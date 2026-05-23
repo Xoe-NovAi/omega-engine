@@ -1,0 +1,10 @@
+
+rotation:
+  strategy: round_robin
+  cycle_order: [t1, t2]
+  aging_decay_per_cycle: 0.8
+  deepening_factor: 1.2
+  priority_floor: 0.1
+scheduled_topics:
+  t1: {title: "Topic 1", cloud_search: {depth: 2}}
+  t2: {title: "Topic 2", cloud_search: {depth: 2}}

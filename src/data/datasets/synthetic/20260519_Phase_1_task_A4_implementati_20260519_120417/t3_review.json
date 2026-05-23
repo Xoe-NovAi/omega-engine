@@ -1,0 +1,44 @@
+```json
+{
+  "reviewed": false,
+  "topic": "Phase 1 task A4 — implementation research",
+  "corrections": [
+    {
+      "claim": "Research on: You are SOPHIA, the Omega Engine's Akashic Record....",
+      "correction": "This claim is not related to the specified topic 'Phase 1 task A4 — implementation research'. It appears to be an internal system prompt or an error message, indicating a complete failure to initiate or conduct research on the assigned topic.",
+      "severity": "critical"
+    }
+  ],
+  "missing_patterns": [
+    "All patterns and concepts related to 'implementation research' are missing, as the report failed to address the topic entirely.",
+    "Key frameworks and models for implementation research (e.g., RE-AIM, CFIR, PRISM).",
+    "Methodologies for studying implementation processes and outcomes (e.g., mixed methods, process evaluation).",
+    "Common challenges and facilitators in implementing evidence-based practices.",
+    "Strategies for promoting successful implementation and sustainment."
+  ],
+  "confidence_scores": {
+    "l1_narrative": 0.0,
+    "l2_insight": 0.0,
+    "l3_principle": 0.0
+  },
+  "recommended_directions": [
+    {
+      "direction": "Re-attempt Phase 1 task A4 — implementation research.",
+      "reason": "The previous attempt failed to produce any relevant research output due to system errors and unavailability of lower-tier models/enrichment providers. A fresh attempt is required to fulfill the task objective.",
+      "priority": 1.0
+    },
+    {
+      "direction": "Investigate and resolve issues with Tier 2 enrichment providers (OpenRouter, OpenCode Zen, Google).",
+      "reason": "The report explicitly states that all cloud enrichment providers returned errors, leading to a 'mock enrichment' and inability to proceed. Ensuring these services are operational is critical for future research tasks.",
+      "priority": 0.9
+    },
+    {
+      "direction": "Ensure Tier 1 draft availability for subsequent processing.",
+      "reason": "The report noted 'No T1 draft available,' which is a foundational failure. The T1 model must successfully generate initial content for the enrichment pipeline to function.",
+      "priority": 0.8
+    }
+  ],
+  "overall_quality": "poor",
+  "summary": "This report is not reviewable as a research output on 'Phase 1 task A4 — implementation research'. The provided content indicates a complete system failure, with no Tier 1 draft available and all Tier 2 cloud enrichment providers returning errors. The 'claim' presented is an internal system prompt rather than a research finding. Consequently, no actual research on the topic was performed, and the report lacks any accuracy, completeness, or insight quality related to implementation research. The confidence scores for all tiers are zero, reflecting the total breakdown in the research generation process. A critical re-attempt of the task is required, along with immediate investigation into the underlying system and provider failures."
+}
+```

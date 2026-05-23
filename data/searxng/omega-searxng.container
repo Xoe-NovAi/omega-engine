@@ -1,0 +1,56 @@
+# 🔱 Omega SearXNG — Sovereign Search Layer
+# AP: AP-SEARXNG-QUADLET-v1.0.0
+#
+# Deploy: cp omega-searxng.container ~/.config/containers/systemd/
+#          cp omega-searxng.service  ~/.config/containers/systemd/
+#          systemctl --user daemon-reload
+#          systemctl --user enable --now omega-searxng.service
+#
+# Hardware: Ryzen 7 5700U | RAM: 14Gi | CPU-only
+# Port: 8017 (avoids 8080/Iris, 5432/Postgres, 6379/Redis, 6333/Qdrant, 8088/Caddy)
+
+[Unit]
+Description=Omega SearXNG — Sovereign Metasearch Engine
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=docker.io/searxng/searxng:latest
+ContainerName=omega-searxng
+AutoUpdate=registry
+
+# Network — bind to localhost only
+PublishPort=127.0.0.1:8017:8080
+
+# Configuration volume
+Volume=%h/Documents/Xoe-NovAi/omega-engine/data/searxng/config:/etc/searxng/:Z,U
+
+# Data volume — favicon cache, SQLite DB
+Volume=%h/omega-library/searxng/data:/var/cache/searxng/:Z,U
+
+# Environment
+Environment=SEARXNG_SECRET=73deefc57187bf3ebb58e090f75fb6a5b37e1c0147709f97be461a11b4c13858
+Environment=SEARXNG_BASE_URL=http://localhost:8017
+Environment=SEARXNG_PORT=8080
+Environment=SEARXNG_HOST=0.0.0.0
+
+# Security hardening
+PodmanArgs=--memory=512m --memory-reservation=256m
+PodmanArgs=--cpus=1.0 --pids-limit=64
+PodmanArgs=--read-only --security-opt=no-new-privileges --cap-drop=ALL
+PodmanArgs=--tmpfs=/tmp:rw,size=64m --tmpfs=/var/tmp:rw,size=32m
+
+# Health check
+HealthCmd=curl -sf http://localhost:8080/healthz || exit 1
+HealthInterval=30s
+HealthTimeout=5s
+HealthRetries=3
+HealthOnFailure=restart
+
+[Service]
+Restart=on-failure
+RestartSec=10
+TimeoutStartSec=60s
+
+[Install]
+WantedBy=multi-user.target

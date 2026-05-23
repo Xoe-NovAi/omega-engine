@@ -1,0 +1,4387 @@
+Is it recommended to chose `pasta` over `slirp4netns` if native IPs ...
+  URL: https://www.reddit.com/r/podman/comments/11isru0/is_it_recommended_to_chose_pasta_over_slirp4netns/
+  Is it recommended to chose pasta over slirp4netns if native IPs are required? Are there any disadvantages? And is it correct that pasta is natively included ...
+
+Chapter 12. Communicating among containers | 9
+  URL: https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/assembly_communicating-among-containers_building-running-and-managing-containers
+  Notable differences of pasta network mode compared to slirp4netns include: ... Starting from RHEL 9.5, pasta is the default network mode for rootless containers.
+
+  --- Content ---
+  # Chapter 12. Communicating among containers
+  
+  * * *
+  
+  Learn about establishing communication between containers, applications, and host systems leveraging port mapping, DNS resolution, or orchestrating communication within pods.
+  
+  
+  ## [12.1. The network modes and layers](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/assembly_communicating-among-containers_building-running-and-managing-containers\#con_the-network-modes-and-layers_assembly_communicating-among-containers)                      Copy linkLink copied to clipboard!
+  
+  There are several different network modes in Podman:
+  
+  
+  - `bridge` \- creates another network on the default bridge network
+  
+  - `container:<id>` \- uses the same network as the container with `<id>` id
+  
+  - `host` \- uses the host network stack
+  
+  - `network-id` \- uses a user-defined network created by the `podman` network create command
+  
+  - `private` \- creates a new network for the container
+  
+  - `slirp4nets` \- creates a user network stack with slirp4netns, the default option for rootless containers
+  
+  - `pasta` \- high performance replacement for slirp4netns. You can use `pasta` beginning with Podman v4.4.1.
+  
+  - `none` \- create a network namespace for the container but do not configure network interfaces for it. The container has no network connectivity.
+  
+  - `ns:<path>` \- path to a network namespace to join
+  
+  
+  Note
+  
+  The host mode gives the container full access to local system services such as D-bus, a system for interprocess communication (IPC), and is therefore considered insecure.
+  
+  
+  ## [12.2. Differences between slirp4netns and pasta](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/assembly_communicating-among-containers_building-running-and-managing-containers\#differences-between-slirp4netns-and-pasta_assembly_communicating-among-containers)                      Copy linkLink copied to clipboard!
+  
+  Notable differences of `pasta` network mode compared to `slirp4netns` include:
+  
+  
+  - `pasta` supports IPv6 port forwarding.
+  
+  - `pasta` is more efficient than `slirp4netns`.
+  
+  - `pasta` copies IP addresses from the host, while slirp4netns uses a predefined IPv4 address.
+  
+  - `pasta` uses an interface name from the host, while slirp4netns uses tap0 as interface name.
+  
+  - `pasta` uses the gateway address from the host, while `slirp4netns` defines its own gateway address and uses NAT.
+  
+  
+  Note
+  
+  Starting from RHEL 9.5, `pasta` is the default network mode for rootless containers. For earlier RHEL versions, the default network mode for rootless containers is `slirp4netns`.
+  
+  
+  ## [12.3. Setting the network mode](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/assembly_communicating-among-containers_building-running-and-managing-containers\#setting-the-network-mode_assembly_communicating-among-containers)                      Copy linkLink copied to clipboard!
+  
+  You can use the `podman run` command with the `--network` option to select the network mode.
+  
+  
+  **Prerequisites**
+  
+  - The `container-tools` meta-package is installed.
+  
+  
+  **Procedure**
+  
+  1. Optional: If you want to use the `pasta` network mode, install the `passt` package:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  $ {PackageManager} install passt
+  ```
+  
+  2. Run the container based on the `registry.access.redhat.com/ubi9/ubi` image:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  $ podman run --network=<netwok_mode> -d --name=myubi registry.access.redhat.com/ubi9/ubi
+  ```
+  
+  
+  
+  
+      The `<netwok_mode>` is the required network mode. Alternatively, you can use the `default_rootless_network_cmd` option in the `containers.conf` file to switch the default network mode.
+  
+  
+  
+  Note
+  
+  Starting from RHEL 9.5, `pasta` is the default network mode for rootless containers. For earlier RHEL versions, the default network mode for rootless containers is `slirp4netns`.
+  
+  
+  **Verification**
+  
+  - Verify the setting of the network mode:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  $ podman inspect --format {{.HostConfig.NetworkMode}} myubi
+  <netwok_mode>
+  ```
+  
+  
+  ## [12.4. Inspecting a network settings of a container](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/assembly_communicating-among-containers_building-running-and-managing-containers\#proc_inspecting-a-network-settings-of-a-container_assembly_communicating-among-containers)                      Copy linkLink copied to clipboard!
+  
+  Use the `podman inspect` command with the `--format` option to display individual items from the `podman inspect` output.
+  
+  
+  **Prerequisites**
+  
+  - The `container-tools` meta-package is installed.
+  
+  
+  **Procedure**
+  
+  1. Display the IP address of a container:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman inspect --format='{{.NetworkSettings.IPAddress}}' <containerName>
+  ```
+  
+  2. Display all networks to which container is connected:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman inspect --format='{{.NetworkSettings.Networks}}' <containerName>
+  ```
+  
+  3. Display port mappings:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman inspect --format='{{.NetworkSettings.Ports}}' <containerName>
+  ```
+  
+  
+  ## [12.5. Communicating between a container and an application](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/assembly_communicating-among-containers_building-running-and-managing-containers\#proc_communicating-between-a-container-and-an-application_assembly_communicating-among-containers)                      Copy linkLink copied to clipboard!
+  
+  You can communicate between a container and an application. An application ports are in either listening or open state. These ports are automatically exposed to the container network, therefore, you can reach those containers using these networks. By default, the web server listens on port 80. Using this procedure, the `myubi` container communicates with the `web-container` application.
+  
+  
+  **Prerequisites**
+  
+  - The `container-tools` meta-package is installed.
+  
+  
+  **Procedure**
+  
+  1. Start the container named `web-container`:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman run -dt --name=web-container docker.io/library/httpd
+  ```
+  
+  2. List all containers:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman ps -a
+  
+  CONTAINER ID  IMAGE                           COMMAND           CREATED        STATUS            PORTS       NAMES
+  b8c057333513  docker.io/library/httpd:latest  httpd-foreground  4 seconds ago  Up 5 seconds ago              web-container
+  ```
+  
+  3. Inspect the container and display the IP address:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman inspect --format='{{.NetworkSettings.IPAddress}}' web-container
+  
+  10.88.0.2
+  ```
+  
+  4. Run the `myubi` container and verify that web server is running:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman run -it --name=myubi ubi9/ubi curl 10.88.0.2:80
+  
+  <html><body><h1>It works!</h1></body></html>
+  ```
+  
+  
+  ## [12.6. Communicating between a container and a host](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/assembly_communicating-among-containers_building-running-and-managing-containers\#proc_communicating-between-a-container-and-a-host_assembly_communicating-among-containers)                      Copy linkLink copied to clipboard!
+  
+  By default, the `podman` network is a bridge network. It means that a network device is bridging a container network to your host network.
+  
+  
+  **Prerequisites**
+  
+  - The `container-tools` meta-package is installed.
+  
+  - The `web-container` is running. For more information, see section [Communicating between a container and an application](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html-single/building_running_and_managing_containers//index#proc_communicating-between-a-container-and-an-application_assembly_communicating-among-containers).
+  
+  
+  **Procedure**
+  
+  1. Verify that the bridge is configured:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman network inspect podman | grep bridge
+  
+         "type": "bridge"
+  ```
+  
+  2. Display the host network configuration:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  Show less
+  
+  
+  
+  ```plaintext
+  # ip addr show podman0
+  
+  6: podman0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default qlen 1000
+         link/ether 62:af:a1:0a:ca:2e brd ff:ff:ff:ff:ff:ff
+         inet 10.88.0.1/16 brd 10.88.255.255 scope global podman0
+            valid_lft forever preferred_lft forever
+         inet6 fe80::60af:a1ff:fe0a:ca2e/64 scope link
+            valid_lft forever preferred_lft forever
+  ```
+  
+  
+  
+  
+      You can see that the `web-container` has an IP of the `podman0` subnet and the network is bridged to the host.
+  
+  
+  3. Inspect the `web-container` and display its IP address:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman inspect --format='{{.NetworkSettings.IPAddress}}' web-container
+  
+  10.88.0.2
+  ```
+  
+  4. Access the `web-container` directly from the host:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  $ curl 10.88.0.2:80
+  
+  <html><body><h1>It works!</h1></body></html>
+  ```
+  
+  
+  ## [12.7. Communicating between containers using port mapping](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/assembly_communicating-among-containers_building-running-and-managing-containers\#proc_communicating-between-containers-using-port-mapping_assembly_communicating-among-containers)                      Copy linkLink copied to clipboard!
+  
+  The most convenient way to communicate between two containers is to use published ports. Ports can be published in two ways: automatically or manually.
+  
+  
+  **Prerequisites**
+  
+  - The `container-tools` meta-package is installed.
+  
+  
+  **Procedure**
+  
+  1. Run the unpublished container:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman run -dt --name=web1 ubi9/httpd-24
+  ```
+  
+  2. Run the automatically published container:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman run -dt --name=web2 -P ubi9/httpd-24
+  ```
+  
+  3. Run the manually published container and publish container port 8080:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman run -dt --name=web3 -p 8888:8080 ubi9/httpd-24
+  ```
+  
+  4. List all containers:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman ps
+  CONTAINER ID  IMAGE                                            COMMAND               CREATED         STATUS         PORTS                                             NAMES
+  db23e8dabc74  registry.access.redhat.com/ubi9/httpd-24:latest  /usr/bin/run-http...  23 seconds ago  Up 23 seconds  8080/tcp, 8443/tcp                                web1
+  1824b8f0a64b  registry.access.redhat.com/ubi9/httpd-24:latest  /usr/bin/run-http...  18 seconds ago  Up 18 seconds  0.0.0.0:33127->8080/tcp, 0.0.0.0:37679->8443/tcp  web2
+  39de784d917a  registry.access.redhat.com/ubi9/httpd-24:latest  /usr/bin/run-http...  5 seconds ago  Up 5 seconds  0.0.0.0:8888->8080/tcp, 8443/tcp                  web3
+  ```
+  
+  
+  
+  
+      You can see that:
+  
+  
+  
+  
+     - Container `web1` has no published ports and can be reached only by container network or a bridge.
+  
+     - Container `web2` has automatically mapped ports 43595 and 42423 to publish the application ports 8080 and 8443, respectively.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+       Note
+  
+  
+  
+  
+  
+  
+       The automatic port mapping is possible because the `registry.access.redhat.com/9/httpd-24` image has the `EXPOSE 8080` and `EXPOSE 8443` commands in the [Containerfile](https://catalog.redhat.com/software/containers/ubi9/httpd-24/6065b844aee24f523c207943?container-tabs=dockerfile).
+  
+  
+     - Container `web3` has a manually published port. The host port 8888 is mapped to the container port 8080.
+  
+  
+  5. Display the IP addresses of `web1` and `web3` containers:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman inspect --format='{{.NetworkSettings.IPAddress}}' web1
+  # podman inspect --format='{{.NetworkSettings.IPAddress}}' web3
+  ```
+  
+  6. Reach `web1` container using <IP>:<port> notation:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # 10.88.0.2:8080
+  ...
+  <title>Test Page for the HTTP Server on Red Hat Enterprise Linux</title>
+  ...
+  ```
+  
+  7. Reach `web2` container using localhost:<port> notation:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # curl localhost:43595
+  ...
+  <title>Test Page for the HTTP Server on Red Hat Enterprise Linux</title>
+  ...
+  ```
+  
+  8. Reach `web3` container using <IP>:<port> notation:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # curl 10.88.0.4:8080
+  ...
+  <title>Test Page for the HTTP Server on Red Hat Enterprise Linux</title>
+  ...
+  ```
+  
+  
+  ## [12.8. Communicating between containers using DNS](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/assembly_communicating-among-containers_building-running-and-managing-containers\#proc_communicating-between-containers-using-dns_assembly_communicating-among-containers)                      Copy linkLink copied to clipboard!
+  
+  When a DNS plugin is enabled, use a container name to address containers.
+  
+  
+  **Prerequisites**
+  
+  - The `container-tools` meta-package is installed.
+  
+  - A network with the enabled DNS plugin has been created using the `podman network create` command.
+  
+  
+  **Procedure**
+  
+  1. Run a `receiver` container attached to the `mynet` network:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman run -d --net mynet --name receiver ubi9 sleep 3000
+  ```
+  
+  2. Run a `sender` container and reach the `receiver` container by its name:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  Show less
+  
+  
+  
+  ```plaintext
+  # podman run -it --rm --net mynet --name sender alpine ping receiver
+  
+  PING rcv01 (10.89.0.2): 56 data bytes
+  64 bytes from 10.89.0.2: seq=0 ttl=42 time=0.041 ms
+  64 bytes from 10.89.0.2: seq=1 ttl=42 time=0.125 ms
+  64 bytes from 10.89.0.2: seq=2 ttl=42 time=0.109 ms
+  ```
+  
+  
+  
+  
+      Exit using the `CTRL+C`.
+  
+  
+  
+  You can see that the `sender` container can ping the `receiver` container using its name.
+  
+  
+  ## [12.9. Communicating between two containers in a pod](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/assembly_communicating-among-containers_building-running-and-managing-containers\#proc_communicating-between-two-containers-in-a-pod_assembly_communicating-among-containers)                      Copy linkLink copied to clipboard!
+  
+  All containers in the same pod share the IP addresses, MAC addresses and port mappings. You can communicate between containers in the same pod using localhost:port notation.
+  
+  
+  **Prerequisites**
+  
+  - The `container-tools` meta-package is installed.
+  
+  
+  **Procedure**
+  
+  1. Create a pod named `web-pod`:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  $ podman pod create --name=web-pod
+  ```
+  
+  2. Run the web container named `web-container` in the pod:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  $ podman container run -d --pod web-pod --name=web-container docker.io/library/httpd
+  ```
+  
+  3. List all pods and containers associated with them:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  $ podman ps --pod
+  
+  CONTAINER ID  IMAGE                           COMMAND           CREATED        STATUS            PORTS       NAMES               POD ID        PODNAME
+  58653cf0cf09  k8s.gcr.io/pause:3.5                              4 minutes ago  Up 3 minutes ago              4e61a300c194-infra  4e61a300c194  web-pod
+  b3f4255afdb3  docker.io/library/httpd:latest  httpd-foreground  3 minutes ago  Up 3 minutes ago              web-container  4e61a300c194  web-pod
+  ```
+  
+  4. Run the container in the `web-pod` based on the docker.io/library/fedora image:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  $ podman container run -it --rm --pod web-pod docker.io/library/fedora curl localhost
+  
+  <html><body><h1>It works!</h1></body></html>
+  ```
+  
+  
+  
+  
+      You can see that the container can reach the `web-container`.
+  
+  
+  
+  ## [12.10. Communicating in a pod](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/assembly_communicating-among-containers_building-running-and-managing-containers\#proc_communicating-in-a-pod_assembly_communicating-among-containers)                      Copy linkLink copied to clipboard!
+  
+  You must publish the ports for the container in a pod when a pod is created.
+  
+  
+  **Prerequisites**
+  
+  - The `container-tools` meta-package is installed.
+  
+  
+  **Procedure**
+  
+  1. Create a pod named `web-pod`:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman pod create --name=web-pod-publish -p 80:80
+  ```
+  
+  2. List all pods:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman pod ls
+  
+  POD ID        NAME         STATUS   CREATED        INFRA ID      # OF CONTAINERS
+  26fe5de43ab3  publish-pod  Created  5 seconds ago  7de09076d2b3  1
+  ```
+  
+  3. Run the web container named `web-container` inside the `web-pod`:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman container run -d --pod web-pod-publish --name=web-container docker.io/library/httpd
+  ```
+  
+  4. List containers
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman ps
+  
+  CONTAINER ID  IMAGE                    COMMAND           CREATED             STATUS             PORTS               NAMES
+  7de09076d2b3  k8s.gcr.io/pause:3.5                       About a minute ago  Up 23 seconds ago  0.0.0.0:80->80/tcp  26fe5de43ab3-infra
+  088befb90e59  docker.io/library/httpd  httpd-foreground  23 seconds ago      Up 23 seconds ago  0.0.0.0:80->80/tcp  web-container
+  ```
+  
+  5. Verify that the `web-container` can be reached:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  $ curl localhost:80
+  
+  <html><body><h1>It works!</h1></body></html>
+  ```
+  
+  
+  ## [12.11. Attaching a pod to the container network](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/assembly_communicating-among-containers_building-running-and-managing-containers\#proc_attaching-a-pod-to-the-container-network_assembly_communicating-among-containers)                      Copy linkLink copied to clipboard!
+  
+  Attach containers in pod to the network during the pod creation.
+  
+  
+  **Prerequisites**
+  
+  - The `container-tools` meta-package is installed.
+  
+  
+  **Procedure**
+  
+  1. Create a network named `pod-net`:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman network create pod-net
+  
+  /etc/cni/net.d/pod-net.conflist
+  ```
+  
+  2. Create a pod `web-pod`:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman pod create --net pod-net --name web-pod
+  ```
+  
+  3. Run a container named `web-container` inside the `web-pod`:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman run -d --pod webt-pod --name=web-container docker.io/library/httpd
+  ```
+  
+  4. Optional: Display the pods the containers are associated with:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman ps -p
+  
+  CONTAINER ID  IMAGE                           COMMAND           CREATED        STATUS            PORTS       NAMES               POD ID        PODNAME
+  b7d6871d018c   registry.access.redhat.com/ubi9/pause:latest                             9 minutes ago  Up 6 minutes ago              a8e7360326ba-infra  a8e7360326ba  web-pod
+  645835585e24  docker.io/library/httpd:latest  httpd-foreground  6 minutes ago  Up 6 minutes ago              web-container    a8e7360326ba  web-pod
+  ```
+  
+  
+  **Verification**
+  
+  - Show all networks connected to the container:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  Toggle word wrap
+  
+  
+  
+  
+  
+  ```plaintext
+  # podman ps --format="{{.Networks}}"
+  
+  pod-net
+  ```
+  
+  
+  ## [12.12. Setting HTTP Proxy variables for Podman](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/building_running_and_managing_containers/assembly_communicating-among-containers_building-running-and-managing-containers\#setting-http-proxy-variables-for-podman_assembly_communicating-among-containers)                      Copy linkLink copied to clipboard!
+  
+  To pull images behind a proxy server, you must set HTTP Proxy variables for Podman. Podman reads the environment variable `HTTP_PROXY` to ascertain the HTTP Proxy information. HTTP proxy information can be configured as an environment variable or under `/etc/profile.d`.
+  
+  
+  **Procedure**
+  
+  - Set proxy variables for Podman. For example:
+  
+  
+  
+  
+    - Unauthenticated proxy:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      Toggle word wrap
+  
+  
+  
+  
+  
+      ```plaintext
+      # cat /etc/profile.d/unauthenticated_http_proxy.sh
+      export HTTP_PROXY=http://192.168.0.1:3128
+      export HTTPS_PROXY=http://192.168.0.1:3128
+      export NO_PROXY=example.com,172.5.0.0/16
+      ```
+  
+    - Authenticated proxy:
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      Copy to Clipboard
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      Toggle word wrap
+  
+  
+  
+  
+  
+      ```plaintext
+      # cat /etc/profile.d/authenticated_http_proxy.sh
+      export HTTP_PROXY=http://USERNAME:PASSWORD@192.168.0.1:3128
+      export HTTPS_PROXY=http://USERNAME:PASSWORD@192.168.0.1:3128
+      export NO_PROXY=example.com,172.5.0.0/16
+      ```
+  
+  
+  [![Red Hat logo](https://docs.redhat.com/Logo-Red_Hat-Documentation-A-Reverse-RGB.svg)](https://docs.redhat.com/en)[Github](https://github.com/redhat-documentation)[![reddit](data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20data-icon-name='reddit'%20height='512'%20width='512'%20viewBox='0%200%20512%20512'%3e%3cpath%20fill='rgb(163,163,163)'%20d='M201.5%20305.5c-13.8%200-24.9-11.1-24.9-24.6%200-13.8%2011.1-24.9%2024.9-24.9%2013.6%200%2024.6%2011.1%2024.6%2024.9%200%2013.6-11.1%2024.6-24.6%2024.6zM504%20256c0%20137-111%20248-248%20248S8%20393%208%20256%20119%208%20256%208s248%20111%20248%20248zm-132.3-41.2c-9.4%200-17.7%203.9-23.8%2010-22.4-15.5-52.6-25.5-86.1-26.6l17.4-78.3%2055.4%2012.5c0%2013.6%2011.1%2024.6%2024.6%2024.6%2013.8%200%2024.9-11.3%2024.9-24.9s-11.1-24.9-24.9-24.9c-9.7%200-18%205.8-22.1%2013.8l-61.2-13.6c-3-.8-6.1%201.4-6.9%204.4l-19.1%2086.4c-33.2%201.4-63.1%2011.3-85.5%2026.8-6.1-6.4-14.7-10.2-24.1-10.2-34.9%200-46.3%2046.9-14.4%2062.8-1.1%205-1.7%2010.2-1.7%2015.5%200%2052.6%2059.2%2095.2%20132%2095.2%2073.1%200%20132.3-42.6%20132.3-95.2%200-5.3-.6-10.8-1.9-15.8%2031.3-16%2019.8-62.5-14.9-62.5zM302.8%20331c-18.2%2018.2-76.1%2017.9-93.6%200-2.2-2.2-6.1-2.2-8.3%200-2.5%202.5-2.5%206.4%200%208.6%2022.8%2022.8%2087.3%2022.8%20110.2%200%202.5-2.2%202.5-6.1%200-8.6-2.2-2.2-6.1-2.2-8.3%200zm7.7-75c-13.6%200-24.6%2011.1-24.6%2024.9%200%2013.6%2011.1%2024.6%2024.6%2024.6%2013.8%200%2024.9-11.1%2024.9-24.6%200-13.8-11-24.9-24.9-24.9z'/%3e%3c/svg%3e)](https://www.reddit.com/r/redhat/)[Youtube](https://www.youtube.com/@redhat)[Twitter](https://twitter.com/RedHat)
+  
+  ### Learn
+  
+  - [Developer resources](https://developers.redhat.com/learn)
+  - [Cloud learning hub](https://docs.redhat.com/learn/learning-paths)
+  - [Interactive labs](https://www.redhat.com/en/interactive-labs)
+  - [Training and certification](https://www.redhat.com/services/training-and-certification)
+  - [Customer support](https://access.redhat.com/support)
+  - [See all documentation](https://docs.redhat.com/en/products)
+  
+  ### Try, buy, & sell
+  
+  - [Product trial center](https://redhat.com/en/products/trials)
+  - [Red Hat Ecosystem Catalog](https://catalog.redhat.com/)
+  - [Red Hat Store](https://www.redhat.com/en/store)
+  - [Buy online (Japan)](https://www.redhat.com/about/japan-buy)
+  
+  ### Communities
+  
+  - [Customer Portal Community](https://access.redhat.com/community)
+  - [Events](https://www.redhat.com/events)
+  - [How we contribute](https://www.redhat.com/about/our-community-contributions)
+  
+  ### About Red Hat
+  
+  We deliver hardened solutions that make it easier for enterprises to work across platforms and environments, from the core datacenter to the network edge.
+  
+  ### Making open source more inclusive
+  
+  Red Hat is committed to replacing problematic language in our code, documentation, and web properties. For more details, see the [Red Hat Blog](https://www.redhat.com/en/blog/making-open-source-more-inclusive-eradicating-problematic-language).
+  
+  ### About Red Hat Documentation
+  
+  We help Red Hat users innovate and achieve their goals with our products and services with content they can trust. [Explore our recent updates](https://www.redhat.com/en/blog/whats-new-docsredhatcom).
+  
+  [Legal Notice](https://docs.redhat.com/en/legal-notice)
+  
+  ### Theme
+  
+  ### Red Hat legal and privacy links
+  
+  - [About Red Hat](https://redhat.com/en/about/company)
+  - [Jobs](https://redhat.com/en/jobs)
+  - [Events](https://redhat.com/en/events)
+  - [Locations](https://redhat.com/en/about/office-locations)
+  - [Contact Red Hat](https://redhat.com/en/contact)
+  - [Red Hat Blog](https://redhat.com/en/blog)
+  - [Inclusion at Red Hat](https://redhat.com/en/about/our-culture/diversity-equity-inclusion)
+  - [Cool Stuff Store](https://coolstuff.redhat.com/)
+  - [Red Hat Summit](https://www.redhat.com/en/summit)
+  
+  [All systems operational](https://status.redhat.com/)
+  
+  © 2026 Red Hat© 2026 Red Hat
+  
+  ### Red Hat legal and privacy links
+  
+  - [Privacy statement](https://redhat.com/en/about/privacy-policy)
+  - [Terms of use](https://redhat.com/en/about/terms-use)
+  - [All policies and guidelines](https://redhat.com/en/about/all-policies-guidelines)
+  - [Digital accessibility](https://redhat.com/en/about/digital-accessibility)
+  - Cookie preferences
+  
+  
+  Back to top
+  
+  ![](https://consent.trustarc.com/get?name=info-circle-solid.svg)
+  
+  ## How we use cookies
+  
+  We use cookies on our websites to deliver our online services. Details about how we use cookies and how you may disable them are set out in our [Privacy Statement](http://www.redhat.com/en/about/privacy-policy#cookies). By using this website you agree to our use of cookies.
+  
+  ![Close](https://consent.trustarc.com/get?name=redhat_close_small.svg)Accept AllMore Options
+  --- End Content ---
+
+Rootless network performance (pasta vs slirp4netns) #22559 - GitHub
+  URL: https://github.com/containers/podman/discussions/22559
+  Pasta performs better than slirp4netns only up to a certain parallelism (specifically up to 8). Then slirp4netns starts to perform significantly better.
+  Category: github
+
+  --- Content ---
+  [Skip to content](https://github.com/containers/podman/discussions/22559#start-of-content)
+  
+  You signed in with another tab or window. [Reload](https://github.com/containers/podman/discussions/22559) to refresh your session.You signed out in another tab or window. [Reload](https://github.com/containers/podman/discussions/22559) to refresh your session.You switched accounts on another tab or window. [Reload](https://github.com/containers/podman/discussions/22559) to refresh your session.Dismiss alert
+  
+  {{ message }}
+  
+  [containers](https://github.com/containers)/ **[podman](https://github.com/containers/podman)** Public
+  
+  - [Notifications](https://github.com/login?return_to=%2Fcontainers%2Fpodman) You must be signed in to change notification settings
+  - [Fork\\
+  3.1k](https://github.com/login?return_to=%2Fcontainers%2Fpodman)
+  - [Star\\
+  31.8k](https://github.com/login?return_to=%2Fcontainers%2Fpodman)
+  
+  
+  # Rootless network performance (pasta vs slirp4netns)  \#22559
+  
+  Unanswered
+  
+  [mlegenovic](https://github.com/mlegenovic)
+  
+  asked this question in
+  [Q&A](https://github.com/containers/podman/discussions/categories/q-a)
+  
+  [Rootless network performance (pasta vs slirp4netns)](https://github.com/containers/podman/discussions/22559#top)#22559
+  
+  [![@mlegenovic](https://avatars.githubusercontent.com/u/30691467?s=40&v=4)\\
+  mlegenovic](https://github.com/mlegenovic)
+  
+  on May 1, 2024May 1, 2024·
+  1 comment
+  
+  
+  [Return to top](https://github.com/containers/podman/discussions/22559#top)
+  
+  Discussion options
+  
+  # {{title}}
+  
+  Quote reply
+  
+  edited
+  
+  # {{editor}}'s edit
+  
+  {{actor}} deleted this content
+  .
+  
+  # {{editor}}'s edit
+  
+  ## [![](https://avatars.githubusercontent.com/u/30691467?s=64&v=4)\ mlegenovic](https://github.com/mlegenovic) [on May 1, 2024May 1, 2024](https://github.com/containers/podman/discussions/22559\#discussion-6591679)
+  
+  Original comment in English -
+  Translate to English
+  
+  |     |
+  | --- |
+  | I did some network performance tests to see how good pasta is compared to slirp4netns. I start on one physical machine nginx (as podman container), and send requests from other phyiscal mashine with "Apache HTTP server benchmarking tool" (ab). Here the results:<br>**_Default rootless network (pasta)_**<br>`ab -c 1 -n 10000`<br>```<br>Time taken for tests:   5.885 seconds<br>Requests per second:    1699.26 [#/sec] (mean)<br>Time per request:       0.588 [ms] (mean)<br>Time per request:       0.588 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 4 -n 40000`<br>```<br>Time taken for tests:   4.498 seconds<br>Requests per second:    8893.57 [#/sec] (mean)<br>Time per request:       0.450 [ms] (mean)<br>Time per request:       0.112 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 8 -n 80000`<br>```<br>Time taken for tests:   5.775 seconds<br>Requests per second:    13851.79 [#/sec] (mean)<br>Time per request:       0.578 [ms] (mean)<br>Time per request:       0.072 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 16 -n 160000`<br>```<br>Time taken for tests:   11.197 seconds<br>Requests per second:    14289.42 [#/sec] (mean)<br>Time per request:       1.120 [ms] (mean)<br>Time per request:       0.070 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 32 -n 320000`<br>```<br>Time taken for tests:   21.100 seconds<br>Requests per second:    15165.95 [#/sec] (mean)<br>Time per request:       2.110 [ms] (mean)<br>Time per request:       0.066 [ms] (mean, across all concurrent requests)<br>```<br>**_Rootless network with slirp4netns_**<br>`ab -c 1 -n 10000`<br>```<br>Time taken for tests:   8.713 seconds<br>Requests per second:    1147.76 [#/sec] (mean)<br>Time per request:       0.871 [ms] (mean)<br>Time per request:       0.871 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 4 -n 40000`<br>```<br>Time taken for tests:   7.143 seconds<br>Requests per second:    5600.11 [#/sec] (mean)<br>Time per request:       0.714 [ms] (mean)<br>Time per request:       0.179 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 8 -n 80000`<br>```<br>Time taken for tests:   5.745 seconds<br>Requests per second:    13924.88 [#/sec] (mean)<br>Time per request:       0.575 [ms] (mean)<br>Time per request:       0.072 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 16 -n 160000`<br>```<br>Time taken for tests:   6.438 seconds<br>Requests per second:    24852.06 [#/sec] (mean)<br>Time per request:       0.644 [ms] (mean)<br>Time per request:       0.040 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 32 -n 320000`<br>```<br>Time taken for tests:   11.061 seconds<br>Requests per second:    28930.86 [#/sec] (mean)<br>Time per request:       1.106 [ms] (mean)<br>Time per request:       0.035 [ms] (mean, across all concurrent requests)<br>```<br>**_Default rootfull network_**<br>`ab -c 1 -n 10000`<br>```<br>Time taken for tests:   5.074 seconds<br>Requests per second:    1970.86 [#/sec] (mean)<br>Time per request:       0.507 [ms] (mean)<br>Time per request:       0.507 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 4 -n 40000`<br>```<br>Time taken for tests:   4.779 seconds<br>Requests per second:    8369.89 [#/sec] (mean)<br>Time per request:       0.478 [ms] (mean)<br>Time per request:       0.119 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 8 -n 80000`<br>```<br>Time taken for tests:   4.174 seconds<br>Requests per second:    19165.58 [#/sec] (mean)<br>Time per request:       0.417 [ms] (mean)<br>Time per request:       0.052 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 16 -n 160000`<br>```<br>Time taken for tests:   5.182 seconds<br>Requests per second:    30878.20 [#/sec] (mean)<br>Time per request:       0.518 [ms] (mean)<br>Time per request:       0.032 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 32 -n 320000`<br>```<br>Time taken for tests:   8.508 seconds<br>Requests per second:    37610.08 [#/sec] (mean)<br>Time per request:       0.851 [ms] (mean)<br>Time per request:       0.027 [ms] (mean, across all concurrent requests)<br>```<br>**_Conclusion_**<br>As you can see, pasta performs better than slirp4netns only up to a certain parallelism (specifically up to 8). Then slirp4netns starts to perform significantly better. Rootfull network scales best, which is to be expected.<br>**_Question_**<br>Are there any options to improve pasta's scalability? |
+  
+  BetaWas this translation helpful? [Give feedback.](https://github.com/containers/podman/discussions/22559#)
+  
+  4You must be logged in to vote
+  
+  All reactions
+  
+  - ![heart](https://github.githubassets.com/assets/2764-982dc91ea48a.png)2
+  
+  ## Replies:   1 comment
+  
+  Comment options
+  
+  # {{title}}
+  
+  Quote reply
+  
+  ### [![](https://avatars.githubusercontent.com/u/84841121?s=64&v=4)\ sbrivio-rh](https://github.com/sbrivio-rh) [on May 14, 2024May 14, 2024](https://github.com/containers/podman/discussions/22559\#discussioncomment-9438366)   Collaborator
+  
+  Original comment in English -
+  Translate to English
+  
+  |     |
+  | --- |
+  | > Are there any options to improve pasta's scalability?<br>Not really options, at the moment. We check latency using [neper](https://github.com/google/neper) in the upstream [CI](https://passt.top/passt/about/#continuous-integration) (`perf/pasta_tcp` set), but it's all single-threaded.<br>There are plans to introduce [multithreading](https://bugs.passt.top/show_bug.cgi?id=13), eventually, and much more concrete [work in progress](https://archives.passt.top/passt-dev/20240202141151.3762941-1-lvivier@redhat.com/) to support [vhost-user](https://bugs.passt.top/show_bug.cgi?id=25) for virtual machines (passt(1)), first.<br>Once vhost-user support is merged, we can start playing with multithreading for virtual machines (vhost-user supports multiple queues). That would be kind of symmetric with VDUSE for containers (see "VDUSE support for containers" in [this article](https://www.redhat.com/en/blog/introducing-vduse-software-defined-datapath-virtio)): for pasta, it could look like [this](https://passt.top/static/pasta_vduse.png).<br>I'm not excluding you could get much better results by tweaking some `#define`s in tcp.c and tap.c, though. I would start with `TAP_SEQS` and `TCP_HASH_TABLE_LOAD` \-\- or perhaps "simply" profiling with perf(1) in the `ab -c 32` case. |
+  
+  BetaWas this translation helpful? [Give feedback.](https://github.com/containers/podman/discussions/22559#)
+  
+  2You must be logged in to vote
+  
+  All reactions
+  
+  0 replies
+  
+  
+  [Sign up for free](https://github.com/join?source=comment-repo) **to join this conversation on GitHub**.
+  Already have an account?
+  [Sign in to comment](https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fcontainers%2Fpodman%2Fdiscussions%2F22559)
+  
+  Category
+  
+  
+  [![pray](https://github.githubassets.com/assets/1f64f-25af8353fbea.png)\\
+  \\
+  Q&A](https://github.com/containers/podman/discussions/categories/q-a)
+  
+  Labels
+  
+  
+  [network](https://github.com/containers/podman/discussions?discussions_q=label%3Anetwork) Networking related issue or feature [pasta](https://github.com/containers/podman/discussions?discussions_q=label%3Apasta) pasta(1) bugs or features
+  
+  2 participants
+  
+  
+  [![@mlegenovic](https://avatars.githubusercontent.com/u/30691467?s=48&v=4)](https://github.com/mlegenovic)[![@sbrivio-rh](https://avatars.githubusercontent.com/u/84841121?s=48&v=4)](https://github.com/sbrivio-rh)
+  
+  Heading
+  
+  Bold
+  
+  Italic
+  
+  Quote
+  
+  Code
+  
+  Link
+  
+  * * *
+  
+  Numbered list
+  
+  Unordered list
+  
+  Task list
+  
+  * * *
+  
+  Attach files
+  
+  Mention
+  
+  Reference
+  
+  # Select a reply
+  
+  Loading
+  
+  [Create a new saved reply](https://github.com/containers/podman/discussions/22559)
+  
+  👍1 reacted with thumbs up emoji👎1 reacted with thumbs down emoji😄1 reacted with laugh emoji🎉1 reacted with hooray emoji😕1 reacted with confused emoji❤️1 reacted with heart emoji🚀1 reacted with rocket emoji👀1 reacted with eyes emoji
+  
+  You can’t perform that action at this time.
+  --- End Content ---
+
+Root is less: container networks get in shape with pasta - YouTube
+  URL: https://www.youtube.com/watch?v=tlxDmUPc4WY
+  ... slirp4netns driver. But it was never intended for this life, and ... Rootful networking with rootless podman containers - DevConf.CZ 2023.
+
+  --- Content ---
+  ![Thumbnail (1920x1080)](https://i.ytimg.com/vi/tlxDmUPc4WY/maxresdefault.jpg)
+  # [Root is less: container networks get in shape with pasta - DevConf.CZ 2023](https://www.youtube.com/watch?v=tlxDmUPc4WY)
+  
+  **Visibility**: Public
+  **Uploaded by**: [DevConf](https://www.youtube.com/@DevConfs)
+  **Uploaded at**: 2023-07-12
+  **Published at**: 
+  **Length**: 32:39
+  **Views**: 1994
+  **Likes**: 20
+  **Category**: Science & Technology
+  
+  ## Description
+  
+  ```
+  Speaker(s): Stefano Brivio
+  
+  Now featuring native integration with Podman (https://podman.io), pasta (https://passt.top#pasta-pack-a-subtle-tap-abstraction), is a brand new approach to usermode networking for rootless containers, aiming at bringing production quality to the scene together with its double passt(1) (for VMs).
+  
+  For a long time, usermode networking was considered by many a second-class citizen among network back-ends for container engines.
+  
+  Slirp has provided usermode networking to QEMU for 18 years, and eventually became consumable for container usage thanks to the slirp4netns driver. But it was never intended for this life, and original design goals proved to be obstacles to an otherwise promising way to embrace the principle of least privilege in container networking.
+  
+  Recently, a number of seemingly unorthodox use cases for pasta emerged from the community, such as containerisation of legacy IPv4 applications in IPv6-only environments.
+  
+  This talk shows some of these ideas, along with motivation behind the pasta/passt project, status, challenges, and future directions.
+  
+  https://sched.co/1MYld
+  ```
+  
+  ## Transcript
+  
+  this will be about container networks uh
+  well presumably rootless as you might
+  have guessed and passed up so what is
+  passed up as you might have guessed I'm
+  Italian but are now talking about that
+  um so let me show you something
+  here I am uh I'm on a server
+  to this
+  abroad
+  and
+  let's take the server down
+  I'm already root
+  no I'm not rude
+  right so great luckily
+  um
+  what's uh what's a trick then uh wait he
+  didn't get through did I did I just
+  reinvent and share and I'm just so
+  enthusiastic to to to show it to you so
+  okay let's say to understand what I am
+  and the good thing sometimes is to look
+  at networks or network interfaces
+  okay so I have look back
+  and I have another network interface but
+  it's down
+  so
+  how do you how am I here I mean this
+  this makes no sense right
+  um okay let's let's get out of this
+  madness and go back to my host have a
+  look at
+  what I have here okay that that makes
+  more sense right I have an internet
+  interface
+  set this up
+  um
+  looks similar so okay the MAC address is
+  different though
+  and it's not the same interface because
+  one is done and the other one is up
+  so
+  um
+  okay I read the main page for you
+  um I actually wrote it too but
+  um
+  and I will not try this
+  and I will check
+  addresses I have into this strange
+  root no rotating
+  uh oh yeah no okay great uh so this is
+  up or at least administratively up the
+  state is unknown because I didn't send
+  the impact it yet
+  um I have some addresses
+  a P4 bunch
+  a bunch of rpv6 Link local
+  uh great okay this this sounds making
+  more sense and let's see if I can reach
+  the internet
+  sorry we talked about pasta so
+  yeah great uh so IPv6 is up icmpv6 is up
+  uh DNS resolution was working
+  um
+  okay so did you just re-implement podman
+  uh
+  no because it's full of stuff here and
+  the container will be clean right I just
+  just started it
+  okay
+  um so let me quickly explain the trick
+  to you
+  um and note that I'm really not rude I'm
+  really really not rude okay I can't
+  delete one thing from here
+  um sorry LS I can probably do it but
+  let's say I want to you know
+  Bash
+  yeah
+  nope
+  um
+  right so no I didn't Implement podman
+  and in fact podman
+  you can also use this thing
+  that's she's like fine right
+  sorry
+  okay
+  and let's have a look at this
+  okay pretty similar so the interface is
+  still the strange name well that was a
+  interface on the server I have the same
+  addresses let me check that this works
+  yeah I can install hyper3
+  [Music]
+  um
+  great so this seems to be some user mode
+  networking
+  um
+  and before I finish revealing the trick
+  to you I just mentioned user mode
+  networking and it might look like I'm
+  copying packets from user space and back
+  and and this is terribly slow right I
+  mean somebody probably played this lyric
+  so hmm
+  okay let me go back to my
+  strange tool here
+  actually sorry let me let me run a
+  server first
+  so I demonized it so that I can just
+  keep a big terminal here I hope you all
+  see here or is it even
+  no it's okay
+  um great so
+  um
+  and now
+  how do I reach that well it looks very
+  local I will try with localhost uh and
+  I'm yeah
+  I'm being quite thorrogant come on I I
+  know that it's fast and and I can give
+  it 32 megabytes of TCP window and and
+  zero copy and disabled Nago algorithm
+  uh right maybe look even let me do two
+  flows
+  great
+  six gigs per second
+  so right
+  um okay now I can review to you the
+  trick so I'm not rude I created a
+  network interface and this thing is
+  pretty fast
+  let's let's look at some diagrams what's
+  a trick
+  um so
+  how does networking work when you are
+  nobody or well in my case you're as
+  preview but it doesn't make a real
+  difference so you don't have root
+  um I don't have Captain at admin right I
+  didn't show you but trust me I didn't
+  cheat on that so I cannot have
+  interfaces but
+  but Linux allows you if you detach your
+  user namespace and the network namespace
+  at the same time since Linux 3.8
+  um which is a few years ago like five
+  six years ago I think
+  um at the same time
+  we can actually create a network
+  interface somewhere so we can actually
+  create a network interface
+  because we are uid 0. so we are talking
+  you might call it wrote
+  for convenience but that's not root
+  that's just uid 0 in a user namespace
+  and your ID 0 can do a lot of things
+  like creating network interfaces
+  um
+  oh and there is the Turnt Up driver it's
+  a kind of kind of old implementation but
+  quite useful
+  this thing creates a network interface
+  on one hand
+  and on the other hand you have a file
+  descriptor it's not a socket it's a file
+  descript so
+  sockets can be represented by file
+  descriptors but it's not the same thing
+  um
+  and on these file descriptors you get
+  frames and you can write frames ethernet
+  frames so the whole thing you know like
+  uh Let It Go on a cable you don't have
+  it here so it goes no it goes in here
+  uh right and then we know that regular
+  users can open TCP and GDP sockets for
+  sure I mean when you start a browser you
+  don't do sudo Firefox right you just
+  start it
+  so are you thinking what I'm thinking
+  if we do this
+  so we have the network name space we
+  just created this top device which gives
+  me the ethernet interface inside that
+  um
+  and down there I have the internets and
+  then I know that as a regular user I can
+  do TCP and UDP sockets
+  I just need to fill in that something
+  not saying that it's so simple but
+  it looks starts looking doable
+  um
+  and that's something
+  namely needs to
+  take the ethernet frames away
+  take the IP sorry the internet header
+  the IP headers away put a payload into
+  layer 4 sockets
+  and then I think we are done and when we
+  get something from the internets uh we
+  need to ask the kernel so we are this
+  something is a user space application
+  and we need to ask a kernel where is
+  this bucket coming from
+  and then tell our Network namespace and
+  we have
+  a number of ways to so we have we have
+  two addresses essentially right so just
+  reminder for everybody
+  um layer one is the physical Network
+  physical layer
+  Layer Two
+  is something where you where you can put
+  bytes on right the the data layer so and
+  then you have layer three which is IP or
+  can be other things but in our case it's
+  it's a p layer four is a transport so
+  TCP UDP icmp dccp whatever you want and
+  then the other layers are
+  more related to yeah YouTube
+  um so
+  great
+  and why am I doing this
+  so what's the whole point
+  no no because we can actually yeah also
+  because we can otherwise we wouldn't be
+  doing it but
+  um the the important thing here is that
+  I don't have root I don't have cabinet
+  admin so if I'm doing a container like a
+  JavaScript department and somebody hacks
+  it
+  uh because I didn't apply security
+  patches or because I'm dumb and and I
+  just map ports
+  um without authentication or something
+  well I have no embarrassing consequences
+  or limited embarrassing consequences now
+  it could could be much much worse
+  um and let's say even if nobody does
+  that
+  we have the safety that what a user can
+  do is just open and connect and bind to
+  TCP UDP and icmp ping so the so-called
+  ping sockets
+  so that means I have the safety that
+  nobody will spoof Pockets because you
+  know if you can send arbitrary frames
+  like if you can spoof ARP you are in
+  control of a network essentially you are
+  telling everybody this is me and this is
+  him and this is
+  per um you know so so that has serious
+  consequences if you um if you can do
+  arbitrary
+  craft type arbitrary frames
+  and
+  quite fast and also flexible now so oops
+  I I would start saying that
+  it looks like a good thing so what what
+  would have been alternative the
+  alternative would have been that I went
+  there to my server and I create a
+  container and then I would have done
+  iPad
+  something created a bridge uh did
+  something with that filter maybe just to
+  to you know drop a bit of um the the
+  really really suspicious things like uh
+  ARP frames that come out with totally
+  random Mac addresses and and stuff like
+  that but
+  that would have involved that I needed
+  root and I
+  realized there was a talk about that
+  actually yesterday so
+  I want to to also state that this is a
+  limitation for some applications maybe
+  you're really running a
+  ARP proxy inside a container if you want
+  to do that hey you need root but then
+  there is a good reason for it
+  um
+  and okay that's an ugly workaround right
+  I mean I'm pending frames appending
+  headers removing headers in a new space
+  so you're going to fix it right now I
+  don't think so
+  I don't think there is something to fix
+  so there are reasons why this is not
+  allowed
+  um and I mentioned some of these reasons
+  um
+  so right I mean I'm pretty unprivileged
+  user shouldn't be in control of the
+  network as well so this is kind of uh
+  you know there are many ways to divide
+  them privileged and privileged user
+  that's
+  um pretty much the Linux and BSD way
+  other operating systems to completely
+  different reasonings
+  um there are I heard of operating
+  systems uh running a UI at ring zero but
+  Linux luckily doesn't so
+  um
+  and okay let's say like you know talk
+  yesterday we do it for them but are they
+  really unprivileged then
+  um
+  I would start having some doubts so
+  um I think that if a network interface
+  is if another name space like we did as
+  an interface then we should only we
+  should follow that philosophy okay it
+  doesn't have root for a reason and we
+  should stick to it because yeah these
+  are the two advantages we really don't
+  need to to to even debate whether it has
+  privileges or not and
+  um
+  actually yeah implementing
+  um appending headers and removing
+  headers is a way of ensuring isolation
+  we are in control of this and we check
+  that
+  you know the kernel wants forces us to
+  append those headers as we send Pockets
+  out from the bottom of the diagram right
+  so when we are there on the layer 4
+  sockets
+  um the kernel doesn't allow us to to say
+  to to put a IP address and the checks on
+  there no it it says I do I take care of
+  it I don't trust you
+  um so that's how you implement isolation
+  um I cheated a bit in the demo earlier
+  so we were actually in the left case
+  um so I didn't do so much
+  in that thing because uh yeah I use a
+  local Connection in the demo it's a bit
+  easier um and in the case I already have
+  layer 4 sockets because
+  um I am doing a connection from iperf
+  from the container to to the host well
+  host is not is a bit of a misnomer right
+  but it's still the same host it's a
+  different uh partition of the host so to
+  say and that I already have layer 4
+  sockets and I can just price data splice
+  is a system called in Linux just allows
+  you to
+  supplies to a pipe from a pipe to a
+  socket then from that socket to a pipe
+  pipe to socket and you don't need to do
+  anything special however of course we
+  are just carrying payload there so that
+  means we have no addressing and that
+  means I can just use the loopback
+  interface to do that so if we are
+  actually to the inter we want to go to
+  the Internet
+  um we need to to do this trick that I
+  was mentioning earlier so we really need
+  to open the other three move headers
+  otherwise
+  so if somebody is familiar with the
+  podman situation as a as of a while ago
+  there was a way to be really fast with
+  this trick
+  and with some amazing tricks on the
+  other hand you would lose the the IP
+  address from outside so every all the
+  traffic would look like it was coming
+  from the host and that's
+  not so convenient if you have
+  applications inside there that need to
+  for example authenticate based on IP
+  address or filter or
+  route
+  so
+  um okay now we pretty much got so this
+  is pasta okay and that's not the thing
+  you eat anymore that's something in
+  between
+  um the acronym I don't even remember it
+  I mean if you want just go to a website
+  and it's written there
+  um
+  so we got what it does uh I just wanted
+  to present a few peculiarities that
+  makes it in my opinion reasonably safe
+  um so we don't do dynamic memory
+  allocation there uh and funny because we
+  are dealing with pockets so it would be
+  natural to read from a socket allocate
+  100 500 bytes or a bit more
+  um than freed when we sent it now if we
+  are careful
+  the kernel has already buffered so we
+  can use them we just need to avoid
+  dropping things from kernel cues before
+  it's
+  before it's time to do so so
+  when I get a packet from the socket
+  I need to remember that my container
+  needs to to read it and maybe it loses
+  it maybe nobody is reading it or maybe
+  they are too late or maybe it's out of
+  the congestion window because I send too
+  fast so I need to keep it there I have
+  no other space I'm not allocative memory
+  so I can use message pick so message
+  Peak is a flag for the receive and
+  receive like system calls that
+  allow you to yeah just look at it don't
+  drop it no I let's pretend I didn't read
+  it
+  um and these are by some classes of
+  memory related potential security issues
+  like I don't know a double free hip
+  overflow and stuff like that it's uh
+  it's not completely safe I still can't
+  have stock overflows it's a bit harder
+  perhaps and it's a bit easier for for my
+  mind actually to keep track of of the
+  stuff I'm doing which uh it's probably
+  an important factor for security
+  um
+  the TCP adaptation so there is some TCP
+  adaptation this thing needs to keep
+  track of the connections and
+  however we have already two stacks
+  around it's actually in the case of a
+  container
+  um
+  the same kernel
+  and two instances of TCP Stacks so we
+  don't need to do really much in terms of
+  congestion window and keeping tracks off
+  of you know metrics and expanding the
+  window shrinking the window how much
+  memory do we have now we can ask them
+  what is your congestion window yeah okay
+  I use it
+  um it doesn't do that if you want it if
+  you don't want it that's why it was so
+  confusing perhaps but it can also be
+  convenient so we have the same addresses
+  inside podman and outside
+  for the pv6 support but I hope maybe we
+  don't have to mention it in 2023
+  um yeah actually I could have just went
+  gone into this pasta config net that I
+  showed you earlier and asked for a DHCP
+  ask for a foreign address via the HTTP 6
+  or the http
+  foreign rights yes
+  I did so let me cover a bit of this
+  project history
+  um it's not original at all it's a big
+  scam
+  um
+  so slip has been doing that for 18 years
+  actually
+  um sorry is it 10 minutes but
+  15. ah to the questions okay not yeah
+  great thanks
+  um so this has been doing that for 18
+  years I'm really not presenting anything
+  new probably
+  um
+  we started it for virtual machines uh
+  namely qbr developers came to my team
+  and and us we don't want to use Lear
+  because it has a bad name but it's
+  really convenient can you do something
+  like that we want to run our container a
+  container with virtual machines that's
+  that's cute beard
+  um without root and if possible we would
+  also like to avoid nut so we started it
+  for virtual machines and then at some
+  point we realized that containers at
+  exactly the same thing so much that
+  um
+  for qimo you have the sleep sleep so
+  sleep comes from from the 90s right I
+  the story is kind of complicated that
+  will not cover it for the sake of time
+  but
+  um
+  it was a way for when when universities
+  started offering dial up shell accounts
+  to students or professors to have a
+  natural internet access by tunneling
+  everything you wanted into your dial-up
+  connection that was supposed just to
+  connect to your University server and
+  then from there you add routing so you
+  could you know if you tunnel everything
+  into that then you could reach whatever
+  you wanted not not just the
+  resources of the University that nobody
+  cared about so this is right that's an
+  old trick and somebody had a really
+  brilliant idea on my opinion to to use
+  it for kyuno and then for another
+  brilliant idea for podman uh and and
+  there is something sierra for Docker
+  actually so
+  there is something already very similar
+  also this leader for nothing else is
+  like pasta and lips gear piece like past
+  both acronyms are available on the the
+  explanation of the acronyms are
+  available on the website
+  um
+  so but yeah it's not a bad name uh
+  well okay nowadays you leak 50 bytes in
+  one day and and you get a CV yeah Fair
+  um however
+  also performance wise it wasn't really
+  meant for for you know the the bazillion
+  bits per second that we need to have
+  nowadays it was meant to yeah dial up
+  you know a bit more than telnet uh post
+  PBS era I would or still BBS era
+  um so it doesn't support TCP window
+  scaling which means 64k is all you can
+  send and then
+  okay 64k more
+  that's slow
+  um IPv6 support wasn't really there so
+  IPv6 was actually introduced a bit
+  before uh but you know there was no
+  reason to use it we still had plenty of
+  ipv for addresses in the world and
+  um
+  right so we realized that pasta was born
+  and then with a lot of help from
+  podman's development team will be
+  integrated we shipped a native
+  integration I just showed you important
+  4.4 that was in January this year
+  um since two days ago uh This Is Now
+  supported in Builders so if you're
+  familiar with it that's a
+  facility creating container that can
+  build container images in podman
+  um it's supported by libyert kilbert
+  Stack preview we are now a very few but
+  very committed developers and lots of
+  occasional contributors and
+  podman users came up with everything
+  possible
+  let me cover some developments just in
+  case you follow this project recently so
+  somebody said it's not fast enough okay
+  great uh what what can we do better so
+  this is only applies to VMS so it's not
+  really pasta
+  um we
+  have a Unix domain socket to qimo and
+  that means copy to the socket copy from
+  the socket
+  and passwords to do that okay we can
+  just bypass queuing all together with
+  Vios user and there it's actually faster
+  than
+  don't quote me on this but because we
+  don't have very nice benchmarks yet but
+  it's actually faster than whatever you
+  could do with truth and the bridge
+  um
+  so yeah we now copy all the addresses
+  and the routes not just one you saw that
+  I had so many IPA ipv4 addresses there
+  because we had some problems with Cloud
+  environments some users reported and
+  wireguard almost works out of the box
+  finally that that's a bit complicated
+  but it looks like a popular use case for
+  Pokemon users
+  um so these new use cases
+  one funny thing somebody came up with is
+  what if I want to just throw away
+  containers and deploy them quickly with
+  their own address and they don't tell
+  the host anything
+  interesting with a pv6 it's actually the
+  case somebody sometimes you have a slash
+  64. so yeah
+  it's actually possible so in that case
+  pasta would just bind and address that
+  the host doesn't have nobody has ever
+  seen
+  except for the prefix
+  so you can just have a completely
+  separate container with its own address
+  and assign it with a NDP responder
+  uh that's built into past so we
+  advertise the prefix and nothing else we
+  assign a pseudo random Mac address we
+  take care of it we keep track of it
+  and we could actually deploy a lot of
+  containers Without Really knowing much
+  about the network or really not thinking
+  much about it uh and some people already
+  use Mac VLAN for it but it takes a few
+  tricks to to set up and it's not
+  ruthless
+  um another
+  less funny maybe
+  more or less Visionary but this starts
+  being important you have ipv4
+  applications maybe you don't have a
+  source code for but they are a P4 and
+  you have an IPv6 only set up maybe
+  somewhere in Central Europe This starts
+  being a problem you start paying quite a
+  lot for an IP for others so there are
+  rfcs for this and pasta could be a good
+  candidate you can find more details in
+  the bug reports there
+  um another one we really need to take
+  care of now is
+  how did I do part forward in there you
+  didn't even see it because I didn't do
+  it explicitly it was automatic
+  um and you can do it with podman
+  configuration options and and everything
+  but
+  [Music]
+  um
+  for Docker actually they really need it
+  by a ruthless kid and also for podman
+  custom networks it would be really nice
+  if podman could happily decide without
+  stopping I restarted the container to or
+  or pasta itself actually to to map a new
+  port
+  um and we are with that going into
+  a general life flows table we don't want
+  to implement openby switch but we are
+  dangerously dangerously close to it
+  start preparing your questions now so if
+  you want to try this out please do and
+  please especially report box we have
+  made in this we are a bit old school but
+  don't be afraid to mess up we understand
+  that many people are not used to patch
+  based or email-based workflows there is
+  an IRC channel on liberal it's past
+  there are weekly meetings that are open
+  to everybody if you just even want to
+  listen to
+  the dramas we have
+  um it's it's kind of quite funny
+  um and every all these information you
+  find it passed out top
+  um credits yeah so David has been
+  reworking a lot of stuff recently
+  um is is taking care of the Brazilian
+  bites per second there uh Power from
+  podman's development team is is got it
+  into build this week and and he always
+  helps a lot
+  um let me
+  um
+  is a packager for white Linux and he
+  presented a lot of new use cases
+  um landed Liberty integration and neon
+  is making the kernel nicer to us or
+  trying to and we have a lot of
+  really a lot of uh contributors and
+  packagers for some packages are
+  available for Arch Debian Ubuntu Fedora
+  RL
+  um a few more probably
+  questions
+  so when you were talking about the
+  cheating case where they actually create
+  the Prejudice of the places
+  so the question from Paulo is whether
+  um when I'm was referring to the
+  cheating case where I just have local
+  local traffic
+  um I'm referring to ruthless
+  the top
+  that
+  yes yes okay so rootrest does ruthless
+  kid allow is ruthless kit the part the
+  allows us to to skip the setup the
+  to just create a bridge to the host uh
+  no actually so ruthless kit what it does
+  okay roadless kit is a community is a
+  pile of things in this case it's what uh
+  rootless kit does the trick of copying
+  packets back and forth not with supplies
+  they use receive message send message
+  it's not very different but that's the
+  part that it does and you can you have
+  it actually as default board for water
+  for partner because it's faster but you
+  don't preserve the source IP address so
+  that's that's part it does
+  um so first question is uh of two is if
+  this can be used with podman network
+  commands
+  so as far as I know yes since Thursday
+  but
+  you probably know better than me and if
+  you don't let's let's check it out but I
+  think Paul just just did this
+  um because it was just I just see it
+  with Bob Maran as you've seen and I
+  think now finally the code has been
+  moved to the proper place so we can
+  actually use it for problem Network I
+  think that's my understanding yeah
+  um so the second question is when will
+  pasta become the default in Pokemon you
+  suggested for the six
+  um right
+  um I I hope we are on track
+  um yeah quite a bit tight but uh yeah
+  right so the question is I showed that I
+  would connect to localhost and connect
+  to the host and maybe I want to really
+  connect to localhost as local stores
+  like like yes and
+  [Music]
+  yeah actually one of the reasons why we
+  are reworking the the not model is to
+  allow to right now we're just allowed to
+  disable this functionality so to map
+  nothing or to map everything or to map
+  like the address of the default gateway
+  to the host
+  um but it is not very flexible so we are
+  actually adding more options and what
+  the default is it has to be seen we need
+  to to to check with many people like
+  what do they really expect because if
+  you come from VMS you have different
+  expectations as yeah
+  right yeah
+  I can check on Matrix
+  okay thank you
+  --- End Content ---
+
+Use Pasta Networking with Podman on Oracle Linux
+  URL: https://docs.oracle.com/en/learn/ol-podman-pasta-networking/
+  Designed to work with rootless containers, allowing users to run containers without requiring elevated privileges and enhancing system security.
+
+  --- Content ---
+  1. [Learn](https://docs.oracle.com/learn/?lang=en)
+  
+  Use Pasta Networking with Podman on Oracle Linux
+  
+  Launch Lab
+  
+  Share on LinkedInShare on XShare on FacebookShare on Email
+  
+  # Use Pasta Networking with Podman on Oracle Linux
+  
+  ## Introduction
+  
+  [Oracle Linux 9 Update 5](https://docs.oracle.com/en/operating-systems/oracle-linux/9/relnotes9.5/ol9-features-Containers.html#OLRNT-ol9.5-features-Containers_podman_5.2) changed the default tool for rootless container networking from `slirp4netns` to `pasta`. So what is [Podman `pasta` networking](https://passt.top/passt/about/)? Pasta is an acronym for “Pack A Subtle Tap Abstraction”.
+  
+  Pasta uses the `passt` network driver, introduced in [Oracle Linux 9 Update 1](https://docs.oracle.com/en/operating-systems/oracle-linux/9/relnotes9.2/ol9-NewFeaturesandChanges.html#OLRNT-ol92-features-virtualization_passt_package_introduced), to allow rootless containers to create a network namespace and forward network traffic to the namespace. Pasta networking uses the `passt` driver as a translation layer between a Layer-2 network interface and Layer-4 socket traffic using TCP, UDP, and ICMP echo on the host. Pasta networking does not require elevated privileges (root), which allows Podman to run rootless containers.
+  
+  Podman pasta networking delivers these benefits:
+  
+  - Seamlessly integrated with Podman v4.1 and higher and is the default from Podman 5.3 onwards.
+  - Improved network performance for rootless containers, especially compared to alternatives such as `slirp4netns`.
+  - Designed to work with rootless containers, allowing users to run containers without requiring elevated privileges and enhancing system security.
+  - Uses the host’s IP address instead of the `slirp4netns` method, which uses a predefined container IP address.
+  - Uses a network interface name from the host instead of the `slirp4netns` default of `tap0`.
+  
+  ### Objectives
+  
+  In this tutorial, you’ll learn to:
+  
+  - Define and use `pasta` networks with Podman
+  - Verify a container is using `pasta` networking
+  
+  ### Prerequisites
+  
+  - Two Oracle Linux systems
+  
+  - Each system should have Oracle Linux installed and configured with:
+    - A non-root user account with sudo access
+    - The latest Oracle Linux Release
+    - [Podman](https://docs.oracle.com/en/operating-systems/oracle-linux/podman/podman-InstallingPodmanandRelatedUtilities.html#podman-install) and cURL packages
+    - Access to the Internet
+  
+  ## Deploy Oracle Linux
+  
+  **Note:** If running in your own tenancy, read the `linux-virt-labs` GitHub project [README.md](https://github.com/oracle-devrel/linux-virt-labs) and complete the prerequisites before deploying the lab environment.
+  
+  1. Open a terminal on the Luna Desktop.
+  
+  2. Clone the `linux-virt-labs` GitHub project.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  git clone https://github.com/oracle-devrel/linux-virt-labs.git
+  ```
+  
+  3. Change into the working directory.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  cd linux-virt-labs/ol
+  ```
+  
+  4. Install the required collections.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  ansible-galaxy collection install -r requirements.yml
+  ```
+  
+  5. Update the Oracle Linux instance configuration.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  cat << EOF | tee instances.yml > /dev/null
+  compute_instances:
+       1:
+         instance_name: "ol-node-01"
+         type: "server"
+       2:
+         instance_name: "ol-node-02"
+         type: "server"
+  passwordless_ssh: true
+  use_podman: true
+  update_all: true
+  use_nginx: true
+  passwordless_ssh: true
+  EOF
+  ```
+  
+  6. Deploy the lab environment.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  ansible-playbook create_instance.yml -e localhost_python_interpreter="/usr/bin/python3.6" -e "@instances.yml" -e os_version="9"
+  ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  The free lab environment requires the extra variable `local_python_interpreter`, which sets `ansible_python_interpreter` for plays running on localhost. This variable is needed because the environment installs the RPM package for the Oracle Cloud Infrastructure SDK for Python, located under the python3.6 modules.
+  
+  The default deployment shape uses the AMD CPU and Oracle Linux 8. To use an Intel CPU or Oracle Linux 9, add `-e instance_shape="VM.Standard3.Flex"` or `-e os_version="9"` to the deployment command.
+  
+  
+  > **Important:** Wait for the playbook to run successfully and reach the pause task. At this stage of the playbook, the installation of Oracle Linux is complete, and the instances are ready. Take note of the previous play, which prints the public and private IP addresses of the nodes it deploys and any other deployment information needed while running the lab.
+  
+  
+  ## Confirm Podman Works
+  
+  The container-tools package in Oracle Linux provides the latest versions of Podman, Buildah, Skopeo, and associated dependencies.
+  
+  1. Open a terminal and connect via SSH to the ol-node-01 instance.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  ssh oracle@<ip_address_of_instance>
+  ```
+  
+  2. Check the version of Podman.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  podman -v
+  ```
+  
+  3. Confirm the Podman CLI is working.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  podman run quay.io/podman/hello
+  ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  > Example Output:
+  >
+  > ```undefined
+  >
+  > Copy
+  >
+  > [oracle@ol-server ~]$ podman run quay.io/podman/hello
+  > Trying to pull quay.io/podman/hello:latest...
+  > Getting image source signatures
+  > Copying blob f82b04e85914 done
+  > Copying config dbd85e09a1 done
+  > Writing manifest to image destination
+  > Storing signatures
+  > !... Hello Podman World ...!
+  >
+  >          .--"--.
+  >        / -     - \
+  >       / (O)   (O) \
+  >    ~~~| -=(,Y,)=- |
+  >     .---. /`  \   |~~
+  >  ~/  o  o \~~~~.----. ~~
+  >   | =(X)= |~  / (O (O) \
+  >    ~~~~~~~  ~| =(Y_)=-  |
+  >   ~~~~    ~~~|   U      |~~
+  >
+  > Project:   https://github.com/containers/podman
+  > Website:   https://podman.io
+  > Documents: https://docs.podman.io
+  > Twitter:   @Podman_io
+  > ```
+  
+  
+  ## Different Podman Networking Options
+  
+  Both `pasta` and `slirp4netns` networking modes provide Podman containers with isolated networks. The main difference between the two is that `pasta` networking copies the host’s network configuration into the container, whereas `slirp4netns` networking creates a separate network configuration that typically uses Network Address Translation (NAT) to communicate between the container and the host. The net effect of this difference means that `pasta` networking offers faster network performance because it avoids using NAT.
+  
+  ### Pasta Networking Benefits
+  
+  - Pasta networking copies IP addresses from the host’s main network interface by default.
+  - The user can specify which host network interface the container should use with the `-i` option.
+  - NAT is not enabled by default but is optionally available.
+  - The user can define the default `pasta` options for rootless containers in a `$HOME/.config/containers/containers.conf` file. Oracle Linux provides a sample of this configuration at `/usr/share/containers/containers.conf`.
+  
+  ### Slirp4netns Networking Benefits
+  
+  - Creates a separate network namespace and virtualized network interface, which by default is called `tap0`.
+  - Uses NAT to translate container network traffic to the host network.
+  - Provides stronger isolation between the host and container due to using separate network namespaces.
+  - Uses `10.0.2.x/24` for the default NAT network, which a user can change in the `containers.conf` file.
+  
+  ### Verify Host and Container Networking
+  
+  1. Check the host’s network configuration.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  ip addr show
+  ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  > Example Output:
+  >
+  > ```undefined
+  >
+  > Copy
+  >
+  > [oracle@ol-node-01 ~]$ ip addr show
+  > 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+  >     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+  >     inet 127.0.0.1/8 scope host lo
+  >        valid_lft forever preferred_lft forever
+  >     inet6 ::1/128 scope host
+  >        valid_lft forever preferred_lft forever
+  > 2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9000 qdisc fq_codel state UP group default qlen 1000
+  >     link/ether 02:00:17:00:23:87 brd ff:ff:ff:ff:ff:ff
+  >     altname enp0s3
+  >     inet 10.0.0.53/28 brd 10.0.0.63 scope global dynamic noprefixroute ens3
+  >        valid_lft 84912sec preferred_lft 84912sec
+  >     inet6 fe80::17ff:fe00:2387/64 scope link noprefixroute
+  >        valid_lft forever preferred_lft forever
+  > ```
+  
+  
+  In this example, the host’s IP address is `10.0.0.53`, which lives on a `/28` subnet and is attached to the `ens3` network interface.
+  
+  2. Check a container’s default network configuration.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  podman run --rm -it oraclelinux:9 ip a
+  ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  > Example Output:
+  >
+  > ```undefined
+  >
+  > Copy
+  >
+  > [oracle@ol-node-01 ~]$ podman run --rm -it oraclelinux:9 ip a
+  > 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+  >     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+  >     inet 127.0.0.1/8 scope host lo
+  >        valid_lft forever preferred_lft forever
+  >     inet6 ::1/128 scope host
+  >        valid_lft forever preferred_lft forever
+  > 2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 65520 qdisc fq_codel state UNKNOWN group default qlen 1000
+  >     link/ether 16:96:71:f5:47:e9 brd ff:ff:ff:ff:ff:ff
+  >     inet 10.0.0.53/28 brd 10.0.0.63 scope global noprefixroute ens3
+  >        valid_lft forever preferred_lft forever
+  >     inet6 fe80::1496:71ff:fef5:47e9/64 scope link
+  >        valid_lft forever preferred_lft forever
+  > ```
+  
+  
+  Notice the network interface and IP address are the same as those used on the host. This output is expected behavior for rootless containers that leverage the pasta networking.
+  
+  3. Check a container’s network configuration when using `slirp4netns`.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  podman run --network=slirp4netns --rm -it oraclelinux:9 ip a
+  ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  > Example Output:
+  >
+  > ```undefined
+  >
+  > Copy
+  >
+  > [oracle@ol-node-01 ~]$ podman run --network=slirp4netns --rm -it oraclelinux:9 ip a
+  > 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+  >     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+  >     inet 127.0.0.1/8 scope host lo
+  >        valid_lft forever preferred_lft forever
+  >     inet6 ::1/128 scope host
+  >        valid_lft forever preferred_lft forever
+  > 2: tap0: <BROADCAST,UP,LOWER_UP> mtu 65520 qdisc fq_codel state UNKNOWN group default qlen 1000
+  >     link/ether b6:e6:32:1a:d3:b4 brd ff:ff:ff:ff:ff:ff
+  >     inet 10.0.2.100/24 brd 10.0.2.255 scope global tap0
+  >        valid_lft forever preferred_lft forever
+  >     inet6 fd00::b4e6:32ff:fe1a:d3b4/64 scope global dynamic mngtmpaddr
+  >        valid_lft 86389sec preferred_lft 14389sec
+  >     inet6 fe80::b4e6:32ff:fe1a:d3b4/64 scope link
+  >        valid_lft forever preferred_lft forever
+  > ```
+  
+  
+  Note that the network interface and IP address are not the same as those used on the host; instead, it uses the `10.0.2.100/24` network range and `tap0` as the network interface name.
+  
+  
+  ## Run an Nginx Container
+  
+  Next, deploy a web server as an unprivileged user and verify that pasta networking is enabled and the web server serves content.
+  
+  01. Check the network routing table on ol-node-01.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      route
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ route
+      > Kernel IP routing table
+      > Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+      > default         _gateway        0.0.0.0         UG    100    0        0 ens3
+      > 10.0.0.48       0.0.0.0         255.255.255.240 U     100    0        0 ens3
+      > link-local      0.0.0.0         255.255.0.0     U     100    0        0 ens3
+      > ```
+  
+  02. Get the default gateway IP address.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      ip route show
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ ip route show
+      > default via 10.0.0.49 dev ens3 proto dhcp src 10.0.0.54 metric 100
+      > 10.0.0.48/28 dev ens3 proto kernel scope link src 10.0.0.54 metric 100
+      > 169.254.0.0/16 dev ens3 proto dhcp scope link src 10.0.0.54 metric 100
+      > ```
+  
+  
+      In this example, the output shows a default gateway of `10.0.0.49`.
+  
+  03. Deploy an Nginx container.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      podman run -d -p 8080:80 --name=pastaTest ghcr.io/oracle/oraclelinux9-nginx:1.20
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      When creating a rootless container, the user must set the port mappings on the host to a value higher than _1024_. This container uses port `8080` to map from the host to the container’s internal port of `80`.
+  
+  04. Confirm Nginx is running.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      podman ps -a
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ podman ps -a
+      > CONTAINER ID  IMAGE                                       COMMAND               CREATED        STATUS                    PORTS                           NAMES
+      > 149780e68fc0  quay.io/podman/hello:latest                 /usr/local/bin/po...  3 hours ago    Exited (0) 3 hours ago                                    competent_brahmagupta
+      > 168f6813b15b  ghcr.io/oracle/oraclelinux9-nginx:1.20  nginx -g daemon o...  5 seconds ago  Up 5 seconds  0.0.0.0:8080->80/tcp, 80/tcp, 443/tcp  pastaTest
+      > ```
+  
+  05. Confirm the container is using pasta networking.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      podman inspect --format= pastaTest
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      **Note:** The `podman inspect --format=` command only works against active containers.
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ podman inspect --format= pastaTest
+      > pasta
+      > ```
+  
+  
+      Where:
+      - `pastaTest` is the name of your container
+  06. Display detailed information about the pasta networking process generated when the container starts.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      ps auxww | grep pasta | grep -v "pastaTest"
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ ps auxww | grep pasta | grep -v "pastaTest"
+      > oracle     12371  0.0  0.0  72072 19908 ?        Ss   11:22   0:00 /usr/bin/pasta --config-net -t 8080-8080:80-80 --dns-forward 169.254.0.1 -u none -T none -U none --no-map-gw --quiet --netns /run/user/1001/netns/netns-7353ec13-afdb-9e54-d8cd-a94d0e0a959e
+      > oracle     21486  0.0  0.0 221796  2268 pts/1    S+   15:26   0:00 grep --color=auto pasta
+      > ```
+  
+  
+      Each container will generate an independent pasta process based on the default _container.conf_ settings or those passed on the Podman command line.
+  
+  07. Confirm that host is listening on port 8080.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      ss -tulpn
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ ss -tulpn
+      > Netid    State     Recv-Q     Send-Q         Local Address:Port          Peer Address:Port    Process
+      > udp      UNCONN    0          0                    0.0.0.0:111                0.0.0.0:*
+      > ...
+      > tcp      LISTEN    0          128                  0.0.0.0:8080               0.0.0.0:*        users:(("pasta.avx2",pid=49771,fd=6))
+      > ...
+      > tcp      LISTEN    0          5                      [::1]:44321                 [::]:*
+      > ```
+  
+  
+      The output should include a line confirming that port 8080 is listening, similar to that shown in the sample output.
+  
+  08. Open port 8080 on the Oracle Linux firewall.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      sudo firewall-cmd --add-port=8080/tcp --permanent
+      sudo firewall-cmd --reload
+      ```
+  
+  09. Confirm the firewall port is open.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      sudo firewall-cmd --list-all
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ sudo firewall-cmd --list-all
+      > public (active)
+      >   target: default
+      >   icmp-block-inversion: no
+      >   interfaces: ens3
+      >   sources:
+      >   services: dhcpv6-client ssh
+      >   ports: 8080/tcp
+      >  protocols:
+      >   forward: yes
+      >   masquerade: no
+      >   forward-ports:
+      >   source-ports:
+      >   icmp-blocks:
+      >   rich rules:
+      > ```
+  
+  10. Confirm Nginx is running and returns the sample homepage.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      curl http://ol-node-01:8080
+      ```
+  
+  11. Check remote access to Nginx from another host.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      ssh oracle@ol-node-02 curl http://ol-node-01:8080
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      The cURL test can run over the SSH connection because the lab environment enables passwordless SSH between the hosts. If you do not have passwordless SSH configured, SSH directly to the remote host and then run the cURL command on that host’s terminal.
+  
+  12. Review the information logged by the Nginx container.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      podman logs pastaTest 2> /dev/null | grep "GET /"
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ podman logs pastaTest 2> /dev/null | grep "GET /"
+      > 10.0.0.49 - - [28/Jan/2025:14:51:08 +0000] "GET / HTTP/1.1" 200 4395 "-" "curl/7.76.1" "-"
+      > 10.0.0.61 - - [28/Jan/2025:14:55:53 +0000] "GET / HTTP/1.1" 200 4395 "-" "curl/7.76.1" "-"
+      > ```
+  
+  
+      Why does the source address for the request from ol-node-01 not match the IP address? This behavior occurs because the request from ol-node-01 is routed from the network device on the host to the gateway and from there to the Podman container running Nginx. Therefore, Nginx records the request as coming from the gateway, rather than the host.
+  
+      For remote hosts, pasta networking routes the rest directly from the remote host to the container. Therefore, Nginx captures the source address of the remote host in its logs.
+  
+  
+  ## Next Steps
+  
+  This tutorial introduced you to using Podman with pasta networking, but it only scratches the surface of what pasta networking can do. Check out the `podman run` [man page](https://docs.podman.io/en/stable/markdown/podman-run.1.html) for more details.
+  
+  ### Related Links
+  
+  - [Oracle Linux Documentation](https://docs.oracle.com/en/operating-systems/oracle-linux/)
+  - [Oracle Learning Library](https://www.oracle.com/goto/oraclelinuxlearning)
+  - [Oracle Linux Training Station](https://www.oracle.com/goto/oltrain)
+  
+  ## More Learning Resources
+  
+  Explore other labs on [docs.oracle.com/learn](https://docs.oracle.com/learn) or access more free learning content on the [Oracle Learning YouTube channel](https://www.youtube.com/user/OracleLearning). Additionally, visit [education.oracle.com/learning-explorer](https://education.oracle.com/learning-explorer) to become an Oracle Learning Explorer.
+  
+  For product documentation, visit [Oracle Help Center](https://docs.oracle.com/).
+  
+  * * *
+  
+  Content on the Oracle Help Center Learn is for informational purposes only and is not part of the product or service documentation for any Oracle product or service, as those terms are used in any Oracle contracts or agreements. Such Learn Content is licensed to you solely under [https://www.oracle.com/legal/terms/](https://www.oracle.com/legal/terms/) and is not subject to any support obligations.
+  
+  Title and Copyright Information
+  
+  Try with Oracle Account
+  
+  Launching this lab requires a free Oracle account [Sign up](https://www.oracle.com/webapps/redirect/signon?nexturl=https://docs.oracle.com/en/learn/ol-podman-pasta-networking/) if you don't have one.
+  
+  On This Page
+  --- End Content ---

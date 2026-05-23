@@ -1,0 +1,144 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "external_directory": {
+      "/home/arcana-novai/Documents/Xoe-NovAi/**": "allow",
+      "/media/arcana-novai/**": "allow"
+    }
+  },
+  "instructions": [
+    "SOVEREIGN_MANDATES.md",
+    "AGENTS.md",
+    "ORACLE_STACK.md",
+    "docs/decisions/PIVOT_LOG.md",
+    "docs/ROADMAP.md",
+    "docs/gnosis/ARCHITECT.md",
+    "config/glossary.md",
+    ".opencode/MANIFEST.md",
+    "docs/research/INDEX.md",
+    "docs/strategy/STACK_RELEASE_ROADMAP.md",
+    "docs/operations/RESEARCH_QUEUE.md",
+    "GNOSIS_BUFFER_PROTOCOL.md",
+    "docs/gnosis/lattice/lattice_manifest.md"
+  ],
+  "mcp": {
+    "filesystem": {
+      "type": "stdio",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-filesystem"],
+      "args": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine"],
+      "enabled": true
+    },
+    "omega-hub": {
+      "type": "sse",
+      "url": "http://127.0.0.1:8016/sse",
+      "enabled": true
+    },
+    "omega-hub-alt": {
+      "type": "sse",
+      "url": "http://127.0.0.1:8016/sse",
+      "enabled": true,
+      "description": "Alias for omega-hub — research and stats tools now consolidated into hub (Decision 50)"
+    },
+    "firecrawl": {
+      "type": "stdio",
+      "command": ["npx", "-y", "firecrawl-mcp"],
+      "env": {
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
+      },
+      "enabled": true
+    },
+    "exa": {
+      "type": "remote",
+      "url": "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa",
+      "headers": {
+        "x-api-key": "${EXA_API_KEY}"
+      },
+      "enabled": true
+    },
+    "serper": {
+      "type": "remote",
+      "url": "https://mcp.serper.dev/mcp",
+      "headers": {
+        "x-api-key": "${SERPER_API_KEY}"
+      },
+      "enabled": true
+    },
+    "tavily": {
+      "type": "stdio",
+      "command": ["npx", "-y", "@tavily/mcp"],
+      "env": {
+        "TAVILY_API_KEY": "${TAVILY_API_KEY}"
+      },
+      "enabled": true
+    },
+    "jina": {
+      "type": "remote",
+      "url": "https://mcp.jina.ai/v1",
+      "headers": {
+        "Authorization": "Bearer ${JINA_API_KEY}"
+      },
+      "enabled": true
+    }
+  },
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "tail_turns": 2,
+    "preserve_recent_tokens": 40000,
+    "reserved": 10000
+  },
+  "provider": {
+    "lmstudio": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LM Studio (Local)",
+      "options": {
+        "baseURL": "http://localhost:1234/v1",
+        "apiKey": "sk-local"
+      },
+      "models": {
+        "qwen3-4b-thinking": {
+          "id": "qwen3-4b-thinking",
+          "name": "Qwen3 4B Thinking (local)",
+          "limit": { "context": 32768, "output": 4096 }
+        },
+        "qwen3-1.7b-q6_k": {
+          "id": "qwen3-1.7b-q6_k",
+          "name": "Qwen3 1.7B Q6_K (local)",
+          "limit": { "context": 32768, "output": 4096 }
+        },
+        "ministral-3.3b": {
+          "id": "ministral-3.3b",
+          "name": "Ministral 3.3B (local)",
+          "limit": { "context": 32768, "output": 4096 }
+        },
+        "rocracoon-3b": {
+          "id": "rocracoon-3b",
+          "name": "RocRacoon 3B (local)",
+          "limit": { "context": 32768, "output": 4096 }
+        },
+        "krikri-8b": {
+          "id": "krikri-8b",
+          "name": "Krikri 8B (local)",
+          "limit": { "context": 65536, "output": 8192 }
+        },
+        "qwen3.5-9b-harmonic": {
+          "id": "qwen3.5-9b-harmonic",
+          "name": "Qwen3.5 9B Harmonic (local)",
+          "limit": { "context": 65536, "output": 8192 }
+        },
+        "hermes-3-llama-3.2-3b": {
+          "id": "hermes-3-llama-3.2-3b",
+          "name": "Hermes 3 Llama 3.2 3B (local)",
+          "limit": { "context": 32768, "output": 4096 }
+        },
+        "deepseek-r1-distill-qwen-7b": {
+          "id": "deepseek-r1-distill-qwen-7b",
+          "name": "DeepSeek R1 Distill Qwen 7B (local)",
+          "limit": { "context": 65536, "output": 8192 }
+        }
+      }
+    }
+  },
+  "agent": {
+  }
+}

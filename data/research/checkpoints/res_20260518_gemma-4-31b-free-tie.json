@@ -1,0 +1,17 @@
+{
+  "topic": "gemma-4-31b-free-tier-limitations-2026",
+  "priority": 4.800000000000001,
+  "depth": 1,
+  "state": "done",
+  "sources": [
+    "searxng"
+  ],
+  "claims": [],
+  "verification_count": 0,
+  "attempts": 1,
+  "max_attempts": 3,
+  "session_id": "res_20260518_gemma-4-31b-free-tie",
+  "created": "2026-05-18T11:00:42.532155+00:00",
+  "last_attempt": null,
+  "error": null
+}

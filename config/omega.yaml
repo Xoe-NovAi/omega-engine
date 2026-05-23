@@ -1,0 +1,40 @@
+omega:
+  identity:
+    name: Omega Engine
+    version: 2.1.0
+    description: Local-first, entity-centric, provider-agnostic AI council runtime
+    maintainer: Xoe-NovAi
+    license: Apache-2.0
+  session_header:
+    mode: compact
+    default_entity: default
+  entity:
+    default: default
+    allow_transient: true
+  data:
+    dir: /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data
+    entities_dir: data/entities
+    session_log: true
+    session_log_dir: data/sessions
+  observability:
+    enable_dataset_collection: false
+    enable_trace_logging: true
+    trace_length: 12
+  model_updater:
+    enabled: true
+    schedule: "0 */6 * * *"
+    model: "gemma-4-31b-it"
+    thread_limit: 2
+    confidence_minimum: 0.85
+    max_changes_per_cycle: 30
+    providers:
+      - name: openrouter
+        enabled: true
+      - name: google
+        enabled: true
+      - name: opencode
+        enabled: true
+    notifications:
+      on_change: true
+      on_error: true
+      channel: observability

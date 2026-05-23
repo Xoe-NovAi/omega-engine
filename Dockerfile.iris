@@ -1,0 +1,64 @@
+# 🔱 Iris — Always-On Voice Assistant Container
+# AP: AP-NOVA-DOCKERFILE-v1.0.0
+#
+# Optimized for:
+#   - python:3.13-slim (~120MB base)
+#   - Ryzen 7 5700U (Zen 2, AVX2, no AVX-512)
+#   - Rootless Podman (user 1001:1001)
+#   - CPU-only inference (qwen3-1.7b)
+#   - Total container size: ~500MB
+#   - RAM at idle: ~300MB | RAM during inference: ~600MB
+
+FROM python:3.13-slim
+
+# ── Security: non-root user ────────────────────────────────────────────
+ENV APP_USER=irisuser
+RUN groupadd -g 1001 $APP_USER && \
+    useradd -r -u 1001 -g $APP_USER $APP_USER
+
+# ── Python optimization ────────────────────────────────────────────────
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONHASHSEED=random \
+    PIP_NO_CACHE_DIR=1 \
+    PYTHONPATH=/app \
+    HOME=/tmp \
+    OMEGA_DATA_DIR=/app/data \
+    OMEGA_WADS_DIR=/app/config/wads
+WORKDIR /app
+
+# ── System dependencies ────────────────────────────────────────────────
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# ── Python dependencies (latest wheels) ────────────────────────────────
+RUN pip install --no-cache-dir --upgrade pip wheel setuptools && \
+    pip install --no-cache-dir \
+        "fastapi>=0.115.0" \
+        "uvicorn[standard]>=0.34.0" \
+        "httpx>=0.28.0" \
+        "pyyaml>=6.0.3" \
+        "anyio>=4.13.0" \
+        "pydantic>=2.11.0" \
+        "tenacity>=8.0.0" \
+        "aiosqlite>=0.20.0" \
+        "qdrant-client>=1.11.0" \
+        "redis>=7.0.0"
+
+# ── Application code ───────────────────────────────────────────────────
+COPY src/omega/ /app/omega/
+COPY config/ /app/config/
+
+# ── Permissions ────────────────────────────────────────────────────────
+RUN mkdir -p /app/data && chown -R 1001:1001 /app/data && chown -R 1001:1001 /app
+USER 1001
+
+# ── Runtime ────────────────────────────────────────────────────────────
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 --start-period=5s \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')" || exit 1
+
+CMD ["uvicorn", "omega.iris.server:app", "--host", "0.0.0.0", "--port", "8080"]

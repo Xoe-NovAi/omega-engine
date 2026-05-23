@@ -1,0 +1,5 @@
+version: "20260517.01"
+phase: "Phase-1"
+last_major_leap: "Sovereign Hardening"
+handoff_path: "docs/gnosis/Sovereign_Handoff.md"
+lattice_path: "docs/gnosis/lattice/lattice_manifest.md"

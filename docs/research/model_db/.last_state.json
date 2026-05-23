@@ -1,0 +1,223 @@
+{
+  "timestamp": "2026-05-16T01:49:35Z",
+  "openrouter": {
+    "free_count": 28,
+    "free": [
+      {
+        "id": "baidu/cobuddy:free",
+        "context": 131072,
+        "name": "Baidu Qianfan: CoBuddy (free)"
+      },
+      {
+        "id": "openrouter/owl-alpha",
+        "context": 1048756,
+        "name": "Owl Alpha"
+      },
+      {
+        "id": "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+        "context": 256000,
+        "name": "NVIDIA: Nemotron 3 Nano Omni (free)"
+      },
+      {
+        "id": "poolside/laguna-xs.2:free",
+        "context": 131072,
+        "name": "Poolside: Laguna XS.2 (free)"
+      },
+      {
+        "id": "poolside/laguna-m.1:free",
+        "context": 131072,
+        "name": "Poolside: Laguna M.1 (free)"
+      },
+      {
+        "id": "deepseek/deepseek-v4-flash:free",
+        "context": 1048576,
+        "name": "DeepSeek: DeepSeek V4 Flash (free)"
+      },
+      {
+        "id": "google/gemma-4-26b-a4b-it:free",
+        "context": 262144,
+        "name": "Google: Gemma 4 26B A4B  (free)"
+      },
+      {
+        "id": "google/gemma-4-31b-it:free",
+        "context": 262144,
+        "name": "Google: Gemma 4 31B (free)"
+      },
+      {
+        "id": "arcee-ai/trinity-large-thinking:free",
+        "context": 262144,
+        "name": "Arcee AI: Trinity Large Thinking (free)"
+      },
+      {
+        "id": "google/lyria-3-pro-preview",
+        "context": 1048576,
+        "name": "Google: Lyria 3 Pro Preview"
+      },
+      {
+        "id": "google/lyria-3-clip-preview",
+        "context": 1048576,
+        "name": "Google: Lyria 3 Clip Preview"
+      },
+      {
+        "id": "nvidia/nemotron-3-super-120b-a12b:free",
+        "context": 1000000,
+        "name": "NVIDIA: Nemotron 3 Super (free)"
+      },
+      {
+        "id": "minimax/minimax-m2.5:free",
+        "context": 204800,
+        "name": "MiniMax: MiniMax M2.5 (free)"
+      },
+      {
+        "id": "openrouter/free",
+        "context": 200000,
+        "name": "Free Models Router"
+      },
+      {
+        "id": "liquid/lfm-2.5-1.2b-thinking:free",
+        "context": 32768,
+        "name": "LiquidAI: LFM2.5-1.2B-Thinking (free)"
+      },
+      {
+        "id": "liquid/lfm-2.5-1.2b-instruct:free",
+        "context": 32768,
+        "name": "LiquidAI: LFM2.5-1.2B-Instruct (free)"
+      },
+      {
+        "id": "nvidia/nemotron-3-nano-30b-a3b:free",
+        "context": 256000,
+        "name": "NVIDIA: Nemotron 3 Nano 30B A3B (free)"
+      },
+      {
+        "id": "nvidia/nemotron-nano-12b-v2-vl:free",
+        "context": 128000,
+        "name": "NVIDIA: Nemotron Nano 12B 2 VL (free)"
+      },
+      {
+        "id": "qwen/qwen3-next-80b-a3b-instruct:free",
+        "context": 262144,
+        "name": "Qwen: Qwen3 Next 80B A3B Instruct (free)"
+      },
+      {
+        "id": "nvidia/nemotron-nano-9b-v2:free",
+        "context": 128000,
+        "name": "NVIDIA: Nemotron Nano 9B V2 (free)"
+      },
+      {
+        "id": "openai/gpt-oss-120b:free",
+        "context": 131072,
+        "name": "OpenAI: gpt-oss-120b (free)"
+      },
+      {
+        "id": "openai/gpt-oss-20b:free",
+        "context": 131072,
+        "name": "OpenAI: gpt-oss-20b (free)"
+      },
+      {
+        "id": "z-ai/glm-4.5-air:free",
+        "context": 131072,
+        "name": "Z.ai: GLM 4.5 Air (free)"
+      },
+      {
+        "id": "qwen/qwen3-coder:free",
+        "context": 1048576,
+        "name": "Qwen: Qwen3 Coder 480B A35B (free)"
+      },
+      {
+        "id": "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
+        "context": 32768,
+        "name": "Venice: Uncensored (free)"
+      },
+      {
+        "id": "meta-llama/llama-3.3-70b-instruct:free",
+        "context": 131072,
+        "name": "Meta: Llama 3.3 70B Instruct (free)"
+      },
+      {
+        "id": "meta-llama/llama-3.2-3b-instruct:free",
+        "context": 131072,
+        "name": "Meta: Llama 3.2 3B Instruct (free)"
+      },
+      {
+        "id": "nousresearch/hermes-3-llama-3.1-405b:free",
+        "context": 131072,
+        "name": "Nous: Hermes 3 405B Instruct (free)"
+      }
+    ]
+  },
+  "google": {
+    "gemma_count": 2,
+    "gemma": [
+      {
+        "id": "gemma-4-26b-a4b-it",
+        "methods": [
+          "generateContent",
+          "countTokens"
+        ]
+      },
+      {
+        "id": "gemma-4-31b-it",
+        "methods": [
+          "generateContent",
+          "countTokens"
+        ]
+      }
+    ]
+  },
+  "opencode_zen": {
+    "total": 42,
+    "free": 6,
+    "all": [
+      "claude-opus-4-7",
+      "claude-opus-4-6",
+      "claude-opus-4-5",
+      "claude-opus-4-1",
+      "claude-sonnet-4-6",
+      "claude-sonnet-4-5",
+      "claude-sonnet-4",
+      "claude-haiku-4-5",
+      "gemini-3.1-pro",
+      "gemini-3-flash",
+      "gpt-5.5",
+      "gpt-5.5-pro",
+      "gpt-5.4",
+      "gpt-5.4-pro",
+      "gpt-5.4-mini",
+      "gpt-5.4-nano",
+      "gpt-5.3-codex-spark",
+      "gpt-5.3-codex",
+      "gpt-5.2",
+      "gpt-5.2-codex",
+      "gpt-5.1",
+      "gpt-5.1-codex-max",
+      "gpt-5.1-codex",
+      "gpt-5.1-codex-mini",
+      "gpt-5",
+      "gpt-5-codex",
+      "gpt-5-nano",
+      "glm-5.1",
+      "glm-5",
+      "minimax-m2.7",
+      "minimax-m2.5",
+      "kimi-k2.6",
+      "kimi-k2.5",
+      "qwen3.6-plus",
+      "qwen3.5-plus",
+      "big-pickle",
+      "deepseek-v4-flash-free",
+      "qwen3.6-plus-free",
+      "minimax-m2.5-free",
+      "ring-2.6-1t-free",
+      "trinity-large-preview-free",
+      "nemotron-3-super-free"
+    ],
+    "free_ids": [
+      "deepseek-v4-flash-free",
+      "qwen3.6-plus-free",
+      "minimax-m2.5-free",
+      "ring-2.6-1t-free",
+      "trinity-large-preview-free",
+      "nemotron-3-super-free"
+    ]
+  }
+}

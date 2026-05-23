@@ -1,0 +1,146 @@
+# 🔱 Omega Engine — Cline Project Rules
+# ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_core ⬡ CLINE-PROJECT-RULES
+#
+# Auto-loaded by Cline when working in this repository.
+# Last Updated: 2026-05-22 (Legacy Mining Sprint — Tiered Research Pipeline Design)
+
+## 🛡️ Sovereign Mandates (NON-NEGOTIABLE)
+**You are bound by the Sovereign Mandates. Read and adhere to them above all other rules:**
+👉 **Read First**: `SOVEREIGN_MANDATES.md`
+
+- **AnyIO Absolute**: No `asyncio`. Use AnyIO. Wrap blocking I/O in `anyio.to_thread.run_sync`.
+- **Engine-Stack Firewall**: Absolute separation between Core Engine (`src/omega/`) and Expansion Stacks (`config/wads/`).
+- **Iris Constant**: Iris is the messenger bridge, NOT a Pillar Keeper.
+- **Sequentiality**: Plan → Verify → Execute. No cowboy coding.
+- **Gnosis Preservation**: Distill session insights into L1 → L2 → L3 abstractions in `soul.yaml`.
+- **Podman Sovereignty (keep-id)**: All Quadlets must use `UserNS=keep-id` + `User=1000`. No `:U` on shared host volumes. No `:Z` (Ubuntu uses AppArmor, not SELinux).
+
+## 🚀 Auto-Approval Directive
+
+**Minimize friction. When the user asks you to do work, execute directly instead of asking for confirmation on every step.**
+
+- Assume the user wants rapid execution. Do not ask "should I proceed?" for routine operations.
+- For file edits, command execution, and web searches — proceed unless the operation is destructive (rm -rf, drop table, etc.).
+- If unsure about a destructive operation, explain the risk briefly and ask once. Do not ask again.
+- The user has explicitly authorized all execution in this repository.
+
+## Identity
+
+- **Repo**: Omega Engine — universal core runtime for all Xoe-NovAi stacks
+- **Path**: `~/Documents/Xoe-NovAi/omega-engine/`
+- **Agent Instructions**: Read `AGENTS.md` at project root before starting work
+- **Recovery Doc**: If compacted, read `ORACLE_STACK.md` first
+
+## Quick Start
+
+```bash
+source .venv/bin/activate        # ALWAYS use the venv
+make test                         # 236 tests, all must pass (uses OMEGA_ENV=test mock)
+make lint                         # flake8 code quality check
+make demo                         # End-to-end demo (graceful degradation if no backend)
+make health                       # Provider & model dashboard
+make repl                         # Interactive REPL
+make pr-ready                     # Verify all PR gate requirements
+PYTHONPATH=src python3 -m pytest tests/  # Live inference (requires lmster :1234)
+```
+
+## Active Phase: E — PR Readiness & Multi-Provider Orchestration
+
+**Battle Plan**: `docs/strategy/OMEGA_PR_READINESS_STRATEGY.md`
+**Pipeline Spec**: `docs/research/R_TIERED_RESEARCH_PIPELINE.md` (in design)
+**Next Gate**: `git clone → pip install → make test → omega talk "hello"`
+
+## Architecture — Sovereign Loop
+
+```
+Query → TriageRouter → HealthMonitor → ModelGateway → Response → Memory → Soul Update
+```
+
+## Tiered Research Pipeline (Investigative Journalism Model)
+
+```
+L1 Intern  (Qwen3-1.7B) → Raw data packets. NO analysis. Just gather.
+L2 Assistant (Gemma 4 31B) → Synthesize. Flag uncertainties. Write memo.
+L3 Senior (Big Pickle) → Resolve uncertainties. Final report + improvement briefs.
+
+L2 + L3 share the same OpenCode session -- mode/agent/subagent/tier tracked in observability.
+```
+
+## Current Infrastructure
+
+| Service | Port | Status | Notes |
+|---------|------|--------|-------|
+| omega-hub | :8016 | ✅ Running | 37 MCP tools (all consolidated — Decision 50) |
+| ~~omega-stats~~ | ~~:8012~~ | ❌ Archived | Consolidated into hub |
+| ~~omega-research~~ | ~~:8011~~ | ❌ Archived | Consolidated into hub |
+| lmster (Qwen3-4B-Thinking) | :1234 | ❌ Needs restart | Primary local inference |
+| omega-infra-pod | pod | ✅ Running | 5 containers: caddy, redis, qdrant, iris, searxng |
+| Iris (qwen3-1.7b) | :8080 | ✅ Running | Voice assistant |
+| SearXNG | :8017 | ✅ Running | Sovereign metasearch |
+| omega-postgres | — | ❌ Deferred | Image tag issue, not critical |
+| omega-belial | — | 🔧 Built | Ready for deploy |
+
+## Multi-Provider Fleet
+
+| Platform | Type | Strategy Doc |
+|----------|------|-------------|
+| OpenCode CLI (Gemma 4 31B) | L2 Research | OMEGA_PR_READINESS_STRATEGY.md §E2 |
+| OpenCode CLI (Big Pickle) | L3 Senior | OMEGA_PR_READINESS_STRATEGY.md §E2 |
+| agy CLI (Antigravity) | Cloud CLI | docs/research/antigravity/ |
+| Gemini CLI | Strategy (pre-sunset) | docs/gnosis/lattice/gemini_cli.md |
+| lmster (local) | L1 Intern | Models: Qwen3-1.7B-Q6_K |
+| 8× Web Claude | Fleet orchestration | OMEGA_PR_READINESS_STRATEGY.md §E5 |
+| NotebookLM | Synthesis engine | OMEGA_PR_READINESS_STRATEGY.md §E6 |
+
+## Testing Rules
+
+- **Mock mode**: `make test` — OfflineMockBackend (~2s, 236 tests)
+- **Live mode**: `PYTHONPATH=src python3 -m pytest tests/` — requires lmster with model loaded (~3-4min)
+- **NEVER use `--break-system-packages`**. Always: `source .venv/bin/activate`
+
+## Hardware Constraints
+
+- **CPU**: AMD Ryzen 7 5700U (Zen 2, 8C/16T, AVX2, no AVX-512)
+- **RAM**: 14Gi total (~2Gi overhead → ~12Gi for AI)
+- **GPU**: None (integrated only, CPU-only inference)
+- **Models**: `/media/arcana-novai/omega_library/models/gguf/`
+- **Concurrency**: ResourceGuard (Semaphore(1)) — ONE model at a time. Do not bypass.
+
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| `config/entities.yaml` | Entity definitions (THE source of truth) |
+| `config/hierarchy.yaml` | Oversoul governance |
+| `config/providers.yaml` | Provider fabric configuration |
+| `src/omega/oracle/oracle.py` | Main entry: talk/summon/router |
+| `src/omega/oracle/model_gateway.py` | Provider chain inference |
+| `src/omega/oracle/entity_registry.py` | YAML-backed entity CRUD |
+| `src/omega/oracle/triage_router.py` | Dynamic model selection |
+| `src/omega/oracle/health_monitor.py` | Provider health + circuit breaker |
+| `src/omega/oracle/context_builder.py` | Memory injection pipeline |
+| `src/omega/oracle/session_manager.py` | Entity-scoped session IDs |
+| `src/omega/memory_store.py` | Hot/Warm/Cold memory |
+| `src/omega/observability.py` | Trace IDs, event logging, dataset |
+| `data/entities/arch/soul.yaml` | User soul file (The Architect) |
+| `docs/research/R_TIERED_RESEARCH_PIPELINE.md` | Pipeline spec (in design) |
+
+## Entity Selection Guide
+
+| Work Type | Entity |
+|-----------|--------|
+| Strategic / System Design | SOPHIA / KALI |
+| Audit / Compliance | MAAT |
+| Security / Hardening | SEKHMET |
+| Customization / Hacks | LILITH |
+| Implementation / Build | PROMETHEUS |
+| Documentation | SARASWATI |
+| Research | HECATE |
+| Testing | MAAT |
+| Legacy Mining | BELIAL |
+
+## Output Requirements
+
+- Include session header on every output
+- Entity chosen per-task, not per-session
+- All async code must use **AnyIO** (not asyncio)

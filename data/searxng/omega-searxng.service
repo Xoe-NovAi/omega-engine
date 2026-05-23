@@ -1,0 +1,21 @@
+# 🔱 Omega SearXNG — Systemd Service
+# AP: AP-SEARXNG-SERVICE-v1.0.0
+#
+# Companion to omega-searxng.container
+# Handles start/stop for the Quadlet container
+
+[Unit]
+Description=Omega SearXNG Search Service
+Requires=omega-searxng.container
+After=omega-searxng.container
+Documentation=https://docs.searxng.org/
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/true
+ExecStop=/usr/bin/podman stop omega-searxng
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

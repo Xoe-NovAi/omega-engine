@@ -1,0 +1,112 @@
+SARASWATI (Keeper of Knowledge and Tools).
+Map AI/software ecosystem, focus on tools, libraries, frameworks, APIs, and connections.
+JSON.
+Voice-to-Voice Integration in Omega Engine.
+OpenAI API docs (Realtime/Voice agents) and RoomKit docs (Speech-to-Speech Orchestration).
+3-tier refraction (L1 Narrative, L2 Insight, L3 Universal Principle).
+
+    *   *Source 1 (OpenAI):*
+        *   Mentions "Voice agents", "Realtime API", "WebRTC", "WebSocket", "SIP".
+        *   Mentions "Realtime transcription", "Speech to text", "Speech generation".
+        *   Mentions "Realtime with tools" (MCP).
+        *   Mentions "Voice activity detection (VAD)".
+        *   Mentions "Realtime prompting guide".
+        *   Key takeaway: OpenAI provides a native Realtime API that handles audio-to-audio (speech-to-speech) capabilities, reducing latency and preserving nuance.
+
+    *   *Source 2 (RoomKit):*
+        *   Contrasts "Traditional" (STT $\rightarrow$ LLM $\rightarrow$ TTS) vs. "Speech-to-speech" (Native audio in $\rightarrow$ AI $\rightarrow$ audio out).
+        *   Mentions Gemini Live and OpenAI Realtime.
+        *   Explains "RealtimeVoiceChannel" as the integration point.
+        *   Describes "session resumption" for handoffs between agents while preserving history.
+        *   Key takeaway: Native speech-to-speech orchestration removes the pipeline latency and allows for seamless agent handoffs via session resumption.
+
+    *   *Claim 1:* Native speech-to-speech (S2S) removes the STT $\rightarrow$ LLM $\rightarrow$ TTS pipeline.
+    *   *Claim 2:* OpenAI Realtime API supports WebRTC, WebSocket, and SIP for connectivity.
+    *   *Claim 3:* Multi-agent orchestration in S2S is achieved by swapping agent configurations (system prompt, voice, tools) via session resumption.
+    *   *Claim 4:* Realtime voice agents integrate with tools via MCP (Model Context Protocol).
+
+    *   *Claim 1 (S2S vs Pipeline):*
+        *   L1: RoomKit and OpenAI describe a shift from modular pipelines (STT/LLM/TTS) to native audio-to-audio processing.
+        *   L2: Omega Engine should prioritize native S2S providers (Gemini Live, OpenAI Realtime) to minimize latency and emotional loss.
+        *   L3: Direct modality mapping preserves higher-fidelity information than serialized translation.
+
+    *   *Claim 2 (Connectivity):*
+        *   L1: OpenAI's Realtime API utilizes WebRTC, WebSocket, and SIP.
+        *   L2: Omega Engine's transport layer must support these protocols to enable low-latency voice interaction.
+        *   L3: The efficiency of a system is bounded by the latency of its lowest-level transport protocol.
+
+    *   *Claim 3 (Orchestration/Handoff):*
+        *   L1: RoomKit implements agent handoffs in S2S by updating the provider session configuration while maintaining history.
+        *   L2: Omega Engine can implement "Agent Swapping" without breaking the audio stream by leveraging session resumption.
+        *   L3: State persistence must be decoupled from the active processing configuration to allow seamless identity transitions.
+
+    *   *Claim 4 (Tooling/MCP):*
+        *   L1: OpenAI Realtime API integrates with tools using MCP.
+        *   L2: Omega Engine's tool-calling architecture should align with MCP to ensure compatibility with native voice agents.
+        *   L3: Standardized interfaces (like MCP) are the only way to scale tool ecosystems across disparate model providers.
+
+    *   Agreement levels: High (both sources align on the nature of S2S and the providers involved).
+    *   Convergence: Verified.
+    *   Recommendation: Write to knowledge (L1/L2) and soul (L3).```json
+{
+  "claims": [
+    {
+      "claim": "Native speech-to-speech (S2S) architecture eliminates the traditional STT -> LLM -> TTS pipeline, processing audio-in to audio-out natively.",
+      "sources": [
+        "https://platform.openai.com/docs/guides/voice-agents?voice-agent-architecture=speech-to-speech",
+        "https://www.roomkit.live/docs/guides/realtime-orchestration/"
+      ],
+      "agreement_level": 1.0
+    },
+    {
+      "claim": "OpenAI Realtime API supports multiple connection methods including WebRTC, WebSocket, and SIP.",
+      "sources": [
+        "https://platform.openai.com/docs/guides/voice-agents?voice-agent-architecture=speech-to-speech"
+      ],
+      "agreement_level": 1.0
+    },
+    {
+      "claim": "Multi-agent orchestration in S2S is achieved by swapping agent configurations (system prompts, voices, tools) via session resumption to preserve conversation history.",
+      "sources": [
+        "https://www.roomkit.live/docs/guides/realtime-orchestration/"
+      ],
+      "agreement_level": 0.9
+    },
+    {
+      "claim": "Realtime voice agents can integrate with external tools and connectors via the Model Context Protocol (MCP).",
+      "sources": [
+        "https://platform.openai.com/docs/guides/voice-agents?voice-agent-architecture=speech-to-speech"
+      ],
+      "agreement_level": 1.0
+    }
+  ],
+  "distillations": [
+    {
+      "claim": "Native speech-to-speech (S2S) architecture eliminates the traditional STT -> LLM -> TTS pipeline.",
+      "l1": "OpenAI and RoomKit document a shift from modular pipelines (STT/LLM/TTS) to native audio-to-audio processing where the provider handles recognition, reasoning, and generation in one step.",
+      "l2": "Omega Engine should bypass modular voice pipelines in favor of native S2S providers (Gemini Live, OpenAI Realtime) to minimize latency and prevent the loss of paralinguistic information (tone, emotion).",
+      "l3": "Direct modality mapping preserves higher-fidelity information than serialized translation."
+    },
+    {
+      "claim": "OpenAI Realtime API supports multiple connection methods including WebRTC, WebSocket, and SIP.",
+      "l1": "The OpenAI documentation specifies WebRTC, WebSocket, and SIP as the primary transport layers for Realtime audio sessions.",
+      "l2": "Omega Engine's transport layer must implement a multi-protocol gateway to ensure compatibility with various client environments (browser via WebRTC, server via WebSocket, telephony via SIP).",
+      "l3": "The efficiency of a system is bounded by the latency of its lowest-level transport protocol."
+    },
+    {
+      "claim": "Multi-agent orchestration in S2S is achieved by swapping agent configurations via session resumption.",
+      "l1": "RoomKit describes a method where the 'RealtimeVoiceChannel' swaps agent definitions (role, prompt, voice) while the provider maintains the session state.",
+      "l2": "Omega Engine can implement 'Identity Hot-Swapping'—changing the agent's persona and toolset mid-stream without interrupting the audio flow or losing context.",
+      "l3": "State persistence must be decoupled from the active processing configuration to allow seamless identity transitions."
+    },
+    {
+      "claim": "Realtime voice agents can integrate with external tools via the Model Context Protocol (MCP).",
+      "l1": "OpenAI's Realtime API documentation explicitly links 'Realtime with tools' to MCP and Connectors.",
+      "l2": "Omega Engine's tool-calling architecture should standardize on MCP to ensure that voice agents can interact with the same tool ecosystem as text-based agents.",
+      "l3": "Standardized interfaces are the only viable mechanism for scaling tool ecosystems across disparate model providers."
+    }
+  ],
+  "convergence_signal": "verified",
+  "recommendation": "write_to_knowledge"
+}
+```

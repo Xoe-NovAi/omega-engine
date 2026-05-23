@@ -1,0 +1,26 @@
+{
+  "topic": "Phase 1 task A4 \u2014 implementation research",
+  "priority": 1.05,
+  "depth": 1,
+  "state": "done",
+  "sources": [
+    "https://www.ncbi.nlm.nih.gov/books/NBK562372/",
+    "https://www.gov.ie/en/department-of-the-taoiseach/publications/phase-2-deepen-understanding-tasks/",
+    "https://implementationscience.biomedcentral.com/articles/10.1186/1748-5908-3-8/tables/2",
+    "https://www.medrxiv.org/content/10.1101/2020.04.05.20054379v2.full-text",
+    "https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/designs-and-methods-for-implementation-research-advancing-the-mission-of-the-ctsa-program/7C8B3532A2CA30AEE3E931641608B274",
+    "https://www.measureevaluation.org/resources/publications/ms-12-55/at_download/document",
+    "https://pmc.ncbi.nlm.nih.gov/articles/PMC12907687/",
+    "https://www.frontiersin.org/journals/health-services/articles/10.3389/frhs.2022.942658/full",
+    "https://tdr.who.int/docs/librariesprovider10/meeting-reports/9292241109-eng-pdf.pdf?download=true&sfvrsn=acfb3a86_0",
+    "https://impact.canada.ca/en/challenges/challenge-guide/phase-1"
+  ],
+  "claims": [],
+  "verification_count": 0,
+  "attempts": 0,
+  "max_attempts": 3,
+  "session_id": "res_20260519_Phase_1_task_A4_\u2014_im",
+  "created": "2026-05-19T12:42:53.960654+00:00",
+  "last_attempt": null,
+  "error": null
+}

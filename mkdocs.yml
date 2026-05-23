@@ -1,0 +1,97 @@
+# 🔱 Omega Engine — Documentation Site Configuration
+
+site_name: Omega Engine Research
+site_url: https://omega.arcana-novai.dev
+site_description: "Sovereign AI Council Runtime — Research & Architecture Documentation"
+site_author: Xoe-NovAi
+
+repo_url: https://github.com/arcana-novai/omega-engine
+edit_uri: edit/main/docs/
+
+# Material theme configuration
+theme:
+  name: material
+  language: en
+  palette:
+    primary: deep purple
+    accent: amber
+  features:
+    - navigation.instant
+    - navigation.indexes
+    - navigation.tracking
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate
+
+# Extensions for superior Markdown rendering
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.magiclink
+  - pymdownx.inlinehilite
+  - pymdownx.tilde
+  - pymdownx.critic
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - admonition
+  - footnotes
+  - toc:
+      permalink: true
+
+# Navigation structure
+nav:
+  - Home: index.md
+  - Research:
+      - Overview: research/INDEX.md
+      - Provider Fabric:
+          - "R-01: Google AI Studio": research/R01_google_api_reference.md
+          - "R-02: SambaNova": research/R02_sambanova_spec.md
+          - "R-03: Cerebras": research/R03_cerebras_spec.md
+          - "R-04: Fallback Chain": research/R04_fallback_chain_design.md
+          - "R-05: Model Capability Matrix": research/R05_model_capability_matrix.md
+      - Infrastructure:
+          - "R-13: Zen 2 Hardware Tuning": research/R13_zen2_hardware_tuning.md
+          - "R-PODMAN: Sovereign Container Strategy": research/R_PODMAN_SOVEREIGN_STRATEGY.md
+      - Soul & Memory:
+          - "R-30: Soul Evolution": research/R30_soul_evolution_logic.md
+          - "R-31: Cross-Pollination": research/R31_cross_pollination_spec.md
+          - "R-HOLO: Holographic Memory Lattice": research/R_HOLOGRAPHIC_MEMORY_LATTICE.md
+      - Maintenance:
+          - "R-MAINT: Sovereign Maintenance": research/R_SOVEREIGN_MAINTENANCE_STRATEGY.md
+      - Internal Discovery:
+          - Overview: research/internal-discovery/INDEX.md
+          - "D-01: Context Aggregation Lineage": research/internal-discovery/STACK_CAT_LINEAGE.md
+          - "D-02: Tooling & Data Strategy": research/internal-discovery/TOOLING_STRATEGY.md
+          - "D-02b: Data Management Hardening": research/internal-discovery/DATA_MANAGEMENT_HARDENING.md
+  - Operations:
+      - Research Queue: operations/RESEARCH_QUEUE.md
+      - Status Reports:
+          - OpenCode: operations/STATUS_OPENCODE.md
+          - Cline: operations/STATUS_CLINE.md
+          - Gemini CLI: operations/STATUS_GEMINI_CLI.md
+      - Bug Log: operations/BUG_LOG.md
+  - Architecture:
+      - Overview: architecture/pillars/framework.md
+  - Decisions:
+      - Pivot Log: decisions/PIVOT_LOG.md
+  - Gnosis:
+      - The Architect: gnosis/ARCHITECT.md
+
+plugins:
+  - search
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/arcana-novai/omega-engine
+
+copyright: Copyright &copy; 2026 Arcana-NovAi — Sovereign AI

@@ -1,0 +1,26 @@
+{
+  "topic": "Voice-to-Voice Integration in Omega Engine",
+  "priority": 1.035,
+  "depth": 1,
+  "state": "done",
+  "sources": [
+    "https://docs.voximplant.ai/voice-ai-orchestration/pipeline-options",
+    "https://callsphere.ai/blog/openai-realtime-voice-agents-eval-pipeline-2026",
+    "https://www.roomkit.live/docs/guides/realtime-orchestration/",
+    "https://github.com/styrene-lab/omegon/pull/53",
+    "https://omeganeural.com/pages/metaengines-hermes",
+    "https://omeganeural.com/pages/omegaos-whitepaper-metaengines-of-civilization",
+    "https://docs.voximplant.ai/voice-ai-orchestration/gemini/overview",
+    "https://atlasphp.org/guides/voice-integration.html",
+    "https://omegacortex.ai/whitepaper",
+    "https://platform.openai.com/docs/guides/voice-agents?voice-agent-architecture=speech-to-speech"
+  ],
+  "claims": [],
+  "verification_count": 0,
+  "attempts": 0,
+  "max_attempts": 3,
+  "session_id": "res_20260519_Voice-to-Voice_Integ",
+  "created": "2026-05-19T13:03:48.344755+00:00",
+  "last_attempt": null,
+  "error": null
+}

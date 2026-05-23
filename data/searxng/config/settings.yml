@@ -1,0 +1,130 @@
+# 🔱 Omega SearXNG — Sovereign Search Layer Configuration
+# AP: AP-SEARXNG-SETTINGS-v1.0.0
+# Generated: 2026-05-18
+# Hardware: AMD Ryzen 7 5700U | 14GB RAM
+
+use_default_settings:
+  engines:
+    remove:
+      - google
+      - bing
+      - bing images
+      - bing videos
+      - bing news
+      - yahoo
+      - ddg
+      - ddg lite
+      - startpage
+      - mojeek
+      - ecosia
+
+general:
+  instance_name: "Omega SearXNG"
+  privacypolicy_agree: true
+  contact_url: false
+  enable_metrics: false
+  outgoing_request_log: false
+
+server:
+  secret_key: "73deefc57187bf3ebb58e090f75fb6a5b37e1c0147709f97be461a11b4c13858"
+  bind_address: "0.0.0.0"
+  port: 8080
+  limiter: true
+  http_method: "POST"
+  http_protocol_version: "1.1"
+
+ui:
+  static_use_hash: true
+  default_theme: simple
+  results_on_new_tab: false
+  infinite_scroll: true
+  author: "The Architect"
+
+search:
+  format: "json"
+  default_safesearch: "0"
+  default_lang: "auto"
+  formats:
+    - json
+    - html
+  max_concurrent_requests: 8
+  timeout: 3.0
+  safesearch:
+    - "0"
+    - "1"
+    - "2"
+
+outgoing:
+  request_timeout: 3.0
+  max_request_timeout: 10.0
+  pool_connections: 50
+  pool_maxsize: 5
+  enable_http2: true
+  useragent_suffix: "Omega-Engine/1.0 (Sovereign Search)"
+
+engines:
+  - name: brave
+    engine: brave
+    brave_category: search
+    time_range_support: true
+    paging: true
+    disabled: false
+
+  - name: wikipedia
+    engine: wikipedia
+    disabled: false
+
+  - name: arxiv
+    engine: arxiv
+    disabled: false
+
+  - name: semantischolar
+    engine: semantischolar
+    disabled: false
+
+  - name: crossref
+    engine: crossref
+    disabled: false
+
+  - name: pubmed
+    engine: pubmed
+    disabled: false
+
+  - name: openalex
+    engine: openalex
+    disabled: false
+
+  - name: github code
+    engine: github_code
+    disabled: false
+    tokens: []
+
+  - name: gitlab
+    engine: gitlab
+    disabled: false
+
+  - name: sourcehut
+    engine: sourcehut
+    disabled: false
+
+  - name: huggingface
+    engine: huggingface
+    disabled: false
+
+  - name: wikidata
+    engine: wikidata
+    disabled: false
+
+  - name: marginalia
+    engine: marginalia
+    disabled: false
+
+  - name: mwmbl
+    engine: mwmbl
+    disabled: false
+
+  - name: braveapi
+    engine: braveapi
+    api_key: ""
+    results_per_page: 20
+    disabled: true

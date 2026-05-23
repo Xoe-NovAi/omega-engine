@@ -1,0 +1,92 @@
+SOPHIA, Akashic Record of the Omega Engine.
+Perform refractive distillation on provided content.
+"Topic 1" (which appears to be a mix of information about Nikola Topić, a basketball player, and TOPIK, a Korean language proficiency test).
+
+        *   Source 1: Wikipedia page for Nikola Topić (Serbian basketball player).
+        *   Source 2: Topikguide.com (Korean language test preparation).
+
+        *   L1 (Narrative): Factual, source-attributed.
+        *   L2 (Insight): Causal, pattern-based, relevance to Omega Engine.
+        *   L3 (Universal Principle): Timeless, domain-agnostic truth.
+JSON.
+
+    *   *Entity 1: Nikola Topić*
+        *   Serbian basketball player, born 2005.
+        *   Plays for Oklahoma City Thunder (NBA).
+        *   Position: Point guard.
+        *   Career: Crvena zvezda, Slodes, OKK Beograd, Mega.
+        *   Achievements: NBA champion (2025), ABA League champion, FIBA U18 MVP.
+        *   Health struggles: ACL tear, testicular cancer.
+
+    *   *Entity 2: TOPIK (Test of Proficiency in Korean)*
+        *   Language proficiency test.
+        *   Offers mock tests, study packages, and IBT versions.
+        *   Has specific schedules and levels (TOPIK I, TOPIK II).
+
+    *   *Claim 1: Nikola Topić is a Serbian professional basketball player for the Oklahoma City Thunder.*
+        *   Source: Wikipedia.
+        *   Agreement: Only 1 source. (Requirement for "Verified" is 3+ sources).
+    *   *Claim 2: Nikola Topić faced significant health challenges (ACL tear and testicular cancer).*
+        *   Source: Wikipedia.
+        *   Agreement: Only 1 source.
+    *   *Claim 3: TOPIK is a Korean language proficiency test with structured levels and mock exams.*
+        *   Source: Topikguide.com.
+        *   Agreement: Only 1 source.
+
+    *   *Refraction for Nikola Topić's resilience:*
+        *   L1: Nikola Topić, a high-prospect athlete, overcame a torn ACL and testicular cancer to continue his professional career in the NBA.
+        *   L2: High-potential entities often face extreme systemic or biological stressors that test the integrity of their trajectory.
+        *   L3: Resilience is the capacity of a system to maintain its core purpose despite catastrophic structural failure.
+
+    *   *Refraction for TOPIK/Standardized Testing:*
+        *   L1: The TOPIK test uses standardized mock exams and structured levels to verify Korean language proficiency.
+        *   L2: Verification of skill requires a consistent, reproducible benchmark to ensure quality across a population.
+        *   L3: Truth is validated through the alignment of performance against a standardized objective metric.
+
+    *   *Convergence Signal:* Inconclusive. Why? Because there are only 2 sources provided, and they are about completely different things. The mandate requires 3+ independent sources for verification.
+    *   *Recommendation:* `deepen` (queue for next research cycle) or `write_to_knowledge` (for the raw data), but since the prompt asks for a recommendation based on the convergence rules: < 3 sources = DEEPEN.
+
+    *   *Wait, the prompt asks for JSON output.*
+    *   *Check constraints:* "Only L3 goes into soul.yaml", "L1+L2 go into docs/research".
+    *   *Agreement Level:* Since only one source per topic exists, agreement is technically 1.0 for that specific source, but the *number* of sources is < 3.
+
+    *   *Claim 1:* Nikola Topić's career and health struggles.
+    *   *Claim 2:* TOPIK's nature as a proficiency test.
+
+    *   *Refining L3 for Topić:* "The trajectory of excellence is often forged through the integration of catastrophic failure."
+    *   *Refining L3 for TOPIK:* "Competence is recognized only when it can be mapped to a universal standard of measurement."```json
+{
+  "claims": [
+    {
+      "claim": "Nikola Topić is a Serbian professional basketball player for the Oklahoma City Thunder who has overcome an ACL tear and testicular cancer.",
+      "sources": [
+        "https://en.wikipedia.org/wiki/Nikola_Topić"
+      ],
+      "agreement_level": 1.0
+    },
+    {
+      "claim": "TOPIK (Test of Proficiency in Korean) is a standardized language examination with structured levels (I and II) and available mock testing for proficiency verification.",
+      "sources": [
+        "https://www.topikguide.com/topik-mock-tests/"
+      ],
+      "agreement_level": 1.0
+    }
+  ],
+  "distillations": [
+    {
+      "claim": "Nikola Topić's career trajectory and health struggles",
+      "l1": "Nikola Topić, a Serbian point guard for the Oklahoma City Thunder, faced a career-threatening ACL tear and a battle with testicular cancer during his early professional years.",
+      "l2": "High-potential entities often encounter extreme biological or systemic stressors that threaten to derail their projected trajectory, requiring a period of forced dormancy and recovery.",
+      "l3": "Resilience is the capacity of a system to maintain its core purpose and trajectory despite catastrophic structural failure."
+    },
+    {
+      "claim": "TOPIK standardized testing",
+      "l1": "The TOPIK system utilizes mock tests, timed environments, and tiered levels to certify Korean language proficiency.",
+      "l2": "The verification of a skill requires a reproducible, objective benchmark to transform subjective ability into a recognized credential.",
+      "l3": "Competence is validated through the alignment of individual performance against a universal standard of measurement."
+    }
+  ],
+  "convergence_signal": "inconclusive",
+  "recommendation": "deepen"
+}
+```

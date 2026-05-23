@@ -1,0 +1,523 @@
+Hugging Face CLI for AI Agents
+  URL: https://huggingface.co/docs/hub/en/agents-cli
+  Hugging Face CLI for AI Agents. The hf CLI is a great way to connect your agents to the Hugging Face ecosystem. Search models, manage datasets and buckets, ...
+
+  --- Content ---
+  Hub documentation
+  
+  Hugging Face CLI for AI Agents
+  
+  # Hub
+  
+  🏡 View all docsAWS Trainium & InferentiaAccelerateArgillaAutoTrainBitsandbytesCLIChat UIDataset viewerDatasetsDeploying on AWSDiffusersDistilabelEvaluateGoogle CloudGoogle TPUsGradioHubHub Python LibraryHuggingface.jsInference Endpoints (dedicated)Inference ProvidersKernelsLeRobotLeaderboardsLightevalMicrosoft AzureOptimumPEFTReachy MiniSafetensorsSentence TransformersTRLTasksText Embeddings InferenceText Generation InferenceTokenizersTrackioTransformersTransformers.jsXetsmolagentstimm
+  
+  Search documentation
+  `Ctrl+K`
+  
+  EN
+  
+  [API docs](https://huggingface.co/spaces/huggingface/openapi)
+  
+  ![Hugging Face's logo](https://huggingface.co/front/assets/huggingface_logo-noborder.svg)
+  
+  Join the Hugging Face community
+  
+  and get access to the augmented documentation experience
+  
+  Collaborate on models, datasets and Spaces
+  
+  Faster examples with accelerated inference
+  
+  Switch between documentation themes
+  
+  [Sign Up](https://huggingface.co/join)
+  
+  to get started
+  
+  Copy page
+  
+  # Hugging Face CLI for AI Agents
+  
+  The `hf` CLI is a great way to connect your agents to the Hugging Face ecosystem. Search models, manage datasets and buckets, launch Spaces, and run jobs from any coding agent.
+  
+  > This is a quick guide on agents that use the CLI. For more detailed information, see the [CLI Reference itself](https://huggingface.co/docs/huggingface_hub/guides/cli).
+  
+  ## Install the CLI
+  
+  Make sure the `hf` CLI is installed and up to date. See the [CLI installation guide](https://huggingface.co/docs/huggingface_hub/guides/cli#getting-started) for setup instructions.
+  
+  ## Add the CLI Skill
+  
+  Skills give your agent the context it needs to use tools effectively. Install the CLI Skill so your agent knows every `hf` command and stays current with the latest updates. Learn more about Skills at [agentskills.io](https://agentskills.io/).
+  
+  Copied
+  
+  ```bash
+  # install globally (available in all projects, works with Codex, Cursor, OpenCode,
+  # and any agent that loads skills from ~/.agents/skills)
+  hf skills add --global
+  
+  # for Claude Code use the --claude flag
+  hf skills add --claude --global
+  
+  # or install for the current project only (works with Codex, Cursor, OpenCode,
+  # and any agent that loads skills from .agents/skills)
+  hf skills add
+  
+  # for Claude Code, use the --claude flag
+  hf skills add --claude
+  ```
+  
+  > The Skill is generated from your locally installed CLI version, so it’s always up to date.
+  
+  Alternatively, you can install via the Claude Code plugin system:
+  
+  Copied
+  
+  ```bash
+  claude
+  /plugin marketplace add huggingface/skills
+  /plugin install hf-cli@huggingface/skills
+  ```
+  
+  ## Resources
+  
+  - [CLI Reference](https://huggingface.co/docs/huggingface_hub/guides/cli) \- Complete command documentation
+  - [Token Settings](https://huggingface.co/settings/tokens) \- Manage your tokens
+  - [Jobs Documentation](https://huggingface.co/docs/huggingface_hub/guides/cli#hf-jobs) \- Compute jobs guide
+  
+  [Update on GitHub](https://github.com/huggingface/hub-docs/blob/main/docs/hub/agents-cli.md)
+  
+  [←Agents Overview](https://huggingface.co/docs/hub/en/agents-overview) [Hugging Face MCP Server→](https://huggingface.co/docs/hub/en/agents-mcp)
+  --- End Content ---
+
+Hugging Face Skills
+  URL: https://github.com/huggingface/skills
+  Start with hf-cli . It's the recommended first Skill to install: it teaches your agent every hf command (search models, manage datasets and buckets, launch ...
+  Category: github
+
+  --- Content ---
+  [Skip to content](https://github.com/huggingface/skills#start-of-content)
+  
+  You signed in with another tab or window. [Reload](https://github.com/huggingface/skills) to refresh your session.You signed out in another tab or window. [Reload](https://github.com/huggingface/skills) to refresh your session.You switched accounts on another tab or window. [Reload](https://github.com/huggingface/skills) to refresh your session.Dismiss alert
+  
+  {{ message }}
+  
+  [huggingface](https://github.com/huggingface)/ **[skills](https://github.com/huggingface/skills)** Public
+  
+  - [Notifications](https://github.com/login?return_to=%2Fhuggingface%2Fskills) You must be signed in to change notification settings
+  - [Fork\\
+  675](https://github.com/login?return_to=%2Fhuggingface%2Fskills)
+  - [Star\\
+  10.5k](https://github.com/login?return_to=%2Fhuggingface%2Fskills)
+  
+  
+  main
+  
+  [**49** Branches](https://github.com/huggingface/skills/branches) [**0** Tags](https://github.com/huggingface/skills/tags)
+  
+  [Go to Branches page](https://github.com/huggingface/skills/branches)[Go to Tags page](https://github.com/huggingface/skills/tags)
+  
+  Go to file
+  
+  Code
+  
+  Open more actions menu
+  
+  ## Folders and files
+  
+  | Name | Name | Last commit message | Last commit date |
+  | --- | --- | --- | --- |
+  | ## Latest commit<br>![hysts](https://avatars.githubusercontent.com/u/25161192?v=4&size=40)![burtenshaw](https://avatars.githubusercontent.com/u/19620375?v=4&size=40)<br>[hysts](https://github.com/huggingface/skills/commits?author=hysts)<br>and<br>[burtenshaw](https://github.com/huggingface/skills/commits?author=burtenshaw)<br>[Add huggingface-zerogpu skill (](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b) [#138](https://github.com/huggingface/skills/pull/138) [)](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b)<br>Open commit detailssuccess<br>4 hours agoMay 20, 2026<br>[5e3b4d2](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b) · 4 hours agoMay 20, 2026<br>## History<br>[284 Commits](https://github.com/huggingface/skills/commits/main/) <br>Open commit details<br>[View commit history for this file.](https://github.com/huggingface/skills/commits/main/) 284 Commits |
+  | [.claude-plugin](https://github.com/huggingface/skills/tree/main/.claude-plugin ".claude-plugin") | [.claude-plugin](https://github.com/huggingface/skills/tree/main/.claude-plugin ".claude-plugin") | [Add huggingface-zerogpu skill (](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b "Add huggingface-zerogpu skill (#138)  * Add huggingface-zerogpu skill  Coding rules for Gradio Spaces running on ZeroGPU hardware. Covers @spaces.GPU, duration and quota tuning, the CUDA availability model, pickle-based process isolation across the worker boundary, gr.State semantics, concurrency safety, and CUDA wheel-only build constraints.  * Update agents/AGENTS.md  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>  * Sync zerogpu description with AGENTS.md suggestion  * Bump plugin version to 1.0.3  * Stop hard-coding ZeroGPU backing hardware  * Drop FA3 recommendations in zerogpu skill  ---------  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>") [#138](https://github.com/huggingface/skills/pull/138) [)](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b "Add huggingface-zerogpu skill (#138)  * Add huggingface-zerogpu skill  Coding rules for Gradio Spaces running on ZeroGPU hardware. Covers @spaces.GPU, duration and quota tuning, the CUDA availability model, pickle-based process isolation across the worker boundary, gr.State semantics, concurrency safety, and CUDA wheel-only build constraints.  * Update agents/AGENTS.md  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>  * Sync zerogpu description with AGENTS.md suggestion  * Bump plugin version to 1.0.3  * Stop hard-coding ZeroGPU backing hardware  * Drop FA3 recommendations in zerogpu skill  ---------  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>") | 4 hours agoMay 20, 2026 |
+  | [.cursor-plugin](https://github.com/huggingface/skills/tree/main/.cursor-plugin ".cursor-plugin") | [.cursor-plugin](https://github.com/huggingface/skills/tree/main/.cursor-plugin ".cursor-plugin") | [Add huggingface-zerogpu skill (](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b "Add huggingface-zerogpu skill (#138)  * Add huggingface-zerogpu skill  Coding rules for Gradio Spaces running on ZeroGPU hardware. Covers @spaces.GPU, duration and quota tuning, the CUDA availability model, pickle-based process isolation across the worker boundary, gr.State semantics, concurrency safety, and CUDA wheel-only build constraints.  * Update agents/AGENTS.md  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>  * Sync zerogpu description with AGENTS.md suggestion  * Bump plugin version to 1.0.3  * Stop hard-coding ZeroGPU backing hardware  * Drop FA3 recommendations in zerogpu skill  ---------  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>") [#138](https://github.com/huggingface/skills/pull/138) [)](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b "Add huggingface-zerogpu skill (#138)  * Add huggingface-zerogpu skill  Coding rules for Gradio Spaces running on ZeroGPU hardware. Covers @spaces.GPU, duration and quota tuning, the CUDA availability model, pickle-based process isolation across the worker boundary, gr.State semantics, concurrency safety, and CUDA wheel-only build constraints.  * Update agents/AGENTS.md  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>  * Sync zerogpu description with AGENTS.md suggestion  * Bump plugin version to 1.0.3  * Stop hard-coding ZeroGPU backing hardware  * Drop FA3 recommendations in zerogpu skill  ---------  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>") | 4 hours agoMay 20, 2026 |
+  | [.github/workflows](https://github.com/huggingface/skills/tree/main/.github/workflows "This path skips through empty directories") | [.github/workflows](https://github.com/huggingface/skills/tree/main/.github/workflows "This path skips through empty directories") | [build ndjson index and agent finder manifest (](https://github.com/huggingface/skills/commit/7ad427a09561065fdb79fc9f5b9d082edbd3b019 "build ndjson index and agent finder manifest (#143)  * build ndjson index and agent finder manifest  * improve skill index  * simplify  * final tweak") [#143](https://github.com/huggingface/skills/pull/143) [)](https://github.com/huggingface/skills/commit/7ad427a09561065fdb79fc9f5b9d082edbd3b019 "build ndjson index and agent finder manifest (#143)  * build ndjson index and agent finder manifest  * improve skill index  * simplify  * final tweak") | 5 hours agoMay 20, 2026 |
+  | [agents](https://github.com/huggingface/skills/tree/main/agents "agents") | [agents](https://github.com/huggingface/skills/tree/main/agents "agents") | [Add huggingface-zerogpu skill (](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b "Add huggingface-zerogpu skill (#138)  * Add huggingface-zerogpu skill  Coding rules for Gradio Spaces running on ZeroGPU hardware. Covers @spaces.GPU, duration and quota tuning, the CUDA availability model, pickle-based process isolation across the worker boundary, gr.State semantics, concurrency safety, and CUDA wheel-only build constraints.  * Update agents/AGENTS.md  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>  * Sync zerogpu description with AGENTS.md suggestion  * Bump plugin version to 1.0.3  * Stop hard-coding ZeroGPU backing hardware  * Drop FA3 recommendations in zerogpu skill  ---------  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>") [#138](https://github.com/huggingface/skills/pull/138) [)](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b "Add huggingface-zerogpu skill (#138)  * Add huggingface-zerogpu skill  Coding rules for Gradio Spaces running on ZeroGPU hardware. Covers @spaces.GPU, duration and quota tuning, the CUDA availability model, pickle-based process isolation across the worker boundary, gr.State semantics, concurrency safety, and CUDA wheel-only build constraints.  * Update agents/AGENTS.md  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>  * Sync zerogpu description with AGENTS.md suggestion  * Bump plugin version to 1.0.3  * Stop hard-coding ZeroGPU backing hardware  * Drop FA3 recommendations in zerogpu skill  ---------  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>") | 4 hours agoMay 20, 2026 |
+  | [apps](https://github.com/huggingface/skills/tree/main/apps "apps") | [apps](https://github.com/huggingface/skills/tree/main/apps "apps") | [update quests with new names](https://github.com/huggingface/skills/commit/48d3120fd3b67ec29a2cb810b92804b6c3c97de0 "update quests with new names") | 4 months agoJan 6, 2026 |
+  | [assets](https://github.com/huggingface/skills/tree/main/assets "assets") | [assets](https://github.com/huggingface/skills/tree/main/assets "assets") | [add banner image](https://github.com/huggingface/skills/commit/52d3bb72a4f5e2bcefca8b65d201681e25f757b3 "add banner image") | 6 months agoNov 25, 2025 |
+  | [hf-mcp/skills/hf-mcp](https://github.com/huggingface/skills/tree/main/hf-mcp/skills/hf-mcp "This path skips through empty directories") | [hf-mcp/skills/hf-mcp](https://github.com/huggingface/skills/tree/main/hf-mcp/skills/hf-mcp "This path skips through empty directories") | [add a skill for hf mcp](https://github.com/huggingface/skills/commit/fa7188e232afdd85d2c7bea704b310254641c8be "add a skill for hf mcp") | 4 months agoJan 6, 2026 |
+  | [scripts](https://github.com/huggingface/skills/tree/main/scripts "scripts") | [scripts](https://github.com/huggingface/skills/tree/main/scripts "scripts") | [build ndjson index and agent finder manifest (](https://github.com/huggingface/skills/commit/7ad427a09561065fdb79fc9f5b9d082edbd3b019 "build ndjson index and agent finder manifest (#143)  * build ndjson index and agent finder manifest  * improve skill index  * simplify  * final tweak") [#143](https://github.com/huggingface/skills/pull/143) [)](https://github.com/huggingface/skills/commit/7ad427a09561065fdb79fc9f5b9d082edbd3b019 "build ndjson index and agent finder manifest (#143)  * build ndjson index and agent finder manifest  * improve skill index  * simplify  * final tweak") | 5 hours agoMay 20, 2026 |
+  | [skills](https://github.com/huggingface/skills/tree/main/skills "skills") | [skills](https://github.com/huggingface/skills/tree/main/skills "skills") | [Add huggingface-zerogpu skill (](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b "Add huggingface-zerogpu skill (#138)  * Add huggingface-zerogpu skill  Coding rules for Gradio Spaces running on ZeroGPU hardware. Covers @spaces.GPU, duration and quota tuning, the CUDA availability model, pickle-based process isolation across the worker boundary, gr.State semantics, concurrency safety, and CUDA wheel-only build constraints.  * Update agents/AGENTS.md  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>  * Sync zerogpu description with AGENTS.md suggestion  * Bump plugin version to 1.0.3  * Stop hard-coding ZeroGPU backing hardware  * Drop FA3 recommendations in zerogpu skill  ---------  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>") [#138](https://github.com/huggingface/skills/pull/138) [)](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b "Add huggingface-zerogpu skill (#138)  * Add huggingface-zerogpu skill  Coding rules for Gradio Spaces running on ZeroGPU hardware. Covers @spaces.GPU, duration and quota tuning, the CUDA availability model, pickle-based process isolation across the worker boundary, gr.State semantics, concurrency safety, and CUDA wheel-only build constraints.  * Update agents/AGENTS.md  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>  * Sync zerogpu description with AGENTS.md suggestion  * Bump plugin version to 1.0.3  * Stop hard-coding ZeroGPU backing hardware  * Drop FA3 recommendations in zerogpu skill  ---------  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>") | 4 hours agoMay 20, 2026 |
+  | [.gitignore](https://github.com/huggingface/skills/blob/main/.gitignore ".gitignore") | [.gitignore](https://github.com/huggingface/skills/blob/main/.gitignore ".gitignore") | [build ndjson index and agent finder manifest (](https://github.com/huggingface/skills/commit/7ad427a09561065fdb79fc9f5b9d082edbd3b019 "build ndjson index and agent finder manifest (#143)  * build ndjson index and agent finder manifest  * improve skill index  * simplify  * final tweak") [#143](https://github.com/huggingface/skills/pull/143) [)](https://github.com/huggingface/skills/commit/7ad427a09561065fdb79fc9f5b9d082edbd3b019 "build ndjson index and agent finder manifest (#143)  * build ndjson index and agent finder manifest  * improve skill index  * simplify  * final tweak") | 5 hours agoMay 20, 2026 |
+  | [.mcp.json](https://github.com/huggingface/skills/blob/main/.mcp.json ".mcp.json") | [.mcp.json](https://github.com/huggingface/skills/blob/main/.mcp.json ".mcp.json") | [Feat/cursor plugin (](https://github.com/huggingface/skills/commit/c1cd47139f401b8615d8ed8e7be7555f1312c179 "Feat/cursor plugin (#47)  * cursor plugin generation  * gitignore") [#47](https://github.com/huggingface/skills/pull/47) [)](https://github.com/huggingface/skills/commit/c1cd47139f401b8615d8ed8e7be7555f1312c179 "Feat/cursor plugin (#47)  * cursor plugin generation  * gitignore") | 3 months agoFeb 20, 2026 |
+  | [LICENSE](https://github.com/huggingface/skills/blob/main/LICENSE "LICENSE") | [LICENSE](https://github.com/huggingface/skills/blob/main/LICENSE "LICENSE") | [Initial commit](https://github.com/huggingface/skills/commit/2a30f92beb97bd8815c9e516e1e7995d5fb9bd45 "Initial commit") | 6 months agoNov 24, 2025 |
+  | [README.md](https://github.com/huggingface/skills/blob/main/README.md "README.md") | [README.md](https://github.com/huggingface/skills/blob/main/README.md "README.md") | [Add huggingface-zerogpu skill (](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b "Add huggingface-zerogpu skill (#138)  * Add huggingface-zerogpu skill  Coding rules for Gradio Spaces running on ZeroGPU hardware. Covers @spaces.GPU, duration and quota tuning, the CUDA availability model, pickle-based process isolation across the worker boundary, gr.State semantics, concurrency safety, and CUDA wheel-only build constraints.  * Update agents/AGENTS.md  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>  * Sync zerogpu description with AGENTS.md suggestion  * Bump plugin version to 1.0.3  * Stop hard-coding ZeroGPU backing hardware  * Drop FA3 recommendations in zerogpu skill  ---------  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>") [#138](https://github.com/huggingface/skills/pull/138) [)](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b "Add huggingface-zerogpu skill (#138)  * Add huggingface-zerogpu skill  Coding rules for Gradio Spaces running on ZeroGPU hardware. Covers @spaces.GPU, duration and quota tuning, the CUDA availability model, pickle-based process isolation across the worker boundary, gr.State semantics, concurrency safety, and CUDA wheel-only build constraints.  * Update agents/AGENTS.md  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>  * Sync zerogpu description with AGENTS.md suggestion  * Bump plugin version to 1.0.3  * Stop hard-coding ZeroGPU backing hardware  * Drop FA3 recommendations in zerogpu skill  ---------  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>") | 4 hours agoMay 20, 2026 |
+  | [gemini-extension.json](https://github.com/huggingface/skills/blob/main/gemini-extension.json "gemini-extension.json") | [gemini-extension.json](https://github.com/huggingface/skills/blob/main/gemini-extension.json "gemini-extension.json") | [Add huggingface-zerogpu skill (](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b "Add huggingface-zerogpu skill (#138)  * Add huggingface-zerogpu skill  Coding rules for Gradio Spaces running on ZeroGPU hardware. Covers @spaces.GPU, duration and quota tuning, the CUDA availability model, pickle-based process isolation across the worker boundary, gr.State semantics, concurrency safety, and CUDA wheel-only build constraints.  * Update agents/AGENTS.md  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>  * Sync zerogpu description with AGENTS.md suggestion  * Bump plugin version to 1.0.3  * Stop hard-coding ZeroGPU backing hardware  * Drop FA3 recommendations in zerogpu skill  ---------  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>") [#138](https://github.com/huggingface/skills/pull/138) [)](https://github.com/huggingface/skills/commit/5e3b4d2226d1beaa6a8a4df3739b6f68bd36521b "Add huggingface-zerogpu skill (#138)  * Add huggingface-zerogpu skill  Coding rules for Gradio Spaces running on ZeroGPU hardware. Covers @spaces.GPU, duration and quota tuning, the CUDA availability model, pickle-based process isolation across the worker boundary, gr.State semantics, concurrency safety, and CUDA wheel-only build constraints.  * Update agents/AGENTS.md  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>  * Sync zerogpu description with AGENTS.md suggestion  * Bump plugin version to 1.0.3  * Stop hard-coding ZeroGPU backing hardware  * Drop FA3 recommendations in zerogpu skill  ---------  Co-authored-by: burtenshaw <ben.burtenshaw@gmail.com>") | 4 hours agoMay 20, 2026 |
+  | View all files |
+  
+  ## Repository files navigation
+  
+  # Hugging Face Skills
+  
+  [Permalink: Hugging Face Skills](https://github.com/huggingface/skills#hugging-face-skills)
+  
+  Hugging Face Skills are definitions for AI/ML tasks like dataset creation, model training, and evaluation. They are interoperable with all major coding agent tools like OpenAI Codex, Anthropic's Claude Code, Google DeepMind's Gemini CLI, and Cursor.
+  
+  The skills in this repository follow the standardized [Agent Skills](https://agentskills.io/home) format.
+  
+  Note
+  
+  **Just want to give your agent access to the Hugging Face Hub?** Start with [`hf-cli`](https://huggingface.co/docs/hub/agents-cli). It's the recommended first Skill to install: it teaches your agent every `hf` command (search models, manage datasets and buckets, launch Spaces, run jobs) and is generated from your locally installed CLI so it stays current.
+  
+  ## How do Skills work?
+  
+  [Permalink: How do Skills work?](https://github.com/huggingface/skills#how-do-skills-work)
+  
+  In practice, skills are self-contained folders that package instructions, scripts, and resources together for an AI agent to use on a specific use case. Each folder includes a `SKILL.md` file with YAML frontmatter (name and description) followed by the guidance your coding agent follows while the skill is active.
+  
+  Tip
+  
+  If your agent doesn't support skills, you can use [`agents/AGENTS.md`](https://github.com/huggingface/skills/blob/main/agents/AGENTS.md) directly as a fallback.
+  
+  The skills in this repository are also available through:
+  
+  - Cursor Marketplace ( [https://cursor.com/marketplace/huggingface](https://cursor.com/marketplace/huggingface))
+  - Codex Plugins Directory ( [https://developers.openai.com/codex/plugins](https://developers.openai.com/codex/plugins))
+  
+  ## Installation
+  
+  [Permalink: Installation](https://github.com/huggingface/skills#installation)
+  
+  Hugging Face skills are compatible with Claude Code, Codex, Gemini CLI, and Cursor.
+  
+  ### Claude Code
+  
+  [Permalink: Claude Code](https://github.com/huggingface/skills#claude-code)
+  
+  1. Register the repository as a plugin marketplace:
+  
+  ```
+  /plugin marketplace add huggingface/skills
+  ```
+  
+  2. To install a skill, run:
+  
+  ```
+  /plugin install <skill-name>@huggingface/skills
+  ```
+  
+  For example:
+  
+  ```
+  /plugin install hf-cli@huggingface/skills
+  ```
+  
+  ### Codex
+  
+  [Permalink: Codex](https://github.com/huggingface/skills#codex)
+  
+  1. Copy or symlink any skills you want to use from this repository's `skills/` directory into one of Codex's standard `.agents/skills` locations (for example, `$REPO_ROOT/.agents/skills` or `$HOME/.agents/skills`) as described in the [Codex Skills guide](https://developers.openai.com/codex/skills/).
+  
+  2. Once a skill is available in one of those locations, Codex will discover it using the Agent Skills standard and load the `SKILL.md` instructions when it decides to use that skill or when you explicitly invoke it.
+  
+  3. If your Codex setup still relies on `AGENTS.md`, you can use the generated [`agents/AGENTS.md`](https://github.com/huggingface/skills/blob/main/agents/AGENTS.md) file in this repo as a fallback bundle of instructions.
+  
+  
+  ### Gemini CLI
+  
+  [Permalink: Gemini CLI](https://github.com/huggingface/skills#gemini-cli)
+  
+  1. This repo includes `gemini-extension.json` to integrate with the Gemini CLI.
+  
+  2. Install locally:
+  
+  
+  ```
+  gemini extensions install . --consent
+  ```
+  
+  or use the GitHub URL:
+  
+  ```
+  gemini extensions install https://github.com/huggingface/skills.git --consent
+  ```
+  
+  4. See [Gemini CLI extensions docs](https://geminicli.com/docs/extensions/#installing-an-extension) for more help.
+  
+  ### Cursor
+  
+  [Permalink: Cursor](https://github.com/huggingface/skills#cursor)
+  
+  This repository includes Cursor plugin manifests:
+  
+  - `.cursor-plugin/plugin.json`
+  - `.mcp.json` (configured with the Hugging Face MCP server URL)
+  
+  Install from repository URL (or local checkout) via the Cursor plugin flow.
+  
+  For contributors, regenerate manifests with:
+  
+  ```
+  ./scripts/publish.sh
+  ```
+  
+  ## Skills
+  
+  [Permalink: Skills](https://github.com/huggingface/skills#skills)
+  
+  This repository contains a few skills to get you started. You can also contribute your own skills to the repository.
+  
+  ### Available skills
+  
+  [Permalink: Available skills](https://github.com/huggingface/skills#available-skills)
+  
+  | Name | Description | Documentation |
+  | --- | --- | --- |
+  | `hf-cli` | Execute Hugging Face Hub operations using the hf CLI. Download models/datasets, upload files, manage repos, and run cloud compute jobs. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/hf-cli/SKILL.md) |
+  | `huggingface-best` | Find the best AI model for any task by querying Hugging Face leaderboards and benchmarks. Recommends top models based on task type, hardware constraints, and benchmark scores. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/huggingface-best/SKILL.md) |
+  | `huggingface-community-evals` | Add and manage evaluation results in Hugging Face model cards. Supports extracting eval tables from README content, importing scores from Artificial Analysis API, and running custom evaluations with vLLM/lighteval. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/huggingface-community-evals/SKILL.md) |
+  | `huggingface-datasets` | Explore, query, and extract data from any Hugging Face dataset using the Dataset Viewer REST API and npx tooling. Zero Python dependencies — covers split/config discovery, row pagination, text search, filtering, SQL via parquetlens, and dataset upload via CLI. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/huggingface-datasets/SKILL.md) |
+  | `huggingface-gradio` | Build Gradio web UIs and demos in Python. Use when creating or editing Gradio apps, components, event listeners, layouts, or chatbots. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/huggingface-gradio/SKILL.md) |
+  | `huggingface-llm-trainer` | Train or fine-tune language models using TRL on Hugging Face Jobs infrastructure. Covers SFT, DPO, GRPO and reward modeling training methods, plus GGUF conversion for local deployment. Includes hardware selection, cost estimation, Trackio monitoring, and Hub persistence. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/huggingface-llm-trainer/SKILL.md) |
+  | `huggingface-local-models` | Use to select models to run locally with llama.cpp and GGUF on CPU, Mac Metal, CUDA, or ROCm. Covers finding GGUFs, quant selection, running servers, exact GGUF file lookup, conversion, and OpenAI-compatible local serving. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/huggingface-local-models/SKILL.md) |
+  | `huggingface-paper-publisher` | Publish and manage research papers on Hugging Face Hub. Supports creating paper pages, linking papers to models/datasets, claiming authorship, and generating professional markdown-based research articles. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/huggingface-paper-publisher/SKILL.md) |
+  | `huggingface-papers` | Look up and read Hugging Face paper pages in markdown, and use the papers API for structured metadata like authors, linked models, datasets, Spaces, and media URLs when needed. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/huggingface-papers/SKILL.md) |
+  | `huggingface-tool-builder` | Build reusable scripts for Hugging Face Hub and API workflows. Useful for chaining API calls, enriching Hub metadata, or automating repeated tasks. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/huggingface-tool-builder/SKILL.md) |
+  | `huggingface-trackio` | Track and visualize ML training experiments with Trackio. Log metrics via Python API and retrieve them via CLI. Supports real-time dashboards synced to HF Spaces. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/huggingface-trackio/SKILL.md) |
+  | `huggingface-vision-trainer` | Train and fine-tune object detection models (RTDETRv2, YOLOS, DETR and others) and image classification models (timm and transformers models — MobileNetV3, MobileViT, ResNet, ViT/DINOv3) using Transformers Trainer API on Hugging Face Jobs infrastructure or locally. Includes COCO dataset format support, Albumentations augmentation, mAP/mAR metrics, trackio tracking, hardware selection, and Hub persistence. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/huggingface-vision-trainer/SKILL.md) |
+  | `huggingface-zerogpu` | Coding rules for Gradio Spaces using Hugging Face Spaces ZeroGPU hardware. Covers `@spaces.GPU`, duration and quota tuning, pickle-based process isolation, `gr.State` semantics across the worker boundary, the CUDA availability model, concurrency safety, and CUDA wheel-only build constraints. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/huggingface-zerogpu/SKILL.md) |
+  | `train-sentence-transformers` | Train or fine-tune sentence-transformers models across all three architectures: SentenceTransformer (bi-encoder embeddings), CrossEncoder (rerankers), and SparseEncoder (SPLADE). Covers loss selection, hard-negative mining, evaluators, distillation, LoRA, Matryoshka, and Hugging Face Hub publishing. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/train-sentence-transformers/SKILL.md) |
+  | `transformers-js` | Run state-of-the-art machine learning models directly in JavaScript/TypeScript for NLP, computer vision, audio processing, and multimodal tasks. Works in Node.js and browsers with WebGPU/WASM using Hugging Face models. | [SKILL.md](https://github.com/huggingface/skills/blob/main/skills/transformers-js/SKILL.md) |
+  
+  ### Using skills in your coding agent
+  
+  [Permalink: Using skills in your coding agent](https://github.com/huggingface/skills#using-skills-in-your-coding-agent)
+  
+  Once a skill is installed, mention it directly while giving your coding agent instructions:
+  
+  - "Use the HF LLM trainer skill to estimate the GPU memory needed for a 70B model run."
+  - "Use the HF model evaluation skill to launch `run_eval_job.py` on the latest checkpoint."
+  - "Use the HF dataset creator skill to draft new few-shot classification templates."
+  - "Use the HF paper publisher skill to index my arXiv paper and link it to my model."
+  
+  Your coding agent automatically loads the corresponding `SKILL.md` instructions and helper scripts while it completes the task.
+  
+  ### Contribute or customize a skill
+  
+  [Permalink: Contribute or customize a skill](https://github.com/huggingface/skills#contribute-or-customize-a-skill)
+  
+  1. Copy one of the existing skill folders (for example, `hf-datasets/`) and rename it.
+  2. Update the new folder's `SKILL.md` frontmatter:
+  
+  
+  
+  ```
+     ---
+  name: my-skill-name
+  description: Describe what the skill does and when to use it
+     ---
+  
+  # Skill Title
+  Guidance + examples + guardrails
+  ```
+  
+  3. Add or edit supporting scripts, templates, and documents referenced by your instructions.
+  4. Add an entry to `.claude-plugin/marketplace.json` with a concise, human-readable description.
+  5. Run:
+  
+  
+  
+  ```
+  ./scripts/publish.sh
+  ```
+  
+  
+  
+  
+  
+  
+  
+  to regenerate and validate all generated metadata.
+  6. Reinstall or reload the skill bundle in your coding agent so the updated folder is available.
+  
+  ### Marketplace
+  
+  [Permalink: Marketplace](https://github.com/huggingface/skills#marketplace)
+  
+  The `.claude-plugin/marketplace.json` file lists skills with human-readable descriptions for the plugin marketplace. The CI validates that skill names and paths match between `SKILL.md` files and `marketplace.json`, but descriptions are maintained separately: `SKILL.md` descriptions guide when Claude activates the skill, while marketplace descriptions are written for humans browsing available skills.
+  
+  ### Additional references
+  
+  [Permalink: Additional references](https://github.com/huggingface/skills#additional-references)
+  
+  - Browse the latest instructions, scripts, and templates directly at [huggingface/skills](https://github.com/huggingface/skills).
+  - Review Hugging Face documentation for the specific libraries or workflows you reference inside each skill.
+  
+  ## About
+  
+  Give your agents the power of the Hugging Face ecosystem
+  
+  
+  [huggingface.co](https://huggingface.co/ "https://huggingface.co")
+  
+  ### Resources
+  
+  [Readme](https://github.com/huggingface/skills#readme-ov-file)
+  
+  ### License
+  
+  [Apache-2.0 license](https://github.com/huggingface/skills#Apache-2.0-1-ov-file)
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://github.com/huggingface/skills).
+  
+  [Activity](https://github.com/huggingface/skills/activity)
+  
+  [Custom properties](https://github.com/huggingface/skills/custom-properties)
+  
+  ### Stars
+  
+  [**10.5k**\\
+  stars](https://github.com/huggingface/skills/stargazers)
+  
+  ### Watchers
+  
+  [**49**\\
+  watching](https://github.com/huggingface/skills/watchers)
+  
+  ### Forks
+  
+  [**675**\\
+  forks](https://github.com/huggingface/skills/forks)
+  
+  [Report repository](https://github.com/contact/report-content?content_url=https%3A%2F%2Fgithub.com%2Fhuggingface%2Fskills&report=huggingface+%28user%29)
+  
+  ## [Releases](https://github.com/huggingface/skills/releases)
+  
+  No releases published
+  
+  ## [Packages\  0](https://github.com/orgs/huggingface/packages?repo_name=skills)
+  
+  No packages published
+  
+  ## [Contributors\  31](https://github.com/huggingface/skills/graphs/contributors)
+  
+  - [![@burtenshaw](https://avatars.githubusercontent.com/u/19620375?s=64&v=4)](https://github.com/burtenshaw)
+  - [![@evalstate](https://avatars.githubusercontent.com/u/1936278?s=64&v=4)](https://github.com/evalstate)
+  - [![@hanouticelina](https://avatars.githubusercontent.com/u/36770234?s=64&v=4)](https://github.com/hanouticelina)
+  - [![@claude](https://avatars.githubusercontent.com/u/81847?s=64&v=4)](https://github.com/claude)
+  - [![@NathanHB](https://avatars.githubusercontent.com/u/30601243?s=64&v=4)](https://github.com/NathanHB)
+  - [![@Wauplin](https://avatars.githubusercontent.com/u/11801849?s=64&v=4)](https://github.com/Wauplin)
+  - [![@NielsRogge](https://avatars.githubusercontent.com/u/48327001?s=64&v=4)](https://github.com/NielsRogge)
+  - [![@abidlabs](https://avatars.githubusercontent.com/u/1778297?s=64&v=4)](https://github.com/abidlabs)
+  - [![@cursoragent](https://avatars.githubusercontent.com/u/199161495?s=64&v=4)](https://github.com/cursoragent)
+  - [![@gary149](https://avatars.githubusercontent.com/u/3841370?s=64&v=4)](https://github.com/gary149)
+  - [![@cfahlgren1](https://avatars.githubusercontent.com/u/13546028?s=64&v=4)](https://github.com/cfahlgren1)
+  - [![@irangareddy](https://avatars.githubusercontent.com/u/60821111?s=64&v=4)](https://github.com/irangareddy)
+  - [![@Madhu3456](https://avatars.githubusercontent.com/u/108209860?s=64&v=4)](https://github.com/Madhu3456)
+  - [![@nico-martin](https://avatars.githubusercontent.com/u/8424136?s=64&v=4)](https://github.com/nico-martin)
+  
+  [\+ 17 contributors](https://github.com/huggingface/skills/graphs/contributors)
+  
+  ## Languages
+  
+  - [Python94.7%](https://github.com/huggingface/skills/search?l=python)
+  - [Shell5.0%](https://github.com/huggingface/skills/search?l=shell)
+  - [TypeScript0.3%](https://github.com/huggingface/skills/search?l=typescript)
+  
+  You can’t perform that action at this time.
+  --- End Content ---
+
+Skills
+  URL: https://huggingface.co/docs/hub/agents-skills
+  Looking for the hf CLI Skill? It's the quickest way to connect your agent to the Hugging Face Hub and ecosystem. See the Hugging Face CLI for AI Agents guide.
+
+  --- Content ---
+  Hub documentation
+  
+  Skills
+  
+  # Hub
+  
+  🏡 View all docsAWS Trainium & InferentiaAccelerateArgillaAutoTrainBitsandbytesCLIChat UIDataset viewerDatasetsDeploying on AWSDiffusersDistilabelEvaluateGoogle CloudGoogle TPUsGradioHubHub Python LibraryHuggingface.jsInference Endpoints (dedicated)Inference ProvidersKernelsLeRobotLeaderboardsLightevalMicrosoft AzureOptimumPEFTReachy MiniSafetensorsSentence TransformersTRLTasksText Embeddings InferenceText Generation InferenceTokenizersTrackioTransformersTransformers.jsXetsmolagentstimm
+  
+  Search documentation
+  
+  EN
+  
+  [API docs](https://huggingface.co/spaces/huggingface/openapi)
+  
+  ![Hugging Face's logo](https://huggingface.co/front/assets/huggingface_logo-noborder.svg)
+  
+  Join the Hugging Face community
+  
+  and get access to the augmented documentation experience
+  
+  Collaborate on models, datasets and Spaces
+  
+  Faster examples with accelerated inference
+  
+  Switch between documentation themes
+  
+  [Sign Up](https://huggingface.co/join)
+  
+  to get started
+  
+  Copy page
+  
+  # Skills
+  
+  > Looking for the `hf` CLI Skill? It’s the quickest way to connect your agent to the Hugging Face ecosystem. See the [Hugging Face CLI for AI Agents](https://huggingface.co/docs/hub/agents-cli) guide.
+  
+  Hugging Face provides a curated set of Skills built for AI builders. Train models, create datasets, run evaluations, track experiments. Each Skill is a self-contained `SKILL.md` that your agent follows while working on the task.
+  
+  Skills work with all major coding agents: Claude Code, OpenAI Codex, Google Gemini CLI, and Cursor. Learn more about the format at [agentskills.io](https://agentskills.io/).
+  
+  ## Installation
+  
+  Claude Code
+  
+  OpenAI Codex
+  
+  Gemini CLI
+  
+  Cursor
+  
+  Copied
+  
+  ```bash
+  # register the skills marketplace
+  /plugin marketplace add huggingface/skills
+  
+  # install a specific Skill
+  /plugin install <skill-name>@huggingface/skills
+  ```
+  
+  ## Available Skills
+  
+  | Skill | What it does |
+  | --- | --- |
+  | [`hf-cli`](https://github.com/huggingface/skills/tree/main/skills/hf-cli) | Hub operations via the `hf` CLI: download, upload, manage repos, run jobs |
+  | [`huggingface-datasets`](https://github.com/huggingface/skills/tree/main/skills/huggingface-datasets) | Explore datasets, paginate rows, search text, apply filters |
+  | [`huggingface-llm-trainer`](https://github.com/huggingface/skills/tree/main/skills/huggingface-llm-trainer) | Train or fine-tune LLMs with TRL (SFT, DPO, GRPO) on HF Jobs |
+  | [`huggingface-vision-trainer`](https://github.com/huggingface/skills/tree/main/skills/huggingface-vision-trainer) | Train object detection and image classification models |
+  | [`huggingface-community-evals`](https://github.com/huggingface/skills/tree/main/skills/huggingface-community-evals) | Run evaluations against models on the Hugging Face Hub on local hardware |
+  | [`huggingface-trackio`](https://github.com/huggingface/skills/tree/main/skills/huggingface-trackio) | Track and visualize ML training experiments with Trackio |
+  | [`huggingface-papers`](https://github.com/huggingface/skills/tree/main/skills/huggingface-papers) | Look up and read Hugging Face paper pages in markdown |
+  | [`huggingface-paper-publisher`](https://github.com/huggingface/skills/tree/main/skills/huggingface-paper-publisher) | Publish and manage research papers on the Hub |
+  | [`huggingface-tool-builder`](https://github.com/huggingface/skills/tree/main/skills/huggingface-tool-builder) | Build reusable scripts for HF API operations |
+  | [`gradio`](https://github.com/huggingface/skills/tree/main/skills/huggingface-gradio) | Build Gradio web UIs and demos |
+  | [`transformers-js`](https://github.com/huggingface/skills/tree/main/skills/transformers-js) | Run ML models in JavaScript/TypeScript with WebGPU/WASM |
+  
+  ## Using Skills
+  
+  Once installed, mention the Skill directly in your prompt:
+  
+  - “Use the HF model trainer Skill to fine-tune Qwen3-0.6B with SFT on the Capybara dataset”
+  - “Use the HF evaluation Skill to add benchmark results to my model card”
+  - “Use the HF datasets Skill to create a new dataset from these examples”
+  
+  Your agent loads the corresponding `SKILL.md` instructions and helper scripts automatically.
+  
+  ## Resources
+  
+  - [Skills Repository](https://github.com/huggingface/skills) \- Browse and contribute
+  - [Agent Skills format](https://agentskills.io/home) \- Specification and docs
+  - [CLI Guide](https://huggingface.co/docs/hub/agents-cli) \- Hugging Face CLI for AI Agents
+  - [MCP Guide](https://huggingface.co/docs/hub/agents-mcp) \- Use alongside Skills
+  
+  [Update on GitHub](https://github.com/huggingface/hub-docs/blob/main/docs/hub/agents-skills.md)
+  
+  [←Hugging Face MCP Server](https://huggingface.co/docs/hub/agents-mcp) [Building agents with the HF SDK→](https://huggingface.co/docs/hub/agents-sdk)
+  --- End Content ---

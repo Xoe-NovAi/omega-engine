@@ -1,0 +1,19 @@
+# 🔱 Omega SearXNG — Service Unit
+# AP: AP-SEARXNG-QUADLET-v1.0.0
+# Manages the omega-searxng.container Quadlet
+
+[Unit]
+Description=Omega SearXNG Search Service
+Requires=omega-searxng.container
+After=omega-searxng.container
+Documentation=https://docs.searxng.org/
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/true
+ExecStop=/usr/bin/podman stop omega-searxng
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

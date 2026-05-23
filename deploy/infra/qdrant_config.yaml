@@ -1,0 +1,44 @@
+# 🏛️ Qdrant Configuration — Omega Engine
+# Optimized for: AMD Ryzen 7 5700U (Zen 2, 8C/16T, 14Gi RAM)
+# AP: AP-QDRANT-CONFIG-v1.0.0
+
+storage:
+  storage_path: /qdrant/storage
+  on_disk: true
+  snapshots_path: /qdrant/storage/snapshots
+  wal:
+    enabled: true
+    wal_capacity_mb: 128
+    wal_segments_ahead: 0
+
+optimizers:
+  default_segment_number: 2
+  snapshot_schedule_sec: 3600
+  memmap_interval_ms: 1000
+  use_mmap_for_vectors: true
+
+performance:
+  max_search_threads: 4
+  max_batch_size: 50
+  indexing_thread_count: 2
+  cpu_limit: 4
+  # Disable AVX512 — Zen 2 does not support it
+  # Disable SSE — Zen 2 optimized for AVX2
+  use_avx2: true
+
+payload_index_limit_mb: 256
+
+api:
+  http:
+    host: 0.0.0.0
+    port: 6333
+    read_only: false
+  grpc:
+    host: 0.0.0.0
+    port: 6334
+
+cluster:
+  enabled: false
+
+logging:
+  level: info

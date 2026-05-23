@@ -1,0 +1,1578 @@
+How to Harden Podman Container Deployments - OneUptime
+  URL: https://oneuptime.com/blog/post/2026-03-18-harden-podman-container-deployments/view
+  Use the hardening checklist script to audit running containers regularly. Each layer adds defense in depth, and together they create a ...
+
+  --- Content ---
+  [Skip to main content](https://oneuptime.com/blog/post/2026-03-18-harden-podman-container-deployments/view#main-content)
+  
+  ![](https://oneuptime.com/blog/post/2026-03-18-harden-podman-container-deployments/view)
+  
+  # How to Harden Podman Container Deployments
+  
+  Learn how to apply comprehensive hardening measures to Podman container deployments for production-grade security.
+  
+  
+  [![Nawaz Dhandala](https://avatars.githubusercontent.com/nawazdhandala)@nawazdhandala](https://github.com/nawazdhandala)•Mar 18, 2026•Reading time
+  5 min read
+  
+  [Podman](https://oneuptime.com/blog/tag/podman) [Container](https://oneuptime.com/blog/tag/container) [DevOps](https://oneuptime.com/blog/tag/devops) [Security](https://oneuptime.com/blog/tag/security) [Hardening](https://oneuptime.com/blog/tag/hardening) [Production](https://oneuptime.com/blog/tag/production)
+  
+  ## On this page
+  
+  [Share on X](https://twitter.com/intent/tweet?text=%20How%20to%20Harden%20Podman%20Container%20Deployments&url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-18-harden-podman-container-deployments%2Fview "Share on X")[Share on LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-18-harden-podman-container-deployments%2Fview "Share on LinkedIn")[Discuss on Hacker News](https://news.ycombinator.com/submitlink?u=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-18-harden-podman-container-deployments%2Fview&t=%20How%20to%20Harden%20Podman%20Container%20Deployments "Discuss on Hacker News")
+  
+  * * *
+  
+  > Hardening is not a single step but a systematic application of every available defense. Each layer you add makes your deployment exponentially harder to compromise.
+  
+  Hardening a Podman container deployment means applying security best practices across every layer: the host, the runtime configuration, the container image, the network, and the operational procedures. This guide brings together all the key hardening techniques into a comprehensive checklist and practical configuration.
+  
+  * * *
+  
+  ## Host-Level Hardening [Link to Host-Level Hardening](https://oneuptime.com/blog/post/2026-03-18-harden-podman-container-deployments/view\#host-level-hardening)
+  
+  The security of your containers starts with the host operating system.
+  
+  ```bash
+  BashCopy
+  # Ensure Podman and dependencies are up to date
+  
+  sudo dnf update -y podman containers-common 2>/dev/null || \
+  (sudo apt-get update && sudo apt-get install --only-upgrade -y podman) 2>/dev/null
+  
+  # Verify Podman version
+  podman version
+  ```
+  
+  ```bash
+  BashCopy
+  # Check that SELinux is in enforcing mode (RHEL/Fedora)
+  getenforce 2>/dev/null || echo "SELinux not available on this system"
+  
+  # Enable SELinux enforcing mode if it is not
+  # sudo setenforce 1
+  # sudo sed -i 's/SELINUX=permissive/SELINUX=enforcing/' /etc/selinux/config
+  ```
+  
+  ```bash
+  BashCopy
+  # Verify user namespace support is enabled
+  sysctl user.max_user_namespaces
+  
+  # Verify subordinate UID/GID ranges are configured for rootless operation
+  cat /etc/subuid
+  cat /etc/subgid
+  ```
+  
+  ## Image Hardening [Link to Image Hardening](https://oneuptime.com/blog/post/2026-03-18-harden-podman-container-deployments/view\#image-hardening)
+  
+  Build minimal, secure container images.
+  
+  ```bash
+  BashCopy
+  # Example of a hardened Containerfile
+  cat > /tmp/Containerfile.hardened << 'EOF'
+  # Use a minimal base image
+  FROM docker.io/library/alpine:3.19
+  
+  # Install only required packages
+  RUN apk add --no-cache curl tini && \
+      # Remove package manager cache
+      rm -rf /var/cache/apk/*
+  
+  # Create a non-root user
+  RUN addgroup -S appgroup && \
+      adduser -S appuser -G appgroup -h /app -s /sbin/nologin
+  
+  # Copy application files
+  COPY --chown=appuser:appgroup . /app/
+  
+  # Set working directory
+  WORKDIR /app
+  
+  # Run as non-root user
+  USER appuser
+  
+  # Use tini as PID 1 for proper signal handling
+  ENTRYPOINT ["/sbin/tini", "--"]
+  
+  # Define the application command
+  CMD ["sh", "-c", "echo 'Hardened container running' && sleep 3600"]
+  EOF
+  ```
+  
+  ```bash
+  BashCopy
+  # Build the hardened image
+  podman build -t hardened-app:latest -f /tmp/Containerfile.hardened /tmp
+  ```
+  
+  ## Runtime Hardening Configuration [Link to Runtime Hardening Configuration](https://oneuptime.com/blog/post/2026-03-18-harden-podman-container-deployments/view\#runtime-hardening-configuration)
+  
+  Apply all available runtime security options.
+  
+  ```bash
+  BashCopy
+  # Run a fully hardened container
+  podman run --rm -d \
+    --name hardened-deployment \
+    --read-only \
+    --tmpfs /tmp:rw,size=64m,noexec,nosuid,nodev \
+    --cap-drop=ALL \
+    --security-opt no-new-privileges \
+    --userns=auto \
+    --memory=256m \
+    --memory-swap=512m \
+    --cpus=1 \
+    --pids-limit=100 \
+    --ulimit nofile=1024:2048 \
+    --ulimit nproc=64:128 \
+    -p 127.0.0.1:8080:8080 \
+    hardened-app:latest
+  ```
+  
+  ```bash
+  BashCopy
+  # Verify the hardening settings
+  podman inspect hardened-deployment --format '
+    ReadOnly: {{.HostConfig.ReadonlyRootfs}}
+    Privileged: {{.HostConfig.Privileged}}
+    Memory: {{.HostConfig.Memory}}
+    MemorySwap: {{.HostConfig.MemorySwap}}
+    PidsLimit: {{.HostConfig.PidsLimit}}
+    Capabilities: {{.EffectiveCaps}}
+    SecurityOpts: {{.HostConfig.SecurityOpt}}
+  '
+  ```
+  
+  ## Network Hardening [Link to Network Hardening](https://oneuptime.com/blog/post/2026-03-18-harden-podman-container-deployments/view\#network-hardening)
+  
+  Minimize network exposure and isolate services.
+  
+  ```bash
+  BashCopy
+  # Create isolated networks for different services
+  podman network create --internal backend
+  podman network create frontend
+  
+  # Run a database on the internal network only
+  podman run --rm -d \
+    --network=backend \
+    --name hardened-db \
+    --read-only \
+    --tmpfs /tmp:rw,size=32m \
+    --cap-drop=ALL \
+    --security-opt no-new-privileges \
+    docker.io/library/alpine:latest sleep 3600
+  
+  # Run the app with access to both networks
+  podman run --rm -d \
+    --network=backend \
+    --network=frontend \
+    --name hardened-web \
+    --read-only \
+    --tmpfs /tmp:rw,size=32m \
+    --tmpfs /var/cache/nginx:rw,size=64m \
+    --tmpfs /var/run:rw,size=8m \
+    --cap-drop=ALL \
+    --cap-add=NET_BIND_SERVICE \
+    --security-opt no-new-privileges \
+    -p 127.0.0.1:8080:80 \
+    docker.io/library/nginx:alpine
+  ```
+  
+  Resource Limit Hardening
+  
+  Prevent resource exhaustion attacks with strict limits.
+  
+  ```bash
+  BashCopy
+  # Apply comprehensive resource limits
+  podman run --rm -d \
+    --name resource-limited \
+    --memory=128m \
+    --memory-swap=256m \
+    --memory-reservation=64m \
+    --cpus=0.5 \
+    --pids-limit=50 \
+    --ulimit nofile=512:1024 \
+    --ulimit nproc=32:64 \
+    --ulimit core=0:0 \
+    docker.io/library/alpine:latest sleep 3600
+  
+  # Verify resource limits
+  podman stats --no-stream resource-limited
+  ```
+  
+  ## Hardening Checklist Script [Link to Hardening Checklist Script](https://oneuptime.com/blog/post/2026-03-18-harden-podman-container-deployments/view\#hardening-checklist-script)
+  
+  ```bash
+  BashCopy
+  #!/bin/bash
+  # hardening-check.sh - Check all containers against hardening best practices
+  
+  echo "========================================"
+  echo "Podman Container Hardening Audit"
+  echo "Date: $(date)"
+  echo "========================================"
+  
+  containers=$(podman ps -q)
+  if [ -z "$containers" ]; then
+    echo "No running containers found."
+    exit 0
+  fi
+  
+  pass=0
+  warn=0
+  fail=0
+  
+  for cid in $containers; do
+    name=$(podman inspect "$cid" --format '{{.Name}}')
+    echo ""
+    echo "--- $name ---"
+  
+    # Check 1: Read-only root filesystem
+    ro=$(podman inspect "$cid" --format '{{.HostConfig.ReadonlyRootfs}}')
+    if [ "$ro" = "true" ]; then
+      echo "[PASS] Read-only root filesystem"
+      ((pass++))
+    else
+      echo "[WARN] Writable root filesystem"
+      ((warn++))
+    fi
+  
+    # Check 2: Not privileged
+    priv=$(podman inspect "$cid" --format '{{.HostConfig.Privileged}}')
+    if [ "$priv" = "false" ]; then
+      echo "[PASS] Not privileged"
+      ((pass++))
+    else
+      echo "[FAIL] Running in privileged mode"
+      ((fail++))
+    fi
+  
+    # Check 3: Non-root user
+    user=$(podman inspect "$cid" --format '{{.Config.User}}')
+    if [ -n "$user" ] && [ "$user" != "root" ] && [ "$user" != "0" ]; then
+      echo "[PASS] Running as non-root user: $user"
+      ((pass++))
+    else
+      echo "[WARN] Running as root"
+      ((warn++))
+    fi
+  
+    # Check 4: Memory limit set
+    mem=$(podman inspect "$cid" --format '{{.HostConfig.Memory}}')
+    if [ "$mem" != "0" ] && [ -n "$mem" ]; then
+      echo "[PASS] Memory limit set: $((mem / 1048576))MB"
+      ((pass++))
+    else
+      echo "[WARN] No memory limit"
+      ((warn++))
+    fi
+  
+    # Check 5: PID limit set
+    pids=$(podman inspect "$cid" --format '{{.HostConfig.PidsLimit}}')
+    if [ "$pids" != "0" ] && [ "$pids" != "-1" ] && [ -n "$pids" ]; then
+      echo "[PASS] PID limit set: $pids"
+      ((pass++))
+    else
+      echo "[WARN] No PID limit"
+      ((warn++))
+    fi
+  
+    # Check 6: No host network
+    net=$(podman inspect "$cid" --format '{{.HostConfig.NetworkMode}}')
+    if [ "$net" != "host" ]; then
+      echo "[PASS] Not using host network"
+      ((pass++))
+    else
+      echo "[FAIL] Using host network"
+      ((fail++))
+    fi
+  
+    # Check 7: Minimal capabilities
+    caps=$(podman inspect "$cid" --format '{{.EffectiveCaps}}')
+    cap_count=$(echo "$caps" | tr ' ' '\n' | grep -c '[A-Z]')
+    if [ "$cap_count" -le 3 ]; then
+      echo "[PASS] Minimal capabilities ($cap_count)"
+      ((pass++))
+    else
+      echo "[WARN] $cap_count capabilities (consider reducing)"
+      ((warn++))
+    fi
+  done
+  
+  echo ""
+  echo "========================================"
+  echo "Results: $pass passed, $warn warnings, $fail failures"
+  echo "========================================"
+  ```
+  
+  ```bash
+  BashCopy
+  chmod +x hardening-check.sh
+  ./hardening-check.sh
+  ```
+  
+  ## Hardened Compose File [Link to Hardened Compose File](https://oneuptime.com/blog/post/2026-03-18-harden-podman-container-deployments/view\#hardened-compose-file)
+  
+  ```yaml
+  YAMLCopy
+  # docker-compose.yml - Production hardened deployment
+  services:
+    web:
+      image: docker.io/library/nginx:alpine
+      read_only: true
+      tmpfs:
+        - /tmp:size=32m,noexec,nosuid
+        - /var/cache/nginx:size=64m
+        - /var/run:size=8m
+      cap_drop:
+        - ALL
+      cap_add:
+        - NET_BIND_SERVICE
+      security_opt:
+        - no-new-privileges
+      deploy:
+        resources:
+          limits:
+            memory: 256m
+            cpus: "1.0"
+      ports:
+        - "127.0.0.1:8080:80"
+      networks:
+        - frontend
+  networks:
+    frontend:
+      driver: bridge
+  ```
+  
+  ## Cleanup [Link to Cleanup](https://oneuptime.com/blog/post/2026-03-18-harden-podman-container-deployments/view\#cleanup)
+  
+  ```bash
+  BashCopy
+  podman stop hardened-deployment hardened-db hardened-web resource-limited 2>/dev/null
+  podman rm hardened-deployment hardened-db hardened-web resource-limited 2>/dev/null
+  podman network rm backend frontend 2>/dev/null
+  rm -f /tmp/Containerfile.hardened hardening-check.sh
+  ```
+  
+  ## Summary [Link to Summary](https://oneuptime.com/blog/post/2026-03-18-harden-podman-container-deployments/view\#summary)
+  
+  Hardening Podman container deployments requires a systematic approach across every layer. Start with an updated, secure host with SELinux enforcing. Build minimal images that run as non-root users. Apply runtime restrictions including read-only filesystems, dropped capabilities, no-new-privileges, resource limits, and network isolation. Use the hardening checklist script to audit running containers regularly. Each layer adds defense in depth, and together they create a deployment that is resilient against a wide range of attacks.
+  
+  Share this article
+  
+  [Share on X](https://twitter.com/intent/tweet?text=%20How%20to%20Harden%20Podman%20Container%20Deployments&url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-18-harden-podman-container-deployments%2Fview "Share on X")[Share on LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-18-harden-podman-container-deployments%2Fview "Share on LinkedIn")[Discuss on Hacker News](https://news.ycombinator.com/submitlink?u=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-18-harden-podman-container-deployments%2Fview&t=%20How%20to%20Harden%20Podman%20Container%20Deployments "Discuss on Hacker News")
+  
+  ![Nawaz Dhandala](https://avatars.githubusercontent.com/nawazdhandala)
+  
+  ### Nawaz Dhandala
+  
+  Author
+  
+  @nawazdhandala • Mar 18, 2026 • 5 min read
+  
+  Nawaz is building OneUptime with a passion for engineering reliable systems and improving observability.
+  
+  [GitHub](https://github.com/nawazdhandala)
+  
+  ### Improve this Blog Post
+  
+  All our blog posts are open source. Found a typo, want to add more detail, or have a better explanation? Anyone can contribute and make this post better for everyone.
+  
+  [Edit this Post on GitHub](https://github.com/oneuptime/blog/tree/master/posts/2026-03-18-harden-podman-container-deployments) [Contributing Guidelines](https://github.com/oneuptime/blog)
+  
+  [Open source](https://github.com/oneuptime/oneuptime)
+  
+  ## OneUptime is the Open-Source   Observability Platform
+  
+  Your complete reliability stack unified: infrastructure monitoring, incident management, status pages, and APM. Open-source and self-hostable.
+  
+  
+  [Get started for free](https://oneuptime.com/accounts/register) [Request a demo](https://oneuptime.com/enterprise/demo)
+  
+  [Status Page\\
+  \\
+  Real-time status updates](https://oneuptime.com/product/status-page) [Incidents\\
+  \\
+  Detect and resolve fast](https://oneuptime.com/product/incident-management) [Monitoring\\
+  \\
+  Monitor any resource](https://oneuptime.com/product/monitoring) [On-Call\\
+  \\
+  Smart alert routing](https://oneuptime.com/product/on-call) [Maintenance\\
+  \\
+  Plan & communicate downtime](https://oneuptime.com/product/scheduled-maintenance) [Logs\\
+  \\
+  Fastest log ingest and search](https://oneuptime.com/product/logs-management) [Metrics\\
+  \\
+  Performance insights](https://oneuptime.com/product/metrics) [Traces\\
+  \\
+  End-to-end distributed tracing](https://oneuptime.com/product/traces) [Exceptions\\
+  \\
+  Catch and fix bugs early](https://oneuptime.com/product/exceptions) [Workflows\\
+  \\
+  Automate any process](https://oneuptime.com/product/workflows) [Dashboards\\
+  \\
+  Visualize all your data](https://oneuptime.com/product/dashboards) [Kubernetes\\
+  \\
+  Monitor K8s clusters](https://oneuptime.com/product/kubernetes) [Profiles\\
+  \\
+  CPU & memory profiling](https://oneuptime.com/product/profiles)
+  
+  [AI Agent\\
+  \\
+  Automatically detect, diagnose, and resolve incidents with AI-powered root cause analysis and code fixes.](https://oneuptime.com/product/ai-agent)
+  --- End Content ---
+
+containers/podman-security-bench - GitHub
+  URL: https://github.com/containers/podman-security-bench
+  Podman Security is a script that checks for dozens of common best-practices around deploying Podman containers in production. The tests are all automated, ...
+  Category: github
+
+  --- Content ---
+  [Skip to content](https://github.com/containers/podman-security-bench#start-of-content)
+  
+  You signed in with another tab or window. [Reload](https://github.com/containers/podman-security-bench) to refresh your session.You signed out in another tab or window. [Reload](https://github.com/containers/podman-security-bench) to refresh your session.You switched accounts on another tab or window. [Reload](https://github.com/containers/podman-security-bench) to refresh your session.Dismiss alert
+  
+  {{ message }}
+  
+  [containers](https://github.com/containers)/ **[podman-security-bench](https://github.com/containers/podman-security-bench)** Public
+  
+  - [Notifications](https://github.com/login?return_to=%2Fcontainers%2Fpodman-security-bench) You must be signed in to change notification settings
+  - [Fork\\
+  12](https://github.com/login?return_to=%2Fcontainers%2Fpodman-security-bench)
+  - [Star\\
+  62](https://github.com/login?return_to=%2Fcontainers%2Fpodman-security-bench)
+  
+  
+  main
+  
+  [**1** Branch](https://github.com/containers/podman-security-bench/branches) [**0** Tags](https://github.com/containers/podman-security-bench/tags)
+  
+  [Go to Branches page](https://github.com/containers/podman-security-bench/branches)[Go to Tags page](https://github.com/containers/podman-security-bench/tags)
+  
+  Go to file
+  
+  Code
+  
+  Open more actions menu
+  
+  ## Folders and files
+  
+  | Name | Name | Last commit message | Last commit date |
+  | --- | --- | --- | --- |
+  | ## Latest commit<br>[![rhatdan](https://avatars.githubusercontent.com/u/2000835?v=4&size=40)](https://github.com/rhatdan)[rhatdan](https://github.com/containers/podman-security-bench/commits?author=rhatdan)<br>[Merge pull request](https://github.com/containers/podman-security-bench/commit/7fa1260a7ef5fb758831c8d53b7f9ef72469bfa4) [#20](https://github.com/containers/podman-security-bench/pull/20) [from badamowicz/fix/inspect-volumes](https://github.com/containers/podman-security-bench/commit/7fa1260a7ef5fb758831c8d53b7f9ef72469bfa4)<br>Open commit details<br>8 months agoSep 4, 2025<br>[7fa1260](https://github.com/containers/podman-security-bench/commit/7fa1260a7ef5fb758831c8d53b7f9ef72469bfa4) · 8 months agoSep 4, 2025<br>## History<br>[36 Commits](https://github.com/containers/podman-security-bench/commits/main/) <br>Open commit details<br>[View commit history for this file.](https://github.com/containers/podman-security-bench/commits/main/) 36 Commits |
+  | [default-lists](https://github.com/containers/podman-security-bench/tree/main/default-lists "default-lists") | [default-lists](https://github.com/containers/podman-security-bench/tree/main/default-lists "default-lists") | [Added allow\_check for check\_5.3](https://github.com/containers/podman-security-bench/commit/b6023cd0cdff50ef4ab578ae4b3dae5130890136 "Added allow_check for check_5.3  Moved hardcoded list of allowed capabilities to separate file (so it can be adjusted without altering the test)  Signed-off-by: Paweł Cendrzak <pabloxxl@fastmail.fm>") | last yearApr 17, 2025 |
+  | [functions](https://github.com/containers/podman-security-bench/tree/main/functions "functions") | [functions](https://github.com/containers/podman-security-bench/tree/main/functions "functions") | [Merge pull request](https://github.com/containers/podman-security-bench/commit/3a5464d9459a0ea86f28f00e2209dc78f71ab199 "Merge pull request #7 from badamowicz/feature/check_4_3  Feature/check 4 3") [#7](https://github.com/containers/podman-security-bench/pull/7) [from badamowicz/feature/check\_4\_3](https://github.com/containers/podman-security-bench/commit/3a5464d9459a0ea86f28f00e2209dc78f71ab199 "Merge pull request #7 from badamowicz/feature/check_4_3  Feature/check 4 3") | 4 years agoJun 22, 2022 |
+  | [img](https://github.com/containers/podman-security-bench/tree/main/img "img") | [img](https://github.com/containers/podman-security-bench/tree/main/img "img") | [Initial Version](https://github.com/containers/podman-security-bench/commit/6df7cb6180ff7b8134cf212fb14e87e7a1f1103c "Initial Version  Signed-off-by: Daniel J Walsh <dwalsh@redhat.com>") | 5 years agoSep 21, 2021 |
+  | [tests](https://github.com/containers/podman-security-bench/tree/main/tests "tests") | [tests](https://github.com/containers/podman-security-bench/tree/main/tests "tests") | [Merge pull request](https://github.com/containers/podman-security-bench/commit/7fa1260a7ef5fb758831c8d53b7f9ef72469bfa4 "Merge pull request #20 from badamowicz/fix/inspect-volumes  Make volume check save in case no volumes are defined in the container") [#20](https://github.com/containers/podman-security-bench/pull/20) [from badamowicz/fix/inspect-volumes](https://github.com/containers/podman-security-bench/commit/7fa1260a7ef5fb758831c8d53b7f9ef72469bfa4 "Merge pull request #20 from badamowicz/fix/inspect-volumes  Make volume check save in case no volumes are defined in the container") | 8 months agoSep 4, 2025 |
+  | [.containerignore](https://github.com/containers/podman-security-bench/blob/main/.containerignore ".containerignore") | [.containerignore](https://github.com/containers/podman-security-bench/blob/main/.containerignore ".containerignore") | [Initial Version](https://github.com/containers/podman-security-bench/commit/6df7cb6180ff7b8134cf212fb14e87e7a1f1103c "Initial Version  Signed-off-by: Daniel J Walsh <dwalsh@redhat.com>") | 5 years agoSep 21, 2021 |
+  | [.gitignore](https://github.com/containers/podman-security-bench/blob/main/.gitignore ".gitignore") | [.gitignore](https://github.com/containers/podman-security-bench/blob/main/.gitignore ".gitignore") | [Initial Version](https://github.com/containers/podman-security-bench/commit/6df7cb6180ff7b8134cf212fb14e87e7a1f1103c "Initial Version  Signed-off-by: Daniel J Walsh <dwalsh@redhat.com>") | 5 years agoSep 21, 2021 |
+  | [CONTRIBUTING.md](https://github.com/containers/podman-security-bench/blob/main/CONTRIBUTING.md "CONTRIBUTING.md") | [CONTRIBUTING.md](https://github.com/containers/podman-security-bench/blob/main/CONTRIBUTING.md "CONTRIBUTING.md") | [Use bash over sh](https://github.com/containers/podman-security-bench/commit/72062960d7f43cfa9cb11a2f6c5e164afd41158e "Use bash over sh  It already uses bashisms so why not spell it out? This fixes issues #13, #14 and #16  Signed-off-by: Emil Berg <emil.berg1991@gmail.com>") | 2 years agoSep 28, 2024 |
+  | [CONTRIBUTORS.md](https://github.com/containers/podman-security-bench/blob/main/CONTRIBUTORS.md "CONTRIBUTORS.md") | [CONTRIBUTORS.md](https://github.com/containers/podman-security-bench/blob/main/CONTRIBUTORS.md "CONTRIBUTORS.md") | [Initial Version](https://github.com/containers/podman-security-bench/commit/6df7cb6180ff7b8134cf212fb14e87e7a1f1103c "Initial Version  Signed-off-by: Daniel J Walsh <dwalsh@redhat.com>") | 5 years agoSep 21, 2021 |
+  | [Containerfile](https://github.com/containers/podman-security-bench/blob/main/Containerfile "Containerfile") | [Containerfile](https://github.com/containers/podman-security-bench/blob/main/Containerfile "Containerfile") | [Initial Version](https://github.com/containers/podman-security-bench/commit/6df7cb6180ff7b8134cf212fb14e87e7a1f1103c "Initial Version  Signed-off-by: Daniel J Walsh <dwalsh@redhat.com>") | 5 years agoSep 21, 2021 |
+  | [LICENSE](https://github.com/containers/podman-security-bench/blob/main/LICENSE "LICENSE") | [LICENSE](https://github.com/containers/podman-security-bench/blob/main/LICENSE "LICENSE") | [Initial commit](https://github.com/containers/podman-security-bench/commit/fb0cf6638d51f8ec3e6a1eee0b508693cbd1f9d9 "Initial commit") | 5 years agoSep 21, 2021 |
+  | [LICENSE.md](https://github.com/containers/podman-security-bench/blob/main/LICENSE.md "LICENSE.md") | [LICENSE.md](https://github.com/containers/podman-security-bench/blob/main/LICENSE.md "LICENSE.md") | [Initial Version](https://github.com/containers/podman-security-bench/commit/6df7cb6180ff7b8134cf212fb14e87e7a1f1103c "Initial Version  Signed-off-by: Daniel J Walsh <dwalsh@redhat.com>") | 5 years agoSep 21, 2021 |
+  | [MAINTAINERS](https://github.com/containers/podman-security-bench/blob/main/MAINTAINERS "MAINTAINERS") | [MAINTAINERS](https://github.com/containers/podman-security-bench/blob/main/MAINTAINERS "MAINTAINERS") | [Initial Version](https://github.com/containers/podman-security-bench/commit/6df7cb6180ff7b8134cf212fb14e87e7a1f1103c "Initial Version  Signed-off-by: Daniel J Walsh <dwalsh@redhat.com>") | 5 years agoSep 21, 2021 |
+  | [README.md](https://github.com/containers/podman-security-bench/blob/main/README.md "README.md") | [README.md](https://github.com/containers/podman-security-bench/blob/main/README.md "README.md") | [Use bash over sh](https://github.com/containers/podman-security-bench/commit/72062960d7f43cfa9cb11a2f6c5e164afd41158e "Use bash over sh  It already uses bashisms so why not spell it out? This fixes issues #13, #14 and #16  Signed-off-by: Emil Berg <emil.berg1991@gmail.com>") | 2 years agoSep 28, 2024 |
+  | [podman-security-bench.sh](https://github.com/containers/podman-security-bench/blob/main/podman-security-bench.sh "podman-security-bench.sh") | [podman-security-bench.sh](https://github.com/containers/podman-security-bench/blob/main/podman-security-bench.sh "podman-security-bench.sh") | [Use bash over sh](https://github.com/containers/podman-security-bench/commit/72062960d7f43cfa9cb11a2f6c5e164afd41158e "Use bash over sh  It already uses bashisms so why not spell it out? This fixes issues #13, #14 and #16  Signed-off-by: Emil Berg <emil.berg1991@gmail.com>") | 2 years agoSep 28, 2024 |
+  | View all files |
+  
+  ## Repository files navigation
+  
+  # Podman Security Tests
+  
+  [Permalink: Podman Security Tests](https://github.com/containers/podman-security-bench#podman-security-tests)
+  
+  [![Podman Security Tests running](https://github.com/containers/podman-security-bench/raw/main/img/benchmark_log.png)](https://github.com/containers/podman-security-bench/blob/main/img/benchmark_log.png)
+  
+  Podman Security is a script that checks for dozens of common best-practices around deploying Podman containers in production. The tests are all automated, and are based on the [CIS Docker Benchmark v1.3.1](https://www.cisecurity.org/benchmark/docker/).
+  
+  We are making this available as an open-source utility so the Podman community
+  can have an easy way to self-assess their hosts and podman containers against
+  this benchmark.
+  
+  ## Running Podman Security
+  
+  [Permalink: Running Podman Security](https://github.com/containers/podman-security-bench#running-podman-security)
+  
+  ### Run from your base host
+  
+  [Permalink: Run from your base host](https://github.com/containers/podman-security-bench#run-from-your-base-host)
+  
+  You can simply run this script from your base host by running:
+  
+  ```
+  git clone https://github.com/containers/podman-security-bench.git
+  cd podman-security-bench
+  sudo bash podman-security-bench.sh
+  ```
+  
+  ### Note
+  
+  [Permalink: Note](https://github.com/containers/podman-security-bench#note)
+  
+  Podman bench requires Podman 3.3.0 or later in order to run.
+  
+  Note that when distributions don't contain `auditctl`, the audit tests will check `/etc/audit/audit.rules` to see if a rule is present instead.
+  
+  ### Podman Security Bench options
+  
+  [Permalink: Podman Security Bench options](https://github.com/containers/podman-security-bench#podman-security-bench-options)
+  
+  ```
+    -b           optional  Do not print colors
+    -h           optional  Print this help message
+    -l FILE      optional  Log output in FILE, inside container if run using podman
+    -c CHECK     optional  Comma delimited list of specific check(s) id
+    -e CHECK     optional  Comma delimited list of specific check(s) id to exclude
+    -i INCLUDE   optional  Comma delimited list of patterns within a container or image name to check
+    -x EXCLUDE   optional  Comma delimited list of patterns within a container or image name to exclude from check
+    -n LIMIT     optional  In JSON output, when reporting lists of items (containers, images, etc.), limit the number of reported items to LIMIT. Default 0 (no limit).
+    -p PRINT     optional  Disable the printing of remediation measures. Default: print remediation measures.
+    -w PATH      optional  Path to directory containing files with allowed content.
+  ```
+  
+  By default, the Podman Security Bench script will run all available CIS tests and produce
+  logs in the log folder from current directory, named `podman-security-bench.log.json` and
+  `podman-security-bench.log`.
+  
+  The CIS based checks are named `check_<section>_<number>`, e.g. `check_2_6` and community contributed checks are named `check_c_<number>`.
+  
+  `sh podman-security-bench.sh -c check_2_2` will only run check `2.2 Ensure the logging level is set to 'info'`.
+  
+  `sh podman-security-bench.sh -e check_2_2` will run all available checks except `2.2 Ensure the logging level is set to 'info'`.
+  
+  `sh podman-security-bench.sh -e podman_enterprise_configuration` will run all available checks except the podman\_enterprise\_configuration group
+  
+  `sh podman-security-bench.sh -e podman_enterprise_configuration,check_2_2` will run all available checks except the podman\_enterprise\_configuration group and `2.2 Ensure the logging level is set to 'info'`
+  
+  `sh podman-security-bench.sh -c container_images -e check_4_5` will run just the container\_images checks except `4.5 Ensure Content trust for Podman is Enabled`
+  
+  Note that when submitting checks, provide information why it is a reasonable test to add and please include some kind of official documentation verifying that information.
+  
+  ### Allowed Content
+  
+  [Permalink: Allowed Content](https://github.com/containers/podman-security-bench#allowed-content)
+  
+  Some of the checks require an allow file in order to verify content or configuration of a container.
+  For example check\_4\_8 (Ensure setuid and setgid permissions are removed) uses a file
+  containing all the files which are allowed to have setuid or setgid set.
+  
+  There is a default file for every affected check below directory `default-lists`.
+  They must follow a simple naming pattern:
+  
+  - `allow_check_x.y`
+  
+  Most likely
+  these defaults will not suit the requirements for your particular containers. That's why it is
+  _highly advisable_ to provide your own files at runtime.
+  To do so just provide your files with something like `-w path/to/your/files`, which must point to a
+  directory containing all required files.
+  
+  Beware if a required file cannot be found, an error message is issued and the test will not be
+  executed.
+  
+  The next three chapters provide some advice of how to analyze containers an allow script has to be
+  created for.
+  
+  #### Analyzing Packages in a Container (4.3)
+  
+  [Permalink: Analyzing Packages in a Container (4.3)](https://github.com/containers/podman-security-bench#analyzing-packages-in-a-container-43)
+  
+  Example:
+  
+  ```
+  $ podman exec 540d7db05f99 apk list
+  libretls-3.3.4-r3 x86_64 {libretls} (ISC AND (BSD-3-Clause OR MIT)) [installed]
+  musl-1.2.2-r7 x86_64 {musl} (MIT) [installed]
+  bash-5.1.16-r0 x86_64 {bash} (GPL-3.0-or-later) [installed]
+  java-cacerts-1.0-r1 x86_64 {java-cacerts} (MIT) [installed]
+  ...
+  ```
+  
+  Or use the respective package manager command when not using alpine.
+  Now don't take over complete lines into your file for packages. Simply use the base name of a
+  package. E.g. to exclude package `bash-5.1.16-r0` from the allowed packages, simply put `bash` into
+  one line of your file.
+  
+  #### Analyzing setuid and setgid in a Container (4.8)
+  
+  [Permalink: Analyzing setuid and setgid in a Container (4.8)](https://github.com/containers/podman-security-bench#analyzing-setuid-and-setgid-in-a-container-48)
+  
+  Example:
+  
+  ```
+  $ podman export 540d7db05f99 | tar -tv 2>/dev/null | grep -E '^[-rwx].*(s|S).*\s[0-9]' | awk '{print $6}'
+  etc/shadow
+  ```
+  
+  This will provide all files having setuid or setgid set. They may server as a basis for your
+  file. It's up to you to decide.
+  
+  #### Analyzing configured Ports in a Container (5.8)
+  
+  [Permalink: Analyzing configured Ports in a Container (5.8)](https://github.com/containers/podman-security-bench#analyzing-configured-ports-in-a-container-58)
+  
+  Example:
+  
+  ```
+  $ podman inspect c2afbaf5b3 --format '{{ .NetworkSettings.Ports }}'
+  map[4711/tcp:[] 8080/tcp:[]]
+  ```
+  
+  This will show you a map containing all configured ports. If it's OK to have them configured, simply
+  put
+  
+  ```
+  4711
+  8080
+  ```
+  
+  into your file.
+  
+  ## About
+  
+  No description, website, or topics provided.
+  
+  
+  ### Resources
+  
+  [Readme](https://github.com/containers/podman-security-bench#readme-ov-file)
+  
+  ### License
+  
+  Apache-2.0, Apache-2.0 licenses found
+  
+  
+  ### Licenses found
+  
+  [Apache-2.0\\
+  \\
+  LICENSE](https://github.com/containers/podman-security-bench/blob/main/LICENSE) [Apache-2.0\\
+  \\
+  LICENSE.md](https://github.com/containers/podman-security-bench/blob/main/LICENSE.md)
+  
+  ### Contributing
+  
+  [Contributing](https://github.com/containers/podman-security-bench#contributing-ov-file)
+  
+  ### Uh oh!
+  
+  There was an error while loading. [Please reload this page](https://github.com/containers/podman-security-bench).
+  
+  [Activity](https://github.com/containers/podman-security-bench/activity)
+  
+  [Custom properties](https://github.com/containers/podman-security-bench/custom-properties)
+  
+  ### Stars
+  
+  [**62**\\
+  stars](https://github.com/containers/podman-security-bench/stargazers)
+  
+  ### Watchers
+  
+  [**9**\\
+  watching](https://github.com/containers/podman-security-bench/watchers)
+  
+  ### Forks
+  
+  [**12**\\
+  forks](https://github.com/containers/podman-security-bench/forks)
+  
+  [Report repository](https://github.com/contact/report-content?content_url=https%3A%2F%2Fgithub.com%2Fcontainers%2Fpodman-security-bench&report=containers+%28user%29)
+  
+  ## [Releases](https://github.com/containers/podman-security-bench/releases)
+  
+  No releases published
+  
+  ## [Packages\  0](https://github.com/orgs/containers/packages?repo_name=podman-security-bench)
+  
+  No packages published
+  
+  ## [Contributors\  7](https://github.com/containers/podman-security-bench/graphs/contributors)
+  
+  - [![@rhatdan](https://avatars.githubusercontent.com/u/2000835?s=64&v=4)](https://github.com/rhatdan)
+  - [![@badamowicz](https://avatars.githubusercontent.com/u/2071239?s=64&v=4)](https://github.com/badamowicz)
+  - [![@wdyzewski](https://avatars.githubusercontent.com/u/25245932?s=64&v=4)](https://github.com/wdyzewski)
+  - [![@pabloxxl](https://avatars.githubusercontent.com/u/374778?s=64&v=4)](https://github.com/pabloxxl)
+  - [![@jwhonce](https://avatars.githubusercontent.com/u/796529?s=64&v=4)](https://github.com/jwhonce)
+  - [![@navidys](https://avatars.githubusercontent.com/u/5696685?s=64&v=4)](https://github.com/navidys)
+  - [![@ember91](https://avatars.githubusercontent.com/u/31469580?s=64&v=4)](https://github.com/ember91)
+  
+  ## Languages
+  
+  - [Shell99.2%](https://github.com/containers/podman-security-bench/search?l=shell)
+  - Other0.8%
+  
+  You can’t perform that action at this time.
+  --- End Content ---
+
+Top 10 Container Security Tools to Know in 2026
+  URL: https://www.ox.security/blog/container-security-tools-2026/
+  This article reviews OX Security, Trivy, Clair, Anchore, Falco, Kube-Bench, KubeArmor, Dagda, Docker Scout, and Wiz, breaking down how each tool ...
+
+  --- Content ---
+  Breaking News: The Shai-Hulud npm Malware Returns With 320+ Affected Packages
+  
+  [Read the Latest Research](https://www.ox.security/blog/the-antv-ecosystem-was-compromised-with-shai-hulud-malware-300-packages-affected?ref=top-banner-the-antv-ecosystem-shai-hulud)
+  
+  # Top 10 Container Security Tools to Know in 2026
+  
+  [![cropped Group 1000002148.png](https://www.ox.security/wp-content/uploads/2025/06/cropped-Group-1000002148.png)OX Security](https://www.ox.security/author/ox-security/)
+  
+  December 8, 2025
+  
+  26 mins read
+  
+  Share
+  
+  [Share on LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fwww.ox.security%2Fblog%2Fcontainer-security-tools-2026%2F)[Share on X](https://twitter.com/intent/tweet?url=https%3A%2F%2Fwww.ox.security%2Fblog%2Fcontainer-security-tools-2026%2F&text=Top+10+Container+Security+Tools+to+Know+in+2026)[Share on Reddit](https://www.reddit.com/submit?url=https%3A%2F%2Fwww.ox.security%2Fblog%2Fcontainer-security-tools-2026%2F&title=Top+10+Container+Security+Tools+to+Know+in+2026)
+  
+  ![Container Security Tools](https://www.ox.security/wp-content/uploads/2025/12/process-2.png)
+  
+  ## **TL;DR**
+  
+  1. [Container security](https://www.ox.security/blog/container-security-tools/) in 2026 is about keeping up with fast-moving pipelines, short-lived workloads, and the complexity of code and images that are constantly changing. Teams are dealing with container changes happening minute-to-minute rather than build-to-build.
+  2. Since early 2025, attacks on build systems, unverified registry pulls, and misconfigured Kubernetes deployments have significantly increased. Weak spots like unpatched dependencies and exposed secrets don’t stay isolated; they can affect pipelines, registries, and clusters, making context more important than raw scan results.
+  3. Scanners can show you vulnerabilities, but that’s not enough. Teams need to see which issues actually affect the running services, which images come from risky commits, and which deployments could be exploited. The goal is no longer just to “find everything” but to “zero in on what’s important.”
+  4. Platform teams want one system that handles everything from identifying threats and validating builds to checking registries, deployment settings, and runtime behavior. Without this, they end up juggling inconsistent dashboards and dealing with duplicate alerts.
+  5. OX Security connects container issues back to their source. This includes the commit, the pipeline, and the deployment. It also matches runtime signals with build-time data to cut down on noise and show the few risks that could actually affect production.
+  6. This article reviews [**OX Security**](https://www.ox.security/blog/container-security-tools-2026/#ox), [**Trivy**](https://www.ox.security/blog/container-security-tools-2026/#trivy), [**Clair**](https://www.ox.security/blog/container-security-tools-2026/#clair), **[Anchore](https://www.ox.security/blog/container-security-tools-2026/#anchore)**, **[Falco](https://www.ox.security/blog/container-security-tools-2026/#falco)**, [**Kube-Bench**](https://www.ox.security/blog/container-security-tools-2026/#kubebench), **[KubeArmor](https://www.ox.security/blog/container-security-tools-2026/#kubearmor)**, [**Dagda**](https://www.ox.security/blog/container-security-tools-2026/#dagda), [**Docker Scout**](https://www.ox.security/blog/container-security-tools-2026/#docker), and [**Wiz**](https://www.ox.security/blog/container-security-tools-2026/#wiz), breaking down how each tool fits into the container security lifecycle.
+  
+  Container security has become harder to manage because AI-driven development changes code, images, and configurations faster than traditional controls can process them. AI systems now generate Dockerfiles, manifests, and dependency updates, creating container variants across pipelines and clouds that legacy scanners were never created to evaluate.
+  
+  The [National Technology Security Coalition (NTSC)](https://ntsc.org/wp-content/uploads/2025/03/The-2025-Software-Supply-Chain-Security-Report-RL-compressed.pdf) notes a clear shift in attacker behavior: targeting build pipelines, artifact integrity, and software supply-chain weak points rather than just exposed workloads. That tracks with what most enterprises see internally: issues introduced early in the SDLC that spread through registries and clusters long before anyone inspects them.
+  
+  The challenge for AppSec leaders is no longer finding vulnerabilities; it’s determining which issues map to real attack paths, which images originate from untrusted or AI-generated changes, and whether they can prove end-to-end lineage from code, pipeline,  image, and runtime.
+  
+  Most container tools still operate in isolation. They find data but not context, leaving Platform and Product Security teams to triage noise rather than defend systems.
+  
+  This guide evaluates how the leading tools, including OX Security, address container risk in 2026 and which of them help enterprise teams focus on the small fraction of issues that matter.
+  
+  ## **Understanding Container Threat Modelling in 2026**
+  
+  ### **1\. What is a Container Threat Model?**
+  
+  A container threat model outlines how an attacker could interact with each stage of a containerised environment, from the Dockerfile through to the point where the container is running in Kubernetes. It gives engineering teams a realistic view of _how_ failures occur, rather than simply listing theoretical risks.
+  
+  A strong threat model analyzes each phase of the container lifecycle and asks a more practical question:
+  
+  **“What could go wrong here, and how would we detect or stop it?”**
+  
+  Here’s how these layers typically align:
+  
+  - **Build Stage:** Unpatched dependencies, insecure Dockerfiles, hardcoded credentials, or vulnerable base images.
+  - **Registry Stage:** Unsigned or tampered images, stale SBOMs (Software Bill of Materials), and outdated repositories.
+  - **Deployment Stage:** Misconfigured Kubernetes manifests, exposed ports, over-permissive roles, and namespace sprawl.
+  - **Runtime Stage:** Privilege escalation, container escapes, abnormal process execution, or lateral movement within the cluster.
+  - **Response Stage:** Poor visibility, alert noise, and lack of contextual prioritisation that slows down incident response.
+  
+  A container threat model is useful only when it directly guides which tools a team actually needs. Without clarity on where the real risks come from,  teams often end up buying multiple scanners that all do the same thing or skipping tools that would catch real issues in production. Teams often overbuy scanners that duplicate effort or under-invest in runtime-focused controls. This leads to wasted budget and gaps in protection that attackers can easily take advantage of.
+  
+  ### **2. Common Attack Points in Containerised Environments**
+  
+  Organisations are relying heavily on containerised workloads today, which has made _attack paths_ more complex and interconnected. A single weakness can quickly spread across clusters and pipelines, whether it is an outdated image, a misconfigured role, or a leaked credential. Container environments also change quickly, with each build pulling new dependencies, services sharing the same networks, and short-lived workloads that can be exploited within minutes of appearing.
+  
+  Below are the most common stages where attackers gain footholds in containerised setups:
+  
+  - **Build-time:** Attackers target build pipelines by injecting malicious code into open-source dependencies or compromising base images. An unscanned Dockerfile or outdated image tag can introduce high-severity CVEs into every container built from it.
+  - **Registry:** Public and private registries are often used to store or pull container images. Pulling unsigned or unverified images from public repositories (such as Docker Hub) poses a risk, as threat actors can upload lookalike images containing cryptominers or remote shells.
+  - **Runtime:** Once containers are deployed, attackers exploit weak isolation to move laterally between pods or escalate privileges to the host kernel. Exploits such as container escapes or privilege escalation in Kubernetes can turn a minor misconfiguration into a full cluster compromise.
+  - **CI/CD Pipelines:** Automated integration systems are another popular target, especially for secret exposure or environment tampering. Compromised credentials in pipelines can grant attackers build-level control, allowing them to poison artifacts, modify configurations, or exfiltrate sensitive data.
+  
+  ## **Why Today’s DevOps Teams Need Container Security Tools (Benefits and Business Impact)**
+  
+  Today’s DevOps teams manage container environments that change by the hour, with new images built, pushed, and deployed automatically across multiple clusters. Without proper security tools, it’s very hard to keep track of what’s happening, ensure images are safe, or spot unusual activity as it happens. Container security tools don’t just find vulnerabilities; they connect the dots between build pipelines, registries, and runtime workloads, enabling engineers to secure the entire lifecycle without disrupting delivery speed.
+  
+  ### **1\. Strengthening Software Supply Chain Integrity**
+  
+  - Container security platforms validate image origins, verify digital signatures, and detect vulnerabilities before they enter the registry.
+  - By scanning every image within CI/CD pipelines, teams can automatically block compromised builds, outdated dependencies, or unsigned base layers from being deployed.
+  - This constant verification creates a chain of trust, ensuring that only clean and verified artifacts make it into production.
+  
+  ### **2\. Improving Visibility and Response**
+  
+  - Tools aggregate and correlate data from multiple layers: build-time scans, configuration checks, and runtime events.
+  - By linking vulnerabilities with container metadata (namespace, image tag, commit ID), teams can respond faster and with precision.
+  - Real-time dashboards and alerts reduce mean time to detection (MTTD) and mean time to remediation (MTTR) during incidents, cutting response time from hours to minutes.
+  
+  ### **3\. Lowering Operational Overhead and Noise**
+  
+  - Traditional scanners often flood dashboards with hundreds of low-value findings. Next-generation [container security solutions](https://www.ox.security/blog/container-security-solutions-in-2026/) prioritise the findings based on exploitability and runtime exposure. This helps engineers focus on vulnerabilities that actually impact active services, not dormant packages buried deep in an image layer.
+  - Alerts that are focused and context-aware let teams automate responses, so fixes are applied only when a vulnerability could actually affect production.
+  
+  ### **4\. Enabling Compliance and Governance**
+  
+  - Regular container image scans and audit trails simplify compliance with standards like **SOC 2**, **ISO 27001**, and **PCI-DSS**.
+  - Many tools provide pre-configured policies aligned with CIS Kubernetes Benchmarks, ensuring a consistent posture across clusters.
+  - Security teams can easily generate compliance reports for regulators or customers, proving adherence without manual review.
+  
+  ## **Top 10 Container Security Tools Every DevOps/Platform Engineer Should Know in 2026**
+  
+  ### **1\. OX Security**
+  
+  ![OX Security](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20467'%3E%3C/svg%3E)
+  
+  #### Overview
+  
+  OX Security is an _Active ASPM_( [Application Security Posture Management](https://www.ox.security/blog/what-is-application-security-posture-management/)) platform built for **enterprise AppSec, Platform Security teams and DevOps** managing large-scale development organizations. It secures software from code to production by correlating risks across source code, CI/CD pipelines, container registries, and runtime workloads—showing AppSec leaders which vulnerabilities are actually exploitable rather than flooding teams with theoretical findings.
+  
+  OX operates on the **VibeSec principle**: security adapts to developer workflows rather than blocking them, embedding checks directly where engineers already work (IDE, Git, pipelines, clusters). For **Heads of Product Security** overseeing hundreds or thousands of developers, OX provides unified governance, automated remediation, and audit-ready compliance across polyglot codebases, multiple CI/CD systems, and hybrid cloud environments.
+  
+  #### Key Features
+  
+  - **Container Security:** Flags unsafe images, misconfigurations, or exposed secrets as soon as they show up in your builds.
+  - **Active ASPM:** Connects signals from code, pipelines, registries, and runtime so teams can see the full picture of risk.
+  - **AI Remediation and No-Code Workflows:** Automatically opens issues tied to the exact commit and developer, making it easier to fix problems quickly.
+  
+  #### Hands-On Usage Guide: Using OX Security for Container Protection
+  
+  Follow this hands-on walkthrough to see how OX ingests container artifacts, runs image scans, shows container-specific alerts, ties findings back to commits, and automates remediation, all inside the same platform.
+  
+  ##### Step 1: Connect source control and registry
+  
+  - Connect your GitHub repository to OX using the OAuth flow so OX can scan code and Docker files.
+  
+  ![Connecting your GitHub repository to OX ](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20606%20630'%3E%3C/svg%3E)
+  
+  - Create a read-only registry token in Docker Hub (or GHCR) and add it to _Configure → Connectors, Registry_ in OX. Use your username and the token as the password.
+  
+  ![Docker Hub ](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20201'%3E%3C/svg%3E)
+  
+  After connecting GitHub and Docker Hub, OX performs a scan and shows repository posture and registry ingestion status on the project dashboard.
+  
+  ##### Step 2: Confirm containers are assigned to the application
+  
+  - Navigate to _Applications_ and open your selected app.
+  - In the bottom-right panel, choose _Containers_ to check whether your image artifacts are already listed.
+  - If none appear, click _Assign Container to Repo_, select the image from the dropdown, and press Add. Use Reset Containers once, if a new connector is added.
+  
+  ![Confirm containers are assigned to the application](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20188'%3E%3C/svg%3E)
+  
+  - If you cannot find a container image, check if Docker Hub is connected and the images are imported successfully.
+  
+  ##### Step 3: Run the image scan
+  
+  - In _Registry / Images,_ find the assigned image and click **Scan** or re-run the scan.
+  - Wait for the scan to complete and refresh the dashboard.
+  
+  Dashboard showing AppSec Data Fabric, Registry counts, and container security tile with issue count.
+  
+  ##### Step 4: Check the full list of container security issues
+  
+  - Open _Issues → Active Issues_ and apply Category = Container Security.
+  - Active issues list filtered to Container Security (shows critical/high/info items).
+  - The active issues view lists container findings such as secrets, outdated base images, and missing health checks, ready for triage.”
+  
+  ##### Step 5: Expand a single issue and check the attack path
+  
+  - Click an issue row (for example, “Dockerfile has no healthcheck instruction” or secret detection).
+  - Open the _Attack Path_ tab to show relationships: app, SBOM, and registry artifact.
+  
+  ![Expand a single issue and check the attack path](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20556'%3E%3C/svg%3E)
+  
+  Issue detail with the Attack Path / Graph open.
+  
+  - The attack path links the container finding to the application, SBOM, and registry artifacts, where you can see the impact and likely attack vectors.
+  
+  OX visualizes how a container finding could be exploited and what elements it touches in the software supply chain.
+  
+  **Note:** The _Attack Path_ panel dispvisualisesed assets, detection context, and remediation suggestions. If the full graph isn’t visible in a static screenshot, remember that the interactive view allows you to zoom and see the entire attack path in detail.
+  
+  ##### Step 6: Automating Fix and Response (no-code workflow, optional)
+  
+  - In _Configure → Workflows,_ create or open a workflow triggered by a container event (secret or high CVE).
+  - Add actions: create a JIRA ticket, send a Slack message, or block artifact. Save and enable, then re-trigger the alert to capture a run.
+  
+  ![JIRA ticket](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20581'%3E%3C/svg%3E)
+  
+  No-code workflow builder with trigger, conditions, and actions for automated remediation.
+  
+  - Remediation can be automated and assigned to owners without manual handoffs.
+  
+  Automated workflows let teams create tickets and notify owners when container rules trigger, keeping fixes inside the developer flow.
+  
+  #### Pros
+  
+  - **Link Issues to Source:** Every vulnerability is tied to the exact code path, pipeline run, and container using it, which reduces triage time.
+  - **Prioritise Real Risks:** Only vulnerabilities that can actually be exploited in live workloads are highlighted.
+  - **Fits Developer Workflows:** Integrates smoothly into CI/CD without forcing teams to change how they work.
+  
+  #### Cons
+  
+  - Integrating OX Security with multiple CI/CD pipelines, container registries, and cloud platforms can require extra configuration and testing.
+  - Runtime monitoring, such as behavior tracking and anomaly detection, may slightly affect container performance under heavy workloads.
+  - Teams new to cloud-native security may need time to get up to speed.
+  
+  ### **2\. Trivy (Aqua Security)**
+  
+  ![Trivy (Aqua Security)](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20477'%3E%3C/svg%3E)
+  
+  #### Overview
+  
+  Trivy is a fast, widely used open source scanner that finds vulnerabilities and misconfigurations in container images, file systems, and source repositories while also generating SBOMs. It is designed for direct integration into CI pipelines and developer workflows.
+  
+  #### Key Features
+  
+  - Scans container images, filesystems, and Git repositories with straightforward CLI commands.
+  - Generates SBOM in standard formats (SPDX) and supports CI/CD integration via CLI and actions.
+  - Provides integration with GitHub Actions, GitLab, and other CI services.
+  
+  #### Hands-On Usage Guide: Scanning Docker Images and Secrets with Trivy
+  
+  This walkthrough demonstrates how to scan Docker images with **Trivy**, identify vulnerabilities, integrate scanning into GitHub Actions, and review scan reports.
+  
+  ##### Step 1: Confirm Images Exist in the Registry
+  
+  The demo uses two Docker images:
+  
+  - _trivy-demo:base_ (a standard Node.js image)
+  - _trivy-demo:secret_ (a version that includes an exposed AWS secret and older dependencies).
+  
+  Confirm that both images exist in your Docker Hub repository before scanning.
+  
+  Copy CodeCopiedUse a different Browser
+  
+  ```php
+  
+  ```
+  
+  Trivy scans container images stored locally or in remote registries. Ensuring both images are available guarantees accurate analysis of their software layers.
+  
+  ![Trivy scanning container images](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201008%20239'%3E%3C/svg%3E)
+  
+  ##### Step 2: Install Trivy on Windows
+  
+  **Chocolatey installation**
+  
+  Copy CodeCopiedUse a different Browser
+  
+  ```php
+  
+  ```
+  
+  Or
+  
+  **Manual installation**
+  
+  1. Download _trivy\_windows\_amd64.zip_ from the [Trivy GitHub releases page](https://github.com/aquasecurity/trivy/releases).
+  2. Extract and move _trivy.exe_ to _C:\\Tools\\trivy_.
+  3. Add that folder to your PATH.
+  
+  Trivy’s CLI is cross-platform, but Windows requires manual PATH configuration for global use.
+  
+  ##### Step 3: Scan Images and Generate Reports
+  
+  Trivy scans images for vulnerabilities in system packages and application dependencies. It uses constantly updated CVE databases to find risks early in the pipeline.
+  
+  Copy CodeCopiedUse a different Browser
+  
+  ```php
+  
+  ```
+  
+  - The first scan analyses the clean image (base).
+  - The second scan inspects the vulnerable one (secret).
+  
+  Both generate JSON reports listing vulnerabilities, package names, and severity.
+  
+  **Scan result – trivy-base.json:**
+  
+  ![Scan result - trivy-base.json](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20931%20748'%3E%3C/svg%3E)
+  
+  **Scan result – trivy-secret.json:**
+  
+  ![trivy-secret.json](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20925'%3E%3C/svg%3E)
+  
+  These two images show how Trivy identifies risk introduced by older or misconfigured images, a common issue in production environments.
+  
+  ##### Step 4: Scan Repository Files for Secrets (Filesystem Scan)
+  
+  Scan the repository to detect baked-in secrets in source files and Dockerfiles. This step uses Trivy’s secret scanner and produces a JSON report ( _trivy-secrets.json_) that can be reviewed or included as an artifact.
+  
+  Commands (Windows PowerShell)
+  
+  Copy CodeCopiedUse a different Browser
+  
+  ```php
+  
+  ```
+  
+  **Output**:
+  
+  ![Output](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20354'%3E%3C/svg%3E)
+  
+  If the repo contains large files or previous Trivy outputs, run focused scans to avoid skipped files:
+  
+  Copy CodeCopiedUse a different Browser
+  
+  ```php
+  
+  ```
+  
+  - _trivy-secrets.json_will list matched secret findings with:
+  
+    - _RuleID_(detector name), _Category, Severity, Match_(matched string or snippet), and _FilePath_.
+  
+  ##### Step 5: Add Trivy to CI as a Pull Request Check
+  
+  Security should run automatically as part of the development process. Integrating Trivy into GitHub Actions ensures that vulnerable images never make it to main branches.
+  
+  Create a new file: _.github/workflows/trivy-scan.yml_
+  
+  Copy CodeCopiedUse a different Browser
+  
+  ```php
+  
+  ```
+  
+  - GitHub Actions runs automatically when a pull request is opened.
+  - Trivy scans the specified image and fails the workflow if it finds high or critical issues.
+  - The resulting JSON report is uploaded as an artifact for review.
+  
+  ![PR shows the failed “Trivy scan” check. ](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20924%20390'%3E%3C/svg%3E)![GitHub Actions pipeline blocking a pull request due to detected high-severity vulnerabilities.](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20465'%3E%3C/svg%3E)
+  
+  Automated enforcement ensures insecure builds never progress through CI/CD, closing security gaps early.
+  
+  ##### Step 6: Download the Trivy Report Artifact
+  
+  Each workflow run stores its scan output as an artifact. Reviewing it helps teams analyse issues in detail before deciding on remediations.
+  
+  Steps to locate the report:
+  
+  1. Navigate to **Actions → Latest Run** in your repository.
+  2. Scroll to the bottom right to find Artifact.
+  3. Click trivy-report.zip to download and extract it.
+  4. Open _trivy-report.json_ in VS Code.
+  
+  **JSON file:**
+  
+  Copy CodeCopiedUse a different Browser
+  
+  ```php
+  
+  ```
+  
+  Trivy reports can be archived or exported into dashboards, providing traceability and audit-ready evidence of vulnerability management.
+  
+  #### Pros
+  
+  - **Lightweight and Easy to Integrate:** Can be added to any CI/CD job with minimal setup, making it simple for teams to start scanning containers quickly.
+  - **Frequent Updates and Community Support:** Maintains a fast-updating vulnerability database and benefits from an active open-source community, helping keep scans current and reliable.
+  
+  #### Cons
+  
+  - Focused on build-time scanning and misconfiguration checks rather than runtime protection.
+  - Alerts require manual triage since Trivy cannot show which issues actually reach a cluster.
+  - CLI-centric workflows may need additional tooling to feed enterprise dashboards.
+  
+  ### **3\. Clair**
+  
+  ![Clair](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20522'%3E%3C/svg%3E)
+  
+  #### Overview
+  
+  Clair is an API-driven, open source engine that performs static, layer-by-layer scanning of container images to detect known vulnerabilities. It is often built into registries to analyse images as they get pushed. As a scanner, it’s dependable, but without context or prioritisation it becomes another feed that DevOps teams must process manually.
+  
+  #### Key Features
+  
+  - Performs layer-by-layer vulnerability analysis using a hostable API.
+  - Built to plug into registries for automated scanning of pushed images.
+  - Works with container registries such as Harbor and Quay for streamlined scanning.
+  
+  #### Pros
+  
+  - **Registry-Level Scanning:** Fits teams that want to scan images directly at the registry, catching issues early.
+  - **Layer Transparency:** Helps developers see exactly which layer or component introduced a vulnerability.
+  
+  #### Cons
+  
+  - No native runtime detection or behavioural analytics.
+  - Requires additional orchestration to provide enterprise-level dashboards and prioritisation.
+  
+  ### **4\. Anchore Engine / Grype**
+  
+  ![Anchore Engine](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20447'%3E%3C/svg%3E)
+  
+  #### Overview
+  
+  Anchore’s open source toolkit (Syft, Grype) is focused on SBOM generation and vulnerability scanning. Grype detects CVEs across a wide range of OS and language packages while Syft builds portable SBOMs for automation. DevOps teams often use these tools during build-time checks, but still require an additional tool to connect SBOM output to deployments, like OX Security.
+  
+  #### Key Features
+  
+  - Automated SBOM generation with Syft, producing consistent and portable SBOMs for all applications.
+  - Vulnerability scanning with Grype across operating systems, libraries, and language-specific packages to catch CVEs early.
+  - JSON output that integrates easily with CI/CD pipelines, compliance tools, and automated governance workflows.
+  
+  #### Pros
+  
+  - **SBOM-first approach:** Enables teams to track all components and dependencies, simplifying compliance and governance across the development lifecycle.
+  - **Easy integration:** Can be quickly scripted and added to container build jobs, allowing DevOps teams to automate security checks without slowing down CI/CD workflows.
+  
+  #### Cons
+  
+  - No runtime visibility; evaluates only what’s inside the image, not how it is used.
+  - Enterprises using it need to build integration layers for prioritisation and incident response.
+  - Does not provide runtime protection or network observability on its own.
+  
+  ### **5\. Falco**
+  
+  ![Falco](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20533'%3E%3C/svg%3E)
+  
+  #### Overview
+  
+  Falco is a CNCF (Cloud Native Computing Foundation) runtime detection project that monitors syscalls and other kernel-level activity to detect anomalous container behaviour in real time. It includes a rules system for high-fidelity alerts. While it provides an extra layer of security by monitoring runtime activity, Falco by itself does not connect runtime events back to the builds or images responsible.
+  
+  #### Key Features
+  
+  - Kernel-level syscall monitoring with a rules engine for behavioural detection.
+  - Integrations for alerting and observability in platforms like Prometheus and Grafana.
+  
+  #### Pros
+  
+  - **Runtime visibility:** Provides timely detection of unusual container activity, helping teams monitor potential security events.
+  - **Established rule:** Comes with a mature range  of detection rules and a supportive community, making it easier to adopt and maintain monitoring.
+  
+  #### Cons
+  
+  - Rules require tuning to reduce noise and avoid false positives.
+  - Produces many alerts with no link to code or pipelines.
+  - Needs pairing with ASPM platforms like OX to understand root cause.
+  
+  ### **6\. Kube-Bench (by Aqua Security)**
+  
+  ![Kube-Bench (by Aqua Security)](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20393'%3E%3C/svg%3E)
+  
+  #### Overview
+  
+  Kube-Bench is a command-line tool that runs checks from the CIS Kubernetes Benchmark to evaluate cluster configuration and hardening posture. It is useful for compliance audits and automated cluster checks. It’s a straightforward compliance tool, but it doesn’t tie findings back to images, workloads, or pipelines.
+  
+  #### Key Features
+  
+  - Automated CIS benchmark checks for API server, controller manager, scheduler, kubelet and etcd.
+  - YAML-driven test configuration that maps to updated benchmark rules.
+  
+  #### Pros
+  
+  - **Kubernetes configuration audit:** Provides a quick way to check Kubernetes configuration hygiene, helping teams identify misconfigurations early.
+  - **Flexible deployment:** Can run in CI pipelines or directly inside clusters, allowing DevOps teams to integrate checks wherever it fits best.
+  
+  #### Cons
+  
+  - It is a benchmark tool and does not detect runtime attacks.
+  - Requires interpretation and follow-up work to remediate configuration findings.
+  
+  ### **7\. KubeArmor**
+  
+  ![KubeArmor](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20490'%3E%3C/svg%3E)
+  
+  #### Overview
+  
+  KubeArmor is a CNCF Sandbox open-source project—a cloud-native runtime security enforcement engine. It enforces runtime security policies using LSM (Linux Security Modules) and eBPF (extended Berkeley Packet Filter) to restrict process, file, and network behaviors, providing a strong containment layer for high-sensitivity workloads. Like most runtime enforcement tools, mapping blocked actions back to build-time origins typically requires complementary platforms such as OX.
+  
+  #### Key Features
+  
+  - Policy enforcement for process execution, file access and network operations using LSM/eBPF.
+  - Native Kubernetes integration to apply policies per pod or namespace.
+  
+  #### Pros
+  
+  - **Low-overhead runtime enforcement:** Efficiently monitors and blocks suspicious actions that scanners won’t catch.
+  - **Enhanced containment for critical workloads:** Provides an additional security layer that complements scanners and detection tools, lowering risk from runtime threats.
+  
+  #### Cons
+  
+  - Policy authoring and lifecycle management are complex in large and dynamic clusters.
+  - Enforcement needs careful testing to avoid blocking legitimate behaviour.
+  
+  ### **8\. Dagda**
+  
+  Repository link: [https://github.com/eliasgranderubio/dagda](https://github.com/eliasgranderubio/dagda)
+  
+  #### Overview
+  
+  Dagda is an image analysis framework that blends vulnerability scanning with malware and trojan detection for Docker images and running containers. It provides research and forensics-oriented feature rules, making it useful for niche threat analysis but not for full-lifecycle visibility.
+  
+  #### Key Features
+  
+  - Scans for known CVEs plus malware signatures using engines like ClamAV.
+  - REST API and scan history storage to track changes over time.
+  
+  #### Pros
+  
+  - **Malware detection:** Enables identification of rare malware during image checks, enhancing overall security coverage.
+  - **Investigation support:** Useful for analyzing suspicious or third-party images, helping teams make informed decisions before deployment.
+  
+  #### Cons
+  
+  - Requires manual work to run reliably, as updates and rule tuning can be inconsistent.
+  - Provides minimal support for CI pipelines or runtime environments, making automation more challenging.
+  
+  ### **9\. Docker Scout**
+  
+  ![ Docker Scout](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20460'%3E%3C/svg%3E)
+  
+  #### Overview
+  
+  Docker Scout is Docker’s built-in image analysis service that generates SBOMs for images pushed to Docker Hub or scanned locally, matching components against a vulnerability database to provide remediation guidance. It’s convenient for developers, but it stops at image-level insights and doesn’t track how those images behave when deployed.
+  
+  #### Key Features
+  
+  - Automatic SBOM generation and component inventory for images.
+  - Risk summaries, CVE matching and remediation recommendations inside Docker Hub and CLI.
+  
+  #### Pros
+  
+  - **Zero configuration for Docker Hub users**: Teams can get started quickly with minimal setup, achieving fast time to value.
+  - **Seamless developer workflow integration**: Works directly with Docker CLI and Hub, making security and scanning part of the existing development process.
+  
+  #### Cons
+  
+  - Limited enterprise-grade runtime monitoring and cross-cluster visibility.
+  - Enterprise teams will likely need complementary tools for prioritisation and response.
+  
+  ### **10\. Wiz**
+  
+  ![Wiz](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%201024%20462'%3E%3C/svg%3E)
+  
+  #### Overview
+  
+  Wiz is a CNAPP that discovers and prioritises risks across cloud, container and identity resources, using an agentless graph model to connect vulnerabilities and misconfigurations to attack paths and exposure. It is great at wide cloud coverage but focuses broadly on infrastructure, not developer-facing workflows. DevOps teams often complement Wiz with platforms/tools that require deep integration with code, pipelines, and runtime behaviour, such as OX Security.
+  
+  #### Key Features
+  
+  - Agentless discovery and graph-based correlation across cloud and container assets.
+  - Contextual prioritisation that combines vulnerability data with exposure and identity.
+  
+  #### Pros
+  
+  - **Faster initial setup:** Quick onboarding and broad asset coverage across multi-cloud environments.
+  - **Integrated Risk Correlation:** See cloud and container risks in one place for faster, more complete threat analysis.
+  
+  #### Cons
+  
+  - Less focused on developer-facing CLI tools and fine-grained SBOM workflows.
+  - An agentless model may miss some deep runtime telemetry compared to agent-based solutions.
+  
+  ## **Assessing the Top 10 Container Security Tools**
+  
+  The table below provides a quick side-by-side view of the leading container security tools, highlighting their strengths and intended use cases for advanced DevOps and platform teams.
+  
+  |     |     |     |     |     |     |
+  | --- | --- | --- | --- | --- | --- |
+  | **Tool** | **Coverage Scope** | **CI/CD Integration** | **Prioritisation Approach** | **Runtime Visibility** | **Developer Experience** |
+  | **OX Security** | Full code-to-runtime lifecycle | Deep pipeline-aware integration | Context-driven impact prioritisation | Linked to build metadata | Strong developer-aligned workflows |
+  | **Trivy** | Build-time image scanning | Simple CLI-based integration | Severity-based vulnerability lists | No runtime inspection | Lightweight and easy to adopt |
+  | **Clair** | Registry-focused image analysis | API-driven CI hooks | Basic CVE severity ranking | No behavioural visibility | Straightforward but minimal context |
+  | **Anchore / Grype** | SBOM-centric image scanning | Scriptable CI workflows | Policy-based evaluation rules | No runtime correlation | Useful for supply-chain checks |
+  | **Falco** | Runtime behavioural detection | Limited CI compatibility | Rule-driven anomaly alerts | Strong syscall-level insights | Requires tuning and rule care |
+  | **Kube-Bench** | Kubernetes configuration auditing | Can run in CI jobs | Benchmark-aligned reporting only | No runtime monitoring | Clear guidance for cluster posture |
+  | **KubeArmor** | Pod-level runtime enforcement | No native CI support | Policy-based blocking actions | System calls and file controls | Needs careful policy lifecycle handling |
+  | **Dagda** | Vulnerability + malware scanning | Scriptable but manual | CVE + malware signature scores | Partial runtime checks | Mostly research and forensics use |
+  | **Docker Scout** | Image analysis and SBOMs | Native Docker CLI workflows | Component-level risk insights | No cluster or runtime data | Very friendly for Docker users |
+  | **Wiz** | Cloud + container posture | Broad agentless integrations | Exposure-aware graph analysis | Limited deep runtime detail | Strong cloud-wide visibility |
+  
+  ## **What to Consider when Choosing a Container Security Tool**
+  
+  The difference in choosing the right container security platform is often between teams that react to alerts versus those that proactively stop breaches. In short, choosing a container security tool is about picking something that enables engineering teams to move faster while lowering risk, not adding another dashboard or more noise. Instead of picking tools based on popularity or vendor marketing, teams should assess alignment with their workflows, scale, and automation maturity.
+  
+  ### **1\. Match Capabilities to Team Goals**
+  
+  - Identify your primary objective: it’s early vulnerability detection in CI/CD, runtime defence against live exploits, or full-lifecycle protection that ties everything together.
+  - Smaller teams may prioritise build-time scanners like _Trivy_ or _Clair_, while larger enterprises often need unified tools like _OX Security_ that handle posture, prioritisation, and runtime analytics in one system.
+  - OX security strengthens this category by connecting [SCA](https://www.ox.security/blog/software-composition-analysis-and-sca-tools/ "10 Best SCA Tools for 2025: Evaluating Software Composition Analysis for Modern Security Pipelines"), SBOM/PBOM, IaC, image scanning, secret exposure, and runtime context, removing the need for separate tools.
+  
+  ### **2\. Check Integration and Developer Adoption**
+  
+  - A tool is only as valuable as it naturally fits within your current pipelines and workflows. Look for _ready-made integrations_ with GitHub Actions, Jenkins, GitLab CI, or your container registry.
+  - APIs, CLI support, and webhook triggers allow teams to automate scans or actions without breaking their update cycle.
+  
+  ### **3\. Prioritization and Automation**
+  
+  - Choose tools that filter out the noise and highlight the exploitable vulnerabilities, instead of showing endless lists of CVEs.
+  - Built-in workflow automation: the creation of tickets, auto-remediation, or triggering rebuilds of containers decreases response time and embeds security into the delivery process.
+  
+  ### **4\. Evaluate Scalability and Coverage**
+  
+  - Containers multiply quickly; a tool that performs well in small clusters may struggle at enterprise scale.
+  - Check for multi-cloud deployments support, Kubernetes, serverless environments, and large image registries.
+  - Runtime monitoring must scale horizontally: _Falco_ or _KubeArmor_ handle high-volume telemetry efficiently, while ASPM platforms such as _OX Security_ maintain unified visibility across thousands of builds and workloads.
+  
+  ### **5\. Budget and Maintenance Trade-offs**
+  
+  - Commercial platforms provide managed databases, dashboards, and automation, but come with licensing costs.
+  - The ideal balance depends on your team’s operational maturity; if you lack in-house security engineering, managed platforms typically provide faster time to value and fewer maintenance burdens.
+  
+  ## **Conclusion**
+  
+  Container security in 2026 demands more than isolated scanners or post-deployment audits; it requires constant, contextual protection across build, registry, runtime, and response. With containers powering the majority of both CI/CD pipelines and production workloads, the attack area has moved far beyond simple image scanning, and the ecosystem has equally matured to meet that challenge with tools at every stage of the lifecycle. For teams looking for comprehensive visibility without adding operational overhead, OX Security provides a unified view that traces vulnerabilities, misconfigurations, and secrets directly to their source in code and pipelines to ensure end-to-end protection from development to deployment.
+  
+  This article reviewed how container threat modelling helps teams choose the right tools, why container security platforms now serve as a foundation for visibility and governance, and how ten leading solutions approach scanning, runtime defence, and policy enforcement. Across these categories, one statement becomes clear: tools must provide context, not just more alerts.
+  
+  Looking ahead, container security will continue shifting closer to the developer workflow, emphasizing automation, contextual prioritization, and AI-assisted remediation. Teams that treat security as part of their build process rather than a separate gate will be best positioned to maintain both agility and resilience as container ecosystems grow more complex.
+  
+  ## FAQs
+  
+  What is the best tool for connecting container vulnerabilities back to source code and pipelines?
+  
+  OX Security is the best choice for tracing container issues to their origin. Unlike standalone scanners that only report CVEs in images, OX links every vulnerability, misconfiguration, or exposed secret directly to the commit, developer, and pipeline run that introduced it. This end-to-end visibility eliminates guesswork during incident response and enables automated remediation workflows that assign fixes to the right owners without manual triage.
+  
+  What is the best tool for reducing alert noise in multi-cluster Kubernetes environments?
+  
+  OX Security is great at cutting through alert noise by applying contextual prioritization across multiple clusters. Instead of flooding teams with thousands of theoretical vulnerabilities, OX analyzes runtime reachability, exploitability, and actual exposure to highlight only the issues that threaten production workloads. It aggregates data across clusters and correlates findings with deployment metadata, so platform teams see unified risk posture without drowning in duplicate alerts from isolated scanners.
+  
+  What is the best tool for securing AI-generated code in container workflows?
+  
+  OX Security is purpose-built for AI-accelerated development environments. It validates AI-generated Dockerfiles, dependencies, and configurations at build time, then tracks how those artifacts progress through registries and into runtime. OX’s Active ASPM approach ensures that insecure patterns created by AI coding assistants are caught before deployment, with automated workflows that block risky builds and notify developers instantly—keeping security aligned with AI-driven velocity.
+  
+  What is the best tool for enterprise teams managing container security across multiple CI/CD pipelines?
+  
+  OX Security provides unified visibility across fragmented CI/CD environments where teams use GitHub Actions, GitLab CI, Jenkins, and other platforms simultaneously. It ingests data from every pipeline, correlates build artifacts with registry images and runtime workloads, and enforces consistent policies regardless of which CI system developers use. For enterprises with decentralized teams and inconsistent security maturity, OX creates a single source of truth that scales across thousands of builds daily.
+  
+  What is the best tool for proving container security compliance to auditors and regulators?
+  
+  OX Security simplifies compliance by maintaining complete audit trails that link code commits to build scans, registry validations, and runtime detections. Unlike point tools that produce siloed reports, OX generates unified compliance dashboards aligned with SOC 2, ISO 27001, and PCI-DSS requirements. Security teams can instantly demonstrate end-to-end container security posture, show remediation timelines, and prove policy enforcement across the entire SDLC—turning painful manual audits into automated evidence collection.
+  
+  ### Tags:
+  
+  - [Conatiners](https://www.ox.security/blog/category/conatiners/)
+  
+  ![post banner image](https://www.ox.security/wp-content/uploads/2026/04/post-banner-image.webp)
+  
+  ### Run Every Security Test Your Code Needs
+  
+  Pinpoint, investigate and eliminate code-level issues across the entire SDLC.
+  
+  [GET A PERSONALIZED DEMO](https://www.ox.security/book-a-demo?ref=post-sidebar-banner)
+  
+  Table of Contents
+  
+  ### Related Content
+  
+  [![Enterprise Container Security Solutions](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%202400%201256'%3E%3C/svg%3E)](https://www.ox.security/blog/container-security-solutions-in-2026/)
+  
+  December 5, 2025 [**Top 8 Container Security Solutions for Enterprise in 2026 \[Tried & Tested\]**](https://www.ox.security/blog/container-security-solutions-in-2026/)
+  
+  - ![cropped Group 1000002148.png](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2040%2040'%3E%3C/svg%3E)
+  
+  OX Security
+  
+  ![Frame 2085668530](data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%200%200'%3E%3C/svg%3E)
+  
+  ## Subscribe to Our Newsletter
+  
+  Stay updated with the latest SaaS insights, tips, and news delivered straight to your inbox.
+  
+  ![Security Starts at the Source](https://www.ox.security/wp-content/uploads/2026/03/Security-Starts-at-the-Source.svg)
+  
+  ×
+  
+  ▶⏸⛶⛶
+  --- End Content ---
+
+best Tools to secure minimal container images in 2026? - Reddit
+  URL: https://www.reddit.com/r/devsecops/comments/1r610co/best_tools_to_secure_minimal_container_images_in/
+  In terms of which one gets you vuln-free container images, Echo is a solid choice. Not open-source or free, but you pay for what you get.
+
+Podman Container Monitoring Tools - eG Innovations
+  URL: https://www.eginnovations.com/supported-technologies/podman-container-monitoring
+  Get application performance visibility and ensure your containers run optimally with Podman monitoring from eG Innovations. Try it for free today!
+
+  --- Content ---
+  [![Live chat online](https://image.providesupport.com/image/egurkha/online-140146475.png)](https://www.eginnovations.com/#)
+  
+  - [Container Monitoring](https://www.eginnovations.com/supported-technologies/observability-for-modern-it)
+  - **Podman Container Monitoring**
+  
+  # Podman Observability & Performance Monitoring \| Rootless & Rootful Support
+  
+  Monitor your Podman infrastructure with rootless container support. Get secure observability reducing security risks with non-admin container monitoring. eG Enterprise provides end-to-end visibility to identify and correlate performance issues within the underlying infrastructure and applications running on Podman.
+  
+  [Free Trial](https://www.eginnovations.com/it-monitoring/free-trial)
+  
+  Trusted by leading companies
+  
+  - [![](https://www.eginnovations.com/images/ebay-product-logo.png?2)](https://www.eginnovations.com/it-monitoring/proactive-it-monitoring-ebay)
+  - [![](https://www.eginnovations.com/images/anthem-product-logo.png?2)](https://www.eginnovations.com/resource)
+  - [![](https://www.eginnovations.com/images/allscripts.png?2)](https://www.eginnovations.com/case-studies/allscripts-monitoring)
+  - [![](https://www.eginnovations.com/images/dachers-product-logo.png?2)](https://www.eginnovations.com/case-studies/citrix-migration-roi-dachser)
+  
+  [![](https://www.eginnovations.com/images/v7-video.webp)](https://youtu.be/xsfOzdj0QO0)
+  
+  Free Trial
+  
+  ## The next-gen monitoring solution   for your Podman ecosystem
+  
+  eG Enterprise is an enterprise-class, converged application and IT monitoring solution that provides unified performance visibility into [Podman](https://www.eginnovations.com/glossary/podman) containers and the applications, services and databases running on them as well as infrastructure, cloud and other service dependencies.
+  
+  Whether you are using Podman for modern app development, microservices, CI/CD, digital transformation, DevOps, or edge computing, eG Enterprise delivers the performance visibility needed to assure success of your IT initiatives.
+  
+  
+  - From a central console, get metrics, events, logs and traces from across your container environment in real-time out-of-the-box
+  - Understand resource usage and capacity needs to futureproof container provisioning
+  - Obtain code-level visibility of applications running inside Podman containers. Detailed automated root-cause diagnostics reveal even code level issues
+  - [AIOps technologies](https://www.eginnovations.com/product/capabilities/aiops-monitoring) auto-baseline behavior and proactively alert on anomalies, slowdowns and unusual behavior
+  
+  ![Docker monitoring](https://www.eginnovations.com/images/podman.png)
+  
+  - Ensure 24x7 availability and high performance of the Podman Container Engine
+  - Automate monitoring in your auto-scaling Podman environment. Metric thresholds and alerting are determined and configured out-of-the-box without manual effort
+  - Available as a fully managed ready-to-go SaaS monitoring service. Self-managed on-prem or in cloud options are also available for those with compliance or regulatory needs
+  
+  ### eG Enterprise forPodman monitoring
+  
+  eG Enterprise provides you with comprehensive Podman monitoring of key components that determine application and Podman Container Engine performance including images, pods and containers. Monitor both rootless and rootful Podman containers within a single console.
+  
+  
+  [![](https://www.eginnovations.com/images/podman-monitoring.webp)](https://www.eginnovations.com/images/podman-monitoring-zoom.jpg)
+  
+  - Get proactive alerting out-of-the-box of potential performance bottlenecks, no need to manually configure alerts
+  - Track which containers have been created and removed, and which are running, stopped and paused
+  - Detect capacity issues and see where there are not enough hardware or cloud resources for your applications or Podman containers
+  - Use [transaction tracing](https://www.eginnovations.com/glossary/distributed-tracing) to identify bottlenecks impacting the end-user experience
+  - Leverage resource utilization trends and historical analytics help forecast future capacity requirements
+  
+  eG Enterprise also monitors and correlates alerts from the Operating System, TCP, and Network layers that Podman has dependencies upon.
+  
+  [See Demo](https://www.eginnovations.com/product/demo)
+  
+  ### Features
+  
+  ### Get alerted to bottlenecks in Podman Container performance
+  
+  Close
+  
+  [See Demo](https://www.eginnovations.com/product/demo) [Free Trial](https://www.eginnovations.com/it-monitoring/free-trial)
+  
+  - Know how long each container has been up and whether it has been restarted
+  - Get details of containers being added and removed; track which containers are running, stopped and paused
+  - Isolate containers that are large in size and ones that have not been started for a long time
+  - Track container events in real time: create, delete, start, stop and die events
+  - Monitor CPU, memory and disk utilization of every Podman container and get alerted to high usage levels
+  
+  [![Container monitoring](https://www.eginnovations.com/images/Podman-Container-performance.webp)](https://www.eginnovations.com/images/Podman-Container-performance-zoom.jpg)
+  
+  - Monitor if the Podman service is installed and loaded and continuously track the service status
+  
+  * * *
+  
+  ### Detect capacity issues and resource constraints
+  
+  As well as support for on-prem IT infrastructure, eG Enterprise provides out-of-the-box cloud monitoring support for applications and services running on the public cloud including AWS and Microsoft Azure.
+  
+  - Monitor the images mapped and not mapped to containers
+  - Drill down to see which images are taking more disk space and how long ago they were created
+  - Monitor the processes running on the Podman Engine and their CPU and memory utilization
+  
+  [![Podman performance monitoring](https://www.eginnovations.com/images/podman-resource-constraints.webp)](https://www.eginnovations.com/images/podman-resource-constraints-zoom.jpg)
+  
+  - Get alerted if the data space usage exceeds threshold levels
+  - Obtain granular visibility into resource availability and utilization: disk space, disk activity, I/O waits, memory, and more
+  - Track how well data is transmitted and received from each container. Continually monitor the rate of errors that are transmitted through each container
+  
+  * * *
+  
+  ### Monitoring the performance and user experience of containerized applications
+  
+  - Get health, availability and performance metrics for applications running on the Podman containers
+  - Leverage distributed transaction tracing and identify slowness in application business transactions
+  - Gain code-level visibility of web applications and debug errors before the application moves to production
+  - Use a combination of synthetic simulation and real user monitoring to measure user experience of users accessing the applications
+  
+  [![Transaction tracing in container environments](https://www.eginnovations.com/images/Real-User-Monitoring.webp)](https://www.eginnovations.com/images/Real-User-Monitoring-zoom.jpg)
+  
+  * * *
+  
+  ### Monitoring the Kubernetes platform
+  
+  In context of Podman containers, eG Enterprise provides visibility of the container orchestration platform, [Kubernetes](https://www.eginnovations.com/supported-technologies/kubernetes-monitoring) (K8s).
+  
+  - Monitor the key services on the Kubernetes Master: API server, scheduler, controller manager, and [etcd](https://www.eginnovations.com/blog/etcd-in-kubernetes-what-is-it-and-why-is-it-important/)
+  - Get detailed performance insight of Kubernetes nodes, pod allocation, CPU and memory allocation, image usage and deployment status
+  - Understand resource usage patterns and determine how much additional workload can be deployed per node
+  - Monitor jobs, pods, deployments and daemonsets by namespaces and get alerted to performance and capacity bottlenecks
+  
+  [![Kubernetes monitoring](https://www.eginnovations.com/images/kubernetes-platform.webp)](https://www.eginnovations.com/images/kubernetes-platform-zoom.jpg)
+  
+  * * *
+  
+  ### Answer key  performance questions
+  
+  - What is the load on Podman containers? Which containers are consuming the most CPU or memory?
+  - What performance thresholds should I set to avoid resource exhaustion?
+  - How can I optimize container performance across multiple Podman clusters?
+  - Are there containers that are restarting frequently?
+  - How can I track historical CPU and memory usage trends for my Podman containers?
+  
+  eG Enterprise natively supports 650+ infrastructure components, Cloud providers and applications. Which means that it provides out-of-the-box deep insights, thresholds, dashboards and reports for any of [these 650+ components.](https://www.eginnovations.com/product/technologies-list-view)
+  
+  * * *
+  
+  * * *
+  
+  ### Frequently Asked Questions (FAQs)    about Podman Monitoring
+  
+  ## Rootful vs Rootless Podman containers. What’s the difference between rootless and rootful Podman containers? Which is best?
+  
+  Rootful Podman containers run with root privileges, offering full system access, while rootless containers operate under a user account, enhancing security by limiting permissions (root access is prevented if a container is compromised) and isolating processes from the host system. There is, of course, a higher potential security risk if a rootful container is breached. It is considered best practice to utilize rootless containers for improved security and isolation whenever possible.
+  
+  ## If rootless Podman containers offer better security than rootful ones, why would you use a rootful container with root access privileges?
+  
+  Rootful Podman containers are used when:
+  
+  - **Advanced Capabilities Are Required:** Root access is needed for operations like binding to privileged ports (<1024) or modifying system files.
+  - **Legacy Applications:** Some applications may require root privileges to function properly.
+  - **Performance Needs:** Rootful containers can access certain system features directly, potentially improving performance in specific scenarios.
+  - **Compatibility:** Testing or replicating environments where applications run as root (e.g., traditional Docker setups).
+  - **Network behavior:** Rootful and rootless containers have different network behaviors. See: [Configuring container networking with Podman](https://www.redhat.com/en/blog/container-networking-podman) for more information.
+  - **Create new devices:** Some containers need to create new devices or loopback mount points, which can only be done as root.
+  
+  While rootless Podman containers are safer, rootful containers are used in some scenarios when full system access is necessary for functionality or testing. In most production environments where security is a primary concern rootless containers should be used.
+  
+  ## Can eG Enterprise monitor both rootless and rootful Podman containers?
+  
+  Yes, the eG Enterprise universal agent can monitor both seamlessly and can also provide comprehensive full stack monitoring across your containerized environments.
+  
+  * * *
+  
+  #### Start your free trial or schedule a custom demo with an engineer
+  
+  - Works on cloud environments, hybrid cloud setups and on-premises deployments
+  - Deploy eG Enterprise using our SaaS platform or on-premises
+  - Suitable for monitoring cloud applications, digital workspaces and IT infrastructures
+  
+  Please Enter Valid Work Email
+  
+  4.5
+  
+  [47 Ratings](https://www.gartner.com/reviews/market/observability-platforms/vendor/eg-innovations/reviews?utm_source=eg-innovations&utm_medium=referral&utm_campaign=widget&utm_content=Mzk5ZDQ3YjMtYTU0Ny00MDdkLWFjZWQtMTQ2ZDI3MGQ2NWY5)
+  
+  Observability Platfo...
+  
+  As of 22 May 2026
+  
+  Peer Insights Widget
+  
+  ![eG Enterprise](https://www.eginnovations.com/images/try-eg.webp?768)
+  
+  Select LanguageChinese (Simplified)FrenchGermanJapaneseKoreanPortuguese (Brazil)Spanish
+  
+  Powered by [![Google Translate](https://www.gstatic.com/images/branding/googlelogo/1x/googlelogo_color_42x16dp.png)Translate](https://translate.google.com/)
+  
+  ![](https://fonts.gstatic.com/s/i/productlogos/translate/v14/24px.svg)
+  
+  Original text
+  
+  Rate this translation
+  
+  Your feedback will be used to help improve Google Translate
+  
+  reCAPTCHA
+  
+  Recaptcha requires verification.
+  
+  protected by **reCAPTCHA**
+  --- End Content ---

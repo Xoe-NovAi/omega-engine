@@ -1,0 +1,15 @@
+{
+  "topic": "Topic 1",
+  "priority": 1.08,
+  "depth": 1,
+  "state": "pending",
+  "sources": [],
+  "claims": [],
+  "verification_count": 0,
+  "attempts": 1,
+  "max_attempts": 3,
+  "session_id": "res_20260521_Topic_1",
+  "created": "2026-05-21T20:06:04.898066+00:00",
+  "last_attempt": null,
+  "error": null
+}

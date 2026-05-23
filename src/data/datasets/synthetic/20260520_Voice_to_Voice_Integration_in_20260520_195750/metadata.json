@@ -1,0 +1,82 @@
+{
+  "topic": "Voice-to-Voice Integration in Omega Engine",
+  "cycle_id": "20260520_195750",
+  "saved_at": "2026-05-20T19:59:09.639146+00:00",
+  "t1_length": 17,
+  "t2_length": 7333,
+  "t3_length": 2772,
+  "t3_skipped": false,
+  "prompt_mode": "tooling",
+  "t1_enabled": true,
+  "t2_enabled": true,
+  "t3_enabled": true,
+  "t1_direct": false,
+  "sources_count": 1,
+  "circuit_states": {
+    "lmster": {
+      "consecutive_failures": 1,
+      "total_failures": 1,
+      "total_successes": 0,
+      "last_failure_time": 1779307070.960338,
+      "last_success_time": 0.0,
+      "skip_until": 0.0,
+      "degraded": false,
+      "critical": false,
+      "last_error": "All connection attempts failed",
+      "skip_threshold": 3,
+      "critical_threshold": 10
+    },
+    "minimax_openrouter": {
+      "consecutive_failures": 1,
+      "total_failures": 1,
+      "total_successes": 0,
+      "last_failure_time": 1779307072.8146813,
+      "last_success_time": 0.0,
+      "skip_until": 0.0,
+      "degraded": false,
+      "critical": false,
+      "last_error": "Client error '400 Bad Request' for url 'https://openrouter.ai/api/v1/chat/completions'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+      "skip_threshold": 3,
+      "critical_threshold": 10
+    },
+    "minimax_zen": {
+      "consecutive_failures": 1,
+      "total_failures": 1,
+      "total_successes": 0,
+      "last_failure_time": 1779307075.0639818,
+      "last_success_time": 0.0,
+      "skip_until": 0.0,
+      "degraded": false,
+      "critical": false,
+      "last_error": "HTTP_429",
+      "skip_threshold": 3,
+      "critical_threshold": 10
+    },
+    "gemma_google": {
+      "consecutive_failures": 0,
+      "total_failures": 0,
+      "total_successes": 1,
+      "last_failure_time": 0.0,
+      "last_success_time": 1779307129.1419802,
+      "skip_until": 0.0,
+      "degraded": false,
+      "critical": false,
+      "last_error": "",
+      "skip_threshold": 3,
+      "critical_threshold": 10
+    },
+    "gemini_cli": {
+      "consecutive_failures": 0,
+      "total_failures": 0,
+      "total_successes": 1,
+      "last_failure_time": 0.0,
+      "last_success_time": 1779307149.6369853,
+      "skip_until": 0.0,
+      "degraded": false,
+      "critical": false,
+      "last_error": "",
+      "skip_threshold": 2,
+      "critical_threshold": 5
+    }
+  }
+}

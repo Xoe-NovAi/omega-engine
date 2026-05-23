@@ -1,0 +1,2141 @@
+Podman, volumes and SELinux: should I use :Z or disable ...
+  URL: https://www.reddit.com/r/podman/comments/wrcmrc/podman_volumes_and_selinux_should_i_use_z_or/
+  I'm using Podman on an SELinux system and mount volumes (with :Z) from my host so that the container can edit some files. Does the SELinux relabeling cause ...
+
+Podman 4.0.0+ fails to SELinux-relabel symlinks in ...
+  URL: https://github.com/containers/podman/issues/13727
+  Specifying the :Z flag in order to relabel the files in the volume, the symlink is not relabeled (but regular files are), resulting in permission denied errors.
+  Category: github
+
+  --- Content ---
+  [Skip to content](https://github.com/containers/podman/issues/13727#start-of-content)
+  
+  You signed in with another tab or window. [Reload](https://github.com/containers/podman/issues/13727) to refresh your session.You signed out in another tab or window. [Reload](https://github.com/containers/podman/issues/13727) to refresh your session.You switched accounts on another tab or window. [Reload](https://github.com/containers/podman/issues/13727) to refresh your session.Dismiss alert
+  
+  {{ message }}
+  
+  [containers](https://github.com/containers)/ **[podman](https://github.com/containers/podman)** Public
+  
+  - [Notifications](https://github.com/login?return_to=%2Fcontainers%2Fpodman) You must be signed in to change notification settings
+  - [Fork\\
+  3.1k](https://github.com/login?return_to=%2Fcontainers%2Fpodman)
+  - [Star\\
+  31.8k](https://github.com/login?return_to=%2Fcontainers%2Fpodman)
+  
+  
+  # Podman 4.0.0+ fails to SELinux-relabel symlinks in volumes when using the ":Z" option, resulting in "permission denied" errors (Regression, bisected)\#13727
+  
+  [New issue](https://github.com/login?return_to=https://github.com/containers/podman/issues/13727)
+  
+  Copy link
+  
+  [New issue](https://github.com/login?return_to=https://github.com/containers/podman/issues/13727)
+  
+  Copy link
+  
+  Closed
+  
+  Closed
+  
+  [Podman 4.0.0+ fails to SELinux-relabel symlinks in volumes when using the ":Z" option, resulting in "permission denied" errors (Regression, bisected)](https://github.com/containers/podman/issues/13727#top)#13727
+  
+  Copy link
+  
+  Labels
+  
+  [kind/bugCategorizes issue or PR as related to a bug.](https://github.com/containers/podman/issues?q=state%3Aopen%20label%3A%22kind%2Fbug%22) Categorizes issue or PR as related to a bug. [locked - please file new issue/PRAssist humans wanting to comment on an old issue or PR with locked comments.](https://github.com/containers/podman/issues?q=state%3Aopen%20label%3A%22locked%20-%20please%20file%20new%20issue%2FPR%22) Assist humans wanting to comment on an old issue or PR with locked comments. [stale-issue](https://github.com/containers/podman/issues?q=state%3Aopen%20label%3A%22stale-issue%22)
+  
+  [![@joanbm](https://avatars.githubusercontent.com/u/519004?u=56bcee379e617d805d1066ebdfd2836c5e369966&v=4&size=80)](https://github.com/joanbm)
+  
+  ## Description
+  
+  [![@joanbm](https://avatars.githubusercontent.com/u/519004?u=56bcee379e617d805d1066ebdfd2836c5e369966&v=4&size=48)](https://github.com/joanbm)
+  
+  [joanbm](https://github.com/joanbm)
+  
+  opened [on Mar 30, 2022on Mar 30, 2022](https://github.com/containers/podman/issues/13727#issue-1187042878)
+  
+  Issue body actions
+  
+  ## Is this a BUG REPORT or FEATURE REQUEST?
+  
+  /kind bug
+  
+  ## Description
+  
+  When mounting a volume containing symlinks using Podman 4.0.0+ in a SELinux-enabled system (e.g. a clean Fedora 36 Workstation beta install), specifying the `:Z` flag in order to relabel the files in the volume, the symlink is not relabeled (but regular files are), resulting in "permission denied" errors.
+  
+  Running the same commands in a similar system, but using Podman 3.4.4 (e.g. a clean Fedora 35 Workstation install), the problem does not reproduce.
+  
+  ## Steps to reproduce the issue
+  
+  1. Install Podman 4.0.0+ in a SELinux-enabled system, e.g. a clean Fedora 36 Workstation beta install.
+  
+  2. Open a terminal and set up some test files:
+  
+  
+  ```
+  $ mkdir stuff && cd stuff
+  $ echo hello > file
+  $ ln -s file link
+  $ ls -Z
+  unconfined_u:object_r:user_home_t:s0 file
+  unconfined_u:object_r:user_home_t:s0 link
+  ```
+  
+  3. Try to mount and relabel the files into a container using a volume:
+  
+  ```
+  $ podman run --rm -v .:/stuff:Z busybox ls -lah /stuff
+  ls: /stuff/link: Permission denied
+  total 4K
+  drwxr-xr-x    1 root     root          16 Mar 30 20:38 .
+  dr-xr-xr-x    1 root     root          36 Mar 30 20:39 ..
+  -rw-r--r--    1 root     root           6 Mar 30 20:38 file
+  ```
+  
+  ## Describe the results you received:
+  
+  I received a permission denied error when trying to access the "link" symlink but not for the "file" regular file.
+  
+  ## Describe the results you expected:
+  
+  I expected the "link" symlink to be accessible inside the container just like the "file" regular file.
+  
+  ## Additional information you deem important (e.g. issue happens only occasionally):
+  
+  The regular file is relabeled while the symlink is not relabeled:
+  
+  ```
+  $ ls -Z
+  system_u:object_r:container_file_t:s0:c177,c899 file
+             unconfined_u:object_r:user_home_t:s0 link
+  ```
+  
+  Running with `--security-opt label=disable` resolves the issue, confirming it's related to SELinux:
+  
+  ```
+  $ podman run --rm -v .:/stuff:Z --security-opt label=disable busybox ls -lah /stuff
+  drwxr-xr-x    1 root     root          16 Mar 30 20:38 .
+  dr-xr-xr-x    1 root     root          36 Mar 30 20:39 ..
+  -rw-r--r--    1 root     root           6 Mar 30 20:38 file
+  lrwxrwxrwx    1 root     root           4 Mar 30 20:38 link -> file
+  ```
+  
+  strace shows that `setxattr` is being used over the symlink (note that `setxattr` _does_ follow symlinks):
+  
+  ```
+  $ strace -f podman run --rm -v .:/stuff:Z busybox ls -lah /stuff 2>&1 | grep -w link | grep setxattr
+  [pid 111800] setxattr("/home/podmantest/stuff/link", "security.selinux", "system_u:object_r:container_file"..., 47, 0 <unfinished ...>
+  ```
+  
+  Compare the output above with Fedora 35 + Podman 3.4.4. The problem does not reproduce and `lsetxattr` is being used over the symlink:
+  
+  ```
+  $ mkdir stuff && cd stuff
+  $ echo hello > file
+  $ ln -s file link
+  $ ls -Z
+  unconfined_u:object_r:user_home_t:s0 file
+  unconfined_u:object_r:user_home_t:s0 link
+  $ podman run --rm -v .:/stuff:Z busybox ls -lah /stuff
+  drwxr-xr-x    1 root     root          16 Mar 30 20:40 .
+  dr-xr-xr-x    1 root     root          36 Mar 30 20:40 ..
+  -rw-r--r--    1 root     root           6 Mar 30 20:40 file
+  lrwxrwxrwx    1 root     root           4 Mar 30 20:40 link -> file
+  $ ls -Z
+  system_u:object_r:container_file_t:s0:c35,c116 file
+  system_u:object_r:container_file_t:s0:c35,c116 link
+  $ strace -f podman run --rm -v .:/stuff:Z busybox ls -lah /stuff 2>&1 | grep -w link | grep setxattr
+  [pid  2214] lsetxattr("/home/podmantest/stuff/link", "security.selinux", "system_u:object_r:container_file"..., 47, 0 <unfinished ...>
+  ```
+  
+  This change in behavior is caused by commit [`f564c9a`](https://github.com/containers/podman/commit/f564c9a342c0705ac54a423e130677ef5b816a9f) (upstream [opencontainers/selinux@ `1b18907`](https://github.com/opencontainers/selinux/commit/1b18907dde2de75c9762d425c862586e1f7c438a)), reverting it fixes the issue.
+  
+  Note how the commit renames the original `setFileLabel` -\> `lSetFileLabel`, and introduces a new `setFileLabel` function that does follows symlinks.
+  
+  ## Output of `podman version`:
+  
+  ```
+  Client:       Podman Engine
+  Version:      4.0.2
+  API Version:  4.0.2
+  Go Version:   go1.18beta2
+  
+  Built:      Thu Mar  3 15:56:09 2022
+  OS/Arch:    linux/amd64
+  ```
+  
+  ## Output of `podman info --debug`:
+  
+  ```
+  host:
+    arch: amd64
+    buildahVersion: 1.24.1
+    cgroupControllers:
+    - cpu
+    - io
+    - memory
+    - pids
+    cgroupManager: systemd
+    cgroupVersion: v2
+    conmon:
+      package: conmon-2.1.0-2.fc36.x86_64
+      path: /usr/bin/conmon
+      version: 'conmon version 2.1.0, commit: '
+    cpus: 8
+    distribution:
+      distribution: fedora
+      variant: workstation
+      version: "36"
+    eventLogger: journald
+    hostname: fedora
+    idMappings:
+      gidmap:
+      - container_id: 0
+        host_id: 1000
+        size: 1
+      - container_id: 1
+        host_id: 100000
+        size: 65536
+      uidmap:
+      - container_id: 0
+        host_id: 1000
+        size: 1
+      - container_id: 1
+        host_id: 100000
+        size: 65536
+    kernel: 5.17.1-300.fc36.x86_64
+    linkmode: dynamic
+    logDriver: journald
+    memFree: 7235469312
+    memTotal: 8329519104
+    networkBackend: netavark
+    ociRuntime:
+      name: crun
+      package: crun-1.4.4-1.fc36.x86_64
+      path: /usr/bin/crun
+      version: |-
+        crun version 1.4.4
+        commit: 6521fcc5806f20f6187eb933f9f45130c86da230
+        spec: 1.0.0
+        +SYSTEMD +SELINUX +APPARMOR +CAP +SECCOMP +EBPF +CRIU +YAJL
+    os: linux
+    remoteSocket:
+      path: /run/user/1000/podman/podman.sock
+    security:
+      apparmorEnabled: false
+      capabilities: CAP_CHOWN,CAP_DAC_OVERRIDE,CAP_FOWNER,CAP_FSETID,CAP_KILL,CAP_NET_BIND_SERVICE,CAP_SETFCAP,CAP_SETGID,CAP_SETPCAP,CAP_SETUID,CAP_SYS_CHROOT
+      rootless: true
+      seccompEnabled: true
+      seccompProfilePath: /usr/share/containers/seccomp.json
+      selinuxEnabled: true
+    serviceIsRemote: false
+    slirp4netns:
+      executable: /usr/bin/slirp4netns
+      package: slirp4netns-1.2.0-0.2.beta.0.fc36.x86_64
+      version: |-
+        slirp4netns version 1.2.0-beta.0
+        commit: 477db14a24ff1a3de3a705e51ca2c4c1fe3dda64
+        libslirp: 4.6.1
+        SLIRP_CONFIG_VERSION_MAX: 3
+        libseccomp: 2.5.3
+    swapFree: 8328835072
+    swapTotal: 8328835072
+    uptime: 25.05s
+  plugins:
+    log:
+    - k8s-file
+    - none
+    - passthrough
+    - journald
+    network:
+    - bridge
+    - macvlan
+    volume:
+    - local
+  registries:
+    search:
+    - registry.fedoraproject.org
+    - registry.access.redhat.com
+    - docker.io
+    - quay.io
+  store:
+    configFile: /home/podmantest/.config/containers/storage.conf
+    containerStore:
+      number: 0
+      paused: 0
+      running: 0
+      stopped: 0
+    graphDriverName: overlay
+    graphOptions: {}
+    graphRoot: /home/podmantest/.local/share/containers/storage
+    graphStatus:
+      Backing Filesystem: btrfs
+      Native Overlay Diff: "true"
+      Supports d_type: "true"
+      Using metacopy: "false"
+    imageCopyTmpDir: /var/tmp
+    imageStore:
+      number: 1
+    runRoot: /run/user/1000/containers
+    volumePath: /home/podmantest/.local/share/containers/storage/volumes
+  version:
+    APIVersion: 4.0.2
+    Built: 1646319369
+    BuiltTime: Thu Mar  3 15:56:09 2022
+    GitCommit: ""
+    GoVersion: go1.18beta2
+    OsArch: linux/amd64
+    Version: 4.0.2
+  ```
+  
+  ## Package info (e.g. output of `rpm -q podman` or `apt list podman`):
+  
+  ```
+  podman-4.0.2-1.fc36.x86_64
+  ```
+  
+  ## Have you tested with the latest version of Podman and have you checked the Podman Troubleshooting Guide? ( [https://github.com/containers/podman/blob/main/troubleshooting.md](https://github.com/containers/podman/blob/main/troubleshooting.md))
+  
+  Yes
+  
+  ## Additional environment details (AWS, VirtualBox, physical, etc.):
+  
+  Reproduced on both local QEMU-KVM virtual machines and bare metal, running Fedora 35/36 Beta.
+  
+  ## Activity
+  
+  [![](https://avatars.githubusercontent.com/in/91280?s=64&v=4)openshift-ci](https://github.com/apps/openshift-ci)
+  
+  added
+  
+  [kind/bugCategorizes issue or PR as related to a bug.](https://github.com/containers/podman/issues?q=state%3Aopen%20label%3A%22kind%2Fbug%22) Categorizes issue or PR as related to a bug.
+  
+  [on Mar 30, 2022on Mar 30, 2022](https://github.com/containers/podman/issues/13727#event-6338587940)
+  
+  [![Luap99](https://avatars.githubusercontent.com/u/45212748?v=4&size=80)](https://github.com/Luap99)
+  
+  ### Luap99 commented on Mar 31, 2022on Mar 31, 2022
+  
+  [![@Luap99](https://avatars.githubusercontent.com/u/45212748?v=4&size=48)](https://github.com/Luap99)
+  
+  [Luap99](https://github.com/Luap99)
+  
+  [on Mar 31, 2022on Mar 31, 2022](https://github.com/containers/podman/issues/13727#issuecomment-1084405948)
+  
+  Member
+  
+  More actions
+  
+  [@rhatdan](https://github.com/rhatdan) PTAL
+  
+  [![rhatdan](https://avatars.githubusercontent.com/u/2000835?u=90169e8f4b677401b6418350fb5fda4abc0720d2&v=4&size=80)](https://github.com/rhatdan)
+  
+  ### rhatdan commented on Mar 31, 2022on Mar 31, 2022
+  
+  [![@rhatdan](https://avatars.githubusercontent.com/u/2000835?u=90169e8f4b677401b6418350fb5fda4abc0720d2&v=4&size=48)](https://github.com/rhatdan)
+  
+  [rhatdan](https://github.com/rhatdan)
+  
+  [on Mar 31, 2022on Mar 31, 2022](https://github.com/containers/podman/issues/13727#issuecomment-1084424797)
+  
+  Member
+  
+  More actions
+  
+  This is what the fix in opencontainers/selinux is all about, calling lsetfilecon versus setfilecon.
+  
+  [![rhatdan](https://avatars.githubusercontent.com/u/2000835?u=90169e8f4b677401b6418350fb5fda4abc0720d2&v=4&size=80)](https://github.com/rhatdan)
+  
+  ### rhatdan commented on Mar 31, 2022on Mar 31, 2022
+  
+  [![@rhatdan](https://avatars.githubusercontent.com/u/2000835?u=90169e8f4b677401b6418350fb5fda4abc0720d2&v=4&size=48)](https://github.com/rhatdan)
+  
+  [rhatdan](https://github.com/rhatdan)
+  
+  [on Mar 31, 2022on Mar 31, 2022](https://github.com/containers/podman/issues/13727#issuecomment-1084425335)
+  
+  Member
+  
+  More actions
+  
+  [opencontainers/selinux#173](https://github.com/opencontainers/selinux/pull/173)
+  
+  [![](https://avatars.githubusercontent.com/u/2000835?s=64&u=90169e8f4b677401b6418350fb5fda4abc0720d2&v=4)rhatdan](https://github.com/rhatdan)
+  
+  mentioned this [on Mar 31, 2022on Mar 31, 2022](https://github.com/containers/podman/issues/13727#event-1177174901)
+  
+  - [build(deps): bump github.com/opencontainers/selinux from 1.10.0 to 1.10.1 #13689](https://github.com/containers/podman/pull/13689)
+  
+  
+  [![joanbm](https://avatars.githubusercontent.com/u/519004?u=56bcee379e617d805d1066ebdfd2836c5e369966&v=4&size=80)](https://github.com/joanbm)
+  
+  ### joanbm commented on Mar 31, 2022on Mar 31, 2022
+  
+  [![@joanbm](https://avatars.githubusercontent.com/u/519004?u=56bcee379e617d805d1066ebdfd2836c5e369966&v=4&size=48)](https://github.com/joanbm)
+  
+  [joanbm](https://github.com/joanbm)
+  
+  [on Mar 31, 2022on Mar 31, 2022](https://github.com/containers/podman/issues/13727#issuecomment-1085108490)
+  
+  Last edited by joanbm
+  
+  Author
+  
+  More actions
+  
+  Thanks, I didn't realize a fix was already available on the dependency. I tested applying [#13689](https://github.com/containers/podman/pull/13689) and it does indeed fix the issue.
+  
+  [![joanbm](https://avatars.githubusercontent.com/u/519004?u=56bcee379e617d805d1066ebdfd2836c5e369966&v=4&size=80)](https://github.com/joanbm)
+  
+  ### joanbm commented on Apr 2, 2022on Apr 2, 2022
+  
+  [![@joanbm](https://avatars.githubusercontent.com/u/519004?u=56bcee379e617d805d1066ebdfd2836c5e369966&v=4&size=48)](https://github.com/joanbm)
+  
+  [joanbm](https://github.com/joanbm)
+  
+  [on Apr 2, 2022on Apr 2, 2022](https://github.com/containers/podman/issues/13727#issuecomment-1086743352)
+  
+  Last edited by joanbm
+  
+  Author
+  
+  More actions
+  
+  4.0.2 + [#13689](https://github.com/containers/podman/pull/13689) works as far as I tested, but 4.0.3 + [#13689](https://github.com/containers/podman/pull/13689) fails to run `RUN` from a Dockerfile:
+  
+  ```
+  $ cat > Dockerfile
+  FROM busybox
+  RUN echo hello
+  $ podman build . -ttest
+  STEP 1/2: FROM busybox
+  STEP 2/2: RUN echo hello
+  error running container: setting file label on "/proc/self/fd/12": lsetxattr /proc/self/fd/12: operation not supported
+  ERRO[0005] did not get container create message from subprocess: read |0: i/o timeout
+  Error: error building at STEP "RUN echo hello": error while running runtime: exit status 1
+  ```
+  
+  My guess is that [containers/buildah#3630](https://github.com/containers/buildah/pull/3630) started using `label.Relabel` on `/proc/self/fd/123`, internally `label.Relabel` calls `selinux.Chcon` which at the same merge started using `setxattr` instead of `lsetxattr`, however [opencontainers/selinux#173](https://github.com/opencontainers/selinux/pull/173) changed `selinux.Chcon` back to `lsetxattr` which breaks the first PR.
+  
+  EDIT: Indeed I removed the call to `runLabelStdioPipes` from [containers/buildah#3630](https://github.com/containers/buildah/pull/3630) and `podman build` works again.
+  
+  [![](https://avatars.githubusercontent.com/u/1888961?s=64&u=ca259b9f8a65568f1df3e13d9ffa808e156a60e2&v=4)javipolo](https://github.com/javipolo)
+  
+  mentioned this [on Apr 11, 2022on Apr 11, 2022](https://github.com/containers/podman/issues/13727#event-1179332622)
+  
+  - [RHCOS 4.11 + RHEL 8.6: Unable to launch an OpenShift cluster openshift/os#764](https://github.com/openshift/os/issues/764)
+  
+  
+  [![github-actions](https://avatars.githubusercontent.com/in/15368?v=4&size=80)](https://github.com/apps/github-actions)
+  
+  ### github-actions commented on May 2, 2022on May 2, 2022
+  
+  [![@github-actions](https://avatars.githubusercontent.com/in/15368?v=4&size=48)](https://github.com/apps/github-actions)
+  
+  [github-actions](https://github.com/apps/github-actions) bot
+  
+  [on May 2, 2022on May 2, 2022](https://github.com/containers/podman/issues/13727#issuecomment-1115482456)
+  
+  More actions
+  
+  A friendly reminder that this issue had no activity for 30 days.
+  
+  [![](https://avatars.githubusercontent.com/in/15368?s=64&v=4)github-actions](https://github.com/apps/github-actions)
+  
+  added
+  
+  [stale-issue](https://github.com/containers/podman/issues?q=state%3Aopen%20label%3A%22stale-issue%22)
+  
+  [on May 2, 2022on May 2, 2022](https://github.com/containers/podman/issues/13727#event-6536966212)
+  
+  [![rhatdan](https://avatars.githubusercontent.com/u/2000835?u=90169e8f4b677401b6418350fb5fda4abc0720d2&v=4&size=80)](https://github.com/rhatdan)
+  
+  ### rhatdan commented on May 3, 2022on May 3, 2022
+  
+  [![@rhatdan](https://avatars.githubusercontent.com/u/2000835?u=90169e8f4b677401b6418350fb5fda4abc0720d2&v=4&size=48)](https://github.com/rhatdan)
+  
+  [rhatdan](https://github.com/rhatdan)
+  
+  [on May 3, 2022on May 3, 2022](https://github.com/containers/podman/issues/13727#issuecomment-1115887002)
+  
+  Member
+  
+  More actions
+  
+  Should be fixed in podman 4.1
+  
+  👍React with 👍2joanbm and aleasto
+  
+  [![](https://avatars.githubusercontent.com/u/2000835?s=64&u=90169e8f4b677401b6418350fb5fda4abc0720d2&v=4)rhatdan](https://github.com/rhatdan)
+  
+  closed this as [completed](https://github.com/containers/podman/issues?q=is%3Aissue%20state%3Aclosed%20archived%3Afalse%20reason%3Acompleted) [on May 3, 2022on May 3, 2022](https://github.com/containers/podman/issues/13727#event-6539325269)
+  
+  [![ncdc](https://avatars.githubusercontent.com/u/354?v=4&size=80)](https://github.com/ncdc)
+  
+  ### ncdc commented on Jun 10, 2022on Jun 10, 2022
+  
+  [![@ncdc](https://avatars.githubusercontent.com/u/354?v=4&size=48)](https://github.com/ncdc)
+  
+  [ncdc](https://github.com/ncdc)
+  
+  [on Jun 10, 2022on Jun 10, 2022](https://github.com/containers/podman/issues/13727#issuecomment-1152574463)
+  
+  More actions
+  
+  [@rhatdan](https://github.com/rhatdan) I'm having problems with both `:z` and `:Z` with a Mac host:
+  
+  ```
+  $ podman run --rm -it -v $(pwd)/foo:/foo:z busybox
+  Error: error preparing container da0823e62fe20ff819ce7027cd3957a85fe721db8ea4098ced4c3ed64d11d4c4 for attach: lsetxattr /Users/angoldst/foo: operation not supported
+  
+  $ podman run --rm -it -v $(pwd)/foo:/foo:Z busybox
+  Error: error preparing container 8719effbe6680f726e16e53a067c96236d48d9362709367822ee7566d1a5993a for attach: lsetxattr /Users/angoldst/foo: operation not supported
+  ```
+  
+  ```
+  $ podman version
+  Client:       Podman Engine
+  Version:      4.1.0
+  API Version:  4.1.0
+  Go Version:   go1.18.1
+  Built:        Thu May  5 16:07:47 2022
+  OS/Arch:      darwin/amd64
+  
+  Server:       Podman Engine
+  Version:      4.1.0
+  API Version:  4.1.0
+  Go Version:   go1.18
+  Built:        Fri May  6 12:15:54 2022
+  OS/Arch:      linux/amd64
+  ```
+  
+  Not sure if this is the same issue/root cause, or a different one? Please let me know if you'd like me to file a new one. Thanks!
+  
+  [![joanbm](https://avatars.githubusercontent.com/u/519004?u=56bcee379e617d805d1066ebdfd2836c5e369966&v=4&size=80)](https://github.com/joanbm)
+  
+  ### joanbm commented on Jun 11, 2022on Jun 11, 2022
+  
+  [![@joanbm](https://avatars.githubusercontent.com/u/519004?u=56bcee379e617d805d1066ebdfd2836c5e369966&v=4&size=48)](https://github.com/joanbm)
+  
+  [joanbm](https://github.com/joanbm)
+  
+  [on Jun 11, 2022on Jun 11, 2022](https://github.com/containers/podman/issues/13727#issuecomment-1152921721)
+  
+  Last edited by joanbm
+  
+  Author
+  
+  More actions
+  
+  [@ncdc](https://github.com/ncdc) Looks like a different issue to me, the operation should not fail on 4.1.0 and for you it doesn't fail on `/proc/fd/N` but rather over the host folder you are trying to map.
+  
+  Also, Mac doesn't support SELinux at all, does it? So you may be able to drop the `z`/`Z` flags altogether. Though if that's the case, maybe it'd be nice if Podman ignored them by itself so the same command could work on both Linux and Mac hosts.
+  
+  [![rhatdan](https://avatars.githubusercontent.com/u/2000835?u=90169e8f4b677401b6418350fb5fda4abc0720d2&v=4&size=80)](https://github.com/rhatdan)
+  
+  ### rhatdan commented on Jun 12, 2022on Jun 12, 2022
+  
+  [![@rhatdan](https://avatars.githubusercontent.com/u/2000835?u=90169e8f4b677401b6418350fb5fda4abc0720d2&v=4&size=48)](https://github.com/rhatdan)
+  
+  [rhatdan](https://github.com/rhatdan)
+  
+  [on Jun 12, 2022on Jun 12, 2022](https://github.com/containers/podman/issues/13727#issuecomment-1153117260)
+  
+  Member
+  
+  More actions
+  
+  Yes, the :Z and :z will not work on networked mounted volumes, which are used on a MAC. We are working on virtiofsd support for SELinux which could also work on a MAC, but this does not exists yet.
+  
+  ### 5 remaining items
+  
+  Load more
+  
+  Loading
+  
+  [Sign up for free](https://github.com/signup?return_to=https://github.com/containers/podman/issues/13727)**to join this conversation on GitHub.** Already have an account? [Sign in to comment](https://github.com/login?return_to=https://github.com/containers/podman/issues/13727)
+  
+  ## Metadata
+  
+  ## Metadata
+  
+  ### Assignees
+  
+  No one assigned
+  
+  ### Labels
+  
+  [kind/bugCategorizes issue or PR as related to a bug.](https://github.com/containers/podman/issues?q=state%3Aopen%20label%3A%22kind%2Fbug%22) Categorizes issue or PR as related to a bug. [locked - please file new issue/PRAssist humans wanting to comment on an old issue or PR with locked comments.](https://github.com/containers/podman/issues?q=state%3Aopen%20label%3A%22locked%20-%20please%20file%20new%20issue%2FPR%22) Assist humans wanting to comment on an old issue or PR with locked comments. [stale-issue](https://github.com/containers/podman/issues?q=state%3Aopen%20label%3A%22stale-issue%22)
+  
+  ### Type
+  
+  No type
+  
+  ### Fields
+  
+  [Give feedback](https://github.com/orgs/community/discussions/189141)
+  
+  No fields configured for issues without a type.
+  
+  ### Projects
+  
+  No projects
+  
+  ### Milestone
+  
+  No milestone
+  
+  ### Relationships
+  
+  None yet
+  
+  ### Development
+  
+  No branches or pull requests
+  
+  ## Issue actions
+  
+  You can’t perform that action at this time.
+  --- End Content ---
+
+Host-wide consequences of setting SELinux z/Z option on ...
+  URL: https://unix.stackexchange.com/questions/728801/host-wide-consequences-of-setting-selinux-z-z-option-on-container-bind-mounts
+  When running podman containers with volume mounts, it is often necessary to add the :z (or :Z) parameter to the mount path. It is due to SELinux and ...
+
+  --- Content ---
+  **Stack Internal**
+  
+  Knowledge at work
+  
+  Bring the best of human thought and AI automation together at your work.
+  
+  [Explore Stack Internal](https://stackoverflow.co/internal/?utm_medium=referral&utm_source=unix-community&utm_campaign=side-bar&utm_content=explore-teams-compact-popover)
+  
+  # [Host-wide consequences of setting SELinux z/Z option on container bind mounts](https://unix.stackexchange.com/questions/728801/host-wide-consequences-of-setting-selinux-z-z-option-on-container-bind-mounts)
+  
+  [Ask Question](https://unix.stackexchange.com/questions/ask)
+  
+  Asked3 years, 5 months ago
+  
+  Modified [3 years, 5 months ago](https://unix.stackexchange.com/questions/728801/host-wide-consequences-of-setting-selinux-z-z-option-on-container-bind-mounts?lastactivity "2022-12-18 12:18:38Z")
+  
+  Viewed
+  4k times
+  
+  
+  This question shows research effort; it is useful and clear
+  
+  1
+  
+  This question does not show any research effort; it is unclear or not useful
+  
+  Save this question.
+  
+  [Timeline](https://unix.stackexchange.com/posts/728801/timeline)
+  
+  Show activity on this post.
+  
+  When running podman containers with volume mounts, it is often necessary to add the `:z` (or `:Z`) parameter to the mount path. It is due to SELinux and its type enforcement. What the parameter does is it changes the type of the mounted files. I think that it is actually quite dangerous operation and it could potentially cause some issues if we mount some files that need some other SELinux type applied.
+  Let's consider an example of an apache httpd server. As far as I know, httpd can only serve files from directiories that are marked with an appropriate label (like `httpd_file_t` or whatever, doesn't matter). What will happen if I start a podman container and mount the httpd's `www` directory to it (with `:z`)? The context would get changed to `container_file_t` type, and I believe the server would stop working (it would lose access to the files in `www`).
+  
+  Is my understanding correct?
+  
+  - [docker](https://unix.stackexchange.com/questions/tagged/docker "show questions tagged 'docker'")
+  - [selinux](https://unix.stackexchange.com/questions/tagged/selinux "show questions tagged 'selinux'")
+  - [podman](https://unix.stackexchange.com/questions/tagged/podman "show questions tagged 'podman'")
+  - [container](https://unix.stackexchange.com/questions/tagged/container "show questions tagged 'container'")
+  
+  [Share](https://unix.stackexchange.com/q/728801)
+  
+  Share a link to this question
+  
+  Copy link [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/ "The current license for this post: CC BY-SA 4.0")
+  
+  Short permalink to this question
+  
+  [Improve this question](https://unix.stackexchange.com/posts/728801/edit "")
+  
+  Follow
+  
+  
+  
+  Follow this question to receive notifications
+  
+  [edited Dec 18, 2022 at 12:18](https://unix.stackexchange.com/posts/728801/revisions "show all edits to this post")
+  
+  [![Edward's user avatar](https://i.sstatic.net/b5g34.png?s=64)](https://unix.stackexchange.com/users/186907/edward)
+  
+  [Edward](https://unix.stackexchange.com/users/186907/edward)
+  
+  2,70433 gold badges1919 silver badges2828 bronze badges
+  
+  asked Dec 17, 2022 at 16:06
+  
+  [![mnj's user avatar](https://www.gravatar.com/avatar/6a1799d9721848d7acfafec588e77277?s=64&d=identicon&r=PG&f=y&so-version=2)](https://unix.stackexchange.com/users/345969/mnj)
+  
+  [mnj](https://unix.stackexchange.com/users/345969/mnj)
+  
+  29155 silver badges1313 bronze badges
+  
+  [Add a comment](https://unix.stackexchange.com/questions/728801/host-wide-consequences-of-setting-selinux-z-z-option-on-container-bind-mounts# "Use comments to ask for more information or suggest improvements. Avoid answering questions in comments.") \| [Expand to show all comments on this post](https://unix.stackexchange.com/questions/728801/host-wide-consequences-of-setting-selinux-z-z-option-on-container-bind-mounts# "Expand to show all comments on this post")
+  
+  ## 1 Answer 1
+  
+  Sorted by:
+  [Reset to default](https://unix.stackexchange.com/questions/728801/host-wide-consequences-of-setting-selinux-z-z-option-on-container-bind-mounts?answertab=scoredesc#tab-top)
+  
+  Highest score (default)
+  
+  Date modified (newest first)
+  
+  Date created (oldest first)
+  
+  
+  This answer is useful
+  
+  2
+  
+  This answer is not useful
+  
+  Save this answer.
+  
+  Loading when this answer was accepted…
+  
+  [Timeline](https://unix.stackexchange.com/posts/728856/timeline)
+  
+  Show activity on this post.
+  
+  Your understanding is correct. From the Docker manual (essentially the same as with podman):
+  
+  ```
+  Configure the selinux label
+  
+  If you use selinux you can add the z or Z options to modify the selinux label of the host file or directory being mounted into the container. This affects the file or directory on the host machine itself and can have consequences outside of the scope of Docker.
+  
+      The z option indicates that the bind mount content is shared among multiple containers.
+      The Z option indicates that the bind mount content is private and unshared.
+  
+  Use extreme caution with these options. Bind-mounting a system directory such as /home or /usr with the Z option renders your host machine inoperable and you may need to relabel the host machine files by hand.
+  ```
+  
+  That means that if you bind mount a certain host directory into Docker, the SELinux context label will be changed to make sure that particular directory is only accessible from that particular container (`:Z`) or from all containers (`:z`).
+  
+  Because these actions are performed on the host filesystem itself, they will have consequences _outside the scope of the container virtualization_. Your example is a good one: when bind mounting a host webroot, the standard `httpd_sys_(rw_)content_t` will be replaced. Apache on the host will then refuse to serve that webroot.
+  
+  Fortunately, this is easily overcome using a custom policy module.
+  
+  Use `:z` or `:Z` and start Docker/podman. Make sure it works. Now set SELinux to permissive using `setenforce 0`. Then start up Apache. It will work (because of SELinux being permissive), but AVC denials will be logged in the audit log.
+  
+  ```bash
+  # use the output of ausearch to create a policy that allows this. This is the dry-run version
+  ausearch -m avc -ts recent | audit2allow -a
+  # If you're satisfied that this is indeed a module you want to add to the SELinux system,
+  # pick a policyname (use a custom prefix like mnj-) and run
+  ausearch -m avc -ts recent | audit2allow -a -M mnj-[policyname]
+  ```
+  
+  This creates a policy module file in `/etc/selinux/targeted/modules/active/modules`.
+  
+  To install and activate this module, run:
+  
+  `semodule -i mnj-[policyname].pp`
+  
+  Now re-enable SELinux: `setenforce 1`. Apache will now be able to serve the webroot again.
+  
+  [Share](https://unix.stackexchange.com/a/728856)
+  
+  Share a link to this answer
+  
+  Copy link [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/ "The current license for this post: CC BY-SA 4.0")
+  
+  Short permalink to this answer
+  
+  [Improve this answer](https://unix.stackexchange.com/posts/728856/edit "")
+  
+  Follow
+  
+  
+  
+  Follow this answer to receive notifications
+  
+  answered Dec 18, 2022 at 12:17
+  
+  [![Edward's user avatar](https://i.sstatic.net/b5g34.png?s=64)](https://unix.stackexchange.com/users/186907/edward)
+  
+  [Edward](https://unix.stackexchange.com/users/186907/edward)
+  
+  2,70433 gold badges1919 silver badges2828 bronze badges
+  
+  1
+  
+  - Thanks for confirming my suspicion. And thanks for providing some solution. I think I will most often use `--security-opt label=disable` when having issues. It's probably not very safe. However, I believe that it will cause harm if and only if the process within container manages to break out of the "sandbox". That would require some flaw in podman itself to be discovered and used I think.
+  
+  
+  
+  mnj
+  
+  
+  –
+  [mnj](https://unix.stackexchange.com/users/345969/mnj "291 reputation")
+  
+  
+  
+  2022-12-18 16:44:29 +00:00
+  
+  [CommentedDec 18, 2022 at 16:44](https://unix.stackexchange.com/questions/728801/host-wide-consequences-of-setting-selinux-z-z-option-on-container-bind-mounts#comment1381959_728856)
+  
+  
+  [Add a comment](https://unix.stackexchange.com/questions/728801/host-wide-consequences-of-setting-selinux-z-z-option-on-container-bind-mounts# "Use comments to ask for more information or suggest improvements. Avoid comments like “+1” or “thanks”.") \| [Expand to show all comments on this post](https://unix.stackexchange.com/questions/728801/host-wide-consequences-of-setting-selinux-z-z-option-on-container-bind-mounts# "Expand to show all comments on this post")
+  
+  ## You must [log in](https://unix.stackexchange.com/users/login?ssrc=question_page&returnurl=https%3a%2f%2funix.stackexchange.com%2fquestions%2f728801) to answer this question.
+  
+  Start asking to get answers
+  
+  Find the answer to your question by asking.
+  
+  [Ask question](https://unix.stackexchange.com/questions/ask)
+  
+  Explore related questions
+  
+  - [docker](https://unix.stackexchange.com/questions/tagged/docker "show questions tagged 'docker'")
+  - [selinux](https://unix.stackexchange.com/questions/tagged/selinux "show questions tagged 'selinux'")
+  - [podman](https://unix.stackexchange.com/questions/tagged/podman "show questions tagged 'podman'")
+  - [container](https://unix.stackexchange.com/questions/tagged/container "show questions tagged 'container'")
+  
+  See similar questions with these tags.
+  --- End Content ---
+
+How to Fix SELinux Denials with Podman Containers
+  URL: https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view
+  A comprehensive guide to understanding and resolving SELinux denials when running Podman containers, covering volume labels, context types, ...
+
+  --- Content ---
+  [Skip to main content](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view#main-content)
+  
+  ![](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view)
+  
+  # How to Fix SELinux Denials with Podman Containers
+  
+  A comprehensive guide to understanding and resolving SELinux denials when running Podman containers, covering volume labels, context types, booleans, and custom policies.
+  
+  
+  [![Nawaz Dhandala](https://avatars.githubusercontent.com/nawazdhandala)@nawazdhandala](https://github.com/nawazdhandala)•Mar 18, 2026•Reading time
+  5 min read
+  
+  [Podman](https://oneuptime.com/blog/tag/podman) [SELinux](https://oneuptime.com/blog/tag/selinux) [Container](https://oneuptime.com/blog/tag/container) [Linux](https://oneuptime.com/blog/tag/linux) [Security](https://oneuptime.com/blog/tag/security)
+  
+  ## On this page
+  
+  [Share on X](https://twitter.com/intent/tweet?text=%20How%20to%20Fix%20SELinux%20Denials%20with%20Podman%20Containers&url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-18-fix-selinux-denials-podman-containers%2Fview "Share on X")[Share on LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-18-fix-selinux-denials-podman-containers%2Fview "Share on LinkedIn")[Discuss on Hacker News](https://news.ycombinator.com/submitlink?u=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-18-fix-selinux-denials-podman-containers%2Fview&t=%20How%20to%20Fix%20SELinux%20Denials%20with%20Podman%20Containers "Discuss on Hacker News")
+  
+  * * *
+  
+  > SELinux denials are one of the most misunderstood sources of container failures on RHEL, Fedora, and CentOS systems. Instead of disabling SELinux, learn how to work with it to keep your containers both functional and secure.
+  
+  SELinux (Security-Enhanced Linux) enforces mandatory access control policies that restrict what processes can do, even if they run as root. When Podman containers interact with the host filesystem, SELinux checks whether the container process has the correct security context to access the requested files. If the context does not match, the access is denied, often producing cryptic errors that look like normal permission problems.
+  
+  The temptation to run `setenforce 0` and disable SELinux is strong, but doing so removes an important security layer. This guide shows you how to fix SELinux denials properly.
+  
+  * * *
+  
+  ## Understanding SELinux Contexts [Link to Understanding SELinux Contexts](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#understanding-selinux-contexts)
+  
+  Every file and process on an SELinux-enabled system has a security context with four components:
+  
+  ```plaintext
+  TextCopy
+  user:role:type:level
+  ```
+  
+  For containers, the most important component is the **type**. Container processes run with the `container_t` type, and they can only access files labeled with compatible types like `container_file_t`.
+  
+  View the SELinux context of a file:
+  
+  ```bash
+  BashCopy
+  ls -Z /home/user/data
+  ```
+  
+  View the context of a running container process:
+  
+  ```bash
+  BashCopy
+  ps -eZ | grep container
+  ```
+  
+  ## Identifying SELinux Denials [Link to Identifying SELinux Denials](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#identifying-selinux-denials)
+  
+  The first step is confirming that your error is actually caused by SELinux and not a standard Unix permission issue.
+  
+  Check the audit log for recent denials:
+  
+  ```bash
+  BashCopy
+  sudo ausearch -m avc -ts recent
+  ```
+  
+  This shows Access Vector Cache (AVC) messages with details about what was denied. A typical denial looks like:
+  
+  ```plaintext
+  TextCopy
+  type=AVC msg=audit(1710700000.123:456): avc:  denied  { read } for
+  pid=12345 comm="nginx" name="index.html" dev="sda1" ino=789
+  scontext=system_u:system_r:container_t:s0:c123,c456
+  tcontext=unconfined_u:object_r:user_home_t:s0
+  tclass=file permissive=0
+  ```
+  
+  This tells you that a process with context `container_t` tried to read a file with context `user_home_t`, and the access was denied.
+  
+  Use `sealert` for a more readable analysis (if available):
+  
+  ```bash
+  BashCopy
+  sudo sealert -a /var/log/audit/audit.log
+  ```
+  
+  ## Solution 1: Volume Mount Labels (:Z and :z) [Link to Solution 1: Volume Mount Labels (:Z and :z)](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#solution-1-volume-mount-labels-z-and-z)
+  
+  The most common SELinux denial occurs when mounting host directories into containers. The files on the host have a context like `user_home_t`, but the container can only access `container_file_t`.
+  
+  Podman provides two volume label options:
+  
+  - `:z` (lowercase): Relabels the content with a shared label. Multiple containers can access the volume.
+  - `:Z` (uppercase): Relabels the content with a private label. Only the specific container can access the volume.
+  
+  ```bash
+  BashCopy
+  # Shared label - multiple containers can access
+  
+  podman run -v /home/user/shared-data:/data:z myimage
+  
+  # Private label - only this container can access
+  podman run -v /home/user/private-data:/data:Z myimage
+  ```
+  
+  **Warning**: The `:Z` flag relabels files recursively. Do not use it on system directories like `/home`, `/etc`, or `/var` as it will relabel everything underneath, potentially breaking your system.
+  
+  ## Solution 2: Manually Set SELinux Contexts [Link to Solution 2: Manually Set SELinux Contexts](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#solution-2-manually-set-selinux-contexts)
+  
+  If the `:z` and `:Z` flags are too broad, set the context manually on specific files or directories:
+  
+  ```bash
+  BashCopy
+  # Set the container file type on a directory
+  sudo chcon -Rt container_file_t /path/to/data
+  
+  # Verify the change
+  ls -Z /path/to/data
+  ```
+  
+  To make the label persist across filesystem relabeling (e.g., after running `restorecon` or during a system relabel), create a custom file context rule:
+  
+  ```bash
+  BashCopy
+  sudo semanage fcontext -a -t container_file_t "/path/to/data(/.*)?"
+  sudo restorecon -Rv /path/to/data
+  ```
+  
+  ## Solution 3: SELinux Booleans [Link to Solution 3: SELinux Booleans](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#solution-3-selinux-booleans)
+  
+  SELinux booleans are switches that enable or disable specific policy features. Several booleans affect container behavior.
+  
+  List container-related booleans:
+  
+  ```bash
+  BashCopy
+  getsebool -a | grep container
+  ```
+  
+  Common booleans and their purposes:
+  
+  ```bash
+  BashCopy
+  # Allow containers to connect to any TCP port
+  sudo setsebool -P container_connect_any 1
+  
+  # Allow containers to manage cgroups, commonly needed for systemd in containers
+  sudo setsebool -P container_manage_cgroup 1
+  
+  # Allow containers to use NFS mounts
+  sudo setsebool -P virt_use_nfs 1
+  
+  # Allow containers to use Samba/CIFS shares
+  sudo setsebool -P virt_use_samba 1
+  ```
+  
+  The `-P` flag makes the change persistent across reboots.
+  
+  ## Solution 4: Run Containers with --security-opt [Link to Solution 4: Run Containers with --security-opt](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#solution-4-run-containers-with-security-opt)
+  
+  Podman allows you to modify SELinux behavior per container using the `--security-opt` flag.
+  
+  Disable SELinux labeling for a specific container:
+  
+  ```bash
+  BashCopy
+  podman run --security-opt label=disable -v /data:/data myimage
+  ```
+  
+  Run a container with a specific SELinux type:
+  
+  ```bash
+  BashCopy
+  podman run --security-opt label=type:svirt_apache_t myimage
+  ```
+  
+  The selected type must be defined by SELinux policy.
+  
+  Set a specific level (MCS category):
+  
+  ```bash
+  BashCopy
+  podman run --security-opt label=level:s0:c100,c200 myimage
+  ```
+  
+  ## Solution 5: Custom SELinux Policy Modules [Link to Solution 5: Custom SELinux Policy Modules](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#solution-5-custom-selinux-policy-modules)
+  
+  For complex scenarios where booleans and context changes are insufficient, create a custom policy module.
+  
+  First, generate a policy from the denial:
+  
+  ```bash
+  BashCopy
+  sudo ausearch -m avc -ts recent | audit2allow -m mycontainer
+  ```
+  
+  This outputs a policy module. Review it carefully:
+  
+  ```plaintext
+  TextCopy
+  module mycontainer 1.0;
+  
+  require {
+      type container_t;
+      type user_home_t;
+      class file { read open getattr };
+  }
+  
+  allow container_t user_home_t:file { read open getattr };
+  ```
+  
+  Compile and install the module:
+  
+  ```bash
+  BashCopy
+  sudo ausearch -m avc -ts recent | audit2allow -M mycontainer
+  sudo semodule -i mycontainer.pp
+  ```
+  
+  **Important**: Always review what `audit2allow` generates. It might create overly permissive rules. Only allow the specific access that is needed.
+  
+  ## Solution 6: Use Podman Volumes Instead of Bind Mounts [Link to Solution 6: Use Podman Volumes Instead of Bind Mounts](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#solution-6-use-podman-volumes-instead-of-bind-mounts)
+  
+  Podman-managed volumes are automatically labeled correctly for container access:
+  
+  ```bash
+  BashCopy
+  # Create a named volume
+  podman volume create mydata
+  
+  # Use it in a container - no SELinux issues
+  podman run -v mydata:/data myimage
+  ```
+  
+  Volumes are stored in Podman's storage directory with the correct `container_file_t` label.
+  
+  ## Debugging SELinux Denials [Link to Debugging SELinux Denials](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#debugging-selinux-denials)
+  
+  ### Check if SELinux Is Enforcing [Link to Check if SELinux Is Enforcing](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#check-if-selinux-is-enforcing)
+  
+  ```bash
+  BashCopy
+  getenforce
+  ```
+  
+  Returns `Enforcing`, `Permissive`, or `Disabled`. In permissive mode, denials are logged but not enforced.
+  
+  ### Temporarily Set Permissive Mode for Testing [Link to Temporarily Set Permissive Mode for Testing](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#temporarily-set-permissive-mode-for-testing)
+  
+  ```bash
+  BashCopy
+  # Temporarily permissive (resets on reboot)
+  sudo setenforce 0
+  
+  # Test your container
+  podman run -v /data:/data myimage
+  
+  # Re-enable enforcing
+  sudo setenforce 1
+  ```
+  
+  If the container works in permissive mode but fails in enforcing mode, you have confirmed the issue is SELinux.
+  
+  ### Use audit2why for Explanations [Link to Use audit2why for Explanations](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#use-audit2why-for-explanations)
+  
+  ```bash
+  BashCopy
+  sudo ausearch -m avc -ts recent | audit2why
+  ```
+  
+  This explains why each denial occurred and often suggests which boolean to set.
+  
+  ### Check Container SELinux Labels [Link to Check Container SELinux Labels](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#check-container-selinux-labels)
+  
+  ```bash
+  BashCopy
+  podman inspect mycontainer --format '{{.ProcessLabel}}'
+  podman inspect mycontainer --format '{{.MountLabel}}'
+  ```
+  
+  ## Common Pitfalls [Link to Common Pitfalls](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#common-pitfalls)
+  
+  1. **Never relabel system directories** with `:Z`. This can make your system unbootable.
+  
+  2. **Do not disable SELinux system-wide** to fix a container problem. Use `--security-opt label=disable` for the specific container if needed.
+  
+  3. **Remember that `restorecon` resets labels** to their defaults. If you used `chcon`, your labels will be reverted. Use `semanage fcontext` for persistent labels.
+  
+  4. **Rootless containers have additional restrictions** because the user does not have permission to relabel certain files. The `:z` and `:Z` flags work in rootless mode only if the user has permissions on the source directory.
+  
+  
+  ## Conclusion [Link to Conclusion](https://oneuptime.com/blog/post/2026-03-18-fix-selinux-denials-podman-containers/view\#conclusion)
+  
+  SELinux denials with Podman containers are almost always about file context mismatches between the host and the container. The `:z` and `:Z` volume mount options solve most cases. For persistent labeling, use `semanage fcontext`. For specific scenarios, adjust SELinux booleans or create custom policy modules with `audit2allow`. Avoid disabling SELinux entirely. Instead, use `--security-opt label=disable` on individual containers when a more targeted fix is not available. Understanding how SELinux contexts work turns a frustrating error into a predictable, fixable issue.
+  
+  Share this article
+  
+  [Share on X](https://twitter.com/intent/tweet?text=%20How%20to%20Fix%20SELinux%20Denials%20with%20Podman%20Containers&url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-18-fix-selinux-denials-podman-containers%2Fview "Share on X")[Share on LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-18-fix-selinux-denials-podman-containers%2Fview "Share on LinkedIn")[Discuss on Hacker News](https://news.ycombinator.com/submitlink?u=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-18-fix-selinux-denials-podman-containers%2Fview&t=%20How%20to%20Fix%20SELinux%20Denials%20with%20Podman%20Containers "Discuss on Hacker News")
+  
+  ![Nawaz Dhandala](https://avatars.githubusercontent.com/nawazdhandala)
+  
+  ### Nawaz Dhandala
+  
+  Author
+  
+  @nawazdhandala • Mar 18, 2026 • 5 min read
+  
+  Nawaz is building OneUptime with a passion for engineering reliable systems and improving observability.
+  
+  [GitHub](https://github.com/nawazdhandala)
+  
+  ### Improve this Blog Post
+  
+  All our blog posts are open source. Found a typo, want to add more detail, or have a better explanation? Anyone can contribute and make this post better for everyone.
+  
+  [Edit this Post on GitHub](https://github.com/oneuptime/blog/tree/master/posts/2026-03-18-fix-selinux-denials-podman-containers) [Contributing Guidelines](https://github.com/oneuptime/blog)
+  
+  [Open source](https://github.com/oneuptime/oneuptime)
+  
+  ## OneUptime is the Open-Source   Observability Platform
+  
+  Your complete reliability stack unified: infrastructure monitoring, incident management, status pages, and APM. Open-source and self-hostable.
+  
+  
+  [Get started for free](https://oneuptime.com/accounts/register) [Request a demo](https://oneuptime.com/enterprise/demo)
+  
+  [Status Page\\
+  \\
+  Real-time status updates](https://oneuptime.com/product/status-page) [Incidents\\
+  \\
+  Detect and resolve fast](https://oneuptime.com/product/incident-management) [Monitoring\\
+  \\
+  Monitor any resource](https://oneuptime.com/product/monitoring) [On-Call\\
+  \\
+  Smart alert routing](https://oneuptime.com/product/on-call) [Maintenance\\
+  \\
+  Plan & communicate downtime](https://oneuptime.com/product/scheduled-maintenance) [Logs\\
+  \\
+  Fastest log ingest and search](https://oneuptime.com/product/logs-management) [Metrics\\
+  \\
+  Performance insights](https://oneuptime.com/product/metrics) [Traces\\
+  \\
+  End-to-end distributed tracing](https://oneuptime.com/product/traces) [Exceptions\\
+  \\
+  Catch and fix bugs early](https://oneuptime.com/product/exceptions) [Workflows\\
+  \\
+  Automate any process](https://oneuptime.com/product/workflows) [Dashboards\\
+  \\
+  Visualize all your data](https://oneuptime.com/product/dashboards) [Kubernetes\\
+  \\
+  Monitor K8s clusters](https://oneuptime.com/product/kubernetes) [Profiles\\
+  \\
+  CPU & memory profiling](https://oneuptime.com/product/profiles)
+  
+  [AI Agent\\
+  \\
+  Automatically detect, diagnose, and resolve incidents with AI-powered root cause analysis and code fixes.](https://oneuptime.com/product/ai-agent)
+  --- End Content ---
+
+Container permission denied: How to diagnose this error
+  URL: https://www.redhat.com/en/blog/container-permission-denied-errors
+  You can try disabling the apparmor profile or AppArmor itself. c. Test capabilities. Podman drops Linux capabilities when it starts a container.
+
+  --- Content ---
+  [Skip to content](https://www.redhat.com/en/blog/container-permission-denied-errors#rhdc-main-content)
+  
+  ## Navigation
+  
+  [Red Hat](https://www.redhat.com/)
+  
+  Menu
+  
+   [Red Hat](https://www.redhat.com/en)
+  
+   AI
+  
+  
+  - ### Overview
+  
+  
+  
+    - [AI news](https://www.redhat.com/en/blog/channel/artificial-intelligence)
+    - [Technical blog](https://developers.redhat.com/blog?field_tax_product_target_id%5B37288%5D=37288&extIdCarryOver=true&intcmp=7013a000003Sl59AAC&sc_cid=RHCTG0250000454096&_gl=1%2A1jal9i8%2A_gcl_au%2ANjU2NDY1NTAwLjE3NjQ2MTY4NTU.&percmp=RHCTG0250000466729)
+    - [Live AI events](https://www.redhat.com/en/events/ai)
+    - [Inference explained](https://www.redhat.com/en/ai/inference/what-you-should-know-about-inference)
+  
+    - [See our approach](https://www.redhat.com/en/artificial-intelligence)
+  
+  - ### Products
+  
+  
+  
+    - [Red Hat AI Enterprise](https://www.redhat.com/en/products/ai/enterprise)
+    - [Red Hat AI Inference](https://www.redhat.com/en/products/ai/inference)
+    - [Red Hat Enterprise Linux AI](https://www.redhat.com/en/products/ai/enterprise-linux-ai)
+    - [Red Hat OpenShift AI](https://www.redhat.com/en/products/ai/openshift-ai)
+  
+    - [Explore Red Hat AI](https://www.redhat.com/en/products/ai)
+  
+  - ### Engage & learn
+  
+  
+    - [Learning hub](https://docs.redhat.com/en/learn/ai)
+    - [AI topics](https://www.redhat.com/en/topics/ai)
+    - [AI partners](https://catalog.redhat.com/categories/ai#ai-partners)
+    - [Services for AI](https://www.redhat.com/en/services/consulting/red-hat-consulting-for-ai)
+  
+   Hybrid cloud
+  
+  
+  - ### Platform solutions
+  
+  
+    - [Artificial intelligence](https://www.redhat.com/en/hybrid-cloud-solutions/ai)
+      Build, deploy, and monitor AI models and apps.
+  
+    - [Linux standardization](https://www.redhat.com/en/hybrid-cloud-solutions/linux-standardization)
+      Get consistency across operating environments.
+  
+    - [Application development](https://www.redhat.com/en/hybrid-cloud-solutions/application-development)
+      Simplify the way you build, deploy, and manage apps.
+  
+    - [Automation](https://www.redhat.com/en/hybrid-cloud-solutions/automation)
+      Scale automation and unite tech, teams, and environments.
+  
+  - ### Use cases
+  
+  
+    - [Virtualization](https://www.redhat.com/en/hybrid-cloud-solutions/virtualization)
+      Modernize operations for virtualized and containerized workloads.
+  
+    - [Digital sovereignty](https://www.redhat.com/en/products/digital-sovereignty)
+      Control and protect critical infrastructure.
+  
+    - [Security](https://www.redhat.com/en/solutions/security-and-compliance-approach)
+      Code, build, deploy, and monitor security-focused software.
+  
+    - [Edge computing](https://www.redhat.com/en/products/edge)
+      Deploy workloads closer to the source with edge technology.
+  
+  - [Explore solutions](https://www.redhat.com/en/hybrid-cloud-solutions)
+  
+  - ### Solutions by industry
+  
+  
+    - [Automotive](https://www.redhat.com/en/solutions/automotive)
+    - [Financial services](https://www.redhat.com/en/solutions/financial-services)
+    - [Healthcare](https://www.redhat.com/en/solutions/healthcare)
+    - [Industrial sector](https://www.redhat.com/en/solutions/industrial-sector)
+    - [Media and entertainment](https://www.redhat.com/en/solutions/media-entertainment)
+    - [Public sector (Global)](https://www.redhat.com/en/solutions/public-sector)
+    - [Public sector (U.S.)](https://www.redhat.com/en/solutions/public-sector/us)
+    - [Telecommunications](https://www.redhat.com/en/solutions/telecommunications)
+  
+  ### [Discover cloud technologies](https://www.redhat.com/en/hybrid-cloud-console)
+  
+  Learn how to use our cloud products and solutions at your own pace in the Red Hat® Hybrid Cloud Console.
+  
+   Products
+  
+  
+  - ### Platforms
+  
+  
+    - [Red Hat AI](https://www.redhat.com/en/products/ai)
+      Develop and deploy AI solutions across the hybrid cloud.
+  
+    - [Red Hat Enterprise Linux](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux)
+      Support hybrid cloud innovation on a flexible operating system.
+  
+    - [Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift)
+      Build, modernize, and deploy apps at scale.
+  
+    - [Red Hat Ansible Automation Platform](https://www.redhat.com/en/technologies/management/ansible)
+      Implement enterprise-wide automation.
+  
+  - ### Featured
+  
+  
+  
+    - [Red Hat AI Enterprise](https://www.redhat.com/en/products/ai/enterprise)
+    - [Red Hat OpenShift Virtualization Engine](https://www.redhat.com/en/technologies/cloud-computing/openshift/virtualization-engine)
+    - [Red Hat Desktop](http://redhat.com/en/products/desktop)
+  
+    - [See all products](https://www.redhat.com/en/products)
+  
+  - ### Try & buy
+  
+  
+    - [Start a trial](https://www.redhat.com/en/products/trials)
+    - [Buy online](https://www.redhat.com/en/store)
+    - [Integrate with major cloud providers](https://www.redhat.com/en/partners/certified-cloud-and-service-providers)
+  
+  - ### Services & support
+  
+  
+  
+    - [Consulting](https://www.redhat.com/en/services/consulting)
+    - [Product support](https://www.redhat.com/en/services/support)
+    - [Services for AI](https://www.redhat.com/en/services/consulting/red-hat-consulting-for-ai)
+    - [Technical Account Management](https://www.redhat.com/en/services/support/technical-account-management)
+  
+    - [Explore services](https://www.redhat.com/en/services)
+  
+   Training
+  
+  
+  - ### Training & certification
+  
+  
+  
+    - [Courses and exams](https://www.redhat.com/en/services/training/all-courses-exams)
+    - [Certifications](https://www.redhat.com/en/services/certifications)
+    - [Skills assessments](https://www.redhat.com/en/services/skills-assessment)
+    - [Red Hat Academy](https://www.redhat.com/en/services/training/red-hat-academy)
+    - [Learning subscription](https://www.redhat.com/en/services/training/learning-subscription)
+  
+    - [Explore training](https://www.redhat.com/en/services/training-and-certification)
+  
+  - ### Featured
+  
+  
+    - [Red Hat Certified System Administrator exam](https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam?percmp=7015Y0000048OFsQAM)
+    - [Red Hat Certified System Administrator in OpenShift exam](https://www.redhat.com/en/services/training/red-hat-certified-openshift-administrator-exam?percmp=7015Y0000048OFsQAM)
+    - [Red Hat Enterprise Linux Automation with Ansible](https://www.redhat.com/en/services/training/au294-red-hat-linux-automation-with-ansible?percmp=7015Y0000048OFsQAM)
+    - [Red Hat System Administration I](https://www.redhat.com/en/services/training/rh124-red-hat-system-administration-i?percmp=7015Y0000048OFsQAM)
+    - [Red Hat Certified Specialist in OpenShift Virtualization](https://www.redhat.com/en/services/training/red-hat-certified-specialist-openshift-virtualization-ex316?percmp=7015Y0000048OFsQAM)
+  
+  - ### Services
+  
+  
+    - [Consulting](https://www.redhat.com/en/services/consulting)
+    - [Partner training](https://connect.redhat.com/en/training)
+    - [Product support](https://www.redhat.com/en/services/support)
+    - [Services for AI](https://www.redhat.com/en/services/consulting/red-hat-consulting-for-ai)
+    - [Technical Account Management](https://www.redhat.com/en/services/support/technical-account-management)
+  
+   Learn
+  
+  
+  - ### Build your skills
+  
+  
+    - [Documentation](https://docs.redhat.com/en)
+    - [Hands-on labs](https://www.redhat.com/en/interactive-labs)
+    - [Hybrid cloud learning hub](https://docs.redhat.com/en/learn/learning-paths)
+    - [Interactive demos](https://www.redhat.com/en/interactive-experiences)
+    - [Training and certification](https://www.redhat.com/en/services/training-and-certification)
+  
+  - ### More ways to learn
+  
+  
+    - [Blog](https://www.redhat.com/en/blog)
+    - [Events and webinars](https://www.redhat.com/en/events)
+    - [Podcasts and video series](https://www.redhat.com/en/red-hat-original-series)
+    - [Red Hat TV](https://tv.redhat.com/)
+    - [Resource library](https://www.redhat.com/en/resources)
+  
+  ### [For developers](https://developers.redhat.com/)
+  
+  Discover resources and tools to help you build, deliver, and manage cloud-native applications and services.
+  
+   Partners
+  
+  
+  - ### For customers
+  
+  
+  
+    - [Our partners](https://www.redhat.com/en/partners)
+    - [Red Hat Ecosystem Catalog](https://catalog.redhat.com/)
+  
+    - [Find a partner](https://catalog.redhat.com/partners)
+  
+  - ### For partners
+  
+  
+  
+    - [Partner Connect](https://connect.redhat.com/)
+    - [Become a partner](https://connect.redhat.com/en/benefits-of-being-a-partner)
+    - [Training](https://connect.redhat.com/en/training)
+    - [Support](https://connect.redhat.com/en/support)
+  
+    - [Access the partner portal](https://connect.redhat.com/partner-admin/dashboard)
+  
+  ### [Build solutions powered by trusted partners](https://catalog.redhat.com/en/solutions)
+  
+  Find solutions from our collaborative community of experts and technologies in the Red Hat® Ecosystem Catalog.
+  
+   Search
+  
+  
+  ×
+  
+  ### I'd like to:
+  
+  - [Start a trial](https://www.redhat.com/en/products/trials)
+  - [Buy a learning subscription](https://www.redhat.com/en/services/training/learning-subscription/how-to-buy)
+  - [Manage subscriptions](https://access.redhat.com/management)
+  - [Contact sales](https://www.redhat.com/en/contact)
+  - [Contact customer service](https://www.redhat.com/en/contact/customer-service)
+  - [See Red Hat jobs](https://www.redhat.com/en/jobs)
+  
+  ### Help me find:
+  
+  - [Documentation](https://docs.redhat.com/en)
+  - [Developer resources](https://developers.redhat.com/)
+  - [Tech topics](https://www.redhat.com/en/topics)
+  - [Architecture center](https://www.redhat.com/architect/portfolio/)
+  - [Security updates](https://access.redhat.com/security/security-updates/cve)
+  - [Customer support](https://access.redhat.com/support)
+  
+  ### I want to learn more about:
+  
+  - [AI](https://www.redhat.com/en/topics/ai)
+  - [Application modernization](https://www.redhat.com/en/topics/application-modernization)
+  - [Automation](https://www.redhat.com/en/topics/automation)
+  - [Cloud-native applications](https://www.redhat.com/en/topics/cloud-native-apps)
+  - [Linux](https://www.redhat.com/en/topics/linux)
+  - [Virtualization](https://www.redhat.com/en/topics/virtualization)
+  
+  [Console](https://www.redhat.com/en/hybrid-cloud-console)
+  
+  [Docs](https://docs.redhat.com/en)
+  
+  [Support](https://access.redhat.com/)
+  
+  New For you
+  
+  
+  ### Recommended
+  
+  We'll recommend resources you may like as you browse. Try these suggestions for now.
+  
+  - [Product trial center](https://www.redhat.com/en/products/trials)
+  - [Courses and exams](https://www.redhat.com/en/services/training/all-courses-exams)
+  - [All products](https://www.redhat.com/en/products)
+  - [Tech topics](https://www.redhat.com/en/topics)
+  - [Resource library](https://www.redhat.com/en/resources)
+  
+  Log in
+  
+  ### Get more with a Red Hat account
+  
+  - Console access
+  - Event registration
+  - Training & trials
+  - World-class support
+  
+  A subscription may be required for some services.
+  
+  [Log in or register](https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/auth?client_id=rhcom&redirect_uri=https%3A%2F%2Fwww.redhat.com%2Fen%2Fblog%2Fcontainer-permission-denied-errors&response_type=code&scope=openid+profile_level.rh_events+id.email+id.idp+id.job.title+id.job.department+id.name+id.organization+id.sub+id.username+roles+profile+api.graphql+api.console+api.ask_red_hat&state=daf1d3a4d6e044f7ac7f7c570ca25abe&code_challenge=MqeBrE1RU0nVjA-d3dZwXOi-X0OB1Gv5UMX_UTrMpfU&code_challenge_method=S256)
+  
+  Change page language简体中文EnglishFrançaisDeutschItaliano日本語한국어PortuguêsEspañol
+  
+  [Contact us](https://www.redhat.com/en/contact)
+  
+  ### \[\[name\]\]
+  
+  [Edit avatar](https://access.redhat.com/user/edit)
+  
+  Login: \[\[login\]\]
+  
+  Account number: \[\[account\_number\]\]
+  
+  \[\[email\]\]
+  
+  Change page language简体中文EnglishFrançaisDeutschItaliano日本語한국어PortuguêsEspañol
+  
+  Log out
+  
+  Menu
+  
+  [Red Hat Blog](https://www.redhat.com/en/blog)
+  
+  - By product
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    - [Red Hat AI](https://www.redhat.com/en/blog/channel/red-hat-ai "Red Hat AI")
+    - [Red Hat Ansible Automation Platform](https://www.redhat.com/en/blog/channel/red-hat-ansible-automation "Red Hat Ansible Automation Platform")
+    - [Red Hat Enterprise Linux](https://www.redhat.com/en/blog/channel/red-hat-enterprise-linux "Red Hat Enterprise Linux")
+    - [Red Hat OpenShift](https://www.redhat.com/en/blog/channel/red-hat-openshift "Red Hat OpenShift")
+  
+  * * *
+  
+  [More products](https://www.redhat.com/en/blog/products "More products")
+  
+  - By topic
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    - [AI](https://www.redhat.com/en/blog/channel/artificial-intelligence "AI")
+    - [Virtualization](https://www.redhat.com/en/blog/channel/red-hat-virtualization "Virtualization")
+    - [Digital sovereignty](https://www.redhat.com/en/blog/channel/digital-sovereignty "Digital sovereignty")
+    - [Applications](https://www.redhat.com/en/blog/channel/applications "Applications")
+    - [Automation](https://www.redhat.com/en/blog/channel/management-and-automation "Automation")
+    - [Cloud services](https://www.redhat.com/en/blog/channel/cloud-services "Cloud services")
+    - [Edge computing](https://www.redhat.com/en/blog/channel/edge-computing "Edge computing")
+    - [Infrastructure](https://www.redhat.com/en/blog/channel/infrastructure "Infrastructure")
+    - [Open hybrid cloud](https://www.redhat.com/en/blog/channel/hybrid-cloud-infrastructure "Open hybrid cloud")
+    - [Original shows](https://www.redhat.com/en/red-hat-original-series "Original shows")
+    - [Security](https://www.redhat.com/en/blog/channel/security "Security")
+  
+  * * *
+  
+  [All topics](https://www.redhat.com/en/blog/channels "All topics")
+  
+  - Podcasts
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    - [Technically Speaking with Chris Wright](https://www.redhat.com/en/technically-speaking "Technically Speaking with Chris Wright")
+    - [Code Comments](https://www.redhat.com/en/code-comments-podcast "Code Comments")
+    - [Command Line Heroes](https://www.redhat.com/en/command-line-heroes "Command Line Heroes")
+    - [Compiler](https://www.redhat.com/en/compiler-podcast "Compiler")
+  
+  - More blogs
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    - [Red Hat Developer blog](https://developers.redhat.com/blog "Red Hat Developer blog")
+    - [Red Hat Partner Connect blog](https://connect.redhat.com/en/blog "Red Hat Partner Connect blog")
+  
+  # Container permission denied: How to diagnose this error
+  
+  April 29, 2022[Dan Walsh](https://www.redhat.com/en/authors/dan-walsh "See more by Dan Walsh")_11_-minute read
+  
+  [Containers](https://www.redhat.com/en/blog?f[0]=taxonomy_topic_tid:9001#rhdc-search-listing)[Professional development](https://www.redhat.com/en/blog?f[0]=taxonomy_topic_tid:107491#rhdc-search-listing)
+  
+  Share
+  
+  [Share via Facebook](https://www.facebook.com/sharer/sharer.php?u=https://www.redhat.com/en/blog/container-permission-denied-errors)[Share via LinkedIn](https://www.linkedin.com/shareArticle?mini=true&title=Container%20permission%20denied%3A%20How%20to%20diagnose%20this%20error&summary=Over%20the%20years%2C%20I%20have%20often%20given%20a%20talk%20using%20the%20story%20of%20Goldilocks%20and%20the%20Three%20Bears%20and%20how%20it%20compares%20to%20container%20security.&url=https%3A%2F%2Fwww.redhat.com%2Fen%2Fblog%2Fcontainer-permission-denied-errors)[Share via Twitter](https://twitter.com/intent/tweet?&url=https%3A%2F%2Fwww.redhat.com%2Fen%2Fblog%2Fcontainer-permission-denied-errors)[E-mail us](mailto:?subject=Check%20out%20this%20redhat.com%20page%3A%20Container%20permission%20denied%3A%20How%20to%20diagnose%20this%20error&body=I%20saw%20this%20on%20redhat.com%20and%20thought%20you%20might%20be%20interested.%20%20Click%20the%20following%20link%20to%20read%20https%3A%2F%2Fwww.redhat.com%2Fen%2Fblog%2Fcontainer-permission-denied-errors)
+  
+  Subscribe to RSS [Subscribe to RSS](https://www.redhat.com/en/rss/blog "Subscribe to RSS")
+  
+  Over the years, I have often given a talk using the story of [Goldilocks and the Three Bears](https://www.youtube.com/watch?v=_w6H5yAbGj8) and how it compares to container security.
+  
+  ![Three bears](https://www.redhat.com/rhdc/managed-files/sysadmin/2022-04/3bears.png)![Goldilocks](https://www.redhat.com/sysadmin/sites/default/files/2022-04/goldilocks_1.png)(Máirín Duffy,
+  
+  CC BY-4.0)
+  
+  In the story, Goldilocks complains that Papa Bear's porridge is too hot, Mama Bear's is too cold, and Baby Bear's is just right. In the next section, she finds Papa Bear's bed is too hard, Mama Bear's bed is too soft, and Baby Bear's bed is just right.
+  
+  If you set the security on containers too tight, many containers will not run.
+  
+  If you set the security on containers too loose, you didn't really secure them.
+  
+  When I want to lock down containers, I look for the Goldilocks level, where the container can be as secure as possible. Still, most containers run within the default constraints.
+  
+  ## Why does your container fail with "permission denied"?
+  
+  ![bear](https://www.redhat.com/sysadmin/sites/default/files/2022-04/mamabear.png)(Máirín Duffy,
+  
+  CC BY-4.0)
+  
+  Many users' only choice is to run with `--privileged` mode. When the container runs fine with `--privileged`, users need to understand what those privileges mean: They mean you are beyond Mama Bear's territory. The `--privileged` flag turns off all security separation on the container. The container processes get the same privilege as if they were run directly by the user. If the user is root, the processes get full root privileges.
+  
+  Note: Even in `--privileged` mode, containers are still subject to namespace protections, including the user namespace. I will cover those later in this article.
+  
+  This article explains how to figure out what the container is trying to do that is blocked by container security and how to run your container with more protection than `--privileged`.
+  
+  ## Why Podman?
+  
+  Because I work on Podman, most of the rest of this article covers using it to secure containers, but the concepts and separation apply to other container engines like Buildah, Docker, CRI-O, and containerd.
+  
+  Podman uses many security mechanisms for isolating containers from the host system and other containers. These security mechanisms can cause a permission-denied error, and sadly only the kernel knows which one is blocking access to the container process. I saw this problem coming, and back in 2013, I opened a feature discussion called [FriendlyEPERM](https://fedoraproject.org/wiki/Features/FriendlyEPERM). Lots of security features were being added to the Linux kernel that could cause a process to get EPERM, and there would be no reasonable way for the user or administrator to figure out what happened. Only the kernel would know. And it might spread some crumbs around the system to help diagnose the issue, but it didn't do this consistently.
+  
+  FriendlyEPERM's goal was to have the kernel write the reason for EPERM into the`/proc` filesystem to allow logging tools to inform the user why the process was denied access. FriendlyEPERM never happened because it would be inherently [racy](https://en.wikipedia.org/wiki/Race_condition), and no one ever figured out a way to have the kernel reveal to a process why it was denied access.
+  
+  Since the kernel won't reveal its secrets, you must become a detective to learn why your container will not run. The rest of this article goes through the different security mechanisms, how to diagnose what is causing the problem, and how to work around the issue without requiring the `--privileged` flag.
+  
+  ## 1\. Confirm the problem is security
+  
+  Use the `--privileged` flag to ensure it is a security problem. Sometimes the problem is related to something other than security, such as namespaces. I cover namespaces at the end of this article. If your container runs with the `--privileged` flag, the problem is likely a security issue. If it still does not run, the problem may be with namespaces.
+  
+  If the container runs in `--privileged` mode, here are the security mechanisms I would try.
+  
+  ### a. Is SELinux the issue?
+  
+  [SELinux](http://www.redhat.com/en/topics/linux/what-is-selinux?intcmp=701f20000012ngPAAQ) is a labeling system that protects the filesystem from container processes. If the content on the host system leaks into a container or a container process escapes, then SELinux blocks access. SELinux can easily cause permission-denied errors, especially when you're using volumes. [Many articles](https://opensource.com/article/18/2/selinux-labels-container-runtimes) have been written on SELinux, container volumes, and the use of the `:z` and `:Z` flags.
+  
+  SELinux can be diagnosed relatively quickly by checking for Access Vector Cache (AVC) messages in the `/var/log/audit/audit.log` or running the container in permissive mode with `sudo setenforce 0`. Another alternative is running a container without SELinux separation:
+  
+  ```shell
+  $ podman run --security-opt label=disable …
+  ```
+  
+  Of course, I would [never recommend disabling](https://stopdisablingselinux.com/) SELinux, but understanding that it is causing the failures makes problems easier to diagnose.
+  
+  The classic SELinux issue is the process is not allowed to write to a volume when running Podman on the container:
+  
+  ```shell
+  $ mkdir /tmp/data
+  
+  $ podman run -v /tmp/data:/data fedora touch /data/content
+  touch: cannot touch '/data/content': Permission denied
+  ```
+  
+  If you run the container with `--privileged`, it works:
+  
+  ```shell
+  $ podman run --privileged -v /tmp/data:/data fedora touch /data/content
+  ```
+  
+  So you now know that this is a privilege problem.
+  
+  If you look in the audit.log using `ausearch`, you see an AVC record:
+  
+  ```shell
+  $ sudo ausearch -m avc -ts recent
+  
+  ----
+  
+  time->Wed Mar 30 10:39:57 2022
+  
+  type=AVC msg=audit(1648651197.081:7952): avc: denied { write } for pid=1235318 comm="touch" name="data" dev="tmpfs" ino=1518754 scontext=system_u:system_r:container_t:s0:c236,c859 tcontext=unconfined_u:object_r:user_tmp_t:s0 tclass=dir permissive=1
+  ```
+  
+  It seems to be an SELinux issue.
+  
+  **_\[ Improve your skills [managing and using SELinux](https://opensource.com/downloads/cheat-sheet-selinux?intcmp=701f20000012ngPAAQ) with this helpful guide. \]_**
+  
+  You could have also set the SELinux system in permissive mode:
+  
+  ```shell
+  $ sudo setenforce 0
+  
+  $ podman run -v /tmp/data:/data fedora touch /data/content
+  
+  $ sudo setenforce 1
+  ```
+  
+  And the command works.
+  
+  Finally, you can use the `:Z` option and tell [Podman](https://podman.io/?intcmp=701f20000012ngPAAQ) to relabel the content so that it is private to the container and run the container fully locked down with SELinux in enforcing mode:
+  
+  ```shell
+  $ podman run -v /tmp/data:/data:Z fedora touch /data/content
+  ```
+  
+  If SELinux is not the issue, turn the security back on (`sudo setenforce 1`), and check another security mechanism.
+  
+  ### b. Is AppArmor the issue?
+  
+  AppArmor is similar to SELinux in that rules are added to the kernel to control process access to the system. Like SELinux, AppArmor could cause a permission-denied error. You can verify whether it is the problem by turning off AppArmor separation:
+  
+  ```shell
+  $ podman run --security-opt apparmor=unconfined …
+  ```
+  
+  Our team has heard of [cases](https://github.com/containers/podman/issues/8575) where `unconfined` is still not working. You can try disabling the `apparmor` profile or AppArmor itself.
+  
+  ### c. Test capabilities
+  
+  Podman drops Linux capabilities when it starts a container. Podman runs root processes with the following capabilities by default:
+  
+  - CHOWN
+  - DAC\_OVERRIDE
+  - FOWNER
+  - FSETID
+  - KILL
+  - NET\_BIND\_SERVICE
+  - SETFCAP
+  - SETGID
+  - SETPCAP
+  - SETUID
+  - SYS\_CHROOT
+  
+  Imagine running a build with a Containerfile that attempts to create a device node:
+  
+  ```shell
+  $ cat /tmp/Containerfile
+  from fedora
+  run mknod /dev/mynull c 1 3
+  ```
+  
+  Running rootful `podman build` on this Containerfile fails:
+  
+  ```shell
+  # podman build /tmp
+  STEP 1/2: FROM fedora
+  STEP 2/2: run mknod /dev/mynull c 1 3
+  mknod: /dev/mynull: Operation not permitted
+  Error: error building at STEP "RUN mknod /dev/mynull c 1 3": error while running runtime: exit status 1
+  ```
+  
+  Since `podman build` does not even have a `--privileged` flag, you need to start diagnosing a workaround. Check whether SELinux is causing the problem:
+  
+  ```shell
+  # setenforce 0
+  
+  # podman build /tmp
+  STEP 1/2: FROM fedora
+  STEP 2/2: run mknod /dev/mynull c 1 3
+  mknod: /dev/mynull: Operation not permitted
+  Error: error building at STEP "RUN mknod /dev/mynull c 1 3": error while running runtime: exit status 1
+  
+  # setenforce 1
+  ```
+  
+  Nope. The `podman build` command still fails while in permissive mode, so the problem is not likely to be SELinux. You could try adding all capabilities. (Note: Podman running with `--privileged` mode turns on all capabilities.)
+  
+  You can turn on all capabilities for running a container by executing the following command:
+  
+  ```shell
+  # podman build --cap-add all /tmp/
+  STEP 1/2: FROM fedora
+  STEP 2/2: run mknod /dev/mynull c 1 3
+  COMMIT
+  --> ee04c826eb9
+  Ee04c826eb9bd8726fb234c83d9cc4c9218c433f56a804e0f06bbefa43fcf586
+  ```
+  
+  Because the container runs fine with all capabilities, you need to figure out which capability is required.
+  
+  The most powerful Linux capability is SYS\_ADMIN, so attempt that one:
+  
+  ```shell
+  # podman build --no-cache --cap-add sys_admin /tmp
+  STEP 1/2: FROM fedora
+  STEP 2/2: run mknod /dev/mynull c 1 3
+  mknod: /dev/mynull: Operation not permitted
+  Error: error building at STEP "RUN mknod /dev/mynull c 1 3": error while running runtime: exit status 1
+  ```
+  
+  The container ran fine with one of these missing capabilities, so you know one of them is the problem.
+  
+  During diagnosis, ask what the service was attempting to do when it got permission denied. If it has something to do with the network, look at the network capabilities. Then search the capabilities list for something network related. Try to add those (NET\_BIND\_SERVICE, NET\_BROADCAST, NET\_ADMIN, NET\_RAW, CAP\_IPC\_LOCK). In this case, the build is attempting to create a device node, so check that capability:
+  
+  ```shell
+  # podman build --no-cache --cap-add mknod /tmp
+  STEP 1/2: FROM fedora
+  STEP 2/2: run mknod /dev/mynull c 1 3
+  COMMIT
+  --> e24c8234f10
+  E24c8234f10fc2f8284ae91253891077dc038c30587f5a4a09f8e315218e7f14
+  ```
+  
+  Obviously, CAP\_MKNOD is the missing capability.
+  
+  Sometimes users have problems with a Podman container, and they tell me that it works with Docker. One reason for this is Podman runs with tighter security and fewer Linux capabilities than Docker. Podman drops a few capabilities that Docker allows by default. If a container runs with Docker but not Podman, try adding the missing capabilities: NET\_RAW, SYS\_CHROOT, AUDIT\_WRITE, MKNOD.
+  
+  ```shell
+  # podman build --no-cache --cap-add sys_chroot,net_raw,audit_write,mknod /tmp
+  STEP 1/2: FROM fedora
+  STEP 2/2: run mknod /dev/mynull c 1 3
+  COMMIT
+  --> 3faef5a3084
+  3faef5a3084427343165c3d322e410108e18ba2b86f45ccee0ab6771a654fcf
+  ```
+  
+  If you want to really get down and dirty, you can use `strace` to attempt to get the actual syscall that is being denied.
+  
+  **_\[ Check out this free guide to [boosting hybrid cloud security and protecting your business](https://www.redhat.com/en/resources/hybrid-cloud-security-ebook?intcmp=701f20000012ngPAAQ). \]_**
+  
+  d. Test SECCOMP
+  
+  Podman uses SECCOMP to limit the number of system calls available within a container. The list of syscalls is shipped in the `/usr/share/containers/seccomp.json` file. Working with seccomp files is a little advanced, so I usually just tell people to see if the container runs with seccomp separation disabled. You can disable SECCOMP easily and see if the container runs:
+  
+  ```shell
+  $ podman run –security-opt seccomp=unconfined
+  ```
+  
+  Sometimes SECCOMP denials show up in `/var/log/audit/audit.log`. Instead of turning off SECCOMP entirely, generate a profile for the specific workload and container. Please refer to [Improving Linux container security with seccomp](https://www.redhat.com/sysadmin/container-security-seccomp) to learn how to do that with Podman.
+  
+  ### e. Test masked kernel filesystems
+  
+  Podman masks over several kernel filesystems to prevent processes within the container from certain activities on the kernel filesystems. Sometimes the processes inside the container might need to access one of these masked kernel filesystems. When running in `--privileged` mode, Podman does not mask any of the kernel filesystems. You can also run containers without the masks by executing:
+  
+  ```shell
+  $ podman run --security-opt unmask=all …
+  ```
+  
+  Use `man podman run` to display the unmask options:
+  
+  ```plaintext
+  ● unmask=ALL or /path/1:/path/2, or shell expanded paths (/proc/*): Paths to unmask separated by a colon. If set to ALL, it will unmask all the paths that are masked or made read only by default. The default masked paths are /proc/acpi, /proc/kcore, /proc/keys, /proc/latency_stats, /proc/sched_debug, /proc/scsi, /proc/timer_list, /proc/timer_stats, /sys/firmware, and /sys/fs/selinux.. The default paths that are read only are /proc/asound, /proc/bus, /proc/fs, /proc/irq, /proc/sys, /proc/sysrq-trigger, /sys/fs/cgroup.
+  ```
+  
+  ## 2\. Namespace issues
+  
+  I have covered all the standard security separations. Next, I will look at namespaces.
+  
+  **_\[ Learn how to [explain orchestration in plain English](https://enterprisersproject.com/how-explain-orchestration-plain-english?intcmp=701f20000012ngPAAQ). \]_**
+  
+  ### a. Is user namespace the issue?
+  
+  One of the most common issues and bug reports our team gets is that the XYZ container image works fine with Docker but blows up with Podman. This is almost invariably because the user is running rootful Docker and rootless Podman. Rootless Podman uses the [user namespace](https://www.redhat.com/sysadmin/building-container-namespaces), which causes some security issues and can cause permission to be denied. You can diagnose this by telling the user to attempt to run the container as root, which would match up to the default experience with Docker:
+  
+  ```shell
+  $ sudo podman run …
+  ```
+  
+  For example, examine what happens if you try to run a [MariaDB](https://www.redhat.com/sysadmin/mysql-mariadb-introduction) image:
+  
+  ```shell
+  $ mkdir /tmp/data
+  
+  $ podman run --env MARIADB_ROOT_PASSWORD=passwd -v /tmp/data/:/var/lib/mysql mariadb
+  Error: open /tmp/data/mysql: permission denied
+  ```
+  
+  Remember from the first section of this article that SELinux blocks access to random content on disk, so you need to add the `:Z` option:
+  
+  ```shell
+  $ podman run --env MARIADB_ROOT_PASSWORD=passwd -v /tmp/data/:/var/lib/mysql:Z mariadb
+  Error: open /tmp/data/mysql: permission denied
+  ```
+  
+  Nope, still broken. You can try it as root:
+  
+  ```shell
+  $ sudo podman run --env MARIADB_ROOT_PASSWORD=passwd -v /tmp/data/:/var/lib/mysql:Z mariadb
+  2022-04-06 20:28:15+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:10.7.3+maria~focal started.
+  2022-04-06 20:28:15+00:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+  2022-04-06 20:28:15+00:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:10.7.3+maria~focal started.
+  …
+  ```
+  
+  When it works in rootful mode but not rootless mode, there is a good chance the issue is with _user namespace_. User namespace tends to cause issues when volumes are mounted into containers, similar to the SELinux problems. Usually, the problem is a non-root user inside a container, say the MySQL UID 999, trying to access a volume mounted from the host user's home directory. By default, the UID of the host user is treated as UID 0 inside the container. The MySQL user of the MariaDB container (UID 999) is not allowed to read and write from it.
+  
+  In a user namespace, this UID is not simply UID==999. It is offset by the range of UIDs in `/etc/subuid`. On my system, this UID 999 inside the container is mapped to UID 100998 outside the user namespace. For this issue, Podman makes it easy by adding a `:U` option. The `:U` tells Podman to recursively `chown` the volume to match the default user found inside the user namespaced container.
+  
+  First, stop the rootful container from running, and then remove and recreate the `/tmp/data` directory since the actual root user owns the content in this directory:
+  
+  ```shell
+  $ sudo stop -f
+  
+  $ sudo rm -rf /tmp/data
+  
+  $ mkdir /tmp/data
+  ```
+  
+  Now run the container again in rootless mode, this time with the `:U` option:
+  
+  ```shell
+  $ podman run --env MARIADB_ROOT_PASSWORD=passwd -v /tmp/data/:/var/lib/mysql:Z,U mariadb
+  2022-04-06 16:30:53-04:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:10.7.3+maria~focal started.
+  2022-04-06 16:30:53-04:00 [Note] [Entrypoint]: Switching to dedicated user 'mysql'
+  2022-04-06 16:30:53-04:00 [Note] [Entrypoint]: Entrypoint script for MariaDB Server 1:10.7.3+maria~focal started.
+  …
+  ```
+  
+  If you'd like more information, I wrote about volumes and user namespace in [Dealing with user namespaces and SELinux on rootless containers](https://www.redhat.com/sysadmin/user-namespaces-selinux-rootless-containers).
+  
+  Another common issue with the user namespace is using a UID that is not mapped within the user namespace. By default, rootless users only use 65537 UIDs. If you use a UID greater than that, the user namespace treats it as undefined, and it will not be allowed. You can see the user namespace mappings of the container with the `podman unshare` command:
+  
+  ```shell
+  $ podman unshare cat /proc/self/uid_map
+  0 3267 1
+  1 100000 65536
+  ```
+  
+  One common problem is a failure with an unmapped user. You can probably run the container as root, or you need to expand the number of UIDs mapped for the user in `/etc/subuid` and `/etc/subgid` files.
+  
+  Note: If you ever modify those files, you need to run `podman system migrate` afterward to use them in a logged-in session.
+  
+  ### b. Is network namespace the issue?
+  
+  Sometimes the issue is caused by the network namespace; you can disable this and use the host's network namespace using the `--net=host` flag:
+  
+  ```shell
+  $ podman run --net=host …
+  ```
+  
+  This runs the container in the host's network. Note that you still won't have full access to the network; if you are running as rootless, some access is prevented even if you have added all caps. For example, rootless users are not allowed to bind to ports < 1024:
+  
+  ```shell
+  $ podman run -p 80:80 ubi8/httpd-24
+  Error: rootlessport cannot expose privileged port 80, you can add 'net.ipv4.ip_unprivileged_port_start=80' to /etc/sysctl.conf (currently 1024), or choose a larger port number (>= 1024): listen tcp 0.0.0.0:80: bind: permission denied
+  ```
+  
+  This happens so often that Podman tells the user about it, and even describes a special sysctl that can be set to allow non-root users to bind to port 80:
+  
+  ```shell
+  $ sudo sysctl -w net.ipv4.ip_unprivileged_port_start=80
+  net.ipv4.ip_unprivileged_port_start = 80
+  
+  $ podman run -p 80:80 ubi8/httpd-24
+  => sourcing 10-set-mpm.sh ...
+  => sourcing 20-copy-config.sh ...
+  => sourcing 40-ssl-certs.sh ...
+  …
+  ```
+  
+  ### c. Issues with PID or IPC namespaces
+  
+  Similar to a network, you could have issues with containers caused by the [PID or IPC namespaces](https://www.redhat.com/sysadmin/7-linux-namespaces). It is simple to turn off the separation on these by executing with the `--pid=host` and `--ipc=host` options:
+  
+  ```shell
+  $ podman run --pid=host --ipc=host …
+  ```
+  
+  ## 3\. Try rootful containers
+  
+  Some containers just require root. Usually, very privileged containers that want to modify the system will not work in rootless mode. Luckily, these are very rare. To run a container that mounts different types of filesystems, you need to run it in rootful mode.
+  
+  The bottom line is that in rootless mode, you can only change system parameters related to namespaces and can only do what a normal user can do. Podman does not add anything special to the system, but it takes advantage of the namespaces in clever ways.
+  
+  ## Wrap up
+  
+  It should rarely be necessary to run with `--privileged` mode; if you spend a small amount of time investigating which of the subsystems is failing, you should be able to run with tighter security. You might be moving away from Papa Bear, but you don't need to go all the way to Mama Bear.
+  
+  * * *
+  
+  ### About the author
+  
+  [![Dan Walsh author photo](https://www.redhat.com/rhdc/managed-files/styles/media_thumbnail/private/dan-walsh-author-photo.jpg?itok=fwQDNytL)](https://www.redhat.com/en/authors/dan-walsh)
+  
+  [**Dan Walsh** \\
+  \\
+  Senior Distinguished Engineer](https://www.redhat.com/en/authors/dan-walsh)
+  
+  [Follow Dan Walsh on Github](https://github.com/rhatdan "Follow Dan Walsh on Github")
+  
+  [Follow Dan Walsh LinkedIn](https://www.linkedin.com/in/dan-walsh-a8729b2/ "Follow Dan Walsh LinkedIn")
+  
+  Daniel Walsh has worked in the computer security field for over 30 years. Dan is a Senior Distinguished Engineer at Red Hat. He joined Red Hat in August 2001. Dan leads the Red Hat Container Engineering team since August 2013, but has been working on container technology for several years.
+  
+  Dan helped developed sVirt, Secure Virtualization as well as the SELinux Sandbox back in RHEL6 an early desktop container tool. Previously, Dan worked Netect/Bindview's on Vulnerability Assessment Products and at Digital Equipment Corporation working on the Athena Project, AltaVista Firewall/Tunnel (VPN) Products. Dan has a BA in Mathematics from the College of the Holy Cross and a MS in Computer Science from Worcester Polytechnic Institute.
+  
+  [Read full bio](https://www.redhat.com/en/authors/dan-walsh)
+  
+  ## Browse by channel
+  
+  [Explore all channels](https://www.redhat.com/en/blog/channels "Explore all channels")
+  
+  ![automation icon](https://www.redhat.com/cms/managed-files/automation.svg)
+  
+  ### [Automation](https://www.redhat.com/en/blog/channel/management-and-automation)
+  
+  The latest on IT automation for tech, teams, and environments
+  
+  ![AI icon](https://www.redhat.com/cms/managed-files/AI.svg)
+  
+  ### [Artificial intelligence](https://www.redhat.com/en/blog/channel/artificial-intelligence)
+  
+  Updates on the platforms that free customers to run AI workloads anywhere
+  
+  ![open hybrid cloud icon](https://www.redhat.com/cms/managed-files/open-hybrid-cloud.svg)
+  
+  ### [Open hybrid cloud](https://www.redhat.com/en/blog/[[url-nid:292921;title:Open%20Hybrid%20Cloud]])
+  
+  Explore how we build a more flexible future with hybrid cloud
+  
+  ![security icon](https://www.redhat.com/cms/managed-files/security.svg)
+  
+  ### [Security](https://www.redhat.com/en/blog/channel/security)
+  
+  The latest on how we reduce risks across environments and technologies
+  
+  ![edge icon](https://www.redhat.com/cms/managed-files/edge_2.svg)
+  
+  ### [Edge computing](https://www.redhat.com/en/blog/channel/edge-computing)
+  
+  Updates on the platforms that simplify operations at the edge
+  
+  ![Infrastructure icon](https://www.redhat.com/cms/managed-files/infrastructure.svg)
+  
+  ### [Infrastructure](https://www.redhat.com/en/blog/channel/infrastructure)
+  
+  The latest on the world’s leading enterprise Linux platform
+  
+  ![application development icon](https://www.redhat.com/cms/managed-files/application-development.svg)
+  
+  ### [Applications](https://www.redhat.com/en/blog/channel/applications)
+  
+  Inside our solutions to the toughest application challenges
+  
+  ![Virtualization icon](https://www.redhat.com/rhdc/managed-files/Icon-Red_Hat-Virtual_server-A-Black-RGB.svg)
+  
+  ### [Virtualization](https://www.redhat.com/en/blog/channel/red-hat-virtualization)
+  
+  The future of enterprise virtualization for your workloads on-premise or across clouds
+  
+  [![Red Hat logo](https://static.redhat.com/libs/redhat/brand-assets/2/corp/logo--on-dark.svg)](https://www.redhat.com/en) [LinkedIn](https://www.linkedin.com/company/red-hat)[YouTube](https://www.youtube.com/user/RedHatVideos)[Facebook](https://www.facebook.com/RedHat/)[X](https://twitter.com/RedHat)[Instagram](https://www.instagram.com/red_hat/)
+  
+  ### Platforms
+  
+  - [Red Hat AI](https://www.redhat.com/en/products/ai)
+  - [Red Hat Enterprise Linux](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux)
+  - [Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift)
+  - [Red Hat Ansible Automation Platform](https://www.redhat.com/en/technologies/management/ansible)
+  - [See all products](https://www.redhat.com/en/products)
+  
+  ### Tools
+  
+  - [Training and certification](https://www.redhat.com/en/services/training-and-certification)
+  - [My account](https://www.redhat.com/wapps/ugc/protected/personalInfo.html)
+  - [Customer support](https://access.redhat.com/)
+  - [Developer resources](https://developers.redhat.com/)
+  - [Find a partner](https://catalog.redhat.com/partners)
+  - [Red Hat Ecosystem Catalog](https://catalog.redhat.com/)
+  - [Documentation](https://docs.redhat.com/en)
+  
+  ### Try, buy, & sell
+  
+  - [Product trial center](https://www.redhat.com/en/products/trials)
+  - [Red Hat Store](https://www.redhat.com/en/store)
+  - [Buy online (Japan)](https://www.redhat.com/en/about/japan-buy)
+  - [Console](https://www.redhat.com/en/hybrid-cloud-console)
+  
+  ### Communicate
+  
+  - [Contact sales](https://www.redhat.com/en/contact/sales)
+  - [Contact customer service](https://www.redhat.com/en/contact/customer-service)
+  - [Contact training](https://www.redhat.com/en/services/training-and-certification/contact-us)
+  - [Social](https://www.redhat.com/en/about/social)
+  
+  ### About Red Hat
+  
+  Red Hat is an open hybrid cloud technology leader, delivering a consistent, comprehensive foundation for transformative IT and artificial intelligence (AI) applications in the enterprise. As a [trusted adviser to the Fortune 500](https://www.redhat.com/en/about), Red Hat offers cloud, developer, Linux, automation, and application platform technologies, as well as [award-winning](https://access.redhat.com/recognition) services.
+  
+  - [Our company](https://www.redhat.com/en/about)
+  - [How we work](https://www.redhat.com/en/about/our-culture)
+  - [Customer success stories](https://www.redhat.com/en/success-stories)
+  - [Analyst relations](https://www.redhat.com/en/about/analysts)
+  - [Newsroom](https://www.redhat.com/en/about/newsroom)
+  - [Open source commitments](https://www.redhat.com/en/about/open-source)
+  - [Our social impact](https://www.redhat.com/en/about/community-social-responsibility)
+  - [Jobs](https://www.redhat.com/en/jobs)
+  
+  ### Change page language
+  
+  简体中文EnglishFrançaisDeutschItaliano日本語한국어PortuguêsEspañol
+  
+  ### Red Hat legal and privacy links
+  
+  - [About Red Hat](https://www.redhat.com/en/about)
+  - [Jobs](https://www.redhat.com/en/jobs)
+  - [Events](https://www.redhat.com/en/events)
+  - [Locations](https://www.redhat.com/en/about/office-locations)
+  - [Contact Red Hat](https://www.redhat.com/en/contact)
+  - [Red Hat Blog](https://www.redhat.com/en/blog)
+  - [Inclusion at Red Hat](https://www.redhat.com/en/about/our-culture/inclusion)
+  - [Cool Stuff Store](https://coolstuff.redhat.com/)
+  - [Red Hat Summit](https://www.redhat.com/en/summit)
+  
+  © 2026 Red Hat
+  
+  ### Red Hat legal and privacy links
+  
+  - [Privacy statement](https://www.redhat.com/en/about/privacy-policy)
+  - [Terms of use](https://www.redhat.com/en/about/terms-use)
+  - [All policies and guidelines](https://www.redhat.com/en/about/all-policies-guidelines)
+  - [Digital accessibility](https://www.redhat.com/en/about/digital-accessibility)
+  - Cookie preferences
+  
+  ![](https://consent.trustarc.com/get?name=info-circle-solid.svg)
+  
+  ## How we use cookies
+  
+  We use cookies on our websites to deliver our online services. Details about how we use cookies and how you may disable them are set out in our [Privacy Statement](http://www.redhat.com/en/about/privacy-policy#cookies). By using this website you agree to our use of cookies.
+  
+  ![Close](https://consent.trustarc.com/get?name=redhat_close_small.svg)Accept AllMore Options
+  --- End Content ---

@@ -1,0 +1,64 @@
+I0522 18:02:04.922186 810211 server.go:1301] Starting language server process with pid 810211
+I0522 18:02:04.922948 810211 server.go:471] Language server will attempt to listen on host localhost
+I0522 18:02:04.923274 810211 server.go:485] Language server listening on random port at 36493 for HTTPS (gRPC)
+I0522 18:02:04.923314 810211 server.go:492] Language server listening on random port at 41637 for HTTP
+W0522 18:02:05.401477 810211 launchmanager.go:69] Entering local chrome mode! This is WRONG unless you are running tests or in eval mode on Linux.
+E0522 18:02:05.403737 810211 log.go:398] Failed to poll ListExperiments: error getting token source: You are not logged into Antigravity.
+W0522 18:02:05.404132 810211 log_context.go:117] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+W0522 18:02:05.404152 810211 log_context.go:117] Cache(availableModels): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+E0522 18:02:05.404179 810211 log.go:398] Failed to poll FetchAvailableModels: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+I0522 18:02:05.404576 810211 server.go:2248] Auth succeeded, refreshing features and managers
+E0522 18:02:05.404666 810211 log.go:398] Failed to poll ListExperiments: error getting token source: You are not logged into Antigravity.
+W0522 18:02:05.404915 810211 log_context.go:117] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+W0522 18:02:05.404929 810211 log_context.go:117] Cache(availableModels): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+E0522 18:02:05.404958 810211 log.go:398] Failed to poll FetchAvailableModels: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+I0522 18:02:05.405172 810211 server.go:2254] State refresh took 0ms
+I0522 18:02:05.412951 810211 server.go:1912] initialized server successfully in 490.657528ms
+I0522 18:02:05.413729 810211 auto_updater.go:207] Last check was less than 15 minutes ago, skipping update
+I0522 18:02:05.413793 810211 common.go:103] Launching CLI mode
+W0522 18:02:05.414040 810211 log_context.go:117] Cache(loadCodeAssistResponse): Singleflight refresh failed: error getting token source: You are not logged into Antigravity.
+W0522 18:02:05.414079 810211 log_context.go:117] Cache(userInfo): Singleflight refresh failed: failed to get load code assist response: error getting token source: You are not logged into Antigravity.
+E0522 18:02:05.414108 810211 server.go:604] Failed to get OAuth token: error getting token source from auth provider: You are not logged into Antigravity.
+W0522 18:02:05.414133 810211 client.go:81] failed to set auth token
+I0522 18:02:05.414151 810211 project.go:64] project: discovered project "/home/arcana-novai" (id=f86384da-c63b-4a4f-b57a-cc85dd0bd0de) via /home/arcana-novai/.antigravitycli
+I0522 18:02:05.414172 810211 common.go:156] project: using project "/home/arcana-novai" (id=f86384da-c63b-4a4f-b57a-cc85dd0bd0de) at /home/arcana-novai/.gemini/config/projects/f86384da-c63b-4a4f-b57a-cc85dd0bd0de.json
+E0522 18:02:05.414195 810211 common.go:188] Failed to resolve GeminiDir ".gemini": .gemini must be an absolute path: path is not absolute, falling back to default
+I0522 18:02:05.414213 810211 common.go:197] CLI app data directory: /home/arcana-novai/.gemini/antigravity-cli
+I0522 18:02:05.414224 810211 server.go:200] Creating CLI server backend: product=antigravity workspaceDirs=[] appDataDir=/home/arcana-novai/.gemini/antigravity-cli cascadeManager=true codeAssist=true
+I0522 18:02:05.414354 810211 printmode.go:71] Print mode: starting (promptLength=5, model="", conversationID="")
+I0522 18:02:05.414390 810211 manager.go:249] Initializing CLI store manager for workspace /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+I0522 18:02:05.414681 810211 cli_setting_manager.go:612] Skipping telemetry propagation because user is not logged in
+I0522 18:02:05.414704 810211 cli_setting_manager.go:66] CLI settings initialized: permissions=&{Allow:[command(id) command(find) command(head) command(podman unshare) command(whoami) command(pytest) command(.venv/bin/pytest) command(grep) command(podman ps) command(touch) command(tail) command(wc) command(ls)] Deny:[] Ask:[]}, toolPermission=request-review
+I0522 18:02:05.414889 810211 manager.go:312] CLI store manager initialized successfully
+I0522 18:02:05.414928 810211 printmode.go:164] Print mode: not authenticated, trying silent auth
+I0522 18:02:05.906110 810211 auth.go:114] ChainedAuth: authenticated via keyring (effective: keyring)
+I0522 18:02:05.906170 810211 server_oauth.go:212] applyAuthResult: email=taylorbare27@gmail.com, authMethod=consumer, quotaProject=
+I0522 18:02:05.906185 810211 server_oauth.go:217] OAuth: authenticated successfully as taylorbare27@gmail.com
+I0522 18:02:05.906197 810211 server_oauth.go:223] b.codeAssistClient.AuthProvider (0x115e369eea80) is same as b.cliAuth (0x115e369eea80)
+I0522 18:02:06.520352 810211 http_helpers.go:182] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0xacacaf65444ccdcc
+I0522 18:02:06.929494 810211 http_helpers.go:182] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0xd6ce9bfab54fef90
+I0522 18:02:07.237164 810211 http_helpers.go:182] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels Trace: 0x3da06cf8255a16de
+I0522 18:02:07.238968 810211 model_config_manager.go:157] Propagating selected model override to backend: label="Claude Opus 4.6 (Thinking)"
+I0522 18:02:07.440884 810211 printmode.go:166] Print mode: silent auth succeeded
+I0522 18:02:07.441016 810211 input_loop.go:499] Auth done received, triggering experiment refresh
+I0522 18:02:07.441078 810211 experiment_manager.go:35] Starting experiment refresh after login
+I0522 18:02:07.748917 810211 http_helpers.go:182] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0x1b86c1d142d268f0
+I0522 18:02:07.851334 810211 experiment_manager.go:39] Experiments refreshed after login
+I0522 18:02:07.851425 810211 manager.go:932] Reloading system slash commands
+I0522 18:02:07.851506 810211 conversation_manager.go:284] Starting new conversation (agent=false)
+I0522 18:02:07.851520 810211 server.go:718] Creating new cascade trajectory (agentScript=false)
+I0522 18:02:07.851528 810211 server.go:726] Conversation using project ID: f86384da-c63b-4a4f-b57a-cc85dd0bd0de
+I0522 18:02:07.852125 810211 server.go:747] Created conversation 26278951-bb86-4870-a421-c7ed3262a591
+I0522 18:02:07.853035 810211 conversation_manager.go:378] Streaming conversation 26278951-bb86-4870-a421-c7ed3262a591
+I0522 18:02:07.853362 810211 server.go:766] Starting conversation update stream for 26278951-bb86-4870-a421-c7ed3262a591
+I0522 18:02:07.853390 810211 printmode.go:130] Print mode: conversation=26278951-bb86-4870-a421-c7ed3262a591, sending message
+I0522 18:02:07.853410 810211 conversation_manager.go:321] Forwarding user message to conversation 26278951-bb86-4870-a421-c7ed3262a591 (items=1, media=0)
+I0522 18:02:07.853418 810211 server.go:1072] Sending user message to conversation 26278951-bb86-4870-a421-c7ed3262a591 (items=1, media=0)
+I0522 18:02:08.054370 810211 http_helpers.go:182] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0x39760b416657bc7
+I0522 18:02:08.369092 810211 http_helpers.go:182] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0x758857cc3928daf1
+I0522 18:02:08.669510 810211 http_helpers.go:182] URL: https://daily-cloudcode-pa.googleapis.com/v1internal:loadCodeAssist Trace: 0xe7cd1e88ec8ff132
+E0522 18:02:08.670848 810211 log.go:398] agent executor error: RESOURCE_EXHAUSTED (code 429): Individual quota reached. Contact your administrator to enable overages. Resets in 162h31m23s.: RESOURCE_EXHAUSTED (code 429): Individual quota reached. Contact your administrator to enable overages. Resets in 162h31m23s.
+E0522 18:02:08.671918 810211 log.go:398] RESOURCE_EXHAUSTED (code 429): Individual quota reached. Contact your administrator to enable overages. Resets in 162h31m23s.: RESOURCE_EXHAUSTED (code 429): Individual quota reached. Contact your administrator to enable overages. Resets in 162h31m23s.
+I0522 18:02:08.867531 810211 printmode_manager.go:90] PlannerResponse without ModifiedResponse encountered
+I0522 18:02:08.867589 810211 manager.go:450] CLI store manager shutting down
+I0522 18:02:08.867841 810211 conversation_manager.go:346] Stopping conversation stream
