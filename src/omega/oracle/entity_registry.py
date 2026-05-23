@@ -10,6 +10,8 @@
 
 import logging
 import os
+import tempfile
+import functools
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -68,7 +70,7 @@ class EntityRegistry:
             )
         self.config_path = Path(config_path)
         self._entities: Dict[str, Entity] = {}
-        self._lock = anyio.Lock()
+        self._lock = None  # Created lazily in async context (C-ARCH-004 pattern)
         self._load()
 
     def _load(self) -> None:
@@ -86,6 +88,9 @@ class EntityRegistry:
 
         raw_entities = data.get("entities", {}) if data else {}
         for key, raw in raw_entities.items():
+            if raw is None or not isinstance(raw, dict):
+                logger.warning(f"Entity '{key}' has empty or malformed definition, skipping")
+                continue
             entity = Entity(
                 name=raw.get("name", key),
                 domains=raw.get("domains", []),
@@ -147,22 +152,25 @@ class EntityRegistry:
 
     async def add(self, entity: Entity) -> None:
         """Add a new entity. Overwrites if name exists."""
+        if self._lock is None:
+            self._lock = anyio.Lock()
         async with self._lock:
             self._entities[entity.name.lower()] = entity
             await self._save()
             
             # Automatically scaffold persistent workspace for the awakened entity
             if entity.name.lower() != "iris":
-                await anyio.to_thread.run_sync(
+                scaffold_fn = functools.partial(
                     EntityWorkspaceManager.scaffold_workspace,
-                    name=entity.name,
-                    archetype=entity.role,
-                    pillars=entity.pillars
+                    entity.name, entity.role, entity.pillars
                 )
+                await anyio.to_thread.run_sync(scaffold_fn)
 
     async def remove(self, name: str) -> bool:
         """Remove an entity by name. Returns True if removed."""
         key = name.lower()
+        if self._lock is None:
+            self._lock = anyio.Lock()
         async with self._lock:
             if key in self._entities:
                 del self._entities[key]
