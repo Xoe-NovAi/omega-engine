@@ -1,13 +1,14 @@
 import uuid
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass
+from collections import deque
 from .entity_registry import EntityRegistry
 
 # ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b ⬡ opencode ⬡ trc_gnosis ⬡ PROXY-IMPLEMENTATION
 
 
 @dataclass
-class TransferDescriptor:
+class DescriptorRef:
     """
     A lightweight reference to a high-density data object.
     Prevents context bloat by passing a pointer instead of the full payload.
@@ -23,13 +24,15 @@ class GnosisProxy:
     Middleware for Tool RAG Discovery and State Transfer.
     Implements the "Invisible RAG" pattern for tools.
     """
+    MAX_TRANSFER_STORE_SIZE = 1000
+
     def __init__(self, registry: 'EntityRegistry'):
-        from .entity_registry import EntityRegistry
         self.registry = registry
         # In-memory cache for descriptors (Sovereign-Lite)
         self.transfer_store: Dict[str, Any] = {}
+        self._store_keys = deque()
 
-    async def discover_tools(self, query: str, entity_name: str, top_k: int = 3) -> List[Dict[str, Any]]:
+    def discover_tools(self, query: str, entity_name: str, top_k: int = 3) -> List[Dict[str, Any]]:
         """
         Performs RAG-based discovery of tools available to the entity.
         Returns matched tool descriptors for injection into system prompt.
@@ -49,17 +52,23 @@ class GnosisProxy:
         # Return top-K
         return matched_tools[:top_k]
 
-    def create_transfer_descriptor(self, data: Any, resource_type: str = "state") -> TransferDescriptor:
+    def create_transfer_descriptor(self, data: Any, resource_type: str = "state") -> DescriptorRef:
         """
         Abstracts a large payload into a Transfer Descriptor.
         """
         descriptor_id = f"trf_{uuid.uuid4().hex[:8]}"
         uri = f"omega://transfer/{descriptor_id}"
 
+        # Bound the store to prevent OOM (C-GNOSIS-001)
+        if len(self.transfer_store) >= self.MAX_TRANSFER_STORE_SIZE:
+            oldest_key = self._store_keys.popleft()
+            self.transfer_store.pop(oldest_key, None)
+
         # Store the actual data in the sovereign store
         self.transfer_store[descriptor_id] = data
+        self._store_keys.append(descriptor_id)
 
-        return TransferDescriptor(
+        return DescriptorRef(
             descriptor_id=descriptor_id,
             resource_type=resource_type,
             uri=uri,
@@ -70,7 +79,9 @@ class GnosisProxy:
         """
         Resolves a descriptor back into its full data object.
         """
-        return self.transfer_store.get(descriptor_id)
+        if descriptor_id not in self.transfer_store:
+            raise KeyError(f"Descriptor {descriptor_id} not found or expired")
+        return self.transfer_store[descriptor_id]
 
     async def wrap_tool_call(self, tool_name: str, args: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -78,7 +89,9 @@ class GnosisProxy:
         """
         resolved_args = {}
         for k, v in args.items():
-            if isinstance(v, str) and v.startswith("omega://transfer/"):
+            if isinstance(v, DescriptorRef):
+                resolved_args[k] = self.resolve_descriptor(v.descriptor_id)
+            elif isinstance(v, str) and v.startswith("omega://transfer/"):
                 desc_id = v.split("/")[-1]
                 resolved_args[k] = self.resolve_descriptor(desc_id)
             else:

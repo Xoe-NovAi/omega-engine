@@ -59,16 +59,16 @@
 
 | ID | Title | File:Line | Report | Status |
 |----|-------|-----------|--------|--------|
-| C-ARCH-010 | WAD manifest entirely unvalidated — empty/null/alien YAML passes through | `wad_loader.py:72-75` | Initial | 🔴 UNFIXED |
-| C-ARCH-011 | `_load_voices()` conflates voice and entity concepts — silent overwrite risk | `wad_loader.py:131-154` | Initial | 🔴 UNFIXED |
-| C-ARCH-012 | Hardcoded Hivemind URL at `:8102` + hardcoded `cli: "opencode"` | `oracle.py:189` | Initial | 🔴 UNFIXED |
-| C-ARCH-013 | `jem` and `testentity` artifacts in production `entities.yaml` — leaky fixtures | `entities.yaml` | Initial | 🔴 UNFIXED |
-| C-ARCH-014 | `_load()` no guard against null YAML values — `NoneType` crash | `entity_registry.py:83` | Initial | 🔴 UNFIXED |
-| C-WS-002 | Soul file comment header stripped on first Oracle update | `entity_workspace.py:67` vs `oracle.py:654` | Deep Dive 1 | 🔴 UNFIXED |
-| C-HIER-004 | `SovereignHierarchy` appears orphaned — not wired into Oracle | `hierarchy.py` (entire file) | Deep Dive 1 | 🔴 UNFIXED |
-| C-GNOSIS-003 | Double import of `EntityRegistry` (module level + inside `__init__`) | `gnosis_proxy.py:4,14` | Deep Dive 1 | 🔴 UNFIXED |
-| C-GNOSIS-004 | Brittle `omega://transfer/` string-prefix protocol — false positives | `gnosis_proxy.py:66-67` | Deep Dive 1 | 🔴 UNFIXED |
-| C-GNOSIS-005 | `resolve_descriptor()` silent failure — ghost references indistinguishable from null | `gnosis_proxy.py:62` | Deep Dive 1 | 🔴 UNFIXED |
+| C-ARCH-010 | WAD manifest entirely unvalidated — empty/null/alien YAML passes through | `wad_loader.py:72-75` | Initial | 🟡 MEDIUM | 🟢 FIXED — Phase 2 |
+| C-ARCH-011 | `_load_voices()` conflates voice and entity concepts — silent overwrite risk | `wad_loader.py:131-154` | Initial | 🟡 MEDIUM | 🟢 FIXED — Phase 2 |
+| C-ARCH-012 | Hardcoded Hivemind URL at `:8102` + hardcoded `cli: "opencode"` | `oracle.py:189` | Initial | 🟡 MEDIUM | 🟢 FIXED — Phase 2 |
+| C-ARCH-013 | `jem` and `testentity` artifacts in production `entities.yaml` — leaky fixtures | `entities.yaml` | Initial | 🟡 MEDIUM | 🟢 FIXED — Phase 2 |
+| C-ARCH-014 | `_load()` no guard against null YAML values — `NoneType` crash | `entity_registry.py:83` | Initial | 🟡 MEDIUM | 🟢 FIXED — Phase 2 |
+| C-WS-002 | Soul file comment header stripped on first Oracle update | `entity_workspace.py:67` vs `oracle.py:654` | Deep Dive 1 | 🟡 MEDIUM | 🟢 FIXED — Phase 2 |
+| C-HIER-004 | `SovereignHierarchy` appears orphaned — not wired into Oracle | `hierarchy.py` (entire file) | Deep Dive 1 | 🟡 MEDIUM | 🟢 FIXED — Phase 2 |
+| C-GNOSIS-003 | Double import of `EntityRegistry` (module level + inside `__init__`) | `gnosis_proxy.py:4,14` | Deep Dive 1 | 🟡 MEDIUM | 🟢 FIXED — Phase 2 |
+| C-GNOSIS-004 | Brittle `omega://transfer/` string-prefix protocol — false positives | `gnosis_proxy.py:66-67` | Deep Dive 1 | 🟡 MEDIUM | 🟢 FIXED — Phase 2 |
+| C-GNOSIS-005 | `resolve_descriptor()` silent failure — ghost references indistinguishable from null | `gnosis_proxy.py:62` | Deep Dive 1 | 🟡 MEDIUM | 🟢 FIXED — Phase 2 |
 
 **Medium total**: 10 findings. All UNFIXED.
 
@@ -78,9 +78,9 @@
 
 | ID | Title | File:Line | Report | Status |
 |----|-------|-----------|--------|--------|
-| C-ARCH-015 | Duplicate imports inside `_write_soul_atomic()` — inner shadowing | `oracle.py:651-652` | Initial | 🔴 UNFIXED |
-| C-ARCH-016 | Double `anyio.Path()` wrapping in `load_all_wads()` | `wad_loader.py:47` | Initial | 🔴 UNFIXED |
-| C-ARCH-017 | `Inanna` pillar name mismatch: "P5: Voice" vs canonical "Throat" | `entities.yaml` vs `hierarchy.yaml:116` | Initial | 🔴 UNFIXED |
+| C-ARCH-015 | Duplicate imports inside `_write_soul_atomic()` — inner shadowing | `oracle.py:651-652` | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 3 |
+| C-ARCH-016 | Double `anyio.Path()` wrapping in `load_all_wads()` | `wad_loader.py:47` | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 3 |
+| C-ARCH-017 | `Inanna` pillar name mismatch: "P5: Voice" vs canonical "Throat" | `entities.yaml` vs `hierarchy.yaml:116` | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 3 |
 
 **Low total**: 3 findings. All UNFIXED.
 

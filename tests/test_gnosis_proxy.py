@@ -2,7 +2,7 @@
 
 import pytest
 
-from omega.oracle.gnosis_proxy import GnosisProxy, TransferDescriptor
+from omega.oracle.gnosis_proxy import GnosisProxy, DescriptorRef
 from omega.oracle.entity_registry import EntityRegistry
 
 
@@ -21,7 +21,7 @@ def test_create_transfer_descriptor(proxy):
     data = {"secret": "the universe is a simulation", "score": 42}
     desc = proxy.create_transfer_descriptor(data, resource_type="state")
 
-    assert isinstance(desc, TransferDescriptor)
+    assert isinstance(desc, DescriptorRef)
     assert desc.resource_type == "state"
     assert desc.uri.startswith("omega://transfer/")
     assert desc.descriptor_id in proxy.transfer_store
@@ -38,9 +38,9 @@ def test_resolve_descriptor(proxy):
 
 
 def test_resolve_nonexistent_descriptor(proxy):
-    """Resolving a non-existent descriptor should return None."""
-    resolved = proxy.resolve_descriptor("nonexistent_id")
-    assert resolved is None
+    """Resolving a non-existent descriptor should raise KeyError."""
+    with pytest.raises(KeyError, match="not found or expired"):
+        proxy.resolve_descriptor("nonexistent_id")
 
 
 def test_create_descriptor_unique_ids(proxy):
@@ -65,26 +65,23 @@ def test_descriptor_metadata_large_data(proxy):
     assert desc.metadata["size"] > 1000
 
 
-@pytest.mark.asyncio
-async def test_discover_tools_empty_query(proxy):
+def test_discover_tools_empty_query(proxy):
     """Empty query should return no tools."""
-    tools = await proxy.discover_tools("", "Sophia", top_k=3)
+    tools = proxy.discover_tools("", "Sophia", top_k=3)
     assert isinstance(tools, list)
 
 
-@pytest.mark.asyncio
-async def test_discover_tools_structure(proxy):
+def test_discover_tools_structure(proxy):
     """discover_tools should return a list of dicts."""
-    tools = await proxy.discover_tools("wisdom", "Sophia", top_k=3)
+    tools = proxy.discover_tools("wisdom", "Sophia", top_k=3)
     assert isinstance(tools, list)
     if tools:
         assert "name" in tools[0] or "description" in tools[0]
 
 
-@pytest.mark.asyncio
-async def test_discover_tools_invalid_entity(proxy):
+def test_discover_tools_invalid_entity(proxy):
     """Invalid entity name should not raise."""
-    tools = await proxy.discover_tools("test", "NonExistentEntity12345", top_k=3)
+    tools = proxy.discover_tools("test", "NonExistentEntity12345", top_k=3)
     assert isinstance(tools, list)
 
 

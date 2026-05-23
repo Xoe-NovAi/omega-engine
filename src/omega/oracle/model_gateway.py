@@ -298,7 +298,7 @@ class ModelGateway:
                 # Fallback: try to derive from model mapping
                 entity_name = model_name.split("-")[0].title() if "-" in model_name else "Oracle"
  
-            discovered = await self._gnosis_proxy.discover_tools(user_query, entity_name)
+            discovered = self._gnosis_proxy.discover_tools(user_query, entity_name)
             if discovered:
                 tool_lines = "\n".join(
                     f"  - {t['name']}: {t['description'][:80]}"

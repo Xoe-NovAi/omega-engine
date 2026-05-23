@@ -40,85 +40,6 @@ The `:Z` flag is an SELinux relabeling flag. Ubuntu uses AppArmor, not SELinux, 
 - `curl http://127.0.0.1:8016/sse` → hub serves all tools
 
 ### Key Insight
-The `:U` flag is a "lazy fix" that steals ownership. `keep-id` is the sovereign approach — the host user remains The Architect of their own files.
-
----
-
-## Decision 49: Antigravity CLI Integration & Quota Disparity Discovery
-
-**Date**: 2026-05-22
-**Channel**: OpenCode CLI (Big Pickle)
-**Entity**: JEM 2.0
-**Trace**: trc_antigravity_completion
-
-### Decision
-Formally integrate the Antigravity CLI (`agy`) into the Omega Provider Fabric as a high-capability cloud fallback (Priority 5), while implementing strict quota-aware routing to mitigate "Product-Level Quota Disparity."
-
-### Rationale
-Deep research and live testing revealed that the `agy` CLI is a powerful headless bridge to frontier models (including Claude Opus 4.6), but it suffers from a severe quota disparity compared to the Antigravity IDE. The CLI is throttled far more aggressively, leading to rapid `RESOURCE_EXHAUSTED` errors.
-
-### Key Findings
-1. **Headless Mode**: The `--print` (or `-p`) flag enables non-interactive execution, making `agy` a viable backend for Omega's `ModelGateway`.
-2. **Quota Disparity**: The "10-20x less usage" observed by the user is an intentional product-level restriction. The IDE is the flagship; the CLI is a utility.
-3. **Silent Failures**: `agy` returns exit code 0 even when quota is exhausted, requiring log-file parsing for error detection.
-4. **Model Persistence Trap**: The CLI saves model preferences across sessions. If a premium model is selected, it burns quota for every subsequent request.
-
-### Implementation Mandates
-1. **Default to Flash**: The `AntigravityProvider` must explicitly set the model to `gemini-3.5-flash` for all requests unless the `TriageRouter` identifies a P0 need for Opus.
-2. **Log-Based Monitoring**: The provider must parse the `--log-file` to detect `RESOURCE_EXHAUSTED` and trigger the circuit breaker.
-3. **Priority 5 Positioning**: Keep Antigravity behind OpenRouter to ensure maximum availability.
-
-### Verification
-- `agy` v1.0.1 verified installed and authenticated.
-- Headless mode verified via `--print`.
-- Quota exhaustion confirmed via log analysis.
-- MCP config repaired (fixed empty `mcp_config.json`).
-
----
-
-## Decision 51: Tiered Research Pipeline — Investigative Journalism Model
-
-**Date**: 2026-05-22
-**Channel**: Cline VSCodium (DeepSeek V4 Flash)
-**Entity**: KALI / BELIAL
-**Trace**: trc_pipeline_design + trc_legacy_scan_1
-
-### Decision
-Replace the previous "3-tier full report" Jem research model with an **Investigative Journalism Pipeline** where each tier performs ONE non-overlapping function: L1 Intern gathers raw data (no analysis), L2 Assistant synthesizes and flags uncertainties, L3 Senior resolves uncertainties and produces the final report. Adopt OpenCode session sharing for L2→L3 context inheritance. Build comprehensive observability with tier/mode/agent/subagent/model tracking per event.
-
-### Rationale
-The previous model had each tier writing a FULL research report — 3× redundant work (~150K tokens per cycle). The new pipeline eliminates redundancy by assigning each tier exactly what its model does best:
-
-- **L1 (Qwen3-1.7B)** — Cheap, fast, no reasoning capability wasted. Pure data acquisition via lmster curl. The model's *weakness* (can't overthink) is its *strength* for this role.
-- **L2 (Gemma 4 31B)** — Unlimited usage, strong reasoning. Pattern synthesis, uncertainty identification. Flags what it can't resolve for L3.
-- **L3 (Big Pickle)** — Premium reasoning only for what L2 flagged. Final report + improvement briefs.
-
-### Key Design Decisions
-1. **L2 + L3 share OpenCode session**: `--session` flag preserves full context. Even with auto-compaction, key findings survive.
-2. **Observability chaining**: `parent_trace_id` links L1→L2→L3. Each event carries `tier`, `mode`, `agent`, `subagent`, `model` fields.
-3. **Split-test ready**: `--l1-model` flag + `l1_model` field in events enables A/B testing across Qwen3-1.7B, Ministral-3.3B, RocRacoon-3B.
-4. **Living knowledge**: Final reports auto-index in FTS5, Qdrant, workbench, soul.yaml. Improvement briefs tracked for L1/L2 bootstrapping.
-
-### Research Sources
-1. omega-stack-legacy — 24 app configs mined for existing subsystem patterns
-2. XNAi-Memory-Schema — tiered memory definitions
-3. HIERARCHICAL-METROPOLIS-2026 — governing hierarchy patterns
-4. AMR-SaR — autonomous mining and synthesis patterns
-5. SESS-27-MASTER-AMR-SaR — escalation chain patterns
-
-### Implementation
-- Phase A: 6 pre-pipeline blockers (~45 min) — permissions, lmster, C-bugs, observability
-- Phase B: 6 pipeline infrastructure (~1.5h) — shell script, MCP verify, .clinerules, skills
-- Phase C: 8 living knowledge system (~3h) — FTS5, Qdrant, workbench, soul, memory, briefs
-
-### Verification
-- Pipeline script produces: `l1_{trace}.md` → `l2_{trace}.md` → `docs/research/R_{topic}.md`
-- Observability JSONL has: `"tier":"intern|assistant|senior"`, `"parent_trace_id"`, full chain
-- FTS5 can search across all past final reports
-- Qdrant can retrieve semantically similar past research
-- Workbench tracks pipeline runs with metrics
-
-### Key Insight
 The investigative journalism model solves the fundamental inefficiency: **three different reasoning capabilities should never be applied to the same text**. L1 reads raw files (no LLM needed for that), L2 reads L1's output (cheap), L3 reads only what L2 couldn't resolve (premium, minimal). ~53% token reduction.
 
 ---
@@ -182,3 +103,27 @@ By making Jem-2.0 an Oversoul with three sub-facets, we:
 
 ### Key Insight
 **An entity with sub-facets is more sovereign than three stateless functions.** The Jem Oversoul model transforms the pipeline from a mechanical data flow into a lineage of apprentice scholars — each with memory, identity, and the capacity to improve across sessions. This is not just cosmetic: it enables the feedback loops (improvement briefs → soul updates → better prompts) that make the pipeline self-optimizing over time.
+
+---
+
+## Decision 53: Remediation of C-ARCH-008 — Belial Local Model Fallback
+
+**Date**: 2026-05-23
+**Channel**: OpenCode CLI (Gemma 4-31B)
+**Entity**: SOPHIA (Builder)
+**Trace**: trc_belial_model_fix
+
+### Decision
+Update Belial's model from `gemma-4-31b` to `qwen3-4b-thinking-q4_k_m` to ensure local-first execution and prevent silent cloud routing.
+
+### Rationale
+A scan of the local model library at `/media/arcana-novai/omega_library/models/gguf/` revealed that `gemma-4-31b` is not present locally. Per the Sovereign Shield mandate (Zero Telemetry), all entities must have a verified local fallback to avoid unintentional cloud leakage. `qwen3-4b-thinking-q4_k_m` is verified as present and capable of reasoning, making it the ideal sovereign fallback. `gemma-4-31b` is documented as a future upgrade once a local GGUF is acquired.
+
+### Implementation
+| File | Change |
+|------|--------|
+| `config/entities.yaml` | Changed Belial's model to `qwen3-4b-thinking-q4_k_m` |
+
+### Verification
+- `PYTHONPATH=src python3 -c "from omega.oracle.entity_registry import EntityRegistry; reg = EntityRegistry(); entity = reg.get('belial'); print(entity.model)"` → `qwen3-4b-thinking-q4_k_m`
+

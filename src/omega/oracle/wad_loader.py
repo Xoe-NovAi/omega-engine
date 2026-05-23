@@ -44,7 +44,7 @@ class WADLoader:
         
         try:
             async for entry in anyio.Path(self.wads_dir).iterdir():
-                if await anyio.Path(entry).is_dir():
+                if await entry.is_dir():
                     stack_name = entry.name
                     logger.info(f"Loading WAD: {stack_name}")
                     success = await self.load_wad(stack_name)
@@ -61,7 +61,13 @@ class WADLoader:
         2. Load entities from entities/
         3. Load voices from voices/
         """
-        wad_path = self.wads_dir / stack_name
+        # Path traversal guard
+        resolved_wad_path = (self.wads_dir / stack_name).resolve()
+        if not str(resolved_wad_path).startswith(str(self.wads_dir.resolve())):
+            logger.warning(f"Path traversal attempt detected: {stack_name}")
+            return False
+
+        wad_path = resolved_wad_path
         manifest_path = wad_path / "manifest.yaml"
         
         if not await anyio.Path(manifest_path).exists():
@@ -72,6 +78,15 @@ class WADLoader:
             async with await anyio.open_file(str(manifest_path), "r") as f:
                 manifest = yaml.safe_load(await f.read())
                 
+            if manifest is None:
+                raise ValueError(f"WAD {stack_name} manifest is empty")
+            
+            # Validate required fields
+            required_fields = ["name", "version", "entities"]
+            missing = [f for f in required_fields if f not in manifest]
+            if missing:
+                raise ValueError(f"WAD {stack_name} manifest missing required fields: {', '.join(missing)}")
+
             logger.info(f"Loading stack {stack_name} (version {manifest.get('version', 'unknown')})")
             
             # 1. Load Entities
@@ -100,9 +115,14 @@ class WADLoader:
                     # Extract entity name from path or data
                     # Path: entities/sekhmet/soul.yaml -> name = sekhmet
                     entity_name = path.parent.name
+                    if self.registry.get(entity_name):
+                        logger.warning(f"Entity {entity_name} already registered. Skipping to avoid overwrite.")
+                        continue
                     
                     # Create Entity object
                     ent_data = data.get("entity", {})
+
+
                     entity = Entity(
                         name=ent_data.get("name", entity_name),
                         domains=ent_data.get("domains", []),
@@ -123,8 +143,9 @@ class WADLoader:
                         container=ent_data.get("container", False),
                         port=ent_data.get("port"),
                     )
-                    self.registry.add(entity)
+                    await self.registry.add(entity)
                     logger.info(f"Registered entity {entity.name} from WAD")
+
                 except Exception as e:
                     logger.warning(f"Failed to load entity from {path}: {e}")
 
@@ -138,6 +159,9 @@ class WADLoader:
                     data = yaml.safe_load(await f.read())
                     
                 voice_name = path.stem
+                if self.registry.get(voice_name):
+                    logger.warning(f"Voice {voice_name} conflicts with already registered entity. Skipping.")
+                    continue
                 # Create a voice entity
                 entity = Entity(
                     name=voice_name,
@@ -148,7 +172,8 @@ class WADLoader:
                     container=True,
                     port=data.get("port", 8080),
                 )
-                self.registry.add(entity)
+                await self.registry.add(entity)
                 logger.info(f"Registered voice {voice_name} from WAD")
+
             except Exception as e:
                 logger.warning(f"Failed to load voice from {path}: {e}")
