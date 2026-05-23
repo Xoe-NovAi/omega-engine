@@ -1,4 +1,16 @@
 entities:
+  default:
+    name: default
+    model: qwen3-1.7b-q6_k
+    personality: You are the Omega Oracle, the universal interface of the engine.
+    pantheon: Omega
+    element: Aether ⛤
+    chakra: Crown
+    planet: ♃ Jupiter
+    sigil: ⬡ Omega
+    glyph: ⬡
+    invocation: O Universal Runtime, awaken the council.
+    container: false
   sekhmet:
     name: Sekhmet
     domains:
@@ -498,6 +510,11 @@ entities:
     role: Voice Interface
     container: true
     port: 8080
+  duplicate:
+    name: Duplicate
+    model: m
+    personality: p
+    container: false
 iris:
   name: Iris
   domains:

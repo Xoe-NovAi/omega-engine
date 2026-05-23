@@ -77,3 +77,6 @@ test_discovery.py
 ../omega/
 ../omega-stack-legacy/
 ../xna-omega-legacy/.firecrawl/
+data/entities/duplicate/
+data/research/checkpoints/
+data/sessions/*.active

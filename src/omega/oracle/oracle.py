@@ -44,7 +44,7 @@ DATA_DIR = Path(os.environ.get(
     "OMEGA_DATA_DIR",
     str(Path(__file__).resolve().parent.parent.parent.parent / "data")
 ))
-ARCH_SOUL_PATH = DATA_DIR / "entities" / "arch" / "soul.yaml"
+DEFAULT_SOUL_PATH = DATA_DIR / "entities" / "arch" / "soul.yaml"
 
 # Confidence threshold for Iris direct response vs escalation
 IRIS_CONFIDENCE_THRESHOLD = 0.4
@@ -126,10 +126,13 @@ class Oracle:
         
         # Load default entity from config
         self.default_entity = None
+        self._soul_path = None
             
-        # Fallbacks if config fails or entity is missing
+        # Fallbacks if config fails or entity is missing — uses the "default" entity
+        # from the registry. No stack-specific entity names are hardcoded here
+        # per the Engine-Stack Firewall mandate.
         if not self.default_entity:
-            self.default_entity = self.registry.get("default") or self.registry.get("brigid")
+            self.default_entity = self.registry.get("default")
             
         self.iris_entity = self.registry.get("iris")
         if not self.iris_entity:
@@ -161,18 +164,26 @@ class Oracle:
                 
             # Move config loading here to avoid synchronous I/O in __init__
             try:
-                    config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
-                    if config_path.exists():
-                        async with await anyio.open_file(str(config_path), "r") as f:
-                             content = await f.read()
-                             self.config = yaml.safe_load(content)
-                             default_name = self.config.get("omega", {}).get("entity", {}).get("default", "SOPHIA")
-                             resolved = self.registry.get(default_name)
-                             if resolved:
-                                 self.default_entity = resolved
+                config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
+                if config_path.exists():
+                    async with await anyio.open_file(str(config_path), "r") as f:
+                        content = await f.read()
+                        self.config = yaml.safe_load(content)
+                        default_name = self.config.get("omega", {}).get("entity", {}).get("default", "default")
+                        resolved = self.registry.get(default_name)
+                        if resolved:
+                            self.default_entity = resolved
 
             except Exception as e:
                 logger.warning(f"Failed to load default entity from config during bootstrap: {e}")
+
+            # Set soul path from config (Engine-Stack Firewall: config-driven, not hardcoded)
+            try:
+                data_dir = self.config.get("omega", {}).get("data", {}).get("dir", str(DATA_DIR))
+                user_name = self.config.get("omega", {}).get("entity", {}).get("user", "arch")
+                self._soul_path = Path(data_dir) / "entities" / user_name / "soul.yaml"
+            except Exception as e:
+                logger.warning(f"Failed to resolve soul path in bootstrap: {e}")
 
             await self.wad_loader.load_all_wads()
             self._wads_loaded = True
@@ -573,7 +584,7 @@ class Oracle:
         
         async with self._soul_lock:
             try:
-                soul_path = Path(str(ARCH_SOUL_PATH))
+                soul_path = self._soul_path or DEFAULT_SOUL_PATH
                 if not soul_path.exists():
                     return
                 
@@ -613,7 +624,7 @@ class Oracle:
                 except Exception as e:
                     logger.warning(f"Gnosis distillation failed: {e}")
                     distilled_data = {"l1": f"Session with {entity_name}", "l2": "Unknown", "l3": "Unknown"}
-                
+
                 lessons = ent.setdefault("lessons_learned", [])
                 if not isinstance(lessons, list):
                     lessons = []
