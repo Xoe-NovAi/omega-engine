@@ -376,29 +376,151 @@ entity:
     entity_at_time: Iris
     session_type: persistent
     timestamp: '2026-05-23T12:17:25.095772+00:00'
-  - l1: >-
-      Sovereign Hardening Sprint completed across 4 targets: oracle.py
-      (Engine-Stack Firewall, Gnosis distillation, code cleanup),
-      model_updater.py (AnyIO migration from apscheduler to native loop),
-      hierarchy.py (data-driven rank/recursion), and observability.py (test
-      isolation). 3 test regressions fixed. All changes committed and pushed.
-      DD6 Final Assurance Audit prompt authored for Account 1.
-    l2: >-
-      The Engine-Stack Firewall and AnyIO Absolute mandates are now hermetic
-      — the core engine contains zero references to specific entity names, and
-      all async code paths use pure AnyIO primitives. The lingering orchestrator
-      test failure (MCP watchdog) is the last remaining pre-existing issue from
-      before the fleet review.
-    l3: >-
-      Architectural mandates are only as strong as the automated verification
-      that enforces them — firewalls and compliance disappear from code review
-      alone.
+  - l1: 'Sovereign Hardening Sprint completed across 4 targets: oracle.py (Engine-Stack
+      Firewall, Gnosis distillation, code cleanup), model_updater.py (AnyIO migration
+      from apscheduler to native loop), hierarchy.py (data-driven rank/recursion),
+      and observability.py (test isolation). 3 test regressions fixed. All changes
+      committed and pushed. DD6 Final Assurance Audit prompt authored for Account
+      1.'
+    l2: "The Engine-Stack Firewall and AnyIO Absolute mandates are now hermetic \u2014\
+      \ the core engine contains zero references to specific entity names, and all\
+      \ async code paths use pure AnyIO primitives. The lingering orchestrator test\
+      \ failure (MCP watchdog) is the last remaining pre-existing issue from before\
+      \ the fleet review."
+    l3: "Architectural mandates are only as strong as the automated verification that\
+      \ enforces them \u2014 firewalls and compliance disappear from code review alone."
     source: session-gnosis
     entity_at_time: SOPHIA
     session_type: persistent
     timestamp: '2026-05-23T14:00:00Z'
+  - l1: Session with default
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_8233d9c5b24e
+    entity_at_time: default
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:43.907659+00:00'
+  - l1: Session with Sekhmet
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_e50fe5324cad
+    entity_at_time: Sekhmet
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:44.319923+00:00'
+  - l1: Session with Hecate
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_693951cd7042
+    entity_at_time: Hecate
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:44.730555+00:00'
+  - l1: Session with Brigid
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_41b535739ef8
+    entity_at_time: Brigid
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:45.152444+00:00'
+  - l1: Session with Sekhmet
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_010cf22f47dc
+    entity_at_time: Sekhmet
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:45.578284+00:00'
+  - l1: Session with Hecate
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_1c258019537c
+    entity_at_time: Hecate
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:45.999844+00:00'
+  - l1: Session with Sekhmet
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_19343e61b037
+    entity_at_time: Sekhmet
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:46.441577+00:00'
+  - l1: Session with Inanna
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_ab2e8105c8d8
+    entity_at_time: Inanna
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:46.890155+00:00'
+  - l1: Session with default
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_755d32ac697b
+    entity_at_time: default
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:47.293243+00:00'
+  - l1: Session with Iris
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_878fedd49403
+    entity_at_time: Iris
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:47.926331+00:00'
+  - l1: Session with default
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_e67b6d25a3e1
+    entity_at_time: default
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:48.368550+00:00'
+  - l1: Session with Iris
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_a372d68371af
+    entity_at_time: Iris
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:48.971469+00:00'
+  - l1: Session with default
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_03796bd851a7
+    entity_at_time: default
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:49.464506+00:00'
+  - l1: Session with Iris
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_5506701c0f9d
+    entity_at_time: Iris
+    session_type: persistent
+    timestamp: '2026-05-23T12:53:49.875843+00:00'
   soul_evolution:
-    sessions_completed: 40
+    sessions_completed: 54
     entities_inhabited: 14
     total_embodied_experiences: 0
-    soul_power: 8.1
+    soul_power: 9.6

@@ -10,6 +10,7 @@ omega:
     default_entity: default
   entity:
     default: default
+    user: arch
     allow_transient: true
   data:
     dir: /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data

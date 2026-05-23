@@ -81,6 +81,10 @@ class WADLoader:
             if manifest is None:
                 raise ValueError(f"WAD {stack_name} manifest is empty")
             
+            # Support both flat (name/version/entities) and wad:-wrapped manifests
+            if "wad" in manifest:
+                manifest = manifest["wad"]
+            
             # Validate required fields
             required_fields = ["name", "version", "entities"]
             missing = [f for f in required_fields if f not in manifest]
