@@ -94,6 +94,7 @@ class Oracle:
         background_worker: Optional[Any] = None,
     ):
         self.registry = registry or EntityRegistry()
+        self.config = {}  # Will be populated in bootstrap(); default prevents AttributeError
 
         # Health Monitor + Triage Router for model selection (B5: wired before ModelGateway)
         self.health_monitor = HealthMonitor()
