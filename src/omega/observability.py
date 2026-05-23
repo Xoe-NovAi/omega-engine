@@ -105,10 +105,16 @@ class ObservabilityEngine:
             logger.warning(f"Failed to persist event: {e}")
 
     # ── Load recent events from disk ───────────────────────────────
+    def clear_log(self) -> None:
+        """Clear the in-memory event log. Useful for testing."""
+        self._event_log = []
+
     def _load_persisted_events(self, max_days: int = 7) -> None:
-        """Load events from disk on startup to restore continuity."""
-        # Skip in test mode to avoid cross-test contamination
+        """Load events from disk on startup to restore continuity.
+        Events are skipped in test mode to prevent cross-test contamination.
+        """
         if os.environ.get("OMEGA_ENV") == "test":
+            self._event_log = []
             return
         events_dir = LOG_DIR / "events"
         if not events_dir.exists():

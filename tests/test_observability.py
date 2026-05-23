@@ -11,6 +11,7 @@ def test_new_trace_id():
 
 def test_log_event():
     engine = ObservabilityEngine(enable_dataset_collection=False)
+    engine.clear_log()
     tid = new_trace_id()
     engine.log_event("test.event", tid, {"key": "value"})
     assert len(engine._event_log) == 1
@@ -20,6 +21,7 @@ def test_log_event():
 
 def test_trace_session():
     engine = ObservabilityEngine(enable_dataset_collection=False)
+    engine.clear_log()
     trace = engine.trace()
     assert trace.trace_id.startswith("trc_")
     trace.log("test.event", detail="hello")
@@ -28,7 +30,8 @@ def test_trace_session():
 
 def test_trace_session_context_manager():
     engine = ObservabilityEngine(enable_dataset_collection=False)
-
+    engine.clear_log()
+    
     async def run():
         async with engine.trace() as trace:
             trace.log("query.received", query="hello")
@@ -62,10 +65,11 @@ def test_record_training_example():
 
 def test_stats():
     engine = ObservabilityEngine(enable_dataset_collection=False)
+    engine.clear_log()
     tid = new_trace_id()
     engine.log_event("query.received", tid, {})
     engine.log_event("response.delivered", tid, {})
-
+    
     stats = engine.stats()
     assert stats["total_events"] == 2
     assert stats["event_counts"]["query.received"] == 1

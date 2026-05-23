@@ -135,7 +135,7 @@ class Oracle:
         if not self.iris_entity:
             logger.warning("Iris entity not found in registry. Speculative decoding may be degraded.")
         self.observability = get_engine()
-        self._soul_lock = None
+        self._soul_lock = anyio.Lock()
 
         # Memory & Session Foundation
         self.session_manager = SessionManager()
@@ -402,7 +402,8 @@ class Oracle:
             session_id = await self.session_manager.get_session_id("Iris")
         
         # Build context and prepend to personality
-        system_prompt = await self._prepare_system_prompt("Iris", session_id, system_prompt)
+        base_prompt = self.iris_entity.personality if self.iris_entity else "You are Iris, your voice interface. Answer simply and warmly."
+        system_prompt = await self._prepare_system_prompt("Iris", session_id, base_prompt)
         
         # Attempt inference with the lightest available model
         response_text = await self.model_gateway.generate(
