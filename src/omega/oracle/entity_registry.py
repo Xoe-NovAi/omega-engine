@@ -194,21 +194,28 @@ class EntityRegistry:
 
     def _save(self) -> None:
         """Save current entities back to YAML file.
-
-        Note: This preserves the structure but may reformat comments.
-        Consider manual edits to entities.yaml for production changes.
+        
+        Uses atomic write (tempfile + os.replace) to prevent data loss on crash.
         """
         data = {"entities": {}}
         for key, entity in self._entities.items():
             if key == "iris":
                 continue
             data["entities"][key] = entity.to_dict()
-
+        
         if "iris" in self._entities:
             data["iris"] = self._entities["iris"].to_dict()
-
-        with open(self.config_path, "w") as f:
-            yaml.dump(data, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
+        
+        # Atomic write: write to temp, then os.replace
+        import tempfile
+        temp_dir = self.config_path.parent
+        with tempfile.NamedTemporaryFile(
+            "w", dir=str(temp_dir), delete=False, suffix=".tmp"
+        ) as tf:
+            yaml.dump(data, tf, default_flow_style=False, sort_keys=False, allow_unicode=True)
+            tmp_name = tf.name
+        
+        os.replace(tmp_name, self.config_path)
         logger.info(f"Saved {len(self._entities)} entities to {self.config_path}")
 
     def get_tools_for_entity(self, entity_name: str) -> List[Dict[str, Any]]:

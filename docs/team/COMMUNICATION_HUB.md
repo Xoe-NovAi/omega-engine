@@ -1,6 +1,6 @@
 # 🔱 Omega Engine — Team Communication Hub
 **AP Token**: `AP-TEAM-HUB-v2.8.0`
-**Updated**: 2026-05-22 (BREAKTHROUGH: OpenCode Custom Provider Architecture discovered — LM Studio now configurable via npm field + auth.json. Fleet research complete. All trackers synced.)
+**Updated**: 2026-05-22 (FLEET REVIEW SPRINT: Account 1 returned 29 findings across initial review + Deep Dive 1. Fleet management system operational. MASTER_REMEDIATION_PLAN ready for Builder mode.)
 ⬡ OMEGA ⬡ SOPHIA ⬡ qwen3.6-plus-free ⬡ opencode ⬡ trc_core ⬡ HUB
 
 ---
@@ -303,3 +303,84 @@
 ---
 
 ### 🚀 Gemini CLI Re-Onboarding & agy Succession — COMPLETE
+
+---
+
+## 📡 Session Completions — 2026-05-22 (Phase E: Web Claude Fleet Review Sprint)
+
+### 🚀 Account 1 Core Architecture Review — INITIAL REPORT COMPLETE
+**Status**: ✅ **17 findings delivered. 6 CRITICAL, 4 HIGH, 4 MEDIUM, 3 LOW.**
+
+| # | Task | Description | Status |
+|---|------|-------------|--------|
+| 1 | Claude Project Created | "Omega Engine Review — Core Architecture" with 10 knowledge files | ✅ |
+| 2 | Handoff Prompt Sent | Complete scan of 13 core engine files via raw.githubusercontent.com | ✅ |
+| 3 | Initial Report Received | 17 issues cataloged — C-ARCH-001 through C-ARCH-017 | ✅ |
+| 4 | Report Saved | `docs/review/claude-reports/01-claude-report-core-arch.md` | ✅ |
+
+**Key Bombshells**:
+- `EntityRegistry._save()` is non-atomic — data loss risk on crash mid-write
+- `Oracle.__init__()` loads config **twice** — double the blocking I/O
+- `hierarchy.yaml` has 5 dangling symbolic references — governance graph is broken
+- `anyio.Lock()` created in sync `__init__` — crashes under Trio event loop
+
+---
+
+### 🚀 Account 1 Deep Dive 1 — Missing Files ANALYSIS COMPLETE
+**Status**: ✅ **12 additional findings. 3 CRITICAL, 5 HIGH, 4 MEDIUM.**
+
+| # | Task | Description | Status |
+|---|------|-------------|--------|
+| 1 | DD1 Prompt Sent | entity_workspace.py, hierarchy.py, gnosis_proxy.py analysis | ✅ |
+| 2 | DD1 Report Received | 12 additional issues cataloged | ✅ |
+| 3 | Report Saved | `docs/review/claude-reports/01-deep-dive-1_core-arch.md` | ✅ |
+
+**Key Bombshells**:
+- `hierarchy.py` loads YAML into `self._hierarchy` and **never reads it** — the entire governance graph is decorative
+- Kali is missing from `RANK_MAP` — gets Keeper rank, cannot spawn subagents
+- `GnosisProxy.transfer_store` is an unbounded `Dict[str, Any]` — OOM vector at scale
+- Inverted fix found: `os.replace` (microseconds) offloaded to thread pool; `yaml_str` write (milliseconds) left sync
+- `ENTITIES_DATA_DIR` ignores `OMEGA_DATA_DIR` env var — silent path desync
+
+---
+
+### 🚀 Fleet Management Infrastructure — COMPLETE
+**Status**: ✅ **Full management system operational. MASTER_REMEDIATION_PLAN ready.**
+
+| # | Task | Description | Status |
+|---|------|-------------|--------|
+| 1 | FINDINGS_LOG.md | Comprehensive catalog of all 29 findings with severity, file mapping, mandate compliance | ✅ |
+| 2 | FLEET_MANAGEMENT.md | Central dashboard: account status, deep dive tracker, launch sequence, findings pipeline | ✅ |
+| 3 | MASTER_REMEDIATION_PLAN.md | Phased fix plan: Phase 0 (4hr critical), Phase 1 (4hr high), Phase 2 (3hr medium), Phase 3 (30min low) | ✅ |
+| 4 | REMAINING_DEEP_DIVES.md | DD2-DD5 prompts preserved for Account 1 warm context | ✅ |
+| 5 | WEB_CLAUDE_FLEET_PROTOCOL.md v1.1.0 | Added §11 Deep Dive Protocol, §12 Lessons Learned, §13 Fleet Management cross-ref | ✅ |
+| 6 | COMMUNICATION_HUB.md | This entry | ✅ |
+| 7 | `.opencode/agents/overseer.md` | Added §7 Fleet Review Management and updated Pulse Check | ⏳ See below |
+
+**Fleet Dashboard**: `docs/review/FLEET_MANAGEMENT.md`
+**Findings Catalog**: `docs/review/FINDINGS_LOG.md`
+**Remediation Plan**: `docs/review/MASTER_REMEDIATION_PLAN.md`
+
+---
+
+### 🚀 Account 1 Deep Dive 2 — Strategic Alignment — SENT, AWAITING REPORT
+**Status**: 🟡 **DD2 prompt sent to Account 1. Report pending.**
+
+**Focus**: Strategic alignment — roadmap feasibility, cross-reference against PIVOT_LOG decisions, Strategic Health Score.
+
+**Expected**: Strategic Health Score (1-10), roadmap blocker analysis, cross-reference against PIVOT_LOG.
+
+---
+
+### 🚀 Remaining Accounts 2-8 — READY TO LAUNCH
+**Status**: 📋 **Handoff prompts and project instructions prepared. Awaiting Account 1 deep dives to complete before fleet-wide launch.**
+
+| Account | Role | Launch Priority |
+|---------|------|-----------------|
+| 2 | Provider Fabric & Inference Pipeline | Next after Account 1 series |
+| 3 | Memory, Context & Knowledge Engine | High |
+| 4 | Jem 2.0 & Background Research Pipeline | Medium |
+| 5 | Observability, Security & Hardening | High |
+| 6 | MCP Hub & Integration Infrastructure | Medium |
+| 7 | CLI, REPL, Agents & Developer Experience | Medium |
+| 8 | Strategy, Documentation & Community | Low (can overlap) |

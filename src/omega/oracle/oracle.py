@@ -122,17 +122,6 @@ class Oracle:
         
         # Load default entity from config
         self.default_entity = None
-        try:
-            import yaml
-            from pathlib import Path
-            config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
-            if config_path.exists():
-                with open(config_path, "r") as f:
-                    config = yaml.safe_load(f)
-                    default_name = config.get("omega", {}).get("entity", {}).get("default", "SOPHIA")
-                    self.default_entity = self.registry.get(default_name)
-        except Exception as e:
-            logger.warning(f"Failed to load default entity from config: {e}")
             
         # Fallbacks if config fails or entity is missing
         if not self.default_entity:
@@ -140,7 +129,7 @@ class Oracle:
             
         self.iris_entity = self.registry.get("iris") or self.registry.get("iris")
         self.observability = get_engine()
-        self._soul_lock = anyio.Lock()
+        self._soul_lock = None
 
         # Memory & Session Foundation
         self.session_manager = SessionManager()
@@ -160,6 +149,10 @@ class Oracle:
     async def bootstrap(self) -> None:
         """Initialize the Oracle by loading WADs and other async resources."""
         if not self._wads_loaded:
+            # Create lock in async context to avoid Trio RuntimeError
+            if self._soul_lock is None:
+                self._soul_lock = anyio.Lock()
+                
             # Move config loading here to avoid synchronous I/O in __init__
             try:
                     config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
