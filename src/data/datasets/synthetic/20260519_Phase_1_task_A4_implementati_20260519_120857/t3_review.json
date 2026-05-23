@@ -1,0 +1,35 @@
+```json
+{
+  "reviewed": false,
+  "topic": "Phase 1 task A4 — implementation research",
+  "corrections": [
+    {
+      "claim": "Research on: You are SOPHIA, the Omega Engine's Akashic Record....",
+      "correction": "This claim is an internal system prompt or error message and is entirely unrelated to the research topic 'Phase 1 task A4 — implementation research'. No actual research claim was generated.",
+      "severity": "critical"
+    }
+  ],
+  "missing_patterns": [
+    "No research content was generated to identify missing patterns or connections related to 'implementation research'."
+  ],
+  "confidence_scores": {
+    "l1_narrative": 0.0,
+    "l2_insight": 0.0,
+    "l3_principle": 0.0
+  },
+  "recommended_directions": [
+    {
+      "direction": "Investigate and resolve the unavailability of Tier 1 draft and Tier 2 cloud enrichment providers (OpenRouter, OpenCode Zen, Google).",
+      "reason": "The current system state prevents any meaningful research output, as indicated by 'No T1 draft available.' and 'All cloud enrichment providers... returned errors.' This is a critical system-level failure.",
+      "priority": 1.0
+    },
+    {
+      "direction": "Re-run 'Phase 1 task A4 — implementation research' once the underlying system issues preventing content generation and enrichment are fully resolved.",
+      "reason": "The original task could not be completed due to system failures, requiring a fresh attempt under operational conditions.",
+      "priority": 0.9
+    }
+  ],
+  "overall_quality": "poor",
+  "summary": "This report is not reviewable as a research output because it consists entirely of system error messages and internal diagnostics, indicating a complete failure to generate or enrich any content related to the specified topic 'Phase 1 task A4 — implementation research'. The 'claims' section contains an internal system prompt rather than research findings. The 'distillations' explicitly state 'No T1 draft available.' and that 'All cloud enrichment providers... returned errors.', leading to 'Mock enrichment' and 'Sovereign operation continues' without actual enrichment. Consequently, no L1 narrative, L2 insight, or L3 principles could be generated or assessed. The entire pipeline failed to produce any relevant research, necessitating immediate investigation into the unavailability of upstream providers and a re-run of the task."
+}
+```

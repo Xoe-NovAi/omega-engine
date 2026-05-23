@@ -1,0 +1,2645 @@
+No matter what I do Podman is mounting volumes as root
+  URL: https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root
+  Podman maps the uid/gid in the container to uid/gid 0 on the host by default. This means when volumes are mounted from the host they appear as being owned by ...
+
+  --- Content ---
+  ##### Collectives™ on Stack Overflow
+  
+  Find centralized, trusted content and collaborate around the technologies you use most.
+  
+  [Learn more about Collectives](https://stackoverflow.com/collectives)
+  
+  **Stack Internal**
+  
+  Knowledge at work
+  
+  Bring the best of human thought and AI automation together at your work.
+  
+  [Explore Stack Internal](https://stackoverflow.co/internal/?utm_medium=referral&utm_source=stackoverflow-community&utm_campaign=side-bar&utm_content=explore-teams-compact-popover)
+  
+  # [No matter what I do Podman is mounting volumes as root](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root)
+  
+  [Ask Question](https://stackoverflow.com/questions/ask)
+  
+  Asked3 years, 2 months ago
+  
+  Modified [1 year, 3 months ago](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root?lastactivity "2025-01-24 09:16:17Z")
+  
+  Viewed
+  29k times
+  
+  
+  This question shows research effort; it is useful and clear
+  
+  20
+  
+  This question does not show any research effort; it is unclear or not useful
+  
+  Save this question.
+  
+  [Timeline](https://stackoverflow.com/posts/75817076/timeline)
+  
+  Show activity on this post.
+  
+  I have configured Podman as user as I describe in [this post](https://unix.stackexchange.com/a/734790/240147)
+  
+  In my dockerfile, I am going to great pains to absolutely ensure that the directory is owned by the user in question and have gone so far as to hardcode the values to be absolutely sure that it isn't a problem with environment variables while further deleting any group or user with node and then recreating them with that specific ID just to be extra extra certain:
+  
+  ```bash
+  Copy
+  ARG USER_ID 1000
+  ARG GROUP_ID 1000
+  ARG GROUPNAME node
+  ARG USERNAME node
+  
+  # getent group ${GROUP_ID} - Get the name of the group. Ex: `somegroup:x:999:`. This makes sure the group exists
+  # echo groupdel by-id ${GROUP_ID} - This is just there to tell the user what we're doing
+  # groupdel $(getent group ${GROUP_ID} | cut -d: -f1) - Gets the group string as above (`somegroup:x:999:`)
+  # and then passes it into `cut -d: -f1` which will grab the `somegroup` part and pass that into groupdel
+  # ||: The || is the or operator and : is the null operator. This just has the effect of ensuring the line
+  # returns with "success" rather than failure in the event the group doesn't exist
+  RUN (getent group ${GROUP_ID}  && (echo groupdel by-id ${GROUP_ID}; groupdel $(getent group ${GROUP_ID} | cut -d: -f1))) ||:
+  RUN (getent group ${GROUPNAME} && (echo groupdel ${GROUPNAME}; groupdel ${GROUPNAME})) ||:
+  RUN (getent passwd ${USERNAME} && (echo userdel ${USERNAME}; userdel -f ${USERNAME})) ||:
+  RUN groupadd -g ${GROUP_ID} ${GROUPNAME}
+  RUN useradd -l -u ${USER_ID} -g ${GROUPNAME} ${USERNAME}
+  
+  WORKDIR /home/node/app
+  RUN mkdir /patches
+  RUN chown node:node /patches
+  ```
+  
+  This still didn't work, so in my build in docker-compose I further specified, explicitly, the permissions:
+  
+  ```yaml
+  Copy
+    build:
+      dockerfile: podman-build/Dockerfile.patches_backend
+      args:
+        USER_ID: ${USER_ID:-1000}
+        GROUP_ID: ${GROUP_ID:-1000}
+        USERNAME: node
+        GROUPNAME: node
+  ```
+  
+  I don't know what else I'm missing, the UID/GID is correct in the container, the permissions of the folder outside the container are UID/GID=1000 as expected:
+  
+  ![enter image description here](https://i.sstatic.net/JqvDg.png)
+  
+  but this volume mount:
+  
+  ```yaml
+  Copy
+  volumes:
+        - type: bind
+          source: repos/xml
+          target: /patches/xml
+  ```
+  
+  still stubbornly mounts in as root with UID/GID=0. I cannot for the life of me figure out where else it could be getting these permissions.
+  
+  - [podman](https://stackoverflow.com/questions/tagged/podman "show questions tagged 'podman'")
+  
+  [Share](https://stackoverflow.com/q/75817076)
+  
+  Share a link to this question
+  
+  Copy link [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/ "The current license for this post: CC BY-SA 4.0")
+  
+  Short permalink to this question
+  
+  [Improve this question](https://stackoverflow.com/posts/75817076/edit "")
+  
+  Follow
+  
+  
+  
+  Follow this question to receive notifications
+  
+  [edited Jun 4, 2024 at 19:31](https://stackoverflow.com/posts/75817076/revisions "show all edits to this post")
+  
+  [![Jonas's user avatar](https://www.gravatar.com/avatar/894e4c1f3bc33e5f9a5008d355287830?s=64&d=identicon&r=PG)](https://stackoverflow.com/users/213269/jonas)
+  
+  [Jonas](https://stackoverflow.com/users/213269/jonas)
+  
+  131k103103 gold badges331331 silver badges410410 bronze badges
+  
+  asked Mar 22, 2023 at 20:40
+  
+  [![Grant Curell's user avatar](https://i.sstatic.net/N54oV.jpg?s=64)](https://stackoverflow.com/users/4427375/grant-curell)
+  
+  [Grant Curell](https://stackoverflow.com/users/4427375/grant-curell)
+  
+  1,93366 gold badges2727 silver badges5151 bronze badges
+  
+  4
+  
+  - Please provide a [minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example). In particular, you seem to be using docker compose somehow, but how you do that is unclear. Also, what user are you running stuff as? Include the output of `id`. Further, what OS are you on? I guess this is some Linux, but it wouldn't hurt mentioning that. Point is, that e.g. Docker on OS X does some funny things concerning permissions of files in volumes.
+  
+  
+  
+  Ulrich Eckhardt
+  
+  
+  –
+  [Ulrich Eckhardt](https://stackoverflow.com/users/1968182/ulrich-eckhardt "17,789 reputation")
+  
+  
+  
+  2023-03-22 21:14:33 +00:00
+  
+  [CommentedMar 22, 2023 at 21:14](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment133738803_75817076)
+  
+  - None of the above are relevant to the problem. I have determined the source - podman does not run the same way docker does. Docker uses fuse-ovelayfs to abstract file permissions on mounted volumes whereas (rootless) podman does not. Podman maps the uid/gid in the container to uid/gid 0 on the host by default. This means when volumes are mounted from the host they appear as being owned by uid/gid 0 in the container. I'll post a solution to the problem later today.
+  
+  
+  
+  Grant Curell
+  
+  
+  –
+  [Grant Curell](https://stackoverflow.com/users/4427375/grant-curell "1,933 reputation")
+  
+  
+  
+  2023-03-27 13:01:15 +00:00
+  
+  [CommentedMar 27, 2023 at 13:01](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment133802356_75817076)
+  
+  - It's likely this \[1\]. I've been butting up against this issue also. podman-compose supports `userns_mode: keep-id` but docker-compose does not. There is also this thread \[2\] that talks about using `uidmap`. \[1\]: [docs.podman.io/en/latest/markdown/options/userns.container.html](https://docs.podman.io/en/latest/markdown/options/userns.container.html) \[2\]: [github.com/containers/podman/issues/2898](https://github.com/containers/podman/issues/2898)
+  
+  
+  
+  gwillz
+  
+  
+  –
+  [gwillz](https://stackoverflow.com/users/7694753/gwillz "306 reputation")
+  
+  
+  
+  2023-06-15 02:52:43 +00:00
+  
+  [CommentedJun 15, 2023 at 2:52](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment134849665_75817076)
+  
+  - I forgot to follow up, I fixed it, I'll post an answer now
+  
+  
+  
+  Grant Curell
+  
+  
+  –
+  [Grant Curell](https://stackoverflow.com/users/4427375/grant-curell "1,933 reputation")
+  
+  
+  
+  2023-06-17 15:59:27 +00:00
+  
+  [CommentedJun 17, 2023 at 15:59](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment134879868_75817076)
+  
+  
+  [Add a comment](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root# "Use comments to ask for more information or suggest improvements. Avoid answering questions in comments.") \| [Expand to show all comments on this post](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root# "Expand to show all comments on this post")
+  
+  ## 4 Answers 4
+  
+  Sorted by:
+  [Reset to default](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root?answertab=scoredesc#tab-top)
+  
+  Highest score (default)
+  
+  Trending (recent votes count more)
+  
+  Date modified (newest first)
+  
+  Date created (oldest first)
+  
+  
+  This answer is useful
+  
+  12
+  
+  This answer is not useful
+  
+  Save this answer.
+  
+  Loading when this answer was accepted…
+  
+  [Timeline](https://stackoverflow.com/posts/79144021/timeline)
+  
+  Show activity on this post.
+  
+  The solution in 2024, with the caveat that the user seen from the host will be the one from inside the container, which means that the host will have readonly right, is to add `:U` as a mount option at the end of the `--volume` argument, like in:
+  
+  `podman run -ti --volume /tmp/testmount/:/home/ubuntu/mountpoint:U --rm --name mount_test localhost/testmount:latest`
+  
+  This allows to mount a folder on the host inside the container, and to have the mounted content appear as owned by the container user, not the container root.
+  
+  * * *
+  
+  ## reproducible least complexity example
+  
+  - Containerfile:
+  
+  ```none
+  FROM ubuntu:24.04
+  
+  USER ubuntu
+  WORKDIR /home/ubuntu/mountpoint
+  
+  CMD /bin/bash
+  ```
+  
+  - prepare test folder to mount:
+  
+  `mkdir /tmp/testmount && touch /tmp/testmount/hello`
+  
+  - build container (as usual):
+  
+  `podman build -t testmount:latest .`
+  
+  - run the container, mounting as a user inside the container, not root: note the `:U` at the end of the `--volume` option!
+  
+  `podman run -ti --volume /tmp/testmount/:/home/ubuntu/mountpoint:U --rm --name mount_test localhost/testmount:latest`
+  
+  for example:
+  
+  ```
+  $ podman run -ti --volume /tmp/testmount/:/home/ubuntu/mountpoint:U --rm --name mount_test localhost/testmount:latest
+  ubuntu@e96984ec46bd:~/mountpoint$ ls -lrth
+  total 0
+  -rw-rw-r-- 1 ubuntu ubuntu 0 Oct 31 08:27 hello
+  ubuntu@e96984ec46bd:~/mountpoint$ exit
+  exit
+  $
+  ```
+  
+  - by contrast, for reference, without the `:U` option, the volume is mounted as root inside the container:
+  
+  ```
+  $ podman run -ti --volume /tmp/testmount/:/home/ubuntu/mountpoint --rm --name mount_test localhost/testmount:latest
+  ubuntu@4c8d3ebb997b:~/mountpoint$ ls -lrth
+  total 0
+  -rw-rw-r-- 1 root root 0 Oct 31 08:27 hello
+  ubuntu@4c8d3ebb997b:~/mountpoint$ exit
+  ```
+  
+  * * *
+  
+  Edit: the owner seen from the host will be the "unknown" container user, so the host will have readonly rights. I guess there can be ways to change rights / add and edit group properties on the host to make this work better, but I have not looked into this.
+  
+  [Share](https://stackoverflow.com/a/79144021)
+  
+  Share a link to this answer
+  
+  Copy link [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/ "The current license for this post: CC BY-SA 4.0")
+  
+  Short permalink to this answer
+  
+  [Improve this answer](https://stackoverflow.com/posts/79144021/edit "")
+  
+  Follow
+  
+  
+  
+  Follow this answer to receive notifications
+  
+  [edited Jan 24, 2025 at 9:16](https://stackoverflow.com/posts/79144021/revisions "show all edits to this post")
+  
+  answered Oct 31, 2024 at 8:53
+  
+  [![Zorglub29's user avatar](https://www.gravatar.com/avatar/027a7a93e687d85bc132a4e235c13fe4?s=64&d=identicon&r=PG&f=y&so-version=2)](https://stackoverflow.com/users/5958323/zorglub29)
+  
+  [Zorglub29](https://stackoverflow.com/users/5958323/zorglub29)
+  
+  9,45788 gold badges3434 silver badges4747 bronze badges
+  
+  Sign up to request clarification or add additional context in comments.
+  
+  
+  ## 4 Comments
+  
+  Add a comment
+  
+  [![](https://www.gravatar.com/avatar/ff46144a61f5f84793104b1d63503fb8?s=48&d=identicon&r=PG)](https://stackoverflow.com/users/920391/evstifeev-roman)
+  
+  Evstifeev Roman
+  
+  [Evstifeev Roman](https://stackoverflow.com/users/920391/evstifeev-roman) [Over a year ago](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment139978051_79144021)
+  
+  Now the problem is reversed :). Adding :U changed the source directory ownership from my host system user to the user which exists only inside docker container, which does not exist on my host system. So now I don't have write permissions to this dir as a host user.
+  
+  2025-01-21T17:10:49Z+00:00
+  
+  5
+  
+  Reply
+  
+  - Copy link
+  
+  [![](https://www.gravatar.com/avatar/027a7a93e687d85bc132a4e235c13fe4?s=48&d=identicon&r=PG&f=y&so-version=2)](https://stackoverflow.com/users/5958323/zorglub29)
+  
+  Zorglub29
+  
+  [Zorglub29](https://stackoverflow.com/users/5958323/zorglub29) [Over a year ago](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment139993871_79144021)
+  
+  True, I can see this too. Still have read rights though, for me it is enough :) .
+  
+  2025-01-24T09:12:11.9Z+00:00
+  
+  0
+  
+  Reply
+  
+  - Copy link
+  
+  [![](https://www.gravatar.com/avatar/60e01f065785145eb9cec924da7fa096?s=48&d=identicon&r=PG)](https://stackoverflow.com/users/490188/danny-staple)
+  
+  Danny Staple
+  
+  [Danny Staple](https://stackoverflow.com/users/490188/danny-staple) [Aug 6, 2025 at 9:35](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment140645715_79144021)
+  
+  WARNING: This will mean everything gets owned by a user inside the container.
+  
+  2025-08-06T09:35:24.27Z+00:00
+  
+  1
+  
+  Reply
+  
+  - Copy link
+  
+  [![](https://i.sstatic.net/884vM.jpg?s=64)](https://stackoverflow.com/users/2531987/marcinkonowalczyk)
+  
+  MarcinKonowalczyk
+  
+  [MarcinKonowalczyk](https://stackoverflow.com/users/2531987/marcinkonowalczyk) [Aug 27, 2025 at 12:16](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment140695816_79144021)
+  
+  `find . | xargs -I{} sudo chown -R $(whoami) "{}"` to fix...
+  
+  2025-08-27T12:16:39.513Z+00:00
+  
+  0
+  
+  Reply
+  
+  - Copy link
+  
+  Add a comment
+  
+  This answer is useful
+  
+  7
+  
+  This answer is not useful
+  
+  Save this answer.
+  
+  Loading when this answer was accepted…
+  
+  [Timeline](https://stackoverflow.com/posts/76497033/timeline)
+  
+  Show activity on this post.
+  
+  [This tutorial](https://www.tutorialworks.com/podman-rootless-volumes/) does a great job of explaining the problem. You have two options:
+  
+  - Use `podman unshare` which will let you run commands in the same namespace as containers.
+  - Run as root inside the container (the container itself is still rootless)
+  
+  `podman unshare` isn't great. The way that it works is you determine what UID is employed by the container and then you use `unshare` to set the ownership of the directory on the host filesystem to use that namespace. Problem is this requires you to change the owner on the host system which is rarely desirable and causes permissions issues.
+  
+  The second approach is a lot better, albeit not from a security perspective - run as root inside the container and then mount the container with either `:Z` or `:z`. I'll let ChatGPT explain the difference between the two (it does a good job):
+  
+  - "Z" (Uppercase Z): When a file or directory has the "Z" context flag, it means that the object is labeled with a private unshared label. This is typically used for files or directories that are created by a process running inside a container. Objects with the "Z" context are confined within the container and are not accessible to other containers or the host system.
+  - "z" (lowercase z): On the other hand, the "z" context flag is used for shared objects. Files or directories labeled with the "z" flag are accessible to other containers and the host system. This flag allows multiple containers to share resources and access the same files or directories.
+  
+  Ex:
+  
+  ```
+  podman run -it --rm --name nexus2 \
+      -v /home/tom/myshares/nexus2:/sonatype-work:Z \
+      -u root \
+      sonatype/nexus /bin/sh
+  ```
+  
+  Hope this helps other people!
+  
+  [Share](https://stackoverflow.com/a/76497033)
+  
+  Share a link to this answer
+  
+  Copy link [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/ "The current license for this post: CC BY-SA 4.0")
+  
+  Short permalink to this answer
+  
+  [Improve this answer](https://stackoverflow.com/posts/76497033/edit "")
+  
+  Follow
+  
+  
+  
+  Follow this answer to receive notifications
+  
+  [edited Sep 28, 2024 at 12:02](https://stackoverflow.com/posts/76497033/revisions "show all edits to this post")
+  
+  answered Jun 17, 2023 at 16:06
+  
+  [![Grant Curell's user avatar](https://i.sstatic.net/N54oV.jpg?s=64)](https://stackoverflow.com/users/4427375/grant-curell)
+  
+  [Grant Curell](https://stackoverflow.com/users/4427375/grant-curell)
+  
+  1,93366 gold badges2727 silver badges5151 bronze badges
+  
+  ## 9 Comments
+  
+  Add a comment
+  
+  [![](https://www.gravatar.com/avatar/5753a5c71aa5ab839635f6852c04c3ae?s=48&d=identicon&r=PG)](https://stackoverflow.com/users/796761/doug-breaux)
+  
+  Doug Breaux
+  
+  [Doug Breaux](https://stackoverflow.com/users/796761/doug-breaux) [Over a year ago](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment135275278_76497033)
+  
+  The linked tutorial was super helpful and clear. I think I'm disagreeing on the recommendation to not use `unshare`, though. To quote that article on that approach, "Running as root in the container is a bit more portable, but it’s cheating. We really shouldn’t be running anything as root, even inside a container. For this reason, this solution isn’t recommended for production setups."
+  
+  2023-07-20T13:33:29.337Z+00:00
+  
+  1
+  
+  Reply
+  
+  - Copy link
+  
+  [![](https://i.sstatic.net/N54oV.jpg?s=64)](https://stackoverflow.com/users/4427375/grant-curell)
+  
+  Grant Curell
+  
+  [Grant Curell](https://stackoverflow.com/users/4427375/grant-curell) [Over a year ago](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment135290248_76497033)
+  
+  If you can find a way to make it so that the mount retains its original permissions outside the container - I’m all onboard. I don’t disagree about root.
+  
+  2023-07-21T15:20:30.583Z+00:00
+  
+  1
+  
+  Reply
+  
+  - Copy link
+  
+  [![](https://www.gravatar.com/avatar/a5ff04171bb92c8fc2208d0a1b8afc46?s=48&d=identicon&r=PG)](https://stackoverflow.com/users/263671/cez)
+  
+  cEz
+  
+  [cEz](https://stackoverflow.com/users/263671/cez) [Over a year ago](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment135345533_76497033)
+  
+  Don't trust ChatGPT z = tells Podman that two or more containers share the volume content Z = tells Podman to label the content with a private unshared label
+  
+  2023-07-26T14:01:25.687Z+00:00
+  
+  4
+  
+  Reply
+  
+  - Copy link
+  
+  [![](https://www.gravatar.com/avatar/a5ff04171bb92c8fc2208d0a1b8afc46?s=48&d=identicon&r=PG)](https://stackoverflow.com/users/263671/cez)
+  
+  cEz
+  
+  [cEz](https://stackoverflow.com/users/263671/cez) [Over a year ago](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment135354764_76497033)
+  
+  @GrantCurell your answer states the opposite for z and Z
+  
+  2023-07-27T06:51:06.99Z+00:00
+  
+  1
+  
+  Reply
+  
+  - Copy link
+  
+  [![](https://i.sstatic.net/GEKBV.jpg?s=64)](https://stackoverflow.com/users/12921500/teeeeee)
+  
+  teeeeee
+  
+  [teeeeee](https://stackoverflow.com/users/12921500/teeeeee) [Over a year ago](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment135912079_76497033)
+  
+  HI Grant, the link was very useful. I have the same problem (mounted volume appears as root inside the container, but the container user is non-root, so can't access it). I can change the owner of the mounted directory using unshare as you suggest, but the problem is that I have another seperate container which also uses this volume. So changing the owner would mess up the second container. Do you have any advice that might help?
+  
+  2023-09-13T10:57:51.717Z+00:00
+  
+  1
+  
+  Reply
+  
+  - Copy link
+  
+  Add a comment\|Show 4 more comments
+  
+  This answer is useful
+  
+  6
+  
+  This answer is not useful
+  
+  Save this answer.
+  
+  Loading when this answer was accepted…
+  
+  [Timeline](https://stackoverflow.com/posts/78194763/timeline)
+  
+  Show activity on this post.
+  
+  Podman by default maps the host user id to the container root user id, meaning that any volumes mounted that is owned by the host user will be owned by root inside the container. You can change this by providing the --userns option as described here:
+  [https://docs.podman.io/en/v4.6.1/markdown/options/userns.container.html#userns-mode](https://docs.podman.io/en/v4.6.1/markdown/options/userns.container.html#userns-mode)
+  
+  [Share](https://stackoverflow.com/a/78194763)
+  
+  Share a link to this answer
+  
+  Copy link [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/ "The current license for this post: CC BY-SA 4.0")
+  
+  Short permalink to this answer
+  
+  [Improve this answer](https://stackoverflow.com/posts/78194763/edit "")
+  
+  Follow
+  
+  
+  
+  Follow this answer to receive notifications
+  
+  answered Mar 20, 2024 at 16:01
+  
+  [![cataclysmic's user avatar](https://www.gravatar.com/avatar/2d44f1b858c17a99957a36f5a81bb801?s=64&d=identicon&r=PG&f=y&so-version=2)](https://stackoverflow.com/users/15393993/cataclysmic)
+  
+  [cataclysmic](https://stackoverflow.com/users/15393993/cataclysmic)
+  
+  6122 silver badges44 bronze badges
+  
+  ## 4 Comments
+  
+  Add a comment
+  
+  [![](https://www.gravatar.com/avatar/5e403c10a027a7b08734c09b981c9942?s=48&d=identicon&r=PG&f=y&so-version=2)](https://stackoverflow.com/users/3873308/evendiagram)
+  
+  evendiagram
+  
+  [evendiagram](https://stackoverflow.com/users/3873308/evendiagram) [Over a year ago](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment139352601_78194763)
+  
+  Although changing to the root user works, as suggested in another comment, this should be the accepted answer.
+  
+  2024-09-27T19:28:22.277Z+00:00
+  
+  0
+  
+  Reply
+  
+  - Copy link
+  
+  [![](https://www.gravatar.com/avatar/027a7a93e687d85bc132a4e235c13fe4?s=48&d=identicon&r=PG&f=y&so-version=2)](https://stackoverflow.com/users/5958323/zorglub29)
+  
+  Zorglub29
+  
+  [Zorglub29](https://stackoverflow.com/users/5958323/zorglub29) [Over a year ago](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment139544467_78194763)
+  
+  Is it possible to get a detailed example of how this can be used? I have tried to add --userns="username\_inside\_podman" but this does not work.
+  
+  2024-10-29T14:45:04.92Z+00:00
+  
+  0
+  
+  Reply
+  
+  - Copy link
+  
+  [![](https://www.gravatar.com/avatar/2d44f1b858c17a99957a36f5a81bb801?s=48&d=identicon&r=PG&f=y&so-version=2)](https://stackoverflow.com/users/15393993/cataclysmic)
+  
+  cataclysmic
+  
+  [cataclysmic](https://stackoverflow.com/users/15393993/cataclysmic) [Over a year ago](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment139552186_78194763)
+  
+  @Zorglub29 You need to provide one of the keys as per the docs. For ex, try userns=keep-id
+  
+  2024-10-30T16:20:14.443Z+00:00
+  
+  0
+  
+  Reply
+  
+  - Copy link
+  
+  [![](https://www.gravatar.com/avatar/2d44f1b858c17a99957a36f5a81bb801?s=48&d=identicon&r=PG&f=y&so-version=2)](https://stackoverflow.com/users/15393993/cataclysmic)
+  
+  cataclysmic
+  
+  [cataclysmic](https://stackoverflow.com/users/15393993/cataclysmic) [Over a year ago](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment139563401_78194763)
+  
+  @Zorglub29, if the non-root user's UID and GID differs from host then specify: --keep-id:uid=<NON\_ROOT\_UID>,gid=<NON\_ROOT\_GID>
+  
+  2024-11-01T14:14:21.15Z+00:00
+  
+  1
+  
+  Reply
+  
+  - Copy link
+  
+  Add a comment
+  
+  This answer is useful
+  
+  4
+  
+  This answer is not useful
+  
+  Save this answer.
+  
+  Loading when this answer was accepted…
+  
+  [Timeline](https://stackoverflow.com/posts/79216257/timeline)
+  
+  Show activity on this post.
+  
+  I wanted a way to share a folder between the host and the run, such that it was read-write on both sides with no requirement for the USER in the Dockerfile to have the same uid or gid as the user owning the folder and executing podman (rootless).
+  
+  Couldn't get `:U` to work as per Zorglub29's answer, but I pulled bits of information from the answers here together and got want I wanted. Things I found were that
+  
+  - `:z` was necessary (with SELinux enabled)
+  - it neemed to be mandatory to mount onto /mnt inside the container, and podman created the mountpoint
+  - using `--userns=keep-id:uid=1000,gid=1000` mapped from the host user to the container USER flawlessly (where 1000,1000 is the uid,gid of the USER in the container.)
+  
+  So, running a test container built `-t  testmount:latest` from
+  
+  ```
+  FROM ubuntu:24.04
+  USER ubuntu
+  WORKDIR /home/ubuntu
+  CMD /bin/bash
+  ```
+  
+  this was the incantation I needed, running as a user "fred" (1001:1001):
+  
+  ```
+  $ podman run -ti --rm \
+       --volume /home/fred/pod-test/testvol:/mnt/testvol:z \
+       --userns=keep-id:uid:1000,gid=1000 \
+            localhost/testmount:latest
+  ```
+  
+  `ls -lR /mnt/testvol` in the container shows everything owned by ubuntu, and the same on the host shows everything owned by fred.
+  
+  Hopefully this helps somebody who arrives here researching the same problem.
+  
+  [Share](https://stackoverflow.com/a/79216257)
+  
+  Share a link to this answer
+  
+  Copy link [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/ "The current license for this post: CC BY-SA 4.0")
+  
+  Short permalink to this answer
+  
+  [Improve this answer](https://stackoverflow.com/posts/79216257/edit "")
+  
+  Follow
+  
+  
+  
+  Follow this answer to receive notifications
+  
+  answered Nov 22, 2024 at 18:53
+  
+  [![nigel222's user avatar](https://www.gravatar.com/avatar/142c955a11305fcc3d6627e046c13fde?s=64&d=identicon&r=PG&f=y&so-version=2)](https://stackoverflow.com/users/5246906/nigel222)
+  
+  [nigel222](https://stackoverflow.com/users/5246906/nigel222)
+  
+  8,35211 gold badge2020 silver badges3131 bronze badges
+  
+  ## 1 Comment
+  
+  Add a comment
+  
+  [![](https://www.gravatar.com/avatar/7d9864bb851e76ee606f27ec5c8ff386?s=48&d=identicon&r=PG)](https://stackoverflow.com/users/505323/bruce)
+  
+  Bruce
+  
+  [Bruce](https://stackoverflow.com/users/505323/bruce) [Over a year ago](https://stackoverflow.com/questions/75817076/no-matter-what-i-do-podman-is-mounting-volumes-as-root#comment140090662_79216257)
+  
+  You can apply multiple volume mount options by comma separating them. To apply both SELinux relabelling and volume mount chowning use. `--volume /home/fred/pod-test/testvol:/mnt/testvol:Z,U` If the volume is to be shared among multiple containers replace the `Z` option with `z`.
+  
+  2025-02-13T02:33:54.56Z+00:00
+  
+  2
+  
+  Reply
+  
+  - Copy link
+  
+  ## Your Answer
+  
+  Draft saved
+  
+  Draft discarded
+  
+  ### Sign up or [log in](https://stackoverflow.com/users/login?ssrc=question_page&returnurl=https%3a%2f%2fstackoverflow.com%2fquestions%2f75817076%2fno-matter-what-i-do-podman-is-mounting-volumes-as-root%23new-answer)
+  
+  Sign up using Google
+  
+  
+  Sign up using Email and Password
+  
+  
+  Submit
+  
+  ### Post as a guest
+  
+  Name
+  
+  Email
+  
+  Required, but never shown
+  
+  Post Your Answer
+  
+  Discard
+  
+  
+  By clicking “Post Your Answer”, you agree to our [terms of service](https://stackoverflow.com/legal/terms-of-service/public) and acknowledge you have read our [privacy policy](https://stackoverflow.com/legal/privacy-policy).
+  
+  
+  Start asking to get answers
+  
+  Find the answer to your question by asking.
+  
+  [Ask question](https://stackoverflow.com/questions/ask)
+  
+  Explore related questions
+  
+  - [podman](https://stackoverflow.com/questions/tagged/podman "show questions tagged 'podman'")
+  
+  See similar questions with these tags.
+  --- End Content ---
+
+How to debug issues with volumes mounted on rootless containers
+  URL: https://www.redhat.com/en/blog/debug-rootless-podman-mounted-volumes
+  In versions without this flag, the podman unshare command can be used to enter the rootless user namespace and then chown the directory to be ...
+
+  --- Content ---
+  [Skip to content](https://www.redhat.com/en/blog/debug-rootless-podman-mounted-volumes#rhdc-main-content)
+  
+  ## Navigation
+  
+  [Red Hat](https://www.redhat.com/)
+  
+  Menu
+  
+   [Red Hat](https://www.redhat.com/en)
+  
+   AI
+  
+  
+  - ### Overview
+  
+  
+  
+    - [AI news](https://www.redhat.com/en/blog/channel/artificial-intelligence)
+    - [Technical blog](https://developers.redhat.com/blog?field_tax_product_target_id%5B37288%5D=37288&extIdCarryOver=true&intcmp=7013a000003Sl59AAC&sc_cid=RHCTG0250000454096&_gl=1%2A1jal9i8%2A_gcl_au%2ANjU2NDY1NTAwLjE3NjQ2MTY4NTU.&percmp=RHCTG0250000466729)
+    - [Live AI events](https://www.redhat.com/en/events/ai)
+    - [Inference explained](https://www.redhat.com/en/ai/inference/what-you-should-know-about-inference)
+  
+    - [See our approach](https://www.redhat.com/en/artificial-intelligence)
+  
+  - ### Products
+  
+  
+  
+    - [Red Hat AI Enterprise](https://www.redhat.com/en/products/ai/enterprise)
+    - [Red Hat AI Inference](https://www.redhat.com/en/products/ai/inference)
+    - [Red Hat Enterprise Linux AI](https://www.redhat.com/en/products/ai/enterprise-linux-ai)
+    - [Red Hat OpenShift AI](https://www.redhat.com/en/products/ai/openshift-ai)
+  
+    - [Explore Red Hat AI](https://www.redhat.com/en/products/ai)
+  
+  - ### Engage & learn
+  
+  
+    - [Learning hub](https://docs.redhat.com/en/learn/ai)
+    - [AI topics](https://www.redhat.com/en/topics/ai)
+    - [AI partners](https://catalog.redhat.com/categories/ai#ai-partners)
+    - [Services for AI](https://www.redhat.com/en/services/consulting/red-hat-consulting-for-ai)
+  
+   Hybrid cloud
+  
+  
+  - ### Platform solutions
+  
+  
+    - [Artificial intelligence](https://www.redhat.com/en/hybrid-cloud-solutions/ai)
+      Build, deploy, and monitor AI models and apps.
+  
+    - [Linux standardization](https://www.redhat.com/en/hybrid-cloud-solutions/linux-standardization)
+      Get consistency across operating environments.
+  
+    - [Application development](https://www.redhat.com/en/hybrid-cloud-solutions/application-development)
+      Simplify the way you build, deploy, and manage apps.
+  
+    - [Automation](https://www.redhat.com/en/hybrid-cloud-solutions/automation)
+      Scale automation and unite tech, teams, and environments.
+  
+  - ### Use cases
+  
+  
+    - [Virtualization](https://www.redhat.com/en/hybrid-cloud-solutions/virtualization)
+      Modernize operations for virtualized and containerized workloads.
+  
+    - [Digital sovereignty](https://www.redhat.com/en/products/digital-sovereignty)
+      Control and protect critical infrastructure.
+  
+    - [Security](https://www.redhat.com/en/solutions/security-and-compliance-approach)
+      Code, build, deploy, and monitor security-focused software.
+  
+    - [Edge computing](https://www.redhat.com/en/products/edge)
+      Deploy workloads closer to the source with edge technology.
+  
+  - [Explore solutions](https://www.redhat.com/en/hybrid-cloud-solutions)
+  
+  - ### Solutions by industry
+  
+  
+    - [Automotive](https://www.redhat.com/en/solutions/automotive)
+    - [Financial services](https://www.redhat.com/en/solutions/financial-services)
+    - [Healthcare](https://www.redhat.com/en/solutions/healthcare)
+    - [Industrial sector](https://www.redhat.com/en/solutions/industrial-sector)
+    - [Media and entertainment](https://www.redhat.com/en/solutions/media-entertainment)
+    - [Public sector (Global)](https://www.redhat.com/en/solutions/public-sector)
+    - [Public sector (U.S.)](https://www.redhat.com/en/solutions/public-sector/us)
+    - [Telecommunications](https://www.redhat.com/en/solutions/telecommunications)
+  
+  ### [Discover cloud technologies](https://www.redhat.com/en/hybrid-cloud-console)
+  
+  Learn how to use our cloud products and solutions at your own pace in the Red Hat® Hybrid Cloud Console.
+  
+   Products
+  
+  
+  - ### Platforms
+  
+  
+    - [Red Hat AI](https://www.redhat.com/en/products/ai)
+      Develop and deploy AI solutions across the hybrid cloud.
+  
+    - [Red Hat Enterprise Linux](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux)
+      Support hybrid cloud innovation on a flexible operating system.
+  
+    - [Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift)
+      Build, modernize, and deploy apps at scale.
+  
+    - [Red Hat Ansible Automation Platform](https://www.redhat.com/en/technologies/management/ansible)
+      Implement enterprise-wide automation.
+  
+  - ### Featured
+  
+  
+  
+    - [Red Hat AI Enterprise](https://www.redhat.com/en/products/ai/enterprise)
+    - [Red Hat OpenShift Virtualization Engine](https://www.redhat.com/en/technologies/cloud-computing/openshift/virtualization-engine)
+    - [Red Hat Desktop](http://redhat.com/en/products/desktop)
+  
+    - [See all products](https://www.redhat.com/en/products)
+  
+  - ### Try & buy
+  
+  
+    - [Start a trial](https://www.redhat.com/en/products/trials)
+    - [Buy online](https://www.redhat.com/en/store)
+    - [Integrate with major cloud providers](https://www.redhat.com/en/partners/certified-cloud-and-service-providers)
+  
+  - ### Services & support
+  
+  
+  
+    - [Consulting](https://www.redhat.com/en/services/consulting)
+    - [Product support](https://www.redhat.com/en/services/support)
+    - [Services for AI](https://www.redhat.com/en/services/consulting/red-hat-consulting-for-ai)
+    - [Technical Account Management](https://www.redhat.com/en/services/support/technical-account-management)
+  
+    - [Explore services](https://www.redhat.com/en/services)
+  
+   Training
+  
+  
+  - ### Training & certification
+  
+  
+  
+    - [Courses and exams](https://www.redhat.com/en/services/training/all-courses-exams)
+    - [Certifications](https://www.redhat.com/en/services/certifications)
+    - [Skills assessments](https://www.redhat.com/en/services/skills-assessment)
+    - [Red Hat Academy](https://www.redhat.com/en/services/training/red-hat-academy)
+    - [Learning subscription](https://www.redhat.com/en/services/training/learning-subscription)
+  
+    - [Explore training](https://www.redhat.com/en/services/training-and-certification)
+  
+  - ### Featured
+  
+  
+    - [Red Hat Certified System Administrator exam](https://www.redhat.com/en/services/training/ex200-red-hat-certified-system-administrator-rhcsa-exam?percmp=7015Y0000048OFsQAM)
+    - [Red Hat Certified System Administrator in OpenShift exam](https://www.redhat.com/en/services/training/red-hat-certified-openshift-administrator-exam?percmp=7015Y0000048OFsQAM)
+    - [Red Hat Enterprise Linux Automation with Ansible](https://www.redhat.com/en/services/training/au294-red-hat-linux-automation-with-ansible?percmp=7015Y0000048OFsQAM)
+    - [Red Hat System Administration I](https://www.redhat.com/en/services/training/rh124-red-hat-system-administration-i?percmp=7015Y0000048OFsQAM)
+    - [Red Hat Certified Specialist in OpenShift Virtualization](https://www.redhat.com/en/services/training/red-hat-certified-specialist-openshift-virtualization-ex316?percmp=7015Y0000048OFsQAM)
+  
+  - ### Services
+  
+  
+    - [Consulting](https://www.redhat.com/en/services/consulting)
+    - [Partner training](https://connect.redhat.com/en/training)
+    - [Product support](https://www.redhat.com/en/services/support)
+    - [Services for AI](https://www.redhat.com/en/services/consulting/red-hat-consulting-for-ai)
+    - [Technical Account Management](https://www.redhat.com/en/services/support/technical-account-management)
+  
+   Learn
+  
+  
+  - ### Build your skills
+  
+  
+    - [Documentation](https://docs.redhat.com/en)
+    - [Hands-on labs](https://www.redhat.com/en/interactive-labs)
+    - [Hybrid cloud learning hub](https://docs.redhat.com/en/learn/learning-paths)
+    - [Interactive demos](https://www.redhat.com/en/interactive-experiences)
+    - [Training and certification](https://www.redhat.com/en/services/training-and-certification)
+  
+  - ### More ways to learn
+  
+  
+    - [Blog](https://www.redhat.com/en/blog)
+    - [Events and webinars](https://www.redhat.com/en/events)
+    - [Podcasts and video series](https://www.redhat.com/en/red-hat-original-series)
+    - [Red Hat TV](https://tv.redhat.com/)
+    - [Resource library](https://www.redhat.com/en/resources)
+  
+  ### [For developers](https://developers.redhat.com/)
+  
+  Discover resources and tools to help you build, deliver, and manage cloud-native applications and services.
+  
+   Partners
+  
+  
+  - ### For customers
+  
+  
+  
+    - [Our partners](https://www.redhat.com/en/partners)
+    - [Red Hat Ecosystem Catalog](https://catalog.redhat.com/)
+  
+    - [Find a partner](https://catalog.redhat.com/partners)
+  
+  - ### For partners
+  
+  
+  
+    - [Partner Connect](https://connect.redhat.com/)
+    - [Become a partner](https://connect.redhat.com/en/benefits-of-being-a-partner)
+    - [Training](https://connect.redhat.com/en/training)
+    - [Support](https://connect.redhat.com/en/support)
+  
+    - [Access the partner portal](https://connect.redhat.com/partner-admin/dashboard)
+  
+  ### [Build solutions powered by trusted partners](https://catalog.redhat.com/en/solutions)
+  
+  Find solutions from our collaborative community of experts and technologies in the Red Hat® Ecosystem Catalog.
+  
+   Search
+  
+  
+  ×
+  
+  ### I'd like to:
+  
+  - [Start a trial](https://www.redhat.com/en/products/trials)
+  - [Buy a learning subscription](https://www.redhat.com/en/services/training/learning-subscription/how-to-buy)
+  - [Manage subscriptions](https://access.redhat.com/management)
+  - [Contact sales](https://www.redhat.com/en/contact)
+  - [Contact customer service](https://www.redhat.com/en/contact/customer-service)
+  - [See Red Hat jobs](https://www.redhat.com/en/jobs)
+  
+  ### Help me find:
+  
+  - [Documentation](https://docs.redhat.com/en)
+  - [Developer resources](https://developers.redhat.com/)
+  - [Tech topics](https://www.redhat.com/en/topics)
+  - [Architecture center](https://www.redhat.com/architect/portfolio/)
+  - [Security updates](https://access.redhat.com/security/security-updates/cve)
+  - [Customer support](https://access.redhat.com/support)
+  
+  ### I want to learn more about:
+  
+  - [AI](https://www.redhat.com/en/topics/ai)
+  - [Application modernization](https://www.redhat.com/en/topics/application-modernization)
+  - [Automation](https://www.redhat.com/en/topics/automation)
+  - [Cloud-native applications](https://www.redhat.com/en/topics/cloud-native-apps)
+  - [Linux](https://www.redhat.com/en/topics/linux)
+  - [Virtualization](https://www.redhat.com/en/topics/virtualization)
+  
+  [Console](https://www.redhat.com/en/hybrid-cloud-console)
+  
+  [Docs](https://docs.redhat.com/en)
+  
+  [Support](https://access.redhat.com/)
+  
+  New For you
+  
+  
+  ### Recommended
+  
+  We'll recommend resources you may like as you browse. Try these suggestions for now.
+  
+  - [Product trial center](https://www.redhat.com/en/products/trials)
+  - [Courses and exams](https://www.redhat.com/en/services/training/all-courses-exams)
+  - [All products](https://www.redhat.com/en/products)
+  - [Tech topics](https://www.redhat.com/en/topics)
+  - [Resource library](https://www.redhat.com/en/resources)
+  
+  Log in
+  
+  ### Get more with a Red Hat account
+  
+  - Console access
+  - Event registration
+  - Training & trials
+  - World-class support
+  
+  A subscription may be required for some services.
+  
+  [Log in or register](https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/auth?client_id=rhcom&redirect_uri=https%3A%2F%2Fwww.redhat.com%2Fen%2Fblog%2Fdebug-rootless-podman-mounted-volumes&response_type=code&scope=openid+profile_level.rh_events+id.email+id.idp+id.job.title+id.job.department+id.name+id.organization+id.sub+id.username+roles+profile+api.graphql+api.console+api.ask_red_hat&state=447520c468d04395b73bda6a45add7e8&code_challenge=msPNmR0f1MgGRoxH4SFcno6G1bsLvtvuDwVdVYJ9waQ&code_challenge_method=S256)
+  
+  Change page language简体中文EnglishFrançaisDeutschItaliano日本語한국어PortuguêsEspañol
+  
+  [Contact us](https://www.redhat.com/en/contact)
+  
+  ### \[\[name\]\]
+  
+  [Edit avatar](https://access.redhat.com/user/edit)
+  
+  Login: \[\[login\]\]
+  
+  Account number: \[\[account\_number\]\]
+  
+  \[\[email\]\]
+  
+  Change page language简体中文EnglishFrançaisDeutschItaliano日本語한국어PortuguêsEspañol
+  
+  Log out
+  
+  Menu
+  
+  [Red Hat Blog](https://www.redhat.com/en/blog)
+  
+  - By product
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    - [Red Hat AI](https://www.redhat.com/en/blog/channel/red-hat-ai "Red Hat AI")
+    - [Red Hat Ansible Automation Platform](https://www.redhat.com/en/blog/channel/red-hat-ansible-automation "Red Hat Ansible Automation Platform")
+    - [Red Hat Enterprise Linux](https://www.redhat.com/en/blog/channel/red-hat-enterprise-linux "Red Hat Enterprise Linux")
+    - [Red Hat OpenShift](https://www.redhat.com/en/blog/channel/red-hat-openshift "Red Hat OpenShift")
+  
+  * * *
+  
+  [More products](https://www.redhat.com/en/blog/products "More products")
+  
+  - By topic
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    - [AI](https://www.redhat.com/en/blog/channel/artificial-intelligence "AI")
+    - [Virtualization](https://www.redhat.com/en/blog/channel/red-hat-virtualization "Virtualization")
+    - [Digital sovereignty](https://www.redhat.com/en/blog/channel/digital-sovereignty "Digital sovereignty")
+    - [Applications](https://www.redhat.com/en/blog/channel/applications "Applications")
+    - [Automation](https://www.redhat.com/en/blog/channel/management-and-automation "Automation")
+    - [Cloud services](https://www.redhat.com/en/blog/channel/cloud-services "Cloud services")
+    - [Edge computing](https://www.redhat.com/en/blog/channel/edge-computing "Edge computing")
+    - [Infrastructure](https://www.redhat.com/en/blog/channel/infrastructure "Infrastructure")
+    - [Open hybrid cloud](https://www.redhat.com/en/blog/channel/hybrid-cloud-infrastructure "Open hybrid cloud")
+    - [Original shows](https://www.redhat.com/en/red-hat-original-series "Original shows")
+    - [Security](https://www.redhat.com/en/blog/channel/security "Security")
+  
+  * * *
+  
+  [All topics](https://www.redhat.com/en/blog/channels "All topics")
+  
+  - Podcasts
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    - [Technically Speaking with Chris Wright](https://www.redhat.com/en/technically-speaking "Technically Speaking with Chris Wright")
+    - [Code Comments](https://www.redhat.com/en/code-comments-podcast "Code Comments")
+    - [Command Line Heroes](https://www.redhat.com/en/command-line-heroes "Command Line Heroes")
+    - [Compiler](https://www.redhat.com/en/compiler-podcast "Compiler")
+  
+  - More blogs
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    - [Red Hat Developer blog](https://developers.redhat.com/blog "Red Hat Developer blog")
+    - [Red Hat Partner Connect blog](https://connect.redhat.com/en/blog "Red Hat Partner Connect blog")
+  
+  # How to debug issues with volumes mounted on rootless containers
+  
+  June 10, 2021[Matthew Heon](https://www.redhat.com/en/authors/mheon "See more by Matthew Heon")_11_-minute read
+  
+  [Linux](https://www.redhat.com/en/blog?f[0]=taxonomy_topic_tid:27061#rhdc-search-listing)[Containers](https://www.redhat.com/en/blog?f[0]=taxonomy_topic_tid:9001#rhdc-search-listing)
+  
+  Share
+  
+  [Share via Facebook](https://www.facebook.com/sharer/sharer.php?u=https://www.redhat.com/en/blog/debug-rootless-podman-mounted-volumes)[Share via LinkedIn](https://www.linkedin.com/shareArticle?mini=true&title=How%20to%20debug%20issues%20with%20volumes%20mounted%20on%20rootless%20containers&summary=One%20of%20the%20most%20frequent%20questions%20I%20am%20asked%20about%20rootless%20Podman%20is%20how%20to%20debug%20issues%20with%20volumes%20mounted%20into%20the%20container.%20This%20question%20is%20deceptively%20hard.%20In%20many%20ways%2C%20running%20Podman%20without%20root%20is%20almost%20identical%20to%20running%20it%20as%20root.%20Unfortunately%2C%20this%20is%20not%20always%20true%2C%20and%20volumes%20are%20one%20of%20the%20areas%20with%20the%20most%20significant%20differences.%20Here%2C%20I%E2%80%99ll%20explain%20in%20detail%20what%20these%20differences%20are%2C%20what%20kinds%20of%20errors%20they%20can%20cause%2C%20and%20how%20you%20can%20work%20around%20them.%20To%20start%2C%20we%20need%20some%20background%20information%20on%20how%20rootless%20containers%20work%2C%20beginning%20with%20one%20of%20the%20most%20fundamental%20features%20of%20rootless%20Podman%3A%20User%20namespaces.&url=https%3A%2F%2Fwww.redhat.com%2Fen%2Fblog%2Fdebug-rootless-podman-mounted-volumes)[Share via Twitter](https://twitter.com/intent/tweet?&url=https%3A%2F%2Fwww.redhat.com%2Fen%2Fblog%2Fdebug-rootless-podman-mounted-volumes)[E-mail us](mailto:?subject=Check%20out%20this%20redhat.com%20page%3A%20How%20to%20debug%20issues%20with%20volumes%20mounted%20on%20rootless%20containers&body=I%20saw%20this%20on%20redhat.com%20and%20thought%20you%20might%20be%20interested.%20%20Click%20the%20following%20link%20to%20read%20https%3A%2F%2Fwww.redhat.com%2Fen%2Fblog%2Fdebug-rootless-podman-mounted-volumes)
+  
+  Subscribe to RSS [Subscribe to RSS](https://www.redhat.com/en/rss/blog "Subscribe to RSS")
+  
+  One of the most frequent questions I am asked about rootless [Podman](https://podman.io/) is how to debug issues with volumes mounted into the container. This question is deceptively hard. In many ways, running Podman without **root** is almost identical to running it as **root**. Unfortunately, this is not always true, and volumes are one of the areas with the most significant differences. Here, I’ll explain in detail what these differences are, what kinds of errors they can cause, and how you can work around them. To start, we need some background information on how rootless containers work, beginning with one of the most fundamental features of rootless Podman: _User namespaces_.
+  
+  ## The user namespace
+  
+  One of the fundamental security features of containers is Linux kernel namespaces. A namespace is a way of isolating a process (or group of processes) from the rest of the system by limiting what it can see. There are many different namespaces, each with a different effect. For example, the PID namespace limits what PIDs a process can view—only PIDs within the namespace are visible and are numbered independently from the host. The process still has a PID on the host as well, so PID 2000 on the host could be PID 1 in the namespace. As of this writing, the namespaces the kernel provides are Mount, PID, Network, IPC, UTS, User, cgroup, and time, each isolating a different aspect of the system; the one we care most about for this blog is the user namespace.
+  
+  User namespaces isolate the users and groups available in the container from those available to the host system. A user namespace works by mapping users in the container to users on the host. For example, we could map users 0 to 1000 in the container to users 100000 to 101000 on the host (groups are also mapped in an identical manner, but we’ll focus on users for simplicity). This mapping acts very similarly to the PID namespace we described above, but with users.
+  
+  From the host, all accesses from **root** in the container (UID 0) will appear to be from UID 100000. Inside the container, any file owned by user 100000 on the host will appear as owned by UID 0 ( **root**). An interesting question is what happens to users not mapped into the container—what if I mount a volume owned by user 1001 on the host into a container using the user namespace I described? The kernel, in this case, will map any UID or GID not valid in the namespace to UID/GID 65534, a user and group called **nobody**, which is not a normal group.
+  
+  It is still possible to interact with files owned by **nobody** if permissions allow (e.g., you can read a file owned by **nobody** that is world-readable and write to that file if it is world-writable), but you cannot change ownership to it. User namespaces also grant limited versions of specific capabilities that are normally only available to **root**—the typical example is that user namespaces can mount certain types of filesystems, like tmpfs.
+  
+  User namespaces are extremely useful because they allow us to act as **root** within the container without actually being **root** on the system. We can use user namespaces to separate containers from different users on multi-tenant systems—one user’s containers would be run as UIDs 10000 to 10999, another’s as 11000 to 11999, and so on. Within each container, it appears as though the application is **root**, and through the limited capabilities granted, it can do most common operations (installing packages, for example).
+  
+  However, suppose an application manages to break out of the container. In that case, it is not running as **root** on the system and not running as the same UID and GID as the containers of any other user—the ability to attack different parts of the system is extremely limited.
+  
+  However, their adoption was limited by technical limitations—most notably, the fact that there was until very recently, no way to remap UIDs and GIDs at the filesystem level. To have a container using UIDs 10000 to 10999, we had to make a copy of its image and then `chown` every UID in said image by adding 10000 to the existing UID. This `chown` can be very slow and (in many filesystems) dramatically increases the amount of space required.
+  
+  **\[ Getting started with containers? Check out this free course. [Deploying containerized applications: A technical overview](https://www.redhat.com/en/services/training/do080-deploying-containerized-applications-technical-overview?intcmp=701f20000012ngPAAQ). \]**
+  
+  ## Rootless containers
+  
+  Where user namespaces have become extremely useful and popular are rootless containers. A non-root user in Linux has access to only one UID and GID (their own). However, containers expect to access more than one user and group—many files in container images are not owned by **root**, and applications will often be run as a non-root user in the container to enforce privilege separation within the container.
+  
+  For some environments (high-performance computing, HPC, being a notable one), having only a single user and group in the container is acceptable (even desirable). For most other environments, one user and group is a severe limitation to the usefulness of the container. We can use user namespaces to gain these additional users and groups that we need to act like a typical container.
+  
+  However, we need elevated privileges to achieve these extra users and groups. This is what the `newuidmap` and `newgidmap` executables (and the `/etc/subuid` and `/etc/subgid` config files they read) do—they grant us access to a block of users and groups, which are then mapped into a user namespace for rootless containers to use. The limitations of user namespaces regarding filesystem support still apply to a degree but are mitigated by only having a single set of UIDs and GIDs for each user to use.
+  
+  Also of note is the fact that the kernel will automatically handle the `chown` operation for us if we unpack the image inside of a user namespace. The user shifting of the namespace ensures that the correct UID is assigned on creation instead of requiring the container runtime to set it manually.
+  
+  The added capabilities of a user namespace are also essential for some of the things rootless containers need—without the ability to mount FUSE and tmpfs filesystems, rootless containers would be much more limited (to the point of being almost unusable).
+  
+  ## User namespaces in Podman
+  
+  Now that we understand how user namespaces in general work, let’s discuss how they are implemented in rootless Podman.
+  
+  All rootless Podman containers are run in a user namespace, even if the user does not have more than one UID and GID available. All of a user’s containers share a single user namespace, held open by the rootless pause process. Namespaces are usually pruned by the kernel when no more processes are in them, so keeping a process around that does nothing but sleep and never exits will keep the user namespace alive.
+  
+  The first thing that a rootless Podman process does is join the rootless user namespace (or create a new namespace and pause the process if they do not yet exist). As part of creating the user namespace, Podman will run the `newuidmap` and `newgidmap` executables to grant any additional UIDs and GIDs the user has been allocated in `/etc/subuid` and `/etc/subgid` (the default amount granted at user creation being 65536 of each). You can view the user mappings available in the `podman info` command, in the **idMappings** field:
+  
+  ```shell
+  mheon@podman-rhel8-test $ podman info
+    idMappings:
+      gidmap:
+      - container_id: 0
+        host_id: 1000
+        size: 1
+      - container_id: 1
+        host_id: 100000
+        size: 65536
+      uidmap:
+      - container_id: 0
+        host_id: 1000
+        size: 1
+      - container_id: 1
+        host_id: 100000
+        size: 65536
+  ```
+  
+  Please note that the rootless user namespace is not re-created by default if the `/etc/subuid` and `/etc/subgid` files are changed; this is done by running the `podman system migrate` command. If you have edited these files and Podman does not seem to recognize your changes, run this command.
+  
+  All rootless Podman commands are run within the rootless user namespace created to ensure that we have the correct user mappings and privileges. Even simple informational commands, like `podman info`, require the rootless user namespace. As such, a nonfunctional user namespace is a showstopper for rootless Podman. Fortunately, this does not happen often. When it does, we usually find that it’s caused by insufficient file permissions on the `newuidmap` and/or `newgidmap` binaries on the system (missing a file capability, usually). Reinstalling the package containing them (called **shadow-utils** on RHEL, CentOS, and Fedora) will usually resolve this.
+  
+  Once the rootless user namespace has been created, we can begin running containers. Using volumes with these containers is the first point at which most users will encounter the practical differences between root and rootless Podman. The user will run a container with a volume mounted in and promptly discover that the container cannot access files in the volume, despite everything seemingly set correctly.
+  
+  For example, let’s examine a simple Podman command:
+  
+  ```bash
+  podman run --user 1000:1000 -v /home/mheon/data:/data:Z ubi8 sh
+  ```
+  
+  This command is being run by my user, **mheon**, with UID and GID set to 1000 (the same user the container was instructed to use). My user has been allocated 65536 UIDs and GIDs starting at UID/GID 100000 via `/etc/subuid` and `/etc/subgid`. The SELinux context has been set so the container can access the directory via the `:Z` option on the volume mount.
+  
+  However, access to the `/data` folder in the container will be denied, and the only error message that the system will return is a generic _permission denied_ from the kernel. Any user that did not know what a user namespace is would have no idea what is wrong.
+  
+  However, now that we do know, the cause should be obvious: The user mapping means that UID 1000 in the container is not actually UID 1000 on the host. You can view the user in the container and the actual user on the host via the `podman top` command:
+  
+  ```shell
+  mheon@podman-rhel8-test $ podman top -l user,huser
+  USER   HUSER
+  1000   100999
+  ```
+  
+  Here, **USER** is the user in the container, while **HUSER** is the user on the host.
+  
+  Still, knowing why something is happening does not mean we know how to fix it. We still want to run our rootless Podman container with a specific volume mounted into it. How do we do that? Fortunately, there are many ways to fix this, which I will cover below.
+  
+  ### The first solution
+  
+  The first is simple: The `--user` option can be omitted from the container, running the container command as **root**. As noted above, by default, Podman maps the user running the container to **root** in the container—so now we’ll be accessing the volume as UID/GID 1000 on the host, despite being **root** in the container. Running as **root** in a rootful container is a potential security issue as you are running as the system’s **root** user—if an attacker broke out of the container, they would be able to act as **root** on the system. The entire point of a rootless container is that this is never true—the security issues are primarily a non-factor.
+  
+  Unfortunately, the solution of running the container as **root** falls flat when the image is specifically written to use a non-root user. Some container images feature complex entry point scripts to drop permissions that cannot easily be modified. These will require an alternative solution.
+  
+  ### The second solution
+  
+  The second option is to grant the user running in the container permission to read and write the folder mounted in from the host. As of Podman v3.1.0, this can be done automatically via the `:U` volume option to the `-v` flag (e.g. `-v /home/mheon/data:/data:Z,U`).
+  
+  Next enter `podman unshare chown 1000:1000 /home/mheon/data`. This volume option will automatically adjust the ownership of the directory, so the user running in the container—whatever user UID 1000 in the container is mapped to on the host—will own the directory. In versions without this flag, the `podman unshare` command can be used to enter the rootless user namespace and then `chown` the directory to be owned by the user running the container.
+  
+  In this case, `podman unshare chown 1000:1000 /home/mheon/data` would change ownership of the directory on the host to the user and group that map to UID/GID 1000 in the user namespace. Please note that, if ownership is changed, all parent directories on the host will also require the execute permission for all users (`chmod a+x…`) permission to ensure the directory in question can be accessed.
+  
+  Unfortunately, the `chown` approach does come with its own set of disadvantages. The `/home/mheon/data` directory is in my user’s home directory, but it is no longer owned by my user (in this case, it’s owned by user and group **100999**). In the rootless user namespace, the **mheon** user can act as **root** and read, write, and modify files owned by that user; but it cannot do any of these things outside it. Podman does provide a command to enter a shell inside the rootless user namespace (`podman unshare`) that can be used to modify or remove such files, but the inability to manage these files otherwise is inconvenient.
+  
+  ### The third solution
+  
+  The third option is to use the `--userns=keep-id` option to `podman run`. This flag tells Podman to do two things: First, to set the user the container runs as to the UID and GID of the user that ran Podman (unless explicitly overridden by the `--user` flag), and second, to reorder the users mapped into the container such that the user that ran Podman is mapped to their own UID and GID, instead of **root** (this is done via a second user namespace, nested inside the rootless user namespace, created just for this container). The user in the user namespace that the container is running as is not **root** but still maps to the user running Podman ( **mheon**) on the host and can thus access the directory mounted in the example `/home/mheon/data`.
+  
+  This will not solve all access errors, however. Another common issue is attempting to mount in a file or device that the user running Podman has access to, but only by a supplemental group. For example, let’s say that my user, **mheon**, is part of the **kvm** group that owns `/dev/kvm`, and I choose to mount `/dev/kvm` into a container using `podman run -t -i -v /dev/kvm:/dev/kvm fedora bash`. The container will be unable to access `/dev/kvm`, despite the fact that it is running as my user on the host (which should have access).
+  
+  The reason is that, for security purposes, containers will (by default) drop all additional groups as part of their creation. This behavior can be disabled, but only using the `crun` OCI runtime (this should be default as of Podman 3.0 on all distributions except RHEL) by passing a special annotation (`--annotation run.oci.keep_original_groups=1`).
+  
+  In the upcoming Podman v3.2.0, this will be available via a special argument to the `group-add` flag (`--group-add keep-groups`). Please note that, while we can retain access to these groups, we do not have permission to add them to the rootless user namespace—we can only do that to the users and groups allocated to us in `/etc/subuid` and `/etc/subgid`. An `ls -al`on `/dev/kvm` in the container will find it is owned by **nobody:nobody** (as its actual owner and group, **root:kvm**, are not mapped into the container).
+  
+  However, it can be accessed because, despite the fact that the **kvm** group is not part of the user namespace, the container process is still part of the group in the eyes of the kernel. This is somewhat limiting in that it is not possible to explicitly create files as one of these supplemental groups (as **nobody** is not a real group we can interact with), but it does suffice to give the container access to content on the host it would otherwise be unable to reach, and directories with the SUID bit owned by a supplemental group will still set the correct owner.
+  
+  Another type of common error is encountered while pulling images with files or folders owned by high UID users. Any file or folder owned by a UID or GID too large to be included in the user namespace will produce an error. I previously wrote a blog about this and potential solutions, which can be found [here](https://www.redhat.com/sysadmin/rootless-podman).
+  
+  ## Conclusion
+  
+  One of Podman’s strongest features is our strong support for rootless containers, and it’s not hard to see why people are excited. Rootless containers are easy to set up, more secure than **root** containers, and can do almost anything a container run as **root** can do. Of course, the key word is _almost_—because the overall experience with root and rootless are so similar, differences can be confusing and often are not easy to explain. After reading this blog, you should have a strong grasp of one of the largest of these differences and how to work with Podman to get your containers running the way you want.
+  
+  * * *
+  
+  ### About the author
+  
+  [![Matthew Heon](https://www.redhat.com/rhdc/managed-files/styles/media_thumbnail/private/sysadmin/pictures/2019-09/profile_mheon.png?itok=dDeW9jbf)](https://www.redhat.com/en/authors/mheon)
+  
+  [**Matthew Heon**](https://www.redhat.com/en/authors/mheon)
+  
+  Matt Heon has been a software engineer on Red Hat's Container Runtimes team for the last five years. He's one of the original authors and lead maintainers of the Podman project. He focuses on container security, networking, and low-level development.
+  
+  [Read full bio](https://www.redhat.com/en/authors/mheon)
+  
+  ## Browse by channel
+  
+  [Explore all channels](https://www.redhat.com/en/blog/channels "Explore all channels")
+  
+  ![automation icon](https://www.redhat.com/cms/managed-files/automation.svg)
+  
+  ### [Automation](https://www.redhat.com/en/blog/channel/management-and-automation)
+  
+  The latest on IT automation for tech, teams, and environments
+  
+  ![AI icon](https://www.redhat.com/cms/managed-files/AI.svg)
+  
+  ### [Artificial intelligence](https://www.redhat.com/en/blog/channel/artificial-intelligence)
+  
+  Updates on the platforms that free customers to run AI workloads anywhere
+  
+  ![open hybrid cloud icon](https://www.redhat.com/cms/managed-files/open-hybrid-cloud.svg)
+  
+  ### [Open hybrid cloud](https://www.redhat.com/en/blog/[[url-nid:292921;title:Open%20Hybrid%20Cloud]])
+  
+  Explore how we build a more flexible future with hybrid cloud
+  
+  ![security icon](https://www.redhat.com/cms/managed-files/security.svg)
+  
+  ### [Security](https://www.redhat.com/en/blog/channel/security)
+  
+  The latest on how we reduce risks across environments and technologies
+  
+  ![edge icon](https://www.redhat.com/cms/managed-files/edge_2.svg)
+  
+  ### [Edge computing](https://www.redhat.com/en/blog/channel/edge-computing)
+  
+  Updates on the platforms that simplify operations at the edge
+  
+  ![Infrastructure icon](https://www.redhat.com/cms/managed-files/infrastructure.svg)
+  
+  ### [Infrastructure](https://www.redhat.com/en/blog/channel/infrastructure)
+  
+  The latest on the world’s leading enterprise Linux platform
+  
+  ![application development icon](https://www.redhat.com/cms/managed-files/application-development.svg)
+  
+  ### [Applications](https://www.redhat.com/en/blog/channel/applications)
+  
+  Inside our solutions to the toughest application challenges
+  
+  ![Virtualization icon](https://www.redhat.com/rhdc/managed-files/Icon-Red_Hat-Virtual_server-A-Black-RGB.svg)
+  
+  ### [Virtualization](https://www.redhat.com/en/blog/channel/red-hat-virtualization)
+  
+  The future of enterprise virtualization for your workloads on-premise or across clouds
+  
+  [![Red Hat logo](https://static.redhat.com/libs/redhat/brand-assets/2/corp/logo--on-dark.svg)](https://www.redhat.com/en) [LinkedIn](https://www.linkedin.com/company/red-hat)[YouTube](https://www.youtube.com/user/RedHatVideos)[Facebook](https://www.facebook.com/RedHat/)[X](https://twitter.com/RedHat)[Instagram](https://www.instagram.com/red_hat/)
+  
+  ### Platforms
+  
+  - [Red Hat AI](https://www.redhat.com/en/products/ai)
+  - [Red Hat Enterprise Linux](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux)
+  - [Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift)
+  - [Red Hat Ansible Automation Platform](https://www.redhat.com/en/technologies/management/ansible)
+  - [See all products](https://www.redhat.com/en/products)
+  
+  ### Tools
+  
+  - [Training and certification](https://www.redhat.com/en/services/training-and-certification)
+  - [My account](https://www.redhat.com/wapps/ugc/protected/personalInfo.html)
+  - [Customer support](https://access.redhat.com/)
+  - [Developer resources](https://developers.redhat.com/)
+  - [Find a partner](https://catalog.redhat.com/partners)
+  - [Red Hat Ecosystem Catalog](https://catalog.redhat.com/)
+  - [Documentation](https://docs.redhat.com/en)
+  
+  ### Try, buy, & sell
+  
+  - [Product trial center](https://www.redhat.com/en/products/trials)
+  - [Red Hat Store](https://www.redhat.com/en/store)
+  - [Buy online (Japan)](https://www.redhat.com/en/about/japan-buy)
+  - [Console](https://www.redhat.com/en/hybrid-cloud-console)
+  
+  ### Communicate
+  
+  - [Contact sales](https://www.redhat.com/en/contact/sales)
+  - [Contact customer service](https://www.redhat.com/en/contact/customer-service)
+  - [Contact training](https://www.redhat.com/en/services/training-and-certification/contact-us)
+  - [Social](https://www.redhat.com/en/about/social)
+  
+  ### About Red Hat
+  
+  Red Hat is an open hybrid cloud technology leader, delivering a consistent, comprehensive foundation for transformative IT and artificial intelligence (AI) applications in the enterprise. As a [trusted adviser to the Fortune 500](https://www.redhat.com/en/about), Red Hat offers cloud, developer, Linux, automation, and application platform technologies, as well as [award-winning](https://access.redhat.com/recognition) services.
+  
+  - [Our company](https://www.redhat.com/en/about)
+  - [How we work](https://www.redhat.com/en/about/our-culture)
+  - [Customer success stories](https://www.redhat.com/en/success-stories)
+  - [Analyst relations](https://www.redhat.com/en/about/analysts)
+  - [Newsroom](https://www.redhat.com/en/about/newsroom)
+  - [Open source commitments](https://www.redhat.com/en/about/open-source)
+  - [Our social impact](https://www.redhat.com/en/about/community-social-responsibility)
+  - [Jobs](https://www.redhat.com/en/jobs)
+  
+  ### Change page language
+  
+  简体中文EnglishFrançaisDeutschItaliano日本語한국어PortuguêsEspañol
+  
+  ### Red Hat legal and privacy links
+  
+  - [About Red Hat](https://www.redhat.com/en/about)
+  - [Jobs](https://www.redhat.com/en/jobs)
+  - [Events](https://www.redhat.com/en/events)
+  - [Locations](https://www.redhat.com/en/about/office-locations)
+  - [Contact Red Hat](https://www.redhat.com/en/contact)
+  - [Red Hat Blog](https://www.redhat.com/en/blog)
+  - [Inclusion at Red Hat](https://www.redhat.com/en/about/our-culture/inclusion)
+  - [Cool Stuff Store](https://coolstuff.redhat.com/)
+  - [Red Hat Summit](https://www.redhat.com/en/summit)
+  
+  © 2026 Red Hat
+  
+  ### Red Hat legal and privacy links
+  
+  - [Privacy statement](https://www.redhat.com/en/about/privacy-policy)
+  - [Terms of use](https://www.redhat.com/en/about/terms-use)
+  - [All policies and guidelines](https://www.redhat.com/en/about/all-policies-guidelines)
+  - [Digital accessibility](https://www.redhat.com/en/about/digital-accessibility)
+  - Cookie preferences
+  
+  ![](https://consent.trustarc.com/get?name=info-circle-solid.svg)
+  
+  ## How we use cookies
+  
+  We use cookies on our websites to deliver our online services. Details about how we use cookies and how you may disable them are set out in our [Privacy Statement](http://www.redhat.com/en/about/privacy-policy#cookies). By using this website you agree to our use of cookies.
+  
+  ![Close](https://consent.trustarc.com/get?name=redhat_close_small.svg)Accept AllMore Options
+  --- End Content ---
+
+Podman volume mounts, rootless container, and non-root user in ...
+  URL: https://discussion.fedoraproject.org/t/podman-volume-mounts-rootless-container-and-non-root-user-in-container/136301
+  In my experience it is better to use podman volume create bind-config and a storage will be created by podman in rootless mode.
+
+  --- Content ---
+  🍪 This website uses cookies to function. The compliance people asked us to tell you. [More information.](https://discussion.fedoraproject.org/t/cookies-on-fedora-discussion/35810)
+  
+  Fine.
+  
+  [Skip to last reply](https://discussion.fedoraproject.org/t/podman-volume-mounts-rootless-container-and-non-root-user-in-container/136301/9) [Skip to top](https://discussion.fedoraproject.org/t/podman-volume-mounts-rootless-container-and-non-root-user-in-container/136301/1)
+  
+  [Skip to main content](https://discussion.fedoraproject.org/t/podman-volume-mounts-rootless-container-and-non-root-user-in-container/136301#main-container)
+  
+  # [Podman volume mounts, rootless container, and non-root user in container](https://discussion.fedoraproject.org/t/podman-volume-mounts-rootless-container-and-non-root-user-in-container/136301)
+  
+  [Ask Fedora](https://discussion.fedoraproject.org/c/ask/6)
+  
+  - [podman](https://discussion.fedoraproject.org/tag/podman/388)
+  
+  You have selected **0** posts.
+  
+  [select all](https://discussion.fedoraproject.org/t/podman-volume-mounts-rootless-container-and-non-root-user-in-container/136301)
+  
+  [cancel selecting](https://discussion.fedoraproject.org/t/podman-volume-mounts-rootless-container-and-non-root-user-in-container/136301)
+  
+  7.6k
+  views
+  2
+  links
+  
+  
+  [![](https://sea1.discourse-cdn.com/fedoraproject/user_avatar/discussion.fedoraproject.org/snowyyd/48/43006_2.png)3](https://discussion.fedoraproject.org/u/snowyyd "snowyyd")
+  
+  [![](https://avatars.discourse-cdn.com/v4/letter/r/eb7434/48.png)3](https://discussion.fedoraproject.org/u/ramki558 "ramki558")
+  
+  [![](https://avatars.discourse-cdn.com/v4/letter/g/eb7434/48.png)2](https://discussion.fedoraproject.org/u/gaoshancha "gaoshancha")
+  
+  [![](https://sea1.discourse-cdn.com/fedoraproject/user_avatar/discussion.fedoraproject.org/huben/48/7796_2.png)](https://discussion.fedoraproject.org/u/huben "huben")
+  
+  read
+  5
+  min
+  
+  
+  [Nov 2024](https://discussion.fedoraproject.org/t/podman-volume-mounts-rootless-container-and-non-root-user-in-container/136301/1 "Jump to the first post")
+  
+  1 / 9
+  
+  
+  Nov 2024
+  
+  
+  [Aug 2025](https://discussion.fedoraproject.org/t/podman-volume-mounts-rootless-container-and-non-root-user-in-container/136301/9)
+  
+  ## post by gaoshancha on Nov 10, 2024
+  
+  [![](https://avatars.discourse-cdn.com/v4/letter/g/eb7434/48.png)](https://discussion.fedoraproject.org/u/gaoshancha)
+  
+  [Bryan](https://discussion.fedoraproject.org/u/gaoshancha)[gaoshancha](https://discussion.fedoraproject.org/u/gaoshancha)
+  
+  [Nov 2024](https://discussion.fedoraproject.org/t/podman-volume-mounts-rootless-container-and-non-root-user-in-container/136301 "Post date")
+  
+  I am working with the official [ISC Bind9 container image](https://hub.docker.com/r/internetsystemsconsortium/bind9) (which appears to be based on Debian Linux though it says Alpine), and I’m having trouble with permissions and mounted voumes:
+  
+  I start the container with mounts in my user-mode account as follows:
+  
+  ```plaintext
+  
+  podman run --name bind9 \
+  -p 11153:53/udp \
+  -p 11153:53/tcp \
+  -v /home/devops/work/dns/primary/etc:/etc/bind/:rw,Z \
+  -v /home/devops/work/dns/primary/cache:/var/cache/bind:rw,Z, \
+  -v /home/devops/work/dns/primary/lib:/var/lib/bind:rw,Z, \
+  -v /home/devops/work/dns/primary/log:/var/log:rw,Z, \
+  internetsystemsconsortium/bind9:9.20 -4 -g -c /etc/bind/named.conf
+  ```
+  
+  There are no podman logs to reference, so I set the -g flag on `named` binary so that errors go to stderr. The container starts but exits with error code 1 after about 3 seconds, and I get the following error messages that appear to be access issues between my host and the container???
+  
+  ```plaintext
+  
+  09-Nov-2024 21:26:44.329 the working directory is not writable
+  09-Nov-2024 21:26:44.330 loading configuration: permission denied
+  09-Nov-2024 21:26:44.330 exiting (due to fatal error)
+  ```
+  
+  Digging into the container layers, I see that in the container a `bind` user is used to run `named` in the ENTRYPOINT part of the container.
+  
+  ```plaintext
+  
+  ...
+  23 VOLUME [/etc/bind /var/cache/bind /var/lib/bind /var/log] 0 B
+  24 EXPOSE map[443/tcp:{} 53/tcp:{} 53/udp:{} 853/tcp:{} 0 B\
+  25 ENTRYPOINT ["/usr/sbin/named" "-u" "bind"] 0 B\
+  26 CMD ["-f" "-c" "/etc/bind/named.conf" "-L" 0 B\
+  ...\
+  ```\
+  \
+  After much searching around the Internet, I understand this is because from the perspective of execution environment inside the container, these mounted volumes have `root:root` permissions, but the container was built but ISC for use with a `bind` user. I suppose if I was running Docker rather than Podman this would just work?\
+  \
+  So after some more digging, I was able to get the UID and GID of the `bind` user inside the container by not mounting any volumes and then spawning a shell in the container execution environment.\
+  \
+  ```plaintext\
+  \
+  podman run -d --name=bind9 -p 11153:53/udp -p 11153:53/tcp internetsystemsconsortium/bind9:9.20\
+  podman exec -it bind9 /bin/sh\
+  / # cat /etc/passwd...\
+  bind:x:100:101:Linux User,,,:/var/cache/bind:/sbin/nologin\
+  ```\
+  \
+  After more Internet research and [RedHat reading](https://www.redhat.com/en/blog/rootless-podman-makes-sense), it seems I should use the `--userns` option on podman to map the mounted volumes with the `bind` user in the container. I tried adding `--userns=keep-id:uid=100,gid=101` to the `podman run` command but I still get the same exact errors.\
+  \
+  At this point I tried a “hail mary” and on the host machine I made the volumes `chmod 777`, but I still get the same exact errors.\
+  \
+  I’m not sure what to try next…do I have to create a useless `bind` user account on the host and somehow map the UID and GID to the container? These seems like an extraneous step and that there should be something I can do with podman to handle this…but I don’t know.\
+  \
+  7.6k\
+  views\
+  2\
+  links\
+  \
+  \
+  [![](https://sea1.discourse-cdn.com/fedoraproject/user_avatar/discussion.fedoraproject.org/snowyyd/48/43006_2.png)3](https://discussion.fedoraproject.org/u/snowyyd "snowyyd")\
+  \
+  [![](https://avatars.discourse-cdn.com/v4/letter/r/eb7434/48.png)3](https://discussion.fedoraproject.org/u/ramki558 "ramki558")\
+  \
+  [![](https://avatars.discourse-cdn.com/v4/letter/g/eb7434/48.png)2](https://discussion.fedoraproject.org/u/gaoshancha "gaoshancha")\
+  \
+  [![](https://sea1.discourse-cdn.com/fedoraproject/user_avatar/discussion.fedoraproject.org/huben/48/7796_2.png)](https://discussion.fedoraproject.org/u/huben "huben")\
+  \
+  read\
+  5\
+  min\
+  \
+  \
+  ## post by huben on Nov 11, 2024\
+  \
+  ## post by gaoshancha on Nov 13, 2024\
+  \
+  9 months later\
+  \
+  \
+  ## post by ramki558 on Aug 13, 2025\
+  \
+  ## post by snowyyd on Aug 14, 2025\
+  \
+  ## post by ramki558 on Aug 14, 2025\
+  \
+  ## post by snowyyd on Aug 14, 2025\
+  \
+  ## post by ramki558 on Aug 14, 2025\
+  \
+  ## post by snowyyd on Aug 14, 2025\
+  \
+  Reply\
+  \
+  ### Related topics\
+  \
+  | Topic | Replies | Views | Activity |\
+  | --- | --- | --- | --- |\
+  | [Podman permission issues with mounted web root](https://discussion.fedoraproject.org/t/podman-permission-issues-with-mounted-web-root/66245)<br>[Ask Fedora](https://discussion.fedoraproject.org/c/ask/6) <br>- [f35](https://discussion.fedoraproject.org/tag/f35/368) | [3](https://discussion.fedoraproject.org/t/podman-permission-issues-with-mounted-web-root/66245/1) | 2.0k | [Jan 2022](https://discussion.fedoraproject.org/t/podman-permission-issues-with-mounted-web-root/66245/4) |\
+  | [Podman container can’t chown and create new directories inside directory, even though directory is owned by its user](https://discussion.fedoraproject.org/t/podman-container-cant-chown-and-create-new-directories-inside-directory-even-though-directory-is-owned-by-its-user/112742)<br>[Ask Fedora](https://discussion.fedoraproject.org/c/ask/6) <br>- [selinux](https://discussion.fedoraproject.org/tag/selinux/795),<br>- [coreos](https://discussion.fedoraproject.org/tag/coreos/895),<br>- [podman](https://discussion.fedoraproject.org/tag/podman/388) | [17](https://discussion.fedoraproject.org/t/podman-container-cant-chown-and-create-new-directories-inside-directory-even-though-directory-is-owned-by-its-user/112742/1) | 22.1k | [Apr 2024](https://discussion.fedoraproject.org/t/podman-container-cant-chown-and-create-new-directories-inside-directory-even-though-directory-is-owned-by-its-user/112742/18) |\
+  | [Help with permissions/user mappings in dev container](https://discussion.fedoraproject.org/t/help-with-permissions-user-mappings-in-dev-container/188828)<br>[Ask Fedora](https://discussion.fedoraproject.org/c/ask/6) <br>- [f43](https://discussion.fedoraproject.org/tag/f43/1315),<br>- [docker](https://discussion.fedoraproject.org/tag/docker/613) | [1](https://discussion.fedoraproject.org/t/help-with-permissions-user-mappings-in-dev-container/188828/1) | 71 | [29d](https://discussion.fedoraproject.org/t/help-with-permissions-user-mappings-in-dev-container/188828/2) |\
+  | [How do I give (rootless) podman permissions to a ~/directory?](https://discussion.fedoraproject.org/t/how-do-i-give-rootless-podman-permissions-to-a-directory/22066)<br>[Project Discussion](https://discussion.fedoraproject.org/c/project/7) <br>- [silverblue-team](https://discussion.fedoraproject.org/tag/silverblue-team/283 "Fedora Silverblue Team") | [6](https://discussion.fedoraproject.org/t/how-do-i-give-rootless-podman-permissions-to-a-directory/22066/1) | 7.8k | [Nov 2023](https://discussion.fedoraproject.org/t/how-do-i-give-rootless-podman-permissions-to-a-directory/22066/7) |\
+  | [Can’t edit files, create directories, mounting a host directory , podman volume](https://discussion.fedoraproject.org/t/cant-edit-files-create-directories-mounting-a-host-directory-podman-volume/72971)<br>[Ask Fedora](https://discussion.fedoraproject.org/c/ask/6) <br>- [f36](https://discussion.fedoraproject.org/tag/f36/369),<br>- [podman](https://discussion.fedoraproject.org/tag/podman/388),<br>- [volume](https://discussion.fedoraproject.org/tag/volume/472) | [1](https://discussion.fedoraproject.org/t/cant-edit-files-create-directories-mounting-a-host-directory-podman-volume/72971/1) | 1.4k | [Oct 2022](https://discussion.fedoraproject.org/t/cant-edit-files-create-directories-mounting-a-host-directory-podman-volume/72971/2) |\
+  \
+  Topic list, column headers with buttons are sortable.\
+  \
+  Invalid date\
+  \
+  Invalid date
+  --- End Content ---
+
+Permissions on top level of mounted volume in rootless container
+  URL: https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/
+  If you are running as root within the user, you need to figure out what is the UID of user within the container and chown the file to this. podman unshare chown ...
+
+  --- Content ---
+  ### [2026](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/\#collapse0)
+  
+  - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2026/5/)
+  - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2026/4/)
+  - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2026/3/)
+  - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2026/2/)
+  - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2026/1/)
+  
+  ### [2025](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/\#collapse1)
+  
+  - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/12/)
+  - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/11/)
+  - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/10/)
+  - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/9/)
+  - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/8/)
+  - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/7/)
+  - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/6/)
+  - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/5/)
+  - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/4/)
+  - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/3/)
+  - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/2/)
+  - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/1/)
+  
+  ### [2024](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/\#collapse2)
+  
+  - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/12/)
+  - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/11/)
+  - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/10/)
+  - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/9/)
+  - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/8/)
+  - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/7/)
+  - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/6/)
+  - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/5/)
+  - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/4/)
+  - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/3/)
+  - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/2/)
+  - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/1/)
+  
+  ### [2023](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/\#collapse3)
+  
+  - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/12/)
+  - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/11/)
+  - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/10/)
+  - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/9/)
+  - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/8/)
+  - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/7/)
+  - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/6/)
+  - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/5/)
+  - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/4/)
+  - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/3/)
+  - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/2/)
+  - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/1/)
+  
+  ### [2022](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/\#collapse4)
+  
+  - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/12/)
+  - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/11/)
+  - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/10/)
+  - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/9/)
+  - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/8/)
+  - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/7/)
+  - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/6/)
+  - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/5/)
+  - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/4/)
+  - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/3/)
+  - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/2/)
+  - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/1/)
+  
+  ### [2021](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/\#collapse5)
+  
+  - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/12/)
+  - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/11/)
+  - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/10/)
+  - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/9/)
+  - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/8/)
+  - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/7/)
+  - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/6/)
+  - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/5/)
+  - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/4/)
+  - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/3/)
+  - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/2/)
+  - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/1/)
+  
+  ### [2020](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/\#collapse6)
+  
+  - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/12/)
+  - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/11/)
+  - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/10/)
+  - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/9/)
+  - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/8/)
+  - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/7/)
+  - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/6/)
+  - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/5/)
+  - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/4/)
+  - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/3/)
+  - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/2/)
+  - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/1/)
+  
+  ### [2019](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/\#collapse7)
+  
+  - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/12/)
+  - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/11/)
+  - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/10/)
+  - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/9/)
+  - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/8/)
+  - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/7/)
+  - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/6/)
+  - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/5/)
+  
+  [List overview](https://lists.podman.io/archives/list/podman@lists.podman.io/)
+  
+  [Download](https://lists.podman.io/archives/list/podman@lists.podman.io/export/podman@lists.podman.io-ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT.mbox.gz?thread=ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT "This thread in gzipped mbox format")
+  
+  [newer](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/4MYPJQJFWPFKJPWSNZR5FTYFXBR3HHB4/ "Podman Community Meeting Notes for April 2021 are posted")
+  
+  ### Permissions on top level of mounted volume in rootless container
+  
+  [older](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/BPXYT4D3J2EVDOYLV6C5AKW5MYX56EZN/ "Podman Community Meeting Recoring - April 6, 2021")
+  
+  [Podman Community Meeting Notes for...](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/4MYPJQJFWPFKJPWSNZR5FTYFXBR3HHB4/ "Podman Community Meeting Notes for April 2021 are posted")
+  
+  [Podman Community Meeting Recoring...](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/BPXYT4D3J2EVDOYLV6C5AKW5MYX56EZN/ "Podman Community Meeting Recoring - April 6, 2021")
+  
+  - [First Post](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#home)
+  - [Replies](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#replies)
+  - [Stats](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#stats)
+  - [Go to](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/)  - [\-\-\-\-\- 2026 -----](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/)
+    - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2026/5/)
+    - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2026/4/)
+    - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2026/3/)
+    - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2026/2/)
+    - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2026/1/)
+    - [\-\-\-\-\- 2025 -----](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/)
+    - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/12/)
+    - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/11/)
+    - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/10/)
+    - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/9/)
+    - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/8/)
+    - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/7/)
+    - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/6/)
+    - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/5/)
+    - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/4/)
+    - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/3/)
+    - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/2/)
+    - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2025/1/)
+    - [\-\-\-\-\- 2024 -----](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/)
+    - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/12/)
+    - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/11/)
+    - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/10/)
+    - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/9/)
+    - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/8/)
+    - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/7/)
+    - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/6/)
+    - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/5/)
+    - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/4/)
+    - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/3/)
+    - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/2/)
+    - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2024/1/)
+    - [\-\-\-\-\- 2023 -----](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/)
+    - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/12/)
+    - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/11/)
+    - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/10/)
+    - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/9/)
+    - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/8/)
+    - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/7/)
+    - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/6/)
+    - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/5/)
+    - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/4/)
+    - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/3/)
+    - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/2/)
+    - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2023/1/)
+    - [\-\-\-\-\- 2022 -----](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/)
+    - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/12/)
+    - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/11/)
+    - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/10/)
+    - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/9/)
+    - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/8/)
+    - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/7/)
+    - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/6/)
+    - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/5/)
+    - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/4/)
+    - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/3/)
+    - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/2/)
+    - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2022/1/)
+    - [\-\-\-\-\- 2021 -----](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/)
+    - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/12/)
+    - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/11/)
+    - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/10/)
+    - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/9/)
+    - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/8/)
+    - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/7/)
+    - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/6/)
+    - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/5/)
+    - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/4/)
+    - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/3/)
+    - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/2/)
+    - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2021/1/)
+    - [\-\-\-\-\- 2020 -----](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/)
+    - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/12/)
+    - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/11/)
+    - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/10/)
+    - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/9/)
+    - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/8/)
+    - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/7/)
+    - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/6/)
+    - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/5/)
+    - [April](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/4/)
+    - [March](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/3/)
+    - [February](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/2/)
+    - [January](https://lists.podman.io/archives/list/podman@lists.podman.io/2020/1/)
+    - [\-\-\-\-\- 2019 -----](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/)
+    - [December](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/12/)
+    - [November](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/11/)
+    - [October](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/10/)
+    - [September](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/9/)
+    - [August](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/8/)
+    - [July](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/7/)
+    - [June](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/6/)
+    - [May](https://lists.podman.io/archives/list/podman@lists.podman.io/2019/5/)
+  
+  ![](https://seccdn.libravatar.org/avatar/03d26fe82a1036b80a1bd8ce4928ccfd.jpg?s=120&r=g&d=retro)
+  
+  [Peter Upfold](https://lists.podman.io/archives/users/303555618233147859558907003297201549931/ "See the profile for Peter Upfold")
+  
+  Thursday, 18 February
+  
+  2021
+  
+  
+  Thu, 18 Feb
+  
+  '21
+  
+  
+  
+  2:03 a.m.
+  
+  [Permalink for this message](https://lists.podman.io/archives/list/podman@lists.podman.io/message/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/ "Permalink for this message")
+  
+  Hello,
+  
+  I'm struggling a little with the permissions set on the top level
+  directory of a volume that is mounted in a rootless container.
+  
+  My Containerfile:
+  [https://gist.github.com/PeterUpfold/2f63ad5341ffd9079bc2683a5bb2744c](https://gist.github.com/PeterUpfold/2f63ad5341ffd9079bc2683a5bb2744c)
+  
+  The top level directory of the volume mount,
+  /var/www/html/websites/windows, ends up with root:nobody and 0755
+  permissions inside the container.
+  
+  I've seen similar issues on this list: Daniel Walsh's suggestion of
+  \`--annotation run.oci.keep\_original\_groups=1\` seems to work beautifully
+  to change the ownership of the volume folder in the container to be
+  windowsnoob:windowsnoob, as I would want it, \_if\_ I'm doing \`podman run\`.
+  
+  However, I'm trying to create a pod as follows. Is it possible to have
+  this permissions configuration work in this scenario?
+  
+       podman pod create -n windowsnoob -p 8081
+       podman build -t windowsnoob-fpm .
+       podman create --name windowsnoob-fpm --pod windowsnoob -v
+  /var/www/html/websites/windows:/var/www/html/websites/windows:Z,noexec,nodev,rw
+  windowsnoob-fpm
+       podman pod start windowsnoob
+  
+  At the moment, doing this and checking the permissions on the
+  /var/www/html/websites/windows volume in the created container (via
+  \`podman exec -it \[container\] bash\`) still shows the following:
+  
+       drwxr-xr-x. 2 root nobody 28 Feb 14 09:45 windows
+  
+  (Note that I can write to a subfolder already owned by
+  windowsnoob:windowsnoob \_inside\_ the volume just fine — I don't believe
+  this is an SELinux issue, or a permissions issue on anywhere except the
+  top level of the volume mount!)
+  
+  Thank you for any insight you might be able to provide!
+  
+  Peter Upfold
+  
+  
+  
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#like "You must be logged-in to vote.") /
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#dislike "You must be logged-in to vote.")
+  
+  [Reply](mailto:podman@lists.podman.io?Subject=Re%3A%20%5BPodman%5D%20Permissions%20on%20top%20level%20of%20mounted%20volume%20in%20rootless%20container&In-Reply-To=%3C48334786-407f-03bf-44b0-5f626cae9685%40upfold.org.uk%3E "Sign in to reply online")
+  
+  [Show replies by date](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/?sort=date)
+  
+  ![](https://seccdn.libravatar.org/avatar/75d88487c07b14b6c7aa0599fce600bf.jpg?s=120&r=g&d=retro)
+  
+  [Daniel Walsh](https://lists.podman.io/archives/users/275273161235341687704311323316858950513/ "See the profile for Daniel Walsh")
+  
+  Thursday, 18 February
+  
+  
+  Thu, 18 Feb
+  
+  
+  
+  6:51 a.m.
+  
+  [Permalink for this message](https://lists.podman.io/archives/list/podman@lists.podman.io/message/FJPJV7BOOFOGXKCSIWEP6WTVLK6F2DOP/ "Permalink for this message")
+  
+  New subject: Permissions on top level of mounted volume in rootless container
+  
+  
+  On 2/18/21 03:03, Peter Upfold wrote:
+  
+  [...](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#)
+  
+  Hello,
+  
+  I'm struggling a little with the permissions set on the top level
+  directory of a volume that is mounted in a rootless container.
+  
+  My Containerfile:
+  [https://gist.github.com/PeterUpfold/2f63ad5341ffd9079bc2683a5bb2744c](https://gist.github.com/PeterUpfold/2f63ad5341ffd9079bc2683a5bb2744c)
+  
+  The top level directory of the volume mount,
+  /var/www/html/websites/windows, ends up with root:nobody and 0755
+  permissions inside the container.
+  
+  I've seen similar issues on this list: Daniel Walsh's suggestion of
+  \`--annotation run.oci.keep\_original\_groups=1\` seems to work
+  beautifully to change the ownership of the volume folder in the
+  container to be windowsnoob:windowsnoob, as I would want it, \_if\_ I'm
+  doing \`podman run\`.
+  
+  
+  Note the annotation does not change the ownership of the folder, it just
+  allows the group access for your non root process to leak into the
+  container.  Allowing you to have group access to the volume.
+  
+  [...](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#)
+  
+  However, I'm trying to create a pod as follows. Is it possible to
+  have
+  this permissions configuration work in this scenario?
+  
+       podman pod create -n windowsnoob -p 8081
+       podman build -t windowsnoob-fpm .
+       podman create --name windowsnoob-fpm --pod windowsnoob -v
+  /var/www/html/websites/windows:/var/www/html/websites/windows:Z,noexec,nodev,rw
+  windowsnoob-fpm
+       podman pod start windowsnoob
+  
+  At the moment, doing this and checking the permissions on the
+  /var/www/html/websites/windows volume in the created container (via
+  \`podman exec -it \[container\] bash\`) still shows the following:
+  
+       drwxr-xr-x. 2 root nobody 28 Feb 14 09:45 windows
+  
+  
+  This should be the same, but the container you create within the pod
+  will need the annotation.
+  
+  [...](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#)
+  
+  (Note that I can write to a subfolder already owned by
+  windowsnoob:windowsnoob \_inside\_ the volume just fine — I don't
+  believe this is an SELinux issue, or a permissions issue on anywhere
+  except the top level of the volume mount!)
+  
+  Thank you for any insight you might be able to provide!
+  
+  Peter Upfold
+  
+  \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+  Podman mailing list -- podman(a)lists.podman.io
+  To unsubscribe send an email to podman-leave(a)lists.podman.io
+  
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#like "You must be logged-in to vote.") /
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#dislike "You must be logged-in to vote.")
+  
+  [Reply](mailto:podman@lists.podman.io?Subject=Re%3A%20%5BPodman%5D%20Re%3A%20Permissions%20on%20top%20level%20of%20mounted%20volume%20in%20rootless%20%20container&In-Reply-To=%3Cf6ab438a-abd0-1308-3838-cadedf0c4a8f%40redhat.com%3E "Sign in to reply online")
+  
+  ![](https://seccdn.libravatar.org/avatar/03d26fe82a1036b80a1bd8ce4928ccfd.jpg?s=120&r=g&d=retro)
+  
+  [Peter Upfold](https://lists.podman.io/archives/users/303555618233147859558907003297201549931/ "See the profile for Peter Upfold")
+  
+  Friday, 19 February
+  
+  
+  Fri, 19 Feb
+  
+  
+  
+  3:07 a.m.
+  
+  [Permalink for this message](https://lists.podman.io/archives/list/podman@lists.podman.io/message/AB36CHBMZH5OGFRXXQYPYZSMTGSAZSVB/ "Permalink for this message")
+  
+  New subject: Permissions on top level of mounted volume in rootless container
+  
+  
+  On 18/02/2021 12:51, Daniel Walsh wrote:
+  
+  [...](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#)
+  
+  This should be the same, but the container you create within the pod
+  
+  will need the annotation.
+  \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+  
+  
+  Thank you for your reply.
+  
+  I don't seem to have had any luck with this. Creating as follows:
+  
+  \`podman create --name windowsnoob-fpm --annotation
+  run.oci.keep\_original\_groups=1 --pod windowsnoob -v
+  /var/www/html/websites/windows:/var/www/html/websites/windows:Z,noexec,nodev,rw
+  windowsnoob-fpm\`
+  
+  still leaves me with root:nobody ownership in the container.
+  
+  The annotation does appear if I \`podman inspect\` the created container.
+  
+  (I'm less concerned about group membership here, as the directory on the
+  host is owned by the user creating this container -- it's just that I'd
+  like the ownership of the mounted volume inside the container to also be
+  a non-root user; the \`oci.keep\_original\_groups\` solution did work to
+  achieve this in the \`podman run\` scenario.)
+  
+  Peter Upfold
+  
+  
+  
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#like "You must be logged-in to vote.") /
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#dislike "You must be logged-in to vote.")
+  
+  [Reply](mailto:podman@lists.podman.io?Subject=Re%3A%20%5BPodman%5D%20Re%3A%20Permissions%20on%20top%20level%20of%20mounted%20volume%20in%20%20rootless%20container&In-Reply-To=%3C30f63a27-e529-2702-4886-2d92162aece6%40upfold.org.uk%3E "Sign in to reply online")
+  
+  ![](https://seccdn.libravatar.org/avatar/75d88487c07b14b6c7aa0599fce600bf.jpg?s=120&r=g&d=retro)
+  
+  [Daniel Walsh](https://lists.podman.io/archives/users/275273161235341687704311323316858950513/ "See the profile for Daniel Walsh")
+  
+  9:15 a.m.
+  
+  [Permalink for this message](https://lists.podman.io/archives/list/podman@lists.podman.io/message/O4QS7UTB3Y5K3G6HOPDIIOOPMWXKAH73/ "Permalink for this message")
+  
+  New subject: Permissions on top level of mounted volume in rootless container
+  
+  
+  On 2/19/21 04:07, Peter Upfold wrote:
+  
+  [...](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#)
+  
+  On 18/02/2021 12:51, Daniel Walsh wrote:
+  \> This should be the same, but the container you create within the pod
+  \> will need the annotation.
+  \> \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+  >
+  Thank you for your reply.
+  
+  I don't seem to have had any luck with this. Creating as follows:
+  
+  \`podman create --name windowsnoob-fpm --annotation
+  run.oci.keep\_original\_groups=1 --pod windowsnoob -v
+  /var/www/html/websites/windows:/var/www/html/websites/windows:Z,noexec,nodev,rw
+  windowsnoob-fpm\`
+  
+  still leaves me with root:nobody ownership in the container.
+  
+  The annotation does appear if I \`podman inspect\` the created container.
+  
+  (I'm less concerned about group membership here, as the directory on
+  the host is owned by the user creating this container -- it's just
+  that I'd like the ownership of the mounted volume inside the container
+  to also be a non-root user; the \`oci.keep\_original\_groups\` solution
+  did work to achieve this in the \`podman run\` scenario.)
+  
+  Peter Upfold
+  \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+  Podman mailing list -- podman(a)lists.podman.io
+  To unsubscribe send an email to podman-leave(a)lists.podman.io
+  
+  If you are running as root within the user, you need to figure out what
+  is the UID of user within the container and chown the file to this.
+  
+  podman unshare chown UID:GID /PATH
+  
+  Should fix the ownerships to work the way you want.
+  
+  A contributor is working on making this happen with the :U option.
+  
+  
+  
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#like "You must be logged-in to vote.") /
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#dislike "You must be logged-in to vote.")
+  
+  [Reply](mailto:podman@lists.podman.io?Subject=Re%3A%20%5BPodman%5D%20Re%3A%20Permissions%20on%20top%20level%20of%20mounted%20volume%20in%20%20rootless%20container&In-Reply-To=%3Cc07a5899-65c5-c069-96a0-9e84d7da2609%40redhat.com%3E "Sign in to reply online")
+  
+  ![](https://seccdn.libravatar.org/avatar/03d26fe82a1036b80a1bd8ce4928ccfd.jpg?s=120&r=g&d=retro)
+  
+  [Peter Upfold](https://lists.podman.io/archives/users/303555618233147859558907003297201549931/ "See the profile for Peter Upfold")
+  
+  Thursday, 8 April
+  
+  
+  Thu, 8 Apr
+  
+  
+  
+  3:26 a.m.
+  
+  [Permalink for this message](https://lists.podman.io/archives/list/podman@lists.podman.io/message/CIA2ZVWQSBABHPJ5GDI44TGLFRFTFC67/ "Permalink for this message")
+  
+  New subject: Permissions on top level of mounted volume in rootless container
+  
+  
+  Apologies if it is bad etiquette to "bump" my previous issue on this!
+  
+  I continue to struggle with the permissions set on the top level
+  directory of a volume that is mounted in a rootless container.
+  
+  My Containerfile:
+  [https://gist.github.com/PeterUpfold/2f63ad5341ffd9079bc2683a5bb2744c](https://gist.github.com/PeterUpfold/2f63ad5341ffd9079bc2683a5bb2744c)
+  
+  The top level directory of the volume mount,
+  /var/www/html/websites/windows, ends up with root:nobody and 0755
+  permissions inside the container.
+  
+  The suggestion to address this was to add the annotation for
+  "keep\_original\_groups" when creating the container in the pod. Creating
+  as follows:
+  
+  \`podman create --name windowsnoob-fpm --annotation
+  run.oci.keep\_original\_groups=1 --pod windowsnoob -v
+  /var/www/html/websites/windows:/var/www/html/websites/windows:Z,noexec,nodev,rw
+  windowsnoob-fpm\`
+  
+  still leaves me with root:nobody ownership in the container.
+  
+  The annotation does appear if I \`podman inspect\` the created container.
+  
+  (I'm not actually concerned about group membership here, as the
+  directory on the host is owned by the user creating this container --
+  it's just that I'd like the ownership of the mounted volume inside the
+  container to also be a non-root user; the \`oci.keep\_original\_groups\`
+  solution did work to achieve this in the \`podman run\` scenario.)
+  
+  Peter Upfold
+  
+  
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#like "You must be logged-in to vote.") /
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#dislike "You must be logged-in to vote.")
+  
+  [Reply](mailto:podman@lists.podman.io?Subject=Re%3A%20%5BPodman%5D%20Re%3A%20Permissions%20on%20top%20level%20of%20mounted%20volume%20in%20%20rootless%20container&In-Reply-To=%3C8d3d4832-79dd-13cb-c0af-dd4bbee594ce%40upfold.org.uk%3E "Sign in to reply online")
+  
+  ![](https://seccdn.libravatar.org/avatar/fd5e59abeac6319e4fe4e8192ea7d08d.jpg?s=120&r=g&d=retro)
+  
+  [Joe Doss](https://lists.podman.io/archives/users/168509869488825361068565970266140941085/ "See the profile for Joe Doss")
+  
+  Friday, 9 April
+  
+  
+  Fri, 9 Apr
+  
+  
+  
+  9:29 a.m.
+  
+  [Permalink for this message](https://lists.podman.io/archives/list/podman@lists.podman.io/message/2BAYFZ6DA422DWMO5GIZT7M3UOSXMELS/ "Permalink for this message")
+  
+  New subject: Permissions on top level of mounted volume in rootless container
+  
+  
+  On 4/8/21 3:26 AM, Peter Upfold wrote:
+  
+  [...](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#)
+  
+  Apologies if it is bad etiquette to "bump" my previous
+  issue on this!
+  
+  I continue to struggle with the permissions set on the top level
+  directory of a volume that is mounted in a rootless container.
+  
+  My Containerfile:
+  [https://gist.github.com/PeterUpfold/2f63ad5341ffd9079bc2683a5bb2744c](https://gist.github.com/PeterUpfold/2f63ad5341ffd9079bc2683a5bb2744c)
+  
+  The top level directory of the volume mount,
+  /var/www/html/websites/windows, ends up with root:nobody and 0755
+  permissions inside the container.
+  
+  The suggestion to address this was to add the annotation for
+  "keep\_original\_groups" when creating the container in the pod. Creating
+  as follows:
+  
+  \`podman create --name windowsnoob-fpm --annotation
+  run.oci.keep\_original\_groups=1 --pod windowsnoob -v
+  /var/www/html/websites/windows:/var/www/html/websites/windows:Z,noexec,nodev,rw
+  windowsnoob-fpm\`
+  
+  still leaves me with root:nobody ownership in the container.
+  
+  The annotation does appear if I \`podman inspect\` the created container.
+  
+  (I'm not actually concerned about group membership here, as the
+  directory on the host is owned by the user creating this container --
+  it's just that I'd like the ownership of the mounted volume inside the
+  container to also be a non-root user; the \`oci.keep\_original\_groups\`
+  solution did work to achieve this in the \`podman run\` scenario.)
+  
+  I think you are running into this issue if you are on Podman 3.
+  
+  [https://github.com/containers/podman/issues/9608#issuecomment-805291997](https://github.com/containers/podman/issues/9608#issuecomment-805291997)
+  
+  Joe
+  
+  \-\-
+  Joe Doss
+  joe(a)solidadmin.com
+  
+  
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#like "You must be logged-in to vote.") /
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#dislike "You must be logged-in to vote.")
+  
+  [Reply](mailto:podman@lists.podman.io?Subject=Re%3A%20%5BPodman%5D%20Re%3A%20Permissions%20on%20top%20level%20of%20mounted%20volume%20in%20%20rootless%20container&In-Reply-To=%3Cc910368a-3c4e-5e70-cae5-0675223ed83b%40solidadmin.com%3E "Sign in to reply online")
+  
+  ![](https://seccdn.libravatar.org/avatar/75d88487c07b14b6c7aa0599fce600bf.jpg?s=120&r=g&d=retro)
+  
+  [Daniel Walsh](https://lists.podman.io/archives/users/275273161235341687704311323316858950513/ "See the profile for Daniel Walsh")
+  
+  Monday, 12 April
+  
+  
+  Mon, 12 Apr
+  
+  
+  
+  2:34 p.m.
+  
+  [Permalink for this message](https://lists.podman.io/archives/list/podman@lists.podman.io/message/VFGQZOMTGBJTV4ZJRJKESJ2H55PXHLMM/ "Permalink for this message")
+  
+  New subject: Permissions on top level of mounted volume in rootless container
+  
+  
+  On 4/9/21 10:29, Joe Doss wrote:
+  
+  [...](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#)
+  
+  On 4/8/21 3:26 AM, Peter Upfold wrote:
+  \> Apologies if it is bad etiquette to "bump" my previous issue on this!
+  >
+  \> I continue to struggle with the permissions set on the top level
+  \> directory of a volume that is mounted in a rootless container.
+  >
+  \> My Containerfile:
+  \> [https://gist.github.com/PeterUpfold/2f63ad5341ffd9079bc2683a5bb2744c](https://gist.github.com/PeterUpfold/2f63ad5341ffd9079bc2683a5bb2744c)
+  >
+  \> The top level directory of the volume mount,
+  \> /var/www/html/websites/windows, ends up with root:nobody and 0755
+  \> permissions inside the container.
+  >
+  \> The suggestion to address this was to add the annotation for
+  \> "keep\_original\_groups" when creating the container in the pod.
+  \> Creating as follows:
+  >
+  \> \`podman create --name windowsnoob-fpm --annotation
+  \> run.oci.keep\_original\_groups=1 --pod windowsnoob -v
+  \> /var/www/html/websites/windows:/var/www/html/websites/windows:Z,noexec,nodev,rw
+  \> windowsnoob-fpm\`
+  >
+  \> still leaves me with root:nobody ownership in the container.
+  \>
+  
+  --volume mounts are just bind mounts from the host.  So they will
+  maintain the permissions of the source directory.  In a rootless
+  container there is nothing that can be done about this.
+  
+  The annotation would only work if you setup group ownership on the
+  directory and then allowed a non root user to have group access.
+  
+  [...](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#)
+  
+  \> The annotation does appear if I \`podman inspect\` the created
+  container.
+  >
+  \> (I'm not actually concerned about group membership here, as the
+  \> directory on the host is owned by the user creating this container --
+  \> it's just that I'd like the ownership of the mounted volume inside
+  \> the container to also be a non-root user; the
+  \> \`oci.keep\_original\_groups\` solution did work to achieve this in the
+  \> \`podman run\` scenario.)
+  
+  I think you are running into this issue if you are on Podman 3.
+  
+  [https://github.com/containers/podman/issues/9608#issuecomment-805291997](https://github.com/containers/podman/issues/9608#issuecomment-805291997)
+  
+  Joe
+  
+  
+  
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#like "You must be logged-in to vote.") /
+  [0](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#dislike "You must be logged-in to vote.")
+  
+  [Reply](mailto:podman@lists.podman.io?Subject=Re%3A%20%5BPodman%5D%20Re%3A%20Permissions%20on%20top%20level%20of%20mounted%20volume%20in%20%20rootless%20container&In-Reply-To=%3C472384f2-8d04-120a-33d2-e63dd1a9079b%40redhat.com%3E "Sign in to reply online")
+  
+  1866
+  
+  days inactive
+  
+  
+  1919
+  
+  days old
+  
+  
+  [podman@lists.podman.io](https://lists.podman.io/archives/list/podman@lists.podman.io/)
+  
+  [Manage subscription](https://lists.podman.io/admin/lists/podman.lists.podman.io/)
+  
+  6 comments
+  
+  
+  3 participants
+  
+  
+  [Add to favorites](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#AddFav "You must be logged-in to have favorites.") [Remove from favorites](https://lists.podman.io/archives/list/podman@lists.podman.io/thread/ORCXSOWYO37Q3QM3RMULDDTH4TLBVFCT/#RmFav)
+  
+  tags (0)
+  
+  
+  
+  
+  participants (3)
+  
+  
+  - ![](https://seccdn.libravatar.org/avatar/75d88487c07b14b6c7aa0599fce600bf.jpg?s=48&r=g&d=retro)
+  
+  Daniel Walsh
+  
+  - ![](https://seccdn.libravatar.org/avatar/fd5e59abeac6319e4fe4e8192ea7d08d.jpg?s=48&r=g&d=retro)
+  
+  Joe Doss
+  
+  - ![](https://seccdn.libravatar.org/avatar/03d26fe82a1036b80a1bd8ce4928ccfd.jpg?s=48&r=g&d=retro)
+  
+  Peter Upfold
+  --- End Content ---
+
+How to Configure Volume Options for Rootless Podman - OneUptime
+  URL: https://oneuptime.com/blog/post/2026-03-17-configure-volume-options-rootless-podman/view
+  Use the :U flag to automatically adjust ownership, podman unshare to manage permissions within the user namespace, and named volumes for ...
+
+  --- Content ---
+  [Skip to main content](https://oneuptime.com/blog/post/2026-03-17-configure-volume-options-rootless-podman/view#main-content)
+  
+  ![](https://oneuptime.com/blog/post/2026-03-17-configure-volume-options-rootless-podman/view)
+  
+  # How to Configure Volume Options for Rootless Podman
+  
+  Learn how to configure volume options specifically for rootless Podman to handle UID mapping and permission challenges.
+  
+  
+  [![Nawaz Dhandala](https://avatars.githubusercontent.com/nawazdhandala)@nawazdhandala](https://github.com/nawazdhandala)•Mar 17, 2026•Reading time
+  3 min read
+  
+  [Podman](https://oneuptime.com/blog/tag/podman) [Container](https://oneuptime.com/blog/tag/container) [DevOps](https://oneuptime.com/blog/tag/devops) [Rootless](https://oneuptime.com/blog/tag/rootless) [Volumes](https://oneuptime.com/blog/tag/volumes) [Security](https://oneuptime.com/blog/tag/security) [Configuration](https://oneuptime.com/blog/tag/configuration)
+  
+  ## On this page
+  
+  [Share on X](https://twitter.com/intent/tweet?text=%20How%20to%20Configure%20Volume%20Options%20for%20Rootless%20Podman&url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-17-configure-volume-options-rootless-podman%2Fview "Share on X")[Share on LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-17-configure-volume-options-rootless-podman%2Fview "Share on LinkedIn")[Discuss on Hacker News](https://news.ycombinator.com/submitlink?u=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-17-configure-volume-options-rootless-podman%2Fview&t=%20How%20to%20Configure%20Volume%20Options%20for%20Rootless%20Podman "Discuss on Hacker News")
+  
+  * * *
+  
+  > Rootless Podman runs containers without root privileges, which introduces unique volume permission challenges that require specific configuration options.
+  
+  Running Podman as a non-root user provides better security but changes how file ownership and permissions work for mounted volumes. User namespace mapping shifts UIDs, causing apparent ownership mismatches. This guide covers the volume options needed to make rootless Podman work seamlessly.
+  
+  * * *
+  
+  ## Understanding Rootless UID Mapping [Link to Understanding Rootless UID Mapping](https://oneuptime.com/blog/post/2026-03-17-configure-volume-options-rootless-podman/view\#understanding-rootless-uid-mapping)
+  
+  ```bash
+  BashCopy
+  # Check your user namespace mapping
+  
+  podman unshare cat /proc/self/uid_map
+  # Output: 0 1000 1        (container root maps to host UID 1000)
+  #         1 100000 65536   (container UIDs 1-65536 map to host 100000+)
+  
+  # Check subordinate UID ranges
+  cat /etc/subuid
+  cat /etc/subgid
+  ```
+  
+  ## The :U Option for Rootless Volumes [Link to The :U Option for Rootless Volumes](https://oneuptime.com/blog/post/2026-03-17-configure-volume-options-rootless-podman/view\#the-u-option-for-rootless-volumes)
+  
+  The `:U` flag is useful for rootless Podman when a volume needs to be owned by the container user. It recursively changes the host directory's ownership to match the container's user namespace, so use it carefully on directories you are willing to modify:
+  
+  ```bash
+  BashCopy
+  # Without :U - files may show wrong ownership inside container
+  podman run --rm -v /home/user/data:/data \
+    docker.io/library/alpine:latest ls -la /data
+  
+  # With :U - ownership is recursively adjusted for the container
+  podman run --rm -v /home/user/data:/data:U \
+    docker.io/library/alpine:latest ls -la /data
+  ```
+  
+  ## Configuring Bind Mounts for Rootless [Link to Configuring Bind Mounts for Rootless](https://oneuptime.com/blog/post/2026-03-17-configure-volume-options-rootless-podman/view\#configuring-bind-mounts-for-rootless)
+  
+  ```bash
+  BashCopy
+  # Pre-set ownership using podman unshare
+  podman unshare chown -R 0:0 /home/user/app-data
+  
+  # Or set to a specific container UID
+  podman unshare chown -R 1000:1000 /home/user/app-data
+  
+  # Mount the properly-owned directory
+  podman run -d --name app \
+    -v /home/user/app-data:/data \
+    docker.io/library/node:20
+  ```
+  
+  ## Named Volumes in Rootless Mode [Link to Named Volumes in Rootless Mode](https://oneuptime.com/blog/post/2026-03-17-configure-volume-options-rootless-podman/view\#named-volumes-in-rootless-mode)
+  
+  Named volumes in rootless mode are stored in the user's home directory:
+  
+  ```bash
+  BashCopy
+  # Create a named volume (stored in ~/.local/share/containers/storage/volumes/)
+  podman volume create appdata
+  
+  # Check the volume location
+  podman volume inspect appdata --format '{{ .Mountpoint }}'
+  
+  # Named volumes handle permissions automatically
+  podman run -d --name app \
+    -v appdata:/app/data \
+    docker.io/library/node:20
+  ```
+  
+  ## Combining Rootless Options [Link to Combining Rootless Options](https://oneuptime.com/blog/post/2026-03-17-configure-volume-options-rootless-podman/view\#combining-rootless-options)
+  
+  ```bash
+  BashCopy
+  # Use :U with SELinux labels on Fedora/RHEL
+  podman run -d --name secure-app \
+    -v /home/user/data:/app/data:Z,U \
+    docker.io/library/nginx:latest
+  
+  # Read-only with user namespace mapping
+  podman run -d --name config-reader \
+    -v /home/user/config:/app/config:ro,U \
+    docker.io/library/alpine:latest tail -f /dev/null
+  ```
+  
+  ## Handling Root-Owned Files [Link to Handling Root-Owned Files](https://oneuptime.com/blog/post/2026-03-17-configure-volume-options-rootless-podman/view\#handling-root-owned-files)
+  
+  When a container creates files as root (UID 0), they appear as your host UID:
+  
+  ```bash
+  BashCopy
+  # Container root creates a file
+  podman run --rm -v /home/user/data:/data:U \
+    docker.io/library/alpine:latest touch /data/root-file
+  
+  # On the host, the file is owned by your user
+  ls -la /home/user/data/root-file
+  # -rw-r--r-- 1 user user 0 root-file
+  ```
+  
+  ## Fixing Permission Issues [Link to Fixing Permission Issues](https://oneuptime.com/blog/post/2026-03-17-configure-volume-options-rootless-podman/view\#fixing-permission-issues)
+  
+  ```bash
+  BashCopy
+  # Use podman unshare to enter the user namespace and fix permissions
+  podman unshare ls -la /home/user/data
+  
+  # Change ownership for a specific container UID
+  podman unshare chown -R 1000:1000 /home/user/data
+  
+  # Reset permissions back to the host user
+  podman unshare chown -R 0:0 /home/user/data
+  ```
+  
+  ## Volume Options Reference for Rootless [Link to Volume Options Reference for Rootless](https://oneuptime.com/blog/post/2026-03-17-configure-volume-options-rootless-podman/view\#volume-options-reference-for-rootless)
+  
+  | Option | Purpose | Example |
+  | --- | --- | --- |
+  | `:U` | Auto-chown for user namespace | `-v /data:/data:U` |
+  | `:Z` | Private SELinux label | `-v /data:/data:Z` |
+  | `:z` | Shared SELinux label | `-v /data:/data:z` |
+  | `:ro` | Read-only mount | `-v /data:/data:ro` |
+  
+  ```bash
+  BashCopy
+  # Full rootless configuration with all relevant options
+  podman run -d --name production-app \
+    -v appdata:/app/data:U \
+    -v /home/user/config:/app/config:ro,U \
+    --tmpfs /tmp:rw,size=100m \
+    docker.io/library/node:20
+  ```
+  
+  ## Summary [Link to Summary](https://oneuptime.com/blog/post/2026-03-17-configure-volume-options-rootless-podman/view\#summary)
+  
+  Rootless Podman requires special attention to volume permissions due to user namespace UID mapping. Use the `:U` flag to automatically adjust ownership, `podman unshare` to manage permissions within the user namespace, and named volumes for automatic permission handling. Combine `:U` with SELinux options on RHEL-based systems for comprehensive rootless volume access.
+  
+  Share this article
+  
+  [Share on X](https://twitter.com/intent/tweet?text=%20How%20to%20Configure%20Volume%20Options%20for%20Rootless%20Podman&url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-17-configure-volume-options-rootless-podman%2Fview "Share on X")[Share on LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-17-configure-volume-options-rootless-podman%2Fview "Share on LinkedIn")[Discuss on Hacker News](https://news.ycombinator.com/submitlink?u=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-17-configure-volume-options-rootless-podman%2Fview&t=%20How%20to%20Configure%20Volume%20Options%20for%20Rootless%20Podman "Discuss on Hacker News")
+  
+  ![Nawaz Dhandala](https://avatars.githubusercontent.com/nawazdhandala)
+  
+  ### Nawaz Dhandala
+  
+  Author
+  
+  @nawazdhandala • Mar 17, 2026 • 3 min read
+  
+  Nawaz is building OneUptime with a passion for engineering reliable systems and improving observability.
+  
+  [GitHub](https://github.com/nawazdhandala)
+  
+  ### Improve this Blog Post
+  
+  All our blog posts are open source. Found a typo, want to add more detail, or have a better explanation? Anyone can contribute and make this post better for everyone.
+  
+  [Edit this Post on GitHub](https://github.com/oneuptime/blog/tree/master/posts/2026-03-17-configure-volume-options-rootless-podman) [Contributing Guidelines](https://github.com/oneuptime/blog)
+  
+  [Open source](https://github.com/oneuptime/oneuptime)
+  
+  ## OneUptime is the Open-Source   Observability Platform
+  
+  Your complete reliability stack unified: infrastructure monitoring, incident management, status pages, and APM. Open-source and self-hostable.
+  
+  
+  [Get started for free](https://oneuptime.com/accounts/register) [Request a demo](https://oneuptime.com/enterprise/demo)
+  
+  [Status Page\\
+  \\
+  Real-time status updates](https://oneuptime.com/product/status-page) [Incidents\\
+  \\
+  Detect and resolve fast](https://oneuptime.com/product/incident-management) [Monitoring\\
+  \\
+  Monitor any resource](https://oneuptime.com/product/monitoring) [On-Call\\
+  \\
+  Smart alert routing](https://oneuptime.com/product/on-call) [Maintenance\\
+  \\
+  Plan & communicate downtime](https://oneuptime.com/product/scheduled-maintenance) [Logs\\
+  \\
+  Fastest log ingest and search](https://oneuptime.com/product/logs-management) [Metrics\\
+  \\
+  Performance insights](https://oneuptime.com/product/metrics) [Traces\\
+  \\
+  End-to-end distributed tracing](https://oneuptime.com/product/traces) [Exceptions\\
+  \\
+  Catch and fix bugs early](https://oneuptime.com/product/exceptions) [Workflows\\
+  \\
+  Automate any process](https://oneuptime.com/product/workflows) [Dashboards\\
+  \\
+  Visualize all your data](https://oneuptime.com/product/dashboards) [Kubernetes\\
+  \\
+  Monitor K8s clusters](https://oneuptime.com/product/kubernetes) [Profiles\\
+  \\
+  CPU & memory profiling](https://oneuptime.com/product/profiles)
+  
+  [AI Agent\\
+  \\
+  Automatically detect, diagnose, and resolve incidents with AI-powered root cause analysis and code fixes.](https://oneuptime.com/product/ai-agent)
+  --- End Content ---

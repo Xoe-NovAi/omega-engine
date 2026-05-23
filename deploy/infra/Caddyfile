@@ -1,0 +1,54 @@
+{
+  admin 127.0.0.1:2019
+}
+
+:80 {
+  # Security headers
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "DENY"
+    X-XSS-Protection "1; mode=block"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+
+  # Iris chat API
+  handle /api/chat/* {
+    reverse_proxy omega-iris:8080 {
+      header_up Host {host}
+      header_up X-Real-IP {remote_host}
+    }
+  }
+
+  # Iris health
+  handle /health {
+    reverse_proxy omega-iris:8080
+  }
+
+  # Qdrant dashboard (internal only)
+  handle /qdrant/* {
+    reverse_proxy omega-qdrant:6333
+  }
+
+  # Static file server for docs
+  handle /docs/* {
+    root * /usr/share/caddy/docs
+    file_server
+  }
+
+  # Default: health check
+  handle {
+    respond "Omega Engine — Reclaimed Vision" 200
+  }
+}
+
+# HTTPS (auto TLS via Caddy)
+:443 {
+  # Production TLS — uncomment and replace domain
+  # tls your-domain.com
+
+  # Forward all requests to the HTTP handler
+  handle {
+    reverse_proxy localhost:80
+  }
+}

@@ -1,0 +1,29 @@
+wad:
+  name: "Omega Engine Default"
+  version: "0.1.0"
+  requires_engine: ">=0.3.0"
+  author: "Xoe-NovAi Foundation"
+  description: "Default WAD containing generic domain expert entities for the Omega Engine core."
+  type: iwad
+  mode: development
+  license: "Apache 2.0"
+
+  entities:
+    - "guardian.yaml"        # P1: Strength, protection, boundaries
+    - "dreamer.yaml"         # P2: Creativity, healing, hearth
+    - "strategist.yaml"      # P3: Will, forethought, light
+    - "scholar.yaml"         # P4: Knowledge, speech, arts
+    - "guide.yaml"           # P5: Transitions, depths
+    - "gatekeeper.yaml"      # P6: Structure, order, underworld
+    - "truthseeker.yaml"     # P7: Gnosis, questioning, sovereignty
+    - "shadowdancer.yaml"    # P8: Shadow, crossroads, keys
+    - "psychopomp.yaml"      # P9: Death, transformation, guidance
+    - "destroyer.yaml"       # P10: Liberation, destruction, time
+
+  voices:
+    primary: "jem.yaml"       # Default voice assistant
+    secondary: []
+
+  vr_scenes: []
+
+  dependencies: []

@@ -1,0 +1,76 @@
+# 🔱 Omega Engine — .gitignore
+# AP: AP-GITIGNORE-v1.0.0
+
+# ── Python Bytecode ──────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ── Virtual Environments ─────────────────────────────────────────────
+.venv/
+venv/
+env/
+virtualenv/
+
+# ── Environment & Secrets ────────────────────────────────────────────
+.env
+.env.local
+*.env
+
+# ── Build Artifacts ──────────────────────────────────────────────────
+*.egg-info/
+dist/
+build/
+*.egg
+*.whl
+*.tar.gz
+
+# ── Data Artifacts (fine-tuning datasets, embeddings) ────────────────
+data/datasets/
+data/embeddings/
+
+# ── Test & Cache ─────────────────────────────────────────────────────
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.hypothesis/
+
+# ── IDE & Editor ─────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS Files ─────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Docker ───────────────────────────────────────────────────────────
+.docker/
+
+# ── Runtime Data (generated at runtime, not source) ────────────────
+data/logs/
+data/traces/
+data/memory/
+data/jobs/
+data/inbox/
+data/processed/
+data/rejected/
+data/mining_queue/
+data/library/
+data/embeddings/
+
+# ── Session Artifacts ───────────────────────────────────────────────
+OCCE-*.md
+open-code-*.md
+opencode.json.bak
+mcp_test.py
+test_discovery.py
+
+# ── External/Reference Dirs ─────────────────────────────────────────
+../omega/
+../omega-stack-legacy/
+../xna-omega-legacy/

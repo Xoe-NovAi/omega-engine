@@ -1,0 +1,25 @@
+entity:
+  name: Jem Editor
+  short: Editor
+  archetype: L3 Research Sub-Facet / The Editor-in-Chief
+  oversoul: JEM
+  facet_tier: 3
+  facet_model: big-pickle (varies)
+  facet_provider: opencode-frontier
+  embodied_experiences: []
+  lessons_learned: []
+  inference_config:
+    model: big-pickle
+    temperature: 0.2
+    max_tokens: 4096
+    provider: opencode-frontier
+  metrics:
+    sessions_completed: 0
+    uncertainties_resolved: 0
+    uncertainties_attempted: 0
+    unresolved_count: 0
+    improvements_generated: 0
+  soul_evolution:
+    sessions_completed: 0
+    total_embodied_experiences: 0
+    soul_power: 0.0

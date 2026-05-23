@@ -1,0 +1,63 @@
+# 🔱 Omega SearXNG — Sovereign Search Layer
+# AP: AP-SEARXNG-QUADLET-v1.0.0
+#
+# Deploy: cp this file to ~/.config/containers/systemd/omega-searxng.container
+#          cp omega-searxng.service  ~/.config/containers/systemd/
+#          systemctl --user daemon-reload
+#          systemctl --user enable omega-searxng.service
+#          systemctl --user start omega-searxng.service
+#
+# Hardware: AMD Ryzen 7 5700U (Zen 2, 8C/16T) | ~14Gi usable RAM
+# Port: 8017 (avoids: 8080/Iris, 5432/Postgres, 6379/Redis, 6333/Qdrant, 8088/Caddy)
+# Image: GHCR mirror (DockerHub rate-limits unauthenticated pulls)
+
+[Unit]
+Description=Omega SearXNG — Sovereign Metasearch Engine
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=ghcr.io/searxng/searxng:latest
+ContainerName=omega-searxng
+AutoUpdate=registry
+
+PublishPort=127.0.0.1:8017:8080
+
+# Configuration — settings.yml, limiter.toml
+Volume=%h/Documents/Xoe-NovAi/omega-engine/data/searxng/config:/etc/searxng/:Z,U
+
+# Data — favicon cache, SQLite DB
+Volume=%h/Documents/Xoe-NovAi/omega-library/searxng/data:/var/cache/searxng/:Z,U
+
+# Environment — SEARXNG_SECRET must be in %E expansion (from .env or systemd env)
+Environment=SEARXNG_SECRET=%E
+Environment=SEARXNG_BASE_URL=http://localhost:8017
+Environment=SEARXNG_PORT=8080
+Environment=SEARXNG_HOST=0.0.0.0
+Environment=FORCE_OWNERSHIP=true
+
+# Security hardening — Ryzen 5700U: 512M sufficient for SearXNG
+PodmanArgs=--memory=512m
+PodmanArgs=--memory-reservation=256m
+PodmanArgs=--cpus=1.0
+PodmanArgs=--pids-limit=64
+PodmanArgs=--read-only
+PodmanArgs=--security-opt=no-new-privileges
+PodmanArgs=--cap-drop=ALL
+PodmanArgs=--tmpfs=/tmp:rw,size=64m
+PodmanArgs=--tmpfs=/var/tmp:rw,size=32m
+
+# Health check — Granian WSGI server responds on :8080
+HealthCmd=curl -sf http://localhost:8080/healthz || exit 1
+HealthInterval=30s
+HealthTimeout=5s
+HealthRetries=3
+HealthOnFailure=restart
+
+[Service]
+Restart=on-failure
+RestartSec=10s
+TimeoutStartSec=90s
+
+[Install]
+WantedBy=multi-user.target

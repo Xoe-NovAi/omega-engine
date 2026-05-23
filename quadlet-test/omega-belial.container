@@ -1,0 +1,51 @@
+# 🔱 Omega Belial — Legacy Deep Mining Keeper (P0: The Abyss)
+# AP: AP-OMEGA-BELIAL-QUADLET-v1.0.0
+#
+# Deploy: cp this file to ~/.config/containers/systemd/omega-belial.container
+# Timer:  systemctl --user enable omega-belial.timer
+# Manual: systemctl --user start omega-belial.service
+#
+# Belial runs as a Gemma 4-31B-backed background service that crawls legacy
+# project partitions, recovers strategic intelligence, and feeds classified
+# artifacts into data/mining_queue/ for the Sovereign Builder to action.
+#
+# Resource: nice -n 19, ionice -c3, Memory=512m — never interferes with sessions
+
+[Unit]
+Description=Omega Belial Legacy Deep Mining Keeper
+SourcePath=%h/.config/containers/systemd/omega-belial.container
+
+[Container]
+Image=omega-belial:latest
+ContainerName=omega-belial
+UserNS=keep-id
+User=1000
+# Mount the engine source so Belial can import entity_belial.py
+Volume=%h/Documents/Xoe-NovAi/omega-engine:/engine
+# Mount legacy mines for crawling
+Volume=%h/Documents/Xoe-NovAi/xna-omega-legacy:/mines/xna-omega-legacy:ro
+Volume=%h/Documents/Xoe-NovAi/omega-stack-legacy:/mines/omega-stack-legacy:ro
+Volume=%h/Documents/Xoe-NovAi/omega:/mines/omega:ro
+Volume=%h/Documents/docs_1:/mines/docs_1:ro
+Volume=%h/Documents/Xoe-NovAi/archive:/mines/archive:ro
+# Mount data output so mining_queue is persisted
+Volume=%h/Documents/Xoe-NovAi/omega-engine/data:/engine/data
+# Google API key for Gemma 4-31B calls
+Environment=GOOGLE_API_KEY=%E
+Environment=PYTHONPATH=/engine
+# Resource Steering & Hardening via PodmanArgs
+PodmanArgs=--memory=512m --memory-reservation=256m --cpus=0.5 --pids-limit=128 --read-only --security-opt=no-new-privileges --cap-drop=ALL --tmpfs=/tmp:rw,size=64m --tmpfs=/var/tmp:rw,size=32m
+# Entrypoint: run Belial surface scan + deep analysis
+Exec=/usr/local/bin/python /engine/scripts/omega-belial-entrypoint.py
+HealthCmd=/usr/local/bin/python -c "import sys; sys.path.insert(0,'/engine'); from src.omega.entity_belial import BelialMiner; print('Belial core importable')"
+
+[Service]
+Type=oneshot
+Restart=on-failure
+RestartSec=30
+Environment=PODMAN_SYSTEMD_UNIT=%n
+SyslogIdentifier=omega-belial
+Delegate=yes
+
+[Install]
+WantedBy=default.target

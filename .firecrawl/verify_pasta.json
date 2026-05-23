@@ -1,0 +1,1832 @@
+Is it recommended to chose `pasta` over `slirp4netns` if ...
+  URL: https://www.reddit.com/r/podman/comments/11isru0/is_it_recommended_to_chose_pasta_over_slirp4netns/
+  Is it recommended to chose pasta over slirp4netns if native IPs are required? Are there any disadvantages? And is it correct that pasta is natively ...
+
+Use Pasta Networking with Podman on Oracle Linux
+  URL: https://docs.oracle.com/en/learn/ol-podman-pasta-networking/
+  Podman pasta networking delivers these benefits: Seamlessly integrated with Podman v4.1 and higher and is the default from Podman 5.3 onwards.
+
+  --- Content ---
+  1. [Learn](https://docs.oracle.com/learn/?lang=en)
+  
+  Use Pasta Networking with Podman on Oracle Linux
+  
+  Launch Lab
+  
+  Share on LinkedInShare on XShare on FacebookShare on Email
+  
+  # Use Pasta Networking with Podman on Oracle Linux
+  
+  ## Introduction
+  
+  [Oracle Linux 9 Update 5](https://docs.oracle.com/en/operating-systems/oracle-linux/9/relnotes9.5/ol9-features-Containers.html#OLRNT-ol9.5-features-Containers_podman_5.2) changed the default tool for rootless container networking from `slirp4netns` to `pasta`. So what is [Podman `pasta` networking](https://passt.top/passt/about/)? Pasta is an acronym for “Pack A Subtle Tap Abstraction”.
+  
+  Pasta uses the `passt` network driver, introduced in [Oracle Linux 9 Update 1](https://docs.oracle.com/en/operating-systems/oracle-linux/9/relnotes9.2/ol9-NewFeaturesandChanges.html#OLRNT-ol92-features-virtualization_passt_package_introduced), to allow rootless containers to create a network namespace and forward network traffic to the namespace. Pasta networking uses the `passt` driver as a translation layer between a Layer-2 network interface and Layer-4 socket traffic using TCP, UDP, and ICMP echo on the host. Pasta networking does not require elevated privileges (root), which allows Podman to run rootless containers.
+  
+  Podman pasta networking delivers these benefits:
+  
+  - Seamlessly integrated with Podman v4.1 and higher and is the default from Podman 5.3 onwards.
+  - Improved network performance for rootless containers, especially compared to alternatives such as `slirp4netns`.
+  - Designed to work with rootless containers, allowing users to run containers without requiring elevated privileges and enhancing system security.
+  - Uses the host’s IP address instead of the `slirp4netns` method, which uses a predefined container IP address.
+  - Uses a network interface name from the host instead of the `slirp4netns` default of `tap0`.
+  
+  ### Objectives
+  
+  In this tutorial, you’ll learn to:
+  
+  - Define and use `pasta` networks with Podman
+  - Verify a container is using `pasta` networking
+  
+  ### Prerequisites
+  
+  - Two Oracle Linux systems
+  
+  - Each system should have Oracle Linux installed and configured with:
+    - A non-root user account with sudo access
+    - The latest Oracle Linux Release
+    - [Podman](https://docs.oracle.com/en/operating-systems/oracle-linux/podman/podman-InstallingPodmanandRelatedUtilities.html#podman-install) and cURL packages
+    - Access to the Internet
+  
+  ## Deploy Oracle Linux
+  
+  **Note:** If running in your own tenancy, read the `linux-virt-labs` GitHub project [README.md](https://github.com/oracle-devrel/linux-virt-labs) and complete the prerequisites before deploying the lab environment.
+  
+  1. Open a terminal on the Luna Desktop.
+  
+  2. Clone the `linux-virt-labs` GitHub project.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  git clone https://github.com/oracle-devrel/linux-virt-labs.git
+  ```
+  
+  3. Change into the working directory.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  cd linux-virt-labs/ol
+  ```
+  
+  4. Install the required collections.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  ansible-galaxy collection install -r requirements.yml
+  ```
+  
+  5. Update the Oracle Linux instance configuration.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  cat << EOF | tee instances.yml > /dev/null
+  compute_instances:
+       1:
+         instance_name: "ol-node-01"
+         type: "server"
+       2:
+         instance_name: "ol-node-02"
+         type: "server"
+  passwordless_ssh: true
+  use_podman: true
+  update_all: true
+  use_nginx: true
+  passwordless_ssh: true
+  EOF
+  ```
+  
+  6. Deploy the lab environment.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  ansible-playbook create_instance.yml -e localhost_python_interpreter="/usr/bin/python3.6" -e "@instances.yml" -e os_version="9"
+  ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  The free lab environment requires the extra variable `local_python_interpreter`, which sets `ansible_python_interpreter` for plays running on localhost. This variable is needed because the environment installs the RPM package for the Oracle Cloud Infrastructure SDK for Python, located under the python3.6 modules.
+  
+  The default deployment shape uses the AMD CPU and Oracle Linux 8. To use an Intel CPU or Oracle Linux 9, add `-e instance_shape="VM.Standard3.Flex"` or `-e os_version="9"` to the deployment command.
+  
+  
+  > **Important:** Wait for the playbook to run successfully and reach the pause task. At this stage of the playbook, the installation of Oracle Linux is complete, and the instances are ready. Take note of the previous play, which prints the public and private IP addresses of the nodes it deploys and any other deployment information needed while running the lab.
+  
+  
+  ## Confirm Podman Works
+  
+  The container-tools package in Oracle Linux provides the latest versions of Podman, Buildah, Skopeo, and associated dependencies.
+  
+  1. Open a terminal and connect via SSH to the ol-node-01 instance.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  ssh oracle@<ip_address_of_instance>
+  ```
+  
+  2. Check the version of Podman.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  podman -v
+  ```
+  
+  3. Confirm the Podman CLI is working.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  podman run quay.io/podman/hello
+  ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  > Example Output:
+  >
+  > ```undefined
+  >
+  > Copy
+  >
+  > [oracle@ol-server ~]$ podman run quay.io/podman/hello
+  > Trying to pull quay.io/podman/hello:latest...
+  > Getting image source signatures
+  > Copying blob f82b04e85914 done
+  > Copying config dbd85e09a1 done
+  > Writing manifest to image destination
+  > Storing signatures
+  > !... Hello Podman World ...!
+  >
+  >          .--"--.
+  >        / -     - \
+  >       / (O)   (O) \
+  >    ~~~| -=(,Y,)=- |
+  >     .---. /`  \   |~~
+  >  ~/  o  o \~~~~.----. ~~
+  >   | =(X)= |~  / (O (O) \
+  >    ~~~~~~~  ~| =(Y_)=-  |
+  >   ~~~~    ~~~|   U      |~~
+  >
+  > Project:   https://github.com/containers/podman
+  > Website:   https://podman.io
+  > Documents: https://docs.podman.io
+  > Twitter:   @Podman_io
+  > ```
+  
+  
+  ## Different Podman Networking Options
+  
+  Both `pasta` and `slirp4netns` networking modes provide Podman containers with isolated networks. The main difference between the two is that `pasta` networking copies the host’s network configuration into the container, whereas `slirp4netns` networking creates a separate network configuration that typically uses Network Address Translation (NAT) to communicate between the container and the host. The net effect of this difference means that `pasta` networking offers faster network performance because it avoids using NAT.
+  
+  ### Pasta Networking Benefits
+  
+  - Pasta networking copies IP addresses from the host’s main network interface by default.
+  - The user can specify which host network interface the container should use with the `-i` option.
+  - NAT is not enabled by default but is optionally available.
+  - The user can define the default `pasta` options for rootless containers in a `$HOME/.config/containers/containers.conf` file. Oracle Linux provides a sample of this configuration at `/usr/share/containers/containers.conf`.
+  
+  ### Slirp4netns Networking Benefits
+  
+  - Creates a separate network namespace and virtualized network interface, which by default is called `tap0`.
+  - Uses NAT to translate container network traffic to the host network.
+  - Provides stronger isolation between the host and container due to using separate network namespaces.
+  - Uses `10.0.2.x/24` for the default NAT network, which a user can change in the `containers.conf` file.
+  
+  ### Verify Host and Container Networking
+  
+  1. Check the host’s network configuration.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  ip addr show
+  ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  > Example Output:
+  >
+  > ```undefined
+  >
+  > Copy
+  >
+  > [oracle@ol-node-01 ~]$ ip addr show
+  > 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+  >     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+  >     inet 127.0.0.1/8 scope host lo
+  >        valid_lft forever preferred_lft forever
+  >     inet6 ::1/128 scope host
+  >        valid_lft forever preferred_lft forever
+  > 2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9000 qdisc fq_codel state UP group default qlen 1000
+  >     link/ether 02:00:17:00:23:87 brd ff:ff:ff:ff:ff:ff
+  >     altname enp0s3
+  >     inet 10.0.0.53/28 brd 10.0.0.63 scope global dynamic noprefixroute ens3
+  >        valid_lft 84912sec preferred_lft 84912sec
+  >     inet6 fe80::17ff:fe00:2387/64 scope link noprefixroute
+  >        valid_lft forever preferred_lft forever
+  > ```
+  
+  
+  In this example, the host’s IP address is `10.0.0.53`, which lives on a `/28` subnet and is attached to the `ens3` network interface.
+  
+  2. Check a container’s default network configuration.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  podman run --rm -it oraclelinux:9 ip a
+  ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  > Example Output:
+  >
+  > ```undefined
+  >
+  > Copy
+  >
+  > [oracle@ol-node-01 ~]$ podman run --rm -it oraclelinux:9 ip a
+  > 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+  >     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+  >     inet 127.0.0.1/8 scope host lo
+  >        valid_lft forever preferred_lft forever
+  >     inet6 ::1/128 scope host
+  >        valid_lft forever preferred_lft forever
+  > 2: ens3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 65520 qdisc fq_codel state UNKNOWN group default qlen 1000
+  >     link/ether 16:96:71:f5:47:e9 brd ff:ff:ff:ff:ff:ff
+  >     inet 10.0.0.53/28 brd 10.0.0.63 scope global noprefixroute ens3
+  >        valid_lft forever preferred_lft forever
+  >     inet6 fe80::1496:71ff:fef5:47e9/64 scope link
+  >        valid_lft forever preferred_lft forever
+  > ```
+  
+  
+  Notice the network interface and IP address are the same as those used on the host. This output is expected behavior for rootless containers that leverage the pasta networking.
+  
+  3. Check a container’s network configuration when using `slirp4netns`.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ```undefined
+  
+  Copy
+  
+  podman run --network=slirp4netns --rm -it oraclelinux:9 ip a
+  ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  > Example Output:
+  >
+  > ```undefined
+  >
+  > Copy
+  >
+  > [oracle@ol-node-01 ~]$ podman run --network=slirp4netns --rm -it oraclelinux:9 ip a
+  > 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+  >     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+  >     inet 127.0.0.1/8 scope host lo
+  >        valid_lft forever preferred_lft forever
+  >     inet6 ::1/128 scope host
+  >        valid_lft forever preferred_lft forever
+  > 2: tap0: <BROADCAST,UP,LOWER_UP> mtu 65520 qdisc fq_codel state UNKNOWN group default qlen 1000
+  >     link/ether b6:e6:32:1a:d3:b4 brd ff:ff:ff:ff:ff:ff
+  >     inet 10.0.2.100/24 brd 10.0.2.255 scope global tap0
+  >        valid_lft forever preferred_lft forever
+  >     inet6 fd00::b4e6:32ff:fe1a:d3b4/64 scope global dynamic mngtmpaddr
+  >        valid_lft 86389sec preferred_lft 14389sec
+  >     inet6 fe80::b4e6:32ff:fe1a:d3b4/64 scope link
+  >        valid_lft forever preferred_lft forever
+  > ```
+  
+  
+  Note that the network interface and IP address are not the same as those used on the host; instead, it uses the `10.0.2.100/24` network range and `tap0` as the network interface name.
+  
+  
+  ## Run an Nginx Container
+  
+  Next, deploy a web server as an unprivileged user and verify that pasta networking is enabled and the web server serves content.
+  
+  01. Check the network routing table on ol-node-01.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      route
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ route
+      > Kernel IP routing table
+      > Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+      > default         _gateway        0.0.0.0         UG    100    0        0 ens3
+      > 10.0.0.48       0.0.0.0         255.255.255.240 U     100    0        0 ens3
+      > link-local      0.0.0.0         255.255.0.0     U     100    0        0 ens3
+      > ```
+  
+  02. Get the default gateway IP address.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      ip route show
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ ip route show
+      > default via 10.0.0.49 dev ens3 proto dhcp src 10.0.0.54 metric 100
+      > 10.0.0.48/28 dev ens3 proto kernel scope link src 10.0.0.54 metric 100
+      > 169.254.0.0/16 dev ens3 proto dhcp scope link src 10.0.0.54 metric 100
+      > ```
+  
+  
+      In this example, the output shows a default gateway of `10.0.0.49`.
+  
+  03. Deploy an Nginx container.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      podman run -d -p 8080:80 --name=pastaTest ghcr.io/oracle/oraclelinux9-nginx:1.20
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      When creating a rootless container, the user must set the port mappings on the host to a value higher than _1024_. This container uses port `8080` to map from the host to the container’s internal port of `80`.
+  
+  04. Confirm Nginx is running.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      podman ps -a
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ podman ps -a
+      > CONTAINER ID  IMAGE                                       COMMAND               CREATED        STATUS                    PORTS                           NAMES
+      > 149780e68fc0  quay.io/podman/hello:latest                 /usr/local/bin/po...  3 hours ago    Exited (0) 3 hours ago                                    competent_brahmagupta
+      > 168f6813b15b  ghcr.io/oracle/oraclelinux9-nginx:1.20  nginx -g daemon o...  5 seconds ago  Up 5 seconds  0.0.0.0:8080->80/tcp, 80/tcp, 443/tcp  pastaTest
+      > ```
+  
+  05. Confirm the container is using pasta networking.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      podman inspect --format= pastaTest
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      **Note:** The `podman inspect --format=` command only works against active containers.
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ podman inspect --format= pastaTest
+      > pasta
+      > ```
+  
+  
+      Where:
+      - `pastaTest` is the name of your container
+  06. Display detailed information about the pasta networking process generated when the container starts.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      ps auxww | grep pasta | grep -v "pastaTest"
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ ps auxww | grep pasta | grep -v "pastaTest"
+      > oracle     12371  0.0  0.0  72072 19908 ?        Ss   11:22   0:00 /usr/bin/pasta --config-net -t 8080-8080:80-80 --dns-forward 169.254.0.1 -u none -T none -U none --no-map-gw --quiet --netns /run/user/1001/netns/netns-7353ec13-afdb-9e54-d8cd-a94d0e0a959e
+      > oracle     21486  0.0  0.0 221796  2268 pts/1    S+   15:26   0:00 grep --color=auto pasta
+      > ```
+  
+  
+      Each container will generate an independent pasta process based on the default _container.conf_ settings or those passed on the Podman command line.
+  
+  07. Confirm that host is listening on port 8080.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      ss -tulpn
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ ss -tulpn
+      > Netid    State     Recv-Q     Send-Q         Local Address:Port          Peer Address:Port    Process
+      > udp      UNCONN    0          0                    0.0.0.0:111                0.0.0.0:*
+      > ...
+      > tcp      LISTEN    0          128                  0.0.0.0:8080               0.0.0.0:*        users:(("pasta.avx2",pid=49771,fd=6))
+      > ...
+      > tcp      LISTEN    0          5                      [::1]:44321                 [::]:*
+      > ```
+  
+  
+      The output should include a line confirming that port 8080 is listening, similar to that shown in the sample output.
+  
+  08. Open port 8080 on the Oracle Linux firewall.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      sudo firewall-cmd --add-port=8080/tcp --permanent
+      sudo firewall-cmd --reload
+      ```
+  
+  09. Confirm the firewall port is open.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      sudo firewall-cmd --list-all
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ sudo firewall-cmd --list-all
+      > public (active)
+      >   target: default
+      >   icmp-block-inversion: no
+      >   interfaces: ens3
+      >   sources:
+      >   services: dhcpv6-client ssh
+      >   ports: 8080/tcp
+      >  protocols:
+      >   forward: yes
+      >   masquerade: no
+      >   forward-ports:
+      >   source-ports:
+      >   icmp-blocks:
+      >   rich rules:
+      > ```
+  
+  10. Confirm Nginx is running and returns the sample homepage.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      curl http://ol-node-01:8080
+      ```
+  
+  11. Check remote access to Nginx from another host.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      ssh oracle@ol-node-02 curl http://ol-node-01:8080
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      The cURL test can run over the SSH connection because the lab environment enables passwordless SSH between the hosts. If you do not have passwordless SSH configured, SSH directly to the remote host and then run the cURL command on that host’s terminal.
+  
+  12. Review the information logged by the Nginx container.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      ```undefined
+  
+      Copy
+  
+      podman logs pastaTest 2> /dev/null | grep "GET /"
+      ```
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      > Example Output:
+      >
+      > ```undefined
+      >
+      > Copy
+      >
+      > [oracle@ol-node-01 ~]$ podman logs pastaTest 2> /dev/null | grep "GET /"
+      > 10.0.0.49 - - [28/Jan/2025:14:51:08 +0000] "GET / HTTP/1.1" 200 4395 "-" "curl/7.76.1" "-"
+      > 10.0.0.61 - - [28/Jan/2025:14:55:53 +0000] "GET / HTTP/1.1" 200 4395 "-" "curl/7.76.1" "-"
+      > ```
+  
+  
+      Why does the source address for the request from ol-node-01 not match the IP address? This behavior occurs because the request from ol-node-01 is routed from the network device on the host to the gateway and from there to the Podman container running Nginx. Therefore, Nginx records the request as coming from the gateway, rather than the host.
+  
+      For remote hosts, pasta networking routes the rest directly from the remote host to the container. Therefore, Nginx captures the source address of the remote host in its logs.
+  
+  
+  ## Next Steps
+  
+  This tutorial introduced you to using Podman with pasta networking, but it only scratches the surface of what pasta networking can do. Check out the `podman run` [man page](https://docs.podman.io/en/stable/markdown/podman-run.1.html) for more details.
+  
+  ### Related Links
+  
+  - [Oracle Linux Documentation](https://docs.oracle.com/en/operating-systems/oracle-linux/)
+  - [Oracle Learning Library](https://www.oracle.com/goto/oraclelinuxlearning)
+  - [Oracle Linux Training Station](https://www.oracle.com/goto/oltrain)
+  
+  ## More Learning Resources
+  
+  Explore other labs on [docs.oracle.com/learn](https://docs.oracle.com/learn) or access more free learning content on the [Oracle Learning YouTube channel](https://www.youtube.com/user/OracleLearning). Additionally, visit [education.oracle.com/learning-explorer](https://education.oracle.com/learning-explorer) to become an Oracle Learning Explorer.
+  
+  For product documentation, visit [Oracle Help Center](https://docs.oracle.com/).
+  
+  * * *
+  
+  Content on the Oracle Help Center Learn is for informational purposes only and is not part of the product or service documentation for any Oracle product or service, as those terms are used in any Oracle contracts or agreements. Such Learn Content is licensed to you solely under [https://www.oracle.com/legal/terms/](https://www.oracle.com/legal/terms/) and is not subject to any support obligations.
+  
+  Title and Copyright Information
+  
+  Try with Oracle Account
+  
+  Launching this lab requires a free Oracle account [Sign up](https://www.oracle.com/webapps/redirect/signon?nexturl=https://docs.oracle.com/en/learn/ol-podman-pasta-networking/) if you don't have one.
+  
+  On This Page
+  --- End Content ---
+
+Rootless network performance (pasta vs slirp4netns) #22559
+  URL: https://github.com/containers/podman/discussions/22559
+  Pasta performs better than slirp4netns only up to a certain parallelism (specifically up to 8). Then slirp4netns starts to perform significantly better.
+  Category: github
+
+  --- Content ---
+  [Skip to content](https://github.com/containers/podman/discussions/22559#start-of-content)
+  
+  You signed in with another tab or window. [Reload](https://github.com/containers/podman/discussions/22559) to refresh your session.You signed out in another tab or window. [Reload](https://github.com/containers/podman/discussions/22559) to refresh your session.You switched accounts on another tab or window. [Reload](https://github.com/containers/podman/discussions/22559) to refresh your session.Dismiss alert
+  
+  {{ message }}
+  
+  [containers](https://github.com/containers)/ **[podman](https://github.com/containers/podman)** Public
+  
+  - [Notifications](https://github.com/login?return_to=%2Fcontainers%2Fpodman) You must be signed in to change notification settings
+  - [Fork\\
+  3.1k](https://github.com/login?return_to=%2Fcontainers%2Fpodman)
+  - [Star\\
+  31.8k](https://github.com/login?return_to=%2Fcontainers%2Fpodman)
+  
+  
+  # Rootless network performance (pasta vs slirp4netns)  \#22559
+  
+  Unanswered
+  
+  [mlegenovic](https://github.com/mlegenovic)
+  
+  asked this question in
+  [Q&A](https://github.com/containers/podman/discussions/categories/q-a)
+  
+  [Rootless network performance (pasta vs slirp4netns)](https://github.com/containers/podman/discussions/22559#top)#22559
+  
+  [![@mlegenovic](https://avatars.githubusercontent.com/u/30691467?s=40&v=4)\\
+  mlegenovic](https://github.com/mlegenovic)
+  
+  on May 1, 2024May 1, 2024·
+  1 comment
+  
+  
+  [Return to top](https://github.com/containers/podman/discussions/22559#top)
+  
+  Discussion options
+  
+  # {{title}}
+  
+  Quote reply
+  
+  edited
+  
+  # {{editor}}'s edit
+  
+  {{actor}} deleted this content
+  .
+  
+  # {{editor}}'s edit
+  
+  ## [![](https://avatars.githubusercontent.com/u/30691467?s=64&v=4)\ mlegenovic](https://github.com/mlegenovic) [on May 1, 2024May 1, 2024](https://github.com/containers/podman/discussions/22559\#discussion-6591679)
+  
+  Original comment in English -
+  Translate to English
+  
+  |     |
+  | --- |
+  | I did some network performance tests to see how good pasta is compared to slirp4netns. I start on one physical machine nginx (as podman container), and send requests from other phyiscal mashine with "Apache HTTP server benchmarking tool" (ab). Here the results:<br>**_Default rootless network (pasta)_**<br>`ab -c 1 -n 10000`<br>```<br>Time taken for tests:   5.885 seconds<br>Requests per second:    1699.26 [#/sec] (mean)<br>Time per request:       0.588 [ms] (mean)<br>Time per request:       0.588 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 4 -n 40000`<br>```<br>Time taken for tests:   4.498 seconds<br>Requests per second:    8893.57 [#/sec] (mean)<br>Time per request:       0.450 [ms] (mean)<br>Time per request:       0.112 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 8 -n 80000`<br>```<br>Time taken for tests:   5.775 seconds<br>Requests per second:    13851.79 [#/sec] (mean)<br>Time per request:       0.578 [ms] (mean)<br>Time per request:       0.072 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 16 -n 160000`<br>```<br>Time taken for tests:   11.197 seconds<br>Requests per second:    14289.42 [#/sec] (mean)<br>Time per request:       1.120 [ms] (mean)<br>Time per request:       0.070 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 32 -n 320000`<br>```<br>Time taken for tests:   21.100 seconds<br>Requests per second:    15165.95 [#/sec] (mean)<br>Time per request:       2.110 [ms] (mean)<br>Time per request:       0.066 [ms] (mean, across all concurrent requests)<br>```<br>**_Rootless network with slirp4netns_**<br>`ab -c 1 -n 10000`<br>```<br>Time taken for tests:   8.713 seconds<br>Requests per second:    1147.76 [#/sec] (mean)<br>Time per request:       0.871 [ms] (mean)<br>Time per request:       0.871 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 4 -n 40000`<br>```<br>Time taken for tests:   7.143 seconds<br>Requests per second:    5600.11 [#/sec] (mean)<br>Time per request:       0.714 [ms] (mean)<br>Time per request:       0.179 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 8 -n 80000`<br>```<br>Time taken for tests:   5.745 seconds<br>Requests per second:    13924.88 [#/sec] (mean)<br>Time per request:       0.575 [ms] (mean)<br>Time per request:       0.072 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 16 -n 160000`<br>```<br>Time taken for tests:   6.438 seconds<br>Requests per second:    24852.06 [#/sec] (mean)<br>Time per request:       0.644 [ms] (mean)<br>Time per request:       0.040 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 32 -n 320000`<br>```<br>Time taken for tests:   11.061 seconds<br>Requests per second:    28930.86 [#/sec] (mean)<br>Time per request:       1.106 [ms] (mean)<br>Time per request:       0.035 [ms] (mean, across all concurrent requests)<br>```<br>**_Default rootfull network_**<br>`ab -c 1 -n 10000`<br>```<br>Time taken for tests:   5.074 seconds<br>Requests per second:    1970.86 [#/sec] (mean)<br>Time per request:       0.507 [ms] (mean)<br>Time per request:       0.507 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 4 -n 40000`<br>```<br>Time taken for tests:   4.779 seconds<br>Requests per second:    8369.89 [#/sec] (mean)<br>Time per request:       0.478 [ms] (mean)<br>Time per request:       0.119 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 8 -n 80000`<br>```<br>Time taken for tests:   4.174 seconds<br>Requests per second:    19165.58 [#/sec] (mean)<br>Time per request:       0.417 [ms] (mean)<br>Time per request:       0.052 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 16 -n 160000`<br>```<br>Time taken for tests:   5.182 seconds<br>Requests per second:    30878.20 [#/sec] (mean)<br>Time per request:       0.518 [ms] (mean)<br>Time per request:       0.032 [ms] (mean, across all concurrent requests)<br>```<br>`ab -c 32 -n 320000`<br>```<br>Time taken for tests:   8.508 seconds<br>Requests per second:    37610.08 [#/sec] (mean)<br>Time per request:       0.851 [ms] (mean)<br>Time per request:       0.027 [ms] (mean, across all concurrent requests)<br>```<br>**_Conclusion_**<br>As you can see, pasta performs better than slirp4netns only up to a certain parallelism (specifically up to 8). Then slirp4netns starts to perform significantly better. Rootfull network scales best, which is to be expected.<br>**_Question_**<br>Are there any options to improve pasta's scalability? |
+  
+  BetaWas this translation helpful? [Give feedback.](https://github.com/containers/podman/discussions/22559#)
+  
+  4You must be logged in to vote
+  
+  All reactions
+  
+  - ![heart](https://github.githubassets.com/assets/2764-982dc91ea48a.png)2
+  
+  ## Replies:   1 comment
+  
+  Comment options
+  
+  # {{title}}
+  
+  Quote reply
+  
+  ### [![](https://avatars.githubusercontent.com/u/84841121?s=64&v=4)\ sbrivio-rh](https://github.com/sbrivio-rh) [on May 14, 2024May 14, 2024](https://github.com/containers/podman/discussions/22559\#discussioncomment-9438366)   Collaborator
+  
+  Original comment in English -
+  Translate to English
+  
+  |     |
+  | --- |
+  | > Are there any options to improve pasta's scalability?<br>Not really options, at the moment. We check latency using [neper](https://github.com/google/neper) in the upstream [CI](https://passt.top/passt/about/#continuous-integration) (`perf/pasta_tcp` set), but it's all single-threaded.<br>There are plans to introduce [multithreading](https://bugs.passt.top/show_bug.cgi?id=13), eventually, and much more concrete [work in progress](https://archives.passt.top/passt-dev/20240202141151.3762941-1-lvivier@redhat.com/) to support [vhost-user](https://bugs.passt.top/show_bug.cgi?id=25) for virtual machines (passt(1)), first.<br>Once vhost-user support is merged, we can start playing with multithreading for virtual machines (vhost-user supports multiple queues). That would be kind of symmetric with VDUSE for containers (see "VDUSE support for containers" in [this article](https://www.redhat.com/en/blog/introducing-vduse-software-defined-datapath-virtio)): for pasta, it could look like [this](https://passt.top/static/pasta_vduse.png).<br>I'm not excluding you could get much better results by tweaking some `#define`s in tcp.c and tap.c, though. I would start with `TAP_SEQS` and `TCP_HASH_TABLE_LOAD` \-\- or perhaps "simply" profiling with perf(1) in the `ab -c 32` case. |
+  
+  BetaWas this translation helpful? [Give feedback.](https://github.com/containers/podman/discussions/22559#)
+  
+  2You must be logged in to vote
+  
+  All reactions
+  
+  0 replies
+  
+  
+  [Sign up for free](https://github.com/join?source=comment-repo) **to join this conversation on GitHub**.
+  Already have an account?
+  [Sign in to comment](https://github.com/login?return_to=https%3A%2F%2Fgithub.com%2Fcontainers%2Fpodman%2Fdiscussions%2F22559)
+  
+  Category
+  
+  
+  [![pray](https://github.githubassets.com/assets/1f64f-25af8353fbea.png)\\
+  \\
+  Q&A](https://github.com/containers/podman/discussions/categories/q-a)
+  
+  Labels
+  
+  
+  [network](https://github.com/containers/podman/discussions?discussions_q=label%3Anetwork) Networking related issue or feature [pasta](https://github.com/containers/podman/discussions?discussions_q=label%3Apasta) pasta(1) bugs or features
+  
+  2 participants
+  
+  
+  [![@mlegenovic](https://avatars.githubusercontent.com/u/30691467?s=48&v=4)](https://github.com/mlegenovic)[![@sbrivio-rh](https://avatars.githubusercontent.com/u/84841121?s=48&v=4)](https://github.com/sbrivio-rh)
+  
+  Heading
+  
+  Bold
+  
+  Italic
+  
+  Quote
+  
+  Code
+  
+  Link
+  
+  * * *
+  
+  Numbered list
+  
+  Unordered list
+  
+  Task list
+  
+  * * *
+  
+  Attach files
+  
+  Mention
+  
+  Reference
+  
+  # Select a reply
+  
+  Loading
+  
+  [Create a new saved reply](https://github.com/containers/podman/discussions/22559)
+  
+  👍1 reacted with thumbs up emoji👎1 reacted with thumbs down emoji😄1 reacted with laugh emoji🎉1 reacted with hooray emoji😕1 reacted with confused emoji❤️1 reacted with heart emoji🚀1 reacted with rocket emoji👀1 reacted with eyes emoji
+  
+  You can’t perform that action at this time.
+  --- End Content ---
+
+Root is less: container networks get in shape with pasta
+  URL: https://www.youtube.com/watch?v=tlxDmUPc4WY
+  This will be about container networks uh well presumably rootless as you might have guessed and passed up.
+
+  --- Content ---
+  Error 403 (Forbidden)!!1
+  
+  **403.** That’s an error.
+  
+  We're sorry, but you do not have access to this page. That’s all we know.
+  
+  Back
+  
+  
+  [![](https://www.youtube.com/watch?v=tlxDmUPc4WY)](https://www.youtube.com/ "YouTube Home")
+  
+  Skip navigation
+  
+  Search
+  
+  
+  Search with your voice
+  
+  [Sign in](https://accounts.google.com/ServiceLogin?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252Fwatch%253Fv%253DtlxDmUPc4WY&hl=en&ec=65620)
+  
+  Root is less: container networks get in shape with pasta - DevConf.CZ 2023
+  
+  Tap to unmute
+  
+  2x
+  
+  ## Root is less: container networks get in shape with pasta - DevConf.CZ 2023
+  
+  DevConf 1,994 views 2 years ago
+  
+  Copy link
+  
+  Info
+  
+  Shopping
+  
+  If playback doesn't begin shortly, try restarting your device.
+  
+  •
+  
+  You're signed out
+  
+  Videos you watch may be added to the TV's watch history and influence TV recommendations. To avoid this, cancel and sign in to YouTube on your computer.
+  
+  CancelConfirm
+  
+  Up next
+  
+  Live
+  
+  Upcoming
+  
+  CancelPlay Now
+  
+  Share
+  
+  Include playlist
+  
+  An error occurred while retrieving sharing information. Please try again later.
+  
+  0:00
+  
+  [Next (SHIFT+n)](https://www.youtube.com/watch?v=S30Kj135-Kc "Next (SHIFT+n)")
+  
+  0:00 / 32:39
+  
+  Live
+  
+  •Watch full video
+  
+  •
+  
+  •
+  
+  [28:06\\
+  Rootful networking with rootless podman containers - DevConf.CZ 2023DevConf7.9K views • 2 years agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=S30Kj135-Kc) [46:03\\
+  passt & pasta: Modern unprivileged networking for containers and VMsEverything Open1.6K views • 3 years agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=QMUEtEt1i3I) [15:45\\
+  I Hacked This Temu Router. What I Found Should Be Illegal.Low Level3.4M views • 2 months agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=KsiuA5gOl1o) [21:07\\
+  Church Basketball Player from Tennessee - Nate Bargatze: Comedy Central Presents - Full SpecialComedy Central Stand-Up7.1M views • 3 years agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=WyX4uqcBrto) [6:33\\
+  Podman vs. DockerIBM Technology112K views • 2 years agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=Xx588nbshlM) [24:00\\
+  Why is Everyone So Wrong About AI Water Use??Hank Green4.9M views • 5 months agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=H_c6MWk7PQc) [29:58\\
+  Podman networking deep dive - DevConf.CZ 2024DevConf3K views • 1 year agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=MCY6APZ4x3A) [8:09\\
+  Rootless Podman: Understanding Root inside and outside a container (part 1)Red Hat31K views • 5 years agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=ZgXpWKgQclc) [5:47\\
+  Chef Show - SNLSaturday Night Live14M views • 2 years agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=PEOZ3I2zk1E) [26:23\\
+  IPv8 is STUPID!! Why we can't just make IP addresses longerapalrd's adventures27K views • 3 weeks agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=Uyr8homutII) [35:22\\
+  Bread and butter of RPM package maintainers - DevConf.CZ 2023DevConf64 views • 2 years agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=dpiLotFkuuM) [39:12\\
+  Docker networking is CRAZY!! (you NEED to learn it)NetworkChuck2.1M views • 3 years agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=bKFMS5C4CG0)
+  
+  # Root is less: container networks get in shape with pasta - DevConf.CZ 2023
+  
+  [![](https://yt3.ggpht.com/ytc/AIdro_lHxKWysGvScDe8_dEjP4haGF4k61TD_9V28mA1HnuIqKE=s48-c-k-c0x00ffffff-no-rj)](https://www.youtube.com/@DevConfs)
+  
+  [DevConf](https://www.youtube.com/@DevConfs)
+  
+  
+  DevConf
+  
+  
+  8.81K subscribers
+  
+  Subscribe
+  
+  Subscribed
+  
+  20
+  
+  Share
+  
+  Save
+  
+  Download
+  
+  Download
+  
+  1.9K views2 years ago
+  
+  1,994 views • Jul 12, 2023
+  
+  Speaker(s): Stefano Brivio
+  
+  Now featuring native integration with Podman ([https://podman.io](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbGt6YmROQ2txcmQyU01JVWMtcklHdFlSaEhNQXxBQ3Jtc0trT0Y5WDZsQld2MW1uZWRSZDlCTTdOSGMyakJNMEw1YlJUbHVaWXRFbWNLYWJ1UU8yNzNCTlA3VWRac1JOSE1vdzhyVEV4R2VDblNfMG5GaWp4TTI4Z3pFMVdEMGQxRnB3eDNBTW9zQWxOMi1WMDMtcw&q=https%3A%2F%2Fpodman.io%2F&v=tlxDmUPc4WY)), pasta ([https://passt.top#pasta-pack-](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbEFzWDBlMllQN2V3ZUdqSUlrdmFWeGlRei1zZ3xBQ3Jtc0ttYXI1VS1meWEtX3dXN1pPMkFMemJhVnpMLVh0Q3dkVk0zRUl1LWFRTjZNd0hZU2RTbTRIYUpFbEZmUEhDYkZWek9OYkNhLURHTl9SeGpQbkQzWkVFTmQ5YUhRTnp1enpXaXNOb2tkeURpNEhNdkdITQ&q=https%3A%2F%2Fpasst.top%2F%23pasta-pack-a-subtle-tap-abstraction%29&v=tlxDmUPc4WY)…...more
+  
+  ...more
+  
+  [**Networking like nobody can do**  **Networking like nobody can do** \\
+  \\
+  5:54](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=354s)
+  
+  [**Networking like nobody can do**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=354s)
+  
+  5:54
+  
+  [**And why exactly would you do that?**  **And why exactly would you do that?** \\
+  \\
+  9:36](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=576s)
+  
+  [**And why exactly would you do that?**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=576s)
+  
+  9:36
+  
+  [**Isn't that an ugly workaround?**  **Isn't that an ugly workaround?** \\
+  \\
+  12:07](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=727s)
+  
+  [**Isn't that an ugly workaround?**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=727s)
+  
+  12:07
+  
+  [**Recent developments**  **Recent developments** \\
+  \\
+  23:17](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1397s)
+  
+  [**Recent developments**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1397s)
+  
+  23:17
+  
+  [**Non-local binds address without NAT**  **Non-local binds address without NAT** \\
+  \\
+  24:25](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1465s)
+  
+  [**Non-local binds address without NAT**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1465s)
+  
+  24:25
+  
+  [**Runtime port/address forwarding**  **Runtime port/address forwarding** \\
+  \\
+  26:05](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1565s)
+  
+  [**Runtime port/address forwarding**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1565s)
+  
+  26:05
+  
+  Follow along using the transcript.
+  
+  Show transcript
+  
+  [Videos](https://www.youtube.com/channel/UCmYAQDZIQGm_kPvemBc_qwg/videos)[About](https://www.youtube.com/channel/UCmYAQDZIQGm_kPvemBc_qwg/about)[LinkedIn CZ](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqa1JiRERTTTlsM0s2c3hLZWhpMVdHSEZVamdoUXxBQ3Jtc0trMENwSnVwVVAtT09jeFBna2ZWam9lZThnWnp6Y1AzeG1CWm5JZTdVZ2ltTDJzRXZ1anBtWGRwNTQ3eFpjZkZEUXJsdE5PSUR6dlNoOWlVMVFHLXlkMHJnT1JjQ2R2d2pVejRaaGxvLVRQRHA1cjVlQQ&q=https%3A%2F%2Fwww.linkedin.com%2Fcompany%2F102081562%2Fadmin%2Ffeed%2Fposts%2F)[LinkedIn US](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbjFYTHpqVVpkVFh5bXlfR08tQXNOZE82VnYwQXxBQ3Jtc0tuRE1DVEVlOVFOeGJFSUpNdGxTQnZQNEZrV0V5TzlqdnZ2X0dsamt6Y3NFYzRoblRrNUpjWTJtenhhd0lLOTZTZkVhQm0yOWZzcDNxRXRBNlRnQ1VZTFhFRWxBVUZPaTIxYTdDTEVUcm1CaHBkeVNrbw&q=https%3A%2F%2Fwww.linkedin.com%2Fcompany%2Fdevconf-us)[LinkedIn IN](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbEF5UHh3d3JiUHBRWDRUMEUzZFVuYWhrSVpQZ3xBQ3Jtc0tuRU5hMmR6Z1hYUUEteXFXeDRQYzdBbUZ2VkMzV1R4SlZYdHhfT2tKTGhZeHFRRTJka2lTY2czOXN3c3RSdU1lakc4TjZDbVdjQUtvQlU1WlM0bFdFNkxZTWsyMGV6d1RqdzdJZE80eDh0azRzaWtHNA&q=https%3A%2F%2Fwww.linkedin.com%2Fcompany%2Fdevconf-in%2F)[X CZ](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbURCVk5qYWVzajlJZUpUYUJwZHRVOG5feFZYZ3xBQ3Jtc0tsTVZzdTl5Um03SHMzWFdwRmVZeXJib3FwZ0dUek90Z2xjQTk0cEJxbGI1RVRtQzlvTFlnN0ZqVGdoc1BrNUFkNVF4aFhUTFYwMzZFS1hPMnNMNERFRDJudkJRYWVOYlJ1NTBuYk44T1h1LTFtelJkRQ&q=https%3A%2F%2Ftwitter.com%2Fdevconf_cz)[X US](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbmRqbGsyUkRmUVpTT0ZWdjV2U3N0eG9lSHc5QXxBQ3Jtc0trby1lUWQyaWVaVDNPMFNkb3Z6WWo1SzBCekJKWkJiVktfOU9KVXRVeHo0bDlLaTQtU0pybXg5ZjQyTmM4UC1sMGY5YnV6a1hWQVBsRnhPWHR2YUJaaEhkNE5YQThvMFlZdDJxeGw3enV2REt0bXR0Zw&q=https%3A%2F%2Ftwitter.com%2Fdevconf_us)[Instagram US](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqazVnNmxvNC14VmhfRGpCcVVzT1laTGkydzhmZ3xBQ3Jtc0tsTnptemU1enF5Z2hUYjUtUG54aVBscGtfU0RZN0wzZ2FqQk56eVlQaWg4cEFsMWwyRjFtcDF0Z0lZdzdKZlF4ZHlxVW0tczhEUWh6RDVWZGcyaWFvYUxNNEZWek1nYVdueXU2clNqai03WkNPSUh3MA&q=https%3A%2F%2Fwww.instagram.com%2Fdevconf_us%2F)[Instagram IN](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbVpnNW45aDhPLU02YXFpREpkOUt5S0NETUx5d3xBQ3Jtc0tubGV3T0lKeURpZkpQNzR2WVRuYjljV2NqT2czWHhTbEVLWkxMeGFEUlZfZDc3OU9MWnlORy1BRzgteVIxTTRMbE93VG9rMFVnWC1vekZUM1pPX0dnWUx0enJDSzNlbmlJdDF2U19MZXJYalQwVnJJWQ&q=https%3A%2F%2Fwww.instagram.com%2Fdevconfindia%2F)
+  
+  #### License
+  
+  [Creative Commons Attribution license (reuse allowed)](https://www.youtube.com/t/creative_commons)
+  
+  Show less
+  
+  # Root is less: container networks get in shape with pasta - DevConf.CZ 2023
+  
+  1,994 views1.9K views
+  
+  Jul 12, 2023
+  
+  20
+  
+  Share
+  
+  Save
+  
+  Download
+  
+  Download
+  
+  [**Networking like nobody can do**  **Networking like nobody can do** \\
+  \\
+  5:54](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=354s)
+  
+  [**Networking like nobody can do**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=354s)
+  
+  5:54
+  
+  [**And why exactly would you do that?**  **And why exactly would you do that?** \\
+  \\
+  9:36](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=576s)
+  
+  [**And why exactly would you do that?**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=576s)
+  
+  9:36
+  
+  [**Isn't that an ugly workaround?**  **Isn't that an ugly workaround?** \\
+  \\
+  12:07](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=727s)
+  
+  [**Isn't that an ugly workaround?**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=727s)
+  
+  12:07
+  
+  [**Recent developments**  **Recent developments** \\
+  \\
+  23:17](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1397s)
+  
+  [**Recent developments**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1397s)
+  
+  23:17
+  
+  [**Non-local binds address without NAT**  **Non-local binds address without NAT** \\
+  \\
+  24:25](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1465s)
+  
+  [**Non-local binds address without NAT**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1465s)
+  
+  24:25
+  
+  [**Runtime port/address forwarding**  **Runtime port/address forwarding** \\
+  \\
+  26:05](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1565s)
+  
+  [**Runtime port/address forwarding**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1565s)
+  
+  26:05
+  
+  Sync to video time
+  
+  Root is less: container networks get in shape with pasta - DevConf.CZ 2023
+  
+  20Likes
+  
+  1,994Views
+  
+  2023Jul 12
+  
+  Speaker(s): Stefano Brivio
+  
+  Now featuring native integration with Podman ([https://podman.io](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqa0VqZmszSjFueTdiTmpwQ0xDaTFGNHd3d2FZd3xBQ3Jtc0tuZjAyQnZHUTc4TTNFMnNnUHZsWjhScmRTNGM3LURDZ0pBNmVaUGtuajF4aTY5R0Y4UHJ4Y2VHdzl1YmxGNWJudUJxWDZaNjY2VUozbGZYVGhVOTRjTkFKaW5FaS1VZHo1Q3pfZzdZZHFkV182Ul90Zw&q=https%3A%2F%2Fpodman.io%2F&v=tlxDmUPc4WY)), pasta ([https://passt.top#pasta-pack-a-subtle...](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbGFuRzRDeDlfbGJHSy14b3FSRFB6cWdzYVFLZ3xBQ3Jtc0trZXUxZDBLVjRNMWYtUzAyVUVhcEd1R3RFaFBMVUlJdHVmMEtvdHdRYjNpMUJhUTZpbU9wQUUwdnh2VC1KdXY5cHBIWkdkZTJWdmxXMUdlM2QtQ2dSMzJnREI4V2NBVW9ZYmVYTk1GWU81R3VQQnpwZw&q=https%3A%2F%2Fpasst.top%2F%23pasta-pack-a-subtle-tap-abstraction%29&v=tlxDmUPc4WY), is a brand new approach to usermode networking for rootless containers, aiming at bringing production quality to the scene together with its double passt(1) (for VMs).
+  
+  For a long time, usermode networking was considered by many a second-class citizen among network back-ends for container engines.
+  
+  Slirp has provided usermode networking to QEMU for 18 years, and eventually became consumable for container usage thanks to the slirp4netns driver. But it was never intended for this life, and original design goals proved to be obstacles to an otherwise promising way to embrace the principle of least privilege in container networking.
+  
+  Recently, a number of seemingly unorthodox use cases for pasta emerged from the community, such as containerisation of legacy IPv4 applications in IPv6-only environments.
+  
+  This talk shows some of these ideas, along with motivation behind the pasta/passt project, status, challenges, and future directions.
+  
+  [https://sched.co/1MYld](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbmVHR2xub1VybkNweVZsaWluYTlqUG83cExCZ3xBQ3Jtc0trNV84LTE5aURMZVE0dnlHbTJmZnE1UGpFclFOUUJ4SWRNODBhb3pxNnhzaXZaWG1xaFB6Vy1HZndfNFVOU1Zkb0JBWC1tNFBTQlVENExiVlRjOURnYVRoWmJuWWJZWFdFbWNmOHJ4NHQyZ09YMmJQUQ&q=https%3A%2F%2Fsched.co%2F1MYld&v=tlxDmUPc4WY)…...more
+  
+  ...more
+  Show less
+  
+  [**Networking like nobody can do**  **Networking like nobody can do** \\
+  \\
+  5:54](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=354s)
+  
+  [**Networking like nobody can do**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=354s)
+  
+  5:54
+  
+  [**And why exactly would you do that?**  **And why exactly would you do that?** \\
+  \\
+  9:36](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=576s)
+  
+  [**And why exactly would you do that?**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=576s)
+  
+  9:36
+  
+  [**Isn't that an ugly workaround?**  **Isn't that an ugly workaround?** \\
+  \\
+  12:07](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=727s)
+  
+  [**Isn't that an ugly workaround?**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=727s)
+  
+  12:07
+  
+  [**Recent developments**  **Recent developments** \\
+  \\
+  23:17](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1397s)
+  
+  [**Recent developments**](https://www.youtube.com/watch?v=tlxDmUPc4WY&t=1397s)
+  
+  23:17
+  
+  Follow along using the transcript.
+  
+  Show transcript
+  
+  [Videos](https://www.youtube.com/channel/UCmYAQDZIQGm_kPvemBc_qwg/videos)[About](https://www.youtube.com/channel/UCmYAQDZIQGm_kPvemBc_qwg/about)[LinkedIn CZ](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqa1JiRERTTTlsM0s2c3hLZWhpMVdHSEZVamdoUXxBQ3Jtc0trMENwSnVwVVAtT09jeFBna2ZWam9lZThnWnp6Y1AzeG1CWm5JZTdVZ2ltTDJzRXZ1anBtWGRwNTQ3eFpjZkZEUXJsdE5PSUR6dlNoOWlVMVFHLXlkMHJnT1JjQ2R2d2pVejRaaGxvLVRQRHA1cjVlQQ&q=https%3A%2F%2Fwww.linkedin.com%2Fcompany%2F102081562%2Fadmin%2Ffeed%2Fposts%2F)[LinkedIn US](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbjFYTHpqVVpkVFh5bXlfR08tQXNOZE82VnYwQXxBQ3Jtc0tuRE1DVEVlOVFOeGJFSUpNdGxTQnZQNEZrV0V5TzlqdnZ2X0dsamt6Y3NFYzRoblRrNUpjWTJtenhhd0lLOTZTZkVhQm0yOWZzcDNxRXRBNlRnQ1VZTFhFRWxBVUZPaTIxYTdDTEVUcm1CaHBkeVNrbw&q=https%3A%2F%2Fwww.linkedin.com%2Fcompany%2Fdevconf-us)[LinkedIn IN](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbEF5UHh3d3JiUHBRWDRUMEUzZFVuYWhrSVpQZ3xBQ3Jtc0tuRU5hMmR6Z1hYUUEteXFXeDRQYzdBbUZ2VkMzV1R4SlZYdHhfT2tKTGhZeHFRRTJka2lTY2czOXN3c3RSdU1lakc4TjZDbVdjQUtvQlU1WlM0bFdFNkxZTWsyMGV6d1RqdzdJZE80eDh0azRzaWtHNA&q=https%3A%2F%2Fwww.linkedin.com%2Fcompany%2Fdevconf-in%2F)[X CZ](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbURCVk5qYWVzajlJZUpUYUJwZHRVOG5feFZYZ3xBQ3Jtc0tsTVZzdTl5Um03SHMzWFdwRmVZeXJib3FwZ0dUek90Z2xjQTk0cEJxbGI1RVRtQzlvTFlnN0ZqVGdoc1BrNUFkNVF4aFhUTFYwMzZFS1hPMnNMNERFRDJudkJRYWVOYlJ1NTBuYk44T1h1LTFtelJkRQ&q=https%3A%2F%2Ftwitter.com%2Fdevconf_cz)[X US](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbmRqbGsyUkRmUVpTT0ZWdjV2U3N0eG9lSHc5QXxBQ3Jtc0trby1lUWQyaWVaVDNPMFNkb3Z6WWo1SzBCekJKWkJiVktfOU9KVXRVeHo0bDlLaTQtU0pybXg5ZjQyTmM4UC1sMGY5YnV6a1hWQVBsRnhPWHR2YUJaaEhkNE5YQThvMFlZdDJxeGw3enV2REt0bXR0Zw&q=https%3A%2F%2Ftwitter.com%2Fdevconf_us)[Instagram US](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqazVnNmxvNC14VmhfRGpCcVVzT1laTGkydzhmZ3xBQ3Jtc0tsTnptemU1enF5Z2hUYjUtUG54aVBscGtfU0RZN0wzZ2FqQk56eVlQaWg4cEFsMWwyRjFtcDF0Z0lZdzdKZlF4ZHlxVW0tczhEUWh6RDVWZGcyaWFvYUxNNEZWek1nYVdueXU2clNqai03WkNPSUh3MA&q=https%3A%2F%2Fwww.instagram.com%2Fdevconf_us%2F)[Instagram IN](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbVpnNW45aDhPLU02YXFpREpkOUt5S0NETUx5d3xBQ3Jtc0tubGV3T0lKeURpZkpQNzR2WVRuYjljV2NqT2czWHhTbEVLWkxMeGFEUlZfZDc3OU9MWnlORy1BRzgteVIxTTRMbE93VG9rMFVnWC1vekZUM1pPX0dnWUx0enJDSzNlbmlJdDF2U19MZXJYalQwVnJJWQ&q=https%3A%2F%2Fwww.instagram.com%2Fdevconfindia%2F)
+  
+  [![](https://i.ytimg.com/vi/S30Kj135-Kc/hqdefault.jpg?sqp=-oaymwFACKgBEF5IWvKriqkDMwgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAHwAQH4Af4JgALQBYoCDAgAEAEYTyA-KH8wDw==&rs=AOn4CLB1wxM35z6Kfy3gTMpVCxZ8_tT9vQ)\\
+  \\
+  28:06](https://www.youtube.com/watch?v=S30Kj135-Kc&pp=ugUEEgJlbtIHCQkGCwGHKiGM7w%3D%3D)
+  
+  ### [Rootful networking with rootless podman containers - DevConf.CZ 2023](https://www.youtube.com/watch?v=S30Kj135-Kc&pp=ugUEEgJlbtIHCQkGCwGHKiGM7w%3D%3D)
+  
+  DevConf
+  
+  7.9K views • 2 years ago
+  
+  [![](https://i.ytimg.com/vi/QMUEtEt1i3I/hqdefault.jpg?sqp=-oaymwFACKgBEF5IWvKriqkDMwgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAHwAQH4Af4JgALQBYoCDAgAEAEYYyBjKGMwDw==&rs=AOn4CLBSPAvPSU_E26ws3DVHASkL0KHw_w)\\
+  \\
+  46:03](https://www.youtube.com/watch?v=QMUEtEt1i3I&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [passt & pasta: Modern unprivileged networking for containers and VMs](https://www.youtube.com/watch?v=QMUEtEt1i3I&pp=ugUEEgJlbg%3D%3D)
+  
+  Everything Open
+  
+  1.6K views • 3 years ago
+  
+  [![](https://i.ytimg.com/vi/KsiuA5gOl1o/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLBff_X5L485SHcgbXEi5lYNbJO7Cw)\\
+  \\
+  15:45](https://www.youtube.com/watch?v=KsiuA5gOl1o)
+  
+  ### [I Hacked This Temu Router. What I Found Should Be Illegal.](https://www.youtube.com/watch?v=KsiuA5gOl1o)
+  
+  Low Level
+  
+  3.4M views • 2 months ago
+  
+  [![](https://i.ytimg.com/vi/WyX4uqcBrto/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLBTBTesynnn8nNGRgKsH1Xm1ZcYqQ)\\
+  \\
+  21:07](https://www.youtube.com/watch?v=WyX4uqcBrto)
+  
+  ### [Church Basketball Player from Tennessee - Nate Bargatze: Comedy Central Presents - Full Special](https://www.youtube.com/watch?v=WyX4uqcBrto)
+  
+  Comedy Central Stand-Up
+  
+  7.1M views • 3 years ago
+  
+  [![](https://i.ytimg.com/vi/Xx588nbshlM/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLA3SMRb0TdTzoMHQvUtrrEbJqqf9w)\\
+  \\
+  6:33](https://www.youtube.com/watch?v=Xx588nbshlM)
+  
+  ### [Podman vs. Docker](https://www.youtube.com/watch?v=Xx588nbshlM)
+  
+  IBM Technology
+  
+  112K views • 2 years ago
+  
+  [![](https://i.ytimg.com/vi/H_c6MWk7PQc/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDveqUTbCxKba6m74Xf5Dl006wHuA)\\
+  \\
+  24:00](https://www.youtube.com/watch?v=H_c6MWk7PQc)
+  
+  ### [Why is Everyone So Wrong About AI Water Use??](https://www.youtube.com/watch?v=H_c6MWk7PQc)
+  
+  Hank Green
+  
+  4.9M views • 5 months ago
+  
+  [![](https://i.ytimg.com/vi/MCY6APZ4x3A/hqdefault.jpg?sqp=-oaymwFACKgBEF5IWvKriqkDMwgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAHwAQH4Af4JgALQBYoCDAgAEAEYUSAuKH8wDw==&rs=AOn4CLA3vHo2WG5LON--6NFvs2LBDFWEQQ)\\
+  \\
+  29:58](https://www.youtube.com/watch?v=MCY6APZ4x3A)
+  
+  ### [Podman networking deep dive - DevConf.CZ 2024](https://www.youtube.com/watch?v=MCY6APZ4x3A)
+  
+  DevConf
+  
+  3K views • 1 year ago
+  
+  [![](https://i.ytimg.com/vi/ZgXpWKgQclc/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLASWQD7MSECNJE7tr6IakYAlGkIaw)\\
+  \\
+  8:09](https://www.youtube.com/watch?v=ZgXpWKgQclc&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [Rootless Podman: Understanding Root inside and outside a container (part 1)](https://www.youtube.com/watch?v=ZgXpWKgQclc&pp=ugUEEgJlbg%3D%3D)
+  
+  Red Hat
+  
+  31K views • 5 years ago
+  
+  [![](https://i.ytimg.com/vi/PEOZ3I2zk1E/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLD2DUC0YGmm5VNpRw3x-l3SYQO6Dg)\\
+  \\
+  5:47](https://www.youtube.com/watch?v=PEOZ3I2zk1E)
+  
+  ### [Chef Show - SNL](https://www.youtube.com/watch?v=PEOZ3I2zk1E)
+  
+  Saturday Night Live
+  
+  14M views • 2 years ago
+  
+  [![](https://i.ytimg.com/vi/Uyr8homutII/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLBPOHEWDhar6Ub3YffibWojhpIkpg)\\
+  \\
+  26:23](https://www.youtube.com/watch?v=Uyr8homutII)
+  
+  ### [IPv8 is STUPID!! Why we can't just make IP addresses longer](https://www.youtube.com/watch?v=Uyr8homutII)
+  
+  apalrd's adventures
+  
+  27K views • 3 weeks ago
+  
+  [![](https://i.ytimg.com/vi/dpiLotFkuuM/hqdefault.jpg?sqp=-oaymwFACKgBEF5IWvKriqkDMwgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAHwAQH4Af4JgALQBYoCDAgAEAEYUyA9KH8wDw==&rs=AOn4CLBdEK4UC__ArP1YQgPU8aVB4WPjow)\\
+  \\
+  35:22](https://www.youtube.com/watch?v=dpiLotFkuuM)
+  
+  ### [Bread and butter of RPM package maintainers - DevConf.CZ 2023](https://www.youtube.com/watch?v=dpiLotFkuuM)
+  
+  DevConf
+  
+  64 views • 2 years ago
+  
+  [![](https://i.ytimg.com/vi/bKFMS5C4CG0/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDuRxCkaioRytm_KMjQLsK-jblSCg)\\
+  \\
+  39:12](https://www.youtube.com/watch?v=bKFMS5C4CG0&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [Docker networking is CRAZY!! (you NEED to learn it)](https://www.youtube.com/watch?v=bKFMS5C4CG0&pp=ugUEEgJlbg%3D%3D)
+  
+  NetworkChuck
+  
+  2.1M views • 3 years ago
+  
+  [![](https://i.ytimg.com/vi/KZeIEiBrT_w/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLC-fTJsWemE2kNgfBb8axMUV6Mxnw)\\
+  \\
+  32:32](https://www.youtube.com/watch?v=KZeIEiBrT_w)
+  
+  ### [The Strange Math That Predicts (Almost) Anything](https://www.youtube.com/watch?v=KZeIEiBrT_w)
+  
+  Veritasium
+  
+  11M views • 9 months ago
+  
+  [![](https://i.ytimg.com/vi/piwcpd_hWn0/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLCY2V04z5YeTQidyTHTIwUDFhW3FA)\\
+  \\
+  1:04:59](https://www.youtube.com/watch?v=piwcpd_hWn0)
+  
+  ### [How To Use Podman Containers](https://www.youtube.com/watch?v=piwcpd_hWn0)
+  
+  theurbanpenguin
+  
+  25K views • 3 years ago
+  
+  [![](https://i.ytimg.com/vi/Uci5WARr66U/hqdefault.jpg?sqp=-oaymwFACKgBEF5IWvKriqkDMwgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAHwAQH4Af4JgALQBYoCDAgAEAEYciA0KFQwDw==&rs=AOn4CLCs_OZqp_dSpQbWetOJbxQFweawgQ)\\
+  \\
+  3:00:01](https://www.youtube.com/watch?v=Uci5WARr66U)
+  
+  ### [Pink Ombre Aura Screen \| 3 Hours and 1 Second \| No Sound](https://www.youtube.com/watch?v=Uci5WARr66U)
+  
+  Set the Mood
+  
+  2.6M views • 2 years ago
+  
+  [![](https://i.ytimg.com/vi/zKHqiWdN91s/hqdefault.jpg?sqp=-oaymwFACKgBEF5IWvKriqkDMwgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAHwAQH4Af4JgALQBYoCDAgAEAEYEyBMKH8wDw==&rs=AOn4CLDRAjJl0Nzz9jUvdidlGCNYvwLJ4A)\\
+  \\
+  29:34](https://www.youtube.com/watch?v=zKHqiWdN91s&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [When to use and not to use Containerlab - Roman Dodin](https://www.youtube.com/watch?v=zKHqiWdN91s&pp=ugUEEgJlbg%3D%3D)
+  
+  Network Automation Forum
+  
+  5.4K views • 1 year ago
+  
+  [![](https://i.ytimg.com/vi/jlG_nrCOmJc/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLBiwjcA3ZMrkpP7sh49TmfEHCH_Ug)\\
+  \\
+  17:58](https://www.youtube.com/watch?v=jlG_nrCOmJc)
+  
+  ### [IPv6 explained - SLAAC and DHCPv6 (IPv6 from scratch part 2)](https://www.youtube.com/watch?v=jlG_nrCOmJc)
+  
+  OneMarcFifty
+  
+  85K views • 3 years ago
+  
+  [![](https://i.ytimg.com/vi/Fpii9F6dsB4/hqdefault.jpg?sqp=-oaymwFACKgBEF5IWvKriqkDMwgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAHwAQH4AdQGgALgA4oCDAgAEAEYZSBlKGUwDw==&rs=AOn4CLDPAGysHZSlalCEk_BN-edZ1plvtg)\\
+  \\
+  27:27](https://www.youtube.com/watch?v=Fpii9F6dsB4)
+  
+  ### [Running Podman within a container](https://www.youtube.com/watch?v=Fpii9F6dsB4)
+  
+  DevConf
+  
+  657 views • 4 years ago
+  
+  [![](https://i.ytimg.com/vi/2GKZa1WJnz4/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLAdGCpvcelYc4xF1R-0o6cFer6Frg)\\
+  \\
+  15:55](https://www.youtube.com/watch?v=2GKZa1WJnz4&pp=ugUEEgJlbtIHCQkGCwGHKiGM7w%3D%3D)
+  
+  ### [How to Get Started with Podman Desktop](https://www.youtube.com/watch?v=2GKZa1WJnz4&pp=ugUEEgJlbtIHCQkGCwGHKiGM7w%3D%3D)
+  
+  Red Hat
+  
+  35K views • 1 year ago
+  
+  [![](https://i.ytimg.com/vi/wBbLkbyzIns/hqdefault.jpg?sqp=-oaymwFACKgBEF5IWvKriqkDMwgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAHwAQH4Af4JgALQBYoCDAgAEAEYZSBlKGUwDw==&rs=AOn4CLDp9W5qSM_R-mDeknWG7qsgkHRh9w)\\
+  \\
+  3:00:01](https://www.youtube.com/watch?v=wBbLkbyzIns)
+  
+  ### [3-Hour Serene Yellow & Orange Gradient - Uplift and Relax Your Space](https://www.youtube.com/watch?v=wBbLkbyzIns)
+  
+  ONCE REELED
+  
+  423K views • 2 years ago
+  
+  Show more
+  --- End Content ---
+
+How to Switch from slirp4netns to Pasta in Podman
+  URL: https://oneuptime.com/blog/post/2026-03-17-switch-slirp4netns-pasta-podman/view
+  Pasta is the default rootless networking tool in current Podman releases and is the recommended replacement for slirp4netns.
+
+  --- Content ---
+  [Skip to main content](https://oneuptime.com/blog/post/2026-03-17-switch-slirp4netns-pasta-podman/view#main-content)
+  
+  ![](https://oneuptime.com/blog/post/2026-03-17-switch-slirp4netns-pasta-podman/view)
+  
+  # How to Switch from slirp4netns to Pasta in Podman
+  
+  Learn how to migrate from slirp4netns to pasta rootless networking in Podman for better performance and features.
+  
+  
+  [![Nawaz Dhandala](https://avatars.githubusercontent.com/nawazdhandala)@nawazdhandala](https://github.com/nawazdhandala)•Mar 17, 2026•Reading time
+  3 min read
+  
+  [Podman](https://oneuptime.com/blog/tag/podman) [Container](https://oneuptime.com/blog/tag/container) [DevOps](https://oneuptime.com/blog/tag/devops) [Networking](https://oneuptime.com/blog/tag/networking) [Pasta](https://oneuptime.com/blog/tag/pasta) [slirp4netns](https://oneuptime.com/blog/tag/slirp4netns) [Migration](https://oneuptime.com/blog/tag/migration)
+  
+  ## On this page
+  
+  [Share on X](https://twitter.com/intent/tweet?text=%20How%20to%20Switch%20from%20slirp4netns%20to%20Pasta%20in%20Podman&url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-17-switch-slirp4netns-pasta-podman%2Fview "Share on X")[Share on LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-17-switch-slirp4netns-pasta-podman%2Fview "Share on LinkedIn")[Discuss on Hacker News](https://news.ycombinator.com/submitlink?u=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-17-switch-slirp4netns-pasta-podman%2Fview&t=%20How%20to%20Switch%20from%20slirp4netns%20to%20Pasta%20in%20Podman "Discuss on Hacker News")
+  
+  * * *
+  
+  > Switching from slirp4netns to pasta improves rootless container networking performance, adds native IPv6 support, and can reduce networking overhead.
+  
+  Pasta is the default rootless networking tool in current Podman releases and is the recommended replacement for slirp4netns. The migration is straightforward and brings significant networking improvements. This guide covers the steps to switch and verify the new rootless networking tool.
+  
+  * * *
+  
+  ## Checking Your Current Rootless Networking Tool [Link to Checking Your Current Rootless Networking Tool](https://oneuptime.com/blog/post/2026-03-17-switch-slirp4netns-pasta-podman/view\#checking-your-current-rootless-networking-tool)
+  
+  ```bash
+  BashCopy
+  # Check the Podman network backend (Netavark or CNI)
+  podman info --format '{{ .Host.NetworkBackend }}'
+  
+  # Check the configured rootless networking tool
+  grep -R "default_rootless_network_cmd" \
+    ~/.config/containers/containers.conf \
+    /etc/containers/containers.conf \
+    /usr/share/containers/containers.conf 2>/dev/null
+  
+  # Check available rootless networking tools
+  podman info --format 'Pasta: {{ .Host.Pasta.Executable }}'
+  podman info --format 'slirp4netns: {{ .Host.Slirp4NetNS.Executable }}'
+  ```
+  
+  ## Installing Pasta [Link to Installing Pasta](https://oneuptime.com/blog/post/2026-03-17-switch-slirp4netns-pasta-podman/view\#installing-pasta)
+  
+  ```bash
+  BashCopy
+  # On Fedora/RHEL
+  sudo dnf install passt -y
+  
+  # On Ubuntu/Debian
+  sudo apt install passt -y
+  
+  # On Arch Linux
+  sudo pacman -S passt
+  
+  # Verify installation
+  pasta --version
+  ```
+  
+  ## Switching the Default Rootless Networking Tool [Link to Switching the Default Rootless Networking Tool](https://oneuptime.com/blog/post/2026-03-17-switch-slirp4netns-pasta-podman/view\#switching-the-default-rootless-networking-tool)
+  
+  Create or edit `~/.config/containers/containers.conf`. If `[network]` already exists, add only the setting under that section.
+  
+  ```bash
+  BashCopy
+  mkdir -p ~/.config/containers
+  ```
+  
+  ```toml
+  TomlCopy
+  [network]
+  default_rootless_network_cmd = "pasta"
+  ```
+  
+  ```bash
+  BashCopy
+  # Verify the change
+  podman run -d --name default-net docker.io/library/alpine:latest sleep 300
+  podman inspect default-net --format '{{ .HostConfig.NetworkMode }}'
+  podman rm -f default-net
+  ```
+  
+  ## Testing Pasta with Existing Containers [Link to Testing Pasta with Existing Containers](https://oneuptime.com/blog/post/2026-03-17-switch-slirp4netns-pasta-podman/view\#testing-pasta-with-existing-containers)
+  
+  ```bash
+  BashCopy
+  # Stop running containers
+  podman stop --all
+  
+  # Restart a container that uses the default rootless network
+  podman start web
+  
+  # Or run a new test container
+  podman run --rm --network pasta \
+    docker.io/library/alpine:latest sh -c "
+      echo '=== Network Config ==='
+      ip addr show
+      echo '=== Connectivity ==='
+      ping -c 2 8.8.8.8
+      echo '=== DNS ==='
+      nslookup google.com
+    "
+  ```
+  
+  ## Comparing Performance [Link to Comparing Performance](https://oneuptime.com/blog/post/2026-03-17-switch-slirp4netns-pasta-podman/view\#comparing-performance)
+  
+  ```bash
+  BashCopy
+  # Test with slirp4netns
+  podman run --rm --network slirp4netns \
+    docker.io/library/alpine:latest sh -c "
+      apk add --no-cache curl > /dev/null 2>&1
+      time curl -s -o /dev/null http://speedtest.tele2.net/1MB.zip
+    "
+  
+  # Test with pasta
+  podman run --rm --network pasta \
+    docker.io/library/alpine:latest sh -c "
+      apk add --no-cache curl > /dev/null 2>&1
+      time curl -s -o /dev/null http://speedtest.tele2.net/1MB.zip
+    "
+  ```
+  
+  ## Verifying Port Forwarding Works [Link to Verifying Port Forwarding Works](https://oneuptime.com/blog/post/2026-03-17-switch-slirp4netns-pasta-podman/view\#verifying-port-forwarding-works)
+  
+  ```bash
+  BashCopy
+  # Test port forwarding with pasta
+  podman run -d --name test-web \
+    --network pasta \
+    -p 8080:80 \
+    docker.io/library/nginx:latest
+  
+  # Verify the port is published
+  podman port test-web
+  curl -s http://localhost:8080
+  
+  # Clean up
+  podman rm -f test-web
+  ```
+  
+  ## Handling Migration Issues [Link to Handling Migration Issues](https://oneuptime.com/blog/post/2026-03-17-switch-slirp4netns-pasta-podman/view\#handling-migration-issues)
+  
+  ```bash
+  BashCopy
+  # If containers fail to start after switching, recreate them
+  podman rm -f mycontainer
+  podman run -d --name mycontainer \
+    --network pasta \
+    -p 8080:80 \
+    docker.io/library/nginx:latest
+  
+  # If pasta is not working, temporarily fall back to slirp4netns
+  podman run -d --name fallback \
+    --network slirp4netns \
+    -p 8081:80 \
+    docker.io/library/nginx:latest
+  ```
+  
+  ## Reverting to slirp4netns [Link to Reverting to slirp4netns](https://oneuptime.com/blog/post/2026-03-17-switch-slirp4netns-pasta-podman/view\#reverting-to-slirp4netns)
+  
+  ```bash
+  BashCopy
+  # If you need to revert, update containers.conf
+  # Change the line to:
+  # default_rootless_network_cmd = "slirp4netns"
+  
+  # Or remove the setting to use Podman's default
+  sed -i '/default_rootless_network_cmd/d' ~/.config/containers/containers.conf
+  ```
+  
+  ## Key Improvements After Switching [Link to Key Improvements After Switching](https://oneuptime.com/blog/post/2026-03-17-switch-slirp4netns-pasta-podman/view\#key-improvements-after-switching)
+  
+  | Feature | slirp4netns | Pasta |
+  | --- | --- | --- |
+  | Throughput | Lower | Higher |
+  | IPv6 | Supported, but more limited | Native |
+  | Addressing | NAT-based by default | No NAT by default |
+  | Port forwarding | Uses a port handler | Preserves source IP by default |
+  
+  ## Summary [Link to Summary](https://oneuptime.com/blog/post/2026-03-17-switch-slirp4netns-pasta-podman/view\#summary)
+  
+  Switch from slirp4netns to pasta by installing the `passt` package and setting `default_rootless_network_cmd = &quot;pasta&quot;` in the `[network]` section of `~/.config/containers/containers.conf`. Pasta provides better throughput, native IPv6 support, no NAT by default, and source-IP-preserving port forwarding. Test port forwarding and connectivity after switching, and fall back to slirp4netns per-container if any issues arise during migration.
+  
+  Share this article
+  
+  [Share on X](https://twitter.com/intent/tweet?text=%20How%20to%20Switch%20from%20slirp4netns%20to%20Pasta%20in%20Podman&url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-17-switch-slirp4netns-pasta-podman%2Fview "Share on X")[Share on LinkedIn](https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-17-switch-slirp4netns-pasta-podman%2Fview "Share on LinkedIn")[Discuss on Hacker News](https://news.ycombinator.com/submitlink?u=https%3A%2F%2Foneuptime.com%2Fblog%2Fpost%2F2026-03-17-switch-slirp4netns-pasta-podman%2Fview&t=%20How%20to%20Switch%20from%20slirp4netns%20to%20Pasta%20in%20Podman "Discuss on Hacker News")
+  
+  ![Nawaz Dhandala](https://avatars.githubusercontent.com/nawazdhandala)
+  
+  ### Nawaz Dhandala
+  
+  Author
+  
+  @nawazdhandala • Mar 17, 2026 • 3 min read
+  
+  Nawaz is building OneUptime with a passion for engineering reliable systems and improving observability.
+  
+  [GitHub](https://github.com/nawazdhandala)
+  
+  ### Improve this Blog Post
+  
+  All our blog posts are open source. Found a typo, want to add more detail, or have a better explanation? Anyone can contribute and make this post better for everyone.
+  
+  [Edit this Post on GitHub](https://github.com/oneuptime/blog/tree/master/posts/2026-03-17-switch-slirp4netns-pasta-podman) [Contributing Guidelines](https://github.com/oneuptime/blog)
+  
+  [Open source](https://github.com/oneuptime/oneuptime)
+  
+  ## OneUptime is the Open-Source   Observability Platform
+  
+  Your complete reliability stack unified: infrastructure monitoring, incident management, status pages, and APM. Open-source and self-hostable.
+  
+  
+  [Get started for free](https://oneuptime.com/accounts/register) [Request a demo](https://oneuptime.com/enterprise/demo)
+  
+  [Status Page\\
+  \\
+  Real-time status updates](https://oneuptime.com/product/status-page) [Incidents\\
+  \\
+  Detect and resolve fast](https://oneuptime.com/product/incident-management) [Monitoring\\
+  \\
+  Monitor any resource](https://oneuptime.com/product/monitoring) [On-Call\\
+  \\
+  Smart alert routing](https://oneuptime.com/product/on-call) [Maintenance\\
+  \\
+  Plan & communicate downtime](https://oneuptime.com/product/scheduled-maintenance) [Logs\\
+  \\
+  Fastest log ingest and search](https://oneuptime.com/product/logs-management) [Metrics\\
+  \\
+  Performance insights](https://oneuptime.com/product/metrics) [Traces\\
+  \\
+  End-to-end distributed tracing](https://oneuptime.com/product/traces) [Exceptions\\
+  \\
+  Catch and fix bugs early](https://oneuptime.com/product/exceptions) [Workflows\\
+  \\
+  Automate any process](https://oneuptime.com/product/workflows) [Dashboards\\
+  \\
+  Visualize all your data](https://oneuptime.com/product/dashboards) [Kubernetes\\
+  \\
+  Monitor K8s clusters](https://oneuptime.com/product/kubernetes) [Profiles\\
+  \\
+  CPU & memory profiling](https://oneuptime.com/product/profiles)
+  
+  [AI Agent\\
+  \\
+  Automatically detect, diagnose, and resolve incidents with AI-powered root cause analysis and code fixes.](https://oneuptime.com/product/ai-agent)
+  --- End Content ---

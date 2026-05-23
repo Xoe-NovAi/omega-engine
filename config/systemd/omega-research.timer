@@ -1,0 +1,13 @@
+[Unit]
+Description=Omega Background Researcher — 20-Minute Research Cycle
+Documentation=https://github.com/Xoe-NovAi/omega-engine
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=20min
+RandomizedDelaySec=3min
+Persistent=true
+AccuracySec=1min
+
+[Install]
+WantedBy=timers.target

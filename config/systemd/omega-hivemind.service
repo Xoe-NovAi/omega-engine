@@ -1,0 +1,16 @@
+[Unit]
+Description=Omega Hivemind MCP Server
+After=network.target
+
+[Service]
+Type=simple
+User=arcana-novai
+WorkingDirectory=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+ExecStart=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.venv/bin/python mcp/omega-hivemind/server.py
+Restart=always
+Environment=OMEGA_MCP_TRANSPORT=sse
+Environment=OMEGA_MCP_PORT=8102
+Environment=OMEGA_MCP_HOST=127.0.0.1
+
+[Install]
+WantedBy=default.target

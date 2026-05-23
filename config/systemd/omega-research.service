@@ -1,0 +1,38 @@
+# 🔱 Omega Engine — Background Research Service
+# ⬡ OMEGA ⬡ SOPHIA ⬡ autonomous ⬡ research ⬡ WORKER
+#
+# Runs one autonomous research cycle. Timer-triggered or manual.
+# See omega-research.timer for the 15-minute schedule.
+
+[Unit]
+Description=Omega Background Researcher — Sovereign Research Worker
+Documentation=https://github.com/Xoe-NovAi/omega-engine
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/Documents/Xoe-NovAi/omega-engine/.venv/bin/python3 -m omega.workers.background_researcher.run
+WorkingDirectory=%h/Documents/Xoe-NovAi/omega-engine
+Environment=PYTHONPATH=%h/Documents/Xoe-NovAi/omega-engine/src
+EnvironmentFile=%h/Documents/Xoe-NovAi/omega-engine/.env
+Environment=OMEGA_ENV=production
+StandardOutput=journal
+StandardError=journal
+
+# Memory protection
+MemoryMax=512M
+MemoryHigh=384M
+
+# Auto-restart on failure (catch crashes)
+Restart=on-failure
+RestartSec=30s
+
+# Security hardening — less strict to allow .env loading
+ProtectSystem=full
+ReadWritePaths=%h/Documents/Xoe-NovAi/omega-engine/data %h/Documents/Xoe-NovAi/omega-engine/docs
+PrivateTmp=yes
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=default.target
