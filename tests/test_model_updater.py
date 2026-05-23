@@ -179,7 +179,7 @@ async def test_concurrency_guard(worker):
         tg.start_soon(slow_cycle)
         await anyio.sleep(0.01)  # ensure first cycle acquires lock
         # Second cycle should be blocked
-        assert worker._running.locked() is True
+        assert worker._running_lock.locked() is True
 
 
 @pytest.mark.anyio
