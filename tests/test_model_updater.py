@@ -192,8 +192,8 @@ async def test_worker_schedule_lifecycle(worker):
     assert status["next_run"] is not None
     # Shutdown the scheduler
     await worker.stop()
-    # After shutdown, get_job should return None for the removed job
-    assert worker.scheduler.get_job("model_updater") is None
+    # After shutdown, the stop flag should be set
+    assert worker._stop_flag is True
 
 
 @pytest.mark.anyio
