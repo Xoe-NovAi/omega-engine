@@ -40,18 +40,18 @@
 
 | ID | Title | File:Line | Report | Status |
 |----|-------|-----------|--------|--------|
-| C-ARCH-005 | `EntityRegistry.add()` calls `scaffold_workspace()` sync from async callers — 7 blocking I/O calls | `entity_registry.py:150-154` | Initial | 🔴 UNFIXED |
-| C-ARCH-006 | `WADLoader.load_wad()` public method vulnerable to path traversal | `wad_loader.py:64` | Initial | 🔴 UNFIXED |
-| C-ARCH-007 | Tautological `iris_entity` assignment (`A or A` — both sides identical) | `oracle.py:141` | Initial | 🔴 UNFIXED |
-| C-ARCH-008 | Belial's model `gemma-4-31b` may silently route to cloud (no local GGUF) | `entities.yaml` (belial) | Initial | 🔴 UNFIXED |
-| C-ARCH-009 | No concurrent write protection on `EntityRegistry._save()` — race condition | `entity_registry.py:195-212` | Initial | 🔴 UNFIXED |
-| C-WS-001 | `ENTITIES_DATA_DIR` resolved at import time, ignores `OMEGA_DATA_DIR` env var | `entity_workspace.py:21` | Deep Dive 1 | 🔴 UNFIXED |
-| C-WS-003 | `update_soul()` not thread-safe with `scaffold_workspace()` — race on os.replace | `entity_workspace.py:97-117` | Deep Dive 1 | 🔴 UNFIXED |
-| C-HIER-003 | `hierarchy.py._load()` uses synchronous `open()` — AnyIO violation | `hierarchy.py:22-25` | Deep Dive 1 | 🔴 UNFIXED |
-| C-GNOSIS-001 | `GnosisProxy.transfer_store` unbounded `Dict[str, Any]` — OOM vector | `gnosis_proxy.py:22` | Deep Dive 1 | 🔴 UNFIXED |
-| C-GNOSIS-002 | `discover_tools()` declared `async` with zero `await` — false contract | `gnosis_proxy.py:26` | Deep Dive 1 | 🔴 UNFIXED |
+| C-ARCH-005 | `EntityRegistry.add()` calls `scaffold_workspace()` sync from async callers — 7 blocking I/O calls | `entity_registry.py:150-154` | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
+| C-ARCH-006 | `WADLoader.load_wad()` public method vulnerable to path traversal | `wad_loader.py:64` | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
+| C-ARCH-007 | Tautological `iris_entity` assignment (`A or A` — both sides identical) | `oracle.py:141` | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
+| C-ARCH-008 | Belial's model `gemma-4-31b` may silently route to cloud (no local GGUF) | `entities.yaml` (belial) | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
+| C-ARCH-009 | No concurrent write protection on `EntityRegistry._save()` — race condition | `entity_registry.py:195-212` | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
+| C-WS-001 | `ENTITIES_DATA_DIR` resolved at import time, ignores `OMEGA_DATA_DIR` env var | `entity_workspace.py:21` | Deep Dive 1 | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
+| C-WS-003 | `update_soul()` not thread-safe with `scaffold_workspace()` — race on os.replace | `entity_workspace.py:97-117` | Deep Dive 1 | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
+| C-HIER-003 | `hierarchy.py._load()` uses synchronous `open()` — AnyIO violation | `hierarchy.py:22-25` | Deep Dive 1 | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
+| C-GNOSIS-001 | `GnosisProxy.transfer_store` unbounded `Dict[str, Any]` — OOM vector | `gnosis_proxy.py:22` | Deep Dive 1 | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
+| C-GNOSIS-002 | `discover_tools()` declared `async` with zero `await` — false contract | `gnosis_proxy.py:26` | Deep Dive 1 | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
 
-**High total**: 10 findings across 7 files. All UNFIXED.
+**High total**: 10 findings across 7 files. **All 10 FIXED (🟢 Phase 1).**
 
 ---
 
@@ -118,7 +118,7 @@
 
 | Mandate | Violations Found | Status |
 |---------|-----------------|--------|
-| **AnyIO Absolute** | C-ARCH-005, C-HIER-003, C-WS-001 (partial) | ⚠️ IMPROVING: 3 remaining (was 5 — 2 fixed in Phase 0) |
+| **AnyIO Absolute** | C-ARCH-011 (voice/entity conflation) | ⚠️ PARTIAL: 1 violation |
 | **Engine-Stack Firewall** | C-ARCH-011 (voice/entity conflation) | ⚠️ PARTIAL: 1 violation |
 | **Iris Constant** | None found | ✅ PASSING |
 | **Sequentiality** | (was C-HIER-001 — fixed in Phase 0: hierarchy YAML is now traversed) | ✅ PASSING — C-HIER-001 resolved |
