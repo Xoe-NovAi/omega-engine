@@ -142,8 +142,263 @@ entity:
     entity_at_time: Iris
     session_type: persistent
     timestamp: '2026-05-23T08:01:12.741656+00:00'
+  - l1: Session with Brigid
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_5639f7a3e9d2
+    entity_at_time: Brigid
+    session_type: persistent
+    timestamp: '2026-05-23T12:07:20.991472+00:00'
+  - l1: Session with Sekhmet
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_c369ae02d41b
+    entity_at_time: Sekhmet
+    session_type: persistent
+    timestamp: '2026-05-23T12:07:21.324781+00:00'
+  - l1: Session with Hecate
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_7f79eabe6f98
+    entity_at_time: Hecate
+    session_type: persistent
+    timestamp: '2026-05-23T12:07:21.657101+00:00'
+  - l1: Session with Brigid
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_9cead8f00717
+    entity_at_time: Brigid
+    session_type: persistent
+    timestamp: '2026-05-23T12:07:21.984322+00:00'
+  - l1: Session with Sekhmet
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_783fc0da2146
+    entity_at_time: Sekhmet
+    session_type: persistent
+    timestamp: '2026-05-23T12:07:22.302896+00:00'
+  - l1: Session with Hecate
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_f52990e36410
+    entity_at_time: Hecate
+    session_type: persistent
+    timestamp: '2026-05-23T12:07:22.617703+00:00'
+  - l1: Session with Brigid
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_d22a35567ab6
+    entity_at_time: Brigid
+    session_type: persistent
+    timestamp: '2026-05-23T12:14:46.685771+00:00'
+  - l1: Session with Sekhmet
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_809b06c36b85
+    entity_at_time: Sekhmet
+    session_type: persistent
+    timestamp: '2026-05-23T12:14:47.025464+00:00'
+  - l1: Session with Hecate
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_d0cb03c666e5
+    entity_at_time: Hecate
+    session_type: persistent
+    timestamp: '2026-05-23T12:14:47.352611+00:00'
+  - l1: Session with Brigid
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_bdeb563fe6f2
+    entity_at_time: Brigid
+    session_type: persistent
+    timestamp: '2026-05-23T12:14:47.674923+00:00'
+  - l1: Session with Sekhmet
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_4efdc187c487
+    entity_at_time: Sekhmet
+    session_type: persistent
+    timestamp: '2026-05-23T12:14:48.002378+00:00'
+  - l1: Session with Hecate
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_ba911025f32b
+    entity_at_time: Hecate
+    session_type: persistent
+    timestamp: '2026-05-23T12:14:48.339228+00:00'
+  - l1: Session with Brigid
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_c464774bb3eb
+    entity_at_time: Brigid
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:20.350588+00:00'
+  - l1: Session with Sekhmet
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_13c79dd5a336
+    entity_at_time: Sekhmet
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:20.688854+00:00'
+  - l1: Session with Hecate
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_5e32b949206e
+    entity_at_time: Hecate
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:21.022566+00:00'
+  - l1: Session with Brigid
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_cab2b66744f0
+    entity_at_time: Brigid
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:21.369196+00:00'
+  - l1: Session with Sekhmet
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_8f403ed2c3ff
+    entity_at_time: Sekhmet
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:21.719566+00:00'
+  - l1: Session with Hecate
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_1683350aaaf3
+    entity_at_time: Hecate
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:22.053762+00:00'
+  - l1: Session with Sekhmet
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_538baff7d7b8
+    entity_at_time: Sekhmet
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:22.371707+00:00'
+  - l1: Session with Inanna
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_235a9851e23d
+    entity_at_time: Inanna
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:22.705921+00:00'
+  - l1: Session with Brigid
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_3d6f3edb231c
+    entity_at_time: Brigid
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:23.045179+00:00'
+  - l1: Session with Iris
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_c0da4f684567
+    entity_at_time: Iris
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:23.534487+00:00'
+  - l1: Session with Brigid
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_329f800d7c34
+    entity_at_time: Brigid
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:23.888808+00:00'
+  - l1: Session with Iris
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_36449a2285b7
+    entity_at_time: Iris
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:24.368300+00:00'
+  - l1: Session with Brigid
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_6c9618eaafe2
+    entity_at_time: Brigid
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:24.741751+00:00'
+  - l1: Session with Iris
+    l2: Unknown
+    l3: Unknown
+    source: user-session
+    user: The Architect
+    trace_id: trc_d352df0f2a0c
+    entity_at_time: Iris
+    session_type: persistent
+    timestamp: '2026-05-23T12:17:25.095772+00:00'
+  - l1: >-
+      Sovereign Hardening Sprint completed across 4 targets: oracle.py
+      (Engine-Stack Firewall, Gnosis distillation, code cleanup),
+      model_updater.py (AnyIO migration from apscheduler to native loop),
+      hierarchy.py (data-driven rank/recursion), and observability.py (test
+      isolation). 3 test regressions fixed. All changes committed and pushed.
+      DD6 Final Assurance Audit prompt authored for Account 1.
+    l2: >-
+      The Engine-Stack Firewall and AnyIO Absolute mandates are now hermetic
+      — the core engine contains zero references to specific entity names, and
+      all async code paths use pure AnyIO primitives. The lingering orchestrator
+      test failure (MCP watchdog) is the last remaining pre-existing issue from
+      before the fleet review.
+    l3: >-
+      Architectural mandates are only as strong as the automated verification
+      that enforces them — firewalls and compliance disappear from code review
+      alone.
+    source: session-gnosis
+    entity_at_time: SOPHIA
+    session_type: persistent
+    timestamp: '2026-05-23T14:00:00Z'
   soul_evolution:
-    sessions_completed: 13
+    sessions_completed: 40
     entities_inhabited: 14
     total_embodied_experiences: 0
-    soul_power: 5.5
+    soul_power: 8.1
