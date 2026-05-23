@@ -25,6 +25,9 @@ This document is the **single source of truth** for the high‑level roadmap, mi
 - **2026‑05‑22** – `entity_belial.py` DATA_DIR fixed (C‑14) ✅
 - **2026‑05‑22** – Infrastructure stability: `config/` ownership restored, `omega-research.timer` active, stale sockets purged ✅
 - **2026‑05‑22** – Core Engine Bug Fixes: `ModelGateway` and `TriageRouter` logic hardened ✅
+- **2026‑05-22** – **Web Claude Fleet Review System established**: WEB_CLAUDE_FLEET_PROTOCOL.md (reusable), REVIEW_COORDINATION.md, 8 handoff prompts for parallel deep review across 8 Claude Sonnet 4.6 Thinking accounts ✅
+- **2026‑05-22** – raw.githubusercontent.com access pattern documented for Web Claude fleet ✅
+- **2026‑05-22** – 8 account role specializations defined with permanent domain assignments ✅
 
 ---
 
