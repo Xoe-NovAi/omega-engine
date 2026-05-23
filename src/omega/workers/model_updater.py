@@ -16,8 +16,7 @@ from typing import Dict, List, Optional
 
 import anyio
 import httpx
-from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from apscheduler.triggers.cron import CronTrigger
+from typing import Dict, List, Optional
 
 from omega.observability import ObservabilityEngine, EventType
 from omega.oracle.model_gateway import ModelGateway
@@ -64,59 +63,63 @@ class ModelUpdaterWorker:
         self.observability = observability
         self.guard = guard
         self.cfg = config
-        self.scheduler = AsyncIOScheduler()
+        self.stop_event = anyio.Event()
         self.db_path = Path("docs/research/model_db/CURRENT_MODELS.json")
         self.audit_dir = Path("data/audit/model_updater")
         self.audit_dir.mkdir(parents=True, exist_ok=True)
         self.lock = anyio.Lock()           # protects DB writes
-        self._running = anyio.Lock()       # guards against concurrent cycles
+        self._running_lock = anyio.Lock() # guards against concurrent cycles
 
     # ── Lifecycle ────────────────────────────────────────────────────────
 
     async def start(self) -> None:
-        """Schedule the periodic job and start the APScheduler."""
+        """Start the background update loop."""
         if not self.cfg.get("enabled", True):
             logger.info("ModelUpdaterWorker disabled by config.")
             return
 
-        trigger = CronTrigger.from_crontab(self.cfg["schedule"], timezone="UTC")
-        self.scheduler.add_job(
-            self.run_update_cycle,
-            trigger=trigger,
-            id="model_updater",
-            name="Gemma-4-31B Model Research Cycle",
-            replace_existing=True,
-        )
-        self.scheduler.start()
         trace_id = str(uuid.uuid4())
         self.observability.log_event(
             EventType.WORKER_START,
             trace_id,
-            {"event": "model_updater_started", "schedule": self.cfg["schedule"]},
+            {"event": "model_updater_started", "schedule": self.cfg.get("schedule", "0 * * * *")},
         )
-        job = self.scheduler.get_job("model_updater")
-        logger.info(f"ModelUpdaterWorker started. Next run: {job.next_run_time}")
+        
+        # Launch the loop as a background task
+        anyio.create_task_group().start_soon(self._main_loop)
+        logger.info(f"ModelUpdaterWorker loop started with schedule: {self.cfg.get('schedule', '0 * * * *')}")
+
+    async def _main_loop(self) -> None:
+        """Periodic loop that triggers the update cycle."""
+        while not self.stop_event.is_set():
+            try:
+                await self.run_update_cycle()
+                # Simple interval sleep (e.g., 1 hour). 
+                # For true cron, we would calculate the delta to the next trigger.
+                await anyio.sleep(3600) 
+            except Exception as e:
+                logger.error(f"ModelUpdaterWorker loop error: {e}")
+                await anyio.sleep(60) # Backoff on error
 
     async def stop(self) -> None:
         """Stop the scheduled worker gracefully."""
-        if self.scheduler.get_job("model_updater"):
-            self.scheduler.remove_job("model_updater")
-        self.scheduler.shutdown(wait=False)
-        logger.info("ModelUpdaterWorker stopped.")
+        self.stop_event.set()
+        logger.info("ModelUpdaterWorker stop signal sent.")
 
     # ── Single cycle ─────────────────────────────────────────────────────
 
     async def run_update_cycle(self) -> None:
         """One full research → diff → update cycle.
-
+        
         Uses a concurrency guard to prevent overlapping runs.
         """
         # Acquire the running lock; if already in a cycle, skip silently.
-        if not self._running.locked():
-            async with self._running:
+        if not self._running_lock.locked():
+            async with self._running_lock:
                 await self._run_full_cycle()
         else:
             logger.warning("Model update cycle already in progress. Skipping.")
+
 
     async def _run_full_cycle(self) -> None:
         trace_id = str(uuid.uuid4())
@@ -432,10 +435,9 @@ All confidence scores must be >= {self.cfg.get("confidence_minimum", 0.85)}."""
 
     def get_status(self) -> Dict:
         """Return current scheduler status."""
-        job = self.scheduler.get_job("model_updater")
         return {
             "enabled": self.cfg.get("enabled", True),
             "schedule": self.cfg.get("schedule"),
-            "next_run": str(job.next_run_time) if job else None,
-            "paused": bool(job and job.next_run_time is None),
+            "running": not self.stop_event.is_set(),
+            "next_run": "Interval-based (approx 1h)",
         }

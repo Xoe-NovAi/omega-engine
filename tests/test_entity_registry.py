@@ -95,3 +95,40 @@ def test_entity_to_dict():
     assert d["pillars"] == ["P0: Test"]
     # Fields with None should not be included
     assert "element" not in d
+
+
+@pytest.mark.asyncio
+async def test_entity_registry_concurrent_add():
+    """Stress test concurrent add() calls to ensure lock prevents corruption."""
+    import anyio
+    
+    # Use a temporary config file
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
+        f.write("entities: {}")
+        config_path = f.name
+    
+    try:
+        registry = EntityRegistry(config_path=config_path)
+        
+        async def add_entity(i):
+            ent = Entity(
+                name=f"Entity_{i}",
+                domains=[f"domain_{i}"],
+                model="qwen3-1.7b",
+                personality=f"Personality {i}",
+            )
+            await registry.add(ent)
+        
+        async with anyio.create_task_group() as tg:
+            for i in range(50):
+                tg.start_soon(add_entity, i)
+        
+        assert registry.count() == 50
+        
+        # Verify file integrity
+        with open(config_path, "r") as f:
+            data = yaml.safe_load(f)
+            assert len(data["entities"]) == 50
+            
+    finally:
+        Path(config_path).unlink(missing_ok=True)

@@ -63,6 +63,9 @@ data/mining_queue/
 data/library/
 data/embeddings/
 
+# ── Test Entity Artifacts (created by EntityRegistry test scaffold) ─
+data/entities/entity_*/
+
 # ── Session Artifacts ───────────────────────────────────────────────
 OCCE-*.md
 open-code-*.md

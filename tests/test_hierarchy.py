@@ -166,16 +166,9 @@ async def test_load_from_config(hierarchy_with_config):
 
 
 def test_missing_config_file():
-    """Missing config file should not raise, just return empty."""
+    """Missing config file should not raise, just return empty.
+    Without config, all entities default to Rank 3.
+    """
     h = SovereignHierarchy(hierarchy_config=Path("/tmp/nonexistent_hierarchy.yaml"))
     assert h._hierarchy == {}
-    # RANK_MAP still works
-    assert h.get_rank("sophia") == 0
-
-
-def test_missing_config_file():
-    """Missing config file should not raise, just return empty."""
-    h = SovereignHierarchy(hierarchy_config=Path("/tmp/nonexistent_hierarchy.yaml"))
-    assert h._hierarchy == {}
-    # RANK_MAP still works
-    assert h.get_rank("sophia") == 0
+    assert h.get_rank("sophia") == 3

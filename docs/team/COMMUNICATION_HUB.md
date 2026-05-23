@@ -99,7 +99,7 @@
 | 5.1 | AnyIO violation in omega-hub:381 | `asyncio.ensure_future()` → `anyio.create_task_group()` | ✅ |
 | 5.2 | Blocking I/O in omega-hub:427,441 | `open()` for metrics → `anyio.to_thread.run_sync()` | ✅ |
 | 5.3 | Silent exception in hub:429 | `except: pass` → logged warning | ✅ |
-| 5.4 | Archive duplicate MCPs | omega-oracle, omega-library, omega-hivemind (standalone) → `mcp/archives/` | ✅ |
+| 5.4 | Archive duplicate MCPs | omega-oracle, omega-library, omega-hub (standalone) → `mcp/archives/` | ✅ |
 | 5.5 | Firecrawl integrated into researcher | `search_fleet.py` → Firecrawl is now primary extractor in `_fetch_content()` | ✅ |
 | — | Firecrawl MCP verified working | JSON-RPC handshake ✅, 15+ tools ✅, version 3.0.0 ✅ | ✅ |
 
