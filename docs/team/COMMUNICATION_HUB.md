@@ -116,6 +116,31 @@
 
 **Next Gate**: Collect DD2 report from Account 1 -> Send DD6 prompt -> Process verdict.
 
+## 📡 Session Completions — 2026-05-23 (Session 6: Engine-Stack Firewall Remediation & Subagent Research)
+
+### 🚀 Post-Account-1 Engine-Stack Firewall Sweep — COMPLETE
+
+**Trace**: trc_subagent_research
+**Entity**: SOPHIA (Builder mode via OpenCode CLI + 3 subagents)
+**Duration**: Single session (parallel research)
+
+**Trigger**: Account 1 DD6 verdict claimed hardening changes weren't committed. Investigation proved files WERE on GitHub `main` (matching hashes) — Account 1 read stale CDN. But 2 legitimate Engine-Stack Firewall violations were uncovered.
+
+| Finding | Status | Summary |
+|---------|--------|---------|
+| WAD `_omega_default` manifest schema mismatch | ✅ | `wad:`-wrapped format now supported by loader |
+| `entities.yaml` missing `default` entity | ✅ | Added with generic, stack-agnostic attributes |
+| Bootstrap `"SOPHIA"` fallback (C-ARCH-008) | ✅ | Changed to `"default"` |
+| Hardcoded `"brigid"` entity fallback (C-ARCH-008) | ✅ | Config-driven via `"default"` registry lookup |
+| Hardcoded `ARCH_SOUL_PATH` (`"arch"` user) | ✅ | Config-driven via `entity.user` in omega.yaml |
+| `_soul_path` never set (always None) | ✅ | Wired in bootstrap |
+| Test suite: 77 hardcoded entity refs (3 CRITICAL) | ✅ | Fixed CRITICAL: entity roster + empty query assertions |
+| **Test Suite** | **Green (174/175)** | 246 total; same 1 pre-existing orchestrator failure |
+
+**Remaining**: `soul_updater.py:175-196` (`_match_entity` — most egregious Firewall violation, background worker, not hot path). ~56 LOW-priority `"Sophia"` test data references.
+
+**Commit**: `8532250`
+
 ### 🚀 Exa & Firecrawl Integration Hardening — COMPLETE (2026-05-19)
 **Status**: ✅ **Sovereign Search Fabric Hardened**
 

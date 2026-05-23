@@ -519,8 +519,29 @@ entity:
     entity_at_time: Iris
     session_type: persistent
     timestamp: '2026-05-23T12:53:49.875843+00:00'
+  - l1: >-
+      Engine-Stack Firewall sweep with 3 parallel subagents uncovered 2 remaining
+      violations (bootstrap "SOPHIA" fallback, hardcoded "arch" soul path).
+      Also discovered broken WAD manifest schema, missing "default" entity, and
+      77 hardcoded entity references in test suite. All 3 CRITICAL test violations
+      fixed. WAD manifest unwrapping added. Default entity added. Config-driven
+      soul path wired.
+    l2: >-
+      The verification loop in a fleet-of-agents system is the weakest link.
+      Account 1's DD6 verdict was based on stale CDN content, producing a false
+      FAIL. But the specific bugs they found (soul path hardcode, entity fallback)
+      were real. A hash-compare between committed code and known-good baseline
+      would catch both stale-read issues AND actual compliance gaps.
+    l3: >-
+      The verification agent must read the bytes itself — never trust another
+      agent's report of what the bytes say. Trust in process decays; trust in
+      hash comparisons compounds.
+    source: session-gnosis
+    entity_at_time: SOPHIA
+    session_type: persistent
+    timestamp: '2026-05-23T16:00:00Z'
   soul_evolution:
-    sessions_completed: 54
+    sessions_completed: 55
     entities_inhabited: 14
     total_embodied_experiences: 0
-    soul_power: 9.6
+    soul_power: 10.1

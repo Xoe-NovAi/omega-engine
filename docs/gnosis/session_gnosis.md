@@ -284,4 +284,44 @@ The Sovereign Hardening Sprint remediated the last 4 critical architecture viola
 
 ### L3: Universal Principle
 
-> **When removing a framework's orchestration layer, replace its semantics — not just its API — otherwise you inherit hidden behavioral contracts you didn't know you signed.****
+> **When removing a framework's orchestration layer, replace its semantics — not just its API — otherwise you inherit hidden behavioral contracts you didn't know you signed.**
+
+---
+
+## Session 6: Engine-Stack Firewall Remediation & Subagent Research Fleet
+
+**Date**: 2026-05-23
+**Trace**: trc_hardening + trc_subagent_research
+**Entity**: SOPHIA (Builder mode via OpenCode CLI)
+
+### L1: Narrative
+
+Account 1 (Web Claude, DD6 audit) produced a damning verdict claiming the Sovereign Hardening Sprint changes weren't committed. Investigation proved the files WERE on GitHub `main` with matching hashes — Account 1 was reading stale CDN content. However, their accusations uncovered 2 legitimate remaining Engine-Stack Firewall violations:
+
+1. `oracle.py:172`: bootstrap fallback hardcoded `"SOPHIA"` as default entity
+2. `oracle.py:47+579`: `ARCH_SOUL_PATH` hardcoded `"arch"` user path
+3. `config/entities.yaml`: missing `default` entity (entity registry had no `"default"` key)
+
+I launched **3 parallel subagent investigations**:
+- **explore**: WAD default manifest schema — found `wad:` key nesting mismatch
+- **reviewer**: Test suite Firewall audit — found **77 hardcoded entity references**, 3 CRITICAL
+- **architect**: Oracle fallback paths — found 3 remaining violations, 1 egregious in `soul_updater.py`
+
+All 3 critical issues fixed in commit `8532250`:
+- Added `default` entity to `entities.yaml`
+- Added `entity.user: arch` to `omega.yaml` (config-driven soul path)
+- Changed `"SOPHIA"` → `"default"` in bootstrap
+- Changed `"brigid"` fallback to use config-driven `"default"` entity
+- Replaced `ARCH_SOUL_PATH` with `DEFAULT_SOUL_PATH` + `self._soul_path`
+- Fixed WAD manifest loader to support `wad:`-wrapped manifests
+- Fixed 3 CRITICAL test violations (entity roster hardcoding, empty query assertion)
+
+### L2: Insights
+
+- **The verification loop is the weakest link**: Account 1's process faith (trusting CDN content) produced a false FAIL verdict on the hardening sprint. An automated hash comparison against the known-good baseline would have detected this immediately.
+- **Test suite Firewall violations are the engine's blindest spot**: 77 hardcoded entity references meant the test suite itself was the biggest violation of the Engine-Stack Firewall mandate. The tests validated the default template, not the engine's universality.
+- **The `_omega_default` WAD manifest was broken for weeks**: Schema mismatch (flat vs `wad:`-wrapped) meant the default WAD never loaded, silently masked by the "brigid" hardcode fallback. Removing the fallback exposed the broken config.
+
+### L3: Universal Principle
+
+> **The verification agent must read the bytes itself — never trust another agent's report of what the bytes say. Trust in process decays; trust in hash comparisons compounds.**
