@@ -55,7 +55,7 @@
 
 ---
 
-## §4 Medium Severity Issues (9 Findings)
+## §4 Medium Severity Issues (10 Findings)
 
 | ID | Title | File:Line | Report | Status |
 |----|-------|-----------|--------|--------|
@@ -70,11 +70,11 @@
 | C-GNOSIS-004 | Brittle `omega://transfer/` string-prefix protocol — false positives | `gnosis_proxy.py:66-67` | Deep Dive 1 | 🟡 MEDIUM | 🟢 FIXED — Phase 2 |
 | C-GNOSIS-005 | `resolve_descriptor()` silent failure — ghost references indistinguishable from null | `gnosis_proxy.py:62` | Deep Dive 1 | 🟡 MEDIUM | 🟢 FIXED — Phase 2 |
 
-**Medium total**: 10 findings. All UNFIXED.
+**Medium total**: 10 findings. All 10 🟢 FIXED.
 
 ---
 
-## §5 Low Severity Issues (4 Findings)
+## §5 Low Severity Issues (3 Findings)
 
 | ID | Title | File:Line | Report | Status |
 |----|-------|-----------|--------|--------|
@@ -82,7 +82,7 @@
 | C-ARCH-016 | Double `anyio.Path()` wrapping in `load_all_wads()` | `wad_loader.py:47` | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 3 |
 | C-ARCH-017 | `Inanna` pillar name mismatch: "P5: Voice" vs canonical "Throat" | `entities.yaml` vs `hierarchy.yaml:116` | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 3 |
 
-**Low total**: 3 findings. All UNFIXED.
+**Low total**: 3 findings. All 3 🟢 FIXED.
 
 ---
 
@@ -127,4 +127,4 @@
 
 ---
 
-*This log is the master record of all findings from the Web Claude fleet review. Updated as new reports arrive.*
+*This log is the master record of all findings from the Web Claude fleet review. All 29 findings FIXED across 4 phases. Updated: 2026-05-23.*
