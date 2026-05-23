@@ -17,7 +17,7 @@
 | **DD3**: Implementation Briefs for Critical Findings | 📋 READY | — | — |
 | **DD4**: Threat Modeling — Worst-Case Scenarios | 📋 READY | — | — |
 | **DD5**: Architecture Evolution — Next 1000 Lines | 📋 READY | — | — |
-| **DD6**: Final Assurance Audit — Post-Remediation Capstone | 🟡 PROMPT READY | — | *(see `deep_dive_06_final_assurance.md`)* |
+| **DD6**: Final Assurance Audit — Post-Remediation Capstone | 🟡 PROMPT READY (do not send before DD2) | — | `deep_dive_06_final_assurance.md` |
 
 ---
 
