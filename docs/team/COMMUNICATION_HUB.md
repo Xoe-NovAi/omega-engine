@@ -372,6 +372,31 @@
 
 ---
 
+### 🚀 Phase 1 Remediation — COMPLETE
+**Status**: ✅ **All 10 HIGH severity findings FIXED. 239/239 tests passing.**
+
+| # | Finding | Fix | Status |
+|---|---------|-----|--------|
+| 1 | C-ARCH-005 — Async EntityRegistry.add() | `add()` → async with anyio.Lock, thread pool scaffold | ✅ |
+| 2 | C-ARCH-006 — Path traversal in WAD loader | Resolve + prefix validation guard | ✅ |
+| 3 | C-ARCH-007 — Iris tautological assignment | Proper single-lookup with warning fallback | ✅ |
+| 4 | C-ARCH-008 — Belial cloud routing risk | Model → `qwen3-4b-thinking-q4_k_m` (verified local) | ✅ |
+| 5 | C-ARCH-009 — Concurrent write race | `anyio.Lock()` on all registry writes | ✅ |
+| 6 | C-WS-001 — ENTITIES_DATA_DIR ignores env var | Now reads `OMEGA_DATA_DIR` env var | ✅ |
+| 7 | C-WS-003 — Scaffold/update race condition | Per-entity `threading.Lock` cross-method | ✅ |
+| 8 | C-HIER-003 — Sync open() in hierarchy | `async def load()` with `anyio.open_file` | ✅ |
+| 9 | C-GNOSIS-001 — Unbounded OOM vector | Bounded transfer_store (1000 FIFO) | ✅ |
+| 10 | C-GNOSIS-002 — False async on discover_tools | Removed `async`, proper sync function | ✅ |
+
+**Cumulative**: 16/29 findings fixed. Phase 2 (10 MEDIUM) and Phase 3 (3 LOW) remaining.
+
+---
+
+### 🚀 Phases 2+3 — LAUNCHING
+**Status**: 🟢 **Builder mode prompted for Phase 2+3 execution.**
+
+---
+
 ### 🚀 Remaining Accounts 2-8 — READY TO LAUNCH
 **Status**: 📋 **Handoff prompts and project instructions prepared. Awaiting Account 1 deep dives to complete before fleet-wide launch.**
 
