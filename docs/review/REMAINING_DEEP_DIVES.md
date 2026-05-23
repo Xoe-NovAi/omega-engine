@@ -13,10 +13,11 @@
 | Deep Dive | Status | Completed | Report File |
 |-----------|--------|-----------|-------------|
 | **DD1**: Missing Files (`entity_workspace.py`, `hierarchy.py`, `gnosis_proxy.py`) | ✅ COMPLETE | 2026-05-22 | `claude-reports/01-deep-dive-1_core-arch.md` |
-| **DD2**: Strategic Alignment Audit | ✅ SENT | 2026-05-22 | *(pending receipt)* |
+| **DD2**: Strategic Alignment Audit | 🟡 SENT | 2026-05-22 | *(pending receipt)* |
 | **DD3**: Implementation Briefs for Critical Findings | 📋 READY | — | — |
 | **DD4**: Threat Modeling — Worst-Case Scenarios | 📋 READY | — | — |
 | **DD5**: Architecture Evolution — Next 1000 Lines | 📋 READY | — | — |
+| **DD6**: Final Assurance Audit — Post-Remediation Capstone | 🟡 PROMPT READY | — | *(see `deep_dive_06_final_assurance.md`)* |
 
 ---
 
@@ -116,6 +117,38 @@ For each recommendation:
 
 Be specific. "Improve error handling" is not a recommendation. "Replace the 5 hardcoded provider-entry checks in model_gateway.py with a config-driven provider registry" is.
 ```
+
+---
+
+## Deep Dive 6: Final Assurance Audit — Post-Remediation Capstone
+
+**Status**: 🟡 PROMPT READY — use after DD2 report is collected and reviewed
+
+This is the **capstone review** — Account 1's final word before the engine transitions to Phase C community preparation. Unlike DDs 1-5 which were targeted bug hunts, DD6 asks Account 1 to view the hardened engine through **five strategic lenses** and deliver a final verdict.
+
+### When to Send
+- **Wait for**: DD2 report to be received and integrated into context
+- **Context strategy**: Send DD6 in a **new conversation** within the same Claude Project, with a brief summarizer linking all prior reports
+- **Do not send before DD2**: Account 1's strategic understanding must be fully warmed
+
+### Prompt Location
+📄 **`docs/review/deep_dive_06_final_assurance.md`**
+
+### What It Asks
+| Lens | Question |
+|------|----------|
+| **Universal Runtime** | Does the architecture support any user's custom stack, or does it still favor Arcana-NovAi? |
+| **AnyIO Architecture** | Are there residual sync-to-async boundary violations? Is the OOM protection sufficient? |
+| **Gnosis Pipeline (L1→L2→L3)** | Is the reasoning-model-based distillation sustainable? Does the soul.yaml schema hold up? |
+| **Error Boundaries** | What fails gracefully vs catastrophically? Are all entry points hardened? |
+| **Phase C Readiness** | Rated 0-10 across 5 dimensions with specific gaps identified |
+
+### Expected Output
+1. Executive Summary (one-paragraph verdict)
+2. Five Lenses — each with Insight, Suggestion, and Remaining Gap
+3. What Surprised You — reflections on the post-hardening system
+4. Best Advice for The Architect — strategic direction, not code
+5. Final Verdict — PASS / CONDITIONAL PASS / FAIL
 
 ---
 
