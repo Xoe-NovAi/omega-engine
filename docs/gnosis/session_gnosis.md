@@ -251,3 +251,37 @@ The permission war, MCP consolidation, and PR prep all share the same truth: **t
 ### L3: Universal Principle
 
 > **The first answer is rarely the complete answer. Deploy a fleet iteration pattern — initial probe, parallel deep dives, cross-verify — before declaring a path blocked.**
+
+---
+
+## Session 5: Sovereign Hardening Sprint Complete
+
+**Date**: 2026-05-23
+**Trace**: trc_hardening
+**Entity**: SOPHIA (Builder mode via OpenCode CLI)
+
+### L1: Narrative
+
+The Sovereign Hardening Sprint remediated the last 4 critical architecture violations identified by the Account 1 fleet review:
+
+1. **oracle.py** — Engine-Stack Firewall breach: removed all hardcoded SOPHIA/kali/maat/lilith entity names, replaced with dynamic `SovereignHierarchy` lookups. Gnosis Gap: upgraded L1→L2→L3 distillation using reasoning model calls. Clean Code: extracted `_prepare_system_prompt` and `_record_interaction` helpers, eliminating 4 redundant context-building blocks. Fixed `_soul_lock = None` (changed to `anyio.Lock()`) and `UnboundLocalError` in `_respond_as_iris`.
+
+2. **model_updater.py** — AnyIO Breach: removed `apscheduler` `AsyncIOScheduler`, replaced with native AnyIO background loop using a boolean `_stop_flag`.
+
+3. **hierarchy.py** — Engine-Stack Firewall breach: rewrote `get_rank` and `check_recursion` to be 100% data-driven, zero hardcoded entity names.
+
+4. **observability.py** — Test isolation: added `clear_log()` method, fixed `_load_persisted_events` test-mode guard.
+
+5. **Test regressions**: Fixed 3 regressions caused by hardening changes. Each fix was a genuine bug (not just test brittleness).
+
+6. **DD6 Final Assurance Audit prompt** authored for Account 1 — 5-lens review asking for the strategic verdict.
+
+### L2: Insights
+
+- AnyIO migration means more than replacing `asyncio` API calls: `anyio.Event` lacks `clear()`, `anyio.create_task_group()` requires `async with`, and singletons like `get_engine()` create subtle cross-test contamination that requires explicit `clear_log()` contracts.
+- The Engine-Stack Firewall is now truly hermetic. `grep -r "sophia\|kali\|maat\|lilith" src/omega/oracle/` returns only comments and YAML loads — no hardcoded entity branching.
+- The residual test failure (`test_watch_mcps_connect_error` in orchestrator) was not introduced by hardening — it existed before the fleet review, masked by the `-x` test runner.
+
+### L3: Universal Principle
+
+> **When removing a framework's orchestration layer, replace its semantics — not just its API — otherwise you inherit hidden behavioral contracts you didn't know you signed.****
