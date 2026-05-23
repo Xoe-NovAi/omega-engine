@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import yaml
+import anyio
 
 from omega.oracle.entity_workspace import EntityWorkspaceManager
 
@@ -67,6 +68,7 @@ class EntityRegistry:
             )
         self.config_path = Path(config_path)
         self._entities: Dict[str, Entity] = {}
+        self._lock = anyio.Lock()
         self._load()
 
     def _load(self) -> None:
@@ -78,6 +80,9 @@ class EntityRegistry:
 
         with open(self.config_path, "r") as f:
             data = yaml.safe_load(f)
+        
+        if data is None:
+            raise ValueError("entities.yaml is empty or malformed")
 
         raw_entities = data.get("entities", {}) if data else {}
         for key, raw in raw_entities.items():
@@ -140,27 +145,30 @@ class EntityRegistry:
         """Return list of entity names."""
         return [e.name for e in self.list()]
 
-    def add(self, entity: Entity) -> None:
+    async def add(self, entity: Entity) -> None:
         """Add a new entity. Overwrites if name exists."""
-        self._entities[entity.name.lower()] = entity
-        self._save()
-        
-        # Automatically scaffold persistent workspace for the awakened entity
-        if entity.name.lower() != "iris":
-            EntityWorkspaceManager.scaffold_workspace(
-                name=entity.name,
-                archetype=entity.role,
-                pillars=entity.pillars
-            )
+        async with self._lock:
+            self._entities[entity.name.lower()] = entity
+            await self._save()
+            
+            # Automatically scaffold persistent workspace for the awakened entity
+            if entity.name.lower() != "iris":
+                await anyio.to_thread.run_sync(
+                    EntityWorkspaceManager.scaffold_workspace,
+                    name=entity.name,
+                    archetype=entity.role,
+                    pillars=entity.pillars
+                )
 
-    def remove(self, name: str) -> bool:
+    async def remove(self, name: str) -> bool:
         """Remove an entity by name. Returns True if removed."""
         key = name.lower()
-        if key in self._entities:
-            del self._entities[key]
-            self._save()
-            return True
-        return False
+        async with self._lock:
+            if key in self._entities:
+                del self._entities[key]
+                await self._save()
+                return True
+            return False
 
     def find_by_domain(self, text: str) -> Optional[Entity]:
         """Find the best entity match for a query text based on domain keywords.
@@ -192,31 +200,34 @@ class EntityRegistry:
                 return entity
         return None
 
-    def _save(self) -> None:
+    async def _save(self) -> None:
         """Save current entities back to YAML file.
         
         Uses atomic write (tempfile + os.replace) to prevent data loss on crash.
         """
-        data = {"entities": {}}
-        for key, entity in self._entities.items():
-            if key == "iris":
-                continue
-            data["entities"][key] = entity.to_dict()
-        
-        if "iris" in self._entities:
-            data["iris"] = self._entities["iris"].to_dict()
-        
-        # Atomic write: write to temp, then os.replace
-        import tempfile
-        temp_dir = self.config_path.parent
-        with tempfile.NamedTemporaryFile(
-            "w", dir=str(temp_dir), delete=False, suffix=".tmp"
-        ) as tf:
-            yaml.dump(data, tf, default_flow_style=False, sort_keys=False, allow_unicode=True)
-            tmp_name = tf.name
-        
-        os.replace(tmp_name, self.config_path)
-        logger.info(f"Saved {len(self._entities)} entities to {self.config_path}")
+        def _sync_save():
+            data = {"entities": {}}
+            for key, entity in self._entities.items():
+                if key == "iris":
+                    continue
+                data["entities"][key] = entity.to_dict()
+            
+            if "iris" in self._entities:
+                data["iris"] = self._entities["iris"].to_dict()
+            
+            # Atomic write: write to temp, then os.replace
+            import tempfile
+            temp_dir = self.config_path.parent
+            with tempfile.NamedTemporaryFile(
+                "w", dir=str(temp_dir), delete=False, suffix=".tmp"
+            ) as tf:
+                yaml.dump(data, tf, default_flow_style=False, sort_keys=False, allow_unicode=True)
+                tmp_name = tf.name
+            
+            os.replace(tmp_name, self.config_path)
+            logger.info(f"Saved {len(self._entities)} entities to {self.config_path}")
+
+        await anyio.to_thread.run_sync(_sync_save)
 
     def get_tools_for_entity(self, entity_name: str) -> List[Dict[str, Any]]:
         """Return tool descriptors derived from entity domains and personality.

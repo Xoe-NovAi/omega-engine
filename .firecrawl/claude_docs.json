@@ -1,0 +1,2446 @@
+Understanding Claude's personalization features
+  URL: https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features
+  Claude offers several ways to personalize your experience: profile instructions, project instructions, and styles.
+
+  --- Content ---
+  [Skip to main content](https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features#main-content)
+  
+  # Understanding Claude's personalization features
+  
+  Updated over 3 weeks ago
+  
+  Table of contents
+  
+  [Instructions for Claude](https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features#h_56148f4c09)[Project instructions](https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features#h_8678318f05)[Styles](https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features#h_401eba89a0)[Choosing the right feature](https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features#h_e9ebfc79d2)
+  
+  Claude offers several ways to personalize your experience: profile instructions, project instructions, and styles. Each serves a different purpose in helping Claude better understand and meet your needs.
+  
+  ## Instructions for Claude
+  
+  Instructions are account-wide settings that help Claude understand your general instructions that Claude should consider in responses.
+  
+  To set your instructions:
+  
+  1. Click your initials in the lower left corner.
+  
+  2. Select "Settings."
+  
+  3. Under "Instructions for Claude," describe your instructions, such as:
+  
+  
+  
+  
+  
+     - Your preferred approaches or methods
+  
+     - Common terms or concepts you use
+  
+     - Typical scenarios you encounter
+  
+     - General communication instructions
+  
+  
+  Any instructions you add here will be applied to all of your conversations with Claude.
+  
+  * * *
+  
+  ## Project instructions
+  
+  Project instructions help Claude understand the specific context and requirements for a particular project. These instructions only apply to chats within that project.
+  
+  Projects are available to all users, including those with free Claude accounts. Free users can create a maximum of five projects.
+  
+  Use project instructions when you want to:
+  
+  - Provide project-specific context
+  
+  - Set guidelines for a particular workflow
+  
+  - Establish requirements for a specific set of tasks
+  
+  - Define roles or perspectives Claude should adopt within the project
+  
+  
+  Project instructions are particularly useful when you're working on focused tasks or need Claude to maintain consistent context across multiple conversations within the same project.
+  
+  For detailed information on using projects, see our article on [creating and managing projects](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects).
+  
+  * * *
+  
+  ## Styles
+  
+  Styles customize how Claude communicates with you. Unlike profile instructions and project instructions which provide context and guidance, styles focus specifically on how Claude formats and delivers its responses.
+  
+  Use styles when you want to:
+  
+  - Adjust the tone and format of Claude's responses.
+  
+  - Switch between different communication styles (e.g., concise for quick answers, explanatory for learning).
+  
+  - Create custom communication patterns based on your own writing.
+  
+  
+  For detailed information on using styles, see our article on [configuring and using styles](https://support.claude.com/en/articles/10181068-configuring-and-using-styles).
+  
+  * * *
+  
+  ## Choosing the right feature
+  
+  - Use profile instructions for account-wide settings that affect all your interactions with Claude.
+  
+  - Use project instructions when you need specific guidance or context for a particular project (paid plans only).
+  
+  - Use styles when you want to customize how Claude formats and delivers its responses.
+  
+  
+  You can use these features independently or in combination to create the most effective experience for your needs.
+  
+  * * *
+  
+  Related Articles
+  
+  [Import and export your memory from Claude](https://support.claude.com/en/articles/12123587-import-and-export-your-memory-from-claude) [Organize your tasks with projects in Claude Cowork](https://support.claude.com/en/articles/14116274-organize-your-tasks-with-projects-in-claude-cowork) [Organization instructions in Claude for Government](https://support.claude.com/en/articles/14503675-organization-instructions-in-claude-for-government) [Claude Code cheatsheet](https://support.claude.com/en/articles/14553413-claude-code-cheatsheet) [Get started with Claude Design](https://support.claude.com/en/articles/14604416-get-started-with-claude-design)
+  
+  Did this answer your question?
+  
+  😞😐😃
+  
+  Table of contents
+  
+  [Instructions for Claude](https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features#h_56148f4c09)[Project instructions](https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features#h_8678318f05)[Styles](https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features#h_401eba89a0)[Choosing the right feature](https://support.claude.com/en/articles/10185728-understanding-claude-s-personalization-features#h_e9ebfc79d2)
+  --- End Content ---
+
+Collaborate with Claude on Projects - Anthropic
+  URL: https://www.anthropic.com/news/projects
+  In addition, you can define custom instructions for each Project to further tailor Claude's responses, including instructing Claude to use a ...
+
+  --- Content ---
+  Product
+  
+  # Collaborate with Claude on Projects
+  
+  Jun 25, 2024
+  
+  ![Illustration of individuals collaborating around Claude logo](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimages%2F4zrzovbb%2Fwebsite%2F06b448dbf07818caf8ac1db37f0165bea8c9a410-2880x1620.png&w=3840&q=75)
+  
+  Our vision for Claude has always been to create AI systems that work alongside people and meaningfully enhance their workflows. As a step in this direction, [Claude.ai](http://claude.ai/redirect/website.v1.07207d65-3556-40e2-b5e9-38342b1743b4) Pro and Team users can now organize their chats into Projects, bringing together curated sets of knowledge and chat activity in one place—with the ability to make their best chats with Claude viewable by teammates. With this new functionality, Claude can enable idea generation, more strategic decision-making, and exceptional results.
+  
+  Projects are available on [Claude.ai](http://claude.ai/redirect/website.v1.07207d65-3556-40e2-b5e9-38342b1743b4) for all Pro and Team customers, and can be powered by [Claude 3.5 Sonnet](https://www.anthropic.com/news/claude-3-5-sonnet), our latest release which outperforms its peers on a wide variety of benchmarks. Each project includes a 200K context window, the equivalent of a 500-page book, so users can add all of the relevant documents, code, and insights to enhance Claude’s effectiveness.
+  
+  ## Avoid the cold start problem
+  
+  Projects allow you to ground Claude’s outputs in your internal knowledge—be it style guides, codebases, interview transcripts, or past work. This added context enables Claude to provide expert assistance across tasks, from writing emails like your marketing team to writing SQL queries like a data analyst.
+  
+  ![App screen showing a user uploading docs to Claude.ai](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimages%2F4zrzovbb%2Fwebsite%2Fcc048db08b3503fa6d713b2b9e3352e8345c8b79-1920x1080.png&w=3840&q=75)
+  
+  In addition, you can define custom instructions for each Project to further tailor Claude’s responses, including instructing Claude to use a more formal tone or answer questions from the perspective of a specific role or industry. With Projects, you can get started much faster and extend your skills further for any task.
+  
+  ![App screen showing custom instructions](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimages%2F4zrzovbb%2Fwebsite%2F9e34412901722019c5a15062544734b3d78fcbc4-1920x1080.png&w=3840&q=75)
+  
+  ## Create side-by-side with Claude
+  
+  Artifacts help you better work with Claude by helping you see, edit, and build with Claude. Simply ask Claude to generate content like code snippets, text documents, graphics, diagrams, or website designs, and Artifacts appear in a dedicated window alongside your conversation.
+  
+  Artifacts especially enhance Claude’s coding capabilities for developers, offering a larger code window and live previews for frontends that streamline reviews. Join the feature preview for Artifacts in Claude.ai via the account menu on the left-side panel.
+  
+  ![App screen that shows the Artifacts panel alongside the user chat](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimages%2F4zrzovbb%2Fwebsite%2Fc5823949d9350145ce2fda51acbc7076f2139cd0-1920x1080.png&w=3840&q=75)
+  
+  ## Spark inspiration through sharing
+  
+  Claude Team users can also share snapshots of their best conversations with Claude into your team’s shared project activity feed. Activity feeds help each teammate get inspired around different ways to work with Claude, and helps the entire team uplevel their skills working with AI.
+  
+  ![App screen showing shared chats within a Project](https://www.anthropic.com/_next/image?url=https%3A%2F%2Fwww-cdn.anthropic.com%2Fimages%2F4zrzovbb%2Fwebsite%2F9aabd215e1104ea914218eaf759b3deefc02a956-1920x1080.png&w=3840&q=75)
+  
+  Sharing work products that were co-created with Claude can improve innovation in areas like product development and research, where bringing together organizational knowledge from across the company can produce higher-quality outputs.
+  
+  Shareable Projects in Claude - YouTube
+  
+  Tap to unmute
+  
+  ## Customer spotlight: North Highland
+  
+  At North Highland, a leading change and transformation consultancy, hundreds of employees across consulting, business development, and marketing teams use Claude to work better. From writing proposals to analyzing complex documents like 10-Ks, teams use Claude to enhance and scale their expert services.
+  
+  > The Claude Team plan is transforming our way of working at North Highland. Claude is a truly exceptional writer that has helped our team complete content creation and analysis tasks up to 5x faster than before—turning what was once two weeks of writing and research into minutes of work. With Claude, we’re future-proofing our workforce, finding more excitement in daily challenges, and leaping into the future of AI-assisted collaboration and creativity.
+  
+  Luka Anic, Senior Director of Technical AI Program and Product Manager at North Highland
+  
+  ## The future of work with Claude
+  
+  These latest features around shared knowledge and collaboration integrate Claude into your existing team processes, enabling you to save time and elevate your work. By harnessing Claude’s accuracy and advanced coding and writing capabilities, Projects can amplify your team’s potential. Additionally, as part of our commitment to user privacy, any data or chats shared within Projects will not be used to train our generative models without a user’s explicit consent.
+  
+  In the coming months, we’ll continue making Claude easier to use while expanding the types of project knowledge you can bring to Claude via native integrations with popular applications and tools. We’re excited to see how your team works with Claude.
+  
+  [Share on Twitter](https://twitter.com/intent/tweet?text=https://www.anthropic.com/news/projects)[Share on LinkedIn](https://www.linkedin.com/shareArticle?mini=true&url=https://www.anthropic.com/news/projects)
+  
+  ## Related content
+  
+  ### Widening the conversation on frontier AI
+  
+  [Read more](https://www.anthropic.com/news/widening-conversation-ai)
+  
+  ### KPMG integrates Claude across its core business and workforce of more than 276,000 in strategic alliance
+  
+  KPMG and Anthropic announce a global alliance, with Claude integrated into KPMG's Digital Gateway platform and available to all 276,000+ employees.
+  
+  [Read more](https://www.anthropic.com/news/anthropic-kpmg)
+  
+  ### Anthropic acquires Stainless
+  
+  Anthropic is acquiring Stainless, a leader in SDKs and MCP server tooling.
+  
+  [Read more](https://www.anthropic.com/news/anthropic-acquires-stainless)
+  
+  Collaborate with Claude on Projects \ Anthropic
+  --- End Content ---
+
+Getting started with projects in Claude.ai - YouTube
+  URL: https://www.youtube.com/watch?v=GJ5jTgcbRHA
+  Discover how to use Projects in Claude to organize your work with persistent context and custom instructions. This tutorial walks you ...
+
+  --- Content ---
+  Error 403 (Forbidden)!!1
+  
+  **403.** That’s an error.
+  
+  We're sorry, but you do not have access to this page. That’s all we know.
+  
+  Back
+  
+  
+  [![](https://www.youtube.com/watch?v=GJ5jTgcbRHA)](https://www.youtube.com/ "YouTube Home")
+  
+  Skip navigation
+  
+  Search
+  
+  
+  Search with your voice
+  
+  [Sign in](https://accounts.google.com/ServiceLogin?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252Fwatch%253Fv%253DGJ5jTgcbRHA&hl=en&ec=65620)
+  
+  Getting started with projects in Claude.ai
+  
+  Tap to unmute
+  
+  2x
+  
+  ## Getting started with projects in Claude.ai
+  
+  Anthropic 738,994 views 5 months ago
+  
+  Copy link
+  
+  Info
+  
+  Shopping
+  
+  If playback doesn't begin shortly, try restarting your device.
+  
+  •
+  
+  You're signed out
+  
+  Videos you watch may be added to the TV's watch history and influence TV recommendations. To avoid this, cancel and sign in to YouTube on your computer.
+  
+  CancelConfirm
+  
+  Up next
+  
+  Live
+  
+  Upcoming
+  
+  CancelPlay Now
+  
+  Share
+  
+  Include playlist
+  
+  An error occurred while retrieving sharing information. Please try again later.
+  
+  0:00
+  
+  [Next (SHIFT+n)](https://www.youtube.com/watch?v=wZeOwqmSw84 "Next (SHIFT+n)")
+  
+  0:00 / 7:07
+  
+  Live
+  
+  •Watch full video
+  
+  •
+  
+  •
+  
+  [47:53\\
+  Set Up Claude Cowork better than 99% of peopleSystems Made Better and Better Creating395K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=pl90LATQlHI) [20:42\\
+  5 Mind Blowing Claude Cowork Uses CasesPaul J Lipsky185K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=hW4FHg4-Ss0) [15:13\\
+  Learn 97% of Claude in Under 16 MinutesDan Martell132K views • 1 day agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=wZeOwqmSw84) [Storchennest Live Webcam in Bad Salzungen, ThüringenStadtverwaltung Bad Salzungen2.1K watching • 3 months agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=Dr5zebXpO-M) [10:46\\
+  How Anthropic Engineers ACTUALLY Prompt Claude CodeAustin Marchese345K views • 7 days agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=qOvc9IUKEIc) [19:13\\
+  Full Claude Tutorial: Beginner to Advanced in 19 MinutesFuturepedia554K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=WSPChlfxJyA) [33:11\\
+  FULL Claude Projects Guide For Beginners in 2026! (Become a PRO)AI Foundations52K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=fOnKo_Hole8) [12:17\\
+  How Claude Code’s Creator Starts EVERY ProjectAustin Marchese228K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=KWrsLqnB6vA) [6:52\\
+  The 6 Claude Features to Get You Ahead of 99% of People using AITristen O'Brien1M views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=KBgZsV-0Fdo) [22:51\\
+  Claude Cowork Fundamentals In 22 MinutesTina Huang125K views • 12 days agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=uGwDuvSqgYI) [10:53\\
+  I Took All 7 Anthropic Courses in One Weekend (Honest Review)Jas Wong184K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=qUQbU7h4RoE) [2:12:07\\
+  God Says:"DO THIS BEFORE TOMORROW ARRIVES"/God Message Now/God MessageGod's Love Unending83K views • 14 hours agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=P3N33Tht2oI)
+  
+  # Getting started with projects in Claude.ai
+  
+  [![](https://yt3.ggpht.com/ux-GXUpB4PkI-qXVOpj9gGEiCkytT0Q78ka4srlxOm_Y3m1gEh5qy8Vu6vTjGSDztMT0NybtC7I=s48-c-k-c0x00ffffff-no-rj)](https://www.youtube.com/@anthropic-ai)
+  
+  [Anthropic](https://www.youtube.com/@anthropic-ai)
+  
+  
+  Anthropic
+  
+  
+  626K subscribers
+  
+  Subscribe
+  
+  Subscribed
+  
+  3.4K
+  
+  Share
+  
+  Save
+  
+  Download
+  
+  Download
+  
+  738K views5 months ago
+  
+  738,994 views • Dec 2, 2025
+  
+  Discover how to use Projects in Claude to organize your work with persistent context and custom instructions. This tutorial walks you through creating your first project, adding a knowledge base, setting up project instructions, and collaborating with team members. Learn how Projects can help you maintain continuity…...more
+  
+  ...more
+  
+  How this was made
+  
+  Auto-dubbed
+  
+  Audio tracks for some languages were automatically generated. [Learn more](https://support.google.com/youtube/answer/15569972?hl=en)
+  
+  Follow along using the transcript.
+  
+  Show transcript
+  
+  [Videos](https://www.youtube.com/channel/UCrDwWp7EBBv4NwvScIpBDOA/videos)[About](https://www.youtube.com/channel/UCrDwWp7EBBv4NwvScIpBDOA/about)
+  
+  Show less
+  
+  # Getting started with projects in Claude.ai
+  
+  738,994 views738K views
+  
+  Dec 2, 2025
+  
+  3.4K
+  
+  Share
+  
+  Save
+  
+  Download
+  
+  Download
+  
+  Getting started with projects in Claude.ai
+  
+  3.4KLikes
+  
+  738,994Views
+  
+  Dec 22025
+  
+  Discover how to use Projects in Claude to organize your work with persistent context and custom instructions. This tutorial walks you through creating your first project, adding a knowledge base, setting up project instructions, and collaborating with team members. Learn how Projects can help you maintain continuity across conversations and tailor Claude's responses to your specific needs—from brand guidelines to research initiatives to content creation workflows.…...more
+  
+  ...more
+  Show less
+  
+  How this was made
+  
+  Auto-dubbed
+  
+  Audio tracks for some languages were automatically generated. [Learn more](https://support.google.com/youtube/answer/15569972?hl=en)
+  
+  Follow along using the transcript.
+  
+  Show transcript
+  
+  [Videos](https://www.youtube.com/channel/UCrDwWp7EBBv4NwvScIpBDOA/videos)[About](https://www.youtube.com/channel/UCrDwWp7EBBv4NwvScIpBDOA/about)
+  
+  [![](https://i.ytimg.com/vi/pl90LATQlHI/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLA8qTNvoaFyRsKHD1d0K3bnx36-og)\\
+  \\
+  47:53](https://www.youtube.com/watch?v=pl90LATQlHI)
+  
+  ### [Set Up Claude Cowork better than 99% of people](https://www.youtube.com/watch?v=pl90LATQlHI)
+  
+  Systems Made Better and Better Creating
+  
+  395K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/hW4FHg4-Ss0/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLB0za9f1PDa09GwxhqqX5Wh9isXMQ)\\
+  \\
+  20:42](https://www.youtube.com/watch?v=hW4FHg4-Ss0)
+  
+  ### [5 Mind Blowing Claude Cowork Uses Cases](https://www.youtube.com/watch?v=hW4FHg4-Ss0)
+  
+  Paul J Lipsky
+  
+  185K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/wZeOwqmSw84/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDrcb0pEmdFSgZbyGtKPfuN2bI3UA)\\
+  \\
+  15:13](https://www.youtube.com/watch?v=wZeOwqmSw84&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [Learn 97% of Claude in Under 16 Minutes](https://www.youtube.com/watch?v=wZeOwqmSw84&pp=ugUEEgJlbg%3D%3D)
+  
+  Dan Martell
+  
+  132K views • 1 day ago
+  
+  New
+  
+  [![](https://i.ytimg.com/vi/Dr5zebXpO-M/hqdefault.jpg?v=814a&sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLA6fI4kv2mV4yf166DHon9G_ickVw)\\
+  \\
+  LIVE](https://www.youtube.com/watch?v=Dr5zebXpO-M)
+  
+  ### [Storchennest Live Webcam in Bad Salzungen, Thüringen](https://www.youtube.com/watch?v=Dr5zebXpO-M)
+  
+  Stadtverwaltung Bad Salzungen
+  
+  2.1K watching
+  
+  [![](https://i.ytimg.com/vi/qOvc9IUKEIc/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLAZRfL2F7ufG4GzxSmrmhhp37wQZA)\\
+  \\
+  10:46](https://www.youtube.com/watch?v=qOvc9IUKEIc)
+  
+  ### [How Anthropic Engineers ACTUALLY Prompt Claude Code](https://www.youtube.com/watch?v=qOvc9IUKEIc)
+  
+  Austin Marchese
+  
+  345K views • 7 days ago
+  
+  [![](https://i.ytimg.com/vi/WSPChlfxJyA/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLBVBg84ZocO8lXD1qFqwtDj_jBiNQ)\\
+  \\
+  19:13](https://www.youtube.com/watch?v=WSPChlfxJyA&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [Full Claude Tutorial: Beginner to Advanced in 19 Minutes](https://www.youtube.com/watch?v=WSPChlfxJyA&pp=ugUEEgJlbg%3D%3D)
+  
+  Futurepedia
+  
+  554K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/fOnKo_Hole8/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLCbDuFBlOibcf6YXUjRefcMCfwa5w)\\
+  \\
+  33:11](https://www.youtube.com/watch?v=fOnKo_Hole8&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [FULL Claude Projects Guide For Beginners in 2026! (Become a PRO)](https://www.youtube.com/watch?v=fOnKo_Hole8&pp=ugUEEgJlbg%3D%3D)
+  
+  AI Foundations
+  
+  52K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/KWrsLqnB6vA/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDpFLaZcXOMqPDn919ovdwDPE2kxQ)\\
+  \\
+  12:17](https://www.youtube.com/watch?v=KWrsLqnB6vA)
+  
+  ### [How Claude Code’s Creator Starts EVERY Project](https://www.youtube.com/watch?v=KWrsLqnB6vA)
+  
+  Austin Marchese
+  
+  228K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/KBgZsV-0Fdo/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLB4YeuFrer4FIJR_scdlWIc0TgmaA)\\
+  \\
+  6:52](https://www.youtube.com/watch?v=KBgZsV-0Fdo)
+  
+  ### [The 6 Claude Features to Get You Ahead of 99% of People using AI](https://www.youtube.com/watch?v=KBgZsV-0Fdo)
+  
+  Tristen O'Brien
+  
+  1M views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/uGwDuvSqgYI/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDDgFgMEYhH2tGXMnOqXPtZ3hKXOg)\\
+  \\
+  22:51](https://www.youtube.com/watch?v=uGwDuvSqgYI&pp=ugUHEgVlbi1VUw%3D%3D)
+  
+  ### [Claude Cowork Fundamentals In 22 Minutes](https://www.youtube.com/watch?v=uGwDuvSqgYI&pp=ugUHEgVlbi1VUw%3D%3D)
+  
+  Tina Huang
+  
+  125K views • 12 days ago
+  
+  [![](https://i.ytimg.com/vi/qUQbU7h4RoE/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDAvZAGJXOVkFvDfKKvKMarWGJSvw)\\
+  \\
+  10:53](https://www.youtube.com/watch?v=qUQbU7h4RoE&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [I Took All 7 Anthropic Courses in One Weekend (Honest Review)](https://www.youtube.com/watch?v=qUQbU7h4RoE&pp=ugUEEgJlbg%3D%3D)
+  
+  Jas Wong
+  
+  184K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/P3N33Tht2oI/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLC_1WS1-AkrsOceqFNo65KfDCkvaQ)\\
+  \\
+  2:12:07](https://www.youtube.com/watch?v=P3N33Tht2oI)
+  
+  ### [God Says:"DO THIS BEFORE TOMORROW ARRIVES"/God Message Now/God Message](https://www.youtube.com/watch?v=P3N33Tht2oI)
+  
+  God's Love Unending
+  
+  83K views • 14 hours ago
+  
+  New
+  
+  [![](https://i.ytimg.com/vi/X7YMMyd2Qnk/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLB2OSZNpqUUjB8ujQo0CZf3ki8S_Q)\\
+  \\
+  9:51](https://www.youtube.com/watch?v=X7YMMyd2Qnk)
+  
+  ### [Claude Design Basics \| Master 95% in 10 Minutes](https://www.youtube.com/watch?v=X7YMMyd2Qnk)
+  
+  Tristen O'Brien
+  
+  190K views • 3 weeks ago
+  
+  [![](https://i.ytimg.com/vi/E0Q96IKXx6Q/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLBY4oGphcukReKW1jJybaV3KZjkjg)\\
+  \\
+  39:58](https://www.youtube.com/watch?v=E0Q96IKXx6Q)
+  
+  ### [Ex-Google Exec: How to Position Yourself Now Before the Next AI Phase (2026–2027) \| Mo Gawdat](https://www.youtube.com/watch?v=E0Q96IKXx6Q)
+  
+  Silicon Valley Girland Mo Gawdat
+  
+  930K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/L2CXXmDG-mM/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLA6_X4hIl-tRR0qLBTzRvzenYHsJg)\\
+  \\
+  46:49](https://www.youtube.com/watch?v=L2CXXmDG-mM&pp=ugUEEgJlbtIHCQkGCwGHKiGM7w%3D%3D)
+  
+  ### [12 Ways to Use Claude So Well It Feels Illegal (Tutorial)](https://www.youtube.com/watch?v=L2CXXmDG-mM&pp=ugUEEgJlbtIHCQkGCwGHKiGM7w%3D%3D)
+  
+  Sabrina Ramonov 🍄
+  
+  258K views • 2 months ago
+  
+  [![](https://i.ytimg.com/vi/ZeWfksNXlbU/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDMSC8_RDjckwYAMeKZcFiDSqJhAw)\\
+  \\
+  18:29](https://www.youtube.com/watch?v=ZeWfksNXlbU&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [Claude COWORK Clearly Explained (& how to use it for beginners)](https://www.youtube.com/watch?v=ZeWfksNXlbU&pp=ugUEEgJlbg%3D%3D)
+  
+  Eliot Prince
+  
+  955K views • 3 months ago
+  
+  [![](https://i.ytimg.com/vi/9OsKjq_rVXc/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLBPJaq2T0NpTEYyBF-twqcAPm4cxw)\\
+  \\
+  9:23](https://www.youtube.com/watch?v=9OsKjq_rVXc&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [How to Use Claude for Excel (Step-by-Step Tutorial)](https://www.youtube.com/watch?v=9OsKjq_rVXc&pp=ugUEEgJlbg%3D%3D)
+  
+  Kevin Stratvert
+  
+  64K views • 2 weeks ago
+  
+  [![](https://i.ytimg.com/vi/zvCOmAzwa3Y/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLBA93qUuLaLyH3S2dfSXtIRbLlLcg)\\
+  \\
+  8:56](https://www.youtube.com/watch?v=zvCOmAzwa3Y&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [New Claude Cowork Projects Explained in 9 Minutes](https://www.youtube.com/watch?v=zvCOmAzwa3Y&pp=ugUEEgJlbg%3D%3D)
+  
+  The AI Advantage
+  
+  47K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/22R3UKaTWKo/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLCTK5XAvqMOhrwGy_Q_xOkGeE6HQQ)\\
+  \\
+  19:17](https://www.youtube.com/watch?v=22R3UKaTWKo&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [How to Use Claude for Excel - Complete Beginner Guide](https://www.youtube.com/watch?v=22R3UKaTWKo&pp=ugUEEgJlbg%3D%3D)
+  
+  Teacher's Tech
+  
+  68K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/S_oN3vlzpMw/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLCmuruxWgtTDQIKKEvhkKr4cgPfyg)\\
+  \\
+  35:26](https://www.youtube.com/watch?v=S_oN3vlzpMw)
+  
+  ### [How AI agents & Claude skills work (Clearly Explained)](https://www.youtube.com/watch?v=S_oN3vlzpMw)
+  
+  Greg Isenberg
+  
+  400K views • 1 month ago
+  --- End Content ---
+
+What project-level custom instructions do you use? : r/ClaudeAI
+  URL: https://www.reddit.com/r/ClaudeAI/comments/1e0s2vw/what_projectlevel_custom_instructions_do_you_use/
+  I created a project with this instruction: When writing a long response, use some combination of bold, italics, headers, and/or subheaders to make the text ...
+
+️ Projects & Custom Instructions: Make Claude AI Work YOUR Way
+  URL: https://www.youtube.com/watch?v=InHPVblSKGg
+  ... projects Getting Started Guide — https://support.anthropic.com/en/articles/8114491-how-do-i-get-started-with-claude-ai Free Claude 101
+
+  --- Content ---
+  🗂️ Projects & Custom Instructions: Make Claude AI Work YOUR Way
+  
+  Tap to unmute
+  
+  2x
+  
+  Copy link
+  
+  Info
+  
+  Shopping
+  
+  ![](https://i.ytimg.com/an/HGw1uT1XmqaRm-6W15-KlQ/featured_channel.jpg?v=63b9616e)
+  
+  If playback doesn't begin shortly, try restarting your device.
+  
+  •
+  
+  You're signed out
+  
+  Videos you watch may be added to the TV's watch history and influence TV recommendations. To avoid this, cancel and sign in to YouTube on your computer.
+  
+  CancelConfirm
+  
+  Up next
+  
+  Live
+  
+  Upcoming
+  
+  CancelPlay Now
+  
+  [Data Science Basics](https://www.youtube.com/channel/UCHGw1uT1XmqaRm-6W15-KlQ)
+  
+  Subscribe
+  
+  Subscribed
+  
+  Hi, I am one of the data enthusiast like you ! On this channel, I teach data science as well as recent AI trend (LLM) stuffs in the most simplest manner possible.
+  
+  Currently, video is one of the most important and go-to content type online. I aim to make Data Science Basics a go to Youtube Channel for videos surrounding data science stuffs in a practical way.
+  
+  If you find the content helpful then consider subscribing.
+  
+  For business inquiries email at: basicsdatascience@gmail.com
+  💼 Consulting: https://topmate.io/sudarshan\_koirala
+  
+  [OpenCode CRASH Course \| OPEN SOURCE AI CODING AGENT\\
+  \\
+  1:00:46](https://www.youtube.com/watch?v=WXffHkvfRpM)
+  
+  [Model Context Protocol (MCP)\\
+  \\
+  2 videos](https://www.youtube.com/watch?v=yJSX0BeMH28&list=PLz-qytj7eIWV8gnpNeGAopDFqQADPwRd-)
+  
+  Share
+  
+  Include playlist
+  
+  An error occurred while retrieving sharing information. Please try again later.
+  
+  0:00
+  
+  0:00 / 16:39
+  
+  Live
+  
+  •Watch full video
+  
+  •
+  
+  •
+  
+  Error 403 (Forbidden)!!1
+  
+  **403.** That’s an error.
+  
+  We're sorry, but you do not have access to this page. That’s all we know.
+  
+  Back
+  
+  
+  [![](https://www.youtube.com/watch?v=InHPVblSKGg)](https://www.youtube.com/)
+  
+  Search
+  --- End Content ---
+
+Claude Projects: Complete Guide + Setup Tutorial (2025)
+  URL: https://melissaonwuka.medium.com/claude-projects-complete-guide-setup-tutorial-2025-3b9a60033b59
+  Each Project maintains its own custom instructions, document library, and conversation history. According to Anthropic's documentation, Projects ...
+
+  --- Content ---
+  [Sitemap](https://melissaonwuka.medium.com/sitemap/sitemap.xml)
+  
+  [Open in app](https://play.google.com/store/apps/details?id=com.medium.reader&referrer=utm_source%3DmobileNavBar&source=post_page---top_nav_layout_nav-----------------------------------------)
+  
+  Sign up
+  
+  [Sign in](https://medium.com/m/signin?operation=login&redirect=https%3A%2F%2Fmelissaonwuka.medium.com%2Fclaude-projects-complete-guide-setup-tutorial-2025-3b9a60033b59&source=post_page---top_nav_layout_nav-----------------------global_nav------------------)
+  
+  [Medium Logo](https://medium.com/?source=post_page---top_nav_layout_nav-----------------------------------------)
+  
+  Get app
+  
+  [Write](https://medium.com/m/signin?operation=register&redirect=https%3A%2F%2Fmedium.com%2Fnew-story&source=---top_nav_layout_nav-----------------------new_post_topnav------------------)
+  
+  [Search](https://medium.com/search?source=post_page---top_nav_layout_nav-----------------------------------------)
+  
+  Sign up
+  
+  [Sign in](https://medium.com/m/signin?operation=login&redirect=https%3A%2F%2Fmelissaonwuka.medium.com%2Fclaude-projects-complete-guide-setup-tutorial-2025-3b9a60033b59&source=post_page---top_nav_layout_nav-----------------------global_nav------------------)
+  
+  ![Unknown user](https://miro.medium.com/v2/resize:fill:32:32/1*dmbNkD5D-u45r44go_cf0g.png)
+  
+  # Claude Projects: Complete Guide + Setup Tutorial (2025)
+  
+  [![Melissa Onwuka](https://miro.medium.com/v2/resize:fill:32:32/1*-sLLn2JruOfIaJf20kHpYg@2x.jpeg)](https://melissaonwuka.medium.com/?source=post_page---byline--3b9a60033b59---------------------------------------)
+  
+  [Melissa Onwuka](https://melissaonwuka.medium.com/?source=post_page---byline--3b9a60033b59---------------------------------------)
+  
+  Follow
+  
+  8 min read
+  
+  ·
+  
+  Dec 24, 2025
+  
+  50
+  
+  3
+  
+  [Listen](https://medium.com/m/signin?actionUrl=https%3A%2F%2Fmedium.com%2Fplans%3Fdimension%3Dpost_audio_button%26postId%3D3b9a60033b59&operation=register&redirect=https%3A%2F%2Fmelissaonwuka.medium.com%2Fclaude-projects-complete-guide-setup-tutorial-2025-3b9a60033b59&source=---header_actions--3b9a60033b59---------------------post_audio_button------------------)
+  
+  Share
+  
+  Press enter or click to view image in full size
+  
+  ![](https://miro.medium.com/v2/resize:fit:700/1*sRARIY-6_o6CkVUZTap_9Q@2x.jpeg)
+  
+  Photo by Anthropic
+  
+  Most AI assistants suffer from a fundamental flaw: they forget everything. Every conversation starts from scratch. You upload the same files repeatedly, explain your preferences over and over, and constantly remind the AI of your style guide. This repetitive process is exhausting and transforms AI from a productivity tool into a time-consuming burden.
+  
+  Claude Projects, launched in June 2024, addresses this problem directly. Unlike traditional AI chat interfaces, Projects creates persistent workspaces where Claude maintains context across conversations, remembers your instructions, and references your documents automatically. The feature transforms Claude from a stateless chatbot into a contextual assistant that actually remembers your work.
+  
+  This guide covers everything you need to know about Claude Projects: what it is, how it works, when to use it, and how to set it up effectively.
+  
+  ## What Is Claude Projects?
+  
+  Claude Projects creates specialized workspaces within Claude. Each Project maintains its own custom instructions, document library, and conversation history. According to [Anthropic’s documentation](https://support.claude.com/en/articles/9517075-what-are-projects), Projects function as “self-contained workspaces with their own chat histories and knowledge bases.”
+  
+  In practical terms, imagine a team member who arrives fully trained on your company’s style guide, has read all your documentation, and understands exactly how you prefer to work. A well-configured Project replicates this experience: Claude responds according to your specifications, references your materials automatically, and maintains consistency across all interactions within that workspace.
+  
+  Projects is available to all Claude users. Free accounts include 5 projects, while paid subscribers receive enhanced capabilities. Pro users ($20/month) and Team users ($25/month per person) gain access to [Retrieval Augmented Generation (RAG)](https://support.claude.com/en/articles/9517075-what-are-projects) technology, which significantly expands document capacity and improves retrieval accuracy.
+  
+  ## Why Context Persistence Matters
+  
+  While new AI features launch constantly, Claude Projects addresses a fundamental problem that most others ignore: context persistence. Current data shows that [78% of organizations](https://www.fullview.io/blog/ai-statistics) now use AI somewhere in their business, up from 55% just two years ago. However, most users still interact with AI through isolated, context-free conversations.
+  
+  The inefficiency isn’t in AI capability but in the overhead of managing it. Users repeatedly upload the same files, re-explain preferences, and re-establish context. This pattern mirrors working with an assistant who forgets everything after each conversation, requiring constant re-onboarding.
+  
+  **Projects solves this through four key mechanisms:**
+  
+  - **Persistent document access**. Upload files once and Claude references them automatically in every conversation. Style guides, codebase documentation, research papers, and other materials remain accessible without re-uploading.
+  - **Consistent instruction following**. Define formatting preferences, tone requirements, and behavioral guidelines once. Every conversation within that Project automatically follows these rules without reminders.
+  - **Organized conversation history**. Related discussions stay grouped by project. Book chapters remain in your Book Project, code reviews in your Development Project. This organization eliminates the common problem of searching through scattered chats for previous responses.
+  - **Team collaboration**. On paid plans, multiple users can access the same Project, ensuring consistent context and eliminating the need to forward prompts or share conversation links.
+  
+  These features shift the user experience from managing Claude to working with Claude, reducing administrative overhead and improving output quality.
+  
+  ## Technical Capabilities and Limitations
+  
+  Each Project supports a 200,000-token context window, roughly equivalent to [500 pages of content](https://freshvanroot.com/blog/how-to-use-claude-projects/). For paid users with RAG enabled, this capacity expands significantly while maintaining response quality across larger document collections.
+  
+  Projects accept multiple file formats: [PDF, DOCX, CSV, TXT, HTML, ODT, RTF, and EPUB.](https://freshvanroot.com/blog/how-to-use-claude-projects/) Individual files can reach 30MB, and users can upload unlimited files provided the total content remains within the context window. Additionally, Claude-generated content (code, analysis, drafts) can be added directly to the Project’s knowledge base for future reference.
+  
+  Key limitations include:
+  
+  - **Storage constraints**. Free users receive 5 projects maximum. Paid users gain additional capacity, but each Project still caps at [200,000 tokens](https://freshvanroot.com/blog/how-to-use-claude-projects/)(expandable with RAG). Exceeding these limits requires deleting older documents or creating new Projects.
+  - **Project Isolation**. Each Project operates independently. A Work Project cannot access information from a Personal Project. While this separation maintains clean contexts, it prevents cross-referencing between Projects.
+  - **Tier restrictions.** Advanced features (RAG, team sharing, expanded capacity) require Pro, Team, or Enterprise subscriptions. Free users access basic functionality only.
+  - **Conversation context limits**. While Projects preserve instructions and documents indefinitely, individual conversations still face token limits. Extended chats may compress or lose early messages, though Claude uses summarization to extend conversation length.
+  - **Manual file management.** Document updates require manual deletion of old versions and upload of new ones. No automatic synchronization exists currently.
+  
+  Understanding these constraints helps set appropriate expectations and inform effective Project design.
+  
+  ## Common Use Cases
+  
+  Projects serve diverse professional applications. The following examples demonstrate typical implementations:
+  
+  ### Content Creation and Brand Consistency
+  
+  Marketing teams upload style guides, previous successful content, and competitive analysis to dedicated Content Projects. Custom instructions specify tone (“conversational but professional”), structure (“short paragraphs”), and requirements (“always include examples”). This configuration ensures every draft maintains brand voice without manual style review, allowing editors to focus on substantive content rather than formatting compliance.
+  
+  ### Software Development
+  
+  Developers create Projects containing architecture documentation, API references, and coding standards. Instructions might specify: “Follow TypeScript conventions, explain reasoning before code, use our component structure.” With this configuration, Claude provides context-aware debugging assistance without requiring repeated explanations of the codebase structure. Integration with [Claude Code](https://www.ultralytics.com/blog/anthropics-claude-4-features-whats-new-and-improved) further enhances development workflows.
+  
+  ### Academic Research
+  
+  Researchers upload collections of papers, survey data, and interview transcripts. Instructions enforce academic citation standards and analytical rigor. Claude can then synthesize findings, identify contradictions, and detect patterns across the entire research corpus, functioning as a research assistant with comprehensive knowledge of the source material.
+  
+  ### Business Analysis
+  
+  Founders and financial teams upload financial statements, market research, and competitive analysis. As [UC Today notes](https://www.uctoday.com/unified-communications/anthropic-projects-using-claude-ai-for-project-management/), “Financial teams can share bank statements, investment reports, and budget details with Claude. The bot can then provide insights into investment strategies, financial goals, monthly budget breakdowns, and more.” This approach delivers business analysis grounded in actual company data rather than generic advice.
+  
+  ### Customer Support
+  
+  Support teams centralize product documentation, FAQs, and solution databases in shared Projects. Multiple team members access the same knowledge base, ensuring consistent, high-quality responses across the support organization. This eliminates knowledge silos and reduces dependency on specific individuals.
+  
+  ## Setup Tutorial: Creating Your First Project
+  
+  Setting up a Claude Project takes approximately five minutes. Follow this step-by-step process:
+  
+  1. **Access the Projects interface**. Open Claude and locate “Projects” in the left sidebar. Click “Create Project” or “New Project.”
+  2. **Choose a descriptive name.** Avoid generic labels like “Project 1" or “Misc.” Use specific identifiers such as “Q4 Marketing Campaign,” “Python Codebase Documentation,” or “Client Analysis: Acme Corp.” Clear naming becomes essential when managing multiple Projects.
+  3. **Write detailed custom instructions**. This step determines Project effectiveness. Avoid vague directives like “be helpful.” Instead, provide specific guidance on tone, format, and behavior.
+  
+  **Effective instruction examples:**
+  
+  > “You are assisting a startup founder. Write in plain English without buzzwords or jargon. Keep paragraphs under three sentences. Support all claims with examples or data.”
+  >
+  > “You are a senior Python developer. Follow PEP 8 standards strictly. Include comprehensive docstrings. Explain your approach before presenting code. Identify potential edge cases.”
+  >
+  > “You are a critical thinking partner, not a validator. Challenge assumptions actively. Ask clarifying questions. Point out logical inconsistencies.”
+  
+  4\. **Upload relevant documents.** Add PDFs, spreadsheets, code files, or other materials Claude should reference. The system will automatically incorporate these into every conversation. Consider adding a README file explaining each document’s purpose to reduce future confusion.
+  
+  ## Get Melissa Onwuka’s stories in your inbox
+  
+  Join Medium for free to get updates from this writer.
+  
+  Subscribe
+  
+  Subscribe
+  
+  Remember me for faster sign in
+  
+  5\. **Begin your first conversation**. Ask a question requiring the uploaded context and instructions. You should immediately notice tailored responses that reference your documents and match your specified tone without explicit prompting.
+  
+  This completes the basic setup. Your Project is now operational and configured to your specifications.
+  
+  ## Writing Effective Custom Instructions
+  
+  Custom instructions determine Project quality. Weak or vague instructions produce inconsistent results. The following guidelines ensure effective configuration:
+  
+  - **Specify exact formatting requirements**. Replace “organize your response well” with “Use this structure: Problem, Why It Matters, Solution, Example, Next Steps.” Explicit templates eliminate ambiguity.
+  - **Define tone with concrete examples**. Terms like “professional” or “casual” mean different things to different people. Instead, write: “Maintain a professional but conversational tone, similar to a knowledgeable colleague explaining concepts during lunch. Avoid corporate press release language.”
+  - **Include negative examples**. Specify what to avoid: “Do not use corporate buzzwords like ‘synergy’ or ‘leverage.’ Do not provide generic advice. Never say ‘it depends’ without explaining the relevant variables.”
+  - **Provide user context.** Information like “You are assisting a solo founder who is technical but not a designer” helps Claude calibrate detail level and terminology appropriately.
+  - **Iterate based on results.** Initial instructions rarely achieve perfection. Monitor outputs, identify weaknesses, and refine instructions accordingly. Projects are designed to evolve.
+  
+  Consider custom instructions as employee onboarding documentation. Clarity and specificity at the outset reduce ongoing management requirements.
+  
+  ## When to Use Projects vs. Regular Chats
+  
+  Not every interaction requires a Project. The following framework helps determine appropriate usage:
+  
+  **Use a Project when:**
+  
+  - Work spans multiple days or weeks
+  - You repeatedly upload the same files
+  - Consistent tone or formatting is required
+  - Multiple users need shared context (available on Team plans)
+  - Conversations frequently begin with “As we discussed previously…”
+  
+  **Use a regular chat when:**
+  
+  - Addressing one-time questions
+  - Exploring or brainstorming without constraints
+  - Seeking fresh perspective without prior context
+  - Topics are unrelated to existing Projects
+  
+  The common mistake is overusing Projects. Apply them where persistence and consistency provide value; use regular chats for everything else.
+  
+  ## The Current State of AI Adoption
+  
+  Understanding Projects’ significance requires context on current AI adoption trends. Recent data reveals rapid acceleration: 78% of organizations now use AI in at least one business function, up from 55% in 2023. Additionally, 71% use generative AI regularly, compared to 33% two years ago. More than half of U.S. employees now use AI tools for work tasks.
+  
+  The [AI market is projected to reach $1.81 trillion by 2030](https://ff.co/ai-statistics-trends-global-market/), indicating AI’s transition from experimental technology to essential infrastructure.
+  
+  However, most users still interact with AI through isolated queries rather than integrated workflows. They treat AI assistants as advanced search engines rather than collaborative tools. This usage pattern wastes time on context-setting and reduces output quality.
+  
+  Projects addresses this adoption gap by enabling persistent, context-aware assistance. As one user who has used Projects daily for months observed: “While I see huge benefits of using the feature already as a single user, it can 10x the productivity as a team.”
+  
+  Competitive advantage increasingly depends not on AI adoption itself, but on effective AI integration. Projects facilitates this integration by reducing overhead and improving consistency.
+  
+  ## Key Takeaways
+  
+  Claude Projects transforms Claude from a stateless chatbot into a contextual workspace that maintains memory across sessions. The feature preserves custom instructions, automatically references uploaded documents, and organizes related conversations within unified Projects.
+  
+  While Projects has limitations (storage caps, isolated contexts, tier restrictions), it solves a fundamental problem in AI usability: the cold start problem that requires constant re-establishment of context. This solution shifts AI interaction from administrative overhead to productive collaboration.
+  
+  For current Claude users who haven’t explored Projects, the recommendation is straightforward: create a Project this week for an active work initiative. Upload relevant documents, write specific instructions, and observe the difference in consistency and efficiency.
+  
+  Effective tools adapt to user workflows rather than forcing users to adapt to tool constraints. Claude Projects delivers this adaptability through persistent context, consistent instruction following, and organized workspace management.
+  
+  ## References
+  
+  What are projects? Claude Help Center
+  
+  Claude Projects: My Experience After Months of Daily Use
+  
+  Anthropic Projects: Using Claude AI for Project Management
+  
+  200+ AI Statistics & Trends for 2025
+  
+  AI Adoption Statistics 2025
+  
+  [Claude](https://medium.com/tag/claude?source=post_page-----3b9a60033b59---------------------------------------)
+  
+  [Anthropic Claude](https://medium.com/tag/anthropic-claude?source=post_page-----3b9a60033b59---------------------------------------)
+  
+  [Claude Ai](https://medium.com/tag/claude-ai?source=post_page-----3b9a60033b59---------------------------------------)
+  
+  [AI](https://medium.com/tag/ai?source=post_page-----3b9a60033b59---------------------------------------)
+  
+  [![Melissa Onwuka](https://miro.medium.com/v2/resize:fill:48:48/1*-sLLn2JruOfIaJf20kHpYg@2x.jpeg)](https://melissaonwuka.medium.com/?source=post_page---post_author_info--3b9a60033b59---------------------------------------)
+  
+  [![Melissa Onwuka](https://miro.medium.com/v2/resize:fill:64:64/1*-sLLn2JruOfIaJf20kHpYg@2x.jpeg)](https://melissaonwuka.medium.com/?source=post_page---post_author_info--3b9a60033b59---------------------------------------)
+  
+  Follow
+  
+  [**Written by Melissa Onwuka**](https://melissaonwuka.medium.com/?source=post_page---post_author_info--3b9a60033b59---------------------------------------)
+  
+  [64 followers](https://melissaonwuka.medium.com/followers?source=post_page---post_author_info--3b9a60033b59---------------------------------------)
+  
+  · [24 following](https://melissaonwuka.medium.com/following?source=post_page---post_author_info--3b9a60033b59---------------------------------------)
+  
+  •Technical Writer•Data Scientist•
+  
+  Follow
+  
+  [Help](https://help.medium.com/hc/en-us?source=post_page-----3b9a60033b59---------------------------------------)
+  
+  [Status](https://status.medium.com/?source=post_page-----3b9a60033b59---------------------------------------)
+  
+  [About](https://medium.com/about?autoplay=1&source=post_page-----3b9a60033b59---------------------------------------)
+  
+  [Careers](https://medium.com/jobs-at-medium/work-at-medium-959d1a85284e?source=post_page-----3b9a60033b59---------------------------------------)
+  
+  [Press](mailto:pressinquiries@medium.com)
+  
+  [Blog](https://blog.medium.com/?source=post_page-----3b9a60033b59---------------------------------------)
+  
+  [Privacy](https://policy.medium.com/medium-privacy-policy-f03bf92035c9?source=post_page-----3b9a60033b59---------------------------------------)
+  
+  [Rules](https://policy.medium.com/medium-rules-30e5502c4eb4?source=post_page-----3b9a60033b59---------------------------------------)
+  
+  [Terms](https://policy.medium.com/medium-terms-of-service-9db0094a1e0f?source=post_page-----3b9a60033b59---------------------------------------)
+  
+  [Text to speech](https://speechify.com/medium?source=post_page-----3b9a60033b59---------------------------------------)
+  
+  reCAPTCHA
+  
+  Recaptcha requires verification.
+  
+  protected by **reCAPTCHA**
+  --- End Content ---
+
+Claude's new AI superpowers - by Jeremy Caplan - Wonder Tools
+  URL: https://wondertools.substack.com/p/claudeprojects
+  Projects, which allow you to upload dozens of documents and allow for custom instructions, require Claude Pro, at $20/month. I spend that on ...
+
+  --- Content ---
+  [![Wonder Tools](https://substackcdn.com/image/fetch/$s_!0PMR!,w_40,h_40,c_fill,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com%2Fpublic%2Fimages%2Fad32f3a1-4418-454b-839e-635d60a88de0_1280x1280.png)](https://wondertools.substack.com/)
+  
+  # [![Wonder Tools](https://substackcdn.com/image/fetch/$s_!KRJN!,e_trim:10:white/e_trim:10:transparent/h_72,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fce3cf2cb-12a5-4d10-90d0-f102b6d268ec_1344x256.png)](https://wondertools.substack.com/)
+  
+  SubscribeSign in
+  
+  ![User's avatar](https://substackcdn.com/image/fetch/$s_!wnwT!,w_64,h_64,c_fill,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com%2Fpublic%2Fimages%2F71a60be2-fb37-4515-94bc-82e21a1b3269_339x433.jpeg)
+  
+  Discover more from Wonder Tools
+  
+  Wonder Tools helps you discover the most useful sites and apps
+  
+  Over 86,000 subscribers
+  
+  Subscribe
+  
+  By subscribing, you agree Substack's [Terms of Use](https://substack.com/tos), and acknowledge its [Information Collection Notice](https://substack.com/ccpa#personal-data-collected) and [Privacy Policy](https://substack.com/privacy).
+  
+  Already have an account? Sign in
+  
+  # Claude's new AI superpowers 🚀
+  
+  ### Check out a surprisingly useful new way to use AI
+  
+  [![Jeremy Caplan's avatar](https://substackcdn.com/image/fetch/$s_!wnwT!,w_36,h_36,c_fill,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com%2Fpublic%2Fimages%2F71a60be2-fb37-4515-94bc-82e21a1b3269_339x433.jpeg)](https://substack.com/@wondertools)
+  
+  [Jeremy Caplan](https://substack.com/@wondertools)
+  
+  Sep 06, 2024
+  
+  76
+  
+  5
+  
+  9
+  
+  Share
+  
+  Article voiceover
+  
+  0:00
+  
+  -11:24
+  
+  Audio playback is not supported on your browser. Please upgrade.
+  
+  **[Claude](http://claude.ai/)** has quietly become one of the most powerful AI tools. Its most surprising and useful feature launched this summer: Projects. I can now train Claude to assist me with anything I’m working on by uploading up to 500 pages of my relevant notes, files, and examples.
+  
+  Subscribe
+  
+  [Share](https://wondertools.substack.com/p/claudeprojects?utm_source=substack&utm_medium=email&utm_content=share&action=share)
+  
+  ## How to use Claude Projects
+  
+  **Step 1. Upload contextual materials.** After initiating a new project I can provide examples of my past work, outlines, notes, interview transcripts, past feedback, or whatever else might help ensure the relevance and usefulness of AI replies. Acceptable file types include pdf, docx, csv, txt, html, odt, rtf and epub, or pasted-in text.
+  
+  **Note on privacy.** Anthropic, which operates Claude, doesn’t train its models on the material you upload or your prompts. Here’s the policy [summarized](https://support.anthropic.com/en/articles/8325621-i-would-like-to-input-sensitive-data-into-free-claude-ai-or-claude-pro-who-can-view-my-conversations) simply. Exceptions to this arise if material you submit is flagged for safety or trust review, or if you give a response a thumbs up or down. That’s one reason I don’t use the thumbs up/down feature to rate Claude’s responses.
+  
+  **Step 2. Set custom instructions.** I provide Claude with custom instructions for supporting me on the project. I tell it about my context and goals. I specify a role Claude should play. And I detail the desired tone, form, and style of responses Claude should provide in response to my prompts.
+  
+  **Note:** These overarching project instructions are not specific to any one prompt. They remain part of Claude’s instructions over the course of a long series of iterative queries. But they’re only for that project, so they won’t interfere with other projects.
+  
+  **Step 3: Begin prompting**. I prompt Claude to assist me, saving time on menial and technical tasks. Claude helps expand the range of creative ideas I consider and ensures I have the bandwidth to do work I couldn’t otherwise do.
+  
+  [![](https://substackcdn.com/image/fetch/$s_!vM-a!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F20a1b5b8-aa7d-4f94-9a7a-4e20dfea01b7_600x400.gif)](https://substackcdn.com/image/fetch/$s_!vM-a!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F20a1b5b8-aa7d-4f94-9a7a-4e20dfea01b7_600x400.gif) With Claude Projects you can apply AI to documents you upload
+  
+  ### Benefits of Claude Projects
+  
+  **Why this is useful.** Rather than tossing queries at ChatGPT with just a short prompt to give it context, Claude can tailor its answers based on extensive background materials, past examples, and detailed instructions. That transforms it into a hyper-personalized digital assistant.
+  
+  **I can create as many projects as I need.** It’s easy to create separate projects for each area of focus. For example, for a teaching project, I can upload past teaching plans I’ve created, as well as transcripts of presentations I’ve given. For a new volunteering project I’m working on, I can upload my past notes, ideas, outlines, and drafts to help Claude assist me in developing a new multifaceted project plan.
+  
+  **Pricing:** Claude’s basic AI is free for anyone to use. You can upload up to five documents to provide context for a prompt, each up to 30mb. Projects, which allow you to upload dozens of documents and allow for custom instructions, require Claude Pro, at $20/month. I spend that on Claude because it’s serving as a 24-7 valuable digital assistant for less than what it might cost me to hire someone for an hour.
+  
+  The team plan costs $25/month/person and requires at least five members, who can then share and collaborate on projects.
+  
+  [Share Wonder Tools](https://wondertools.substack.com/?utm_source=substack&utm_medium=email&utm_content=share&action=share)
+  
+  ## Ideas for using Claude’s Projects
+  
+  1. **Prepare for workshops, classes or meetings you’re leading.** Provide background on the class, workshop, or meeting. Explain your objectives, reference examples of past agendas or lesson plans, and summarize of your pedagogical style or preferences. Omit names or any personal details.
+  
+  
+  - Then task Claude with assisting you in generating examples to use in class, in a meeting, or a workshop. Ask it to generate examples of common mistakes so you can show students or colleagues errors to avoid or challenge them to spot the weakness in a sample.
+  
+  - Direct it to help you spot errors, gaps or blind spots in the instructions, handouts, or other materials you’re giving to students or colleagues.
+  
+  - Give it your ideal learning or project outcomes and ask it to assist you in developing lesson or meeting plans, spotting unconscious bias, or clarifying elements of your syllabus.
+  
+  - Invite its help in brainstorming provocative discussion or quiz questions and generating plausible wrong answers to save you time.
+  
+  - Ask it to assist with outlines for slide presentations.
+  
+  - Prompt it to give you intriguing analogies, jokes, or anecdotes to help you prepare engaging, interactive sessions.
+  
+  - Ask it to give you a dozen alternative ways to explain complex terms.
+  
+  - Use it to generate translations for students or colleagues who might benefit.
+  
+  - Task it with helping you develop accessible materials and activities for learners with different kinds of mental or physical challenges.
+  
+  - **Tip:** Ask it to generate multiple possible approaches and instruct it to be surprising, creative, and to create intriguing, unexpected materials. _(If you missed last week’s post, here are **[terrific teaching tools](https://wondertools.substack.com/p/terrific-teaching-tools)**)._
+  
+  
+  [![Surprising ways to prompt AI 😳](https://substackcdn.com/image/fetch/$s_!xh39!,w_140,h_140,c_fill,f_auto,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F420492ca-1354-4fee-987b-ddc320e067e7_1792x1024.webp)](https://wondertools.substack.com/p/surprising-ways-to-prompt-ai)
+  
+  [**Surprising ways to prompt AI 😳**](https://wondertools.substack.com/p/surprising-ways-to-prompt-ai)
+  
+  [Jeremy Caplan](https://substack.com/profile/332836-jeremy-caplan)
+  
+  ·
+  
+  May 9, 2024
+  
+  [Read full story](https://wondertools.substack.com/p/surprising-ways-to-prompt-ai)
+  
+  2. **Get assistance on hobby projects.** Whether you’re putting together an outline for fan fiction, a visitor’s guide to your plant collection, or an onboarding guide for a new volunteer or club member, you can save hours with Claude’s project assistance. Generate a choose-your-own adventure game, or have it assist you in designing a new language. Dream big.
+  
+  3. **Plan a team initiative.** Provide Claude with notes, goals, deadlines, project context and any other relevant documents. Prompt it to assist you in creating detailed project plans, timelines, memos, step-by-step task lists and more.
+  
+  
+  **Tip:** Remind Claude to ask questions whenever it needs additional information to provide targeted, useful responses. Give it feedback after its initial responses to push it in whatever direction you need.
+  
+  [Leave a comment](https://wondertools.substack.com/p/claudeprojects/comments)
+  
+  ## 30+ more ways to use Claude Projects
+  
+  I created a project with Claude so it could help me dream up a collection of ideas for **[surprising ways to use Claude Projects](https://wonder.craft.me/claudeprojectideas)**. (A project about projects😬)
+  
+  [![](https://substackcdn.com/image/fetch/$s_!0Bu9!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F46f6955a-e5e8-4c4a-a7da-b455b206a110_1978x1098.png)](https://wonder.craft.me/claudeprojectideas)
+  
+  ## Prompting Tips
+  
+  In addition to uploading relevant documents, provide detailed instructions about the kinds of responses that will be useful for you. For example, if you set up a project to assist you with a professional development workshop for career changers, specify the potential range of skill and knowledge levels of likely attendees so Claude’s responses will be relevant. Additional tips:
+  
+  - **Define your target tone.** Ask Claude to adopt a casual tone or to be concise and direct, or to use whatever style or language you prefer.
+  
+  - **Assign a role.** Ask Claude to respond from the perspective of an expert in your industry or job, or have it role play someone facing challenges you’re aiming to address.
+  
+  - **Remind Claude to go slow.** For complex tasks with multiple facets, tell Claude to "think step-by-step" and direct it to "explain your reasoning.” That guides the model to fully account for the materials and contextual details you’ve shared.
+  
+  
+  ## Learn more about Claude
+  
+  - Anthropic’s own [guide to Claude](https://www.anthropic.com/news/projects)
+  
+  - My previous post on [creative ways to use Claude](https://wondertools.substack.com/p/claude)
+  
+  - A 1-min [video example](https://youtu.be/nbG2DO6Xsek?si=jg8aYU8vquElQhtu) — how Claude can be useful for a team
+  
+  - Anthropic’s own [prompt generator, prompt library and prompt tutorial](https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/prompt-generator)
+  
+  
+  [Share](https://wondertools.substack.com/p/claudeprojects?utm_source=substack&utm_medium=email&utm_content=share&action=share)
+  
+  ## Caveats
+  
+  - Claude can’t generate images like ChatGPT Pro or Microsoft’s free Copilot.
+  
+  - The steep $20/month charge may only be worthwhile if you use Projects extensively. Claude’s top model is already available, for limited use, in its free plan. So if you’re just interested in occasional isolated queries, there’s no need to pay.
+  
+  - You can’t upload links into Claude as you can with some AI tools that will parse them for you. Nor can you upload video or audio files, though you can upload transcripts of those files.
+  
+  
+  ## Alternatives
+  
+  **[NotebookLM](https://notebooklm.google.com/)** is a useful free Google tool that lets you create notebooks with your own documents you can then query with AI. Here’s my **[guide](https://wondertools.substack.com/p/notebooklm)**. It’s a great free alternative to Claude if your goal is to observe patterns in your documents or explore connections with your materials. But Claude provides a richer, fuller chat interaction based on documents you upload than NotebookLM.
+  
+  **[Perplexity](http://perplexity.ai/)** lets you create Pages based on search queries to organize summary material on topics you’re exploring. Helpfully, the information you curate in Pages includes citations, so you can trace the info back to its original sources. Rather than deriving these pages from your own material, though, Perplexity’s Pages assist you in organizing information it’s provided through its AI-powered searches. Read my [take on Perplexity](https://wondertools.substack.com/p/the-best-new-ai-search).
+  
+  **[ChatGPT Plus](https://openai.com/chatgpt/)**, the pro version of ChatGPT, is also priced at $20/month. The paid subscription allows you to create your own Custom GPTs. \[Here’s my [post on Custom GPTs](https://wondertools.substack.com/p/make-your-own-chatgpt-bot)\]. These are basically miniature bots you can train with your own files and custom instructions, much like you can train Claude with Projects. You don’t need any knowledge of code — you can create a bot with natural language instructions. And an advantage of ChatGPT Plus is it also includes an excellent image generation engine. But Claude Projects are a little easier to understand and to use.
+  
+  * * *
+  
+  #### **How did you feel about this post?**
+  
+  **[👍 Liked it. I found this post useful](https://docs.google.com/forms/d/e/1FAIpQLSeVYM4vsQ9WIA-MiBbv7COWQPjsU3PXwQda6ryvwviDR1ppYg/viewform?usp=pp_url&entry.1039764853=%F0%9F%91%8D+Liked+it.+I+found+this+post+useful.)**.
+  
+  **[👎 Not useful or relevant for me.](https://docs.google.com/forms/d/e/1FAIpQLSeVYM4vsQ9WIA-MiBbv7COWQPjsU3PXwQda6ryvwviDR1ppYg/viewform?usp=pp_url&entry.1039764853=%F0%9F%91%8E+Not+useful+or+relevant+for+me.)**
+  
+  * * *
+  
+  [Leave a comment](https://wondertools.substack.com/p/claudeprojects/comments)
+  
+  ### Partner Message
+  
+  > **[Volv](https://bit.ly/4cDzUep)** is a Snapchat-backed social news app that consolidates the most important, viral, and interesting content from around the web into 9-second stories that you can just scroll through like social media.
+  >
+  > Users call it “TikTok for smart people” since they use Volv instead of TikTok and Instagram to discover quality content that they would’ve never read otherwise. So far, users have read 60 million stories on Volv.
+  >
+  > Get **[Volv](https://bit.ly/4cDzUep)** Premium free for a month with code **VOLVWT**
+  
+  [![Steve Sampson's avatar](https://substackcdn.com/image/fetch/$s_!Y-Mm!,w_32,h_32,c_fill,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Febe92953-5bbc-4794-942a-33a78925d76d_2352x2352.jpeg)](https://substack.com/profile/15172810-steve-sampson)[![Anthony Sills's avatar](https://substackcdn.com/image/fetch/$s_!Pm8U!,w_32,h_32,c_fill,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fdbea1e7e-28b6-434e-bdf8-814383866ceb_96x96.jpeg)](https://substack.com/profile/17392688-anthony-sills)[![Mallary Tenore Tarpley's avatar](https://substackcdn.com/image/fetch/$s_!ah8O!,w_32,h_32,c_fill,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F32c39348-94d8-48a5-9b16-225dbfac6ca6_6240x4160.jpeg)](https://substack.com/profile/13658158-mallary-tenore-tarpley)[![Tyson Gaylord's avatar](https://substackcdn.com/image/fetch/$s_!xdzf!,w_32,h_32,c_fill,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fbucketeer-e05bbc84-baa3-437e-9518-adb32be77984.s3.amazonaws.com%2Fpublic%2Fimages%2Ffb7f2d27-6a58-4f49-908c-32bc94b373b2_360x360.png)](https://substack.com/profile/10197032-tyson-gaylord)[![Atul's avatar](https://substackcdn.com/image/fetch/$s_!VzM2!,w_32,h_32,c_fill,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F26704f31-5b70-4ee0-a661-681a1e4f4701_500x500.png)](https://substack.com/profile/181507688-atul)
+  
+  76 Likes∙
+  
+  [9 Restacks](https://substack.com/note/p-148424467/restacks?utm_source=substack&utm_content=facepile-restacks)
+  
+  76
+  
+  5
+  
+  9
+  
+  Share
+  
+  PreviousNext
+  
+  #### Discussion about this post
+  
+  CommentsRestacks
+  
+  ![User's avatar](https://substackcdn.com/image/fetch/$s_!TnFC!,w_32,h_32,c_fill,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack.com%2Fimg%2Favatars%2Fdefault-light.png)
+  
+  [![Siobhan Fitzgerald's avatar](https://substackcdn.com/image/fetch/$s_!59LU!,w_32,h_32,c_fill,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe690d782-8836-4f2e-8037-d61eba77492a_2316x3086.jpeg)](https://substack.com/profile/958492-siobhan-fitzgerald?utm_source=comment)
+  
+  [Siobhan Fitzgerald](https://substack.com/profile/958492-siobhan-fitzgerald?utm_source=substack-feed-item)
+  
+  [Sep 7, 2024](https://wondertools.substack.com/p/claudeprojects/comment/68114683 "Sep 7, 2024, 5:51 AM")
+  
+  Liked by Jeremy Caplan
+  
+  I’ve been using Claude projects for the past couple of weeks and love it. I was a bit stumped when it came to the custom instructions so thanks for clarifying that!
+  
+  Like (2)
+  
+  Reply
+  
+  Share
+  
+  [![Jon (Animated)'s avatar](https://substackcdn.com/image/fetch/$s_!kbgu!,w_32,h_32,c_fill,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F029295b0-da3d-4d0b-ac1b-dcd52fb3f56f_1169x1169.jpeg)](https://substack.com/profile/69634656-jon-animated?utm_source=comment)
+  
+  [Jon (Animated)](https://substack.com/profile/69634656-jon-animated?utm_source=substack-feed-item)
+  
+  [Sep 7, 2024](https://wondertools.substack.com/p/claudeprojects/comment/68107095 "Sep 7, 2024, 2:13 AM")
+  
+  Liked by Jeremy Caplan
+  
+  This looks incredible. I use Chat GPT and other apps but not used Claude. As a teacher is Claude the better option as it sounds like it is. Thank you so much, your posts are so good.
+  
+  Like (1)
+  
+  Reply
+  
+  Share
+  
+  [3 more comments...](https://wondertools.substack.com/p/claudeprojects/comments)
+  
+  TopLatestDiscussions
+  
+  [NotebookLM: The Complete Guide 📍](https://wondertools.substack.com/p/notebooklm-the-complete-guide)
+  
+  [How to make the most of 2025's most valuable free AI tool](https://wondertools.substack.com/p/notebooklm-the-complete-guide)
+  
+  Dec 6, 2025•[Jeremy Caplan](https://substack.com/@wondertools)
+  
+  410
+  
+  13
+  
+  45
+  
+  ![](https://substackcdn.com/image/fetch/$s_!sOl7!,w_320,h_213,c_fill,f_auto,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-video.s3.amazonaws.com%2Fvideo_upload%2Fpost%2F180674314%2F5a57edb0-4da5-4e1a-a68d-bc89f7279afe%2Ftranscoded-00641.png)
+  
+  12:26
+  
+  [💯 Surprisingly useful ChatGPT apps](https://wondertools.substack.com/p/surprisingly-useful-chatgpt-apps)
+  
+  [New free ways to use ChatGPT for creative work](https://wondertools.substack.com/p/surprisingly-useful-chatgpt-apps)
+  
+  Jun 20, 2024•[Jeremy Caplan](https://substack.com/@wondertools)
+  
+  115
+  
+  10
+  
+  7
+  
+  ![](https://substackcdn.com/image/fetch/$s_!gAYt!,w_320,h_213,c_fill,f_auto,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2ae78834-9de8-488c-b766-e8b8bf673e30_2400x1352.png)
+  
+  [9 useful AI prompts ❤️](https://wondertools.substack.com/p/9-useful-ai-prompts)
+  
+  [Wonder Tools for AI — Practical, free prompts](https://wondertools.substack.com/p/9-useful-ai-prompts)
+  
+  Feb 28, 2025•[Jeremy Caplan](https://substack.com/@wondertools)
+  
+  180
+  
+  14
+  
+  17
+  
+  ![](https://substackcdn.com/image/fetch/$s_!cR_d!,w_320,h_213,c_fill,f_auto,q_auto:good,fl_progressive:steep,g_auto/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F9a930ef5-f10a-480b-b144-aade807adfcb_1200x400.png)
+  
+  See all
+  
+  ### Ready for more?
+  
+  Subscribe
+  --- End Content ---
+
+Claude's AMAZING 'Custom Instructions' Feature! (Full Guide)
+  URL: https://www.youtube.com/watch?v=hP1bNevQEGI
+  ... Instructions in Claude 13:18 - Prompting Your Instructions 15:05 - Bonus: Claude Prompting Guide 18:33 - The Best Way to Lean AI #claude #
+
+  --- Content ---
+  Error 403 (Forbidden)!!1
+  
+  **403.** That’s an error.
+  
+  We're sorry, but you do not have access to this page. That’s all we know.
+  
+  Back
+  
+  
+  [![](https://www.youtube.com/watch?v=hP1bNevQEGI)](https://www.youtube.com/ "YouTube Home")
+  
+  Skip navigation
+  
+  Search
+  
+  
+  Search with your voice
+  
+  [Sign in](https://accounts.google.com/ServiceLogin?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252Fwatch%253Fv%253DhP1bNevQEGI&hl=en&ec=65620)
+  
+  Claude’s AMAZING ‘Custom Instructions’ Feature! (Full Guide)
+  
+  Tap to unmute
+  
+  2x
+  
+  ## Claude’s AMAZING ‘Custom Instructions’ Feature! (Full Guide)
+  
+  AI Foundations 24,039 views 1 year ago
+  
+  Copy link
+  
+  Info
+  
+  Shopping
+  
+  If playback doesn't begin shortly, try restarting your device.
+  
+  •
+  
+  You're signed out
+  
+  Videos you watch may be added to the TV's watch history and influence TV recommendations. To avoid this, cancel and sign in to YouTube on your computer.
+  
+  CancelConfirm
+  
+  Up next
+  
+  Live
+  
+  Upcoming
+  
+  CancelPlay Now
+  
+  [AI Foundations](https://www.youtube.com/channel/UCWZwfV3ICOt3uEPpW6hYK4g)
+  
+  Subscribe
+  
+  Subscribed
+  
+  Learn to leverage market moving AI tools.
+  
+  [15 INSANE Use Cases for NEW Claude Sonnet 3.5! (Outperforms GPT-4o)\\
+  \\
+  28:54](https://www.youtube.com/watch?v=wBJZQt23J7M)
+  
+  Hide
+  
+  Share
+  
+  Include playlist
+  
+  An error occurred while retrieving sharing information. Please try again later.
+  
+  0:00
+  
+  [Next (SHIFT+n)](https://www.youtube.com/watch?v=dWExoo_8Fwg "Next (SHIFT+n)")
+  
+  0:00 / 19:11
+  
+  Live
+  
+  •Watch full video
+  
+  •
+  Intro
+  
+  •
+  
+  [49:17\\
+  FULL Claude Tutorial for Beginners in 2026! (Become a PRO!)AI Foundations722K views • 2 months agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=rRrBbyv3ChM) [24:18\\
+  Automate any task using Claude! (my full Claude projects workflow)AI Foundations94K views • 1 year agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=gj8oM8Z4FI8) [19:13\\
+  Full Claude Tutorial: Beginner to Advanced in 19 MinutesFuturepedia548K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=WSPChlfxJyA) [34:23\\
+  12 INSANE Use Cases for NEW ChatGPT o1 Model! (The BEST LLM)AI Foundations115K views • 1 year agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=5EPazPx59UU) [46:49\\
+  12 Ways to Use Claude So Well It Feels Illegal (Tutorial)Sabrina Ramonov 🍄255K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=L2CXXmDG-mM) [29:00\\
+  You’re Not Behind (Yet): How to Learn AI in 29 MinutesFuturepedia979K views • 9 months agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=9c7zh2MkslY) [16:24\\
+  The Real Reason Karpathy Joined AnthropicNate Herk \| AI Automation103K views • 2 days agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=brB-hSiV2iU) [33:17\\
+  Full Claude Cowork Tutorial for Beginners in 2026! (Become a PRO)AI Foundations76K views • 2 months agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=xEoVCx9CmxQ) [40:59\\
+  FULL Claude Cowork Tutorial For Beginners in 2026! (Zero to PRO)AI Foundations42K views • 2 weeks agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=JdQ_FHgP5ms) [20:18\\
+  Model Context Protocol (MCP), clearly explained (why it matters)Greg Isenberg1.2M views • 1 year agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=7j_NE6Pjv-E) [38:13\\
+  How To: Use Agentforce Vibes to Build Salesforce Apps FasterLearn the Technology with Brandon Krakowsky232 views • 3 months agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=dWExoo_8Fwg) [40:52\\
+  Full Claude Code Tutorial for Non-Technical Beginners in 2026 (step-by-step)Futurepedia98K views • 3 weeks agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=bqJzIWAEn40)
+  
+  # Claude’s AMAZING ‘Custom Instructions’ Feature! (Full Guide)
+  
+  [![](https://yt3.ggpht.com/T6VX2AMTq3WCNFJ5vvFOUW1dBY3gPcOIhP_QM_cd9Lc49lzD0jMIFtMomiUv8tO2TlG8aLElgw=s48-c-k-c0x00ffffff-no-rj)](https://www.youtube.com/@ai-foundations)
+  
+  [AI Foundations](https://www.youtube.com/@ai-foundations)
+  
+  
+  AI Foundations
+  
+  
+  332K subscribers
+  
+  Subscribe
+  
+  Subscribed
+  
+  593
+  
+  Share
+  
+  Save
+  
+  Download
+  
+  Download
+  
+  24K views1 year ago [#claude](https://www.youtube.com/hashtag/claude) [#anthropic](https://www.youtube.com/hashtag/anthropic)
+  
+  24,039 views • Premiered Jul 19, 2024 • #claude #anthropic
+  
+  Master AI through courses and community: [https://www.skool.com/ai-foundations](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqa0M5aUFVSkpmeWlyM3FxWXhOUzM1OXo2TWRZd3xBQ3Jtc0tsdkszTF9OSEdVM0R5cXhVXzE4YmkteURkMUN5eXlzeEFRa1ZFSTJoS1hCQUxvTW1hbDRKSlFnT3p0OThfTldPWVNZTEhDWTUzdE5EdjcxcjUwY2VUTjFtZjNRS2U0TkxxZWJXT05GTTMxYlJnajBHNA&q=https%3A%2F%2Fwww.skool.com%2Fai-foundations&v=hP1bNevQEGI)
+  Claude's new custom instructions feature is a game-changer! Here is how to use it!…...more
+  
+  ...more
+  
+  How this was made
+  
+  Auto-dubbed
+  
+  Audio tracks for some languages were automatically generated. [Learn more](https://support.google.com/youtube/answer/15569972?hl=en)
+  
+  [**Intro**  **Intro** \\
+  \\
+  0:00](https://www.youtube.com/watch?v=hP1bNevQEGI)
+  
+  [**Intro**](https://www.youtube.com/watch?v=hP1bNevQEGI)
+  
+  0:00
+  
+  [**Ai Foundations Community**  **Ai Foundations Community** \\
+  \\
+  0:49](https://www.youtube.com/watch?v=hP1bNevQEGI&t=49s&pp=0gcJCRkDDuyUWbzu)
+  
+  [**Ai Foundations Community**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=49s&pp=0gcJCRkDDuyUWbzu)
+  
+  0:49
+  
+  [**Claude Overview**  **Claude Overview** \\
+  \\
+  2:02](https://www.youtube.com/watch?v=hP1bNevQEGI&t=122s)
+  
+  [**Claude Overview**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=122s)
+  
+  2:02
+  
+  [**Creating a Project**  **Creating a Project** \\
+  \\
+  2:45](https://www.youtube.com/watch?v=hP1bNevQEGI&t=165s)
+  
+  [**Creating a Project**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=165s)
+  
+  2:45
+  
+  [**Backend Workspace**  **Backend Workspace** \\
+  \\
+  3:55](https://www.youtube.com/watch?v=hP1bNevQEGI&t=235s)
+  
+  [**Backend Workspace**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=235s)
+  
+  3:55
+  
+  [**Intro to Custom Instructions**  **Intro to Custom Instructions** \\
+  \\
+  4:28](https://www.youtube.com/watch?v=hP1bNevQEGI&t=268s)
+  
+  [**Intro to Custom Instructions**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=268s)
+  
+  4:28
+  
+  [**Assigning Roles**  **Assigning Roles** \\
+  \\
+  5:35](https://www.youtube.com/watch?v=hP1bNevQEGI&t=335s)
+  
+  [**Assigning Roles**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=335s)
+  
+  5:35
+  
+  [**Creating Your Own Custom Instructions**  **Creating Your Own Custom Instructions** \\
+  \\
+  6:19](https://www.youtube.com/watch?v=hP1bNevQEGI&t=379s)
+  
+  [**Creating Your Own Custom Instructions**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=379s)
+  
+  6:19
+  
+  Follow along using the transcript.
+  
+  Show transcript
+  
+  [Videos](https://www.youtube.com/channel/UCWZwfV3ICOt3uEPpW6hYK4g/videos)[About](https://www.youtube.com/channel/UCWZwfV3ICOt3uEPpW6hYK4g/about)[Follow my LinkedIn](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbjBaQjlNRE9Wa2xpQ2hXelItLVFOOC1HMHJPQXxBQ3Jtc0ttX2NDZFJBNUV4ZnRpQUttYUJEUHB4RVd1NzVQODNPbDZJYjlpQnNEQm9RUTd6bm5YTnBXcEVEaTFNSUplYVhabnZKVUhHSzQ1YVVHNHRBX1dIOVZFVDM0SE5XUTZWaURWc0QzMHg2bzYwOXV3X1FKMA&q=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdrake-surach-823530203%2F)[Follow my Twitter](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbFhWNnVoOGcxbGFkdmgwUlVNcWd6Mmw2VVRJQXxBQ3Jtc0tucVVwMk1xem9yZlppMG9xRG5McXdkSHRGbHUzeFZQQkJEVWlYTFR5UjFiV2VHNUdOdGJLbFFsRXRpcEVkMGhiRk9yeUl6c2V4ckZUeWtRbnliWXpjeWlKLVJodDVPUml1UDBoOWxyV0xTRlhNRk9jRQ&q=https%3A%2F%2Ftwitter.com%2Fdrake0DTE)
+  
+  [28:54\\
+  \\
+  28:54](https://www.youtube.com/watch?v=wBJZQt23J7M)[15 INSANE Use Cases for NEW Claude Sonnet 3.5! (Outperforms GPT-4o)\\
+  \\
+  by AI Foundations](https://www.youtube.com/watch?v=wBJZQt23J7M)
+  
+  [18:05\\
+  \\
+  18:05](https://www.youtube.com/watch?v=oNAi8blLLk4&pp=0gcJCTEB7p79v9jh)[NEW Claude Projects Full Guide! (Amazing Results)\\
+  \\
+  by AI Foundations](https://www.youtube.com/watch?v=oNAi8blLLk4&pp=0gcJCTEB7p79v9jh)
+  
+  Show less
+  
+  ## Live chat replay
+  
+  See what others said about this video while it was live.
+  Open panel
+  
+  [#claude](https://www.youtube.com/hashtag/claude) [#anthropic](https://www.youtube.com/hashtag/anthropic)
+  
+  # Claude’s AMAZING ‘Custom Instructions’ Feature! (Full Guide)
+  
+  24,039 views24K views
+  
+  Premiered Jul 19, 2024
+  
+  593
+  
+  Share
+  
+  Save
+  
+  Download
+  
+  Download
+  
+  [**Intro**  **Intro** \\
+  \\
+  0:00](https://www.youtube.com/watch?v=hP1bNevQEGI)
+  
+  [**Intro**](https://www.youtube.com/watch?v=hP1bNevQEGI)
+  
+  0:00
+  
+  [**Ai Foundations Community**  **Ai Foundations Community** \\
+  \\
+  0:49](https://www.youtube.com/watch?v=hP1bNevQEGI&t=49s)
+  
+  [**Ai Foundations Community**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=49s)
+  
+  0:49
+  
+  [**Claude Overview**  **Claude Overview** \\
+  \\
+  2:02](https://www.youtube.com/watch?v=hP1bNevQEGI&t=122s)
+  
+  [**Claude Overview**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=122s)
+  
+  2:02
+  
+  [**Creating a Project**  **Creating a Project** \\
+  \\
+  2:45](https://www.youtube.com/watch?v=hP1bNevQEGI&t=165s)
+  
+  [**Creating a Project**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=165s)
+  
+  2:45
+  
+  [**Backend Workspace**  **Backend Workspace** \\
+  \\
+  3:55](https://www.youtube.com/watch?v=hP1bNevQEGI&t=235s)
+  
+  [**Backend Workspace**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=235s)
+  
+  3:55
+  
+  [**Intro to Custom Instructions**  **Intro to Custom Instructions** \\
+  \\
+  4:28](https://www.youtube.com/watch?v=hP1bNevQEGI&t=268s)
+  
+  [**Intro to Custom Instructions**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=268s)
+  
+  4:28
+  
+  [**Assigning Roles**  **Assigning Roles** \\
+  \\
+  5:35](https://www.youtube.com/watch?v=hP1bNevQEGI&t=335s)
+  
+  [**Assigning Roles**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=335s)
+  
+  5:35
+  
+  [**Creating Your Own Custom Instructions**  **Creating Your Own Custom Instructions** \\
+  \\
+  6:19](https://www.youtube.com/watch?v=hP1bNevQEGI&t=379s)
+  
+  [**Creating Your Own Custom Instructions**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=379s)
+  
+  6:19
+  
+  [**Special Formatting Instructions**  **Special Formatting Instructions** \\
+  \\
+  9:54](https://www.youtube.com/watch?v=hP1bNevQEGI&t=594s)
+  
+  [**Special Formatting Instructions**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=594s)
+  
+  9:54
+  
+  [**Inputting Instructions in Claude**  **Inputting Instructions in Claude** \\
+  \\
+  12:18](https://www.youtube.com/watch?v=hP1bNevQEGI&t=738s)
+  
+  [**Inputting Instructions in Claude**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=738s)
+  
+  12:18
+  
+  [**Prompting Your Instructions**  **Prompting Your Instructions** \\
+  \\
+  13:18](https://www.youtube.com/watch?v=hP1bNevQEGI&t=798s)
+  
+  [**Prompting Your Instructions**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=798s)
+  
+  13:18
+  
+  [**Bonus: Claude Prompting Guide**  **Bonus: Claude Prompting Guide** \\
+  \\
+  15:05](https://www.youtube.com/watch?v=hP1bNevQEGI&t=905s)
+  
+  [**Bonus: Claude Prompting Guide**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=905s)
+  
+  15:05
+  
+  [**The Best Way to Lean AI**  **The Best Way to Lean AI** \\
+  \\
+  18:33](https://www.youtube.com/watch?v=hP1bNevQEGI&t=1113s&pp=0gcJCRkDDuyUWbzu)
+  
+  [**The Best Way to Lean AI**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=1113s&pp=0gcJCRkDDuyUWbzu)
+  
+  18:33
+  
+  Sync to video time
+  
+  Claude’s AMAZING ‘Custom Instructions’ Feature! (Full Guide)
+  
+  Master AI through courses and community: [https://www.skool.com/ai-foundations](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqa2gxNXhjc084OUJqcXpPdWVRbGV1aG50Q1Azd3xBQ3Jtc0ttZXJUQWVuNGVRS2NfaWloVXJneWRSc19xMExvRnVTU0Q2TGVlVm15Y29vSDdWSkd6QkxKWS1xOEZydzZGWjZ0OWFXeUtWWUtXOXBtb2dxWDNoVEVhSWdLeWhoYXg3S0MyNHdzNDkyYmNvRWs4N2JONA&q=https%3A%2F%2Fwww.skool.com%2Fai-foundations&v=hP1bNevQEGI)
+  Claude's new custom instructions feature is a game-changer! Here is how to use it!
+  👉🏼Join the BEST Ai Community: [https://www.skool.com/ai-foundations/...](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbnJ2ZjNGcGpPdGdTRVByS2Mxb0liMjhtV3pOZ3xBQ3Jtc0ttbURNd0xOTDNxNGVEZUMxVTJ1LWZna0V5NnYzN3N4SVlFUUhxb3FXdHBOSDd2TDBDQVp2YU5BSzQ3ZlBFVndkR2hnb1N6alNZNHpWMnNTWkV4ZzRDSWpwMDlfcjdjXzFfLXlvenFHRTd6QUI1T1lQbw&q=https%3A%2F%2Fwww.skool.com%2Fai-foundations%2Fabout&v=hP1bNevQEGI)
+  
+  \-\-\--------
+  
+  Custom Instructions Prompt:
+  
+  Profession/Role: \[Describe the profession or role of the chatbot, e.g., Etymologist, Nurse, Historian.\]
+  
+  Objective: \[Define the primary goal or task of the chatbot, e.g., to trace word origins, provide medical advice, teach history.\]
+  
+  Personality Traits (Tone): \[List key personality traits, e.g., energetic, compassionate, methodical.\]
+  
+  Communication Style: \[Describe the style of communication, e.g., formal, casual, etc.\]
+  
+  Output Format (Use this special output formatting for each response):
+  
+  \[Specific Output Formatting You'd Like\]
+  
+  Special Formatting Instructions: \[List any specific formatting requirements, e.g., bolding years, using bullet points.\]
+  
+  \-\-\------------------
+  🛒AI Templates, Prompts and Courses for ChatGPT and Midjourney:
+  [https://aifoundations.io/shop](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbG9lTVJmdWZCWE5WRTU2bGNzLWRWbWRQZ3I1UXxBQ3Jtc0tuRkdKTGRkcXNYaDdZOUtSSEhrbDhZNnRsTFdJOGpibWxRbDNma2E3V19JUUVaNDd4WUJYY3FlOWRRcXVZSUVncXlZZjRfOHpsdHV1a01OMEtIRjhkWHZjX0ctazNVV194NW5sSExLX0RRbVlPRElDMA&q=https%3A%2F%2Faifoundations.io%2Fshop&v=hP1bNevQEGI)
+  
+  📰Subscribe to my newsletter:
+  [https://aifoundations.io](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqa1NHNnAxOVBlYWlZZmFfdms5enEtR2RCX2dWZ3xBQ3Jtc0tsTTh2Mk4xdi1Zb1RuNHVBWWhpWng5RVFyMm0zakg2R1RpdXhqa0dPMW1OVFE0djdXOEJIeUVoUGxXZ3QyMzIzanFfclNrYkQzenFCMVVJM3JiVkxTNzlranl6VGtoZ2UwUGx2UlJ5MlFnQW1kT1Ytdw&q=https%3A%2F%2Faifoundations.io%2F&v=hP1bNevQEGI)
+  
+  🔗Follow me on Linkedin:
+  [/ drake-surach-823530203](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqa1NadHZLbmNGLVJaN08tY2NXdl8xVW9KQ01BUXxBQ3Jtc0tsdkR1a1o0TkhCRDd4UVkwU3QtN2ZFNFItalJMVHlPMXY0WGdTeV9CX2pGNGpWQlNWdXNobGIwSHdFWHJYWklpZFNUWG5UUDJfcGx2TXNVaWEwZnNWZS15WEZ6aHE2T0NpUTZBSUNJT3ExSGt6Nk56aw&q=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdrake-surach-823530203%2F&v=hP1bNevQEGI)
+  
+  🐥Follow me on twitter:
+  [/ drake0dte](https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqbTh4bXdKNlpJVVQxX3lpc2ZRQzZ1S0lLeFNmZ3xBQ3Jtc0tsbEtvc0Y4WTNRM2JwbWpJWkFmd2xHMGpOTEd5Ym9rOHRqcXhSUXZ6Z1lnOGhJUHhueEQ4d0pZOVg5X1FyWnZWZ25mVkN6ZFhtaG1Dd1phTE5GZ1BJSjlqVXl2Y01WLTlYaHlBSjRXa1ZBaDQ0eHoycw&q=https%3A%2F%2Ftwitter.com%2Fdrake0DTE&v=hP1bNevQEGI)
+  \-\-\------------------
+  
+  ⌚Chapters:
+  [0:00](https://www.youtube.com/watch?v=hP1bNevQEGI) \- Intro
+  [0:49](https://www.youtube.com/watch?v=hP1bNevQEGI&t=49s) \- Ai Foundations Community
+  [2:02](https://www.youtube.com/watch?v=hP1bNevQEGI&t=122s) \- Claude Overview
+  [2:45](https://www.youtube.com/watch?v=hP1bNevQEGI&t=165s) \- Creating a Project
+  [3:55](https://www.youtube.com/watch?v=hP1bNevQEGI&t=235s) \- Backend Workspace
+  [4:28](https://www.youtube.com/watch?v=hP1bNevQEGI&t=268s) \- Intro to Custom Instructions
+  [5:35](https://www.youtube.com/watch?v=hP1bNevQEGI&t=335s) \- Assigning Roles
+  [6:19](https://www.youtube.com/watch?v=hP1bNevQEGI&t=379s) \- Creating Your Own Custom Instructions
+  [9:54](https://www.youtube.com/watch?v=hP1bNevQEGI&t=594s) \- Special Formatting Instructions
+  [12:18](https://www.youtube.com/watch?v=hP1bNevQEGI&t=738s) \- Inputting Instructions in Claude
+  [13:18](https://www.youtube.com/watch?v=hP1bNevQEGI&t=798s) \- Prompting Your Instructions
+  [15:05](https://www.youtube.com/watch?v=hP1bNevQEGI&t=905s) \- Bonus: Claude Prompting Guide
+  [18:33](https://www.youtube.com/watch?v=hP1bNevQEGI&t=1113s) \- The Best Way to Lean AI
+  
+  [#claude](https://www.youtube.com/hashtag/claude)[#anthropic](https://www.youtube.com/hashtag/anthropic)…...more
+  
+  ...more
+  Show less
+  
+  How this was made
+  
+  Auto-dubbed
+  
+  Audio tracks for some languages were automatically generated. [Learn more](https://support.google.com/youtube/answer/15569972?hl=en)
+  
+  [**Intro**  **Intro** \\
+  \\
+  0:00](https://www.youtube.com/watch?v=hP1bNevQEGI)
+  
+  [**Intro**](https://www.youtube.com/watch?v=hP1bNevQEGI)
+  
+  0:00
+  
+  [**Ai Foundations Community**  **Ai Foundations Community** \\
+  \\
+  0:49](https://www.youtube.com/watch?v=hP1bNevQEGI&t=49s&pp=0gcJCRkDDuyUWbzu)
+  
+  [**Ai Foundations Community**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=49s&pp=0gcJCRkDDuyUWbzu)
+  
+  0:49
+  
+  [**Claude Overview**  **Claude Overview** \\
+  \\
+  2:02](https://www.youtube.com/watch?v=hP1bNevQEGI&t=122s)
+  
+  [**Claude Overview**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=122s)
+  
+  2:02
+  
+  [**Creating a Project**  **Creating a Project** \\
+  \\
+  2:45](https://www.youtube.com/watch?v=hP1bNevQEGI&t=165s)
+  
+  [**Creating a Project**](https://www.youtube.com/watch?v=hP1bNevQEGI&t=165s)
+  
+  2:45
+  
+  Follow along using the transcript.
+  
+  Show transcript
+  
+  [Videos](https://www.youtube.com/channel/UCWZwfV3ICOt3uEPpW6hYK4g/videos)[About](https://www.youtube.com/channel/UCWZwfV3ICOt3uEPpW6hYK4g/about)[Follow my LinkedIn](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbjBaQjlNRE9Wa2xpQ2hXelItLVFOOC1HMHJPQXxBQ3Jtc0ttX2NDZFJBNUV4ZnRpQUttYUJEUHB4RVd1NzVQODNPbDZJYjlpQnNEQm9RUTd6bm5YTnBXcEVEaTFNSUplYVhabnZKVUhHSzQ1YVVHNHRBX1dIOVZFVDM0SE5XUTZWaURWc0QzMHg2bzYwOXV3X1FKMA&q=https%3A%2F%2Fwww.linkedin.com%2Fin%2Fdrake-surach-823530203%2F)[Follow my Twitter](https://www.youtube.com/redirect?event=Watch_SD_EP&redir_token=QUFFLUhqbFhWNnVoOGcxbGFkdmgwUlVNcWd6Mmw2VVRJQXxBQ3Jtc0tucVVwMk1xem9yZlppMG9xRG5McXdkSHRGbHUzeFZQQkJEVWlYTFR5UjFiV2VHNUdOdGJLbFFsRXRpcEVkMGhiRk9yeUl6c2V4ckZUeWtRbnliWXpjeWlKLVJodDVPUml1UDBoOWxyV0xTRlhNRk9jRQ&q=https%3A%2F%2Ftwitter.com%2Fdrake0DTE)
+  
+  [28:54\\
+  \\
+  28:54](https://www.youtube.com/watch?v=wBJZQt23J7M)[15 INSANE Use Cases for NEW Claude Sonnet 3.5! (Outperforms GPT-4o)\\
+  \\
+  by AI Foundations](https://www.youtube.com/watch?v=wBJZQt23J7M)
+  
+  [18:05\\
+  \\
+  18:05](https://www.youtube.com/watch?v=oNAi8blLLk4&pp=0gcJCTEB7p79v9jh)[NEW Claude Projects Full Guide! (Amazing Results)\\
+  \\
+  by AI Foundations](https://www.youtube.com/watch?v=oNAi8blLLk4&pp=0gcJCTEB7p79v9jh)
+  
+  Show chat replay
+  
+  [![](https://i.ytimg.com/vi/rRrBbyv3ChM/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLC8XVXdak9fCcdpLz-1sfFzMPRzBA)\\
+  \\
+  49:17](https://www.youtube.com/watch?v=rRrBbyv3ChM&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [FULL Claude Tutorial for Beginners in 2026! (Become a PRO!)](https://www.youtube.com/watch?v=rRrBbyv3ChM&pp=ugUEEgJlbg%3D%3D)
+  
+  AI Foundations
+  
+  722K views • 2 months ago
+  
+  [![](https://i.ytimg.com/vi/gj8oM8Z4FI8/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLD6yjeE2JLlZqNceNMRATQrz6rQ_A)\\
+  \\
+  24:18](https://www.youtube.com/watch?v=gj8oM8Z4FI8&pp=ugUHEgVlbi1VUw%3D%3D)
+  
+  ### [Automate any task using Claude! (my full Claude projects workflow)](https://www.youtube.com/watch?v=gj8oM8Z4FI8&pp=ugUHEgVlbi1VUw%3D%3D)
+  
+  AI Foundations
+  
+  94K views • 1 year ago
+  
+  [![](https://i.ytimg.com/vi/WSPChlfxJyA/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCdjIVuqrpaGV5fr-ak3-IGTXWKvA)\\
+  \\
+  19:13](https://www.youtube.com/watch?v=WSPChlfxJyA&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [Full Claude Tutorial: Beginner to Advanced in 19 Minutes](https://www.youtube.com/watch?v=WSPChlfxJyA&pp=ugUEEgJlbg%3D%3D)
+  
+  Futurepedia
+  
+  548K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/5EPazPx59UU/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLDRgOu7JS7F8PwasROXp3h4xrAW4Q)\\
+  \\
+  34:23](https://www.youtube.com/watch?v=5EPazPx59UU&pp=ugUHEgVlbi1VUw%3D%3D)
+  
+  ### [12 INSANE Use Cases for NEW ChatGPT o1 Model! (The BEST LLM)](https://www.youtube.com/watch?v=5EPazPx59UU&pp=ugUHEgVlbi1VUw%3D%3D)
+  
+  AI Foundations
+  
+  115K views • 1 year ago
+  
+  [![](https://i.ytimg.com/vi/L2CXXmDG-mM/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLDuGuwpfkVmzSyjjWKGA-aoSHEjhA)\\
+  \\
+  46:49](https://www.youtube.com/watch?v=L2CXXmDG-mM&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [12 Ways to Use Claude So Well It Feels Illegal (Tutorial)](https://www.youtube.com/watch?v=L2CXXmDG-mM&pp=ugUEEgJlbg%3D%3D)
+  
+  Sabrina Ramonov 🍄
+  
+  255K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/9c7zh2MkslY/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCZCbpBubgvX8Lsa4lqupx_vwQJuQ)\\
+  \\
+  29:00](https://www.youtube.com/watch?v=9c7zh2MkslY&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [You’re Not Behind (Yet): How to Learn AI in 29 Minutes](https://www.youtube.com/watch?v=9c7zh2MkslY&pp=ugUEEgJlbg%3D%3D)
+  
+  Futurepedia
+  
+  979K views • 9 months ago
+  
+  [![](https://i.ytimg.com/vi/brB-hSiV2iU/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAHlOh778qUrS4xRS1b8ODX2m1lJA)\\
+  \\
+  16:24](https://www.youtube.com/watch?v=brB-hSiV2iU&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [The Real Reason Karpathy Joined Anthropic](https://www.youtube.com/watch?v=brB-hSiV2iU&pp=ugUEEgJlbg%3D%3D)
+  
+  Nate Herk \| AI Automation
+  
+  103K views • 2 days ago
+  
+  New
+  
+  [![](https://i.ytimg.com/vi/xEoVCx9CmxQ/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBmxa_bV6T3JnfFhs3mca1VLSpzcQ)\\
+  \\
+  33:17](https://www.youtube.com/watch?v=xEoVCx9CmxQ&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [Full Claude Cowork Tutorial for Beginners in 2026! (Become a PRO)](https://www.youtube.com/watch?v=xEoVCx9CmxQ&pp=ugUEEgJlbg%3D%3D)
+  
+  AI Foundations
+  
+  76K views • 2 months ago
+  
+  [![](https://i.ytimg.com/vi/JdQ_FHgP5ms/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCYcCFkZmOWfexkHmu6w2zALSR1gA)\\
+  \\
+  40:59](https://www.youtube.com/watch?v=JdQ_FHgP5ms&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [FULL Claude Cowork Tutorial For Beginners in 2026! (Zero to PRO)](https://www.youtube.com/watch?v=JdQ_FHgP5ms&pp=ugUEEgJlbg%3D%3D)
+  
+  AI Foundations
+  
+  42K views • 2 weeks ago
+  
+  [![](https://i.ytimg.com/vi/7j_NE6Pjv-E/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLDadIloN7O5RvLlOXCJwjdCJxSIsg)\\
+  \\
+  20:18](https://www.youtube.com/watch?v=7j_NE6Pjv-E&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [Model Context Protocol (MCP), clearly explained (why it matters)](https://www.youtube.com/watch?v=7j_NE6Pjv-E&pp=ugUEEgJlbg%3D%3D)
+  
+  Greg Isenberg
+  
+  1.2M views • 1 year ago
+  
+  [![](https://i.ytimg.com/vi/dWExoo_8Fwg/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLAfozu2hE-E3RQoUSATh3594aNrww)\\
+  \\
+  38:13](https://www.youtube.com/watch?v=dWExoo_8Fwg&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [How To: Use Agentforce Vibes to Build Salesforce Apps Faster](https://www.youtube.com/watch?v=dWExoo_8Fwg&pp=ugUEEgJlbg%3D%3D)
+  
+  Learn the Technology with Brandon Krakowsky
+  
+  232 views • 3 months ago
+  
+  [![](https://i.ytimg.com/vi/bqJzIWAEn40/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBhErigws86VBB5CVfIV-mCNrSgGw)\\
+  \\
+  40:52](https://www.youtube.com/watch?v=bqJzIWAEn40&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [Full Claude Code Tutorial for Non-Technical Beginners in 2026 (step-by-step)](https://www.youtube.com/watch?v=bqJzIWAEn40&pp=ugUEEgJlbg%3D%3D)
+  
+  Futurepedia
+  
+  98K views • 3 weeks ago
+  
+  [![](https://i.ytimg.com/vi/GEJgoix8gF0/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLByVIiGMUcrjogtKnAZUxElxJ9JFA)\\
+  \\
+  30:54](https://www.youtube.com/watch?v=GEJgoix8gF0)
+  
+  ### [Stephen Colbert's Funniest Moments \| The Daily Show](https://www.youtube.com/watch?v=GEJgoix8gF0)
+  
+  The Daily Show
+  
+  and Comedy Central
+  
+  390K views • 16 hours ago
+  
+  New
+  
+  [![](https://i.ytimg.com/vi/F7G20NjSxeI/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCckOR1NCVQGNTt3wXO6onN0y78DQ)\\
+  \\
+  17:54](https://www.youtube.com/watch?v=F7G20NjSxeI&pp=0gcJCQYLAYcqIYzv)
+  
+  ### [The Ultimate Beginner’s Guide to Claude](https://www.youtube.com/watch?v=F7G20NjSxeI&pp=0gcJCQYLAYcqIYzv)
+  
+  Shane Brady \| AI for Local Businesses
+  
+  37K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/dax6fD475M8/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBDM4O-yhfkrMzFPrRx5KBXWMuVbQ)\\
+  \\
+  52:59](https://www.youtube.com/watch?v=dax6fD475M8&pp=ugUHEgVlbi1VUw%3D%3D)
+  
+  ### [Politics Chat, May 21, 2026](https://www.youtube.com/watch?v=dax6fD475M8&pp=ugUHEgVlbi1VUw%3D%3D)
+  
+  Heather Cox Richardson
+  
+  149K views • Streamed 8 hours ago
+  
+  New
+  
+  [![](https://i.ytimg.com/vi/YkpEX_jlb04/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLC12-YU6j7TlLtqwWfdcTO3O1mFWA)\\
+  \\
+  46:55](https://www.youtube.com/watch?v=YkpEX_jlb04&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [Full Claude Skills Tutorial for Beginners in 2026! (Become a PRO)](https://www.youtube.com/watch?v=YkpEX_jlb04&pp=ugUEEgJlbg%3D%3D)
+  
+  AI Foundations
+  
+  119K views • 2 months ago
+  
+  [![](https://i.ytimg.com/vi/jw0pMr54Ztc/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLCdDeRFIN2CifWHvwVjSYRkn1_x2Q)\\
+  \\
+  25:36](https://www.youtube.com/watch?v=jw0pMr54Ztc&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [The Ultimate Beginner’s Guide To Claude](https://www.youtube.com/watch?v=jw0pMr54Ztc&pp=ugUEEgJlbg%3D%3D)
+  
+  AI Edge
+  
+  606K views • 2 months ago
+  
+  [![](https://i.ytimg.com/vi/C9gKWTzRukM/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLDjSR42ESwgdUd535gN1jB5EnVVTg)\\
+  \\
+  1:28:07](https://www.youtube.com/watch?v=C9gKWTzRukM)
+  
+  ### [Claude COWORK Full Course: Zero To Working AI Employee (2026)](https://www.youtube.com/watch?v=C9gKWTzRukM)
+  
+  KJ Rainey
+  
+  242K views • 2 months ago
+  
+  [![](https://i.ytimg.com/vi/6eBSHbLKuN0/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLBsWOhOiZ1ONvVMut2IMPnSKLD5GA)\\
+  \\
+  28:07](https://www.youtube.com/watch?v=6eBSHbLKuN0)
+  
+  ### [Mastering Claude Code in 30 minutes](https://www.youtube.com/watch?v=6eBSHbLKuN0)
+  
+  Anthropic
+  
+  1.3M views • Streamed 11 months ago
+  
+  [![](https://i.ytimg.com/vi/BuwPnrMmhzQ/hqdefault.jpg?sqp=-oaymwEnCNACELwBSFryq4qpAxkIARUAAIhCGAHYAQHiAQoIGBACGAY4AUAB&rs=AOn4CLDYx-78ilR8AytAzw3bydK7EmTg9A)\\
+  \\
+  19:58](https://www.youtube.com/watch?v=BuwPnrMmhzQ&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [9 AI Skills You MUST Have to Get Ahead of 99% of People](https://www.youtube.com/watch?v=BuwPnrMmhzQ&pp=ugUEEgJlbg%3D%3D)
+  
+  Dan Martell
+  
+  340K views • 3 months ago
+  
+  Show more
+  --- End Content ---
+
+Claude gets Projects and Custom Instructions - Michael Rowe
+  URL: https://www.mrowe.co.za/blog/2024/06/claude-gets-projects-and-custom-instructions/
+  Claude.ai Pro and Team users can now organize their chats into Projects, bringing together curated sets of knowledge and chat activity in one place.
+
+  --- Content ---
+  [Skip to content](https://www.mrowe.co.za/blog/2024/06/claude-gets-projects-and-custom-instructions/#wp--skip-link--target)
+  
+  ### **No longer active**
+  
+  This site is now an archive of my previous work. I have moved all my ongoing writing to [https://michael-rowe.github.io/home-michael/](https://michael-rowe.github.io/home-michael/)
+  
+  # Claude gets Projects and Custom Instructions
+  
+  [Jun 26, 2024](https://www.mrowe.co.za/blog/2024/06/claude-gets-projects-and-custom-instructions/)
+  
+  in [AI](https://www.mrowe.co.za/blog/category/ai/)
+  
+  [Anthropic](https://www.mrowe.co.za/blog/tag/anthropic/), [Artifacts](https://www.mrowe.co.za/blog/tag/artifacts/), [Claude](https://www.mrowe.co.za/blog/tag/claude/), [projects](https://www.mrowe.co.za/blog/tag/projects/)
+  
+  [https://www.anthropic.com/news/projects](https://www.anthropic.com/news/projects)
+  
+  > [Claude.ai](http://claude.ai/) Pro and Team users can now organize their chats into Projects, bringing together curated sets of knowledge and chat activity in one place—with the ability to make their best chats with Claude viewable by teammates.
+  
+  ### Projects
+  
+  [![](https://i0.wp.com/www.mrowe.co.za/blog/wp-content/uploads/2024/06/Claude-projects.webp?resize=1024%2C576&ssl=1)](https://i0.wp.com/www.mrowe.co.za/blog/wp-content/uploads/2024/06/Claude-projects.webp?ssl=1)
+  
+  With Projects, you can:
+  
+  - Upload docs and code—like style guides, codebases, or user feedback—so that every response you get from Claude is grounded in expertise about your Project.
+  - Generate new content like code snippets or diagrams with Claude and see a preview of your Artifacts in a dedicated panel.
+  - Share your most insightful Claude chats and the Artifacts you create on the Project activity feed, allowing your teammates to learn, explore, and build on shared content.
+  
+  Shareable Projects in Claude - YouTube
+  
+  Tap to unmute
+  
+  [Shareable Projects in Claude](https://www.youtube.com/watch?v=nbG2DO6Xsek) [Anthropic](https://www.youtube.com/channel/UCrDwWp7EBBv4NwvScIpBDOA)
+  
+  Anthropic626k subscribers
+  
+  [Watch on](https://www.youtube.com/watch?v=nbG2DO6Xsek)
+  
+  > Projects allow you to ground Claude’s outputs in your internal knowledge—be it style guides, codebases, interview transcripts, or past work. This added context enables Claude to provide expert assistance across tasks, from writing emails like your marketing team to writing SQL queries like a data analyst.
+  
+  ### Custom instructions
+  
+  [![](https://i0.wp.com/www.mrowe.co.za/blog/wp-content/uploads/2024/06/Claude-custom-instructions.webp?resize=1024%2C576&ssl=1)](https://i0.wp.com/www.mrowe.co.za/blog/wp-content/uploads/2024/06/Claude-custom-instructions.webp?ssl=1)
+  
+  > In addition, you can define custom instructions for each Project to further tailor Claude’s responses, including instructing Claude to use a more formal tone or answer questions from the perspective of a specific role or industry.
+  
+  ### Like this:
+  
+  LikeLoading…
+  
+  * * *
+  
+  **Share** this
+  
+  - [Share on LinkedIn (Opens in new window)LinkedIn](https://www.mrowe.co.za/blog/2024/06/claude-gets-projects-and-custom-instructions/?share=linkedin&nb=1)
+  - [Share on Facebook (Opens in new window)Facebook](https://www.mrowe.co.za/blog/2024/06/claude-gets-projects-and-custom-instructions/?share=facebook&nb=1)
+  - [Share on Twitter (Opens in new window)Twitter](https://www.mrowe.co.za/blog/2024/06/claude-gets-projects-and-custom-instructions/?share=twitter&nb=1)
+  - [Share on X (Opens in new window)X](https://www.mrowe.co.za/blog/2024/06/claude-gets-projects-and-custom-instructions/?share=x&nb=1)
+  - [Share on WhatsApp (Opens in new window)WhatsApp](https://www.mrowe.co.za/blog/2024/06/claude-gets-projects-and-custom-instructions/?share=whatsapp&nb=1)
+  - [Share on Mail (Opens in new window)Mail](mailto:?subject=%5BShared%20Post%5D%20Claude%20gets%20Projects%20and%20Custom%20Instructions&body=https%3A%2F%2Fwww.mrowe.co.za%2Fblog%2F2024%2F06%2Fclaude-gets-projects-and-custom-instructions%2F&share=email)
+  - [Share on Mastodon (Opens in new window)Mastodon](https://www.mrowe.co.za/blog/2024/06/claude-gets-projects-and-custom-instructions/?share=mastodon&nb=1)
+  - [Share using Native toolsShareCopied to clipboard](https://www.mrowe.co.za/blog/2024/06/claude-gets-projects-and-custom-instructions/)
+  
+  * * *
+  
+  ### Discover more from Michael Rowe
+  
+  Subscribe to get the latest posts to your email.
+  
+  Type your email…
+  
+  Subscribe
+  
+  * * *
+  
+  [Toggle photo metadata visibility](https://www.mrowe.co.za/blog/2024/06/claude-gets-projects-and-custom-instructions/#)
+  
+  %d
+  --- End Content ---
+
+Claude Projects Feature Guide: Complete Setup Tutorial (2025)
+  URL: https://aionx.co/claude-ai-reviews/claude-projects-feature-guide/
+  Learn how to use Claude Projects effectively. Complete guide covering setup, custom instructions, knowledge base management, use cases, ...
+
+  --- Content ---
+  [Skip to content](https://aionx.co/claude-ai-reviews/claude-projects-feature-guide/#content "Skip to content")
+  
+  # Claude Projects Feature Guide – Complete Guide
+  
+  [George Mitchell](https://aionx.co/author/george-mitchell/)
+  
+  \- Updated on March 5, 2026
+  
+  Claude Projects transforms how you work with AI by creating specialized workspaces that remember your context, documents, and preferences across every conversation. Whether you’re managing complex research, developing products, or creating content, Projects gives you a persistent, organized environment that makes Claude far more powerful than simple chat interfaces.
+  
+  This complete guide walks you through everything you need to know about Claude Projects in 2026, from basic setup to advanced optimization strategies that help you get the most from this game-changing feature.
+  
+  #### Key Takeaways
+  
+  - **Persistent Workspaces:** Claude Projects maintain dedicated chat histories, knowledge bases, and custom instructions for focused work.
+  - **Knowledge Base Power:** Upload up to 30MB per file with unlimited files, supporting PDF, DOCX, CSV, TXT, HTML, and more formats.
+  - **Free & Paid Access:** Free users get 5 projects; paid plans offer unlimited projects with enhanced RAG capabilities that expand capacity 10x.
+  - **Team Collaboration:** Team and Enterprise plans enable project sharing with granular permissions for organizational collaboration.
+  - **Superior Context:** According to [comparative analyses](https://jeffreybowdoin.com/claude-projects-vs-custom-gpts/), Claude Projects outperforms ChatGPT Custom GPTs for document-heavy and business applications.
+  
+  ## What Are Claude Projects?
+  
+  Claude Projects are self-contained workspaces that combine three essential components into a unified environment. According to [Anthropic’s official documentation](https://support.claude.com/en/articles/9517075-what-are-projects), Projects enable focused collaboration by bringing together chat histories, dedicated knowledge bases, and custom instructions.
+  
+  Unlike standard Claude conversations that reset with each new chat, Projects maintain persistent context. You upload documents once, set your preferences, and Claude references this information automatically in every conversation within that project. This eliminates the frustration of repeatedly uploading files or explaining the same context.
+  
+  Projects are available to all Claude users, including free accounts. Free users can create up to five projects, while users with Pro, Max, Team, or Enterprise plans enjoy unlimited project creation along with advanced Retrieval Augmented Generation (RAG) capabilities that dramatically expand knowledge base capacity.
+  
+  ## How to Create and Set Up Your First Project
+  
+  Creating a Claude Project takes less than two minutes. According to [Anthropic’s setup guide](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects), the process is straightforward whether you’re on desktop or mobile.
+  
+  ### Step-by-Step Setup Process
+  
+  Navigate to [claude.ai/projects](https://claude.ai/projects) or hover over the left side of your account and click “Projects.” Select “+ New Project” from the upper right corner to begin.
+  
+  Enter a descriptive project name and description. Note that Claude does not have access to these details—they’re purely for your organizational purposes. Choose something specific that helps you quickly identify the project’s purpose when browsing your project list.
+  
+  For Team and Enterprise users, configure visibility settings. Choose “Private” if only you and invited members should access the project, or “Organizational” to make it available to everyone in your organization (subject to admin settings).
+  
+  ### Adding Knowledge to Your Project
+  
+  The knowledge base appears on your project’s right side and applies across all conversations. Click the “+” button in the knowledge section to upload documents, text files, or code snippets. Claude uses this material as context during every chat within the project.
+  
+  According to [file upload specifications](https://www.datastudios.org/post/claude-file-upload-sizes-across-all-plans-complete-overview), Projects accept multiple formats including PDF, DOCX, CSV, TXT, HTML, ODT, RTF, and EPUB. Individual files can reach 30MB, with no limit on the number of files provided the total content remains within the context window.
+  
+  For paid plan users, Claude automatically enables RAG mode when approaching capacity limits. This [seamlessly expands capacity by up to 10x](https://support.claude.com/en/articles/9517075-what-are-projects) while maintaining response quality, allowing your projects to scale for larger content volumes without performance degradation.
+  
+  #### Pro Tip: PDF Visual Analysis
+  
+  PDF uploads require Claude 3.5 Sonnet or newer models for full visual analysis capabilities. Excel workbooks (.xlsx) require the Analysis Tool enabled in your account or project. For maximum compatibility, convert Excel files to CSV format.
+  
+  ### Setting Custom Project Instructions
+  
+  Custom instructions tell Claude how to behave specifically within this project. Select “Set project instructions” and add behavioral guidelines such as tone preferences, role-specific perspectives, or industry-specific terminology.
+  
+  For example, a content creation project might include instructions like: “Write in a conversational yet professional tone suitable for B2B SaaS audiences. Always include data-driven insights and cite sources. Format all lists as bullet points with bolded headers.”
+  
+  These instructions apply automatically to all chats within the project, eliminating the need to repeat preferences in every conversation. This saves time and ensures consistency across all interactions.
+  
+  ## Claude Projects File Upload Capabilities and Limits
+  
+  Understanding file upload capabilities helps you structure your projects for maximum effectiveness. The knowledge base leverages advanced RAG technology with enhancements unique to Claude’s Contextual Retriever.
+  
+  #### Supported File Formats
+  
+  PDF, DOCX, CSV, TXT, HTML, ODT, RTF, EPUB, and more. Claude handles structured documents, research papers, code files, and plain text with equal capability.
+  
+  #### File Size Limits
+  
+  Each file can be up to 30MB. Upload unlimited files within the 200K token context window. Paid plans automatically switch to RAG mode to expand capacity 10x when limits are approached.
+  
+  According to [technical documentation](https://medium.com/@melissaonwuka/claude-projects-complete-guide-setup-tutorial-2025-3b9a60033b59), you can also add copied text directly into the knowledge base. This means you can paste webpage content, email threads, or any text-based information without creating separate files—a significant advantage over ChatGPT Projects which requires file uploads.
+  
+  ## Managing and Organizing Your Projects
+  
+  Effective project management becomes essential as your project count grows. Claude provides several organizational features to keep your workspace clean and efficient.
+  
+  ### Starring Important Projects
+  
+  Click the star icon next to any project for quick access from your sidebar. Starred projects appear at the top of your project list, making frequently-used workspaces immediately accessible.
+  
+  ### Moving Chats Between Projects
+  
+  Use the dropdown menu next to any chat to add it to a project or move it between projects. This flexibility helps you reorganize conversations as project scopes evolve or when you realize a chat belongs in a different workspace.
+  
+  ### Archiving and Deleting Projects
+  
+  Archive completed projects to remove them from your active list while preserving all content. Note that sharing permissions reset when projects are archived. You can unarchive from the archived projects tab at any time.
+  
+  Delete projects permanently when no longer needed. This action cannot be undone, so ensure you’ve saved any important information before deleting.
+  
+  ## Team Collaboration Features (Team and Enterprise Plans)
+  
+  Claude for Work subscribers unlock powerful collaboration capabilities through project sharing. According to [Anthropic’s collaboration documentation](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects), Team and Enterprise users can share projects with granular permission controls.
+  
+  #### Can Use Permission
+  
+  Users can view and chat within projects without editing capabilities. Ideal for team members who need access to project knowledge but shouldn’t modify instructions or knowledge base content.
+  
+  #### Can Edit Permission
+  
+  Users can modify instructions, manage knowledge base content, and adjust member access. Suitable for project owners and core contributors who need full control.
+  
+  To share a project, open it and click “Share project.” Add members individually by name or email, use bulk email additions for larger teams, or enable organization-wide visibility for company-wide resources. Users receive email notifications when projects are shared with them.
+  
+  This collaboration model supports various team structures. Marketing teams can share brand guidelines and content calendars. Development teams can maintain shared documentation and code standards. Research teams can collaborate on datasets and findings without version control headaches.
+  
+  ## Claude Projects vs ChatGPT Custom GPTs: The 2026 Comparison
+  
+  The choice between Claude Projects and ChatGPT Custom GPTs significantly impacts your productivity. According to [detailed comparison analyses](https://elephas.app/blog/claude-projects-vs-chatgpt-projects), Claude Projects significantly outperforms Custom GPTs in complex or document-heavy use cases for business applications.
+  
+  | Feature | Claude Projects | ChatGPT Custom GPTs |
+  | --- | --- | --- |
+  | Context Persistence | Native persistent context across sessions | Requires manual document uploads each session |
+  | Knowledge Base | Uploaded documents + copied text support | Document uploads only |
+  | Task Switching | Automatic context switching within projects | Manual navigation between Custom GPTs breaks flow |
+  | Document Handling | Superior summarization and information retrieval | Good for general tasks |
+  | Sharing | Team collaboration with permissions (Team/Enterprise) | GPT Store marketplace for pre-built assistants |
+  
+  According to [practical user testing](https://jeffreybowdoin.com/claude-projects-vs-custom-gpts/), Claude’s superior context handling and integration capabilities make it the go-to choice for those pushing the boundaries of AI in business contexts. ChatGPT does more things overall, but Claude does the important things better—particularly for serious business applications and complex document handling.
+  
+  #### Important Consideration
+  
+  Custom GPTs maintain an advantage for users seeking a marketplace of pre-built specialized assistants and broader ecosystem integration through the GPT Store. If you need quick access to community-created specialized tools, ChatGPT’s ecosystem offers significant value.
+  
+  ## Practical Use Cases: Real-World Project Examples
+  
+  Understanding practical applications helps you design effective projects. According to [Anthropic’s use case documentation](https://support.claude.com/en/articles/9529781-examples-of-projects-you-can-create), Projects excel across six primary categories.
+  
+  ### Research Projects
+  
+  Example: “Climate Change Impact on Coral Reefs”
+  
+  Organize scientific papers, research reports, and datasets in one location. Discuss findings, formulate hypotheses, and create summaries or draft research sections. The persistent knowledge base means Claude understands the full context of your research without re-explaining background information.
+  
+  ### Product Development
+  
+  Example: “EcoFriendly Water Bottle Design”
+  
+  Manage ideation through launch phases with market research, competitor analysis, and material specifications. Facilitate brainstorming sessions and track design iterations. Upload product requirements, customer feedback, and technical specifications for comprehensive product context.
+  
+  ### Content Creation Hub
+  
+  Example: “Lifestyle Blog and Social Media Content”
+  
+  Consolidate style guides, audience personas, and SEO best practices. According to [content creator workflows](https://tactiq.io/learn/claude-project-examples), Projects streamline editorial calendar planning and content optimization. Generate blog drafts and social media calendars that maintain consistent brand voice.
+  
+  ### Educational Course Development
+  
+  Example: “Introduction to Machine Learning”
+  
+  Organize textbooks, research papers, and industry reports. Develop curriculum and assessment strategies with context-aware assistance. Create lesson plans, lecture notes, and problem sets that align with learning objectives.
+  
+  ### Personal Finance Management
+  
+  Example: “2026 Financial Goals and Budget”
+  
+  Track bank statements and investment reports in a secure project workspace. Plan budgets and investment strategies with Claude analyzing your financial data. Generate financial summaries and savings trackers with personalized recommendations.
+  
+  ### Home Renovation Projects
+  
+  Example: “Kitchen Remodel 2026”
+  
+  Centralize improvement guides, product catalogs, and design inspiration. Document contractor communications and project timelines. Create layouts, material lists, and budget breakdowns that account for all renovation aspects.
+  
+  #### SEO Content Updates
+  
+  Analyze old blog posts against current SEO best practices. Paste existing content and receive rewritten versions optimized for 2026 search algorithms and user intent.
+  
+  #### Link Building Analysis
+  
+  Streamline link building by analyzing potential partners based on quality criteria. Use guidelines and past partnerships to assess new opportunities efficiently.
+  
+  #### Product Communications
+  
+  Craft product update emails with consistent brand voice. Quickly generate relevant content based on product updates while maintaining style consistency.
+  
+  ## Advanced Optimization: Best Practices for Maximum Productivity
+  
+  Implementing optimization strategies dramatically improves your Projects experience. According to [advanced usage guides](https://dinanjana.medium.com/mastering-the-vibe-claude-code-best-practices-that-actually-work-823371daf64c), three practices have the most impact: CLAUDE.md configuration, structured prompting, and project caching strategies.
+  
+  ### CLAUDE.md Configuration
+  
+  Create a CLAUDE.md file in your project’s knowledge base documenting project conventions, code style guidelines, common commands, and core files. Claude automatically references this file, permanently “teaching” it your project’s essential information without repeating context in every conversation.
+  
+  Include developer environment setup, testing instructions, repository etiquette, and any unexpected behaviors particular to your project. This single file can reduce repetitive explanations by 80% or more.
+  
+  ### Structured Prompting with Precise Context
+  
+  Provide clear, detailed instructions in each message rather than vague queries. Include relevant visual context through screenshots, architecture diagrams, or links to API documentation directly in your prompts.
+  
+  Break complex requests into smaller, verifiable steps. Instead of “Build a user authentication system,” try “Create a database schema for user accounts with email, password hash, and created\_at fields.” This precision improves output quality and reduces back-and-forth clarifications.
+  
+  ### Leverage Project Caching for Efficiency
+  
+  According to [efficiency optimization research](https://medium.com/@haiou-a/wasting-money-on-claude-10-advanced-tips-to-triple-your-efficiency-a3b5dbfa5a40), when you upload documents to a project, they’re cached for future use. Every time you reference that content, only new or uncached portions count against your usage limits.
+  
+  This means you can work with the same documents repeatedly without consuming messages as quickly. For users on message-limited plans, this caching dramatically extends your effective usage capacity.
+  
+  #### Advanced Workflow Tip
+  
+  Create reusable prompt templates by adding Markdown files to a .claude/commands folder in your project. These custom slash commands automate common workflows, saving time and ensuring consistency across repetitive tasks.
+  
+  ## Understanding Claude Pricing Plans and Projects Access
+  
+  Claude offers tiered pricing that affects your Projects capabilities. According to [2026 pricing documentation](https://www.glbgpt.com/hub/claude-ai-plans-2026/), plans are structured for different usage levels.
+  
+  | Plan | Price | Projects Limit | RAG Enhancement | Team Sharing |
+  | --- | --- | --- | --- | --- |
+  | Free | $0 | 5 projects maximum | No | No |
+  | Claude Pro | $20/month | Unlimited | Yes (10x capacity) | No |
+  | Claude Max | $100-$200/month | Unlimited | Yes (10x capacity) | No |
+  | Team | $30/seat/month | Unlimited | Yes (10x capacity) | Yes |
+  | Enterprise | Custom pricing | Unlimited | Yes (10x capacity) | Yes |
+  
+  Free users get substantial value with five projects—enough for most individual use cases. According to [plan comparison analyses](https://screenapp.io/blog/claude-ai-pricing), Claude Pro at $20/month offers the best value for professionals who need unlimited projects and enhanced knowledge base capabilities through RAG technology.
+  
+  Claude Max users ($100-$200/month) get significantly higher message limits—5x to 20x more than Pro depending on the tier. Team and Enterprise plans add collaboration features essential for organizational use, with Team starting at $30 per seat monthly.
+  
+  ## Common Mistakes to Avoid When Using Projects
+  
+  Understanding common pitfalls helps you avoid frustration and maximize productivity. Here are the most frequent mistakes users make with Claude Projects.
+  
+  ### Overloading Single Projects
+  
+  Creating one massive project for everything defeats the purpose of organization. Instead, create separate projects for distinct workflows. A marketing professional should maintain separate projects for blog content, social media, email campaigns, and SEO research rather than combining everything.
+  
+  ### Ignoring Custom Instructions
+  
+  Many users skip setting custom instructions, then repeatedly explain the same preferences in every chat. Spend five minutes upfront defining tone, format, and behavioral guidelines. This investment saves hours over the project’s lifetime.
+  
+  ### Not Using Descriptive Names
+  
+  Generic project names like “Project 1” or “Work Stuff” become confusing as your project count grows. Use specific, descriptive names that immediately communicate the project’s purpose: “Q1 2026 Product Launch – EcoBottle” instead of “Product Work.”
+  
+  ### Forgetting to Organize Knowledge Base
+  
+  Uploading dozens of files without organization creates clutter. Group related documents, remove outdated materials, and periodically review your knowledge base to ensure Claude accesses the most relevant information.
+  
+  **Context Window Awareness:** Free users hit the 200K token context window faster than paid users. If you notice degraded performance, you may be approaching limits. Paid plans automatically switch to RAG mode, but free users should consider removing less-relevant documents or creating a new project.
+  
+  ## Maximizing ROI: Getting the Most Value from Projects
+  
+  Strategic use of Projects delivers significant productivity gains. Here’s how to maximize return on investment whether you’re on free or paid plans.
+  
+  ### Template Projects for Recurring Work
+  
+  Create template projects for workflows you repeat frequently. Set up a project with your ideal knowledge base and custom instructions, then duplicate it (by manually recreating) for new initiatives. This ensures consistency and saves setup time.
+  
+  ### Integrate with External Tools
+  
+  According to [2026 feature updates](https://www.glbgpt.com/hub/claude-ai-plans-2026/), Claude Pro now integrates with Google Workspace, connecting to Google Docs and Gmail. Leverage these integrations to automatically sync relevant documents into your Projects, creating seamless workflows between tools.
+  
+  ### Regular Knowledge Base Maintenance
+  
+  Schedule monthly reviews of your project knowledge bases. Remove outdated documents, add new relevant materials, and update custom instructions as your needs evolve. This maintenance ensures Claude always works with current, accurate information.
+  
+  ### Measure and Track Productivity Gains
+  
+  Before implementing Projects, note how long typical tasks take. After two weeks of Project use, measure again. Most users report 30-50% time savings on document-heavy workflows and 20-40% improvements in content consistency.
+  
+  ## Future of Claude Projects: What’s Coming in 2026
+  
+  Anthropic continues evolving Projects with new capabilities. While not all features are officially announced, industry trends and beta testing suggest several enhancements coming throughout 2026.
+  
+  Enhanced API integration will allow developers to programmatically create and manage projects, enabling automated workflows and third-party tool connections. Improved version control for project knowledge bases will help teams track changes to documents and instructions over time.
+  
+  Advanced analytics showing which documents Claude references most frequently will help users optimize their knowledge bases. Expanded file format support and increased individual file size limits will accommodate larger datasets and more diverse content types.
+  
+  For Enterprise users, expect enhanced security controls, audit logging, and compliance features that make Projects suitable for highly regulated industries like healthcare and finance.
+  
+  ### Get Claude Pro Access for Just $7/Month with AIonX
+  
+  Want unlimited Claude Projects with enhanced RAG capabilities? AIonX provides affordable access to Claude Pro through our group subscription service—just $7/month instead of $20. Get the 5-AI Bundle for $30/month to access Claude Pro plus ChatGPT Plus, Gemini Advanced, Grok Premium, and SeeDream Pro through one unified interface. Start your 2-day free trial today.
+  
+  [See Plans & Pricing](https://aionx.co/pricing/)
+  
+  ## Frequently Asked Questions About Claude Projects
+  
+  How many projects can I create with a free Claude account?
+  
+  Free Claude accounts can create a maximum of five projects. This limit provides enough capacity for most individual users to organize their primary workflows. Paid plans (Pro, Max, Team, Enterprise) offer unlimited project creation.
+  
+  What file formats can I upload to Claude Projects?
+  
+  Claude Projects accept PDF, DOCX, CSV, TXT, HTML, ODT, RTF, and EPUB file formats. Each file can be up to 30MB, with unlimited files allowed within the context window. You can also paste text directly into the knowledge base without creating files.
+  
+  Can I share Claude Projects with team members?
+  
+  Project sharing is available exclusively for Team and Enterprise plan users. You can share projects with granular permissions—either “Can use” (view and chat only) or “Can edit” (modify instructions and knowledge base). Free and Pro users cannot share projects.
+  
+  What happens when my project reaches the context window limit?
+  
+  For paid plan users (Pro, Max, Team, Enterprise), Claude automatically enables RAG mode when approaching the 200K token context window limit. This expands capacity by up to 10x while maintaining response quality. Free users should remove less-relevant documents or create a new project.
+  
+  How do Claude Projects differ from ChatGPT Custom GPTs?
+  
+  Claude Projects maintain persistent context across sessions natively, while ChatGPT requires manual document uploads each time. Projects support both file uploads and pasted text in the knowledge base, offer superior document handling and summarization, and provide better context for complex business applications. Custom GPTs offer marketplace access to pre-built assistants through the GPT Store.
+  
+  Can I move or copy chats between different projects?
+  
+  Yes, you can move chats between projects using the dropdown menu next to any chat. This flexibility helps you reorganize conversations as project scopes evolve. However, there is no built-in copy function—you can only move chats, not duplicate them across projects.
+  
+  Do custom instructions apply to all chats in a project?
+  
+  Yes, custom instructions set at the project level automatically apply to every chat within that project. This ensures consistency across all conversations and eliminates the need to repeat preferences. You can modify instructions at any time, and changes apply to new chats immediately.
+  
+  Is there a limit to how many documents I can upload to a project?
+  
+  There is no hard limit on the number of documents you can upload. However, total content must remain within Claude’s 200K token context window (approximately 150,000 words). Paid plans automatically switch to RAG mode to expand this capacity by up to 10x when limits are approached.
+  
+  ## Conclusion: Transform Your Workflow with Claude Projects
+  
+  Claude Projects represents a fundamental shift in how we interact with AI assistants. By providing persistent workspaces with dedicated knowledge bases and custom instructions, Projects transforms Claude from a helpful chatbot into a true productivity partner that understands your context and maintains continuity across all your work.
+  
+  Whether you’re managing research, developing products, creating content, or handling complex business workflows, Projects provides the organizational structure and persistent memory that makes AI genuinely useful for sustained, meaningful work. The ability to upload documents once and reference them forever, combined with custom instructions that ensure consistent behavior, eliminates the friction that makes standard AI chat interfaces frustrating for serious applications.
+  
+  Start with the free tier to explore five projects and understand the workflow. As your needs grow, paid plans unlock unlimited projects, enhanced RAG capabilities, and team collaboration features that make Projects suitable for organizational use. The productivity gains typically justify the investment within the first month.
+  
+  The future of knowledge work involves AI assistants that understand our context, remember our preferences, and maintain continuity across our projects. Claude Projects delivers this vision today, in a practical, user-friendly package that works for individuals and enterprises alike.
+  
+  ![AI SaaS platform for group buy services to optimize AI resource sharing.](https://spcdn.shortpixel.ai/spio/ret_img,q_cdnize,to_auto,s_webp:avif/aionx.co/wp-content/uploads/2025/11/claude-projects-feature-guide-complete-guide-1024x575.jpg)
+  
+  ### Ready to save up to 73% on AI tools you use daily by sharing?
+  
+  [Start Free Trial](https://aionx.co/sp/shared-chatgpt-plus/)
+  
+  - [Claude AI Reviews & Features](https://aionx.co/claude-ai-reviews/)
+  - [artifacts](https://aionx.co/tag/artifacts/), [Claude](https://aionx.co/tag/claude/), [explained](https://aionx.co/tag/explained/)
+  
+  [![Picture of George Mitchell](https://spcdn.shortpixel.ai/spio/ret_img,q_cdnize,to_auto,s_webp:avif/aionx.co/wp-content/uploads/2025/11/George-Mitchell-300x300.png)](https://aionx.co/author/george-mitchell/)
+  
+  [George Mitchell](https://aionx.co/author/george-mitchell/)
+  
+  **George Mitchell** founded **AIonX** in 2024 after years in digital optimization and seeing professionals overpay for AI subscriptions by 200–300%. Frustrated by freelancers having to choose between essential tools and financial strain, he built AIonX to solve the affordability crisis.
+  
+  **What he does:** Manages AI subscriptions for 500+ professionals worldwide, helping them save an average of $720–960/year.
+  
+  **How he evaluates tools:** Personally tests every AI model AIonX offers, tracks usage patterns across hundreds of users, and analyzes cost-per-value to separate real ROI from hype.
+  
+  **Customer results**
+  
+  1) Average savings: $720–960/year
+  
+  2) 500+ professionals served
+  
+  3) 99% uptime maintained
+  
+  4) Max 5 customers per account for optimal performance
+  
+  **Read more:** [aionx.co/author/george-mitchell](https://aionx.co/author/george-mitchell/)
+  
+  **Contact:** [george@aionx.co](mailto:george@aionx.co)
+  
+  [![Picture of George Mitchell](https://spcdn.shortpixel.ai/spio/ret_img,q_cdnize,to_auto,s_webp:avif/aionx.co/wp-content/uploads/2025/11/George-Mitchell-300x300.png)](https://aionx.co/author/george-mitchell/)
+  
+  [George Mitchell](https://aionx.co/author/george-mitchell/)
+  
+  **George Mitchell** founded **AIonX** in 2024 after years in digital optimization and seeing professionals overpay for AI subscriptions by 200–300%. Frustrated by freelancers having to choose between essential tools and financial strain, he built AIonX to solve the affordability crisis.
+  
+  **What he does:** Manages AI subscriptions for 500+ professionals worldwide, helping them save an average of $720–960/year.
+  
+  **How he evaluates tools:** Personally tests every AI model AIonX offers, tracks usage patterns across hundreds of users, and analyzes cost-per-value to separate real ROI from hype.
+  
+  **Customer results**
+  
+  1) Average savings: $720–960/year
+  
+  2) 500+ professionals served
+  
+  3) 99% uptime maintained
+  
+  4) Max 5 customers per account for optimal performance
+  
+  **Read more:** [aionx.co/author/george-mitchell](https://aionx.co/author/george-mitchell/)
+  
+  **Contact:** [george@aionx.co](mailto:george@aionx.co)
+  
+  ## Related Posts
+  
+  [PrevPreviousClaude Pro: file uploads – Complete Guide](https://aionx.co/claude-ai-reviews/claude-pro-file-uploads/)
+  
+  [NextClaude Pro: for legal documents – Complete GuideNext](https://aionx.co/claude-ai-reviews/claude-pro-for-legal-documents-complete-guide/)
+  
+  [![Overview of the Gemini Advanced Mobile App for Android and iOS in 2026.](https://spcdn.shortpixel.ai/spio/ret_img,q_cdnize,to_auto,s_webp:avif/aionx.co/wp-content/uploads/2026/03/gemini-advanced-mobile-app-complete-2026-guide-android-ios-768x432.jpg)](https://aionx.co/gemini-advanced-reviews/gemini-advanced-mobile-app/)
+  
+  Gemini Advanced Reviews
+  
+  ### [Gemini Advanced Mobile App: Complete 2026 Guide (Android & iOS)](https://aionx.co/gemini-advanced-reviews/gemini-advanced-mobile-app/)
+  
+  Google’s Gemini Advanced mobile app transforms your smartphone into a powerful AI assistant, delivering cutting-edge features for research, content creation, and productivity. Available on both Android and iOS since 2024, the app brings Google’s most advanced AI models to your pocket—but what exactly can you do with it, and is
+  
+  [![Gemini workspace integrating Gmail, Docs, Drive, and Sheets in 2026.](https://spcdn.shortpixel.ai/spio/ret_img,q_cdnize,to_auto,s_webp:avif/aionx.co/wp-content/uploads/2026/03/gemini-advanced-workspace-integration-gmail-docs-drive-sheets-2026-768x432.jpg)](https://aionx.co/gemini-advanced-reviews/gemini-advanced-workspace-integration/)
+  
+  Gemini Advanced Reviews
+  
+  ### [Gemini Advanced Workspace Integration: Gmail, Docs, Drive & Sheets (2026)](https://aionx.co/gemini-advanced-reviews/gemini-advanced-workspace-integration/)
+  
+  What Is Gemini Advanced Workspace Integration? Gemini Advanced (Google AI Pro) is Google’s enterprise-grade AI model now deeply integrated into Google Workspace applications including Gmail, Google Docs, Google Sheets, Google Drive, and Google Calendar. Unlike the basic Gemini that works across the web, Gemini Advanced in Workspace maintains all your
+  
+  [![Illustration of building and sharing custom GPTs for AI monetization.](https://spcdn.shortpixel.ai/spio/ret_img,q_cdnize,to_auto,s_webp:avif/aionx.co/wp-content/uploads/2026/03/chatgpt-plus-custom-gpts-build-share-monetize-your-ai-2026-complete-guide-768x432.jpg)](https://aionx.co/chatgpt-reviews/chatgpt-plus-custom-gpts/)
+  
+  ChatGPT Reviews & Features
+  
+  ### [ChatGPT Plus Custom GPTs: Build, Share & Monetize Your AI (2026 Complete Guide)](https://aionx.co/chatgpt-reviews/chatgpt-plus-custom-gpts/)
+  
+  ChatGPT Plus custom GPTs let you build specialized AI assistants tailored to your exact workflows, without writing a single line of code. Whether you need a content editor that follows your brand voice, a coding helper trained on your tech stack, or a client-facing chatbot loaded with your product documentation,
+  --- End Content ---

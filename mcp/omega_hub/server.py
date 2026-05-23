@@ -641,6 +641,8 @@ async def observability_check_recursion(entity_name: str, current_depth: int) ->
         entity_name: The name of the entity attempting to spawn a subagent.
         current_depth: The current depth of the subagent chain (0-indexed).
     """
+    if not hierarchy._hierarchy:
+        await hierarchy.load()
     result = hierarchy.check_recursion(entity_name, current_depth)
     return json.dumps(result, indent=2)
 

@@ -4,9 +4,13 @@ AP: AP-HIERARCHY-LOGIC-v1.0.0
 ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: HIERARCHY]
 """
 
+import logging
 import yaml
 from pathlib import Path
 from typing import Dict, Optional
+import anyio
+
+logger = logging.getLogger(__name__)
 
 class SovereignHierarchy:
     """Manages entity ranks and recursion limits based on the Oversoul Hierarchy."""
@@ -14,15 +18,18 @@ class SovereignHierarchy:
     def __init__(self, hierarchy_config: Optional[Path] = None):
         self.config_path = hierarchy_config or Path(__file__).resolve().parent.parent.parent.parent / "config" / "hierarchy.yaml"
         self._hierarchy = {}
-        self._load()
 
-    def _load(self):
+
+    async def load(self):
+        """Asynchronously load the hierarchy configuration."""
         if not self.config_path.exists():
-            print(f"DEBUG: Hierarchy config not found at {self.config_path}")
+            logger.warning(f"Hierarchy config not found at {self.config_path}")
             return
-        with open(self.config_path, "r") as f:
-            self._hierarchy = yaml.safe_load(f)
-            print(f"DEBUG: Loaded hierarchy from {self.config_path}")
+        async with await anyio.open_file(self.config_path, "r") as f:
+            content = await f.read()
+            self._hierarchy = yaml.safe_load(content)
+            logger.info(f"Loaded hierarchy from {self.config_path}")
+
 
     def get_rank(self, entity_name: str) -> int:
         """Get the numeric rank of an entity (0=Root, 3=Keeper) by traversing the hierarchy.yaml.

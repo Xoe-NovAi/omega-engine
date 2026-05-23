@@ -20,6 +20,9 @@ omega:
     enable_dataset_collection: false
     enable_trace_logging: true
     trace_length: 12
+  hivemind:
+    url: "http://127.0.0.1:8102"
+    cli: "opencode"
   model_updater:
     enabled: true
     schedule: "0 */6 * * *"

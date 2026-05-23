@@ -202,7 +202,9 @@ def add_entity():
     )
 
     registry = EntityRegistry()
-    registry.add(entity)
+    async def _run():
+        await registry.add(entity)
+    anyio.run(_run)
     console.print(f"[green]✅ {name} added to pantheon![/green]")
     console.print("[dim]Edit ~/omega/config/entities.yaml to add pillar mappings, sigils, etc.[/dim]")
 
@@ -214,7 +216,9 @@ def remove_entity(
 ):
     """Remove an entity from the pantheon."""
     registry = EntityRegistry()
-    if registry.remove(name):
+    async def _run():
+        return await registry.remove(name)
+    if anyio.run(_run):
         console.print(f"[yellow]🗑️ {name} removed from pantheon.[/yellow]")
     else:
         console.print(f"[red]Entity '{name}' not found.[/red]")

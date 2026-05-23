@@ -31,6 +31,8 @@ from .model_gateway import ModelGateway
 from .session_manager import SessionManager
 from .context_builder import ContextBuilder
 from .wad_loader import WADLoader
+from .entity_workspace import EntityWorkspaceManager, SOUL_FILE_HEADER
+from .hierarchy import SovereignHierarchy
 from ..memory_store import get_memory_store
 from ..orchestration.triage_router import TriageRouter, TriageRequest, TaskRequest, EntityContext, Constraints, SessionContext
 from .health_monitor import HealthMonitor
@@ -100,6 +102,7 @@ class Oracle:
         # B5: Pass health_monitor to ModelGateway
         self.model_gateway = model_gateway or ModelGateway(health_monitor=self.health_monitor)
         self.background_worker = background_worker
+        self.hierarchy = SovereignHierarchy()
 
         if self.background_worker:
             self.model_gateway.background_worker = self.background_worker
@@ -127,7 +130,9 @@ class Oracle:
         if not self.default_entity:
             self.default_entity = self.registry.get("default") or self.registry.get("brigid")
             
-        self.iris_entity = self.registry.get("iris") or self.registry.get("iris")
+        self.iris_entity = self.registry.get("iris")
+        if not self.iris_entity:
+            logger.warning("Iris entity not found in registry. Speculative decoding may be degraded.")
         self.observability = get_engine()
         self._soul_lock = None
 
@@ -158,12 +163,13 @@ class Oracle:
                     config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
                     if config_path.exists():
                         async with await anyio.open_file(str(config_path), "r") as f:
-                            content = await f.read()
-                            config = yaml.safe_load(content)
-                            default_name = config.get("omega", {}).get("entity", {}).get("default", "SOPHIA")
-                            resolved = self.registry.get(default_name)
-                            if resolved:
-                                self.default_entity = resolved
+                             content = await f.read()
+                             self.config = yaml.safe_load(content)
+                             default_name = self.config.get("omega", {}).get("entity", {}).get("default", "SOPHIA")
+                             resolved = self.registry.get(default_name)
+                             if resolved:
+                                 self.default_entity = resolved
+
             except Exception as e:
                 logger.warning(f"Failed to load default entity from config during bootstrap: {e}")
 
@@ -178,10 +184,11 @@ class Oracle:
         """
         try:
             import httpx
-            # Hivemind is configured to run on port 8102
-            url = "http://127.0.0.1:8102/tools/post_context"
+            # Hivemind config from omega.yaml
+            hivemind_cfg = self.config.get("omega", {}).get("hivemind", {})
+            url = f"{hivemind_cfg.get('url', 'http://127.0.0.1:8102')}/tools/post_context"
             payload = {
-                "cli": "opencode",
+                "cli": hivemind_cfg.get("cli", "opencode"),
                 "model": response.model or "unknown",
                 "task_current": query[:200],
                 "focus_chain": [],
@@ -641,10 +648,9 @@ class Oracle:
 
     def _write_soul_atomic(self, soul: dict, temp_dir: Path) -> str:
         """Write soul data to a temp file synchronously (runs in thread pool)."""
-        import tempfile
-        import yaml
         with tempfile.NamedTemporaryFile("w", dir=str(temp_dir), delete=False) as tf:
-            yaml.dump(soul, tf, default_flow_style=False, sort_keys=False)
+            yaml_str = yaml.dump(soul, default_flow_style=False, sort_keys=False)
+            tf.write(f"{SOUL_FILE_HEADER}# Updated via Oracle soul evolution.\n\n{yaml_str}")
             return tf.name
 
     # ── Pattern detection ─────────────────────────────────────────────

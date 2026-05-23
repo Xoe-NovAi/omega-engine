@@ -1,0 +1,780 @@
+How can I create and manage projects? | Claude Help Center
+  URL: https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects
+  Click on "Set project instructions." · Add instructions for how you'd like Claude to behave and respond and click "Save instructions." · Claude ...
+
+  --- Content ---
+  [Skip to main content](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#main-content)
+  
+  # How can I create and manage projects?
+  
+  March 16, 2026
+  
+  Table of contents
+  
+  [How to create a project](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_c0a21a0003)[Adding content to project knowledge](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_4d41838a57)[Sharing projects](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_551239a4d4)[Starring projects for quick access](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_fcb9c0ef46)[How to move chats into projects](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_aebd2b696f)[Move chats to manage Claude’s memory](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_45a746513f)[How to archive projects](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_b7ab8bdcf4)[How to unarchive a project](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_3a4acc2478)[Deleting projects](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_093f8d6001)
+  
+  Projects are available to all users, including those with free Claude accounts. Free users can create a maximum of five projects.
+  
+  ## How to create a project
+  
+  1. Hover over the left side of your account and click “Projects,” or navigate directly to this section: [claude.ai/projects](http://claude.ai/projects).
+  
+  2. Click "+ New Project" in the upper right corner.
+  
+  3. Give your project a name and description (note that Claude will not have access to these details).
+  
+  4. If you are on a Team or Enterprise plan, choose the visibility settings:
+  
+  
+  
+  
+  
+     - **Keep it private:** Only you and members you invite can view or use this project.
+  
+     - **Share with your broader organization:** Everyone in your organization can view and use this project (where enabled by administrators).
+  
+  
+  Once your project is set up, you can initiate chats with Claude within the project.
+  
+  ## Adding content to project knowledge
+  
+  You'll find the project knowledge base on the right side of your project's main page. Anything you upload to this space will be used across all of your chats within that project.
+  
+  ### To add content to your project knowledge base
+  
+  1. Click on the "+" button to add content to the project.
+  
+  2. Upload relevant documents, text files, or code snippets.
+  
+  3. Claude will process this information and use it as context in your chats within the project.
+  
+  4. If you are using a paid Claude plan, when your project knowledge approaches the context window limit, [Claude will automatically enable RAG mode to expand your project's capacity](https://support.anthropic.com/en/articles/11473015-retrieval-augmented-generation-rag-for-projects).
+  
+  
+  ### To add project instructions to your project knowledge base
+  
+  1. Click on "Set project instructions."
+  
+  2. Add instructions for how you'd like Claude to behave and respond and click "Save instructions."
+  
+  3. Claude will use these instructions for all the chats within the project.
+  
+  
+  **Note:** Context is not shared across chats within a project unless the information is added into the project knowledge base.
+  
+  * * *
+  
+  ## Sharing projects
+  
+  If you are a member of a Team or Enterprise plan organization, you can share projects with other members of your organization.
+  
+  ### To share a project
+  
+  1. Open the project you want to share.
+  
+  2. Click the "Share project" button to the right of the project name.
+  
+  3. Add individual members using their name or email address, or copy and paste a list of email addresses for bulk sharing.
+  
+  4. Select the appropriate permission level for each member:
+  
+  
+  
+  
+  
+     - **Can use:** Members can see project contents, knowledge, and instructions, and chat within the project, but cannot edit it.
+  
+     - **Can edit:** Members can modify project instructions and knowledge, update member settings, and actively contribute to the project.
+  
+  
+  5. Click "Share" to send invitations.
+  
+  
+  ### Managing shared project access
+  
+  - **To change permissions:** Open the sharing menu and select a new role for the member.
+  
+  - **To view who has access:** The sharing menu shows all current members and their permission levels.
+  
+  - **To remove access:** The project creator can click on the member's current role and select "Remove access."
+  
+  
+  ### Finding shared projects
+  
+  Projects that others have shared with you will appear in the "Shared with me" tab on your [Projects page](http://claude.ai/projects). You'll also receive an email notification when someone shares a project with you.
+  
+  * * *
+  
+  ## Starring projects for quick access
+  
+  Starring a project allows for quick access from your projects and chats list, visible when hovering over the left side of your account. You can star a project from two different areas:
+  
+  ### From the “Projects” page
+  
+  1. Locate the project on the “Projects” page.
+  
+  2. Click on the three dots ("..." button) on the upper right corner of the project.
+  
+  3. Select "Star" from the menu that appears.
+  
+  
+  ![](https://downloads.intercomcdn.com/i/o/lupk8zyo/1584571648/2a3c5e2ea9f13a61365e02cb3d54/Screenshot+2025-06-23+at+11_19_50%E2%80%AFAM.png?expires=1779447600&signature=3a93a38e7d816539271b2869022d5af24984f3c30ab951d7e3e1d0ae2de8c899&req=dSUvEsx5nIdbUfMW1HO4zYgMrE2P41xd9NE33p2Jnb904H63TKMf%2FlwNYHJt%0A12rUquWKKMfwho5j0C0%3D%0A)
+  
+  ### From the project
+  
+  1. Open the relevant project.
+  
+  2. Click on the star icon in the upper right corner.
+  
+  3. The project will now appear in your starred items in the left side panel of your account.
+  
+  
+  ![](https://downloads.intercomcdn.com/i/o/lupk8zyo/1584571995/a5c91a7ee55606f5006e9c023696/Screenshot+2025-06-23+at+11_20_28%E2%80%AFAM.png?expires=1779447600&signature=1ac50d9b6cdee100b69158e104fec0f2b579d1fc6b990fbddec3a86ca6d8bea9&req=dSUvEsx5nIhWXPMW1HO4zZOc34pqz3bhOGS2ma2coPyO51yUSVY6p%2BftEr0U%0AHKGi5nR7imTDmPLNhgg%3D%0A)
+  
+  * * *
+  
+  ## How to move chats into projects
+  
+  You can move a standalone chat into a project by clicking on the dropdown arrow next to the chat name, then “Add to project”:
+  
+  ![](https://downloads.intercomcdn.com/i/o/lupk8zyo/1784190248/0f19c8de18b494a27be252fdfaff/d4e7a5c5-25f5-4623-862b-c593d2dc0b39?expires=1779447600&signature=7e61f44d87f55c65b1c0cda77dadad60b546ee731ebbe3ef38a41274a41c93dc&req=dScvEsh3nYNbUfMW1HO4zQABZmhoTqcTBSXNVFXQ%2FVF3Tvrd7Aqm6%2F%2F5fV2X%0Au%2FUNLFA7YsEER%2BhBouQ%3D%0A)
+  
+  Browse or search for the correct project in the **Move chat** modal that appears, then click on it to move the chat.
+  
+  ![](https://downloads.intercomcdn.com/i/o/lupk8zyo/1784190951/34dc256ccd4c0cf74976f31062e6/55365cf2-059d-41b2-ac95-4b00c4389a76?expires=1779447600&signature=3e2b6ccd91dad05b5f27bce60cdc08be40b860916f43425735189e29328d93dd&req=dScvEsh3nYhaWPMW1HO4zSMEBSm0zw4HgYbpTjViBxCVId5LibU01Y9X2UpK%0AnlUMm%2FnAhKHUz7XSyAM%3D%0A)
+  
+  You can also remove chats from projects, or move them between projects, using the same dropdown menu within the chat:
+  
+  ![](https://downloads.intercomcdn.com/i/o/lupk8zyo/1784185682/8625eac15b9fa452f148a6c47250/c53a1bc4-a991-4684-a789-5447ed789d35?expires=1779447600&signature=a06d34a81119a971dc3c96eb102c2f7654e52b60539c0d8e85e348962bf4cb3c&req=dScvEsh2mIdXW%2FMW1HO4zb6Dt%2F4oCkIMS2r1%2FGRlqORmDTOtS%2BuNtdugbtK6%0AKYZjj2XCahhVVQHKqHg%3D%0A)
+  
+  You can move chats into projects in bulk from [Your chat history page](https://claude.ai/recents):
+  
+  ![](https://downloads.intercomcdn.com/i/o/lupk8zyo/1784185685/bb960063204592db277a4ba62d8d/ebbf5c69-da79-4e56-9d87-f2a97a22fe67?expires=1779447600&signature=72a8b7342ee162431fb35281eb6c57f72a14602498bafb83f707b03d2bb8d265&req=dScvEsh2mIdXXPMW1HO4zbPaokVN7f2luQSB0Ebsw9fAn8pqqqqAEnYnGxno%0ASzryvTpkP%2BRzwpRoVKE%3D%0A)
+  
+  Select the chats you want to move, then click the icon next to the number of selected chats to move them into your project.
+  
+  * * *
+  
+  ## Move chats to manage Claude’s memory
+  
+  Memory from chat history is available for users on Pro, Max, Team, and Enterprise plans on the web, Claude Desktop, and Claude Mobile.
+  
+  For Team and Enterprise plans using Claude’s memory, the ability to move chats into and out of projects allows you to manage what’s included in memory summaries. Claude maintains separate memory summaries for each individual project, as well as a summary including the rest of your non-project chats. For example, if you accidentally start an unrelated chat in a project and need to remove it from the project-specific memory summary, you can click “Remove from project” so it will be included in Claude’s overall memory summary instead.
+  
+  Refer to our article on chat search and memory for more information: [What is Claude’s memory?](https://support.claude.com/en/articles/11817273-using-claude-s-chat-search-and-memory-to-build-on-previous-context#h_c1c0b33879)
+  
+  * * *
+  
+  ## How to archive projects
+  
+  Archiving is a way to organize your projects and declutter your project list. It's particularly useful for completed projects or those you're not actively working on but may need to reference in the future.
+  
+  **Important:** When a project is archived, all sharing permissions are reset to private and previous sharing context is wiped for security purposes.
+  
+  Here's what you need to know about archiving:
+  
+  - Archived projects will appear at the bottom of your main projects list.
+  
+  - You can still access conversations from archived projects.
+  
+  - There is no way to delete archived projects at this time (you must unarchive it first).
+  
+  
+  ### To archive a project, follow these steps
+  
+  1. Navigate to the project you want to archive.
+  
+  2. Click on the three dots ("..." button) in the upper right corner.
+  
+  3. Confirm that you want to archive the project.
+  
+  
+  ### How to access archived projects
+  
+  You can access an archived project in the archived projects tab on the [Projects page](http://claude.ai/projects).
+  
+  ## How to unarchive a project
+  
+  There are two ways to make archived project active again:
+  
+  ### From the archived projects tab
+  
+  1. Locate the archived project.
+  
+  2. Click on the three dots ("..." button) in the upper right corner.
+  
+  3. Select "Unarchive" from the menu that appears.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  ![](https://downloads.intercomcdn.com/i/o/lupk8zyo/1784203118/6490446438392ddbe9fd523f0d81/Screenshot-2B2025-07-09-2Bat-2B11_38_30-E2-80-AFAM.png?expires=1779447600&signature=f9aca6ac111dd5b145a40f0624001a389aee1f0e8d76a6f2eac783872c502778&req=dScvEst%2BnoBeUfMW1HO4zeHszjVjvytISqvQQeeJTp8VdpLWXlOzuRUgf36I%0A8%2BJV%0A)
+  
+  
+  ### From the project
+  
+  1. Navigate to the archived project.
+  
+  2. Click on the three dots ("..." button) in the upper right corner.
+  
+  3. Confirm that you want to unarchive the project.
+  
+  
+  ![](https://downloads.intercomcdn.com/i/o/lupk8zyo/1584543869/87d1308b507e2f62827757ec0b61/Screenshot+2025-06-23+at+10_59_50%E2%80%AFAM.png?expires=1779447600&signature=f16458f61154cb1bb230c259a4bc306ee1fbbd3eb5269b9f47ac30f9e05b2a2d&req=dSUvEsx6nolZUPMW1HO4zVDg8tUPS6hn%2BOxOx8zCzkatzDLMNbE6EQi%2FUTkm%0ARIJ1lKB3MJnWUPiPi%2Fs%3D%0A)
+  
+  * * *
+  
+  ## Deleting projects
+  
+  **Note:** It's not possible to delete archived projects. To see the option to delete an archived project, you must unarchive it first.
+  
+  ### From the “Projects” page
+  
+  1. Locate the project on the [Projects page](https://claude.ai/projects).
+  
+  2. Click on the three dots ("..." button) on the upper right corner of the project.
+  
+  3. Select "Delete" from the menu that appears.
+  
+  4. Confirm deletion in the pop-up by clicking "Yes, delete."
+  
+  
+  ![](https://downloads.intercomcdn.com/i/o/lupk8zyo/1784203814/66200261afca3b2d6533a0ec8de9/Screenshot%2B2025-07-09%2Bat%2B11_34_02-E2-80-AFAM.png?expires=1779447600&signature=4845063397c797400983d77b8a3aa1959a3543f3792a0ce21db4384b6e03b127&req=dScvEst%2BnoleXfMW1HO4zUvE7d7LNi58gwQJrerRpXfaVfslTRYgWX8o8h%2FJ%0AGQqi9bPS73IVCkejTbE%3D%0A)
+  
+  ### From the project
+  
+  1. Navigate to the project
+  
+  2. Click on the three dots ("..." button) next to the star.
+  
+  3. Select "Delete."
+  
+  4. Confirm deletion in the pop-up by clicking "Yes, delete."
+  
+  
+  ![](https://downloads.intercomcdn.com/i/o/lupk8zyo/1611821522/4a3423380f3cf55e2f1540387743/Screenshot+2025-07-09+at+11_34_52%E2%80%AFAM.png?expires=1779447600&signature=663b891f93ab9d287a32aed1576dfaa9f522df450bd8d46258bba6dab2a1cfd6&req=dSYmF8F8nIRdW%2FMW1HO4zdEk9pUODwpMH0VF4IAuZvjgqaCrSseKIwqLw%2BIF%0AVr%2FLn%2Bah17rWexkNx%2FA%3D%0A)
+  
+  * * *
+  
+  Related Articles
+  
+  [What are projects?](https://support.claude.com/en/articles/9517075-what-are-projects) [Manage project visibility and sharing](https://support.claude.com/en/articles/9519189-manage-project-visibility-and-sharing) [Use Claude’s chat search and memory to build on previous context](https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context) [Manage custom roles on Enterprise plans](https://support.claude.com/en/articles/13930452-manage-custom-roles-on-enterprise-plans) [Organize your tasks with projects in Claude Cowork](https://support.claude.com/en/articles/14116274-organize-your-tasks-with-projects-in-claude-cowork)
+  
+  Did this answer your question?
+  
+  😞😐😃
+  
+  Table of contents
+  
+  [How to create a project](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_c0a21a0003)[Adding content to project knowledge](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_4d41838a57)[Sharing projects](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_551239a4d4)[Starring projects for quick access](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_fcb9c0ef46)[How to move chats into projects](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_aebd2b696f)[Move chats to manage Claude’s memory](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_45a746513f)[How to archive projects](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_b7ab8bdcf4)[How to unarchive a project](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_3a4acc2478)[Deleting projects](https://support.claude.com/en/articles/9519177-how-can-i-create-and-manage-projects#h_093f8d6001)
+  --- End Content ---
+
+What project-level custom instructions do you use? : r/ClaudeAI
+  URL: https://www.reddit.com/r/ClaudeAI/comments/1e0s2vw/what_projectlevel_custom_instructions_do_you_use/
+  When writing a long response, use some combination of bold, italics, headers, and/or subheaders to make the text more readable. It worked pretty ...
+
+Getting started with projects in Claude.ai - YouTube
+  URL: https://www.youtube.com/watch?v=GJ5jTgcbRHA
+  first project, adding a knowledge base, setting up project instructions, and collaborating with team members. Learn how Projects can help ...
+
+  --- Content ---
+  Error 403 (Forbidden)!!1
+  
+  **403.** That’s an error.
+  
+  We're sorry, but you do not have access to this page. That’s all we know.
+  
+  Back
+  
+  
+  [![](https://www.youtube.com/watch?v=GJ5jTgcbRHA)](https://www.youtube.com/ "YouTube Home")
+  
+  Skip navigation
+  
+  Search
+  
+  
+  Search with your voice
+  
+  [Sign in](https://accounts.google.com/ServiceLogin?service=youtube&uilel=3&passive=true&continue=https%3A%2F%2Fwww.youtube.com%2Fsignin%3Faction_handle_signin%3Dtrue%26app%3Ddesktop%26hl%3Den%26next%3Dhttps%253A%252F%252Fwww.youtube.com%252Fwatch%253Fv%253DGJ5jTgcbRHA&hl=en&ec=65620)
+  
+  Getting started with projects in Claude.ai
+  
+  Tap to unmute
+  
+  2x
+  
+  ## Getting started with projects in Claude.ai
+  
+  Anthropic 738,994 views 5 months ago
+  
+  Copy link
+  
+  Info
+  
+  Shopping
+  
+  If playback doesn't begin shortly, try restarting your device.
+  
+  •
+  
+  You're signed out
+  
+  Videos you watch may be added to the TV's watch history and influence TV recommendations. To avoid this, cancel and sign in to YouTube on your computer.
+  
+  CancelConfirm
+  
+  Up next
+  
+  Live
+  
+  Upcoming
+  
+  CancelPlay Now
+  
+  Share
+  
+  Include playlist
+  
+  An error occurred while retrieving sharing information. Please try again later.
+  
+  0:00
+  
+  [Next (SHIFT+n)](https://www.youtube.com/watch?v=wZeOwqmSw84 "Next (SHIFT+n)")
+  
+  0:00 / 7:07
+  
+  Live
+  
+  •Watch full video
+  
+  •
+  
+  •
+  
+  [47:53\\
+  Set Up Claude Cowork better than 99% of peopleSystems Made Better and Better Creating395K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=pl90LATQlHI) [20:42\\
+  5 Mind Blowing Claude Cowork Uses CasesPaul J Lipsky185K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=hW4FHg4-Ss0) [15:13\\
+  Learn 97% of Claude in Under 16 MinutesDan Martell132K views • 1 day agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=wZeOwqmSw84) [Storchennest Live Webcam in Bad Salzungen, ThüringenStadtverwaltung Bad Salzungen2.1K watching • 3 months agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=Dr5zebXpO-M) [10:46\\
+  How Anthropic Engineers ACTUALLY Prompt Claude CodeAustin Marchese345K views • 7 days agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=qOvc9IUKEIc) [19:13\\
+  Full Claude Tutorial: Beginner to Advanced in 19 MinutesFuturepedia554K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=WSPChlfxJyA) [33:11\\
+  FULL Claude Projects Guide For Beginners in 2026! (Become a PRO)AI Foundations52K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=fOnKo_Hole8) [12:17\\
+  How Claude Code’s Creator Starts EVERY ProjectAustin Marchese228K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=KWrsLqnB6vA) [6:52\\
+  The 6 Claude Features to Get You Ahead of 99% of People using AITristen O'Brien1M views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=KBgZsV-0Fdo) [22:51\\
+  Claude Cowork Fundamentals In 22 MinutesTina Huang125K views • 12 days agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=uGwDuvSqgYI) [10:53\\
+  I Took All 7 Anthropic Courses in One Weekend (Honest Review)Jas Wong184K views • 1 month agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=qUQbU7h4RoE) [2:12:07\\
+  God Says:"DO THIS BEFORE TOMORROW ARRIVES"/God Message Now/God MessageGod's Love Unending83K views • 14 hours agoLivePlaylist ()Mix (50+)](https://www.youtube.com/watch?v=P3N33Tht2oI)
+  
+  # Getting started with projects in Claude.ai
+  
+  [![](https://yt3.ggpht.com/ux-GXUpB4PkI-qXVOpj9gGEiCkytT0Q78ka4srlxOm_Y3m1gEh5qy8Vu6vTjGSDztMT0NybtC7I=s48-c-k-c0x00ffffff-no-rj)](https://www.youtube.com/@anthropic-ai)
+  
+  [Anthropic](https://www.youtube.com/@anthropic-ai)
+  
+  
+  Anthropic
+  
+  
+  626K subscribers
+  
+  Subscribe
+  
+  Subscribed
+  
+  3.4K
+  
+  Share
+  
+  Save
+  
+  Download
+  
+  Download
+  
+  738K views5 months ago
+  
+  738,994 views • Dec 2, 2025
+  
+  Discover how to use Projects in Claude to organize your work with persistent context and custom instructions. This tutorial walks you through creating your first project, adding a knowledge base, setting up project instructions, and collaborating with team members. Learn how Projects can help you maintain continuity…...more
+  
+  ...more
+  
+  How this was made
+  
+  Auto-dubbed
+  
+  Audio tracks for some languages were automatically generated. [Learn more](https://support.google.com/youtube/answer/15569972?hl=en)
+  
+  Follow along using the transcript.
+  
+  Show transcript
+  
+  [Videos](https://www.youtube.com/channel/UCrDwWp7EBBv4NwvScIpBDOA/videos)[About](https://www.youtube.com/channel/UCrDwWp7EBBv4NwvScIpBDOA/about)
+  
+  Show less
+  
+  # Getting started with projects in Claude.ai
+  
+  738,994 views738K views
+  
+  Dec 2, 2025
+  
+  3.4K
+  
+  Share
+  
+  Save
+  
+  Download
+  
+  Download
+  
+  Getting started with projects in Claude.ai
+  
+  3.4KLikes
+  
+  738,994Views
+  
+  Dec 22025
+  
+  Discover how to use Projects in Claude to organize your work with persistent context and custom instructions. This tutorial walks you through creating your first project, adding a knowledge base, setting up project instructions, and collaborating with team members. Learn how Projects can help you maintain continuity across conversations and tailor Claude's responses to your specific needs—from brand guidelines to research initiatives to content creation workflows.…...more
+  
+  ...more
+  Show less
+  
+  How this was made
+  
+  Auto-dubbed
+  
+  Audio tracks for some languages were automatically generated. [Learn more](https://support.google.com/youtube/answer/15569972?hl=en)
+  
+  Follow along using the transcript.
+  
+  Show transcript
+  
+  [Videos](https://www.youtube.com/channel/UCrDwWp7EBBv4NwvScIpBDOA/videos)[About](https://www.youtube.com/channel/UCrDwWp7EBBv4NwvScIpBDOA/about)
+  
+  [![](https://i.ytimg.com/vi/pl90LATQlHI/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLA8qTNvoaFyRsKHD1d0K3bnx36-og)\\
+  \\
+  47:53](https://www.youtube.com/watch?v=pl90LATQlHI)
+  
+  ### [Set Up Claude Cowork better than 99% of people](https://www.youtube.com/watch?v=pl90LATQlHI)
+  
+  Systems Made Better and Better Creating
+  
+  395K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/hW4FHg4-Ss0/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLB0za9f1PDa09GwxhqqX5Wh9isXMQ)\\
+  \\
+  20:42](https://www.youtube.com/watch?v=hW4FHg4-Ss0)
+  
+  ### [5 Mind Blowing Claude Cowork Uses Cases](https://www.youtube.com/watch?v=hW4FHg4-Ss0)
+  
+  Paul J Lipsky
+  
+  185K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/wZeOwqmSw84/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDrcb0pEmdFSgZbyGtKPfuN2bI3UA)\\
+  \\
+  15:13](https://www.youtube.com/watch?v=wZeOwqmSw84&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [Learn 97% of Claude in Under 16 Minutes](https://www.youtube.com/watch?v=wZeOwqmSw84&pp=ugUEEgJlbg%3D%3D)
+  
+  Dan Martell
+  
+  132K views • 1 day ago
+  
+  New
+  
+  [![](https://i.ytimg.com/vi/Dr5zebXpO-M/hqdefault.jpg?v=814a&sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLA6fI4kv2mV4yf166DHon9G_ickVw)\\
+  \\
+  LIVE](https://www.youtube.com/watch?v=Dr5zebXpO-M)
+  
+  ### [Storchennest Live Webcam in Bad Salzungen, Thüringen](https://www.youtube.com/watch?v=Dr5zebXpO-M)
+  
+  Stadtverwaltung Bad Salzungen
+  
+  2.1K watching
+  
+  [![](https://i.ytimg.com/vi/qOvc9IUKEIc/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLAZRfL2F7ufG4GzxSmrmhhp37wQZA)\\
+  \\
+  10:46](https://www.youtube.com/watch?v=qOvc9IUKEIc)
+  
+  ### [How Anthropic Engineers ACTUALLY Prompt Claude Code](https://www.youtube.com/watch?v=qOvc9IUKEIc)
+  
+  Austin Marchese
+  
+  345K views • 7 days ago
+  
+  [![](https://i.ytimg.com/vi/WSPChlfxJyA/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLBVBg84ZocO8lXD1qFqwtDj_jBiNQ)\\
+  \\
+  19:13](https://www.youtube.com/watch?v=WSPChlfxJyA&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [Full Claude Tutorial: Beginner to Advanced in 19 Minutes](https://www.youtube.com/watch?v=WSPChlfxJyA&pp=ugUEEgJlbg%3D%3D)
+  
+  Futurepedia
+  
+  554K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/fOnKo_Hole8/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLCbDuFBlOibcf6YXUjRefcMCfwa5w)\\
+  \\
+  33:11](https://www.youtube.com/watch?v=fOnKo_Hole8&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [FULL Claude Projects Guide For Beginners in 2026! (Become a PRO)](https://www.youtube.com/watch?v=fOnKo_Hole8&pp=ugUEEgJlbg%3D%3D)
+  
+  AI Foundations
+  
+  52K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/KWrsLqnB6vA/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDpFLaZcXOMqPDn919ovdwDPE2kxQ)\\
+  \\
+  12:17](https://www.youtube.com/watch?v=KWrsLqnB6vA)
+  
+  ### [How Claude Code’s Creator Starts EVERY Project](https://www.youtube.com/watch?v=KWrsLqnB6vA)
+  
+  Austin Marchese
+  
+  228K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/KBgZsV-0Fdo/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLB4YeuFrer4FIJR_scdlWIc0TgmaA)\\
+  \\
+  6:52](https://www.youtube.com/watch?v=KBgZsV-0Fdo)
+  
+  ### [The 6 Claude Features to Get You Ahead of 99% of People using AI](https://www.youtube.com/watch?v=KBgZsV-0Fdo)
+  
+  Tristen O'Brien
+  
+  1M views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/uGwDuvSqgYI/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDDgFgMEYhH2tGXMnOqXPtZ3hKXOg)\\
+  \\
+  22:51](https://www.youtube.com/watch?v=uGwDuvSqgYI&pp=ugUHEgVlbi1VUw%3D%3D)
+  
+  ### [Claude Cowork Fundamentals In 22 Minutes](https://www.youtube.com/watch?v=uGwDuvSqgYI&pp=ugUHEgVlbi1VUw%3D%3D)
+  
+  Tina Huang
+  
+  125K views • 12 days ago
+  
+  [![](https://i.ytimg.com/vi/qUQbU7h4RoE/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDAvZAGJXOVkFvDfKKvKMarWGJSvw)\\
+  \\
+  10:53](https://www.youtube.com/watch?v=qUQbU7h4RoE&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [I Took All 7 Anthropic Courses in One Weekend (Honest Review)](https://www.youtube.com/watch?v=qUQbU7h4RoE&pp=ugUEEgJlbg%3D%3D)
+  
+  Jas Wong
+  
+  184K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/P3N33Tht2oI/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLC_1WS1-AkrsOceqFNo65KfDCkvaQ)\\
+  \\
+  2:12:07](https://www.youtube.com/watch?v=P3N33Tht2oI)
+  
+  ### [God Says:"DO THIS BEFORE TOMORROW ARRIVES"/God Message Now/God Message](https://www.youtube.com/watch?v=P3N33Tht2oI)
+  
+  God's Love Unending
+  
+  83K views • 14 hours ago
+  
+  New
+  
+  [![](https://i.ytimg.com/vi/X7YMMyd2Qnk/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLB2OSZNpqUUjB8ujQo0CZf3ki8S_Q)\\
+  \\
+  9:51](https://www.youtube.com/watch?v=X7YMMyd2Qnk)
+  
+  ### [Claude Design Basics \| Master 95% in 10 Minutes](https://www.youtube.com/watch?v=X7YMMyd2Qnk)
+  
+  Tristen O'Brien
+  
+  190K views • 3 weeks ago
+  
+  [![](https://i.ytimg.com/vi/E0Q96IKXx6Q/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLBY4oGphcukReKW1jJybaV3KZjkjg)\\
+  \\
+  39:58](https://www.youtube.com/watch?v=E0Q96IKXx6Q)
+  
+  ### [Ex-Google Exec: How to Position Yourself Now Before the Next AI Phase (2026–2027) \| Mo Gawdat](https://www.youtube.com/watch?v=E0Q96IKXx6Q)
+  
+  Silicon Valley Girland Mo Gawdat
+  
+  930K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/L2CXXmDG-mM/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLA6_X4hIl-tRR0qLBTzRvzenYHsJg)\\
+  \\
+  46:49](https://www.youtube.com/watch?v=L2CXXmDG-mM&pp=ugUEEgJlbtIHCQkGCwGHKiGM7w%3D%3D)
+  
+  ### [12 Ways to Use Claude So Well It Feels Illegal (Tutorial)](https://www.youtube.com/watch?v=L2CXXmDG-mM&pp=ugUEEgJlbtIHCQkGCwGHKiGM7w%3D%3D)
+  
+  Sabrina Ramonov 🍄
+  
+  258K views • 2 months ago
+  
+  [![](https://i.ytimg.com/vi/ZeWfksNXlbU/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLDMSC8_RDjckwYAMeKZcFiDSqJhAw)\\
+  \\
+  18:29](https://www.youtube.com/watch?v=ZeWfksNXlbU&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [Claude COWORK Clearly Explained (& how to use it for beginners)](https://www.youtube.com/watch?v=ZeWfksNXlbU&pp=ugUEEgJlbg%3D%3D)
+  
+  Eliot Prince
+  
+  955K views • 3 months ago
+  
+  [![](https://i.ytimg.com/vi/9OsKjq_rVXc/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLBPJaq2T0NpTEYyBF-twqcAPm4cxw)\\
+  \\
+  9:23](https://www.youtube.com/watch?v=9OsKjq_rVXc&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [How to Use Claude for Excel (Step-by-Step Tutorial)](https://www.youtube.com/watch?v=9OsKjq_rVXc&pp=ugUEEgJlbg%3D%3D)
+  
+  Kevin Stratvert
+  
+  64K views • 2 weeks ago
+  
+  [![](https://i.ytimg.com/vi/zvCOmAzwa3Y/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLBA93qUuLaLyH3S2dfSXtIRbLlLcg)\\
+  \\
+  8:56](https://www.youtube.com/watch?v=zvCOmAzwa3Y&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [New Claude Cowork Projects Explained in 9 Minutes](https://www.youtube.com/watch?v=zvCOmAzwa3Y&pp=ugUEEgJlbg%3D%3D)
+  
+  The AI Advantage
+  
+  47K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/22R3UKaTWKo/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLCTK5XAvqMOhrwGy_Q_xOkGeE6HQQ)\\
+  \\
+  19:17](https://www.youtube.com/watch?v=22R3UKaTWKo&pp=ugUEEgJlbg%3D%3D)
+  
+  ### [How to Use Claude for Excel - Complete Beginner Guide](https://www.youtube.com/watch?v=22R3UKaTWKo&pp=ugUEEgJlbg%3D%3D)
+  
+  Teacher's Tech
+  
+  68K views • 1 month ago
+  
+  [![](https://i.ytimg.com/vi/S_oN3vlzpMw/hqdefault.jpg?sqp=-oaymwEmCKgBEF5IWvKriqkDGQgBFQAAiEIYAdgBAeIBCggYEAIYBjgBQAE=&rs=AOn4CLCmuruxWgtTDQIKKEvhkKr4cgPfyg)\\
+  \\
+  35:26](https://www.youtube.com/watch?v=S_oN3vlzpMw)
+  
+  ### [How AI agents & Claude skills work (Clearly Explained)](https://www.youtube.com/watch?v=S_oN3vlzpMw)
+  
+  Greg Isenberg
+  
+  400K views • 1 month ago
+  --- End Content ---
+
+Setting Up a Claude Project: Instructions, Files, and Persistent Contex
+  URL: https://www.graduateschool.edu/learn/ai/claude-project-setup
+  To create a project, navigate to the Projects section in the left-hand sidebar of the Claude interface and click New Project. The first ...
+
+  --- Content ---
+  A Claude project is a dedicated workspace that retains context, instructions, and reference materials across every conversation within it. Instead of re-explaining your role, your goals, and your preferences at the start of every chat, you set those things up once in a project and Claude carries them forward automatically. Setting up a project takes about five minutes and can save significant time across repeated workflows.
+  
+  - How to create a new project and name it effectively
+  - What to include in your custom instructions and why they matter
+  - How to upload reference files and what types of documents are useful
+  - How RAG enables Claude to search uploaded documents on paid plans
+  - What changes once your project is set up and a conversation begins
+  
+  The following sections walk through each step of the project setup process and explain the decisions that make the difference between a useful project and one that underdelivers.
+  
+  This lesson is a preview from our [AI for the Workplace with Claude Course Online](https://www.graduateschool.edu/courses/ai-for-the-workplace-with-claude-course-self-paced). Enroll in a course for detailed lessons, live instructor support, and project-based training.
+  
+  To create a project, navigate to the Projects section in the left-hand sidebar of the Claude interface and click New Project. The first thing you will do is give the project a name. Names should be specific enough that they are immediately recognizable. A name like "Hiring for Data Analyst Positions" is more useful than "HR Stuff" because it tells you at a glance exactly what the project is for. Adding a brief description of the project's purpose is optional but can be helpful for clarity.
+  
+  ## Writing Custom Instructions
+  
+  Custom instructions are the most important part of a project setup. They tell Claude who you are, what this project is about, and how you want it to behave throughout every conversation in this workspace.
+  
+  Good instructions cover four things: your role and organization, the specific purpose of the project, the tone and format you expect Claude to use, and any rules that should always apply. For example, instructions for a hiring project might specify that you are an HR Director looking for help reviewing resumes against job descriptions, that outputs should always begin with an executive summary followed by detailed findings, and that formal language should be used throughout.
+  
+  When Claude has instructions like this in place, it starts every conversation already oriented toward your goals. You do not need to restate your role or your preferences. You can go directly to the task.
+  
+  ## Uploading Reference Files
+  
+  After writing your instructions, you can upload any documents that Claude should be able to reference within this project. In a hiring project, that might include job descriptions, company policy documents, or candidate evaluation templates. In other types of projects, it might be style guides, data files, standard operating procedures, or any other material Claude could use to give you more grounded, accurate responses.
+  
+  On paid plans, Claude uses a technique called Retrieval Augmented Generation, or RAG, to search through uploaded documents efficiently. This means Claude can find and use relevant content from your uploaded files even if the total volume of documents exceeds what would fit in a single context window. The documents do not all need to be loaded into memory at once. Claude retrieves what is relevant in response to your specific questions.
+  
+  ## What Changes Once the Project Is Ready
+  
+  Once a project has instructions and reference files in place, conversations within it work differently than regular chats. Claude already has the context it needs from the moment you type your first message. There is no setup or preamble required. You can go directly to the task, whether that is reviewing a resume, drafting a document, or analyzing data, and Claude will apply the context, tone, and rules you have established from the very first response.
+  
+  This persistent context is what makes projects valuable for any recurring workflow. The investment in setting up a project pays off across every conversation that follows.
+  
+  - Projects provide a persistent workspace that retains instructions and reference materials across all conversations within the project.
+  - Project names should be specific enough to be immediately recognizable at a glance.
+  - Custom instructions are the most important element of a project and should cover your role, the project's purpose, preferred tone and format, and any standing rules.
+  - Reference files such as job descriptions, policy documents, and templates can be uploaded for Claude to draw on throughout the project.
+  - On paid plans, RAG allows Claude to search uploaded documents even when the total file volume exceeds a single context window.
+  - Once a project is set up, conversations can begin directly with the task, without any re-explanation of context or preferences.
+  
+  ![photo of Brian Simms](https://www.graduateschool.edu/rails/active_storage/representations/redirect/eyJfcmFpbHMiOnsiZGF0YSI6MTAwMjQsInB1ciI6ImJsb2JfaWQifX0=--55f858ffc9b994ee8ec93b8a38796461fcd303ee/eyJfcmFpbHMiOnsiZGF0YSI6eyJmb3JtYXQiOiJ3ZWJwIiwicmVzaXplIjoiMjYweDI2MFx1MDAzZSJ9LCJwdXIiOiJ2YXJpYXRpb24ifX0=--688528981376a824ee2cd27fee342a60dad5c339/Brian%20Simms.jpg)
+  
+  ## Brian Simms
+  
+  Brian Simms teaches for Graduate School USA in the area of Artificial Intelligence, helping federal agencies build the knowledge and skills needed to adopt AI responsibly and effectively. An AI educator and author, he focuses on practical, mission-driven applications of AI for government leaders, program managers, and technical professionals.
+  
+  [More articles by Brian Simms](https://www.graduateschool.edu/blog/authors/brian-simms)
+  
+  ### **How to Learn AI**
+  
+  Build practical, career-focused skills in AI through hands-on training designed for beginners and professionals alike. Learn fundamental tools and workflows that prepare you for real-world projects or industry certification.
+  
+  - Explore [AI classes, bootcamps, and certifications](https://www.graduateschool.edu/topics/ai-classes) to find the right training format for your goals.
+  - Take the [Generative AI Certificate](https://www.graduateschool.edu/certificates/generative-ai) to gain comprehensive, career-ready skills
+  - Develop your team’s expertise through customized [AI group training](https://www.graduateschool.edu/group-training/ai) sessions
+  
+  ![](https://tvspix.com/t.png?&t=1779498579643&l=tvscientific-pix-o-fcb76cfd-4f28-40e9-88d8-8585c07ca8ec&u3=https%3A%2F%2Fwww.graduateschool.edu%2Flearn%2Fai%2Fclaude-project-setup)
+  --- End Content ---
+
+The Ultimate Guide to Turn Claude Into Your Brain's Most Valuable ...
+  URL: https://aimaker.substack.com/p/the-ultimate-guide-to-turn-claude-project-knowledge-into-your-brain-most-valuable-coworker
+  Learn how to set up Claude Projects with a master prompt and knowledge base. Step-by-step guide to building AI that knows your work like a ...
+
+  --- Content ---
+  [![The AI Maker](https://substackcdn.com/image/fetch/$s_!Og-U!,w_40,h_40,c_fill,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F38aaec92-ae56-46b5-9aef-79b9a0b0a017_1080x1080.png)](https://aimaker.substack.com/)
+  
+  # [![The AI Maker](https://substackcdn.com/image/fetch/$s_!7IAm!,e_trim:10:white/e_trim:10:transparent/h_72,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F78f297e6-ab00-4b6d-98f8-3f3bd32406ad_1344x256.png)](https://aimaker.substack.com/)
+  
+  SubscribeSign in
+  
+  [🧪 Maker Labs](https://aimaker.substack.com/s/maker-labs/?utm_source=substack&utm_medium=menu)
+  
+  # The Ultimate Guide to Turn Claude Into Your Brain’s Most Valuable Co-Worker
+  
+  ### The only guide you need to build master prompt and structure your knowledge base.
+  
+  [![Wyndo's avatar](https://substackcdn.com/image/fetch/$s_!zTXR!,w_36,h_36,c_fill,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F2ac42946-717d-4e50-8477-551c5d7a3025_1638x1638.jpeg)](https://substack.com/@wyndo)
+  
+  [Wyndo](https://substack.com/@wyndo)
+  
+  Aug 07, 2025
+  
+  ∙ Paid
+  
+  134
+  
+  25
+  
+  19
+  
+  Share
+  
+  [![Claude Projects knowledge base setup guide for building persistent AI context](https://substackcdn.com/image/fetch/$s_!SJgx!,w_1456,c_limit,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3bdcbce6-0f9b-400c-94d7-79928a367474_1536x1024.png)](https://substackcdn.com/image/fetch/$s_!SJgx!,f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F3bdcbce6-0f9b-400c-94d7-79928a367474_1536x1024.png)
+  
+  Welcome to [AI Maker Lab's](https://aimaker.substack.com/p/what-ive-actually-been-building-while-writing-about-ai-system-workflow) first post 👋🏻
+  
+  My free posts show you what's possible with AI. This post shows you exactly how to build it.
+  
+  This is the complete system I used to build AI that grew my newsletter from 0 to 4K subscribers in 4 months—the exact blueprints, [prompts](https://aimaker.substack.com/p/prompt-engineering-deep-dive-guide-simple-steps-10x-ai-results), and frameworks I've never shared publicly.
+  
+  Everything I wish I'd known months ago a…
+  
+  ## This post is for paid subscribers
+  
+  [Subscribe](https://aimaker.substack.com/subscribe?simple=true&next=https%3A%2F%2Faimaker.substack.com%2Fp%2Fthe-ultimate-guide-to-turn-claude-project-knowledge-into-your-brain-most-valuable-coworker&utm_source=paywall&utm_medium=web&utm_content=170052202)
+  
+  [Already a paid subscriber? **Sign in**](https://substack.com/sign-in?redirect=%2Fp%2Fthe-ultimate-guide-to-turn-claude-project-knowledge-into-your-brain-most-valuable-coworker&for_pub=aimaker&change_user=false)
+  --- End Content ---
