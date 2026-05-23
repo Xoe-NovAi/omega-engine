@@ -31,9 +31,22 @@ This index provides a structured map of the Omega Engine's knowledge base.
 - [scripts/setup.sh](../../scripts/setup.sh) — Environment bootstrap script.
 
 ## 🔱 Fleet Review System (Web Claude Parallel Review)
-- [docs/strategy/WEB_CLAUDE_FLEET_PROTOCOL.md](../docs/strategy/WEB_CLAUDE_FLEET_PROTOCOL.md) — Reusable protocol for 8-account Web Claude fleet review.
+- [docs/strategy/WEB_CLAUDE_FLEET_PROTOCOL.md](../docs/strategy/WEB_CLAUDE_FLEET_PROTOCOL.md) — Reusable protocol for 8-account Web Claude fleet review (v1.1.0: added deep dive protocol + lessons learned).
+- [docs/review/FLEET_MANAGEMENT.md](../docs/review/FLEET_MANAGEMENT.md) — Central command dashboard: account status, deep dive tracker, findings pipeline, launch sequence.
+- [docs/review/FINDINGS_LOG.md](../docs/review/FINDINGS_LOG.md) — Comprehensive catalog of all 29+ findings by severity, file, and source account.
+- [docs/review/MASTER_REMEDIATION_PLAN.md](../docs/review/MASTER_REMEDIATION_PLAN.md) — Phased fix plan (Phase 0→1→2→3) for Builder mode execution.
+- [docs/review/REMAINING_DEEP_DIVES.md](../docs/review/REMAINING_DEEP_DIVES.md) — Account 1 deep dive prompts preserved (DD2-DD5) for warm context continuity.
 - [docs/review/REVIEW_COORDINATION.md](../docs/review/REVIEW_COORDINATION.md) — Coordination instructions for the current fleet review.
-- [docs/review/review_01_core_architecture.md](../docs/review/review_01_core_architecture.md) — Account 1: Core Architecture & Engine Integrity.
+- [docs/review/PROJECT_SETUP_GUIDE.md](../docs/review/PROJECT_SETUP_GUIDE.md) — Step-by-step Claude Project configuration with RAG threshold warnings.
+- [docs/review/project_instructions_01_core_architecture.md](../docs/review/project_instructions_01_core_architecture.md) — Account 1 Project Instructions.
+- [docs/review/project_instructions_02_provider_fabric.md](../docs/review/project_instructions_02_provider_fabric.md) — Account 2 Project Instructions.
+- [docs/review/project_instructions_03_memory_knowledge.md](../docs/review/project_instructions_03_memory_knowledge.md) — Account 3 Project Instructions.
+- [docs/review/project_instructions_04_jem_pipeline.md](../docs/review/project_instructions_04_jem_pipeline.md) — Account 4 Project Instructions.
+- [docs/review/project_instructions_05_security_hardening.md](../docs/review/project_instructions_05_security_hardening.md) — Account 5 Project Instructions.
+- [docs/review/project_instructions_06_mcp_infrastructure.md](../docs/review/project_instructions_06_mcp_infrastructure.md) — Account 6 Project Instructions.
+- [docs/review/project_instructions_07_cli_dx.md](../docs/review/project_instructions_07_cli_dx.md) — Account 7 Project Instructions.
+- [docs/review/project_instructions_08_strategy_docs.md](../docs/review/project_instructions_08_strategy_docs.md) — Account 8 Project Instructions.
+- [docs/review/review_01_core_architecture.md](../docs/review/review_01_core_architecture.md) — Account 1: Core Architecture & Engine Integrity (handoff prompt).
 - [docs/review/review_02_provider_fabric.md](../docs/review/review_02_provider_fabric.md) — Account 2: Provider Fabric & Inference Pipeline.
 - [docs/review/review_03_memory_knowledge.md](../docs/review/review_03_memory_knowledge.md) — Account 3: Memory, Context & Knowledge Engine.
 - [docs/review/review_04_jem_pipeline.md](../docs/review/review_04_jem_pipeline.md) — Account 4: Jem 2.0 & Background Research Pipeline.
@@ -41,3 +54,5 @@ This index provides a structured map of the Omega Engine's knowledge base.
 - [docs/review/review_06_mcp_infrastructure.md](../docs/review/review_06_mcp_infrastructure.md) — Account 6: MCP Hub & Integration Infrastructure.
 - [docs/review/review_07_cli_dx.md](../docs/review/review_07_cli_dx.md) — Account 7: CLI, REPL, Agents & Developer Experience.
 - [docs/review/review_08_strategy_docs.md](../docs/review/review_08_strategy_docs.md) — Account 8: Strategy, Documentation & Community Readiness.
+- [docs/review/claude-reports/01-claude-report-core-arch.md](../docs/review/claude-reports/01-claude-report-core-arch.md) — Account 1 initial report (17 findings).
+- [docs/review/claude-reports/01-deep-dive-1_core-arch.md](../docs/review/claude-reports/01-deep-dive-1_core-arch.md) — Account 1 Deep Dive 1 (12 findings).

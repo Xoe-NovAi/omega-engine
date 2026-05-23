@@ -249,7 +249,91 @@ Maintain changelog at the bottom of this document.
 | Date | Version | Change |
 |------|---------|--------|
 | 2026-05-22 | v1.0.0 | Initial protocol — 8-account fleet with raw.githubusercontent.com access pattern |
+| 2026-05-22 | v1.1.0 | Added §11: Deep Dive Protocol, §12: Lessons Learned from Account 1 pilot, §13: Fleet Management System cross-reference |
 
 ---
 
-*The fleet is your force multiplier. Eight lenses see more than one.*
+## §11 Deep Dive Protocol (Post-Initial Review)
+
+After an account delivers its initial report, **don't stop there**. The warm context is exponentially more valuable than a cold start.
+
+### The Deep Dive Sequence
+
+```
+Initial Report (broad scan) 
+  → DD1: Missing Files — send files not included in initial scope
+  → DD2: Strategic Alignment — audit against roadmap and decisions
+  → DD3: Implementation Briefs — exact diffs for criticals
+  → DD4: Threat Modeling — worst-case scenarios and failure modes
+  → DD5: Architecture Evolution — where to spend next 1000 lines
+  → Synthesis — all reports combined, top 10 prioritized
+```
+
+### Rules
+
+1. **Send sequentially**: Each dive builds on the previous. Don't skip ahead.
+2. **Same conversation**: Keep all dives in the same Claude Project conversation to preserve warm context.
+3. **Save every report**: Each dive produces its own `.md` file in `docs/review/claude-reports/`.
+4. **Usage limits**: If an account hits limits (typically 5-hour cooldown on Pro), pause and switch to another account.
+5. **Account 1 is the Lead**: After all 8 accounts report, Account 1 does the Synthesis. Account 1 has the deepest architecture understanding.
+
+### Deep Dive Templates
+
+Refer to `docs/review/REMAINING_DEEP_DIVES.md` for the full Account 1 templates.
+Generic templates for future review cycles: see `docs/review/FLEET_MANAGEMENT.md` §2.
+
+---
+
+## §12 Lessons Learned from Pilot (2026-05-22)
+
+### Account 1 Results Summary
+
+| Phase | Findings | Value |
+|-------|----------|-------|
+| Initial Review (broad scan) | 17 issues | Catastrophic: 6 CRITICAL bugs in core architecture |
+| Deep Dive 1 (missing files) | 12 issues | 3 more CRITICAL: hierarchy YAML is decorative, OOM vector, inverted AnyIO fix |
+| **Total from 1 account** | **29 issues before fleet is even fully launched** | **Validates the fleet approach beyond doubt** |
+
+### Lessons
+
+| Lesson | Detail | Protocol Change |
+|--------|--------|-----------------|
+| **L1: Deep dives are more valuable than initial scans** | DD1 found an inverted fix (cheap op offloaded, expensive op kept sync) — a bug no linter catches and no cold-start review finds | Added §11 Deep Dive Protocol |
+| **L2: Cross-file pattern analysis is Claude's superpower** | Account 1 caught that `hierarchy.py` loads YAML and never reads it — connecting two files (`hierarchy.py` + `hierarchy.yaml`) that a human would review separately | Knowledge files should include related pairs |
+| **L3: Warm context quality degrades slowly** | DD1 was as sharp as the initial report despite having 5x more conversation history | Don't fear deep dive sequences — 5 dives per account is sustainable |
+| **L4: The inverted fix finding** | `entity_workspace.py` has `os.replace` offloaded to thread pool (microseconds) but `yaml_str` write left sync (milliseconds) — the wrong half is async | This finding alone justifies the entire fleet approach |
+| **L5: RAG threshold is real** | Claude Projects forces RAG mode at ~13 files regardless of total token size. ≤12 files per project. | Enforce strictly — document in PROJECT_SETUP_GUIDE.md |
+| **L6: raw.githubusercontent.com is reliable** | All 60+ file fetches across 2 sessions returned HTTP 200 with complete content | No change needed — pattern is verified |
+| **L7: Account specialization prevents drift** | Account 1 found deeply systemic issues because it focused ONLY on architecture. Cross-training would have diluted this. | Enforce specialization strictly |
+
+### Quantitative Validation
+
+- **Effort invested**: ~15 minutes to create Project + paste prompts + send initial review + send DD1
+- **Results returned**: 29 findings (6 CRITICAL, 10 HIGH, 10 MEDIUM, 3 LOW)
+- **Return on investment**: **~2 findings per minute of setup time**
+- **Human architect equivalent**: ~3-5 days of senior architect review time, compressed into ~2 hours of wall-clock time
+
+### Key Insight
+
+> *The fleet model transforms code review from a sequential bottleneck into a parallel force multiplier. One account found more systemic bugs in one review than the entire previous month of manual development. With 8 accounts running 5 deep dives each, we should expect **150-200 total findings** before the review cycle completes.*
+
+---
+
+## §13 Fleet Management System Cross-Reference
+
+The fleet is managed through a dedicated system of documents:
+
+| Document | Location | Purpose |
+|----------|----------|---------|
+| Fleet Management Dashboard | `docs/review/FLEET_MANAGEMENT.md` | Account status, deep dive tracker, launch sequence, synthesis protocol |
+| Findings Log | `docs/review/FINDINGS_LOG.md` | Comprehensive catalog of all findings by severity, file, and source |
+| Master Remediation Plan | `docs/review/MASTER_REMEDIATION_PLAN.md` | Phased implementation plan for Builder mode (Phase 0→1→2→3) |
+| Remaining Deep Dives | `docs/review/REMAINING_DEEP_DIVES.md` | Account 1 deep dive prompts preserved for warm context |
+| Review Coordination | `docs/review/REVIEW_COORDINATION.md` | One-page coordination overview for current review cycle |
+| Project Setup Guide | `docs/review/PROJECT_SETUP_GUIDE.md` | Step-by-step Claude Project configuration with RAG warnings |
+| Project Instructions | `docs/review/project_instructions_{N}.md` | Persistent per-account Claude Project instructions (ClaSSIC format) |
+| Handoff Prompts | `docs/review/review_{N}_{role}.md` | One-shot per-account review prompts with file lists |
+
+---
+
+*The fleet is your force multiplier. Eight lenses see more than one. Five deep dives each see more than eight.*
