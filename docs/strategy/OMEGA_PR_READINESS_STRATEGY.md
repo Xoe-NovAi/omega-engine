@@ -100,7 +100,7 @@ One honest changelog from git history. Structure:
 - 53 test-blocking YAML syntax error in entities.yaml
 
 ### Changed
-- Iris model migration: functiongemma-270m → qwen3-1.7b
+- Iris model migration: qwen3-1.7b → qwen3-1.7b (Verified local)
 - Provider Fabric: 6-backend priority chain
 - Session architecture: entity-scoped rolling sessions
 ```

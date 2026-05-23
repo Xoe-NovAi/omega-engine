@@ -184,7 +184,7 @@ When writing build briefs, include the `--vision` flag when appropriate:
 7. **Fleet check**: `ls docs/review/claude-reports/` -- how many reports collected?
 8. **Fleet dashboard**: Read `docs/review/FLEET_MANAGEMENT.md` §1 to check account status
 9. **Findings log**: Read `docs/review/FINDINGS_LOG.md` §2-5 for current unfixed findings count
-10. **Test suite**: Run `make test` -- 236 tests must pass before signoff
+10. **Test suite**: Run `make test` -- 241 tests must pass before signoff
 
 ### II. Strategic Dispatch
 ```
@@ -269,16 +269,17 @@ The Web Claude 8-account fleet is the primary quality assurance mechanism for Ph
 ### Fleet Documents Hierarchy
 ```
 docs/review/
-├── FLEET_MANAGEMENT.md          ← CENTRAL DASHBOARD
-├── FINDINGS_LOG.md              ← COMPREHENSIVE CATALOG (29 findings so far)
-├── MASTER_REMEDIATION_PLAN.md   ← EXECUTION PLAN for Builder mode
-├── REMAINING_DEEP_DIVES.md      ← ACCOUNT 1 deep dive prompts
-├── WEB_CLAUDE_FLEET_PROTOCOL.md ← REUSABLE SYSTEM protocol
-├── REVIEW_COORDINATION.md       ← CURRENT CYCLE overview
-├── PROJECT_SETUP_GUIDE.md       ← Step-by-step Claude config
-├── project_instructions_{N}.md  ← Per-account Project instructions
-├── review_{N}_{role}.md         ← Per-account handoff prompts
-└── claude-reports/              ← All received reports
+├── FLEET_MANAGEMENT.md              ← CENTRAL DASHBOARD
+├── FINDINGS_LOG.md                  ← COMPREHENSIVE CATALOG (29 findings — ALL FIXED)
+├── MASTER_REMEDIATION_PLAN.md       ← EXECUTION PLAN for Builder mode (all 4 phases complete)
+├── REMAINING_DEEP_DIVES.md          ← ACCOUNT 1 deep dive prompt references
+├── deep_dive_02_strategic_alignment.md  ← ENHANCED Deep Dive 2 prompt (ready to send)
+├── WEB_CLAUDE_FLEET_PROTOCOL.md     ← REUSABLE SYSTEM protocol
+├── REVIEW_COORDINATION.md           ← CURRENT CYCLE overview
+├── PROJECT_SETUP_GUIDE.md           ← Step-by-step Claude config
+├── project_instructions_{N}.md      ← Per-account Project instructions
+├── review_{N}_{role}.md             ← Per-account handoff prompts
+└── claude-reports/                  ← All received reports
 ```
 
 ### Fleet Workflow for the Overseer
@@ -290,11 +291,12 @@ docs/review/
 5. Track deep dives in FLEET_MANAGEMENT.md §2
 ```
 
-### Key Fleet Data (as of 2026-05-22)
-- **Account 1**: 29 findings (6 CRITICAL, 10 HIGH, 10 MEDIUM, 3 LOW)
-- **Accounts 2-8**: Not yet launched — await Account 1 deep dives to complete
-- **Estimated total**: 150-200 findings across all 8 accounts
-- **Estimated fix time**: ~12 hours for Account 1 findings alone
+### Key Fleet Data (as of 2026-05-23)
+- **Account 1**: 29 findings — **ALL 29 FIXED** (6 CRITICAL, 10 HIGH, 10 MEDIUM, 3 LOW) via 4-phase remediation. 241/241 tests green.
+- **Account 1 Deep Dives**: DD1 complete (12 findings → FIXED). DD2 enhanced prompt ready at `docs/review/deep_dive_02_strategic_alignment.md`. DD3-5 still queued.
+- **Accounts 2-8**: Not yet launched — await Account 1 deep dives to complete, then deploy 8-account parallel fleet review.
+- **Estimated total**: 150-200 findings expected across all 8 accounts (29 from Account 1 alone).
+- **Estimated fix time for Account 1**: ~12 hours actual (6 hours Phase 0-1, ~6 hours Phase 2-3).
 
 ### The Findings Lifecycle
 ```

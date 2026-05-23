@@ -22,23 +22,22 @@
 
 ## Deep Dive 2: Strategic Alignment Audit
 
-**Status**: ✅ SENT — awaiting report
+**Status**: ✅ ENHANCED PROMPT READY — awaiting Account 1 rate limit reset
 
-**Prompt to send (copy-paste)**:
+The enhanced prompt (v2.0.0) is available at:
 
-```
-Now read the project's strategic documents:
+📄 **`docs/review/deep_dive_02_strategic_alignment.md`**
 
-1. https://raw.githubusercontent.com/Xoe-NovAi/omega-engine/main/docs/MASTER_LEDGER.md
-2. https://raw.githubusercontent.com/Xoe-NovAi/omega-engine/main/docs/decisions/PIVOT_LOG.md (focus on Decisions 44, 50, 51, 52)
-3. https://raw.githubusercontent.com/Xoe-NovAi/omega-engine/main/config/omega.yaml
+Key improvements over the original:
+- **Phase 1: Reconnaissance** — forces empirical verification (run `make test`, check grep results) before analysis
+- **Document Triangulation** — 4 document pairs (A/B/C/D) cross-referenced for mismatches AND gaps
+- **Severity Rubric** — standardized finding format (CRITICAL/HIGH/MEDIUM/LOW/INFO) ready to slot into `FINDINGS_LOG.md`
+- **Phase C Readiness Scoring** — 6-dimensional score /60 with supporting evidence
+- **Edge Cases Checklist** — 5 concrete failure scenarios to manually exercise
+- **Closure Criteria** — explicit exit conditions prevent premature sign-off
+- **Zero-Finding Success Condition** — finding nothing is success, not failure; prevents manufactured low-value findings
 
-Then answer:
-a) Does the current architecture support the Phase 2-4 roadmap (Multi-Provider, Stack Release, Community)? Where are the architectural blockers?
-b) Cross-reference your findings against PIVOT_LOG decisions. Are any of your 17+ issues the result of a deliberate trade-off that was decided and documented? Or are these undocumented gaps?
-c) Is there anything in the strategy documents that the current architecture CANNOT support without significant rework?
-d) Give me a "Strategic Health Score" (1-10) for the current architecture relative to the stated roadmap. What would it take to get to a 9?
-```
+**To send**: Copy `docs/review/deep_dive_02_strategic_alignment.md` into a new Web Claude conversation on Account 1.
 
 ---
 

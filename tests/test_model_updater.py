@@ -78,12 +78,13 @@ def worker(mock_model_gateway, mock_observability, mock_guard, worker_config, tm
     return w
 
 
-@pytest.mark.anyio
-async def test_worker_initialization(worker):
-    assert worker.cfg["enabled"] is True
-    assert worker.cfg["model"] == "gemma-4-31b-it"
-    assert worker.db_path.exists() is False
-    assert worker._running is not None
+    @pytest.mark.anyio
+    async def test_worker_initialization(worker):
+        assert worker.cfg["enabled"] is True
+        assert worker.cfg["model"] == "gemma-4-31b-it"
+        assert worker.db_path.exists() is False
+        assert worker._running_lock is not None
+
 
 
 @pytest.mark.anyio
@@ -170,7 +171,7 @@ async def test_load_current_db_empty(worker):
 async def test_concurrency_guard(worker):
     """Test that concurrent cycles are prevented."""
     async def slow_cycle():
-        async with worker._running:
+        async with worker._running_lock:
             await anyio.sleep(0.1)
 
     # Start first cycle

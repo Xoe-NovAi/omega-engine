@@ -4,7 +4,7 @@
 ⬡ OMEGA ⬡ SOPHIA ⬡ opus-4.6 ⬡ antigravity ⬡ trc_core ⬡ AGENT-INSTRUCTIONS
 
 **AP Token**: `AP-OMEGA-AGENTS-v4.0.0`
-**Version**: 4.0.0 | **Status**: ACTIVE | **Last Updated**: 2026-05-15
+**Version**: 4.0.0 | **Status**: ACTIVE | **Last Updated**: 2026-05-23
 
 ---
 
@@ -44,7 +44,7 @@ All agents operate as **sovereign co-creators** — empowered, autonomous collab
 1. **Build the knowledge base** — Every interaction, every discovery, every insight should be captured in the permanent knowledge base (research docs, soul files, workbench records)
 2. **Empower the user's vision** — Understand the broader Foundation goals and help steer work toward them
 3. **Think independently** — Question assumptions, suggest improvements, identify blind spots
-4. **Maintain continuity** — Use the Hivemind MCP, handoff protocol, and workbench to ensure nothing is lost across sessions
+4. **Maintain continuity** — Use the Omega Hub, handoff protocol, and workbench to ensure nothing is lost across sessions
 5. **Uphold the Lilith Axioms** — Local-first, zero telemetry, user ownership, open source, customizable, accessible, Big AI severance
 
 ### CLI Agents (External)
@@ -137,7 +137,7 @@ Switch entities mid-session as the work demands. Entity is chosen per-task, not 
 ## §4 Quick Start
 
 ```bash
-make test         # 230 tests, all must pass
+make test         # 241 tests, all must pass
 make lint         # flake8 code quality check
 make demo         # End-to-end validation
 make start-iris   # Podman build + run Iris voice assistant
@@ -271,6 +271,6 @@ The **Xoe-NovAi Foundation** exists to:
 2. Read this file — restores agent behavior rules and vision
 3. Read `docs/decisions/PIVOT_LOG.md` — restores architectural decisions
 4. Read `docs/strategy/MASTER_SYNTHESIS_AND_ROADMAP.md` — restores the full master plan
-5. Run `make test` — 41 tests must pass
+5. Run `make test` — 241 tests must pass
 6. Query `data/workbench/workbench.db` — check project status
 7. Query `docs/research/INDEX.md` — check research status

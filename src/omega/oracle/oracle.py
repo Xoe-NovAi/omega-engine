@@ -218,7 +218,7 @@ class Oracle:
             trace.log("query.received", query=query, transient=transient)
 
             # Get current session for the default entity
-            default_name = self.default_entity.name if self.default_entity else "SOPHIA"
+            default_name = self.default_entity.name if self.default_entity else self.config.get("omega", {}).get("entity", {}).get("default", "default")
             if transient:
                 session_id = self.session_manager.get_session_id_transient(trace.trace_id)
             else:
@@ -228,8 +228,7 @@ class Oracle:
             # Early return for empty queries (still inside trace context)
             if not query or not query.strip():
                 resp = self._empty_response(trace)
-                if not transient:
-                    await self._track_soul_evolution(resp.entity, trace.trace_id)
+                await self._record_interaction(resp, query, trace, transient)
                 return resp
 
             # Step 1: Try explicit summon (bypasses speculative decoder)
@@ -239,13 +238,7 @@ class Oracle:
                 session_id = await self.session_manager.get_session_id(entity_name)
                 trace.log("summon.detected", entity=entity_name, query=summon_query, session_id=session_id)
                 resp = await self._summon(entity_name, summon_query, trace, session_id, transient=transient)
-                if not transient:
-                    await self.memory_store.add_exchange(
-                        resp.entity, resp.session_id, summon_query, resp.text,
-                        metadata={"trace_id": trace.trace_id, "backend": resp.backend, "model": resp.model},
-                    )
-                    await self._track_soul_evolution(resp.entity, trace.trace_id)
-                    await self._post_to_hivemind(resp, summon_query)
+                await self._record_interaction(resp, summon_query, trace, transient)
                 return resp
 
 
@@ -255,13 +248,7 @@ class Oracle:
                 session_id = await self.session_manager.get_session_id(entity_name)
                 trace.log("summon.detected", entity=entity_name, query=consult_query, pattern="consult", session_id=session_id)
                 resp = await self._summon(entity_name, consult_query, trace, session_id, transient=transient)
-                if not transient:
-                    await self.memory_store.add_exchange(
-                        resp.entity, resp.session_id, consult_query, resp.text,
-                        metadata={"trace_id": trace.trace_id, "backend": resp.backend, "model": resp.model},
-                    )
-                    await self._track_soul_evolution(resp.entity, trace.trace_id)
-                    await self._post_to_hivemind(resp, consult_query)
+                await self._record_interaction(resp, consult_query, trace, transient)
                 return resp
 
 
@@ -271,25 +258,13 @@ class Oracle:
 
             if iris_confidence > IRIS_CONFIDENCE_THRESHOLD:
                 resp = await self._respond_as_iris(query, trace, iris_confidence, transient=transient)
-                if not transient:
-                    await self.memory_store.add_exchange(
-                        resp.entity, resp.session_id, query, resp.text,
-                        metadata={"trace_id": trace.trace_id, "backend": resp.backend, "model": resp.model},
-                    )
-                    await self._track_soul_evolution(resp.entity, trace.trace_id)
-                    await self._post_to_hivemind(resp, query)
+                await self._record_interaction(resp, query, trace, transient)
                 return resp
 
             # Step 3: Escalate to domain-matched Pillar Keeper
             trace.log("escalation", reason=f"iris_confidence={iris_confidence:.2f} <= threshold={IRIS_CONFIDENCE_THRESHOLD}")
             resp = await self._route_by_domain(query, trace, session_id, transient=transient)
-            if not transient:
-                await self.memory_store.add_exchange(
-                    resp.entity, resp.session_id, query, resp.text,
-                    metadata={"trace_id": trace.trace_id, "backend": resp.backend, "model": resp.model},
-                )
-                await self._track_soul_evolution(resp.entity, trace.trace_id)
-                await self._post_to_hivemind(resp, query)
+            await self._record_interaction(resp, query, trace, transient)
             return resp
 
     async def summon(self, entity_name: str, query: str, transient: bool = False) -> OracleResponse:
@@ -362,7 +337,31 @@ class Oracle:
             logger.warning(f"TriageRouter failed for {entity_name}, falling back to configured model: {e}")
             return entity.model
 
-    # ── INTERNAL: Speculative decoder ─────────────────────────────────
+    async def _prepare_system_prompt(self, entity_name: str, session_id: str, personality: str) -> str:
+        """Builds the full system prompt by injecting session context."""
+        try:
+            context_block = await self.context_builder.build_context(entity_name, session_id)
+        except Exception as e:
+            logger.warning(f"ContextBuilder failed for {entity_name}: {e}")
+            context_block = ""
+        return ContextBuilder.prepend_to_prompt(context_block, personality)
+
+    async def _record_interaction(self, resp: OracleResponse, query: str, trace: TraceSession, transient: bool) -> None:
+        """Records interaction to memory, soul, and hivemind if not transient."""
+        if transient:
+            return
+        
+        # 1. Memory Store
+        await self.memory_store.add_exchange(
+            resp.entity, resp.session_id, query, resp.text,
+            metadata={"trace_id": trace.trace_id, "backend": resp.backend, "model": resp.model},
+        )
+        
+        # 2. Soul Evolution
+        await self._track_soul_evolution(resp.entity, trace.trace_id)
+        
+        # 3. Hivemind Sync
+        await self._post_to_hivemind(resp, query)
 
     def _assess_iris_confidence(self, query: str) -> float:
         """Assess whether Iris can handle this query directly.
@@ -403,18 +402,7 @@ class Oracle:
             session_id = await self.session_manager.get_session_id("Iris")
         
         # Build context and prepend to personality
-        try:
-            context_block = await self.context_builder.build_context("Iris", session_id)
-        except Exception as e:
-            logger.warning(f"ContextBuilder failed for Iris: {e}")
-            context_block = ""
-        
-        # If Iris entity exists, use her personality
-        system_prompt = "You are Iris, your voice interface. Answer simply and warmly."
-        if self.iris_entity:
-            system_prompt = self.iris_entity.personality
-        
-        system_prompt = ContextBuilder.prepend_to_prompt(context_block, system_prompt)
+        system_prompt = await self._prepare_system_prompt("Iris", session_id, system_prompt)
         
         # Attempt inference with the lightest available model
         response_text = await self.model_gateway.generate(
@@ -465,12 +453,7 @@ class Oracle:
         trace.log("entity.matched", entity=entity.name, pillars=entity.pillars, session_id=session_id)
         
         # Build context and prepend to personality
-        try:
-            context_block = await self.context_builder.build_context(entity.name, session_id)
-        except Exception as e:
-            logger.warning(f"ContextBuilder failed for {entity.name}: {e}")
-            context_block = ""
-        system_prompt = ContextBuilder.prepend_to_prompt(context_block, entity.personality)
+        system_prompt = await self._prepare_system_prompt(entity.name, session_id, entity.personality)
         
         # Generate response via model gateway with TriageRouter
         model_name = await self._select_model(entity.name, query, session_id, trace.trace_id)
@@ -534,12 +517,7 @@ class Oracle:
             )
         
         # Build context and prepend to personality
-        try:
-            context_block = await self.context_builder.build_context(entity.name, session_id)
-        except Exception as e:
-            logger.warning(f"ContextBuilder failed for {entity.name}: {e}")
-            context_block = ""
-        system_prompt = ContextBuilder.prepend_to_prompt(context_block, entity.personality)
+        system_prompt = await self._prepare_system_prompt(entity.name, session_id, entity.personality)
         
         # Generate response via model gateway with TriageRouter
         model_name = await self._select_model(entity.name, text, session_id, trace.trace_id)
@@ -587,9 +565,8 @@ class Oracle:
 
     async def _track_soul_evolution(self, entity_name: str, trace_id: str) -> None:
         """Update the Architect's soul.yaml after each interaction.
-        Uses atomic write and lock to prevent race conditions and corruption.
+        Implements the L1->L2->L3 refractive abstraction model for gnosis preservation.
         """
-        # Skip in test mode to avoid filesystem contamination
         if os.environ.get("OMEGA_ENV") == "test":
             return
         
@@ -598,31 +575,54 @@ class Oracle:
                 soul_path = Path(str(ARCH_SOUL_PATH))
                 if not soul_path.exists():
                     return
-
-                # Read soul file
-                if not await anyio.Path(soul_path).exists():
-                    return
                 
                 async with await anyio.open_file(str(soul_path), "r") as f:
                     content = await f.read()
                     soul = yaml.safe_load(content)
-
+                
                 ent = soul["entity"]
                 evo = ent.setdefault("soul_evolution", {})
                 evo["sessions_completed"] = evo.get("sessions_completed", 0) + 1
-
+                
                 # Track unique entities inhabited
                 inhabited: Set[str] = set(ent.get("soul_wardrobe", []))
                 evo["entities_inhabited"] = len(inhabited)
-
-                # Add a lightweight lesson entry
+                
+                # --- Gnosis Distillation (L1->L2->L3) ---
+                # We use a reasoning model to distill the session trace into gnosis
+                distillation_prompt = (
+                    f"Analyze the following interaction trace for entity {entity_name} (Trace ID: {trace_id}).\n"
+                    "Extract the following three levels of abstraction:\n"
+                    "L1 (Narrative): A concise summary of what happened.\n"
+                    "L2 (Insight): The causal pattern or strategic significance of this interaction.\n"
+                    "L3 (Universal Principle): A timeless, domain-agnostic truth extracted from this experience.\n\n"
+                    "Format as YAML with keys: l1, l2, l3."
+                )
+                
+                # Use a reasoning model for distillation
+                try:
+                    distilled_text = await self.model_gateway.generate(
+                        model_name="qwen3-4b-thinking-q4_k_m",
+                        system_prompt="You are the Gnosis Distiller. Your goal is to extract timeless truths from session traces.",
+                        user_query=distillation_prompt,
+                        temperature=0.3,
+                        max_tokens=512,
+                    )
+                    distilled_data = yaml.safe_load(distilled_text) or {}
+                except Exception as e:
+                    logger.warning(f"Gnosis distillation failed: {e}")
+                    distilled_data = {"l1": f"Session with {entity_name}", "l2": "Unknown", "l3": "Unknown"}
+                
                 lessons = ent.setdefault("lessons_learned", [])
                 if not isinstance(lessons, list):
                     lessons = []
                     ent["lessons_learned"] = lessons
-                if len(lessons) < 1000:  # prevent unbounded growth
+                
+                if len(lessons) < 1000:
                     lessons.append({
-                        "lesson": f"Session with {entity_name}",
+                        "l1": distilled_data.get("l1", "N/A"),
+                        "l2": distilled_data.get("l2", "N/A"),
+                        "l3": distilled_data.get("l3", "N/A"),
                         "source": "user-session",
                         "user": "The Architect",
                         "trace_id": trace_id,
@@ -630,20 +630,21 @@ class Oracle:
                         "session_type": "persistent",
                         "timestamp": datetime.now(timezone.utc).isoformat(),
                     })
-
+                
                 # Recompute soul_power
                 sessions = evo.get("sessions_completed", 0)
                 entities = evo.get("entities_inhabited", 0)
                 experiences = evo.get("total_embodied_experiences", 0)
                 evo["soul_power"] = round((sessions * 0.1) + (entities * 0.3) + (experiences * 0.6), 2)
-
-                # Atomic write using tempfile and os.replace (wrapped for async)
+                
+                # Atomic write
                 temp_dir = soul_path.parent
                 temp_name = await anyio.to_thread.run_sync(self._write_soul_atomic, soul, temp_dir)
                 await anyio.to_thread.run_sync(os.replace, temp_name, str(soul_path))
-
+                
             except Exception as e:
                 logger.warning(f"Failed to track soul evolution: {e}")
+
 
     # ── Soul file atomic write helper (runs in thread pool) ───────────
 

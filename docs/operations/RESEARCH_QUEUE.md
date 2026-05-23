@@ -170,7 +170,7 @@
 | JEM-1.4 | Tier 3: Gemini CLI headless caller (structured review JSON) | 🔲 PENDING | 1h |
 | JEM-1.5 | Per-tier circuit breaker (asymmetric thresholds) | 🔲 PENDING | 45m |
 | JEM-1.6 | Training triple saver (data/datasets/synthetic/) | 🔲 PENDING | 30m |
-| JEM-1.7 | Fix `_post_to_hivemind` JSONL append bug | 🔲 PENDING | 15m |
+| JEM-1.7 | Fix `_post_to_hub` JSONL append bug | 🔲 PENDING | 15m |
 
 ### 🟡 Jem Grand Strategy — Phase 2: Scheduling & Rotation
 

@@ -115,3 +115,22 @@ async def test_wrap_tool_call_partial_descriptors(proxy):
     assert result["arguments"]["normal"] == "plain"
     assert result["arguments"]["transfer"] == "secret_data"
     assert result["arguments"]["number"] == 99
+
+
+def test_gnosis_proxy_fifo_eviction(proxy):
+    """Verify that the transfer store evicts the oldest descriptors when full."""
+    # Fill the store to its limit
+    for i in range(GnosisProxy.MAX_TRANSFER_STORE_SIZE):
+        proxy.create_transfer_descriptor(f"data_{i}")
+    
+    # The first one created should be 'data_0'
+    first_id = list(proxy._store_keys)[0]
+    
+    # Add one more to trigger eviction
+    proxy.create_transfer_descriptor("overflow_data")
+    
+    # The first one should now be gone
+    with pytest.raises(KeyError):
+        proxy.resolve_descriptor(first_id)
+    
+    assert len(proxy.transfer_store) == GnosisProxy.MAX_TRANSFER_STORE_SIZE

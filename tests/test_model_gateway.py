@@ -1,5 +1,6 @@
 """Tests for Omega Model Gateway."""
 
+import pytest
 from omega.oracle.model_gateway import ModelGateway
 
 
@@ -37,3 +38,46 @@ def test_fallback_response():
         "Hello",
     )
     assert "no inference backend is running" in response
+
+
+@pytest.mark.asyncio
+async def test_model_gateway_fallback_chain():
+    """Verify that ModelGateway falls back through the provider chain when others fail."""
+    from unittest.mock import AsyncMock, MagicMock
+    
+    gateway = ModelGateway()
+    
+    # Create mock providers
+    p1 = MagicMock()
+    p1.name = "provider1"
+    p1.is_available = AsyncMock(return_value=True)
+    p1.generate = AsyncMock(side_effect=Exception("P1 Failed"))
+    
+    p2 = MagicMock()
+    p2.name = "provider2"
+    p2.is_available = AsyncMock(return_value=True)
+    p2.generate = AsyncMock(side_effect=Exception("P2 Failed"))
+    
+    p3 = MagicMock()
+    p3.name = "provider3"
+    p3.is_available = AsyncMock(return_value=True)
+    p3.generate = AsyncMock(return_value="Success from P3")
+    
+    gateway.providers = [p1, p2, p3]
+    
+    # We must mock the environment to avoid the mock_backend in test mode
+    import os
+    os.environ["OMEGA_ENV"] = "production" 
+    
+    result = await gateway.generate(
+        model_name="test-model",
+        system_prompt="sys",
+        user_query="query",
+        temperature=0.7,
+        max_tokens=100
+    )
+    
+    assert result == "Success from P3"
+    assert p1.generate.called
+    assert p2.generate.called
+    assert p3.generate.called

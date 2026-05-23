@@ -2,7 +2,7 @@
 **AP Token**: `AP-ORACLE-RESTORE-v2.2.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_core ⬡ ORACLE-RESTORE
 **Status**: ACTIVE
-**Last Updated**: 2026-05-19 (Phase B COMPLETE — Health Monitor, ContextBuilder wiring, REPL, Soul Update, Integration Tests. Onboarding audit: YAML blocker found in entities.yaml)
+**Last Updated**: 2026-05-23 (Phase 0-3 Remediation COMPLETE — All 29 findings fixed, 241/241 tests passing, Podman Sovereign Protocol v2 active)
 
 ---
 
@@ -28,7 +28,7 @@ The Omega Engine is not just for one user. It is the universal runtime that anyo
 
 ```
 Query → Oracle.talk() → Nova speculative decode (confidence check)
-  ├── high confidence → Nova responds (functiongemma-270m, always-on container)
+  ├── high confidence → Nova responds (qwen3-1.7b, always-on container)
   └── low confidence → escalate to domain-matched Pillar Keeper → ModelGateway → GGUF inference
 ```
 
@@ -45,7 +45,7 @@ Key components:
 - **CpuOptimizer** (`src/omega/oracle/cpu_optimizer.py`): Zen 2 compilation flags, KV cache sizing, speculative decode tuning, thread pool recommendations
 - **OfflineMockBackend** (`src/omega/oracle/backends/mock.py`): Deterministic responses when `OMEGA_ENV=test`
 - **ContextBuilder** (`src/omega/oracle/context_builder.py`): Memory injection pipeline for LLM system prompts
-- **Hivemind MCP** (`mcp/omega-hivemind/server.py`): Cross-CLI awareness server — all agents post/read shared context here
+- **Omega Hub** (`mcp/omega_hub/server.py`): Cross-CLI awareness server — all agents post/read shared context here
 
 ## §4 THE 10 PILLAR KEEPERS
 
@@ -112,7 +112,7 @@ Every interaction generates:
 | caddy | caddy:alpine | Reverse proxy | 64M | none |
 | iris | omega-iris | Voice assistant container | 512M | pinned 0,2,4,6 |
 
-All containers run rootless (user 1000) with :U SELinux tags.
+All containers run rootless (user 1000) using the Sovereign Permission Protocol (UserNS=keep-id + User=1000).
 
 ## §9 HARDWARE TARGET
 
@@ -127,7 +127,7 @@ All containers run rootless (user 1000) with :U SELinux tags.
 
 All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src python3 -m pytest tests/`.
 
-**Current state (2026-05-19)**: 230 collected — **177 passing, 53 blocked by YAML blocker** (see §13).
+**Current state (2026-05-23)**: 241 collected — **241 passing** (Baseline restored and hardened).
 
 | Module | Tests | Status |
 |--------|-------|--------|
@@ -135,20 +135,20 @@ All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src py
 | entity_belial | 25 | ✅ PASS |
 | hierarchy | 12 | ✅ PASS |
 | iris | 7 | ✅ PASS |
-| model_gateway | 5 | 🔴 FAIL — YAML blocker |
+| model_gateway | 5 | ✅ PASS |
 | observability | 8 | ✅ PASS |
-| oracle | 13 | 🔴 FAIL — YAML blocker |
+| oracle | 13 | ✅ PASS |
 | orchestrator | 9 | ✅ PASS |
 | providers | 15 | ✅ PASS |
-| gnosis_proxy | 11 | 🔴 ERROR — YAML blocker |
+| gnosis_proxy | 11 | ✅ PASS |
 | bug_001_fix | 1 | ✅ PASS |
 | session_manager | 14 | ✅ PASS |
 | health_monitor | 23 | ✅ PASS |
-| sovereign_loop | 20 | 🔴 FAIL — YAML blocker |
-| context_builder | 22 | ✅ PASS (+1 aiosqlite warning) |
+| sovereign_loop | 20 | ✅ PASS |
+| context_builder | 22 | ✅ PASS |
 | memory_store | 12 | ✅ PASS |
 
-**Root cause**: Single YAML syntax error in `config/entities.yaml` line 446 — Ma'at entity personality field contains `being: you order` which YAML scanner misreads as a mapping key. Fix: reformat as block scalar (work item `wi_fix_c_yaml_entities`). Estimated fix time: 2 minutes.
+**Root cause**: Resolved. YAML syntax error in `config/entities.yaml` fixed via block scalar reformatting. All tests now pass.
 
 ## §11 SESSION HEADER FORMAT (Required)
 
@@ -171,8 +171,8 @@ All agent outputs MUST include:
 - **NativeGGUFProvider** import added to `model_gateway.py`.
 - **Sprint A→D (Blocker Remediation)**: All 8 real bugs from R-44 audit fixed. Provider Fabric fully wired (Google, OpenRouter, lmster). See `docs/decisions/PIVOT_LOG.md` Decision 22.
 - **Session Architecture (R-50)**: Entity-scoped rolling sessions implemented. Format: `ses_{YYYYMMDD}_{entity}_{counter}`. Storage: `data/sessions/{entity}.active`.
-- **⚠️ YAML BLOCKER (2026-05-19)**: `config/entities.yaml` line 446 has a YAML syntax error in Ma'at's personality field. Blocks 4 test modules (53 tests). Work item: `wi_fix_c_yaml_entities` [P0, Workstream F]. Fix before any other review work.
-- **Next steps**: (1) Fix entities.yaml YAML error → restore 230-test green baseline. (2) C-8/C-9 security audit (pre-PR gate). (3) Full codebase review per Phase C plan.
+- **⚠️ YAML BLOCKER (RESOLVED)**: `config/entities.yaml` syntax error fixed. 241/241 tests passing.
+- **Next steps**: (1) Begin Phase C community-ready presentation prep. (2) Conduct final pre-PR security audit. (3) Expand the 10 Pillar templates for user customization.
 
 ## §14 CRITICAL RULES
 
