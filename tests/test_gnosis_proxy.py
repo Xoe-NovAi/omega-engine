@@ -1,6 +1,11 @@
 """Tests for GnosisProxy (Invisible RAG middleware)."""
 
+import os
+import tempfile
+from pathlib import Path
+
 import pytest
+import yaml
 
 from omega.oracle.gnosis_proxy import GnosisProxy, DescriptorRef
 from omega.oracle.entity_registry import EntityRegistry
@@ -8,7 +13,23 @@ from omega.oracle.entity_registry import EntityRegistry
 
 @pytest.fixture
 def registry():
-    return EntityRegistry()
+    """Create an isolated EntityRegistry backed by a temp config to avoid
+    contaminating the real config/entities.yaml."""
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as tf:
+        yaml.dump({"entities": {"test": {
+            "name": "TestEntity",
+            "domains": ["test", "wisdom", "knowledge"],
+            "model": "qwen3-1.7b",
+            "personality": "You are a test entity.",
+            "temperature": 0.7,
+        }}}, tf)
+        temp_path = tf.name
+    
+    try:
+        reg = EntityRegistry(config_path=temp_path)
+        yield reg
+    finally:
+        os.unlink(temp_path)
 
 
 @pytest.fixture

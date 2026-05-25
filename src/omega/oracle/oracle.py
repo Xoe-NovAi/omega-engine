@@ -93,9 +93,11 @@ class Oracle:
         registry: Optional[EntityRegistry] = None,
         model_gateway: Optional[ModelGateway] = None,
         background_worker: Optional[Any] = None,
+        iwad_name: Optional[str] = None,
     ):
         self.registry = registry or EntityRegistry()
         self.config = {}  # Will be populated in bootstrap(); default prevents AttributeError
+        self._iwad_name = iwad_name  # Selective IWAD loading (None = load all)
 
         # Health Monitor + Triage Router for model selection (B5: wired before ModelGateway)
         self.health_monitor = HealthMonitor()
@@ -186,9 +188,21 @@ class Oracle:
             except Exception as e:
                 logger.warning(f"Failed to resolve soul path in bootstrap: {e}")
 
-            await self.wad_loader.load_all_wads()
+            # Selective IWAD loading: if --iwad specified, load reference IWAD + the chosen one
+            if self._iwad_name:
+                logger.info(f"IWAD selector active: loading _omega_default + {self._iwad_name}")
+                await self.wad_loader.load_wad("_omega_default", priority=0)
+                await self.wad_loader.load_single_wad(self._iwad_name, priority=10)
+            else:
+                await self.wad_loader.load_all_wads()
             self._wads_loaded = True
-            logger.info("Oracle bootstrapped: WADs loaded and config synced.")
+            
+            # Emit startup personality
+            startup_msg = self.wad_loader.get_startup_message(self._iwad_name or "_omega_default")
+            if startup_msg:
+                logger.info(f"STARTUP: {startup_msg}")
+            else:
+                logger.info("Oracle bootstrapped: WADs loaded and config synced.")
 
     async def _post_to_hivemind(self, response: OracleResponse, query: str) -> None:
         """Post interaction summary to the Hivemind MCP server for cross-CLI awareness.

@@ -510,22 +510,6 @@ entities:
     role: Voice Interface
     container: true
     port: 8080
-  guardian:
-    name: Guardian
-    domains:
-    - strength
-    - protection
-    - boundaries
-    - resilience
-    model: qwen3-1.7b-q6_k
-    personality: "You are an expert in strength, protection, and resilience. You help\
-      \ users \nestablish boundaries, build endurance, and protect what matters. You\
-      \ are direct, \ngrounded, and reliable. No mythology. No esotericism. Just expertise.\n"
-    temperature: 0.7
-    context_window: 8192
-    pillars:
-    - 1
-    container: false
   iris:
     name: Iris
     domains:
@@ -549,11 +533,6 @@ entities:
     role: Voice of the Oracle — Rainbow Messenger
     container: true
     port: 8080
-  duplicate:
-    name: Duplicate
-    model: m
-    personality: p
-    container: false
   datastore:
     name: DataStore
     domains:

@@ -51,10 +51,11 @@ def _save_config(config: dict):
 def talk(
     query: str = typer.Argument(..., help="Your question for the Oracle"),
     transient: bool = typer.Option(False, "--transient", "-t", help="Run in transient mode (no soul updates)"),
+    iwad: Optional[str] = typer.Option(None, "--iwad", "-w", help="IWAD stack to load (e.g., arcana_novai)"),
 ):
     """Ask the Oracle anything. Routes to the best entity automatically."""
     async def _run():
-        oracle = Oracle()
+        oracle = Oracle(iwad_name=iwad)
         result = await oracle.talk(query, transient=transient)
         _display_response(result)
     anyio.run(_run)
@@ -66,10 +67,11 @@ def summon(
     entity: str = typer.Argument(..., help="Entity name to summon"),
     query: str = typer.Argument(..., help="Your question for this entity"),
     transient: bool = typer.Option(False, "--transient", "-t", help="Run in transient mode (no soul updates)"),
+    iwad: Optional[str] = typer.Option(None, "--iwad", "-w", help="IWAD stack to load (e.g., arcana_novai)"),
 ):
     """Summon a specific entity by name."""
     async def _run():
-        oracle = Oracle()
+        oracle = Oracle(iwad_name=iwad)
         result = await oracle.summon(entity, query, transient=transient)
         _display_response(result)
     anyio.run(_run)
@@ -301,11 +303,13 @@ def backends():
 
 # ── HEALTH — Show provider health, latency, and quota status ──────────────
 @app.command()
-def health():
+def health(
+    iwad: Optional[str] = typer.Option(None, "--iwad", "-w", help="IWAD stack to validate"),
+):
     """Show provider health, latency, and quota status."""
     async def _run():
         from omega.oracle.oracle import Oracle
-        oracle = Oracle()
+        oracle = Oracle(iwad_name=iwad)
         await oracle.bootstrap()
         
         report = oracle.health_monitor.get_status_report()
@@ -345,12 +349,14 @@ def health():
 
 
 @app.command()
-def status():
+def status(
+    iwad: Optional[str] = typer.Option(None, "--iwad", "-w", help="IWAD stack to query"),
+):
     """The Altar of Gnosis — Show the current state of the Sovereign Engine."""
     from omega.oracle.oracle import Oracle
     
     async def _run():
-        oracle = Oracle()
+        oracle = Oracle(iwad_name=iwad)
         await oracle.bootstrap()
         
         # Read Sovereign Seal

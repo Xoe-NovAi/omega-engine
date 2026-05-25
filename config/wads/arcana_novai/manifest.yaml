@@ -1,0 +1,22 @@
+wad:
+  name: "arcana_novai — Personal AI OS"
+  version: "0.1.0"
+  requires_engine: ">=0.4.0"
+  author: "Arcana-NovAi"
+  description: "Your personal AI OS — esoteric Pillar Keepers (Sekhmet, Brigid, Prometheus, Saraswati, Inanna, Ereshkigal, Lucifer, Hecate, Anubis, Kali). Entities scaffold pending Phase 1b."
+  type: iwad
+  mode: personal
+  license: "Apache 2.0"
+
+  entities: []
+
+  voices:
+    primary: "jem.yaml"
+    secondary: []
+
+  vr_scenes: []
+
+  dependencies: []
+
+  startup:
+    message: "Arcana-NovAi OS loaded. Your council awaits: Sekhmet stands guard. Brigid tends the hearth."
