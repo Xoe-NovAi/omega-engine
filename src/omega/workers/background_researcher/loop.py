@@ -54,7 +54,7 @@ class BackgroundResearcherLoop:
         self.checkpoint = CheckpointManager()
         self.searxng = SearXNGClient()
         self.search_fleet = SearchFleet(self.budget)
-        self.distiller = Distiller(model_gateway)
+        self.distiller = Distiller(model_gateway, budget=self.budget)
         self.convergence = ConvergenceDetector()
         self.soul_updater = SoulUpdater()
         
@@ -172,7 +172,7 @@ class BackgroundResearcherLoop:
                 "circuit_states": {"t1": "CLOSED", "t2": "CLOSED", "t3": "CLOSED"},
                 "training_triple_saved": True
             }
-            self.metrics.log_cycle(task.topic, cycle_metrics)
+            await self.metrics.log_cycle(task.topic, cycle_metrics)
 
             task.state = "distilled"
             await self.checkpoint.save(task)
@@ -373,8 +373,10 @@ class BackgroundResearcherLoop:
 
         entities_dir = Path(__file__).parent.parent.parent.parent / "data" / "entities"
         if entities_dir.exists():
+            # Skip the user's own soul file (config-driven, default "arch")
+            skip_user = os.environ.get("OMEGA_DEFAULT_USER", "arch")
             for entity_dir in entities_dir.iterdir():
-                if entity_dir.is_dir() and entity_dir.name != "arch":
+                if entity_dir.is_dir() and entity_dir.name != skip_user:
                     knowledge_dir = entity_dir / "knowledge"
                     if not knowledge_dir.exists() or not any(knowledge_dir.iterdir()):
                         candidates.append({"topic": f"Knowledge base scaffolding for entity {entity_dir.name}", "source": "entity_gap", "priority": 0.5, "depth": 1})

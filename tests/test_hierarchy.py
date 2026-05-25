@@ -73,7 +73,8 @@ async def test_default_ranks(hierarchy):
     assert hierarchy.get_rank("kali") == 1
     assert hierarchy.get_rank("maat") == 2
     assert hierarchy.get_rank("lilith") == 2
-    assert hierarchy.get_rank("isis") == 2
+    # Isis is per-IWAD (Arcana-NovAi), not in core hierarchy — defaults to rank 3
+    assert hierarchy.get_rank("isis") == 3
 
 
 @pytest.mark.asyncio
@@ -83,7 +84,8 @@ async def test_unknown_entity_is_keeper(hierarchy):
     assert hierarchy.get_rank("INANNA") == 3
     assert hierarchy.get_rank("lucifer") == 3
     assert hierarchy.get_rank("hecate") == 3
-    assert hierarchy.get_rank("belial") == 2
+    # roc_racoon is per-IWAD, not in core hierarchy — defaults to rank 3
+    assert hierarchy.get_rank("roc_racoon") == 3
     assert hierarchy.get_rank("nonexistent") == 3
 
 
@@ -92,7 +94,7 @@ async def test_case_insensitive(hierarchy):
     """Rank lookup is case-insensitive."""
     assert hierarchy.get_rank("Sophia") == 0
     assert hierarchy.get_rank("MAAT") == 2
-    assert hierarchy.get_rank("Isis") == 2
+    assert hierarchy.get_rank("Isis") == 3  # per-IWAD entity, defaults to rank 3
 
 
 @pytest.mark.asyncio
@@ -130,7 +132,7 @@ async def test_recursion_kali_blocked_at_depth_2(hierarchy):
 @pytest.mark.asyncio
 async def test_recursion_oversoul_allowed_at_depth_0(hierarchy):
     """Oversoul (Rank 2) max_allowed_depth=1, so depth 0 is allowed."""
-    result = hierarchy.check_recursion("isis", 0)
+    result = hierarchy.check_recursion("maat", 0)
     assert result["allowed"] is True
     assert result["max_allowed_depth"] == 1
 

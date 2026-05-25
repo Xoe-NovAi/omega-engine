@@ -22,6 +22,7 @@
 
 | ID | Title | Urgency | Status | File | Completed |
 |----|-------|---------|--------|------|-----------|
+| R-HARDEN | Sovereign Hardening Codex | 🔴 Critical | ✅ | [sovereign_hardening_codex.md](sovereign_hardening_codex.md) | 2026-05-23 |
 | R-HF-INTEGRATE | Hugging Face Hub Integration + 8TB Model Library Architecture | 🔴 Critical | ✅ | [OmegaLibrary/INDEX.md](../../OmegaLibrary/INDEX.md) | 2026-05-20 |
 | R-OPENC-PERM | OpenCode `external_directory` Permission Guide | 🔴 Critical | ✅ | [R_OPENC_PERMISSIONS.md](R_OPENC_PERMISSIONS.md) | 2026-05-18 |
 | R-OPENC-MCP | OpenCode MCP Configuration Guide | 🔴 Critical | ✅ | [R_OPENC_MCP_CONFIG.md](R_OPENC_MCP_CONFIG.md) | 2026-05-18 |
@@ -181,3 +182,9 @@
 | R-OPENCODE-LMSTER | OpenCode lmster Provider Investigation — running L1 via OpenCode | 🟡 High | ✅ | [R_OPENCODE_LMSTER_PROVIDER.md](R_OPENCODE_LMSTER_PROVIDER.md) | 2026-05-22 |
 | R-TIERED-PIPELINE | Tiered Research Pipeline (Investigative Journalism Model) | 🔴 Critical | ✅ | [R_TIERED_RESEARCH_PIPELINE.md](R_TIERED_RESEARCH_PIPELINE.md) | 2026-05-22 |
 | R-OPENCODE-CUSTOM-PROVIDER | OpenCode Custom Provider Architecture — LM Studio via npm + auth.json | 🔴 Critical | ✅ | [R_OPENCODE_CUSTOM_PROVIDER_ARCHITECTURE.md](R_OPENCODE_CUSTOM_PROVIDER_ARCHITECTURE.md) | 2026-05-22 |
+| R-QDRANT | Qdrant Vector Integration Specification (Option B) | 🔴 Critical | ✅ | [R_QDRANT_INTEGRATION_SPEC.md](R_QDRANT_INTEGRATION_SPEC.md) | 2026-05-23 |
+| R-IWAD-ARCHITECTURE | IWAD Architecture — Doom Engine Model for Stack Separation (Decision 55) | 🔴 Critical | ✅ | [OMEGA_IWAD_ARCHITECTURE.md](../strategy/OMEGA_IWAD_ARCHITECTURE.md) | 2026-05-25 |
+| R-DOOM-WAD-DEEP | Doom IWAD/PWAD System — Deep Architecture Analysis (W1) | 🔴 Critical | ✅ | [R_DOOM_WAD_DEEP_RESEARCH.md](R_DOOM_WAD_DEEP_RESEARCH.md) | 2026-05-25 |
+| R-PLUGIN-ARCH | Plugin/Extension Architecture Patterns for AI Engines (W2) | 🔴 Critical | ✅ | [R_PLUGIN_ARCHITECTURE_PATTERNS.md](R_PLUGIN_ARCHITECTURE_PATTERNS.md) | 2026-05-25 |
+| R-AI-STACK-SEP | AI Engine Stack Separation Architecture (W3) | 🔴 Critical | ✅ | [R_AI_ENGINE_STACK_SEPARATION.md](R_AI_ENGINE_STACK_SEPARATION.md) | 2026-05-25 |
+| R-CONTAINER-DIST | Container & Self-Contained Application Distribution Models (W4) | 🔴 Critical | ✅ | [R_CONTAINER_DISTRIBUTION_MODELS.md](R_CONTAINER_DISTRIBUTION_MODELS.md) | 2026-05-25 |

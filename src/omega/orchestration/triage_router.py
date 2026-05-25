@@ -180,8 +180,12 @@ class TriageRouter:
         def _read():
             if not path.exists():
                 return {}
-            with open(path, 'r') as f:
-                return json.load(f)
+            try:
+                with open(path, 'r') as f:
+                    return json.load(f)
+            except (json.JSONDecodeError, ValueError) as e:
+                self.logger.error(f"Failed to decode soul file at {path}: {e}")
+                return {}
         return await anyio.to_thread.run_sync(_read)
 
     async def _assemble_candidates(self, domain: str, preferred_models: List[Any]) -> List[Dict]:

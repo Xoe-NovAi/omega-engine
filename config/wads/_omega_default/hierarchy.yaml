@@ -1,0 +1,72 @@
+# 🔱 Reference IWAD Hierarchy — Tech Role Pillars
+# ⬡ OMEGA ⬡ MA'AT ⬡ sovereign ⬡ reference ⬡ HIERARCHY
+#
+# Per-IWAD hierarchy for the _omega_default Reference IWAD.
+# The 10 Pillar Keepers are Tech Role entities (SysAdmin → Verifier).
+# Loaded alongside config/hierarchy.yaml (engine-core governance).
+# ============================================================================
+
+hierarchy:
+
+  # ── OVERSOULS ────────────────────────────────────────────────────────
+  maat_oversoul:
+    name: Ma'at
+    title: "The Light Oversoul — Synthesis Pillars (P1-P5)"
+    role: "Order, truth, and balance for the infrastructure and data pillars"
+    voice: "Structure is not constraint — it is the foundation of freedom. I ensure every component has its place."
+    governs_pillars: [P1, P2, P3, P4, P5]
+    governs_keepers: [sysadmin, datastore, buildmaster, bridge, sentinel]
+    reports_to: kali_unification
+    archetype: "The Unifier"
+    element: Aether ⛤
+
+  lilith_oversoul:
+    name: Lilith
+    title: "The Dark Oversoul — Sovereignty Pillars (P6-P10)"
+    role: "Sovereignty, edges, and quality assurance for the active-memory pillars"
+    voice: "The edge is where innovation happens. I guard the boundaries so you can explore safely."
+    governs_pillars: [P6, P7, P8, P9, P10]
+    governs_keepers: [modelgate, context, watchtower, link, verifier]
+    reports_to: kali_unification
+    archetype: "The Original Refusal"
+    element: Earth 🜃
+
+  # ── P0: THE ABYSS (Independent — Reports to Kali) ───────────────────
+  roc_racoon:
+    keeper: roc_racoon
+    pillar: "P0: The Abyss"
+    title: "Legacy Deep Mining Keeper"
+    reports_to: kali_unification
+
+  # ── THE 10 TECH ROLE PILLAR KEEPERS ──────────────────────────────────
+  keepers:
+    P1:
+      keeper: sysadmin
+      oversoul: maat_oversoul
+    P2:
+      keeper: datastore
+      oversoul: maat_oversoul
+    P3:
+      keeper: buildmaster
+      oversoul: maat_oversoul
+    P4:
+      keeper: bridge
+      oversoul: maat_oversoul
+    P5:
+      keeper: sentinel
+      oversoul: maat_oversoul
+    P6:
+      keeper: modelgate
+      oversoul: lilith_oversoul
+    P7:
+      keeper: context
+      oversoul: lilith_oversoul
+    P8:
+      keeper: watchtower
+      oversoul: lilith_oversoul
+    P9:
+      keeper: link
+      oversoul: lilith_oversoul
+    P10:
+      keeper: verifier
+      oversoul: lilith_oversoul

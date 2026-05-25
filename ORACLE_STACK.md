@@ -132,7 +132,7 @@ All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src py
 | Module | Tests | Status |
 |--------|-------|--------|
 | entity_registry | 7 | ✅ PASS |
-| entity_belial | 25 | ✅ PASS |
+| entity_roc_racoon | 25 | ✅ PASS |
 | hierarchy | 12 | ✅ PASS |
 | iris | 7 | ✅ PASS |
 | model_gateway | 5 | ✅ PASS |

@@ -1,6 +1,20 @@
 # 🔱 OpenCode Agent & Mode Manifest
 **AP Token**: `AP-OC-MANIFEST-v1.0.0`
+**Updated**: 2026-05-25 (IWAD Architecture Awareness added)
 ⬡ OMEGA ⬡ KALI ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_framework ⬡ MANIFEST
+
+---
+
+## §0 IWAD Architecture (Decision 55)
+
+All agents operate within the IWAD architecture. Key awareness:
+- **Engine Core** (`src/omega/`) — pure runtime, no entity content
+- **Reference IWAD** (`config/wads/_omega_default/`) — 10 tech pillars, dev team
+- **Arcana-NovAi IWAD** (`config/wads/arcana_novai/`) — personal AI OS, esoteric pillars
+- **Community IWADs** (`config/wads/doom_universe/`, etc.) — game, philosophical, medical stacks
+- **Three Inviolable Rules**: MaKaLi trine same in ALL IWADs, default services same in ALL IWADs, only pillars change
+
+Canonical reference: `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md`
 
 ---
 
@@ -22,7 +36,7 @@
 | `maat` | Ma'at | ACTIVE | Ethical audit, light manifestation |
 | `lilith` | Lilith | ACTIVE | Sovereignty, customization, overrides |
 | `opencode-architect` | Kali/Ma'at | ACTIVE | CLI config, platform awareness, plumbing |
-| `belial` | Belial | ACTIVE | Legacy mining, archaeology |
+| `roc_racoon` | Roc Racoon | ACTIVE | Legacy mining, archaeology |
 | `iris` | Iris | ACTIVE | Quick chat, routing, messaging |
 
 ---

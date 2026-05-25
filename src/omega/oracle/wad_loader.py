@@ -111,17 +111,24 @@ class WADLoader:
     async def _load_entities(self, entities_dir: Path) -> None:
         """Load all soul.yaml files from the entities directory."""
         async for path in anyio.Path(entities_dir).glob("**/*.yaml"):
+            # Accept any .yaml file. Extract name from parent dir (if soul.yaml) or filename stem.
             if path.name == "soul.yaml":
-                try:
-                    async with await anyio.open_file(str(path), "r") as f:
-                        data = yaml.safe_load(await f.read())
-                        
-                    # Extract entity name from path or data
-                    # Path: entities/sekhmet/soul.yaml -> name = sekhmet
-                    entity_name = path.parent.name
-                    if self.registry.get(entity_name):
-                        logger.warning(f"Entity {entity_name} already registered. Skipping to avoid overwrite.")
-                        continue
+                entity_name = path.parent.name
+            elif path.suffix == ".yaml":
+                entity_name = path.stem  # e.g., "guardian.yaml" → "guardian"
+            else:
+                continue
+            
+            if not entity_name:
+                continue
+            
+            if self.registry.get(entity_name):
+                logger.warning(f"Entity {entity_name} already registered. Skipping to avoid overwrite.")
+                continue
+            
+            try:
+                async with await anyio.open_file(str(path), "r") as f:
+                    data = yaml.safe_load(await f.read())
                     
                     # Create Entity object
                     ent_data = data.get("entity", {})
@@ -150,8 +157,8 @@ class WADLoader:
                     await self.registry.add(entity)
                     logger.info(f"Registered entity {entity.name} from WAD")
 
-                except Exception as e:
-                    logger.warning(f"Failed to load entity from {path}: {e}")
+            except Exception as e:
+                logger.warning(f"Failed to load entity from {path}: {e}")
 
     async def _load_voices(self, voices_dir: Path) -> None:
         """Load voice configurations from the voices directory."""

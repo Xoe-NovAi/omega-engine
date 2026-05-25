@@ -113,22 +113,6 @@ class EntityRegistry:
             )
             self._entities[entity.name.lower()] = entity
 
-        # Also load Iris from root if present
-        iris_raw = data.get("iris") if data else None
-        if iris_raw:
-            iris = Entity(
-                name=iris_raw.get("name", "Iris"),
-                domains=iris_raw.get("domains", []),
-                model=iris_raw.get("model", "qwen3-1.7b"),
-                personality=iris_raw.get("personality", ""),
-                temperature=iris_raw.get("temperature"),
-                context_window=iris_raw.get("context_window"),
-                role=iris_raw.get("role", "Messenger — Always-On Interface"),
-                container=iris_raw.get("container", True),
-                port=iris_raw.get("port", 8080),
-            )
-            self._entities["iris"] = iris
-
         logger.info(f"Loaded {len(self._entities)} entities from config")
 
     def get(self, name: str) -> Optional[Entity]:
@@ -136,11 +120,8 @@ class EntityRegistry:
         return self._entities.get(name.lower())
 
     def list(self) -> List[Entity]:
-        """List all entities (Pillar Keepers first, then Iris)."""
-        entities = [e for k, e in self._entities.items() if k != "iris"]
-        if "iris" in self._entities:
-            entities.append(self._entities["iris"])
-        return entities
+        """List all entities."""
+        return list(self._entities.values())
 
     def list_pillar_keepers(self) -> List[Entity]:
         """List only the 10 Pillar Keepers (entities with non-empty pillars)."""
@@ -149,6 +130,10 @@ class EntityRegistry:
     def names(self) -> List[str]:
         """Return list of entity names."""
         return [e.name for e in self.list()]
+
+    def get_all(self) -> Dict[str, Entity]:
+        """Return all entities as a dict keyed by lowercase name."""
+        return dict(self._entities)
 
     async def add(self, entity: Entity) -> None:
         """Add a new entity. Overwrites if name exists."""
@@ -159,12 +144,11 @@ class EntityRegistry:
             await self._save()
             
             # Automatically scaffold persistent workspace for the awakened entity
-            if entity.name.lower() != "iris":
-                scaffold_fn = functools.partial(
-                    EntityWorkspaceManager.scaffold_workspace,
-                    entity.name, entity.role, entity.pillars
-                )
-                await anyio.to_thread.run_sync(scaffold_fn)
+            scaffold_fn = functools.partial(
+                EntityWorkspaceManager.scaffold_workspace,
+                entity.name, entity.role, entity.pillars
+            )
+            await anyio.to_thread.run_sync(scaffold_fn)
 
     async def remove(self, name: str) -> bool:
         """Remove an entity by name. Returns True if removed."""
@@ -216,12 +200,7 @@ class EntityRegistry:
         def _sync_save():
             data = {"entities": {}}
             for key, entity in self._entities.items():
-                if key == "iris":
-                    continue
                 data["entities"][key] = entity.to_dict()
-            
-            if "iris" in self._entities:
-                data["iris"] = self._entities["iris"].to_dict()
             
             # Atomic write: write to temp, then os.replace
             import tempfile

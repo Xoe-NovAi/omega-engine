@@ -173,24 +173,31 @@ class SoulUpdater:
             logger.info(f"Created research doc: {doc_path}")
 
     def _match_entity(self, topic: str) -> str:
-        """Heuristic entity matching based on topic keywords."""
+        """Find the best-matching entity by checking topic keywords against entity domains.
+        
+        Falls back to the first available entity (config-driven, not hardcoded).
+        """
+        from omega.oracle.entity_registry import EntityRegistry
+        registry = EntityRegistry()
+        entities = registry.get_all()
+        
         topic_lower = topic.lower()
-        mappings = [
-            (["security", "protection", "boundary", "strength", "warrior"], "sekmet"),
-            (["poetry", "healing", "inspiration", "art", "creative", "music"], "brigid"),
-            (["will", "forethought", "strategy", "planning", "vision"], "prometheus"),
-            (["knowledge", "speech", "voice", "teaching", "education"], "saraswati"),
-            (["dream", "descent", "rebirth", "transformation", "journey", "underworld"], "inanna"),
-            (["law", "balance", "justice", "audit", "compliance", "order"], "ereshkigal"),
-            (["rebellion", "gnosis", "wisdom", "truth", "sovereignty"], "lucifer"),
-            (["shadow", "crossroads", "magic", "path", "transformation"], "hecate"),
-            (["death", "transition", "soul", "guidance", "afterlife"], "anubis"),
-            (["chaos", "destruction", "liberation", "time", "change"], "kali"),
-            (["ai", "model", "provider", "api", "code", "software", "github", "technology"], "sophia"),
-            (["research", "discovery", "science", "paper", "arxiv", "academic"], "sophia"),
-            (["hardware", "system", "performance", "optimization", "server"], "prometheus"),
-        ]
-        for keywords, entity in mappings:
-            if any(kw in topic_lower for kw in keywords):
-                return entity
-        return "sophia"
+        
+        # 1. Direct match: check if any entity's name is in the topic
+        for name, entity in entities.items():
+            if name.lower() in topic_lower:
+                return name
+        
+        # 2. Domain match: check if any entity's domains match the topic
+        best_match = next(iter(entities.keys())) if entities else "default"
+        max_matches = 0
+        
+        for name, entity in entities.items():
+            # Entity is a dataclass object, access via attribute
+            domains = entity.domains if hasattr(entity, 'domains') else []
+            matches = sum(1 for domain in domains if domain.lower() in topic_lower)
+            if matches > max_matches:
+                max_matches = matches
+                best_match = name
+                
+        return best_match

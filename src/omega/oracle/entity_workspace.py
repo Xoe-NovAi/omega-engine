@@ -64,8 +64,11 @@ class EntityWorkspaceManager:
         headless_dir = workspace_dir / "workspace"
         
         workspace_dir.mkdir(parents=True, exist_ok=True)
+        os.chmod(workspace_dir, 0o755) # Sovereign Guard: Bypass umask drift
         knowledge_dir.mkdir(parents=True, exist_ok=True)
+        os.chmod(knowledge_dir, 0o755) # Sovereign Guard: Bypass umask drift
         headless_dir.mkdir(parents=True, exist_ok=True)
+        os.chmod(headless_dir, 0o755) # Sovereign Guard: Bypass umask drift
         
         # Create soul.yaml if it doesn't exist (Atomic Write Pattern)
         soul_file = workspace_dir / "soul.yaml"
@@ -96,6 +99,7 @@ class EntityWorkspaceManager:
                     with os.fdopen(fd, 'w') as f:
                         yaml_str = yaml.dump(soul_data, default_flow_style=False, sort_keys=False)
                         f.write(f"{SOUL_FILE_HEADER}# Generated dynamically.\n\n{yaml_str}")
+                    os.chmod(temp_path, 0o644) # Sovereign Guard: Bypass umask drift
                     os.replace(temp_path, str(soul_file))
                     logger.info(f"Scaffolded new soul file for {name} at {soul_file}")
                 except Exception as e:
@@ -170,6 +174,7 @@ class EntityWorkspaceManager:
                         yaml_str = yaml.dump(data, default_flow_style=False, sort_keys=False)
                         f.write(f"{SOUL_FILE_HEADER}# Updated dynamically.\n\n{yaml_str}")
                     
+                    os.chmod(temp_path, 0o644) # Sovereign Guard: Bypass umask drift
                     os.replace(temp_path, str(soul_file))
                     logger.info(f"Updated soul file for {name} at {soul_file}")
                 except Exception as e:

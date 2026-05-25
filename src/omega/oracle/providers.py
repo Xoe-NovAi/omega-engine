@@ -27,7 +27,7 @@ class GoogleAIProvider(BaseProvider):
 
     async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int) -> Optional[str]:
         api_key = os.environ.get("GOOGLE_API_KEY")
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
         
         payload = {
             "contents": [{
@@ -40,7 +40,11 @@ class GoogleAIProvider(BaseProvider):
         }
         
         async with httpx.AsyncClient(timeout=60.0) as client:
-            response = await client.post(url, json=payload)
+            response = await client.post(
+                url, 
+                json=payload, 
+                headers={"x-goog-api-key": api_key}
+            )
             response.raise_for_status()
             data = response.json()
             try:
