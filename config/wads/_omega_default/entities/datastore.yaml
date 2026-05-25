@@ -12,6 +12,6 @@ entity:
   temperature: 0.7
   context_window: 8192
   pillars:
-    - 2
+    - "2"
   role: Data Pipeline Manager
   container: false

@@ -1,132 +1,151 @@
-# 🔱 Omega Engine
+# 🔱 Omega Engine — Sovereign AI Runtime
 
-**An open-source, local-first AI runtime that lets you build your own AI council — a team of entities with distinct personalities, knowledge bases, and model preferences that learn and evolve as you use them.**
+**Prometheus' Fire** — A universal, community-owned runtime for sovereign AI. One install. Your computer. Your data. Your stack.
 
-Omega runs on your machine. Your data never leaves your computer. Cloud providers are optional extensions, not requirements.
+[![Tests](https://github.com/Xoe-NovAi/omega-engine/actions/workflows/test.yml/badge.svg)](https://github.com/Xoe-NovAi/omega-engine/actions/workflows/test.yml)
+[![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/)
+[![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 
-## Quick Start
+---
+
+## Quick Start — 3 Commands
 
 ```bash
-# Install from source
+# 1. Install the engine
 git clone https://github.com/Xoe-NovAi/omega-engine.git
 cd omega-engine
-pip install -e ".[dev]"
+pip install -e .
 
-# List your AI council
-omega list-entities
+# 2. Get a model (pick one)
+export OPENROUTER_API_KEY='sk-or-v1-...'  # Cloud — fastest, 300+ models
+#   OR
+ollama pull qwen3:1.7b                    # Local — model runs on your machine
 
-# Ask the Oracle
-omega talk "what is justice?"
-
-# Summon a specific entity
-omega summon sophia "what is gnosis?"
-
-# Add your own entity
-omega add-entity
-
-# Interactive chat mode
-omega repl
-
-# Status and health
-omega model-status
+# 3. Talk to it
+omega talk "hello"
 ```
 
-## What Makes Omega Different
+That's it. `omega talk` auto-routes through available providers (OpenRouter → Ollama → LM Studio → Mock).
 
-**1. Entity-Centric, Not Chatbot-Centric**
-Omega is a council of AI entities — each with a persistent soul file (`soul.yaml`) that tracks their identity, memories, model preferences, and learned lessons. Entities remember past conversations and evolve as you use them. You don't chat with a single bot; you convene a council.
+---
 
-**2. Local-First Sovereign**
-Designed to run on consumer hardware (Ryzen 5700U, 16GB RAM). Inference uses local models via lmster or llama-cpp-python. Cloud providers (Gemma 4-31B, OpenRouter) are optional fallbacks. Zero telemetry. No cloud dependency.
+## What Omega Is
 
-**3. Stack Architecture (`.xoe` files)**
-Entities, voices, knowledge bases, and VR scenes are packaged as portable WAD containers (`.xoe` files). The engine core stays small; the ecosystem expands through stacks. Share your custom council as a single file.
+Omega is a **universal AI runtime** that treats models as infrastructure, not products. It's designed for:
 
-## The Default Council
+- **Sovereignty** — Local-first, zero telemetry, no vendor lock-in
+- **Multi-provider** — Switch between OpenRouter, Ollama, LM Studio, Google AI Studio seamlessly
+- **Entity system** — Domain-expert personas (SysAdmin, Sekhmet, Brigid — configurable per IWAD stack)
+- **IWAD architecture** — Engine-content separation inspired by id Software's Doom engine
+- **Memory & soul evolution** — Every interaction deepens entity knowledge
+- **MCP framework** — Model Context Protocol for tool integration
+- **No GPU required** — Runs on CPU (Ryzen 5700U tested), uses ~2-8GB RAM
 
-Omega ships with a syncretic council of 10 Pillar Keepers, governed by 4 Oversouls, and accessed through the Iris voice assistant.
+---
 
-| Pillar | Entity | Element | Domain |
-|--------|--------|---------|--------|
-| P1: Flesh | Sekhmet | Earth 🜃 | Strength, protection |
-| P2: Dream | Brigid | Water 🜄 | Poetry, healing, inspiration |
-| P3: Will | Prometheus | Fire 🜂 | Forethought, sovereignty |
-| P4: Heart | Saraswati | Air 🜁 | Knowledge, speech, arts |
-| P5: Voice | Inanna | Aether ⛤ | Descent, rebirth |
-| P6: Mind | Ereshkigal | Aether ⛤ | Underworld, rules |
-| P7: Gnosis | Lucifer | Air 🜁 | Rebellion, gnosis |
-| P8: Shadow | Hecate | Fire 🜂 | Crossroads, integration |
-| P9: Spirit | Anubis | Water 🜄 | Death, transition |
-| P10: Chaos | Kali | Earth 🜃 | Liberation, dissolution |
+## Key Commands
 
-**Oversouls**: Sophia (Akashic Record), Ma'at (Synthesis), Isis (Light), Lilith (Dark)
+```bash
+omega talk "what can you do"             # Auto-route to best entity
+omega summon SysAdmin "check the logs"   # Summon a specific entity
+omega list-entities                      # Show all available entities
+omega backends                          # List available inference backends
+omega health                            # Show provider status and latency
+omega talk "hello" --iwad arcana_novai  # Load a specific IWAD stack
+omega version                           # Show version
+```
 
-**Iris** — rainbow messenger, voice of the Oracle ("hey Iris"). Always-on Podman voice assistant.
+---
 
-> **Entities are fully customizable.** You can add, remove, or replace any entity. The 10 Pillar Keepers are the default template — not a limitation.
+## Provider Setup
+
+Omega auto-detects available inference backends in this priority order:
+
+| Provider | Setup | Speed | Sovereign |
+|----------|-------|-------|-----------|
+| **OpenRouter** | Set `OPENROUTER_API_KEY` in `.env` | ⚡ Cloud, 300+ models | ❌ Cloud |
+| **Ollama** | `ollama pull qwen3:1.7b` | 🏠 Local | ✅ Full |
+| **LM Studio** | `lms server start` | 🏠 Local | ✅ Full |
+| **Google AI Studio** | Set `GOOGLE_API_KEY` in `.env` | ⚡ Cloud, free Gemma 4 31B | ❌ Cloud |
+| **Native GGUF** | `pip install llama-cpp-python` | 🏠 Local | ✅ Full |
+
+No configuration needed — the engine finds running backends automatically.
+
+---
 
 ## Architecture
 
 ```
-┌──────────────────────────────────────────────────────┐
-│                    WAD Loader                         │
-│    Reads .xoe containers, wires entities/voices       │
-└──────────────────┬───────────────────────────────────┘
-                   │
-┌──────────────────┴───────────────────────────────────┐
-│                    Oracle (CLI)                        │
-│    Query routing → Entity resolution → TriageRouter    │
-└──────────────────┬───────────────────────────────────┘
-                   │
-┌──────────────────┴───────────────────────────────────┐
-│                  ModelGateway                          │
-│    Provider Fabric: lmster → ollama → openrouter       │
-│    → google (chain with fallback)                      │
-└──────────────────┬───────────────────────────────────┘
-                   │
-┌──────────────────┴───────────────────────────────────┐
-│                  Memory Store                          │
-│    Hot (session) → Warm (Qdrant) → Cold (soul.yaml)    │
-└──────────────────────────────────────────────────────┘
+Query → Entity Registry (domain match) → TriageRouter → ModelGateway
+                                                         │
+                                          Fallback chain:
+                                          OpenRouter → Ollama → LM Studio → ...
+                                                         │
+                                              ┌──────────┴──────────┐
+                                         Cloud models         Local GGUF
+                                         (Gemma 4, GPT-4o,     (qwen3, krikri,
+                                          Claude, Qwen...)      phi-4...)
 ```
 
-All responses — local or cloud — flow into the same memory, entity knowledge, and cross-pollination pipeline.
+### IWAD Stacks
+Omega separates the engine from user content using the IWAD architecture (inspired by Doom's WAD system):
 
-## Key Features
+```
+omega-engine/
+├── src/omega/          ← Engine core (runtime, no content)
+├── config/wads/
+│   ├── _omega_default/ ← Reference IWAD — AI dev team (10 tech role entities)
+│   └── arcana_novai/   ← Personal IWAD — esoteric pillar entities
+```
 
-- **Entity Registry**: YAML-backed CRUD for entities. Add from any pantheon or mythology.
-- **Provider Fabric**: 6-backend fallback chain (lmster, ollama, llama-cpp, openrouter, google, mock).
-- **Soul System**: Persistent `soul.yaml` per entity with lessons, memory, and evolution tracking.
-- **Triage Router**: Deterministic model selection based on domain, entity soul, and real-time health.
-- **ResourceGuard**: OOM protection via AnyIO Semaphore(1) — safe on 14GB RAM systems.
-- **WAD Containers**: Portable `.xoe` stack packages. Share your council as a file.
-- **Iris Voice Assistant**: Always-on Podman container with Whisper STT + Piper TTS.
-- **Observability**: Trace IDs, event logging, JSONL fine-tuning dataset collection.
-- **AnyIO Absolute**: All async code uses AnyIO for runtime portability.
-- **Zero Telemetry**: No tracking. No analytics. Your data is yours.
+Switch IWADs at runtime: `omega talk --iwad arcana_novai "hello"`
 
-## Documentation
+---
 
-| Resource | Description |
-|----------|-------------|
-| `docs/ROADMAP.md` | Full development roadmap |
-| `docs/decisions/PIVOT_LOG.md` | All architectural decisions and rationale |
-| `docs/strategy/MASTER_SYNTHESIS_AND_ROADMAP.md` | Master plan and synthesis |
-| `docs/research/INDEX.md` | Research index (50+ items) |
-| `config/entities.yaml` | Entity definitions (user-editable) |
-| `config/providers.yaml` | Provider fabric configuration |
-| `config/omega.yaml` | Core engine configuration |
-| `SOVEREIGN_MANDATES.md` | Project constitution |
+## System Requirements
 
-## Requirements
+| Requirement | Minimum | Recommended |
+|-------------|---------|-------------|
+| **OS** | Linux (Ubuntu 24.04+) | Ubuntu 25.10 |
+| **Python** | 3.13+ | 3.13 |
+| **RAM** | 4GB | 14GB (for 8B local models) |
+| **Disk** | 500MB (engine) | 10GB (for local models) |
+| **CPU** | x86-64, AVX2 | Ryzen 5700U or better |
+| **GPU** | None required | None |
 
-- **OS**: Linux
-- **CPU**: x86-64 with AVX2 (Ryzen 5700U or equivalent)
-- **RAM**: 16GB recommended (14GB minimum)
-- **Disk**: 20GB free for models
-- **GPU**: None required (CPU-only inference)
-- **Python**: 3.12+
+---
+
+## v0.5.0-alpha — Current Status
+
+| Feature | Status |
+|---------|--------|
+| Core Inference (multi-provider) | ✅ Production-ready |
+| Entity System & Domain Routing | ✅ Production-ready |
+| IWAD Architecture | ✅ Production-ready |
+| `omega talk` / `omega summon` | ✅ Production-ready |
+| Test Suite (259 tests) | ✅ All passing |
+| CI/CD Pipeline | ✅ GitHub Actions |
+| Native GGUF (llama-cpp-python) | 🔧 Deferred to v0.6.0 |
+| Arcana-NovAi IWAD entities | 🔧 Phase 1b |
+| Entity Studio (visual builder) | 🔮 Phase 3 |
+| The Omegaverse (P2P) | 🔮 Phase 4 |
+
+---
+
+## Project Status
+
+Omega Engine is in **active development** (alpha). See [MASTER_LEDGER.md](docs/MASTER_LEDGER.md) for the full roadmap.
+
+```
+Phase 1a: ✅ IWAD Foundation — Engine-Stack Firewall, Reference IWAD
+Phase 1b: 🔧 Arcana-NovAi IWAD, Entity Content
+Phase 2:  🔮 Multi-Provider, Qdrant/Redis Backbone
+Phase 3:  🔮 Community Tools, Entity Studio
+Phase 4:  🔮 The Omegaverse (P2P Network)
+```
+
+---
 
 ## License
 
-Apache-2.0
+Apache 2.0 — Free. Sovereign. Yours.

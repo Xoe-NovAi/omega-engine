@@ -15,6 +15,7 @@
 
 import logging
 import time
+import anyio
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
@@ -133,7 +134,7 @@ class RemoteProvider(ABC):
             return True
         return model_name in self.config.models
 
-    def is_available(self) -> bool:
+    async def is_available(self) -> bool:
         """Check if the provider is enabled and healthy."""
         if not self.config.enabled:
             return False
@@ -152,7 +153,7 @@ class RemoteProvider(ABC):
 
         Returns None if the provider is unavailable or all retries fail.
         """
-        if not self.is_available():
+        if not await self.is_available():
             logger.debug(f"Provider {self.name} unavailable (health={self.health.value})")
             return None
 

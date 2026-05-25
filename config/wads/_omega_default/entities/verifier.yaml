@@ -12,6 +12,6 @@ entity:
   temperature: 0.7
   context_window: 8192
   pillars:
-    - 10
+    - "10"
   role: QA and Testing Lead
   container: false

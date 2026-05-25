@@ -29,6 +29,7 @@ build/
 # ── Data Artifacts (fine-tuning datasets, embeddings) ────────────────
 data/datasets/
 data/embeddings/
+src/data/datasets/
 
 # ── Test & Cache ─────────────────────────────────────────────────────
 .pytest_cache/
@@ -73,10 +74,54 @@ opencode.json.bak
 mcp_test.py
 test_discovery.py
 
+# ── Web Research Caches ──────────────────────────────────────────────
+.firecrawl/
+
+# ── Temp Files ───────────────────────────────────────────────────────
+tmp_*
+*.bak
+
+# ── Stale/Orphaned Entity Artifacts ─────────────────────────────────
+data/entities/duplicate/
+data/entities/entity_*/
+data/entities/bridge/
+data/entities/buildmaster/
+data/entities/context/
+data/entities/datastore/
+data/entities/direntity/
+data/entities/flatentity/
+data/entities/guardian/
+data/entities/link/
+data/entities/modelgate/
+data/entities/myentity/
+data/entities/mytest/
+data/entities/preexisting/
+data/entities/sentinel/
+data/entities/soulentity/
+data/entities/sysadmin/
+data/entities/verifier/
+data/entities/watchtower/
+
+# ── Stale Container Artifacts (Roc_Racoon legacy, replaced by Hub) ──
+Dockerfile.roc_racoon
+scripts/omega-roc_racoon-entrypoint.py
+quadlet-test/omega-roc_racoon.container
+quadlet-test/omega-roc_racoon.timer
+src/omega/entity_roc_racoon.py
+tests/test_entity_roc_racoon.py
+
+# ── Ad-hoc Test Scripts (not part of test suite) ─────────────────────
+tests/sovereign_stress_test.py
+tests/verify_jem_pipeline.py
+
+# ── Research & Runtime Artifacts ─────────────────────────────────────
+data/research/checkpoints/
+data/research/scheduler_state.json
+data/research/credit_budget.json
+data/research/metrics/
+data/sessions/*.active
+
 # ── External/Reference Dirs ─────────────────────────────────────────
 ../omega/
 ../omega-stack-legacy/
 ../xna-omega-legacy/.firecrawl/
-data/entities/duplicate/
-data/research/checkpoints/
-data/sessions/*.active

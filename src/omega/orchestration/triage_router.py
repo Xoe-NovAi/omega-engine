@@ -4,6 +4,7 @@ from typing import List, Dict, Optional, Any, Tuple
 from datetime import datetime, timedelta, timezone
 import json
 import logging
+import yaml
 from pathlib import Path
 
 # --- Schemas ---
@@ -176,16 +177,24 @@ class TriageRouter:
         return "general"
 
     async def _load_soul(self, path: Path) -> Dict:
-        """Load soul file using AnyIO thread pool to avoid blocking."""
+        """Load soul file using AnyIO thread pool to avoid blocking.
+        
+        Soul files are YAML, not JSON (the older .soul format used JSON).
+        """
         def _read():
             if not path.exists():
                 return {}
             try:
                 with open(path, 'r') as f:
-                    return json.load(f)
-            except (json.JSONDecodeError, ValueError) as e:
-                self.logger.error(f"Failed to decode soul file at {path}: {e}")
-                return {}
+                    return yaml.safe_load(f) or {}
+            except (yaml.YAMLError, ValueError) as e:
+                # Fallback to JSON for legacy .soul files
+                try:
+                    with open(path, 'r') as f:
+                        return json.load(f)
+                except (json.JSONDecodeError, ValueError):
+                    self.logger.error(f"Failed to decode soul file at {path}: {e}")
+                    return {}
         return await anyio.to_thread.run_sync(_read)
 
     async def _assemble_candidates(self, domain: str, preferred_models: List[Any]) -> List[Dict]:

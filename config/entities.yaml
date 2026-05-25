@@ -551,7 +551,7 @@ entities:
     temperature: 0.7
     context_window: 8192
     pillars:
-    - 2
+    - "2"
     role: Data Pipeline Manager
     container: false
   bridge:
@@ -572,7 +572,7 @@ entities:
     temperature: 0.7
     context_window: 8192
     pillars:
-    - 4
+    - "4"
     role: API and Protocol Engineer
     container: false
   verifier:
@@ -594,7 +594,7 @@ entities:
     temperature: 0.7
     context_window: 8192
     pillars:
-    - 10
+    - "10"
     role: QA and Testing Lead
     container: false
   link:
@@ -616,7 +616,7 @@ entities:
     temperature: 0.7
     context_window: 8192
     pillars:
-    - 9
+    - "9"
     role: Cross-Agent Synchronization
     container: false
   sentinel:
@@ -637,7 +637,7 @@ entities:
     temperature: 0.7
     context_window: 8192
     pillars:
-    - 5
+    - "5"
     role: Security and Hardening
     container: false
   modelgate:
@@ -659,7 +659,7 @@ entities:
     temperature: 0.7
     context_window: 8192
     pillars:
-    - 6
+    - "6"
     role: Inference and Provider Fabric
     container: false
   context:
@@ -680,7 +680,7 @@ entities:
     temperature: 0.7
     context_window: 8192
     pillars:
-    - 7
+    - "7"
     role: Session and Memory Keeper
     container: false
   watchtower:
@@ -701,7 +701,7 @@ entities:
     temperature: 0.7
     context_window: 8192
     pillars:
-    - 8
+    - "8"
     role: Observability and Telemetry
     container: false
   buildmaster:
@@ -722,7 +722,7 @@ entities:
     temperature: 0.7
     context_window: 8192
     pillars:
-    - 3
+    - "3"
     role: CI/CD and Toolchain Lead
     container: false
   sysadmin:
@@ -744,7 +744,7 @@ entities:
     temperature: 0.7
     context_window: 8192
     pillars:
-    - 1
+    - "1"
     role: Infrastructure Engineer
     container: false
 

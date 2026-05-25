@@ -12,6 +12,6 @@ entity:
   temperature: 0.7
   context_window: 8192
   pillars:
-    - 5
+    - "5"
   role: Security and Hardening
   container: false

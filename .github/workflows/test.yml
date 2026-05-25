@@ -1,0 +1,76 @@
+# 🔱 Omega Engine — CI Pipeline
+# ⬡ OMEGA ⬡ PROMETHEUS ⬡ github-actions ⬡ trc_ci ⬡ PHASE-1a
+#
+# Runs on every push and pull request to the main branch.
+# Tests use MockProvider (OMEGA_ENV=test) — no cloud APIs needed.
+# Native GGUF (llama-cpp-python) is NOT installed — deferred to v0.6.0.
+
+name: Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  OMEGA_ENV: test
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  test:
+    name: 🧪 pytest (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.12", "3.13"]
+      fail-fast: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -e ".[cli,dev]"
+          pip install pytest pytest-asyncio pytest-cov
+
+      - name: Verify imports
+        run: |
+          python3 -c "import anyio; print(f'AnyIO {anyio.__version__}')"
+          python3 -c "from omega.oracle.model_gateway import ModelGateway; print('ModelGateway OK')"
+
+      - name: Run tests
+        run: |
+          python3 -m pytest tests/ -v --tb=short -x
+
+      - name: Lint check (non-blocking)
+        continue-on-error: true
+        run: |
+          pip install flake8
+          flake8 src tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+
+  docs:
+    name: 📖 Documentation Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify docs Index
+        run: |
+          DOC_COUNT=$(find docs/research -maxdepth 1 -name 'R*.md' | wc -l)
+          echo "📚 Research documents: $DOC_COUNT"
+          if [ -f docs/research/INDEX.md ]; then
+            echo "✅ INDEX.md present"
+          else
+            echo "⚠️ INDEX.md missing"
+          fi

@@ -12,6 +12,6 @@ entity:
   temperature: 0.7
   context_window: 8192
   pillars:
-    - 9
+    - "9"
   role: Cross-Agent Synchronization
   container: false
