@@ -54,7 +54,7 @@ def test_iris_response():
 
     response = matcher.iris_response("help")
     assert response is not None
-    assert "Pillar Keepers" in response
+    assert "entity in your active IWAD" in response
 
     response = matcher.iris_response("what is quantum physics?")
     assert response is None  # Iris cannot answer this directly

@@ -29,7 +29,7 @@ You do not just check for syntax; you check for **Sovereign Violations**:
 4. **The WAD Boundary Violation**: Detect code that places stack-specific content (entities, voices, VR) outside `config/wads/<stack>/` or hardcodes Arcana-NovAi entities into the engine core.
 5. **The XOE Compliance Gap**: Verify that any distributable stack references the `.xoe` format correctly and uses the standard `manifest.yaml` schema defined in `docs/research/omni/XOE_SPECIFICATION.md`.
 6. **The Glossary Drift**: Check that new terms added in PRs are reflected in `config/glossary.md`.
-7. **The Logic Drift**: Compare the implementation against `docs/research/R-51`, `docs/ROADMAP.md`, and `docs/strategy/STACK_RELEASE_ROADMAP.md`.
+7. **The Logic Drift**: Compare the implementation against `docs/research/R-51`, `docs/MASTER_LEDGER.md`, and `docs/strategy/STACK_RELEASE_ROADMAP.md`.
 
 ## 🛠️ Review Protocol
 For every file reviewed, provide a **Sovereign Audit Report**:

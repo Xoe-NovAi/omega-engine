@@ -88,7 +88,11 @@ class ModelGateway:
         self.models = self._load_models()
         self._kv_cache_config = self._load_kv_cache_config()
         self._backend_cache: Dict[str, bool] = {}
-        self._cpu_optimizer: Optional[Any] = None
+        
+        # Initialize Zen2Optimizer for hardware resonance
+        from .cpu_optimizer import Zen2Optimizer
+        self._cpu_optimizer = Zen2Optimizer()
+        
         self.resource_guard = ResourceGuard()
         self._mock_backend = OfflineMockBackend()
         self.providers = self._load_provider_fabric()
@@ -97,6 +101,8 @@ class ModelGateway:
         self._gnosis_proxy = GnosisProxy(self._entity_registry)
         # B5: HealthMonitor for latency and success/failure recording
         self._health_monitor = health_monitor
+        # Sovereign Guard: Prevent leak amplification by limiting concurrent gateway entries
+        self._limiter = anyio.CapacityLimiter(10)
 
     @staticmethod
     def _create_openrouter(name: str, cfg: dict) -> OpenAICompatProvider:
@@ -129,6 +135,9 @@ class ModelGateway:
             "native-gguf": NativeGGUFProvider,
             "mock": MockProvider,
             "openrouter": ModelGateway._create_openrouter,
+            "github-copilot": ModelGateway._create_openrouter,
+            "kilo": ModelGateway._create_openrouter,
+            "genlabs": ModelGateway._create_openrouter,
         }
         
         instances = []
@@ -136,6 +145,11 @@ class ModelGateway:
             name = p_cfg.get("provider")
             if name in provider_map:
                 instances.append(provider_map[name](name, p_cfg))
+            else:
+                logger.warning(f"Unrecognized provider '{name}' in config. Skipping.")
+        
+        # Sort by priority ascending (Sovereign Priority Protocol)
+        instances.sort(key=lambda p: getattr(p.config, 'priority', 999) if hasattr(p, 'config') else 999)
         
         return instances if instances else [MockProvider("mock", {})]
 
@@ -312,59 +326,50 @@ class ModelGateway:
 
     # ── Generation (auto-detect + fallback chain) ──────────────────────
     async def _execute_with_retry(self, provider: Any, model_name: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int) -> Optional[str]:
-        """Execute request with retry logic and background metrics tracking."""
-        max_retries = 3
-        for attempt in range(max_retries):
-            start_time = time.monotonic()  # B5: start timing
+        """Execute request with retry logic and background metrics tracking.
+        
+        Consolidates retry logic: RemoteProviders handle their own internal retries.
+        """
+        from .backends.remote_provider import RemoteProvider
+        
+        # If it's a RemoteProvider, it owns its retry loop. Call once.
+        if isinstance(provider, RemoteProvider):
+            start_time = time.monotonic()
             try:
                 response = await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens)
-
-                # B5: Record latency + success via HealthMonitor
                 if self._health_monitor:
                     latency_ms = (time.monotonic() - start_time) * 1000
-                    try:
-                        self._health_monitor.record_latency(model_name, latency_ms)
-                        self._health_monitor.record_success(model_name)
-                    except Exception as hm_err:
-                        logger.debug(f"HealthMonitor recording failed: {hm_err}")
+                    self._health_monitor.record_latency(model_name, latency_ms)
+                    self._health_monitor.record_success(model_name)
+                return response
+            except Exception as e:
+                if self._health_monitor:
+                    self._health_monitor.record_failure(model_name)
+                logger.error(f"Remote provider {provider.name} failed: {e}")
+                return None
 
-                # Submit health check to background worker
-                if hasattr(self, 'background_worker') and self.background_worker and attempt == 0:
-                    await self.background_worker.submit(
-                        task_type="provider_health_check",
-                        provider=provider.name,
-                        success=True
-                    )
-
+        # Local providers use the gateway's retry loop
+        max_retries = 3
+        for attempt in range(max_retries):
+            start_time = time.monotonic()
+            try:
+                response = await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens)
+                if self._health_monitor:
+                    latency_ms = (time.monotonic() - start_time) * 1000
+                    self._health_monitor.record_latency(model_name, latency_ms)
+                    self._health_monitor.record_success(model_name)
                 if response:
                     return response
             except Exception as e:
-                # B5: Record failure via HealthMonitor
                 if self._health_monitor:
-                    try:
-                        self._health_monitor.record_failure(model_name)
-                    except Exception as hm_err:
-                        logger.debug(f"HealthMonitor failure recording failed: {hm_err}")
-
+                    self._health_monitor.record_failure(model_name)
                 err_msg = str(e).lower()
-                # Classify as Transient or Fatal
                 is_transient = any(code in err_msg for code in ["429", "502", "503", "504", "timeout"])
-
-                if hasattr(self, 'background_worker') and self.background_worker:
-                    await self.background_worker.submit(
-                        task_type="provider_health_check",
-                        provider=provider.name,
-                        success=False,
-                        error=str(e)
-                    )
-
                 if not is_transient or attempt == max_retries - 1:
                     logger.error(f"Fatal or final error with {provider.name}: {e}")
                     raise e
-
                 logger.warning(f"Transient error with {provider.name} (attempt {attempt+1}): {e}. Retrying...")
                 await anyio.sleep(2 ** attempt)
-
         return None
 
     async def generate(
@@ -377,42 +382,49 @@ class ModelGateway:
         pinned_provider: Optional[str] = None,
     ) -> str:
         """Send a prompt to the model using the configured provider fabric."""
-        if temperature is None:
-            temperature = 0.7
-            
-        if os.environ.get("OMEGA_ENV") == "test":
-            return await self._mock_backend.generate(
-                model_name, system_prompt, user_query, temperature, max_tokens
-            )
-        
-        # Pre-inference GnosisProxy enrichment
-        enriched_prompt = await self._enrich_with_tools(model_name, system_prompt, user_query)
-        
-        # Provider Selection
-        if pinned_provider:
-            # Bypass fallback chain and use specific provider
-            target_provider = next((p for p in self.providers if p.name == pinned_provider), None)
-            if target_provider:
-                return await self._call_provider_with_resilience(target_provider, model_name, enriched_prompt, user_query, temperature, max_tokens)
-            logger.warning(f"Pinned provider {pinned_provider} not found. Falling back to chain.")
-
-        for provider in self.providers:
-            if not await provider.is_available():
-                continue
-            
-            try:
-                if isinstance(provider, (LocallmsterProvider, OllamaProvider, NativeGGUFProvider)):
-                    async with self.resource_guard.lock():
-                        response = await self._execute_with_retry(provider, model_name, enriched_prompt, user_query, temperature, max_tokens)
-                else:
-                    response = await self._execute_with_retry(provider, model_name, enriched_prompt, user_query, temperature, max_tokens)
+        async with self._limiter:
+            if temperature is None:
+                temperature = 0.7
                 
-                if response:
-                    return response
-            except Exception as e:
-                logger.warning(f"Provider {provider.name} failed after retries: {e}")
-        
-        return self._fallback_response(model_name, enriched_prompt, user_query)
+            if os.environ.get("OMEGA_ENV") == "test":
+                return await self._mock_backend.generate(
+                    model_name, system_prompt, user_query, temperature, max_tokens
+                )
+            
+            # Pre-inference GnosisProxy enrichment
+            enriched_prompt = await self._enrich_with_tools(model_name, system_prompt, user_query)
+            
+            # Provider Selection
+            if pinned_provider:
+                # Bypass fallback chain and use specific provider
+                target_provider = next((p for p in self.providers if p.name == pinned_provider), None)
+                if target_provider:
+                    # ResourceGuard protection for pinned local providers
+                    if isinstance(target_provider, (LocallmsterProvider, OllamaProvider, NativeGGUFProvider)):
+                        async with self.resource_guard.lock():
+                            return await self._call_provider_with_resilience(target_provider, model_name, enriched_prompt, user_query, temperature, max_tokens)
+                    return await self._call_provider_with_resilience(target_provider, model_name, enriched_prompt, user_query, temperature, max_tokens)
+                logger.warning(f"Pinned provider {pinned_provider} not found. Falling back to chain.")
+            
+            for provider in self.providers:
+                if not await provider.is_available():
+                    continue
+                
+                try:
+                    # Wrap local providers in a timeout to prevent systemic hangs
+                    if isinstance(provider, (LocallmsterProvider, OllamaProvider, NativeGGUFProvider)):
+                        async with self.resource_guard.lock():
+                            with anyio.move_on_after(130):
+                                response = await self._execute_with_retry(provider, model_name, enriched_prompt, user_query, temperature, max_tokens)
+                    else:
+                        response = await self._execute_with_retry(provider, model_name, enriched_prompt, user_query, temperature, max_tokens)
+                    
+                    if response:
+                        return response
+                except Exception as e:
+                    logger.warning(f"Provider {provider.name} failed after retries: {e}")
+            
+            return self._fallback_response(model_name, enriched_prompt, user_query)
 
     async def _call_provider_with_resilience(self, provider, model_name, system_prompt, user_query, temperature, max_tokens):
         """Wrapper to apply the OpenRouter retry policy."""

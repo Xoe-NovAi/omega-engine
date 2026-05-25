@@ -51,13 +51,13 @@ class SovereignHierarchy:
         if name == field_entity:
             return 0
 
-        # 2. Resolve entity name to hierarchy key
+        # 2. Resolve entity name to hierarchy key (data-driven, no hardcoded names)
         lookup_name = name
         if lookup_name not in hierarchy_data:
             if f"{name}_oversoul" in hierarchy_data:
                 lookup_name = f"{name}_oversoul"
-            elif name == "kali" and "kali_unification" in hierarchy_data:
-                lookup_name = "kali_unification"
+            elif f"{name}_unification" in hierarchy_data:
+                lookup_name = f"{name}_unification"
             else:
                 # Check if it's a keeper
                 keepers = hierarchy_data.get("keepers", {})

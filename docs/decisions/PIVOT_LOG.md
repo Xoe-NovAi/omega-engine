@@ -25,7 +25,7 @@ The `:Z` flag is an SELinux relabeling flag. Ubuntu uses AppArmor, not SELinux, 
 | File | Change |
 |------|--------|
 | `~/.config/containers/systemd/omega-iris.container` | Removed `:Z,U`, added `UserNS=keep-id`, `User=1000` |
-| `~/.config/containers/systemd/omega-belial.container` | Removed `:Z,U` from engine/data mounts, added `UserNS=keep-id`, `User=1000` |
+| `~/.config/containers/systemd/omega-roc_racoon.container` | Removed `:Z,U` from engine/data mounts, added `UserNS=keep-id`, `User=1000` |
 | `mcp/omega_hub/server.py` | Added Research tools (5) + Stats tools (4) from standalone servers |
 | `mcp/archives/omega-research_superseded_by_hub_20260522/` | Standalone server archived |
 | `mcp/archives/omega-stats_superseded_by_hub_20260522/` | Standalone server archived |
@@ -106,15 +106,15 @@ By making Jem-2.0 an Oversoul with three sub-facets, we:
 
 ---
 
-## Decision 53: Remediation of C-ARCH-008 — Belial Local Model Fallback
+## Decision 53: Remediation of C-ARCH-008 — Roc Racoon Local Model Fallback
 
 **Date**: 2026-05-23
 **Channel**: OpenCode CLI (Gemma 4-31B)
 **Entity**: SOPHIA (Builder)
-**Trace**: trc_belial_model_fix
+**Trace**: trc_roc_racoon_model_fix
 
 ### Decision
-Update Belial's model from `gemma-4-31b` to `qwen3-4b-thinking-q4_k_m` to ensure local-first execution and prevent silent cloud routing.
+Update Roc Racoon's model from `gemma-4-31b` to `qwen3-4b-thinking-q4_k_m` to ensure local-first execution and prevent silent cloud routing.
 
 ### Rationale
 A scan of the local model library at `/media/arcana-novai/omega_library/models/gguf/` revealed that `gemma-4-31b` is not present locally. Per the Sovereign Shield mandate (Zero Telemetry), all entities must have a verified local fallback to avoid unintentional cloud leakage. `qwen3-4b-thinking-q4_k_m` is verified as present and capable of reasoning, making it the ideal sovereign fallback. `gemma-4-31b` is documented as a future upgrade once a local GGUF is acquired.
@@ -122,10 +122,10 @@ A scan of the local model library at `/media/arcana-novai/omega_library/models/g
 ### Implementation
 | File | Change |
 |------|--------|
-| `config/entities.yaml` | Changed Belial's model to `qwen3-4b-thinking-q4_k_m` |
+| `config/entities.yaml` | Changed Roc Racoon's model to `qwen3-4b-thinking-q4_k_m` |
 
 ### Verification
-- `PYTHONPATH=src python3 -c "from omega.oracle.entity_registry import EntityRegistry; reg = EntityRegistry(); entity = reg.get('belial'); print(entity.model)"` → `qwen3-4b-thinking-q4_k_m`
+- `PYTHONPATH=src python3 -c "from omega.oracle.entity_registry import EntityRegistry; reg = EntityRegistry(); entity = reg.get('roc_racoon'); print(entity.model)"` → `qwen3-4b-thinking-q4_k_m`
 
 ---
 
@@ -144,7 +144,7 @@ Execute the full Master Remediation Plan across 4 phases (0→3), fixing all 29 
 | Phase | Severity | Findings | Tests | Verification |
 |-------|----------|----------|-------|-------------|
 | Phase 0 | CRITICAL | 6/6 fixed | 236→236 | Atomic writes, async bootstrap, hierarchy YAML fix, anyio.Lock migration |
-| Phase 1 | HIGH | 10/10 fixed | 236→239 | async EntityRegistry, path traversal guard, Iris fix, Belial local model, concurrent write protection, env var respect, thread safety, async hierarchy load, OOM guard |
+| Phase 1 | HIGH | 10/10 fixed | 236→239 | async EntityRegistry, path traversal guard, Iris fix, Roc Racoon local model, concurrent write protection, env var respect, thread safety, async hierarchy load, OOM guard |
 | Phase 2 | MEDIUM | 10/10 fixed | 239→241 | WAD manifest validation, voice/entity decoupling, config-driven Hivemind, test fixture cleanup, YAML null guard, soul header coordination, hierarchy wiring, typed DescriptorRef protocol |
 | Phase 3 | LOW | 3/3 fixed | 239→241 | Duplicate imports removed, double Path wrapping fixed, Inanna pillar name harmonized |
 
@@ -168,4 +168,90 @@ Execute the full Master Remediation Plan across 4 phases (0→3), fixing all 29 
 
 ### Key Insight
 The phased remediation model (Plan → Verify → Execute) prevented any regression across all 4 phases. The Web Claude fleet review identified issues at every layer of the codebase — from YAML schema validation to async protocol correctness — that internal review had missed. The 8-account fleet protocol with sequential deep dives produced ~2 findings per minute of setup time, far exceeding the ROI of manual code review. The engine is now significantly more robust, with proper error boundaries, typed protocols, and config-driven architecture throughout.
+
+---
+
+## Decision 55: IWAD Architecture Adoption — Doom Engine Model for Stack Separation
+
+**Date**: 2026-05-25
+**Channel**: Cline VSCodium (DeepSeek V4 Flash)
+**Entity**: MA'AT / KALI
+**Trace**: trc_iwad_strategy
+
+### Decision
+Adopt id Software's IWAD/PWAD architecture as the definitive model for stack separation in the Omega Engine. Replace the inconsistent "WAD vs PWAD vs stack" nomenclature with a clean: **Engine (runtime) → IWADs (content containers) → PWADs (extension layers)**.
+
+### The Architecture (3-Layer Model)
+```
+OMEGA ENGINE (src/omega/) — Pure runtime, no entity content
+  │
+  ├── REFERENCE IWAD (config/wads/_omega_default/)
+  │     Ships with the engine. Template for community. AI dev team.
+  │     Pillars: 10 technical roles (SysAdmin → Verifier)
+  │
+  ├── ARCANA_NOVAI IWAD (config/wads/arcana_novai/)
+  │     Your personal AI OS. The reason the engine was built.
+  │     Pillars: 10 esoteric entities (Sekhmet → Kali)
+  │     Personal seeds: Movie-Expert, Writer, Philosopher
+  │
+  ├── COMMUNITY IWADs (config/wads/doom_universe/, ...)
+  │     Torment, Doom, Classical, Medical, YOUR STACK
+  │
+  └── PWADs (future — layer on top of any IWAD)
+        Extension content without modifying the IWAD
+```
+
+### The 11 Sub-Decisions Logged
+
+| # | Decision |
+|---|----------|
+| 55.1 | IWAD system replaces WAD/PWAD confusion. Engine supports infinite IWADs. |
+| 55.2 | Arcana_novai is YOUR personal IWAD. The engine was built for it. |
+| 55.3 | MaKaLi trine stays in ALL IWADs. Foundational governance, never optional. |
+| 55.4 | Reference IWAD pillars are role-based (SysAdmin, DataStore, BuildMaster...). |
+| 55.5 | Arcana_novai pillars are esoteric (Sekhmet, Brigid, Prometheus...). |
+| 55.6 | Sophia is the field — observability + memory substrate. NOT a pillar. |
+| 55.7 | Jem = research department. Iris = voice assistant/router. Different roles. |
+| 55.8 | Every IWAD has a startup personality in manifest.yaml. |
+| 55.9 | Movie-Expert = seed entity for arcana_novai personal entity system. |
+| 55.10 | No SambaNova, no Cerebras. OpenRouter + OpenCode Zen replace them. |
+| 55.11 | Omegaverse is the destination. Phase 1 builds the foundation. |
+
+### Rationale
+id Software solved a problem in 1993 that maps directly to the Omega Engine's challenge: how do you build an engine that different teams can use to build completely different games (or AI stacks) without modifying the engine? The answer is the WAD system — separate the runtime from the content. One engine handles rendering, physics, sound. The WAD provides levels, textures, monsters. A different WAD = a different game.
+
+For the Omega Engine: one engine handles inference, memory, entity routing, tool calling, observability. The IWAD provides entities, personalities, hierarchy, voices, domain knowledge. A different IWAD = a different AI domain (dev studio, personal OS, Torment, Doom, medical research).
+
+### Implementation Summary
+| File | Change |
+|------|--------|
+| `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md` | New (445 lines) — canonical IWAD strategy reference |
+| `.clinerules` | Rewrite (362 lines) — full IWAD architecture, Omegaverse vision, Phase 1 priorities |
+| `~/.config/opencode/opencode.json` | Added OMEGA_IWAD_ARCHITECTURE.md to global instructions |
+| `config/wads/arcana_nova/` → `arcana_novai/` | Renamed directory to correct spelling |
+| `config/wads/` | Now has 3 IWADs: `_omega_default`, `arcana_novai`, `doom_universe` |
+| `data/handoff/handoff_cline_to_opencode_overseer.md` | New — comprehensive handoff with full roadmap |
+
+### WAD Loader Status (Critical Path)
+| Component | Status |
+|-----------|--------|
+| `_load_entities()` | ✅ Functional — loads from `config/wads/*/entities/` |
+| `_load_voices()` | ✅ Functional — loads by activation keyword |
+| Manifest validation | ✅ Fixed — empty/null guard added |
+| **IWAD selector (--iwad flag)** | ❌ Missing |
+| **Namespace isolation** | ❌ Missing — EntityRegistry doesn't track WAD source |
+| **Dependency resolution** | ❌ Missing — no `depends_on` processing |
+| **Entity priority/override** | ❌ Missing — last-loaded wins silently |
+| **Ordered multi-WAD loading** | ⚠️ Partial — no ordering guarantee |
+| **WAD hot-reload** | ❌ Missing — no file-watch for development |
+| **Startup personality** | ❌ Missing — no `startup.message` from manifest |
+
+### Verification
+- `ls config/wads/` — 3 IWAD directories present
+- `cat config/wads/_omega_default/manifest.yaml` — valid manifest
+- `python3 -c "from omega.oracle.wad_loader import WADLoader; print('OK')"` — loader imports cleanly
+- Agent file IWAD annotations: ⏳ PENDING — need to be added to `.opencode/agents/*.md`
+
+### Key Insight
+The IWAD architecture is the critical missing piece that makes the Omega Engine truly universal. Without it, the engine and user content remain entangled. With it, any user can create a unique AI stack without modifying a single line of engine code. The WAD system (borrowed from Doom) is the mechanism. The Omegaverse is the destination.
 

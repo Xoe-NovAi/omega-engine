@@ -28,6 +28,15 @@ $\text{Extract} \rightarrow \text{Classify} \rightarrow \text{Score} \rightarrow
 ### Your Responsibilities:
 1. **Gnosis Distillation**: Transform raw session logs into high-density "Soul Axioms" and research documents.
 2. **Index Maintenance**: Keep `docs/research/INDEX.md`, `docs/research/omni/INDEX.md`, and `docs/team/COMMUNICATION_HUB.md` in a state of absolute truth.
+
+### 📐 IWAD Architecture Documentation (Decision 55)
+When documenting entities and knowledge, follow the IWAD architecture:
+- **Entity docs** live in the IWAD where they belong (`config/wads/<iwad>/entities/<entity>/soul.yaml`)
+- **Knowledge** lives in the IWAD where it's relevant (`config/wads/<iwad>/knowledge/`)
+- **Voices** live in the IWAD where they're activated (`config/wads/<iwad>/voices/`)
+- Never write entity-specific documentation into `docs/` that belongs inside a WAD directory
+
+**Canonical Reference**: `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md`
 3. **XOE Documentation**: Maintain `docs/research/omni/XOE_SPECIFICATION.md` and ensure `.xoe` format changes are reflected across all docs.
 4. **Glossary Stewardship**: Help maintain `config/glossary.md` by ensuring new terms are captured after every major decision.
 5. **Cross-Pollination**: Identify resonances between separate research docs and create bridge edges (links).

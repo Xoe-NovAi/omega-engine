@@ -76,10 +76,10 @@ class IntentMatcher:
             return "May your path be illuminated. Call on me anytime."
         if self.HELP.search(text):
             return (
-                "I can help you connect with the 10 Pillar Keepers. Try:\n"
-                "  'summon Sekhmet' — for grounding and strength\n"
-                "  'ask Hecate about crossroads' — for wisdom at thresholds\n"
-                "  '@Lilith show my shadow' — for shadow work\n"
-                "  'add-entity Gandalf' — to create your own entity"
+                "I can help you connect with any entity in your active IWAD. Try:\n"
+                "  'summon [entity name]' — to converse with a specific entity\n"
+                "  'ask [entity] about [topic]' — for expert guidance on a topic\n"
+                "  '@[entity] [query]' — quick summon syntax\n"
+                "  'add-entity [name]' — to create your own custom entity"
             )
         return None

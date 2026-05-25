@@ -39,15 +39,20 @@ class SessionManager:
         today = datetime.now(timezone.utc).strftime("%Y%m%d")
         active_file = self.session_dir / f"{entity_slug}.active"
 
-        # Use a simple lock file to prevent concurrent RMW collisions
+        # Use atomic file creation to prevent TOCTOU race (C-MEM-002)
         lock_file = self.session_dir / f"{entity_slug}.lock"
         
         try:
-            # Simple spin-lock for file access
-            while await anyio.Path(lock_file).exists():
+            # Attempt to create lock file atomically
+            def _create_lock():
+                try:
+                    os.open(str(lock_file), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                    return True
+                except FileExistsError:
+                    return False
+
+            while not await anyio.to_thread.run_sync(_create_lock):
                 await anyio.sleep(0.01)
-            
-            await anyio.Path(lock_file).touch()
 
             counter = 1
             if await anyio.Path(active_file).exists():

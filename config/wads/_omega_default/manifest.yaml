@@ -1,27 +1,27 @@
 wad:
-  name: "Omega Engine Default"
-  version: "0.1.0"
+  name: "_omega_default — Reference IWAD"
+  version: "0.2.0"
   requires_engine: ">=0.3.0"
   author: "Xoe-NovAi Foundation"
-  description: "Default WAD containing generic domain expert entities for the Omega Engine core."
+  description: "Reference IWAD — 10 Tech Role pillars. Template for community WAD creators. Development test harness."
   type: iwad
   mode: development
   license: "Apache 2.0"
 
   entities:
-    - "guardian.yaml"        # P1: Strength, protection, boundaries
-    - "dreamer.yaml"         # P2: Creativity, healing, hearth
-    - "strategist.yaml"      # P3: Will, forethought, light
-    - "scholar.yaml"         # P4: Knowledge, speech, arts
-    - "guide.yaml"           # P5: Transitions, depths
-    - "gatekeeper.yaml"      # P6: Structure, order, underworld
-    - "truthseeker.yaml"     # P7: Gnosis, questioning, sovereignty
-    - "shadowdancer.yaml"    # P8: Shadow, crossroads, keys
-    - "psychopomp.yaml"      # P9: Death, transformation, guidance
-    - "destroyer.yaml"       # P10: Liberation, destruction, time
+    - "sysadmin.yaml"       # P1: Infrastructure engineer
+    - "datastore.yaml"      # P2: Data pipeline manager
+    - "buildmaster.yaml"    # P3: CI/CD and toolchain lead
+    - "bridge.yaml"         # P4: API and protocol engineer
+    - "sentinel.yaml"       # P5: Security and hardening
+    - "modelgate.yaml"      # P6: Inference and provider fabric
+    - "context.yaml"        # P7: Session and memory keeper
+    - "watchtower.yaml"     # P8: Observability and telemetry
+    - "link.yaml"           # P9: Cross-agent synchronization
+    - "verifier.yaml"       # P10: QA and testing lead
 
   voices:
-    primary: "jem.yaml"       # Default voice assistant
+    primary: "jem.yaml"
     secondary: []
 
   vr_scenes: []

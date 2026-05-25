@@ -132,3 +132,13 @@ async def test_entity_registry_concurrent_add():
             
     finally:
         Path(config_path).unlink(missing_ok=True)
+
+
+def test_get_all(temp_config):
+    """get_all() should return all entities as a dict keyed by lowercase name."""
+    registry = EntityRegistry(config_path=temp_config)
+    all_entities = registry.get_all()
+    assert len(all_entities) == 1
+    assert "testentity" in all_entities
+    assert all_entities["testentity"].name == "TestEntity"
+    assert isinstance(all_entities, dict)

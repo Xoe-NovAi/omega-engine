@@ -44,7 +44,8 @@ DATA_DIR = Path(os.environ.get(
     "OMEGA_DATA_DIR",
     str(Path(__file__).resolve().parent.parent.parent.parent / "data")
 ))
-DEFAULT_SOUL_PATH = DATA_DIR / "entities" / "arch" / "soul.yaml"
+DEFAULT_USER = os.environ.get("OMEGA_DEFAULT_USER", "arch")
+DEFAULT_SOUL_PATH = DATA_DIR / "entities" / DEFAULT_USER / "soul.yaml"
 
 # Confidence threshold for Iris direct response vs escalation
 IRIS_CONFIDENCE_THRESHOLD = 0.4
@@ -407,18 +408,19 @@ class Oracle:
         trace.log("iris.speculative", action="direct_response", confidence=confidence)
         
         # Resolve session for Iris
+        iris_name = self.iris_entity.name if self.iris_entity else "Iris"
         if transient:
             session_id = self.session_manager.get_session_id_transient(trace.trace_id)
         else:
-            session_id = await self.session_manager.get_session_id("Iris")
+            session_id = await self.session_manager.get_session_id(iris_name)
         
         # Build context and prepend to personality
         base_prompt = self.iris_entity.personality if self.iris_entity else "You are Iris, your voice interface. Answer simply and warmly."
-        system_prompt = await self._prepare_system_prompt("Iris", session_id, base_prompt)
+        system_prompt = await self._prepare_system_prompt(iris_name, session_id, base_prompt)
         
         # Attempt inference with the lightest available model
         response_text = await self.model_gateway.generate(
-            model_name="qwen3-1.7b",
+            model_name=self.iris_entity.model if self.iris_entity else "qwen3-1.7b",
             system_prompt=system_prompt,
             user_query=query,
             temperature=self.iris_entity.temperature if self.iris_entity else 0.6,
@@ -429,23 +431,23 @@ class Oracle:
         
         result = OracleResponse(
             text=response_text,
-            entity="Iris",
+            entity=iris_name,
             role="Messenger — Lightweight Response",
             confidence=confidence,
             trace_id=trace.trace_id,
             backend=backend,
-            model="qwen3-1.7b",
+            model=self.iris_entity.model if self.iris_entity else "qwen3-1.7b",
             session_id=session_id,
             escalated=False,
         )
         
-        trace.log("response.delivered", entity="Iris", confidence=confidence, backend=backend, session_id=session_id)
+        trace.log("response.delivered", entity=iris_name, confidence=confidence, backend=backend, session_id=session_id)
         trace.record(
             query=query,
             system_prompt=system_prompt,
             response=response_text,
-            entity="Iris",
-            model="qwen3-1.7b",
+            entity=iris_name,
+            model=self.iris_entity.model if self.iris_entity else "qwen3-1.7b",
             backend=backend,
             confidence=confidence,
             session_id=session_id,
@@ -611,10 +613,22 @@ class Oracle:
                     "Format as YAML with keys: l1, l2, l3."
                 )
                 
-                # Use a reasoning model for distillation
+                # --- Gnosis Distillation (L1->L2->L3) ---
+                # We use a reasoning model to distill the session trace into gnosis
+                distillation_prompt = (
+                    f"Analyze the following interaction trace for entity {entity_name} (Trace ID: {trace_id}).\n"
+                    "Extract the following three levels of abstraction:\n"
+                    "L1 (Narrative): A concise summary of what happened.\n"
+                    "L2 (Insight): The causal pattern or strategic significance of this interaction.\n"
+                    "L3 (Universal Principle): A timeless, domain-agnostic truth extracted from this experience.\n\n"
+                    "Format as YAML with keys: l1, l2, l3."
+                )
+                
+                # Use a reasoning model for distillation (config-driven via env var)
                 try:
+                    distill_model = os.environ.get("OMEGA_DISTILL_MODEL", "qwen3-4b-thinking-q4_k_m")
                     distilled_text = await self.model_gateway.generate(
-                        model_name="qwen3-4b-thinking-q4_k_m",
+                        model_name=distill_model,
                         system_prompt="You are the Gnosis Distiller. Your goal is to extract timeless truths from session traces.",
                         user_query=distillation_prompt,
                         temperature=0.3,
@@ -624,13 +638,25 @@ class Oracle:
                 except Exception as e:
                     logger.warning(f"Gnosis distillation failed: {e}")
                     distilled_data = {"l1": f"Session with {entity_name}", "l2": "Unknown", "l3": "Unknown"}
-
+                
                 lessons = ent.setdefault("lessons_learned", [])
                 if not isinstance(lessons, list):
                     lessons = []
                     ent["lessons_learned"] = lessons
                 
-                if len(lessons) < 1000:
+                # Sovereign Guard: Prune empty lessons and prevent semantic explosion (C-MEM-005, 006)
+                # 1. Prune existing empty lessons (L2 == "Unknown")
+                ent["lessons_learned"] = [l for l in lessons if l.get("l2") != "Unknown"]
+                lessons = ent["lessons_learned"]
+
+                # 2. Semantic Deduplication: Check if L3 is already present
+                new_l3 = distilled_data.get("l3", "N/A").strip().lower()
+                is_duplicate = any(
+                    str(l.get("l3", "")).strip().lower() == new_l3 
+                    for l in lessons if l.get("l3")
+                )
+                
+                if not is_duplicate and len(lessons) < 1000:
                     lessons.append({
                         "l1": distilled_data.get("l1", "N/A"),
                         "l2": distilled_data.get("l2", "N/A"),
@@ -642,6 +668,7 @@ class Oracle:
                         "session_type": "persistent",
                         "timestamp": datetime.now(timezone.utc).isoformat(),
                     })
+
                 
                 # Recompute soul_power
                 sessions = evo.get("sessions_completed", 0)
