@@ -1,12 +1,15 @@
 wad:
   name: "_omega_default — Reference IWAD"
-  version: "0.2.0"
-  requires_engine: ">=0.3.0"
+  version: "0.3.0"
+  requires_engine: ">=0.4.0"
   author: "Xoe-NovAi Foundation"
   description: "Reference IWAD — 10 Tech Role pillars. Template for community WAD creators. Development test harness."
   type: iwad
   mode: development
   license: "Apache 2.0"
+  
+  startup:
+    message: "Omega Engine — Reference IWAD loaded. Your AI development team is ready: SysAdmin, DataStore, BuildMaster, Bridge, Sentinel, ModelGate, Context, WatchTower, Link, Verifier."
 
   entities:
     - "sysadmin.yaml"       # P1: Infrastructure engineer

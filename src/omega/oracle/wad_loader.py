@@ -28,6 +28,7 @@ class WADLoader:
             "OMEGA_WADS_DIR",
             str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads")
         ))
+        self._startup_messages: Dict[str, str] = {}  # stack_name -> startup message
         
         if os.environ.get("OMEGA_ENV") != "test":
             try:
@@ -54,12 +55,42 @@ class WADLoader:
             
         return results
 
-    async def load_wad(self, stack_name: str) -> bool:
+    async def load_single_wad(self, stack_name: str, priority: int = 10) -> bool:
+        """Load only a single named WAD.
+        
+        Unlike load_all_wads(), this loads exactly one IWAD and skips the rest.
+        The selected IWAD gets higher priority so its entities override entities.yaml.
+        
+        Args:
+            stack_name: Name of the WAD directory to load
+            priority: Override priority (default 10 — overrides entities.yaml baseline)
+        """
+        logger.info(f"Loading single WAD: {stack_name} (priority {priority})")
+        return await self.load_wad(stack_name, priority=priority)
+
+    def get_startup_message(self, stack_name: Optional[str] = None) -> Optional[str]:
+        """Return the startup personality message for a given WAD stack.
+        
+        If no stack_name is specified, returns the message from the last-loaded WAD
+        that defined one (useful for --iwad mode where a specific IWAD is active).
+        """
+        if stack_name:
+            return self._startup_messages.get(stack_name)
+        # Return most recently added startup message (active IWAD)
+        if self._startup_messages:
+            return list(self._startup_messages.values())[-1]
+        return None
+
+    async def load_wad(self, stack_name: str, priority: int = 0) -> bool:
         """Load a specific WAD stack.
         
         1. Read manifest.yaml
         2. Load entities from entities/
         3. Load voices from voices/
+        
+        Args:
+            stack_name: Name of the WAD directory (e.g., '_omega_default')
+            priority: Loading priority (higher = overrides lower). Default 0.
         """
         # Path traversal guard
         resolved_wad_path = (self.wads_dir / stack_name).resolve()
@@ -91,40 +122,58 @@ class WADLoader:
             if missing:
                 raise ValueError(f"WAD {stack_name} manifest missing required fields: {', '.join(missing)}")
 
+            # Capture startup personality if defined
+            if manifest.get("startup") and manifest["startup"].get("message"):
+                self._startup_messages[stack_name] = manifest["startup"]["message"]
+
             logger.info(f"Loading stack {stack_name} (version {manifest.get('version', 'unknown')})")
             
             # 1. Load Entities
             entities_dir = wad_path / "entities"
             if await anyio.Path(entities_dir).exists():
-                await self._load_entities(entities_dir)
+                await self._load_entities(entities_dir, wad_source=stack_name, priority=priority)
                 
             # 2. Load Voices (currently mapped to entities in this simple version)
             voices_dir = wad_path / "voices"
             if await anyio.Path(voices_dir).exists():
-                await self._load_voices(voices_dir)
+                await self._load_voices(voices_dir, wad_source=stack_name)
                 
             return True
         except Exception as e:
             logger.error(f"Failed to load WAD {stack_name}: {e}")
             return False
 
-    async def _load_entities(self, entities_dir: Path) -> None:
-        """Load all soul.yaml files from the entities directory."""
+    async def _load_entities(self, entities_dir: Path, wad_source: str = "", priority: int = 0) -> None:
+        """Load all .yaml files from the entities directory.
+        
+        Args:
+            entities_dir: Path to the entities directory
+            wad_source: WAD name to tag entities with (for IWAD tracking)
+            priority: Override priority — higher priority can replace lower priority
+        """
         async for path in anyio.Path(entities_dir).glob("**/*.yaml"):
             # Accept any .yaml file. Extract name from parent dir (if soul.yaml) or filename stem.
             if path.name == "soul.yaml":
                 entity_name = path.parent.name
             elif path.suffix == ".yaml":
-                entity_name = path.stem  # e.g., "guardian.yaml" → "guardian"
+                entity_name = path.stem  # e.g., "sysadmin.yaml" → "sysadmin"
             else:
                 continue
             
             if not entity_name:
                 continue
             
-            if self.registry.get(entity_name):
-                logger.warning(f"Entity {entity_name} already registered. Skipping to avoid overwrite.")
-                continue
+            # Collision detection with priority resolution
+            existing = self.registry.get(entity_name)
+            if existing:
+                existing_priority = 0  # entities.yaml entities have base priority 0
+                if existing.wad_source and existing.wad_source == wad_source:
+                    logger.warning(f"Entity {entity_name} already registered from WAD {wad_source}. Skipping duplicate.")
+                    continue
+                if priority <= existing_priority:
+                    logger.info(f"Entity {entity_name} already registered (priority {existing_priority} >= {priority}). Skipping from WAD {wad_source}.")
+                    continue
+                logger.info(f"Entity {entity_name} already registered (priority {existing_priority} < {priority}). Overriding from WAD {wad_source}.")
             
             try:
                 async with await anyio.open_file(str(path), "r") as f:
@@ -153,14 +202,15 @@ class WADLoader:
                         role=ent_data.get("role"),
                         container=ent_data.get("container", False),
                         port=ent_data.get("port"),
+                        wad_source=wad_source,
                     )
                     await self.registry.add(entity)
-                    logger.info(f"Registered entity {entity.name} from WAD")
+                    logger.info(f"Registered entity {entity.name} from WAD {wad_source}")
 
             except Exception as e:
                 logger.warning(f"Failed to load entity from {path}: {e}")
 
-    async def _load_voices(self, voices_dir: Path) -> None:
+    async def _load_voices(self, voices_dir: Path, wad_source: str = "") -> None:
         """Load voice configurations from the voices directory."""
         # In the current architecture, voices are essentially entities with 
         # specific activation phrases and roles.
@@ -170,9 +220,16 @@ class WADLoader:
                     data = yaml.safe_load(await f.read())
                     
                 voice_name = path.stem
-                if self.registry.get(voice_name):
-                    logger.warning(f"Voice {voice_name} conflicts with already registered entity. Skipping.")
-                    continue
+                existing = self.registry.get(voice_name)
+                if existing:
+                    existing_priority = 0
+                    if existing.wad_source and existing.wad_source == wad_source:
+                        logger.warning(f"Voice {voice_name} already registered from WAD {wad_source}. Skipping.")
+                        continue
+                    if wad_source and existing.wad_source != wad_source:
+                        logger.info(f"Voice {voice_name} already registered from WAD {existing.wad_source}. Skipping voice from WAD {wad_source}.")
+                        continue
+                
                 # Create a voice entity
                 entity = Entity(
                     name=voice_name,
@@ -182,6 +239,7 @@ class WADLoader:
                     role=data.get("role", "Voice Interface"),
                     container=True,
                     port=data.get("port", 8080),
+                    wad_source=wad_source,
                 )
                 await self.registry.add(entity)
                 logger.info(f"Registered voice {voice_name} from WAD")

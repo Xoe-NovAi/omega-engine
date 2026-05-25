@@ -46,6 +46,7 @@ class Entity:
     role: Optional[str] = None
     container: bool = False
     port: Optional[int] = None
+    wad_source: Optional[str] = None
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialize entity fields to dict, excluding None and empty collections."""
@@ -70,6 +71,7 @@ class EntityRegistry:
             )
         self.config_path = Path(config_path)
         self._entities: Dict[str, Entity] = {}
+        self._wad_sources: Dict[str, List[str]] = {}  # lowercase entity name -> list of WAD source names
         self._lock = None  # Created lazily in async context (C-ARCH-004 pattern)
         self._load()
 
@@ -111,7 +113,15 @@ class EntityRegistry:
                 container=raw.get("container", False),
                 port=raw.get("port"),
             )
-            self._entities[entity.name.lower()] = entity
+            key = entity.name.lower()
+            self._entities[key] = entity
+            
+            # Track wad_source for entities that have it
+            if entity.wad_source:
+                if key not in self._wad_sources:
+                    self._wad_sources[key] = []
+                if entity.wad_source not in self._wad_sources[key]:
+                    self._wad_sources[key].append(entity.wad_source)
 
         logger.info(f"Loaded {len(self._entities)} entities from config")
 
@@ -135,12 +145,29 @@ class EntityRegistry:
         """Return all entities as a dict keyed by lowercase name."""
         return dict(self._entities)
 
+    def get_by_wad(self, wad_name: str) -> List[Entity]:
+        """Return all entities that originated from a specific WAD."""
+        return [e for e in self._entities.values() if e.wad_source == wad_name]
+
+    def get_wad_sources(self, name: str) -> List[str]:
+        """Return list of WAD sources for a given entity name (lowercase lookup)."""
+        return self._wad_sources.get(name.lower(), [])
+
     async def add(self, entity: Entity) -> None:
         """Add a new entity. Overwrites if name exists."""
         if self._lock is None:
             self._lock = anyio.Lock()
         async with self._lock:
-            self._entities[entity.name.lower()] = entity
+            key = entity.name.lower()
+            
+            # Track WAD source if present
+            if entity.wad_source:
+                if key not in self._wad_sources:
+                    self._wad_sources[key] = []
+                if entity.wad_source not in self._wad_sources[key]:
+                    self._wad_sources[key].append(entity.wad_source)
+            
+            self._entities[key] = entity
             await self._save()
             
             # Automatically scaffold persistent workspace for the awakened entity
@@ -158,6 +185,7 @@ class EntityRegistry:
         async with self._lock:
             if key in self._entities:
                 del self._entities[key]
+                self._wad_sources.pop(key, None)
                 await self._save()
                 return True
             return False
