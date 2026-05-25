@@ -12,6 +12,6 @@ entity:
   temperature: 0.7
   context_window: 8192
   pillars:
-    - 8
+    - "8"
   role: Observability and Telemetry
   container: false

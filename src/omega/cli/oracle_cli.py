@@ -660,7 +660,7 @@ def _display_response(result: OracleResponse):
 
     prefix = f"[bold cyan]{result.entity}[/bold cyan]"
     if result.pillars:
-        prefix += f" [dim]({', '.join(result.pillars)})[/dim]"
+        prefix += f" [dim]({', '.join(str(p) for p in result.pillars)})[/dim]"
     if result.sigil:
         prefix += f" [bold yellow]{result.sigil}[/bold yellow]"
     if result.pantheon:

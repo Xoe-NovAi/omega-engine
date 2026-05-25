@@ -35,12 +35,12 @@ class TestMockProvider:
 
     @pytest.mark.asyncio
     async def test_generate_returns_string(self, provider):
-        """Mock generate returns a predictable string."""
+        """Mock generate returns a helpful setup message."""
         result = await provider.generate("qwen3-test", "system", "hello", 0.7, 128)
         assert result is not None
-        assert "MOCK RESPONSE" in result
-        assert "qwen3-test" in result
-        assert "hello" in result
+        assert "Omega Engine is running in setup mode" in result
+        assert "OPENROUTER_API_KEY" in result
+        assert "inference backend" in result
 
 
 class TestGoogleAIProvider:

@@ -12,6 +12,6 @@ entity:
   temperature: 0.7
   context_window: 8192
   pillars:
-    - 7
+    - "7"
   role: Session and Memory Keeper
   container: false

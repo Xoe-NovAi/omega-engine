@@ -1,37 +1,85 @@
+# 🔱 Omega Engine — Provider Fabric
+# ⬡ OMEGA ⬡ PROMETHEUS ⬡ deepseek-v4-flash ⬡ opencode ⬡ FABRIC-CONFIG
+#
+# The fallback chain defines inference priority order.
+# Providers are sorted by priority ascending (0 = highest priority).
+# Each provider in the chain is tried in order until one succeeds.
+#
+# Model Overrides: Each provider can define model_overrides to map
+# local GGUF entity model names to cloud/provider-specific model IDs.
+# Pattern:  "override map resolver key": "provider model name"
+#
+# Example: entity uses "qwen3-1.7b-q6_k" → OpenRouter maps to "qwen/qwen3-1.7b"
+
 inference:
-  strategy: local_first
+  strategy: cloud_first  # OpenRouter is primary for speed-to-PR; local local inference deferred
   fallback_chain:
-    - provider: native-gguf
-      priority: 1
-      model_path: /media/arcana-novai/omega_library/models/gguf/local/all/phi-4-mini-reasoning-abliterated-q4_k_m.gguf
-      n_ctx: 4096
-    - provider: google
+
+    # ── Primary: OpenRouter (cloud, API key in env) ──────────────────
+    # Provides access to Gemma 4 31B, GPT-4o, Claude, Qwen, and 300+ models.
+    # API key: env:OPENROUTER_API_KEY (set in .env or shell profile)
+    - provider: openrouter
+      priority: 0
+      api_key: env:OPENROUTER_API_KEY
+      base_url: https://openrouter.ai/api
+      model_overrides:
+        qwen3-1.7b-q6_k: google/gemma-4-31b-it
+        qwen3-1.7b: google/gemma-4-31b-it
+        qwen3-4b-thinking-q4_k_m: qwen/qwen3-4b-thinking
+        qwen3-0.6b-q6_k: qwen/qwen3-0.6b
+        deepseek-r1-qwen3-8b-q3_k_l: deepseek/deepseek-r1:free
+        krikri-8b-q5_k_m: openai/gpt-4o-mini
+        phi-2-omnimatrix-i1-q4_k_m: google/gemma-4-31b-it
+        roracoon-3b: openai/gpt-4o-mini
+      models:
+        - google/gemma-4-31b-it  # Default entity model for most entities
+
+    # ── Fallback: Ollama (local, running at :11434) ──────────────────
+    # Already verified running with krikri:latest and qwen2.5:0.5b
+    - provider: ollama
       priority: 2
+      endpoint: http://127.0.0.1:11434/v1
+      model_overrides:
+        qwen3-1.7b-q6_k: qwen2.5:0.5b
+        qwen3-1.7b: qwen2.5:0.5b
+
+    # ── Fallback: LM Studio / lmster (local, :1234 when started) ─────
+    # Start with: lms server start
+    - provider: lmster
+      priority: 3
+      endpoint: http://127.0.0.1:1234
+      model_overrides:
+        qwen3-4b-thinking-q4_k_m: qwen3-4b-thinking
+        qwen3-1.7b-q6_k: qwen3-1.7b
+
+    # ── Fallback: Google AI Studio (if GOOGLE_API_KEY set) ───────────
+    - provider: google
+      priority: 10
       api_key: env:GOOGLE_API_KEY
+
+    # ── Fallback: OpenRouter-backed aggregators ──────────────────────
+    - provider: genlabs
+      priority: 11
+      api_key: env:GENLABS_API_KEY
+      base_url: https://openrouter.ai/api/v1
+
     - provider: github-copilot
-      priority: 4
+      priority: 12
       models:
         - github-copilot/claude-haiku-4.5
         - github-copilot/gpt-4.1
         - github-copilot/gpt-4o
         - github-copilot/gpt-5-mini
-    - provider: kilo
-      priority: 5
-      models:
-        - kilo/deepseek/deepseek-v4-flash:free
-        - kilo/anthropic/claude-opus-4.6
-        - kilo/openai/gpt-5.4-pro
-        - kilo/qwen/qwen3-max-thinking
-    - provider: genlabs
-      priority: 6
-      api_key: env:GENLABS_API_KEY
-      base_url: https://openrouter.ai/api/v1
-    - provider: lmster
-      priority: 4
-      endpoint: http://127.0.0.1:1234
-    - provider: ollama
-      priority: 5
-      endpoint: http://127.0.0.1:11434/v1
+
+    # ── Deferred: Native GGUF (llama-cpp-python) ────────────────────
+    # Requires: pip install llama-cpp-python (CPU build, ~8 min compile)
+    # Model exists at path below. Will be primary in v0.6.0.
+    - provider: native-gguf
+      priority: 98
+      model_path: /media/arcana-novai/omega_library/models/gguf/local/all/phi-4-mini-reasoning-abliterated-q4_k_m.gguf
+      n_ctx: 4096
+
+    # ── Last resort: Mock provider (no inference needed) ─────────────
     - provider: mock
-      priority: 10
+      priority: 99
       enabled: true

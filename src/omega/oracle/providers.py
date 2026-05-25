@@ -119,12 +119,23 @@ class OllamaProvider(BaseProvider):
             return f"{reasoning}\n\n{content}".strip() if reasoning else content
 
 class MockProvider(BaseProvider):
-    """Offline mock provider for testing."""
+    """Offline mock provider — last resort when no inference backend is available."""
+
     async def is_available(self) -> bool:
         return True
 
     async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int) -> Optional[str]:
-        return f"[MOCK RESPONSE for {model}] User asked: {user_query}. Mocking successful."
+        return (
+            f"Omega Engine is running in setup mode.\n\n"
+            f"No inference backend responded. To enable AI responses:\n"
+            f"  1. Set OPENROUTER_API_KEY in your environment (fastest — cloud)\n"
+            f"     → `export OPENROUTER_API_KEY='your-key'` or add to .env\n"
+            f"  2. Start Ollama with a local model (local — already running):\n"
+            f"     → `ollama pull qwen3:1.7b`\n"
+            f"  3. Start LM Studio (local — already installed):\n"
+            f"     → `lms server start`\n\n"
+            f"Quick start: https://github.com/Xoe-NovAi/omega-engine#quickstart"
+        )
 
 class NativeGGUFProvider(BaseProvider):
     """Native GGUF provider using llama-cpp-python with Zen 2 optimizations."""

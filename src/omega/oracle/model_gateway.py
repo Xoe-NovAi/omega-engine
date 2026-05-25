@@ -372,6 +372,23 @@ class ModelGateway:
                 await anyio.sleep(2 ** attempt)
         return None
 
+    def _resolve_model_name(self, provider: Any, model_name: str) -> str:
+        """Resolve model name through provider-specific overrides.
+        
+        Entities use local GGUF filenames (e.g., 'qwen3-1.7b-q6_k') as model names.
+        Cloud providers need these translated to their model IDs (e.g., 'qwen/qwen3-1.7b').
+        The provider's 'model_overrides' config section maps local names → provider names.
+        """
+        # Extract overrides from provider config (works for both BaseProvider and RemoteProvider)
+        overrides: Dict[str, str] = {}
+        if hasattr(provider, 'config'):
+            if isinstance(provider.config, dict):
+                overrides = provider.config.get('model_overrides', {})
+            elif hasattr(provider.config, 'extra'):
+                overrides = provider.config.extra.get('model_overrides', {})
+        
+        return overrides.get(model_name, model_name)
+
     async def generate(
         self,
         model_name: str,
@@ -399,25 +416,30 @@ class ModelGateway:
                 # Bypass fallback chain and use specific provider
                 target_provider = next((p for p in self.providers if p.name == pinned_provider), None)
                 if target_provider:
+                    # Resolve model name for pinned provider
+                    resolved_model = self._resolve_model_name(target_provider, model_name)
                     # ResourceGuard protection for pinned local providers
                     if isinstance(target_provider, (LocallmsterProvider, OllamaProvider, NativeGGUFProvider)):
                         async with self.resource_guard.lock():
-                            return await self._call_provider_with_resilience(target_provider, model_name, enriched_prompt, user_query, temperature, max_tokens)
-                    return await self._call_provider_with_resilience(target_provider, model_name, enriched_prompt, user_query, temperature, max_tokens)
+                            return await self._call_provider_with_resilience(target_provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens)
+                    return await self._call_provider_with_resilience(target_provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens)
                 logger.warning(f"Pinned provider {pinned_provider} not found. Falling back to chain.")
             
             for provider in self.providers:
                 if not await provider.is_available():
                     continue
                 
+                # Resolve model name through provider's overrides
+                resolved_model = self._resolve_model_name(provider, model_name)
+                
                 try:
                     # Wrap local providers in a timeout to prevent systemic hangs
                     if isinstance(provider, (LocallmsterProvider, OllamaProvider, NativeGGUFProvider)):
                         async with self.resource_guard.lock():
                             with anyio.move_on_after(130):
-                                response = await self._execute_with_retry(provider, model_name, enriched_prompt, user_query, temperature, max_tokens)
+                                response = await self._execute_with_retry(provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens)
                     else:
-                        response = await self._execute_with_retry(provider, model_name, enriched_prompt, user_query, temperature, max_tokens)
+                        response = await self._execute_with_retry(provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens)
                     
                     if response:
                         return response

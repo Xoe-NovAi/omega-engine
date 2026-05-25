@@ -12,6 +12,6 @@ entity:
   temperature: 0.7
   context_window: 8192
   pillars:
-    - 4
+    - "4"
   role: API and Protocol Engineer
   container: false
