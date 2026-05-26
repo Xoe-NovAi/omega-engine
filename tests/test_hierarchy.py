@@ -66,7 +66,7 @@ async def hierarchy_with_config():
     Path(path).unlink(missing_ok=True)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_default_ranks(hierarchy):
     """Hierarchy entries should resolve correctly based on YAML."""
     assert hierarchy.get_rank("sophia") == 0
@@ -77,7 +77,7 @@ async def test_default_ranks(hierarchy):
     assert hierarchy.get_rank("isis") == 3
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_unknown_entity_is_keeper(hierarchy):
     """Entities not in RANK_MAP default to rank 3 (Pillar Keeper), unless they are special."""
     assert hierarchy.get_rank("sekHmet") == 3
@@ -89,7 +89,7 @@ async def test_unknown_entity_is_keeper(hierarchy):
     assert hierarchy.get_rank("nonexistent") == 3
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_case_insensitive(hierarchy):
     """Rank lookup is case-insensitive."""
     assert hierarchy.get_rank("Sophia") == 0
@@ -97,7 +97,7 @@ async def test_case_insensitive(hierarchy):
     assert hierarchy.get_rank("Isis") == 3  # per-IWAD entity, defaults to rank 3
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_recursion_sophia_allowed_at_depth_2(hierarchy):
     """Sophia (Rank 0) max_allowed_depth=3, so depth 2 is allowed."""
     result = hierarchy.check_recursion("sophia", 2)
@@ -106,7 +106,7 @@ async def test_recursion_sophia_allowed_at_depth_2(hierarchy):
     assert result["max_allowed_depth"] == 3
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_recursion_sophia_blocked_at_depth_3(hierarchy):
     """Sophia (Rank 0) max_allowed_depth=3, so depth 3 is blocked."""
     result = hierarchy.check_recursion("sophia", 3)
@@ -114,7 +114,7 @@ async def test_recursion_sophia_blocked_at_depth_3(hierarchy):
     assert "recursion limit" in result["reason"]
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_recursion_kali_allowed_at_depth_1(hierarchy):
     """Kali (Rank 1) max_allowed_depth=2, so depth 1 is allowed."""
     result = hierarchy.check_recursion("kali", 1)
@@ -122,14 +122,14 @@ async def test_recursion_kali_allowed_at_depth_1(hierarchy):
     assert result["max_allowed_depth"] == 2
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_recursion_kali_blocked_at_depth_2(hierarchy):
     """Kali (Rank 1) max_allowed_depth=2, so depth 2 is blocked."""
     result = hierarchy.check_recursion("kali", 2)
     assert result["allowed"] is False
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_recursion_oversoul_allowed_at_depth_0(hierarchy):
     """Oversoul (Rank 2) max_allowed_depth=1, so depth 0 is allowed."""
     result = hierarchy.check_recursion("maat", 0)
@@ -137,14 +137,14 @@ async def test_recursion_oversoul_allowed_at_depth_0(hierarchy):
     assert result["max_allowed_depth"] == 1
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_recursion_oversoul_blocked_at_depth_1(hierarchy):
     """Oversoul (Rank 2) max_allowed_depth=1, so depth 1 is blocked."""
     result = hierarchy.check_recursion("lilith", 1)
     assert result["allowed"] is False
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_recursion_keeper_blocked_at_depth_0(hierarchy):
     """Keeper (Rank 3) max_allowed_depth=0, so depth 0 is blocked."""
     result = hierarchy.check_recursion("Sekhmet", 0)
@@ -152,14 +152,14 @@ async def test_recursion_keeper_blocked_at_depth_0(hierarchy):
     assert result["max_allowed_depth"] == 0
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_recursion_keeper_at_negative_depth(hierarchy):
     """Negative depth should be allowed for any rank."""
     result = hierarchy.check_recursion("Sekhmet", -1)
     assert result["allowed"] is True
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_from_config(hierarchy_with_config):
     """Hierarchy can be loaded from a custom YAML config."""
     assert hierarchy_with_config._hierarchy is not None

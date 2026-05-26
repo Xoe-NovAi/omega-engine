@@ -2,6 +2,17 @@
 
 import pytest
 from omega.oracle.model_gateway import ModelGateway
+import os
+
+@pytest.fixture
+def mock_env(monkeypatch):
+    """Fixture to handle OMEGA_ENV pollution."""
+    original_env = os.environ.get("OMEGA_ENV")
+    yield monkeypatch
+    if original_env:
+        os.environ["OMEGA_ENV"] = original_env
+    else:
+        os.environ.pop("OMEGA_ENV", None)
 
 
 def test_model_gateway_init():
@@ -40,8 +51,8 @@ def test_fallback_response():
     assert "no inference backend is running" in response
 
 
-@pytest.mark.asyncio
-async def test_model_gateway_fallback_chain():
+@pytest.mark.anyio
+async def test_model_gateway_fallback_chain(monkeypatch):
     """Verify that ModelGateway falls back through the provider chain when others fail."""
     from unittest.mock import AsyncMock, MagicMock
     
@@ -67,7 +78,7 @@ async def test_model_gateway_fallback_chain():
     
     # We must mock the environment to avoid the mock_backend in test mode
     import os
-    os.environ["OMEGA_ENV"] = "production" 
+    monkeypatch.setenv("OMEGA_ENV", "production") 
     
     result = await gateway.generate(
         model_name="test-model",

@@ -15,7 +15,7 @@ from omega.workers.background_researcher.scheduler import TopicScheduler
 from omega.workers.background_researcher.review_queue import ReviewQueue
 from omega.workers.background_researcher.metrics import ResearchMetrics
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_enhanced_priority_queue_weighted_fair():
     """Test that EnhancedPriorityQueue implements 2:1 weighted fair scheduling."""
     queue = EnhancedPriorityQueue(weight_ratio=(2, 1))
@@ -40,7 +40,7 @@ async def test_enhanced_priority_queue_weighted_fair():
     assert results[4] == "high"
     assert results[5] == "normal"
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_topic_scheduler_rotation(tmp_path):
     """Test that TopicScheduler correctly rotates and deepens topics."""
     # Mock config
@@ -57,8 +57,9 @@ scheduled_topics:
   t2: {title: "Topic 2", cloud_search: {depth: 2}}
 """)
     
-    scheduler = TopicScheduler(config_path=str(config_path))
-    
+    state_path = tmp_path / "scheduler_state.json"
+    scheduler = TopicScheduler(config_path=str(config_path), state_path=str(state_path))
+
     # Cycle 1: Topic 1
     task1 = scheduler.get_next_topic()
     assert task1.topic == "Topic 1"
@@ -73,14 +74,14 @@ scheduled_topics:
     assert task3.topic == "Topic 1"
     assert task3.priority < p1, "Priority should decay over cycles"
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_review_queue_atomic_locks(tmp_path):
     """Test that ReviewQueue handles atomic locks and prevents concurrent processing."""
     # Use a temporary directory for the queue
     queue = ReviewQueue(base_dir=str(tmp_path))
     
     # Enqueue an item
-    queue.enqueue("Test Topic", {"claim": "X is Y"}, priority="high")
+    await queue.enqueue("Test Topic", {"claim": "X is Y"}, priority="high")
     
     # Simulate a lock by creating the .lock directory manually
     files = list((tmp_path / "high").glob("*.json"))
@@ -89,17 +90,17 @@ async def test_review_queue_atomic_locks(tmp_path):
         lock_dir.mkdir()
         
         # Try to dequeue - should return None because it's locked
-        assert queue.dequeue() is None
+        assert await queue.dequeue() is None
         
         # Remove lock and try again
         lock_dir.rmdir()
-        assert queue.dequeue() is not None
-
+        assert await queue.dequeue() is not None
+    
     # Cleanup
     import shutil
     shutil.rmtree(str(tmp_path), ignore_errors=True)
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_background_loop_atomic_lock():
     """Test that BackgroundResearcherLoop prevents concurrent cycles via file lock."""
     loop = BackgroundResearcherLoop()
@@ -117,7 +118,7 @@ async def test_background_loop_atomic_lock():
     result = await loop.run_cycle()
     assert result["skipped"] is not True or result["reason"] != "locked"
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_local_discovery_scan(tmp_path):
     """Test that _local_discovery_scan finds relevant snippets."""
     # Create a dummy file for scanning
@@ -144,13 +145,13 @@ async def test_local_discovery_scan(tmp_path):
     assert "TODO: implement voice" in context
     assert "tmp_scan_test.py" in context
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_metrics_logging(tmp_path):
     """Test that ResearchMetrics correctly logs and summarizes cycles."""
     metrics = ResearchMetrics(log_dir=str(tmp_path))
     
-    metrics.log_cycle("Topic A", {"t1_latency": 1.0, "t1_quality": 0.8})
-    metrics.log_cycle("Topic B", {"t1_latency": 2.0, "t1_quality": 0.6})
+    await metrics.log_cycle("Topic A", {"t1_latency": 1.0, "t1_quality": 0.8})
+    await metrics.log_cycle("Topic B", {"t1_latency": 2.0, "t1_quality": 0.6})
     
     summary = metrics.get_summary()
     assert summary["total_cycles"] == 2

@@ -106,7 +106,7 @@ def test_discover_tools_invalid_entity(proxy):
     assert isinstance(tools, list)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_wrap_tool_call_no_descriptors(proxy):
     """wrap_tool_call with regular args should pass them through unchanged."""
     result = await proxy.wrap_tool_call("my_tool", {"arg1": "hello", "arg2": 42})
@@ -114,7 +114,7 @@ async def test_wrap_tool_call_no_descriptors(proxy):
     assert result["arguments"] == {"arg1": "hello", "arg2": 42}
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_wrap_tool_call_with_descriptor(proxy):
     """wrap_tool_call should resolve omega://transfer/ URIs."""
     data = {"resolved": "payload"}
@@ -124,7 +124,7 @@ async def test_wrap_tool_call_with_descriptor(proxy):
     assert result["arguments"]["other"] == "value"
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_wrap_tool_call_partial_descriptors(proxy):
     """wrap_tool_call should handle mixed descriptor/non-descriptor args."""
     desc = proxy.create_transfer_descriptor("secret_data")
