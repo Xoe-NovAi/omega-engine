@@ -455,3 +455,60 @@ Key Phase 3 wins: Duplicate imports removed, double Path wrapping fixed, Inanna 
 | 6 | MCP Hub & Integration Infrastructure | Medium |
 | 7 | CLI, REPL, Agents & Developer Experience | Medium |
 | 8 | Strategy, Documentation & Community | Low (can overlap) |
+
+---
+
+## 📡 Session Completions — 2026-05-25 (PR Readiness Sprint & Cloud-First Pivot)
+
+### 🚀 Cloud-First Provider Strategy & PR Readiness — COMPLETE
+**Status**: ✅ **Inference chain verified, README quickstart written, CI/CD pipeline active, .gitignore cleaned, 259/259 tests passing**
+
+| # | Objective | Description | Status |
+|---|-----------|-------------|--------|
+| 1 | Cloud-First Pivot | Prioritized OpenRouter (0) with model overrides mapping local GGUF names to cloud model IDs (google/gemma-4-31b-it) | ✅ |
+| 2 | MockProvider Hardening | Replaced debug text with helpful setup instructions for local/cloud inference | ✅ |
+| 3 | Bug Fixes | Fixed missing `await` in `RemoteProvider.generate()`, YAML parsing in `TriageRouter`, and integer pillar display | ✅ |
+| 4 | README Quickstart | Authored 3-command setup path, provider setup table, and architecture overview | ✅ |
+| 5 | CI/CD Pipeline | Added GitHub Actions workflow (`test.yml`) running pytest and flake8 on Python 3.12 + 3.13 | ✅ |
+| 6 | .gitignore Cleanup | Added `.firecrawl/`, stale test scaffolds, and legacy Belial artifacts (untracked files 215 → 11) | ✅ |
+| 7 | Decision Logged | Decision 56 in `PIVOT_LOG.md` — Cloud-First Provider Strategy | ✅ |
+
+**Files Updated**:
+- `config/providers.yaml` — OpenRouter priority 0 + model overrides
+- `src/omega/oracle/model_gateway.py` — Added `_resolve_model_name`
+- `src/omega/oracle/providers.py` — Helpful MockProvider message
+- `src/omega/oracle/backends/remote_provider.py` — Fixed missing `await`
+- `src/omega/orchestration/triage_router.py` — Fixed YAML soul loading
+- `src/omega/cli/oracle_cli.py` — Fixed integer pillar display
+- `README.md` — Complete rewrite with 3-command quickstart
+- `.github/workflows/test.yml` — New GitHub Actions workflow
+- `.gitignore` — Cleaned up untracked files
+- `docs/decisions/PIVOT_LOG.md` — Decision 56 logged
+- `docs/strategy/OMEGA_PR_READINESS_STRATEGY.md` — Updated with completed work
+
+---
+
+## 📡 Session Completions — 2026-05-26 (Overseer's Strategic Audit & Remediation Handoff)
+
+### 🚀 Codebase & Documentation Audit — COMPLETE
+**Status**: ✅ **Audit completed, 4 findings logged, remediation handoff created for Builder mode**
+
+| # | Objective | Description | Status |
+|---|-----------|-------------|--------|
+| 1 | Codebase Audit | Verified AnyIO compliance, Engine-Stack Firewall, and WAD Loader integrity | ✅ |
+| 2 | Documentation Audit | Verified README, Master Ledger, and PIVOT_LOG alignment | ✅ |
+| 3 | Findings Logged | Logged 4 new findings (C-AUD-001 to C-AUD-004) in `FINDINGS_LOG.md` | ✅ |
+| 4 | Remediation Handoff | Created comprehensive build brief for Builder mode at `data/handoff/handoff_overseer_to_builder_audit_remediation.md` | ✅ |
+
+**Key Findings**:
+- **C-AUD-001 (Critical)**: `_grow_frontier()` in `loop.py` parses stale `docs/ROADMAP.md` instead of `docs/MASTER_LEDGER.md`.
+- **C-AUD-002 (High)**: Obsolete agent files cluttering `.opencode/agents/` (already resolved on disk).
+- **C-AUD-003 (Medium)**: Dual-load of entities from `entities.yaml` and WAD Loader (deferred to v0.6.0).
+- **C-AUD-004 (Medium)**: Native GGUF integration path deferred (deferred to v0.6.0).
+
+**Files Updated**:
+- `docs/review/FINDINGS_LOG.md` — Added §9 with 4 new findings
+- `data/handoff/handoff_overseer_to_builder_audit_remediation.md` — New build brief for Gemma
+- `docs/team/COMMUNICATION_HUB.md` — This entry
+
+---

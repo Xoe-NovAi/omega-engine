@@ -43,7 +43,7 @@
 | C-ARCH-005 | `EntityRegistry.add()` calls `scaffold_workspace()` sync from async callers — 7 blocking I/O calls | `entity_registry.py:150-154` | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
 | C-ARCH-006 | `WADLoader.load_wad()` public method vulnerable to path traversal | `wad_loader.py:64` | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
 | C-ARCH-007 | Tautological `iris_entity` assignment (`A or A` — both sides identical) | `oracle.py:141` | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
-| C-ARCH-008 | Belial's model `gemma-4-31b` may silently route to cloud (no local GGUF) | `entities.yaml` (belial) | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
+| C-ARCH-008 | Roc Racoon's model `gemma-4-31b` may silently route to cloud (no local GGUF) | `entities.yaml` (roc_racoon) | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
 | C-ARCH-009 | No concurrent write protection on `EntityRegistry._save()` — race condition | `entity_registry.py:195-212` | Initial | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
 | C-WS-001 | `ENTITIES_DATA_DIR` resolved at import time, ignores `OMEGA_DATA_DIR` env var | `entity_workspace.py:21` | Deep Dive 1 | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
 | C-WS-003 | `update_soul()` not thread-safe with `scaffold_workspace()` — race on os.replace | `entity_workspace.py:97-117` | Deep Dive 1 | 🔴 UNFIXED | 🟢 FIXED — Phase 1 |
@@ -101,16 +101,49 @@
 
 ---
 
-## §7 Report Cross-Reference
-
+## §7 Jem 2.0 Pipeline Issues (13 Findings)
+ 
+| ID | Title | File:Line | Report | Severity | Status |
+|----|-------|-----------|--------|----------|--------|
+| C-JEM-001 | `config/distiller_prompts.yaml` missing — prompts hardcoded | `distiller.py` | Report 04 | 🔴 CRITICAL | 🟢 FIXED |
+| C-JEM-002 | `soul_updater.py` retains hardcoded entity mappings | `soul_updater.py` | Report 04 | 🔴 HIGH | 🟢 FIXED |
+| C-JEM-003 | Improvement brief loop not implemented in automated pipeline | `loop.py` | Report 04 | 🔴 HIGH | 🟢 FIXED |
+| C-JEM-004 | Sub-facet soul metrics permanently zeroed | `soul.yaml` | Report 04 | 🔴 HIGH | 🟢 FIXED |
+| C-JEM-005 | `RotationState` not persisted — scheduler resets every run | `scheduler.py` | Report 04 | 🔴 HIGH | 🟢 FIXED |
+| C-JEM-006 | `review_queue.py` and `metrics.py` use blocking synchronous I/O | `review_queue.py` | Report 04 | 🔴 HIGH | 🟢 FIXED |
+| C-JEM-007 | T3 Gemini review output discarded — not applied to GnosisPacket | `distiller.py` | Report 04 | 🟡 MEDIUM | 🟢 FIXED |
+| C-JEM-008 | Tier contract violated in automated distiller (L1 does analysis) | `distiller.py` | Report 04 | 🟡 MEDIUM | 🟢 FIXED |
+| C-JEM-009 | Model identity mismatch between `soul.yaml` and `distiller.py` | `distiller.py` | Report 04 | 🟡 MEDIUM | 🟢 FIXED |
+| C-JEM-010 | `review_queue.py` calls undefined `_prune_oldest()` — crashes | `review_queue.py` | Report 04 | 🟡 MEDIUM | 🟢 FIXED |
+| C-JEM-011 | `research_topics.yaml` is a placeholder stub | `research_topics.yaml` | Report 04 | 🟡 MEDIUM | 🟢 FIXED |
+| C-JEM-012 | Daily API limits defined but never enforced | `credit_budget.py` | Report 04 | 🟢 LOW | 🟢 FIXED |
+| C-JEM-013 | Convergence condition 1 has model-bias fragility | `convergence.py` | Report 04 | 🟢 LOW | 🟢 FIXED |
+  
+**Jem total**: 13 findings. All 13 🟢 FIXED.
+ 
+---
+ 
+## §8 Report Cross-Reference
+ 
 | Report Source | File | Findings | Download Date |
 |---------------|------|----------|---------------|
 | Initial Review (Account 1) | `claude-reports/01-claude-report-core-arch.md` | 17 issues (C-ARCH-001 to C-ARCH-017) | 2026-05-22 |
 | Deep Dive 1: Missing Files | `claude-reports/01-deep-dive-1_core-arch.md` | 12 issues (C-WS-001 to C-GNOSIS-005) | 2026-05-22 |
-| Deep Dive 2: Strategic Alignment | *(pending)* | — | — |
-| Deep Dive 3: Implementation Briefs | *(pending)* | — | — |
-| Deep Dive 4: Threat Modeling | *(pending)* | — | — |
-| Deep Dive 5: Architecture Evolution | *(pending)* | — | — |
+| Jem 2.0 Pipeline | `claude-reports/04-claude-report-jem-pipe.md` | 13 issues (C-JEM-001 to C-JEM-013) | 2026-05-23 |
+| Overseer's Strategic Audit | `docs/review/FINDINGS_LOG.md` | 4 issues (C-AUD-001 to C-AUD-004) | 2026-05-26 |
+
+---
+
+## §9 Overseer's Strategic Audit (4 Findings — 2026-05-26)
+
+| ID | Title | File:Line | Report | Severity | Status |
+|----|-------|-----------|--------|----------|--------|
+| C-AUD-001 | `_grow_frontier()` parses stale `docs/ROADMAP.md` instead of `docs/MASTER_LEDGER.md` | `loop.py:363` | Overseer | 🔴 CRITICAL | 🔴 UNFIXED |
+| C-AUD-002 | Obsolete agent files cluttering `.opencode/agents/` | `.opencode/agents/` | Overseer | 🔴 HIGH | 🔴 UNFIXED |
+| C-AUD-003 | Dual-load of entities from `entities.yaml` and WAD Loader | `oracle.py` / `entities.yaml` | Overseer | 🟡 MEDIUM | 🔴 UNFIXED |
+| C-AUD-004 | Native GGUF integration path deferred (needs clear documentation) | `providers.yaml` | Overseer | 🟡 MEDIUM | 🔴 UNFIXED |
+
+**Overseer total**: 4 findings. **All 4 UNFIXED (remit to Builder mode).**
 
 ---
 
@@ -127,4 +160,4 @@
 
 ---
 
-*This log is the master record of all findings from the Web Claude fleet review. All 29 findings FIXED across 4 phases. Updated: 2026-05-23.*
+*This log is the master record of all findings. 29/33 findings FIXED. 4 UNFIXED (remit to Builder). Updated: 2026-05-26.*

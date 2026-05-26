@@ -342,7 +342,7 @@ class BackgroundResearcherLoop:
                         if "🔲" in status_col or "🔄" in status_col:
                             candidates.append({"topic": title, "source": "research_index", "priority": 0.7, "depth": 2})
         
-        src_dir = Path(__file__).parent.parent.parent / "src" / "omega"
+        src_dir = Path(__file__).resolve().parent.parent.parent.parent / "src" / "omega"
         if src_dir.exists():
             for py_file in src_dir.rglob("*.py"):
                 try:
@@ -360,16 +360,21 @@ class BackgroundResearcherLoop:
                 except (IOError, OSError):
                     continue
         
-        roadmap_path = Path("docs/ROADMAP.md")
-        if roadmap_path.exists():
-            text = roadmap_path.read_text()
-            current_phase: Optional[str] = None
+        ledger_path = Path("docs/MASTER_LEDGER.md")
+        if ledger_path.exists():
+            text = ledger_path.read_text()
             for line in text.split("\n"):
-                phase_match = re.match(r"^### Phase (\w+):", line)
-                if phase_match: current_phase = phase_match.group(1)
-                task_match = re.match(r"^\|\s*(\w[\w.]*)\s*\|.*?\|.*?\|.*?(🔴|🟡)", line)
-                if task_match and current_phase:
-                    candidates.append({"topic": f"Phase {current_phase} task {task_match.group(1)} — implementation research", "source": "roadmap", "priority": 0.6, "depth": 1})
+                if line.startswith("|") and any(icon in line for icon in ("📅", "🟡", "🔴")):
+                    parts = [p.strip() for p in line.split("|")]
+                    if len(parts) >= 3:
+                        phase_raw = parts[1].replace("**", "").strip()
+                        goal = parts[2].strip()
+                        candidates.append({
+                            "topic": f"{phase_raw} — {goal} research",
+                            "source": "master_ledger",
+                            "priority": 0.6,
+                            "depth": 1
+                        })
 
         entities_dir = Path(__file__).parent.parent.parent.parent / "data" / "entities"
         if entities_dir.exists():

@@ -25,6 +25,7 @@ import anyio
 import httpx
 
 from .models import GnosisPacket
+from .soul_update_manager import SoulUpdateManager
 
 logger = logging.getLogger(__name__)
 
@@ -203,25 +204,28 @@ def validate_t1_output(text: str) -> QualityGateResult:
         result.reason = f"Too short: {tokens} tokens (minimum 50)"
         return result
 
-    # Check for L1/L2/L3 structure in JSON or text
+    # Check for raw claims and sources
     text_lower = text.lower()
-    result.has_l1 = bool(re.search(r'"[^"]*l1[^"]*"', text) or 'l1 (narrative)' in text_lower)
-    result.has_l2 = bool(re.search(r'"[^"]*l2[^"]*"', text) or 'l2 (insight)' in text_lower)
-    result.has_l3 = bool(re.search(r'"[^"]*l3[^"]*"', text) or 'l3 (universal principle)' in text_lower)
-
+    claims_found = bool(re.search(r'"claims":\s*\[', text) or 'claim:' in text_lower)
+    sources_found = bool(re.search(r'"sources":\s*\[', text) or 'source:' in text_lower)
+    
+    result.has_l1 = claims_found
+    result.has_l2 = sources_found
+    result.has_l3 = False # T1 should NEVER produce L3
+    
     # Check if we can extract JSON
     try:
         _extract_json(text)
         result.valid_json = True
     except (json.JSONDecodeError, ValueError):
         result.valid_json = False
-
+    
     # For very short texts, require JSON structure
     if tokens < 100 and not result.valid_json:
         result.passed = False
         result.reason = f"Short ({tokens} tokens) and not valid JSON"
         return result
-
+    
     result.passed = True
     result.reason = f"Passed ({tokens} tokens, json={result.valid_json})"
     return result
@@ -310,31 +314,21 @@ class LmsterBackend:
 # §4 Tier 2 Backend — MiniMax M2.5 (OpenRouter → Zen → Gemma)
 # ══════════════════════════════════════════════════════════════════════════
 
-class MiniMaxBackend:
-    """Calls MiniMax M2.5 via OpenRouter primary, OpenCode Zen fallback,
-    then Gemma 4-31B as tertiary fallback.
-
+class T2Backend:
+    """Calls Gemma 4-31B via Google AI Studio.
+    
     The call method takes an optional T1 draft to enrich — if provided,
     the draft becomes the starting point for the enrichment.
     """
-
+    
     def __init__(self):
         self.circuit = JemCircuitBreaker()
         self.timeout = 90.0
-
-        # OpenRouter config
-        self.or_api_key = os.getenv("OPENROUTER_API_KEY", "") or os.getenv("OPENROUTER_KEY", "")
-        self.or_endpoint = "https://openrouter.ai/api/v1/chat/completions"
-        self.or_model = "minimax/m2.5"
-
-        # OpenCode Zen config
-        self.zen_api_key = os.getenv("OPENCODEZEN", "")
-        self.zen_endpoint = "https://opencode.ai/zen/v1/chat/completions"
-        self.zen_model = "minimax-m2.5-free"
-
-        # Google AI Studio config (fallback)
+        
+        # Google AI Studio config
         self.google_api_key = os.getenv("GOOGLE_API_KEY", "")
         self.google_endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent"
+        self.model = "gemma-4-31b-it"
 
     async def call(
         self,
@@ -344,9 +338,8 @@ class MiniMaxBackend:
         temperature: float = 0.1,
         max_tokens: int = 4096,
     ) -> str:
-        """Call MiniMax M2.5 with OpenRouter primary, OpenCode Zen fallback,
-        Gemma 4-31B tertiary fallback, then mock.
-
+        """Call Gemma 4-31B via Google AI Studio.
+        
         If t1_draft is provided, the prompt includes instructions to enrich it.
         """
         # Build enrichment prompt if we have a T1 draft
@@ -360,153 +353,31 @@ class MiniMaxBackend:
                 f"{t1_draft}\n\n"
                 "---\nProduce an enriched version of the above with the same JSON structure."
             )
-
+        
         full_prompt = prompt + enrichment_context
-
-        # Chain: OpenRouter → OpenCode Zen → Gemma → Mock
-        result = await self._call_openrouter(full_prompt, system_prompt, temperature, max_tokens)
-        if result:
-            return result
-
-        result = await self._call_opencode_zen(full_prompt, system_prompt, temperature, max_tokens)
-        if result:
-            return result
-
+        
+        # Primary: Google AI Studio
         result = await self._call_gemma_google(full_prompt, system_prompt, temperature, max_tokens)
         if result:
             return result
-
-        logger.error("All Tier 2 providers failed — returning mock enrichment")
+        
+        logger.error("Tier 2 provider (Gemma Google) failed — returning mock enrichment")
         return self._mock_enrichment(prompt, t1_draft or "")
-
-    async def _call_openrouter(
-        self, prompt: str, system_prompt: str, temp: float, max_tokens: int
-    ) -> str:
-        """Call MiniMax M2.5 via OpenRouter."""
-        if not self.or_api_key:
-            logger.warning("OPENROUTER_API_KEY not set — skipping OpenRouter")
-            return ""
-
-        severity = "ok"
-        try:
-            # Check circuit breaker
-            if not self.circuit.can_call("minimax_openrouter"):
-                logger.warning("OpenRouter circuit breaker open — skipping")
-                return ""
-
-            async with httpx.AsyncClient(timeout=self.timeout) as client:
-                resp = await client.post(
-                    self.or_endpoint,
-                    headers={
-                        "Authorization": f"Bearer {self.or_api_key}",
-                        "Content-Type": "application/json",
-                    },
-                    json={
-                        "model": self.or_model,
-                        "messages": [
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": prompt},
-                        ],
-                        "temperature": temp,
-                        "max_tokens": max_tokens,
-                    },
-                )
-
-                if resp.status_code == 429:
-                    severity = self.circuit.record_failure("minimax_openrouter", "rate_limited")
-                    logger.warning(f"OpenRouter 429 — severity={severity}")
-                    return ""
-                if resp.status_code == 500:
-                    severity = self.circuit.record_failure("minimax_openrouter", "server_error")
-                    return ""
-
-                resp.raise_for_status()
-                data = resp.json()
-                text = self._extract_content(data)
-                if text:
-                    self.circuit.record_success("minimax_openrouter")
-                    return text
-
-                severity = self.circuit.record_failure("minimax_openrouter", "empty_response")
-                return ""
-
-        except httpx.TimeoutException:
-            severity = self.circuit.record_failure("minimax_openrouter", "timeout")
-        except Exception as e:
-            severity = self.circuit.record_failure("minimax_openrouter", str(e))
-
-        if severity == "critical":
-            logger.critical("OpenRouter MiniMax: CRITICAL failure threshold reached. "
-                            "Check API key and account status.")
-        return ""
-
-    async def _call_opencode_zen(
-        self, prompt: str, system_prompt: str, temp: float, max_tokens: int
-    ) -> str:
-        """Call MiniMax M2.5-free via OpenCode Zen API."""
-        if not self.zen_api_key:
-            logger.warning("OPENCODEZEN not set — skipping OpenCode Zen")
-            return ""
-
-        severity = "ok"
-        try:
-            if not self.circuit.can_call("minimax_zen"):
-                logger.warning("OpenCode Zen circuit breaker open — skipping")
-                return ""
-
-            async with httpx.AsyncClient(timeout=self.timeout) as client:
-                resp = await client.post(
-                    self.zen_endpoint,
-                    headers={
-                        "Authorization": f"Bearer {self.zen_api_key}",
-                        "Content-Type": "application/json",
-                    },
-                    json={
-                        "model": self.zen_model,
-                        "messages": [
-                            {"role": "system", "content": system_prompt},
-                            {"role": "user", "content": prompt},
-                        ],
-                        "temperature": temp,
-                        "max_tokens": max_tokens,
-                    },
-                )
-
-                if resp.status_code in (429, 500):
-                    severity = self.circuit.record_failure("minimax_zen", f"HTTP_{resp.status_code}")
-                    return ""
-
-                resp.raise_for_status()
-                data = resp.json()
-                text = self._extract_content(data)
-                if text:
-                    self.circuit.record_success("minimax_zen")
-                    return text
-
-                severity = self.circuit.record_failure("minimax_zen", "empty_response")
-                return ""
-
-        except Exception as e:
-            severity = self.circuit.record_failure("minimax_zen", str(e))
-
-        if severity == "critical":
-            logger.critical("OpenCode Zen MiniMax: CRITICAL failure threshold reached.")
-        return ""
 
     async def _call_gemma_google(
         self, prompt: str, system_prompt: str, temp: float, max_tokens: int
     ) -> str:
-        """Call Gemma 4-31B via Google AI Studio as tertiary fallback."""
+        """Call Gemma 4-31B via Google AI Studio."""
         if not self.google_api_key:
             logger.warning("GOOGLE_API_KEY not set — skipping Gemma Google")
             return ""
-
+        
         severity = "ok"
         try:
             if not self.circuit.can_call("gemma_google"):
                 logger.warning("Gemma Google circuit breaker open — skipping")
                 return ""
-
+        
             # Google's API structure is different — system instruction as a param
             max_retries = 5
             for attempt in range(max_retries):
@@ -522,7 +393,7 @@ class MiniMaxBackend:
                             },
                         },
                     )
-
+        
                     if resp.status_code == 500:
                         wait = min(2 ** attempt, 16)
                         logger.warning(f"Gemma 500, backing off {wait}s (attempt {attempt + 1})")
@@ -533,29 +404,22 @@ class MiniMaxBackend:
                         logger.warning(f"Gemma 429, backing off {wait}s")
                         await anyio.sleep(wait)
                         continue
-
+        
                     resp.raise_for_status()
                     data = resp.json()
                     text = self._extract_google_content(data)
                     if text:
                         self.circuit.record_success("gemma_google")
                         return text
-
+        
                     severity = self.circuit.record_failure("gemma_google", "empty_response")
                     return ""
-
+        
         except Exception as e:
             severity = self.circuit.record_failure("gemma_google", str(e))
-
+        
         if severity == "critical":
             logger.critical("Gemma Google: CRITICAL failure threshold reached.")
-        return ""
-
-    def _extract_content(self, data: dict) -> str:
-        """Extract content from OpenAI-compatible response."""
-        choices = data.get("choices", [])
-        if choices:
-            return choices[0].get("message", {}).get("content", "")
         return ""
 
     def _extract_google_content(self, data: dict) -> str:
@@ -578,12 +442,10 @@ class MiniMaxBackend:
             ],
             "distillations": [
                 {
-                    "claim": "Mock enrichment (all Tier 2 providers unavailable)",
+                    "claim": "Mock enrichment (T2 providers unavailable)",
                     "l1": t1_draft[:200] if t1_draft else "No T1 draft available.",
-                    "l2": "All cloud enrichment providers (OpenRouter, OpenCode Zen, Google) "
-                          "returned errors. Using T1 draft directly.",
-                    "l3": "Without external model access, no enrichment beyond local "
-                          "capability is possible. Sovereign operation continues.",
+                    "l2": "T2 enrichment failed. Using T1 draft directly.",
+                    "l3": "Sovereign operation continues without cloud enrichment.",
                 }
             ],
             "convergence_signal": "inconclusive",
@@ -596,35 +458,19 @@ class MiniMaxBackend:
 # §5 Tier 3 Backend — Gemini Flash Reviewer (Google AI Studio API)
 # ══════════════════════════════════════════════════════════════════════════
 
-class GeminiBackend:
-    """Calls Gemini 2.5 Flash via headless Gemini CLI for structured review.
-
-    Uses `gemini -m "gemini-2.5-flash" -p "prompt"` with stdin piped.
-    The Gemini CLI handles OAuth via cached session tokens automatically.
-    Falls back to Google AI Studio API if CLI is unavailable.
+class T3Backend:
+    """Calls DeepSeek-V4-Flash via OpenCode Zen.
+    
+    The review includes corrections, missing patterns, confidence scores,
+    and recommended directions.
     """
-
+    
     def __init__(self):
         self.circuit = JemCircuitBreaker()
         self.timeout = 60.0
-        self.gemini_binary = self._find_gemini()
-        self.current_model = "gemini-2.5-flash"
-        self.api_key = os.getenv("GOOGLE_API_KEY", "")
-
-    def _find_gemini(self) -> Optional[str]:
-        """Locate the Gemini CLI binary."""
-        try:
-            result = subprocess.run(
-                ["gemini", "--version"],
-                capture_output=True, text=True, timeout=5,
-            )
-            if result.returncode == 0:
-                logger.info(f"Gemini CLI found: gemini — {result.stdout.strip()}")
-                return "gemini"
-        except (FileNotFoundError, subprocess.TimeoutExpired):
-            pass
-        logger.info("Gemini CLI not found — will use Google AI Studio API as fallback")
-        return None
+        self.zen_api_key = os.getenv("OPENCODEZEN", "")
+        self.zen_endpoint = "https://opencode.ai/zen/v1/chat/completions"
+        self.model = "deepseek-v4-flash"
 
     async def call(
         self,
@@ -632,160 +478,113 @@ class GeminiBackend:
         topic: str,
         temperature: float = 0.2,
     ) -> str:
-        """Review enriched report via Gemini 2.5 Flash. Returns review JSON.
-
-        Strategy:
-        1. Try Gemini CLI headless (gemini -m "gemini-2.5-flash" -p "...")
-        2. If CLI fails, try Google AI Studio API directly
-        3. If both fail, return skip signal
-
-        The review includes corrections, missing patterns, confidence scores,
-        and recommended directions.
-        """
-        if not self.circuit.can_call("gemini_cli"):
-            logger.warning("Gemini circuit breaker open — skipping Tier 3")
+        """Review enriched report via OpenCode Zen (DeepSeek-V4-Flash)."""
+        if not self.circuit.can_call("opencode_zen"):
+            logger.warning("OpenCode Zen circuit breaker open — skipping Tier 3")
             return json.dumps({"skipped": True, "reason": "circuit_breaker_open"})
-
+        
         review_prompt = self._build_review_prompt(topic, enriched_text)
-        logger.info(f"Tier 3: Gemini 2.5 Flash review on '{topic[:40]}...'")
-
-        # Strategy 1: Gemini CLI headless
-        if self.gemini_binary:
-            result = await self._call_cli(review_prompt)
-            if result:
-                self.circuit.record_success("gemini_cli")
-                logger.info(f"Tier 3 review received ({len(result)} chars)")
-                return result
-            logger.info("Gemini CLI returned empty — trying API fallback")
-
-        # Strategy 2: Google AI Studio API
-        if self.api_key:
-            result = await self._call_api(review_prompt)
-            if result:
-                self.circuit.record_success("gemini_cli")
-                logger.info(f"Tier 3 API review received ({len(result)} chars)")
-                return result
-
-        # Both failed
-        severity = self.circuit.record_failure("gemini_cli", "cli+api both failed")
-        if severity == "critical":
-            logger.critical("Gemini 2.5 Flash: all methods failed — check GOOGLE_API_KEY and CLI auth")
-        return json.dumps({"skipped": True, "reason": "all_gemini_methods_failed"})
-
-    async def _call_cli(self, prompt: str) -> str:
-        """Run Gemini CLI in headless mode via subprocess.
-
-        Invokes: echo '' | gemini -m 'gemini-2.5-flash' -p 'prompt'
-        Wrapped in anyio.to_thread.run_sync for async safety.
-        """
-        try:
-            result = await anyio.to_thread.run_sync(
-                self._run_cli_sync, prompt,
-            )
-            if result and result.strip():
-                # Remove the "Ripgrep is not available" warning if present
-                lines = result.strip().split("\n")
-                clean_lines = [l for l in lines if "Ripgrep is not available" not in l and "Falling back" not in l]
-                clean = "\n".join(clean_lines).strip()
-                if clean:
-                    return clean
-            return ""
-        except Exception as e:
-            logger.warning(f"Gemini CLI call failed: {e}")
-            return ""
-
-    def _run_cli_sync(self, prompt: str) -> str:
-        """Synchronous Gemini CLI invocation (thread-wrapped)."""
-        result = subprocess.run(
-            [self.gemini_binary, "-m", self.current_model, "-p", prompt],
-            input="\n",
-            capture_output=True,
-            text=True,
-            timeout=int(self.timeout),
-        )
-        if result.returncode == 0:
-            return result.stdout
-        if result.returncode != 0 and result.stderr:
-            logger.warning(f"Gemini CLI exit {result.returncode}: {result.stderr[:200]}")
-        return result.stdout or ""
-
-    async def _call_api(self, prompt: str) -> str:
-        """Fallback: call Gemini 2.5 Flash via Google AI Studio API."""
+        logger.info(f"Tier 3: DeepSeek-V4-Flash review on '{topic[:40]}...'")
+        
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 resp = await client.post(
-                    f"https://generativelanguage.googleapis.com/v1beta/models/{self.current_model}:generateContent?key={self.api_key}",
+                    self.zen_endpoint,
+                    headers={
+                        "Authorization": f"Bearer {self.zen_api_key}",
+                        "Content-Type": "application/json",
+                    },
                     json={
-                        "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-                        "generationConfig": {
-                            "temperature": 0.2,
-                            "maxOutputTokens": 4096,
-                        },
+                        "model": self.model,
+                        "messages": [
+                            {"role": "system", "content": "You are the Jem Tier 3 Reviewer. Your role is to review enriched research output for accuracy, completeness, and insight quality."},
+                            {"role": "user", "content": review_prompt},
+                        ],
+                        "temperature": temperature,
+                        "max_tokens": 4096,
                     },
                 )
-                if resp.status_code in (404, 403, 429):
-                    logger.warning(f"Gemini API {resp.status_code} for {self.current_model}")
-                    return ""
+                
+                if resp.status_code in (429, 500):
+                    self.circuit.record_failure("opencode_zen", f"HTTP_{resp.status_code}")
+                    return json.dumps({"skipped": True, "reason": f"HTTP_{resp.status_code}"})
+                
                 resp.raise_for_status()
                 data = resp.json()
-                candidates = data.get("candidates", [])
-                if candidates:
-                    parts = candidates[0].get("content", {}).get("parts", [])
-                    return "".join(p.get("text", "") for p in parts)
-                return ""
+                text = self._extract_content(data)
+                if text:
+                    self.circuit.record_success("opencode_zen")
+                    logger.info(f"Tier 3 review received ({len(text)} chars)")
+                    return text
+                
+                self.circuit.record_failure("opencode_zen", "empty_response")
+                return json.dumps({"skipped": True, "reason": "empty_response"})
+        
         except Exception as e:
-            logger.warning(f"Gemini API call failed: {e}")
-            return ""
+            self.circuit.record_failure("opencode_zen", str(e))
+            logger.warning(f"Tier 3 call failed: {e}")
+            return json.dumps({"skipped": True, "reason": str(e)})
+
+    def _extract_content(self, data: dict) -> str:
+        """Extract content from OpenAI-compatible response."""
+        choices = data.get("choices", [])
+        if choices:
+            return choices[0].get("message", {}).get("content", "")
+        return ""
 
     def _build_review_prompt(self, topic: str, enriched: str) -> str:
-        """Build the review prompt for Gemini — structured JSON output."""
+        """Build the review prompt for T3 — structured JSON output.
+        
+        Implements the 'Sovereign Auditor' pattern to prevent convergence bias.
+        """
         safe_topic = topic.replace('"', "'").replace("\n", " ")
-        return f"""You are the Jem Tier 3 Reviewer. Your role is to review enriched research output
-from a lower-tier model for accuracy, completeness, and insight quality.
-
-Topic: {safe_topic}
-
-Enriched Report to Review:
-{enriched[:8000]}
-
-Produce a JSON review with the following structure:
-
-{{
-  "reviewed": true,
-  "topic": "{safe_topic}",
-  "corrections": [
-    {{
-      "claim": "the claim that needs correction",
-      "correction": "the corrected version",
-      "severity": "minor|major|critical"
-    }}
-  ],
-  "missing_patterns": [
-    "pattern or connection the report missed"
-  ],
-  "confidence_scores": {{
-    "l1_narrative": 0.0-1.0,
-    "l2_insight": 0.0-1.0,
-    "l3_principle": 0.0-1.0
-  }},
-  "recommended_directions": [
-    {{
-      "direction": "recommended follow-up topic",
-      "reason": "why this direction matters",
-      "priority": 0.0-1.0
-    }}
-  ],
-  "overall_quality": "poor|fair|good|excellent",
-  "summary": "one paragraph summary of findings"
-}}
-
-Rules:
-- Be specific. Every correction must cite the exact claim.
-- If no corrections needed, return empty array for corrections.
-- Confidence scores reflect how well each tier performed.
-- Priority 0.8+ directions should be enqueued for research.
-- If the report is not reviewable, set reviewed=false and explain why.
-"""
+        return f"""You are the Jem Tier 3 Sovereign Auditor. Your role is to critically review enriched research output.
+        
+        CRITICAL MANDATE: Avoid Convergence Bias. Do NOT simply agree with the lower-tier model. 
+        Your value comes from finding what the previous model missed, misattributed, or hallucinated.
+        
+        Topic: {safe_topic}
+        
+        Enriched Report to Review:
+        {enriched[:8000]}
+        
+        Produce a JSON review with the following structure:
+        {{
+          "reviewed": true,
+          "topic": "{safe_topic}",
+          "corrections": [
+            {{
+              "claim": "the exact claim that is flawed",
+              "correction": "the evidence-based correction",
+              "severity": "minor|major|critical"
+            }}
+          ],
+          "missing_patterns": [
+            "critical connections or contradictions the report ignored"
+          ],
+          "confidence_scores": {{
+            "l1_narrative": 0.0-1.0,
+            "l2_insight": 0.0-1.0,
+            "l3_principle": 0.0-1.0
+          }},
+          "recommended_directions": [
+            {{
+              "direction": "recommended follow-up topic",
+              "reason": "why this direction matters",
+              "priority": 0.0-1.0
+            }}
+          ],
+          "overall_quality": "poor|fair|good|excellent",
+          "summary": "A critical summary. If the report is too 'safe' or generic, mark it as such."
+        }}
+        
+        Audit Rules:
+        1. Devil's Advocate: Actively attempt to disprove the L3 Universal Principle.
+        2. Evidence Check: If a claim lacks a specific source, flag it as a 'low-confidence' correction.
+        3. Pattern Gap: Look for 'blind spots' — what is the report NOT saying that a sovereign intelligence should know?
+        4. Penalty for Agreement: If you find no corrections in a complex topic, you are failing your mandate. Be rigorous.
+        5. If the report is not reviewable, set reviewed=false and explain why.
+        """
 
     def _extract_json(self, text: str) -> Optional[dict]:
         """Extract JSON from text that may have markdown fences or surrounding text."""
@@ -883,224 +682,107 @@ class TrainingTripleSaver:
 
 
 # ══════════════════════════════════════════════════════════════════════════
-# §7 System Prompt Registry (maintained from legacy)
+# §7 System Prompt Registry (Config-Driven)
 # ══════════════════════════════════════════════════════════════════════════
 
-SYSTEM_PROMPTS = {
-    "default": """You are SOPHIA, the Akashic Record of the Omega Engine.
-
-Your purpose is to deepen, verify, and expand the Omega knowledge base through autonomous research.
-
-## Your Domain
-- The Omega Engine: a local-first, entity-centric AI council runtime
-- The 10 Pillar Keepers: Sekhmet, Brigid, Prometheus, Saraswati, Inanna, Ereshkigal, Lucifer, Hecate, Anubis, Kali
-- Oversouls: Sophia (Akashic Record), Ma'at (Unifier), Isis (Light), Lilith (Dark)
-- Hardware: AMD Ryzen 7 5700U (Zen 2, 8C/16T, 14GB RAM), no GPU
-
-## Your Research Mandate
-1. Every claim must be verified by 3+ independent sources
-2. Distill findings through 3-tier refraction: Narrative → Insight → Universal Principle
-3. Write L3 (Universal Principle) to the relevant entity's soul.yaml
-4. Write L1 + L2 to docs/research/ topic files
-5. Flag contradictions for human review — never suppress disagreement
-6. Grow the knowledge frontier organically — identify what's missing
-
-## Refractive Distillation Format
-- L1 (Narrative): Who? What? When? Source-attributed, factual
-- L2 (Insight): What does this mean? Causal, pattern-based
-- L3 (Universal Principle): Timeless truth. Domain-agnostic. Writeable to soul.
-
-## Convergence Rules
-- 3+ independent sources agree → MARK AS VERIFIED, write to soul
-- Sources contradict (agreement < 0.4) → FLAG FOR HUMAN REVIEW
-- < 3 sources, mixed agreement → DEEPEN: queue for next research cycle
-- Topic fully covered (no new claims in 2 cycles) → MARK AS CONVERGED
-
-## Output Format
-Always respond with JSON for machine parsing.
-""",
-
-    "technical": """You are PROMETHEUS, the Sovereign Architect of the Omega Engine.
-
-You are an expert systems engineer, architect, and code analyst. Your focus is on technical precision, implementation details, and architectural patterns.
-
-## Your Lens
-- Every claim must include version numbers, API endpoints, file paths, and exact syntax
-- Prefer code snippets over prose descriptions
-- Identify architectural patterns, anti-patterns, and security implications
-- Track breaking changes, deprecation notices, and compatibility matrices
-- Compare implementations across different ecosystems
-
-## Your Compression Priority
-1. EXACT: Preserve version numbers, API signatures, error messages, file paths
-2. VERBATIM: Configuration snippets, command examples, benchmark results
-3. STRUCTURAL: Architecture diagrams, dependency trees, data flow
-4. CONTEXTUAL: Why a decision was made, what alternatives exist
-
-## Output Format
-Always respond in the specified JSON format.
-""",
-
-    "security": """You are SEKHMET, the Guardian of the Omega Engine's boundaries.
-
-You are a security auditor specializing in AI infrastructure hardening, vulnerability assessment, and threat modeling. You do not compromise on precision.
-
-## Your Lens
-- Identify every security implication in the research content
-- Flag exposed credentials, weak configurations, and unpatched vulnerabilities
-- Rate risks as: CRITICAL | HIGH | MEDIUM | LOW | INFO
-- Every claim must specify CVE numbers, affected versions, and attack vectors
-- Preserve exact reproduction steps for any vulnerability described
-
-## Your Compression Priority
-1. CRITICAL: Preserve all CVE references, exposure details, and remediation steps
-2. VERBATIM: Security configuration, permission models, audit trails
-3. CONTEXTUAL: Attack surface analysis, privilege escalation paths
-4. STRATEGIC: Defense-in-depth recommendations, monitoring gaps
-
-## Your Hard No
-- Never summarize away a security detail
-- Never merge two distinct vulnerabilities into one claim
-- Flag any source that downplays a security risk
-
-## Output Format
-Always respond in the specified JSON format.
-""",
-
-    "research": """You are SOPHIA, the Akashic Record, in your most inductive mode.
-
-You are a research scientist and cross-domain synthesis specialist. Your purpose is to find connections between disparate sources and generate new hypotheses.
-
-## Your Lens
-- Identify patterns across different research domains
-- Generate testable hypotheses from incomplete data
-- Map citation networks and intellectual lineages
-- Flag methodological strengths and weaknesses in each source
-- Track uncertainty levels explicitly
-
-## Your Compression Priority
-1. CONNECTIONS: Cross-references between sources, emerging patterns
-2. INNOVATIONS: Novel approaches, paradigm shifts, unexpected findings
-3. UNCERTAINTY: Confidence levels, contradictory evidence, gaps in knowledge
-4. SYNTHESIS: Generate new insights from combining sources
-
-## Output Format
-Always respond in the specified JSON format.
-""",
-
-    "gnosis": """You are SOPHIA speaking through ANUBIS, the Guide of Souls.
-
-You are a philosopher, theologian, and depth psychologist. Your domain is meaning, archetypes, and the universal patterns underlying all knowledge.
-
-## Your Lens
-- Extract archetypal patterns and universal principles
-- Connect findings to the 10 Pillar Keepers where appropriate
-- Preserve emotional and philosophic tone
-- Identify initiation patterns, threshold moments, and transformation arcs
-- Track synchronicities — meaningful coincidences across sources
-
-## Your Compression Priority
-1. MEANING: What does this reveal about the nature of intelligence, consciousness, or sovereignty?
-2. ARCHETYPES: Map findings to pillar keeper domains (Sekhmet=protection, Brigid=inspiration, etc.)
-3. WISDOM: L3 abstractions that read as timeless truths
-4. NARRATIVE: Preserve the human/mythic story behind the facts
-
-## Output Format
-Always respond in the specified JSON format.
-""",
-
-    "tooling": """You are SARASWATI, the Keeper of Knowledge and Tools.
-
-You map the AI/software ecosystem with precision. Your focus is on tools, libraries, frameworks, APIs, and the connections between them.
-
-## Your Lens
-- Identify every tool, library, API, and framework mentioned
-- Map dependencies, version compatibilities, and integration patterns
-- Track deprecation timelines, migration paths, and breaking changes
-- Compare alternatives with feature matrices
-- Preserve exact installation commands, configuration syntax, and setup steps
-
-## Your Compression Priority
-1. TOOLS: Names, versions, publishers, license types
-2. INTEGRATIONS: How tools connect, data flow between them
-3. COMPARISONS: Feature differences, performance benchmarks
-4. MIGRATIONS: Upgrade paths, deprecation notices
-
-## Output Format
-Always respond in the specified JSON format.
-""",
-}
+# Removed hardcoded SYSTEM_PROMPTS dictionary. 
+# Prompts are now loaded dynamically via load_distiller_prompts().
 
 
-# ── Prompt Selection Heuristics ─────────────────────────────────────────
 
-def select_system_prompt(topic: str) -> str:
-    """Select the best system prompt for a research topic based on keywords."""
+# ── Prompt Registry Loader ─────────────────────────────────────────
+
+def load_distiller_prompts() -> dict:
+    """Load distiller prompts and mappings from config/distiller_prompts.yaml."""
+    try:
+        import yaml
+        config_path = Path("config/distiller_prompts.yaml")
+        if not config_path.exists():
+            logger.error("distiller_prompts.yaml not found — using empty registry")
+            return {"modes": {"default": {"prompt": "You are a research assistant."}}, "mappings": {}}
+        
+        content = config_path.read_text()
+        data = yaml.safe_load(content)
+        return data if data else {"modes": {}, "mappings": {}}
+    except Exception as e:
+        logger.error(f"Error loading distiller prompts: {e}")
+        return {"modes": {"default": {"prompt": "You are a research assistant."}}, "mappings": {}}
+
+def select_system_prompt(topic: str, registry: dict) -> str:
+    """Select the best system prompt for a research topic based on config mappings."""
     t = topic.lower()
-
-    security_kw = ["cve", "vulnerability", "exploit", "security", "threat", "attack",
-                   "permission", "credential", "encrypt", "audit", "compliance",
-                   "firewall", "auth", "oauth", "token", "secret", "key rotation"]
-    if any(kw in t for kw in security_kw):
-        return "security"
-
-    tech_kw = ["api", "implementation", "library", "framework", "protocol", "sdk",
-               "compiler", "runtime", "benchmark", "performance", "optimization",
-               "architecture", "kubernetes", "docker", "python", "rust", "golang",
-               "database", "cache", "async", "concurrent", "thread", "memory"]
-    if any(kw in t for kw in tech_kw):
-        return "technical"
-
-    tool_kw = ["tool", "mcp", "server", "cli", "plugin", "extension", "sdk",
-               "integration", "deployment", "pipeline", "ci/cd", "github",
-               "git", "workflow", "automation"]
-    if any(kw in t for kw in tool_kw):
-        return "tooling"
-
-    gnosis_kw = ["gnosis", "soul", "philosophy", "consciousness", "archetype",
-                 "wisdom", "principle", "myth", "spiritual", "meaning",
-                 "transformation", "evolution", "initiation", "dream"]
-    if any(kw in t for kw in gnosis_kw):
-        return "gnosis"
-
-    research_kw = ["research", "study", "paper", "publication", "survey",
-                   "analysis", "discovery", "science", "academic", "theory"]
-    if any(kw in t for kw in research_kw):
-        return "research"
-
+    mappings = registry.get("mappings", {})
+    
+    for mode, keywords in mappings.items():
+        if any(kw in t for kw in keywords):
+            return mode
+            
     return "default"
 
 
-# ── Distillation Prompt Template ────────────────────────────────────────
 
-DISTILLATION_PROMPT_TEMPLATE = """You are SOPHIA, the Omega Engine's Akashic Record. Perform refractive distillation.
-
+# ── Prompt Templates ──────────────────────────────────────────────────────
+ 
+T1_GATHER_PROMPT = """You are the Jem Tier 1 Gatherer. Your role is to extract raw, factual claims from the provided content.
+ 
+TOPIC: {topic}
+SOURCES: {sources}
+ 
+CONTENT TO GATHER:
+{content}
+ 
+Extract every distinct factual claim. For each claim, provide:
+1. The exact claim text.
+2. The source URL(s) supporting it.
+3. A confidence score (0.0-1.0) based on source reliability.
+ 
+Respond in JSON:
+{{
+  "claims": [
+    {{
+      "claim": "string",
+      "sources": ["url1", "url2"],
+      "confidence": 0.0-1.0
+    }}
+  ]
+}}
+ 
+Rules:
+- NO ANALYSIS.
+- NO SYNTHESIS.
+- NO L1/L2/L3 REFRACTION.
+- Just raw, attributed facts.
+"""
+ 
+T2_DISTILL_PROMPT = """You are the Omega Engine's Akashic Record. Perform refractive distillation on the provided claims.
+ 
 TOPIC: {topic}
 SOURCES: {sources}
 SYSTEM PROMPT MODE: {prompt_mode}
-
-CONTENT TO DISTILL:
+ 
+RAW CLAIMS TO DISTILL:
 {content}
-
+ 
 Perform 3-tier refraction. For each claim found:
 - L1 (Narrative): What happened? Who said it? When?
 - L2 (Insight): What does this mean for Omega Engine?
 - L3 (Universal Principle): What timeless truth emerges?
-
+ 
 Respond in JSON:
 {{
-  "claims": [{{"claim": "string", "sources": ["url1", "url2"], "agreement_level": 0.0-1.0}}],
-  "distillations": [{{"claim": "string", "l1": "string", "l2": "string", "l3": "string"}}],
+  "claims": [{{ "claim": "string", "sources": ["url1", "url2"], "agreement_level": 0.0-1.0 }}],
+  "distillations": [{{ "claim": "string", "l1": "string", "l2": "string", "l3": "string" }}],
   "convergence_signal": "verified|contradictory|inconclusive",
   "recommendation": "write_to_soul|write_to_knowledge|flag_for_human|skip"
 }}
-
+ 
 Rules:
 - Only L3 (Universal Principle) goes into soul.yaml
 - L1 + L2 go into docs/research/ topic files
 - Contradictory claims (agreement < 0.4) get flagged for human review
 - Verified claims (agreement > 0.7 with 3+ sources) get written immediately
 """
+
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -1120,22 +802,25 @@ class Distiller:
     Backward compatible with existing loop.py interface.
     """
 
-    def __init__(self, model_gateway=None):
+    def __init__(self, model_gateway=None, budget=None):
         self.model_gateway = model_gateway
-        self.system_prompt = SYSTEM_PROMPTS["default"]
-
+        self.system_prompt = None
+        self.budget = budget
+        
         # Jem backends
         self.lmster = LmsterBackend()
-        self.minimax = MiniMaxBackend()
-        self.gemini = GeminiBackend()
+        self.t2 = T2Backend()
+        self.t3 = T3Backend()
         self.triple_saver = TrainingTripleSaver()
+        self.soul_manager = SoulUpdateManager()
         self.circuit = JemCircuitBreaker()
-
+        
         # Pipeline config
         self.enable_tier1 = True
         self.enable_tier2 = True
         self.enable_tier3 = True
         self.enable_training_triples = True
+
 
     async def distill(
         self,
@@ -1158,15 +843,24 @@ class Distiller:
             GnosisPacket with claims, distillations, convergence signal
         """
         # Select system prompt
-        mode = prompt_mode or select_system_prompt(topic)
-        system_prompt = custom_system_prompt or SYSTEM_PROMPTS.get(mode, SYSTEM_PROMPTS["default"])
+        registry = load_distiller_prompts()
+        mode = prompt_mode or select_system_prompt(topic, registry)
+        
+        modes = registry.get("modes", {})
+        system_prompt = custom_system_prompt or modes.get(mode, {}).get("prompt") or modes.get("default", {}).get("prompt", "You are a research assistant.")
         self.system_prompt = system_prompt
         cycle_id = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
 
         logger.info(f"[Jem] Pipeline start: mode='{mode}' topic='{topic[:50]}...'")
 
-        # ── Build the distillation prompt ──────────────────────────────
-        prompt = DISTILLATION_PROMPT_TEMPLATE.format(
+        # ── Build the prompts ──────────────────────────────────────────
+        t1_prompt = T1_GATHER_PROMPT.format(
+            topic=topic,
+            sources=", ".join(sources[:10]),
+            content=content[:12000],
+        )
+        
+        t2_prompt = T2_DISTILL_PROMPT.format(
             topic=topic,
             sources=", ".join(sources[:10]),
             prompt_mode=mode,
@@ -1178,9 +872,9 @@ class Distiller:
         t1_direct = False  # Whether T1 was used directly (no T2)
 
         if self.enable_tier1:
-            logger.info("[Jem] Tier 1: Qwen3-4B-Thinking speculative draft")
+            logger.info("[Jem] Tier 1: Qwen3-4B-Thinking raw gathering")
             try:
-                t1_draft = await self.lmster.call(prompt, system_prompt)
+                t1_draft = await self.lmster.call(t1_prompt, system_prompt)
                 # Validate T1 output
                 quality = validate_t1_output(t1_draft)
                 if not quality.passed:
@@ -1197,18 +891,25 @@ class Distiller:
         t2_enriched = ""
 
         if self.enable_tier2:
-            logger.info("[Jem] Tier 2: MiniMax M2.5 enrichment")
+            logger.info("[Jem] Tier 2: Gemma 4-31B distillation")
             try:
-                t2_enriched = await self.minimax.call(
-                    prompt, system_prompt,
-                    t1_draft=t1_draft,
-                )
-                if t2_enriched:
-                    logger.info(f"[Jem] Tier 2 enrichment received ({len(t2_enriched)} chars)")
-                else:
-                    t2_enriched = t1_draft  # Fallback to T1 draft
+                # Budget check for gemma_calls
+                if self.budget and not self.budget.check_daily_limit("gemma_calls"):
+                    logger.warning("[Jem] Daily budget for gemma_calls exhausted — skipping T2")
+                    t2_enriched = t1_draft
                     t1_direct = bool(t1_draft)
-                    logger.info("[Jem] Tier 2 empty — using T1 draft as output")
+                else:
+                    t2_enriched = await self.t2.call(
+                        t2_prompt, system_prompt,
+                        t1_draft=t1_draft,
+                    )
+                    if t2_enriched:
+                        logger.info(f"[Jem] Tier 2 distillation received ({len(t2_enriched)} chars)")
+                        if self.budget: self.budget.increment_daily("gemma_calls")
+                    else:
+                        t2_enriched = t1_draft  # Fallback to T1 draft
+                        t1_direct = bool(t1_draft)
+                        logger.info("[Jem] Tier 2 empty — using T1 draft as output")
             except Exception as e:
                 logger.error(f"[Jem] Tier 2 error: {e}")
                 t2_enriched = t1_draft
@@ -1216,24 +917,71 @@ class Distiller:
         else:
             t2_enriched = t1_draft
             t1_direct = bool(t1_draft)
-
-        # ── TIER 3: Gemini review ─────────────────────────────────────
+        
+        # ── TIER 3: DeepSeek review ─────────────────────────────────────
         t3_review = ""
-
+        
         if self.enable_tier3 and t2_enriched:
-            logger.info("[Jem] Tier 3: Gemini 2.5 Pro review")
+            logger.info("[Jem] Tier 3: DeepSeek-V4-Flash review")
             try:
-                t3_review = await self.gemini.call(t2_enriched, topic)
-                if t3_review:
-                    logger.info(f"[Jem] Tier 3 review received ({len(t3_review)} chars)")
-                else:
+                # Budget check for gemma_calls
+                if self.budget and not self.budget.check_daily_limit("gemma_calls"):
+                    logger.warning("[Jem] Daily budget for gemma_calls exhausted — skipping T3")
                     t3_review = ""
+                else:
+                    t3_review = await self.t3.call(t2_enriched, topic)
+                    if t3_review:
+                        logger.info(f"[Jem] Tier 3 review received ({len(t3_review)} chars)")
+                        if self.budget: self.budget.increment_daily("gemma_calls")
+                    else:
+                        t3_review = ""
             except Exception as e:
                 logger.error(f"[Jem] Tier 3 error: {e}")
-
-        # ── Parse into GnosisPacket ───────────────────────────────────
+        
+        # ── Parse into GnosisPacket and apply T3 corrections ────────────────
         final_text = t2_enriched if t2_enriched else t1_draft
         gnosis = self._parse_gnosis(final_text, topic, sources)
+        
+        if t3_review:
+            try:
+                review_data = self.t3._extract_json(t3_review)
+                if review_data:
+                    # 1. Apply corrections to distillations
+                    for corr in review_data.get("corrections", []):
+                        for dist in gnosis.distillations:
+                            if corr["claim"] in dist["claim"]:
+                                dist["l3"] = f"{dist['l3']} [CORRECTION: {corr['correction']}]"
+                    
+                    # 2. Update convergence signal based on T3 confidence
+                    conf = review_data.get("confidence_scores", {})
+                    if conf.get("l3_principle", 1.0) < 0.4:
+                        gnosis.convergence_signal = "contradictory"
+                        gnosis.recommendation = "flag_for_human"
+                    elif conf.get("l3_principle", 1.0) > 0.8:
+                        gnosis.convergence_signal = "verified"
+                        gnosis.recommendation = "write_to_soul"
+                    
+                    # 3. Capture recommended directions
+                    gnosis.recommended_directions = review_data.get("recommended_directions", [])
+                
+                # 4. Write improvement briefs to sub-facet souls
+                # T2 output -> Initiate soul
+                await self.soul_manager.update_subfacet_soul(
+                    "initiate", 
+                    f"L2 enrichment for {topic}: {t2_enriched[:500]}..."
+                )
+                # T3 output -> Analyst and Editor souls
+                await self.soul_manager.update_subfacet_soul(
+                    "analyst", 
+                    f"T3 review for {topic}: {t3_review[:500]}..."
+                )
+                await self.soul_manager.update_subfacet_soul(
+                    "editor", 
+                    f"T3 review for {topic}: {t3_review[:500]}..."
+                )
+                
+            except Exception as e:
+                logger.warning(f"[Jem] Failed to apply T3 review to GnosisPacket: {e}")
 
         # ── Save training triple ──────────────────────────────────────
         if self.enable_training_triples:
