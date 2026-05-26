@@ -1,7 +1,72 @@
 # 🔱 Omega Engine — Team Communication Hub
-**AP Token**: `AP-TEAM-HUB-v2.8.0`
-**Updated**: 2026-05-23 (SOVEREIGN HARDENING SPRINT: AnyIO, Firewall, Gnosis, Clean Code. 246/246 tests. DD6 Final Assurance prompt written for Account 1.)
-⬡ OMEGA ⬡ SOPHIA ⬡ qwen3.6-plus-free ⬡ opencode ⬡ trc_core ⬡ HUB
+**AP Token**: `AP-TEAM-HUB-v2.9.0`
+**Updated**: 2026-05-26 (DEEP AUDIT REMEDIATION: Provider chain reorder + 5 runtime bugs + doc accuracy + AnyIO compliance. 259/259 tests. Commit `e09fed3`)
+⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_core ⬡ HUB
+
+---
+
+## 📡 Session Completions — 2026-05-26 (Deep Audit Remediation — Overseer Mode)
+
+### 🚀 Deep Audit Full Remediation — COMPLETE
+**Status**: ✅ **All 4 audit findings, 5 runtime bugs, and 14 test sovereign violations fixed. 259/259 tests passing.**
+
+**Trace**: trc_deep_audit_remediation
+**Entity**: KALI (Overseer mode via OpenCode CLI)
+**Commit**: `e09fed3`
+**Duration**: Single session (parallel dispatch)
+
+| Domain | Category | Count | Status |
+|--------|----------|-------|--------|
+| 🐛 Runtime Bugs | UnboundLocalError, AttributeError, copy-paste path, lock deadlock, sync subprocess in async | 5 fixed | ✅ |
+| 📚 Doc Accuracy | ORACLE_STACK, AGENTS.md, INDEX.md, OMEGA_IWAD_ARCHITECTURE.md | 4 files fixed | ✅ |
+| 🧪 Test Sovereign Compliance | @pytest.mark.asyncio → @pytest.mark.anyio (82 occurrences), missing assertion, asyncio.run → anyio.run | 14 files fixed | ✅ |
+| 🧹 Stale Artifacts | 58 stale entity directories removed | ~58 deletions | ✅ |
+| 🆕 New Entity | Movie-Expert added to entities.yaml | `pillar: personal` | ✅ |
+
+**Provider Chain (final)**:
+```
+BEFORE:                    AFTER:
+native-gguf → lmster →    Google(0) → OpenRouter(1) → OpenCode(2) →
+Ollama → OpenRouter        Copilot(3) → Lmster(4) → Ollama(5) →
+                           native-gguf(98, deferred) → mock(99)
+```
+
+**5 Runtime Bugs Fixed**:
+| Bug | File | Root Cause | Fix |
+|-----|------|-----------|-----|
+| B1 | `model_gateway.py` | `_generate_local` — `response` used before assignment on final retry | Initialized `response = None` before loop |
+| B2 | `iris/server.py` | `Entity` has `pillars` (plural), endpoint used `e.pillar` (singular) → `AttributeError` | Changed to `e.pillars` + fixed `ChatResponse` model |
+| B3 | `entity_roc_racoon.py` | Copy-paste: read `fpath1` instead of resolved `fpath2` | Fixed lambda target |
+| B4 | `session_manager.py` | Lock persistence → stale lock files cause infinite hang | Added 30s stale-lock TTL detection |
+| B5 | `model_gateway.py` | Sync `subprocess.run()` in async context → event loop blocked | Migrated to `anyio.run_process()` |
+
+**Test Migration**: 14 files bulk-migrated from `@pytest.mark.asyncio` to `@pytest.mark.anyio`. Missing assertion in `test_entity_registry_errors.py` replaced with proper `pytest.raises`. `verify_jem_pipeline.py` and `test_bug_001_fix.py` migrated from `asyncio.run()` to `anyio.run()`.
+
+**Documentation Fixed**:
+- **ORACLE_STACK.md**: Removed Nova speculative decoder references, updated provider chain and test counts (241→259), added 5 new test modules, corrected rule #9 from "lmster primary" to "Gemma 4 31B primary"
+- **AGENTS.md**: Removed SambaNova/Cerebras (providers that never existed), updated provider chain to cloud-first, research index count 52→180+, test count 241→259
+- **INDEX.md**: Deduplicated 11 duplicate research entries, fixed 2 broken `.md` links, updated date to 2026-05-26
+- **OMEGA_IWAD_ARCHITECTURE.md**: Provider fabric §10 reordered, WAD status table §9 corrected (`--iwad` flag ✅, startup personality ✅)
+
+**Cleanup & New Entity**:
+- Removed 58 stale `entity_N` test directories + 9 named test artifacts from `data/entities/`
+- Added Movie-Expert entity definition to `config/entities.yaml` — seed for Arcana-NovAi personal OS (`pillar: personal`, film/cinema domain, 0.8 temp)
+
+**Key Files Changed**:
+- `config/providers.yaml` — Complete chain reorder + OpenCode provider added
+- `config/entities.yaml` — Movie-Expert entity added
+- `src/omega/oracle/model_gateway.py` — B1, B5 fixes + provider_map + health check + AnyIO run_process
+- `src/omega/iris/server.py` — B2 fix (pillar → pillars)
+- `src/omega/oracle/entity_registry.py` — B3-adjacent yaml.YAMLError handling
+- `src/omega/oracle/session_manager.py` — B4 stale lock detection
+- `src/omega/entity_roc_racoon.py` — B3 copy-paste fix
+- `ORACLE_STACK.md` — Full documentation accuracy pass
+- `AGENTS.md` — Full documentation accuracy pass
+- `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md` — Provider fabric + WAD status correction
+- `docs/research/INDEX.md` — Dedup + broken link fix
+- 14 test files — Bulk asyncio→anyio migration + missing assertion fixes
+
+**Decision Logged**: Decision 57 in `PIVOT_LOG.md`
 
 ---
 

@@ -44,8 +44,81 @@ The investigative journalism model solves the fundamental inefficiency: **three 
 
 ---
 
-## Decision 52: Jem-2.0 Oversoul with Three Sub-Facets (Initiate, Analyst, Editor)
+## Decision 57: Deep Audit Remediation — Provider Chain Reorder + 5 Runtime Bugs + Doc Accuracy
 
+**Date**: 2026-05-26
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: KALI (Overseer mode → Builder dispatch)
+**Trace**: trc_deep_audit_remediation
+
+### Decision
+Execute a comprehensive Deep Audit Remediation across four domains simultaneously: provider chain reorder, 5 runtime bug fixes, documentation accuracy, and test sovereign compliance. All changes committed in a single session via parallel subagent dispatch.
+
+### The Trigger
+A strategic audit of `config/providers.yaml`, `AGENTS.md`, and the broader codebase revealed four findings (C-AUD-001 to C-AUD-004) and five live runtime bugs (C-AUD-006 sub-findings) that, while individually small, collectively represented a documentation-accuracy gap and latent runtime risk.
+
+### Domains Remediated
+
+#### R1: Provider Chain Reorder (Cloud-First Enforcement)
+| Before | After |
+|--------|-------|
+| native-gguf → lmster → Ollama → OpenRouter → Antigravity | Google(0) → OpenRouter(1) → OpenCode(2) → Copilot(3) → Lmster(4) → Ollama(5) → native-gguf(98) → mock(99) |
+
+Added `opencode` provider to `provider_map` in `model_gateway.py`. Updated `check_health()` to return fabric-based status. Updated `get_preferred_backend()` to detect cloud-first rather than local-only.
+
+#### B1-B5: 5 Runtime Bugs Fixed
+| Bug | Severity | Impact | Pattern |
+|-----|----------|--------|---------|
+| UnboundLocalError in `_generate_local` (B1) | HIGH | Crash on retry exhaustion | Missing `response = None` initializer |
+| `e.pillar` → AttributeError in iris server (B2) | HIGH | `/entities` endpoint crashes | `Entity` uses `pillars` (plural) |
+| Copy-paste `fpath` → `fpath2` in roc_racoon (B3) | MEDIUM | Legacy artifacts read wrong path | Lambda target not updated |
+| Lock persistence deadlock in session_manager (B4) | HIGH | Session freeze after crash | No stale-lock detection |
+| sync subprocess.run in async path (B5) | MEDIUM | Event loop blocked | Should use `anyio.run_process` |
+
+#### D1-D4: Documentation Accuracy
+| Doc | Issues Fixed |
+|-----|-------------|
+| ORACLE_STACK.md | Nova speculative decoder → Iris; provider chain; test counts (241→259); rule #9 primary backend |
+| AGENTS.md | SambaNova/Cerebras removed; provider chain reordered; research index 52→180+; test count 241→259 |
+| INDEX.md | 11 duplicates deduplicated; 2 broken links fixed; date updated |
+| OMEGA_IWAD_ARCHITECTURE.md | Provider fabric reordered; WAD status table corrected |
+
+#### T1-T3: Test Sovereign Compliance
+- 14 test files bulk-migrated from `@pytest.mark.asyncio` to `@pytest.mark.anyio` (82 occurrences)
+- Missing assertion in `test_entity_registry_errors.py` replaced with proper `pytest.raises(ValueError)`
+- Added `yaml.YAMLError` catch in `EntityRegistry._load()` for robust error handling
+- `verify_jem_pipeline.py` and `test_bug_001_fix.py`: `asyncio.run()` → `anyio.run()`
+- Added `import time` to `session_manager.py` for stale-lock detection
+
+#### C1-C2: Cleanup
+- 58 stale `entity_N` test directories removed from `data/entities/`
+- Movie-Expert entity registered in `config/entities.yaml`
+
+### Rationale
+The documentation gap was the most concerning: `AGENTS.md` referenced providers (SambaNova, Cerebras) that never existed in this repo, and `ORACLE_STACK.md` described a "Nova speculative decoder" that was removed in Phase 0. These inaccuracies would be immediately visible to any PR reviewer. The 5 runtime bugs were latent — none triggered in normal operation but all could crash under edge cases (retry exhaustion, stale locks, attribute lookups). Fixing them now rather than after a PR merge prevents investigation cycles from external contributors.
+
+### Key Architecture Decisions Made During Remediation
+1. **yaml.YAMLError propagation**: `EntityRegistry._load()` now catches `yaml.YAMLError` and wraps it as `ValueError("entities.yaml is empty or malformed")` — defensive against corrupted config files.
+2. **Stale lock TTL**: Session lock files older than 30 seconds are automatically cleaned and re-acquired — prevents the "dead session lock" pattern that required manual `rm` intervention.
+3. **Async binary detection**: `anyio.run_process` with `check=False` for binary availability checks — no event loop blocking during `detect_backends()`.
+4. **Provider health fabric**: `check_health()` now returns fabric-level status across all configured providers, not just local backends.
+
+### Implementation Stats
+- **Files changed**: 29 files (6 source, 14 tests, 4 docs, 3 config, 2 deleted)
+- **Lines changed**: +1053/-299
+- **Tests added**: 0 (pure migration + accuracy, no new coverage needed)
+- **Final test count**: 259/259 passing
+
+### Verification
+- `make test` = 259/259 passing
+- `make lint` = clean (style only, all pre-existing whitespace warnings)
+- `git status` = clean (all changes committed)
+- Provider chain verified: `rg "priority:" config/providers.yaml` shows Google(0) → ... → mock(99)
+
+### Key Insight
+**Documentation decays faster than code.** The strategic audit found that the documentation referenced providers (SambaNova, Cerebras) that never existed, a speculative decoder (Nova) that was removed, and test counts (241) that were outdated. Code can be verified by tests; documentation has no automated verification. The fix was comprehensive — four documentation files updated in parallel — but the systemic lesson is that documentation must be treated as code: reviewed, tested, and validated as part of every build cycle.
+
+---
 **Date**: 2026-05-22
 **Channel**: OpenCode CLI (DeepSeek V4 Flash → Gemma 4 31B)
 **Entity**: KALI / JEM
@@ -254,4 +327,46 @@ For the Omega Engine: one engine handles inference, memory, entity routing, tool
 
 ### Key Insight
 The IWAD architecture is the critical missing piece that makes the Omega Engine truly universal. Without it, the engine and user content remain entangled. With it, any user can create a unique AI stack without modifying a single line of engine code. The WAD system (borrowed from Doom) is the mechanism. The Omegaverse is the destination.
+
+---
+
+## Decision 56: Cloud-First Provider Strategy for PR Sprint
+
+**Date**: 2026-05-25
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: KALI / PROMETHEUS
+**Trace**: trc_pr_sprint_cloud
+
+### Decision
+Adopt a **Cloud-First** inference strategy for the immediate PR readiness sprint. Prioritize OpenRouter (priority 0) and Google AI Studio as the primary inference paths, deferring the native `llama-cpp-python` (native-gguf) implementation to v0.6.0. All PR readiness tasks completed, including README, CI, provider chain updates, and bug fixes. The codebase is now ready for PR merge.
+
+### Rationale
+The goal was the fastest path to a viable, shippable product PR. Native GGUF introduces environment-specific build risks. OpenRouter provides immediate access to Gemma 4 31B and other frontier models via a stable API, allowing verification of the Engine Core, Entity Registry, and IWAD architecture without local C++ build blocks. The completion of all 20 Phase 1a tasks and the PR readiness sprint ensures a stable, testable, and documented codebase.
+
+### Implementation
+1. **Provider Chain Update**: `providers.yaml` updated to: OpenRouter (0) → Ollama (1) → LM Studio (2) → Native GGUF (98) → Mock (99).
+2. **Model Translation**: Implemented `_resolve_model_name` in `ModelGateway` to map local GGUF filenames (e.g., `qwen3-1.7b-q6_k`) to OpenRouter model IDs (e.g., `qwen/qwen3-1.7b`).
+3. **Sovereign Fallback**: Maintained Ollama and LM Studio as local fallbacks to ensure the "local-first" mandate is still verifiable.
+4. **PR Readiness Tasks**: All 20 Phase 1a tasks completed, including:
+    - OpenCode agent/mode files hardened (8 updated, 5 verified).
+    - Provider chain updated (OpenRouter priority 0, model overrides).
+    - MockProvider updated with helpful setup instructions.
+    - Fixed bugs: `RemoteProvider.await`, `TriageRouter.soul` parsing, integer pillars display.
+    - Updated all entity pillars from ints to strings.
+    - Updated `.gitignore`, `README`, CI, docs, decisions.
+    - Completed tests (259 passed).
+    - Implemented `_resolve_model_name` in `ModelGateway`.
+    - Updated `providers.yaml`, `config/entities.yaml`, IWAD entity files.
+    - Updated `overseer.md`, `builder.md`.
+    - Updated `opencode.json` instructions to streamlined list.
+    - Added GitHub Actions CI workflow file.
+
+### Verification
+- `omega talk "hello"` returns real responses via OpenRouter.
+- `make test` (259 tests) passes.
+- `make lint` is clean.
+- All PR readiness tasks are marked ✅ Completed in `docs/strategy/OMEGA_PR_READINESS_STRATEGY.md`.
+
+---
+
 
