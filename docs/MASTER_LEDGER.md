@@ -4,7 +4,7 @@ This document is the **single source of truth** for the high‑level roadmap, mi
 
 ---
 
-## Current Phases (as of 2026‑05‑25 — IWAD Architecture Shift)
+## Current Phases (as of 2026‑05‑26 — PR Readiness Complete, Deep Audit Remediated)
 
 | Phase | Goal | Owner | Target Completion |
 |-------|------|-------|-------------------|
