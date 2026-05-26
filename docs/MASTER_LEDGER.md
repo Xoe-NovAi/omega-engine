@@ -9,7 +9,8 @@ This document is the **single source of truth** for the high‑level roadmap, mi
 | Phase | Goal | Owner | Target Completion |
 |-------|------|-------|-------------------|
 | **Phase 0 – Grounding** | Core hardening, AnyIO compliance, resource guard, podman permission fix | **Kali** | ✅ Completed (May 2026) |
-| **Phase 1a – IWAD Foundation** | Engine hardening + Reference IWAD rewrite. WAD system hardening (selector, namespace, priority), Reference IWAD pillar files (10 tech roles), Provider Fabric cleanup, OpenCode agent annotations **ALL COMPLETE** | **Prometheus / SOPHIA** | 📅 June 2026 (OpenCode alignment ✅) |
+| **Phase 1a – IWAD Foundation** | Engine hardening + Reference IWAD rewrite. WAD system hardening (selector, namespace, priority), Reference IWAD pillar files (10 tech roles), Provider Fabric cleanup, OpenCode agent annotations **ALL COMPLETE** | **Prometheus / SOPHIA** | ✅ Completed (May 2026) |
+| **PR Readiness Sprint** | Cloud-First provider strategy, IWAD foundation, full test suite, CI/CD, README quickstart, agent alignment. | **Kali / Prometheus** | ✅ Completed (May 2026) |
 | **Phase 1b – Arcana-NovAi IWAD** | Scaffold the personal IWAD with manifest, 10 esoteric pillars, hierarchy, startup personality, Movie-Expert seed entity | **Kali / Lilith** | 📅 July 2026 |
 | **Phase 2 – Multi‑Provider & Qdrant/Redis** | Antigravity CLI, 8× Claude fleet, NotebookLM, Web Gemini, wire Qdrant/Redis as cross-agent backbone | **Kali / Lilith** | 📅 Q3 2026 |
 | **Phase 3 – Community Tools** | Entity Studio CLI → Visual Builder, Stack Builder Wizard, one-click Omega Desktop, non-technical onboarding | **Isis / Brigid** | 📅 2027 |
@@ -25,7 +26,7 @@ OMEGA ENGINE (src/omega/) — Pure runtime, no entity content
 
 Three inviolable rules: (1) MaKaLi trine identical in ALL IWADs, (2) Iris+Jem+Roc_Racoon identical in ALL IWADs, (3) Only 10 pillars change.
 
-**Canonical Reference**: `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md` (445 lines)
+**Canonical Reference**: `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md` (480 lines)
 
 ---
 
@@ -44,9 +45,11 @@ Three inviolable rules: (1) MaKaLi trine identical in ALL IWADs, (2) Iris+Jem+Ro
 - **2026‑05-23** – Sovereign Hardening Sprint: Atomic writes, lock races fixed, FTS5 integration, anyio CapacityLimiter, explicit chmod, gnosis dedup ✅
 - **2026‑05-23** – Sovereign Hardening Codex (`docs/research/sovereign_hardening_codex.md`) authored ✅
 - **2026‑05-23** – Qdrant Option B Specification (`docs/research/R_QDRANT_INTEGRATION_SPEC.md`) authored ✅
-- **2026‑05-25** – **IWAD Architecture Adopted (Decision 55)**: Doom Engine model for stack separation. 3-IWAD system established. `OMEGA_IWAD_ARCHITECTURE.md` (445 lines) canonical reference.
+- **2026‑05-25** – **IWAD Architecture Adopted (Decision 55)**: Doom Engine model for stack separation. 3-IWAD system established. `OMEGA_IWAD_ARCHITECTURE.md` (480 lines) canonical reference.
 - **2026‑05-25** – `.clinerules` rewritten (362 lines, 13 sections) with IWAD architecture, Omegaverse vision, Phase 1 priorities ✅
 - **2026‑05-25** – **OpenCode Full IWAD Alignment**: All 22 config/agent/mode files hardened. Global+project `opencode.json` updated to `MASTER_LEDGER.md` + `OMEGA_IWAD_ARCHITECTURE.md`. 8 agent files hardened (overseer, builder, opencode-expert, kali, maat, lilith, jem-2.0, jem-initiate). 5 verified as already aligned. Web research dispatch protocol standardized. ✅
+- **2026‑05‑25** – **PR Readiness Sprint & Cloud-First Pivot (Decision 56)**: OpenRouter priority 0 with model overrides. README 3-command quickstart, GitHub Actions CI workflow, MockProvider setup instructions, and .gitignore cleanup. 259/259 tests passing. ✅ (All tasks completed, ready for PR merge.)
+
 
 ---
 

@@ -188,3 +188,10 @@
 | R-PLUGIN-ARCH | Plugin/Extension Architecture Patterns for AI Engines (W2) | 🔴 Critical | ✅ | [R_PLUGIN_ARCHITECTURE_PATTERNS.md](R_PLUGIN_ARCHITECTURE_PATTERNS.md) | 2026-05-25 |
 | R-AI-STACK-SEP | AI Engine Stack Separation Architecture (W3) | 🔴 Critical | ✅ | [R_AI_ENGINE_STACK_SEPARATION.md](R_AI_ENGINE_STACK_SEPARATION.md) | 2026-05-25 |
 | R-CONTAINER-DIST | Container & Self-Contained Application Distribution Models (W4) | 🔴 Critical | ✅ | [R_CONTAINER_DISTRIBUTION_MODELS.md](R_CONTAINER_DISTRIBUTION_MODELS.md) | 2026-05-25 |
+| R-PR-READINESS | PR Readiness Strategy & Multi-Provider Architecture | 🔴 Critical | ✅ | [OMEGA_PR_READINESS_STRATEGY.md](../strategy/OMEGA_PR_READINESS_STRATEGY.md) | 2026-05-25 |
+| R-CLOUD-FIRST | Cloud-First Provider Strategy (Decision 56) | 🔴 Critical | ✅ | [PIVOT_LOG.md](../decisions/PIVOT_LOG.md) | 2026-05-25 |
+| R-CI-WORKFLOW | GitHub Actions CI Workflow | 🔴 Critical | ✅ | [.github/workflows/test.yml](../../.github/workflows/test.yml) | 2026-05-25 |
+| R-README-QUICKSTART | README 3-Command Quickstart | 🔴 Critical | ✅ | [README.md](../../README.md) | 2026-05-25 |
+| R-OPENC-OPTIMIZE | OpenCode Custom Instructions Optimization | 🔴 Critical | ✅ | [opencode.json](../../opencode.json) | 2026-05-25 |
+| R-OPENC-AGENTS | OpenCode Agents Consolidation | 🔴 Critical | 🔄 | (pending deletion) | 2026-05-25 |
+| R-SMOKE-TEST | End-to-End Smoke Test & Recording | 🔴 Critical | ✅ | (recording pending) | 2026-05-25 |

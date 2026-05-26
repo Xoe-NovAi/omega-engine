@@ -443,3 +443,39 @@ Phase 4: The Omegaverse (DREAM)
 10. **No SambaNova, no Cerebras.** OpenRouter and OpenCode Zen replace them.
 11. **Qdrant + Redis are the Omegaverse backbone.** They stay unwired until Phase 1 is stable.
 12. **The WAD system is the critical path.** Without it, none of this works.
+
+---
+
+## §16: Strategic Roadmap Gaps (Audit Remediation — v0.5.0-alpha)
+
+During the pre-PR strategic audit (2026-05-26), two key architectural gaps were identified and formally deferred to the v0.6.0 release cycle to ensure immediate PR stability:
+
+### 16.1 Deprecation of `config/entities.yaml` (Dual-Load Resolution)
+
+| Attribute | Detail |
+|-----------|--------|
+| **Gap** | The engine currently loads baseline entities from `config/entities.yaml` (via `EntityRegistry`) and then overlays stack-specific entities via the `WADLoader`. This dual-loading mechanism introduces minor performance overhead and potential namespace collisions. |
+| **Risk** | When a stack entity overrides a baseline entity with the same name, the last-loaded definition wins silently — no collision detection, no warning, no priority-based merge. |
+| **Timeline** | v0.6.0 |
+| **Resolution Path** | 1. Migrate all baseline entity definitions from `config/entities.yaml` into `config/wads/_omega_default/entities/`. 2. Update `EntityRegistry` to load exclusively from the active IWAD stack. 3. Remove the fallback-to-baseline path. 4. Add collision detection with explicit priority resolution. |
+| **Migration Strategy** | Dual-load remains active during v0.5.x for backward compatibility. A deprecation warning is logged when `EntityRegistry` finds entities in both `config/entities.yaml` and `config/wads/`. In v0.6.0, the YAML path is removed entirely. |
+
+### 16.2 Native GGUF Integration Path
+
+| Attribute | Detail |
+|-----------|--------|
+| **Gap** | Native GGUF inference (`llama-cpp-python`) is currently deferred to avoid environment-specific C++ compilation risks during the PR sprint. The `NativeGGUFProvider.is_available()` method is wired but returns `False`. |
+| **Risk** | Users must configure an external provider (OpenRouter, Ollama, LM Studio) before they can run inference. This violates the "local-first, sovereign AI" principle for first-time users. |
+| **Timeline** | v0.6.0 |
+| **Resolution Path** | 1. Ship pre-compiled `llama-cpp-python` wheels for Zen 2 (AVX2) and x86-64-v3 in the release assets. 2. Provide a streamlined one-click compilation script for unsupported architectures. 3. Promote native GGUF to priority 1 in the provider fallback chain. 4. Bundle a default small model (e.g., Qwen3-1.7B-Q6_K, ~1.6 GB) for out-of-the-box inference. |
+| **Migration Strategy** | During v0.5.x, the engine gracefully falls through the provider chain when `NativeGGUFProvider` reports unavailability — no error, just a logged info message with setup instructions. The `MockProvider` displays setup instructions when all other providers are unavailable. |
+
+### 16.3 Additional Soft Gaps (Watch Items)
+
+These are minor gaps identified during the audit that do not require architectural changes but should be tracked:
+
+| Gap | Description | Tracking |
+|-----|-------------|----------|
+| **TODO/FIXME Scanner Path** | The `_grow_frontier()` method in the background researcher loop had a silently broken `src_dir` path that prevented TODO/FIXME/HACK comment scanning from working. Fixed during audit remediation. | ✅ Resolved |
+| **WAD Hot-Reload** | No file-watch mechanism for WAD changes during development. Developers must restart the engine after editing entity definitions. | Tracked in workbench |
+| **Dependency Resolution** | No `depends_on` processing in WAD Loader. Entities cannot declare dependencies on other entities or services. | Tracked in workbench |
