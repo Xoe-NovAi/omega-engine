@@ -28,12 +28,12 @@ class TestMockProvider:
     def provider(self):
         return MockProvider("mock", {})
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_is_available(self, provider):
         """Mock provider is always available."""
         assert await provider.is_available() is True
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_returns_string(self, provider):
         """Mock generate returns a helpful setup message."""
         result = await provider.generate("qwen3-test", "system", "hello", 0.7, 128)
@@ -48,19 +48,19 @@ class TestGoogleAIProvider:
     def provider(self):
         return GoogleAIProvider("google", {})
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_is_available_with_key(self, provider):
         """is_available returns True when GOOGLE_API_KEY is set."""
         with patch.dict(os.environ, {"GOOGLE_API_KEY": "test-key"}):
             assert await provider.is_available() is True
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_is_available_no_key(self, provider):
         """is_available returns False when GOOGLE_API_KEY is not set."""
         with patch.dict(os.environ, {}, clear=True):
             assert await provider.is_available() is False
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_success(self, provider):
         """Successful API call returns parsed text."""
         mock_response = AsyncMock(spec=httpx.Response)
@@ -80,7 +80,7 @@ class TestGoogleAIProvider:
                 )
                 assert result == "Hello, world!"
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_missing_candidates(self, provider):
         """API response without candidates returns None."""
         mock_response = AsyncMock(spec=httpx.Response)
@@ -94,7 +94,7 @@ class TestGoogleAIProvider:
                 )
                 assert result is None
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_malformed_response(self, provider):
         """Malformed API response returns None without raising."""
         mock_response = AsyncMock(spec=httpx.Response)
@@ -108,7 +108,7 @@ class TestGoogleAIProvider:
                 )
                 assert result is None
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_http_error(self, provider):
         """HTTP errors propagate as httpx.HTTPStatusError."""
         mock_response = AsyncMock(spec=httpx.Response)
@@ -130,7 +130,7 @@ class TestLocallmsterProvider:
     def provider(self):
         return LocallmsterProvider("lmster", {"endpoint": "http://127.0.0.1:1234"})
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_is_available_success(self, provider):
         """is_available returns True when server responds."""
         mock_response = AsyncMock(spec=httpx.Response)
@@ -140,14 +140,14 @@ class TestLocallmsterProvider:
             available = await provider.is_available()
             assert available is True
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_is_available_timeout(self, provider):
         """is_available returns False on connection error."""
         with patch("httpx.AsyncClient.get", side_effect=httpx.ConnectError("refused")):
             available = await provider.is_available()
             assert available is False
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_with_reasoning(self, provider):
         """generate returns content with reasoning_preamble."""
         mock_response = AsyncMock(spec=httpx.Response)
@@ -169,7 +169,7 @@ class TestLocallmsterProvider:
             assert "I think, therefore..." in result
             assert "Final answer" in result
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_no_reasoning(self, provider):
         """generate returns just content when no reasoning_content."""
         mock_response = AsyncMock(spec=httpx.Response)
@@ -189,7 +189,7 @@ class TestLocallmsterProvider:
             )
             assert result == "Just the answer"
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_empty_content(self, provider):
         """generate returns empty string when content is empty."""
         mock_response = AsyncMock(spec=httpx.Response)
@@ -215,7 +215,7 @@ class TestOllamaProvider:
     def provider(self):
         return OllamaProvider("ollama", {"endpoint": "http://127.0.0.1:11434"})
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_is_available_success(self, provider):
         """is_available returns True when /api/tags responds."""
         mock_response = AsyncMock(spec=httpx.Response)
@@ -225,14 +225,14 @@ class TestOllamaProvider:
             available = await provider.is_available()
             assert available is True
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_is_available_failure(self, provider):
         """is_available returns False on connection error."""
         with patch("httpx.AsyncClient.get", side_effect=httpx.ConnectError("refused")):
             available = await provider.is_available()
             assert available is False
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate(self, provider):
         """generate returns parsed content."""
         mock_response = AsyncMock(spec=httpx.Response)
@@ -260,14 +260,14 @@ class TestNativeGGUFProvider:
             {"model_path": "/tmp/nonexistent_model.gguf", "n_ctx": 2048},
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_is_available_no_model_path(self):
         """is_available returns False when model_path doesn't exist."""
         p = NativeGGUFProvider("native", {"model_path": "/nonexistent.gguf"})
         result = await p.is_available()
         assert result is False
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_is_available_no_model_path_key(self):
         """is_available returns False when model_path not in config."""
         p = NativeGGUFProvider("native", {})

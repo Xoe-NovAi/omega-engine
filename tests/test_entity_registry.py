@@ -97,7 +97,7 @@ def test_entity_to_dict():
     assert "element" not in d
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_entity_registry_concurrent_add():
     """Stress test concurrent add() calls to ensure lock prevents corruption."""
     import anyio

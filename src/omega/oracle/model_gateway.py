@@ -2,14 +2,15 @@
 # AP: AP-MODEL-GATEWAY-v2.3.0
 # ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: MODEL-ABSTRACTION]
 #
-# Supports 6 inference backends with automatic detection and fallback:
-#   1. lmster      (LM Studio headless server at http://127.0.0.1:1234) [PRIMARY]
-#   2. Ollama      (OpenAI-compatible API at http://127.0.0.1:11434) [BACKUP]
-#   3. llama.cpp   (HTTP server at http://127.0.0.1:8080)
-#   4. llama-cli   (Direct GGUF via subprocess)
-#   5. llmster     (Direct GGUF CLI binary)
-#   6. ONNX Runtime (if models available in ONNX format)
-#   7. Graceful fallback (no model loaded)
+# Supports provider fabric with automatic detection and fallback:
+#   0. Google AI Studio  (cloud, Gemma 4 31B) [PRIMARY]
+#   1. OpenRouter        (cloud, 300+ models)
+#   2. OpenCode          (OpenCode built-in provider)
+#   3. GitHub Copilot    (cloud, Claude/GPT models)
+#   4. lmster            (LM Studio headless server at :1234)
+#   5. Ollama            (OpenAI-compatible API at :11434)
+#   6. native-gguf       (llama-cpp-python, deferred to v0.6.0)
+#   7. Graceful fallback (setup instructions)
 #
 # Zen 2 optimizations:
 #   - KV cache quantization (q8_0 key, q8_0 value by default)
@@ -130,14 +131,13 @@ class ModelGateway:
         
         provider_map = {
             "google": GoogleAIProvider,
+            "opencode": ModelGateway._create_openrouter,
+            "openrouter": ModelGateway._create_openrouter,
+            "github-copilot": ModelGateway._create_openrouter,
             "lmster": LocallmsterProvider,
             "ollama": OllamaProvider,
             "native-gguf": NativeGGUFProvider,
             "mock": MockProvider,
-            "openrouter": ModelGateway._create_openrouter,
-            "github-copilot": ModelGateway._create_openrouter,
-            "kilo": ModelGateway._create_openrouter,
-            "genlabs": ModelGateway._create_openrouter,
         }
         
         instances = []
@@ -232,19 +232,19 @@ class ModelGateway:
         except Exception:
             return False
 
-    def _check_llama_cli(self) -> bool:
-        """Check if llama-cli binary is available."""
+    async def _check_llama_cli(self) -> bool:
+        """Check if llama-cli binary is available (async, non-blocking)."""
         try:
-            subprocess.run(["llama-cli", "--version"], capture_output=True, check=False)
-            return True
+            result = await anyio.run_process(["llama-cli", "--version"], check=False)
+            return result.returncode == 0
         except FileNotFoundError:
             return False
 
-    def _check_llmster(self) -> bool:
-        """Check if llmster binary is available."""
+    async def _check_llmster(self) -> bool:
+        """Check if llmster binary is available (async, non-blocking)."""
         try:
-            subprocess.run(["llmster", "--version"], capture_output=True, check=False)
-            return True
+            result = await anyio.run_process(["llmster", "--version"], check=False)
+            return result.returncode == 0
         except FileNotFoundError:
             return False
 
@@ -254,8 +254,8 @@ class ModelGateway:
             "lmster": await self._check_lmster(),
             "ollama": await self._check_ollama(),
             "llama_cpp": await self._check_llama_cpp(),
-            "llama_cli": self._check_llama_cli(),
-            "llmster": self._check_llmster(),
+            "llama_cli": await self._check_llama_cli(),
+            "llmster": await self._check_llmster(),
         }
         self._backend_cache = backends
         return backends
@@ -263,15 +263,17 @@ class ModelGateway:
     async def get_preferred_backend(self) -> str:
         """Return the name of the best available backend.
         
-        Priority: lmster (LM Studio headless) → Ollama → llama.cpp → llama-cli → llmster.
-        lmster is the canonical primary headless inference server.
-        Ollama is retained as a lightweight fallback/backup option.
+        Cloud-first priority: Google → OpenRouter → OpenCode → Copilot → lmster → Ollama.
+        Local inference backends detect available servers.
         """
+        # Cloud providers are always considered "available" (upstream health is their concern)
+        # For local backends, check actual availability
         backends = await self.detect_backends()
         for name in ["lmster", "ollama", "llama_cpp", "llama_cli", "llmster"]:
             if backends.get(name):
                 return name
-        return "none"
+        # If no local backend found, cloud providers will be used via fabric
+        return "cloud"
 
     # ── Model name resolution ──────────────────────────────────────────
     async def _resolve_ollama_model(self, model_name: str) -> str:
@@ -349,6 +351,7 @@ class ModelGateway:
                 return None
 
         # Local providers use the gateway's retry loop
+        response = None
         max_retries = 3
         for attempt in range(max_retries):
             start_time = time.monotonic()
@@ -627,33 +630,37 @@ class ModelGateway:
     async def check_health(self) -> Dict[str, Any]:
         """Return health status of all inference backends.
 
-        Order matches the canonical backend priority chain:
-        lmster → Ollama → llama.cpp → llama-cli → llmster
+        Cloud-first priority: Google → OpenRouter → OpenCode → Copilot → lmster → Ollama
+        Local backends checked via HTTP; cloud providers are always considered available.
         """
         backends = await self.detect_backends()
+        # Show provider fabric status
+        fabric_status = {}
+        for p in self.providers:
+            name = p.name
+            is_avail = await p.is_available()
+            fabric_status[name] = {
+                "available": is_avail,
+                "priority": getattr(p.config, 'priority', 999) if hasattr(p, 'config') else 999,
+            }
         return {
-            "lmster": {
-                "available": backends.get("lmster", False),
-                "url": self.LMSTER_URL,
-                "note": "PRIMARY — LM Studio headless server. Start: `lms server start`"
-            },
-            "ollama": {
-                "available": backends.get("ollama", False),
-                "url": self.OLLAMA_URL,
-                "note": "BACKUP — Run: `ollama run qwen3:1.7b`"
-            },
-            "llama_cpp": {
-                "available": backends.get("llama_cpp", False),
-                "url": self.LLAMA_CPP_URL,
-                "note": "llama.cpp HTTP server. Run: llama-server ..."
-            },
-            "llama_cli": {
-                "available": backends.get("llama_cli", False),
-                "note": "Direct GGUF inference. Run: llama-cli --model ..."
-            },
-            "llmster": {
-                "available": backends.get("llmster", False),
-                "note": "Zero-config CLI inference via llmster binary."
+            "fabric": fabric_status,
+            "local_backends": {
+                "lmster": {
+                    "available": backends.get("lmster", False),
+                    "url": self.LMSTER_URL,
+                    "note": "LM Studio headless. Start: `lms server start`"
+                },
+                "ollama": {
+                    "available": backends.get("ollama", False),
+                    "url": self.OLLAMA_URL,
+                    "note": "Ollama fallback. Run: `ollama run qwen3:1.7b`"
+                },
+                "llama_cpp": {
+                    "available": backends.get("llama_cpp", False),
+                    "url": self.LLAMA_CPP_URL,
+                    "note": "llama.cpp HTTP server"
+                },
             },
         }
 

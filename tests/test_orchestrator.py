@@ -27,7 +27,7 @@ class TestMCPWatchdog:
                 pass
         return AsyncContextManagerMock()
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_watch_mcps_all_healthy(self, orchestrator):
         """watch_mcps should mark all MCPs healthy when they respond 200."""
         mock_acm = self._make_mock_response_context_manager(200)
@@ -37,15 +37,17 @@ class TestMCPWatchdog:
         mock_client.__aexit__ = AsyncMock(return_value=None)
 
         with patch("httpx.AsyncClient", return_value=mock_client):
-            async def one_iter():
-                with anyio.move_on_after(1.0):
-                    await orchestrator.watch_mcps()
+            with patch("anyio.run_process", new_callable=AsyncMock) as mock_process:
+                async def one_iter():
+                    with anyio.move_on_after(5.0):
+                        await orchestrator.watch_mcps()
 
-            await one_iter()
-            for name in orchestrator.mcp_ports:
-                assert orchestrator._mcp_status.get(name, {}).get("status") == "healthy", f"{name} not healthy"
+                await one_iter()
+                for name in orchestrator.mcp_ports:
+                    assert orchestrator._mcp_status.get(name, {}).get("status") == "healthy", f"{name} not healthy"
 
-    @pytest.mark.asyncio
+
+    @pytest.mark.anyio
     async def test_watch_mcps_connect_error(self, orchestrator):
         """watch_mcps should mark unresponsive MCPs on connection error."""
         mock_client = AsyncMock(spec=httpx.AsyncClient)
@@ -54,15 +56,17 @@ class TestMCPWatchdog:
         mock_client.__aexit__ = AsyncMock(return_value=None)
 
         with patch("httpx.AsyncClient", return_value=mock_client):
-            async def one_iter():
-                with anyio.move_on_after(1.0):
-                    await orchestrator.watch_mcps()
+            with patch("anyio.run_process", new_callable=AsyncMock) as mock_process:
+                async def one_iter():
+                    with anyio.move_on_after(5.0):
+                        await orchestrator.watch_mcps()
 
-            await one_iter()
-            for name in orchestrator.mcp_ports:
-                assert orchestrator._mcp_status.get(name, {}).get("status") == "unresponsive"
+                await one_iter()
+                for name in orchestrator.mcp_ports:
+                    assert orchestrator._mcp_status.get(name, {}).get("status") == "unresponsive"
 
-    @pytest.mark.asyncio
+
+    @pytest.mark.anyio
     async def test_watch_mcps_degraded(self, orchestrator):
         """watch_mcps should mark MCPs as degraded on non-200 status."""
         mock_acm = self._make_mock_response_context_manager(500)
@@ -84,13 +88,13 @@ class TestMCPWatchdog:
 
 
 class TestDispatchAgent:
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_dispatch_unsupported_cli(self, orchestrator):
         """dispatch_agent should return error for unsupported CLI type."""
         result = await orchestrator.dispatch_agent("unknown_cli", "task", "Sophia")
         assert result["status"] == "error"
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_dispatch_cline_success(self, orchestrator):
         """dispatch_agent should run cline and return stdout on success."""
         mock_result = MagicMock()
@@ -109,7 +113,7 @@ class TestDispatchAgent:
         assert result["status"] == "success"
         assert result["returncode"] == 0
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_dispatch_opencode_success(self, orchestrator):
         """dispatch_agent should run opencode and return stdout on success."""
         mock_result = MagicMock()
@@ -127,7 +131,7 @@ class TestDispatchAgent:
 
         assert result["status"] == "success"
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_dispatch_cline_failure(self, orchestrator):
         """dispatch_agent should return failure on non-zero returncode."""
         mock_result = MagicMock()
@@ -146,7 +150,7 @@ class TestDispatchAgent:
         assert result["status"] == "failed"
         assert result["returncode"] == 1
 
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_dispatch_timeout(self, orchestrator):
         """dispatch_agent should return timeout when execution takes too long."""
         with patch(

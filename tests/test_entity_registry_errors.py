@@ -16,16 +16,12 @@ def test_load_empty_yaml():
 
 def test_load_malformed_yaml():
     with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:
-        f.write("not: a: yaml: file") # Malformed
+        f.write("invalid: yaml: content:") # Malformed YAML
         path = f.name
     
     try:
-        # yaml.safe_load might raise yaml.YAMLError or return None
-        # If it returns None, our ValueError should trigger.
-        # If it raises YAMLError, that's also acceptable as an error.
-        try:
+        # EntityRegistry._load() wraps yaml.YAMLError in ValueError
+        with pytest.raises(ValueError, match="empty or malformed"):
             EntityRegistry(config_path=path)
-        except (ValueError, Exception):
-            pass
     finally:
         Path(path).unlink()

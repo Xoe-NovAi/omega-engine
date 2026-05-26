@@ -137,7 +137,7 @@ Switch entities mid-session as the work demands. Entity is chosen per-task, not 
 ## §4 Quick Start
 
 ```bash
-make test         # 241 tests, all must pass
+make test         # 259 tests, all must pass
 make lint         # flake8 code quality check
 make demo         # End-to-end validation
 make start-iris   # Podman build + run Iris voice assistant
@@ -183,17 +183,18 @@ omega version                 # Show version
 
 ```
 User query → Entity lens → ModelGateway → Provider Fabric (fallback chain)
-                                           ├── 1. Native GGUF (llama-cpp-python, Zen 2 optimized)
-                                           ├── 2. lmster (LM Studio headless, local)
-                                           ├── 3. Google AI Studio — Gemma 4-31B (8-key pool)
-                                           ├── 4. SambaNova (DeepSeek-R1, Llama-3.1-405B)
-                                           ├── 5. Cerebras (Llama-3.3-70b, ~3000 t/s)
+                                           ├── 1. Google AI Studio — Gemma 4 31B (unlimited, 262K context) [PRIMARY]
+                                           ├── 2. OpenRouter (Gemma 4, GPT-4o, Claude, Qwen, 300+ models)
+                                           ├── 3. OpenCode (OpenCode built-in provider)
+                                           ├── 4. GitHub Copilot (Claude Haiku, GPT-4.1, GPT-4o, GPT-5-mini)
+                                           ├── 5. lmster (LM Studio headless, local)
                                            ├── 6. Ollama (secondary local backup)
-                                           └── 7. OfflineMockBackend (test/dev only)
+                                           ├── 7. Native GGUF (llama-cpp-python, deferred to v0.6.0)
+                                           └── 8. Mock (test/dev only, setup instructions)
 All responses → same memory, same entity, same observability, same knowledge base
 ```
 
-The Engine is **local-first, sovereign AI**. Remote cloud providers are high-capability extensions for reasoning/complexity, orchestrated via the Provider Fabric with circuit breakers, exponential backoff, and per-provider token budgets. **Every response, regardless of provider, flows into the same memory, entity knowledge, and cross-pollination pipeline.**
+The Engine is **cloud-first, sovereign AI**. Google AI Studio is the primary provider for the PR sprint, providing unlimited Gemma 4 31B access. Native GGUF via llama-cpp-python is the long-term target for true local-first sovereignty (v0.6.0). **Every response, regardless of provider, flows into the same memory, entity knowledge, and cross-pollination pipeline.**
 
 ---
 
@@ -218,14 +219,14 @@ The Engine is **local-first, sovereign AI**. Remote cloud providers are high-cap
 | `src/omega/iris/` | Iris voice assistant |
 | `data/entities/arch/soul.yaml` | User soul file (The Architect) |
 | `data/workbench/workbench.db` | Project management database |
-| `docs/research/INDEX.md` | Complete research index (52+ items) |
+| `docs/research/INDEX.md` | Complete research index (180+ entries) |
 | `docs/research/R44_comprehensive_systems_review.md` | Full code audit + critical bugs |
 | `docs/research/R44_ENGINE_STACK_SEPARATION.md` | Engine vs Stack architecture |
 | `docs/research/R50_session_id_architecture.md` | Session ID design for ContextBuilder wiring |
 | `docs/strategy/XOE_NOVAI_FOUNDATION_STRATEGIC_PLAN.md` | Foundation vision and strategy |
 | `docs/strategy/SYSTEMS_HARDENING_PLAN.md` | Systems hardening backlog |
 | `docs/strategy/MASTER_SYNTHESIS_AND_ROADMAP.md` | Master plan with inventory, mining plan, roadmap |
-| `docs/ROADMAP.md` | Full 6-phase strategy |
+| `docs/MASTER_LEDGER.md` | Full 6-phase strategy (single source of truth) |
 
 ---
 
@@ -271,6 +272,6 @@ The **Xoe-NovAi Foundation** exists to:
 2. Read this file — restores agent behavior rules and vision
 3. Read `docs/decisions/PIVOT_LOG.md` — restores architectural decisions
 4. Read `docs/strategy/MASTER_SYNTHESIS_AND_ROADMAP.md` — restores the full master plan
-5. Run `make test` — 241 tests must pass
+5. Run `make test` — 259 tests must pass
 6. Query `data/workbench/workbench.db` — check project status
 7. Query `docs/research/INDEX.md` — check research status

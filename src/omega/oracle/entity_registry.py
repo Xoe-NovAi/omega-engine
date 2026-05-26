@@ -82,8 +82,11 @@ class EntityRegistry:
             self._entities = {}
             return
 
-        with open(self.config_path, "r") as f:
-            data = yaml.safe_load(f)
+        try:
+            with open(self.config_path, "r") as f:
+                data = yaml.safe_load(f)
+        except yaml.YAMLError as e:
+            raise ValueError(f"entities.yaml is empty or malformed: {e}")
         
         if data is None:
             raise ValueError("entities.yaml is empty or malformed")

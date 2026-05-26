@@ -2,7 +2,7 @@
 **AP Token**: `AP-ORACLE-RESTORE-v2.2.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_core ⬡ ORACLE-RESTORE
 **Status**: ACTIVE
-**Last Updated**: 2026-05-23 (Phase 0-3 Remediation COMPLETE — All 29 findings fixed, 241/241 tests passing, Podman Sovereign Protocol v2 active)
+**Last Updated**: 2026-05-26 (Phase I PR Readiness — All providers active, 259/259 tests passing, IWAD Architecture active)
 
 ---
 
@@ -27,17 +27,17 @@ The Omega Engine is not just for one user. It is the universal runtime that anyo
 ## §3 CORE ARCHITECTURE
 
 ```
-Query → Oracle.talk() → Nova speculative decode (confidence check)
-  ├── high confidence → Nova responds (qwen3-1.7b, always-on container)
-  └── low confidence → escalate to domain-matched Pillar Keeper → ModelGateway → GGUF inference
+Query → Oracle.talk() → Iris speculative decode (confidence check via qwen3-1.7b)
+  ├── high confidence → Iris responds directly (simple Q&A, greetings)
+  └── low confidence → escalate to domain-matched Pillar Keeper → ModelGateway → provider fabric
 ```
 
 Key components:
-- **Oracle** (`src/omega/oracle/oracle.py`): Intent detection + summon parsing + domain routing + Nova speculative decoder
+- **Oracle** (`src/omega/oracle/oracle.py`): Intent detection + summon parsing + domain routing + Iris speculative decoder
 - **EntityRegistry** (`src/omega/oracle/entity_registry.py`): YAML-backed entity CRUD (pure Python, no SQLAlchemy/PostgreSQL). Auto-scaffolds sovereign workspaces on entity creation.
 - **EntityWorkspaceManager** (`src/omega/oracle/entity_workspace.py`): Creates `data/entities/<name>/` with `soul.yaml`, `knowledge/`, and `workspace/` directories for each awakened entity.
 - **Orchestrator** (`src/omega/oracle/orchestrator.py`): Dispatches headless CLI agents (Cline, OpenCode) with soul-injected system prompts. Protected by ResourceGuard.
-- **ModelGateway** (`src/omega/oracle/model_gateway.py`): 6-backend auto-detection chain (lmster → Ollama → llama.cpp → ONNX → llama-cli → llmster → graceful fallback). **Long-term target**: custom Omega inference engine via `llama-cpp-python`.
+- **ModelGateway** (`src/omega/oracle/model_gateway.py`): 8-backend provider fabric (Google → OpenRouter → OpenCode → Copilot → lmster → Ollama → native-gguf → mock). Cloud-first priority per Decision 56. **Long-term target**: native GGUF via `llama-cpp-python` in v0.6.0.
 - **Nova** (`src/omega/nova/`): FastAPI voice assistant + intent matcher, runs as Podman container ("hey Nova")
 - **Observability** (`src/omega/observability.py`): Trace IDs, event logging, fine-tuning dataset collection (JSONL export)
 - **CLI** (`src/omega/cli/oracle_cli.py`): Typer CLI (talk, summon, list-entities, add-entity, entity-info, backends, version)
@@ -83,14 +83,16 @@ ENTITIES ARE USER-CUSTOMIZABLE. The 10 Pillar Keepers are the DEFAULT TEMPLATE. 
 
 ## §6 MODEL GATEWAY — PROVIDER FABRIC
 
-Configured via `config/providers.yaml`. The Engine auto-detects available backends in the configured priority order:
-1. **native** — Omega custom llama-cpp-python engine (LONG-TERM TARGET)
-2. **lmster** (:1234) — LM Studio headless server (**PRIMARY** interim, `lms server start`)
-3. Ollama (:11434) — **BACKUP** fallback
-4. llama.cpp (:8080) — HTTP server
-5. OpenRouter — cloud fallback (if configured)
-6. Antigravity — OAuth-based frontier models (if configured)
-7. Graceful fallback — setup instructions
+Configured via `config/providers.yaml`. The Engine auto-detects available backends in the configured priority order. Current chain (per Decision 56 & Deep Audit 2026-05-26):
+
+1. **Google AI Studio** — Gemma 4 31B (unlimited, 262K context) [PRIMARY]
+2. **OpenRouter** — 300+ models (Gemma 4, GPT-4o, Claude, Qwen) [FALLBACK]
+3. **OpenCode** — OpenCode built-in provider [FALLBACK]
+4. **GitHub Copilot** — Claude Haiku, GPT-4.1, GPT-4o, GPT-5-mini [FALLBACK]
+5. **lmster** (:1234) — LM Studio headless server [LOCAL FALLBACK]
+6. **Ollama** (:11434) — lightweight local fallback [LOCAL FALLBACK]
+7. **native-gguf** — llama-cpp-python (deferred to v0.6.0)
+8. **Mock** — setup instructions (last resort, test/dev only)
 
 All responses — local or cloud — flow into the same memory, entity knowledge, and cross-pollination pipeline. Model specs in `config/models.yaml` with loading strategies: always | warm | on_demand_5min | on_demand_10min
 
@@ -127,7 +129,7 @@ All containers run rootless (user 1000) using the Sovereign Permission Protocol 
 
 All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src python3 -m pytest tests/`.
 
-**Current state (2026-05-23)**: 241 collected — **241 passing** (Baseline restored and hardened).
+**Current state (2026-05-26)**: 259 collected — **259 passing** (PR Readiness Sprint complete).
 
 | Module | Tests | Status |
 |--------|-------|--------|
@@ -147,6 +149,9 @@ All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src py
 | sovereign_loop | 20 | ✅ PASS |
 | context_builder | 22 | ✅ PASS |
 | memory_store | 12 | ✅ PASS |
+| wad_loader | 13 | ✅ PASS |
+| model_updater | 10 | ✅ PASS |
+| sovereign_stress_test | 5 | ✅ PASS | |
 
 **Root cause**: Resolved. YAML syntax error in `config/entities.yaml` fixed via block scalar reformatting. All tests now pass.
 
@@ -184,5 +189,5 @@ All agent outputs MUST include:
 6. No telemetry. Zero. None.
 7. This repo is at ~/Documents/Xoe-NovAi/omega-engine/ — NOT xna-omega, NOT omega-stack
 8. The 10 Pillar Keepers are DEFAULT TEMPLATE — users customize freely
-9. Primary inference backend is lmster. Long-term goal: custom llama-cpp-python engine.
+9. Primary inference backend is Google AI Studio (Gemma 4 31B). Long-term goal: native GGUF via llama-cpp-python.
 10. Always use the venv (`.venv/`) or podman for package management — NEVER `--break-system-packages`.

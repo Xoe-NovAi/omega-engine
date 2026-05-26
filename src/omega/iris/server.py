@@ -38,7 +38,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: str
     entity: str
-    pillar: Optional[str] = None
+    pillars: list[str] = []
     sigil: Optional[str] = None
 
 
@@ -75,7 +75,7 @@ async def chat(request: ChatRequest):
         return ChatResponse(
             response=result.text,
             entity=result.entity,
-            pillar=result.pillar,
+            pillars=result.pillars,
             sigil=result.sigil,
         )
     except Exception as e:
@@ -97,7 +97,7 @@ async def voice(request: ChatRequest):
         return ChatResponse(
             response=result.text,
             entity=result.entity,
-            pillar=result.pillar,
+            pillars=result.pillars,
             sigil=result.sigil,
         )
     except Exception as e:
@@ -113,7 +113,7 @@ async def list_entities():
         "entities": [
             {
                 "name": e.name,
-                "pillar": e.pillar,
+                "pillar": e.pillars,
                 "pantheon": e.pantheon,
                 "sigil": e.sigil,
                 "domains": e.domains,

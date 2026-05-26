@@ -8,6 +8,7 @@ back to trace_id with no persistence.
 import json
 import logging
 import os
+import time
 import anyio
 from datetime import datetime, timezone
 from pathlib import Path
@@ -49,6 +50,15 @@ class SessionManager:
                     os.open(str(lock_file), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
                     return True
                 except FileExistsError:
+                    # Check for stale lock (older than 30 seconds)
+                    try:
+                        age = time.monotonic() - lock_file.stat().st_mtime
+                        if age > 30:
+                            lock_file.unlink()
+                            os.open(str(lock_file), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                            return True
+                    except (OSError, FileNotFoundError):
+                        pass
                     return False
 
             while not await anyio.to_thread.run_sync(_create_lock):

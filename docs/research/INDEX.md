@@ -4,7 +4,7 @@
 **AP Token**: `AP-RESEARCH-INDEX-v1.6.0`
 **Maintained by**: Multi-Provider Research Fleet
 **Reviewed by**: Opus 4.6 (Oversight)
-**Last updated**: 2026-05-22 (BREAKTHROUGH: OpenCode Custom Provider Architecture — LM Studio integration via npm field + auth.json; Fleet research on provider mechanism; opencode-expert.md v2.0.0)
+**Last updated**: 2026-05-26 (BREAKTHROUGH: OpenCode Custom Provider Architecture — LM Studio integration via npm field + auth.json; Fleet research on provider mechanism; opencode-expert.md v2.0.0)
 
 ---
 
@@ -52,7 +52,6 @@
 | R-JEM2-PIPELINE | Jem 2.0 Speculative Decoding Pipeline | 🔴 Critical | ✅ | [JEM_SPECULATIVE_DECODING_PIPELINE.md](JEM_SPECULATIVE_DECODING_PIPELINE.md) | 2026-05-18 |
 | R-JEM2-BACKGROUND | Jem 2.0 Background Researcher | 🔴 Critical | ✅ | [JEM_BACKGROUND_RESEARCHER.md](JEM_BACKGROUND_RESEARCHER.md) | 2026-05-18 |
 | R-JEM2-SPLIT | Jem 2.0 Split Test Framework | 🔴 Critical | ✅ | [JEM_SPLIT_TEST_FRAMEWORK.md](JEM_SPLIT_TEST_FRAMEWORK.md) | 2026-05-18 |
-| R-TIERED-PIPELINE | Tiered Research Pipeline (Investigative Journalism Model) | 🔴 Critical | 🔲 | [R_TIERED_RESEARCH_PIPELINE.md](R_TIERED_RESEARCH_PIPELINE.md) | 2026-05-22 |
 | R-MODES-REFACTOR | OpenCode Modes Refactoring Strategy | 🔴 Critical | ✅ | [R_OPENCODE_MODES_REFACTOR_STRATEGY.md](R_OPENCODE_MODES_REFACTOR_STRATEGY.md) | 2026-05-18 |
 | R-SUB-REC | Subagent Recursion Analysis | 🟡 High | ✅ | [R_SUBAGENT_RECURSION.md](R_SUBAGENT_RECURSION.md) | 2026-05-14 |
 | R-EXA-DEEP | Exa Deep Research Pattern | 🟡 High | ✅ | [R_EXA_DEEP_RESEARCH.md](R_EXA_DEEP_RESEARCH.md) | 2026-05-14 |
@@ -108,7 +107,6 @@
 | R-OR | OpenRouter Free + Available Model Landscape | 🔴 Critical | ✅ | [OPENROUTER_MODEL_REFERENCE.md](OPENROUTER_MODEL_REFERENCE.md) | 2026-05-15 |
 | R-GEMMA-LIVE | Google Gemma Live API Validation | 🔴 Critical | ✅ | [GOOGLE_GEMMA_MODEL_REFERENCE.md](GOOGLE_GEMMA_MODEL_REFERENCE.md) | 2026-05-15 |
 | R-MODEL-DB | Always-Current Model Database System | 🔴 Critical | ✅ | [model_db/CURRENT_MODELS.md](model_db/CURRENT_MODELS.md) | 2026-05-15 |
-| R-MODEL-UPDATER | Automated Model Updater — Background Worker Design | 🟡 High | ✅ | [AUTOMATED_MODEL_UPDATER_DESIGN.md](AUTOMATED_MODEL_UPDATER_DESIGN.md) | 2026-05-17 |
 | R-LEGACY-XREF | Legacy Model DB Cross-Reference | 🔴 Critical | ✅ | [model_db/LEGACY_CROSS_REFERENCE_REPORT.md](model_db/LEGACY_CROSS_REFERENCE_REPORT.md) | 2026-05-16 |
 | R-COMPACTION | OpenCode Compaction System Deep Dive | 🟡 High | ✅ | [R_OPENCODE_COMPACTION_DEEP_DIVE.md](R_OPENCODE_COMPACTION_DEEP_DIVE.md) | 2026-05-17 |
 | R-COMPACTION-SOUL | Compaction-Triggered Soul Evolution Pipeline | 🔴 Critical | ✅ | [R_COMPACTION_SOUL_EVOLUTION.md](R_COMPACTION_SOUL_EVOLUTION.md) | 2026-05-17 |
@@ -117,7 +115,7 @@
 | R-71 | Knowledge Deepening & Verification | 🔴 Critical | ✅ | [R71_knowledge_deepening_verification.md](R71_knowledge_deepening_verification.md) | 2026-05-18 |
 | R-72 | Gemma 4-31B Advanced Orchestration Patterns | 🔴 Critical | ✅ | [R72_gemma_orchestration_patterns.md](R72_gemma_orchestration_patterns.md) | 2026-05-18 |
 | R-67 | REPL Chat Loop Architecture — prompt_toolkit + AnyIO | 🔴 Critical | ✅ | [R67_repl_architecture.md](R67_repl_architecture.md) | 2026-05-18 |
-| R-PHASE-C | Phase C Preparation — Community-Ready Presentation Spec | 🟡 High | ✅ | [R_PHASE_C_PREPARATION.md](R_PHASE_C_PREPARATION_md) | 2026-05-18 |
+| R-PHASE-C | Phase C Preparation — Community-Ready Presentation Spec | 🟡 High | ✅ | [R_PHASE_C_PREPARATION.md](R_PHASE_C_PREPARATION.md) | 2026-05-18 |
 | R-PHASE-C-DEEP | Phase C Deep Research — Comprehensive Analysis | 🟡 High | ✅ | [R_PHASE_C_DEEP_RESEARCH.md](R_PHASE_C_DEEP_RESEARCH.md) | 2026-05-18 |
 | R-96 | Guard-Rails Completion Report | 🔴 Critical | ✅ | [R96_guard_rails_completion.md](R96_guard_rails_completion.md) | 2026-05-14 |
 | R-97 | Omega Doc Architect Spec | 🔴 Critical | ✅ | [R97_omega_doc_architect.md](R97_omega_doc_architect.md) | 2026-05-14 |
@@ -141,23 +139,14 @@
 | R-MODELFILE | Legacy Modelfile Alchemy Recovery | 🟡 High | 🔲 | *(not yet researched)* | — |
 | R-COPILOT | Copilot CLI Session Recovery | 🟡 High | 🔲 | *(not yet researched)* | — |
 | R-SEED-ARCH | Sovereign Seed Implementation for Phase 1 | 🔴 Critical | ✅ | [SOVEREIGN_SEED_ARCHITECTURE.md](SOVEREIGN_SEED_ARCHITECTURE.md) | 2026-05-16 |
-| R-SUB-LESSONS | Subagent Fleet Operational Lessons | 🟡 High | ✅ | [SUBAGENT_FLEET_LESSONS.md](SUBAGENT_FLEET_LESSONS_e) | 2026-05-16 |
+| R-SUB-LESSONS | Subagent Fleet Operational Lessons | 🟡 High | ✅ | [SUBAGENT_FLEET_LESSONS.md](SUBAGENT_FLEET_LESSONS.md) | 2026-05-16 |
 | R-CLAUDE-FLEET | 8-Account Claude Fleet + Sonnet 4.6 Thinking Distribution Strategy | 🟡 High | 🔲 | *(not yet researched)* | — |
-| R-OPENC-PERM | OpenCode `external_directory` Permission Guide | 🔴 Critical | ✅ | [R_OPENC_PERMISSIONS.md](R_OPENC_PERMISSIONS.md) | 2026-05-18 |
-| R-OPENC-MCP | OpenCode MCP Configuration Guide | 🔴 Critical | ✅ | [R_OPENC_MCP_CONFIG.md](R_OPENC_MCP_CONFIG.md) | 2026-05-18 |
-| R-OPENC-WORK | Filesystem Permission Workarounds (Glob/HEREDOC) | 🔴 Critical | ✅ | [R_OPENC_PERM_WORKAROUNDS.md](R_OPENC_PERM_WORKAROUNDS.md) | 2026-05-18 |
-| R-MCP-SPEC | Model Context Protocol (MCP) Deep Dive & 2026 Roadmap | 🔴 Critical | ✅ | [R_MCP_SPEC.md](R_MCP_SPEC.md) | 2026-05-18 |
-| R-ANYIO-ORCH | AnyIO Orchestration Guide for High-Concurrency AI | 🔴 Critical | ✅ | [R_ANYIO_ORCHESTRATION_GUIDE.md](R_ANYIO_ORCHESTRATION_GUIDE.md) | 2026-05-18 |
-| R-SVR-LIFECYCLE | Systemd Socket Activation & Lifecycle Persistence | 🔴 Critical | ✅ | [R40_sovereign_lifecycle_persistence.md](R40_sovereign_lifecycle_persistence.md) | 2026-05-18 |
-| R-PODMAN-BLUE | Sovereign Podman Deployment Blueprint | 🔴 Critical | ✅ | [R_PODMAN_SOVEREIGN_DEPLOYMENT_BLUEPRINT.md](R_PODMAN_SOVEREIGN_DEPLOYMENT_BLUEPRINT.md) | 2026-05-18 |
-| R-ZEN2-GGUF | Zen 2 (5700U) GGUF Optimization Guide | 🔴 Critical | ✅ | [R_ZEN2_GGUF_OPTIMIZATION.md](R_ZEN2_GGUF_OPTIMIZATION.md) | 2026-05-18 |
 | R-SEARXNG | Sovereign SearXNG Search Layer — Complete Research | 🔴 Critical | ✅ | [R_SEARXNG_SOVEREIGN_SEARCH_LAYER.md](R_SEARXNG_SOVEREIGN_SEARCH_LAYER.md) | 2026-05-18 |
 | R-CONSULTATION-ARCH | Consultation Prompt Architecture | 🔴 Critical | ✅ | [R_CONSULTATION_PROMPT_ARCHITECTURE.md](R_CONSULTATION_PROMPT_ARCHITECTURE.md) | 2026-05-18 |
 | R-JEM-LEGACY-INV | Jem Legacy Artifact Inventory | 🔴 Critical | ✅ | [R_JEM_LEGACY_ARTIFACT_INVENTORY.md](R_JEM_LEGACY_ARTIFACT_INVENTORY.md) | 2026-05-18 |
 | R-GEMINI-QUOTAS | Gemini 2.0 Pro Free Tier Quotas | 🔴 Critical | 🔄 | [R_GEMINI_FREE_TIER_QUOTAS.md](R_GEMINI_FREE_TIER_QUOTAS.md) | — |
 | R-FASTROUTER-MAPPING | FastRouter Omega Mapping Spec | 🔴 Critical | ✅ | [R_FASTROUTER_OMEGA_MAPPING.md](R_FASTROUTER_OMEGA_MAPPING.md) | 2026-05-18 |
 | R-FASTROUTER | FastRouter LLM Gateway Analysis | ✅ DONE | 2026-05-18 | [R-FASTROUTER.md](R-FASTROUTER.md) |
-| R-FASTROUTER-MAPPING | FastRouter Omega Pillar Mapping | ✅ DONE | 2026-05-18 | [R_FASTROUTER_OMEGA_MAPPING.md](R_FASTROUTER_OMEGA_MAPPING.md) |
 | R-FASTROUTER-RESILIENCE | FastRouter Sovereign Resilience | ✅ DONE | 2026-05-18 | [R_FASTROUTER_RESILIENCE.md](R_FASTROUTER_RESILIENCE.md) |
 | R-FASTROUTER-GNOSIS | FastRouter Gnosis Integration | ✅ DONE | 2026-05-18 | [R-FASTROUTER-GNOSIS.md](R-FASTROUTER-GNOSIS.md) |
 | R-FASTROUTER-BENCHMARK | FastRouter Competitive Analysis | ✅ DONE | 2026-05-18 | [R-FASTROUTER-BENCHMARK.md](R-FASTROUTER-BENCHMARK.md) |

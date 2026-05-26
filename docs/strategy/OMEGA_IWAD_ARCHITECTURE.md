@@ -326,26 +326,26 @@ Torment:    "Dak'kon's blade hums. Morte cackles. The Lady of Pain watches."
 | `_load_entities()` | ✅ Functional | Loads from `config/wads/*/entities/` |
 | `_load_voices()` | ✅ Functional | Loads by activation keyword |
 | Manifest validation | ✅ Fixed | Empty/null guard added |
-| **IWAD selection (--iwad flag)** | ❌ Missing | No CLI flag to choose IWAD |
-| **Namespace isolation** | ❌ Missing | EntityRegistry doesn't track WAD source |
+| **IWAD selection (--iwad flag)** | ✅ Functional | `oracle_cli.py` exposes `--iwad`/`-w` on talk, summon, compact, and validate |
+| **Namespace isolation** | ❌ Missing | EntityRegistry `wad_source` field exists but no enforcement |
 | **Dependency resolution** | ❌ Missing | No `depends_on` processing |
 | **Entity priority/override** | ❌ Missing | Last-loaded wins silently |
 | **Ordered multi-WAD loading** | ⚠️ Partial | No ordering guarantee |
 | **WAD hot-reload** | ❌ Missing | No file-watch for development |
-| **Startup personality** | ❌ Missing | No `startup.message` from manifest |
+| **Startup personality** | ✅ Functional | `wad_loader.get_startup_message()` reads from manifest; `oracle.py` calls it at boot |
 
 ---
 
 ## §10: Provider Fabric
 
 ```
-1. Native GGUF (llama-cpp-python, Zen 2)
-2. lmster (LM Studio, localhost:1234)
-3. Ollama (localhost:11434)
-4. Google AI Studio (Gemma 4-31B, 8-key pool)
-5. OpenRouter (aggregated API, multi-model)
-6. OpenCode Zen (OpenCode's built-in provider)
-7. GitHub Copilot (Claude Haiku, GPT-4.1, GPT-4o)
+1. Google AI Studio (Gemma 4-31B, unlimited, 262K context)
+2. OpenRouter (aggregated API, 300+ models)
+3. OpenCode (OpenCode's built-in provider)
+4. GitHub Copilot (Claude Haiku, GPT-4.1, GPT-4o, GPT-5-mini)
+5. lmster (LM Studio, localhost:1234)
+6. Ollama (localhost:11434)
+7. Native GGUF (llama-cpp-python, deferred to v0.6.0)
 8. OfflineMockBackend (test/dev only)
 ```
 

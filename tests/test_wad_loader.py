@@ -41,7 +41,7 @@ def wad_env():
     # Cleanup
     shutil.rmtree(temp_dir)
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_wad_valid(wad_env):
     wads_dir, _ = wad_env
     registry, loader, cfg = make_registry_and_loader(wads_dir)
@@ -50,7 +50,7 @@ async def test_load_wad_valid(wad_env):
     finally:
         Path(cfg).unlink(missing_ok=True)
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_wad_path_traversal(wad_env):
     wads_dir, secret_dir = wad_env
     registry, loader, cfg = make_registry_and_loader(wads_dir)
@@ -61,7 +61,7 @@ async def test_load_wad_path_traversal(wad_env):
     finally:
         Path(cfg).unlink(missing_ok=True)
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_wad_nonexistent(wad_env):
     wads_dir, _ = wad_env
     registry, loader, cfg = make_registry_and_loader(wads_dir)
@@ -71,7 +71,7 @@ async def test_load_wad_nonexistent(wad_env):
         Path(cfg).unlink(missing_ok=True)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_wad_malformed_manifest(wad_env):
     """Loading a WAD with a malformed manifest should return False."""
     wads_dir, _ = wad_env
@@ -86,7 +86,7 @@ async def test_load_wad_malformed_manifest(wad_env):
         Path(cfg).unlink(missing_ok=True)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_wad_missing_fields(wad_env):
     """Loading a WAD with missing required manifest fields should return False."""
     wads_dir, _ = wad_env
@@ -101,7 +101,7 @@ async def test_load_wad_missing_fields(wad_env):
         Path(cfg).unlink(missing_ok=True)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_wad_duplicate_entities(wad_env):
     """Loading a WAD with entities already in the registry should skip them."""
     wads_dir, _ = wad_env
@@ -129,7 +129,7 @@ async def test_load_wad_duplicate_entities(wad_env):
         Path(cfg).unlink(missing_ok=True)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_flat_entity_yaml(wad_env):
     """Flat .yaml entity files (not in subdirectory with soul.yaml) should load correctly."""
     wads_dir, _ = wad_env
@@ -154,7 +154,7 @@ async def test_load_flat_entity_yaml(wad_env):
         Path(cfg).unlink(missing_ok=True)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_soul_yaml_structure(wad_env):
     """Traditional soul.yaml directory structure should still load correctly."""
     wads_dir, _ = wad_env
@@ -177,7 +177,7 @@ async def test_load_soul_yaml_structure(wad_env):
         Path(cfg).unlink(missing_ok=True)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_entities_mixed_types(wad_env):
     """Loading a WAD with both flat and soul.yaml entities should work."""
     wads_dir, _ = wad_env
@@ -208,7 +208,7 @@ async def test_load_entities_mixed_types(wad_env):
         Path(cfg).unlink(missing_ok=True)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_entity_skips_registered(wad_env):
     """Already-registered entities should be skipped during WAD load."""
     wads_dir, _ = wad_env
@@ -234,7 +234,7 @@ async def test_load_entity_skips_registered(wad_env):
         Path(cfg).unlink(missing_ok=True)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_entity_invalid_yaml(wad_env):
     """Invalid YAML in an entity file should be handled gracefully."""
     wads_dir, _ = wad_env
@@ -255,7 +255,7 @@ async def test_load_entity_invalid_yaml(wad_env):
         Path(cfg).unlink(missing_ok=True)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_all_wads_handles_empty(wad_env):
     """Loading all WADs with no WADs loaded should not crash."""
     wads_dir, _ = wad_env
@@ -266,7 +266,7 @@ async def test_load_all_wads_handles_empty(wad_env):
         Path(cfg).unlink(missing_ok=True)
 
 
-@pytest.mark.asyncio
+@pytest.mark.anyio
 async def test_load_entities_directory_not_exists(wad_env):
     """Loading entities from a non-existent directory should handle gracefully."""
     wads_dir, _ = wad_env
