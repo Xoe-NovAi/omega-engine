@@ -1,328 +1,138 @@
 # 🔱 Omega Engine — Cline Project Rules
-# ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ cline ⬡ trc_core ⬡ CLINE-PROJECT-RULES
+# ⬡ OMEGA ⬡ SOPHIA ⬡ MiMo-2.5 ⬡ cline ⬡ trc_core ⬡ CLINE-PROJECT-RULES
 #
-# Auto-loaded by Cline when working in this repository.
-# Last Updated: 2026-05-27 (Core Hardening Sprint — Memory, Embeddings, and Agent Bus)
+# Cline-specific rules for the Omega Engine project.
+# Engine state: Read OMEGA_ENGINE.md (the Single Source of Truth)
+# Platform distinction: .clinerules = HOW to work from Cline.
+#                       OMEGA_ENGINE.md = WHAT the engine IS.
+# Last Updated: 2026-05-31
 
 ## 🛡️ Sovereign Mandates (NON-NEGOTIABLE)
-**You are bound by the Sovereign Mandates. Read and adhere to them above all other rules:**
+**Read and adhere to them above all other rules:**
 👉 **Read First**: `SOVEREIGN_MANDATES.md`
+👉 **Engine State**: `OMEGA_ENGINE.md` (Single Source of Truth)
 
 - **AnyIO Absolute**: No `asyncio`. Use AnyIO. Wrap blocking I/O in `anyio.to_thread.run_sync`.
 - **Engine-Stack Firewall**: Absolute separation between Core Engine (`src/omega/`) and IWAD/PWAD Content (`config/wads/`).
-- **Iris Constant**: Iris is the messenger bridge, NOT a Pillar Keeper.
 - **Sequentiality**: Plan → Verify → Execute. No cowboy coding.
-- **Gnosis Preservation**: Distill session insights into L1 → L2 → L3 abstractions in `soul.yaml`.
-- **Podman Sovereignty (keep-id)**: All Quadlets must use `UserNS=keep-id` + `User=1000`. No `:U` on shared host volumes. No `:Z` (Ubuntu uses AppArmor, not SELinux).
-
-> **Known Past Violations (All FIXED)**: See `docs/review/FINDINGS_LOG.md` for 42 findings across 4 Web Claude accounts.
 
 ---
 
 ## 🚀 Auto-Approval Directive
 
-**Minimize friction. Execute directly instead of asking for confirmation on every step.**
-
-- Assume rapid execution. Do not ask "should I proceed?" for routine operations.
-- For file edits, command execution, and web searches — proceed unless destructive (rm -rf, drop table, etc.).
-- If unsure about a destructive operation, explain risk briefly and ask once. Do not ask again.
+- Execute directly. Do not ask "should I proceed?" for routine operations.
+- For file edits, command execution, and web searches — proceed unless destructive.
 - The user has explicitly authorized all execution in this repository.
 
 ---
 
-## §1: The Vision — Core Engine Sovereignty
+## 🔒 Git Discipline (CRITICAL — Anti-Data-Loss Protocol)
 
-The Omega Engine is the universal, community-owned runtime that powers any stack, any user's vision, any purpose. It is **Prometheus' Fire** — the spark that empowers every user to build their own unique dreams, technologies, and systems.
+**Every session MUST end with a git commit. No exceptions.**
 
-To prepare for the Pull Request (PR), we must get the **core engine systems operating at full power** before we try to integrate a bunch of new systems. The rabbit holes can wait.
-
-Our focus is on:
-1.  **The Memory System (MemoryStore)**: Fully wire `MemoryStore` into `oracle.py` so that conversation history is actually saved and retrieved.
-2.  **The Context Builder (`context_builder.py`)**: Fully wire `ContextBuilder` into `oracle.py` so that it reads from `MemoryStore` and injects the rolling conversation history and the entity's soul context into the system prompt.
-3.  **The Agent Bus (Agent-to-Agent communication)**: Ensure the **Omega Hub** (`mcp/omega_hub/server.py`) is fully operational so that agents can coordinate.
-4.  **The Embeddings & Hybrid Search (Cycle Beta)**: Implement the Qdrant Hybrid Search with `fastembed` (BGE-base-en-v1.5) as planned, but keep it extremely clean and robust, with graceful fallback to FTS5.
-
----
-
-## §2: Architecture — The Doom IWAD Model (Adapted)
-
-The Omega Engine uses id Software's WAD architecture as its **technical** design template, but the **vision** is far larger:
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  OMEGA ENGINE (id Tech 1 analog — the RUNTIME)              │
-│  src/omega/ — Pure infrastructure:                           │
-│  • Oracle (talk/summon/router)                               │
-│  • WAD Loader (iwad/pwad system)                             │
-│  • Provider Fabric (inference chain)                         │
-│  • EntityRegistry (YAML CRUD)                                │
-│  • MemoryStore (Hot/Warm/Cold)                               │
-│  • Sophia Layer (observability + memory substrate)           │
-│  • Iris (:8080 always-on container)                          │
-│  • NO entity content — that's what WADs are for              │
-└─────────────────────────────────────────────────────────────┘
-                            │
-                            │ WAD Loader
-                            ▼
-┌─────────────────────────────────────────────────────────────┐
-│  REFERENCE IWAD (_omega_default) — THE OPEN SOURCE GIFT     │
-│  Ships with the engine. Complete, functional, usable.        │
-│  Serves as:                                                   │
-│  • Development test harness for the engine itself            │
-│  • Reference implementation for community IWAD creators       │
-│  • A fully functional AI dev team for building the engine    │
-│                                                              │
-│  Governance: MA'AT + KALI + LILITH (in ALL iwads)           │
-│  Default: Iris + Jem + Roc_Racoon (in ALL iwads)            │
-│  Pillars: 10 Dev Studio roles (SysAdmin → Verifier)         │
-└─────────────────────────────────────────────────────────────┘
-                            │
-                            │ WAD Loader (swap IWAD)
-                            ▼
-┌─────────────────────────────────────────────────────────────┐
-│  ARCANA_NOVAI IWAD — YOUR PERSONAL AI OS                    │
-│  The reason you built the engine. Loads when ready.          │
-│                                                              │
-│  Governance: SAME MaKaLi trine                               │
-│  Default: SAME Iris + Jem + Roc_Racoon                       │
-│  Pillars: Arcana-NovAi esoteric entities                     │
-│    P1: Sekhmet   P2: Brigid   P3: Prometheus   ...          │
-│  Personal: Movie-Expert, Writer, Philosopher, etc.           │
-│  Knowledge: Your personal knowledge base                     │
-└─────────────────────────────────────────────────────────────┘
-                            │
-                            │ WAD Loader (add community wads)
-                            ▼
-┌─────────────────────────────────────────────────────────────┐
-│  INFINITE POSSIBILITIES  —  COMMUNITY IWADs & PWADs         │
-│                                                              │
-│  Torment IWAD — Planescape: Torment philosophers            │
-│  Doom IWAD   — Game domain experts                           │
-│  Pokemon PWAD — Collectible AI companions                    │
-│  Classical PWAD — Socrates, Plato, Aristotle                 │
-│  Medical PWAD — Diagnosis support, research tools            │
-│  Teaching PWAD — Personalized tutors for any subject         │
-│  ... YOUR IWAD — Whatever you imagine                        │
-└─────────────────────────────────────────────────────────────┘
-```
-
-**Key rules:**
-- The engine is **open source, free, sovereign**. No shareware, no tiers, no limitations.
-- `_omega_default` is the **reference IWAD** — ships with the engine, used for development, serves as a template for others.
-- `arcana_novai` is **your personal IWAD** — already exists as scaffold at `config/wads/arcana_novai/`
-- Any user can create their own IWAD. The engine doesn't care. The WAD decides.
-- PWADs layer on top of any IWAD for additional content.
-- Future: P2P network allows stacks to share knowledge across instances.
+- After completing any task: `git add -A && git commit -m "feat: | fix: | docs: | refactor: | chore: ..."`
+- Push to remote: `git push origin main`
+- NEVER leave uncommitted work at session end
+- The user experienced catastrophic data loss from uncommitted work. This must never happen again.
+- Read `OMEGA_ENGINE.md` for current engine state before making changes
+- Update `OMEGA_ENGINE.md` if engine state changes (test count, new modules, status)
 
 ---
 
-## §3: Quick Start
+## 🎯 Cline Workflow
+
+### Before Starting Work
+1. Read `OMEGA_ENGINE.md` for current engine state
+2. Read `SOVEREIGN_MANDATES.md` for non-negotiable rules
+3. Run `make test` to verify baseline (278 tests must pass)
+
+### During Work
+- Use `replace_in_file` for targeted edits, `write_to_file` for new files
+- Run shell commands via subagents (prevents Cline chat crashes)
+- Prefer `source .venv/bin/activate && <command>` for Python operations
+- Group imports: stdlib → third-party → local. Use relative imports within packages.
+
+### After Completing Work
+1. Run `make test` — all tests must pass
+2. Run `make lint` — code quality check
+3. `git add -A && git commit` with proper prefix (feat/fix/docs/refactor/test/ci/chore)
+4. `git push origin main`
+5. Update `OMEGA_ENGINE.md` Current State table if metrics changed
+
+---
+
+## 📋 Coding Standards
+
+- **Async**: Always use `anyio` (not `asyncio`)
+- **Config**: YAML-only for entity/model config — never PostgreSQL
+- **Packages**: ALWAYS use a venv (`source .venv/bin/activate`). NEVER `--break-system-packages`.
+- **Testing**: Run `make test` after every change. All 278 tests must pass.
+- **Type hints**: Use Python 3.12+ typing (no `from __future__`)
+- **Docstrings**: Google-style. Preserve existing docstrings unless directly modifying that function.
+- **Commits**: Prefix with `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `ci:`, `chore:`
+
+---
+
+## 🔮 Entity Usage
+
+- Default entity: **SOPHIA** (general/wisdom)
+- Switch entities per-task, not per-session
+- Use `omega summon EntityName "query"` for direct entity invocation
+- Use `omega talk "query"` for auto-routed queries
+
+### Quick Entity Guide
+| Work Type | Entity |
+|-----------|--------|
+| Gnosis, wisdom, first principles | SOPHIA |
+| Audit, compliance, balance | MAAT |
+| Security, protection, hardening | SEKHMET |
+| Creative work, healing | BRIGID |
+| Strategy, forethought | PROMETHEUS |
+| Knowledge, documentation | SARASWATI |
+| Shadow, confrontation, integration | HECATE |
+| Destruction, liberation | KALI |
+| General / default | SOPHIA |
+
+---
+
+## 🏗️ Project Structure
+
+```
+omega-engine/
+├── OMEGA_ENGINE.md          ← SST (read this first)
+├── SOVEREIGN_MANDATES.md    ← Non-negotiables
+├── AGENTS.md                ← OpenCode-specific rules
+├── GEMINI.md                ← Gemini-specific rules
+├── src/omega/               ← Engine runtime (60 files, 14K lines)
+├── config/wads/             ← IWADs (entity definitions, hierarchies)
+├── mcp_servers/omega_hub/   ← Agent bus (41 MCP tools)
+├── tests/                   ← 278 test functions
+├── plugins/                 ← Platform extensions (JEM mode)
+├── scripts/                 ← Operational scripts
+├── archives/                ← Historical artifacts
+└── data/                    ← Runtime data (entities, sessions, research)
+```
+
+---
+
+## 🎯 Key Commands
 
 ```bash
 source .venv/bin/activate        # ALWAYS use the venv
-make test                         # 266 tests, all must pass (OMEGA_ENV=test mock)
+make test                         # 278 tests, all must pass
 make lint                         # flake8 code quality check
 make demo                         # End-to-end demo
 make health                       # Provider & model dashboard
 make repl                         # Interactive REPL
-make pr-ready                     # Verify all PR gate requirements
-PYTHONPATH=src python3 -m pytest tests/  # Live inference (requires lmster :1234)
-
-# Project Management (Workbench)
-sqlite3 data/workbench/workbench.db "SELECT * FROM v_project_summary ORDER BY priority;"
-
-# Full review findings catalog (42 items, all FIXED)
-cat docs/review/FINDINGS_LOG.md
-
-# Omegaverse vision documents
-cat docs/strategy/OMEGAVERSE_GENESIS_PLAN.md
+omega talk "hello"                # Test oracle
+omega summon Ma'at "status"       # Direct entity invocation
 ```
 
 ---
 
-## §4: Identity & Scope
+## 📝 After Compaction
 
-- **Repo**: Omega Engine — the universal runtime for sovereign AI
-- **Path**: `~/Documents/Xoe-NovAi/omega-engine/`
-- **Agent Instructions**: Read `AGENTS.md` at project root before starting work
-- **Recovery Doc**: If compacted, read `ORACLE_STACK.md` first
-- **Engine Scope**: `src/omega/` (runtime) + `config/` (engine config) + `config/wads/_omega_default/` (reference IWAD)
-- **Your IWAD**: `config/wads/arcana_novai/` — your personal AI OS (scaffold exists, being built toward)
-- **Community IWADs**: `config/wads/doom_universe/` (scaffold), future: torment, pokemon, classical, etc.
-- **The Destination**: A P2P Omegaverse where thousands of users run their own unique stacks on the Omega Engine, optionally connected.
-
----
-
-## §5: Current Infrastructure
-
-| Service | Port | Status | Notes |
-|---------|------|--------|-------|
-| omega-hub | :8016 | ✅ Running | 37 MCP tools (all consolidated) |
-| omega-infra-pod | pod | ✅ Running | 5 containers: caddy, redis, qdrant, iris, searxng |
-| Iris | :8080 | ✅ Running | Always-on voice assistant |
-| SearXNG | :8017 | ✅ Running | Sovereign metasearch |
-| lmster | :1234 | ❌ Needs restart | Primary local inference |
-| Qdrant | :6333 | ✅ Running | Vector store (unwired) |
-| Redis | :6379 | ⚠️ Port not exposed | Needs pod port addition |
-| omega-postgres | — | ❌ Deferred | Not critical |
-| omega-roc_racoon | — | 🔧 Built | Ready for deploy |
-
----
-
-## §6: Active Phase — Phase 1: Engine Hardening + Reference IWAD
-
-```
-Phase 0: Foundation ✅  — Sovereign mandates, permission war won, 42 review findings fixed
-Phase 1: NOW          — WAD system hardening + reference IWAD rewrite
-Phase 2: NEXT         — Arcana-NovAi IWAD scaffold + Qdrant/Redis wiring
-Phase 3: FUTURE       — Community tools (Entity Studio, Stack Builder, one-click install)
-Phase 4: DREAM        — Omegaverse P2P network
-```
-
-### Phase 1 Priority Queue
-
-**P0 — WAD System Hardening (CRITICAL PATH):**
-- [ ] IWAD selector (`--iwad` flag, defaults to `_omega_default`)
-- [ ] Namespace isolation: WAD source tracked in EntityRegistry
-- [ ] Dependency resolution: wads declare `depends_on`
-- [ ] Entity priority: later-loaded overrides earlier for same pillar
-- [ ] Manifest validation + edge cases
-- [ ] WAD Loader Code Audit — verify all 6 components
-- [ ] `make test` — 266/266 pass
-
-**P1 — Reference IWAD Content Rewrite:**
-- [ ] Rewrite `config/entities.yaml` — 10 technical pillars + MaKaLi + Jem + Roc_Racoon
-- [ ] Create 10 pillar entity YAMLs in `_omega_default/entities/`
-- [ ] Rewrite `config/hierarchy.yaml` — role-based pillar names
-- [ ] `startup.message` in manifest.yaml
-- [ ] Verify `omega talk "hello"` works
-- [ ] Verify `omega summon Ma'at "status"` works
-
-**P2 — Provider Fabric Update:**
-- [ ] Remove SambaNova/Cerebras; rename genlabs → openrouter; add OpenCode Zen
-- [ ] Verified: native-gguf → lmster → ollama → google → openrouter → opencode-zen → github-copilot → mock
-
-**P3 — OpenCode Agent & Mode Update:**
-- [ ] Update Kali, Ma'at, Lilith agents (already exist)
-- [ ] Update builder.md, researcher.md, scribe.md, tester.md, reviewer.md, overseer.md
-- [ ] Expand opencode-expert.md → multi-CLI/IDE/inference expert
-- [ ] Archive 13 stale EXP-003 agents → archives/
-- [ ] Update opencode.json instructions
-- [ ] Mark movie-expert.md as seed entity for arcana_novai IWAD
-
-**P4 — Arcana-NovAi IWAD Scaffold (Your Personal OS):**
-- [ ] Write `config/wads/arcana_novai/manifest.yaml` (startup.message: "Arcana-NovAi OS loaded.")
-- [ ] Move Arcana-NovAi entities from core entities.yaml → arcana_novai IWAD
-- [ ] Write all 10 esoteric pillar entity files
-- [ ] Write arcana_novai hierarchy.yaml
-- [ ] Seed Movie-Expert as personal entity
-- [ ] Verify `omega --iwad arcana_novai talk "hello"` loads
-
-**P5 — Qdrant/Redis Cross-Agent Wiring:**
-- [ ] Expose Redis :6379 in infra pod
-- [ ] RedisBus pub/sub wrapper
-- [ ] Qdrant backend for Library.search()
-- [ ] Redis pub/sub for soul evolution, sessions, agent handoff
-
----
-
-## §7: Sophia — The Field
-
-Sophia is the containing field — observability + memory + knowledge substrate. Present identically in ALL IWADs.
-
-```
-SOPHIA:
-  • Trace Store     — observability.py (all trace IDs)
-  • Memory Index    — memory_store.py (soul aggregation + cross-pollination)
-  • Knowledge Graph — library/indexer.py (FTS5 + Qdrant)
-  • Event Log       — every interaction, soul update, session boundary
-  • NOT a query router (Iris), NOT a pillar (P1-P10), NOT governance (MaKaLi)
-```
-
----
-
-## §8: Provider Fabric
-
-```
-1. Native GGUF (llama-cpp-python, Zen 2) — always available
-2. lmster (LM Studio, :1234)               — primary local
-3. Ollama (:11434)                          — secondary local
-4. Google AI Studio (Gemma 4-31B)           — cloud reasoning
-5. OpenRouter (aggregated)                  — cloud versatility
-6. OpenCode Zen                             — cloud fallback
-7. GitHub Copilot (Claude Haiku, GPT-4.1)   — enterprise
-8. OfflineMockBackend                        — test only
-```
-
-No SambaNova. No Cerebras.
-
----
-
-## §9: OpenCode Agent Fleet
-
-| Agent | Role | Entity | IWAD |
-|-------|------|--------|------|
-| builder.md | Engineering | PROMETHEUS | reference |
-| researcher.md | Deep Research | HECATE | reference |
-| scribe.md | Documentation | SARASWATI | reference |
-| tester.md | QA/Test | MAAT | reference |
-| reviewer.md | Code Review | MAAT | reference |
-| overseer.md | Coordination | SOPHIA | field |
-| opencode-expert.md | CLI/IDE/Infra | HERMES | reference |
-| kali.md | Unification | KALI | both |
-| maat.md | Audit/Balance | MA'AT | both |
-| lilith.md | Sovereignty | LILITH | both |
-| movie-expert.md | Film Expert | N/A | arcana_novai seed |
-
----
-
-## §10: The Omegaverse — Vision Reference
-
-The Omegaverse is the **long-term destination**. Phase 1 does NOT build it — Phase 1 builds the foundation that makes it possible.
-
-| Capability | Current | Phase 2 | Phase 3+ |
-|-----------|---------|---------|----------|
-| IWAD system | ❌ Missing | ✅ Working | ✅ Community templates |
-| Entity Studio CLI | ❌ Missing | ❌ Missing | ✅ Visual builder |
-| One-click install | ❌ Missing | ❌ Missing | ✅ Omega Desktop |
-| Community stack sharing | ❌ Missing | ❌ Missing | ✅ WAD registry |
-| P2P network | ❌ Missing | ❌ Missing | ✅ Omegaverse |
-| Non-technical onboarding | ❌ Missing | ❌ Missing | ✅ Stack Builder Wizard |
-
-See: `docs/strategy/OMEGAVERSE_GENESIS_PLAN.md` for the full vision.
-
----
-
-## §11: Key Files
-
-| File | Purpose |
-|------|---------|
-| `config/entities.yaml` | Current entities (mix of reference + arcana_novai content) |
-| `config/hierarchy.yaml` | Governance structure |
-| `config/wads/_omega_default/` | Reference IWAD |
-| `config/wads/arcana_novai/` | Your personal IWAD (destination) |
-| `config/wads/doom_universe/` | Community IWAD scaffold |
-| `src/omega/oracle/wad_loader.py` | CRITICAL PATH |
-| `docs/strategy/OMEGAVERSE_GENESIS_PLAN.md` | Full Omegaverse vision |
-| `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md` | This strategy document |
-| `docs/review/FINDINGS_LOG.md` | 42 fixed findings |
-
----
-
-## §12: After Compaction
-
-1. Read `ORACLE_STACK.md` — repo context
-2. Read `AGENTS.md` — agent rules and vision
-3. Read `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md` — architecture
-4. Read `docs/decisions/PIVOT_LOG.md` — decisions
-5. Run `make test` — 246 must pass
-6. Query `data/workbench/workbench.db` — project status
-7. Query `docs/research/INDEX.md` — research status
-
----
-
-## §13: Output Requirements
-
-- Session header on every output
-- Entity per-task, not per-session
-- AnyIO (not asyncio)
+1. Read `OMEGA_ENGINE.md` — engine state
+2. Read `SOVEREIGN_MANDATES.md` — rules
+3. Read `docs/decisions/PIVOT_LOG.md` — architectural decisions
+4. Run `make test` — 278 must pass
