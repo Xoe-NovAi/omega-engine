@@ -1,15 +1,23 @@
 # ============================================================================
-# Omega Engine — Models Configuration v1.0.0
+# Omega Engine — Models Configuration v2.0.0
 # ============================================================================
-# Alethia Pointer: AP-MODELS-CONFIG-v1.0.0
-# Purpose: Centralized model specifications for Ryzen 7 5700U local inference
-# Hardware: AMD Ryzen 7 5700U (8C/16T), 16GB RAM (14.4Gi usable), AMD iGPU
-# Strategy: max_concurrent_models = 1 (plus Nova always-on at ~300MB)
+# Alethia Pointer: AP-MODELS-CONFIG-v2.0.0
+# Purpose: Single source of truth for all model specs, paths, context, threads,
+#          KV cache config, and loading strategies.
+# Hardware: AMD Ryzen 7 5700U (Zen 2, 8C/16T), 14Gi RAM, AMD iGPU
+# RAM budget: 14336 total - 2000 OS = 12336 available for AI
+#             Nova always-on: 300MB → 12036MB for pillar models
+# Strategy: max_concurrent_models = 1 (plus Nova always-on)
+#
+# Context window philosophy (v2.0.0):
+#   Context is NOT free. Every token costs KV cache RAM. Windows are set to
+#   the MINIMUM that serves the entity's actual use case, not the model's max.
+#   This frees RAM for model weights, a second concurrent model, or OS headroom.
 # ============================================================================
 
 embedding:
   model: "embeddinggemma-300m-q6_k"
-  local_path: "/media/arcana-novai/omega_library/models/gguf/embeddinggemma-300m-Q6_K.gguf"
+  local_path: "/media/arcana-novai/omega_library/models/gguf/local/all/embedding-gemma-300m.gguf"
   dimensions: 768
   backend: "llama-server"
   quantization: "Q6_K"
@@ -20,142 +28,112 @@ llama_server:
   port: 8080
   host: "127.0.0.1"
   log_level: "info"
-  threads: 6
+  threads: 6                  # Zen 2: 6 physical cores (0,2,4,6), leave 1 for OS
   batch_size: 512
   ubatch_size: 32
-  context_size: 8192
-  gpu_layers: 0
+  context_size: 8192          # Default context (per-model overrides below)
+  gpu_layers: 0               # CPU-only on 5700U (no discrete GPU)
   startup_timeout_sec: 120
 
 models:
-  # Always-on model (Nova voice assistant container)
+  # ── Always-on: Nova (voice assistant, speculative decoder) ──────
   qwen3-1.7b:
-    path: "/media/arcana-novai/omega_library/models/gguf/Qwen3-1.7B-Q6_K.gguf"
+    path: "/media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-1.7B-Q6_K.gguf"
     size_gb: 0.27
     ram_mb: 300
-    context_window: 4096
-    threads: 2
-    load_strategy: "always"        # Nova keeps this loaded
+    context_window: 4096       # Short Q&A, greetings, routing — no need for 32K
+    threads: 4                 # Tiny model, 4 threads sufficient
+    load_strategy: "always"
     entity: "nova"
 
-  # Ultra-light model (stays warm)
+  # ── Warm: Iris (speculative decode check, quick tasks) ──────────
   qwen3-0.6b-q6_k:
-    path: "/media/arcana-novai/omega_library/models/gguf/Qwen3-1.7B-Q6_K.gguf"  # No 0.6B exists; use 1.7B as warm
+    path: "/media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-0.6B-Q6_K.gguf"
     size_gb: 0.47
     ram_mb: 500
-    context_window: 32768
+    context_window: 4096       # Speculative decode check only
     threads: 4
-    load_strategy: "warm"           # Keep loaded (tiny)
-    entity: "kali"
+    load_strategy: "warm"
+    entity: "iris"
 
-  # Workhorse model (frequently loaded)
+  # ── On-demand: Sekhmet/Hecate (boundary, protection, shadow) ───
   qwen3-1.7b-q6_k:
-    path: "/media/arcana-novai/omega_library/models/gguf/Qwen3-1.7B-Q6_K.gguf"
+    path: "/media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-1.7B-Q6_K.gguf"
     size_gb: 1.6
     ram_mb: 1800
-    context_window: 32768
+    context_window: 8192       # Medium conversations
     threads: 6
-    load_strategy: "on_demand_10min" # Load, keep 10min idle
+    load_strategy: "on_demand_10min"
     entity: "sekhmet, hecate"
 
-  # Native default model
+  # ── On-demand: Sophia (deep analysis, code review, strategy) ───
   phi-4-mini:
-    path: "/media/arcana-novai/omega_library/models/gguf/phi-4-mini-reasoning-abliterated-q4_k_m.gguf"
+    path: "/media/arcana-novai/omega_library/models/gguf/local/all/phi-4-mini-reasoning-abliterated-q4_k_m.gguf"
     size_gb: 3.8
     ram_mb: 4500
-    context_window: 32768
+    context_window: 16384      # Deep analysis needs room for code + reasoning
     threads: 6
     load_strategy: "on_demand_10min"
     entity: "SOPHIA"
 
-
-  # Creative/emotional model
+  # ── On-demand: Brigid (creative, poetry, healing) ──────────────
   phi-2-omnimatrix-i1-q4_k_m:
-    path: "/media/arcana-novai/omega_library/models/gguf/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf"  # phi-2 not present; use Ministral-3B
+    path: "/media/arcana-novai/omega_library/models/gguf/local/all/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf"
     size_gb: 2.5
     ram_mb: 2800
-    context_window: 8192
+    context_window: 8192       # Creative work, moderate context
     threads: 6
     load_strategy: "on_demand_10min"
     entity: "brigid"
 
-  # Thinking/reasoning model (PRIMARY — Tier 1 local inference)
+  # ── On-demand: Maat/Anubis (reasoning, judgment, soul guidance) ─
   qwen3-4b-thinking-q4_k_m:
-    path: "/media/arcana-novai/omega_library/models/gguf/Qwen3-4B-Thinking-2507-Q4_K_M.gguf"
+    path: "/media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-4B-Thinking-2507-Q4_K_M.gguf"
     size_gb: 2.4
     ram_mb: 2700
-    context_window: 32768
+    context_window: 8192       # Reasoning chains, not long-context
     threads: 6
     load_strategy: "on_demand_5min"
     entity: "maat, anubis"
-    kv_cache_key_type: "fp8"         # fp8 KV cache (try first), q8_0 fallback
+    kv_cache_key_type: "fp8"
     kv_cache_value_type: "fp8"
 
-  # Deep reasoning model
+  # ── On-demand: Lucifer (deep reasoning, rebellion, gnosis) ──────
   deepseek-r1-qwen3-8b-q3_k_l:
-    path: "/media/arcana-novai/omega_library/models/gguf/DeepSeek-R1-0528-Qwen3-8B-Q3_K_L.gguf"
+    path: "/media/arcana-novai/omega_library/models/gguf/local/all/DeepSeek-R1-0528-Qwen3-8B-Q3_K_L.gguf"
     size_gb: 4.2
     ram_mb: 4500
-    context_window: 32768
+    context_window: 8192       # Heavy model, limit context to save RAM
     threads: 6
     load_strategy: "on_demand_5min"
     entity: "lucifer"
 
-  # Deep knowledge model (shared pool)
-  krikri-8b-q5_k_m:
-    path: "/media/arcana-novai/omega_library/models/gguf/Krikri-8b-Instruct-Q5_K_M.gguf"
-    size_gb: 5.5
-    ram_mb: 5800
-    context_window: 32768
-    threads: 6
-    load_strategy: "on_demand_5min"  # Shared: inanna, isis, lilith
-    entity: "inanna, isis, lilith"
-
-  # Greek-capable models
-  krikri-7b-instruct-q6_k:
-    path: "/media/arcana-novai/omega_library/models/gguf/Krikri-8b-Instruct-Q5_K_M.gguf"  # 7B not present; use 8B as Greek-capable
-    alt_paths:
-      - "/media/arcana-novai/omega_library/models/gguf/krikri-7b-instruct-q4_k_m.gguf"
-    size_gb: 5.5
-    ram_mb: 5800
-    context_window: 32768
+  # ── On-demand: Inanna/Isis/Lilith (knowledge, dreams, depths) ──
+  krikri-8b-q4_k_m:
+    path: "/media/arcana-novai/omega_library/models/gguf/local/all/Krikri-8B-Instruct.Q4_K_M.gguf"
+    size_gb: 4.7
+    ram_mb: 4900
+    context_window: 16384      # Knowledge work, Greek texts can be long
     threads: 6
     load_strategy: "on_demand_5min"
-    languages: ["el", "grc", "en"]
-    capabilities: ["greek_text", "ancient_greek", "translation"]
-    entity: "hermes, thoth"
-
-# Embedding models
-embedding_models:
-  ancient-greek-bert:
-    type: "sentence_transformer"
-    path: "/media/arcana-novai/omega_library/models/gguf/ancient-greek-bert"
-    dimensions: 768
-    capabilities: ["greek_embeddings", "greek_classification", "greek_lemmatization"]
-    load_strategy: "on_demand"
-    fallback: "bow_embeddings"
+    entity: "inanna, isis, lilith"
 
 # KV Cache optimization (Zen 2)
 # Note: fp8 requires llama.cpp build with FP8_KV support; fallback to q8_0 if unsupported
+# Per-model overrides only — defaults apply to any model not listed here.
 kv_cache:
-  default_key_type: "q8_0"      # 8-bit key cache (50% memory vs f16)
-  default_value_type: "q8_0"    # 8-bit value cache (50% memory vs f16)
+  default_key_type: "q8_0"
+  default_value_type: "q8_0"
   models:
     qwen3-1.7b:
-      key_type: "f16"            # Tiny model, no need for quant
+      key_type: "f16"            # Tiny model, KV cache is negligible
       value_type: "f16"
     qwen3-0.6b-q6_k:
-      key_type: "f16"            # Tiny model, no need for quant
+      key_type: "f16"
       value_type: "f16"
     qwen3-4b-thinking-q4_k_m:
-      key_type: "fp8"            # fp8 target (32K ctx, 2.4GB model), q8_0 fallback
+      key_type: "fp8"            # fp8 target, q8_0 fallback if unsupported
       value_type: "fp8"
-    deepseek-r1-qwen3-8b-q3_k_l:
-      key_type: "q8_0"           # 4.2GB model, fp8 viable
-      value_type: "q8_0"
-    krikri-8b-q5_k_m:
-      key_type: "q8_0"           # 32K context, moderate quant
-      value_type: "q8_0"
 
 # Zen 2 compilation guide
 zen2_build:
@@ -164,22 +142,22 @@ zen2_build:
     - "-DLLAMA_AVX2=ON"
     - "-DLLAMA_FMA=ON"
     - "-DLLAMA_F16C=ON"
-    - "-DLLAMA_NO_AVX512=ON"    # CRITICAL — Zen 2 has no AVX-512
+    - "-DLLAMA_NO_AVX512=ON"
     - "-DLLAMA_BLAS=OFF"
     - "-DLLAMA_CUDA=OFF"
     - "-DLLAMA_METAL=OFF"
     - "-DCMAKE_C_FLAGS='-march=znver2'"
     - "-DCMAKE_CXX_FLAGS='-march=znver2'"
   runtime_env:
-    OMP_NUM_THREADS: "6"
+    OMP_NUM_THREADS: "6"         # Match cpu_optimizer.py ZEN2_RECOMMENDED_THREADS
     OMP_PROC_BIND: "close"
     OMP_PLACES: "cores"
     OPENBLAS_CORETYPE: "ZEN"
 
 # Loading strategy rules
 loading:
-  max_concurrent_models: 1    # Only 1 pillar model + Nova always-on
-  nova_always_on: true          # qwen3-1.7b stays loaded (~300MB)
-  warm_models: ["qwen3-0.6b-q6_k"]  # Tiny models stay warm
-  unload_after_idle_minutes: 5      # Heavy models unload faster
-  emergency_swap_threshold_mb: 1024 # If free RAM < 1GB, unload all idle
+  max_concurrent_models: 1
+  nova_always_on: true           # qwen3-1.7b stays loaded (~300MB)
+  warm_models: ["qwen3-0.6b-q6_k"]
+  unload_after_idle_minutes: 5
+  emergency_swap_threshold_mb: 1024

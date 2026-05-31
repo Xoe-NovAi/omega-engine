@@ -129,7 +129,7 @@ async def generate(self, ...):
 
 **`.env` file** (`/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.env:10`):
 ```
-GOOGLE_API_KEY=AIzaSyDJldc4BgzN-Ui2C3XDwSr8ohPTWCKQZrU
+GOOGLE_API_KEY=[...REVOKED-2026-05-30...]
 ```
 
 **Impact**: `GoogleAIProvider.is_available()` **always returns False**. Google provider is dead code — never used in inference chain.
@@ -211,7 +211,7 @@ Gemma 4 supports configurable thinking/reasoning mode. The current `GoogleAIProv
 | Quick chat responses | `gemma-3-4b-it` | Fast inference, low latency, 128K context | `gemma-3-1b-it` |
 | Entity workspace agent tasks | `gemma-4-31b-it` | Function calling, structured output, agentic | `gemma-4-26b-a4b-it` |
 | RAG / knowledge base queries | `gemma-4-31b-it` | 256K context for large document injection | `gemma-4-26b-a4b-it` |
-| Legacy mining / analysis (Belial) | `gemma-4-31b-it` | Deep analysis, long context for codebases | `gemma-4-26b-a4b-it` |
+| Legacy mining / analysis (Roc Racoon) | `gemma-4-31b-it` | Deep analysis, long context for codebases | `gemma-4-26b-a4b-it` |
 
 ### General Guidance
 

@@ -16,19 +16,35 @@ class SovereignHierarchy:
     """Manages entity ranks and recursion limits based on the Oversoul Hierarchy."""
 
     def __init__(self, hierarchy_config: Optional[Path] = None):
-        self.config_path = hierarchy_config or Path(__file__).resolve().parent.parent.parent.parent / "config" / "hierarchy.yaml"
+        if hierarchy_config is None:
+            try:
+                omega_config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
+                with open(omega_config_path, "r") as f:
+                    omega_cfg = yaml.safe_load(f)
+                active_iwad = omega_cfg.get("omega", {}).get("entity", {}).get("active_iwad", "_omega_default")
+                self.config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / active_iwad / "hierarchy.yaml"
+            except Exception as e:
+                logger.error(f"Failed to resolve active IWAD for hierarchy: {e}. Falling back to default.")
+                self.config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / "_omega_default" / "hierarchy.yaml"
+        else:
+            self.config_path = hierarchy_config
         self._hierarchy = {}
 
-
-    async def load(self):
-        """Asynchronously load the hierarchy configuration."""
-        if not self.config_path.exists():
-            logger.warning(f"Hierarchy config not found at {self.config_path}")
+    async def load(self, config_path: Optional[Path] = None):
+        """Asynchronously load the hierarchy configuration.
+        
+        Args:
+            config_path: Optional path to a specific hierarchy file (e.g., from a WAD).
+                          If None, uses the default config_path.
+        """
+        path = config_path or self.config_path
+        if not path.exists():
+            logger.warning(f"Hierarchy config not found at {path}")
             return
-        async with await anyio.open_file(self.config_path, "r") as f:
+        async with await anyio.open_file(str(path), "r") as f:
             content = await f.read()
             self._hierarchy = yaml.safe_load(content)
-            logger.info(f"Loaded hierarchy from {self.config_path}")
+            logger.info(f"Loaded hierarchy from {path}")
 
 
     def get_rank(self, entity_name: str) -> int:
@@ -52,12 +68,13 @@ class SovereignHierarchy:
             return 0
 
         # 2. Resolve entity name to hierarchy key (data-driven, no hardcoded names)
+        #    Try common suffixes: _founder, _cto, _ciso, _oversoul, _unification
         lookup_name = name
         if lookup_name not in hierarchy_data:
-            if f"{name}_oversoul" in hierarchy_data:
-                lookup_name = f"{name}_oversoul"
-            elif f"{name}_unification" in hierarchy_data:
-                lookup_name = f"{name}_unification"
+            for suffix in ("_founder", "_cto", "_ciso", "_oversoul", "_unification"):
+                if f"{name}{suffix}" in hierarchy_data:
+                    lookup_name = f"{name}{suffix}"
+                    break
             else:
                 # Check if it's a keeper
                 keepers = hierarchy_data.get("keepers", {})

@@ -43,7 +43,7 @@ Here is everything the Overseer already discovered. Trust this data — do not r
 | `omega-hivemind` | Systemd points to `mcp/omega-hivemind/server.py` (ARCHIVED — see Decision 38). The hivemind was merged into `mcp/omega_hub/server.py`. | Update systemd unit path |
 | `omega-research` | `src/omega/workers/background_researcher/models.py` line 131: `def dequeue(self)` has **lost its indent** — sits at module level instead of under `EnhancedPriorityQueue` class. This cascades to line 201 `peek()`. | Re-indent `dequeue()` by 4 spaces |
 | `omega-infra-pod` | Root disk at 98% — Podman cannot create overlay filesystems. Fix root disk first. | Phase Z → free space |
-| `omega-belial` | Podman permission denied on `/media/arcana-novai/omega_library/`. Needs SELinux relabel or volume remap. | After Phase Z |
+| `omega-roc_racoon` | Podman permission denied on `/media/arcana-novai/omega_library/`. Needs SELinux relabel or volume remap. | After Phase Z |
 
 ### 🟢 Available Local GGUF Models (on omega_library)
 ```
@@ -286,9 +286,9 @@ podman logs omega-redis omega-qdrant omega-postgres omega-caddy 2>&1 | tail -20
 
 **Current infra-pod network**: Uses `omega-db-net` (internal) and `omega-app-net` (bridge). Both defined in `docker-compose.yml`.
 
-### Task I4: Fix omega-belial Podman Permission (20 min)
+### Task I4: Fix omega-roc_racoon Podman Permission (20 min)
 
-**File**: `src/omega/workers/omega-belial-entrypoint.py` (or the Podman command in the systemd unit)
+**File**: `src/omega/workers/omega-roc_racoon-entrypoint.py` (or the Podman command in the systemd unit)
 
 **Root cause**: Podman permission denied on `/media/arcana-novai/omega_library/`. This is a SELinux or ownership issue.
 
@@ -297,11 +297,11 @@ podman logs omega-redis omega-qdrant omega-postgres omega-caddy 2>&1 | tail -20
 podman unshare chown -R 1000:1000 /media/arcana-novai/omega_library/podman-storage/
 ```
 
-**Permanent fix**: Ensure the `:U` flag is on all volume mounts in the Belial container definition.
+**Permanent fix**: Ensure the `:U` flag is on all volume mounts in the Roc Racoon container definition.
 
-**Check current belial config**:
+**Check current roc_racoon config**:
 ```bash
-cat config/systemd/omega-belial.service
+cat config/systemd/omega-roc_racoon.service
 ```
 
 ### Task I5: Green Test Suite (10 min)
@@ -317,7 +317,7 @@ Expected: 230 collected, all passing.
 - ✅ `models.py` indentation fixed
 - ✅ `omega-hivemind` service resolved (option B — removed dead reference)
 - ✅ `omega-infra-pod` restarted and healthy
-- ✅ `omega-belial` permission fix applied
+- ✅ `omega-roc_racoon` permission fix applied
 - ✅ `make test` — all 230 tests green
 - ✅ `make demo` — runs without error
 

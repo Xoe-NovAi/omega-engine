@@ -58,7 +58,7 @@ Read this first, then the three deliverables, to restore full context.
 2. **4 Deprecated Subagents REMOVED** — binah, daath, yesod (Kabbalistic), minimax (model name)
 3. **Container UID Permission Leak (P0)** — Entire repo owned by UID 101000, not 1000
 4. **Google API Key in URL Params (P1/CRITICAL)** — `distiller.py:515,717`, `providers.py:30`
-5. **3 HIGH AnyIO Violations** — blocking `open()` in `entity_belial.py:208,217`, `inbox.py:199,206,220`
+5. **3 HIGH AnyIO Violations** — blocking `open()` in `entity_roc_racoon.py:208,217`, `inbox.py:199,206,220`
 6. **Engine-Stack Firewall** — `hierarchy.py:14-20` hardcodes RANK_MAP
 7. **WAD System Incomplete** — 9 of 10 entity files missing from `_omega_default/entities/`
 
@@ -82,7 +82,7 @@ Read this first, then the three deliverables, to restore full context.
 | omega-iris | ✅ Running | :8080 |
 | omega-searxng | ✅ Running | :8017 |
 | omega-postgres | ❌ Failed (image tag) | — |
-| omega-belial | 🔧 Built, not deployed | — |
+| omega-roc_racoon | 🔧 Built, not deployed | — |
 
 **Disk**: Root 98% (2.3G free). Podman NOT blocked (graph root on omega_library, 24G free).
 **Repo owner**: UID 101000 — **P0 blocker**.
@@ -102,7 +102,7 @@ make test  # Verify 236 tests
 |---|------|-------|------|
 | 1 | API key URL param → Header | `providers.py:30`, `distiller.py:515,717` | 10m |
 | 2 | Fix `test_get_model_path` | `test_model_gateway.py:15` | 15m |
-| 3 | Fix 3 AnyIO violations | `entity_belial.py:208,217`, `inbox.py:199,206,220` | 20m |
+| 3 | Fix 3 AnyIO violations | `entity_roc_racoon.py:208,217`, `inbox.py:199,206,220` | 20m |
 | 4 | Migrate RANK_MAP to YAML | `hierarchy.py:14-20` | 15m |
 
 ### P2 — Future

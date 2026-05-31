@@ -16,7 +16,9 @@ virtualenv/
 # ── Environment & Secrets ────────────────────────────────────────────
 .env
 .env.local
-*.env
+*.env*
+# Also add explicit rule for .env backup/key files to protect from any edge cases
+.env.*
 
 # ── Build Artifacts ──────────────────────────────────────────────────
 *.egg-info/

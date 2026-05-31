@@ -5,15 +5,27 @@ import anyio
 from contextlib import asynccontextmanager
 
 class ResourceGuard:
-    """Ensures only one model can be loaded/running at a time.
+    """Ensures model resource usage doesn't exceed system capacity.
     
-    Prevents OOM on memory-constrained systems (e.g. 14GB Ryzen 7).
+    Uses a weighted semaphore pattern to allow multiple light models 
+    to run concurrently while restricting heavy models.
     """
-    def __init__(self, limit: int = 1):
-        self._semaphore = anyio.Semaphore(limit)
+    def __init__(self, total_capacity: int = 8):
+        self._capacity = total_capacity
+        self._current_usage = 0
+        self._condition = anyio.Condition()
 
     @asynccontextmanager
-    async def lock(self):
-        """Async context manager to acquire the resource semaphore."""
-        async with self._semaphore:
+    async def lock(self, weight: int = 1):
+        """Async context manager to acquire weighted resource locks."""
+        async with self._condition:
+            while self._current_usage + weight > self._capacity:
+                await self._condition.wait()
+            self._current_usage += weight
+        
+        try:
             yield
+        finally:
+            async with self._condition:
+                self._current_usage -= weight
+                self._condition.notify_all()

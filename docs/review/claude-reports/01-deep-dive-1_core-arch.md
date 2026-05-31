@@ -126,7 +126,7 @@ The `omega://transfer/{id}` protocol is barely defined. What exists: a URI schem
 - [ ] **C-HIER-002: `kali` absent from `RANK_MAP` — gets Keeper rank — HIGH**
   - File: `hierarchy.py:14-18`
   - Issue: Kali is the MaKaLi — the Unifier above Ma'at and Lilith. She should be Rank 1 (same tier as Ma'at) or have a special rank above all Oversouls. Instead, because she is not in `RANK_MAP`, `get_rank("kali")` returns `3` (standard Keeper rank). By the recursion rules: Rank 3 entities have `max_allowed_depth = 3 - 3 = 0`, meaning Kali cannot spawn any subagents. The highest-authority entity in the Dark hierarchy is treated as a leaf node with no governance power.
-  - `RANK_MAP` is also missing: `kali`, `belial`, `sophia` (only the Oversouls, not the Field). `belial` (P0) would also get rank 3, which may be correct, but it should be explicit.
+  - `RANK_MAP` is also missing: `kali`, `roc_racoon`, `sophia` (only the Oversouls, not the Field). `roc_racoon` (P0) would also get rank 3, which may be correct, but it should be explicit.
 
 - [ ] **C-HIER-003: `hierarchy.py._load()` uses synchronous `open()` — HIGH / Mandate Violation**
   - File: `hierarchy.py:22-25`

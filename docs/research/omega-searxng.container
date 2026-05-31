@@ -17,6 +17,8 @@ After=network-online.target
 Wants=network-online.target
 
 [Container]
+UserNS=keep-id
+User=1000
 Image=ghcr.io/searxng/searxng:latest
 ContainerName=omega-searxng
 AutoUpdate=registry
@@ -24,10 +26,10 @@ AutoUpdate=registry
 PublishPort=127.0.0.1:8017:8080
 
 # Configuration — settings.yml, limiter.toml
-Volume=%h/Documents/Xoe-NovAi/omega-engine/data/searxng/config:/etc/searxng/:Z,U
+Volume=%h/Documents/Xoe-NovAi/omega-engine/data/searxng/config:/etc/searxng/
 
 # Data — favicon cache, SQLite DB
-Volume=%h/Documents/Xoe-NovAi/omega-library/searxng/data:/var/cache/searxng/:Z,U
+Volume=%h/Documents/Xoe-NovAi/omega-library/searxng/data:/var/cache/searxng/
 
 # Environment — SEARXNG_SECRET must be in %E expansion (from .env or systemd env)
 Environment=SEARXNG_SECRET=%E

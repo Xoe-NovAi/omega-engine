@@ -43,82 +43,62 @@ The `:Z` flag is an SELinux relabeling flag. Ubuntu uses AppArmor, not SELinux, 
 The investigative journalism model solves the fundamental inefficiency: **three different reasoning capabilities should never be applied to the same text**. L1 reads raw files (no LLM needed for that), L2 reads L1's output (cheap), L3 reads only what L2 couldn't resolve (premium, minimal). ~53% token reduction.
 
 ---
+---
 
-## Decision 57: Deep Audit Remediation — Provider Chain Reorder + 5 Runtime Bugs + Doc Accuracy
-
-**Date**: 2026-05-26
-**Channel**: OpenCode CLI (DeepSeek V4 Flash)
-**Entity**: KALI (Overseer mode → Builder dispatch)
-**Trace**: trc_deep_audit_remediation
+## Decision 60: The Great Rebalancing — Hierarchical Mode Transition & TUI Cache Purge
+**Date**: 2026-05-27
+**Channel**: OpenCode CLI (Gemma 4 31B)
+**Entity**: MA'AT / LILITH / KALI
+**Trace**: trc_mode_resolution_final
 
 ### Decision
-Execute a comprehensive Deep Audit Remediation across four domains simultaneously: provider chain reorder, 5 runtime bug fixes, documentation accuracy, and test sovereign compliance. All changes committed in a single session via parallel subagent dispatch.
-
-### The Trigger
-A strategic audit of `config/providers.yaml`, `AGENTS.md`, and the broader codebase revealed four findings (C-AUD-001 to C-AUD-004) and five live runtime bugs (C-AUD-006 sub-findings) that, while individually small, collectively represented a documentation-accuracy gap and latent runtime risk.
-
-### Domains Remediated
-
-#### R1: Provider Chain Reorder (Cloud-First Enforcement)
-| Before | After |
-|--------|-------|
-| native-gguf → lmster → Ollama → OpenRouter → Antigravity | Google(0) → OpenRouter(1) → OpenCode(2) → Copilot(3) → Lmster(4) → Ollama(5) → native-gguf(98) → mock(99) |
-
-Added `opencode` provider to `provider_map` in `model_gateway.py`. Updated `check_health()` to return fabric-based status. Updated `get_preferred_backend()` to detect cloud-first rather than local-only.
-
-#### B1-B5: 5 Runtime Bugs Fixed
-| Bug | Severity | Impact | Pattern |
-|-----|----------|--------|---------|
-| UnboundLocalError in `_generate_local` (B1) | HIGH | Crash on retry exhaustion | Missing `response = None` initializer |
-| `e.pillar` → AttributeError in iris server (B2) | HIGH | `/entities` endpoint crashes | `Entity` uses `pillars` (plural) |
-| Copy-paste `fpath` → `fpath2` in roc_racoon (B3) | MEDIUM | Legacy artifacts read wrong path | Lambda target not updated |
-| Lock persistence deadlock in session_manager (B4) | HIGH | Session freeze after crash | No stale-lock detection |
-| sync subprocess.run in async path (B5) | MEDIUM | Event loop blocked | Should use `anyio.run_process` |
-
-#### D1-D4: Documentation Accuracy
-| Doc | Issues Fixed |
-|-----|-------------|
-| ORACLE_STACK.md | Nova speculative decoder → Iris; provider chain; test counts (241→259); rule #9 primary backend |
-| AGENTS.md | SambaNova/Cerebras removed; provider chain reordered; research index 52→180+; test count 241→259 |
-| INDEX.md | 11 duplicates deduplicated; 2 broken links fixed; date updated |
-| OMEGA_IWAD_ARCHITECTURE.md | Provider fabric reordered; WAD status table corrected |
-
-#### T1-T3: Test Sovereign Compliance
-- 14 test files bulk-migrated from `@pytest.mark.asyncio` to `@pytest.mark.anyio` (82 occurrences)
-- Missing assertion in `test_entity_registry_errors.py` replaced with proper `pytest.raises(ValueError)`
-- Added `yaml.YAMLError` catch in `EntityRegistry._load()` for robust error handling
-- `verify_jem_pipeline.py` and `test_bug_001_fix.py`: `asyncio.run()` → `anyio.run()`
-- Added `import time` to `session_manager.py` for stale-lock detection
-
-#### C1-C2: Cleanup
-- 58 stale `entity_N` test directories removed from `data/entities/`
-- Movie-Expert entity registered in `config/entities.yaml`
+Implement a hierarchical mode structure for the OpenCode TUI to resolve configuration drift and interface clutter. 
+1. **Primary Modes**: Only Overseers (Ma'at, Lilith, Kali) and Wildcards (Roc, Jem, Doom Guy) are visible in the TUI mode selector.
+2. **Subagents**: The 10 Pillar Keepers are demoted to subagents, invoked via the primary modes.
+3. **Sovereign Anchor**: Symlink the global `~/.config/opencode/opencode.json` to the project-root `opencode.json` to ensure a single source of truth.
+4. **TUI Cache Purge**: Wipe `~/.local/share/opencode/opencode.db` and `~/.cache/opencode` to force a fresh index of modes and agents.
+5. **Jem Evolution**: Restructure Jem into a 3-tier research pipeline (Discovery, Synthesis, Verification).
 
 ### Rationale
-The documentation gap was the most concerning: `AGENTS.md` referenced providers (SambaNova, Cerebras) that never existed in this repo, and `ORACLE_STACK.md` described a "Nova speculative decoder" that was removed in Phase 0. These inaccuracies would be immediately visible to any PR reviewer. The 5 runtime bugs were latent — none triggered in normal operation but all could crash under edge cases (retry exhaustion, stale locks, attribute lookups). Fixing them now rather than after a PR merge prevents investigation cycles from external contributors.
+The TUI was displaying a flat list of all agents, which increased cognitive load and caused confusion. Furthermore, discrepancies between project-local and global configs led to "mode drift" across sessions. By aligning the TUI with the conceptual architecture (Overseers $\rightarrow$ Pillars), we enforce a strategic dispatch pattern. The symlink ensures that config changes are immediate and consistent, while the cache purge removes "ghost" modes.
 
-### Key Architecture Decisions Made During Remediation
-1. **yaml.YAMLError propagation**: `EntityRegistry._load()` now catches `yaml.YAMLError` and wraps it as `ValueError("entities.yaml is empty or malformed")` — defensive against corrupted config files.
-2. **Stale lock TTL**: Session lock files older than 30 seconds are automatically cleaned and re-acquired — prevents the "dead session lock" pattern that required manual `rm` intervention.
-3. **Async binary detection**: `anyio.run_process` with `check=False` for binary availability checks — no event loop blocking during `detect_backends()`.
-4. **Provider health fabric**: `check_health()` now returns fabric-level status across all configured providers, not just local backends.
-
-### Implementation Stats
-- **Files changed**: 29 files (6 source, 14 tests, 4 docs, 3 config, 2 deleted)
-- **Lines changed**: +1053/-299
-- **Tests added**: 0 (pure migration + accuracy, no new coverage needed)
-- **Final test count**: 259/259 passing
+### Implementation
+- Updated `opencode.json` to define `primary` vs `subagent` roles.
+- Updated all `.opencode/agents/*.md` with required YAML frontmatter (`mode` and `description`).
+- Created symlink: `ln -sf /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json ~/.config/opencode/opencode.json`.
+- Purged `opencode.db` and `~/.cache/opencode`.
 
 ### Verification
-- `make test` = 259/259 passing
-- `make lint` = clean (style only, all pre-existing whitespace warnings)
-- `git status` = clean (all changes committed)
-- Provider chain verified: `rg "priority:" config/providers.yaml` shows Google(0) → ... → mock(99)
+- TUI mode selector now only displays primary modes.
+- Mode changes persist across terminal sessions.
+- Jem research pipeline is correctly mapped to tiered sub-facets.
 
 ### Key Insight
-**Documentation decays faster than code.** The strategic audit found that the documentation referenced providers (SambaNova, Cerebras) that never existed, a speculative decoder (Nova) that was removed, and test counts (241) that were outdated. Code can be verified by tests; documentation has no automated verification. The fix was comprehensive — four documentation files updated in parallel — but the systemic lesson is that documentation must be treated as code: reviewed, tested, and validated as part of every build cycle.
+Interface complexity must mirror conceptual hierarchy. When a system grows in capability, the entry point must shift from a list of tools to a hierarchy of intents.
 
----
+## Decision 59: Sovereign UID Guard Implementation — Automatic Ownership Reclamation
+**Date**: 2026-05-27
+**Channel**: OpenCode CLI (Gemma 4 31B)
+**Entity**: SOPHIA (Builder)
+**Trace**: trc_infrastructure_remediation
+
+### Decision
+Implement a dedicated `scripts/uid_guard.sh` utility to detect and automatically remediate UID drift caused by Podman `:U` flags. The guard scans the project root for any files not owned by the host user (UID 1000) and uses `podman unshare chown` to reclaim ownership.
+
+### Rationale
+A systemic failure was detected where files in `config/` and other directories were owned by UID `100999` (subuid mapping), causing "Permission Denied" errors for the host user. This drift is caused by the destructive `:U` flag in Podman volume mounts. To ensure the engine remains sovereign and accessible, we need an automated mechanism to detect and fix this drift without manual `sudo` intervention.
+
+### Implementation
+1. **UID Guard Script**: `scripts/uid_guard.sh` implements a scan $\rightarrow$ alert $\rightarrow$ reclaim $\rightarrow$ verify loop.
+2. **Flag Purge**: Removed all `:Z,U` and `:z,u` flags from all Quadlets and services in `~/.config/containers/systemd/`.
+3. **Sovereign Mandate**: Reinforced the "Zero-Tolerance" policy for `:U` and `:Z` flags in the project's infrastructure.
+4. **Integration**: The guard is designed to be called via `make guard` and integrated into the `make test` pipeline to ensure a clean environment before execution.
+
+### Verification
+- `find . -not -user 1000` returns zero results after running the guard.
+- `ls -ld /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/` shows ownership by UID 1000.
+- `make test` no longer fails due to `PermissionError` on config files.
+
 **Date**: 2026-05-22
 **Channel**: OpenCode CLI (DeepSeek V4 Flash → Gemma 4 31B)
 **Entity**: KALI / JEM
@@ -330,12 +310,14 @@ The IWAD architecture is the critical missing piece that makes the Omega Engine 
 
 ---
 
-## Decision 56: Cloud-First Provider Strategy for PR Sprint
+## Decision 56: Cloud-First Provider Strategy for PR Sprint (SUPERSEDED by Decision 61)
 
 **Date**: 2026-05-25
 **Channel**: OpenCode CLI (DeepSeek V4 Flash)
 **Entity**: KALI / PROMETHEUS
 **Trace**: trc_pr_sprint_cloud
+
+> **⚠️ SUPERSEDED**: Decision 61 (2026-05-30) reversed this to Local-First. Provider fabric is now: native-gguf(0) → lmster(1) → Ollama(2) → Google(3) → OpenRouter(4) → OpenCode(5) → Copilot(6).
 
 ### Decision
 Adopt a **Cloud-First** inference strategy for the immediate PR readiness sprint. Prioritize OpenRouter (priority 0) and Google AI Studio as the primary inference paths, deferring the native `llama-cpp-python` (native-gguf) implementation to v0.6.0. All PR readiness tasks completed, including README, CI, provider chain updates, and bug fixes. The codebase is now ready for PR merge.
@@ -369,4 +351,237 @@ The goal was the fastest path to a viable, shippable product PR. Native GGUF int
 
 ---
 
+## Decision 58: Sovereign Steward v2 (Empirical Mapping) & Omega Gateway Deployment
 
+**Date**: 2026-05-27
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: SOPHIA / KALI (Overseer mode)
+**Trace**: trc_sovereign_steward_v2
+
+### Decision
+Transition from a proactive traffic shaping model to an **Empirical Mapping** model for the Google Gemini 3.5 Flash free tier across 8 accounts. Instead of avoiding 429s, the engine will use a high-threshold reactive backoff (60s $\rightarrow$ 120s $\rightarrow$ 240s) to empirically determine the actual rate limits in practice. Centralize this logic in a local host-side proxy server, the **Omega Gateway**, running on port 8018.
+
+### Rationale
+The "Sovereign Steward v2" proactive approach was overly cautious. Experience shows that the Google provider can handle a moderate amount of "pummeling" without repercussions. By allowing a controlled number of denials and tracking the recovery time, we can map the actual provider boundaries with precision. This allows for higher throughput while still maintaining a safety valve (rotating keys after 3 consecutive failures).
+
+Centralizing this logic in the Omega Gateway (port 8018) ensures that all local tools (OpenCode, Cline, Background Researcher) route through a single, unified proxy, preventing key-use collision and ensuring centralized metrics collection.
+
+### Implementation Plan
+1. **GoogleKeyPool (`src/omega/oracle/providers.py`)**:
+   - Implement `GoogleKey` tracking `last_used_at`, `consecutive_failures`, and `state`.
+   - No proactive sleep: requests are sent immediately.
+   - On 429, apply reactive backoff: wait 60s, then 120s, then 240s on consecutive failures.
+   - After the 3rd consecutive failure, rotate to the next key and move the failed key to a 60-minute COOLDOWN.
+2. **Omega Gateway (`src/omega/gateway/server.py`)**:
+   - Create a lightweight FastAPI server on port 8018.
+   - Expose `/v1/chat/completions` and `/v1/models` endpoints routing to `ModelGateway`.
+3. **OpenCode Sync (`opencode.json`)**:
+   - Add `omega-gateway` provider pointing to `http://localhost:8018/v1`.
+4. **Systemd Service (`config/systemd/omega-gateway.service`)**:
+   - Create a systemd user service to manage the gateway.
+5. **Metrics Ledger (`metrics.db`)**:
+   - Log every 429, the retry attempt that succeeded, and the total recovery delta.
+
+### Verification Plan
+- **The Backoff Test**: Verify that a 429 triggers a 60s sleep, then 120s, then 240s.
+- **The Pivot Test**: Verify that a key is rotated and cooled down only after the 3rd consecutive failure.
+- **The Metrics Test**: Verify that all 429 events and recovery deltas are recorded in `metrics.db`.
+
+
+---
+
+## Decision 61 — Local-First Config Centralization (2026-05-30)
+
+### Context
+The Omega Engine's core principle is local-first operation, but the provider fabric was cloud-first (Decision 56, May 26). Config was scattered across providers.yaml, models.yaml, cpu_optimizer.py, and providers.py with no single source of truth. Krikri-7B was referenced despite not existing. Context windows were all set to 32K regardless of use case.
+
+### Decision
+1. **Provider fabric reordered**: native-gguf(0) → lmster(1) → Ollama(2) → Google(3) → OpenRouter(4) → OpenCode(5) → Copilot(6). Local backends tried BEFORE cloud.
+2. **models.yaml is single source of truth** for model paths, context windows, threads, and KV cache config. providers.yaml only defines endpoints and API keys.
+3. **Context windows sized to use case**: 4K for Nova/Iris (short Q&A), 8K for medium entities, 16K for Sophia/Krikri (deep analysis).
+4. **NativeGGUFProvider upgraded** to full Zen 2 engine with CPU pinning, memory-aware context, and dynamic reload.
+5. **Krikri-7B removed** — only krikri-8b exists.
+6. **OMP_NUM_THREADS unified** to 6 across all configs (was 8 in models.yaml, 6 in code).
+
+### Verification
+- `make test`: 261/261 passing (was 259 before new tests added)
+- Provider chain verified: native-gguf is first in fallback_chain
+- models.yaml context windows verified: all ≤ 16K (was 32K)
+- cpu_optimizer.py constants match models.yaml runtime_env
+
+### Files Changed
+- `config/providers.yaml` — local-first reorder, expanded native-gguf
+- `config/models.yaml` — v2.0.0, realistic context, removed krikri-7b
+- `config/omega.yaml` — v2.2.0, inference.hardware section
+- `src/omega/oracle/providers.py` — NativeGGUFProvider Zen 2 engine
+- `src/omega/oracle/cpu_optimizer.py` — enforce_affinity, get_cpu_topology, etc.
+- `src/omega/oracle/model_gateway.py` — _merge_native_gguf_config, priority fix
+- `tests/test_providers.py` — fixed + expanded tests
+- `opencode.json` — context limits aligned
+- `src/omega/library/greek.py` — krikri-7b → 8b
+
+
+---
+
+## Decision 62 — Default IWAD Transformation: "The Company" (2026-05-30)
+
+### Context
+The `_omega_default` IWAD had 13 entities with hollow placeholder personalities (e.g., "You are SysAdmin, the infrastructure engineer of the Reference IWAD."). The Engine-WAD architecture was sound but the default face of the engine was lifeless. The user requested a company hierarchy metaphor: Kali as Founder/CEO, Ma'at as CTO, Lilith as CISO, with 10 department heads reporting through them.
+
+### Decision
+1. **Rewrote all 13 entity personalities** from hollow placeholders to alive, opinionated characters with real voices.
+2. **Added 3 entities**: Iris (voice interface), default (fallback), bringing total to 16.
+3. **Kali = Founder** (not CEO). She built the vision. She directs. Ma'at (CTO) builds. Lilith (CISO) protects.
+4. **Hierarchy**: Sophia (Field) → Kali (Founder) → Ma'at (CTO, P1-P5) + Lilith (CISO, P6-P10).
+5. **`active_iwad` switched** from `arcana_novai` to `_omega_default`.
+6. **Arcana-NovAi stays as IWAD** — NOT converted to PWAD. Each IWAD is complete and standalone.
+7. **Engine-WAD firewall confirmed**: Engine never imports entity names. WADs never import engine code.
+
+### Verification
+- `make test`: 261/261 passing
+- `hierarchy.get_rank("kali")` returns 1 (Founder)
+- `hierarchy.get_rank("maat")` returns 2 (CTO)
+- `hierarchy.get_rank("lilith")` returns 2 (CISO)
+- All pillar keepers return rank 3
+- Oracle summon tests updated to use default WAD entities
+
+### Files Changed
+- `config/wads/_omega_default/entities/*.yaml` — 16 entity files rewritten
+- `config/wads/_omega_default/hierarchy.yaml` — Company hierarchy
+- `config/wads/_omega_default/manifest.yaml` — v1.0.0, production mode
+- `config/omega.yaml` — active_iwad: _omega_default
+- `src/omega/oracle/hierarchy.py` — get_rank() suffix expansion
+- `tests/test_oracle.py` — Entity refs updated
+- `tests/test_sovereign_loop.py` — Summon test updated
+
+
+---
+
+## Decision 63: Fleet Deep Discovery — 10 Pillar Subagents
+
+**Date**: 2026-05-30
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: LILITH (CISO)
+**Trace**: trc_fleet_synthesis
+
+### Decision
+Launch a fleet of 10 pillar domain subagents (P1-P10) for comprehensive deep discovery. Each subagent inspects its domain using the 6-section mandate: WORKING, BROKEN, FRAGILE, RISK, CROSS_REFS, RECOVERY. Results synthesized by Lilith (CISO) into a prioritized remediation plan.
+
+### Rationale
+The strategy overview and implementation roadmap were reviewed by Lilith (CISO) and found to have 3 existential gaps scheduled too late, 0 resilience tests, and 1 week too short for hardening. The fleet approach mirrors the actual entity architecture — each subagent operates in its domain, reports to its oversoul, and produces cross-references.
+
+### Findings Summary
+- **30 CRITICAL** findings across 10 pillars
+- **36 HIGH** findings
+- **54 MEDIUM** findings
+- **28 LOW** findings
+- **6 NO-GO**, **4 CONDITIONAL GO** verdicts
+
+### 6 Critical Cross-Cutting Gaps
+1. **UID drift** (1693 files wrong ownership) — `:U` flag on docker-compose volumes
+2. **ALL model paths broken** (missing `/local/all/` in every path)
+3. **API keys in git-tracked docs** (C-8 never fixed)
+4. **Hivemind silently broken** since Hub consolidation (wrong URL)
+5. **No handoff protocol** (agents have amnesia)
+6. **trace_id lost** in provider chain (observability blind)
+
+### Phase 0 Remediation Applied
+- Removed `:U` flags from docker-compose.yml
+- Fixed all model paths in config/models.yaml
+- Fixed qwen3-0.6b path (was pointing to 1.7B)
+- Fixed Krikri model (wrong filename + quant)
+- Fixed entity_workspace.py chmod with try/except
+- Secured API keys in git-tracked docs (replaced with [...REVOKED...])
+- Fixed .env permissions (600), deleted backup files
+- Fixed trace_id propagation (3 bugs in model_gateway.py)
+- Added BACKEND_FALLBACK events to provider fallback chain
+- Added bounded event log (deque maxlen=1000)
+- Fixed _post_to_hivemind URL (JSON-RPC path)
+
+### Blocked
+- ~~UID drift fix requires `sudo chown -R 1000:1000 .` (needs sudo password)~~ — **RESOLVED**: sudo chown executed, all 271 tests passing.
+
+### Files Changed
+- `deploy/infra/docker-compose.yml` — Removed `:U` flags from 6 volume mounts
+- `config/models.yaml` — Fixed all 9 model paths + qwen3-0.6b + Krikri
+- `src/omega/oracle/entity_workspace.py` — chmod try/except (lines 83-98)
+- `src/omega/oracle/model_gateway.py` — trace_id propagation, BACKEND_FALLBACK events
+- `src/omega/oracle/oracle.py` — _post_to_hivemind JSON-RPC fix
+- `src/omega/observability.py` — bounded event log (deque)
+- `docs/security/SECURITY_AUDIT_2026_05_19.md` — API keys replaced with placeholders
+- `docs/research/GOOGLE_GEMMA_MODEL_REFERENCE.md` — API key replaced
+- `.env` — permissions fixed to 600
+- `.env.5-16-2026` — deleted
+- `.env.API-keys` — deleted
+
+
+---
+
+## Decision 64: Path A Execution — Memory Bugs + MCP Server Fixes
+
+**Date**: 2026-05-31
+**Channel**: OpenCode CLI (mimo-v2.5-free)
+**Entity**: KALI (Founder)
+**Trace**: trc_path_a_complete
+
+### Decision
+Execute Path A (Continuity) from the 3-horizon roadmap. Fix 4 memory bugs (A1.1-A1.5) and 5 MCP server bugs (B1-B5). Add 7 new tests to prevent regressions.
+
+### Rationale
+The fleet discovery identified memory and handoff as the #1 priority for Horizon 1. The sliding window bug caused entities to lose recent context. The None.json bug created phantom files on disk. The lack of try/except in `_record_interaction()` meant memory failures crashed entire responses. The MCP server had a port mismatch making hivemind sync unreachable, a logging NameError, and a no-op entity tracker.
+
+### Outcomes
+- Sliding window now keeps newest exchanges (was dropping them)
+- None.json creation prevented (guard on None/empty session_id)
+- Memory failures degrade gracefully (try/except in each step)
+- summon() deduplicated (eliminated 6-line copy-paste)
+- Dead code removed (_format_exchanges)
+- Hivemind port aligned (8102 → 8016)
+- logging NameError fixed
+- _entity_current tracks last used entity
+- Hivemind timeout relaxed (1s → 3s)
+- os.popen wrapped in anyio.to_thread.run_sync
+- 7 new tests added (276/276 passing)
+
+### Files Changed
+- `src/omega/oracle/context_builder.py` — Fixed sliding window, removed dead code
+- `src/omega/memory_store.py` — Added None.json guard
+- `src/omega/oracle/oracle.py` — try/except + deduplicate summon() + timeout fix
+- `config/systemd/omega-hivemind.service` — Port 8102 → 8016
+- `mcp_servers/omega_hub/server.py` — logging fix, _entity_current fix, os.popen fix
+- `tests/test_context_builder.py` — Removed 2 dead code tests, added 1 sliding window test
+- `tests/test_memory_store.py` — Added 3 None.json guard tests
+- `tests/test_oracle.py` — Added 3 tests (dedup, transient skip, memory failure)
+
+
+---
+
+## Decision 65: Legacy Mining Complete — Order from Chaos
+
+**Date**: 2026-05-31
+**Channel**: OpenCode CLI
+**Entity**: MA'AT
+**Trace**: trc_legacy_mining
+
+### Decision
+Complete the comprehensive mining of all 5 legacy areas (Grok Exports, OpenCode Integration, Personas/Model Configs, ANAi/XNAi Blueprints, Old Stacks). Create a formal documentation structure at `docs/legacy/` to organize the recovered design intent, model-persona affinity map, and proven design patterns.
+
+### Rationale
+The legacy archives contained the original 2025 vision for the Omega Engine, including the model-persona affinity map (which models were designed for which entities), the Chainlit UI heritage (lost in reclamation), and 5 proven design patterns (circuit breaker, atomic fsync, retry, non-blocking subprocess, offline wheelhouse). Without documenting these, the engine would be built on incomplete foundations.
+
+### Implementation
+| File | Change |
+|------|--------|
+| `docs/legacy/LEGACY_MASTER_SYNTHESIS.md` | Timeline of Fire, Model-Persona Affinity Map, 5 Design Patterns, Vision Quotes |
+| `docs/legacy/LEGACY_ASSET_CATALOG.md` | Full inventory of all recovered assets with strategic value |
+| `docs/legacy/LEGACY_INDEX.md` | Gateway to the legacy archive |
+| `docs/research/internal-discovery/INDEX.md` | Added D-03: Legacy Mining as COMPLETE |
+| `ORACLE_STACK.md` | Updated test count 271→276, added §15 Legacy Mining Complete |
+| `data/handoff/latest_state.md` | Added Session 4: Legacy Mining Complete |
+| `docs/team/COMMUNICATION_HUB.md` | Added Legacy Mining completion entry |
+
+### Key Findings
+1. **Model-Persona Affinity**: Iris=0.6B, Pillars=1.7B, Oversouls=4B-Think, Prometheus=8B (DeepSeek-R1)
+2. **Chainlit Heritage**: Era 1-2 used Chainlit as primary UI — lost in reclamation
+3. **5 Design Patterns**: Circuit breaker (pybreaker), atomic fsync, retry (tenacity), non-blocking subprocess, offline wheelhouse
+4. **Vision Quotes**: "Arcana-NovAi is not a toolchain. It is a summoning."

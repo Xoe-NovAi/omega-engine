@@ -25,7 +25,7 @@ Jem's background worker can be triggered by:
 |---------|--------|----------|
 | **Scheduled** | `omega-research.timer` (systemd) | Every 6 hours |
 | **Workbench P0 task** | `data/workbench/workbench.db` `priority='P0'` | On detection |
-| **Belial mining completion** | Belial posts to omega-hivemind MCP | On artifact discovery |
+| **Roc Racoon mining completion** | Roc Racoon posts to omega-hivemind MCP | On artifact discovery |
 | **Manual summon** | `omega summon Jem "research prompt"` | On demand |
 | **Queue event** | `data/research/sessions/research_queue.json` | On new entry |
 | **Tier 3 gap dispatch** | Synthesizer identifies knowledge gap | On pipeline completion |
@@ -129,8 +129,8 @@ omega:
 
 ## §4 Integration Points
 
-### 4.1 With Belial (Legacy Mining)
-When Belial discovers artifacts of type `strategic`, he posts to the omega-hivemind MCP with:
+### 4.1 With Roc Racoon (Legacy Mining)
+When Roc Racoon discovers artifacts of type `strategic`, he posts to the omega-hivemind MCP with:
 ```json
 {
   "event": "artifact.discovered",
@@ -146,7 +146,7 @@ Jem's worker subscribes to this event and enqueues a research task:
 ```json
 {
   "task_id": "uuid",
-  "trigger": "belial_artifact",
+  "trigger": "roc_racoon_artifact",
   "artifact_path": "rel/path/to/artifact",
   "research_question": "What strategic value does this discovered artifact hold for the Omega Engine?",
   "priority": 0,

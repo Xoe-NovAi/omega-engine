@@ -87,7 +87,7 @@ config/wads/_omega_core/
 ├── scale.md                    # The Scale — Ma'at's Auditor
 ├── key.md                      # The Key — Lilith's Sovereign
 ├── crucible.md                 # The Crucible — Kali's Alchemist
-├── shadow.md                   # The Shadow — Legacy Reclamation (Belial)
+├── shadow.md                   # The Shadow — Legacy Reclamation (Roc Racoon)
 └── messenger.md                # The Messenger — Interface Guide (Iris)
 ```
 

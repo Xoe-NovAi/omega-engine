@@ -46,7 +46,7 @@ async def test_load_wad_valid(wad_env):
     wads_dir, _ = wad_env
     registry, loader, cfg = make_registry_and_loader(wads_dir)
     try:
-        assert await loader.load_wad("test_stack") is True
+        assert (await loader.load_wad("test_stack"))[0] is True
     finally:
         Path(cfg).unlink(missing_ok=True)
 
@@ -57,7 +57,7 @@ async def test_load_wad_path_traversal(wad_env):
     try:
         traversal_path = "../secrets"
         result = await loader.load_wad(traversal_path)
-        assert result is False
+        assert result[0] is False
     finally:
         Path(cfg).unlink(missing_ok=True)
 
@@ -66,7 +66,7 @@ async def test_load_wad_nonexistent(wad_env):
     wads_dir, _ = wad_env
     registry, loader, cfg = make_registry_and_loader(wads_dir)
     try:
-        assert await loader.load_wad("nonexistent_stack") is False
+        assert (await loader.load_wad("nonexistent_stack"))[0] is False
     finally:
         Path(cfg).unlink(missing_ok=True)
 
@@ -81,7 +81,7 @@ async def test_load_wad_malformed_manifest(wad_env):
         stack_path = wads_dir / stack_name
         stack_path.mkdir()
         (stack_path / "manifest.yaml").write_text("this is not yaml: { [")
-        assert await loader.load_wad(stack_name) is False
+        assert (await loader.load_wad(stack_name))[0] is False
     finally:
         Path(cfg).unlink(missing_ok=True)
 
@@ -96,7 +96,7 @@ async def test_load_wad_missing_fields(wad_env):
         stack_path = wads_dir / stack_name
         stack_path.mkdir()
         (stack_path / "manifest.yaml").write_text("name: missing_fields\nversion: 1.0.0")
-        assert await loader.load_wad(stack_name) is False
+        assert (await loader.load_wad(stack_name))[0] is False
     finally:
         Path(cfg).unlink(missing_ok=True)
 
@@ -123,7 +123,7 @@ async def test_load_wad_duplicate_entities(wad_env):
         (entities_dir / "duplicate" / "soul.yaml").parent.mkdir(parents=True)
         (entities_dir / "duplicate" / "soul.yaml").write_text("entity:\n  name: Duplicate\n  personality: I am a duplicate")
         
-        assert await loader.load_wad(stack_name) is True
+        assert (await loader.load_wad(stack_name))[0] is True
         assert registry.get("duplicate").personality == "p" # Original preserved
     finally:
         Path(cfg).unlink(missing_ok=True)
@@ -145,7 +145,7 @@ async def test_load_flat_entity_yaml(wad_env):
         flat_entity = entities_dir / "myentity.yaml"
         flat_entity.write_text("entity:\n  name: MyEntity\n  domains: [test]\n  personality: I am a flat entity")
         
-        assert await loader.load_wad(stack_name) is True
+        assert (await loader.load_wad(stack_name))[0] is True
         entity = registry.get("myentity")
         assert entity is not None, f"Expected myentity, got {registry.names()}"
         assert entity.name == "MyEntity"
@@ -169,7 +169,7 @@ async def test_load_soul_yaml_structure(wad_env):
         entity_dir.mkdir(parents=True)
         (entity_dir / "soul.yaml").write_text("entity:\n  name: SoulEntity\n  domains: [soul]\n  personality: I live in a soul.yaml directory")
         
-        assert await loader.load_wad(stack_name) is True
+        assert (await loader.load_wad(stack_name))[0] is True
         entity = registry.get("SoulEntity")
         assert entity is not None, f"Expected SoulEntity, got {registry.names()}"
         assert entity.name == "SoulEntity"
@@ -199,7 +199,7 @@ async def test_load_entities_mixed_types(wad_env):
         soul_dir.mkdir()
         (soul_dir / "soul.yaml").write_text("entity:\n  name: direntity\n  domains: [dir]\n  personality: Directory")
         
-        assert await loader.load_wad(stack_name) is True
+        assert (await loader.load_wad(stack_name))[0] is True
         assert registry.get("flatentity") is not None, f"Entities: {registry.names()}"
         assert registry.get("direntity") is not None
         assert registry.get("flatentity").name == "flatentity"
@@ -228,7 +228,7 @@ async def test_load_entity_skips_registered(wad_env):
         entities_dir.mkdir()
         (entities_dir / "preexisting.yaml").write_text("entity:\n  name: Preexisting\n  domains: [new]\n  personality: duplicate")
         
-        assert await loader.load_wad(stack_name) is True
+        assert (await loader.load_wad(stack_name))[0] is True
         assert registry.get("preexisting").personality == "original"
     finally:
         Path(cfg).unlink(missing_ok=True)
@@ -249,7 +249,7 @@ async def test_load_entity_invalid_yaml(wad_env):
         entities_dir.mkdir()
         (entities_dir / "badyaml.yaml").write_text("entity: { bad: yaml: invalid: [[[")
         
-        assert await loader.load_wad(stack_name) is True
+        assert (await loader.load_wad(stack_name))[0] is True
         assert registry.get("badyaml") is None
     finally:
         Path(cfg).unlink(missing_ok=True)
@@ -276,6 +276,6 @@ async def test_load_entities_directory_not_exists(wad_env):
         stack_path = wads_dir / stack_name
         stack_path.mkdir()
         (stack_path / "manifest.yaml").write_text("name: no_entities_stack\nversion: 1.0.0\nentities: []")
-        assert await loader.load_wad(stack_name) is True
+        assert (await loader.load_wad(stack_name))[0] is True
     finally:
         Path(cfg).unlink(missing_ok=True)

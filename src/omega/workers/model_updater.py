@@ -63,7 +63,7 @@ class ModelUpdaterWorker:
         self.observability = observability
         self.guard = guard
         self.cfg = config
-        self.stop_event = anyio.Event()
+        self._stop_flag = False
         self.db_path = Path("docs/research/model_db/CURRENT_MODELS.json")
         self.audit_dir = Path("data/audit/model_updater")
         self.audit_dir.mkdir(parents=True, exist_ok=True)
@@ -73,37 +73,37 @@ class ModelUpdaterWorker:
     # ── Lifecycle ────────────────────────────────────────────────────────
 
     async def start(self) -> None:
-        """Start the background update loop."""
+        """Enable the worker's scheduled operation.
+        
+        Does not start a background loop — the caller should manage the
+        task lifecycle via run_forever() in their own TaskGroup.
+        """
         if not self.cfg.get("enabled", True):
             logger.info("ModelUpdaterWorker disabled by config.")
             return
 
+        self._stop_flag = False
         trace_id = str(uuid.uuid4())
         self.observability.log_event(
             EventType.WORKER_START,
             trace_id,
             {"event": "model_updater_started", "schedule": self.cfg.get("schedule", "0 * * * *")},
         )
-        
-        # Launch the loop as a background task
-        anyio.create_task_group().start_soon(self._main_loop)
-        logger.info(f"ModelUpdaterWorker loop started with schedule: {self.cfg.get('schedule', '0 * * * *')}")
+        logger.info(f"ModelUpdaterWorker enabled with schedule: {self.cfg.get('schedule', '0 * * * *')}")
 
-    async def _main_loop(self) -> None:
-        """Periodic loop that triggers the update cycle."""
-        while not self.stop_event.is_set():
+    async def run_forever(self) -> None:
+        """Run the update loop indefinitely. Call inside a TaskGroup or via anyio.run()."""
+        while not self._stop_flag:
             try:
                 await self.run_update_cycle()
-                # Simple interval sleep (e.g., 1 hour). 
-                # For true cron, we would calculate the delta to the next trigger.
-                await anyio.sleep(3600) 
+                await anyio.sleep(3600)
             except Exception as e:
                 logger.error(f"ModelUpdaterWorker loop error: {e}")
-                await anyio.sleep(60) # Backoff on error
+                await anyio.sleep(60)
 
     async def stop(self) -> None:
-        """Stop the scheduled worker gracefully."""
-        self.stop_event.set()
+        """Signal the worker to stop on its next loop iteration."""
+        self._stop_flag = True
         logger.info("ModelUpdaterWorker stop signal sent.")
 
     # ── Single cycle ─────────────────────────────────────────────────────
@@ -438,6 +438,6 @@ All confidence scores must be >= {self.cfg.get("confidence_minimum", 0.85)}."""
         return {
             "enabled": self.cfg.get("enabled", True),
             "schedule": self.cfg.get("schedule"),
-            "running": not self.stop_event.is_set(),
+            "running": not self._stop_flag,
             "next_run": "Interval-based (approx 1h)",
         }

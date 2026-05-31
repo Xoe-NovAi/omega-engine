@@ -8,13 +8,13 @@
 ---
 
 ## 📋 Mission
-
-You are performing a deep strategic review of the Omega Engine's **autonomous research capability** — the background researcher with its 3-tier Investigative Journalism Pipeline (L1 Intern / L2 Analyst / L3 Editor), the Jem-2.0 Oversoul with 3 persistent sub-facets, the distiller that abstracts knowledge, the scheduler that rotates topics, the convergence detector, the credit budget manager, the review queue, and the checkpoint system. This is the engine's "brain" — its capacity to learn autonomously. Verify every component.
-
+ 
+You are performing a deep strategic review of the Omega Engine's **autonomous research capability** — the background researcher (utilizing the **Roc Racoon** persona and `roracoon-3b` model) with its 3-tier Investigative Journalism Pipeline (L1 Intern / L2 Analyst / L3 Editor), the Jem-2.0 Oversoul with 3 persistent sub-facets, the distiller that abstracts knowledge, the scheduler that rotates topics, the convergence detector, the credit budget manager, the review queue, and the checkpoint system. This is the engine's "brain" — its capacity to learn autonomously. Verify every component.
+ 
 ---
-
+ 
 ## 🎯 Scope — Files to Read
-
+ 
 ### Source: Background Researcher Pipeline (17 files)
 - **Entry Point**: `https://raw.githubusercontent.com/Xoe-NovAi/omega-engine/main/src/omega/workers/background_researcher/run.py`
 - **Main Loop**: `https://raw.githubusercontent.com/Xoe-NovAi/omega-engine/main/src/omega/workers/background_researcher/loop.py`
@@ -30,6 +30,8 @@ You are performing a deep strategic review of the Omega Engine's **autonomous re
 - **Review Queue**: `https://raw.githubusercontent.com/Xoe-NovAi/omega-engine/main/src/omega/workers/background_researcher/review_queue.py`
 - **Soul Updater**: `https://raw.githubusercontent.com/Xoe-NovAi/omega-engine/main/src/omega/workers/background_researcher/soul_updater.py`
 - **Soul Update Manager**: `https://raw.githubusercontent.com/Xoe-NovAi/omega-engine/main/src/omega/workers/background_researcher/soul_update_manager.py`
+- **Distiller Prompts**: `https://raw.githubusercontent.com/Xoe-NovAi/omega-engine/main/config/distiller_prompts.yaml`
+
 
 ### Jem 2.0 Oversoul
 - **Jem Oversoul Soul**: `https://raw.githubusercontent.com/Xoe-NovAi/omega-engine/main/data/entities/jem/soul.yaml`

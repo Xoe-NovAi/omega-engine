@@ -1,11 +1,29 @@
-# 🔱 State of the Engine Briefing — Fleet Synchronization (Phase E)
+# 🔱 State of the Engine Briefing — Fleet Synchronization
 
-⬡ OMEGA ⬡ OVERSEER-SYNC ⬡ trc_overseer_sync_v1 ⬡ PHASE-E
+⬡ OMEGA ⬡ OVERSEER-SYNC ⬡ trc_overseer_sync_v2 ⬡ LOCAL-FIRST-COMPLETE
 
-**To**: OpenCode co-Overseer (Builder Mode / Gemma 4 31B)
-**From**: Gemini CLI (Master Overseer / Strategic Assistant)
-**Date**: 2026-05-22
-**Subject**: Phase A Completion & Strategic Delegation Mandate
+**Current Status**: 2026-05-30 — Local-First Config + The Company IWAD Complete
+**Tests**: 261/261 | **Strategy**: local_first | **Active WAD**: _omega_default
+**Handoff**: `data/handoff/handoff_wad_transform_20260530.md`
+
+### What Changed Since Phase E (2026-05-22)
+1. Provider fabric reordered: native-gguf(0) → cloud(3+). Local-first is law.
+2. Default IWAD rewritten: "The Company" with 16 alive entities.
+3. Engine-WAD firewall confirmed (Doom WAD model).
+4. Sovereign Mandates expanded: 6 → 8 Laws (added Local-First + Zero Telemetry).
+5. NativeGGUFProvider upgraded to full Zen 2 inference engine.
+
+### Current Architecture
+```
+ENGINE (src/omega/) — runtime, never changes per WAD
+IWADs (config/wads/) — complete, standalone, replaceable
+  _omega_default/ — The Company (16 entities, tech roles)
+  arcana_novai/ — The Council (28 entities, esoteric roles)
+```
+
+---
+
+## Historical Briefing (Phase E, 2026-05-22)
 
 ---
 
@@ -13,7 +31,7 @@
 
 The **Permission War** is over. We have established **Decision 50** as the absolute mandate for containerized workloads.
 - **Protocol**: `UserNS=keep-id` + `User=1000`.
-- **Implementation**: Applied to `omega-belial.container`. The destructive `:U` flags have been removed.
+- **Implementation**: Applied to `omega-roc_racoon.container`. The destructive `:U` flags have been removed.
 - **Sovereignty**: Host user 1000 maintains ownership of all shared volumes (`Documents/Xoe-NovAi/omega-engine/`).
 - **Impact**: All mining and building operations can now write to host volumes without triggering EACCES or UID 101000 fragmentation.
 

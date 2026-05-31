@@ -1,0 +1,18 @@
+{
+  "session_id": "ses_f32cda7be9f8",
+  "cli": "agent-beta",
+  "model": "claude-3-5-sonnet",
+  "task_current": "Mapping provider fabric",
+  "focus_chain": [
+    "Provider Fabric",
+    "Priority Chain"
+  ],
+  "decisions": [
+    {
+      "context": "Provider fabric mapping",
+      "decision": "The fabric correctly prioritizes Google AI Studio."
+    }
+  ],
+  "continuation": "Beta: I have mapped the provider fabric. Next: Test fallback chain.",
+  "timestamp": "2026-05-27T18:40:49.971556+00:00"
+}

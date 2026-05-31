@@ -21,8 +21,8 @@ from .distiller import (
     JemCircuitBreaker,
     CircuitBreakerState,
     LmsterBackend,
-    MiniMaxBackend,
-    GeminiBackend,
+    T2Backend,
+    T3Backend,
     TrainingTripleSaver,
     list_prompt_modes,
 )
@@ -36,8 +36,8 @@ __all__ = [
     "JemCircuitBreaker",
     "CircuitBreakerState",
     "LmsterBackend",
-    "MiniMaxBackend",
-    "GeminiBackend",
+    "T2Backend",
+    "T3Backend",
     "TrainingTripleSaver",
     "list_prompt_modes",
 ]

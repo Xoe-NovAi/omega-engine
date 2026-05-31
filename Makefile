@@ -104,7 +104,12 @@ rag-reindex: ## 🔄 Reindex all documents in Qdrant
 # 🧪 TESTING & QUALITY
 # ============================================================================
 
-test: ## 🧪 Run tests (uses mock backend when OMEGA_ENV=test)
+guard: ## 🛡️ Run the Sovereign UID Guard to fix permission drift
+	@echo "$(COLOR_CYAN)🛡️  Running Sovereign UID Guard...$(COLOR_NC)"
+	@bash scripts/uid_guard.sh
+	@echo "$(COLOR_GREEN)✅ UID Guard complete.$(COLOR_NC)"
+
+test: guard ## 🧪 Run tests (uses mock backend when OMEGA_ENV=test)
 	OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m pytest $(ARGS)
 
 test-cov: ## 📊 Run tests with coverage

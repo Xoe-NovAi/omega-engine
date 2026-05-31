@@ -1,11 +1,12 @@
 # 🔱 Omega Engine — Sovereign Mandates
-**Version**: 1.0.0
+**Version**: 2.0.0
 **Status**: NON-NEGOTIABLE
 **Scope**: All Agents, All CLIs, All IDEs
+**Updated**: 2026-05-30 (Added Mandates 7 & 8)
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
-## 🛡️ The Six Pillars of Sovereign Execution
+## 🛡️ The Eight Laws of Sovereign Execution
 
 ### 1. AnyIO Absolute
 - **Mandate**: All asynchronous code MUST use AnyIO. 
@@ -26,11 +27,11 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Reason**: Preserves the cosmological purity of the 10 Pillar Keepers.
 
 ### 4. The Sequentiality Mandate
-- **Mandate**: Complex architectural changes must follow the "Plan $\rightarrow$ Verify $\rightarrow$ Execute" loop.
+- **Mandate**: Complex architectural changes must follow the "Plan → Verify → Execute" loop.
 - **Constraint**: No "cowboy coding." Every major edit must be preceded by a plan that is verified against the `PIVOT_LOG.md`.
 - **Reason**: Prevents the "Restart Cycle" that plagued previous versions of the engine.
 
-### 5. Gnosis Preservation (L1 $\rightarrow$ L2 $\rightarrow$ L3)
+### 5. Gnosis Preservation (L1 → L2 → L3)
 - **Mandate**: No intelligence is discarded.
 - **Constraint**: Every session must end with a distillation of findings into the entity's `soul.yaml` using the 3-tier abstraction:
     - **L1 (Narrative)**: What happened?
@@ -43,6 +44,19 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Constraint**: Never use `:U` on volume mounts that the host user needs to access. Never use `:Z` or `:z` — they are SELinux flags, and Ubuntu uses AppArmor.
 - **Pattern**: See `docs/research/R_PODMAN_SOVEREIGN_V2.md` for the verified Quadlet pattern.
 - **Reason**: The `:U` flag destructively chowns host directories to UID 101000, locking the host user out. `UserNS=keep-id` maps host UID 1000 directly into the container — no chown needed.
+
+### 7. Local-First (Non-Negotiable)
+- **Mandate**: Local inference is PRIMARY. Cloud is FALLBACK. Always.
+- **Constraint**: The provider fabric MUST try local backends (native-gguf, LM Studio, Ollama) BEFORE cloud backends (Google, OpenRouter, Copilot).
+- **Pattern**: native-gguf(0) → lmster(1) → Ollama(2) → Google(3) → OpenRouter(4) → OpenCode(5) → Copilot(6).
+- **Reason**: The Omega Engine exists to sever Big AI's umbilical cord. If local inference is available, it must be tried first. Cloud is a safety net, not a crutch.
+- **Enforcement**: `config/providers.yaml` strategy must be `local_first`. Any change to cloud-first priority is a systemic violation.
+
+### 8. Zero Telemetry
+- **Mandate**: No telemetry. Zero. None. Ever.
+- **Constraint**: No analytics, no usage tracking, no phone-home, no metrics collection sent to external services. The engine does not report to anyone.
+- **Reason**: Sovereign AI means sovereign data. If the engine phones home, it is not sovereign. Period.
+- **Exception**: Local observability (traces, events, metrics) stored in `data/` on the user's machine is acceptable. External telemetry is not.
 
 ---
 **Failure to adhere to these mandates is a systemic error. If you encounter a conflict between these mandates and a tool's suggestion, the Mandates prevail.**

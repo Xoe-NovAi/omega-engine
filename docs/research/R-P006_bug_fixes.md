@@ -18,11 +18,11 @@ This document tracks the resolution of critical bugs identified in the R44 Compr
 | C-4 | `model_gateway.py` — `NativeGGUFProvider` ResourceGuard | Added `NativeGGUFProvider` to the ResourceGuard `isinstance` check | `make test` (41/41 passed) | ✅ FIXED | 2026-05-15 |
 | C-7 | Non-existent `anyio.Deque()` in `curation_pipeline.py` | Deleted redundant `curation_pipeline.py` (superseded by `curator.py`) | `make test` (41/41 passed) | ✅ FIXED | 2026-05-15 |
 | C-10 | Wrong install extra `iris` in `setup.sh` | Changed `.[cli,iris,all,dev]` to `.[all,dev]` | Manual inspection | ✅ FIXED | 2026-05-15 |
-| C-11 | `omega-belial.container` — Missing Dependencies | Created `Dockerfile.belial` and updated `.container` to use `omega-belial:latest` | Manual inspection | ✅ FIXED | 2026-05-15 |
+| C-11 | `omega-roc_racoon.container` — Missing Dependencies | Created `Dockerfile.roc_racoon` and updated `.container` to use `omega-roc_racoon:latest` | Manual inspection | ✅ FIXED | 2026-05-15 |
 | C-12 | `providers.yaml` Native-GGUF Model Path | Added `phi-4-mini` spec to `models.yaml` to match `providers.yaml` | Manual inspection | ✅ FIXED | 2026-05-15 |
 | C-13 | `asyncio.create_task()` in AnyIO loop | Replaced `asyncio.create_task` with `anyio.to_thread.run_sync` + `anyio.run` | `make test` (41/41 passed) | ✅ FIXED | 2026-05-15 |
-| C-14 | `entity_belial.py` — Relative Paths | Replaced relative `data/` paths with `DATA_DIR` constant | Manual inspection | ✅ FIXED | 2026-05-15 |
-| C-15 | `omega-belial.container` — Duplicate Keys | Combined duplicate `PodmanArgs` into a single line | Manual inspection | ✅ FIXED | 2026-05-15 |
+| C-14 | `entity_roc_racoon.py` — Relative Paths | Replaced relative `data/` paths with `DATA_DIR` constant | Manual inspection | ✅ FIXED | 2026-05-15 |
+| C-15 | `omega-roc_racoon.container` — Duplicate Keys | Combined duplicate `PodmanArgs` into a single line | Manual inspection | ✅ FIXED | 2026-05-15 |
 
 ## 📋 Pending Criticals
 - [ ] C-16: Image tag mismatch in `setup.sh`

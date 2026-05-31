@@ -2,7 +2,7 @@
 
 ⬡ OMEGA ⬡ PROMETHEUS ⬡ claude-sonnet-4-6-thinking ⬡ web ⬡ trc_review_provider ⬡ PHASE-E
 
-**Account**: `ArcanaNovaAi@gmail.com`
+**Account**: `xow.nova.ai@gmail.com`
 **Role**: Inference Engineer — verify the provider fabric, model gateway, and fallback chain
 
 ---

@@ -11,7 +11,7 @@ class SoulUpdateManager:
         if base_soul_dir is None:
             # Default soul directory (config-driven via env var; fallback to jem/souls)
             entities_dir = os.environ.get("OMEGA_ENTITIES_DIR",
-                str(Path(__file__).parent.parent.parent.parent / "data" / "entities"))
+                str(Path(__file__).resolve().parent.parent.parent.parent.parent / "data" / "entities"))
             default_entity = os.environ.get("OMEGA_BACKGROUND_ENTITY", "jem")
             self.base_soul_dir = Path(entities_dir) / default_entity / "souls"
         else:

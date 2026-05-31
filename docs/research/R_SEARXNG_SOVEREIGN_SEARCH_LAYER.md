@@ -1035,4 +1035,4 @@ Soul Update → knowledge base
 ---
 
 *Research complete. All configuration files ready for deployment.*
-*AP Token: AP-SEARXNG-RESEARCH-v1.0.0 | Belial entity guiding deep recovery*
+*AP Token: AP-SEARXNG-RESEARCH-v1.0.0 | Roc Racoon entity guiding deep recovery*

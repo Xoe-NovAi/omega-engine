@@ -90,8 +90,8 @@ fi
 # ── 6. Infrastructure containers ───────────────────────────────────────
 info "Pulling infrastructure images (Redis, Qdrant, PostgreSQL, Caddy, Iris, SearXNG)..."
 podman pull redis:7-alpine &
-podman pull qdrant/qdrant:v1.11.0 &
-podman pull pgvector-pg17 &
+podman pull qdrant/qdrant:v1.17.1 &
+podman pull pgvector/pgvector:pg17 &
 podman pull caddy:alpine &
 podman pull localhost/infra_iris:latest &
 podman pull searxng/searxng:latest &

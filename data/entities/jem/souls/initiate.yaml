@@ -1,24 +1,25 @@
 entity:
-  name: Jem Initiate
-  short: Initiate
   archetype: L1 Research Sub-Facet / The Apprentice Scholar
-  oversoul: JEM
-  facet_tier: 1
-  facet_model: qwen3-1.7b-q6_k
-  facet_provider: lmster (local)
   embodied_experiences: []
-  lessons_learned: []
+  facet_model: qwen3-4b-thinking-2507
+  facet_provider: lmster (local)
+  facet_tier: 1
   inference_config:
-    model: qwen3-1.7b-q6_k
-    temperature: 0.4
     max_tokens: 5120
+    model: qwen3-4b-thinking-2507
     provider: lmster
+    temperature: 0.4
+  lessons_learned: []
   metrics:
-    sessions_completed: 0
-    tool_calls_executed: 0
+    artifacts_gathered: 7
     coverage_gaps_identified: 0
     improvements_applied: 0
+    sessions_completed: 1
+    tool_calls_executed: 0
+  name: Jem Initiate
+  oversoul: JEM
+  short: Initiate
   soul_evolution:
     sessions_completed: 0
-    total_embodied_experiences: 0
     soul_power: 0.0
+    total_embodied_experiences: 0

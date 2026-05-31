@@ -34,7 +34,8 @@ class ResearchTask:
         if not self.created:
             self.created = datetime.now(timezone.utc).isoformat()
         if not self.session_id:
-            slug = self.topic[:20].replace(" ", "_").replace("/", "_")
+            import re
+            slug = re.sub(r'[^a-zA-Z0-9_-]', '_', self.topic[:20].replace(" ", "_"))
             self.session_id = f"res_{datetime.now(timezone.utc).strftime('%Y%m%d')}_{slug}"
 
     def to_dict(self) -> dict:
@@ -71,13 +72,15 @@ class TriageResult:
 @dataclass
 class GnosisPacket:
     """The distilled output from a research cycle — L1/L2/L3 abstractions."""
-
+    
     topic: str
     claims: list[dict] = field(default_factory=list)
     distillations: list[dict] = field(default_factory=list)
     convergence_signal: str = "inconclusive"   # verified|contradictory|inconclusive
     recommendation: str = "skip"               # write_to_soul|write_to_knowledge|flag_for_human|skip
     sources: list[str] = field(default_factory=list)
+    recommended_directions: list[dict] = field(default_factory=list) # T3's follow-up topics
+
 
     def to_dict(self) -> dict:
         return asdict(self)

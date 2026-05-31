@@ -17,7 +17,7 @@ ContainerName=omega-redis
 Pod=omega-infra.pod
 # Zen 2 Core Steering
 # Sovereign Volume
-Volume=/media/arcana-novai/omega_library/podman-storage/volumes/redis:/data:Z,U
+Volume=/media/arcana-novai/omega_library/podman-storage/volumes/redis:/data
 Exec=redis-server --requirepass omega --maxmemory 256mb --maxmemory-policy allkeys-lru --save 300 1 --appendonly yes --appendfsync everysec --no-appendfsync-on-rewrite yes --lazyfree-lazy-eviction yes --lazyfree-lazy-expire yes
 HealthCmd=redis-cli -a omega ping
 Notify=healthy
@@ -35,7 +35,7 @@ Delegate=yes
 Type=notify
 NotifyAccess=all
 SyslogIdentifier=%N
-ExecStart=/usr/bin/podman run --name omega-redis --cidfile=%t/%N.cid --replace --rm --cgroups=split --sdnotify=healthy -d -v /media/arcana-novai/omega_library/podman-storage/volumes/redis:/data:Z,U --health-cmd "redis-cli -a omega ping" --pod-id-file %t/omega-infra-pod.pod-id docker.io/library/redis:7.4-alpine redis-server --requirepass omega --maxmemory 256mb --maxmemory-policy allkeys-lru --save 300 1 --appendonly yes --appendfsync everysec --no-appendfsync-on-rewrite yes --lazyfree-lazy-eviction yes --lazyfree-lazy-expire yes
+ExecStart=/usr/bin/podman run --userns=keep-id --user 1000 --name omega-redis --cidfile=%t/%N.cid --replace --rm --cgroups=split --sdnotify=healthy -d -v /media/arcana-novai/omega_library/podman-storage/volumes/redis:/data --health-cmd "redis-cli -a omega ping" --pod-id-file %t/omega-infra-pod.pod-id docker.io/library/redis:7.4-alpine redis-server --requirepass omega --maxmemory 256mb --maxmemory-policy allkeys-lru --save 300 1 --appendonly yes --appendfsync everysec --no-appendfsync-on-rewrite yes --lazyfree-lazy-eviction yes --lazyfree-lazy-expire yes
 
 [Install]
 WantedBy=default.target

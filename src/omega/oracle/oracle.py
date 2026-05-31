@@ -17,10 +17,12 @@ import os
 import pathlib
 import re
 import tempfile
+import shutil
+import errno
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import anyio
 import yaml
@@ -70,6 +72,7 @@ class OracleResponse:
     model: Optional[str] = None
     phase: str = "Phase-0"
     escalated: bool = False
+    cost_warning: Optional[str] = None
 
 
 class Oracle:
@@ -141,7 +144,8 @@ class Oracle:
         if not self.iris_entity:
             logger.warning("Iris entity not found in registry. Speculative decoding may be degraded.")
         self.observability = get_engine()
-        self._soul_lock = anyio.Lock()
+        self._soul_lock = None
+
 
         # Memory & Session Foundation
         self.session_manager = SessionManager()
@@ -176,10 +180,9 @@ class Oracle:
                         resolved = self.registry.get(default_name)
                         if resolved:
                             self.default_entity = resolved
-
             except Exception as e:
                 logger.warning(f"Failed to load default entity from config during bootstrap: {e}")
-
+            
             # Set soul path from config (Engine-Stack Firewall: config-driven, not hardcoded)
             try:
                 data_dir = self.config.get("omega", {}).get("data", {}).get("dir", str(DATA_DIR))
@@ -187,7 +190,7 @@ class Oracle:
                 self._soul_path = Path(data_dir) / "entities" / user_name / "soul.yaml"
             except Exception as e:
                 logger.warning(f"Failed to resolve soul path in bootstrap: {e}")
-
+            
             # Selective IWAD loading: if --iwad specified, load reference IWAD + the chosen one
             if self._iwad_name:
                 logger.info(f"IWAD selector active: loading _omega_default + {self._iwad_name}")
@@ -196,6 +199,9 @@ class Oracle:
             else:
                 await self.wad_loader.load_all_wads()
             self._wads_loaded = True
+            
+            # Dynamic Hierarchy Loading: Load the hierarchy from the active WAD if available
+            await self.hierarchy.load(self.wad_loader.active_hierarchy_path)
             
             # Emit startup personality
             startup_msg = self.wad_loader.get_startup_message(self._iwad_name or "_omega_default")
@@ -207,24 +213,33 @@ class Oracle:
     async def _post_to_hivemind(self, response: OracleResponse, query: str) -> None:
         """Post interaction summary to the Hivemind MCP server for cross-CLI awareness.
         
-        Uses the Hivemind's post_context tool via HTTP POST.
+        Uses the MCP JSON-RPC protocol via the /messages/ SSE endpoint.
         """
         try:
             import httpx
             # Hivemind config from omega.yaml
             hivemind_cfg = self.config.get("omega", {}).get("hivemind", {})
-            url = f"{hivemind_cfg.get('url', 'http://127.0.0.1:8102')}/tools/post_context"
+            base_url = hivemind_cfg.get("url", "http://127.0.0.1:8016")
+            url = f"{base_url}/messages"
             payload = {
-                "cli": hivemind_cfg.get("cli", "opencode"),
-                "model": response.model or "unknown",
-                "task_current": query[:200],
-                "focus_chain": [],
-                "decisions": [],
-                "continuation": f"Conversation with {response.entity} about: {query[:100]}",
-                "session_id": response.session_id,
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "tools/call",
+                "params": {
+                    "name": "hivemind_post_context",
+                    "arguments": {
+                        "cli": hivemind_cfg.get("cli", "opencode"),
+                        "model": response.model or "unknown",
+                        "task_current": query[:200],
+                        "focus_chain": [],
+                        "decisions": [],
+                        "continuation": f"Conversation with {response.entity} about: {query[:100]}",
+                        "session_id": response.session_id,
+                    }
+                }
             }
             async with httpx.AsyncClient() as client:
-                await client.post(url, json=payload, timeout=1.0)
+                await client.post(url, json=payload, timeout=3.0)
         except Exception as e:
             # Silent failure to avoid disrupting the main inference flow
             logger.debug(f"Hivemind synchronization failed: {e}")
@@ -308,13 +323,7 @@ class Oracle:
                 session_id = await self.session_manager.get_session_id(entity_name)
             trace.log("summon.detected", entity=entity_name, query=query, transient=transient, session_id=session_id)
             resp = await self._summon(entity_name, query, trace, session_id)
-            if not transient:
-                await self.memory_store.add_exchange(
-                    resp.entity, resp.session_id, query, resp.text,
-                    metadata={"trace_id": trace.trace_id, "backend": resp.backend, "model": resp.model},
-                )
-                await self._track_soul_evolution(resp.entity, trace.trace_id)
-                await self._post_to_hivemind(resp, query)
+            await self._record_interaction(resp, query, trace, transient)
             return resp
 
     # ── INTERNAL: Triage Router bridge ─────────────────────────────────
@@ -378,16 +387,25 @@ class Oracle:
             return
         
         # 1. Memory Store
-        await self.memory_store.add_exchange(
-            resp.entity, resp.session_id, query, resp.text,
-            metadata={"trace_id": trace.trace_id, "backend": resp.backend, "model": resp.model},
-        )
+        try:
+            await self.memory_store.add_exchange(
+                resp.entity, resp.session_id, query, resp.text,
+                metadata={"trace_id": trace.trace_id, "backend": resp.backend, "model": resp.model},
+            )
+        except Exception as e:
+            logger.warning(f"Failed to record exchange (non-fatal): {e}")
         
         # 2. Soul Evolution
-        await self._track_soul_evolution(resp.entity, trace.trace_id)
+        try:
+            await self._track_soul_evolution(resp.entity, trace.trace_id)
+        except Exception as e:
+            logger.warning(f"Failed to track soul evolution (non-fatal): {e}")
         
         # 3. Hivemind Sync
-        await self._post_to_hivemind(resp, query)
+        try:
+            await self._post_to_hivemind(resp, query)
+        except Exception as e:
+            logger.debug(f"Failed to post to hivemind (non-fatal): {e}")
 
     def _assess_iris_confidence(self, query: str) -> float:
         """Assess whether Iris can handle this query directly.
@@ -433,7 +451,7 @@ class Oracle:
         system_prompt = await self._prepare_system_prompt(iris_name, session_id, base_prompt)
         
         # Attempt inference with the lightest available model
-        response_text = await self.model_gateway.generate(
+        response_text, is_cloud = await self.model_gateway.generate(
             model_name=self.iris_entity.model if self.iris_entity else "qwen3-1.7b",
             system_prompt=system_prompt,
             user_query=query,
@@ -453,6 +471,7 @@ class Oracle:
             model=self.iris_entity.model if self.iris_entity else "qwen3-1.7b",
             session_id=session_id,
             escalated=False,
+            cost_warning="\n\n⚠️ [Sovereignty Alert]: This response was generated by a cloud provider. Local inference was unavailable or bypassed." if is_cloud else None,
         )
         
         trace.log("response.delivered", entity=iris_name, confidence=confidence, backend=backend, session_id=session_id)
@@ -485,7 +504,7 @@ class Oracle:
         
         # Generate response via model gateway with TriageRouter
         model_name = await self._select_model(entity.name, query, session_id, trace.trace_id)
-        response_text = await self.model_gateway.generate(
+        response_text, is_cloud = await self.model_gateway.generate(
             model_name=model_name,
             system_prompt=system_prompt,
             user_query=query,
@@ -509,6 +528,7 @@ class Oracle:
             backend=backend,
             model=model_name,
             session_id=session_id,
+            cost_warning="\n\n⚠️ [Sovereignty Alert]: This response was generated by a cloud provider. Local inference was unavailable or bypassed." if is_cloud else None,
         )
         
         trace.log("model.completed", entity=entity.name, backend=backend, session_id=session_id)
@@ -549,7 +569,7 @@ class Oracle:
         
         # Generate response via model gateway with TriageRouter
         model_name = await self._select_model(entity.name, text, session_id, trace.trace_id)
-        response_text = await self.model_gateway.generate(
+        response_text, is_cloud = await self.model_gateway.generate(
             model_name=model_name,
             system_prompt=system_prompt,
             user_query=text,
@@ -574,6 +594,7 @@ class Oracle:
             model=model_name,
             session_id=session_id,
             escalated=True,
+            cost_warning="\n\n⚠️ [Sovereignty Alert]: This response was generated by a cloud provider. Local inference was unavailable or bypassed." if is_cloud else None,
         )
         
         trace.log("model.completed", entity=entity.name, backend=backend, escalated=True, session_id=session_id)
@@ -589,6 +610,31 @@ class Oracle:
         )
         return result
 
+    def _validate_l3(self, l3: str) -> bool:
+        """Validate a soul L3 Universal Principle for quality and safety.
+        
+        Rules:
+        1. Not empty.
+        2. Length 10-500 characters.
+        3. Must not start with YAML-breaking characters (', ", :, \n, \t).
+        4. Must have at least 3 unique words (spam detection).
+        """
+        if not isinstance(l3, str) or not l3.strip():
+            return False
+        
+        l3 = l3.strip()
+        if not (10 <= len(l3) <= 500):
+            return False
+        
+        if l3[0] in ('\'', '"', ':', '\n', '\t'):
+            return False
+        
+        words = set(re.findall(r'\w+', l3.lower()))
+        if len(words) < 3:
+            return False
+            
+        return True
+
     # ── Soul evolution tracking ───────────────────────────────────────
 
     async def _track_soul_evolution(self, entity_name: str, trace_id: str) -> None:
@@ -602,22 +648,32 @@ class Oracle:
             try:
                 soul_path = self._soul_path or DEFAULT_SOUL_PATH
                 if not soul_path.exists():
+                    logger.warning(f"Soul file not found at {soul_path}")
                     return
                 
+                # Disk Space Guard: Abort if free space < 5%
+                usage = shutil.disk_usage(soul_path.parent)
+                free_pct = (usage.free / usage.total) * 100
+                if free_pct < 5:
+                    logger.critical(f"Critical disk space: {free_pct:.2f}% free. Aborting soul write to prevent corruption.")
+                    return
+
                 async with await anyio.open_file(str(soul_path), "r") as f:
                     content = await f.read()
                     soul = yaml.safe_load(content)
                 
-                ent = soul["entity"]
+                ent = soul.get("entity", {})
                 evo = ent.setdefault("soul_evolution", {})
                 evo["sessions_completed"] = evo.get("sessions_completed", 0) + 1
                 
                 # Track unique entities inhabited
-                inhabited: Set[str] = set(ent.get("soul_wardrobe", []))
-                evo["entities_inhabited"] = len(inhabited)
+                wardrobe = ent.get("soul_wardrobe", [])
+                if entity_name not in wardrobe:
+                    wardrobe.append(entity_name)
+                    ent["soul_wardrobe"] = wardrobe
+                evo["entities_inhabited"] = len(wardrobe)
                 
                 # --- Gnosis Distillation (L1->L2->L3) ---
-                # We use a reasoning model to distill the session trace into gnosis
                 distillation_prompt = (
                     f"Analyze the following interaction trace for entity {entity_name} (Trace ID: {trace_id}).\n"
                     "Extract the following three levels of abstraction:\n"
@@ -627,79 +683,179 @@ class Oracle:
                     "Format as YAML with keys: l1, l2, l3."
                 )
                 
-                # --- Gnosis Distillation (L1->L2->L3) ---
-                # We use a reasoning model to distill the session trace into gnosis
-                distillation_prompt = (
-                    f"Analyze the following interaction trace for entity {entity_name} (Trace ID: {trace_id}).\n"
-                    "Extract the following three levels of abstraction:\n"
-                    "L1 (Narrative): A concise summary of what happened.\n"
-                    "L2 (Insight): The causal pattern or strategic significance of this interaction.\n"
-                    "L3 (Universal Principle): A timeless, domain-agnostic truth extracted from this experience.\n\n"
-                    "Format as YAML with keys: l1, l2, l3."
+                distill_model = os.environ.get("OMEGA_DISTILL_MODEL", "qwen3-4b-thinking-q4_k_m")
+                distilled_text, _ = await self.model_gateway.generate(
+                    model_name=distill_model,
+                    system_prompt="You are the Gnosis Distiller. Your goal is to extract timeless truths from session traces.",
+                    user_query=distillation_prompt,
+                    temperature=0.3,
+                    max_tokens=512,
                 )
-                
-                # Use a reasoning model for distillation (config-driven via env var)
-                try:
-                    distill_model = os.environ.get("OMEGA_DISTILL_MODEL", "qwen3-4b-thinking-q4_k_m")
-                    distilled_text = await self.model_gateway.generate(
-                        model_name=distill_model,
-                        system_prompt="You are the Gnosis Distiller. Your goal is to extract timeless truths from session traces.",
-                        user_query=distillation_prompt,
-                        temperature=0.3,
-                        max_tokens=512,
-                    )
-                    distilled_data = yaml.safe_load(distilled_text) or {}
-                except Exception as e:
-                    logger.warning(f"Gnosis distillation failed: {e}")
-                    distilled_data = {"l1": f"Session with {entity_name}", "l2": "Unknown", "l3": "Unknown"}
-                
-                lessons = ent.setdefault("lessons_learned", [])
-                if not isinstance(lessons, list):
-                    lessons = []
-                    ent["lessons_learned"] = lessons
-                
-                # Sovereign Guard: Prune empty lessons and prevent semantic explosion (C-MEM-005, 006)
-                # 1. Prune existing empty lessons (L2 == "Unknown")
-                ent["lessons_learned"] = [l for l in lessons if l.get("l2") != "Unknown"]
-                lessons = ent["lessons_learned"]
-
-                # 2. Semantic Deduplication: Check if L3 is already present
-                new_l3 = distilled_data.get("l3", "N/A").strip().lower()
-                is_duplicate = any(
-                    str(l.get("l3", "")).strip().lower() == new_l3 
-                    for l in lessons if l.get("l3")
-                )
-                
-                if not is_duplicate and len(lessons) < 1000:
-                    lessons.append({
-                        "l1": distilled_data.get("l1", "N/A"),
-                        "l2": distilled_data.get("l2", "N/A"),
-                        "l3": distilled_data.get("l3", "N/A"),
-                        "source": "user-session",
-                        "user": "The Architect",
-                        "trace_id": trace_id,
-                        "entity_at_time": entity_name,
-                        "session_type": "persistent",
-                        "timestamp": datetime.now(timezone.utc).isoformat(),
-                    })
-
+            
+                if distilled_text:
+                    try:
+                        # Clean up LLM output (remove markdown blocks)
+                        distilled_text = distilled_text.replace("```yaml", "").replace("```", "").strip()
+                        distilled_gnosis = yaml.safe_load(distilled_text)
+                        
+                        if isinstance(distilled_gnosis, dict) and all(k in distilled_gnosis for k in ['l1', 'l2', 'l3']):
+                            # Soul L3 Validation
+                            if self._validate_l3(distilled_gnosis['l3']):
+                                lessons = evo.setdefault("lessons_learned", [])
+                                # Check for duplicates by L3 content
+                                is_duplicate = any(l.get("l3") == distilled_gnosis['l3'] for l in lessons)
+                                
+                                if not is_duplicate and len(lessons) < 1000:
+                                    lessons.append({
+                                        "l1": distilled_gnosis['l1'],
+                                        "l2": distilled_gnosis['l2'],
+                                        "l3": distilled_gnosis['l3'],
+                                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                                        "trace_id": trace_id,
+                                        "entity": entity_name,
+                                    })
+                                    logger.info(f"Soul for {entity_name} updated with new gnosis (L3: {distilled_gnosis['l3'][:50]}...)")
+                                else:
+                                    logger.debug(f"Gnosis L3 duplicate or limit reached for {entity_name}")
+                            else:
+                                logger.warning(f"Distilled L3 failed validation: {distilled_gnosis['l3'][:100]}...")
+                        else:
+                            logger.warning(f"Distilled text not in expected format: {distilled_text[:100]}...")
+                    except yaml.YAMLError as e:
+                        logger.error(f"Failed to parse distilled gnosis YAML: {e}")
                 
                 # Recompute soul_power
                 sessions = evo.get("sessions_completed", 0)
                 entities = evo.get("entities_inhabited", 0)
                 experiences = evo.get("total_embodied_experiences", 0)
                 evo["soul_power"] = round((sessions * 0.1) + (entities * 0.3) + (experiences * 0.6), 2)
-                
-                # Atomic write
+        
+                # Atomic write with backup and recovery
                 temp_dir = soul_path.parent
-                temp_name = await anyio.to_thread.run_sync(self._write_soul_atomic, soul, temp_dir)
-                await anyio.to_thread.run_sync(os.replace, temp_name, str(soul_path))
+                backup_path = soul_path.with_suffix(".yaml.backup")
                 
+                try:
+                    # Create backup before writing
+                    await anyio.to_thread.run_sync(shutil.copy2, str(soul_path), str(backup_path))
+                    
+                    # Verify backup integrity
+                    if not backup_path.exists() or backup_path.stat().st_size == 0:
+                        logger.error(f"Soul backup verification failed for {entity_name}. Aborting write to prevent loss.")
+                        return
+                    
+                    temp_name = await anyio.to_thread.run_sync(self._write_soul_atomic, soul, temp_dir)
+                    await anyio.to_thread.run_sync(os.replace, temp_name, str(soul_path))
+                except OSError as e:
+                    if e.errno == errno.ENOSPC:
+                        logger.critical("Disk full (ENOSPC) during soul write. Attempting to restore backup...")
+                        await anyio.to_thread.run_sync(shutil.copy2, str(backup_path), str(soul_path))
+                    else:
+                        logger.error(f"OSError during soul write: {e}")
+                        raise
             except Exception as e:
-                logger.warning(f"Failed to track soul evolution: {e}")
+                logger.error(f"Error during soul evolution for {entity_name} (Trace ID: {trace_id}): {e}")
 
 
-    # ── Soul file atomic write helper (runs in thread pool) ───────────
+
+
+    def _prune_soul(self, soul: dict) -> int:
+        """Remove stub lessons (L2=Unknown, L3=Unknown) from the soul.
+        
+        Returns:
+            Number of lessons pruned.
+        """
+        ent = soul.get("entity", {})
+        evo = ent.get("soul_evolution", {})
+        lessons = evo.get("lessons_learned", [])
+        
+        if not lessons:
+            return 0
+            
+        initial_count = len(lessons)
+        # Keep only lessons that have at least one meaningful abstraction
+        pruned_lessons = [
+            l for l in lessons 
+            if not (l.get("l2") == "Unknown" and l.get("l3") == "Unknown")
+        ]
+        
+        evo["lessons_learned"] = pruned_lessons
+        return initial_count - len(pruned_lessons)
+
+    async def _compact_soul(self, soul: dict) -> int:
+        """Merge repeated narrative lessons into summarized experiences.
+        
+        Example: 15 'Session with Iris' entries -> 'Interacted with Iris over 15 sessions. Key focus: X'
+        """
+        ent = soul.get("entity", {})
+        evo = ent.get("soul_evolution", {})
+        lessons = evo.get("lessons_learned", [])
+        
+        if not lessons:
+            return 0
+            
+        # Group by L1 narrative pattern
+        groups = {}
+        for l in lessons:
+            l1 = l.get("l1", "").lower()
+            if "session with" in l1:
+                entity = l1.split("session with")[-1].strip().title()
+                key = f"interactions_{entity}"
+                groups.setdefault(key, []).append(l)
+            else:
+                groups.setdefault(l.get("l3", "unique"), []).append(l)
+        
+        new_lessons = []
+        merged_count = 0
+        
+        for key, members in groups.items():
+            if len(members) > 1 and key.startswith("interactions_"):
+                # Merge into a single summary lesson
+                entity_name = key.replace("interactions_", "")
+                merged_lesson = {
+                    "l1": f"Conducted {len(members)} sessions with {entity_name}.",
+                    "l2": f"Consolidated experience across {len(members)} interactions.",
+                    "l3": "Repetitive interactions refine the bond but only unique insights evolve the soul.",
+                    "timestamp": members[-1].get("timestamp"),
+                    "trace_id": members[-1].get("trace_id"),
+                    "entity": members[-1].get("entity"),
+                }
+                new_lessons.append(merged_lesson)
+                merged_count += len(members) - 1
+            else:
+                new_lessons.extend(members)
+        
+        evo["lessons_learned"] = new_lessons
+        return merged_count
+    async def evolve_soul(self, entity_name: str) -> Dict[str, Any]:
+        """Manually trigger soul pruning and compaction for an entity.
+        
+        Returns:
+            Stats on the evolution (pruned, compacted, total_remaining).
+        """
+        async with self._soul_lock:
+            soul_path = self._soul_path or DEFAULT_SOUL_PATH
+            if not soul_path.exists():
+                return {"error": "Soul file not found"}
+            
+            async with await anyio.open_file(str(soul_path), "r") as f:
+                content = await f.read()
+                soul = yaml.safe_load(content)
+            
+            pruned = self._prune_soul(soul)
+            compacted = await self._compact_soul(soul)
+            
+            # Save the evolved soul
+            temp_dir = soul_path.parent
+            temp_name = await anyio.to_thread.run_sync(self._write_soul_atomic, soul, temp_dir)
+            await anyio.to_thread.run_sync(os.replace, temp_name, str(soul_path))
+            
+            return {
+                "entity": entity_name,
+                "pruned_stubs": pruned,
+                "compacted_lessons": compacted,
+                "total_remaining": len(soul["entity"]["soul_evolution"]["lessons_learned"]),
+                "status": "evolved"
+            }
 
     def _write_soul_atomic(self, soul: dict, temp_dir: Path) -> str:
         """Write soul data to a temp file synchronously (runs in thread pool)."""
@@ -742,3 +898,9 @@ class Oracle:
             self.default_entity = entity
             return True
         return False
+
+    async def close(self) -> None:
+        """Gracefully shut down the Oracle and its components."""
+        if self.memory_store:
+            await self.memory_store.close()
+        logger.info("Oracle shutdown complete.")

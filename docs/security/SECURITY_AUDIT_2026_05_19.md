@@ -61,47 +61,57 @@ The following API keys are visible in the `.env` file and have been exposed in t
    - Update `.env`
 
 6. **Google AI Studio** (https://aistudio.google.com/app/apikey)
-   - Revoke current key: `AIzaSyDJldc4BgzN-Ui2C3XDwSr8ohPTWCKQZrU`
+   - Revoke current key: `[...REVOKED-2026-05-30...]`
+   - Generate new key
+   - Update `.env`
+
+5. **Jina** (https://jina.ai/settings)
+   - Revoke current key: `[...REVOKED-2026-05-30...]`
+   - Generate new key
+   - Update `.env`
+
+6. **Google AI Studio** (https://aistudio.google.com/app/apikey)
+   - Revoke current key: `[...REVOKED-2026-05-30...]`
    - Generate new key
    - Update `.env`
 
 7. **OpenRouter** (https://openrouter.ai/keys)
-   - Revoke current key: `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`
+   - Revoke current key: `[...REVOKED-2026-05-30...]`
    - Generate new key
    - Update `.env`
 
 8. **Cerebras** (https://console.cerebras.ai/api-keys)
-   - Revoke current key: `csk-f4y5wepcy54w5hfrv853hhddn53wyvve436n9rthv9hrnhjr`
+   - Revoke current key: `[...REVOKED-2026-05-30...]`
    - Generate new key
    - Update `.env`
 
 9. **SambaNova** (https://cloud.sambanova.ai/settings/api-keys)
-   - Revoke current key: `29b6811b-7e87-4b28-ad92-1bdde10f7777`
+   - Revoke current key: `[...REVOKED-2026-05-30...]`
    - Generate new key
    - Update `.env`
 
 10. **GenLabs** (https://genlabs.ai/settings)
-    - Revoke current key: `sk_EDArGdjj7JlBY_NyX1V3_295NFsCSET9QSGcwkhfqB8`
+    - Revoke current key: `[...REVOKED-2026-05-30...]`
     - Generate new key
     - Update `.env`
 
 11. **Kilo** (https://kilo.dev/settings)
-    - Revoke current key: `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbnYiOiJwcm9kdWN0aW9uIiwia2lsb1VzZXJJZCI6IjA1OTA0ZjhlLWRjMzgtNDg1Ni1iOGVmLTNjNGQzZjhmODg1YiIsImFwaVRva2VuUGVwcGVyIjpudWxsLCJ2ZXJzaW9uIjozLCJpYXQiOjE3NzkwMjY3ODMsImV4cCI6MTkzNjcwNjc4M30.EFPoLtDMvPlszuRTcbGdkD2sDSG5PF-dh4CuSvLQa9k`
+    - Revoke current key: `[...REVOKED-2026-05-30...]`
     - Generate new key
     - Update `.env`
 
 12. **TogetherAI** (https://api.together.xyz/settings/keys)
-    - Revoke current key: `tgp_v1_qdMuZcQo1-L6HDow2EMJlDRnKtO7f_IxIyyNvcMAeSs`
+    - Revoke current key: `[...REVOKED-2026-05-30...]`
     - Generate new key
     - Update `.env`
 
 13. **Groq** (https://console.groq.com/keys)
-    - Revoke current key: `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`
+    - Revoke current key: `[...REVOKED-2026-05-30...]`
     - Generate new key
     - Update `.env`
 
 14. **OpenCode Zen** (https://opencode.ai/settings)
-    - Revoke current key: `sk-PVlrGm5QHtLrNcJrRj3pWQVFho7SSFcalueJLPE39nebrX9nboUwemCdWjqGGl2O`
+    - Revoke current key: `[...REVOKED-2026-05-30...]`
     - Generate new key
     - Update `.env`
 

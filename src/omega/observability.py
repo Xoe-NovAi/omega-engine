@@ -73,7 +73,8 @@ class ObservabilityEngine:
     def __init__(self, enable_dataset_collection: bool = False):
         self.enable_dataset_collection = enable_dataset_collection
         self._session_id = uuid.uuid4().hex[:8]
-        self._event_log: List[Dict[str, Any]] = []
+        from collections import deque
+        self._event_log: deque = deque(maxlen=1000)  # Bounded to prevent OOM
         self._dataset: List[Dict[str, Any]] = []
         self._event_persist_enabled = os.environ.get("OMEGA_PERSIST_EVENTS", "true").lower() == "true"
         self._load_persisted_events()

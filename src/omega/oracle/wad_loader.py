@@ -12,7 +12,7 @@ import logging
 import os
 import yaml
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import anyio
 from .entity_registry import EntityRegistry, Entity
@@ -29,6 +29,7 @@ class WADLoader:
             str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads")
         ))
         self._startup_messages: Dict[str, str] = {}  # stack_name -> startup message
+        self.active_hierarchy_path: Optional[Path] = None
         
         if os.environ.get("OMEGA_ENV") != "test":
             try:
@@ -48,7 +49,7 @@ class WADLoader:
                 if await entry.is_dir():
                     stack_name = entry.name
                     logger.info(f"Loading WAD: {stack_name}")
-                    success = await self.load_wad(stack_name)
+                    success, _ = await self.load_wad(stack_name)
                     results[stack_name] = success
         except Exception as e:
             logger.error(f"Failed to iterate WADs directory: {e}")
@@ -66,7 +67,8 @@ class WADLoader:
             priority: Override priority (default 10 — overrides entities.yaml baseline)
         """
         logger.info(f"Loading single WAD: {stack_name} (priority {priority})")
-        return await self.load_wad(stack_name, priority=priority)
+        success, _ = await self.load_wad(stack_name, priority=priority)
+        return success
 
     def get_startup_message(self, stack_name: Optional[str] = None) -> Optional[str]:
         """Return the startup personality message for a given WAD stack.
@@ -81,29 +83,24 @@ class WADLoader:
             return list(self._startup_messages.values())[-1]
         return None
 
-    async def load_wad(self, stack_name: str, priority: int = 0) -> bool:
+    async def load_wad(self, stack_name: str, priority: int = 0) -> Tuple[bool, Optional[Path]]:
         """Load a specific WAD stack.
         
-        1. Read manifest.yaml
-        2. Load entities from entities/
-        3. Load voices from voices/
-        
-        Args:
-            stack_name: Name of the WAD directory (e.g., '_omega_default')
-            priority: Loading priority (higher = overrides lower). Default 0.
+        Returns:
+            Tuple of (success_status, hierarchy_path)
         """
         # Path traversal guard
         resolved_wad_path = (self.wads_dir / stack_name).resolve()
         if not str(resolved_wad_path).startswith(str(self.wads_dir.resolve())):
             logger.warning(f"Path traversal attempt detected: {stack_name}")
-            return False
+            return False, None
 
         wad_path = resolved_wad_path
         manifest_path = wad_path / "manifest.yaml"
         
         if not await anyio.Path(manifest_path).exists():
             logger.warning(f"WAD {stack_name} missing manifest.yaml. Skipping.")
-            return False
+            return False, None
             
         try:
             async with await anyio.open_file(str(manifest_path), "r") as f:
@@ -121,11 +118,11 @@ class WADLoader:
             missing = [f for f in required_fields if f not in manifest]
             if missing:
                 raise ValueError(f"WAD {stack_name} manifest missing required fields: {', '.join(missing)}")
-
+            
             # Capture startup personality if defined
             if manifest.get("startup") and manifest["startup"].get("message"):
                 self._startup_messages[stack_name] = manifest["startup"]["message"]
-
+            
             logger.info(f"Loading stack {stack_name} (version {manifest.get('version', 'unknown')})")
             
             # 1. Load Entities
@@ -137,11 +134,25 @@ class WADLoader:
             voices_dir = wad_path / "voices"
             if await anyio.Path(voices_dir).exists():
                 await self._load_voices(voices_dir, wad_source=stack_name)
-                
-            return True
+            
+            # 3. Resolve Hierarchy Path (if specified in manifest or exists in WAD root)
+            hierarchy_path = None
+            if "hierarchy" in manifest:
+                h_path = wad_path / manifest["hierarchy"]
+                if await anyio.Path(h_path).exists():
+                    hierarchy_path = h_path
+            else:
+                default_h_path = wad_path / "hierarchy.yaml"
+                if await anyio.Path(default_h_path).exists():
+                    hierarchy_path = default_h_path
+
+            if hierarchy_path:
+                self.active_hierarchy_path = hierarchy_path
+
+            return True, hierarchy_path
         except Exception as e:
             logger.error(f"Failed to load WAD {stack_name}: {e}")
-            return False
+            return False, None
 
     async def _load_entities(self, entities_dir: Path, wad_source: str = "", priority: int = 0) -> None:
         """Load all .yaml files from the entities directory.

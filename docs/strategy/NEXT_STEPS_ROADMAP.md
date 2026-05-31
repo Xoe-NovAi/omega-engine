@@ -14,7 +14,7 @@ The architecture sprint delivered:
 
 ### 🟢 P0 — Immediate (~30 min)
 1. Archive 13 stale EXP-003 agents to `archives/`
-2. Create 3 special modes: `belial.md`, `iris.md`, `opencode-architect.md`
+2. Create 3 special modes: `roc_racoon.md`, `iris.md`, `opencode-architect.md`
 3. Update `opencode.json`
 
 ### 🟡 P1 — Next Session (~45 min)

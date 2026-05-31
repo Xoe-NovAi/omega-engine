@@ -31,6 +31,7 @@ class OpenAICompatProvider(RemoteProvider):
         user_query: str,
         temperature: float,
         max_tokens: int,
+        trace_id: Optional[str] = None,
     ) -> str:
         """Send a chat completion request to the OpenAI-compatible API."""
         import httpx

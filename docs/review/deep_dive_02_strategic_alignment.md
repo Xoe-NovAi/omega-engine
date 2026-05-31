@@ -75,7 +75,7 @@ Compare every claim in §3 Core Architecture against the actual code:
 |----------|----------------|-------|
 | **Decision 50** (Podman keep-id) | Quadlets at `~/.config/containers/systemd/` use `UserNS=keep-id` | `grep -rn "keep-id\|:U\|:Z" ~/.config/containers/systemd/*.container` |
 | **Decision 52** (Jem-2.0 Oversoul) | Sub-facet soul files at `data/entities/jem/souls/` | `ls data/entities/jem/souls/ 2>/dev/null` |
-| **Decision 53** (Belial local model) | Belial's model is `qwen3-4b-thinking-q4_k_m` | `grep "belial" config/entities.yaml -A 5` |
+| **Decision 53** (Roc Racoon local model) | Roc Racoon's model is `qwen3-4b-thinking-q4_k_m` | `grep "roc_racoon" config/entities.yaml -A 5` |
 | **Decision 54** (Remediation complete) | 241 tests pass, all findings FIXED | Verify `docs/review/FINDINGS_LOG.md` shows 🟢 FIXED for all 29 entries |
 
 ### Pair D: `AGENTS.md` vs Agent Readiness

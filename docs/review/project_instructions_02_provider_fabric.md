@@ -1,6 +1,6 @@
 # 🔱 Project Instructions — Omega Provider Fabric
 
-**Account**: `ArcanaNovaAi@gmail.com`
+**Account**: `xoe.nova.ai@gmail.com`
 **Role**: Inference Engineer
 **Project**: Omega Engine — Provider Fabric & Inference
 

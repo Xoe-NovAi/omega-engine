@@ -266,11 +266,58 @@ class Indexer:
                         existing["_vec_score"] = r.pop("_score", 0.0)
                         break
 
+        def _rrf_score(item, k=60):
+            """Reciprocal Rank Fusion score — higher is better.
+            
+            Converts FTS5 rank (negative BM25, closer to 0 = better) and
+            vector score (0 to 1, higher = better) into combined RRF score.
+            k=60 is the standard RRF parameter.
+            """
+            # FTS5 rank: negate to make positive (higher rank value = worse match)
+            # Convert to RRF: 1 / (k + rank_position)
+            fts_raw = -item.get("_fts_score", 0)  # negate to make positive
+            if fts_raw < 0:
+                fts_raw = 0  # shouldn't happen, but guard
+            fts_rrf = 1.0 / (k + fts_raw)
+            
+            # Vector score: already positive 0-1, invert so 1.0 = rank 0
+            vec_raw = 1.0 - item.get("_vec_score", 0.0)
+            vec_rrf = 1.0 / (k + vec_raw * 100)
+            
+            return fts_rrf + vec_rrf
+
+        def _rrf_score(item, k=60):
+            """Reciprocal Rank Fusion score — higher is better.
+            
+            Converts FTS5 rank (negative BM25, closer to 0 = better) and
+            vector score (0 to 1, higher = better) into combined RRF score.
+            k=60 is the standard RRF parameter.
+            """
+            # FTS5 rank: negate to make positive (higher rank value = worse match)
+            # Convert to RRF: 1 / (k + rank_position)
+            fts_raw = -item.get("_fts_score", 0)  # negate to make positive
+            if fts_raw < 0:
+                fts_raw = 0  # shouldn't happen, but guard
+            fts_rrf = 1.0 / (k + fts_raw)
+            
+            # Vector score: already positive 0-1, invert so 1.0 = rank 0
+            vec_raw = 1.0 - item.get("_vec_score", 0.0)
+            vec_rrf = 1.0 / (k + vec_raw * 100)
+            
+            return fts_rrf + vec_rrf
+
         combined.sort(
-            key=lambda r: r.get("_fts_score", 0) + r.get("_vec_score", 0) * 10,
-            reverse=True,
+            key=_rrf_score,
+            reverse=False,
         )
         return combined[:limit]
+
+    async def close(self) -> None:
+        """Close the FTS database and save vectors."""
+        if self._fts:
+            await self._fts.close()
+            self._fts = None
+        await self.save_vectors()
 
     async def save_vectors(self) -> None:
         """Persist vector embeddings to disk."""

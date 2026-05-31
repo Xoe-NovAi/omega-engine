@@ -134,3 +134,43 @@ async def test_get_memory_store_returns_singleton(temp_data_dir):
     s1 = get_memory_store()
     s2 = get_memory_store()
     assert s1 is s2
+
+@pytest.mark.anyio
+async def test_add_exchange_none_session_id(temp_data_dir):
+    """add_exchange with session_id=None must not create None.json."""
+    reset_memory_store()
+    store = get_memory_store()
+    await store.add_exchange("Sophia", None, "Hello", "Hi there!")
+
+    # No file should be created
+    none_json = Path(os.environ["OMEGA_DATA_DIR"]) / "memory" / "entities" / "sophia" / "None.json"
+    assert not none_json.exists()
+
+    # Hot cache should not contain a None entry
+    assert "sophia:None" not in store._hot
+
+    # get_history with None should return empty
+    history = await store.get_history("Sophia", None)
+    assert history == []
+
+@pytest.mark.anyio
+async def test_add_exchange_empty_session_id(temp_data_dir):
+    """add_exchange with session_id='' must be skipped."""
+    reset_memory_store()
+    store = get_memory_store()
+    await store.add_exchange("Sophia", "", "Hello", "Hi there!")
+
+    # Hot cache should not contain an empty string entry
+    assert "sophia:" not in store._hot
+
+    # get_history with empty string should return empty
+    history = await store.get_history("Sophia", "")
+    assert history == []
+
+@pytest.mark.anyio
+async def test_get_history_none_session_id_returns_empty(temp_data_dir):
+    """get_history with session_id=None must return empty list."""
+    reset_memory_store()
+    store = get_memory_store()
+    history = await store.get_history("Sophia", None)
+    assert history == []

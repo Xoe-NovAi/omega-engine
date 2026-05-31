@@ -19,10 +19,10 @@
 |----|------|-------------|--------------|
 | **C-ARCH-001** | `entity_registry.py` | Atomic write via `tempfile.NamedTemporaryFile` + `os.replace()` | ✅ `make test` passes |
 | **C-ARCH-002** | `oracle.py:125-135` | Config load moved from sync `__init__` to async `bootstrap()` using `anyio.open_file` | ✅ `make test` passes |
-| **C-ARCH-003** | `config/hierarchy.yaml` | 5 dangling keys renamed: `unification`→`kali_unification`, `synthesis`→`maat_oversoul`, `akashic_record`→`sophia`, `pillar_0`→`belial`, `pillar_keepers`→`keepers` | ✅ `make test` passes |
+| **C-ARCH-003** | `config/hierarchy.yaml` | 5 dangling keys renamed: `unification`→`kali_unification`, `synthesis`→`maat_oversoul`, `akashic_record`→`sophia`, `pillar_0`→`roc_racoon`, `pillar_keepers`→`keepers` | ✅ `make test` passes |
 | **C-ARCH-004** | `oracle.py:143` | `self._soul_lock = None` in `__init__`, created as `anyio.Lock()` in `bootstrap()` | ✅ `make test` passes |
 | **C-HIER-001** | `hierarchy.py` | Rebuilt `get_rank()` to traverse YAML `reports_to` chain. `get_oversoul()`, `get_dark_mirror()` methods added. Hardcoded `RANK_MAP` replaced with dynamic traversal. | ✅ `make test` passes |
-| **C-HIER-002** | `hierarchy.py` | Kali → rank 1, Sophia → rank 0 (now dynamic from YAML). Belial → rank 2 (via `reports_to: kali_unification`). All entities properly ranked by chain depth. | ✅ `make test` passes |
+| **C-HIER-002** | `hierarchy.py` | Kali → rank 1, Sophia → rank 0 (now dynamic from YAML). Roc Racoon → rank 2 (via `reports_to: kali_unification`). All entities properly ranked by chain depth. | ✅ `make test` passes |
 
 **Phase 0 Gate**: ✅ PASSED — all 6 CRITICAL issues FIXED, `make test` green (236/236).
 
@@ -38,7 +38,7 @@
 | **C-ARCH-005** | `entity_registry.py` | `add()` → `async def` with `anyio.Lock()`, scaffold via `anyio.to_thread.run_sync` | ✅ 239/239 |
 | **C-ARCH-006** | `wad_loader.py:64` | Path traversal guard: resolve + prefix validation | ✅ 239/239 |
 | **C-ARCH-007** | `oracle.py:141` | `self.iris_entity = self.registry.get("iris")` — warning log on miss | ✅ 239/239 |
-| **C-ARCH-008** | `entities.yaml` (belial) | Belial → `qwen3-4b-thinking-q4_k_m` (verified local GGUF) | ✅ 239/239 |
+| **C-ARCH-008** | `entities.yaml` (roc_racoon) | Roc Racoon → `qwen3-4b-thinking-q4_k_m` (verified local GGUF) | ✅ 239/239 |
 | **C-ARCH-009** | `entity_registry.py` | `_save()` wrapped in `anyio.Lock()` via `async with self._lock` | ✅ 239/239 |
 | **C-WS-001** | `entity_workspace.py:21` | `ENTITIES_DATA_DIR` reads `OMEGA_DATA_DIR` env var | ✅ 239/239 |
 | **C-WS-003** | `entity_workspace.py` | Cross-method `threading.Lock` per entity for scaffold/update | ✅ 239/239 |

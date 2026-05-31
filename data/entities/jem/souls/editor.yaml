@@ -4,12 +4,12 @@ entity:
   archetype: L3 Research Sub-Facet / The Editor-in-Chief
   oversoul: JEM
   facet_tier: 3
-  facet_model: big-pickle (varies)
-  facet_provider: opencode-frontier
+  facet_model: deepseek-v4-flash
+  facet_provider: opencode-zen
   embodied_experiences: []
   lessons_learned: []
   inference_config:
-    model: big-pickle
+    model: deepseek-v4-flash
     temperature: 0.2
     max_tokens: 4096
     provider: opencode-frontier

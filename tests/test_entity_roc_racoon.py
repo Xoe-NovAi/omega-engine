@@ -5,11 +5,18 @@ Uses temporary directories and mock file systems to avoid touching real partitio
 
 import json
 import os
+import sys
 import tempfile
 from pathlib import Path
 from unittest.mock import patch, AsyncMock
 
 import pytest
+
+# Add the IWAD plugins directory to the import path
+_project_root = Path(__file__).resolve().parent.parent
+_plugins_path = str(_project_root / "config" / "wads" / "arcana_novai" / "plugins")
+if _plugins_path not in sys.path:
+    sys.path.insert(0, _plugins_path)
 
 # Mock OMEGA_DATA_DIR to a temp dir before importing entity_roc_racoon
 _omd = None
@@ -27,9 +34,9 @@ def mock_data_dir(monkeypatch, tmp_path):
 
 @pytest.fixture
 def roc_racoon(mock_data_dir):
-    # Need to import after env is set
-    from omega.entity_roc_racoon import RocRacoonMiner
-    with patch("omega.entity_roc_racoon.DATA_DIR", mock_data_dir):
+    # Need to import after env is set — module moved to IWAD plugin path
+    from entity_roc_racoon import RocRacoonMiner
+    with patch("entity_roc_racoon.DATA_DIR", mock_data_dir):
         miner = RocRacoonMiner()
         yield miner
 
@@ -67,7 +74,7 @@ class TestRocRacoonMinerInit:
         history = [{"path": "test.yaml", "classification": "technical"}]
         (history_dir / "mining_history.json").write_text(json.dumps(history))
 
-        from omega.entity_roc_racoon import RocRacoonMiner
+        from entity_roc_racoon import RocRacoonMiner
         miner = RocRacoonMiner()
         assert len(miner.mining_queue) == 1
         assert miner.mining_queue[0]["path"] == "test.yaml"
@@ -78,13 +85,13 @@ class TestRocRacoonMinerInit:
         history_dir.mkdir(parents=True, exist_ok=True)
         (history_dir / "mining_history.json").write_text("not valid json{{{")
 
-        from omega.entity_roc_racoon import RocRacoonMiner
+        from entity_roc_racoon import RocRacoonMiner
         miner = RocRacoonMiner()
         assert miner.mining_queue == []
 
     def test_legacy_mines_configured(self):
         """LEGACY_MINES should include expected mine locations."""
-        from omega.entity_roc_racoon import LEGACY_MINES
+        from entity_roc_racoon import LEGACY_MINES
         mine_names = [m[0] for m in LEGACY_MINES]
         assert "xna-omega-legacy" in mine_names
         assert "omega-stack-legacy" in mine_names
@@ -223,8 +230,8 @@ class TestGetPrioritizedQueue:
 class TestDiscoverOmegaFolders:
     def test_discover_omega_folders_nonexistent(self):
         """discover_omega_folders returns empty list when partitions don't exist."""
-        from omega.entity_roc_racoon import discover_omega_folders, OMEGA_PARTITIONS
-        with patch("omega.entity_roc_racoon.OMEGA_PARTITIONS", [Path("/nonexistent_omega_vault")]):
+        from entity_roc_racoon import discover_omega_folders, OMEGA_PARTITIONS
+        with patch("entity_roc_racoon.OMEGA_PARTITIONS", [Path("/nonexistent_omega_vault")]):
             found = discover_omega_folders()
             assert found == []
 
@@ -238,8 +245,8 @@ class TestDiscoverOmegaFolders:
             (vault / "projects").mkdir()
             (vault / "backups").mkdir()
 
-            with patch("omega.entity_roc_racoon.OMEGA_PARTITIONS", [vault]):
-                from omega.entity_roc_racoon import discover_omega_folders
+            with patch("entity_roc_racoon.OMEGA_PARTITIONS", [vault]):
+                from entity_roc_racoon import discover_omega_folders
                 found = discover_omega_folders()
                 assert vault in found
                 assert len(found) >= 3  # vault + 2 subdirs

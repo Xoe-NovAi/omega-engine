@@ -148,61 +148,62 @@ class RemoteProvider(ABC):
         user_query: str,
         temperature: float = 0.7,
         max_tokens: int = 1024,
+        trace_id: Optional[str] = None,
     ) -> Optional[str]:
         """Generate a response with retry, circuit breaking, and metrics.
-
+        
         Returns None if the provider is unavailable or all retries fail.
         """
         if not await self.is_available():
             logger.debug(f"Provider {self.name} unavailable (health={self.health.value})")
             return None
-
+        
         # Budget check
         if self.config.daily_token_budget is not None:
             if self.metrics.total_tokens_used >= self.config.daily_token_budget:
                 logger.warning(f"Provider {self.name} daily budget exhausted ({self.metrics.total_tokens_used} tokens)")
                 return None
-
+        
         # Retry loop with exponential backoff
         last_error = None
         for attempt in range(self.config.max_retries):
             try:
                 start_ms = time.monotonic() * 1000
                 result = await self._send_request(
-                    model_name, system_prompt, user_query, temperature, max_tokens
+                    model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id
                 )
                 elapsed_ms = (time.monotonic() * 1000) - start_ms
-
+        
                 # Record success
                 self.metrics.total_requests += 1
                 self.metrics.successful_requests += 1
                 self.metrics.total_latency_ms += elapsed_ms
                 self.metrics.consecutive_failures = 0
                 self.metrics.last_success_time = time.monotonic()
-
+        
                 # Estimate token usage (rough: 4 chars per token)
                 if result:
                     est_tokens = (len(system_prompt) + len(user_query) + len(result)) // 4
                     self.metrics.total_tokens_used += est_tokens
-
+        
                 logger.info(
                     f"Provider {self.name} responded in {elapsed_ms:.0f}ms "
                     f"(attempt {attempt + 1})"
                 )
                 return result
-
+        
             except Exception as e:
                 last_error = e
                 self.metrics.total_requests += 1
                 self.metrics.failed_requests += 1
                 self.metrics.consecutive_failures += 1
                 self.metrics.last_failure_time = time.monotonic()
-
+        
                 logger.warning(
                     f"Provider {self.name} attempt {attempt + 1}/{self.config.max_retries} "
                     f"failed: {e}"
                 )
-
+        
                 # Circuit breaker trip
                 if self.metrics.consecutive_failures >= self.config.circuit_breaker_threshold:
                     self.metrics.cooldown_until = (
@@ -213,7 +214,7 @@ class RemoteProvider(ABC):
                         f"cooling down for {self.config.circuit_breaker_cooldown}s"
                     )
                     break
-
+        
                 # Exponential backoff
                 if attempt < self.config.max_retries - 1:
                     delay = min(
@@ -222,7 +223,7 @@ class RemoteProvider(ABC):
                     )
                     import anyio
                     await anyio.sleep(delay)
-
+        
         logger.error(f"Provider {self.name} exhausted all retries. Last error: {last_error}")
         return None
 
@@ -255,9 +256,10 @@ class RemoteProvider(ABC):
         user_query: str,
         temperature: float,
         max_tokens: int,
+        trace_id: Optional[str] = None,
     ) -> str:
         """Send the actual API request. Subclasses implement this.
-
+        
         Should raise an exception on failure (will be retried).
         Should return the generated text on success.
         """

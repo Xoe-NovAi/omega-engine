@@ -88,7 +88,7 @@ async def test_model_gateway_fallback_chain(monkeypatch):
         max_tokens=100
     )
     
-    assert result == "Success from P3"
+    assert result[0] == "Success from P3"
     assert p1.generate.called
     assert p2.generate.called
     assert p3.generate.called

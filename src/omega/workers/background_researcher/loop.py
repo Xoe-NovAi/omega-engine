@@ -342,7 +342,8 @@ class BackgroundResearcherLoop:
                         if "🔲" in status_col or "🔄" in status_col:
                             candidates.append({"topic": title, "source": "research_index", "priority": 0.7, "depth": 2})
         
-        src_dir = Path(__file__).resolve().parent.parent.parent.parent / "src" / "omega"
+        project_root = Path(__file__).resolve().parent.parent.parent.parent.parent
+        src_dir = project_root / "src" / "omega"
         if src_dir.exists():
             for py_file in src_dir.rglob("*.py"):
                 try:
@@ -353,7 +354,7 @@ class BackgroundResearcherLoop:
                                 if keyword in line:
                                     idx = line.find(keyword)
                                     comment = line[idx + len(keyword):].strip().lstrip(": ")
-                                    rel_path = py_file.relative_to(src_dir.parent.parent)
+                                    rel_path = py_file.relative_to(project_root)
                                     topic = f"[{keyword}] {comment} — {rel_path}" if comment else f"[{keyword}] {rel_path}"
                                     candidates.append({"topic": topic, "source": "codebase", "priority": base_priority, "depth": 1})
                                     break
@@ -376,7 +377,7 @@ class BackgroundResearcherLoop:
                             "depth": 1
                         })
 
-        entities_dir = Path(__file__).parent.parent.parent.parent / "data" / "entities"
+        entities_dir = project_root / "data" / "entities"
         if entities_dir.exists():
             # Skip the user's own soul file (config-driven, default "arch")
             skip_user = os.environ.get("OMEGA_DEFAULT_USER", "arch")
@@ -423,7 +424,7 @@ class BackgroundResearcherLoop:
 
     async def _post_to_hivemind(self, cycle_result: dict) -> None:
         try:
-            base_dir = Path(__file__).parent.parent.parent.parent
+            base_dir = Path(__file__).resolve().parent.parent.parent.parent.parent
             records_dir = base_dir / "data" / "knowledge" / "HALL_OF_RECORDS" / "background-researcher"
             records_dir.mkdir(parents=True, exist_ok=True)
             today = datetime.now(timezone.utc).strftime("%Y%m%d")

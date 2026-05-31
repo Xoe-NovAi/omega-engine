@@ -14,7 +14,7 @@
 | Session | Model | Date | Scope | Key Deliverable |
 |---------|-------|------|-------|-----------------|
 | **ses_1dc0** (7246 lines) | Gemma 4-31B | May 13-14 | Workspace cleanup, initial architecture | Deleted 5370 legacy files, established clean workspace |
-| **Cline Sprint 2** | Gemini 2.0 Flash | May 14 | Belial ecosystem, MCP hub, self-healing | `mcp/omega_hub/`, `watchdog.py`, DiscoveryOrchestrator, GnosisProxy, 41/41 tests |
+| **Cline Sprint 2** | Gemini 2.0 Flash | May 14 | Roc Racoon ecosystem, MCP hub, self-healing | `mcp/omega_hub/`, `watchdog.py`, DiscoveryOrchestrator, GnosisProxy, 41/41 tests |
 | **Systems Discovery** | qwen3.6-plus | May 14-15 | Full systems inventory, persistence, soul evolution | `OMEGA_SYSTEMS_DISCOVERY_REPORT.md`, Phase 0→1→3 execution |
 | **This session** | deepseek-v4-flash | May 15 | Commit + handoff for Qwen 3.6 | `QWEN3.6_HANDOFF.md`, commit `0bf3991` |
 
@@ -58,15 +58,15 @@
 | `curation_pipeline.py` | AnyIO async queues | ✅ AnyIO compliant |
 | `discovery.py` | Research orchestration (Exa/Brave/Tavily → Gemma) | ✅ NEW — jobs persist to JSON |
 
-### 2.4 Belial Ecosystem — 4 files
+### 2.4 Roc Racoon Ecosystem — 4 files
 
 | File | Purpose | Lines |
 |------|---------|-------|
-| `src/omega/entity_belial.py` | Sovereign miner entity | 242 |
+| `src/omega/entity_roc_racoon.py` | Sovereign miner entity | 242 |
 | `src/omega/mcp_runtime.py` | MCP runtime integration | 56 |
-| `scripts/omega-belial-entrypoint.py` | Container entrypoint | 40 |
-| `quadlet-test/omega-belial.container` | Podman Quadlet definition | 51 |
-| `quadlet-test/omega-belial.timer` | Daily 03:30 timer | 23 |
+| `scripts/omega-roc_racoon-entrypoint.py` | Container entrypoint | 40 |
+| `quadlet-test/omega-roc_racoon.container` | Podman Quadlet definition | 51 |
+| `quadlet-test/omega-roc_racoon.timer` | Daily 03:30 timer | 23 |
 
 ### 2.5 Bridge (`src/omega/bridge/`)
 
@@ -94,7 +94,7 @@
 | `omega-postgres` | Service | SQL persistence |
 | `omega-caddy` | Service | Reverse proxy |
 | `omega-iris` | Service | Voice assistant |
-| `omega-belial` | Container + Timer | Sovereign miner (daily 03:30) |
+| `omega-roc_racoon` | Container + Timer | Sovereign miner (daily 03:30) |
 
 ### 2.8 OpenCode Ecosystem
 
@@ -163,7 +163,7 @@
 | G-04 | **No lmster heartbeat** | ROADMAP 0.13 | Not started — needs heartbeat check + auto-restart |
 | G-05 | **RemoteProvider untested** | `src/omega/oracle/providers.py` | 201 lines, zero test coverage |
 | G-06 | **GnosisProxy untested** | `src/omega/oracle/gnosis_proxy.py` | 86 lines, zero test coverage |
-| G-07 | **Belial untested** | `src/omega/entity_belial.py` | 242 lines, zero test coverage |
+| G-07 | **Roc Racoon untested** | `src/omega/entity_roc_racoon.py` | 242 lines, zero test coverage |
 | G-08 | **Hierarchy loader untested** | `src/omega/oracle/hierarchy.py` | 66 lines, zero test coverage |
 | G-09 | **MCP hub untested** | `mcp/omega_hub/server.py` | 444 lines, zero test coverage |
 | G-10 | **MCP crashers** | Various | ROADMAP 0.1 partial — intermittent SSE disconnects |
@@ -176,7 +176,7 @@
 | E-02 | **Lint baseline** | ~236 warnings (mostly E501/W293) | Clean progressively |
 | E-03 | **Doc coverage** | No test for docstrings or API docs | Add sphinx or mkdocstrings |
 | E-04 | **Contract tests** | No provider contract tests | Add mock-based contract tests for each provider |
-| E-05 | **Belial integration test** | No end-to-end Belial test | Add container-based integration test |
+| E-05 | **Roc Racoon integration test** | No end-to-end Roc Racoon test | Add container-based integration test |
 | E-06 | **OPCODE agent tests** | No tests for agent prompt quality | Add prompt validation |
 | E-07 | **Soul evolution edge cases** | `_track_soul_evolution` has no error handler for corrupt YAML | Add corruption handling per R-10 |
 | E-08 | **No trace_exchange calls** | `data/traces/` dir exists but unused | Wire into observability |
@@ -209,7 +209,7 @@ When you receive this context, Qwen 3.6 Plus should perform:
 - [ ] `src/omega/oracle/gnosis_proxy.py` — is RecursionGuard sufficient?
 - [ ] `src/omega/oracle/oracle.py` — _track_soul_evolution, any race conditions?
 - [ ] `mcp/omega_hub/server.py` — SSE reliability, reconnection handling?
-- [ ] `src/omega/entity_belial.py` — is the miner architecture sound?
+- [ ] `src/omega/entity_roc_racoon.py` — is the miner architecture sound?
 - [ ] `src/omega/observability.py` — JSONL persistence, is thread-safe?
 - [ ] `src/omega/library/discovery.py` — job persistence, error recovery?
 
@@ -240,7 +240,7 @@ When you receive this context, Qwen 3.6 Plus should perform:
 | `mcp/omega_hub/server.py` | 444 | NEW — Unified MCP hub |
 | `src/omega/observability.py` | 276 | JSONL persistence |
 | `src/omega/library/discovery.py` | 365 | NEW — Discovery orchestrator |
-| `src/omega/entity_belial.py` | 242 | NEW — Sovereign miner |
+| `src/omega/entity_roc_racoon.py` | 242 | NEW — Sovereign miner |
 | `src/omega/oracle/hierarchy.py` | 66 | NEW — Oversoul hierarchy |
 | `config/entities.yaml` | — | Entity source of truth |
 | `config/providers.yaml` | — | Provider chain config |
@@ -258,7 +258,7 @@ When you receive this context, Qwen 3.6 Plus should perform:
 | `src/omega/bridge/elevenlabs.py` | 55 | Skeleton — only TODO |
 | `src/omega/mcp_runtime.py` | 56 | MCP runtime integration |
 | `scripts/init-research-db.py` | 546 | SQLite DB init (schema v3) |
-| `quadlet-test/omega-belial.container` | 51 | Container def |
+| `quadlet-test/omega-roc_racoon.container` | 51 | Container def |
 | `mkdocs.yml` | 97 | Documentation site config |
 
 ---
@@ -301,7 +301,7 @@ omega-engine/
 │   ├── iris/                  # Voice assistant
 │   ├── library/               # Library, indexer, inbox, discovery
 │   ├── oracle/                # Core engine (10 files)
-│   └── ...                    # observability, entity_belial, mcp_runtime
+│   └── ...                    # observability, entity_roc_racoon, mcp_runtime
 ├── tests/                     # 6 test files, 41 tests
 ├── .env.example               # Created (Phase 0 task 0.3)
 ├── .gitignore                 # Enhanced with runtime dirs
@@ -340,7 +340,7 @@ make mkdocs-serve            # http://127.0.0.1:8000
 36 modified, 126 new, 0 deleted
 
 Categories:
-  src/omega/:     19 files (core + belial + bridge + library + mcp_runtime)
+  src/omega/:     19 files (core + roc_racoon + bridge + library + mcp_runtime)
   docs/research/: 69 files (45 R-docs + internal-discovery + mcp + sovereign-blitz)
   docs/team/:     4 files (BLITZ, HANDOFF, SYSTEMS DISCOVERY, COMMUNICATION HUB)
   scripts/:       10 files (init-db, watchdog, health-check, CI, etc.)

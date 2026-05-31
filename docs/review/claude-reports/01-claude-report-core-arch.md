@@ -64,11 +64,11 @@ Now I have everything I need. Compiling the full structured audit.
   - Impact: If Iris fails to load (e.g., malformed YAML), `iris_entity` is `None`. Line 423 then falls back to a hardcoded temperature of `0.6` — silent degradation with no warning.
   - Recommendation: `self.iris_entity = self.registry.get("iris")`. Add `if not self.iris_entity: logger.warning("Iris entity not found — voice interface degraded")`.
 
-- [ ] **C-ARCH-008: Belial's model may violate Zero Telemetry / Sovereign Shield — HIGH**
-  - File: `entities.yaml` (belial block, `model: gemma-4-31b`)
-  - Issue: `gemma-4-31b` is not listed among the local models at `/media/arcana-novai/omega_library/models/` per the known hardware profile. If ModelGateway cannot find a local provider for this model and falls back to a cloud endpoint, any query routed to Belial would silently exfiltrate data to an external API.
+- [ ] **C-ARCH-008: Roc Racoon's model may violate Zero Telemetry / Sovereign Shield — HIGH**
+  - File: `entities.yaml` (roc_racoon block, `model: gemma-4-31b`)
+  - Issue: `gemma-4-31b` is not listed among the local models at `/media/arcana-novai/omega_library/models/` per the known hardware profile. If ModelGateway cannot find a local provider for this model and falls back to a cloud endpoint, any query routed to Roc Racoon would silently exfiltrate data to an external API.
   - Mandate: **Sovereign Shield** — POTENTIALLY VIOLATED.
-  - Recommendation: Verify Belial's model is served locally. If it isn't available as a local GGUF, assign a local fallback (e.g., `qwen3-4b-thinking-q4_k_m`) and document the cloud model as a future upgrade target.
+  - Recommendation: Verify Roc Racoon's model is served locally. If it isn't available as a local GGUF, assign a local fallback (e.g., `qwen3-4b-thinking-q4_k_m`) and document the cloud model as a future upgrade target.
 
 - [ ] **C-ARCH-009: No concurrent write protection on `EntityRegistry._save()` — HIGH**
   - File: `entity_registry.py:195-212`
@@ -147,7 +147,7 @@ The WAD Loader is the best-written file for AnyIO compliance. The EntityRegistry
 **Orphaned / Hierarchy-External Entities:**
 - `sophia`: In `entities.yaml` but NOT in `hierarchy.yaml`. She is described in the hierarchy header comments but has no structural node. Her mythic role as the Akashic Field is documented in `hierarchy.yaml:40-45` but her entity definition floats free with no `hierarchy.yaml` anchor.
 - `isis`, `ma'at`, `lilith` (entities.yaml): These are Oversouls/secondary entities — NOT Pillar Keepers — but they have entries in entities.yaml with no pillars, and will load into the registry. They can be directly summoned (`@isis`, `@maat`). This is probably intentional but is undocumented.
-- `belial` (entities.yaml): Has `'P0: The Abyss'` as a pillar. `list_pillar_keepers()` will include him. But `hierarchy.yaml:98-103` defines him as reporting to `kali_unification` (broken reference — see C-ARCH-003). His position is architecturally correct but the hierarchy graph can't express it due to the dangling reference bug.
+- `roc_racoon` (entities.yaml): Has `'P0: The Abyss'` as a pillar. `list_pillar_keepers()` will include him. But `hierarchy.yaml:98-103` defines him as reporting to `kali_unification` (broken reference — see C-ARCH-003). His position is architecturally correct but the hierarchy graph can't express it due to the dangling reference bug.
 
 **`ma'at` YAML key:** The apostrophe (`ma'at:`) is valid in YAML plain scalars and PyYAML handles it. Not a bug, but editors/linters may choke on it. Consider quoting: `"ma'at":`.
 
@@ -171,7 +171,7 @@ The WAD Loader is the best-written file for AnyIO compliance. The EntityRegistry
 
 ### Governance Hierarchy Assessment
 
-The conceptual hierarchy (Sophia → Kali → Ma'at/Lilith → 10 Keepers → Belial) is coherent and architecturally elegant. The problems are entirely in the implementation of the YAML that expresses it:
+The conceptual hierarchy (Sophia → Kali → Ma'at/Lilith → 10 Keepers → Roc Racoon) is coherent and architecturally elegant. The problems are entirely in the implementation of the YAML that expresses it:
 
 - The symbolic reference system (`kali_unification`, `maat_oversoul`) is broken because the keys don't match (C-ARCH-003). Every governance relationship in the graph is a dangling pointer.
 - Without `hierarchy.py` available for review, it is unknown whether there is a `$ref`-resolution layer that translates symbolic names to keys, or whether the parser does naive dict lookups. Either way, the current state will either silently return `None` for all parent references or raise `KeyError`.

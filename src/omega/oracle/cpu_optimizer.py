@@ -33,11 +33,12 @@ Speculative decoding (Oracle already implements this):
 """
 
 import logging
+import os
 import platform
 import re
 import time
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 logger = logging.getLogger(__name__)
 
@@ -549,4 +550,233 @@ class Zen2Optimizer:
             "OMP_PLACES": "cores",
             "OPENBLAS_CORETYPE": "ZEN",
             "LLAMA_CPU_HINT": "1",
+        }
+
+    # ── CPU Topology (Dynamic Detection) ────────────────────────────────
+
+    def get_cpu_topology(self) -> Dict[str, Any]:
+        """Detect actual CPU topology dynamically from /proc/cpuinfo.
+
+        Returns:
+            Dict with physical_cores, logical_cores, core_pairs (physical→SMT),
+            compute_cores (recommended for AI), io_threads (SMT siblings).
+        """
+        topology: Dict[str, Any] = {
+            "physical_cores": [],
+            "logical_cores": [],
+            "core_pairs": {},
+            "compute_cores": ZEN2_COMPUTE_CORES,
+            "io_threads": ZEN2_IO_THREADS,
+            "is_smt": True,
+            "cores_detected": 0,
+            "threads_detected": 0,
+        }
+
+        try:
+            with open("/proc/cpuinfo") as f:
+                text = f.read()
+
+            # Parse processor entries: each "processor : N" is a logical core
+            # On Zen 2 with SMT, physical core N has logical cores N and N+8
+            processors = re.findall(r"processor\s+:\s+(\d+)", text)
+            topology["logical_cores"] = [int(p) for p in processors]
+            topology["threads_detected"] = len(processors)
+
+            # Detect physical cores via "core id" field
+            core_ids = re.findall(r"core id\s+:\s+(\d+)", text)
+            physical = sorted(set(int(c) for c in core_ids))
+            topology["physical_cores"] = physical
+            topology["cores_detected"] = len(physical)
+
+            # Build physical→SMT mapping
+            # On AMD Zen 2: logical core N and N+(physical_count) share a physical core
+            if len(processors) > len(physical):
+                half = len(physical)
+                for i, phys_id in enumerate(physical):
+                    smt_sibling = i + half
+                    if smt_sibling < len(processors):
+                        topology["core_pairs"][phys_id] = {
+                            "physical": i,
+                            "smt": smt_sibling,
+                        }
+            else:
+                topology["is_smt"] = False
+                for i, phys_id in enumerate(physical):
+                    topology["core_pairs"][phys_id] = {"physical": i}
+
+            # Override compute cores with detected physical cores if available
+            if physical:
+                # Use even-indexed logical cores (physical cores, not SMT)
+                topology["compute_cores"] = sorted(
+                    [i for i in range(len(physical)) if i % 2 == 0]
+                ) if len(physical) >= 4 else physical[:len(physical)//2]
+                topology["io_threads"] = sorted(
+                    [i for i in range(len(physical)) if i % 2 == 1]
+                ) if len(physical) >= 4 else physical[len(physical)//2:]
+
+        except Exception as e:
+            logger.warning(f"CPU topology detection failed, using Zen 2 defaults: {e}")
+
+        return topology
+
+    # ── CPU Affinity Enforcement ────────────────────────────────────────
+
+    def enforce_affinity(self, cores: Optional[List[int]] = None) -> Dict[str, Any]:
+        """Pin the current process to specific CPU cores.
+
+        Uses os.sched_setaffinity (Linux-native, no psutil dependency).
+        This is the primary mechanism for ensuring local inference runs on
+        physical cores only, avoiding SMT contention.
+
+        Args:
+            cores: List of CPU core indices to pin to. Defaults to ZEN2_COMPUTE_CORES.
+
+        Returns:
+            Dict with success, old_affinity, new_affinity, cores_used.
+        """
+        if cores is None:
+            cores = ZEN2_COMPUTE_CORES
+
+        try:
+            old_affinity = os.sched_getaffinity(0)
+            os.sched_setaffinity(0, set(cores))
+            new_affinity = os.sched_getaffinity(0)
+            logger.info(
+                f"CPU affinity pinned: {sorted(old_affinity)} -> {sorted(new_affinity)} "
+                f"(cores: {cores})"
+            )
+            return {
+                "success": True,
+                "old_affinity": sorted(old_affinity),
+                "new_affinity": sorted(new_affinity),
+                "cores_used": cores,
+            }
+        except (OSError, AttributeError) as e:
+            logger.warning(f"CPU affinity pinning failed: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "cores_requested": cores,
+            }
+
+    def get_current_affinity(self) -> Set[int]:
+        """Get the current process's CPU affinity mask."""
+        try:
+            return os.sched_getaffinity(0)
+        except (OSError, AttributeError):
+            return set(range(ZEN2_THREADS))
+
+    def pin_external_process(self, pid: int, cores: Optional[List[int]] = None) -> Dict[str, Any]:
+        """Pin an external process (e.g., LM Studio, Ollama) to specific cores.
+
+        Args:
+            pid: Process ID to pin.
+            cores: Core indices. Defaults to ZEN2_COMPUTE_CORES.
+
+        Returns:
+            Dict with success, pid, cores, error.
+        """
+        if cores is None:
+            cores = ZEN2_COMPUTE_CORES
+
+        try:
+            old_affinity = os.sched_getaffinity(pid)
+            os.sched_setaffinity(pid, set(cores))
+            new_affinity = os.sched_getaffinity(pid)
+            logger.info(
+                f"Pinned PID {pid}: {sorted(old_affinity)} -> {sorted(new_affinity)} "
+                f"(cores: {cores})"
+            )
+            return {
+                "success": True,
+                "pid": pid,
+                "old_affinity": sorted(old_affinity),
+                "new_affinity": sorted(new_affinity),
+                "cores_used": cores,
+            }
+        except (OSError, PermissionError) as e:
+            logger.warning(f"Failed to pin PID {pid}: {e}")
+            return {
+                "success": False,
+                "pid": pid,
+                "error": str(e),
+            }
+
+    # ── Process Launch with Affinity ────────────────────────────────────
+
+    def build_pinned_command(
+        self,
+        command: List[str],
+        cores: Optional[List[int]] = None,
+    ) -> List[str]:
+        """Wrap a command with taskset to pin it to specific cores.
+
+        Args:
+            command: The command to run (e.g., ['llama-server', '-m', 'model.gguf', ...])
+            cores: Core indices. Defaults to ZEN2_COMPUTE_CORES.
+
+        Returns:
+            New command list with taskset prefix.
+        """
+        if cores is None:
+            cores = ZEN2_COMPUTE_CORES
+
+        core_mask = ",".join(str(c) for c in cores)
+        return ["taskset", "-c", core_mask] + command
+
+    def build_inference_env(
+        self,
+        threads: Optional[int] = None,
+        extra_env: Optional[Dict[str, str]] = None,
+    ) -> Dict[str, str]:
+        """Build environment variables for a pinned inference process.
+
+        Args:
+            threads: Thread count. Defaults to ZEN2_RECOMMENDED_THREADS.
+            extra_env: Additional environment variables to merge.
+
+        Returns:
+            Complete environment dict for the subprocess.
+        """
+        if threads is None:
+            threads = ZEN2_RECOMMENDED_THREADS
+
+        env = os.environ.copy()
+        env.update({
+            "OMP_NUM_THREADS": str(threads),
+            "OMP_PROC_BIND": "close",
+            "OMP_PLACES": "cores",
+            "OPENBLAS_CORETYPE": "ZEN",
+            "LLAMA_CPU_HINT": "1",
+        })
+        if extra_env:
+            env.update(extra_env)
+        return env
+
+    # ── System Overview ─────────────────────────────────────────────────
+
+    def get_system_overview(self) -> Dict[str, Any]:
+        """Comprehensive system status for local inference planning.
+
+        Returns topology, current affinity, memory pressure, and recommendations.
+        """
+        topology = self.get_cpu_topology()
+        current_affinity = self.get_current_affinity()
+
+        return {
+            "topology": topology,
+            "current_affinity": sorted(current_affinity),
+            "recommended_compute_cores": ZEN2_COMPUTE_CORES,
+            "recommended_threads": ZEN2_RECOMMENDED_THREADS,
+            "recommended_env": self.get_environment_variables(),
+            "compilation_flags": self.get_compilation_flags().to_cmake_flags(),
+            "kv_cache_config": {
+                "key_type": self.kv_cache.key_cache_type,
+                "value_type": self.kv_cache.value_cache_type,
+            },
+            "model_recommendations": {
+                "max_concurrent": 1,
+                "nova_resident_mb": RAM_NOVA_RESIDENT_MB,
+                "available_ai_mb": RAM_AVAILABLE_AI_MB,
+            },
         }

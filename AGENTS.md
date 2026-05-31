@@ -202,8 +202,8 @@ The Engine is **cloud-first, sovereign AI**. Google AI Studio is the primary pro
 
 | File | Purpose |
 |------|---------|
-| `config/entities.yaml` | SOURCE OF TRUTH for entities |
-| `config/hierarchy.yaml` | Oversoul governance (Sophia→Ma'at→Isis/Lilith) |
+| `config/wads/<active_iwad>/entities.yaml` | SOURCE OF TRUTH for entities |
+| `config/wads/<active_iwad>/hierarchy.yaml` | Oversoul governance (Sophia→Ma'at→Isis/Lilith) |
 | `config/providers.yaml` | Provider fabric configuration |
 | `config/omega.yaml` | Core engine configuration |
 | `config/models.yaml` | Model specs (loading strategies) |

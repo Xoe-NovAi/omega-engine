@@ -281,18 +281,46 @@ class TestNativeGGUFProvider:
         assert "~" not in p.model_path
         assert p.model_path.startswith("/")
 
-    def test_init_default_threads(self):
-        """__init__ reads OMP_NUM_THREADS env var."""
-        with patch.dict(os.environ, {"OMP_NUM_THREADS": "4"}):
-            p = NativeGGUFProvider("native", {"model_path": "/tmp/test.gguf"})
-            assert p.n_threads == 4
+    def test_init_threads_from_config(self):
+        """__init__ reads n_threads from config dict."""
+        p = NativeGGUFProvider("native", {"model_path": "/tmp/test.gguf", "n_threads": 4})
+        assert p._n_threads == 4
 
-    def test_init_fallback_threads(self):
-        """__init__ falls back to 6 threads when env not set."""
-        with patch.dict(os.environ, {}, clear=True):
-            p = NativeGGUFProvider("native", {"model_path": "/tmp/test.gguf"})
-            assert p.n_threads == 6
+    def test_init_default_threads(self):
+        """__init__ defaults to 6 threads when not in config."""
+        p = NativeGGUFProvider("native", {"model_path": "/tmp/test.gguf"})
+        assert p._n_threads == 6
 
     def test_n_threads_is_int(self, provider):
         """n_threads is always an int."""
-        assert isinstance(provider.n_threads, int)
+        assert isinstance(provider._n_threads, int)
+
+    def test_init_cores_from_config(self):
+        """__init__ reads cores from config dict."""
+        p = NativeGGUFProvider("native", {"model_path": "/tmp/test.gguf", "cores": [0, 2, 4]})
+        assert p._cores == [0, 2, 4]
+
+    def test_init_default_cores(self):
+        """__init__ defaults to Zen 2 physical cores."""
+        p = NativeGGUFProvider("native", {"model_path": "/tmp/test.gguf"})
+        assert p._cores == [0, 2, 4, 6]
+
+    def test_init_kv_cache_types(self):
+        """__init__ reads type_k and type_v from config."""
+        p = NativeGGUFProvider("native", {"model_path": "/tmp/test.gguf", "type_k": 0, "type_v": 0})
+        assert p._type_k == 0
+        assert p._type_v == 0
+
+    def test_init_default_kv_cache(self):
+        """__init__ defaults to q8_0 (enum 8) for KV cache."""
+        p = NativeGGUFProvider("native", {"model_path": "/tmp/test.gguf"})
+        assert p._type_k == 8
+        assert p._type_v == 8
+
+    def test_get_status(self, provider):
+        """get_status returns provider state dict."""
+        status = provider.get_status()
+        assert status["provider"] == "native"
+        assert status["loaded"] is False
+        assert status["cores"] == [0, 2, 4, 6]
+        assert status["threads"] == 6

@@ -1,6 +1,6 @@
 # 🔱 Project Instructions — Omega Memory & Knowledge
 
-**Account**: `xoe.nova.ai@gmail.com`
+**Account**: `taylorbare27gmail.com`
 **Role**: Knowledge Keeper
 **Project**: Omega Engine — Memory, Context & Knowledge
 

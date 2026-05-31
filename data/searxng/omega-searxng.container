@@ -15,6 +15,8 @@ After=network-online.target
 Wants=network-online.target
 
 [Container]
+UserNS=keep-id
+User=1000
 Image=docker.io/searxng/searxng:latest
 ContainerName=omega-searxng
 AutoUpdate=registry
@@ -23,10 +25,10 @@ AutoUpdate=registry
 PublishPort=127.0.0.1:8017:8080
 
 # Configuration volume
-Volume=%h/Documents/Xoe-NovAi/omega-engine/data/searxng/config:/etc/searxng/:Z,U
+Volume=%h/Documents/Xoe-NovAi/omega-engine/data/searxng/config:/etc/searxng/
 
 # Data volume — favicon cache, SQLite DB
-Volume=%h/omega-library/searxng/data:/var/cache/searxng/:Z,U
+Volume=%h/omega-library/searxng/data:/var/cache/searxng/
 
 # Environment
 Environment=SEARXNG_SECRET=73deefc57187bf3ebb58e090f75fb6a5b37e1c0147709f97be461a11b4c13858

@@ -11,6 +11,7 @@ import logging
 import os
 import tempfile
 import threading
+import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 import yaml
@@ -24,6 +25,22 @@ SOUL_FILE_HEADER = "# 🔱 Omega Engine — Entity Soul File\n"
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 ENTITIES_DATA_DIR = BASE_DIR / os.getenv("OMEGA_DATA_DIR", "data") / "entities"
 
+
+class SovereignAuditLog:
+    """Immutable audit log for entity workspace modifications."""
+
+    def __init__(self, workspace_dir: Path):
+        self.log_file = workspace_dir / "audit.log"
+
+    def log(self, action: str, details: str):
+        """Append a modification record to the audit log."""
+        timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        entry = f"[{timestamp}] ACTION: {action} | DETAILS: {details}\n"
+        try:
+            with open(self.log_file, "a") as f:
+                f.write(entry)
+        except Exception as e:
+            logger.error(f"Audit log failure: {e}")
 
 class EntityWorkspaceManager:
     """Manages the physical persistent storage for awakened entities."""
@@ -64,11 +81,26 @@ class EntityWorkspaceManager:
         headless_dir = workspace_dir / "workspace"
         
         workspace_dir.mkdir(parents=True, exist_ok=True)
-        os.chmod(workspace_dir, 0o755) # Sovereign Guard: Bypass umask drift
+        try:
+            os.chmod(workspace_dir, 0o755) # Sovereign Guard: Bypass umask drift
+        except PermissionError:
+            logger.warning(f"Cannot chmod {workspace_dir} — UID drift may be present")
         knowledge_dir.mkdir(parents=True, exist_ok=True)
-        os.chmod(knowledge_dir, 0o755) # Sovereign Guard: Bypass umask drift
+        try:
+            os.chmod(knowledge_dir, 0o755) # Sovereign Guard: Bypass umask drift
+        except PermissionError:
+            logger.warning(f"Cannot chmod {knowledge_dir} — UID drift may be present")
         headless_dir.mkdir(parents=True, exist_ok=True)
-        os.chmod(headless_dir, 0o755) # Sovereign Guard: Bypass umask drift
+        try:
+            os.chmod(headless_dir, 0o755) # Sovereign Guard: Bypass umask drift
+        except PermissionError:
+            logger.warning(f"Cannot chmod {headless_dir} — UID drift may be present")
+        
+        # Initialize Audit Log
+        audit = SovereignAuditLog(workspace_dir)
+        audit.log("WORKSPACE_CREATE", f"Created root workspace at {workspace_dir}")
+        audit.log("DIR_CREATE", f"Created knowledge directory at {knowledge_dir}")
+        audit.log("DIR_CREATE", f"Created workspace directory at {headless_dir}")
         
         # Create soul.yaml if it doesn't exist (Atomic Write Pattern)
         soul_file = workspace_dir / "soul.yaml"
@@ -99,11 +131,13 @@ class EntityWorkspaceManager:
                     with os.fdopen(fd, 'w') as f:
                         yaml_str = yaml.dump(soul_data, default_flow_style=False, sort_keys=False)
                         f.write(f"{SOUL_FILE_HEADER}# Generated dynamically.\n\n{yaml_str}")
-                    os.chmod(temp_path, 0o644) # Sovereign Guard: Bypass umask drift
-                    os.replace(temp_path, str(soul_file))
-                    logger.info(f"Scaffolded new soul file for {name} at {soul_file}")
+                        os.chmod(temp_path, 0o644) # Sovereign Guard: Bypass umask drift
+                        os.replace(temp_path, str(soul_file))
+                        audit.log("SOUL_CREATE", f"Scaffolded initial soul file at {soul_file}")
+                        logger.info(f"Scaffolded new soul file for {name} at {soul_file}")
                 except Exception as e:
                     if os.path.exists(temp_path):
+
                         os.remove(temp_path)
                     logger.error(f"Failed to scaffold soul for {name}: {e}")
                     raise
@@ -176,6 +210,11 @@ class EntityWorkspaceManager:
                     
                     os.chmod(temp_path, 0o644) # Sovereign Guard: Bypass umask drift
                     os.replace(temp_path, str(soul_file))
+                    
+                    # Log to audit trail
+                    audit = SovereignAuditLog(workspace_dir)
+                    audit.log("SOUL_UPDATE", f"Updated soul file at {soul_file}")
+                    
                     logger.info(f"Updated soul file for {name} at {soul_file}")
                 except Exception as e:
                     if os.path.exists(temp_path):

@@ -65,10 +65,17 @@ class EntityRegistry:
 
     def __init__(self, config_path: Optional[str] = None):
         if config_path is None:
-            config_path = os.environ.get(
-                "OMEGA_ENTITIES_CONFIG",
-                str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "entities.yaml"),
-            )
+            # Resolve active IWAD from config/omega.yaml to enforce Engine-Stack Firewall
+            try:
+                omega_config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
+                with open(omega_config_path, "r") as f:
+                    omega_cfg = yaml.safe_load(f)
+                active_iwad = omega_cfg.get("omega", {}).get("entity", {}).get("active_iwad", "_omega_default")
+                config_path = str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / active_iwad / "entities.yaml")
+            except Exception as e:
+                logger.error(f"Failed to resolve active IWAD from omega.yaml: {e}. Falling back to default.")
+                config_path = str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / "_omega_default" / "entities.yaml")
+        
         self.config_path = Path(config_path)
         self._entities: Dict[str, Entity] = {}
         self._wad_sources: Dict[str, List[str]] = {}  # lowercase entity name -> list of WAD source names
@@ -115,6 +122,7 @@ class EntityRegistry:
                 role=raw.get("role"),
                 container=raw.get("container", False),
                 port=raw.get("port"),
+                wad_source=raw.get("wad_source"),
             )
             key = entity.name.lower()
             self._entities[key] = entity

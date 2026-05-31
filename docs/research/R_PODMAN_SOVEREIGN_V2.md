@@ -119,7 +119,7 @@ Named volumes on the `omega_library` partition (redis data, qdrant storage, cadd
 | Quadlet | Mount(s) Fixed | Change |
 |---------|----------------|--------|
 | `omega-iris.container` | `config:/app/config:ro`, `/cache:/cache` | Removed `:Z,U`, added `UserNS=keep-id`, `User=1000` |
-| `omega-belial.container` | All volume mounts | Removed `:Z,U`, added `UserNS=keep-id`, `User=1000` |
+| `omega-roc_racoon.container` | All volume mounts | Removed `:Z,U`, added `UserNS=keep-id`, `User=1000` |
 | `omega-redis.container` | `/data` (omega_library) | Not changed — container uses UID 999, `:U` acceptable |
 | `omega-caddy.container` | `/data`, `/config` (omega_library) | Not changed — named volumes on separate partition |
 | `omega-qdrant.container` | `/qdrant/storage` (omega_library) | Not changed — named volumes on separate partition |
@@ -149,7 +149,7 @@ As part of Decision 50, the following MCP servers were consolidated into the Ome
 ## §9 Implementation Checklist
 
 - [x] `omega-iris.container` — `:U,:Z` removed, `UserNS=keep-id` + `User=1000` added
-- [x] `omega-belial.container` — `:U,:Z` removed from engine/data mounts, `UserNS=keep-id` + `User=1000` added
+- [x] `omega-roc_racoon.container` — `:U,:Z` removed from engine/data mounts, `UserNS=keep-id` + `User=1000` added
 - [x] MCP Research tools consolidated into Hub
 - [x] MCP Stats tools consolidated into Hub
 - [x] `opencode.json` — omega-research and omega-stats removed (served by hub)

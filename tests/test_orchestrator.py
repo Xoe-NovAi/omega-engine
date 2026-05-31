@@ -10,7 +10,7 @@ from omega.oracle.resource_guard import ResourceGuard
 
 @pytest.fixture
 def orchestrator():
-    return Orchestrator(resource_guard=ResourceGuard(limit=1))
+    return Orchestrator(resource_guard=ResourceGuard(total_capacity=1))
 
 
 class TestMCPWatchdog:

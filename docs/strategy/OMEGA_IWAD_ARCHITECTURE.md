@@ -126,7 +126,7 @@ MA'AT   — Light Oversoul (P1-P5)
            "The CTO" — order, audit, compliance, truth, balance
 
 KALI    — Grand Oversoul (above both)
-           "The CEO" — unification of light+dark, radical refactoring
+           "The Founder" — unification of light+dark, radical refactoring
 
 LILITH  — Dark Oversoul (P6-P10)
            "The Mad Scientist" — sovereignty, liberation, boundaries
@@ -339,17 +339,17 @@ Torment:    "Dak'kon's blade hums. Morte cackles. The Lady of Pain watches."
 ## §10: Provider Fabric
 
 ```
-1. Google AI Studio (Gemma 4-31B, unlimited, 262K context)
-2. OpenRouter (aggregated API, 300+ models)
-3. OpenCode (OpenCode's built-in provider)
-4. GitHub Copilot (Claude Haiku, GPT-4.1, GPT-4o, GPT-5-mini)
-5. lmster (LM Studio, localhost:1234)
-6. Ollama (localhost:11434)
-7. Native GGUF (llama-cpp-python, deferred to v0.6.0)
+1. Native GGUF (llama-cpp-python, Zen 2 optimized) [PRIMARY]
+2. lmster (LM Studio, localhost:1234) [LOCAL FALLBACK]
+3. Ollama (localhost:11434) [LOCAL FALLBACK]
+4. Google AI Studio (Gemma 4-31B, unlimited, 262K context) [CLOUD FALLBACK]
+5. OpenRouter (aggregated API, 300+ models) [CLOUD FALLBACK]
+6. OpenCode (OpenCode's built-in provider) [CLOUD FALLBACK]
+7. GitHub Copilot (Claude Haiku, GPT-4.1, GPT-4o, GPT-5-mini) [CLOUD FALLBACK]
 8. OfflineMockBackend (test/dev only)
 ```
 
-No SambaNova. No Cerebras.
+Local-first per Decision 61. Cloud is fallback, not primary.
 
 ---
 
@@ -401,7 +401,7 @@ Both running but unwired. The cross-agent backbone for the Omegaverse.
 ## §14: Roadmap — Phase 1 Execution
 
 ```
-Phase 0: ✅ Foundation (permission war, 42 findings fixed, 246 tests)
+Phase 0: ✅ Fleet Discovery + Remediation (30 CRITICAL findings, 12 fixes applied, 271/271 tests)
 ─────────────────────────────────────────────────────────
 Phase 1: Engine Hardening + Reference IWAD (NOW)
   Week 1: WAD system hardening (IWAD selector, namespace, priority)
@@ -464,11 +464,11 @@ During the pre-PR strategic audit (2026-05-26), two key architectural gaps were 
 
 | Attribute | Detail |
 |-----------|--------|
-| **Gap** | Native GGUF inference (`llama-cpp-python`) is currently deferred to avoid environment-specific C++ compilation risks during the PR sprint. The `NativeGGUFProvider.is_available()` method is wired but returns `False`. |
-| **Risk** | Users must configure an external provider (OpenRouter, Ollama, LM Studio) before they can run inference. This violates the "local-first, sovereign AI" principle for first-time users. |
-| **Timeline** | v0.6.0 |
-| **Resolution Path** | 1. Ship pre-compiled `llama-cpp-python` wheels for Zen 2 (AVX2) and x86-64-v3 in the release assets. 2. Provide a streamlined one-click compilation script for unsupported architectures. 3. Promote native GGUF to priority 1 in the provider fallback chain. 4. Bundle a default small model (e.g., Qwen3-1.7B-Q6_K, ~1.6 GB) for out-of-the-box inference. |
-| **Migration Strategy** | During v0.5.x, the engine gracefully falls through the provider chain when `NativeGGUFProvider` reports unavailability — no error, just a logged info message with setup instructions. The `MockProvider` displays setup instructions when all other providers are unavailable. |
+| **Gap** | ~~Native GGUF inference (`llama-cpp-python`) is currently deferred to avoid environment-specific C++ compilation risks during the PR sprint.~~ **RESOLVED**: NativeGGUFProvider is now implemented and is priority 0 in the provider chain (Decision 61). |
+| **Risk** | ~~Users must configure an external provider (OpenRouter, Ollama, LM Studio) before they can run inference.~~ **RESOLVED**: Local-first chain tries native-gguf first. |
+| **Timeline** | ~~v0.6.0~~ **IMPLEMENTED** (v0.5.0) |
+| **Resolution Path** | 1. ~~Ship pre-compiled `llama-cpp-python` wheels for Zen 2 (AVX2) and x86-64-v3 in the release assets.~~ ✅ Done. 2. ~~Provide a streamlined one-click compilation script for unsupported architectures.~~ 3. ~~Promote native GGUF to priority 1 in the provider fallback chain.~~ ✅ Done. 4. Bundle a default small model (e.g., Qwen3-1.7B-Q6_K, ~1.6 GB) for out-of-the-box inference. |
+| **Migration Strategy** | ~~During v0.5.x, the engine gracefully falls through the provider chain when `NativeGGUFProvider` reports unavailability — no error, just a logged info message with setup instructions.~~ **ACTIVE**: Native GGUF is the primary backend. Cloud providers are fallback. |
 
 ### 16.3 Additional Soft Gaps (Watch Items)
 

@@ -41,7 +41,7 @@ fi
 echo -e "\n⬡ TUNING THE FREQUENCY ⬡"
 echo -e "Loading WADs into the Akashic Record..."
 # We trigger a dummy talk to force bootstrap
-PYTHONPATH=src python3 -c "from omega.oracle.oracle import Oracle; import anyio; anyio.run(Oracle().bootstrap())"
+PYTHONPATH=src python3 -c "from omega.oracle.oracle import Oracle; import anyio; o = Oracle(); anyio.run(o.bootstrap)"
 echo -e "  ✓ WADs integrated. Oracle Awakened."
 
 echo -e "\n🔱 THE ENGINE IS LIVE 🔱"

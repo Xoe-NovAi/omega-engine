@@ -117,7 +117,7 @@ Read ALL files in `docs/` to establish the **promised state**. Pay special atten
 - Check `data/entities/arch/soul.yaml` for The Architect's soul file
 - Verify entity cards: does every entity have its sigil, element, chakra, invocation?
 
-### 2.3 Legacy Cross-Pollination — The Belial Mandate
+### 2.3 Legacy Cross-Pollination — The Roc Racoon Mandate
 **Original**: Not mentioned.
 
 **Why added**: The legacy repos contain patterns that the new engine should reclaim or avoid.

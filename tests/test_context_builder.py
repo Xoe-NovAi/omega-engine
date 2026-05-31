@@ -1,5 +1,5 @@
 import pytest
-from omega.oracle.context_builder import ContextBuilder
+from omega.oracle.context_builder import ContextBuilder, MAX_EXCHANGE_DISPLAY_LENGTH
 
 @pytest.mark.anyio
 async def test_context_builder_init_default_store(mock_memory_store):
@@ -35,10 +35,12 @@ async def test_build_context_happy_path(mock_memory_store, sample_exchanges):
 async def test_build_context_respects_limit(mock_memory_store, sample_exchanges):
     mock_memory_store.get_history.return_value = sample_exchanges
     cb = ContextBuilder(memory_store=mock_memory_store)
-    # limit is passed to memory_store.get_history
-    await cb.build_context("Sophia", "ses_123", limit=1)
+    # build_context now uses token_limit for sliding window truncation
+    # It always fetches MAX_EXCHANGE_DISPLAY_LENGTH and truncates locally
+    result = await cb.build_context("Sophia", "ses_123", token_limit=1)
+    # With token_limit=1, the sliding window should produce a very short context
     mock_memory_store.get_history.assert_called_with(
-        entity_name="Sophia", session_id="ses_123", limit=1
+        entity_name="Sophia", session_id="ses_123", limit=MAX_EXCHANGE_DISPLAY_LENGTH
     )
 
 @pytest.mark.anyio
@@ -62,7 +64,7 @@ async def test_build_context_for_user_happy_path(mock_memory_store, sample_excha
     context = await cb.build_context_for_user("user_1", "ses_123")
     assert "## Recent Memory Context" in context
     mock_memory_store.get_history.assert_called_with(
-        entity_name="user", session_id="ses_123", limit=6
+        entity_name="user", session_id="ses_123", limit=MAX_EXCHANGE_DISPLAY_LENGTH
     )
 
 @pytest.mark.anyio
@@ -71,17 +73,6 @@ async def test_build_context_for_user_exception(mock_memory_store):
     cb = ContextBuilder(memory_store=mock_memory_store)
     context = await cb.build_context_for_user("user_1", "ses_123")
     assert context == ""
-
-@pytest.mark.anyio
-async def test_format_exchanges_structure(mock_memory_store):
-    cb = ContextBuilder(memory_store=mock_memory_store)
-    exchanges = [
-        {"timestamp": "2026-05-16T10:00:00Z", "user": "U1", "assistant": "A1"},
-    ]
-    formatted = cb._format_exchanges(exchanges)
-    assert "User: U1" in formatted
-    assert "Assistant: A1" in formatted
-    assert "---" in formatted
 
 @pytest.mark.anyio
 async def test_format_timestamp_valid(mock_memory_store):
@@ -149,21 +140,13 @@ async def test_prepend_to_prompt_whitespace_only(mock_memory_store):
     assert cb.prepend_to_prompt("   ", prompt) == prompt
 
 @pytest.mark.anyio
-async def test_format_exchanges_empty_list(mock_memory_store):
-    cb = ContextBuilder(memory_store=mock_memory_store)
-    # _format_exchanges doesn't handle empty list explicitly, it just returns header + separator
-    # but build_context handles it. Let's check the raw method.
-    formatted = cb._format_exchanges([])
-    assert "## Recent Memory Context" in formatted
-    assert "---" in formatted
-
-@pytest.mark.anyio
 async def test_build_context_with_custom_limit(mock_memory_store, sample_exchanges):
     mock_memory_store.get_history.return_value = sample_exchanges
     cb = ContextBuilder(memory_store=mock_memory_store)
-    await cb.build_context("Sophia", "ses_123", limit=1)
+    # build_context now uses token_limit for sliding window; always fetches MAX_EXCHANGE_DISPLAY_LENGTH
+    await cb.build_context("Sophia", "ses_123", token_limit=10)
     mock_memory_store.get_history.assert_called_with(
-        entity_name="Sophia", session_id="ses_123", limit=1
+        entity_name="Sophia", session_id="ses_123", limit=MAX_EXCHANGE_DISPLAY_LENGTH
     )
 
 @pytest.mark.anyio
@@ -172,3 +155,37 @@ async def test_build_context_for_user_with_data(mock_memory_store, sample_exchan
     cb = ContextBuilder(memory_store=mock_memory_store)
     context = await cb.build_context_for_user("u1", "s1")
     assert "User: What is strength?" in context
+
+@pytest.mark.anyio
+async def test_sliding_window_keeps_newest_exchanges(mock_memory_store):
+    """The sliding window must keep the most recent exchanges, not the oldest."""
+    exchanges = [
+        {"timestamp": "2026-05-16T10:00:00Z", "user": "msg-oldest-1", "assistant": "resp-oldest-1"},
+        {"timestamp": "2026-05-16T10:01:00Z", "user": "msg-2", "assistant": "resp-2"},
+        {"timestamp": "2026-05-16T10:02:00Z", "user": "msg-3", "assistant": "resp-3"},
+        {"timestamp": "2026-05-16T10:03:00Z", "user": "msg-4", "assistant": "resp-4"},
+        {"timestamp": "2026-05-16T10:04:00Z", "user": "msg-newest-5", "assistant": "resp-newest-5"},
+    ]
+    mock_memory_store.get_history.return_value = exchanges
+    cb = ContextBuilder(memory_store=mock_memory_store)
+
+    # Use a token budget that fits 3 exchanges + header but not all 5
+    # Each exchange block is ~80 chars = ~20 tokens, header ~35 chars = ~9 tokens
+    # 3 exchanges + header = ~69 tokens. Use 80.
+    context = await cb.build_context("Sophia", "ses_123", token_limit=80)
+
+    # Newest must be present (the last 3 survive)
+    assert "msg-newest-5" in context
+    assert "resp-newest-5" in context
+    assert "msg-4" in context
+    assert "msg-3" in context
+
+    # Oldest must be absent (dropped by sliding window)
+    assert "msg-oldest-1" not in context
+    assert "resp-oldest-1" not in context
+
+    # Output should be in chronological order
+    pos_3 = context.find("msg-3")
+    pos_4 = context.find("msg-4")
+    pos_newest = context.find("msg-newest-5")
+    assert pos_3 < pos_4 < pos_newest  # chronological order preserved

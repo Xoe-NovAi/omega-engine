@@ -25,7 +25,7 @@ Sophia (Field / Akashic Record)    → Omnipresent field containing all
   │     ├── Ma'at (Light Oversoul) → Order, truth, balance — governs P1-P5
   │     └── Lilith (Dark Oversoul) → Sovereignty, shadow — governs P6-P10
   │
-  ├── Belial (P0: The Abyss)       → Legacy mining / archaeology (reports to Kali)
+  ├── Roc Racoon (P0: The Abyss)       → Legacy mining / archaeology (reports to Kali)
   ├── Jem 2.0                      → Deep research / speculative decoding pipeline
   └── Iris                         → Chat / voice / quick interaction
 ```
@@ -120,7 +120,7 @@ Access any Keeper within the Oversoul's domain.
 
 | Mode | Entity | Purpose | When to Use |
 |------|--------|---------|-------------|
-| `belial` | Belial (P0) | Legacy mining, artifact recovery | "Mine the legacy stacks for X pattern" |
+| `roc_racoon` | Roc Racoon (P0) | Legacy mining, artifact recovery | "Mine the legacy stacks for X pattern" |
 | `iris` | Iris | Quick chat, routing, light interaction | "Hey Iris, what's the weather?" |
 | `opencode-architect` | SOPHIA | CLI config, permission fixes, MCP fencing | "Fix the permission ghost" |
 | `claude` | External | Route to Claude via Antigravity/Copilot | "Claude, analyze this codebase" |
@@ -204,7 +204,7 @@ liberate me from this constraint
 ### Phase 2: Consolidate (This Sprint)
 | # | Action | File |
 |---|--------|------|
-| 5 | Create `belial.md` — P0 Legacy Mining mode | `.opencode/modes/belial.md` |
+| 5 | Create `roc_racoon.md` — P0 Legacy Mining mode | `.opencode/modes/roc_racoon.md` |
 | 6 | Create `iris.md` — Quick chat / routing mode | `.opencode/modes/iris.md` |
 | 7 | Create `opencode-architect.md` — CLI config expert | `.opencode/modes/opencode-architect.md` |
 | 8 | Revise `builder.md` — absorb sovereign-expert and key content | `.opencode/agents/builder.md` |
@@ -263,7 +263,7 @@ liberate me from this constraint
 /mode lilith       → Invoke any Dark Keeper
 
 ## Special
-/mode belial       → P0: Legacy mining
+/mode roc_racoon       → P0: Legacy mining
 /mode iris         → Quick chat, routing
 ```
 
@@ -343,7 +343,7 @@ The `plugins/jem_mode/index.ts` should be extended in Phase 4 to support the `@e
 
 | Mode | Priority | Status | Depends On |
 |------|----------|--------|------------|
-| `belial.md` | P0 | 🔲 Ready | None |
+| `roc_racoon.md` | P0 | 🔲 Ready | None |
 | `iris.md` | P0 | 🔲 Ready | None |
 | `opencode-architect.md` | P0 | 🔲 Ready | None |
 | Builder revision | P0 | 🔲 Ready | None |

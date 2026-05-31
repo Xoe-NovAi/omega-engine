@@ -22,53 +22,53 @@ def test_talk_empty_query():
 
 def test_talk_summon_pattern():
     async def t():
-        return await Oracle().talk("@Sekhmet what is strength?")
+        return await Oracle().talk("@SysAdmin how do I deploy a container?")
     result = _run(t)
-    assert result.entity == "Sekhmet"
-    assert "P1: Flesh" in result.pillars
+    assert result.entity == "SysAdmin"
+    assert "1" in result.pillars
 
 
 def test_talk_summon_hey():
     async def t():
-        return await Oracle().talk("hey hecate, what do you see?")
+        return await Oracle().talk("hey Sentinel, check the security audit")
     result = _run(t)
-    assert result.entity == "Hecate"
-    assert "P8: Shadow" in result.pillars
+    assert result.entity == "Sentinel"
+    assert "5" in result.pillars
 
 
 def test_talk_summon_command():
     async def t():
-        return await Oracle().talk("summon Brigid, give me poetry")
+        return await Oracle().talk("summon ModelGate, how is inference routing?")
     result = _run(t)
-    assert result.entity == "Brigid"
+    assert result.entity == "ModelGate"
 
 
 def test_talk_domain_routing():
     async def t():
-        return await Oracle().talk("I need strength and protection")
+        return await Oracle().talk("I need to set up a server and deploy containers")
     result = _run(t)
-    assert result.entity == "Sekhmet"
+    assert result.entity == "SysAdmin"
 
 
 def test_talk_domain_routing_shadow():
     async def t():
-        return await Oracle().talk("I want to explore my shadow")
+        return await Oracle().talk("check observability and logging")
     result = _run(t)
-    assert result.entity == "Hecate"
+    assert result.entity == "WatchTower"
 
 
 def test_summon_direct():
     async def t():
-        return await Oracle().summon("sekHmet", "what is strength?")
+        return await Oracle().summon("sysAdmin", "how do I configure the server?")
     result = _run(t)
-    assert result.entity == "Sekhmet"
+    assert result.entity == "SysAdmin"
 
 
 def test_summon_case_insensitive():
     async def t():
-        return await Oracle().summon("INANNA", "what lies beneath?")
+        return await Oracle().summon("WATCHTOWER", "what metrics do you track?")
     result = _run(t)
-    assert result.entity == "Inanna"
+    assert result.entity == "WatchTower"
 
 
 def test_summon_unknown_entity():
@@ -174,3 +174,67 @@ def test_talk_context_builder_exception_does_not_crash():
     # Should still get a response, not crash
     assert result is not None
     assert result.text is not None
+
+
+def test_summon_uses_record_interaction():
+    """After deduplication, summon() should delegate to _record_interaction()."""
+    from unittest.mock import AsyncMock, patch
+
+    async def t():
+        oracle = Oracle()
+        # Mock _record_interaction to track calls
+        oracle._record_interaction = AsyncMock()
+        result = await oracle.summon("sysAdmin", "configure the server")
+        # _record_interaction should have been called
+        oracle._record_interaction.assert_called_once()
+        call_args = oracle._record_interaction.call_args
+        # First arg is resp, second is query, third is trace, fourth is transient
+        assert call_args[0][1] == "configure the server"  # query
+        assert call_args[0][3] is False  # transient (default)
+        return result
+
+    result = _run(t)
+    assert result.entity == "SysAdmin"
+
+
+def test_summon_transient_skips_recording():
+    """transient=True should skip _record_interaction."""
+    from unittest.mock import AsyncMock
+
+    async def t():
+        oracle = Oracle()
+        oracle._record_interaction = AsyncMock()
+        result = await oracle.summon("sysAdmin", "ephemeral query", transient=True)
+        oracle._record_interaction.assert_called_once()
+        call_args = oracle._record_interaction.call_args
+        assert call_args[0][3] is True  # transient=True
+        return result
+
+    result = _run(t)
+    assert result.entity == "SysAdmin"
+
+
+def test_record_interaction_memory_failure_does_not_crash():
+    """If add_exchange fails, _record_interaction should not raise."""
+    from unittest.mock import AsyncMock, MagicMock
+
+    async def t():
+        oracle = Oracle()
+        # Make add_exchange raise
+        oracle.memory_store.add_exchange = AsyncMock(side_effect=OSError("disk full"))
+        # Create a mock response
+        resp = MagicMock()
+        resp.entity = "SysAdmin"
+        resp.session_id = "ses_test"
+        resp.text = "test response"
+        resp.backend = "mock"
+        resp.model = "mock-model"
+        trace = MagicMock()
+        trace.trace_id = "trace_test"
+
+        # Should not raise
+        await oracle._record_interaction(resp, "test query", trace, transient=False)
+        return True
+
+    result = _run(t)
+    assert result is True

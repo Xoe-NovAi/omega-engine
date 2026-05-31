@@ -18,7 +18,7 @@ The Omega Engine repo experienced a **P0 permission blocker** across 3 developme
 Rootless Podman subuid mapping (`arcana-novai:100000:65536`):
 - Container UID 1001 → Host UID 100000 + 1001 = **101000**
 - Container processes writing to volume-mounted host directories stamp files with UID 101000
-- Multiple containers (iris, belial) mount the workspace
+- Multiple containers (iris, roc_racoon) mount the workspace
 
 ## §3 Resolution Achieved
 

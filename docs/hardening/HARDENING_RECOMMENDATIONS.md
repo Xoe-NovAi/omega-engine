@@ -33,7 +33,7 @@ Volume=/host/path:/container/path
 Volume=/host/path:/container/path:U
 ```
 
-**Files to update**: `quadlet-test/omega-iris.service`, `quadlet-test/omega-belial.container`, `Dockerfile.iris`, `Dockerfile.belial`
+**Files to update**: `quadlet-test/omega-iris.service`, `quadlet-test/omega-roc_racoon.container`, `Dockerfile.iris`, `Dockerfile.roc_racoon`
 
 ---
 
@@ -62,8 +62,8 @@ headers = {"X-Goog-Api-Key": api_key}
 
 | File | Line | Code | Fix |
 |------|------|------|-----|
-| `src/omega/entity_belial.py` | 208 | `with open(fpath) as f` | `await anyio.to_thread.run_sync(Path(fpath).read_text)` |
-| `src/omega/entity_belial.py` | 217 | `with open(fpath2) as f` | Same pattern |
+| `src/omega/entity_roc_racoon.py` | 208 | `with open(fpath) as f` | `await anyio.to_thread.run_sync(Path(fpath).read_text)` |
+| `src/omega/entity_roc_racoon.py` | 217 | `with open(fpath2) as f` | Same pattern |
 | `src/omega/library/inbox.py` | 199,206,220 | `with open()` in async defs | Replace with `await anyio.Path(...).read_text()` |
 
 ---
@@ -107,7 +107,7 @@ sudo chown -R 1000:1000 .
 
 # P1 Security — providers.py:30, distiller.py:515,717
 # P1 Test — fix model_gateway.py path resolution
-# P1 AnyIO — entity_belial.py + inbox.py (3 violations)
+# P1 AnyIO — entity_roc_racoon.py + inbox.py (3 violations)
 # P1 Config — hierarchy.py RANK_MAP → YAML
 # P2 — WAD entities, docs, Makefile, CONTRIBUTING.md
 ```

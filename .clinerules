@@ -2,7 +2,7 @@
 # ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ cline ⬡ trc_core ⬡ CLINE-PROJECT-RULES
 #
 # Auto-loaded by Cline when working in this repository.
-# Last Updated: 2026-05-25 (IWAD Sprint — Doom Engine Model + Omegaverse Vision)
+# Last Updated: 2026-05-27 (Core Hardening Sprint — Memory, Embeddings, and Agent Bus)
 
 ## 🛡️ Sovereign Mandates (NON-NEGOTIABLE)
 **You are bound by the Sovereign Mandates. Read and adhere to them above all other rules:**
@@ -30,51 +30,17 @@
 
 ---
 
-## §1: The Vision — Prometheus' Fire
+## §1: The Vision — Core Engine Sovereignty
 
-The Omega Engine is not a product. It is **Prometheus' Fire** — the spark that empowers any user to build their own unique AI systems. The fire is free. What each user builds with it is theirs alone.
+The Omega Engine is the universal, community-owned runtime that powers any stack, any user's vision, any purpose. It is **Prometheus' Fire** — the spark that empowers every user to build their own unique dreams, technologies, and systems.
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     THE OMEGAVERSE                               │
-│                                                                  │
-│  A P2P multiverse of user-created stacks, all running on         │
-│  the Omega Engine. Every user's unique vision, sovereign         │
-│  on their own machine, optionally connected in a peer-to-peer    │
-│  network of shared intelligence.                                  │
-│                                                                  │
-│  ┌───────────────────────────────────────────────────────────┐  │
-│  │  YOUR STACK (arcana_novai)  ──  Your personal AI OS       │  │
-│  │  Your entities. Your knowledge. Your council.             │  │
-│  │  Sekhmet. Brigid. Prometheus. Movie-Expert.               │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                                                  │
-│  ┌───────────────────────────────────────────────────────────┐  │
-│  │  COMMUNITY STACKS  ──  Built by anyone, for anyone        │  │
-│  │  Torment stack (Planescape philosophers)                  │  │
-│  │  Doom stack (game domain experts)                         │  │
-│  │  Pokemon stack (collector companions)                     │  │
-│  │  Classical Philosophers stack (Socrates, Plato, etc.)     │  │
-│  │  Medical Research stack, Teaching stack, Gaming stack...  │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                                                  │
-│  ┌───────────────────────────────────────────────────────────┐  │
-│  │  NON-TECHNICAL USERS                                       │  │
-│  │  One-click install. Visual Entity Studio.                  │  │
-│  │  Stack Builder Wizard. "Your AI. Your Data. Your           │  │
-│  │  Computer. No Cloud Required."                              │  │
-│  └───────────────────────────────────────────────────────────┘  │
-│                                                                  │
-│  ┌───────────────────────────────────────────────────────────┐  │
-│  │  THE OMEGAVERSE P2P NETWORK  (Future)                     │  │
-│  │  Stacks sharing knowledge across machines.                │  │
-│  │  Entity-to-entity communication across instances.         │  │
-│  │  A living multiverse of sovereign AI.                     │  │
-│  └───────────────────────────────────────────────────────────┘  │
-└─────────────────────────────────────────────────────────────────┘
-```
+To prepare for the Pull Request (PR), we must get the **core engine systems operating at full power** before we try to integrate a bunch of new systems. The rabbit holes can wait.
 
-**Key context for this sprint**: We are in Phase 1 — building the engine and the reference IWAD. The Omegaverse is the destination, not the current task. But every architecture decision must be made with the Omegaverse in mind.
+Our focus is on:
+1.  **The Memory System (MemoryStore)**: Fully wire `MemoryStore` into `oracle.py` so that conversation history is actually saved and retrieved.
+2.  **The Context Builder (`context_builder.py`)**: Fully wire `ContextBuilder` into `oracle.py` so that it reads from `MemoryStore` and injects the rolling conversation history and the entity's soul context into the system prompt.
+3.  **The Agent Bus (Agent-to-Agent communication)**: Ensure the **Omega Hub** (`mcp/omega_hub/server.py`) is fully operational so that agents can coordinate.
+4.  **The Embeddings & Hybrid Search (Cycle Beta)**: Implement the Qdrant Hybrid Search with `fastembed` (BGE-base-en-v1.5) as planned, but keep it extremely clean and robust, with graceful fallback to FTS5.
 
 ---
 
@@ -154,7 +120,7 @@ The Omega Engine uses id Software's WAD architecture as its **technical** design
 
 ```bash
 source .venv/bin/activate        # ALWAYS use the venv
-make test                         # 246 tests, all must pass (OMEGA_ENV=test mock)
+make test                         # 266 tests, all must pass (OMEGA_ENV=test mock)
 make lint                         # flake8 code quality check
 make demo                         # End-to-end demo
 make health                       # Provider & model dashboard
@@ -222,7 +188,7 @@ Phase 4: DREAM        — Omegaverse P2P network
 - [ ] Entity priority: later-loaded overrides earlier for same pillar
 - [ ] Manifest validation + edge cases
 - [ ] WAD Loader Code Audit — verify all 6 components
-- [ ] `make test` — 246/246 pass
+- [ ] `make test` — 266/266 pass
 
 **P1 — Reference IWAD Content Rewrite:**
 - [ ] Rewrite `config/entities.yaml` — 10 technical pillars + MaKaLi + Jem + Roc_Racoon
