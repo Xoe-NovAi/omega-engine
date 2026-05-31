@@ -58,5 +58,13 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Reason**: Sovereign AI means sovereign data. If the engine phones home, it is not sovereign. Period.
 - **Exception**: Local observability (traces, events, metrics) stored in `data/` on the user's machine is acceptable. External telemetry is not.
 
+### 9. Error Integrity (NEW — 2026-05-31)
+- **Mandate**: All errors MUST be typed, traceable, and testable. No silent swallowing.
+- **Constraint**: Never use bare `except:`. Never use bare `except Exception:` without logging and propagating `trace_id`. Every public API boundary MUST catch and convert internal errors to `OmegaError` subtypes.
+- **Pattern**: See `docs/strategy/LOGGING_ERROR_HANDLING_ARCHITECTURE.md` §2 (Exception Handling Standards).
+- **Reason**: The Gemini CLI server deletion and the systemd start-limit-hit failure were both caused by silent error swallowing. Structured error handling is the foundation of debuggability and resilience.
+- **Enforcement**: Code review must check each `except` clause. Tests must cover each error path. `pytest.raises(OmegaError)` is the canonical test pattern.
+- **Exception**: Health probe functions may catch all exceptions to prevent crash loops, provided they log the error with `logger.warning()`.
+
 ---
 **Failure to adhere to these mandates is a systemic error. If you encounter a conflict between these mandates and a tool's suggestion, the Mandates prevail.**

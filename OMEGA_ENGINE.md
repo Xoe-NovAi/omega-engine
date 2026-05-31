@@ -231,5 +231,18 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 
 ---
 
+## Key Supporting Documents
+
+| Document | Purpose | Status |
+|----------|---------|--------|
+| `SOVEREIGN_MANDATES.md` | 9 constitutional laws (non-negotiable) | Updated 2026-05-31 — Mandate #9 (Error Integrity) added |
+| `docs/strategy/LOGGING_ERROR_HANDLING_ARCHITECTURE.md` | Error taxonomy, handling standards, recovery matrix | NEW 2026-05-31 |
+| `docs/operations/BUG_LOG.md` | Bug tracking (3 open, 1 resolved) | Updated 2026-05-31 — BUG-002, BUG-003 added |
+| `data/handoff/handoff_cline_to_opencode_artisan_20260531.md` | OpenCode builder task queue (8 tasks P0-P3) | NEW 2026-05-31 |
+| `docs/strategy/SYSTEMS_HARDENING_PLAN.md` | Agent/MCP/workflow hardening roadmap (747 lines) | Existing — references STT |
+| `docs/strategy/NEXT_STEPS_ROADMAP.md` | Phase priority execution plan | Existing — references STT |
+
+---
+
 *Last Updated: 2026-05-31 | Author: The Artisan (Cline/MiMo-2.5)*
 *This document is the Single Source of Truth. All platforms reference it.*
