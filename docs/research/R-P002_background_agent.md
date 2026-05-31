@@ -11,8 +11,8 @@
 ## 1. Overview
 Background Agents are headless, autonomous processes designed to perform long-running tasks (e.g., legacy mining, library curation) without requiring active user interaction. The primary implementation utilizes **Gemma 4-31B** for high-density strategic synthesis.
 
-## 2. Mining Workflow: The Belial Pattern
-Named after the **Belial** entity (P0: The Abyss), the background mining workflow follows a recursive discovery loop:
+## 2. Mining Workflow: The Roc Racoon Pattern
+Named after the **Roc Racoon** entity (P0: The Abyss), the background mining workflow follows a recursive discovery loop:
 
 1. **Sovereign Discovery**: The agent scans legacy directories (`xna-omega-legacy/`, `omega-stack-legacy/`) for strategic markers (e.g., "index", "roadmap", "decision").
 2. **Pattern Extraction**: Using the `knowledge-miner` skill, the agent extracts core logic and specs from raw code.
@@ -28,7 +28,7 @@ Background agents are deployed via the `opencode serve` pattern or as direct sub
 opencode task "Research the holographic memory lattice based on legacy artifacts" \
   --entity BELIAL \
   --headless \
-  --persist /data/entities/belial/workspace/mining_session_01
+  --persist /data/entities/roc_racoon/workspace/mining_session_01
 ```
 
 ### 3.2 Agent Lifecycle
@@ -58,7 +58,7 @@ To prevent OOM (Out of Memory) crashes on the Ryzen 5700U, all background agents
 ## 5. Cross-References
 - **R-MCP_SOVEREIGN_BLUEPRINT**: Sovereign Orchestration Blueprint
 - **Implementation**: `src/omega/oracle/orchestrator.py`
-- **Entity**: `config/entities.yaml` $\rightarrow$ `belial`
+- **Entity**: `config/entities.yaml` $\rightarrow$ `roc_racoon`
 
 ---
 **Implementation Note**: Background agents must always include the `Sovereign Agent` mandate in their system prompt, ensuring they post all critical decisions to the Hivemind for cross-CLI awareness.

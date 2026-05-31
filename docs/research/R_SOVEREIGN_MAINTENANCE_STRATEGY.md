@@ -8,7 +8,7 @@
 ---
 
 ## 1. Executive Summary
-The Omega Engine generates vast amounts of "digital exhaust"—chat logs, shell outputs, and temporary research fragments. Left unmanaged, this creates "Belial Rot" (cognitive noise and storage bloat). This strategy defines the **Sovereign Janitor**: a background maintenance system that uses Gemma 4-31B to distill noise into gnosis, prune redundancies, and drive the autonomous evolution of the Engine whenever the host is active.
+The Omega Engine generates vast amounts of "digital exhaust"—chat logs, shell outputs, and temporary research fragments. Left unmanaged, this creates "Roc Racoon Rot" (cognitive noise and storage bloat). This strategy defines the **Sovereign Janitor**: a background maintenance system that uses Gemma 4-31B to distill noise into gnosis, prune redundancies, and drive the autonomous evolution of the Engine whenever the host is active.
 
 ## 2. The Sovereign Janitor: Maintenance Crawler
 

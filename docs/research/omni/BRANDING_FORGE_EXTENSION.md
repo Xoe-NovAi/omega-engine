@@ -64,7 +64,7 @@ Relevant entries already defined:
 - **Engine**: `omega-engine` (repo name)
 - **Legacy prefixes**: `xna-` (xna-omega-legacy), `omega-` (omega-stack-legacy)
 - **Hidden directory**: `~/.xoe_novai/` (legacy dependency backups, ~50MB)
-- **Container names**: `omega-iris`, `omega-belial` (Podman)
+- **Container names**: `omega-iris`, `omega-roc_racoon` (Podman)
 - **Session IDs**: `ses_{YYYYMMDD}_{entity}_{counter}`
 
 **Pattern**: The foundation uses `xoe` as a short prefix, `omega` as the engine brand, and `novai` as the AI suffix.

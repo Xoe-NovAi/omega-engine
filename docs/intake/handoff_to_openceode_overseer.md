@@ -54,7 +54,7 @@ drwxrwxr-x  2 101000 101000 4096 May 21 17:06 .
 Host user is `arcana-novai` (UID 1000). But ~6,900 files are owned by UID `101000`.
 
 ### Root Cause
-Rootless Podman's subuid mapping. When containers run as root (UID 0 inside container), Podman maps that to host UID 1000. But when container processes run as UID 1001 (e.g., the `omega` user inside Iris/Belial containers), Podman maps that to host UID `100999 + 1001 = 101000`. When those containers mount the workspace via volumes, any files they touch get stamped with the mapped UID.
+Rootless Podman's subuid mapping. When containers run as root (UID 0 inside container), Podman maps that to host UID 1000. But when container processes run as UID 1001 (e.g., the `omega` user inside Iris/Roc Racoon containers), Podman maps that to host UID `100999 + 1001 = 101000`. When those containers mount the workspace via volumes, any files they touch get stamped with the mapped UID.
 
 ### The Fix (For OpenCode to Execute)
 
@@ -96,7 +96,7 @@ python3 -m venv .venv --clear
 | Test File | Tests | Status | Notes |
 |-----------|-------|--------|-------|
 | `test_background_researcher.py` | 4 | **1 FAIL** | `test_background_loop_atomic_lock` — PermissionError writing to `data/research/checkpoints/` |
-| `test_entity_belial.py` | ~25 | ✅ PASS | |
+| `test_entity_roc_racoon.py` | ~25 | ✅ PASS | |
 | `test_entity_registry.py` | ~7 | ✅ PASS | |
 | `test_health_monitor.py` | 23 | ✅ PASS | |
 | `test_hierarchy.py` | 13 | ✅ PASS | |
@@ -182,10 +182,10 @@ These were identified in the R44 comprehensive systems review. Here is the exact
 - **Fix**: Remove `[iris]` from the pip install command
 - **Effort**: 2 minutes
 
-#### C-11: Belial Container Missing Dependencies
-- **File**: [omega-belial.container](file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/quadlet-test/omega-belial.container)
+#### C-11: Roc Racoon Container Missing Dependencies
+- **File**: [omega-roc_racoon.container](file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/quadlet-test/omega-roc_racoon.container)
 - **Bug**: Container image doesn't include `httpx` and `anyio` — instant crash-loop
-- **Fix**: Add to Dockerfile.belial requirements or container build step
+- **Fix**: Add to Dockerfile.roc_racoon requirements or container build step
 - **Effort**: 10 minutes
 
 #### C-12: Unspecified GGUF Model in providers.yaml
@@ -194,14 +194,14 @@ These were identified in the R44 comprehensive systems review. Here is the exact
 - **Fix**: Set to `qwen3-1.7b` GGUF path on the omega_library partition
 - **Effort**: 5 minutes
 
-#### C-14: Hardcoded Entity Paths in entity_belial.py
-- **File**: [entity_belial.py](file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/entity_belial.py)
+#### C-14: Hardcoded Entity Paths in entity_roc_racoon.py
+- **File**: [entity_roc_racoon.py](file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/entity_roc_racoon.py)
 - **Bug**: Uses hardcoded relative paths instead of `DATA_DIR` constant
 - **Fix**: Use the global `DATA_DIR` from config or environment
 - **Effort**: 10 minutes
 
 #### C-15: Duplicate PodmanArgs in Container Spec
-- **File**: [omega-belial.container](file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/quadlet-test/omega-belial.container)
+- **File**: [omega-roc_racoon.container](file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/quadlet-test/omega-roc_racoon.container)
 - **Bug**: Duplicate `PodmanArgs` declarations — later one silently overrides, voiding resource constraints
 - **Fix**: Merge into single declaration
 - **Effort**: 5 minutes
@@ -373,7 +373,7 @@ Execute C-3 (orchestrator subprocess), C-5/C-13 (MCP hub asyncio), C-7 (anyio.De
 Execute C-2 (atomic soul writes), C-4 (GGUF OOM guard), C-6 (get_engine undefined).
 
 ### Step 5: Infrastructure Fixes (30 minutes)
-Execute C-8 (exposed secrets), C-11 (Belial container deps).
+Execute C-8 (exposed secrets), C-11 (Roc Racoon container deps).
 
 ### Step 6: Security Sweep (20 minutes)
 Full secrets scan, `.env` removal from git, `.env.example` verification.

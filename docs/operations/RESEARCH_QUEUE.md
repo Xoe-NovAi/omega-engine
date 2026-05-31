@@ -54,7 +54,7 @@
 
 **Files Changed**:
 - `~/.config/containers/systemd/omega-iris.container` — `keep-id` protocol
-- `~/.config/containers/systemd/omega-belial.container` — `keep-id` protocol
+- `~/.config/containers/systemd/omega-roc_racoon.container` — `keep-id` protocol
 - `mcp/omega_hub/server.py` — +5 research tools, +4 stats tools (200+ lines added)
 - `mcp/archives/omega-research_superseded_by_hub_20260522/` — archived
 - `mcp/archives/omega-stats_superseded_by_hub_20260522/` — archived

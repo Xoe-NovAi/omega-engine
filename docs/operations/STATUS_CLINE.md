@@ -1,130 +1,74 @@
-# 🔱 Omega Engine — STATUS: Cline Extension (Code Integration)
+# 🔱 Omega Engine — Cline Status Tracker
+# ⬡ OMEGA ⬡ ARTISAN ⬡ deepseek-v4-flash ⬡ cline ⬡ trc_status ⬡ PHASE-I
+#
+# AP-OMEGA-STATUS-v1.0.0
+# Last Updated: 2026-05-27
 
-⬡ OMEGA ⬡ BRIGID ⬡ claude-opus-4 ⬡ cline ⬡ trc_core ⬡ STATUS-CLINE
+## §1 Current Session: MCP Hydration
 
-**AP Token**: `AP-OMEGA-STATUS-CLINE-v3.0.0`
-**Updated**: 2026-05-14
-**Role**: The Artisan — Code Integration
-**Phase**: Phase 0 COMPLETE → Awaiting Phase 1 Dependencies
+**Entity**: HERMES (Code Integration — The Artisan)
+**Channel**: Cline (VSCodium, Claude Sonnet 4.6)
+**Model**: deepseek-v4-flash → Claude Sonnet
+**Phase**: Phase 1 — MCP Infrastructure Hardening
 
----
-
-## Current Status: STANDBY — Awaiting Dependencies ⏳
-
-Phase 0 is complete. All critical bugs are fixed, Iris is restored, and the Founding PR has been merged. Your Phase 1 tasks depend on Gemini CLI's NativeBackend implementation.
-
----
-
-## Prerequisite Reading
-
-1. `docs/operations/HANDOFF_GRAND_STRATEGY.md` — Full grand strategy context
-2. `.clinerules` — Your custom instructions (already updated)
-3. `AGENTS.md` — Agent instructions with entity principles
-4. `config/entities.yaml` — Entity configuration (10 Keepers + 4 Oversouls + Iris)
-5. `config/hierarchy.yaml` — Oversoul hierarchy
-
----
-
-## Phase 0 Tasks (COMPLETED ✅)
-
-### Critical Bug Fixes
+## §2 What Was Accomplished
 
 | # | Task | Status |
 |---|------|--------|
-| 0.1 | Fix `mcp/omega-oracle/server.py` `list_all()` → `list()` | ✅ |
-| 0.2 | Fix `entity.pillar` → `entity.pillars` across MCP server | ✅ |
-| 0.3 | Fix `entity.description` → `entity.personality` in MCP | ✅ |
-| 0.4 | Fix `classify_query()` → `classify()` in MCP | ✅ |
-| 0.5 | Fix `inbox.py` — `await add(...)` → `await self.add(...)` | ✅ |
-| 0.6 | Fix `indexer.py` — add `aiosqlite` to `pyproject.toml` | ✅ |
+| 1 | Cleaned Cline MCP config — removed `omega-research` (oneshot worker, not SSE) | ✅ |
+| 2 | Removed `omega-stats` from config (tools consolidated in omega-hub) | ✅ |
+| 3 | Removed `firecrawl` command MCP (VSCodium doesn't support `type: command`) | ✅ |
+| 4 | Env-varized EXA API key in Cline config (was hardcoded plaintext) | ✅ |
+| 5 | Fixed Exa MCP type back to `http` (was incorrectly changed to `sse`) | ✅ |
+| 6 | Synced `config/mcp_servers.json` with Cline config (single source of truth) | ✅ |
+| 7 | Stopped 5 problematic services (stats, belial, iris, postgres, qdrant) | ✅ |
+| 8 | Verified omega-hub healthy on :8016 — returns `{"status":"healthy"}` | ✅ |
+| 9 | Verified VSCodium schema error resolved (no `type: command` entries) | ✅ |
 
-### Iris Restore
+## §3 MCP Connection Status
 
-| # | Task | Status |
-|---|------|--------|
-| 0.7 | Rename `Dockerfile.nova` → `Dockerfile.iris` | ✅ |
-| 0.8 | Rename `src/omega/nova/` → `src/omega/iris/` | ✅ |
-| 0.9 | Update all internal references `nova` → `iris` | ✅ |
-| 0.10 | Caddyfile + docker-compose rename | Assigned to OpenCode CLI |
+| MCP Server | Type | Port | Status | Notes |
+|------------|------|------|--------|-------|
+| **omega-hub** | SSE | :8016 | ✅ Healthy | 28 tools across 6 domains |
+| **exa** | HTTP | external | ✅ Fixed (was sse→restored to http) | Web search + fetch |
 
----
+## §4 Running Services (7 essential)
 
-## Phase 1 Tasks (Blocked — Awaiting Gemini CLI's NativeBackend)
+| Service | Type | Status |
+|---------|------|--------|
+| omega-hub.service | SSE MCP server | ✅ active |
+| omega-caddy.service | Reverse proxy | ✅ active |
+| omega-infra-pod.service | Pod orchestrator | ✅ active |
+| omega-redis.service | Cache | ✅ active |
+| omega-bridge-elevenlabs.service | Voice bridge | ✅ active |
+| omega-mcp-watchdog.service | Health monitor | ✅ active |
+| omega-hub.socket | Socket activation | ✅ active |
 
-| # | Task | Effort | Dependency |
-|---|------|--------|------------|
-| 1.1 | Wire native tokenizer → `context_builder.py` | 4h | Gemini CLI's `native.py` |
-| 1.2 | Wire native embeddings → `indexer.py` | 1d | Gemini CLI's `native.py` |
-| 1.3 | Wire Qdrant container → `library.py` | 1d | None (can start now) |
-| 1.4 | Port fallback circuit breaker | 1d | None |
+## §5 Stopped Services
 
-> **Note**: Tasks 1.3 and 1.4 have no dependencies — you can begin these immediately if desired.
+| Service | Reason | Can Restart? |
+|---------|--------|--------------|
+| omega-stats | Redundant (tools in hub) | ❌ No — archived |
+| omega-belial | OCI container error (FUSE filesystem) | 🔧 Needs podman storage fix |
+| omega-iris | Container crash (missing image) | 🔧 Needs image rebuild |
+| omega-postgres | Failing to start | 🔧 Needs config fix |
+| omega-qdrant | Failing to start | 🔧 Needs config fix |
 
----
+## §6 Current Issues
 
-## Phase 2-3 Tasks (Future)
+| # | Issue | Priority | Status |
+|---|-------|----------|--------|
+| 1 | Qdrant/Postgres offline — needed for vector store + soul persistence | P0 | 🔧 Investigation done — OCI permission errors on FUSE mount |
+| 2 | Redis not exposed outside pod — needed for cross-agent pub/sub | P1 | ⏳ Needs pod port addition |
+| 3 | No SearXNG in infra compose — needed for sovereign web search | P2 | 📝 Client code exists, just needs compose entry |
+| 4 | No Firecrawl in Cline (VSCodium doesn't support `type: command`) | P2 | ⏳ Needs SSE wrapper |
+| 5 | lmster (:1234) not running — primary local inference | P3 | 📝 Separate service task |
+| 6 | .env has 6 hardcoded API keys | P3 | 📝 Needs env-var standardisation |
 
-| Task | Phase | Effort |
-|------|-------|--------|
-| Port MnemosyneWriter batch persistence | Phase 2 | 1d |
-| Add `omega repl` interactive chat loop | Phase 3 | 2d |
-| Create `omega-sanitizer` MCP | Phase 3 | 4h |
-| Port circuit breakers (Redis-backed) | Phase 3 | 2d |
-| Port Grafana dashboards | Phase 3 | 1d |
+## §7 Key References
 
----
-
-## Architecture Reference
-
-### Current Entity Map
-
-```
-           LIGHT (Isis)                    DARK (Lilith)
-P1  🜃 Earth — Root    SEKHMET      KALI       🜃 Earth — Celestial   P10
-P2  🜄 Water — Sacral  BRIGID      ANUBIS      🜄 Water — Cosmic      P9
-P3  🜂 Fire — Solar     PROMETHEUS  HECATE      🜂 Fire — Beyond       P8
-P4  🜁 Air — Heart      SARASWATI   LUCIFER     🜁 Air — Crown         P7
-P5  ⛤ Aether — Throat  INANNA      ERESHKIGAL  ⛤ Aether — Third Eye  P6
-```
-
-Oversouls (in `entities.yaml` with `pillars: []`): **Sophia**, **Ma'at**, **Isis**, **Lilith**
-
-### Session Header
-
-```
-⬡ OMEGA ⬡ {entity} ⬡ {model} ⬡ {channel} ⬡ {trace} ⬡ {phase}
-```
-
-### Entity Selection
-
-| Work Type | Entity |
-|-----------|--------|
-| Code integration, bug fixes | BRIGID (healing, making things whole) |
-| Shadow work, hard truths in code | HECATE (crossroads, seeing clearly) |
-| Architecture design | SOPHIA (gnosis, first principles) |
-| Security, boundaries | SEKHMET (protection, strength) |
-
----
-
-## Verification
-
-```bash
-# Mock mode
-OMEGA_ENV=test PYTHONPATH=src python3 -m pytest tests/
-
-# Verify Iris restore
-ls src/omega/iris/
-
-# Verify entity config
-PYTHONPATH=src python3 -c "from omega.oracle import EntityRegistry; r=EntityRegistry(); print([e.name for e in r.list_pillar_keepers()])"
-# Expected: ['Sekhmet', 'Brigid', 'Prometheus', 'Saraswati', 'Inanna', 'Ereshkigal', 'Lucifer', 'Hecate', 'Anubis', 'Kali']
-```
-
----
-
-## Version History
-
-| Version | Date | Summary |
-|---------|------|---------|
-| 3.0.0 | 2026-05-14 | Phase 0 marked complete. Phase 1 dependency chain documented. |
-| 2.1.0 | 2026-05-14 | Grand strategy recorded. Bug fix tasks defined. |
+- `.clinerules` — Project rules and IWAD architecture
+- `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md` — Architecture reference
+- `docs/team/COMMUNICATION_HUB.md` — Fleet communication protocol
+- `config/mcp_servers.json` — MCP config (single source of truth)
+- `data/handoff/handoff_cline_to_opencode_overseer.md` — Previous handoff

@@ -1,17 +1,5 @@
 """Entity Memory Store — Hot/Warm/Cold persistent memory for entities.
-
 AP: AP-MEMORY-STORE-v1.0.0
-ICS: [NODE: MNEMOSYNE | ARCHETYPE: SOPHIA | CONTEXT: MEMORY-STORE]
-
-Three-tier storage:
-  Hot   — In-memory LRU dict (active sessions, fast access)
-  Warm  — JSON files on disk (recent conversations, per-entity per-session)
-  Cold  — Gzipped JSON archive (compacted/summarized older sessions)
-
-Every entity gets persistent conversation memory. Memory is injected
-into Oracle context on summon, and persisted after each response.
-
-Auto-compaction: conversations > MAX_HISTORY exchanges are summarized.
 """
 
 import gzip
@@ -26,62 +14,74 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import anyio
 
+from .constants import DEFAULT_CONTEXT_LIMIT, MAX_HISTORY_EXCHANGES
+from .memory.providers import (
+    StorageProvider,
+    RedisStorageProvider,
+    FileStorageProvider,
+    InMemoryStorageProvider,
+    DiskSpaceError,
+)
+
 logger = logging.getLogger(__name__)
 
-# --- Constants ---
-# Defined in src/omega/oracle/constants.py
-# MAX_HISTORY and MAX_CONTEXT_EXCHANGES are imported from there.
-
-
 def _get_data_dir() -> Path:
-    """Get data directory, respecting OMEGA_DATA_DIR env var (lazy, for testability)."""
+    """Get data directory, respecting OMEGA_DATA_DIR env var."""
     return Path(os.environ.get(
         "OMEGA_DATA_DIR",
-        str(Path(__file__).resolve().parent.parent.parent.parent / "data")
+        str(Path(__file__).resolve().parent.parent.parent / "data")
     ))
-
 
 def _get_memory_dir() -> Path:
     return _get_data_dir() / "memory"
 
-
 def _get_trace_dir() -> Path:
     return _get_memory_dir() / "trace"
-
 
 def _get_entity_dir() -> Path:
     return _get_memory_dir() / "entities"
 
-
 def _get_archive_dir() -> Path:
     return _get_memory_dir() / "archive"
-
-
-from .constants import DEFAULT_CONTEXT_LIMIT, MAX_HISTORY_EXCHANGES
 
 MAX_HOT_SESSIONS = 50
 MAX_HISTORY = MAX_HISTORY_EXCHANGES
 MAX_CONTEXT_EXCHANGES = DEFAULT_CONTEXT_LIMIT
 ARCHIVE_AFTER_DAYS = 7
 
-
 class MemoryStore:
-    """Hot/Warm/Cold entity memory with LRU caching."""
+    """Hot/Warm/Cold entity memory with LRU caching and 3-tier provider fallback."""
 
-    def __init__(self):
+    def __init__(self, providers: Optional[List[StorageProvider]] = None):
         self._hot: Dict[str, OrderedDict] = {}
-        self._stats: Dict[str, int] = {"loads": 0, "saves": 0, "archives": 0}
-
-    def _entity_path(self, entity_name: str, session_id: str) -> Path:
-        safe_name = entity_name.lower().replace(" ", "_")
-        return _get_entity_dir() / safe_name / f"{session_id}.json"
-
-    def _archive_path(self, entity_name: str, session_id: str) -> Path:
-        safe_name = entity_name.lower().replace(" ", "_")
-        return _get_archive_dir() / safe_name / f"{session_id}.json.gz"
-
-    def _trace_path(self, trace_id: str) -> Path:
-        return _get_trace_dir() / f"{trace_id}.json"
+        self._stats: Dict[str, int] = {"loads": 0, "saves": 0, "archives": 0, "fallbacks": 0}
+        
+        if providers is not None:
+            self.providers = providers
+        else:
+            self.providers = []
+            
+            # Skip Redis in test environment to keep tests fast
+            is_test = os.environ.get("OMEGA_ENV") == "test"
+            
+            if not is_test:
+                # 1. Redis Provider (Hot)
+                try:
+                    redis_host = os.environ.get("OMEGA_REDIS_HOST", "localhost")
+                    redis_port = int(os.environ.get("OMEGA_REDIS_PORT", "6379"))
+                    redis_password = os.environ.get("OMEGA_REDIS_PASSWORD", "omega")
+                    self.providers.append(RedisStorageProvider(host=redis_host, port=redis_port, password=redis_password))
+                except Exception as e:
+                    logger.warning(f"Failed to initialize RedisStorageProvider: {e}")
+            
+            # 2. File Provider (Warm)
+            try:
+                self.providers.append(FileStorageProvider(data_dir=_get_memory_dir()))
+            except Exception as e:
+                logger.warning(f"Failed to initialize FileStorageProvider: {e}")
+                
+            # 3. InMemory Provider (Cold/Volatile Fallback)
+            self.providers.append(InMemoryStorageProvider())
 
     async def get_history(
         self,
@@ -89,33 +89,33 @@ class MemoryStore:
         session_id: str,
         limit: int = MAX_CONTEXT_EXCHANGES,
     ) -> List[Dict[str, str]]:
-        """Get recent conversation history for context injection.
-
-        Tries hot → warm → cold in order. Returns last N exchanges.
-        """
+        """Get recent conversation history for context injection."""
+        if not session_id:
+            return []
         cache_key = f"{entity_name.lower()}:{session_id}"
 
+        # 1. Check hot cache
         if cache_key in self._hot:
             self._stats["loads"] += 1
             history = list(self._hot[cache_key].values())
             return history[-limit:]
 
-        warm_path = self._entity_path(entity_name, session_id)
-        if await anyio.Path(warm_path).exists():
-            self._stats["loads"] += 1
-            async with await anyio.open_file(str(warm_path)) as f:
-                data = json.loads(await f.read())
-            exchanges = data.get("exchanges", [])
-            self._cache_hot(cache_key, exchanges)
-            return exchanges[-limit:]
-
-        cold_path = self._archive_path(entity_name, session_id)
-        if await anyio.Path(cold_path).exists():
-            self._stats["loads"] += 1
-            async with await anyio.open_file(str(cold_path), "rb") as f:
-                data = json.loads(gzip.decompress(await f.read()))
-            exchanges = data.get("exchanges", [])
-            return exchanges[-limit:]
+        # 2. Query providers in order
+        for provider in self.providers:
+            if hasattr(provider, "check_health"):
+                if not await provider.check_health():
+                    continue
+                    
+            try:
+                exchanges = await provider.get_history(entity_name, session_id, limit=MAX_HISTORY)
+                if exchanges:
+                    self._stats["loads"] += 1
+                    self._cache_hot(cache_key, exchanges)
+                    return exchanges[-limit:]
+            except Exception as e:
+                logger.warning(f"Provider {provider.__class__.__name__} failed to get_history: {e}")
+                self._stats["fallbacks"] += 1
+                continue
 
         return []
 
@@ -127,11 +127,10 @@ class MemoryStore:
         response: str,
         metadata: Optional[Dict[str, Any]] = None,
     ) -> None:
-        """Record a user-assistant exchange in entity memory.
-
-        Stores in hot cache, syncs to warm on every call.
-        Auto-compacts if history exceeds MAX_HISTORY.
-        """
+        """Record a user-assistant exchange in entity memory."""
+        if not session_id:
+            logger.warning("add_exchange called with None/empty session_id for entity=%s, skipping", entity_name)
+            return
         cache_key = f"{entity_name.lower()}:{session_id}"
         exchange = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -149,23 +148,28 @@ class MemoryStore:
 
         if len(exchanges) > MAX_HISTORY:
             exchanges = await self._compact(entity_name, session_id, exchanges)
-            # Re-cache hot with compacted result
             self._hot[cache_key] = OrderedDict()
             for i, ex in enumerate(exchanges):
                 self._hot[cache_key][f"hist_{i}"] = ex
 
-        warm_path = self._entity_path(entity_name, session_id)
-        await anyio.Path(warm_path.parent).mkdir(parents=True, exist_ok=True)
-        data = {
-            "entity": entity_name,
-            "session_id": session_id,
-            "exchange_count": len(exchanges),
-            "last_updated": datetime.now(timezone.utc).isoformat(),
-            "exchanges": exchanges,
-        }
-        async with await anyio.open_file(str(warm_path), "w") as f:
-            await f.write(json.dumps(data, indent=2, default=str))
-        self._stats["saves"] += 1
+        # Save to providers
+        saved_any = False
+        for provider in self.providers:
+            if hasattr(provider, "check_health"):
+                if not await provider.check_health():
+                    continue
+                    
+            try:
+                await provider.save_history(entity_name, session_id, exchanges)
+                saved_any = True
+            except Exception as e:
+                logger.warning(f"Provider {provider.__class__.__name__} failed to save_history: {e}")
+                self._stats["fallbacks"] += 1
+                
+        if not saved_any:
+            logger.error(f"All providers failed to save_history for {session_id}!")
+        else:
+            self._stats["saves"] += 1
 
     def _cache_hot(self, cache_key: str, exchanges: List[Dict]) -> None:
         if cache_key not in self._hot:
@@ -219,25 +223,22 @@ class MemoryStore:
         entity_name: str,
         session_id: str,
     ) -> bool:
-        """Move a warm session to cold storage (gzipped)."""
-        warm_path = self._entity_path(entity_name, session_id)
-        if not await anyio.Path(warm_path).exists():
-            return False
-
-        async with await anyio.open_file(str(warm_path)) as f:
-            data = json.loads(await f.read())
-
-        cold_path = self._archive_path(entity_name, session_id)
-        await anyio.Path(cold_path.parent).mkdir(parents=True, exist_ok=True)
-        async with await anyio.open_file(str(cold_path), "wb") as f:
-            await f.write(gzip.compress(json.dumps(data, default=str).encode()))
-
-        await anyio.Path(warm_path).unlink()
-        cache_key = f"{entity_name.lower()}:{session_id}"
-        self._hot.pop(cache_key, None)
-        self._stats["archives"] += 1
-        logger.info(f"Archived {entity_name}/{session_id} to cold storage")
-        return True
+        """Move a session to cold storage / archive across all providers."""
+        archived_any = False
+        for provider in self.providers:
+            try:
+                if await provider.archive(entity_name, session_id):
+                    archived_any = True
+            except Exception as e:
+                logger.warning(f"Provider {provider.__class__.__name__} failed to archive: {e}")
+                
+        if archived_any:
+            cache_key = f"{entity_name.lower()}:{session_id}"
+            self._hot.pop(cache_key, None)
+            self._stats["archives"] += 1
+            logger.info(f"Archived session {session_id} across providers")
+            return True
+        return False
 
     async def trace_exchange(
         self,
@@ -258,7 +259,7 @@ class MemoryStore:
             "response": response,
             "metadata": metadata or {},
         }
-        trace_path = self._trace_path(trace_id)
+        trace_path = _get_trace_dir() / f"{trace_id}.json"
         await anyio.Path(trace_path.parent).mkdir(parents=True, exist_ok=True)
         async with await anyio.open_file(str(trace_path), "w") as f:
             await f.write(json.dumps(trace_data, indent=2, default=str))
@@ -302,25 +303,27 @@ class MemoryStore:
             "loads": self._stats["loads"],
             "saves": self._stats["saves"],
             "archives": self._stats["archives"],
+            "fallbacks": self._stats.get("fallbacks", 0),
         }
 
     async def close(self) -> None:
-        """Flush hot cache to warm storage."""
+        """Flush hot cache to providers and close them."""
         for cache_key in list(self._hot.keys()):
             entity_name, session_id = cache_key.rsplit(":", 1)
             exchanges = list(self._hot[cache_key].values())
             if exchanges:
-                warm_path = self._entity_path(entity_name, session_id)
-                await anyio.Path(warm_path.parent).mkdir(parents=True, exist_ok=True)
-                data = {
-                    "entity": entity_name,
-                    "session_id": session_id,
-                    "exchange_count": len(exchanges),
-                    "last_updated": datetime.now(timezone.utc).isoformat(),
-                    "exchanges": exchanges,
-                }
-                async with await anyio.open_file(str(warm_path), "w") as f:
-                    await f.write(json.dumps(data, indent=2, default=str))
+                for provider in self.providers:
+                    try:
+                        await provider.save_history(entity_name, session_id, exchanges)
+                    except Exception as e:
+                        logger.warning(f"Failed to flush to {provider.__class__.__name__} on close: {e}")
+                        
+        for provider in self.providers:
+            try:
+                await provider.close()
+            except Exception as e:
+                logger.warning(f"Failed to close provider {provider.__class__.__name__}: {e}")
+                
         logger.info("Memory store flushed and closed")
 
     async def archive_old_sessions(self, older_than_days: int = ARCHIVE_AFTER_DAYS) -> int:
@@ -340,15 +343,12 @@ class MemoryStore:
                         count += 1
         return count
 
-
 _memory_store: Optional[MemoryStore] = None
-
 
 def reset_memory_store() -> None:
     """Reset the singleton instance. Used for testing."""
     global _memory_store
     _memory_store = None
-
 
 def get_memory_store() -> MemoryStore:
     global _memory_store

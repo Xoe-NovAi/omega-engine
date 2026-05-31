@@ -17,7 +17,7 @@ Cline has completed the following:
 - **Full Context Restoration**: Read all canonical and deep discovery documents.
 - **Tiered Research Pipeline Design**: Created a comprehensive spec for the Investigative Journalism Model (`docs/research/R_TIERED_RESEARCH_PIPELINE.md`).
 - **Subagent #1 Mining**: Completed `omega-stack-legacy` mining, recovering 24 app configs, memory bank structures, and strategic documents.
-- **Subagent #2 Mining**: Completed `xna-omega-legacy` (Temple Grade era) mining, recovering OMEGA_CANON v7.6.3, 13 Archons, 26 spheres, knowledge base, config patterns, and specifications. Report saved to `data/research/mining/xna-omega-legacy_mining_report.md`.
+- **Subagent #2 Mining**: Completed `xna-omega-legacy` mining, recovering OMEGA_CANON v7.6.3, knowledge base, config patterns, and specifications. Report saved to `data/research/mining/xna-omega-legacy_mining_report.md`.
 - **Model Switch**: The DeepSeek v4 Flash daily usage limit was reached during Subagent #3 launch. You are now running on Gemini 2.5 Flash.
 
 ---

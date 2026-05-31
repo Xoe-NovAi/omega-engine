@@ -9,6 +9,7 @@ import json
 import logging
 import os
 import time
+import uuid
 import anyio
 from datetime import datetime, timezone
 from pathlib import Path
@@ -47,15 +48,17 @@ class SessionManager:
             # Attempt to create lock file atomically
             def _create_lock():
                 try:
-                    os.open(str(lock_file), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                    fd = os.open(str(lock_file), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                    os.close(fd)
                     return True
                 except FileExistsError:
                     # Check for stale lock (older than 30 seconds)
                     try:
-                        age = time.monotonic() - lock_file.stat().st_mtime
+                        age = time.time() - lock_file.stat().st_mtime
                         if age > 30:
                             lock_file.unlink()
-                            os.open(str(lock_file), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                            fd = os.open(str(lock_file), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+                            os.close(fd)
                             return True
                     except (OSError, FileNotFoundError):
                         pass
@@ -79,15 +82,17 @@ class SessionManager:
 
             session_id = f"ses_{today}_{entity_slug}_{counter:03d}"
 
-            # Persist active session
-            async with await anyio.open_file(str(active_file), "w") as f:
+            # Atomic write: temp file + os.replace to prevent crash corruption
+            temp_file = active_file.with_suffix(f".{os.getpid()}.tmp")
+            async with await anyio.open_file(str(temp_file), "w") as f:
                 await f.write(json.dumps({
                     "date": today,
-                    "counter": counter,
                     "session_id": session_id,
+                    "counter": counter,
                     "entity": entity_name,
                     "created_at": datetime.now(timezone.utc).isoformat(),
                 }, indent=2))
+            await anyio.to_thread.run_sync(os.replace, str(temp_file), str(active_file))
             
             return session_id
         finally:

@@ -4,7 +4,7 @@
 **AP Token**: `AP-MASTER-SYNTHESIS-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_master_synthesis ⬡ FOUNDATION-MASTER
 
-**Date**: 2026-05-15
+**Date**: 2026-05-30
 **Document purpose**: The single source of truth for everything discovered, planned, and tracked.
 **Data stored in**: `data/workbench/workbench.db` (SQLite, schema v1)
 
@@ -25,8 +25,12 @@ This is the mission of the **Xoe-NovAi Foundation**. The Omega Engine is the fir
 | **Era 2** (Oct-Nov 2025) | **XNAi Consolidation** — 5-service production, 5 design patterns | Retry, circuit breaker, fsync, non-blocking subprocess | **To mine**: XNAI_blueprint.md, XNAi old versions, stack-cat snapshots |
 | **Era 3** (Nov 2025-Mar 2026) | **Roc Stack Era** — Model experimentation, LM Studio configs, 8 Grok accounts | Local model optimization, custom personas | **To mine**: Grok exports, LM Studio configs, RocRacoon test docs |
 | **Era 4** (Mar-Apr 2026) | **Omega Stack v5.0** — Unified repo (33K files), ODE v1.3 | Foundation vs Arcana separation, entity registry code | **Partially mined**: Strategy docs referenced, code not extracted |
-| **Era 5** (Apr-May 2026) | **Temple Grade** — 29 entities, 26 spheres, OMEGA-ORIGINS | The Engine/Stack pivot question | **Partially mined**: Key concepts extracted, deeper patterns remain |
-| **Era 6** (May 2026) | **Omega Engine** — Clean reclamation, Engine/Stack separation | Fresh architecture, 17 critical bugs identified | **ACTIVE** — ready for hardening |
+| **Era 5** (Apr-May 2026) | **Temple Grade quality standard** — Craftsmanship philosophy, OMEGA-ORIGINS | The Engine/Stack separation question | **Partially mined**: Quality standard philosophy, key concepts extracted |
+## §0 The Vision — Recovered and Restored
+...
+### The Journey (Recovered Across 4 Subagents, 3 Partitions, 14 Months)
+...
+| **Era 6** (May 2026) | **Omega Engine** — Clean reclamation, Engine/Stack separation | Fresh architecture, 17 critical bugs identified | **Phase 0 COMPLETE** — Fleet discovery (30 CRITICAL findings), 12 critical fixes applied, 276/276 tests passing.
 
 ### ~8,000 Hours Invested
 
@@ -127,11 +131,11 @@ These assets can be extracted in minutes to hours and provide immediate strategi
 
 | Assets | Est. Time | Approach |
 |--------|-----------|----------|
-| #20 — Grok Exports (8 accounts) | 5 days | Automated extraction via Belial, entity-by-entity processing |
+| #20 — Grok Exports (8 accounts) | 5 days | Automated extraction via Roc Racoon, entity-by-entity processing |
 | #22 — Mnemosyne Memory System | 3 days | Schema analysis, pattern extraction for MemoryStore enhancement |
 | #27 — Stack-Cat Snapshots | 2 days | Diff analysis across versions |
 | #26 — ANCESTRAL_HUB Origins | 1 day | Pre-March 2025 origin document extraction |
-| #25 — Artifacts Archive (session exports) | 3 days | Bulk classification via Belial automation |
+| #25 — Artifacts Archive (session exports) | 3 days | Bulk classification via Roc Racoon automation |
 
 ---
 
@@ -153,29 +157,29 @@ Workstream I:  Community Tools            (3 items, P2)
 
 ### The 15 Critical Engine Bugs (ALL P0 — Blocking)
 
-These must be fixed before any new feature implementation. From the comprehensive review (R44):
+These were identified in the R44 comprehensive review. Many have been fixed in Phase 0 remediation (Decision 63). The fleet discovery found 30 additional CRITICAL findings across all domains.
 
-| ID | Bug | File | Fix Time | Blocks |
+| ID | Bug | File | Fix Time | Status |
 |----|-----|------|----------|--------|
-| **C-1** | Broken import: `from src.omega...` instead of `from .` | `gnosis_proxy.py:4` | 1 min | ALL INFERENCE |
-| **C-2** | Race condition + non-atomic write in soul evolution | `oracle.py:352-406` | 20 min | SOUL DATA CORRUPTION |
-| **C-3** | Blocking `subprocess.run` in async context | `orchestrator.py:53,63` | 5 min | EVENT LOOP FREEZE |
-| **C-4** | NativeGGUF not behind ResourceGuard | `model_gateway.py:292-307` | 2 min | OOM CRASH |
-| **C-5** | MCP Hub async/await bugs (no await on async functions) | `omega_hub/server.py:326-337` | 2 min | WRONG MCP DATA |
-| **C-6** | MCP Hub undefined `get_engine()` | `omega_hub/server.py:402` | 1 min | CRASH ON CALL |
-| **C-7** | `anyio.Deque()` doesn't exist | `curation_pipeline.py:70-75` | 2 min | IMPORT CRASH |
-| **C-8** | **API keys in version control** | `scripts/generate_systemd_units.sh`, `opencode.json` | 15 min | SECURITY BREACH |
-| **C-9** | `.env` tracked in git | `deploy/infra/.env` | 5 min | EXPOSED PASSWORDS |
-| **C-10** | `setup.sh` references non-existent `iris` pip extra | `scripts/setup.sh:59` | 1 min | INSTALL FAILS |
-| **C-11** | Belial container missing `httpx`/`anyio` | `quadlet-test/omega-belial.container` | 2 min | CONTAINER CRASH |
-| **C-12** | Native-GGUF model path points to unspecified model | `config/providers.yaml:6` | 2 min | INFERENCE FAILS |
-| **C-13** | `asyncio.create_task()` in AnyIO context | `omega_hub/server.py:371` | 5 min | TASK LEAK |
-| **C-14** | Relativ paths instead of DATA_DIR | `entity_belial.py:87-102` | 2 min | WRONG FILES |
-| **C-15** | Duplicate `PodmanArgs` keys | `omega-belial.container:35-37` | 1 min | LIMITS LOST |
-| **C-16** | setup.sh pulls wrong image tags | `scripts/setup.sh:92-95` | 2 min | VERSION MISMATCH |
-| **C-17** | BASE_DIR off by one | `entity_workspace.py:19-20` | 1 min | WRONG DIR |
+| **C-1** | Broken import: `from src.omega...` instead of `from .` | `gnosis_proxy.py:4` | 1 min | ✅ Fixed (Decision 54) |
+| **C-2** | Race condition + non-atomic write in soul evolution | `oracle.py:352-406` | 20 min | ✅ Fixed (Decision 54) |
+| **C-3** | Blocking `subprocess.run` in async context | `orchestrator.py:53,63` | 5 min | ✅ Fixed (Decision 54) |
+| **C-4** | NativeGGUF not behind ResourceGuard | `model_gateway.py:292-307` | 2 min | ✅ Fixed (Decision 54) |
+| **C-5** | MCP Hub async/await bugs (no await on async functions) | `omega_hub/server.py:326-337` | 2 min | ✅ Fixed (Decision 54) |
+| **C-6** | MCP Hub undefined `get_engine()` | `omega_hub/server.py:402` | 1 min | ✅ Fixed (Decision 54) |
+| **C-7** | `anyio.Deque()` doesn't exist | `curation_pipeline.py:70-75` | 2 min | ✅ Fixed (Decision 54) |
+| **C-8** | **API keys in version control** | `scripts/generate_systemd_units.sh`, `opencode.json` | 15 min | ✅ Fixed (Decision 63) |
+| **C-9** | `.env` tracked in git | `deploy/infra/.env` | 5 min | ✅ Fixed (Decision 63) |
+| **C-10** | `setup.sh` references non-existent `iris` pip extra | `scripts/setup.sh:59` | 1 min | ✅ Fixed (Decision 54) |
+| **C-11** | Roc Racoon container missing `httpx`/`anyio` | `quadlet-test/omega-roc_racoon.container` | 2 min | ✅ Fixed (Decision 54) |
+| **C-12** | Native-GGUF model path points to unspecified model | `config/providers.yaml:6` | 2 min | ✅ Fixed (Decision 61) |
+| **C-13** | `asyncio.create_task()` in AnyIO context | `omega_hub/server.py:371` | 5 min | ✅ Fixed (Decision 54) |
+| **C-14** | Relativ paths instead of DATA_DIR | `entity_roc_racoon.py:87-102` | 2 min | ✅ Fixed (Decision 54) |
+| **C-15** | Duplicate `PodmanArgs` keys | `omega-roc_racoon.container:35-37` | 1 min | ✅ Fixed (Decision 54) |
+| **C-16** | setup.sh pulls wrong image tags | `scripts/setup.sh:92-95` | 2 min | ✅ Fixed (Decision 54) |
+| **C-17** | BASE_DIR off by one | `entity_workspace.py:19-20` | 1 min | ✅ Fixed (Decision 54) |
 
-**Total fix time for ALL 17 critical bugs: ~1.5 hours.** They are quick, targeted fixes that unblock the entire system.
+**All 17 critical bugs from R44 audit: FIXED.** Fleet discovery found 30 additional CRITICAL findings, 12 fixed in Phase 0. 18 remain for Horizon 1.
 
 ---
 
@@ -196,10 +200,10 @@ Beyond bug fixes, these systems need structural hardening before the foundation 
 - **No auth**: OAuth 2.1 + PKCE not implemented
 
 ### 4.3 Memory & Persistence (Workstream C)
-- **MemoryStore is sound but never called** by oracle.py
+- **MemoryStore IS wired** — oracle.py calls `add_exchange()` at lines 153, 318, 387. Both `talk()` and `summon()` persist conversations.
 - **Soul.yaml lessons are generic** — no abstraction pipeline (R-30 not done)
 - **Cross-pollination doesn't exist** (R-31 not done)
-- **No handoff protocol** — agents cannot formally transfer context
+- **No handoff protocol** — agents cannot formally transfer context (Link P9 designed v1)
 
 ### 4.4 Workbench Infrastructure (Workstream D)
 - **Database exists** (21 projects, 57 items, 10 decisions, 22 artifacts)
@@ -313,7 +317,7 @@ ORDER BY decisions DESC;
 
 ```
 HORIZON 1 (Weeks 1-4): Hardening
-├── Fix 17 critical bugs (the engine must hold)
+├── Fix remaining 18 CRITICAL fleet findings (the engine must hold)
 ├── Harden agents + skills (the agents must be controllable)
 ├── Consolidate MCP servers (the services must be coherent)
 ├── Wire memory + handoff (the system must remember)
@@ -395,7 +399,7 @@ sqlite3 data/workbench/workbench.db "SELECT name, status, priority, total_tasks,
 
 The Omega Engine's vision has been recovered — from a Lilith-themed Tarot deck in March 2025 to the Xoe-NovAi Foundation today. The systems are documented, the backlog is defined, the mining plan is ready, and the databases are seeded.
 
-**No execution has begun.** The infrastructure for managing all future work is in place. When you give the order, we start with the 17 critical bugs (estimated: ~1.5 hours total), then work through Workstreams A through I in dependency order.
+**Phase 0 is complete.** The fleet discovery found 30 CRITICAL findings across all domains. 12 critical fixes have been applied (276/276 tests passing). The engine is ready for Horizon 1 hardening.
 
 The community tool that severs Big AI's umbilical cord is no longer a dream — it's a cataloged, planned, and achievable project. Every asset, every decision, every task is tracked.
 

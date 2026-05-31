@@ -2,18 +2,62 @@
 
 ⬡ OMEGA ⬡ SOPHIA ⬡ opus-4.6 ⬡ antigravity ⬡ trc_core ⬡ STATUS-OPUS
 
-**AP Token**: `AP-OMEGA-STATUS-OPUS-v4.0.0`
-**Updated**: 2026-05-14
+**AP Token**: `AP-OMEGA-STATUS-OPUS-v5.0.0`
+**Updated**: 2026-05-30
 
 ---
 
-## Current Status: FOUNDING PR MERGED — Phase 1 Transition ✅
+## Current Status: LOCAL-FIRST + THE COMPANY — Complete ✅
 
-Phase 0 is complete. The Founding PR has been committed to the local `main` branch with 40 files changed (+2497/-879). All 40 tests pass. The codebase is fully aligned with the Grand Strategy.
+The Omega Engine is now local-first with a living default IWAD. Provider fabric reordered. NativeGGUFProvider upgraded to full Zen 2 engine. Default IWAD ("The Company") rewritten with 16 alive entities. Engine-WAD firewall confirmed. Sovereign Mandates expanded to 8 Laws. **261/261 tests passing.**
+
+### Key Metrics
+| Metric | Value |
+|--------|-------|
+| Tests | 261/261 passing |
+| Provider Strategy | local_first |
+| Active WAD | _omega_default ("The Company") |
+| Entities | 16 (default) / 28 (arcana_novai) |
+| Sovereign Mandates | 8 Laws |
+| Decisions Logged | 62 |
+| Default WAD Version | 1.0.0 |
+
+### Today's Sessions (2026-05-30)
+
+**Session 1: Local-First Config Centralization** (SOPHIA, trc_local_first_config)
+- Provider fabric reordered: native-gguf(0) → cloud(3+)
+- Config centralized: models.yaml as single source of truth
+- NativeGGUFProvider upgraded: CPU pinning, memory-aware context, dynamic reload
+- 320MB RAM freed via realistic context windows
+
+**Session 2: Engine-WAD Firewall & Default IWAD Transform** (KALI, trc_wad_transform)
+- Engine-WAD firewall confirmed (Doom WAD model)
+- _omega_default rewritten: "The Company" with 16 alive entities
+- Kali (Founder), Ma'at (CTO), Lilith (CISO), 10 department heads
+- active_iwad switched from arcana_novai to _omega_default
+- Sovereign Mandates v2.0.0: Added Local-First + Zero Telemetry
+
+### Strategic Position
+
+```
+DONE:
+  ✅ Provider fabric local-first
+  ✅ Config centralized (models.yaml single source of truth)
+  ✅ NativeGGUFProvider Zen 2 engine
+  ✅ Default IWAD alive ("The Company")
+  ✅ Engine-WAD firewall confirmed
+  ✅ Sovereign Mandates v2.0.0 (8 Laws)
+  ✅ 261/261 tests passing
+
+NEXT:
+  🔜 Phase 1b — Memory wiring, handoff protocol, workbench CLI
+  🔜 PR readiness — Final security audit
+  🔜 Omega Desktop — curl | bash installer
+```
 
 ---
 
-## Session History
+## Historical Session Log
 
 ### Session 4 — Research Program & Sovereign Agent Fabric (2026-05-14)
 **Agent**: Claude Opus 4.6 (Antigravity IDE)

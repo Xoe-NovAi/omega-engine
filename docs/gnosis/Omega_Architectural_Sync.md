@@ -35,7 +35,7 @@ Agents MUST detect and adapt to the **Runtime Platform**:
 OpenCode is now the **Primary Implementation Hub** for all high-token count tasks.
 1. **Opus 4.6 Prep**: Perform a deep codebase review of `src/omega/` and `tests/` to identify AnyIO leaks or mythology-runtime contamination.
 2. **Dynamic Testing**: Verify the `TriageRouter`'s dynamic scaling logic in `test_triage_router.py`.
-3. **Agent Hardening**: Ensure all newly created modes (`belial`, `iris`, `opencode-architect`) adhere to the **Platform Awareness Protocol (PAP)**.
+3. **Agent Hardening**: Ensure all newly created modes (`roc_racoon`, `iris`, `opencode-architect`) adhere to the **Platform Awareness Protocol (PAP)**.
 
 ### 🟡 Pending Implementations (Sprint 2)
 - **JemResearcher Python Worker**: Implementation of `src/omega/workers/jem_researcher.py`.

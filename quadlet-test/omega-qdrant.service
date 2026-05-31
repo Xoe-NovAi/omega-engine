@@ -18,7 +18,7 @@ ContainerName=omega-qdrant
 Pod=omega-infra.pod
 # Zen 2 Core Steering
 # Sovereign Volume
-Volume=/media/arcana-novai/omega_library/podman-storage/volumes/qdrant:/qdrant/storage:Z,U
+Volume=/media/arcana-novai/omega_library/podman-storage/volumes/qdrant:/qdrant/storage
 Volume=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/deploy/infra/qdrant_config.yaml:/qdrant/config/config.yaml:ro,Z,U
 Environment=QDRANT__SERVICE__GRPC_PORT=6334
 Environment=QDRANT__STORAGE__PERFORMANCE__MAX_SEARCH_THREADS=4
@@ -39,7 +39,7 @@ Delegate=yes
 Type=notify
 NotifyAccess=all
 SyslogIdentifier=%N
-ExecStart=/usr/bin/podman run --name omega-qdrant --cidfile=%t/%N.cid --replace --rm --cgroups=split --sdnotify=healthy -d -v /media/arcana-novai/omega_library/podman-storage/volumes/qdrant:/qdrant/storage:Z,U -v /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/deploy/infra/qdrant_config.yaml:/qdrant/config/config.yaml:ro,Z,U --env QDRANT__SERVICE__GRPC_PORT=6334 --env QDRANT__STORAGE__OPTIMIZER__CPU_LIMIT=4 --env QDRANT__STORAGE__PERFORMANCE__MAX_SEARCH_THREADS=4 --health-cmd "curl -f http://localhost:6333/healthz" --pod-id-file %t/omega-infra-pod.pod-id docker.io/qdrant/qdrant:v1.13.1
+ExecStart=/usr/bin/podman run --userns=keep-id --user 1000 --name omega-qdrant --cidfile=%t/%N.cid --replace --rm --cgroups=split --sdnotify=healthy -d -v /media/arcana-novai/omega_library/podman-storage/volumes/qdrant:/qdrant/storage -v /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/deploy/infra/qdrant_config.yaml:/qdrant/config/config.yaml:ro,Z,U --env QDRANT__SERVICE__GRPC_PORT=6334 --env QDRANT__STORAGE__OPTIMIZER__CPU_LIMIT=4 --env QDRANT__STORAGE__PERFORMANCE__MAX_SEARCH_THREADS=4 --health-cmd "curl -f http://localhost:6333/healthz" --pod-id-file %t/omega-infra-pod.pod-id docker.io/qdrant/qdrant:v1.13.1
 
 [Install]
 WantedBy=default.target

@@ -1,6 +1,6 @@
 {
   "topic": "Topic 1",
-  "priority": 1.08,
+  "priority": 0.1,
   "depth": 1,
   "state": "pending",
   "sources": [],
@@ -9,7 +9,7 @@
   "attempts": 1,
   "max_attempts": 3,
   "session_id": "res_20260523_Topic_1",
-  "created": "2026-05-23T05:06:18.629267+00:00",
+  "created": "2026-05-23T17:10:13.449734+00:00",
   "last_attempt": null,
   "error": null
 }

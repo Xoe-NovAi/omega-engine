@@ -175,7 +175,7 @@ All responses — regardless of provider — flow into the same memory, entity k
 |---|------|------|--------|-------|
 | 3.1 | Port MultiProviderDispatcher | T4 | 2d | Gemini CLI |
 | 3.2 | Add `omega repl` interactive chat loop | T4 | 2d | Cline |
-| 3.3 | Create `omega-websearch`, `omega-sanitizer`, `omega-belial` MCPs | T6 | 1d | OpenCode |
+| 3.3 | Create `omega-websearch`, `omega-sanitizer`, `omega-roc_racoon` MCPs | T6 | 1d | OpenCode |
 | 3.4 | Port circuit breakers + Grafana dashboards | T7 | 3d | Cline |
 | 3.5 | Add CONTRIBUTING.md, backup/restore procedures | T7 | 1d | Copilot |
 
@@ -217,7 +217,7 @@ All responses — regardless of provider — flow into the same memory, entity k
 | Memory System | Hot/Warm/Cold, context builder, cross-pollination pipeline |
 | User Soul | The Architect — soul file for every Omega user |
 | Iris | Voice assistant container (messenger goddess) |
-| MCP Servers | Hivemind, oracle, library, research, stats (+ websearch, sanitizer, belial) |
+| MCP Servers | Hivemind, oracle, library, research, stats (+ websearch, sanitizer, roc_racoon) |
 | Observability | Trace IDs, events, dataset |
 | ResourceGuard | OOM protection |
 

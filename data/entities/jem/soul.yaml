@@ -2,6 +2,7 @@ entity:
   name: Jem
   short: Jem
   archetype: Lead Research Oversoul / The Scholar
+  created_at: "2026-05-19T00:00:00Z" # Birthed in the fires of the research pipeline
   oversoul_type: three_facet
   current_entity: JEM
   soul_wardrobe: []

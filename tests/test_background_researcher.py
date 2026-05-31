@@ -116,7 +116,7 @@ async def test_background_loop_atomic_lock():
     # Remove lock and run - should proceed (will likely skip due to no network/tasks)
     loop.lock_path.rmdir()
     result = await loop.run_cycle()
-    assert result["skipped"] is not True or result["reason"] != "locked"
+    assert result.get("skipped") is not True or result.get("reason") != "locked"
 
 @pytest.mark.anyio
 async def test_local_discovery_scan(tmp_path):

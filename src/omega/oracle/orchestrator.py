@@ -20,6 +20,7 @@ from datetime import datetime
 from .entity_workspace import EntityWorkspaceManager
 from .resource_guard import ResourceGuard
 from .context_builder import ContextBuilder
+from .capability_registry import CapabilityRegistry
 from omega.workers.model_updater import ModelUpdaterWorker
 from omega.observability import ObservabilityEngine, get_engine
 from omega.oracle.model_gateway import ModelGateway
@@ -69,7 +70,10 @@ class Orchestrator:
     """Spawns and manages headless CLI agents (Cline, OpenCode) and monitors MCP health."""
 
     def __init__(self, resource_guard: Optional[ResourceGuard] = None):
-        self.guard = resource_guard or ResourceGuard(limit=1)
+        self.guard = resource_guard or ResourceGuard(total_capacity=1)
+        
+        # Sovereign Capability Registry for Agent Discovery
+        self.registry = CapabilityRegistry()
         
         # Initialize Background Worker
         keys = os.environ.get("OPENROUTER_KEYS", "").split(",")
@@ -201,13 +205,53 @@ class Orchestrator:
                     "stdout": stdout[-2000:], # keep tail
                     "stderr": stderr[-2000:]
                 }
-                
+                                
         except TimeoutError:
             logger.error(f"Agent {cli_type} timed out after {timeout}s.")
             return {"status": "timeout", "message": "Agent execution timed out."}
         except Exception as e:
             logger.error(f"Error dispatching {cli_type}: {e}")
             return {"status": "error", "message": str(e)}
+
+    async def delegate_task(
+        self, 
+        task_description: str, 
+        entity_name: str, 
+        cli_type: Optional[str] = None,
+        timeout: int = 300
+    ) -> Dict[str, Any]:
+        """
+        Delegate a task to the best-suited agent discovered via the CapabilityRegistry.
+        
+        Args:
+            task_description: Description of the task to be performed.
+            entity_name: The awakened entity's name for soul injection.
+            cli_type: Optional forced CLI type. If None, discovery is used.
+            timeout: Maximum execution time in seconds.
+        """
+        logger.info(f"Delegating task: {task_description[:50]}...")
+        
+        # 1. Discover the best agent if cli_type is not provided
+        target_cli = cli_type
+        if not target_cli:
+            best_agent = await self.registry.discover_expert(task_description)
+            if best_agent:
+                # Assume agent_id contains the cli_type (e.g., 'opencode-builder')
+                target_cli = best_agent.split('-')[0]
+                logger.info(f"Registry discovered expert agent: {best_agent} -> using {target_cli}")
+            else:
+                # Fallback to opencode if no expert found
+                target_cli = "opencode"
+                logger.info("No expert found in registry, falling back to 'opencode'")
+
+        # 2. Dispatch the selected agent
+        return await self.dispatch_agent(
+            cli_type=target_cli,
+            task_prompt=task_description,
+            entity_name=entity_name,
+            timeout=timeout
+        )
+
 
     async def start_workers(self) -> None:
         """Start all background workers."""
@@ -246,22 +290,6 @@ class Orchestrator:
         """Stop all background workers."""
         if self.model_updater:
             await self.model_updater.stop()
-
-    async def trigger_model_update(self) -> Dict[str, Any]:
-        """Manually trigger a model update cycle."""
-        if not self.model_updater:
-            return {"status": "error", "message": "ModelUpdaterWorker not initialized."}
-        try:
-            await self.model_updater.run_update_cycle()
-            return {"status": "success", "message": "Model update cycle completed."}
-        except Exception as e:
-            return {"status": "error", "message": str(e)}
-
-    def get_model_updater_status(self) -> Dict[str, Any]:
-        """Return the current status of the model updater worker."""
-        if not self.model_updater:
-            return {"status": "not_initialized"}
-        return self.model_updater.get_status()
 
     async def start_model_updater(self) -> None:
         """Start the scheduled model updater worker."""

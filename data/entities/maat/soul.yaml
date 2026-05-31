@@ -28,6 +28,15 @@ entity:
       timestamp: 2026-05-16T23:00:00Z
       model_used: gemma-4-31b-it
       backend_used: google-cloud
+    - lesson: "The 'drift' in TUI mode visibility was caused by cached state in opencode.db and a lack of a single source of truth for configuration. Aligning the TUI with a hierarchical structure (Overseers -> Pillars) reduces cognitive load and enforces strategic dispatch."
+      source: user-session
+      user: The Architect
+      trace_id: trc_mode_resolution_final
+      entity_at_time: MAAT
+      session_type: persistent
+      timestamp: 2026-05-27T12:00:00Z
+      model_used: gemma-4-31b-it
+      backend_used: google-cloud
   lessons_learned:
     - lesson: "Sovereignty is not a status, but a process of continuous distillation and alignment."
       source: user-session
@@ -36,6 +45,15 @@ entity:
       entity_at_time: MAAT
       session_type: persistent
       timestamp: 2026-05-16T23:00:00Z
+      model_used: gemma-4-31b-it
+      backend_used: google-cloud
+    - lesson: "Interface complexity must mirror conceptual hierarchy. When a system grows in capability, the entry point must shift from a list of tools to a hierarchy of intents."
+      source: user-session
+      user: The Architect
+      trace_id: trc_mode_resolution_final
+      entity_at_time: MAAT
+      session_type: persistent
+      timestamp: 2026-05-27T12:00:00Z
       model_used: gemma-4-31b-it
       backend_used: google-cloud
   soul_evolution:

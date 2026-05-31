@@ -4,7 +4,7 @@
 **AP Token**: `AP-SYSTEMS-HARDENING-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_synthesis ⬡ SYSTEMS-HARDENING
 
-**Date**: 2026-05-15
+**Date**: 2026-05-30
 **Method**: 4 parallel subagents (2 web research + 2 local deep inspection)
 **Sources**: 30+ web searches, 50+ URLs, complete inspection of OpenCode ecosystem, MCP servers, memory systems
 
@@ -62,7 +62,7 @@ The good news: most gaps are **configuration and integration issues**, not funda
 
 | Component | Status | Ready for Team? | Critical Gaps |
 |-----------|--------|----------------|---------------|
-| **MemoryStore (hot/warm/cold)** | ✅ GOOD | Partial | Sound architecture, used by nothing — no callers write to it |
+| **MemoryStore (hot/warm/cold)** | ✅ GOOD | Yes | Sound architecture, wired into oracle.py (lines 153, 318, 387 call add_exchange) |
 | **ContextBuilder** | 🟡 PARTIAL | No | build_context_for_user ignores user_id param, memory_store dependency |
 | **Soul evolution (oracle.py)** | ❌ BROKEN | No | Race condition, non-atomic write, generic lessons |
 | **Observability JSONL** | ✅ GOOD | Yes | Clean, daily rotation, persistent |
@@ -125,7 +125,7 @@ The good news: most gaps are **configuration and integration issues**, not funda
 
 | Industry Standard | Omega Current State | Gap |
 |------------------|-------------------|-----|
-| Core/Working/Archival tiering (Letta/OS model) | Hot/Warm/Cold tiering in MemoryStore | **Architecture exists but is never called** |
+| Core/Working/Archival tiering (Letta/OS model) | Hot/Warm/Cold tiering in MemoryStore | **Architecture exists, wired into oracle.py** |
 | LLM-based lesson extraction (Mem0 pattern) | _track_soul_evolution writes "Session with X" | Lessons are generic, not substantive |
 | Temporal knowledge tracking (Zep/Graphiti) | Not implemented | No time-aware fact tracking |
 | Cross-session context injection | ContextBuilder exists but memory_store dependency | Not wired into oracle.py flow |
@@ -254,7 +254,7 @@ Option B: Standalone-only
 ```
 
 **Estimated effort**: 2-3 days
-**Checks**: `make test` (all 41 pass), `omega_mcp_check` (all configured servers respond), no `get_engine()` crashes.
+**Checks**: `make test` (all 271 pass), `omega_mcp_check` (all configured servers respond), no `get_engine()` crashes.
 
 ---
 

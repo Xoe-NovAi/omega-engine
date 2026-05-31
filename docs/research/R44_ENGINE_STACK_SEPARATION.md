@@ -48,9 +48,9 @@ timeline
     2026 Mar : Omega Stack repo created (33,483 files)
              : Minted from XNAi era
              : Omnidroid BIOS incorporated
-    2026 Apr : Temple Grade architecture (xna-omega)
-             : 29 entities, 26 spheres, 13 Archons
-             : 3-tier inference, entity soul system
+     2026 Apr : Temple Grade quality standard (xna-omega)
+              : Craftsmanship philosophy, 3-tier inference, entity soul system
+              : The "build with temple precision" ethos
     2026 May 13: Omega Engine reclamation
              : Fresh repo at ~/omega/
              : Engine vs Stack naming introduced
@@ -152,7 +152,7 @@ engine_contract:
 | Location | Size | Contents | Value |
 |----------|------|----------|-------|
 | `~/Documents/Xoe-NovAi/omega-stack-legacy/` | 3.9GB | 33,000+ files, full v5.0 Omega Stack | 🔴 HIGH — includes STRATEGY-MASTER-INDEX, Foundation vs Arcana document, entity registry source code |
-| `~/Documents/Xoe-NovAi/xna-omega-legacy/` | 560MB | Temple Grade era, 29 entities, 26 spheres | 🔴 HIGH — OMEGA_CANON.md, resonance_mappings.yaml, session that birthed Engine/Stack split |
+| `~/Documents/Xoe-NovAi/xna-omega-legacy/` | 560MB | Temple Grade quality standard (xna-omega) | 🔴 HIGH — OMEGA_CANON.md, resonance_mappings.yaml, session that birthed Engine/Stack split |
 | `~/Documents/Xoe-NovAi/omega-engine/` | ~50MB | Current active repo | 🟢 ACTIVE — the clean reclamation |
 | `~/Documents/docs_1/` | ~500MB | Xoe-NovAi documentation system | 🟡 MEDIUM — deep research, architecture references |
 | `~/Documents/docs_2/` | ~400MB | Runbook-based doc system | 🟡 MEDIUM — operational guides, how-tos |
@@ -269,7 +269,7 @@ arcana_nova_stack:
     - "The 10 Pillar Keepers"  # Inherits default template
     - "Sophia, Ma'at, Isis, Lilith"  # Oversouls
     - "Iris"  # Voice messenger
-    - "Belial"  # P0: The Abyss (Legacy Mining)
+    - "Roc Racoon"  # P0: The Abyss (Legacy Mining)
 
   unique_features:
     - "Dual Flame polarity engine (Ma'at/Lilith governance)"
@@ -287,7 +287,7 @@ arcana_nova_stack:
     - "Pillar Keepers: ✅ CONFIGURED in entities.yaml"
     - "Oversoul Hierarchy: ✅ CONFIGURED in hierarchy.yaml"
     - "Iris Container: ✅ CONFIGURED (Dockerfile.iris)"
-    - "Belial Entity: ✅ CONFIGURED (entity_belial.py)"
+    - "Roc Racoon Entity: ✅ CONFIGURED (entity_roc_racoon.py)"
     - "Soul Evolution: ✅ WIRED (oracle.py _track_soul_evolution)"
     - "42 Ma'at Ideals: 🔲 NOT IMPLEMENTED"
     - "Tarot Circuitry: 🔲 NOT IMPLEMENTED"
@@ -378,7 +378,7 @@ This is the direct descendant of the Feb 2026 "Foundation vs Arcana" concept —
 2. **Implement the provider chain** as recommended (native → lmster → google-8key → sambanova → cerebras → ollama)
 3. **Build the Sovereign Workbench** (project tracking, research binding, context routing)
 4. **Create the Arcana-Nova stack** as a formal omega-engine instantiation
-5. **Set up the Belial Deep Miner** to systematically process the unmined assets in §8
+5. **Set up the Roc Racoon Deep Miner** to systematically process the unmined assets in §8
 
 ---
 
@@ -452,7 +452,7 @@ The key innovations from legacy:
 | Add SambaNova + Cerebras providers | 🟡 HIGH | 4 hrs | R-02/R-03 research | Week 1 Day 4-5 |
 | Implement Sovereign Workbench Phase 1 | 🟡 HIGH | 2 days | SQLite schema | Week 2 |
 | Build llama-cpp-python (Zen 2) | 🟡 HIGH | 1 day | CMake, Python | Week 2 |
-| Mine unmined assets (§8) | 🟡 MEDIUM | 3 days | Belial Miner | Week 2-3 |
+| Mine unmined assets (§8) | 🟡 MEDIUM | 3 days | Roc Racoon Miner | Week 2-3 |
 | Create Arcana-Nova stack scaffolding | 🟢 STRATEGIC | 2 days | Engine fixes done | Week 3-4 |
 
 ---

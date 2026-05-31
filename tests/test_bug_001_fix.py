@@ -2,8 +2,8 @@ import anyio
 import os
 import shutil
 from pathlib import Path
-from src.omega.library.library import Library
-from src.omega.library.curator import CuratedDocument
+from omega.library.library import Library
+from omega.library.curator import CuratedDocument
 
 async def test_bug_001_fix():
     # Setup temporary data directory

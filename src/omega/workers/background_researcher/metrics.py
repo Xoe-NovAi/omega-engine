@@ -4,6 +4,7 @@
 
 import json
 import os
+import anyio
 from datetime import datetime, timezone
 from typing import Dict, Any
 from pathlib import Path
@@ -19,32 +20,21 @@ class ResearchMetrics:
         self.log_dir.mkdir(parents=True, exist_ok=True)
         self.log_file = self.log_dir / "cycle_metrics.jsonl"
 
-    def log_cycle(self, topic: str, metrics: Dict[str, Any]):
-        """Log a complete cycle's metrics.
-        
-        Expected metrics schema:
-        {
-            "t1_latency": float,
-            "t1_tokens": int,
-            "t1_quality": float,
-            "t2_latency": float,
-            "t2_tokens": int,
-            "t2_quality": float,
-            "t3_latency": float,
-            "t3_tokens": int,
-            "t3_quality": float,
-            "circuit_states": {"t1": str, "t2": str, "t3": str},
-            "training_triple_saved": bool
-        }
-        """
+    async def log_cycle(self, topic: str, metrics: Dict[str, Any]):
+        """Log a research cycle's metrics to the JSONL store."""
+        timestamp = datetime.now(timezone.utc).isoformat()
         entry = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": timestamp,
             "topic": topic,
             **metrics
         }
         
-        with open(self.log_file, 'a') as f:
-            f.write(json.dumps(entry) + "\n")
+        def _write():
+            with open(self.log_file, "a") as f:
+                f.write(json.dumps(entry) + "\n")
+        
+        await anyio.to_thread.run_sync(_write)
+
 
     def get_summary(self) -> Dict[str, Any]:
         """Calculate aggregate performance metrics from the log file."""

@@ -11,8 +11,7 @@ NC='\033[0m'
 
 declare -A PORTS
 PORTS["omega-hub"]=8016
-PORTS["omega-research"]=8011
-PORTS["omega-stats"]=8012
+# Note: omega-research and omega-stats are merged into omega-hub (Decision 050)
 
 FAILED=0
 

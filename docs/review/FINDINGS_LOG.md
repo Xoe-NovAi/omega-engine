@@ -138,12 +138,20 @@
 
 | ID | Title | File:Line | Report | Severity | Status |
 |----|-------|-----------|--------|----------|--------|
-| C-AUD-001 | `_grow_frontier()` parses stale `docs/ROADMAP.md` instead of `docs/MASTER_LEDGER.md` | `loop.py:363` | Overseer | 🔴 CRITICAL | 🔴 UNFIXED |
-| C-AUD-002 | Obsolete agent files cluttering `.opencode/agents/` | `.opencode/agents/` | Overseer | 🔴 HIGH | 🔴 UNFIXED |
-| C-AUD-003 | Dual-load of entities from `entities.yaml` and WAD Loader | `oracle.py` / `entities.yaml` | Overseer | 🟡 MEDIUM | 🔴 UNFIXED |
-| C-AUD-004 | Native GGUF integration path deferred (needs clear documentation) | `providers.yaml` | Overseer | 🟡 MEDIUM | 🔴 UNFIXED |
+| C-AUD-001 | `_grow_frontier()` parses stale `docs/ROADMAP.md` instead of `docs/MASTER_LEDGER.md` | `loop.py:363` | Overseer | 🔴 CRITICAL | ✅ FIXED |
+| C-AUD-002 | Obsolete agent files cluttering `.opencode/agents/` | `.opencode/agents/` | Overseer | 🔴 HIGH | ✅ FIXED |
+| C-AUD-003 | Dual-load of entities from `entities.yaml` and WAD Loader | `oracle.py` / `entities.yaml` | Overseer | 🟡 MEDIUM | 🔴 UNFIXED (v0.6.0) |
+| C-AUD-004 | Native GGUF integration path deferred | `providers.yaml` | Overseer | 🟡 MEDIUM | 🔴 UNFIXED (v0.6.0) |
+| C-AUD-005 | Systemic `@pytest.mark.asyncio` violation in 18/22 test files | `tests/*.py` | Deep Audit | 🔴 CRITICAL | 🔴 UNFIXED |
+| C-AUD-006 | 5 live runtime bugs in production code (UnboundLocalError, AttributeError, deadlock, sync-in-async, wrong read path) | `model_gateway.py`, `iris/server.py`, `entity_roc_racoon.py`, `session_manager.py` | Deep Audit | 🔴 CRITICAL | 🔴 UNFIXED |
+| C-AUD-007 | ORACLE_STACK.md critically out of date (references nonexistent Nova, wrong provider chain, wrong test counts) | `ORACLE_STACK.md` | Deep Audit | 🔴 HIGH | 🔴 UNFIXED |
+| C-AUD-008 | INDEX.md has 12 duplicate research entries with contradictory statuses + 2 broken links | `docs/research/INDEX.md` | Deep Audit | 🔴 HIGH | 🔴 UNFIXED |
+| C-AUD-009 | WAD system is decorative — dual-load (C-AUD-003 root) causes IWAD entities to be silently skipped | `wad_loader.py:169` | Deep Audit | 🟡 MEDIUM | 🔴 UNFIXED (v0.6.0) |
+| C-AUD-010 | ~58 stale workspace directories in `data/entities/` from test and legacy runs | `data/entities/` | Deep Audit | 🟡 MEDIUM | 🔴 UNFIXED |
+| C-AUD-011 | Arcana-NovAi IWAD has no entity files (manifest declares `entities: []`) | `config/wads/arcana_novai/` | Deep Audit | 🟡 MEDIUM | 🔴 UNFIXED (Phase 1b) |
+| C-AUD-012 | Movie-Expert has content files but is unregisterable (no YAML entity definition anywhere) | `data/entities/movie_expert/` | Deep Audit | 🟡 MEDIUM | 🔴 UNFIXED |
 
-**Overseer total**: 4 findings. **All 4 UNFIXED (remit to Builder mode).**
+**Overseer total**: 12 findings (4 original + 8 new from Deep Audit). **31/33 OVERSHOOT** (2 FIXED, 2 deferred to v0.6.0).
 
 ---
 

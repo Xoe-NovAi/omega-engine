@@ -34,8 +34,8 @@
 
 | # | File | Line | Code | Fix |
 |---|------|------|------|-----|
-| 1 | `src/omega/entity_belial.py` | 208 | `with open(fpath) as f: content = f.read()[:2000]` | Wrap in `anyio.to_thread.run_sync` |
-| 2 | `src/omega/entity_belial.py` | 217 | `with open(fpath2) as f: content = f.read()[:2000]` | Wrap in `anyio.to_thread.run_sync` |
+| 1 | `src/omega/entity_roc_racoon.py` | 208 | `with open(fpath) as f: content = f.read()[:2000]` | Wrap in `anyio.to_thread.run_sync` |
+| 2 | `src/omega/entity_roc_racoon.py` | 217 | `with open(fpath2) as f: content = f.read()[:2000]` | Wrap in `anyio.to_thread.run_sync` |
 | 3 | `src/omega/library/inbox.py` | 199,206,220 | Multiple `with open()` in async defs | Replace with `await anyio.Path(...).read_text()` |
 
 ### 🟡 LOW — `print()` in production code (3 instances)
@@ -47,7 +47,7 @@
 | 3 | `mcp/omega-hub/server.py` | various | `print()` debug output | Replace with structured logging |
 
 ### Status
-❌ **FAIL** — 3 HIGH violations in entity_belial.py and inbox.py, both in sovereign hot paths.
+❌ **FAIL** — 3 HIGH violations in entity_roc_racoon.py and inbox.py, both in sovereign hot paths.
 
 ---
 
@@ -133,7 +133,7 @@ Entire repo owned by UID 101000 (container user). Affects `tests/`, `docs/`, `co
 | Module | Tests | May 19 Status | May 20 Status |
 |--------|-------|--------------|--------------|
 | entity_registry | 7 | ✅ PASS | ✅ PASS |
-| entity_belial | 25 | ✅ PASS | ✅ PASS |
+| entity_roc_racoon | 25 | ✅ PASS | ✅ PASS |
 | hierarchy | 12 | ✅ PASS | ✅ PASS |
 | iris | 7 | ✅ PASS | ✅ PASS |
 | observability | 8 | ✅ PASS | ✅ PASS |

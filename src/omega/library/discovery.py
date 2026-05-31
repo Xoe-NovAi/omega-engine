@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 DATA_DIR = Path(os.environ.get(
     "OMEGA_DATA_DIR",
-    str(Path(__file__).resolve().parent.parent.parent.parent / "data")
+    str(Path(__file__).resolve().parent.parent.parent / "data")
 ))
 JOBS_DIR = DATA_DIR / "jobs"
 JOBS_PENDING_DIR = JOBS_DIR / "pending"

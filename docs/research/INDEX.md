@@ -4,7 +4,7 @@
 **AP Token**: `AP-RESEARCH-INDEX-v1.6.0`
 **Maintained by**: Multi-Provider Research Fleet
 **Reviewed by**: Opus 4.6 (Oversight)
-**Last updated**: 2026-05-26 (BREAKTHROUGH: OpenCode Custom Provider Architecture — LM Studio integration via npm field + auth.json; Fleet research on provider mechanism; opencode-expert.md v2.0.0)
+**Last updated**: 2026-05-26 (FLEET SYNTHESIS COMPLETE: 4 local + 4 web subagents. 13 bugs found, 56 test artifacts inventoried, soul file movement documented, council patterns mapped, KB seeding strategy defined, strategic execution roadmap v2 authored)
 
 ---
 
@@ -53,6 +53,7 @@
 | R-JEM2-BACKGROUND | Jem 2.0 Background Researcher | 🔴 Critical | ✅ | [JEM_BACKGROUND_RESEARCHER.md](JEM_BACKGROUND_RESEARCHER.md) | 2026-05-18 |
 | R-JEM2-SPLIT | Jem 2.0 Split Test Framework | 🔴 Critical | ✅ | [JEM_SPLIT_TEST_FRAMEWORK.md](JEM_SPLIT_TEST_FRAMEWORK.md) | 2026-05-18 |
 | R-MODES-REFACTOR | OpenCode Modes Refactoring Strategy | 🔴 Critical | ✅ | [R_OPENCODE_MODES_REFACTOR_STRATEGY.md](R_OPENCODE_MODES_REFACTOR_STRATEGY.md) | 2026-05-18 |
+| R-OC-ARCH-DEEP | OpenCode Architecture Deep Dive — Full Schema, Plugins, Compaction, Permissions, Providers | 🔴 Critical | ✅ | [R_OPENCODE_ARCHITECTURE_DEEP_DIVE.md](R_OPENCODE_ARCHITECTURE_DEEP_DIVE.md) | 2026-05-26 |
 | R-SUB-REC | Subagent Recursion Analysis | 🟡 High | ✅ | [R_SUBAGENT_RECURSION.md](R_SUBAGENT_RECURSION.md) | 2026-05-14 |
 | R-EXA-DEEP | Exa Deep Research Pattern | 🟡 High | ✅ | [R_EXA_DEEP_RESEARCH.md](R_EXA_DEEP_RESEARCH.md) | 2026-05-14 |
 | R-EL-HACK | ElevenLabs Hackathon Strategy | 🔴 Critical | ✅ | [R_ELEVENLABS_HACKATHON.md](R_ELEVENLABS_HACKATHON.md) | 2026-05-14 |
@@ -183,4 +184,11 @@
 | R-README-QUICKSTART | README 3-Command Quickstart | 🔴 Critical | ✅ | [README.md](../../README.md) | 2026-05-25 |
 | R-OPENC-OPTIMIZE | OpenCode Custom Instructions Optimization | 🔴 Critical | ✅ | [opencode.json](../../opencode.json) | 2026-05-25 |
 | R-OPENC-AGENTS | OpenCode Agents Consolidation | 🔴 Critical | 🔄 | (pending deletion) | 2026-05-25 |
-| R-SMOKE-TEST | End-to-End Smoke Test & Recording | 🔴 Critical | ✅ | (recording pending) | 2026-05-25 |
+| R-DBCLI-AUDIT | Database & Cross-CLI Hardening Review — 13 bugs in firsthand audit | 🔴 Critical | ✅ | [R_DATABASE_AND_CROSS_CLI_FIRSTHAND_FINDINGS.md](R_DATABASE_AND_CROSS_CLI_FIRSTHAND_FINDINGS.md) | 2026-05-26 |
+| R-DBCLI-STRATEGIC | Strategic Database Review — MaKaLi trine overlay, v0.6.0 deferral | 🔴 Critical | ✅ | [OVERSEER_DATABASE_STRATEGIC_REVIEW.md](../strategy/OVERSEER_DATABASE_STRATEGIC_REVIEW.md) | 2026-05-26 |
+| R-DBCLI-TECH | Technical Database & Cross-CLI Hardening Review — 3-campaign plan | 🔴 Critical | ✅ | [R_DATABASE_AND_CROSS_CLI_HARDENING_REVIEW.md](R_DATABASE_AND_CROSS_CLI_HARDENING_REVIEW.md) | 2026-05-26 |
+| R-OPENC-SCHEMA | OpenCode Architecture Deep Dive — Full Schema, Plugins, Compaction, Permissions | 🔴 Critical | ✅ | [R_OPENCODE_ARCHITECTURE_DEEP_DIVE.md](R_OPENCODE_ARCHITECTURE_DEEP_DIVE.md) | 2026-05-26 |
+| R-COUNCIL-PATTERNS | Multi-Agent Council/Orchestration Patterns — CrewAI, LangGraph, AutoGen, MoA | 🟡 High | ✅ | [R_MULTI_AGENT_COUNCIL_PATTERNS.md](R_MULTI_AGENT_COUNCIL_PATTERNS.md) | 2026-05-26 |
+| R-SOUL-EVOLUTION | Soul Evolution & Persistent Identity Patterns — soul-file-spec, Letta, Woven Imprint | 🔴 Critical | ✅ | [R_SOUL_EVOLUTION_PATTERNS.md](R_SOUL_EVOLUTION_PATTERNS.md) | 2026-05-26 |
+| R-KB-SEEDING | Knowledge Base Seeding & Entity Knowledge Patterns | 🟡 High | ✅ | [R_KNOWLEDGE_BASE_SEEDING_PATTERNS.md](R_KNOWLEDGE_BASE_SEEDING_PATTERNS.md) | 2026-05-26 |
+| R-FLEET-FINDINGS | Fleet Discovery Master Synthesis — Local + Web findings for mode architecture | 🔴 Critical | ✅ | [FLEET_DISCOVERY_SYNTHESIS.md](../strategy/FLEET_DISCOVERY_SYNTHESIS.md) | 2026-05-26 |

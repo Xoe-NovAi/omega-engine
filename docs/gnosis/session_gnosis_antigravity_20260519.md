@@ -28,7 +28,7 @@ after Phase B's last commit. This is the top-priority item before any review pro
    logged to workbench [P0, Workstream F].
 
 2. **Test suite**: 177/230 passing. All passing tests are non-Oracle-path modules.
-   The green 177 includes: entity_registry, entity_belial, hierarchy, iris,
+   The green 177 includes: entity_registry, entity_roc_racoon, hierarchy, iris,
    observability, context_builder, health_monitor, session_manager, orchestrator,
    providers, memory_store, bug_001_fix.
 

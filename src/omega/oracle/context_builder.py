@@ -20,6 +20,9 @@ from typing import Any, Dict, List, Optional
 
 from ..memory_store import get_memory_store, MemoryStore
 from ..constants import DEFAULT_CONTEXT_LIMIT
+# New constant for token-aware sliding window
+DEFAULT_TOKEN_LIMIT = 4000 
+
 
 logger = logging.getLogger(__name__)
 
@@ -45,24 +48,25 @@ class ContextBuilder:
         self,
         entity_name: str,
         session_id: str,
-        limit: int = DEFAULT_CONTEXT_LIMIT,
+        token_limit: int = DEFAULT_TOKEN_LIMIT,
     ) -> str:
-        """Fetch recent memory for an entity/session and format as context block.
+        """Fetch recent memory for an entity/session and format as a token-aware sliding window.
 
         Args:
             entity_name: Name of the entity (e.g., 'Sekhmet', 'Brigid').
             session_id: Unique session identifier for the conversation.
-            limit: Maximum number of recent exchanges to include.
+            token_limit: Maximum tokens for the memory block.
 
         Returns:
             A formatted string block of recent conversation history,
             or an empty string if no memory is available.
         """
         try:
+            # Fetch a larger batch to perform sliding window truncation locally
             exchanges = await self.memory_store.get_history(
                 entity_name=entity_name,
                 session_id=session_id,
-                limit=limit,
+                limit=MAX_EXCHANGE_DISPLAY_LENGTH, # Use a safe upper bound for fetching
             )
         except Exception as e:
             logger.warning(f"Failed to fetch memory for {entity_name}/{session_id}: {e}")
@@ -70,36 +74,25 @@ class ContextBuilder:
 
         if not exchanges:
             return ""
-
-        return self._format_exchanges(exchanges)
+        
+        # Implement sliding window based on token estimation
+        return self._format_exchanges_sliding_window(exchanges, token_limit)
 
     async def build_context_for_user(
         self,
         user_id: str,
         session_id: str,
-        limit: int = DEFAULT_CONTEXT_LIMIT,
+        token_limit: int = DEFAULT_TOKEN_LIMIT,
     ) -> str:
         """Fetch recent traces for a user across all entities.
-
-        This is a broader context fetch — it traces user-level interactions
-        rather than entity-scoped ones. Useful for the Oracle to have
-        cross-entity awareness of a user's recent activity.
-
-        Args:
-            user_id: The user identifier.
-            session_id: Current session identifier.
-            limit: Maximum number of recent trace entries.
-
-        Returns:
-            A formatted string block of recent user activity,
-            or an empty string if no traces are available.
+        
+        Implements a token-aware sliding window for user-level context.
         """
         try:
-            # Fetch memory from the orchestrator/scoped user session
             exchanges = await self.memory_store.get_history(
                 entity_name="user",
                 session_id=session_id,
-                limit=limit,
+                limit=MAX_EXCHANGE_DISPLAY_LENGTH,
             )
         except Exception as e:
             logger.warning(f"Failed to fetch user context for {user_id}/{session_id}: {e}")
@@ -108,37 +101,59 @@ class ContextBuilder:
         if not exchanges:
             return ""
 
-        return self._format_exchanges(exchanges)
+        return self._format_exchanges_sliding_window(exchanges, token_limit)
 
     # ── Formatting ────────────────────────────────────────────────────
 
-    def _format_exchanges(self, exchanges: List[Dict[str, Any]]) -> str:
-        """Format a list of conversation exchanges into a context string block.
-
-        Each exchange is rendered as:
-          [timestamp] User: message
-          [timestamp] Entity: response
-
-        Returns a block ready to prepend to a system prompt.
+    def _format_exchanges_sliding_window(self, exchanges: List[Dict[str, Any]], token_limit: int) -> str:
+        """Format exchanges into a context block using a sliding token window.
+        
+        Iterates from newest to oldest, collecting exchanges that fit within
+        the token budget, then renders them in chronological order.
         """
         lines: List[str] = []
-        lines.append("## Recent Memory Context")
-        lines.append("")
-
-        for exchange in exchanges:
+        current_tokens = 0
+        
+        # get_history() returns exchanges in chronological order (oldest first).
+        # We iterate in reverse to fill the token budget from the newest
+        # exchange backwards, keeping the most recent context.
+        
+        # Header tokens (est)
+        header = "## Recent Memory Context\n\n"
+        current_tokens += self._estimate_tokens(header)
+        
+        # Iterate from newest to oldest; collect until token budget is hit
+        for exchange in reversed(exchanges):
             timestamp = self._format_timestamp(exchange.get("timestamp"))
             user_msg = self._truncate(exchange.get("user", ""))
             assistant_msg = self._truncate(exchange.get("assistant", ""))
+            
+            exchange_block = f"[{timestamp}] User: {user_msg}\n[{timestamp}] Assistant: {assistant_msg}\n\n"
+            est_tokens = self._estimate_tokens(exchange_block)
+            
+            if current_tokens + est_tokens > token_limit:
+                break
+            
+            lines.append(exchange_block)
+            current_tokens += est_tokens
+        
+        # lines is newest-first; reverse to chronological order for LLM readability
+        lines.reverse()
+            
+        if not lines:
+            return ""
+            
+        # Prepend header and append separator
+        full_block = header + "".join(lines) + "---\n\n"
+        return full_block
 
-            lines.append(f"[{timestamp}] User: {user_msg}")
-            lines.append(f"[{timestamp}] Assistant: {assistant_msg}")
-            lines.append("")
-
-        # Append a clear separator
-        lines.append("---")
-        lines.append("")
-
-        return "\n".join(lines)
+    def _estimate_tokens(self, text: str) -> int:
+        """Estimate token count. 
+        
+        Uses a rough approximation (4 chars per token) since tiktoken 
+        is not available in the current environment.
+        """
+        return len(text) // 4
 
     def _format_timestamp(self, ts: Optional[str]) -> str:
         """Format an ISO timestamp to a compact display form."""

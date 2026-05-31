@@ -34,7 +34,7 @@
 | **omega-stats.service still RUNNING** | 🟡 HIGH | Should have been stopped in Decision 50 (consolidated into hub). Running in parallel. |
 | **omega-research.socket FAILED** | 🟡 HIGH | Stale socket from old standalone research server. Should be disabled. |
 | **omega-postgres.service auto-restart** | 🟡 LOW | Image tag issue (`:Z,U` on postgres:18.4-alpine). Not critical (entities use YAML, not SQL). |
-| **omega-belial.service dead** | 🟡 LOW | Container exit-code. Not critical (miner can run from CLI). |
+| **omega-roc_racoon.service dead** | 🟡 LOW | Container exit-code. Not critical (miner can run from CLI). |
 | **Hub has no health endpoint** | 🟡 LOW | Returns 404 on `/health`. Should return `{"status":"ok"}`. |
 
 ### What's Defined But Not Yet Built (Yellow)

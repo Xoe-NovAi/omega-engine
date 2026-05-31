@@ -196,15 +196,14 @@ class InboxManager:
         if not src.exists():
             return
         try:
-            with open(src) as f:
-                data = json.load(f)
+            text = await anyio.Path(src).read_text()
+            data = json.loads(text)
         except Exception:
             data = {"item_id": item_id}
         data["error"] = error
         data["failed_at"] = datetime.now(timezone.utc).isoformat()
         dst = FAILED_DIR / f"{item_id}.json"
-        with open(dst, "w") as f:
-            json.dump(data, f, indent=2)
+        await anyio.Path(dst).write_text(json.dumps(data, indent=2))
         src.unlink()
         self._pending.pop(item_id, None)
         logger.warning(f"Inbox item failed: {item_id} — {error}")
@@ -216,11 +215,11 @@ class InboxManager:
         for d in [PENDING_DIR, PROCESSING_DIR, FAILED_DIR]:
             path = d / f"{item_id}.json"
             if path.exists():
-                try:
-                    with open(path) as f:
-                        return InboxItem.from_dict(json.load(f))
-                except Exception:
-                    pass
+                    try:
+                        text = await anyio.Path(path).read_text()
+                        return InboxItem.from_dict(json.loads(text))
+                    except Exception:
+                        pass
         return None
 
     async def clear_completed(self) -> int:

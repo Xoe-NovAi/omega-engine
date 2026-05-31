@@ -48,7 +48,7 @@ Jem 2.0 Draft ────────────────────► Re
 │  TRIGGER                                                                      │
 │  ┌───────────────────────────────────────────────────────────────────────┐   │
 │  │  ● /mode jem (interactive)  ● Scheduler (background)  ● Queue event  │   │
-│  │  ● Belial mining completion  ● Workbench P0 task      ● Manual summon │   │
+│  │  ● Roc Racoon mining completion  ● Workbench P0 task      ● Manual summon │   │
 │  └───────────────────────────────────────────────────────────────────────┘   │
 │                                  │                                             │
 │                                  ▼                                             │

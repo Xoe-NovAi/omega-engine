@@ -44,7 +44,8 @@ internal-discovery/
 |----|-------|--------|------|---------|-----------|
 | D-01 | Context Aggregation Lineage | ✅ COMPLETE | Researcher | 2026-05-14 | [STACK_CAT_LINEAGE.md](./STACK_CAT_LINEAGE.md) |
 | D-02 | Tooling & Data Management Strategy | ✅ COMPLETE | Researcher | 2026-05-14 | [TOOLING_STRATEGY.md](./TOOLING_STRATEGY.md), [DATA_MANAGEMENT_HARDENING.md](./DATA_MANAGEMENT_HARDENING.md) |
-| D-03 | *(Next)* | 🔲 PENDING | — | — | — |
+| D-03 | Legacy Mining — Order from Chaos | 🟢 COMPLETE | Ma'at/Sophia | 2026-05-31 | [docs/legacy/LEGACY_MASTER_SYNTHESIS.md](../../legacy/LEGACY_MASTER_SYNTHESIS.md), [docs/legacy/LEGACY_ASSET_CATALOG.md](../../legacy/LEGACY_ASSET_CATALOG.md), [docs/legacy/LEGACY_INDEX.md](../../legacy/LEGACY_INDEX.md) |
+| D-04 | *(Next)* | 🔲 PENDING | — | — | — |
 
 ---
 

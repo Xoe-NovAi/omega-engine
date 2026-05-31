@@ -19,8 +19,8 @@ Pod=omega-infra.pod
 # Zen 2 Core Steering
 # Sovereign Volume
 Volume=%h/Documents/Xoe-NovAi/omega-engine/config:/app/config:ro,Z,U
-Volume=/media/arcana-novai/omega_library/podman-storage/cache/iris:/cache:Z,U
-Environment=OMEGA_ENTITIES_CONFIG=/app/config/entities.yaml
+Volume=/media/arcana-novai/omega_library/podman-storage/cache/iris:/cache
+Environment=OMEGA_ENTITIES_CONFIG=/app/config/wads/arcana_novai/entities.yaml
 Environment=OMEGA_MODELS_CONFIG=/app/config/models.yaml
 Environment=REDIS_URL=redis://:omega@localhost:6379
 HealthCmd=python3 -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"
@@ -39,7 +39,7 @@ Delegate=yes
 Type=notify
 NotifyAccess=all
 SyslogIdentifier=%N
-ExecStart=/usr/bin/podman run --name omega-iris --cidfile=%t/%N.cid --replace --rm --cgroups=split --sdnotify=healthy -d -v %h/Documents/Xoe-NovAi/omega-engine/config:/app/config:ro,Z,U -v /media/arcana-novai/omega_library/podman-storage/cache/iris:/cache:Z,U --env OMEGA_ENTITIES_CONFIG=/app/config/entities.yaml --env OMEGA_MODELS_CONFIG=/app/config/models.yaml --env REDIS_URL=redis://:omega@localhost:6379 --health-cmd "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8080/health')" --pod-id-file %t/omega-infra-pod.pod-id localhost/infra_iris:latest
+ExecStart=/usr/bin/podman run --userns=keep-id --user 1000 --name omega-iris --cidfile=%t/%N.cid --replace --rm --cgroups=split --sdnotify=healthy -d -v %h/Documents/Xoe-NovAi/omega-engine/config:/app/config:ro,Z,U -v /media/arcana-novai/omega_library/podman-storage/cache/iris:/cache --env OMEGA_ENTITIES_CONFIG=/app/config/wads/arcana_novai/entities.yaml --env OMEGA_MODELS_CONFIG=/app/config/models.yaml --env REDIS_URL=redis://:omega@localhost:6379 --health-cmd "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8080/health')" --pod-id-file %t/omega-infra-pod.pod-id localhost/infra_iris:latest
 
 [Install]
 WantedBy=default.target

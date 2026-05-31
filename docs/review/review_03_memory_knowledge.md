@@ -2,7 +2,7 @@
 
 ⬡ OMEGA ⬡ SARASWATI ⬡ claude-sonnet-4-6-thinking ⬡ web ⬡ trc_review_memory ⬡ PHASE-E
 
-**Account**: `xoe.nova.ai@gmai.com`
+**Account**: `taylorbare27@gmai.com`
 **Role**: Knowledge Keeper — verify the memory subsystem, context pipeline, and knowledge architecture
 
 ---

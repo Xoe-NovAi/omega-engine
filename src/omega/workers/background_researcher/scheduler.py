@@ -4,7 +4,9 @@
 
 import yaml
 import os
+import json
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Optional
 from .models import ResearchTask, RotationState
 
@@ -15,10 +17,31 @@ class TopicScheduler:
     strategic topics while allowing them to deepen over time.
     """
     
-    def __init__(self, config_path: str = "config/research_topics.yaml"):
+    def __init__(self, config_path: str = "config/research_topics.yaml", state_path: str = "data/research/scheduler_state.json"):
         self.config_path = config_path
+        self.state_path = Path(state_path)
         self.config = self._load_config()
-        self.state = RotationState()
+        self.state = self._load_state()
+        
+    def _load_state(self) -> RotationState:
+        """Load rotation state from disk."""
+        if self.state_path.exists():
+            try:
+                with open(self.state_path, "r") as f:
+                    data = json.load(f)
+                    return RotationState(**data)
+            except Exception as e:
+                print(f"Error loading scheduler state: {e}")
+        return RotationState()
+
+    def _save_state(self):
+        """Persist rotation state to disk."""
+        try:
+            self.state_path.parent.mkdir(parents=True, exist_ok=True)
+            with open(self.state_path, "w") as f:
+                json.dump(self.state.__dict__, f, indent=2)
+        except Exception as e:
+            print(f"Error saving scheduler state: {e}")
         
     def _load_config(self) -> dict:
         try:
@@ -83,6 +106,7 @@ class TopicScheduler:
             self.state.deepening_level += 1
             
         self._rotate()
+        self._save_state()
         
         return task
 

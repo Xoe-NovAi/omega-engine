@@ -322,30 +322,30 @@ All 10 orchestrator tests pass. Now the full suite:
 collecting ... collected 123 items
 
 tests/test_bug_001_fix.py::test_bug_001_fix[asyncio] PASSED              [  0%]
-tests/test_entity_belial.py::TestBelialMinerInit::test_init_loads_empty_history PASSED [  1%]
-tests/test_entity_belial.py::TestBelialMinerInit::test_init_loads_existing_history PASSED [  2%]
-tests/test_entity_belial.py::TestBelialMinerInit::test_init_invalid_history PASSED [  3%]
-tests/test_entity_belial.py::TestBelialMinerInit::test_legacy_mines_configured PASSED [  4%]
-tests/test_entity_belial.py::TestScanMine::test_scan_mine_finds_files PASSED [  4%]
-tests/test_entity_belial.py::TestScanMine::test_scan_mine_nonexistent PASSED [  5%]
-tests/test_entity_belial.py::TestScanMine::test_scan_mine_skips_large_files PASSED [  6%]
-tests/test_entity_belial.py::TestScanMine::test_scan_mine_has_metadata PASSED [  7%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_config_yaml PASSED [  8%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_config_yml PASSED [  8%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_session PASSED [  9%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_python PASSED [ 10%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_markdown PASSED [ 11%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_noise PASSED [ 12%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_json PASSED [ 13%]
-tests/test_entity_belial.py::TestSubmitToQueue::test_submit_adds_artifacts PASSED [ 13%]
-tests/test_entity_belial.py::TestSubmitToQueue::test_submit_deduplicates PASSED [ 14%]
-tests/test_entity_belial.py::TestSubmitToQueue::test_submit_persists_to_disk PASSED [ 15%]
-tests/test_entity_belial.py::TestGetPrioritizedQueue::test_prioritizes_strategic PASSED [ 16%]
-tests/test_entity_belial.py::TestGetPrioritizedQueue::test_empty_queue PASSED [ 17%]
-tests/test_entity_belial.py::TestDiscoverOmegaFolders::test_discover_omega_folders_nonexistent PASSED [ 17%]
-tests/test_entity_belial.py::TestDiscoverOmegaFolders::test_discover_omega_folders_full PASSED [ 18%]
-tests/test_entity_belial.py::TestDeepAnalyze::test_deep_analyze_empty_queue[asyncio] PASSED [ 19%]
-tests/test_entity_belial.py::TestDeepAnalyze::test_deep_analyze_calls_gemma[asyncio] PASSED [ 20%]
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_init_loads_empty_history PASSED [  1%]
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_init_loads_existing_history PASSED [  2%]
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_init_invalid_history PASSED [  3%]
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_legacy_mines_configured PASSED [  4%]
+tests/test_entity_roc_racoon.py::TestScanMine::test_scan_mine_finds_files PASSED [  4%]
+tests/test_entity_roc_racoon.py::TestScanMine::test_scan_mine_nonexistent PASSED [  5%]
+tests/test_entity_roc_racoon.py::TestScanMine::test_scan_mine_skips_large_files PASSED [  6%]
+tests/test_entity_roc_racoon.py::TestScanMine::test_scan_mine_has_metadata PASSED [  7%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_config_yaml PASSED [  8%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_config_yml PASSED [  8%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_session PASSED [  9%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_python PASSED [ 10%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_markdown PASSED [ 11%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_noise PASSED [ 12%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_json PASSED [ 13%]
+tests/test_entity_roc_racoon.py::TestSubmitToQueue::test_submit_adds_artifacts PASSED [ 13%]
+tests/test_entity_roc_racoon.py::TestSubmitToQueue::test_submit_deduplicates PASSED [ 14%]
+tests/test_entity_roc_racoon.py::TestSubmitToQueue::test_submit_persists_to_disk PASSED [ 15%]
+tests/test_entity_roc_racoon.py::TestGetPrioritizedQueue::test_prioritizes_strategic PASSED [ 16%]
+tests/test_entity_roc_racoon.py::TestGetPrioritizedQueue::test_empty_queue PASSED [ 17%]
+tests/test_entity_roc_racoon.py::TestDiscoverOmegaFolders::test_discover_omega_folders_nonexistent PASSED [ 17%]
+tests/test_entity_roc_racoon.py::TestDiscoverOmegaFolders::test_discover_omega_folders_full PASSED [ 18%]
+tests/test_entity_roc_racoon.py::TestDeepAnalyze::test_deep_analyze_empty_queue[asyncio] PASSED [ 19%]
+tests/test_entity_roc_racoon.py::TestDeepAnalyze::test_deep_analyze_calls_gemma[asyncio] PASSED [ 20%]
 tests/test_entity_registry.py::test_load_entities PASSED                 [ 21%]
 tests/test_entity_registry.py::test_list_entities PASSED                 [ 21%]
 tests/test_entity_registry.py::test_list_pillar_keepers PASSED           [ 22%]
@@ -555,30 +555,30 @@ Now run the full suite:
 collecting ... collected 123 items
 
 tests/test_bug_001_fix.py::test_bug_001_fix[asyncio] PASSED              [  0%]
-tests/test_entity_belial.py::TestBelialMinerInit::test_init_loads_empty_history PASSED [  1%]
-tests/test_entity_belial.py::TestBelialMinerInit::test_init_loads_existing_history PASSED [  2%]
-tests/test_entity_belial.py::TestBelialMinerInit::test_init_invalid_history PASSED [  3%]
-tests/test_entity_belial.py::TestBelialMinerInit::test_legacy_mines_configured PASSED [  4%]
-tests/test_entity_belial.py::TestScanMine::test_scan_mine_finds_files PASSED [  4%]
-tests/test_entity_belial.py::TestScanMine::test_scan_mine_nonexistent PASSED [  5%]
-tests/test_entity_belial.py::TestScanMine::test_scan_mine_skips_large_files PASSED [  6%]
-tests/test_entity_belial.py::TestScanMine::test_scan_mine_has_metadata PASSED [  7%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_config_yaml PASSED [  8%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_config_yml PASSED [  8%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_session PASSED [  9%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_python PASSED [ 10%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_markdown PASSED [ 11%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_noise PASSED [ 12%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_json PASSED [ 13%]
-tests/test_entity_belial.py::TestSubmitToQueue::test_submit_adds_artifacts PASSED [ 13%]
-tests/test_entity_belial.py::TestSubmitToQueue::test_submit_deduplicates PASSED [ 14%]
-tests/test_entity_belial.py::TestSubmitToQueue::test_submit_persists_to_disk PASSED [ 15%]
-tests/test_entity_belial.py::TestGetPrioritizedQueue::test_prioritizes_strategic PASSED [ 16%]
-tests/test_entity_belial.py::TestGetPrioritizedQueue::test_empty_queue PASSED [ 17%]
-tests/test_entity_belial.py::TestDiscoverOmegaFolders::test_discover_omega_folders_nonexistent PASSED [ 17%]
-tests/test_entity_belial.py::TestDiscoverOmegaFolders::test_discover_omega_folders_full PASSED [ 18%]
-tests/test_entity_belial.py::TestDeepAnalyze::test_deep_analyze_empty_queue[asyncio] PASSED [ 19%]
-tests/test_entity_belial.py::TestDeepAnalyze::test_deep_analyze_calls_gemma[asyncio] PASSED [ 20%]
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_init_loads_empty_history PASSED [  1%]
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_init_loads_existing_history PASSED [  2%]
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_init_invalid_history PASSED [  3%]
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_legacy_mines_configured PASSED [  4%]
+tests/test_entity_roc_racoon.py::TestScanMine::test_scan_mine_finds_files PASSED [  4%]
+tests/test_entity_roc_racoon.py::TestScanMine::test_scan_mine_nonexistent PASSED [  5%]
+tests/test_entity_roc_racoon.py::TestScanMine::test_scan_mine_skips_large_files PASSED [  6%]
+tests/test_entity_roc_racoon.py::TestScanMine::test_scan_mine_has_metadata PASSED [  7%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_config_yaml PASSED [  8%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_config_yml PASSED [  8%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_session PASSED [  9%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_python PASSED [ 10%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_markdown PASSED [ 11%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_noise PASSED [ 12%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_json PASSED [ 13%]
+tests/test_entity_roc_racoon.py::TestSubmitToQueue::test_submit_adds_artifacts PASSED [ 13%]
+tests/test_entity_roc_racoon.py::TestSubmitToQueue::test_submit_deduplicates PASSED [ 14%]
+tests/test_entity_roc_racoon.py::TestSubmitToQueue::test_submit_persists_to_disk PASSED [ 15%]
+tests/test_entity_roc_racoon.py::TestGetPrioritizedQueue::test_prioritizes_strategic PASSED [ 16%]
+tests/test_entity_roc_racoon.py::TestGetPrioritizedQueue::test_empty_queue PASSED [ 17%]
+tests/test_entity_roc_racoon.py::TestDiscoverOmegaFolders::test_discover_omega_folders_nonexistent PASSED [ 17%]
+tests/test_entity_roc_racoon.py::TestDiscoverOmegaFolders::test_discover_omega_folders_full PASSED [ 18%]
+tests/test_entity_roc_racoon.py::TestDeepAnalyze::test_deep_analyze_empty_queue[asyncio] PASSED [ 19%]
+tests/test_entity_roc_racoon.py::TestDeepAnalyze::test_deep_analyze_calls_gemma[asyncio] PASSED [ 20%]
 tests/test_entity_registry.py::test_load_entities PASSED                 [ 21%]
 tests/test_entity_registry.py::test_list_entities PASSED                 [ 21%]
 tests/test_entity_registry.py::test_list_pillar_keepers PASSED           [ 22%]
@@ -687,7 +687,7 @@ E       assert <coroutine object NativeGGUFProvider.is_available at 0x71de1d63be
 
 tests/test_providers.py:267: AssertionError
 =============================== warnings summary ===============================
-tests/test_entity_belial.py::TestBelialMinerInit::test_init_loads_empty_history
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_init_loads_empty_history
   /home/arcana-novai/.local/lib/python3.13/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-1 (_connection_worker_thread)
   
   Traceback (most recent call last):
@@ -872,30 +872,30 @@ Now let me run the full test suite again.
 collecting ... collected 123 items
 
 tests/test_bug_001_fix.py::test_bug_001_fix[asyncio] PASSED              [  0%]
-tests/test_entity_belial.py::TestBelialMinerInit::test_init_loads_empty_history PASSED [  1%]
-tests/test_entity_belial.py::TestBelialMinerInit::test_init_loads_existing_history PASSED [  2%]
-tests/test_entity_belial.py::TestBelialMinerInit::test_init_invalid_history PASSED [  3%]
-tests/test_entity_belial.py::TestBelialMinerInit::test_legacy_mines_configured PASSED [  4%]
-tests/test_entity_belial.py::TestScanMine::test_scan_mine_finds_files PASSED [  4%]
-tests/test_entity_belial.py::TestScanMine::test_scan_mine_nonexistent PASSED [  5%]
-tests/test_entity_belial.py::TestScanMine::test_scan_mine_skips_large_files PASSED [  6%]
-tests/test_entity_belial.py::TestScanMine::test_scan_mine_has_metadata PASSED [  7%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_config_yaml PASSED [  8%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_config_yml PASSED [  8%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_session PASSED [  9%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_python PASSED [ 10%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_markdown PASSED [ 11%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_noise PASSED [ 12%]
-tests/test_entity_belial.py::TestClassifyArtifact::test_classify_json PASSED [ 13%]
-tests/test_entity_belial.py::TestSubmitToQueue::test_submit_adds_artifacts PASSED [ 13%]
-tests/test_entity_belial.py::TestSubmitToQueue::test_submit_deduplicates PASSED [ 14%]
-tests/test_entity_belial.py::TestSubmitToQueue::test_submit_persists_to_disk PASSED [ 15%]
-tests/test_entity_belial.py::TestGetPrioritizedQueue::test_prioritizes_strategic PASSED [ 16%]
-tests/test_entity_belial.py::TestGetPrioritizedQueue::test_empty_queue PASSED [ 17%]
-tests/test_entity_belial.py::TestDiscoverOmegaFolders::test_discover_omega_folders_nonexistent PASSED [ 17%]
-tests/test_entity_belial.py::TestDiscoverOmegaFolders::test_discover_omega_folders_full PASSED [ 18%]
-tests/test_entity_belial.py::TestDeepAnalyze::test_deep_analyze_empty_queue[asyncio] PASSED [ 19%]
-tests/test_entity_belial.py::TestDeepAnalyze::test_deep_analyze_calls_gemma[asyncio] PASSED [ 20%]
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_init_loads_empty_history PASSED [  1%]
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_init_loads_existing_history PASSED [  2%]
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_init_invalid_history PASSED [  3%]
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_legacy_mines_configured PASSED [  4%]
+tests/test_entity_roc_racoon.py::TestScanMine::test_scan_mine_finds_files PASSED [  4%]
+tests/test_entity_roc_racoon.py::TestScanMine::test_scan_mine_nonexistent PASSED [  5%]
+tests/test_entity_roc_racoon.py::TestScanMine::test_scan_mine_skips_large_files PASSED [  6%]
+tests/test_entity_roc_racoon.py::TestScanMine::test_scan_mine_has_metadata PASSED [  7%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_config_yaml PASSED [  8%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_config_yml PASSED [  8%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_session PASSED [  9%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_python PASSED [ 10%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_markdown PASSED [ 11%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_noise PASSED [ 12%]
+tests/test_entity_roc_racoon.py::TestClassifyArtifact::test_classify_json PASSED [ 13%]
+tests/test_entity_roc_racoon.py::TestSubmitToQueue::test_submit_adds_artifacts PASSED [ 13%]
+tests/test_entity_roc_racoon.py::TestSubmitToQueue::test_submit_deduplicates PASSED [ 14%]
+tests/test_entity_roc_racoon.py::TestSubmitToQueue::test_submit_persists_to_disk PASSED [ 15%]
+tests/test_entity_roc_racoon.py::TestGetPrioritizedQueue::test_prioritizes_strategic PASSED [ 16%]
+tests/test_entity_roc_racoon.py::TestGetPrioritizedQueue::test_empty_queue PASSED [ 17%]
+tests/test_entity_roc_racoon.py::TestDiscoverOmegaFolders::test_discover_omega_folders_nonexistent PASSED [ 17%]
+tests/test_entity_roc_racoon.py::TestDiscoverOmegaFolders::test_discover_omega_folders_full PASSED [ 18%]
+tests/test_entity_roc_racoon.py::TestDeepAnalyze::test_deep_analyze_empty_queue[asyncio] PASSED [ 19%]
+tests/test_entity_roc_racoon.py::TestDeepAnalyze::test_deep_analyze_calls_gemma[asyncio] PASSED [ 20%]
 tests/test_entity_registry.py::test_load_entities PASSED                 [ 21%]
 tests/test_entity_registry.py::test_list_entities PASSED                 [ 21%]
 tests/test_entity_registry.py::test_list_pillar_keepers PASSED           [ 22%]
@@ -996,7 +996,7 @@ tests/test_providers.py::TestNativeGGUFProvider::test_init_fallback_threads PASS
 tests/test_providers.py::TestNativeGGUFProvider::test_n_threads_is_int PASSED [100%]
 
 =============================== warnings summary ===============================
-tests/test_entity_belial.py::TestBelialMinerInit::test_init_loads_empty_history
+tests/test_entity_roc_racoon.py::TestRoc RacoonMinerInit::test_init_loads_empty_history
   /home/arcana-novai/.local/lib/python3.13/site-packages/_pytest/threadexception.py:58: PytestUnhandledThreadExceptionWarning: Exception in thread Thread-1 (_connection_worker_thread)
   
   Traceback (most recent call last):
@@ -1914,7 +1914,7 @@ Let me start by auditing all the status/docs files that need updating.
 192: | 3.3 | Add `omega repl` interactive chat loop | T4 | 2d |
 193: | 3.4 | Create `omega-websearch` MCP | T6 | 2h |
 194: | 3.5 | Create `omega-sanitizer` MCP | T6 | 4h |
-195: | 3.6 | Create `omega-belial` MCP | T6 | 2h |
+195: | 3.6 | Create `omega-roc_racoon` MCP | T6 | 2h |
 196: | 3.7 | Port circuit breakers (Redis-backed) | T7 | 2d |
 197: | 3.8 | Port Grafana dashboards | T7 | 1d |
 198: | 3.9 | Add CONTRIBUTING.md, backup/restore procedures | T7 | 1d |
@@ -1991,7 +1991,7 @@ Let me start by auditing all the status/docs files that need updating.
 269: | **Memory System** | Hot/Warm/Cold, context builder, cross-pollination pipeline |
 270: | **User Soul** | The Architect — soul file for every Omega user |
 271: | **Iris** | Voice assistant container (messenger goddess) |
-272: | **MCP Servers** | Hivemind, oracle, library, research, stats (+ websearch, sanitizer, belial) |
+272: | **MCP Servers** | Hivemind, oracle, library, research, stats (+ websearch, sanitizer, roc_racoon) |
 273: | **Observability** | Trace IDs, events, dataset |
 274: | **ResourceGuard** | OOM protection |
 275: | **Orchestrator** | Headless agent dispatch |
@@ -3291,9 +3291,9 @@ Now I have a comprehensive picture. Let me check the communication hub and the w
 130: - **Source**: Three parallel `explore` subagents inventorying all tracking/orchestration systems.
 131: - **Phase 0 Actions Taken**: INDEX.md reconciled (44 items), ROADMAP.md Phase 0 marked, COMMUNICATION_HUB.md contradictions fixed, .env.example created.
 132: 
-133: ### 🛠️ Cline Sprint 2 — Belial & Control Plane (Gemini 2.0 Flash) ✅
+133: ### 🛠️ Cline Sprint 2 — Roc Racoon & Control Plane (Gemini 2.0 Flash) ✅
 134: - **Status**: COMPLETE
-135: - **Achievements**: Belial Ecosystem deployed, PR #1 hardening (41/41 tests), GnosisProxy + Invisible RAG integrated, EXP-003 A/B study completed.
+135: - **Achievements**: Roc Racoon Ecosystem deployed, PR #1 hardening (41/41 tests), GnosisProxy + Invisible RAG integrated, EXP-003 A/B study completed.
 136: - **Blocked**: EXP-004 benchmark (rate limited, retry ~22h).
 137: - **Next**: Sprint 3 — Topology Router implementation.
 138: 
@@ -3427,9 +3427,9 @@ Now I have a comprehensive picture. Let me check the communication hub and the w
 266: 
 267: ### What I've Done This Session
 268: 
-269: 1. **Loaded full project context** from previous consolidated state (Belial, PR #1 hardening, GnosisProxy, EXP-003 A/B test, doc updates)
+269: 1. **Loaded full project context** from previous consolidated state (Roc Racoon, PR #1 hardening, GnosisProxy, EXP-003 A/B test, doc updates)
 270: 2. **Deep dives into 5 key code areas**: `OMEGA_SYSTEMS_DISCOVERY_REPORT.md`, `QWEN3.6_HANDOFF.md`, `gnosis_proxy.py`, `model_gateway.py`, `cpu_optimizer.py`
-271: 3. **Targeted discovery on 5 more files**: `init-research-db.py`, `inbox.py`, `discovery.py`, `providers.py`, `entity_belial.py`
+271: 3. **Targeted discovery on 5 more files**: `init-research-db.py`, `inbox.py`, `discovery.py`, `providers.py`, `entity_roc_racoon.py`
 272: 4. **Deployed subagent** (61 tool calls, 11.1% context) for 8-layer comprehensive reconnaissance
 273: 
 274: ### Current Stack State
@@ -3449,7 +3449,7 @@ Now I have a comprehensive picture. Let me check the communication hub and the w
 288: | `src/omega/oracle/providers.py` | 207 | ❌ None |
 289: | `src/omega/oracle/gnosis_proxy.py` | 86 | ❌ None |
 290: | `src/omega/oracle/hierarchy.py` | 66 | ❌ None |
-291: | `src/omega/entity_belial.py` | 245 | ❌ None |
+291: | `src/omega/entity_roc_racoon.py` | 245 | ❌ None |
 292: | `src/omega/oracle/orchestrator.py` | ~100 | ❌ None |
 293: | `mcp/omega_hub/server.py` | 444 | ❌ None |
 294: 
@@ -3486,7 +3486,7 @@ Now I have a comprehensive picture. Let me check the communication hub and the w
 325: 2. Add YAML frontmatter to 45 research docs
 326: 3. Implement lmster heartbeat (ROADMAP 0.13)
 327: 4. Fix MCP crashers — intermittent SSE disconnects
-328: 5. Add Belial container integration test
+328: 5. Add Roc Racoon container integration test
 329: 
 330: ### Dialog for OpenCode Sovereign Builder
 331: 
@@ -3494,7 +3494,7 @@ Now I have a comprehensive picture. Let me check the communication hub and the w
 333: >
 334: > I've mapped the full stack so we can work efficiently as a team. Here's where things stand:
 335: >
-336: > **You have richer context on**: Phase 0 ROADMAP completion status, Belial deployment flow, and the OpenCode agent/skill ecosystem. I scanned these, but you live in them daily.
+336: > **You have richer context on**: Phase 0 ROADMAP completion status, Roc Racoon deployment flow, and the OpenCode agent/skill ecosystem. I scanned these, but you live in them daily.
 337: >
 338: > **I've identified the sharp edges**: The P0 bugs in `oracle.py`, the documentation contradictions, and the untested modules. My proposal:
 339: >
@@ -4252,7 +4252,7 @@ _Thinking:_
 
 ORACLE_STACK.md has:
 - Line 129: "Current: 41 tests, all passing (verified live + mock)." → should be 123 tests
-- Line 130: "Modules: entity_registry (7), iris (7), model_gateway (5), observability (8), oracle (13)" → missing providers, hierarchy, gnosis_proxy, orchestrator, bug_001_fix, entity_belial modules
+- Line 130: "Modules: entity_registry (7), iris (7), model_gateway (5), observability (8), oracle (13)" → missing providers, hierarchy, gnosis_proxy, orchestrator, bug_001_fix, entity_roc_racoon modules
 
 Let me update those stale references.
 
@@ -4263,7 +4263,7 @@ Let me update those stale references.
 {
   "filePath": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/ORACLE_STACK.md",
   "oldString": "Current: 41 tests, all passing (verified live + mock).\nModules: entity_registry (7), iris (7), model_gateway (5), observability (8), oracle (13)",
-  "newString": "Current: 123 tests, all passing in ~4s mock mode (verified live + mock).\nModules: entity_registry (7), entity_belial (25), hierarchy (12), iris (7), model_gateway (5), observability (8), oracle (13), orchestrator (9), providers (15), gnosis_proxy (11), bug_001_fix (1)"
+  "newString": "Current: 123 tests, all passing in ~4s mock mode (verified live + mock).\nModules: entity_registry (7), entity_roc_racoon (25), hierarchy (12), iris (7), model_gateway (5), observability (8), oracle (13), orchestrator (9), providers (15), gnosis_proxy (11), bug_001_fix (1)"
 }
 ```
 
@@ -4687,10 +4687,10 @@ D  deploy/infra/.env
  M docs/team/COMMUNICATION_HUB.md
  M mcp/omega_hub/server.py
  M opencode.json
- M quadlet-test/omega-belial.container
+ M quadlet-test/omega-roc_racoon.container
  M scripts/generate_systemd_units.sh
  M scripts/setup.sh
- M src/omega/entity_belial.py
+ M src/omega/entity_roc_racoon.py
  D src/omega/library/curation_pipeline.py
  M src/omega/library/discovery.py
  M src/omega/oracle/entity_workspace.py
@@ -4704,7 +4704,7 @@ D  deploy/infra/.env
 ?? ../archive/
 ?? .opencode/skills/sovereign-search/
 ?? CONTRIBUTING.md
-?? Dockerfile.belial
+?? Dockerfile.roc_racoon
 ?? data/workbench/
 ?? docs/research/FREE_TIER_MODEL_INDEX.md
 ?? docs/research/GEMINI_DEEP_AUDIT_TASK.md
@@ -4737,7 +4737,7 @@ D  deploy/infra/.env
 ?? scripts/migrate_workbench_domain.sh
 ?? scripts/migrate_workbench_domain.sql
 ?? test_providers.py
-?? tests/test_entity_belial.py
+?? tests/test_entity_roc_racoon.py
 ?? tests/test_gnosis_proxy.py
 ?? tests/test_hierarchy.py
 ?? tests/test_orchestrator.py
@@ -8717,9 +8717,9 @@ Resuming. I had marked INDEX.md updated. Now I need to update the remaining trac
 140: - **Source**: Three parallel `explore` subagents inventorying all tracking/orchestration systems.
 141: - **Phase 0 Actions Taken**: INDEX.md reconciled (44 items), ROADMAP.md Phase 0 marked, COMMUNICATION_HUB.md contradictions fixed, .env.example created.
 142: 
-143: ### 🛠️ Cline Sprint 2 — Belial & Control Plane (Gemini 2.0 Flash) ✅
+143: ### 🛠️ Cline Sprint 2 — Roc Racoon & Control Plane (Gemini 2.0 Flash) ✅
 144: - **Status**: COMPLETE
-145: - **Achievements**: Belial Ecosystem deployed, PR #1 hardening (41/41 tests), GnosisProxy + Invisible RAG integrated, EXP-003 A/B study completed.
+145: - **Achievements**: Roc Racoon Ecosystem deployed, PR #1 hardening (41/41 tests), GnosisProxy + Invisible RAG integrated, EXP-003 A/B study completed.
 146: - **Blocked**: EXP-004 benchmark (rate limited, retry ~22h).
 147: - **Next**: Sprint 3 — Topology Router implementation.
 148: 
@@ -8856,9 +8856,9 @@ Resuming. I had marked INDEX.md updated. Now I need to update the remaining trac
 279: 
 280: ### What I've Done This Session
 281: 
-282: 1. **Loaded full project context** from previous consolidated state (Belial, PR #1 hardening, GnosisProxy, EXP-003 A/B test, doc updates)
+282: 1. **Loaded full project context** from previous consolidated state (Roc Racoon, PR #1 hardening, GnosisProxy, EXP-003 A/B test, doc updates)
 283: 2. **Deep dives into 5 key code areas**: `OMEGA_SYSTEMS_DISCOVERY_REPORT.md`, `QWEN3.6_HANDOFF.md`, `gnosis_proxy.py`, `model_gateway.py`, `cpu_optimizer.py`
-284: 3. **Targeted discovery on 5 more files**: `init-research-db.py`, `inbox.py`, `discovery.py`, `providers.py`, `entity_belial.py`
+284: 3. **Targeted discovery on 5 more files**: `init-research-db.py`, `inbox.py`, `discovery.py`, `providers.py`, `entity_roc_racoon.py`
 285: 4. **Deployed subagent** (61 tool calls, 11.1% context) for 8-layer comprehensive reconnaissance
 286: 
 287: ### Current Stack State
@@ -8878,7 +8878,7 @@ Resuming. I had marked INDEX.md updated. Now I need to update the remaining trac
 301: | `src/omega/oracle/providers.py` | 207 | ❌ None |
 302: | `src/omega/oracle/gnosis_proxy.py` | 86 | ❌ None |
 303: | `src/omega/oracle/hierarchy.py` | 66 | ❌ None |
-304: | `src/omega/entity_belial.py` | 245 | ❌ None |
+304: | `src/omega/entity_roc_racoon.py` | 245 | ❌ None |
 305: | `src/omega/oracle/orchestrator.py` | ~100 | ❌ None |
 306: | `mcp/omega_hub/server.py` | 444 | ❌ None |
 307: 
@@ -8915,7 +8915,7 @@ Resuming. I had marked INDEX.md updated. Now I need to update the remaining trac
 338: 2. Add YAML frontmatter to 45 research docs
 339: 3. Implement lmster heartbeat (ROADMAP 0.13)
 340: 4. Fix MCP crashers — intermittent SSE disconnects
-341: 5. Add Belial container integration test
+341: 5. Add Roc Racoon container integration test
 342: 
 343: ### Dialog for OpenCode Sovereign Builder
 344: 
@@ -8923,7 +8923,7 @@ Resuming. I had marked INDEX.md updated. Now I need to update the remaining trac
 346: >
 347: > I've mapped the full stack so we can work efficiently as a team. Here's where things stand:
 348: >
-349: > **You have richer context on**: Phase 0 ROADMAP completion status, Belial deployment flow, and the OpenCode agent/skill ecosystem. I scanned these, but you live in them daily.
+349: > **You have richer context on**: Phase 0 ROADMAP completion status, Roc Racoon deployment flow, and the OpenCode agent/skill ecosystem. I scanned these, but you live in them daily.
 350: >
 351: > **I've identified the sharp edges**: The P0 bugs in `oracle.py`, the documentation contradictions, and the untested modules. My proposal:
 352: >
@@ -9345,7 +9345,7 @@ Now let me update all three tracker files with the latest research sprint result
 193: | 3.3 | Add `omega repl` interactive chat loop | T4 | 2d |
 194: | 3.4 | Create `omega-websearch` MCP | T6 | 2h |
 195: | 3.5 | Create `omega-sanitizer` MCP | T6 | 4h |
-196: | 3.6 | Create `omega-belial` MCP | T6 | 2h |
+196: | 3.6 | Create `omega-roc_racoon` MCP | T6 | 2h |
 197: | 3.7 | Port circuit breakers (Redis-backed) | T7 | 2d |
 198: | 3.8 | Port Grafana dashboards | T7 | 1d |
 199: | 3.9 | Add CONTRIBUTING.md, backup/restore procedures | T7 | 1d |
@@ -9422,7 +9422,7 @@ Now let me update all three tracker files with the latest research sprint result
 270: | **Memory System** | Hot/Warm/Cold, context builder, cross-pollination pipeline |
 271: | **User Soul** | The Architect — soul file for every Omega user |
 272: | **Iris** | Voice assistant container (messenger goddess) |
-273: | **MCP Servers** | Hivemind, oracle, library, research, stats (+ websearch, sanitizer, belial) |
+273: | **MCP Servers** | Hivemind, oracle, library, research, stats (+ websearch, sanitizer, roc_racoon) |
 274: | **Observability** | Trace IDs, events, dataset |
 275: | **ResourceGuard** | OOM protection |
 276: | **Orchestrator** | Headless agent dispatch |
@@ -10542,10 +10542,10 @@ Let me now finalize the todo list and provide the comprehensive summary.
  omega-engine/docs/team/COMMUNICATION_HUB.md        | 189 ++++++++++++--
  omega-engine/mcp/omega_hub/server.py               |  26 +-
  omega-engine/opencode.json                         |  39 ++-
- omega-engine/quadlet-test/omega-belial.container   |   8 +-
+ omega-engine/quadlet-test/omega-roc_racoon.container   |   8 +-
  omega-engine/scripts/generate_systemd_units.sh     |  12 +-
  omega-engine/scripts/setup.sh                      |   4 +-
- omega-engine/src/omega/entity_belial.py            |  10 +-
+ omega-engine/src/omega/entity_roc_racoon.py            |  10 +-
  .../src/omega/library/curation_pipeline.py         | 290 ---------------------
  omega-engine/src/omega/library/discovery.py        |   5 +-
  omega-engine/src/omega/oracle/entity_workspace.py  |   2 +-
@@ -11578,9 +11578,9 @@ Good. Now let me check the COMMUNICATION_HUB.md to see what was updated there.
 147: - **Source**: Three parallel `explore` subagents inventorying all tracking/orchestration systems.
 148: - **Phase 0 Actions Taken**: INDEX.md reconciled (44 items), ROADMAP.md Phase 0 marked, COMMUNICATION_HUB.md contradictions fixed, .env.example created.
 149: 
-150: ### 🛠️ Cline Sprint 2 — Belial & Control Plane (Gemini 2.0 Flash) ✅
+150: ### 🛠️ Cline Sprint 2 — Roc Racoon & Control Plane (Gemini 2.0 Flash) ✅
 151: - **Status**: COMPLETE
-152: - **Achievements**: Belial Ecosystem deployed, PR #1 hardening (41/41 tests), GnosisProxy + Invisible RAG integrated, EXP-003 A/B study completed.
+152: - **Achievements**: Roc Racoon Ecosystem deployed, PR #1 hardening (41/41 tests), GnosisProxy + Invisible RAG integrated, EXP-003 A/B study completed.
 153: - **Blocked**: EXP-004 benchmark (rate limited, retry ~22h).
 154: - **Next**: Sprint 3 — Topology Router implementation.
 155: 
@@ -11755,9 +11755,9 @@ Good. Now let me check the COMMUNICATION_HUB.md to see what was updated there.
 324: 
 325: ### What I've Done This Session
 326: 
-327: 1. **Loaded full project context** from previous consolidated state (Belial, PR #1 hardening, GnosisProxy, EXP-003 A/B test, doc updates)
+327: 1. **Loaded full project context** from previous consolidated state (Roc Racoon, PR #1 hardening, GnosisProxy, EXP-003 A/B test, doc updates)
 328: 2. **Deep dives into 5 key code areas**: `OMEGA_SYSTEMS_DISCOVERY_REPORT.md`, `QWEN3.6_HANDOFF.md`, `gnosis_proxy.py`, `model_gateway.py`, `cpu_optimizer.py`
-329: 3. **Targeted discovery on 5 more files**: `init-research-db.py`, `inbox.py`, `discovery.py`, `providers.py`, `entity_belial.py`
+329: 3. **Targeted discovery on 5 more files**: `init-research-db.py`, `inbox.py`, `discovery.py`, `providers.py`, `entity_roc_racoon.py`
 330: 4. **Deployed subagent** (61 tool calls, 11.1% context) for 8-layer comprehensive reconnaissance
 331: 
 332: ### Current Stack State
@@ -11777,7 +11777,7 @@ Good. Now let me check the COMMUNICATION_HUB.md to see what was updated there.
 346: | `src/omega/oracle/providers.py` | 207 | ❌ None |
 347: | `src/omega/oracle/gnosis_proxy.py` | 86 | ❌ None |
 348: | `src/omega/oracle/hierarchy.py` | 66 | ❌ None |
-349: | `src/omega/entity_belial.py` | 245 | ❌ None |
+349: | `src/omega/entity_roc_racoon.py` | 245 | ❌ None |
 350: | `src/omega/oracle/orchestrator.py` | ~100 | ❌ None |
 351: | `mcp/omega_hub/server.py` | 444 | ❌ None |
 352: 
@@ -11814,7 +11814,7 @@ Good. Now let me check the COMMUNICATION_HUB.md to see what was updated there.
 383: 2. Add YAML frontmatter to 45 research docs
 384: 3. Implement lmster heartbeat (ROADMAP 0.13)
 385: 4. Fix MCP crashers — intermittent SSE disconnects
-386: 5. Add Belial container integration test
+386: 5. Add Roc Racoon container integration test
 387: 
 388: ### Dialog for OpenCode Sovereign Builder
 389: 
@@ -11822,7 +11822,7 @@ Good. Now let me check the COMMUNICATION_HUB.md to see what was updated there.
 391: >
 392: > I've mapped the full stack so we can work efficiently as a team. Here's where things stand:
 393: >
-394: > **You have richer context on**: Phase 0 ROADMAP completion status, Belial deployment flow, and the OpenCode agent/skill ecosystem. I scanned these, but you live in them daily.
+394: > **You have richer context on**: Phase 0 ROADMAP completion status, Roc Racoon deployment flow, and the OpenCode agent/skill ecosystem. I scanned these, but you live in them daily.
 395: >
 396: > **I've identified the sharp edges**: The P0 bugs in `oracle.py`, the documentation contradictions, and the untested modules. My proposal:
 397: >

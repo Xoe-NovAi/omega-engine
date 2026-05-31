@@ -193,18 +193,15 @@ def classify_classics_domain(text: str) -> str:
 
 
 def get_krikri_model_spec() -> Dict:
-    """Get model spec for Krikri-7B-Instruct (Greek-capable)."""
+    """Get model spec for Krikri-8b-Instruct (Greek-capable)."""
     return {
-        "name": "krikri-7b-instruct",
-        "description": "Krikri-7B-Instruct — Greek-capable instruction model (Modern + Ancient Greek)",
-        "path": os.path.expanduser("~/omega/models/krikri-7b-instruct-q6_k.gguf"),
-        "alternative_paths": [
-            "/media/arcana-novai/omega_library/models/gguf/krikri-7b-instruct-q6_k.gguf",
-            "/media/arcana-novai/omega_library/models/gguf/krikri-7b-instruct-q4_k_m.gguf",
-        ],
+        "name": "krikri-8b-instruct",
+        "description": "Krikri-8b-Instruct — Greek-capable instruction model (Modern + Ancient Greek)",
+        "path": "/media/arcana-novai/omega_library/models/gguf/Krikri-8b-Instruct-Q5_K_M.gguf",
+        "alternative_paths": [],
         "languages": ["el", "grc", "en"],
         "capabilities": ["greek_text", "ancient_greek", "instruction_following", "translation"],
-        "context_window": 8192,
+        "context_window": 16384,
         "temperature": 0.7,
     }
 

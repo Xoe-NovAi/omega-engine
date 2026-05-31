@@ -158,14 +158,14 @@ This report was produced in an OpenCode CLI session with the following parameter
       "notes": "Tracks agent 'current task' as awareness metadata, not as a dedicated issue tracker. Most relevant existing system for tracking 'what is being worked on.' The task_current and focus_chain fields track work items but only ephemerally."
     },
     {
-      "name": "BelialMiner — Legacy Artifact Mining Queue",
-      "file_location": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/entity_belial.py",
+      "name": "Roc RacoonMiner — Legacy Artifact Mining Queue",
+      "file_location": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/entity_roc_racoon.py",
       "purpose": "P0 entity for deep legacy mining. Scans legacy repos for strategic intelligence, classifies artifacts, and maintains a prioritized mining queue.",
       "key_interfaces_classes": [
-        "BelialMiner (class) — scan_mine(), classify_artifact(), submit_to_queue(), get_prioritized_queue(), deep_analyze()"
+        "Roc RacoonMiner (class) — scan_mine(), classify_artifact(), submit_to_queue(), get_prioritized_queue(), deep_analyze()"
       ],
       "data_storage": "JSON file at data/mining_queue/mining_history.json. Artifact schema: artifact_id, source_mine, path, classification (strategic/technical/archival/noise), sovereignty_score, effort_to_extract, summary, related_research.",
-      "api": "Summon via Oracle: 'omega summon Belial \"mining brief\"'. Designed for Podman Quadlet on systemd.timer (daily at 03:30).",
+      "api": "Summon via Oracle: 'omega summon Roc Racoon \"mining brief\"'. Designed for Podman Quadlet on systemd.timer (daily at 03:30).",
       "is_task_tracker": false,
       "notes": "Has a prioritized queue with classification-based sorting. Very specific to legacy artifact recovery, not general task management."
     },
@@ -497,7 +497,7 @@ This report was produced in an OpenCode CLI session with the following parameter
       "src/omega/observability.py",
       "src/omega/memory_store.py",
       "src/omega/mcp_runtime.py",
-      "src/omega/entity_belial.py",
+      "src/omega/entity_roc_racoon.py",
       "src/omega/bridge/elevenlabs.py",
       "src/omega/iris/server.py",
       "src/omega/library/inbox.py",
@@ -801,7 +801,7 @@ The developers (you) intentionally built tracking fields into multiple systems:
 | Soul YAML | `sessions_completed`, `entities_inhabited`, `embodied_experiences[]`, `lessons_learned[]`, `soul_power` | ❌ Never written to |
 | Metrics JSON (`data/logs/metrics.json`) | Arbitrary JSON dict | ⚠️ Only boundary violations |
 | Research SQLite DB | `status`, `urgency`, `confidence`, `sovereignty_score`, lifecycle events | ✅ For research documents |
-| BelialMiner | `classification`, `sovereignty_score`, `effort_to_extract` | ✅ For legacy mining queue |
+| Roc RacoonMiner | `classification`, `sovereignty_score`, `effort_to_extract` | ✅ For legacy mining queue |
 
 **Interpretation**: You designed seven distributed tracking systems but never connected them into a unified view. The data is there — it's just fragmented.
 
@@ -1015,7 +1015,7 @@ Wire the soul evolution schema to actually track progress.
 | ResearchEngine | `src/omega/library/research.py` | `data/research/*.json` |
 | Oracle | `src/omega/oracle/oracle.py` | (orchestrator only) |
 | Orchestrator | `src/omega/oracle/orchestrator.py` | In-memory only |
-| BelialMiner | `src/omega/entity_belial.py` | `data/mining_queue/mining_history.json` |
+| Roc RacoonMiner | `src/omega/entity_roc_racoon.py` | `data/mining_queue/mining_history.json` |
 | Research SQLite DB | `docs/research/internal-discovery/DB/research.db` | SQLite |
 | Metrics JSON | `data/logs/metrics.json` | JSON file |
 | Soul YAML | `data/entities/arch/soul.yaml` | YAML file |

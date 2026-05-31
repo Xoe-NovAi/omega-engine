@@ -101,9 +101,9 @@ from src.omega.oracle.entity_registry import EntityRegistry  # WRONG
 **Fix**: Change to `cli,voice,all,dev` or just `all,dev`
 **Confidence**: 10/10
 
-### C-11: `omega-belial.container` — Python Container Missing Dependencies
+### C-11: `omega-roc_racoon.container` — Python Container Missing Dependencies
 
-**File**: `quadlet-test/omega-belial.container`
+**File**: `quadlet-test/omega-roc_racoon.container`
 **Issue**: `python:3.12-slim` base image does not have `httpx` or `anyio`. Container fails on import.
 **Fix**: Add `RUN pip install httpx anyio pyyaml` to container definition
 **Confidence**: 10/10
@@ -122,16 +122,16 @@ from src.omega.oracle.entity_registry import EntityRegistry  # WRONG
 **Fix**: Use `anyio.create_task_group()` with a long-lived scope
 **Confidence**: 9/10
 
-### C-14: `entity_belial.py` — Relative Paths for Mining History
+### C-14: `entity_roc_racoon.py` — Relative Paths for Mining History
 
-**File**: `src/omega/entity_belial.py` lines 87-102
+**File**: `src/omega/entity_roc_racoon.py` lines 87-102
 **Issue**: `Path("data/mining_queue/mining_history.json")` — relative to CWD, not project root
 **Fix**: Use `DATA_DIR` consistent with rest of codebase
 **Confidence**: 10/10
 
-### C-15: `quadlet-test/omega-belial.container` — Duplicate `PodmanArgs` Keys
+### C-15: `quadlet-test/omega-roc_racoon.container` — Duplicate `PodmanArgs` Keys
 
-**File**: `quadlet-test/omega-belial.container` lines 35-37
+**File**: `quadlet-test/omega-roc_racoon.container` lines 35-37
 **Issue**: Quadlet does not support duplicate keys. Second `PodmanArgs` silently overrides first, losing memory/CPU limits.
 **Fix**: Combine into single `PodmanArgs` line
 **Confidence**: 10/10
@@ -159,7 +159,7 @@ from src.omega.oracle.entity_registry import EntityRegistry  # WRONG
 | H-1 | GoogleAIProvider doesn't use `systemInstruction` for Gemini | `providers.py:28-49` | Suboptimal prompt formatting, safety filter crashes |
 | H-2 | LocallmsterProvider/OllamaProvider lack error handling on response parsing | `providers.py:79,109` | Raw tracebacks on unexpected API responses |
 | H-3 | Duplicate imports in `oracle.py.__init__` | `oracle.py:86-87` | Code hygiene |
-| H-4 | `hierarchy.py` missing Belial in RANK_MAP; lowercase `any` type annotation | `hierarchy.py:14-19,44` | Belial gets wrong recursion depth |
+| H-4 | `hierarchy.py` missing Roc Racoon in RANK_MAP; lowercase `any` type annotation | `hierarchy.py:14-19,44` | Roc Racoon gets wrong recursion depth |
 | H-5 | 140 lines of dead code in `model_gateway.py` (5 backend methods never called) | `model_gateway.py:312-449` | Maintenance burden, drift risk |
 | H-6 | No disk-full handling in observability JSONL writes | `observability.py:87-94` | Silent data loss |
 | H-7 | `discovery.py` background jobs have no error recovery or timeout | `discovery.py:134-171` | Jobs hang indefinitely |
@@ -222,7 +222,7 @@ from src.omega.oracle.entity_registry import EntityRegistry  # WRONG
 
 - `src/omega/library/` — 7 files, ~2,073 lines (library, inbox, indexer, curator, extractor, discovery, research)
 - `src/omega/memory_store.py` — 320 lines
-- `src/omega/entity_belial.py` — 242 lines
+- `src/omega/entity_roc_racoon.py` — 242 lines
 - `src/omega/mcp_runtime.py` — 56 lines
 - `src/omega/oracle/providers.py` — 201 lines (provider chain!)
 - `src/omega/oracle/gnosis_proxy.py` — 86 lines
@@ -360,7 +360,7 @@ Sovereign Workbench
 You have 8 Google API keys for Gemma 4-31B with "nearly unlimited usage." This is a massive resource for:
 - Background research orchestration
 - Session distillation (Sovereign Janitor)
-- Legacy mining (Belial)
+- Legacy mining (Roc Racoon)
 - Multi-project context management
 - Continuous provider health monitoring
 
@@ -403,7 +403,7 @@ class GoogleKeyPool:
 - **API Keys**: 2 keys dedicated (25% of pool)
 - **Output**: `data/janitor/YYYY-MM-DD.jsonl`
 
-**Service 2: Belial Deep Miner (Gemma 4-31B)**
+**Service 2: Roc Racoon Deep Miner (Gemma 4-31B)**
 - **Purpose**: Legacy artifact analysis, pattern recovery
 - **Schedule**: Daily 03:30 (existing timer)
 - **RAM**: 0 (cloud-based)
@@ -514,8 +514,8 @@ known_unknowns:
     impact: "blocker for native inference"
     next_step: "attempt build and report"
   
-  - question: "Are the legacy mine paths in entity_belial.py still valid?"
-    impact: "blocker for Belial mining"
+  - question: "Are the legacy mine paths in entity_roc_racoon.py still valid?"
+    impact: "blocker for Roc Racoon mining"
     next_step: "verify paths exist and are accessible"
   
   - question: "What is the actual RAM usage of the current Podman containers?"
@@ -537,7 +537,7 @@ known_unknowns:
 | 1 | Fix C-1 (gnosis_proxy import), C-5/C-6 (MCP Hub async bugs), C-7 (curation_pipeline) | 🔴 |
 | 2 | Fix C-2 (soul evolution race), C-3 (blocking subprocess), C-4 (ResourceGuard) | 🔴 |
 | 3 | Fix C-8/C-9 (exposed secrets), C-10 (setup.sh), C-17 (entity_workspace path) | 🔴 |
-| 4 | Fix C-11/C-12/C-15/C-16 (Belial container, providers.yaml, quadlets, setup.sh) | 🔴 |
+| 4 | Fix C-11/C-12/C-15/C-16 (Roc Racoon container, providers.yaml, quadlets, setup.sh) | 🔴 |
 | 5 | Write provider chain tests (GoogleAI, lmster, Ollama, NativeGGUF) | 🔴 |
 | 6-7 | Write MCP Hub integration tests (catch C-5, C-6, C-13) | 🟡 |
 
@@ -563,7 +563,7 @@ known_unknowns:
 |-----|------|----------|
 | 1-2 | Native inference optimization (KV cache, core pinning) | 🟡 |
 | 3-4 | Sovereign Workbench Phase 3 (Context Routing) | 🟡 |
-| 5 | Belial deep miner integration with key pool | 🟡 |
+| 5 | Roc Racoon deep miner integration with key pool | 🟡 |
 | 6-7 | Full test suite expansion (target 60% coverage) | 🟡 |
 
 ---

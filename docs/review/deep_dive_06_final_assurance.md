@@ -19,7 +19,7 @@ Since you produced the initial 29 findings, the remediation and hardening team h
 | Phase | Severity | Findings | Key Actions |
 |-------|----------|----------|-------------|
 | Phase 0 | CRITICAL | 6/6 | Atomic YAML writes, async bootstrap, hierarchy YAML fix, anyio.Lock migration |
-| Phase 1 | HIGH | 10/10 | Async EntityRegistry, path traversal guard, Belial local model, FIFO bounded transfer store, env var respect |
+| Phase 1 | HIGH | 10/10 | Async EntityRegistry, path traversal guard, Roc Racoon local model, FIFO bounded transfer store, env var respect |
 | Phase 2 | MEDIUM | 10/10 | WAD manifest validation, voice/entity decoupling, config-driven Hivemind, typed DescriptorRef protocol |
 | Phase 3 | LOW | 3/3 | Duplicate imports removed, double path wrapping fixed, Inanna pillar name harmonized |
 

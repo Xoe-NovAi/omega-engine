@@ -46,7 +46,7 @@ This document integrates Cline's ground truth with the COO's roadmap authority a
 | `providers.py` | ~200 | **P1** | OfflineMockBackend + parameterized fixtures | Cline |
 | `gnosis_proxy.py` | ~150 | **P1** | Mock GnosisProxy with canned responses | Cline |
 | `hierarchy.py` | ~80 | **P2** | Pure logic — no mocks needed, test resolvers directly | Cline |
-| `entity_belial.py` | ~250 | **P2** | OfflineMockBackend + session fixtures | Cline |
+| `entity_roc_racoon.py` | ~250 | **P2** | OfflineMockBackend + session fixtures | Cline |
 | `orchestrator.py` | ~300 | **P1** | ResourceGuard mock + AnyIO test helpers | Cline |
 | `mcp/omega_hub/server.py` | ~168 | **P2** | FastAPI TestClient + mock engine | Cline |
 
@@ -151,7 +151,7 @@ See §3 above. **13/15 done.** Gaps: 0.13 (lmster hardening) and C‑18.
 | `gnosis_proxy.py` | Mock GnosisProxy | 45min |
 | `orchestrator.py` | ResourceGuard mock + AnyIO | 1h |
 | `hierarchy.py` | Direct unit tests | 30min |
-| `entity_belial.py` | OfflineMockBackend + session | 1h |
+| `entity_roc_racoon.py` | OfflineMockBackend + session | 1h |
 | `mcp/omega_hub/server.py` | FastAPI TestClient | 45min |
 
 ### Sprint D: Mode/Agent Consolidation (COO + Cline — Phase 1.5)

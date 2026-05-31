@@ -38,7 +38,7 @@ services:
       --lazyfree-lazy-eviction yes
       --lazyfree-lazy-expire yes
     volumes:
-      - /media/arcana-novai/omega_library/podman-storage/volumes/redis:/data:U
+      - /media/arcana-novai/omega_library/podman-storage/volumes/redis:/data
     deploy:
       resources:
         limits:
@@ -68,8 +68,8 @@ services:
     ports:
       - "127.0.0.1:6333:6333"
     volumes:
-      - /media/arcana-novai/omega_library/podman-storage/volumes/qdrant:/qdrant/storage:U
-      - ./qdrant_config.yaml:/qdrant/config/config.yaml:ro,U
+      - /media/arcana-novai/omega_library/podman-storage/volumes/qdrant:/qdrant/storage
+      - ./qdrant_config.yaml:/qdrant/config/config.yaml:ro
     environment:
       - QDRANT__SERVICE__GRPC_PORT=6334
       - QDRANT__STORAGE__PERFORMANCE__MAX_SEARCH_THREADS=4
@@ -104,7 +104,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-omega}
       POSTGRES_DB: omega
     volumes:
-      - /media/arcana-novai/omega_library/podman-storage/volumes/postgres:/var/lib/postgresql/data:U
+      - /media/arcana-novai/omega_library/podman-storage/volumes/postgres:/var/lib/postgresql/data
     deploy:
       resources:
         limits:
@@ -133,9 +133,9 @@ services:
     ports:
       - "127.0.0.1:8088:80"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro,U
-      - /media/arcana-novai/omega_library/podman-storage/volumes/caddy/data:/data:U
-      - /media/arcana-novai/omega_library/podman-storage/volumes/caddy/config:/config:U
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - /media/arcana-novai/omega_library/podman-storage/volumes/caddy/data:/data
+      - /media/arcana-novai/omega_library/podman-storage/volumes/caddy/config:/config
     deploy:
       resources:
         limits:
@@ -171,8 +171,8 @@ services:
       - OMEGA_MODELS_CONFIG=/app/config/models.yaml
       - REDIS_URL=redis://:${REDIS_PASSWORD:-omega}@omega-redis:6379
     volumes:
-      - ../../config:/app/config:ro,U
-      - /media/arcana-novai/omega_library/podman-storage/cache/iris:/cache:U
+      - ../../config:/app/config:ro
+      - /media/arcana-novai/omega_library/podman-storage/cache/iris:/cache
     deploy:
       resources:
         limits:

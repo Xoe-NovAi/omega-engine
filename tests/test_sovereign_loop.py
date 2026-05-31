@@ -165,22 +165,22 @@ class TestSovereignLoop:
             oracle = Oracle()
 
             # Explicitly summon an entity
-            result = await oracle.summon("Sekhmet", "what is strength?")
+            result = await oracle.summon("SysAdmin", "how do I deploy a container?")
 
             assert result is not None
             assert result.text, "Response should have text"
-            assert result.entity == "Sekhmet", "Should respond as Sekhmet"
+            assert result.entity == "SysAdmin", "Should respond as SysAdmin"
             assert result.session_id, "Should have a session ID"
 
             # Verify memory was recorded
             memory_store = get_memory_store()
-            history = await memory_store.get_history("Sekhmet", result.session_id, limit=10)
+            history = await memory_store.get_history("SysAdmin", result.session_id, limit=10)
             assert len(history) >= 1, "Memory should be recorded for summoned entity"
 
             return result
 
         result = _run(t)
-        assert result.entity == "Sekhmet"
+        assert result.entity == "SysAdmin"
 
     def test_transient_mode_skips_memory(self):
         """Test that transient mode skips memory recording."""

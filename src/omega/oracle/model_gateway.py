@@ -1,18 +1,19 @@
-# 🔱 Model Gateway — Local Inference Abstraction
-# AP: AP-MODEL-GATEWAY-v2.3.0
+# 🔱 Model Gateway — Local-First Inference Abstraction
+# AP: AP-MODEL-GATEWAY-v2.4.0
 # ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: MODEL-ABSTRACTION]
 #
-# Supports provider fabric with automatic detection and fallback:
-#   0. Google AI Studio  (cloud, Gemma 4 31B) [PRIMARY]
-#   1. OpenRouter        (cloud, 300+ models)
-#   2. OpenCode          (OpenCode built-in provider)
-#   3. GitHub Copilot    (cloud, Claude/GPT models)
-#   4. lmster            (LM Studio headless server at :1234)
-#   5. Ollama            (OpenAI-compatible API at :11434)
-#   6. native-gguf       (llama-cpp-python, deferred to v0.6.0)
-#   7. Graceful fallback (setup instructions)
+# LOCAL-FIRST provider fabric with automatic detection and fallback:
+#   0. native-gguf       (llama-cpp-python, Zen 2 optimized) [PRIMARY]
+#   1. lmster            (LM Studio headless server at :1234)
+#   2. Ollama            (OpenAI-compatible API at :11434)
+#   3. Google AI Studio  (cloud, Gemma 4 31B)
+#   4. OpenRouter        (cloud, 300+ models)
+#   5. OpenCode          (OpenCode built-in provider)
+#   6. GitHub Copilot    (cloud, Claude/GPT models)
+#   99. Graceful fallback (setup instructions)
 #
 # Zen 2 optimizations:
+#   - CPU affinity pinned to physical cores [0,2,4,6]
 #   - KV cache quantization (q8_0 key, q8_0 value by default)
 #   - Adaptive thread pool (6 threads, pinned to cores 0,2,4,6)
 #   - Cache-friendly batch sizes (512/32 for small models, 64/16 for 8B+)
@@ -117,18 +118,54 @@ class ModelGateway:
             extra=extra,
         ))
 
+    @staticmethod
+    def _merge_native_gguf_config(p_cfg: dict, models: dict) -> dict:
+        """Merge models.yaml model spec into native-gguf provider config.
+
+        models.yaml is the single source of truth for model paths, context,
+        threads, and KV cache. This method overlays those values onto the
+        provider defaults from providers.yaml.
+        """
+        # Find first on-demand model as default path
+        default_spec = models.get("phi-4-mini", {})
+        merged = dict(p_cfg)
+
+        # Keys to pull from models.yaml
+        for key in ("path", "size_gb", "ram_mb", "context_window",
+                     "threads", "load_strategy", "entity",
+                     "kv_cache_key_type", "kv_cache_value_type"):
+            if key in default_spec and key not in merged:
+                merged[key] = default_spec[key]
+
+        # Map models.yaml names → NativeGGUFProvider config names
+        if "path" in merged and "model_path" not in merged:
+            merged["model_path"] = merged.pop("path")
+        if "context_window" in merged and "n_ctx" not in merged:
+            merged["n_ctx"] = merged.pop("context_window")
+        if "threads" in merged and "n_threads" not in merged:
+            merged["n_threads"] = merged.pop("threads")
+
+        # Map string KV cache types → llama.cpp enum ints
+        kv_map = {"f16": 0, "q8_0": 8, "q4_0": 9, "fp8": 7}
+        for yaml_key, prov_key in [("kv_cache_key_type", "type_k"),
+                                    ("kv_cache_value_type", "type_v")]:
+            if yaml_key in merged:
+                merged[prov_key] = kv_map.get(merged.pop(yaml_key), 8)
+
+        return merged
+
     def _load_provider_fabric(self) -> List[Any]:
         """Load provider chain from providers.yaml."""
         providers_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "providers.yaml"
         if not providers_path.exists():
             logger.warning(f"Provider config not found at {providers_path}. Using defaults.")
             return [MockProvider("mock", {})]
-        
+
         with open(providers_path, "r") as f:
             config = yaml.safe_load(f)
-        
+
         fabric_config = config.get("inference", {}).get("fallback_chain", [])
-        
+
         provider_map = {
             "google": GoogleAIProvider,
             "opencode": ModelGateway._create_openrouter,
@@ -139,18 +176,25 @@ class ModelGateway:
             "native-gguf": NativeGGUFProvider,
             "mock": MockProvider,
         }
-        
+
         instances = []
         for p_cfg in fabric_config:
             name = p_cfg.get("provider")
-            if name in provider_map:
-                instances.append(provider_map[name](name, p_cfg))
-            else:
+            if name not in provider_map:
                 logger.warning(f"Unrecognized provider '{name}' in config. Skipping.")
-        
-        # Sort by priority ascending (Sovereign Priority Protocol)
-        instances.sort(key=lambda p: getattr(p.config, 'priority', 999) if hasattr(p, 'config') else 999)
-        
+                continue
+            if name == "native-gguf":
+                merged = self._merge_native_gguf_config(p_cfg, self.models)
+                instances.append(provider_map[name](name, merged))
+            else:
+                instances.append(provider_map[name](name, p_cfg))
+
+        def _get_priority(p):
+            if hasattr(p, 'config') and isinstance(p.config, dict):
+                return p.config.get('priority', 999)
+            return 999
+        instances.sort(key=_get_priority)
+
         return instances if instances else [MockProvider("mock", {})]
 
     def _load_models(self) -> dict:
@@ -200,6 +244,22 @@ class ModelGateway:
     def get_model_spec(self, model_name: str) -> Optional[dict]:
         """Get full model spec."""
         return self.models.get(model_name)
+
+    def get_model_weight(self, model_name: str) -> int:
+        """Return resource weight for a model based on RAM requirements.
+        
+        Light: 1, Medium: 2, Heavy: 4.
+        """
+        spec = self.models.get(model_name)
+        if not spec:
+            return 1
+        
+        ram_mb = spec.get("ram_mb", 0)
+        if ram_mb >= 4000:
+            return 4
+        if ram_mb >= 2000:
+            return 2
+        return 1
 
     # ── Backend availability detection ─────────────────────────────────
     async def _check_lmster(self) -> bool:
@@ -327,7 +387,7 @@ class ModelGateway:
         return system_prompt
 
     # ── Generation (auto-detect + fallback chain) ──────────────────────
-    async def _execute_with_retry(self, provider: Any, model_name: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int) -> Optional[str]:
+    async def _execute_with_retry(self, provider: Any, model_name: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None) -> Optional[str]:
         """Execute request with retry logic and background metrics tracking.
         
         Consolidates retry logic: RemoteProviders handle their own internal retries.
@@ -338,7 +398,7 @@ class ModelGateway:
         if isinstance(provider, RemoteProvider):
             start_time = time.monotonic()
             try:
-                response = await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens)
+                response = await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
                 if self._health_monitor:
                     latency_ms = (time.monotonic() - start_time) * 1000
                     self._health_monitor.record_latency(model_name, latency_ms)
@@ -356,7 +416,7 @@ class ModelGateway:
         for attempt in range(max_retries):
             start_time = time.monotonic()
             try:
-                response = await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens)
+                response = await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
                 if self._health_monitor:
                     latency_ms = (time.monotonic() - start_time) * 1000
                     self._health_monitor.record_latency(model_name, latency_ms)
@@ -400,16 +460,25 @@ class ModelGateway:
         temperature: Optional[float] = None,
         max_tokens: int = 1024,
         pinned_provider: Optional[str] = None,
-    ) -> str:
-        """Send a prompt to the model using the configured provider fabric."""
+        trace_id: Optional[str] = None,
+    ) -> Tuple[str, bool]:
+        """Send a prompt to the model using the configured provider fabric.
+        
+        Returns:
+            Tuple of (response_text, is_cloud)
+        """
         async with self._limiter:
             if temperature is None:
                 temperature = 0.7
                 
             if os.environ.get("OMEGA_ENV") == "test":
-                return await self._mock_backend.generate(
+                res = await self._mock_backend.generate(
                     model_name, system_prompt, user_query, temperature, max_tokens
                 )
+                return res, False
+            
+            # Calculate resource weight for this model
+            weight = self.get_model_weight(model_name)
             
             # Pre-inference GnosisProxy enrichment
             enriched_prompt = await self._enrich_with_tools(model_name, system_prompt, user_query)
@@ -423,9 +492,13 @@ class ModelGateway:
                     resolved_model = self._resolve_model_name(target_provider, model_name)
                     # ResourceGuard protection for pinned local providers
                     if isinstance(target_provider, (LocallmsterProvider, OllamaProvider, NativeGGUFProvider)):
-                        async with self.resource_guard.lock():
-                            return await self._call_provider_with_resilience(target_provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens)
-                    return await self._call_provider_with_resilience(target_provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens)
+                        async with self.resource_guard.lock(weight=weight):
+                            res = await self._call_provider_with_resilience(target_provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
+                            is_cloud = target_provider.name in ("google", "openrouter", "opencode", "github-copilot")
+                            return res, is_cloud
+                    res = await self._call_provider_with_resilience(target_provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
+                    is_cloud = target_provider.name in ("google", "openrouter", "opencode", "github-copilot")
+                    return res, is_cloud
                 logger.warning(f"Pinned provider {pinned_provider} not found. Falling back to chain.")
             
             for provider in self.providers:
@@ -438,25 +511,38 @@ class ModelGateway:
                 try:
                     # Wrap local providers in a timeout to prevent systemic hangs
                     if isinstance(provider, (LocallmsterProvider, OllamaProvider, NativeGGUFProvider)):
-                        async with self.resource_guard.lock():
+                        async with self.resource_guard.lock(weight=weight):
                             with anyio.move_on_after(130):
-                                response = await self._execute_with_retry(provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens)
+                                response = await self._execute_with_retry(provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
                     else:
-                        response = await self._execute_with_retry(provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens)
+                        response = await self._execute_with_retry(provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
                     
                     if response:
-                        return response
+                        is_cloud = provider.name in ("google", "openrouter", "opencode", "github-copilot")
+                        return response, is_cloud
                 except Exception as e:
                     logger.warning(f"Provider {provider.name} failed after retries: {e}")
+                    # Log backend fallback event for observability
+                    if trace_id:
+                        try:
+                            from omega.observability import get_engine, EventType
+                            get_engine().log_event(
+                                EventType.BACKEND_FALLBACK,
+                                trace_id,
+                                {"failed_provider": provider.name, "error": str(e)[:200], "model": model_name}
+                            )
+                        except Exception:
+                            pass
             
-            return self._fallback_response(model_name, enriched_prompt, user_query)
+            fallback = self._fallback_response(model_name, enriched_prompt, user_query)
+            return fallback, False
 
-    async def _call_provider_with_resilience(self, provider, model_name, system_prompt, user_query, temperature, max_tokens):
+    async def _call_provider_with_resilience(self, provider, model_name, system_prompt, user_query, temperature, max_tokens, trace_id=None):
         """Wrapper to apply the OpenRouter retry policy."""
         @openrouter_retry_policy
         async def _do_call():
             try:
-                return await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens)
+                return await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
             except Exception as e:
                 # Map specific HTTP errors to Transient vs Fatal
                 err_msg = str(e).lower()

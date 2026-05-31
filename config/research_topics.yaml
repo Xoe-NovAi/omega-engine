@@ -1,10 +1,56 @@
+# 🔱 Omega Engine — Research Topics Registry
+# AP: AP-RESEARCH-TOPICS-v1.0.0
+# ⬡ OMEGA ⬡ PROMETHEUS ⬡ research_topics ⬡ PHASE-1
 
-rotation:
-  strategy: round_robin
-  cycle_order: [t1, t2]
-  aging_decay_per_cycle: 0.8
-  deepening_factor: 1.2
-  priority_floor: 0.1
-scheduled_topics:
-  t1: {title: "Topic 1", cloud_search: {depth: 2}}
-  t2: {title: "Topic 2", cloud_search: {depth: 2}}
+# This file defines the priority queue for the Background Researcher.
+# Topics are categorized by domain and assigned a priority (0.0 - 1.0).
+# The TopicScheduler rotates through these to ensure comprehensive coverage.
+
+topics:
+  - id: "voice_to_voice_latency"
+    title: "Low-Latency Voice-to-Voice Pipelines"
+    domain: "infrastructure"
+    priority: 0.9
+    tags: ["latency", "voice", "real-time"]
+    description: "Researching the fastest path from audio input to LLM to audio output, focusing on VAD and streaming."
+
+  - id: "llama_cpp_python_optimization"
+    title: "llama-cpp-python Zen 2 Optimization"
+    domain: "hardware"
+    priority: 0.8
+    tags: ["zen2", "gguf", "performance"]
+    description: "Optimizing KV cache and thread pinning for the Ryzen 5700U to maximize tokens/sec."
+
+  - id: "mcp_ecosystem_expansion"
+    title: "Model Context Protocol (MCP) Server Ecosystem"
+    domain: "integration"
+    priority: 0.7
+    tags: ["mcp", "tools", "interop"]
+    description: "Identifying and auditing high-value MCP servers for integration into the Omega Hub."
+
+  - id: "soul_evolution_metrics"
+    title: "Quantitative Metrics for Soul Evolution"
+    domain: "gnosis"
+    priority: 0.6
+    tags: ["soul", "metrics", "evolution"]
+    description: "Defining how 'soul_power' and 'embodied_experience' are calculated and tracked."
+
+  - id: "p2p_soul_exchange"
+    title: "Consent-Based P2P Soul Print Exchange"
+    domain: "sovereignty"
+    priority: 0.5
+    tags: ["p2p", "soul", "privacy"]
+    description: "Designing the protocol for sharing evolved entity states between Omega instances."
+
+  - id: "vr_soul_mapping"
+    title: "Soul-to-Visual Mapping in Godot"
+    domain: "vr"
+    priority: 0.4
+    tags: ["godot", "visuals", "soul"]
+    description: "Mapping soul attributes (e.g., power, archetype) to visual shaders and environment changes in VR."
+
+# Metadata for the scheduler
+config:
+  rotation_strategy: "priority_weighted"
+  default_priority: 0.3
+  max_concurrent_topics: 5

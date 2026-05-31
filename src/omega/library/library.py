@@ -90,16 +90,18 @@ class Library:
         return None
 
     async def search(self, query: str, domain: Optional[str] = None, limit: int = 20) -> List[CuratedDocument]:
-        """Full-text search across all documents."""
-        query_lower = query.lower()
+        """Full-text search across all documents using the FTS5 index."""
+        # Use the FTS5 index instead of linear scan to avoid O(n) performance cliff
+        fts_results = await self._indexer.search_fts(query, domain, limit)
+        
         results = []
-        for doc in self._documents.values():
-            if domain and doc.domain != domain:
-                continue
-            if query_lower in doc.title.lower() or query_lower in doc.body.lower() or query_lower in doc.summary.lower():
+        for res in fts_results:
+            doc_id = res["doc_id"]
+            doc = await self.get(doc_id)
+            if doc:
                 results.append(doc)
-        results.sort(key=lambda d: self._relevance(d, query_lower), reverse=True)
-        return results[:limit]
+        
+        return results
 
     async def search_by_domain(self, domain: str, limit: int = 50) -> List[CuratedDocument]:
         """List all documents in a domain."""
@@ -129,6 +131,10 @@ class Library:
 
     async def count(self) -> int:
         return len(self._documents)
+
+    async def close(self) -> None:
+        """Close the search index and flush any pending data."""
+        await self._indexer.close()
 
     async def stats(self) -> Dict[str, Any]:
         domains = await self.domains()

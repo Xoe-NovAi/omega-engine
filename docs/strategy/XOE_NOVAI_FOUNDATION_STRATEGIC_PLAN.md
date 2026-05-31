@@ -33,7 +33,7 @@ Rocracoon-3B-Instruct (model name from Microsoft)
 | Source | Claimed | Truth |
 |--------|---------|-------|
 | Subagent 1 (omega-stack) | "Roc = Rocracoon model only" | PARTIALLY WRONG — it was both a model AND a planned stack name |
-| Subagent 2 (xna-omega) | No mention of Roc at all | MISSED — the name was abandoned by the Temple Grade era |
+| Subagent 2 (xna-omega) | No mention of Roc at all | MISSED — the name was abandoned during the xna-omega phase |
 | Subagent 3 (foundation) | "Roc is NOT a stack" | CORRECTED — the user has now confirmed it WAS a planned name |
 | OMEGA-ORIGINS-AND-RETURN.md | Mentions "Rocracoon" only as model | INCOMPLETE — the early planning docs in Grok chats have the context |
 
@@ -80,10 +80,10 @@ Each era contributed strategy, code, or insight that the final system must captu
 **Keywords**: ODE, Omnidroid BIOS, Temple Grade (emerging)
 **Artifacts**: `omega-stack-legacy/STRATEGY-MASTER-INDEX.md`, `V5.0_COMPREHENSIVE_STRATEGY_MAPPING.md`, Foundation vs Arcana document
 
-### Era 5: Temple Grade / xna-omega (April — May 13, 2026)
-**Key contribution**: OMEGA-ORIGINS-AND-RETURN.md, the Engine vs Stack pivot session (5,600+ lines), 29-entity system
+### Era 5: Temple Grade quality standard / xna-omega (April — May 13, 2026)
+**Key contribution**: OMEGA-ORIGINS-AND-RETURN.md, the Engine vs Stack separation session (5,600+ lines), craftsmanship philosophy
 **Strategic gold**: The question "Is Omega the engine that runs every Xoe-NovAi stack?" — the reclamation seed
-**Keywords**: Temple Grade, 13 Archons, 26 spheres, `ses_1e18`
+**Keywords**: Temple Grade quality standard, OMEGA-ORIGINS, `ses_1e18`
 **Artifacts**: `xna-omega-legacy/OMEGA_CANON.md`, `resonance_mappings.yaml`, `opencode-omega-engine-vision-deepening-session-ses_1e18-05-13-2026.md`
 
 ### Era 6: Omega Engine (May 13-15, 2026 — PRESENT)
@@ -199,7 +199,7 @@ sovereign_dev_system:
       - DAG dependency resolution
       - Effort estimation (hours/days)
       - Automatic priority escalation on blockers
-      - Integration with Belial mining queue
+      - Integration with Roc Racoon mining queue
       - Integration with research index (R## docs)
 
   research_catalog:
@@ -242,7 +242,7 @@ sovereign_dev_system:
 - CLI: `omega work [list|add|status]`
 
 **Phase 2: Integration (Week 2)**
-- Wire work_tracker into Belial mining queue
+- Wire work_tracker into Roc Racoon mining queue
 - Wire research_catalog into mkdocs + FTS5
 - Create per-project context boundaries in ContextBuilder
 - CLI: `omega legacy [scan|catalog]`
@@ -306,7 +306,7 @@ $ omega status
 ║  └── ...                                                   ║
 ║                                                            ║
 ║  LEGACY BACKLOG: 143 artifacts (12 high-value)             ║
-║  NEXT MINING: Belial timer (03:30 daily)                   ║
+║  NEXT MINING: Roc Racoon timer (03:30 daily)                   ║
 ╚══════════════════════════════════════════════════════════════╝
 ```
 
@@ -387,8 +387,8 @@ community_tool:
 |-----|-----------|---------|
 | Day 1 | C-1 (gnosis_proxy import), C-5/C-6 (MCP Hub async), C-8/C-9 (exposed secrets) | Engine |
 | Day 2 | C-2 (soul evolution race), C-3 (blocking subprocess), C-4 (ResourceGuard), C-7 (curation_pipeline) | Engine |
-| Day 3 | C-10 (setup.sh), C-11 (Belial container), C-12 (providers.yaml), C-13 (asyncio in MCP Hub) | Engine |
-| Day 4 | C-14 (Belial paths), C-15 (PodmanArgs), C-16 (image tags), C-17 (entity_workspace path) | Engine |
+| Day 3 | C-10 (setup.sh), C-11 (Roc Racoon container), C-12 (providers.yaml), C-13 (asyncio in MCP Hub) | Engine |
+| Day 4 | C-14 (Roc Racoon paths), C-15 (PodmanArgs), C-16 (image tags), C-17 (entity_workspace path) | Engine |
 | Day 5-7 | Write tests for all fixes. Implement Omega project CLI (Phase 1 of Workbench). | Engine + Workbench |
 
 ### Week 2: Provider Chain + Key Pool
@@ -406,7 +406,7 @@ community_tool:
 | Day | Work Items | Project |
 |-----|-----------|---------|
 | Day 1-2 | Build llama-cpp-python with Zen 2 flags. Fix NativeGGUFProvider. | Engine |
-| Day 3 | Implement Belial mining queue integration with Workbench | Workbench |
+| Day 3 | Implement Roc Racoon mining queue integration with Workbench | Workbench |
 | Day 4 | Mine P0 targets: Old Stacks directory, docs-backup strategy docs, stack-cat snapshots | Legacy |
 | Day 5 | Mine P1 targets: Grok account exports, Mnemosyne memory system, tarot genesis docs | Legacy |
 | Day 6-7 | Catalog all findings into workbench with sovereignty scores | Workbench |

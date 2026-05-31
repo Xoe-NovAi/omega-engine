@@ -20,8 +20,8 @@ Pod=omega-infra.pod
 # Zen 2 Core Steering
 # Sovereign Volume
 Volume=/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/deploy/infra/Caddyfile:/etc/caddy/Caddyfile:ro,Z,U
-Volume=/media/arcana-novai/omega_library/podman-storage/volumes/caddy/data:/data:Z,U
-Volume=/media/arcana-novai/omega_library/podman-storage/volumes/caddy/config:/config:Z,U
+Volume=/media/arcana-novai/omega_library/podman-storage/volumes/caddy/data:/data
+Volume=/media/arcana-novai/omega_library/podman-storage/volumes/caddy/config:/config
 HealthCmd=curl -f http://localhost:80/
 Notify=healthy
 
@@ -38,7 +38,7 @@ Delegate=yes
 Type=notify
 NotifyAccess=all
 SyslogIdentifier=%N
-ExecStart=/usr/bin/podman run --name omega-caddy --cidfile=%t/%N.cid --replace --rm --cgroups=split --sdnotify=healthy -d -v /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/deploy/infra/Caddyfile:/etc/caddy/Caddyfile:ro,Z,U -v /media/arcana-novai/omega_library/podman-storage/volumes/caddy/data:/data:Z,U -v /media/arcana-novai/omega_library/podman-storage/volumes/caddy/config:/config:Z,U --health-cmd "curl -f http://localhost:80/" --pod-id-file %t/omega-infra-pod.pod-id docker.io/library/caddy:2.8-alpine
+ExecStart=/usr/bin/podman run --userns=keep-id --user 1000 --name omega-caddy --cidfile=%t/%N.cid --replace --rm --cgroups=split --sdnotify=healthy -d -v /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/deploy/infra/Caddyfile:/etc/caddy/Caddyfile:ro,Z,U -v /media/arcana-novai/omega_library/podman-storage/volumes/caddy/data:/data -v /media/arcana-novai/omega_library/podman-storage/volumes/caddy/config:/config --health-cmd "curl -f http://localhost:80/" --pod-id-file %t/omega-infra-pod.pod-id docker.io/library/caddy:2.8-alpine
 
 [Install]
 WantedBy=default.target

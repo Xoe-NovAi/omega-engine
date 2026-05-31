@@ -381,18 +381,19 @@ class T2Backend:
             # Google's API structure is different — system instruction as a param
             max_retries = 5
             for attempt in range(max_retries):
-                async with httpx.AsyncClient(timeout=60.0) as client:
-                    resp = await client.post(
-                        f"{self.google_endpoint}?key={self.google_api_key}",
-                        json={
-                            "contents": [{"role": "user", "parts": [{"text": prompt}]}],
-                            "systemInstruction": {"parts": [{"text": system_prompt}]},
-                            "generationConfig": {
-                                "temperature": temp,
-                                "maxOutputTokens": max_tokens,
+                    async with httpx.AsyncClient(timeout=60.0) as client:
+                        resp = await client.post(
+                            f"{self.google_endpoint}",
+                            headers={"X-Goog-Api-Key": self.google_api_key},
+                            json={
+                                "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+                                "systemInstruction": {"parts": [{"text": system_prompt}]},
+                                "generationConfig": {
+                                    "temperature": temp,
+                                    "maxOutputTokens": max_tokens,
+                                },
                             },
-                        },
-                    )
+                        )
         
                     if resp.status_code == 500:
                         wait = min(2 ** attempt, 16)
@@ -617,7 +618,7 @@ class TrainingTripleSaver:
 
     def __init__(self, base_dir: Optional[Path] = None):
         if base_dir is None:
-            base_dir = Path(__file__).parent.parent.parent.parent / "data" / "datasets" / "synthetic"
+            base_dir = Path(__file__).resolve().parent.parent.parent.parent.parent / "data" / "datasets" / "synthetic"
         self.base_dir = Path(base_dir)
 
     async def save(

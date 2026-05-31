@@ -328,7 +328,7 @@ RULE 4 — Frontmatter mandate.
 | **omega-infra-pod** | **Running** | mixed | caddy, redis, qdrant, iris, searxng |
 | lmster (LM Studio) | Running | :1234 | Qwen3-4B-Thinking loaded |
 | omega-postgres | Failed | — | Image tag issue, deferred |
-| omega-belial | Needs start | — | Image built, container not running |
+| omega-roc_racoon | Needs start | — | Image built, container not running |
 | Root disk | 98% (2.3G free) | — | Podman NOT blocked (uses separate partition) |
 | NVMe omega_library | 24G free | — | Podman graph root, models |
 | 8TB HDD OmegaLibrary | 7.3T free | — | HF Hub cache |
@@ -367,7 +367,7 @@ RULE 4 — Frontmatter mandate.
 
 ### Container Configs
 - `Dockerfile.iris`
-- `Dockerfile.belial`
+- `Dockerfile.roc_racoon`
 
 ### Configuration
 - `config/entities.yaml`
