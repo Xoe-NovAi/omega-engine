@@ -99,7 +99,8 @@ def create_openrouter_provider(config: ProviderConfig) -> OpenAICompatProvider:
 def create_groq_provider(config: ProviderConfig) -> OpenAICompatProvider:
     """Create a Groq provider with correct base URL."""
     config.base_url = config.base_url or "https://api.groq.com/openai"
-    config.timeout_seconds = config.timeout_seconds or 15.0  # Groq is fast
+    if config.timeout_seconds is None:
+        config.timeout_seconds = 15.0  # Groq is fast
     return OpenAICompatProvider(config)
 
 

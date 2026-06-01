@@ -9,6 +9,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 from .models import ResearchTask, RotationState
+import logging
+logger = logging.getLogger(__name__)
 
 class TopicScheduler:
     """Manages the round-robin rotation and deepening of scheduled research topics.
@@ -31,7 +33,7 @@ class TopicScheduler:
                     data = json.load(f)
                     return RotationState(**data)
             except Exception as e:
-                print(f"Error loading scheduler state: {e}")
+                logger.warning("Error loading scheduler state: %s", e)
         return RotationState()
 
     def _save_state(self):
@@ -41,7 +43,7 @@ class TopicScheduler:
             with open(self.state_path, "w") as f:
                 json.dump(self.state.__dict__, f, indent=2)
         except Exception as e:
-            print(f"Error saving scheduler state: {e}")
+            logger.warning("Error saving scheduler state: %s", e)
         
     def _load_config(self) -> dict:
         try:
@@ -49,7 +51,7 @@ class TopicScheduler:
                 return yaml.safe_load(f)
         except Exception as e:
             # In a real worker, this would use the logger
-            print(f"Error loading research topics config: {e}")
+            logger.warning("Error loading research topics config: %s", e)
             return {}
 
     def get_next_topic(self) -> Optional[ResearchTask]:

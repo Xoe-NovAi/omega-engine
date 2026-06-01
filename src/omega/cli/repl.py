@@ -97,8 +97,8 @@ class OmegaREPL:
                 self.transient = state.get("transient", False)
                 self.current_entity = state.get("current_entity", "SOPHIA")
                 self.header_mode = state.get("header_mode", "compact")
-            except Exception:
-                pass  # Use defaults
+            except Exception as e:
+                logger.warning("Failed to load REPL state, using defaults: %s", e)
 
     def _save_state(self):
         """Persist REPL state to disk."""
@@ -283,8 +283,8 @@ class OmegaREPL:
             for name, success in self.oracle.wad_loader.load_all_wads():
                 if success:
                     wads.append(name)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("Failed to load WADs for status display: %s", e)
         print(f"  Active WADs:   {', '.join(wads) if wads else 'None'}")
         print(f"{'=' * 50}\n")
 

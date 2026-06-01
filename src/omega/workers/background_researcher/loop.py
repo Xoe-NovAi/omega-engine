@@ -209,8 +209,8 @@ class BackgroundResearcherLoop:
             self._running = False
             try:
                 self.lock_path.rmdir()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("Failed to remove research lock: %s", e)
 
     async def _local_discovery_scan(self, task: ResearchTask) -> str:
         """Perform a 'Discovery-First' scan of the local codebase for relevant snippets."""
@@ -238,7 +238,8 @@ class BackgroundResearcherLoop:
                             for line in content.splitlines():
                                 if pattern.lower() in line.lower():
                                     snippets.append(f"[{file_path.name}]: {line.strip()}")
-                        except Exception:
+                        except Exception as e:
+                            logger.warning("Failed to read file %s: %s", file_path, e)
                             continue
                             
         return "\n".join(snippets[:20])
@@ -298,7 +299,8 @@ class BackgroundResearcherLoop:
                 chunk = await self._fetch_content(url)
                 if chunk:
                     content_chunks.append(f"[Source: {url}]\n{chunk}")
-            except Exception:
+            except Exception as e:
+                logger.warning("Failed to fetch URL %s: %s", url, e)
                 continue
         return "\n\n---\n\n".join(content_chunks[:3])
 
@@ -317,7 +319,8 @@ class BackgroundResearcherLoop:
                 resp = await client.get(url, follow_redirects=True)
                 resp.raise_for_status()
                 return resp.text[:8000]
-        except Exception:
+        except Exception as e:
+            logger.warning("HTTP fallback failed for %s: %s", url, e)
             return None
 
     async def _enqueue_adjacent(self, task: ResearchTask, gnosis: GnosisPacket) -> None:
@@ -437,21 +440,22 @@ class BackgroundResearcherLoop:
                 tmp.write_bytes(existing + line.encode("utf-8"))
                 tmp.replace(log_path)
             await anyio.to_thread.run_sync(_atomic_append)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("Failed to append cycle log: %s", e)
 
     async def _is_network_available(self) -> bool:
         try:
             async with httpx.AsyncClient(timeout=5.0) as client:
                 await client.get("https://httpbin.org/get")
                 return True
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("Network check (httpbin) failed: %s", e)
         try:
             async with httpx.AsyncClient(timeout=5.0) as client:
                 resp = await client.get("http://localhost:8017/healthz")
                 return resp.status_code == 200
-        except Exception:
+        except Exception as e:
+            logger.warning("Network check (SearXNG health) failed: %s", e)
             return False
 
     async def get_status(self) -> dict:

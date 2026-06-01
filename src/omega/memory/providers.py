@@ -132,8 +132,8 @@ class RedisStorageProvider(StorageProvider):
     async def close(self) -> None:
         try:
             await self.client.close()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("Failed to close Redis connection: %s", e)
 
 class FileStorageProvider(StorageProvider):
     """Warm storage provider using JSON files on disk with disk guard and file locking."""
@@ -253,8 +253,8 @@ class FileStorageProvider(StorageProvider):
         try:
             lock_path = warm_path.with_suffix(".lock")
             await anyio.Path(lock_path).unlink()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("Failed to remove lock file %s: %s", lock_path, e)
         return True
 
     async def close(self) -> None:

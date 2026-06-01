@@ -198,7 +198,8 @@ class InboxManager:
         try:
             text = await anyio.Path(src).read_text()
             data = json.loads(text)
-        except Exception:
+        except Exception as e:
+            logger.warning("Failed to load failed item %s: %s", item_id, e)
             data = {"item_id": item_id}
         data["error"] = error
         data["failed_at"] = datetime.now(timezone.utc).isoformat()
@@ -218,8 +219,8 @@ class InboxManager:
                     try:
                         text = await anyio.Path(path).read_text()
                         return InboxItem.from_dict(json.loads(text))
-                    except Exception:
-                        pass
+                    except Exception as e:
+                        logger.warning("Failed to load inbox item from %s: %s", path, e)
         return None
 
     async def clear_completed(self) -> int:

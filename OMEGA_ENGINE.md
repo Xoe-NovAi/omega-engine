@@ -229,12 +229,12 @@ See `SOVEREIGN_MANDATES.md` for full details (12 mandates).
 - [x] Benchmark runner with per-criterion scoring, calibration loop, position randomization
 - [x] CLI commands: `bench run`, `bench compare`, `bench rank`, `bench list`
 
-### ⏳ REMAINING — Option B (Mandate 9 Violations)
-- [ ] Fix 17 bare `except Exception:` without logging (10 files)
-- [ ] Fix falsy-trap in openai_compat.py:102 (`timeout or 15.0`)
-- [ ] Fix hardcoded paths in greek.py + cpu_optimizer.py
-- [ ] Fix direct `asyncio` import in observability.py:235
-- [ ] All 17 violations must have `logger.warning()` before silent fallback
+### ✅ DONE — Option B (Mandate 9 Violations)
+- [x] Fix 23 bare `except Exception:` without logging (10 files)
+- [x] Fix falsy-trap in openai_compat.py:102 (`timeout or 15.0`)
+- [x] Fix hardcoded paths in greek.py + cpu_optimizer.py
+- [x] Fix direct `asyncio` import in observability.py:235
+- [x] All violations now have `logger.warning()` before silent fallback
 
 ### ✅ DONE — MCP Hub Restoration (40 Tools)
 - [x] Restored 40 MCP tools from git history (`69db713` merged with current HTTP routes)
@@ -315,5 +315,5 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 
 ---
 
-*Last Updated: 2026-06-01 | Author: SOPHIA — Horizon 2: ForensicsManager + Error Gauntlet*
+*Last Updated: 2026-06-01 | Author: GEMMA4 — Option B (Mandate 9, falsy-trap, hardcoded paths) — Horizon 1 FINAL GATE CLOSED*
 *This document is the Single Source of Truth. All platforms reference it.*

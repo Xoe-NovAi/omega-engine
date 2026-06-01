@@ -38,6 +38,7 @@ import platform
 import re
 import time
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 
 logger = logging.getLogger(__name__)
@@ -182,8 +183,8 @@ class Zen2Optimizer:
             f"cmake -B build {' '.join(flags.to_cmake_flags())}\n"
             "cmake --build build --config Release -j$(nproc)\n"
             "# Install binaries:\n"
-            "cp build/bin/llama-server /home/arcana-novai/.local/bin/\n"
-            "cp build/bin/llama-cli /home/arcana-novai/.local/bin/\n\n"
+            f"cp build/bin/llama-server {Path.home()}/.local/bin/\n"
+            f"cp build/bin/llama-cli {Path.home()}/.local/bin/\n\n"
             "# Environment variables for runtime:\n"
             "export OMP_NUM_THREADS=6\n"
             "export OMP_PROC_BIND=close\n"
@@ -382,7 +383,8 @@ class Zen2Optimizer:
             )
             available_kb = int(result.stdout.decode().strip())
             pressure["available_mb"] = available_kb // 1024
-        except Exception:
+        except Exception as e:
+            logger.warning("Failed to read RAM pressure via awk: %s", e)
             pressure["available_mb"] = RAM_AVAILABLE_AI_MB
 
         avail = pressure["available_mb"]

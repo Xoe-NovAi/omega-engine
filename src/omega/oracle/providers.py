@@ -316,7 +316,8 @@ class NativeGGUFProvider(BaseProvider):
                 "fits_in_ram": fits,
                 "headroom_mb": round(RAM_AVAILABLE_AI_MB - total_mb, 0),
             }
-        except Exception:
+        except Exception as e:
+            logger.warning("Failed to estimate memory for model '%s': %s", self.model_path or '?', e)
             return {"model_mb": 0, "kv_cache_mb": 0, "total_mb": 0, "fits_in_ram": True}
 
     def _select_optimal_context(self, requested_ctx: Optional[int] = None) -> int:

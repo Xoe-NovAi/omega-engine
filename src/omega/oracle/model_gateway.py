@@ -402,7 +402,8 @@ class ModelGateway:
                 else:
                     if not provider.is_available():
                         return False
-            except Exception:
+            except Exception as e:
+                logger.warning("Provider %s availability check failed: %s", getattr(provider, 'name', '?'), e)
                 return False
 
         return True
@@ -419,8 +420,9 @@ class ModelGateway:
                     {"provider": provider.name, "model": model_name,
                      "event": "provider_failed"}
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("Failed to log BACKEND_FALLBACK event for provider %s: %s",
+                               getattr(provider, 'name', '?'), e)
 
     async def generate(
         self, model_name: str, system_prompt: str, user_query: str,

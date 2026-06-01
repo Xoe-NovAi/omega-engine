@@ -10,6 +10,8 @@ import anyio
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timezone
+import logging
+logger = logging.getLogger(__name__)
 
 class ReviewQueue:
     """A crash-safe, filesystem-backed queue for research items requiring review.
@@ -101,7 +103,7 @@ class ReviewQueue:
                 except FileExistsError:
                     continue # Already locked by another process
                 except Exception as e:
-                    print(f"Error processing review item {file_path}: {e}")
+                    logger.warning("Error processing review item %s: %s", file_path, e)
                     continue
                     
         return None
@@ -118,8 +120,8 @@ class ReviewQueue:
                     if (now - file_path.stat().st_mtime) > ttl_seconds:
                         try:
                             file_path.unlink()
-                        except Exception:
-                            pass
+                        except Exception as e:
+                            logger.warning("Failed to remove stale review item: %s", e)
         
         await anyio.to_thread.run_sync(_sweep)
 
@@ -134,7 +136,7 @@ class ReviewQueue:
                 try:
                     files[0].unlink()
                 except Exception as e:
-                    print(f"Error pruning review queue: {e}")
+                    logger.warning("Error pruning review queue: %s", e)
         
         await anyio.to_thread.run_sync(_sync_prune)
 

@@ -231,8 +231,8 @@ class ForensicsManager:
                 p for p in providers
                 if hasattr(p, 'is_available') and p.is_available
             ])
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("Failed to collect provider state for crash dump: %s", e)
 
         try:
             import psutil
@@ -247,8 +247,8 @@ class ForensicsManager:
                             if len(parts) >= 2:
                                 state["rss_mb"] = int(parts[1]) / 1024
                             break
-            except Exception:
-                pass
+            except Exception as e:
+                logger.warning("Failed to read /proc/self/status for RSS: %s", e)
 
         return state
 
@@ -279,8 +279,8 @@ class ForensicsManager:
         try:
             import sniffio
             return sniffio.current_async_library()
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("anyio backend detection failed: %s", e)
         return "unknown"
 
     def check_recovery(self) -> Optional[Dict[str, Any]]:
@@ -356,7 +356,8 @@ class ForensicsManager:
                                     timeline.append(event)
                             except json.JSONDecodeError:
                                 continue
-                except Exception:
+                except Exception as e:
+                    logger.warning("Failed to read event log for crash dump: %s", e)
                     continue
 
         return {

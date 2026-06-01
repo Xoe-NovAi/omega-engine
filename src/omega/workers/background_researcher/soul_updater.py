@@ -83,7 +83,8 @@ class SoulUpdater:
             import yaml
             content = await anyio.Path(soul_path).read_text()
             soul_data = yaml.safe_load(content) or {}
-        except Exception:
+        except Exception as e:
+            logger.warning("Failed to read soul.yaml for %s: %s", entity, e)
             soul_data = {"entity": {"name": entity, "lessons_learned": []}}
 
         # Append lesson

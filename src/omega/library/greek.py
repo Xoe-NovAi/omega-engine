@@ -197,7 +197,10 @@ def get_krikri_model_spec() -> Dict:
     return {
         "name": "krikri-8b-instruct",
         "description": "Krikri-8b-Instruct — Greek-capable instruction model (Modern + Ancient Greek)",
-        "path": "/media/arcana-novai/omega_library/models/gguf/Krikri-8b-Instruct-Q5_K_M.gguf",
+        "path": str(Path(os.environ.get(
+            "OMEGA_MODELS_DIR",
+            str(Path.home() / "omega" / "models" / "gguf")
+        )) / "Krikri-8b-Instruct-Q5_K_M.gguf"),
         "alternative_paths": [],
         "languages": ["el", "grc", "en"],
         "capabilities": ["greek_text", "ancient_greek", "instruction_following", "translation"],
