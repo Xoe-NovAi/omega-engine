@@ -858,11 +858,22 @@ class Oracle:
             }
 
     def _write_soul_atomic(self, soul: dict, temp_dir: Path) -> str:
-        """Write soul data to a temp file synchronously (runs in thread pool)."""
-        with tempfile.NamedTemporaryFile("w", dir=str(temp_dir), delete=False) as tf:
-            yaml_str = yaml.dump(soul, default_flow_style=False, sort_keys=False)
-            tf.write(f"{SOUL_FILE_HEADER}# Updated via Oracle soul evolution.\n\n{yaml_str}")
-            return tf.name
+        """Write soul data to a temp file with physical disk sync (Sovereign Pattern)."""
+        # 1. Create temp file in the same directory to ensure os.replace is atomic (same filesystem)
+        fd, temp_path = tempfile.mkstemp(dir=str(temp_dir), suffix=".tmp")
+        try:
+            with os.fdopen(fd, "w") as tf:
+                yaml_str = yaml.dump(soul, default_flow_style=False, sort_keys=False)
+                tf.write(f"{SOUL_FILE_HEADER}# Updated via Oracle soul evolution.\n\n{yaml_str}")
+                # 2. Flush buffers to OS
+                tf.flush()
+                # 3. Force physical disk write (Sovereign Sync)
+                os.fsync(tf.fileno())
+            return temp_path
+        except Exception:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+            raise
 
     # ── Pattern detection ─────────────────────────────────────────────
 

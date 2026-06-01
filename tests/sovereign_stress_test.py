@@ -13,7 +13,7 @@ import json
 
 # --- Mock Provider for Hangs ---
 class HangingProvider(LocallmsterProvider):
-    async def generate(self, model, system, user, temp, max_tokens):
+    async def generate(self, model, system, user, temp, max_tokens, trace_id=None):
         await anyio.sleep(10) # Simulate a hang
         return "Should have timed out"
 
@@ -84,7 +84,7 @@ async def test_resource_guard_concurrency():
     gateway = ModelGateway()
     
     class SlowLocalProvider(LocallmsterProvider):
-        async def generate(self, model, system, user, temp, max_tokens):
+        async def generate(self, model, system, user, temp, max_tokens, trace_id=None):
             await anyio.sleep(0.5)
             return "Done"
             

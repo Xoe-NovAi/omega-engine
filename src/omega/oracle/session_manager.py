@@ -81,23 +81,46 @@ class SessionManager:
                     logger.warning(f"Failed to read session file {active_file}: {e}")
 
             session_id = f"ses_{today}_{entity_slug}_{counter:03d}"
-
-            # Atomic write: temp file + os.replace to prevent crash corruption
-            temp_file = active_file.with_suffix(f".{os.getpid()}.tmp")
-            async with await anyio.open_file(str(temp_file), "w") as f:
-                await f.write(json.dumps({
-                    "date": today,
-                    "session_id": session_id,
-                    "counter": counter,
-                    "entity": entity_name,
-                    "created_at": datetime.now(timezone.utc).isoformat(),
-                }, indent=2))
-            await anyio.to_thread.run_sync(os.replace, str(temp_file), str(active_file))
+            
+            # Sovereign Atomic Write: Flush -> Sync -> Commit -> Anchor
+            data = {
+                "date": today,
+                "session_id": session_id,
+                "counter": counter,
+                "entity": entity_name,
+                "created_at": datetime.now(timezone.utc).isoformat(),
+            }
+            await anyio.to_thread.run_sync(self._write_session_atomic, active_file, data)
             
             return session_id
         finally:
             if await anyio.Path(lock_file).exists():
                 await anyio.Path(lock_file).unlink()
+
+    def _write_session_atomic(self, target_path: Path, data: dict) -> None:
+        """Physically synchronize session data to disk. (Sovereign Pattern)"""
+        temp_path = target_path.with_suffix(f".{os.getpid()}.tmp")
+        try:
+            # 1. Write and Sync File
+            with open(temp_path, "w") as f:
+                json.dump(data, f, indent=2)
+                f.flush()
+                os.fsync(f.fileno())
+            
+            # 2. Atomic Replace
+            os.replace(temp_path, target_path)
+            
+            # 3. Anchor: Sync Parent Directory
+            parent_dir = target_path.parent
+            dir_fd = os.open(str(parent_dir), os.O_RDONLY)
+            try:
+                os.fsync(dir_fd)
+            finally:
+                os.close(dir_fd)
+        except Exception as e:
+            if temp_path.exists():
+                temp_path.unlink()
+            raise e
 
     def get_session_id_transient(self, trace_id: str) -> str:
         """Return trace_id as session_id for transient mode."""

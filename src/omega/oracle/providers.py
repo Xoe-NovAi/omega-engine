@@ -3,6 +3,12 @@ import httpx
 import os
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
+from ..errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError
+)
 
 logger = logging.getLogger(__name__)
 
@@ -50,18 +56,42 @@ class GoogleAIProvider(BaseProvider):
             }
         }
         
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            response = await client.post(
-                url, 
-                json=payload, 
-                headers={"x-goog-api-key": api_key}
-            )
-            response.raise_for_status()
-            data = response.json()
-            try:
+        try:
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                response = await client.post(
+                    url, 
+                    json=payload, 
+                    headers={"x-goog-api-key": api_key}
+                )
+                
+                if response.status_code == 429:
+                    raise ProviderRateLimitError(provider="google", message="Google API quota exceeded", status_code=429, trace_id=trace_id)
+                if response.status_code in (401, 403):
+                    raise ProviderAuthError(provider="google", message="Google API authentication failed", status_code=response.status_code, trace_id=trace_id)
+                if response.status_code >= 500:
+                    raise ProviderUnavailableError(provider="google", message="Google API server error", status_code=response.status_code, trace_id=trace_id)
+                
+                response.raise_for_status()
+                data = response.json()
+                
+                # Handle safety blocks
+                if data.get("candidates") and "finishReason" in data["candidates"][0] and data["candidates"][0]["finishReason"] == "SAFETY":
+                    raise ProviderSafetyError(provider="google", message="Response blocked by Google safety filters", trace_id=trace_id)
+                
+                if not data.get("candidates"):
+                    return None
+                
                 return data["candidates"][0]["content"]["parts"][0]["text"].strip()
-            except (KeyError, IndexError):
-                return None
+        except httpx.TimeoutException as e:
+            raise ProviderTimeoutError(provider="google", message=f"Google API timeout: {e}", trace_id=trace_id, raw_error=e)
+        except httpx.HTTPStatusError as e:
+            # Fallback for any other HTTP errors not caught by status checks
+            raise ProviderError(provider="google", message=f"Google API HTTP error: {e}", status_code=e.response.status_code, trace_id=trace_id, raw_error=e)
+        except OmegaError as e:
+            # Allow our custom typed errors to propagate untouched
+            raise e
+        except Exception as e:
+            raise ProviderError(provider="google", message=f"Unexpected Google API failure: {e}", trace_id=trace_id, raw_error=e)
 
 class LocallmsterProvider(BaseProvider):
     """LM Studio headless server provider."""
@@ -71,7 +101,7 @@ class LocallmsterProvider(BaseProvider):
             async with httpx.AsyncClient(timeout=2.0) as client:
                 r = await client.get(f"{url}/v1/models")
                 return r.status_code == 200
-        except Exception:
+        except (httpx.HTTPError, OSError):
             return False
 
     async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None) -> Optional[str]:
@@ -87,14 +117,29 @@ class LocallmsterProvider(BaseProvider):
             "max_tokens": max_tokens,
             "stream": False,
         }
-        async with httpx.AsyncClient(timeout=120.0) as client:
-            response = await client.post(f"{url}/v1/chat/completions", json=payload)
-            response.raise_for_status()
-            data = response.json()
-            message = data["choices"][0]["message"]
-            content = message.get("content", "").strip()
-            reasoning = message.get("reasoning_content", "").strip()
-            return f"{reasoning}\n\n{content}".strip() if reasoning else content
+        try:
+            async with httpx.AsyncClient(timeout=120.0) as client:
+                response = await client.post(f"{url}/v1/chat/completions", json=payload)
+                
+                if response.status_code == 429:
+                    raise ProviderRateLimitError(provider="lmster", message="LM Studio rate limit exceeded", status_code=429, trace_id=trace_id)
+                if response.status_code >= 500:
+                    raise ProviderUnavailableError(provider="lmster", message="LM Studio server error", status_code=response.status_code, trace_id=trace_id)
+                
+                response.raise_for_status()
+                data = response.json()
+                message = data["choices"][0]["message"]
+                content = message.get("content", "").strip()
+                reasoning = message.get("reasoning_content", "").strip()
+                return f"{reasoning}\n\n{content}".strip() if reasoning else content
+        except httpx.TimeoutException as e:
+            raise ProviderTimeoutError(provider="lmster", message=f"LM Studio timeout: {e}", trace_id=trace_id, raw_error=e)
+        except httpx.HTTPStatusError as e:
+            raise ProviderError(provider="lmster", message=f"LM Studio HTTP error: {e}", status_code=e.response.status_code, trace_id=trace_id, raw_error=e)
+        except OmegaError as e:
+            raise e
+        except Exception as e:
+            raise ProviderError(provider="lmster", message=f"Unexpected LM Studio failure: {e}", trace_id=trace_id, raw_error=e)
 
 class OllamaProvider(BaseProvider):
     """Ollama local provider."""
@@ -104,7 +149,7 @@ class OllamaProvider(BaseProvider):
             async with httpx.AsyncClient(timeout=2.0) as client:
                 r = await client.get(f"{url}/api/tags")
                 return r.status_code == 200
-        except Exception:
+        except (httpx.HTTPError, OSError):
             return False
 
     async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None) -> Optional[str]:
@@ -120,14 +165,29 @@ class OllamaProvider(BaseProvider):
             "max_tokens": max_tokens,
             "stream": False,
         }
-        async with httpx.AsyncClient(timeout=120.0) as client:
-            response = await client.post(f"{url}/v1/chat/completions", json=payload)
-            response.raise_for_status()
-            data = response.json()
-            message = data["choices"][0]["message"]
-            content = message.get("content", "").strip()
-            reasoning = message.get("reasoning_content", "").strip()
-            return f"{reasoning}\n\n{content}".strip() if reasoning else content
+        try:
+            async with httpx.AsyncClient(timeout=120.0) as client:
+                response = await client.post(f"{url}/v1/chat/completions", json=payload)
+                
+                if response.status_code == 429:
+                    raise ProviderRateLimitError(provider="ollama", message="Ollama rate limit exceeded", status_code=429, trace_id=trace_id)
+                if response.status_code >= 500:
+                    raise ProviderUnavailableError(provider="ollama", message="Ollama server error", status_code=response.status_code, trace_id=trace_id)
+                
+                response.raise_for_status()
+                data = response.json()
+                message = data["choices"][0]["message"]
+                content = message.get("content", "").strip()
+                reasoning = message.get("reasoning_content", "").strip()
+                return f"{reasoning}\n\n{content}".strip() if reasoning else content
+        except httpx.TimeoutException as e:
+            raise ProviderTimeoutError(provider="ollama", message=f"Ollama timeout: {e}", trace_id=trace_id, raw_error=e)
+        except httpx.HTTPStatusError as e:
+            raise ProviderError(provider="ollama", message=f"Ollama HTTP error: {e}", status_code=e.response.status_code, trace_id=trace_id, raw_error=e)
+        except OmegaError as e:
+            raise e
+        except Exception as e:
+            raise ProviderError(provider="ollama", message=f"Unexpected Ollama failure: {e}", trace_id=trace_id, raw_error=e)
 
 class MockProvider(BaseProvider):
     """Offline mock provider — last resort when no inference backend is available."""
@@ -346,7 +406,7 @@ class NativeGGUFProvider(BaseProvider):
         n_ctx: Optional[int] = None,
     ) -> Optional[str]:
         """Perform local inference with Zen 2 optimizations.
-
+        
         Args:
             model: Model identifier (used for logging).
             system_prompt: System prompt text.
@@ -355,16 +415,16 @@ class NativeGGUFProvider(BaseProvider):
             max_tokens: Maximum tokens to generate.
             trace_id: Observability trace ID.
             n_ctx: Optional context length override. If None, auto-selects.
-
+        
         Returns:
             Generated text or None on failure.
         """
         import anyio
         await self._ensure_loaded(n_ctx)
-
+        
         # Format prompt (ChatML-style for most GGUF models)
         prompt = f"<|system|>{system_prompt}</s><|user|>{user_query}</s><|assistant|>"
-
+        
         try:
             response = await anyio.to_thread.run_sync(
                 lambda: self.llm(
@@ -375,14 +435,31 @@ class NativeGGUFProvider(BaseProvider):
                     echo=False,
                 )
             )
-
+        
             if response and "choices" in response:
                 return response["choices"][0]["text"].strip()
         except Exception as e:
+            # Check for OOM patterns in the error message
+            err_msg = str(e).lower()
+            if "cuda malloc" in err_msg or "out of memory" in err_msg or "allocation failed" in err_msg:
+                raise InferenceOOMError(
+                    message=f"Native GGUF OOM: {e}", 
+                    trace_id=trace_id, 
+                    raw_error=e
+                )
+            if "illegal instruction" in err_msg or "segmentation fault" in err_msg:
+                raise InferenceRuntimeError(
+                    message=f"Native GGUF runtime crash: {e}", 
+                    trace_id=trace_id, 
+                    raw_error=e
+                )
+            
             logger.error(f"Native GGUF inference failed: {e}")
             # Reset model state on error to force reload
             self.llm = None
             self._loaded_ctx = 0
+            raise InferenceError(message=f"Native GGUF inference failed: {e}", trace_id=trace_id, raw_error=e)
+
 
         return None
 

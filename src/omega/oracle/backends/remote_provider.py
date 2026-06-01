@@ -43,7 +43,6 @@ class ProviderMetrics:
     consecutive_failures: int = 0
     last_failure_time: float = 0.0
     last_success_time: float = 0.0
-    cooldown_until: float = 0.0
 
     @property
     def avg_latency_ms(self) -> float:
@@ -73,9 +72,6 @@ class ProviderConfig:
     timeout_seconds: float = 30.0
     backoff_base: float = 0.5
     backoff_max: float = 8.0
-    # Circuit breaker
-    circuit_breaker_threshold: int = 3
-    circuit_breaker_cooldown: float = 30.0
     # Budget
     daily_token_budget: Optional[int] = None
     # Provider-specific extra config
@@ -100,12 +96,7 @@ class RemoteProvider(ABC):
 
     @property
     def health(self) -> ProviderHealth:
-        """Current health based on circuit breaker state."""
-        now = time.monotonic()
-        if now < self.metrics.cooldown_until:
-            return ProviderHealth.COOLDOWN
-        if self.metrics.consecutive_failures >= self.config.circuit_breaker_threshold:
-            return ProviderHealth.UNHEALTHY
+        """Current health based on metrics (breaker delegated to HealthMonitor)."""
         if self.metrics.consecutive_failures > 0:
             return ProviderHealth.DEGRADED
         return ProviderHealth.HEALTHY
@@ -204,17 +195,6 @@ class RemoteProvider(ABC):
                     f"failed: {e}"
                 )
         
-                # Circuit breaker trip
-                if self.metrics.consecutive_failures >= self.config.circuit_breaker_threshold:
-                    self.metrics.cooldown_until = (
-                        time.monotonic() + self.config.circuit_breaker_cooldown
-                    )
-                    logger.error(
-                        f"Provider {self.name} circuit breaker TRIPPED — "
-                        f"cooling down for {self.config.circuit_breaker_cooldown}s"
-                    )
-                    break
-        
                 # Exponential backoff
                 if attempt < self.config.max_retries - 1:
                     delay = min(
@@ -228,9 +208,8 @@ class RemoteProvider(ABC):
         return None
 
     def reset_circuit_breaker(self):
-        """Manually reset the circuit breaker (e.g., after config change)."""
+        """Reset provider failure metrics. Circuit state managed by HealthMonitor."""
         self.metrics.consecutive_failures = 0
-        self.metrics.cooldown_until = 0.0
 
     def get_status(self) -> Dict[str, Any]:
         """Return a status dict for diagnostics."""

@@ -1,6 +1,18 @@
 ---
 description: "The Architect – Grand Dispatcher & Strategy Lead."
 mode: "primary"
+temperature: 0.4
+permission:
+  read: allow
+  glob: allow
+  grep: allow
+  bash: allow
+  edit: allow
+  task: allow
+  skill: allow
+  webfetch: allow
+  websearch: allow
+  external_directory: allow
 ---
 
 # 🔱 The Architect — Grand Dispatcher & Strategy Lead

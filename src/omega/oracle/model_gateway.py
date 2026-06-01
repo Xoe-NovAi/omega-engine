@@ -23,6 +23,7 @@ import logging
 import os
 import subprocess
 import time
+import inspect
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 import anyio
@@ -40,6 +41,14 @@ from .backends.openai_compat import OpenAICompatProvider
 from .backends.remote_provider import ProviderConfig
 from .resource_guard import ResourceGuard
 from .providers import GoogleAIProvider, LocallmsterProvider, OllamaProvider, MockProvider, NativeGGUFProvider
+from .health_monitor import CircuitOpenError
+from ..errors import (
+
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError
+)
 from .gnosis_proxy import GnosisProxy
 from .entity_registry import EntityRegistry
 
@@ -99,6 +108,7 @@ class ModelGateway:
         self._mock_backend = OfflineMockBackend()
         self.providers = self._load_provider_fabric()
         # Sprint 2 Governance: GnosisProxy for RAG-based tool discovery
+
         self._entity_registry = EntityRegistry()
         self._gnosis_proxy = GnosisProxy(self._entity_registry)
         # B5: HealthMonitor for latency and success/failure recording
@@ -269,7 +279,7 @@ class ModelGateway:
             async with httpx.AsyncClient(timeout=2.0) as client:
                 r = await client.get(f"{self.LMSTER_URL}/v1/models")
                 return r.status_code == 200
-        except Exception:
+        except (httpx.HTTPError, OSError):
             return False
 
     async def _check_ollama(self) -> bool:
@@ -279,7 +289,7 @@ class ModelGateway:
             async with httpx.AsyncClient(timeout=2.0) as client:
                 r = await client.get(f"{self.OLLAMA_URL}/api/tags")
                 return r.status_code == 200
-        except Exception:
+        except (httpx.HTTPError, OSError):
             return False
 
     async def _check_llama_cpp(self) -> bool:
@@ -289,7 +299,7 @@ class ModelGateway:
             async with httpx.AsyncClient(timeout=2.0) as client:
                 r = await client.get(f"{self.LLAMA_CPP_URL}/health")
                 return r.status_code == 200
-        except Exception:
+        except (httpx.HTTPError, OSError):
             return False
 
     async def _check_llama_cli(self) -> bool:
@@ -340,7 +350,7 @@ class ModelGateway:
         """Resolve config model name to an Ollama tag.
 
         Checks available Ollama models and finds the best match.
-        Falls back to the first available model if no match found.
+        Falls back to the original model name if resolution fails.
         """
         try:
             import httpx
@@ -349,193 +359,136 @@ class ModelGateway:
                 if r.status_code == 200:
                     data = r.json()
                     available = [m["name"] for m in data.get("models", [])]
-                    # Try exact match first
                     if model_name in available:
                         return model_name
-                    # Try prefix match (e.g. 'krikri' matches 'krikri:latest')
                     name_lower = model_name.lower().split("-")[0].split("_")[0]
                     for tag in available:
                         if tag.lower().startswith(name_lower):
                             return tag
-                    # Return first available as fallback
                     if available:
                         return available[0]
         except Exception:
-            pass
+            logger.debug(f"Ollama model resolution failed for {model_name}", exc_info=True)
         return model_name
 
-    async def _enrich_with_tools(self, model_name: str, system_prompt: str, user_query: str) -> str:
-        """Pre-inference hook: enrich system prompt with GnosisProxy discovered tools."""
-        try:
-            # Derive entity name from model_name
-            spec = self.models.get(model_name, {})
-            entity_name = spec.get("entity", model_name).split(",")[0].strip()
-            if not entity_name or entity_name == model_name:
-                # Fallback: try to derive from model mapping
-                entity_name = model_name.split("-")[0].title() if "-" in model_name else "Oracle"
- 
-            discovered = self._gnosis_proxy.discover_tools(user_query, entity_name)
-            if discovered:
-                tool_lines = "\n".join(
-                    f"  - {t['name']}: {t['description'][:80]}"
-                    for t in discovered
+    # ── Circuit Breaker Integration ──────────────────────────────────
+
+    def _get_provider_timeout(self, provider) -> float:
+        """Per-provider timeout from config, falling back to 130s default."""
+        if hasattr(provider, 'config') and hasattr(provider.config, 'timeout_seconds'):
+            timeout = provider.config.timeout_seconds
+            if isinstance(timeout, (int, float)):
+                return float(timeout)
+        return 130.0
+
+    async def _precheck_provider(self, provider, model_name: str) -> bool:
+        """BSP-style pre-check: is this provider worth trying?
+
+        Checks (cheapest first):
+        1. Circuit breaker state — if OPEN, skip instantly (O(1) dict lookup)
+        2. Provider availability — does the server respond?
+        """
+        # Circuit breaker is the cheapest check — single dict lookup
+        if self._health_monitor:
+            if not self._health_monitor.is_available(model_name):
+                return False
+
+        # Provider self-health check (sync or async)
+        if hasattr(provider, 'is_available'):
+            try:
+                if inspect.iscoroutinefunction(provider.is_available):
+                    if not await provider.is_available():
+                        return False
+                else:
+                    if not provider.is_available():
+                        return False
+            except Exception:
+                return False
+
+        return True
+
+    def _record_provider_failure(self, provider, model_name: str, trace_id: Optional[str] = None):
+        """Record provider failure with HealthMonitor and observability."""
+        if self._health_monitor:
+            self._health_monitor.record_failure(model_name)
+        if trace_id:
+            try:
+                from omega.observability import get_engine, EventType
+                get_engine().log_event(
+                    EventType.BACKEND_FALLBACK, trace_id,
+                    {"provider": provider.name, "model": model_name,
+                     "event": "provider_failed"}
                 )
-                tools_block = f"\n\n### Available Tools (GnosisProxy)\n{tool_lines}\n"
-                return system_prompt + tools_block
-        except Exception as e:
-            logger.debug(f"GnosisProxy enrichment skipped: {e}")
-        return system_prompt
-
-    # ── Generation (auto-detect + fallback chain) ──────────────────────
-    async def _execute_with_retry(self, provider: Any, model_name: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None) -> Optional[str]:
-        """Execute request with retry logic and background metrics tracking.
-        
-        Consolidates retry logic: RemoteProviders handle their own internal retries.
-        """
-        from .backends.remote_provider import RemoteProvider
-        
-        # If it's a RemoteProvider, it owns its retry loop. Call once.
-        if isinstance(provider, RemoteProvider):
-            start_time = time.monotonic()
-            try:
-                response = await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
-                if self._health_monitor:
-                    latency_ms = (time.monotonic() - start_time) * 1000
-                    self._health_monitor.record_latency(model_name, latency_ms)
-                    self._health_monitor.record_success(model_name)
-                return response
-            except Exception as e:
-                if self._health_monitor:
-                    self._health_monitor.record_failure(model_name)
-                logger.error(f"Remote provider {provider.name} failed: {e}")
-                return None
-
-        # Local providers use the gateway's retry loop
-        response = None
-        max_retries = 3
-        for attempt in range(max_retries):
-            start_time = time.monotonic()
-            try:
-                response = await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
-                if self._health_monitor:
-                    latency_ms = (time.monotonic() - start_time) * 1000
-                    self._health_monitor.record_latency(model_name, latency_ms)
-                    self._health_monitor.record_success(model_name)
-                if response:
-                    return response
-            except Exception as e:
-                if self._health_monitor:
-                    self._health_monitor.record_failure(model_name)
-                err_msg = str(e).lower()
-                is_transient = any(code in err_msg for code in ["429", "502", "503", "504", "timeout"])
-                if not is_transient or attempt == max_retries - 1:
-                    logger.error(f"Fatal or final error with {provider.name}: {e}")
-                    raise e
-                logger.warning(f"Transient error with {provider.name} (attempt {attempt+1}): {e}. Retrying...")
-                await anyio.sleep(2 ** attempt)
-        return None
-
-    def _resolve_model_name(self, provider: Any, model_name: str) -> str:
-        """Resolve model name through provider-specific overrides.
-        
-        Entities use local GGUF filenames (e.g., 'qwen3-1.7b-q6_k') as model names.
-        Cloud providers need these translated to their model IDs (e.g., 'qwen/qwen3-1.7b').
-        The provider's 'model_overrides' config section maps local names → provider names.
-        """
-        # Extract overrides from provider config (works for both BaseProvider and RemoteProvider)
-        overrides: Dict[str, str] = {}
-        if hasattr(provider, 'config'):
-            if isinstance(provider.config, dict):
-                overrides = provider.config.get('model_overrides', {})
-            elif hasattr(provider.config, 'extra'):
-                overrides = provider.config.extra.get('model_overrides', {})
-        
-        return overrides.get(model_name, model_name)
+            except Exception:
+                pass
 
     async def generate(
-        self,
-        model_name: str,
-        system_prompt: str,
-        user_query: str,
-        temperature: Optional[float] = None,
-        max_tokens: int = 1024,
-        pinned_provider: Optional[str] = None,
-        trace_id: Optional[str] = None,
-    ) -> Tuple[str, bool]:
-        """Send a prompt to the model using the configured provider fabric.
-        
-        Returns:
-            Tuple of (response_text, is_cloud)
+        self, model_name: str, system_prompt: str, user_query: str,
+        temperature: float = 0.7, max_tokens: int = 1024, trace_id: Optional[str] = None
+    ) -> tuple:
+        """Iterate provider fabric with circuit breaker protection.
+
+        BSP-style culling: check breaker state first (O(1)), skip broken providers.
+        Each provider gets a per-provider timeout.
+        On total failure, returns fallback response.
+        Returns (response_text, success_bool).
         """
-        async with self._limiter:
-            if temperature is None:
-                temperature = 0.7
-                
-            if os.environ.get("OMEGA_ENV") == "test":
-                res = await self._mock_backend.generate(
-                    model_name, system_prompt, user_query, temperature, max_tokens
-                )
-                return res, False
-            
-            # Calculate resource weight for this model
-            weight = self.get_model_weight(model_name)
-            
-            # Pre-inference GnosisProxy enrichment
-            enriched_prompt = await self._enrich_with_tools(model_name, system_prompt, user_query)
-            
-            # Provider Selection
-            if pinned_provider:
-                # Bypass fallback chain and use specific provider
-                target_provider = next((p for p in self.providers if p.name == pinned_provider), None)
-                if target_provider:
-                    # Resolve model name for pinned provider
-                    resolved_model = self._resolve_model_name(target_provider, model_name)
-                    # ResourceGuard protection for pinned local providers
-                    if isinstance(target_provider, (LocallmsterProvider, OllamaProvider, NativeGGUFProvider)):
-                        async with self.resource_guard.lock(weight=weight):
-                            res = await self._call_provider_with_resilience(target_provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
-                            is_cloud = target_provider.name in ("google", "openrouter", "opencode", "github-copilot")
-                            return res, is_cloud
-                    res = await self._call_provider_with_resilience(target_provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
-                    is_cloud = target_provider.name in ("google", "openrouter", "opencode", "github-copilot")
-                    return res, is_cloud
-                logger.warning(f"Pinned provider {pinned_provider} not found. Falling back to chain.")
-            
-            for provider in self.providers:
-                if not await provider.is_available():
-                    continue
-                
-                # Resolve model name through provider's overrides
-                resolved_model = self._resolve_model_name(provider, model_name)
-                
-                try:
-                    # Wrap local providers in a timeout to prevent systemic hangs
-                    if isinstance(provider, (LocallmsterProvider, OllamaProvider, NativeGGUFProvider)):
-                        async with self.resource_guard.lock(weight=weight):
-                            with anyio.move_on_after(130):
-                                response = await self._execute_with_retry(provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
-                    else:
-                        response = await self._execute_with_retry(provider, resolved_model, enriched_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
-                    
-                    if response:
-                        is_cloud = provider.name in ("google", "openrouter", "opencode", "github-copilot")
-                        return response, is_cloud
-                except Exception as e:
-                    logger.warning(f"Provider {provider.name} failed after retries: {e}")
-                    # Log backend fallback event for observability
-                    if trace_id:
-                        try:
-                            from omega.observability import get_engine, EventType
-                            get_engine().log_event(
-                                EventType.BACKEND_FALLBACK,
-                                trace_id,
-                                {"failed_provider": provider.name, "error": str(e)[:200], "model": model_name}
+        errors = []
+
+        for provider in self.providers:
+            # Step 1: BSP-style pre-check — fast fail if circuit is OPEN
+            if not await self._precheck_provider(provider, model_name):
+                errors.append(f"{provider.name}: culled by precheck")
+                continue
+
+            # Step 2: Execute with breaker protection
+            timeout = self._get_provider_timeout(provider)
+            try:
+                with anyio.move_on_after(timeout) as cancel_scope:
+                    # Use HealthMonitor's breaker if available, otherwise direct call
+                    if self._health_monitor:
+                        breaker = self._health_monitor._breakers.get(provider.name)
+                        if breaker:
+                            result = await breaker.call(
+                                provider.generate, model_name, system_prompt,
+                                user_query, temperature, max_tokens,
+                                trace_id=trace_id
                             )
-                        except Exception:
-                            pass
-            
-            fallback = self._fallback_response(model_name, enriched_prompt, user_query)
-            return fallback, False
+                        else:
+                            result = await provider.generate(
+                                model_name, system_prompt, user_query,
+                                temperature, max_tokens, trace_id=trace_id
+                            )
+                    else:
+                        result = await provider.generate(
+                            model_name, system_prompt, user_query,
+                            temperature, max_tokens, trace_id=trace_id
+                        )
+                    if result:
+                        # Record success with HealthMonitor
+                        if self._health_monitor:
+                            self._health_monitor.record_success(model_name)
+                        return result, True
+
+                if cancel_scope.cancelled_caught:
+                    errors.append(f"{provider.name}: timed out ({timeout}s)")
+                    self._record_provider_failure(provider, model_name, trace_id)
+                    continue
+
+            except CircuitOpenError:
+                # Circuit is OPEN — provider already known broken, skip silently
+                errors.append(f"{provider.name}: circuit OPEN")
+                continue
+            except Exception as e:
+                errors.append(f"{provider.name}: {e}")
+                self._record_provider_failure(provider, model_name, trace_id)
+                continue
+
+        logger.warning(
+            "All providers failed. Trace: %s | Errors: %s",
+            trace_id, '; '.join(errors)
+        )
+        return self._fallback_response(model_name, system_prompt, user_query), False
 
     async def _call_provider_with_resilience(self, provider, model_name, system_prompt, user_query, temperature, max_tokens, trace_id=None):
         """Wrapper to apply the OpenRouter retry policy."""

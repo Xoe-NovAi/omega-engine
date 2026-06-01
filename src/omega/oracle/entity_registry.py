@@ -63,6 +63,20 @@ class Entity:
 class EntityRegistry:
     """Loads, saves, and manages entities from YAML config."""
 
+    # 1. Define Core Slots (The Holographic Grid)
+    PILLAR_SLOTS = {
+        "p1": {"domain": "Flesh", "element": "Earth", "chakra": "Root"},
+        "p2": {"domain": "Dream", "element": "Water", "chakra": "Sacral"},
+        "p3": {"domain": "Will", "element": "Fire", "chakra": "Solar Plexus"},
+        "p4": {"domain": "Heart", "element": "Air", "chakra": "Heart"},
+        "p5": {"domain": "Voice", "element": "Aether", "chakra": "Throat"},
+        "p6": {"domain": "Mind", "element": "Aether", "chakra": "Third Eye"},
+        "p7": {"domain": "Gnosis", "element": "Air", "chakra": "Crown"},
+        "p8": {"domain": "Shadow", "element": "Fire", "chakra": "Beyond Crown"},
+        "p9": {"domain": "Spirit", "element": "Water", "chakra": "Cosmic Heart"},
+        "p10": {"domain": "Chaos", "element": "Earth", "chakra": "Celestial Breath"},
+    }
+
     def __init__(self, config_path: Optional[str] = None):
         if config_path is None:
             # Resolve active IWAD from config/omega.yaml to enforce Engine-Stack Firewall
@@ -137,8 +151,34 @@ class EntityRegistry:
         logger.info(f"Loaded {len(self._entities)} entities from config")
 
     def get(self, name: str) -> Optional[Entity]:
-        """Get entity by name (case-insensitive)."""
-        return self._entities.get(name.lower())
+        """Get entity by name, role, or Pillar Slot (3-Tier Resolution)."""
+        if not name:
+            return None
+            
+        name_lower = name.lower().strip()
+        
+        # Tier 1: Direct Entity Match (e.g., "sekhmet")
+        entity = self._entities.get(name_lower)
+        if entity:
+            return entity
+            
+        # Tier 2: Slot Match (e.g., "p1" or "pillar 1")
+        # Normalize "pillar 1" -> "p1"
+        slot_key = name_lower.replace("pillar ", "p").replace("pillar", "p")
+        if slot_key in self.PILLAR_SLOTS:
+            # Resolve the slot to its active role in the default/active IWAD
+            # We look for an entity that has this slot in its .pillars list
+            for ent in self._entities.values():
+                # Check if slot_key (e.g. "p1") matches any of the entity's pillars (case-insensitive)
+                if any(p.lower() == slot_key for p in ent.pillars):
+                    return ent
+
+        # Tier 3: Role Match (e.g., "sysadmin")
+        for ent in self._entities.values():
+            if ent.role and ent.role.lower() == name_lower:
+                return ent
+                
+        return None
 
     def list(self) -> List[Entity]:
         """List all entities."""
@@ -234,24 +274,37 @@ class EntityRegistry:
     async def _save(self) -> None:
         """Save current entities back to YAML file.
         
-        Uses atomic write (tempfile + os.replace) to prevent data loss on crash.
+        Uses Sovereign Atomic Write (Flush -> Sync -> Commit -> Anchor) to prevent data loss on crash.
         """
         def _sync_save():
             data = {"entities": {}}
             for key, entity in self._entities.items():
                 data["entities"][key] = entity.to_dict()
             
-            # Atomic write: write to temp, then os.replace
-            import tempfile
             temp_dir = self.config_path.parent
-            with tempfile.NamedTemporaryFile(
-                "w", dir=str(temp_dir), delete=False, suffix=".tmp"
-            ) as tf:
-                yaml.dump(data, tf, default_flow_style=False, sort_keys=False, allow_unicode=True)
-                tmp_name = tf.name
-            
-            os.replace(tmp_name, self.config_path)
-            logger.info(f"Saved {len(self._entities)} entities to {self.config_path}")
+            fd, temp_path = tempfile.mkstemp(dir=str(temp_dir), suffix=".tmp")
+            try:
+                # 1. Write and Sync File
+                with os.fdopen(fd, "w") as tf:
+                    yaml.dump(data, tf, default_flow_style=False, sort_keys=False, allow_unicode=True)
+                    tf.flush()
+                    os.fsync(tf.fileno())
+                
+                # 2. Atomic Replace
+                os.replace(temp_path, self.config_path)
+                
+                # 3. Anchor: Sync Parent Directory
+                dir_fd = os.open(str(temp_dir), os.O_RDONLY)
+                try:
+                    os.fsync(dir_fd)
+                finally:
+                    os.close(dir_fd)
+                
+                logger.info(f"Saved {len(self._entities)} entities to {self.config_path}")
+            except Exception as e:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+                raise e
 
         await anyio.to_thread.run_sync(_sync_save)
 

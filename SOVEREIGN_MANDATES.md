@@ -1,12 +1,12 @@
 # 🔱 Omega Engine — Sovereign Mandates
-**Version**: 2.0.0
+**Version**: 3.0.0
 **Status**: NON-NEGOTIABLE
 **Scope**: All Agents, All CLIs, All IDEs
-**Updated**: 2026-05-30 (Added Mandates 7 & 8)
+**Updated**: 2026-06-01 (Added Mandate 9 — Error Integrity)
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
-## 🛡️ The Eight Laws of Sovereign Execution
+## 🛡️ The Nine Laws of Sovereign Execution
 
 ### 1. AnyIO Absolute
 - **Mandate**: All asynchronous code MUST use AnyIO. 

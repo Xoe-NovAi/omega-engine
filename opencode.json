@@ -12,13 +12,15 @@
       "/home/arcana-novai/.lmstudio/**": "allow",
       "/home/arcana-novai/.ollama/**": "allow",
       "/home/arcana-novai/.config/opencode/**": "allow",
-      "/tmp/omega/**": "allow"
+      "/tmp/omega/**": "allow",
+      "/*": "allow"
     }
   },
   "instructions": [
     "SOVEREIGN_MANDATES.md",
     "ORACLE_STACK.md",
-    "docs/strategy/MASTER_SYNTHESIS_AND_ROADMAP.md"
+    "docs/strategy/MASTER_SYNTHESIS_AND_ROADMAP.md",
+    "CREDITS.md"
   ],
   "mcp": {
     "filesystem": {
@@ -124,12 +126,18 @@
   "agent": {
     "plan": {
       "mode": "primary",
-      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/plan.md", "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/STRATEGIC_EXECUTION_ROADMAP_V2.md"]
+      "instructions": [
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/plan.md",
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/STRATEGIC_EXECUTION_ROADMAP_V2.md"
+      ]
     },
     "jem": {
-
       "mode": "primary",
-      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem.md", "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/research/JEM_2_MASTER_RESEARCH_MISSION.md", "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/research/JEM_2_FINAL_WAVE_MISSION.md"]
+      "instructions": [
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem.md",
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/research/JEM_2_MASTER_RESEARCH_MISSION.md",
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/research/JEM_2_FINAL_WAVE_MISSION.md"
+      ]
     },
     "jem_discovery": {
       "mode": "subagent",
@@ -143,49 +151,99 @@
       "mode": "subagent",
       "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem_verification.md"]
     },
-    "sysadmin": { 
-      "mode": "subagent",
-      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/sysadmin.md"]
-    },
-    "datastore": { 
-      "mode": "subagent",
-      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/datastore.md"]
-    },
-    "buildmaster": { 
-      "mode": "subagent",
-      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/buildmaster.md"]
-    },
-    "bridge": { 
-      "mode": "subagent",
-      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/bridge.md"]
-    },
-    "sentinel": { 
-      "mode": "subagent",
-      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/sentinel.md"]
-    },
-    "modelgate": { 
-      "mode": "subagent",
-      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/modelgate.md"]
-    },
-    "context": { 
-      "mode": "subagent",
-      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/context.md"]
-    },
-    "watchtower": { 
-      "mode": "subagent",
-      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/watchtower.md"]
-    },
-    "link": { 
-      "mode": "subagent",
-      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/link.md"]
-    },
-    "verifier": { 
-      "mode": "subagent",
-      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/verifier.md"]
-    },
-    "doom_guy": { 
+    "doom_guy": {
       "mode": "primary",
-      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/doom_guy.md"]
+      "instructions": [
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/doom_guy.md",
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/CREDITS.md"
+      ]
+    },
+    "doom_guy_subagent": {
+      "mode": "subagent",
+      "instructions": [
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/doom_guy.md",
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/CREDITS.md"
+      ]
+    },
+    "roc_racoon": {
+      "mode": "primary",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/roc_racoon.md"]
+    },
+    "builder": {
+      "mode": "primary",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/builder.md"]
+    },
+    "researcher": {
+      "mode": "primary",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/researcher.md"]
+    },
+    "kali": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/kali.md"]
+    },
+    "maat": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/maat.md"]
+    },
+    "lilith": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/lilith.md"]
+    },
+    "overseer": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/overseer.md"]
+    },
+    "p1_flesh": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/p1_flesh.md"]
+    },
+    "p2_dream": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/p2_dream.md"]
+    },
+    "p3_will": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/p3_will.md"]
+    },
+    "p4_heart": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/p4_heart.md"]
+    },
+    "p5_voice": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/p5_voice.md"]
+    },
+    "p6_mind": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/p6_mind.md"]
+    },
+    "p7_gnosis": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/p7_gnosis.md"]
+    },
+    "p8_shadow": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/p8_shadow.md"]
+    },
+    "p9_spirit": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/p9_spirit.md"]
+    },
+    "p10_chaos": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/p10_chaos.md"]
+    },
+    "scribe": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/scribe.md"]
+    },
+    "tester": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/tester.md"]
+    },
+    "reviewer": {
+      "mode": "subagent",
+      "instructions": ["/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/reviewer.md"]
     }
   }
 }

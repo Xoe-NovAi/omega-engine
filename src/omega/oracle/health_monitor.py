@@ -87,7 +87,7 @@ class AsyncCircuitBreaker:
         self.last_failure_time: Optional[float] = None
         self._lock = anyio.Lock()
 
-    async def call(self, func, *args, **kwargs):
+    async def call(self, func, *args, trace_id: Optional[str] = None, **kwargs):
         """Execute function through circuit breaker."""
         async with self._lock:
             if self.state == CircuitState.OPEN:
@@ -113,31 +113,57 @@ class AsyncCircuitBreaker:
                 result = await func(*args, **kwargs)
             else:
                 result = func(*args, **kwargs)
-            await self._on_success()
+            await self._on_success(trace_id=trace_id)
             return result
         except Exception as e:
             if self._is_circuit_breaking_error(e):
-                await self._on_failure()
+                await self._on_failure(trace_id=trace_id)
             raise
 
-    async def _on_success(self):
+    async def _on_success(self, trace_id: Optional[str] = None):
         async with self._lock:
+            old_state = self.state
             if self.state == CircuitState.HALF_OPEN:
                 self.state = CircuitState.CLOSED
             self.failure_count = 0
             self.half_open_requests = 0
+            # Log state transition to observability (non-blocking, best-effort)
+            if trace_id and old_state != self.state:
+                try:
+                    from omega.observability import get_engine, EventType
+                    get_engine().log_event(
+                        EventType.BACKEND_FALLBACK,
+                        trace_id,
+                        {"provider": self.name, "event": "circuit_closed",
+                         "from": old_state.value, "to": self.state.value}
+                    )
+                except Exception:
+                    pass  # Circuit works silently if observability unavailable
 
-    async def _on_failure(self):
+    async def _on_failure(self, trace_id: Optional[str] = None):
         async with self._lock:
             self.failure_count += 1
             self.last_failure_time = time.monotonic()
+            old_state = self.state
 
             if self.state == CircuitState.HALF_OPEN:
                 self.state = CircuitState.OPEN
-                return
-
-            if self.failure_count >= self.failure_threshold:
+            elif self.failure_count >= self.failure_threshold:
                 self.state = CircuitState.OPEN
+
+            # Log state transition to observability (non-blocking, best-effort)
+            if trace_id and old_state != self.state:
+                try:
+                    from omega.observability import get_engine, EventType
+                    get_engine().log_event(
+                        EventType.BACKEND_FALLBACK,
+                        trace_id,
+                        {"provider": self.name, "event": "circuit_opened",
+                         "from": old_state.value, "to": self.state.value,
+                         "failure_count": self.failure_count}
+                    )
+                except Exception:
+                    pass  # Circuit works silently if observability unavailable
 
     def _should_transition_to_half_open(self) -> bool:
         if self.last_failure_time is None:

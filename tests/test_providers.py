@@ -110,7 +110,8 @@ class TestGoogleAIProvider:
 
     @pytest.mark.anyio
     async def test_generate_http_error(self, provider):
-        """HTTP errors propagate as httpx.HTTPStatusError."""
+        """HTTP errors propagate as custom OmegaErrors."""
+        from omega.errors import ProviderRateLimitError
         mock_response = AsyncMock(spec=httpx.Response)
         mock_response.status_code = 429
         mock_response.raise_for_status.side_effect = httpx.HTTPStatusError(
@@ -119,7 +120,7 @@ class TestGoogleAIProvider:
 
         with patch.dict(os.environ, {"GOOGLE_API_KEY": "test-key"}):
             with patch("httpx.AsyncClient.post", return_value=mock_response):
-                with pytest.raises(httpx.HTTPStatusError):
+                with pytest.raises(ProviderRateLimitError):
                     await provider.generate(
                         "gemma-4-31b", "be helpful", "hi", 0.7, 256
                     )

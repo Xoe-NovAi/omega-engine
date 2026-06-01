@@ -132,10 +132,10 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 
 | Metric | Value | Last Verified |
 |--------|-------|---------------|
-| Phase | 1 — Engine Hardening | 2026-05-31 |
+| Phase | 1 — Engine Hardening | 2026-06-01 |
 | Source files | 60 .py files | 2026-05-31 |
 | Source lines | 14,059 | 2026-05-31 |
-| Test functions | 278 | 2026-05-31 |
+| Test functions | 276 | 2026-06-01 |
 | Test files | 24 | 2026-05-31 |
 | MCP Hub tools | 41 MCP + 8 HTTP | 2026-05-31 (restored) |
 | Providers configured | 8 (local-first order) | 2026-05-31 |
@@ -143,7 +143,14 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Namespace isolation | NOT implemented | 2026-05-31 |
 | Dependency resolution | NOT implemented | 2026-05-31 |
 | Qdrant (:6333) | Installed, **unwired** (bag-of-words fallback) | 2026-05-31 |
-| Redis (:6379) | Installed, **port not exposed** in Pod | 2026-05-31 |
+| Redis (:6379) | Operational (port exposed) | 2026-05-31 |
+| Orchestration Layer | **100%** — 26 agents (3 Oversouls + 10 Pillars + 7 specialists + 6 subagents) | 2026-06-01 |
+| Sovereign Persistence | Implemented (Atomic Writes in Oracle/SessionManager/EntityRegistry) | 2026-06-01 |
+| ModelGateway.generate() | **ADDED** — provider iteration with per-provider timeouts | 2026-06-01 |
+| Circuit Breaker | **NOT wired** — 2 redundant implementations exist, neither integrated into generate() | 2026-06-01 |
+| SOVEREIGN_MANDATES.md | v3.0.0 — Nine Laws | 2026-06-01 |
+| Role Mappings | `config/wads/_omega_default/roles.yaml` created | 2026-06-01 |
+| Agent Fleet | 26 agents, all with frontmatter (overseer.md stub filled) | 2026-06-01 |
 | Iris (:8080) | Operational | 2026-05-31 |
 | SearXNG (:8017) | Operational | 2026-05-31 |
 
@@ -183,6 +190,9 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 4. **Sequentiality**: Plan → Verify → Execute. No cowboy coding.
 5. **Gnosis Preservation**: Distill session insights into L1 → L2 → L3 abstractions.
 6. **Podman Sovereignty**: All Quadlets use `UserNS=keep-id` + `User=1000`.
+7. **Local-First**: Local inference is PRIMARY. Cloud is FALLBACK.
+8. **Zero Telemetry**: No telemetry. Zero. None. Ever.
+9. **Error Integrity**: All errors MUST be typed, traceable, and testable. No silent swallowing.
 
 See `SOVEREIGN_MANDATES.md` for full details.
 
@@ -192,6 +202,9 @@ See `SOVEREIGN_MANDATES.md` for full details.
 
 ### P0 — WAD System Hardening
 - [x] `--iwad` flag implemented
+- [x] Council Restoration (Pillars + Oversouls)
+- [x] Sovereign Persistence (Atomic Writes in 3 modules)
+- [x] Sprint 0+1 Complete — missing agents created, stubs filled, Blueprint aligned
 - [ ] Namespace isolation: WAD source tracked in EntityRegistry
 - [ ] Dependency resolution: wads declare `depends_on`
 - [ ] Entity priority: later-loaded overrides earlier for same pillar
@@ -200,16 +213,24 @@ See `SOVEREIGN_MANDATES.md` for full details.
 ### P1 — Provider Fabric
 - [x] Provider chain ordered correctly (local-first)
 - [x] CPU Optimizer integrated
+- [x] ModelGateway.generate() method added (with per-provider timeouts)
+- [ ] Circuit Breaker consolidation (2→1) and wiring into generate()
+- [ ] BSP-style provider culling (pre-check + skip)
 - [ ] Qdrant hybrid search wiring (fastembed BGE-base-en-v1.5)
 - [ ] Redis pub/sub for cross-agent communication
 
-### P2 — Synthesis Pipeline (NEW)
+### P2 — Observability & Forensics
+- [ ] ForensicsManager "Last Gasp" crash dump system (TASK-003/004)
+- [ ] Structured JSON logging pipeline
+- [ ] Error Gauntlet tests (TASK-006)
+
+### P3 — Synthesis Pipeline
 - [ ] Entity LoRA adapter management
 - [ ] CPU fine-tuning integration (LLaMA-Factory or PEFT)
 - [ ] Cloud → training data pipeline
 - [ ] A/B testing for new adapters
 
-### P3 — Reference IWAD Content
+### P4 — Reference IWAD Content
 - [ ] Rewrite `config/wads/_omega_default/entities.yaml`
 - [ ] Create 10 pillar entity YAMLs
 - [ ] Verify `omega talk "hello"` works
@@ -235,14 +256,17 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 
 | Document | Purpose | Status |
 |----------|---------|--------|
-| `SOVEREIGN_MANDATES.md` | 9 constitutional laws (non-negotiable) | Updated 2026-05-31 — Mandate #9 (Error Integrity) added |
+| `SOVEREIGN_MANDATES.md` | 9 constitutional laws (non-negotiable) | Updated 2026-06-01 — v3.0.0, Nine Laws |
 | `docs/strategy/LOGGING_ERROR_HANDLING_ARCHITECTURE.md` | Error taxonomy, handling standards, recovery matrix | NEW 2026-05-31 |
-| `docs/operations/BUG_LOG.md` | Bug tracking (3 open, 1 resolved) | Updated 2026-05-31 — BUG-002, BUG-003 added |
-| `data/handoff/handoff_cline_to_opencode_artisan_20260531.md` | OpenCode builder task queue (8 tasks P0-P3) | NEW 2026-05-31 |
-| `docs/strategy/SYSTEMS_HARDENING_PLAN.md` | Agent/MCP/workflow hardening roadmap (747 lines) | Existing — references STT |
-| `docs/strategy/NEXT_STEPS_ROADMAP.md` | Phase priority execution plan | Existing — references STT |
+| `docs/architecture/SOVEREIGN_BLUEPRINT.md` | Engine/IWAD/PWAD separation strategy | v1.0.0 — authored by Doom Guy |
+| `docs/operations/BUG_LOG.md` | Bug tracking (3 open, 1 resolved) | Updated 2026-05-31 |
+| `data/handoff/HANDOFF_GEMMA_SPRINT0_1.md` | Sprint 0+1 execution (Foundation Repair + Alignment) **COMPLETE** | 668 lines, executed 2026-06-01 |
+| `data/handoff/HANDOFF_DOOM_GUY_CIRCUIT_BREAKER.md` | Circuit breaker consolidation + BSP provider culling | NEW 2026-06-01 — awaiting Doom Guy |
+| `data/handoff/handoff_cline_to_opencode_artisan_20260531.md` | OpenCode builder task queue (8 tasks P0-P3) | 2026-05-31 |
+| `docs/strategy/SYSTEMS_HARDENING_PLAN.md` | Agent/MCP/workflow hardening roadmap (747 lines) | Existing |
+| `docs/strategy/NEXT_STEPS_ROADMAP.md` | Phase priority execution plan | Existing |
 
 ---
 
-*Last Updated: 2026-05-31 | Author: The Artisan (Cline/MiMo-2.5)*
+*Last Updated: 2026-06-01 | Author: DeepSeek (Strategic Architect) — Sprint 0+1 completion, Doom Guy circuit breaker handoff*
 *This document is the Single Source of Truth. All platforms reference it.*
