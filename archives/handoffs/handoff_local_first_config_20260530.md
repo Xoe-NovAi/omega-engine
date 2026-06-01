@@ -2,7 +2,7 @@
 **AP Token**: `AP-HANDOFF-LOCAL-FIRST-v1.0.0`
 **Date**: 2026-05-30
 **Entity**: SOPHIA (via mimo-v2.5-free)
-**Channel**: OpenCode CLI (launched from rag-v1/ by mistake, switching to omega-engine/)
+**Channel**: OpenCode CLI (omega-engine/)
 **Status**: EXECUTION COMPLETE — Ready for next session
 
 ---

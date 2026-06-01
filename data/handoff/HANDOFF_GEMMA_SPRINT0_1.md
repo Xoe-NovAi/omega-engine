@@ -656,7 +656,7 @@ grep "Sekhmet\|Brigid\|Prometheus\|Saraswati\|Inanna\|Ereshkigal\|Lucifer\|Hecat
 3. **Don't use asyncio**: Always use AnyIO for async operations.
 4. **Don't use bare except**: Always catch specific exceptions.
 5. **Don't forget the venv**: Use `source .venv/bin/activate` before any Python command.
-6. **Don't use `/rag-v1`**: That directory is purged. Use absolute paths.
+6. **Use absolute paths**: Always reference directories from the repo root.
 7. **Don't create empty files**: Every new file must have real, non-stub content.
 
 ---

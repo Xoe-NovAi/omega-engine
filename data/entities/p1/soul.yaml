@@ -1,0 +1,6 @@
+# soul.yaml — p1 (SysAdmin)
+# Pillar Slot Entity
+# Created: 2026-06-01
+entity: p1
+role: SysAdmin
+lessons: []

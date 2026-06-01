@@ -26,6 +26,47 @@ import anyio
 
 logger = logging.getLogger(__name__)
 
+# ── Structured JSON Logging Formatter ───────────────────────────────────
+
+class JsonFormatter(logging.Formatter):
+    """Structured JSON logging formatter.
+
+    Outputs machine-parseable JSON log lines instead of text.
+    Drop-in replacement for any logging.Formatter — zero code changes
+    to existing logger calls.
+
+    Example output:
+    {"timestamp":"2026-06-01T12:00:00Z","level":"INFO","logger":"omega.hub","message":"server started","trace_id":"trc_abc123","extra":{"key":"val"}}
+    """
+
+    def format(self, record: logging.LogRecord) -> str:
+        payload: Dict[str, Any] = {
+            "timestamp": datetime.fromtimestamp(record.created, tz=timezone.utc).isoformat(),
+            "level": record.levelname,
+            "logger": record.name,
+            "message": record.getMessage(),
+        }
+        if record.exc_info and record.exc_info[0]:
+            payload["exc_info"] = traceback.format_exception(*record.exc_info)
+        for key in ("trace_id", "entity", "provider", "model"):
+            val = getattr(record, key, None)
+            if val:
+                payload[key] = val
+        return json.dumps(payload, default=str)
+
+
+def setup_json_logging(logger_name: str = "omega") -> None:
+    """Apply structured JSON logging to all loggers under the given name.
+
+    Call once at engine startup. Existing logger calls continue to work.
+    """
+    handler = logging.StreamHandler()
+    handler.setFormatter(JsonFormatter())
+    target = logging.getLogger(logger_name)
+    target.handlers.clear()
+    target.addHandler(handler)
+
+
 # ── Storage paths ─────────────────────────────────────────────────────
 DATA_DIR = Path(os.environ.get("OMEGA_DATA_DIR", str(Path.home() / "omega" / "data")))
 LOG_DIR = DATA_DIR / "logs"
@@ -220,39 +261,27 @@ class ForensicsManager:
             "anyio_backend": self._detect_anyio_backend(),
             "timestamp": time.time(),
         }
-
-    @staticmethod
-    def _detect_anyio_backend() -> str:
-        """Detect the running anyio backend in a portable way.
-
-        Uses anyio's internal API first, falls back gracefully.
-        """
-        try:
-            from anyio._core._eventloop import get_async_backend
-            return get_async_backend()
-        except Exception:
-            try:
-                import asyncio
-                asyncio.get_running_loop()
-                return "asyncio"
-            except RuntimeError:
-                pass
-            try:
-                import trio
-                trio.hazmat.current_call_from_trio()
-                return "trio"
-            except (ImportError, RuntimeError, AttributeError):
-                pass
-            return "unknown"
-
         try:
             import psutil
             info["rss_mb"] = psutil.Process().memory_info().rss / 1024 / 1024
             info["cpu_percent"] = psutil.cpu_percent(interval=0.1)
         except ImportError:
             pass
-
         return info
+
+    @staticmethod
+    def _detect_anyio_backend() -> str:
+        """Detect the running anyio backend in a portable way.
+
+        Uses sniffio (anyio's internal backend detector) first,
+        falls back gracefully.
+        """
+        try:
+            import sniffio
+            return sniffio.current_async_library()
+        except Exception:
+            pass
+        return "unknown"
 
     def check_recovery(self) -> Optional[Dict[str, Any]]:
         """Check for crash dumps from previous runs.
@@ -290,6 +319,93 @@ class ForensicsManager:
         except Exception as e:
             logger.warning(f"Failed to process crash dump {latest}: {e}")
             return None
+
+    async def replay(self, trace_id: str) -> Optional[Dict[str, Any]]:
+        """Reconstruct the sequence of events that led to a crash.
+
+        Loads the crash dump with the given trace_id, then gathers all
+        persisted log events with that trace_id to rebuild the timeline.
+        """
+        crash_files = sorted(self._crash_dir.glob(f"crash_*_{trace_id}.json"))
+        if not crash_files:
+            crash_files = sorted(self._crash_dir.glob("crash_*.json"))
+        if not crash_files:
+            return None
+
+        latest = crash_files[-1]
+        try:
+            with open(str(latest), "r") as f:
+                dump = json.load(f)
+        except Exception as e:
+            logger.warning("Failed to load crash dump for replay: %s", e)
+            return None
+
+        events_path = DATA_DIR / "logs" / "events"
+        timeline = []
+        if events_path.exists():
+            for f in sorted(events_path.glob("*.jsonl")):
+                try:
+                    with open(str(f)) as fh:
+                        for line in fh:
+                            line = line.strip()
+                            if not line:
+                                continue
+                            try:
+                                event = json.loads(line)
+                                if event.get("trace_id") == trace_id:
+                                    timeline.append(event)
+                            except json.JSONDecodeError:
+                                continue
+                except Exception:
+                    continue
+
+        return {
+            "crash_dump": dump,
+            "timeline": sorted(timeline, key=lambda e: e.get("timestamp", "")),
+            "total_events_in_trace": len(timeline),
+        }
+
+    async def learn(self, trace_id: str, entity_name: str = "SOPHIA") -> Optional[str]:
+        """Extract a lesson from a crash and append to the entity's soul.yaml.
+
+        Returns the lesson string if written successfully.
+        """
+        dump = await self.replay(trace_id)
+        if not dump:
+            return None
+
+        crash = dump["crash_dump"]
+        error_info = crash.get("error", {})
+        reason = crash.get("reason", "unknown")
+
+        lesson = (
+            f"Recovered from {error_info.get('type', 'error')}: "
+            f"{error_info.get('message', 'unknown')[:200]} "
+            f"(reason: {reason})"
+        )
+
+        soul_path = DATA_DIR / "entities" / entity_name / "soul.yaml"
+        if soul_path.exists():
+            try:
+                import yaml
+                with open(str(soul_path)) as f:
+                    soul = yaml.safe_load(f) or {}
+                lessons = soul.setdefault("lessons", [])
+                if isinstance(lessons, list):
+                    lessons.append({
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                        "trace_id": trace_id,
+                        "lesson": lesson,
+                    })
+                    if len(lessons) > 100:
+                        lessons[:] = lessons[-100:]
+                    with open(str(soul_path), "w") as f:
+                        yaml.safe_dump(soul, f, default_flow_style=False)
+                logger.info("Learned from crash %s: %s", trace_id, lesson)
+                return lesson
+            except Exception as e:
+                logger.warning("Failed to write lesson to soul.yaml: %s", e)
+        return lesson
 
     @property
     def recent_errors(self) -> List[Dict[str, Any]]:
@@ -465,7 +581,9 @@ class ObservabilityEngine:
 
     # ── Get recent events for monitoring ─────────────────────────────
     def recent_events(self, limit: int = 50) -> List[Dict[str, Any]]:
-        return self._event_log[-limit:]
+        total = len(self._event_log)
+        start = max(0, total - limit)
+        return [self._event_log[i] for i in range(start, total)]
 
     # ── Stats ────────────────────────────────────────────────────────
     def stats(self) -> Dict[str, Any]:

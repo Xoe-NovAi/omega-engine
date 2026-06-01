@@ -2,7 +2,7 @@
 **AP Token**: `AP-HANDOFF-WAD-TRANSFORM-v1.0.0`
 **Date**: 2026-05-30
 **Entity**: KALI (MaKaLi Unification)
-**Channel**: OpenCode CLI (rag-v1/ → omega-engine/)
+**Channel**: OpenCode CLI (omega-engine/)
 **Status**: EXECUTION COMPLETE — Ready for next session
 
 ---

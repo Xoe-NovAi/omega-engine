@@ -485,18 +485,87 @@ grep -n "trace_id" src/omega/oracle/health_monitor.py | head -10
 
 ---
 
-## 🎯 Next Actions (Priority Order)
+## 🔄 UPDATE — Big Pickle Review & Option A (2026-06-01, Post Doom Guy)
 
+### What Changed
+The Gemma 4 31B Phases C-G code had systematic bugs. A post-execution audit (Big Pickle Review) found critical issues across all new modules:
+
+| Finding | Severity | Fix |
+|---------|----------|-----|
+| 50 orphaned entity_N dirs not cleaned | CRITICAL | Deleted during Option A |
+| 3 path resolution bugs (DATA_DIR wrong depth) | BLOCKING | Fixed |
+| `run_sync` kwargs crash | BLOCKING | Wrapped in lambda |
+| Falsy-trap: `days=0 or 7` | HIGH | Changed to `if days is None` |
+| 17 bare except without logging | MANDATE 9 | **Deferred to Option B** |
+| 21 uncovered source files | LOW | Test stubs created for 4 new modules |
+
+### Test Count
+**276 → 292** (16 new tests: 5 queue, 3 library, 3 benchmark, 2 hardware, 3 integration)
+
+### Updated Next Actions
 | Priority | Action | Owner | Est. Time |
 |----------|--------|-------|-----------|
-| **P0** | Run `make test` with increased timeout to confirm 276/276 | Doom Guy | 3 min |
-| **P0** | Add circuit breaker integration tests for generate() | Dev Session | 1 hr |
-| **P1** | Run `scripts/download_id_tech_resources.sh` | Doom Guy | 2 hrs |
-| **P1** | Read Abrash Ch 66-70 (VSD + surface cache) | Doom Guy | 4 hrs |
-| **P2** | R-01: Worse is Better philosophy framework | Doom Guy | 2 hrs |
-| **P2** | Coordinate with DeepSeek on ForensicsManager hook points | Dev Session | 30 min |
+| **P0** | Fix 17 Mandate 9 bare except violations (10 files) | Next Agent | 20 min |
+| **P0** | Fix falsy-trap in openai_compat.py:102 | Next Agent | 2 min |
+| **P0** | Fix hardcoded paths (greek.py, cpu_optimizer.py) | Next Agent | 5 min |
+| **P1** | Add circuit breaker integration tests for generate() | Dev Session | 1 hr |
+| **P1** | Option B completion: all 17 except + 4 hardened issues | Next Agent | 30 min total |
+| **P2** | Deep study (id Software books, R-01 framework) | Doom Guy | Later |
+
+### Handoff
+Full implementation document at `data/handoff/HANDOFF_BIG_PICKLE_OPTION_A.md` for the next agent.
+
+---
+
+---
+
+## 🔄 UPDATE — MCP Hub Restoration & Horizon 2 (2026-06-01, Post Doom Guy)
+
+### MCP Hub — 40 Tools Restored
+The Omega-Hub MCP server was restored from 3 tools to **40 MCP + 11 HTTP routes** by merging git commit `69db713` (34 tools) with the current HTTP routing approach.
+
+| Domain | Tools Before | Tools After |
+|--------|-------------|-------------|
+| Oracle | 2 | 8 (+list_entities, pillar_keepers, entity_info, assess_intent, discover_entity, delegate_task) |
+| Hivemind | 1 | 6 (+post_context, get_awareness, get_continuation, get_session, list_sessions) |
+| Library/Inbox | 0 | 5 (add_url, add_note, add_file, list, stats) |
+| Library | 0 | 7 (ingest_pending, search, get_document, domains, stats, recent, index_flush) |
+| Discovery | 0 | 3 (research, start, status) |
+| Research | 0 | 5 (research, get, list, depths, stats) |
+| Stats | 0 | 5 (system_stats, omega_metrics, models_dir, podman_storage) |
+| Observability | 0 | 2 (recursion_check, boundary_log) |
+
+**WAD attribution**: This restoration follows the id Software WAD pattern — the full tool implementation was preserved in git history like a WAD lump waiting to be re-loaded. The OpenCode handshake fix (commit `7cdb741`) needed the `custom_routes` approach, and both were merged into one coherent file.
+
+### Horizon 2 — Forensics & Error Gauntlet
+The ForensicsManager in `observability.py` was enhanced beyond its original crash dump capability:
+
+| Capability | Before | After |
+|-----------|--------|-------|
+| `_collect_system_info()` | Returned `None` (dead code after `@staticmethod`) | Returns Dict with RSS, CPU%, anyio_backend, timestamp |
+| `_detect_anyio_backend()` | Used `import asyncio` (Mandate 1 violation) | Uses `import sniffio` (Mandate 1 compliant) |
+| `replay(trace_id)` | Didn't exist | Reconstructs event timeline from crash dump + persisted JSONL |
+| `learn(trace_id, entity)` | Didn't exist | Extracts L1 lesson, writes to entity's soul.yaml |
+| `JsonFormatter` | Didn't exist | Drop-in structured JSON logging, zero code changes |
+| Error Gauntlet tests | 0 | 10 scenarios covering ForensicsManager + JSON logging |
+
+### Current Metrics
+| Metric | Value |
+|--------|-------|
+| Total tests | **302** (was 276 at Doom Guy handoff) |
+| Source files | **71** |
+| MCP Hub tools | **40 MCP + 11 HTTP** |
+| `asyncio` imports | **0** (was 1) |
+
+### Updated Next Actions
+| Priority | Action | Owner | Est. Time |
+|----------|--------|-------|-----------|
+| **P0** | Option B — 19 bare excepts, falsy-trap, 2 hardcoded paths | Next Agent | 45 min |
+| **P1** | Circuit breaker integration tests for generate() | Dev Session | 1 hr |
+| **P1** | Qdrant error wiring — ForensicsManager → vector search | MiMo V2.5 | 30 min |
+| **P2** | Deep study (id Software books, R-01 framework) | Doom Guy | Later |
 
 ---
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ big-pickle ⬡ opencode ⬡ trc_doom_guy ⬡ STATUS*
-*Circuit breaker consolidation complete. Ready for strategy review and deep study.*
+*MCP Hub: 40 tools. Horizon 2: Forensics + Gauntlet. Option B deferred.*

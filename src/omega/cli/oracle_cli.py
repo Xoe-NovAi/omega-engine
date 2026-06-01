@@ -22,6 +22,7 @@ except ImportError:
     typer = None
 
 from omega.oracle import Oracle, OracleResponse, EntityRegistry, Entity
+from omega.request_queue import RequestQueue
 
 logger = logging.getLogger(__name__)
 console = Console()
@@ -269,7 +270,225 @@ def _display_response(result: OracleResponse):
     console.print(f"{output_text}\n")
 
 
+# ── REQUEST QUEUE COMMANDS ──────────────────────────────────────────────
+
+@app.command()
+def queue_status():
+    """Show pending queued/review items."""
+    async def _run():
+        q = RequestQueue()
+        stats = await q.stats()
+        console.print("[bold]Request Queue Status[/bold]")
+        console.print(f"  Queued:       {stats['queued']}")
+        console.print(f"  Pending Review: {stats['pending_review']}")
+        console.print(f"  Completed:    {stats['completed']}")
+        if stats['queued'] > 0:
+            requests = await q.get_queued_requests()
+            table = Table(title="Queued Requests")
+            table.add_column("ID", style="cyan")
+            table.add_column("Priority", style="yellow")
+            table.add_column("Query", style="white")
+            table.add_column("Created", style="green")
+            for r in requests[:20]:
+                table.add_row(
+                    r.get("id", "?"),
+                    r.get("priority", "P2"),
+                    r.get("query", "?")[:60],
+                    r.get("created_at", "?")[:19],
+                )
+            console.print(table)
+    anyio.run(_run)
+
+@app.command()
+def process_queue():
+    """Process all queued research requests."""
+    async def _run():
+        q = RequestQueue()
+        requests = await q.get_queued_requests()
+        if not requests:
+            console.print("[yellow]No queued requests to process.[/yellow]")
+            return
+        console.print(f"[bold]Processing {len(requests)} queued requests...[/bold]")
+        for req in requests:
+            console.print(f"  Processing {req['id']}: {req['query'][:60]}...")
+            result = {"status": "processed", "note": "Implement execution logic in Phase C"}
+            await q.complete_request(req["id"], result)
+        console.print("[green]Done.[/green]")
+    anyio.run(_run)
+
+@app.command()
+def review_pending():
+    """Process all pending cloud review requests."""
+    async def _run():
+        q = RequestQueue()
+        reviews = await q.get_review_requests()
+        if not reviews:
+            console.print("[yellow]No pending review requests.[/yellow]")
+            return
+        console.print(f"[bold]Processing {len(reviews)} review requests...[/bold]")
+        for rev in reviews:
+            console.print(f"  Reviewing {rev['id']}: {rev.get('work_product_path', '?')}")
+            result = {"status": "reviewed", "note": "Implement review logic in Phase C"}
+            await q.complete_request(rev["id"], result)
+        console.print("[green]Done.[/green]")
+    anyio.run(_run)
+
+@app.command()
+def queue_prune(
+    days: int = typer.Option(7, "--stale", "-s", help="Prune requests older than N days"),
+):
+    """Archive stale requests older than N days."""
+    async def _run():
+        q = RequestQueue()
+        pruned = await q.prune_stale(days)
+        console.print(f"[green]Pruned {pruned} stale requests (>{days} days).[/green]")
+    anyio.run(_run)
+
+# ── LIBRARY COMMANDS ────────────────────────────────────────────────────
+
+@app.command()
+def library_curate(
+    domain: str = typer.Option("all", "--domain", "-d", help="Domain to curate (e.g., P7, all)"),
+):
+    """Run domain curation."""
+    async def _run():
+        from omega.library.catalog import LibraryCatalog
+        c = LibraryCatalog()
+        await c.ensure_db()
+        console.print(f"[bold]Library curation triggered for domain: {domain}[/bold]")
+        console.print("[yellow]Curator dispatch logic — implement agent dispatch here[/yellow]")
+    anyio.run(_run)
+
+@app.command()
+def library_status():
+    """Show library catalog statistics."""
+    async def _run():
+        from omega.library.catalog import LibraryCatalog
+        c = LibraryCatalog()
+        stats = await c.stats()
+        console.print("[bold]Library Catalog Status[/bold]")
+        console.print(f"  Total Documents: {stats['total_documents']}")
+        console.print(f"  Average Quality: {stats['avg_quality']}")
+        console.print("  By Domain:")
+        for domain, count in stats.get("by_domain", {}).items():
+            console.print(f"    {domain}: {count}")
+    anyio.run(_run)
+
+@app.command()
+def library_search(
+    query: str = typer.Argument(..., help="Search query"),
+    domain: Optional[str] = typer.Option(None, "--domain", "-d", help="Filter by domain"),
+):
+    """Search the library catalog."""
+    async def _run():
+        from omega.library.catalog import LibraryCatalog
+        c = LibraryCatalog()
+        results = await c.search(domain=domain, query=query)
+        if not results:
+            console.print("[yellow]No results found.[/yellow]")
+            return
+        table = Table(title=f"Search Results: {query}")
+        table.add_column("ID", style="cyan")
+        table.add_column("Title", style="white")
+        table.add_column("Domain", style="yellow")
+        table.add_column("Quality", style="green")
+        for r in results:
+            table.add_row(
+                r.get("id", "?")[:20],
+                r.get("title", "Untitled")[:40],
+                r.get("domain", "?"),
+                str(round(r.get("avg_quality", 0), 2)),
+            )
+        console.print(table)
+    anyio.run(_run)
+
+# ── BENCHMARK COMMANDS ───────────────────────────────────────────────────
+
+@app.command()
+def bench_run(
+    model: str = typer.Argument(..., help="Model ID to benchmark"),
+    role: str = typer.Argument(..., help="Agent role to benchmark"),
+    samples: int = typer.Option(10, "--samples", "-s", help="Number of samples to run"),
+):
+    """Run a benchmark for a specific model and role."""
+    async def _run():
+        from omega.benchmarks.runner import BenchmarkRunner
+        runner = BenchmarkRunner()
+        result = await runner.run(model, role, samples=samples)
+        console.print(f"[bold]Benchmark Complete: {model} for {role}[/bold]")
+        console.print(f"  TTFT: {result.ttft_ms}ms")
+        console.print(f"  TPS: {result.tokens_per_sec} tok/s")
+        console.print(f"  Peak RAM: {result.peak_ram_mb}MB")
+        console.print(f"  Avg Quality: {result.avg_quality_score}")
+        console.print(f"  Scores: {result.scores}")
+    anyio.run(_run)
+
+@app.command()
+def bench_compare(
+    role: str = typer.Argument(..., help="Role to compare models for"),
+):
+    """Compare all benchmarked models for a specific role."""
+    async def _run():
+        from omega.benchmarks.runner import BenchmarkRunner
+        runner = BenchmarkRunner()
+        results = await runner.compare(role)
+        if not results:
+            console.print("[yellow]No benchmarks found for this role.[/yellow]")
+            return
+        table = Table(title=f"Benchmark Comparison: {role}")
+        table.add_column("Model", style="cyan")
+        table.add_column("TTFT (ms)", style="yellow")
+        table.add_column("TPS", style="green")
+        table.add_column("RAM (MB)", style="magenta")
+        table.add_column("Quality", style="blue")
+        for r in results:
+            table.add_row(r.model, str(r.ttft_ms), str(r.tokens_per_sec), str(r.peak_ram_mb), str(r.avg_quality_score))
+        console.print(table)
+    anyio.run(_run)
+
+@app.command()
+def bench_rank(
+    role: str = typer.Argument(..., help="Role to rank models for"),
+):
+    """Show the best model for a specific role based on quality."""
+    async def _run():
+        from omega.benchmarks.runner import BenchmarkRunner
+        runner = BenchmarkRunner()
+        ranked = await runner.rank(role)
+        if not ranked:
+            console.print("[yellow]No benchmarks found for this role.[/yellow]")
+            return
+        console.print(f"[bold]Best model for {role}: {ranked[0].model}[/bold]")
+        table = Table(title=f"Ranking: {role}")
+        table.add_column("Rank", style="cyan")
+        table.add_column("Model", style="white")
+        table.add_column("Quality", style="green")
+        for i, r in enumerate(ranked, 1):
+            table.add_row(str(i), r.model, str(r.avg_quality_score))
+        console.print(table)
+    anyio.run(_run)
+
+@app.command()
+def bench_list():
+    """List all completed benchmark runs."""
+    async def _run():
+        from omega.benchmarks.runner import BenchmarkRunner
+        runner = BenchmarkRunner()
+        results = await runner.list_runs()
+        if not results:
+            console.print("[yellow]No benchmark runs yet.[/yellow]")
+            return
+        table = Table(title="All Benchmark Runs")
+        table.add_column("Model", style="cyan")
+        table.add_column("Role", style="white")
+        table.add_column("Date", style="green")
+        for r in results:
+            table.add_row(r.model, r.role, r.timestamp[:10])
+        console.print(table)
+    anyio.run(_run)
+
 # ── Entry point ─────────────────────────────────────────────────────────
+
 def main():
     if not TYPER_AVAILABLE:
         console.print("[red]Error: typer and rich are required. Install with: pip install typer rich[/red]")

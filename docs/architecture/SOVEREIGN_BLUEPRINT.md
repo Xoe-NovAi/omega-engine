@@ -56,6 +56,24 @@ To eliminate YAML overhead and ensure immutability, the system will transition t
 2. **The Resolver**: The Engine will read the OBIW header, locate the requested lump offset, and deserialize the role/entity directly into memory.
 3. **Immutability**: Once packed, the Default IWAD is a read-only binary, preventing architectural drift.
 
+## §4 New Architectural Layers (2026-06-01)
+
+Beyond the Engine/IWAD/PWAD core, the Omega Engine now includes three supporting layers:
+
+### Layer 4: Request Queue — The Data Comes Home
+- **Purpose**: Offline research queue (`data/requests/queued/`) ensures no query is lost when connectivity drops.
+- **Cloud Delegation**: Low-confidence outputs flow to `data/requests/review/` for consultant pattern review.
+- **Atomic Contract**: Every request reaches a terminal state: `queued`, `completed`, `failed`, `timed_out`.
+
+### Layer 5: Knowledge Library — The Sovereign Archive
+- **Purpose**: Curated, multi-domain document catalog (`data/library/`) with SQLite-backed full-text search.
+- **10 Domains**: Maps to the 10 Pillar slots (sysadmin, datastore, buildmaster, bridge, sentinel, modelgate, context, watchtower, link, verifier).
+- **Quality Scoring**: Multi-dimensional assessment (content integrity, coherence, completeness, structure, domain fit).
+
+### Layer 6: Training Pipeline — The Synthesis Flywheel
+- **Purpose**: Aggregates synthetic training data from research cycles. Lite-tier models fine-tuned locally; heavy-tier via cloud delegation.
+- **Benchmarking**: LLM-as-a-Judge with calibration loop, position randomization, and self-consistency checks.
+
 ## §5 Implementation Path
 
 ### Phase 1: Registry Refactor

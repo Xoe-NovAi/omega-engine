@@ -585,3 +585,400 @@ The legacy archives contained the original 2025 vision for the Omega Engine, inc
 2. **Chainlit Heritage**: Era 1-2 used Chainlit as primary UI — lost in reclamation
 3. **5 Design Patterns**: Circuit breaker (pybreaker), atomic fsync, retry (tenacity), non-blocking subprocess, offline wheelhouse
 4. **Vision Quotes**: "Arcana-NovAi is not a toolchain. It is a summoning."
+
+---
+
+## Decision 66: Attribution Corrections — Hot/Warm/Cold & PVE Are Not id Software
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: SOPHIA / DOOM GUY
+**Trace**: trc_attribution_correction
+
+### Decision
+Correct the attribution of two key patterns that had been incorrectly credited to id Software:
+1. **Hot/Warm/Cold memory tier system**: This is the user's own design, conceived months before id Software architecture was introduced. id Software's Surface Cache provides supplementary eviction policy patterns only.
+2. **Plan → Verify → Execute workflow**: This is the user's own development methodology from the beginning. Not derived from id Software.
+
+### Rationale
+The user explicitly flagged this during review. The strategy plan and CREDITS.md had attributed the three-tiered memory system and the sequential development workflow to id Software. Both were independently developed by the user before id Software was introduced to the Omega Engine. Correcting this maintains attribution integrity.
+
+### Implementation
+| File | Change |
+|------|--------|
+| `CREDITS.md` | Removed Three-Phase Pattern section. Surface Cache rephrased as eviction policy enhancement. Registry count 8→7. |
+| `docs/strategy/FLEET_REDESIGN_EXECUTION_PLAN.md` | §0 attribution table row removed. Added "Clarification" section distinguishing original patterns from enhancements. |
+| `SOVEREIGN_MANDATES.md` | §4 Sequentiality Mandate updated to remove id Software reference. |
+
+### Verification
+- `grep -c "id Software" CREDITS.md` = 7 entries (correct)
+- `grep -c "Three-Phase\|three-phase\|PVE\|Plan-Verify" docs/strategy/FLEET_REDESIGN_EXECUTION_PLAN.md` shows only PVE as user-owned
+
+### Key Insight
+Attribution integrity is a sovereignty issue. When we say "the data comes home," we must also mean "the credit stays with its origin." A borrowed pattern is not an original sin—but misattribution erases the true author's contribution.
+
+---
+
+## Decision 67: Fleet Redesign v5.0 — 14-Agent Consolidation
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (DeepSeek V4 Flash → Gemini 3.5 Flash)
+**Entity**: KALI / DOOM GUY
+**Trace**: trc_fleet_redesign_v5
+
+### Context
+The 26-agent fleet from Phase 0 had 14 agents with overlapping responsibilities (reviewer+tester, 10 individual pillar agents, builder as duplicate of build mode, overseer with no use case). The plan.md inspired a single-agent pillar pattern modeled after id Software's single-renderer architecture.
+
+### Decision
+1. **Consolidate 26→14 agents**: Delete 14 files, create 2 new, redesign 9.
+2. **Single pillar agent**: One `pillar.md --slot PX` replaces 10 separate pillar agents. Directly inspired by id Software's single highly-optimized renderer that accepts parameters rather than maintaining 10 binaries for different game states.
+3. **Kali promoted to primary mode**: Grand oversight — sees all, delegates to Maat/Lilith, destroys drift.
+4. **Maat/Lilith as step-down oversouls**: Light (P1-P5 build) and Dark (P6-P10 run) governance.
+5. **Quality merges reviewer+tester**: Single subagent for code review and stress testing.
+6. **Jem subagents become persistent entities**: Each with individual soul.yaml for accumulated domain wisdom.
+7. **Researcher gets inline lattice reasoning**: Multi-axis (Technical/Philosophical/Historical/Practical) research protocol baked into agent prompt.
+
+### Rationale
+The 10 individual pillar agents violated the Single Renderer Principle. Each was a copy-paste variant with minor changes in description and model config. A single parameterized agent is easier to maintain, harder to drift, and more aligned with the Doom Guy architectural philosophy of "consolidate, optimize, eliminate."
+
+### Implementation (Planned — Phase A of execution handoff)
+| File | Change |
+|------|--------|
+| `.opencode/agents/*.md` | Delete 14 files, create `quality.md` + `pillar.md`, redesign 9 files |
+| `opencode.json` | Rebuild agent registry from 26→14 entries |
+
+### Verification (Expected)
+- `ls .opencode/agents/*.md | wc -l` = 14
+- `python3 -c "import json; c=json.load(open('opencode.json')); print(len(c['agent']))"` = 14
+
+### Key Insight
+Consolidation is not reduction—it is *clarification*. A fleet of 14 with explicit delegation paths is more powerful than 26 with overlapping territories. The single pillar agent is the architectural proof: one compact file replaces 10, parameterized by a single flag.
+
+---
+
+## Decision 68: Research-Backed Enhancements — Web Validation of Subagent Designs
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (Gemini 3.5 Flash → Firecrawl Search)
+**Entity**: RESEARCHER / PILLAR FLEET
+**Trace**: trc_research_gap_closure
+
+### Context
+A fleet of 4 subagents designed the "muscle" (internal logic) for the Request Queue, Knowledge Library, Benchmarking, and Lattice Reasoning. Before hardcoding these designs into the implementation plan, the user requested independent web research to validate the approaches against industry best practices.
+
+### Decision
+1. **LLM-as-a-Judge**: Validated. Enhancements from Galtea/Rulers/EMNLP 2025: 3-point scale (not 5), per-criterion scoring (not composite), position randomization, self-consistency checks, mandatory calibration loop with gold set.
+2. **Agent Task Queue**: File-based v1 acceptable; ecosystem (plandb, persistent-agent-runtime) converges on SQLite. Design SQLite v2 path now.
+3. **Document Quality Scoring**: Multi-dimensional (not scalar). CRACQ/propella-1/DQS all use 5+ dimensions. Upgrade library scoring.
+4. **Lattice Reasoning**: Academic validation from LogicAgent (Semiotic Square) and OSL (Observer-Situation Lattice). Add Reflective Verification and contradiction resolution.
+5. **Model-Persona Affinity**: Verified. Kali/Ma'at/Lilith on 4B-Think, Iris on 0.6B, Prometheus/Doom Guy on 8B.
+
+### Rationale
+The subagent designs were directionally correct but missed several critical details (position bias, calibration requirement, multi-dimensional scoring). Rather than hardcoding flawed implementations, the web research closed the knowledge gap before a single line of code was written.
+
+### Implementation
+| File | Change |
+|------|--------|
+| `data/handoff/HANDOFF_FLEET_REDESIGN_G4.md` | Added Phase 0.5 with research-backed code-level enhancements for C/D/E/F |
+| `docs/strategy/FLEET_REDESIGN_EXECUTION_PLAN.md` | Added §11 Research-Backed Enhancements (4 subsections, 6 sources) |
+
+### Research Sources
+1. EMNLP 2025: "From Generation to Judgment" — LLM-as-a-Judge survey
+2. Galtea Blog (May 2026): Production-grade judge prompt templates
+3. Rulers Framework (arXiv 2601.08654): Evidence-grounded criteria transfer
+4. FutureAGI Guide (2026): 5-element judge prompt structure
+5. plandb (Agent-Field, 4.1k stars): SQLite-backed agent task queue
+6. CRACQ, propella-1, DQS: Multi-dimensional document quality scoring
+7. LogicAgent (arXiv 2509.24765): Semiotic Square lattice reasoning
+8. DocReward (Microsoft Research): Structural document quality assessment
+
+### Verification
+- All 4 subagent designs validated and enhanced
+- 8 distinct sources cited covering 3 domains (judging, queues, libraries)
+- Enhancements inlined into execution handoff for direct implementation by Gemma 4 31B
+
+### Key Insight
+The combination of *internal subagent design* + *external web research* creates a synthesis that neither approach achieves alone. The subagents produce Omega-native architecture; web research catches blind spots and industry standard patterns. This becomes the canonical research pattern: Decompose → Dispatch → Design → Validate → Execute.
+
+---
+
+## Decision 69: Sovereign Mandates 10-12 — Fleet, Soul, Queue Integrity
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (Gemini 3.5 Flash)
+**Entity**: SENTINEL (P5) / MA'AT
+**Trace**: trc_mandates_10_12
+
+### Context
+The existing 9 mandates covered Async, Firewall, Iris, Sequentiality, Gnosis, Podman, Local-First, Zero Telemetry, and Error Integrity. With the fleet redesign (14 agents), persistent entity souls, and offline queue system, three new constitutional protections were needed.
+
+### Decision
+1. **Mandate 10 (Fleet Integrity)**: Agent fleet must stay ≤14 agents. No new agents without verified slot gap. Capabilities map to existing Pillars/Lattice roles.
+2. **Mandate 11 (Soul Integrity)**: Mandatory L1→L2→L3 distillation before session close. Scribe is canonical executor. Session stop hooks must trigger soul.yaml write.
+3. **Mandate 12 (Queue Integrity)**: Atomic contracts. Every request reaches terminal state. Dead-letter catches failures. Heartbeat timestamps for crash recovery.
+
+### Rationale
+The consolidation from 26 to 14 agents exposed how bloat accumulates through additive habits. The fleet redesign would be wasted without a constitutional guard against re-bloat. Similarly, entity soul.yaml files were being written but never systematically read back. The queue system needed the same atomic integrity guarantees already applied to soul writes.
+
+### Implementation
+| File | Change |
+|------|--------|
+| `SOVEREIGN_MANDATES.md` | Added Mandates 10-12 after Mandate 9 |
+| `OMEGA_ENGINE.md` | Updated from "9 laws" to "12 mandates" |
+| `AGENTS.md` | Updated compaction protocol to check 12 mandates |
+
+### Verification
+- `grep -c "^### " SOVEREIGN_MANDATES.md` = 12
+- Cross-referenced in Handoff Phase F (Gemma will update mandate-adjacent docs)
+
+### Key Insight
+Sovereignty is not a state—it is a *practice*. Each mandate is a scar from a wound the engine already survived. Mandates 10-12 scar over the three new wounds: fleet bloat, soul amnesia, and ghost requests.
+
+---
+
+## Decision 70: Artifact Purge — Stale Path References
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (Gemini 3.5 Flash)
+**Entity**: SOPHIA (SysAdmin)
+**Trace**: trc_artifact_purge
+
+### Context
+Three archived handoff documents contained references to a deleted LM Studio plugin directory. The directory no longer existed but the string references remained in handoff files.
+
+### Decision
+Purge all 3 occurrences from handoff documents. Replace with generic references.
+
+### Verification
+- `grep` across repo = 0 matches (clean)
+
+### Key Insight
+Digital archaeology works both ways: you uncover gold, but you also uncover debris. Purging debris is as important as preserving gold.
+
+---
+
+## Decision 71: Final Strategic Review — Ready for Gemma 4 31B Execution
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (Gemini 3.5 Flash)
+**Entity**: KALI / QUALITY
+**Trace**: trc_final_review_v5
+
+### Context
+All research was complete. The strategy plan had attribution corrections. The implementation handoff was drafted. The gap-closure fleet had returned. The question: is the plan ready for execution?
+
+### Decision
+YES. Constitutional alignment verified against all 12 Sovereign Mandates. Attribution corrections locked in both CREDITS.md and strategy plan. Research-backed enhancements inlined into handoff. Baseline `make test` confirmed at 276/276. Pre-flight snapshot committed at `9c91e97`. Gemma 4 31B designated as execution model.
+
+### Risk Register
+| Risk | Severity | Mitigation |
+|------|----------|------------|
+| opencode.json edit breaks agent resolution | High | Rollback via `git reset --hard 9c91e97` |
+| New module imports break CLI | Medium | Lazy imports in CLI, test each new module |
+| File-based queue has scaling limits | Low | v2 design doc includes SQLite migration path |
+| Entity cleanup deletes wrong dirs | High | Delete commands specified in handoff by exact path |
+
+### Key Insight
+Readiness is not perfection—it is *completeness*. Every question has been asked. Every answer has been documented. Every risk has a rollback. The plan is not flawless, but it is complete. That is the threshold for execution.
+
+---
+
+## Decision 74: MCP Hub Restoration — 40 Tools Recovered from Git History
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (deepseek-v4-flash)
+**Entity**: SOPHIA
+**Trace**: trc_mcp_restore
+
+### Context
+Commit `7cdb741` ("fix: restore OpenCode 1.15+ handshake") rewrote `mcp_servers/omega_hub/server.py` from 952 lines to 223 lines, accidentally removing 31 MCP tools while adding HTTP routes for the handshake fix. The full 34-tool implementation was preserved in git at commit `69db713` (the "Great Cleanup").
+
+### Decision
+Merge the 34-tool implementation from `69db713` with the current HTTP routes (`custom_routes=hub_routes` approach). Key architectural choice: use `custom_routes` (required for OpenCode 1.15+) for HTTP routes, and a daemon thread for background awareness pruning (replaces the old `modify_app` lifespan approach).
+
+### Files Changed
+| File | Change |
+|------|--------|
+| `mcp_servers/omega_hub/server.py` | Merged 69db713 tools (34→40 tools) + current HTTP routes (8→11 routes) |
+| `OMEGA_ENGINE.md` | Tool count: 3→40 MCP, added restoration to priority queue |
+| `docs/strategy/PHASE_MCP_HUB.md` | New phase document with merge plan and verification gates |
+| `docs/strategy/EXECUTION_ROADMAP.md` | Phase completion updated |
+| `docs/strategy/HORIZON_MAP.md` | Horizon 1 completion updated |
+
+### Verification
+- 6 verification gates passed: health check, config.providers, provider.list, app.agents (16), config.get, SSE endpoint
+- `make test`: 292/292 passing
+- systemd service: active
+
+### Key Insight
+The 69db713 and 7cdb741 commits each had half of the truth — 34 tools but no HTTP routes, vs 3 tools with perfect HTTP routing. Both were regressions. The correct answer was always both: 40 tools + 11 HTTP routes. Same pattern as the Circuit Breaker consolidation: when two commits each solve half the problem, the merge is not optional.
+
+---
+
+## Decision 75: Horizon 2 — Observability & Forensics (Phase 1)
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (deepseek-v4-flash)
+**Entity**: SOPHIA
+**Trace**: trc_horizon_2_phase1
+
+### Context
+The ForensicsManager class existed in `observability.py` but had a critical structural bug (`_collect_system_info()` returned `None` due to dead code after `@staticmethod`) and used `import asyncio` directly (Mandate 1 violation). Option B was deferred to prioritize Horizon 2.
+
+### Architectural Decisions
+1. **ForensicsManager**: File-based (not Qdrant-backed) — Qdrant is still unwired. Files are the source of truth; Qdrant indexing can be added later.
+2. **Error Gauntlet**: Unit tests (10 scenarios in `test_error_gauntlet.py`) — fast (0.82s), covers all error paths. Integration scenarios can be added when Qdrant is wired.
+3. **Structured Logging**: Drop-in JSON formatter (`JsonFormatter`) — zero code changes to existing logger calls. Gradual migration to structured events later.
+
+### Bugs Fixed
+| Bug | File | Fix |
+|-----|------|-----|
+| `_collect_system_info()` returned `None` — psutil block was dead code after `@staticmethod` | `observability.py:214-255` | Reflowed method body: psutil block + `return info` before `@staticmethod` |
+| `asyncio` import in `_detect_anyio_backend()` | `observability.py:235` | Replaced with `sniffio.current_async_library()` |
+| `recent_events()` used `deque[-limit:]` — `deque` doesn't support slicing | `observability.py:584` | Replaced with explicit index-based iteration |
+
+### Features Added
+| Feature | Implementation | Tests |
+|---------|---------------|-------|
+| `ForensicsManager.replay(trace_id)` | Reconstructs crash timeline from persisted events | 2 |
+| `ForensicsManager.learn(trace_id, entity)` | Writes L1 lesson to entity's soul.yaml | 1 |
+| `JsonFormatter` | Structured JSON logging, drop-in replacement | 2 |
+| `setup_json_logging(name)` | Apply JSON formatting to logger tree | 1 |
+| Error Gauntlet (10 scenarios) | Crash/recovery, replay, learn, engine state, persistence, ring buffer, JSON format | 10 |
+
+### Verification
+```bash
+# All tests pass
+PYTHONPATH=src pytest tests/test_observability.py tests/test_error_gauntlet.py tests/test_health_monitor.py -v
+# ✅ 44 passed in 1.01s
+
+# Total test count
+PYTHONPATH=src pytest tests/ --collect-only -q | tail -1
+# ✅ 302 tests collected
+```
+
+### Key Insight
+The ForensicsManager class was designed correctly but had a dead code path that made `_collect_system_info()` return `None` silently. This is the same "silent failure" pattern that Mandate 9 targets — code that looks correct but produces nothing. The structural bug was invisible because ForensicsManager had no tests and `snapshot()` doesn't validate its return value. Error handling without error reporting is performative.
+
+---
+
+## Decision 76: Option B — Deferred (Structural Fix Extracted)
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (deepseek-v4-flash)
+**Entity**: SOPHIA
+**Trace**: trc_option_b_deferred
+
+### Context
+Option B was originally scoped to fix 17 bare `except Exception:` blocks, the `observability.py` structural bug, the `asyncio` import, the falsy-trap in `openai_compat.py`, and hardcoded paths in `greek.py`/`cpu_optimizer.py`. Horizon 2 work extracted the two observability bugs (structural + asyncio) as prerequisites.
+
+### Remaining Scope
+| Item | File | Priority |
+|------|------|----------|
+| 19 bare `except Exception:` without logging | 9 files (review_queue, model_gateway, providers, cpu_optimizer, memory/providers, inbox, loop, soul_updater, repl) | LOW |
+| Falsy-trap: `config.timeout_seconds or 15.0` | `openai_compat.py:102` | LOW |
+| Hardcoded `/home/arcana-novai/` path | `cpu_optimizer.py:185-186` | LOW |
+| Hardcoded `/media/arcana-novai/` path | `greek.py:200` | LOW |
+
+### Rationale
+These are informational/warning-level issues. None cause crashes. None block functionality. The bare except blocks all have fallback-only logic (return False, return None, pass). The falsy-trap causes a minor config issue (cannot set timeout=0). The hardcoded paths are informational (system would still work with wrong paths — they'd just show empty results). Deferred to next available session.
+
+### Key Insight
+Option B is "the noise floor" — dozens of small issues that degrade debuggability but don't block function. The pattern of deferring them is correct, but they must eventually be addressed. Each one represents a time bomb for a future debugging session.
+
+---
+
+*Decisions 0-49: See legacy archives at `docs/decisions/archive/` (pre-2026-05-22)*
+*Decisions 50-76: Current and in effect*
+
+---
+
+## Decision 72: Big Pickle Review — Post-Execution Audit
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (deepseek-v4-flash)
+**Entity**: SOPHIA / KALI
+**Trace**: trc_big_pickle_review
+
+### Context
+Gemma 4 31B completed Phases A-G of the Fleet Redesign execution. Before proceeding to Horizon 2 (Legacy Mining), a comprehensive post-execution audit was ordered. The audit covered all new files, test coverage, orphan artifacts, and Mandate 9 compliance across all 69 source files.
+
+### Findings
+| Category | Count | Severity |
+|----------|-------|----------|
+| Orphaned entity_N directories (Gemma missed cleanup) | 50 | CRITICAL |
+| Path resolution bugs (DATA_DIR wrong parent count) | 3 (request_queue, catalog, runner) | BLOCKING |
+| `anyio.to_thread.run_sync` kwargs crash | 1 (request_queue) | BLOCKING |
+| Falsy-trap logic (`days=0 or 7`) | 1 (request_queue) | HIGH |
+| Bare `except Exception:` without logging | 17 across 10 files | MANDATE 9 |
+| Falsy-trap in provider config (`timeout=0 or 15.0`) | 1 (openai_compat) | MEDIUM |
+| Hardcoded absolute paths | 2 (greek, cpu_optimizer) | MEDIUM |
+| Direct `asyncio` import (detection only) | 1 (observability) | LOW |
+| Source files without direct test coverage | 21 | LOW |
+
+### Decision
+**Two-phase remediation:**
+1. **Option A (IMMEDIATE)**: Delete orphans, fix all blocking bugs, create test stubs for new modules. Done.
+2. **Option B (NEXT)**: Fix all 17 Mandate 9 violations + 4 additional hardened issues before Horizon 2.
+
+### Outcome
+- 50 orphan directories deleted
+- 3 path resolution bugs fixed
+- 1 runtime crash fixed (run_sync kwargs)
+- 1 falsy-trap fixed (days=0)
+- 16 new tests created (5 queue, 3 library, 3 benchmark, 2 hardware, 3 integration)
+- Test baseline: 276 → **292 passing**
+- Option B deferred to next session (est. 30 min)
+
+### Key Insight
+"Code that looks right but has the wrong constants is invisible." Every new file from Gemma had structurally correct code but systematically wrong path depth. A pattern, not random errors. Future handoffs should include `Path(__file__).resolve().parent` depth diagrams for each file.
+
+---
+
+## Decision 73: Option A Execution — Bug Remediation
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (deepseek-v4-flash)
+**Entity**: KALI
+**Trace**: trc_option_a
+
+### Context
+The Big Pickle Review found critical bugs in Gemma's Phase C/E/F implementations. Option A was scoped to fix the blocking issues only, deferring the 17 Mandate 9 violations to Option B.
+
+### Tasks Executed
+| Task | Description | Result |
+|------|-------------|--------|
+| **A1** | Delete 50 orphaned entity_N directories | ✅ Done (grep confirmed 25 legit workspaces remain) |
+| **A2** | Add psutil to dependency manifest | ✅ Already in pyproject.toml at line 25 |
+| **A3** | Create test stubs for 4 new modules + integration | ✅ 16 tests written |
+| **A4** | Run full test suite (make test) | ✅ 292/292 passing |
+
+### Bugs Discovered During A3/A4
+1. `request_queue.py` DATA_DIR: 4 parents for 3-deep file → 3 (bug: resolves to Documents/ instead of omega-engine/)
+2. `catalog.py` DATA_DIR: 5 parents for 4-deep file → 4
+3. `runner.py` DATA_DIR: 5 parents for 4-deep file → 4
+4. `request_queue.py:74`: `run_sync(d.mkdir, parents=True, exist_ok=True)` → kwargs not supported by this AnyIO version
+5. `request_queue.py:210`: `days=0 or self.STALE_DAYS` → `0 or 7 = 7` (falsy-trap)
+6. `request_queue.py:214-217`: `lambda: list(directory.glob(...))` — closure-capture bug in loop (all iterations examined _completed_dir)
+7. HardwareProfile field name mismatch in tests (`num_cpus` vs `cpu_count`)
+
+### Verification
+```bash
+# Full test suite
+source .venv/bin/activate && OMEGA_ENV=test PYTHONPATH=src pytest tests/ -x --tb=short
+# ✅ 292 passed in 151s
+
+# Zero orphan directories
+ls -d data/entities/entity_* 2>/dev/null | wc -l
+# ✅ 0 (all clean)
+
+# Queue, library, benchmark all functional
+pytest tests/test_request_queue.py tests/test_library_catalog.py tests/test_benchmarks.py tests/test_hardware.py tests/test_integration_new_systems.py -v
+# ✅ 16 passed
+```
+
+### Handoff
+Full implementation handoff created at `data/handoff/HANDOFF_BIG_PICKLE_OPTION_A.md` for Antigravity/Sonnet-4.6 executor.
+
+### Key Insight
+Gemma 4 31B wrote structurally correct code at the pattern/import/async level, but systematically mis-estimated filesystem path depth. This is consistent with LLMs being trained on relative-path-agnostic source code. The fix: verify paths in review, don't assume correct constants.

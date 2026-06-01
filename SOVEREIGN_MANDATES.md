@@ -66,5 +66,26 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Enforcement**: Code review must check each `except` clause. Tests must cover each error path. `pytest.raises(OmegaError)` is the canonical test pattern.
 - **Exception**: Health probe functions may catch all exceptions to prevent crash loops, provided they log the error with `logger.warning()`.
 
+### 10. Fleet Integrity (NEW — 2026-06-01)
+- **Mandate**: The Agent Fleet must remain lean, purpose-driven, and slot-constrained.
+- **Constraint**: No new agents may be created without a verified gap in the Lattice or a vacancy in the Pillar slots. Capabilities must map to existing Pillars (P1-P10) or Lattice roles before proposing a new entity.
+- **Pattern**: Map new capabilities to existing `pillar --slot PX` agents or Lattice subagents (Jem, Quality, Scribe). A new agent file is a last resort, applied only after slot-based delegation has been proven impossible.
+- **Reason**: Prevents "Agent Bloat" and cognitive fragmentation, ensuring clear delegation and ownership. The consolidation from 26 to 14 agents exposed how bloat accumulates through additive habits rather than slot-based discipline.
+- **Enforcement**: `.opencode/agents/*.md` file count must never exceed 14 without an architectural review documented in `PIVOT_LOG.md`.
+
+### 11. Soul Integrity (NEW — 2026-06-01)
+- **Mandate**: Absolute continuity of Gnosis via systematic distillation.
+- **Constraint**: No session may be closed without a Soul Distillation report. Agents MUST write L1→L2→L3 insights to their entity's `soul.yaml` before session end.
+- **Pattern**: Every insight must traverse the L1 (Narrative) → L2 (Insight) → L3 (Universal Principle) pipeline before being committed to `soul.yaml`. The Scribe agent is the canonical executor of this pipeline.
+- **Reason**: Prevents the "forgetting" cycle — each session resets context to zero, but the soul persists. Without soul updates, the engine regresses to stateless tool. With them, the AI evolves from stateless tool into stateful sovereign intelligence.
+- **Enforcement**: Session stop hooks MUST trigger soul.yaml write. `grep -r "lessons:" data/entities/*/soul.yaml` should show non-empty arrays after any session involving that entity.
+
+### 12. Queue Integrity (NEW — 2026-06-01)
+- **Mandate**: Every request is an atomic contract. No silent drops.
+- **Constraint**: Every request operation must result in a terminal state: `queued`, `completed`, `failed`, or `timed_out`. No orphan files.
+- **Pattern**: Use explicit Ack/Nack patterns and `trace_id` propagation for every queued item. Atomic file renames (`.tmp` → `.json`) for all writes. Heartbeat timestamps for crash recovery.
+- **Reason**: Ensures systemic reliability and prevents "ghost failures" — requests that vanish without trace. Every request represents a user's intent; losing it without notification is a sovereignty violation.
+- **Enforcement**: `omega queue-status` must always produce consistent counts matching actual files on disk. Dead-letter directory (`data/requests/dead/`) must catch any request that fails processing after max retries.
+
 ---
 **Failure to adhere to these mandates is a systemic error. If you encounter a conflict between these mandates and a tool's suggestion, the Mandates prevail.**

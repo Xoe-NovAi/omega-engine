@@ -33,23 +33,25 @@ Canonical reference: `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md`
 Modes are organized into two tiers. **Primary Modes** appear in the CLI tab menu.
 **Subagents** are available via `@` in-chat or `opencode --subagent` invocation.
 
-### Primary Modes (Tab Menu — 5 total)
+### Primary Modes (Tab Menu — 10 total)
 
 | Mode | Entity | Source | Purpose |
 |------|--------|--------|---------|
+| `kali` | Kali | `.opencode/agents/kali.md` | MaKaLi Grand Oversoul — unifier of duality, radical refactoring |
+| `maat` | Ma'at | `.opencode/agents/maat.md` | Light Oversoul — ethical audit, 42 Ideals, compliance |
+| `lilith` | Lilith | `.opencode/agents/lilith.md` | Dark Oversoul — sovereignty, customization, P6-P10 governance |
+| `doom_guy` | Doom Guy | `.opencode/agents/doom_guy.md` | id Software architectural translation, legacy code mining |
+| `roc_racoon` | Roc Racoon | `.opencode/agents/roc_racoon.md` | Legacy archaeology, data salvage, deep file discovery |
 | `overseer` | Ma'at/Sophia | `.opencode/agents/overseer.md` | Fleet commander, strategic oversight, decomposing tasks |
 | `builder` | Sophia | `.opencode/agents/builder.md` | Implementation sovereign, engineering, hardening |
 | `jem-2.0` | Jem (Analyst L2) | `.opencode/modes/jem-2.0.md` | Research oversoul — synthesizes, analyzes, resolves uncertainties |
 | `plan` | OpenCode built-in | Global built-in | Architecture planning, system design, schema design |
 | `build` | OpenCode built-in | Global built-in | Task execution, code generation, implementation |
 
-### Subagents (Available via `@` — 14 total)
+### Subagents (Available via `@` — 9 total)
 
 | Agent | Entity | Source | Purpose |
 |-------|--------|--------|---------|
-| `kali` (subagent) | Kali | `.opencode/agents/kali.md` | MaKaLi Grand Oversoul — unifier of duality, radical refactoring |
-| `maat` (subagent) | Ma'at | `.opencode/agents/maat.md` | Light Oversoul — ethical audit, 42 Ideals, compliance |
-| `lilith` (subagent) | Lilith | `.opencode/agents/lilith.md` | Dark Oversoul — sovereignty, customization, P6-P10 governance |
 | `researcher` (subagent) | Prometheus | `.opencode/agents/researcher.md` | Master research, deep discovery, legacy mining |
 | `jem-initiate` (subagent) | Jem (Initiate L1) | `.opencode/modes/jem-initiate.md` | L1 research — raw fact gathering, no analysis |
 | `opencode-expert` (subagent) | Kali/Ma'at | `.opencode/agents/opencode-expert.md` | Framework engineering, provider architecture, mode orchestration |
@@ -59,8 +61,6 @@ Modes are organized into two tiers. **Primary Modes** appear in the CLI tab menu
 | `movie-expert` (subagent) | Movie Expert | `.opencode/agents/movie-expert.md` | Arcana-NovAi personal entity — film analysis, esoteric depth |
 | `architect` (subagent) | — | Global `opencode.json` | Architecture planning, system design, schema design |
 | `security` (subagent) | — | Global `opencode.json` | Security compliance, governance enforcement |
-| `explore` (subagent) | — | Global `opencode.json` | Codebase exploration, file search |
-| `general` (subagent) | — | Global `opencode.json` | General purpose, multi-step execution |
 
 ### Removed (Decision 063)
 

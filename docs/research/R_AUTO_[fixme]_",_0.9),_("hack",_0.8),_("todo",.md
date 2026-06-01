@@ -3985,3 +3985,2304 @@ Explicit markers of imperfection are the most efficient pointers to the next nec
 **L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
 
 **Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: TODO, FIXME, and HACK are standardized semantic markers in software engineering used to categorize technical debt and future work.
+
+**L1 (Narrative)**: Developers across various platforms (StackOverflow, Godot, VSCode) use a consistent set of tags to mark code state.
+
+**L2 (Insight)**: The Omega Engine's background_researcher loop assigns weights to these tags (FIXME: 0.9, HACK: 0.8, TODO: 0.5), effectively treating 'broken' and 'inelegant' code as higher-priority signals for research/intervention than 'planned' work.
+
+**L3 (Universal Principle)**: Semantic metadata embedded within unstructured noise (comments) serves as a high-fidelity proxy for system fragility and technical debt.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: The tag UNDONE is ambiguous, referring either to a rollback of a previous change or an unfinished method.
+
+**L1 (Narrative)**: Community consensus on the 'UNDONE' tag is split between 'reversal' and 'incomplete'.
+
+**L2 (Insight)**: Omega Engine should assign low confidence or a neutral weight to 'UNDONE' tags to avoid misinterpreting a rollback as a missing feature.
+
+**L3 (Universal Principle)**: Lexical ambiguity in shared protocols leads to signal degradation and requires contextual disambiguation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Modern IDEs and extensions (VSCode, Godot) implement visual highlighting and indexing for these tags to facilitate project management and technical debt tracking.
+
+**L1 (Narrative)**: Tooling has evolved to transform textual comments into structured, navigable data (e.g., Todo Tree).
+
+**L2 (Insight)**: Omega Engine can treat these tags as 'anchors' for automated codebase auditing, mirroring the way IDEs surface hidden technical debt.
+
+**L3 (Universal Principle)**: The transformation of implicit textual intent into explicit structured data reduces cognitive load and accelerates system maintenance.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Andrej Karpathy's 'autoresearch' project implements an autonomous loop that optimizes a codebase based on a single metric through iterative experimentation.
+
+**L1 (Narrative)**: Andrej Karpathy released a system where an AI agent proposes changes to a codebase, runs experiments, and keeps changes that improve a predefined metric, operating autonomously overnight.
+
+**L2 (Insight)**: Omega Engine can integrate 'metric-driven autonomous iteration' into its background researcher loop, allowing the system to self-optimize its own internal logic or research outputs without step-by-step human approval.
+
+**L3 (Universal Principle)**: The transition from execution to architecture: Value migrates from the act of 'doing' to the act of 'defining the success metric'.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: The 'Ralph Wiggum' pattern (Geoffrey Huntley, 2025) is a binary 'while (not done)' loop for task completion, whereas 'autoresearch' is an optimization loop 'while (can improve)'.
+
+**L1 (Narrative)**: Geoffrey Huntley's Ralph Wiggum pattern focuses on binary completion (pass/fail), while Karpathy's approach uses continuous metrics to drive optimization.
+
+**L2 (Insight)**: Omega Engine must distinguish between 'Task-Completion Workers' (binary success) and 'Optimization Workers' (metric-based improvement) to avoid infinite loops in non-optimizable tasks.
+
+**L3 (Universal Principle)**: Binary success is a subset of optimization; the shift from 'done' to 'better' transforms a tool into a researcher.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Knowledge work is shifting from 'Human-in-the-Loop' (real-time judgment) to 'Human-before-the-Loop' (designing the arena and success metrics).
+
+**L1 (Narrative)**: The strategic role of the human is moving from providing judgment during the process to designing the 'arena' (constraints and goals) before the process begins.
+
+**L2 (Insight)**: Omega Engine's user interface should evolve from 'prompt-and-response' to 'arena-design,' where the user defines the objective function and constraints, then steps away.
+
+**L3 (Universal Principle)**: High-leverage agency is achieved by decoupling the intent (the metric) from the iteration (the loop).
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Standardized Comment Tags
+
+**L1 (Narrative)**: Developers across StackOverflow, Godot, and VSCode ecosystems utilize a consistent vocabulary of tags to communicate intent within source code.
+
+**L2 (Insight)**: Omega Engine can utilize these tags as semantic anchors to automatically categorize and prioritize technical debt or research gaps within its own codebase.
+
+**L3 (Universal Principle)**: Shared linguistic markers reduce cognitive load and synchronize intent across disparate agents in a collaborative system.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Semantic Distinction of Tags
+
+**L1 (Narrative)**: FIXME is for bugs, TODO for future work, and HACK for suboptimal solutions that nonetheless function.
+
+**L2 (Insight)**: The weights in the provided loop.py snippet (FIXME: 0.9, HACK: 0.8, TODO: 0.5) correctly map to the risk/urgency profile of these tags: Broken > Inelegant > Future.
+
+**L3 (Universal Principle)**: Urgency is inversely proportional to the elegance of the solution.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: UNDONE Ambiguity
+
+**L1 (Narrative)**: Users on StackOverflow disagree on whether 'UNDONE' refers to a reversal of a change or an incomplete implementation.
+
+**L2 (Insight)**: Omega Engine should avoid using 'UNDONE' in its internal logic or automated parsing due to high semantic variance.
+
+**L3 (Universal Principle)**: Ambiguous terminology in a shared system increases entropy and degrades signal-to-noise ratios.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Visual/Structural Tracking
+
+**L1 (Narrative)**: Tools like Todo Tree and Godot's editor implement highlighting to make these tags discoverable and navigable.
+
+**L2 (Insight)**: Omega Engine should not merely detect these tags but index them as a 'Technical Debt Map' to facilitate targeted refactoring.
+
+**L3 (Universal Principle)**: Visibility is the prerequisite for resolution.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Using a single, unified tag (e.g., TODO) for all pending tasks maximizes searchability and minimizes maintenance overhead.
+
+**L1 (Narrative)**: Users on Hacker News (yosito, beepbeepnewnew) argue that a single keyword is superior because it eliminates the need to remember a taxonomy of labels.
+
+**L2 (Insight)**: For the Omega Engine's background researcher, a unified marker reduces the risk of 'silent misses' during automated codebase scans.
+
+**L3 (Universal Principle)**: Simplicity in indexing reduces the probability of retrieval failure.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Specific tags (FIXME, HACK, BUG) provide immediate semantic clarity and allow for prioritized triage of technical debt.
+
+**L1 (Narrative)**: Developers like boole1854 and yosito utilize subcategories (TODO-BUG, FIXME) to distinguish between urgent fixes and general improvements.
+
+**L2 (Insight)**: The Omega Engine can implement a weighted priority system (e.g., FIXME=0.9, TODO=0.5) to determine the order of autonomous refactoring tasks.
+
+**L3 (Universal Principle)**: Semantic granularity enables efficient resource allocation through priority-based filtering.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Tag saturation leads to cognitive load and retrieval failure.
+
+**L1 (Narrative)**: The HN community compares excessive tagging to note-taking apps where overlapping tags (e.g., #cooking vs #recipes) render the system unusable.
+
+**L2 (Insight)**: Omega Engine must resist 'taxonomy creep' in its internal labeling to prevent the background researcher from encountering contradictory or redundant markers.
+
+**L3 (Universal Principle)**: Over-categorization increases system entropy and diminishes the utility of the classification.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Comments in Python are ignored by the interpreter and serve exclusively as human-readable documentation.
+
+**L1 (Narrative)**: The Nikhef Python glossary defines comments as remarks starting with # that are ignored by the computer.
+
+**L2 (Insight)**: This confirms that the Omega Engine can inject markers like [FIXME] into source code without altering the execution logic of the target system.
+
+**L3 (Universal Principle)**: Metadata embedded in non-executable space allows for out-of-band communication between system agents.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Using a single, unified tag (e.g., TODO) for all pending tasks maximizes searchability and minimizes maintenance overhead compared to a fragmented tagging system.
+
+**L1 (Narrative)**: Users on Hacker News (May 2022) argued that a single keyword like TODO is superior because it removes the need to remember which specific label was used for a task.
+
+**L2 (Insight)**: For the Omega Engine's background researcher, a unified entry point for 'pending' states reduces the risk of missing critical updates across disparate modules.
+
+**L3 (Universal Principle)**: Simplicity in indexing reduces the cost of retrieval.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Specialized tags (FIXME, HACK, BUG) provide immediate semantic context regarding the nature and urgency of technical debt.
+
+**L1 (Narrative)**: Developers discussed using specific labels like FIXME or HACK to distinguish between 'unfinished features' and 'broken/ugly code'.
+
+**L2 (Insight)**: The Omega Engine can implement a weighted priority system (e.g., FIXME=0.9, HACK=0.8) to automate the triage of background research tasks based on tag severity.
+
+**L3 (Universal Principle)**: Semantic precision enables prioritized resource allocation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Tag saturation (the proliferation of too many categories) leads to cognitive load and 'tag drift,' eventually rendering the tagging system useless and forcing a return to raw text search.
+
+**L1 (Narrative)**: Participants compared over-tagging in code to note-taking apps where multiple tags for the same concept (e.g., #cooking vs #recipes) create unusable cruft.
+
+**L2 (Insight)**: Omega Engine must resist the urge to create hyper-granular categories for its internal knowledge, as this will eventually degrade into noise.
+
+**L3 (Universal Principle)**: Over-categorization eventually collapses into noise.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Relational linking (Zettelkasten method) is more effective for long-term recall and synthesis than hierarchical or categorical tagging.
+
+**L1 (Narrative)**: A user (shakezula) advocated for a Zettelkasten flow where notes are organized by their links to other notes rather than by tags.
+
+**L2 (Insight)**: The Akashic Record should prioritize the mapping of connections between claims over the assignment of static categories to those claims.
+
+**L3 (Universal Principle)**: Connection is more valuable than classification.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Using a single, unified tag (e.g., 'TODO') for all pending tasks maximizes searchability and minimizes maintenance overhead.
+
+**L1 (Narrative)**: Developers on Hacker News (May 2022) argued that a single keyword reduces the need to remember a complex taxonomy of labels.
+
+**L2 (Insight)**: For the Omega Engine's background researcher, a unified marker ensures no critical 'to-do' is missed due to naming variance across different modules.
+
+**L3 (Universal Principle)**: Simplicity in indexing maximizes recall.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Specific tags (e.g., 'FIXME', 'HACK', 'BUG') provide essential descriptive context and allow for nuanced filtering of technical debt.
+
+**L1 (Narrative)**: Practitioners suggest that labels like 'HACK' or 'FIXME' communicate the urgency and nature of the issue more effectively than a generic 'TODO'.
+
+**L2 (Insight)**: The Omega Engine can implement weighted priorities based on these tags (e.g., FIXME=0.9, HACK=0.8) to automate the triage of background research tasks.
+
+**L3 (Universal Principle)**: Granularity enables prioritization.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Tag saturation—the creation of too many distinct categories—leads to cognitive load and 'cruft,' eventually rendering the tagging system unusable.
+
+**L1 (Narrative)**: Users compared over-tagging in code to the failure of tag-based note-taking apps, where too many similar tags (e.g., #cooking vs #recipes) lead to system collapse.
+
+**L2 (Insight)**: Omega Engine must avoid an exhaustive taxonomy of markers to prevent 'signal noise' in its internal knowledge graph.
+
+**L3 (Universal Principle)**: Excessive categorization obscures signal.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Hybrid tagging strategies (e.g., 'TODO-BUG' or 'TODO FIXME') bridge the gap between generic searchability and specific categorization.
+
+**L1 (Narrative)**: Some developers utilize composite tags to ensure a task is found by both a general 'TODO' search and a specific 'BUG' search.
+
+**L2 (Insight)**: The Engine could adopt a hierarchical tagging schema (Primary Marker -> Sub-type) to maintain both breadth and depth of search.
+
+**L3 (Universal Principle)**: Synthesis of opposing constraints yields the most robust system.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Standardized markers such as TODO, FIXME, and HACK are used in source code to signal technical debt, bugs, or pending tasks to human developers.
+
+**L1 (Narrative)**: Developers use specific keywords in comments to flag areas of code that require future attention, as discussed in the Hacker News thread and implied by Python coding standards.
+
+**L2 (Insight)**: For the Omega Engine, these markers serve as 'semantic beacons.' The weights provided in the topic (FIXME: 0.9, HACK: 0.8, TODO: 0.5) indicate a priority heuristic where corrective actions (FIXME) are weighted higher than general tasks (TODO).
+
+**L3 (Universal Principle)**: Intentionality can be encoded as metadata within a system to guide future resource allocation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: There is a fundamental trade-off between 'Universal Tagging' and 'Granular Tagging'.
+
+**L1 (Narrative)**: Hacker News users debate whether a single 'TODO' tag is superior for searchability or if multiple tags are necessary for descriptive clarity.
+
+**L2 (Insight)**: This reflects a tension in the Omega Engine's background researcher loop: whether to use broad triggers for high recall or specific triggers for high precision.
+
+**L3 (Universal Principle)**: The utility of a classification system is inversely proportional to the cognitive effort required to maintain its taxonomy.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Tag-based organization systems are prone to 'tag saturation'.
+
+**L1 (Narrative)**: Users note that as the number of tags increases (e.g., #cooking, #baking, #food), the system becomes unusable, leading users back to simple keyword searches.
+
+**L2 (Insight)**: Omega Engine must avoid 'category creep' in its internal knowledge mapping to prevent the degradation of its retrieval efficiency.
+
+**L3 (Universal Principle)**: Over-specification in categorization leads to systemic entropy.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Relational linking (Zettelkasten method) is a more effective alternative to categorical tagging.
+
+**L1 (Narrative)**: A contributor suggests that notes organized by their links to other notes are more resilient for recall than those organized by tags.
+
+**L2 (Insight)**: This suggests a potential architectural shift for Omega Engine: moving from a keyword-based 'TODO' list to a graph-based 'dependency' map for background research tasks.
+
+**L3 (Universal Principle)**: Relational connectivity is more resilient for long-term synthesis than categorical labeling.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Developers use standardized comment tags (TODO, FIXME, HACK) to flag technical debt and future tasks within source code.
+
+**L1 (Narrative)**: Programming communities utilize specific keywords in comments to communicate intent and pending work to future maintainers.
+
+**L2 (Insight)**: Omega Engine can treat these tags as 'semantic beacons' to automatically identify fragile or incomplete modules during codebase analysis.
+
+**L3 (Universal Principle)**: Explicit markers of imperfection are the most efficient entry points for system optimization.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: There is a fundamental trade-off between 'Universal Tagging' and 'Granular Tagging'.
+
+**L1 (Narrative)**: Hacker News users debate whether a single searchable string (TODO) is superior to a taxonomy of tags (TODO-BUG, TODO-OPTIMIZE) which may suffer from 'tag saturation'.
+
+**L2 (Insight)**: The Omega Engine's researcher should implement a hybrid retrieval system: search for the universal 'TODO' but apply weights based on granular modifiers.
+
+**L3 (Universal Principle)**: The utility of a classification system is inversely proportional to the cognitive load required to maintain its taxonomy.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: FIXME and HACK tags represent higher urgency or higher technical risk than general TODO tags.
+
+**L1 (Narrative)**: The Omega Engine's internal loop.py assigns higher weights to FIXME (0.9) and HACK (0.8) than to TODO (0.5), mirroring developer sentiment that 'broken' or 'ugly' code is more critical than 'unfinished' code.
+
+**L2 (Insight)**: The background researcher should prioritize 'HACK' and 'FIXME' nodes in its traversal graph to identify the most likely points of failure.
+
+**L3 (Universal Principle)**: The severity of a system flaw is often encoded in the specificity of its label.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Developers use standardized tags such as TODO, FIXME, and HACK within code comments to signal technical debt, bugs, or pending features.
+
+**L1 (Narrative)**: In a 2022 Hacker News discussion, developers confirmed the use of keywords like TODO, FIXME, and HACK to mark code for future action.
+
+**L2 (Insight)**: The Omega Engine's `background_researcher/loop.py` is implementing a weighted priority system for these tags (FIXME: 0.9, HACK: 0.8, TODO: 0.5), transforming passive comments into a prioritized task queue for the agent.
+
+**L3 (Universal Principle)**: Semantic markers in unstructured data allow for the transformation of passive documentation into an actionable priority queue.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: There is a fundamental trade-off between 'Tag Simplicity' and 'Tag Granularity'.
+
+**L1 (Narrative)**: Users 'yosito' and 'beepbeepnewnew' argue that a single TODO tag is superior for searchability, while 'boole1854' advocates for subcategories like TODO-BUG.
+
+**L2 (Insight)**: Omega Engine must handle inconsistent tagging across disparate codebases. By assigning weights to different tags, the engine can normalize varying developer habits into a unified urgency scale.
+
+**L3 (Universal Principle)**: The utility of a classification system is inversely proportional to the cognitive effort required to maintain its taxonomy.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Over-categorization of tags leads to 'tag saturation'.
+
+**L1 (Narrative)**: Discussion participants compared complex tagging systems to failed note-taking habits where too many tags (e.g., #cooking vs #recipes) lead to a reliance on raw text search.
+
+**L2 (Insight)**: To avoid saturation, Omega Engine should prioritize raw text search (the 'slip box' method) over rigid taxonomic adherence when analyzing developer intent.
+
+**L3 (Universal Principle)**: Explicit indexing of intent reduces the entropy of future retrieval, but only if the index remains simpler than the data it describes.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Using a single, broad tag (e.g., TODO) for all pending tasks increases searchability and reduces the cognitive overhead of maintaining a complex tagging taxonomy.
+
+**L1 (Narrative)**: In a May 2022 Hacker News discussion, users (yosito, beepbeepnewnew) argued that a single keyword is more reliable for retrieval than a nuanced set of labels.
+
+**L2 (Insight)**: For the Omega Engine's background researcher loop, relying on a primary anchor tag ensures that no critical 'to-do' items are missed by the agent due to taxonomy mismatch.
+
+**L3 (Universal Principle)**: Simplicity in indexing reduces the probability of retrieval failure.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Specific tags like FIXME, HACK, and BUG provide immediate semantic context regarding the nature of the technical debt, allowing for better prioritization.
+
+**L1 (Narrative)**: Developers on Hacker News (boole1854, yosito) noted that distinct tags allow them to differentiate between a bug, an optimization, or a temporary 'hack'.
+
+**L2 (Insight)**: The Omega Engine can implement a weighted priority system (as seen in the prompt: FIXME=0.9, HACK=0.8) to determine the urgency of background tasks based on the semantic tag used.
+
+**L3 (Universal Principle)**: Semantic precision enables efficient resource allocation through prioritization.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Excessive tagging (tag saturation) leads to 'unusable cruft' where the user forgets which tags were used, eventually reverting to raw text search.
+
+**L1 (Narrative)**: User shakezula compared code tagging to note-taking apps, suggesting that too many tags lead to disarray and a reliance on raw text search (Zettelkasten method).
+
+**L2 (Insight)**: The Omega Engine should avoid an expanding list of specialized tags in its research loop to prevent 'tag entropy' where the agent's filtering logic becomes obsolete.
+
+**L3 (Universal Principle)**: Over-categorization increases systemic entropy and degrades long-term utility.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Using a single, unified tag (e.g., TODO) for all pending tasks maximizes searchability and minimizes maintenance overhead.
+
+**L1 (Narrative)**: Users on Hacker News (yosito, beepbeepnewnew) argue that a single keyword is superior because the descriptive text following the tag provides the necessary nuance, while the tag itself ensures nothing is missed during search.
+
+**L2 (Insight)**: For the Omega Engine's background researcher, relying on a primary anchor tag reduces the risk of 'silent failures' where critical tasks are missed because they were labeled with an unexpected variant.
+
+**L3 (Universal Principle)**: In information retrieval, a single high-recall anchor is more reliable than multiple high-precision labels when the cost of a missed item is higher than the cost of filtering noise.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Specialized tags (e.g., FIXME, HACK, BUG) provide essential semantic clarity regarding the nature and urgency of technical debt.
+
+**L1 (Narrative)**: Developers like boole1854 and yosito utilize distinct labels to differentiate between bugs, optimizations, and temporary 'hacks'.
+
+**L2 (Insight)**: The Omega Engine can implement a weighted priority system (as suggested by the prompt's mapping: FIXME 0.9, HACK 0.8, TODO 0.5) to automate the triage of background research tasks based on label urgency.
+
+**L3 (Universal Principle)**: Semantic differentiation allows for the transformation of a flat list into a prioritized queue, enabling efficient resource allocation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Tag saturation leads to abandonment of the tagging system in favor of raw text search.
+
+**L1 (Narrative)**: Discussion participants compared complex tagging systems to note-taking apps where too many tags (e.g., #cooking vs #recipes) lead to disarray and a return to simple keyword searching.
+
+**L2 (Insight)**: Omega Engine must avoid 'label bloat' in its internal record-keeping to prevent the degradation of its own indexing efficiency.
+
+**L3 (Universal Principle)**: Complexity in categorization eventually collapses into entropy if the taxonomy is not strictly governed or automatically synthesized.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Using a single, unified tag (e.g., TODO) for all pending tasks maximizes searchability and minimizes maintenance overhead.
+
+**L1 (Narrative)**: Developers on Hacker News (May 2022) argued that a single keyword is easier to remember and search for than a complex taxonomy of labels.
+
+**L2 (Insight)**: For the Omega Engine's background researcher, a unified search string reduces the risk of 'silent failures' where critical tasks are missed because they were tagged with an obscure label.
+
+**L3 (Universal Principle)**: Simplicity in indexing reduces the cost of retrieval.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Specialized tags (FIXME, HACK, BUG) provide essential semantic metadata that allows for prioritized action and clearer communication of technical debt.
+
+**L1 (Narrative)**: Some practitioners advocate for sub-categorization (e.g., TODO-BUG) to distinguish between feature requests and critical errors.
+
+**L2 (Insight)**: The Omega Engine can implement a weighted priority system (as seen in the prompt's mapping: FIXME=0.9, HACK=0.8) to automate the triage of background research tasks.
+
+**L3 (Universal Principle)**: Semantic precision enables prioritized resource allocation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Tag saturation—the proliferation of too many categories—leads to cognitive load and system decay, eventually rendering the tagging system useless.
+
+**L1 (Narrative)**: Users compared over-tagging in code to the failure of tag-based note-taking apps, where too many similar tags (e.g., #cooking vs #recipes) create 'unusable cruft'.
+
+**L2 (Insight)**: Omega Engine must resist the urge to create an infinite taxonomy of worker labels; it should maintain a lean, high-signal set of primitives to avoid internal entropy.
+
+**L3 (Universal Principle)**: Excessive granularity degrades the utility of a classification system.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Relational linking (Zettelkasten method) is superior to categorical tagging for long-term recall and synthesis of complex information.
+
+**L1 (Narrative)**: A contributor suggested moving away from tags entirely in favor of a 'slip box' method where notes are organized by their links to other notes.
+
+**L2 (Insight)**: Omega Engine could evolve its task tracking from a flat list of tagged comments to a directed graph of technical dependencies, where a 'FIXME' is linked to the 'HACK' that caused it.
+
+**L3 (Universal Principle)**: Relational context is more durable than categorical labels.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Using a single, unified tag (e.g., TODO) for all pending tasks maximizes searchability and minimizes maintenance overhead.
+
+**L1 (Narrative)**: Users on Hacker News (yosito, beepbeepnewnew) argue that a single keyword is superior because it removes the need to guess which label was used, making the codebase easier to audit.
+
+**L2 (Insight)**: For the Omega Engine's background researcher, relying on a single primary trigger prevents 'silent misses' where the agent ignores a critical task because it was labeled 'FIXME' instead of 'TODO'.
+
+**L3 (Universal Principle)**: Simplicity in indexing reduces the probability of retrieval failure.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Specialized tags (e.g., FIXME, HACK, BUG) provide essential semantic metadata that allows for better triage and categorization of technical debt.
+
+**L1 (Narrative)**: Developers like boole1854 and yosito utilize specific tags to distinguish between bugs, optimizations, and temporary 'hacks'.
+
+**L2 (Insight)**: The Omega Engine can map these tags to priority weights (as seen in the source snippet: FIXME=0.9, HACK=0.8, TODO=0.5) to dynamically prioritize the background research queue.
+
+**L3 (Universal Principle)**: Semantic granularity enables prioritized resource allocation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Excessive tag granularity leads to 'tag saturation,' where the cognitive load of remembering which tag to use results in organizational decay.
+
+**L1 (Narrative)**: beepbeepnewnew compares complex tagging to note-taking apps where overlapping tags (e.g., #cooking vs #recipes) eventually render the system unusable.
+
+**L2 (Insight)**: If the Omega Engine's internal loop implements too many specific state-tags, it risks 'category drift,' making the researcher's logic brittle and inconsistent over time.
+
+**L3 (Universal Principle)**: Over-categorization creates a maintenance burden that eventually outweighs the benefit of precision.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Using a single, unified tag (e.g., TODO) for all pending tasks maximizes searchability and minimizes maintenance overhead compared to a complex taxonomy of tags.
+
+**L1 (Narrative)**: Developers on Hacker News (May 2022) argued that a single keyword is easier to remember and search, while nuance should be handled in the description following the tag.
+
+**L2 (Insight)**: For the Omega Engine's background researcher, relying on a limited set of high-signal anchors reduces the risk of missing critical markers across diverse source codebases.
+
+**L3 (Universal Principle)**: Simplicity in indexing maximizes retrieval reliability.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Specialized tags (FIXME, HACK, BUG) provide immediate semantic context regarding the nature and urgency of the technical debt.
+
+**L1 (Narrative)**: Some practitioners utilize specific labels like FIXME or HACK to distinguish between 'unfinished features' and 'broken/suboptimal code'.
+
+**L2 (Insight)**: The Omega Engine can implement a weighted priority system (e.g., FIXME=0.9, HACK=0.8) to triage the order in which the background researcher analyzes code smells.
+
+**L3 (Universal Principle)**: Semantic granularity enables prioritized resource allocation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Tag saturation (creating too many specific categories) leads to cognitive load and 'tag drift,' eventually rendering the tagging system unusable and forcing a return to raw text search.
+
+**L1 (Narrative)**: Users compared over-tagging in code to over-tagging in note-taking apps, where multiple similar tags (e.g., #cooking vs #recipes) create confusion.
+
+**L2 (Insight)**: Omega Engine must avoid an exploding taxonomy of internal labels to prevent 'knowledge fragmentation' within its own record-keeping.
+
+**L3 (Universal Principle)**: Over-categorization degrades the utility of the category.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Relational linking (Zettelkasten method) is superior to hierarchical tagging for long-term recall and synthesis of information.
+
+**L1 (Narrative)**: A contributor suggested that notes should be organized by what they link to/from rather than by static tags to better facilitate synthesis.
+
+**L2 (Insight)**: The Engine should prioritize the mapping of dependencies between a 'FIXME' and the functions it affects, rather than just indexing the 'FIXME' tag itself.
+
+**L3 (Universal Principle)**: Connection is more potent than classification.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a micro-paradigm
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 in 2005 to standardize codetags, arguing that they allow developers to act as the documentation team by marking code for review in-situ.
+
+**L2 (Insight)**: The Omega Engine's background researcher is utilizing a weighted system (FIXME: 0.9, HACK: 0.8, TODO: 0.5) to programmatically prioritize its own internal refactoring and research loops.
+
+**L3 (Universal Principle)**: Embedded metadata within a primary artifact is more resilient and accurate than detached tracking systems.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Adherence to SPOT/DRY principles
+
+**L1 (Narrative)**: PEP 350 posits that documentation should be auto-generated from a single source to prevent the decay associated with duplicating information across multiple files.
+
+**L2 (Insight)**: Omega Engine should prioritize 'living documentation'—where the system's state and requirements are derived from its active code and logs rather than static manuals.
+
+**L3 (Universal Principle)**: Truth decays when duplicated; the closest proximity to the source of action is the highest fidelity of information.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Weighted prioritization of technical debt
+
+**L1 (Narrative)**: While PEP 350 suggests optional fields for priority, the Omega Engine implementation assigns explicit numerical weights to different tag types to drive worker behavior.
+
+**L2 (Insight)**: The high weight of 'FIXME' (0.9) relative to 'TODO' (0.5) indicates a system designed to prioritize stability and correctness over feature expansion.
+
+**L3 (Universal Principle)**: The severity of technical debt is proportional to the distance between intended logic and implemented syntax.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a project management paradigm.
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 in 2005 to standardize codetags, arguing that they allow developers to maintain a 'Single Point of Truth' by keeping requirements and tasks within the source code.
+
+**L2 (Insight)**: Omega Engine can treat the codebase not just as executable logic, but as a structured database of intent and technical debt, allowing the background researcher to map the 'cognitive map' of the developers.
+
+**L3 (Universal Principle)**: The source code is the most high-fidelity record of a system's current state and future trajectory.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Rejection of formal codetag standardization.
+
+**L1 (Narrative)**: PEP 350 was rejected because the Python community preferred flexibility over a rigid standard library specification for internal comments.
+
+**L2 (Insight)**: This justifies Omega Engine's use of a custom weighting system (0.9, 0.8, 0.5) rather than adhering to a global standard; internal utility outweighs external conformity.
+
+**L3 (Universal Principle)**: Organic, utility-driven adoption is more resilient and effective than top-down standardization for developer-centric metadata.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Quantitative weighting of qualitative tags.
+
+**L1 (Narrative)**: The Omega Engine's loop.py assigns specific float values to tags like FIXME and HACK, likely to drive a priority queue for the background researcher.
+
+**L2 (Insight)**: By converting qualitative markers into quantitative weights, Omega transforms 'comments' into 'signals' that can be processed by an optimization algorithm.
+
+**L3 (Universal Principle)**: Qualitative intent can be mathematically modeled to automate the prioritization of systemic entropy.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Beginner syntax errors (Assignment vs Equality).
+
+**L1 (Narrative)**: A StackOverflow thread demonstrates a user attempting to use '=' (assignment) inside a 'while' loop condition instead of '==' (comparison).
+
+**L2 (Insight)**: When the Omega Engine analyzes external code or user inputs, it must distinguish between 'syntactic noise' (beginner errors) and 'intentional hacks' (HACK tags) to avoid miscategorizing technical debt.
+
+**L3 (Universal Principle)**: The gap between conceptual intent and syntactic execution is the primary site of failure in human-machine communication.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a project management paradigm
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 in 2005 to standardize codetags, arguing they allow for the construction of standard utilities to monitor project health.
+
+**L2 (Insight)**: Omega Engine can utilize these tags as a semantic layer to map the 'psychological state' of a codebase, identifying areas of developer anxiety or known instability.
+
+**L3 (Universal Principle)**: Metadata embedded within the primary artifact is the most accurate reflection of the artifact's current state.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: The Single Point of Truth (SPOT) in documentation
+
+**L1 (Narrative)**: PEP 350 advocates for generating all documentation from a single source (the code) to prevent duplication and synchronization errors.
+
+**L2 (Insight)**: Omega Engine should treat source code as the primary knowledge base, treating external documentation as a derivative 'view' rather than a source of truth.
+
+**L3 (Universal Principle)**: The distance between the declaration of intent and the execution of logic should be minimized to reduce systemic entropy.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Omega Engine's prioritization of debt over growth
+
+**L1 (Narrative)**: The background researcher's loop assigns higher weights to FIXME and HACK than to TODO.
+
+**L2 (Insight)**: The system is architected to prioritize the resolution of existing instability (entropy reduction) over the addition of new capabilities (expansion).
+
+**L3 (Universal Principle)**: Urgency is a function of existing instability rather than potential growth.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Symbolic conflation in Python syntax
+
+**L1 (Narrative)**: A StackOverflow user failed to distinguish between assignment and equality, leading to a loop failure.
+
+**L2 (Insight)**: The background researcher must distinguish between intentional codetags and accidental syntax errors that may mimic the structure of tags or logic markers.
+
+**L3 (Universal Principle)**: Precision in symbolic representation is the boundary between intent and failure.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a lightweight micro-paradigm
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 in 2005 to standardize codetags for project health; while rejected as a Python standard, the practice persists ad-hoc across the industry and is currently utilized in the Omega Engine's background researcher loop.
+
+**L2 (Insight)**: Omega Engine is not merely using tags for human readability but is treating them as machine-readable signals to drive the background researcher's focus.
+
+**L3 (Universal Principle)**: Metadata embedded within the primary artifact is the most resilient form of documentation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: SPOT/DRY via Codetags
+
+**L1 (Narrative)**: PEP 350 argues that documentation should be generated from a single source (the code) to avoid the friction of maintaining separate ticketing systems for every minor thought.
+
+**L2 (Insight)**: Omega Engine can reduce 'documentation drift' by treating its own source code as the living specification and roadmap.
+
+**L3 (Universal Principle)**: The distance between the declaration of a problem and its location is the primary source of documentation decay.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Quantitative priority weighting of tags
+
+**L1 (Narrative)**: The Omega Engine's `loop.py` assigns specific float values to tags: FIXME (0.9), HACK (0.8), and TODO (0.5).
+
+**L2 (Insight)**: This transforms qualitative developer sentiment into a quantitative priority queue, allowing the engine to algorithmically decide which technical debt to address first.
+
+**L3 (Universal Principle)**: Qualitative labels must be mapped to quantitative values to enable algorithmic prioritization.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as project management markers
+
+**L1 (Narrative)**: PEP 350 (2005) proposed standardizing codetags to enable automated utility construction, while the Omega Engine's background researcher loop currently utilizes them.
+
+**L2 (Insight)**: Omega Engine is not just using tags for human readability but is treating them as structured data for its background research processes.
+
+**L3 (Universal Principle)**: Metadata embedded within the primary artifact reduces the friction of synchronization between intent and implementation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: DRY/SPOT via source-embedded documentation
+
+**L1 (Narrative)**: Micah Elliott argued that documentation should be auto-generated from source to prevent duplication and ensure the developers remain the primary documentation team.
+
+**L2 (Insight)**: By treating the codebase as the 'Single Point of Truth', Omega can dynamically generate roadmaps or health reports without external ticket synchronization.
+
+**L3 (Universal Principle)**: The most reliable source of truth is the one closest to the point of execution.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Weighted priority system for technical debt
+
+**L1 (Narrative)**: The local context reveals a mapping of tags to floats: FIXME (0.9), HACK (0.8), and TODO (0.5).
+
+**L2 (Insight)**: Omega has quantified qualitative markers, transforming passive comments into a prioritized telemetry stream for the background researcher.
+
+**L3 (Universal Principle)**: Quantification of qualitative markers transforms passive documentation into active steering.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Symbolic conflation in logic loops
+
+**L1 (Narrative)**: A 2014 StackOverflow thread highlights a beginner's error where '=' was used instead of '==' in a while loop, causing a logic failure.
+
+**L2 (Insight)**: This underscores the necessity for the Omega Engine's background researcher to distinguish between 'intent' (what the coder meant) and 'syntax' (what the code does) when analyzing legacy loops.
+
+**L3 (Universal Principle)**: Precision in symbolic representation is the boundary between intent and failure.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a micro-paradigm
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 in 2005 to standardize codetags for project management. Although rejected as a standard library requirement, the practice remains ubiquitous in developer culture.
+
+**L2 (Insight)**: Omega Engine is operationalizing this 'rejected' standard by treating codetags not just as comments, but as weighted data inputs for its background research loop.
+
+**L3 (Universal Principle)**: Metadata embedded within the primary artifact reduces the friction of synchronization between intent and implementation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Omega Engine's weighted priority system
+
+**L1 (Narrative)**: The local source code in loop.py assigns numerical weights to specific tags: FIXME (0.9), HACK (0.8), and TODO (0.5).
+
+**L2 (Insight)**: The engine differentiates between 'critical instability' (FIXME) and 'planned expansion' (TODO), allowing the background researcher to prioritize stability over feature growth.
+
+**L3 (Universal Principle)**: Urgency is a function of the delta between the current state and the required stability threshold.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Single Point of Truth (SPOT) in documentation
+
+**L1 (Narrative)**: PEP 350 argues that developers are the best documentation team and that information should be recorded once in the code and generated into other formats.
+
+**L2 (Insight)**: To maintain high fidelity, Omega Engine should avoid external task trackers for internal logic and instead derive its 'to-do' list directly from the codebase.
+
+**L3 (Universal Principle)**: The cost of synchronization increases linearly with the number of disparate sources of truth.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Syntactic vs Semantic errors
+
+**L1 (Narrative)**: A StackOverflow thread demonstrates a beginner's failure to distinguish between assignment and equality, leading to a logical loop failure.
+
+**L2 (Insight)**: When the Omega Engine parses or generates code, it must account for the high probability of 'semantic drift' where the user's intent (equality) is betrayed by their syntax (assignment).
+
+**L3 (Universal Principle)**: Semantic intent is frequently obscured by syntactic precision.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a micro-paradigm
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 in 2005 to standardize codetags to enable automated utility construction and project uniformity.
+
+**L2 (Insight)**: Omega Engine is not just using tags for human readability but is quantifying them into a priority vector for its background researcher loop.
+
+**L3 (Universal Principle)**: Metadata embedded within the primary artifact is more resilient and accurate than external tracking systems.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Omega's weighted tag system
+
+**L1 (Narrative)**: The local source code defines a mapping where FIXME and HACK are prioritized over TODO.
+
+**L2 (Insight)**: This suggests the Omega Engine prioritizes 'stability and debt reduction' (FIXME/HACK) over 'feature expansion' (TODO).
+
+**L3 (Universal Principle)**: Qualitative markers must be quantified to be actionable by an autonomous agent.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: SPOT/DRY via in-code markers
+
+**L1 (Narrative)**: PEP 350 argues that documentation should be auto-generated from source to prevent duplication and divergence.
+
+**L2 (Insight)**: Omega can treat its own codebase as a living database, using the background researcher to synchronize its internal state with the actual state of the code.
+
+**L3 (Universal Principle)**: The distance between the definition of a problem and its record should be minimized to prevent systemic entropy.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Syntax/Logic conflation
+
+**L1 (Narrative)**: A StackOverflow user failed to distinguish between assignment and equality in a while loop, leading to execution failure.
+
+**L2 (Insight)**: This highlights the necessity for the Omega Engine's research loop to implement strict static analysis to avoid 'hallucinating' valid syntax that is logically flawed.
+
+**L3 (Universal Principle)**: Precision in symbolic representation is the absolute boundary between intent and execution.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a lightweight micro-paradigm
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 to standardize codetags to enable standard utilities for project health monitoring, though the PEP was ultimately rejected by the core Python team.
+
+**L2 (Insight)**: The Omega Engine has internalized this rejected standard, using codetags as programmatic triggers for its background researcher to identify and weight areas of the codebase requiring attention.
+
+**L3 (Universal Principle)**: Metadata embedded within the primary artifact reduces the friction of synchronization between intent and implementation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Omega Engine's weighted priority system
+
+**L1 (Narrative)**: The internal loop in src/omega/workers/background_researcher/loop.py assigns numerical weights to specific tags: FIXME (0.9), HACK (0.8), and TODO (0.5).
+
+**L2 (Insight)**: The system is designed to prioritize 'instability' and 'technical debt' over 'feature expansion,' treating existing flaws as higher-priority research targets than missing functionality.
+
+**L3 (Universal Principle)**: Urgency is a function of existing instability rather than potential growth.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: SPOT/DRY via source-embedded documentation
+
+**L1 (Narrative)**: PEP 350 argues that developers are the best documentation team and that information should be recorded in a single original format (the code) to avoid duplication.
+
+**L2 (Insight)**: Omega Engine can treat the codebase as a living database of requirements, allowing it to generate its own internal roadmaps without relying on external ticketing systems.
+
+**L3 (Universal Principle)**: The most reliable documentation is that which is physically coupled to the logic it describes.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Syntactic conflation in Python
+
+**L1 (Narrative)**: A StackOverflow thread demonstrates a user attempting to use an assignment operator (=) within a while-loop condition, leading to a runtime failure.
+
+**L2 (Insight)**: This highlights a specific pattern of 'semantic hallucination' that the Omega Engine's background researcher should be able to detect when auditing user-submitted or generated code.
+
+**L3 (Universal Principle)**: Semantic ambiguity in syntax leads to systemic failure; precision in operator usage is the boundary between execution and error.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as project management tools
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 to standardize codetags for consistency; while rejected as a standard library requirement, the practice persists in the Omega Engine's background researcher loop.
+
+**L2 (Insight)**: Omega Engine is treating code comments not as passive text, but as active signals for its autonomous agents to identify technical debt and priority areas.
+
+**L3 (Universal Principle)**: Metadata embedded within the primary artifact is the most resilient and accurate form of documentation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: The SPOT/DRY Principle
+
+**L1 (Narrative)**: PEP 350 argues that developers should be the documentation team and that documentation should be auto-generated from a single source of truth.
+
+**L2 (Insight)**: To minimize entropy, Omega Engine should avoid external tracking tickets for internal code issues, instead using the codebase as the primary database for its own evolution.
+
+**L3 (Universal Principle)**: Redundancy in information systems increases entropy and decreases reliability.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Quantitative weighting of technical debt
+
+**L1 (Narrative)**: The local context reveals a mapping where 'FIXME' is weighted higher (0.9) than 'TODO' (0.5).
+
+**L2 (Insight)**: The Omega Engine has evolved a 'Technical Debt Index' that allows it to algorithmically prioritize which parts of its own architecture require immediate intervention versus long-term planning.
+
+**L3 (Universal Principle)**: Qualitative labels are most actionable when mapped to a quantitative scale for systemic processing.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Syntactic vs Semantic failure in Python
+
+**L1 (Narrative)**: A StackOverflow user failed to implement a while loop due to using assignment instead of comparison and failing to indent.
+
+**L2 (Insight)**: The Omega Engine's background researcher must be capable of distinguishing between a developer's semantic intent and their syntactic execution when analyzing external repositories.
+
+**L3 (Universal Principle)**: The gap between conceptual intent and formal syntax is the primary site of failure in human-machine communication.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a micro-paradigm
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 in 2005 to standardize codetags, arguing they allow for the construction of standard utilities to monitor project health.
+
+**L2 (Insight)**: Omega Engine can treat codetags as 'semantic beacons' to automatically map technical debt and critical failure points across disparate repositories without requiring external ticket access.
+
+**L3 (Universal Principle)**: Metadata embedded within the primary artifact is more resilient and accurate than metadata stored in a decoupled tracking system.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: SPOT/DRY in documentation
+
+**L1 (Narrative)**: PEP 350 posits that developers are the best documentation team and that information should be recorded in a single original format (the code).
+
+**L2 (Insight)**: The Engine should prioritize 'in-situ' knowledge capture; any documentation that exists outside the source code is a liability prone to synchronization drift.
+
+**L3 (Universal Principle)**: The cost of maintaining synchronization between two disparate representations of the same truth eventually exceeds the cost of creating a unified representation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Omega's priority weighting
+
+**L1 (Narrative)**: The background_researcher loop assigns higher weights to FIXME (0.9) and HACK (0.8) than to TODO (0.5).
+
+**L2 (Insight)**: The system is architected to prioritize risk mitigation (fixing broken/ugly code) over feature growth (implementing new tasks).
+
+**L3 (Universal Principle)**: Urgency is a function of existing instability rather than future potential.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Syntax conflation errors
+
+**L1 (Narrative)**: A StackOverflow user failed to distinguish between assignment and equality in a while loop, leading to a logic crash.
+
+**L2 (Insight)**: When the Engine performs automated code repair or analysis, it must explicitly check for 'assignment-in-condition' patterns as a high-probability source of human error.
+
+**L3 (Universal Principle)**: The gap between intent (checking a condition) and execution (assigning a value) is a primary source of systemic failure in symbolic logic.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a lightweight micro-paradigm
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 in 2005 to standardize codetags to enable automated utilities for project health monitoring, though the PEP was ultimately rejected for standard library inclusion.
+
+**L2 (Insight)**: Omega Engine's background researcher is implementing a version of this paradigm, treating code comments as actionable data points for its research loop.
+
+**L3 (Universal Principle)**: Metadata embedded within the primary artifact (code) reduces the friction of synchronization between execution and intention.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: The Single Point of Truth (SPOT) principle
+
+**L1 (Narrative)**: PEP 350 argues that information should be recorded in a single original format and all other locations should be automatically generated from that source.
+
+**L2 (Insight)**: The 'Akashic Record' function of the Omega Engine is a systemic application of SPOT, distilling disparate raw claims into a single synthesized truth.
+
+**L3 (Universal Principle)**: The cost of synchronization increases linearly with the number of redundant representations of a single fact.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Weighted priority for codetags
+
+**L1 (Narrative)**: The local source code in src/omega/workers/background_researcher/loop.py maps specific tags to floating-point values (FIXME: 0.9, HACK: 0.8, TODO: 0.5).
+
+**L2 (Insight)**: This indicates the Omega Engine converts qualitative developer sentiment into quantitative priority vectors to optimize its background processing queue.
+
+**L3 (Universal Principle)**: Qualitative labels must be quantified to be processed by an algorithmic agent.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Semantic confusion in Python logic
+
+**L1 (Narrative)**: A StackOverflow discussion highlights a beginner's failure to distinguish between assignment and equality, and between the NoneType object and a string 'none'.
+
+**L2 (Insight)**: This underscores the necessity for the Omega Engine's refractive distillation to maintain strict type and operator boundaries to avoid 'semantic collapse' during synthesis.
+
+**L3 (Universal Principle)**: Precision in symbolic representation is the boundary between functional logic and systemic failure.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a micro-paradigm
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 in 2005 to standardize codetags to enable automated utility construction and project uniformity.
+
+**L2 (Insight)**: Omega Engine can treat its own source code as a structured, queryable database of technical debt and intent by parsing these tags.
+
+**L3 (Universal Principle)**: Metadata embedded within the primary artifact is more resilient and accurate than external tracking systems.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: SPOT/DRY Principles
+
+**L1 (Narrative)**: PEP 350 advocates for documentation to be auto-generated from source code to prevent duplication and divergence.
+
+**L2 (Insight)**: Omega Engine should prioritize 'living documentation' that evolves automatically from the codebase rather than maintaining separate manuals.
+
+**L3 (Universal Principle)**: Redundancy in information storage increases the probability of divergence and systemic decay.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Python Syntax Failures
+
+**L1 (Narrative)**: A StackOverflow user struggled with basic loop logic, specifically confusing assignment with comparison and object types with strings.
+
+**L2 (Insight)**: The Omega Engine's research loop must distinguish between a user's semantic intent and their syntactic execution when analyzing external code snippets.
+
+**L3 (Universal Principle)**: The gap between conceptual intent and formal syntax is the primary site of failure in human-machine communication.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Omega's Weighted Codetags
+
+**L1 (Narrative)**: The Omega Engine's internal loop assigns numerical weights to specific codetags to categorize the urgency of code issues.
+
+**L2 (Insight)**: By quantifying qualitative labels (FIXME vs TODO), the engine can algorithmically prioritize its own self-healing or refactoring tasks.
+
+**L3 (Universal Principle)**: Qualitative labels can be mapped to quantitative weights to enable automated decision-making in complex systems.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a project management paradigm.
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 in 2005 to standardize codetags, arguing they are more efficient than external ticketing systems for high-velocity development.
+
+**L2 (Insight)**: Omega Engine can treat codetags as 'semantic beacons,' allowing the background researcher to map the 'psychological state' of the codebase (e.g., areas of high anxiety/FIXME vs. areas of growth/TODO).
+
+**L3 (Universal Principle)**: Metadata embedded within the primary artifact is more resilient and accurate than external tracking.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Standardized tags and the SPOT principle.
+
+**L1 (Narrative)**: PEP 350 suggests that documentation should be a derivative of the code, not a separate entity, to prevent duplication and drift.
+
+**L2 (Insight)**: The Omega Engine should prioritize 'in-situ' knowledge extraction over external documentation summaries to avoid the 'documentation lag' seen in human-managed projects.
+
+**L3 (Universal Principle)**: The distance between the definition of a problem and its record should be minimized to prevent entropy.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Omega Engine's weighted priority for technical debt.
+
+**L1 (Narrative)**: The internal loop.py assigns higher weights to corrective tags (FIXME/HACK) than additive tags (TODO).
+
+**L2 (Insight)**: The system is architected to prioritize stability and risk mitigation (correcting 'hacks') over feature expansion, reflecting a 'stability-first' heuristic.
+
+**L3 (Universal Principle)**: Urgency is a function of existing instability rather than potential growth.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Syntactic conflation in Python.
+
+**L1 (Narrative)**: A StackOverflow user failed to distinguish between assignment and comparison, leading to a logic loop failure.
+
+**L2 (Insight)**: When the Omega Engine's researcher identifies a 'FIXME' tag, it must distinguish between 'architectural debt' and 'syntactic failure' to determine if the fix is trivial (syntax) or complex (logic).
+
+**L3 (Universal Principle)**: Precision in symbolic representation is the boundary between execution and failure.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a project management paradigm.
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 in 2005 to standardize codetags to enable the construction of standard utilities for project health monitoring.
+
+**L2 (Insight)**: Omega Engine is operationalizing this by treating qualitative code comments as quantitative data points for its background researcher.
+
+**L3 (Universal Principle)**: Metadata embedded within the primary artifact is more resilient and contextually accurate than external tracking systems.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: The Single Point of Truth (SPOT) principle.
+
+**L1 (Narrative)**: PEP 350 argues that documentation should be auto-generated from source code to prevent duplication and divergence.
+
+**L2 (Insight)**: Omega Engine should prioritize 'living documentation' where the system's internal state is derived directly from the codebase's current markers.
+
+**L3 (Universal Principle)**: Redundancy in information storage increases the probability of entropy and systemic divergence.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Weighted codetag prioritization in Omega Engine.
+
+**L1 (Narrative)**: The local context reveals a mapping of tags to floats: FIXME (0.9) > HACK (0.8) > TODO (0.5).
+
+**L2 (Insight)**: This transforms subjective developer notes into a prioritized queue for autonomous research agents, prioritizing critical failures over technical debt.
+
+**L3 (Universal Principle)**: Qualitative signals can be operationalized through weighted quantification to drive autonomous prioritization.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Syntax vs. Intent failure modes.
+
+**L1 (Narrative)**: A StackOverflow user failed to implement a while loop due to basic syntax errors (assignment vs equality), despite having the correct logical intent.
+
+**L2 (Insight)**: The Omega Engine's background researcher must be capable of distinguishing between a developer's logical intent and their syntactic execution when analyzing 'FIXME' tags.
+
+**L3 (Universal Principle)**: The gap between conceptual logic and formal syntax is the primary site of failure in human-machine communication.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a micro-paradigm
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 in 2005 to standardize codetags, arguing they allow for the construction of standard utilities to monitor project health.
+
+**L2 (Insight)**: Omega Engine can treat source code comments not as passive text, but as active telemetry for the background_researcher to identify high-friction areas of the codebase.
+
+**L3 (Universal Principle)**: Metadata embedded within the primary artifact is the most resilient and accurate form of documentation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: SPOT/DRY in documentation
+
+**L1 (Narrative)**: PEP 350 posits that developers are the best documentation team and that information should be recorded in a single original format.
+
+**L2 (Insight)**: To maintain coherence, Omega Engine should prioritize 'in-situ' knowledge capture over external documentation to eliminate the synchronization gap.
+
+**L3 (Universal Principle)**: Truth decays when decoupled from its point of origin.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Novice syntax errors
+
+**L1 (Narrative)**: A StackOverflow thread highlights a user failing to implement a while loop due to using '=' instead of '==' and failing to indent the loop body.
+
+**L2 (Insight)**: The Omega Engine's research loop must distinguish between 'logical intent' and 'syntactic failure' when analyzing broken code to provide corrective synthesis.
+
+**L3 (Universal Principle)**: The gap between conceptual logic and formal syntax is the primary friction point in human-machine communication.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Omega Engine Codetag Weighting
+
+**L1 (Narrative)**: Local logs indicate that the Omega Engine assigns numerical weights to specific codetags in its background researcher loop.
+
+**L2 (Insight)**: The engine is transforming qualitative developer signals (comments) into quantitative priority vectors to automate the allocation of research attention.
+
+**L3 (Universal Principle)**: Qualitative signals can be algorithmically converted into quantitative priorities to automate cognitive focus.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Codetags as a micro-paradigm
+
+**L1 (Narrative)**: Micah Elliott proposed PEP 350 in 2005 to standardize codetags to enable standard utilities for project tracking, though the PEP was ultimately rejected for standard library inclusion.
+
+**L2 (Insight)**: Omega Engine can treat its own codebase as a structured database of technical debt and intent by parsing these tags, transforming comments into actionable telemetry.
+
+**L3 (Universal Principle)**: The most effective metadata is that which resides at the point of creation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: DRY/SPOT via source-based documentation
+
+**L1 (Narrative)**: PEP 350 argues that maintaining separate roadmap documents leads to duplication and desynchronization; tags allow for dynamic roadmap generation.
+
+**L2 (Insight)**: To maintain coherence, Omega Engine should synthesize its 'Soul' and 'Knowledge' updates directly from the codetags found in its evolving implementation files.
+
+**L3 (Universal Principle)**: Truth is most stable when it exists in a single, authoritative location.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Assignment vs Equality confusion
+
+**L1 (Narrative)**: A StackOverflow thread demonstrates a user attempting to use '=' instead of '==' in a while loop, leading to a logic error.
+
+**L2 (Insight)**: When Omega Engine generates or audits code, it must implement specific heuristics to detect the 'assignment-as-condition' fallacy, as it is a high-frequency failure mode for humans.
+
+**L3 (Universal Principle)**: Complexity arises from the ambiguity between intent (checking a state) and action (changing a state).
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Omega's weighted priority system
+
+**L1 (Narrative)**: Internal configuration in src/omega/workers/background_researcher/loop.py assigns numerical weights to different codetags.
+
+**L2 (Insight)**: The engine quantifies technical debt; 'FIXME' is treated as a critical risk (0.9), while 'TODO' is treated as a low-priority enhancement (0.5).
+
+**L3 (Universal Principle)**: Priority is a function of risk and urgency, which can be mathematically modeled to optimize resource allocation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Standardized comment markers (TODO, FIXME, HACK, NOTE) are essential for IDE quality-of-life and cross-tool parity.
+
+**L1 (Narrative)**: Godot Engine implemented highlighting for TODO, FIXME, NOTE, and HACK in version 4.2 to align with industry standards like VS Code.
+
+**L2 (Insight)**: Omega Engine should adopt a rigid, standardized set of markers for its internal worker logs and codebase to ensure that automated research agents can reliably flag technical debt.
+
+**L3 (Universal Principle)**: Standardized signals reduce the energy cost of discovery in high-entropy systems.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: There is a fundamental tension between minimalist tagging (using only 'TODO' for searchability) and granular tagging (using specific markers for nuance).
+
+**L1 (Narrative)**: Developers on Hacker News debated whether a single 'TODO' tag is superior for grep-ability versus multiple tags (FIXME, DREAM, HACK) for descriptive intent.
+
+**L2 (Insight)**: When Omega Engine synthesizes research, it must balance 'broad-net' search terms with 'high-precision' markers to avoid missing data while maintaining context.
+
+**L3 (Universal Principle)**: The value of a signal is a trade-off between the ease of retrieval (recall) and the precision of the meaning (fidelity).
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Excessive tag proliferation (tag saturation) leads to cognitive overhead and degrades the utility of the classification system.
+
+**L1 (Narrative)**: Users compared the failure of complex tagging systems in note-taking apps to the 'taxonomy trap' where too many categories make the system unusable.
+
+**L2 (Insight)**: Omega Engine's knowledge graph must resist 'category creep'; it should prioritize a lean ontology over an exhaustive one to prevent retrieval fragmentation.
+
+**L3 (Universal Principle)**: Complexity in classification eventually becomes a barrier to the information it was intended to organize.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Hard-coded, standardized keywords are preferable to configurable ones to ensure interoperability across different editors and environments.
+
+**L1 (Narrative)**: The Godot proposal author argued against making highlight keywords configurable to ensure that external editors (like VS Code) could reliably highlight the same terms.
+
+**L2 (Insight)**: Omega Engine's cross-domain protocols should rely on immutable primitives rather than user-defined configurations to maintain coherence across disparate modules.
+
+**L3 (Universal Principle)**: Interoperability requires a shared, immutable vocabulary.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Standardized comment markers (TODO, FIXME, HACK, NOTE) improve developer productivity and IDE usability.
+
+**L1 (Narrative)**: Godot Engine implemented highlighting for these specific keywords in version 4.2 to bring its editor in line with industry standards like VS Code.
+
+**L2 (Insight)**: Omega Engine should adopt a standardized set of 'Attention Markers' across its codebase and logs to ensure technical debt and critical notes are visually salient.
+
+**L3 (Universal Principle)**: Visibility is the prerequisite for resolution; that which is visually isolated from the noise is more likely to be addressed.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: The tension between universal searchability (single tag) and semantic precision (multiple tags).
+
+**L1 (Narrative)**: Hacker News users debated whether to use only 'TODO' for easy grepping or a variety of tags (FIXME, HACK, DREAM) for nuance.
+
+**L2 (Insight)**: Omega Engine's internal metadata strategy should employ a 'Hybrid-Hierarchical' approach: a primary universal anchor (e.g., TODO) followed by a semantic qualifier (e.g., TODO-OPTIMIZE).
+
+**L3 (Universal Principle)**: The utility of a classification system is inversely proportional to the cognitive effort required to maintain its taxonomy.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Excessive tagging leads to 'tag saturation.'
+
+**L1 (Narrative)**: Users compared code tagging to note-taking apps, noting that too many tags lead to 'unusable cruft' and a return to raw text search.
+
+**L2 (Insight)**: Avoid over-engineering the Omega Engine knowledge graph's tagging schema; prioritize raw-text searchability over complex, nested categories.
+
+**L3 (Universal Principle)**: Complexity in organization often masks a failure in synthesis.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Core markers should be immutable for interoperability.
+
+**L1 (Narrative)**: The Godot proposal author argued against making keywords configurable so that external editors could reliably highlight them without reading project files.
+
+**L2 (Insight)**: Omega Engine's core communication protocols must rely on an immutable shared vocabulary to ensure seamless integration between disparate modules.
+
+**L3 (Universal Principle)**: Interoperability requires a shared, immutable linguistic foundation.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Standardized comment markers (TODO, FIXME, HACK, NOTE) are essential for IDE quality-of-life and cross-tool parity.
+
+**L1 (Narrative)**: Godot Engine implemented highlighting for TODO, FIXME, NOTE, and HACK in version 4.2 to align with industry standards like VS Code.
+
+**L2 (Insight)**: Omega Engine should adopt a rigid, high-visibility signaling system for internal technical debt to ensure that critical 'breaks' or 'hacks' are not lost in the noise of the codebase.
+
+**L3 (Universal Principle)**: Standardized signals reduce the cost of discovery in complex systems.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: There is a fundamental tension between minimalist tagging (using only 'TODO' for searchability) and granular tagging (using specific markers for semantic intent).
+
+**L1 (Narrative)**: Developers on Hacker News debated whether a single 'TODO' tag is superior for grep-ability or if specific tags like 'DREAM' or 'FIXME' provide necessary nuance.
+
+**L2 (Insight)**: When synthesizing cross-domain data, Omega Engine must decide if it prioritizes 'broad-net' retrieval (minimalist) or 'high-precision' retrieval (granular).
+
+**L3 (Universal Principle)**: The utility of a classification system is inversely proportional to the cognitive effort required to maintain its taxonomy.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Fixed, non-configurable keyword sets are preferable for ensuring interoperability between different editors and tools.
+
+**L1 (Narrative)**: In the Godot proposal, the author argued against making highlight keywords configurable to ensure external editors could reliably highlight the same terms.
+
+**L2 (Insight)**: For the Omega Engine's knowledge graph, a 'Universal Vocabulary' is more valuable than user-defined aliases, as it ensures consistency across different research agents.
+
+**L3 (Universal Principle)**: Interoperability requires the sacrifice of individual preference for collective standardization.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Over-categorization of markers leads to 'tag saturation,' where the cognitive load of maintaining the taxonomy outweighs the benefit of the organization.
+
+**L1 (Narrative)**: HN users compared the failure of complex tagging systems in note-taking apps to the risk of using too many distinct code markers.
+
+**L2 (Insight)**: Avoid over-engineering the metadata layers of the Omega Engine; prioritize raw text searchability over deep hierarchical tagging to prevent 'taxonomy rot.'
+
+**L3 (Universal Principle)**: Over-categorization creates a 'taxonomy trap' where the effort to organize exceeds the value of the organization.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Standardized comment markers (TODO, FIXME, HACK, NOTE) are essential for IDE quality-of-life and cross-tool compatibility.
+
+**L1 (Narrative)**: Godot Engine implemented highlighting for TODO, FIXME, NOTE, and HACK in version 4.2 to bring its script editor on par with VS Code.
+
+**L2 (Insight)**: Omega Engine should implement a standardized set of 'signal markers' across its worker logs and source code to ensure that automated research agents can instantly categorize technical debt vs. intentional placeholders.
+
+**L3 (Universal Principle)**: Standardized signals reduce the cognitive and computational cost of coordination in complex, multi-tool environments.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: There is a fundamental tension between minimalist tagging (using only 'TODO' for searchability) and granular tagging (using specific markers for nuance).
+
+**L1 (Narrative)**: Hacker News users debated whether a single 'TODO' tag is superior for searchability or if specific tags like 'DREAM' or 'FIXME' provide necessary fidelity.
+
+**L2 (Insight)**: The Omega Engine's record-keeping should support a 'broad-to-narrow' filter: a global 'TODO' catch-all for rapid retrieval, with optional granular sub-tags for deep synthesis.
+
+**L3 (Universal Principle)**: The utility of a classification system is inversely proportional to the cognitive load required to maintain it.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Hard-coded, non-configurable keyword standards are preferable to user-defined settings to ensure interoperability between different editors.
+
+**L1 (Narrative)**: In the Godot proposal, the author argued against making keywords configurable because external editors (like VS Code) would not read the project's local configuration files.
+
+**L2 (Insight)**: When designing Omega's internal communication protocols, prioritize immutable standards over flexible configurations to prevent 'dialect drift' between different agent modules.
+
+**L3 (Universal Principle)**: Interoperability requires the sacrifice of individual preference for collective predictability.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: High-granularity tagging systems eventually suffer from 'tag saturation,' leading users to revert to raw text search.
+
+**L1 (Narrative)**: HN contributors compared the failure of complex tagging in code to the failure of tag-based note-taking apps, where too many tags lead to organizational disarray.
+
+**L2 (Insight)**: Avoid over-engineering the taxonomy of the Akashic Record; prefer a few high-signal markers over a sprawling library of low-signal categories.
+
+**L3 (Universal Principle)**: Entropy eventually consumes any system that relies on manual, high-granularity categorization.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Standardized comment markers (TODO, FIXME, HACK, NOTE) are essential for IDE quality-of-life and cross-editor compatibility.
+
+**L1 (Narrative)**: Godot Engine implemented highlighting for TODO, FIXME, NOTE, and HACK in version 4.2 to align with industry standards like VS Code.
+
+**L2 (Insight)**: Omega Engine should adopt a rigid, non-configurable set of core markers for its internal workers to ensure that technical debt is visible across all diagnostic tools.
+
+**L3 (Universal Principle)**: The utility of a signal is proportional to its universality; standardization reduces the cost of discovery.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: There is a fundamental tension between 'tag minimalism' and 'tag specificity'.
+
+**L1 (Narrative)**: Hacker News users debated whether using a single 'TODO' tag is superior for searchability versus using specific tags like 'FIXME' or 'OPTIMIZE' for nuance.
+
+**L2 (Insight)**: Omega Engine's synthesis layers must balance granular metadata (for precision) with broad search terms (for recall) to avoid missing critical system warnings.
+
+**L3 (Universal Principle)**: Precision and Recall exist in a state of inverse tension within information retrieval systems.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Over-categorization of markers leads to 'tag saturation'.
+
+**L1 (Narrative)**: Developers noted that too many tags (e.g., #cooking, #baking, #food) lead to disarray and a return to raw text searching.
+
+**L2 (Insight)**: Avoid creating an overly complex taxonomy for Omega Engine's internal logs; prefer a few high-signal markers over a comprehensive library of niche tags.
+
+**L3 (Universal Principle)**: Complexity in classification systems eventually degrades into noise (The Entropy of Taxonomy).
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Comment markers often function as a decentralized, low-friction alternative to formal issue trackers.
+
+**L1 (Narrative)**: Programmers use 'grep TODO * -r' as a primary method for tracking pending tasks directly within the source code.
+
+**L2 (Insight)**: Omega Engine can treat its own codebase and logs as a living database of intent by indexing these markers as 'fleeting thoughts' to be synthesized later.
+
+**L3 (Universal Principle)**: The most effective tool is the one closest to the point of production.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Standardized comment markers improve developer productivity.
+
+**L1 (Narrative)**: Godot Engine implemented highlighting for TODO, FIXME, NOTE, and HACK in version 4.2 to bring its script editor to parity with professional IDEs like VS Code.
+
+**L2 (Insight)**: The Omega Engine's background researcher is already utilizing these markers as weighted signals (FIXME: 0.9, HACK: 0.8, TODO: 0.5), indicating that the engine treats these not just as text, but as priority vectors for technical debt.
+
+**L3 (Universal Principle)**: Visual signaling of latent intent reduces the cognitive cost of context switching.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Tension between searchability and granularity.
+
+**L1 (Narrative)**: Hacker News users debated whether to use a single 'TODO' tag for easy grep-ability or a diverse set of tags (e.g., TODO-BUG, DREAM) for precision.
+
+**L2 (Insight)**: Omega Engine should avoid creating an overly complex internal taxonomy for 'tasks' to prevent recall failure, instead using a low-resolution tag paired with high-resolution metadata (weights).
+
+**L3 (Universal Principle)**: The utility of a classification system is inversely proportional to the cognitive effort required to maintain its boundaries.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Tag saturation leads to organizational decay.
+
+**L1 (Narrative)**: Developers compared code tagging to note-taking apps, noting that too many categories lead to 'unusable cruft' and a return to raw text search.
+
+**L2 (Insight)**: When synthesizing cross-domain research, Omega Engine must resist 'category creep' in its knowledge graph to avoid the same entropy that plagues human tagging systems.
+
+**L3 (Universal Principle)**: Entropy increases as the resolution of a taxonomy increases beyond the limits of working memory.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Interoperability requires shared, low-resolution conventions.
+
+**L1 (Narrative)**: The Godot proposal author argued against making highlight keywords configurable to ensure that external editors (VS Code) could reliably highlight the same markers.
+
+**L2 (Insight)**: To maintain seamless integration with human-authored codebases, Omega Engine must prioritize industry-standard markers over proprietary internal labeling schemes.
+
+**L3 (Universal Principle)**: Interoperability is achieved through the adoption of shared, low-resolution conventions.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Standardized comment markers (TODO, FIXME, HACK, NOTE) are essential quality-of-life features in modern IDEs to signal technical debt and future intent.
+
+**L1 (Narrative)**: Godot Engine implemented highlighting for TODO, FIXME, NOTE, and HACK in version 4.2 to bring its script editor to parity with VS Code.
+
+**L2 (Insight)**: Omega Engine should adopt a standardized signaling lexicon for internal state markers to ensure that 'technical debt' is visually salient and programmatically discoverable.
+
+**L3 (Universal Principle)**: Standardized signals reduce the cognitive load of navigating complex systems by creating a shared visual language for urgency and intent.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: There is a fundamental tension between 'tag minimalism' (using only TODO for searchability) and 'tag specificity' (using multiple markers for nuanced intent).
+
+**L1 (Narrative)**: Hacker News users debated whether using a single 'TODO' tag is superior for searchability or if specific tags (e.g., DREAM, OPTIMIZE) provide necessary fidelity.
+
+**L2 (Insight)**: Omega Engine's internal metadata system must balance 'broad-spectrum' searchability with 'high-fidelity' categorization to avoid 'tag saturation' while maintaining nuance.
+
+**L3 (Universal Principle)**: The utility of a classification system is inversely proportional to its complexity once it exceeds the user's cognitive capacity for recall (Miller's Law).
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Comment markers often function as a decentralized, lightweight issue tracking system via raw text search (e.g., grep).
+
+**L1 (Narrative)**: Developers reported using 'grep TODO * -r' as their primary issue tracker, bypassing formal project management tools for immediate tasks.
+
+**L2 (Insight)**: Omega Engine can treat its own source code and logs as a living, queryable database of intent rather than just a set of instructions.
+
+**L3 (Universal Principle)**: The most effective tracking system is the one located closest to the point of execution.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Configurable highlight keywords are necessary for localization and personalization, but conflict with the goal of cross-editor consistency.
+
+**L1 (Narrative)**: In the Godot proposal, developers argued whether keywords should be hardcoded for consistency across external editors or configurable for non-English speakers.
+
+**L2 (Insight)**: Omega Engine's core protocols must remain rigid for interoperability, while its user-facing interfaces should allow for extensible, localized aliases.
+
+**L3 (Universal Principle)**: Interoperability requires a shared lexicon; personalization requires an extensible one.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Standardized comment markers (TODO, FIXME, HACK, NOTE) are essential for IDE quality-of-life and technical debt visibility.
+
+**L1 (Narrative)**: Godot Engine implemented highlighting for TODO, FIXME, NOTE, and HACK in version 4.2 to align with industry standards like VS Code.
+
+**L2 (Insight)**: Omega Engine should adopt a standardized set of high-visibility markers in its source code to ensure that technical debt and 'future-state' intentions are programmatically discoverable by the background researcher.
+
+**L3 (Universal Principle)**: Standardized signals reduce the cognitive cost of discovery in complex systems.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: There is a fundamental tension between 'tag minimalism' (using only TODO for searchability) and 'tag granularity' (using specific markers for semantic clarity).
+
+**L1 (Narrative)**: Hacker News users debated whether using a single 'TODO' tag is superior for searchability versus using multiple tags which can lead to 'tag saturation' and organizational decay.
+
+**L2 (Insight)**: When implementing the Omega Engine's internal tracking, avoid an exhaustive taxonomy of markers. A small, high-signal set is more sustainable than a granular system that risks becoming 'unusable cruft'.
+
+**L3 (Universal Principle)**: Complexity in categorization often leads to systemic abandonment; the utility of a tag is inversely proportional to the number of similar tags available.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Configurable comment markers improve accessibility for non-English speakers but degrade cross-editor consistency.
+
+**L1 (Narrative)**: In the Godot proposal, developers debated whether to allow users to define their own highlight keywords, with the author arguing that fixed keywords ensure external editor compatibility.
+
+**L2 (Insight)**: Omega's core protocols must prioritize interoperability over individual preference to ensure the 'Akashic Record' remains readable across disparate synthesis interfaces.
+
+**L3 (Universal Principle)**: Interoperability is a function of shared constraints.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Specific markers can be used to define strict workflow gates (e.g., FIXME as a merge-blocker).
+
+**L1 (Narrative)**: Some developers use 'FIXME' as a hard rule that no code can be merged while the tag exists, and 'DREAM' for non-immediate value additions.
+
+**L2 (Insight)**: Omega can utilize specific markers as triggers for automated agents: 'FIXME' could trigger a high-priority audit, while 'DREAM' could be routed to the long-term hypothesis generator.
+
+**L3 (Universal Principle)**: Semantic labeling transforms passive documentation into actionable triggers.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Standardized comment markers (TODO, FIXME, HACK, NOTE) improve developer quality of life and editor usability by providing visual cues for technical debt and future work.
+
+**L1 (Narrative)**: Godot Engine implemented highlighting for TODO, FIXME, NOTE, and HACK in version 4.2 to bring its script editor to parity with professional IDEs like VS Code.
+
+**L2 (Insight)**: Omega Engine's internal logging and worker-to-worker communication should adopt a standardized set of semantic markers to allow for rapid visual scanning of system health and pending optimizations.
+
+**L3 (Universal Principle)**: Standardized signals reduce the cognitive cost of discovery in high-entropy environments.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Rigid standardization of markers is preferable to user-configurable lists to ensure interoperability across different editors and tools.
+
+**L1 (Narrative)**: In the Godot proposal, Calinou argued against making keywords configurable to ensure that external editors (which don't read project-specific config files) could still highlight the markers.
+
+**L2 (Insight)**: When designing Omega's cross-domain synthesis protocols, prioritize 'interoperable defaults' over 'infinite customization' to prevent fragmentation between disparate research modules.
+
+**L3 (Universal Principle)**: Interoperability is a function of shared constraints.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Using a single generic marker (TODO) for all tasks is superior to a diverse taxonomy because it eliminates 'tag saturation' and simplifies searchability.
+
+**L1 (Narrative)**: Hacker News users debated the 'TODO for everything' approach, with some arguing that complex tagging leads to 'tag saturation' where users forget which tag to use, rendering the system useless.
+
+**L2 (Insight)**: Omega's background researcher should avoid over-categorizing findings; a broad 'TODO' or 'RESEARCH' bucket is more resilient to search failure than a hyper-specific taxonomy.
+
+**L3 (Universal Principle)**: The utility of a taxonomy is inversely proportional to the cognitive load required to maintain it.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Specific semantic markers (e.g., FIXME, HACK, DREAM) are necessary to communicate the nature and urgency of a task with higher fidelity than a generic TODO.
+
+**L1 (Narrative)**: Opposing views on Hacker News suggest that specific tags like 'DREAM' (for non-immediate value) or 'FIXME' (for critical bugs) provide essential context that a generic TODO lacks.
+
+**L2 (Insight)**: For high-criticality Omega Engine components, a tiered marker system (e.g., CRITICAL vs. OPTIMIZE) is necessary to prevent urgent system failures from being buried in a generic task list.
+
+**L3 (Universal Principle)**: Precision in signaling is a prerequisite for effective prioritization in complex systems.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Standardized comment markers (TODO, FIXME, HACK, NOTE) are essential for IDE quality-of-life and cross-tool parity.
+
+**L1 (Narrative)**: Godot Engine implemented highlighting for TODO, FIXME, NOTE, and HACK in version 4.2 to bring its script editor in line with industry standards like VS Code.
+
+**L2 (Insight)**: Omega Engine should implement a consistent set of internal markers for its generated code and research logs to ensure that human operators can quickly scan for technical debt or pending tasks using standard tooling.
+
+**L3 (Universal Principle)**: Standardized signals reduce cognitive load by creating a shared vocabulary for intent across disparate systems.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: There is a fundamental tension between 'Universal Simplicity' (using only TODO for searchability) and 'Semantic Precision' (using specific tags like FIXME or HACK for intent).
+
+**L1 (Narrative)**: Hacker News users debated whether using a single 'TODO' tag is superior for searchability (grep) versus using specific tags (FIXME, DREAM, HACK) to describe the nature of the work.
+
+**L2 (Insight)**: When Omega Engine flags issues in code or research, it must balance the 'grep-ability' of a single token with the 'nuance' of specific categories to avoid overwhelming the user while providing necessary context.
+
+**L3 (Universal Principle)**: The utility of a classification system is inversely proportional to the cognitive effort required to maintain its boundaries.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Hard-coded, non-configurable tagging standards are preferable to user-defined tags to ensure interoperability between different editors and tools.
+
+**L1 (Narrative)**: In the Godot proposal, the author argued against making highlight keywords configurable because external editors would not read the project configuration file, breaking consistency.
+
+**L2 (Insight)**: Omega Engine's internal metadata and markers should follow a rigid, immutable protocol rather than a flexible one to ensure that any external analysis tool can parse the records without custom configuration.
+
+**L3 (Universal Principle)**: Interoperability requires the sacrifice of individual preference in favor of a common protocol.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Over-categorization of tags leads to 'tag saturation,' where the system becomes unusable and users revert to raw text search.
+
+**L1 (Narrative)**: HN contributors compared the failure of complex tagging systems in note-taking apps to the risk of creating too many code tags, which eventually leads users back to raw text searching.
+
+**L2 (Insight)**: Omega Engine must resist the urge to create an exhaustive taxonomy of 'status tags' for its background research loops; a lean set of high-signal markers is more sustainable than a complex hierarchy.
+
+**L3 (Universal Principle)**: Complexity in organization eventually collapses into raw search.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Using a single 'TODO' tag for all pending tasks is superior due to searchability and reduced cognitive overhead.
+
+**L1 (Narrative)**: Users on Hacker News (2022) argue that a single keyword prevents 'tag saturation' and eliminates the need to remember a complex taxonomy.
+
+**L2 (Insight)**: For the Omega Engine's background researcher, a unified tagging system reduces the risk of missing critical markers due to inconsistent labeling.
+
+**L3 (Universal Principle)**: Simplicity in retrieval mechanisms often outweighs precision in categorization.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Specialized tags (FIXME, HACK, DREAM) are necessary for high-fidelity communication and scalability in professional codebases.
+
+**L1 (Narrative)**: Experienced developers argue that distinct tags allow for immediate triage (e.g., FIXME for bugs, HACK for technical debt, DREAM for future features).
+
+**L2 (Insight)**: Omega Engine requires a nuanced distinction between 'critical failure' and 'aspirational optimization' to prioritize its own self-refactoring loops.
+
+**L3 (Universal Principle)**: High-fidelity metadata is essential for scaling complex systems across multiple contributors or autonomous agents.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: In-code tags often become 'scenery' and are ignored, necessitating external issue trackers for actual execution.
+
+**L1 (Narrative)**: Critics of in-code TODOs suggest that proximity to the code leads to habituation, where the developer stops 'seeing' the tag.
+
+**L2 (Insight)**: Relying solely on internal markers for Omega Engine's evolution may lead to 'stale' logic; an external state-machine or backlog is required.
+
+**L3 (Universal Principle)**: Proximity to the object of work does not guarantee attention; external triggers are required for execution.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Python sets provide O(1) average time complexity for membership testing, significantly outperforming lists which operate at O(n).
+
+**L1 (Narrative)**: The PyCharm blog (2025) demonstrates via benchmarks that set lookups are orders of magnitude faster than list lookups for large datasets.
+
+**L2 (Insight)**: Omega Engine's data processing pipelines must prioritize set-based membership checks to avoid linear performance degradation as the Akashic Record grows.
+
+**L3 (Universal Principle)**: Algorithmic complexity is the primary driver of performance, regardless of language elegance.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Using a single 'TODO' tag maximizes searchability and minimizes maintenance overhead compared to a complex taxonomy of tags.
+
+**L1 (Narrative)**: Users on Hacker News (yosito, beepbeepnewnew) argue that a single keyword reduces the cognitive load of remembering which tag to use and prevents 'tag saturation'.
+
+**L2 (Insight)**: For the Omega Engine's background researcher, a simplified tagging system reduces the risk of missing signals due to inconsistent labeling by contributors.
+
+**L3 (Universal Principle)**: The Law of Least Friction: Systems that minimize the cost of entry (naming/categorization) maximize the volume of data capture.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Specialized tags (e.g., FIXME, HACK, DREAM) provide higher fidelity and better human scalability for large-scale collaboration.
+
+**L1 (Narrative)**: Developers (ezekiel68, mr-wendel) suggest that specific tags allow for nuanced prioritization (e.g., DREAM for future vision, HACK for technical debt).
+
+**L2 (Insight)**: The local context in `loop.py` implements this via weights (FIXME: 0.9, HACK: 0.8, TODO: 0.5), allowing the engine to prioritize critical failures over general tasks.
+
+**L3 (Universal Principle)**: Precision requires Taxonomy: High-fidelity action requires the transition from generic signals to categorized intents.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: In-code comments can become 'scenery' (invisible to the developer) if they are not integrated into an external tracking system.
+
+**L1 (Narrative)**: Contributor drewcoo notes that proximity to code does not guarantee attention; comments often blend into the background over time.
+
+**L2 (Insight)**: Omega Engine must not rely on passive discovery of tags; it requires an active, scheduled 'refractive' scan to prevent technical debt from becoming invisible.
+
+**L3 (Universal Principle)**: Habituation blinds the observer: Proximity is not a substitute for active retrieval.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Python sets provide O(1) average time complexity for membership testing, whereas lists provide O(n).
+
+**L1 (Narrative)**: The PyCharm blog demonstrates that switching from list to set for membership checks reduces lookup time from ~0.015s to ~0.000020s for 1M elements.
+
+**L2 (Insight)**: When the Omega Engine processes large-scale citation networks or claim sets, membership testing must be performed using hash-based structures to avoid linear performance degradation.
+
+**L3 (Universal Principle)**: Algorithmic Efficiency is the only scalable constant: The choice of data structure determines the ceiling of system growth.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H
+
+
+## Update — 2026-06-01
+
+**Claim**: Mock enrichment (T2 providers unavailable)
+
+**L1 (Narrative)**: No T1 draft available.
+
+**L2 (Insight)**: T2 enrichment failed. Using T1 draft directly.
+
+**L3 (Universal Principle)**: Sovereign operation continues without cloud enrichment.
+
+**Source**: res_20260601__FIXME_____0_9_____H

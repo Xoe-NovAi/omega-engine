@@ -161,3 +161,68 @@ loading:
   warm_models: ["qwen3-0.6b-q6_k"]
   unload_after_idle_minutes: 5
   emergency_swap_threshold_mb: 1024
+
+# ── Agent Role-to-Model Tier Mapping ──────────────────────────
+# The engine detects available RAM at startup and recommends
+# tier assignments. Users override any role's model here.
+# Hardware: 14GB RAM → lite tier fine-tunable locally
+#           Heavy tier fine-tuning deferred to cloud/hardware upgrade
+
+agent_roles:
+  jem_discovery:
+    tier: lite
+    default_model: "qwen3-0.6b-q6_k"
+    min_ram_gb: 8
+  jem_synthesis:
+    tier: medium
+    default_model: "qwen3-1.7b"
+    min_ram_gb: 16
+  jem_verification:
+    tier: heavy
+    default_model: "qwen3-4b-thinking-q4_k_m"
+    min_ram_gb: 16
+  scribe:
+    tier: heavy
+    default_model: "qwen3-4b-thinking-q4_k_m"
+    min_ram_gb: 16
+  doom_guy:
+    tier: heavy
+    default_model: "qwen3-4b-thinking-q4_k_m"
+    min_ram_gb: 16
+  roc_racoon:
+    tier: lite
+    default_model: "qwen3-1.7b"
+    min_ram_gb: 8
+  quality:
+    tier: medium
+    default_model: "qwen3-1.7b"
+    min_ram_gb: 16
+  kali:
+    tier: heavy
+    default_model: "qwen3-4b-thinking-q4_k_m"
+    min_ram_gb: 16
+  pillar:
+    tier: lite
+    default_model: "qwen3-1.7b"
+    min_ram_gb: 8
+  plan:
+    tier: heavy
+    default_model: "qwen3-4b-thinking-q4_k_m"
+    min_ram_gb: 16
+  jem:
+    tier: medium
+    default_model: "qwen3-1.7b"
+    min_ram_gb: 16
+  maat:
+    tier: heavy
+    default_model: "qwen3-4b-thinking-q4_k_m"
+    min_ram_gb: 16
+  lilith:
+    tier: heavy
+    default_model: "qwen3-4b-thinking-q4_k_m"
+    min_ram_gb: 16
+  researcher:
+    tier: heavy
+    default_model: "qwen3-4b-thinking-q4_k_m"
+    min_ram_gb: 16
+

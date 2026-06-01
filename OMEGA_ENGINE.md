@@ -132,25 +132,30 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 
 | Metric | Value | Last Verified |
 |--------|-------|---------------|
-| Phase | 1 — Engine Hardening | 2026-06-01 |
-| Source files | 60 .py files | 2026-05-31 |
-| Source lines | 14,059 | 2026-05-31 |
-| Test functions | 276 | 2026-06-01 |
-| Test files | 24 | 2026-05-31 |
-| MCP Hub tools | 41 MCP + 8 HTTP | 2026-05-31 (restored) |
+| Phase | 2 — Observability & Forensics | 2026-06-01 |
+| Source files | **71** .py files (was 69) | 2026-06-01 |
+| Source lines | ~15,200 | 2026-06-01 |
+| Test functions | **302** (+10 Error Gauntlet) | 2026-06-01 |
+| Test files | **30** (was 29) | 2026-06-01 |
+| New modules | request_queue, library.catalog, benchmarks.runner, hardware | 2026-06-01 |
+| Horizon 2 | ForensicsManager, JsonFormatter, Error Gauntlet (10 tests) | 2026-06-01 |
+| MCP Hub tools | **40 MCP + 11 HTTP** (34 tools restored) | 2026-06-01 |
 | Providers configured | 8 (local-first order) | 2026-05-31 |
 | WAD Loader | Functional (--iwad flag works) | 2026-05-31 |
 | Namespace isolation | NOT implemented | 2026-05-31 |
 | Dependency resolution | NOT implemented | 2026-05-31 |
 | Qdrant (:6333) | Installed, **unwired** (bag-of-words fallback) | 2026-05-31 |
 | Redis (:6379) | Operational (port exposed) | 2026-05-31 |
-| Orchestration Layer | **100%** — 26 agents (3 Oversouls + 10 Pillars + 7 specialists + 6 subagents) | 2026-06-01 |
+| Agent Fleet | **14 agents** (fleet redesign complete) | 2026-06-01 |
+| Entity workspaces | 25 active (50 orphans deleted) | 2026-06-01 |
 | Sovereign Persistence | Implemented (Atomic Writes in Oracle/SessionManager/EntityRegistry) | 2026-06-01 |
-| ModelGateway.generate() | **ADDED** — provider iteration with per-provider timeouts | 2026-06-01 |
-| Circuit Breaker | **NOT wired** — 2 redundant implementations exist, neither integrated into generate() | 2026-06-01 |
-| SOVEREIGN_MANDATES.md | v3.0.0 — Nine Laws | 2026-06-01 |
+| ModelGateway.generate() | **WIRED** — circuit breaker + BSP culling + per-provider timeouts | 2026-06-01 (Doom Guy) |
+| Circuit Breaker | **Consolidated** — single AsyncCircuitBreaker in health_monitor.py | 2026-06-01 (Doom Guy) |
+| SOVEREIGN_MANDATES.md | v3.0.0 — 12 Laws (Mandates 10-12 added for Fleet/Soul/Queue) | 2026-06-01 |
 | Role Mappings | `config/wads/_omega_default/roles.yaml` created | 2026-06-01 |
-| Agent Fleet | 26 agents, all with frontmatter (overseer.md stub filled) | 2026-06-01 |
+| Request Queue | `src/omega/request_queue.py` — atomic queue with heartbeat/dead-letter | 2026-06-01 |
+| Library Catalog | `src/omega/library/catalog.py` — SQLite, 5D quality scoring | 2026-06-01 |
+| Benchmark Runner | `src/omega/benchmarks/runner.py` — 3-point scale, per-criterion scoring | 2026-06-01 |
 | Iris (:8080) | Operational | 2026-05-31 |
 | SearXNG (:8017) | Operational | 2026-05-31 |
 
@@ -170,10 +175,14 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | `src/omega/oracle/health_monitor.py` | Circuit breaker + latency |
 | `src/omega/oracle/gnosis_proxy.py` | Soul evolution tracking |
 | `src/omega/memory_store.py` | Hot/Warm/Cold memory |
-| `src/omega/observability.py` | JSONL events + training data |
+| `src/omega/observability.py` | JSONL events + training data + ForensicsManager + JsonFormatter |
+| `src/omega/request_queue.py` | Offline request queue (atomic, heartbeat, dead-letter) |
+| `src/omega/library/catalog.py` | SQLite document catalog with 5D quality scoring |
+| `src/omega/benchmarks/runner.py` | LLM benchmark runner with 3-point scale |
+| `src/omega/hardware.py` | CPU/RAM detection, Zen 2 optimization |
 | `src/omega/library/` | FTS5 + vector library (7 modules) |
 | `src/omega/workers/` | Background researcher, model updater |
-| `mcp_servers/omega_hub/server.py` | Agent bus (41 MCP tools) |
+| `mcp_servers/omega_hub/server.py` | Agent bus (40 MCP tools + 11 HTTP routes) |
 | `config/wads/_omega_default/` | Reference IWAD |
 | `config/wads/arcana_novai/` | Personal IWAD |
 | `config/providers.yaml` | Provider fabric config |
@@ -194,13 +203,46 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 8. **Zero Telemetry**: No telemetry. Zero. None. Ever.
 9. **Error Integrity**: All errors MUST be typed, traceable, and testable. No silent swallowing.
 
-See `SOVEREIGN_MANDATES.md` for full details.
+See `SOVEREIGN_MANDATES.md` for full details (12 mandates).
 
 ---
 
 ## Phase Priority Queue
 
-### P0 — WAD System Hardening
+### ✅ DONE — Agent Fleet & Entity Cleanup
+- [x] Phase A: 26→14 agent consolidation, redesign 9 agents, create quality/pillar
+- [x] Phase B: Delete 67 orphan entity directories, create 13 new workspaces (plus 50 more during Option A)
+- [x] Update `opencode.json` to 14-agent registry
+
+### ✅ DONE — Offline Request Queue
+- [x] Phase C: `src/omega/request_queue.py` — file-based queue with atomic claim/heartbeat/dead-letter
+- [x] CLI commands: `queue-status`, `process-queue`, `review-pending`, `queue-prune`
+- [ ] v2 design doc referencing plandb SQLite patterns for Horizon 2
+
+### ✅ DONE — Knowledge Library
+- [x] Phase D: `src/omega/library/catalog.py` — SQLite-backed multi-dimensional catalog
+- [x] 10 domain subdirectories under `data/library/documents/`
+- [x] CLI commands: `library curate`, `library status`, `library search`
+
+### ✅ DONE — Model Tiers & Benchmarking
+- [x] Phase E: `agent_roles` section in `config/models.yaml`
+- [x] Benchmark runner with per-criterion scoring, calibration loop, position randomization
+- [x] CLI commands: `bench run`, `bench compare`, `bench rank`, `bench list`
+
+### ⏳ REMAINING — Option B (Mandate 9 Violations)
+- [ ] Fix 17 bare `except Exception:` without logging (10 files)
+- [ ] Fix falsy-trap in openai_compat.py:102 (`timeout or 15.0`)
+- [ ] Fix hardcoded paths in greek.py + cpu_optimizer.py
+- [ ] Fix direct `asyncio` import in observability.py:235
+- [ ] All 17 violations must have `logger.warning()` before silent fallback
+
+### ✅ DONE — MCP Hub Restoration (40 Tools)
+- [x] Restored 40 MCP tools from git history (`69db713` merged with current HTTP routes)
+- [x] Background task lifecycle via daemon thread
+- [x] Verified all 6 gates (health, routes, agents, config, SSE, tools)
+- [x] Restarted systemd service
+
+### P1 — WAD System Hardening
 - [x] `--iwad` flag implemented
 - [x] Council Restoration (Pillars + Oversouls)
 - [x] Sovereign Persistence (Atomic Writes in 3 modules)
@@ -219,10 +261,13 @@ See `SOVEREIGN_MANDATES.md` for full details.
 - [ ] Qdrant hybrid search wiring (fastembed BGE-base-en-v1.5)
 - [ ] Redis pub/sub for cross-agent communication
 
-### P2 — Observability & Forensics
-- [ ] ForensicsManager "Last Gasp" crash dump system (TASK-003/004)
-- [ ] Structured JSON logging pipeline
-- [ ] Error Gauntlet tests (TASK-006)
+### ✅ DONE — Horizon 2: Observability & Forensics
+- [x] ForensicsManager — crash dump creation, recovery, replay, learn (10 tests)
+- [x] Structured JSON logging — JsonFormatter + setup_json_logging()
+- [x] Error Gauntlet — 10 scenarios (crash dump, replay, learn, engine state, persistence, ring buffer, JSON format)
+- [x] Fixed structural bug in `_collect_system_info()` (dead code, returned None)
+- [x] Fixed `asyncio` → `sniffio` in `_detect_anyio_backend()` (Mandate 1)
+- [x] Fixed `deque` slicing bug in `recent_events()` (was masking TypeError)
 
 ### P3 — Synthesis Pipeline
 - [ ] Entity LoRA adapter management
@@ -256,8 +301,10 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 
 | Document | Purpose | Status |
 |----------|---------|--------|
-| `SOVEREIGN_MANDATES.md` | 9 constitutional laws (non-negotiable) | Updated 2026-06-01 — v3.0.0, Nine Laws |
+| `SOVEREIGN_MANDATES.md` | 12 constitutional laws (non-negotiable) | Updated 2026-06-01 — v3.1.0, Twelve Laws |
+| `data/handoff/HANDOFF_FLEET_REDESIGN_G4.md` | Fleet Redesign & Systems Hardening — Gemma 4 31B execution handoff | NEW 2026-06-01 — 2,000+ lines, 8 phases |
 | `docs/strategy/LOGGING_ERROR_HANDLING_ARCHITECTURE.md` | Error taxonomy, handling standards, recovery matrix | NEW 2026-05-31 |
+| `tests/test_error_gauntlet.py` | 10 Error Gauntlet scenarios (crash dump, replay, learn, JSON format) |
 | `docs/architecture/SOVEREIGN_BLUEPRINT.md` | Engine/IWAD/PWAD separation strategy | v1.0.0 — authored by Doom Guy |
 | `docs/operations/BUG_LOG.md` | Bug tracking (3 open, 1 resolved) | Updated 2026-05-31 |
 | `data/handoff/HANDOFF_GEMMA_SPRINT0_1.md` | Sprint 0+1 execution (Foundation Repair + Alignment) **COMPLETE** | 668 lines, executed 2026-06-01 |
@@ -268,5 +315,5 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 
 ---
 
-*Last Updated: 2026-06-01 | Author: DeepSeek (Strategic Architect) — Sprint 0+1 completion, Doom Guy circuit breaker handoff*
+*Last Updated: 2026-06-01 | Author: SOPHIA — Horizon 2: ForensicsManager + Error Gauntlet*
 *This document is the Single Source of Truth. All platforms reference it.*

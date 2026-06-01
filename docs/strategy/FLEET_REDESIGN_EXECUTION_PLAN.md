@@ -720,6 +720,88 @@ git add -A && git commit -m "snapshot: before fleet redesign v5.0"
 | G7 | `omega library status` | Empty library |
 | G8 | `omega bench list` | No runs yet |
 
+---
+
+## §11 Research-Backed Enhancements (2026-06-01)
+
+This section documents refinements discovered through multi-source web research, validating and upgrading the subagent-designed specs.
+
+### 11.1 LLM-as-a-Judge: Calibration-Driven Benchmarking
+
+**Sources**: EMNLP 2025 Survey ("From Generation to Judgment"), Galtea Production Guide (May 2026), Rulers Framework (arXiv 2601.08654), FutureAGI LLM-Judge Guide (2026)
+
+**Key Findings**:
+
+| Finding | Source | Impact on Phase E |
+|---------|--------|-------------------|
+| Binary/3-point scales beat 5-point for production | Galtea, EMNLP | Benchmark quality_score changes from 1-5 to 3-point (fail/pass/excellent) |
+| One rubric per criterion — composite prompts produce correlated noise | Galtea, Rulers | Score each dimension in a separate LLM call |
+| Position bias causes 10-15% winrate swing | FutureAGI, EMNLP | Add A/B position randomization + swap-and-rerun |
+| Verbosity bias — longer = better by default | Galtea, EMNLP | Add explicit length-neutrality clause to judge prompt |
+| Calibration against gold set mandatory | Galtea, Rulers | Benchmark runner must include calibration loop: Write → Label → Measure Kappa → Tweak |
+| Self-consistency check — run judge twice, flag disagreements | FutureAGI | Add disagreement detection to benchmark output |
+| Rubric drift — criteria degrade over time | Rulers, Galtea | Version rubric hashes in benchmark results |
+
+**Production Prompt Template** (4 elements):
+1. `[Criterion Definition]` — domain-specific, not generic ML vocabulary
+2. `[Reasoning Structure]` — enumerate claims/conditions BEFORE scoring
+3. `[Scoring Rule]` — deterministic map from reasoning to verdict
+4. `[Edge Case Handling]` — truncated context, empty retrievals, refusals
+
+### 11.2 Agent Task Queue: SQLite-Backed Future Path
+
+**Sources**: plandb (Agent-Field, 4.1k stars), persistent-agent-runtime, fulcrum, agentbook
+
+The open-source ecosystem is converging on SQLite-backed agent task queues over file-based or Postgres approaches:
+
+| Pattern | Source | Implementation |
+|---------|--------|----------------|
+| Atomic Claim | plandb | `UPDATE tasks SET claimed_by=? WHERE status='ready' LIMIT 1` — SQLite serializes writes |
+| State Machine | plandb | pending → ready → claimed → running → done/failed |
+| Heartbeat + Reaper | persistent-agent-runtime | Touch timestamp; background sweeper reclaims expired leases |
+| Dead Letter with Redrive | persistent-agent-runtime | Failed tasks → structured inspection → retry or archive |
+| Effect Analysis | plandb | Every mutation returns: delayed/ready_now/critical_path |
+
+**Phase C (v1)** uses file-based architecture with atomic renaming.
+**Horizon 2** MUST migrate to SQLite-backed queue citing plandb's proven patterns.
+
+### 11.3 Document Quality Scoring: Multi-Dimensional Required
+
+**Sources**: CRACQ (5-trait), propella-1 (18-property, HuggingFace), DQS (10-metric), DocReward (Microsoft Research)
+
+Single scalar quality scores are insufficient. Production knowledge bases use multi-dimensional annotation:
+
+| Framework | Dimensions | Model Size |
+|-----------|-----------|------------|
+| CRACQ | Coherence, Rigor, Appropriateness, Completeness, Quality | BigBird LoRA |
+| propella-1 | 18 properties across 6 categories | 0.6B-4B Qwen-3 |
+| DQS | 10 metrics (redundancy, toxicity, diversity, readability, coherence, novelty, structure, conflict, balance, length) | Embedding-based |
+| DocReward | Structural quality + stylistic quality (vision-based) | 7B |
+
+**Phase D Enhancement**: Upgrade library quality scoring from 7-signal scalar to 5-dimensional vector:
+- `content_integrity`, `coherence_score`, `completeness_score`, `structure_score`, `domain_fit`
+- Multi-model cross-validation for reliability (propella-1 pattern)
+
+### 11.4 Lattice Reasoning: Academic Validation
+
+**Sources**: LogicAgent (Semiotic Square, arXiv 2509.24765), Observer-Situation Lattice (UT Austin, arXiv 2603), Lattice Framework (Python), Multi-Agent Belief Planning (AAAI 2023)
+
+The 4-axis lattice (Technical/Philosophical/Historical/Practical) is validated by emerging research:
+
+| Academic Framework | Key Insight | Omega Translation |
+|-------------------|-------------|-------------------|
+| LogicAgent (Semiotic Square) | Generate 4 propositions (S1, ¬S1, S2, ¬S2), reflectively verify | Add Reflective Verification stage after lattice traversal |
+| Observer-Situation Lattice (OSL) | Each node = observer × situation; RBP algorithm for propagation | Map axes as "observer stances" |
+| Lattice Framework (Python) | Z3 formal verification + constitutional critic | Add contradiction resolution requirement |
+| Multi-Agent Belief | Justified perspectives — agents believe what they've seen | Citation requirement: every claim must anchor to source node |
+
+**Phase F Enhancement**: Upgrade Researcher lattice protocol to include:
+- Contradiction Resolution — when two axes disagree, document conflict explicitly
+- Reflective Verification — after traversing 3+ nodes, reflect on convergence
+- Source Anchoring — every claim in a lattice node must cite its evidence
+
+---
+
 ### Total: ~6.5 hours (Phases C, D, and E can run in parallel after A+B complete)
 
 ---
