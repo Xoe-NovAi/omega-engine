@@ -138,7 +138,7 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Test functions | **302** (+10 Error Gauntlet, +23 Option B fixes) | 2026-06-01 |
 | Test files | **30** | 2026-06-01 |
 | Mandate 9 compliance | **FULL** — zero bare except violations | 2026-06-01 |
-| Horizon 1 | **100% — All 12 Sovereign Mandates Enforced** | 2026-06-01 |
+| Horizon 1 | **100% — All 13 Sovereign Mandates Enforced (Mandate 13 Temple-Grade restored)** | 2026-06-02 |
 | Horizon 2 | 🔓 Unlocked — ForensicsManager, JsonFormatter, Error Gauntlet (25%) | 2026-06-01 |
 | Providers configured | 8 (local-first order) | 2026-06-01 |
 | WAD Loader | Functional (--iwad flag works) | 2026-06-01 |
@@ -151,7 +151,9 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Sovereign Persistence | Implemented (Atomic Writes in Oracle/SessionManager/EntityRegistry) | 2026-06-01 |
 | ModelGateway.generate() | **WIRED** — circuit breaker + BSP culling + per-provider timeouts | 2026-06-01 (Doom Guy) |
 | Circuit Breaker | **Consolidated** — single AsyncCircuitBreaker in health_monitor.py | 2026-06-01 (Doom Guy) |
-| SOVEREIGN_MANDATES.md | v3.0.0 — 12 Laws (Mandates 10-12 added for Fleet/Soul/Queue) | 2026-06-01 |
+| Sovereign Mandates | **13 (12 original + Mandate 13 Temple-Grade)** | 2026-06-02 |
+| PIVOT decisions | **90 (Decision 50-90 active)** | 2026-06-02 |
+| Horizon 1.5 (Bridge Phase) | **DEFINED — 4 sprints, F→A→B→C→E→D execution** | 2026-06-02 |
 | Role Mappings | `config/wads/_omega_default/roles.yaml` created | 2026-06-01 |
 | Request Queue | `src/omega/request_queue.py` — atomic queue with heartbeat/dead-letter | 2026-06-01 |
 | Library Catalog | `src/omega/library/catalog.py` — SQLite, 5D quality scoring | 2026-06-01 |

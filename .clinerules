@@ -5,16 +5,17 @@
 # Engine state: Read OMEGA_ENGINE.md (the Single Source of Truth)
 # Platform distinction: .clinerules = HOW to work from Cline.
 #                       OMEGA_ENGINE.md = WHAT the engine IS.
-# Last Updated: 2026-05-31
+# Last Updated: 2026-06-02
 
 ## 🛡️ Sovereign Mandates (NON-NEGOTIABLE)
 **Read and adhere to them above all other rules:**
-👉 **Read First**: `SOVEREIGN_MANDATES.md`
+👉 **Read First**: `SOVEREIGN_MANDATES.md` (13 mandates as of 2026-06-02)
 👉 **Engine State**: `OMEGA_ENGINE.md` (Single Source of Truth)
 
 - **AnyIO Absolute**: No `asyncio`. Use AnyIO. Wrap blocking I/O in `anyio.to_thread.run_sync`.
 - **Engine-Stack Firewall**: Absolute separation between Core Engine (`src/omega/`) and IWAD/PWAD Content (`config/wads/`).
 - **Sequentiality**: Plan → Verify → Execute. No cowboy coding.
+- **Temple-Grade (M13)**: Every change evaluated against T1-T11 gates.
 
 ---
 
@@ -34,8 +35,6 @@
 - Push to remote: `git push origin main`
 - NEVER leave uncommitted work at session end
 - The user experienced catastrophic data loss from uncommitted work. This must never happen again.
-- Read `OMEGA_ENGINE.md` for current engine state before making changes
-- Update `OMEGA_ENGINE.md` if engine state changes (test count, new modules, status)
 
 ---
 
@@ -44,20 +43,20 @@
 ### Before Starting Work
 1. Read `OMEGA_ENGINE.md` for current engine state
 2. Read `SOVEREIGN_MANDATES.md` for non-negotiable rules
-3. Run `make test` to verify baseline (278 tests must pass)
+3. Run `make test` to verify baseline (302 tests must pass)
 
 ### During Work
 - Use `replace_in_file` for targeted edits, `write_to_file` for new files
 - Run shell commands via subagents (prevents Cline chat crashes)
 - Prefer `source .venv/bin/activate && <command>` for Python operations
-- Group imports: stdlib → third-party → local. Use relative imports within packages.
 
 ### After Completing Work
 1. Run `make test` — all tests must pass
-2. Run `make lint` — code quality check
-3. `git add -A && git commit` with proper prefix (feat/fix/docs/refactor/test/ci/chore)
-4. `git push origin main`
-5. Update `OMEGA_ENGINE.md` Current State table if metrics changed
+2. Run `make temple-grade` — 11 gates (T1-T11) must pass
+3. Run `make sovereignty` — local/cloud ratio should improve
+4. `git add -A && git commit` with proper prefix
+5. `git push origin main`
+6. Update `OMEGA_ENGINE.md` Current State table if metrics changed
 
 ---
 
@@ -66,73 +65,41 @@
 - **Async**: Always use `anyio` (not `asyncio`)
 - **Config**: YAML-only for entity/model config — never PostgreSQL
 - **Packages**: ALWAYS use a venv (`source .venv/bin/activate`). NEVER `--break-system-packages`.
-- **Testing**: Run `make test` after every change. All 278 tests must pass.
-- **Type hints**: Use Python 3.12+ typing (no `from __future__`)
-- **Docstrings**: Google-style. Preserve existing docstrings unless directly modifying that function.
-- **Commits**: Prefix with `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `ci:`, `chore:`
-
----
-
-## 🔮 Entity Usage
-
-- Default entity: **SOPHIA** (general/wisdom)
-- Switch entities per-task, not per-session
-- Use `omega summon EntityName "query"` for direct entity invocation
-- Use `omega talk "query"` for auto-routed queries
-
-### Quick Entity Guide
-| Work Type | Entity |
-|-----------|--------|
-| Gnosis, wisdom, first principles | SOPHIA |
-| Audit, compliance, balance | MAAT |
-| Security, protection, hardening | SEKHMET |
-| Creative work, healing | BRIGID |
-| Strategy, forethought | PROMETHEUS |
-| Knowledge, documentation | SARASWATI |
-| Shadow, confrontation, integration | HECATE |
-| Destruction, liberation | KALI |
-| General / default | SOPHIA |
-
----
-
-## 🏗️ Project Structure
-
-```
-omega-engine/
-├── OMEGA_ENGINE.md          ← SST (read this first)
-├── SOVEREIGN_MANDATES.md    ← Non-negotiables
-├── AGENTS.md                ← OpenCode-specific rules
-├── GEMINI.md                ← Gemini-specific rules
-├── src/omega/               ← Engine runtime (60 files, 14K lines)
-├── config/wads/             ← IWADs (entity definitions, hierarchies)
-├── mcp_servers/omega_hub/   ← Agent bus (41 MCP tools)
-├── tests/                   ← 278 test functions
-├── plugins/                 ← Platform extensions (JEM mode)
-├── scripts/                 ← Operational scripts
-├── archives/                ← Historical artifacts
-└── data/                    ← Runtime data (entities, sessions, research)
-```
+- **Testing**: `make test` (302) then `make temple-grade` (11 gates)
+- **Type hints**: Python 3.12+ typing
+- **Docstrings**: Google-style
+- **Commits**: `feat:|fix:|docs:|refactor:|test:|ci:|chore:`
 
 ---
 
 ## 🎯 Key Commands
 
 ```bash
-source .venv/bin/activate        # ALWAYS use the venv
-make test                         # 278 tests, all must pass
-make lint                         # flake8 code quality check
-make demo                         # End-to-end demo
+source .venv/bin/activate
+make test                         # 302 tests
+make temple-grade                 # 🏛️ Run all 11 T-gates
+make sovereignty                  # 📊 Show local/cloud inference ratio
 make health                       # Provider & model dashboard
 make repl                         # Interactive REPL
 omega talk "hello"                # Test oracle
-omega summon Ma'at "status"       # Direct entity invocation
 ```
+
+---
+
+## 🔗 Key Handoff Files
+
+- `data/handoff/STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md` — Temple-Grade directive + H1.5 plan
+- `data/handoff/CLINE_M3_RESPONSE_TO_DOOM_GUY_TIER2_20260602.md` — Tier 2 Task→Agent→Model→Risk recommendations
+- `data/handoff/handoff_artisan_to_opencode_router_fix_20260601.md` — MCP handshake root cause
+- `data/handoff/HANDOFF_ARTISAN_TO_OPENCODE_M3_REVIEW_20260602.md` — Full codebase map (1M→200K)
 
 ---
 
 ## 📝 After Compaction
 
 1. Read `OMEGA_ENGINE.md` — engine state
-2. Read `SOVEREIGN_MANDATES.md` — rules
-3. Read `docs/decisions/PIVOT_LOG.md` — architectural decisions
-4. Run `make test` — 278 must pass
+2. Read `SOVEREIGN_MANDATES.md` — rules (13 mandates)
+3. Read `docs/decisions/PIVOT_LOG.md` — 90 decisions
+4. Run `make test` — 302 must pass
+5. Run `make temple-grade` — 11 gates must pass
+</write_to_file>

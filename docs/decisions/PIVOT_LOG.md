@@ -1421,3 +1421,31 @@ The existing R-09 (in `R_ID_SOFTWARE_EXTRACTION_MATRIX.md:48` and `R_DOOM_GUY_ID
 ---
 
 *PIVOT_LOG.md — Immutable. Every decision recorded. 89 decisions tracked.*
+
+## Decision 90: Temple-Grade Mandate 13 Restoration + H1.5 Bridge Phase
+
+**Date**: 2026-06-02
+**Channel**: Cline VSCodium (DeepSeek V4 Flash → MiMo-2.5 → OpenCode M3)
+**Entity**: SOPHIA / DOOM GUY / KALI
+**Trace**: trc_temple_grade_restoration
+
+### Decision
+1. Restore Temple-Grade work quality directive (from xna-omega-legacy v7.5.4) as Sovereign Mandate 13.
+2. Define H1.5 "The Bridge Phase" (2-4 weeks) between H1 and H2.
+3. Adopt F→A→B→C→E→D execution order.
+4. Task→Agent→Model→Risk→Why→Integration format for Tier 2 implementations.
+
+### Rationale
+Three-model synthesis (MiMo-2.5 1M, DeepSeek V4 Flash, OpenCode M3 200K) + xna-omega-legacy v7.5.4 sources converged on the same gap: principles documented but not operationalized.
+
+### What Changed
+- SOVEREIGN_MANDATES.md: Mandate 13 inserted
+- Makefile: make temple-grade + make sovereignty targets
+- data/handoff/STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md: Full report
+- data/handoff/CLINE_M3_RESPONSE_TO_DOOM_GUY_TIER2_20260602.md: Tier 2 recommendations
+- .clinerules: Updated (302 tests, M13, temple-grade/sov targets)
+
+### Key Insight
+The cvar table + lazy deletion + ZONEID constants form a coherent architectural layer that enables measurement-based sovereignty enforcement.
+
+---
