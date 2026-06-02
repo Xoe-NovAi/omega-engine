@@ -1,4 +1,5 @@
 import os
+import logging
 import pytest
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -6,11 +7,20 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from omega.memory_store import MemoryStore, reset_memory_store
 from omega.oracle.context_builder import ContextBuilder
 
+logger = logging.getLogger(__name__)
+
+
+@pytest.fixture(autouse=True)
+def _set_test_env(monkeypatch):
+    """Ensure OMEGA_ENV=test for all tests — prevents RedisProvider from connecting."""
+    monkeypatch.setenv("OMEGA_ENV", "test")
+
 
 @pytest.fixture
 def temp_data_dir(tmp_path, monkeypatch):
     """Create isolated temp data directory for tests."""
     monkeypatch.setenv("OMEGA_DATA_DIR", str(tmp_path))
+    logger.debug("temp_data_dir: OMEGA_DATA_DIR=%s, OMEGA_ENV=%s", tmp_path, os.environ.get("OMEGA_ENV"))
     reset_memory_store()
     yield tmp_path
     reset_memory_store()
