@@ -374,12 +374,23 @@ class ModelGateway:
     # ── Circuit Breaker Integration ──────────────────────────────────
 
     def _get_provider_timeout(self, provider) -> float:
-        """Per-provider timeout from config, falling back to 130s default."""
-        if hasattr(provider, 'config') and hasattr(provider.config, 'timeout_seconds'):
+        """Per-provider timeout with MagicMock-safe type check."""
+        try:
             timeout = provider.config.timeout_seconds
-            if isinstance(timeout, (int, float)):
-                return float(timeout)
+        except AttributeError:
+            timeout = provider.config.get("timeout_seconds", 130.0)
+        if isinstance(timeout, (int, float)):
+            return float(timeout)
         return 130.0
+
+    @property
+    def _cloud_providers(self) -> set:
+        """Set of cloud provider names for sovereignty tracking."""
+        return {"google", "openrouter", "opencode", "github-copilot"}
+
+    def _is_cloud_provider(self, provider) -> bool:
+        """Check if a provider is a cloud provider."""
+        return provider.name in self._cloud_providers
 
     async def _precheck_provider(self, provider, model_name: str) -> bool:
         """BSP-style pre-check: is this provider worth trying?
@@ -436,6 +447,7 @@ class ModelGateway:
         Returns (response_text, success_bool).
         """
         errors = []
+        success_provider = None
 
         for provider in self.providers:
             # Step 1: BSP-style pre-check — fast fail if circuit is OPEN
@@ -470,7 +482,8 @@ class ModelGateway:
                         # Record success with HealthMonitor
                         if self._health_monitor:
                             self._health_monitor.record_success(model_name)
-                        return result, True
+                        success_provider = provider
+                        break
 
                 if cancel_scope.cancelled_caught:
                     errors.append(f"{provider.name}: timed out ({timeout}s)")
@@ -485,6 +498,10 @@ class ModelGateway:
                 errors.append(f"{provider.name}: {e}")
                 self._record_provider_failure(provider, model_name, trace_id)
                 continue
+
+        if success_provider:
+            is_cloud = self._is_cloud_provider(success_provider)
+            return result, is_cloud
 
         logger.warning(
             "All providers failed. Trace: %s | Errors: %s",

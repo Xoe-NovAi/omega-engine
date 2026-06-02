@@ -1,7 +1,8 @@
 # 🔱 Omega Engine Makefile
-# AP: AP-MAKEFILE-v2.0.0
+# AP: AP-MAKEFILE-v3.0.0
 # ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: BUILD-ORCHESTRATION]
-# Hardware: AMD Ryzen 7 5700U (8C/16T) | 16GB RAM | CPU-only inference
+# Hardware: AMD Ryzen 7 5700U (8C/16T) | CPU-only inference
+# Status: HORIZON 1 COMPLETE ✅
 
 ROOT := $(shell pwd)
 PYTHON := .venv/bin/python3
@@ -19,13 +20,155 @@ COLOR_CYAN := \033[0;36m
 COLOR_GREEN := \033[0;32m
 COLOR_YELLOW := \033[1;33m
 COLOR_RED := \033[0;31m
+COLOR_PURPLE := \033[0;35m
+COLOR_BOLD := \033[1m
 COLOR_NC := \033[0m
+
+# ============================================================================
+# 📋 MENU — Polished Text-Based Interface
+# ============================================================================
+
+.PHONY: menu
+
+menu: ## 📋 Show the Omega Engine command menu
+	@echo ""
+	@echo "$(COLOR_PURPLE)╔══════════════════════════════════════════════════════╗$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)║$(COLOR_BOLD)  🔱 OMEGA ENGINE — HORIZON 1 COMPLETE             $(COLOR_PURPLE)║$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  $(COLOR_GREEN)302 tests ✅  |  71 modules  |  All 12 Mandates enforced$(COLOR_PURPLE)║$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)╚══════════════════════════════════════════════════════╝$(COLOR_NC)"
+	@echo ""
+	@echo "$(COLOR_BOLD)🔥 CORE$(COLOR_NC)"
+	@echo "  $(COLOR_CYAN)make demo$(COLOR_NC)         🔱 Run the Oracle demo (talk + summon)"
+	@echo "  $(COLOR_CYAN)make repl$(COLOR_NC)         💬 Launch interactive REPL"
+	@echo "  $(COLOR_CYAN)make talk 'q'$(COLOR_NC)     🗣️  Quick query via Oracle (alias)"
+	@echo "  $(COLOR_CYAN)make summon E 'q'$(COLOR_NC) 🧞 Direct entity summon (alias)"
+	@echo "  $(COLOR_CYAN)make health$(COLOR_NC)       🩺 System health dashboard"
+	@echo "  $(COLOR_CYAN)make doctor$(COLOR_NC)       🩺 Full system diagnosis"
+	@echo "  $(COLOR_CYAN)make menu$(COLOR_NC)         📋 This menu"
+	@echo ""
+	@echo "$(COLOR_BOLD)🧪 TESTING$(COLOR_NC)"
+	@echo "  $(COLOR_CYAN)make test$(COLOR_NC)         🧪 Run all 302 tests"
+	@echo "  $(COLOR_CYAN)make test ARGS='-k name'$(COLOR_NC)  Filter tests by name"
+	@echo "  $(COLOR_CYAN)make test-cov$(COLOR_NC)     📊 Run tests with coverage"
+	@echo "  $(COLOR_CYAN)make lint$(COLOR_NC)         🔍 Lint with flake8"
+	@echo "  $(COLOR_CYAN)make guard$(COLOR_NC)        🛡️  Fix permission drift (UID Guard)"
+	@echo ""
+	@echo "$(COLOR_BOLD)🤖 LOCAL INFERENCE$(COLOR_NC)"
+	@echo "  $(COLOR_CYAN)make lmster-start$(COLOR_NC) 🚀 Start LM Studio server"
+	@echo "  $(COLOR_CYAN)make lmster-stop$(COLOR_NC)  ⏹️  Stop LM Studio"
+	@echo "  $(COLOR_CYAN)make lmster-status$(COLOR_NC)📊 Check LM Studio"
+	@echo "  $(COLOR_CYAN)make lmster-load MODEL=x$(COLOR_NC) Load model into LM Studio"
+	@echo ""
+	@echo "$(COLOR_BOLD)🗣️  ENTITY COMMANDS$(COLOR_NC)"
+	@echo "  $(COLOR_CYAN)make entities$(COLOR_NC)     📋 List all entities"
+	@echo "  $(COLOR_CYAN)make entity NAME=x$(COLOR_NC) 🔍 Show entity details"
+	@echo "  $(COLOR_CYAN)make model-status$(COLOR_NC) 🤖 Show available models"
+	@echo "  $(COLOR_CYAN)make talk MSG$(COLOR_NC)     🗣️  Talk to Oracle (usage: make talk MSG='hello')"
+	@echo ""
+	@echo "$(COLOR_BOLD)📦 QUEUE & LIBRARY$(COLOR_NC)"
+	@echo "  $(COLOR_CYAN)make queue-status$(COLOR_NC) 📊 Show request queue"
+	@echo "  $(COLOR_CYAN)make process-queue$(COLOR_NC)⚡ Process queue"
+	@echo "  $(COLOR_CYAN)make queue-prune$(COLOR_NC)  🧹 Archive stale requests"
+	@echo "  $(COLOR_CYAN)make library-status$(COLOR_NC)📊 Library catalog stats"
+	@echo "  $(COLOR_CYAN)make library-search$(COLOR_NC)🔎 Search library"
+	@echo ""
+	@echo "$(COLOR_BOLD)📊 BENCHMARKS$(COLOR_NC)"
+	@echo "  $(COLOR_CYAN)make bench-run$(COLOR_NC)    📊 Run a benchmark"
+	@echo "  $(COLOR_CYAN)make bench-list$(COLOR_NC)   📋 List completed runs"
+	@echo "  $(COLOR_CYAN)make bench-rank$(COLOR_NC)   🏆 Show best model"
+	@echo ""
+	@echo "$(COLOR_BOLD)🏗️  INFRASTRUCTURE$(COLOR_NC)"
+	@echo "  $(COLOR_CYAN)make start-infra$(COLOR_NC)  🟢 Start containers"
+	@echo "  $(COLOR_CYAN)make stop-infra$(COLOR_NC)   🔴 Stop containers"
+	@echo "  $(COLOR_CYAN)make infra-status$(COLOR_NC) 📊 Container status"
+	@echo "  $(COLOR_CYAN)make mcp-check$(COLOR_NC)    🔌 MCP health check"
+	@echo ""
+	@echo "$(COLOR_BOLD)🧹 MAINTENANCE$(COLOR_NC)"
+	@echo "  $(COLOR_CYAN)make clean$(COLOR_NC)        🧹 Clean Python cache"
+	@echo "  $(COLOR_CYAN)make doctor$(COLOR_NC)       🩺 Full diagnosis"
+	@echo "  $(COLOR_CYAN)make setup$(COLOR_NC)        🚀 Install dependencies"
+	@echo "  $(COLOR_CYAN)make bootstrap$(COLOR_NC)    🔱 Full system bootstrap"
+	@echo ""
+	@echo "$(COLOR_PURPLE)╔══════════════════════════════════════════════════════╗$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  For detailed docs: $(COLOR_CYAN)less docs/USER_MANUAL.md$(COLOR_NC)          $(COLOR_PURPLE)║$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  Engine state:     $(COLOR_CYAN)cat OMEGA_ENGINE.md$(COLOR_NC)              $(COLOR_PURPLE)║$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)╚══════════════════════════════════════════════════════╝$(COLOR_NC)"
+	@echo ""
+
+# ============================================================================
+# 🌊 OFFLINE DEMO — Boat-Ready (No Internet Required)
+# ============================================================================
+
+offline-demo: ## 🌊 Offline demo for boat — no internet required
+	@echo "$(COLOR_CYAN)╔══════════════════════════════════════════════╗$(COLOR_NC)"
+	@echo "$(COLOR_CYAN)║$(COLOR_BOLD) 🌊 OMEGA ENGINE — OFFLINE DEMO             $(COLOR_CYAN)║$(COLOR_NC)"
+	@echo "$(COLOR_CYAN)║$(COLOR_NC)  $(COLOR_GREEN)No internet needed — MockBackend active$(COLOR_CYAN)    ║$(COLOR_NC)"
+	@echo "$(COLOR_CYAN)╚══════════════════════════════════════════════╝$(COLOR_NC)"
+	@echo ""
+	@echo "$(COLOR_YELLOW)[1/4]$(COLOR_NC) Listing entities..."
+	@OMEGA_ENV=test OMEGA_DEMO=true PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli list-entities
+	@echo ""
+	@echo "$(COLOR_YELLOW)[2/4]$(COLOR_NC) Talking to Oracle..."
+	@OMEGA_ENV=test OMEGA_DEMO=true PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli talk "who are you?"
+	@echo ""
+	@echo "$(COLOR_YELLOW)[3/4]$(COLOR_NC) Summoning Sekhmet..."
+	@OMEGA_ENV=test OMEGA_DEMO=true PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli summon Sekhmet "what is strength?"
+	@echo ""
+	@echo "$(COLOR_YELLOW)[4/4]$(COLOR_NC) Checking system pulse..."
+	@OMEGA_ENV=test OMEGA_DEMO=true PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli talk "system status"
+	@echo ""
+	@echo "$(COLOR_GREEN)╔══════════════════════════════════════════════╗$(COLOR_NC)"
+	@echo "$(COLOR_GREEN)║$(COLOR_BOLD) ✅ OFFLINE DEMO COMPLETE                 $(COLOR_GREEN)║$(COLOR_NC)"
+	@echo "$(COLOR_GREEN)║$(COLOR_NC)  All responses generated locally via       $(COLOR_GREEN)║$(COLOR_NC)"
+	@echo "$(COLOR_GREEN)║$(COLOR_NC)  MockProvider — zero network calls.        $(COLOR_GREEN)║$(COLOR_NC)"
+	@echo "$(COLOR_GREEN)╚══════════════════════════════════════════════╝$(COLOR_NC)"
+	@echo ""
+
+# ============================================================================
+# 🚀 ALIASES (Convenience Shortcuts)
+# ============================================================================
+
+talk: guard ## 🗣️ Quick talk alias: make talk MSG='your question'
+	@OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli talk "$(MSG)"
+
+summon: guard ## 🧞 Quick summon alias: make summon NAME=E MSG='query'
+	@OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli summon "$(NAME)" "$(MSG)"
+
+entities: ## 📋 List all entities
+	PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli list-entities
+
+entity: ## 🔍 Show entity info: make entity NAME=Sekhmet
+	PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli entity "$(NAME)"
+
+queue-status: ## 📊 Show request queue status
+	PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli queue-status
+
+process-queue: ## ⚡ Process queued items
+	PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli process-queue
+
+queue-prune: ## 🧹 Archive stale requests (default: 7 days)
+	PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli queue-prune
+
+library-status: ## 📊 Library catalog statistics
+	PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli library-status
+
+library-search: ## 🔎 Search library: make library-search QUERY='term'
+	PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli library-search "$(QUERY)"
+
+bench-run: ## 📊 Run benchmark: make bench-run MODEL=x ROLE=will
+	PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli bench-run "$(MODEL)" "$(ROLE)"
+
+bench-list: ## 📋 List completed benchmarks
+	PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli bench-list
+
+bench-rank: ## 🏆 Show best model for role: make bench-rank ROLE=will
+	PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli bench-rank "$(ROLE)"
 
 # ============================================================================
 # 🚀 CORE COMMANDS
 # ============================================================================
 
-.PHONY: help setup bootstrap demo test lint clean
+.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank setup bootstrap demo test test-cov mcp-check lint typecheck guard clean doctor
 
 help: ## 📚 Show this help
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z_-]+:.*## / {printf "  $(COLOR_CYAN)%-20s$(COLOR_NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)

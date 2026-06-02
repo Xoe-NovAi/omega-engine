@@ -196,6 +196,17 @@ class MockProvider(BaseProvider):
         return True
 
     async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None) -> Optional[str]:
+        demo = os.environ.get("OMEGA_DEMO")
+        if demo:
+            return (
+                f"I am the Omega Engine — sovereign AI runtime.\n\n"
+                f"You asked: \"{user_query}\"\n\n"
+                f"I hear you through the Oracle, routed by the Iris decoder, "
+                f"enhanced by memory from the Soul Engine.\n\n"
+                f"This is a demo response. Connect a local GGUF model at "
+                f"lmster :1234 or native-gguf for full inference.\n\n"
+                f"302 tests pass. 71 modules. 12 Sovereign Mandates enforced."
+            )
         return (
             f"Omega Engine is running in setup mode.\n\n"
             f"No inference backend responded. To enable AI responses:\n"

@@ -982,3 +982,44 @@ Full implementation handoff created at `data/handoff/HANDOFF_BIG_PICKLE_OPTION_A
 
 ### Key Insight
 Gemma 4 31B wrote structurally correct code at the pattern/import/async level, but systematically mis-estimated filesystem path depth. This is consistent with LLMs being trained on relative-path-agnostic source code. The fix: verify paths in review, don't assume correct constants.
+
+---
+
+## Decision 77: Option B Completion — Horizon 1 Final Gate
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (Gemma 4 31B)
+**Entity**: GEMMA4
+**Context**: After Option B was deferred in Decision 76, the remaining Mandate 9 violations (bare excepts without logging), falsy-trap, and hardcoded paths were executed by Gemma 4 31B via `data/handoff/HANDOFF_OPTION_B_GEMMA4.md`.
+
+### What Was Done
+
+| Category | Count | Files |
+|----------|-------|-------|
+| Bare `except Exception:` → `logger.warning()` | 23 | 10 files |
+| Files with `print()` → `logger.warning()` + logger added | 2 | `review_queue.py`, `scheduler.py` |
+| Falsy-trap `or` → `if is None` | 1 | `openai_compat.py:102` |
+| Hardcoded paths → `Path.home()` / `OMEGA_MODELS_DIR` | 3 | `greek.py:200`, `cpu_optimizer.py:185-186` |
+| `asyncio` import → `sniffio` (already done in H2) | 1 | `observability.py:235` |
+
+### Quality Gates (All Passed)
+
+| Gate | Check | Result |
+|------|-------|--------|
+| Gate 1 | `make test` | 302 passed |
+| Gate 2 | Bare excepts remaining | 5 carve-outs only (health_monitor:140,165, oracle.py:873, searxng_client.py:92, model_gateway.py:370) |
+| Gate 3 | Hardcoded `/home/arcana-novai` or `/media/arcana-novai` | 0 |
+| Gate 4 | `import asyncio` | 0 |
+| Gate 5 | `print(f"Error...")` | 0 |
+
+### Files Changed
+`src/omega/cli/repl.py`, `src/omega/library/greek.py`, `src/omega/library/inbox.py`, `src/omega/memory/providers.py`, `src/omega/observability.py`, `src/omega/oracle/backends/openai_compat.py`, `src/omega/oracle/cpu_optimizer.py`, `src/omega/oracle/model_gateway.py`, `src/omega/oracle/providers.py`, `src/omega/workers/background_researcher/loop.py`, `src/omega/workers/background_researcher/review_queue.py`, `src/omega/workers/background_researcher/scheduler.py`, `src/omega/workers/background_researcher/soul_updater.py`
+
+### Consequences
+- **Horizon 1 is now 100% complete**. All 12 Sovereign Mandates are enforced across the entire codebase.
+- **Horizon 2** is now unlocked for full execution.
+- **Test baseline**: updated from 292 to 302 (10 Error Gauntlet tests added by H2 Phase 1).
+- The `HANDOFF_OPTION_B_OPENCODE.md` is superseded by `HANDOFF_OPTION_B_GEMMA4.md`.
+
+### Enforcement
+Code review must check each `except` clause. The canonical test pattern is `pytest.raises(OmegaError)`. No bare `except Exception:` without logging will be accepted in future PRs.

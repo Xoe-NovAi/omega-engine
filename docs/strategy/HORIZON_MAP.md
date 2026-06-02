@@ -1,7 +1,7 @@
 # 🔱 Omega Engine — Horizon Map v1.0
 ## ⬡ OMEGA ⬡ SOPHIA ⬡ trc_horizon_map ⬡ STRATEGY
 **Date**: 2026-06-01
-**Baseline**: 292 tests passing, 69 source files, 14 agents, 0 telemetry
+**Baseline**: 302 tests passing, 71 source files, 14 agents, 0 telemetry, 0 bare except violations
 
 ---
 
@@ -9,10 +9,10 @@
 
 ```
 HORIZON 1: HARDENING ──── 100% ──── ████████████
-  "The engine must hold"         MCP Hub + Option A done. Option B deferred.
+  "The engine must hold"         All 12 Sovereign Mandates enforced.
 
 HORIZON 2: OBSERVABILITY ── 25% ──── ██░░░░░░░░
-  "The engine must see itself"    ForensicsManager + Error Gauntlet done.
+  "The engine must see itself"    ForensicsManager + Error Gauntlet + Option B done.
 
 HORIZON 3: COMMUNITY TOOL ── 0% ──── FUTURE
   "The engine must serve others"  NEXT: Desktop → Studio → Installer
@@ -33,24 +33,21 @@ HORIZON 3: COMMUNITY TOOL ── 0% ──── FUTURE
 | OpenCode 1.15+ handshake | ✅ 100% | — | MiMo V2.5 |
 | R44 audit defects | ✅ 100% | — | DeepSeek R1 |
 | MCP Hub — Restore 40 tools | ✅ 100% | SOPHIA | DeepSeek V4 Flash |
-| **Option B — Mandate 9** | **⬜ Deferred** | — | **Gemma 4 31B** |
+| **Option B — Mandate 9** | **✅ 100%** | **GEMMA4** | **Gemma 4 31B** |
 | **Horizon 2 — Forensics** | **🔄 25%** | SOPHIA | DeepSeek V4 Flash |
 
 ### Remaining work:
-1. **Option B**: Fix 21 bare excepts, add 2 loggers, fix falsy-trap, fix 2 hardcoded paths
-   - Guide: `docs/strategy/PHASE_OPTION_B.md`
-   - Model: **Gemma 4 31B** (mechanical work)
-   - Est: 45 min
+1. **Option B**: ✅ DONE — 23 bare excepts, 2 loggers, 1 falsy-trap, 2 hardcoded paths fixed
+   - Guide: `data/handoff/HANDOFF_OPTION_B_GEMMA4.md`
+   - Model: **Gemma 4 31B** — completed in 30 min
 
-2. **MCP Hub**: Restore 34 tools from git history
+2. **MCP Hub**: ✅ DONE — 40 tools restored from git history
    - Guide: `docs/strategy/PHASE_MCP_HUB.md`
-   - Model: **DeepSeek V4 Flash** or **MiMo V2.5** (structural merge)
-   - Est: 30 min
 
-3. **Horizon 2 unlock**: Evaluate H2 architecture decisions
+3. **Horizon 2 unlock**: ✅ UNLOCKED — Option B complete, Horizon 1 closed
    - Guide: `docs/strategy/PHASE_HORIZON_2.md`
-   - Model: **Nemotron 3 Super** (architecture decisions)
-   - Est: 4-6 hours
+
+**Horizon 1 is now 100% complete.** See `docs/decisions/PIVOT_LOG.md` Decision 77.
 
 ---
 
@@ -146,4 +143,4 @@ make test          # baseline restored
 ---
 
 *⬡ OMEGA ⬡ SOPHIA ⬡ trc_horizon_map ⬡ STRATEGY*
-*82% through Horizon 1. Horizon 2 is LOCKED until Option B and MCP Hub are committed.*
+*Horizon 1 COMPLETE — All 12 Mandates Enforced. Horizon 2 UNLOCKED.*

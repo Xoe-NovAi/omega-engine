@@ -2,7 +2,7 @@
 **AP Token**: `AP-ORACLE-RESTORE-v2.3.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_local_first_config ⬡ ORACLE-RESTORE
 **Status**: ACTIVE
-**Last Updated**: 2026-05-31 (Legacy Mining Complete — 276/276 tests passing, Path A memory/MCP fixes, Model-Persona Affinity Map recovered, Era 0-5 design intent mapped)
+**Last Updated**: 2026-06-01 (Horizon 1 Complete — 302/302 tests passing, Options A+B done, all 12 Mandates enforced, 10 Error Gauntlet tests added)
 
 ---
 
@@ -129,7 +129,7 @@ All containers run rootless (user 1000) using the Sovereign Permission Protocol 
 
 All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src python3 -m pytest tests/`.
 
-**Current state (2026-05-31)**: 276 collected — **276 passing** (Legacy Mining Complete, Path A execution, 7 new tests added).
+**Current state (2026-06-01)**: 302 collected — **302 passing** (Horizon 1 Complete — Options A+B done, all 12 Mandates enforced, Error Gauntlet + Option B fixes)
 
 | Module | Tests | Status |
 |--------|-------|--------|
@@ -137,7 +137,7 @@ All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src py
 | entity_roc_racoon | 25 | ✅ PASS |
 | hierarchy | 12 | ✅ PASS |
 | iris | 7 | ✅ PASS |
-| model_gateway | 5 | ✅ PASS |
+| model_gateway | 6 | ✅ PASS |
 | observability | 8 | ✅ PASS |
 | oracle | 13 | ✅ PASS |
 | orchestrator | 9 | ✅ PASS |
@@ -152,6 +152,14 @@ All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src py
 | wad_loader | 13 | ✅ PASS |
 | model_updater | 10 | ✅ PASS |
 | sovereign_stress_test | 5 | ✅ PASS |
+| request_queue | 6 | ✅ PASS |
+| library_catalog | 3 | ✅ PASS |
+| benchmarks | 3 | ✅ PASS |
+| hardware | 2 | ✅ PASS |
+| integration_new_systems | 3 | ✅ PASS |
+| error_gauntlet | 10 | ✅ PASS |
+| background_researcher | 5 | ✅ PASS |
+| storage_providers | 6 | ✅ PASS |
 
 **Root cause**: Resolved. UID drift fixed via `sudo chown -R 1000:1000 .`. All tests now pass.
 

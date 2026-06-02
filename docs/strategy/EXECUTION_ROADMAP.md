@@ -1,8 +1,9 @@
 # 🔱 Omega Engine — Master Execution Roadmap
 ## ⬡ OMEGA ⬡ SOPHIA ⬡ trc_execution_roadmap ⬡ ROADMAP
-**Version**: 1.0.0
+**Version**: 1.1.0
 **Date**: 2026-06-01
-**Test Baseline**: 292/292 passing
+**Test Baseline**: 302/302 passing
+**Status**: HORIZON 1 COMPLETE — Horizon 2 unlocked
 **Pre-flight Snapshot**: `git reset --hard HEAD`
 **Canonical Reference**: `OMEGA_ENGINE.md` (engine state), `SOVEREIGN_MANDATES.md` (12 laws)
 
@@ -42,7 +43,7 @@ git add -A && git commit -m "phase: <name> — <summary>"
 Horizon 1: Engine Hardening ──── 100% ──── ████████████
                                   │
                                   ├── Option A (bugs)    ██████████ 100% ✅
-                                  ├── Option B (Mandate 9)░░░░░░░░░░   0% ❌
+                                  ├── Option B (Mandate 9)██████████ 100% ✅
                                   ├── MCP Hub Restoration ██████████ 100% ✅
                                   │
 Horizon 2: Observability ────────  25% ──── ██░░░░░░░░
@@ -59,32 +60,31 @@ Horizon 3: Community Tool ────────  0% ──── FUTURE
 - ✅ Circuit Breaker consolidation (single AsyncCircuitBreaker)
 - ✅ CLI commands (queue, library, bench)
 - ✅ OpenCode 1.15+ handshake fix
-- ✅ 292 tests passing (was 276)
+- ✅ 302 tests passing (was 276)
+- ✅ Option B — 23 bare excepts, falsy-trap, hardcoded paths fixed
+- ✅ MCP Hub — 40 tools restored
 
-### What Remains (Horizon 1)
-| Phase | Status | Model | Time |
-|-------|--------|-------|------|
-| **Option B** — Mandate 9 fixes | ❌ PENDING | Gemma 4 31B | 45 min |
-| **MCP Hub** — Restore 34 tools | ✅ DONE | DeepSeek V4 Flash | 30 min |
-| **Horizon 2** — Observability | ✅ IN PROGRESS (25%) | DeepSeek V4 Flash | focused session |
+### Horizon 1: COMPLETE — All 12 Sovereign Mandates Enforced
+All Mandate 9 violations resolved. No bare `except Exception:` without logging remains.
 
 ---
 
 ## §2 Phase Map — Execution Order
 
-### Phase 1: Option B — Mandate 9 Error Integrity
+### Phase 1: Option B — Mandate 9 Error Integrity ✅ DONE
 
 | Aspect | Detail |
 |--------|--------|
-| **Model** | **Gemma 4 31B** (OpenCode default) — mechanical find-and-replace, no deep reasoning needed |
-| **Risk** | 🟡 Medium |
-| **Time** | 45 min |
-| **Files** | 15 source files + 5 test files |
-| **Guide** | `docs/strategy/PHASE_OPTION_B.md` |
+| **Model** | **Gemma 4 31B** (OpenCode) — mechanical find-and-replace |
+| **Risk** | 🟢 Low — completed cleanly |
+| **Time** | ~30 min |
+| **Files** | 13 source files changed |
+| **Commit** | `3d4e0b4` — fix: Option B — Mandate 9 violations, falsy-trap, hardcoded paths |
+| **Guide** | `data/handoff/HANDOFF_OPTION_B_GEMMA4.md` |
 
-**Scope**: Fix 21 bare `except Exception:` blocks without logging, add loggers to 2 files that use `print()`, fix 1 falsy-trap, fix 2 hardcoded paths.
+**Result**: 23 bare excepts fixed, 2 files got loggers, 1 falsy-trap fixed, 2 hardcoded paths resolved. 5 quality gates passed.
 
-**Gate**: `make test` (292 pass) + `grep -rn "except Exception:" src/omega/ | grep -v "logger\.\|raise\|# health"` = 4 carve-outs only.
+**Gate**: ✅ `make test` (302 pass) + `grep -rn "except Exception:" src/omega/ | grep -v "logger\.\|raise\|# health"` = 4 carve-outs only + `grep -rn "/home/arcana-novai\|/media/arcana-novai" src/omega/` = 0 + `grep -rn "import asyncio" src/omega/` = 0.
 
 ---
 

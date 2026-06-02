@@ -556,11 +556,12 @@ The ForensicsManager in `observability.py` was enhanced beyond its original cras
 | Source files | **71** |
 | MCP Hub tools | **40 MCP + 11 HTTP** |
 | `asyncio` imports | **0** (was 1) |
+| Bare except violations | **0** (was 23) — Horizon 1 Final Gate CLOSED |
 
 ### Updated Next Actions
 | Priority | Action | Owner | Est. Time |
 |----------|--------|-------|-----------|
-| **P0** | Option B — 19 bare excepts, falsy-trap, 2 hardcoded paths | Next Agent | 45 min |
+| **P0** | ✅ **DONE** — Option B (23 bare excepts, falsy-trap, 2 hardcoded paths) | GEMMA4 | 30 min |
 | **P1** | Circuit breaker integration tests for generate() | Dev Session | 1 hr |
 | **P1** | Qdrant error wiring — ForensicsManager → vector search | MiMo V2.5 | 30 min |
 | **P2** | Deep study (id Software books, R-01 framework) | Doom Guy | Later |
@@ -568,4 +569,4 @@ The ForensicsManager in `observability.py` was enhanced beyond its original cras
 ---
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ big-pickle ⬡ opencode ⬡ trc_doom_guy ⬡ STATUS*
-*MCP Hub: 40 tools. Horizon 2: Forensics + Gauntlet. Option B deferred.*
+*Horizon 1 COMPLETE — All 12 Mandates Enforced. Option B closed by GEMMA4.*

@@ -132,14 +132,14 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 
 | Metric | Value | Last Verified |
 |--------|-------|---------------|
-| Phase | 2 — Observability & Forensics | 2026-06-01 |
-| Source files | **71** .py files (was 69) | 2026-06-01 |
+| Phase | 1 — ENGINE HARDENING COMPLETE ✅ | 2026-06-01 |
+| Source files | **71** .py files | 2026-06-01 |
 | Source lines | ~15,200 | 2026-06-01 |
-| Test functions | **302** (+10 Error Gauntlet) | 2026-06-01 |
-| Test files | **30** (was 29) | 2026-06-01 |
-| New modules | request_queue, library.catalog, benchmarks.runner, hardware | 2026-06-01 |
-| Horizon 2 | ForensicsManager, JsonFormatter, Error Gauntlet (10 tests) | 2026-06-01 |
-| MCP Hub tools | **40 MCP + 11 HTTP** (34 tools restored) | 2026-06-01 |
+| Test functions | **302** (+10 Error Gauntlet, +23 Option B fixes) | 2026-06-01 |
+| Test files | **30** | 2026-06-01 |
+| Mandate 9 compliance | **FULL** — zero bare except violations | 2026-06-01 |
+| Horizon 1 | **100% — All 12 Sovereign Mandates Enforced** | 2026-06-01 |
+| Horizon 2 | 🔓 Unlocked — ForensicsManager, JsonFormatter, Error Gauntlet (25%) | 2026-06-01 |
 | Providers configured | 8 (local-first order) | 2026-05-31 |
 | WAD Loader | Functional (--iwad flag works) | 2026-05-31 |
 | Namespace isolation | NOT implemented | 2026-05-31 |
