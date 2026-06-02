@@ -2,7 +2,7 @@
 **AP Token**: `AP-ORACLE-RESTORE-v2.3.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_local_first_config ⬡ ORACLE-RESTORE
 **Status**: ACTIVE
-**Last Updated**: 2026-06-01 (Horizon 1 Complete — 302/302 tests passing, Options A+B done, all 12 Mandates enforced, 10 Error Gauntlet tests added)
+**Last Updated**: 2026-06-01 (Horizon 1 Complete — 302/302 tests passing, Options A+B done, all 12 Mandates enforced, 10 Error Gauntlet tests added, Ollama real inference working, entity routing fixed)
 
 ---
 

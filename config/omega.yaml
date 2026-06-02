@@ -9,7 +9,7 @@ omega:
     mode: compact
     default_entity: default
   entity:
-    active_iwad: _omega_default
+    active_iwad: arcana_novai
     default: default
     user: arch
     allow_transient: true

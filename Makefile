@@ -83,11 +83,21 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo "  $(COLOR_CYAN)make infra-status$(COLOR_NC) 📊 Container status"
 	@echo "  $(COLOR_CYAN)make mcp-check$(COLOR_NC)    🔌 MCP health check"
 	@echo ""
+	@echo "$(COLOR_BOLD)📦 WAD (Stack Management)$(COLOR_NC)"
+	@echo "  $(COLOR_CYAN)make wad-status$(COLOR_NC)  📋 Show current IWAD and available WADs"
+	@echo "  $(COLOR_CYAN)make wad NAME=x$(COLOR_NC)  🔄 Switch active IWAD (e.g. arcana_novai)"
+	@echo "  $(COLOR_CYAN)make wad-reset$(COLOR_NC)   🔄 Reset to reference IWAD (_omega_default)"
+	@echo ""
 	@echo "$(COLOR_BOLD)🧹 MAINTENANCE$(COLOR_NC)"
 	@echo "  $(COLOR_CYAN)make clean$(COLOR_NC)        🧹 Clean Python cache"
 	@echo "  $(COLOR_CYAN)make doctor$(COLOR_NC)       🩺 Full diagnosis"
 	@echo "  $(COLOR_CYAN)make setup$(COLOR_NC)        🚀 Install dependencies"
 	@echo "  $(COLOR_CYAN)make bootstrap$(COLOR_NC)    🔱 Full system bootstrap"
+	@echo ""
+	@echo "$(COLOR_BOLD)📦 WAD (Stack Management)$(COLOR_NC)"
+	@echo "  $(COLOR_CYAN)make wad-status$(COLOR_NC)  📋 Show current IWAD and available WADs"
+	@echo "  $(COLOR_CYAN)make wad NAME=x$(COLOR_NC)  🔄 Switch active IWAD (e.g. arcana_novai)"
+	@echo "  $(COLOR_CYAN)make wad-reset$(COLOR_NC)   🔄 Reset to reference IWAD (_omega_default)"
 	@echo ""
 	@echo "$(COLOR_PURPLE)╔══════════════════════════════════════════════════════╗$(COLOR_NC)"
 	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  For detailed docs: $(COLOR_CYAN)less docs/USER_MANUAL.md$(COLOR_NC)          $(COLOR_PURPLE)║$(COLOR_NC)"
@@ -165,10 +175,54 @@ bench-rank: ## 🏆 Show best model for role: make bench-rank ROLE=will
 	PYTHONPATH=src $(PYTHON) -m omega.cli.oracle_cli bench-rank "$(ROLE)"
 
 # ============================================================================
+# 📦 WAD (Stack Management)
+# ============================================================================
+
+wad-status: ## 📋 Show current IWAD and list available WADs
+	@echo "$(COLOR_CYAN)📋 WAD Status$(COLOR_NC)"
+	@echo ""
+	@echo "  $(COLOR_BOLD)Active IWAD:$(COLOR_NC)"
+	@grep "active_iwad" config/omega.yaml | sed 's/.*active_iwad: //' | xargs echo "    "
+	@echo ""
+	@echo "  $(COLOR_BOLD)Available WADs:$(COLOR_NC)"
+	@for w in config/wads/*/; do \
+		name=$$(basename $$w); \
+		manifest=$${w}manifest.yaml; \
+		desc=""; \
+		if [ -f "$$manifest" ]; then \
+			desc=$$(grep "description" $$manifest 2>/dev/null | head -1 | sed 's/.*description: *//' | tr -d '"' | head -c 50); \
+		fi; \
+		mark=" "; \
+		if grep -q "active_iwad: $$name" config/omega.yaml 2>/dev/null; then mark="▶"; fi; \
+		printf "  $(COLOR_GREEN)%s$(COLOR_NC) %-20s %s\n" "$$mark" "$$name" "$$desc"; \
+	done
+	@echo ""
+	@echo "  Switch: $(COLOR_CYAN)make wad NAME=<wad>$(COLOR_NC)"
+	@echo "  Reset:  $(COLOR_CYAN)make wad-reset$(COLOR_NC)"
+
+wad: guard ## 🔄 Switch active IWAD: make wad NAME=arcana_novai
+	@if [ -z "$(NAME)" ]; then \
+		echo "$(COLOR_RED)Usage: make wad NAME=<wad>$(COLOR_NC)"; \
+		echo "  Available: arcana_novai, _omega_default, doom_universe"; \
+		exit 1; \
+	fi; \
+	if [ ! -d "config/wads/$(NAME)" ]; then \
+		echo "$(COLOR_RED)WAD '$(NAME)' not found in config/wads/$(COLOR_NC)"; \
+		exit 1; \
+	fi; \
+	sed -i "s/active_iwad: .*/active_iwad: $(NAME)/" config/omega.yaml; \
+	echo "$(COLOR_GREEN)✅ Switched to IWAD: $(NAME)$(COLOR_NC)"; \
+	echo "  Run $(COLOR_CYAN)make talk MSG='hello'$(COLOR_NC) to verify."
+
+wad-reset: ## 🔄 Reset to reference IWAD (_omega_default)
+	@sed -i "s/active_iwad: .*/active_iwad: _omega_default/" config/omega.yaml
+	@echo "$(COLOR_GREEN)✅ Reset to reference IWAD: _omega_default$(COLOR_NC)"
+
+# ============================================================================
 # 🚀 CORE COMMANDS
 # ============================================================================
 
-.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank setup bootstrap demo test test-cov mcp-check lint typecheck guard clean doctor
+.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank wad-load wad-status wad-list setup bootstrap demo test test-cov mcp-check lint typecheck guard clean doctor
 
 help: ## 📚 Show this help
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z_-]+:.*## / {printf "  $(COLOR_CYAN)%-20s$(COLOR_NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)

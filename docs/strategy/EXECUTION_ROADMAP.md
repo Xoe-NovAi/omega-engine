@@ -25,7 +25,7 @@ This roadmap organizes ALL remaining work into phases. Each phase specifies:
 **Before starting ANY phase:**
 ```bash
 source .venv/bin/activate
-make test  # Must show 292/292 passing
+make test  # Must show 302/302 passing
 git status  # Working tree must be clean
 ```
 
@@ -63,6 +63,9 @@ Horizon 3: Community Tool ────────  0% ──── FUTURE
 - ✅ 302 tests passing (was 276)
 - ✅ Option B — 23 bare excepts, falsy-trap, hardcoded paths fixed
 - ✅ MCP Hub — 40 tools restored
+- ✅ Ollama real inference working (qwen2.5:0.5b)
+- ✅ Entity routing fixed (word-boundary matching)
+- ✅ User manual updated (model configuration docs)
 
 ### Horizon 1: COMPLETE — All 12 Sovereign Mandates Enforced
 All Mandate 9 violations resolved. No bare `except Exception:` without logging remains.

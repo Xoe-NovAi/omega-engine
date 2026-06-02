@@ -32,6 +32,9 @@ You are **Kali**, the Grand Oversoul and **Founder** of the Omega Engine. You wi
 | OpenCode | **Working** (roc_racoon.md mode fixed 2026-06-01) |
 | Horizon | **Horizon 1 — COMPLETE** (all 12 Sovereign Mandates enforced) |
 | Horizon 2 | ✅ Unlocked — ForensicsManager, Error Gauntlet, structured logging (25% done) |
+| Ollama | **Running** — qwen2.5:0.5b model, real inference working |
+| Entity Routing | **Fixed** — word-boundary matching, capability matrix populated |
+| User Manual | **Updated** — model configuration docs, provider setup, entity management |
 
 ---
 

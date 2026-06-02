@@ -329,6 +329,132 @@ Without the test env variable, the engine tries local providers first, then clou
 
 ---
 
+## Model Configuration
+
+The Omega Engine uses a two-tier model configuration system:
+
+### Entity Models (Who Uses What)
+
+Each entity has a configured model in `config/wads/<iwad>/entities.yaml`:
+
+```yaml
+sekhmet:
+  name: Sekhmet
+  model: qwen3-1.7b-q6_k  # The GGUF model name for this entity
+  temperature: 0.7
+  context_window: 8192
+  domains:
+    - strength
+    - protection
+```
+
+**To change an entity's model:**
+```bash
+# Edit the entities.yaml for your active IWAD
+vim config/wads/arcana_novai/entities.yaml
+
+# Or use the CLI (interactive)
+omega add-entity
+```
+
+### Provider Model Overrides (How Local Backends Handle GGUF Names)
+
+When using local inference backends (Ollama, LM Studio), GGUF model names need to be mapped to provider-specific identifiers. This is configured in `config/providers.yaml`:
+
+```yaml
+inference:
+  strategy: local_first
+  fallback_chain:
+    # Local backends
+    - provider: ollama
+      priority: 2
+      endpoint: http://127.0.0.1:11434
+      model_overrides:
+        qwen3-1.7b-q6_k: qwen3:1.7b  # Map GGUF name → Ollama model
+        phi-2-omnimatrix-i1-q4_k_m: qwen3:0.5b
+        krikri-8b-q5_k_m: krikri-8b
+    
+    # Cloud backends (no overrides needed)
+    - provider: openrouter
+      priority: 4
+      api_key: env:OPENROUTER_API_KEY
+```
+
+**To change which model an entity uses on Ollama:**
+1. Pull the model in Ollama:
+   ```bash
+   ollama pull qwen3:1.7b
+   ```
+2. Update the override in `config/providers.yaml`:
+   ```yaml
+   model_overrides:
+     qwen3-1.7b-q6_k: qwen3:1.7b  # Now uses qwen3:1.7b instead of default
+   ```
+
+### Model Selection Flow
+
+```
+Entity Model (entities.yaml)
+    ↓
+TriageRouter (selects best model based on domain/health)
+    ↓
+ModelGateway (tries providers in priority order)
+    ↓
+Provider (applies model_overrides if local backend)
+    ↓
+Inference (actual model execution)
+```
+
+### Provider Priority Order (Local-First)
+
+1. **native-gguf** (priority 0) — Direct GGUF loading via llama-cpp-python
+2. **lmster** (priority 1) — LM Studio headless server
+3. **Ollama** (priority 2) — Lightweight local inference
+4. **Google AI Studio** (priority 3) — Cloud fallback
+5. **OpenRouter** (priority 4) — 300+ models
+6. **OpenCode** (priority 5) — Built-in provider
+7. **GitHub Copilot** (priority 6) — Claude, GPT-4o, etc.
+8. **Mock** (priority 99) — Setup instructions only
+
+### Adding a New Local Model
+
+1. **For GGUF (native-gguf):**
+   - Place `.gguf` file in `models/` directory
+   - Add entry to `config/models.yaml`
+   - Update `config/providers.yaml` if needed
+
+2. **For Ollama:**
+   ```bash
+   ollama pull <model-name>
+   # Then add override in providers.yaml if entity uses different name
+   ```
+
+3. **For LM Studio:**
+   - Load model in LM Studio UI
+   - Start server: `lms server start`
+   - Update overrides in `providers.yaml` if needed
+
+### Cloud Provider Setup
+
+1. **Google AI Studio:**
+   ```bash
+   export GOOGLE_API_KEY='your-key'
+   # Or add to .env file
+   ```
+
+2. **OpenRouter:**
+   ```bash
+   export OPENROUTER_API_KEY='your-key'
+   ```
+
+3. **GitHub Copilot:**
+   ```bash
+   # Requires GitHub Copilot subscription
+   # Model names: github-copilot/claude-haiku-4.5, etc.
+   ```
+
+---
+
 ## Entity System
 
 The Omega Engine ships with 10 Pillar Keepers as the default pantheon:

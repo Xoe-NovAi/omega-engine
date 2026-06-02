@@ -36,7 +36,7 @@ from .wad_loader import WADLoader
 from .entity_workspace import EntityWorkspaceManager, SOUL_FILE_HEADER
 from .hierarchy import SovereignHierarchy
 from ..memory_store import get_memory_store
-from ..orchestration.triage_router import TriageRouter, TriageRequest, TaskRequest, EntityContext, Constraints, SessionContext
+from ..orchestration.triage_router import TriageRouter, TriageRequest, TaskRequest, EntityContext, Constraints, SessionContext, ModelSelection
 from .health_monitor import HealthMonitor
 
 logger = logging.getLogger(__name__)
@@ -102,14 +102,19 @@ class Oracle:
         self.config = {}  # Will be populated in bootstrap(); default prevents AttributeError
         self._iwad_name = iwad_name  # Selective IWAD loading (None = load all)
 
-        # Health Monitor + Triage Router for model selection (B5: wired before ModelGateway)
+        # Health Monitor + Triage Router for model selection
         self.health_monitor = HealthMonitor()
-        self.triage_router = TriageRouter(health_monitor=self.health_monitor)
 
-        # B5: Pass health_monitor to ModelGateway
+        # ModelGateway
         self.model_gateway = model_gateway or ModelGateway(health_monitor=self.health_monitor)
         self.background_worker = background_worker
         self.hierarchy = SovereignHierarchy()
+
+        # TriageRouter (needs model_gateway for capability matrix)
+        self.triage_router = TriageRouter(
+            health_monitor=self.health_monitor,
+            capability_matrix=self._build_capability_matrix(),
+        )
 
         if self.background_worker:
             self.model_gateway.background_worker = self.background_worker
@@ -209,6 +214,35 @@ class Oracle:
                 logger.info(f"STARTUP: {startup_msg}")
             else:
                 logger.info("Oracle bootstrapped: WADs loaded and config synced.")
+
+    def _build_capability_matrix(self) -> Dict[str, list]:
+        """Build capability matrix from model_gateway's model registry.
+        Populates the TriageRouter with real model candidates grouped by domain.
+        """
+        matrix: Dict[str, list] = {}
+        universal_candidate = None
+        for name, spec in self.model_gateway.models.items():
+            domain = spec.get("domain", "general")
+            if domain not in matrix:
+                matrix[domain] = []
+            matrix[domain].append(
+                ModelSelection(
+                    name=name,
+                    provider=spec.get("provider", "local"),
+                    context_window=spec.get("context_window", 8192),
+                    temperature=spec.get("temperature", 0.7),
+                )
+            )
+            if universal_candidate is None:
+                universal_candidate = ModelSelection(
+                    name=name,
+                    provider=spec.get("provider", "local"),
+                    context_window=spec.get("context_window", 8192),
+                    temperature=spec.get("temperature", 0.7),
+                )
+        if universal_candidate is not None:
+            matrix["universal"] = universal_candidate
+        return matrix
 
     async def _post_to_hivemind(self, response: OracleResponse, query: str) -> None:
         """Post interaction summary to the Hivemind MCP server for cross-CLI awareness.
@@ -367,7 +401,12 @@ class Oracle:
                 session=session_ctx,
             )
             result = await self.triage_router.select_model(request)
-            return result.selected_model.name
+            selected = result.selected_model.name
+            # Guard: if TriageRouter returns mock (universal fallback with no
+            # capability matrix), use the entity's configured model instead
+            if selected in ("mock", None, ""):
+                return entity.model
+            return selected
         except Exception as e:
             logger.warning(f"TriageRouter failed for {entity_name}, falling back to configured model: {e}")
             return entity.model

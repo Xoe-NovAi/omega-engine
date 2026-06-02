@@ -140,8 +140,8 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Mandate 9 compliance | **FULL** — zero bare except violations | 2026-06-01 |
 | Horizon 1 | **100% — All 12 Sovereign Mandates Enforced** | 2026-06-01 |
 | Horizon 2 | 🔓 Unlocked — ForensicsManager, JsonFormatter, Error Gauntlet (25%) | 2026-06-01 |
-| Providers configured | 8 (local-first order) | 2026-05-31 |
-| WAD Loader | Functional (--iwad flag works) | 2026-05-31 |
+| Providers configured | 8 (local-first order) | 2026-06-01 |
+| WAD Loader | Functional (--iwad flag works) | 2026-06-01 |
 | Namespace isolation | NOT implemented | 2026-05-31 |
 | Dependency resolution | NOT implemented | 2026-05-31 |
 | Qdrant (:6333) | Installed, **unwired** (bag-of-words fallback) | 2026-05-31 |
@@ -158,6 +158,9 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Benchmark Runner | `src/omega/benchmarks/runner.py` — 3-point scale, per-criterion scoring | 2026-06-01 |
 | Iris (:8080) | Operational | 2026-05-31 |
 | SearXNG (:8017) | Operational | 2026-05-31 |
+| Ollama | **Running** — qwen2.5:0.5b model, real inference working | 2026-06-01 |
+| Entity Routing | **Fixed** — word-boundary matching, capability matrix populated | 2026-06-01 |
+| User Manual | **Updated** — model configuration docs, provider setup, entity management | 2026-06-01 |
 
 ---
 
@@ -317,3 +320,4 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 
 *Last Updated: 2026-06-01 | Author: GEMMA4 — Option B (Mandate 9, falsy-trap, hardcoded paths) — Horizon 1 FINAL GATE CLOSED*
 *This document is the Single Source of Truth. All platforms reference it.*
+*Changes: Ollama real inference working, entity routing fixed, user manual updated with model config docs.*

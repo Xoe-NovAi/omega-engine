@@ -246,16 +246,19 @@ class EntityRegistry:
 
         Matches Pillar Keepers only (Nova handles routing separately).
         Scores each entity by how many domain keywords appear in the text.
+        Uses word-boundary matching to avoid substring false positives.
         Returns the highest-scoring entity, or None if no match.
         """
         text_lower = text.lower()
         best_score = 0
         best_entity: Optional[Entity] = None
+        words = set(text_lower.split())
 
         for entity in self.list_pillar_keepers():
             score = 0
             for keyword in entity.domains:
-                if keyword in text_lower:
+                kw_lower = keyword.lower()
+                if kw_lower in words or f" {kw_lower} " in f" {text_lower} ":
                     score += 1
             if score > best_score:
                 best_score = score

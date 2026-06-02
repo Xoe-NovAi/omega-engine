@@ -45,7 +45,7 @@ def test_talk_summon_command():
 
 def test_talk_domain_routing():
     async def t():
-        return await Oracle().talk("I need to set up a server and deploy containers")
+        return await Oracle().talk("I need to check infrastructure monitoring")
     result = _run(t)
     assert result.entity == "SysAdmin"
 

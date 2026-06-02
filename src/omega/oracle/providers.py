@@ -29,6 +29,13 @@ class BaseProvider(ABC):
         self.name = name
         self.config = config
 
+    def resolve_model(self, model_name: str) -> str:
+        """Resolve config model name to provider-specific model name via overrides."""
+        overrides = self.config.get("model_overrides", {})
+        if not isinstance(overrides, dict):
+            return model_name
+        return overrides.get(model_name, model_name)
+
     @abstractmethod
     async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None) -> Optional[str]:
         pass
@@ -106,12 +113,13 @@ class LocallmsterProvider(BaseProvider):
 
     async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None) -> Optional[str]:
         url = self.config.get("endpoint", "http://127.0.0.1:1234")
+        resolved_model = self.resolve_model(model)
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_query},
         ]
         payload = {
-            "model": model,
+            "model": resolved_model,
             "messages": messages,
             "temperature": temperature,
             "max_tokens": max_tokens,
@@ -154,12 +162,13 @@ class OllamaProvider(BaseProvider):
 
     async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None) -> Optional[str]:
         url = self.config.get("endpoint", "http://127.0.0.1:11434")
+        resolved_model = self.resolve_model(model)
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_query},
         ]
         payload = {
-            "model": model,
+            "model": resolved_model,
             "messages": messages,
             "temperature": temperature,
             "max_tokens": max_tokens,

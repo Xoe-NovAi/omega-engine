@@ -123,14 +123,14 @@ Horizon 1 ─── Option B (deferred) ─→ MCP Hub (DeepSeek V4) ─→ Hori
 ### Pre-flight check (start every session):
 ```bash
 source .venv/bin/activate
-make test          # 292 must pass
+make test          # 302 must pass
 git status         # clean working tree
 grep -rn "FIXME\|TODO\|HACK" src/omega/ | grep -v ".pyc"  # known technical debt
 ```
 
 ### Post-flight check (end every session):
 ```bash
-make test          # still 292 passing
+make test          # still 302 passing
 make lint          # zero flake8 violations
 ```
 

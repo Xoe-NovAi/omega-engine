@@ -1067,4 +1067,69 @@ When adding new Makefile targets, update both `make menu` and `docs/USER_MANUAL.
 
 ---
 
-*PIVOT_LOG.md — Immutable. Every decision recorded. 79 decisions tracked.*
+## Decision 80: Ollama Provider URL Fix — Remove Double `/v1` Endpoint
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (MiMo V2.5)
+**Entity**: SOPHIA
+**Context**: Ollama provider was appending `/v1` to the endpoint, causing double `/v1/v1` paths.
+
+### Decision
+Fix Ollama provider to use base URL without `/v1` suffix. The provider's `_make_request` method appends `/v1/chat/completions` and `/api/tags` internally.
+
+### Implementation
+- Changed `config/providers.yaml` ollama endpoint from `http://127.0.0.1:11434/v1` to `http://127.0.0.1:11434`
+- Verified `is_available()` and `generate()` work with the fixed URL
+
+### Consequences
+- Ollama provider now correctly communicates with the Ollama server
+- Real inference works through Ollama backend
+
+---
+
+## Decision 81: Model Overrides — Provider-Level Model Name Mapping
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (MiMo V2.5)
+**Entity**: SOPHIA
+**Context**: Ollama only has `qwen2.5:0.5b` loaded, but entities use GGUF model names like `qwen3-1.7b-q6_k`.
+
+### Decision
+Add `model_overrides` to each provider in `config/providers.yaml` to map entity GGUF model names to provider-specific model identifiers.
+
+### Implementation
+- Added `model_overrides` section to ollama, lmster, and openrouter providers
+- Ollama overrides map all GGUF names to `qwen2.5:0.5b`
+- Added `resolve_model()` method to `BaseProvider` class in `providers.py`
+- OllamaProvider and LocallmsterProvider now resolve entity model names via overrides
+
+### Consequences
+- Entities can use their configured GGUF names while providers use available models
+- Users can change which model an entity uses by updating the override mapping
+- Provider-specific model selection is now explicit and configurable
+
+---
+
+## Decision 82: Entity Routing Fix — Word-Boundary Domain Matching
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (MiMo V2.5)
+**Entity**: SOPHIA
+**Context**: `find_by_domain` used substring matching, causing false positives (e.g., "structure" matching "infrastructure").
+
+### Decision
+Change `find_by_domain` in `entity_registry.py` to use word-boundary matching instead of substring matching.
+
+### Implementation
+- Modified `find_by_domain` to check if domain keywords are in the text's word set or have word boundaries
+- Added capability matrix population from `model_gateway.models` to `TriageRouter`
+- Added guard in `_select_model` to fall back to entity's configured model when TriageRouter returns "mock"
+
+### Consequences
+- Entity routing is now more accurate (no more false positives from substrings)
+- TriageRouter has real model candidates from the capability matrix
+- Entity model selection falls back gracefully when TriageRouter can't select
+
+---
+
+*PIVOT_LOG.md — Immutable. Every decision recorded. 82 decisions tracked.*
