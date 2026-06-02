@@ -86,6 +86,13 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Pattern**: Use explicit Ack/Nack patterns and `trace_id` propagation for every queued item. Atomic file renames (`.tmp` → `.json`) for all writes. Heartbeat timestamps for crash recovery.
 - **Reason**: Ensures systemic reliability and prevents "ghost failures" — requests that vanish without trace. Every request represents a user's intent; losing it without notification is a sovereignty violation.
 - **Enforcement**: `omega queue-status` must always produce consistent counts matching actual files on disk. Dead-letter directory (`data/requests/dead/`) must catch any request that fails processing after max retries.
+### 13. Temple-Grade Compliance (NEW — 2026-06-02)
+- **Mandate**: All engine code MUST comply with Temple-Grade standards (T1-T11) defined in xna-omega-legacy v7.5.4.
+- **Constraint**: No code may be merged that regresses any Temple-Grade gate. The 11 gates (Version Control, Documentation, Testing, Code Quality, Architecture, Security, Performance, Resilience, Observability, Integrity, Agent Security) are the minimum quality bar.
+- **Pattern**: Run `make temple-grade` to verify compliance. Each gate must pass or have a documented exception with a remediation date.
+- **Reason**: Temple-Grade exceeds enterprise-grade standards and ensures the engine remains sovereign, production-ready AI infrastructure. It prevents architectural rot and maintains the quality bar that justifies sovereignty claims.
+- **Enforcement**: `make temple-grade` must pass before any release. CI must gate on T3 (coverage ≥80%), T5 (AnyIO-only), T6 (zero telemetry), T8 (resilience patterns), T9 (structured logging), and T10 (atomic writes).
+- **Exception**: T11 (IA2 Agent Security) is exempted until IA2 specification stabilizes.
 
 ---
 **Failure to adhere to these mandates is a systemic error. If you encounter a conflict between these mandates and a tool's suggestion, the Mandates prevail.**
