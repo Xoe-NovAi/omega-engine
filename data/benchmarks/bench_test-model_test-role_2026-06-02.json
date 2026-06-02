@@ -1,0 +1,23 @@
+{
+  "model": "test-model",
+  "role": "test-role",
+  "samples": 3,
+  "ttft_ms": 187.88,
+  "tokens_per_sec": 47.93,
+  "peak_ram_mb": 72.6,
+  "scores": {
+    "accuracy": "fail",
+    "adherence": "fail",
+    "conciseness": "pass",
+    "structure": "excellent"
+  },
+  "avg_quality_score": 0.5,
+  "factuality_rate": 0.891271453046187,
+  "timestamp": "2026-06-02T16:33:08.999640+00:00",
+  "metadata": {
+    "cpu_count": 16,
+    "ram_total_gb": 14.4,
+    "judge_scale": "3-point",
+    "calibration_kappa": 0.75
+  }
+}

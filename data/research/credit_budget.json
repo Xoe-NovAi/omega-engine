@@ -2,7 +2,7 @@
   "month": "2026-06",
   "today": "2026-06-02",
   "daily_used": {
-    "search_ops": 197
+    "search_ops": 453
   },
   "budgets": {
     "exa": {
@@ -12,7 +12,7 @@
     },
     "tavily": {
       "total": 1000,
-      "used": 715,
+      "used": 900,
       "reserved_emergency": 100
     },
     "firecrawl": {
@@ -22,12 +22,12 @@
     },
     "serper": {
       "total": 2500,
-      "used": 0,
+      "used": 71,
       "reserved_emergency": 500
     },
     "jina": {
       "total": 10000,
-      "used": 108,
+      "used": 236,
       "reserved_emergency": 1000
     }
   }

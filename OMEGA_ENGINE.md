@@ -90,8 +90,8 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Priority | Provider | Type | Endpoint |
 |----------|----------|------|----------|
 | 3 | google | Cloud | env:GOOGLE_API_KEY (Gemma 4-31B) |
-| 4 | openrouter | Cloud | env:OPENROUTER_API_KEY |
-| 5 | opencode | Cloud | OpenCode built-in provider |
+| 4 | opencode-zen | Cloud | OpenCode Zen (MiniMax M3/DeepSeek V4/MiMo V2.5 — 200K) |
+| 5 | cline | Cloud | Cline hub API (MiniMax M3/DeepSeek V4/MiMo V2.5 — 1M context) |
 | 6 | copilot | Cloud | GitHub Copilot |
 | 7 | mock | Test | OfflineMockBackend |
 
@@ -140,7 +140,7 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Mandate 9 compliance | **FULL** — zero bare except violations | 2026-06-01 |
 | Horizon 1 | **100% — All 13 Sovereign Mandates Enforced (Mandate 13 Temple-Grade restored)** | 2026-06-02 |
 | Horizon 2 | 🔓 Unlocked — ForensicsManager, JsonFormatter, Error Gauntlet (25%) | 2026-06-01 |
-| Providers configured | 8 (local-first order) | 2026-06-01 |
+| Providers configured | 8 (local-first: native-gguf → lmster → ollama → google → opencode-zen → cline → copilot → mock) | 2026-06-02 |
 | WAD Loader | Functional (--iwad flag works) | 2026-06-01 |
 | Namespace isolation | NOT implemented | 2026-05-31 |
 | Dependency resolution | NOT implemented | 2026-05-31 |
@@ -212,7 +212,7 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 8. **Zero Telemetry**: No telemetry. Zero. None. Ever.
 9. **Error Integrity**: All errors MUST be typed, traceable, and testable. No silent swallowing.
 
-See `SOVEREIGN_MANDATES.md` for full details (12 mandates).
+See `SOVEREIGN_MANDATES.md` for full details (13 mandates).
 
 ---
 

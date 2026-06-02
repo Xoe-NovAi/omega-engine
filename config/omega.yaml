@@ -45,11 +45,11 @@ omega:
     confidence_minimum: 0.85
     max_changes_per_cycle: 30
     providers:
-      - name: openrouter
+      - name: opencode-zen
         enabled: true
       - name: google
         enabled: true
-      - name: opencode
+      - name: cline
         enabled: true
     notifications:
       on_change: true

@@ -46,45 +46,59 @@ inference:
         krikri-8b-q5_k_m: krikri-8b
 
     # ── FALLBACK 2: Ollama (local, :11434) ────────────────────────────
+    # ⚠️ Requires `ollama pull` for each model below before it will work.
+    #    For models not in Ollama's registry, import GGUF directly:
+    #    ollama create <name> --model <path-to-gguf>
     - provider: ollama
       priority: 2
       endpoint: http://127.0.0.1:11434
       model_overrides:
-        qwen3-1.7b-q6_k: qwen2.5:0.5b
-        qwen3-1.7b: qwen2.5:0.5b
-        qwen3-0.6b-q6_k: qwen2.5:0.5b
-        qwen3-4b-thinking-q4_k_m: qwen2.5:0.5b
-        deepseek-r1-qwen3-8b-q3_k_l: qwen2.5:0.5b
-        krikri-8b-q5_k_m: qwen2.5:0.5b
-        phi-2-omnimatrix-i1-q4_k_m: qwen2.5:0.5b
-        roracoon-3b: qwen2.5:0.5b
+        qwen3-1.7b-q6_k: qwen3:1.7b              # Sekhmet/Hecate — pull: ollama pull qwen3:1.7b
+        qwen3-1.7b: qwen3:1.7b                    # Nova — same model
+        qwen3-0.6b-q6_k: qwen3:0.6b               # Iris — pull: ollama pull qwen3:0.6b
+        qwen3-4b-thinking-q4_k_m: qwen3:4b        # Maat/Anubis — pull: ollama pull qwen3:4b
+        deepseek-r1-qwen3-8b-q3_k_l: deepseek-r1:8b  # Lucifer — pull: ollama pull deepseek-r1:8b
+        krikri-8b-q5_k_m: krikri:8b               # Inanna/Isis/Lilith — import GGUF
+        phi-2-omnimatrix-i1-q4_k_m: ministral:3b  # Brigid — pull: ollama pull ministral:3b
+        phi-4-mini: phi-4-mini                    # Sophia — pull: ollama pull phi-4-mini
+        roracoon-3b: roracoon:3b                  # Roracoon — import GGUF
 
-    # ── FALLBACK 3: Google AI Studio (cloud) ───────────────────────────
+    # ── FALLBACK 3: Google AI Studio (cloud, Gemma 4 31B — unlimited) ──
     - provider: google
       priority: 3
       api_key: env:GOOGLE_API_KEY
-
-    # ── FALLBACK 4: OpenRouter (cloud, 300+ models) ───────────────────
-    - provider: openrouter
-      priority: 4
-      api_key: env:OPENROUTER_API_KEY
-      base_url: https://openrouter.ai/api
       model_overrides:
-        qwen3-1.7b-q6_k: google/gemma-4-31b-it
-        qwen3-1.7b: google/gemma-4-31b-it
-        qwen3-4b-thinking-q4_k_m: qwen/qwen3-4b-thinking
-        qwen3-0.6b-q6_k: qwen/qwen3-0.6b
-        deepseek-r1-qwen3-8b-q3_k_l: deepseek/deepseek-r1:free
-        krikri-8b-q5_k_m: openai/gpt-4o-mini
-        phi-2-omnimatrix-i1-q4_k_m: google/gemma-4-31b-it
-        phi-4-mini: google/gemma-4-31b-it
+        phi-4-mini: gemma-4-31b-it          # Sophia: deep analysis → Gemma 4 31B
+        deepseek-r1-qwen3-8b-q3_k_l: gemma-4-31b-it  # Reasoning → Gemma 4 31B
+        krikri-8b-q5_k_m: gemma-4-31b-it    # Heavy general → Gemma 4 31B
+        qwen3-4b-thinking-q4_k_m: gemma-4-31b-it     # Thinking → Gemma 4 31B
+        phi-2-omnimatrix-i1-q4_k_m: gemma-4-31b-it   # Creative → Gemma 4 31B
       models:
-        - google/gemma-4-31b-it
+        - gemma-4-31b-it
 
-    # ── FALLBACK 5: OpenCode Built-in Provider (hybrid) ───────────────
-    - provider: opencode
+    # ── FALLBACK 4: OpenCode Zen (cloud, MiniMax/DeepSeek/MiMo) ──────
+    - provider: opencode-zen
+      priority: 4
+      api_key: env:OPENCODE_ZEN_API_KEY
+      base_url: https://api.opencode.ai/zen/v1
+      model_overrides:
+        qwen3-1.7b-q6_k: minimax/minimax-m3
+        qwen3-1.7b: minimax/minimax-m3
+        qwen3-4b-thinking-q4_k_m: minimax/minimax-m3
+        qwen3-0.6b-q6_k: minimax/minimax-m3
+        deepseek-r1-qwen3-8b-q3_k_l: deepseek/deepseek-v4-flash
+        krikri-8b-q5_k_m: minimax/minimax-m2.5
+        phi-2-omnimatrix-i1-q4_k_m: minimax/minimax-m3
+        phi-4-mini: minimax/minimax-m3
+      models:
+        - minimax/minimax-m3
+        - deepseek/deepseek-v4-flash
+        - minimax/minimax-m2.5
+
+    # ── FALLBACK 5: Cline (cloud via API/headless, 1M context) ────────
+    - provider: cline
       priority: 5
-      base_url: http://127.0.0.1:8080/v1
+      # Endpoint TBD — Cline hub uses WebSocket (:35833), HTTP API needs config
 
     # ── FALLBACK 6: GitHub Copilot (cloud) ────────────────────────────
     - provider: github-copilot

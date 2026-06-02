@@ -441,8 +441,8 @@ Inference (actual model execution)
 | 1 | **lmster** | Local (LM Studio) | `http://127.0.0.1:1234` |
 | 2 | **ollama** | Local | `http://127.0.0.1:11434` |
 | 3 | **google** | Cloud (Gemma 4-31B) | `env:GOOGLE_API_KEY` |
-| 4 | **openrouter** | Cloud (300+ models) | `env:OPENROUTER_API_KEY` |
-| 5 | **opencode** | Cloud (OpenCode built-in) | `http://127.0.0.1:8080/v1` |
+| 4 | **opencode-zen** | Cloud (MiniMax M3/DeepSeek V4/MiMo V2.5 — 200K) | OpenCode Zen |
+| 5 | **cline** | Cloud (MiniMax M3/DeepSeek V4/MiMo V2.5 — 1M) | Cline API/headless |
 | 6 | **github-copilot** | Cloud (Claude, GPT-4o) | GitHub Copilot |
 | 99 | **mock** | Test/Demo | Deterministic responses |
 

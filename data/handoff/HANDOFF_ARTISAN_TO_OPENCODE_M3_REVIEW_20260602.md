@@ -2,7 +2,7 @@
 # ⬡ OMEGA ⬡ SOPHIA ⬡ Parallel Codebase Review Handoff
 # AP: AP-HANDDOWN-OMEGA-REVIEW-v1.0.0
 # Date: 2026-06-02
-# Status: HORIZON 1 COMPLETE ✅ | 302 tests | 12 Mandates | 82 PIVOT decisions
+# Status: HORIZON 1 COMPLETE ✅ | 302 tests | 13 Mandates | 82 PIVOT decisions | OpenCode Zen replaces OpenRouter
 
 ## Purpose
 
@@ -23,7 +23,7 @@ This document is a **synthesized map** of the Omega Engine, produced by the Arti
 | PIVOT decisions tracked | 82 (Decision 50→82 active) |
 | OpenCode agents | 14 (consolidated from 26) |
 | Active IWAD | `_omega_default` (per `config/omega.yaml`) |
-| Provider chain | native-gguf(0) → lmster(1) → ollama(2) → google(3) → openrouter(4) → opencode(5) → copilot(6) → mock(7) |
+| Provider chain | native-gguf(0) → lmster(1) → ollama(2) → google(3) → opencode-zen(4) → cline(5) → copilot(6) → mock(7) |
 | Primary local backend | lmster (LM Studio :1234) — NOT `lm_studio` or `lm-studio` |
 | Hardware | Ryzen 7 5700U (Zen 2, 8C/16T, AVX2, no AVX-512) | 14Gi RAM | No GPU |
 | Primary MCP service | Omega Hub on :8016 (consolidated from 4 servers) |
@@ -49,7 +49,7 @@ These are non-negotiable constitutional laws. **Every change must respect them.*
 | 11 | **Soul Integrity** | Session stop hooks must trigger `soul.yaml` write. Scribe is canonical executor. |
 | 12 | **Queue Integrity** | Every request reaches terminal state. Atomic writes. Heartbeat timestamps. Dead-letter for failures. |
 
-**Enforcement state (Decision 77)**: All 12 mandates are 100% enforced. Horizon 1 final gate closed.
+**Enforcement state (Decision 77)**: All 13 mandates are 100% enforced. Horizon 1 final gate closed.
 
 ---
 
@@ -160,14 +160,14 @@ Per D61, **local-first**:
 | 1 | lmster | Local | LM Studio headless :1234. **NOT `lm_studio` or `lm-studio`** |
 | 2 | ollama | Local | :11434, base URL NO `/v1` suffix (D80) |
 | 3 | google | Cloud | env:GOOGLE_API_KEY (Gemma 4 31B) |
-| 4 | openrouter | Cloud | env:OPENROUTER_API_KEY |
-| 5 | opencode | Cloud | OpenCode built-in |
+| 4 | opencode-zen | Cloud | OpenCode Zen (MiniMax M3/DeepSeek V4/MiMo V2.5 — 200K) |
+| 5 | cline | Cloud | Cline API/headless (MiniMax M3/DeepSeek V4/MiMo V2.5 — 1M) |
 | 6 | copilot | Cloud | GitHub Copilot |
 | 7 | mock | Test | OfflineMockBackend (OMEGA_DEMO=true) |
 
 **`model_overrides`** (D81): Logical GGUF names → physical per-provider names. e.g. `qwen3-1.7b-q6_k` → `qwen2.5:0.5b` for ollama.
 
-**Cloud-only providers** (D78): `google`, `openrouter`, `opencode`, `github-copilot`. Sovereignty alert only fires for these.
+**Cloud-only providers** (D78): `google`, `opencode-zen`, `cline`, `github-copilot`. Sovereignty alert only fires for these.
 
 ---
 
@@ -343,7 +343,7 @@ config/wads/<name>/
 
 ### Top-level SST (read first)
 - `OMEGA_ENGINE.md` (323 lines) — Single Source of Truth, all platforms reference
-- `SOVEREIGN_MANDATES.md` (91 lines, 12 mandates)
+- `SOVEREIGN_MANDATES.md` (91 lines, 13 mandates)
 - `docs/decisions/PIVOT_LOG.md` (1135 lines, 82 decisions)
 - `docs/USER_MANUAL.md` (250+ lines) — comprehensive user guide (D79)
 - `docs/INDEX.md` — doc index
@@ -463,7 +463,7 @@ config/wads/<name>/
 4. **Single-renderer principle**: `pillar.md` is one file acting as 10 agents via `--slot` parameter. Don't be confused by lack of separate P1-P10 files.
 5. **Local-first is constitutional** (Mandate 7). Any cloud-first change is a systemic violation.
 6. **PIVOT_LOG is append-only and immutable** (D77 confirmation). New decisions are Decision 83+.
-7. **All 12 mandates are enforced** (D77 final gate). Any new code MUST respect all of them. Pay particular attention to Mandates 1, 5, 9, 11.
+7. **All 13 mandates are enforced** (D77 final gate). Any new code MUST respect all of them. Pay particular attention to Mandates 1, 5, 9, 11.
 8. **No mention of the unwanted root directory anywhere**. The user wants it completely eradicated.
 9. **The 5-attempt MCP router sequence** is documented in `data/handoff/handoff_artisan_to_opencode_router_fix_20260601.md`. Don't redo work that's already been tried.
 
@@ -474,7 +474,7 @@ config/wads/<name>/
 For a parallel review session, recommend reading in this order:
 1. **This handoff** (you're reading it)
 2. `OMEGA_ENGINE.md` — SST for engine state
-3. `SOVEREIGN_MANDATES.md` — 12 constitutional laws
+3. `SOVEREIGN_MANDATES.md` — 13 constitutional laws
 4. `docs/decisions/PIVOT_LOG.md` — 82 decisions, esp. D50-D82 (current)
 5. `mcp_servers/omega_hub/server.py` — current MCP state (post-D74)
 6. `src/omega/mcp_runtime.py` — runtime wrapper

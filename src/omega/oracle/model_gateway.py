@@ -7,8 +7,8 @@
 #   1. lmster            (LM Studio headless server at :1234)
 #   2. Ollama            (OpenAI-compatible API at :11434)
 #   3. Google AI Studio  (cloud, Gemma 4 31B)
-#   4. OpenRouter        (cloud, 300+ models)
-#   5. OpenCode          (OpenCode built-in provider)
+#   4. OpenCode Zen      (cloud, MiniMax/DeepSeek/MiMo)
+#   5. Cline             (cloud via API/headless, 1M context)
 #   6. GitHub Copilot    (cloud, Claude/GPT models)
 #   99. Graceful fallback (setup instructions)
 #
@@ -178,8 +178,8 @@ class ModelGateway:
 
         provider_map = {
             "google": GoogleAIProvider,
-            "opencode": ModelGateway._create_openrouter,
-            "openrouter": ModelGateway._create_openrouter,
+            "opencode-zen": ModelGateway._create_openrouter,
+            "cline": ModelGateway._create_openrouter,
             "github-copilot": ModelGateway._create_openrouter,
             "lmster": LocallmsterProvider,
             "ollama": OllamaProvider,
@@ -386,7 +386,7 @@ class ModelGateway:
     @property
     def _cloud_providers(self) -> set:
         """Set of cloud provider names for sovereignty tracking."""
-        return {"google", "openrouter", "opencode", "github-copilot"}
+        return {"google", "opencode-zen", "cline", "github-copilot"}
 
     def _is_cloud_provider(self, provider) -> bool:
         """Check if a provider is a cloud provider."""

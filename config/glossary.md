@@ -69,7 +69,7 @@
 | **P2P** | Peer-to-peer networking layer for consent-based stack sharing between Omega instances | — | — |
 | **Persona Mask** | A facet of an entity's personality that can be switched contextually | Performer, Businesswoman, Secret Identity (Jem) | Facet, Aspect |
 | **Pillar** | A domain category (1-10). The pillar structure is core engine; the entity that fills it is stack-specific. | P1=Strength, P2=Dream, P3=Will... | Domain, Expertise area |
-| **Provider Fabric** | The fallback chain of inference backends | lmster → ollama → openrouter → google | ModelGateway |
+| **Provider Fabric** | The fallback chain of inference backends | lmster → ollama → opencode-zen → cline → google | ModelGateway |
 
 ## S
 

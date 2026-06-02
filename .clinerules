@@ -23,7 +23,7 @@ Key mandates in one line each (full text in SOVEREIGN_MANDATES.md):
 - **M4 Sequentiality** — Plan -> Verify -> Execute. No cowboy coding.
 - **M5 Gnosis Preservation** — distill session insights into L1 -> L2 -> L3 abstractions.
 - **M6 Podman Sovereignty** — Quadlets use `UserNS=keep-id` + `User=1000`. NO `:U` on shared volumes.
-- **M7 Local-First** — local inference PRIMARY; cloud FALLBACK. Order: native-gguf(0) -> lmster(1) -> ollama(2) -> google(3) -> openrouter(4) -> opencode(5) -> copilot(6) -> mock(7).
+- **M7 Local-First** — local inference PRIMARY; cloud is OPTIONAL, external tools. Order: native-gguf(0) -> lmster(1) -> ollama(2) -> google(3) -> opencode-zen(4) -> cline(5) -> copilot(6) -> mock(7).
 - **M8 Zero Telemetry** — no analytics, no phone-home, no external metrics.
 - **M9 Error Integrity** — typed, traceable, testable errors; no bare `except:`; `pytest.raises(OmegaError)` is canonical.
 - **M10 Fleet Integrity** — agent fleet capped at 14 (no new files without gap + slot review).
@@ -78,8 +78,8 @@ cline -c /path/to/project "prompt"
 cline --worktree "experimental task"
 
 # Provider / model override
-cline -P openrouter -m qwen/qwen3-coder:free "prompt"
-cline -P cline -m minimax/minimax-m3 "prompt"
+cline -P opencode-zen -m minimax/minimax-m3 "prompt"   # 200K context via OpenCode Zen
+cline -P cline -m minimax/minimax-m3 "prompt"          # 1M context via Cline provider
 
 # Reasoning effort: none|low|medium|high|xhigh (default: medium)
 cline --thinking high "complex architectural task"
@@ -113,7 +113,7 @@ cline --acp
 - **Account**: `usr-01KH6X6GY0HBW6AW9Y8HYF82JC` (rob@antipode2727@gmail.com)
 - **Model**: `minimax/minimax-m3` (1M context in Cline)
 - **Reasoning**: enabled, effort `high`
-- **Alternative provider**: `openrouter` with `qwen/qwen3-coder:free`
+- **Alternative provider**: `opencode-zen` with `minimax/minimax-m3` (200K context)
 - **MCP servers**: NONE currently configured (the 6 legacy xna-* servers were
   removed from `~/.cline/data/settings/cline_mcp_settings.json` on 2026-06-02 -
   they pointed to the old `xna-omega` path which is now `xna-omega-legacy`).
@@ -343,8 +343,8 @@ Query -> EntityRegistry (YAML CRUD, word-boundary match) -> TriageRouter -> Mode
                                                           Fallback chain (local-first):
                                                           native-gguf(0) -> lmster(1) -> ollama(2)
                                                                             |
-                                                              Cloud teachers: google(3) -> openrouter(4)
-                                                                              -> opencode(5) -> copilot(6)
+                                                              Cloud teachers: google(3) -> opencode-zen(4)
+                                                                              -> cline(5) -> copilot(6)
                                                                                             -> mock(7)
 ```
 

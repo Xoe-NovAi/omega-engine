@@ -296,7 +296,7 @@ ESCALATION = "escalation"                          # Human intervention needed
 ### 5.1 Provider Fallback Chain (Documented in OMEGA_ENGINE.md)
 
 ```
-native-gguf(0) → lmster(1) → ollama(2) → google(3) → openrouter(4) → opencode(5) → copilot(6) → mock(7)
+native-gguf(0) → lmster(1) → ollama(2) → google(3) → opencode-zen(4) → opencode(5) → copilot(6) → mock(7)
 ```
 
 Each fallback step SHOULD emit a `BACKEND_FALLBACK` event with the failing

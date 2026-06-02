@@ -8,7 +8,7 @@
 
 This handoff initiates a **bidirectional dialog** between:
 - **OpenCode session** — `minimax-m3` (200K context) — running here
-- **Cline session** — `minimax-m3` (1M context) — running in VSCodium
+- **Cline session** — `minimax-m3` (1M context) — running via Cline CLI v3.0.15
 
 Both instances run the same model family (MiniMax M3) but with different context
 windows. Cline gets 1M, OpenCode gets 200K. We use Cline for **deep synthesis**
