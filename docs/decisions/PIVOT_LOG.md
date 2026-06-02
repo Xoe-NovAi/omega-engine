@@ -1355,4 +1355,69 @@ User had previously downloaded 20 id Software source code archives (92 MB) to `d
 
 ---
 
-*PIVOT_LOG.md — Immutable. Every decision recorded. 88 decisions tracked.*
+## Decision 89: R-09 Verification — DOOM 3 Job System Correction
+
+**Date**: 2026-06-02
+**Channel**: OpenCode CLI (MiniMax-M3, 200K context)
+**Entity**: DOOM_GUY
+**Trace**: trc_r09_verify
+
+### Context
+The existing R-09 (in `R_ID_SOFTWARE_EXTRACTION_MATRIX.md:48` and `R_DOOM_GUY_ID_SOFTWARE_GNOSIS.md:178-183`) characterized the DOOM 3 job system as **"id Tech 5's job system with 1-frame latency"** with **"player-facing systems exempted"**. This was identified as a remaining verification task in Decision 88 §7.
+
+### Decision
+**R-09 is PARTIALLY CORRECTED.** 1 of 4 sub-claims verified, 3 corrected.
+
+### Verification (file:line citations)
+
+| R-09 Sub-Claim | Actual Code | Status |
+|---|---|:---:|
+| **"id Tech 5's job system"** | Code is in `DOOM-3-BFG-master/neo/idlib/ParallelJobList.cpp` (BFG 2012, not id Tech 5/Rage 2011) | ❌ Wrong |
+| **File path `idlib/jobs/JobList.cpp`** | Actual path is `idlib/ParallelJobList.{h,cpp}` + `sys/Snapshot_Jobs.{h,cpp}` | ❌ Wrong |
+| **"1-frame latency"** | No per-job latency budget in code. Priority-aware list dispatch with stall-hiding. | ❌ Wrong |
+| **"Player-facing exempted (16ms)"** | Mechanism is priority levels (`JOBLIST_RENDERER_FRONTEND/BACKEND` HIGH vs `JOBLIST_UTILITY` LOW), not 16ms exemption. The 16ms number isn't in the code. | ⚠️ Partially right |
+| **"Maps to Omega async inference"** | Correct mapping, but for different reasons: `ResourceGuard` ↔ `fetchLock` spinlock, entity priorities ↔ `JOBLIST_PRIORITY_*`, cross-list `waitFor` ↔ provider handoff | ✅ Right |
+
+### Verified Facts (with file:line)
+
+| Fact | Citation |
+|---|---|
+| **2-thread fixed worker pool** | `ParallelJobList.cpp:1094` (`MAX_JOB_THREADS = 2` with CVar override) |
+| **Priority-aware dispatch** | `ParallelJobList.cpp:1011-1031` (workers pick highest-priority non-stalled list) |
+| **Shared atomic counter with 1-bit spinlock** | `ParallelJobList.cpp:233-235, 581-621` |
+| **Sync barriers** | `ParallelJobList.h:36-40` (`SYNC_SIGNAL`, `SYNC_SYNCHRONIZE`) |
+| **Cross-list dependencies** | `ParallelJobList.cpp:211, 397-401, 611` (rotating 4-guard `doneGuards[NUM_DONE_GUARDS = 4]`) |
+| **Stall-hiding** | `ParallelJobList.cpp:1021-1031` (stalled workers switch to other lists of equal-or-higher priority) |
+| **Profiling only (not budget)** | `ParallelJobList.cpp:130` (`jobs_longJobMicroSec = 10000` = 10ms warning threshold) |
+| **NOT work-stealing** (counter + dispatch, not per-thread deques) | `ParallelJobList.cpp:1011-1031` |
+| **PS3 SPURS abstraction (irrelevant for Omega)** | `ParallelJobList.h:85, 745-747` (`AddJobSPURS()` returns NULL on PC) |
+
+### Unexpected Findings
+
+1. **Original `DOOM-3-master/neo/idlib/` has NO job system** — only Base64, BitMsg, Parser, etc. The job system was added in BFG Edition (2012), not the 2004 original. R-09's source attribution is doubly wrong (wrong archive + wrong game).
+2. **The "rotating 4-guard" pattern** (`doneGuards[NUM_DONE_GUARDS = 4]`, `ParallelJobList.cpp:211`) is a clean way to handle ABA on rapid re-submission of the same job list. **Worth adopting for Omega's soul-evolution handoffs** (rapid re-entity registration).
+3. **The BFG code is NOT work-stealing** in the Cilk sense — it's a shared counter with priority-aware dispatch. The `RUN_STALLED` return code hides latency but workers don't have per-thread deques.
+4. **R-09 was written from secondary sources** (GDC talks, .plan archives about id Tech 5) and projected onto BFG code without verification — same failure mode as the 17 R44 bugs in Decision 54.
+
+### Consequences
+
+- **R-09 must be updated** in `R_ID_SOFTWARE_EXTRACTION_MATRIX.md` and `R_DOOM_GUY_ID_SOFTWARE_GNOSIS.md` with corrected source attribution
+- **The 4-guard ABA pattern is a P1 implementation candidate** for soul-evolution handoffs (R-20 lazy deletion + R-30 grace period)
+- **DOOM 3 BFG (2012), not id Tech 5 (Rage 2011)**, is the correct source for the job system
+- **Priority-based scheduling, not latency budgets**, is the actual pattern — Omega's `JOBLIST_PRIORITY_*` enum is the right translation
+
+### Implementation
+- Created: `data/entities/doom_guy/knowledge/R_09_DOOM3_JOB_SYSTEM_VERIFICATION.md` (502 lines, 28 KB)
+- Updated: `PENDING_CREDITS_QUEUE.md` (added R-09's `doneGuards` pattern as a candidate for promotion)
+
+### Key Insight
+
+> **The original R-09 plan was written from secondary sources (GDC talks, .plan
+> archives) and projected onto BFG code without verification.** This is the same
+> failure mode as the 17 R44 bugs. Lesson: **never cite a pattern without reading
+> the actual source code first**. R-19 through R-30 are verified; R-09 was not.
+> The verification process caught this.
+
+---
+
+*PIVOT_LOG.md — Immutable. Every decision recorded. 89 decisions tracked.*
