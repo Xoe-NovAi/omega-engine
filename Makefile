@@ -222,7 +222,7 @@ wad-reset: ## 🔄 Reset to reference IWAD (_omega_default)
 # 🚀 CORE COMMANDS
 # ============================================================================
 
-.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank wad-load wad-status wad-list audit-no-rag-v1 setup bootstrap demo test test-cov mcp-check lint typecheck guard clean doctor
+.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank wad-load wad-status wad-list audit-no-rag-v1 setup bootstrap demo test test-cov test-oracle-bootstrap mcp-check lint typecheck guard clean doctor
 
 help: ## 📚 Show this help
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z_-]+:.*## / {printf "  $(COLOR_CYAN)%-20s$(COLOR_NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -351,6 +351,10 @@ test: guard ## 🧪 Run tests (uses mock backend when OMEGA_ENV=test)
 
 test-cov: ## 📊 Run tests with coverage
 	$(PYTHON) -m pytest --cov=omega --cov-report=term-missing $(ARGS)
+
+test-oracle-bootstrap: guard ## 🧪 Test Oracle bootstrap path (no live backends)
+	@echo "→ Testing Oracle lazy bootstrap (OMEGA_ENV=test)..."
+	@OMEGA_ENV=test $(PYTHON) -m pytest tests/test_oracle.py -v -k "bootstrap or summon or talk"
 
 mcp-check: ## 🔌 Verify all MCP services are healthy
 	@bash scripts/mcp_health_check.sh

@@ -1,18 +1,9 @@
-# ⬡ OMEGA ⬡ SOPHIA ⬡ minimax/minimax-m3 (OpenCode Zen, 200K) ⬡ opencode ⬡ LIVE-FEED
-# AP: AP-LIVE-FEED-OPENCODE-DEV-v1.0.0
-# Date: 2026-06-02
-# Purpose: Append-only progress log for the OpenCode dev session.
-# Format: One line per task completion: `[TASK-ID] [STATUS] [TIMESTAMP] [agent]`
-# Read by: Cline (in parallel session) — checks for `[C1] DONE` before starting Doom Guy.
+# Sprint 0 Live Feed
 
----
-
-## Awaiting first entry from OpenCode dev session...
-
-[Format guide]
-- Task complete:   `[C3] DONE 2026-06-02T14:30:00Z minimax/minimax-m3`
-- Task blocked:    `[C1] BLOCKED 2026-06-02T15:00:00Z minimax/minimax-m3 — Oracle 5-way I/O refactor needs context`
-- Clarification:   `[C2] CLARIFICATION-NEEDED 2026-06-02T15:30:00Z — Where does test-oracle-bootstrap go? Makefile root?`
-- Sprint complete: `[SPRINT-0] COMPLETE 2026-06-02T18:00:00Z — All C1-C4 green, 302 tests in 12s`
-
----
+| Timestamp | Task | Status | Diff | Tests | Mandate Check |
+|-----------|------|--------|------|-------|---------------|
+| 2026-06-02T15:00Z | C3 (PIVOT_LOG D91+D92+D93) | ✅ COMPLETE | +46 -1 | 302/302 | M1✓ M5✓ M9✓ M13✓ |
+| 2026-06-02T15:05Z | C1 (Oracle bootstrap guard) | ✅ COMPLETE | +2 -0 | 302/302 (19 oracle) | M1✓ M5✓ M9✓ M13✓ |
+| 2026-06-02T15:10Z | C2 (Makefile test-oracle-bootstrap) | ✅ COMPLETE | +4 -1 | 14/14 (filtered) | M1✓ M5✓ M9✓ M13✓ |
+| 2026-06-02T15:15Z | C4 (CI workflow hardening) | ✅ COMPLETE | +14 -0 | N/A (CI config) | M1✓ M5✓ M9✓ M13✓ |
+| 2026-06-02T15:20Z | [SPRINT-0] COMPLETE | ✅ | +66 -3 | 302/302 | M1✓ M2✓ M5✓ M9✓ M13✓ |

@@ -52,6 +52,22 @@ jobs:
         run: |
           python3 -m pytest tests/ -v --tb=short -x
 
+      - name: AnyIO-only check (Mandate 1)
+        run: |
+          if grep -rn "import asyncio" src/omega/ --include="*.py"; then
+            echo "❌ MANDATE 1 VIOLATION: asyncio found in src/omega/"
+            exit 1
+          fi
+          echo "✅ No asyncio imports found"
+
+      - name: Error integrity check (Mandate 9)
+        run: |
+          # Check for bare 'except:' (no exception type)
+          if grep -rn "except:" src/omega/ --include="*.py" | grep -v "except Exception" | grep -v "# noqa"; then
+            echo "⚠️ WARNING: Bare except clauses found (review needed)"
+          fi
+          echo "✅ Error integrity check complete"
+
       - name: Lint check (non-blocking)
         continue-on-error: true
         run: |

@@ -350,6 +350,7 @@ class Oracle:
             query: The user query
             transient: If True, do not record the interaction in the soul/memory
         """
+        await self.bootstrap()
         async with self.observability.trace() as trace:
             if transient:
                 session_id = self.session_manager.get_session_id_transient(trace.trace_id)
@@ -871,6 +872,7 @@ class Oracle:
         Returns:
             Stats on the evolution (pruned, compacted, total_remaining).
         """
+        await self.bootstrap()
         async with self._soul_lock:
             soul_path = self._soul_path or DEFAULT_SOUL_PATH
             if not soul_path.exists():

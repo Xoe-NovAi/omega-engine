@@ -1449,3 +1449,109 @@ Three-model synthesis (MiMo-2.5 1M, DeepSeek V4 Flash, OpenCode M3 200K) + xna-o
 The cvar table + lazy deletion + ZONEID constants form a coherent architectural layer that enables measurement-based sovereignty enforcement.
 
 ---
+
+## Decision 99: Opus 4.6 Final Sprint Plan Review (H1.5 Gate Audit)
+
+**Date**: 2026-06-02
+**Channel**: Antigravity (Opus 4.6, via Gemini CLI)
+**Entity**: KALI
+**Trace**: trc_final_review
+
+### Decision
+Final gate review of both sprint initiation prompts (`PROMPT_OPENCODE_DEV_SPRINT_INIT_20260602.md` and `PROMPT_OPENCODE_DOOM_GUY_SPRINT_INIT_20260602.md`) before dispatch to parallel OpenCode sessions. Three-model audit chain: Gemini 3.5 Flash (initial context) → Sonnet 4.6 (independent code audit) → Opus 4.6 (prompt-level fact-check and cross-reference).
+
+### Findings (7 total)
+- **F1 (🔴 Critical)**: Dev prompt C1 references `OmegaConfig.load()` — class does not exist in codebase.
+- **F2 (🟡 Correctness)**: Dev prompt lists wrong sync I/O sources — SessionManager and MemoryStore are not sync I/O.
+- **F3 (🔴 Critical)**: Dev prompt has structural markdown damage — C2/C4 content orphaned after signoff.
+- **F4 (🟡 Correctness)**: Dev prompt says `ci.yml (new)` — file already exists (May 14, 49 lines).
+- **F5 (🟡 Correctness)**: Dev prompt says "T11 gate" — T11 is explicitly exempted per Mandate 13.
+- **F6 (🟡 Correctness)**: Doom Guy prompt says `circuit_breaker.py` to be removed — already deleted.
+- **F7 (🟡 Correctness)**: Doom Guy prompt line numbers drifted — `generate()` is at line 438, not 375.
+
+### Prior Audit Findings Endorsed
+- Sonnet P0-1: `summon()` missing `bootstrap()` call
+- Sonnet P0-3: `_precheck_provider` uses model-name lookup instead of provider-name lookup
+- Sonnet P0-4: `RemoteProvider.generate()` returns None on retry exhaustion — circuit breaker never trips
+- Sonnet P1-1: OpenRouter dead code + tenacity dependency remains in model_gateway.py
+- Doom Guy test baseline: 302 tests (not 276 as cited in handoff)
+
+### What Changed
+- `data/handoff/STRATEGIC_REVIEW_OPUS46_FINAL_20260602.md`: Full review (7 findings + 5 enhancements)
+- `data/handoff/STRATEGIC_REVIEW_OPUS46_LIVE_FEED.md`: Summary line appended
+
+### Key Insight
+> The sprint prompts are architecturally sound — the three-model convergence on Sprint 0 tasks is validated.
+> The failures are in *facts* (line numbers, class names, file existence), not *strategy*. Apply the 2 critical
+> corrections (F1, F3) and the prompts are ready for dispatch.
+
+---
+
+## Decision 91: Provider Fabric Reconciliation (OpenRouter Removal)
+
+**Date**: 2026-06-01
+**Channel**: Cline → OpenCode → Gemma 4 31B
+**Entity**: KALI / SOPHIA
+**Trace**: trc_provider_fabric_reconciliation
+
+### Decision
+Removed OpenRouter provider from fabric. 8→7 active providers. `_create_openrouter()` factory in model_gateway.py is a misnomer — it creates generic OpenAICompatProvider, not OpenRouter-specific. Name retained for now; rename deferred.
+
+### Rationale
+OpenRouter's relay model adds latency and cost without value when Google AI Studio provides unlimited Gemma 4 31B.
+
+### What Changed
+- config/providers.yaml: OpenRouter entry removed, priority order adjusted
+- src/omega/oracle/model_gateway.py: `_create_openrouter()` factory name retained but function creates generic provider
+
+### Key Insight
+Provider fabric simplification — reducing providers from 8 to 7 reduces configuration complexity without sacrificing capability.
+
+---
+
+## Decision 92: Tool-Usage Discipline
+
+**Date**: 2026-06-02
+**Channel**: Cline → OpenCode → Opus 4.6
+**Entity**: KALI
+**Trace**: trc_tool_usage_discipline
+
+### Decision
+Formalized constraint that agent tools must be prioritized via Pillar slots rather than additive creation. Model context limits enforced.
+
+### Rationale
+Uncontrolled tool proliferation fragments context across agents. Each new tool adds cognitive overhead to every agent that references it.
+
+### What Changed
+- SOVEREIGN_MANDATES.md: Added Mandate 10 (Fleet Integrity)
+- .opencode/agents/pillar.md: Slot-based domain agent documented
+- AGENTS.md: Fleet constraints documented
+
+### Key Insight
+Agent tools should map to existing Pillar slots (P1-P10) before proposing new tooling. A new agent file is a last resort, applied only after slot-based delegation has been proven impossible.
+
+---
+
+## Decision 93: Sprint 0 Initiation (Horizon 1.5 Bridge Phase)
+
+**Date**: 2026-06-02
+**Channel**: Cline → OpenCode → plan.md (Architect)
+**Entity**: SOPHIA / KALI
+**Trace**: trc_sprint_0_init
+
+### Decision
+Initiated Sprint 0 — the first sprint of the Horizon 1.5 Bridge Phase. Four tasks (C1-C4) in order: Oracle bootstrap guard, Makefile test target, CI workflow hardening. Three-model audit chain (Gemini Flash → Sonnet 4.6 → Opus 4.6) produced the implementation manual.
+
+### Rationale
+Sprint 0 addresses the foundational gaps that block all subsequent sprints: bootstrap synchronization, test coverage for Oracle init path, and CI enforcement of Mandates 1 and 9.
+
+### What Changed
+- data/handoff/current-sprint/DEV_SPRINT_0.md: Implementation manual created
+- This PIVOT_LOG entry: Sprint start marker
+
+### Key Insight
+Three-model convergence on Sprint 0 tasks validates the prioritization. The gaps are in *execution* (missing bootstrap calls, missing CI checks), not *strategy*.
+
+---
+
+*PIVOT_LOG.md — Immutable. Every decision recorded. 94 decisions tracked (D1-D93, D99).*
