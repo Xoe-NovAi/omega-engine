@@ -33,6 +33,14 @@ data/datasets/
 data/embeddings/
 src/data/datasets/
 
+# ── Eradicated Directories (NEVER re-create, NEVER re-track) ────────
+# Per D87: rag-v1/ was an LM Studio plugin artifact that kept recreating
+# itself. Source: ~/.lmstudio/extensions/plugins/lmstudio/rag-v1/
+# Removed from LM Studio settings (pinnedPlugins: []) on 2026-06-02.
+# If this ever reappears: it's a regression of the LM Studio bundled plugin.
+rag-v1/
+rag-v1/**/*
+
 # ── Test & Cache ─────────────────────────────────────────────────────
 .pytest_cache/
 .ruff_cache/

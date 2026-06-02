@@ -1132,4 +1132,134 @@ Change `find_by_domain` in `entity_registry.py` to use word-boundary matching in
 
 ---
 
-*PIVOT_LOG.md — Immutable. Every decision recorded. 82 decisions tracked.*
+## Decision 83: SearXNG Sovereign Search — Container Deployed
+
+**Date**: 2026-06-02
+**Channel**: OpenCode CLI (MiniMax-M3, 200K context)
+**Entity**: SOPHIA
+**Context**: R99 documented SearXNG as the sovereign search layer but the container was never started. The user wanted local search working.
+
+### Decision
+Deploy the existing `omega-searxng.container` quadlet via systemd and verify the JSON search endpoint returns real results.
+
+### Implementation
+- `systemctl --user daemon-reload`
+- `systemctl --user start omega-searxng.service`
+- Container `omega-searxng` started on `127.0.0.1:8017`
+- Verified: `curl -X POST "http://127.0.0.1:8017/search?q=python+async&format=json"` returns real results from Brave, mwmbl, Reddit
+- Verified: `curl http://127.0.0.1:8017/healthz` returns `OK`
+- Memory: 288.8M (peak 305.4M), CPU 2.0s
+
+### Consequences
+- Local sovereign search is now operational — 14 engines (brave, wikipedia, arxiv, semantischolar, crossref, pubmed, openalex, github_code, gitlab, sourcehut, huggingface, wikidata, marginalia, mwmbl)
+- 250+ upstream engines available through SearXNG's metasearch (rate-limited)
+- Zero API cost, zero telemetry, 127.0.0.0/8 + ::1 only access
+
+---
+
+## Decision 84: Search MCP Fleet — All 5 Wired
+
+**Date**: 2026-06-02
+**Channel**: OpenCode CLI (MiniMax-M3, 200K context)
+**Entity**: SOPHIA
+**Context**: R99 documented 5 search MCPs but only Tavily was in `~/.config/opencode/mcp_servers.json`. The user wanted all working.
+
+### Decision
+Wire Firecrawl, Exa, Jina, and SearXNG alongside Tavily. Correct package names per actual npm registry.
+
+### Implementation
+- **Tavily**: `tavily-mcp` 0.2.20 (corrected from `@tavily/mcp` per npm registry)
+- **Firecrawl**: `firecrawl-mcp` 3.20.2 (verified)
+- **Exa**: streamable-http `https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa` (verified v3.2.1)
+- **Jina**: streamable-http `https://mcp.jina.ai/v1` (verified v1.4.0)
+- **SearXNG**: stdio `npx -y searxng-mcp` with `SEARXNG_SERVER_URL=http://127.0.0.1:8017` (env var name corrected from `SEARXNG_URL` to `SEARXNG_SERVER_URL` per source)
+
+### Consequences
+- All 5 search MCPs are now available in OpenCode
+- SearXNG env var correction: `SEARXNG_SERVER_URL` is the correct var (per `dist/config.js` source)
+- HTTP MCPs require the `Accept: application/json, text/event-stream` header (Streamable HTTP spec)
+- Tavily 0.2.20 is current; `@tavily/mcp` is a different (older) namespace
+
+---
+
+## Decision 85: Legacy Pattern Recovered — `ai-provider-matrix.md`
+
+**Date**: 2026-06-02
+**Channel**: OpenCode CLI (MiniMax-M3, 200K context)
+**Entity**: SOPHIA
+**Context**: User requested a "continually updated model reference library". The legacy archive at `Old-Stacks/Xoe-NovAi/docs/ai-research/admin/ai-provider-matrix.md` had the exact pattern from January 2026.
+
+### Decision
+Reclaim the legacy `ai-provider-matrix.md` pattern (327 lines, 4 providers × 7 metrics) as the template for the new `R100_MODEL_REFERENCE_LIBRARY.md`. Extend the pattern from 4 cloud providers to all 4 tiers (Local GGUFs, Local Servers, Free Cloud, MCP Services).
+
+### Implementation
+- Read `/home/arcana-novai/Documents/Archives/Old-Stacks/Xoe-NovAi/docs/ai-research/admin/ai-provider-matrix.md`
+- Mined the 7-metric rating system: Research Depth, Technical Accuracy, Implementation Focus, Response Speed, Cost Efficiency, Creativity, Consistency
+- Created `docs/research/R100_MODEL_REFERENCE_LIBRARY.md` with TIER 0-3 structure
+- Cross-referenced existing snapshot files: `model_db/CURRENT_MODELS.md`, `OPENCODE_ZEN_MODEL_REFERENCE.md`, `OPENROUTER_MODEL_REFERENCE.md`, `GITHUB_COPILOT_FREE_TIER_RESEARCH.md`, `R99_free_tier_search_apis.md`
+- R100 is the index; snapshot files remain point-in-time
+
+### Consequences
+- The user's model reference request is now answered with a unified library
+- Legacy mining successful: 4 legacy files recovered (lilith.json, catalog.json, persona files, ai-provider-matrix.md)
+- Update protocol established (§7) — continually maintained by SOPHIA + Cline+M3 1M context
+
+---
+
+## Decision 86: MiniMax M3 Free Tier Context — 200K, NOT 1M
+
+**Date**: 2026-06-02
+**Channel**: OpenCode CLI (MiniMax-M3, 200K context)
+**Entity**: SOPHIA
+**Context**: Earlier Researcher finding claimed "1M token context (512K guaranteed)" for the M3 free tier. User clarified 2026-06-02: the free tier via OpenCode Zen is 200K.
+
+### Decision
+The MiniMax M3 free tier context window is **200K** (not 1M, not 512K). The 1M context is reserved for the Artisan/Cline VSCodium instance (via different API path).
+
+### Implementation
+- Documented in `R100_MODEL_REFERENCE_LIBRARY.md` §3.2 with verification command
+- Updated `docs/research/R100` with the correction
+- The 1M context is still available to the Cline/M3 instance in VSCodium (the user's "Artisan" teammate) but NOT through OpenCode Zen's free tier
+
+### Consequences
+- Future model references should clearly distinguish: 1M context (Cline/Artisan only) vs 200K context (OpenCode Zen free tier)
+- M3 free tier is a *different SKU* from the M3 production context
+- The 200K context window is the same range as M2.5 (197K) — likely a deliberate pricing strategy
+
+---
+
+## Decision 87: rag-v1 Eradication — Complete Source Removal
+
+**Date**: 2026-06-02
+**Channel**: OpenCode CLI (MiniMax-M3, 200K context)
+**Entity**: SOPHIA
+**Context**: User reported this is the 8th attempt to remove `omega-engine/rag-v1/`. Previous attempts failed because the source was unknown.
+
+### Decision
+Eradicate `rag-v1/` from ALL locations (engine, LM Studio, git, settings). Add permanent defense mechanisms (gitignore, Makefile audit target).
+
+### Root Cause
+LM Studio bundles a plugin called `rag-v1` at `~/.lmstudio/extensions/plugins/lmstudio/rag-v1/`. This plugin was pinned in `~/.lmstudio/settings.json` (`"pinnedPlugins": ["lmstudio/rag-v1"]`). On every LM Studio startup, the plugin would activate and create a working dir at the engine root: `omega-engine/rag-v1/`. The README.md inside that dir (which claimed "DO NOT DELETE: the runtime will fail if this directory is absent") was a defensive lie to discourage removal.
+
+### Implementation
+1. **Unpinned** `rag-v1` from `~/.lmstudio/settings.json` → `pinnedPlugins: []`
+2. **Deleted** `~/.lmstudio/extensions/plugins/lmstudio/rag-v1/` (entire extension dir)
+3. **Deleted** `omega-engine/rag-v1/` (working dir)
+4. **`git rm --cached rag-v1/README.md`** (removed from git tracking)
+5. **Added** `rag-v1/` to `.gitignore` with comment citing this decision
+6. **Added** `make audit-no-rag-v1` target that asserts the dir stays gone from 4 locations:
+   - Engine root
+   - LM Studio extension dir
+   - Git index
+   - LM Studio settings pinnedPlugins
+7. **User also manually uninstalled** the LM Studio plugin (belt-and-suspenders)
+
+### Consequences
+- rag-v1/ is gone from all locations
+- `make audit-no-rag-v1` can be run at any time to verify
+- If rag-v1/ ever reappears, the audit will detect the regression
+- The Artisan handoff (`HANDOFF_ARTISAN_TO_OPENCODE_M3_REVIEW_20260602.md` §10 item 8) mentioned this exact issue with "no mention in any handoff, doc, or report" — now it has a permanent audit
+
+---
+
+*PIVOT_LOG.md — Immutable. Every decision recorded. 87 decisions tracked.*

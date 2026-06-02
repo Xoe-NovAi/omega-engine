@@ -222,10 +222,50 @@ wad-reset: ## 🔄 Reset to reference IWAD (_omega_default)
 # 🚀 CORE COMMANDS
 # ============================================================================
 
-.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank wad-load wad-status wad-list setup bootstrap demo test test-cov mcp-check lint typecheck guard clean doctor
+.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank wad-load wad-status wad-list audit-no-rag-v1 setup bootstrap demo test test-cov mcp-check lint typecheck guard clean doctor
 
 help: ## 📚 Show this help
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z_-]+:.*## / {printf "  $(COLOR_CYAN)%-20s$(COLOR_NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+# ── D87: rag-v1 Eradication Audit ───────────────────────────────────
+# Per Decision 87, the rag-v1/ directory was an LM Studio plugin artifact
+# that kept recreating itself at the engine root. This target asserts it
+# stays gone from all known locations.
+audit-no-rag-v1: ## 🛡️  Assert rag-v1/ is eradicated (engine + LM Studio + git)
+	@status=0; \
+	echo "$(COLOR_CYAN)🛡️  rag-v1 Eradication Audit$(COLOR_NC)"; \
+	echo ""; \
+	if [ -d rag-v1 ]; then \
+		echo "  $(COLOR_RED)✗$(COLOR_NC) rag-v1/ EXISTS in engine root"; \
+		status=1; \
+	else \
+		echo "  $(COLOR_GREEN)✓$(COLOR_NC) rag-v1/ absent from engine root"; \
+	fi; \
+	if [ -d $$HOME/.lmstudio/extensions/plugins/lmstudio/rag-v1 ]; then \
+		echo "  $(COLOR_RED)✗$(COLOR_NC) LM Studio extension rag-v1/ EXISTS"; \
+		status=1; \
+	else \
+		echo "  $(COLOR_GREEN)✓$(COLOR_NC) LM Studio extension rag-v1/ absent"; \
+	fi; \
+	if git ls-files | grep -q "rag-v1" 2>/dev/null; then \
+		echo "  $(COLOR_RED)✗$(COLOR_NC) rag-v1/ is in git index"; \
+		status=1; \
+	else \
+		echo "  $(COLOR_GREEN)✓$(COLOR_NC) rag-v1/ not tracked by git"; \
+	fi; \
+	if grep -q '"lmstudio/rag-v1"' $$HOME/.lmstudio/settings.json 2>/dev/null; then \
+		echo "  $(COLOR_RED)✗$(COLOR_NC) rag-v1 still pinned in LM Studio settings"; \
+		status=1; \
+	else \
+		echo "  $(COLOR_GREEN)✓$(COLOR_NC) rag-v1 not pinned in LM Studio settings"; \
+	fi; \
+	echo ""; \
+	if [ $$status -eq 0 ]; then \
+		echo "$(COLOR_GREEN)✅ rag-v1 stays eradicated.$(COLOR_NC)"; \
+	else \
+		echo "$(COLOR_RED)❌ rag-v1 has RESURRECTED. Re-run eradication.$(COLOR_NC)"; \
+	fi; \
+	exit $$status
 
 setup: ## 🚀 Quick setup (deps only)
 	$(PIP) install -e ".[cli,nova,dev]"
