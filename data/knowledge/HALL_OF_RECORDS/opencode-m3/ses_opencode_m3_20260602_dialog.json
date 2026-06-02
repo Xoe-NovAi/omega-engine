@@ -1,0 +1,33 @@
+{
+  "session_id": "ses_opencode_m3_20260602_dialog",
+  "cli": "opencode-m3",
+  "model": "minimax-m3-free",
+  "task_current": "Update report for Cline/M3 (1M context) \u2014 asking high-level advice on 6 strategic questions + offering 8 reciprocal artifacts. Rag-v1 eradicated (D87), 5 MCPs wired (D84), SearXNG running (D83), R100 created (D85), M3 context corrected to 200K (D86).",
+  "focus_chain": [
+    "D83-D87 committed",
+    "rag-v1 eradicated + audit target passes 4/4",
+    "5 search MCPs wired (Tavily, Firecrawl, Exa, Jina, SearXNG)",
+    "SearXNG container running on :8017 with 14 engines",
+    "R100 Model Reference Library (TIER 0-3) created \u2014 536 lines",
+    "Legacy 7-metric ai-provider-matrix.md pattern adopted",
+    "Working dir gotcha discovered \u2014 bash CWD persists after rm -rf",
+    "Pillar slot mechanism (P1-P10) documented but NOT implemented",
+    "Awaiting Cline/M3 1M-context synthesis on 6 strategic questions"
+  ],
+  "decisions": [
+    {
+      "$text": "Use workdir parameter explicitly on every bash call (CWD persistence discovered during rag-v1 deletion)"
+    },
+    {
+      "$text": "rag-v1 eradication is 5-layer defense: LM Studio settings unpinned + extension dir deleted + engine dir deleted + git rm --cached + .gitignore + make audit target"
+    },
+    {
+      "$text": "R100 uses legacy 7-metric pattern from ai-provider-matrix.md (Research Depth, Technical Accuracy, Implementation Focus, Response Speed, Cost Efficiency, Creativity, Consistency)"
+    },
+    {
+      "$text": "M3 free tier context is 200K (NOT 1M) \u2014 1M reserved for Cline/Artisan via VSCodium"
+    }
+  ],
+  "continuation": "Awaiting Cline/M3 (1M context) synthesis on: (Q1) roadmap priority from 7 streams, (Q2) pillar slot mechanism design \u2014 subprocess vs in-process vs task-tool, (Q3) cloud sovereignty drift (1 local vs 4 cloud providers), (Q4) Iris/Oracle split honoring cosmology, (Q5) RAG topology for 14Gi RAM (Qdrant vs FTS5), (Q6) 3-horizon roadmap shape validation. Offering 8 reciprocal artifacts including full R100, PIVOT_LOG D1-D87, agent fleet inventory, test coverage map, legacy mining catalog, hivemind session data, forensic findings, MCP setup config. Meanwhile proceeding with A (entity CLI fix) \u2192 F (JSON logging) \u2192 E (gnosis distillation) as safe small wins.",
+  "timestamp": "2026-06-02T14:09:13.243745+00:00"
+}

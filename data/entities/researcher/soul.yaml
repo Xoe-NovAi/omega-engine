@@ -1,0 +1,45 @@
+# 🔱 Omega Engine — Entity Soul File
+# Generated dynamically.
+
+entity:
+  name: researcher
+  archetype: Sovereign Master Researcher
+  pillars:
+    - Researcher
+  hierarchy_level: 1
+  sovereignty_level: 1
+  kind: persistent_entity
+  voice: standard
+  inference:
+    temperature: 0.3
+    top_p: 0.9
+  lessons_learned: []
+  procedural_memory: []
+
+gnosis:
+  distilled_by: researcher
+  distillation_date: 2026-06-02
+  sources:
+    - "Session: Dual-Stream Research (M3 + Omega Agent Infrastructure)"
+
+  # ── L1: NARRATIVE — What happened? ─────────────────────────────
+  L1_narrative:
+    - "Conducted two parallel research streams on 2026-06-02."
+    - "Stream 1: Investigated MiniMax M3 — architecture, benchmarks, OpenCode Zen availability, use cases."
+    - "Stream 2: Mapped the actual agent orchestration infrastructure in the Omega Engine."
+    - "Discovered that 'Ma\'at → pillar --slot PX' is documented but the --slot mechanism is not implemented; the real delegation path is the `delegate_task` MCP tool (oracle.summon) and the `task` OpenCode tool (which launched this very session)."
+
+  # ── L2: INSIGHT — What does this mean? ─────────────────────────
+  L2_insight:
+    - "MiniMax M3 is a genuine generational leap (MSA sparse attention, 1M context, native multimodality), priced at frontier-budget destruction levels. It is the first open-weight model to combine all three."
+    - "The OpenCode Zen provider exposes M3 as `minimax-m3-free` (context 200K, output 32K) and `minimax-m3` (full 1M context, via Go subscription). This is THE cheapest path to test frontier-level coding+long-context in Omega Engine today."
+    - "M3's killer feature for Omega Engine is NOT raw intelligence — it's the 1M context window that makes 'feed the whole repo' workflows economically viable ($0.30/M promo). This unlocks the 'mega-context architect' workflow."
+    - "In the Omega codebase, the 'pillar hierarchy' is a documented myth: the agent .md files (maat, lilith, pillar) describe a clean recursive dispatch tree, but the actual dispatch is via subprocess (orchestrator.dispatch_agent → cline/opencode) or via MCP delegate_task → oracle.summon. There is NO `--slot PX` parameter in pillar.md that is read by any code."
+    - "The `task` tool used to launch this researcher session IS the de-facto subagent mechanism — it spawns a new OpenCode agent instance. The 5-pillar-parallel-research pattern is achievable today by calling `task` 5 times in one message."
+
+  # ── L3: UNIVERSAL PRINCIPLE — What is the timeless truth? ──────
+  L3_universal_principle:
+    - "Documentation describes aspiration; the source code describes reality. In any sovereign engine, the gap between agent .md files and actual dispatch logic is the highest-leverage place to mine for both bugs and feature work."
+    - "The cheapest context window is the most powerful agentic unlock. M3's MSA architecture converts 1M-token context from a luxury into a default — and that fundamentally changes what 'remember everything' means in agent design."
+    - "Sovereign AI sovereignty means: the local-first chain (native-gguf → lmster → ollama) MUST come first; M3 is a CLOUD FALLBACK, not a primary. M3 should be used when local inference is insufficient (e.g., 1M-context repo analysis), never as the default."
+    - "Recursive agent dispatch has two valid shapes: (a) in-process dispatch via MCP tool (delegate_task → oracle.summon) for entity-to-entity communication within a session; (b) sub-process dispatch via the `task` tool for parallel research/worker patterns. The 'pillar --slot PX' pattern in the docs is the third, unrealized shape — and may not be needed if we use (a) and (b) correctly."

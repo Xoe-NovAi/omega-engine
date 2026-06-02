@@ -1485,7 +1485,14 @@ entity:
     session_type: persistent
     timestamp: '2026-05-27T12:00:00Z'
   soul_evolution:
-    sessions_completed: 218
+    sessions_completed: 219
     entities_inhabited: 21
     total_embodied_experiences: 0
-    soul_power: 28.1
+    soul_power: 28.2
+    lessons_learned:
+    - l1: A concise summary of what happened.
+      l2: The causal pattern or strategic significance of this interaction.
+      l3: A timeless, domain-agnostic truth extracted from this experience.
+      timestamp: '2026-06-02T00:59:17.368978+00:00'
+      trace_id: trc_9f987965e86d
+      entity: Iris
