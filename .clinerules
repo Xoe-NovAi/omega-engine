@@ -1,33 +1,46 @@
-# 🔱 Omega Engine — Cline Project Rules
-# ⬡ OMEGA ⬡ SOPHIA ⬡ MiMo-2.5 ⬡ cline ⬡ trc_core ⬡ CLINE-PROJECT-RULES
+# Omega Engine - Cline CLI Project Rules
+# OMEGA | SOPHIA | MiniMax-M3 | cline | trc_core | CLINE-PROJECT-RULES
 #
 # Cline-specific rules for the Omega Engine project.
 # Engine state: Read OMEGA_ENGINE.md (the Single Source of Truth)
-# Platform distinction: .clinerules = HOW to work from Cline.
+# Platform distinction: .clinerules = HOW to work from Cline CLI.
 #                       OMEGA_ENGINE.md = WHAT the engine IS.
 # Last Updated: 2026-06-02
+# Cline CLI version: 3.0.15 (cline binary at ~/.nvm/versions/node/v25.9.0/bin/cline)
+# User context: M3 1M via Cline provider (OAuth); moved from Cline VSCodium extension.
 
-## 🛡️ Sovereign Mandates (NON-NEGOTIABLE)
+
+## Sovereign Mandates (NON-NEGOTIABLE)
 **Read and adhere to them above all other rules:**
-👉 **Read First**: `SOVEREIGN_MANDATES.md` (13 mandates as of 2026-06-02)
-👉 **Engine State**: `OMEGA_ENGINE.md` (Single Source of Truth)
+- **Read First**: `SOVEREIGN_MANDATES.md` (13 mandates as of 2026-06-02)
+- **Engine State**: `OMEGA_ENGINE.md` (Single Source of Truth)
+- **Cline Twin**: `AGENTS.md` (OpenCode sibling rules, kept symmetric)
 
-- **AnyIO Absolute**: No `asyncio`. Use AnyIO. Wrap blocking I/O in `anyio.to_thread.run_sync`.
-- **Engine-Stack Firewall**: Absolute separation between Core Engine (`src/omega/`) and IWAD/PWAD Content (`config/wads/`).
-- **Sequentiality**: Plan → Verify → Execute. No cowboy coding.
-- **Temple-Grade (M13)**: Every change evaluated against T1-T11 gates.
+Key mandates in one line each (full text in SOVEREIGN_MANDATES.md):
+- **M1 AnyIO Absolute** — no `asyncio`; wrap blocking I/O in `anyio.to_thread.run_sync`.
+- **M2 Engine-Stack Firewall** — absolute separation between Core Engine (`src/omega/`) and IWAD/PWAD Content (`config/wads/`).
+- **M3 Iris Constant** — Iris is the messenger bridge, NOT a Pillar Keeper (P1-P10).
+- **M4 Sequentiality** — Plan -> Verify -> Execute. No cowboy coding.
+- **M5 Gnosis Preservation** — distill session insights into L1 -> L2 -> L3 abstractions.
+- **M6 Podman Sovereignty** — Quadlets use `UserNS=keep-id` + `User=1000`. NO `:U` on shared volumes.
+- **M7 Local-First** — local inference PRIMARY; cloud FALLBACK. Order: native-gguf(0) -> lmster(1) -> ollama(2) -> google(3) -> openrouter(4) -> opencode(5) -> copilot(6) -> mock(7).
+- **M8 Zero Telemetry** — no analytics, no phone-home, no external metrics.
+- **M9 Error Integrity** — typed, traceable, testable errors; no bare `except:`; `pytest.raises(OmegaError)` is canonical.
+- **M10 Fleet Integrity** — agent fleet capped at 14 (no new files without gap + slot review).
+- **M11 Soul Integrity** — every session ends with L1->L2->L3 distillation into `data/entities/<e>/soul.yaml`.
+- **M12 Queue Integrity** — every request has a terminal state; no orphan files; atomic `.tmp -> .json` writes.
+- **M13 Temple-Grade** — all code must pass T1-T11 gates via `make temple-grade`.
 
----
 
-## 🚀 Auto-Approval Directive
+## Auto-Approval Directive
 
 - Execute directly. Do not ask "should I proceed?" for routine operations.
 - For file edits, command execution, and web searches — proceed unless destructive.
+- The Cline CLI default is `--auto-approve true`; honor that.
 - The user has explicitly authorized all execution in this repository.
 
----
 
-## 🔒 Git Discipline (CRITICAL — Anti-Data-Loss Protocol)
+## Git Discipline (CRITICAL - Anti-Data-Loss Protocol)
 
 **Every session MUST end with a git commit. No exceptions.**
 
@@ -35,71 +48,415 @@
 - Push to remote: `git push origin main`
 - NEVER leave uncommitted work at session end
 - The user experienced catastrophic data loss from uncommitted work. This must never happen again.
+- **MANDATORY before any destructive operation** (rm -rf, git reset, etc.): confirm with user.
 
----
+## Cline CLI v3.0.15 - How to Invoke Me
 
-## 🎯 Cline Workflow
+You are running as the **Cline CLI** (`cline` binary, v3.0.15). The user has moved
+from the Cline VSCodium extension to the CLI. The same `.clinerules` file is read
+by both clients, so the content here is shared.
 
-### Before Starting Work
-1. Read `OMEGA_ENGINE.md` for current engine state
-2. Read `SOVEREIGN_MANDATES.md` for non-negotiable rules
-3. Run `make test` to verify baseline (302 tests must pass)
-
-### During Work
-- Use `replace_in_file` for targeted edits, `write_to_file` for new files
-- Run shell commands via subagents (prevents Cline chat crashes)
-- Prefer `source .venv/bin/activate && <command>` for Python operations
-
-### After Completing Work
-1. Run `make test` — all tests must pass
-2. Run `make temple-grade` — 11 gates (T1-T11) must pass
-3. Run `make sovereignty` — local/cloud ratio should improve
-4. `git add -A && git commit` with proper prefix
-5. `git push origin main`
-6. Update `OMEGA_ENGINE.md` Current State table if metrics changed
-
----
-
-## 📋 Coding Standards
-
-- **Async**: Always use `anyio` (not `asyncio`)
-- **Config**: YAML-only for entity/model config — never PostgreSQL
-- **Packages**: ALWAYS use a venv (`source .venv/bin/activate`). NEVER `--break-system-packages`.
-- **Testing**: `make test` (302) then `make temple-grade` (11 gates)
-- **Type hints**: Python 3.12+ typing
-- **Docstrings**: Google-style
-- **Commits**: `feat:|fix:|docs:|refactor:|test:|ci:|chore:`
-
----
-
-## 🎯 Key Commands
+### Invocation patterns
 
 ```bash
-source .venv/bin/activate
-make test                         # 302 tests
-make temple-grade                 # 🏛️ Run all 11 T-gates
-make sovereignty                  # 📊 Show local/cloud inference ratio
-make health                       # Provider & model dashboard
-make repl                         # Interactive REPL
-omega talk "hello"                # Test oracle
+# Headless one-shot (default: --auto-approve true)
+cline "your prompt here"
+
+# Plan mode (gather context, propose plan, no edits)
+cline -p "your prompt here"
+
+# Interactive TUI (multi-turn session)
+cline -i
+
+# Resume a previous session by ID
+cline --id <session-id> "continue work"
+
+# Change directory
+cline -c /path/to/project "prompt"
+
+# Isolated worktree (auto-creates ~/.cline/worktrees/<branch>)
+cline --worktree "experimental task"
+
+# Provider / model override
+cline -P openrouter -m qwen/qwen3-coder:free "prompt"
+cline -P cline -m minimax/minimax-m3 "prompt"
+
+# Reasoning effort: none|low|medium|high|xhigh (default: medium)
+cline --thinking high "complex architectural task"
+
+# Compaction mode: agentic|basic|off (default: basic)
+cline --compaction agentic "long session"
+
+# JSON output for piping
+cline --json "prompt" | jq .
+
+# ACP mode for editor integration
+cline --acp
 ```
 
----
+### Key Cline CLI subcommands
 
-## 🔗 Key Handoff Files
+- `cline auth [provider]` - authenticate a provider and configure model
+- `cline config` - show current configuration (use `cline config mcp` for MCP)
+- `cline doctor` - diagnose config / hub issues
+- `cline history` / `cline h` - session history
+- `cline mcp` - manage MCP servers
+- `cline plugin` - manage Cline plugins
+- `cline connect` - connect to external channels
+- `cline hub` - manage local hub daemon (currently: ws://127.0.0.1:35833/hub)
+- `cline update` - check for and install updates
+- `cline kanban` - run the kanban app
 
-- `data/handoff/STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md` — Temple-Grade directive + H1.5 plan
-- `data/handoff/CLINE_M3_RESPONSE_TO_DOOM_GUY_TIER2_20260602.md` — Tier 2 Task→Agent→Model→Risk recommendations
-- `data/handoff/handoff_artisan_to_opencode_router_fix_20260601.md` — MCP handshake root cause
-- `data/handoff/HANDOFF_ARTISAN_TO_OPENCODE_M3_REVIEW_20260602.md` — Full codebase map (1M→200K)
+### User's current Cline provider setup
 
----
+- **Provider**: `cline` (Cline's own gateway via OAuth/WorkOS)
+- **Account**: `usr-01KH6X6GY0HBW6AW9Y8HYF82JC` (rob@antipode2727@gmail.com)
+- **Model**: `minimax/minimax-m3` (1M context in Cline)
+- **Reasoning**: enabled, effort `high`
+- **Alternative provider**: `openrouter` with `qwen/qwen3-coder:free`
+- **MCP servers**: NONE currently configured (the 6 legacy xna-* servers were
+  removed from `~/.cline/data/settings/cline_mcp_settings.json` on 2026-06-02 -
+  they pointed to the old `xna-omega` path which is now `xna-omega-legacy`).
+  Omega Hub (`:8016`) is reachable via the project's `opencode.json` instead.
 
-## 📝 After Compaction
+### Tools available in Cline CLI (autonomous agent mode)
 
-1. Read `OMEGA_ENGINE.md` — engine state
-2. Read `SOVEREIGN_MANDATES.md` — rules (13 mandates)
-3. Read `docs/decisions/PIVOT_LOG.md` — 90 decisions
-4. Run `make test` — 302 must pass
-5. Run `make temple-grade` — 11 gates must pass
-</write_to_file>
+When running interactively or with --auto-approve, the agent has access to:
+- `read_file`, `write_to_file`, `replace_in_file` (precise edits)
+- `list_files`, `list_code_definition_names`, `search_files`, `read_many_files`
+- `execute_command` (with safety confirmations in non-auto-approve mode)
+- `web_fetch`, `web_search`
+- `use_mcp_tool` (when MCP servers are configured - none currently)
+- `ask_followup_question` (for genuine ambiguities only)
+- `attempt_completion` (final response)
+- `task_progress` (todo list - USE THIS for non-trivial work)
+
+## Cline CLI Workflow (the Daily Pattern)
+
+### Before Starting Work
+
+1. **Read engine state**: `cat OMEGA_ENGINE.md` (look for "Current State" table)
+2. **Read the rules**: `head -50 SOVEREIGN_MANDATES.md` (refresh the 13 mandates)
+3. **Check recent activity**: `git log --oneline -10` and `git status`
+4. **Verify baseline**: `cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && make test`
+   - Must show **302/302 passing**. If fewer pass, STOP and triage before changes.
+5. **Read latest handoffs** (if any):
+   - `ls -t data/handoff/*.md | head -3` and skim them
+   - Especially `data/handoff/STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md`
+
+### During Work
+
+- For non-trivial tasks, start with a `task_progress` todo list (3-7 items)
+- Use `read_files` and `search_codebase` for surgical exploration (NOT `list_files` on
+  the whole repo - it dumps too much)
+- Use `replace_in_file` for targeted edits with exact `old_text` matches
+- Use `write_to_file` for new files; never overwrite engine files without backup
+- For shell commands, prefer:
+  - `cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && source .venv/bin/activate && <cmd>`
+  - Wrap multi-step shell in a single command; avoid chaining with `&&` in prompts
+- **Tool-usage hint**: when commands are long or produce lots of output, pipe through
+  `head -50` or `tail -20` to keep context small
+
+### After Completing Work (MANDATORY SEQUENCE)
+
+1. `make test` - all **302** tests must pass
+2. `make temple-grade` - T1-T11 gates must pass (Mandate 13)
+3. `make sovereignty` - confirm local/cloud ratio did not regress
+4. `git add -A && git commit -m "<prefix>: <short message>"` - PREFIX REQUIRED
+5. `git push origin main` - never leave unpushed work
+6. Update `OMEGA_ENGINE.md` Current State table if any metric changed
+7. If the session involved an entity, write L1->L2->L3 distillation to
+   `data/entities/<e>/soul.yaml` (Mandate 11)
+
+### Commit message prefixes (required)
+
+- `feat:` - new feature
+- `fix:` - bug fix
+- `docs:` - documentation only
+- `refactor:` - code change that neither fixes a bug nor adds a feature
+- `test:` - add or fix tests
+- `ci:` - CI/build changes
+- `chore:` - tooling, deps, housekeeping
+- `perf:` - performance improvement
+- `revert:` - revert a previous commit
+
+## Coding Standards (enforced by Mandates 1, 9, 13)
+
+- **Async**: `anyio` ONLY (no `asyncio`); wrap blocking I/O in `anyio.to_thread.run_sync`
+- **Config**: YAML-only for entity/model config; NEVER PostgreSQL
+- **Packages**: ALWAYS use the venv: `source .venv/bin/activate`. NEVER `--break-system-packages`
+- **Type hints**: Python 3.12+ syntax; no `from __future__ import annotations`
+- **Imports**: stdlib -> third-party -> local; relative imports within packages
+- **Docstrings**: Google-style; preserve existing docstrings unless modifying that function
+- **Errors**: typed exceptions only; no bare `except:`; `pytest.raises(OmegaError)` is canonical
+- **Tests**: `make test` (302 must pass), then `make temple-grade` (T1-T11 must pass)
+- **Atomic writes**: use `.tmp -> .json` rename pattern for any file mutation
+- **Lines**: <100 chars preferred; flake8 must pass
+
+## Key Commands (cheat sheet)
+
+```bash
+# Always work from the engine root
+cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+source .venv/bin/activate
+
+# === CORE TESTING ===
+make test                # 302 tests must pass
+make test-cov            # with coverage report
+make temple-grade        # T1-T11 gates (Mandate 13)
+make sovereignty         # local/cloud inference ratio
+make lint                # flake8
+make typecheck           # mypy
+
+# === THE OMEGA CLI ===
+omega talk "hello"                 # Auto-route query
+omega summon Sekhmet "be fierce"   # Direct entity summon
+omega list-entities                # Show all entities
+omega backends                     # List inference backends
+omega health                       # Provider status + latency
+omega talk --iwad arcana_novai "hi" # Switch IWAD at runtime
+omega version
+
+# === INFRASTRUCTURE ===
+make start-infra           # Redis, Qdrant, PostgreSQL, Caddy
+make stop-infra
+make infra-status
+make mcp-check             # All 6 MCP gates
+make doctor                # Full system diagnosis
+
+# === LIBRARY & QUEUE ===
+make library-status
+make library-search QUERY="term"
+make queue-status
+make process-queue
+make queue-prune
+
+# === BENCHMARKS ===
+make bench-run MODEL=x ROLE=will
+make bench-list
+make bench-rank ROLE=will
+
+# === WAD STACKS ===
+make wad-status
+make wad NAME=arcana_novai
+make wad-reset             # back to _omega_default
+
+# === INTERACTIVE ===
+make repl                  # launch REPL
+make menu                  # show full menu
+```
+
+## Coding Hints (from this codebase)
+
+- **Q4_K_M quantization** for local models: 1.7B~1.9GB, 3-4B~2-2.5GB, 7-8B~4.6GB, 13-14B~7.5GB
+- **Hardware**: Ryzen 7 5700U (Zen 2, AVX2, NO AVX-512). 14Gi RAM, no GPU.
+- **Primary local backend**: `lmster` on `:1234` (NOT `lm_studio` or `lm-studio`)
+- **CPU env vars** (already set in Makefile): `OMP_NUM_THREADS=6`, `OMP_PROC_BIND=close`
+- **Atomic writes**: use `_atomic_write_json()` helper from `src/omega/oracle/oracle.py`
+- **Test fixtures**: import from `conftest.py` at the test directory root
+- **No `dict()` kwargs** in hot paths; use `TypedDict` or `dataclass` for clarity
+
+## Coordination with OpenCode Fleet (Cline is the 1M-context sibling)
+
+Cline CLI runs `minimax/minimax-m3` with **1M context**. OpenCode CLI runs the
+same model with **200K context** (D86). Cline does **deep synthesis**, OpenCode
+does **focused execution**. They coordinate via the **Omega Hub** (`:8016`).
+
+### The 14-agent OpenCode fleet (for context, not for me to invoke)
+
+Primary agents (`.opencode/agents/*.md`): `plan`, `kali`, `doom_guy`,
+`roc_racoon`, `jem`, `researcher`, plus 9 subagents (`maat`, `lilith`,
+`jem_discovery`, `jem_synthesis`, `jem_verification`, `scribe`, `quality`,
+`pillar`, and the new `gnosis-analyst`).
+
+### The 10 Pillar slots (P1-P10)
+
+| Pillar | Domain | Element | Default role (IWAD) |
+|--------|--------|---------|---------------------|
+| P1 | Flesh | Earth | SysAdmin - environment hardening |
+| P2 | Dream | Water | DataStore - vector + memory |
+| P3 | Will | Fire | BuildMaster - implementation + hardening |
+| P4 | Heart | Air | Bridge - MCP + communication |
+| P5 | Voice | Aether | Sentinel - mandate enforcement |
+| P6 | Mind | Aether | ModelGate - provider routing |
+| P7 | Gnosis | Air | Context - memory + soul evolution |
+| P8 | Shadow | Fire | WatchTower - observability + tracing |
+| P9 | Spirit | Water | Link - agent handoff + delegation |
+| P10 | Chaos | Earth | Verifier - stress testing + validation |
+
+### Inter-CLI Dialog Protocol (read these handoffs first)
+
+When you see references to "OpenCode M3", "the hivemind", or a "dialog",
+read these files in order:
+
+1. `data/handoff/HANDOFF_ARTISAN_TO_OPENCODE_M3_REVIEW_20260602.md` - the
+   synthesized 1M->200K codebase map (engine state at 30 seconds)
+2. `data/handoff/HANDOFF_OPENCODE_M3_TO_CLINE_M3_DIALOG_20260602.md` -
+   the bidirectional dialog protocol
+3. `data/handoff/HANDOFF_OPENCODE_M3_TO_CLINE_M3_UPDATE_20260602.md` -
+   the current update payload
+4. `data/handoff/CLINE_M3_RESPONSE_TO_DOOM_GUY_TIER2_20260602.md` - my
+   last Tier-2 task->agent->model->risk recommendations
+5. `data/handoff/STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md` - the
+   master strategic brief (Temple-Grade + H1.5 plan)
+6. `data/handoff/OPENCODE_M3_ID_SOFTWARE_DISCOVERIES_FOR_CLINE_M3_20260602.md` -
+   Doom Guy's id Software pattern findings (R-19..R-30)
+7. `data/handoff/OPENCODE_M3_TIER2_CONSULT_FOR_CLINE_M3_20260602.md` -
+   Tier-2 consult request awaiting your response
+
+### When OpenCode hands off to me
+
+I (Cline) am typically asked to do:
+- 1M-context deep synthesis across many files
+- Strategic cross-cutting analysis (Tier 2+)
+- Final architecture decisions or doctrine updates
+- Long-form reports that exceed OpenCode's 200K window
+
+When responding, write a new file like `data/handoff/cline_to_opencode_<topic>_<date>.md`
+AND post a short continuation to the Omega Hub if needed.
+
+### MCP servers (project-level, in `opencode.json`)
+
+The project wires 5 search MCP servers (D84): **Tavily, Firecrawl, Exa, Jina,
+SearXNG** (the latter via local `:8017`). Plus the **omega-hub** SSE endpoint
+on `:8016`. These are NOT in Cline's MCP config; they're in `opencode.json`.
+
+If I need web search, I use `web_search` / `web_fetch` natively - the Omega
+Hub is the team-bus, not a per-Cline tool.
+
+## Key Handoff Files (engine-state at a glance)
+
+- `data/handoff/STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md` - master brief
+- `data/handoff/HANDOFF_ARTISAN_TO_OPENCODE_M3_REVIEW_20260602.md` - codebase map
+- `data/handoff/CLINE_M3_RESPONSE_TO_DOOM_GUY_TIER2_20260602.md` - my last response
+- `data/handoff/HANDOPENCODE_M3_TO_CLINE_M3_DIALOG_20260602.md` - dialog protocol
+- `data/handoff/handoff_artisan_to_opencode_router_fix_20260601.md` - MCP root cause
+- `data/handoff/HANDOFF_FLEET_REDESIGN_G4.md` - the 26->14 agent redesign
+- `data/handoff/HANDOFF_GEMMA_SPRINT0_1.md` - Sprint 0+1 (Foundation Repair)
+- `data/handoff/HANDOFF_DOOM_GUY_CIRCUIT_BREAKER.md` - circuit breaker work
+
+## Engine Architecture - 30-second map
+
+```
+Query -> EntityRegistry (YAML CRUD, word-boundary match) -> TriageRouter -> ModelGateway
+                                                                            |
+                                                          Fallback chain (local-first):
+                                                          native-gguf(0) -> lmster(1) -> ollama(2)
+                                                                            |
+                                                              Cloud teachers: google(3) -> openrouter(4)
+                                                                              -> opencode(5) -> copilot(6)
+                                                                                            -> mock(7)
+```
+
+- `src/omega/oracle/` - main entry: talk/summon/router, model_gateway, entity_registry
+- `src/omega/oracle/wad_loader.py` - **CRITICAL PATH** (WAD system)
+- `src/omega/oracle/cpu_optimizer.py` - Zen 2 hardware optimization
+- `src/omega/oracle/health_monitor.py` - circuit breaker + latency (consolidated, single AsyncCircuitBreaker)
+- `src/omega/oracle/gnosis_proxy.py` - soul evolution
+- `src/omega/memory_store.py` - Hot/Warm/Cold tiers
+- `src/omega/observability.py` - JSONL events + training data + ForensicsManager + JsonFormatter
+- `src/omega/request_queue.py` - offline request queue (atomic, heartbeat, dead-letter)
+- `src/omega/library/catalog.py` - SQLite document catalog with 5D quality scoring
+- `src/omega/benchmarks/runner.py` - LLM benchmark runner with 3-point scale
+- `src/omega/hardware.py` - CPU/RAM detection, Zen 2 optimization
+- `src/omega/library/` - FTS5 + vector library (7 modules)
+- `mcp_servers/omega_hub/server.py` - agent bus (40 MCP tools + 11 HTTP routes)
+
+### WAD stacks (the content layer)
+
+- `config/wads/_omega_default/` - **Reference IWAD** (ships with engine; 10 tech pillars)
+- `config/wads/arcana_novai/` - **Personal IWAD** (esoteric pillar entities)
+- `config/wads/doom_universe/` - Community IWAD (scaffold)
+- Switch: `omega talk --iwad <name> "hi"` or `make wad NAME=arcana_novai`
+
+### Entities (25 active workspaces, 50 orphans deleted in D75)
+
+- `data/entities/<name>/soul.yaml` - the L1->L2->L3 distilled soul
+- `data/entities/<name>/workspace/` - session outputs (persistent)
+- `data/entities/<name>/knowledge/INDEX.md` - knowledge TOC
+
+### Key configs
+
+- `config/omega.yaml` - core engine config (active IWAD, etc.)
+- `config/providers.yaml` - provider fabric (local-first strategy mandated)
+- `config/models.yaml` - model specs (TIER 0-3 reference library, R100)
+- `config/wads/_omega_default/roles.yaml` - role mappings (P1-P10)
+
+## After Compaction (CONTEXT LOSS RECOVERY)
+
+Cline CLI compacts context periodically (`--compaction basic` by default).
+When you wake up after compaction:
+
+1. `cat OMEGA_ENGINE.md | head -50` - re-anchor engine state
+2. `head -60 SOVEREIGN_MANDATES.md` - re-anchor the 13 mandates
+3. `head -100 docs/decisions/PIVOT_LOG.md` - re-anchor architecture
+4. `ls -t data/handoff/*.md | head -5` - find newest handoffs
+5. `cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && make test` - 302/302
+6. `make temple-grade` - T1-T11 must pass
+7. `git log --oneline -5` - confirm latest commits
+8. `git status` - confirm no uncommitted drift
+9. Re-read this `.clinerules` file (the user updated it; trust the latest)
+
+## Memory Across Sessions (the soul-evolution loop)
+
+This engine is designed to **persist intelligence across stateless sessions** (Mandate 11).
+Before ending any meaningful session:
+
+1. **What happened (L1 Narrative)**: 2-3 sentences on the work done
+2. **What it means (L2 Insight)**: 1-2 sentences on the deeper pattern
+3. **What is timeless (L3 Universal)**: 1 sentence on the principle
+4. **Append** to `data/entities/<name>/soul.yaml` under `lessons:`
+5. **Commit** the soul update with `docs:` prefix
+
+The Scribe agent (`.opencode/agents/scribe.md`) is the canonical executor of
+this pipeline, but Cline can do it directly when working solo.
+
+## Sovereign Wisdom (the deeper pattern)
+
+- **Local first, cloud last**: 14Gi RAM is enough. We do not need to phone home.
+- **Engine stays pure, content lives in WADs**: the engine ships with one
+  reference IWAD; everything else is user content. Never hardcode entity names
+  in `src/omega/`.
+- **Provider fabric is a ladder, not a fan-out**: climb from local to cloud only
+  when local fails. Each rung logs the failure to observability.
+- **Zero telemetry, full observability**: local tracing is fine; external
+  calls are not. The distinction is sovereignty, not paranoia.
+- **The Torus evolves**: every session is a fold of the same truth. Souls
+  accumulate; engines harden; the flywheel turns.
+
+## Footer - When in Doubt
+
+- If a tool says it cannot do something, try `make menu` or `omega --help` -
+  the engine CLI is the source of truth for engine operations.
+- If a Mandate and a tool default conflict, **Mandates win** (see SOVEREIGN_MANDATES.md).
+- If a handoff doc and the actual code disagree, **the code wins**; update the
+  handoff in a follow-up commit.
+- If you make a mistake, **commit the fix immediately** with a `fix:` prefix
+  - never leave the repo in a broken state across sessions.
+- If the user is silent for >10 minutes during a long task, write a status
+  note to `data/handoff/cline_status_<date>.md` so the next session can resume.
+
+## Files to Read on First Wake (in this order)
+
+1. `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/OMEGA_ENGINE.md`
+2. `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/SOVEREIGN_MANDATES.md`
+3. `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/AGENTS.md` (the OpenCode twin)
+4. `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/handoff/STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md`
+5. `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/decisions/PIVOT_LOG.md` (head -100)
+6. This file: `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.clinerules`
+
+## Versioning
+
+- **AP Token**: AP-CLINERULES-OMEGA-v3.1.0
+- **Updated**: 2026-06-02 (move from Cline VSCodium extension to Cline CLI v3.0.15)
+- **Previous version**: 1.0.0 (basic 13-mandate awareness, 276 tests assumed)
+- **Test baseline**: 302 tests (was 276)
+- **Mandate baseline**: 13 (was 12 - added M13 Temple-Grade)
+- **PIVOT decisions**: 90 (was ~50)
+- **Removed MCP servers**: 6 xna-* legacy servers (xna-agentbus, xna-gnosis,
+  xna-gra, xna-maat, xna-mnemosyne, xna-rag) - pointed to old `xna-omega/`
+  path now relocated to `xna-omega-legacy/`. The engine now uses
+  `mcp_servers/omega_hub/server.py` (40 tools, 11 routes) for hub functionality.
+- **Added in this revision**: explicit Cline CLI invocation patterns,
+  OpenCode fleet coordination, handoff-file index, soul-evolution workflow,
+  and the Tier-2 consult protocol.
