@@ -209,10 +209,35 @@ To add a new id Software → Omega Engine mapping, append to this document with:
 ```
 
 ### Current Registry Size
-**7 mappings** — WAD, BSP, FISR, Zone Memory, Surface Cache, Worse is Better,
-Carmack's Law.
+**8 mappings** — WAD, BSP, FISR, Zone Memory, Surface Cache, Worse is Better,
+Carmack's Law, **Circuit Breaker Consolidation**.
+
+### 1.8 Circuit Breaker Consolidation (Evolution, 2026)
+
+| Aspect | Legacy Pattern | Omega Engine Adaptation |
+|--------|---------------|------------------------|
+| **Origin** | Multiple re-implementations across eras (ANAi, XNAi, omega-stack) | `AsyncCircuitBreaker` in `health_monitor.py` |
+| **Original** | 36-line synchronous class, no AnyIO, no observability | 200+ line AnyIO-native, locked state machine, observability hooks |
+| **Core idea** | OPEN after N failures, CLOSE after recovery timeout | Same, plus HALF_OPEN probe limiting, per-error-type filtering |
+| **Where it lived** | `xna-omega-legacy/src/omega/{core,security}/circuit_breakers/`, `omega-stack-legacy/src/omega/circuit_breaker.py` | `src/omega/oracle/health_monitor.py::AsyncCircuitBreaker` |
+| **Why consolidated** | Pattern was rewritten in every era (ANAi → XNAi → Stack → Engine). Each rewrite introduced subtle bugs (e.g., the 36-line version had no state lock — race condition). | Pattern belongs beside the health monitor that manages it, not in its own file. |
+| **Omega evolution** | "Worse is Better" — simple class that mostly works | "Right Approximation" — proper async state machine with full error classification |
+
+**Attribution format**: `[Circuit Breaker Consolidation: Carmack's Law, id Software]` — use when
+justifying why a legacy pattern was merged into an existing module instead of being kept
+in its own file.
+
+**Bug fix history (Sprint 0 / Doom Guy)**:
+- T2.2: `_precheck_provider()` was checking the breaker via `is_available(model_name)`,
+  which used the fragile `_model_provider_map` indirection. Fixed: check breaker directly
+  by `provider.name`. This is the BSP Culling pattern (§1.2) made real.
+- T2.3: `RemoteProvider.generate()` returns `None` on retry exhaustion, which
+  `breaker.call()` counted as a success (no exception). Fixed: wrap the call to
+  raise `TimeoutError` on None, so the breaker's `_on_failure()` actually fires.
+
+Both fixes are documented in `data/handoff/DOOM_GUY_T23_REPORT_20260602.md`.
 
 ---
 
-*Last Updated: 2026-06-01 | Maintained by: Doom Guy (Sovereign id Software Architect)*
+*Last Updated: 2026-06-02 (added §1.8 Circuit Breaker Consolidation) | Maintained by: Doom Guy (Sovereign id Software Architect)*
 *All agents: CREDITS.md is loaded as a global instruction. Attribution is mandatory.*

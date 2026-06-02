@@ -92,3 +92,206 @@ async def test_model_gateway_fallback_chain(monkeypatch):
     assert p1.generate.called
     assert p2.generate.called
     assert p3.generate.called
+
+
+# ── T2.2 Tests: BSP-style pre-check uses provider.name, not model_name ──────
+
+
+@pytest.mark.anyio
+async def test_precheck_skips_open_circuit_by_provider_name(monkeypatch):
+    """T2.2: _precheck_provider must check breaker by provider.name, not model_name.
+
+    Before the fix, is_available(model_name) used _model_provider_map which often
+    returned True (no mapping), so OPEN circuits were never culled. After the fix,
+    the breaker is looked up directly by provider.name.
+    """
+    from unittest.mock import AsyncMock, MagicMock
+
+    from omega.oracle.health_monitor import AsyncCircuitBreaker, HealthMonitor
+
+    gateway = ModelGateway()
+    monkeypatch.setenv("OMEGA_ENV", "production")
+
+    # Create a health monitor with a breaker for "broken_provider"
+    hm = HealthMonitor(providers={"broken_provider": {"type": "cloud"}})
+    # Force the breaker OPEN by recording 5 failures (threshold default)
+    for _ in range(5):
+        await hm._breakers["broken_provider"]._on_failure()
+    assert hm._breakers["broken_provider"].state.value == "open"
+
+    gateway._health_monitor = hm
+    gateway.providers = []
+
+    p_open = MagicMock()
+    p_open.name = "broken_provider"
+    p_open.is_available = AsyncMock(return_value=True)
+    p_open.generate = AsyncMock(return_value="should not reach here")
+
+    result = await gateway._precheck_provider(p_open, "any-model-name")
+    assert result is False, "OPEN circuit must be culled by precheck"
+    assert not p_open.generate.called, "Provider.generate() must not be called when precheck fails"
+
+
+@pytest.mark.anyio
+async def test_precheck_allows_closed_circuit():
+    """T2.2: CLOSED circuits must pass the precheck."""
+    from unittest.mock import AsyncMock, MagicMock
+
+    from omega.oracle.health_monitor import HealthMonitor
+
+    gateway = ModelGateway()
+    hm = HealthMonitor(providers={"healthy_provider": {"type": "cloud"}})
+    gateway._health_monitor = hm
+
+    p_healthy = MagicMock()
+    p_healthy.name = "healthy_provider"
+    p_healthy.is_available = AsyncMock(return_value=True)
+
+    result = await gateway._precheck_provider(p_healthy, "any-model")
+    assert result is True, "CLOSED circuit must pass precheck"
+
+
+# ── T2.3 Tests: RemoteProvider None return must trip the breaker ────────────
+
+
+@pytest.mark.anyio
+async def test_none_response_trips_breaker(monkeypatch):
+    """T2.3: When provider.generate() returns None, the breaker must be tripped.
+
+    Before the fix, breaker.call() recorded a 'success' (no exception) for None
+    returns, so the circuit never opened. After the fix, the else clause detects
+    the None result and manually calls breaker._on_failure().
+    """
+    from unittest.mock import AsyncMock, MagicMock
+
+    from omega.oracle.health_monitor import CircuitState, HealthMonitor
+
+    gateway = ModelGateway()
+    monkeypatch.setenv("OMEGA_ENV", "production")
+
+    hm = HealthMonitor(providers={"silent_provider": {"type": "cloud"}})
+    gateway._health_monitor = hm
+
+    # Provider always returns None (e.g., RemoteProvider with exhausted retries)
+    p_silent = MagicMock()
+    p_silent.name = "silent_provider"
+    p_silent.is_available = AsyncMock(return_value=True)
+    p_silent.generate = AsyncMock(return_value=None)
+
+    # Set the threshold to 2 for fast test
+    hm._breakers["silent_provider"].failure_threshold = 2
+
+    # First call: should record failure, breaker still CLOSED
+    gateway.providers = [p_silent]
+    result = await gateway.generate(
+        model_name="test-model",
+        system_prompt="sys",
+        user_query="query",
+        temperature=0.7,
+        max_tokens=100,
+    )
+    # Provider returned nothing → fallback response
+    assert result[1] is False, "None response should return fallback (success=False)"
+    breaker = hm._breakers["silent_provider"]
+    assert breaker.failure_count == 1, f"First None response should record 1 failure, got {breaker.failure_count}"
+    assert breaker.state == CircuitState.CLOSED, "One failure should not open the circuit yet"
+
+    # Second call: threshold reached, breaker should trip
+    result2 = await gateway.generate(
+        model_name="test-model",
+        system_prompt="sys",
+        user_query="query",
+        temperature=0.7,
+        max_tokens=100,
+    )
+    breaker = hm._breakers["silent_provider"]
+    assert breaker.failure_count >= 2, f"Second None response should reach threshold, got {breaker.failure_count}"
+    assert breaker.state == CircuitState.OPEN, (
+        f"After {breaker.failure_count} failures (threshold=2), breaker must be OPEN, "
+        f"got {breaker.state.value}"
+    )
+
+
+@pytest.mark.anyio
+async def test_successful_response_keeps_breaker_closed(monkeypatch):
+    """T2.3: Real responses must NOT trip the breaker (regression check)."""
+    from unittest.mock import AsyncMock, MagicMock
+
+    from omega.oracle.health_monitor import CircuitState, HealthMonitor
+
+    gateway = ModelGateway()
+    monkeypatch.setenv("OMEGA_ENV", "production")
+
+    hm = HealthMonitor(providers={"good_provider": {"type": "cloud"}})
+    gateway._health_monitor = hm
+
+    p_good = MagicMock()
+    p_good.name = "good_provider"
+    p_good.is_available = AsyncMock(return_value=True)
+    p_good.generate = AsyncMock(return_value="Real response from provider")
+
+    gateway.providers = [p_good]
+
+    result = await gateway.generate(
+        model_name="test-model",
+        system_prompt="sys",
+        user_query="query",
+        temperature=0.7,
+        max_tokens=100,
+    )
+
+    assert result[0] == "Real response from provider"
+    assert result[1] is False  # not cloud
+    breaker = hm._breakers["good_provider"]
+    assert breaker.failure_count == 0, "Successful response must not count as failure"
+    assert breaker.state == CircuitState.CLOSED, "Successful response must keep circuit CLOSED"
+
+
+@pytest.mark.anyio
+async def test_exception_still_trips_breaker(monkeypatch):
+    """T2.3: Exceptions (not just None) must continue to trip the breaker.
+
+    This is a regression check — the original code already handled exceptions
+    via the except clause + breaker.call()'s internal _on_failure.
+    """
+    from unittest.mock import AsyncMock, MagicMock
+
+    from omega.oracle.health_monitor import CircuitState, HealthMonitor
+
+    gateway = ModelGateway()
+    monkeypatch.setenv("OMEGA_ENV", "production")
+
+    hm = HealthMonitor(providers={"flaky_provider": {"type": "cloud"}})
+    gateway._health_monitor = hm
+    hm._breakers["flaky_provider"].failure_threshold = 2
+
+    p_flaky = MagicMock()
+    p_flaky.name = "flaky_provider"
+    p_flaky.is_available = AsyncMock(return_value=True)
+    p_flaky.generate = AsyncMock(side_effect=ConnectionError("network down"))
+
+    gateway.providers = [p_flaky]
+
+    # First failure
+    await gateway.generate(
+        model_name="test-model",
+        system_prompt="sys",
+        user_query="query",
+        temperature=0.7,
+        max_tokens=100,
+    )
+    breaker = hm._breakers["flaky_provider"]
+    assert breaker.failure_count == 1
+
+    # Second failure → circuit should open
+    await gateway.generate(
+        model_name="test-model",
+        system_prompt="sys",
+        user_query="query",
+        temperature=0.7,
+        max_tokens=100,
+    )
+    breaker = hm._breakers["flaky_provider"]
+    assert breaker.state == CircuitState.OPEN, (
+        f"Circuit must be OPEN after 2 ConnectionError failures, got {breaker.state.value}"
+    )

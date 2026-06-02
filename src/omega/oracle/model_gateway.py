@@ -398,10 +398,16 @@ class ModelGateway:
         Checks (cheapest first):
         1. Circuit breaker state — if OPEN, skip instantly (O(1) dict lookup)
         2. Provider availability — does the server respond?
+
+        FIX T2.2: Check breaker by provider.name directly, not via model_name
+        indirection through _model_provider_map. The old code called
+        is_available(model_name) which used _model_provider_map.get(model_name)
+        to find the provider — if the mapping was missing it always returned True.
         """
-        # Circuit breaker is the cheapest check — single dict lookup
+        # Circuit breaker is the cheapest check — single dict lookup by provider name
         if self._health_monitor:
-            if not self._health_monitor.is_available(model_name):
+            breaker = self._health_monitor._breakers.get(provider.name)
+            if breaker and not breaker.is_available:
                 return False
 
         # Provider self-health check (sync or async)
@@ -457,15 +463,30 @@ class ModelGateway:
 
             # Step 2: Execute with breaker protection
             timeout = self._get_provider_timeout(provider)
+            breaker = None  # Initialize for else-clause scope
             try:
                 with anyio.move_on_after(timeout) as cancel_scope:
-                    # Use HealthMonitor's breaker if available, otherwise direct call
+                    # Use HealthMonitor's breaker if available, otherwise direct call.
+                    # T2.3 fix: wrap the call to raise TimeoutError on None so the
+                    # breaker's _on_failure() actually fires (None is not an exception
+                    # — RemoteProvider.generate() returns None on retry exhaustion,
+                    # which breaker.call() would count as a success).
                     if self._health_monitor:
                         breaker = self._health_monitor._breakers.get(provider.name)
                         if breaker:
+                            async def _call_with_none_as_failure():
+                                r = await provider.generate(
+                                    model_name, system_prompt, user_query,
+                                    temperature, max_tokens, trace_id=trace_id
+                                )
+                                if not r:
+                                    # None/empty response = circuit-breaking
+                                    raise TimeoutError(
+                                        f"Provider {provider.name} returned empty response"
+                                    )
+                                return r
                             result = await breaker.call(
-                                provider.generate, model_name, system_prompt,
-                                user_query, temperature, max_tokens,
+                                _call_with_none_as_failure,
                                 trace_id=trace_id
                             )
                         else:
@@ -493,6 +514,12 @@ class ModelGateway:
             except CircuitOpenError:
                 # Circuit is OPEN — provider already known broken, skip silently
                 errors.append(f"{provider.name}: circuit OPEN")
+                continue
+            except TimeoutError as e:
+                # T2.3 fix: None response raised as TimeoutError by _call_with_none_as_failure.
+                # breaker.call() has already recorded _on_failure for us.
+                errors.append(f"{provider.name}: {e}")
+                self._record_provider_failure(provider, model_name, trace_id)
                 continue
             except Exception as e:
                 errors.append(f"{provider.name}: {e}")

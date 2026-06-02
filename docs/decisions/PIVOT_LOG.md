@@ -1554,4 +1554,30 @@ Three-model convergence on Sprint 0 tasks validates the prioritization. The gaps
 
 ---
 
-*PIVOT_LOG.md — Immutable. Every decision recorded. 94 decisions tracked (D1-D93, D99).*
+## Decision 94: Tier 2 Circuit Breaker Wire-Up (Sprint 0 Doom Guy)
+
+**Date**: 2026-06-02
+**Channel**: OpenCode (Doom Guy) → minimax-m3-free
+**Entity**: DOOM_GUY / SOPHIA
+**Trace**: trc_circuit_breaker_fix
+
+### Decision
+Fixed two critical bugs in the circuit breaker integration:
+1. T2.2: `_precheck_provider()` now looks up the breaker directly by `provider.name` instead of going through `_model_provider_map` indirection.
+2. T2.3: `RemoteProvider.generate()` returning `None` on retry exhaustion now trips the circuit breaker via a `TimeoutError`-raising wrapper.
+
+### Rationale
+The original code had the breaker wrapped in `breaker.call()` but the wiring was ineffective: the precheck couldn't detect OPEN circuits (wrong key), and the breaker never received circuit-breaking events for None returns. Result: broken cloud providers were retried forever instead of being culled by the BSP-style precheck.
+
+### What Changed
+- src/omega/oracle/model_gateway.py: T2.2 + T2.3 fixes
+- tests/test_model_gateway.py: 5 new tests (307/307 passing)
+- CREDITS.md: §1.8 (Circuit Breaker Consolidation) new section
+- data/handoff/DOOM_GUY_T23_REPORT_20260602.md: full report
+
+### Key Insight
+The original `_call_with_none_as_failure()` wrapper transforms a non-exception failure (None return) into a circuit-breaking exception. This is a clean separation: the provider's "I couldn't generate" semantic is converted into a signal the breaker can act on. The exception is then caught and the failure recorded explicitly — the breaker.call() has already incremented the failure count, so we don't double-count.
+
+---
+
+*PIVOT_LOG.md — Immutable. Every decision recorded. 95 decisions tracked (D1-D94, D99).*
