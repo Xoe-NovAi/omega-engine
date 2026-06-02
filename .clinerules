@@ -460,3 +460,37 @@ this pipeline, but Cline can do it directly when working solo.
 - **Added in this revision**: explicit Cline CLI invocation patterns,
   OpenCode fleet coordination, handoff-file index, soul-evolution workflow,
   and the Tier-2 consult protocol.
+
+## Tool-Usage Discipline (LESSONS LEARNED 2026-06-02)
+
+The `.clinerules` was originally rewritten via a Python-builder-script workaround
+because a 22KB Markdown payload failed to parse in `editor`/`run_commands` JSON
+parameters. This is the WRONG pattern. Use these rules instead:
+
+### File creation / full rewrite
+
+1. For files <2KB: pass the content directly in a single `editor` call.
+2. For files 2-10KB: split into 3-5 `editor` calls using `insert_line`.
+3. For files >10KB: write to `/tmp/file.md` first with a heredoc, then `cp` it
+   into place. NEVER pass >10KB of free-form text as a JSON string parameter.
+4. For surgical edits: use `editor` with `old_text`/`new_text` on a small anchor.
+
+### Shell commands with complex content
+
+- Write the script to `/tmp/script.sh` first; then `bash /tmp/script.sh`.
+- Do not pass multi-line scripts with special characters in JSON parameters.
+- Use simple, single-purpose shell commands; chain via `&&` only when short.
+
+### Failure recovery
+
+- If a tool call fails twice with the same payload, STOP and reconsider.
+- Do not retry the same large payload — break it down or switch strategy.
+- Verify with `wc -l`, `head`, `tail`, or `md5sum` after each edit.
+
+### Why this matters
+
+- Tool parameters are designed for short, structured commands — not bulk content.
+- JSON parsers choke on unbalanced quotes, raw backticks, and shell metacharacters.
+- The filesystem (`/tmp/`) is the correct transport for large content.
+- Surgical edits scale; bulk-rewrite attempts do not.
+
