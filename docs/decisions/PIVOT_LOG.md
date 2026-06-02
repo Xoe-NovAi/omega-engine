@@ -1023,3 +1023,48 @@ Gemma 4 31B wrote structurally correct code at the pattern/import/async level, b
 
 ### Enforcement
 Code review must check each `except` clause. The canonical test pattern is `pytest.raises(OmegaError)`. No bare `except Exception:` without logging will be accepted in future PRs.
+
+## Decision 78: `is_cloud` Fix — Sovereignty Alert Accuracy
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: SOPHIA
+**Context**: The `generate()` method's return tuple `(response, success_bool)` was interpreted by Oracle as `(response, is_cloud)`, causing the sovereignty alert to fire for any successful provider — including MockProvider and local LM Studio/Ollama — because `True` was conflated with "cloud".
+
+### What Changed
+1. **`model_gateway.py`**: `generate()` now tracks which provider succeeded and returns `(result, is_cloud)` where `is_cloud` is determined by provider name membership in `{"google", "openrouter", "opencode", "github-copilot"}`.
+2. **`providers.py`**: `MockProvider` now checks `os.environ.get("OMEGA_DEMO")` to return a demo-friendly response for boat/offline use cases.
+
+### Providers Not Classified as Cloud
+`native-gguf`, `lmster`, `ollama`, `mock` — all correctly classified as LOCAL.
+
+### Consequences
+- Sovereignty alert now only fires when Google, OpenRouter, OpenCode, or Copilot actually respond.
+- Offline demo (`make offline-demo`, `OMEGA_DEMO=true`) shows clean output without the misleading "cloud provider" warning.
+- Demo response for MockProvider: "I am the Omega Engine — sovereign AI runtime..."
+
+### Enforcement
+If new providers are added, they must be classified as cloud or local in `_is_cloud_provider()`.
+
+## Decision 79: Makefile Menu & User Manual
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: SOPHIA
+**Context**: After Horizon 1 completion, the engine needed a polished terminal UX and comprehensive documentation for the boat demo.
+
+### What Changed
+1. **`Makefile`**: Added `make menu` — polished TUI with categorized commands, `make offline-demo` — 4-step offline demo with `OMEGA_DEMO=true`, convenience aliases (`entities`, `entity`, `talk`, `summon`, `queue-*`, `library-*`, `bench-*`).
+2. **`docs/USER_MANUAL.md`**: 250+ line comprehensive manual covering quick start, menu, CLI, offline demo, Makefile reference, script reference, architecture, entities, troubleshooting.
+
+### Consequences
+- Boat demo can run with zero internet: `make offline-demo` produces entity listing and mock responses.
+- User can discover all engine capabilities via `make menu` without reading the Makefile.
+- New users get a comprehensive reference without needing to search across files.
+
+### Enforcement
+When adding new Makefile targets, update both `make menu` and `docs/USER_MANUAL.md`.
+
+---
+
+*PIVOT_LOG.md — Immutable. Every decision recorded. 79 decisions tracked.*
