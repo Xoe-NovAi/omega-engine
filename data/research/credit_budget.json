@@ -13,7 +13,7 @@
     },
     "tavily": {
       "total": 1000,
-      "used": 473,
+      "used": 484,
       "reserved_emergency": 100
     },
     "firecrawl": {
