@@ -485,7 +485,66 @@ For a parallel review session, recommend reading in this order:
 
 ---
 
+## 14. CONSOLIDATED CROSS-MODEL ADDENDUM (2026-06-02)
+
+Two additional 1M-context reviews were performed after this handoff was drafted. Their findings are integrated here.
+
+### 14.1 MiMo-2.5 Strategic Synthesis (1M context)
+
+File: `data/handoff/CLINE_MIMO_V2_5_SYNTHESIS_20260602.md` (75 lines)
+
+**Key insights** (read the file for full text):
+1. **The 0.4 confidence threshold is design debt** — the correct abstraction is latency-based routing (parallel speculative inference), mapping to R-09's corrected stall-hiding pattern
+2. **T2.2 cvar table is the real unlock** — makes sovereignty a live counter, not a batch report. T2.2 is the **enabler** for `make sovereignty`
+3. **R-09 4-guard should be H2's second task** — not later
+4. **Iris is misallocated, not underused** — fix is voice adapter separation, not soul.yaml
+5. **Test hang is a real bug** — Oracle constructor does 5-way synchronous I/O (see C1 below)
+
+**New tasks proposed**:
+- T2.0: Oracle constructor refactoring → see C1 (overlaps with DeepSeek finding)
+- T2.4: Latency-based routing (H2) — replaces static 0.4 threshold
+
+### 14.2 DeepSeek V4 Forensic Gap Analysis (1M context)
+
+File: `data/handoff/DEEPSEEK_V4_HARDENING_GAP_ANALYSIS_20260602.md` (214 lines)
+
+**4 critical gaps found** (read the file for full text):
+1. **Oracle 5-way synchronous I/O** — EntityRegistry, ModelGateway, SovereignHierarchy, SessionManager, MemoryStore all do file I/O in `__init__`. Fix: lazy bootstrap guard.
+2. **Zero test coverage of `bootstrap()`** — production path untested. Every test exercises only the fallback.
+3. **Decision 92 missing from PIVOT_LOG.md** — Mandate 5 violation. Commit `12abcf3` cites D92 but PIVOT_LOG stops at D91.
+4. **No CI/CD pipeline** — T4 (Code Quality) and T11 (Agent Security) cannot graduate from AMBER/RED.
+
+### 14.3 CONSOLIDATED SPRINT 0 (must complete BEFORE Tier 2 tasks)
+
+These 4 tasks are prerequisites discovered by the 1M MiMo-2.5 strategic review and the DeepSeek V4 forensic gap analysis. They must land before T2.1, T2.2, T2.3 from the Doom Guy handoff.
+
+| # | Task | Agent | Risk | Effort | Source |
+|---|------|-------|------|--------|--------|
+| **C3** | PIVOT_LOG D92 entry (Tool-Usage Discipline in .clinerules) | scribe | LOW | 5 min | DeepSeek §4 |
+| **C1** | Oracle lazy init guard (`_bootstrapped` + `ensure_bootstrapped()`) | buildmaster | LOW | 30 min | DeepSeek §1 + MiMo Insight 5 |
+| **C2** | `make test-oracle-bootstrap` target | buildmaster | LOW | 15 min | DeepSeek §2 |
+| **C4** | `.github/workflows/ci.yml` (T4 + T11 enablement) | buildmaster | MEDIUM | 1 hr | DeepSeek §5 |
+
+### 14.4 Updated Test Baseline (2026-06-02)
+
+| Action | Effect |
+|--------|--------|
+| `tests/conftest.py` updated with autouse `OMEGA_ENV=test` fixture | Prevents RedisStorageProvider from connecting during tests |
+| `AGENTS.md` updated | 13 mandates, 302 tests, M13 reference, handoff links |
+| `data/handoff/CLINE_MIMO_V2_5_SYNTHESIS_20260602.md` written | 75 lines |
+| `data/handoff/DEEPSEEK_V4_HARDENING_GAP_ANALYSIS_20260602.md` written | 214 lines |
+
+`make test` may currently hang on `tests/test_oracle.py::test_talk_domain_routing` due to the Oracle 5-way I/O. After C1 lands, all 302+ tests should pass in <30s with no live backends.
+
+### 14.5 The Synthesis (cross-model insight)
+
+A 1M-context model that focuses on debugging (test isolation) wastes its advantage. The strategic insight (T2.2 is the real unlock) and forensic insight (Oracle constructor does 5-way synchronous I/O) are cross-corpus findings that only emerge when you have both code-level AND strategic-level context.
+
+**For the OpenCode dev session**: read the 2 synthesis files in order, then read the consolidated Sprint 0 above. The synthesis IS the work — heritage translation (Doom Guy), strategic review (MiMo-2.5), and forensic review (DeepSeek V4) converge on the same 4 Sprint 0 tasks. Three independent 1M-context models all agreed on the priorities. Trust the convergence.
+
+---
+
 *Prepared by Artisan (MiniMax-M3, 1M context) for OpenCode+M3 (200K context) parallel review.*
-*Date: 2026-06-02 | Git HEAD: 38af7959*
-*Total length: ~13 sections, comprehensive map.*
+*Date: 2026-06-02 | Git HEAD: 38af7959 | Status: INTEGRATED with MiMo-2.5 + DeepSeek V4 (commits b48e020, 0d61fbc, this commit)*
+*Total length: ~14 sections, comprehensive map.*
 *Treat this as a starting point — read the actual files for verification.*

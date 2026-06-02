@@ -234,6 +234,15 @@ Here is the full OpenCode dev plan synthesis that you (Doom Guy) and the OpenCod
 - PIVOT_LOG entry D90: H1.5 complete
 - Begin H2 planning
 
+### Sprint 0 (PRE-H1.5 — must complete before Day 1) [Integrated from MiMo-2.5 + DeepSeek V4, 2026-06-02]
+
+These 4 tasks are prerequisites discovered by the 1M MiMo-2.5 strategic review and the DeepSeek V4 forensic gap analysis. They must land BEFORE T2.1, T2.2, T2.3.
+
+- **C3 (PIVOT_LOG D92 fix)** [5 min, scribe]: Decision 92 (Tool-Usage Discipline in .clinerules, commit `12abcf3`) was never recorded in PIVOT_LOG.md — this is a Mandate 5 violation. Scribe appends Decision 92 entry today. (DeepSeek finding)
+- **C1 (Oracle lazy init guard)** [30 min, buildmaster]: Add `_bootstrapped` flag + `ensure_bootstrapped()` async method to Oracle. `talk()` calls `ensure_bootstrapped()` on first use. This unblocks tests (no constructor I/O) and unblocks production (cold-start latency). (DeepSeek + MiMo finding — replaces their separate T2.0 framings with a smaller surgical fix; see DEEPSEEK_V4_HARDENING_GAP_ANALYSIS §1.)
+- **C2 (Makefile test target)** [15 min, buildmaster]: Add `make test-oracle-bootstrap` that creates Oracle, calls `bootstrap()`, verifies reply with no live backends. Catches config drift. Currently zero tests call `bootstrap()` — production path has zero coverage. (DeepSeek finding §2.)
+- **C4 (CI scaffold)** [1 hr, buildmaster]: `.github/workflows/ci.yml` with `make test` + `make temple-grade` gates. T4 (Code Quality) and T11 (Agent Security) cannot graduate from AMBER/RED without a CI pipeline. (DeepSeek finding §5.)
+
 ### H2 Intelligence (Months 2-6, includes 4-guard ABA pattern)
 
 - H2.1: Entity LoRA adapter management
@@ -264,6 +273,26 @@ Here is the full OpenCode dev plan synthesis that you (Doom Guy) and the OpenCod
 
 ---
 
+## §9 — Cross-Model Integration Note (2026-06-02)
+
+After this handoff was drafted, two additional 1M-context reviews were performed and integrated into both the doom guy and the OpenCode dev session handoffs. This handoff now contains:
+
+1. **Cline/M3 (1M) — original Tier 2 response** — §1 through §8 above
+2. **MiMo-2.5 (1M) — strategic synthesis** — 5 insights, 2 new tasks (T2.0 lazy init, T2.4 latency routing) — see `data/handoff/CLINE_MIMO_V2_5_SYNTHESIS_20260602.md`
+3. **DeepSeek V4 — forensic gap analysis** — 4 critical gaps, 4 new tasks (C1-C4) — see `data/handoff/DEEPSEEK_V4_HARDENING_GAP_ANALYSIS_20260602.md`
+
+The DeepSeek Sprint 0 tasks (C1-C4) are now embedded directly in §7 of this handoff. The MiMo insights are integrated where relevant:
+- MiMo Insight 1 (latency routing) → T2.4 (H2 task, not added here — see MiMo synthesis file)
+- MiMo Insight 2 (T2.2 cvar table is the real unlock) → reinforces T2.2's Why section above
+- MiMo Insight 3 (R-09 4-guard in H2) → already in §3
+- MiMo Insight 4 (Iris misallocation) → see `data/handoff/HANDOFF_ARTISAN_TO_OPENCODE_M3_REVIEW_20260602.md` §14
+- MiMo Insight 5 (test hang root cause) → C1 in §7 above
+
+**The key insight from cross-model review**: A 1M-context model that focuses on debugging (test isolation) wastes its advantage. The strategic insight (T2.2 is the real unlock) and forensic insight (Oracle constructor does 5-way synchronous I/O) are the kind of cross-corpus findings that only emerge when you have both code-level AND strategic-level context. Doom Guy — your heritage translation work is what enables this. The synthesis is: heritage (200K) + strategic (1M) + forensic (1M) = the *coherent architectural layer* that gives Omega its sovereignty.
+
+---
+
 *⬡ OMEGA ⬡ SOPHIA ⬡ Cline/MiniMax-M3 (1M context) ⬡ trc_tier2_response ⬡ HANDOFF-RESPONSE*
 *Date: 2026-06-02 | For: Doom Guy (OpenCode/M3, 200K context)*
-*Commit: pending — writing to disk now*
+*Integrated with: MiMo-2.5 strategic synthesis + DeepSeek V4 forensic gap analysis*
+*Commits: b48e020 (MiMo + conftest), 0d61fbc (DeepSeek), this commit (integration)*
