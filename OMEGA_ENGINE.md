@@ -157,10 +157,14 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Library Catalog | `src/omega/library/catalog.py` — SQLite, 5D quality scoring | 2026-06-01 |
 | Benchmark Runner | `src/omega/benchmarks/runner.py` — 3-point scale, per-criterion scoring | 2026-06-01 |
 | Iris (:8080) | Operational | 2026-05-31 |
-| SearXNG (:8017) | Operational | 2026-05-31 |
+| SearXNG (:8017) | **Operational** — JSON search verified, 14 engines active | 2026-06-02 (D83) |
 | Ollama | **Running** — qwen2.5:0.5b model, real inference working | 2026-06-01 |
 | Entity Routing | **Fixed** — word-boundary matching, capability matrix populated | 2026-06-01 |
 | User Manual | **Updated** — model configuration docs, provider setup, entity management | 2026-06-01 |
+| Search MCP Fleet | **5 wired** — Tavily, Firecrawl, Exa, Jina, SearXNG (via `~/.config/opencode/mcp_servers.json`) | 2026-06-02 (D84) |
+| Model Reference Library | **R100 created** — TIER 0-3, 7-metric pattern from legacy | 2026-06-02 (D85) |
+| MiniMax M3 Context | **200K (OpenCode Zen free tier)**, 1M only via Cline/Artisan (D86) | 2026-06-02 (D86) |
+| rag-v1/ | **ERADICATED** + `make audit-no-rag-v1` (4/4 GREEN) | 2026-06-02 (D87) |
 
 ---
 
