@@ -118,11 +118,19 @@ class LocallmsterProvider(BaseProvider):
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_query},
         ]
+        # [id-soft: quake3-1999] Cvar System — stop tokens from cvar table
+        try:
+            from omega.cvar_table import cvar_get
+            stop_tokens = cvar_get("config.gguf.stop_tokens", ["</s>", "User:", "\n\n"])
+        except ImportError:
+            stop_tokens = ["</s>", "User:", "\n\n"]
+
         payload = {
             "model": resolved_model,
             "messages": messages,
             "temperature": temperature,
             "max_tokens": max_tokens,
+            "stop": stop_tokens,
             "stream": False,
         }
         try:
@@ -167,11 +175,20 @@ class OllamaProvider(BaseProvider):
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_query},
         ]
+        # [id-soft: quake3-1999] Cvar System — stop tokens from cvar table
+        # Port 1.3: ChatML stop tokens prevent hallucinated conversation turns
+        try:
+            from omega.cvar_table import cvar_get
+            stop_tokens = cvar_get("config.gguf.stop_tokens", ["</s>", "User:", "\n\n"])
+        except ImportError:
+            stop_tokens = ["</s>", "User:", "\n\n"]
+
         payload = {
             "model": resolved_model,
             "messages": messages,
             "temperature": temperature,
             "max_tokens": max_tokens,
+            "stop": stop_tokens,
             "stream": False,
         }
         try:
@@ -242,6 +259,12 @@ class NativeGGUFProvider(BaseProvider):
       - Thread count scaled to model size (4 for <1B, 6 otherwise)
       - Batch sizes tuned to L2 cache (512KB/core)
       - Memory pressure monitoring before model load
+
+    Heritage:
+      [id-soft: quake3-1999] Cvar System — config values read from cvar_table
+      Port 1.1 (filter_llama_kwargs): validate_llama_kwargs() called at init
+      Port 1.2 (n_gpu_layers=0): explicit CPU-only default via cvar
+      Port 1.5 (atomic trace_id): trace_id propagated to observability events
     """
 
     def __init__(self, name: str, config: Dict[str, Any]):
@@ -250,13 +273,32 @@ class NativeGGUFProvider(BaseProvider):
         if self.model_path and self.model_path.startswith("~"):
             self.model_path = os.path.expanduser(self.model_path)
 
+        # [id-soft: quake3-1999] Cvar System — read from cvar_table for hot-reload
+        try:
+            from omega.cvar_table import cvar_get, validate_llama_kwargs
+            # Port 1.1: validate llama-cpp kwargs at init
+            if cvar_get("config.gguf.kwarg_filter", True):
+                kwarg_warnings = validate_llama_kwargs(config, "NativeGGUFProvider")
+                if kwarg_warnings:
+                    logger.warning(
+                        "NativeGGUFProvider init: %d kwarg warnings:\n  %s",
+                        len(kwarg_warnings), "\n  ".join(kwarg_warnings)
+                    )
+            n_gpu = cvar_get("config.gguf.n_gpu_layers", 0)
+            n_ctx_default = cvar_get("config.gguf.n_ctx", 4096)
+            n_threads_default = cvar_get("config.gguf.n_threads", 6)
+        except ImportError:
+            n_gpu = 0
+            n_ctx_default = 4096
+            n_threads_default = 6
+
         # Zen 2 core configuration
         self._cores = config.get("cores", [0, 2, 4, 6])
-        self._n_threads = config.get("n_threads", 6)
-        self._n_threads_batch = config.get("n_threads_batch", 6)
+        self._n_threads = config.get("n_threads", n_threads_default)
+        self._n_threads_batch = config.get("n_threads_batch", self._n_threads)
 
         # Context configuration
-        self._n_ctx = config.get("n_ctx", 4096)
+        self._n_ctx = config.get("n_ctx", n_ctx_default)
         self._n_ctx_max = config.get("n_ctx_max", 32768)
         self._ctx_overflow = config.get("ctx_overflow", "rolling_window")
 
@@ -271,7 +313,9 @@ class NativeGGUFProvider(BaseProvider):
         # Memory management
         self._use_mmap = config.get("use_mmap", True)
         self._use_mlock = config.get("use_mlock", False)
-        self._n_gpu_layers = config.get("n_gpu_layers", 0)
+        # [id-soft: quake3-1999] Cvar System — n_gpu_layers from cvar table
+        # Port 1.2: explicit CPU-only default prevents iGPU crash on Vega 7
+        self._n_gpu_layers = config.get("n_gpu_layers", n_gpu)
 
         # State
         self.llm = None
@@ -458,7 +502,15 @@ class NativeGGUFProvider(BaseProvider):
             )
         
             if response and "choices" in response:
-                return response["choices"][0]["text"].strip()
+                text = response["choices"][0]["text"].strip()
+                # [id-soft: quake3-1999] Cvar System — trace_id propagated
+                # Port 1.5: atomic trace_id logging for observability
+                if trace_id:
+                    logger.debug(
+                        "NativeGGUF inference complete [trace_id=%s] tokens=%d chars=%d",
+                        trace_id, response.get("usage", {}).get("completion_tokens", 0), len(text),
+                    )
+                return text
         except Exception as e:
             # Check for OOM patterns in the error message
             err_msg = str(e).lower()

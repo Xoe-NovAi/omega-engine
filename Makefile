@@ -568,6 +568,31 @@ temple-grade: ## 🏛️ Run all 11 Temple-Grade gates (T1-T11)
 	@echo "[1;33m⚠️  Temple-Grade score: 7/11 GREEN, 3 AMBER, 1 RED[0m"
 	@echo ""
 
+heritage-map: ## 🏛️ Verify [id-soft:] heritage tags in source files
+	@echo "$(COLOR_CYAN)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo " 🏛️  Heritage Map — id Software [id-soft:] Tag Audit"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(COLOR_NC)"
+	@TOTAL=0; TAGGED=0; UNTAGGED=0; \
+	for f in $$(find src/omega -name '*.py' -path '*/oracle/*' -o -name '*.py' -path '*/omega/constants.py' -o -name '*.py' -path '*/omega/cvar_table.py' -o -name '*.py' -path '*/omega/observability.py'); do \
+		TOTAL=$$((TOTAL + 1)); \
+		if grep -q '\[id-soft:' "$$f" 2>/dev/null; then \
+			TAGGED=$$((TAGGED + 1)); \
+			TAGS=$$(grep -c '\[id-soft:' "$$f" 2>/dev/null); \
+			printf "  $(COLOR_GREEN)✅$(COLOR_NC) %-45s %d tags\n" "$$(basename $$f)" "$$TAGS"; \
+		else \
+			UNTAGGED=$$((UNTAGGED + 1)); \
+			printf "  $(COLOR_RED)❌$(COLOR_NC) %-45s MISSING\n" "$$(basename $$f)"; \
+		fi; \
+	done; \
+	echo ""; \
+	echo "  $$TAGGED/$$TOTAL files with [id-soft:] tags, $$UNTAGGED missing"; \
+	if [ "$$UNTAGGED" -gt 0 ]; then \
+		echo "  $(COLOR_YELLOW)⚠️  Some heritage files lack [id-soft:] tags. See CREDITS.md §2a.$(COLOR_NC)"; \
+	else \
+		echo "  $(COLOR_GREEN)✅ Heritage map complete — all files tagged.$(COLOR_NC)"; \
+	fi; \
+	echo ""
+
 sovereignty: ## 🏛️ Show local vs cloud inference ratio
 	@echo "[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 	@echo " 🏛️ Sovereignty Report — Local/Cloud Inference Ratio"
