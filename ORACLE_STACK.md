@@ -2,7 +2,7 @@
 **AP Token**: `AP-ORACLE-RESTORE-v2.3.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_local_first_config ⬡ ORACLE-RESTORE
 **Status**: ACTIVE
-**Last Updated**: 2026-06-01 (Horizon 1 Complete — 302/302 tests passing, Options A+B done, all 12 Mandates enforced, 10 Error Gauntlet tests added, Ollama real inference working, entity routing fixed)
+**Last Updated**: 2026-06-03 (Sprint 0 Execution — 307/307 tests passing, ZONEID constants + lazy deletion + heritage tagging protocol live. See OMEGA_ENGINE.md for current state.)
 
 ---
 
@@ -129,7 +129,7 @@ All containers run rootless (user 1000) using the Sovereign Permission Protocol 
 
 All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src python3 -m pytest tests/`.
 
-**Current state (2026-06-01)**: 302 collected — **302 passing** (Horizon 1 Complete — Options A+B done, all 12 Mandates enforced, Error Gauntlet + Option B fixes)
+**Current state (2026-06-03)**: 307 collected — **307 passing** (Sprint 0 Execution — ZONEID constants + lazy deletion + heritage tagging protocol + Circuit Breaker fix)
 
 | Module | Tests | Status |
 |--------|-------|--------|

@@ -15,3 +15,5 @@
 - Sprint cleared:    `[OPUS-FINAL-REVIEW] CLEARED 2026-06-02T21:00:00Z — All findings non-blocking, OpenCode sessions may proceed`
 
 ---
+
+OPUS-FINAL-REVIEW COMPLETE 2026-06-02T19:09UTC — 2 critical, 3 correctness, 2 process findings. Must-fix: F1 (OmegaConfig phantom), F3 (garbled markdown). D99 logged.

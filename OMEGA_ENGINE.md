@@ -135,8 +135,8 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Phase | 1 — ENGINE HARDENING COMPLETE ✅ | 2026-06-01 |
 | Source files | **71** .py files | 2026-06-01 |
 | Source lines | ~15,200 | 2026-06-01 |
-| Test functions | **302** (+10 Error Gauntlet, +23 Option B fixes) | 2026-06-01 |
-| Test files | **30** | 2026-06-01 |
+| Test functions | **307** (+5 circuit breaker fixes, +10 Error Gauntlet, +23 Option B fixes) | 2026-06-03 |
+| Test files | **30** | 2026-06-03 |
 | Mandate 9 compliance | **FULL** — zero bare except violations | 2026-06-01 |
 | Horizon 1 | **100% — All 13 Sovereign Mandates Enforced (Mandate 13 Temple-Grade restored)** | 2026-06-02 |
 | Horizon 2 | 🔓 Unlocked — ForensicsManager, JsonFormatter, Error Gauntlet (25%) | 2026-06-01 |
@@ -151,8 +151,20 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Sovereign Persistence | Implemented (Atomic Writes in Oracle/SessionManager/EntityRegistry) | 2026-06-01 |
 | ModelGateway.generate() | **WIRED** — circuit breaker + BSP culling + per-provider timeouts | 2026-06-01 (Doom Guy) |
 | Circuit Breaker | **Consolidated** — single AsyncCircuitBreaker in health_monitor.py | 2026-06-01 (Doom Guy) |
+| Circuit Breaker Wire-Up | **DONE** — BSP precheck fixed, None-return detection added | 2026-06-02 (D94) |
+| ZONEID Constants | **IMPLEMENTED** — 5 constants (0x1d4a11-0x1d4a15) + validate_zoneid() in constants.py, applied to 5 subsystems | 2026-06-03 (Doom Guy) |
+| Lazy Deletion | **IMPLEMENTED** — EntityRegistry remove() sets ZONEID_TOMBSTONE, _reap_tombstoned() after 0.5s grace | 2026-06-03 (Doom Guy) |
+| Heritage Tagging Protocol | **LIVE** — CREDITS.md §2a, [id-soft:] inline tag format, 30+ tags across 6 source files | 2026-06-03 (Doom Guy) |
+| Unified cvar Table | **IMPLEMENTED** — D101: `cvar_table.py` with zoneid.* (6) + config.* (12) namespaces, 7 access helpers, validate_llama_kwargs() | 2026-06-03 (Lilith) |
+| Sprint 1 Ports | **5 COMPLETE** — kwarg_filter, n_gpu_layers=0, ChatML stops, Google API header, trace_id propagation | 2026-06-03 |
+| `make heritage-map` | **LIVE** — CI target audits [id-soft:] tags, 6/23 files currently tagged | 2026-06-03 |
+| Subagent Dispatch | **DEFINED** — Protocol for agents to launch specialized subagents (Doom Guy, Roc Racoon, etc.) via Task tool + persona injection | 2026-06-03 (Kali) |
+| Sovereign Roadmap | **RECORDED** — Lilith's 888-line 7-phase roadmap with 8-demographic analysis, Handoff Protocol, and UI/UX plan | 2026-06-03 |
+| Roc Racoon Mining | **COMPLETE** — 6 stacks, 160+ techs, 7 reports, ~250KB, stored in data/entities/roc_racoon/ | 2026-06-03 |
+| Handoff Archive | **CREATED** — 36 non-active handoffs moved to data/handoff/archive/ with INDEX.md and mining tags | 2026-06-03 |
+| Expanded Strategic Roadmap | **RECORDED** — D100-D102 in PIVOT_LOG with full delegation contract between Doom Guy and Dev Session | 2026-06-03 |
 | Sovereign Mandates | **13 (12 original + Mandate 13 Temple-Grade)** | 2026-06-02 |
-| PIVOT decisions | **90 (Decision 50-90 active)** | 2026-06-02 |
+| PIVOT decisions | **102 (D1-D102 tracked)** | 2026-06-03 |
 | Horizon 1.5 (Bridge Phase) | **DEFINED — 4 sprints, F→A→B→C→E→D execution** | 2026-06-02 |
 | Role Mappings | `config/wads/_omega_default/roles.yaml` created | 2026-06-01 |
 | Request Queue | `src/omega/request_queue.py` — atomic queue with heartbeat/dead-letter | 2026-06-01 |
@@ -188,7 +200,10 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | `src/omega/request_queue.py` | Offline request queue (atomic, heartbeat, dead-letter) |
 | `src/omega/library/catalog.py` | SQLite document catalog with 5D quality scoring |
 | `src/omega/benchmarks/runner.py` | LLM benchmark runner with 3-point scale |
-| `src/omega/hardware.py` | CPU/RAM detection, Zen 2 optimization |
+| `src/omega/constants.py` | ZONEID magic constants + validate_zoneid() + ZONEID_TABLE (re-export from cvar_table) |
+| `src/omega/cvar_table.py` | Unified named-constant registry — zoneid.* + config.* namespaces + CvarDef + 7 access helpers |
+| `src/omega/oracle/subagent_dispatcher.py` | HandoffPacket + Agent Capability Registry + dispatch() — subagent launch protocol |
+| `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` | Full protocol spec for launching specialized agents as subagents |
 | `src/omega/library/` | FTS5 + vector library (7 modules) |
 | `src/omega/workers/` | Background researcher, model updater |
 | `mcp_servers/omega_hub/server.py` | Agent bus (40 MCP tools + 11 HTTP routes) |
@@ -265,8 +280,8 @@ See `SOVEREIGN_MANDATES.md` for full details (13 mandates).
 - [x] Provider chain ordered correctly (local-first)
 - [x] CPU Optimizer integrated
 - [x] ModelGateway.generate() method added (with per-provider timeouts)
-- [ ] Circuit Breaker consolidation (2→1) and wiring into generate()
-- [ ] BSP-style provider culling (pre-check + skip)
+- [x] Circuit Breaker consolidation (2→1) and wiring into generate() — D94 fixed BSP precheck + None detection
+- [x] BSP-style provider culling (_precheck_provider() by provider.name) — D94
 - [ ] Qdrant hybrid search wiring (fastembed BGE-base-en-v1.5)
 - [ ] Redis pub/sub for cross-agent communication
 
@@ -277,6 +292,35 @@ See `SOVEREIGN_MANDATES.md` for full details (13 mandates).
 - [x] Fixed structural bug in `_collect_system_info()` (dead code, returned None)
 - [x] Fixed `asyncio` → `sniffio` in `_detect_anyio_backend()` (Mandate 1)
 - [x] Fixed `deque` slicing bug in `recent_events()` (was masking TypeError)
+
+### ✅ DONE — Sprint 1: cvar Table + Priority Ports + Subagent Dispatch Protocol
+- [x] `src/omega/cvar_table.py` — unified named-constant registry with zoneid.* (6) + config.* (12) namespaces
+- [x] `constants.py` — re-export layer for backward compatibility
+- [x] 7 access helpers: cvar_get, cvar_set, cvar_namespace, cvar_modification_count, cvar_by_subsystem, cvar_list, cvar_summary
+- [x] Port 1.1: `validate_llama_kwargs()` — kwarg whitelist for llama-cpp
+- [x] Port 1.2: `n_gpu_layers=0` — cvar default for CPU-only
+- [x] Port 1.3: ChatML stop tokens — wired into Ollama + Locallmster providers
+- [x] Port 1.4: Google API key header — documented in cvar table
+- [x] Port 1.5: Atomic trace_id — NativeGGUFProvider logs trace_id
+- [x] `make heritage-map` — CI target audits [id-soft:] tags
+- [x] Subagent Dispatch Protocol: `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` + `src/omega/oracle/subagent_dispatcher.py`
+- [x] Handoff Archive: 36 non-active handoffs → `data/handoff/archive/` with INDEX.md and mining tags
+- [x] Expanded Roadmap: D100-D102 recorded, delegation contract between Doom Guy and Dev Session
+- [x] Commit: `3048e91`, tests: 307/307, Temple-Grade: 7/11 GREEN
+
+### P1 — Subagent Dispatch Protocol
+- [ ] HandoffPacket dataclass — typed schema for agent-to-agent task delegation
+- [ ] Agent Capability Registry — what each of the 14 agents can do
+- [ ] Standardized Task tool prompt format for persona injection
+- [ ] `dispatch_subagent()` — build prompts from HandoffPacket
+- [ ] Archive: processed handoffs → `data/handoff/archive/`
+
+### P1 — Handoff Protocol (Link P9)
+- [ ] Redis Pub/Sub handoff bus (reuse existing redis container at port 6379)
+- [ ] Link P9 runtime module — agent presence, task queue, heartbeat
+- [ ] CLI commands: `omega handoff send`, `omega handoff list`, `omega handoff status`
+- [ ] JSON archive system — `data/handoffs/archive/{packet_id}.json`
+- [ ] MCP Hub resurrection — read running config, serve agent state
 
 ### P3 — Synthesis Pipeline
 - [ ] Entity LoRA adapter management
@@ -324,6 +368,6 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 
 ---
 
-*Last Updated: 2026-06-01 | Author: GEMMA4 — Option B (Mandate 9, falsy-trap, hardcoded paths) — Horizon 1 FINAL GATE CLOSED*
+*Last Updated: 2026-06-03 | Author: KALI/DOOM_GUY — Sprint 1 complete (cvar_table + 5 ports + heritage-map) + Subagent Dispatch Protocol defined*
 *This document is the Single Source of Truth. All platforms reference it.*
-*Changes: Ollama real inference working, entity routing fixed, user manual updated with model config docs.*
+*Changes: cvar_table.py live (276 lines, 18 entries, 7 helpers), constants.py re-export, providers wired, make heritage-map CI, Subagent Dispatch Protocol defined, 8 handoffs archived for Roc Racoon mining.*

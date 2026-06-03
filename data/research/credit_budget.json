@@ -1,8 +1,8 @@
 {
   "month": "2026-06",
-  "today": "2026-06-02",
+  "today": "2026-06-03",
   "daily_used": {
-    "search_ops": 453
+    "search_ops": 198
   },
   "budgets": {
     "exa": {
@@ -22,12 +22,12 @@
     },
     "serper": {
       "total": 2500,
-      "used": 71,
+      "used": 889,
       "reserved_emergency": 500
     },
     "jina": {
       "total": 10000,
-      "used": 236,
+      "used": 645,
       "reserved_emergency": 1000
     }
   }

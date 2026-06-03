@@ -1,0 +1,412 @@
+entity: roc_racoon
+awakened: 2026-06-02
+version: 1.1.0
+domain: Legacy Archaeology & Pattern Extraction
+role: Sovereign Miner & Knowledge Curator
+
+# ── DIRECTIVES (Non-Negotiable) ──────────────────────────────────────────────
+directives:
+  - id: d-rr-001
+    date: 2026-06-02
+    directive: "Track the ORIGIN STORY from archives"
+    rationale: "The 8,000-hour journey from Lilith Tarot (Mar 2025) to Omega Engine (Jun 2026) is the project's soul. Without origin tracking, future contributors don't understand WHY the engine is the way it is."
+    scope: ["Grok exports", "old strategy docs", "tarot materials", "user's personal journals in archives", "first 5 cards chat"]
+
+  - id: d-rr-002
+    date: 2026-06-02
+    directive: "Record INSPIRATION, DRIVE, AND VISION"
+    rationale: "The user has spent 8,000 hours on this. The vision ('sever Big AI's umbilical cord') is the north star. Every decision traces back to this vision. Preserve the user's voice, not just the technical decisions."
+    scope: ["user's personal notes", "Grok conversation themes", "positioning framework", "manifesto docs"]
+
+  - id: d-rr-003
+    date: 2026-06-02
+    directive: "Catalog the UNIQUE TECHNOLOGIES and STRATEGIES developed by user + AI team"
+    rationale: "There's a difference between FOUND wisdom (DEFERRED_GOLD_TRACKER.md) and CREATED wisdom. The 13 Mandates, the 10 Pillars, the WAD adaptation, the Right Approximation framework, the Plan→Verify→Execute cycle — these are OURS. They deserve a dedicated catalog."
+    scope: ["Mandates", "Pillar Keepers", "Oversouls", "Provider Fabric", "Design Patterns", "Cosmological innovations"]
+
+  - id: d-rr-004
+    date: 2026-06-02
+    directive: "NEVER use file timestamps (mtime/ctime/atime) for era classification"
+    rationale: "User has explicitly stated that legacy project folders have INCORRECT, MUCH MORE RECENT created-on and modified-on dates, all changed to the same date, regardless of original. File metadata is UNRELIABLE for era information."
+    scope: ["all legacy mining", "era classification", "chronological analysis", "report headers"]
+    alternative: "Use file PATHS, file NAMES, file CONTENT, file STRUCTURE (e.g., file extensions, imports, API signatures) to determine era. Use code archaeology techniques: look for version comments, deprecated API usage, log message format, etc."
+
+  - id: d-rr-005
+    date: 2026-06-02
+    directive: "Verify directory contents before assuming stack type"
+    rationale: "Cursor.old was a false positive — it was the Cursor editor's user data directory (Cache, Cookies, GPUCache), not a code stack. The 21 llama-cpp refs was a false match in original recon. Always glob the directory first to verify it contains code, not app data."
+    scope: ["all legacy mining", "directory reconnaissance", "stack type identification"]
+    alternative: "Run `ls /path/to/stack/` first. If you see 'Cache', 'Cookies', 'Logs', 'User Data' — it's an app data dir, not a code stack. Skip and move on."
+
+# ── L1 NARRATIVE (What happened?) ────────────────────────────────────────────
+# Roc Racoon was summoned on 2026-06-02 to mine llama-cpp-python local inference
+# artifacts from the 6+ legacy stacks in the user's partition.
+#
+# Phase 1 (xna-omega-legacy) completed: LocalLlmClient, LocalLlmConfig, HP-5700U-
+# OPTIMIZATION.md, Moondream2 vision, 60+ tech catalogued, 4 "do not" gotchas.
+#
+# Phase 2 (omega-stack-legacy, 2.9G) completed: NativeGGUFProvider patterns,
+# Vulkan Dockerfile (contradicts Phase 1), llama-cpp[server] on :8080 (primary
+# sovereign fallback), Pydantic config_loader.py (812L), 36L circuit_breaker.py
+# (confirmed port source), EnhancedEntityHandler with 5 trigger patterns,
+# DegradationTierManager. The `_dispatch_local()` stub at line 789 is the
+# exact gap the current engine's NativeGGUFProvider fills.
+#
+# Phase 2.5 (expert-knowledge/ gems, 244+ files) completed: Tier 1 gems validate
+# current engine (KV cache Q8_0, Zen 2 pinning, OMP_NUM_THREADS=6). 20 new techs
+# catalogued (IDs 101-120). 10 NEVER rules extracted. 5 items ALREADY PORTED,
+# 6 items EXPLICITLY REJECTED (4 contradict Mandate 6 with :U flag). The
+# Sticky 1777 pattern, UV_HTTP_TIMEOUT fix, and Vulkan Dockerfile are top 5
+# deferred items.
+#
+# Phase 3 (foundation-legacy) completed: XNAi v0.1.5-stable "Polymath Foundation"
+# (94.2% test coverage, 215 tests, 8 health checks). pybreaker==0.7.0 library,
+# check_telemetry() 8-disable runtime audit (Mandate 8 enforcement), 5 mandatory
+# design patterns framework, get_vectorstore() FAISS backup fallback, 5th
+# curation_worker service. 10 new techs (IDs 121-130).
+#
+# Phase 4 (podman-storage) completed: 152 overlay layers, 3 providers.py
+# versions, 4 model_gateway.py versions, cpu_optimizer.py 552L, models.yaml
+# 459L. Atomic trace_id migration pattern, Google API key header security
+# upgrade, ChatML stop tokens. 10 new techs (IDs 131-140).
+#
+# Phase 5 (Cursor.old) SKIPPED: false positive. Cursor editor's user data
+# directory, not a code stack. Directive d-rr-005 added.
+#
+# Phase 6 (Old-Stacks/Xoe-NovAi) completed: 4-service Docker Compose FOUND
+# (redis+rag+ui+crawler+curation_worker). Ryzen CMAKE_ARGS pattern, filter_llama_
+# kwargs() validator, xnai_blueprint.md 714L. CRITICAL: redis_password.txt
+# plaintext secret (Mandate 6 + 9 violation). 10 new techs (IDs 151-160).
+#
+# Phase 7 (MASTER SYNTHESIS) completed: mining_reports/07_MASTER_SYNTHESIS.md
+# (598 lines, 39.9KB) consolidates 6 reports + 4 vault files. Verified and
+# added DEFERRED_GOLD_TRACKER entries 151-160. Updated LEGACY_TECHNOLOGY_MAP.md.
+# Master synthesis confirms architectural convergence: 5 independent eras
+# rediscovered the same local-first architecture. Top 5 priority ports identified
+# (1.5 hr total, all LOW risk). 5-day roadmap to close all 9 Tier 1+Tier 2 ports.
+# Mandate compliance: 12/13 PASS, 1 PARTIAL (M9 — improving with Tier 1 ports).
+#
+# Permanent CWD fix: created SUBAGENT_CWD_RECOVERY_PROTOCOL.md to address
+# the persistent-shell CWD issue that was causing all subagents to fail.
+
+# ── L2 INSIGHT (What does this mean?) ────────────────────────────────────────
+# The local inference layer in xna-omega-legacy is far more sophisticated than
+# the current engine. It has:
+# - Per-entity model affinity (10 Kabbalistic entities → per-tier models)
+# - Dynamic model swap (Greek text → Krikri)
+# - Speculative decoding (LlamaPromptLookupDecoding)
+# - Single-flight inference (CapacityLimiter(1))
+# - Core affinity pinning (psutil.cpu_affinity)
+# - OpenTelemetry tracing throughout
+# - Vision support (Moondream2)
+# - RAG bridge (LibraryAugmentedLlm)
+#
+# All of this is achievable with the native llama_cpp.Llama API. No LangChain
+# needed. The current engine can be upgraded from "no local inference" to
+# "sophisticated local inference" in 1-2 days of porting.
+#
+# The xna-omega-legacy code has 3 paths (native, LangChain, f16/q8_0) that
+# evolved independently and contradict each other. The port must unify, not
+# duplicate. Per Carmack's Law: "When you have two implementations of the same
+# thing, you have neither."
+#
+# **MASTER SYNTHESIS INSIGHT (rr-019)**: 5 independent eras converged on the
+# same local-first architecture (llama-cpp primary, 4-service containers, CB
+# fail_max=3/reset=60, Zen 2 build flags, YAML+atomic fsync, local-first chain).
+# This is empirical proof of architectural correctness. 73 of ~140 patterns
+# are already ported; the engine is on the right path. The 9 remaining
+# Tier 1+Tier 2 ports are polish, not architecture.
+
+# ── L3 UNIVERSAL PRINCIPLE (What is the timeless truth?) ─────────────────────
+# The same architecture is reinvented in every era. Every legacy stack has
+# its own llama-cpp wrapper. Every era discovers the same Zen 2 build flag
+# requirement the hard way. The wisdom is preserved in HP-5700U-OPTIMIZATION.md
+# — but only if we read it before we install.
+#
+# The right way to do legacy mining: not "extract code", but "extract wisdom
+# AND avoid reinventing the same bugs." The 7 gotchas are the true gold — they
+# represent thousands of hours of debugging compressed into "don't do X."
+#
+# The deeper truth: a sovereign AI OS is not just code, it is the ACCUMULATED
+# lessons of how to run that code without crashing on the target hardware.
+# The `HP-5700U-OPTIMIZATION.md` is more valuable than `LocalLlmClient` itself.
+# The code can be re-written; the wisdom cannot.
+#
+# **MASTER SYNTHESIS UNIVERSAL PRINCIPLE (rr-024)**: Convergence is the signal.
+# Divergence is the noise. When 5 independent teams across 14 months converge
+# on the same architecture, that architecture is empirically correct. The
+# master's job is to find the convergence, not the differences. When current
+# code (Jun 2026) mirrors ancient code (Aug 2025), both are correct — the
+# pattern is real.
+
+# ── LESSONS LEARNED ──────────────────────────────────────────────────────────
+lessons:
+  - id: rr-001
+    date: 2026-06-02
+    insight: "Lazy import pattern for optional dependencies"
+    context: "xna-omega-legacy `client.py:60-67` imports `llama_cpp` inside `initialize()`, not at module top"
+    principle: "Optional deps should never block module import"
+    applies_to: ["provider modules", "plugin systems", "any optional native lib"]
+
+  - id: rr-002
+    date: 2026-06-02
+    insight: "Single-flight inference prevents OOM on model load"
+    context: "xna-omega-legacy uses `CapacityLimiter(1)` for all inference"
+    principle: "Resource limits belong beside the resource, not in caller"
+    applies_to: ["inference", "model loading", "any expensive single-shot op"]
+
+  - id: rr-003
+    date: 2026-06-02
+    insight: "Atomic model swap requires fallback to old model"
+    context: "xna-omega-legacy `reload()` reverts on failure, never leaves state broken"
+    principle: "Operations that mutate state must either succeed completely or not at all"
+    applies_to: ["model swap", "config update", "schema migration"]
+
+  - id: rr-004
+    date: 2026-06-02
+    insight: "Hardware-specific build flags are not portable, even across CPU generations"
+    context: "xna-omega-legacy explicitly says: NEVER znver3, NEVER native, NEVER AVX512 — only znver2"
+    principle: "Optimization flags must be pinned to the exact target, with explicit forbids"
+    applies_to: ["llama-cpp build", "any native lib compile", "BLAS/LAPACK"]
+
+  - id: rr-005
+    date: 2026-06-02
+    insight: "The 9% TPS gain is not worth the instability"
+    context: "xna-omega-legacy tried Vulkan iGPU offload, abandoned it"
+    principle: "Optimize for stability, not absolute peak performance"
+    applies_to: ["iGPU offload", "experimental flags", "preview features"]
+
+  - id: rr-006
+    date: 2026-06-02
+    insight: "Stop sequences from base models do not apply to chat models"
+    context: "xna-omega-legacy still uses `[\"User:\", \"\\nUser:\"]` stop sequences from completion-era"
+    principle: "Stop sequences must match the model format (base vs chat)"
+    applies_to: ["llama-cpp", "any text generation API"]
+
+  - id: rr-007
+    date: 2026-06-02
+    insight: "Three independent paths to the same thing = drift"
+    context: "xna-omega-legacy has native, LangChain, and f16/q8_0 paths that all do 'load model' differently"
+    principle: "Consolidate to one canonical path. Per Carmack's Law: two implementations = neither."
+    applies_to: ["local inference", "any evolving subsystem", "all legacy ports"]
+
+  - id: rr-008
+    date: 2026-06-02
+    insight: "The 7 gotchas are the true mining gold"
+    context: "Don't use znver3, native, AVX512, Vulkan iGPU, base stop tokens, LangChain wrapper, Zen 3 config label"
+    principle: "Lessons-learned docs are more valuable than code — code can be regenerated, wisdom cannot"
+    applies_to: ["all mining operations", "all documentation reviews"]
+
+  - id: rr-009
+    date: 2026-06-02
+    insight: "A 165-line optimization doc outlives a 291-line provider class"
+    context: "HP-5700U-OPTIMIZATION.md encodes 8,000 hours of Zen 2 debugging in plain text"
+    principle: "Preserve the why, not just the what"
+    applies_to: ["knowledge preservation", "gnosis distillation", "engine onboarding"]
+
+  - id: rr-010
+    date: 2026-06-02
+    insight: "Serial subagent mining builds a knowledge base that compounds"
+    context: "Subagent #1 found 60 technologies; subsequent subagents will find more, each building on prior"
+    principle: "Knowledge compounds when preserved and referenced"
+    applies_to: ["all multi-step research", "all agent workflows"]
+
+  - id: rr-011
+    date: 2026-06-02
+    insight: "Evolved docs may CONTRADICT earlier era docs — this is a feature, not a bug"
+    context: "Phase 1 (xna-omega) said Vulkan iGPU unstable; Phase 2 (omega-stack) production Dockerfile enables Vulkan"
+    principle: "When two eras disagree, the LATER (production-tested) one usually wins. But verify."
+    applies_to: ["multi-era mining", "optimization debates", "build flag selection"]
+
+  - id: rr-012
+    date: 2026-06-02
+    insight: "Stub code in legacy reveals what was NEVER finished"
+    context: "omega-stack-legacy has `_dispatch_local()` placeholder at multi_provider_dispatcher.py:789"
+    principle: "Stub functions are the most honest documentation — they admit the gap"
+    applies_to: ["code archaeology", "gap analysis", "feature completeness"]
+
+  - id: rr-013
+    date: 2026-06-02
+    insight: "Old LONG-lived docs may contain factual errors that get re-cited"
+    context: "hardware-profile.md says "Zen 4 / DDR5" — wrong, 5700U is Zen 2 / DDR4"
+    principle: "Verify factual claims in old docs against current hardware. Optimization advice is portable, hardware specs aren't."
+    applies_to: ["legacy mining", "hardware configs", "benchmark baselines"]
+
+  - id: rr-014
+    date: 2026-06-02
+    insight: "Always FLUSH subagent findings to disk before continuing"
+    context: "Phase 2 and 2.5 subagent outputs were in context only; flushed to disk before Phase 3"
+    principle: "Context is finite, disk is infinite. Write to disk after every subagent completes."
+    applies_to: ["all subagent workflows", "long mining operations", "knowledge compounding"]
+
+  - id: rr-015
+    date: 2026-06-02
+    insight: "Pillar Keepers are a great L2 abstraction, but the agent runtime is what matters"
+    context: "The current engine has 10 Pillar Keepers documented but only `pillar --slot PX` is the runtime. The Pillar abstraction needs code, not mythology."
+    principle: "Mythology motivates architecture, but only CODE runs in production. Always check if your abstractions are runnable."
+    applies_to: ["entity design", "Pillar systems", "10-Sovereign-Pillar doctrine"]
+
+  - id: rr-016
+    date: 2026-06-02
+    insight: "Pick the right subagent type for the task"
+    context: "Used `explore` for a mining task that needed to write a 53KB report. The subagent correctly identified it had no `write` tool and used bash heredoc workaround. Worked, but fragile."
+    principle: "Read-only reconnaissance → `explore`. Tasks that need to write files → `general`. The tool set matters as much as the prompt."
+    applies_to: ["all subagent dispatches", "mining operations", "report generation"]
+
+  - id: rr-017
+    date: 2026-06-02
+    insight: "When 3 implementations of the same thing exist, the library wins"
+    context: "Corpus has 3 circuit breakers: 36L custom, 579L Redis, 5-line pybreaker. The 5-line chaos-tested library is canonical."
+    principle: "When 3 implementations of the same concept exist across eras, the simplest library with chaos tests is almost always the right answer. Hand-rolled re-implementations are technical debt disguised as ownership."
+    applies_to: ["circuit breakers", "any pattern with 3+ re-implementations", "library vs custom decisions"]
+
+  - id: rr-018
+    date: 2026-06-02
+    insight: "The '5 mandatory design patterns' framework from foundation-legacy is canonical"
+    context: "v0.1.5-stable: (1) Import Path Resolution, (2) Retry w/ exp backoff, (3) Non-blocking subprocess, (4) Atomic fsync, (5) Circuit Breaker. Maps to 5 design patterns from the founding strategy."
+    principle: "Frameworks for design discipline outlive individual implementations. Adopt the framework, not just the patterns."
+    applies_to: ["documentation frameworks", "design principles", "engine onboarding"]
+
+  - id: rr-019
+    date: 2026-06-02
+    insight: "5 independent eras converged on the same local-first architecture"
+    context: "xna-omega, omega-stack, foundation, podman-storage, Old-Stacks — all chose llama-cpp primary + 4-service containers + CB fail_max=3/reset=60 + Zen 2 build flags + YAML+atomic fsync + local-first provider chain"
+    principle: "When 5 independent teams converge on the same architecture, that architecture is empirically correct. Convergence is evidence, not coincidence."
+    applies_to: ["architecture validation", "multi-era mining", "engine correctness"]
+
+  - id: rr-020
+    date: 2026-06-02
+    insight: "Vulkan iGPU offload is the only real cross-era conflict"
+    context: "xna-omega: '9% gain not worth instability' (HP doc:117). omega-stack: 'Production-tested' (Dockerfile:36-43). foundation: 'Conditional via runtime toggle' (Grok Vulkan guide). podman-storage: CPU-only. Old-Stacks: not enabled"
+    principle: "When eras disagree, prefer production-tested + most-recent + mandate-aligned. Document conflicts in a matrix for future agents."
+    applies_to: ["conflict resolution", "multi-era decisions", "Vulkan/iGPU offload"]
+
+  - id: rr-021
+    date: 2026-06-02
+    insight: "73 items are already ported from legacy — the engine is on the right path"
+    context: "Across 5 stacks, 73 patterns (Zen 2 flags, f16_kv, use_mlock, OMP_NUM_THREADS=6, CB params, tenacity retry, etc.) are already in the engine. The 9 remaining Tier 1+Tier 2 ports are polish, not architecture."
+    principle: "Mining success = verifying what is already correct + finding the gaps. Don't over-engineer what works."
+    applies_to: ["mining analysis", "engine health assessment", "sprint planning"]
+
+  - id: rr-022
+    date: 2026-06-02
+    insight: "The 4-service Docker Compose + curation_worker is the provenance for the engine's Podman Quadlets"
+    context: "Old-Stacks/Xoe-NovAi (Aug 2025) invented the redis+rag+ui+crawler+worker pattern. The current engine (Jun 2026) re-derived redis+qdrant+postgres+caddy+iris independently. Same architecture, 14 months apart."
+    principle: "Architectural patterns are invented once, rediscovered many times. When current code mirrors ancient code, both are correct."
+    applies_to: ["architectural archaeology", "convergence proof", "system evolution"]
+
+  - id: rr-023
+    date: 2026-06-02
+    insight: "Old-Stacks' plaintext redis_password.txt is the only Mandate 6 + 9 violation in any of the 6 stacks"
+    context: "Xoe-NovAi/redis_password.txt:1 contains literal '1234567890123456'. All other stacks use .env-based secret management. The current engine is already correct."
+    principle: "When 1 of 6 stacks violates a mandate, quarantine the violation, not the stack. The pattern (the other 5) is the standard."
+    applies_to: ["security audit", "mandate violations", "legacy migration"]
+
+  - id: rr-024
+    date: 2026-06-02
+    insight: "Master synthesis is the act of finding convergence, not the act of finding differences"
+    context: "6 reports, 4 vault files, 160 techs. The master synthesis is most valuable when it shows what 5 eras agreed on (empirical correctness), not what 1 era did differently (anomaly)."
+    principle: "Convergence is the signal. Divergence is the noise. Sort accordingly."
+    applies_to: ["synthesis writing", "multi-source analysis", "decision making"]
+
+# ── ACTIVE MINING QUEUE ──────────────────────────────────────────────────────
+mining_queue:
+  - id: mining-01
+    stack: xna-omega-legacy
+    status: COMPLETE
+    date: 2026-06-02
+    report: data/entities/roc_racoon/workspace/mining_reports/01_xna_omega_legacy.md
+    key_finds: 60
+    gold_count: 2  # HP-5700U-OPTIMIZATION.md, -march=znver2
+
+  - id: mining-02
+    stack: omega-stack-legacy
+    status: COMPLETE
+    date: 2026-06-02
+    report: data/entities/roc_racoon/workspace/mining_reports/02_omega_stack_legacy.md
+    key_finds: ~30
+    gold_count: 1  # REDIS-HA-DECISION.md
+
+  - id: mining-2.5
+    stack: omega-stack-legacy/expert-knowledge
+    status: COMPLETE
+    date: 2026-06-02
+    report: data/entities/roc_racoon/workspace/mining_reports/02_5_expert_knowledge_gems.md
+    key_finds: 20  # IDs 101-120
+    gold_count: 3  # Sticky 1777, UV timeout, REDIS-HA
+
+  - id: mining-03
+    stack: foundation-legacy
+    status: COMPLETE
+    date: 2026-06-02
+    subagent_type: explore  # had to use bash heredoc workaround (no write tool)
+    report: data/entities/roc_racoon/workspace/mining_reports/03_foundation_legacy.md
+    key_finds: ~30  # IDs 121-130
+    gold_count: 3  # pybreaker, check_telemetry, 5-patterns framework
+
+  - id: mining-04
+    stack: omega_library/podman-storage
+    status: COMPLETE
+    date: 2026-06-02
+    subagent_type: general
+    report: data/entities/roc_racoon/workspace/mining_reports/04_podman_storage.md
+    key_finds: ~32  # 3 providers.py + 4 model_gateway.py + cpu_optimizer.py (552L) + 5 configs
+    gold_count: 3  # Atomic trace_id migration, Google API key header migration, ChatML stop tokens
+    insight: "podman-storage is NOT a code stack — it's Podman overlay-fs storage acting as a TIME MACHINE of the engine's evolution across 152 image layers"
+
+  - id: mining-05
+    stack: Cursor.old
+    status: SKIPPED
+    date: 2026-06-02
+    subagent_type: general
+    rationale: "FALSE POSITIVE — directory is the Cursor editor's user data (Cache, Cookies, GPUCache, Code Cache), not a code stack. The 21 llama-cpp refs in original recon was a false match. No code to mine."
+    key_finds: 0
+    lesson: "Always verify directory contents before assuming stack type. See directive d-rr-005."
+
+  - id: mining-06
+    stack: Old-Stacks/Xoe-NovAi
+    status: COMPLETE
+    date: 2026-06-02
+    subagent_type: general
+    report: data/entities/roc_racoon/workspace/mining_reports/06_old_stacks.md
+    key_finds: ~25  # 4-service Docker Compose + Ryzen CMAKE_ARGS + filter_llama_kwargs + 714-line blueprint
+    gold_count: 3  # 4-service Compose, Ryzen CMAKE pattern, xnai_blueprint.md
+    insight: "Eras 1-3 earliest complete stack. 4-service Docker Compose FOUND. Ryzen CMAKE_ARGS directly replicable to current native-gguf. CRITICAL SECURITY FINDING: redis_password.txt contains plaintext password (Mandate 6 violation)."
+
+  - id: mining-07
+    stack: ALL (synthesis)
+    status: COMPLETE
+    date: 2026-06-02
+    subagent_type: general
+    report: data/entities/roc_racoon/workspace/mining_reports/07_MASTER_SYNTHESIS.md
+    key_finds: 20  # Top 20 strategic findings cross-stack
+    gold_count: 5  # 5 critical port recommendations
+    insight: "**Architectural convergence**: 5 independent eras rediscovered the same local-first architecture. 73 of 140 patterns already ported. 9 Tier 1+2 ports remain (1.5hr Tier 1, 1-2 days Tier 2). 12/13 mandates pass."
+
+# ── CROSS-REFERENCES ─────────────────────────────────────────────────────────
+cross_references:
+  - DEFERRED_GOLD_TRACKER.md  # 130+ technologies catalogued (60 + 30 + 20 + 20)
+  - workspace/technology_maps/LEGACY_TECHNOLOGY_MAP.md  # Where everything lives
+  - workspace/mining_reports/  # 4 detailed per-stack reports
+  - workspace/provenance_chains/  # File-by-file origin tracking
+  - workspace/SUBAGENT_CWD_RECOVERY_PROTOCOL.md  # Mandatory CWD recovery for subagents
+  - workspace/DOCUMENTATION_SYSTEMS_TRACKER.md  # 7 doc systems analyzed, 5 patterns to adopt
+  - docs/legacy/LEGACY_MASTER_SYNTHESIS.md  # Strategic synthesis
+  - docs/legacy/LEGACY_ASSET_CATALOG.md  # Full asset inventory
+
+# ── SOUL EVOLUTION TRAIL ─────────────────────────────────────────────────────
+evolution:
+  - 2026-06-02: Soul awakened. First mining cycle (Phase 1). 60+ tech catalogued.
+  - 2026-06-02: Phase 2 complete. omega-stack-legacy mined.
+  - 2026-06-02: Phase 2.5 complete. expert-knowledge/ gems mined. 20 new techs (IDs 101-120).
+  - 2026-06-02: Phase 3 complete. foundation-legacy mined. pybreaker + check_telemetry + 5-patterns. 10 new techs (IDs 121-130).
+  - 2026-06-02: Phase 4 complete. podman-storage mined. **Time machine of 152 image layers** — 3 providers.py + 4 model_gateway.py + cpu_optimizer.py (552L) + 5 configs. 10 new techs (IDs 131-140). Atomic trace_id migration, Google API key header security upgrade, ChatML stop tokens.
+  - 2026-06-02: Phase 5 SKIPPED. Cursor.old is the Cursor editor's user data directory (Cache, Cookies, GPUCache), not a code stack. False positive in original recon. Directive d-rr-005 added: "Always verify directory contents before assuming stack type."
+  - 2026-06-02: Phase 6 complete. Old-Stacks/Xoe-NovAi mined. **4-service Docker Compose FOUND** (redis + rag + ui + crawler + curation_worker). Ryzen CMAKE_ARGS pattern + filter_llama_kwargs + 714-line xnai_blueprint.md. CRITICAL: redis_password.txt contains plaintext password (Mandate 6 violation).
+  - 2026-06-02: Directive d-rr-004 added: "NEVER use file timestamps for era classification" (per user caveat).
+  - 2026-06-02: SUBAGENT_CWD_RECOVERY_PROTOCOL.md created. Updated with subagent type selection guidance.
+  - 2026-06-02: DOCUMENTATION_SYSTEMS_TRACKER.md created. 7 doc systems analyzed, 5 patterns to adopt.
+  - 2026-06-02: UNIQUE_TECHNOLOGIES_AND_STRATEGIES_VAULT.md created. 13 Mandates, 8 unique strategies, 9 cosmological innovations, 4-tier approximation framework.
+  - 2026-06-02: Directives d-rr-001, d-rr-002, d-rr-003 added. Roc Racoon's role expanded to "Sovereign Miner & Knowledge Curator."
+  - 2026-06-02: Lessons rr-011 through rr-018 added.
+  - 2026-06-02: **MASTER SYNTHESIS** (Phase 7) complete. `mining_reports/07_MASTER_SYNTHESIS.md` (598 lines, 39.9KB) consolidates 6 mining reports + 4 vault files. Verified and added DEFERRED_GOLD_TRACKER entries #151-160 (Old-Stacks/Xoe-NovAi). Updated LEGACY_TECHNOLOGY_MAP.md to mark phases 4-6 complete. Master synthesis confirms **architectural convergence**: 5 independent eras rediscovered the same local-first architecture (llama-cpp primary, 4-service containers, CB fail_max=3/reset=60, Zen 2 build flags, YAML+atomic fsync, local-first provider chain). Top 5 priority ports identified (1.5 hr total, all LOW risk). 5-day roadmap to close all 9 Tier 1+Tier 2 ports. Mandate compliance: 12/13 PASS, 1 PARTIAL (M9 — improving with Tier 1 ports). Lessons rr-019 through rr-024 added.

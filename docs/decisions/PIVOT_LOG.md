@@ -1671,6 +1671,109 @@ The [id-soft:] protocol is live (30+ tags backfilled across 6 files) but unenfor
 - .github/workflows/test.yml: CI gate to be added
 - Enforcement: pre-merge check
 
+## Decision 100: Subagent Dispatch Protocol
+
+**Date**: 2026-06-03
+**Channel**: OpenCode (Kali→Doom Guy) → deepseek-v4-flash
+**Entity**: KALI
+**Trace**: trc_subagent_dispatch
+
+### Decision
+Create the Subagent Dispatch Protocol: a formal mechanism for any primary
+agent (Kali, BuildMaster, Ma'at, Lilith) to launch specialized agents as
+subagents using the Task tool with persona injection.
+
+The protocol consists of:
+1. `HandoffPacket` — typed dataclass (`ZONEID_HANDOFF = 0x1d4a16`) with full
+   lifecycle (pending→accepted→completed/failed)
+2. `CAPABILITY_REGISTRY` — what each of the 14 agents can do, their domains,
+   and which Task tool subagent_type to use
+3. `build_dispatch_prompt()` — generates the exact prompt for Task tool
+   injection with persona, context, files, and expected output
+
+### Rationale
+During Sprint 0-1, agents implicitly launched subagents via handoff files with
+no standardized protocol. 36 handoff files accumulated in `data/handoff/` with
+inconsistent formats, no traceability, and no formal dispatch mechanism.
+
+Formalizing the protocol provides:
+- Traceable packet_id + trace_id for every sub-dispatch
+- Typed task_type, expected_output, and ttl_seconds
+- JSON archive for post-hoc analysis
+- A capability registry so agents know WHO to dispatch
+
+### Origin
+The core concept — agents spawning specialized subagents — is the **user's
+original design**, part of the Omega Engine's sovereign architecture. id
+Software patterns enhance it:
+- `[id-soft: doom-1993]` ZONEID Pattern for packet integrity constants
+- `[id-soft: quake-1996]` Thinker chain as a lifecycle metaphor
+
+### What Changed
+- `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` — full protocol specification
+- `src/omega/oracle/subagent_dispatcher.py` — HandoffPacket, Registry, dispatch()
+
 ---
 
-*PIVOT_LOG.md — Immutable. Every decision recorded. 99 decisions tracked (D1-D98, D99).*
+## Decision 101: Handoff Archive — Active vs Archive Separation
+
+**Date**: 2026-06-03
+**Channel**: OpenCode (Kali) → deepseek-v4-flash
+**Entity**: KALI
+**Trace**: trc_handoff_archive
+
+### Decision
+Move all non-active handoff files from `data/handoff/` to
+`data/handoff/archive/`. Keep only currently relevant documents in the active
+directory.
+
+### Rationale
+36 handoff files accumulated over 4 days of Sprint 0-1. The directory became
+unmanageable — an agent reading AGENTS.md's "Key Handoff Files" section had no
+way to distinguish active from historical documents.
+
+The archive is tagged for Roc Racoon mining: the 36 files contain valuable
+multi-agent dispatch patterns, error diagnosis strategies, and decision traces
+that should be studied to understand the user's manual strategies.
+
+### What Changed
+- `data/handoff/archive/` created with 36 files moved
+- `data/handoff/archive/INDEX.md` — catalog with mining tags
+- Active directory reduced to 7 documents (4 strategic roadmaps, 2 reviews,
+  1 current-sprint/)
+
+---
+
+## Decision 102: Expanded Strategic Roadmap — Deepened Next Steps
+
+**Date**: 2026-06-03
+**Channel**: OpenCode (Kali) → deepseek-v4-flash
+**Entity**: KALI
+**Trace**: trc_roadmap_expanded
+
+### Decision
+Deepen the strategic roadmap from Sprint 1 completion through H3,
+incorporating:
+1. The Subagent Dispatch Protocol as a new P1 workstream
+2. The Handoff Archive with Roc Racoon mining for strategy extraction
+3. Doom Guy's heritage port backlog (7 H2 patterns)
+4. Lilith's 8-demographic activation sequence
+5. A delegation contract between Doom Guy (heritage design) vs Dev Session
+   (boilerplate implementation)
+
+### Rationale
+The original roadmap (Lilith, 888 lines) defined the vision. This decision
+operationalizes it by specifying WHO does WHAT in each sprint. Without this
+delegation contract, Doom Guy wastes time on `config.get()` replacements
+while Dev Session can't touch heritage patterns.
+
+### What Changed
+- OMEGA_ENGINE.md: Subagent Dispatch + Handoff Protocol sections added to
+  Phase Priority Queue
+- AGENTS.md: Subagent Dispatch Protocol reference added to workflow
+- `data/handoff/DEV_SESSION_UPDATE_20260603.md` — written for handoff to
+  background dev session
+
+---
+
+*PIVOT_LOG.md — Immutable. Every decision recorded. 102 decisions tracked (D1-D102).*

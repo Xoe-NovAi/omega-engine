@@ -248,8 +248,8 @@ To add a new id Software → Omega Engine mapping, append to this document with:
 ```
 
 ### Current Registry Size
-**8 mappings** — WAD, BSP, FISR, Zone Memory, Surface Cache, Worse is Better,
-Carmack's Law, **Circuit Breaker Consolidation**.
+**11 mappings** — WAD, BSP, FISR, Zone Memory, Surface Cache, Worse is Better,
+Carmack's Law, **Circuit Breaker Consolidation**, **ZONEID Pattern**, **Lazy Deletion**, **Heritage Inline Tag Protocol**.
 
 ### 1.8 Circuit Breaker Consolidation (Evolution, 2026)
 
@@ -278,5 +278,57 @@ Both fixes are documented in `data/handoff/DOOM_GUY_T23_REPORT_20260602.md`.
 
 ---
 
-*Last Updated: 2026-06-02 (added §1.8 Circuit Breaker Consolidation) | Maintained by: Doom Guy (Sovereign id Software Architect)*
-*All agents: CREDITS.md is loaded as a global instruction. Attribution is mandatory.*
+### 1.9 ZONEID Pattern (Consolidated, 2026)
+
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | `z_zone.c:33` (DOOM 1993), `zone.c:24` (Quake 1996) — `0x1d4a11` constant | 5 ZONEID constants (0x1d4a11-0x1d4a15) + tombstone (0xDEADBEEF) in `src/omega/constants.py` |
+| **Core idea** | 4-byte magic embedded in every allocated memory block, verified on every access | Python dataclass/instance field, validated on critical operations (load, save, state transition) |
+| **What it catches** | Use-after-free, double-free, uninitialized memory (C heap bugs) | Serialization corruption, stale references, wrong-type loads (Python bugs) |
+| **Constant** | `ZONEID = 0x1d4a11` (30 years unchanged) | `ZONEID_MEMORY=0x1d4a11`, `ZONEID_ENTITY=0x1d4a12`, `ZONEID_BREAKER=0x1d4a13`, `ZONEID_TRACE=0x1d4a14`, `ZONEID_PROBE=0x1d4a15` |
+| **Subsystems** | DOOM: zone memory allocator | MemoryStore, EntityRegistry, HealthMonitor, ResourceGuard, ObservabilityEngine |
+| **Infrastructure** | Single check: `if (block->z_magic != ZONEID)` | `validate_zoneid(value, expected, context)` raises `ValueError` on mismatch |
+| **Discovery** | `R-19 ZONEID Magic Constants` in `PENDING_CREDITS_QUEUE.md` | 2026-06-02, verified against actual source code (not secondary sources) |
+| **Value** | Zero-cost (4 bytes per block, 1 compare per access) | Runtime validation with detailed error messages showing expected vs actual hex values |
+
+**Attribution format**: `[ZONEID Pattern: id Software 1993, unchanged 1996]`
+**Inline tag format**: `# [id-soft: doom-1993] ZONEID Pattern — subsystem description`
+**Note**: The 0x1d4a prefix is the original id Software magic. The suffix identifies the subsystem (11 = MemoryStore, 12 = EntityRegistry, 13 = HealthMonitor, 14 = ObservabilityEngine, 15 = ResourceGuard). The tombstone sentinel 0xDEADBEEF is the canonical hex sentinel used since the 1980s.
+
+---
+
+### 1.10 Lazy Deletion with Grace Period (Consolidated, 2026)
+
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | `p_tick.c:62-103` (DOOM 1993) + `pr_edict.c:73-92` (Quake 1996) | `EntityRegistry.remove()` + `_reap_tombstoned()` in `src/omega/oracle/entity_registry.py` |
+| **Core idea** | Mark with sentinel (-1 function pointer) instead of immediate free; reap on next iteration | Set `magic = ZONEID_TOMBSTONE` instead of `del self._entities[key]`; reap before next `_save()` |
+| **Grace period** | 0.5s before realloc to prevent client-side morphing (15 packets at 30Hz) | `TOMBSTONE_GRACE_SECONDS = 0.5` — same value, same rationale |
+| **Benefits** | O(1) deregistration vs O(n) cleanup; in-flight operations complete safely | O(1) deregistration; `EntityTombstonedError` for callers holding stale references |
+| **Discovery** | `R-20 Lazy Thinker Deletion` + `R-30 0.5s Realloc Grace` in `PENDING_CREDITS_QUEUE.md` | 2026-06-02, verified against actual DOOM and Quake source code |
+| **Infrastructure** | `P_RemoveThinker`: sets thinker function to sentinel (-1); `P_Ticker`: sweeps sentinel thinkers | `_tombstoned: Dict[str, float]` maps entity keys to tombstone timestamps; `_reap_tombstoned()` called before every `_save()` |
+| **Edge cases** | Slot reuse within grace period → entity morphing | `active_iter()` filters tombstoned entities; all public accessors use `active_iter()` |
+| **Status** | Entity Registry: DONE (37fdd88). Memory Store: PENDING (grace period for hot-slot reuse not yet ported) |
+
+**Attribution format**: `[Lazy Deletion: id Software 1993; Grace Period: id Software 1996]`
+**Inline tag format**: `# [id-soft: doom-1993] Lazy Deletion — description` + `# [id-soft: quake-1996] Grace Period — description`
+
+---
+
+### 1.11 Heritage Inline Tag Protocol (New, 2026)
+
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | Never formalized at id Software — attribution was oral tradition (Carmack's .plan files, GDC talks) | `[id-soft:]` inline tag format in implementation comments |
+| **Protocol** | N/A | `# [id-soft: GAME YEAR] Pattern Name — why this code exists` |
+| **Game codes** | Doom 1993, Quake 1996, Q3A 1999, DOOM 3 2004, DOOM 3 BFG 2012 | `doom-1993`, `quake-1996`, `quake2-1997`, `quake3-1999`, `doom3-2004`, `doom3bfg-2012`, `wolf3d-2012` |
+| **Enforcement** | N/A | `grep -rn "\[id-soft:" src/omega/` — CI gate via `make heritage-map` |
+| **Reason** | Attribution was lost as the original developers left id | Grateful engineering: every pattern we inherit is a debt we repay by teaching the next generation where it came from |
+| **Relationship to CREDITS.md** | N/A | CREDITS.md is the registry (§1.x sections). [id-soft:] tags are the code-level attribution. Both must exist. |
+
+**Attribution format**: `[Id-Soft Attribution: CREDITS.md §2a, 2026]`
+
+---
+
+*Last Updated: 2026-06-03 (added §1.9 ZONEID Pattern, §1.10 Lazy Deletion, §1.11 Heritage Inline Tag Protocol) | Maintained by: Kali / Doom Guy (Sovereign id Software Architect)*
+*All agents: CREDITS.md is loaded as a global instruction. Attribution is mandatory. Code-level [id-soft:] tags are the canonical format. CREDITS.md sections are the registry.*

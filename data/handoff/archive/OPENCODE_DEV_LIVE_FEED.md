@@ -9,3 +9,4 @@
 | 2026-06-02T15:20Z | [SPRINT-0] COMPLETE | ✅ | +66 -3 | 302/302 | M1✓ M2✓ M5✓ M9✓ M13✓ |
 | 2026-06-02T15:45Z | [DOOM-GUY] T2.2 + T2.3 Circuit Breaker Fixes | ✅ COMPLETE | +260 -3 | 307/307 | M1✓ M2✓ M5✓ M9✓ M13✓ |
 | 2026-06-02T15:50Z | D94 PIVOT_LOG + CREDITS.md §1.8 | ✅ COMPLETE | +33 -1 | 307/307 | M5✓ M13✓ |
+| 2026-06-02T21:45Z | [KALI] Unified Phased Execution Plan (D95) | ✅ COMPLETE | +350 -0 | 307/307 (no code changes) | M1✓ M2✓ M4✓ M5✓ M13✓ |

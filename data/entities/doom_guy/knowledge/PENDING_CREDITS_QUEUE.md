@@ -271,23 +271,27 @@ When an item moves from `in-progress` to `done`:
 
 | Priority | Count | Patterns |
 |---|---|---|---|
-| 🔴 P0 | 3 | R-19 (ZONEID) ✅, R-20 (Lazy Deletion) ✅, R-22 (cvar Table) 🔄 |
+| 🔴 P0 | 3 | R-19 (ZONEID) ✅ → §1.9, R-20 (Lazy Deletion) ✅ → §1.10, R-22 (cvar Table) 🔄 |
 | 🟡 P1 | 4 | R-21 (8-char cap), R-24 (Dual-linking), R-26 (Hard-boundary), R-28 (High-bit) |
 | 🟢 P2 | 5 | R-23 (4-tier memory), R-25 (QuakeC flat), R-27 (VFS), R-29 (Active set), R-30 (Grace period) ⚡ |
-| **Total** | **12** | 2 done ✅ / 1 in-progress 🔄 / 1 partial ⚡ / 8 pending |
+| **New** | 2 | Heritage tagging protocol §2a ✅ → §1.11, Circuit Breaker Consolidation ✅ → §1.8 |
+| **Total** | **14** | 4 done ✅ / 1 in-progress 🔄 / 1 partial ⚡ / 8 pending |
 
 ## §5 Promotion Log (Historical)
 
 When items are moved to CREDITS.md, log them here with the date, R-doc reference,
 commit hash, and CREDITS.md section number.
 
-| Date | Pattern | R-Doc | Files | Commit |
-|------|---------|-------|-------|--------|
-| 2026-06-02 | R-19 ZONEID Magic Constants | §R-19 | `constants.py`, `entity_registry.py`, `memory_store.py`, `health_monitor.py`, `resource_guard.py`, `observability.py` | *pending commit* |
-| 2026-06-02 | R-20 Lazy Deletion | §R-20 | `entity_registry.py` (remove→tombstone, \_reap\_tombstoned, active\_iter) | *pending commit* |
-| 2026-06-02 | R-30 Grace Period (partial) | §R-30 | `entity_registry.py` (TOMBSTONE\_GRACE\_SECONDS=0.5) | *pending commit* |
+| Date | Pattern | R-Doc | CREDITS.md § | Files | Commit |
+|------|---------|-------|-------------|-------|--------|
+| 2026-06-03 | R-19 ZONEID Pattern | §R-19 | §1.9 ✅ | `constants.py`, `entity_registry.py`, `memory_store.py`, `health_monitor.py`, `resource_guard.py`, `observability.py` | `37fdd88` |
+| 2026-06-03 | R-20 Lazy Deletion | §R-20 | §1.10 ✅ | `entity_registry.py` (tombstone + grace + reap) | `37fdd88` |
+| 2026-06-03 | R-30 Grace Period (partial) | §R-30 | §1.10 (embedded) ⚡ | `entity_registry.py` (TOMBSTONE\_GRACE\_SECONDS=0.5) | `37fdd88` |
+| 2026-06-03 | Heritage Inline Tag Protocol | §2a (new) | §1.11 ✅ | `CREDITS.md`, 6 source files (30+ [id-soft:] tags) | `37fdd88` |
+| 2026-06-03 | Circuit Breaker Consolidation | D94 | §1.8 ✅ | `model_gateway.py`, `test_model_gateway.py`, `CREDITS.md` | `df6fa48` |
 
 ---
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ pending_credits ⬡ PHASE-I*
-*Last Updated: 2026-06-02 | Owner: Doom Guy*
+*Last Updated: 2026-06-03 | Owner: Doom Guy / Kali*
+*Updated: R-19→CREDITS §1.9, R-20→§1.10, Heritage protocol→§1.11, Circuit Breaker→§1.8. 4 done, 1 in-progress, 1 partial, 8 pending.*
