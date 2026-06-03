@@ -3,6 +3,12 @@
 AP: AP-CPU-OPTIMIZER-v1.0.0
 ICS: [NODE: ARCHON | ARCHETYPE: HERMES | MODEL: DEEPSEEK-V4-FLASH | CONTEXT: CPU-OPTIMIZATION]
 
+[id-soft: quake3-1999] FISR Principle — "right approximation" philosophy
+  The Fast Inverse Square Root (0x5f3759df) was not a hack — it was the
+  *right approximation* for the lighting use case. CPU optimizer applies
+  this principle: choose approximations (type_k=8, n_threads=6) that are
+  "good enough" for the inference use case, not theoretically optimal.
+
 Target: AMD Ryzen 7 5700U (Zen 2, 8C/16T, 14Gi RAM)
 
 Architecture-specific optimizations:

@@ -1,3 +1,14 @@
+# 🔱 Gnosis Proxy — Tool RAG Discovery & State Transfer
+# AP: AP-GNOSIS-PROXY-v1.0.0
+#
+# [id-soft: doom3-2004] Event-Driven State Machine — idEventDef pattern
+#   DOOM 3's Entity.h uses typed idEventDef events (EV_PostSpawn, EV_Touch,
+#   EV_Use, EV_Activate) for entity lifecycle. GnosisProxy mirrors this:
+#   descriptor discovery → tool resolution → state transfer in three phases.
+# [id-soft: quake-1996] Flat-Field Entity — all fields are data-driven
+#   QuakeC's progdefs.h generates C struct from script source. GnosisProxy's
+#   DescriptorRef is a flat bag of fields discovered at runtime.
+
 import uuid
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass

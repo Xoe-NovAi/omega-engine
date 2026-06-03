@@ -13,6 +13,11 @@
 # Integration:
 #   context_block = await ContextBuilder().build_context(entity_name, session_id)
 #   system_prompt = ContextBuilder.prepend_to_prompt(context_block, entity.personality)
+#
+# [id-soft: quake-1996] Zone Memory — Cache (LRU) tier pattern
+#   Quake's zone allocator (zone.h:24-80) has a Cache tier (PU_CACHE=101)
+#   that is purged when memory runs low. ContextBuilder fetches from
+#   MemoryStore's hot tier (most recent) and falls back to warm/cold.
 
 import logging
 from datetime import datetime, timezone

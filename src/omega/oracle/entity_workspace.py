@@ -5,6 +5,11 @@ ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | MODEL: GEMINI-3.1-PRO | CONTEXT: ENTITY
 
 Manages the creation and scaffolding of persistent entity workspaces,
 including the soul.yaml and dedicated knowledge/workspace directories.
+
+[id-soft: quake-1996] QuakeC Flat Entity — data-driven workspace creation
+  QuakeC's progdefs.h generates entity struct fields from script source.
+  EntityWorkspaceManager auto-scaffolds per-entity workspaces from YAML
+  definitions — same data-driven principle.
 """
 
 import logging

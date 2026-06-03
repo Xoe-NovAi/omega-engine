@@ -5,6 +5,11 @@ ICS: [NODE: ARCHON | ARCHETYPE: HERMES | MODEL: GEMINI-3.1-PRO | CONTEXT: ORCHES
 
 Manages the lifecycle of headless AI subagents (Cline, OpenCode).
 Uses AnyIO for subprocess spawning and ResourceGuard to protect RAM.
+
+[id-soft: quake-1996] Dedicated Server Model — lifecycle management
+  Quake's dedicated server runs headless, managing client connections
+  through a tick loop. Orchestrator mirrors this: manages subagent
+  processes through AnyIO tasks with ResourceGuard protection.
 """
 
 import logging

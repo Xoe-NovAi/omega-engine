@@ -7,6 +7,14 @@
 # EntityRegistry and Voice system.
 #
 # Respects the Engine-Stack Firewall: only modifies runtime state.
+#
+# [id-soft: doom-1993] WAD System — IWAD/PWAD separation with backward scan
+#   DOOM's WAD format (w_wad.c:376) scans backwards so PWAD patch files
+#   take precedence over IWAD base entries. Omega mirrors this: later WAD
+#   entity definitions override earlier ones.
+# [id-soft: quake3-1999] 4-Path VFS — search order: active stack → _omega_default
+#   Q3A's files.c:39-75 defines base + cd + home + current game search order.
+#   Omega's wad_loader follows the same override chain pattern.
 
 import logging
 import os

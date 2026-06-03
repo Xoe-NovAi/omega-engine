@@ -11,6 +11,7 @@
 import logging
 import os
 import time
+import struct
 import tempfile
 import functools
 from dataclasses import dataclass, field, asdict
@@ -56,6 +57,64 @@ class Entity:
     wad_source: Optional[str] = None
     # [id-soft: doom-1993] ZONEID Pattern — runtime marker, not serialized
     magic: int = field(default=ZONEID_ENTITY, compare=False)
+    # [id-soft: doom-1993] High-Bit Trick — flags as bitfield, high bit = system
+    # 0x80000000 = system entity, 0x40000000 = WAD-loaded entity
+    flags: int = field(default=0, compare=False)
+    # [id-soft: quake3-1999] Hard-Boundary — engine zone sentinel
+    # __engine_zone__ and __game_zone__ are checked by zone-aware getters.
+    __engine_zone__: dict = field(default_factory=dict, repr=False, compare=False)
+    __game_zone__: dict = field(default_factory=dict, repr=False, compare=False)
+
+    def __post_init__(self) -> None:
+        """Post-init: populate zone sentinels from known fields.
+
+        [id-soft: quake3-1999] Hard-Boundary — automatically partition
+        fields into engine zone (read-only) and game zone (writable).
+        """
+        # Engine zone: structural identity fields (DO NOT MODIFY by game logic)
+        self.__engine_zone__ = {
+            "magic": self.magic,
+            "name": self.name,
+            "domains": self.domains,
+            "model": self.model,
+            "role": self.role,
+            "container": self.container,
+            "port": self.port,
+            "wad_source": self.wad_source,
+            "pillars": self.pillars,
+            "flags": self.flags,
+        }
+        # Game zone: personality/behavior fields (freely modifiable)
+        self.__game_zone__ = {
+            "personality": self.personality,
+            "temperature": self.temperature,
+            "context_window": self.context_window,
+            "secondary_keeper": self.secondary_keeper,
+            "pantheon": self.pantheon,
+            "element": self.element,
+            "chakra": self.chakra,
+            "planet": self.planet,
+            "sigil": self.sigil,
+            "glyph": self.glyph,
+            "invocation": self.invocation,
+        }
+
+    def is_system(self) -> bool:
+        """Check if this is a system-level entity (high-bit flag).
+
+        [id-soft: doom-1993] High-Bit Trick — single bit check
+        instead of separate boolean field. 1 AND instruction vs 1 struct field.
+        """
+        return bool(self.flags & EntityRegistry.FLAG_SYSTEM)
+
+    def mark_system(self) -> None:
+        """Mark this entity as system-level (high-bit).
+
+        Once set, this should not be cleared — follows the same
+        convention as id Software's NF_SUBSECTOR bit.
+        """
+        self.flags |= EntityRegistry.FLAG_SYSTEM
+        self.__engine_zone__["flags"] = self.flags
 
     def to_dict(self) -> Dict[str, Any]:
         """Serialize entity fields to dict, excluding None/empty/magic."""
@@ -84,6 +143,31 @@ class EntityRegistry:
     # [id-soft: quake-1996] Grace Period — 0.5s realloc delay
     # Derived from Quake 1996 host_cmd.c's delayed entity removal pattern.
     TOMBSTONE_GRACE_SECONDS = 0.5
+
+        # [id-soft: doom-1993] 8-Char Name — max name length for fast 2-int compare
+    # DOOM lumps use 8-byte names so comparison is 2 × int32 vs strcmp.
+    # Python benefit: dict short-circuit on hash mismatch, plus consistent key format.
+    MAX_NAME_LENGTH = 8
+
+    # [id-soft: doom-1993] High-Bit Trick — flag encoding using high bit
+    # DOOM's NF_SUBSECTOR (0x8000) repurposed high bit of node child index.
+    # Here: high bit (bit 31) = SYSTEM entity. Two types in one integer field.
+    FLAG_SYSTEM = 0x80000000  # Bit 31: system-level entity (vs user-created)
+    FLAG_WAD = 0x40000000     # Bit 30: loaded from a WAD (vs runtime-created)
+    FLAG_ACTIVE = 0x00000000  # Default: active entity (low bits = slot flags)
+
+    # [id-soft: quake3-1999] Hard-Boundary Struct — engine zone vs game zone
+    # Q3A separated entityState_t (engine-owned) from entityShared_t (game-owned)
+    # with a "DO NOT MODIFY" comment. We use sentinel attributes.
+    ENGINE_ZONE_ATTRS = frozenset({
+        "magic", "name", "domains", "model", "role",
+        "container", "port", "wad_source", "pillars",
+    })
+    GAME_ZONE_ATTRS = frozenset({
+        "personality", "temperature", "context_window",
+        "secondary_keeper", "pantheon", "element", "chakra",
+        "planet", "sigil", "glyph", "invocation",
+    })
 
     # 1. Define Core Slots (The Holographic Grid)
     PILLAR_SLOTS = {
@@ -261,11 +345,24 @@ class EntityRegistry:
         return self._wad_sources.get(name.lower(), [])
 
     async def add(self, entity: Entity) -> None:
-        """Add a new entity. Overwrites if name exists."""
+        """Add a new entity. Overwrites if name exists.
+
+        [id-soft: doom-1993] 8-Char Name — validates name length at add time
+        [id-soft: doom-1993] High-Bit Trick — sets WAD flag if wad_source present
+        """
         if self._lock is None:
             self._lock = anyio.Lock()
         async with self._lock:
-            key = entity.name.lower()
+            # [id-soft: doom-1993] 8-Char Name — validate at add time
+            name_key = self._validate_name(entity.name)
+            entity.name = name_key  # Normalize to lowercase
+            
+            # [id-soft: doom-1993] High-Bit Trick — set FLAG_WAD if WAD-loaded
+            if entity.wad_source:
+                entity.flags |= EntityRegistry.FLAG_WAD
+                entity.__engine_zone__["flags"] = entity.flags
+            
+            key = name_key
             
             # Track WAD source if present
             if entity.wad_source:
@@ -355,6 +452,51 @@ class EntityRegistry:
     def count_active(self) -> int:
         """Count non-tombstoned entities."""
         return len(self.active_iter())
+
+    # ── 8-Char Name Utility ───────────────────────────────────────────
+    # [id-soft: doom-1993] R-21 8-Char Name Caps — fast 2-int compare
+    # DOOM's WAD lump names are 8 bytes: `*(int*)name` + `*(int*)&name[4]`
+    # enables 2-instruction comparison vs strcmp.
+    # Here: short_name_hash returns a 64-bit int for dict key optimization.
+
+    @staticmethod
+    def short_name_hash(name: str, default: int = 0) -> int:
+        """Encode a name as a 64-bit hash for fast comparison.
+
+        Names longer than MAX_NAME_LENGTH (8) are truncated with a warning.
+        Returns the hash as a Python int (unlimited precision, but the
+        hash itself is only 64 bits wide).
+        """
+        truncated = name[:EntityRegistry.MAX_NAME_LENGTH]
+        if len(name) > EntityRegistry.MAX_NAME_LENGTH:
+            logger.warning(
+                "EntityRegistry.short_name_hash: name '%s' truncated to '%s' "
+                "(%d chars, max %d). Long names lose 2-int compare benefit.",
+                name, truncated, len(name), EntityRegistry.MAX_NAME_LENGTH,
+            )
+        # Pad to 8 bytes, pack as big-endian uint64
+        padded = truncated.ljust(EntityRegistry.MAX_NAME_LENGTH, '\x00')[:8]
+        return struct.unpack('>Q', padded.encode('ascii', errors='replace'))[0]
+
+    def _validate_name(self, name: str) -> str:
+        """Validate an entity name against engine constraints.
+
+        [id-soft: doom-1993] 8-Char Name — cap at 8 chars for fast comparison
+        [id-soft: quake3-1999] Hard-Boundary — name is engine-zone property
+
+        Returns the normalized name (lowercase, stripped).
+        Raises ValueError if the name is invalid.
+        """
+        if not name or not name.strip():
+            raise ValueError("Entity name must be non-empty")
+        normalized = name.strip().lower()
+        if len(normalized) > self.MAX_NAME_LENGTH:
+            raise ValueError(
+                f"Entity name '{normalized}' exceeds max length "
+                f"{self.MAX_NAME_LENGTH}. Use short_name_hash() for "
+                f"2-int compare optimization."
+            )
+        return normalized
 
     def find_by_domain(self, text: str) -> Optional[Entity]:
         """Find the best entity match for a query text based on domain keywords.
