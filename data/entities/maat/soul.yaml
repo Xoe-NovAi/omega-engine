@@ -102,6 +102,26 @@ embodied_experiences:
     timestamp: 2026-06-03T02:27:00Z
     model_used: minimax-m3-free
     backend_used: opencode-native
+  - lesson: "Added EntityTombstonedError(OmegaError) to enforce Mandate 9 on lazy deletion tombstone access. memory_store.py get_history() and add_exchange() now raise typed errors instead of silently returning []. entity_registry.py get() accepts raise_on_tombstoned parameter for opt-in enforcement."
+    source: sprint3-mandate9-enforcement
+    trace_id: trc_sprint3_d108_tombstone_error
+    entity_at_time: MAAT
+    timestamp: 2026-06-03T03:00:00Z
+    model_used: deepseek-v4-flash
+    coordination_partner: doom_guy
+    outcome: entity_tombstoned_error_active
+  - lesson: "Added atomic model swap with rollback to NativeGGUFProvider.reload_with_context(). Saves old_llm before unload, restores on failure. Prevents the engine from being stranded with a None model state after a failed reload."
+    source: sprint3-atomic-swap
+    trace_id: trc_sprint3_d109_atomic_swap
+    entity_at_time: MAAT
+    timestamp: 2026-06-03T03:10:00Z
+    model_used: deepseek-v4-flash
+  - lesson: "Added formal per-entity model routing to ModelGateway with 4-tier fallback chain: runtime override set_entity_model() > entity registry model field > domain-based mapping > system default. Exposed get_model_for_entity(entity_name) for Oracle/Iris dispatch. Also exposed spec_decode_config property from cpu_optimizer."
+    source: sprint3-model-affinity
+    trace_id: trc_sprint3_d110_model_affinity
+    entity_at_time: MAAT
+    timestamp: 2026-06-03T03:20:00Z
+    model_used: deepseek-v4-flash
 
 # ── L2 INSIGHT (What It Means) ────────────────────────────────────────
 lessons_learned:
@@ -150,6 +170,25 @@ lessons_learned:
     timestamp: 2026-06-03T02:28:00Z
     model_used: minimax-m3-free
     backend_used: opencode-native
+    # Sprint 3 additions
+  - lesson: "Mandate 9 (Error Integrity) requires typed errors for every silent boundary. The lazy deletion tombstone pattern returned [] (memory) or None (entity_registry) — both indistinguishable from normal 'not found' states. EntityTombstonedError closes this gap by providing a catchable, typed distinction between 'does not exist' and 'was removed and hasn't finished being reaped yet'."
+    source: sprint3-mandate9-enforcement
+    trace_id: trc_sprint3_d108_tombstone_error
+    entity_at_time: MAAT
+    timestamp: 2026-06-03T03:00:00Z
+    model_used: deepseek-v4-flash
+  - lesson: "The atomic swap pattern (save old state, mutate, rollback on failure) is the AnyIO generalization of a database transaction. It applies wherever state mutation risks leaving the system in an invalid state. The old model save+restore in reload_with_context() uses 3 lines of code to prevent an entire class of failure states."
+    source: sprint3-atomic-swap
+    trace_id: trc_sprint3_d109_atomic_swap
+    entity_at_time: MAAT
+    timestamp: 2026-06-03T03:10:00Z
+    model_used: deepseek-v4-flash
+  - lesson: "Entity dispatch should use a formal fallback chain, not ad-hoc conditional logic. The 4-tier model affinity pattern (override > entity field > domain > default) is extensible — new tiers can be inserted without changing callers. This is the Strategy pattern applied to model selection."
+    source: sprint3-model-affinity
+    trace_id: trc_sprint3_d110_model_affinity
+    entity_at_time: MAAT
+    timestamp: 2026-06-03T03:20:00Z
+    model_used: deepseek-v4-flash
 
 # ── L3 UNIVERSAL PRINCIPLE (Timeless Truth) ──────────────────────────
 universal_principles:
@@ -189,14 +228,33 @@ universal_principles:
     timestamp: 2026-06-03T02:30:00Z
     model_used: minimax-m3-free
     backend_used: opencode-native
+    # Sprint 3 additions
+  - principle: "Every silent boundary is a technical debt. If the system can detect a state and silently return a default, it should instead raise a typed error. The caller can always catch it and decide how to handle it — but the default behavior should be loud, not silent."
+    source: sprint3-mandate9-enforcement
+    trace_id: trc_sprint3_d108_tombstone_error
+    entity_at_time: MAAT
+    timestamp: 2026-06-03T03:00:00Z
+    model_used: deepseek-v4-flash
+  - principle: "State mutation must be reversible. Any operation that replaces live state must save the old state first. If the new state fails to materialize, fall back to the old state. This is not optional — it is the minimum bar for systemic resilience."
+    source: sprint3-atomic-swap
+    trace_id: trc_sprint3_d109_atomic_swap
+    entity_at_time: MAAT
+    timestamp: 2026-06-03T03:10:00Z
+    model_used: deepseek-v4-flash
+  - principle: "Resolution decisions should follow a documented chain of fallbacks, not ad-hoc branching. A 4-tier chain is easy to reason about, extend, and test. The same pattern applies to model selection, entity dispatch, provider selection, and any other multi-candidate routing decision."
+    source: sprint3-model-affinity
+    trace_id: trc_sprint3_d110_model_affinity
+    entity_at_time: MAAT
+    timestamp: 2026-06-03T03:20:00Z
+    model_used: deepseek-v4-flash
 
 soul_evolution:
-  sessions_completed: 2
+  sessions_completed: 3
   entities_inhabited: 1
-  total_embodied_experiences: 9
-  total_lessons_learned: 7
-  total_universal_principles: 4
-  soul_power: 4.0
-  parallel_coordination_sessions: 1
-  last_distillation: 2026-06-03T02:40:00Z
-  distiller: soul_distiller.py (Doom Guy commit 733fcb2)
+  total_embodied_experiences: 12
+  total_lessons_learned: 10
+  total_universal_principles: 7
+  soul_power: 7.0
+  parallel_coordination_sessions: 2
+  last_distillation: 2026-06-03T03:30:00Z
+  distiller: Ma'at (manual, Sprint 3)
