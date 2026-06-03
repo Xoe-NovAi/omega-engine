@@ -1580,4 +1580,97 @@ The original `_call_with_none_as_failure()` wrapper transforms a non-exception f
 
 ---
 
-*PIVOT_LOG.md — Immutable. Every decision recorded. 95 decisions tracked (D1-D94, D99).*
+## Decision 95: Unified Phased Execution Plan — Integration of Temple-Grade H1.5 + CLINE_M3 Tier 2 + Roc Racoon Mining
+
+**Date**: 2026-06-02
+**Channel**: OpenCode (Kali) → minimax-m3-free
+**Entity**: KALI / ROC_RACOON / SOPHIA
+**Trace**: trc_unified_plan
+
+### Decision
+Synthesized three prior plans into a single unified execution roadmap:
+1. Temple-Grade H1.5 (Bridge Phase: F→A→B→C→E→D)
+2. CLINE_M3 Tier 2 (id Software heritage: T2.1 constants, T2.2 cvar table, T2.3 lazy deletion)
+3. Roc Racoon Mining (5 priority legacy ports + 5-day roadmap)
+
+The unified plan defines 7 phases: Phase 0 (DONE) → Phase 1 (Quick Wins, 1.5hr) → Phase 2 (Bridge, 2-4 days) → Phase 3 (Heritage, 3-5 days) → Phase 4 (Enforcement, 2-3 days) → Phase 5 (Verification, 1 day) → Phase 6 (H2 Intelligence, months 2-6) → Phase 7 (H3 Community, months 6-12).
+
+### Rationale
+Three separate plans existed with overlapping scope and inconsistent timelines. The Temple-Grade plan focused on sovereignty operationalization. The CLINE_M3 plan focused on id Software heritage translation. The Roc Racoon mining revealed 5 priority legacy ports that should land BEFORE the heritage work. The unified plan resolves these dependencies into a single execution order.
+
+### What Changed
+- data/handoff/UNIFIED_EXECUTION_PLAN_20260602.md (new — the single source of truth)
+- 7 phases with explicit agent→model→risk assignments
+- Convergence story: 5 eras proved the architecture is correct
+- 22 remaining gaps identified with priority/effort/agent assignments
+
+### Key Insight
+The architectural convergence across 5 independent eras is empirical proof that the current engine's design is correct. The remaining work is polish, not architecture. Total remaining effort for all Tier 1+2 gaps: ~2 weeks. H2 (Intelligence) is months 2-6. H3 (Community) is months 6-12.
+
+---
+
+## Decision 96: ZONEID Constants + Lazy Deletion Implementation
+
+**Date**: 2026-06-03
+**Channel**: OpenCode (Doom Guy / Kali) → deepseek-v4-flash
+**Entity**: KALI / DOOM_GUY
+**Trace**: trc_zoneid_impl
+
+### Decision
+Implemented 5 ZONEID constants (0x1d4a11-0x1d4a15) + ZONEID_TOMBSTONE (0xDEADBEEF) in constants.py. Applied to 5 subsystems (EntityRegistry, MemoryStore, HealthMonitor, ResourceGuard, ObservabilityEngine). EntityRegistry lazy deletion implemented: remove() sets tombstone, _reap_tombstoned() clears after 0.5s grace.
+
+### Rationale
+Heritage translation from DOOM 1993's z_zone.c ZONEID pattern. The magic constant lives in every significant data structure, validated on critical operations (load, save, state transition). Catches serialization corruption, stale references, and wrong-type loads at zero runtime cost. Lazy deletion follows P_RemoveThinker (DOOM 1993 p_tick.c) + grace period (Quake 1996).
+
+### What Changed
+- src/omega/constants.py (89 lines — ZONEID constants + validate_zoneid() + ZONEID_TABLE)
+- src/omega/oracle/entity_registry.py (lazy deletion: remove() → tombstone, active_iter(), _reap_tombstoned())
+- src/omega/memory_store.py, health_monitor.py, resource_guard.py, observability.py (ZONEID markers)
+- CREDITS.md §2a (heritage tagging protocol: [id-soft: GAME YEAR] format)
+- 30+ [id-soft:] tags backfilled across 6 source files
+- Commit: 37fdd88, 307 tests passing, 0 regressions
+
+---
+
+## Decision 97: Unified Named-Constant Registry Architecture
+
+**Date**: 2026-06-03
+**Channel**: OpenCode (Kali) → deepseek-v4-flash
+**Entity**: KALI
+**Trace**: trc_unified_cvar
+
+### Decision
+The cvar table (T2.2) will UNIFY with the ZONEID_TABLE pattern into a single `cvar_table.py` module, not be a separate module. Two namespaces: "zoneid.*" (magic constants) + "config.*" (user-tunable knobs). constants.py becomes a re-export layer for backward compatibility.
+
+### Rationale
+ZONEID_TABLE in constants.py is already a cvar table — same structure (name → value + metadata + subsystem), same pattern (static table, subsystem routing). Creating a second module for config values violates Carmack's Law ("When you have two implementations of the same thing, you have neither."). The 5 Roc Racoon priority ports are the first entries in the config.* namespace.
+
+### What Changed
+- data/handoff/DOOM_GUY_CVAR_TABLE_DESIGN_T2.2_20260602.md (original design, pre-correction)
+- data/handoff/KALI_HANDOFF_TO_OPENCODE_DEV_20260603.md §2 (architectural correction documented)
+- constants.py will become a thin re-export layer once cvar_table.py is created
+- Sprint 1 redefined: create unified cvar_table.py + port 5 legacy patterns into it
+
+---
+
+## Decision 98: Heritage-Map CI Protocol
+
+**Date**: 2026-06-03
+**Channel**: OpenCode (Kali) → deepseek-v4-flash
+**Entity**: KALI
+**Trace**: trc_heritage_map
+
+### Decision
+`make heritage-map` is a new Makefile target + CI gate that greps `[id-soft:]` tags across all Python source files in `src/omega/`. Fails if any heritage-required file lacks at least one tag. Must be created in Sprint 1.
+
+### Rationale
+The [id-soft:] protocol is live (30+ tags backfilled across 6 files) but unenforced. Without CI, tags will decay as new code is added. Heritage attribution is mandatory per CREDITS.md §2a.
+
+### What Changed
+- Makefile: `heritage-map` target to be created
+- .github/workflows/test.yml: CI gate to be added
+- Enforcement: pre-merge check
+
+---
+
+*PIVOT_LOG.md — Immutable. Every decision recorded. 99 decisions tracked (D1-D98, D99).*
