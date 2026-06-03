@@ -199,6 +199,9 @@ class EntityRegistry:
         self.config_path = Path(config_path)
         self._entities: Dict[str, Entity] = {}
         self._wad_sources: Dict[str, List[str]] = {}  # lowercase entity name -> list of WAD source names
+        # [id-soft: doom-1993] Multi-Index Entity — dual-index lookup
+        # maps capability (e.g. "research") -> list of entity keys
+        self._capability_index: Dict[str, List[str]] = {}
         self._lock = None  # Created lazily in async context (C-ARCH-004 pattern)
         # [id-soft: doom-1993] Lazy Deletion — tombstoned entity tracking
         self._tombstoned: Dict[str, float] = {}  # key -> time.monotonic() of tombstone
@@ -257,6 +260,15 @@ class EntityRegistry:
                     self._wad_sources[key] = []
                 if entity.wad_source not in self._wad_sources[key]:
                     self._wad_sources[key].append(entity.wad_source)
+            
+            # [id-soft: doom-1993] Multi-Index Entity — populate capability index
+            for domain in entity.domains:
+                domain_lower = domain.lower()
+                if domain_lower not in self._capability_index:
+                    self._capability_index[domain_lower] = []
+                if key not in self._capability_index[domain_lower]:
+                    self._capability_index[domain_lower].append(key)
+
 
         logger.info(f"Loaded {len(self._entities)} entities from config")
 
@@ -309,6 +321,20 @@ class EntityRegistry:
                 return ent
                 
         return None
+
+    def get_by_capability(self, capability: str) -> List[Entity]:
+        """Find all active entities that possess a specific capability.
+        
+        [id-soft: doom-1993] Multi-Index Entity — O(1) capability lookup
+        """
+        if not capability:
+            return []
+        
+        cap_lower = capability.lower()
+        keys = self._capability_index.get(cap_lower, [])
+        
+        # Filter out tombstoned entities
+        return [self._entities[k] for k in keys if k in self._entities and self._entities[k].magic != ZONEID_TOMBSTONE]
 
     def list(self) -> List[Entity]:
         """List all non-tombstoned entities.
@@ -370,6 +396,14 @@ class EntityRegistry:
                     self._wad_sources[key] = []
                 if entity.wad_source not in self._wad_sources[key]:
                     self._wad_sources[key].append(entity.wad_source)
+            
+            # [id-soft: doom-1993] Multi-Index Entity — populate capability index
+            for domain in entity.domains:
+                domain_lower = domain.lower()
+                if domain_lower not in self._capability_index:
+                    self._capability_index[domain_lower] = []
+                if key not in self._capability_index[domain_lower]:
+                    self._capability_index[domain_lower].append(key)
             
             # [id-soft: doom-1993] ZONEID Pattern — set runtime marker
             entity.magic = ZONEID_ENTITY

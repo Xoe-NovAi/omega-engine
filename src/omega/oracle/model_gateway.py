@@ -107,6 +107,9 @@ class ModelGateway:
         self.resource_guard = ResourceGuard()
         self._mock_backend = OfflineMockBackend()
         self.providers = self._load_provider_fabric()
+        # [id-soft: doom-1993] Fixed-Size Active Set — 32-entry clip range for O(1) culling
+        # Maintains a list of the 32 most recently successful providers.
+        self._active_providers: List[str] = []
         # Sprint 2 Governance: GnosisProxy for RAG-based tool discovery
 
         self._entity_registry = EntityRegistry()
@@ -522,25 +525,49 @@ class ModelGateway:
                 logger.warning("Failed to log BACKEND_FALLBACK event for provider %s: %s",
                                getattr(provider, 'name', '?'), e)
 
+    def _update_active_set(self, provider_name: str) -> None:
+        """Maintain a fixed-size active set of successful providers (LRU).
+        
+        [id-soft: doom-1993] Fixed-Size Active Set — 32-entry clip range.
+        If the set exceeds 32, the oldest (least recently used) is culled.
+        """
+        if provider_name in self._active_providers:
+            self._active_providers.remove(provider_name)
+        self._active_providers.insert(0, provider_name)
+        if len(self._active_providers) > 32:
+            self._active_providers.pop()
+
     async def generate(
         self, model_name: str, system_prompt: str, user_query: str,
         temperature: float = 0.7, max_tokens: int = 1024, trace_id: Optional[str] = None
     ) -> tuple:
         """Iterate provider fabric with circuit breaker protection.
-
-        BSP-style culling: check breaker state first (O(1)), skip broken providers.
-        Each provider gets a per-provider timeout.
-        On total failure, returns fallback response.
-        Returns (response_text, success_bool).
+        
+        [id-soft: doom-1993] Fixed-Size Active Set — first try the 32 most recently
+        successful providers before falling back to the full fabric.
         """
         errors = []
         success_provider = None
-
+        
+        # 1. Build the search order: Active Set (LRU) -> Full Fabric
+        search_order = []
+        # Add active providers first (if they are in the fabric)
+        fabric_names = {p.name for p in self.providers}
+        for p_name in self._active_providers:
+            if p_name in fabric_names:
+                search_order.append(next(p for p in self.providers if p.name == p_name))
+        
+        # Add remaining providers from the full fabric
         for provider in self.providers:
+            if provider not in search_order:
+                search_order.append(provider)
+        
+        for provider in search_order:
             # Step 1: BSP-style pre-check — fast fail if circuit is OPEN
             if not await self._precheck_provider(provider, model_name):
                 errors.append(f"{provider.name}: culled by precheck")
                 continue
+
 
             # Step 2: Execute with breaker protection
             timeout = self._get_provider_timeout(provider)
@@ -584,6 +611,10 @@ class ModelGateway:
                         # Record success with HealthMonitor
                         if self._health_monitor:
                             self._health_monitor.record_success(model_name)
+                        
+                        # [id-soft: doom-1993] Fixed-Size Active Set — update LRU
+                        self._update_active_set(provider.name)
+                        
                         success_provider = provider
                         break
 

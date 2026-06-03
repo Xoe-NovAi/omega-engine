@@ -77,6 +77,9 @@ class MemoryStore:
         # [id-soft: doom-1993] Lazy Deletion — tombstone registry
         # Maps cache_key -> time.time() when tombstoned
         self._tombstoned: Dict[str, float] = {}
+        # [id-soft: quake-1996] Temp Tier — transient scratchpad memory
+        # Used for in-flight inference results that should not be persisted.
+        self._temp: Dict[str, Any] = {}
         self._stats: Dict[str, int] = {"loads": 0, "saves": 0, "archives": 0, "fallbacks": 0}
         
         if providers is not None:
@@ -258,6 +261,25 @@ class MemoryStore:
     def _is_tombstoned(self, cache_key: str) -> bool:
         """Check if a cache_key is currently tombstoned (within grace period)."""
         return cache_key in self._tombstoned
+
+    def store_transient(self, key: str, value: Any) -> None:
+        """Store data in the Temp tier (transient scratchpad).
+
+        [id-soft: quake-1996] Temp Tier — transient memory that is not
+        persisted to any provider. Used for intermediate inference steps.
+        """
+        self._temp[key] = value
+
+    def get_transient(self, key: str) -> Optional[Any]:
+        """Retrieve data from the Temp tier."""
+        return self._temp.get(key)
+
+    def clear_transient(self, key: Optional[str] = None) -> None:
+        """Clear transient memory. If key is provided, clear only that key."""
+        if key:
+            self._temp.pop(key, None)
+        else:
+            self._temp.clear()
 
     async def _compact(
         self,
