@@ -23,6 +23,8 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Callable, Deque, Dict, Optional
 
+from omega.constants import ZONEID_BREAKER, validate_zoneid
+
 
 logger = logging.getLogger("omega.health_monitor")
 
@@ -78,6 +80,8 @@ class AsyncCircuitBreaker:
         half_open_max_requests: int = 1,
     ):
         self.name = name
+        # [id-soft: doom-1993] ZONEID Pattern — circuit breaker state marker
+        self.magic = ZONEID_BREAKER
         self.state = CircuitState.CLOSED
         self.failure_count = 0
         self.failure_threshold = failure_threshold
@@ -121,6 +125,8 @@ class AsyncCircuitBreaker:
             raise
 
     async def _on_success(self, trace_id: Optional[str] = None):
+        # [id-soft: doom-1993] ZONEID Pattern — pre-transition integrity check
+        validate_zoneid(self.magic, ZONEID_BREAKER, f"AsyncCircuitBreaker._on_success({self.name})")
         async with self._lock:
             old_state = self.state
             if self.state == CircuitState.HALF_OPEN:
@@ -141,6 +147,8 @@ class AsyncCircuitBreaker:
                     pass  # Circuit works silently if observability unavailable
 
     async def _on_failure(self, trace_id: Optional[str] = None):
+        # [id-soft: doom-1993] ZONEID Pattern — pre-transition integrity check
+        validate_zoneid(self.magic, ZONEID_BREAKER, f"AsyncCircuitBreaker._on_failure({self.name})")
         async with self._lock:
             self.failure_count += 1
             self.last_failure_time = time.monotonic()

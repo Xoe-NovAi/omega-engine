@@ -27,11 +27,12 @@ queue TO `CREDITS.md` AS THEY ARE IMPLEMENTED.
 | **Omega Target** | `src/omega/constants.py` (5 magic constants: OMEGA_MEMORY_ID, OMEGA_PROBE_MARKER, OMEGA_BREAKER_MARKER, OMEGA_ENTITY_ID, OMEGA_TRACE_MAGIC) |
 | **Omega Files Affected** | `src/omega/memory_store.py`, `src/omega/oracle/model_gateway.py`, `src/omega/oracle/resource_guard.py`, `src/omega/oracle/entity_registry.py` |
 | **Effort** | 30 min (constants) + 2 hours (apply to all subsystems) |
-| **Status** | pending |
+| **Status** | **done** ✅ |
 | **Attribution Tag** | `[ZONEID Pattern: id Software 1993, unchanged 1996]` |
 | **R-Doc** | `docs/research/R_ID_SOFTWARE_PATTERNS_VOL2.md` §R-19 |
 | **Verification Report** | `data/entities/doom_guy/knowledge/R_ID_SOFTWARE_VERIFICATION_REPORT.md` §2.2 |
 | **Handoff Reference** | `data/handoff/OPENCODE_M3_ID_SOFTWARE_DISCOVERIES_FOR_CLINE_M3_20260602.md` §3.1 |
+| **Implementation** | `src/omega/constants.py` (5 constants + validate_zoneid()), applied to EntityRegistry, MemoryStore, HealthMonitor, ResourceGuard, ObservabilityEngine |
 | **Notes** | Catches 90% of use-after-free, double-free, uninitialized memory bugs at zero runtime cost. A 4-byte comparison per access is essentially free. |
 
 ---
@@ -46,11 +47,12 @@ queue TO `CREDITS.md` AS THEY ARE IMPLEMENTED.
 | **Omega Target** | `src/omega/oracle/entity_registry.py` (add tombstone field + `active_iter()` reaping) |
 | **Omega Files Affected** | `src/omega/oracle/entity_registry.py` (refactor, not new file) |
 | **Effort** | 2 hours (refactor + tests) |
-| **Status** | pending |
+| **Status** | **done** ✅ |
 | **Attribution Tag** | `[Lazy Deletion: id Software 1993]` |
 | **R-Doc** | `docs/research/R_ID_SOFTWARE_PATTERNS_VOL2.md` §R-20 |
 | **Verification Report** | `data/entities/doom_guy/knowledge/R_ID_SOFTWARE_VERIFICATION_REPORT.md` §2.3 |
 | **Handoff Reference** | `data/handoff/OPENCODE_M3_ID_SOFTWARE_DISCOVERIES_FOR_CLINE_M3_20260602.md` §3.3 |
+| **Implementation** | `src/omega/oracle/entity_registry.py` — `remove()` sets ZONEID_TOMBSTONE, `_reap_tombstoned()` clears after grace period, `active_iter()` filters |
 | **Notes** | O(1) deregistration vs O(n) cleanup. Pairs with R-30 (0.5s grace). `P_RemoveThinker` doesn't free — it sets function to sentinel (-1). Actual Z_Free happens in next pass. |
 
 ---
@@ -83,12 +85,13 @@ queue TO `CREDITS.md` AS THEY ARE IMPLEMENTED.
 | **Era** | 1999 |
 | **Omega Target** | `src/omega/cvar_table.py` (new module) |
 | **Omega Files Affected** | `src/omega/cvar_table.py` (new), all config dicts (refactor) |
-| **Effort** | 4 hours (module + tests + migration plan) |
-| **Status** | pending |
+| **Effort** | ~5.5 hours (design + implementation + tests) |
+| **Status** | **in-progress** 🔄 |
 | **Attribution Tag** | `[Cvar System: id Software 1996/1999, formalized Q3A]` |
 | **R-Doc** | `docs/research/R_ID_SOFTWARE_PATTERNS_VOL2.md` §R-22 |
 | **Verification Report** | `data/entities/doom_guy/knowledge/R_ID_SOFTWARE_VERIFICATION_REPORT.md` §2.5 |
 | **Handoff Reference** | `data/handoff/OPENCODE_M3_ID_SOFTWARE_DISCOVERIES_FOR_CLINE_M3_20260602.md` §3.2 |
+| **Design Doc** | `data/handoff/DOOM_GUY_CVAR_TABLE_DESIGN_T2.2_20260602.md` (sent to Cline/M3 for review) |
 | **Notes** | The cleanest config system in any of the engines. CVAR_ROM, CVAR_LATCH, CVAR_ARCHIVE, CVAR_NORESTART flags as bitfields. modificationCount for change detection. |
 
 ---
@@ -236,12 +239,13 @@ queue TO `CREDITS.md` AS THEY ARE IMPLEMENTED.
 | **Omega Target** | `src/omega/memory_store.py` (realloc grace) |
 | **Omega Files Affected** | `src/omega/memory_store.py` (refactor) |
 | **Effort** | 2 hours |
-| **Status** | pending |
+| **Status** | **partial** ⚡ (entity_registry done, memory_store pending) |
 | **Attribution Tag** | `[Grace Period: id Software 1996]` |
 | **R-Doc** | `docs/research/R_ID_SOFTWARE_PATTERNS_VOL2.md` §R-30 |
 | **Verification Report** | `data/entities/doom_guy/knowledge/R_ID_SOFTWARE_VERIFICATION_REPORT.md` §2.4 |
 | **Handoff Reference** | (not in handoff) |
-| **Notes** | ED_Alloc with 0.5s grace period prevents the client from seeing "morphing" artifacts. 0.5s = 15 packets at 30 Hz. After 15 packets, the slot is safe to reuse. |
+| **Implementation** | `src/omega/oracle/entity_registry.py` — `TOMBSTONE_GRACE_SECONDS = 0.5`, used in `_reap_tombstoned()` |
+| **Notes** | ED_Alloc with 0.5s grace period prevents the client from seeing "morphing" artifacts. Implemented for entity registry lazy deletion; memory_store hot-slot reuse still pending. |
 
 ---
 
@@ -266,18 +270,22 @@ When an item moves from `in-progress` to `done`:
 ## §4 Summary by Priority
 
 | Priority | Count | Patterns |
-|---|---|---|
-| 🔴 P0 | 3 | R-19 (ZONEID), R-20 (Lazy Deletion), R-22 (cvar Table) |
+|---|---|---|---|
+| 🔴 P0 | 3 | R-19 (ZONEID) ✅, R-20 (Lazy Deletion) ✅, R-22 (cvar Table) 🔄 |
 | 🟡 P1 | 4 | R-21 (8-char cap), R-24 (Dual-linking), R-26 (Hard-boundary), R-28 (High-bit) |
-| 🟢 P2 | 5 | R-23 (4-tier memory), R-25 (QuakeC flat), R-27 (VFS), R-29 (Active set), R-30 (Grace period) |
-| **Total** | **12** | All pending implementation |
+| 🟢 P2 | 5 | R-23 (4-tier memory), R-25 (QuakeC flat), R-27 (VFS), R-29 (Active set), R-30 (Grace period) ⚡ |
+| **Total** | **12** | 2 done ✅ / 1 in-progress 🔄 / 1 partial ⚡ / 8 pending |
 
 ## §5 Promotion Log (Historical)
 
 When items are moved to CREDITS.md, log them here with the date, R-doc reference,
 commit hash, and CREDITS.md section number.
 
-*No items promoted yet — this section is empty.*
+| Date | Pattern | R-Doc | Files | Commit |
+|------|---------|-------|-------|--------|
+| 2026-06-02 | R-19 ZONEID Magic Constants | §R-19 | `constants.py`, `entity_registry.py`, `memory_store.py`, `health_monitor.py`, `resource_guard.py`, `observability.py` | *pending commit* |
+| 2026-06-02 | R-20 Lazy Deletion | §R-20 | `entity_registry.py` (remove→tombstone, \_reap\_tombstoned, active\_iter) | *pending commit* |
+| 2026-06-02 | R-30 Grace Period (partial) | §R-30 | `entity_registry.py` (TOMBSTONE\_GRACE\_SECONDS=0.5) | *pending commit* |
 
 ---
 

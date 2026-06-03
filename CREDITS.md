@@ -133,6 +133,45 @@ in the header or at the implementation site:
 # Adapted to dynamic circuit breaker state from Doom's static BSP tree.
 ```
 
+### Rule 2a: Inline `[id-soft:]` Tag Protocol (Standardized Format)
+
+Every implementation site (function, class, constant, or code block) that
+directly ports an id Software pattern MUST carry an `[id-soft:]` inline tag.
+
+**Format**:
+```
+# [id-soft: GAME YEAR] Pattern Name — why this code exists
+```
+
+**Game abbreviations**:
+| Code | Game |
+|------|------|
+| `doom-1993` | DOOM (1993) |
+| `quake-1996` | Quake (1996) |
+| `quake2-1997` | Quake II (1997) |
+| `quake3-1999` | Quake III Arena (1999) |
+| `doom3-2004` | DOOM 3 (2004) |
+| `doom3bfg-2012` | DOOM 3 BFG Edition (2012) |
+| `wolf3d-2012` | Wolfenstein 3D iOS/browser (2012) |
+
+**Examples**:
+```python
+# [id-soft: doom-1993] ZONEID Pattern — state marker for circuit breakers
+ZONEID_BREAKER = 0x1d4a13
+
+# [id-soft: quake-1996] Grace Period — 0.5s delay before reaping
+self._grace_seconds = 0.5
+```
+
+**Enforcement**: `grep -rn "\[id-soft:" src/omega/` MUST return >=1 match per
+file that ports heritage code. A CI-check (`make heritage-map`) generates
+`docs/research/HERITAGE_SOURCE_MAP.md` from all `[id-soft:]` tags.
+
+**Relationship to CREDITS.md**: The `[id-soft:]` tag is the *code-level*
+attribution. When a pattern is implemented, its row moves from
+`PENDING_CREDITS_QUEUE.md` to `CREDITS.md` §1.x. The tags stay in the code
+permanently.
+
 ### Rule 3: Every Architectural Decision Must Cite Source
 In `PIVOT_LOG.md` or decision registers, when a decision is influenced by an
 id Software pattern, cite it:

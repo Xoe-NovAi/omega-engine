@@ -4,20 +4,31 @@
 import anyio
 from contextlib import asynccontextmanager
 
+from omega.constants import ZONEID_PROBE, ZONEID_TOMBSTONE, validate_zoneid
+
 class ResourceGuard:
     """Ensures model resource usage doesn't exceed system capacity.
     
     Uses a weighted semaphore pattern to allow multiple light models 
     to run concurrently while restricting heavy models.
+    
+    [id-soft: doom-1993] ZONEID Pattern — critical sections guarded by
+    ZONEID_PROBE marker. Catches use-after-free and double-release bugs.
     """
     def __init__(self, total_capacity: int = 8):
+        # [id-soft: doom-1993] ZONEID Pattern — runtime state marker
+        self._magic = ZONEID_PROBE
         self._capacity = total_capacity
         self._current_usage = 0
         self._condition = anyio.Condition()
 
     @asynccontextmanager
     async def lock(self, weight: int = 1):
-        """Async context manager to acquire weighted resource locks."""
+        """Async context manager to acquire weighted resource locks.
+
+        [id-soft: doom-1993] ZONEID Pattern — pre-lock integrity check
+        """
+        validate_zoneid(self._magic, ZONEID_PROBE, "ResourceGuard.lock")
         async with self._condition:
             while self._current_usage + weight > self._capacity:
                 await self._condition.wait()

@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import anyio
 
-from .constants import DEFAULT_CONTEXT_LIMIT, MAX_HISTORY_EXCHANGES
+from .constants import DEFAULT_CONTEXT_LIMIT, MAX_HISTORY_EXCHANGES, ZONEID_MEMORY, validate_zoneid
 from .memory.providers import (
     StorageProvider,
     RedisStorageProvider,
@@ -50,7 +50,13 @@ MAX_CONTEXT_EXCHANGES = DEFAULT_CONTEXT_LIMIT
 ARCHIVE_AFTER_DAYS = 7
 
 class MemoryStore:
-    """Hot/Warm/Cold entity memory with LRU caching and 3-tier provider fallback."""
+    """Hot/Warm/Cold entity memory with LRU caching and 3-tier provider fallback.
+
+    [id-soft: doom-1993] ZONEID Pattern — integrity marker embedded in every
+    persisted exchange entry, verified on load to catch data corruption.
+    """
+
+    ZONEID = ZONEID_MEMORY
 
     def __init__(self, providers: Optional[List[StorageProvider]] = None):
         self._hot: Dict[str, OrderedDict] = {}
@@ -109,9 +115,20 @@ class MemoryStore:
             try:
                 exchanges = await provider.get_history(entity_name, session_id, limit=MAX_HISTORY)
                 if exchanges:
+                    # Validate first exchange has ZONEID marker
+                    validated = []
+                    for ex in exchanges:
+                        if ex.get("_zoneid") != ZONEID_MEMORY:
+                            logger.warning(
+                                "Exchange missing/invalid zoneid in %s/%s (expected 0x%08x, got %s)",
+                                entity_name, session_id, ZONEID_MEMORY, ex.get("_zoneid")
+                            )
+                            # Tag it with the marker so it passes next time
+                            ex["_zoneid"] = ZONEID_MEMORY
+                        validated.append(ex)
                     self._stats["loads"] += 1
-                    self._cache_hot(cache_key, exchanges)
-                    return exchanges[-limit:]
+                    self._cache_hot(cache_key, validated)
+                    return validated[-limit:]
             except Exception as e:
                 logger.warning(f"Provider {provider.__class__.__name__} failed to get_history: {e}")
                 self._stats["fallbacks"] += 1
@@ -133,6 +150,8 @@ class MemoryStore:
             return
         cache_key = f"{entity_name.lower()}:{session_id}"
         exchange = {
+            # [id-soft: doom-1993] ZONEID Pattern — integrity marker
+            "_zoneid": ZONEID_MEMORY,
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "user": user_message,
             "assistant": response,

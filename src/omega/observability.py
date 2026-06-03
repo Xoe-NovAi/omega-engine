@@ -24,6 +24,8 @@ from typing import Any, Dict, List, Optional
 
 import anyio
 
+from omega.constants import ZONEID_TRACE
+
 logger = logging.getLogger(__name__)
 
 # ── Structured JSON Logging Formatter ───────────────────────────────────
@@ -507,8 +509,12 @@ class ObservabilityEngine:
         data: Dict[str, Any],
         parent_trace_id: Optional[str] = None,
     ) -> None:
-        """Log a single observability event."""
+        """Log a single observability event.
+
+        [id-soft: doom-1993] ZONEID Pattern — integrity marker on every event
+        """
         event = {
+            "_zoneid": ZONEID_TRACE,  # Heritage marker for event lineage validation
             "event": event_type,
             "trace_id": trace_id,
             "parent_trace_id": parent_trace_id,

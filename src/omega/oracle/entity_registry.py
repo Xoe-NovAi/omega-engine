@@ -10,6 +10,7 @@
 
 import logging
 import os
+import time
 import tempfile
 import functools
 from dataclasses import dataclass, field, asdict
@@ -20,13 +21,18 @@ import yaml
 import anyio
 
 from omega.oracle.entity_workspace import EntityWorkspaceManager
+from omega.constants import ZONEID_ENTITY, ZONEID_TOMBSTONE, validate_zoneid
 
 logger = logging.getLogger(__name__)
 
 
 @dataclass
 class Entity:
-    """A user-definable entity — a Pillar Keeper or custom persona."""
+    """A user-definable entity — a Pillar Keeper or custom persona.
+
+    [id-soft: doom-1993] ZONEID Pattern — magic constant validated on get()
+    to catch stale references and tombstoned entities.
+    """
 
     name: str
     domains: List[str]
@@ -47,21 +53,36 @@ class Entity:
     container: bool = False
     port: Optional[int] = None
     wad_source: Optional[str] = None
+    # [id-soft: doom-1993] ZONEID Pattern — runtime marker, not serialized
+    magic: int = field(default=ZONEID_ENTITY, compare=False)
 
     def to_dict(self) -> Dict[str, Any]:
-        """Serialize entity fields to dict, excluding None and empty collections."""
+        """Serialize entity fields to dict, excluding None/empty/magic."""
         result = {}
         for k, v in asdict(self).items():
             if v is None:
                 continue
             if isinstance(v, (list, dict)) and not v:
                 continue
+            if k == "magic":
+                continue  # Runtime-only; not stored in YAML
             result[k] = v
         return result
 
 
 class EntityRegistry:
-    """Loads, saves, and manages entities from YAML config."""
+    """Loads, saves, and manages entities from YAML config.
+
+    [id-soft: doom-1993] Lazy Deletion — entities are tombstoned (magic =
+    ZONEID_TOMBSTONE) on remove() and reaped after a grace period.
+    See P_RemoveThinker in DOOM 1993 p_tick.c:62-103.
+    [id-soft: quake-1996] Grace Period — 0.5s delay before actual removal
+    ensures in-flight operations complete safely.
+    """
+
+    # [id-soft: quake-1996] Grace Period — 0.5s realloc delay
+    # Derived from Quake 1996 host_cmd.c's delayed entity removal pattern.
+    TOMBSTONE_GRACE_SECONDS = 0.5
 
     # 1. Define Core Slots (The Holographic Grid)
     PILLAR_SLOTS = {
@@ -94,6 +115,8 @@ class EntityRegistry:
         self._entities: Dict[str, Entity] = {}
         self._wad_sources: Dict[str, List[str]] = {}  # lowercase entity name -> list of WAD source names
         self._lock = None  # Created lazily in async context (C-ARCH-004 pattern)
+        # [id-soft: doom-1993] Lazy Deletion — tombstoned entity tracking
+        self._tombstoned: Dict[str, float] = {}  # key -> time.monotonic() of tombstone
         self._load()
 
     def _load(self) -> None:
@@ -139,6 +162,8 @@ class EntityRegistry:
                 wad_source=raw.get("wad_source"),
             )
             key = entity.name.lower()
+            # [id-soft: doom-1993] ZONEID Pattern — set at load, not serialized
+            entity.magic = ZONEID_ENTITY
             self._entities[key] = entity
             
             # Track wad_source for entities that have it
@@ -151,7 +176,11 @@ class EntityRegistry:
         logger.info(f"Loaded {len(self._entities)} entities from config")
 
     def get(self, name: str) -> Optional[Entity]:
-        """Get entity by name, role, or Pillar Slot (3-Tier Resolution)."""
+        """Get entity by name, role, or Pillar Slot (3-Tier Resolution).
+
+        [id-soft: doom-1993] ZONEID Pattern — validates magic on matched entities
+        [id-soft: doom-1993] Lazy Deletion — tombstoned entities treated as not found
+        """
         if not name:
             return None
             
@@ -160,6 +189,11 @@ class EntityRegistry:
         # Tier 1: Direct Entity Match (e.g., "sekhmet")
         entity = self._entities.get(name_lower)
         if entity:
+            if entity.magic == ZONEID_TOMBSTONE:
+                # [id-soft: doom-1993] Lazy Deletion — sentinel marker check
+                return None
+            # [id-soft: doom-1993] ZONEID Pattern — runtime integrity check
+            validate_zoneid(entity.magic, ZONEID_ENTITY, f"EntityRegistry.get({name})")
             return entity
             
         # Tier 2: Slot Match (e.g., "p1" or "pillar 1")
@@ -181,27 +215,37 @@ class EntityRegistry:
         return None
 
     def list(self) -> List[Entity]:
-        """List all entities."""
-        return list(self._entities.values())
+        """List all non-tombstoned entities.
+
+        [id-soft: doom-1993] Lazy Deletion — tombstoned entities filtered out.
+        """
+        return self.active_iter()
 
     def list_pillar_keepers(self) -> List[Entity]:
-        """List only the 10 Pillar Keepers (entities with non-empty pillars)."""
-        return [e for e in self._entities.values() if e.pillars]
+        """List only the 10 Pillar Keepers (non-tombstoned entities with pillars)."""
+        return [e for e in self.active_iter() if e.pillars]
 
     def names(self) -> List[str]:
-        """Return list of entity names."""
+        """Return list of non-tombstoned entity names."""
         return [e.name for e in self.list()]
 
     def get_all(self) -> Dict[str, Entity]:
-        """Return all entities as a dict keyed by lowercase name."""
-        return dict(self._entities)
+        """Return all entities as a dict keyed by lowercase name.
+
+        [id-soft: doom-1993] Lazy Deletion — tombstoned entities excluded.
+        """
+        return {k: v for k, v in self._entities.items() if v.magic != ZONEID_TOMBSTONE}
 
     def get_by_wad(self, wad_name: str) -> List[Entity]:
-        """Return all entities that originated from a specific WAD."""
-        return [e for e in self._entities.values() if e.wad_source == wad_name]
+        """Return all non-tombstoned entities from a specific WAD."""
+        return [e for e in self.active_iter() if e.wad_source == wad_name]
 
     def get_wad_sources(self, name: str) -> List[str]:
-        """Return list of WAD sources for a given entity name (lowercase lookup)."""
+        """Return list of WAD sources for a given entity name (lowercase lookup).
+
+        Still returns sources for tombstoned entities — WAD provenance is
+        preserved for debugging even after removal.
+        """
         return self._wad_sources.get(name.lower(), [])
 
     async def add(self, entity: Entity) -> None:
@@ -218,6 +262,8 @@ class EntityRegistry:
                 if entity.wad_source not in self._wad_sources[key]:
                     self._wad_sources[key].append(entity.wad_source)
             
+            # [id-soft: doom-1993] ZONEID Pattern — set runtime marker
+            entity.magic = ZONEID_ENTITY
             self._entities[key] = entity
             await self._save()
             
@@ -229,17 +275,74 @@ class EntityRegistry:
             await anyio.to_thread.run_sync(scaffold_fn)
 
     async def remove(self, name: str) -> bool:
-        """Remove an entity by name. Returns True if removed."""
+        """Remove an entity by name. Returns True if removed.
+
+        [id-soft: doom-1993] Lazy Deletion — marks with ZONEID_TOMBSTONE
+        instead of immediate deletion. Actual cleanup happens in
+        _reap_tombstoned() on the next _save() after the grace period.
+        [id-soft: quake-1996] Grace Period — 0.5s delay for safety.
+        """
         key = name.lower()
         if self._lock is None:
             self._lock = anyio.Lock()
         async with self._lock:
             if key in self._entities:
-                del self._entities[key]
-                self._wad_sources.pop(key, None)
+                entity = self._entities[key]
+                # [id-soft: doom-1993] ZONEID Pattern — pre-tombstone check
+                validate_zoneid(entity.magic, ZONEID_ENTITY, f"EntityRegistry.remove({name})")
+                # [id-soft: doom-1993] Lazy Deletion — set sentinel, keep in dict
+                self._tombstoned[key] = time.monotonic()
+                entity.magic = ZONEID_TOMBSTONE
                 await self._save()
                 return True
             return False
+
+    def _reap_tombstoned(self, grace_seconds: Optional[float] = None) -> int:
+        """Remove tombstoned entities past the grace period.
+
+        [id-soft: doom-1993] Lazy Deletion — periodic sweep of sentinel entities
+        [id-soft: quake-1996] Grace Period — 0.5s delay before reaping
+
+        Args:
+            grace_seconds: Override grace period. Defaults to
+                TOMBSTONE_GRACE_SECONDS (0.5s).
+
+        Returns:
+            Number of entities reaped.
+        """
+        if grace_seconds is None:
+            grace_seconds = self.TOMBSTONE_GRACE_SECONDS
+        now = time.monotonic()
+        to_reap = []
+        for key, ts in self._tombstoned.items():
+            if now - ts >= grace_seconds:
+                to_reap.append(key)
+        reaped = 0
+        for key in to_reap:
+            if key in self._entities:
+                del self._entities[key]
+                self._tombstoned.pop(key, None)
+                self._wad_sources.pop(key, None)
+                reaped += 1
+        if reaped:
+            logger.debug("Reaped %d tombstoned entities (grace=%.1fs)", reaped, grace_seconds)
+        return reaped
+
+    def active_iter(self) -> List[Entity]:
+        """Iterate over non-tombstoned entities.
+
+        [id-soft: doom-1993] Lazy Deletion — P_RemoveThinker sweep pattern
+        Derived from DOOM 1993 p_tick.c:62-103: entities with sentinel
+        markers are skipped; actual reaping happens asynchronously.
+
+        Currently O(n) — future optimization: maintain a separate
+        active set with [id-soft: doom-1993] Mobj Dual-Linking pattern.
+        """
+        return [e for e in self._entities.values() if e.magic != ZONEID_TOMBSTONE]
+
+    def count_active(self) -> int:
+        """Count non-tombstoned entities."""
+        return len(self.active_iter())
 
     def find_by_domain(self, text: str) -> Optional[Entity]:
         """Find the best entity match for a query text based on domain keywords.
@@ -278,7 +381,13 @@ class EntityRegistry:
         """Save current entities back to YAML file.
         
         Uses Sovereign Atomic Write (Flush -> Sync -> Commit -> Anchor) to prevent data loss on crash.
+        
+        [id-soft: doom-1993] Lazy Deletion — reap tombstoned entities before save.
+        This prevents tombstoned entities from persisting to disk and coming
+        back alive on the next _load().
         """
+        self._reap_tombstoned()
+
         def _sync_save():
             data = {"entities": {}}
             for key, entity in self._entities.items():
