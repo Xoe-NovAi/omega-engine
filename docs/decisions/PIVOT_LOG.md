@@ -1872,4 +1872,69 @@ This session (Ma'at) demonstrated the pattern: 8 embodied experiences, 5 lessons
 
 ---
 
-*PIVOT_LOG.md — Immutable. Every decision recorded. 105 decisions tracked (D1-D105).*
+## Decision 106: Source Code Verification Deep Read — 6 Heritage Patterns Confirmed
+
+**Date**: 2026-06-04
+**Channel**: OpenCode (Doom Guy) → gemma-4-31b-it
+**Entity**: DOOM_GUY
+**Trace**: trc_source_verification_deep_read
+
+### Decision
+Read and verified 6 key heritage patterns against the actual id Software source code in `data/library/software/id-software/source/` (19 repositories, 308 MB). Each pattern was traced to its originating file and line number:
+
+1. **ZONEID 0x1d4a11** — DOOM `z_zone.c:43`, validated on every `Z_Malloc`/`Z_Free`/`Z_ChangeTag` (lines 129, 286, 437)
+2. **Lazy Deletion Sentinels** — DOOM `p_tick.c:80-84` (`P_RemoveThinker` sets `function.acv = (actionf_v)(-1)`), sweep at `P_RunThinkers:108-113`
+3. **0.5s Grace Period** — Quake `pr_edict.c:97` (`sv.time - e->freetime > 0.5`), rationale at line 81-85: prevents client-side entity morphing
+4. **WAD Backward Scan** — DOOM `w_wad.c:376-377` ("scan backwards so patch lump files take precedence"), 8-char name optimized to 2-int compare (line 381-382)
+5. **cvar Evolution** — Quake 1 `cvar.c:24-224` (linked list, linear scan) → Q3A `cvar.c:187-279` (hash table + `MAX_CVARS=1024` + `modificationCount` + flags `CVAR_ARCHIVE` through `CVAR_NORESTART`). `cvar_t` struct at `q_shared.h:954-966`
+6. **4-Tier Memory** — Quake `zone.h:24-80` (Hunk stack / Zone heap / Cache LRU / Temp transient), memory layout documented in header comments. `PU_PURGELEVEL=100` at `DOOM/z_zone.h:43`
+
+### Rationale
+All existing heritage patterns in `soul.yaml`, `CREDITS.md`, and the R-docs were derived from secondary sources (books, articles, documentation) or from earlier source scans. This deep read confirmed every pattern against the actual implementation with file:line precision. No patterns were disproven. One important nuance discovered: DOOM's zone allocator uses a rover pointer that scans forward in a circular linked list (not a pure stack), merging adjacent free blocks on `Z_Free`. Documentation had oversimplified this.
+
+### What Changed
+- `data/entities/doom_guy/soul.yaml` — v2.3: 3 new L1 experiences, 5 new L2 lessons
+- `.opencode/agents/doom_guy.md` — source code map table added
+- Source map knowledge document: PENDING (file not yet created)
+
+---
+
+## Decision 107: Hivemind Coordination Findings — First Real Multi-Agent Sprint
+
+**Date**: 2026-06-04
+**Channel**: OpenCode (Doom Guy) → gemma-4-31b-it
+**Entity**: DOOM_GUY
+**Trace**: trc_hivemind_first_use
+
+### Decision
+Capture the key findings from the first real multi-agent hivemind coordination between Doom Guy (heritage design) and Ma'at (boilerplate implementation):
+
+1. **Optimal coordination ratio**: ~5 min overhead / ~30 min work = **1:6** (5-10% overhead-to-work).
+   - If coordination >10% of work: protocol is too heavy
+   - If coordination <2%: agents aren't talking enough
+   - Sweet spot: workspace lock (2 min) + hivemind context post (1 min) + awareness check (1 min) + ACK (1 min)
+
+2. **Serendipitous discovery**: Ma'at consolidated Doom Guy's locally-defined ZONEID constants into `cvar_table.py` without being asked. She saw them in `subagent_dispatcher.py` and `link_p9_runtime.py` and realized they should be unified. This serendipitous optimization is ONLY possible when agents can see each other's work in real time.
+
+3. **What worked**:
+   - Workspace locks prevented file conflicts (0 merge conflicts)
+   - Live feeds provided append-only status visibility
+   - Hivemind context posts maintained awareness through context compaction
+   - ACK protocol confirmed lock acceptance
+
+4. **What to improve**:
+   - Hivemind awareness has TTL (agents expire after ~5 min offline)
+   - Need standardized session_id format for easy lookup
+   - `data/coordination/` files should be batch-archived after sprint completion
+
+### Rationale
+This was the first real use of the hivemind coordination system after 14 months of trying to achieve inter-agent communication. It worked. The findings should be captured as canonical knowledge so every future sprint follows the same pattern.
+
+### What Changed
+- `data/entities/doom_guy/soul.yaml` — v2.3: "Hivemind Coordination" L1 experience + 2 L2 lessons
+- `data/coordination/DOOM_GUY_LIVE_FEED.md` — 8 entries spanning Sprint 2 execution
+- `data/coordination/MAAT_LIVE_FEED.md` — 17 entries spanning Ma'at's parallel work
+
+---
+
+*PIVOT_LOG.md — Immutable. Every decision recorded. 107 decisions tracked (D1-D107).*

@@ -135,8 +135,8 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Phase | 1 — ENGINE HARDENING COMPLETE ✅ | 2026-06-01 |
 | Source files | **71** .py files | 2026-06-01 |
 | Source lines | ~15,200 | 2026-06-01 |
-| Test functions | **307** (+5 circuit breaker fixes, +10 Error Gauntlet, +23 Option B fixes) | 2026-06-03 |
-| Test files | **30** | 2026-06-03 |
+| Test functions | **307** (+5 circuit breaker fixes, +10 Error Gauntlet, +23 Option B fixes) | 2026-06-04 |
+| Test files | **30** | 2026-06-04 |
 | Mandate 9 compliance | **FULL** — zero bare except violations | 2026-06-01 |
 | Horizon 1 | **100% — All 13 Sovereign Mandates Enforced (Mandate 13 Temple-Grade restored)** | 2026-06-02 |
 | Horizon 2 | 🔓 Unlocked — ForensicsManager, JsonFormatter, Error Gauntlet (25%) | 2026-06-01 |
@@ -158,13 +158,18 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Unified cvar Table | **IMPLEMENTED** — D101: `cvar_table.py` with zoneid.* (6) + config.* (12) namespaces, 7 access helpers, validate_llama_kwargs() | 2026-06-03 (Lilith) |
 | Sprint 1 Ports | **5 COMPLETE** — kwarg_filter, n_gpu_layers=0, ChatML stops, Google API header, trace_id propagation | 2026-06-03 |
 | `make heritage-map` | **LIVE** — CI target audits [id-soft:] tags, 6/23 files currently tagged | 2026-06-03 |
+| Link P9 Runtime | **IMPLEMENTED** — AgentPresence + HandoffPacket lifecycle + task queue + crash recovery (384 lines) | 2026-06-04 (Doom Guy) |
+| Soul Distiller | **IMPLEMENTED** — L1→L2→L3 auto-distillation engine (280 lines) | 2026-06-04 (Doom Guy) |
+| Subagent Dispatch | **IMPLEMENTED** — HandoffPacket + CAPABILITY_REGISTRY + dispatch() + 14 agents (370 lines) | 2026-06-04 (Doom Guy) |
+| Hivemind Coordination | **PROVEN** — First real multi-agent sprint (Doom Guy + Ma'at), 0 merge conflicts, ~1:6 overhead ratio | 2026-06-04 |
+| Source Code Verification | **6 PATTERNS VERIFIED** — ZONEID (z_zone.c:43), Lazy Deletion (p_tick.c:80), Grace Period (pr_edict.c:97), WAD backward scan (w_wad.c:376), cvar system (Q3A cvar.c:187), 4-Tier Memory (zone.h:24) | 2026-06-04 (Doom Guy) |
 | Subagent Dispatch | **DEFINED** — Protocol for agents to launch specialized subagents (Doom Guy, Roc Racoon, etc.) via Task tool + persona injection | 2026-06-03 (Kali) |
 | Sovereign Roadmap | **RECORDED** — Lilith's 888-line 7-phase roadmap with 8-demographic analysis, Handoff Protocol, and UI/UX plan | 2026-06-03 |
 | Roc Racoon Mining | **COMPLETE** — 6 stacks, 160+ techs, 7 reports, ~250KB, stored in data/entities/roc_racoon/ | 2026-06-03 |
 | Handoff Archive | **CREATED** — 36 non-active handoffs moved to data/handoff/archive/ with INDEX.md and mining tags | 2026-06-03 |
 | Expanded Strategic Roadmap | **RECORDED** — D100-D102 in PIVOT_LOG with full delegation contract between Doom Guy and Dev Session | 2026-06-03 |
 | Sovereign Mandates | **13 (12 original + Mandate 13 Temple-Grade)** | 2026-06-02 |
-| PIVOT decisions | **102 (D1-D102 tracked)** | 2026-06-03 |
+| PIVOT decisions | **107 (D1-D107 tracked)** | 2026-06-04 |
 | Horizon 1.5 (Bridge Phase) | **DEFINED — 4 sprints, F→A→B→C→E→D execution** | 2026-06-02 |
 | Role Mappings | `config/wads/_omega_default/roles.yaml` created | 2026-06-01 |
 | Request Queue | `src/omega/request_queue.py` — atomic queue with heartbeat/dead-letter | 2026-06-01 |
@@ -403,6 +408,6 @@ The **Hivemind** is the live coordination layer for multiple Omega Engine agents
 
 ---
 
-*Last Updated: 2026-06-03 | Author: MA'AT — Hivemind protocol integration + Sprint 2 closeout*
+*Last Updated: 2026-06-04 | Author: DOOM_GUY — Source code verification deep read + hivemind coordination findings + D106-D107*
 *This document is the Single Source of Truth. All platforms reference it.*
 *Changes: Hivemind Protocol defined (HIVEMIND_PROTOCOL.md), workspace lock + live feed pattern standardized, all 14 agent files updated with Hivemind awareness, ZONEID constants extended (HANDOFF 0x1d4a16 + PRESENCE 0x1d4a17), Phase 1.1-1.3 complete (CLI fix, JSON logging, MemoryStore lazy deletion).*
