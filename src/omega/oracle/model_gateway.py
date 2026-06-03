@@ -345,6 +345,87 @@ class ModelGateway:
         # If no local backend found, cloud providers will be used via fabric
         return "cloud"
 
+    # ── Speculative decoding config (from cpu_optimizer) ─────────────
+    # Port 3.5: expose the CPU-level speculative decode config for Oracle/Iris.
+    @property
+    def spec_decode_config(self) -> 'SpeculativeDecodeConfig':
+        """Expose the Zen 2-optimized speculative decode configuration.
+
+        Returns:
+            SpeculativeDecodeConfig with draft_model, min/max_draft_tokens,
+            and target_acceptance_rate tailored for the Ryzen 7 5700U.
+        """
+        return self._cpu_optimizer.spec_decode
+
+    # ── Entity-aware model affinity ───────────────────────────────────
+    # Per-entity model overrides for domain-specific routing.
+    # Fallback chain: entity override → entity registry field → domain default → system default
+    # [id-soft: xna-omega-legacy] Port 3.1: Entity Model Affinity
+
+    _entity_model_map: Dict[str, str] = {}  # entity_name.lower() -> model_name
+
+    def set_entity_model(self, entity_name: str, model_name: str) -> None:
+        """Set a per-entity model override.
+
+        Args:
+            entity_name: Case-insensitive entity name.
+            model_name: Model identifier (e.g. "qwen3-1.7b", "deepseek-r1-8b").
+        """
+        self._entity_model_map[entity_name.lower().strip()] = model_name
+        logger.debug("Entity model affinity set: %s -> %s", entity_name.lower(), model_name)
+
+    def remove_entity_model(self, entity_name: str) -> None:
+        """Remove a per-entity model override, reverting to default resolution."""
+        self._entity_model_map.pop(entity_name.lower().strip(), None)
+
+    def get_model_for_entity(self, entity_name: Optional[str] = None) -> str:
+        """Resolve the best model for an entity using fallback chain.
+
+        Resolution priority:
+        1. Entity override (set_entity_model) — runtime overrides for entity-specific routing
+        2. Entity registry field — the entity's configured ``model`` in its YAML definition
+        3. Domain-based mapping — entity's first domain linked to model config
+        4. System default — "qwen3-1.7b" (Iris tier)
+
+        Args:
+            entity_name: Entity name to resolve. If None, returns system default.
+
+        Returns:
+            Model identifier string.
+        """
+        if not entity_name:
+            return self._system_default_model()
+
+        key = entity_name.lower().strip()
+
+        # Tier 1: Runtime override via set_entity_model()
+        override = self._entity_model_map.get(key)
+        if override:
+            return override
+
+        # Tier 2: Entity registry field
+        entity = self._entity_registry.get(key)
+        if entity and entity.model:
+            return entity.model
+
+        # Tier 3: Domain-based — use entity's first domain to find model match
+        if entity and entity.domains:
+            domain = entity.domains[0].lower()
+            # Check if models.yaml has domain->model mappings
+            domain_key = f"domain.{domain}"
+            if domain_key in getattr(self, 'models', {}):
+                domain_model = self.models[domain_key].get("model")
+                if domain_model:
+                    return domain_model
+
+        # Tier 4: System default
+        return self._system_default_model()
+
+    @staticmethod
+    def _system_default_model() -> str:
+        """Return the system default model for unaffiliated queries."""
+        return "qwen3-1.7b"
+
     # ── Model name resolution ──────────────────────────────────────────
     async def _resolve_ollama_model(self, model_name: str) -> str:
         """Resolve config model name to an Ollama tag.

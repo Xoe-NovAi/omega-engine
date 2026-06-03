@@ -276,18 +276,16 @@ class NativeGGUFProvider(BaseProvider):
         # [id-soft: quake3-1999] Cvar System — read from cvar_table for hot-reload
         try:
             from omega.cvar_table import cvar_get, validate_llama_kwargs
-            # Port 1.1: validate llama-cpp kwargs at init
-            if cvar_get("config.gguf.kwarg_filter", True):
-                kwarg_warnings = validate_llama_kwargs(config, "NativeGGUFProvider")
-                if kwarg_warnings:
-                    logger.warning(
-                        "NativeGGUFProvider init: %d kwarg warnings:\n  %s",
-                        len(kwarg_warnings), "\n  ".join(kwarg_warnings)
-                    )
+            # Port 1.1: validate llama-cpp kwargs — moved to _ensure_loaded
+            # where the actual llama_cpp.Llama() kwargs are built. Validating
+            # the raw provider config here caused false positives because
+            # config also contains `provider`, `priority`, `cores`, etc.
+            self._kwarg_filter_enabled = cvar_get("config.gguf.kwarg_filter", True)
             n_gpu = cvar_get("config.gguf.n_gpu_layers", 0)
             n_ctx_default = cvar_get("config.gguf.n_ctx", 4096)
             n_threads_default = cvar_get("config.gguf.n_threads", 6)
         except ImportError:
+            self._kwarg_filter_enabled = False
             n_gpu = 0
             n_ctx_default = 4096
             n_threads_default = 6
@@ -439,21 +437,34 @@ class NativeGGUFProvider(BaseProvider):
             f"  mmap: {self._use_mmap}, mlock: {self._use_mlock}"
         )
 
+        # Build the exact kwargs we'll pass to Llama(), then validate them
+        # [id-soft: quake3-1999] Cvar System — config validation at the cvar boundary
+        # Port 1.1 fix: validate the actual llama_cpp kwargs, not the raw provider config
+        llama_kwargs = {
+            "model_path": self.model_path,
+            "n_threads": threads,
+            "n_threads_batch": self._n_threads_batch,
+            "n_ctx": target_ctx,
+            "n_batch": self._n_batch,
+            "n_ubatch": self._n_ubatch,
+            "type_k": self._type_k,
+            "type_v": self._type_v,
+            "use_mmap": self._use_mmap,
+            "use_mlock": self._use_mlock,
+            "n_gpu_layers": self._n_gpu_layers,
+            "verbose": False,
+        }
+        if self._kwarg_filter_enabled:
+            from omega.cvar_table import validate_llama_kwargs
+            kwarg_warnings = validate_llama_kwargs(llama_kwargs, "NativeGGUFProvider.load")
+            if kwarg_warnings:
+                logger.warning(
+                    "NativeGGUFProvider.load: %d kwarg warnings:\n  %s",
+                    len(kwarg_warnings), "\n  ".join(kwarg_warnings)
+                )
+
         def _load():
-            return Llama(
-                model_path=self.model_path,
-                n_threads=threads,
-                n_threads_batch=self._n_threads_batch,
-                n_ctx=target_ctx,
-                n_batch=self._n_batch,
-                n_ubatch=self._n_ubatch,
-                type_k=self._type_k,
-                type_v=self._type_v,
-                use_mmap=self._use_mmap,
-                use_mlock=self._use_mlock,
-                n_gpu_layers=self._n_gpu_layers,
-                verbose=False,
-            )
+            return Llama(**llama_kwargs)
 
         self.llm = await anyio.to_thread.run_sync(_load)
         self._loaded_ctx = target_ctx
@@ -539,20 +550,29 @@ class NativeGGUFProvider(BaseProvider):
     async def reload_with_context(self, n_ctx: int) -> bool:
         """Explicitly reload the model with a new context length.
 
+        Atomic model swap with rollback: if the new model fails to load, the
+        previous model instance and context are restored. Never leave the
+        engine with a None model state.
+
         Useful for dynamic context management — call this when a conversation
         needs more context than currently allocated.
 
         Returns:
             True if reload succeeded.
         """
+        # [id-soft: z_zone 1996] Atomic Swap — save old state before mutation
+        old_llm = self.llm
         old_ctx = self._loaded_ctx
+        self.llm = None  # Signal unloading
         try:
-            self.llm = None  # Force unload
             await self._ensure_loaded(n_ctx)
             logger.info(f"Context reloaded: {old_ctx} -> {self._loaded_ctx}")
             return True
         except Exception as e:
-            logger.error(f"Context reload failed: {e}")
+            # [id-soft: z_zone 1996] Rollback — restore old state on failure
+            self.llm = old_llm
+            self._loaded_ctx = old_ctx if old_llm else 0
+            logger.error(f"Context reload failed, rolled back to {self._loaded_ctx}: {e}")
             return False
 
     def get_status(self) -> Dict[str, Any]:

@@ -15,6 +15,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import anyio
 
 from .constants import DEFAULT_CONTEXT_LIMIT, MAX_HISTORY_EXCHANGES, ZONEID_MEMORY, validate_zoneid
+from .errors import EntityTombstonedError
 from .memory.providers import (
     StorageProvider,
     RedisStorageProvider,
@@ -49,17 +50,33 @@ MAX_HISTORY = MAX_HISTORY_EXCHANGES
 MAX_CONTEXT_EXCHANGES = DEFAULT_CONTEXT_LIMIT
 ARCHIVE_AFTER_DAYS = 7
 
+# [id-soft: quake-1996] Grace Period — 0.5s delay before fully removing a
+# tombstoned session from the hot cache. Prevents hot-slot reuse during
+# in-flight add_exchange operations. Same value used by id Software's Quake
+# server (15 packets at 30Hz ≈ 0.5s) to prevent client-side entity morphing.
+TOMBSTONE_GRACE_SECONDS = 0.5
+
+
 class MemoryStore:
     """Hot/Warm/Cold entity memory with LRU caching and 3-tier provider fallback.
 
     [id-soft: doom-1993] ZONEID Pattern — integrity marker embedded in every
     persisted exchange entry, verified on load to catch data corruption.
+    [id-soft: doom-1993] Lazy Deletion — archive_session() tombstones a
+    cache_key for TOMBSTONE_GRACE_SECONDS before fully removing the hot
+    cache entry. In-flight add_exchange operations complete safely because
+    they hold their own reference to the OrderedDict.
+    [id-soft: quake-1996] Grace Period — 0.5s delay (TOMBSTONE_GRACE_SECONDS)
+    before reap matches the original Quake server realloc grace.
     """
 
     ZONEID = ZONEID_MEMORY
 
     def __init__(self, providers: Optional[List[StorageProvider]] = None):
         self._hot: Dict[str, OrderedDict] = {}
+        # [id-soft: doom-1993] Lazy Deletion — tombstone registry
+        # Maps cache_key -> time.time() when tombstoned
+        self._tombstoned: Dict[str, float] = {}
         self._stats: Dict[str, int] = {"loads": 0, "saves": 0, "archives": 0, "fallbacks": 0}
         
         if providers is not None:
@@ -99,6 +116,17 @@ class MemoryStore:
         if not session_id:
             return []
         cache_key = f"{entity_name.lower()}:{session_id}"
+
+        # [id-soft: doom-1993] Lazy Deletion — tombstoned sessions raise typed error
+        # Mandate 9 enforcement: silent empty returns hide the fact that the
+        # session was archived. Callers must catch EntityTombstonedError and
+        # handle it explicitly (typically by loading from cold storage).
+        if self._is_tombstoned(cache_key):
+            raise EntityTombstonedError(
+                cache_key=cache_key,
+                message=f"Session '{session_id}' for entity '{entity_name}' is tombstoned (archived within grace period {TOMBSTONE_GRACE_SECONDS}s)",
+                trace_id=None,
+            )
 
         # 1. Check hot cache
         if cache_key in self._hot:
@@ -149,6 +177,15 @@ class MemoryStore:
             logger.warning("add_exchange called with None/empty session_id for entity=%s, skipping", entity_name)
             return
         cache_key = f"{entity_name.lower()}:{session_id}"
+
+        # [id-soft: doom-1993] Lazy Deletion — tombstoned sessions reject new exchanges
+        # Mandate 9 enforcement: prevent data loss on archived sessions
+        if self._is_tombstoned(cache_key):
+            raise EntityTombstonedError(
+                cache_key=cache_key,
+                message=f"Cannot add exchange to tombstoned session '{session_id}' for entity '{entity_name}' — session was archived within grace period {TOMBSTONE_GRACE_SECONDS}s",
+                trace_id=None,
+            )
         exchange = {
             # [id-soft: doom-1993] ZONEID Pattern — integrity marker
             "_zoneid": ZONEID_MEMORY,
@@ -191,12 +228,36 @@ class MemoryStore:
             self._stats["saves"] += 1
 
     def _cache_hot(self, cache_key: str, exchanges: List[Dict]) -> None:
+        # [id-soft: doom-1993] Lazy Deletion — reap tombstoned before slot reuse
+        self._reap_tombstoned()
         if cache_key not in self._hot:
             self._hot[cache_key] = OrderedDict()
         for i, ex in enumerate(exchanges):
             self._hot[cache_key][f"hist_{i}"] = ex
         while len(self._hot) > MAX_HOT_SESSIONS:
             self._hot.popitem(last=False)
+
+    def _reap_tombstoned(self) -> None:
+        """Reap tombstoned hot cache entries past the grace period.
+
+        [id-soft: doom-1993] Lazy Deletion — sweep tombstoned entries
+        [id-soft: quake-1996] Grace Period — only reap after TOMBSTONE_GRACE_SECONDS
+        In-flight add_exchange operations hold their own references to the
+        OrderedDict, so they complete safely even after the slot is reaped
+        from the registry. The actual data is in providers, so the reaped
+        slot is recoverable on next get_history() call.
+        """
+        if not self._tombstoned:
+            return
+        now = time.time()
+        expired = [k for k, ts in self._tombstoned.items() if now - ts >= TOMBSTONE_GRACE_SECONDS]
+        for cache_key in expired:
+            self._hot.pop(cache_key, None)
+            del self._tombstoned[cache_key]
+
+    def _is_tombstoned(self, cache_key: str) -> bool:
+        """Check if a cache_key is currently tombstoned (within grace period)."""
+        return cache_key in self._tombstoned
 
     async def _compact(
         self,
@@ -242,7 +303,13 @@ class MemoryStore:
         entity_name: str,
         session_id: str,
     ) -> bool:
-        """Move a session to cold storage / archive across all providers."""
+        """Move a session to cold storage / archive across all providers.
+
+        [id-soft: doom-1993] Lazy Deletion — instead of popping the hot cache
+        entry immediately, tombstone it for TOMBSTONE_GRACE_SECONDS so any
+        in-flight add_exchange operations complete safely. The slot is
+        reaped by _reap_tombstoned() on the next access.
+        """
         archived_any = False
         for provider in self.providers:
             try:
@@ -250,12 +317,14 @@ class MemoryStore:
                     archived_any = True
             except Exception as e:
                 logger.warning(f"Provider {provider.__class__.__name__} failed to archive: {e}")
-                
+
         if archived_any:
             cache_key = f"{entity_name.lower()}:{session_id}"
-            self._hot.pop(cache_key, None)
+            # [id-soft: doom-1993] Lazy Deletion — tombstone marker
+            # [id-soft: quake-1996] Grace Period — wait TOMBSTONE_GRACE_SECONDS
+            self._tombstoned[cache_key] = time.time()
             self._stats["archives"] += 1
-            logger.info(f"Archived session {session_id} across providers")
+            logger.info(f"Archived session {session_id} across providers (tombstoned, grace={TOMBSTONE_GRACE_SECONDS}s)")
             return True
         return False
 
@@ -288,12 +357,20 @@ class MemoryStore:
         entity_name: Optional[str] = None,
         limit: int = 20,
     ) -> List[Dict[str, Any]]:
-        """List recent sessions, optionally filtered by entity."""
+        """List recent sessions, optionally filtered by entity.
+
+        [id-soft: doom-1993] Lazy Deletion — skips sessions whose hot-cache
+        entry is tombstoned (within grace period). After grace expires, the
+        tombstone is reaped and the file itself remains the source of truth.
+        """
         sessions = []
         if entity_name:
             search_dir = _get_entity_dir() / entity_name.lower().replace(" ", "_")
             if await anyio.Path(search_dir).exists():
                 async for path in anyio.Path(search_dir).glob("*.json"):
+                    cache_key = f"{entity_name.lower()}:{path.stem}"
+                    if self._is_tombstoned(cache_key):
+                        continue
                     sessions.append({
                         "session_id": path.stem,
                         "entity": entity_name,
@@ -305,6 +382,9 @@ class MemoryStore:
             async for ent_dir in anyio.Path(_get_entity_dir()).iterdir():
                 if await anyio.Path(ent_dir).is_dir():
                     async for path in anyio.Path(ent_dir).glob("*.json"):
+                        cache_key = f"{ent_dir.name}:{path.stem}"
+                        if self._is_tombstoned(cache_key):
+                            continue
                         sessions.append({
                             "session_id": path.stem,
                             "entity": ent_dir.name,
@@ -319,6 +399,7 @@ class MemoryStore:
         return {
             "hot_sessions": sum(len(v) for v in self._hot.values()),
             "hot_cache_size": len(self._hot),
+            "tombstoned": len(self._tombstoned),
             "loads": self._stats["loads"],
             "saves": self._stats["saves"],
             "archives": self._stats["archives"],
@@ -326,8 +407,14 @@ class MemoryStore:
         }
 
     async def close(self) -> None:
-        """Flush hot cache to providers and close them."""
+        """Flush hot cache to providers and close them.
+
+        [id-soft: doom-1993] Lazy Deletion — skip tombstoned keys when flushing
+        because their data has already been archived to providers.
+        """
         for cache_key in list(self._hot.keys()):
+            if self._is_tombstoned(cache_key):
+                continue
             entity_name, session_id = cache_key.rsplit(":", 1)
             exchanges = list(self._hot[cache_key].values())
             if exchanges:
@@ -336,13 +423,13 @@ class MemoryStore:
                         await provider.save_history(entity_name, session_id, exchanges)
                     except Exception as e:
                         logger.warning(f"Failed to flush to {provider.__class__.__name__} on close: {e}")
-                        
+
         for provider in self.providers:
             try:
                 await provider.close()
             except Exception as e:
                 logger.warning(f"Failed to close provider {provider.__class__.__name__}: {e}")
-                
+
         logger.info("Memory store flushed and closed")
 
     async def archive_old_sessions(self, older_than_days: int = ARCHIVE_AFTER_DAYS) -> int:

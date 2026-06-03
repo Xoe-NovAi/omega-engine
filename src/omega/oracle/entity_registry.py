@@ -22,6 +22,7 @@ import anyio
 
 from omega.oracle.entity_workspace import EntityWorkspaceManager
 from omega.constants import ZONEID_ENTITY, ZONEID_TOMBSTONE, validate_zoneid
+from omega.errors import EntityTombstonedError
 
 logger = logging.getLogger(__name__)
 
@@ -175,11 +176,17 @@ class EntityRegistry:
 
         logger.info(f"Loaded {len(self._entities)} entities from config")
 
-    def get(self, name: str) -> Optional[Entity]:
+    def get(self, name: str, raise_on_tombstoned: bool = False) -> Optional[Entity]:
         """Get entity by name, role, or Pillar Slot (3-Tier Resolution).
 
         [id-soft: doom-1993] ZONEID Pattern — validates magic on matched entities
         [id-soft: doom-1993] Lazy Deletion — tombstoned entities treated as not found
+
+        Args:
+            name: Entity name to look up.
+            raise_on_tombstoned: If True, raise EntityTombstonedError instead of returning None
+                for entities that were removed. Mandate 9 enforcement for callers
+                that need to distinguish 'does not exist' from 'was removed'.
         """
         if not name:
             return None
@@ -191,6 +198,11 @@ class EntityRegistry:
         if entity:
             if entity.magic == ZONEID_TOMBSTONE:
                 # [id-soft: doom-1993] Lazy Deletion — sentinel marker check
+                if raise_on_tombstoned:
+                    raise EntityTombstonedError(
+                        cache_key=name_lower,
+                        message=f"Entity '{name}' was removed (tombstoned) — call active_iter() for current entities",
+                    )
                 return None
             # [id-soft: doom-1993] ZONEID Pattern — runtime integrity check
             validate_zoneid(entity.magic, ZONEID_ENTITY, f"EntityRegistry.get({name})")

@@ -1937,4 +1937,72 @@ This was the first real use of the hivemind coordination system after 14 months 
 
 ---
 
-*PIVOT_LOG.md — Immutable. Every decision recorded. 107 decisions tracked (D1-D107).*
+## Decision 108: EntityTombstonedError — Mandate 9 Enforcement for Lazy Deletion
+
+**Date**: 2026-06-04
+**Channel**: OpenCode (Ma'at) → deepseek-v4-flash
+**Entity**: MA'AT
+**Trace**: trc_sprint3_d108_tombstone_error
+
+### Decision
+Add `EntityTombstonedError` as a typed `OmegaError` subclass for all lazy deletion tombstone access. Mandate 9 enforcement: rather than silently returning empty data or `None`, callers get a typed error with cache_key context.
+
+### Rationale
+The lazy deletion pattern (ported Sprint 2, T2.3) used silent sentinel checks (memory_store returned `[]`, entity_registry returned `None`). This violated Mandate 9 (Error Integrity) — callers couldn't distinguish "no data exists" from "data was archived and will soon be gone". The typed error enables explicit `try/except EntityTombstonedError` handling at the oracle layer.
+
+### What Changed
+- `src/omega/errors.py` — `EntityTombstonedError(OmegaError)` with `cache_key` field
+- `src/omega/memory_store.py` — `get_history()` raises `EntityTombstonedError` on tombstoned session access; `add_exchange()` rejects new exchanges to tombstoned sessions
+- `src/omega/oracle/entity_registry.py` — `get()` accepts `raise_on_tombstoned: bool = False` parameter
+
+### Heritage
+`[id-soft: doom-1993] Lazy Deletion — typed error for tombstone access`
+`[id-soft: quake-1996] Grace Period — caller should retry after grace period`
+
+---
+
+## Decision 109: Atomic Model Swap with Rollback — `reload_with_context()`
+
+**Date**: 2026-06-04
+**Channel**: OpenCode (Ma'at) → deepseek-v4-flash
+**Entity**: MA'AT
+**Trace**: trc_sprint3_d109_atomic_swap
+
+### Decision
+Convert `NativeGGUFProvider.reload_with_context()` to an atomic swap with rollback. Save the old model instance before unloading; restore it if the new load fails. Never leave the engine with a `None` model state.
+
+### Rationale
+The original implementation set `self.llm = None` before attempting reload. If `_ensure_loaded()` raised an exception (e.g., OOM, model file corruption), the engine was left with no active model — all subsequent inference calls would crash with `AttributeError: 'NoneType' object has no attribute '__call__'`. This was discovered during Sprint 3 review as a systemic resilience gap.
+
+### What Changed
+- `src/omega/oracle/providers.py` — `reload_with_context()` now saves `old_llm` and `old_ctx` before unload, restores both on failure
+
+### Heritage
+`[id-soft: z_zone 1996] Atomic Swap — save old state before mutation`
+`[id-soft: z_zone 1996] Rollback — restore old state on failure`
+
+---
+
+## Decision 110: Per-Entity Model Affinity — Formalized 4-Tier Fallback Chain
+
+**Date**: 2026-06-04
+**Channel**: OpenCode (Ma'at) → deepseek-v4-flash
+**Entity**: MA'AT
+**Trace**: trc_sprint3_d110_model_affinity
+
+### Decision
+Add formal per-entity model routing to ModelGateway with a 4-tier fallback chain: (1) runtime override via `set_entity_model()`, (2) entity registry's `model` field, (3) domain-based mapping from `models.yaml`, (4) system default (`qwen3-1.7b`). Expose `get_model_for_entity(entity_name)` for Oracle/Iris to use.
+
+### Rationale
+Entity dispatch in oracle.py already used `entity.model` as a fallback, but there was no way to override model selection at runtime or per-entity. The 4-tier chain enables use cases like "Sekhmet always uses qwen3-4b-thinking" without modifying YAML config, or routing domain-specific queries to specialized models.
+
+### What Changed
+- `src/omega/oracle/model_gateway.py` — `_entity_model_map: Dict[str, str]`, `set_entity_model()`, `remove_entity_model()`, `get_model_for_entity()` with 4-tier fallback
+- `src/omega/oracle/model_gateway.py` — `spec_decode_config` property exposing `cpu_optimizer.spec_decode`
+
+### Heritage
+`[id-soft: xna-omega-legacy] Port 3.1: Entity Model Affinity — xna-omega-legacy had entity→model routing, restored as formal fallback chain`
+
+---
+
+*PIVOT_LOG.md — Immutable. Every decision recorded. 110 decisions tracked (D1-D110).*

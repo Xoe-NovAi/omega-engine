@@ -109,3 +109,21 @@ class BoundaryViolationError(OmegaError):
 
 class InvariantViolationError(OmegaError): 
     """Internal logic failure where a fundamental system invariant is broken."""
+
+# ── Entity & Memory Errors ────────────────────────────────────────────────────
+
+class EntityTombstonedError(OmegaError):
+    """Raised when an operation attempts to access a lazily-deleted entity or
+    session that has been tombstoned but not yet reaped.
+
+    [id-soft: doom-1993] Lazy Deletion — typed error for tombstone access.
+    [id-soft: quake-1996] Grace Period — caller should retry after grace period.
+
+    This is a Mandate 9 enforcement: rather than silently returning empty data,
+    we raise a typed error so callers can distinguish "no data exists" from
+    "data was archived and will be gone soon."
+    """
+    def __init__(self, cache_key: str, message: Optional[str] = None, **kwargs):
+        self.cache_key = cache_key
+        default_msg = f"Cannot access tombstoned entry '{cache_key}' — session was archived or entity was removed"
+        super().__init__(message or default_msg, **kwargs)
