@@ -5,14 +5,14 @@
 # Engine state: Read OMEGA_ENGINE.md (the Single Source of Truth)
 # Platform distinction: .clinerules = HOW to work from Cline CLI.
 #                       OMEGA_ENGINE.md = WHAT the engine IS.
-# Last Updated: 2026-06-02
+# Last Updated: 2026-06-04
 # Cline CLI version: 3.0.15 (cline binary at ~/.nvm/versions/node/v25.9.0/bin/cline)
 # User context: M3 1M via Cline provider (OAuth); moved from Cline VSCodium extension.
 
 
 ## Sovereign Mandates (NON-NEGOTIABLE)
 **Read and adhere to them above all other rules:**
-- **Read First**: `SOVEREIGN_MANDATES.md` (13 mandates as of 2026-06-02)
+- **Read First**: `SOVEREIGN_MANDATES.md` (13 mandates as of 2026-06-02 (M1-M13, v3.0.0))
 - **Engine State**: `OMEGA_ENGINE.md` (Single Source of Truth)
 - **Cline Twin**: `AGENTS.md` (OpenCode sibling rules, kept symmetric)
 
@@ -139,10 +139,15 @@ When running interactively or with --auto-approve, the agent has access to:
 2. **Read the rules**: `head -50 SOVEREIGN_MANDATES.md` (refresh the 13 mandates)
 3. **Check recent activity**: `git log --oneline -10` and `git status`
 4. **Verify baseline**: `cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && make test`
-   - Must show **302/302 passing**. If fewer pass, STOP and triage before changes.
-5. **Read latest handoffs** (if any):
+   - Must show **308/308 passing**. If fewer pass, STOP and triage before changes.
+5. **Verify Hivemind** (multi-agent work): `omega-hub_hivemind_get_awareness()`
+   - See who's already working before claiming files
+6. **Read latest handoffs** (if any):
    - `ls -t data/handoff/*.md | head -3` and skim them
    - Especially `data/handoff/STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md`
+7. **If parallel work**: write `data/coordination/CLINE_M3_WORKSPACE_LOCK_{YYYYMMDD}.md` BEFORE
+   any file edit, post `omega-hub_hivemind_post_context(...)`, and initialize
+   `data/coordination/CLINE_M3_LIVE_FEED.md`. See `docs/strategy/HIVEMIND_PROTOCOL.md`.
 
 ### During Work
 
@@ -159,7 +164,7 @@ When running interactively or with --auto-approve, the agent has access to:
 
 ### After Completing Work (MANDATORY SEQUENCE)
 
-1. `make test` - all **302** tests must pass
+1. `make test` - all **308** tests must pass
 2. `make temple-grade` - T1-T11 gates must pass (Mandate 13)
 3. `make sovereignty` - confirm local/cloud ratio did not regress
 4. `git add -A && git commit -m "<prefix>: <short message>"` - PREFIX REQUIRED
@@ -189,7 +194,7 @@ When running interactively or with --auto-approve, the agent has access to:
 - **Imports**: stdlib -> third-party -> local; relative imports within packages
 - **Docstrings**: Google-style; preserve existing docstrings unless modifying that function
 - **Errors**: typed exceptions only; no bare `except:`; `pytest.raises(OmegaError)` is canonical
-- **Tests**: `make test` (302 must pass), then `make temple-grade` (T1-T11 must pass)
+- **Tests**: `make test` (308 must pass), then `make temple-grade` (T1-T11 must pass)
 - **Atomic writes**: use `.tmp -> .json` rename pattern for any file mutation
 - **Lines**: <100 chars preferred; flake8 must pass
 
@@ -201,7 +206,7 @@ cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
 source .venv/bin/activate
 
 # === CORE TESTING ===
-make test                # 302 tests must pass
+make test                # 308 tests must pass
 make test-cov            # with coverage report
 make temple-grade        # T1-T11 gates (Mandate 13)
 make sovereignty         # local/cloud inference ratio
@@ -244,6 +249,19 @@ make wad-reset             # back to _omega_default
 # === INTERACTIVE ===
 make repl                  # launch REPL
 make menu                  # show full menu
+
+# === LINK P9 + HIVEMIND (NEW 2026-06-04) ===
+make link-p9-heartbeat     # refresh presence in hivemind
+make link-p9-agents        # list active agents
+make link-p9-dispatch      # launch a subagent (HandoffPacket)
+make link-p9-inbox         # read pending handoffs
+make link-p9-status        # full P9 status dump
+make link-p9-archive       # archive processed handoffs
+make heritage-map          # audit [id-soft:] heritage tags
+make mcp-check             # all 6 MCP gates (omega-hub GREEN required)
+make cvar-summary          # unified cvar table snapshot
+make cvar-zoneid           # list ZONEID.* constants
+make temple-grade          # T1-T11 gates (Mandate 13)
 ```
 
 ## Coding Hints (from this codebase)
@@ -255,6 +273,13 @@ make menu                  # show full menu
 - **Atomic writes**: use `_atomic_write_json()` helper from `src/omega/oracle/oracle.py`
 - **Test fixtures**: import from `conftest.py` at the test directory root
 - **No `dict()` kwargs** in hot paths; use `TypedDict` or `dataclass` for clarity
+- **ZONEID constants** (do not hardcode): use `cvar_get("zoneid.presence")` etc. (D101)
+- **Heritage tags**: any id Software-derived pattern MUST carry `[id-soft: <source>]` inline (CREDITS.md §2a)
+- **Hivemind awareness**: at session start, call `hivemind_get_awareness()` if multi-agent work
+- **Workspace lock**: write `data/coordination/{YOU}_WORKSPACE_LOCK_{YYYYMMDD}.md` BEFORE any file edit in parallel work
+- **Live feed**: append `data/coordination/{YOU}_LIVE_FEED.md` after each major task
+- **cvar table**: prefer `cvar_get("config.omp_threads")` over hardcoding values (D101)
+- **Soul distillation**: end any entity-touching session with L1->L2->L3 in `data/entities/<e>/soul.yaml` (M11)
 
 ## Coordination with OpenCode Fleet (Cline is the 1M-context sibling)
 
@@ -317,12 +342,54 @@ AND post a short continuation to the Omega Hub if needed.
 
 ### MCP servers (project-level, in `opencode.json`)
 
-The project wires 5 search MCP servers (D84): **Tavily, Firecrawl, Exa, Jina,
-SearXNG** (the latter via local `:8017`). Plus the **omega-hub** SSE endpoint
-on `:8016`. These are NOT in Cline's MCP config; they're in `opencode.json`.
+The project wires **6 MCP servers** (verified `make mcp-check` GREEN):
+
+| Server | Type | Endpoint | Purpose |
+|--------|------|----------|---------|
+| `omega-hub` | remote | `http://127.0.0.1:8016/sse` | **THE HIVEMIND** — 40 MCP tools + 11 HTTP routes |
+| `firecrawl` | local | `npx -y firecrawl-mcp` | Web scraping |
+| `exa` | remote | `https://mcp.exa.ai/mcp` | Web search (`web_search_exa`, `web_fetch_exa`) |
+| `tavily` | local | `npx -y @tavily/mcp` | Web search (disabled, available) |
+| `jina` | remote | `https://mcp.jina.ai/v1` | Reader/fetch (disabled, available) |
+| `serper` | remote | `https://mcp.serper.dev/mcp` | Google SERP (disabled) |
+| `filesystem` | local | `npx -y @modelcontextprotocol/server-filesystem` | FS access (disabled) |
+
+These are NOT in Cline's MCP config; they're in `opencode.json`. Cline reaches
+the hub via the project's `opencode.json` SSE endpoint or via `make mcp-check`.
 
 If I need web search, I use `web_search` / `web_fetch` natively - the Omega
 Hub is the team-bus, not a per-Cline tool.
+
+### Hivemind MCP — The Coordination Layer (NEW 2026-06-03)
+
+The **Hivemind** is the live coordination layer for multi-agent work. It is
+exposed via the `omega-hub` MCP server as 6 `hivemind_*` tools. **MANDATORY**
+for parallel/multi-agent work, **RECOMMENDED** for any multi-step work (>3 steps).
+
+See `docs/strategy/HIVEMIND_PROTOCOL.md` for the full protocol.
+
+| Tool | Purpose |
+|------|---------|
+| `hivemind_get_awareness()` | List all active CLIs (who's alive right now) |
+| `hivemind_post_context(cli, model, task_current, focus_chain, decisions, continuation, session_id)` | Declare your presence + state |
+| `hivemind_heartbeat(cli)` | Refresh presence TTL (every 5-10 min for long tasks) |
+| `hivemind_get_continuation(cli)` | Read another agent's last continuation note |
+| `hivemind_get_session(session_id)` | Retrieve a specific session snapshot |
+| `hivemind_list_sessions(cli, limit)` | Audit trail of recent sessions |
+
+**State storage**: `data/knowledge/HALL_OF_RECORDS/<cli>/<session_id>.json`
+(cold path) + in-memory `_awareness` / `_hot_store` dicts (hot path, TTL 300s).
+
+**Quick start** (when starting a session):
+1. `omega-hub_hivemind_get_awareness()` — see who's already working
+2. `omega-hub_hivemind_post_context(...)` — declare your presence
+3. (If parallel) Write `data/coordination/{YOU}_WORKSPACE_LOCK_{YYYYMMDD}.md`
+4. Append to `data/coordination/{YOU}_LIVE_FEED.md` after each major task
+5. `omega-hub_hivemind_heartbeat(cli="{you}")` every 5-10 min for long ops
+
+**ZONEID pattern** (`[id-soft: doom-1993]`):
+- `ZONEID_PRESENCE = 0x1d4a17` — presence record integrity
+- `ZONEID_HANDOFF = 0x1d4a16` — handoff packet integrity
 
 ## Key Handoff Files (engine-state at a glance)
 
@@ -334,6 +401,14 @@ Hub is the team-bus, not a per-Cline tool.
 - `data/handoff/HANDOFF_FLEET_REDESIGN_G4.md` - the 26->14 agent redesign
 - `data/handoff/HANDOFF_GEMMA_SPRINT0_1.md` - Sprint 0+1 (Foundation Repair)
 - `data/handoff/HANDOFF_DOOM_GUY_CIRCUIT_BREAKER.md` - circuit breaker work
+- `data/handoff/HANDOFF_GEMMA_SPRINT0_1.md` - Sprint 0+1 (Foundation Repair) **COMPLETE**
+- `docs/strategy/HIVEMIND_PROTOCOL.md` - Hivemind coordination protocol (v1.0.0)
+- `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` - HandoffPacket spec (v1.0.0)
+- `src/omega/oracle/subagent_dispatcher.py` - HandoffPacket + CAPABILITY_REGISTRY (370 lines)
+- `src/omega/oracle/link_p9_runtime.py` - Link P9 AgentPresence + handoff queue (384 lines)
+- `src/omega/oracle/soul_distiller.py` - L1->L2->L3 auto-distillation (280 lines)
+- `src/omega/cvar_table.py` - Unified cvar registry (D101, zoneid.* + config.*)
+- `data/handoff/archive/` - 36 archived handoffs (INDEX.md)
 
 ## Engine Architecture - 30-second map
 
@@ -390,12 +465,15 @@ When you wake up after compaction:
 1. `cat OMEGA_ENGINE.md | head -50` - re-anchor engine state
 2. `head -60 SOVEREIGN_MANDATES.md` - re-anchor the 13 mandates
 3. `head -100 docs/decisions/PIVOT_LOG.md` - re-anchor architecture
-4. `ls -t data/handoff/*.md | head -5` - find newest handoffs
-5. `cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && make test` - 302/302
-6. `make temple-grade` - T1-T11 must pass
-7. `git log --oneline -5` - confirm latest commits
-8. `git status` - confirm no uncommitted drift
-9. Re-read this `.clinerules` file (the user updated it; trust the latest)
+4. `head -50 docs/strategy/HIVEMIND_PROTOCOL.md` - re-anchor coordination rules
+5. `ls -t data/handoff/*.md | head -5` - find newest handoffs
+6. `cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && make test` - 308/308
+7. `make temple-grade` - T1-T11 must pass
+8. `git log --oneline -5` - confirm latest commits
+9. `git status` - confirm no uncommitted drift
+10. Re-read this `.clinerules` file (the user updated it; trust the latest)
+11. If multi-agent: `omega-hub_hivemind_get_awareness()` to re-anchor team state
+12. Resume live feed: `cat data/coordination/CLINE_M3_LIVE_FEED.md | tail -20`
 
 ## Memory Across Sessions (the soul-evolution loop)
 
@@ -441,25 +519,38 @@ this pipeline, but Cline can do it directly when working solo.
 1. `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/OMEGA_ENGINE.md`
 2. `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/SOVEREIGN_MANDATES.md`
 3. `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/AGENTS.md` (the OpenCode twin)
-4. `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/handoff/STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md`
-5. `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/decisions/PIVOT_LOG.md` (head -100)
-6. This file: `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.clinerules`
+4. `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/HIVEMIND_PROTOCOL.md` (NEW — read if multi-agent)
+5. `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/handoff/STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md`
+6. `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/decisions/PIVOT_LOG.md` (head -100)
+7. This file: `/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.clinerules`
 
 ## Versioning
 
-- **AP Token**: AP-CLINERULES-OMEGA-v3.1.0
-- **Updated**: 2026-06-02 (move from Cline VSCodium extension to Cline CLI v3.0.15)
-- **Previous version**: 1.0.0 (basic 13-mandate awareness, 276 tests assumed)
-- **Test baseline**: 302 tests (was 276)
-- **Mandate baseline**: 13 (was 12 - added M13 Temple-Grade)
-- **PIVOT decisions**: 90 (was ~50)
+- **AP Token**: AP-CLINERULES-OMEGA-v3.2.0
+- **Updated**: 2026-06-04 (Hivemind Protocol + Subagent Dispatch + Link P9 + ZONEID + cvar Table)
+- **Previous version**: 3.1.0 (Cline CLI v3.0.15 move, 302 tests, 13 mandates, 90 PIVOT)
+- **Test baseline**: 308 tests (was 302)
+- **Mandate baseline**: 13 (M1-M13, v3.0.0)
+- **PIVOT decisions**: 107 (D1-D107, was 90)
+- **Hivemind**: OPERATIONAL via omega-hub (`:8016/sse`), 6 tools, 5min TTL
+- **Omega Hub**: 40 MCP tools + 11 HTTP routes, systemd user service, /health GREEN
+- **Sprint 2 COMPLETE**: Subagent Dispatch + Link P9 Runtime + Soul Distiller + Hivemind Protocol
+- **Sprint 3 COMPLETE**: EntityTombstonedError, atomic model swap, per-entity model affinity, spec decode
+- **H2 COMPLETE**: ForensicsManager + Error Gauntlet (10 scenarios) + JsonFormatter
+- **ZONEID**: 7 constants (0x1d4a11-0x1d4a17) + validate_zoneid()
+- **Heritage**: [id-soft:] tags live in 6 source files, `make heritage-map` audits
+- **cvar Table**: D101 unified registry (zoneid.* + config.* namespaces, 7 helpers)
 - **Removed MCP servers**: 6 xna-* legacy servers (xna-agentbus, xna-gnosis,
   xna-gra, xna-maat, xna-mnemosyne, xna-rag) - pointed to old `xna-omega/`
   path now relocated to `xna-omega-legacy/`. The engine now uses
   `mcp_servers/omega_hub/server.py` (40 tools, 11 routes) for hub functionality.
-- **Added in this revision**: explicit Cline CLI invocation patterns,
+- **Added in this revision** (v3.1.0): explicit Cline CLI invocation patterns,
   OpenCode fleet coordination, handoff-file index, soul-evolution workflow,
   and the Tier-2 consult protocol.
+- **Added in this revision** (v3.2.0): Hivemind MCP tool reference (6 tools),
+  workspace lock + live feed pattern, ZONEID constants, Subagent Dispatch
+  + Link P9 + Soul Distiller + cvar Table references, expanded handoff
+  index, Files-to-Read updated for Hivemind Protocol, Sprint 2/3 status.
 
 ## Tool-Usage Discipline (LESSONS LEARNED 2026-06-02)
 
