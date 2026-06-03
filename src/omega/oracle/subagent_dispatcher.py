@@ -86,7 +86,7 @@ class HandoffPacket:
     def to_json(self, indent: int = 2) -> str:
         return json.dumps(self.to_dict(), indent=indent, default=str)
 
-    def save(self, archive_dir: str = "data/handoffs/handoff_archive") -> Path:
+    def save(self, archive_dir: str = "data/handoff/archive") -> Path:
         path = Path(archive_dir) / f"{self.packet_id}.json"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(self.to_json())
@@ -145,6 +145,24 @@ CAPABILITY_REGISTRY: Dict[str, AgentDescriptor] = {
         "purpose": "The Architect — Grand Dispatcher & Strategy Lead",
         "capabilities": ["architecture", "dispatch", "strategy"],
         "domains": ["grand_design", "roadmapping"],
+        "pillar_slot": None,
+        "task_tool_type": "general",
+        "owned_files": [],
+    },
+    "jem": {
+        "mode": "primary",
+        "purpose": "Research Orchestrator — 3-tier local model pipeline",
+        "capabilities": ["research_orchestration", "local_model_management", "knowledge_synthesis"],
+        "domains": ["research", "local_models", "knowledge_pipeline"],
+        "pillar_slot": None,
+        "task_tool_type": "general",
+        "owned_files": [],
+    },
+    "researcher": {
+        "mode": "primary",
+        "purpose": "Sovereign Master Researcher — deep research, lattice reasoning",
+        "capabilities": ["deep_research", "lattice_reasoning", "web_search", "source_verification"],
+        "domains": ["research", "web_intelligence", "documentation"],
         "pillar_slot": None,
         "task_tool_type": "general",
         "owned_files": [],

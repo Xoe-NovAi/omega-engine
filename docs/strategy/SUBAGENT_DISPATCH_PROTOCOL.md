@@ -216,11 +216,11 @@ packet = {
 
 ## §6 HandoffPacket JSON Archive
 
-Every completed handoff is archived to `data/handoffs/handoff_archive/`.
+Every completed handoff is archived to `data/handoff/archive/`.
 
 ### Location
 ```
-data/handoffs/handoff_archive/
+data/handoff/archive/
 ├── hdp_20260603_kali_doom_guy_a1b2c3.json
 ├── hdp_20260603_kali_roc_racoon_d4e5f6.json
 └── INDEX.json

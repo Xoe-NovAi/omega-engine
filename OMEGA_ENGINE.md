@@ -203,6 +203,9 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | `src/omega/constants.py` | ZONEID magic constants + validate_zoneid() + ZONEID_TABLE (re-export from cvar_table) |
 | `src/omega/cvar_table.py` | Unified named-constant registry — zoneid.* + config.* namespaces + CvarDef + 7 access helpers |
 | `src/omega/oracle/subagent_dispatcher.py` | HandoffPacket + Agent Capability Registry + dispatch() — subagent launch protocol |
+| `src/omega/oracle/link_p9_runtime.py` | Link P9 — Agent presence tracking + HandoffPacket lifecycle + task queue |
+| `src/omega/oracle/soul_distiller.py` | L1→L2→L3 auto-distillation engine — session insights → soul.yaml |
+| `src/omega/cli/link_p9_cli.py` | Link P9 CLI commands (heartbeat, dispatch, inbox, status, etc.) |
 | `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` | Full protocol spec for launching specialized agents as subagents |
 | `src/omega/library/` | FTS5 + vector library (7 modules) |
 | `src/omega/workers/` | Background researcher, model updater |
@@ -308,18 +311,20 @@ See `SOVEREIGN_MANDATES.md` for full details (13 mandates).
 - [x] Expanded Roadmap: D100-D102 recorded, delegation contract between Doom Guy and Dev Session
 - [x] Commit: `3048e91`, tests: 307/307, Temple-Grade: 7/11 GREEN
 
-### P1 — Subagent Dispatch Protocol
-- [ ] HandoffPacket dataclass — typed schema for agent-to-agent task delegation
-- [ ] Agent Capability Registry — what each of the 14 agents can do
-- [ ] Standardized Task tool prompt format for persona injection
-- [ ] `dispatch_subagent()` — build prompts from HandoffPacket
-- [ ] Archive: processed handoffs → `data/handoff/archive/`
+### ✅ DONE — Subagent Dispatch Protocol
+- [x] HandoffPacket dataclass — typed schema for agent-to-agent task delegation
+- [x] Agent Capability Registry — what each of the 14 agents can do
+- [x] Standardized Task tool prompt format for persona injection
+- [x] `dispatch()` — build prompts from HandoffPacket
+- [x] Archive: processed handoffs → `data/handoff/archive/`
 
-### P1 — Handoff Protocol (Link P9)
+### ✅ DONE — Handoff Protocol (Link P9)
+- [x] Link P9 runtime module — agent presence, task queue, heartbeat, crash recovery (384 lines)
+- [x] CLI commands: `link-p9 heartbeat`, `link-p9 agents`, `link-p9 dispatch`, `link-p9 inbox`, `link-p9 status`, `link-p9 archive` (12 commands)
+- [x] JSON archive system — `data/handoff/archive/{packet_id}.json`
+- [x] Soul distiller — L1→L2→L3 auto-distillation on session end (280 lines)
 - [ ] Redis Pub/Sub handoff bus (reuse existing redis container at port 6379)
-- [ ] Link P9 runtime module — agent presence, task queue, heartbeat
-- [ ] CLI commands: `omega handoff send`, `omega handoff list`, `omega handoff status`
-- [ ] JSON archive system — `data/handoffs/archive/{packet_id}.json`
+- [ ] CLI integration into oracle_cli.py (pending Ma'at's Phase 1)
 - [ ] MCP Hub resurrection — read running config, serve agent state
 
 ### P3 — Synthesis Pipeline

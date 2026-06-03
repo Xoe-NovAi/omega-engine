@@ -2,18 +2,18 @@
   "model": "qwen3-1.7b",
   "role": "p7_context",
   "samples": 5,
-  "ttft_ms": 178.91,
-  "tokens_per_sec": 32.54,
+  "ttft_ms": 213.83,
+  "tokens_per_sec": 39.45,
   "peak_ram_mb": 75.0,
   "scores": {
     "accuracy": "fail",
     "adherence": "pass",
     "conciseness": "pass",
-    "structure": "fail"
+    "structure": "pass"
   },
-  "avg_quality_score": 0.5,
-  "factuality_rate": 0.8344469111390903,
-  "timestamp": "2026-06-03T01:59:43.130406+00:00",
+  "avg_quality_score": 0.52,
+  "factuality_rate": 0.9773204960147566,
+  "timestamp": "2026-06-03T02:17:37.661065+00:00",
   "metadata": {
     "cpu_count": 16,
     "ram_total_gb": 14.4,
