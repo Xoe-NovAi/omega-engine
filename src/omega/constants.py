@@ -32,6 +32,8 @@ from omega.cvar_table import (
     ZONEID_BREAKER,
     ZONEID_TRACE,
     ZONEID_PROBE,
+    ZONEID_HANDOFF,
+    ZONEID_PRESENCE,
     ZONEID_TOMBSTONE,
     # Validation
     validate_zoneid,
@@ -54,7 +56,9 @@ from omega.cvar_table import (
 
 __all__ = [
     "ZONEID_MEMORY", "ZONEID_ENTITY", "ZONEID_BREAKER",
-    "ZONEID_TRACE", "ZONEID_PROBE", "ZONEID_TOMBSTONE",
+    "ZONEID_TRACE", "ZONEID_PROBE",
+    "ZONEID_HANDOFF", "ZONEID_PRESENCE",
+    "ZONEID_TOMBSTONE",
     "validate_zoneid",
     "ZONEID_TABLE", "CVAR_TABLE",
     "CvarDef",

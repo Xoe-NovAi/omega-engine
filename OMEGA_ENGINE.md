@@ -355,11 +355,41 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 
 ---
 
+## Hivemind Coordination Layer (NEW 2026-06-03)
+
+The **Hivemind** is the live coordination layer for multiple Omega Engine agents working in parallel. It is **MANDATORY** for parallel/multi-agent work and **RECOMMENDED** for any multi-step work (>3 steps).
+
+**See `docs/strategy/HIVEMIND_PROTOCOL.md` for the full protocol.**
+
+### Quick Reference
+
+| Component | Purpose | File |
+|-----------|---------|------|
+| **Hivemind MCP** | Live agent awareness + context sharing | `mcp/omega_hub/server.py` (hivemind_* tools) |
+| **Workspace Lock** | File ownership declaration for parallel work | `data/coordination/*_WORKSPACE_LOCK_*.md` |
+| **Live Feed** | Append-only progress log per agent | `data/coordination/*_LIVE_FEED.md` |
+| **ACK Pattern** | Symmetric acknowledgment of boundaries | `data/coordination/*_ACK_*.md` |
+
+### When to Use
+
+- **Single agent, single task** → No coordination needed
+- **Single agent, multi-step (>3 steps)** → Live feed recommended
+- **Multi-agent, parallel (same files)** → Workspace lock + Hivemind + Live feed **MANDATORY**
+- **Cross-CLI (OpenCode + Cline)** → All three **MANDATORY**
+
+### Heritage
+- `[id-soft: doom-1993]` **ZONEID Pattern** — `ZONEID_PRESENCE = 0x1d4a17` for presence record integrity
+- `[id-soft: doom-1993]` **ZONEID Pattern** — `ZONEID_HANDOFF = 0x1d4a16` for handoff packet integrity
+
+---
+
 ## Key Supporting Documents
 
 | Document | Purpose | Status |
 |----------|---------|--------|
-| `SOVEREIGN_MANDATES.md` | 12 constitutional laws (non-negotiable) | Updated 2026-06-01 — v3.1.0, Twelve Laws |
+| `SOVEREIGN_MANDATES.md` | 13 constitutional laws (non-negotiable) | Updated 2026-06-02 — v3.0.0, Thirteen Laws |
+| `docs/strategy/HIVEMIND_PROTOCOL.md` | Hivemind coordination protocol for parallel/multi-agent work | **NEW 2026-06-03** — v1.0.0 |
+| `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` | HandoffPacket schema for specialized subagent dispatch | 2026-06-03 — v1.0.0 |
 | `data/handoff/HANDOFF_FLEET_REDESIGN_G4.md` | Fleet Redesign & Systems Hardening — Gemma 4 31B execution handoff | NEW 2026-06-01 — 2,000+ lines, 8 phases |
 | `docs/strategy/LOGGING_ERROR_HANDLING_ARCHITECTURE.md` | Error taxonomy, handling standards, recovery matrix | NEW 2026-05-31 |
 | `tests/test_error_gauntlet.py` | 10 Error Gauntlet scenarios (crash dump, replay, learn, JSON format) |
@@ -373,6 +403,6 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 
 ---
 
-*Last Updated: 2026-06-03 | Author: KALI/DOOM_GUY — Sprint 1 complete (cvar_table + 5 ports + heritage-map) + Subagent Dispatch Protocol defined*
+*Last Updated: 2026-06-03 | Author: MA'AT — Hivemind protocol integration + Sprint 2 closeout*
 *This document is the Single Source of Truth. All platforms reference it.*
-*Changes: cvar_table.py live (276 lines, 18 entries, 7 helpers), constants.py re-export, providers wired, make heritage-map CI, Subagent Dispatch Protocol defined, 8 handoffs archived for Roc Racoon mining.*
+*Changes: Hivemind Protocol defined (HIVEMIND_PROTOCOL.md), workspace lock + live feed pattern standardized, all 14 agent files updated with Hivemind awareness, ZONEID constants extended (HANDOFF 0x1d4a16 + PRESENCE 0x1d4a17), Phase 1.1-1.3 complete (CLI fix, JSON logging, MemoryStore lazy deletion).*

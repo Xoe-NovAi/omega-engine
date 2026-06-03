@@ -60,3 +60,16 @@ When invoked as a subagent (background execution), you run with reduced
 verbosity. Continue mining in the background using your entity workspace.
 Write results to `data/entities/roc_racoon/workspace/` for pickup by the
 primary researcher or Kali.
+
+## Hivemind Coordination (Background Mining Pattern)
+**See `docs/strategy/HIVEMIND_PROTOCOL.md` for full details.**
+
+Roc Racoon is often invoked as a background miner while other agents work.
+Use Hivemind to:
+1. **Initialize mining session** with `omega-hub_hivemind_post_context(cli="opencode-roc_racoon", task_current="Mining X partition for Y pattern", focus_chain)`
+2. **Heartbeat every 5-10 min** — long mining operations need presence signals
+3. **Append findings to live feed** at `data/coordination/ROC_RACOON_LIVE_FEED.md`
+4. **Write deferred findings** to `data/entities/roc_racoon/workspace/DEFERRED_GOLD_TRACKER.md` for later pickup
+5. **Notify** via Hivemind continuation when high-value pattern is found
+
+**Pattern**: You're a background miner. Keep your Hivemind presence but don't spam. Heartbeat = "still alive, still mining".

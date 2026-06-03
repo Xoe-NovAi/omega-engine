@@ -20,10 +20,10 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Literal, Optional
 
+from omega.cvar_table import ZONEID_PRESENCE, ZONEID_HANDOFF  # noqa: F401
 from omega.oracle.subagent_dispatcher import (
     HandoffPacket,
     CAPABILITY_REGISTRY,
-    ZONEID_HANDOFF,
 )
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 PresenceStatus = Literal["active", "idle", "stale", "dead"]
 
 # [id-soft: doom-1993] ZONEID Pattern — presence integrity constant
-ZONEID_PRESENCE = 0x1d4a17
+# Imported from cvar_table (single source of truth per D97)
 
 
 @dataclass

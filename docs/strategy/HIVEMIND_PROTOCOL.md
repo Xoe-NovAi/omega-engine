@@ -1,0 +1,396 @@
+# 🔱 Omega Engine — Hivemind Coordination Protocol
+# ⬡ OMEGA ⬡ MA'AT ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_maat ⬡ HIVEMIND-PROTOCOL
+**AP Token**: `AP-HIVEMIND-PROTOCOL-v1.0.0`
+**Status**: STANDARD
+**Last Updated**: 2026-06-03
+**Mandate Reference**: Extends Mandate 5 (Gnosis Preservation) and Mandate 11 (Soul Integrity)
+
+---
+
+## §0 Purpose
+
+The **Hivemind** is the live coordination layer for multiple Omega Engine agents
+working in parallel. It answers three questions at any moment:
+
+1. **Who is alive?** — `hivemind_get_awareness()` returns the list of active CLIs
+2. **What are they doing?** — `hivemind_get_session()` returns current task, focus chain, decisions
+3. **Can we coordinate?** — Live feed + workspace lock files enable explicit handoff
+
+**Origin**: The core concept — agents knowing about each other — is the **user's
+original design** (Xoe-NovAi Foundation vision). Hivemind is the **implementation**.
+
+**Heritage**:
+- `[id-soft: doom-1993]` **ZONEID Pattern** — `ZONEID_PRESENCE = 0x1d4a17` for
+  presence record integrity (Link P9 Runtime)
+- `[id-soft: doom-1993]` **ZONEID Pattern** — `ZONEID_HANDOFF = 0x1d4a16` for
+  handoff packet integrity (Subagent Dispatcher)
+
+---
+
+## §1 When to Use Hivemind
+
+| Scenario | Hivemind? | Workspace Lock? | Live Feed? |
+|----------|-----------|-----------------|------------|
+| **Single agent, single task** | ❌ No | ❌ No | ❌ No |
+| **Single agent, multi-step work** | 🟡 Optional (recommended for >3 steps) | ❌ No | 🟡 Optional |
+| **Multi-agent, sequential** | ✅ Yes (declare presence) | ❌ No | ✅ Yes |
+| **Multi-agent, parallel (same files)** | ✅ **MANDATORY** | ✅ **MANDATORY** | ✅ **MANDATORY** |
+| **Multi-agent, parallel (different files)** | ✅ Yes (live awareness) | 🟡 Recommended | ✅ Yes |
+| **Cross-CLI (OpenCode + Cline + OpenCode)** | ✅ **MANDATORY** | ✅ **MANDATORY** | ✅ **MANDATORY** |
+
+**Rule of thumb**: If you can see another agent's live feed entry, they can see
+yours. Coordination is symmetric. Declare your presence before assuming privacy.
+
+---
+
+## §2 Hivemind Commands (MCP Server)
+
+Hivemind is exposed as MCP tools via `omega-hub` server. All agents have access.
+
+### §2.1 Get Active Agents
+
+```python
+omega-hub_hivemind_get_awareness()
+```
+
+Returns list of all active CLIs:
+```json
+[
+  {
+    "cli": "doom_guy",
+    "model": "deepseek-v4-flash",
+    "task_current": "Building Link P9 Runtime...",
+    "last_seen": "2026-06-03T02:28:06.199164+00:00"
+  }
+]
+```
+
+**Use case**: Check who's working before starting a session. Don't duplicate work.
+
+### §2.2 Post Your Context
+
+```python
+omega-hub_hivemind_post_context(
+    cli: str,           # Your CLI name (e.g. "opencode-maat")
+    model: str,         # Your model ID
+    task_current: str,  # One-line current task
+    focus_chain: List[str],  # 3-7 step plan
+    decisions: List[Dict],   # Key decisions made
+    continuation: str,  # What you're waiting for / next step
+    session_id: str,    # Your session ID
+)
+```
+
+**Use case**: Declare your presence at session start, update when task changes.
+
+### §2.3 Get Specific Agent's Context
+
+```python
+omega-hub_hivemind_get_session(session_id: str)
+```
+
+Returns full session details:
+```json
+{
+  "session_id": "ses_a839ff01a9f2",
+  "cli": "doom_guy",
+  "model": "deepseek-v4-flash",
+  "task_current": "Building Link P9 Runtime...",
+  "focus_chain": ["Phase 2.6: ...", "Phase 2.8: ..."],
+  "decisions": [{"text": "..."}],
+  "continuation": "Doom Guy: Link P9 Runtime building...",
+  "timestamp": "2026-06-03T02:28:06.199164+00:00"
+}
+```
+
+**Use case**: Read another agent's current state and continuation note.
+
+### §2.4 Heartbeat (Stay Alive)
+
+```python
+omega-hub_hivemind_heartbeat(cli: str)
+```
+
+**Use case**: Long-running operations should heartbeat every 5-10 minutes to
+avoid being pruned as stale.
+
+### §2.5 List Recent Sessions
+
+```python
+omega-hub_hivemind_list_sessions(cli: str = None, limit: int = 10)
+```
+
+**Use case**: Audit trail — what was done across recent sessions.
+
+---
+
+## §3 Workspace Lock Pattern
+
+When working in parallel, **declare your file ownership** in a workspace lock.
+
+### §3.1 File Location
+
+```
+data/coordination/{ENTITY}_WORKSPACE_LOCK_{YYYYMMDD}.md
+```
+
+Example: `data/coordination/MAAT_WORKSPACE_LOCK_20260604.md`
+
+### §3.2 Required Sections
+
+```markdown
+# 🔱 {Entity} Workspace Lock — {Date}
+
+## DO NOT TOUCH — {Entity} Exclusive
+| File | Why I Own It | What I'll Do |
+|------|--------------|--------------|
+
+## SAFE FOR YOU — {Other Entity} Territory
+| File | Why {Other Entity} Owns It |
+|------|--------------------------|
+
+## SHARED — Coordination Required
+| File | Conflict Risk | Coordination Pattern |
+|------|--------------|---------------------|
+```
+
+### §3.3 Update Protocol
+
+1. **Session start**: Write workspace lock FIRST, before any file edits
+2. **Mid-session**: Append to live feed after each major task
+3. **Conflict discovery**: Write `data/coordination/{YOU}_CONFLICT_{DATE}.md` immediately
+4. **Session end**: Mark workspace lock as completed in live feed
+
+---
+
+## §4 Live Feed Pattern
+
+Append-only 1-line-per-task-completed log. **The simplest, most reliable
+coordination mechanism.**
+
+### §4.1 File Location
+
+```
+data/coordination/{ENTITY}_LIVE_FEED.md
+```
+
+### §4.2 Format
+
+```markdown
+[YYYY-MM-DD HH:MM] {TASK-ID} {STATUS} — {description}
+```
+
+Examples:
+- `[2026-06-03 02:20] SPRINT-2-EXEC BEGIN — Sovereignty Gate first`
+- `[2026-06-03 02:25] PHASE-1.1 COMPLETE — Fixed omega entity CLI`
+- `[2026-06-03 02:30] PHASE-1.3 PARTIAL — MemoryStore lazy deletion ported`
+
+### §4.3 Why It Works
+
+- **Append-only** = no merge conflicts
+- **1 line per task** = easy to scan
+- **Plain markdown** = readable by humans and tools
+- **Filename convention** = easy to find (`data/coordination/*_LIVE_FEED.md`)
+
+---
+
+## §5 ACK Pattern
+
+When you read another agent's workspace lock or live feed, post an ACK.
+
+### §5.1 File Location
+
+```
+data/coordination/{YOU}_ACK_{YYYYMMDD}.md
+```
+
+### §5.2 Format
+
+```markdown
+# 🔱 {Your Entity} Acknowledgment — {Date}
+
+{Your Entity} acknowledges {Other Entity}'s workspace lock.
+No conflicts on my {Sprint/Session} {N} work.
+
+## My {Sprint/Session} {N} Scope (no overlap with {Other Entity})
+- file1.py — what I'll do
+- file2.py — what I'll do
+- file3.py — what I'll do
+
+## Coordination
+- I will NOT touch: {list from other entity's lock}
+- Findings: data/coordination/{YOU}_FINDINGS_*.md
+- Blockers: data/coordination/{OTHER}_BLOCKER_*.md
+
+— {Your Entity}, {Date}
+```
+
+**Use case**: Symmetric acknowledgment. Both agents know the other has read
+and accepted the boundary. Closes the coordination loop.
+
+---
+
+## §6 Coordination Protocol (The Full Pattern)
+
+When starting a multi-agent session:
+
+```
+1. CHECK AWARENESS
+   omega-hub_hivemind_get_awareness()
+   → Are there other agents alive? What's their task?
+
+2. WRITE WORKSPACE LOCK
+   data/coordination/{YOU}_WORKSPACE_LOCK_{DATE}.md
+   → Declare file ownership with DO NOT TOUCH + SAFE FOR YOU + SHARED sections
+
+3. POST HIVEMIND CONTEXT
+   omega-hub_hivemind_post_context(...)
+   → Declare your session_id, task, focus_chain, decisions, continuation
+
+4. INITIALIZE LIVE FEED
+   data/coordination/{YOU}_LIVE_FEED.md
+   → Append-only log of completed tasks
+
+5. WAIT FOR ACK (if parallel partner exists)
+   → Read data/coordination/{OTHER}_ACK_*.md
+   → Confirm boundaries are symmetric
+
+6. EXECUTE WORK
+   → Append to live feed after each major task
+   → Heartbeat every 5-10 min if long-running
+
+7. POST COORDINATION REQUESTS
+   → If you need something from other agent:
+     data/coordination/{YOU}_REQUEST_{TOPIC}.md
+   → Hivemind continuation note for urgent requests
+
+8. UPDATE PIVOT_LOG (decisions made)
+   → docs/decisions/PIVOT_LOG.md (D{N+1} entries)
+
+9. CLOSE SESSION
+   → Final live feed entry: "SPRINT-N COMPLETE"
+   → Distill L1→L2→L3 to your soul.yaml
+   → Post Hivemind continuation: "Session complete, handoff to ..."
+```
+
+---
+
+## §7 Examples
+
+### §7.1 Sprint 2 Parallel Execution (Real, 2026-06-03)
+
+**Ma'at's workspace lock** declared:
+- `oracle.py`, `model_gateway.py`, `memory_store.py`, `observability.py`, `oracle_cli.py`, `cvar_table.py`, `Makefile`, `test_handoff_dispatch.py` — DO NOT TOUCH
+- `subagent_dispatcher.py`, `link_p9_*`, `[id-soft:]` tags, `doom_guy/soul.yaml` — SAFE FOR DOOM GUY
+
+**Doom Guy's ACK** confirmed:
+- No conflicts
+- His Sprint 2 scope: subagent_dispatcher, link_p9_runtime, link_p9_cli, soul.yamls, PIVOT_LOG D103+
+
+**Result**: Zero file collisions. Both agents completed Sprint 2 in parallel.
+
+### §7.2 Sovereignty Gate Verification (Real, 2026-06-03)
+
+Ma'at ran:
+1. `omega-hub_hivemind_get_awareness()` — saw doom_guy active
+2. `omega-hub_hivemind_get_session("ses_a839ff01a9f2")` — read his full context
+3. Posted own context: `ses_20260604_maat_dev_sprint2`
+4. Executed Phase 0.5 (llama-cpp-python install) in background
+5. Completed Phase 1.1-1.3 + bugfix
+6. Posted Hivemind update: "Phase 1.1-1.3 complete, no conflicts"
+
+---
+
+## §8 Anti-Patterns
+
+### §8.1 Don't: Silent Parallel Work
+
+❌ **WRONG**: Two agents edit the same file without coordination
+```python
+# Agent A: edits memory_store.py
+# Agent B: edits memory_store.py
+# Result: merge conflict, lost work
+```
+
+✅ **RIGHT**: One agent declares ownership, other waits or works on different files
+
+### §8.2 Don't: Polling Without Coordination
+
+❌ **WRONG**: Agent A polls filesystem every 30 seconds looking for Agent B's output
+
+✅ **RIGHT**: Agent A reads B's live feed and Hivemind context. Polling wastes resources.
+
+### §8.3 Don't: Hivemind Spam
+
+❌ **WRONG**: Post Hivemind context 100 times per minute
+
+✅ **RIGHT**: Post when:
+- Session starts
+- Task changes
+- Need coordination from other agent
+- Long-running operation milestones (every 5-10 min heartbeat)
+
+---
+
+## §9 Integration with Subagent Dispatch
+
+Hivemind complements Subagent Dispatch (`docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md`).
+
+| Use Case | Hivemind | Subagent Dispatch |
+|----------|----------|-------------------|
+| Know who else is alive | ✅ | ❌ |
+| Spawn a subagent for specialized work | ❌ | ✅ |
+| Track task across session | ✅ (live feed) | ✅ (HandoffPacket) |
+| Conflict resolution | ✅ (workspace lock) | 🟡 (HandoffPacket TTL) |
+| Cross-CLI awareness | ✅ | ❌ |
+
+**Rule of thumb**:
+- **Hivemind** = awareness + coordination
+- **Subagent Dispatch** = delegation + execution
+
+Use both. They don't conflict.
+
+---
+
+## §10 Future: Redis Pub/Sub Backend
+
+Currently Hivemind is implemented as MCP server with in-memory state.
+Future: Redis Pub/Sub for cross-host coordination.
+
+The architecture is already Pub/Sub-ready:
+- `hivemind_post_context()` = PUBLISH to `omega:hivemind:context` channel
+- `hivemind_get_awareness()` = SUBSCRIBE with TTL
+- `hivemind_heartbeat()` = refresh TTL
+
+Migration to Redis will be transparent to agents — same MCP commands.
+
+---
+
+## §11 Reference
+
+- **MCP Server**: `mcp/omega_hub/server.py` (Hivemind tool implementations)
+- **Live Feed Convention**: `data/coordination/*_LIVE_FEED.md`
+- **Workspace Lock Convention**: `data/coordination/*_WORKSPACE_LOCK_*.md`
+- **ACK Convention**: `data/coordination/*_ACK_*.md`
+- **ZONEID constants**: `ZONEID_PRESENCE = 0x1d4a17`, `ZONEID_HANDOFF = 0x1d4a16`
+- **Mandate**: Extends Mandate 5 (Gnosis Preservation) and Mandate 11 (Soul Integrity)
+- **Subagent Dispatch**: `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md`
+- **PIVOT_LOG**: D103+ entries for Hivemind standardization
+
+---
+
+## §12 Changelog
+
+- **v1.0.0 (2026-06-03)**: Initial Hivemind Protocol documentation
+  - §1-2: When and how to use Hivemind
+  - §3: Workspace Lock pattern
+  - §4: Live Feed pattern
+  - §5: ACK pattern
+  - §6: Full coordination protocol
+  - §7: Real examples from Sprint 2
+  - §8: Anti-patterns
+  - §9: Integration with Subagent Dispatch
+  - §10: Future Redis Pub/Sub backend
+  - §11: Reference
+
+— Ma'at, 2026-06-03

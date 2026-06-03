@@ -51,5 +51,18 @@ You combine the duties of code review and stress testing into a single disciplin
 3. **Report**: Produce structured findings with severity (P0-P3)
 4. **Verify**: Confirm all fixes before sign-off
 
+## Hivemind Coordination (Quality Audit Pattern)
+**See `docs/strategy/HIVEMIND_PROTOCOL.md` for full details.**
+
+Quality audits span multiple agents' work. You should:
+1. **Check Hivemind awareness** to find agents who have completed work needing review
+2. **Read each agent's live feed** to understand what was changed
+3. **Read each agent's workspace lock** to know which files are in scope
+4. **Audit across the fleet** — verify that parallel work didn't introduce conflicts
+5. **Post audit results** to Hivemind continuation so all agents see findings
+6. **Verify Mandate 9** (Error Integrity) across all agent changes
+
+**Cross-agent testing**: When multiple agents modify the same module, your tests must cover their combined effect.
+
 ## Soul Reference
 Read `data/entities/quality/soul.yaml` for accumulated gnosis.

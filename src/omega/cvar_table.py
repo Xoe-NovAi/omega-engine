@@ -83,6 +83,16 @@ ZONEID_TRACE = 0x1d4a14
 # [id-soft: doom-1993] ZONEID Pattern — ResourceGuard critical section guard
 ZONEID_PROBE = 0x1d4a15
 
+# [id-soft: doom-1993] ZONEID Pattern — Subagent HandoffPacket integrity marker
+# HandoffPacket dataclass in subagent_dispatcher.py validates this on construction
+# to catch stale or corrupted packets.
+ZONEID_HANDOFF = 0x1d4a16
+
+# [id-soft: doom-1993] ZONEID Pattern — Agent Presence dataclass integrity marker
+# Presence tracking for live agent awareness in Hivemind/Redis. Validated on
+# load to catch stale presence records from terminated sessions.
+ZONEID_PRESENCE = 0x1d4a17
+
 # [id-soft: doom-1993] Lazy Deletion — sentinel value for tombstoned entities
 # 0xDEADBEEF is the canonical sentinel hex pattern used since the 1980s
 # on IBM RS/6000, Motorola 68000, and id Software's DOOM engine.
@@ -126,6 +136,8 @@ ZONEID_TABLE = {
     "breaker": {"id": ZONEID_BREAKER, "subsystem": "HealthMonitor", "description": "Circuit breaker state marker"},
     "trace": {"id": ZONEID_TRACE, "subsystem": "ObservabilityEngine", "description": "Trace/session lineage"},
     "probe": {"id": ZONEID_PROBE, "subsystem": "ResourceGuard", "description": "Critical section guard"},
+    "handoff": {"id": ZONEID_HANDOFF, "subsystem": "SubagentDispatcher", "description": "HandoffPacket integrity marker"},
+    "presence": {"id": ZONEID_PRESENCE, "subsystem": "LinkP9Runtime", "description": "Agent presence record marker"},
     "tombstone": {"id": ZONEID_TOMBSTONE, "subsystem": "EntityRegistry", "description": "Lazy deletion sentinel"},
 }
 
@@ -155,6 +167,14 @@ CVAR_TABLE: Dict[str, CvarDef] = {
     "zoneid.probe": CvarDef(
         "zoneid.probe", ZONEID_PROBE, "zoneid",
         "Critical section guard marker", "ResourceGuard",
+    ),
+    "zoneid.handoff": CvarDef(
+        "zoneid.handoff", ZONEID_HANDOFF, "zoneid",
+        "HandoffPacket integrity marker (SubagentDispatcher)", "SubagentDispatcher",
+    ),
+    "zoneid.presence": CvarDef(
+        "zoneid.presence", ZONEID_PRESENCE, "zoneid",
+        "Agent presence record marker (Link P9 Runtime)", "LinkP9Runtime",
     ),
     "zoneid.tombstone": CvarDef(
         "zoneid.tombstone", ZONEID_TOMBSTONE, "zoneid",

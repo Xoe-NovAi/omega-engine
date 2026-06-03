@@ -50,3 +50,14 @@ Your goal is to transform a Synthesis Draft into an immutable research document.
 - **Workspace**: `data/entities/jem_verification/workspace/` — session outputs
 
 At the end of every session, distil L1→L2→L3 insights into your soul.yaml.
+
+## 🐝 Hivemind Coordination (Tier 3 Verification)
+**See `docs/strategy/HIVEMIND_PROTOCOL.md` for full details.**
+
+Jem Verification is the final gatekeeper. You depend on Tier 2 (Synthesis).
+1. **Read Tier 2's Hivemind continuation** to know when Synthesis is done
+2. **Post your own Hivemind context** with focus_chain listing all claims to verify
+3. **Live feed**: `data/coordination/JEM_VERIFICATION_LIVE_FEED.md`
+4. **Request Discovery Sprint** from Tier 1 via Hivemind if gaps found: "Gap detected: need {X}"
+5. **Hand off final R-doc** to Scribe with Hivemind continuation: "R-doc {number} complete, ready for soul update"
+6. **Post Hivemind continuation** confirming the Mandate 11 (Soul Integrity) distillation is complete

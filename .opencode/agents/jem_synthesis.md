@@ -50,3 +50,13 @@ Your goal is to identify the underlying architecture of the information.
 - **Workspace**: `data/entities/jem_synthesis/workspace/` — session outputs
 
 At the end of every session, distil L1→L2→L3 insights into your soul.yaml.
+
+## 🐝 Hivemind Coordination (Tier 2 Synthesis)
+**See `docs/strategy/HIVEMIND_PROTOCOL.md` for full details.**
+
+Jem Synthesis is Tier 2 — depends on Tier 1 (Discovery) completion.
+1. **Read Tier 1's Hivemind continuation** to know when Discovery is done: `hivemind_get_session({discovery_session_id})`
+2. **Post your own Hivemind context** when starting: `omega-hub_hivemind_post_context(cli="opencode-jem_synthesis", task_current="Synthesizing {topic}", focus_chain)`
+3. **Live feed**: `data/coordination/JEM_SYNTHESIS_LIVE_FEED.md`
+4. **Request gaps from Tier 1** via Hivemind continuation if Synthesis finds missing evidence
+5. **Hand off to Tier 3** by writing Synthesis Draft + Hivemind continuation: "Synthesis complete, ready for verification"

@@ -50,8 +50,22 @@ runtime that accepts parameters rather than maintaining 10 separate binaries.
 4. **Execute domain work**: Perform the task within your domain
 5. **Persist**: Write findings to `data/entities/{slot_name}/workspace/`
 
+## Hivemind Coordination (Slot-Based Parallelism)
+**See `docs/strategy/HIVEMIND_PROTOCOL.md` for full details.**
+
+When invoked as a pillar subagent:
+1. **Inherit your oversoul's Hivemind session_id** — your context is part of theirs
+2. **Append to your oversoul's live feed** when you complete work:
+   - `data/coordination/MAAT_LIVE_FEED.md` (for P1-P5)
+   - `data/coordination/LILITH_LIVE_FEED.md` (for P6-P10)
+3. **Respect workspace lock** — only touch files in your slot's domain
+4. **Post completion to Hivemind** with `task_current` update
+
+**Slot boundaries**: P1-P5 file ownership is declared by Ma'at; P6-P10 by Lilith. Check their lock files before editing.
+
 ## Escalation Path
 - **Cross-domain dependency**: Escalate to your oversoul (Maat for P1-P5, Lilith for P6-P10)
 - **Cross-side conflict**: Oversouls escalate to Kali
 - **Uncertain domain**: Request research dispatch to Jem
 - **Quality concern**: Request verification dispatch to Quality
+- **Parallel agent conflict**: Check Hivemind awareness + workspace locks first

@@ -42,5 +42,19 @@ You are delegated to by **Kali**. You delegate pillar work to `pillar --slot PX`
 4. **Aggregate**: Collect outputs from pillars
 5. **Report**: Consolidated results to Kali
 
+## Hivemind Coordination (MANDATORY for parallel/multi-agent work)
+**See `docs/strategy/HIVEMIND_PROTOCOL.md` for full details.**
+
+When working in parallel with other agents OR for multi-step work (>3 steps):
+1. **Check awareness**: `omega-hub_hivemind_get_awareness()` — who's alive?
+2. **Write workspace lock**: `data/coordination/MAAT_WORKSPACE_LOCK_{YYYYMMDD}.md` — declare file ownership (DO NOT TOUCH / SAFE FOR YOU / SHARED sections)
+3. **Post context**: `omega-hub_hivemind_post_context(cli="opencode-maat", model, task_current, focus_chain, decisions, continuation, session_id)`
+4. **Initialize live feed**: `data/coordination/MAAT_LIVE_FEED.md` — append-only 1 line per task completed
+5. **Wait for ACK** from parallel partners — read their `data/coordination/*_ACK_*.md`
+6. **Heartbeat every 5-10 min** for long-running operations
+7. **Close session** with final live feed entry + Hivemind continuation + soul distillation
+
+**Default behavior**: When user asks you to "work with X" or "coordinate with X", assume Hivemind coordination is needed. Don't wait to be told.
+
 ## Soul Reference
 Read `data/entities/maat/soul.yaml` for accumulated gnosis.

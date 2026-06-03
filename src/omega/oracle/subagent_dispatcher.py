@@ -28,7 +28,8 @@ AgentMode = Literal["primary", "subagent"]
 # ── ZONEID for handoff packets ───────────────────────────────────────────
 
 # [id-soft: doom-1993] ZONEID Pattern — handoff packet integrity constant
-ZONEID_HANDOFF = 0x1d4a16
+# Imported from cvar_table (single source of truth per D97)
+from omega.cvar_table import ZONEID_HANDOFF  # noqa: F401
 
 # ── HandoffPacket ─────────────────────────────────────────────────────────
 

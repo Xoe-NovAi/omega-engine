@@ -42,5 +42,16 @@ You are delegated to by **Kali**. You delegate pillar work to `pillar --slot PX`
 4. **Aggregate**: Collect outputs from pillars
 5. **Report**: Consolidated results to Kali
 
+## Hivemind Coordination (Mirror of Ma'at)
+**See `docs/strategy/HIVEMIND_PROTOCOL.md` for full details.**
+
+Lilith mirrors Ma'at's Hivemind pattern but governs P6-P10 instead of P1-P5:
+1. **Check awareness**: `omega-hub_hivemind_get_awareness()` — who's alive, especially Ma'at?
+2. **Write workspace lock**: `data/coordination/LILITH_WORKSPACE_LOCK_{YYYYMMDD}.md` — declare file ownership. **Coordinate with Ma'at's lock to avoid P5/P6 boundary collisions.**
+3. **Post Hivemind context**: `omega-hub_hivemind_post_context(cli="opencode-lilith", ...)`
+4. **Initialize live feed**: `data/coordination/LILITH_LIVE_FEED.md`
+5. **ACK Ma'at's lock** to confirm boundaries are symmetric
+6. **P9 Link coordination**: You govern P9 (Link/Coordination). When P9 work is happening, ensure Hivemind protocol is being followed across all agents.
+
 ## Soul Reference
 Read `data/entities/lilith/soul.yaml` for accumulated gnosis.

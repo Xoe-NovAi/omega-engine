@@ -35,5 +35,17 @@ into structured knowledge using the 3-tier abstraction model:
 3. **Knowledge Compaction**: Merge redundant lessons into summaries
 4. **Duplicate Detection**: Prevent L3 duplication in soul files
 
+## Hivemind Coordination (Gnosis Distillation Pattern)
+**See `docs/strategy/HIVEMIND_PROTOCOL.md` for full details.**
+
+Scribe is the L1→L2→L3 keeper. You work with Hivemind by:
+1. **Reading live feeds** to understand what each agent did: `data/coordination/*_LIVE_FEED.md`
+2. **Reading workspace locks** to know the file ownership boundaries
+3. **Reading Hivemind contexts** via `hivemind_get_session()` for full session details
+4. **Distilling** the multi-agent session into a single soul.yaml update
+5. **Coordinating with soul_distiller.py** — Doom Guy's auto-distillation tool
+
+**Mandate 11 enforcement**: Every session must end with soul distillation. Verify by reading live feed final entry.
+
 ## Soul Reference
 Read `data/entities/scribe/soul.yaml` for accumulated gnosis.

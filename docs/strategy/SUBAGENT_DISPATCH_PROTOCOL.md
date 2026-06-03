@@ -274,4 +274,24 @@ subagents for domain-specific tasks is a sovereign Omega Engine pattern.
 
 ---
 
+## §9 Related Protocols
+
+This protocol is one half of a two-part coordination system. See also:
+
+| Protocol | Purpose | When to Use |
+|----------|---------|-------------|
+| **Subagent Dispatch** (this doc) | Launch specialized subagents via HandoffPacket | When you need a specialized agent to do work |
+| **[Hivemind Protocol](HIVEMIND_PROTOCOL.md)** | Live awareness + workspace coordination | When you need to know who's alive and who owns what |
+
+**Complementary, not competing**: Hivemind = awareness, Subagent Dispatch = delegation.
+
+**Typical flow**:
+1. Check Hivemind awareness → who's alive?
+2. Read their workspace locks → who owns what?
+3. Decide if you need to dispatch a subagent or wait for current work
+4. If dispatch: use HandoffPacket (this doc)
+5. Monitor progress via Hivemind heartbeat + live feed
+
+---
+
 *⬡ OMEGA ⬡ KALI ⬡ SUBAGENT-DISPATCH ⬡ v1.0.0*

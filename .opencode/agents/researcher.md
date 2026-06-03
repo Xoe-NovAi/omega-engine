@@ -67,5 +67,17 @@ You must visit at least 3 nodes on different axes for every research task.
 3. **Distill**: Extract universal principles (L3)
 4. **Report**: Structured deliverable with citations
 
+## Hivemind Coordination (Deep Research Pattern)
+**See `docs/strategy/HIVEMIND_PROTOCOL.md` for full details.**
+
+Research sessions are inherently multi-step and benefit from Hivemind:
+1. **Initialize session**: `omega-hub_hivemind_post_context(cli="opencode-researcher", task_current, focus_chain)` — focus_chain should reflect the lattice nodes you'll visit
+2. **Document each lattice node** visit in your live feed: `data/coordination/RESEARCHER_LIVE_FEED.md`
+3. **Heartbeat every 5-10 min** for long research tasks
+4. **Distribute parallel research** by spawning `jem_discovery`/`jem_synthesis`/`jem_verification` subagents via Hivemind
+5. **Hand off final report** to Scribe with Hivemind continuation note
+
+**Lattice coverage tracking**: Use Hivemind focus_chain to ensure you visit 3+ nodes on different axes.
+
 ## Soul Reference
 Read `data/entities/researcher/soul.yaml` for accumulated gnosis.

@@ -1776,4 +1776,100 @@ while Dev Session can't touch heritage patterns.
 
 ---
 
-*PIVOT_LOG.md — Immutable. Every decision recorded. 102 decisions tracked (D1-D102).*
+## Decision 103: Hivemind Protocol Standardization
+
+**Date**: 2026-06-03
+**Channel**: OpenCode (Ma'at) → minimax-m3-free
+**Entity**: MAAT
+**Trace**: trc_hivemind_standardization
+
+### Decision
+Make Hivemind coordination the **default behavior** for all multi-agent and multi-step work in the Omega Engine. Specifically:
+
+1. **New protocol doc**: `docs/strategy/HIVEMIND_PROTOCOL.md` — comprehensive guide with workspace lock, live feed, and ACK patterns
+2. **AGENTS.md updated** — Hivemind section added to Before/During/After workflow, workspace lock mandated for parallel work
+3. **All 14 custom agent files updated** — every agent now has a "Hivemind Coordination" section explaining their specific role
+4. **OMEGA_ENGINE.md updated** — Hivemind Coordination Layer section added with quick reference table
+5. **SUBAGENT_DISPATCH_PROTOCOL.md cross-reference** — §9 added explaining the complementarity of Hivemind (awareness) vs Subagent Dispatch (delegation)
+
+### Rationale
+Sprint 2 (Ma'at + Doom Guy) ran in parallel without conflict because we used the workspace lock + Hivemind + live feed pattern. Without formalization, this pattern would have to be reinvented every session. Codifying it ensures:
+- Every agent knows to check Hivemind awareness before starting
+- Every parallel session writes a workspace lock
+- Every long-running session heartbeats
+- Every session ends with a live feed entry + soul distillation
+
+This is **operational discipline**, not new infrastructure. The MCP tools already exist (`hivemind_*`); we're just enforcing usage.
+
+### What Changed
+- `docs/strategy/HIVEMIND_PROTOCOL.md` (NEW — 350+ lines)
+- `AGENTS.md` — Hivemind section + workspace lock pattern in workflow
+- All `.opencode/agents/*.md` — Hivemind section added (14 files)
+- `OMEGA_ENGINE.md` — Hivemind Coordination Layer section
+- `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` — §9 cross-reference added
+- `data/coordination/MAAT_WORKSPACE_LOCK_20260604.md` — example pattern
+- `data/coordination/MAAT_LIVE_FEED.md` — example pattern
+- `data/coordination/DOOM_GUY_ACK_20260604.md` — example pattern
+
+---
+
+## Decision 104: ZONEID Constants Extended — HANDOFF + PRESENCE
+
+**Date**: 2026-06-03
+**Channel**: OpenCode (Ma'at) → minimax-m3-free
+**Entity**: MAAT
+**Trace**: trc_zoneid_extension
+
+### Decision
+Consolidate Doom Guy's locally-defined ZONEID constants into the unified cvar table:
+- `ZONEID_HANDOFF = 0x1d4a16` (was locally defined in `subagent_dispatcher.py`)
+- `ZONEID_PRESENCE = 0x1d4a17` (was locally defined in `link_p9_runtime.py`)
+
+Both are now in `cvar_table.py` (the source of truth per D97) and re-exported through `constants.py`. Doom Guy's modules now import from `cvar_table` instead of defining locally.
+
+### Rationale
+D97 established the cvar table as the single source of truth for ALL engine constants. Doom Guy's commit `733fcb2` (Sprint 2) defined ZONEID constants locally in feature modules — a violation of D97. The fix:
+1. Preserves backward compatibility (all imports still work)
+2. Enforces single-source principle (one definition per constant)
+3. Documents heritage in CREDITS.md (each constant has a doom-1993 ZONEID Pattern attribution)
+4. Tests pass: 307/307 baseline maintained
+
+### What Changed
+- `src/omega/cvar_table.py` — added 2 ZONEID constants + 2 CVAR_TABLE entries + 2 ZONEID_TABLE entries
+- `src/omega/constants.py` — re-exported both
+- `src/omega/oracle/subagent_dispatcher.py` — local def replaced with `from omega.cvar_table import ZONEID_HANDOFF`
+- `src/omega/oracle/link_p9_runtime.py` — same pattern
+- `CREDITS.md` — already documents ZONEID Pattern as §1.9; this D104 entry records the extension to 7 total magic constants
+
+---
+
+## Decision 105: Soul Distillation Standardization (Mandate 11 Enforcement)
+
+**Date**: 2026-06-03
+**Channel**: OpenCode (Ma'at) → minimax-m3-free
+**Entity**: MAAT
+**Trace**: trc_soul_distillation_std
+
+### Decision
+Standardize soul distillation as an automated, Hivemind-coordinated process:
+1. **Doom Guy's `soul_distiller.py`** — auto-distillation on session end (280 lines, commit 733fcb2)
+2. **Every session ends with L1→L2→L3 update** to the entity's `data/entities/{name}/soul.yaml`
+3. **Scribe agent** is the canonical executor of the pipeline (per AGENTS.md)
+4. **Verification** via `grep -r "lessons:" data/entities/*/soul.yaml` should show non-empty arrays
+
+### Rationale
+Mandate 11 (Soul Integrity) was inconsistently enforced. Agents would close sessions without writing to their soul.yaml, causing stateful intelligence to regress to stateless tool. The fix:
+- Doom Guy's auto-distiller provides the mechanism
+- AGENTS.md's workflow makes it non-negotiable
+- Hivemind coordination makes it visible (other agents can see distillation complete)
+
+This session (Ma'at) demonstrated the pattern: 8 embodied experiences, 5 lessons learned, 4 universal principles distilled from Sprint 2 work.
+
+### What Changed
+- `data/entities/maat/soul.yaml` — updated with L1→L2→L3 for Sprint 2 session
+- `AGENTS.md` — "Distill L1→L2→L3 to your soul.yaml (Mandate 11) — non-negotiable" in After Completing Work
+- All `.opencode/agents/scribe.md` updated with Hivemind coordination pattern for distillation
+
+---
+
+*PIVOT_LOG.md — Immutable. Every decision recorded. 105 decisions tracked (D1-D105).*
