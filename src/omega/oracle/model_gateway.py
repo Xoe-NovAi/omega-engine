@@ -149,6 +149,11 @@ class ModelGateway:
                      "kv_cache_key_type", "kv_cache_value_type"):
             if key in default_spec and key not in merged:
                 merged[key] = default_spec[key]
+        
+        # Optimize threads based on model size if not explicitly set
+        if "threads" not in merged:
+            model_size_b = default_spec.get("size_gb", 1.7) # Default to 1.7B if unknown
+            merged["threads"] = self._cpu_optimizer.get_recommended_threads(model_size_b)
 
         # Map models.yaml names → NativeGGUFProvider config names
         if "path" in merged and "model_path" not in merged:
@@ -363,7 +368,7 @@ class ModelGateway:
     # ── Entity-aware model affinity ───────────────────────────────────
     # Per-entity model overrides for domain-specific routing.
     # Fallback chain: entity override → entity registry field → domain default → system default
-    # [id-soft: xna-omega-legacy] Port 3.1: Entity Model Affinity
+    # [legacy: xna-omega-legacy] Port 3.1: Entity Model Affinity
 
     _entity_model_map: Dict[str, str] = {}  # entity_name.lower() -> model_name
 
@@ -539,7 +544,8 @@ class ModelGateway:
 
     async def generate(
         self, model_name: str, system_prompt: str, user_query: str,
-        temperature: float = 0.7, max_tokens: int = 1024, trace_id: Optional[str] = None
+        temperature: float = 0.7, max_tokens: int = 1024, trace_id: Optional[str] = None,
+        session_id: Optional[str] = None
     ) -> tuple:
         """Iterate provider fabric with circuit breaker protection.
         
@@ -551,13 +557,11 @@ class ModelGateway:
         
         # 1. Build the search order: Active Set (LRU) -> Full Fabric
         search_order = []
-        # Add active providers first (if they are in the fabric)
         fabric_names = {p.name for p in self.providers}
         for p_name in self._active_providers:
             if p_name in fabric_names:
                 search_order.append(next(p for p in self.providers if p.name == p_name))
         
-        # Add remaining providers from the full fabric
         for provider in self.providers:
             if provider not in search_order:
                 search_order.append(provider)
@@ -567,69 +571,57 @@ class ModelGateway:
             if not await self._precheck_provider(provider, model_name):
                 errors.append(f"{provider.name}: culled by precheck")
                 continue
-
-
-            # Step 2: Execute with breaker protection
+            
+            # Step 2: Execute with Hardware Lock and breaker protection
             timeout = self._get_provider_timeout(provider)
             breaker = None  # Initialize for else-clause scope
+            
+            # Use Hardware Lock to prevent resource contention
+            weight = self.get_model_weight(model_name)
+            spec = self.get_model_spec(model_name)
+            
             try:
-                with anyio.move_on_after(timeout) as cancel_scope:
-                    # Use HealthMonitor's breaker if available, otherwise direct call.
-                    # T2.3 fix: wrap the call to raise TimeoutError on None so the
-                    # breaker's _on_failure() actually fires (None is not an exception
-                    # — RemoteProvider.generate() returns None on retry exhaustion,
-                    # which breaker.call() would count as a success).
-                    if self._health_monitor:
-                        breaker = self._health_monitor._breakers.get(provider.name)
-                        if breaker:
-                            async def _call_with_none_as_failure():
-                                r = await provider.generate(
+                async with self.resource_guard.lock(weight=weight, model_spec=spec):
+                    with anyio.move_on_after(timeout) as cancel_scope:
+                        # Use HealthMonitor's breaker if available, otherwise direct call.
+                        if self._health_monitor:
+                            breaker = self._health_monitor._breakers.get(provider.name)
+                            if breaker:
+                                async def _call_with_none_as_failure():
+                                    r = await provider.generate(
+                                        model_name, system_prompt, user_query,
+                                        temperature, max_tokens, trace_id=trace_id
+                                    )
+                                    if not r:
+                                        raise TimeoutError(f"Provider {provider.name} returned empty response")
+                                    return r
+                                result = await breaker.call(_call_with_none_as_failure, trace_id=trace_id)
+                            else:
+                                result = await provider.generate(
                                     model_name, system_prompt, user_query,
                                     temperature, max_tokens, trace_id=trace_id
                                 )
-                                if not r:
-                                    # None/empty response = circuit-breaking
-                                    raise TimeoutError(
-                                        f"Provider {provider.name} returned empty response"
-                                    )
-                                return r
-                            result = await breaker.call(
-                                _call_with_none_as_failure,
-                                trace_id=trace_id
-                            )
                         else:
                             result = await provider.generate(
                                 model_name, system_prompt, user_query,
                                 temperature, max_tokens, trace_id=trace_id
                             )
-                    else:
-                        result = await provider.generate(
-                            model_name, system_prompt, user_query,
-                            temperature, max_tokens, trace_id=trace_id
-                        )
-                    if result:
-                        # Record success with HealthMonitor
-                        if self._health_monitor:
-                            self._health_monitor.record_success(model_name)
                         
-                        # [id-soft: doom-1993] Fixed-Size Active Set — update LRU
-                        self._update_active_set(provider.name)
-                        
-                        success_provider = provider
-                        break
-
-                if cancel_scope.cancelled_caught:
-                    errors.append(f"{provider.name}: timed out ({timeout}s)")
-                    self._record_provider_failure(provider, model_name, trace_id)
-                    continue
-
+                        if result:
+                            if self._health_monitor:
+                                self._health_monitor.record_success(model_name)
+                            self._update_active_set(provider.name)
+                            success_provider = provider
+                            break
+                    
+                    if cancel_scope.cancelled_caught:
+                        errors.append(f"{provider.name}: timed out ({timeout}s)")
+                        self._record_provider_failure(provider, model_name, trace_id)
+                        continue
             except CircuitOpenError:
-                # Circuit is OPEN — provider already known broken, skip silently
                 errors.append(f"{provider.name}: circuit OPEN")
                 continue
             except TimeoutError as e:
-                # T2.3 fix: None response raised as TimeoutError by _call_with_none_as_failure.
-                # breaker.call() has already recorded _on_failure for us.
                 errors.append(f"{provider.name}: {e}")
                 self._record_provider_failure(provider, model_name, trace_id)
                 continue
@@ -637,16 +629,14 @@ class ModelGateway:
                 errors.append(f"{provider.name}: {e}")
                 self._record_provider_failure(provider, model_name, trace_id)
                 continue
-
+        
         if success_provider:
             is_cloud = self._is_cloud_provider(success_provider)
             return result, is_cloud
-
-        logger.warning(
-            "All providers failed. Trace: %s | Errors: %s",
-            trace_id, '; '.join(errors)
-        )
+        
+        logger.warning("All providers failed. Trace: %s | Errors: %s", trace_id, '; '.join(errors))
         return self._fallback_response(model_name, system_prompt, user_query), False
+
 
     async def _call_provider_with_resilience(self, provider, model_name, system_prompt, user_query, temperature, max_tokens, trace_id=None):
         """Wrapper to apply the OpenRouter retry policy."""

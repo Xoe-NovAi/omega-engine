@@ -34,7 +34,7 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo ""
 	@echo "$(COLOR_PURPLE)╔══════════════════════════════════════════════════════╗$(COLOR_NC)"
 	@echo "$(COLOR_PURPLE)║$(COLOR_BOLD)  🔱 OMEGA ENGINE — HORIZON 1 COMPLETE             $(COLOR_PURPLE)║$(COLOR_NC)"
-	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  $(COLOR_GREEN)302 tests ✅  |  71 modules  |  All 12 Mandates enforced$(COLOR_PURPLE)║$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  $(COLOR_GREEN)307 tests ✅  |  71 modules  |  All 12 Mandates enforced$(COLOR_PURPLE)║$(COLOR_NC)"
 	@echo "$(COLOR_PURPLE)╚══════════════════════════════════════════════════════╝$(COLOR_NC)"
 	@echo ""
 	@echo "$(COLOR_BOLD)🔥 CORE$(COLOR_NC)"
@@ -47,7 +47,7 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo "  $(COLOR_CYAN)make menu$(COLOR_NC)         📋 This menu"
 	@echo ""
 	@echo "$(COLOR_BOLD)🧪 TESTING$(COLOR_NC)"
-	@echo "  $(COLOR_CYAN)make test$(COLOR_NC)         🧪 Run all 302 tests"
+	@echo "  $(COLOR_CYAN)make test$(COLOR_NC)         🧪 Run all 307 tests"
 	@echo "  $(COLOR_CYAN)make test ARGS='-k name'$(COLOR_NC)  Filter tests by name"
 	@echo "  $(COLOR_CYAN)make test-cov$(COLOR_NC)     📊 Run tests with coverage"
 	@echo "  $(COLOR_CYAN)make lint$(COLOR_NC)         🔍 Lint with flake8"
@@ -87,6 +87,16 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo "  $(COLOR_CYAN)make wad-status$(COLOR_NC)  📋 Show current IWAD and available WADs"
 	@echo "  $(COLOR_CYAN)make wad NAME=x$(COLOR_NC)  🔄 Switch active IWAD (e.g. arcana_novai)"
 	@echo "  $(COLOR_CYAN)make wad-reset$(COLOR_NC)   🔄 Reset to reference IWAD (_omega_default)"
+	@echo ""
+	@echo "$(COLOR_BOLD)⛓️ VERIFICATION (P3 Cadence)$(COLOR_NC)"
+	@echo "  $(COLOR_CYAN)make verify-pending$(COLOR_NC) 📋 Show pending verification items"
+	@echo "  $(COLOR_CYAN)make verify-mining$(COLOR_NC) 🔎 Verify Roc's mining was ported"
+	@echo "  $(COLOR_CYAN)make verify-stale$(COLOR_NC)  ⏰ Find items stalled >48h"
+	@echo "  $(COLOR_CYAN)make verify-rollup$(COLOR_NC) 📊 Fleet-wide verification status"
+	@echo "  $(COLOR_CYAN)make verify-cleanup$(COLOR_NC)🗑️  Archive TTL-expired items"
+	@echo "  $(COLOR_CYAN)make verify-status$(COLOR_NC) 🔍 Drill into one verification item"
+	@echo "  $(COLOR_CYAN)make knowledge-index$(COLOR_NC)📚 Rebuild knowledge catalog"
+	@echo "  $(COLOR_CYAN)make knowledge-flow$(COLOR_NC) 🌊 Check unconsumed signals"
 	@echo ""
 	@echo "$(COLOR_BOLD)🧹 MAINTENANCE$(COLOR_NC)"
 	@echo "  $(COLOR_CYAN)make clean$(COLOR_NC)        🧹 Clean Python cache"
@@ -222,7 +232,7 @@ wad-reset: ## 🔄 Reset to reference IWAD (_omega_default)
 # 🚀 CORE COMMANDS
 # ============================================================================
 
-.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank wad-load wad-status wad-list audit-no-rag-v1 setup bootstrap demo test test-cov test-oracle-bootstrap mcp-check lint typecheck guard clean doctor
+.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank wad-load wad-status wad-list audit-no-rag-v1 setup bootstrap demo test test-cov test-oracle-bootstrap mcp-check lint typecheck guard clean doctor verify-pending verify-stale verify-mining verify-rollup verify-cleanup verify-status knowledge-index knowledge-flow
 
 help: ## 📚 Show this help
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z_-]+:.*## / {printf "  $(COLOR_CYAN)%-20s$(COLOR_NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -593,26 +603,23 @@ heritage-map: ## 🏛️ Verify [id-soft:] heritage tags in source files
 	fi; \
 	echo ""
 
+heritage-vet: ## 🏛️ Verify all [id-soft:] tags have vet records (Heritage Vetting Pipeline)
+	@bash scripts/heritage_vet.sh
+
+heritage-vet-create: ## 📝 Create HERITAGE_VET_LOG.md if missing (seed with template)
+	@echo "Creating Heritage Vet Log..."
+	@mkdir -p data/entities/doom_guy/knowledge
+	@if [ ! -f "data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md" ]; then \
+		echo "# Heritage Vet Log" > "data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md"; \
+		echo "" >> "data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md"; \
+		echo "See docs/strategy/HERITAGE_VETTING_PIPELINE.md for the pipeline." >> "data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md"; \
+		echo "Created: $(shell date +%Y-%m-%d)" >> "data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md"; \
+		echo "$(COLOR_GREEN)✅ Created HERITAGE_VET_LOG.md$(COLOR_NC)"; \
+	else \
+		echo "$(COLOR_GREEN)✅ HERITAGE_VET_LOG.md already exists$(COLOR_NC)"; \
+	fi
+
 sovereignty: ## 🏛️ Show local vs cloud inference ratio
-	@echo "[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo "[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m"
 	@echo " 🏛️ Sovereignty Report — Local/Cloud Inference Ratio"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m"
-	@echo ""
-	@echo "  Local providers configured: native-gguf, lmster, Ollama"
-	@echo "  Cloud providers configured: Google, OpenRouter, OpenCode, Copilot"
-	@echo "  Strategy: local_first (Mandate 7)"
-	@echo ""
-	@# Check observability events directory for local/cloud ratio
-	@if [ -d "data/observability/" ]; then 		LOCAL=$$(find data/observability/ -name '*.jsonl' -exec grep -l '"provider":"native-gguf"\|"provider":"lmster"\|"provider":"ollama"' {} \; 2>/dev/null | wc -l); 		CLOUD=$$(find data/observability/ -name '*.jsonl' -exec grep -l '"provider":"google"\|"provider":"openrouter"\|"provider":"opencode"\|"provider":"copilot"' {} \; 2>/dev/null | wc -l); 		TOTAL=$$((LOCAL + CLOUD)); 		if [ "$$TOTAL" -gt 0 ]; then 			PCT=$$((LOCAL * 100 / TOTAL)); 			echo "  [1;37mLocal calls: $$LOCAL  Cloud calls: $$CLOUD  Ratio: $$PCT% local[0m"; 			if [ "$$PCT" -ge 70 ]; then 				echo "  [1;32m✅ Sovereignty target met (≥70% local)[0m"; 			else 				echo "  [1;33m⚠️  Below sovereignty target (70% local)[0m"; 			fi; 		else 			echo "  [1;33m⚠️  No observability data yet. Run queries to generate data.[0m"; 		fi; 	else 		echo "  [1;33m⚠️  No observability data directory. Create data/observability/ to track.[0m"; 	fi
-	@echo ""
-	@echo "  Target: 70%+ local by end of H1.5 (Bridge Phase)"
-	@echo ""
-
-# 🔐 GIT (Commit Hygiene)
-# ============================================================================
-
-git-status: ## 📋 Show working tree status
-	git status
-
-git-log: ## 📋 Show recent commits
-	git log --oneline -20

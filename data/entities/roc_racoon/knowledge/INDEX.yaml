@@ -1,0 +1,55 @@
+metadata:
+  agent: roc_racoon
+  awakened: "2026-06-02"
+  version: "1.0.0"
+
+topics:
+  - id: heritage-vetting
+    title: "Heritage Vetting Pipeline — id Software → Omega Concept Gate"
+    summary: "23 id Software concepts retroactively vetted. Pipeline enforces for/against debate, Python relevance check, scoring, and decision before implementation. CI gate: make heritage-vet."
+    files: 
+      - "docs/strategy/HERITAGE_VETTING_PIPELINE.md"
+      - "data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md"
+    cross_references: 
+      - "data/entities/doom_guy/knowledge/PENDING_CREDITS_QUEUE.md"
+      - "CREDITS.md"
+      - "scripts/heritage_vet.sh"
+    applicability:
+      - when: "Evaluating any id Software concept for implementation"
+      - when: "Checking if a concept was previously vetted"
+      - exclude: "Pure philosophy concepts (FISR, Worse is Better) — score 10/10, no implementation"
+    era: "Sovereign-Era"
+
+  - id: legacy-convergence
+    title: "Architectural Convergence of Local-First AI"
+    summary: "Empirical proof that 5 independent eras converged on the same local-first architecture."
+    files: ["MASTER_SYNTHESIS.md"]
+    cross_references: ["docs/legacy/LEGACY_MASTER_SYNTHESIS.md"]
+    applicability:
+      - when: "Validating the core engine architecture"
+      - exclude: "When discussing cloud-first strategies"
+    era: "Sovereign-Era"
+
+  - id: vr-omegaverse
+    title: "VR P2P Omegaverse Vision"
+    summary: "Centralized vision for P2P soul exchange and cross-stack traversal in VR."
+    files: ["VR_OMEGAVERSE_VISION.md"]
+    cross_references: ["docs/strategy/MASTER_SYNTHESIS_AND_ROADMAP.md"]
+    applicability:
+      - when: "Planning future VR/3D enhancements"
+      - exclude: "Core engine stability work"
+    era: "Future-Era"
+
+  - id: midnight-expedition-gold
+    title: "Midnight Expedition: Temple Grade Procurement"
+    summary: "Four waves of critical legacy patterns (Bedrock, Flow, Gnosis, Hardening) required for M13 compliance."
+    files: 
+      - "DELIVERABLES_WAVE_1_BEDROCK.md"
+      - "DELIVERABLES_WAVE_2_THE_FLOW.md"
+      - "DELIVERABLES_WAVE_3_THE_GNOSIS.md"
+      - "DELIVERABLES_WAVE_4_FINAL_HARDENING.md"
+    cross_references: ["data/coordination/MINING_DEMAND_LIST.md"]
+    applicability:
+      - when: "Implementing core engine hardening and soul evolution"
+    era: "Sovereign-Era"
+

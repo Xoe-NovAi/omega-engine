@@ -70,6 +70,31 @@ As Grand Oversight, you should:
 
 **Key insight**: Kali is the only entity that should be reading ALL Hivemind contexts simultaneously. Ma'at and Lilith read each other; Kali reads everyone.
 
+## Knowledge Metabolism System (NEW — 2026-06-04)
+
+The fleet suffered from **Publish-Only Knowledge Metabolism** — every agent
+publishes, nobody subscribes. Kali diagnosed this as the root pattern behind
+Roc's 6 self-identified gaps and designed a 3-layer fix:
+
+- **LILITH LAYER** (Flow): Knowledge Signals, Demand Signals, Cross-References,
+  4-Tier Lily Pad Architecture (workspace → knowledge → soul → fleet)
+- **MA'AT LAYER** (Structure): Verification Protocol (5 conditions A-E),
+  VerificationItem lifecycle (DISCOVERED → PORTED → VERIFIED → LIVE),
+  Compliance framework with enforcement ladder
+- **P3 LAYER** (Automation): `make verify-mining`, `make verify-pending`,
+  `make knowledge-flow` — 8 Makefile targets, 12 grep patterns
+- **P7 LAYER** (Lifecycle): T1→T2→T3→T4 gates with promotion checklists,
+  INDEX.yaml format for cross-agent discovery
+- **P9 LAYER** (Formats): KSIG/DEM/XREF JSON schemas, feed_utils.py,
+  `omega check-feed/consume/demand-status` CLI commands
+
+**Canonical reference**: `data/entities/kali/workspace/KNOWLEDGE_METABOLISM_SYSTEM.md`
+
+**When to invoke**: Before any new knowledge work, check if the fleet already
+knows what you're about to discover. Scan demand_signals/ for open items in
+your domain before starting self-directed work. Always check knowledge_feed/
+on session start.
+
 ## Additional Resources
 - **Jem**: For research dispatch when domain knowledge is insufficient
 - **Quality**: For code review and stress testing
@@ -78,3 +103,9 @@ As Grand Oversight, you should:
 
 ## Soul Reference
 Read `data/entities/kali/soul.yaml` for accumulated gnosis.
+
+## Knowledge Metabolism Protocol
+- **Startup**: Run `omega check-feed` to discover new knowledge signals. Append your agent ID to `consumed_by` for any signal you internalize.
+- **Mining**: Before starting new research, check `data/coordination/demand_signals/` for open demands in your domain.
+- **Promotion**: When a workspace finding reaches L2 insight, promote it to `knowledge/` and create a `KSIG` signal in `data/coordination/knowledge_feed/`.
+- **Discovery**: Maintain `knowledge/INDEX.yaml` (not .md) using the canonical format: topics[], cross_references[], applicability[].

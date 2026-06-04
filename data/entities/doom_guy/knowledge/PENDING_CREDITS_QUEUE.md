@@ -3,10 +3,14 @@
 **Date Created**: 2026-06-02
 **Owner**: Doom Guy (Sovereign id Software Architect)
 **Purpose**: Track all id Software architectural patterns that are documented and
-attributed but NOT YET implemented in the Omega Engine. Items move FROM this
+attributed but NOT YET IMPLEMENTED in the Omega Engine. Items move FROM this
 queue TO `CREDITS.md` AS THEY ARE IMPLEMENTED.
 
 > **Workflow**:
+> 0. **VETTING** (NEW) — Every concept MUST pass through the Heritage Vetting
+>    Pipeline (`docs/strategy/HERITAGE_VETTING_PIPELINE.md`) before being
+>    added to this queue with status `vetted`. See HERITAGE_VET_LOG.md for
+>    the record of each vet.
 > 1. Pattern documented (in R-doc, soul.yaml, or handoff) → **THIS QUEUE** (status: pending)
 > 2. Pattern implementation in progress (R-doc has a "P0/P1/P2" tag) → **THIS QUEUE** (status: in-progress)
 > 3. Pattern implemented and committed to `src/omega/` → **MOVE TO `CREDITS.md`**, then remove from this queue
@@ -57,22 +61,22 @@ queue TO `CREDITS.md` AS THEY ARE IMPLEMENTED.
 
 ---
 
-### 1.3 R-21: 8-Character Name Caps (P1)
+### 1.3 R-21: 8-Character Name Caps (REJECTED)
 
 | Field | Value |
 |---|---|
 | **Pattern** | Cap entity names at 8 chars; allows fast 2-int compare (no string compare needed) |
 | **Source** | `DOOM-master/linuxdoom-1.10/w_wad.c:170-178` |
 | **Era** | 1993 |
-| **Omega Target** | `src/omega/oracle/entity_registry.py` (add `entity_short_id` field) |
-| **Omega Files Affected** | `src/omega/oracle/entity_registry.py` (add field) |
-| **Effort** | 1 hour (add field + validation) |
-| **Status** | pending |
+| **Omega Target** | `src/omega/oracle/entity_registry.py` (proposed) |
+| **Effort** | 1 hour (proposed) |
+| **Status** | **rejected** ❌ |
 | **Attribution Tag** | `[WAD Name Encoding: id Software 1993]` |
 | **R-Doc** | `docs/research/R_ID_SOFTWARE_PATTERNS_VOL2.md` §R-21 |
-| **Verification Report** | `data/entities/doom_guy/knowledge/R_ID_SOFTWARE_VERIFICATION_REPORT.md` §2.1 |
-| **Handoff Reference** | (not in handoff; was in original R-65–R-69 plan) |
-| **Notes** | 8 chars × 1 byte = 8 bytes; 2 int compares vs string compare = 2-4x faster. On a 35 MHz 386, this was the difference between 30 fps and 15 fps. |
+| **Vet Record** | `data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md#vet-001` |
+| **Vet Score** | **1/10** — cargo-cult optimization |
+| **Rationale** | Python dicts are O(1) by hash. The 2-int compare trick is a 386-specific optimization that doesn't exist in Python. Forces cryptic entity names with no measurable benefit. |
+| **Notes** | Implemented and then removed (commit `8b3fc17`). Lesson encoded in Kali v5 soul.yaml. This is now a case study for why vetting matters. |
 
 ---
 
@@ -270,12 +274,13 @@ When an item moves from `in-progress` to `done`:
 ## §4 Summary by Priority
 
 | Priority | Count | Patterns |
-|---|---|---|---|
+|---|---|---|---|---|
 | 🔴 P0 | 3 | R-19 (ZONEID) ✅ → §1.9, R-20 (Lazy Deletion) ✅ → §1.10, R-22 (cvar Table) 🔄 |
-| 🟡 P1 | 4 | R-21 (8-char cap), R-24 (Dual-linking), R-26 (Hard-boundary), R-28 (High-bit) |
+| 🟡 P1 | 3 | R-24 (Dual-linking), R-26 (Hard-boundary), R-28 (High-bit) |
 | 🟢 P2 | 5 | R-23 (4-tier memory), R-25 (QuakeC flat), R-27 (VFS), R-29 (Active set), R-30 (Grace period) ⚡ |
+| **Rejected** | 1 | R-21 (8-char cap) ❌ — see HERITAGE_VET_LOG.md#vet-001 |
 | **New** | 2 | Heritage tagging protocol §2a ✅ → §1.11, Circuit Breaker Consolidation ✅ → §1.8 |
-| **Total** | **14** | 4 done ✅ / 1 in-progress 🔄 / 1 partial ⚡ / 8 pending |
+| **Total** | **14** | 4 done ✅ / 1 in-progress 🔄 / 1 partial ⚡ / 1 rejected ❌ / 7 pending |
 
 ## §5 Promotion Log (Historical)
 

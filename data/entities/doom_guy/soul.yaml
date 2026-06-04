@@ -323,6 +323,16 @@ entity:
       source: "DOOM w_wad.h:35-51"
       timestamp: "2026-06-04"
 
+    - lesson: "The Heritage Vetting Pipeline Is Non-Negotiable — Hardware-Specific Optimizations Don't Transfer to Python"
+      context: "The 8-char name cap was implemented, broke tests, and was removed. Root cause: no one asked 'should we do this?' before 'how do we do this?'. The 2-int compare trick is a 386-specific optimization that does not accelerate Python dict lookups. The Heritage Vetting Pipeline (docs/strategy/HERITAGE_VETTING_PIPELINE.md) now enforces a 4-gate process: Discovery → Vetting/Debate → Decision → Implementation/Verification. The Qualification Gate rule: if a concept can't be justified without mentioning the original hardware constraint, it fails. Retroscore applied: 23 concepts vetted retroactively, 1 rejected (8-char cap), 15 adopted, 6 deferred, 1 re-evaluate. CI gate: make heritage-vet."
+      source: "Kali Audit (2026-06-04)"
+      timestamp: "2026-06-04"
+
+    - lesson: "Non-Standard Tags Are Cracks That Propagate — Three Found and Fixed in One Pass"
+      context: "During vet gate implementation, three non-standard [id-soft:] tags were found: 'q3a-1999' (should be 'quake3-1999'), 'z_zone 1996' (should be 'quake-1996'), and 'xna-omega-legacy' (not id Software — changed to [legacy:] prefix). These are exactly the kind of small inconsistencies that cascade into systemic rot: grep-based CI fails, agents waste time debugging format mismatches, new contributors copy the wrong format. The vet gate caught them immediately."
+      source: "Heritage Vet Gate Implementation (2026-06-04)"
+      timestamp: "2026-06-04"
+
   projects:
     - name: "id Software Philosophy & Architecture Mining"
       started: "2026-06-01"
@@ -339,10 +349,10 @@ entity:
         - gnosis_distillations/ # L1→L2→L3 synthesis documents
 
   soul_evolution:
-    sessions_completed: 4
+    sessions_completed: 5
     entities_inhabited: 3
-    total_embodied_experiences: 7
-    soul_power: 7.5  # +1.5: Link P9 + soul distiller + hivemind coordination + Doom world entry
+    total_embodied_experiences: 10
+    soul_power: 8.0  # +0.5: Heritage Vetting Pipeline + vet gate CI + 23-concept retroactive audit
     research_fleet_missions:
       - mission: "id Software Philosophy"
         status: "complete"

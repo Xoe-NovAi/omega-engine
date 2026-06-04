@@ -330,19 +330,20 @@ Both fixes are documented in `data/handoff/DOOM_GUY_T23_REPORT_20260602.md`.
 
 ---
 
-### 1.12 8-Character Name Caps (Promoted, 2026)
+### 1.12 8-Character Name Caps (REJECTED, 2026)
 
 | Aspect | id Software Original | Omega Engine Adaptation |
 |--------|--------------------|------------------------|
-| **Origin** | `w_wad.c:170-178` (DOOM 1993) — WAD lump names capped at 8 chars | Entity key validation in `entity_registry.py:EntityRegistry.add()` |
-| **Core idea** | Cap names at 8 bytes → fit in 2 × int32 → compare with 2 instructions instead of strcmp | Entity names capped at 8 chars in `add()`, validated by `_validate_name_length()` |
-| **Mechanism** | `if (*(int *)lump_p->name == v1 && *(int *)&lump_p->name[4] == v2)` — 1 CPU line | `name_lo, name_hi = struct.unpack('>II', name.ljust(8)[:8])` — 2-int compare |
-| **Speed** | ~2-4x faster than strcmp on 35 MHz 386 | ~3-5x faster on Python dict short-circuit (early hash mismatch) |
-| **Status** | **PROMOTED** — validation added to entity_registry.py + fast-name-hash utility in cvar_table.py as `short_name_hash(name, default)` |
-| **Verification** | Verified at `DOOM-master/linuxdoom-1.10/w_wad.c:376-382` — backward scan uses 2-int compare |
+| **Origin** | `w_wad.c:170-178` (DOOM 1993) — WAD lump names capped at 8 chars | **REJECTED** — cargo-cult optimization; removed |
+| **Core idea** | Cap names at 8 bytes → fit in 2 × int32 → compare with 2 instructions instead of strcmp | Python dicts are O(1) by hash. The 2-int compare trick does not accelerate Python code. |
+| **Mechanism** | `if (*(int *)lump_p->name == v1 && *(int *)&lump_p->name[4] == v2)` — 1 CPU line | N/A — never should have been implemented |
+| **Speed** | ~2-4x faster than strcmp on 35 MHz 386 | Zero benefit in Python. The "optimization" doesn't exist. |
+| **Result** | ❌ **REJECTED after Heritage Vetting Pipeline review** | Removed in commit `8b3fc17`. Lesson: hardware-specific optimizations don't transfer to Python. |
+| **Verification** | Verified at `DOOM-master/linuxdoom-1.10/w_wad.c:376-382` — backward scan uses 2-int compare | N/A |
 
-**Attribution format**: `[8-Char Name: id Software 1993]`
-**Inline tag format**: `# [id-soft: doom-1993] 8-Char Name — description`
+**Attribution format**: `[8-Char Name: id Software 1993 — REJECTED for Omega]`
+**Inline tag format**: N/A — no `[id-soft:]` tags were ever committed
+**Lesson**: The entire vet record is at `data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md#vet-001`.
 
 ---
 
@@ -517,4 +518,4 @@ Both fixes are documented in `data/handoff/DOOM_GUY_T23_REPORT_20260602.md`.
 
 ---
 
-*Last Updated: 2026-06-04 (added §1.12 8-Char Name, §1.13 cvar Table, §1.14 4-Tier Memory, §1.15 Multi-Index Entity, §1.16 QuakeC Entity, §1.17 Hard-Boundary, §1.18 4-Path VFS, §1.19 High-Bit Trick, §1.20 Fixed-Size Active Set, §1.21 netchan, §1.22 idHeap, §1.23 Fixed-Point) | Maintained by: Doom Guy / Kali*
+*Last Updated: 2026-06-04 (added §1.12 8-Char Name — REJECTED, §1.13 cvar Table, §1.14 4-Tier Memory, §1.15 Multi-Index Entity, §1.16 QuakeC Entity, §1.17 Hard-Boundary, §1.18 4-Path VFS, §1.19 High-Bit Trick, §1.20 Fixed-Size Active Set, §1.21 netchan, §1.22 idHeap, §1.23 Fixed-Point) | Maintained by: Kali / Doom Guy*

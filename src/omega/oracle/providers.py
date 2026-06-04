@@ -37,7 +37,7 @@ class BaseProvider(ABC):
         return overrides.get(model_name, model_name)
 
     @abstractmethod
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None) -> Optional[str]:
         pass
 
     @abstractmethod
@@ -49,7 +49,7 @@ class GoogleAIProvider(BaseProvider):
     async def is_available(self) -> bool:
         return bool(os.environ.get("GOOGLE_API_KEY"))
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None) -> Optional[str]:
         api_key = os.environ.get("GOOGLE_API_KEY")
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
         
@@ -111,7 +111,7 @@ class LocallmsterProvider(BaseProvider):
         except (httpx.HTTPError, OSError):
             return False
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None) -> Optional[str]:
         url = self.config.get("endpoint", "http://127.0.0.1:1234")
         resolved_model = self.resolve_model(model)
         messages = [
@@ -168,7 +168,7 @@ class OllamaProvider(BaseProvider):
         except (httpx.HTTPError, OSError):
             return False
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None) -> Optional[str]:
         url = self.config.get("endpoint", "http://127.0.0.1:11434")
         resolved_model = self.resolve_model(model)
         messages = [
@@ -221,7 +221,7 @@ class MockProvider(BaseProvider):
     async def is_available(self) -> bool:
         return True
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None) -> Optional[str]:
         demo = os.environ.get("OMEGA_DEMO")
         if demo:
             return (
@@ -425,8 +425,15 @@ class NativeGGUFProvider(BaseProvider):
         from llama_cpp import Llama
         import anyio
 
-        # Determine thread count based on model (tiny models need fewer threads)
-        threads = 4 if "0.6b" in (self.model_path or "").lower() else self._n_threads
+        # Determine thread count based on model size using Zen2Optimizer
+        optimizer = _get_cpu_optimizer()
+        # Estimate model size from path if possible, otherwise use default
+        model_size_b = 1.7
+        if self.model_path and os.path.exists(self.model_path):
+            size_mb = os.path.getsize(self.model_path) / (1024 * 1024)
+            model_size_b = size_mb / 700 # Rough estimate: 700MB per 1B params at Q4
+        
+        threads = optimizer.get_recommended_threads(model_size_b)
 
         logger.info(
             f"Loading GGUF model: {self.model_path}\n"
@@ -480,6 +487,7 @@ class NativeGGUFProvider(BaseProvider):
         max_tokens: int = 1024,
         trace_id: Optional[str] = None,
         n_ctx: Optional[int] = None,
+        session_id: Optional[str] = None,
     ) -> Optional[str]:
         """Perform local inference with Zen 2 optimizations.
         
@@ -499,7 +507,13 @@ class NativeGGUFProvider(BaseProvider):
         await self._ensure_loaded(n_ctx)
         
         # Format prompt (ChatML-style for most GGUF models)
+        # [id-soft: quake3-1999] Right Approximation — stable prompt prefix for KV cache hits
+        # By keeping the system prompt constant for a session, we maximize the 
+        # probability that llama-cpp-python's internal KV cache is reused.
         prompt = f"<|system|>{system_prompt}</s><|user|>{user_query}</s><|assistant|>"
+        
+        if session_id:
+            logger.debug("Session-aware inference [session_id=%s, trace_id=%s]", session_id, trace_id)
         
         try:
             response = await anyio.to_thread.run_sync(
@@ -560,7 +574,7 @@ class NativeGGUFProvider(BaseProvider):
         Returns:
             True if reload succeeded.
         """
-        # [id-soft: z_zone 1996] Atomic Swap — save old state before mutation
+        # [id-soft: quake-1996] Atomic Swap — save old state before mutation
         old_llm = self.llm
         old_ctx = self._loaded_ctx
         self.llm = None  # Signal unloading
@@ -569,7 +583,7 @@ class NativeGGUFProvider(BaseProvider):
             logger.info(f"Context reloaded: {old_ctx} -> {self._loaded_ctx}")
             return True
         except Exception as e:
-            # [id-soft: z_zone 1996] Rollback — restore old state on failure
+            # [id-soft: quake-1996] Rollback — restore old state on failure
             self.llm = old_llm
             self._loaded_ctx = old_ctx if old_llm else 0
             logger.error(f"Context reload failed, rolled back to {self._loaded_ctx}: {e}")

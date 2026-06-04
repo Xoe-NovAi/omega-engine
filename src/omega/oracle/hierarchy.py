@@ -3,7 +3,7 @@
 AP: AP-HIERARCHY-LOGIC-v1.0.0
 ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: HIERARCHY]
 
-[id-soft: q3a-1999] Hard-Boundary Struct — hierarchy tier separation
+[id-soft: quake3-1999] Hard-Boundary Struct — hierarchy tier separation
   Q3A separates entityState_t (engine) from entityShared_t (game) with
   a "DO NOT MODIFY" boundary. HierarchyManager enforces rank-based
   boundaries: lower-rank entities cannot modify higher-rank state.

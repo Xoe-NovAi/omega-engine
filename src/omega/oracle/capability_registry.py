@@ -1,6 +1,6 @@
 # 🔱 Capability Registry — Agent Skill Discovery
 #
-# [id-soft: q3a-1999] VM System — capability-based dispatch
+# [id-soft: quake3-1999] VM System — capability-based dispatch
 #   Q3A's virtual machine (vm.c) loads game code as a dynamic module with
 #   exported function table. CapabilityRegistry mirrors this: agents publish
 #   their skills as discoverable entries, enabling runtime dispatch.
