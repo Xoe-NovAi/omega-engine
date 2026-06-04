@@ -94,6 +94,63 @@
     "preserve_recent_tokens": 40000,
     "reserved": 10000
   },
+  "mode": {
+    "kali": {
+      "prompt": "{file:.opencode/modes/kali.md}",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "write": true,
+        "read": true,
+        "glob": true,
+        "grep": true
+      }
+    },
+    "maat": {
+      "prompt": "{file:.opencode/modes/maat.md}",
+      "tools": {
+        "bash": false,
+        "edit": false,
+        "write": false,
+        "read": true,
+        "glob": true,
+        "grep": true
+      }
+    },
+    "lilith": {
+      "prompt": "{file:.opencode/modes/lilith.md}",
+      "tools": {
+        "bash": true,
+        "edit": true,
+        "write": true,
+        "read": true,
+        "glob": true,
+        "grep": true
+      }
+    },
+    "jem-2.0": {
+      "prompt": "{file:.opencode/modes/jem-2.0.md}",
+      "tools": {
+        "bash": false,
+        "edit": false,
+        "write": false,
+        "read": true,
+        "glob": true,
+        "grep": true
+      }
+    },
+    "jem-initiate": {
+      "prompt": "{file:.opencode/modes/jem-initiate.md}",
+      "tools": {
+        "bash": false,
+        "edit": false,
+        "write": false,
+        "read": true,
+        "glob": true,
+        "grep": true
+      }
+    }
+  },
   "provider": {
     "lmstudio": {
       "npm": "@ai-sdk/openai-compatible",

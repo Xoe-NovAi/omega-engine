@@ -1,0 +1,18 @@
+{
+  "_schema_version": 1,
+  "rollup_id": "rollup-stale-20260604",
+  "domain": "stale",
+  "generated_at": "2026-06-04T00:00:00Z",
+  "generated_by": "P1 (SysAdmin) — bootstrap",
+  "summary": {
+    "total_items": 0,
+    "stale_items": [],
+    "critical_count": 0,
+    "warning_count": 0
+  },
+  "aging_report": {
+    "older_than_48h": [],
+    "older_than_7d": [],
+    "older_than_14d": []
+  }
+}

@@ -1,0 +1,956 @@
+# 🔱 Omega Engine — Verification Item Schema (Canonical)
+# ⬡ OMEGA ⬡ P2-DATASTORE ⬡ deepseek-v4-flash ⬡ opencode ⬡ PHASE-I ⬡ STRUCTURE-LAYER
+# AP: VERIFICATION-SCHEMA-v1.0.0
+#
+# This file is the SINGLE SOURCE OF TRUTH for the VerificationItem schema.
+# All verification processors, rollup generators, and lifecycle managers
+# MUST validate against this schema. Forms the STRUCTURE layer of the
+# Knowledge Metabolism System (Lily Pad Architecture §2 — P2).
+#
+# Heritage:
+#   [id-soft: doom-1993] ZONEID Pattern — ZONEID_VERIFICATION = 0x1d4a1a
+#   [ZONEID Pattern: id Software 1993, adapted 2026]
+#     Each VerificationItem carries a zoneid that validates the data structure
+#     on load/save, catching file corruption or wrong-type reads.
+# ──────────────────────────────────────────────────────────────────────────────
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §1 — VERIFICATIONITEM (Canonical Record)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Tracks one knowledge artifact from discovery through production deployment.
+# Storage: data/coordination/verification/items/ver-YYYYMMDD-NNN.yaml
+# Integrity: validated by ZONEID_VERIFICATION (0x1d4a1a) on every load/save
+# ═══════════════════════════════════════════════════════════════════════════════
+
+verification_item:
+  description: >
+    A single record tracking a knowledge artifact through its lifecycle.
+    Created when knowledge is first discovered/mined. Updated at each
+    lifecycle transition (ported, tested, verified, deployed).
+
+  # ── Required Fields ─────────────────────────────────────────────────────────
+  fields:
+
+    item_id:
+      type: string
+      pattern: "^ver-\\d{8}-\\d{3}$"
+      description: >
+        Unique identifier. Format: ver-YYYYMMDD-NNN.
+        NNN is a 3-digit zero-padded counter per day.
+      example: "ver-20260603-001"
+      required: true
+      immutable: true
+
+    zoneid:
+      type: integer
+      constant: 1919514
+      description: >
+        Integrity marker (0x1d4a1a). Validated on every load/save.
+        Must always equal ZONEID_VERIFICATION. If it doesn't match,
+        the file is corrupt or misidentified and must be rejected.
+      required: true
+      immutable: true
+      validation: must equal 1919514 (0x1d4a1a)
+
+    source_agent:
+      type: string
+      description: >
+        Name of the agent that discovered/created the knowledge.
+        Must match a registered entity name in the active IWAD.
+      example: "roc_racoon"
+      required: true
+      immutable: true
+      validation: must match existing entity name
+
+    source_path:
+      type: string
+      description: >
+        Path to the knowledge artifact. Should be relative to the
+        engine repo root. For scattered external docs, use absolute
+        path prefixed with [EXTERNAL] (e.g. "[EXTERNAL] /media/...")
+      example: "data/entities/roc_racoon/workspace/mining_reports/07_MASTER_SYNTHESIS.md"
+      required: true
+      validation: path must resolve at time of creation
+
+    title:
+      type: string
+      max_length: 120
+      description: >
+        Human-readable title describing the knowledge artifact.
+        Should be concise enough to fit in a commit message.
+      example: "Master Synthesis confirms architectural convergence across 5 eras"
+      required: true
+
+    domain:
+      type: string
+      enum:
+        - legacy_mining
+        - source_verification
+        - memory_wiring
+        - provider_fabric
+        - agent_hardening
+        - mcp_consolidation
+        - handoff_protocol
+        - documentation_port
+        - knowledge_curation
+        - cross_pollination
+        - soul_distillation
+        - demand_fulfillment
+        - testing_infrastructure
+        - deployment_pipeline
+        - engine_core
+        - research
+      description: >
+        Domain classification. Used for rollup aggregation and
+        pipeline efficiency metrics.
+      required: true
+
+    status:
+      type: string
+      enum:
+        - mined
+        - ported
+        - tested
+        - verified
+        - deployed
+        - stalled
+        - archived
+      description: >
+        Current lifecycle state. See Lifecycle State Machine (§4)
+        for valid transitions. Transitions are monotonic forward
+        except for stalled and archived.
+      required: true
+      default: mined
+
+    mined_at:
+      type: string  # ISO 8601 datetime
+      format: datetime
+      description: >
+        When the knowledge was first discovered or the artifact was created.
+        Set once at item creation. Immutable thereafter.
+      required: true
+      immutable: true
+
+  # ── Optional Lifecycle Timestamps ───────────────────────────────────────────
+  lifecycle_timestamps:
+
+    ported_at:
+      type: string
+      format: datetime
+      nullable: true
+      description: >
+        When the knowledge was ported to engine code (file created or
+        modified in src/omega/ or docs/). Set when status transitions
+        to 'ported'.
+
+    port_paths:
+      type: array
+      items:
+        type: string
+      nullable: true
+      description: >
+        List of file paths created or modified during the port.
+        Each path should be relative to the engine repo root.
+      example:
+        - "src/omega/oracle/context_builder.py"
+        - "src/omega/cvar_table.py"
+
+    tested_at:
+      type: string
+      format: datetime
+      nullable: true
+      description: >
+        When tests were run and passed for the ported code.
+        Set when status transitions to 'tested'.
+
+    test_ref:
+      type: string
+      nullable: true
+      description: >
+        Test evidence. Either: a specific test name/pattern,
+        a commit hash, or the output of "make test" showing
+        the test count that passed.
+      example: "tests/test_cvar_table.py::test_zoneid_validation"
+
+    verified_at:
+      type: string
+      format: datetime
+      nullable: true
+      description: >
+        When verification was confirmed by a human or an automated
+        verification agent (Quality, Verifier, or Kali).
+        Set when status transitions to 'verified'.
+
+    verified_by:
+      type: string
+      nullable: true
+      description: >
+        Who confirmed verification. Can be a human ("The Architect"),
+        an agent ("quality", "kali"), or an automated system
+        ("make temple-grade").
+      example: "quality"
+
+    verification_method:
+      type: string
+      enum:
+        - manual_review
+        - automated_test
+        - peer_review
+        - temple_grade_gate
+        - sovereignty_gate
+        - heritage_map_check
+        - demand_fulfillment_confirmation
+      nullable: true
+      description: >
+        How verification was performed. Added at verification time
+        to enable metrics on which methods produce reliable results.
+
+    deployed_at:
+      type: string
+      format: datetime
+      nullable: true
+      description: >
+        When the knowledge reached production (merged to main branch,
+        container deployed, or configuration activated).
+        Set when status transitions to 'deployed'.
+
+  # ── Linking Fields ──────────────────────────────────────────────────────────
+  linking:
+
+    demand_signal_ids:
+      type: array
+      items:
+        type: string
+        pattern: "^dem-\\d{8}-\\d{3}$"
+      nullable: true
+      description: >
+        Demand signal IDs that drove this verification item.
+        Links to data/coordination/demand_signals/dem-*.json.
+        Populated when this item fulfills one or more demand signals.
+      example: ["dem-20260603-001", "dem-20260603-002"]
+
+    knowledge_signal_ids:
+      type: array
+      items:
+        type: string
+        pattern: "^ksig-\\d{8}-[a-z]+-\\d{3}$"
+      nullable: true
+      description: >
+        Knowledge signal IDs that announced this item's promotion
+        to the fleet. Links to data/coordination/knowledge_feed/.
+      example: ["ksig-20260603-roc_racoon-001"]
+
+    commit_refs:
+      type: array
+      items:
+        type: string
+        pattern: "^[0-9a-f]{7,40}$"
+      nullable: true
+      description: >
+        Git commit hashes associated with porting this knowledge.
+        Full SHA or abbreviated (7+ chars). Should map to commits
+        that modified files in port_paths.
+      example: ["a1b2c3d", "e4f5g6h"]
+
+    demand_source_ids:
+      type: array
+      items:
+        type: string
+      nullable: true
+      description: >
+        IDs from other systems that may have triggered this verification.
+        Examples: SCRUM-123 (sprint item), BUG-456 (bug report),
+        R-78 (research doc). Freeform text field.
+
+  # ── Metadata & Notes ────────────────────────────────────────────────────────
+  metadata:
+
+    created_at:
+      type: string
+      format: datetime
+      description: >
+        When this VerificationItem record was created.
+        Matches mined_at for initial creation. Use updated_at
+        for subsequent edits.
+      required: true
+
+    updated_at:
+      type: string
+      format: datetime
+      nullable: true
+      description: >
+        When this VerificationItem record was last updated.
+        Updated on every status transition or metadata change.
+        Null until first update.
+
+    ttl_days:
+      type: integer
+      default: 90
+      description: >
+        Days after which this item transitions from deployed to
+        archived (if deployed) or from any state to stalled (if
+        no progress). Default 90 days for standard knowledge.
+      validation: must be >= 7
+
+    notes:
+      type: array
+      items:
+        type: object
+        properties:
+          timestamp:
+            type: string
+            format: datetime
+            required: true
+          author:
+            type: string
+            required: true
+          text:
+            type: string
+            max_length: 1000
+            required: true
+      nullable: true
+      description: >
+        Free-form notes appended over the item's lifecycle.
+        Each note has a timestamp, author, and text. Immutable
+        once written (append-only log).
+
+    tags:
+      type: array
+      items:
+        type: string
+      nullable: true
+      description: >
+        Arbitrary tags for cross-cutting classification.
+        Examples: "id-soft-heritage", "critical-path", "blocker",
+        "high-value", "needs-porting", "needs-testing", "needs-review"
+      example: ["id-soft-heritage", "high-value"]
+
+  # ── Integrity Rules ────────────────────────────────────────────────────────
+  integrity:
+    - field: status
+      rule: transitions must follow the Lifecycle State Machine (§4)
+      error: "InvalidStatusTransition"
+
+    - field: zoneid
+      rule: must equal ZONEID_VERIFICATION (0x1d4a1a = 1919514)
+      error: "ZoneidMismatch"
+
+    - field: mined_at
+      rule: must be before all other timestamps
+      error: "TimestampOrderViolation"
+
+    - field: ported_at, tested_at, verified_at, deployed_at
+      rule: if present, must be in chronological order (monotonic)
+      error: "TimestampOrderViolation"
+
+    - field: port_paths
+      rule: if status >= ported, at least one path required
+      error: "MissingPortPath"
+
+    - field: test_ref
+      rule: if status >= tested, test_ref required
+      error: "MissingTestReference"
+
+    - field: verified_by
+      rule: if status >= verified, verified_by required
+      error: "MissingVerifier"
+
+    - field: item_id
+      rule: must be globally unique (no duplicates permitted)
+      error: "DuplicateItemId"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §2 — VERIFICATION STATUS ROLLUP SCHEMA
+# ═══════════════════════════════════════════════════════════════════════════════
+# Aggregate view of all VerificationItems. Generated by the rollup processor
+# (P2 DataStore). Stored at data/coordination/verification/rollup/latest.yaml.
+# Can also generate dated snapshots for historical comparison.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+verification_rollup:
+  description: >
+    Aggregate snapshot of verification pipeline state. Regenerated
+    automatically by the rollup processor whenever items are created
+    or updated. Provides a at-a-glance health check for Kali and
+    the Oversouls.
+
+  fields:
+
+    generated_at:
+      type: string
+      format: datetime
+      description: When this rollup was generated.
+      required: true
+
+    zoneid:
+      type: integer
+      constant: 1919514
+      description: Integrity marker (must match ZONEID_VERIFICATION).
+
+    summary:
+      type: object
+      properties:
+        total_items:
+          type: integer
+          description: Total number of VerificationItems across all statuses.
+        by_status:
+          type: object
+          description: Count of items at each lifecycle stage.
+          properties:
+            mined: { type: integer }
+            ported: { type: integer }
+            tested: { type: integer }
+            verified: { type: integer }
+            deployed: { type: integer }
+            stalled: { type: integer }
+            archived: { type: integer }
+        total_ports:
+          type: integer
+          description: Number of items that reached at least ported.
+        total_verified:
+          type: integer
+          description: Number of items that reached at least verified.
+        total_deployed:
+          type: integer
+          description: Number of items that reached deployed.
+
+    pipeline_efficiency:
+      type: object
+      description: >
+        What percentage of items reach each stage. Calculated as
+        stage_count / total_items * 100. The decay between stages
+        reveals where the pipeline is clogged.
+      properties:
+        mined_to_ported_pct:
+          type: number
+          format: float
+          description: Percentage of mined items that were ported.
+          example: 85.0
+        mined_to_tested_pct:
+          type: number
+          format: float
+          description: Percentage of mined items that reached testing.
+        mined_to_verified_pct:
+          type: number
+          format: float
+          description: Percentage of mined items that were verified.
+        mined_to_deployed_pct:
+          type: number
+          format: float
+          description: Percentage of mined items that were deployed.
+
+    per_agent:
+      type: object
+      description: >
+        Breakdown per source_agent. Keys are agent names.
+        Each value is an object with counts for each status.
+      additional_properties:
+        type: object
+        properties:
+          mined: { type: integer }
+          ported: { type: integer }
+          tested: { type: integer }
+          verified: { type: integer }
+          deployed: { type: integer }
+          stalled: { type: integer }
+          archived: { type: integer }
+          total: { type: integer }
+          efficiency_pct:
+            type: number
+            format: float
+            description: Percentage of this agent's items reaching deployed.
+      example:
+        roc_racoon:
+          mined: 15
+          ported: 12
+          tested: 10
+          verified: 8
+          deployed: 6
+          stalled: 2
+          archived: 1
+          total: 15
+          efficiency_pct: 40.0
+
+    per_domain:
+      type: object
+      description: >
+        Breakdown per domain. Same structure as per_agent.
+        Reveals which domains have high throughput vs bottlenecks.
+      additional_properties:
+        type: object
+        properties:
+          mined: { type: integer }
+          ported: { type: integer }
+          tested: { type: integer }
+          verified: { type: integer }
+          deployed: { type: integer }
+          stalled: { type: integer }
+          archived: { type: integer }
+          total: { type: integer }
+          efficiency_pct: { type: number, format: float }
+
+    orphaned_items:
+      type: array
+      description: >
+        Items that have not made progress in >30 days (stalled).
+        Listed here for visibility and escalation. Includes items
+        in mined state older than 30 days without porting.
+      items:
+        type: object
+        properties:
+          item_id: { type: string }
+          title: { type: string }
+          source_agent: { type: string }
+          domain: { type: string }
+          status: { type: string }
+          mined_at: { type: string, format: datetime }
+          days_since_last_update: { type: integer }
+          notes: { type: array, items: { type: string } }
+
+    demand_fulfillment_rate:
+      type: object
+      description: >
+        Cross-reference tracking: how many items linked to demand
+        signals have been fulfilled (reached verified or deployed).
+      properties:
+        total_linked_to_demand: { type: integer }
+        fulfilled: { type: integer }
+        unfulfilled: { type: integer }
+        fulfillment_rate_pct: { type: number, format: float }
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §3 — VERIFICATION DEMAND LINKING SCHEMA
+# ═══════════════════════════════════════════════════════════════════════════════
+# How a VerificationItem connects to demand signals, knowledge signals,
+# and git commits. These cross-links form a directed graph:
+#
+#   Demand Signal ──drives──▷ VerificationItem ──ports──▷ Git Commits
+#                               │
+#                               ├──announces──▷ Knowledge Signal
+#                               └──fulfills───▷ Demand Signal (reverse link)
+#
+# The linking is MEANT TO BE traversable in both directions:
+#   Forward:  "What demand drove this verification?"
+#   Reverse:  "Which verification items fulfilled this demand?"
+# ═══════════════════════════════════════════════════════════════════════════════
+
+linking_graph:
+  description: >
+    The linking graph connects four node types. Edges have direction
+    and labels. A single VerificationItem may link to multiple demands,
+    multiple commits, and produce multiple knowledge signals.
+
+  node_types:
+    - type: demand_signal
+      storage: data/coordination/demand_signals/dem-YYYYMMDD-NNN.json
+      zoneid: 0x1d4a19 (ZONEID_DEMAND)
+      outgoing_edges:
+        - label: drives
+          target: verification_item
+          description: "This demand signal triggered the creation of a verification item"
+
+    - type: verification_item
+      storage: data/coordination/verification/items/ver-YYYYMMDD-NNN.yaml
+      zoneid: 0x1d4a1a (ZONEID_VERIFICATION)
+      incoming_edges:
+        - label: drives
+          source: demand_signal
+          description: "This item was created to fulfill a demand signal"
+      outgoing_edges:
+        - label: fulfills
+          target: demand_signal
+          description: "This item fulfills a demand signal (status → fulfilled)"
+          direction: reverse
+        - label: announces
+          target: knowledge_signal
+          description: "This item's promotion was announced via knowledge signal"
+        - label: ports_to
+          target: git_commit
+          description: "This item was ported in these commits"
+
+    - type: knowledge_signal
+      storage: data/coordination/knowledge_feed/ksig-*.json
+      zoneid: 0x1d4a18 (ZONEID_KNOWLEDGE)
+      incoming_edges:
+        - label: announces
+          source: verification_item
+          description: "Knowledge signal broadcasting this item's lifecycle event"
+
+    - type: git_commit
+      storage: git history (commit hashes)
+      incoming_edges:
+        - label: ports_to
+          source: verification_item
+          description: "Commit where the port was made"
+
+  linking_rules:
+    - id: link-001
+      rule: "A VerificationItem SHOULD link to the demand signal that triggered it"
+      rationale: "Without this link, we can't measure demand fulfillment rate"
+      enforcement: recommended
+
+    - id: link-002
+      rule: "A VerificationItem MUST link to at least one port_path when status >= ported"
+      rationale: "Without port paths, we can't find the code that implements the knowledge"
+      enforcement: required
+
+    - id: link-003
+      rule: "A VerificationItem SHOULD link to a knowledge signal when status changes"
+      rationale: "Without knowledge signals, the fleet doesn't know about the promotion"
+      enforcement: recommended
+
+    - id: link-004
+      rule: "Demand signals MUST update fulfilled_by when verification item reaches verified"
+      rationale: "Without this reverse link, the demand requester doesn't know it's done"
+      enforcement: required
+      cross_reference: demand_signals/dem-*.json → fulfilled_by field
+
+    - id: link-005
+      rule: "Git commit messages SHOULD reference the verification item ID"
+      rationale: "Enables git-log to verification-item reverse lookup"
+      enforcement: recommended
+      pattern: "commit message should include 'ver-YYYYMMDD-NNN'"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §4 — LIFECYCLE STATE MACHINE
+# ═══════════════════════════════════════════════════════════════════════════════
+# Valid status transitions for VerificationItem. The state machine is
+# monotonic forward by default (mined → ported → tested → verified → deployed)
+# with special transitions for stalled, archived, and bypass rules.
+#
+# State Diagram (clean):
+#
+#   ┌─────────┐  port  ┌─────────┐  test  ┌─────────┐  verify  ┌──────────┐  deploy  ┌──────────┐
+#   │  MINED  │ ──────→│ PORTED  │ ──────→│ TESTED  │ ────────→│ VERIFIED │ ────────→│ DEPLOYED │
+#   └────┬────┘        └─────────┘         └─────────┘          └────┬─────┘         └────┬─────┘
+#        │                    │                                      │                     │
+#        │ stale >30d         │ stale >60d                           │ re-verify           │ TTL >90d
+#        ▼                    ▼                                      ▼                     ▼
+#   ┌─────────┐          ┌─────────┐                           ┌──────────┐          ┌──────────┐
+#   │ STALLED │          │ STALLED │                           │ DEPLOYED │          │ ARCHIVED │
+#   └─────────┘          └─────────┘                           │ (re-ver) │          └──────────┘
+#                                                               └──────────┘
+# ═══════════════════════════════════════════════════════════════════════════════
+
+lifecycle_state_machine:
+  description: >
+    Valid status transitions for VerificationItem. Each transition
+    requires the prerequisite fields to be populated and the
+    timestamps to be monotonic.
+
+  # ── Standard Forward Transitions ────────────────────────────────────────────
+  transitions:
+
+    - from: mined
+      to: ported
+      description: "Knowledge artifact has been ported to engine code"
+      trigger: "Agent creates/modifies files in src/omega/ or config/"
+      required_fields:
+        - ported_at
+        - port_paths (at least 1)
+      condition: "ported_at >= mined_at"
+      notes: "The port_paths must be verifiable file paths"
+
+    - from: ported
+      to: tested
+      description: "Ported code has tests that pass"
+      trigger: "make test passes or specific test suite succeeds"
+      required_fields:
+        - tested_at
+        - test_ref
+      condition: "tested_at >= ported_at"
+      notes: "test_ref should include test name + result for audit trail"
+
+    - from: tested
+      to: verified
+      description: "Ported code has been independently verified"
+      trigger: "Quality agent review, temple-grade check, or human review"
+      required_fields:
+        - verified_at
+        - verified_by
+        - verification_method (recommended)
+      condition: "verified_at >= tested_at"
+      notes: "verified_by should be a different agent than source_agent (separation of duties)"
+
+    - from: verified
+      to: deployed
+      description: "Ported code has reached production (main branch, container, config)"
+      trigger: "Merge to main, container push, or config activation"
+      required_fields:
+        - deployed_at
+      condition: "deployed_at >= verified_at"
+
+  # ── Stalled Transitions (regression by inactivity) ──────────────────────────
+  stalled_transitions:
+
+    - from: mined
+      to: stalled
+      description: "Knowledge mined but not ported within 30 days"
+      trigger: "Automatic — P2 rollup processor marks after 30 days no activity"
+      required_fields:
+        - notes (appended with stall reason)
+      condition: "current_time - mined_at > 30 days"
+      recovery: "Reset to mined when work resumes (agent sets notes + status back to mined)"
+      notes: "Stalled items appear in rollup.orphaned_items for visibility"
+
+    - from: ported
+      to: stalled
+      description: "Knowledge ported but not tested within 60 days"
+      trigger: "Automatic — P2 rollup processor marks after 60 days no activity"
+      required_fields:
+        - notes (appended with stall reason)
+      condition: "current_time - ported_at > 60 days"
+      recovery: "Reset to ported when work resumes"
+
+    - from: tested
+      to: stalled
+      description: "Knowledge tested but not verified within 60 days"
+      trigger: "Automatic — P2 rollup processor marks after 60 days no activity"
+      condition: "current_time - tested_at > 60 days"
+      recovery: "Reset to tested when work resumes"
+
+  # ── Deployed Re-Verification Cycle ──────────────────────────────────────────
+  re_verification:
+
+    - from: deployed
+      to: verified
+      description: >
+        Deployed items are periodically re-verified. This is NOT a
+        regression — it's a health check. The item remains deployed
+        (it's not rolled back) but gets a fresh verification stamp.
+      trigger:
+        - "Automatic — every 30 days after deployment"
+        - "Manual — agent initiates re-verification"
+      required_fields:
+        - verified_at (updated)
+        - verified_by (updated)
+        - verification_method (updated)
+        - notes (appended with re-verification result)
+      condition: "verified_at >= previous verified_at (monotonic)"
+      notes: >
+        deployed_at is NEVER updated during re-verification — the
+        item stays deployed. Only verified_at updates. This ensures
+        the deployed_at timestamp always reflects original deployment.
+
+    - from: deployed
+      to: stalled
+      description: >
+        A deployed item that fails re-verification is stalled.
+        The deployment is NOT rolled back (that's a separate action)
+        but the item's status reflects that it needs attention.
+      trigger: "Re-verification finds issues (test regression, mandate violation)"
+      required_fields:
+        - notes (appended with failure reason)
+      recovery: "Reset to verified after issues are resolved"
+
+  # ── Archival Transitions ────────────────────────────────────────────────────
+  archival:
+
+    - from: verified
+      to: archived
+      description: "Verified knowledge that is no longer actively referenced"
+      trigger:
+        - "Automatic — TTL exceeded (default 90 days)"
+        - "Manual — agent determines knowledge is superseded"
+      required_fields:
+        - notes (appended with archival reason)
+      condition: "item has been in verified status for > ttl_days"
+      notes: >
+        Archived items are NOT deleted. They remain in the items/
+        directory for historical reference. The status change is
+        informational — it removes them from active rollup counts.
+
+    - from: deployed
+      to: archived
+      description: "Deployed knowledge that has been superseded or deprecated"
+      trigger:
+        - "Automatic — TTL exceeded (default 90 days post-deployment)"
+        - "Manual — agent marks as deprecated"
+      required_fields:
+        - notes (appended with archival reason)
+      condition: "item has been in deployed status for > ttl_days"
+      notes: >
+        Archive reason MUST be recorded: 'superseded_by: ver-YYYYMMDD-NNN'
+        if superseded, or 'deprecated: <reason>' if deprecated.
+
+  # ── Bypass Rules ────────────────────────────────────────────────────────────
+  # The real world is messy. Sometimes you skip verification because the
+  # test IS the verification. Sometimes you deploy before formal verification
+  # because it's a hotfix. These bypass rules define legal shortcuts.
+  # ────────────────────────────────────────────────────────────────────────────
+  bypass_rules:
+
+    - id: bypass-001
+      name: "Test-As-Verification"
+      path: mined → ported → verified (skips tested)
+      description: >
+        When the port itself includes tests that prove correctness,
+        and those tests pass, the tested status is folded into
+        verified. The port IS the verification.
+      condition: "port_paths include test files AND those tests pass"
+      required_fields:
+        - tested_at and verified_at set to same timestamp
+        - test_ref populated (showing test results)
+        - notes must explain why test-as-verification was used
+      rationale: "Common pattern for documentation ports or config changes"
+
+    - id: bypass-002
+      name: "Hotfix Express"
+      path: mined → ported → deployed (skips tested + verified)
+      description: >
+        Emergency hotfix that must reach production immediately.
+        Testing and verification happen POST-deployment.
+      condition:
+        - "Priority is CRITICAL (as determined by Kali or human)"
+        - "Main branch protection is temporarily suspended"
+      required_fields:
+        - ported_at and deployed_at set to same timestamp
+        - tested_at and verified_at set to null (to be filled post-deployment)
+        - notes MUST document the hotfix rationale
+        - A new verification item MUST be created for the post-deployment testing
+      ttl: "Post-deployment testing must be completed within 48 hours"
+      escalation: "Kali is notified if post-deployment testing exceeds 48h"
+
+    - id: bypass-003
+      name: "Simultaneous Dock"
+      path: mined → tested (ports and tests happen simultaneously)
+      description: >
+        When code is ported and tested in the same operation
+        (e.g., a single PR that includes code + tests).
+        This is the NORMAL case for well-structured work.
+      condition: "ported_at and tested_at timestamps are within 5 minutes"
+      required_fields:
+        - ported_at and tested_at both populated
+        - port_paths and test_ref both populated
+      notes: "This is the preferred path. The staged transitions (mined→ported→tested) are for when porting and testing happen in different sessions."
+
+    - id: bypass-004
+      name: "Clean Room Re-Deploy"
+      path: deployed → verified → deployed (re-verification cycle)
+      description: >
+        A deployed item passes re-verification and stays deployed.
+        This is the HEALTHY re-verification path — no status change,
+        just timestamp and metadata updates.
+      condition: "Item is already in deployed status and re-verification passes"
+      required_fields:
+        - verified_at updated
+        - verified_by updated
+        - notes appended with "Re-verification passed: <details>"
+      notes: "deployed_at is NEVER changed during re-verification"
+
+  # ── Summary Transition Matrix ──────────────────────────────────────────────
+  # Shows ALL valid transitions. Any transition not listed is INVALID.
+  transition_matrix:
+    from_mined:
+      to: [ported, stalled]
+    from_ported:
+      to: [tested, stalled]
+    from_tested:
+      to: [verified, stalled]
+    from_verified:
+      to: [deployed, archived]
+    from_deployed:
+      to: [verified, stalled, archived]
+    from_stalled:
+      to: [mined, ported, tested, verified]  # recovery back to original state
+    from_archived:
+      to: []  # terminal state — no transitions out
+
+  # ── Bypass-Enabled Transitions (from bypass_rules above) ──────────────────
+  bypass_transition_matrix:
+    from_mined:
+      to_verified:  # bypass-001 (test-as-verification)
+        condition: "port includes tests, test-as-verification invoked"
+      to_deployed:  # bypass-002 (hotfix express)
+        condition: "emergency hotfix, Kali-approved"
+    from_ported:
+      to_deployed:  # bypass-002 (hotfix express)
+        condition: "emergency hotfix, Kali-approved"
+    from_tested:
+      to_deployed:  # bypass-002 (hotfix express)
+        condition: "emergency hotfix, Kali-approved"
+    from_deployed:
+      to_verified:  # bypass-004 (clean room re-deploy — re-verification)
+        condition: "periodic health check, item stays deployed"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §5 — EXAMPLE: Complete VerificationItem
+# ═══════════════════════════════════════════════════════════════════════════════
+# A fully populated example showing all fields in use.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+example:
+  item_id: "ver-20260603-001"
+  zoneid: 1919514
+  source_agent: "roc_racoon"
+  source_path: "data/entities/roc_racoon/workspace/mining_reports/07_MASTER_SYNTHESIS.md"
+  title: "Master Synthesis confirms architectural convergence across 5 eras"
+  domain: "legacy_mining"
+  status: "verified"
+  mined_at: "2026-06-03T03:52:00Z"
+  ported_at: "2026-06-04T10:30:00Z"
+  port_paths:
+    - "docs/legacy/LEGACY_MASTER_SYNTHESIS.md"
+    - "docs/research/R45_ARCHITECTURAL_CONVERGENCE.md"
+  tested_at: "2026-06-04T11:00:00Z"
+  test_ref: "make test (307/307 passing), coverage >= 80%"
+  verified_at: "2026-06-04T14:00:00Z"
+  verified_by: "quality"
+  verification_method: "peer_review"
+  deployed_at: "2026-06-05T09:00:00Z"
+  demand_signal_ids:
+    - "dem-20260603-001"
+    - "dem-20260603-002"
+  knowledge_signal_ids:
+    - "ksig-20260603-roc_racoon-002"
+  commit_refs:
+    - "a1b2c3d4e5f6"
+    - "b2c3d4e5f6a7"
+  demand_source_ids: []
+  created_at: "2026-06-03T03:52:00Z"
+  updated_at: "2026-06-05T09:00:00Z"
+  ttl_days: 90
+  notes:
+    - timestamp: "2026-06-03T03:52:00Z"
+      author: "roc_racoon"
+      text: "Master synthesis completed. 5-era convergence confirmed. 9 Tier 1+2 ports identified."
+    - timestamp: "2026-06-04T14:00:00Z"
+      author: "quality"
+      text: "Cross-verified against DEFERRED_GOLD_TRACKER entries. All claims match mined data."
+  tags:
+    - "high-value"
+    - "architectural-validation"
+    - "id-soft-heritage"
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# §6 — INITIALIZATION & SEED DATA
+# ═══════════════════════════════════════════════════════════════════════════════
+# When the Structure Layer is first deployed, we seed it with initial items
+# for existing knowledge that has already been verified/deployed but never
+# tracked. This bootstraps the system with historical data.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+bootstrap_rules:
+  - id: boot-001
+    rule: "Existing verified knowledge gets a VerificationItem with status=deployed"
+    rationale: "We cannot track what was not tracked. Backfill gives us a starting point."
+    fields_to_backfill:
+      - mined_at: "approximate date (from git log or closest reference)"
+      - ported_at: "from git commit timestamps"
+      - tested_at: "from make test history"
+      - verified_at: "from temple-grade run history or first review"
+      - deployed_at: "date item was first merged to main"
+      - notes: must include '[BOOTSTRAP]' prefix to distinguish from real-time records
+
+  - id: boot-002
+    rule: "Seed items start at status=deployed (not mined)"
+    rationale: "These items are already in production. They don't need to go through the pipeline."
+
+  - id: boot-003
+    rule: "New items (after Structure Layer activation) start at status=mined"
+    rationale: "New knowledge must go through the full pipeline."
+    note: "The cutover date is the Structure Layer deployment date."
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# End of VERIFICATION_SCHEMA.yaml
+# ═══════════════════════════════════════════════════════════════════════════════

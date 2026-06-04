@@ -1,0 +1,29 @@
+{
+  "_schema_version": 1,
+  "ver_id": "ver-20260604-007",
+  "created_at": "2026-06-04T00:00:00Z",
+  "updated_at": "2026-06-04T00:00:00Z",
+  "title": "Link P9 Handoff Documentation — Cross-agent handoff protocol docs liberation",
+  "domain": "documentation",
+  "classification": "doc_port",
+  "source_refs": [
+    {
+      "type": "demand_signal",
+      "id": "dem-20260603-006",
+      "path": "data/coordination/demand_signals/dem-20260603-006.json"
+    }
+  ],
+  "artifact_paths": {
+    "source_reference": "docs/strategy/HIVEMIND_PROTOCOL.md"
+  },
+  "state": "DISCOVERED",
+  "history": [],
+  "current_holder": null,
+  "ttl": {
+    "state_ttl_days": 14,
+    "archive_at": "2026-06-18T00:00:00Z",
+    "auto_archive_state": "DEPLOYED"
+  },
+  "zoneid": 1912619,
+  "tags": ["handoff", "link-p9", "documentation", "demand-signals"]
+}

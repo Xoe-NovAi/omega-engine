@@ -1,0 +1,35 @@
+# 🔱 VerificationItem — ver-20260603-006
+# ⬡ OMEGA ⬡ P2-DATASTORE ⬡ STRUCTURE-LAYER ⬡ SEED
+item_id: "ver-20260603-006"
+zoneid: 1919514
+source_agent: "roc_racoon"
+source_path: "data/entities/roc_racoon/workspace/DOCUMENTATION_CHAOS_TRACKER.md"
+title: "Documentation Chaos Tracker — master index of 19+ scattered documents"
+domain: "documentation_port"
+status: "mined"
+mined_at: "2026-06-03T05:00:00Z"
+ported_at: null
+port_paths: null
+tested_at: null
+test_ref: null
+verified_at: null
+verified_by: null
+verification_method: null
+deployed_at: null
+demand_signal_ids:
+  - "dem-20260603-003"
+  - "dem-20260603-006"
+knowledge_signal_ids: []
+commit_refs: []
+demand_source_ids: []
+created_at: "2026-06-03T05:00:00Z"
+updated_at: null
+ttl_days: 60
+notes:
+  - timestamp: "2026-06-03T05:00:00Z"
+    author: "P2-DataStore"
+    text: "[BOOTSTRAP] Seed item. Indexes 19+ documents scattered across 3 partitions. P0 docs (S-11, S-03, S-06) need porting. This is an index, not a fix."
+tags:
+  - "documentation"
+  - "needs-porting"
+  - "seed"
