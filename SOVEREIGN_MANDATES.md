@@ -1,5 +1,5 @@
 # 🔱 Omega Engine — Sovereign Mandates
-*Version**: 3.1.0
+**Version**: 3.1.0
 *Status**: NON-NEGOTIABLE
 **Scope**: All Agents, All CLIs, All IDEs
 **Updated**: 2026-06-04 (Added M14 Heritage Vetting)

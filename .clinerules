@@ -5,14 +5,14 @@
 # Engine state: Read OMEGA_ENGINE.md (the Single Source of Truth)
 # Platform distinction: .clinerules = HOW to work from Cline CLI.
 #                       OMEGA_ENGINE.md = WHAT the engine IS.
-# Last Updated: 2026-06-04 (D113 Firewall + H1 Heritage Vetting)
+# Last Updated: 2026-06-04 (D117 Clean Slate + Sovereign Development Roadmap)
 # Cline CLI version: 3.0.15 (cline binary at ~/.nvm/versions/node/v25.9.0/bin/cline)
 # User context: M3 1M via Cline provider (OAuth); moved from Cline VSCodium extension.
 
 
 ## Sovereign Mandates (NON-NEGOTIABLE)
 **Read and adhere to them above all other rules:**
-- **Read First**: `SOVEREIGN_MANDATES.md` (13 mandates as of 2026-06-02 (M1-M13, v3.0.0))
+- **Read First**: `SOVEREIGN_MANDATES.md` (14 mandates, M1-M14, v3.1.0)
 - **Engine State**: `OMEGA_ENGINE.md` (Single Source of Truth)
 - **Cline Twin**: `AGENTS.md` (OpenCode sibling rules, kept symmetric)
 
@@ -137,7 +137,7 @@ When running interactively or with --auto-approve, the agent has access to:
 ### Before Starting Work
 
 1. **Read engine state**: `cat OMEGA_ENGINE.md` (look for "Current State" table)
-2. **Read the rules**: `head -50 SOVEREIGN_MANDATES.md` (refresh the 13 mandates)
+2. **Read the rules**: `head -50 SOVEREIGN_MANDATES.md` (refresh the 14 mandates)
 3. **Check recent activity**: `git log --oneline -10` and `git status`
 4. **Verify baseline**: `cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && make test`
    - Must show **308/308 passing**. If fewer pass, STOP and triage before changes.
@@ -470,7 +470,7 @@ Cline CLI compacts context periodically (`--compaction basic` by default).
 When you wake up after compaction:
 
 1. `cat OMEGA_ENGINE.md | head -50` - re-anchor engine state
-2. `head -60 SOVEREIGN_MANDATES.md` - re-anchor the 13 mandates
+2. `head -60 SOVEREIGN_MANDATES.md` - re-anchor the 14 mandates
 3. `head -100 docs/decisions/PIVOT_LOG.md` - re-anchor architecture
 4. `head -50 docs/strategy/HIVEMIND_PROTOCOL.md` - re-anchor coordination rules
 5. `ls -t data/handoff/*.md | head -5` - find newest handoffs
@@ -533,11 +533,11 @@ this pipeline, but Cline can do it directly when working solo.
 
 ## Versioning
 
-- **AP Token**: AP-CLINERULES-OMEGA-v3.4.0
+- **AP Token**: AP-CLINERULES-OMEGA-v3.5.0
 - **Updated**: 2026-06-04 (Hivemind Protocol + Subagent Dispatch + Link P9 + ZONEID + cvar Table)
-- **Previous version**: 3.2.0 (Cline CLI v3.0.15 move, 302 tests, 13 mandates, 90 PIVOT)
+- **Previous version**: 3.2.0 (Cline CLI v3.0.15 move, 302 tests, 14 mandates, 115 PIVOT)
 - **Test baseline**: 308 tests (stable)
-- **Mandate baseline**: 13 (M1-M13, v3.0.0)
+- **Mandate baseline**: 13 (M1-M14, v3.1.0)
 - **PIVOT decisions**: 115 (D1-D115, was 107)
 - **Hivemind**: OPERATIONAL via omega-hub (`:8016/sse`), 6 tools, 5min TTL
 - **Omega Hub**: 40 MCP tools + 11 HTTP routes, systemd user service, /health GREEN

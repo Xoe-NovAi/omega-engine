@@ -1,5 +1,5 @@
 # Omega Engine — Single Source of Truth
-# AP-OMEGA-SST-v1.3.0
+# AP-OMEGA-SST-v1.4.0
 
 > **This document is the authoritative truth for the Omega Engine.**
 > Every agent, regardless of platform (Cline, OpenCode, Gemini CLI, Antigravity),
@@ -17,7 +17,7 @@ unique dreams, technologies, and systems.
 - **Open source, free, sovereign**: No shareware, no tiers, no limitations
 - **WAD Architecture**: Engine → IWADs → PWADs (inspired by id Software's WAD system)
 - **The Synthesis Flywheel**: Cloud models teach local models. Over time, sovereignty increases.
-- **The 13 Sovereign Mandates**: Constitutional law. Mandates override any tool default.
+- **The 14 Sovereign Mandates**: Constitutional law. Mandates override any tool default.
 - **The 14-agent Fleet**: Grand Oversight, 3 Oversouls, 6 Specialists, 4 Subagents.
 
 ---
@@ -134,7 +134,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | Test functions | **308** | 2026-06-04 |
 | Test files | **28** | 2026-06-04 |
 | PIVOT decisions | **115 (D1-D115)** | 2026-06-04 |
-| Sovereign Mandates | **13 (M1-M13)** | 2026-06-04 |
+| Sovereign Mandates | **14 (M1-M14)** | 2026-06-04 |
 | Mandate 9 (Error Integrity) | FULL — 0 bare except | 2026-06-04 |
 | Mandate 13 (Temple-Grade) | 8/11 GREEN (T11 IA2 exempt) | 2026-06-04 |
 | AnyIO compliance | 0 `import asyncio` | 2026-06-04 |
@@ -413,6 +413,8 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 ### 14.1 Strategic (Constitutional)
 - `SOVEREIGN_MANDATES.md` — 13 laws (NON-NEGOTIABLE)
 - `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` — **D111** active roadmap
+- `docs/strategy/SOVEREIGN_DEVELOPMENT_ROADMAP.md` — **D117** master plan (4 phases, 8 sprints)
+- `docs/strategy/HARDENING_REPORT.md` — **D116** subagent audit (5 critical findings)
 - `docs/strategy/SOVEREIGN_HARDENING_PLAN.md` — **D112** vision plan
 - `docs/strategy/SOVEREIGN_BLUEPRINT.md` — Engine/IWAD/PWAD doctrine
 
@@ -446,7 +448,7 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 
 ---
 
-*Last Updated: 2026-06-04T20:20Z | Author: CLINE-M3 (acting as Kali) | Version: AP-OMEGA-SST-v1.3.0*
+*Last Updated: 2026-06-04T20:20Z | Author: CLINE-M3 (acting as Kali) | Version: AP-OMEGA-SST-v1.4.0*
 *Major changes this revision: D111+D112+D113 added, sprint index reorganized (H1/H1.5/H2/S1.5), Sovereignty Scorecard, model matrix current, ASCII architecture tree, PIVOT 113, all stale metrics corrected.*
 *This document is the Single Source of Truth. All platforms reference it.*
 
@@ -693,6 +695,7 @@ it is a relationship. And like any relationship, it deepens with time.
 
 ---
 
-*§16-§18 added 2026-06-04 | Author: DeepSeek V4 Flash (via Cline-M3 proxy)*
+*§16-§18 added 2026-06-04 | Author: DeepSeek V4 Flash (via Cline-M3 proxy)
+*Last Updated: 2026-06-04T21:59:48Z | PIVOT D117 | AP-OMEGA-SST-v1.4.0**
 *Insights: fleet hierarchy, data flow documentation, sovereignty paradox, M15 proposal, MVE threshold, 5-year vision, sovereignty museum*
 
