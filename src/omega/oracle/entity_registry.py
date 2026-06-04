@@ -40,6 +40,7 @@ class Entity:
     domains: List[str]
     model: str
     personality: str
+    capabilities: List[str] = field(default_factory=list)
     temperature: Optional[float] = None
     context_window: Optional[int] = None
     pillars: List[str] = field(default_factory=list)
@@ -76,6 +77,7 @@ class Entity:
             "magic": self.magic,
             "name": self.name,
             "domains": self.domains,
+            "capabilities": self.capabilities,
             "model": self.model,
             "role": self.role,
             "container": self.container,
@@ -143,11 +145,6 @@ class EntityRegistry:
     # [id-soft: quake-1996] Grace Period — 0.5s realloc delay
     # Derived from Quake 1996 host_cmd.c's delayed entity removal pattern.
     TOMBSTONE_GRACE_SECONDS = 0.5
-
-        # [id-soft: doom-1993] 8-Char Name — max name length for fast 2-int compare
-    # DOOM lumps use 8-byte names so comparison is 2 × int32 vs strcmp.
-    # Python benefit: dict short-circuit on hash mismatch, plus consistent key format.
-    MAX_NAME_LENGTH = 8
 
     # [id-soft: doom-1993] High-Bit Trick — flag encoding using high bit
     # DOOM's NF_SUBSECTOR (0x8000) repurposed high bit of node child index.
@@ -231,6 +228,7 @@ class EntityRegistry:
             entity = Entity(
                 name=raw.get("name", key),
                 domains=raw.get("domains", []),
+                capabilities=raw.get("capabilities", []),
                 model=raw.get("model", "qwen3-1.7b-q6_k"),
                 personality=raw.get("personality", ""),
                 temperature=raw.get("temperature"),
@@ -262,12 +260,12 @@ class EntityRegistry:
                     self._wad_sources[key].append(entity.wad_source)
             
             # [id-soft: doom-1993] Multi-Index Entity — populate capability index
-            for domain in entity.domains:
-                domain_lower = domain.lower()
-                if domain_lower not in self._capability_index:
-                    self._capability_index[domain_lower] = []
-                if key not in self._capability_index[domain_lower]:
-                    self._capability_index[domain_lower].append(key)
+            for cap in entity.domains + entity.capabilities:
+                cap_lower = cap.lower()
+                if cap_lower not in self._capability_index:
+                    self._capability_index[cap_lower] = []
+                if key not in self._capability_index[cap_lower]:
+                    self._capability_index[cap_lower].append(key)
 
 
         logger.info(f"Loaded {len(self._entities)} entities from config")
@@ -373,13 +371,12 @@ class EntityRegistry:
     async def add(self, entity: Entity) -> None:
         """Add a new entity. Overwrites if name exists.
 
-        [id-soft: doom-1993] 8-Char Name — validates name length at add time
+        Normalizes names to lowercase for case-insensitive lookup.
         [id-soft: doom-1993] High-Bit Trick — sets WAD flag if wad_source present
         """
         if self._lock is None:
             self._lock = anyio.Lock()
         async with self._lock:
-            # [id-soft: doom-1993] 8-Char Name — validate at add time
             name_key = self._validate_name(entity.name)
             entity.name = name_key  # Normalize to lowercase
             
@@ -398,12 +395,12 @@ class EntityRegistry:
                     self._wad_sources[key].append(entity.wad_source)
             
             # [id-soft: doom-1993] Multi-Index Entity — populate capability index
-            for domain in entity.domains:
-                domain_lower = domain.lower()
-                if domain_lower not in self._capability_index:
-                    self._capability_index[domain_lower] = []
-                if key not in self._capability_index[domain_lower]:
-                    self._capability_index[domain_lower].append(key)
+            for cap in entity.domains + entity.capabilities:
+                cap_lower = cap.lower()
+                if cap_lower not in self._capability_index:
+                    self._capability_index[cap_lower] = []
+                if key not in self._capability_index[cap_lower]:
+                    self._capability_index[cap_lower].append(key)
             
             # [id-soft: doom-1993] ZONEID Pattern — set runtime marker
             entity.magic = ZONEID_ENTITY
@@ -487,50 +484,40 @@ class EntityRegistry:
         """Count non-tombstoned entities."""
         return len(self.active_iter())
 
-    # ── 8-Char Name Utility ───────────────────────────────────────────
-    # [id-soft: doom-1993] R-21 8-Char Name Caps — fast 2-int compare
-    # DOOM's WAD lump names are 8 bytes: `*(int*)name` + `*(int*)&name[4]`
-    # enables 2-instruction comparison vs strcmp.
-    # Here: short_name_hash returns a 64-bit int for dict key optimization.
+    # ── Name Utility ───────────────────────────────────────────────────
+    # short_name_hash is preserved as a utility for generating deterministic
+    # 64-bit integer keys from entity names. Originally inspired by id Soft-
+    # ware's 8-byte WAD lump convention (2× int32 compare), the encoding is
+    # still useful for hash-ring lookups and sharding. The 8-char cap has
+    # been lifted — names longer than 8 chars are hashed with a warning.
 
     @staticmethod
     def short_name_hash(name: str, default: int = 0) -> int:
-        """Encode a name as a 64-bit hash for fast comparison.
+        """Encode a name as a 64-bit deterministic integer key.
 
-        Names longer than MAX_NAME_LENGTH (8) are truncated with a warning.
-        Returns the hash as a Python int (unlimited precision, but the
-        hash itself is only 64 bits wide).
+        Useful for hash-ring sharding and cross-reference lookups.
+        Names longer than 8 chars are truncated with a warning.
         """
-        truncated = name[:EntityRegistry.MAX_NAME_LENGTH]
-        if len(name) > EntityRegistry.MAX_NAME_LENGTH:
+        max_len = 8  # Keep the 64-bit encoding; cap at 8 for uint64
+        truncated = name[:max_len]
+        if len(name) > max_len:
             logger.warning(
-                "EntityRegistry.short_name_hash: name '%s' truncated to '%s' "
-                "(%d chars, max %d). Long names lose 2-int compare benefit.",
-                name, truncated, len(name), EntityRegistry.MAX_NAME_LENGTH,
+                "short_name_hash: name '%s' truncated to '%s' "
+                "(%d chars, max %d).",
+                name, truncated, len(name), max_len,
             )
-        # Pad to 8 bytes, pack as big-endian uint64
-        padded = truncated.ljust(EntityRegistry.MAX_NAME_LENGTH, '\x00')[:8]
+        padded = truncated.ljust(max_len, '\x00')[:8]
         return struct.unpack('>Q', padded.encode('ascii', errors='replace'))[0]
 
     def _validate_name(self, name: str) -> str:
-        """Validate an entity name against engine constraints.
-
-        [id-soft: doom-1993] 8-Char Name — cap at 8 chars for fast comparison
-        [id-soft: quake3-1999] Hard-Boundary — name is engine-zone property
+        """Validate and normalize an entity name.
 
         Returns the normalized name (lowercase, stripped).
-        Raises ValueError if the name is invalid.
+        Raises ValueError if the name is empty.
         """
         if not name or not name.strip():
             raise ValueError("Entity name must be non-empty")
-        normalized = name.strip().lower()
-        if len(normalized) > self.MAX_NAME_LENGTH:
-            raise ValueError(
-                f"Entity name '{normalized}' exceeds max length "
-                f"{self.MAX_NAME_LENGTH}. Use short_name_hash() for "
-                f"2-int compare optimization."
-            )
-        return normalized
+        return name.strip().lower()
 
     def find_by_domain(self, text: str) -> Optional[Entity]:
         """Find the best entity match for a query text based on domain keywords.

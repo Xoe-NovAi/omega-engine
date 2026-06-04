@@ -109,7 +109,7 @@ async def test_load_wad_duplicate_entities(wad_env):
     try:
         # Pre-register an entity
         from omega.oracle.entity_registry import Entity
-        existing_entity = Entity(name="Dupe", domains=[], model="m", personality="p")
+        existing_entity = Entity(name="Duplicate", domains=[], model="m", personality="p")
         await registry.add(existing_entity)
         
         stack_name = "duplicate_stack"
@@ -120,11 +120,11 @@ async def test_load_wad_duplicate_entities(wad_env):
         # Create a duplicate entity in the WAD
         entities_dir = stack_path / "entities"
         entities_dir.mkdir()
-        (entities_dir / "dupe" / "soul.yaml").parent.mkdir(parents=True)
-        (entities_dir / "dupe" / "soul.yaml").write_text("entity:\n  name: Dupe\n  personality: I am a duplicate")
+        (entities_dir / "duplicate" / "soul.yaml").parent.mkdir(parents=True)
+        (entities_dir / "duplicate" / "soul.yaml").write_text("entity:\n  name: Duplicate\n  personality: I am a duplicate")
         
         assert (await loader.load_wad(stack_name))[0] is True
-        assert registry.get("dupe").personality == "p" # Original preserved
+        assert registry.get("duplicate").personality == "p" # Original preserved
     finally:
         Path(cfg).unlink(missing_ok=True)
 
@@ -167,12 +167,12 @@ async def test_load_soul_yaml_structure(wad_env):
         
         entity_dir = stack_path / "entities" / "soul_entity"
         entity_dir.mkdir(parents=True)
-        (entity_dir / "soul.yaml").write_text("entity:\n  name: Soul\n  domains: [soul]\n  personality: I live in a soul.yaml directory")
+        (entity_dir / "soul.yaml").write_text("entity:\n  name: SoulEntity\n  domains: [soul]\n  personality: I live in a soul.yaml directory")
         
         assert (await loader.load_wad(stack_name))[0] is True
-        entity = registry.get("soul")
-        assert entity is not None, f"Expected soul, got {registry.names()}"
-        assert entity.name.lower() == "soul"
+        entity = registry.get("soulentity")
+        assert entity is not None, f"Expected soulentity, got {registry.names()}"
+        assert entity.name.lower() == "soulentity"
     finally:
         Path(cfg).unlink(missing_ok=True)
 
@@ -192,18 +192,18 @@ async def test_load_entities_mixed_types(wad_env):
         entities_dir.mkdir()
         
         # Flat entity
-        (entities_dir / "flat.yaml").write_text("entity:\n  name: flat\n  domains: [flat]\n  personality: Flat")
+        (entities_dir / "flatentity.yaml").write_text("entity:\n  name: flatentity\n  domains: [flat]\n  personality: Flat")
         
         # soul.yaml entity
-        soul_dir = entities_dir / "dir"
+        soul_dir = entities_dir / "direntity"
         soul_dir.mkdir()
-        (soul_dir / "soul.yaml").write_text("entity:\n  name: dir\n  domains: [dir]\n  personality: Directory")
+        (soul_dir / "soul.yaml").write_text("entity:\n  name: direntity\n  domains: [dir]\n  personality: Directory")
         
         assert (await loader.load_wad(stack_name))[0] is True
-        assert registry.get("flat") is not None, f"Entities: {registry.names()}"
-        assert registry.get("dir") is not None
-        assert registry.get("flat").name == "flat"
-        assert registry.get("dir").name == "dir"
+        assert registry.get("flatentity") is not None, f"Entities: {registry.names()}"
+        assert registry.get("direntity") is not None
+        assert registry.get("flatentity").name == "flatentity"
+        assert registry.get("direntity").name == "direntity"
     finally:
         Path(cfg).unlink(missing_ok=True)
 
@@ -216,7 +216,7 @@ async def test_load_entity_skips_registered(wad_env):
     try:
         # Pre-register an entity
         from omega.oracle.entity_registry import Entity
-        existing = Entity(name="Pre", domains=[], model="m", personality="original")
+        existing = Entity(name="Preexisting", domains=[], model="m", personality="original")
         await registry.add(existing)
         
         stack_name = "skip_stack"
@@ -226,10 +226,10 @@ async def test_load_entity_skips_registered(wad_env):
         
         entities_dir = stack_path / "entities"
         entities_dir.mkdir()
-        (entities_dir / "pre.yaml").write_text("entity:\n  name: Pre\n  domains: [new]\n  personality: duplicate")
+        (entities_dir / "preexisting.yaml").write_text("entity:\n  name: Preexisting\n  domains: [new]\n  personality: duplicate")
         
         assert (await loader.load_wad(stack_name))[0] is True
-        assert registry.get("pre").personality == "original"
+        assert registry.get("preexisting").personality == "original"
     finally:
         Path(cfg).unlink(missing_ok=True)
 
