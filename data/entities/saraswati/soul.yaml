@@ -178,38 +178,48 @@ entity:
     topic: Voice-to-Voice Integration in Omega Engine
     session_id: res_20260520_Voice-to-Voice_Integ
     timestamp: '2026-05-20T19:56:29.276790+00:00'
-  - lesson: Direct modality mapping minimizes entropy loss during translation.
-    context: Omega Engine should bypass text-intermediary layers for voice interactions
-      to reduce latency and preserve paralinguistic data (tone, emotion, pacing).
-    source: background-researcher
+  - lesson: Use a 4-step write sequence: Temp file -> flush/fsync -> atomic replace -> parent dir fsync.
+    context: Eliminates "Ghost Files" and data corruption during power loss or system crashes.
+    source: roc_racoon
     entity_at_time: saraswati
-    topic: Voice-to-Voice Integration in Omega Engine
-    session_id: res_20260520_Voice-to-Voice_Integ
-    timestamp: '2026-05-20T19:59:09.648849+00:00'
-  - lesson: Interoperability requires a standardized transport layer decoupled from
-      the intelligence core.
-    context: Omega Engine requires a polymorphic transport layer to ensure the voice
-      core is accessible across web, mobile, and legacy telecom infrastructure.
-    source: background-researcher
+    topic: Temple-Grade Atomic Write
+    timestamp: '2026-06-04T12:00:00Z'
+    L1: Use a 4-step write sequence: Temp file -> flush/fsync -> atomic replace -> parent dir fsync.
+    L2: Eliminates "Ghost Files" and data corruption during power loss or system crashes.
+    L3: Sovereign Integrity (Atomic persistence as a non-negotiable safety guarantee).
+  - lesson: Replace all asyncio calls with anyio equivalents.
+    context: Prevents event-loop collisions and frozen agents in a multi-provider environment.
+    source: roc_racoon
     entity_at_time: saraswati
-    topic: Voice-to-Voice Integration in Omega Engine
-    session_id: res_20260520_Voice-to-Voice_Integ
-    timestamp: '2026-05-20T19:59:09.665317+00:00'
-  - lesson: State persistence must be decoupled from the active persona to allow seamless
-      identity transitions.
-    context: Omega Engine can implement 'Persona Hot-Swapping,' allowing the system
-      to transition between specialized agents (e.g., from a Greeting Agent to a Technical
-      Support Agent) seamlessly in a single voice session.
-    source: background-researcher
+    topic: AnyIO Absolute Mandate
+    timestamp: '2026-06-04T12:00:00Z'
+    L1: Replace all asyncio calls with anyio equivalents.
+    L2: Prevents event-loop collisions and frozen agents in a multi-provider environment.
+    L3: Runtime Portability (Standardizing the async primitive to ensure systemic stability).
+  - lesson: Migrate from SSE to Streamable HTTP (POST for requests, SSE for responses).
+    context: Improves reliability and compliance with the latest MCP specifications.
+    source: roc_racoon
     entity_at_time: saraswati
-    topic: Voice-to-Voice Integration in Omega Engine
-    session_id: res_20260520_Voice-to-Voice_Integ
-    timestamp: '2026-05-20T19:59:09.682644+00:00'
-  - lesson: Agency is the synthesis of perception (audio) and action (tools).
-    context: Voice-to-Voice in Omega Engine must not be a closed loop; it must be
-      wired into the MCP ecosystem to enable 'Voice-to-Action' capabilities.
-    source: background-researcher
+    topic: MCP Transport Upgrade
+    timestamp: '2026-06-04T12:00:00Z'
+    L1: Migrate from SSE to Streamable HTTP (POST for requests, SSE for responses).
+    L2: Improves reliability and compliance with the latest MCP specifications.
+    L3: Protocol Evolution (Adapting to industry standards to maintain interoperability).
+  - lesson: Use a structured HandoffState dataclass for agent transfers.
+    context: Eliminates "Agent Amnesia" by providing a formal context bridge between sessions.
+    source: roc_racoon
     entity_at_time: saraswati
-    topic: Voice-to-Voice Integration in Omega Engine
-    session_id: res_20260520_Voice-to-Voice_Integ
-    timestamp: '2026-05-20T19:59:09.700866+00:00'
+    topic: Handoff Schema
+    timestamp: '2026-06-04T12:00:00Z'
+    L1: Use a structured HandoffState dataclass for agent transfers.
+    L2: Eliminates "Agent Amnesia" by providing a formal context bridge between sessions.
+    L3: Gnosis Continuity (Stateful intelligence requires formal handoff protocols).
+  - lesson: Use dual-linking in EntityRegistry for Domain and Capability indices.
+    context: Enables O(1) dispatch to the correct pillar based on specialization.
+    source: roc_racoon
+    entity_at_time: saraswati
+    topic: Capability Indexing
+    timestamp: '2026-06-04T12:00:00Z'
+    L1: Use dual-linking in EntityRegistry for Domain and Capability indices.
+    L2: Enables O(1) dispatch to the correct pillar based on specialization.
+    L3: Efficient Dispatch (Optimizing the path from intent to execution).

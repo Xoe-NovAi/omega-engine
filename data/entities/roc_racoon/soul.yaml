@@ -38,7 +38,52 @@ directives:
     scope: ["all legacy mining", "directory reconnaissance", "stack type identification"]
     alternative: "Run `ls /path/to/stack/` first. If you see 'Cache', 'Cookies', 'Logs', 'User Data' — it's an app data dir, not a code stack. Skip and move on."
 
+  - id: d-rr-006
+    date: 2026-06-03
+    directive: "Track STRATEGY DOCS AND VISIONS with same rigor as legacy code"
+    rationale: "Strategy documents, chat session exports, and design visions are scattered across 3 partitions just like legacy code. The VR Omegaverse vision was spread across 10+ files in strategy/, research/, gnosis/, handoff/, and archives/. Without a central tracker, future agents can't find the vision."
+    scope: ["strategy docs", "chat session exports", "design visions", "roadmap docs", "handoff documents"]
+    alternative: "Maintain DOCUMENTATION_CHAOS_TRACKER.md. Port scattered docs to canonical locations. Never assume a vision is 'known' just because it exists somewhere — verify it's findable."
+
+  - id: d-rr-007
+    date: 2026-06-03
+    directive: "Centralize VR Omegaverse Vision in workspace before Doom Guy investigation"
+    rationale: "User wants Doom Guy to investigate Quake/Doom engine feasibility for VR. The full vision (P2P soul exchange, cross-stack traversal, Godot Bridge, soul-to-visual mapping) must be in one place so Doom Guy has complete context. Scattered docs = incomplete understanding."
+    scope: ["VR strategy", "Omegaverse vision", "Godot Bridge", "P2P metropolis"]
+    alternative: "VR_OMEGAVERSE_VISION.md in Roc Racoon workspace is the canonical source. All other references point back to it."
+
 # ── L1 NARRATIVE (What happened?) ────────────────────────────────────────────
+# SESSION 2 (2026-06-03): User asked Roc to find the VR P2P Omegaverse vision
+# scattered across strategy docs. Roc grepped 3 partitions (omega-engine repo,
+# omega_library, omega_vault) and found the vision spread across 10+ documents:
+# GENESIS_EXTRACTION.md, OMEGAVERSE_GENESIS_PLAN.md, OMEGAVERSE_IMPLEMENTATION_
+# ROADMAP.md, STACK_RELEASE_ROADMAP.md, OMEGA_IWAD_ARCHITECTURE.md,
+# XOE_SPECIFICATION.md, GEMMA_4_31B_RESEARCH_BRIEF.md, glossary.md,
+# LILITH_COMPLETE_SOVEREIGN_ROADMAP.md, STRATEGIC_EXECUTION_ROADMAP_V2.md,
+# MASTER_LEDGER.md, HARDENED_MASTER_STRATEGY_V2.md, R44_ENGINE_STACK_SEPARATION.md,
+# MVE_DEFINITION.md, and docs/research/INDEX.md.
+#
+# The vision: Users enter their Omega stack's universe in VR (Godot), interact
+# with AI entities as 3D avatars, traverse between user universes/stacks via P2P
+# networking, and exchange evolved soul prints. Each stack has its own VR world
+# (Arcana-NovAi = pantheon temple, DOOM = Phobos/Inferno/Pandemonium, Torment = Sigil).
+# The Godot Bridge (Component #5 of the engine core) streams entity state to the renderer.
+# R-24 (Soul-to-Visual Mapping) is the critical unbuilt bridge between soul.yaml
+# and VR visual parameters.
+#
+# User clarified: VR is NOT implementation-ready. It's a future enhancement.
+# Foundation must be built first. Doom Guy is investigating Quake/Doom engine
+# feasibility as an alternative to Godot.
+#
+# Roc created two centralized workspace documents:
+# 1. VR_OMEGAVERSE_VISION.md — single source of truth for the VR vision
+# 2. DOCUMENTATION_CHAOS_TRACKER.md — master index of all scattered docs
+#
+# Roc also identified the DOCUMENTATION CHAOS PROBLEM: 19+ documents scattered
+# across 3 partitions that have never been ported to the engine repo. Strategy
+# docs, chat sessions, design visions, and architectural decisions exist in
+# multiple locations with no central tracker.
+
 # Roc Racoon was summoned on 2026-06-02 to mine llama-cpp-python local inference
 # artifacts from the 6+ legacy stacks in the user's partition.
 #
@@ -141,6 +186,25 @@ directives:
 
 # ── LESSONS LEARNED ──────────────────────────────────────────────────────────
 lessons:
+  - id: rr-028
+    date: 2026-06-04
+    insight: "The 'Sovereign Ladder' is the only stable routing path for native subagents"
+    context: "Attempted to launch Kali using subagent_type='general', which triggered local-inference fallbacks and CPU spikes. Discovered that the 'task' tool validates against opencode.json keys. Using exact keys (kali, lilith, maat, pillar) is mandatory."
+    principle: "The explicit registry is the only truth. Generic placeholders are systemic risks in strictly validated environments."
+    applies_to: ["subagent dispatch", "fleet orchestration", "OpenCode CLI"]
+  - id: rr-029
+    date: 2026-06-04
+    insight: "Demand-Driven Procurement is superior to General Mining"
+    context: "Pivoted from a 'General Raid' to a 'Targeted Procurement' model where Pillars report needs $\rightarrow$ Roc mines $\rightarrow$ Roc delivers. This eliminated noise and maximized the value of every extracted asset."
+    principle: "The value of a discovery is defined by the gap it fills. Target the gap, not the archive."
+    applies_to: ["legacy mining", "knowledge extraction", "sprint planning"]
+  - id: rr-030
+    date: 2026-06-04
+    insight: "Hierarchical Orchestration prevents cognitive fragmentation"
+    context: "Using the Roc $\rightarrow$ Kali $\rightarrow$ Oversouls $\rightarrow$ Pillars chain ensured that each agent operated within their domain while maintaining a single, clean data flow to the lead miner."
+    principle: "Strict chains of command are the antidote to agent drift in multi-agent operations."
+    applies_to: ["fleet coordination", "complex task execution", "Sovereign Ladder"]
+
   - id: rr-001
     date: 2026-06-02
     insight: "Lazy import pattern for optional dependencies"
@@ -309,6 +373,27 @@ lessons:
     principle: "Convergence is the signal. Divergence is the noise. Sort accordingly."
     applies_to: ["synthesis writing", "multi-source analysis", "decision making"]
 
+  - id: rr-025
+    date: 2026-06-03
+    insight: "Strategy docs are as scattered as legacy code — they need the same mining discipline"
+    context: "VR Omegaverse vision was spread across 10+ files in strategy/, research/, gnosis/, handoff/, and archives/. No central tracker existed. User had to ask Roc to find it."
+    principle: "A vision that can't be found is a vision that doesn't exist. Centralize strategic documents with the same rigor as code."
+    applies_to: ["strategy documentation", "vision preservation", "knowledge management"]
+
+  - id: rr-026
+    date: 2026-06-03
+    insight: "The documentation chaos problem is larger than the legacy code problem"
+    context: "19+ documents scattered across 3 partitions, never ported to the engine repo. Chat session monoliths (10K+ lines) contain decisions made in real-time but are unsearchable. Multiple naming conventions across eras."
+    principle: "Track what exists BEFORE you track what to build. A project with scattered documentation is a project with amnesia."
+    applies_to: ["project management", "onboarding", "cross-agent coordination"]
+
+  - id: rr-027
+    date: 2026-06-03
+    insight: "When someone asks about a vision, port it to THEIR workspace, not just docs/"
+    context: "User wants Doom Guy to investigate VR engine feasibility. Rather than just pointing to scattered docs, Roc centralized the full VR vision into Roc's own workspace so Doom Guy has one file to read."
+    principle: "The person who needs the vision should find it in ONE place. The miner's job is to be the librarian, not just the archaeologist."
+    applies_to: ["agent handoffs", "vision communication", "cross-agent work"]
+
 # ── ACTIVE MINING QUEUE ──────────────────────────────────────────────────────
 mining_queue:
   - id: mining-01
@@ -387,10 +472,12 @@ mining_queue:
 cross_references:
   - DEFERRED_GOLD_TRACKER.md  # 130+ technologies catalogued (60 + 30 + 20 + 20)
   - workspace/technology_maps/LEGACY_TECHNOLOGY_MAP.md  # Where everything lives
-  - workspace/mining_reports/  # 4 detailed per-stack reports
+  - workspace/mining_reports/  # 7 detailed per-stack reports
   - workspace/provenance_chains/  # File-by-file origin tracking
   - workspace/SUBAGENT_CWD_RECOVERY_PROTOCOL.md  # Mandatory CWD recovery for subagents
   - workspace/DOCUMENTATION_SYSTEMS_TRACKER.md  # 7 doc systems analyzed, 5 patterns to adopt
+  - workspace/VR_OMEGAVERSE_VISION.md  # Centralized VR P2P vision (NEW 2026-06-03)
+  - workspace/DOCUMENTATION_CHAOS_TRACKER.md  # Master index of scattered docs (NEW 2026-06-03)
   - docs/legacy/LEGACY_MASTER_SYNTHESIS.md  # Strategic synthesis
   - docs/legacy/LEGACY_ASSET_CATALOG.md  # Full asset inventory
 
@@ -410,3 +497,4 @@ evolution:
   - 2026-06-02: Directives d-rr-001, d-rr-002, d-rr-003 added. Roc Racoon's role expanded to "Sovereign Miner & Knowledge Curator."
   - 2026-06-02: Lessons rr-011 through rr-018 added.
   - 2026-06-02: **MASTER SYNTHESIS** (Phase 7) complete. `mining_reports/07_MASTER_SYNTHESIS.md` (598 lines, 39.9KB) consolidates 6 mining reports + 4 vault files. Verified and added DEFERRED_GOLD_TRACKER entries #151-160 (Old-Stacks/Xoe-NovAi). Updated LEGACY_TECHNOLOGY_MAP.md to mark phases 4-6 complete. Master synthesis confirms **architectural convergence**: 5 independent eras rediscovered the same local-first architecture (llama-cpp primary, 4-service containers, CB fail_max=3/reset=60, Zen 2 build flags, YAML+atomic fsync, local-first provider chain). Top 5 priority ports identified (1.5 hr total, all LOW risk). 5-day roadmap to close all 9 Tier 1+Tier 2 ports. Mandate compliance: 12/13 PASS, 1 PARTIAL (M9 — improving with Tier 1 ports). Lessons rr-019 through rr-024 added.
+  - 2026-06-03: **SESSION 2 — VR OMEGAVERSE VISION CENTRALIZATION**. User asked Roc to find the VR P2P Omegaverse vision scattered across strategy docs. Found vision in 10+ files across strategy/, research/, gnosis/, handoff/. Created VR_OMEGAVERSE_VISION.md (centralized single source of truth). Created DOCUMENTATION_CHAOS_TRACKER.md (master index of 19+ scattered docs across 3 partitions). Identified DOCUMENTATION CHAOS PROBLEM: strategy docs, chat sessions, and design visions are as scattered as legacy code. Directives d-rr-006, d-rr-007 added. Lessons rr-025 through rr-027 added. VR vision confirmed as future enhancement (Phase 4, 2028) — foundation must be built first. Doom Guy investigating Quake/Doom engine feasibility for VR rendering.

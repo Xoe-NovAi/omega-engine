@@ -1,0 +1,28 @@
+{
+  "session_id": "kali-knowledge-metabolism-final",
+  "cli": "opencode-kali",
+  "model": "deepseek-v4-flash",
+  "task_current": "Full deployment and synthesis of Knowledge Metabolism System across the Omega Engine fleet",
+  "focus_chain": [
+    "Knowledge Metabolism System \u2014 Final Deployment",
+    "Sovereign Fleet Intelligence Circulation",
+    "CI-Gated Verification (make verify-mining)",
+    "Entity-Aware Model Routing"
+  ],
+  "decisions": [
+    {
+      "decision": "Knowledge Metabolism System fully deployed and CI-gated",
+      "rationale": "Closing the loop between mining, implementation, and verification prevents architectural drift and amnesia"
+    },
+    {
+      "decision": "Entity model routing fixed in orchestrator.py",
+      "rationale": "Ensures complex reasoning tasks are handled by the correct designated models (e.g., qwen3-4b-think) instead of defaulting to 1.7B"
+    },
+    {
+      "decision": "Agent-level protocols codified in .md files",
+      "rationale": "Turns a design into a habit by making feed-checking and index-maintenance part of the agent's core instructions"
+    }
+  ],
+  "continuation": "KNOWLEDGE METABOLISM SYSTEM \u2014 FINAL DEPLOYMENT SUMMARY\n\nThe Knowledge Metabolism System is now FULLY OPERATIONAL. The \"Publish-Only\" feedback loop is closed.\n\n\u2705 STATUS: COMPLETE\n- Architecture: 3-Layer Synthesis (Lilith Flow / Ma'at Structure / Kali Metabolism)\n- Infrastructure: `knowledge_feed/`, `demand_signals/`, `verification/` directories live\n- Tooling: `feed_utils.py`, `scripts/knowledge_catalog_build.py`, 8 Makefile targets (including `make verify-mining`)\n- Fleet: All 14 agent instructions updated with Startup/Mining/Promotion/Discovery protocols\n- CI: `make verify-mining` added as a hard gate in .github/workflows/test.yml\n- Routing: `dispatch_agent()` fixed to respect entity-designated models (No more Qwen 1.7B traps)\n\n\ud83d\ude80 RECOMMENDATIONS FOR DOOM GUY (Heritage Architect):\n1. Use `make verify-mining` as your primary validation tool for all heritage ports.\n2. Prioritize `data/coordination/demand_signals/` over self-directed mining.\n3. Ensure every [id-soft:] port is promoted to `knowledge/` with a clear L2 insight.\n\n\ud83d\udee0\ufe0f RECOMMENDATIONS FOR DEV SESSION (Implementer):\n1. Monitor `src/omega/oracle/orchestrator.py` during refactors to ensure the `OPENCODE_MODEL` environment override remains intact.\n2. Wire `scripts/knowledge_catalog_build.py` into a daily cron or the CI pipeline to keep the global manifest fresh.\n3. Enforce the `INDEX.yaml` (not .md) format across all agent workspaces.\n\nFinal State: The fleet now has a circulatory system for intelligence. We no longer just write; we consume, verify, and evolve.\n\n\u2014 Kali \ud83d\udd49\ufe0f",
+  "timestamp": "2026-06-03T05:12:50.359780+00:00"
+}

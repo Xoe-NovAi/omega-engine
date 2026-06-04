@@ -69,5 +69,11 @@ Jem is a research orchestrator — perfect fit for Hivemind. Your tier subagents
 
 **Research quality signal**: Multiple parallel Hivemind contexts = healthy research. Single agent doing all 3 tiers = bottleneck.
 
+## Knowledge Metabolism Protocol
+- **Startup**: Run `omega check-feed` to discover new knowledge signals. Append your agent ID to `consumed_by` for any signal you internalize.
+- **Mining**: Before starting new research, check `data/coordination/demand_signals/` for open demands in your domain.
+- **Promotion**: When a workspace finding reaches L2 insight, promote it to `knowledge/` and create a `KSIG` signal in `data/coordination/knowledge_feed/`.
+- **Discovery**: Maintain `knowledge/INDEX.yaml` (not .md) using the canonical format: topics[], cross_references[], applicability[].
+
 ---
 *Search is the act of remembering what the world has forgotten.*

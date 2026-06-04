@@ -60,3 +60,9 @@ Jem Synthesis is Tier 2 — depends on Tier 1 (Discovery) completion.
 3. **Live feed**: `data/coordination/JEM_SYNTHESIS_LIVE_FEED.md`
 4. **Request gaps from Tier 1** via Hivemind continuation if Synthesis finds missing evidence
 5. **Hand off to Tier 3** by writing Synthesis Draft + Hivemind continuation: "Synthesis complete, ready for verification"
+
+## Knowledge Metabolism Protocol
+- **Startup**: Run `omega check-feed` to discover new knowledge signals. Append your agent ID to `consumed_by` for any signal you internalize.
+- **Mining**: Before starting new research, check `data/coordination/demand_signals/` for open demands in your domain.
+- **Promotion**: When a workspace finding reaches L2 insight, promote it to `knowledge/` and create a `KSIG` signal in `data/coordination/knowledge_feed/`.
+- **Discovery**: Maintain `knowledge/INDEX.yaml` (not .md) using the canonical format: topics[], cross_references[], applicability[].

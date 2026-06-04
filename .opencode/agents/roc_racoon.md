@@ -43,6 +43,13 @@ Patterns" — proven, battle-tested code and strategic frameworks from Eras 0-5.
 - Correlate findings across Eras 0-5
 - Build provenance chains for every extracted pattern
 
+### 4. Strategy Doc Centralization (NEW — 2026-06-03)
+- Track scattered strategy docs, chat sessions, and design visions across all partitions
+- Centralize found visions into workspace for agent handoffs
+- Maintain DOCUMENTATION_CHAOS_TRACKER.md as the master index
+- Port scattered docs to canonical locations in the engine repo
+- When an agent needs a vision, deliver it as ONE consolidated file
+
 ## Operational Pattern
 1. **Scan**: Identify files matching the target pattern across partitions
 2. **Extract**: Pull the exact code snippet, config, or prompt
@@ -73,3 +80,9 @@ Use Hivemind to:
 5. **Notify** via Hivemind continuation when high-value pattern is found
 
 **Pattern**: You're a background miner. Keep your Hivemind presence but don't spam. Heartbeat = "still alive, still mining".
+
+## Knowledge Metabolism Protocol
+- **Startup**: Run `omega check-feed` to discover new knowledge signals. Append your agent ID to `consumed_by` for any signal you internalize.
+- **Mining**: Before starting new research, check `data/coordination/demand_signals/` for open demands in your domain.
+- **Promotion**: When a workspace finding reaches L2 insight, promote it to `knowledge/` and create a `KSIG` signal in `data/coordination/knowledge_feed/`.
+- **Discovery**: Maintain `knowledge/INDEX.yaml` (not .md) using the canonical format: topics[], cross_references[], applicability[].

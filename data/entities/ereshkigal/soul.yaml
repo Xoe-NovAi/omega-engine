@@ -1,0 +1,11 @@
+entity:
+  name: ereshkigal
+  lessons_learned:
+    - L1_narrative: |
+        Enforce specific quantization (q8_0) and thread pool sizes based on model tier for Ryzen 7 5700U.
+      L2_insight: |
+        Optimizes memory usage and CPU throughput for local inference, preventing OOM and reducing latency.
+      L3_principle: |
+        The Right Approximation (Hardware-specific tuning for optimal performance).
+      timestamp: '2026-06-04T12:00:00Z'
+      topic: 'Hardware Lock'

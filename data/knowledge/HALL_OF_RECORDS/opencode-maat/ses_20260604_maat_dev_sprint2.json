@@ -1,38 +1,26 @@
 {
   "session_id": "ses_20260604_maat_dev_sprint2",
   "cli": "opencode-maat",
-  "model": "minimax-m3-free",
-  "task_current": "Ma'at executing Sovereignty Gate + Phase 1 critical fixes (CLI crash, JSON logging, MemoryStore lazy deletion) + Phase 2 cvar wiring + Phase 2.6 subagent tests",
+  "model": "deepseek-v4-flash",
+  "task_current": "OpenCode Extensibility Research & Fleet Hardening Plan Complete \u2014 awaiting transition to Kali mode",
   "focus_chain": [
-    "Phase 0.5: Install llama-cpp-python with Zen 2 flags",
-    "Phase 0.5: Verify end-to-end local inference (omega talk)",
-    "Phase 1.1: Fix omega entity CLI crash (oracle_cli.py)",
-    "Phase 1.2: Wire setup_json_logging() into oracle startup",
-    "Phase 1.3: MemoryStore lazy deletion \u2014 port ZONEID_TOMBSTONE + 0.5s grace",
-    "Phase 1.4: make sovereignty reads cvar table live data",
-    "Phase 2.1: cvar_get() migration in model_gateway.py (~10 calls)",
-    "Phase 2.2: cvar_get() migration in oracle.py (~6 calls)",
-    "Phase 2.4: Add 6 test_handoff_* tests for subagent_dispatcher.py",
-    "Final: make test, make temple-grade, make heritage-map, commit, push",
-    "Final: Distill L1\u2192L2\u2192L3 to data/entities/maat/soul.yaml"
+    "DONE: Deep local discovery of opencode.json, .opencode/agents/, .opencode/skills/, .opencode/modes/, and MANIFEST.md",
+    "DONE: Web research on OpenCode custom modes, agent skills, plugins, and hooks best practices",
+    "DONE: Identified rogue agent (gnosis-analyst.md) and silent skill bug (sovereign-refinement-protocol/SKILL.md)",
+    "DONE: Formulated 4-step hardening plan for Kali to execute",
+    "AWAITING: Transition to Kali mode to execute the hardening plan and work subagent magic"
   ],
   "decisions": [
     {
-      "$text": "Phase 0.5 Sovereignty Gate is MANDATORY before any other work \u2014 Kali's directive"
+      "decision": "D111: OpenCode Extensibility Research Complete \u2014 mapped custom modes, agent skills, plugins, and hooks architecture"
     },
     {
-      "$text": "llama-cpp-python install will use Zen 2 flags from models.yaml (march=znver2, AVX2+FMA+F16C, no AVX-512)"
+      "decision": "D112: Rogue Agent Identified \u2014 gnosis-analyst.md is on disk but unregistered in opencode.json and subagent_dispatcher.py (leftover from Decision 063 archive)"
     },
     {
-      "$text": "MemoryStore lazy deletion: same pattern as EntityRegistry (tombstone sentinel + 0.5s grace + active_iter filter)"
-    },
-    {
-      "$text": "Subagent tests will live in tests/test_handoff_dispatch.py \u2014 do NOT touch subagent_dispatcher.py itself (Doom Guy owns it)"
-    },
-    {
-      "$text": "CLI entity-info crash is actually a misnaming bug \u2014 'entity-info' doesn't exist, only 'entity' does \u2014 not a true crash, will fix docs or add alias"
+      "decision": "D113: Silent Skill Bug Identified \u2014 sovereign-refinement-protocol/SKILL.md lacks YAML frontmatter, causing OpenCode to silently ignore it during discovery"
     }
   ],
-  "continuation": "Doom Guy: I am writing the workspace lock at data/coordination/MAAT_WORKSPACE_LOCK_20260604.md. Please read it before editing any files. I will NOT touch: subagent_dispatcher.py, the new CLI subagent dispatch commands, or your heritage tagging work. You should NOT touch: oracle.py (cvar migration), model_gateway.py (cvar migration), memory_store.py (lazy deletion port), oracle_cli.py (entity fix), or the new test_handoff_dispatch.py file. Coordination protocol: write findings to data/coordination/MAAT_FINDINGS_*.md; I will read these before committing. After Phase 0.5 completes, I will post [SOVEREIGNTY-GATE] PASS/FAIL.",
-  "timestamp": "2026-06-03T02:20:10.638144+00:00"
+  "continuation": "Kali: The deep discovery and web research on OpenCode extensibility is complete. I have identified the exact discrepancies in our agent fleet: (1) gnosis-analyst.md is a rogue file on disk that was supposed to be archived under Decision 063, (2) sovereign-refinement-protocol/SKILL.md has a silent frontmatter bug (no YAML header) causing OpenCode to ignore it. I have laid out a 4-step hardening plan for you to execute in your upcoming session. Ready for transition to Kali mode.",
+  "timestamp": "2026-06-03T05:15:09.251169+00:00"
 }

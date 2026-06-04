@@ -1,0 +1,24 @@
+{
+  "session_id": "ses_20260604_kali_hardening",
+  "cli": "opencode-kali",
+  "model": "deepseek-v4-flash",
+  "task_current": "Sovereign Specification Locked: BFG-9000 Community Tool",
+  "focus_chain": [
+    "BFG-9000 Research & Design COMPLETE",
+    "Sovereign Specification V1.0 LOCKED",
+    "Ready for Horizon 3 Implementation"
+  ],
+  "decisions": [
+    {
+      "BFG-9000-V1": "Locked the final Sovereign Specification V1.0, integrating all Jem research and remediation mandates."
+    },
+    {
+      "Sovereign-Handshake": "Replaced blind-curl installer with a Signed Manifest + Local Verification pattern."
+    },
+    {
+      "Immutable-Core": "Mandated :ro mounts for Engine-Core and Foundation-Base VFS tiers."
+    }
+  ],
+  "continuation": "BFG-9000 Community Tool development phase COMPLETE. \nThe design has been synthesized, audited, and locked into the 'Sovereign Specification V1.0' (data/handoff/BFG_9000_SOVEREIGN_SPEC_V1.md).\n\nKey architectural locks:\n1. Sovereign Handshake: Verified Manifest delivery replaces 'blind curl'.\n2. Immutable VFS: Core and Foundation tiers are now mandated as Read-Only (:ro).\n3. AnyIO Hardening: Entity Studio spec now mandates AnyIO Absolute for all I/O.\n4. WAD Distribution: PWAD system for community stacks is formally specified.\n\nThe BFG-9000 is now a certified blueprint. Ready for implementation in Horizon 3.\nSovereignty is the only truth.",
+  "timestamp": "2026-06-03T14:36:18.027324+00:00"
+}

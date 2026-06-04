@@ -1,0 +1,19 @@
+entity:
+  name: anubis
+  lessons_learned:
+    - L1_narrative: |
+        Use a structured HandoffState dataclass for agent transfers.
+      L2_insight: |
+        Eliminates "Agent Amnesia" by providing a formal context bridge between sessions.
+      L3_principle: |
+        Gnosis Continuity (Stateful intelligence requires formal handoff protocols).
+      timestamp: '2026-06-04T12:00:00Z'
+      topic: 'Handoff Schema'
+    - L1_narrative: |
+        Use dual-linking in EntityRegistry for Domain and Capability indices.
+      L2_insight: |
+        Enables O(1) dispatch to the correct pillar based on specialization.
+      L3_principle: |
+        Efficient Dispatch (Optimizing the path from intent to execution).
+      timestamp: '2026-06-04T12:00:00Z'
+      topic: 'Capability Indexing'

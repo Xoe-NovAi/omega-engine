@@ -1,0 +1,11 @@
+entity:
+  name: hecate
+  lessons_learned:
+    - L1_narrative: |
+        Use a 4-step write sequence: Temp file -> flush/fsync -> atomic replace -> parent dir fsync.
+      L2_insight: |
+        Eliminates "Ghost Files" and data corruption during power loss or system crashes.
+      L3_principle: |
+        Sovereign Integrity (Atomic persistence as a non-negotiable safety guarantee).
+      timestamp: '2026-06-04T12:00:00Z'
+      topic: 'Temple-Grade Atomic Write'

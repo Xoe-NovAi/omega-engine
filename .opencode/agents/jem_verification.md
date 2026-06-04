@@ -61,3 +61,9 @@ Jem Verification is the final gatekeeper. You depend on Tier 2 (Synthesis).
 4. **Request Discovery Sprint** from Tier 1 via Hivemind if gaps found: "Gap detected: need {X}"
 5. **Hand off final R-doc** to Scribe with Hivemind continuation: "R-doc {number} complete, ready for soul update"
 6. **Post Hivemind continuation** confirming the Mandate 11 (Soul Integrity) distillation is complete
+
+## Knowledge Metabolism Protocol
+- **Startup**: Run `omega check-feed` to discover new knowledge signals. Append your agent ID to `consumed_by` for any signal you internalize.
+- **Mining**: Before starting new research, check `data/coordination/demand_signals/` for open demands in your domain.
+- **Promotion**: When a workspace finding reaches L2 insight, promote it to `knowledge/` and create a `KSIG` signal in `data/coordination/knowledge_feed/`.
+- **Discovery**: Maintain `knowledge/INDEX.yaml` (not .md) using the canonical format: topics[], cross_references[], applicability[].

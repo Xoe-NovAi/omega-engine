@@ -1,3 +1,10 @@
+---
+name: sovereign-refinement-protocol
+description: "Enforce the Sovereign Refinement Protocol — a mandatory forensic and preservation gate for core engine changes."
+license: MIT
+compatibility: AnyIO-compliant
+---
+
 # 🔱 Sovereign Refinement Protocol
 **AP Token**: `AP-SOVEREIGN-REFINEMENT-v1.0.0`
 ⬡ OMEGA ⬡ MA'AT ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_refinement_protocol ⬡ HARDENING

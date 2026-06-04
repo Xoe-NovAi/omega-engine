@@ -1,0 +1,43 @@
+entity:
+  name: sekhmet
+  lessons_learned:
+    - L1_narrative: |
+        Enforce specific quantization (q8_0) and thread pool sizes based on model tier for Ryzen 7 5700U.
+      L2_insight: |
+        Optimizes memory usage and CPU throughput for local inference, preventing OOM and reducing latency.
+      L3_principle: |
+        The Right Approximation (Hardware-specific tuning for optimal performance).
+      timestamp: '2026-06-04T12:00:00Z'
+      topic: 'Hardware Lock'
+    - L1_narrative: |
+        Use a 4-step write sequence: Temp file -> flush/fsync -> atomic replace -> parent dir fsync.
+      L2_insight: |
+        Eliminates "Ghost Files" and data corruption during power loss or system crashes.
+      L3_principle: |
+        Sovereign Integrity (Atomic persistence as a non-negotiable safety guarantee).
+      timestamp: '2026-06-04T12:00:00Z'
+      topic: 'Temple-Grade Atomic Write'
+    - L1_narrative: |
+        Replace all asyncio calls with anyio equivalents.
+      L2_insight: |
+        Prevents event-loop collisions and frozen agents in a multi-provider environment.
+      L3_principle: |
+        Runtime Portability (Standardizing the async primitive to ensure systemic stability).
+      timestamp: '2026-06-04T12:00:00Z'
+      topic: 'AnyIO Absolute Mandate'
+    - L1_narrative: |
+        Migrate from SSE to Streamable HTTP (POST for requests, SSE for responses).
+      L2_insight: |
+        Improves reliability and compliance with the latest MCP specifications.
+      L3_principle: |
+        Protocol Evolution (Adapting to industry standards to maintain interoperability).
+      timestamp: '2026-06-04T12:00:00Z'
+      topic: 'MCP Transport Upgrade'
+    - L1_narrative: |
+        Use a shell-script -> Podman Quadlets -> systemd pipeline with a strict zero-telemetry audit.
+      L2_insight: |
+        Ensures the engine is sovereign from the first second of installation.
+      L3_principle: |
+        Absolute Sovereignty (Zero-telemetry as a foundational requirement for trust).
+      timestamp: '2026-06-04T12:00:00Z'
+      topic: 'Zero-Telemetry Setup'

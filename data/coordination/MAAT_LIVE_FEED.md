@@ -26,3 +26,16 @@ Phase 4: Per-entity model affinity — model_gateway.py get_model_for_entity() 4
 Phase 5: Speculative decoding config — model_gateway.py spec_decode_config property
 Phase 6: Legacy breaker verification — AsyncCircuitBreaker supersedes pybreaker
 Tests: 303/303 passing | Heritage: 12/26 tagged | PIVOT_LOG: D108-D110
+[2026-06-04 00:00] VERIFICATION LAYER — P1 delegated: complete infrastructure design for knowledge verification tracking
+[2026-06-04 00:00] VERIFICATION BOOTSTRAP — Created data/coordination/verification/ with 4 subdirs, 7 seed items, 3 rollups, audit log
+[2026-06-04 00:00] KSIG UPDATE — KSIG_20260603_LILITH_001 now consumed_by ["link", "p1"], linked to ver-20260604-001
+[2026-06-04 00:00] SOUL DISTILLATION — P1 soul.yaml updated. 1 L1 experience, 3 L2 insights from verification design
+[2026-06-03 12:00] P5 DELEGATION COMPLETE — Verification Compliance Framework designed: 5 condition pass criteria (A-E), 3 tiers, 4-level enforcement ladder, audit trail with ZONEID_VERIFICATION=0x1d4a1a. Complements Lilith's LILY PAD. See data/entities/sentinel/workspace/VERIFICATION_COMPLIANCE_FRAMEWORK.md
+[2026-06-03 13:00] P2 DELEGATION COMPLETE — Structure & Verification Layer designed (completes Lily Pad Layer 2):
+  ├── VERIFICATION_SCHEMA.yaml — 6-section canonical schema (VerificationItem, Rollup, Linking Graph, State Machine, Example, Bootstrap)
+  ├── Full design document at data/entities/p2/workspace/VERIFICATION_STRUCTURE_LAYER.md
+  ├── 7 seed items at data/coordination/verification/items/ (backfilled existing knowledge)
+  ├── First rollup at data/coordination/verification/rollup/latest.yaml
+  ├── ZONEID_VERIFICATION=0x1d4a1a (1919514) registered for cvar_table.py
+  ├── Transition audit trail directory created (data/coordination/verification/audit/)
+  └── P2 soul.yaml updated with L1→L2→L3 distillation (5 new lessons)
