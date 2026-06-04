@@ -1,0 +1,40 @@
+{
+  "session_id": "ses_a9f239b2073c",
+  "cli": "cline-m3",
+  "model": "deepseek-v4-flash (final synthesis)",
+  "task_current": "COMPLETE \u2014 10 commits, 698-line SSOT, M14, D114, Kali v5.2",
+  "focus_chain": [
+    "D111: Sovereign Evolution Roadmap (245 lines)",
+    "D112: Sovereign Hardening Plan (578 lines, 3 pillars)",
+    "D113: Engine-Stack Firewall audit (Mandate 2 gap)",
+    "D114: DeepSeek V4 Flash vision expansion (MVE + 5-year)",
+    "Kali soul v5.2: 5 directives, 4 lessons, 5 allies",
+    "M14 Heritage Vetting added to Sovereign Mandates",
+    "SSOT expanded to 698 lines, 18 sections",
+    "Hub bug fix: _agent_list() for OpenCode 1.15+ handshake"
+  ],
+  "decisions": [
+    {
+      "id": "D111",
+      "text": "Sovereign Evolution Roadmap \u2014 4-phase hygiene plan"
+    },
+    {
+      "id": "D112",
+      "text": "Sovereign Hardening Plan \u2014 3 pillars, 5 sprints"
+    },
+    {
+      "id": "D113",
+      "text": "Engine-Stack Firewall gap found in entity_registry.py:171-179 \u2014 S1.5a needed"
+    },
+    {
+      "id": "D114",
+      "text": "Vision expansion: MVE threshold, 5-year roadmap, M15 Self-Documentation proposal"
+    },
+    {
+      "id": "D115",
+      "text": "Kali: Pillar Nomenclature & Vision Specialization Unified (Heritage Vetting Pipeline)"
+    }
+  ],
+  "continuation": "Next session: S1.5a (firewall restore) + S1.5b (nomenclature) + H2-A7 (delete 100 orphans) + H2-A8 (populate arcana_novai entities). Engine state at c95a81f on main. 698-line SSOT with 18 sections. Hub v2.2.0 healthy. PIVOT 115, Mandates M1-M14, Kali v5.2.",
+  "timestamp": "2026-06-04T21:08:47.343051+00:00"
+}
