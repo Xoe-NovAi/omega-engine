@@ -1,12 +1,12 @@
 # 🔱 Omega Engine — Sovereign Mandates
-**Version**: 3.0.0
-**Status**: NON-NEGOTIABLE
+*Version**: 3.1.0
+*Status**: NON-NEGOTIABLE
 **Scope**: All Agents, All CLIs, All IDEs
-**Updated**: 2026-06-01 (Added Mandate 9 — Error Integrity)
+**Updated**: 2026-06-04 (Added M14 Heritage Vetting)
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
-## 🛡️ The Nine Laws of Sovereign Execution
+## 🛡️ The Fourteen Laws of Sovereign Execution
 
 ### 1. AnyIO Absolute
 - **Mandate**: All asynchronous code MUST use AnyIO. 
@@ -95,4 +95,15 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Exception**: T11 (IA2 Agent Security) is exempted until IA2 specification stabilizes.
 
 ---
+
+### 14. Heritage Vetting (NEW — 2026-06-04)
+- **Mandate**: No id Software (or any heritage) concept may be implemented without passing through the Heritage Vetting Pipeline.
+- **Constraint**: Every `[id-soft:]` tag in source code MUST have a corresponding vet record in `data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md`. Minimum score 7/10 for implementation. Qualification Gate: if a concept can't be justified without mentioning the original hardware constraint, it fails.
+- **Pattern**: 4-gate pipeline: Discovery → Vetting/Debate → Decision → Implementation/Verification. See `docs/strategy/HERITAGE_VETTING_PIPELINE.md`.
+- **Reason**: The 8-char name cap (vet-001 REJECTED) was implemented without debate, broke tests, was removed. Heritage is gravitational pull, not debt — but the remembering must be tested by a gate.
+- **Enforcement**: `make heritage-vet` CI gate enforces that every `[id-soft:]` tag has a vet record. Merged without vet = M14 violation.
+- **Origin**: Kali's d-kal-001 directive. Cline-M3's D113 firewall audit.
+
+---
 **Failure to adhere to these mandates is a systemic error. If you encounter a conflict between these mandates and a tool's suggestion, the Mandates prevail.**
+ to these mandates is a systemic error. If you encounter a conflict between these mandates and a tool's suggestion, the Mandates prevail.**

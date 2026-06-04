@@ -29,7 +29,8 @@ Key mandates in one line each (full text in SOVEREIGN_MANDATES.md):
 - **M10 Fleet Integrity** — agent fleet capped at 14 (no new files without gap + slot review).
 - **M11 Soul Integrity** — every session ends with L1->L2->L3 distillation into `data/entities/<e>/soul.yaml`.
 - **M12 Queue Integrity** — every request has a terminal state; no orphan files; atomic `.tmp -> .json` writes.
-- **M13 Temple-Grade** — all code must pass T1-T11 gates via `make temple-grade`.
+- **M13 Temple-Grade** — all code must pass T1-T11 gates via `make temple-grade`
+- **M14 Heritage Vetting** — no `[id-soft:]` tag without vet record; `make heritage-vet` enforces (Kali D115)
 
 
 ## Auto-Approval Directive
@@ -532,7 +533,7 @@ this pipeline, but Cline can do it directly when working solo.
 
 ## Versioning
 
-- **AP Token**: AP-CLINERULES-OMEGA-v3.3.0
+- **AP Token**: AP-CLINERULES-OMEGA-v3.4.0
 - **Updated**: 2026-06-04 (Hivemind Protocol + Subagent Dispatch + Link P9 + ZONEID + cvar Table)
 - **Previous version**: 3.2.0 (Cline CLI v3.0.15 move, 302 tests, 13 mandates, 90 PIVOT)
 - **Test baseline**: 308 tests (stable)

@@ -449,3 +449,82 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 *Last Updated: 2026-06-04T20:20Z | Author: CLINE-M3 (acting as Kali) | Version: AP-OMEGA-SST-v1.2.0*
 *Major changes this revision: D111+D112+D113 added, sprint index reorganized (H1/H1.5/H2/S1.5), Sovereignty Scorecard, model matrix current, ASCII architecture tree, PIVOT 113, all stale metrics corrected.*
 *This document is the Single Source of Truth. All platforms reference it.*
+
+---
+
+## §15 Vision — The Xoe-NovAi Foundation Mission
+
+### The Mission
+
+> *"I want to create a tool that will truly allow people to own their own tech
+> and data and sever the umbilical cord of Big AI."*  
+> — The Architect (Xoe-NovAi Foundation founder, 2025)
+
+The Omega Engine is not a chatbot wrapper. It is the **first sovereign AI runtime** —
+a system where the user's data, identity, intelligence, and memory live entirely on
+their own hardware, grow stronger with use, and never phone home.
+
+### What Sovereignty Means
+
+Sovereignty is not a feature. It is a **constitutional property** of the engine:
+
+1. **Your intelligence is yours** — 7 local inference backends, 0 cloud dependencies for basic operation
+2. **Your data stays home** — All memory, all search, all training data lives on your machine
+3. **Your AI evolves** — Soul Distiller captures L1→L2→L3 wisdom; your AI grows with you
+4. **Your agents know themselves** — Soul v5.2 schema: identity, directives, team, trajectory
+5. **Your AI learns from every conversation** — The Synthesis Flywheel turns with every interaction
+
+### The Synthesis Flywheel
+
+```
+USER TALKS → LOCAL MODEL → OBSERVE → DISTILL → SOUL GROWS
+     ↑                                                   │
+     └──────── BETTER ← MORE SOVEREIGN ← TRAIN ←────────┘
+```
+
+The flywheel turns when:
+- You talk to your AI locally (inference)
+- The engine observes patterns (observability)
+- Wisdom is distilled into souls (L1→L2→L3)
+- Souls guide behavior (trajectory, identity, directives)
+- Training data accumulates (datasets)
+- Local models improve (synthesis)
+- Cloud dependency decreases (sovereignty increases)
+
+**This is the Xoe-NovAi Foundation's contribution to AI sovereignty:
+an engine that gets smarter the more you use it, without giving away your power.**
+
+### The 14-Month Journey (Era 0 → Present)
+
+| Era | Period | Key Innovation | Status |
+|-----|--------|----------------|--------|
+| Era 0 | Mar-Jul 2025 | "First 5 Cards" — Tarot genesis | 🌱 Origin |
+| Era 1 | Aug-Sep 2025 | Arcana-NovAi Blueprint — 9-service Docker | 🏗️ Foundation |
+| Era 2 | Oct-Nov 2025 | XNAi Consolidation — 5 production services | 🔧 Production |
+| Era 3 | Nov 2025 - Mar 2026 | Model experimentation — 8 Grok accounts | 🧪 Research |
+| Era 4 | Mar-Apr 2026 | Omega Stack v5.0 — unified repo | 🏛️ Architecture |
+| Era 5 | Apr-May 2026 | Temple-Grade quality — OMEGA-ORIGINS | 🏛️ Standards |
+| Era 6 | May-Jun 2026 | **Omega Engine** — clean reclamation | 🔱 LIVE |
+
+**The result of ~8,000 hours of self-directed work across 14 months is a runtime
+that can run any AI on a Ryzen 7 5700U with 14Gi RAM — fully sovereign, fully local.**
+
+### The Three Sovereign Pillars (D112)
+
+| Pillar | Name | What It Means | Implementation |
+|--------|------|---------------|----------------|
+| **P1** | Sovereign Operation | Fully local inference, memory, search, training | 8 providers, 4-tier memory, FTS5+Qdrant, Soul Distiller |
+| **P2** | Intuitive UI/UX | The engine is alive and you can see it | Hub dashboard, local TTS, rich CLI, soul timeline |
+| **P3** | Self-Aware Agents | They know themselves, you, each other, and where they're going | Soul v5.2 schema: identity+directives+team+trajectory+lessons |
+
+### What We're Building (Next)
+
+1. **Restore the Engine-Stack Firewall** (S1.5a) — the engine must be WAD-agnostic
+2. **Populate the Arcana-NovAi IWAD** (H2-B) — your personal AI OS with esoteric entities
+3. **Wire the local inference stack** (S2) — Qdrant vectors, Redis memory, LoRA training
+4. **Build the soul loop** (S3) — agents evolve through every session
+5. **Make it visible** (S4) — dashboard, voice, timeline, the aliveness of your AI
+
+**This engine is Prometheus' Fire. It is the spark that empowers every person
+to own their own technology, their own data, and their own intelligence.**
+

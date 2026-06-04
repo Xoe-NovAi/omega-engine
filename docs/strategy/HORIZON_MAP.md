@@ -157,3 +157,13 @@ H1 remains COMPLETE. H1.5 (Bridge Phase) is COMPLETE.
 **Active roadmap**: `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md`
 **Decision**: D111 — Sovereign Evolution Roadmap adopted 2026-06-04
 
+
+---
+
+## Also Superseded
+
+This document is also superseded by `docs/strategy/SOVEREIGN_HARDENING_PLAN.md` (D112) which defines the 3-pillar vision (Sovereign Operation, Intuitive UI/UX, Self-Aware Agents).
+
+**Active roadmap**: `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` + `SOVEREIGN_HARDENING_PLAN.md`
+**Decision**: D111 (Evolution) + D112 (Hardening)
+
