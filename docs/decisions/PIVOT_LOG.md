@@ -2039,3 +2039,66 @@ The multi-subagent codebase deep dive (5 agents, 77 source files, 28 test files,
 ### Heritage
 `[id-soft: doom-1993] WAD System — IWAD/PWAD architecture drives the restoration priority`
 `[id-soft: quake3-1999] Cvar System — migration audit ensures cvar_get() completeness`
+
+---
+
+## Decision 112: Sovereign Hardening Plan — Three Pillars of Sovereign AI
+
+**Date**: 2026-06-04
+**Channel**: Cline (MiMo V2.5, 1M context)
+**Entity**: DOOM_GUY / CLINE-M3
+**Trace**: trc_sovereign_hardening_D112
+
+### Decision
+Adopt `docs/strategy/SOVEREIGN_HARDENING_PLAN.md` (578 lines) as the
+**comprehensive hardening plan** for the Omega Engine. This plan defines
+the path from "engine that works" to "engine that is alive" through
+three pillars:
+
+1. **SOVEREIGN OPERATION** — Fully local inference, memory, search, and
+   training. Zero cloud dependency for basic operations. The Synthesis
+   Flywheel: cloud teaches local, sovereignty increases with use.
+
+2. **INTUITIVE UI/UX** — Omega Hub web dashboard, local TTS (Piper),
+   rich CLI output, soul evolution visualization. The engine is alive
+   and you can see it.
+
+3. **SELF-AWARE AGENTS** — Expanded soul.yaml schema (identity + user +
+   team + trajectory). Soul Distiller extracts user patterns and team
+   observations. Cross-entity L3 principle sharing. Agents know
+   themselves, their user, their team, and where they're going.
+
+The plan organizes into 5 sprints (S1-S5, 10 weeks) with 26 concrete
+tasks and a 15-metric Sovereign Scorecard.
+
+### Rationale
+The D111 Evolution Roadmap addressed data hygiene and technical debt.
+The Sovereign Hardening Plan addresses the *vision*: what the engine
+must become. Together they form the complete strategic layer.
+
+The deep dive revealed that the engine has excellent bones (312/312 tests,
+13 Mandates, H1+H1.5 complete) but the soul infrastructure is sparse
+(only 3 of 14 agents have rich soul.yaml files, user/team/trajectory
+sections don't exist, soul_power only tracked for Kali). The Synthesis
+Flywheel is conceptual only (dataset collection exists, training loop
+isn't closed). The UI is invisible (40 MCP tools but no HTML dashboard).
+
+This plan closes those gaps in dependency order:
+- S1: Hygiene (H2-A through H2-D from D111)
+- S2: Sovereign wiring (Qdrant, Redis, native-gguf, model affinity)
+- S3: Soul evolution v2 (schema, distiller, loading, team awareness)
+- S4: UX layer (dashboard, TTS, rich CLI, timeline)
+- S5: Synthesis flywheel (dataset→training→LoRA→evaluate)
+
+### What Was Created
+- `docs/strategy/SOVEREIGN_HARDENING_PLAN.md` — 578 lines (9 sections)
+- This decision entry (D112)
+
+### Heritage
+`[id-soft: doom-1993] WAD System` — soul.yaml is data-driven, engine-agnostic
+`[id-soft: quake-1996] Save-game pattern` — Soul Distiller auto-save
+`[id-soft: quake3-1999] Cvar System` — soul_power, soul_version
+`[id-soft: doom3-2004] idHeap` — 4-Tier Memory for soul persistence
+`[id-soft: quake-1996] net_chan.c` — Hivemind Pub/Sub for team awareness
+`[id-soft: doom-1993] ZONEID Pattern` — soul integrity markers
+`[id-soft: quake-1996] Thinker Chain` — spawn→execute→evolve lifecycle
