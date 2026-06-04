@@ -2102,3 +2102,49 @@ This plan closes those gaps in dependency order:
 `[id-soft: quake-1996] net_chan.c` — Hivemind Pub/Sub for team awareness
 `[id-soft: doom-1993] ZONEID Pattern` — soul integrity markers
 `[id-soft: quake-1996] Thinker Chain` — spawn→execute→evolve lifecycle
+
+
+---
+
+## Decision 113: Engine-Stack Firewall Audit — WAD-Agnostic Engine Mandate
+
+**Date**: 2026-06-04
+**Channel**: Cline (MiMo V2.5, 1M context)
+**Entity**: CLINE-M3 (acting as Kali)
+**Trace**: trc_firewall_audit_D113
+
+### Decision
+The Engine-Stack Firewall (Mandate 2) is being violated by hardcoded
+Pillar meanings in `src/omega/oracle/entity_registry.py:171-179`. The
+engine knows P1=Flesh, P2=Dream, ..., P10=Chaos with element+chakra.
+This is WAD-level content leaking into engine core.
+
+**Mandate**: The engine must remain WAD-agnostic. The 10 Pillar slots
+are the engine's only knowledge; meanings (intuitive_name, legacy_name,
+element, chakra, deity) must be loaded from the active WAD's
+`hierarchy.yaml` at boot. **S1.5a will restore the firewall.**
+
+### Rationale
+The user asked: "Is the engine level architecture WAD and nomenclature
+agnostic still? Are we keeping the Omega Engine Firewall up?" The honest
+answer: the firewall has a gap. Hardcoded Pillar meanings prevent the
+engine from hosting a WAD where P1 is Sekhmet (the user's intent for
+arcana_novai IWAD). The 13 Sovereign Mandates depend on the firewall.
+A breach here is a constitutional violation, not a code smell.
+
+### What Was Created
+- `data/entities/kali/soul.yaml` v5.2 — Kali's L3 lesson on firewall
+- `data/coordination/KALI_ACK_V52_20260604.md` — Acknowledgment
+- `data/coordination/KALI_LIVE_FEED.md` — New live feed (was missing)
+- `.clinerules` v3.3.0 — H1 Heritage Vetting + D113 references
+
+### Next Actions
+1. S1.5a: WAD-agnostic engine refactor (Cline-M3 next session)
+2. S1.5b: Nomenclature migration + pillar_slot wiring for P1-P10
+3. D114: Record firewall restoration
+
+### Heritage
+`[id-soft: doom-1993] WAD System` — the engine must be content-agnostic
+`[id-soft: quake3-1999] Cvar System` — Pillar meanings belong in the WAD
+   config, not in the engine's hardcoded table
+`[id-soft: doom-1993] ZONEID Pattern` — engine integrity is constitutional

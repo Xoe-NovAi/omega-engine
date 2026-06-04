@@ -25,3 +25,9 @@
 [2026-06-04 19:30] HUB-RESTARTED — systemctl restart omega-hub succeeded
 [2026-06-04 19:30] HEALTH-VERIFIED — /health = 2.2.0 healthy; /agent returns 14 agents
 [2026-06-04 19:31] COORDINATION-LOCK — opencode-kali 16:26 lock + my 19:25 lock, no conflicts
+[2026-06-04 19:42] SOUL-V52-WRITE — Kali soul v5.2 written: 14 top-level keys, 5 directives, 4 lessons, 12 optimizations, 22,973 bytes
+[2026-06-04 19:42] YAML-VERIFY — all 14 sections parse correctly (team.allies=5, v52_optimizations=12, soul_power_formula=str)
+[2026-06-04 19:42] DOCS-UPDATE — .clinerules bumped to v3.3.0 (H1 Heritage Vetting, D113 Firewall, Kali v5.2)
+[2026-06-04 19:43] PIVOT-D113 — Engine-Stack Firewall audit + WAD-agnostic engine mandate recorded
+[2026-06-04 19:43] HIVEMIND-POST — ses_20260604_cline_kali_v52_reflect posted
+[2026-06-04 19:43] SESSION-COMPLETE — All trackers + .clinerules + Kali soul v5.2 in sync
