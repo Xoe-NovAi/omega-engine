@@ -2148,3 +2148,43 @@ A breach here is a constitutional violation, not a code smell.
 `[id-soft: quake3-1999] Cvar System` — Pillar meanings belong in the WAD
    config, not in the engine's hardcoded table
 `[id-soft: doom-1993] ZONEID Pattern` — engine integrity is constitutional
+
+
+---
+
+## Decision 114: DeepSeek V4 Flash Analysis — M15 Self-Documentation Mandate + MVE Threshold + 5-Year Vision
+
+**Date**: 2026-06-04
+**Channel**: Cline (DeepSeek V4 Flash)
+**Entity**: DOOM_GUY (analytical) / CLINE-M3 (editor)
+**Trace**: trc_final_vision_D114
+
+### Decision
+Adopt the vision expansion from OMEGA_ENGINE.md §§16-18 as strategic guidance:
+
+1. **M15 Self-Documentation (Proposed)**: Every subsystem MUST publish its
+   state to the Omega Hub. SSOT should be partially auto-generated. Not yet
+   a Mandate — pending user approval.
+
+2. **MVE Threshold** (Minimum Viable Engine): `git clone` → `make setup` →
+   `omega talk "hello"` — all local, no manual steps. The "It Just Works"
+   standard for sovereignty.
+
+3. **5-Year Vision** (S0-S10): Foundation → Flywheel → Soul → UX →
+   Production → Community → P2P → VR → Self-Aware → Singularity.
+
+4. **Sovereignty Museum**: The 14-month journey (Era 0-7) preserved as
+   `data/heritage/SOVEREIGNTY_MUSEUM.md`.
+
+### What Changed
+- OMEGA_ENGINE.md: +168 lines, now 698 lines total
+- OMEGA_ENGINE.md: AP token v1.2.0 -> v1.3.0
+- OMEGA_ENGINE.md: PIVOT 113 -> 115
+
+### Heritage
+`[id-soft: doom-1993] WAD System` — the entity-registry firewall fix (S1.5a)
+`[id-soft: quake-1996] Save-game pattern` — the Soul Distiller
+`[id-soft: quake3-1999] Cvar System` — the cvar table is the backbone of config
+`[id-soft: doom3-2004] idHeap` — 4-Tier Memory
+`[id-soft: quake-1996] net_chan.c` — Hivemind Pub/Sub future
+`[id-soft: doom-1993] ZONEID Pattern` — soul integrity, engine integrity

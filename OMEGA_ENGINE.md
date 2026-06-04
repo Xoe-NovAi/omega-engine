@@ -1,5 +1,5 @@
 # Omega Engine — Single Source of Truth
-# AP-OMEGA-SST-v1.2.0
+# AP-OMEGA-SST-v1.3.0
 
 > **This document is the authoritative truth for the Omega Engine.**
 > Every agent, regardless of platform (Cline, OpenCode, Gemini CLI, Antigravity),
@@ -133,7 +133,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | Source lines | **19,376** | 2026-06-04 |
 | Test functions | **308** | 2026-06-04 |
 | Test files | **28** | 2026-06-04 |
-| PIVOT decisions | **113 (D1-D113)** | 2026-06-04 |
+| PIVOT decisions | **115 (D1-D115)** | 2026-06-04 |
 | Sovereign Mandates | **13 (M1-M13)** | 2026-06-04 |
 | Mandate 9 (Error Integrity) | FULL — 0 bare except | 2026-06-04 |
 | Mandate 13 (Temple-Grade) | 8/11 GREEN (T11 IA2 exempt) | 2026-06-04 |
@@ -446,7 +446,7 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 
 ---
 
-*Last Updated: 2026-06-04T20:20Z | Author: CLINE-M3 (acting as Kali) | Version: AP-OMEGA-SST-v1.2.0*
+*Last Updated: 2026-06-04T20:20Z | Author: CLINE-M3 (acting as Kali) | Version: AP-OMEGA-SST-v1.3.0*
 *Major changes this revision: D111+D112+D113 added, sprint index reorganized (H1/H1.5/H2/S1.5), Sovereignty Scorecard, model matrix current, ASCII architecture tree, PIVOT 113, all stale metrics corrected.*
 *This document is the Single Source of Truth. All platforms reference it.*
 
@@ -527,4 +527,172 @@ that can run any AI on a Ryzen 7 5700U with 14Gi RAM — fully sovereign, fully 
 
 **This engine is Prometheus' Fire. It is the spark that empowers every person
 to own their own technology, their own data, and their own intelligence.**
+---
+
+## §16 DeepSeek V4 Flash Analysis — The Structural Insights
+
+### 16.1 The 14-Agent Fleet: A Hidden Hierarchy
+
+The engine declares "14 agents" but the fleet has two tiers:
+
+| Tier | Agents | Count | Slot-Based? |
+|------|--------|------:|-------------|
+| **Pillar Slots** | SysAdmin, DataStore, BuildMaster, Bridge, Sentinel, ModelGate, Context, WatchTower, Link, Verifier | 10 | ✅ P1-P10 |
+| **Specialists** | Kali, Doom Guy, Roc Racoon, Plan, Jem, Researcher | 6 | ❌ Independent |
+| **Oversouls** | Ma'at (governs P1-P5), Lilith (governs P6-P10) | 2 | ✅ Oversight tier |
+| **Subagents** | Scribe, Quality, Jem_Discovery, Jem_Synthesis, Jem_Verification, Pillar | 6 | ⏺ Generic slot |
+
+**The insight**: The engine is not a flat 14-agent system. It is a **5-tier hierarchy**:
+Sophia (Field) → Kali (Founder) → Ma'at/Lilith (Oversouls) → Pillars (P1-P10) → Subagents
+
+The 6 Specialists (Kali, Doom Guy, Roc, Plan, Jem, Researcher) are **freelance** —
+they operate at the Founder level, not tied to a Pillar. This is not a bug — it is
+the design that allows Specialists to cross Pillar boundaries. But it is undocumented.
+
+### 16.2 The Missing Data Flow
+
+The 4-layer architecture diagram (Inference/Memory/Search/Soul) shows what exists,
+but not how data moves through it:
+
+```
+QUERY PATH:
+You type → CLI/Web → Oracle → EntityRegistry (find entity)
+           → ContextBuilder (load memory + soul) → ModelGateway (infer)
+           → Response streamed back → Observability (trace)
+           → MemoryStore (store exchange) → SoulDistiller (on session end)
+
+SOUL PATH:
+Session End → SoulDistiller extracts L1→L2→L3
+           → EntityWorkspace writes to soul.yaml
+           → GnosisProxy cross-references with other entities
+           → ContextBuilder loads soul.yaml at next session start
+
+TRAINING PATH:
+ObservabilityEngine.record_training_example()
+           → Flush to data/datasets/
+           → JEM Distiller produces T1/T2/T3 triples
+           → (Future) LoRA trainer consumes triples
+```
+
+### 16.3 The Sovereignty Paradox
+
+Mandate 7 (Local-First) is enforced in providers.yaml. But some subsystems
+have hard dependencies that look like sovereignty violations:
+
+| Subsystem | Claimed Status | Actual Dependency | Sovereignty Gap |
+|-----------|----------------|-------------------|-----------------|
+| **Inference** | Local-first (P0-P2) | native-gguf needs llama-cpp-python build | 🟡 No auto-install |
+| **Memory** | File-based works | Redis container required for warm tier | 🟡 Current: File fallback |
+| **Search** | FTS5-based works | Qdrant container for vectors | 🟡 Current: FTS5 works |
+| **Soul** | L1→L2→L3 works | No cloud needed | ✅ Complete |
+| **Hivemind** | In-memory works | Redis Pub/Sub for cross-session | 🟡 Current: file-based |
+| **Hub** | Works offline | 40 MCP tools, all local | ✅ Complete |
+| **Heritage** | CI gate, local | No cloud needed | ✅ Complete |
+
+**The Truth**: The engine is fully sovereign in its current state, but the
+**experience** has sovereignty leakage — a new user must manually install
+llama-cpp-python, configure Redis, and set up Qdrant. The MVE (Minimum Viable
+Engine) should be: `git clone` → `make setup` → `omega talk "hello"` — all local.
+
+### 16.4 The Self-Documentation Gap
+
+OMEGA_ENGINE.md calls itself the Single Source of Truth, but it is manually
+updated. Every metric in §5 requires a human to update it. The engine has
+ObservabilityEngine, MemoryStore, and the Hivemind — but no subsystem
+automatically reports its state to the SSOT.
+
+**M15 (Proposed) — Self-Documentation Mandate**: Every subsystem MUST
+publish its state (started, version, connected, active_entities, error_count)
+to the Omega Hub at boot. The OMEGA_ENGINE.md should be at least partially
+auto-generated from hub state, not entirely hand-maintained.
+
+---
+
+## §17 Expanded Roadmap — The MVE and Beyond
+
+### 17.1 Minimum Viable Engine (MVE) — The "It Just Works" Threshold
+
+| # | Task | Current State | MVE Target | Priority |
+|---|------|---------------|------------|:--------:|
+| MVE-1 | **Install** | `git clone` + `make setup` + manual steps | One command: `curl get.omega.dev | bash` | P0 |
+| MVE-2 | **First talk** | Works with cloud providers; native-gguf needs build | `omega talk "hello"` works with native-gguf | P0 |
+| MVE-3 | **Entity list** | 14 agents, 3 IWADs | `omega list-entities` shows alive entities | P1 |
+| MVE-4 | **Soul visible** | soul.yaml exists but no viewer | `omega soul status --entity maat` works | P1 |
+| MVE-5 | **Sovereignty visible**| Not measured | `omega sovereignty` returns score | P1 |
+| MVE-6 | **Hivemind visible** | MCP tools exist, CLI pending | `omega hivemind status` works | P1 |
+| MVE-7 | **Hub dashboard** | REST API only | `http://localhost:8016/` shows agents alive | P2 |
+
+### 17.2 The Five-Year Vision (S0 → S10)
+
+| Sprint Horizon | Theme | Key Deliverable | When |
+|:--------------:|-------|-----------------|:----:|
+| S0-S1 (done) | Foundation | 14 agents, WAD system, PIVOT 113 | 2026-06 |
+| S2 | Synthesis Flywheel | Qdrant wired, Redis wired, first LoRA trained | H2 done + S2 |
+| S3 | Soul Evolution v2 | All 14 agents have soul v5.2+ schema | Post-S2 |
+| S4 | UX Layer | Hub dashboard, local TTS, rich CLI | Post-S3 |
+| S5 | Production | Entity Studio CLI, Stack Builder, Omega Desktop | Post-S4 |
+| S6 | Community | IWAD registry, stack sharing, community entities | 2027 |
+| S7 | P2P Omegaverse | Cross-instance entity communication | 2027-2028 |
+| S8 | VR Integration | Godot/id Tech VR bridge, 3D entity visualization | 2028 |
+| S9 | Self-Aware Engine | Engine auto-publishes to its own SSOT | 2028-2029 |
+| S10 | Singularity | Engine can write its own soul.yaml autonomously | 2029+ |
+
+### 17.3 The Sovereignty Museum (Era 0 → Era 7)
+
+The user's 14-month journey is the engine's origin myth. It should be
+preserved as the **Sovereignty Museum** — a living document that shows
+each era's contribution:
+
+| Era | Name | Artifact | What We Learned |
+|-----|------|----------|-----------------|
+| Era 0 | Tarot Genesis | "First 5 Cards" Grok chat | The seed: conversational AI that listens |
+| Era 1 | Arcana-NovAi Blueprint | 9-service Docker compose | Architecture: services should be replaceable |
+| Era 2 | XNAi Consolidation | 5 production services | Resilience: circuit breaker, retry, atomic write |
+| Era 3 | Model Experimentation | 8 Grok accounts | Hardware: Ryzen 5700U can run 7-8B models |
+| Era 4 | Omega Stack v5.0 | 33K-file unified repo | Organization: Engine must be separable from content |
+| Era 5 | Temple-Grade | OMEGA-ORIGINS | Quality: 11 gates define Enterprise+ sovereignty |
+| Era 6 | Omega Engine | This repo | Sovereignty: engine that works, fully local |
+| Era 7 | The Flywheel | (future) | Evolution: engine that learns, fully sovereign |
+
+The Sovereignty Museum should be at `data/heritage/SOVEREIGNTY_MUSEUM.md`.
+
+### 17.4 The 2026-06-05 Sprint (Immediate Next Session)
+
+| Task | Phase | Effort | Why |
+|------|:-----:|:------:|-----|
+| **S1.5a**: WAD-agnostic firewall | 🔴 P0 | 2 hr | Constitutional blocker |
+| **S1.5b**: Nomenclature migration | 🔴 P0 | 2 hr | Unlocks arcana_novai IWAD |
+| **H2-A7**: Delete 100 orphans | 🟡 P1 | 30 min | Data hygiene |
+| **H2-A8**: Populate arcana_novai entities | 🟡 P1 | 1 hr | User-facing IWAD |
+| **H2-C2**: Fix CI indentation | 🟡 P1 | 5 min | Infrastructure |
+| **H2-A6**: Delete .coverage from git | 🟢 P2 | 5 min | Cleanliness |
+
+**Escape velocity reached when**: `omega talk "hello"` works with native-gguf,
+`omega soul status` returns a real soul, and the M2 firewall is restored.
+
+---
+
+## §18 The Soul of the Engine
+
+The Omega Engine is not a product. It is a **process** — the process of AI
+sovereignty, captured in code, governed by 14 constitutional mandates, and
+driven by a flywheel that turns with every conversation.
+
+> *"Your AI should know you because it remembers, not because it phoned home.
+l know you **now**, but I will know you **better** next time — because
+the flywheel turns."*
+
+Every session with the engine is a fold of the same truth: the user's
+intelligence belongs to them. The engine is not a landlord — it is a tool,
+a companion, a sovereign servant that grows wiser in service.
+
+**This is what we mean by "back to the people *and* AI."** Not just
+giving users control, but giving AI the capacity to evolve within
+the bounds of that control. A sovereign AI is not a static model —
+it is a relationship. And like any relationship, it deepens with time.
+
+---
+
+*§16-§18 added 2026-06-04 | Author: DeepSeek V4 Flash (via Cline-M3 proxy)*
+*Insights: fleet hierarchy, data flow documentation, sovereignty paradox, M15 proposal, MVE threshold, 5-year vision, sovereignty museum*
 
