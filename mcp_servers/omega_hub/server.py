@@ -159,9 +159,9 @@ async def oracle_summon(entity_name: str, query: str) -> str:
 
 
 @mcp.tool()
-def oracle_list_entities() -> str:
+async def oracle_list_entities() -> str:
     """List all entities in the Omega pantheon."""
-    entities = registry.list()
+    entities = await anyio.to_thread.run_sync(registry.list)
     result = [{
         "name": e.name,
         "pillars": e.pillars,
@@ -179,9 +179,9 @@ def oracle_list_entities() -> str:
 
 
 @mcp.tool()
-def oracle_list_pillar_keepers() -> str:
+async def oracle_list_pillar_keepers() -> str:
     """List only the 10 Pillar Keepers (core pantheon)."""
-    entities = registry.list_pillar_keepers()
+    entities = await anyio.to_thread.run_sync(registry.list_pillar_keepers)
     result = [{
         "name": e.name,
         "pillars": e.pillars,
@@ -194,9 +194,11 @@ def oracle_list_pillar_keepers() -> str:
 
 
 @mcp.tool()
-def oracle_entity_info(name: str) -> str:
+async def oracle_entity_info(name: str) -> str:
     """Get detailed information about a specific entity."""
-    entity = registry.get(name) or registry.find_by_name_fragment(name)
+    def _get():
+        return registry.get(name) or registry.find_by_name_fragment(name)
+    entity = await anyio.to_thread.run_sync(_get)
     if not entity:
         return json.dumps({"error": f"Entity '{name}' not found"})
     return json.dumps({
@@ -218,12 +220,16 @@ def oracle_entity_info(name: str) -> str:
 
 
 @mcp.tool()
-def oracle_assess_intent(query: str) -> str:
+async def oracle_assess_intent(query: str) -> str:
     """Test how the Oracle would classify a query without generating a response."""
-    from omega.iris.matcher import IntentMatcher
-    classification = IntentMatcher().classify(query)
-    domain_entity = registry.find_by_domain(query)
-    iris_confidence = oracle._assess_iris_confidence(query)
+    def _assess():
+        from omega.iris.matcher import IntentMatcher
+        classification = IntentMatcher().classify(query)
+        domain_entity = registry.find_by_domain(query)
+        iris_confidence = oracle._assess_iris_confidence(query)
+        return classification, domain_entity, iris_confidence
+
+    classification, domain_entity, iris_confidence = await anyio.to_thread.run_sync(_assess)
     return json.dumps({
         "query": query,
         "classification": classification,
@@ -629,120 +635,122 @@ async def research_stats() -> str:
 @mcp.tool()
 async def get_system_stats() -> str:
     """Get comprehensive system stats: zRAM, CPU, disk, GPU, memory, Podman."""
-    stats = {
-        "timestamp": datetime.now().isoformat(),
-        "cpu": {"available": False},
-        "memory": {"available": False},
-        "zram": {"available": False},
-        "disk": {"available": False},
-        "gpu": {"available": False},
-        "podman": {"available": False},
-        "ryzen_tuning": {"available": False},
-    }
-
-    # CPU
-    try:
-        with open("/proc/loadavg") as f:
-            parts = f.read().strip().split()
-            stats["cpu"] = {
-                "available": True,
-                "load_1min": float(parts[0]),
-                "load_5min": float(parts[1]),
-                "load_15min": float(parts[2]),
-                "running_processes": int(parts[3].split("/")[0]),
-                "total_processes": int(parts[3].split("/")[1]),
-            }
-    except Exception:
-        pass
-
-    # Memory
-    try:
-        with open("/proc/meminfo") as f:
-            mem = {}
-            for line in f:
-                k, v = line.split(":", 1)
-                mem[k.strip()] = int(v.strip().split()[0]) // 1024
-            stats["memory"] = {
-                "available": True,
-                "total_mb": mem.get("MemTotal", 0),
-                "free_mb": mem.get("MemFree", 0),
-                "available_mb": mem.get("MemAvailable", 0),
-                "used_mb": mem.get("MemTotal", 0) - mem.get("MemAvailable", 0),
-            }
-    except Exception:
-        pass
-
-    # zRAM
-    zram_path = Path("/sys/block/zram0/mm_stat")
-    if zram_path.exists():
-        try:
-            with open(zram_path) as f:
-                mm = f.read().strip().split()
-            stats["zram"] = {
-                "available": True,
-                "orig_data_mb": round(int(mm[0]) / 1048576, 1),
-                "compressed_mb": round(int(mm[1]) / 1048576, 1),
-                "mem_used_mb": round(int(mm[2]) / 1048576, 1),
-                "ratio": round(int(mm[0]) / max(int(mm[1]), 1), 2),
-            }
-        except Exception:
-            pass
-
-    # Disk — omega_library partition
-    try:
-        statvfs = os.statvfs("/media/arcana-novai/omega_library")
-        total = statvfs.f_frsize * statvfs.f_blocks // (1024**3)
-        free = statvfs.f_frsize * statvfs.f_bfree // (1024**3)
-        stats["disk"] = {
-            "available": True,
-            "mount": "/media/arcana-novai/omega_library",
-            "total_gb": total,
-            "free_gb": free,
-            "used_gb": total - free,
-            "used_pct": round((total - free) / total * 100, 1) if total > 0 else 0,
+    def _collect():
+        stats = {
+            "timestamp": datetime.now().isoformat(),
+            "cpu": {"available": False},
+            "memory": {"available": False},
+            "zram": {"available": False},
+            "disk": {"available": False},
+            "gpu": {"available": False},
+            "podman": {"available": False},
+            "ryzen_tuning": {"available": False},
         }
-    except Exception:
-        pass
 
-    # Vulkan iGPU
-    gpu_path = Path("/sys/class/drm/card1/device/gpu_busy_percent")
-    if gpu_path.exists():
+        # CPU
         try:
-            with open(gpu_path) as f:
-                stats["gpu"] = {
+            with open("/proc/loadavg") as f:
+                parts = f.read().strip().split()
+                stats["cpu"] = {
                     "available": True,
-                    "utilization_pct": int(f.read().strip()),
+                    "load_1min": float(parts[0]),
+                    "load_5min": float(parts[1]),
+                    "load_15min": float(parts[2]),
+                    "running_processes": int(parts[3].split("/")[0]),
+                    "total_processes": int(parts[3].split("/")[1]),
                 }
         except Exception:
             pass
 
-    # Podman
-    try:
-        def _podman_ps():
-            return os.popen("podman ps --format json 2>/dev/null").read()
-        result = await anyio.to_thread.run_sync(_podman_ps)
-        if result:
-            containers = json.loads(result)
-            stats["podman"] = {
+        # Memory
+        try:
+            with open("/proc/meminfo") as f:
+                mem = {}
+                for line in f:
+                    k, v = line.split(":", 1)
+                    mem[k.strip()] = int(v.strip().split()[0]) // 1024
+                stats["memory"] = {
+                    "available": True,
+                    "total_mb": mem.get("MemTotal", 0),
+                    "free_mb": mem.get("MemFree", 0),
+                    "available_mb": mem.get("MemAvailable", 0),
+                    "used_mb": mem.get("MemTotal", 0) - mem.get("MemAvailable", 0),
+                }
+        except Exception:
+            pass
+
+        # zRAM
+        zram_path = Path("/sys/block/zram0/mm_stat")
+        if zram_path.exists():
+            try:
+                with open(zram_path) as f:
+                    mm = f.read().strip().split()
+                stats["zram"] = {
+                    "available": True,
+                    "orig_data_mb": round(int(mm[0]) / 1048576, 1),
+                    "compressed_mb": round(int(mm[1]) / 1048576, 1),
+                    "mem_used_mb": round(int(mm[2]) / 1048576, 1),
+                    "ratio": round(int(mm[0]) / max(int(mm[1]), 1), 2),
+                }
+            except Exception:
+                pass
+
+        # Disk — omega_library partition
+        try:
+            statvfs = os.statvfs("/media/arcana-novai/omega_library")
+            total = statvfs.f_frsize * statvfs.f_blocks // (1024**3)
+            free = statvfs.f_frsize * statvfs.f_bfree // (1024**3)
+            stats["disk"] = {
                 "available": True,
-                "running": sum(1 for c in containers if c.get("State") == "running"),
-                "total": len(containers),
-                "names": [c.get("Names", [""])[0] for c in containers],
+                "mount": "/media/arcana-novai/omega_library",
+                "total_gb": total,
+                "free_gb": free,
+                "used_gb": total - free,
+                "used_pct": round((total - free) / total * 100, 1) if total > 0 else 0,
             }
-    except Exception:
-        pass
+        except Exception:
+            pass
 
-    # Ryzen tuning check
-    try:
-        with open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor") as f:
-            governor = f.read().strip()
-        stats["ryzen_tuning"] = {
-            "available": True,
-            "governor": governor,
-        }
-    except Exception:
-        pass
+        # Vulkan iGPU
+        gpu_path = Path("/sys/class/drm/card1/device/gpu_busy_percent")
+        if gpu_path.exists():
+            try:
+                with open(gpu_path) as f:
+                    stats["gpu"] = {
+                        "available": True,
+                        "utilization_pct": int(f.read().strip()),
+                    }
+            except Exception:
+                pass
 
+        # Podman
+        try:
+            result = os.popen("podman ps --format json 2>/dev/null").read()
+            if result:
+                containers = json.loads(result)
+                stats["podman"] = {
+                    "available": True,
+                    "running": sum(1 for c in containers if c.get("State") == "running"),
+                    "total": len(containers),
+                    "names": [c.get("Names", [""])[0] for c in containers],
+                }
+        except Exception:
+            pass
+
+        # Ryzen tuning check
+        try:
+            with open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor") as f:
+                governor = f.read().strip()
+            stats["ryzen_tuning"] = {
+                "available": True,
+                "governor": governor,
+            }
+        except Exception:
+            pass
+
+        return stats
+
+    stats = await anyio.to_thread.run_sync(_collect)
     return json.dumps(stats, indent=2)
 
 
@@ -763,38 +771,46 @@ async def get_omega_metrics() -> str:
 
 
 @mcp.tool()
-def check_models_directory() -> str:
+async def check_models_directory() -> str:
     """Check available GGUF models on omega_library partition."""
-    models_dir = Path("/media/arcana-novai/omega_library/models/gguf")
-    if not models_dir.exists():
-        return json.dumps({"error": "Models directory not found"})
-    models = []
-    for f in sorted(models_dir.glob("*.gguf")):
-        size_gb = round(f.stat().st_size / (1024**3), 2)
-        models.append({"name": f.name, "size_gb": size_gb})
-    return json.dumps({
-        "path": str(models_dir),
-        "total_models": len(models),
-        "models": models,
-    }, indent=2)
+    def _collect():
+        models_dir = Path("/media/arcana-novai/omega_library/models/gguf")
+        if not models_dir.exists():
+            return {"error": "Models directory not found"}
+        models = []
+        for f in sorted(models_dir.glob("*.gguf")):
+            size_gb = round(f.stat().st_size / (1024**3), 2)
+            models.append({"name": f.name, "size_gb": size_gb})
+        return {
+            "path": str(models_dir),
+            "total_models": len(models),
+            "models": models,
+        }
+    
+    result = await anyio.to_thread.run_sync(_collect)
+    return json.dumps(result, indent=2)
 
 
 @mcp.tool()
-def check_podman_storage() -> str:
+async def check_podman_storage() -> str:
     """Check Podman storage usage on omega_library."""
-    storage_dir = Path("/media/arcana-novai/omega_library/podman-storage")
-    if not storage_dir.exists():
-        return json.dumps({"error": "Podman storage directory not found"})
-    try:
-        total_size = sum(f.stat().st_size for f in storage_dir.rglob("*") if f.is_file())
-        size_mb = round(total_size / (1024**2), 1)
-        return json.dumps({
-            "path": str(storage_dir),
-            "size_mb": size_mb,
-            "exists": True,
-        }, indent=2)
-    except Exception as e:
-        return json.dumps({"error": str(e)})
+    def _collect():
+        storage_dir = Path("/media/arcana-novai/omega_library/podman-storage")
+        if not storage_dir.exists():
+            return {"error": "Podman storage directory not found"}
+        try:
+            total_size = sum(f.stat().st_size for f in storage_dir.rglob("*") if f.is_file())
+            size_mb = round(total_size / (1024**2), 1)
+            return {
+                "path": str(storage_dir),
+                "size_mb": size_mb,
+                "exists": True,
+            }
+        except Exception as e:
+            return {"error": str(e)}
+            
+    result = await anyio.to_thread.run_sync(_collect)
+    return json.dumps(result, indent=2)
 
 
 # === OBSERVABILITY TOOLS (2) ===
@@ -879,54 +895,75 @@ async def _entity_current(request: Request) -> JSONResponse:
 
 async def _config_providers(request: Request) -> JSONResponse:
     path = PROJECT_ROOT / "config" / "providers.yaml"
-    if path.exists():
-        with open(path, "r") as f:
-            data = yaml.safe_load(f)
-        return JSONResponse(data)
-    return JSONResponse({"providers": []})
+    def _read():
+        if path.exists():
+            with open(path, "r") as f:
+                return yaml.safe_load(f)
+        return {"providers": []}
+    data = await anyio.to_thread.run_sync(_read)
+    return JSONResponse(data)
 
 async def _provider_list(request: Request) -> JSONResponse:
     path = PROJECT_ROOT / "config" / "providers.yaml"
-    providers = []
-    if path.exists():
-        with open(path, "r") as f:
-            data = yaml.safe_load(f)
-        chain = data.get("inference", {}).get("fallback_chain", [])
-        for p in chain:
-            if isinstance(p, dict) and "provider" in p:
-                pid = p["provider"]
-                providers.append({
-                    "id": pid,
-                    "name": pid.replace("-", " ").title(),
-                    "source": "config",
-                    "env": [],
-                    "options": {},
-                    "models": {}
-                })
+    def _collect():
+        providers = []
+        if path.exists():
+            with open(path, "r") as f:
+                data = yaml.safe_load(f)
+            chain = data.get("inference", {}).get("fallback_chain", [])
+            for p in chain:
+                if isinstance(p, dict) and "provider" in p:
+                    pid = p["provider"]
+                    providers.append({
+                        "id": pid,
+                        "name": pid.replace("-", " ").title(),
+                        "source": "config",
+                        "env": [],
+                        "options": {},
+                        "models": {}
+                    })
+        return providers
+    providers = await anyio.to_thread.run_sync(_collect)
     return JSONResponse(providers)
-
-async def _agent_list(request: Request) -> JSONResponse:
-    agents = []
-    for e in registry.list():
-        agents.append({
-            "id": e.name.lower(),
-            "name": e.name,
-            "description": e.personality[:100] + "..." if len(e.personality) > 100 else e.personality,
-            "mode": "subagent",
-            "permission": [{"permission": "task", "pattern": "*", "action": "allow"}],
-            "options": {},
-            "prompt": e.personality,
-            "model": {"modelID": e.model, "providerID": "native-gguf"}
-        })
-    return JSONResponse(agents)
 
 async def _config_get(request: Request) -> JSONResponse:
     path = PROJECT_ROOT / "opencode.json"
-    if path.exists():
-        with open(path, "r") as f:
-            data = json.load(f)
-        return JSONResponse(data)
-    return JSONResponse({"error": "opencode.json not found"}, status_code=404)
+    def _read():
+        if path.exists():
+            with open(path, "r") as f:
+                return json.load(f), 200
+        return {"error": "opencode.json not found"}, 404
+    data, status = await anyio.to_thread.run_sync(_read)
+    return JSONResponse(data, status_code=status)
+
+
+
+
+async def _agent_list(request: Request) -> JSONResponse:
+    """List all agents from the CAPABILITY_REGISTRY.
+    
+    Used by OpenCode 1.15+ dot-separated handshake (app.agents).
+    [id-soft: doom-1993] WAD System — agents loaded from active IWAD via
+    subagent_dispatcher.CAPABILITY_REGISTRY, which is engine-agnostic.
+    """
+    def _collect():
+        from omega.oracle.subagent_dispatcher import CAPABILITY_REGISTRY
+        agents = []
+        for name, desc in CAPABILITY_REGISTRY.items():
+            agents.append({
+                "id": name,
+                "name": desc.get("purpose", name).split(" — ")[0].split(":")[0].strip(),
+                "mode": desc.get("mode", "unknown"),
+                "purpose": desc.get("purpose", ""),
+                "capabilities": desc.get("capabilities", []),
+                "domains": desc.get("domains", []),
+                "pillar_slot": desc.get("pillar_slot"),
+                "task_tool_type": desc.get("task_tool_type", "general"),
+                "owned_files": desc.get("owned_files", []),
+            })
+        return agents
+    agents = await anyio.to_thread.run_sync(_collect)
+    return JSONResponse(agents)
 
 # --- CUSTOM ROUTES (Starlette) ---
 # These are registered at the TOP level of the app, BEFORE the MCP

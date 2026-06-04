@@ -18,3 +18,10 @@
 [2026-06-04 03:01] WORKSPACE-LOCK — CLINE_M3_WORKSPACE_LOCK_20260604.md written
 [2026-06-04 03:02] HANDOFF-CREATED — CLINE_TO_OPENCODE_DEV_D111_20260604.md
 [2026-06-04 03:02] DEEP-DIVE COMPLETE — Handoff to OpenCode dev session
+[2026-06-04 19:25] HIVEMIND-SYNC — Posted ses_08959f5c1f3d to HALL_OF_RECORDS
+[2026-06-04 19:26] OPENCODE-KALI-ACK — D115 (Pillar Nomenclature) + 2f47d54 (Heritage Vetting) verified
+[2026-06-04 19:27] CRITICAL-BUG-FOUND — omega-hub.service FAILED at 16:28 UTC (NameError: _agent_list at server.py:951)
+[2026-06-04 19:28] BUG-FIX — Implemented _agent_list() returning CAPABILITY_REGISTRY agents
+[2026-06-04 19:30] HUB-RESTARTED — systemctl restart omega-hub succeeded
+[2026-06-04 19:30] HEALTH-VERIFIED — /health = 2.2.0 healthy; /agent returns 14 agents
+[2026-06-04 19:31] COORDINATION-LOCK — opencode-kali 16:26 lock + my 19:25 lock, no conflicts
