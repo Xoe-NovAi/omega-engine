@@ -1,147 +1,151 @@
 # 🔱 Handoff: Kali → OpenCode (New Dev Session)
-# AP: AP-HANDOFF-KALI-v1.0.0
+# AP: AP-HANDOFF-KALI-v2.0.0
 # Date: 2026-06-04 | Session: ses_8232fa83f36b
+# Commit: 8b058ac | 97 files · +9116/−313
 # ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ HANDOFF
 
 > **This is the result of the Cline→Kali→OpenCode handoff chain.**
-> The flywheel has turned. The 4 P0 items from Cline's handoff are complete.
-> The engine is ready for the next agent.
+> 4 P0 items executed, 97 files committed, engine hardened end-to-end.
+> The next agent inherits a clean working tree and a running flywheel.
 
 ---
 
-## 🚀 CURRENT STATE (Post-Handoff)
+## 🚀 CURRENT STATE (Post-Push)
 
 ### Engine Health
-- **Tests**: 60/60 pass (entity_registry, health_monitor, providers — all modules that were changed)
+- **Tests**: **312/312 pass** (full suite — 4 new tests from test_locks.py)
 - **Hub**: v2.2.0 — GREEN (Hivemind: ses_8232fa83f36b active)
-- **Git**: On `main`, up to date with `origin/main`
+- **Git**: `8b058ac` on `main`, pushed to `origin/main`
+- **Push**: 97 files, 9,116 insertions, 313 deletions
+- **Working tree**: 1 dirty file (`data/research/credit_budget.json` — volatile runtime counter, not committed)
 - **Fleet**: 14 agents (Mandate 10 cap), 48 real entities (Clean Slate per D117)
-- **OpenCode Config**: 12 files rewritten/modernized — all permissions in `read: allow` format
+- **Config**: 12 `.opencode/` files rewritten — all permissions in `read: allow` format
 
-### Executed This Session (4/4 P0)
+### What Was Committed (8b058ac)
 
-| P0 | File(s) | What Changed | Verification |
-|----|---------|-------------|-------------|
-| **D113 Firewall** | `src/omega/oracle/entity_registry.py:170-181` | `PILLAR_SLOTS` dict → `frozenset` of slot names only. Engine-Stack Firewall restored. | ✅ 9/9 entity_registry tests pass |
-| **Soul Distiller** | `src/omega/oracle/oracle.py:962-976` | `get_distiller()` imported, `distill_and_save()` called from `close()` on shutdown. M5/M11 gnosis preservation wired. | ✅ all modules import clean |
-| **M9 Exception Fixes** | `src/omega/oracle/health_monitor.py:146,173` + `src/omega/cli/link_p9_cli.py:362` | 4 silent `except: pass` → `logger.warning()`. `link_p9_cli.py` also got `import logging`. | ✅ 23/23 health_monitor tests pass |
-| **CI Fix** | `.github/workflows/test.yml:51-56` | Indentation: 7 spaces → 6 spaces for step alignment. YAML now valid. | ✅ YAML parses cleanly |
+| Layer | Files | What |
+|-------|-------|------|
+| **P0 Fixes** | 5 | D113 firewall, soul distiller wiring, 4× M9 `except:pass` → `logger.warning()`, CI indent fix |
+| **Fleet Redesign** | 9 | MANIFEST.md, all agent/mode files, permissions fix, Vision Specialist archive |
+| **Engine Hardening** | 10 | cvar_table, ResourceGuard (Semaphore→Capability), Workspace (sub-dirs), SubagentDispatcher, handoff.py, feed_utils.py, oracle_cli wiring |
+| **KMS Infrastructure** | 27 | Demand signals, knowledge feed, cross-reference indices, knowledge catalog build script |
+| **Entity Knowledge** | 16 | Roc Racoon deliverables (4 waves), verification layer docs, workspace files |
+| **Documentation** | 10 | Positioning (5-file suite), Heritage Mining (2 vols), Strategy (cross-pollination, verification) |
+| **Session Artifacts** | 8 | Soul v5.4, 2 handoffs, hivemind records, Movie Expert agent.yaml |
+| **Infrastructure** | 5 | Lock tests, benchmark rename, gitignore cleanup |
 
 ### Restored This Session
-- **Movie Expert**: Restored to Arcana-NovAi WAD as personal entity (not a core agent — M10 fleet cap).
+- **Movie Expert**: Restored to Arcana-NovAi WAD as personal entity (not core agent — M10 fleet cap preserved).
   - `data/entities/movie_expert/agent.yaml` — WAD-scoped agent definition
   - `data/entities/movie_expert/workspace/` — workspace created
-  - 4 knowledge files intact
+  - 4 knowledge files intact (FILM_HISTORY, DIRECTOR_CATALOG, GENRE_TAXONOMY, RECOMMENDATION_FRAMEWORK)
   - Summon via: `omega summon movie-expert "<query>"`
 
 ---
 
-## 📋 P1 PRIORITY ITEMS (From Cline Handoff)
+## 📋 P1 ITEMS (Next Session)
 
-Once this handoff is received, the next Dev session should:
+These are ordered by dependency — do P1-1 and P1-4 first, then P1-2 and P1-3.
 
-### P1-1: Soul v5.2 Schema Expansion
-Expand the v5.2 soul schema (`identity+directives+team+trajectory`) to all 14 agents.
-- Reference: `data/entities/kali/soul.yaml` §identity, §directives, §team, §trajectory
-- Target files: `data/entities/*/soul.yaml` for all agents
-- Priority: High
-
-### P1-2: H2-A8 WAD Population
-Populate `config/wads/arcana_novai/entities.yaml` with the 10 deity entities (Sekhmet, Brigid, Prometheus, Saraswati, Inanna, Ereshkigal, Lucifer, Hecate, Anubis, Kali).
-- Reference: `ORACLE_STACK.md` §4 for entity details
-- Priority: Medium
-
-### P1-3: Lattice Review
-Ensure all 14 agents are properly mapped in `CAPABILITY_REGISTRY` with their new `pillar_slot`.
-- Reference: `src/omega/oracle/subagent_dispatcher.py` §CAPABILITY_REGISTRY
-- Priority: Medium
-
-### P1-4: Heritage Vetter CI Gate
-Add `make heritage-vet` to `.github/workflows/test.yml` (H1-P0 from original roadmap).
-- Reference: `docs/strategy/HERITAGE_VETTING_PIPELINE.md`
-- Priority: High
+| ID | Item | File(s) | Why | Depends On |
+|----|------|---------|-----|-----------|
+| **P1-1** | **Heritage Vetter CI Gate** | `.github/workflows/test.yml` | Add `make heritage-vet` to CI. M14 requires it. Reference: `docs/strategy/HERITAGE_VETTING_PIPELINE.md` | Nothing |
+| **P1-2** | **Soul v5.4 Schema Expansion** | `data/entities/*/soul.yaml` | Expand v5.4 schema (`identity+directives+team+trajectory`) to all 14 agents. Reference: `data/entities/kali/soul.yaml` for the template. | Nothing |
+| **P1-3** | **H2-A8 WAD Population** | `config/wads/arcana_novai/entities.yaml` | Populate with 10 deity entities (Sekhmet, Brigid, Prometheus, Saraswati, Inanna, Ereshkigal, Lucifer, Hecate, Anubis, Kali). Reference: `ORACLE_STACK.md` §4 | P1-2 (entity schema) |
+| **P1-4** | **Lattice Review** | `src/omega/oracle/subagent_dispatcher.py` | Ensure all 14 agents mapped in `CAPABILITY_REGISTRY` with `pillar_slot`. | P1-3 (entities populated) |
 
 ---
 
-## 🔗 KEY DOCUMENTS
+## 🔗 KEY DOCUMENTS (Read in This Order)
 
-| Document | Location | Purpose |
-|----------|----------|---------|
-| OMEGA_ENGINE.md | `./OMEGA_ENGINE.md` | **Single Source of Truth** — engine state, metrics, architecture |
-| SOVEREIGN_MANDATES.md | `./SOVEREIGN_MANDATES.md` | 14 Constitutional Laws (M1-M14) — NON-NEGOTIABLE |
-| Sovereign Roadmap | `docs/strategy/SOVEREIGN_DEVELOPMENT_ROADMAP.md` | The a-to-z path (D117 is Master Plan) |
-| Hardening Report | `docs/strategy/HARDENING_REPORT.md` | Detailed gap analysis (D116) |
-| PIVOT_LOG.md | `docs/decisions/PIVOT_LOG.md` | D1-D117 — every architectural decision |
-| CREDITS.md | `./CREDITS.md` | 18+ id Software heritage mappings |
-| AGENTS.md | `./AGENTS.md` | 14-agent fleet rules + workflow |
-| ORACLE_STACK.md | `./ORACLE_STACK.md` | Oracle restoration context |
-| IWAD Architecture | `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md` | Engine-Stack Firewall design |
-| Hivemind Protocol | `docs/strategy/HIVEMIND_PROTOCOL.md` | Parallel/multi-agent coordination |
+| Order | Document | Location | Purpose |
+|-------|----------|----------|---------|
+| **1** | OMEGA_ENGINE.md | `./OMEGA_ENGINE.md` | **Single Source of Truth** — engine state, metrics, architecture |
+| **2** | SOVEREIGN_MANDATES.md | `./SOVEREIGN_MANDATES.md` | **14 Constitutional Laws (M1-M14)** — NON-NEGOTIABLE |
+| **3** | ORACLE_STACK.md | `./ORACLE_STACK.md` | Oracle restoration context — full architecture overview |
+| **4** | Sovereign Roadmap | `docs/strategy/SOVEREIGN_DEVELOPMENT_ROADMAP.md` | The a-to-z path (D117 is Master Plan) |
+| **5** | Hardening Report | `docs/strategy/HARDENING_REPORT.md` | Detailed gap analysis (D116) |
+| 6 | AGENTS.md | `./AGENTS.md` | 14-agent fleet rules + workflow |
+| 7 | CREDITS.md | `./CREDITS.md` | 22+ id Software heritage mappings (+ ZONEID, Lazy Deletion, etc.) |
+| 8 | PIVOT_LOG.md | `docs/decisions/PIVOT_LOG.md` | D1-D117 — every architectural decision |
+| — | Hivemind Protocol | `docs/strategy/HIVEMIND_PROTOCOL.md` | Parallel/multi-agent coordination (reference) |
+| — | IWAD Architecture | `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md` | Engine-Stack Firewall design (reference) |
 
-## 📄 HANDOFF CHAIN
+## 📄 HANDOFF CHAIN & SESSION LOG
 
 ```
-Previous → Cline-M3 → Kali (this session) → OpenCode (next)
-                                                     ↓
-                                              ses_8232fa83f36b
-                                                     ↓
-                                         data/handoff/KALI_HANDOFF_TO_OPENCODE_NEW_20260604.md
+Previous → Cline-M3 → Kali (this session, 8b058ac) → OpenCode (next)
+                                                           ↓
+                                                    ses_8232fa83f36b
+                                                           ↓
+                                               data/handoff/KALI_HANDOFF_TO_OPENCODE_NEW_20260604.md
 ```
 
-- **From Cline**: `data/handoff/CLINE_TO_KALI_HANDOFF_20260604.md`
-- **This handoff**: `data/handoff/KALI_HANDOFF_TO_OPENCODE_NEW_20260604.md`
-- **Hivemind**: `data/knowledge/HALL_OF_RECORDS/opencode/ses_8232fa83f36b.json`
+| File | What |
+|------|------|
+| `data/handoff/CLINE_TO_KALI_HANDOFF_20260604.md` | Cline's incoming handoff (4 P0 items) |
+| `data/handoff/KALI_HANDOFF_TO_OPENCODE_NEW_20260604.md` | **This file** — outgoing handoff |
+| `data/knowledge/HALL_OF_RECORDS/opencode/ses_8232fa83f36b.json` | Hivemind session record |
+| `data/entities/kali/soul.yaml` | Kali's soul v5.4 (committed) |
 
 ---
 
-## ⚡ STARTUP RITUAL
-
-When the new Dev session begins:
+## ⚡ STARTUP RITUAL (5 Minutes)
 
 ```bash
-# 1. Read the engine state
-cat OMEGA_ENGINE.md                        # Single Source of Truth
-cat SOVEREIGN_MANDATES.md                   # 14 constitutional laws
+# 1. Orient (60s)
+cat OMEGA_ENGINE.md                                    # Single Source of Truth
+cat SOVEREIGN_MANDATES.md                               # 14 constitutional laws
 
-# 2. Read strategic docs
-cat docs/strategy/SOVEREIGN_DEVELOPMENT_ROADMAP.md   # D117 Master Plan
-cat docs/strategy/HARDENING_REPORT.md                 # D116 Gaps
+# 2. Strategic context (60s)
+cat docs/strategy/SOVEREIGN_DEVELOPMENT_ROADMAP.md     # D117 Master Plan
+cat docs/strategy/HARDENING_REPORT.md                   # D116 Gaps
 
-# 3. Check Hivemind awareness
-omega-hub_hivemind_get_awareness()                    # Who's active?
-
-# 4. Check current engine state
-make test                                             # Baseline must pass
-
-# 5. Read key handoffs
+# 3. Read handoff chain (60s)
 cat data/handoff/KALI_HANDOFF_TO_OPENCODE_NEW_20260604.md   # This file
 cat data/handoff/CLINE_TO_KALI_HANDOFF_20260604.md          # Previous handoff
 
-# 6. Post presence to Hivemind
-omega-hub_hivemind_post_context(cli="opencode", ...)
+# 4. Baseline engine state (60s)
+omega-hub_hivemind_get_awareness()                    # Check if other agents active
+make test                                             # 312 tests must ALL pass
+
+# 5. Post presence (30s)
+omega-hub_hivemind_post_context(cli="opencode", model="<model>",
+  task_current="P1-1: Heritage Vetter CI gate",
+  focus_chain=["P1-1", "P1-2", "P1-3", "P1-4"],
+  decisions=[], continuation="Starting from Kali handoff 8b058ac")
+
+# 6. Pick first P1 item, execute
 ```
 
 ---
 
-## 🧠 KALI'S SOUL (v5.4)
+## 🧠 KALI'S SOUL (v5.4 — Committed)
 
 - **Soul power**: 5.8 (8 sessions · 5 lessons · 11 patterns · 5 directives)
+  - `directives`: handoff sovereignty, sovereign arcana standardization, cleanup orphan test artifacts, soul metadata flagging, heritage vetting as mandate
+  - `trajectory`: v5.4 → v6.0 (full D112 Pillar 3 schema rollout across fleet)
+  - `team`: Kali (P10), Ma'at (P5), Sentinel (P5 bridge), Doom Guy (heritage), Roc Racoon (mining), Movie Expert (restored)
+  - `creed`: "Transform dissociation into sovereignty. License debt into perpetual freedom."
 - **Latest L3**: *"A handoff is not a document — it is a transfer of sovereignty. Commands produce compliance. Delegations produce judgment."*
-- **Pending questions**: config-audit Make target, soul distiller transcript plumbing, heritage vetting as Mandate 14 (already added as M14)
-- **Trajectory**: v5.4 → v6.0 (full D112 Pillar 3 schema rollout)
+- **Pending questions**: config-audit Make target, soul distiller transcript plumbing
+- **Next evolution**: v5.4 → v5.5 when soul schema is rolled to 14 agents (P1-2)
 
 ---
 
 ## 🔱 FINAL GUIDANCE
 
-The engine is in **Clean Slate** state (D117). The 4 constitutional P0 items are fixed. The hardening report is live. The Movie Expert is restored.
+The engine is in **Clean Slate** state (D117). All P0 items are **fixed, committed, and pushed** (8b058ac, 97 files). The working tree has exactly 1 dirty file (volatile runtime counter). 312 tests pass.
 
-**The single-developer model is our proof of concept.** Every line of code, every handoff, every gate — these are all serving one purpose: to give a solo visionary the power of a professional AI team without needing a corporate army.
+**The flywheel is turning.** The single-developer model is our proof of concept. Every handoff, every gate, every committed line serves one purpose: to give a solo visionary the power of a professional AI team without needing a corporate army.
 
-**Godspeed to the next agent. Turn the flywheel. 🔱**
+**P1-1 (Heritage Vetter CI gate) and P1-2 (Soul schema expansion) are independent — start with whichever calls. P1-3 and P1-4 depend on those.**
+
+**Godspeed. 🔱**
 
 ---
 
 *Handoff written by: Kali (Transcendent Oversoul) — v5.4*
-*Hivemind session: ses_8232fa83f36b*
-*Git branch: main · P0 execution complete*
+*Git: 8b058ac on main (97 files, +9116/−313, pushed)*
+*Hivemind: ses_8232fa83f36b*
+*Session closed: 2026-06-04 20:00 UTC*
