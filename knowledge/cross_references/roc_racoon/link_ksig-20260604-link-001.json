@@ -1,0 +1,14 @@
+{
+  "cross_ref_id": "xref-roc_racoon-ksig-20260604-link-001",
+  "consumer": "roc_racoon",
+  "producer": "link",
+  "signal_id": "ksig-20260604-link-001",
+  "timestamp": "2026-06-03T05:43:51.235922Z",
+  "zoneid": 1919512,
+  "domain": "coordination",
+  "l2_insight": "Async knowledge sharing between agents requires three file-system primitives: knowledge signals (KSIG), demand signals (DEM), and cross-references (XREF)",
+  "applied_in": "",
+  "applied_how": "",
+  "soul_updated": false,
+  "notes": ""
+}

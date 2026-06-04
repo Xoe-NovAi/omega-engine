@@ -38,6 +38,7 @@ from .hierarchy import SovereignHierarchy
 from ..memory_store import get_memory_store
 from ..orchestration.triage_router import TriageRouter, TriageRequest, TaskRequest, EntityContext, Constraints, SessionContext, ModelSelection
 from .health_monitor import HealthMonitor
+from .soul_distiller import get_distiller
 
 logger = logging.getLogger(__name__)
 
@@ -170,10 +171,17 @@ class Oracle:
     async def bootstrap(self) -> None:
         """Initialize the Oracle by loading WADs and other async resources."""
         if not self._wads_loaded:
+            # [id-soft: quake3-1999] Cvar System — read JSON logging flag at startup
+            # Wire structured logging once, idempotent due to _wads_loaded guard
+            from omega.cvar_table import cvar_get
+            from omega.observability import setup_json_logging
+            if cvar_get("config.observability.json_logging", True):
+                setup_json_logging("omega")
+
             # Create lock in async context to avoid Trio RuntimeError
             if self._soul_lock is None:
                 self._soul_lock = anyio.Lock()
-                
+
             # Move config loading here to avoid synchronous I/O in __init__
             try:
                 config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
@@ -953,6 +961,21 @@ class Oracle:
 
     async def close(self) -> None:
         """Gracefully shut down the Oracle and its components."""
+        # Soul Distillation (M5/M11): Auto-distill session insights on shutdown
+        # [id-soft: quake-1996] Save-game pattern — auto-save on exit
+        try:
+            transcript = f"Oracle shutdown at {datetime.now(timezone.utc).isoformat()}"
+            if self.default_entity:
+                distiller = get_distiller()
+                await anyio.to_thread.run_sync(
+                    distiller.distill_and_save,
+                    transcript,
+                    self.default_entity.name,
+                    None,
+                )
+        except Exception as e:
+            logger.warning("Soul distillation on shutdown failed (non-blocking): %s", e)
+
         if self.memory_store:
             await self.memory_store.close()
         logger.info("Oracle shutdown complete.")

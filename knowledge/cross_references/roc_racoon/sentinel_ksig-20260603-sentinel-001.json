@@ -1,0 +1,14 @@
+{
+  "cross_ref_id": "xref-roc_racoon-ksig-20260603-sentinel-001",
+  "consumer": "roc_racoon",
+  "producer": "sentinel",
+  "signal_id": "ksig-20260603-sentinel-001",
+  "timestamp": "2026-06-03T05:43:51.234956Z",
+  "zoneid": 1919512,
+  "domain": "verification_compliance",
+  "l2_insight": "Verification without criteria is theater \u2014 every condition must be precisely testable with grep, file paths, and thresholds",
+  "applied_in": "",
+  "applied_how": "",
+  "soul_updated": false,
+  "notes": ""
+}

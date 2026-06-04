@@ -1,0 +1,7 @@
+{
+  "agent": "link",
+  "updated_at": "2026-06-04T10:00:00Z",
+  "cross_references": ["xref-link-ksig-20260603-lilith-001"],
+  "total_consumed": 1,
+  "unique_producers": ["lilith"]
+}

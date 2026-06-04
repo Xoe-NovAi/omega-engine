@@ -1,0 +1,29 @@
+{
+  "demand_id": "dem-20260603-003",
+  "requester": "roc_racoon",
+  "priority": "HIGH",
+  "domain": "documentation",
+  "title": "Documentation chaos indexed but not fixed \u2014 port P0 docs now",
+  "what_needed": "DOCUMENTATION_CHAOS_TRACKER.md indexes 19+ scattered documents across 3 partitions, but none have been ported to the repo. The tracker is an index, not a fix. P0 docs (Omega Positioning Framework S-11, Lilith Persona S-03, XNAI Blueprint S-06) need to be ported NOW.",
+  "why": "An index of chaos is not order. It's a map of the problem, not the solution. P0 docs are blocking: they contain strategic decisions and entity definitions that other agents need. Every session that references scattered docs without porting them is compounding the problem.",
+  "producer_hint": "Start with S-11 (Omega Positioning Framework, 12 files, 30 min). Then S-03 (Lilith Persona JSON, 10 min). Then S-06 (XNAI Blueprint, 15 min).",
+  "artifacts_requested": [
+    "S-11 ported to docs/strategy/positioning/",
+    "S-03 ported to config/wads/arcana_novai/entities/lilith/",
+    "S-06 ported to docs/legacy/XNAI_blueprint.md",
+    "DOCUMENTATION_CHAOS_TRACKER.md updated with \u2705 PORTED status"
+  ],
+  "status": "ASSIGNED",
+  "assigned_to": "roc_racoon",
+  "fulfilled_by": null,
+  "fulfilled_signal_id": null,
+  "fulfilled_at": null,
+  "created_at": "2026-06-03T03:52:00Z",
+  "ttl_days": 7,
+  "zoneid": 1919513,
+  "tags": [
+    "documentation",
+    "porting",
+    "chaos-tracker"
+  ]
+}

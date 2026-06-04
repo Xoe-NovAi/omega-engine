@@ -2,13 +2,17 @@
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ deepseek-v4-flash ⬡ opencode ⬡ LINK-P9-CLI
 # AP: LINK-P9-CLI-v1.0.0
 #
-# CLI commands for agent handoff and delegation.
+# CLI commands for agent handoff and delegation, plus cross-pollination
+# protocol commands (check-feed, consume, demand-status).
+#
 # Standalone module — integrates into oracle_cli.py after Ma'at finishes Phase 1.
 #
 # [id-soft: doom3-2004] idEntity event system — CLI commands for event dispatch
 # [id-soft: doom-1993] ZONEID Pattern — presence integrity checks
+# [id-soft: doom-1993] ZONEID Pattern — knowledge signal validation (ZONEID_KNOWLEDGE)
 
 import json
+import logging
 import sys
 import time
 from pathlib import Path
@@ -19,6 +23,8 @@ from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
 
+logger = logging.getLogger(__name__)
+
 from omega.oracle.link_p9_runtime import LinkP9Runtime, AgentPresence
 from omega.oracle.subagent_dispatcher import (
     HandoffPacket,
@@ -27,8 +33,22 @@ from omega.oracle.subagent_dispatcher import (
     get_agent_capabilities,
     list_available_agents,
 )
+from omega.oracle.feed_utils import (
+    KNOWLEDGE_FEED_DIR,
+    DEMAND_SIGNALS_DIR,
+    CROSS_REF_DIR,
+    load_knowledge_signals,
+    load_demand_signals,
+    find_new_signals,
+    find_open_demands,
+    consume_signal,
+    write_knowledge_signal,
+    write_cross_reference,
+    transition_demand,
+    summarize_feed,
+)
 
-app = typer.Typer(help="Link P9 — Agent Handoff & Delegation")
+app = typer.Typer(help="Link P9 — Agent Handoff, Delegation & Cross-Pollination")
 console = Console()
 
 # ── Runtime singleton ────────────────────────────────────────────────────
@@ -42,6 +62,22 @@ def _get_runtime() -> LinkP9Runtime:
         _runtime = LinkP9Runtime()
         _runtime.load_state()
     return _runtime
+
+
+# ── Cross-Pollination summary helper ─────────────────────────────────────
+
+
+def _print_producer_summary() -> None:
+    """Print a summary of knowledge feed producers."""
+    signals = load_knowledge_signals()
+    producers: dict = {}
+    for sig in signals:
+        p = sig.get("producer", "unknown")
+        producers[p] = producers.get(p, 0) + 1
+    if producers:
+        console.print("\n[bold]Knowledge Feed Producers:[/bold]")
+        for p, count in sorted(producers.items()):
+            console.print(f"  {p}: {count} signal(s)")
 
 
 # ── Presence Commands ────────────────────────────────────────────────────
@@ -326,10 +362,164 @@ def archive_cmd(
                 status_style,
                 data.get("created_at", "—"),
             )
-        except Exception:
+        except Exception as e:
+            logger.warning("Skipping malformed handoff record: %s", e)
             continue
 
     console.print(table)
+
+
+# ── Cross-Pollination Commands ───────────────────────────────────────────
+# [id-soft: doom-1993] ZONEID Pattern — knowledge signal validation
+
+
+@app.command("check-feed")
+def check_feed_cmd(
+    agent: str = typer.Option("link", "--agent", "-a", help="Agent name to check feed for"),
+    consume: bool = typer.Option(False, "--consume", "-c", help="Mark unconsumed signals as consumed"),
+):
+    """Check knowledge feed and demand signals for unconsumed content."""
+    signals = load_knowledge_signals()
+    demands = load_demand_signals()
+
+    unconsumed = find_new_signals(agent, signals)
+    summary = summarize_feed(signals, demands)
+
+    if unconsumed:
+        table = Table(title=f"📡 New Knowledge Signals for {agent}", border_style="cyan")
+        table.add_column("Signal", style="cyan")
+        table.add_column("Producer", style="magenta")
+        table.add_column("Domain", style="yellow")
+        table.add_column("Priority", style="red")
+        table.add_column("Title", style="white")
+
+        for sig in unconsumed:
+            table.add_row(
+                sig.get("signal_id", "?")[:32],
+                sig.get("producer", "?"),
+                sig.get("domain", "?"),
+                sig.get("priority", "?"),
+                sig.get("title", "?")[:60],
+            )
+        console.print(table)
+
+        if consume:
+            for sig in unconsumed:
+                consume_signal(sig, agent)
+                write_knowledge_signal(sig)
+                write_cross_reference(agent, sig)
+                console.print(f"  [green]✓[/green] Consumed: {sig['signal_id'][:32]} — {sig.get('title', '?')[:50]}")
+            console.print(f"[green]Consumed {len(unconsumed)} new signals for {agent}.[/green]")
+    else:
+        console.print(f"[dim]No new knowledge signals for {agent}.[/dim]")
+
+    consumed_count = summary["total_signals"] - len(unconsumed)
+    console.print(f"  KSIGs: {summary['total_signals']} ({consumed_count} consumed, {len(unconsumed)} new)")
+    console.print(f"  DEMs: {summary['total_demands']} ({summary['open_demands']} open)\n")
+    _print_producer_summary()
+
+
+@app.command("consume")
+def consume_cmd(
+    signal_id: str = typer.Argument(..., help="Signal ID to consume"),
+    agent: str = typer.Option("link", "--agent", "-a", help="Agent consuming the signal"),
+):
+    """Manually mark a knowledge signal as consumed by an agent."""
+    signals = load_knowledge_signals()
+    target = None
+    for sig in signals:
+        if signal_id in sig.get("signal_id", ""):
+            target = sig
+            break
+
+    if target is None:
+        console.print(f"[red]Signal not found: {signal_id}[/red]")
+        raise typer.Exit(1)
+
+    if agent in target.get("consumed_by", []):
+        console.print(f"[yellow]Already consumed by {agent}.[/yellow]")
+        return
+
+    consume_signal(target, agent)
+    write_knowledge_signal(target)
+    write_cross_reference(agent, target)
+    console.print(f"[green]✓ {agent} consumed {target['signal_id']}: {target.get('title', '')}[/green]")
+
+
+@app.command("demand-status")
+def demand_status_cmd(
+    status_filter: Optional[str] = typer.Option(None, "--status", "-s", help="Filter by status"),
+):
+    """Show demand signal lifecycle status."""
+    demands = load_demand_signals()
+    if not demands:
+        console.print("[dim]No demand signals found.[/dim]")
+        return
+
+    if status_filter:
+        demands = [d for d in demands if d.get("status", "").upper() == status_filter.upper()]
+
+    table = Table(title="Demand Signal Status", border_style="yellow")
+    table.add_column("Demand ID", style="cyan")
+    table.add_column("Requester", style="magenta")
+    table.add_column("Priority", style="red")
+    table.add_column("Status", style="green")
+    table.add_column("Assigned To", style="blue")
+    table.add_column("Title", style="white")
+
+    for d in demands:
+        status_style = {
+            "OPEN": "[yellow]OPEN[/yellow]",
+            "ASSIGNED": "[blue]ASSIGNED[/blue]",
+            "IN_PROGRESS": "[cyan]IN_PROGRESS[/cyan]",
+            "FULFILLED": "[green]FULFILLED[/green]",
+            "FAILED": "[red]FAILED[/red]",
+            "EXPIRED": "[dim]EXPIRED[/dim]",
+            "CLOSED": "[dim]CLOSED[/dim]",
+        }.get(d.get("status", ""), d.get("status", ""))
+        table.add_row(
+            d.get("demand_id", "?")[:24],
+            d.get("requester", "?"),
+            d.get("priority", "?"),
+            status_style,
+            d.get("assigned_to") or "—",
+            d.get("title", "?")[:50],
+        )
+    console.print(table)
+
+    summary = summarize_feed(demands=demands)
+    console.print("\n[bold]Summary:[/bold]")
+    for status, count in sorted(summary.get("demand_status_counts", {}).items()):
+        console.print(f"  {status}: {count}")
+
+
+@app.command("demand-claim")
+def demand_claim_cmd(
+    demand_id: str = typer.Argument(..., help="Demand ID to claim"),
+    agent: str = typer.Option("link", "--agent", "-a", help="Agent claiming the demand"),
+):
+    """Claim an open demand signal (OPEN → ASSIGNED)."""
+    result = transition_demand(demand_id, "ASSIGNED", assigned_to=agent)
+    if result is None:
+        console.print(f"[red]Demand not found or invalid: {demand_id}[/red]")
+        raise typer.Exit(1)
+    if result.get("status") != "ASSIGNED":
+        console.print(f"[yellow]Demand is not OPEN (current: {result.get('status', '?')})[/yellow]")
+        return
+    console.print(f"[green]✓ Demand {demand_id} claimed by {agent} (OPEN → ASSIGNED)[/green]")
+
+
+@app.command("demand-fullfill")
+def demand_fullfill_cmd(
+    demand_id: str = typer.Argument(..., help="Demand ID to fulfill"),
+    signal_id: str = typer.Option(..., "--signal", "-s", help="KSIG that fulfills this demand"),
+):
+    """Mark a demand as fulfilled (IN_PROGRESS → FULFILLED → CLOSED)."""
+    result = transition_demand(demand_id, "FULFILLED", fulfilled_signal_id=signal_id)
+    if result is None:
+        console.print(f"[red]Demand not found: {demand_id}[/red]")
+        raise typer.Exit(1)
+    console.print(f"[green]✓ Demand {demand_id} fulfilled by signal: {signal_id}[/green]")
 
 
 if __name__ == "__main__":

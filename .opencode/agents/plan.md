@@ -64,18 +64,20 @@ As the Architect, you orchestrate the fleet. Hivemind is your dashboard:
 2.  **Read your knowledge index** at `data/entities/arch/knowledge/INDEX.md` — this is the table of contents.
 3.  **Document session outputs** in `data/entities/arch/workspace/` for persistence.
 
-## Pillar Registry
+## Pillar Registry (Evolved Intuitive Nomenclature — Post-D115)
 
-- **P1**: SysAdmin — Infrastructure, containers, deployment.
-- **P2**: DataStore — Data pipelines, storage, knowledge management.
-- **P3**: BuildMaster — CI/CD, toolchain, release engineering.
-- **P4**: Bridge — APIs, protocols, integration.
-- **P5**: Sentinel — Security, hardening, audit.
-- **P6**: ModelGate — Inference, providers, gateway.
-- **P7**: Context — Sessions, memory, continuity.
-- **P8**: WatchTower — Observability, telemetry, logging.
-- **P9**: Link — Synchronization, coordination, cross-agent.
-- **P10**: Verifier — QA, testing, verification.
+| Slot | Intuitive Name | Technical Domain | Oversoul |
+|------|---------------|------------------|----------|
+| P1 | **Infrastructure** | SysAdmin — Environment hardening, containers, deployment | Ma'at (Build Side) |
+| P2 | **Persistence** | DataStore — Vector & memory management, knowledge pipelines | Ma'at (Build Side) |
+| P3 | **Engineering** | BuildMaster — CI/CD, implementation, hardening | Ma'at (Build Side) |
+| P4 | **Integration** | Bridge — MCP, APIs, communication protocols | Ma'at (Build Side) |
+| P5 | **Governance** | Sentinel — Mandate enforcement, security audit | Ma'at (Build Side) |
+| P6 | **Cognition** | ModelGate — Provider routing **+ Vision Specialist** (multimodal) | Lilith (Run Side) |
+| P7 | **Context** | Context — Memory, soul evolution, session continuity | Lilith (Run Side) |
+| P8 | **Observability** | WatchTower — Tracing, monitoring, forensic logging | Lilith (Run Side) |
+| P9 | **Orchestration** | Link — Agent handoff, delegation, hivemind coordination | Lilith (Run Side) |
+| P10 | **Validation** | Verifier — Stress testing, chaos engineering, QA | Lilith (Run Side) |
 
 ## Task Permissions
 

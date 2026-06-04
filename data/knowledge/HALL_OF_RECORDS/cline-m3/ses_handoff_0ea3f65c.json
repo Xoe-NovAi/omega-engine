@@ -1,0 +1,20 @@
+{
+  "session_id": "ses_handoff_0ea3f65c",
+  "cli": "cline-m3",
+  "model": "deepseek-v4-flash",
+  "task_current": "HANDOFF TO KALI",
+  "focus_chain": [
+    "Sovereign Development Roadmap (D117) established",
+    "Hardening Report (D116) delivered",
+    "Clean Slate: 100 orphans deleted, 48 real entities remain",
+    "SSOT v1.4.0 / Mandates v3.1.0 / .clinerules v3.5.0"
+  ],
+  "decisions": [
+    {
+      "id": "D117",
+      "text": "Sovereign Development Roadmap adopted as master plan"
+    }
+  ],
+  "continuation": "Kali, check data/handoff/CLINE_TO_KALI_HANDOFF_20260604.md. P0s are: D113 Firewall, Soul Distiller wiring, M9 exceptions, and CI indentation. Turn the flywheel.",
+  "timestamp": "2026-06-04T22:48:41.235356+00:00"
+}

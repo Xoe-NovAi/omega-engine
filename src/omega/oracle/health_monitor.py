@@ -144,7 +144,8 @@ class AsyncCircuitBreaker:
                          "from": old_state.value, "to": self.state.value}
                     )
                 except Exception:
-                    pass  # Circuit works silently if observability unavailable
+                    logger.warning("Circuit closed event failed — observability unavailable (non-blocking)")
+                    pass
 
     async def _on_failure(self, trace_id: Optional[str] = None):
         # [id-soft: doom-1993] ZONEID Pattern — pre-transition integrity check
@@ -171,7 +172,8 @@ class AsyncCircuitBreaker:
                          "failure_count": self.failure_count}
                     )
                 except Exception:
-                    pass  # Circuit works silently if observability unavailable
+                    logger.warning("Circuit opened event failed — observability unavailable (non-blocking)")
+                    pass
 
     def _should_transition_to_half_open(self) -> bool:
         if self.last_failure_time is None:

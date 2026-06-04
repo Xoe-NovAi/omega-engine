@@ -112,7 +112,7 @@ async def test_entity_registry_concurrent_add():
         
         async def add_entity(i):
             ent = Entity(
-                name=f"Entity_{i}",
+                name=f"Ent_{i}",
                 domains=[f"domain_{i}"],
                 model="qwen3-1.7b",
                 personality=f"Personality {i}",

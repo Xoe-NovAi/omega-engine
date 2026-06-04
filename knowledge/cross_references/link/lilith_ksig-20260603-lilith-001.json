@@ -1,0 +1,14 @@
+{
+  "cross_ref_id": "xref-link-ksig-20260603-lilith-001",
+  "consumer": "link",
+  "producer": "lilith",
+  "signal_id": "ksig-20260603-lilith-001",
+  "timestamp": "2026-06-04T10:00:00Z",
+  "zoneid": 1919512,
+  "domain": "knowledge_metabolism",
+  "l2_insight": "No knowledge is considered known until it has crossed at least one agent boundary",
+  "applied_in": "docs/strategy/CROSS_POLLINATION_PROTOCOL.md",
+  "applied_how": "Formalized Lilith's LILY PAD architecture design into concrete JSON schemas, lifecycle state machine, CLI commands, and discovery flow",
+  "soul_updated": true,
+  "notes": "Lilith had the vision. Link formalized the implementation. This cross-ref proves the protocol works."
+}

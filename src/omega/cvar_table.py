@@ -93,6 +93,23 @@ ZONEID_HANDOFF = 0x1d4a16
 # load to catch stale presence records from terminated sessions.
 ZONEID_PRESENCE = 0x1d4a17
 
+# [id-soft: doom-1993] ZONEID Pattern — Knowledge Signal integrity marker
+# Cross-pollination knowledge feed signals. Validated on every read/write to
+# catch corrupt or stale knowledge signals.
+ZONEID_KNOWLEDGE = 0x1d4a18
+
+# [id-soft: doom-1993] ZONEID Pattern — Demand Signal integrity marker
+# Inter-agent demand signals. Validated on every state transition to catch
+# corrupted demand lifecycle records.
+ZONEID_DEMAND = 0x1d4a19
+
+# [id-soft: doom-1993] ZONEID Pattern — Verification audit trail integrity marker
+ZONEID_VERIFICATION = 0x1d4a1a
+
+# [id-soft: doom-1993] ZONEID Pattern — critical section atomic lock marker
+ZONEID_ATOMIC = 0x1d4a1b
+
+
 # [id-soft: doom-1993] Lazy Deletion — sentinel value for tombstoned entities
 # 0xDEADBEEF is the canonical sentinel hex pattern used since the 1980s
 # on IBM RS/6000, Motorola 68000, and id Software's DOOM engine.
@@ -138,7 +155,10 @@ ZONEID_TABLE = {
     "probe": {"id": ZONEID_PROBE, "subsystem": "ResourceGuard", "description": "Critical section guard"},
     "handoff": {"id": ZONEID_HANDOFF, "subsystem": "SubagentDispatcher", "description": "HandoffPacket integrity marker"},
     "presence": {"id": ZONEID_PRESENCE, "subsystem": "LinkP9Runtime", "description": "Agent presence record marker"},
+    "knowledge": {"id": ZONEID_KNOWLEDGE, "subsystem": "CrossPollination", "description": "Knowledge signal integrity marker"},
+    "demand": {"id": ZONEID_DEMAND, "subsystem": "CrossPollination", "description": "Demand signal integrity marker"},
     "tombstone": {"id": ZONEID_TOMBSTONE, "subsystem": "EntityRegistry", "description": "Lazy deletion sentinel"},
+    "verification": {"id": ZONEID_VERIFICATION, "subsystem": "Sentinel", "description": "Verification audit trail integrity marker"},
 }
 
 
@@ -179,6 +199,14 @@ CVAR_TABLE: Dict[str, CvarDef] = {
     "zoneid.tombstone": CvarDef(
         "zoneid.tombstone", ZONEID_TOMBSTONE, "zoneid",
         "Lazy deletion sentinel", "EntityRegistry",
+    ),
+    "zoneid.verification": CvarDef(
+        "zoneid.verification", ZONEID_VERIFICATION, "zoneid",
+        "Verification audit trail integrity marker (P5 Sentinel)", "Sentinel",
+    ),
+    "zoneid.atomic": CvarDef(
+        "zoneid.atomic", ZONEID_ATOMIC, "zoneid",
+        "Critical section atomic lock marker", "ResourceGuard",
     ),
 
     # ── config.gguf.* — Native GGUF Provider knobs ───────────────

@@ -23,6 +23,7 @@ except ImportError:
 
 from omega.oracle import Oracle, OracleResponse, EntityRegistry, Entity
 from omega.request_queue import RequestQueue
+from omega.oracle.feed_utils import load_demand_signals, transition_demand, summarize_feed
 
 logger = logging.getLogger(__name__)
 console = Console()
@@ -100,13 +101,38 @@ def default_entity(
     _save_config(config)
     console.print(f"[green]✅ Default entity set to: {name}[/green]")
 
-# ── ENTITY — Alias for entity-info ──────────────────────────────────────
+# ── ENTITY — Show detailed information about a specific entity ──────────
 @app.command(name="entity")
+@app.command(name="entity-info")
 def entity_cmd(
     name: str = typer.Argument(..., help="Entity name to inspect"),
 ):
-    """Show detailed information about a specific entity (alias for entity-info)."""
-    entity_info(name)
+    """Show detailed information about a specific entity."""
+    entity = EntityRegistry().get(name)
+    if entity is None:
+        console.print(f"[red]Error: Entity '{name}' not found in pantheon.[/red]")
+        available = [e.name for e in EntityRegistry().list()]
+        if available:
+            console.print(f"[dim]Available entities: {', '.join(available[:10])}{'...' if len(available) > 10 else ''}[/dim]")
+        raise typer.Exit(1)
+
+    table = Table(title=f"🔱 Entity: {entity.name}", show_header=True, header_style="bold cyan")
+    table.add_column("Field", style="cyan", no_wrap=True)
+    table.add_column("Value", style="white")
+
+    table.add_row("Name", entity.name)
+    table.add_row("Pillars", ", ".join(entity.pillars) if entity.pillars else "—")
+    table.add_row("Pantheon", entity.pantheon or "—")
+    table.add_row("Sigil", entity.sigil or "—")
+    table.add_row("Domains", ", ".join(entity.domains) if entity.domains else "—")
+    table.add_row("Model", entity.model or "—")
+    table.add_row("Temperature", str(entity.temperature))
+    table.add_row("Container", str(entity.container) if entity.container else "—")
+    if entity.personality:
+        personality_preview = entity.personality[:200] + ("..." if len(entity.personality) > 200 else "")
+        table.add_row("Personality", personality_preview)
+
+    console.print(table)
 
 
 # ── TRANSIENT — Toggle transient mode ──────────────────────────────────
@@ -486,6 +512,129 @@ def bench_list():
             table.add_row(r.model, r.role, r.timestamp[:10])
         console.print(table)
     anyio.run(_run)
+
+# ── CROSS-POLLINATION COMMANDS ───────────────────────────────────────────
+@app.command(name="check-feed")
+def check_feed_cmd(
+    agent: str = typer.Option("sophia", "--agent", "-a", help="Agent name to check feed for"),
+    consume: bool = typer.Option(False, "--consume", "-c", help="Mark unconsumed signals as consumed"),
+):
+    """Check knowledge feed and demand signals for unconsumed content."""
+    from omega.oracle.feed_utils import (
+        load_knowledge_signals,
+        load_demand_signals,
+        find_new_signals,
+        summarize_feed,
+        consume_signal,
+        write_knowledge_signal,
+        write_cross_reference,
+    )
+    from rich.table import Table
+
+    signals = load_knowledge_signals()
+    demands = load_demand_signals()
+    unconsumed = find_new_signals(agent, signals)
+    summary = summarize_feed(signals, demands)
+
+    if unconsumed:
+        table = Table(title=f"📡 New Knowledge Signals for {agent}", border_style="cyan")
+        table.add_column("Signal", style="cyan")
+        table.add_column("Producer", style="magenta")
+        table.add_column("Domain", style="yellow")
+        table.add_column("Priority", style="red")
+        table.add_column("Title", style="white")
+        for sig in unconsumed:
+            table.add_row(
+                sig.get("signal_id", "?")[:32],
+                sig.get("producer", "?"),
+                sig.get("domain", "?"),
+                sig.get("priority", "?"),
+                sig.get("title", "?")[:60],
+            )
+        console.print(table)
+
+        if consume:
+            for sig in unconsumed:
+                consume_signal(sig, agent)
+                write_knowledge_signal(sig)
+                write_cross_reference(agent, sig)
+            console.print(f"[green]Consumed {len(unconsumed)} new signals for {agent}.[/green]")
+    else:
+        console.print(f"[dim]No new knowledge signals for {agent}.[/dim]")
+
+    consumed_count = summary["total_signals"] - len(unconsumed)
+    console.print(f"  KSIGs: {summary['total_signals']} ({consumed_count} consumed, {len(unconsumed)} new)")
+    console.print(f"  DEMs: {summary['total_demands']} ({summary['open_demands']} open)")
+
+
+@app.command(name="demand-status")
+def demand_status(
+    status_filter: Optional[str] = typer.Option(None, "--status", "-s", help="Filter by status"),
+):
+    """Show demand signal lifecycle status."""
+    demands = load_demand_signals()
+    if not demands:
+        console.print("[dim]No demand signals found.[/dim]")
+        return
+    if status_filter:
+        demands = [d for d in demands if d.get("status", "").upper() == status_filter.upper()]
+    table = Table(title="Demand Signal Status", border_style="yellow")
+    table.add_column("Demand ID", style="cyan")
+    table.add_column("Requester", style="magenta")
+    table.add_column("Priority", style="red")
+    table.add_column("Status", style="green")
+    table.add_column("Assigned To", style="blue")
+    table.add_column("Title", style="white")
+    for d in demands:
+        status_style = {
+            "OPEN": "[yellow]OPEN[/yellow]",
+            "ASSIGNED": "[blue]ASSIGNED[/blue]",
+            "IN_PROGRESS": "[cyan]IN_PROGRESS[/cyan]",
+            "FULFILLED": "[green]FULFILLED[/green]",
+            "FAILED": "[red]FAILED[/red]",
+            "EXPIRED": "[dim]EXPIRED[/dim]",
+            "CLOSED": "[dim]CLOSED[/dim]",
+        }.get(d.get("status", "").upper(), d.get("status", ""))
+        table.add_row(
+            d.get("demand_id", "?")[:24],
+            d.get("requester", "?"),
+            d.get("priority", "?"),
+            status_style,
+            d.get("assigned_to") or "—",
+            d.get("title", "?")[:50],
+        )
+    console.print(table)
+    summary = summarize_feed(demands=demands)
+    console.print("\n[bold]Summary:[/bold]")
+    for status, count in sorted(summary.get("demand_status_counts", {}).items()):
+        console.print(f"  {status}: {count}")
+
+@app.command(name="demand-claim")
+def demand_claim(
+    demand_id: str = typer.Argument(..., help="Demand ID to claim"),
+    agent: str = typer.Option("roc_racoon", "--agent", "-a", help="Agent claiming the demand"),
+):
+    """Claim an open demand signal (OPEN → ASSIGNED)."""
+    result = transition_demand(demand_id, "ASSIGNED", assigned_to=agent)
+    if result is None:
+        console.print(f"[red]Demand not found or invalid: {demand_id}[/red]")
+        raise typer.Exit(1)
+    if result.get("status") != "ASSIGNED":
+        console.print(f"[yellow]Demand is not OPEN (current: {result.get('status', '?')})[/yellow]")
+        return
+    console.print(f"[green]✓ Demand {demand_id} claimed by {agent} (OPEN → ASSIGNED)[/green]")
+
+@app.command(name="demand-fulfill")
+def demand_fulfill(
+    demand_id: str = typer.Argument(..., help="Demand ID to fulfill"),
+    signal_id: str = typer.Option(..., "--signal", "-s", help="KSIG that fulfills this demand"),
+):
+    """Mark a demand as fulfilled (IN_PROGRESS → FULFILLED → CLOSED)."""
+    result = transition_demand(demand_id, "FULFILLED", fulfilled_signal_id=signal_id)
+    if result is None:
+        console.print(f"[red]Demand not found: {demand_id}[/red]")
+        raise typer.Exit(1)
+    console.print(f"[green]✓ Demand {demand_id} fulfilled by signal: {signal_id}[/green]")
 
 # ── Entry point ─────────────────────────────────────────────────────────
 

@@ -1,0 +1,24 @@
+{
+  "demand_id": "dem-20260603-005",
+  "requester": "roc_racoon",
+  "priority": "MEDIUM",
+  "domain": "knowledge_curation",
+  "title": "Workspace is a junk drawer — apply TTLs and archive rules",
+  "what_needed": "My workspace/ directory has 7+ files and subdirectories with no content lifecycle. Old mining reports sit next to new vision documents. VR_OMEGAVERSE_VISION.md (a permanent strategic doc) sits next to mining_reports/07_MASTER_SYNTHESIS.md (a 7-day ephemeral report). There's no distinction between permanent reference and temporary findings.",
+  "why": "A workspace without lifecycle management inevitably becomes a junk drawer. Agents don't know what's safe to delete, what's reference material, and what's raw sediment awaiting curation. The LILY_PAD architecture's Tier 1 (raw, 7-day TTL) vs Tier 2 (curated, 30-day TTL) vs Tier 3 (permanent) distinction must be enforced.",
+  "producer_hint": "Create data/entities/roc_racoon/workspace/LIFECYCLE_RULES.md defining TTL for each workspace subdirectory. Archive mining_reports/ >=7 days old to workspace/_archive/.",
+  "artifacts_requested": [
+    "workspace/LIFECYCLE_RULES.md in Roc's workspace",
+    "Archive subdirectory with old reports moved",
+    "Clear separation of permanent docs (VR vision) vs ephemeral (reports)"
+  ],
+  "status": "open",
+  "assigned_to": null,
+  "fulfilled_by": null,
+  "fulfilled_signal_id": null,
+  "fulfilled_at": null,
+  "created_at": "2026-06-03T03:52:00Z",
+  "ttl_days": 14,
+  "zoneid": 1919513,
+  "tags": ["workspace-management", "lifecycle", "organization"]
+}

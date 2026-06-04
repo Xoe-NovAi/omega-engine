@@ -1,0 +1,17 @@
+{
+  "agent": "roc_racoon",
+  "updated_at": "2026-06-03T05:43:51.236100Z",
+  "cross_references": [
+    "xref-roc_racoon-ksig-20260603-lilith-001",
+    "xref-roc_racoon-ksig-20260603-sentinel-001",
+    "xref-roc_racoon-ksig-20260604-context-001",
+    "xref-roc_racoon-ksig-20260604-link-001"
+  ],
+  "total_consumed": 4,
+  "unique_producers": [
+    "lilith",
+    "sentinel",
+    "context",
+    "link"
+  ]
+}

@@ -179,9 +179,9 @@ CAPABILITY_REGISTRY: Dict[str, AgentDescriptor] = {
     },
     "lilith": {
         "mode": "subagent",
-        "purpose": "Dark Oversoul — Governs P6-P10 on the run side",
-        "capabilities": ["oversight_dark", "run_governance", "operations"],
-        "domains": ["run_side", "pillar_6_10"],
+        "purpose": "Dark Oversoul — Governs P6-P10 (Cognition through Validation) on the run side",
+        "capabilities": ["oversight_dark", "run_governance", "operations", "vision_oversight", "knowledge_metabolism"],
+        "domains": ["run_side", "pillar_6_10", "vision_specialist", "multimodal", "knowledge_flow"],
         "pillar_slot": None,
         "task_tool_type": "general",
         "owned_files": [],

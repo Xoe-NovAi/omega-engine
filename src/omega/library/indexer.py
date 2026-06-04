@@ -25,12 +25,16 @@ from .curator import CuratedDocument
 
 logger = logging.getLogger(__name__)
 
-DATA_DIR = Path(os.environ.get("OMEGA_DATA_DIR", str(Path.home() / "omega" / "data")))
-INDEX_DIR = DATA_DIR / "library" / "index"
-INDEX_DIR.mkdir(parents=True, exist_ok=True)
+def _get_db_path() -> Path:
+    data_dir = Path(os.environ.get("OMEGA_DATA_DIR", str(Path.home() / "omega" / "data")))
+    index_dir = data_dir / "library" / "index"
+    index_dir.mkdir(parents=True, exist_ok=True)
+    return index_dir / "fts_index.db"
 
-FTS_DB_PATH = INDEX_DIR / "fts_index.db"
-VECTOR_INDEX_PATH = INDEX_DIR / "vectors.json"
+def _get_vector_path() -> Path:
+    data_dir = Path(os.environ.get("OMEGA_DATA_DIR", str(Path.home() / "omega" / "data")))
+    return data_dir / "library" / "index" / "vectors.json"
+
 
 _STOPWORDS = {
     "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
@@ -56,12 +60,13 @@ class Indexer:
     def __init__(self):
         self._fts: Optional[Any] = None
         self._vector_store: Dict[str, List[float]] = {}
+        self._write_lock = anyio.Lock()
         self._load_vectors()
 
     async def _get_fts(self) -> Any:
         if self._fts is None:
             import aiosqlite
-            self._fts = await aiosqlite.connect(str(FTS_DB_PATH))
+            self._fts = await aiosqlite.connect(str(_get_db_path()), timeout=20)
             await self._fts.execute(
                 "CREATE VIRTUAL TABLE IF NOT EXISTS documents_fts USING fts5("
                 "doc_id, title, body, summary, domain, tags, tokenize='unicode61 remove_diacritics 2'"
@@ -78,9 +83,10 @@ class Indexer:
         return self._fts
 
     def _load_vectors(self) -> None:
-        if VECTOR_INDEX_PATH.exists():
+        vector_path = _get_vector_path()
+        if vector_path.exists():
             try:
-                with open(VECTOR_INDEX_PATH) as f:
+                with open(vector_path) as f:
                     self._vector_store = json.load(f)
                 logger.info(f"Loaded {len(self._vector_store)} vector embeddings")
             except Exception as e:
@@ -88,36 +94,37 @@ class Indexer:
 
     async def index_document(self, doc: CuratedDocument) -> None:
         """Add a document to the search index."""
-        conn = await self._get_fts()
+        async with self._write_lock:
+            conn = await self._get_fts()
 
-        await conn.execute(
-            "INSERT OR REPLACE INTO documents_fts (doc_id, title, body, summary, domain, tags) "
-            "VALUES (?, ?, ?, ?, ?, ?)",
-            (
-                doc.doc_id,
-                doc.title,
-                doc.body[:100000] if doc.body else "",
-                doc.summary,
-                doc.domain or "general",
-                " ".join(doc.tags),
-            ),
-        )
-        await conn.execute(
-            "INSERT OR REPLACE INTO doc_metadata (doc_id, source, source_type, author, "
-            "published_date, quality_score, word_count, curated_at) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            (
-                doc.doc_id,
-                doc.source,
-                doc.source_type,
-                doc.author,
-                doc.published_date,
-                doc.quality_score,
-                doc.word_count,
-                doc.curated_at,
-            ),
-        )
-        await conn.commit()
+            await conn.execute(
+                "INSERT OR REPLACE INTO documents_fts (doc_id, title, body, summary, domain, tags) "
+                "VALUES (?, ?, ?, ?, ?, ?)",
+                (
+                    doc.doc_id,
+                    doc.title,
+                    doc.body[:100000] if doc.body else "",
+                    doc.summary,
+                    doc.domain or "general",
+                    " ".join(doc.tags),
+                ),
+            )
+            await conn.execute(
+                "INSERT OR REPLACE INTO doc_metadata (doc_id, source, source_type, author, "
+                "published_date, quality_score, word_count, curated_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                (
+                    doc.doc_id,
+                    doc.source,
+                    doc.source_type,
+                    doc.author,
+                    doc.published_date,
+                    doc.quality_score,
+                    doc.word_count,
+                    doc.curated_at,
+                ),
+            )
+            await conn.commit()
 
         embedding = self._compute_embedding(doc.title + " " + doc.summary)
         if embedding:
@@ -127,10 +134,11 @@ class Indexer:
 
     async def remove_document(self, doc_id: str) -> None:
         """Remove a document from the search index."""
-        conn = await self._get_fts()
-        await conn.execute("DELETE FROM documents_fts WHERE doc_id = ?", (doc_id,))
-        await conn.execute("DELETE FROM doc_metadata WHERE doc_id = ?", (doc_id,))
-        await conn.commit()
+        async with self._write_lock:
+            conn = await self._get_fts()
+            await conn.execute("DELETE FROM documents_fts WHERE doc_id = ?", (doc_id,))
+            await conn.execute("DELETE FROM doc_metadata WHERE doc_id = ?", (doc_id,))
+            await conn.commit()
         self._vector_store.pop(doc_id, None)
 
     async def search_fts(
@@ -317,27 +325,23 @@ class Indexer:
         if self._fts:
             await self._fts.close()
             self._fts = None
+            logger.info("FTS index connection closed")
         await self.save_vectors()
 
     async def save_vectors(self) -> None:
         """Persist vector embeddings to disk."""
         if self._vector_store:
-            async with await anyio.open_file(str(VECTOR_INDEX_PATH), "w") as f:
+            vector_path = _get_vector_path()
+            async with await anyio.open_file(str(vector_path), "w") as f:
                 await f.write(json.dumps(self._vector_store))
             logger.info(f"Saved {len(self._vector_store)} vector embeddings")
 
     async def flush(self) -> None:
         """Flush all indices to disk."""
         await self.save_vectors()
-        if self._fts:
-            await self._fts.commit()
-
-    async def close(self) -> None:
-        """Close the SQLite connection."""
-        if self._fts:
-            await self._fts.close()
-            self._fts = None
-            logger.info("FTS index connection closed")
+        async with self._write_lock:
+            if self._fts:
+                await self._fts.commit()
 
     async def stats(self) -> Dict[str, Any]:
         """Get index statistics."""

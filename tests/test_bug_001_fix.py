@@ -53,6 +53,7 @@ async def test_bug_001_fix():
         print(f"Results found: {len(results)}")
 
     # Cleanup
+    await lib.close()
     shutil.rmtree(test_data_dir)
 
 if __name__ == "__main__":

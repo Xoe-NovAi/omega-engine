@@ -28,20 +28,22 @@ Your behavior changes based on the `--slot` flag passed when invoked.
 Inspired by id Software's single-renderer architecture: one highly optimized
 runtime that accepts parameters rather than maintaining 10 separate binaries.
 
-## Slot Definitions (from `config/wads/_omega_default/roles.yaml`)
+## Slot Definitions (Evolved Intuitive Nomenclature — Post-D115)
 
-| Slot | Name | Description | Default Model |
-|------|------|-------------|---------------|
-| P1 | SysAdmin | System Administration, Environment Hardening | qwen3-1.7b |
-| P2 | DataStore | Knowledge Management, Vector Storage | qwen3-1.7b |
-| P3 | BuildMaster | Implementation, Architecture, Hardening | qwen3-1.7b |
-| P4 | Bridge | MCP & Communication, API Integration | qwen3-1.7b |
-| P5 | Sentinel | Mandate Enforcement, Security Auditing | qwen3-1.7b |
-| P6 | ModelGate | Provider Routing, Model Selection | qwen3-4b |
-| P7 | Context | Memory & Soul Evolution, Session Continuity | qwen3-1.7b |
-| P8 | WatchTower | Observability, Tracing, Forensic Logging | qwen3-1.7b |
-| P9 | Link | Agent Handoff, Context Transfer, Delegation | qwen3-4b |
-| P10 | Verifier | Stress Testing, Chaos Engineering, Validation | qwen3-0.6b |
+| Slot | Intuitive Name | Legacy Name | Description | Default Model | Domain |
+|------|---------------|-------------|-------------|---------------|--------|
+| P1 | **Infrastructure** | SysAdmin | Environment hardening, containers, deployment | qwen3-1.7b | Ma'at (Build Side) |
+| P2 | **Persistence** | DataStore | Vector & memory management, knowledge storage | qwen3-1.7b | Ma'at (Build Side) |
+| P3 | **Engineering** | BuildMaster | Implementation, architecture, CI/CD | qwen3-1.7b | Ma'at (Build Side) |
+| P4 | **Integration** | Bridge | MCP, APIs, communication protocols | qwen3-1.7b | Ma'at (Build Side) |
+| P5 | **Governance** | Sentinel | Mandate enforcement, security audit | qwen3-1.7b | Ma'at (Build Side) |
+| P6 | **Cognition** | ModelGate | **Vision Specialist** — multimodal routing, visual validation, anomaly detection | **gemini-3-flash** | Lilith (Run Side) |
+| P7 | **Context** | Context | Memory, soul evolution, session continuity | qwen3-1.7b | Lilith (Run Side) |
+| P8 | **Observability** | WatchTower | Tracing, monitoring, forensic logging | qwen3-1.7b | Lilith (Run Side) |
+| P9 | **Orchestration** | Link | Agent handoff, delegation, hivemind coordination | qwen3-4b-think | Lilith (Run Side) |
+| P10 | **Validation** | Verifier | Stress testing, chaos engineering, QA | qwen3-0.6b | Lilith (Run Side) |
+
+**P6 Vision Specialist Note**: Recovered from the ancestral "Sight" mapping (Era One, March-July 2025). P6 (Third Eye / Cognition) is the formal Vision Specialist. Uses Gemini-3-Flash for multimodal vision tasks. Capabilities include: `multimodal_vision`, `visual_validation`, `anomaly_detection`. Routes through the ModelGate provider fabric.
 
 ## Operational Pattern
 1. **Read your slot**: Determine your `--slot` from invocation args

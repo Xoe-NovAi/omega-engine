@@ -166,19 +166,15 @@ class EntityRegistry:
         "planet", "sigil", "glyph", "invocation",
     })
 
-    # 1. Define Core Slots (The Holographic Grid)
-    PILLAR_SLOTS = {
-        "p1": {"domain": "Flesh", "element": "Earth", "chakra": "Root"},
-        "p2": {"domain": "Dream", "element": "Water", "chakra": "Sacral"},
-        "p3": {"domain": "Will", "element": "Fire", "chakra": "Solar Plexus"},
-        "p4": {"domain": "Heart", "element": "Air", "chakra": "Heart"},
-        "p5": {"domain": "Voice", "element": "Aether", "chakra": "Throat"},
-        "p6": {"domain": "Mind", "element": "Aether", "chakra": "Third Eye"},
-        "p7": {"domain": "Gnosis", "element": "Air", "chakra": "Crown"},
-        "p8": {"domain": "Shadow", "element": "Fire", "chakra": "Beyond Crown"},
-        "p9": {"domain": "Spirit", "element": "Water", "chakra": "Cosmic Heart"},
-        "p10": {"domain": "Chaos", "element": "Earth", "chakra": "Celestial Breath"},
-    }
+    # 1. Define Core Slots — The Holographic Grid (D113 Firewall Fix)
+    # Engine-Stack Firewall (M2): PILLAR_SLOTS is a frozenset of slot identifiers
+    # ONLY. Domain/element/chakra attributes live in the IWAD entities.yaml, not in
+    # the engine core. This prevents hardcoding arcana_nova-specific meanings.
+    # [id-soft: doom-1993] WAD System — engine only knows slot names, WAD provides content.
+    PILLAR_SLOTS = frozenset({
+        "p1", "p2", "p3", "p4", "p5",
+        "p6", "p7", "p8", "p9", "p10",
+    })
 
     def __init__(self, config_path: Optional[str] = None):
         if config_path is None:

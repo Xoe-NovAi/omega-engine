@@ -26,6 +26,8 @@ from .entity_workspace import EntityWorkspaceManager
 from .resource_guard import ResourceGuard
 from .context_builder import ContextBuilder
 from .capability_registry import CapabilityRegistry
+from .entity_registry import EntityRegistry
+from .handoff import HandoffState, format_handoff_prompt
 from omega.workers.model_updater import ModelUpdaterWorker
 from omega.observability import ObservabilityEngine, get_engine
 from omega.oracle.model_gateway import ModelGateway
@@ -140,7 +142,8 @@ class Orchestrator:
         cli_type: str, 
         task_prompt: str, 
         entity_name: str,
-        timeout: int = 300
+        timeout: int = 300,
+        handoff_state: Optional[HandoffState] = None
     ) -> Dict[str, Any]:
         """Dispatch a headless CLI agent with the entity's soul injected.
         
@@ -149,6 +152,7 @@ class Orchestrator:
             task_prompt: The objective for the agent
             entity_name: The awakened entity's name (for soul injection)
             timeout: Maximum execution time in seconds
+            handoff_state: Optional state for transferring context from another agent
             
         Returns:
             Dict containing the exit status and stdout of the agent.
@@ -161,6 +165,16 @@ class Orchestrator:
         # Load the soul profile
         soul_prompt = await EntityWorkspaceManager.get_soul_prompt(entity_name)
         
+        # BLOCKER FIX #1: Load entity's designated model from entity registry
+        try:
+            entity_registry = EntityRegistry()
+            entity = entity_registry.get(entity_name)
+            entity_model = entity.model if entity else "qwen3-1.7b-q6_k"
+            logger.info(f"Entity '{entity_name}' designated model: {entity_model}")
+        except Exception as e:
+            logger.warning(f"Failed to load entity model for '{entity_name}': {e}. Using default.")
+            entity_model = "qwen3-1.7b-q6_k"
+        
         # Combine the soul prompt with the task prompt
         full_prompt = (
             f"{soul_prompt}\n\n"
@@ -169,7 +183,10 @@ class Orchestrator:
             f"to post your context, or simply conclude the task."
         )
 
-        # Construct the CLI command
+        if handoff_state:
+            full_prompt = format_handoff_prompt(handoff_state) + "\n\n" + full_prompt
+
+        # Construct the CLI command with model specification
         if cli_type.lower() == "cline":
             # cline task <prompt>
             cmd = ["cline", "task", full_prompt]
@@ -179,9 +196,13 @@ class Orchestrator:
         else:
             return {"status": "error", "message": f"Unsupported CLI type: {cli_type}"}
 
-        logger.info(f"Waiting for ResourceGuard to spawn {cli_type}...")
+        logger.info(f"Waiting for ResourceGuard to spawn {cli_type} with model {entity_model}...")
         
         try:
+            # Prepare environment with entity model override
+            env = os.environ.copy()
+            env['OPENCODE_MODEL'] = entity_model  # Pass entity's designated model to OpenCode CLI
+            
             # The async context manager from resource_guard.py has no __aenter__ / __aexit__ natively 
             # if it's returning an AsyncContextManager but wait, resource_guard.py defines it as:
             # @asynccontextmanager
@@ -190,12 +211,13 @@ class Orchestrator:
             async with self.guard.lock():
                 logger.info(f"ResourceGuard acquired. Spawning {cli_type}...")
                 
-                # Execute the subprocess
+                # Execute the subprocess with entity's model environment override
                 with anyio.fail_after(timeout):
                     result = await anyio.run_process(
                         cmd,
                         capture_output=True,
-                        check=False
+                        check=False,
+                        env=env
                     )
                 
                 stdout = result.stdout.decode(errors='replace')
@@ -223,7 +245,8 @@ class Orchestrator:
         task_description: str, 
         entity_name: str, 
         cli_type: Optional[str] = None,
-        timeout: int = 300
+        timeout: int = 300,
+        handoff_state: Optional[HandoffState] = None
     ) -> Dict[str, Any]:
         """
         Delegate a task to the best-suited agent discovered via the CapabilityRegistry.
@@ -233,6 +256,7 @@ class Orchestrator:
             entity_name: The awakened entity's name for soul injection.
             cli_type: Optional forced CLI type. If None, discovery is used.
             timeout: Maximum execution time in seconds.
+            handoff_state: Optional state for transferring context from another agent.
         """
         logger.info(f"Delegating task: {task_description[:50]}...")
         
@@ -254,7 +278,8 @@ class Orchestrator:
             cli_type=target_cli,
             task_prompt=task_description,
             entity_name=entity_name,
-            timeout=timeout
+            timeout=timeout,
+            handoff_state=handoff_state
         )
 
 

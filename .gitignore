@@ -135,3 +135,11 @@ data/sessions/*.active
 ../omega/
 ../omega-stack-legacy/
 ../xna-omega-legacy/.firecrawl/
+
+# ── Orphan Test Entity Dirs (ent_*) ────────────────────────────
+data/entities/ent_*/
+data/entities/dir/
+data/entities/dupe/
+data/entities/flat/
+data/entities/pre/
+data/entities/soul/

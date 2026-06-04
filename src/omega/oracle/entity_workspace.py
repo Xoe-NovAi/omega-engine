@@ -146,7 +146,37 @@ class EntityWorkspaceManager:
                         os.remove(temp_path)
                     logger.error(f"Failed to scaffold soul for {name}: {e}")
                     raise
-                
+            
+        # [P7 Context] Create INDEX.yaml for knowledge discovery if it doesn't exist
+        # This enables the global knowledge catalog to index this entity's topics
+        index_file = knowledge_dir / "INDEX.yaml"
+        
+        if not index_file.exists():
+            index_data = {
+                "entity": name,
+                "updated": datetime.datetime.now().isoformat(),
+                "topics": [],  # Empty initially — agent populates via knowledge promotion
+            }
+            
+            # Atomic Write: Write to temp file then move
+            fd, temp_path = tempfile.mkstemp(dir=str(knowledge_dir), prefix=".index_", suffix=".yaml")
+            try:
+                with os.fdopen(fd, 'w') as f:
+                    f.write("# data/entities/{}/knowledge/INDEX.yaml\n".format(safe_name))
+                    f.write("# Entity knowledge discovery index\n")
+                    f.write("# Topics are promoted from workspace/ → knowledge/ via the T1→T2 gate\n\n")
+                    yaml_str = yaml.dump(index_data, default_flow_style=False, sort_keys=False)
+                    f.write(yaml_str)
+                    os.chmod(temp_path, 0o644) # Sovereign Guard: Bypass umask drift
+                    os.replace(temp_path, str(index_file))
+                    audit.log("INDEX_CREATE", f"Scaffolded INDEX.yaml at {index_file}")
+                    logger.info(f"Scaffolded INDEX.yaml for {name}")
+            except Exception as e:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+                logger.error(f"Failed to scaffold INDEX.yaml for {name}: {e}")
+                # Non-fatal — don't raise, let entity creation continue
+                 
         return workspace_dir
 
     @staticmethod

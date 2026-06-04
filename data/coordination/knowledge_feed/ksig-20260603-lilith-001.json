@@ -1,0 +1,55 @@
+{
+  "signal_id": "ksig-20260603-lilith-001",
+  "type": "architecture_design",
+  "domain": "knowledge_metabolism",
+  "title": "LILY PAD Architecture \u2014 Knowledge Metabolism Flow & Connection Layer",
+  "producer": "lilith",
+  "source_agent": "lilith",
+  "timestamp": "2026-06-03T03:52:00Z",
+  "created_at": "2026-06-03T03:52:00Z",
+  "l2_insight": "No knowledge is considered known until it has crossed at least one agent boundary",
+  "priority": "HIGH",
+  "ttl_days": 30,
+  "paths": {
+    "artifact": "data/entities/lilith/workspace/LILY_PAD_KNOWLEDGE_METABOLISM.md",
+    "design_reference": "data/entities/lilith/workspace/LILY_PAD_KNOWLEDGE_METABOLISM.md#implementation-recipe",
+    "soul_update": "data/entities/lilith/soul.yaml"
+  },
+  "summary": "Complete design for the Knowledge Metabolism Flow & Connection layer \u2014 solves the publish-only knowledge problem with a 4-tier lily pad architecture, cross-pollination protocol, demand signal system, and documentation liberation path",
+  "key_insights": [
+    "Four-tier knowledge architecture: workspace (raw, 7d TTL) \u2192 knowledge (curated, 30d TTL) \u2192 soul (permanent) \u2192 fleet (cross-pollinated via signals)",
+    "Demand signals solve the 'what should I mine?' problem \u2014 agents publish needs, miners fulfill them",
+    "Documentation liberation: P0 docs must be ported when an agent needs them (don't read scattered, port first)",
+    "The golden rule: no knowledge is considered known until it has crossed at least one agent boundary",
+    "Built on top of existing Link P9 runtime \u2014 no new infrastructure, just new conventions + files"
+  ],
+  "relevance_tags": [
+    "kali",
+    "roc_racoon",
+    "doom_guy",
+    "maat",
+    "scribe",
+    "quality",
+    "plan"
+  ],
+  "demand_signals_seeded": [
+    "dem-20260603-001",
+    "dem-20260603-002",
+    "dem-20260603-003",
+    "dem-20260603-004",
+    "dem-20260603-005",
+    "dem-20260603-006"
+  ],
+  "consumed_by": [
+    "link",
+    "p1",
+    "roc_racoon"
+  ],
+  "consumed_at": {
+    "link": "2026-06-04T10:00:00Z",
+    "p1": "2026-06-04T00:00:00Z",
+    "roc_racoon": "2026-06-03T05:43:51.234066Z"
+  },
+  "verification_item_id": "ver-20260604-001",
+  "zoneid": 1919512
+}

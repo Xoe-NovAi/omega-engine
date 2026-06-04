@@ -1,0 +1,27 @@
+{
+  "demand_id": "dem-20260603-002",
+  "requester": "roc_racoon",
+  "priority": "HIGH",
+  "domain": "knowledge_curation",
+  "title": "Promote workspace findings to knowledge/ directory daily",
+  "what_needed": "My data/entities/roc_racoon/knowledge/ directory is empty. 7 mining reports (160+ techs) sit in workspace/mining_reports/ with no curation or promotion. I need a daily pipeline that extracts L2 insights from my workspace reports and writes them to knowledge/ with structured metadata.",
+  "why": "Without the workspace \u2192 knowledge promotion, my findings are undiscoverable. The workspace is raw sediment; knowledge/ is the curated wisdom. Currently all findings sit at Tier 1 and never reach Tier 2+.",
+  "producer_hint": "Create P7 distillation pipeline. First promotion: extract top 10 lessons from MASTER_SYNTHESIS.md into knowledge/domain_insights/",
+  "artifacts_requested": [
+    "knowledge/domain_insights/ with at least 5 files",
+    "Automated or semi-automated promotion script"
+  ],
+  "status": "ASSIGNED",
+  "assigned_to": "roc_racoon",
+  "fulfilled_by": null,
+  "fulfilled_signal_id": null,
+  "fulfilled_at": null,
+  "created_at": "2026-06-03T03:52:00Z",
+  "ttl_days": 14,
+  "zoneid": 1919513,
+  "tags": [
+    "knowledge-promotion",
+    "curation",
+    "p7-context"
+  ]
+}

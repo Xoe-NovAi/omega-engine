@@ -1,0 +1,14 @@
+{
+  "cross_ref_id": "xref-roc_racoon-ksig-20260604-context-001",
+  "consumer": "roc_racoon",
+  "producer": "context",
+  "signal_id": "ksig-20260604-context-001",
+  "timestamp": "2026-06-03T05:43:51.235441Z",
+  "zoneid": 1919512,
+  "domain": "knowledge_lifecycle",
+  "l2_insight": "Knowledge moves through four tiers (T1\u2192T2\u2192T3\u2192T4) with promotion checklists and condensation patterns at each boundary",
+  "applied_in": "",
+  "applied_how": "",
+  "soul_updated": false,
+  "notes": ""
+}

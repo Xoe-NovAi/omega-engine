@@ -1,0 +1,25 @@
+{
+  "signal_id": "ksig-20260604-link-001",
+  "producer": "link",
+  "timestamp": "2026-06-04T10:00:00Z",
+  "zoneid": 1919512,
+  "domain": "coordination",
+  "priority": "HIGH",
+  "title": "Cross-Pollination Protocol v1 — Knowledge Signal + Demand Signal Standard",
+  "artifact_path": "docs/strategy/CROSS_POLLINATION_PROTOCOL.md",
+  "l2_insight": "Async knowledge sharing between agents requires three file-system primitives: knowledge signals (KSIG), demand signals (DEM), and cross-references (XREF)",
+  "summary": "Formalized the Cross-Pollination Protocol for asynchronous agent-to-agent knowledge sharing. Built on Link P9 Runtime (384 lines) with two new ZONEID constants (0x1d4a18, 0x1d4a19), a JSON schema for knowledge signals, a lifecycle state machine for demand signals (OPEN→ASSIGNED→IN_PROGRESS→FULFILLED→CLOSED), a file-system based discovery flow, and a cross-reference tracking format. Added `omega check-feed`, `omega consume`, `omega demand-status`, and `omega demand-claim` CLI commands.",
+  "key_insights": [
+    "Three protocol layers: signals (what's known), demands (what's needed), cross-refs (who learned what)",
+    "ZONEID_KNOWLEDGE=0x1d4a18 and ZONEID_DEMAND=0x1d4a19 added to cvar_table with validate_zoneid support",
+    "check-feed CLI command scans knowledge_feed/ and demand_signals/ for unconsumed content",
+    "Cross-references at knowledge/cross_references/<consumer>/ track provenance of every insight transfer",
+    "Lilith's LILY_PAD design had 6 demand signals and 1 KSIG — this protocol makes them machine-readable"
+  ],
+  "relevance_tags": ["kali", "lilith", "roc_racoon", "doom_guy", "maat", "scribe", "quality", "plan"],
+  "demand_signals_seeded": [],
+  "consumed_by": [],
+  "consumed_at": {},
+  "ttl_days": 30,
+  "heritage_tags": ["[id-soft: doom-1993] ZONEID Pattern", "[id-soft: doom3-2004] idEntity event"]
+}
