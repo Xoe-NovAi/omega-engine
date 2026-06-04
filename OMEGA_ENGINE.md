@@ -158,6 +158,10 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Unified cvar Table | **IMPLEMENTED** — D101: `cvar_table.py` with zoneid.* (6) + config.* (12) namespaces, 7 access helpers, validate_llama_kwargs() | 2026-06-03 (Lilith) |
 | Sprint 1 Ports | **5 COMPLETE** — kwarg_filter, n_gpu_layers=0, ChatML stops, Google API header, trace_id propagation | 2026-06-03 |
 | `make heritage-map` | **LIVE** — CI target audits [id-soft:] tags, 6/23 files currently tagged | 2026-06-03 |
+| `make heritage-vet` | **LIVE** — CI gate verifies every [id-soft:] tag has a vet record in HERITAGE_VET_LOG.md | 2026-06-04 (Kali) |
+| Heritage Vetting Pipeline | **CREATED** — docs/strategy/HERITAGE_VETTING_PIPELINE.md: 4-gate process (Discovery → Vetting → Decision → Implementation) with 10-point scoring matrix and Qualification Gate | 2026-06-04 (Kali) |
+| Heritage Vet Log | **CREATED** — data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md: 23 concepts retroactively vetted (15 adopted, 1 rejected, 6 deferred, 1 re-evaluate) | 2026-06-04 (Kali) |
+| 8-Char Name Cap | **REJECTED & REMOVED** — cargo-cult optimization; removed in commit 8b3fc17. Case study for why vetting matters. | 2026-06-04 (Kali) |
 | Link P9 Runtime | **IMPLEMENTED** — AgentPresence + HandoffPacket lifecycle + task queue + crash recovery (384 lines) | 2026-06-04 (Doom Guy) |
 | Soul Distiller | **IMPLEMENTED** — L1→L2→L3 auto-distillation engine (280 lines) | 2026-06-04 (Doom Guy) |
 | Subagent Dispatch | **IMPLEMENTED** — HandoffPacket + CAPABILITY_REGISTRY + dispatch() + 14 agents (370 lines) | 2026-06-04 (Doom Guy) |
