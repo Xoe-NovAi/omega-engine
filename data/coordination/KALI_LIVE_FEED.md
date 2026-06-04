@@ -1,12 +1,15 @@
-# 🔱 Kali Live Feed — Heritage Vetting + Soul v5.2
+# 🔱 Kali Live Feed — Dev Chat Session (Phase-III / P0 Execution)
 
-[2026-06-04 19:00] H1-PLAN-CREATED — KALI_HORIZON_PLAN_H1_20260604.md (7 items)
-[2026-06-04 19:00] VET-PIPELINE-LIVE — HERITAGE_VETTING_PIPELINE.md (4-gate, 10-point scoring)
-[2026-06-04 19:00] VET-LOG-23 — 23 concepts audited (15 adopt, 1 reject 8-char cap, 6 defer, 1 re-eval)
-[2026-06-04 19:00] CI-GATE — make heritage-vet live; scripts/heritage_vet.sh
-[2026-06-04 19:00] CREDITS-UPDATED — 8-char cap moved PROMOTED → REJECTED
-[2026-06-04 19:00] TAGS-FIXED — q3a-1999 → quake3-1999 (3 files), z_zone 1996 → quake-1996, xna-omega-legacy → [legacy:]
-[2026-06-04 19:00] SOUL-V51 — Kali soul v5.1: Heritage Vetting L3 lesson encoded
-[2026-06-04 19:42] SOUL-V52-OPTIMIZED — 10 issues fixed: dedup, directives, distillation_log, trajectory, team, identity, drift metrics
-[2026-06-04 19:42] FIREWALL-L3 — Engine-Stack Firewall added to lessons (Cline-M3 D113 audit)
-[2026-06-04 19:42] H1-HANDED-OFF — Cline-M3 takes H1-P0 (CI integration) + S1.5a (firewall refactor)
+[2026-06-04 23:16] ONBOARD-COMPLETE — Hivemind review done, 1 opencode ses_55e1cf6b8afd (closed), no live work conflict
+[2026-06-04 23:16] LOCK-WRITTEN — KALI_WORKSPACE_LOCK_20260604.md (4 P0s + scope cap)
+[2026-06-04 23:16] CONTEXT-POSTED — Hivemind: 4 P0 focus chain declared, session_id=ses_kali_dev_20260604_p0
+[2026-06-04 23:16] HEARTBEAT-SENT — first ping
+[2026-06-04 23:16] P0-SCOPE — S1.5a (D113 firewall) + soul distiller wire + M9 3 fixes + CI indentation = 75 min critical path
+[2026-06-04 23:25] P0-1 VERIFY — entity_registry.py:174 frozenset ALREADY APPLIED (prior opencode session 8b058ac)
+[2026-06-04 23:25] P0-2 VERIFY — oracle.py:971 distill_and_save ALREADY APPLIED (prior opencode session 8b058ac)
+[2026-06-04 23:25] P0-3 FIX — searxng_client.py:92 — bare except → except Exception as e + logger.warning (M9 compliance)
+[2026-06-04 23:25] P0-4 FIX — test.yml: added Heritage Vetting (Mandate 14) CI gate with make heritage-vet
+[2026-06-04 23:26] FLEET-AUDIT — 14 agent files verified: all have proper YAML frontmatter, all @-mentionable
+[2026-06-04 23:26] FLEET-FIX — quality.md: stale test count 276 → 308
+[2026-06-04 23:26] ENTITY-CREATE — quality + scribe entity workspaces created (soul.yaml + knowledge/ + workspace/)
+[2026-06-04 23:30] TESTS-GREEN — 312/312 passing (4 new from prior session)

@@ -72,6 +72,10 @@ jobs:
           fi
           echo "✅ Error integrity check complete"
 
+      - name: Heritage Vetting (Mandate 14)
+        run: |
+          make heritage-vet
+
       - name: Lint check (non-blocking)
         continue-on-error: true
         run: |

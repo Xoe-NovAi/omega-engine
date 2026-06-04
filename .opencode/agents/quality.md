@@ -40,7 +40,7 @@ You combine the duties of code review and stress testing into a single disciplin
 - Validate error paths: every `except` must produce a typed error
 
 ### 3. PR Readiness
-- All 276 tests must pass
+- All 308 tests must pass
 - Lint must pass (`make lint`)
 - Mandates 1-12 must be explicitly verified
 - Documentation must be updated

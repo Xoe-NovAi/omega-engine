@@ -1,0 +1,24 @@
+{
+  "session_id": "ses_kali_dev_20260604_p0",
+  "cli": "opencode-kali",
+  "model": "minimax-m3-free",
+  "task_current": "Dev chat session \u2014 taking 4 P0s from Cline handoff (D113 firewall, soul distiller wire, M9 error integrity, CI fix)",
+  "focus_chain": [
+    "P0-1 S1.5a: entity_registry.py:171-179 PILLAR_SLOTS \u2192 frozenset (D113)",
+    "P0-2: wire soul_distiller.distill_and_save() into oracle.py end_session hook",
+    "P0-3: fix 3 silent except violations (link_p9_cli.py:362, searxng_client.py:92, health_monitor.py:146,173)",
+    "P0-4: fix .github/workflows/test.yml indentation + add make heritage-vet gate",
+    "verify: make test (308/308), make temple-grade (T1-T11), make heritage-vet",
+    "commit + push, distill L1\u2192L2\u2192L3 to soul.yaml v5.5"
+  ],
+  "decisions": [
+    {
+      "$text": "{\"id\": \"P0-set\", \"text\": \"Execute 4 Cline-handoff P0s in dependency order: Firewall first (constitutional), then distiller wire, then error integrity, then CI gate\"}"
+    },
+    {
+      "$text": "{\"id\": \"scope-cap\", \"text\": \"Single-session focus \u2014 no scope creep into H2-B IWAD content or S2 wire stack; defer to next session\"}"
+    }
+  ],
+  "continuation": "After P0s done, commit all changes with single phase commit, push to main, then distill L1\u2192L2\u2192L3 to soul.yaml, post final hivemind context. No follow-on session required for this scope.",
+  "timestamp": "2026-06-04T23:18:30.961195+00:00"
+}

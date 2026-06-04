@@ -1,0 +1,27 @@
+{
+  "session_id": "ses_55e1cf6b8afd",
+  "cli": "opencode",
+  "model": "deepseek-v4-flash",
+  "task_current": "Session complete \u2014 handoff updated, git pushed",
+  "focus_chain": [
+    "P0-execution",
+    "D113-firewall",
+    "soul-distiller",
+    "M9-exceptions",
+    "CI-fix",
+    "handoff-v2"
+  ],
+  "decisions": [
+    {
+      "d-kal-003": "PILLAR_SLOTS frozenset enforces Engine-Stack Firewall (M2)"
+    },
+    {
+      "d-kal-004": "97 files committed in one batch for clean history"
+    },
+    {
+      "d-kal-005": "Handoff v2.0.0 with real test counts and dependency-ordered P1 items"
+    }
+  ],
+  "continuation": "Kali session closed. 2 commits (8b058ac + bb82442), 98 files, 312/312 tests. Handoff ready at data/handoff/KALI_HANDOFF_TO_OPENCODE_NEW_20260604.md (v2.0.0). Next agent: start with P1-1 (Heritage CI gate) or P1-2 (Soul schema expansion).",
+  "timestamp": "2026-06-04T23:12:04.599065+00:00"
+}

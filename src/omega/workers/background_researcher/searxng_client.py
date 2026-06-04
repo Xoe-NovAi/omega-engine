@@ -89,5 +89,7 @@ class SearXNGClient:
             async with httpx.AsyncClient(timeout=5.0) as client:
                 resp = await client.get(f"{self.base_url}/healthz")
                 return resp.status_code == 200
-        except Exception:
+        except Exception as e:
+            # [id-soft: doom-1993] WAD System — graceful degradation on search failure
+            logger.warning("SearXNG health check failed: %s", e)
             return False
