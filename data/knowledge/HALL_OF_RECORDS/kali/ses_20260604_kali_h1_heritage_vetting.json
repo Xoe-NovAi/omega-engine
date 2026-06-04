@@ -1,0 +1,42 @@
+{
+  "session_id": "ses_20260604_kali_h1_heritage_vetting",
+  "cli": "opencode-kali",
+  "model": "deepseek-v4-flash",
+  "task_current": "Heritage Vetting Pipeline — audit, pipeline design, CI gate, handoff",
+  "focus_chain": [
+    "Audit all 23 id Software concepts for vetting status",
+    "Design 4-gate Heritage Vetting Pipeline",
+    "Build CI gate (make heritage-vet)",
+    "Fix 3 non-standard [id-soft:] tags",
+    "Retroactively vet all 23 concepts",
+    "Update souls (Kali v5.1, Doom Guy v5)",
+    "Record H1 execution plan and hivemind handoff"
+  ],
+  "decisions": [
+    {
+      "id": "D112",
+      "text": "Heritage Vetting Pipeline created. 4-gate process: Discovery → Vetting/Debate → Decision → Implementation/Verification. 10-point scoring matrix, minimum 7/10 for implementation. Qualification Gate rule: if a concept can't be justified without mentioning original hardware constraint, it fails.",
+      "commit": "2f47d54"
+    },
+    {
+      "id": "D113",
+      "text": "8-char name cap REJECTED — cargo-cult optimization. 386-specific 2-int compare trick doesn't accelerate Python dict lookups. Moved from PROMOTED to REJECTED in CREDITS.md.",
+      "commit": "2f47d54"
+    },
+    {
+      "id": "D114",
+      "text": "Non-standard [id-soft:] tags fixed: q3a-1999 → quake3-1999, z_zone 1996 → quake-1996, xna-omega-legacy → [legacy:] prefix. Standardized to CREDITS.md game/year codes.",
+      "commit": "2f47d54"
+    },
+    {
+      "id": "D115",
+      "text": "make heritage-vet CI gate live, passes clean. Still needs CI workflow integration (H1-P0).",
+      "commit": "ce00bcc"
+    }
+  ],
+  "continuation": "Kali: H1 plan recorded at data/handoff/KALI_HORIZON_PLAN_H1_20260604.md. Priority: stand up CI gate (H1-P0), then hold Vetting Council (H1-P1). No new heritage patterns until council clears the backlog.",
+  "handoff": "data/handoff/KALI_HORIZON_PLAN_H1_20260604.md",
+  "timestamp": "2026-06-04T03:50:00Z",
+  "commits_pushed": ["2f47d54", "6416ebf", "ce00bcc"],
+  "tests_passing": 312
+}
