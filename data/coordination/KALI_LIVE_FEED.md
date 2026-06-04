@@ -13,3 +13,7 @@
 [2026-06-04 23:26] FLEET-FIX — quality.md: stale test count 276 → 308
 [2026-06-04 23:26] ENTITY-CREATE — quality + scribe entity workspaces created (soul.yaml + knowledge/ + workspace/)
 [2026-06-04 23:30] TESTS-GREEN — 312/312 passing (4 new from prior session)
+[2026-06-04 23:30] HERITAGE-VET — make heritage-vet PASS (all tags have vet records)
+[2026-06-04 23:32] COMMIT — da7bd1d feat: P0 execution + fleet enhancement (16 files, +437/-53)
+[2026-06-04 23:32] PUSH — origin/main (bb82442..da7bd1d)
+[2026-06-04 23:33] SESSION-COMPLETE — All 4 P0s verified/fixed, fleet enhanced, @-dispatch documented
