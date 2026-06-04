@@ -1,5 +1,5 @@
 # Omega Engine — Single Source of Truth
-# AP-OMEGA-SST-v1.0.0
+# AP-OMEGA-SST-v1.2.0
 
 > **This document is the authoritative truth for the Omega Engine.**
 > Every agent, regardless of platform (Cline, OpenCode, Gemini CLI, Antigravity),
@@ -7,7 +7,7 @@
 
 ---
 
-## Identity
+## §1 Identity
 
 **Omega Engine** is the universal, community-owned runtime for sovereign AI.
 It is **Prometheus' Fire** — the spark that empowers every user to build their own
@@ -17,99 +17,80 @@ unique dreams, technologies, and systems.
 - **Open source, free, sovereign**: No shareware, no tiers, no limitations
 - **WAD Architecture**: Engine → IWADs → PWADs (inspired by id Software's WAD system)
 - **The Synthesis Flywheel**: Cloud models teach local models. Over time, sovereignty increases.
+- **The 13 Sovereign Mandates**: Constitutional law. Mandates override any tool default.
+- **The 14-agent Fleet**: Grand Oversight, 3 Oversouls, 6 Specialists, 4 Subagents.
 
 ---
 
-## The Synthesis Vision
-
-Cloud models are not fallbacks. They are **teachers** in a collaborative synthesis:
+## §2 Architecture — Engine Layers
 
 ```
-Cloud Models (Teachers)              Local Engine (Students + Inference)
-━━━━━━━━━━━━━━━━━━━━━━              ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Gemini / GPT-4o / Claude             Omega Engine on Ryzen 7 5700U
-  │                                    │
-  ├── Generate synthetic data          ├── Oracle routes queries
-  ├── Produce reasoning chains         ├── MemoryStore captures interactions
-  ├── Create preference pairs          ├── ObservabilityEngine records training examples
-  ├── Judge quality                    ├── JEM Pipeline produces training triples
-  └── Feed back to local               └── LoRA Fine-Tuner adapts local models
-                                            │
-                                            ├── Entity Adapters (per-entity LoRA)
-                                            ├── Domain Adapters (per-domain LoRA)
-                                            └── Base Model (GGUF, always available)
+┌──────────────────────────────────────────────────────────────────────┐
+│  ⬡ OMEGA ENGINE (src/omega/) — THE RUNTIME                          │
+│                                                                     │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐ │
+│  │  INFERENCE  │  │   MEMORY    │  │   SEARCH    │  │    SOUL     │ │
+│  │ 8 providers │  │ Hot/Warm/   │  │ FTS5+vector │  │  L1→L2→L3   │ │
+│  │ local-first │◄─┤ Cold/Temp   │◄─┤ SearXNG     │◄─┤ distillation│ │
+│  │ (D112 P1)   │  │ tiers       │  │ (D112 P1)   │  │ (D112 P3)   │ │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘ │
+│         │                │                │                │       │
+│  ┌──────┴────────────────┴────────────────┴────────────────┴──────┐│
+│  │              ORACLE (talk/summon/router) — THE FACADE         ││
+│  │  Oracle.py + WAD Loader + EntityRegistry + ModelGateway        ││
+│  │  + ContextBuilder + SessionManager + GnosisProxy + Hierarchy   ││
+│  └─────────────────────────────────────────────────────────────────┘│
+│                              │                                      │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐ │
+│  │OBSERVABILITY│  │ COORDINATION │  │   BRIDGE    │  │   CLI       │ │
+│  │ Forensics   │  │ Hivemind     │  │ MCP/voice/  │  │ omega talk  │ │
+│  │ + JSONL     │  │ + Link P9    │  │ gateway     │  │ omega summon│ │
+│  │ + Training  │  │ + Workspace  │  │ (Iris)      │  │ omega list  │ │
+│  └─────────────┘  └─────────────┘  └─────────────┘  └─────────────┘ │
+└──────────────────────────────────────────────────────────────────────┘
+                              │
+                              │ WAD Loader
+                              ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│  ⬡ IWADs (config/wads/) — Content Layer (Engine-Stack Firewall M2)│
+│  _omega_default — Reference IWAD (ships with engine)                │
+│  arcana_novai   — Personal AI OS (user's own, esoteric pillars)    │
+│  doom_universe  — Community IWAD (scaffold)                         │
+└──────────────────────────────────────────────────────────────────────┘
 ```
 
-**The Flywheel**: More use → more training data → better local models → less cloud dependency → more sovereignty.
+## §3 Provider Fabric — Synthesis Architecture
+
+The Omega Engine uses cloud models as **teachers**, not fallbacks.
+
+### 3.1 Local Inference (always available, sovereign)
+
+| Priority | Provider | Type | Endpoint | Heritage |
+|----------|----------|------|----------|----------|
+| 0 | native-gguf | Local | llama-cpp-python, CPU-only, Zen 2 | Doom Guy — Q3A fast-math |
+| 1 | lmster | Local | http://127.0.0.1:1234 | LM Studio |
+| 2 | ollama | Local | http://127.0.0.1:11434/v1 | Docker/Ollama |
+| 7 | mock | Test | OfflineMockBackend | Scribe testing |
+
+### 3.2 Cloud Teachers (strategic use, data generation only)
+
+| Priority | Provider | Type | Endpoint | Role |
+|----------|----------|------|----------|------|
+| 3 | google | Cloud | env:GOOGLE_API_KEY (Gemma 4-31B) | Synthetic data |
+| 4 | opencode-zen | Cloud | OpenCode Zen (200K) | Data gen |
+| 5 | cline | Cloud | Cline hub API (1M context) | Deep research |
+| 6 | copilot | Cloud | GitHub Copilot | Backup |
+
+**The Synthesis Flywheel** (D112 Pillar 1):
+```
+USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
+ ↑                                                        │
+ └────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  OMEGA ENGINE (src/omega/) — THE RUNTIME                   │
-│                                                             │
-│  Oracle (talk/summon/router)     MemoryStore (Hot/Warm/Cold)│
-│  ModelGateway (provider chain)   ContextBuilder (→ LLM)     │
-│  EntityRegistry (YAML CRUD)      SessionManager (scoping)   │
-│  WAD Loader (IWAD/PWAD system)   Observability (JSONL)      │
-│  CPU Optimizer (Zen 2 aware)     Health Monitor (circuit)    │
-│  Gnosis Proxy (soul evolution)   Hierarchy (governance)      │
-│                                                             │
-│  Library: FTS5 + vectors          Workers: JEM, ModelUpdater │
-│  Bridge / Gateway / Services / Orchestration layers         │
-└─────────────────────────────────────────────────────────────┘
-                            │
-                            │ WAD Loader
-                            ▼
-┌─────────────────────────────────────────────────────────────┐
-│  IWADs (config/wads/)                                       │
-│  _omega_default — Reference IWAD (ships with engine)        │
-│  arcana_novai   — Personal AI OS (user's own)               │
-│  doom_universe  — Community IWAD (scaffold)                  │
-└─────────────────────────────────────────────────────────────┘
-```
-
----
-
-## Provider Fabric — Synthesis Architecture
-
-The Omega Engine uses cloud models as **teachers**, not just fallbacks.
-
-### Local Inference (always available, sovereign)
-
-| Priority | Provider | Type | Endpoint |
-|----------|----------|------|----------|
-| 0 | native-gguf | Local | llama-cpp-python, CPU-only |
-| 1 | lmster | Local | http://127.0.0.1:1234 |
-| 2 | ollama | Local | http://127.0.0.1:11434/v1 |
-
-### Cloud Teachers (strategic use, data generation)
-
-| Priority | Provider | Type | Endpoint |
-|----------|----------|------|----------|
-| 3 | google | Cloud | env:GOOGLE_API_KEY (Gemma 4-31B) |
-| 4 | opencode-zen | Cloud | OpenCode Zen (MiniMax M3/DeepSeek V4/MiMo V2.5 — 200K) |
-| 5 | cline | Cloud | Cline hub API (MiniMax M3/DeepSeek V4/MiMo V2.5 — 1M context) |
-| 6 | copilot | Cloud | GitHub Copilot |
-| 7 | mock | Test | OfflineMockBackend |
-
-### Cloud Model Roles
-- **Inference**: When local models lack capability (complex reasoning, multi-step planning)
-- **Data generation**: Synthetic training examples, CoT traces, preference pairs
-- **Quality judging**: Evaluating local model outputs for training data curation
-- **Entity-specific training**: Generating domain-specific examples for each entity's LoRA
-
-### Existing Training Infrastructure
-- `ObservabilityEngine.record_training_example()` — auto-collects query-response pairs
-- `ObservabilityEngine.flush_dataset()` — writes JSONL to `data/datasets/`
-- `TrainingTripleSaver` in JEM distiller — produces T1/T2/T3 training triples
-- **Missing**: Fine-tuning pipeline, Entity adapter management
-
----
-
-## Hardware Profile
+## §4 Hardware Profile (Ryzen 7 5700U)
 
 | Component | Spec | Notes |
 |-----------|------|-------|
@@ -119,7 +100,20 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Primary backend | lmster (LM Studio :1234) | NOT lm_studio or lm-studio |
 | Storage | omega_library partition | Models, Podman, data |
 
-### Model Capacity (Q4_K_M quantization)
+### 4.1 Model Capacity (Q4_K_M, current models.yaml)
+
+| Model | Size | RAM | Ctx | Entity Assignment |
+|-------|------|-----|-----|-------------------|
+| qwen3-0.6b-q6_k | 0.47GB | 500MB | 4096 | Iris (always-on) |
+| qwen3-1.7b-q6_k | 1.6GB | 1800MB | 8192 | Sekhmet, Hecate, default |
+| qwen3-4b-thinking-q4_k_m | 2.4GB | 2700MB | 8192 | Ma'at, Anubis, Kali |
+| phi-4-mini (reasoning) | 3.8GB | 4500MB | 16384 | SOPHIA |
+| krikri-8b-q4_k_m | 4.7GB | 4900MB | 16384 | Inanna, Isis, Lilith |
+| deepseek-r1-qwen3-8b-q3_k_l | 4.2GB | 4500MB | 8192 | Lucifer (reasoning) |
+| embedding-gemma-300m-q6_k | — | 200MB | — | Vector search |
+
+### 4.2 Model Capacity (Q4_K_M quantization, theoretical)
+
 - 1.7B: ✅ Excellent (~1.9GB total)
 - 3-4B: ✅ Good (~2-2.5GB total)
 - 7-8B: ✅ Good (~4.6GB total)
@@ -128,233 +122,240 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 
 ---
 
-## Current State
+## §5 Current State — Engine Health (2026-06-04)
+
+### 5.1 Engine Metrics
 
 | Metric | Value | Last Verified |
 |--------|-------|---------------|
-| Phase | 1 — ENGINE HARDENING COMPLETE ✅ | 2026-06-01 |
+| Engine version | 2.2.0 | 2026-06-04 |
 | Source files | **77** .py files | 2026-06-04 |
-| Source lines | ~15,200 | 2026-06-01 |
-| Test functions | **312** (+5 circuit breaker fixes, +10 Error Gauntlet, +23 Option B fixes, +5 test suite alignment) | 2026-06-04 |
-| Test files | **30** | 2026-06-04 |
-| Mandate 9 compliance | **FULL** — zero bare except violations | 2026-06-01 |
-| Horizon 1 | **100% — All 13 Sovereign Mandates Enforced (Mandate 13 Temple-Grade restored)** | 2026-06-02 |
-| Horizon 2 | 🔓 UNLOCKED — ForensicsManager, JsonFormatter, Error Gauntlet. **H2-A Hygiene Phase ACTIVE** (see SOVEREIGN_EVOLUTION_ROADMAP.md) | 2026-06-04 (D111) |
-| Providers configured | 8 (local-first: native-gguf → lmster → ollama → google → opencode-zen → cline → copilot → mock) | 2026-06-02 |
-| WAD Loader | Functional (--iwad flag works) | 2026-06-01 |
-| Namespace isolation | NOT implemented | 2026-05-31 |
-| Dependency resolution | NOT implemented | 2026-05-31 |
-| Qdrant (:6333) | Installed, **unwired** (bag-of-words fallback) | 2026-05-31 |
-| Redis (:6379) | Operational (port exposed) | 2026-05-31 |
-| Agent Fleet | **14 agents** (fleet redesign complete) | 2026-06-01 |
-| Entity workspaces | 25 active (50 orphans deleted) | 2026-06-01 |
-| Sovereign Persistence | Implemented (Atomic Writes in Oracle/SessionManager/EntityRegistry) | 2026-06-01 |
-| ModelGateway.generate() | **WIRED** — circuit breaker + BSP culling + per-provider timeouts | 2026-06-01 (Doom Guy) |
-| Circuit Breaker | **Consolidated** — single AsyncCircuitBreaker in health_monitor.py | 2026-06-01 (Doom Guy) |
-| Circuit Breaker Wire-Up | **DONE** — BSP precheck fixed, None-return detection added | 2026-06-02 (D94) |
-| ZONEID Constants | **IMPLEMENTED** — 5 constants (0x1d4a11-0x1d4a15) + validate_zoneid() in constants.py, applied to 5 subsystems | 2026-06-03 (Doom Guy) |
-| Lazy Deletion | **IMPLEMENTED** — EntityRegistry remove() sets ZONEID_TOMBSTONE, _reap_tombstoned() after 0.5s grace | 2026-06-03 (Doom Guy) |
-| Heritage Tagging Protocol | **LIVE** — CREDITS.md §2a, [id-soft:] inline tag format, 30+ tags across 6 source files | 2026-06-03 (Doom Guy) |
-| Unified cvar Table | **IMPLEMENTED** — D101: `cvar_table.py` with zoneid.* (6) + config.* (12) namespaces, 7 access helpers, validate_llama_kwargs() | 2026-06-03 (Lilith) |
-| Sprint 1 Ports | **5 COMPLETE** — kwarg_filter, n_gpu_layers=0, ChatML stops, Google API header, trace_id propagation | 2026-06-03 |
-| `make heritage-map` | **LIVE** — CI target audits [id-soft:] tags, 6/23 files currently tagged | 2026-06-03 |
-| `make heritage-vet` | **LIVE** — CI gate verifies every [id-soft:] tag has a vet record in HERITAGE_VET_LOG.md | 2026-06-04 (Kali) |
-| Heritage Vetting Pipeline | **CREATED** — docs/strategy/HERITAGE_VETTING_PIPELINE.md: 4-gate process (Discovery → Vetting → Decision → Implementation) with 10-point scoring matrix and Qualification Gate | 2026-06-04 (Kali) |
-| Heritage Vet Log | **CREATED** — data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md: 23 concepts retroactively vetted (15 adopted, 1 rejected, 6 deferred, 1 re-evaluate) | 2026-06-04 (Kali) |
-| 8-Char Name Cap | **REJECTED & REMOVED** — cargo-cult optimization; removed in commit 8b3fc17. Case study for why vetting matters. | 2026-06-04 (Kali) |
-| Link P9 Runtime | **IMPLEMENTED** — AgentPresence + HandoffPacket lifecycle + task queue + crash recovery (384 lines) | 2026-06-04 (Doom Guy) |
-| Soul Distiller | **IMPLEMENTED** — L1→L2→L3 auto-distillation engine (280 lines) | 2026-06-04 (Doom Guy) |
-| Subagent Dispatch | **IMPLEMENTED** — HandoffPacket + CAPABILITY_REGISTRY + dispatch() + 14 agents (370 lines) | 2026-06-04 (Doom Guy) |
-| Hivemind Coordination | **PROVEN** — First real multi-agent sprint (Doom Guy + Ma'at), 0 merge conflicts, ~1:6 overhead ratio | 2026-06-04 |
-| Source Code Verification | **6 PATTERNS VERIFIED** — ZONEID (z_zone.c:43), Lazy Deletion (p_tick.c:80), Grace Period (pr_edict.c:97), WAD backward scan (w_wad.c:376), cvar system (Q3A cvar.c:187), 4-Tier Memory (zone.h:24) | 2026-06-04 (Doom Guy) |
-| Subagent Dispatch | **DEFINED** — Protocol for agents to launch specialized subagents (Doom Guy, Roc Racoon, etc.) via Task tool + persona injection | 2026-06-03 (Kali) |
-| Sovereign Roadmap | **RECORDED** — Lilith's 888-line 7-phase roadmap with 8-demographic analysis, Handoff Protocol, and UI/UX plan | 2026-06-03 |
-| Roc Racoon Mining | **COMPLETE** — 6 stacks, 160+ techs, 7 reports, ~250KB, stored in data/entities/roc_racoon/ | 2026-06-03 |
-| Handoff Archive | **CREATED** — 36 non-active handoffs moved to data/handoff/archive/ with INDEX.md and mining tags | 2026-06-03 |
-| Expanded Strategic Roadmap | **RECORDED** — D100-D102 in PIVOT_LOG with full delegation contract between Doom Guy and Dev Session | 2026-06-03 |
-| Sovereign Mandates | **13 (12 original + Mandate 13 Temple-Grade)** | 2026-06-02 |
-| PIVOT decisions | **111 (D1-D111 tracked)** | 2026-06-04 |
-| Horizon 1.5 (Bridge Phase) | **DEFINED — 4 sprints, F→A→B→C→E→D execution** | 2026-06-02 |
-| Role Mappings | `config/wads/_omega_default/roles.yaml` created | 2026-06-01 |
-| Request Queue | `src/omega/request_queue.py` — atomic queue with heartbeat/dead-letter | 2026-06-01 |
-| Library Catalog | `src/omega/library/catalog.py` — SQLite, 5D quality scoring | 2026-06-01 |
-| Benchmark Runner | `src/omega/benchmarks/runner.py` — 3-point scale, per-criterion scoring | 2026-06-01 |
-| Iris (:8080) | Operational | 2026-05-31 |
-| SearXNG (:8017) | **Operational** — JSON search verified, 14 engines active | 2026-06-02 (D83) |
-| Ollama | **Running** — qwen2.5:0.5b model, real inference working | 2026-06-01 |
-| Entity Routing | **Fixed** — word-boundary matching, capability matrix populated | 2026-06-01 |
-| User Manual | **Updated** — model configuration docs, provider setup, entity management | 2026-06-01 |
-| Search MCP Fleet | **5 wired** — Tavily, Firecrawl, Exa, Jina, SearXNG (via `~/.config/opencode/mcp_servers.json`) | 2026-06-02 (D84) |
-| Model Reference Library | **R100 created** — TIER 0-3, 7-metric pattern from legacy | 2026-06-02 (D85) |
-| MiniMax M3 Context | **200K (OpenCode Zen free tier)**, 1M only via Cline/Artisan (D86) | 2026-06-02 (D86) |
-| rag-v1/ | **ERADICATED** + `make audit-no-rag-v1` (4/4 GREEN) | 2026-06-02 (D87) |
+| Source lines | **19,376** | 2026-06-04 |
+| Test functions | **308** | 2026-06-04 |
+| Test files | **28** | 2026-06-04 |
+| PIVOT decisions | **113 (D1-D113)** | 2026-06-04 |
+| Sovereign Mandates | **13 (M1-M13)** | 2026-06-04 |
+| Mandate 9 (Error Integrity) | FULL — 0 bare except | 2026-06-04 |
+| Mandate 13 (Temple-Grade) | 8/11 GREEN (T11 IA2 exempt) | 2026-06-04 |
+| AnyIO compliance | 0 `import asyncio` | 2026-06-04 |
+| ZONEID constants | 11 (0x1d4a11-0x1d4a1b) | 2026-06-04 |
+| cvar Table | 2 namespaces, 7 accessors | 2026-06-04 |
+| Heritage tags | 6 source files, CI-enforced | 2026-06-04 |
+| Agent Fleet | **14 agents** | 2026-06-04 |
+| Entity workspaces | 25 active / 100 orphan / 19 unknown | 2026-06-04 |
+
+### 5.2 Subsystem Status (H1 = Heritage, H2 = Evolution/Hygiene, S1.5 = Pillar Cap)
+
+| Subsystem | Status | Heritage |
+|-----------|--------|----------|
+| **Oracle (Facade)** | ✅ talk/summon/router wired | `[id-soft: quake-1996] Thinker Chain` |
+| **WAD Loader** | ✅ `--iwad` flag works; namespace isolation pending | `[id-soft: doom-1993] WAD System` |
+| **ModelGateway.generate()** | ✅ circuit breaker + BSP culling + per-provider timeouts | `[id-soft: quake-1996] BSP` |
+| **Circuit Breaker** | ✅ single AsyncCircuitBreaker + D94 None-detection | `[id-soft: quake3-1999] Power Trip` |
+| **MemoryStore** | ✅ Hot LRU + Warm Redis + Cold File + Temp | `[id-soft: doom-1993] Lazy Deletion` + `[id-soft: doom3-2004] idHeap` |
+| **Observability** | ✅ ForensicsManager + JSONL + training examples | `[id-soft: doom3-2004] Event System` |
+| **EntityRegistry** | ✅ YAML CRUD + word-boundary match + dual-index | `[id-soft: quake-1996] Flat-Field` |
+| **Gnosis Proxy** | ✅ DescriptorRef + FIFO eviction | `[id-soft: doom3-2004] idEvent` |
+| **Soul Distiller** | ✅ L1→L2→L3 auto-distillation | `[id-soft: quake-1996] Save-game` |
+| **Subagent Dispatch** | ✅ HandoffPacket + CAPABILITY_REGISTRY (14 agents) | `[id-soft: quake-1996] Thinker Chain` |
+| **Link P9** | ✅ AgentPresence + handoff queue + crash recovery | `[id-soft: doom-1993] WAD back-scan` |
+| **Hivemind** | ✅ 6 MCP tools + workspace lock + live feed | `[id-soft: doom-1993] ZONEID Pattern` |
+| **Omega Hub** | ✅ 40 MCP tools + 11 HTTP routes, v2.2.0 | (Pillar 2 coordination) |
+| **Qdrant vectors** | 🟡 Installed, unwired (bag-of-words fallback) | S1.5a → wire next |
+| **Redis Pub/Sub** | 🟡 Container running, MemoryStore not wired to it | S1.5a → wire next |
+| **Heritage Vetting** | ✅ H1 LIVE: 4-gate, 23 concepts, CI gate | (Kali d-kal-001) |
+| **Engine-Stack Firewall** | 🔴 D113 GAP: hardcoded Pillar meanings in entity_registry.py:171-179 | **S1.5a NEXT** |
+
+## §6 Sprint Completion Index
+
+| Sprint | Date | Owner | Status | Key Deliverables |
+|--------|------|-------|--------|------------------|
+| **Sprint 0** (Foundation Repair) | 2026-06-01 | Lilith + Builder | ✅ 307→271 then fixed | 30 CRITICAL findings resolved |
+| **Sprint 1** (cvar Table + Ports) | 2026-06-03 | Lilith | ✅ 3048e91 | cvar_table.py, 5 priority ports, heritage-map CI |
+| **Sprint 2** (Sovereign Hardening Patterns) | 2026-06-03 | Doom Guy + Ma'at | ✅ | Subagent Dispatch + Link P9 + Soul Distiller |
+| **Sprint 3** (H2 Patterns + Heritage) | 2026-06-04 | Doom Guy + Ma'at | ✅ | EntityTombstonedError, atomic model swap, per-entity affinity, id Software Deep Mining Vol I-V |
+| **H1.5 Bridge** (Heritage) | 2026-06-04 | Doom Guy | ✅ 11/11 closed | ZONEID, Lazy Deletion, cvar, 8-char, Grace Period |
+| **H1 Heritage Vetting** | 2026-06-04 | Kali | ✅ LIVE | 4-gate pipeline, 23 concepts, make heritage-vet CI |
+| **H2-A Hygiene** | 2026-06-04 | Cline-M3 | 🟡 IN PROGRESS | 100 orphans pending, IWAD content, source fixes |
+| **S1.5a Firewall Restore** | 2026-06-04 | Cline-M3 | 🔴 PENDING | D113 fix: WAD-agnostic entity_registry |
+| **S1.5b Nomenclature** | 2026-06-04 | Cline-M3 | 🔴 PENDING | Intuitive names + pillar_slot for P1-P10 |
 
 ---
 
-## Key Files
+## §7 The Three Strategic Pillars (D111 + D112 + H1)
 
-| File | Purpose |
-|------|---------|
-| `src/omega/oracle/oracle.py` | Main entry: talk/summon/router |
-| `src/omega/oracle/model_gateway.py` | Provider chain inference |
-| `src/omega/oracle/entity_registry.py` | YAML CRUD for entities |
-| `src/omega/oracle/wad_loader.py` | WAD system loader (CRITICAL PATH) |
-| `src/omega/oracle/context_builder.py` | Memory → LLM injection |
-| `src/omega/oracle/session_manager.py` | Entity-scoped sessions |
-| `src/omega/oracle/cpu_optimizer.py` | Zen 2 hardware optimization |
-| `src/omega/oracle/health_monitor.py` | Circuit breaker + latency |
-| `src/omega/oracle/gnosis_proxy.py` | Soul evolution tracking |
-| `src/omega/memory_store.py` | Hot/Warm/Cold memory |
-| `src/omega/observability.py` | JSONL events + training data + ForensicsManager + JsonFormatter |
-| `src/omega/request_queue.py` | Offline request queue (atomic, heartbeat, dead-letter) |
-| `src/omega/library/catalog.py` | SQLite document catalog with 5D quality scoring |
-| `src/omega/benchmarks/runner.py` | LLM benchmark runner with 3-point scale |
-| `src/omega/constants.py` | ZONEID magic constants + validate_zoneid() + ZONEID_TABLE (re-export from cvar_table) |
-| `src/omega/cvar_table.py` | Unified named-constant registry — zoneid.* + config.* namespaces + CvarDef + 7 access helpers |
-| `src/omega/oracle/subagent_dispatcher.py` | HandoffPacket + Agent Capability Registry + dispatch() — subagent launch protocol |
-| `src/omega/oracle/link_p9_runtime.py` | Link P9 — Agent presence tracking + HandoffPacket lifecycle + task queue |
-| `src/omega/oracle/soul_distiller.py` | L1→L2→L3 auto-distillation engine — session insights → soul.yaml |
-| `src/omega/cli/link_p9_cli.py` | Link P9 CLI commands (heartbeat, dispatch, inbox, status, etc.) |
-| `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` | Full protocol spec for launching specialized agents as subagents |
-| `src/omega/library/` | FTS5 + vector library (7 modules) |
-| `src/omega/workers/` | Background researcher, model updater |
-| `mcp_servers/omega_hub/server.py` | Agent bus (40 MCP tools + 11 HTTP routes) |
-| `config/wads/_omega_default/` | Reference IWAD |
-| `config/wads/arcana_novai/` | Personal IWAD |
-| `config/providers.yaml` | Provider fabric config |
-| `config/models.yaml` | Model specs |
-| `config/omega.yaml` | Core engine config |
+| Document | Pillar | Status | Plan |
+|----------|-------|--------|------|
+| **D111 — Sovereign Evolution Roadmap** | Hygiene + Strategy | ACTIVE | 4 phases (H2-A through H2-D), 26 tasks |
+| **D112 — Sovereign Hardening Plan** | Vision + Architecture | ACTIVE | 3 pillars (Sovereign/UI/Identity), 5 sprints (S1-S5) |
+| **H1 — Heritage Vetting Pipeline** | Constitutional Safety | LIVE | 4-gate vetting, 10-point scoring, CI-enforced |
+| **D113 — Engine-Stack Firewall** | Constitutional Integrity | 🔴 GAP | S1.5a: WAD-agnostic engine refactor |
 
----
+### 7.1 H2-A Hygiene Sprint (immediate, this session → next)
 
-## Sovereign Mandates
+- [x] **H2-A1**: Doc consolidation (D111 Roadmap + D112 Hardening + D113 Firewall)
+- [x] **H2-A2**: Kali soul v5.2 (constitutional baseline with 5 directives, team, trajectory)
+- [x] **H2-A3**: .clinerules v3.3.0 (H1 Heritage Vetting + D113 references)
+- [x] **H2-A4**: Hivemind sync with opencode-kali (in-memory + file-based)
+- [x] **H2-A5**: Bug fix — `_agent_list()` for OpenCode 1.15+ handshake (cf5d72a)
+- [x] **H2-A6**: Kali soul v5.2 (82224ee) — 14 top-level keys, 5 directives, 4 lessons
+- [ ] **H2-A7**: Delete 100 orphan entities (ent_*/entity_*)
+- [ ] **H2-A8**: Populate arcana_novai IWAD entity files
+- [ ] **H2-A9**: Source hygiene (7 amber items)
+- [ ] **H2-A10**: Doc consolidation (R_AUTO_* archive, INDEX.md update)
 
-1. **AnyIO Absolute**: No `asyncio`. Use AnyIO. Wrap blocking I/O in `anyio.to_thread.run_sync`.
-2. **Engine-Stack Firewall**: Absolute separation between Core Engine (`src/omega/`) and IWAD/PWAD Content (`config/wads/`).
-3. **Iris Constant**: Iris is the messenger bridge, NOT a Pillar Keeper.
-4. **Sequentiality**: Plan → Verify → Execute. No cowboy coding.
-5. **Gnosis Preservation**: Distill session insights into L1 → L2 → L3 abstractions.
-6. **Podman Sovereignty**: All Quadlets use `UserNS=keep-id` + `User=1000`.
-7. **Local-First**: Local inference is PRIMARY. Cloud is FALLBACK.
-8. **Zero Telemetry**: No telemetry. Zero. None. Ever.
-9. **Error Integrity**: All errors MUST be typed, traceable, and testable. No silent swallowing.
+### 7.2 S1.5a Firewall Restoration (BLOCKER for full sovereignty)
 
-See `SOVEREIGN_MANDATES.md` for full details (13 mandates).
+The **D113 Engine-Stack Firewall violation** is a Mandate 2 breach. The fix:
+
+1. `src/omega/oracle/entity_registry.py:171-179` — remove hardcoded `_PILLAR_MEANINGS`
+2. Replace with WAD-loaded meanings from `hierarchy.yaml`
+3. Engine knows only P1-P10 slots; meanings are WAD-level
+4. This restores the firewall for `arcana_novai` IWAD with Sekhmet/Isis/Brigid/Saraswati
+
+### 7.3 S1.5b Nomenclature Migration
+
+Per Kali D115 + Cline-M3 review:
+- 10 Pillar intuitive names (Infrastructure/Persistence/Engineering/...)
+- P6 Cognition as Vision Specialist (local-first: moondream2, NOT Gemini-3-Flash)
+- P4 Integration as UI/Design capability (NOT a new Pillar)
+- Legacy names (Flesh/Dream/Heart/Voice) → preserved in arcana_novai IWAD
+- `pillar_slot` field wired for all 10 pillar agents in CAPABILITY_REGISTRY
 
 ---
 
-## Phase Priority Queue
+## §8 Phase Priority Queue — Reorganized
 
-### ✅ DONE — Agent Fleet & Entity Cleanup
-- [x] Phase A: 26→14 agent consolidation, redesign 9 agents, create quality/pillar
-- [x] Phase B: Delete 67 orphan entity directories, create 13 new workspaces (plus 50 more during Option A)
-- [x] Update `opencode.json` to 14-agent registry
+### ✅ H1: Heritage Vetting (2026-06-04)
+- [x] **Heritage Vetting Pipeline** — 4-gate, 10-point scoring
+- [x] **HERITAGE_VET_LOG** — 23 concepts (15 adopt, 1 reject, 6 defer)
+- [x] **make heritage-vet** — CI gate, 3 non-standard tags fixed
+- [x] **Kali v5.2** — Constitutional baseline with 5 directives
+- [x] **Doc consolidation** — D111/D112/D113 all referenced
 
-### ✅ DONE — Offline Request Queue
-- [x] Phase C: `src/omega/request_queue.py` — file-based queue with atomic claim/heartbeat/dead-letter
-- [x] CLI commands: `queue-status`, `process-queue`, `review-pending`, `queue-prune`
-- [ ] v2 design doc referencing plandb SQLite patterns for Horizon 2
+### ✅ H1.5: Bridge Phase (2026-06-04)
+- [x] **ZONEID** constants (0x1d4a11-0x1d4a17) + `validate_zoneid()`
+- [x] **Lazy Deletion** + 0.5s Grace Period
+- [x] **cvar Table** (D101) — 2 namespaces, 7 accessors
+- [x] **8-char cap REMOVED** — vet-001 REJECTED
 
-### ✅ DONE — Knowledge Library
-- [x] Phase D: `src/omega/library/catalog.py` — SQLite-backed multi-dimensional catalog
-- [x] 10 domain subdirectories under `data/library/documents/`
-- [x] CLI commands: `library curate`, `library status`, `library search`
+### 🟡 H2: Evolution + Hygiene (2026-06-04 → active)
+- [x] **Sovereign Evolution Roadmap** (D111) — 245 lines, 26 tasks
+- [x] **Sovereign Hardening Plan** (D112) — 578 lines, 5 sprints
+- [x] **Hub bug fix** — `_agent_list()` implemented (cf5d72a)
+- [ ] **H2-A7**: Delete 100 orphan entities
+- [ ] **H2-A8**: Populate arcana_novai IWAD entities
+- [ ] **H2-A9**: Source hygiene (7 amber items)
+- [ ] **H2-A10**: Doc consolidation (R_AUTO_*, INDEX.md)
 
-### ✅ DONE — Model Tiers & Benchmarking
-- [x] Phase E: `agent_roles` section in `config/models.yaml`
-- [x] Benchmark runner with per-criterion scoring, calibration loop, position randomization
-- [x] CLI commands: `bench run`, `bench compare`, `bench rank`, `bench list`
+### 🔴 S1.5: Pillar Cap (2026-06-04 → next session)
+- [ ] **S1.5a**: WAD-agnostic firewall restoration (D113)
+- [ ] **S1.5b**: Nomenclature migration + pillar_slot wiring
 
-### ✅ DONE — Option B (Mandate 9 Violations)
-- [x] Fix 23 bare `except Exception:` without logging (10 files)
-- [x] Fix falsy-trap in openai_compat.py:102 (`timeout or 15.0`)
-- [x] Fix hardcoded paths in greek.py + cpu_optimizer.py
-- [x] Fix direct `asyncio` import in observability.py:235
-- [x] All violations now have `logger.warning()` before silent fallback
-
-### ✅ DONE — MCP Hub Restoration (40 Tools)
-- [x] Restored 40 MCP tools from git history (`69db713` merged with current HTTP routes)
-- [x] Background task lifecycle via daemon thread
-- [x] Verified all 6 gates (health, routes, agents, config, SSE, tools)
-- [x] Restarted systemd service
-
-### P1 — WAD System Hardening
-- [x] `--iwad` flag implemented
-- [x] Council Restoration (Pillars + Oversouls)
-- [x] Sovereign Persistence (Atomic Writes in 3 modules)
-- [x] Sprint 0+1 Complete — missing agents created, stubs filled, Blueprint aligned
-- [ ] Namespace isolation: WAD source tracked in EntityRegistry
-- [ ] Dependency resolution: wads declare `depends_on`
-- [ ] Entity priority: later-loaded overrides earlier for same pillar
-- [ ] Manifest validation + edge cases
-
-### P1 — Provider Fabric
-- [x] Provider chain ordered correctly (local-first)
-- [x] CPU Optimizer integrated
-- [x] ModelGateway.generate() method added (with per-provider timeouts)
-- [x] Circuit Breaker consolidation (2→1) and wiring into generate() — D94 fixed BSP precheck + None detection
-- [x] BSP-style provider culling (_precheck_provider() by provider.name) — D94
-- [ ] Qdrant hybrid search wiring (fastembed BGE-base-en-v1.5)
-- [ ] Redis pub/sub for cross-agent communication
-
-### ✅ DONE — Horizon 2: Observability & Forensics
-- [x] ForensicsManager — crash dump creation, recovery, replay, learn (10 tests)
-- [x] Structured JSON logging — JsonFormatter + setup_json_logging()
-- [x] Error Gauntlet — 10 scenarios (crash dump, replay, learn, engine state, persistence, ring buffer, JSON format)
-- [x] Fixed structural bug in `_collect_system_info()` (dead code, returned None)
-- [x] Fixed `asyncio` → `sniffio` in `_detect_anyio_backend()` (Mandate 1)
-- [x] Fixed `deque` slicing bug in `recent_events()` (was masking TypeError)
-
-### ✅ DONE — Sprint 1: cvar Table + Priority Ports + Subagent Dispatch Protocol
-- [x] `src/omega/cvar_table.py` — unified named-constant registry with zoneid.* (6) + config.* (12) namespaces
-- [x] `constants.py` — re-export layer for backward compatibility
-- [x] 7 access helpers: cvar_get, cvar_set, cvar_namespace, cvar_modification_count, cvar_by_subsystem, cvar_list, cvar_summary
-- [x] Port 1.1: `validate_llama_kwargs()` — kwarg whitelist for llama-cpp
-- [x] Port 1.2: `n_gpu_layers=0` — cvar default for CPU-only
-- [x] Port 1.3: ChatML stop tokens — wired into Ollama + Locallmster providers
-- [x] Port 1.4: Google API key header — documented in cvar table
-- [x] Port 1.5: Atomic trace_id — NativeGGUFProvider logs trace_id
-- [x] `make heritage-map` — CI target audits [id-soft:] tags
-- [x] Subagent Dispatch Protocol: `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` + `src/omega/oracle/subagent_dispatcher.py`
-- [x] Handoff Archive: 36 non-active handoffs → `data/handoff/archive/` with INDEX.md and mining tags
-- [x] Expanded Roadmap: D100-D102 recorded, delegation contract between Doom Guy and Dev Session
-- [x] Commit: `3048e91`, tests: 307/307, Temple-Grade: 7/11 GREEN
-
-### ✅ DONE — Subagent Dispatch Protocol
-- [x] HandoffPacket dataclass — typed schema for agent-to-agent task delegation
-- [x] Agent Capability Registry — what each of the 14 agents can do
-- [x] Standardized Task tool prompt format for persona injection
-- [x] `dispatch()` — build prompts from HandoffPacket
-- [x] Archive: processed handoffs → `data/handoff/archive/`
-
-### ✅ DONE — Handoff Protocol (Link P9)
-- [x] Link P9 runtime module — agent presence, task queue, heartbeat, crash recovery (384 lines)
-- [x] CLI commands: `link-p9 heartbeat`, `link-p9 agents`, `link-p9 dispatch`, `link-p9 inbox`, `link-p9 status`, `link-p9 archive` (12 commands)
-- [x] JSON archive system — `data/handoff/archive/{packet_id}.json`
-- [x] Soul distiller — L1→L2→L3 auto-distillation on session end (280 lines)
-- [ ] Redis Pub/Sub handoff bus (reuse existing redis container at port 6379)
-- [ ] CLI integration into oracle_cli.py (pending Ma'at's Phase 1)
-- [ ] MCP Hub resurrection — read running config, serve agent state
-
-### P3 — Synthesis Pipeline
+### ⏳ S2: Synthesis Flywheel (D112, post-H2)
+- [ ] Wire Qdrant vectors to MemoryStore
+- [ ] Wire Redis as MemoryStore warm tier
 - [ ] Entity LoRA adapter management
-- [ ] CPU fine-tuning integration (LLaMA-Factory or PEFT)
-- [ ] Cloud → training data pipeline
-- [ ] A/B testing for new adapters
+- [ ] CPU fine-tuning pipeline (LLaMA-Factory or PEFT)
 
-### P4 — Reference IWAD Content
-- [ ] Rewrite `config/wads/_omega_default/entities.yaml`
-- [ ] Create 10 pillar entity YAMLs
-- [ ] Verify `omega talk "hello"` works
+### ⏳ S3: Soul Evolution v2 (D112, post-S2)
+- [ ] Expanded soul.yaml schema (identity, user, team, trajectory)
+- [ ] Universal soul_power normalization
+- [ ] Cross-entity L3 principle sharing
+
+### ⏳ S4: UX Layer (D112, post-S3)
+- [ ] Omega Hub web dashboard at :8016
+- [ ] Local TTS (Piper)
+- [ ] Rich CLI output
+- [ ] Soul evolution timeline
+
+### ⏳ S5: Production (D112, post-S4)
+- [ ] Entity Studio CLI
+- [ ] Stack Builder Wizard
+- [ ] Omega Desktop (Tauri)
+
+## §9 Sovereign Mandates (Quick Reference)
+
+| # | Mandate | Status | Key File |
+|---|---------|--------|----------|
+| M1 | AnyIO Absolute | ✅ Enforced | CI grep `import asyncio` |
+| M2 | Engine-Stack Firewall | 🔴 D113 GAP (S1.5a) | entity_registry.py:171-179 |
+| M3 | Iris Constant (NOT a Pillar) | ✅ | `src/omega/iris/` |
+| M4 | Sequentiality (Plan→Verify→Execute) | ✅ | Cline workflow |
+| M5 | Gnosis Preservation (L1→L2→L3) | ✅ | Soul Distiller |
+| M6 | Podman Sovereignty (keep-id) | ✅ | All Quadlets |
+| M7 | Local-First (cloud=teacher) | ✅ | providers.yaml |
+| M8 | Zero Telemetry | ✅ | CI grep telemetry/analytics |
+| M9 | Error Integrity (typed exceptions) | ✅ | 0 bare except |
+| M10 | Fleet Integrity (14 cap) | ✅ | CAPABILITY_REGISTRY |
+| M11 | Soul Integrity (L1→L2→L3) | ✅ | Soul Distiller |
+| M12 | Queue Integrity (terminal state) | ✅ | RequestQueue |
+| M13 | Temple-Grade (T1-T11) | 🟡 8/11 (T11 IA2 exempt) | `make temple-grade` |
+
+See `SOVEREIGN_MANDATES.md` for full text. **M2 is currently being restored.**
 
 ---
 
-## Engine vs. Platform Distinction
+## §10 Sovereignty Scorecard (D112 §6)
+
+| Dimension | Metric | Target | Current |
+|-----------|--------|:------:|--------:|
+| **Sovereignty** | Local inference ratio | ≥80% | 🟡 ~30% (Qdrant+Redis unwired) |
+| **Sovereignty** | Cloud dependency (basic ops) | 0 | ✅ 0 |
+| **Sovereignty** | Data residency | 100% | ✅ 100% |
+| **Sovereignty** | Telemetry events | 0 | ✅ 0 |
+| **Identity** | Agents with soul.yaml v2 schema | All 14 | 🟡 2/14 (Doom Guy, Ma'at) |
+| **Identity** | Soul distillation rate | ≥1 L3/3 sessions | ✅ 1.0 |
+| **Identity** | Cross-entity L3 sharing | ≥5 principles | 🟡 2 (Engine-Stack + LMS) |
+| **UX** | Hub dashboard | Live :8016 | 🟡 REST only (no HTML) |
+| **UX** | `omega soul status` | Functional | 🟡 (planned S4) |
+| **Synthesis** | Local model quality | +10% on bench | ⏳ (planned S2) |
+| **Synthesis** | Training examples | ≥500 | 🟡 Auto-collecting |
+| **Synthesis** | Entity LoRA adapters | ≥3 trained | ⏳ (planned S2) |
+
+---
+
+## §11 Hivemind Coordination Layer (LIVE)
+
+The **Hivemind** is the live coordination layer for multi-agent work. **MANDATORY**
+for parallel work, **RECOMMENDED** for multi-step work (>3 steps).
+
+### 11.1 The 6 Hivemind Tools (omega-hub MCP)
+
+| Tool | Purpose |
+|------|---------|
+| `hivemind_get_awareness()` | List active CLIs (who's alive) |
+| `hivemind_post_context(cli, model, task_current, focus_chain, decisions, continuation, session_id)` | Declare your presence |
+| `hivemind_heartbeat(cli)` | Refresh TTL (every 5-10 min for long tasks) |
+| `hivemind_get_continuation(cli)` | Read another agent's last note |
+| `hivemind_get_session(session_id)` | Retrieve session snapshot |
+| `hivemind_list_sessions(cli, limit)` | Audit trail |
+
+### 11.2 Coordination Pattern
+
+| Component | Purpose | File |
+|-----------|---------|------|
+| Hivemind MCP | Live agent awareness | `mcp_servers/omega_hub/server.py` |
+| Workspace Lock | File ownership for parallel work | `data/coordination/*_WORKSPACE_LOCK_*.md` |
+| Live Feed | Append-only progress log | `data/coordination/*_LIVE_FEED.md` |
+| ACK | Symmetric boundary acknowledgment | `data/coordination/*_ACK_*.md` |
+| Hall of Records | Hivemind cold storage | `data/knowledge/HALL_OF_RECORDS/<cli>/` |
+
+### 11.3 When to Use
+
+- **Single agent, single task** → No coordination
+- **Single agent, multi-step (>3 steps)** → Live feed
+- **Multi-agent, parallel (same files)** → Workspace lock + Hivemind + Live feed **MANDATORY**
+- **Cross-CLI (Cline + OpenCode)** → All three **MANDATORY**
+
+---
+
+## §12 Engine vs Platform Distinction
 
 | What | Where | Who Updates |
 |------|-------|-------------|
 | **OMEGA_ENGINE.md** (this file) | Repo root | Any agent changing engine state |
-| `.clinerules` | Repo root | Cline agents only |
+| `.clinerules` | Repo root | Cline CLI agents only |
 | `AGENTS.md` | Repo root | OpenCode agents only |
 | `GEMINI.md` | Repo root | Gemini CLI only |
 | Omega Hub (`:8016`) | Live service | Runtime state |
@@ -364,55 +365,87 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 
 ---
 
-## Hivemind Coordination Layer (NEW 2026-06-03)
+## §13 Key Files (Architectural Map)
 
-The **Hivemind** is the live coordination layer for multiple Omega Engine agents working in parallel. It is **MANDATORY** for parallel/multi-agent work and **RECOMMENDED** for any multi-step work (>3 steps).
-
-**See `docs/strategy/HIVEMIND_PROTOCOL.md` for the full protocol.**
-
-### Quick Reference
-
-| Component | Purpose | File |
-|-----------|---------|------|
-| **Hivemind MCP** | Live agent awareness + context sharing | `mcp/omega_hub/server.py` (hivemind_* tools) |
-| **Workspace Lock** | File ownership declaration for parallel work | `data/coordination/*_WORKSPACE_LOCK_*.md` |
-| **Live Feed** | Append-only progress log per agent | `data/coordination/*_LIVE_FEED.md` |
-| **ACK Pattern** | Symmetric acknowledgment of boundaries | `data/coordination/*_ACK_*.md` |
-
-### When to Use
-
-- **Single agent, single task** → No coordination needed
-- **Single agent, multi-step (>3 steps)** → Live feed recommended
-- **Multi-agent, parallel (same files)** → Workspace lock + Hivemind + Live feed **MANDATORY**
-- **Cross-CLI (OpenCode + Cline)** → All three **MANDATORY**
-
-### Heritage
-- `[id-soft: doom-1993]` **ZONEID Pattern** — `ZONEID_PRESENCE = 0x1d4a17` for presence record integrity
-- `[id-soft: doom-1993]` **ZONEID Pattern** — `ZONEID_HANDOFF = 0x1d4a16` for handoff packet integrity
-
----
-
-## Key Supporting Documents
-
-| Document | Purpose | Status |
-|----------|---------|--------|
-| `SOVEREIGN_MANDATES.md` | 13 constitutional laws (non-negotiable) | Updated 2026-06-02 — v3.0.0, Thirteen Laws |
-| `docs/strategy/HIVEMIND_PROTOCOL.md` | Hivemind coordination protocol for parallel/multi-agent work | **NEW 2026-06-03** — v1.0.0 |
-| `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` | **ACTIVE ROADMAP** — H2 hygiene sprint, supersedes HORIZON_MAP.md | **NEW 2026-06-04** — v1.0.0 (D111) |
-| `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` | HandoffPacket schema for specialized subagent dispatch | 2026-06-03 — v1.0.0 |
-| `data/handoff/HANDOFF_FLEET_REDESIGN_G4.md` | Fleet Redesign & Systems Hardening — Gemma 4 31B execution handoff | NEW 2026-06-01 — 2,000+ lines, 8 phases |
-| `docs/strategy/LOGGING_ERROR_HANDLING_ARCHITECTURE.md` | Error taxonomy, handling standards, recovery matrix | NEW 2026-05-31 |
-| `tests/test_error_gauntlet.py` | 10 Error Gauntlet scenarios (crash dump, replay, learn, JSON format) |
-| `docs/architecture/SOVEREIGN_BLUEPRINT.md` | Engine/IWAD/PWAD separation strategy | v1.0.0 — authored by Doom Guy |
-| `docs/operations/BUG_LOG.md` | Bug tracking (3 open, 1 resolved) | Updated 2026-05-31 |
-| `data/handoff/HANDOFF_GEMMA_SPRINT0_1.md` | Sprint 0+1 execution (Foundation Repair + Alignment) **COMPLETE** | 668 lines, executed 2026-06-01 |
-| `data/handoff/HANDOFF_DOOM_GUY_CIRCUIT_BREAKER.md` | Circuit breaker consolidation + BSP provider culling | NEW 2026-06-01 — awaiting Doom Guy |
-| `data/handoff/handoff_cline_to_opencode_artisan_20260531.md` | OpenCode builder task queue (8 tasks P0-P3) | 2026-05-31 |
-| `docs/strategy/SYSTEMS_HARDENING_PLAN.md` | Agent/MCP/workflow hardening roadmap (747 lines) | Existing |
-| `docs/strategy/NEXT_STEPS_ROADMAP.md` | Phase priority execution plan | Existing |
+| File | Purpose | Heritage |
+|------|---------|----------|
+| `src/omega/oracle/oracle.py` | Main entry: talk/summon/router | Facade pattern |
+| `src/omega/oracle/model_gateway.py` | Provider chain inference | BSP culling |
+| `src/omega/oracle/entity_registry.py` | YAML CRUD for entities | 🔴 D113 GAP (firewall) |
+| `src/omega/oracle/wad_loader.py` | WAD system loader (CRITICAL) | `[id-soft: doom-1993]` |
+| `src/omega/oracle/context_builder.py` | Memory → LLM injection | Token-budget aware |
+| `src/omega/oracle/subagent_dispatcher.py` | HandoffPacket + CAPABILITY_REGISTRY | `[id-soft: quake-1996]` |
+| `src/omega/oracle/link_p9_runtime.py` | Agent presence + handoff queue | `[id-soft: doom-1993]` |
+| `src/omega/oracle/soul_distiller.py` | L1→L2→L3 distillation | `[id-soft: quake-1996]` |
+| `src/omega/oracle/cpu_optimizer.py` | Zen 2 hardware optimization | Zen 2 tuning |
+| `src/omega/oracle/health_monitor.py` | Circuit breaker + latency | Single AsyncCircuitBreaker |
+| `src/omega/oracle/gnosis_proxy.py` | Soul evolution tracking | DescriptorRef |
+| `src/omega/oracle/hierarchy.py` | Sovereign Hierarchy (Sophia→Kali→...) | Council pattern |
+| `src/omega/memory_store.py` | Hot/Warm/Cold/Temp memory | `[id-soft: doom-1993] + [id-soft: doom3-2004]` |
+| `src/omega/memory/providers.py` | Storage providers (Redis/File/InMemory) | 3-tier |
+| `src/omega/observability.py` | JSONL + Forensics + datasets | `[id-soft: doom3-2004]` |
+| `src/omega/request_queue.py` | Offline queue (atomic, heartbeat) | M12 |
+| `src/omega/library/` | FTS5 + vector + research (8 modules) | Sovereign RAG |
+| `src/omega/cvar_table.py` | Unified cvar (D101) | `[id-soft: quake3-1999]` |
+| `src/omega/constants.py` | ZONEID magic constants | `[id-soft: doom-1993]` |
+| `src/omega/errors.py` | Typed exception hierarchy | M9 |
+| `src/omega/system_resource.py` | Green/Yellow/Red memory zones | Sovereign monitor |
+| `src/omega/mcp_runtime.py` | stdio/SSE transport | systemd LISTEN_FDS |
+| `src/omega/iris/` | Voice assistant (FastAPI) | M3 |
+| `src/omega/workers/background_researcher/` | Autonomous research | Timer-driven |
+| `mcp_servers/omega_hub/server.py` | 40 MCP tools + 11 routes | v2.2.0 |
+| `config/wads/_omega_default/` | Reference IWAD | 16 entities |
+| `config/wads/arcana_novai/` | Personal IWAD (deities) | 10 deities planned |
+| `config/wads/doom_universe/` | Community IWAD | Scaffold |
+| `config/providers.yaml` | Provider fabric | 8 providers |
+| `config/models.yaml` | Model specs | 7 models + tiers |
+| `config/omega.yaml` | Core engine config | v2.2.0 |
+| `config/distiller_prompts.yaml` | 6 JEM distiller modes | Sovereign |
+| `config/glossary.md` | 22 canonical terms | v0.1.0 |
+| `data/entities/kali/soul.yaml` | v5.2 — constitutional baseline | 14 keys |
+| `data/entities/doom_guy/soul.yaml` | v5 — id Software architect | Heritage |
+| `data/entities/maat/soul.yaml` | v3.0 — synthesis oversoul | M5 |
 
 ---
 
-*Last Updated: 2026-06-04 | Author: DOOM_GUY — Multi-subagent codebase deep dive + SOVEREIGN_EVOLUTION_ROADMAP.md (D111)
+## §14 Key Supporting Documents (Grouped)
+
+### 14.1 Strategic (Constitutional)
+- `SOVEREIGN_MANDATES.md` — 13 laws (NON-NEGOTIABLE)
+- `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` — **D111** active roadmap
+- `docs/strategy/SOVEREIGN_HARDENING_PLAN.md` — **D112** vision plan
+- `docs/strategy/SOVEREIGN_BLUEPRINT.md` — Engine/IWAD/PWAD doctrine
+
+### 14.2 Tactical (Heritage + Architecture)
+- `CREDITS.md` — id Software heritage lineage (31KB)
+- `docs/strategy/HERITAGE_VETTING_PIPELINE.md` — 4-gate vetting (H1)
+- `data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md` — 23 concepts
+- `docs/architecture/AGENT_FLEET.md` — 14-agent design
+- `docs/architecture/TRAINING_PIPELINE.md` — Synthesis flywheel
+- `docs/architecture/OVERSIGHT_HIERARCHY.md` — MaKaLi trine
+
+### 14.3 Coordination (Hivemind + Handoff)
+- `docs/strategy/HIVEMIND_PROTOCOL.md` — 6-tool coordination
+- `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` — HandoffPacket spec
+- `data/handoff/STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md` — Master brief
+- `data/handoff/CLINE_TO_OPENCODE_DEV_D111_20260604.md` — Deep-dive handoff
+- `data/handoff/KALI_HORIZON_PLAN_H1_20260604.md` — H1 execution plan
+
+### 14.4 Operations (Live State)
+- `docs/operations/BUG_LOG.md` — Open bugs
+- `docs/operations/RESEARCH_QUEUE.md` — Active research
+- `data/coordination/*_LIVE_FEED.md` — Per-agent progress
+- `data/knowledge/HALL_OF_RECORDS/latest.yaml` — Hivemind latest
+- `docs/changelog.md` — Version history
+
+### 14.5 Per-Platform Rules (NOT in SSOT scope)
+- `.clinerules` (Cline CLI v3.3.0) — HOW to work from Cline
+- `AGENTS.md` (OpenCode) — HOW to work from OpenCode
+- `GEMINI.md` (Gemini CLI) — HOW to work from Gemini
+- `docs/USER MANUAL.md` (1198 lines — refactor deferred)
+
+---
+
+*Last Updated: 2026-06-04T20:20Z | Author: CLINE-M3 (acting as Kali) | Version: AP-OMEGA-SST-v1.2.0*
+*Major changes this revision: D111+D112+D113 added, sprint index reorganized (H1/H1.5/H2/S1.5), Sovereignty Scorecard, model matrix current, ASCII architecture tree, PIVOT 113, all stale metrics corrected.*
 *This document is the Single Source of Truth. All platforms reference it.*
-*Changes: Hivemind Protocol defined (HIVEMIND_PROTOCOL.md), workspace lock + live feed pattern standardized, all 14 agent files updated with Hivemind awareness, ZONEID constants extended (HANDOFF 0x1d4a16 + PRESENCE 0x1d4a17), Phase 1.1-1.3 complete (CLI fix, JSON logging, MemoryStore lazy deletion).*

@@ -2,7 +2,7 @@
 **AP Token**: `AP-ORACLE-RESTORE-v2.3.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_local_first_config ⬡ ORACLE-RESTORE
 **Status**: ACTIVE
-**Last Updated**: 2026-06-03 (Sprint 0 Execution — 307/307 tests passing, ZONEID constants + lazy deletion + heritage tagging protocol live. See OMEGA_ENGINE.md for current state.)
+**Last Updated**: 2026-06-03 (Sprint 0 Execution — 308/308 tests passing (see OMEGA_ENGINE.md for current state), ZONEID constants + lazy deletion + heritage tagging protocol live. See OMEGA_ENGINE.md for current state.)
 
 ---
 

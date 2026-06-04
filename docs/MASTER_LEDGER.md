@@ -8,11 +8,18 @@ This document is the **single source of truth** for the high‑level roadmap, mi
 
 | Phase | Goal | Owner | Status |
 |-------|------|-------|--------|
-| **Phase 0 — Fleet Discovery + Remediation** | 10 pillar subagents, 30 CRITICAL findings, 12 critical fixes applied | **Lilith / Builder** | ✅ COMPLETE (271/271 tests) |
+| **Phase 0 — Fleet Discovery + Remediation** | 10 pillar subagents, 30 CRITICAL findings, 12 critical fixes applied | **Lilith / Builder** | ✅ COMPLETE (308/308 tests) |
 | **Phase 1 — Engine Hardening** | Memory wiring, handoff protocol, soul atomicity, agent hardening, MCP consolidation | **Kali / Ma'at** | 📅 Weeks 1-4 |
 | **Phase 2 — Legacy Mining** | Extract 12 quick-win assets, port legacy patterns, compile community content | **Jem-2.0** | 📅 Weeks 5-8 |
 | **Phase 3 — Community Tools** | Entity Studio CLI → Visual Builder, Stack Builder Wizard, one-click Omega Desktop | **Isis / Brigid** | 📅 Weeks 9-12 |
-| **Phase 4 — The Omegaverse** | P2P network protocol, WAD registry for community sharing, cross-instance entity communication | **Saraswati** | 📅 2028 |
+| **Phase 4 — The Omegaverse** | P2P network protocol, WAD registry, cross-instance entity communication, **Godot/id Tech VR bridge**, soul-to-visual mapping (R-24), **shared VR realms (P2P Metropolis)** | **Saraswati** | 📅 2028 |
+
+### VR Omegaverse Vision (Phase 4 — Strategic Context)
+**Status**: Vision documented, NOT implementation-ready. Foundation (Phases 1-3) must be built first.
+**Centralized Vision**: `data/entities/roc_racoon/workspace/VR_OMEGAVERSE_VISION.md` (single source of truth)
+**Feasibility Investigation**: Doom Guy investigating Quake/Doom engine as VR rendering backend (heritage completeness — WAD system already borrows from id Software)
+**Critical Research**: R-24 (Soul-to-Visual Mapping) — bridges soul.yaml to VR visual parameters. Status: 🔲 Not yet researched.
+**Source Docs**: 15+ scattered strategy docs indexed in `data/entities/roc_racoon/workspace/DOCUMENTATION_CHAOS_TRACKER.md`
 
 ### Phase 0 Completed Items (Decision 63)
 - Removed `:U` flags from docker-compose.yml (Mandate 6)

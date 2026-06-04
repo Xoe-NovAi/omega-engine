@@ -3,6 +3,9 @@
 **Prometheus' Fire** — A universal, community-owned runtime for sovereign AI. One install. Your computer. Your data. Your stack.
 
 [![Tests](https://github.com/Xoe-NovAi/omega-engine/actions/workflows/test.yml/badge.svg)](https://github.com/Xoe-NovAi/omega-engine/actions/workflows/test.yml)
+[![PIVOT: 113](https://img.shields.io/badge/PIVOT-113-blue)]()
+[![Sovereignty](https://img.shields.io/badge/Sovereignty-Active-brightgreen)]()
+[![Firewall](https://img.shields.io/badge/S1.5a-Firewall%20Restoration-orange)]()
 [![Python 3.13+](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 
