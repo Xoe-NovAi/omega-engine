@@ -471,4 +471,50 @@ Both fixes are documented in `data/handoff/DOOM_GUY_T23_REPORT_20260602.md`.
 
 ---
 
-*Last Updated: 2026-06-04 (added §1.12 8-Char Name, §1.13 cvar Table, §1.14 4-Tier Memory, §1.15 Multi-Index Entity, §1.16 QuakeC Entity, §1.17 Hard-Boundary, §1.18 4-Path VFS, §1.19 High-Bit Trick, §1.20 Fixed-Size Active Set) | Maintained by: Doom Guy / Kali*
+### 1.21 Network Channel (netchan) Protocol (Quake III, 1999)
+
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | `net_chan.c:35-235` (Q3A 1999) — Out-of-band (OOB) messages, fragmentation, and qport NAT remapping | MCP Hub transport layer in `mcp/omega_hub/server.py` |
+| **OOB Messages** | Sequence number `-1` bypasses stateful channel for lightweight queries (ping, status) | Separate stateless HTTP POST endpoints from stateful SSE channels |
+| **Fragmentation** | Split messages exceeding 1400-byte MTU into sequential fragments | AnyIO-native streamable chunking for large context snapshots |
+| **qport Workaround** | Embed unique `qport` to re-associate connection if NAT remaps client port mid-game | Embed unique `session_id` token in headers to re-associate connection if IP changes |
+| **Status** | **MAPPED** — pattern documented. MCP Hub transport already follows these principles. |
+
+**Attribution format**: `[netchan Protocol: id Software 1996/1999]`
+**Inline tag format**: `# [id-soft: quake3-1999] netchan — description`
+
+---
+
+### 1.22 Unified Memory Allocator (idHeap) (DOOM 3, 2004)
+
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | `Heap.cpp:45-143` (DOOM 3, 2004) — 3-tier allocator (Small/Medium/Large) + Defrag Block hack | Tiered Memory Store in `src/omega/memory_store.py` + `ResourceGuard` |
+| **Small Allocator** | 1–255 bytes, pre-allocated free-list buckets, $O(1)$ zero search overhead | `HotMemoryTier` — fast, in-memory dictionary for active states |
+| **Medium Allocator** | 256–32,768 bytes, page-based allocator with block merging | `WarmMemoryTier` — SQLite database for recent summarized history |
+| **Large Allocator** | >32,768 bytes, bypasses heap, allocates directly from OS | `ColdMemoryTier` — YAML files on disk or vector embeddings in Qdrant |
+| **Defrag Block** | Single massive block allocated at startup, freed during heavy tasks to guarantee memory | `ResourceGuard` — AnyIO `Semaphore(1)` to prevent OOM crashes on Ryzen 5700U |
+| **Status** | **MAPPED** — pattern documented. 3-tier memory store and ResourceGuard live. |
+
+**Attribution format**: `[Unified Memory: id Software 2004]`
+**Inline tag format**: `# [id-soft: doom3-2004] idHeap — description`
+
+---
+
+### 1.23 Fixed-Point Math (DOOM, 1993)
+
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | `m_fixed.c:43-87` (DOOM 1993) — 16.16 fixed-point format, bit-shift multiplication, division guard | CPU Optimizer in `src/omega/oracle/cpu_optimizer.py` + Quantization |
+| **Fixed-Point** | Represent real numbers as 32-bit integers to bypass slow software FPU emulation | Integer-quantized GGUF models (Q4_K_M / Q8_0) to bypass slow FP16/FP32 matrix math |
+| **Bit-Shift Mul** | Cast to 64-bit, multiply, bit-shift right by 16 (`>> 16`) | Zen 2 AVX2 vectorization flags (`-march=znver2 -mavx2 -mfma`) for fast integer math |
+| **Division Guard** | Fast bit-shift check to detect overflow/divide-by-zero before execution | KV cache quantization flags (`-ctk q8_0 -ctv q8_0`) to prevent memory bottlenecks |
+| **Status** | **MAPPED** — pattern documented. Quantization and AVX2 compilation flags live. |
+
+**Attribution format**: `[Fixed-Point Math: id Software 1993]`
+**Inline tag format**: `# [id-soft: doom-1993] Fixed-Point — description`
+
+---
+
+*Last Updated: 2026-06-04 (added §1.12 8-Char Name, §1.13 cvar Table, §1.14 4-Tier Memory, §1.15 Multi-Index Entity, §1.16 QuakeC Entity, §1.17 Hard-Boundary, §1.18 4-Path VFS, §1.19 High-Bit Trick, §1.20 Fixed-Size Active Set, §1.21 netchan, §1.22 idHeap, §1.23 Fixed-Point) | Maintained by: Doom Guy / Kali*
