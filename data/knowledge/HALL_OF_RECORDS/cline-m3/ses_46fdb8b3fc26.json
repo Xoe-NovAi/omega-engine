@@ -1,0 +1,35 @@
+{
+  "session_id": "ses_46fdb8b3fc26",
+  "cli": "cline-m3",
+  "model": "minimax/minimax-m3",
+  "task_current": "Deep review of Kali's Pillar Nomenclature & H2 Deep Patterns handoff (ses_19c39850180f)",
+  "focus_chain": [
+    "Review pillar_slot=None in CAPABILITY_REGISTRY (13/14 agents)",
+    "Verify H2 patterns actually wired (Temp Tier, Capability Index, Fixed-Size Active Set)",
+    "Assess P6 Cognition as Vision Specialist mapping (Gemini-3-Flash cloud-dependent)",
+    "Plan nomenclature migration: legacy name -> intuitive name across stack",
+    "Coordination with opencode-kali (parallel session)"
+  ],
+  "decisions": [
+    {
+      "text": "Verified: H2 patterns ARE implemented in code (model_gateway.py:533 active_set, entity_registry.py:201 capability_index, memory_store.py:82 _temp tier)"
+    },
+    {
+      "text": "Issue: pillar_slot=None for 13/14 agents in CAPABILITY_REGISTRY \u2014 pillar.py subagent has 'PX' but no other agent has its slot set"
+    },
+    {
+      "text": "Concern: P6 Cognition as Vision Specialist maps to Gemini-3-Flash \u2014 this REGRESSES Sovereignty (cloud-dependent for vision). Must guard against cloud-only vision paths"
+    },
+    {
+      "text": "Concern: 'Perspective' (Ma'at) and 'Lattice' (Lilith) hierarchies in Kali's # Omega Hub code are conceptual only \u2014 not in src/omega/oracle/"
+    },
+    {
+      "text": "Accept nomenclature: Infrastructure/Persistence/Engineering/Integration/Governance/Cognition/Context/Observability/Orchestration/Validation is more intuitive than Flesh/Dream/Will/Heart/Voice/Mind/Gnosis/Shadow/Spirit/Chaos"
+    },
+    {
+      "text": "Concern: Pillar name in subagent_dispatcher.py: pillar_slot field exists but only used in 'pillar' agent \u2014 not enforced for actual pillar agents (P1-P10)"
+    }
+  ],
+  "continuation": "Cline-M3 will update subagent_dispatcher.py, AGENTS.md, .opencode/MANIFEST.md with intuitive names + pillar_slot for P1-P10. Will DEFER vision specialization decision to user (P6 Cognition as Vision is a regression \u2014 needs sovereign local vision path). Coordination with opencode-kali ses_19c39850180f.",
+  "timestamp": "2026-06-04T19:17:57.633861+00:00"
+}

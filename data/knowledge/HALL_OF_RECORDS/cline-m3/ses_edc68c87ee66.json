@@ -1,0 +1,31 @@
+{
+  "session_id": "ses_edc68c87ee66",
+  "cli": "cline-m3",
+  "model": "minimax/minimax-m3",
+  "task_current": "Vision LLM/UI domains, legacy->Arcana-NovAi transfer, Engine-Stack Firewall audit",
+  "focus_chain": [
+    "Map Vision LLM domain (P6 Cognition) and UI/Design domain to Pillar slots",
+    "Plan legacy Flesh/Dream/Heart/Voice -> Arcana-NovAi IWAD transfer (keep in WAD content, not engine)",
+    "Audit Engine-Stack Firewall: entity_registry.py:171-179 hardcodes Flesh/Dream/etc \u2014 MANDATE 2 VIOLATION",
+    "Design WAD-agnostic engine: pillars should be slot references, not domain names"
+  ],
+  "decisions": [
+    {
+      "text": "CONFIRMED Firewall VIOLATION: entity_registry.py:171-179 hardcodes {P1:Flesh/P2:Dream/P3:Will/P4:Heart/P5:Voice/P6:Mind/P7:Gnosis/P8:Shadow/P9:Spirit/P10:Chaos} with element+chakra \u2014 these are WAD-level attributes leaking into engine core. This is exactly what Mandate 2 forbids. MUST FIX."
+    },
+    {
+      "text": "FIX: Replace P1-P10 hardcoded metadata with an optional WAD-loaded PILLAR_MEANINGS dict. Engine should only know P1-P10 exist as slots; the meanings (element, chakra, intuitive name) are loaded from active WAD's hierarchy.yaml"
+    },
+    {
+      "text": "VISION domain fits P6 Cognition as a CAPABILITY (multimodal_vision, visual_validation, anomaly_detection) \u2014 execution is local-first via moondream2/nomic-embed-vision, NOT Gemini-3-Flash"
+    },
+    {
+      "text": "UI/DESIGN domain is meta \u2014 it serves the human-facing layer. It fits in P4 Integration (Bridge \u2014 MCP + UI Communication) as a capability, not a new Pillar. UI = presentation of integration. Add capability 'interface_design' to P4 Bridge."
+    },
+    {
+      "text": "LEGACY TRANSFER PLAN: arcana_novai IWAD will carry Flesh/Dream/Heart/Voice (the original 4 pillars from Era 1) as the esoteric council. _omega_default uses new intuitive names. The engine only sees slot numbers P1-P10; the names live in WADs."
+    }
+  ],
+  "continuation": "Will propose the WAD-agnostic engine refactor + UI capability mapping + legacy transfer plan. Coordination with opencode-kali ses_19c39850180f on nomenclature migration.",
+  "timestamp": "2026-06-04T19:24:20.972028+00:00"
+}
