@@ -2006,3 +2006,36 @@ Entity dispatch in oracle.py already used `entity.model` as a fallback, but ther
 ---
 
 *PIVOT_LOG.md — Immutable. Every decision recorded. 110 decisions tracked (D1-D110).*
+
+---
+
+## Decision 111: Sovereign Evolution Roadmap — H2 Hygiene Sprint
+
+**Date**: 2026-06-04
+**Channel**: Cline (MiMo V2.5, 1M context, `--thinking high`)
+**Entity**: DOOM_GUY
+**Trace**: trc_evolution_roadmap_D111
+
+### Decision
+Adopt `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` as the **single active roadmap**, superseding `HORIZON_MAP.md` and `ROADMAP.md`. Execute H2 (Data Hygiene + Source Fixes + Doc Consolidation + IWAD Content) before H3 (Pattern Deep Mining) or H4 (Community Tools).
+
+### Rationale
+The multi-subagent codebase deep dive (5 agents, 77 source files, 28 test files, 426 docs, 148 entity workspaces, 15,948 data files) revealed that the engine itself is **production-grade** (312/312 tests, 13 Mandates enforced, H1+H1.5 complete), but **data hygiene and documentation** are dragging the health grade from ENGINE GREEN to 🟡 AMBER overall. Fixing 100 orphan entities, populating the arcana_novai IWAD, fixing 7 source amber items, and consolidating 3+ competing roadmaps will bring the full project to GREEN before any major feature work.
+
+### What Was Created
+- `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` — 245-line unified roadmap (H2-A through H4-D)
+- `docs/decisions/PIVOT_LOG.md` — this entry (D111)
+
+### What Changed
+- No source changes yet. This is a strategic planning decision only.
+
+### Next Actions (ordered)
+1. **H2-A**: Delete 100 orphan entity workspaces
+2. **H2-C**: Fix 7 source amber items (CI, test_bug, hierarchy imports, .gitignore, etc.)
+3. **H2-B**: Populate arcana_novai IWAD entity files
+4. **H2-D**: Consolidate roadmap docs, update INDEX.md, archive R_AUTO_*
+5. → H3: Hivemind productionization + heritage mining + test expansion
+
+### Heritage
+`[id-soft: doom-1993] WAD System — IWAD/PWAD architecture drives the restoration priority`
+`[id-soft: quake3-1999] Cvar System — migration audit ensures cvar_get() completeness`

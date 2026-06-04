@@ -144,3 +144,16 @@ make test          # baseline restored
 
 *⬡ OMEGA ⬡ SOPHIA ⬡ trc_horizon_map ⬡ STRATEGY*
 *Horizon 1 COMPLETE — All 12 Mandates Enforced. Horizon 2 UNLOCKED.*
+
+
+---
+
+## §8 Superseded
+
+This document is **superseded** by `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` (D111).
+The H2 (Observability) section below is now folded into H2 (Hygiene) in the new roadmap.
+H1 remains COMPLETE. H1.5 (Bridge Phase) is COMPLETE.
+
+**Active roadmap**: `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md`
+**Decision**: D111 — Sovereign Evolution Roadmap adopted 2026-06-04
+

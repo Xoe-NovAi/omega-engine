@@ -133,13 +133,13 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Metric | Value | Last Verified |
 |--------|-------|---------------|
 | Phase | 1 — ENGINE HARDENING COMPLETE ✅ | 2026-06-01 |
-| Source files | **71** .py files | 2026-06-01 |
+| Source files | **77** .py files | 2026-06-04 |
 | Source lines | ~15,200 | 2026-06-01 |
-| Test functions | **307** (+5 circuit breaker fixes, +10 Error Gauntlet, +23 Option B fixes) | 2026-06-04 |
+| Test functions | **312** (+5 circuit breaker fixes, +10 Error Gauntlet, +23 Option B fixes, +5 test suite alignment) | 2026-06-04 |
 | Test files | **30** | 2026-06-04 |
 | Mandate 9 compliance | **FULL** — zero bare except violations | 2026-06-01 |
 | Horizon 1 | **100% — All 13 Sovereign Mandates Enforced (Mandate 13 Temple-Grade restored)** | 2026-06-02 |
-| Horizon 2 | 🔓 Unlocked — ForensicsManager, JsonFormatter, Error Gauntlet (25%) | 2026-06-01 |
+| Horizon 2 | 🔓 UNLOCKED — ForensicsManager, JsonFormatter, Error Gauntlet. **H2-A Hygiene Phase ACTIVE** (see SOVEREIGN_EVOLUTION_ROADMAP.md) | 2026-06-04 (D111) |
 | Providers configured | 8 (local-first: native-gguf → lmster → ollama → google → opencode-zen → cline → copilot → mock) | 2026-06-02 |
 | WAD Loader | Functional (--iwad flag works) | 2026-06-01 |
 | Namespace isolation | NOT implemented | 2026-05-31 |
@@ -169,7 +169,7 @@ The Omega Engine uses cloud models as **teachers**, not just fallbacks.
 | Handoff Archive | **CREATED** — 36 non-active handoffs moved to data/handoff/archive/ with INDEX.md and mining tags | 2026-06-03 |
 | Expanded Strategic Roadmap | **RECORDED** — D100-D102 in PIVOT_LOG with full delegation contract between Doom Guy and Dev Session | 2026-06-03 |
 | Sovereign Mandates | **13 (12 original + Mandate 13 Temple-Grade)** | 2026-06-02 |
-| PIVOT decisions | **107 (D1-D107 tracked)** | 2026-06-04 |
+| PIVOT decisions | **111 (D1-D111 tracked)** | 2026-06-04 |
 | Horizon 1.5 (Bridge Phase) | **DEFINED — 4 sprints, F→A→B→C→E→D execution** | 2026-06-02 |
 | Role Mappings | `config/wads/_omega_default/roles.yaml` created | 2026-06-01 |
 | Request Queue | `src/omega/request_queue.py` — atomic queue with heartbeat/dead-letter | 2026-06-01 |
@@ -394,6 +394,7 @@ The **Hivemind** is the live coordination layer for multiple Omega Engine agents
 |----------|---------|--------|
 | `SOVEREIGN_MANDATES.md` | 13 constitutional laws (non-negotiable) | Updated 2026-06-02 — v3.0.0, Thirteen Laws |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | Hivemind coordination protocol for parallel/multi-agent work | **NEW 2026-06-03** — v1.0.0 |
+| `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` | **ACTIVE ROADMAP** — H2 hygiene sprint, supersedes HORIZON_MAP.md | **NEW 2026-06-04** — v1.0.0 (D111) |
 | `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` | HandoffPacket schema for specialized subagent dispatch | 2026-06-03 — v1.0.0 |
 | `data/handoff/HANDOFF_FLEET_REDESIGN_G4.md` | Fleet Redesign & Systems Hardening — Gemma 4 31B execution handoff | NEW 2026-06-01 — 2,000+ lines, 8 phases |
 | `docs/strategy/LOGGING_ERROR_HANDLING_ARCHITECTURE.md` | Error taxonomy, handling standards, recovery matrix | NEW 2026-05-31 |
@@ -408,6 +409,6 @@ The **Hivemind** is the live coordination layer for multiple Omega Engine agents
 
 ---
 
-*Last Updated: 2026-06-04 | Author: DOOM_GUY — Source code verification deep read + hivemind coordination findings + D106-D107*
+*Last Updated: 2026-06-04 | Author: DOOM_GUY — Multi-subagent codebase deep dive + SOVEREIGN_EVOLUTION_ROADMAP.md (D111)
 *This document is the Single Source of Truth. All platforms reference it.*
 *Changes: Hivemind Protocol defined (HIVEMIND_PROTOCOL.md), workspace lock + live feed pattern standardized, all 14 agent files updated with Hivemind awareness, ZONEID constants extended (HANDOFF 0x1d4a16 + PRESENCE 0x1d4a17), Phase 1.1-1.3 complete (CLI fix, JSON logging, MemoryStore lazy deletion).*
