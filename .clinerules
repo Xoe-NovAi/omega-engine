@@ -5,9 +5,15 @@
 # Engine state: Read OMEGA_ENGINE.md (the Single Source of Truth)
 # Platform distinction: .clinerules = HOW to work from Cline CLI.
 #                       OMEGA_ENGINE.md = WHAT the engine IS.
-# Last Updated: 2026-06-04 (D117 Clean Slate + Sovereign Development Roadmap)
+# Last Updated: 2026-06-05 (thin-wrapper refactor + entity hygiene + session lessons)
 # Cline CLI version: 3.0.15 (cline binary at ~/.nvm/versions/node/v25.9.0/bin/cline)
 # User context: M3 1M via Cline provider (OAuth); moved from Cline VSCodium extension.
+#
+# SESSION LESSONS (2026-06-05):
+# - Chaos session transcripts are EVIDENCE, not GOSPEL. Verify every claim against disk.
+# - Agent prompts must be thin wrappers. Mandates are injected at boot, not in the prompt.
+# - `websearch` is the only working search tool. firecrawl/exa are 401-broken.
+# - When the user says "fix X", scope to X. Do not expand scope to Y and Z.
 
 
 ## Sovereign Mandates (NON-NEGOTIABLE)
@@ -140,7 +146,7 @@ When running interactively or with --auto-approve, the agent has access to:
 2. **Read the rules**: `head -50 SOVEREIGN_MANDATES.md` (refresh the 14 mandates)
 3. **Check recent activity**: `git log --oneline -10` and `git status`
 4. **Verify baseline**: `cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && make test`
-   - Must show **308/308 passing**. If fewer pass, STOP and triage before changes.
+   - Must show **312/312 passing**. If fewer pass, STOP and triage before changes.
 5. **Verify Hivemind** (multi-agent work): `omega-hub_hivemind_get_awareness()`
    - See who's already working before claiming files
 6. **Read latest handoffs** (if any):
@@ -165,7 +171,7 @@ When running interactively or with --auto-approve, the agent has access to:
 
 ### After Completing Work (MANDATORY SEQUENCE)
 
-1. `make test` - all **308** tests must pass
+1. `make test` - all **312** tests must pass
 2. `make temple-grade` - T1-T11 gates must pass (Mandate 13)
 3. `make sovereignty` - confirm local/cloud ratio did not regress
 4. `git add -A && git commit -m "<prefix>: <short message>"` - PREFIX REQUIRED
@@ -195,7 +201,7 @@ When running interactively or with --auto-approve, the agent has access to:
 - **Imports**: stdlib -> third-party -> local; relative imports within packages
 - **Docstrings**: Google-style; preserve existing docstrings unless modifying that function
 - **Errors**: typed exceptions only; no bare `except:`; `pytest.raises(OmegaError)` is canonical
-- **Tests**: `make test` (308 must pass), then `make temple-grade` (T1-T11 must pass)
+- **Tests**: `make test` (312 must pass), then `make temple-grade` (T1-T11 must pass)
 - **Atomic writes**: use `.tmp -> .json` rename pattern for any file mutation
 - **Lines**: <100 chars preferred; flake8 must pass
 
@@ -207,7 +213,7 @@ cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
 source .venv/bin/activate
 
 # === CORE TESTING ===
-make test                # 308 tests must pass
+make test                # 312 tests must pass
 make test-cov            # with coverage report
 make temple-grade        # T1-T11 gates (Mandate 13)
 make sovereignty         # local/cloud inference ratio
@@ -293,10 +299,13 @@ does **focused execution**. They coordinate via the **Omega Hub** (`:8016`).
 
 ### The 14-agent OpenCode fleet (for context, not for me to invoke)
 
-Primary agents (`.opencode/agents/*.md`): `plan`, `kali`, `doom_guy`,
-`roc_racoon`, `jem`, `researcher`, plus 9 subagents (`maat`, `lilith`,
-`jem_discovery`, `jem_synthesis`, `jem_verification`, `scribe`, `quality`,
-`pillar`, and the new `gnosis-analyst`).
+Primary agents (`.opencode/agents/*.md`): `kali`, `doom_guy`, `roc_racoon`,
+`jem`, `researcher`, `makali`, `maat`, `lilith`, `jem_discovery`,
+`jem_synthesis`, `jem_verification`, `scribe`, `quality`, `pillar`.
+
+**Note**: Agent prompts were thinned on 2026-06-05 (D-cln-006). Each agent is
+now ~30 lines: identity anchor + role-specific protocol + behavioral heuristic.
+Mandates are injected at boot via SOVEREIGN_MANDATES.md + Agency-Injector.
 
 ### The 10 Pillar slots (P1-P10)
 
@@ -346,23 +355,24 @@ AND post a short continuation to the Omega Hub if needed.
 
 ### MCP servers (project-level, in `opencode.json`)
 
-The project wires **6 MCP servers** (verified `make mcp-check` GREEN):
+**SOVEREIGN REALITY (2026-06-05)**: `firecrawl` and `exa` are **401-Broken (Unauthorized)**.
+Do NOT attempt to use them. `websearch` is the only working search tool.
 
-| Server | Type | Endpoint | Purpose |
-|--------|------|----------|---------|
-| `omega-hub` | remote | `http://127.0.0.1:8016/sse` | **THE HIVEMIND** — 40 MCP tools + 11 HTTP routes |
-| `firecrawl` | local | `npx -y firecrawl-mcp` | Web scraping |
-| `exa` | remote | `https://mcp.exa.ai/mcp` | Web search (`web_search_exa`, `web_fetch_exa`) |
-| `tavily` | local | `npx -y @tavily/mcp` | Web search (disabled, available) |
-| `jina` | remote | `https://mcp.jina.ai/v1` | Reader/fetch (disabled, available) |
-| `serper` | remote | `https://mcp.serper.dev/mcp` | Google SERP (disabled) |
-| `filesystem` | local | `npx -y @modelcontextprotocol/server-filesystem` | FS access (disabled) |
+| Server | Type | Endpoint | Purpose | Status |
+|--------|------|----------|---------|--------|
+| `omega-hub` | remote | `http://127.0.0.1:8016/sse` | **THE HIVEMIND** — 40 MCP tools + 11 HTTP routes | ✅ Working (when running) |
+| `firecrawl` | local | `npx -y firecrawl-mcp` | Web scraping | ❌ 401 Unauthorized |
+| `exa` | remote | `https://mcp.exa.ai/mcp` | Web search | ❌ 401 Unauthorized |
+| `tavily` | local | `npx -y @tavily/mcp` | Web search | ⚠️ Disabled |
+| `jina` | remote | `https://mcp.jina.ai/v1` | Reader/fetch | ⚠️ Disabled |
+| `serper` | remote | `https://mcp.serper.dev/mcp` | Google SERP | ⚠️ Disabled |
+| `filesystem` | local | `npx -y @modelcontextprotocol/server-filesystem` | FS access | ⚠️ Disabled |
 
 These are NOT in Cline's MCP config; they're in `opencode.json`. Cline reaches
 the hub via the project's `opencode.json` SSE endpoint or via `make mcp-check`.
 
-If I need web search, I use `web_search` / `web_fetch` natively - the Omega
-Hub is the team-bus, not a per-Cline tool.
+**For web search, use `web_search` / `web_fetch` natively.** firecrawl and exa are dead.
+The Omega Hub is the team-bus, not a per-Cline tool.
 
 ### Hivemind MCP — The Coordination Layer (NEW 2026-06-03)
 
@@ -451,7 +461,7 @@ Query -> EntityRegistry (YAML CRUD, word-boundary match) -> TriageRouter -> Mode
 - `config/wads/doom_universe/` - Community IWAD (scaffold)
 - Switch: `omega talk --iwad <name> "hi"` or `make wad NAME=arcana_novai`
 
-### Entities (25 active workspaces, 50 orphans deleted in D75)
+### Entities (42 total — 30 active, 12 stubs; quarantined/archived 62 in D-cln-007)
 
 - `data/entities/<name>/soul.yaml` - the L1->L2->L3 distilled soul
 - `data/entities/<name>/workspace/` - session outputs (persistent)
@@ -474,7 +484,7 @@ When you wake up after compaction:
 3. `head -100 docs/decisions/PIVOT_LOG.md` - re-anchor architecture
 4. `head -50 docs/strategy/HIVEMIND_PROTOCOL.md` - re-anchor coordination rules
 5. `ls -t data/handoff/*.md | head -5` - find newest handoffs
-6. `cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && make test` - 308/308
+6. `cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && make test` - 312/312
 7. `make temple-grade` - T1-T11 must pass
 8. `git log --oneline -5` - confirm latest commits
 9. `git status` - confirm no uncommitted drift
@@ -508,6 +518,15 @@ this pipeline, but Cline can do it directly when working solo.
   calls are not. The distinction is sovereignty, not paranoia.
 - **The Torus evolves**: every session is a fold of the same truth. Souls
   accumulate; engines harden; the flywheel turns.
+- **Verify before acting**: Chaos session transcripts are evidence, not gospel.
+  Agents miscount, misclassify, and hallucinate. Always check the actual
+  filesystem before quarantining, deleting, or restructuring anything.
+- **Scope discipline**: When the user says "fix X", scope to X. Do not expand
+  to Y and Z. Do not "also fix" things you noticed along the way unless asked.
+- **Thin wrappers, not law books**: Agent prompts should be identity anchors
+  and role-specific protocols. The constitution (M1-M14) lives in
+  SOVEREIGN_MANDATES.md and is injected at boot. Do not duplicate it in
+  every agent file.
 
 ## Footer - When in Doubt
 
@@ -516,6 +535,10 @@ this pipeline, but Cline can do it directly when working solo.
 - If a Mandate and a tool default conflict, **Mandates win** (see SOVEREIGN_MANDATES.md).
 - If a handoff doc and the actual code disagree, **the code wins**; update the
   handoff in a follow-up commit.
+- If a chaos session transcript says X, **verify X against the actual filesystem** before acting on it.
+  Transcripts are evidence, not gospel. Agents miscount, misclassify, and hallucinate.
+- If the user says "fix X", **scope to X**. Do not expand to Y and Z. Do not "also fix" things
+  you noticed along the way unless the user asks. Respect the directive boundary.
 - If you make a mistake, **commit the fix immediately** with a `fix:` prefix
   - never leave the repo in a broken state across sessions.
 - If the user is silent for >10 minutes during a long task, write a status
@@ -533,32 +556,22 @@ this pipeline, but Cline can do it directly when working solo.
 
 ## Versioning
 
-- **AP Token**: AP-CLINERULES-OMEGA-v3.5.0
-- **Updated**: 2026-06-04 (Hivemind Protocol + Subagent Dispatch + Link P9 + ZONEID + cvar Table)
-- **Previous version**: 3.2.0 (Cline CLI v3.0.15 move, 302 tests, 14 mandates, 115 PIVOT)
-- **Test baseline**: 308 tests (stable)
-- **Mandate baseline**: 13 (M1-M14, v3.1.0)
-- **PIVOT decisions**: 115 (D1-D115, was 107)
+- **AP Token**: AP-CLINERULES-OMEGA-v4.0.0
+- **Updated**: 2026-06-05 (Thin-wrapper refactor + entity hygiene + session lessons)
+- **Previous version**: 3.5.0 (Hivemind Protocol + Subagent Dispatch + Link P9 + ZONEID)
+- **Test baseline**: 312 tests (stable; handoff says 312/312)
+- **Mandate baseline**: 14 (M1-M14, v3.1.0)
+- **PIVOT decisions**: 119+ (D1-D119+)
+- **Entity count**: 42 total (30 active, 12 stubs); 62 quarantined/archived in D-cln-007
+- **Agent fleet**: 14 agents (9 core at 30 lines, 4 JEM at 43 lines, researcher at 72 lines)
 - **Hivemind**: OPERATIONAL via omega-hub (`:8016/sse`), 6 tools, 5min TTL
-- **Omega Hub**: 40 MCP tools + 11 HTTP routes, systemd user service, /health GREEN
-- **Sprint 2 COMPLETE**: Subagent Dispatch + Link P9 Runtime + Soul Distiller + Hivemind Protocol
-- **Sprint 3 COMPLETE**: EntityTombstonedError, atomic model swap, per-entity model affinity, spec decode
-- **H2 COMPLETE**: ForensicsManager + Error Gauntlet (10 scenarios) + JsonFormatter
-- **ZONEID**: 7 constants (0x1d4a11-0x1d4a17) + validate_zoneid()
-- **Heritage**: [id-soft:] tags live in 6 source files, `make heritage-map` audits
-- **cvar Table**: D101 unified registry (zoneid.* + config.* namespaces, 7 helpers)
-- **Removed MCP servers**: 6 xna-* legacy servers (xna-agentbus, xna-gnosis,
-  xna-gra, xna-maat, xna-mnemosyne, xna-rag) - pointed to old `xna-omega/`
-  path now relocated to `xna-omega-legacy/`. The engine now uses
-  `mcp_servers/omega_hub/server.py` (40 tools, 11 routes) for hub functionality.
-- **Added in this revision** (v3.1.0): explicit Cline CLI invocation patterns,
-  OpenCode fleet coordination, handoff-file index, soul-evolution workflow,
-  and the Tier-2 consult protocol.
-- **Added in this revision** (v3.3.0): H1 Heritage Vetting Pipeline reference (make heritage-vet, vet-001..023), D113 Firewall audit finding, Kali soul v5.2 schema, 23-concept retro audit
-- **Added in this revision** (v3.2.0): Hivemind MCP tool reference (6 tools),
-  workspace lock + live feed pattern, ZONEID constants, Subagent Dispatch
-  + Link P9 + Soul Distiller + cvar Table references, expanded handoff
-  index, Files-to-Read updated for Hivemind Protocol, Sprint 2/3 status.
+- **Omega Hub**: 40 MCP tools + 11 HTTP routes, systemd user service
+- **Web search**: `websearch` ONLY — firecrawl/exa are 401-broken
+- **SESSION LESSONS (2026-06-05)**:
+  - Chaos session transcripts are EVIDENCE, not GOSPEL — verify against disk
+  - Agent prompts must be thin wrappers — mandates are injected at boot
+  - When user says "fix X", scope to X — do not expand to Y and Z
+  - `git mv` fails on untracked dirs — use plain `mv` for new entity dirs
 
 ## Tool-Usage Discipline (LESSONS LEARNED 2026-06-02)
 
