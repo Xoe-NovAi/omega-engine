@@ -2,7 +2,7 @@
   "month": "2026-06",
   "today": "2026-06-05",
   "daily_used": {
-    "search_ops": 617
+    "search_ops": 639
   },
   "budgets": {
     "exa": {
@@ -27,7 +27,7 @@
     },
     "jina": {
       "total": 10000,
-      "used": 5457,
+      "used": 5490,
       "reserved_emergency": 1000
     }
   }

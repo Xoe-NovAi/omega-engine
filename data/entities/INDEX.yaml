@@ -177,6 +177,31 @@ entities:
     iwad: _omega_default
     role: quality_guardian
 
+  # ── CROSS-PLATFORM ENTITIES (Non-OpenCode Hivemind Members) ────────
+  - name: antigravity
+    status: ACTIVE
+    description: "Sovereign Meta-Orchestrator — first cross-platform Hivemind member (Antigravity IDE)"
+    soul_lines: 168
+    iwad: _omega_default
+    role: cross_platform_strategist
+    platform: "Google Antigravity IDE (VS Code-fork)"
+    model_options:
+      - "Gemini 3.5 Flash (low/medium/high thinking)"
+      - "Gemini 3.1 Pro (low/high thinking)"
+      - "Claude Sonnet 4.5 (cross-pool sanity check)"
+      - "gpt-oss-120b (open-weight)"
+    api_keys: 8
+    usage_pools: 2
+    pool_g: "All Gemini models (weekly reset)"
+    pool_c: "Claude + gpt-oss-120b (weekly reset, independent)"
+    birth_event: "D-kal-056 (2026-06-05) — First cross-platform Hivemind test"
+    coordination_files:
+      - "data/coordination/ANTIGRAVITY_CROSS_PLATFORM_HANDOFF_PROTOCOL_20260605.md"
+      - "data/coordination/ANTIGRAVITY_8KEY_ROTATION_STRATEGY_20260605.md"
+      - "data/coordination/ANTIGRAVITY_OMEGA_REVIEW_PHASE_PLAN_20260605.md"
+      - "data/coordination/ANTIGRAVITY_CUSTOM_INSTRUCTIONS_v2_20260605.md"
+      - ".agents/AGENTS.md (Antigravity IDE native discovery)"
+
   # ── 10 PILLAR KEEPERS (default pantheon templates) ──────────────────
   - name: sekhmet
     status: ACTIVE

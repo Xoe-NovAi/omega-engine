@@ -1,0 +1,243 @@
+{
+  "schema_version": "1.0",
+  "last_updated": "2026-06-05T06:10:00Z",
+  "weekly_reset_date": "2026-06-08T00:00:00Z",
+  "keys": [
+    {
+      "key_id": "agy_key_01",
+      "last_used_at": null,
+      "last_model_used": null,
+      "status": "active",
+      "cool_until": null,
+      "pool_g": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "pool_c": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "assigned_to_phase": 1
+    },
+    {
+      "key_id": "agy_key_02",
+      "last_used_at": null,
+      "last_model_used": null,
+      "status": "active",
+      "cool_until": null,
+      "pool_g": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "pool_c": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "assigned_to_phase": 2
+    },
+    {
+      "key_id": "agy_key_03",
+      "last_used_at": null,
+      "last_model_used": null,
+      "status": "active",
+      "cool_until": null,
+      "pool_g": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "pool_c": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "assigned_to_phase": 3
+    },
+    {
+      "key_id": "agy_key_04",
+      "last_used_at": null,
+      "last_model_used": null,
+      "status": "active",
+      "cool_until": null,
+      "pool_g": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "pool_c": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "assigned_to_phase": 4,
+      "note": "RESERVED for Heritage & id Software (M14 vet) — escalate to Gemini 3.1 Pro — high"
+    },
+    {
+      "key_id": "agy_key_05",
+      "last_used_at": null,
+      "last_model_used": null,
+      "status": "active",
+      "cool_until": null,
+      "pool_g": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "pool_c": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "assigned_to_phase": 5
+    },
+    {
+      "key_id": "agy_key_06",
+      "last_used_at": null,
+      "last_model_used": null,
+      "status": "active",
+      "cool_until": null,
+      "pool_g": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "pool_c": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "assigned_to_phase": 6,
+      "note": "Sovereignty review — use Gemini 3.5 Flash — high (depth without escalation cost)"
+    },
+    {
+      "key_id": "agy_key_07",
+      "last_used_at": null,
+      "last_model_used": null,
+      "status": "active",
+      "cool_until": null,
+      "pool_g": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "pool_c": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "assigned_to_phase": 7,
+      "note": "RESERVED for Roadmap & Future-Proofing — escalate to Gemini 3.1 Pro — high"
+    },
+    {
+      "key_id": "agy_key_08",
+      "last_used_at": null,
+      "last_model_used": null,
+      "status": "active",
+      "cool_until": null,
+      "pool_g": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "pool_c": {
+        "quota_hit_at": null,
+        "calls_this_week": 0,
+        "tokens_this_week": 0,
+        "thinking_levels_used": {
+          "low": 0,
+          "medium": 0,
+          "high": 0
+        }
+      },
+      "assigned_to_phase": null,
+      "note": "RESERVE — for cross-pool sanity checks via Claude Sonnet 4.5 (Pool C) or 2-model tie-breaking"
+    }
+  ],
+  "current_key_index": 0,
+  "decisions_log": [
+    {
+      "timestamp": "2026-06-05T06:10:00Z",
+      "decision": "Initial allocation: 7 keys assigned to 7 phases, 1 key reserved for cross-pool sanity checks",
+      "source": "D-kal-057"
+    }
+  ]
+}

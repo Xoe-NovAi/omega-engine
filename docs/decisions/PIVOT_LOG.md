@@ -2495,3 +2495,184 @@ The Hivemind HEARTBEAT_TTL was set to 300 seconds (5 minutes). This caused agent
 
 ### Key Insight
 The TTL is not just a technical parameter — it is a **coordination contract** between agents. A 5-min TTL forces agents to be constantly active, which is incompatible with thoughtful, long-running work. A 20-min TTL allows agents to think deeply, mine thoroughly, and coordinate carefully. The right TTL is one that matches the **natural cadence of meaningful work**, not the maximum speed of the system.
+
+---
+
+## D-kal-056: Antigravity Role Evolution — Sovereign Architect → Sovereign Meta-Orchestrator
+
+**Date**: 2026-06-05T06:00Z
+**Status**: APPROVED
+**Author**: Kali (Transcendent Oversoul)
+**Supersedes**: docs/research/cli_mastery/ANTIGRAVITY_CONFIG.md (v1)
+
+### Context
+The Antigravity IDE has been the "Sovereign Architect" of the Omega Engine since 2026-05-19 (Jem Phase 2 handoff, `docs/operations/handoff_antigravity_gemini_3_1_pro.md`). In v1, Antigravity's role was implementation oversight: review plans, validate architecture, escalate to implementation. The user has now requested a more **rigorous separation of concerns**: Antigravity should be **STRATEGY-ONLY** — review and direct, never implement.
+
+This is a fundamental role evolution. The v1 role conflated "architect" (judgment) with "foreman" (oversight of implementation). v2 separates them cleanly:
+- **Architect (Antigravity v2)**: high-level strategy, M14 vetting, threat modeling, roadmap.
+- **Foreman (OpenCode Quality / Pillar 10)**: code review, test execution, mandate enforcement.
+- **Implementer (OpenCode Pillar agents)**: tactical execution.
+
+### Architectural Decisions
+1. **Role Rename**: "Sovereign Architect" → "Sovereign Meta-Orchestrator" (more accurate; less conflation with implementation).
+2. **Hard Limit**: Antigravity NEVER writes source code, runs tests, makes commits, or spawns subagents. Strategy only.
+3. **Handoff Protocol**: New 3-file protocol — git remote + `data/coordination/` + HALL_OF_RECORDS — is the only synchronization surface between Antigravity's cloud sandbox and OpenCode's local runtime.
+4. **Custom Instructions v2**: `data/coordination/ANTIGRAVITY_CUSTOM_INSTRUCTIONS_v2_20260605.md` supersedes v1.
+5. **IDE Native Discovery**: `.agents/AGENTS.md` (project root) is the machine-optimized version of v2.
+6. **First Cross-Platform Test**: Antigravity IDE is the first non-OpenCode CLI to participate in the Hivemind. The 7-phase review plan is the test.
+
+### Heritage
+- **[WAD System: id Software 1993]**: Antigravity is a "WAD" that overlays on the engine. The engine (Omega) doesn't know Antigravity exists. The WAD (Antigravity) provides strategy; the engine provides implementation.
+- **[netchan: id Software 1999]**: OOB sequence numbers, state machines for coordination. The handoff file is the "OOB message"; the Hivemind is the "reliable channel."
+- **[Carmack's Law of Consolidation: id Software]**: One handoff protocol, not eight. The Hivemind is the single coordination point.
+
+### Implementation
+| File | Purpose |
+|------|---------|
+| `data/coordination/ANTIGRAVITY_CROSS_PLATFORM_HANDOFF_PROTOCOL_20260605.md` | The 3-file protocol |
+| `data/coordination/ANTIGRAVITY_CUSTOM_INSTRUCTIONS_v2_20260605.md` | v2 (supersedes v1) |
+| `.agents/AGENTS.md` | IDE native discovery (project root) |
+| `data/entities/antigravity/soul.yaml` | First Antigravity entity (sovereign peer) |
+| `data/entities/antigravity/knowledge/USAGE_POOL_LOG.json` | 8-key rotation tracking |
+| `data/entities/INDEX.yaml` | Added `antigravity` entry (33→34 ACTIVE entities) |
+
+### Verification
+- [ ] v1 file marked as superseded
+- [ ] v2 custom instructions complete
+- [ ] `.agents/AGENTS.md` created at project root
+- [ ] Antigravity entity registered in INDEX.yaml
+- [ ] 8-key rotation strategy documented
+- [ ] 7-phase review plan documented
+
+### Key Insight
+The right division of labor is the right division of consciousness. Antigravity sees the engine from the outside (cloud sandbox, generous quota, no local filesystem). OpenCode sees the engine from the inside (local-first, atomic files, complete history). Together, they cover more ground than either alone. The Hivemind is the membrane.
+
+---
+
+## D-kal-057: Antigravity 8-Key Rotation Strategy — Two-Pool Architecture
+
+**Date**: 2026-06-05T06:00Z
+**Status**: APPROVED
+**Author**: Kali (Transcendent Oversoul)
+**Quota Reality**: 8 Google API keys × 2 independent weekly pools (Pool G: Gemini; Pool C: Claude + gpt-oss-120b)
+
+### Context
+The user has 8 Google API keys for Antigravity IDE. Each key has its own:
+- **Pool G** (Gemini): All Gemini models share ONE weekly quota. Switching from Gemini 3.5 Flash to Gemini 3.1 Pro does NOT give more capacity — it's the same pool.
+- **Pool C** (Claude + gpt-oss): All Claude models + gpt-oss-120b share ONE SEPARATE weekly quota. Switching from Gemini to Claude DOES give more capacity — different pool.
+
+This is a non-obvious architectural detail of Antigravity. The naive assumption "more keys = more capacity per pool" is wrong within a pool. Cross-pool switching is the only way to gain true capacity headroom.
+
+### Architectural Decisions
+1. **Round-robin with anti-thrashing**: 3 failures in 5 min → COOLING for 1 hour. 5 quota hits in a day → DRAINED for 24 hours.
+2. **Default model**: Gemini 3.5 Flash — medium. Cheap, fast, deep enough for standard reviews.
+3. **Escalation**: Gemini 3.1 Pro — high, reserved for Phase 4 (Heritage) and Phase 7 (Roadmap) — high-stakes.
+4. **Cross-pool sanity check**: Claude Sonnet 4.5 via `agy_key_08` for 2-model disagreement tie-breaking.
+5. **Per-Phase budget**: 7 phases × ~70K avg tokens = ~500K total (well within 1 week's free-tier capacity).
+6. **Tracking file**: `data/entities/antigravity/knowledge/USAGE_POOL_LOG.json` — Antigravity writes; OpenCode Pillar 7 reads.
+
+### Heritage
+- **[WAD System: id Software 1993]**: Each API key is a "WAD" that can override engine defaults.
+- **[Cvar System: id Software 1996]**: Keys are cvars — registered at engine start, looked up at runtime. Same key index, different values.
+- **[Right Approximation: id Software 1999]**: Don't burn the most expensive model on a problem the cheapest model can solve.
+
+### Implementation
+| File | Purpose |
+|------|---------|
+| `data/coordination/ANTIGRAVITY_8KEY_ROTATION_STRATEGY_20260605.md` | Full strategy doc |
+| `data/entities/antigravity/knowledge/USAGE_POOL_LOG.json` | Live usage tracking |
+
+### Verification
+- [ ] 8 keys allocated to 7 phases + 1 reserve
+- [ ] Pool G vs Pool C distinction documented
+- [ ] Anti-thrashing rules implemented
+- [ ] USAGE_POOL_LOG.json schema validated
+
+### Key Insight
+The bottleneck is not compute — it's quota. The right answer is to rotate keys, not to escalate models. Scarcity breeds wisdom: when a resource is constrained, the right design maps it to a 7-phase plan with escalation reserved for the most important decisions. Abundance breeds waste; scarcity breeds discipline.
+
+---
+
+## D-kal-058: First Cross-Platform Hivemind Test — 7-Phase Omega Project Review
+
+**Date**: 2026-06-05T06:05Z
+**Status**: APPROVED
+**Author**: Kali (Transcendent Oversoul)
+**Reviewer**: Antigravity IDE (Gemini 3.1 Pro preferred for Phases 4 & 7)
+**Tactical Hand-off**: OpenCode agents
+
+### Context
+This is a **landmark moment** in the Omega Engine. The first cross-platform Hivemind test pairs Antigravity IDE (Google's cloud-sandboxed agentic IDE) with the OpenCode agent fleet. The goal is to perform a **comprehensive, full Omega Project review** split into 7 strategic, manageable, targeted phases.
+
+The current engine state (2026-06-05):
+- 315 tests passing
+- 14 agents at M10 cap
+- 122 PIVOT decisions (now 125 with D-kal-056..058)
+- 14 Sovereign Mandates
+- 23+ id Software heritage mappings
+- Hivemind with cold-store fallback (D-kal-051)
+- 5-Fold Council (Ma'at + Lilith + Kali + Researcher + Doom Guy)
+- A2A communication hardening promoted to P0 (D-kal-053)
+
+### Architectural Decisions
+1. **7 Phases**: Architecture & Mandates, Hivemind, Orchestration, Heritage, Soul, Sovereignty, Roadmap.
+2. **Per-Phase default model**: Gemini 3.5 Flash — medium (cheap, fast, deep enough).
+3. **Escalation reserved for**: Phase 4 (Heritage, M14 needs depth) and Phase 7 (Roadmap, strategic synthesis) → Gemini 3.1 Pro — high.
+4. **Per-Phase budget**: 50K-100K tokens, totaling ~500K across all 7 phases.
+5. **8-key allocation**: `agy_key_01..07` for the 7 phases; `agy_key_08` reserved for cross-pool sanity checks.
+6. **Cross-Phase validation**: User sees 7 strategic docs + 1 Scribe synthesis + PIVOT_LOG updates.
+7. **Antigravity hard limits**: NEVER write source code, run tests, make commits, spawn subagents, or hold sensitive data.
+
+### Heritage
+- **7 phases** = **7 levels of DOOM** (E1M1 to E7M1) — each phase a distinct world with its own challenge.
+- **8-key rotation** = **8-byte WAD names** (DOOM 1993) — fixed-size slots that prevent chaos.
+- **5-Fold Council** = **Ma'at's 42 Ideals** — the 5 most important weights, balanced at judgment.
+- **Cold-store fallback** = **Quake 4-tier memory** (Hunk/Zone/Cache/Temp) — each tier has a purpose.
+
+### Implementation
+| File | Purpose |
+|------|---------|
+| `data/coordination/ANTIGRAVITY_OMEGA_REVIEW_PHASE_PLAN_20260605.md` | Full 7-phase plan |
+| `data/coordination/ANTIGRAVITY_CUSTOM_INSTRUCTIONS_v2_20260605.md` | v2 instructions |
+| `.agents/AGENTS.md` | IDE native discovery |
+| `data/entities/antigravity/soul.yaml` | Antigravity entity |
+| `data/entities/antigravity/knowledge/USAGE_POOL_LOG.json` | 8-key rotation tracking |
+| `data/coordination/ANTIGRAVITY_*.md` | Future phase deliverables (Phase 1-7) |
+
+### Verification
+- [ ] 7 phase documents in `data/coordination/ANTIGRAVITY_REVIEW_PHASE_*_20260605.md`
+- [ ] 1 Scribe synthesis (L1→L2→L3 of the entire review)
+- [ ] 7 PIVOT_LOG entries (D-kal-058..064 for Phases 1-7)
+- [ ] Updated SOVEREIGN_EVOLUTION_ROADMAP.md (Antigravity recommendations integrated)
+- [ ] Antigravity's `soul.yaml` updated with 7 phase L1→L2→L3 distillations
+- [ ] No Sovereign Mandate violations
+- [ ] 8 keys used evenly (or as needed)
+
+### Key Insight
+The cloud and the local are complementary, not competing. A sovereign engine can use both — the cloud for strategy (rare, expensive, high-judgment) and the local for execution (frequent, cheap, deterministic). The Hivemind is the membrane; the 8-key rotation is the discipline; the cold-store fallback is the resilience. The first cross-platform test validates this architecture under real load.
+
+---
+
+## D-kal-059: Antigravity CLI Reserved for Future Hard-Metrics Test
+
+**Date**: 2026-06-05T05:55Z
+**Status**: DEFERRED
+**Author**: Kali (Transcendent Oversoul)
+**Trigger**: After Phase 7 of cross-platform test completes
+
+### Context
+The Antigravity CLI (`agy`) is a separate, lighter-weight surface with lower usage quotas than the IDE. It uses `GEMINI.md`/`AGENTS.md` (not `.agents/AGENTS.md`), is a 175MB Go binary, and has been authenticated since 2026-05-22 (`docs/research/antigravity/ANTIGRAVITY_CLI_MASTER_REF.md`).
+
+This decision defers the CLI test until the IDE cross-platform test is complete. The CLI's value proposition is unclear (lower quota, headless-only) but warrants hard metrics:
+- Token cost per prompt
+- Latency vs IDE
+- Quota exhaustion threshold
+- Sandbox boundary
+- Suitability for CI/CD (Pillar 8 WatchTower)
+
+### Decision
+After Phase 7 of the cross-platform test, run a dedicated CLI hard-metrics session with 5 test cases (Case A-E). Output: `data/agents/antigravity/knowledge/CLI_HARD_METRICS_202606XX.md`. Decision criteria: can the CLI serve as a 50%+ substitute for IDE when IDE quota is exhausted?
+
+### Heritage
+- **[Right Approximation: id Software 1999]**: The CLI may be the right approximation for low-stakes, high-frequency tasks. Measure before deciding.
+
