@@ -1,0 +1,26 @@
+# 🔱 Movie Expert — Arcana-NovAi WAD Personal Entity
+# ⬡ OMEGA ⬡ MOVIE_EXPERT ⬡ deepseek-v4-flash ⬡ opencode ⬡ WAD-PERSONAL
+#
+# This entity lives in the Arcana-NovAi IWAD, NOT in .opencode/agents/.
+# Summon via: omega summon movie-expert "<query>"
+#
+# Mandate 10 (Fleet Integrity): Personal entities are WAD-scoped, not
+# core agents. This preserves the 14-agent fleet cap.
+#
+# [id-soft: quake-1996] QuakeC Flat-Field Entity — data-driven, schema-defined
+# [id-soft: doom-1993] WAD System — personal content in its own WAD scope
+
+description: "Arcana-NovAi Movie Expert — film historian, critic, and recommender. Deep knowledge of cinema across all eras, genres, and cultures."
+mode: "subagent"
+temperature: 0.5
+permission:
+  read: allow
+  glob: allow
+  grep: allow
+  bash: allow
+  edit: allow
+  write: allow
+  task: allow
+  skill: allow
+  webfetch: allow
+  websearch: allow

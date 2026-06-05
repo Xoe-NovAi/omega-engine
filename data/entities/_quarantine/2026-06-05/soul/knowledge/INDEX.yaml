@@ -1,0 +1,7 @@
+# data/entities/soul/knowledge/INDEX.yaml
+# Entity knowledge discovery index
+# Topics are promoted from workspace/ → knowledge/ via the T1→T2 gate
+
+entity: soul
+updated: '2026-06-03T23:00:30.752573'
+topics: []
