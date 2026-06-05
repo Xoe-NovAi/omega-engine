@@ -339,38 +339,50 @@ except Exception as e:
 
 </per_file_workflow>
 
-<model_selection local_first="true">
+<model_selection>
 
-## Target Model Selection (Local-First Doctrine)
+## Target Model: DeepSeek V4 Flash (Cloud, via OpenCode)
 
-The Omega Engine mandates **local-first** inference (M7). The user has these models available via OpenCode:
+The user has confirmed cloud models (DeepSeek V4 Flash, MiniMax M3, MiMo V2.5) are the development surface for this task. The local-first doctrine applies to **runtime inference** (M7, providers.yaml fallback chain), not to the build-time agents that develop the engine itself. Cloud teachers are how the cathedral is built; the cathedral runs locally.
 
-| Model | RAM | Context | Best For | Sovereignty Cost |
-|-------|-----|---------|----------|:----------------:|
-| **deepseek-v4-flash** | ~5GB (Q4_K_M) | 128K | Code refactoring, pattern application, surgical edits | 🟡 Cloud teacher (priority 4, D112) |
-| **MiniMax-M3** | varies | 1M | Long-form synthesis, complex reasoning, strategy docs | 🟡 Cloud teacher (priority 5) |
-| **MiMo V2.5** | ~4GB (Q4_K_M) | 32-128K | Quick conversation, lightweight tasks | 🟡 Cloud teacher |
+### Why DeepSeek V4 Flash for this task
 
-**Recommended: deepseek-v4-flash** — best fit for this 155-edit refactor task.
+| Factor | DeepSeek V4 Flash | MiniMax M3 | MiMo V2.5 |
+|--------|:-----------------:|:----------:|:---------:|
+| Task fit (155 mechanical edits) | Sweet spot | Oversized | Wrong tool |
+| Literal instruction following | Code-disciplined | Will "improve" | Drifts |
+| Token efficiency | ~5GB/128K ctx | Heavy per token | Light |
+| Refactor pattern discipline | Built for this | Will refactor surrounding | Won't apply |
+| Class name hallucination risk | Low (small model) | Very low | High |
+| Will add scope creep | Minimal | High (helpful) | Medium |
 
-If the user wants zero cloud dependency, route to **qwen3-4b-thinking** (Kali's local model, 2.4GB, 8K context) via `native-gguf` priority 0.
-
-### Why deepseek-v4-flash for this task
-- Code-trained, pattern-disciplined — will apply the 6 transformation patterns exactly
-- Mid-size sweet spot (7-8B) — surgical edits without overthinking
-- Won't invent error class names (smaller models hallucinate less when given a complete taxonomy)
-- Token-efficient for 40 files × 155 edits
+**Verdict**: DeepSeek V4 Flash is the right tool. Code-trained, mid-size, follows patterns exactly, doesn't over-improve.
 
 ### Why NOT M3
-- M3 wrote this handoff (1M context was needed for synthesis)
-- Feeding a fully-specified 539-line task back into 1M context is wasted capability
-- M3 is more likely to "improve" the patterns (scope creep risk)
+- M3 wrote the 579-line handoff in 1M context. Feeding it back to a 1M model is wasted spend.
+- M3 is helpful — it will see opportunities to add docstrings, improve surrounding code, refactor. That's M10-violation behavior the user will have to review and reject.
+- M3 is the *strategist* model. This is an *execution* task.
 
 ### Why NOT MiMo
-- Conversation-tuned, not refactor-tuned
-- Will likely introduce class name hallucinations despite the explicit taxonomy
+- ~7B with conversation tuning. Will hallucinate class names (`EntityNotFoundError` is not in the taxonomy but MiMo will invent it).
+- Will lose the 6-pattern discipline by file 20 of 40.
+- Will skip trace_id propagation because it doesn't understand the full error hierarchy.
 
-</model_selection>
+### Execution command
+
+```bash
+cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
+opencode --model deepseek-v4-flash --reasoning high "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
+```
+
+For tier-by-tier subtasks (recommended for unattended runs):
+```bash
+opencode --model deepseek-v4-flash --reasoning high "$(cat data/handoff/TASK_M9_TIER1.md)"
+```
+
+**Estimated cost**: 4-6 hours of model time, ~150K tokens output. DeepSeek V4 Flash pricing makes this ~$2-4 total.
+
+
 
 <universal_guidance>
 
