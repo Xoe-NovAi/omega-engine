@@ -229,7 +229,7 @@
         }
       },
       "assigned_to_phase": null,
-      "note": "RESERVE — for cross-pool sanity checks via Claude Sonnet 4.5 (Pool C) or 2-model tie-breaking"
+      "note": "RESERVE — for cross-pool sanity checks via Claude Sonnet 4.6 Adaptive Thinking (Pool C) or high-stakes tie-breaking via Opus 4.6 Adaptive Thinking"
     }
   ],
   "current_key_index": 0,

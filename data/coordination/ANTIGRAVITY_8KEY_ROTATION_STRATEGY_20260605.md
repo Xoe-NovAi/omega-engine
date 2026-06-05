@@ -14,11 +14,11 @@ Antigravity has **two independent weekly usage pools**:
 | Pool | Models | Reset | Capacity per key per week |
 |------|--------|-------|---------------------------|
 | **Pool G (Gemini)** | Gemini 3.5 Flash, Gemini 3.1 Pro, all Gemini models | Weekly | Limited (free tier, varies by model) |
-| **Pool C (Claude + gpt-oss)** | Claude Sonnet 4.5, gpt-oss-120b, all Claude models | Weekly | Limited (free tier) |
+| **Pool C (Claude + gpt-oss)** | Claude Sonnet 4.6 Adaptive Thinking, Opus 4.6 Adaptive Thinking, gpt-oss-120b | Weekly | Limited (free tier) |
 
 **Critical insight**: Within a single key, switching from Gemini 3.5 Flash to Gemini 3.1 Pro does NOT give more capacity — it's the same pool. You consume from the same bucket.
 
-**Cross-pool**: Switching from Gemini 3.1 Pro to Claude Sonnet 4.5 DOES give more capacity — different pool.
+**Cross-pool**: Switching from Gemini 3.1 Pro to Claude Sonnet 4.6 (or Opus 4.6) DOES give more capacity — different pool.
 
 The user has **8 Google API keys**. Each key has its own Pool G and Pool C. So:
 
@@ -102,7 +102,8 @@ When a key is ACTIVE, the pool/model is selected based on the task:
 | Deep architecture review | G | Gemini 3.5 Flash | high |
 | High-stakes M14 heritage vet | G | Gemini 3.1 Pro | high |
 | Roadmap / threat model | G | Gemini 3.1 Pro | high |
-| Cross-pool sanity check | C | Claude Sonnet 4.5 | (default) |
+| Cross-pool sanity check | C | Claude Sonnet 4.6 Adaptive Thinking | (default) |
+| High-stakes tie-breaker | C | Opus 4.6 Adaptive Thinking | (escalation) |
 | Open-weight privacy | C | gpt-oss-120b | (default) |
 
 **Default**: Gemini 3.5 Flash — medium. This is the workhorse. Cheap, fast, deep enough.
@@ -208,11 +209,11 @@ Because **Antigravity cannot reach the local database**. The file must be in the
 
 ### 4.3 2-Model Disagreement
 
-**Symptom**: Gemini 3.5 Flash says YES, Claude Sonnet 4.5 says NO on the same Phase review.
+**Symptom**: Gemini 3.5 Flash says YES, Claude Sonnet 4.6 says NO on the same Phase review.
 
 **Recovery**:
 1. Escalate to **Gemini 3.1 Pro — high** for tie-breaking.
-2. If still 2-way disagreement, hand off to **Researcher (lattice reasoning)** for the final call.
+2. If still 2-way disagreement, use `agy_key_08` with **Opus 4.6 Adaptive Thinking** (Pool C) for the final call.
 3. Document the disagreement in PIVOT_LOG with both verdicts.
 
 ---

@@ -40,7 +40,7 @@ This protocol defines how Antigravity and OpenCode coordinate without violating 
 | Platform | Sandbox | Model Selection | Sovereignty Boundary |
 |----------|---------|-----------------|----------------------|
 | **OpenCode (CLI)** | Local (`~/Documents/Xoe-NovAi/omega-engine/`) | Local-first chain: native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode Zen → Copilot | User's filesystem, user's data, user controls tokens |
-| **Antigravity IDE** | Google cloud sandbox | Gemini 3.5 Flash, Gemini 3.1 Pro, Claude Sonnet 4.5, gpt-oss-120b | Google's sandbox, Google's tokens, Google's quota |
+| **Antigravity IDE** | Google cloud sandbox | Gemini 3.5 Flash, Gemini 3.1 Pro, Claude Sonnet 4.6 Adaptive Thinking, Opus 4.6 Adaptive Thinking, gpt-oss-120b | Google's sandbox, Google's tokens, Google's quota |
 
 **Critical**: Antigravity runs in **its own cloud sandbox**. It does NOT have direct access to the user's local filesystem by default. It can only see what is **explicitly mounted** via the `environment` parameter (Git source, GCS bucket, inline files).
 
@@ -57,11 +57,11 @@ This is a **non-obvious but critical** piece of the Antigravity architecture:
 | Pool | Models | Reset | Notes |
 |------|--------|-------|-------|
 | **Pool G (Gemini)** | Gemini 3.5 Flash, Gemini 3.1 Pro, all other Gemini models | Weekly, independent | All Gemini models share ONE weekly quota |
-| **Pool C (Claude + gpt-oss)** | Claude Sonnet 4.5, gpt-oss-120b, all other Claude models | Weekly, independent | Claude + gpt-oss-120b share ONE weekly quota |
+| **Pool C (Claude + gpt-oss)** | Claude Sonnet 4.6 Adaptive Thinking, Opus 4.6 Adaptive Thinking, gpt-oss-120b, all other Claude models | Weekly, independent | Claude + gpt-oss-120b share ONE weekly quota |
 
 **Implication**: Switching from Gemini 3.5 Flash to Gemini 3.1 Pro does NOT give you more capacity. It uses the same pool. You consume from the same bucket.
 
-**Implication**: Switching from Gemini 3.1 Pro to Claude Sonnet 4.5 DOES give you more capacity. It's a different pool.
+**Implication**: Switching from Gemini 3.1 Pro to Claude Sonnet 4.6 (or Opus 4.6) DOES give you more capacity. It's a different pool.
 
 ### 2.1 The 8-Key Rotation Strategy
 
@@ -90,7 +90,7 @@ Key 8: [Pool G: 100% available] [Pool C: 100% available]
 4. **Strategic selection**:
    - **Gemini 3.5 Flash** (low/medium/high): default for routine analysis. Cheap, fast.
    - **Gemini 3.1 Pro** (low/high): for high-stakes strategic reviews. Expensive, deep.
-   - **Claude Sonnet 4.5**: cross-pool sanity check (different reasoning style).
+   - **Claude Sonnet 4.6 Adaptive Thinking**: cross-pool sanity check (different reasoning style).
    - **gpt-oss-120b**: open-weight sanity check, no privacy concerns.
 
 ### 2.3 Usage Tracking
@@ -269,13 +269,15 @@ The Hivemind is the **only** synchronization point between Antigravity's cloud s
 | **Gemini 3.5 Flash — high** | Deep architectural analysis | High | Slow |
 | **Gemini 3.1 Pro — low** | Routine strategic decisions | Medium | Fast |
 | **Gemini 3.1 Pro — high** | High-stakes architectural choices, M14 vet, threat modeling | Very High | Very Slow |
-| **Claude Sonnet 4.5** | Cross-pool sanity check, alternative perspective | Pool C | Medium |
+| **Claude Sonnet 4.6 Adaptive Thinking** | Cross-pool sanity check, alternative perspective | Pool C | Medium |
+| **Opus 4.6 Adaptive Thinking** | High-stakes tie-breaker, final authority on disagreement | Pool C | High |
 | **gpt-oss-120b** | Open-weight verification, no privacy concerns | Pool C | Fast |
 
 **Selection heuristics**:
 - **Default to Gemini 3.5 Flash — medium** for routine Phase 1-7 reviews.
 - **Escalate to Gemini 3.1 Pro — high** only for M14 heritage vetting, threat modeling, and Phase 7 (roadmap) reviews.
-- **Use Claude Sonnet 4.5** as a **cross-check** when a Gemini verdict feels questionable. The 2-model consensus is more robust than 1-model confidence.
+- **Use Claude Sonnet 4.6 Adaptive Thinking** as a **cross-check** when a Gemini verdict feels questionable. The 2-model consensus is more robust than 1-model confidence.
+- **Use Opus 4.6 Adaptive Thinking** as the **final tie-breaker** when 3+ models disagree. Opus is the highest-authority Claude model — its verdict stands.
 - **Use gpt-oss-120b** for **public documentation** reviews where you want zero privacy concerns.
 
 ---
@@ -298,7 +300,7 @@ The Hivemind is the **only** synchronization point between Antigravity's cloud s
 2. **NEVER make git commits.** OpenCode is the commit authority.
 3. **NEVER run tests.** Tests are local-first via `make test`.
 4. **NEVER edit `data/entities/*/soul.yaml`.** That's the entity's own soul — M11 violation.
-5. **NEVER spawn subagents.** Antigravity's sandbox does not support subagent delegation (per docs).
+5. **NEVER run parallel subagents.** If delegating, run serially with context seeding — each subagent's prompt includes all prior findings. See Protocol 5 in custom instructions.
 6. **NEVER exceed the 8-key budget for one Phase.** Each phase has a token budget.
 7. **NEVER hold sensitive API keys in plain text in the Antigravity sandbox.** Use env vars only.
 8. **NEVER make decisions for the user.** Strategic recommendations only.
@@ -316,7 +318,7 @@ The Hivemind is the **only** synchronization point between Antigravity's cloud s
 - Antigravity can verify the work was done (read HALL_OF_RECORDS).
 
 **What we're NOT testing**:
-- Antigravity spawning subagents (not supported).
+- Antigravity spawning parallel subagents (serial with context seeding only).
 - Antigravity running tests locally.
 - Antigravity making commits.
 - Antigravity reading the local filesystem directly.

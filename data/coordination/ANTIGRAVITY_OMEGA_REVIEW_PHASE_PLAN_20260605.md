@@ -293,10 +293,11 @@ This plan splits the review into **7 strategic, manageable, targeted phases**. E
 | 7. Roadmap | **3.1P — high** | (highest stakes) | agy_key_07 | 100K |
 | **Total** | | | | **~500K tokens** |
 
-**Reserve key**: `agy_key_08` — held back for cross-pool sanity checks (Claude Sonnet 4.5) or 2-model tie-breaking.
+**Reserve key**: `agy_key_08` — held back for cross-pool sanity checks (Claude Sonnet 4.6 Adaptive Thinking) or high-stakes tie-breaking (Opus 4.6 Adaptive Thinking).
 
 **2-model tie-breaking protocol**:
-- If 2 Gemini models disagree → use `agy_key_08` with Claude Sonnet 4.5 (Pool C) for the tie-breaker.
+- If 2 Gemini models disagree → use `agy_key_08` with Claude Sonnet 4.6 Adaptive Thinking (Pool C) for the cross-check.
+- If still 2-way disagreement → escalate to Opus 4.6 Adaptive Thinking (Pool C) for the final verdict.
 
 ---
 
@@ -315,7 +316,7 @@ After all 7 phases:
 
 - ❌ Implement the recommendations (that's OpenCode's job)
 - ❌ Make commits to the engine
-- ❌ Spawn subagents (not supported)
+- ❌ Run parallel subagents (serial with context seeding only)
 - ❌ Edit `data/entities/*/soul.yaml`
 - ❌ Run tests (OpenCode runs `make test`)
 - ❌ Hold any sensitive data beyond the 8-key budget
