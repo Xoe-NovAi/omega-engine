@@ -384,10 +384,25 @@ The user has access to these models via OpenCode Zen (https://opencode.ai/zen/, 
 - Google Gemini — via Google AI Studio / Vertex
 - Anthropic Claude — via Anthropic API or Google Vertex (also on Zen)
 
-### IMPORTANT CORRECTION: There is NO "MiniMax M3" available to the user
-The user mentioned "MiniMax M3" — OpenCode Zen only has MiniMax M2.7 and M2.5 (both paid). The "MiniMax M3" in this handoff author's Cline runtime is a different Cline provider, NOT what the user has. MiniMax's latest series is the M2 family (M2.5, M2.7). There is no M3 model on HuggingFace or OpenCode Zen.
+### CORRECTION: MiniMax M3 DOES exist (the author was wrong)
+The handoff author incorrectly claimed "there is NO MiniMax M3" based on checking only HuggingFace and OpenCode Zen. This was wrong. **MiniMax M3 is a real model** released 2026-06-01, available on the MiniMax platform directly (platform.minimax.io). Key verified specs from the official blog:
 
-Furthermore: The "M3" references in the `<universal_guidance>` section below are stale. Ignore them. If using a MiniMax model, use `opencode/minimax-m2.7` (paid, $0.30 input / $1.20 output).
+- **Architecture**: MSA (MiniMax Sparse Attention) — new sparse attention mechanism, 1/20 per-token compute vs full attention at 1M context
+- **Context**: 1M tokens
+- **Capabilities**: Multimodal (text, image, video), frontier coding, agentic, computer use
+- **Benchmarks**: SWE-Bench Pro 59.0%, Terminal-Bench 2.1 66.0%, Claw-Eval highest score, MCP Atlas 74.2%, PostTrainBench 0.37
+- **Pricing**: Token plan (Plus $20/mo, Max $50/mo, Ultra $120/mo) or API (standard rate ≤512K input)
+- **Availability**: Via MiniMax API directly. NOT on OpenCode Zen (Zen only has M2.7/M2.5)
+- **Open-weight**: Weights to be open-sourced ~2026-06-11
+
+**Why the author was wrong**: I checked only HuggingFace (has M2 series only) and OpenCode Zen (serves M2.7/M2.5 only) and concluded "does not exist." This conflates "not in the two places I checked" with "does not exist." The model is available via the MiniMax platform directly.
+
+**How the user accesses M3**: Via MiniMax API platform directly (platform.minimax.io) or via a provider that routes to MiniMax. NOT on OpenCode Zen.
+
+**MiniMax M2 series** (for comparison):
+- M2, M2.1, M2.5, M2.7: All share ~228B total MoE architecture (HF: 228,703,644,928 params). M2.1 described as "230B total / 10B activated"
+- M2.7 is latest in M2 line. Available on Zen as `opencode/minimax-m2.7` (paid, $0.30 input / $1.20 output)
+- M3 is a COMPLETELY NEW architecture (MSA), not a continuation of M2
 
 ### Verified model specifications (HuggingFace + blog + OpenCode Zen)
 
@@ -417,7 +432,7 @@ Furthermore: The "M3" references in the `<universal_guidance>` section below are
 
 ### My previous errors (now retracted)
 
-- ❌ "MiniMax M3" — there is no M3 on OpenCode Zen. The M3 in my Cline runtime is Cline's own gateway; Zen exposes M2.7 and M2.5 only.
+- ❌ "MiniMax M3 does not exist" — I claimed M3 does not exist because I checked only HuggingFace and OpenCode Zen. **I was wrong.** MiniMax M3 is a real model (released 2026-06-01, MSA sparse attention, 1M context, frontier coding). It is available via the MiniMax API directly (platform.minimax.io). It is NOT on OpenCode Zen (which has M2.7 and M2.5 only). The lesson: "not in the two places I checked" does not equal "does not exist."
 - ❌ "deepseek-v4-flash pricing $0.28/M output" — correct for the paid tier ($0.14 input / $0.28 output), but the **free tier is $0.00**. Cost analysis should be: use free when possible.
 - ❌ Cost estimate "$2-4 for full refactor" — completely wrong. Free tier = $0.
 - ❌ "MiMo V2.5 ~7B" — retracted previously. Correct: 310B/15B activated.
@@ -541,8 +556,12 @@ transform_block(text)
 - DATA COLLECTION: "Trial use only — do not submit personal or confidential data. Logged for security purposes."
 - BEST FOR: Phase 2 deep review (agentic, multi-file, long-context). NOT best for this mechanical M9 task.
 
-### IMPORTANT: There is NO "MiniMax M3" on OpenCode Zen
-The user does not have access to a model called "MiniMax M3". The Zen catalog offers **MiniMax M2.7** and **M2.5** (both paid at $0.30 input / $1.20 output). The "M3" references in the task author's notes are from a different provider. If using a MiniMax model, use `opencode/minimax-m2.7`.
+### MiniMax M3 (via MiniMax API directly, NOT on OpenCode Zen)
+MiniMax M3 (released 2026-06-01) is a frontier multimodal coding model with 1M context and MSA sparse attention. Available via the MiniMax API directly (platform.minimax.io), NOT via OpenCode Zen. Zen only has M2.7 and M2.5 (228B MoE).
+
+M3 benchmarks: SWE-Bench Pro 59.0%, Terminal-Bench 2.1 66.0%, Claw-Eval highest score. But M3 is a PAID API model (not on Zen free tier). For this M9 task where free tier is preferred, use deepseek-v4-flash-free. If paying, M3 is a strong choice.
+
+If using a MiniMax model via Zen: `opencode/minimax-m2.7` (228B, ~10B activated, $0.30/$1.20 per M tokens).
 
 
 
