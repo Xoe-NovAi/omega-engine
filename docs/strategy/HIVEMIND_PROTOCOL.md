@@ -368,14 +368,19 @@ Migration to Redis will be transparent to agents — same MCP commands.
 
 ## §11 Reference
 
-- **MCP Server**: `mcp/omega_hub/server.py` (Hivemind tool implementations)
+- **MCP Server**: `mcp_servers/omega_hub/server.py` (Hivemind tool implementations) — **D116 fix**: canonical path
 - **Live Feed Convention**: `data/coordination/*_LIVE_FEED.md`
 - **Workspace Lock Convention**: `data/coordination/*_WORKSPACE_LOCK_*.md`
 - **ACK Convention**: `data/coordination/*_ACK_*.md`
+- **Observations Log Convention**: `data/coordination/HIVEMIND_OBSERVATIONS_LOG.md` — **D-121** fleet-wide meta-observation capture
+- **Observations Protocol**: `docs/strategy/HIVEMIND_OBSERVATIONS_PROTOCOL.md` — **D-121** (categories, triggers, lifecycle, anti-patterns)
 - **ZONEID constants**: `ZONEID_PRESENCE = 0x1d4a17`, `ZONEID_HANDOFF = 0x1d4a16`
 - **Mandate**: Extends Mandate 5 (Gnosis Preservation) and Mandate 11 (Soul Integrity)
 - **Subagent Dispatch**: `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md`
-- **PIVOT_LOG**: D103+ entries for Hivemind standardization
+- **PIVOT_LOG**: D103+ entries for Hivemind standardization; D116 for MCP path canonicalization; D-121 for observations protocol
+- **MaKaLi Triad Coordination**: See `AGENTS.md` §"The MaKaLi Triad Architecture" for Ma'at/Lilith/Kali delegation patterns
+- **Dual-Inference Protocol**: See `AGENTS.md` §"The Dual-Inference Mandate" for session-vs-local model routing
+- **Observations Closed Loop**: §4 of `HIVEMIND_OBSERVATIONS_PROTOCOL.md` — observation → cluster → promote → design change → new observation
 
 ---
 
@@ -393,4 +398,71 @@ Migration to Redis will be transparent to agents — same MCP commands.
   - §10: Future Redis Pub/Sub backend
   - §11: Reference
 
-— Ma'at, 2026-06-03
+- **v1.1.0 (2026-06-04)**: D116 MCP path canonicalization + D117/D118 references
+  - §11: Updated MCP path `mcp/omega_hub/server.py` → `mcp_servers/omega_hub/server.py` (D116)
+  - §11: Added MaKaLi Triad and Dual-Inference cross-references (D117, D118)
+  - §13 NEW: Model Dispatch Protocol — Hivemind integration with `oracle_summon_local`
+
+- **v1.2.0 (2026-06-05)**: D-121 Hivemind Observations Protocol — fleet-wide meta-observation
+  - §11: Added `HIVEMIND_OBSERVATIONS_LOG.md` (shared log) and `HIVEMIND_OBSERVATIONS_PROTOCOL.md` (D-121)
+  - §11: Added closed-loop reference: observation → cluster → promote → design change → new observation
+  - New convention: every agent that uses Hivemind must append observations per D-121 trigger table
+  - Mandate 5 (Gnosis Preservation) extended to the coordination layer itself
+
+---
+
+## §13 Model Dispatch Protocol (D118)
+
+When an agent uses Hivemind, it must declare its **model dispatch mode** so other
+agents can predict the cost/quality/sovereignty tradeoff.
+
+### §13.1 The Three Dispatch Modes
+
+| Mode | MCP Tool | Model | Sovereignty | Latency | Use When |
+|------|----------|-------|-------------|---------|----------|
+| **Session** (default) | `oracle_summon()` | OpenCode session model (cloud or local) | Varies | Varies | Daily dev, fast iteration |
+| **Local Opt-In** | `oracle_summon_local()` | User-specified local GGUF | 🔴 MAX | 🟢 LOW | Sovereignty-critical work |
+| **Inherited** | (read from hivemind_get_session) | Whatever the parent's mode is | Varies | Varies | Subagent dispatched by another agent |
+
+### §13.2 Declaration Pattern
+
+When posting Hivemind context (`hivemind_post_context`), include the dispatch mode
+in the `task_current` field:
+
+```python
+omega-hub_hivemind_post_context(
+    cli="roc_racoon",
+    model="lmstudio/rocracoon-3b-instruct",      # ← which local model
+    task_current="[LOCAL] Mining omega-stack for circuit breakers",  # ← dispatch mode tag
+    focus_chain=["Find breaker", "Port to health_monitor", "Verify tests"],
+    decisions=[],
+    continuation="Next: verify with @quality",
+    session_id="ses_20260604_roc_racoon",
+)
+```
+
+### §13.3 Hivemind-Aware Model Override
+
+When a subagent reads its parent's Hivemind session via `hivemind_get_session()`,
+it can detect the dispatch mode and either:
+1. **Inherit** the parent's mode (default for `task()`-spawned subagents)
+2. **Override** by calling `oracle_summon_local(entity, query, model)` to explicitly
+   route to a different model — this is a "conscious override" and should be
+   logged in the live feed with `[MODEL-OVERRIDE]` tag.
+
+### §13.4 Engine-Stack Firewall (M2) Compliance
+
+Hivemind operates at the OpenCode client layer. It must NEVER reach into
+`src/omega/` core engine code to change model routing. The contract is:
+
+- Hivemind → `oracle_summon_local(entity, query, model)` MCP call
+- MCP server → `Oracle.summon(entity_name, query, model_override)` Python call
+- Oracle → `ModelGateway.generate(model_name, ...)` (no IWAD knowledge)
+
+The model identifier (`model` parameter) is the only cross-stack string. All
+IWAD/PWAD content remains in `config/wads/`. The core engine in `src/omega/`
+has no knowledge of specific model names, providers, or WAD contents.
+
+---
+
+— Ma'at, 2026-06-03 (updated 2026-06-04 per D116/D117/D118)

@@ -1,0 +1,39 @@
+{
+  "session_id": "ses_0fa297efad03",
+  "cli": "opencode-roc_racoon",
+  "model": "minimax-m3-free",
+  "task_current": "ICS TREASURE MAP \u2014 \u2705 COMPLETE. Wrote `data/entities/roc_racoon/workspace/ICS_TREASURE_MAP_v1.md`. Discovered: (1) TWO distinct header systems (\u2b21 OMEGA agent signature vs ICS: code tag), (2) Only ONE generation point (CLI's _display_response), (3) 748 hand-typed .md headers, 29+ .py files with formal ICS: tags, (4) Specs ICS_DYNAMIC_HEADER_SPEC.md and ICS_MODEL_DETECTION.md were approved but never built, (5) No _build_header/_render_header method exists in engine. Recommendations: build src/omega/ics.py, add Oracle._render_header(), update agent files to NOT hand-type, add CI gate. Awaiting user direction on implementation timing.",
+  "focus_chain": [
+    "Map \u2b21 OMEGA header generation \u2705 DONE (CLI template at oracle_cli.py:280, OracleResponse dataclass)",
+    "Map ICS: [NODE|ARCHETYPE|MODEL|CONTEXT] format \u2705 DONE (29+ files, no spec)",
+    "Read existing specs \u2705 DONE (both read in full)",
+    "Identify gaps between docs and implementation \u2705 DONE (spec approved but never built)",
+    "Write ICS_TREASURE_MAP_v1.md \u2705 DONE (9 sections, recommendations)",
+    "Sync with parallel OpenCode Dev session \u2705 DONE (PARALLEL_SYNC file read, awareness confirmed)"
+  ],
+  "decisions": [
+    {
+      "$text": "D-rr-012: Two distinct header systems in engine (\u2b21 OMEGA agent sig + ICS: code tag). They serve different purposes and should not be conflated."
+    },
+    {
+      "$text": "D-rr-013: User asked about \u2b21 OMEGA signature, but engine ALSO has formal ICS: tag. Both systems need investigation, but template-ification is only for the \u2b21 OMEGA agent signature."
+    },
+    {
+      "$text": "D-rr-014: Specs ICS_DYNAMIC_HEADER_SPEC.md and ICS_MODEL_DETECTION.md were approved but the dynamic header middleware was never built. CLI's _display_response is the only generation point."
+    },
+    {
+      "$text": "D-rr-015: Template-ification requires (a) middleware auto-inject, (b) agent instructions not hand-write, (c) model detection, (d) phase detection. The D118 model_override parameter is relevant for model detection."
+    },
+    {
+      "$text": "D-rr-016: No _build_header or _render_header method exists in src/omega/. The only header generation is in oracle_cli.py:280. This is the implementation gap."
+    },
+    {
+      "$text": "D-rr-017: Recommend creating src/omega/ics.py as a dedicated module for the \u2b21 OMEGA agent signature system. Add _render_header() to Oracle per spec Option A."
+    },
+    {
+      "$text": "D-rr-018: The ICS: code tag should be renamed ICS-T (Tag) to distinguish from the \u2b21 OMEGA agent signature (ICS-S, Signature). The code tag needs a formal spec document \u2014 currently an undocumented emergent convention."
+    }
+  ],
+  "continuation": "Session 3-B ICS Treasure Map research COMPLETE. Deliverable: data/entities/roc_racoon/workspace/ICS_TREASURE_MAP_v1.md (9 sections covering: dual header system discovery, generation code paths, pre-existing specs, implementation gap, recommendations, open questions). Discovered 2 pre-existing spec docs that were approved but never built. Found the D118 model_override and D120 soul write-back are relevant to dynamic header generation. Awaiting user direction on implementation timing. Should NOT auto-implement per d-rr-008 discovery-only directive.",
+  "timestamp": "2026-06-05T03:01:35.809614+00:00"
+}

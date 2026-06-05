@@ -189,7 +189,7 @@ class Oracle:
                     async with await anyio.open_file(str(config_path), "r") as f:
                         content = await f.read()
                         self.config = yaml.safe_load(content)
-                        default_name = self.config.get("omega", {}).get("entity", {}).get("default", "default")
+                        default_name = self.cvar_get("config.entity.default", "default")
                         resolved = self.registry.get(default_name)
                         if resolved:
                             self.default_entity = resolved
@@ -198,8 +198,8 @@ class Oracle:
             
             # Set soul path from config (Engine-Stack Firewall: config-driven, not hardcoded)
             try:
-                data_dir = self.config.get("omega", {}).get("data", {}).get("dir", str(DATA_DIR))
-                user_name = self.config.get("omega", {}).get("entity", {}).get("user", "arch")
+                data_dir = self.cvar_get("config.data.dir", str(DATA_DIR))
+                user_name = self.cvar_get("config.entity.user", "arch")
                 self._soul_path = Path(data_dir) / "entities" / user_name / "soul.yaml"
             except Exception as e:
                 logger.warning(f"Failed to resolve soul path in bootstrap: {e}")
@@ -301,7 +301,7 @@ class Oracle:
             trace.log("query.received", query=query, transient=transient)
 
             # Get current session for the default entity
-            default_name = self.default_entity.name if self.default_entity else self.config.get("omega", {}).get("entity", {}).get("default", "default")
+            default_name = self.default_entity.name if self.default_entity else self.cvar_get("config.entity.default", "default")
             if transient:
                 session_id = self.session_manager.get_session_id_transient(trace.trace_id)
             else:
@@ -350,13 +350,25 @@ class Oracle:
             await self._record_interaction(resp, query, trace, transient)
             return resp
 
-    async def summon(self, entity_name: str, query: str, transient: bool = False) -> OracleResponse:
+    async def summon(
+        self,
+        entity_name: str,
+        query: str,
+        transient: bool = False,
+        model_override: Optional[str] = None,
+    ) -> OracleResponse:
         """Directly summon a specific entity by name.
+        
+        [D118 Dual-Inference Mandate] When model_override is provided, the
+        TriageRouter is bypassed and the specified model is used directly.
+        This enables opt-in local routing for the MaKaLi parallel council.
         
         Args:
             entity_name: Name of the entity to summon
             query: The user query
             transient: If True, do not record the interaction in the soul/memory
+            model_override: Optional model name to bypass TriageRouter and use
+                           a specific model directly (e.g., 'qwen3-1.7b' for local)
         """
         await self.bootstrap()
         async with self.observability.trace() as trace:
@@ -364,8 +376,10 @@ class Oracle:
                 session_id = self.session_manager.get_session_id_transient(trace.trace_id)
             else:
                 session_id = await self.session_manager.get_session_id(entity_name)
-            trace.log("summon.detected", entity=entity_name, query=query, transient=transient, session_id=session_id)
-            resp = await self._summon(entity_name, query, trace, session_id)
+            trace.log("summon.detected", entity=entity_name, query=query, transient=transient,
+                      session_id=session_id, model_override=model_override)
+            resp = await self._summon(entity_name, query, trace, session_id,
+                                       transient=transient, model_override=model_override)
             await self._record_interaction(resp, query, trace, transient)
             return resp
 
@@ -483,6 +497,25 @@ class Oracle:
         # Default: let Iris try with a small model, expect escalation
         return 0.3
 
+    def _render_header(self, response: "OracleResponse", mode: str = "full") -> str:
+        """Render an ICS-S header from an OracleResponse.
+        
+        [ICS-R2] Single source of truth for session headers. Delegates to
+        :func:`omega.ics.render` — never hand-constructs headers.
+        
+        [id-soft: quake-1996] netchan — structured header construction
+        from the OOB message format.
+        """
+        from omega.ics import render as _ics_render
+        return _ics_render(
+            entity=response.entity,
+            model=response.model,
+            channel="oracle",
+            trace_id=response.trace_id[:8] if response.trace_id else None,
+            phase=response.phase,
+            mode=mode,
+        )
+
     async def _respond_as_iris(self, query: str, trace: TraceSession, confidence: float, transient: bool = False) -> OracleResponse:
         """Respond directly as Iris with lightweight inference."""
         trace.log("iris.speculative", action="direct_response", confidence=confidence)
@@ -535,8 +568,20 @@ class Oracle:
         )
         return result
 
-    async def _summon(self, entity_name: str, query: str, trace: TraceSession, session_id: str, transient: bool = False) -> OracleResponse:
-        """Summon a specific entity and generate a response."""
+    async def _summon(
+        self,
+        entity_name: str,
+        query: str,
+        trace: TraceSession,
+        session_id: str,
+        transient: bool = False,
+        model_override: Optional[str] = None,
+    ) -> OracleResponse:
+        """Summon a specific entity and generate a response.
+        
+        [D118 Dual-Inference Mandate] When model_override is provided,
+        TriageRouter is bypassed and the specified model is used directly.
+        """
         entity = self.registry.get(entity_name)
         if not entity:
             entity = self.registry.find_by_name_fragment(entity_name)
@@ -550,8 +595,13 @@ class Oracle:
         # Build context and prepend to personality
         system_prompt = await self._prepare_system_prompt(entity.name, session_id, entity.personality)
         
-        # Generate response via model gateway with TriageRouter
-        model_name = await self._select_model(entity.name, query, session_id, trace.trace_id)
+        # [D118] Model selection: override bypasses TriageRouter
+        if model_override:
+            model_name = model_override
+            trace.log("model.override", entity=entity.name, model=model_name, source="model_override")
+        else:
+            model_name = await self._select_model(entity.name, query, session_id, trace.trace_id)
+        
         response_text, is_cloud = await self.model_gateway.generate(
             model_name=model_name,
             system_prompt=system_prompt,

@@ -357,7 +357,7 @@ guard: ## 🛡️ Run the Sovereign UID Guard to fix permission drift
 	@echo "$(COLOR_GREEN)✅ UID Guard complete.$(COLOR_NC)"
 
 test: guard ## 🧪 Run tests (uses mock backend when OMEGA_ENV=test)
-	OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m pytest $(ARGS)
+	flock -x /tmp/omega_test.lock -c "OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m pytest $(ARGS)"
 
 test-cov: ## 📊 Run tests with coverage
 	$(PYTHON) -m pytest --cov=omega --cov-report=term-missing $(ARGS)
@@ -623,3 +623,9 @@ sovereignty: ## 🏛️ Show local vs cloud inference ratio
 	@echo "[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m"
 	@echo " 🏛️ Sovereignty Report — Local/Cloud Inference Ratio"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m"
+
+verify-model-spelling: ## 🤖 Verify model name consistency (D119)
+	PYTHONPATH=src $(PYTHON) scripts/verify_model_spelling.py
+
+pivot-watchdog: ## 🛡️  Flag pending PIVOT decisions > 7 days
+	PYTHONPATH=src $(PYTHON) scripts/pivot_watchdog.py

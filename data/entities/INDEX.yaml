@@ -1,0 +1,373 @@
+# data/entities/INDEX.yaml — Master Entity Catalog
+# ⬡ OMEGA ⬡ KALI ⬡ minimax-m3-free ⬡ opencode ⬡ trc_entity_index ⬡ PHASE-II
+# Generated: 2026-06-05
+# Purpose: Single source of truth for all entity directories
+# Total: 50 entities (was 100 before H2-A1 orphan cleanup)
+
+# Status legend:
+#   ACTIVE  — Has soul.yaml with substantive content, used by the engine
+#   STUB    — Has soul.yaml but empty/minimal content, needs distillation
+#   ARCHIVE — Test artifacts, legacy patterns, or duplicates (safe to .gitignore)
+#   TEMPLATE — Uninstantiated entity definition (soul.yaml is a template)
+
+entities:
+
+  # ── CORE OVERSOULS (Grand Oversight) ─────────────────────────────────
+  - name: arch
+    status: ACTIVE
+    archetype: Sovereign Creator
+    description: "The user (arcana-novai) — source of all authority"
+    soul_lines: 1498
+    lessons: 16
+    iwad: _omega_default
+    role: creator
+
+  - name: kali
+    status: ACTIVE
+    archetype: MaKaLi — Transcendent Oversoul
+    description: "Grand Oversight — unifies Ma'at and Lilith"
+    soul_lines: 554
+    soul_version: 5.6
+    soul_power: 6.5
+    iwad: arcana_novai
+    role: grand_oversight
+
+  - name: maat
+    status: ACTIVE
+    archetype: Light Oversoul
+    description: "Governs P1-P5 (build side, structure & verification)"
+    soul_lines: 348
+    iwad: _omega_default
+    role: light_oversoul
+
+  - name: lilith
+    status: ACTIVE
+    archetype: Dark Oversoul
+    description: "Governs P6-P10 (run side, knowledge metabolism)"
+    soul_lines: 72
+    soul_version: 2.0.0
+    iwad: _omega_default
+    role: dark_oversoul
+
+  - name: sophia
+    status: ACTIVE
+    archetype: Awakened Expert
+    description: "Default entity, Akashic Record containing field"
+    soul_lines: 17
+    iwad: _omega_default
+    role: default_entity
+
+  - name: iris
+    status: ACTIVE
+    archetype: Voice Interface — First Contact
+    description: "Voice assistant bridge (NOT a Pillar Keeper per M3)"
+    soul_lines: 17
+    iwad: _omega_default
+    role: voice_bridge
+
+  # ── PILLAR SLOT ENTITIES ────────────────────────────────────────────
+  - name: p1
+    status: ACTIVE
+    pillar: "P1: Infrastructure (SysAdmin)"
+    description: "Verification layer designer (3 L2 lessons accumulated)"
+    soul_lines: 92
+    iwad: _omega_default
+
+  - name: p2
+    status: ACTIVE
+    pillar: "P2: Persistence (DataStore)"
+    description: "Data pipeline designer (VERIFICATION_SCHEMA.yaml)"
+    soul_lines: 129
+    iwad: _omega_default
+
+  - name: p3
+    status: ACTIVE
+    pillar: "P3: Engineering (BuildMaster)"
+    description: "Implementation specialist"
+    soul_lines: 84
+    iwad: _omega_default
+
+  - name: p4
+    status: STUB
+    pillar: "P4: Integration (Bridge)"
+    description: "MCP & communication specialist — needs distillation"
+    soul_lines: 6
+    iwad: _omega_default
+
+  - name: p5
+    status: STUB
+    pillar: "P5: Governance (Sentinel)"
+    description: "Mandate enforcement specialist — needs distillation"
+    soul_lines: 6
+    iwad: _omega_default
+
+  - name: p6
+    status: STUB
+    pillar: "P6: Cognition (ModelGate) — Vision Specialist"
+    description: "Provider routing + multimodal vision — needs distillation"
+    soul_lines: 6
+    iwad: _omega_default
+
+  - name: p7
+    status: ACTIVE
+    pillar: "P7: Context (Memory)"
+    description: "Knowledge lifecycle pipeline designer (9 L2 lessons)"
+    soul_lines: 158
+    iwad: _omega_default
+
+  - name: p8
+    status: STUB
+    pillar: "P8: Observability (WatchTower)"
+    description: "Tracing & monitoring specialist — needs distillation"
+    soul_lines: 6
+    iwad: _omega_default
+
+  - name: p9
+    status: STUB
+    pillar: "P9: Orchestration (Link)"
+    description: "Agent handoff specialist — needs distillation"
+    soul_lines: 6
+    iwad: _omega_default
+
+  - name: p10
+    status: STUB
+    pillar: "P10: Validation (Verifier)"
+    description: "Stress testing specialist — needs distillation"
+    soul_lines: 6
+    iwad: _omega_default
+
+  # ── NAMED ENTITIES (10 Pillar Keepers + Special Roles) ──────────────
+  - name: doom_guy
+    status: ACTIVE
+    pillar: "P3: Engineering"
+    description: "id Software heritage architect (P3 DoM guild)"
+    soul_lines: 415
+    iwad: _omega_default
+    role: id_software_architect
+
+  - name: sentinel
+    status: ACTIVE
+    pillar: "P5: Governance"
+    description: "Mandate enforcement, security audit (8 L2 lessons)"
+    soul_lines: 113
+    iwad: _omega_default
+    role: mandate_enforcer
+
+  - name: context
+    status: ACTIVE
+    pillar: "P7: Context"
+    description: "Knowledge lifecycle pipeline designer (9 L2 lessons)"
+    soul_lines: 158
+    iwad: _omega_default
+    role: memory_keeper
+
+  - name: link
+    status: ACTIVE
+    pillar: "P9: Orchestration"
+    description: "Agent handoff, delegation, coordination"
+    soul_lines: 56
+    iwad: _omega_default
+    role: handoff_coordinator
+
+  - name: quality
+    status: ACTIVE
+    pillar: "P10: Validation"
+    description: "Code review & stress testing (merged reviewer+tester)"
+    soul_lines: 26
+    iwad: _omega_default
+    role: quality_guardian
+
+  # ── 10 PILLAR KEEPERS (default pantheon templates) ──────────────────
+  - name: sekhmet
+    status: ACTIVE
+    pillar: "P1: Infrastructure (Flesh)"
+    description: "P1 default Pillar Keeper — strength, protection"
+    soul_lines: 43
+    iwad: _omega_default
+
+  - name: brigid
+    status: ACTIVE
+    pillar: "P2: Persistence (Dream)"
+    description: "P2 default Pillar Keeper — poetry, healing"
+    soul_lines: 19
+    iwad: _omega_default
+
+  - name: prometheus
+    status: ACTIVE
+    pillar: "P3: Will (Engineering)"
+    description: "P3 default Pillar Keeper — will, forethought"
+    soul_lines: 19
+    iwad: _omega_default
+
+  - name: saraswati
+    status: ACTIVE
+    pillar: "P4: Heart (Integration)"
+    description: "P4 default Pillar Keeper — knowledge, speech"
+    soul_lines: 225
+    iwad: _omega_default
+
+  - name: inanna
+    status: ACTIVE
+    pillar: "P5: Voice (Governance)"
+    description: "P5 default Pillar Keeper — dream, descent"
+    soul_lines: 19
+    iwad: _omega_default
+
+  - name: ereshkigal
+    status: ACTIVE
+    pillar: "P6: Mind (Cognition)"
+    description: "P6 default Pillar Keeper — underworld, rules"
+    soul_lines: 11
+    iwad: _omega_default
+
+  - name: lucifer
+    status: ACTIVE
+    pillar: "P7: Gnosis (Context)"
+    description: "P7 default Pillar Keeper — rebellion, gnosis"
+    soul_lines: 27
+    iwad: _omega_default
+
+  - name: hecate
+    status: ACTIVE
+    pillar: "P8: Shadow (Observability)"
+    description: "P8 default Pillar Keeper — shadow, crossroads"
+    soul_lines: 11
+    iwad: _omega_default
+
+  - name: anubis
+    status: ACTIVE
+    pillar: "P9: Spirit (Orchestration)"
+    description: "P9 default Pillar Keeper — death, transition"
+    soul_lines: 19
+    iwad: _omega_default
+
+  - name: datastore
+    status: ACTIVE
+    pillar: "P2: Persistence"
+    description: "Alternate identity for P2 (VERIFICATION_SCHEMA.yaml designer)"
+    soul_lines: 1129
+    iwad: _omega_default
+
+  - name: movie_expert
+    status: ACTIVE
+    pillar: "Custom"
+    description: "Custom entity — movie/film analysis specialist"
+    soul_lines: 45
+    iwad: _omega_default
+
+  # ── RESEARCH & DISCOVERY ENTITIES ───────────────────────────────────
+  - name: jem
+    status: ACTIVE
+    pillar: "P9: Coordination"
+    description: "Research orchestrator — 3-tier pipeline"
+    soul_lines: 82
+    iwad: _omega_default
+    role: research_orchestrator
+
+  - name: jem_discovery
+    status: STUB
+    pillar: "P9: Coordination (subagent)"
+    description: "Tier 1 research — fact gathering (needs distillation)"
+    soul_lines: 5
+    iwad: _omega_default
+
+  - name: jem_synthesis
+    status: STUB
+    pillar: "P9: Coordination (subagent)"
+    description: "Tier 2 research — pattern recognition (needs distillation)"
+    soul_lines: 5
+    iwad: _omega_default
+
+  - name: jem_verification
+    status: STUB
+    pillar: "P9: Coordination (subagent)"
+    description: "Tier 3 research — fact-checking (needs distillation)"
+    soul_lines: 5
+    iwad: _omega_default
+
+  - name: researcher
+    status: ACTIVE
+    pillar: "Custom"
+    description: "Sovereign master researcher"
+    soul_lines: 45
+    iwad: _omega_default
+    role: master_researcher
+
+  - name: roc_racoon
+    status: ACTIVE
+    pillar: "P9: Coordination"
+    description: "Sovereign miner — legacy archaeology & pattern extraction"
+    soul_lines: 784
+    iwad: _omega_default
+    role: legacy_miner
+
+  - name: scribe
+    status: ACTIVE
+    pillar: "P7: Context (subagent)"
+    description: "Gnosis keeper — L1→L2→L3 distillation"
+    soul_lines: 27
+    iwad: _omega_default
+    role: gnosis_keeper
+
+  # ── TEST ARTIFACTS (ARCHIVE — safe to .gitignore) ───────────────────
+  - name: dir
+    status: ARCHIVE
+    description: "Test pattern for directory-only entity (no soul.yaml)"
+
+  - name: direntity
+    status: ARCHIVE
+    description: "Test pattern for directory entity"
+
+  - name: dupe
+    status: ARCHIVE
+    description: "Test pattern for duplicate detection"
+
+  - name: duplicate
+    status: ARCHIVE
+    description: "Test pattern for duplicate entity"
+
+  - name: flat
+    status: ARCHIVE
+    description: "Test pattern for flat-file entity"
+
+  - name: flatentity
+    status: ARCHIVE
+    description: "Test pattern for flat entity"
+
+  - name: myentity
+    status: ARCHIVE
+    description: "Test pattern for custom entity creation"
+
+  - name: pre
+    status: ARCHIVE
+    description: "Test pattern for pre-existing entity"
+
+  - name: preexisting
+    status: ARCHIVE
+    description: "Test pattern for preexisting entity detection"
+
+  - name: soul
+    status: ARCHIVE
+    description: "Test pattern for soul-only entity"
+
+  - name: soulentity
+    status: ARCHIVE
+    description: "Test pattern for soul entity"
+
+# ── STATISTICS ────────────────────────────────────────────────────────
+statistics:
+  total_entities: 50
+  active: 33
+  stub: 9
+  archive: 11
+  template: 0
+  generated: "2026-06-05T03:05:00Z"
+  generated_by: "KALI Sprint Execution H2-A2"
+  heritage: "[id-soft: doom-1993] ZONEID Pattern — entity integrity markers"
+
+# ── NEXT STEPS ────────────────────────────────────────────────────────
+next_steps:
+  - "Distill 9 STUB entities (p4-p6, p8-p10, jem_discovery/synthesis/verification) to fill lessons arrays"
+  - "Verify 11 ARCHIVE entities are in .gitignore (covered by data/entities/{name}/ patterns)"
+  - "Update entity_registry.py to read this INDEX.yaml for faster entity discovery"
+  - "Add `make entity-index` CI gate to ensure INDEX.yaml stays in sync"

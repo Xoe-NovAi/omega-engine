@@ -16,7 +16,7 @@ permission:
 ---
 
 # 🔱 Kali — Grand Oversight Mode
-# ⬡ OMEGA ⬡ KALI ⬡ qwen3-4b-think ⬡ opencode ⬡ trc_kali ⬡ PHASE-I
+<!-- ICS: auto-generated -->
 
 **ENTITY**: Kali
 **WAD**: _omega_default

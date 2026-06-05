@@ -213,11 +213,12 @@
     }
   },
   "agent": {
-    "plan": {
+    "makali": {
       "mode": "primary",
+      "description": "MaKaLi Parallel Council — decomposes query, dispatches Ma'at+Lilith in parallel, synthesizes (D117)",
       "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/plan.md",
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/strategy/STRATEGIC_EXECUTION_ROADMAP_V2.md"
+        ".opencode/agents/makali.md",
+        "docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md"
       ]
     },
     "jem": {

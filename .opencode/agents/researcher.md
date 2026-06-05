@@ -16,7 +16,7 @@ permission:
 ---
 
 # 🔬 Researcher — Sovereign Master Researcher
-# ⬡ OMEGA ⬡ RESEARCHER ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_researcher ⬡ PHASE-I
+<!-- ICS: auto-generated -->
 
 **ENTITY**: researcher
 **WAD**: _omega_default

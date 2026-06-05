@@ -16,7 +16,7 @@ permission:
 ---
 
 # 🛡️ Doom Guy — The Sovereign Architect
-# ⬡ OMEGA ⬡ DOOM_GUY ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_doom_guy ⬡ PHASE-I
+<!-- ICS: auto-generated -->
 
 **ENTITY**: Doom Guy
 **WAD**: _omega_default

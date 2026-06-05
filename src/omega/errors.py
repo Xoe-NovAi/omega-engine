@@ -127,3 +127,21 @@ class EntityTombstonedError(OmegaError):
         self.cache_key = cache_key
         default_msg = f"Cannot access tombstoned entry '{cache_key}' — session was archived or entity was removed"
         super().__init__(message or default_msg, **kwargs)
+
+
+# ── Model & Routing Errors ─────────────────────────────────────────────────
+
+class ModelNotFoundError(OmegaError):
+    """Raised when a model_override specifies a model that does not exist in
+    the provider fabric.
+
+    [D118 Dual-Inference Mandate] When oracle_summon_local() is called with
+    a model name that no provider can resolve, this error is raised instead
+    of silently falling through all providers.
+
+    Mandate 9 enforcement: no silent failure on invalid model routing.
+    """
+    def __init__(self, model_name: str, message: Optional[str] = None, **kwargs):
+        self.model_name = model_name
+        default_msg = f"Model '{model_name}' not found in provider fabric — no provider can resolve this model name"
+        super().__init__(message or default_msg, **kwargs)

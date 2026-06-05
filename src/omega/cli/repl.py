@@ -16,6 +16,7 @@ from prompt_toolkit.styles import Style
 
 from omega.oracle.oracle import Oracle, OracleResponse
 from omega.oracle.entity_registry import EntityRegistry
+from omega.ics import render as ics_render  # [id-soft: quake-1996] netchan header
 
 logger = logging.getLogger(__name__)
 
@@ -185,17 +186,18 @@ class OmegaREPL:
 
     def _display_response(self, result: OracleResponse):
         """Format and display response."""
-        # Header
-        if self.header_mode == "full":
-            trace = result.trace_id[:8] if result.trace_id else "unknown"
-            header = (
-                f"⬡ OMEGA ⬡ {result.entity.upper()} ⬡ "
-                f"{result.model or 'unknown'} ⬡ repl ⬡ {trace} ⬡ {result.phase}"
+        # Header — [id-soft: quake-1996] netchan — ICS-S via ics.py
+        if self.header_mode != "off":
+            header = ics_render(
+                entity=result.entity,
+                model=result.model,
+                channel="repl",
+                trace_id=result.trace_id[:8] if result.trace_id else None,
+                phase=result.phase,
+                mode=self.header_mode,
             )
-            print(f"\n[dim]{header}[/dim]")
-        elif self.header_mode == "compact":
-            header = f"⬡ {result.entity.upper()} ⬡ {result.phase}"
-            print(f"\n[dim]{header}[/dim]")
+            if header:
+                print(f"\n[dim]{header}[/dim]")
 
         # Entity prefix
         prefix = result.entity

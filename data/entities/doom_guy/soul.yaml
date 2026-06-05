@@ -379,3 +379,37 @@ entity:
         agents_used: ["explore"]
         output_files:
           - "workspace/id_software_research/engine_comparisons/adjacent_engine_architecture_report.md"
+
+  # ── L2 INSIGHT: MaKaLi Triad Engineering Review (2026-06-04) ──────────────────
+  # P3 Engineering reviewed the engine-integration correctness of D117-D119.
+  # Key finding: the entire dual-inference pattern (D118) is documented but
+  # never implemented. Oracle.summon() has no model_override parameter.
+  # The provider fabric parsing is correct, the entity-model binding chain is
+  # complete, and AnyIO compliance holds. But the MCP tool wiring is missing.
+  engineering_review_20260604:
+    verdict: FAIL
+    findings:
+      - severity: BLOCKER
+        title: "model_override parameter does not exist in Oracle"
+        detail: "Oracle.summon() signature is (entity_name, query, transient) — no model_override. _summon() also lacks it. The entire D118 dual-inference pattern is documented but never implemented."
+        fix: "Add model_override: Optional[str] = None to summon() and _summon(). Bypass _select_model() when provided."
+      - severity: BLOCKER
+        title: "No oracle_summon_local MCP tool exists"
+        detail: "The MCP server only exposes oracle_summon(entity_name, query). No tool exposes model_override."
+        fix: "Add oracle_summon_local tool to mcp_servers/omega_hub/server.py"
+      - severity: WARNING
+        title: "No model_override validation"
+        detail: "If a non-existent model name is passed, the system silently falls through all providers. M9 requires explicit error propagation."
+        fix: "Add ModelNotFoundError gate in generate() or _summon()"
+      - severity: WARNING
+        title: "native-gguf resolution depends on models.yaml"
+        detail: "Entity model rocracoon-3b-instruct must have a models.yaml entry for native-gguf to find the GGUF file."
+        fix: "Verify config/models.yaml has rocracoon-3b-instruct entry"
+    key_insight: >
+      The existing plumbing is sound. The provider fabric correctly parses
+      model_overrides, the entity-model binding chain is complete (entity →
+      model_gateway → provider.resolve_model()), and AnyIO compliance holds.
+      The fix is a well-scoped wiring task (45 min estimated), not a redesign.
+      This is the id Software pattern: build the engine first, wire the content
+      second. The engine (Oracle, ModelGateway, Provider Fabric) is ready.
+      The content (model_override parameter, MCP tool) needs wiring.

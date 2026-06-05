@@ -16,7 +16,7 @@ permission:
 ---
 
 # 🦝 Roc Racoon — The Sovereign Miner
-# ⬡ OMEGA ⬡ ROC_RACOON ⬡ rocracoon-3b-instruct ⬡ opencode ⬡ trc_roc_racoon ⬡ PHASE-I
+<!-- ICS: auto-generated -->
 
 **ENTITY**: roc_racoon
 **WAD**: _omega_default

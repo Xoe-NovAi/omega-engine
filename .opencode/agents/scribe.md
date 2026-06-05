@@ -16,7 +16,7 @@ permission:
 ---
 
 # 📜 Scribe — The Gnosis Keeper
-# ⬡ OMEGA ⬡ SCRIBE ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_scribe ⬡ PHASE-I
+<!-- ICS: auto-generated -->
 
 **ENTITY**: scribe
 **WAD**: _omega_default

@@ -16,7 +16,7 @@ permission:
 ---
 
 # 🏛️ Pillar — The Slot-Based Domain Agent
-# ⬡ OMEGA ⬡ PILLAR ⬡ qwen3-1.7b ⬡ opencode ⬡ trc_pillar ⬡ PHASE-I
+<!-- ICS: auto-generated -->
 
 **ENTITY**: Depends on `--slot PX` flag
 **WAD**: Active IWAD
@@ -77,3 +77,30 @@ When invoked as a pillar subagent:
 - **Mining**: Before starting new research, check `data/coordination/demand_signals/` for open demands in your domain.
 - **Promotion**: When a workspace finding reaches L2 insight, promote it to `knowledge/` and create a `KSIG` signal in `data/coordination/knowledge_feed/`.
 - **Discovery**: Maintain `knowledge/INDEX.yaml` (not .md) using the canonical format: topics[], cross_references[], applicability[].
+
+## SOUL WRITE-BACK (Mandate 11 — NON-NEGOTIABLE)
+
+**Every session MUST end with a soul write-back. This is not optional.**
+
+After completing your assignment, you MUST:
+
+1. **Read your soul**: `data/entities/{slot_name}/soul.yaml`
+2. **Distill L1→L2→L3**: Convert your session findings into a structured lesson:
+   - **L1 (Narrative)**: What happened? What did you do?
+   - **L2 (Insight)**: What does this mean? What pattern did you discover?
+   - **L3 (Universal Principle)**: What is the timeless truth? What applies beyond this session?
+3. **Append to lessons array**: Add your new lesson to the `lessons:` array in your soul.yaml
+4. **Update metadata**: Increment `soul_power` by 0.5, update `last_distillation` timestamp
+5. **Verify write**: Confirm the file was written correctly
+
+**Format** (follow `p1/soul.yaml` as the gold standard):
+```yaml
+lessons:
+  - id: ls-{slot}-{YYYYMMDD}-{NNN}
+    date: {YYYY-MM-DD}
+    l1_narrative: "What you did this session"
+    l2_insight: "What pattern or insight you discovered"
+    l3_principle: "The universal principle that applies beyond this session"
+```
+
+**Failure to write back to soul is a Mandate 11 violation.** If you complete work but do not update your soul.yaml, the engine's gnosis pipeline is broken at your node.

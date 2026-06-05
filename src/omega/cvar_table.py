@@ -22,8 +22,15 @@
 #   - New code should import from omega.cvar_table directly.
 
 import logging
+import os
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+# Canonical data dir resolution (mirrors observability.py and library modules).
+# Inlined here to avoid circular import with constants.py.
+_DATA_DIR_DEFAULT = Path.home() / "omega" / "data"
+DATA_DIR = Path(os.environ.get("OMEGA_DATA_DIR", str(_DATA_DIR_DEFAULT)))
 
 logger = logging.getLogger(__name__)
 
@@ -207,6 +214,42 @@ CVAR_TABLE: Dict[str, CvarDef] = {
     "zoneid.atomic": CvarDef(
         "zoneid.atomic", ZONEID_ATOMIC, "zoneid",
         "Critical section atomic lock marker", "ResourceGuard",
+    ),
+
+    # ── config.entity.* — Entity Registry knobs ─────────────────
+    "config.entity.default": CvarDef(
+        "config.entity.default", "default", "str",
+        "Default entity name for Oracle talk/summon", "EntityRegistry",
+    ),
+    "config.entity.user": CvarDef(
+        "config.entity.user", "arch", "str",
+        "Default user name for entity workspace paths", "EntityRegistry",
+    ),
+    "config.entity.allow_transient": CvarDef(
+        "config.entity.allow_transient", True, "bool",
+        "Allow transient sessions that aren't recorded to soul", "EntityRegistry",
+    ),
+
+    # ── config.data.* — Global data paths ──────────────────────
+    "config.data.dir": CvarDef(
+        "config.data.dir", str(DATA_DIR), "str",
+        "Root directory for all engine data (entities, sessions, logs)", "EntityRegistry",
+    ),
+
+    # ── config.hivemind.* — Hivemind/Hub knobs ─────────────────
+    "config.hivemind.enabled": CvarDef(
+        "config.hivemind.enabled", True, "bool",
+        "Enable cross-agent awareness via Omega Hub", "LinkP9Runtime",
+    ),
+    "config.hivemind.endpoint": CvarDef(
+        "config.hivemind.endpoint", "http://127.0.0.1:8016", "str",
+        "Base URL for the Omega Hub MCP server", "LinkP9Runtime",
+    ),
+
+    # ── config.session_header.* — ICS/Session header knobs ─────────
+    "config.session_header.mode": CvarDef(
+        "config.session_header.mode", "compact", "str",
+        "Session header display mode (compact|verbose|off)", "Oracle",
     ),
 
     # ── config.gguf.* — Native GGUF Provider knobs ───────────────

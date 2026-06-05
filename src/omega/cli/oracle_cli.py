@@ -8,6 +8,8 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+from omega.cvar_table import cvar_get, cvar_namespace
+
 # Add src to path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
@@ -24,6 +26,7 @@ except ImportError:
 from omega.oracle import Oracle, OracleResponse, EntityRegistry, Entity
 from omega.request_queue import RequestQueue
 from omega.oracle.feed_utils import load_demand_signals, transition_demand, summarize_feed
+from omega.ics import render as ics_render  # [id-soft: quake-1996] netchan header
 
 logger = logging.getLogger(__name__)
 console = Console()
@@ -72,13 +75,18 @@ def summon(
     entity: str = typer.Argument(..., help="Entity name to summon"),
     query: str = typer.Argument(..., help="Your question for this entity"),
     transient: bool = typer.Option(False, "--transient", "-t", help="Run in transient mode (no soul updates)"),
+    model: Optional[str] = typer.Option(None, "--model", "-m", help="[D118] Model override — bypass TriageRouter and use specific model (e.g., qwen3-1.7b)"),
     iwad: Optional[str] = typer.Option(None, "--iwad", "-w", help="IWAD stack to load (e.g., arcana_novai)"),
 ):
-    """Summon a specific entity by name."""
+    """Summon a specific entity by name.
+    
+    [D118 Dual-Inference Mandate] Use --model to bypass TriageRouter and route
+    to a specific model. Example: omega summon roc_racoon "hello" --model qwen3-1.7b
+    """
     async def _run():
         oracle = Oracle(iwad_name=iwad)
         try:
-            result = await oracle.summon(entity, query, transient=transient)
+            result = await oracle.summon(entity, query, transient=transient, model_override=model)
             _display_response(result)
         finally:
             await oracle.close()
@@ -143,7 +151,7 @@ def transient(
     """Get or set the default transient mode."""
     config = _load_config()
     if mode is None:
-        current = config.get("omega", {}).get("entity", {}).get("allow_transient", True)
+        current = cvar_get("config.entity.allow_transient", True)
         console.print(f"Transient mode is currently: [bold cyan]{'ON' if current else 'OFF'}[/bold cyan]")
         return
 
@@ -165,7 +173,7 @@ def header(
     """Get or set the session header mode."""
     config = _load_config()
     if mode is None:
-        current = config.get("omega", {}).get("session_header", {}).get("mode", "compact")
+        current = cvar_get("config.session_header.mode", "compact")
         console.print(f"Header mode is currently: [bold cyan]{current}[/bold cyan]")
         return
 
@@ -266,18 +274,20 @@ def mcp_restart(
 def _display_response(result: OracleResponse):
     """Format and display an Oracle response."""
     config = _load_config()
-    header_mode = config.get("omega", {}).get("session_header", {}).get("mode", "compact")
+    header_mode = cvar_get("config.session_header.mode", "compact")
 
     if header_mode != "off":
-        if header_mode == "full":
-            # ⬡ OMEGA ⬡ {entity} ⬡ {model} ⬡ {channel} ⬡ {trace} ⬡ {phase}
-            trace = result.trace_id[:8] if result.trace_id else "unknown"
-            header = f"⬡ OMEGA ⬡ {result.entity.upper()} ⬡ {result.model or 'unknown'} ⬡ cli ⬡ {trace} ⬡ {result.phase}"
-        else:  # compact
-            # ⬡ {entity} ⬡ {phase}
-            header = f"⬡ {result.entity.upper()} ⬡ {result.phase}"
-        
-        console.print(f"[dim]{header}[/dim]")
+        # [id-soft: quake-1996] netchan — ICS-S header via ics.py (single source of truth)
+        header = ics_render(
+            entity=result.entity,
+            model=result.model,
+            channel="cli",
+            trace_id=result.trace_id[:8] if result.trace_id else None,
+            phase=result.phase,
+            mode=header_mode,
+        )
+        if header:
+            console.print(f"[dim]{header}[/dim]")
 
     prefix = f"[bold cyan]{result.entity}[/bold cyan]"
     if result.pillars:

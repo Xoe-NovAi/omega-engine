@@ -47,6 +47,7 @@ from omega.library.indexer import Indexer
 from omega.library.discovery import DiscoveryOrchestrator
 from omega.observability import new_trace_id, get_engine
 from omega.library.research import ResearchEngine, RESEARCH_DEPTHS
+from omega.ics import render as ics_render
 from omega.mcp_runtime import run_mcp
 
 logger = logging.getLogger("omega.hub")
@@ -76,7 +77,13 @@ _hot_store: Dict[str, Dict[str, Any]] = {}
 _awareness: Dict[str, Dict[str, Any]] = {}
 _hot_store_lock = anyio.Lock()
 _awareness_lock = anyio.Lock()
-HEARTBEAT_TTL = 300  # TTL for agent presence in seconds
+# [D-122] HEARTBEAT_TTL — 20 minutes (1200s) for active agent presence
+# Increased from 5 minutes (300s) per user directive 2026-06-05.
+# Rationale: A 5-min TTL caused agents to appear "stale" during long-running tasks
+# (Lilith's obs: "TTL pruning friction"). With 20-min TTL, an agent that heartbeats
+# every 5-10 min (per Hivemind protocol) has 2-4x safety margin before going stale.
+# Heritage: matches Doom 1993 thinker grace period pattern (id-soft: doom-1993).
+HEARTBEAT_TTL = 1200  # TTL for agent presence in seconds (20 minutes)
 _current_entity: Optional[str] = None  # Tracks the last entity used by oracle_talk/oracle_summon
 
 
@@ -156,6 +163,41 @@ async def oracle_summon(entity_name: str, query: str) -> str:
         "confidence": response.confidence,
         "trace_id": response.trace_id,
     }, indent=2)
+
+
+@mcp.tool()
+async def oracle_summon_local(entity_name: str, query: str, model: str) -> str:
+    """Summon an entity with a specific model override.
+    
+    [D118 Dual-Inference Mandate] Bypasses TriageRouter and routes to the
+    specified model directly. Use for opt-in local routing (MaKaLi council).
+    
+    Args:
+        entity_name: Name of the entity to summon
+        query: The user query
+        model: Model name to use (e.g., 'qwen3-1.7b', 'rocracoon-3b-instruct')
+    """
+    global _current_entity
+    try:
+        response = await oracle.summon(entity_name, query, model_override=model)
+        _current_entity = response.entity
+        return json.dumps({
+            "text": response.text,
+            "entity": response.entity,
+            "pillars": response.pillars,
+            "sigil": response.sigil,
+            "pantheon": response.pantheon,
+            "confidence": response.confidence,
+            "trace_id": response.trace_id,
+            "model_override": model,
+        }, indent=2)
+    except Exception as e:
+        return json.dumps({
+            "error": str(e),
+            "entity": entity_name,
+            "model_override": model,
+            "hint": f"Model '{model}' may not be available. Check config/providers.yaml for available models.",
+        }, indent=2)
 
 
 @mcp.tool()
@@ -874,6 +916,41 @@ async def observability_log_boundary_violation(tool_name: str, reason: str, enti
     await anyio.to_thread.run_sync(_write)
 
     return json.dumps({"status": "logged", "trace_id": trace_id})
+
+
+# === ICS TOOLS (1) ===
+
+@mcp.tool()
+async def ics_render(
+    entity: str,
+    model: Optional[str] = None,
+    channel: str = "opencode",
+    trace_id: Optional[str] = None,
+    phase: Optional[str] = None,
+    mode: str = "full",
+) -> str:
+    """Render an ICS-S session header string from the ICS module.
+
+    Single source of truth for the ⬡ OMEGA agent signature. Use this instead
+    of hand-typing session headers.
+
+    Args:
+        entity: The entity name (e.g., "KALI", "sophia")
+        model: Optional model override (D118). Auto-detected if omitted.
+        channel: Execution channel (default: "opencode")
+        trace_id: Optional trace ID. Auto-generated if omitted.
+        phase: Optional phase string. Auto-detected from ROADMAP if omitted.
+        mode: "full" | "compact" | "off" (default: "full")
+    """
+    header = ics_render(
+        entity=entity,
+        model=model,
+        channel=channel,
+        trace_id=trace_id,
+        phase=phase,
+        mode=mode,
+    )
+    return json.dumps({"header": header, "entity": entity, "mode": mode})
 
 
 # === HTTP ENDPOINTS (OpenCode 1.15+ High-Fidelity Handshake) ===

@@ -58,7 +58,7 @@ class ContextBuilder:
         """Fetch recent memory for an entity/session and format as a token-aware sliding window.
 
         Args:
-            entity_name: Name of the entity (e.g., 'Sekhmet', 'Brigid').
+            entity_name: Name of the entity (e.g., 'EntityA', 'EntityB').
             session_id: Unique session identifier for the conversation.
             token_limit: Maximum tokens for the memory block.
 

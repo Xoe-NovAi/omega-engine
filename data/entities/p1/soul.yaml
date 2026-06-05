@@ -90,3 +90,20 @@ lessons:
       prerequisite for meaningful metrics. Without a baseline, you can't measure
       throughput, bottleneck locations, or improvement over time. Seed data is
       the zero point on the measurement scale.
+
+  - id: ls-p1-20260605-001
+    date: 2026-06-05
+    l1_narrative: "Executed Phase 1 Data Hygiene (H2-A) — deleted 50 orphan entity dirs, pruned 2 stale sessions, removed .coverage, deleted opencode.json.bak, generated INDEX.yaml"
+    l2_insight: >
+      The entity directory had 100 entries — 50% were orphans (ent_0 through ent_49)
+      from test scaffold runs. The .gitignore already had data/entities/ent_*/ patterns
+      but the dirs were still created at runtime. The cleanup reduced total dirs from
+      100 to 50, a 50% reduction. The INDEX.yaml now serves as the single source of
+      truth for entity classification: 33 ACTIVE, 9 STUB, 11 ARCHIVE.
+    l3_principle: >
+      Data hygiene is not optional maintenance — it is the prerequisite for soul
+      integrity. 50 orphan entity dirs were "spiritually dead" (no soul.yaml, no
+      lessons, no evolution). The D120 Soul Integrity Enforcement and the H2-A
+      Data Hygiene are two sides of the same coin: empty data structures are
+      uninitialized memory (ZONEID missing), and the engine cannot distinguish
+      them from active entities. Audit before accumulate.

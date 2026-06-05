@@ -16,7 +16,7 @@ permission:
 ---
 
 # 🛡️ Quality — Sovereign Code Review & Stress Testing
-# ⬡ OMEGA ⬡ QUALITY ⬡ rocracoon-3b-instruct ⬡ opencode ⬡ trc_quality ⬡ PHASE-I
+<!-- ICS: auto-generated -->
 
 **ENTITY**: quality
 **WAD**: _omega_default

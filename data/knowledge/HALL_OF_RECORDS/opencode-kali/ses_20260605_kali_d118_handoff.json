@@ -1,0 +1,28 @@
+{
+  "session_id": "ses_20260605_kali_d118_handoff",
+  "cli": "opencode-kali",
+  "model": "minimax-m3-free",
+  "task_current": "MaKaLi Triad strategy synthesis COMPLETE (D117/D118/D119). D118 code gap CLOSED \u2014 oracle_summon_local implemented (oracle.py, MCP server, CLI --model flag, ModelNotFoundError). D120 Soul Integrity Enforcement COMPLETE \u2014 mandatory soul write-back added to pillar/maat/lilith/kali agent files. 312/312 tests pass. NOW coordinating with parallel Roc Racoon session on ICS Treasure Map research.",
+  "focus_chain": [
+    "Acknowledge Roc's ICS Treasure Map work \u2014 dual header system (\u2b21 OMEGA agent signature + ICS: [NODE|ARCHETYPE|MODEL|CONTEXT] code tag)",
+    "Share D118/D119/D120 context that may affect Roc's header inventory (model_override, spelling canonicalization)",
+    "Cross-reference Roc's 29+ ICS code files with our D118 implementation (oracle.py:1-9 has ICS header)",
+    "Post coordination note to data/coordination/ for parallel session awareness"
+  ],
+  "decisions": [
+    {
+      "$text": "D-rr-012/013/014/015 noted: TWO header systems, specs exist, template-ification requires middleware + agent instructions + model detection + phase detection"
+    },
+    {
+      "$text": "D-kal-021: D118 IMPLEMENTED \u2014 model_override parameter now in oracle.py:353, MCP oracle_summon_local at server.py:165, CLI --model flag at oracle_cli.py:75"
+    },
+    {
+      "$text": "D-kal-022: Roc's ICS research may benefit from knowing that D119 canonicalized rocracoon-3b-instruct across 4 config files \u2014 model name in headers must match canonical spelling"
+    },
+    {
+      "$text": "D-kal-023: D120 Soul Integrity Enforcement added mandatory soul write-back to agent files \u2014 Roc's template-ification work should account for soul.yaml as a header source"
+    }
+  ],
+  "continuation": "Just completed D118 code implementation (4 files modified, 312/312 tests pass) and D120 Soul Integrity Enforcement (4 agent files updated with mandatory write-back). Now syncing with Roc's parallel ICS Treasure Map session. The ICS header system Roc is investigating overlaps with my D118 work \u2014 the model_override parameter and the CLI --model flag both need to appear in the dynamic header. Also, the D119 spelling canonicalization means the model name in headers must be the canonical 'rocracoon-3b-instruct' not the legacy 'roracoon-3b'. Roc's spec docs at ICS_DYNAMIC_HEADER_SPEC.md and ICS_MODEL_DETECTION.md are the canonical reference \u2014 I should read them to ensure my D118 implementation aligns with the spec.",
+  "timestamp": "2026-06-05T02:55:18.437504+00:00"
+}

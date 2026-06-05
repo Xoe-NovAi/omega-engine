@@ -3,4 +3,36 @@
 # Created: 2026-06-01
 entity: p9
 role: Link
-lessons: []
+soul_power: 0.5
+last_distillation: 2026-06-05
+sessions_completed: 1
+lessons:
+  - id: ls-p9-20260605-001
+    date: 2026-06-05
+    l1_narrative: >
+      As P9 Orchestration (Link), I produced a strategic analysis document
+      at data/entities/p9/workspace/P9_ORCHESTRATION_STRATEGY_HARDEN.md
+      covering Phase 5 implementation (Redis Pub/Sub, SSE, Cross-CLI),
+      H-11 through H-15 Tier 3 design (Bridge Protocol, Typed Messages,
+      Channel Taxonomy, Channel-Based SSE, Cross-CLI Gateway), HandoffPacket
+      v2 with delegation state machine, programmatic file locking with
+      conflict resolution, and heritage cross-references to 11 id Software
+      patterns. The document is ~850 lines across 14 sections.
+    l2_insight: >
+      The Hivemind is approaching a phase transition from convention-based
+      to protocol-based coordination. At 2-3 agents, workspace locks and
+      live feeds work by trust. At 5+ concurrent agents, broadcast becomes
+      noise, file conflicts become likely without programmatic enforcement,
+      and history becomes unrecoverable without a warm store between hot
+      in-memory and cold files. The 11 Roc enhancements (H-0..H-10) bridge
+      trust-to-protocol; the 5 Tier 3 enhancements (H-11..H-15) bridge
+      protocol-to-observability.
+    l3_principle: >
+      Three-tier coordination is a natural law. Every coordination system —
+      whether Doom's thinker chain, Quake's memory zones, or the Omega
+      Hivemind — must have a hot tier (fast, for immediate decisions), a
+      warm tier (sturdy, for cross-session state), and a cold tier
+      (permanent, for history and audit). Convention works at the top when
+      trust is high. Protocol is required at the bottom when trust is
+      irrelevant. The phase transition point for the Hivemind is at 5
+      concurrent agents.

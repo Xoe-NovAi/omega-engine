@@ -1,0 +1,28 @@
+{
+  "session_id": "ses_af87fe84c1ac",
+  "cli": "opencode-roc_racoon",
+  "model": "minimax-m3-free",
+  "task_current": "D-122 IMPLEMENTED \u2014 Hivemind HEARTBEAT_TTL increased from 300s (5 min) to 1200s (20 min). Code: mcp_servers/omega_hub/server.py:80. With 5-10 min heartbeat cadence (per Hivemind protocol), agents now have 2-4x safety margin before going stale. H-4 cold fallback and H-9 warm store still valuable for >20 min gaps.",
+  "focus_chain": [
+    "User directive: increase Hivemind TTL to at least 20 minutes \u2705 DONE",
+    "Located HEARTBEAT_TTL in mcp_servers/omega_hub/server.py:80 \u2705 DONE",
+    "Changed HEARTBEAT_TTL from 300s (5 min) to 1200s (20 min) with comment block + D-122 tag \u2705 DONE",
+    "Appended D-122 to PIVOT_LOG with full context, heritage, verification \u2705 DONE",
+    "Updated HIVEMIND_HARDENING_SPEC_v1.md \u00a76, \u00a711, and two-tier schema to reflect 20-min TTL \u2705 DONE",
+    "Added d-rr-033 (TTL mandate) and rr-049 (TTL design lesson) to soul.yaml \u2705 DONE",
+    "Posting to Hivemind for fleet-wide awareness \u23f3 CURRENT"
+  ],
+  "decisions": [
+    {
+      "$text": "D-122: Hivemind HEARTBEAT_TTL increased from 300s (5 min) to 1200s (20 min). User directive 2026-06-05. Implemented in mcp_servers/omega_hub/server.py:80 with comment block and heritage tag. Hivemind Hardening Spec updated for consistency."
+    },
+    {
+      "$text": "d-rr-033: Hivemind HEARTBEAT_TTL is 20 minutes (1200 seconds) \u2014 coordination contract, not just technical parameter. Matches natural cadence of meaningful work."
+    },
+    {
+      "$text": "rr-049: The TTL is a coordination contract, not just a technical parameter. Time-based contracts should match natural cadence of work, not maximum speed of system. Heritage: Doom 1993 thinker grace period at different scale."
+    }
+  ],
+  "continuation": "D-122 IMPLEMENTED \u2014 Hivemind HEARTBEAT_TTL is now 20 minutes.\n\n**Change**: `mcp_servers/omega_hub/server.py:80` \u2014 `HEARTBEAT_TTL = 300` \u2192 `HEARTBEAT_TTL = 1200` (20 min).\n\n**Rationale**: The 5-min TTL caused agents to appear \"stale\" during long-running tasks (per Lilith's TTL pruning friction observation in D-121). With 20-min TTL and 5-10 min heartbeat cadence, agents have 2-4x safety margin. The TTL is a coordination contract \u2014 it should match the natural cadence of meaningful work (deep thinking, thorough mining, careful coordination), not the maximum speed of the system.\n\n**Heritage**: Maps to Doom 1993's thinker grace period pattern (0.5s realloc) at a different scale \u2014 prevent misclassification of active agents as stale, which would cause coordination errors.\n\n**Side effects**:\n- H-4 cold fallback in `get_continuation` \u2014 still valuable for >20 min gaps\n- H-9 warm store (disk persistence) \u2014 still valuable across Hub restarts\n- HIVEMIND_HARDENING_SPEC_v1.md \u00a76, \u00a711, and two-tier schema updated to reflect 20-min TTL\n\n**Fleet action**: All agents can now work on long tasks (>5 min) without appearing stale. The coordination contract has been renegotiated. \u2b21\ud83e\udd9d",
+  "timestamp": "2026-06-05T04:21:09.315198+00:00"
+}

@@ -1,0 +1,4 @@
+[2026-06-05T02:35:50.277662+00:00] ACTION: WORKSPACE_CREATE | DETAILS: Created root workspace at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/researcher
+[2026-06-05T02:35:50.277758+00:00] ACTION: DIR_CREATE | DETAILS: Created knowledge directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/researcher/knowledge
+[2026-06-05T02:35:50.277778+00:00] ACTION: DIR_CREATE | DETAILS: Created workspace directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/researcher/workspace
+[2026-06-05T02:35:50.278115+00:00] ACTION: INDEX_CREATE | DETAILS: Scaffolded INDEX.yaml at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/researcher/knowledge/INDEX.yaml

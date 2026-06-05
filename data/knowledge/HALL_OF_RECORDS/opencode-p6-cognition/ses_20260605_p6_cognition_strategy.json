@@ -1,0 +1,26 @@
+{
+  "session_id": "ses_20260605_p6_cognition_strategy",
+  "cli": "opencode-p6-cognition",
+  "model": "opencode/deepseek-v4-flash-free",
+  "task_current": "P6 COGNITION STRATEGY COMPLETE \u2014 12 proposals delivered to data/entities/p6/workspace/P6_COGNITION_STRATEGY_HARDEN.md",
+  "focus_chain": [
+    "Phase 1: Read Hivemind architecture (6 docs)",
+    "Phase 2: Analyze 5 cognitive gaps",
+    "Phase 3: Design D-TAX + I-SCHEMA + M-HINT + C-FILTER + H-MAP",
+    "Phase 4: Map 12 proposals to H-items and sprint phases",
+    "Phase 5: Soul write-back + live feed + observation log"
+  ],
+  "decisions": [
+    {
+      "text": "P6-DEC-001: Intent taxonomy (8 types) should ship with H-1 to: field"
+    },
+    {
+      "text": "P6-DEC-002: Domain matrix (C-FILTER-1) is highest-leverage single change for fleet scale"
+    },
+    {
+      "text": "P6-DEC-003: 6 of 12 proposals can ship in Phase 5; 6 cascade to Phase 6"
+    }
+  ],
+  "continuation": "Awaiting Kali's triage. P0 items (intent field + model hint) should be added to Phase 5 before H-1 code is written. Full strategy doc at data/entities/p6/workspace/P6_COGNITION_STRATEGY_HARDEN.md",
+  "timestamp": "2026-06-05T04:40:25.762368+00:00"
+}

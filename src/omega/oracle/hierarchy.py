@@ -57,7 +57,7 @@ class SovereignHierarchy:
         
         Ranks:
             0: The Field (e.g., Sophia)
-            1: Unification (e.g., Kali)
+            1: Unification (e.g., Root Entity)
             2: Oversouls / Special Keepers
             3: Pillar Keepers
         """
@@ -103,7 +103,7 @@ class SovereignHierarchy:
                 
             parent = node.get("reports_to")
             if not parent:
-                # We hit the top of the reports_to chain (e.g., Kali)
+                # We hit the top of the reports_to chain (e.g., Root Entity)
                 # If the field_entity exists, the top of the chain is Rank 1
                 return depth + (1 if field_entity else 0)
             

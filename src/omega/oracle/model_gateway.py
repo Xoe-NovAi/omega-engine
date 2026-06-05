@@ -28,6 +28,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 import anyio
 import yaml
+from omega.cvar_table import cvar_get, cvar_namespace
 from tenacity import (
     retry, 
     stop_after_attempt, 

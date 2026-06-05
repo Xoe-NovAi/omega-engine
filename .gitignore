@@ -46,6 +46,11 @@ rag-v1/**/*
 .ruff_cache/
 .mypy_cache/
 .hypothesis/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.tox/
 
 # ── IDE & Editor ─────────────────────────────────────────────────────
 .vscode/
