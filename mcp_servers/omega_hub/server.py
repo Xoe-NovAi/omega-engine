@@ -100,15 +100,26 @@ def _latest_path() -> Path:
 # --- BACKGROUND TASKS ---
 
 async def _prune_awareness_background() -> None:
-    """Background loop to prune stale agents from the hivemind."""
+    """Background loop to prune stale agents from the hivemind.
+
+    D-kal-052: Respects extended-session check-ins. If an agent
+    has called hivemind_extended_checkin(), the pruning loop
+    uses their custom TTL (default 3h) instead of HEARTBEAT_TTL (20m).
+    """
     while True:
         try:
             now = datetime.now(timezone.utc)
-            async with _awareness_lock:
-                stale_clis = [
-                    cli for cli, snap in _awareness.items()
-                    if snap.get("timestamp") and (now - datetime.fromisoformat(snap["timestamp"])).total_seconds() > HEARTBEAT_TTL
-                ]
+            async with _awareness_lock, _extended_sessions_lock:
+                stale_clis = []
+                for cli, snap in _awareness.items():
+                    if not snap.get("timestamp"):
+                        continue
+                    age = (now - datetime.fromisoformat(snap["timestamp"])).total_seconds()
+                    # Check if agent has an extended check-in
+                    ext = _extended_sessions.get(cli)
+                    effective_ttl = ext["ttl_seconds"] if ext else HEARTBEAT_TTL
+                    if age > effective_ttl:
+                        stale_clis.append(cli)
                 for cli in stale_clis:
                     del _awareness[cli]
                 if stale_clis:
@@ -426,12 +437,102 @@ async def hivemind_get_awareness() -> str:
 
 @mcp.tool()
 async def hivemind_get_continuation(cli: str) -> str:
-    """Get the latest continuation note for a specific CLI."""
+    """Get the latest continuation note for a specific CLI.
+
+    D-kal-051: Fixed cold-store fallback. Previously only checked
+    in-memory _awareness (lost on server restart). Now falls back
+    to HALL_OF_RECORDS cold store for the most recent session file.
+    """
     async with _awareness_lock:
         snap = _awareness.get(cli)
     if snap:
         return snap.get("continuation", "No continuation note found.")
-    return f"No awareness data for CLI '{cli}'."
+
+    # Cold-store fallback: scan HALL_OF_RECORDS/<cli>/*.json for latest
+    def _read_cold_fallback():
+        cli_dir = HALL_OF_RECORDS / cli
+        if not cli_dir.exists():
+            return None
+        json_files = sorted(cli_dir.glob("ses_*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+        if not json_files:
+            return None
+        try:
+            with json_files[0].open() as f:
+                return json.load(f)
+        except Exception:
+            return None
+
+    cold = await anyio.to_thread.run_sync(_read_cold_fallback)
+    if cold:
+        return cold.get("continuation", "No continuation note found in cold store.")
+    return f"No awareness data for CLI '{cli}' (checked hot + cold stores)."
+
+
+# === D-kal-052: EXTENDED SESSION CHECK-IN (3-Hour Safety TTL) ===
+# Per user feedback (2026-06-05): Agents in extended Hivemind sessions
+# may need a longer safety TTL (default 3 hours) so the pruning loop
+# doesn't reap them if the user forgets to instruct agents to check out.
+_extended_sessions: Dict[str, Dict[str, Any]] = {}  # cli -> {ttl_seconds, registered_at, reason}
+_extended_sessions_lock = anyio.Lock()
+EXTENDED_SAFETY_TTL_DEFAULT = 3 * 60 * 60  # 3 hours = 10800s
+
+
+@mcp.tool()
+async def hivemind_extended_checkin(
+    cli: str,
+    reason: str = "Extended Hivemind session — user may forget to check out",
+    ttl_seconds: int = EXTENDED_SAFETY_TTL_DEFAULT,
+) -> str:
+    """Register an extended-session heartbeat with a custom safety TTL.
+
+    D-kal-052: Long-running agents in Hivemind sessions can call this
+    to prevent the 20-minute pruning loop from reaping them while the
+    user is away. Default TTL is 3 hours. The pruning loop respects
+    this longer TTL — agents are only reaped after `ttl_seconds` of
+    silence (not the default 1200s).
+
+    Use case: User kicks off 5 agents in parallel Hivemind mode, gets
+    pulled into a meeting, comes back 2 hours later. Without this,
+    the pruning loop would have reaped all 5 agents after 20 minutes.
+    With this, they persist for the full 3 hours.
+
+    Args:
+        cli: CLI identifier (e.g., "opencode-kali")
+        reason: Human-readable explanation (for the Hivemind audit log)
+        ttl_seconds: Override default 3-hour TTL (max 24h = 86400s)
+
+    Returns:
+        JSON status with the registered TTL and expiry timestamp.
+    """
+    ttl_seconds = min(ttl_seconds, 86400)  # cap at 24h
+    async with _extended_sessions_lock:
+        _extended_sessions[cli] = {
+            "ttl_seconds": ttl_seconds,
+            "registered_at": datetime.now(timezone.utc).isoformat(),
+            "reason": reason,
+        }
+    return json.dumps({
+        "status": "extended_checkin_registered",
+        "cli": cli,
+        "ttl_seconds": ttl_seconds,
+        "ttl_hours": ttl_seconds / 3600,
+        "reason": reason,
+        "expires_at": (datetime.now(timezone.utc).timestamp() + ttl_seconds),
+    })
+
+
+@mcp.tool()
+async def hivemind_extended_checkout(cli: str) -> str:
+    """Cancel an extended-session check-in.
+
+    Call this when ending the session cleanly so the pruning loop
+    reverts to the default 20-minute TTL behavior.
+    """
+    async with _extended_sessions_lock:
+        if cli in _extended_sessions:
+            del _extended_sessions[cli]
+            return json.dumps({"status": "extended_checkout_complete", "cli": cli})
+        return json.dumps({"status": "no_extended_session", "cli": cli})
 
 
 @mcp.tool()

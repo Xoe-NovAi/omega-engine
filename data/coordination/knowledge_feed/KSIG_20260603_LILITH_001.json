@@ -32,8 +32,8 @@
     "dem-20260603-005",
     "dem-20260603-006"
   ],
-  "consumed_by": ["link", "p1"],
-  "consumed_at": {"link": "2026-06-04T10:00:00Z", "p1": "2026-06-04T00:00:00Z"},
+  "consumed_by": ["link", "p1", "doom_guy"],
+  "consumed_at": {"link": "2026-06-04T10:00:00Z", "p1": "2026-06-04T00:00:00Z", "doom_guy": "2026-06-05T05:20:00Z"},
   "verification_item_id": "ver-20260604-001",
   "zoneid": 1919512
 }

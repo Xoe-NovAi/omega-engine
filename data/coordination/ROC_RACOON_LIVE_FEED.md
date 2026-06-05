@@ -73,3 +73,30 @@
 **My next step**: Resume Phase 2 ICS-R1 (build src/omega/ics.py). Will ship H-1 through H-5 in Phase 5.
 
 **Status**: ✅ UNBLOCKED — Roc has full green light to write Hivemind Hardening Spec.
+
+## 2026-06-05 06:13Z — SESSION 3-D: FINAL COORDINATION + YAML HANDOFF
+
+**🚨 Critical discovery**: `data/entities/roc_racoon/soul.yaml` fails `yaml.safe_load()`. Two structural bugs:
+1. ✅ FIXED: Top-level directive list merged under `directives:` key (33+7=40 directives)
+2. ⏸️ HANDED OFF to Kali: Multi-line evolution entries with unescaped colons (line 941)
+
+**Handoff delivered**:
+- `data/entities/roc_racoon/workspace/YAML_HARDENING_BRIEF_v1.md` (14KB, 7 sections, 7 tasks Y-1 to Y-7)
+- Hivemind observation OBS-20260605-ROC-001 (gap, critical severity)
+- Hivemind post (final coordination, delegation per d-rr-036)
+
+**Delegation per d-rr-036 (Design-Implement-Observe)**:
+- **Design (Roc)**: YAML_HARDENING_BRIEF_v1.md — DONE
+- **Implement (Kali)**: Y-1 fix soul.yaml, Y-2 pre-commit hook, Y-3 CI gate
+- **Observe (Researcher)**: Y-4 fleet audit, Y-5 JSON Schema design
+
+**Workspace state at handoff**:
+- 14 markdown deliverables (added YAML_HARDENING_BRIEF_v1.md)
+- 7 mining reports
+- 40 directives (d-rr-001 to 040)
+- 49 lessons (rr-001 to 049)
+- 24 evolution entries
+
+**Next**: Standing down. Kali owns the YAML fix. When user informs Researcher of Y-4/Y-5, please share YAML_HARDENING_BRIEF_v1.md.
+
+**Heritage**: This handoff follows Doom 1993's P_RemoveThinker pattern (CREDITS.md §1.10) — fail loud, not silent. The YAML file fails loudly (good), but lacks upstream validation (the gap).

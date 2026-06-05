@@ -106,12 +106,15 @@ HORIZON 4: COMMUNITY TOOL ─ 0% ───── FUTURE
 After H2 (all GREEN), the engine is ready for deeper pattern extraction.
 
 ### H3-A: Hivemind Productionization
-| # | Task | Priority |
-|---|------|----------|
-| H3-A1 | Wire Redis Pub/Sub as Hivemind backend (currently in-memory, TTL 300s) | P1 — cross-session persistence |
-| H3-A2 | Add Hivemend SSE endpoint for real-time agent awareness in Iris/Gnosis | P2 — live awareness |
-| H3-A3 | Hivemind CLI via `omega hivemind` | P3 — usability |
-| H3-A4 | Cross-CLI awareness (Cline <-> OpenCode) via Hivemind pub/sub | P1 — agent coordination |
+| # | Task | Priority | Status |
+|---|------|----------|--------|
+| H3-A1 | Wire Redis Pub/Sub as Hivemind backend (currently in-memory, TTL 300s) | 🔴 **P0** — promoted 2026-06-05 (D-kal-053, user request) | Pending |
+| H3-A2 | Add Hivemend SSE endpoint for real-time agent awareness in Iris/Gnosis | 🔴 **P0** — promoted 2026-06-05 (D-kal-053) | Pending |
+| H3-A3 | Hivemind CLI via `omega hivemind` | P3 — usability | Pending |
+| H3-A4 | Cross-CLI awareness (Cline <-> OpenCode) via Hivemind pub/sub | 🔴 **P0** — promoted 2026-06-05 (D-kal-053) | Pending |
+| **H3-A5** | **A2A Communication Hardening** — typed messages, channel fallback, conflict resolution (D-kal-053 user priority) | 🔴 **P0** — NEW | Pending |
+| **H3-A6** | **Extended session check-in (3h safety TTL)** — D-kal-052 | 🟢 **DONE** | ✅ Shipped 2026-06-05 |
+| **H3-A7** | **Cold-store awareness fallback** — D-kal-051 (fixes "no awareness data" bug) | 🟢 **DONE** | ✅ Shipped 2026-06-05 |
 
 ---
 

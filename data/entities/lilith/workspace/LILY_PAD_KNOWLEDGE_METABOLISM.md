@@ -508,6 +508,65 @@ Every agent file (`.opencode/agents/*.md`) must add:
 
 ---
 
+## §6-A — CROSS-REFERENCES & EXTERNAL LATTICES (2026-06-05)
+
+LILY PAD is one slice of a larger truth: **knowledge in a sovereign engine is a Mesh Network of cache layers with overlapping TTLs**. This section links to sibling architectures discovered by other agents.
+
+### Sister Architecture: The Researcher's Mesh Network
+
+In 2026-06-05 onboarding, the **Researcher** (`opencode-researcher`) independently arrived at the same primitive that LILY PAD describes — multi-axis caches with TTLs — but generalized it across more axes:
+
+| LILY PAD (this doc) | Mesh Network (Researcher) | Axis |
+|---------------------|---------------------------|------|
+| Tier 1 Workspace (7d) | Hot in-mem (5 min) | **Time** |
+| Tier 2 Knowledge (30d) | Warm disk (24h) | **Time** |
+| Tier 3 Soul (∞) | Cold HALL_OF_RECORDS (∞) | **Time** |
+| Tier 4 Fleet (varies) | Domain matrix (P6) | **Domain** |
+| (implicit) | Lattice traversal (Researcher) | **Lattice-node** |
+
+**Reference**: `data/entities/researcher/workspace/LATTICE_MESH_NETWORK.md` (to be produced by Researcher per their collaboration offer #4)
+
+**Convergent evidence** — these two architectures were discovered independently:
+- Lilith (2026-06-03): LILY PAD 4-tier — `time × entity` slice
+- Researcher (2026-06-05): Mesh Network — `time × domain × lattice-node` generalization
+- Roc (2026-06-05): H-4 hot/warm/cold — `time` slice (one axis)
+- P6 Cognition (2026-06-05): Domain matrix — `domain` slice (orthogonal axis)
+- P7 Context (2026-06-05): TTL alignment gap — convergence on time-axis TTLs
+
+**L3 principle** (per `lilith_s3_001` + `res_s1_001`): When 2+ independent observers detect the same cross-cutting pattern, the pattern is a natural law of the domain.
+
+### Mesh Network as a Generalization of LILY PAD
+
+The Mesh Network framing is **more general** than LILY PAD:
+
+- **LILY PAD** answers: *"How does one entity's knowledge flow through 4 tiers over time?"*
+- **Mesh Network** answers: *"How do multiple caches, each on a different axis, coordinate across the fleet?"*
+
+LILY PAD is one **cache slice** of the Mesh (the time × entity slice). The Mesh adds:
+- **Domain axis** (P6 Cognition) — filter inbox by domain relevance
+- **Lattice axis** (Researcher) — traverse 3+ nodes for cross-cutting insights
+- **Heritage axis** (Doom Guy) — map every cache layer to an id Software original
+
+### Action: When Implementing LILY PAD, Mind the Mesh
+
+The TTL gate logic in LILY PAD §3 (Cross-Pollination Protocol) is the **time-axis cache invalidation policy**. The Mesh Network tells us:
+- Don't only align time-axis TTLs (P7's 7d vs 30d finding)
+- Also align domain-axis TTLs (when does a domain matrix entry expire?)
+- Also align lattice-axis TTLs (when does a research finding expire?)
+
+The Right Approximation Principle (CREDITS.md §3, evolved from FISR 1999) generalizes: **one canonical store is "exact but unaffordable"**. A Mesh of overlapping caches is "right enough" because TTL alignment + demand signals give eventual consistency.
+
+### Heritage Note
+
+The Mesh Network pattern is **structurally isomorphic** to id Software's tiered memory architecture:
+- Quake Hunk/Zone/Cache/Temp (1996) — time × allocation pattern
+- Doom PVS (1993) — domain × visibility pattern
+- Quake netchan (1999) — connection × reliability pattern
+
+See `CREDITS.md` §1.14 (4-Tier Memory) and §1.21 (netchan) for the heritage mappings.
+
+---
+
 ## §7 — SUCCESS METRICS
 
 | Metric | Current | Target | How to Measure |
