@@ -99,11 +99,10 @@ from omega.errors import (
 except Exception as e:
     logger.error(f"Failed: {e}")
 ```
-**After**:
+**After** (NOTE THE ORDER: OmegaError first to avoid double-logging):
 ```python
-except OmegaError as e:
-    logger.error(f"[{e.trace_id}] Failed: {e.message}", exc_info=True)
-    raise
+except OmegaError:
+    raise  # already logged at origin — do NOT log again
 except Exception as e:
     logger.error(f"Failed: {e}", exc_info=True)
     raise OmegaError(f"Operation failed: {e}", raw_error=e) from e
@@ -269,6 +268,9 @@ For these, the most common pattern is circuit breaker + provider fallback. Use P
 ## Per-File Workflow (execute this for every file you modify)
 
 ```bash
+# 0. RUN BASELINE TEST FIRST (before any edits)
+make test
+
 # 1. Identify the exact lines
 grep -n 'except Exception' src/omega/<file>.py
 
@@ -331,13 +333,24 @@ except Exception as e:
             os.remove(temp_path)
         except OSError as cleanup_err:
             logger.warning(f"Failed to clean up temp file {temp_path}: {cleanup_err}")
+    # Use StateIntegrityError for file I/O failures. Use OmegaPersistenceError for DB/storage failures.
+    # Use ConfigError only for config parse failures (Pattern 6 domain).
+    # When unsure, use OmegaError (base class) as the generic fallback.
     raise StateIntegrityError(
         f"Soul atomic write failed (temp file: {temp_path}): {e}",
         raw_error=e,
     ) from e
 ```
 
-</per_file_workflow>
+### ⚠️ IMPORTANT: CircuitBreakerError handling (distiller.py only)
+The file `distiller.py` defines its own `CircuitBreakerError` and `CircuitBreakerOpen` classes locally (lines 1103-1110). When applying Pattern 5 in this file:
+- Change `raise CircuitBreakerError(...)` to `raise ProviderUnavailableError("lmster", ...)`
+- ALSO update the catch block at line 886 from `except (CircuitBreakerError, CircuitBreakerOpen)` to `except (ProviderUnavailableError, CircuitBreakerOpen)`
+- DO NOT define `CircuitBreakerError` in `errors.py` — it's only used in this one file and the catch needs updating alongside the raise
+
+### 📋 Test guidance by file category
+- **Files WITH dedicated test files** (observability, oracle, discovery, distiller, loop, providers, model_gateway, memory_store, orchestrator, wad_loader, health_monitor, hierarchy, request_queue, session_manager, gateway, entity_registry, context_builder, model_updater, iris, library, providers): Run `make test ARGS=tests/test_<module>.py`
+- **Files WITHOUT test files** (capability_registry.py, entity_workspace.py, cpu_optimizer.py, link_p9_runtime.py, inbox.py, searxng_client.py, scheduler.py, review_queue.py, extractor.py, indexer.py, oracle_cli.py, link_p9_cli.py, elevenlabs.py, intake_digestor.py, soul_updater.py, soul_inscriber.py, repl.py): Verify with `python -c "from omega.<module_path> import *"`
 
 <model_selection>
 
@@ -371,7 +384,10 @@ The user has access to these models via OpenCode Zen (https://opencode.ai/zen/, 
 - Google Gemini — via Google AI Studio / Vertex
 - Anthropic Claude — via Anthropic API or Google Vertex (also on Zen)
 
-**IMPORTANT CORRECTION**: The user said "I have MiniMax M3 available" — but OpenCode Zen only has M2.7 and M2.5. **M3 is NOT on Zen.** The model I (Cline) am running on is MiniMax M3, but the user gets MiniMax M2.7/M2.5 via Zen. The naming MiniMax-M3 in my Cline runtime is the Cline provider's model ID, not the OpenCode Zen catalog. I confused these.
+### IMPORTANT CORRECTION: There is NO "MiniMax M3" available to the user
+The user mentioned "MiniMax M3" — OpenCode Zen only has MiniMax M2.7 and M2.5 (both paid). The "MiniMax M3" in this handoff author's Cline runtime is a different Cline provider, NOT what the user has. MiniMax's latest series is the M2 family (M2.5, M2.7). There is no M3 model on HuggingFace or OpenCode Zen.
+
+Furthermore: The "M3" references in the `<universal_guidance>` section below are stale. Ignore them. If using a MiniMax model, use `opencode/minimax-m2.7` (paid, $0.30 input / $1.20 output).
 
 ### Verified model specifications (HuggingFace + blog + OpenCode Zen)
 
@@ -379,7 +395,7 @@ The user has access to these models via OpenCode Zen (https://opencode.ai/zen/, 
 |-------|:-----:|:------:|:-------:|--------------|---------|-----------------|
 | **DeepSeek V4 Flash** | 284B | 13B | 1M | MoE (FP4+FP8) | MIT | HF card + Zen docs |
 | **DeepSeek V4 Pro** | 1.6T | 49B | 1M | MoE | MIT | HF card |
-| **MiMo V2.5** (instruct) | 311B | (not stated) | (not verified) | MoE | (not verified) | HF XiaomiMiMo |
+| **MiMo V2.5** (instruct) | 310B | 15B | 1M | Sparse MoE (SWA/GA hybrid) | MIT | HF XiaomiMiMo (verified) |
 | **MiMo V2.5 Pro** | ~1T | (not stated) | (not verified) | MoE | (not verified) | HF XiaomiMiMo |
 | **Nemotron 3 Ultra** | 550B | 55B | 1M (Ruler @1M = 95%) | Hybrid Mamba-Transformer + LatentMoE | OpenMDW-1.1 | NVIDIA blog + HF |
 | **DeepSeek V3.2** (older) | 685B | 37B | 256K | MoE | MIT | HF (V3.2 family) |
@@ -397,18 +413,18 @@ The user has access to these models via OpenCode Zen (https://opencode.ai/zen/, 
 | Long Context (Ruler @1M) | 95% | not stated | not stated | N/A (256K) | N/A (256K) |
 | LiveCodeBench (V4 Flash) | not stated | 91.6 (Max) | not stated | not stated | not stated |
 
-**Source**: NVIDIA blog for Nemotron; DeepSeek V4 model card for V4 Flash; GLM/Kimi from public benchmarks.
+**Source**: NVIDIA blog for Nemotron; DeepSeek V4 model card for V4 Flash; MiMo V2.5 model card (HF); GLM/Kimi from public benchmarks.
 
 ### My previous errors (now retracted)
 
 - ❌ "MiniMax M3" — there is no M3 on OpenCode Zen. The M3 in my Cline runtime is Cline's own gateway; Zen exposes M2.7 and M2.5 only.
 - ❌ "deepseek-v4-flash pricing $0.28/M output" — correct for the paid tier ($0.14 input / $0.28 output), but the **free tier is $0.00**. Cost analysis should be: use free when possible.
 - ❌ Cost estimate "$2-4 for full refactor" — completely wrong. Free tier = $0.
-- ❌ "MiMo V2.5 ~7B" — retracted previously. Correct: 311B.
+- ❌ "MiMo V2.5 ~7B" — retracted previously. Correct: 310B/15B activated.
 - ❌ "DeepSeek V4 Flash ~8B" — retracted previously. Correct: 284B/13B.
 - ❌ I did not previously mention Nemotron 3 Ultra. The user added it now; I should have looked at it as soon as they listed the available models.
 
-### Updated recommendation: MiMo V2.5 Free
+### Updated recommendation: DeepSeek V4 Flash Free
 
 The user has 3 free-tier candidates for the M9 remediation task. I previously recommended DeepSeek V4 Flash without considering Nemotron. Let me re-evaluate now with the verified benchmark data.
 
@@ -422,8 +438,8 @@ The user has 3 free-tier candidates for the M9 remediation task. I previously re
 | Instruction following (apply 6 patterns) | IFBench 82% (best) | not stated | not stated |
 | Avoiding scope creep (don't add features) | likely good (agentic-tuned) | likely good | not stated |
 | Cost | $0 (free) | $0 (free) | $0 (free) |
-| Long context (1M needed for full source tree) | 1M verified | 1M verified | not verified |
-| Code quality benchmarked | Terminal-Bench 54% (decent) | LiveCodeBench 91.6 (strong) | not stated |
+| Long context (1M needed for full source tree) | 1M verified | 1M verified | 1M verified |
+| Code quality benchmarked | Terminal-Bench 54% (decent) | LiveCodeBench 91.6 (strong) | Terminal-Bench 65.8 (SWE-Bench 56.1) |
 
 **Revised recommendation: DeepSeek V4 Flash Free**, but with a caveat I didn't have before.
 
@@ -431,7 +447,7 @@ Reasoning for the revision:
 1. **Free tier is free** — eliminates cost as a discriminator.
 2. **DeepSeek has the only verified code benchmark** — LiveCodeBench 91.6 is strong evidence for the M9 task.
 3. **Nemotron's strengths are agentic/long-horizon** (PinchBench 91%, Ruler 1M 95%) — but the M9 task is NOT agentic or long-horizon. It's mechanical refactoring.
-4. **MiMo V2.5 has no verified benchmarks** in the data I retrieved. Xiaomi is newer to market. Choosing it would be a leap of faith.
+4. **MiMo V2.5 benchmarks are now verified** (Terminal-Bench 65.8, SWE-Bench 56.1, 1M context, MIT). It is a strong alternative to DeepSeek for code tasks.
 5. **DeepSeek V4 Flash is the proven code model** in this set, with the Coder heritage lineage in the broader DeepSeek family.
 
 **When Nemotron 3 Ultra would be the right choice**: For Phase 2+ of the deep review (heritage vetting, agentic multi-file analysis, long-context research), Nemotron's agentic tuning (MOPD with 10+ teachers) and 1M context with 95% Ruler score make it the strongest candidate. But that's a different task profile.
@@ -477,8 +493,8 @@ This gives you the strengths of all three models against the same task spec.
 
 These tips apply to whichever model executes this task. The 6 patterns in `<transformation_patterns>` are the core; the tips below are execution discipline.
 
-### File Reading Strategy (all large models)
-Both DeepSeek V4 Flash (284B) and MiMo V2.5 (311B) are large MoE models with 100K+ context. Both can hold the entire `src/omega/` tree (26,637 SLOC) + 626-line handoff in working memory.
+### File Reading Strategy (all supported models)
+All three free-tier models (DeepSeek V4 Flash 284B, MiMo V2.5 310B, Nemotron 3 Ultra 550B) have 1M+ context. They can hold the entire `src/omega/` tree (26,637 SLOC) + 701-line handoff in working memory.
 
 DO NOT do this:
 ```python
@@ -506,20 +522,27 @@ transform_block(text)
 - MoE with 13B activated parameters per token. Effective per-token compute similar to a 13B dense model.
 - 1M context fits the full source tree + handoff. Do not truncate.
 - `--reasoning high` enables the "Think" mode shown in the model card. Use for Tier 1 only.
-- Pricing: $0.28/M output tokens on Novita. Full task likely under $1.
+- COST: $0 on free tier (opencode/deepseek-v4-flash-free). The paid tier ($0.14 input / $0.28 output on Novita) only needed if data privacy concerns apply (free tier data may be used for model improvement).
 - If the model proposes a refactor that wasn't asked for, REJECT it. Commit only the except transformation.
 
-### MiniMax M3 Specific Notes (if user chooses despite recommendation)
-- M3 will likely add helpful comments and docstrings. Strip these before commit.
-- M3 may want to fix M9 violations in test files. Do not — tests have different M9 rules.
-- Use `--reasoning xhigh` to get M3 to take this seriously instead of speed-running it.
-- Best for: the original 1M-context handoff synthesis work. Not for 155 mechanical edits.
+### MiMo V2.5 Specific Notes (310B/15B activated, 1M context, MIT)
+- **Verified from model card**: 310B total / 15B activated (MoE), 1M context, MIT license, omnimodal (text/image/video/audio)
+- **Benchmarks**: Terminal-Bench 2.0: **65.8** (beats Nemotron's 54%), SWE-Bench Pro: **56.1**
+- Architecture: Sparse MoE, 48 layers, 256 routed experts, 8 experts per token, hybrid SWA/GA attention (5:1 ratio)
+- Post-training: SFT + large-scale agentic RL + Multi-Teacher On-Policy Distillation (MOPD)
+- DATA COLLECTION: Same caveat as DeepSeek free tier — "During its free period, collected data may be used to improve the model."
+- Hallucination risk is NOT correlated with model size. The complete taxonomy in `<target_file>` is the safeguard.
 
-### MiMo V2.5 Specific Notes (311B, MoE, May 2026, Xiaomi)
-- Cannot verify context window from the HF data I retrieved. User should check the model card directly if context matters.
-- Newer to market (May 2026) — less independent benchmark coverage than DeepSeek V4.
-- If choosing MiMo, verify context via the Xiaomi MiMo model card before committing to long-context transforms.
-- Hallucination risk is NOT correlated with model size in a simple way. Even 311B models hallucinate class names if the taxonomy is poorly presented. The complete taxonomy in `<target_file>` is the safeguard, not the size.
+### Nemotron 3 Ultra Specific Notes (550B/55B, 1M context, OpenMDW-1.1)
+- 550B total / 55B activated (MoE). 1M context with verified Ruler @1M score of 95%.
+- Hybrid Mamba-Transformer + LatentMoE architecture. NVFP4 quantization enables 5x throughput on Blackwell.
+- **Benchmarks**: PinchBench 91% (best in free tier for agentic), IFBench 82% (best instruction following), Terminal-Bench 2.0: 54% (lower than MiMo's 65.8).
+- License: OpenMDW-1.1 (Linux Foundation permissive — covers architecture, params, docs, software).
+- DATA COLLECTION: "Trial use only — do not submit personal or confidential data. Logged for security purposes."
+- BEST FOR: Phase 2 deep review (agentic, multi-file, long-context). NOT best for this mechanical M9 task.
+
+### IMPORTANT: There is NO "MiniMax M3" on OpenCode Zen
+The user does not have access to a model called "MiniMax M3". The Zen catalog offers **MiniMax M2.7** and **M2.5** (both paid at $0.30 input / $1.20 output). The "M3" references in the task author's notes are from a different provider. If using a MiniMax model, use `opencode/minimax-m2.7`.
 
 
 
@@ -625,12 +648,12 @@ FINAL VERIFICATION:
 
 ```bash
 cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
-opencode --model deepseek-v4-flash "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
+opencode --model opencode/deepseek-v4-flash-free "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
 ```
 
-Or with reasoning enabled:
+Or with reasoning enabled (recommended for Tier 1):
 ```bash
-opencode --model deepseek-v4-flash --reasoning high "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
+opencode --model opencode/deepseek-v4-flash-free --reasoning high "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
 ```
 
 **Note**: This task is estimated at **4-6 hours of work** for a single agent. If running unattended, ensure the session has enough token budget. Otherwise, break the task into tier-by-tier subtasks:
