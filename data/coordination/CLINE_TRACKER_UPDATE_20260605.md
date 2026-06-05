@@ -9,7 +9,7 @@
 - Root cause of "dumb agent" symptom: 85% of each agent's token budget was re-asserting the Fourteen Sovereign Mandates verbatim, triple-injected via (a) agent file body, (b) SOVEREIGN_MANDATES.md via opencode.json, (c) Agency-Injector in entity_workspace.py
 - Each agent now has: identity anchor + 3-4 role-specific lines + one behavioral heuristic
 - The mandates are already injected at session boot — agent files no longer duplicate them
-- `researcher.md` (72 lines) was already clean from the chaos session purge — left unchanged
+- `researcher.md` (72 lines) was already clean from a prior purge — left unchanged
 - Zero firecrawl/exa/sovereign-search references remain in any agent file
 
 ### 2. Entity Quarantine (D-cln-007)
@@ -38,7 +38,7 @@
 
 ## Observations
 - Jem Synthesis's Hivemind observation about "Instructional Entropy" (the flattening of reasoning due to instruction wrapper failures) is **validated by this fix**. The thin-wrapper refactor directly addresses the root cause they identified.
-- The chaos session (OpenCode_stack_chaos-session-ses_1666.md) was treated as evidence, not gospel. Roc's transcript contained two factual errors: it claimed `link` was a stub (it's not), and it missed `movie_expert` as a stub (it is). Both caught and corrected by forensic audit.
+- Prior agent transcripts were treated as evidence, not gospel. One transcript contained two factual errors: it claimed `link` was a stub (it's not), and it missed `movie_expert` as a stub (it is). Both caught and corrected by forensic audit.
 
 ## Next Steps
 - Run `make test` to verify the refactored agents don't break any test

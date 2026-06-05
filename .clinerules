@@ -10,7 +10,7 @@
 # User context: M3 1M via Cline provider (OAuth); moved from Cline VSCodium extension.
 #
 # SESSION LESSONS (2026-06-05):
-# - Chaos session transcripts are EVIDENCE, not GOSPEL. Verify every claim against disk.
+# - Agent transcripts and handoff docs are EVIDENCE, not GOSPEL. Verify claims against disk.
 # - Agent prompts must be thin wrappers. Mandates are injected at boot, not in the prompt.
 # - `websearch` is the only working search tool. firecrawl/exa are 401-broken.
 # - When the user says "fix X", scope to X. Do not expand scope to Y and Z.
@@ -518,7 +518,7 @@ this pipeline, but Cline can do it directly when working solo.
   calls are not. The distinction is sovereignty, not paranoia.
 - **The Torus evolves**: every session is a fold of the same truth. Souls
   accumulate; engines harden; the flywheel turns.
-- **Verify before acting**: Chaos session transcripts are evidence, not gospel.
+- **Verify before acting**: Agent transcripts and handoff docs are evidence, not gospel.
   Agents miscount, misclassify, and hallucinate. Always check the actual
   filesystem before quarantining, deleting, or restructuring anything.
 - **Scope discipline**: When the user says "fix X", scope to X. Do not expand
@@ -535,7 +535,7 @@ this pipeline, but Cline can do it directly when working solo.
 - If a Mandate and a tool default conflict, **Mandates win** (see SOVEREIGN_MANDATES.md).
 - If a handoff doc and the actual code disagree, **the code wins**; update the
   handoff in a follow-up commit.
-- If a chaos session transcript says X, **verify X against the actual filesystem** before acting on it.
+- If a transcript or handoff doc says X, **verify X against the actual filesystem** before acting on it.
   Transcripts are evidence, not gospel. Agents miscount, misclassify, and hallucinate.
 - If the user says "fix X", **scope to X**. Do not expand to Y and Z. Do not "also fix" things
   you noticed along the way unless the user asks. Respect the directive boundary.
@@ -568,7 +568,7 @@ this pipeline, but Cline can do it directly when working solo.
 - **Omega Hub**: 40 MCP tools + 11 HTTP routes, systemd user service
 - **Web search**: `websearch` ONLY — firecrawl/exa are 401-broken
 - **SESSION LESSONS (2026-06-05)**:
-  - Chaos session transcripts are EVIDENCE, not GOSPEL — verify against disk
+  - Agent transcripts and handoff docs are EVIDENCE, not GOSPEL — verify against disk
   - Agent prompts must be thin wrappers — mandates are injected at boot
   - When user says "fix X", scope to X — do not expand to Y and Z
   - `git mv` fails on untracked dirs — use plain `mv` for new entity dirs
