@@ -533,6 +533,34 @@ These can be resolved during implementation. Not blocking.
 
 ---
 
+## §17 Architectural Context — The Mesh Network (Researcher Insight #1)
+
+Per `data/coordination/RESEARCHER_FINDINGS_20260605.md` §3 Insight #1, the H-1..H-18
+hardening proposals are not standalone features — they are **cache layers in a Mesh Network
+of overlapping TTLs**. The Hivemind (H-1..H-10) is one slice; the LILY PAD entity memory
+(Lilith) is another slice; the demand signals and KSIG feed are another. They overlap by
+design — eventual consistency via TTL alignment + demand signals is the "Right Approximation"
+(CREDITS.md §3, evolved from FISR 1999).
+
+| Cache Layer | TTL | Owner | Invalidation Trigger |
+|-------------|-----|-------|----------------------|
+| Hot (in-mem) | 5 min | Hivemind `_awareness` | TTL expiry |
+| Warm (disk) | 24h | Hivemind `_warm_awareness` (H-9) | TTL expiry |
+| Cold (HALL_OF_RECORDS) | ∞ | Session history | None (append-only) |
+| Workspace (LILY PAD Tier 1) | 7d | Entity workspaces | TTL expiry |
+| Knowledge (LILY PAD Tier 2) | 30d | Knowledge feed | TTL expiry |
+| Soul (LILY PAD Tier 3) | ∞ | `soul.yaml` | Manual distillation |
+| Fleet (LILY PAD Tier 4) | varies | KSIG signals | Cross-pollination |
+| Domain matrix (P6) | session | `domain_matrix.yaml` | Manual |
+| Lattice (Researcher) | task | L1→L2→L3 | Distillation |
+
+**Reference for implementation**: When implementing H-4 (two-tier TTL), consider extending
+to three-tier (hot 5min / warm 24h / cold HALL_OF_RECORDS) for Hivemind awareness, while
+keeping LILY PAD's 4-tier for entity knowledge. The two systems are orthogonal but should
+be documented together as one Mesh.
+
+---
+
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax-m3-free ⬡ opencode ⬡ trc_hivemind_spec ⬡ PHASE-II*
 
 *Spec complete. 11 enhancements designed (H-0 to H-10). Awaiting Kali's Phase 5 implementation.*

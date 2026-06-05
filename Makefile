@@ -629,3 +629,6 @@ verify-model-spelling: ## 🤖 Verify model name consistency (D119)
 
 pivot-watchdog: ## 🛡️  Flag pending PIVOT decisions > 7 days
 	PYTHONPATH=src $(PYTHON) scripts/pivot_watchdog.py
+
+hivemind-test: ## 🧪 Run Hivemind test suite (U-001..U-020)
+	PYTHONPATH=src $(PYTHON) -m pytest tests/test_hivemind.py -v 2>&1 | tail -20

@@ -37,6 +37,12 @@ omega:
   hivemind:
     url: "http://127.0.0.1:8016"
     cli: "opencode"
+    retention:
+      workspace_days: 30      # P7 Alignment: matches observation log (was 7)
+      observation_days: 30    # Observability log retention
+      grace_ratio: 0.25       # 25% grace period (id Software pattern)
+      warm_ttl_hours: 24      # Warm awareness tier
+      hot_ttl_minutes: 5      # Hot presence tier (in-memory)
   model_updater:
     enabled: true
     schedule: "0 */6 * * *"

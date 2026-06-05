@@ -252,6 +252,30 @@ CVAR_TABLE: Dict[str, CvarDef] = {
         "Session header display mode (compact|verbose|off)", "Oracle",
     ),
 
+    # ── config.hivemind.retention.* — TTL Alignment (D-kal-045) ────
+    # P7 Dark Council Synthesis: workspace (was 7d) and observation log (30d)
+    # had a 23-day silent data loss zone. Aligned both to 30d with 25% grace.
+    "config.hivemind.retention.workspace_days": CvarDef(
+        "config.hivemind.retention.workspace_days", 30, "int",
+        "Workspace file retention (days) — aligned with observation log", "LinkP9Runtime",
+    ),
+    "config.hivemind.retention.observation_days": CvarDef(
+        "config.hivemind.retention.observation_days", 30, "int",
+        "Observation log retention (days)", "LinkP9Runtime",
+    ),
+    "config.hivemind.retention.grace_ratio": CvarDef(
+        "config.hivemind.retention.grace_ratio", 0.25, "float",
+        "Grace period as ratio of base TTL (id Software Quake 1996 pattern)", "LinkP9Runtime",
+    ),
+    "config.hivemind.retention.warm_ttl_hours": CvarDef(
+        "config.hivemind.retention.warm_ttl_hours", 24, "int",
+        "Warm awareness tier retention (hours)", "LinkP9Runtime",
+    ),
+    "config.hivemind.retention.hot_ttl_minutes": CvarDef(
+        "config.hivemind.retention.hot_ttl_minutes", 5, "int",
+        "Hot presence tier retention (minutes) — in-memory", "LinkP9Runtime",
+    ),
+
     # ── config.gguf.* — Native GGUF Provider knobs ───────────────
     "config.gguf.n_gpu_layers": CvarDef(
         "config.gguf.n_gpu_layers", 0, "int",

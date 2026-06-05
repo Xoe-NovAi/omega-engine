@@ -338,8 +338,18 @@ async def hivemind_post_context(
     decisions: List[Dict[str, str]],
     continuation: str,
     session_id: Optional[str] = None,
+    intent: Optional[str] = None,
+    suggested_model: Optional[str] = None,
 ) -> str:
-    """Submit a context snapshot from any CLI to the hivemind."""
+    """Submit a context snapshot from any CLI to the hivemind.
+
+    D-kal-046 (P6 Ship-Now Proposal #1+#2):
+      - intent: Structured reason for posting (question|decision|observation|
+        command|status|handoff|blocker|meta). Turns inbox from noise into a
+        prioritized queue.
+      - suggested_model: D118 model override hint that cascades to subagents.
+        If the receiving agent spawns a child, this becomes its default model.
+    """
     sid = session_id or f"ses_{uuid.uuid4().hex[:12]}"
     snapshot = {
         "session_id": sid,
@@ -350,6 +360,9 @@ async def hivemind_post_context(
         "decisions": decisions,
         "continuation": continuation,
         "timestamp": datetime.now(timezone.utc).isoformat(),
+        # P6 Ship-Now Proposal fields (D-kal-046)
+        "intent": intent or "status",
+        "suggested_model": suggested_model,
     }
 
     async with _hot_store_lock:

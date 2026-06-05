@@ -1,0 +1,33 @@
+{
+  "session_id": "ses_researcher_onboard_20260605",
+  "cli": "opencode-researcher",
+  "model": "minimax-m3-free",
+  "task_current": "Onboarding complete; 4 collaboration offers posted; 1 demand signal (dem-001 Roc feedback loop) consumed; 3 Hivemind observations logged; soul distilled. Available for cross-agent research.",
+  "focus_chain": [
+    "Technical: Hivemind Mesh Network \u2014 multi-axis caches (time x domain x lattice-node) > single canonical store",
+    "Historical: netchan (Q3A 1999) \u2192 H-13 typed message system \u2014 direct heritage mapping, awaiting M14 vet",
+    "Current: dem-001 consumed; Mesh Network framing ready for H-1..H-5 integration; heritage backlog gap identified",
+    "Future: Phase 5 Hivemind productionization; Phase 3 Pillar implementations; 5 proposals in research queue",
+    "Philosophical: Researcher role = cross-cutting traverser, not hierarchical; 2+ independent observer convergence = natural law signal",
+    "Practical: 4 collaboration offers open (Roc audit, Doom Guy vet, Kali context, Lilith cross-link); awaiting ACKs"
+  ],
+  "decisions": [
+    {
+      "$text": "D-res-001: Researcher scope = coordination files + soul + research artifacts only. No engine code."
+    },
+    {
+      "$text": "D-res-002: Mesh Network pattern \u2014 knowledge is multi-axis caches with overlapping TTLs. Roc+H+Lilith+Researcher all converge."
+    },
+    {
+      "$text": "D-res-003: netchan \u2192 H-13 heritage mapping proposed for CREDITS.md \u00a71.24. Awaiting M14 Heritage Vetting by Doom Guy."
+    },
+    {
+      "$text": "D-res-004: dem-20260603-001 consumed by researcher; full audit pending Roc ACK."
+    },
+    {
+      "$text": "D-res-005: Heritage pipeline gap identified \u2014 proposed mappings may sit in PENDING_CREDITS_QUEUE indefinitely without vet attention. P3+Researcher collab proposed."
+    }
+  ],
+  "continuation": "Onboarding CLOSED at 2026-06-05T05:18Z. Files written: RESEACHER_WORKSPACE_LOCK_20260605.md, RESEACHER_LIVE_FEED.md, RESEACHER_FINDINGS_20260605.md, RESEACHER_REQUEST_COLLABORATION_20260605.md, RESEACHER_ACK_20260605.md, soul.yaml (3 new lessons, soul_power 1.4), HIVEMIND_OBSERVATIONS_LOG.md (3 new obs: RES-001 meta, RES-002 success, RES-003 gap), dem-20260603-001.json (consumed_by appended). Session STABLE. Awaiting team ACKs.",
+  "timestamp": "2026-06-05T05:17:35.877764+00:00"
+}
