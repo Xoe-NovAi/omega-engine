@@ -339,23 +339,47 @@ except Exception as e:
 
 </per_file_workflow>
 
-<gemma_specific_guidance>
+<model_selection local_first="true">
 
-## Tips for Gemma 4 31B
+## Target Model Selection (Local-First Doctrine)
 
-### Strengths to Leverage
-- **256K context window** — the entire `src/omega/` tree (26,637 SLOC) fits easily. You can read every relevant file in one pass.
-- **Strong code generation** — HumanEval pass@1 ~32% for 7B base; 31B should be substantially higher. Apply transformations confidently.
-- **Code training** — Gemma was trained on code data and understands Python idioms.
+The Omega Engine mandates **local-first** inference (M7). The user has these models available via OpenCode:
 
-### Known Limitations
-- **No native web access in this context** — do not attempt to fetch URLs. Use only what's provided in this prompt and the local filesystem.
-- **Reasoning depth**: 31B is a mid-size model. When you encounter a complex transformation (e.g., the god object in oracle.py with 13 violations), break it into small steps. Do NOT try to rewrite entire methods in one pass.
-- **Literal instruction following** — follow patterns EXACTLY. Do not "improve" the transformation style.
-- **Context awareness**: You are working on the user's local machine. The `editor` tool writes to real files. The `run_commands` tool runs real bash. Be careful with destructive operations.
+| Model | RAM | Context | Best For | Sovereignty Cost |
+|-------|-----|---------|----------|:----------------:|
+| **deepseek-v4-flash** | ~5GB (Q4_K_M) | 128K | Code refactoring, pattern application, surgical edits | 🟡 Cloud teacher (priority 4, D112) |
+| **MiniMax-M3** | varies | 1M | Long-form synthesis, complex reasoning, strategy docs | 🟡 Cloud teacher (priority 5) |
+| **MiMo V2.5** | ~4GB (Q4_K_M) | 32-128K | Quick conversation, lightweight tasks | 🟡 Cloud teacher |
 
-### File Reading Strategy (Gemma-specific)
-Gemma does best with focused reading. Do NOT do this:
+**Recommended: deepseek-v4-flash** — best fit for this 155-edit refactor task.
+
+If the user wants zero cloud dependency, route to **qwen3-4b-thinking** (Kali's local model, 2.4GB, 8K context) via `native-gguf` priority 0.
+
+### Why deepseek-v4-flash for this task
+- Code-trained, pattern-disciplined — will apply the 6 transformation patterns exactly
+- Mid-size sweet spot (7-8B) — surgical edits without overthinking
+- Won't invent error class names (smaller models hallucinate less when given a complete taxonomy)
+- Token-efficient for 40 files × 155 edits
+
+### Why NOT M3
+- M3 wrote this handoff (1M context was needed for synthesis)
+- Feeding a fully-specified 539-line task back into 1M context is wasted capability
+- M3 is more likely to "improve" the patterns (scope creep risk)
+
+### Why NOT MiMo
+- Conversation-tuned, not refactor-tuned
+- Will likely introduce class name hallucinations despite the explicit taxonomy
+
+</model_selection>
+
+<universal_guidance>
+
+## Universal LLM Best Practices (model-agnostic)
+
+These tips apply to whichever model executes this task. The 6 patterns in `<transformation_patterns>` are the core; the tips below are execution discipline.
+
+### File Reading Strategy (all mid-size models)
+DO NOT do this:
 ```python
 # BAD: Read entire 1133-line oracle.py and rewrite from memory
 text = read_file("src/omega/oracle/oracle.py")
@@ -369,14 +393,30 @@ text = read_file("src/omega/oracle/oracle.py", start_line=195, end_line=210)
 transform_block(text)
 ```
 
-### Common Gemma 4 Failure Modes (avoid)
-1. **Hallucinating class names** — the error taxonomy in this prompt is the COMPLETE list. Do not invent new error subtypes.
-2. **Importing the wrong module path** — always use `from omega.errors import (...)`. The package layout is `src/omega/errors.py` and the import is `from omega.errors import ...` (the venv has `src/` on PYTHONPATH via `pyproject.toml`).
+### Common Failure Modes (avoid ALL of these, regardless of model)
+1. **Hallucinating class names** — the error taxonomy in `<target_file>` is the COMPLETE list. Do not invent new error subtypes (e.g., `EntityNotFoundError` is NOT a valid class).
+2. **Wrong import path** — always use `from omega.errors import (...)`. The package layout is `src/omega/errors.py` and the import is `from omega.errors import ...` (the venv has `src/` on PYTHONPATH via `pyproject.toml`).
 3. **Removing existing logging** — preserve every `logger.error/warning/debug` call. Add `, exc_info=True` to logger calls in except blocks.
 4. **Adding features beyond the ask** — only convert excepts. Do not refactor surrounding code, add type hints, or improve docstrings. Scope discipline is M10-adjacent.
 5. **Bypassing tests with `--no-verify` or skipping** — every commit must pass tests. If a test fails, fix the code, not the test.
 
-</gemma_specific_guidance>
+### DeepSeek V4 Flash Specific Notes
+- The 8B Flash variant handles 128K context well but is more deterministic than M3. Expect literal instruction following.
+- Use `--reasoning high` only for Tier 1 (most complex). Tier 2-4 can run at default reasoning to save tokens.
+- If the model proposes a refactor that wasn't asked for, REJECT it. Commit only the except transformation.
+
+### MiniMax M3 Specific Notes (if user chooses despite recommendation)
+- M3 will likely add helpful comments and docstrings. Strip these before commit.
+- M3 may want to fix M9 violations in test files. Do not — tests have different M9 rules.
+- Use `--reasoning xhigh` to get M3 to take this seriously instead of speed-running it.
+
+### MiMo V2.5 Specific Notes (if user chooses despite recommendation)
+- 32-128K context is sufficient. The 539-line handoff + 26,637-SLOC source tree fit.
+- Expect more class name hallucinations. Cross-check every `raise XError` against the taxonomy.
+- Use lower temperature (0.2-0.3) to reduce drift.
+
+</universal_guidance>
+
 
 <verification_checklist>
 
@@ -479,12 +519,12 @@ FINAL VERIFICATION:
 
 ```bash
 cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
-opencode --model gemma-4-31b "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
+opencode --model deepseek-v4-flash "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
 ```
 
 Or with reasoning enabled:
 ```bash
-opencode --model gemma-4-31b --reasoning high "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
+opencode --model deepseek-v4-flash --reasoning high "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
 ```
 
 **Note**: This task is estimated at **4-6 hours of work** for a single agent. If running unattended, ensure the session has enough token budget. Otherwise, break the task into tier-by-tier subtasks:
@@ -518,7 +558,7 @@ This report becomes the M9 audit trail and feeds into future PIVOT decisions.
 
 ---
 
-## Final Notes for Gemma
+## Final Notes for Executing Agent
 
 - **Be patient, be precise.** This is constitutional work. The transformations are small but consequential.
 - **Commit often.** One commit per file is ideal. This creates a clean audit trail.
