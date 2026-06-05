@@ -40,7 +40,22 @@
 - Jem Synthesis's Hivemind observation about "Instructional Entropy" (the flattening of reasoning due to instruction wrapper failures) is **validated by this fix**. The thin-wrapper refactor directly addresses the root cause they identified.
 - Prior agent transcripts were treated as evidence, not gospel. One transcript contained two factual errors: it claimed `link` was a stub (it's not), and it missed `movie_expert` as a stub (it is). Both caught and corrected by forensic audit.
 
-## Next Steps
-- Run `make test` to verify the refactored agents don't break any test
-- Restart hivemind hub and post live coordination state
-- The user should test an agent (e.g., @doom_guy or @kali) to validate intelligence improvement
+## Deep Review — Phase 1 Complete
+
+### Phase 1: Code Architecture & Engine Core
+- Full architecture survey: 78 files, 26,637 SLOC across 9 packages
+- M9 reality check: 155 `except Exception:` violations across 31 files (docs claimed 0)
+- M1 compliance: CLEAN — zero `import asyncio` violations
+- Test count: 322 functions across 30 files (not 308/312 as documented)
+- God object: oracle.py (1,133 lines, 27 methods)
+- D113 firewall: partially restored (_PILLAR_MEANINGS removed)
+- Background researcher: 16 files, 3,500 SLOC, orphaned subsystem
+- Report: `data/handoff/DEEP_REVIEW_PHASE1_CODE_ARCHITECTURE.md`
+- M9 Remediation Task: `data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md`
+  - Tasked to Gemma 4 31B via OpenCode CLI (P0, constitutional)
+  - 4-tier execution strategy, start with observability.py (15 violations)
+
+### Next Phases (awaiting user direction)
+- Phase 2: Heritage & id Software Alignment (CREDITS.md, [id-soft:] tags, ZONEID)
+- Phase 3: Infrastructure & Operations (Podman, MCP, hub, hivemind)
+- Phase 4: Strategy & Roadmap Synthesis (PIVOT_LOG, sprint status, mandate compliance)
