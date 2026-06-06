@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega REPL — Interactive Chat Loop
 # AP: AP-OMEGA-REPL-v1.0.0
 #
@@ -6,6 +7,15 @@
 # Screen-reader accessible: no full-screen mode, Emacs key bindings.
 
 import logging
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 from pathlib import Path
 from typing import Optional
 
@@ -98,8 +108,11 @@ class OmegaREPL:
                 self.transient = state.get("transient", False)
                 self.current_entity = state.get("current_entity", "SOPHIA")
                 self.header_mode = state.get("header_mode", "compact")
+            except OmegaError:
+                pass
             except Exception as e:
-                logger.warning("Failed to load REPL state, using defaults: %s", e)
+                logger.error("Failed to load REPL state, using defaults: %s", e, exc_info=True)
+                pass
 
     def _save_state(self):
         """Persist REPL state to disk."""
@@ -112,8 +125,11 @@ class OmegaREPL:
         try:
             with open(REPL_STATE_FILE, "w") as f:
                 yaml.dump(state, f, default_flow_style=False)
+        except OmegaError:
+            pass
         except Exception as e:
-            logger.warning(f"Failed to save REPL state: {e}")
+            logger.error(f"Failed to save REPL state: {e}", exc_info=True)
+            pass
 
     async def run(self):
         """Main REPL loop."""
@@ -147,9 +163,12 @@ class OmegaREPL:
             except KeyboardInterrupt:
                 # Ctrl+C — cancel current input
                 continue
+            except OmegaError as e:
+                print(f"\n[error] OmegaError: {e}")
+                logger.error(f"REPL OmegaError: {e}")
             except Exception as e:
-                print(f"\n[error] Error: {e}")
-                logger.error(f"REPL error: {e}", exc_info=True)
+                print(f"\n[error] Unexpected Error: {e}")
+                logger.error(f"REPL unexpected error: {e}", exc_info=True)
 
         self._save_state()
         print("\n🔱 The Oracle rests. Until next time, Architect.")
@@ -285,8 +304,11 @@ class OmegaREPL:
             for name, success in self.oracle.wad_loader.load_all_wads():
                 if success:
                     wads.append(name)
+        except OmegaError:
+            pass
         except Exception as e:
-            logger.warning("Failed to load WADs for status display: %s", e)
+            logger.error("Failed to load WADs for status display: %s", e, exc_info=True)
+            pass
         print(f"  Active WADs:   {', '.join(wads) if wads else 'None'}")
         print(f"{'=' * 50}\n")
 
