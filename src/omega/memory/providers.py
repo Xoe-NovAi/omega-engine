@@ -9,6 +9,15 @@ import gzip
 import shutil
 import fcntl
 import anyio
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 import redis.asyncio as redis
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
@@ -63,6 +72,7 @@ class RedisStorageProvider(StorageProvider):
             self.is_available = True
             return True
         except Exception as e:
+            # M9 carve-out: health probe may catch all to prevent crash loops
             logger.warning(f"Redis health check failed: {e}")
             self.is_available = False
             return False
@@ -83,10 +93,12 @@ class RedisStorageProvider(StorageProvider):
                     logger.warning(f"Failed to parse history entry from Redis for {session_id}")
                     continue
             return exchanges
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.error(f"Redis get_history failed for {session_id}: {e}")
+            logger.error(f"Redis get_history failed for {session_id}: {e}", exc_info=True)
             self.is_available = False
-            return []
+            raise OmegaPersistenceError(f"Redis get_history failed: {e}", raw_error=e) from e
 
     async def save_history(self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]) -> None:
         if not self.is_available:
@@ -112,9 +124,12 @@ class RedisStorageProvider(StorageProvider):
                 await self.client.xtrim(hist_key, maxlen=100, approximate=True)
             
             await self.client.expire(hist_key, 86400)
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.error(f"Redis save_history failed for {session_id}: {e}")
+            logger.error(f"Redis save_history failed for {session_id}: {e}", exc_info=True)
             self.is_available = False
+            raise OmegaPersistenceError(f"Redis save_history failed: {e}", raw_error=e) from e
 
     async def archive(self, entity_name: str, session_id: str) -> bool:
         if not self.is_available:
@@ -124,16 +139,21 @@ class RedisStorageProvider(StorageProvider):
             await self.client.delete(f"{self.meta_prefix}:{session_id}")
             await self.client.delete(f"{self.hist_prefix}:{session_id}")
             return True
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.error(f"Redis archive failed for {session_id}: {e}")
+            logger.error(f"Redis archive failed for {session_id}: {e}", exc_info=True)
             self.is_available = False
-            return False
+            raise OmegaPersistenceError(f"Redis archive failed: {e}", raw_error=e) from e
 
     async def close(self) -> None:
         try:
             await self.client.close()
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.warning("Failed to close Redis connection: %s", e)
+            logger.error("Failed to close Redis connection: %s", e, exc_info=True)
+            raise OmegaError(f"Redis close failed: {e}", raw_error=e) from e
 
 class FileStorageProvider(StorageProvider):
     """Warm storage provider using JSON files on disk with disk guard and file locking."""
@@ -164,6 +184,7 @@ class FileStorageProvider(StorageProvider):
                 return False
             return True
         except Exception as e:
+            # M9 carve-out: health probe may catch all to prevent crash loops
             logger.warning(f"Failed to check disk space: {e}")
             return True
 
@@ -235,9 +256,11 @@ class FileStorageProvider(StorageProvider):
                     
         try:
             raw = await anyio.to_thread.run_sync(_read_with_lock)
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.error(f"Failed to read warm path for archiving: {e}")
-            return False
+            logger.error(f"Failed to read warm path for archiving: {e}", exc_info=True)
+            raise OmegaPersistenceError(f"File archive read failed: {e}", raw_error=e) from e
         
         cold_path = self._archive_path(entity_name, session_id)
         await anyio.Path(cold_path.parent).mkdir(parents=True, exist_ok=True)
@@ -253,8 +276,11 @@ class FileStorageProvider(StorageProvider):
         try:
             lock_path = warm_path.with_suffix(".lock")
             await anyio.Path(lock_path).unlink()
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.warning("Failed to remove lock file %s: %s", lock_path, e)
+            logger.error("Failed to remove lock file %s: %s", lock_path, e, exc_info=True)
+            raise OmegaPersistenceError(f"Lock removal failed: {e}", raw_error=e) from e
         return True
 
     async def close(self) -> None:
