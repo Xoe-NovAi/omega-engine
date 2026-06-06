@@ -10,6 +10,15 @@ from pathlib import Path
 from typing import Optional
 from .models import ResearchTask, RotationState
 import logging
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 logger = logging.getLogger(__name__)
 
 class TopicScheduler:
@@ -32,9 +41,11 @@ class TopicScheduler:
                 with open(self.state_path, "r") as f:
                     data = json.load(f)
                     return RotationState(**data)
+            except OmegaError:
+                return RotationState()
             except Exception as e:
-                logger.warning("Error loading scheduler state: %s", e)
-        return RotationState()
+                logger.error("Error loading scheduler state: %s", e, exc_info=True)
+                return RotationState()
 
     def _save_state(self):
         """Persist rotation state to disk."""
@@ -42,16 +53,20 @@ class TopicScheduler:
             self.state_path.parent.mkdir(parents=True, exist_ok=True)
             with open(self.state_path, "w") as f:
                 json.dump(self.state.__dict__, f, indent=2)
+        except OmegaError:
+            pass
         except Exception as e:
-            logger.warning("Error saving scheduler state: %s", e)
+            logger.error("Error saving scheduler state: %s", e, exc_info=True)
+            pass
         
     def _load_config(self) -> dict:
         try:
             with open(self.config_path, 'r') as f:
                 return yaml.safe_load(f)
+        except OmegaError:
+            return {}
         except Exception as e:
-            # In a real worker, this would use the logger
-            logger.warning("Error loading research topics config: %s", e)
+            logger.error("Error loading research topics config: %s", e, exc_info=True)
             return {}
 
     def get_next_topic(self) -> Optional[ResearchTask]:
