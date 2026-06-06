@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 import logging
 import time
 import uuid
@@ -8,6 +9,15 @@ import uvicorn
 import anyio
 
 from omega.oracle.model_gateway import ModelGateway
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 
 # 🔱 Omega Gateway — Rate-Limit Resilience Proxy
 # Port: 8018
@@ -92,7 +102,7 @@ class OmegaGateway:
 
                 if not response:
                     raise HTTPException(status_code=503, detail="No available providers could generate a response.")
-
+                
                 # Record success for the primary provider used (if we could track it)
                 # In this simplified proxy, we assume if it worked, the fabric is healthy.
                 
@@ -116,17 +126,21 @@ class OmegaGateway:
                     }
                 )
 
+            except HTTPException:
+                raise
+            except OmegaError as e:
+                err_msg = str(e).lower()
+                if "429" in err_msg or "rate limit" in err_msg:
+                    self._get_backoff(request.model).record_failure()
+                    raise HTTPException(status_code=429, detail=f"Rate limit reached. Reactive backoff active. {e}")
+                logger.error(f"Gateway OmegaError: {e}")
+                raise HTTPException(status_code=500, detail=str(e))
             except Exception as e:
                 err_msg = str(e).lower()
                 if "429" in err_msg or "rate limit" in err_msg:
-                    # Empirical Mapping: Record the 429
-                    # We don't know exactly which provider failed here because ModelGateway abstracts it,
-                    # but we can track the 'model' as a proxy or the gateway as a whole.
-                    # For this implementation, we'll track it per model.
                     self._get_backoff(request.model).record_failure()
                     raise HTTPException(status_code=429, detail=f"Rate limit reached. Reactive backoff active. {e}")
-                
-                logger.error(f"Gateway Error: {e}")
+                logger.error(f"Gateway unexpected error: {e}", exc_info=True)
                 raise HTTPException(status_code=500, detail=str(e))
 
 app = OmegaGateway().gateway
