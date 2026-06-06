@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Automated Model Research & Update Worker
 # AP: AP-MODEL-UPDATER-v1.0.0
 # ICS: [NODE: SOPHIA | ARCHETYPE: AUTOMATED_RESEARCHER | CONTEXT: MODEL_UPDATER]
@@ -15,6 +16,15 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import anyio
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 import httpx
 from typing import Dict, List, Optional
 
@@ -97,8 +107,11 @@ class ModelUpdaterWorker:
             try:
                 await self.run_update_cycle()
                 await anyio.sleep(3600)
+            except OmegaError as e:
+                logger.error(f"ModelUpdaterWorker loop OmegaError: {e}")
+                await anyio.sleep(60)
             except Exception as e:
-                logger.error(f"ModelUpdaterWorker loop error: {e}")
+                logger.error(f"ModelUpdaterWorker loop unexpected error: {e}", exc_info=True)
                 await anyio.sleep(60)
 
     async def stop(self) -> None:
@@ -149,12 +162,20 @@ class ModelUpdaterWorker:
                     "models_fetched": len(provider_data),
                 },
             )
+        except OmegaError as exc:
+            self.observability.log_event(
+                EventType.ERROR,
+                trace_id,
+                {"event": "model_update_cycle_failed", "error": str(exc)},
+            )
+            raise
         except Exception as exc:
             self.observability.log_event(
                 EventType.ERROR,
                 trace_id,
                 {"event": "model_update_cycle_failed", "error": str(exc)},
             )
+            logger.error(f"Unexpected model update cycle failure: {exc}", exc_info=True)
             raise
 
     # ── 1️⃣ Provider data fetching ──────────────────────────────────────
@@ -191,8 +212,21 @@ class ModelUpdaterWorker:
                     parsed = self._parse_provider_models(name, data)
                     results.extend(parsed)
                     return
+                except OmegaError as e:
+                    await anyio.sleep(2**attempt)
+                    self.observability.log_event(
+                        EventType.ERROR,
+                        trace_id,
+                        {
+                            "event": "provider_fetch_retry",
+                            "provider": name,
+                            "attempt": attempt + 1,
+                            "error": str(e),
+                        },
+                    )
                 except Exception as e:
                     await anyio.sleep(2**attempt)
+                    logger.error(f"Provider {name} fetch error: {e}", exc_info=True)
                     self.observability.log_event(
                         EventType.ERROR,
                         trace_id,
@@ -268,10 +302,13 @@ class ModelUpdaterWorker:
                 # Strip markdown code fences
                 content = content.split("\n", 1)[1].rsplit("```", 1)[0].strip()
             return json.loads(content)
+        except OmegaError:
+            raise
         except Exception as e:
+            logger.error(f"Gemma JSON parse failure: {e}", exc_info=True)
             raise RuntimeError(
                 f"Gemma returned non-JSON content: {response_str[:200]}... Error: {e}"
-            )
+            ) from e
 
     def _build_research_prompt(self, provider_data: List[Dict]) -> str:
         return f"""Verify the free-tier model catalog.
