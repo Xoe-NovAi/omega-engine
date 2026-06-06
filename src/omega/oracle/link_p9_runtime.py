@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Link P9 Runtime (Agent Handoff & Delegation)
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ deepseek-v4-flash ⬡ opencode ⬡ LINK-P9
 # AP: LINK-P9-v1.0.0
@@ -14,6 +15,15 @@
 
 import json
 import logging
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 import time
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
@@ -329,8 +339,10 @@ class LinkP9Runtime:
             path = self._archive_dir / f"{packet.packet_id}.json"
             path.write_text(packet.to_json())
             logger.info("Packet archived: %s", path)
+        except OmegaError:
+            logger.error("Failed to archive packet %s (OmegaError)", packet.packet_id)
         except Exception as e:
-            logger.error("Failed to archive packet %s: %s", packet.packet_id, e)
+            logger.error("Failed to archive packet %s: %s", packet.packet_id, e, exc_info=True)
 
     def save_state(self, state_dir: str = "data/coordination") -> Path:
         """Save runtime state to disk for crash recovery.
@@ -379,6 +391,8 @@ class LinkP9Runtime:
 
             logger.info("Link P9 state loaded from %s", state_path)
             return True
+        except OmegaError:
+            return False
         except Exception as e:
-            logger.error("Failed to load Link P9 state: %s", e)
+            logger.error("Failed to load Link P9 state: %s", e, exc_info=True)
             return False
