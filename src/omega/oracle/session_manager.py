@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 """Session Manager — Entity-scoped rolling sessions with daily counter.
 
 Implements the R50 session architecture. Each entity has one active session
@@ -14,6 +15,15 @@ back to trace_id with no persistence.
 """
 
 import json
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 import logging
 import os
 import time
@@ -125,10 +135,15 @@ class SessionManager:
                 os.fsync(dir_fd)
             finally:
                 os.close(dir_fd)
+        except OmegaError:
+            if temp_path.exists():
+                temp_path.unlink()
+            raise
         except Exception as e:
             if temp_path.exists():
                 temp_path.unlink()
-            raise e
+            logger.error(f"Sovereign atomic write failed for {target_path}: {e}", exc_info=True)
+            raise OmegaPersistenceError(f"Session write failed: {e}", raw_error=e) from e
 
     def get_session_id_transient(self, trace_id: str) -> str:
         """Return trace_id as session_id for transient mode."""
