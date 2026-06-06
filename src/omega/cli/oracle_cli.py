@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega CLI — Oracle Commands
 # AP: AP-ORACLE-CLI-v1.0.0
 # ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: CLI-COMMANDS]
@@ -24,6 +25,15 @@ except ImportError:
     typer = None
 
 from omega.oracle import Oracle, OracleResponse, EntityRegistry, Entity
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 from omega.request_queue import RequestQueue
 from omega.oracle.feed_utils import load_demand_signals, transition_demand, summarize_feed
 from omega.ics import render as ics_render  # [id-soft: quake-1996] netchan header
@@ -264,8 +274,11 @@ def mcp_restart(
         try:
             await anyio.to_thread.run_sync(subprocess.run, ["systemctl", "--user", "restart", f"{service}.service"], check=True)
             console.print(f"[green]✅ {service} restarted.[/green]")
+        except OmegaError as e:
+            console.print(f"[red]OmegaError restarting {service}: {e}[/red]")
         except Exception as e:
-            console.print(f"[red]Error restarting {service}: {e}[/red]")
+            logger.error(f"Unexpected error restarting {service}: {e}", exc_info=True)
+            console.print(f"[red]Unexpected error restarting {service}: {e}[/red]")
     anyio.run(_run)
 
 
