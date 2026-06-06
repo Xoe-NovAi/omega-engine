@@ -11,6 +11,15 @@ from pathlib import Path
 from typing import Optional, List, Dict, Any
 from datetime import datetime, timezone
 import logging
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 logger = logging.getLogger(__name__)
 
 class ReviewQueue:
@@ -102,8 +111,10 @@ class ReviewQueue:
                     return data
                 except FileExistsError:
                     continue # Already locked by another process
+                except OmegaError:
+                    continue
                 except Exception as e:
-                    logger.warning("Error processing review item %s: %s", file_path, e)
+                    logger.error("Error processing review item %s: %s", file_path, e, exc_info=True)
                     continue
                     
         return None
@@ -135,8 +146,11 @@ class ReviewQueue:
             if files:
                 try:
                     files[0].unlink()
+                except OmegaError:
+                    pass
                 except Exception as e:
-                    logger.warning("Error pruning review queue: %s", e)
+                    logger.error("Error pruning review queue: %s", e, exc_info=True)
+                    pass
         
         await anyio.to_thread.run_sync(_sync_prune)
 
