@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Iris — The Voice Assistant
 # AP: AP-NOVA-SERVER-v1.0.0
 # ICS: [NODE: HERMES | ARCHETYPE: HERMES | CONTEXT: NOVA-MESSENGER]
@@ -16,6 +17,15 @@ from pathlib import Path
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 from pydantic import BaseModel
 
 # Add src to path so we can import omega modules
@@ -78,8 +88,11 @@ async def chat(request: ChatRequest):
             pillars=result.pillars,
             sigil=result.sigil,
         )
+    except OmegaError as e:
+        logger.error(f"Chat OmegaError: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        logger.error(f"Chat error: {e}")
+        logger.error(f"Chat unexpected error: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -100,8 +113,11 @@ async def voice(request: ChatRequest):
             pillars=result.pillars,
             sigil=result.sigil,
         )
+    except OmegaError as e:
+        logger.error(f"Voice OmegaError: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        logger.error(f"Voice error: {e}")
+        logger.error(f"Voice unexpected error: {e}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 
