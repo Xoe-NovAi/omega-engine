@@ -22,6 +22,15 @@ from pathlib import Path
 from typing import Optional
 
 import anyio
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 import httpx
 
 from .models import GnosisPacket
@@ -305,9 +314,12 @@ class LmsterBackend:
         except httpx.HTTPStatusError as e:
             self.circuit.record_failure("lmster", f"HTTP {e.response.status_code}")
             raise CircuitBreakerError(f"lmster HTTP {e.response.status_code}")
+        except OmegaError:
+            raise
         except Exception as e:
             self.circuit.record_failure("lmster", str(e))
-            raise CircuitBreakerError(f"lmster call failed: {e}")
+            logger.error(f"Lmster backend failure: {e}", exc_info=True)
+            raise InferenceRuntimeError(f"lmster call failed: {e}", raw_error=e) from e
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -416,8 +428,12 @@ class T2Backend:
                     severity = self.circuit.record_failure("gemma_google", "empty_response")
                     return ""
         
+        except OmegaError:
+            raise
         except Exception as e:
             severity = self.circuit.record_failure("gemma_google", str(e))
+            logger.error(f"Gemma Google backend failure: {e}", exc_info=True)
+            raise ProviderError(f"Gemma Google failed: {e}", raw_error=e) from e
         
         if severity == "critical":
             logger.critical("Gemma Google: CRITICAL failure threshold reached.")
@@ -521,10 +537,12 @@ class T3Backend:
                 self.circuit.record_failure("opencode_zen", "empty_response")
                 return json.dumps({"skipped": True, "reason": "empty_response"})
         
+        except OmegaError:
+            raise
         except Exception as e:
             self.circuit.record_failure("opencode_zen", str(e))
-            logger.warning(f"Tier 3 call failed: {e}")
-            return json.dumps({"skipped": True, "reason": str(e)})
+            logger.error(f"Tier 3 call failed: {e}", exc_info=True)
+            raise ProviderError(f"Tier 3 review failed: {e}", raw_error=e) from e
 
     def _extract_content(self, data: dict) -> str:
         """Extract content from OpenAI-compatible response."""
@@ -705,9 +723,11 @@ def load_distiller_prompts() -> dict:
         content = config_path.read_text()
         data = yaml.safe_load(content)
         return data if data else {"modes": {}, "mappings": {}}
+    except OmegaError:
+        raise
     except Exception as e:
-        logger.error(f"Error loading distiller prompts: {e}")
-        return {"modes": {"default": {"prompt": "You are a research assistant."}}, "mappings": {}}
+        logger.error(f"Error loading distiller prompts: {e}", exc_info=True)
+        raise ConfigError(f"Distiller prompt config failure: {e}", raw_error=e) from e
 
 def select_system_prompt(topic: str, registry: dict) -> str:
     """Select the best system prompt for a research topic based on config mappings."""
@@ -885,8 +905,11 @@ class Distiller:
                     logger.info(f"[Jem] Tier 1 quality gate: {quality.reason}")
             except (CircuitBreakerError, CircuitBreakerOpen) as e:
                 logger.warning(f"[Jem] Tier 1 unavailable: {e}")
+            except OmegaError:
+                raise
             except Exception as e:
-                logger.error(f"[Jem] Tier 1 unexpected error: {e}")
+                logger.error(f"[Jem] Tier 1 unexpected error: {e}", exc_info=True)
+                raise InferenceError(f"Tier 1 speculative draft failed: {e}", raw_error=e) from e
 
         # ── TIER 2: MiniMax enrichment ────────────────────────────────
         t2_enriched = ""
@@ -911,10 +934,13 @@ class Distiller:
                         t2_enriched = t1_draft  # Fallback to T1 draft
                         t1_direct = bool(t1_draft)
                         logger.info("[Jem] Tier 2 empty — using T1 draft as output")
+            except OmegaError:
+                raise
             except Exception as e:
-                logger.error(f"[Jem] Tier 2 error: {e}")
+                logger.error(f"[Jem] Tier 2 error: {e}", exc_info=True)
                 t2_enriched = t1_draft
                 t1_direct = bool(t1_draft)
+                # We don't raise here to allow fallback to T1 draft
         else:
             t2_enriched = t1_draft
             t1_direct = bool(t1_draft)
@@ -936,8 +962,11 @@ class Distiller:
                         if self.budget: self.budget.increment_daily("gemma_calls")
                     else:
                         t3_review = ""
+            except OmegaError:
+                raise
             except Exception as e:
-                logger.error(f"[Jem] Tier 3 error: {e}")
+                logger.error(f"[Jem] Tier 3 error: {e}", exc_info=True)
+                # T3 failure is non-fatal to the result, but should be logged
         
         # ── Parse into GnosisPacket and apply T3 corrections ────────────────
         final_text = t2_enriched if t2_enriched else t1_draft
@@ -981,8 +1010,11 @@ class Distiller:
                     f"T3 review for {topic}: {t3_review[:500]}..."
                 )
                 
+            except OmegaError:
+                raise
             except Exception as e:
-                logger.warning(f"[Jem] Failed to apply T3 review to GnosisPacket: {e}")
+                logger.error(f"[Jem] Failed to apply T3 review to GnosisPacket: {e}", exc_info=True)
+                # Non-fatal to the packet, but log as error
 
         # ── Save training triple ──────────────────────────────────────
         if self.enable_training_triples:
@@ -1003,8 +1035,11 @@ class Distiller:
                         "circuit_states": self.circuit.get_reports(),
                     },
                 )
+            except OmegaError:
+                raise
             except Exception as e:
-                logger.warning(f"[Jem] Failed to save training triple: {e}")
+                logger.error(f"[Jem] Failed to save training triple: {e}", exc_info=True)
+                raise OmegaPersistenceError(f"Training triple save failed: {e}", raw_error=e) from e
 
         # ── Log circuit states for observability ──────────────────────
         if self.enable_tier1 or self.enable_tier2 or self.enable_tier3:
