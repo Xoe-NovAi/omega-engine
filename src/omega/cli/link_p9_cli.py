@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Link P9 CLI Commands
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ deepseek-v4-flash ⬡ opencode ⬡ LINK-P9-CLI
 # AP: LINK-P9-CLI-v1.0.0
@@ -12,6 +13,15 @@
 # [id-soft: doom-1993] ZONEID Pattern — knowledge signal validation (ZONEID_KNOWLEDGE)
 
 import json
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 import logging
 import sys
 import time
@@ -362,8 +372,10 @@ def archive_cmd(
                 status_style,
                 data.get("created_at", "—"),
             )
+        except OmegaError:
+            continue
         except Exception as e:
-            logger.warning("Skipping malformed handoff record: %s", e)
+            logger.error("Skipping malformed handoff record: %s", e, exc_info=True)
             continue
 
     console.print(table)
