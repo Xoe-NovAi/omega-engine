@@ -32,6 +32,17 @@ from .entity_registry import EntityRegistry
 from .model_gateway import ModelGateway
 from .session_manager import SessionManager
 from .context_builder import ContextBuilder
+from omega.cvar_table import cvar_get
+from omega.errors import (
+
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 from .wad_loader import WADLoader
 from .entity_workspace import EntityWorkspaceManager, SOUL_FILE_HEADER
 from .hierarchy import SovereignHierarchy
@@ -173,7 +184,6 @@ class Oracle:
         if not self._wads_loaded:
             # [id-soft: quake3-1999] Cvar System — read JSON logging flag at startup
             # Wire structured logging once, idempotent due to _wads_loaded guard
-            from omega.cvar_table import cvar_get
             from omega.observability import setup_json_logging
             if cvar_get("config.observability.json_logging", True):
                 setup_json_logging("omega")
@@ -189,20 +199,26 @@ class Oracle:
                     async with await anyio.open_file(str(config_path), "r") as f:
                         content = await f.read()
                         self.config = yaml.safe_load(content)
-                        default_name = self.cvar_get("config.entity.default", "default")
+                        default_name = cvar_get("config.entity.default", "default")
                         resolved = self.registry.get(default_name)
                         if resolved:
                             self.default_entity = resolved
+            except (yaml.YAMLError, OSError, KeyError) as e:
+                logger.warning(f"Expected failure loading default entity from config: {e}. Using engine defaults.")
             except Exception as e:
-                logger.warning(f"Failed to load default entity from config during bootstrap: {e}")
+                logger.error(f"Unexpected error loading default entity from config during bootstrap: {e}", exc_info=True)
+                raise ConfigError(f"Critical bootstrap failure in config: {e}", raw_error=e) from e
             
             # Set soul path from config (Engine-Stack Firewall: config-driven, not hardcoded)
             try:
-                data_dir = self.cvar_get("config.data.dir", str(DATA_DIR))
-                user_name = self.cvar_get("config.entity.user", "arch")
+                data_dir = cvar_get("config.data.dir", str(DATA_DIR))
+                user_name = cvar_get("config.entity.user", "arch")
                 self._soul_path = Path(data_dir) / "entities" / user_name / "soul.yaml"
+            except (KeyError, TypeError, OSError) as e:
+                logger.warning(f"Expected failure resolving soul path: {e}. Using default path.")
             except Exception as e:
-                logger.warning(f"Failed to resolve soul path in bootstrap: {e}")
+                logger.error(f"Unexpected error resolving soul path in bootstrap: {e}", exc_info=True)
+                raise ConfigError(f"Critical bootstrap failure in soul path: {e}", raw_error=e) from e
             
             # Selective IWAD loading: if --iwad specified, load reference IWAD + the chosen one
             if self._iwad_name:
@@ -283,8 +299,9 @@ class Oracle:
             async with httpx.AsyncClient() as client:
                 await client.post(url, json=payload, timeout=3.0)
         except Exception as e:
-            # Silent failure to avoid disrupting the main inference flow
-            logger.debug(f"Hivemind synchronization failed: {e}")
+            # M9: Log fully and raise as typed. Non-critical side-effect.
+            logger.error(f"Hivemind synchronization failed: {e}", exc_info=True)
+            raise OmegaError(f"Hivemind sync failed: {e}", raw_error=e) from e
 
     # ── PUBLIC API ────────────────────────────────────────────────────
 
@@ -301,7 +318,7 @@ class Oracle:
             trace.log("query.received", query=query, transient=transient)
 
             # Get current session for the default entity
-            default_name = self.default_entity.name if self.default_entity else self.cvar_get("config.entity.default", "default")
+            default_name = self.default_entity.name if self.default_entity else cvar_get("config.entity.default", "default")
             if transient:
                 session_id = self.session_manager.get_session_id_transient(trace.trace_id)
             else:
@@ -311,7 +328,10 @@ class Oracle:
             # Early return for empty queries (still inside trace context)
             if not query or not query.strip():
                 resp = self._empty_response(trace)
-                await self._record_interaction(resp, query, trace, transient)
+                try:
+                    await self._record_interaction(resp, query, trace, transient)
+                except OmegaError as e:
+                    logger.error(f"Recording interaction failed (non-fatal): {e}")
                 return resp
 
             # Step 1: Try explicit summon (bypasses speculative decoder)
@@ -321,7 +341,10 @@ class Oracle:
                 session_id = await self.session_manager.get_session_id(entity_name)
                 trace.log("summon.detected", entity=entity_name, query=summon_query, session_id=session_id)
                 resp = await self._summon(entity_name, summon_query, trace, session_id, transient=transient)
-                await self._record_interaction(resp, summon_query, trace, transient)
+                try:
+                    await self._record_interaction(resp, summon_query, trace, transient)
+                except OmegaError as e:
+                    logger.error(f"Recording interaction failed (non-fatal): {e}")
                 return resp
 
 
@@ -331,7 +354,10 @@ class Oracle:
                 session_id = await self.session_manager.get_session_id(entity_name)
                 trace.log("summon.detected", entity=entity_name, query=consult_query, pattern="consult", session_id=session_id)
                 resp = await self._summon(entity_name, consult_query, trace, session_id, transient=transient)
-                await self._record_interaction(resp, consult_query, trace, transient)
+                try:
+                    await self._record_interaction(resp, consult_query, trace, transient)
+                except OmegaError as e:
+                    logger.error(f"Recording interaction failed (non-fatal): {e}")
                 return resp
 
 
@@ -341,13 +367,19 @@ class Oracle:
 
             if iris_confidence > IRIS_CONFIDENCE_THRESHOLD:
                 resp = await self._respond_as_iris(query, trace, iris_confidence, transient=transient)
-                await self._record_interaction(resp, query, trace, transient)
+                try:
+                    await self._record_interaction(resp, query, trace, transient)
+                except OmegaError as e:
+                    logger.error(f"Recording interaction failed (non-fatal): {e}")
                 return resp
 
             # Step 3: Escalate to domain-matched Pillar Keeper
             trace.log("escalation", reason=f"iris_confidence={iris_confidence:.2f} <= threshold={IRIS_CONFIDENCE_THRESHOLD}")
             resp = await self._route_by_domain(query, trace, session_id, transient=transient)
-            await self._record_interaction(resp, query, trace, transient)
+            try:
+                await self._record_interaction(resp, query, trace, transient)
+            except OmegaError as e:
+                logger.error(f"Recording interaction failed (non-fatal): {e}")
             return resp
 
     async def summon(
@@ -380,7 +412,10 @@ class Oracle:
                       session_id=session_id, model_override=model_override)
             resp = await self._summon(entity_name, query, trace, session_id,
                                        transient=transient, model_override=model_override)
-            await self._record_interaction(resp, query, trace, transient)
+            try:
+                await self._record_interaction(resp, query, trace, transient)
+            except OmegaError as e:
+                logger.error(f"Recording interaction failed (non-fatal): {e}")
             return resp
 
     # ── INTERNAL: Triage Router bridge ─────────────────────────────────
@@ -431,6 +466,7 @@ class Oracle:
                 return entity.model
             return selected
         except Exception as e:
+            # M9 carve-out: health probe may catch all to prevent crash loops
             logger.warning(f"TriageRouter failed for {entity_name}, falling back to configured model: {e}")
             return entity.model
 
@@ -439,6 +475,7 @@ class Oracle:
         try:
             context_block = await self.context_builder.build_context(entity_name, session_id)
         except Exception as e:
+            # M9 carve-out: health probe may catch all to prevent crash loops
             logger.warning(f"ContextBuilder failed for {entity_name}: {e}")
             context_block = ""
         return ContextBuilder.prepend_to_prompt(context_block, personality)
@@ -454,20 +491,29 @@ class Oracle:
                 resp.entity, resp.session_id, query, resp.text,
                 metadata={"trace_id": trace.trace_id, "backend": resp.backend, "model": resp.model},
             )
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.warning(f"Failed to record exchange (non-fatal): {e}")
+            logger.error(f"Failed to record exchange (non-fatal): {e}", exc_info=True)
+            raise OmegaError(f"Memory recording failed: {e}", raw_error=e) from e
         
         # 2. Soul Evolution
         try:
             await self._track_soul_evolution(resp.entity, trace.trace_id)
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.warning(f"Failed to track soul evolution (non-fatal): {e}")
+            logger.error(f"Failed to track soul evolution (non-fatal): {e}", exc_info=True)
+            raise OmegaError(f"Soul tracking failed: {e}", raw_error=e) from e
         
         # 3. Hivemind Sync
         try:
             await self._post_to_hivemind(resp, query)
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.debug(f"Failed to post to hivemind (non-fatal): {e}")
+            logger.error(f"Failed to post to hivemind (non-fatal): {e}", exc_info=True)
+            raise OmegaError(f"Hivemind post failed: {e}", raw_error=e) from e
 
     def _assess_iris_confidence(self, query: str) -> float:
         """Assess whether Iris can handle this query directly.
@@ -969,10 +1015,13 @@ class Oracle:
                 # 3. Force physical disk write (Sovereign Sync)
                 os.fsync(tf.fileno())
             return temp_path
-        except Exception:
+        except Exception as e:
             if os.path.exists(temp_path):
-                os.remove(temp_path)
-            raise
+                try:
+                    os.remove(temp_path)
+                except OSError as cleanup_err:
+                    logger.warning(f"Cleanup failed: {cleanup_err}")
+            raise StateIntegrityError(f"Soul atomic write failed (temp file: {temp_path}): {e}", raw_error=e) from e
 
     # ── Pattern detection ─────────────────────────────────────────────
 
