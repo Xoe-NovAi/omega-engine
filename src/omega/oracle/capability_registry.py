@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Capability Registry — Agent Skill Discovery
 #
 # [id-soft: quake3-1999] VM System — capability-based dispatch
@@ -14,6 +15,15 @@ import anyio
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 import logging
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 
 logger = logging.getLogger("omega.capabilities")
 
@@ -39,8 +49,11 @@ class CapabilityRegistry:
                     data = yaml.safe_load(f)
                     if data:
                         self._registry = data
+            except OmegaError:
+                pass
             except Exception as e:
-                logger.error(f"Failed to load capability registry: {e}")
+                logger.error(f"Failed to load capability registry: {e}", exc_info=True)
+                pass
 
     async def _save(self):
         """Save capabilities to disk."""
@@ -51,8 +64,11 @@ class CapabilityRegistry:
                 with open(self.storage_path, "w") as f:
                     yaml.dump(self._registry, f)
             await anyio.to_thread.run_sync(_write)
+        except OmegaError:
+            pass
         except Exception as e:
-            logger.error(f"Failed to save capability registry: {e}")
+            logger.error(f"Failed to save capability registry: {e}", exc_info=True)
+            pass
 
     async def publish(self, agent_id: str, capabilities: Dict[str, Any]) -> bool:
         """
