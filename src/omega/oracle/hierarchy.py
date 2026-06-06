@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 """Omega Sovereign Hierarchy — Rank and Recursion Management.
 
 AP: AP-HIERARCHY-LOGIC-v1.0.0
@@ -10,6 +11,15 @@ ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: HIERARCHY]
 """
 
 import logging
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 import yaml
 from pathlib import Path
 from typing import Dict, Optional
@@ -28,8 +38,11 @@ class SovereignHierarchy:
                     omega_cfg = yaml.safe_load(f)
                 active_iwad = omega_cfg.get("omega", {}).get("entity", {}).get("active_iwad", "_omega_default")
                 self.config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / active_iwad / "hierarchy.yaml"
+            except OmegaError:
+                logger.warning("OmegaError resolving active IWAD for hierarchy. Falling back to default.")
+                self.config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / "_omega_default" / "hierarchy.yaml"
             except Exception as e:
-                logger.error(f"Failed to resolve active IWAD for hierarchy: {e}. Falling back to default.")
+                logger.error(f"Failed to resolve active IWAD for hierarchy: {e}. Falling back to default.", exc_info=True)
                 self.config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / "_omega_default" / "hierarchy.yaml"
         else:
             self.config_path = hierarchy_config
