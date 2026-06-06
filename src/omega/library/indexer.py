@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 """Search Indexing — Full-text and vector search indexing for the library.
 
 AP: AP-OMEGA-INDEXER-v1.0.0
@@ -20,6 +21,15 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import anyio
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 
 from .curator import CuratedDocument
 
@@ -89,8 +99,11 @@ class Indexer:
                 with open(vector_path) as f:
                     self._vector_store = json.load(f)
                 logger.info(f"Loaded {len(self._vector_store)} vector embeddings")
+            except OmegaError:
+                pass
             except Exception as e:
-                logger.warning(f"Failed to load vector index: {e}")
+                logger.error(f"Failed to load vector index: {e}", exc_info=True)
+                pass
 
     async def index_document(self, doc: CuratedDocument) -> None:
         """Add a document to the search index."""
