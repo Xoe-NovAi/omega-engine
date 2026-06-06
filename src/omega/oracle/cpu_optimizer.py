@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 """Zen 2 CPU Optimizer — llama.cpp compilation flags, KV cache, speculative decoding tuning.
 
 AP: AP-CPU-OPTIMIZER-v1.0.0
@@ -39,6 +40,15 @@ Speculative decoding (Oracle already implements this):
 """
 
 import logging
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 import os
 import platform
 import re
@@ -389,8 +399,10 @@ class Zen2Optimizer:
             )
             available_kb = int(result.stdout.decode().strip())
             pressure["available_mb"] = available_kb // 1024
+        except OmegaError:
+            pressure["available_mb"] = RAM_AVAILABLE_AI_MB
         except Exception as e:
-            logger.warning("Failed to read RAM pressure via awk: %s", e)
+            logger.error("Failed to read RAM pressure via awk: %s", e, exc_info=True)
             pressure["available_mb"] = RAM_AVAILABLE_AI_MB
 
         avail = pressure["available_mb"]
@@ -497,7 +509,10 @@ class Zen2Optimizer:
             info["is_intel"] = "GenuineIntel" in text
             info["is_zen"] = "Ryzen 7" in text or "AMD Ryzen" in text
 
+        except OmegaError as e:
+            info["error"] = str(e)
         except Exception as e:
+            logger.error(f"CPU info detection failed: {e}", exc_info=True)
             info["error"] = str(e)
 
         return info
@@ -622,8 +637,11 @@ class Zen2Optimizer:
                     [i for i in range(len(physical)) if i % 2 == 1]
                 ) if len(physical) >= 4 else physical[len(physical)//2:]
 
+        except OmegaError:
+            pass
         except Exception as e:
-            logger.warning(f"CPU topology detection failed, using Zen 2 defaults: {e}")
+            logger.error(f"CPU topology detection failed, using Zen 2 defaults: {e}", exc_info=True)
+            pass
 
         return topology
 
