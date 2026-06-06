@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 import logging
 import httpx
 import os
@@ -97,8 +98,11 @@ class GoogleAIProvider(BaseProvider):
         except OmegaError as e:
             # Allow our custom typed errors to propagate untouched
             raise e
+        except OmegaError:
+            raise
         except Exception as e:
-            raise ProviderError(provider="google", message=f"Unexpected Google API failure: {e}", trace_id=trace_id, raw_error=e)
+            logger.error(f"Unexpected Google API failure: {e}", exc_info=True)
+            raise ProviderError(provider="google", message=f"Unexpected Google API failure: {e}", trace_id=trace_id, raw_error=e) from e
 
 class LocallmsterProvider(BaseProvider):
     """LM Studio headless server provider."""
@@ -154,8 +158,11 @@ class LocallmsterProvider(BaseProvider):
             raise ProviderError(provider="lmster", message=f"LM Studio HTTP error: {e}", status_code=e.response.status_code, trace_id=trace_id, raw_error=e)
         except OmegaError as e:
             raise e
+        except OmegaError:
+            raise
         except Exception as e:
-            raise ProviderError(provider="lmster", message=f"Unexpected LM Studio failure: {e}", trace_id=trace_id, raw_error=e)
+            logger.error(f"Unexpected LM Studio failure: {e}", exc_info=True)
+            raise ProviderError(provider="lmster", message=f"Unexpected LM Studio failure: {e}", trace_id=trace_id, raw_error=e) from e
 
 class OllamaProvider(BaseProvider):
     """Ollama local provider."""
@@ -212,8 +219,11 @@ class OllamaProvider(BaseProvider):
             raise ProviderError(provider="ollama", message=f"Ollama HTTP error: {e}", status_code=e.response.status_code, trace_id=trace_id, raw_error=e)
         except OmegaError as e:
             raise e
+        except OmegaError:
+            raise
         except Exception as e:
-            raise ProviderError(provider="ollama", message=f"Unexpected Ollama failure: {e}", trace_id=trace_id, raw_error=e)
+            logger.error(f"Unexpected Ollama failure: {e}", exc_info=True)
+            raise ProviderError(provider="ollama", message=f"Unexpected Ollama failure: {e}", trace_id=trace_id, raw_error=e) from e
 
 class MockProvider(BaseProvider):
     """Offline mock provider — last resort when no inference backend is available."""
@@ -344,8 +354,10 @@ class NativeGGUFProvider(BaseProvider):
             result = optimizer.enforce_affinity(self._cores)
             self._affinity_applied = result.get("success", False)
             return result
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.warning(f"CPU affinity enforcement failed (non-fatal): {e}")
+            logger.error(f"CPU affinity enforcement failed: {e}", exc_info=True)
             return {"success": False, "error": str(e)}
 
     def _estimate_context_memory(self, n_ctx: int) -> Dict[str, float]:
@@ -378,8 +390,10 @@ class NativeGGUFProvider(BaseProvider):
                 "fits_in_ram": fits,
                 "headroom_mb": round(RAM_AVAILABLE_AI_MB - total_mb, 0),
             }
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.warning("Failed to estimate memory for model '%s': %s", self.model_path or '?', e)
+            logger.error("Failed to estimate memory for model '%s': %s", self.model_path or '?', e, exc_info=True)
             return {"model_mb": 0, "kv_cache_mb": 0, "total_mb": 0, "fits_in_ram": True}
 
     def _select_optimal_context(self, requested_ctx: Optional[int] = None) -> int:
@@ -536,6 +550,8 @@ class NativeGGUFProvider(BaseProvider):
                         trace_id, response.get("usage", {}).get("completion_tokens", 0), len(text),
                     )
                 return text
+        except OmegaError:
+            raise
         except Exception as e:
             # Check for OOM patterns in the error message
             err_msg = str(e).lower()
@@ -552,11 +568,11 @@ class NativeGGUFProvider(BaseProvider):
                     raw_error=e
                 )
             
-            logger.error(f"Native GGUF inference failed: {e}")
+            logger.error(f"Native GGUF inference failed: {e}", exc_info=True)
             # Reset model state on error to force reload
             self.llm = None
             self._loaded_ctx = 0
-            raise InferenceError(message=f"Native GGUF inference failed: {e}", trace_id=trace_id, raw_error=e)
+            raise InferenceError(message=f"Native GGUF inference failed: {e}", trace_id=trace_id, raw_error=e) from e
 
 
         return None
@@ -582,11 +598,13 @@ class NativeGGUFProvider(BaseProvider):
             await self._ensure_loaded(n_ctx)
             logger.info(f"Context reloaded: {old_ctx} -> {self._loaded_ctx}")
             return True
+        except OmegaError:
+            raise
         except Exception as e:
             # [id-soft: quake-1996] Rollback — restore old state on failure
             self.llm = old_llm
             self._loaded_ctx = old_ctx if old_llm else 0
-            logger.error(f"Context reload failed, rolled back to {self._loaded_ctx}: {e}")
+            logger.error(f"Context reload failed, rolled back to {self._loaded_ctx}: {e}", exc_info=True)
             return False
 
     def get_status(self) -> Dict[str, Any]:
