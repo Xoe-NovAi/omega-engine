@@ -279,9 +279,14 @@ class RequestQueue:
                 json.dump(data, f, indent=2, ensure_ascii=False, default=str)
                 f.flush()
             tmp.rename(filepath)
+        except OmegaError:
+            if tmp.exists():
+                tmp.unlink()
+            raise
         except Exception as e:
             if tmp.exists():
                 tmp.unlink()
+            logger.error(f"Unexpected failure writing {filepath}: {e}", exc_info=True)
             raise OmegaError(f"Failed to write {filepath}: {e}") from e
 
     @staticmethod
