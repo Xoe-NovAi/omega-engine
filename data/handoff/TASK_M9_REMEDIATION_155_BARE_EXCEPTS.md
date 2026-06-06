@@ -360,10 +360,13 @@ The file `distiller.py` defines its own `CircuitBreakerError` and `CircuitBreake
 
 The user has access to these models via OpenCode Zen (https://opencode.ai/zen/, scraped 2026-06-05):
 
-**FREE tier (4 models, all available now):**
-- `opencode/deepseek-v4-flash-free` — DeepSeek V4 Flash
+**FREE tier (7 models, all available now):**
+- `opencode/deepseek-v4-flash-free` — DeepSeek V4 Flash (200K ctx on Zen free tier)
 - `opencode/mimo-v2.5-free` — Xiaomi MiMo V2.5
 - `opencode/nemotron-3-ultra-free` — NVIDIA Nemotron 3 Ultra
+- `opencode/nemotron-3-super-free` — NVIDIA Nemotron 3 Super (120B/12B)
+- `opencode/minimax-m3-free` — MiniMax M3 (200K ctx on Zen free tier, frontier coding)
+- `opencode/qwen3.6-plus-free` — Qwen 3.6 Plus
 - `opencode/big-pickle` — Stealth model (free)
 
 **PAID tier (Zen catalog, user can enable):**
@@ -392,12 +395,12 @@ The handoff author incorrectly claimed "there is NO MiniMax M3" based on checkin
 - **Capabilities**: Multimodal (text, image, video), frontier coding, agentic, computer use
 - **Benchmarks**: SWE-Bench Pro 59.0%, Terminal-Bench 2.1 66.0%, Claw-Eval highest score, MCP Atlas 74.2%, PostTrainBench 0.37
 - **Pricing**: Token plan (Plus $20/mo, Max $50/mo, Ultra $120/mo) or API (standard rate ≤512K input)
-- **Availability**: Via MiniMax API directly. NOT on OpenCode Zen (Zen only has M2.7/M2.5)
+- **Availability**: Via MiniMax API directly AND on OpenCode Zen as `opencode/minimax-m3-free` (200K context on free tier). The full model with 1M context is available via MiniMax API directly.
 - **Open-weight**: Weights to be open-sourced ~2026-06-11
 
 **Why the author was wrong**: I checked only HuggingFace (has M2 series only) and OpenCode Zen (serves M2.7/M2.5 only) and concluded "does not exist." This conflates "not in the two places I checked" with "does not exist." The model is available via the MiniMax platform directly.
 
-**How the user accesses M3**: Via MiniMax API platform directly (platform.minimax.io) or via a provider that routes to MiniMax. NOT on OpenCode Zen.
+**How the user accesses M3**: Via OpenCode Zen as `opencode/minimax-m3-free` (200K ctx, free tier). Also via MiniMax API directly for the full 1M-context version.
 
 **MiniMax M2 series** (for comparison):
 - M2, M2.1, M2.5, M2.7: All share ~228B total MoE architecture (HF: 228,703,644,928 params). M2.1 described as "230B total / 10B activated"
@@ -432,14 +435,14 @@ The handoff author incorrectly claimed "there is NO MiniMax M3" based on checkin
 
 ### My previous errors (now retracted)
 
-- ❌ "MiniMax M3 does not exist" — I claimed M3 does not exist because I checked only HuggingFace and OpenCode Zen. **I was wrong.** MiniMax M3 is a real model (released 2026-06-01, MSA sparse attention, 1M context, frontier coding). It is available via the MiniMax API directly (platform.minimax.io). It is NOT on OpenCode Zen (which has M2.7 and M2.5 only). The lesson: "not in the two places I checked" does not equal "does not exist."
+- ❌ "MiniMax M3 does not exist" — **I was wrong three times.** MiniMax M3 is a real model (released 2026-06-01, MSA sparse attention, 1M context, frontier coding). It IS available on OpenCode Zen as `opencode/minimax-m3-free` (free tier, 200K context). My error: I scraped the Zen DOCS page which only showed a subset, instead of querying the actual Zen API (`/zen/v1/models`). The docs page was incomplete and I assumed it was exhaustive. The lesson: query the actual API, not the marketing page.
 - ❌ "deepseek-v4-flash pricing $0.28/M output" — correct for the paid tier ($0.14 input / $0.28 output), but the **free tier is $0.00**. Cost analysis should be: use free when possible.
 - ❌ Cost estimate "$2-4 for full refactor" — completely wrong. Free tier = $0.
 - ❌ "MiMo V2.5 ~7B" — retracted previously. Correct: 310B/15B activated.
 - ❌ "DeepSeek V4 Flash ~8B" — retracted previously. Correct: 284B/13B.
 - ❌ I did not previously mention Nemotron 3 Ultra. The user added it now; I should have looked at it as soon as they listed the available models.
 
-### Updated recommendation: DeepSeek V4 Flash Free
+### Updated recommendation: MiniMax M3 Free (opencode/minimax-m3-free)
 
 The user has 3 free-tier candidates for the M9 remediation task. I previously recommended DeepSeek V4 Flash without considering Nemotron. Let me re-evaluate now with the verified benchmark data.
 
@@ -447,23 +450,23 @@ The user has 3 free-tier candidates for the M9 remediation task. I previously re
 
 **Evaluation against benchmarks:**
 
-| Need for this task | Nemotron 3 Ultra | DeepSeek V4 Flash | MiMo V2.5 |
-|--------------------|:----------------:|:-----------------:|:---------:|
-| Mechanical pattern application | not measured | LiveCodeBench 91.6 (good) | not measured |
-| Instruction following (apply 6 patterns) | IFBench 82% (best) | not stated | not stated |
-| Avoiding scope creep (don't add features) | likely good (agentic-tuned) | likely good | not stated |
-| Cost | $0 (free) | $0 (free) | $0 (free) |
-| Long context (1M needed for full source tree) | 1M verified | 1M verified | 1M verified |
-| Code quality benchmarked | Terminal-Bench 54% (decent) | LiveCodeBench 91.6 (strong) | Terminal-Bench 65.8 (SWE-Bench 56.1) |
+| Need for this task | MiniMax M3 Free | DeepSeek V4 Flash Free | Nemotron 3 Ultra Free | MiMo V2.5 Free |
+|--------------------|:----------------:|:-----------------:|:----------------:|:-------------:|
+| Mechanical pattern application | SWE-Bench 59.0% (frontier) | LiveCodeBench 91.6 | not measured | not measured |
+| Instruction following (apply 6 patterns) | not stated | not stated | IFBench 82% | not stated |
+| Avoiding scope creep (don't add features) | likely good (code-trained) | likely good | likely good (agentic) | not stated |
+| Cost | $0 (200K ctx free) | $0 (200K ctx free) | $0 (free) | $0 (free) |
+| Long context on Zen free tier | 200K | 200K | (full 1M via API) | (full 1M via API) |
+| Code quality benchmarked | SWE-Bench 59.0% / TB 66.0% | LiveCodeBench 91.6 | Terminal-Bench 54% | Terminal-Bench 65.8 |
 
 **Revised recommendation: DeepSeek V4 Flash Free**, but with a caveat I didn't have before.
 
 Reasoning for the revision:
-1. **Free tier is free** — eliminates cost as a discriminator.
-2. **DeepSeek has the only verified code benchmark** — LiveCodeBench 91.6 is strong evidence for the M9 task.
-3. **Nemotron's strengths are agentic/long-horizon** (PinchBench 91%, Ruler 1M 95%) — but the M9 task is NOT agentic or long-horizon. It's mechanical refactoring.
-4. **MiMo V2.5 benchmarks are now verified** (Terminal-Bench 65.8, SWE-Bench 56.1, 1M context, MIT). It is a strong alternative to DeepSeek for code tasks.
-5. **DeepSeek V4 Flash is the proven code model** in this set, with the Coder heritage lineage in the broader DeepSeek family.
+1. **MiniMax M3 has the strongest coding benchmarks** in the free tier — SWE-Bench Pro 59.0%, Terminal-Bench 2.1 66.0%, Claw-Eval highest score. Purpose-built for code.
+2. **Free on Zen** ($0, 200K context) — more than enough for single-file M9 edits with the 727-line handoff.
+3. **MSA sparse attention architecture** — designed for efficient long-context, which matters for multi-file refactoring.
+4. **DeepSeek V4 Flash Free** is the fallback (also 200K on Zen, LiveCodeBench 91.6) — use if M3 hits issues.
+5. **Nemotron 3 Ultra Free** remains best for Phase 2 (agentic review). MiMo V2.5 Free for cross-check.
 
 **When Nemotron 3 Ultra would be the right choice**: For Phase 2+ of the deep review (heritage vetting, agentic multi-file analysis, long-context research), Nemotron's agentic tuning (MOPD with 10+ teachers) and 1M context with 95% Ruler score make it the strongest candidate. But that's a different task profile.
 
@@ -473,7 +476,7 @@ Reasoning for the revision:
 
 ```bash
 cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
-opencode --model opencode/deepseek-v4-flash-free --reasoning high "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
+opencode --model opencode/minimax-m3-free --reasoning high "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
 ```
 
 The `opencode/` prefix is required by Zen. Use the `-free` suffix to hit the free tier endpoint.
@@ -481,7 +484,7 @@ The `opencode/` prefix is required by Zen. Use the `-free` suffix to hit the fre
 For tier-by-tier subtasks:
 ```bash
 # Tier 1: observability.py, oracle.py, discovery.py (38 violations)
-opencode --model opencode/deepseek-v4-flash-free --reasoning high "$(cat data/handoff/TASK_M9_TIER1.md)"
+opencode --model opencode/minimax-m3-free --reasoning high "$(cat data/handoff/TASK_M9_TIER1.md)"
 ```
 
 ### Cost estimate (final correction)
@@ -494,9 +497,9 @@ This means the user's M9 edits will be visible to DeepSeek for training. If that
 ### Alternative: Split the workload
 
 If the user wants to use multiple models in parallel for resilience:
-- **Tier 1 (most complex)**: `opencode/nemotron-3-ultra-free` — agentic tuning helps with the god object in oracle.py
-- **Tier 2-4 (mechanical)**: `opencode/deepseek-v4-flash-free` — proven code model
-- **Final verification**: re-run with `opencode/mimo-v2.5-free` to cross-check
+- **Primary (all tiers)**: `opencode/minimax-m3-free` — frontier coding model, SWE-Bench 59.0%
+- **Fallback**: `opencode/deepseek-v4-flash-free` — use if M3 hits context or quality issues
+- **Final verification**: re-run critical files with `opencode/mimo-v2.5-free` to cross-check
 
 This gives you the strengths of all three models against the same task spec.
 
@@ -556,12 +559,18 @@ transform_block(text)
 - DATA COLLECTION: "Trial use only — do not submit personal or confidential data. Logged for security purposes."
 - BEST FOR: Phase 2 deep review (agentic, multi-file, long-context). NOT best for this mechanical M9 task.
 
-### MiniMax M3 (via MiniMax API directly, NOT on OpenCode Zen)
-MiniMax M3 (released 2026-06-01) is a frontier multimodal coding model with 1M context and MSA sparse attention. Available via the MiniMax API directly (platform.minimax.io), NOT via OpenCode Zen. Zen only has M2.7 and M2.5 (228B MoE).
+### MiniMax M3 Free (on OpenCode Zen: `opencode/minimax-m3-free`)
+MiniMax M3 (released 2026-06-01) is a frontier multimodal coding model with 1M context and MSA sparse attention. On OpenCode Zen free tier, available as `opencode/minimax-m3-free` with 200K context window — more than enough for single-file editing with this 727-line handoff.
 
-M3 benchmarks: SWE-Bench Pro 59.0%, Terminal-Bench 2.1 66.0%, Claw-Eval highest score. But M3 is a PAID API model (not on Zen free tier). For this M9 task where free tier is preferred, use deepseek-v4-flash-free. If paying, M3 is a strong choice.
+**Benchmarks** (frontier coding): SWE-Bench Pro 59.0%, Terminal-Bench 2.1 66.0%, Claw-Eval highest score, MCP Atlas 74.2%
 
-If using a MiniMax model via Zen: `opencode/minimax-m2.7` (228B, ~10B activated, $0.30/$1.20 per M tokens).
+**M3 Free is now the primary recommendation for this M9 task.** Reasons:
+1. Free on Zen ($0)
+2. 200K context is sufficient for handoff + single-file editing
+3. Frontier coding benchmarks (SWE-Bench 59.0%, Terminal-Bench 66.0%) — purpose-built for code
+4. MSA sparse attention architecture gives efficient long-context handling
+
+If the 200K context of the free tier is insufficient for a particular file (very unlikely for single-file editing), fall back to `opencode/deepseek-v4-flash-free` (also 200K on Zen free tier) or use M3 via MiniMax API directly with full 1M context (paid).
 
 
 
@@ -667,12 +676,12 @@ FINAL VERIFICATION:
 
 ```bash
 cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
-opencode --model opencode/deepseek-v4-flash-free "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
+opencode --model opencode/minimax-m3-free "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
 ```
 
 Or with reasoning enabled (recommended for Tier 1):
 ```bash
-opencode --model opencode/deepseek-v4-flash-free --reasoning high "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
+opencode --model opencode/minimax-m3-free --reasoning high "$(cat data/handoff/TASK_M9_REMEDIATION_155_BARE_EXCEPTS.md)"
 ```
 
 **Note**: This task is estimated at **4-6 hours of work** for a single agent. If running unattended, ensure the session has enough token budget. Otherwise, break the task into tier-by-tier subtasks:
