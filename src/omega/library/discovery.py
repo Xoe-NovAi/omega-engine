@@ -21,6 +21,15 @@ from typing import Any, Dict, List, Optional
 
 import httpx
 import anyio
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -114,8 +123,11 @@ class DiscoveryOrchestrator:
                     )
                     job_id = path.stem
                     self._jobs[job_id] = report
+                except OmegaError:
+                    raise
                 except Exception as e:
-                    logger.warning(f"Failed to load discovery job {path}: {e}")
+                    logger.error(f"Failed to load discovery job {path}: {e}", exc_info=True)
+                    raise OmegaError(f"Job load failed: {e}", raw_error=e) from e
         if self._jobs:
             logger.info(f"Loaded {len(self._jobs)} discovery jobs from disk")
 
@@ -131,8 +143,11 @@ class DiscoveryOrchestrator:
                     old_path = self._job_path(job_id, old_status)
                     if old_path.exists():
                         old_path.unlink()
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.warning(f"Failed to persist discovery job {job_id}: {e}")
+            logger.error(f"Failed to persist discovery job {job_id}: {e}", exc_info=True)
+            raise OmegaPersistenceError(f"Job persist failed: {e}", raw_error=e) from e
 
     async def start_discovery(self, query: str) -> str:
         """Start a background discovery job and return the job ID."""
@@ -167,11 +182,17 @@ class DiscoveryOrchestrator:
             report.status = "complete"
             self._persist_job(job_id, report)
             
-        except Exception as e:
-            logger.error(f"Discovery job {job_id} failed: {e}")
+        except OmegaError as e:
+            logger.error(f"Discovery job {job_id} failed (OmegaError): {e}")
             report.status = "failed"
             report.final_synthesis = f"Error: {e}"
             self._persist_job(job_id, report)
+        except Exception as e:
+            logger.error(f"Discovery job {job_id} failed (Unexpected): {e}", exc_info=True)
+            report.status = "failed"
+            report.final_synthesis = f"Error: {e}"
+            self._persist_job(job_id, report)
+            raise OmegaError(f"Discovery job {job_id} failed: {e}", raw_error=e) from e
 
     def get_job_status(self, job_id: str) -> Dict[str, Any]:
         """Get the current status of a discovery job."""
@@ -210,9 +231,11 @@ class DiscoveryOrchestrator:
                 max_tokens=1024
             )
             return response
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.error(f"Gemini Recon Phase failed: {e}")
-            return f"Error during Gemini recon: {e}"
+            logger.error(f"Gemini Recon Phase failed: {e}", exc_info=True)
+            raise OmegaError(f"Gemini recon failed: {e}", raw_error=e) from e
 
     async def _phase_decompose(self, query: str, recon_summary: str) -> List[Dict[str, Any]]:
         """Decompose the main query into 3-5 specific subtopics for deeper research."""
@@ -239,9 +262,11 @@ class DiscoveryOrchestrator:
             
             topics = json.loads(clean)
             return [{"query": t, "status": "pending"} for t in topics]
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.error(f"Decomposition failed: {e}")
-            return [{"query": query, "status": "pending"}]
+            logger.error(f"Decomposition failed: {e}", exc_info=True)
+            raise OmegaError(f"Decomposition failed: {e}", raw_error=e) from e
 
     async def _research_subtopic(self, report: DiscoveryReport, subtopic: Dict[str, Any]):
         """Run discovery for a single subtopic."""
@@ -258,9 +283,11 @@ class DiscoveryOrchestrator:
             report.extracted_content.extend(extracted)
             
             subtopic["status"] = "complete"
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.error(f"Subtopic research failed for '{sub_query}': {e}")
-            subtopic["status"] = "failed"
+            logger.error(f"Subtopic research failed for '{sub_query}': {e}", exc_info=True)
+            raise OmegaError(f"Subtopic research failed: {e}", raw_error=e) from e
 
     async def _phase_synthesize(self, report: DiscoveryReport) -> str:
         """Final synthesis of all gathered research."""
@@ -285,9 +312,11 @@ class DiscoveryOrchestrator:
                 max_tokens=2048
             )
             return response
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.error(f"Final synthesis failed: {e}")
-            return f"Error during synthesis: {e}"
+            logger.error(f"Final synthesis failed: {e}", exc_info=True)
+            raise OmegaError(f"Final synthesis failed: {e}", raw_error=e) from e
 
     async def _phase_discovery(self, query: str) -> List[Dict[str, Any]]:
         """Phase 2: Semantic discovery via Exa (Free Tier)."""
@@ -316,9 +345,11 @@ class DiscoveryOrchestrator:
                 resp.raise_for_status()
                 data = resp.json()
                 return data.get("results", [])
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.error(f"Exa Phase failed: {e}")
-            return []
+            logger.error(f"Exa Phase failed: {e}", exc_info=True)
+            raise ProviderError(f"Exa Phase failed: {e}", raw_error=e) from e
 
     async def _phase_validation(self, query: str, sources: List[Dict[str, Any]]) -> List[str]:
         """Phase 3: Broad validation via Brave Search (Free Tier)."""
@@ -339,9 +370,11 @@ class DiscoveryOrchestrator:
                 data = resp.json()
                 results = data.get("web", {}).get("results", [])
                 return [f"{r.get('title')}: {r.get('description')}" for r in results]
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.error(f"Brave Phase failed: {e}")
-            return [f"Error during Brave validation: {e}"]
+            logger.error(f"Brave Phase failed: {e}", exc_info=True)
+            raise ProviderError(f"Brave Phase failed: {e}", raw_error=e) from e
 
     async def _phase_extraction(self, sources: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Phase 4: Content extraction via Tavily (Free Tier)."""
@@ -363,6 +396,8 @@ class DiscoveryOrchestrator:
                 resp.raise_for_status()
                 data = resp.json()
                 return data.get("results", [])
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.error(f"Tavily Phase failed: {e}")
-            return []
+            logger.error(f"Tavily Phase failed: {e}", exc_info=True)
+            raise ProviderError(f"Tavily Phase failed: {e}", raw_error=e) from e
