@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 """Intake Inbox — Queue content for curation and library ingestion.
 
 AP: AP-OMEGA-INBOX-v1.0.0
@@ -24,6 +25,15 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import anyio
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -198,8 +208,10 @@ class InboxManager:
         try:
             text = await anyio.Path(src).read_text()
             data = json.loads(text)
+        except OmegaError:
+            data = {"item_id": item_id}
         except Exception as e:
-            logger.warning("Failed to load failed item %s: %s", item_id, e)
+            logger.error("Failed to load failed item %s: %s", item_id, e, exc_info=True)
             data = {"item_id": item_id}
         data["error"] = error
         data["failed_at"] = datetime.now(timezone.utc).isoformat()
@@ -219,8 +231,11 @@ class InboxManager:
                     try:
                         text = await anyio.Path(path).read_text()
                         return InboxItem.from_dict(json.loads(text))
+                    except OmegaError:
+                        continue
                     except Exception as e:
-                        logger.warning("Failed to load inbox item from %s: %s", path, e)
+                        logger.error("Failed to load inbox item from %s: %s", path, e, exc_info=True)
+                        continue
         return None
 
     async def clear_completed(self) -> int:
