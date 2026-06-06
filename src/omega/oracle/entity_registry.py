@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Entity Registry — YAML-backed Entity CRUD
 # AP: AP-ENTITY-REGISTRY-v1.0.0
 # ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: ENTITY-MANAGEMENT]
@@ -31,11 +32,11 @@ logger = logging.getLogger(__name__)
 @dataclass
 class Entity:
     """A user-definable entity — a Pillar Keeper or custom persona.
-
+    
     [id-soft: doom-1993] ZONEID Pattern — magic constant validated on get()
     to catch stale references and tombstoned entities.
     """
-
+    
     name: str
     domains: List[str]
     model: str
@@ -56,8 +57,10 @@ class Entity:
     container: bool = False
     port: Optional[int] = None
     wad_source: Optional[str] = None
+    priority: int = 0  # [Project 3] Layer priority for Shadow-Stacking
     # [id-soft: doom-1993] ZONEID Pattern — runtime marker, not serialized
     magic: int = field(default=ZONEID_ENTITY, compare=False)
+
     # [id-soft: doom-1993] High-Bit Trick — flags as bitfield, high bit = system
     # 0x80000000 = system entity, 0x40000000 = WAD-loaded entity
     flags: int = field(default=0, compare=False)
@@ -134,28 +137,21 @@ class Entity:
 
 class EntityRegistry:
     """Loads, saves, and manages entities from YAML config.
-
+    
     [id-soft: doom-1993] Lazy Deletion — entities are tombstoned (magic =
     ZONEID_TOMBSTONE) on remove() and reaped after a grace period.
-    See P_RemoveThinker in DOOM 1993 p_tick.c:62-103.
-    [id-soft: quake-1996] Grace Period — 0.5s delay before actual removal
-    ensures in-flight operations complete safely.
+    [id-soft: quake-1996] Grace Period — 0.5s delay for safety.
     """
-
+    
     # [id-soft: quake-1996] Grace Period — 0.5s realloc delay
-    # Derived from Quake 1996 host_cmd.c's delayed entity removal pattern.
     TOMBSTONE_GRACE_SECONDS = 0.5
-
+    
     # [id-soft: doom-1993] High-Bit Trick — flag encoding using high bit
-    # DOOM's NF_SUBSECTOR (0x8000) repurposed high bit of node child index.
-    # Here: high bit (bit 31) = SYSTEM entity. Two types in one integer field.
     FLAG_SYSTEM = 0x80000000  # Bit 31: system-level entity (vs user-created)
     FLAG_WAD = 0x40000000     # Bit 30: loaded from a WAD (vs runtime-created)
     FLAG_ACTIVE = 0x00000000  # Default: active entity (low bits = slot flags)
-
+    
     # [id-soft: quake3-1999] Hard-Boundary Struct — engine zone vs game zone
-    # Q3A separated entityState_t (engine-owned) from entityShared_t (game-owned)
-    # with a "DO NOT MODIFY" comment. We use sentinel attributes.
     ENGINE_ZONE_ATTRS = frozenset({
         "magic", "name", "domains", "model", "role",
         "container", "port", "wad_source", "pillars",
@@ -165,17 +161,13 @@ class EntityRegistry:
         "secondary_keeper", "pantheon", "element", "chakra",
         "planet", "sigil", "glyph", "invocation",
     })
-
+    
     # 1. Define Core Slots — The Holographic Grid (D113 Firewall Fix)
-    # Engine-Stack Firewall (M2): PILLAR_SLOTS is a frozenset of slot identifiers
-    # ONLY. Domain/element/chakra attributes live in the IWAD entities.yaml, not in
-    # the engine core. This prevents hardcoding arcana_nova-specific meanings.
-    # [id-soft: doom-1993] WAD System — engine only knows slot names, WAD provides content.
     PILLAR_SLOTS = frozenset({
         "p1", "p2", "p3", "p4", "p5",
         "p6", "p7", "p8", "p9", "p10",
     })
-
+    
     def __init__(self, config_path: Optional[str] = None):
         if config_path is None:
             # Resolve active IWAD from config/omega.yaml to enforce Engine-Stack Firewall
@@ -190,15 +182,16 @@ class EntityRegistry:
                 config_path = str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / "_omega_default" / "entities.yaml")
         
         self.config_path = Path(config_path)
-        self._entities: Dict[str, Entity] = {}
+        # [Project 3: Shadow-Stacking] Store entities as a list of layers sorted by priority
+        self._entities: Dict[str, List[Entity]] = {}
         self._wad_sources: Dict[str, List[str]] = {}  # lowercase entity name -> list of WAD source names
         # [id-soft: doom-1993] Multi-Index Entity — dual-index lookup
-        # maps capability (e.g. "research") -> list of entity keys
         self._capability_index: Dict[str, List[str]] = {}
         self._lock = None  # Created lazily in async context (C-ARCH-004 pattern)
         # [id-soft: doom-1993] Lazy Deletion — tombstoned entity tracking
         self._tombstoned: Dict[str, float] = {}  # key -> time.monotonic() of tombstone
         self._load()
+
 
     def _load(self) -> None:
         """Load entities from YAML file."""
@@ -246,7 +239,7 @@ class EntityRegistry:
             key = entity.name.lower()
             # [id-soft: doom-1993] ZONEID Pattern — set at load, not serialized
             entity.magic = ZONEID_ENTITY
-            self._entities[key] = entity
+            self._entities[key] = [entity]
             
             # Track wad_source for entities that have it
             if entity.wad_source:
@@ -268,15 +261,10 @@ class EntityRegistry:
 
     def get(self, name: str, raise_on_tombstoned: bool = False) -> Optional[Entity]:
         """Get entity by name, role, or Pillar Slot (3-Tier Resolution).
-
+        
+        [Project 3: Shadow-Stacking] Projects a single Entity by merging layers.
         [id-soft: doom-1993] ZONEID Pattern — validates magic on matched entities
         [id-soft: doom-1993] Lazy Deletion — tombstoned entities treated as not found
-
-        Args:
-            name: Entity name to look up.
-            raise_on_tombstoned: If True, raise EntityTombstonedError instead of returning None
-                for entities that were removed. Mandate 9 enforcement for callers
-                that need to distinguish 'does not exist' from 'was removed'.
         """
         if not name:
             return None
@@ -284,37 +272,115 @@ class EntityRegistry:
         name_lower = name.lower().strip()
         
         # Tier 1: Direct Entity Match (e.g., "sekhmet")
-        entity = self._entities.get(name_lower)
-        if entity:
-            if entity.magic == ZONEID_TOMBSTONE:
-                # [id-soft: doom-1993] Lazy Deletion — sentinel marker check
+        layers = self._entities.get(name_lower)
+        if layers:
+            # Filter out tombstoned layers
+            active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
+            if not active_layers:
                 if raise_on_tombstoned:
                     raise EntityTombstonedError(
                         cache_key=name_lower,
                         message=f"Entity '{name}' was removed (tombstoned) — call active_iter() for current entities",
                     )
                 return None
-            # [id-soft: doom-1993] ZONEID Pattern — runtime integrity check
-            validate_zoneid(entity.magic, ZONEID_ENTITY, f"EntityRegistry.get({name})")
-            return entity
+            
+            # [Project 3: Shadow-Stacking] Project the layered entity
+            return self._project_entity(active_layers)
             
         # Tier 2: Slot Match (e.g., "p1" or "pillar 1")
-        # Normalize "pillar 1" -> "p1"
         slot_key = name_lower.replace("pillar ", "p").replace("pillar", "p")
         if slot_key in self.PILLAR_SLOTS:
             # Resolve the slot to its active role in the default/active IWAD
-            # We look for an entity that has this slot in its .pillars list
-            for ent in self._entities.values():
-                # Check if slot_key (e.g. "p1") matches any of the entity's pillars (case-insensitive)
-                if any(p.lower() == slot_key for p in ent.pillars):
-                    return ent
-
+            # We look for any entity that has this slot in its .pillars list
+            for key, layers in self._entities.items():
+                active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
+                if not active_layers:
+                    continue
+                projected = self._project_entity(active_layers)
+                if any(p.lower() == slot_key for p in projected.pillars):
+                    return projected
+        
         # Tier 3: Role Match (e.g., "sysadmin")
-        for ent in self._entities.values():
-            if ent.role and ent.role.lower() == name_lower:
-                return ent
+        for key, layers in self._entities.items():
+            active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
+            if not active_layers:
+                continue
+            projected = self._project_entity(active_layers)
+            if projected.role and projected.role.lower() == name_lower:
+                return projected
                 
         return None
+
+    def _project_entity(self, layers: List[Entity]) -> Entity:
+        """Project a single Entity by merging multiple layers.
+        
+        Engine Zone: Highest priority layer wins (Standard Override).
+        Game Zone: Traits are merged (Concatenation/Union).
+        """
+        # Base layer is the lowest priority (last in list)
+        base = layers[-1]
+        
+        # Start with a copy of the base
+        projected = Entity(
+            name=base.name,
+            domains=list(base.domains),
+            model=base.model,
+            personality=base.personality,
+            capabilities=list(base.capabilities),
+            temperature=base.temperature,
+            context_window=base.context_window,
+            pillars=list(base.pillars),
+            secondary_keeper=base.secondary_keeper,
+            pantheon=base.pantheon,
+            element=base.element,
+            chakra=base.chakra,
+            planet=base.planet,
+            sigil=base.sigil,
+            glyph=base.glyph,
+            invocation=base.invocation,
+            role=base.role,
+            container=base.container,
+            port=base.port,
+            wad_source=base.wad_source,
+            priority=layers[0].priority, # Highest priority of the stack
+        )
+        
+        # Merge layers from lowest to highest priority
+        for layer in reversed(layers):
+            # 1. Engine Zone: Override
+            projected.model = layer.model or projected.model
+            projected.role = layer.role or projected.role
+            projected.container = layer.container if layer.container else projected.container
+            projected.port = layer.port or projected.port
+            projected.wad_source = layer.wad_source or projected.wad_source
+            
+            # 2. Game Zone: Merge/Union
+            # Domains & Capabilities: Set Union
+            projected.domains = list(set(projected.domains + layer.domains))
+            projected.capabilities = list(set(projected.capabilities + layer.capabilities))
+            
+            # Personality & Invocation: Concatenation
+            if layer.personality and layer.personality != projected.personality:
+                projected.personality = f"{layer.personality}\n\n{projected.personality}" if projected.personality else layer.personality
+            
+            if layer.invocation and layer.invocation != projected.invocation:
+                projected.invocation = f"{layer.invocation}\n\n{projected.invocation}" if projected.invocation else layer.invocation
+                
+            # Other traits: Highest priority wins
+            projected.temperature = layer.temperature or projected.temperature
+            projected.context_window = layer.context_window or projected.context_window
+            projected.secondary_keeper = layer.secondary_keeper or projected.secondary_keeper
+            projected.pantheon = layer.pantheon or projected.pantheon
+            projected.element = layer.element or projected.element
+            projected.chakra = layer.chakra or projected.chakra
+            projected.planet = layer.planet or projected.planet
+            projected.sigil = layer.sigil or projected.sigil
+            projected.glyph = layer.glyph or projected.glyph
+            
+        # Final validation
+        projected.magic = ZONEID_ENTITY
+        return projected
+
 
     def get_by_capability(self, capability: str) -> List[Entity]:
         """Find all active entities that possess a specific capability.
@@ -332,29 +398,32 @@ class EntityRegistry:
 
     def list(self) -> List[Entity]:
         """List all non-tombstoned entities.
-
+        
         [id-soft: doom-1993] Lazy Deletion — tombstoned entities filtered out.
         """
         return self.active_iter()
-
+    
     def list_pillar_keepers(self) -> List[Entity]:
         """List only the 10 Pillar Keepers (non-tombstoned entities with pillars)."""
         return [e for e in self.active_iter() if e.pillars]
-
+    
     def names(self) -> List[str]:
         """Return list of non-tombstoned entity names."""
         return [e.name for e in self.list()]
-
+    
     def get_all(self) -> Dict[str, Entity]:
         """Return all entities as a dict keyed by lowercase name.
-
+        
         [id-soft: doom-1993] Lazy Deletion — tombstoned entities excluded.
         """
-        return {k: v for k, v in self._entities.items() if v.magic != ZONEID_TOMBSTONE}
-
+        return {k: self._project_entity([l for l in layers if l.magic != ZONEID_TOMBSTONE]) 
+                for k, layers in self._entities.items() 
+                if any(l.magic != ZONEID_TOMBSTONE for l in layers)}
+    
     def get_by_wad(self, wad_name: str) -> List[Entity]:
         """Return all non-tombstoned entities from a specific WAD."""
         return [e for e in self.active_iter() if e.wad_source == wad_name]
+
 
     def get_wad_sources(self, name: str) -> List[str]:
         """Return list of WAD sources for a given entity name (lowercase lookup).
@@ -365,10 +434,10 @@ class EntityRegistry:
         return self._wad_sources.get(name.lower(), [])
 
     async def add(self, entity: Entity) -> None:
-        """Add a new entity. Overwrites if name exists.
-
-        Normalizes names to lowercase for case-insensitive lookup.
-        [id-soft: doom-1993] High-Bit Trick — sets WAD flag if wad_source present
+        """Add a new entity layer.
+        
+        [Project 3: Shadow-Stacking] Entities are stored as a list of layers.
+        New layers are appended and sorted by priority (highest first).
         """
         if self._lock is None:
             self._lock = anyio.Lock()
@@ -400,7 +469,14 @@ class EntityRegistry:
             
             # [id-soft: doom-1993] ZONEID Pattern — set runtime marker
             entity.magic = ZONEID_ENTITY
-            self._entities[key] = entity
+            
+            # [Project 3: Shadow-Stacking] Layered storage
+            if key not in self._entities:
+                self._entities[key] = []
+            self._entities[key].append(entity)
+            # Sort layers by priority (descending)
+            self._entities[key].sort(key=lambda e: e.priority, reverse=True)
+            
             await self._save()
             
             # Automatically scaffold persistent workspace for the awakened entity
@@ -409,6 +485,7 @@ class EntityRegistry:
                 entity.name, entity.role, entity.pillars
             )
             await anyio.to_thread.run_sync(scaffold_fn)
+
 
     async def remove(self, name: str) -> bool:
         """Remove an entity by name. Returns True if removed.
@@ -471,10 +548,19 @@ class EntityRegistry:
         Derived from DOOM 1993 p_tick.c:62-103: entities with sentinel
         markers are skipped; actual reaping happens asynchronously.
 
+        self._entities is Dict[str, List[Entity]] (one key can hold stacked
+        layers from multiple WAD sources). Flatten all layers and filter
+        tombstoned entities.
+
         Currently O(n) — future optimization: maintain a separate
         active set with [id-soft: doom-1993] Mobj Dual-Linking pattern.
         """
-        return [e for e in self._entities.values() if e.magic != ZONEID_TOMBSTONE]
+        return [
+            e
+            for layers in self._entities.values()
+            for e in layers
+            if e.magic != ZONEID_TOMBSTONE
+        ]
 
     def count_active(self) -> int:
         """Count non-tombstoned entities."""
@@ -517,7 +603,7 @@ class EntityRegistry:
 
     def find_by_domain(self, text: str) -> Optional[Entity]:
         """Find the best entity match for a query text based on domain keywords.
-
+        
         Matches Pillar Keepers only (Nova handles routing separately).
         Scores each entity by how many domain keywords appear in the text.
         Uses word-boundary matching to avoid substring false positives.
@@ -527,25 +613,37 @@ class EntityRegistry:
         best_score = 0
         best_entity: Optional[Entity] = None
         words = set(text_lower.split())
-
-        for entity in self.list_pillar_keepers():
+        
+        for key, layers in self._entities.items():
+            active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
+            if not active_layers:
+                continue
+            projected = self._project_entity(active_layers)
+            if not projected.pillars:
+                continue
+                
             score = 0
-            for keyword in entity.domains:
+            for keyword in projected.domains:
                 kw_lower = keyword.lower()
                 if kw_lower in words or f" {kw_lower} " in f" {text_lower} ":
                     score += 1
             if score > best_score:
                 best_score = score
-                best_entity = entity
-
+                best_entity = projected
+        
         return best_entity if best_score > 0 else None
+
 
     def find_by_name_fragment(self, fragment: str) -> Optional[Entity]:
         """Find entity by partial name match (for 'summon' detection)."""
         frag = fragment.lower()
-        for key, entity in self._entities.items():
-            if frag in key or frag in entity.name.lower():
-                return entity
+        for key, layers in self._entities.items():
+            active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
+            if not active_layers:
+                continue
+            projected = self._project_entity(active_layers)
+            if frag in key or frag in projected.name.lower():
+                return projected
         return None
 
     async def _save(self) -> None:
@@ -561,8 +659,14 @@ class EntityRegistry:
 
         def _sync_save():
             data = {"entities": {}}
-            for key, entity in self._entities.items():
-                data["entities"][key] = entity.to_dict()
+            for key, layers in self._entities.items():
+                # Project stacked layers into a single Entity for serialization.
+                # Skip keys whose layers are all tombstoned.
+                active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
+                if not active_layers:
+                    continue
+                projected = self._project_entity(active_layers)
+                data["entities"][key] = projected.to_dict()
             
             temp_dir = self.config_path.parent
             fd, temp_path = tempfile.mkstemp(dir=str(temp_dir), suffix=".tmp")
