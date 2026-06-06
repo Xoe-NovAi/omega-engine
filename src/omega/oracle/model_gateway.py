@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Model Gateway — Local-First Inference Abstraction
 # AP: AP-MODEL-GATEWAY-v2.4.0
 # ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: MODEL-ABSTRACTION]
@@ -27,6 +28,15 @@ import inspect
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 import anyio
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 import yaml
 from omega.cvar_table import cvar_get, cvar_namespace
 from tenacity import (
@@ -97,6 +107,10 @@ class ModelGateway:
                 str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "models.yaml"),
             )
         self.config_path = Path(config_path)
+        
+        # Load Sovereign Secrets from .env
+        self._load_sovereign_secrets()
+        
         self.models = self._load_models()
         self._kv_cache_config = self._load_kv_cache_config()
         self._backend_cache: Dict[str, bool] = {}
@@ -109,8 +123,16 @@ class ModelGateway:
         self._mock_backend = OfflineMockBackend()
         self.providers = self._load_provider_fabric()
         # [id-soft: doom-1993] Fixed-Size Active Set — 32-entry clip range for O(1) culling
-        # Maintains a list of the 32 most recently successful providers.
-        self._active_providers: List[str] = []
+        # Sprint 3 Hardening (P6): Split into Local/Cloud tiers to prevent
+        # sovereignty drift (Mandate 7) — local providers always tried first.
+        self._local_active: List[str] = []
+        self._cloud_active: List[str] = []
+        # Availability TTL cache (seconds) — avoids repeated health checks
+        # for known-healthy or known-dead providers.
+        self._availability_cache: Dict[str, Tuple[float, bool]] = {}
+        self._availability_ttl: float = 30.0
+        # Shared HTTP client (lazy-initialized) for connection pooling.
+        self._http_client: Optional[Any] = None
         # Sprint 2 Governance: GnosisProxy for RAG-based tool discovery
 
         self._entity_registry = EntityRegistry()
@@ -119,6 +141,34 @@ class ModelGateway:
         self._health_monitor = health_monitor
         # Sovereign Guard: Prevent leak amplification by limiting concurrent gateway entries
         self._limiter = anyio.CapacityLimiter(10)
+
+    def _load_sovereign_secrets(self) -> None:
+        """Load API keys from .env file into environment variables.
+        
+        Implements the Sovereign Gateway pattern: secrets are stored in a 
+        single .env file and injected into the process environment.
+        """
+        env_path = Path(__file__).resolve().parent.parent.parent.parent / ".env"
+        if not env_path.exists():
+            logger.warning(f"Sovereign secrets file not found at {env_path}. Using system env.")
+            return
+        
+        try:
+            with open(env_path, "r") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    if "=" in line:
+                        key, value = line.split("=", 1)
+                        os.environ[key.strip()] = value.strip()
+            logger.info("Sovereign secrets loaded successfully from .env")
+        except OmegaError:
+            raise
+        except Exception as e:
+            logger.error(f"Failed to load sovereign secrets: {e}", exc_info=True)
+            raise ConfigError(f"Sovereign secrets load failed: {e}", raw_error=e) from e
+
 
     @staticmethod
     def _create_openrouter(name: str, cfg: dict) -> OpenAICompatProvider:
@@ -457,8 +507,11 @@ class ModelGateway:
                             return tag
                     if available:
                         return available[0]
-        except Exception:
-            logger.debug(f"Ollama model resolution failed for {model_name}", exc_info=True)
+        except OmegaError:
+            raise
+        except Exception as e:
+            logger.debug(f"Ollama model resolution failed for {model_name}: {e}", exc_info=True)
+            # Resolve to original as fallback
         return model_name
 
     # ── Circuit Breaker Integration ──────────────────────────────────
@@ -532,16 +585,26 @@ class ModelGateway:
                                getattr(provider, 'name', '?'), e)
 
     def _update_active_set(self, provider_name: str) -> None:
-        """Maintain a fixed-size active set of successful providers (LRU).
-        
+        """Maintain tiered fixed-size active sets of successful providers (LRU).
+
         [id-soft: doom-1993] Fixed-Size Active Set — 32-entry clip range.
-        If the set exceeds 32, the oldest (least recently used) is culled.
+        [hardening-p6] Sovereignty-Tiered — local and cloud providers are
+        tracked in separate sets to prevent sovereignty drift (Mandate 7).
+        A known-good local provider is always preferred over a known-good
+        cloud provider, regardless of recency.
         """
-        if provider_name in self._active_providers:
-            self._active_providers.remove(provider_name)
-        self._active_providers.insert(0, provider_name)
-        if len(self._active_providers) > 32:
-            self._active_providers.pop()
+        is_cloud = self._is_cloud_provider_name(provider_name)
+        target = self._cloud_active if is_cloud else self._local_active
+
+        if provider_name in target:
+            target.remove(provider_name)
+        target.insert(0, provider_name)
+        if len(target) > 32:
+            target.pop()
+
+    def _is_cloud_provider_name(self, name: str) -> bool:
+        """Check if a provider name is a cloud provider."""
+        return name in self._cloud_providers
 
     async def generate(
         self, model_name: str, system_prompt: str, user_query: str,
@@ -556,16 +619,37 @@ class ModelGateway:
         errors = []
         success_provider = None
         
-        # 1. Build the search order: Active Set (LRU) -> Full Fabric
+        # 1. Build the search order: Sovereignty-Tiered (P6 Hardening)
+        #    Local Active (LRU) -> Local Fabric -> Cloud Active (LRU) -> Cloud Fabric
+        #    This prevents sovereignty drift (Mandate 7): a known-good local
+        #    provider is always preferred over a known-good cloud provider.
         search_order = []
-        fabric_names = {p.name for p in self.providers}
-        for p_name in self._active_providers:
-            if p_name in fabric_names:
-                search_order.append(next(p for p in self.providers if p.name == p_name))
-        
-        for provider in self.providers:
-            if provider not in search_order:
-                search_order.append(provider)
+        fabric_by_name = {p.name: p for p in self.providers}
+        seen = set()
+
+        # Tier 1: Local active set (LRU)
+        for p_name in self._local_active:
+            if p_name in fabric_by_name:
+                search_order.append(fabric_by_name[p_name])
+                seen.add(p_name)
+
+        # Tier 2: Remaining local fabric
+        for p in self.providers:
+            if p.name not in seen and p.name not in self._cloud_providers:
+                search_order.append(p)
+                seen.add(p.name)
+
+        # Tier 3: Cloud active set (LRU)
+        for p_name in self._cloud_active:
+            if p_name in fabric_by_name and p_name not in seen:
+                search_order.append(fabric_by_name[p_name])
+                seen.add(p_name)
+
+        # Tier 4: Remaining cloud fabric
+        for p in self.providers:
+            if p.name not in seen:
+                search_order.append(p)
+                seen.add(p.name)
         
         for provider in search_order:
             # Step 1: BSP-style pre-check — fast fail if circuit is OPEN
@@ -784,9 +868,11 @@ class ModelGateway:
             outputs = sess.run(None, inputs)
             if outputs and len(outputs[0]) > 0:
                 return str(outputs[0][0])[:max_tokens]
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.debug(f"ONNX inference failed: {e}")
-        return None
+            logger.error(f"ONNX inference failed: {e}", exc_info=True)
+            return None
 
     def is_onnx_available(self) -> bool:
         """Check if ONNX Runtime is installed and usable."""
