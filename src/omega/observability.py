@@ -12,8 +12,18 @@
 # the entire Oracle → Entity → ModelGateway → Response pipeline.
 
 import json
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 import logging
 import os
+import threading
 import time
 import traceback
 import uuid
@@ -139,6 +149,39 @@ class ForensicsManager:
         self._has_crashed = False
         self._obs_engine = observability_engine
         self._lock = anyio.Lock()
+        # [hardening-p8] Install signal handlers for last-gasp death marker.
+        # These are only installed in the main thread and only if not in test mode.
+        if os.environ.get("OMEGA_ENV") != "test":
+            try:
+                import signal
+                if threading.current_thread() is threading.main_thread():
+                    for sig in (signal.SIGSEGV, signal.SIGABRT, signal.SIGILL,
+                                signal.SIGFPE, signal.SIGTERM):
+                        try:
+                            signal.signal(sig, self._sync_signal_handler)
+                        except (ValueError, OSError):
+                            pass
+            except OmegaError:
+                logger.debug("OmegaError installing signal handler")
+            except Exception as e:
+                logger.error("Unexpected error installing signal handler: %s", e, exc_info=True)
+
+    def _sync_signal_handler(self, signum, frame):
+        """Synchronous signal handler. Writes a death marker then re-raises.
+
+        [hardening-p8] Signal handlers must be async-signal-safe, so we
+        only perform minimal synchronous I/O here.
+        """
+        import signal
+        try:
+            sig_name = signal.Signals(signum).name
+        except (ValueError, AttributeError):
+            sig_name = str(signum)
+        self.write_death_marker(reason=f"signal_{sig_name}")
+        # Re-raise to the default handler (which will terminate the process).
+        import signal as _sig
+        _sig.signal(signum, _sig.SIG_DFL)
+        _sig.raise_signal(signum)
 
     def record_error(
         self,
@@ -170,6 +213,7 @@ class ForensicsManager:
 
         Collects error details, engine state, recent events, and system
         info into a JSON file at data/crashes/crash_{timestamp}_{trace_id}.json.
+        [hardening-p8] Adds os.fsync() and deep state capture.
         """
         self._has_crashed = True
 
@@ -200,24 +244,56 @@ class ForensicsManager:
         try:
             with open(str(atomic_path), "w", encoding="utf-8") as f:
                 json.dump(dump, f, default=str, indent=2)
+                # [hardening-p8] Force physical write — os.fsync() ensures
+                # the crash dump survives a system freeze or hard kill.
+                f.flush()
+                os.fsync(f.fileno())
             atomic_path.rename(path)
             logger.critical(f"Crash dump written to {path}")
+        except OmegaError:
+            logger.error("Failed to write crash dump (OmegaError)")
         except Exception as e:
-            logger.error(f"Failed to write crash dump: {e}")
+            logger.error(f"Unexpected failure writing crash dump: {e}", exc_info=True)
 
         return path
+
+    def write_death_marker(self, reason: str = "signal") -> None:
+        """Synchronous last-gasp death marker.
+
+        Called from signal handlers (which cannot run async code).
+        Writes a minimal marker to disk so check_recovery() can detect
+        an abnormal termination even if the async snapshot() never ran.
+        [hardening-p8] Signal-safe fallback.
+        """
+        try:
+            marker_path = self._crash_dir / "death_marker.txt"
+            self._crash_dir.mkdir(parents=True, exist_ok=True)
+            with open(str(marker_path), "w") as f:
+                f.write(f"{datetime.now(timezone.utc).isoformat()}\t{reason}\n")
+                f.flush()
+                os.fsync(f.fileno())
+        except OmegaError:
+            pass
+        except (IOError, OSError, TypeError) as e:
+            logger.error("Failed to write death marker (signal handler): %s", e, exc_info=True)
+            pass
 
     async def _collect_engine_state(self) -> Dict[str, Any]:
         """Collect current engine state for crash dump.
 
         Safe to call even if engine components are not fully initialized.
+        [hardening-p8] Deep state capture: thread dumps, memory maps, fd audit.
         """
+        import threading
         state: Dict[str, Any] = {
             "providers_available": 0,
             "circuit_breakers_open": [],
             "memory_warm_count": 0,
             "memory_hot_count": 0,
             "has_crashed": self._has_crashed,
+            "thread_dump": self._collect_thread_dump(),
+            "memory_map_sample": self._collect_memory_map(),
+            "open_file_descriptors": self._collect_fd_audit(),
         }
 
         if self._obs_engine:
@@ -233,8 +309,11 @@ class ForensicsManager:
                 p for p in providers
                 if hasattr(p, 'is_available') and p.is_available
             ])
+        except OmegaError:
+            pass
         except Exception as e:
-            logger.warning("Failed to collect provider state for crash dump: %s", e)
+            logger.error("Failed to collect provider state for crash dump: %s", e, exc_info=True)
+            pass
 
         try:
             import psutil
@@ -249,10 +328,65 @@ class ForensicsManager:
                             if len(parts) >= 2:
                                 state["rss_mb"] = int(parts[1]) / 1024
                             break
+            except OmegaError:
+                pass
             except Exception as e:
-                logger.warning("Failed to read /proc/self/status for RSS: %s", e)
+                logger.error("Failed to read /proc/self/status for RSS: %s", e, exc_info=True)
+                pass
 
         return state
+
+    @staticmethod
+    def _collect_thread_dump() -> List[Dict[str, str]]:
+        """Capture stack traces of all live threads. [hardening-p8]"""
+        import sys
+        import threading
+        try:
+            frames = sys._current_frames()
+            result = []
+            for tid, frame in frames.items():
+                thread = next((t for t in threading.enumerate() if t.ident == tid), None)
+                name = thread.name if thread else f"Unknown-{tid}"
+                # Format the stack trace
+                import traceback
+                stack = traceback.format_stack(frame, limit=8)
+                result.append({
+                    "thread_id": str(tid),
+                    "thread_name": name,
+                    "stack": "".join(stack)[:2000],
+                })
+            return result
+        except Exception as e:
+            return [{"error": str(e)}]
+
+    @staticmethod
+    def _collect_memory_map(limit: int = 20) -> List[str]:
+        """Sample the process memory map from /proc/self/maps. [hardening-p8]"""
+        try:
+            with open("/proc/self/maps", "r") as f:
+                lines = f.readlines()
+            # Return first N and last N lines to keep size manageable
+            if len(lines) <= limit * 2:
+                return [l.strip() for l in lines]
+            return [l.strip() for l in lines[:limit] + lines[-limit:]]
+        except OmegaError:
+            return []
+        except Exception as e:
+            logger.error(f"Failed to collect memory map: {e}", exc_info=True)
+            return []
+
+    @staticmethod
+    def _collect_fd_audit() -> Dict[str, int]:
+        """Audit open file descriptors. [hardening-p8]"""
+        try:
+            with open("/proc/self/fd", "r") as f:
+                fds = f.readlines()
+            return {"total_open": len(fds)}
+        except OmegaError:
+            return {"total_open": -1}
+        except Exception as e:
+            logger.error(f"Failed to collect FD audit: {e}", exc_info=True)
+            return {"total_open": -1}
 
     def _collect_system_info(self) -> Dict[str, Any]:
         """Collect system-level info for crash dump.
@@ -281,8 +415,10 @@ class ForensicsManager:
         try:
             import sniffio
             return sniffio.current_async_library()
+        except OmegaError:
+            logger.debug("OmegaError detecting anyio backend")
         except Exception as e:
-            logger.debug("anyio backend detection failed: %s", e)
+            logger.error("Unexpected error detecting anyio backend: %s", e, exc_info=True)
         return "unknown"
 
     def check_recovery(self) -> Optional[Dict[str, Any]]:
@@ -318,8 +454,10 @@ class ForensicsManager:
             logger.info(f"Crash dump archived to {archived}")
 
             return dump
+        except OmegaError:
+            return None
         except Exception as e:
-            logger.warning(f"Failed to process crash dump {latest}: {e}")
+            logger.error(f"Unexpected failure processing crash dump {latest}: {e}", exc_info=True)
             return None
 
     async def replay(self, trace_id: str) -> Optional[Dict[str, Any]]:
@@ -338,8 +476,10 @@ class ForensicsManager:
         try:
             with open(str(latest), "r") as f:
                 dump = json.load(f)
+        except OmegaError:
+            return None
         except Exception as e:
-            logger.warning("Failed to load crash dump for replay: %s", e)
+            logger.error("Unexpected failure loading crash dump for replay: %s", e, exc_info=True)
             return None
 
         events_path = DATA_DIR / "logs" / "events"
@@ -358,8 +498,10 @@ class ForensicsManager:
                                     timeline.append(event)
                             except json.JSONDecodeError:
                                 continue
+                except OmegaError:
+                    continue
                 except Exception as e:
-                    logger.warning("Failed to read event log for crash dump: %s", e)
+                    logger.error("Unexpected failure reading event log for crash dump: %s", e, exc_info=True)
                     continue
 
         return {
@@ -406,8 +548,11 @@ class ForensicsManager:
                         yaml.safe_dump(soul, f, default_flow_style=False)
                 logger.info("Learned from crash %s: %s", trace_id, lesson)
                 return lesson
+            except OmegaError:
+                pass
             except Exception as e:
-                logger.warning("Failed to write lesson to soul.yaml: %s", e)
+                logger.error("Unexpected failure writing lesson to soul.yaml: %s", e, exc_info=True)
+                pass
         return lesson
 
     @property
@@ -464,8 +609,11 @@ class ObservabilityEngine:
             path.parent.mkdir(parents=True, exist_ok=True)
             with open(str(path), "a", encoding="utf-8") as f:
                 f.write(json.dumps(event, default=str) + "\n")
+        except OmegaError:
+            pass
         except Exception as e:
-            logger.warning(f"Failed to persist event: {e}")
+            logger.error(f"Unexpected failure persisting event: {e}", exc_info=True)
+            pass
 
     # ── Load recent events from disk ───────────────────────────────
     def clear_log(self) -> None:
@@ -498,8 +646,11 @@ class ObservabilityEngine:
                                     self._event_log.append(event)
                                 except json.JSONDecodeError:
                                     continue
+        except OmegaError:
+            pass
         except Exception as e:
-            logger.warning(f"Failed to load persisted events: {e}")
+            logger.error(f"Unexpected failure loading persisted events: {e}", exc_info=True)
+            pass
 
     # ── Log an event ─────────────────────────────────────────────────
     def log_event(
