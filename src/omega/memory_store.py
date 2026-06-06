@@ -13,6 +13,15 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import anyio
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 
 from .constants import DEFAULT_CONTEXT_LIMIT, MAX_HISTORY_EXCHANGES, ZONEID_MEMORY, validate_zoneid
 from .errors import EntityTombstonedError
@@ -97,8 +106,11 @@ class MemoryStore:
                     redis_port = int(os.environ.get("OMEGA_REDIS_PORT", "6379"))
                     redis_password = os.environ.get("OMEGA_REDIS_PASSWORD", "omega")
                     self.providers.append(RedisStorageProvider(host=redis_host, port=redis_port, password=redis_password))
+                except OmegaError:
+                    raise
                 except Exception as e:
-                    logger.warning(f"Failed to initialize RedisStorageProvider: {e}")
+                    logger.error(f"Failed to initialize RedisStorageProvider: {e}", exc_info=True)
+                    raise OmegaPersistenceError(f"Redis init failed: {e}", raw_error=e) from e
             
             # 2. File Provider (Warm)
             try:
@@ -160,8 +172,10 @@ class MemoryStore:
                     self._stats["loads"] += 1
                     self._cache_hot(cache_key, validated)
                     return validated[-limit:]
+            except OmegaError:
+                continue
             except Exception as e:
-                logger.warning(f"Provider {provider.__class__.__name__} failed to get_history: {e}")
+                logger.error(f"Provider {provider.__class__.__name__} failed to get_history: {e}", exc_info=True)
                 self._stats["fallbacks"] += 1
                 continue
 
@@ -221,8 +235,10 @@ class MemoryStore:
             try:
                 await provider.save_history(entity_name, session_id, exchanges)
                 saved_any = True
+            except OmegaError:
+                continue
             except Exception as e:
-                logger.warning(f"Provider {provider.__class__.__name__} failed to save_history: {e}")
+                logger.error(f"Provider {provider.__class__.__name__} failed to save_history: {e}", exc_info=True)
                 self._stats["fallbacks"] += 1
                 
         if not saved_any:
@@ -337,8 +353,11 @@ class MemoryStore:
             try:
                 if await provider.archive(entity_name, session_id):
                     archived_any = True
+            except OmegaError:
+                continue
             except Exception as e:
-                logger.warning(f"Provider {provider.__class__.__name__} failed to archive: {e}")
+                logger.error(f"Provider {provider.__class__.__name__} failed to archive: {e}", exc_info=True)
+                continue
 
         if archived_any:
             cache_key = f"{entity_name.lower()}:{session_id}"
@@ -449,8 +468,11 @@ class MemoryStore:
         for provider in self.providers:
             try:
                 await provider.close()
+            except OmegaError:
+                pass
             except Exception as e:
-                logger.warning(f"Failed to close provider {provider.__class__.__name__}: {e}")
+                logger.error(f"Failed to close provider {provider.__class__.__name__}: {e}", exc_info=True)
+                pass
 
         logger.info("Memory store flushed and closed")
 
