@@ -14,6 +14,15 @@ from pathlib import Path
 from typing import Optional
 
 import anyio
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 
 from .models import GnosisPacket, ResearchTask
 
@@ -83,8 +92,10 @@ class SoulUpdater:
             import yaml
             content = await anyio.Path(soul_path).read_text()
             soul_data = yaml.safe_load(content) or {}
+        except OmegaError:
+            soul_data = {"entity": {"name": entity, "lessons_learned": []}}
         except Exception as e:
-            logger.warning("Failed to read soul.yaml for %s: %s", entity, e)
+            logger.error("Failed to read soul.yaml for %s: %s", entity, e, exc_info=True)
             soul_data = {"entity": {"name": entity, "lessons_learned": []}}
 
         # Append lesson
