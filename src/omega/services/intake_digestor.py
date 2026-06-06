@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 #!/usr/bin/env python3
 """
 🔱 Omega Engine — Intake Digestor
@@ -12,6 +13,15 @@ import sys
 import json
 import logging
 import hashlib
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, Optional
@@ -64,8 +74,10 @@ class ContentExtractor:
             else:
                 logger.warning(f"Unsupported file extension: {ext}")
                 return None
+        except OmegaError:
+            return None
         except Exception as e:
-            logger.error(f"Failed to extract text from {filepath.name}: {e}")
+            logger.error(f"Failed to extract text from {filepath.name}: {e}", exc_info=True)
             return None
 
     @staticmethod
