@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 """Omega CLI Orchestrator.
 
 AP: AP-ORCHESTRATOR-v1.0.0
@@ -15,6 +16,15 @@ Uses AnyIO for subprocess spawning and ResourceGuard to protect RAM.
 import logging
 import subprocess
 import anyio
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 import httpx
 import os
 from pathlib import Path
@@ -31,6 +41,7 @@ from .handoff import HandoffState, format_handoff_prompt
 from omega.workers.model_updater import ModelUpdaterWorker
 from omega.observability import ObservabilityEngine, get_engine
 from omega.oracle.model_gateway import ModelGateway
+from omega.errors import BrakeViolationError
 
 logger = logging.getLogger(__name__)
 
@@ -128,14 +139,52 @@ class Orchestrator:
                                 ["systemctl", "--user", "restart", f"{name}.service"],
                                 check=False
                             )
+                        except OmegaError:
+                            raise
                         except Exception as e:
-                            logger.error(f"Failed to restart {name}: {e}")
+                            logger.error(f"Failed to restart {name}: {e}", exc_info=True)
+                            raise OmegaError(f"MCP restart failed: {e}", raw_error=e) from e
                 
                 await anyio.sleep(60) # One check per minute is enough for background health
 
     def get_mcp_status(self) -> Dict[str, Any]:
         """Return the current health status of all MCPs."""
         return self._mcp_status
+
+    def _verify_sovereign_brake(self, task_prompt: str):
+        """
+        Enforces the Sovereign Brake and the Sovereign Communication Protocol (SCP).
+        
+        Checks for:
+        1. [VERIFICATION] block (Sovereign Brake)
+        2. RTCO pattern: Role, Task, Constraints, Output (SCP)
+        """
+        if "[VERIFICATION]" not in task_prompt:
+            raise BrakeViolationError(
+                "Sovereign Brake Triggered: Dispatch missing [VERIFICATION] block. "
+                "All subagent requests must be preceded by a verification of intent."
+            )
+        
+        required_patterns = ["Role:", "Task:", "Constraints:", "Output:"]
+        missing = [p for p in required_patterns if p.lower() not in task_prompt.lower()]
+        
+        if missing:
+            raise BrakeViolationError(
+                f"SCP Violation: Dispatch missing required RTCO components: {', '.join(missing)}. "
+                "A2A communication must follow the Role-Task-Constraints-Output pattern."
+            )
+
+    def _calculate_sovereign_dampening(self, task_prompt: str) -> str:
+        """
+        Scales agent drive based on task complexity.
+        """
+        prompt_lower = task_prompt.lower()
+        if any(k in prompt_lower for k in ["exhaustive", "deep dive", "comprehensive", "audit", "complex"]):
+            return "Sovereign Drive: COMPLEX. Execute with maximum depth, iterative verification, and exhaustive analysis."
+        elif any(k in prompt_lower for k in ["quick", "simple", "list", "check", "trivial"]):
+            return "Sovereign Drive: TRIVIAL. Execute with minimal overhead. Direct and concise."
+        else:
+            return "Sovereign Drive: STANDARD. Execute with standard rigor and verification."
 
     async def dispatch_agent(
         self, 
@@ -157,6 +206,10 @@ class Orchestrator:
         Returns:
             Dict containing the exit status and stdout of the agent.
         """
+        # Sovereign Brake & SCP Enforcement
+        self._verify_sovereign_brake(task_prompt)
+        dampening_field = self._calculate_sovereign_dampening(task_prompt)
+
         logger.info(f"Preparing to dispatch {cli_type} for entity '{entity_name}'")
         
         # Ensure workspace exists (auto-scaffold on first dispatch)
@@ -171,17 +224,21 @@ class Orchestrator:
             entity = entity_registry.get(entity_name)
             entity_model = entity.model if entity else "qwen3-1.7b-q6_k"
             logger.info(f"Entity '{entity_name}' designated model: {entity_model}")
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.warning(f"Failed to load entity model for '{entity_name}': {e}. Using default.")
+            logger.error(f"Failed to load entity model for '{entity_name}': {e}. Using default.", exc_info=True)
             entity_model = "qwen3-1.7b-q6_k"
         
-        # Combine the soul prompt with the task prompt
+        # Combine the soul prompt with the task prompt and dampening field
         full_prompt = (
             f"{soul_prompt}\n\n"
+            f"{dampening_field}\n\n"
             f"YOUR TASK:\n{task_prompt}\n\n"
             f"IMPORTANT: You are operating headlessly. When finished, use the omega-hivemind MCP "
             f"to post your context, or simply conclude the task."
         )
+
 
         if handoff_state:
             full_prompt = format_handoff_prompt(handoff_state) + "\n\n" + full_prompt
@@ -236,8 +293,10 @@ class Orchestrator:
         except TimeoutError:
             logger.error(f"Agent {cli_type} timed out after {timeout}s.")
             return {"status": "timeout", "message": "Agent execution timed out."}
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.error(f"Error dispatching {cli_type}: {e}")
+            logger.error(f"Error dispatching {cli_type}: {e}", exc_info=True)
             return {"status": "error", "message": str(e)}
 
     async def delegate_task(
@@ -313,8 +372,11 @@ class Orchestrator:
                     guard=self.guard,
                 )
                 logger.info("ModelUpdaterWorker initialized successfully.")
+        except OmegaError:
+            raise
         except Exception as e:
-            logger.warning(f"Failed to initialize ModelUpdaterWorker: {e}")
+            logger.error(f"Failed to initialize ModelUpdaterWorker: {e}", exc_info=True)
+            raise OmegaError(f"ModelUpdater init failed: {e}", raw_error=e) from e
 
     async def stop_workers(self) -> None:
         """Stop all background workers."""
@@ -338,7 +400,10 @@ class Orchestrator:
         try:
             await self.model_updater.run_update_cycle()
             return {"status": "success", "message": "Model update cycle completed."}
+        except OmegaError:
+            raise
         except Exception as e:
+            logger.error(f"Model update cycle failed: {e}", exc_info=True)
             return {"status": "error", "message": str(e)}
 
     def get_model_updater_status(self) -> Dict[str, Any]:
