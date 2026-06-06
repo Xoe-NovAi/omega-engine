@@ -298,6 +298,8 @@ class Oracle:
             }
             async with httpx.AsyncClient() as client:
                 await client.post(url, json=payload, timeout=3.0)
+        except OmegaError:
+            raise
         except Exception as e:
             # M9: Log fully and raise as typed. Non-critical side-effect.
             logger.error(f"Hivemind synchronization failed: {e}", exc_info=True)
@@ -465,23 +467,30 @@ class Oracle:
             if selected in ("mock", None, ""):
                 return entity.model
             return selected
+        except OmegaError:
+            return entity.model
         except Exception as e:
             # M9 carve-out: health probe may catch all to prevent crash loops
-            logger.warning(f"TriageRouter failed for {entity_name}, falling back to configured model: {e}")
+            logger.error(f"TriageRouter failed for {entity_name}, falling back to configured model: {e}", exc_info=True)
             return entity.model
 
     async def _prepare_system_prompt(self, entity_name: str, session_id: str, personality: str) -> str:
         """Builds the full system prompt by injecting session context."""
         try:
             context_block = await self.context_builder.build_context(entity_name, session_id)
+        except OmegaError:
+            context_block = ""
         except Exception as e:
             # M9 carve-out: health probe may catch all to prevent crash loops
-            logger.warning(f"ContextBuilder failed for {entity_name}: {e}")
+            logger.error(f"ContextBuilder failed for {entity_name}: {e}", exc_info=True)
             context_block = ""
         return ContextBuilder.prepend_to_prompt(context_block, personality)
 
     async def _record_interaction(self, resp: OracleResponse, query: str, trace: TraceSession, transient: bool) -> None:
-        """Records interaction to memory, soul, and hivemind if not transient."""
+        """Records interaction to memory, soul, and hivemind if not transient.
+        
+        Non-fatal failures (memory, soul, hivemind) are logged but do not crash the response.
+        """
         if transient:
             return
         
@@ -495,7 +504,7 @@ class Oracle:
             raise
         except Exception as e:
             logger.error(f"Failed to record exchange (non-fatal): {e}", exc_info=True)
-            raise OmegaError(f"Memory recording failed: {e}", raw_error=e) from e
+            # Non-fatal: log but don't crash the response
         
         # 2. Soul Evolution
         try:
@@ -504,7 +513,7 @@ class Oracle:
             raise
         except Exception as e:
             logger.error(f"Failed to track soul evolution (non-fatal): {e}", exc_info=True)
-            raise OmegaError(f"Soul tracking failed: {e}", raw_error=e) from e
+            # Non-fatal: log but don't crash the response
         
         # 3. Hivemind Sync
         try:
@@ -513,7 +522,7 @@ class Oracle:
             raise
         except Exception as e:
             logger.error(f"Failed to post to hivemind (non-fatal): {e}", exc_info=True)
-            raise OmegaError(f"Hivemind post failed: {e}", raw_error=e) from e
+            # Non-fatal: log but don't crash the response
 
     def _assess_iris_confidence(self, query: str) -> float:
         """Assess whether Iris can handle this query directly.
@@ -1015,12 +1024,20 @@ class Oracle:
                 # 3. Force physical disk write (Sovereign Sync)
                 os.fsync(tf.fileno())
             return temp_path
+        except OmegaError:
+            if os.path.exists(temp_path):
+                try:
+                    os.remove(temp_path)
+                except OSError as cleanup_err:
+                    logger.warning(f"Cleanup failed: {cleanup_err}")
+            raise
         except Exception as e:
             if os.path.exists(temp_path):
                 try:
                     os.remove(temp_path)
                 except OSError as cleanup_err:
                     logger.warning(f"Cleanup failed: {cleanup_err}")
+            logger.error(f"Unexpected soul atomic write failure: {e}", exc_info=True)
             raise StateIntegrityError(f"Soul atomic write failed (temp file: {temp_path}): {e}", raw_error=e) from e
 
     # ── Pattern detection ─────────────────────────────────────────────
@@ -1072,8 +1089,11 @@ class Oracle:
                     self.default_entity.name,
                     None,
                 )
+        except OmegaError:
+            pass
         except Exception as e:
-            logger.warning("Soul distillation on shutdown failed (non-blocking): %s", e)
+            logger.error("Soul distillation on shutdown failed (non-blocking): %s", e, exc_info=True)
+            pass
 
         if self.memory_store:
             await self.memory_store.close()
