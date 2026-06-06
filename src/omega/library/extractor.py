@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 """Content Extraction — Extract content from URLs, PDFs, RSS feeds, and files.
 
 AP: AP-OMEGA-EXTRACTOR-v1.0.0
@@ -18,6 +19,15 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import anyio
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -91,8 +101,17 @@ class ContentExtractor:
         extractor = extractors.get(source_type, self._extract_url)
         try:
             return await extractor(source)
+        except OmegaError as e:
+            logger.error(f"Extraction OmegaError for {source}: {e}")
+            return ExtractedContent(
+                source=source,
+                source_type=source_type,
+                title=f"Extraction failed: {source[:60]}",
+                body="",
+                error=str(e),
+            )
         except Exception as e:
-            logger.warning(f"Extraction failed for {source}: {e}")
+            logger.error(f"Extraction unexpected error for {source}: {e}", exc_info=True)
             return ExtractedContent(
                 source=source,
                 source_type=source_type,
