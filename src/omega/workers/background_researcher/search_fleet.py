@@ -6,6 +6,15 @@
 # Works alongside SearXNGClient for the sovereign (zero-cost) layer.
 
 import logging
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 import os
 from typing import Optional
 
@@ -49,8 +58,10 @@ class SearchFleet:
                 resp.raise_for_status()
                 data = resp.json()
                 return [r["url"] for r in data.get("results", [])]
+        except OmegaError:
+            return []
         except Exception as e:
-            logger.warning(f"Exa search failed: {e}")
+            logger.error(f"Exa search failed: {e}", exc_info=True)
             return []
 
     async def fetch_exa(self, url: str) -> Optional[str]:
@@ -71,8 +82,10 @@ class SearchFleet:
                 if results:
                     return results[0].get("text", "")
                 return None
+        except OmegaError:
+            return None
         except Exception as e:
-            logger.warning(f"Exa fetch failed for {url}: {e}")
+            logger.error(f"Exa fetch failed for {url}: {e}", exc_info=True)
             return None
 
     # ── Tavily ──────────────────────────────────────────────────────────────
@@ -104,8 +117,10 @@ class SearchFleet:
                 resp.raise_for_status()
                 data = resp.json()
                 return [r["url"] for r in data.get("results", [])]
+        except OmegaError:
+            return []
         except Exception as e:
-            logger.warning(f"Tavily search failed: {e}")
+            logger.error(f"Tavily search failed: {e}", exc_info=True)
             return []
 
     # ── Jina ────────────────────────────────────────────────────────────────
@@ -135,8 +150,10 @@ class SearchFleet:
                 import re
                 urls = re.findall(r"\[.*?\]\((https?://[^\s)]+)\)", text)
                 return urls[:max_results]
+        except OmegaError:
+            return []
         except Exception as e:
-            logger.warning(f"Jina search failed: {e}")
+            logger.error(f"Jina search failed: {e}", exc_info=True)
             return []
 
     async def read_url_jina(self, url: str) -> Optional[str]:
@@ -156,8 +173,10 @@ class SearchFleet:
                 )
                 resp.raise_for_status()
                 return resp.text
+        except OmegaError:
+            return None
         except Exception as e:
-            logger.warning(f"Jina read failed for {url}: {e}")
+            logger.error(f"Jina read failed for {url}: {e}", exc_info=True)
             return None
 
     # ── Firecrawl ───────────────────────────────────────────────────────────
@@ -182,8 +201,10 @@ class SearchFleet:
                 resp.raise_for_status()
                 data = resp.json()
                 return data.get("data", {}).get("markdown", "")
+        except OmegaError:
+            return None
         except Exception as e:
-            logger.warning(f"Firecrawl failed for {url}: {e}")
+            logger.error(f"Firecrawl failed for {url}: {e}", exc_info=True)
             return None
 
     # ── Unified search with fallback ────────────────────────────────────────
