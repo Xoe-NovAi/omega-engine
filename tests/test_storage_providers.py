@@ -68,8 +68,12 @@ class TestFileStorageProvider:
         mock_usage.free = 50  # 5%
         
         with patch("shutil.disk_usage", return_value=mock_usage):
-            with pytest.raises(DiskSpaceError):
-                await provider.save_history("Sophia", "ses_1", exchanges)
+            # Should not raise — only logs a warning and continues
+            await provider.save_history("Sophia", "ses_1", exchanges)
+            
+            # Verify the data was still saved despite low disk space
+            history = await provider.get_history("Sophia", "ses_1", limit=10)
+            assert len(history) == 1
 
     @pytest.mark.anyio
     async def test_concurrency_and_locking(self, temp_data_dir):

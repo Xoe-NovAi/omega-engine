@@ -606,6 +606,24 @@ class ModelGateway:
         """Check if a provider name is a cloud provider."""
         return name in self._cloud_providers
 
+    def _fallback_response(self, model_name: str, system_prompt: str, user_query: str) -> str:
+        """Generate a fallback response when all providers fail.
+        
+        Returns a helpful message indicating that no inference backend is available
+        and instructions for enabling local or cloud inference.
+        """
+        return (
+            f"⚠️ no inference backend is running for model '{model_name}'.\n\n"
+            "To use the Omega Engine, please:\n"
+            "1. Start a local inference backend (llama-cpp-python, LM Studio, or Ollama), OR\n"
+            "2. Configure cloud credentials (Google AI Studio, OpenRouter, GitHub Copilot), OR\n"
+            "3. Check logs for provider errors: omega-hub is attempting to fallback through the provider fabric.\n\n"
+            "System prompt: {}\nUser query: {}".format(
+                system_prompt[:100] + "..." if len(system_prompt) > 100 else system_prompt,
+                user_query[:100] + "..." if len(user_query) > 100 else user_query,
+            )
+        )
+
     async def generate(
         self, model_name: str, system_prompt: str, user_query: str,
         temperature: float = 0.7, max_tokens: int = 1024, trace_id: Optional[str] = None,
@@ -883,7 +901,17 @@ class ModelGateway:
             return False
 
     # ── Fallback ──────────────────────────────────────────────────────
-    def _fallback_response(self, model_name: str, system_prompt: str, user_query: str) -> str:
+    async def embed(self, text: str) -> List[float]:
+        """Generate a vector embedding for the given text.
+        
+        Currently uses a mock implementation. In a full implementation, this 
+        would route to a local embedding model (e.g., SentenceTransformers) 
+        or a cloud provider.
+        """
+        # Mock embedding: 384-dim vector (standard for MiniLM)
+        # In production, this would call a real embedding model.
+        import numpy as np
+        return np.random.rand(384).tolist()
         """Return a graceful fallback with setup instructions."""
         entity_name = "Oracle"
         for name, spec in self.models.items():

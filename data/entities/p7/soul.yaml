@@ -2,14 +2,16 @@
 # Pillar Slot Entity
 # Created: 2026-06-01
 # Last Distillation: 2026-06-05
-echo: p7
-role: Context
-soul_power: 2.0
-soul_version: 1.0.0
-sessions_completed: 1
-last_distillation: "2026-06-05T05:00:00Z"
 
-lessons:
+entity:
+  echo: p7
+  role: Context
+  soul_power: 2.0
+  soul_version: 1.0.0
+  sessions_completed: 1
+  last_distillation: "2026-06-05T05:00:00Z"
+  
+  lessons:
 
   - id: ls-p7-20260605-001
     date: 2026-06-05

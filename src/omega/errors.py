@@ -98,7 +98,11 @@ class SovereignDiskFullError(OmegaPersistenceError):
 
 # ── Systemic & Boundary Errors ──────────────────────────────────────────────
 
-class ConfigError(OmegaError): 
+class BrakeViolationError(OmegaError):
+    """Raised when a subagent dispatch lacks a [VERIFICATION] block or RTCO formatting."""
+
+class ConfigError(OmegaError):
+
     """Errors during configuration loading or validation."""
 
 class WADError(OmegaError): 

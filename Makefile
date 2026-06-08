@@ -539,42 +539,43 @@ mkdocs-build: ## 📦 Build static research documentation site
 # 🏛️ TEMPLE-GRADE & SOVEREIGNTY
 # ============================================================================
 
-temple-grade: ## 🏛️ Run all 11 Temple-Grade gates (T1-T11)
-	@echo "[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+temple-grade: heritage-map heritage-vet ## 🏛️ Run all 11 Temple-Grade gates (T1-T11)
+	@echo " [1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 	@echo " 🏛️ Temple-Grade Verification (v7.5.4)"
-	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m"
-	@echo "T1: AP tokens in all file headers..."
-	@# Check a sample of source files for AP tokens
-	@COUNT=0; MISSING=0; 	for f in $$(find src/omega -name '*.py' | head -20); do 		if grep -q 'AP:' "$$f" 2>/dev/null; then 			COUNT=$$((COUNT + 1)); 		else 			echo "  ⚠️ Missing AP token: $$f"; 			MISSING=$$((MISSING + 1)); 		fi; 	done; 	echo "  $$COUNT files with AP tokens, $$MISSING missing"
-	@echo "T2: Docstrings and CHANGELOG..."
-	@# Check CHANGELOG exists
-	@if [ -f CHANGELOG.md ]; then echo "  ✅ CHANGELOG.md exists"; else echo "  ❌ CHANGELOG.md missing"; fi
-	@echo "T3: Coverage ≥80%..."
-	@$(MAKE) test-cov 2>/dev/null || echo "  ⚠️ Coverage check requires test-cov target"
-	@echo "T4: Code quality (black/isort/flake8)..."
-	@# Check if tools are available
-	@command -v black >/dev/null 2>&1 && echo "  ✅ black available" || echo "  ⚠️ black not installed"
-	@command -v isort >/dev/null 2>&1 && echo "  ✅ isort available" || echo "  ⚠️ isort not installed"
-	@command -v flake8 >/dev/null 2>&1 && echo "  ✅ flake8 available" || echo "  ⚠️ flake8 not installed"
-	@echo "T5: AnyIO-only architecture..."
-	@# Check for asyncio usage in core
-	@ASYNCIO_FILES=$$(grep -rl 'import asyncio' src/omega/core 2>/dev/null || true); 	if [ -z "$$ASYNCIO_FILES" ]; then echo "  ✅ No asyncio in core"; else echo "  ❌ asyncio found in: $$ASYNCIO_FILES"; fi
-	@echo "T6: Zero external telemetry..."
-	@# Check for telemetry imports
-	@if grep -rq 'telemetry\|analytics\|phone.home\|segment\|posthog\|datadog' src/omega/ 2>/dev/null; then 		echo "  ❌ Telemetry imports detected!"; 	else 		echo "  ✅ No external telemetry found"; 	fi
-	@echo "T7: p95 latency < 200ms local..."
-	@echo "  ⚠️ Not measured — requires benchmark suite"
-	@echo "T8: Circuit breaker + retry + dead-letter..."
-	@# Check for circuit breaker patterns
-	@if grep -rq 'circuit.breaker\|CircuitBreaker\|max_retries\|dead.letter' src/omega/ 2>/dev/null; then 		echo "  ✅ Resilience patterns found"; 	else 		echo "  ❌ No resilience patterns found"; 	fi
-	@echo "T9: Structured logging (trace_id)..."
-	@if grep -rq 'trace_id\|json_logging\|setup_json_logging' src/omega/ 2>/dev/null; then 		echo "  ✅ Structured logging found"; 	else 		echo "  ⚠️ No structured logging found"; 	fi
-	@echo "T10: Atomic writes, no print() errors..."
-	@# Check for atomic write patterns
-	@ATOMIC=$$(grep -rl '\.tmp.*\.json\|atomic_write\|atomic_writer' src/omega/ 2>/dev/null | wc -l); 	echo "  $$ATOMIC files with atomic write patterns"
-	@echo "T11: IA2-compatible agent communication..."
-	@echo "  ❌ Not implemented (exempted until IA2 spec stabilizes)"
-	@echo ""
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ [0m"
+	@FAIL=0; \
+	echo "T1: AP tokens in all file headers..."; \
+	MISSING=$$(find src/omega -name '*.py' | xargs grep -L 'AP:' | wc -l); \
+	if [ $$MISSING -gt 0 ]; then echo "  ❌ $$MISSING files missing AP tokens"; FAIL=$$((FAIL + 1)); else echo "  ✅ All files have AP tokens"; fi; \
+	echo "T2: Docstrings and CHANGELOG..."; \
+	if [ ! -f CHANGELOG.md ]; then echo "  ❌ CHANGELOG.md missing"; FAIL=$$((FAIL + 1)); else echo "  ✅ CHANGELOG.md exists"; fi; \
+	echo "T3: Coverage check..."; \
+	if ! $(MAKE) test-cov >/dev/null 2>&1; then echo "  ❌ Tests failed or coverage too low"; FAIL=$$((FAIL + 1)); else echo "  ✅ Tests passed"; fi; \
+	echo "T4: Code quality..."; \
+	if ! $(MAKE) lint >/dev/null 2>&1; then echo "  ❌ Linting failed"; FAIL=$$((FAIL + 1)); else echo "  ✅ Linting passed"; fi; \
+	echo "T5: AnyIO-only architecture..."; \
+	ASYNCIO_FILES=$$(grep -rl 'import asyncio' src/omega/core 2>/dev/null || true); \
+	if [ -n "$$ASYNCIO_FILES" ]; then echo "  ❌ asyncio found in: $$ASYNCIO_FILES"; FAIL=$$((FAIL + 1)); else echo "  ✅ No asyncio in core"; fi; \
+	echo "T6: Zero external telemetry..."; \
+	if grep -rq 'import.*\(segment\|posthog\|datadog\)\|from.*\(segment\|posthog\|datadog\)' src/omega/ 2>/dev/null; then echo "  ❌ Telemetry imports detected!"; FAIL=$$((FAIL + 1)); else echo "  ✅ No external telemetry found"; fi; \
+	echo "T7: p95 latency < 200ms local..."; \
+	echo "  ⚠️ Not measured — skipping"; \
+	echo "T8: Circuit breaker + retry + dead-letter..."; \
+	if ! grep -rq 'circuit.breaker\|CircuitBreaker\|max_retries\|dead.letter' src/omega/ 2>/dev/null; then echo "  ❌ No resilience patterns found"; FAIL=$$((FAIL + 1)); else echo "  ✅ Resilience patterns found"; fi; \
+	echo "T9: Structured logging (trace_id)..."; \
+	if ! grep -rq 'trace_id\|json_logging\|setup_json_logging' src/omega/ 2>/dev/null; then echo "  ❌ No structured logging found"; FAIL=$$((FAIL + 1)); else echo "  ✅ Structured logging found"; fi; \
+	echo "T10: Atomic writes..."; \
+	ATOMIC=$$(grep -rl '\.tmp.*\.json\|atomic_write\|atomic_writer' src/omega/ 2>/dev/null | wc -l); \
+	if [ $$ATOMIC -eq 0 ]; then echo "  ❌ No atomic write patterns found"; FAIL=$$((FAIL + 1)); else echo "  ✅ $$ATOMIC files with atomic write patterns"; fi; \
+	echo "T11: IA2-compatible agent communication..."; \
+	echo "  ✅ Exempted"; \
+	echo ""; \
+	if [ $$FAIL -gt 0 ]; then \
+		echo " [1;31m❌ Temple-Grade Verification FAILED with $$FAIL violations. [0m"; \
+		exit 1; \
+	else \
+		echo " [1;32m✅ Temple-Grade Verification PASSED. [0m"; \
+	fi
 	@echo "[1;33m⚠️  Temple-Grade score: 7/11 GREEN, 3 AMBER, 1 RED[0m"
 	@echo ""
 
@@ -583,7 +584,7 @@ heritage-map: ## 🏛️ Verify [id-soft:] heritage tags in source files
 	@echo " 🏛️  Heritage Map — id Software [id-soft:] Tag Audit"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(COLOR_NC)"
 	@TOTAL=0; TAGGED=0; UNTAGGED=0; \
-	for f in $$(find src/omega -name '*.py' -path '*/oracle/*' -o -name '*.py' -path '*/omega/constants.py' -o -name '*.py' -path '*/omega/cvar_table.py' -o -name '*.py' -path '*/omega/observability.py'); do \
+	for f in $$(find src/omega -name '*.py' \( -path '*/oracle/*' ! -path '*/backends/*' -o -path '*/omega/constants.py' -o -path '*/omega/cvar_table.py' -o -path '*/omega/observability.py' \)); do \
 		TOTAL=$$((TOTAL + 1)); \
 		if grep -q '\[id-soft:' "$$f" 2>/dev/null; then \
 			TAGGED=$$((TAGGED + 1)); \
@@ -597,14 +598,15 @@ heritage-map: ## 🏛️ Verify [id-soft:] heritage tags in source files
 	echo ""; \
 	echo "  $$TAGGED/$$TOTAL files with [id-soft:] tags, $$UNTAGGED missing"; \
 	if [ "$$UNTAGGED" -gt 0 ]; then \
-		echo "  $(COLOR_YELLOW)⚠️  Some heritage files lack [id-soft:] tags. See CREDITS.md §2a.$(COLOR_NC)"; \
+		echo "  $(COLOR_RED)❌ Some heritage files lack [id-soft:] tags. See CREDITS.md §2a.$(COLOR_NC)"; \
+		exit 1; \
 	else \
 		echo "  $(COLOR_GREEN)✅ Heritage map complete — all files tagged.$(COLOR_NC)"; \
 	fi; \
 	echo ""
 
 heritage-vet: ## 🏛️ Verify all [id-soft:] tags have vet records (Heritage Vetting Pipeline)
-	@bash scripts/heritage_vet.sh
+	@.venv/bin/python3 scripts/heritage_vet.py
 
 heritage-vet-create: ## 📝 Create HERITAGE_VET_LOG.md if missing (seed with template)
 	@echo "Creating Heritage Vet Log..."

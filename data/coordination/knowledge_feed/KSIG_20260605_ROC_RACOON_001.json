@@ -1,0 +1,18 @@
+{
+  "signal_id": "ksig-20260605-roc_racoon-001",
+  "gate": "T1_to_T2",
+  "trigger": "manual_promotion",
+  "entity": "roc_racoon",
+  "domain": "knowledge_management",
+  "title": "Promoted Knowledge Lifecycle Pipeline",
+  "summary": "Roc Racoon recovered the Knowledge Lifecycle Pipeline design from the context entity's workspace and promoted it to a formal knowledge entry. This defines the T1-T4 promotion gates.",
+  "soul_change": null,
+  "paths": {
+    "soul": null,
+    "knowledge_source": "data/entities/context/knowledge/KNOWLEDGE_LIFECYCLE_PIPELINE.md"
+  },
+  "relevance_tags": ["scribe", "quality", "kali", "roc_racoon"],
+  "consumed_by": [],
+  "created_at": "2026-06-05T09:00:00Z",
+  "zoneid": 1912614
+}

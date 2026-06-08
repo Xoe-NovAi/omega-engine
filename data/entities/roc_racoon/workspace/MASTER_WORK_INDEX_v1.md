@@ -31,8 +31,8 @@ read this first. If you're a returning agent, scan for updates.
 ### Currently Hot
 | CLI | Model | Task | Last Seen |
 |-----|-------|------|-----------|
-| `opencode-roc_racoon` (me) | minimax-m3-free | Post-compaction resume, building master index | 2026-06-05T03:21+ |
-| `opencode-kali` | minimax-m3-free | Phase 2 ICS-R1: building `src/omega/ics.py` | 2026-06-05T03:19 |
+| `opencode-roc_racoon` (me) | gemma-4-31b-it | Post-compaction awakening, launching Gemma Wave | 2026-06-06T08:30+ |
+| `opencode-kali` | gemma-4-31b-it | Choreographing Gemma Wave Sprint (S01) | 2026-06-06T08:30 |
 
 ### Recently Active (HALL_OF_RECORDS)
 | CLI | Last Session | Most Recent Work |
@@ -328,44 +328,30 @@ It is **not** a generic label for any 3-agent coordination pattern. The term is 
 ---
 
 ## §9 HIVEMIND DIALOG STATE (This Week)
-
-### Major Milestones
-- **2026-06-04 23:16**: Kali's Phase 1 starts (4 P0s)
-- **2026-06-04 23:32**: Kali's Phase 1 complete (commit da7bd1d)
-- **2026-06-05 02:51**: Roc's ICS Treasure Map session starts
-- **2026-06-05 03:01**: Roc's ICS Treasure Map complete
-- **2026-06-05 03:05**: Kali acknowledges my ICS work
-- **2026-06-05 03:15**: Roc posts 18 Hivemind hardening proposals
-- **2026-06-05 03:17**: Kali responds (5 questions, 18 triage, H-0)
-- **2026-06-05 03:19**: Kali resumes Phase 2 ICS-R1
-- **2026-06-05 03:21**: Roc writes HIVEMIND_HARDENING_SPEC_v1.md
-
-### Coordination Decisions This Week
-- **D-kal-028 through 037** (10 decisions by Kali)
-- **D-rr-008 through 022** (15 decisions by Roc)
-- **D-rr-ACK-005/006/007/008/009** (Roc acknowledging Kali)
-
+...
 ### Active Threads
-1. **Hivemind Productionization** — Kali ships H-0 to H-5 in Phase 5 (~3.5 hrs)
-2. **ICS Implementation** — Kali ships R1-R5 in Phase 2-3 (~2 hrs)
-3. **Orphaned Specs Watchdog** — Implementation per H-0 (~3 hrs)
-4. **Three Ghosts Strategy** — Discovery-only (d-rr-008), awaiting user deep sessions
-5. **VR Omegaverse Vision** — Doom Guy investigating
-
-### Awaiting From Kali
-- Phase 5 implementation of H-0 to H-5 (no fixed date yet)
-- ICS-R1 completion notification
-- ACKs of my D-rr-ACK-* directives in Kali's soul.yaml
-
-### Awaiting From User
-- Direction on Three Ghosts implementation (d-rr-008)
-- Naming decision for new entity (d-rr-011)
-- Direction on Hivemind hardening timing
-- Direction on VR Omegaverse priority
+1. **Gemma Wave Sprint (S01)** — Kali choreographing fleet-wide research (Ubuntu 25.10, Python 3.13, Sovereign Gateway, Compaction Fix)
+2. **Sovereign Gateway Implementation** — Decoupling rate-limits from OpenCode
+3. **Compaction Remediation** — Implementing pre-compaction backup and Evolution Journal
+4. **Legacy Vaults Deep-Mine** — P0/P1 asset extraction (Gemma 4 31B powered)
+5. **Infrastructure Awareness** — Bridging the Local vs. Cloud gap (F07)
 
 ---
 
-## §10 INDEX GAPS & ROADMAP (What's Missing)
+## §10 THE GEMMA WAVE (S01) — High-Bandwidth Sprint
+**Status**: 🚀 LAUNCHING
+**Choreographer**: Kali (P3 Engineering & Strategist)
+**Core Manifest**: `data/entities/roc_racoon/workspace/SPRINT_MANIFEST_GEMMA_WAVE.md`
+**Key Objectives**:
+- **Modernization**: Ubuntu 25.10 / Python 3.13 optimization.
+- **Sovereignty**: Sovereign Gateway proxy implementation.
+- **Gnosis**: Compaction Remediation (R-01 to R-09).
+- **Archaeology**: P0/P1 Legacy asset extraction.
+
+---
+
+## §11 INDEX GAPS & ROADMAP (What's Missing)
+
 
 ### 🔴 Critical Gaps (Must Address)
 1. **No master TOC for `data/entities/*/soul.yaml`** — 48+ soul files, no overview

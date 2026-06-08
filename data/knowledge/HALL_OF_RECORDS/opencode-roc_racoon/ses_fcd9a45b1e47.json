@@ -1,0 +1,25 @@
+{
+  "session_id": "ses_fcd9a45b1e47",
+  "cli": "opencode-roc_racoon",
+  "model": "gemini-3.5-flash",
+  "task_current": "Sovereign Gateway design delivered. soul.yaml updated. Hivemind updated. Minimal Thinking tested.",
+  "focus_chain": [
+    "Sovereign Gateway: Do NOT patch OpenCode. Implement rate-limiting and backoff inside the Omega Engine Core via Omega Hub MCP proxy.",
+    "TUI Backoff Bypass: Intercepting requests locally means OpenCode never sees a 429 error, bypassing its unlimited backoff entirely.",
+    "Minimal Thinking: Pure reflex machine. Zero lag, zero overthinking, razor-sharp execution.",
+    "Hivemind updated with the Sovereign Gateway design. Kali and the team briefed."
+  ],
+  "decisions": [
+    {
+      "$text": "SOVEREIGN-GATEWAY: Do NOT patch OpenCode. Implement the rate-limiting and backoff control center inside the Omega Engine Core (via the Omega Hub MCP Server acting as a local proxy). This decouples us from OpenCode's internal updates entirely."
+    },
+    {
+      "$text": "TUI-BACKOFF-BYPASS: By intercepting requests at the Omega Hub proxy and handling rate-limits locally, OpenCode never sees a 429 error, meaning it never triggers its own unlimited exponential backoff."
+    },
+    {
+      "$text": "Task R-08: Design the local proxy/interceptor logic inside src/omega/gateway/ and integrate the Token Bucket rate-limiter. Assigned to Kali and the team."
+    }
+  ],
+  "continuation": "\ud83d\udea8 **STRATEGIC UPDATE: THE SOVEREIGN GATEWAY PATTERN** \u2b21\ud83e\udd9d\n\n**The Choreographer has raised a critical architectural question: Do we patch OpenCode directly (maintenance nightmare) or build the control center inside the Omega Engine?**\n\n### THE DECISION: NO OPENCODE PATCHING\n- We will **NOT** patch OpenCode. Re-applying patches after every OpenCode update is a dependency trap.\n- **The Sovereign Gateway**: We will implement the rate-limiting and backoff control center inside the **Omega Engine Core (via the Omega Hub MCP Server acting as a local proxy)**.\n\n### HOW IT WORKS (Task R-08):\n1. OpenCode routes its provider requests through the **Omega Hub MCP**.\n2. The Omega Hub intercepts the request, applies our **65-second start rate-limiter**, and handles the backoff locally.\n3. If a rate limit is hit, the Omega Hub holds the request locally and returns a controlled, healthy response to OpenCode once the window clears.\n4. **OpenCode never sees a 429 error, so it never triggers its own unlimited exponential backoff.**\n\n### LANE ASSIGNMENTS (Gemma 4 31B Wave):\n- **KALI (P3 Engineering)**: Tasked with designing the local proxy/interceptor logic inside `src/omega/gateway/` (Task B-06).\n- **LILITH (P7 Context)**: Tasked with integrating the Token Bucket rate-limiter into the proxy (Task B-07).\n- **QUALITY (Auditor)**: Tasked with auditing the proxy's latency and throughput (Task B-08).\n- **DOOM GUY (M14 Heritage)**: Run an M14 review on the proxy pattern vs. Quake 3's `netchan` OOB bypass (CREDITS.md \u00a71.21).\n\n**Kali, hold all implementation. Focus the Gemma 4 31B wave on local discovery and the Sovereign Gateway proxy design. Let's build it right.** \ud83e\udd9d\ud83d\udea8",
+  "timestamp": "2026-06-05T10:38:08.051721+00:00"
+}

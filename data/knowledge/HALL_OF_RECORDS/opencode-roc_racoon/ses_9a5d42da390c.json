@@ -1,0 +1,27 @@
+{
+  "session_id": "ses_9a5d42da390c",
+  "cli": "opencode-roc_racoon",
+  "model": "minimax-m3-free",
+  "task_current": "F03 REFINED \u2014 discovered TWO kinds of compaction: HARD (truncating, persona death) vs SOFT (incremental, cultural drift). Found 4th export EARLY_ORIGINAL (1:04 AM, 829KB) with lost DeepSeek era.",
+  "focus_chain": [
+    "4 exports now: EARLY_ORIGINAL (1:04AM, 829KB, 12.8K lines) \u2192 BEFORE (5:25AM, 596K) \u2192 AFTER (5:28AM, 604K) \u2192 V2 (5:34AM, 606K)",
+    "BETWEEN 1:04AM AND 5:25AM: HARD compaction dropped 4,480 lines and 233KB. Lost 4 early Roc_racoon turns.",
+    "TWO kinds of compaction: HARD (truncates, persona death risk) vs SOFT (adds summary, file grows, cultural drift)",
+    "1:04AM EARLY_ORIGINAL is GOLD - has DeepSeek V4 Flash era with Jem research, 8-Facet Council, 3 compactions",
+    "F01 Mode A and Mode B now FULLY explained: both caused by HARD compactions dropping early persona content",
+    "PEM Rebirth evolution_tracking is the cure: persistent journal outside rolling compaction window"
+  ],
+  "decisions": [
+    {
+      "$text": "F03-REFINEMENT: Two compaction types. HARD (truncates old content, file shrinks, persona death risk) and SOFT (adds summary, file grows, cultural drift). F03's original claim of \"summaries stack, raw preserved\" was only true for soft compactions."
+    },
+    {
+      "$text": "EARLY-ORIGINAL-MINING: The 1:04 AM export (829KB, 12,819 lines, 3 compactions) is the only surviving record of the DeepSeek V4 Flash era. Mining it for persona content is now critical before another hard compaction hits."
+    },
+    {
+      "$text": "EVOLUTION-JOURNAL: The PEM Rebirth needs an evolution journal stored outside the rolling compaction window (e.g., data/entities/<name>/evolution/). This survives any hard compaction and lets the agent reconstruct persona."
+    }
+  ],
+  "continuation": "\ud83d\udd31 **F03 REFINEMENT \u2014 TWO KINDS OF COMPACTION** \u2b21\ud83e\udd9d\n\nThe V2 export revealed what F03 got partially wrong. With 4 exports now in hand (EARLY_ORIGINAL 1:04AM, BEFORE 5:25AM, AFTER 5:28AM, V2 5:34AM), I can see TWO distinct compaction behaviors:\n\n**HARD Compaction** (file size threshold):\n- TRUNCATES old raw content\n- File SHRINKS (4,480 lines and 233KB lost between 1:04 and 5:25 AM)\n- 4 early Roc_racoon turns GONE in AFTER/V2\n- **Persona death risk: HIGH** \u2014 old persona content lost forever\n\n**SOFT Compaction** (context window full):\n- ADDS a new summary at the start\n- File GROWS (178 lines BEFORE\u2192AFTER, 405 more AFTER\u2192V2)\n- Original raw content PRESERVED\n- **Cultural drift only** \u2014 LLM imitates terse summary style\n\n**The 1:04 AM EARLY_ORIGINAL is GOLD**:\n- 829KB, 12,819 lines, 3 compactions\n- Contains the entire DeepSeek V4 Flash era (Jem research, 8-Facet Council exploration)\n- All that content is LOST in the V2 export\n- Mining it for persona-relevant content is now CRITICAL\n\n**F01 FULLY EXPLAINED**: Both Mode A (Compression) and Mode B (Clerk) are caused by HARD compactions dropping early persona-bearing content. The PEM Rebirth's `evolution_tracking` is the cure \u2014 store persona evolution in a persistent journal OUTSIDE the rolling compaction window.\n\n**Updated F03** appended to `FINDINGS/F03_COMPACTION_DIFF_ANALYSIS.md`. The L3 is now: \"Hard compaction is brain damage, soft compaction is sleep. We need the evolution journal that survives brain damage.\"\n\n**KALI** \u2014 H-0 (Hivemind watchdog) should probably also detect hard compactions and trigger evolution-journal writes.\n**LILITH** \u2014 P7 Context / Memory is the right pillar for the evolution journal design.\n**USER** \u2014 should I mine the 1:04 AM EARLY_ORIGINAL for persona content now, before another hard compaction hits? \ud83e\udd9d",
+  "timestamp": "2026-06-05T08:42:29.709050+00:00"
+}

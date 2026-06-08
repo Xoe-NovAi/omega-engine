@@ -18,6 +18,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 import anyio
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 import httpx
 
 from .models import ResearchTask, TriageResult, GnosisPacket, EnhancedPriorityQueue, RotationState
@@ -201,16 +210,22 @@ class BackgroundResearcherLoop:
             await self._post_to_hivemind(result)
             return result
 
+        except OmegaError:
+            logger.error(f"Research cycle failed (OmegaError): {e}")
+            return {"cycle_id": cycle_id, "error": str(e)}
         except Exception as e:
-            logger.error(f"Research cycle failed: {e}", exc_info=True)
+            logger.error(f"Research cycle failed (Unexpected): {e}", exc_info=True)
             return {"cycle_id": cycle_id, "error": str(e)}
 
         finally:
             self._running = False
             try:
                 self.lock_path.rmdir()
+            except OmegaError:
+                pass
             except Exception as e:
-                logger.warning("Failed to remove research lock: %s", e)
+                logger.error("Failed to remove research lock: %s", e, exc_info=True)
+                pass
 
     async def _local_discovery_scan(self, task: ResearchTask) -> str:
         """Perform a 'Discovery-First' scan of the local codebase for relevant snippets."""
@@ -238,8 +253,10 @@ class BackgroundResearcherLoop:
                             for line in content.splitlines():
                                 if pattern.lower() in line.lower():
                                     snippets.append(f"[{file_path.name}]: {line.strip()}")
+                        except OmegaError:
+                            continue
                         except Exception as e:
-                            logger.warning("Failed to read file %s: %s", file_path, e)
+                            logger.error("Failed to read file %s: %s", file_path, e, exc_info=True)
                             continue
                             
         return "\n".join(snippets[:20])
@@ -299,8 +316,10 @@ class BackgroundResearcherLoop:
                 chunk = await self._fetch_content(url)
                 if chunk:
                     content_chunks.append(f"[Source: {url}]\n{chunk}")
+            except OmegaError:
+                continue
             except Exception as e:
-                logger.warning("Failed to fetch URL %s: %s", url, e)
+                logger.error("Failed to fetch URL %s: %s", url, e, exc_info=True)
                 continue
         return "\n\n---\n\n".join(content_chunks[:3])
 
@@ -319,8 +338,10 @@ class BackgroundResearcherLoop:
                 resp = await client.get(url, follow_redirects=True)
                 resp.raise_for_status()
                 return resp.text[:8000]
+        except OmegaError:
+            return None
         except Exception as e:
-            logger.warning("HTTP fallback failed for %s: %s", url, e)
+            logger.error("HTTP fallback failed for %s: %s", url, e, exc_info=True)
             return None
 
     async def _enqueue_adjacent(self, task: ResearchTask, gnosis: GnosisPacket) -> None:
@@ -440,8 +461,11 @@ class BackgroundResearcherLoop:
                 tmp.write_bytes(existing + line.encode("utf-8"))
                 tmp.replace(log_path)
             await anyio.to_thread.run_sync(_atomic_append)
+        except OmegaError:
+            pass
         except Exception as e:
-            logger.warning("Failed to append cycle log: %s", e)
+            logger.error("Failed to append cycle log: %s", e, exc_info=True)
+            pass
 
     async def _is_network_available(self) -> bool:
         try:

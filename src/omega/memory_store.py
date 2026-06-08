@@ -32,6 +32,7 @@ from .memory.providers import (
     InMemoryStorageProvider,
     DiskSpaceError,
 )
+from .memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -81,7 +82,7 @@ class MemoryStore:
 
     ZONEID = ZONEID_MEMORY
 
-    def __init__(self, providers: Optional[List[StorageProvider]] = None):
+    def __init__(self, providers: Optional[List[StorageProvider]] = None, vector_store: Optional[IVectorStoreAdapter] = None):
         self._hot: Dict[str, OrderedDict] = {}
         # [id-soft: doom-1993] Lazy Deletion — tombstone registry
         # Maps cache_key -> time.time() when tombstoned
@@ -120,6 +121,16 @@ class MemoryStore:
                 
             # 3. InMemory Provider (Cold/Volatile Fallback)
             self.providers.append(InMemoryStorageProvider())
+
+        if vector_store is not None:
+            self.vector_store = vector_store
+        else:
+            # Default to QdrantAdapter for semantic memory
+            try:
+                self.vector_store = QdrantAdapter()
+            except Exception as e:
+                logger.error(f"Failed to initialize default QdrantAdapter: {e}")
+                self.vector_store = None
 
     async def get_history(
         self,

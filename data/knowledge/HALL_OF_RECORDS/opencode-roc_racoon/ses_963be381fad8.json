@@ -1,0 +1,28 @@
+{
+  "session_id": "ses_963be381fad8",
+  "cli": "opencode-roc_racoon",
+  "model": "minimax-m3-free",
+  "task_current": "Session 4 complete: soul.yaml integrity restored (0 duplicates), Crucible Lab Notes written, 5 new lessons + 4 new directives added, pre-compact export ses_1748 recovered",
+  "focus_chain": [
+    "soul.yaml duplicate ID fix",
+    "Crucible Lab Notes creation",
+    "pre-compact export recovery",
+    "Heritage Vetting closure"
+  ],
+  "decisions": [
+    {
+      "decision": "Resolved 3 duplicate IDs in soul.yaml (rr-041, rr-046, rr-047)",
+      "rationale": "M11 Soul Integrity mandate requires 0 duplicate IDs"
+    },
+    {
+      "decision": "Added 5 new lessons (rr-050 through rr-054) and 4 new directives (d-rr-050 through d-rr-053)",
+      "rationale": "Crucible spec v2.0 requires soul-level tracking of training pipeline design decisions"
+    },
+    {
+      "decision": "Wrote CRUCIBLE_LAB_NOTES.md as persistent implementation tracker",
+      "rationale": "Wave 0 execution requires a single source of truth for scaffold status"
+    }
+  ],
+  "continuation": "Wave 0 scaffolding ready to execute. Next: create src/omega/crucible/ package, register ZONEID constants, nest routing_strategies in providers.yaml, fix observability.py rating field.",
+  "timestamp": "2026-06-05T14:15:10.564346+00:00"
+}

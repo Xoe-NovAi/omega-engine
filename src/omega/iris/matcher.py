@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Iris Intent Matcher
 # AP: AP-NOVA-MATCHER-v1.0.0
 # Lightweight intent detection for the always-on Iris container.

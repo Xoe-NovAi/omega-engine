@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 """Omega Engine Handoff Protocol.
 AP: AP-HANDOFF-v1.0.0
 ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: HANDOFF]

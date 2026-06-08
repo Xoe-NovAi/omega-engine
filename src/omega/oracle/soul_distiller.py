@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Soul Distillation Engine (L1→L2→L3)
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ deepseek-v4-flash ⬡ opencode ⬡ SOUL-DISTILL
 # AP: SOUL-DISTILL-v1.0.0

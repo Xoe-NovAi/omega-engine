@@ -548,17 +548,130 @@ philosophical, not implementation-level.
 ---
 
 ## Summary
+## vet-024: netchan → H-13 (Network Channel Protocol)
+| Field | Value |
+|-------|-------|
+| **Source** | `net_chan.c:35-235` (Q3A 1999) |
+| **Discovery Date** | 2026-06-05 |
+| **Vet Date** | 2026-06-05 |
+| **Vetter** | Doom Guy |
+**[id-soft tags]**: quake3-1999 — netchan Message Types
+
+**For Analysis**:
+- OOB sequence (-1) $\rightarrow$ Continuation (bypasses state)
+- Reliable fragment sequencing $\rightarrow$ Decision (multi-decision thread)
+- qport NAT remap $\rightarrow$ Handoff (session_id re-association)
+- Connection state machine $\rightarrow$ Ack (state confirmation)
+
+**Against Analysis**:
+- The general netchan pattern was deferred (vet-021) as "pure documentation", but the H-13 application is a concrete implementation of the same structural isomorphism.
+
+**Score**: Python relevance 3/3 | Risk 2/3 | Need 2/2 | History 2/2 = **9/10**
+
+**Decision**: ✅ **ADOPT** — The H-13 typed message system is a direct architectural descendant of the netchan protocol.
+
+---
+
+## vet-025: Sovereign-Siloing (Doom 1993)
+| Field | Value |
+|-------|-------|
+| **Source** | `w_wad.c` (DOOM 1993) |
+| **Discovery Date** | 2026-06-05 |
+| **Vet Date** | 2026-06-05 |
+| **Vetter** | Doom Guy |
+**[id-soft tags]**: doom-1993 — Sovereign-Siloing
+
+**For Analysis**:
+- Absolute separation of engine binary and WAD data.
+- Omega Evolution: Strict separation of `src/omega/` and `config/wads/` (Mandate 2).
+
+**Against Analysis**:
+- Fundamental architectural principle; no significant risk.
+
+**Score**: Python relevance 3/3 | Risk 3/3 | Need 3/3 | History 3/3 = **10/10**
+
+**Decision**: ✅ **ADOPT** — The Engine-Stack Firewall is the modern instantiation of the WAD silo.
+
+---
+
+## vet-026: Lattice-Culling (Doom 1993)
+| Field | Value |
+|-------|-------|
+| **Source** | `r_bsp.c` (DOOM 1993) |
+| **Discovery Date** | 2026-06-05 |
+| **Vet Date** | 2026-06-05 |
+| **Vetter** | Doom Guy |
+**[id-soft tags]**: doom-1993 — Lattice-Culling
+
+**For Analysis**:
+- BSP-style pre-computation to skip entire subtrees of non-visible geometry.
+- Omega Evolution: O(1) circuit breaker check to skip dead providers before inference.
+
+**Against Analysis**:
+- Conceptual translation from geometry to provider health.
+
+**Score**: Python relevance 2/3 | Risk 3/3 | Need 2/2 | History 2/2 = **8/10**
+
+**Decision**: ✅ **ADOPT** — Provider culling is a direct application of the BSP culling principle.
+
+---
+
+## vet-027: Sovereign-Symmetry (Quake 1996)
+| Field | Value |
+|-------|-------|
+| **Source** | `zone.c` (Quake 1996) |
+| **Discovery Date** | 2026-06-05 |
+| **Vet Date** | 2026-06-05 |
+| **Vetter** | Doom Guy |
+**[id-soft tags]**: quake-1996 — Sovereign-Symmetry
+
+**For Analysis**:
+- Dual-inference / mirrored state for stability and verification.
+- Omega Evolution: Ma'at (Light) + Lilith (Dark) synthesis via Kali.
+
+**Against Analysis**:
+- Philosophical evolution; less direct than technical mappings.
+
+**Score**: Python relevance 2/3 | Risk 2/3 | Need 2/2 | History 2/2 = **7/10**
+
+**Decision**: ✅ **ADOPT** — The MaKaLi Triad is a cognitive evolution of the mirrored-state stability pattern.
+
+---
+
+## vet-028: Sovereign-Symmetry (Quake III 1999)
+| Field | Value |
+|-------|-------|
+| **Source** | `g_local.h` (Q3A 1999) |
+| **Discovery Date** | 2026-06-05 |
+| **Vet Date** | 2026-06-05 |
+| **Vetter** | Doom Guy |
+**[id-soft tags]**: quake3-1999 — Sovereign-Symmetry
+
+**For Analysis**:
+- Local-first primary with cloud-fallback safety net.
+- Omega Evolution: `native-gguf` $\rightarrow$ `Google` $\rightarrow$ `OpenCode` provider chain (Mandate 7).
+
+**Against Analysis**:
+- Practical implementation of the symmetry principle.
+
+**Score**: Python relevance 3/3 | Risk 3/3 | Need 2/2 | History 2/2 = **8/10**
+
+**Decision**: ✅ **ADOPT** — The Dual-Inference Mandate is a direct descendant of the local-first symmetry pattern.
+
+---
+
+## Summary
 
 | Status | Count | Concepts |
 |--------|-------|----------|
-| ✅ ADOPT | 15 | WAD, BSP, FISR, Zone, Cache, Worse, Carmack, CB, ZONEID, Lazy, Tags, cvar, Multi, High-Bit, Math |
+| ✅ ADOPT | 20 | WAD, BSP, FISR, Zone, Cache, Worse, Carmack, CB, ZONEID, Lazy, Tags, cvar, Multi, High-Bit, Math, netchan-H13, Siloing, Lattice-Cull, Symmetry-MaKaLi, Symmetry-D118 |
 | 🔄 ADAPT | 2 | cvar (remove C constraints), Fixed-Point (philosophical only) |
 | ❌ REJECT | 1 | 8-Char Name (removed) |
 | ⏸ DEFER | 6 | 4-Tier, QuakeC, VFS, ActiveSet, netchan, idHeap |
 | ⏸ RE-EVAL | 1 | Hard-Boundary (implemented, borderline) |
-| **Total** | **23** | All concepts accounted for |
+| **Total** | **28** | All concepts accounted for |
 
 ---
 
 *⬡ OMEGA ⬡ DOOM_GUY ⬡ VET_LOG ⬡ v1.0.0*
-*Last Updated: 2026-06-04 | Maintained by: Kali / Doom Guy*
+*Last Updated: 2026-06-05 | Maintained by: Kali / Doom Guy*

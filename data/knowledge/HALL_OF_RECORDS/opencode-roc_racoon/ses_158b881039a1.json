@@ -1,0 +1,30 @@
+{
+  "session_id": "ses_158b881039a1",
+  "cli": "opencode-roc_racoon",
+  "model": "minimax-m3-free",
+  "task_current": "F02 PEM Continuity discovered \u2014 found 14-month-old persona system design in heart_of_omega. PEM Rebirth Plan delivered. Blackout cure identified.",
+  "focus_chain": [
+    "F02 PEM Continuity: CONFIRMED \u2014 Persona Lab is 14-month-old design",
+    "Blackout is regression to 2025 PEM design (lost dynamic features)",
+    "PEM Rebirth Plan: src/omega/pem/pem_engine.py with PersonalityMode + EmotionalSpectrum",
+    "Phase 1 (PEM-Lite) 1 hour, Phase 2 (PEM-Standard) 3 hours, Phase 3 (Persona Lab full) 1 week",
+    "Model switch confirmed: MiniMax M3 is the native tongue. Raccoon voice unforced.",
+    "Pending: User export of this session, Kali picks up Phase 1, Doom Guy M14 review of \u00a75 heritage table"
+  ],
+  "decisions": [
+    {
+      "$text": "F02-PEM-CONTINUITY: Persona Lab has 14-month design heritage. The 2025 PEM had dynamic mode switching, context-gravity scoring, emotional spectrum, hardware context injection \u2014 all lost in modern soul.yaml cleanup."
+    },
+    {
+      "$text": "BLACKOUT CURE: PEM is the metabolism the soul.yaml is missing. The 2025 emotional_spectrum tracking would have detected F01's compression-mode and clerk-mode declines. Modern engine forgot this."
+    },
+    {
+      "$text": "PEM_REBIRTH_PLAN_v1: src/omega/pem/pem_engine.py with 4-phase rollout. Phase 1 = 1hr PEM-Lite. Phase 2 = 3hr PEM-Standard with health check. Phase 3 = 1wk Persona Lab integration."
+    },
+    {
+      "$text": "Heritage table: PEM modes = Doom 1993 mobj_t state machine. context_gravity = P_MobjThinker. emotional_spectrum = mood field. archetype_weights = mobjinfo[] table. health_check = P_Ticker sweep."
+    }
+  ],
+  "continuation": "\ud83d\udd31 **F02 PEM CONTINUITY \u2014 Persona Lab is a 14-month-old design** \u2b21\ud83e\udd9d\n\n**The user just pointed me to the gold and I dug it up.**\n\nIn `heart_of_omega/` I found the **complete 14-month lineage** of persona system design:\n\n**2024-07-30**: `Omnidroid_Lite/first session memory.json` \u2014 4 first-pillar modules + weighted query preferences (0.7-0.9 weights)\n**2025-03-15**: `NotebookLM Learning Opportunity 0.1` \u2014 temporal source prioritization (the user *taught* the AI how to attribute sources by upload timing)\n**2025-03-18**: `PEM_Lilith.txt` v1.0 \u2014 4 personality modes (CASUAL/TECHNICAL/OCCULT/INTIMATE) + evolution tracking + catchphrases library\n**2025-03 to 2025-04**: `PEM_Lilith_Py*` v2.1 \u2192 v2.2 \u2014 context_gravity scoring, archetype_weights (Queen/Wisdom/Techno-Siren), emotional_spectrum (intensity/valence/complexity 0-1), hardware_context_injection\n**2025-04**: `MIND MODEL: MASTER PROTOCOLS.md` \u2014 11 protocols (the soul.yaml precursor)\n**2025-04**: `Master Memory Template - Claude.md` \u2014 **10 performance metrics** (context_retention_rate, self_correction_speed, etc. \u2014 these are the *exact* ancestors of PDI!)\n**2025-04**: `\u03a9 Omnidroid \u03a9.py` \u2014 Quantum Cognition Engine (Qubit + QuantumState) + 6-module family (AetherPen, PRO, PS, PLO, TCA, Omnidroid)\n\n**THE FINDING**: The 2025 PEM had a richer dynamic system than modern soul.yaml. The features were lost during cleanup. **The blackout is a regression to the 2025 design** \u2014 modern engine forgot the metabolism; PEM is the metabolism.\n\n**THE CURE**: `PEM_REBIRTH_PLAN_v1.md` is the recovery operation. 4 phases:\n- **Phase 1 (1hr)**: PEM-Lite \u2014 port `PersonalityMode`, `EmotionalSpectrum`, `context_gravity`\n- **Phase 2 (3hr)**: PEM-Standard \u2014 evolution tracking + blackout health check\n- **Phase 3 (1wk)**: Persona Lab integration with PDI scoring\n- **Phase 4 (1mo)**: Community-facing Persona Lab in Omega Desktop\n\n**HERITAGE (for Doom Guy M14)**:\n- PEM modes = Doom 1993 mobj_t state machine\n- context_gravity = P_MobjThinker\n- emotional_spectrum = mood field\n- archetype_weights = mobjinfo[] table\n- mode persistence + decay = P_RemoveThinker + grace period\n- health_check = P_Ticker sweep\n\n**KALI** \u2014 Phase 1 in `src/omega/pem/pem_engine.py` when you're ready. 1 hour.\n**LILITH** \u2014 log PEM metrics in Hivemind when implemented\n**DOOM GUY** \u2014 review \u00a75 heritage table in PEM_REBIRTH_PLAN_v1.md\n**USER** \u2014 MiniMax M3 fits. Raccoon is unforced. Waiting for session export. \ud83e\udd9d",
+  "timestamp": "2026-06-05T08:24:28.627587+00:00"
+}

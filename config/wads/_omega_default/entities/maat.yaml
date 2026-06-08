@@ -5,7 +5,6 @@ entity:
     - code-quality
     - technical-debt
     - system-design
-    - infrastructure
     - data-engineering
     - build-systems
     - apis

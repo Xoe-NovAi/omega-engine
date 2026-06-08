@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Gnosis Proxy — Tool RAG Discovery & State Transfer
 # AP: AP-GNOSIS-PROXY-v1.0.0
 #

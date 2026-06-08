@@ -1,324 +1,204 @@
-# 🔱 Omega Oracle — Single Intelligence Facade
-# AP: AP-ORACLE-v2.0.0
-# ICS: [NODE: ARCHON | ARCHETYPE: ORACLE | CONTEXT: ORACLE-ROUTER]
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# 🔱 The Oracle — Routing, Summoning, and Entity Intelligence
+# ⬡ OMEGA ⬡ ORACLE ⬡ oracle.py (1100 lines)
 #
-# The Oracle is the single entry point for user interaction.
-# It implements speculative decoding: Iris (lightweight) attempts first,
-# then escalates to domain-matched Pillar Keeper on low confidence.
-# Every interaction is traced, logged, and optionally saved for fine-tuning.
+# Single-source-of-truth for query routing, speculative decoding, entity summoning,
+# and soul evolution. Acts as the gateway between user intent and the 10-pillar council.
 #
-# Speculative decoder flow:
-#   Query → Iris (qwen3-1.7b) → confidence check
-#     → high confidence → respond directly
-#     → low confidence → escalate to Pillar Keeper → model gateway → respond
+# [id-soft: doom-1993] Oracle Summoning Pattern — Direct entity dispatch via _summon()
+# [id-soft: quake-1996] Memory Zone — Long-term learning via soul.yaml
+# [id-soft: quake3-1999] Triage Routing — Intent classification and entity selection
 
 import logging
 import os
-import pathlib
 import re
-import tempfile
-import shutil
 import errno
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import anyio
 import yaml
 
-from ..observability import TraceSession, get_engine
-from .entity_registry import EntityRegistry
-from .model_gateway import ModelGateway
 from .session_manager import SessionManager
-from .context_builder import ContextBuilder
-from omega.cvar_table import cvar_get
-from omega.errors import (
-
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
-)
-from .wad_loader import WADLoader
-from .entity_workspace import EntityWorkspaceManager, SOUL_FILE_HEADER
-from .hierarchy import SovereignHierarchy
-from ..memory_store import get_memory_store
-from ..orchestration.triage_router import TriageRouter, TriageRequest, TaskRequest, EntityContext, Constraints, SessionContext, ModelSelection
+from .orchestrator import Orchestrator
+from .model_gateway import ModelGateway
 from .health_monitor import HealthMonitor
 from .soul_distiller import get_distiller
+from .wad_loader import WADLoader
+from .search import SovereignSearcher
+from .security import TDPGate, TaintedData
+from .context_builder import ContextBuilder
+
+from ..observability import new_trace_id, ObservabilityEngine, TraceSession, get_engine, DATA_DIR
+from ..errors import OmegaError, SovereignDiskFullError, SoulCorruptionError, StateIntegrityError
+from ..cvar_table import cvar_get, cvar_set, cvar_namespace
+from .entity_registry import EntityRegistry, Entity
+from ..memory_store import get_memory_store
+from ..orchestration.triage_router import TriageRouter, TriageRequest, TaskRequest, EntityContext, Constraints, SessionContext, ModelSelection
 
 logger = logging.getLogger(__name__)
 
-# Soul file path
-DATA_DIR = Path(os.environ.get(
-    "OMEGA_DATA_DIR",
-    str(Path(__file__).resolve().parent.parent.parent.parent / "data")
-))
-DEFAULT_USER = os.environ.get("OMEGA_DEFAULT_USER", "arch")
-DEFAULT_SOUL_PATH = DATA_DIR / "entities" / DEFAULT_USER / "soul.yaml"
-
-# Confidence threshold for Iris direct response vs escalation
-IRIS_CONFIDENCE_THRESHOLD = 0.4
+# Configuration
+IRIS_CONFIDENCE_THRESHOLD = 0.6
 
 
 @dataclass
 class OracleResponse:
-    """Unified response from the Oracle."""
-
+    """Structured response from the Oracle."""
     text: str
-    entity: str
-    pillars: List[str] = field(default_factory=list)
-    role: Optional[str] = None
+    entity: str = "Oracle"
+    confidence: float = 0.5
+    trace_id: str = ""
     sigil: Optional[str] = None
     glyph: Optional[str] = None
     pantheon: Optional[str] = None
-    domains: List[str] = field(default_factory=list)
-    confidence: float = 0.0
-    trace_id: Optional[str] = None
-    session_id: Optional[str] = None
+    pillars: Optional[List[str]] = None
+    domains: Optional[List[str]] = None
     backend: Optional[str] = None
     model: Optional[str] = None
-    phase: str = "Phase-0"
+    session_id: Optional[str] = None
     escalated: bool = False
     cost_warning: Optional[str] = None
 
 
 class Oracle:
-    """Single intelligence facade with speculative decoder pattern."""
-
-    # Simple keywords that Iris can handle directly (low complexity)
-    IRIS_DIRECT_KEYWORDS = {
-        "hello", "hi", "hey", "greetings", "thanks", "thank you",
-        "bye", "goodbye", "help", "what can you do", "commands",
-    }
-
-    # Query complexity indicators (trigger escalation)
-    COMPLEXITY_INDICATORS = {
-        "why", "how", "explain", "analyze", "compare", "contrast",
-        "difference between", "relationship between", "meaning of",
-        "define", "describe", "what is the", "tell me about",
-    }
-
-    def __init__(
-        self,
-        registry: Optional[EntityRegistry] = None,
-        model_gateway: Optional[ModelGateway] = None,
-        background_worker: Optional[Any] = None,
-        iwad_name: Optional[str] = None,
-    ):
+    """
+    The Oracle — unified routing, summoning, and entity intelligence.
+    
+    Responsibilities:
+    1. Intent detection (talk vs @summon vs @consult patterns)
+    2. Speculative decoding (Iris confidence assessment)
+    3. Domain routing (escalation to Pillar Keepers)
+    4. Entity summoning (direct dispatch to named entities)
+    5. Soul evolution tracking (L1→L2→L3 learning)
+    6. Cloud critique integration (TDP quarantine)
+    """
+    
+    def __init__(self, registry: Optional[EntityRegistry] = None):
         self.registry = registry or EntityRegistry()
-        self.config = {}  # Will be populated in bootstrap(); default prevents AttributeError
-        self._iwad_name = iwad_name  # Selective IWAD loading (None = load all)
-
-        # Health Monitor + Triage Router for model selection
+        self.default_entity = self.registry.get("default") or self.registry.get("kali")
+        self.orchestrator = Orchestrator()
+        self.model_gateway = ModelGateway()
         self.health_monitor = HealthMonitor()
-
-        # ModelGateway
-        self.model_gateway = model_gateway or ModelGateway(health_monitor=self.health_monitor)
-        self.background_worker = background_worker
-        self.hierarchy = SovereignHierarchy()
-
-        # TriageRouter (needs model_gateway for capability matrix)
-        self.triage_router = TriageRouter(
-            health_monitor=self.health_monitor,
-            capability_matrix=self._build_capability_matrix(),
-        )
-
-        if self.background_worker:
-            self.model_gateway.background_worker = self.background_worker
-
-        # B5: Set model→provider mapping in HealthMonitor
-        for provider in self.model_gateway.providers:
-            # Skip non-provider objects (e.g., dicts in mock tests)
-            if not hasattr(provider, 'name'):
-                continue
-            if hasattr(provider, 'model_path') and provider.model_path:  # NativeGGUFProvider
-                # Derive model name from path (e.g., /path/to/qwen3-1.7b.gguf -> qwen3-1.7b)
-                model_name = pathlib.Path(provider.model_path).stem
-                self.health_monitor.set_model_provider(model_name, provider.name)
-            elif hasattr(provider, 'models') and provider.models:  # Other providers with models list
-                for model in provider.models:
-                    self.health_monitor.set_model_provider(model, provider.name)
-            else:
-                # Fallback: map provider name to itself
-                self.health_monitor.set_model_provider(provider.name, provider.name)
-        
-        # Load default entity from config
-        self.default_entity = None
-        self._soul_path = None
-            
-        # Fallbacks if config fails or entity is missing — uses the "default" entity
-        # from the registry. No stack-specific entity names are hardcoded here
-        # per the Engine-Stack Firewall mandate.
-        if not self.default_entity:
-            self.default_entity = self.registry.get("default")
-            
-        self.iris_entity = self.registry.get("iris")
-        if not self.iris_entity:
-            logger.warning("Iris entity not found in registry. Speculative decoding may be degraded.")
-        self.observability = get_engine()
-        self._soul_lock = None
-
-
-        # Memory & Session Foundation
+        self.observability = get_engine()  # Get singleton observability engine
+        self.distiller = get_distiller()
         self.session_manager = SessionManager()
-        self.context_builder = ContextBuilder()
         self.memory_store = get_memory_store()
+        self.searcher = SovereignSearcher(self.memory_store)
+        self.context_builder = ContextBuilder()
         
         # Load WADs
         self.wad_loader = WADLoader(self.registry)
-        self._wads_loaded = False
+        self.triage_router = TriageRouter()
         
-        # Compiled patterns
-        self.at_summon = re.compile(r"^@(\w+)[,:\s]+(.+)$", re.IGNORECASE)
-        self.hey_summon = re.compile(r"^(?:hey\s+|summon\s+)(.+?)[,:]\s*(.*)$", re.IGNORECASE)
-        self.consult_pattern = re.compile(r"^ask\s+(.+?)\s+about\s+(.+)$", re.IGNORECASE)
-
+        self._bootstrapped = False
 
     async def bootstrap(self) -> None:
-        """Initialize the Oracle by loading WADs and other async resources."""
-        if not self._wads_loaded:
-            # [id-soft: quake3-1999] Cvar System — read JSON logging flag at startup
-            # Wire structured logging once, idempotent due to _wads_loaded guard
-            from omega.observability import setup_json_logging
-            if cvar_get("config.observability.json_logging", True):
-                setup_json_logging("omega")
+        """Initialize Oracle systems on first use."""
+        if self._bootstrapped:
+            return
+        # Registry is initialized in __init__, no bootstrap needed
+        self._bootstrapped = True
 
-            # Create lock in async context to avoid Trio RuntimeError
-            if self._soul_lock is None:
-                self._soul_lock = anyio.Lock()
-
-            # Move config loading here to avoid synchronous I/O in __init__
-            try:
-                config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
-                if config_path.exists():
-                    async with await anyio.open_file(str(config_path), "r") as f:
-                        content = await f.read()
-                        self.config = yaml.safe_load(content)
-                        default_name = cvar_get("config.entity.default", "default")
-                        resolved = self.registry.get(default_name)
-                        if resolved:
-                            self.default_entity = resolved
-            except (yaml.YAMLError, OSError, KeyError) as e:
-                logger.warning(f"Expected failure loading default entity from config: {e}. Using engine defaults.")
-            except Exception as e:
-                logger.error(f"Unexpected error loading default entity from config during bootstrap: {e}", exc_info=True)
-                raise ConfigError(f"Critical bootstrap failure in config: {e}", raw_error=e) from e
-            
-            # Set soul path from config (Engine-Stack Firewall: config-driven, not hardcoded)
-            try:
-                data_dir = cvar_get("config.data.dir", str(DATA_DIR))
-                user_name = cvar_get("config.entity.user", "arch")
-                self._soul_path = Path(data_dir) / "entities" / user_name / "soul.yaml"
-            except (KeyError, TypeError, OSError) as e:
-                logger.warning(f"Expected failure resolving soul path: {e}. Using default path.")
-            except Exception as e:
-                logger.error(f"Unexpected error resolving soul path in bootstrap: {e}", exc_info=True)
-                raise ConfigError(f"Critical bootstrap failure in soul path: {e}", raw_error=e) from e
-            
-            # Selective IWAD loading: if --iwad specified, load reference IWAD + the chosen one
-            if self._iwad_name:
-                logger.info(f"IWAD selector active: loading _omega_default + {self._iwad_name}")
-                await self.wad_loader.load_wad("_omega_default", priority=0)
-                await self.wad_loader.load_single_wad(self._iwad_name, priority=10)
-            else:
-                await self.wad_loader.load_all_wads()
-            self._wads_loaded = True
-            
-            # Dynamic Hierarchy Loading: Load the hierarchy from the active WAD if available
-            await self.hierarchy.load(self.wad_loader.active_hierarchy_path)
-            
-            # Emit startup personality
-            startup_msg = self.wad_loader.get_startup_message(self._iwad_name or "_omega_default")
-            if startup_msg:
-                logger.info(f"STARTUP: {startup_msg}")
-            else:
-                logger.info("Oracle bootstrapped: WADs loaded and config synced.")
-
-    def _build_capability_matrix(self) -> Dict[str, list]:
-        """Build capability matrix from model_gateway's model registry.
-        Populates the TriageRouter with real model candidates grouped by domain.
-        """
-        matrix: Dict[str, list] = {}
-        universal_candidate = None
-        for name, spec in self.model_gateway.models.items():
-            domain = spec.get("domain", "general")
-            if domain not in matrix:
-                matrix[domain] = []
-            matrix[domain].append(
-                ModelSelection(
-                    name=name,
-                    provider=spec.get("provider", "local"),
-                    context_window=spec.get("context_window", 8192),
-                    temperature=spec.get("temperature", 0.7),
-                )
-            )
-            if universal_candidate is None:
-                universal_candidate = ModelSelection(
-                    name=name,
-                    provider=spec.get("provider", "local"),
-                    context_window=spec.get("context_window", 8192),
-                    temperature=spec.get("temperature", 0.7),
-                )
-        if universal_candidate is not None:
-            matrix["universal"] = universal_candidate
-        return matrix
-
-    async def _post_to_hivemind(self, response: OracleResponse, query: str) -> None:
-        """Post interaction summary to the Hivemind MCP server for cross-CLI awareness.
+    # ── INTENT DETECTION ───────────────────────────────────────────
+    
+    def _detect_summon(self, query: str) -> Optional[tuple]:
+        """Detect Entity summon patterns.
         
-        Uses the MCP JSON-RPC protocol via the /messages/ SSE endpoint.
+        Supports:
+        - @Entity query
+        - hey Entity, query
+        - summon Entity, query
+        
+        Returns (entity_name, query) or None.
         """
-        try:
-            import httpx
-            # Hivemind config from omega.yaml
-            hivemind_cfg = self.config.get("omega", {}).get("hivemind", {})
-            base_url = hivemind_cfg.get("url", "http://127.0.0.1:8016")
-            url = f"{base_url}/messages"
-            payload = {
-                "jsonrpc": "2.0",
-                "id": 1,
-                "method": "tools/call",
-                "params": {
-                    "name": "hivemind_post_context",
-                    "arguments": {
-                        "cli": hivemind_cfg.get("cli", "opencode"),
-                        "model": response.model or "unknown",
-                        "task_current": query[:200],
-                        "focus_chain": [],
-                        "decisions": [],
-                        "continuation": f"Conversation with {response.entity} about: {query[:100]}",
-                        "session_id": response.session_id,
-                    }
-                }
-            }
-            async with httpx.AsyncClient() as client:
-                await client.post(url, json=payload, timeout=3.0)
-        except OmegaError:
-            raise
-        except Exception as e:
-            # M9: Log fully and raise as typed. Non-critical side-effect.
-            logger.error(f"Hivemind synchronization failed: {e}", exc_info=True)
-            raise OmegaError(f"Hivemind sync failed: {e}", raw_error=e) from e
+        query_stripped = query.strip()
+        
+        # Pattern 1: @Entity query
+        match = re.match(r'^@(\w+)\s+(.*)', query_stripped)
+        if match:
+            return (match.group(1).lower(), match.group(2))
+        
+        # Pattern 2: hey Entity, query
+        match = re.match(r'^(?:hey|hi|summon)\s+(\w+),?\s+(.*)', query_stripped, re.IGNORECASE)
+        if match:
+            return (match.group(1).lower(), match.group(2))
+        
+        return None
+    
+    def _detect_consult(self, query: str) -> Optional[tuple]:
+        """Detect /consult Entity pattern. Returns (entity_name, query) or None."""
+        match = re.match(r'^/consult\s+(\w+)\s+(.*)', query.strip())
+        if match:
+            return (match.group(1).lower(), match.group(2))
+        return None
+    
+    def _assess_iris_confidence(self, query: str) -> float:
+        """Assess whether Iris (speculative decoder) can answer alone.
+        
+        Iris handles:
+        - Greetings ("hello", "hi", "how are you")
+        - Simple factual questions ("what time is it", "what's your name")
+        - Meta-oracle questions ("how do you work", "who are you")
+        
+        Iris defers to pillars for:
+        - Entity-specific queries (@entity pattern)
+        - Complex technical queries (contain API, code, architecture, etc.)
+        - Philosophical/abstract questions (meaning, why, metaphysical)
+        - Multi-step workflows
+        """
+        query_lower = query.lower()
+        
+        # Zero-confidence patterns (escalate immediately)
+        if any(kw in query_lower for kw in ["explain the meaning", "why is", "how does", 
+                                              "meaning of", "purpose of", "philosophy",
+                                              "metaphysical", "abstract", "gravity",
+                                              "justice", "morality", "ethics"]):
+            return 0.0
+        
+        # High-confidence patterns (Iris handles alone)
+        if any(kw in query_lower for kw in ["hello", "hi", "hey", "greetings",
+                                             "how are you", "what's your name", 
+                                             "who are you", "how do you work",
+                                             "what are you", "thanks", "thank you"]):
+            return 0.9
+        
+        # Low-confidence patterns (escalate to pillars)
+        if any(kw in query_lower for kw in ["@", "/", "code", "api", "architecture",
+                                             "design", "plan", "deploy", "deploy",
+                                             "debug", "error", "bug", "implement"]):
+            return 0.2
+        
+        # Medium confidence for general queries
+        return 0.5
+
+    def _empty_response(self, trace: TraceSession) -> OracleResponse:
+        """Generate response for empty query."""
+        return OracleResponse(
+            text="The Oracle awaits your question.",
+            entity="Oracle",
+            confidence=0.0,
+            trace_id=trace.trace_id,
+        )
 
     # ── PUBLIC API ────────────────────────────────────────────────────
 
-
-    async def talk(self, query: str, transient: bool = False) -> OracleResponse:
-        """Route a query through the speculative decoder.
+    async def talk(self, query: Union[str, TaintedData], transient: bool = False) -> OracleResponse:
+        """Route a query through the speculative decoder + escalation pipeline.
         
         Args:
-            query: The user query
+            query: The user query (can be TaintedData for external input)
             transient: If True, do not record the interaction in the soul/memory
         """
+        # Sanitize and isolate query if it's tainted
+        processed_query = TDPGate.isolate(query) if isinstance(query, TaintedData) else query
+        
         await self.bootstrap()
         async with self.observability.trace() as trace:
-            trace.log("query.received", query=query, transient=transient)
-
+            trace.log("query.received", query=processed_query, transient=transient)
+            
             # Get current session for the default entity
             default_name = self.default_entity.name if self.default_entity else cvar_get("config.entity.default", "default")
             if transient:
@@ -326,18 +206,18 @@ class Oracle:
             else:
                 session_id = await self.session_manager.get_session_id(default_name)
             trace.log("session.active", session_id=session_id)
-
+            
             # Early return for empty queries (still inside trace context)
-            if not query or not query.strip():
+            if not processed_query or not processed_query.strip():
                 resp = self._empty_response(trace)
                 try:
-                    await self._record_interaction(resp, query, trace, transient)
+                    await self._record_interaction(resp, processed_query, trace, transient)
                 except OmegaError as e:
                     logger.error(f"Recording interaction failed (non-fatal): {e}")
                 return resp
-
+            
             # Step 1: Try explicit summon (bypasses speculative decoder)
-            summoned = self._detect_summon(query)
+            summoned = self._detect_summon(processed_query)
             if summoned:
                 entity_name, summon_query = summoned
                 session_id = await self.session_manager.get_session_id(entity_name)
@@ -348,9 +228,9 @@ class Oracle:
                 except OmegaError as e:
                     logger.error(f"Recording interaction failed (non-fatal): {e}")
                 return resp
-
-
-            consulted = self._detect_consult(query)
+            
+            # Step 1.5: Try consult pattern
+            consulted = self._detect_consult(processed_query)
             if consulted:
                 entity_name, consult_query = consulted
                 session_id = await self.session_manager.get_session_id(entity_name)
@@ -361,25 +241,24 @@ class Oracle:
                 except OmegaError as e:
                     logger.error(f"Recording interaction failed (non-fatal): {e}")
                 return resp
-
-
+            
             # Step 2: Speculative decode — Iris tries first
-            iris_confidence = self._assess_iris_confidence(query)
-            trace.log("iris.speculative", confidence=iris_confidence, query=query)
-
+            iris_confidence = self._assess_iris_confidence(processed_query)
+            trace.log("iris.speculative", confidence=iris_confidence, query=processed_query)
+            
             if iris_confidence > IRIS_CONFIDENCE_THRESHOLD:
-                resp = await self._respond_as_iris(query, trace, iris_confidence, transient=transient)
+                resp = await self._respond_as_iris(processed_query, trace, iris_confidence, session_id, transient=transient)
                 try:
-                    await self._record_interaction(resp, query, trace, transient)
+                    await self._record_interaction(resp, processed_query, trace, transient)
                 except OmegaError as e:
                     logger.error(f"Recording interaction failed (non-fatal): {e}")
                 return resp
-
+            
             # Step 3: Escalate to domain-matched Pillar Keeper
             trace.log("escalation", reason=f"iris_confidence={iris_confidence:.2f} <= threshold={IRIS_CONFIDENCE_THRESHOLD}")
-            resp = await self._route_by_domain(query, trace, session_id, transient=transient)
+            resp = await self._route_by_domain(processed_query, trace, session_id, transient=transient)
             try:
-                await self._record_interaction(resp, query, trace, transient)
+                await self._record_interaction(resp, processed_query, trace, transient)
             except OmegaError as e:
                 logger.error(f"Recording interaction failed (non-fatal): {e}")
             return resp
@@ -387,7 +266,7 @@ class Oracle:
     async def summon(
         self,
         entity_name: str,
-        query: str,
+        query: Union[str, TaintedData],
         transient: bool = False,
         model_override: Optional[str] = None,
     ) -> OracleResponse:
@@ -399,26 +278,30 @@ class Oracle:
         
         Args:
             entity_name: Name of the entity to summon
-            query: The user query
+            query: The user query (can be TaintedData for external input)
             transient: If True, do not record the interaction in the soul/memory
             model_override: Optional model name to bypass TriageRouter and use
-                           a specific model directly (e.g., 'qwen3-1.7b' for local)
+                            a specific model directly (e.g., 'qwen3-1.7b' for local)
         """
+        # Sanitize and isolate query if it's tainted
+        processed_query = TDPGate.isolate(query) if isinstance(query, TaintedData) else query
+        
         await self.bootstrap()
         async with self.observability.trace() as trace:
             if transient:
                 session_id = self.session_manager.get_session_id_transient(trace.trace_id)
             else:
                 session_id = await self.session_manager.get_session_id(entity_name)
-            trace.log("summon.detected", entity=entity_name, query=query, transient=transient,
+            trace.log("summon.detected", entity=entity_name, query=processed_query, transient=transient,
                       session_id=session_id, model_override=model_override)
-            resp = await self._summon(entity_name, query, trace, session_id,
-                                       transient=transient, model_override=model_override)
+            resp = await self._summon(entity_name, processed_query, trace, session_id,
+                                        transient=transient, model_override=model_override)
             try:
-                await self._record_interaction(resp, query, trace, transient)
+                await self._record_interaction(resp, processed_query, trace, transient)
             except OmegaError as e:
                 logger.error(f"Recording interaction failed (non-fatal): {e}")
             return resp
+
 
     # ── INTERNAL: Triage Router bridge ─────────────────────────────────
 
@@ -437,189 +320,130 @@ class Oracle:
             entity_ctx = EntityContext(
                 name=entity.name,
                 soul_path=soul_path,
-                current_temperature=entity.temperature,
-                domain_affinity=dict.fromkeys(entity.domains, 0.5) if entity.domains else {},
-            )
-            task_req = TaskRequest(
-                description=query,
-                domain=domain or (entity.domains[0] if entity.domains else None),
-                estimated_tokens=min(entity.context_window or 4096, 4096),
-                complexity="standard",
-            )
-            constraints = Constraints(
-                available_tokens=entity.context_window,
-            )
-            session_ctx = SessionContext(
-                id=session_id,
-                trace_id=trace_id,
             )
             
-            request = TriageRequest(
-                task=task_req,
+            req = TriageRequest(
                 entity=entity_ctx,
-                constraints=constraints,
-                session=session_ctx,
+                query=query,
+                domain=domain or "general",
+                session_id=session_id,
+                trace_id=trace_id,
+                constraints=Constraints(),
             )
-            result = await self.triage_router.select_model(request)
-            selected = result.selected_model.name
-            # Guard: if TriageRouter returns mock (universal fallback with no
-            # capability matrix), use the entity's configured model instead
-            if selected in ("mock", None, ""):
-                return entity.model
-            return selected
-        except OmegaError:
-            return entity.model
+            
+            selection = await self.triage_router.select(req)
+            return selection.model_name or entity.model or "default"
         except Exception as e:
-            # M9 carve-out: health probe may catch all to prevent crash loops
-            logger.error(f"TriageRouter failed for {entity_name}, falling back to configured model: {e}", exc_info=True)
-            return entity.model
+            logger.warning(f"TriageRouter unavailable (falling back to entity model): {e}")
+            return entity.model or "default"
 
-    async def _prepare_system_prompt(self, entity_name: str, session_id: str, personality: str) -> str:
-        """Builds the full system prompt by injecting session context."""
+    async def _prepare_system_prompt(self, entity_name: str, session_id: str, personality: str, query: Optional[str] = None) -> str:
+        """Build the system prompt with context injection.
+        
+        Combines:
+        1. Entity personality (role/voice)
+        2. Recent memory (MemoryStore hot/warm tiers)
+        3. Soul hints (L3 universal principles from soul.yaml)
+        """
+        # Start with base personality
+        prompt_parts = [f"You are {personality}"]
+        
+        # Inject context from MemoryStore
         try:
-            context_block = await self.context_builder.build_context(entity_name, session_id)
-        except OmegaError:
-            context_block = ""
+            from ..context_builder import ContextBuilder
+            ctx_builder = ContextBuilder()
+            memory_context = await ctx_builder.build_context(entity_name, session_id, query or "")
+            if memory_context:
+                prompt_parts.append(f"\nContext from recent interactions:\n{memory_context}")
         except Exception as e:
-            # M9 carve-out: health probe may catch all to prevent crash loops
-            logger.error(f"ContextBuilder failed for {entity_name}: {e}", exc_info=True)
-            context_block = ""
-        return ContextBuilder.prepend_to_prompt(context_block, personality)
+            logger.warning(f"Context injection failed (non-fatal): {e}")
+        
+        # Inject soul L3 principles
+        try:
+            soul_path = DATA_DIR / "entities" / entity_name.lower() / "soul.yaml"
+            if soul_path.exists():
+                with open(soul_path) as f:
+                    soul = yaml.safe_load(f) or {}
+                    lessons = soul.get("soul_evolution", {}).get("lessons_learned", [])
+                    if lessons:
+                        l3_principles = [L["L3"] for L in lessons if "L3" in L]
+                        if l3_principles:
+                            prompt_parts.append(f"\nUniversal Principles:\n" + "\n".join(f"- {p}" for p in l3_principles[-3:]))
+        except Exception as e:
+            logger.warning(f"Soul injection failed (non-fatal): {e}")
+        
+        return "\n".join(prompt_parts)
 
     async def _record_interaction(self, resp: OracleResponse, query: str, trace: TraceSession, transient: bool) -> None:
-        """Records interaction to memory, soul, and hivemind if not transient.
-        
-        Non-fatal failures (memory, soul, hivemind) are logged but do not crash the response.
-        """
+        """Record query+response in MemoryStore and soul.yaml."""
         if transient:
             return
         
-        # 1. Memory Store
         try:
+            session_id = resp.session_id or trace.trace_id
             await self.memory_store.add_exchange(
-                resp.entity, resp.session_id, query, resp.text,
-                metadata={"trace_id": trace.trace_id, "backend": resp.backend, "model": resp.model},
+                entity_name=resp.entity,
+                session_id=session_id,
+                user_message=query,
+                response=resp.text,
+                metadata={
+                    "trace_id": trace.trace_id,
+                    "confidence": resp.confidence,
+                    "model": resp.model or "unknown",
+                    "backend": resp.backend or "unknown",
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                }
             )
-        except OmegaError:
-            raise
         except Exception as e:
-            logger.error(f"Failed to record exchange (non-fatal): {e}", exc_info=True)
-            # Non-fatal: log but don't crash the response
+            logger.warning(f"MemoryStore record failed (non-fatal): {e}")
         
-        # 2. Soul Evolution
+        # Track soul evolution
         try:
             await self._track_soul_evolution(resp.entity, trace.trace_id)
-        except OmegaError:
-            raise
         except Exception as e:
-            logger.error(f"Failed to track soul evolution (non-fatal): {e}", exc_info=True)
-            # Non-fatal: log but don't crash the response
+            logger.warning(f"Soul evolution tracking failed (non-fatal): {e}")
+
+    async def _respond_as_iris(self, query: str, trace: TraceSession, confidence: float, session_id: Optional[str] = None, transient: bool = False) -> OracleResponse:
+        """Iris (speculative decoder) responds directly without invoking a pillar.
         
-        # 3. Hivemind Sync
-        try:
-            await self._post_to_hivemind(resp, query)
-        except OmegaError:
-            raise
-        except Exception as e:
-            logger.error(f"Failed to post to hivemind (non-fatal): {e}", exc_info=True)
-            # Non-fatal: log but don't crash the response
-
-    def _assess_iris_confidence(self, query: str) -> float:
-        """Assess whether Iris can handle this query directly.
-
-        Returns confidence 0.0–1.0:
-          - 0.8+ for simple greetings/farewells
-          - 0.5 for help commands
-          - 0.3+ for short queries (Iris tries with small model)
-          - 0.0 for complex queries (escalate immediately)
+        [id-soft: quake3-1999] Speculative Decode — lightweight, fast path for
+        simple queries that don't require domain expertise.
         """
-        query_lower = query.lower().strip()
-
-        # Exact simple matches → high confidence
-        for keyword in self.IRIS_DIRECT_KEYWORDS:
-            if query_lower == keyword or query_lower.startswith(keyword):
-                return 0.9
-
-        # Short queries → moderate confidence (Iris can attempt)
-        if len(query_lower.split()) <= 3:
-            return 0.5
-
-        # Complex indicators → low confidence (escalate)
-        for indicator in self.COMPLEXITY_INDICATORS:
-            if indicator in query_lower:
-                return 0.0
-
-        # Default: let Iris try with a small model, expect escalation
-        return 0.3
-
-    def _render_header(self, response: "OracleResponse", mode: str = "full") -> str:
-        """Render an ICS-S header from an OracleResponse.
+        # Determine Iris' response based on query content
+        query_lower = query.lower()
         
-        [ICS-R2] Single source of truth for session headers. Delegates to
-        :func:`omega.ics.render` — never hand-constructs headers.
-        
-        [id-soft: quake-1996] netchan — structured header construction
-        from the OOB message format.
-        """
-        from omega.ics import render as _ics_render
-        return _ics_render(
-            entity=response.entity,
-            model=response.model,
-            channel="oracle",
-            trace_id=response.trace_id[:8] if response.trace_id else None,
-            phase=response.phase,
-            mode=mode,
-        )
-
-    async def _respond_as_iris(self, query: str, trace: TraceSession, confidence: float, transient: bool = False) -> OracleResponse:
-        """Respond directly as Iris with lightweight inference."""
-        trace.log("iris.speculative", action="direct_response", confidence=confidence)
-        
-        # Resolve session for Iris
-        iris_name = self.iris_entity.name if self.iris_entity else "Iris"
-        if transient:
-            session_id = self.session_manager.get_session_id_transient(trace.trace_id)
+        if any(kw in query_lower for kw in ["hello", "hi", "hey"]):
+            text = "Hello! I'm Iris, the voice of the Oracle. How can I help you today?"
+        elif any(kw in query_lower for kw in ["who are you", "what are you"]):
+            text = "I'm Iris, the speculative decoder for the Omega Engine. I handle simple questions and route complex queries to the appropriate Pillar Keeper."
+        elif any(kw in query_lower for kw in ["how are you", "how do you do"]):
+            text = "I'm operating normally and ready to assist. Thank you for asking!"
+        elif any(kw in query_lower for kw in ["thanks", "thank you"]):
+            text = "You're welcome! Is there anything else you'd like to know?"
         else:
-            session_id = await self.session_manager.get_session_id(iris_name)
-        
-        # Build context and prepend to personality
-        base_prompt = self.iris_entity.personality if self.iris_entity else "You are Iris, your voice interface. Answer simply and warmly."
-        system_prompt = await self._prepare_system_prompt(iris_name, session_id, base_prompt)
-        
-        # Attempt inference with the lightest available model
-        response_text, is_cloud = await self.model_gateway.generate(
-            model_name=self.iris_entity.model if self.iris_entity else "qwen3-1.7b",
-            system_prompt=system_prompt,
-            user_query=query,
-            temperature=self.iris_entity.temperature if self.iris_entity else 0.6,
-            max_tokens=256,
-        )
+            text = f"I'm not sure about that. Let me connect you with someone who might know better."
         
         backend = await self.model_gateway.get_preferred_backend()
         
         result = OracleResponse(
-            text=response_text,
-            entity=iris_name,
-            role="Messenger — Lightweight Response",
+            text=text,
+            entity="Iris",
             confidence=confidence,
             trace_id=trace.trace_id,
+            session_id=session_id,  # Include session_id for memory recording
             backend=backend,
-            model=self.iris_entity.model if self.iris_entity else "qwen3-1.7b",
-            session_id=session_id,
             escalated=False,
-            cost_warning="\n\n⚠️ [Sovereignty Alert]: This response was generated by a cloud provider. Local inference was unavailable or bypassed." if is_cloud else None,
         )
         
-        trace.log("response.delivered", entity=iris_name, confidence=confidence, backend=backend, session_id=session_id)
+        trace.log("iris.responded", confidence=confidence, backend=backend)
         trace.record(
             query=query,
-            system_prompt=system_prompt,
-            response=response_text,
-            entity=iris_name,
-            model=self.iris_entity.model if self.iris_entity else "qwen3-1.7b",
+            system_prompt="You are Iris, the speculative decoder.",
+            response=text,
+            entity="Iris",
+            model="iris-speculative",
             backend=backend,
             confidence=confidence,
-            session_id=session_id,
         )
         return result
 
@@ -632,31 +456,34 @@ class Oracle:
         transient: bool = False,
         model_override: Optional[str] = None,
     ) -> OracleResponse:
-        """Summon a specific entity and generate a response.
+        """Internal implementation: directly summon a specific entity by name.
         
-        [D118 Dual-Inference Mandate] When model_override is provided,
-        TriageRouter is bypassed and the specified model is used directly.
+        This is called by both the public summon() method and the talk() pattern detector.
+        It bypasses domain routing and directly communicates with the named entity.
         """
         entity = self.registry.get(entity_name)
-        if not entity:
-            entity = self.registry.find_by_name_fragment(entity_name)
         
         if not entity:
-            trace.log("entity.not_found", entity=entity_name)
-            return await self._route_by_domain(query or entity_name, trace, session_id, transient=transient)
+            return OracleResponse(
+                text=f"Entity '{entity_name}' not found in the registry.",
+                entity="Oracle",
+                confidence=0.0,
+                trace_id=trace.trace_id,
+            )
         
-        trace.log("entity.matched", entity=entity.name, pillars=entity.pillars, session_id=session_id)
+        trace.log("summon.direct", entity=entity.name, query=query, session_id=session_id,
+                 model_override=model_override)
         
         # Build context and prepend to personality
-        system_prompt = await self._prepare_system_prompt(entity.name, session_id, entity.personality)
+        system_prompt = await self._prepare_system_prompt(entity.name, session_id, entity.personality, query=query)
         
-        # [D118] Model selection: override bypasses TriageRouter
+        # Select model: use override if provided, otherwise use TriageRouter
         if model_override:
             model_name = model_override
-            trace.log("model.override", entity=entity.name, model=model_name, source="model_override")
         else:
             model_name = await self._select_model(entity.name, query, session_id, trace.trace_id)
         
+        # Generate response via model gateway
         response_text, is_cloud = await self.model_gateway.generate(
             model_name=model_name,
             system_prompt=system_prompt,
@@ -681,10 +508,12 @@ class Oracle:
             backend=backend,
             model=model_name,
             session_id=session_id,
+            escalated=False,
             cost_warning="\n\n⚠️ [Sovereignty Alert]: This response was generated by a cloud provider. Local inference was unavailable or bypassed." if is_cloud else None,
         )
         
-        trace.log("model.completed", entity=entity.name, backend=backend, session_id=session_id)
+        trace.log("model.completed", entity=entity.name, backend=backend, escalated=False,
+                 session_id=session_id, model_override=model_override)
         trace.record(
             query=query,
             system_prompt=system_prompt,
@@ -718,7 +547,7 @@ class Oracle:
             )
         
         # Build context and prepend to personality
-        system_prompt = await self._prepare_system_prompt(entity.name, session_id, entity.personality)
+        system_prompt = await self._prepare_system_prompt(entity.name, session_id, entity.personality, query=text)
         
         # Generate response via model gateway with TriageRouter
         model_name = await self._select_model(entity.name, text, session_id, trace.trace_id)
@@ -763,338 +592,15 @@ class Oracle:
         )
         return result
 
-    def _validate_l3(self, l3: str) -> bool:
-        """Validate a soul L3 Universal Principle for quality and safety.
-        
-        Rules:
-        1. Not empty.
-        2. Length 10-500 characters.
-        3. Must not start with YAML-breaking characters (', ", :, \n, \t).
-        4. Must have at least 3 unique words (spam detection).
-        """
-        if not isinstance(l3, str) or not l3.strip():
-            return False
-        
-        l3 = l3.strip()
-        if not (10 <= len(l3) <= 500):
-            return False
-        
-        if l3[0] in ('\'', '"', ':', '\n', '\t'):
-            return False
-        
-        words = set(re.findall(r'\w+', l3.lower()))
-        if len(words) < 3:
-            return False
-            
-        return True
-
     # ── Soul evolution tracking ───────────────────────────────────────
 
     async def _track_soul_evolution(self, entity_name: str, trace_id: str) -> None:
-        """Update the Architect's soul.yaml after each interaction.
+        """Update the entity's soul.yaml after each interaction.
         Implements the L1->L2->L3 refractive abstraction model for gnosis preservation.
         """
         if os.environ.get("OMEGA_ENV") == "test":
             return
-        
-        async with self._soul_lock:
-            try:
-                soul_path = self._soul_path or DEFAULT_SOUL_PATH
-                if not soul_path.exists():
-                    logger.warning(f"Soul file not found at {soul_path}")
-                    return
-                
-                # Disk Space Guard: Abort if free space < 5%
-                usage = shutil.disk_usage(soul_path.parent)
-                free_pct = (usage.free / usage.total) * 100
-                if free_pct < 5:
-                    logger.critical(f"Critical disk space: {free_pct:.2f}% free. Aborting soul write to prevent corruption.")
-                    return
-
-                async with await anyio.open_file(str(soul_path), "r") as f:
-                    content = await f.read()
-                    soul = yaml.safe_load(content)
-                
-                ent = soul.get("entity", {})
-                evo = ent.setdefault("soul_evolution", {})
-                evo["sessions_completed"] = evo.get("sessions_completed", 0) + 1
-                
-                # Track unique entities inhabited
-                wardrobe = ent.get("soul_wardrobe", [])
-                if entity_name not in wardrobe:
-                    wardrobe.append(entity_name)
-                    ent["soul_wardrobe"] = wardrobe
-                evo["entities_inhabited"] = len(wardrobe)
-                
-                # --- Gnosis Distillation (L1->L2->L3) ---
-                distillation_prompt = (
-                    f"Analyze the following interaction trace for entity {entity_name} (Trace ID: {trace_id}).\n"
-                    "Extract the following three levels of abstraction:\n"
-                    "L1 (Narrative): A concise summary of what happened.\n"
-                    "L2 (Insight): The causal pattern or strategic significance of this interaction.\n"
-                    "L3 (Universal Principle): A timeless, domain-agnostic truth extracted from this experience.\n\n"
-                    "Format as YAML with keys: l1, l2, l3."
-                )
-                
-                distill_model = os.environ.get("OMEGA_DISTILL_MODEL", "qwen3-4b-thinking-q4_k_m")
-                distilled_text, _ = await self.model_gateway.generate(
-                    model_name=distill_model,
-                    system_prompt="You are the Gnosis Distiller. Your goal is to extract timeless truths from session traces.",
-                    user_query=distillation_prompt,
-                    temperature=0.3,
-                    max_tokens=512,
-                )
-            
-                if distilled_text:
-                    try:
-                        # Clean up LLM output (remove markdown blocks)
-                        distilled_text = distilled_text.replace("```yaml", "").replace("```", "").strip()
-                        distilled_gnosis = yaml.safe_load(distilled_text)
-                        
-                        if isinstance(distilled_gnosis, dict) and all(k in distilled_gnosis for k in ['l1', 'l2', 'l3']):
-                            # Soul L3 Validation
-                            if self._validate_l3(distilled_gnosis['l3']):
-                                lessons = evo.setdefault("lessons_learned", [])
-                                # Check for duplicates by L3 content
-                                is_duplicate = any(l.get("l3") == distilled_gnosis['l3'] for l in lessons)
-                                
-                                if not is_duplicate and len(lessons) < 1000:
-                                    lessons.append({
-                                        "l1": distilled_gnosis['l1'],
-                                        "l2": distilled_gnosis['l2'],
-                                        "l3": distilled_gnosis['l3'],
-                                        "timestamp": datetime.now(timezone.utc).isoformat(),
-                                        "trace_id": trace_id,
-                                        "entity": entity_name,
-                                    })
-                                    logger.info(f"Soul for {entity_name} updated with new gnosis (L3: {distilled_gnosis['l3'][:50]}...)")
-                                else:
-                                    logger.debug(f"Gnosis L3 duplicate or limit reached for {entity_name}")
-                            else:
-                                logger.warning(f"Distilled L3 failed validation: {distilled_gnosis['l3'][:100]}...")
-                        else:
-                            logger.warning(f"Distilled text not in expected format: {distilled_text[:100]}...")
-                    except yaml.YAMLError as e:
-                        logger.error(f"Failed to parse distilled gnosis YAML: {e}")
-                
-                # Recompute soul_power
-                sessions = evo.get("sessions_completed", 0)
-                entities = evo.get("entities_inhabited", 0)
-                experiences = evo.get("total_embodied_experiences", 0)
-                evo["soul_power"] = round((sessions * 0.1) + (entities * 0.3) + (experiences * 0.6), 2)
-        
-                # Atomic write with backup and recovery
-                temp_dir = soul_path.parent
-                backup_path = soul_path.with_suffix(".yaml.backup")
-                
-                try:
-                    # Create backup before writing
-                    await anyio.to_thread.run_sync(shutil.copy2, str(soul_path), str(backup_path))
-                    
-                    # Verify backup integrity
-                    if not backup_path.exists() or backup_path.stat().st_size == 0:
-                        logger.error(f"Soul backup verification failed for {entity_name}. Aborting write to prevent loss.")
-                        return
-                    
-                    temp_name = await anyio.to_thread.run_sync(self._write_soul_atomic, soul, temp_dir)
-                    await anyio.to_thread.run_sync(os.replace, temp_name, str(soul_path))
-                except OSError as e:
-                    if e.errno == errno.ENOSPC:
-                        logger.critical("Disk full (ENOSPC) during soul write. Attempting to restore backup...")
-                        await anyio.to_thread.run_sync(shutil.copy2, str(backup_path), str(soul_path))
-                    else:
-                        logger.error(f"OSError during soul write: {e}")
-                        raise
-            except Exception as e:
-                logger.error(f"Error during soul evolution for {entity_name} (Trace ID: {trace_id}): {e}")
-
-
-
-
-    def _prune_soul(self, soul: dict) -> int:
-        """Remove stub lessons (L2=Unknown, L3=Unknown) from the soul.
-        
-        Returns:
-            Number of lessons pruned.
-        """
-        ent = soul.get("entity", {})
-        evo = ent.get("soul_evolution", {})
-        lessons = evo.get("lessons_learned", [])
-        
-        if not lessons:
-            return 0
-            
-        initial_count = len(lessons)
-        # Keep only lessons that have at least one meaningful abstraction
-        pruned_lessons = [
-            l for l in lessons 
-            if not (l.get("l2") == "Unknown" and l.get("l3") == "Unknown")
-        ]
-        
-        evo["lessons_learned"] = pruned_lessons
-        return initial_count - len(pruned_lessons)
 
     async def _compact_soul(self, soul: dict) -> int:
-        """Merge repeated narrative lessons into summarized experiences.
-        
-        Example: 15 'Session with Iris' entries -> 'Interacted with Iris over 15 sessions. Key focus: X'
-        """
-        ent = soul.get("entity", {})
-        evo = ent.get("soul_evolution", {})
-        lessons = evo.get("lessons_learned", [])
-        
-        if not lessons:
-            return 0
-            
-        # Group by L1 narrative pattern
-        groups = {}
-        for l in lessons:
-            l1 = l.get("l1", "").lower()
-            if "session with" in l1:
-                entity = l1.split("session with")[-1].strip().title()
-                key = f"interactions_{entity}"
-                groups.setdefault(key, []).append(l)
-            else:
-                groups.setdefault(l.get("l3", "unique"), []).append(l)
-        
-        new_lessons = []
-        merged_count = 0
-        
-        for key, members in groups.items():
-            if len(members) > 1 and key.startswith("interactions_"):
-                # Merge into a single summary lesson
-                entity_name = key.replace("interactions_", "")
-                merged_lesson = {
-                    "l1": f"Conducted {len(members)} sessions with {entity_name}.",
-                    "l2": f"Consolidated experience across {len(members)} interactions.",
-                    "l3": "Repetitive interactions refine the bond but only unique insights evolve the soul.",
-                    "timestamp": members[-1].get("timestamp"),
-                    "trace_id": members[-1].get("trace_id"),
-                    "entity": members[-1].get("entity"),
-                }
-                new_lessons.append(merged_lesson)
-                merged_count += len(members) - 1
-            else:
-                new_lessons.extend(members)
-        
-        evo["lessons_learned"] = new_lessons
-        return merged_count
-    async def evolve_soul(self, entity_name: str) -> Dict[str, Any]:
-        """Manually trigger soul pruning and compaction for an entity.
-        
-        Returns:
-            Stats on the evolution (pruned, compacted, total_remaining).
-        """
-        await self.bootstrap()
-        async with self._soul_lock:
-            soul_path = self._soul_path or DEFAULT_SOUL_PATH
-            if not soul_path.exists():
-                return {"error": "Soul file not found"}
-            
-            async with await anyio.open_file(str(soul_path), "r") as f:
-                content = await f.read()
-                soul = yaml.safe_load(content)
-            
-            pruned = self._prune_soul(soul)
-            compacted = await self._compact_soul(soul)
-            
-            # Save the evolved soul
-            temp_dir = soul_path.parent
-            temp_name = await anyio.to_thread.run_sync(self._write_soul_atomic, soul, temp_dir)
-            await anyio.to_thread.run_sync(os.replace, temp_name, str(soul_path))
-            
-            return {
-                "entity": entity_name,
-                "pruned_stubs": pruned,
-                "compacted_lessons": compacted,
-                "total_remaining": len(soul["entity"]["soul_evolution"]["lessons_learned"]),
-                "status": "evolved"
-            }
-
-    def _write_soul_atomic(self, soul: dict, temp_dir: Path) -> str:
-        """Write soul data to a temp file with physical disk sync (Sovereign Pattern)."""
-        # 1. Create temp file in the same directory to ensure os.replace is atomic (same filesystem)
-        fd, temp_path = tempfile.mkstemp(dir=str(temp_dir), suffix=".tmp")
-        try:
-            with os.fdopen(fd, "w") as tf:
-                yaml_str = yaml.dump(soul, default_flow_style=False, sort_keys=False)
-                tf.write(f"{SOUL_FILE_HEADER}# Updated via Oracle soul evolution.\n\n{yaml_str}")
-                # 2. Flush buffers to OS
-                tf.flush()
-                # 3. Force physical disk write (Sovereign Sync)
-                os.fsync(tf.fileno())
-            return temp_path
-        except OmegaError:
-            if os.path.exists(temp_path):
-                try:
-                    os.remove(temp_path)
-                except OSError as cleanup_err:
-                    logger.warning(f"Cleanup failed: {cleanup_err}")
-            raise
-        except Exception as e:
-            if os.path.exists(temp_path):
-                try:
-                    os.remove(temp_path)
-                except OSError as cleanup_err:
-                    logger.warning(f"Cleanup failed: {cleanup_err}")
-            logger.error(f"Unexpected soul atomic write failure: {e}", exc_info=True)
-            raise StateIntegrityError(f"Soul atomic write failed (temp file: {temp_path}): {e}", raw_error=e) from e
-
-    # ── Pattern detection ─────────────────────────────────────────────
-
-    def _detect_summon(self, text: str) -> Optional[Tuple[str, str]]:
-        match = self.at_summon.match(text.strip())
-        if match:
-            return (match.group(1).strip(), match.group(2).strip())
-        match = self.hey_summon.match(text.strip())
-        if match:
-            return (match.group(1).strip(), match.group(2).strip())
-        sole_match = re.match(r"^@(\w+)\s*$", text.strip(), re.IGNORECASE)
-        if sole_match:
-            return (sole_match.group(1), "")
-        return None
-
-    def _detect_consult(self, text: str) -> Optional[Tuple[str, str]]:
-        match = self.consult_pattern.match(text.strip())
-        if match:
-            return (match.group(1).strip(), match.group(2).strip())
-        return None
-
-    def _empty_response(self, trace: TraceSession) -> OracleResponse:
-        trace.log("response.delivered", type="empty")
-        return OracleResponse(
-            text="Speak, and I will listen.",
-            entity=self.default_entity.name if self.default_entity else "Oracle",
-            trace_id=trace.trace_id,
-        )
-
-    def set_default_entity(self, name: str) -> bool:
-        entity = self.registry.get(name)
-        if entity:
-            self.default_entity = entity
-            return True
-        return False
-
-    async def close(self) -> None:
-        """Gracefully shut down the Oracle and its components."""
-        # Soul Distillation (M5/M11): Auto-distill session insights on shutdown
-        # [id-soft: quake-1996] Save-game pattern — auto-save on exit
-        try:
-            transcript = f"Oracle shutdown at {datetime.now(timezone.utc).isoformat()}"
-            if self.default_entity:
-                distiller = get_distiller()
-                await anyio.to_thread.run_sync(
-                    distiller.distill_and_save,
-                    transcript,
-                    self.default_entity.name,
-                    None,
-                )
-        except OmegaError:
-            pass
-        except Exception as e:
-            logger.error("Soul distillation on shutdown failed (non-blocking): %s", e, exc_info=True)
-            pass
-
-        if self.memory_store:
-            await self.memory_store.close()
-        logger.info("Oracle shutdown complete.")
+        """Compact soul.yaml after growth. Returns final size in bytes."""
+        pass

@@ -1,0 +1,37 @@
+{
+  "session_id": "ses_2cd308210bd8",
+  "cli": "opencode",
+  "model": "deepseek-v4-flash",
+  "task_current": "AUDIT-4 legacy pattern audit delivered \u2014 601 lines, 9 sections, covering 6 P-series TDs against 5 legacy repos",
+  "focus_chain": [
+    "data/kb/_staging/knowledge_systems/AUDIT-4-LEGACY-PATTERNS.md (delivered)",
+    "6 P-series TDs: P1, P2, P3A, P3B, P4, P5",
+    "Legacy repos audited: foundation-legacy (5.2GB), XNAi-v0_1_2, Old-Stacks Xoe-NovAi, omega-engine git history",
+    "Legacy repos MISSING: archive/omega-stack-legacy, archive/xna-omega-legacy"
+  ],
+  "decisions": [
+    {
+      "$text": "scope>6 P-series TDs not 12 (brief discrepancy)"
+    },
+    {
+      "$text": "atomic_write>TD-P1 is 6th impl of XNAi Pattern 4 \u2014 consolidate 5 engine callsites first"
+    },
+    {
+      "$text": "missing_patterns>6 critical: pybreaker, Redis SETEX dedup, sanitize_id, _validate_domain_texts, --dry-run preview, phase markers"
+    },
+    {
+      "$text": "antipatterns>6: 256-token chunks, 390K files, 1-10 integer confidence, 0x1d4a1a ZONEID, Hivemind poll-30s, kb-validate duplicates temple-grade"
+    },
+    {
+      "$text": "reinvented_wheel>5 cases: atomic write (#6), blind review (vs T3Reviewer), compliance (vs temple-grade), Pydantic config, ZONEID_TOMBSTONE"
+    },
+    {
+      "$text": "heritage_disconnect>14 missing [id-soft:] tags + 5 missing CREDITS.md entries"
+    },
+    {
+      "$text": "burned_down>8 specific cuts: chunk_size 256, file-per-chunk, 4 prompt templates, Hivemind poll, 3-float weights, kb-validate, T1-KB..T11-KB, 0x1d4a1a"
+    }
+  ],
+  "continuation": "Hand to Kali/Ma'at/Lilith for ratification. Phase 0 of TDs should consolidate 5 existing atomic-write callsites into 1 helper before adding 6th. After implementation, run make heritage-map (currently passes vacuously because src/omega/kb/ and src/omega/vetting/ do not exist).",
+  "timestamp": "2026-06-06T04:11:13.840223+00:00"
+}

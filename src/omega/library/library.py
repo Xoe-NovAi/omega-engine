@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 """Offline Library — Persistent storage, search, and retrieval of curated content.
 
 AP: AP-OMEGA-LIBRARY-STORE-v1.0.0

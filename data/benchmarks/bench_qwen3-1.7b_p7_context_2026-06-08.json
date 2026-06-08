@@ -1,0 +1,23 @@
+{
+  "model": "qwen3-1.7b",
+  "role": "p7_context",
+  "samples": 5,
+  "ttft_ms": 193.23,
+  "tokens_per_sec": 37.0,
+  "peak_ram_mb": 180.8,
+  "scores": {
+    "accuracy": "fail",
+    "adherence": "fail",
+    "conciseness": "fail",
+    "structure": "pass"
+  },
+  "avg_quality_score": 0.42,
+  "factuality_rate": 0.9450603470535588,
+  "timestamp": "2026-06-08T00:27:56.839059+00:00",
+  "metadata": {
+    "cpu_count": 16,
+    "ram_total_gb": 14.4,
+    "judge_scale": "3-point",
+    "calibration_kappa": 0.75
+  }
+}

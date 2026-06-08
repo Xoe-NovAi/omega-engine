@@ -126,7 +126,7 @@ class RedisStorageProvider(StorageProvider):
             await self.client.delete(hist_key)
             
             if exchanges:
-                pipeline = self.client.pipeline()
+                pipeline = await self.client.pipeline()
                 for ex in exchanges:
                     pipeline.xadd(hist_key, {"json": json.dumps(ex, default=str)})
                 await pipeline.execute()
@@ -183,9 +183,9 @@ class FileStorageProvider(StorageProvider):
     async def _check_disk_space(self) -> bool:
         """Check if free space is above 10% threshold."""
         try:
-            target_dir = self.data_dir
+            target_dir = self.data_dir.resolve()  # Resolve symlinks
             while not target_dir.exists() and target_dir.parent != target_dir:
-                target_dir = target_dir.parent
+                target_dir = target_dir.parent.resolve()  # Keep resolving as we walk up
             usage = await anyio.to_thread.run_sync(shutil.disk_usage, str(target_dir))
             free_percent = usage.free / usage.total
             if free_percent < 0.10:
@@ -221,7 +221,7 @@ class FileStorageProvider(StorageProvider):
 
     async def save_history(self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]) -> None:
         if not await self._check_disk_space():
-            raise DiskSpaceError(f"Disk space below 10% threshold on {self.data_dir}")
+            logger.warning(f"Disk space below 10% threshold on {self.data_dir} — continuing anyway (non-fatal)")
             
         path = self._entity_path(entity_name, session_id)
         await anyio.Path(path.parent).mkdir(parents=True, exist_ok=True)
@@ -236,15 +236,19 @@ class FileStorageProvider(StorageProvider):
         }
         
         def _write_and_lock_sync():
-            lock_path = path.with_suffix(".lock")
-            with open(lock_path, "w") as lock_file:
-                fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
-                try:
-                    with open(temp_path, "w") as f:
-                        json.dump(data, f, indent=2, default=str)
-                    os.replace(temp_path, path)
-                finally:
-                    fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+            try:
+                lock_path = path.with_suffix(".lock")
+                with open(lock_path, "w") as lock_file:
+                    fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+                    try:
+                        with open(temp_path, "w") as f:
+                            json.dump(data, f, indent=2, default=str)
+                        os.replace(temp_path, path)
+                    finally:
+                        fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
+            except Exception as e:
+                logger.error(f"FileStorageProvider.save_history failed for {entity_name}/{session_id}: {e}", exc_info=True)
+                raise
                     
         await anyio.to_thread.run_sync(_write_and_lock_sync)
 

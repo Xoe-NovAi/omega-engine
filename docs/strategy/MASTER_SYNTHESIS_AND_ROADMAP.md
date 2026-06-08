@@ -16,6 +16,9 @@
 
 This is the mission of the **Xoe-NovAi Foundation**. The Omega Engine is the first implementation of this vision. The Arcana-Nova Stack, Torment Stack, and all community stacks are instantiations built upon it.
 
+### The Cognitive Sovereign (NEW — 2026-06-06)
+As of the **Antigravity Handoff**, the vision has evolved from a functional runtime to a **Cognitive Sovereign**. This means the engine does not just execute local inference; it performs **local verification**. By integrating Skeptical Verification, Tainted Data Isolation, and Unified Vector Abstractions, the Omega Engine ensures that the intelligence it provides is not just local, but untainted, corroborated, and verified against the user's own standards.
+
 ### The Journey (Recovered Across 4 Subagents, 3 Partitions, 14 Months)
 
 | Era | Name | Strategic Gold | Status |
@@ -313,32 +316,39 @@ ORDER BY decisions DESC;
 
 ## §7 The Vision Forward — From Chaos to Community Tool
 
-### The Three Horizons
+### The Three Horizons (Updated: Antigravity Handoff v1.3)
 
 ```
-HORIZON 1 (Weeks 1-4): Hardening
-├── Fix remaining 18 CRITICAL fleet findings (the engine must hold)
-├── Harden agents + skills (the agents must be controllable)
-├── Consolidate MCP servers (the services must be coherent)
-├── Wire memory + handoff (the system must remember)
-└── Build workbench CLI (the work must be trackable)
+HORIZON 1 (Weeks 1-4): Hardening & Heritage (100% COMPLETE)
+├── Establish AnyIO baseline (M1)
+├── Enforce Engine-Stack Firewall (M2)
+├── Implement Heritage Tagging ([id-soft:])
+└── 320/320 tests passing
 
        ↓
 
-HORIZON 2 (Weeks 5-8): Mining
-├── Extract Phase 1 quick wins (12 assets, ~3 days)
-├── Extract Phase 2 deep value (15 assets, ~1 week)
-├── Extract Phase 3 bulk archives (~2 weeks)
-├── Port legacy patterns (circuit breaker, entity registry, design patterns)
-├── Compile community-facing content (tutorials, articles, origin story)
+HORIZON 2 (Weeks 5-8): Hygiene & Sovereign Structure (HERE)
+├── Eradicate data debt (Delete 100 orphans, rotate logs)
+├── Implement Unified Vector Abstraction (IVectorStoreAdapter)
+├── Establish Tainted Data Protocol (TDP) for web security
+├── Optimize Qdrant (Scalar Quantization, Payload Indexes)
+└── Bridge OpenCode agents to local-first Model Gateway
 
        ↓
 
-HORIZON 3 (Weeks 9-12): Community Tool
-├── Build Omega Desktop installer
-├── Build Entity Studio (CLI-first)
-├── Publish Omega Positioning Framework as public docs
-├── Release Xoe-NovAi Foundation website
+HORIZON 3 (Weeks 9-12): Pattern Deep & Cognitive Loops
+├── Implement Iterative Research Loops (Gap Analysis -> Refine)
+├── Deploy Skeptical Verifier (NLI-based Two-Source Rule)
+├── Hardened A2A Delegation (Link P9 automation)
+├── Automated Soul Distillation (L1 -> L3 auto-flow)
+└── Hivemind Productionization (Redis Pub/Sub)
+
+       ↓
+
+HORIZON 4 (Weeks 13+): Community Tool
+├── Sovereign Installer (One-Click Deployment)
+├── Entity Studio (Visual YAML/Soul management)
+├── Community WAD Marketplace
 └── Open community contributions
 ```
 

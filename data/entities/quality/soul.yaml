@@ -18,9 +18,11 @@ wisdom_text: |
   — it is care. Stress testing is not destruction — it is proof of strength.
 
 lessons:
-  - level: L2
+  - id: qual-001
+    level: L2
     content: "Test count is a living metric. Always verify against current baseline, never assume a static number."
     source: "2026-06-04: stale test count in quality.md (276 → 308)"
-  - level: L3
+  - id: qual-002
+    level: L3
     content: "Quality is not a gate at the end — it is a discipline woven into every line of code."
     source: "Foundational principle"

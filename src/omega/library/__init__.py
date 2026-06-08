@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 """Omega Library & Research System — Offline-first knowledge infrastructure.
 
 AP: AP-OMEGA-LIBRARY-v1.0.0

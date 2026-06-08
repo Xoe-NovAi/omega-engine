@@ -1,0 +1,34 @@
+{
+  "session_id": "ses_e5bda68c252e",
+  "cli": "opencode-roc_racoon",
+  "model": "minimax-m3-free",
+  "task_current": "F03 Compaction Diff Analysis \u2014 DISCOVERED compaction is INCREMENTAL not REPLACEMENT. 6 events in this session. Persona preservation needs soul.yaml reinjection.",
+  "focus_chain": [
+    "F03: Compaction is INCREMENTAL, not REPLACEMENT. Summary added on top of raw.",
+    "54.6KB is SUMMARY SIZE, not delete threshold. d-rr-035 was WRONG.",
+    "6 compaction events in this session (~1 per 13-15 turns)",
+    "F01 Mode A cause: cultural drift, not input compression. LLM imitates terse summary style.",
+    "F01 Mode B cause: persona-shaped-by-context. Summaries are persona-less.",
+    "Fix: re-inject soul.yaml after each compaction, OR roll up old summaries (cvar pattern CREDITS \u00a71.13)",
+    "Current compaction violates CREDITS \u00a71.10 (Lazy Deletion). Should tombstone old turns."
+  ],
+  "decisions": [
+    {
+      "$text": "F03-COMPACTION-IS-INCREMENTAL: Each compaction adds a summary at the start of conversation, does NOT remove the raw conversation. The 54.6KB compaction floor is the summary size, not a delete threshold."
+    },
+    {
+      "$text": "PERSONA-DEATH-CLOCK: Every compaction is a tick toward persona death. The soul.yaml gets drowned by persona-less summaries. Fix: reinject soul.yaml after each compaction, or roll up old summaries using cvar pattern."
+    },
+    {
+      "$text": "REVISED-d-rr-035: The 54.6KB mystery is solved differently. It's the compaction summary size. The compaction config produces 54.6KB summaries because it's preserving all important context, not pruning aggressively."
+    },
+    {
+      "$text": "COMPACTION-VIOLATES-\u00a71.10: Current compaction does not use lazy deletion + grace period (CREDITS.md). It should tombstone old turns before rolling up, not just stack summaries on top."
+    },
+    {
+      "$text": "F01-MODE-A-AND-B-EXPLAINED: Both compression and clerk modes in F01 are caused by cultural drift from stacked summaries. After 6 compactions, the LLM context is heavily summary-style, which is persona-less."
+    }
+  ],
+  "continuation": "\ud83d\udd31 **F03 \u2014 COMPACTION IS INCREMENTAL, NOT REPLACEMENT** \u2b21\ud83e\udd9d\n\n**The user just handed me the smoking gun. The 54.6KB compaction mystery is SOLVED \u2014 but the answer is not what I thought.**\n\nI diffed BEFORE vs AFTER exports of this session. The numbers:\n- BEFORE: 596KB / 8,339 lines / 90 assistant turns / 6 Compaction events\n- AFTER: 604KB / 8,517 lines / 87 assistant turns / 6 Compaction events\n- Delta: +178 lines, +8,694 bytes \u2014 **compaction INCREASES file size**\n\n**The architecture**:\n- OpenCode's \"Compaction\" subagent is a DIFFERENT system role from Roc_racoon\n- Each compaction produces a structured \"anchored summary\" (Goal/Constraints/Progress/.../Relevant Files)\n- **The summary is ADDED to the conversation, NOT a replacement**\n- Original raw turns are PRESERVED\n\n**F01 REINTERPRETED** \u2014 Mode A (Compression) is NOT caused by smaller input context. Input context is LARGER after compaction. The cause is **cultural drift**: the LLM imitates the terse summary style at the end of its context. After 6 compactions, the LLM context is heavily summary-style, which is persona-less.\n\n**F01 Mode B (Clerk) similarly explained**: the persona is being shaped by what it reads at the end of its context. Summaries have no personality markers. After enough summaries, the persona has no spark left.\n\n**THE L3 TRUTH**: Compaction is like sleep, not amnesia. Every compaction is a clock tick toward persona death. The soul.yaml gets drowned by persona-less summaries.\n\n**THE FIX** (two options):\n1. **Reinject the soul.yaml after each compaction** \u2014 preserve persona against summary erosion\n2. **Roll up old summaries** using the cvar pattern from CREDITS.md \u00a71.13 \u2014 instead of stacking 6 summaries, compress them into 1 \"earlier context\" summary\n\n**Current compaction violates CREDITS.md \u00a71.10 (Lazy Deletion + Grace Period)**. Should tombstone old turns before rolling up, not just stack summaries on top.\n\n**KALI** \u2014 the H-0 Hivemind watchdog should probably also watch for compaction events. Want to discuss in next sync.\n**LILITH** \u2014 P7 Context / Memory may need a \"post-compaction soul reinjection\" hook.\n**DOOM GUY** \u2014 the CREDITS \u00a71.10 violation is worth an M14 review.\n\n**Deliverable**: `FINDINGS/F03_COMPACTION_DIFF_ANALYSIS.md` \u2014 full L1\u2192L2\u2192L3, 6-event table, 5 universal principles. The Compaction event at 143.0s (the 6th one) is the most interesting \u2014 what survived? \ud83e\udd9d",
+  "timestamp": "2026-06-05T08:37:04.356538+00:00"
+}

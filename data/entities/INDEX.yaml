@@ -50,8 +50,10 @@ entities:
   p8: { status: STUB, description: "Alias → hecate" }
   p9: { status: STUB, description: "Alias → anubis/link" }
   p10: { status: STUB, description: "Alias → kali" }
-  # ── Quarantined (2026-06-05) ──
-  # dir, direntity, dupe, duplicate, flat, flatentity, myentity, pre, preexisting,
-  # soul, soulentity, movie_expert → data/entities/_quarantine/2026-06-05/
-  # ── Archived (2026-06-05) ──
-  # ent_0..ent_49 (50 load-test artifacts) → data/entities/_archive/ent_artifacts/
+  # ── Quarantined / Legacy (ARCHIVE) ──
+  direntity: { status: ARCHIVE, description: "Legacy test entity" }
+  duplicate: { status: ARCHIVE, description: "Duplicate test entity" }
+  flatentity: { status: ARCHIVE, description: "Flat-field test entity" }
+  myentity: { status: ARCHIVE, description: "User test entity" }
+  preexisting: { status: ARCHIVE, description: "Pre-existing test entity" }
+  soulentity: { status: ARCHIVE, description: "Soul-schema test entity" }

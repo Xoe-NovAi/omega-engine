@@ -46,6 +46,7 @@ class TopicScheduler:
             except Exception as e:
                 logger.error("Error loading scheduler state: %s", e, exc_info=True)
                 return RotationState()
+        return RotationState()
 
     def _save_state(self):
         """Persist rotation state to disk."""

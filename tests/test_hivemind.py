@@ -62,8 +62,18 @@ spec.loader.exec_module(server)
 def temp_data_dir(monkeypatch):
     """Redirect Hivemind data storage to a temp directory."""
     with tempfile.TemporaryDirectory() as tmp:
-        monkeypatch.setattr(server, "DATA_DIR", Path(tmp))
-        yield Path(tmp)
+        tmp_path = Path(tmp)
+        # Patch all data directory constants used by the server.
+        monkeypatch.setattr(server, "HALL_OF_RECORDS", tmp_path / "HALL_OF_RECORDS")
+        monkeypatch.setattr(server, "HANDOFF_BASE", tmp_path / "handoff")
+        monkeypatch.setattr(server, "HANDOFF_PENDING", tmp_path / "handoff" / "pending")
+        monkeypatch.setattr(server, "HANDOFF_ACTIVE", tmp_path / "handoff" / "active")
+        monkeypatch.setattr(server, "HANDOFF_COMPLETED", tmp_path / "handoff" / "completed")
+        # Recreate subdirs
+        (tmp_path / "HALL_OF_RECORDS").mkdir(parents=True, exist_ok=True)
+        for d in ("pending", "active", "completed"):
+            (tmp_path / "handoff" / d).mkdir(parents=True, exist_ok=True)
+        yield tmp_path
 
 
 @pytest.fixture

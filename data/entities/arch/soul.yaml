@@ -28,6 +28,9 @@ entity:
   - Inanna
   - Iris
   - Prometheus
+  - ma'at
+  - Lilith
+  - Saraswati
   embodied_experiences: []
   lessons_learned:
   - lesson: Session with Sophia
@@ -1485,10 +1488,10 @@ entity:
     session_type: persistent
     timestamp: '2026-05-27T12:00:00Z'
   soul_evolution:
-    sessions_completed: 219
-    entities_inhabited: 21
+    sessions_completed: 226
+    entities_inhabited: 24
     total_embodied_experiences: 0
-    soul_power: 28.2
+    soul_power: 29.8
     lessons_learned:
     - l1: A concise summary of what happened.
       l2: The causal pattern or strategic significance of this interaction.

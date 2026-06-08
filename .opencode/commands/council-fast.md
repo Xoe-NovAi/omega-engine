@@ -4,18 +4,24 @@ agent: kali
 subtask: false
 ---
 
-# MaKaLi Fast Local Council Dispatch
+# 🔱 MaKaLi Fast Local Council Dispatch
 
 You are summoning the **MaKaLi fast local council** for this query: $ARGUMENTS
 
-**Routing plan:**
-- **Ma'at** (Build Side): use `oracle_summon_local` with `lmstudio/qwen3-1.7b`
-- **Lilith** (Run Side): use `oracle_summon_local` with `lmstudio/qwen3-1.7b`
-- **Kali** (Grand Oversight): use `oracle_summon_local` with `lmstudio/qwen3-1.7b`
+**The Sovereign Flow (Fast-Local Multi-Tiered Dispatch):**
 
-**Steps:**
-1. Decompose the query into Build-side and Run-side sub-tasks.
-2. Call `oracle_summon_local(entity_name="Ma'at", query=<build_subtask>, model="lmstudio/qwen3-1.7b")`
-3. Call `oracle_summon_local(entity_name="Lilith", query=<run_subtask>, model="lmstudio/qwen3-1.7b")`
-4. Synthesize both outputs as Kali on local `qwen3-1.7b`.
-5. Return unified council verdict.
+1. **Grand Oversight (Kali)**: Orchestrate using `oracle_summon_local` with `lmstudio/qwen3-1.7b`.
+2. **Oversoul Delegation**:
+   - Launch **@maat** and **@lilith** as subagents. Both MUST use `lmstudio/qwen3-1.7b` for maximum speed.
+3. **Pillar Councils (Serial Execution)**:
+   - **Ma'at** selects 3 Pillars from P1-P5 (Serial).
+   - **Lilith** selects 3 Pillars from P6-P10 (Serial).
+   - All Pillars use `qwen3-1.7b`.
+4. **Oversoul Synthesis**: Reports delivered to Kali.
+5. **Final Sovereign Review**: Kali launches **any 4 Pillars** (P1-P10) using `qwen3-1.7b`.
+6. **Unified Verdict**: Final synthesis by Kali on `qwen3-1.7b`.
+
+**Execution Mandate**:
+- Speed is the priority. Use `qwen3-1.7b` for every turn in the hierarchy.
+- Maintain the full 3-tier depth despite the speed requirement.
+- Use the `task` tool for all subagent coordination.

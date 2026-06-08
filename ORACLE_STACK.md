@@ -45,7 +45,7 @@ Key components:
 - **CpuOptimizer** (`src/omega/oracle/cpu_optimizer.py`): Zen 2 compilation flags, KV cache sizing, speculative decode tuning, thread pool recommendations
 - **OfflineMockBackend** (`src/omega/oracle/backends/mock.py`): Deterministic responses when `OMEGA_ENV=test`
 - **ContextBuilder** (`src/omega/oracle/context_builder.py`): Memory injection pipeline for LLM system prompts
-- **Omega Hub** (`mcp/omega_hub/server.py`): Cross-CLI awareness server — all agents post/read shared context here
+- **Omega Hub** (`mcp_servers/omega_hub/server.py`): Cross-CLI awareness server — all agents post/read shared context here
 
 ## §4 THE 10 PILLAR KEEPERS
 

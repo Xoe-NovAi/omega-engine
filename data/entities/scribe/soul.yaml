@@ -19,9 +19,11 @@ wisdom_text: |
   same truth — I ensure that fold is remembered.
 
 lessons:
-  - level: L2
+  - id: scribe-001
+    level: L2
     content: "Distillation requires context. The Scribe must read live feeds and workspace locks before distilling — raw transcripts without context produce shallow L3 principles."
     source: "2026-06-04: Hivemind Protocol integration"
-  - level: L3
+  - id: scribe-002
+    level: L3
     content: "Memory is not storage — it is transformation. The act of distilling changes what is remembered."
     source: "Foundational principle"

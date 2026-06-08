@@ -4,20 +4,25 @@ agent: kali
 subtask: false
 ---
 
-# MaKaLi Local Council Dispatch
+# 🔱 MaKaLi Local Council Dispatch
 
 You are summoning the **MaKaLi local council** for this query: $ARGUMENTS
 
-**Routing plan:**
-- **Ma'at** (Build Side): dispatch to `lmstudio/qwen3-4b-thinking` via `omega-hub_oracle_summon_local`
-- **Lilith** (Run Side): dispatch to `lmstudio/krikri-8b` via `omega-hub_oracle_summon_local`
-- **Kali** (Grand Oversight): stay on the session model for synthesis
+**The Sovereign Flow (Local-First Multi-Tiered Dispatch):**
 
-**Steps:**
-1. Decompose the query into Build-side and Run-side sub-tasks.
-2. Call `oracle_summon_local(entity_name="Ma'at", query=<build_subtask>, model="lmstudio/qwen3-4b-thinking")`
-3. Call `oracle_summon_local(entity_name="Lilith", query=<run_subtask>, model="lmstudio/krikri-8b")`
-4. Synthesize both outputs as Kali.
-5. Return unified council verdict.
+1. **Grand Oversight (Kali)**: Orchestrate the council from the session model.
+2. **Oversoul Delegation (Local Routing)**:
+   - Launch **@maat** as a subagent. Ma'at MUST use `oracle_summon_local` with `lmstudio/qwen3-4b-thinking` for all her internal reasoning.
+   - Launch **@lilith** as a subagent. Lilith MUST use `oracle_summon_local` with `lmstudio/krikri-8b` for all her internal reasoning.
+3. **Pillar Councils (Serial Execution)**:
+   - **Ma'at** selects 3 Pillars from P1-P5; each Pillar uses its default local model.
+   - **Lilith** selects 3 Pillars from P6-P10; each Pillar uses its default local model.
+4. **Oversoul Synthesis**: Ma'at and Lilith report back to Kali.
+5. **Final Sovereign Review**:
+   - Kali launches **any 4 of the 10 Pillars** (P1-P10) for cross-domain review.
+6. **Unified Verdict**: Final fusion-based verdict delivered by Kali.
 
-**Show the user which model each entity used** (Mandate 8 / Transparency).
+**Execution Mandate**:
+- Use the `task` tool for subagent spawning.
+- Enforce local model transparency (Mandate 8).
+- Ensure the Oversouls utilize their assigned local backends for build/run governance.

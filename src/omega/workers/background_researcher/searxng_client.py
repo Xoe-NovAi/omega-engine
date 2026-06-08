@@ -5,6 +5,15 @@
 # Zero-cost, always-on search via the local SearXNG instance (port 8017).
 
 import logging
+from omega.errors import (
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
 from typing import Optional
 
 import httpx
@@ -69,8 +78,10 @@ class SearXNGClient:
         except httpx.RequestError as e:
             logger.warning(f"SearXNG request failed: {e}")
             return []
+        except OmegaError:
+            return []
         except Exception as e:
-            logger.error(f"SearXNG search error: {e}")
+            logger.error(f"SearXNG search error: {e}", exc_info=True)
             return []
 
     async def search_text(
@@ -90,6 +101,7 @@ class SearXNGClient:
                 resp = await client.get(f"{self.base_url}/healthz")
                 return resp.status_code == 200
         except Exception as e:
+            # M9 carve-out: health probe may catch all to prevent crash loops
             # [id-soft: doom-1993] WAD System — graceful degradation on search failure
             logger.warning("SearXNG health check failed: %s", e)
             return False

@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 """Curation Pipeline — Quality-gated content processing and classification.
 
 AP: AP-OMEGA-CURATOR-v1.0.0

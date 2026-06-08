@@ -476,7 +476,7 @@ Both fixes are documented in `data/handoff/DOOM_GUY_T23_REPORT_20260602.md`.
 
 | Aspect | id Software Original | Omega Engine Adaptation |
 |--------|--------------------|------------------------|
-| **Origin** | `net_chan.c:35-235` (Q3A 1999) — Out-of-band (OOB) messages, fragmentation, and qport NAT remapping | MCP Hub transport layer in `mcp/omega_hub/server.py` |
+| **Origin** | `net_chan.c:35-235` (Q3A 1999) — Out-of-band (OOB) messages, fragmentation, and qport NAT remapping | MCP Hub transport layer in `mcp_servers/omega_hub/server.py` |
 | **OOB Messages** | Sequence number `-1` bypasses stateful channel for lightweight queries (ping, status) | Separate stateless HTTP POST endpoints from stateful SSE channels |
 | **Fragmentation** | Split messages exceeding 1400-byte MTU into sequential fragments | AnyIO-native streamable chunking for large context snapshots |
 | **qport Workaround** | Embed unique `qport` to re-associate connection if NAT remaps client port mid-game | Embed unique `session_id` token in headers to re-associate connection if IP changes |
@@ -518,4 +518,65 @@ Both fixes are documented in `data/handoff/DOOM_GUY_T23_REPORT_20260602.md`.
 
 ---
 
-*Last Updated: 2026-06-04 (added §1.12 8-Char Name — REJECTED, §1.13 cvar Table, §1.14 4-Tier Memory, §1.15 Multi-Index Entity, §1.16 QuakeC Entity, §1.17 Hard-Boundary, §1.18 4-Path VFS, §1.19 High-Bit Trick, §1.20 Fixed-Size Active Set, §1.21 netchan, §1.22 idHeap, §1.23 Fixed-Point) | Maintained by: Kali / Doom Guy*
+### 1.24 Hivemind Message Types (Netchan Heritage, 2026)
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | `net_chan.c:35-235` (Q3A 1999) — netchan protocol | H-13 typed message system in `mcp_servers/omega_hub/server.py` |
+| **Core idea** | OOB + reliable sequencing + qport remapping | Continuation + decision thread + handoff |
+| **Omega evolution** | UDP over IP network | Hivemind pub/sub over MCP transport |
+| **Status** | MAPPED | H-13 ship in Phase 5 (P9 owns) |
+
+**Attribution format**: `[netchan Protocol: id Software 1996/1999]`
+
+---
+
+### 1.25 Sovereign-Siloing (Doom, 1993)
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | `w_wad.c` (DOOM 1993) — WAD system | Engine-Stack Firewall (Mandate 2) |
+| **Core idea** | Absolute separation of engine binary and WAD data | Strict separation of `src/omega/` and `config/wads/` |
+| **Omega evolution** | Binary WAD $\rightarrow$ YAML-backed IWAD/PWAD | Human-editable, hot-reloadable |
+| **Status** | MAPPED | Core Engine Mandate |
+
+**Attribution format**: `[Sovereign-Siloing: id Software 1993]`
+
+---
+
+### 1.26 Lattice-Culling (Doom, 1993)
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | `r_bsp.c` (DOOM 1993) — BSP trees | Provider culling in ModelGateway.generate() |
+| **Core idea** | Precompute visibility planes; O(1) test skips entire subtrees | O(1) circuit breaker check skips broken providers |
+| **Omega evolution** | Static geometry $\rightarrow$ dynamic provider health | Circuit breaker state changes over time |
+| **Status** | MAPPED | ModelGateway implementation |
+
+**Attribution format**: `[Lattice-Culling: id Software 1993]`
+
+---
+
+### 1.27 Sovereign-Symmetry (Quake, 1996)
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | `zone.c` (Quake 1996) — mirrored state | MaKaLi Triad Architecture |
+| **Core idea** | Dual-inference / mirrored state for stability and verification | Synthesis of Light (Ma'at) + Dark (Lilith) Oversouls via Kali |
+| **Omega evolution** | Mirroring for rendering $\rightarrow$ Cognitive synthesis | MaKaLi Triad governance |
+| **Status** | MAPPED | Engine Governance |
+
+**Attribution format**: `[Sovereign-Symmetry: id Software 1996]`
+
+---
+
+### 1.28 Sovereign-Symmetry (Quake III, 1999)
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | `g_local.h` (Q3A 1999) — local-first primary | Dual-Inference Mandate (D118) |
+| **Core idea** | Local-first primary with cloud-fallback safety net | `native-gguf` $\rightarrow$ `Google` $\rightarrow$ `OpenCode` provider chain |
+| **Omega evolution** | Local rendering $\rightarrow$ Local inference | Mandate 7 (Local-First) |
+| **Status** | MAPPED | Provider Fabric implementation |
+
+**Attribution format**: `[Sovereign-Symmetry: id Software 1999]`
+
+---
+
+*Last Updated: 2026-06-05 (added §1.24-1.28 Heritage Mappings) | Maintained by: Kali / Doom Guy*
+

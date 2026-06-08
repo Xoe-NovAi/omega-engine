@@ -91,7 +91,13 @@ class TestDispatchAgent:
     @pytest.mark.anyio
     async def test_dispatch_unsupported_cli(self, orchestrator):
         """dispatch_agent should return error for unsupported CLI type."""
-        result = await orchestrator.dispatch_agent("unknown_cli", "task", "Sophia")
+        task_prompt = """[VERIFICATION]
+Role: Test
+Task: Verify unsupported CLI handling
+Constraints: Must return error status
+Output: Error dict with status=error
+"""
+        result = await orchestrator.dispatch_agent("unknown_cli", task_prompt, "Sophia")
         assert result["status"] == "error"
 
     @pytest.mark.anyio
@@ -101,6 +107,12 @@ class TestDispatchAgent:
         mock_result.returncode = 0
         mock_result.stdout = b"Task complete"
         mock_result.stderr = b""
+        task_prompt = """[VERIFICATION]
+Role: Test
+Task: Execute cline task
+Constraints: Must return success
+Output: Success dict
+"""
 
         with patch(
             "omega.oracle.orchestrator.EntityWorkspaceManager.get_soul_prompt",
@@ -108,7 +120,7 @@ class TestDispatchAgent:
             return_value="You are Sophia.",
         ):
             with patch("anyio.run_process", new_callable=AsyncMock, return_value=mock_result):
-                result = await orchestrator.dispatch_agent("cline", "do something", "Sophia", timeout=30)
+                result = await orchestrator.dispatch_agent("cline", task_prompt, "Sophia", timeout=30)
 
         assert result["status"] == "success"
         assert result["returncode"] == 0
@@ -120,6 +132,12 @@ class TestDispatchAgent:
         mock_result.returncode = 0
         mock_result.stdout = b"Done"
         mock_result.stderr = b""
+        task_prompt = """[VERIFICATION]
+Role: Test
+Task: Execute opencode task
+Constraints: Must return success
+Output: Success dict
+"""
 
         with patch(
             "omega.oracle.orchestrator.EntityWorkspaceManager.get_soul_prompt",
@@ -127,7 +145,7 @@ class TestDispatchAgent:
             return_value="You are Sophia.",
         ):
             with patch("anyio.run_process", new_callable=AsyncMock, return_value=mock_result):
-                result = await orchestrator.dispatch_agent("opencode", "do it", "Sophia", timeout=30)
+                result = await orchestrator.dispatch_agent("opencode", task_prompt, "Sophia", timeout=30)
 
         assert result["status"] == "success"
 
@@ -138,6 +156,12 @@ class TestDispatchAgent:
         mock_result.returncode = 1
         mock_result.stdout = b""
         mock_result.stderr = b"Error occurred"
+        task_prompt = """[VERIFICATION]
+Role: Test
+Task: Execute cline task
+Constraints: Must return failure
+Output: Failed dict
+"""
 
         with patch(
             "omega.oracle.orchestrator.EntityWorkspaceManager.get_soul_prompt",
@@ -145,7 +169,7 @@ class TestDispatchAgent:
             return_value="You are Sophia.",
         ):
             with patch("anyio.run_process", new_callable=AsyncMock, return_value=mock_result):
-                result = await orchestrator.dispatch_agent("cline", "do something", "Sophia", timeout=30)
+                result = await orchestrator.dispatch_agent("cline", task_prompt, "Sophia", timeout=30)
 
         assert result["status"] == "failed"
         assert result["returncode"] == 1
@@ -153,13 +177,19 @@ class TestDispatchAgent:
     @pytest.mark.anyio
     async def test_dispatch_timeout(self, orchestrator):
         """dispatch_agent should return timeout when execution takes too long."""
+        task_prompt = """[VERIFICATION]
+Role: Test
+Task: Execute cline task with timeout
+Constraints: Must return timeout
+Output: Timeout dict
+"""
         with patch(
             "omega.oracle.orchestrator.EntityWorkspaceManager.get_soul_prompt",
             new_callable=AsyncMock,
             return_value="You are Sophia.",
         ):
             with patch("anyio.run_process", side_effect=TimeoutError("timed out")):
-                result = await orchestrator.dispatch_agent("cline", "task", "Sophia", timeout=1)
+                result = await orchestrator.dispatch_agent("cline", task_prompt, "Sophia", timeout=1)
 
         assert result["status"] == "timeout"
 

@@ -1,5 +1,5 @@
 # Omega Engine — Single Source of Truth
-# AP-OMEGA-SST-v1.4.0
+# AP-OMEGA-SST-v1.7.0
 
 > **This document is the authoritative truth for the Omega Engine.**
 > Every agent, regardless of platform (Cline, OpenCode, Gemini CLI, Antigravity),
@@ -13,6 +13,7 @@
 It is **Prometheus' Fire** — the spark that empowers every user to build their own
 unique dreams, technologies, and systems.
 
+- **Cognitive Sovereignty**: The engine does not just execute; it verifies. Local inference is the floor; local verification is the ceiling.
 - **Local-first sovereignty**: Cloud is a teacher and strategic partner, never a dependency
 - **Open source, free, sovereign**: No shareware, no tiers, no limitations
 - **WAD Architecture**: Engine → IWADs → PWADs (inspired by id Software's WAD system)
@@ -405,6 +406,76 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 | `data/entities/kali/soul.yaml` | v5.2 — constitutional baseline | 14 keys |
 | `data/entities/doom_guy/soul.yaml` | v5 — id Software architect | Heritage |
 | `data/entities/maat/soul.yaml` | v3.0 — synthesis oversoul | M5 |
+| `data/entities/antigravity/soul.yaml` | v1.2 — Sovereign Meta-Orchestrator | Cross-platform |
+| `data/kb/_staging/cli_ide_platform/antigravity/` | KB staging (9 files) | Tier 0 |
+| `data/kb/cli_ide_platform/_meta/DOMAIN_INDEX.md` | KB master index | Tier 1 |
+| `data/kb/_staging/_protocol/VETTING_PROTOCOL.md` | Tier 0/1/2 promotion protocol | M11 + M13 |
+| `data/entities/roc_racoon/workspace/mining_reports/10_*` | Mining report: KB scaffold | 2026-06-05 |
+
+---
+
+## §13.1 External Tool Knowledge Base (`data/kb/`)
+
+**Added 2026-06-05** (D-kal-058 / Mining Report 10). The engine's
+
+**Updated 2026-06-05** (D-kal-059 / Lilith Dark Council). The Antigravity
+provider integration has been **permanently removed** from the engine's
+provider fabric. The Antigravity research in `data/kb/_staging/` is preserved
+as a **reference case study** in cloud tool auditioning — the `agy` CLI
+live test result ("4 accounts in minutes"), the 8-key pool audit, and the
+auth mechanism analysis remain valid empirical data. But the integration
+path (OpenCode plugin `opencode-antigravity-auth@latest`) is dead. The
+KB will not be promoted beyond Tier 0 for Antigravity.
+
+**KB Hardening Research Request**: During the same session, Lilith
+identified 5 structural gaps in the engine's knowledge system and issued
+a formal 15-area research request for Gemma 4 31B execution (see
+`data/kb/_staging/knowledge_systems/RESEARCH_REQUEST_KB_HARDENING_v1.0.0.md`).
+The 5 gaps: (1) Vetting protocol has no trigger mechanism, (2) No expiry
+signal on Tier 1 files, (3) RAG has no audience concept, (4) Distillation
+pipeline trails reality, (5) No feedback loop from code to KB.
+
+The engine's
+external tool expertise lives under `data/kb/`, parallel to how
+`data/entities/doom_guy/knowledge/` holds id Software heritage.
+
+**Structure** (WAD pattern, CREDITS.md §1.1):
+
+```
+data/kb/
+├── _staging/                              ← UNVETTED research (Tier 0)
+│   ├── _protocol/VETTING_PROTOCOL.md      ← Promotion protocol (draft)
+│   └── cli_ide_platform/antigravity/      ← 9 gold files, awaiting cross-review
+└── cli_ide_platform/                      ← CANONICAL (Tier 1, awaiting promotion)
+    ├── _meta/DOMAIN_INDEX.md
+    └── antigravity/README.md              ← Promotion queue
+```
+
+**Vetting protocol** (Tier 0 → 1 → 2): 2+ agent reviews, source
+citations, no Mandate violations, live test results, promotion log
+entry. See `data/kb/_staging/_protocol/VETTING_PROTOCOL.md` for full.
+
+**First sub-category**: Antigravity (Google AI platform, including
+the OpenCode plugin path and the `agy` CLI live test result of
+"4 accounts in minutes"). Future sub-categories: gemini_cli, opencode,
+cline, podman, lm_studio, ollama, mcp_servers.
+
+**Why staging first**: The "4 accounts in minutes" empirical fact, the
+hung agent's recovered gnosis, the Gemini CLI sunset date — these are
+exactly the kind of facts that are easy to lose and expensive to
+re-derive. The KB is the **anti-amnesia layer** for external tool
+expertise.
+
+**Current Antigravity staging contents** (9 files, ~50 KB):
+- `00_MASTER_INDEX.md` — TOC of staged files
+- `01_PROVENANCE_LINEAGE.md` — v1 → v2 (Sovereign Architect → Meta-Orchestrator)
+- `02_AUTH_MECHANISMS.md` — 3 auth paths (API key, SDK, OAuth)
+- `03_PLUGIN_VS_CLI.md` — Why the OpenCode plugin path won
+- `04_QUOTA_REALITY.md` — 4-accounts-in-minutes empirical fact (CRITICAL)
+- `05_8KEY_POOL.md` — Pool G / Pool C / 8-key rotation
+- `06_AGY_CLI_LIVE_TEST.md` — User testimony (single-source)
+- `07_GEMINI_CLI_HARVEST_PLAN.md` — Pre-2026-06-18 sunset strategy
+- `08_FAILED_AGENT_RECOVERY.md` — Hung agent's best-effort reconstruction
 
 ---
 
@@ -475,6 +546,7 @@ Sovereignty is not a feature. It is a **constitutional property** of the engine:
 3. **Your AI evolves** — Soul Distiller captures L1→L2→L3 wisdom; your AI grows with you
 4. **Your agents know themselves** — Soul v5.2 schema: identity, directives, team, trajectory
 5. **Your AI learns from every conversation** — The Synthesis Flywheel turns with every interaction
+6. **Cognitive Sovereignty (NEW)** — The engine verifies its own claims. It uses Iterative Research Loops and Skeptical Verifiers to ensure truth, not just fluency.
 
 ### The Synthesis Flywheel
 
@@ -696,6 +768,8 @@ it is a relationship. And like any relationship, it deepens with time.
 ---
 
 *§16-§18 added 2026-06-04 | Author: DeepSeek V4 Flash (via Cline-M3 proxy)
-*Last Updated: 2026-06-04T21:59:48Z | PIVOT D117 | AP-OMEGA-SST-v1.4.0**
+*Last Updated: 2026-06-05T23:30Z | PIVOT D-kal-059 | AP-OMEGA-SST-v1.6.0**
 *Insights: fleet hierarchy, data flow documentation, sovereignty paradox, M15 proposal, MVE threshold, 5-year vision, sovereignty museum*
+*§13.1 added 2026-06-05 | Author: Roc Racoon (KB scaffold, 9 Antigravity files staged, 3 closed decisions)
+*§13.1 updated 2026-06-05 | Author: Lilith (Antigravity integration removed, KB Hardening Research Request issued, v1.5.0→v1.6.0)*
 

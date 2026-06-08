@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 """Ancient Greek Support — Greek-BERT and Krikri integration for the library system.
 
 AP: AP-OMEGA-GREEK-v1.0.0

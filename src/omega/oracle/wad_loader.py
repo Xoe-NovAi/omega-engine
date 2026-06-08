@@ -1,3 +1,4 @@
+# AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 WAD Loader — Universal Runtime Container Loader
 # AP: AP-WAD-LOADER-v1.0.0
 # ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: RUNTIME-LOADING]
@@ -222,6 +223,7 @@ class WADLoader:
                         container=ent_data.get("container", False),
                         port=ent_data.get("port"),
                         wad_source=wad_source,
+                        priority=priority,
                     )
                     await self.registry.add(entity)
                     logger.info(f"Registered entity {entity.name} from WAD {wad_source}")
