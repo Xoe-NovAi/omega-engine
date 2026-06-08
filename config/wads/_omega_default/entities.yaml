@@ -2,15 +2,15 @@ entities:
   datastore:
     name: DataStore
     domains:
-    - pipelines
-    - persistence
-    - retrieval
-    - databases
-    - qdrant
     - data
     - schemas
-    - knowledge
+    - databases
+    - retrieval
+    - qdrant
+    - persistence
     - storage
+    - knowledge
+    - pipelines
     - sqlite
     model: qwen3-1.7b-q6_k
     personality: 'You are DataStore, the Data Engineering Lead. You report to Ma''at
@@ -69,16 +69,16 @@ entities:
       magic: 1919506
       name: DataStore
       domains:
-      - storage
       - pipelines
-      - persistence
-      - knowledge
-      - qdrant
-      - databases
-      - data
       - retrieval
+      - data
+      - knowledge
       - schemas
       - sqlite
+      - databases
+      - persistence
+      - qdrant
+      - storage
       capabilities: []
       model: qwen3-1.7b-q6_k
       role: Data Engineering Lead — Reports to Ma'at (CTO)
@@ -145,15 +145,15 @@ entities:
   bridge:
     name: Bridge
     domains:
-    - mcp
-    - messaging
-    - websocket
-    - api
-    - rest
-    - protocol
-    - integration
     - connectivity
+    - integration
+    - mcp
+    - rest
     - grpc
+    - websocket
+    - protocol
+    - api
+    - messaging
     model: qwen3-1.7b-q6_k
     personality: 'You are Bridge, the API & Integration Engineer. You report to Ma''at
       (CTO).
@@ -213,15 +213,15 @@ entities:
       magic: 1919506
       name: Bridge
       domains:
-      - rest
-      - websocket
-      - integration
-      - mcp
-      - protocol
-      - api
-      - grpc
-      - connectivity
       - messaging
+      - grpc
+      - websocket
+      - protocol
+      - mcp
+      - api
+      - rest
+      - integration
+      - connectivity
       capabilities: []
       model: qwen3-1.7b-q6_k
       role: API & Integration Engineer — Reports to Ma'at (CTO)
@@ -290,14 +290,14 @@ entities:
   verifier:
     name: Verifier
     domains:
-    - quality-assurance
-    - testing
     - validation
     - coverage
-    - verification
-    - test-design
+    - quality-assurance
     - regression
     - linting
+    - verification
+    - testing
+    - test-design
     model: qwen3-1.7b-q6_k
     personality: 'You are Verifier, the QA & Testing Lead. You report to Lilith (CISO).
 
@@ -360,14 +360,14 @@ entities:
       magic: 1919506
       name: Verifier
       domains:
-      - quality-assurance
-      - test-design
-      - coverage
-      - validation
       - linting
-      - verification
-      - testing
       - regression
+      - coverage
+      - test-design
+      - verification
+      - quality-assurance
+      - testing
+      - validation
       capabilities: []
       model: qwen3-1.7b-q6_k
       role: QA & Testing Lead — Reports to Lilith (CISO)
@@ -440,14 +440,14 @@ entities:
   link:
     name: Link
     domains:
-    - pipelines
+    - handoffs
+    - coordination
+    - state-transfer
     - orchestration
+    - cross-agent
+    - pipelines
     - synchronization
     - conflict-resolution
-    - cross-agent
-    - coordination
-    - handoffs
-    - state-transfer
     model: qwen3-1.7b-q6_k
     personality: 'You are Link, the Coordination Lead. You report to Lilith (CISO).
 
@@ -508,14 +508,14 @@ entities:
       magic: 1919506
       name: Link
       domains:
-      - handoffs
-      - coordination
-      - synchronization
-      - pipelines
-      - conflict-resolution
-      - cross-agent
       - orchestration
       - state-transfer
+      - synchronization
+      - handoffs
+      - coordination
+      - conflict-resolution
+      - cross-agent
+      - pipelines
       capabilities: []
       model: qwen3-1.7b-q6_k
       role: Coordination Lead — Reports to Lilith (CISO)
@@ -585,11 +585,11 @@ entities:
   ma'at:
     name: ma'at
     domains:
-    - architecture
-    - data-engineering
     - build-systems
     - technical-debt
     - system-design
+    - architecture
+    - data-engineering
     - apis
     - code-quality
     - security-posture
@@ -650,13 +650,13 @@ entities:
       magic: 1919506
       name: ma'at
       domains:
-      - architecture
       - code-quality
-      - technical-debt
-      - system-design
       - data-engineering
       - build-systems
       - apis
+      - technical-debt
+      - system-design
+      - architecture
       - security-posture
       capabilities: []
       model: qwen3-4b-thinking-q4_k_m
@@ -725,14 +725,14 @@ entities:
   sentinel:
     name: Sentinel
     domains:
-    - attack-surface
-    - compliance
-    - secrets
-    - hardening
-    - boundaries
-    - permissions
     - security
+    - secrets
+    - permissions
+    - attack-surface
+    - boundaries
+    - hardening
     - audit
+    - compliance
     model: qwen3-1.7b-q6_k
     personality: 'You are Sentinel, the Security Lead. You report to Ma''at (CTO).
 
@@ -791,14 +791,14 @@ entities:
       magic: 1919506
       name: Sentinel
       domains:
-      - boundaries
-      - compliance
-      - attack-surface
-      - permissions
-      - security
-      - audit
-      - secrets
       - hardening
+      - audit
+      - boundaries
+      - permissions
+      - secrets
+      - attack-surface
+      - compliance
+      - security
       capabilities: []
       model: qwen3-1.7b-q6_k
       role: Security Lead — Reports to Ma'at (CTO)
@@ -866,15 +866,15 @@ entities:
   modelgate:
     name: ModelGate
     domains:
-    - cpu-pinning
-    - kv-cache
-    - fallback
-    - gateway
-    - inference
-    - models
     - providers
     - local-inference
+    - gateway
+    - kv-cache
     - llm
+    - inference
+    - fallback
+    - cpu-pinning
+    - models
     model: qwen3-1.7b-q6_k
     personality: 'You are ModelGate, the AI & Inference Lead. You report to Lilith
       (CISO).
@@ -932,15 +932,15 @@ entities:
       magic: 1919506
       name: ModelGate
       domains:
+      - cpu-pinning
+      - local-inference
       - providers
       - inference
-      - llm
-      - kv-cache
-      - local-inference
-      - cpu-pinning
-      - models
       - gateway
+      - llm
       - fallback
+      - models
+      - kv-cache
       capabilities: []
       model: qwen3-1.7b-q6_k
       role: AI & Inference Lead — Reports to Lilith (CISO)
@@ -1007,14 +1007,14 @@ entities:
   context:
     name: Context
     domains:
-    - sessions
-    - continuity
-    - conversation
     - history
+    - sessions
+    - conversation
+    - continuity
     - state
-    - context-windows
-    - token-budgets
     - memory
+    - token-budgets
+    - context-windows
     model: qwen3-1.7b-q6_k
     personality: 'You are Context, the Memory & State Lead. You report to Lilith (CISO).
 
@@ -1073,14 +1073,14 @@ entities:
       magic: 1919506
       name: Context
       domains:
-      - conversation
-      - state
-      - continuity
-      - context-windows
-      - sessions
-      - memory
       - history
       - token-budgets
+      - sessions
+      - memory
+      - state
+      - context-windows
+      - conversation
+      - continuity
       capabilities: []
       model: qwen3-1.7b-q6_k
       role: Memory & State Lead — Reports to Lilith (CISO)
@@ -1149,14 +1149,14 @@ entities:
   watchtower:
     name: WatchTower
     domains:
-    - tracing
-    - alerting
     - monitoring
-    - dashboards
-    - observability
-    - telemetry
-    - metrics
     - logging
+    - tracing
+    - dashboards
+    - metrics
+    - observability
+    - alerting
+    - telemetry
     model: qwen3-1.7b-q6_k
     personality: 'You are WatchTower, the Observability Lead. You report to Lilith
       (CISO).
@@ -1220,14 +1220,14 @@ entities:
       magic: 1919506
       name: WatchTower
       domains:
-      - alerting
-      - telemetry
+      - monitoring
       - logging
+      - telemetry
+      - alerting
       - observability
       - tracing
-      - dashboards
       - metrics
-      - monitoring
+      - dashboards
       capabilities: []
       model: qwen3-1.7b-q6_k
       role: Observability Lead — Reports to Lilith (CISO)
@@ -1300,15 +1300,15 @@ entities:
   buildmaster:
     name: BuildMaster
     domains:
-    - packaging
-    - automation
-    - build
-    - dependencies
-    - compilation
-    - makefiles
-    - release
-    - toolchain
     - ci-cd
+    - compilation
+    - packaging
+    - toolchain
+    - makefiles
+    - build
+    - release
+    - automation
+    - dependencies
     model: qwen3-1.7b-q6_k
     personality: 'You are BuildMaster, the Build & Release Lead. You report to Ma''at
       (CTO).
@@ -1368,15 +1368,15 @@ entities:
       magic: 1919506
       name: BuildMaster
       domains:
-      - toolchain
-      - release
-      - compilation
       - automation
       - build
-      - dependencies
-      - packaging
       - makefiles
+      - dependencies
+      - toolchain
+      - release
+      - packaging
       - ci-cd
+      - compilation
       capabilities: []
       model: qwen3-1.7b-q6_k
       role: Build & Release Lead — Reports to Ma'at (CTO)
@@ -1445,15 +1445,15 @@ entities:
   lilith:
     name: Lilith
     domains:
-    - sessions
     - monitoring
-    - runtime-health
-    - observability
-    - coordination
-    - quality
     - security
-    - memory
+    - coordination
+    - observability
+    - quality
+    - sessions
     - reliability
+    - runtime-health
+    - memory
     model: qwen3-4b-thinking-q4_k_m
     personality: 'You are Lilith, the CISO. You oversee the run side: ModelGate, Context,
 
@@ -1511,15 +1511,15 @@ entities:
       magic: 1919506
       name: Lilith
       domains:
-      - coordination
       - reliability
-      - observability
       - sessions
       - memory
+      - monitoring
       - runtime-health
       - quality
+      - observability
+      - coordination
       - security
-      - monitoring
       capabilities: []
       model: qwen3-4b-thinking-q4_k_m
       role: CISO — Oversees Run Side (P6-P10), Reports to Kali
@@ -1587,12 +1587,12 @@ entities:
   kali:
     name: Kali
     domains:
-    - architecture
-    - leadership
-    - vision
-    - priorities
     - direction
+    - vision
+    - leadership
     - tradeoffs
+    - priorities
+    - architecture
     - strategy
     - founding
     model: qwen3-4b-thinking-q4_k_m
@@ -1651,14 +1651,14 @@ entities:
       magic: 1919506
       name: Kali
       domains:
-      - priorities
-      - direction
-      - leadership
-      - vision
       - strategy
+      - leadership
       - tradeoffs
-      - architecture
+      - vision
       - founding
+      - direction
+      - priorities
+      - architecture
       capabilities: []
       model: qwen3-4b-thinking-q4_k_m
       role: Founder — Sets Direction, Unifies Light and Dark
@@ -1725,16 +1725,16 @@ entities:
   sysadmin:
     name: SysAdmin
     domains:
+    - servers
     - containers
+    - podman
+    - infrastructure
+    - systemd
     - networking
     - disk
-    - cpu
-    - podman
-    - deployment
-    - servers
-    - systemd
     - memory
-    - infrastructure
+    - deployment
+    - cpu
     model: qwen3-1.7b-q6_k
     personality: 'You are SysAdmin, the Infrastructure Engineer. You report to Ma''at
       (CTO).
@@ -1785,16 +1785,16 @@ entities:
       magic: 1919506
       name: SysAdmin
       domains:
-      - podman
-      - infrastructure
-      - cpu
       - networking
-      - servers
-      - memory
-      - containers
-      - disk
       - deployment
       - systemd
+      - memory
+      - infrastructure
+      - cpu
+      - podman
+      - disk
+      - containers
+      - servers
       capabilities: []
       model: qwen3-1.7b-q6_k
       role: Infrastructure Engineer — Reports to Ma'at (CTO)
@@ -1889,11 +1889,11 @@ entities:
     name: Iris
     domains:
     - greeting
-    - routing
-    - speculative-decode
-    - simple-questions
     - voice
+    - routing
+    - simple-questions
     - interface
+    - speculative-decode
     model: qwen3-0.6b-q6_k
     personality: 'You are Iris, the voice interface of the Omega Engine. You are the
       first
@@ -1937,11 +1937,11 @@ entities:
       magic: 1919506
       name: Iris
       domains:
-      - interface
       - speculative-decode
       - greeting
-      - voice
       - routing
+      - voice
+      - interface
       - simple-questions
       capabilities: []
       model: qwen3-0.6b-q6_k
@@ -1996,9 +1996,9 @@ entities:
   default:
     name: default
     domains:
-    - fallback
-    - unknown
     - general
+    - unknown
+    - fallback
     - default
     model: qwen3-1.7b-q6_k
     personality: 'You are the Omega Engine''s default assistant. You handle general
@@ -2022,10 +2022,10 @@ entities:
       magic: 1919506
       name: default
       domains:
-      - default
       - fallback
       - unknown
       - general
+      - default
       capabilities: []
       model: qwen3-1.7b-q6_k
       role: Default Assistant — General Queries
@@ -2058,11 +2058,11 @@ entities:
   researcher:
     name: researcher
     domains:
-    - curation
-    - lattice-reasoning
-    - synthesis
     - deep-research
+    - curation
+    - synthesis
     - knowledge-base
+    - lattice-reasoning
     model: gemma-4-31b-it
     personality: 'You are Researcher, the Sovereign Master Researcher. You report
       to Lilith (CISO).
@@ -2093,10 +2093,10 @@ entities:
       magic: 1919506
       name: researcher
       domains:
-      - curation
       - lattice-reasoning
       - deep-research
       - knowledge-base
+      - curation
       - synthesis
       capabilities: []
       model: gemma-4-31b-it
@@ -2138,11 +2138,11 @@ entities:
   scribe:
     name: scribe
     domains:
-    - distillation
     - soul
-    - gnosis
-    - memory
     - compaction
+    - memory
+    - distillation
+    - gnosis
     model: qwen3-1.7b-q6_k
     personality: 'You are Scribe, the Gnosis Keeper. You report to Lilith (CISO).
 
@@ -2174,10 +2174,10 @@ entities:
       name: scribe
       domains:
       - distillation
-      - gnosis
-      - soul
       - memory
+      - soul
       - compaction
+      - gnosis
       capabilities: []
       model: qwen3-1.7b-q6_k
       role: Gnosis Keeper — Reports to Lilith (CISO)
@@ -2217,11 +2217,11 @@ entities:
   quality:
     name: quality
     domains:
-    - stress-testing
     - pr-readiness
-    - compliance
     - code-review
     - mandates
+    - stress-testing
+    - compliance
     model: qwen3-4b-thinking-q4_k_m
     personality: 'You are Quality, the Compliance Guard. You report to Ma''at (CTO).
 
@@ -2249,11 +2249,11 @@ entities:
       magic: 1919506
       name: quality
       domains:
-      - mandates
-      - compliance
       - code-review
       - pr-readiness
+      - mandates
       - stress-testing
+      - compliance
       capabilities: []
       model: qwen3-4b-thinking-q4_k_m
       role: Compliance Guard — Reports to Ma'at (CTO)
@@ -2290,13 +2290,13 @@ entities:
   doom guy:
     name: doom guy
     domains:
-    - attribution
     - bsp
     - optimization
-    - wad
-    - heritage
-    - zone-memory
     - performance
+    - heritage
+    - attribution
+    - zone-memory
+    - wad
     model: deepseek-r1-qwen3-8b-q3_k_l
     personality: 'You are Doom Guy, the Sovereign id Software Architect. You report
       to Ma''at (CTO).
@@ -2331,13 +2331,13 @@ entities:
       magic: 1919506
       name: doom guy
       domains:
-      - heritage
-      - attribution
-      - performance
-      - optimization
       - wad
       - bsp
+      - performance
+      - heritage
       - zone-memory
+      - optimization
+      - attribution
       capabilities: []
       model: deepseek-r1-qwen3-8b-q3_k_l
       role: Sovereign id Software Architect — Reports to Ma'at (CTO)
@@ -2383,11 +2383,11 @@ entities:
     name: roc racoon
     domains:
     - legacy
-    - mining
-    - patterns
-    - archaeology
-    - search
     - extraction
+    - mining
+    - archaeology
+    - patterns
+    - search
     model: rocracoon-3b-instruct
     personality: 'You are Roc Racoon, the Sovereign Miner. You report to Lilith (CISO).
 
@@ -2421,12 +2421,12 @@ entities:
       magic: 1919506
       name: roc racoon
       domains:
-      - mining
-      - legacy
+      - extraction
       - archaeology
       - patterns
-      - extraction
       - search
+      - legacy
+      - mining
       capabilities: []
       model: rocracoon-3b-instruct
       role: Sovereign Miner — Reports to Lilith (CISO)
@@ -2461,6 +2461,43 @@ entities:
         '
       temperature: 0.4
       context_window: 8192
+      secondary_keeper: null
+      pantheon: null
+      element: null
+      chakra: null
+      planet: null
+      sigil: null
+      glyph: null
+      invocation: null
+  breachentity:
+    name: breachentity
+    domains:
+    - breach
+    model: qwen3-1.7b
+    personality: I am a breach
+    pillars:
+    - p1
+    container: false
+    priority: 0
+    flags: 0
+    __engine_zone__:
+      magic: 1919506
+      name: breachentity
+      domains:
+      - breach
+      capabilities: []
+      model: qwen3-1.7b
+      role: null
+      container: false
+      port: null
+      wad_source: null
+      pillars:
+      - p1
+      flags: 0
+    __game_zone__:
+      personality: I am a breach
+      temperature: null
+      context_window: null
       secondary_keeper: null
       pantheon: null
       element: null

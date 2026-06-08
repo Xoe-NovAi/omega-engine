@@ -25,19 +25,55 @@ def run_mcp(mcp: Any, modify_app: Optional[Callable[[Any], None]] = None,
     transport = os.getenv("OMEGA_MCP_TRANSPORT", "stdio").lower()
 
     def _build_app():
-        """Build a Starlette app with MCP mounted + custom routes."""
-        from starlette.applications import Starlette
-        from starlette.routing import Mount
+        """Build a Starlette app with MCP mounted + custom routes.
 
-        mcp_app = mcp.sse_app()
+        Uses a custom SSE handler with stateless=True so that clients
+        (e.g. OpenCode) can reconnect and send tool calls without
+        re-sending the InitializeRequest — which MCP SDK currently
+        requires per-session.
+        """
+        from starlette.applications import Starlette
+        from starlette.routing import Mount, Route
+        from starlette.responses import Response
+        from starlette.requests import Request
+        from mcp.server.sse import SseServerTransport
+
+        sse = SseServerTransport(
+            mcp.settings.message_path,
+            security_settings=mcp.settings.transport_security,
+        )
+
+        async def handle_sse(request: Request) -> Response:
+            async with sse.connect_sse(
+                request.scope, request.receive, request._send,
+            ) as streams:
+                await mcp._mcp_server.run(
+                    streams[0], streams[1],
+                    mcp._mcp_server.create_initialization_options(),
+                    stateless=True,
+                )
+            return Response()
+
+        routes = [
+            Route(mcp.settings.sse_path, endpoint=handle_sse, methods=["GET"]),
+            Mount(mcp.settings.message_path, app=sse.handle_post_message),
+        ]
+
         if modify_app:
-            modify_app(mcp_app)
+            # Legacy support: modify_app expected a full Starlette app.
+            # Build one for compatibility.
+            from starlette.applications import Starlette
+            legacy_app = Starlette(routes=routes)
+            modify_app(legacy_app)
+            return Starlette(
+                routes=(custom_routes or []) + [Mount("/", app=legacy_app)],
+                debug=mcp.settings.debug,
+            )
 
         if custom_routes:
-            # Custom routes take priority — they're checked first by Starlette
-            all_routes = custom_routes + [Mount("/", app=mcp_app)]
-            return Starlette(routes=all_routes)
-        return mcp_app
+            all_routes = custom_routes + routes
+            return Starlette(routes=all_routes, debug=mcp.settings.debug)
+        return Starlette(routes=routes, debug=mcp.settings.debug)
 
     # --- Systemd Socket Activation Logic ---
     listen_fds = os.getenv("LISTEN_FDS")

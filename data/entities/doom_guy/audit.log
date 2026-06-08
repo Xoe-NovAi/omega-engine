@@ -3194,3 +3194,6 @@
 [2026-06-07T23:14:08.991820+00:00] ACTION: WORKSPACE_CREATE | DETAILS: Created root workspace at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/doom_guy
 [2026-06-07T23:14:08.991966+00:00] ACTION: DIR_CREATE | DETAILS: Created knowledge directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/doom_guy/knowledge
 [2026-06-07T23:14:08.992027+00:00] ACTION: DIR_CREATE | DETAILS: Created workspace directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/doom_guy/workspace
+[2026-06-08T01:07:52.750910+00:00] ACTION: WORKSPACE_CREATE | DETAILS: Created root workspace at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/doom_guy
+[2026-06-08T01:07:52.750979+00:00] ACTION: DIR_CREATE | DETAILS: Created knowledge directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/doom_guy/knowledge
+[2026-06-08T01:07:52.750999+00:00] ACTION: DIR_CREATE | DETAILS: Created workspace directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/doom_guy/workspace

@@ -7,48 +7,52 @@ license = "Apache-2.0"
 requires-python = ">=3.12"
 dependencies = [
     # Async runtime
-    "anyio==4.13.0",
-    "httpx==0.28.1",
+    "anyio>=4.13.0",
+    "httpx>=0.28.1",
     # Config & serialization
-    "pyyaml==6.0.3",
-    "pydantic==2.13.4",
+    "pyyaml>=6.0.3",
+    "pydantic>=2.13.4",
     # Embeddings & vector store (CPU-optimized)
-    "qdrant-client==1.17.1",
-    "fastembed==0.6.0",
+    "qdrant-client>=1.18.0",
+    "fastembed>=0.8.0",
     # Redis (sessions, cache, streams)
-    "redis>=7.0.0,<8.0.0",
+    "redis>=7.0.0",
     # Document parsing
-    "markdown==3.7.0",
-    "beautifulsoup4==4.14.3",
+    "markdown>=3.7.0",
+    "beautifulsoup4>=4.14.3",
     # Monitoring
-    "prometheus-client==0.25.0",
-    "psutil==7.2.2",
-    "tenacity==8.5.0",
-    "aiosqlite==0.22.1",
+    "prometheus-client>=0.25.0",
+    "psutil>=7.2.2",
+    "tenacity>=9.1.4",
+    "aiosqlite>=0.22.1",
     # MCP (Model Context Protocol) servers
-    "fastmcp==3.2.0",
-    "python-multipart==0.0.28", # For FastAPI form data handling
-    "nest_asyncio==1.6.0", # For better async loop management
-    "apscheduler==3.10.4", # For background scheduled tasks
+    "mcp>=1.27.2",
+    "fastmcp>=3.2.0",
+    # HTTP/ASGI servers (core gateway + MCP runtime)
+    "fastapi>=0.136.1",
+    "uvicorn>=0.46.0",
+    "starlette>=0.46.0",
+    "python-multipart>=0.0.28", # For FastAPI form data handling
+    "nest_asyncio>=1.6.0", # For better async loop management
+    "apscheduler>=3.10.4", # For background scheduled tasks
+    # Native GGUF inference (Zen 2 optimized)
+    "llama-cpp-python>=0.3.28",
 ]
 
 [project.optional-dependencies]
 cli = [
-    "typer==0.25.1",
-    "rich==15.0.0",
-    "shellingham==1.5.4",
-    "prompt_toolkit>=3.0.43,<4.0.0",
+    "typer>=0.25.1",
+    "rich>=15.0.0",
+    "shellingham>=1.5.4",
+    "prompt_toolkit>=3.0.43",
 ]
-nova = [
-    "fastapi==0.136.1",
-    "uvicorn[standard]==0.46.0",
-]
+nova = []
 voice = [
-    "faster-whisper==1.1.0",
-    "piper-tts==1.2.0",
+    "faster-whisper>=1.1.0",
+    "piper-tts>=1.2.0",
 ]
 all = [
-    "omega[cli,nova,voice]",
+    "omega[cli,voice]",
 ]
 dev = [
     "pytest>=9.0.0",

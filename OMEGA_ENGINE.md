@@ -132,7 +132,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | Engine version | 2.2.0 | 2026-06-04 |
 | Source files | **77** .py files | 2026-06-04 |
 | Source lines | **19,376** | 2026-06-04 |
-| Test functions | **308** | 2026-06-04 |
+| Test functions | **320** | 2026-06-08 |
 | Test files | **28** | 2026-06-04 |
 | PIVOT decisions | **115 (D1-D115)** | 2026-06-04 |
 | Sovereign Mandates | **14 (M1-M14)** | 2026-06-04 |

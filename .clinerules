@@ -5,11 +5,12 @@
 # Engine state: Read OMEGA_ENGINE.md (the Single Source of Truth)
 # Platform distinction: .clinerules = HOW to work from Cline CLI.
 #                       OMEGA_ENGINE.md = WHAT the engine IS.
-# Last Updated: 2026-06-05 (thin-wrapper refactor + entity hygiene + session lessons)
+# Last Updated: 2026-06-08 (M9 Error Integrity Push + Test Baseline Update)
 # Cline CLI version: 3.0.15 (cline binary at ~/.nvm/versions/node/v25.9.0/bin/cline)
 # User context: M3 1M via Cline provider (OAuth); moved from Cline VSCodium extension.
 #
-# SESSION LESSONS (2026-06-05):
+# SESSION LESSONS (2026-06-08):
+# - M9 Error Integrity is paramount: 155+ bare excepts were purged. NO bare `except:`.
 # - Agent transcripts and handoff docs are EVIDENCE, not GOSPEL. Verify claims against disk.
 # - Agent prompts must be thin wrappers. Mandates are injected at boot, not in the prompt.
 # - `websearch` is the only working search tool. firecrawl/exa are 401-broken.
@@ -21,6 +22,8 @@
 - **Read First**: `SOVEREIGN_MANDATES.md` (14 mandates, M1-M14, v3.1.0)
 - **Engine State**: `OMEGA_ENGINE.md` (Single Source of Truth)
 - **Cline Twin**: `AGENTS.md` (OpenCode sibling rules, kept symmetric)
+- **Sovereignty Scorecard**: Check `OMEGA_ENGINE.md` §10 for current metrics (Target: 80%+ Local Ratio).
+
 
 Key mandates in one line each (full text in SOVEREIGN_MANDATES.md):
 - **M1 AnyIO Absolute** — no `asyncio`; wrap blocking I/O in `anyio.to_thread.run_sync`.
@@ -37,6 +40,12 @@ Key mandates in one line each (full text in SOVEREIGN_MANDATES.md):
 - **M12 Queue Integrity** — every request has a terminal state; no orphan files; atomic `.tmp -> .json` writes.
 - **M13 Temple-Grade** — all code must pass T1-T11 gates via `make temple-grade`
 - **M14 Heritage Vetting** — no `[id-soft:]` tag without vet record; `make heritage-vet` enforces (Kali D115)
+
+## 🚩 CURRENT SYSTEMIC PRIORITY: D113 FIREWALL RESTORATION
+- **Violation**: Mandate 2 (Engine-Stack Firewall) is currently breached.
+- **Gap**: `src/omega/oracle/entity_registry.py` contains hardcoded Pillar meanings.
+- **S1.5a Goal**: Restore WAD-agnosticism by loading meanings from `hierarchy.yaml`.
+- **Blocker**: This is a P0 priority for full sovereignty.
 
 
 ## Auto-Approval Directive
@@ -146,7 +155,7 @@ When running interactively or with --auto-approve, the agent has access to:
 2. **Read the rules**: `head -50 SOVEREIGN_MANDATES.md` (refresh the 14 mandates)
 3. **Check recent activity**: `git log --oneline -10` and `git status`
 4. **Verify baseline**: `cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && make test`
-   - Must show **312/312 passing**. If fewer pass, STOP and triage before changes.
+   - Must show **315/315 passing**. If fewer pass, STOP and triage before changes.
 5. **Verify Hivemind** (multi-agent work): `omega-hub_hivemind_get_awareness()`
    - See who's already working before claiming files
 6. **Read latest handoffs** (if any):
@@ -171,7 +180,7 @@ When running interactively or with --auto-approve, the agent has access to:
 
 ### After Completing Work (MANDATORY SEQUENCE)
 
-1. `make test` - all **312** tests must pass
+1. `make test` - all **315** tests must pass
 2. `make temple-grade` - T1-T11 gates must pass (Mandate 13)
 3. `make sovereignty` - confirm local/cloud ratio did not regress
 4. `git add -A && git commit -m "<prefix>: <short message>"` - PREFIX REQUIRED
@@ -201,7 +210,7 @@ When running interactively or with --auto-approve, the agent has access to:
 - **Imports**: stdlib -> third-party -> local; relative imports within packages
 - **Docstrings**: Google-style; preserve existing docstrings unless modifying that function
 - **Errors**: typed exceptions only; no bare `except:`; `pytest.raises(OmegaError)` is canonical
-- **Tests**: `make test` (312 must pass), then `make temple-grade` (T1-T11 must pass)
+- **Tests**: `make test` (315 must pass), then `make temple-grade` (T1-T11 must pass)
 - **Atomic writes**: use `.tmp -> .json` rename pattern for any file mutation
 - **Lines**: <100 chars preferred; flake8 must pass
 
@@ -213,7 +222,7 @@ cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine
 source .venv/bin/activate
 
 # === CORE TESTING ===
-make test                # 312 tests must pass
+make test                # 315 tests must pass
 make test-cov            # with coverage report
 make temple-grade        # T1-T11 gates (Mandate 13)
 make sovereignty         # local/cloud inference ratio
@@ -484,7 +493,7 @@ When you wake up after compaction:
 3. `head -100 docs/decisions/PIVOT_LOG.md` - re-anchor architecture
 4. `head -50 docs/strategy/HIVEMIND_PROTOCOL.md` - re-anchor coordination rules
 5. `ls -t data/handoff/*.md | head -5` - find newest handoffs
-6. `cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && make test` - 312/312
+6. `cd /home/arcana-novai/Documents/Xoe-NovAi/omega-engine && make test` - 315/315
 7. `make temple-grade` - T1-T11 must pass
 8. `git log --oneline -5` - confirm latest commits
 9. `git status` - confirm no uncommitted drift
@@ -557,9 +566,9 @@ this pipeline, but Cline can do it directly when working solo.
 ## Versioning
 
 - **AP Token**: AP-CLINERULES-OMEGA-v4.0.0
-- **Updated**: 2026-06-05 (Thin-wrapper refactor + entity hygiene + session lessons)
+- **Updated**: 2026-06-08 (M9 Error Integrity Push + Test Baseline Update)
 - **Previous version**: 3.5.0 (Hivemind Protocol + Subagent Dispatch + Link P9 + ZONEID)
-- **Test baseline**: 312 tests (stable; handoff says 312/312)
+- **Test baseline**: 315 tests (stable; handoff says 315/315)
 - **Mandate baseline**: 14 (M1-M14, v3.1.0)
 - **PIVOT decisions**: 119+ (D1-D119+)
 - **Entity count**: 42 total (30 active, 12 stubs); 62 quarantined/archived in D-cln-007
@@ -567,7 +576,8 @@ this pipeline, but Cline can do it directly when working solo.
 - **Hivemind**: OPERATIONAL via omega-hub (`:8016/sse`), 6 tools, 5min TTL
 - **Omega Hub**: 40 MCP tools + 11 HTTP routes, systemd user service
 - **Web search**: `websearch` ONLY — firecrawl/exa are 401-broken
-- **SESSION LESSONS (2026-06-05)**:
+- **SESSION LESSONS (2026-06-08)**:
+  - M9 Error Integrity is paramount: 155+ bare excepts were purged. NO bare `except:`.
   - Agent transcripts and handoff docs are EVIDENCE, not GOSPEL — verify against disk
   - Agent prompts must be thin wrappers — mandates are injected at boot
   - When user says "fix X", scope to X — do not expand to Y and Z

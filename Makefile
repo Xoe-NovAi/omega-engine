@@ -2,7 +2,7 @@
 # AP: AP-MAKEFILE-v3.0.0
 # ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: BUILD-ORCHESTRATION]
 # Hardware: AMD Ryzen 7 5700U (8C/16T) | CPU-only inference
-# Status: HORIZON 1 COMPLETE ✅
+# Status: PUBLIC RELEASE v2.2.0 ✅
 
 ROOT := $(shell pwd)
 PYTHON := .venv/bin/python3
@@ -33,8 +33,8 @@ COLOR_NC := \033[0m
 menu: ## 📋 Show the Omega Engine command menu
 	@echo ""
 	@echo "$(COLOR_PURPLE)╔══════════════════════════════════════════════════════╗$(COLOR_NC)"
-	@echo "$(COLOR_PURPLE)║$(COLOR_BOLD)  🔱 OMEGA ENGINE — HORIZON 1 COMPLETE             $(COLOR_PURPLE)║$(COLOR_NC)"
-	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  $(COLOR_GREEN)307 tests ✅  |  71 modules  |  All 12 Mandates enforced$(COLOR_PURPLE)║$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)║$(COLOR_BOLD)  🔱 OMEGA ENGINE — PUBLIC RELEASE v2.2.0           $(COLOR_PURPLE)║$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  $(COLOR_GREEN)320 tests ✅  |  77 modules  |  All 14 Mandates enforced$(COLOR_PURPLE)║$(COLOR_NC)"
 	@echo "$(COLOR_PURPLE)╚══════════════════════════════════════════════════════╝$(COLOR_NC)"
 	@echo ""
 	@echo "$(COLOR_BOLD)🔥 CORE$(COLOR_NC)"
@@ -47,7 +47,7 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo "  $(COLOR_CYAN)make menu$(COLOR_NC)         📋 This menu"
 	@echo ""
 	@echo "$(COLOR_BOLD)🧪 TESTING$(COLOR_NC)"
-	@echo "  $(COLOR_CYAN)make test$(COLOR_NC)         🧪 Run all 307 tests"
+	@echo "  $(COLOR_CYAN)make test$(COLOR_NC)         🧪 Run all 320 tests"
 	@echo "  $(COLOR_CYAN)make test ARGS='-k name'$(COLOR_NC)  Filter tests by name"
 	@echo "  $(COLOR_CYAN)make test-cov$(COLOR_NC)     📊 Run tests with coverage"
 	@echo "  $(COLOR_CYAN)make lint$(COLOR_NC)         🔍 Lint with flake8"

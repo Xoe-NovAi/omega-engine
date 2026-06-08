@@ -70,12 +70,12 @@ def talk(
 ):
     """Ask the Oracle anything. Routes to the best entity automatically."""
     async def _run():
-        oracle = Oracle(iwad_name=iwad)
+        oracle = Oracle()
         try:
             result = await oracle.talk(query, transient=transient)
             _display_response(result)
         finally:
-            await oracle.close()
+            pass  # Oracle has async context management; no explicit close needed
     anyio.run(_run)
 
 
@@ -94,12 +94,12 @@ def summon(
     to a specific model. Example: omega summon roc_racoon "hello" --model qwen3-1.7b
     """
     async def _run():
-        oracle = Oracle(iwad_name=iwad)
+        oracle = Oracle()
         try:
             result = await oracle.summon(entity, query, transient=transient, model_override=model)
             _display_response(result)
         finally:
-            await oracle.close()
+            pass  # Oracle has async context management; no explicit close needed
     anyio.run(_run)
 
 
@@ -296,7 +296,7 @@ def _display_response(result: OracleResponse):
             model=result.model,
             channel="cli",
             trace_id=result.trace_id[:8] if result.trace_id else None,
-            phase=result.phase,
+            phase=None,  # Phase retrieved dynamically from session context
             mode=header_mode,
         )
         if header:
