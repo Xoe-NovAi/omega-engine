@@ -135,6 +135,13 @@ class Oracle:
             return (match.group(1).lower(), match.group(2))
         return None
     
+    def assess_confidence(self, query: str) -> float:
+        """Public alias for _assess_iris_confidence (P0-B: M-A2b fix).
+
+        [P0-B aligned: zero id-soft heritage, pure Python pattern.]
+        """
+        return self._assess_iris_confidence(query)
+
     def _assess_iris_confidence(self, query: str) -> float:
         """Assess whether Iris (speculative decoder) can answer alone.
         

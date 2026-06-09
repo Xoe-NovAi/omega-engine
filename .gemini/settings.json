@@ -1,5 +1,12 @@
 {
   "general": {
     "preferredEditor": "vscodium"
+  },
+  "mcpServers": {
+    "omega-hub": {
+      "url": "http://127.0.0.1:8016/sse",
+      "timeout": 30000,
+      "trust": true
+    }
   }
 }

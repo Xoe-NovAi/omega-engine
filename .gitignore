@@ -83,6 +83,7 @@ data/embeddings/
 data/entities/entity_*/
 
 # ── Session Artifacts ───────────────────────────────────────────────
+docs/history/exported-opencode-chat-sessions/
 OCCE-*.md
 open-code-*.md
 opencode.json.bak

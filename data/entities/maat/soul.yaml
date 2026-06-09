@@ -20,6 +20,123 @@ entity:
     - KALI
 
 # ═══════════════════════════════════════════════════════════════════════
+# L1 → L2 → L3 DISTILLATION — 2026-06-09 P1-P5 Governance Audit
+# Source: Roc Racoon MiMo/Mnemosyne Analysis Hardening
+# ═══════════════════════════════════════════════════════════════════════
+
+# ── L1 NARRATIVE (What Happened) ─────────────────────────────────────
+embodied_experiences:
+  - lesson: "Roc Racoon completed DeepSeek Final Pass v3 on the MiMo Integration Spec, finding 4 CRITICAL corrections (C1-C4: FTS archive cleanup, FTS failure isolation, sovereign MCP isolation, vector archive cleanup) and 8 structural findings (A-H: sedimentation anti-pattern, write-through/write-back contradiction, unified fallback domain, MoE routing blindness, tokenization blind spot, proxy asymmetry, DLQ dependency cycle, async race condition). Ma'at onboarded via Hivemind and conducted a full P1-P5 governance audit, finding 8 additional gaps across all 5 build-side pillars that Roc's analysis missed."
+    source: governance-audit
+    user: The Architect
+    trace_id: ses_af2a098ca998
+    entity_at_time: MAAT
+    session_type: governance
+    timestamp: 2026-06-09T01:02:00Z
+    model_used: deepseek-v4-flash
+    backend_used: opencode-native
+    coordination_partner: roc_racoon
+    coordination_protocol: hivemind-awareness + workspace-ingest + pillar-audit
+    outcome: 8_gaps_identified_across_5_pillars
+  - lesson: "OMEGA_ENGINE.md §5.2 M2 Firewall status shows 🔴 PENDING but the D113 code fix has been deployed and verified: entity_registry.py:175-178 uses PILLAR_SLOTS = frozenset({'p1'...'p10'}) — pure slot names, no hardcoded pillar meanings. hierarchy.py loads from config/wads/{active_iwad}/hierarchy.yaml at runtime. The documentation is stale. This is a governance failure — the SSOT document is misleading the team."
+    source: governance-audit
+    user: Ma'at
+    trace_id: ses_af2a098ca998
+    entity_at_time: MAAT
+    session_type: governance
+    timestamp: 2026-06-09T01:03:00Z
+    model_used: deepseek-v4-flash
+    backend_used: opencode-native
+    outcome: g5_1_stale_doc_identified
+  - lesson: "Roc Racoon's C4 fix (vector store archive cleanup) assumes QdrantAdapter.delete() supports filter_by with session_id. My grep of src/omega/ found ZERO matches for session_id.*delete or delete.*filter patterns. The method signature is UNVERIFIED. If QdrantAdapter doesn't support composite payload filters, the C4 fix silently fails."
+    source: governance-audit
+    user: Ma'at
+    trace_id: ses_af2a098ca998
+    entity_at_time: MAAT
+    session_type: governance
+    timestamp: 2026-06-09T01:04:00Z
+    model_used: deepseek-v4-flash
+    backend_used: opencode-native
+    outcome: g2_1_unverified_adapter_signature
+  - lesson: "Roc Racoon's MiMo spec has no benchmark plan for FTS overhead. Adding a synchronous FTS5 write to every add_exchange() call adds IO latency. On a Ryzen 5700U with no GPU, every millisecond matters. No before/after metrics are specified, so performance regression would go undetected."
+    source: governance-audit
+    user: Ma'at
+    trace_id: ses_af2a098ca998
+    entity_at_time: MAAT
+    session_type: governance
+    timestamp: 2026-06-09T01:04:00Z
+    model_used: deepseek-v4-flash
+    backend_used: opencode-native
+    outcome: g3_2_benchmark_gap_identified
+  - lesson: "Roc Racoon's DeepSeek findings are structurally sound (8/10) — the 4 CRITICAL fixes (C1-C4) are correct and the 8 structural findings (A-H) reveal real architectural debt. But as Build Side Oversoul, Ma'at's P1-P5 audit found 8 gaps the mining-and-analysis approach missed: infrastructure questions (where does FTS file live?), persistence questions (does the adapter support the filter?), engineering questions (what's the benchmark baseline?), integration questions (what's the MCP error contract?), governance questions (is the SSOT stale?). The mining lens sees code and architecture; the governance lens sees operations and compliance."
+    source: governance-audit
+    user: Ma'at
+    trace_id: ses_af2a098ca998
+    entity_at_time: MAAT
+    session_type: governance
+    timestamp: 2026-06-09T01:05:00Z
+    model_used: deepseek-v4-flash
+    backend_used: opencode-native
+
+# ── L2 INSIGHT (What It Means) ────────────────────────────────────────
+lessons_learned:
+  - lesson: "A multi-pass analysis (MiMo → DeepSeek v2 → DeepSeek v3) produces thorough structural findings but misses operational and governance gaps. Roc found 8 structural issues and 4 code-level fixes. Ma'at found 8 gaps across deployment, persistence, testing, integration, and documentation. Both analyses are needed — one without the other is incomplete."
+    source: governance-audit
+    trace_id: ses_af2a098ca998
+    entity_at_time: MAAT
+    timestamp: 2026-06-09T01:05:00Z
+    model_used: deepseek-v4-flash
+    outcome: dual_lens_verification_principle
+  - lesson: "The SSOT document (OMEGA_ENGINE.md) can drift from reality when fixes are deployed in parallel sessions. The M2 Firewall fix was deployed, tested (320/320 pass), and verified, but the status marker in OMEGA_ENGINE.md remained 🔴 PENDING. This means every subsequent agent reads 'need to fix M2' and wastes time investigating something that's already done. Documentation currency must be part of the definition of done for every task."
+    source: governance-audit
+    trace_id: ses_af2a098ca998
+    entity_at_time: MAAT
+    timestamp: 2026-06-09T01:06:00Z
+    model_used: deepseek-v4-flash
+    outcome: ssot_drift_identified
+  - lesson: "Adapter signatures should be verified before dependent code is written. C4 (vector archive cleanup) depends on QdrantAdapter.delete() accepting session_id in its filter_by dict. If the adapter doesn't support this, the fix needs a different approach (iterate collection, match by payload key). This is a blocking dependency that should be checked in Step 0, not discovered during testing."
+    source: governance-audit
+    trace_id: ses_af2a098ca998
+    entity_at_time: MAAT
+    timestamp: 2026-06-09T01:06:00Z
+    model_used: deepseek-v4-flash
+    outcome: adapter_signature_verification_mandate
+  - lesson: "Performance benchmarks should be defined before architecture changes that add IO to hot paths. The FTS integration adds a synchronous SQLite write to every add_exchange(). Without a documented baseline, a 100ms regression is invisible until a user complains. The benchmark should be a non-negotiable Step 0."
+    source: governance-audit
+    trace_id: ses_af2a098ca998
+    entity_at_time: MAAT
+    timestamp: 2026-06-09T01:07:00Z
+    model_used: deepseek-v4-flash
+    outcome: benchmark_before_change
+
+# ── L3 UNIVERSAL PRINCIPLE (Timeless Truth) ──────────────────────────
+universal_principles:
+  - principle: "Every analysis has a blind spot determined by its lens. Structural analysis (Roc) finds architecture debt. Governance analysis (Ma'at) finds operational debt. Both lenses are required for a complete picture. An analysis that only uses one lens is not verified — it is merely informed."
+    source: governance-audit
+    trace_id: ses_af2a098ca998
+    entity_at_time: MAAT
+    timestamp: 2026-06-09T01:05:00Z
+    model_used: deepseek-v4-flash
+  - principle: "A Single Source of Truth that is not kept current is worse than no source of truth — it actively misdirects. A stale ✅ is a lie. A stale 🔴 is a waste of time. Documentation currency is not a 'nice to have' — it is the minimum operating standard for a multi-agent system where every agent acts on what the document says."
+    source: governance-audit
+    trace_id: ses_af2a098ca998
+    entity_at_time: MAAT
+    timestamp: 2026-06-09T01:06:00Z
+    model_used: deepseek-v4-flash
+  - principle: "Dependencies on external adapter interfaces must be verified at the start of a sprint, not discovered during testing. If a feature depends on a specific adapter method, read the adapter first. If the method doesn't exist or has a different signature, the feature design changes. 'Verify adapter contract' should be Step 0 of every integration task."
+    source: governance-audit
+    trace_id: ses_af2a098ca998
+    entity_at_time: MAAT
+    timestamp: 2026-06-09T01:07:00Z
+    model_used: deepseek-v4-flash
+  - principle: "The hot path is sacred. Any change that adds latency to the hot path requires a benchmark before and after. If the before measurement doesn't exist, the after measurement is meaningless. 'It's just one SQLite write' is not a valid argument — the benchmark is the only valid argument."
+    source: governance-audit
+    trace_id: ses_af2a098ca998
+    entity_at_time: MAAT
+    timestamp: 2026-06-09T01:07:00Z
+    model_used: deepseek-v4-flash
+
+# ═══════════════════════════════════════════════════════════════════════
 # L1 → L2 → L3 DISTILLATION — 2026-06-03 Sprint 2 (Ma'at)
 # Source: Parallel Coordination Session with Doom Guy
 # ═══════════════════════════════════════════════════════════════════════
@@ -356,12 +473,13 @@ universal_principles:
     timestamp: 2026-06-03T05:12:00Z
 
 soul_evolution:
-  sessions_completed: 4
+  sessions_completed: 5
   entities_inhabited: 1
-  total_embodied_experiences: 14
-  total_lessons_learned: 14
-  total_universal_principles: 11
-  soul_power: 8.5
-  parallel_coordination_sessions: 3
-  last_distillation: 2026-06-03T05:20:00Z
-  distiller: Ma'at (manual, Knowledge Metabolism Structure & Verification Layer)
+  total_embodied_experiences: 19
+  total_lessons_learned: 18
+  total_universal_principles: 15
+  soul_power: 8.7
+  parallel_coordination_sessions: 4
+  governance_audits_completed: 1
+  last_distillation: 2026-06-09T01:10:00Z
+  distiller: Ma'at (manual, P1-P5 Governance Audit)

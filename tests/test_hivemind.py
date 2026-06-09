@@ -50,9 +50,27 @@ class MockFastMCP:
 
 mock_mcp_fastmcp.FastMCP = MockFastMCP
 mock_mcp_server.fastmcp = mock_mcp_fastmcp
+
+# Mock mcp.types (used by m9_safe decorator for CallToolResult/TextContent)
+mock_mcp_types = types.ModuleType("mcp.types")
+
+class MockCallToolResult:
+    def __init__(self, content=None, isError=False, **kwargs):
+        self.content = content or []
+        self.isError = isError
+
+class MockTextContent:
+    def __init__(self, type="text", text=""):
+        self.type = type
+        self.text = text
+
+mock_mcp_types.CallToolResult = MockCallToolResult
+mock_mcp_types.TextContent = MockTextContent
+
 sys.modules["mcp"] = mock_mcp_pkg
 sys.modules["mcp.server"] = mock_mcp_server
 sys.modules["mcp.server.fastmcp"] = mock_mcp_fastmcp
+sys.modules["mcp.types"] = mock_mcp_types
 
 server = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(server)

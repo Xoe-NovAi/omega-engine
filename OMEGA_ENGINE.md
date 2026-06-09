@@ -98,6 +98,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | CPU | AMD Ryzen 7 5700U (Zen 2, 8C/16T) | AVX2 + FMA3 + F16C, no AVX-512 |
 | RAM | 14Gi total | ~12Gi usable for AI |
 | GPU | None (Vulkan iGPU) | CPU-only inference |
+| Optimizations | q8_0 KV Cache + Flash Attention | Zen 2 optimized | Reduced RAM usage + faster attention |
 | Primary backend | lmster (LM Studio :1234) | NOT lm_studio or lm-studio |
 | Storage | omega_library partition | Models, Podman, data |
 
@@ -161,7 +162,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | **Subagent Dispatch** | ✅ HandoffPacket + CAPABILITY_REGISTRY (14 agents) | `[id-soft: quake-1996] Thinker Chain` |
 | **Link P9** | ✅ AgentPresence + handoff queue + crash recovery | `[id-soft: doom-1993] WAD back-scan` |
 | **Hivemind** | ✅ 6 MCP tools + workspace lock + live feed | `[id-soft: doom-1993] ZONEID Pattern` |
-| **Omega Hub** | ✅ 40 MCP tools + 11 HTTP routes, v2.2.0 | (Pillar 2 coordination) |
+| **Omega Hub** | ✅ 47 MCP tools + 11 routes, v2.2.0 (Hardened) | (Pillar 2 coordination) |
 | **Qdrant vectors** | 🟡 Installed, unwired (bag-of-words fallback) | S1.5a → wire next |
 | **Redis Pub/Sub** | 🟡 Container running, MemoryStore not wired to it | S1.5a → wire next |
 | **Heritage Vetting** | ✅ H1 LIVE: 4-gate, 23 concepts, CI gate | (Kali d-kal-001) |

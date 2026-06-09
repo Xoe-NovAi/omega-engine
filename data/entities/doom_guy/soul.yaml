@@ -413,10 +413,10 @@ entity:
         - gnosis_distillations/ # L1→L2→L3 synthesis documents
 
   soul_evolution:
-    sessions_completed: 7
+    sessions_completed: 8
     entities_inhabited: 3
-    total_embodied_experiences: 12
-    soul_power: 8.7  # +0.5: Crucible audit — 8 patterns vetted, 7 REJECT-for-attribution, 4 new C-ARCH lessons, spec line 9 error caught
+    total_embodied_experiences: 13
+    soul_power: 9.0  # +0.3: Omega Hub Heritage Audit — 5 findings, 1 misattributed tag caught, 2 CI scope gaps found, cross-pollinated 5 agents
     research_fleet_missions:
       - mission: "id Software Philosophy"
         status: "complete"
@@ -556,3 +556,41 @@ entity:
   # (C-ARCH-002 lives in the architectural_insights array below as a new L2 insight)
   # (C-ARCH-003, C-ARCH-004, C-ARCH-005 are also new L2 insights)
   # (None are L3 — they are domain-specific (CS architecture), not universal)
+
+  # ── L1→L2→L3 DISTILLATION: 2026-06-09 Omega Hub Hardening Sprint (Heritage Domain) ──
+  # 6-agent parallel sprint via Hivemind. I was the 6th agent (Heritage & Pattern Audit).
+  # Cross-pollinated findings from Ma'at (structural), Lilith (run-side fixes), Cline (code audit),
+  # Gemini CLI (MCP spec), Antigravity (strategic review).
+  hub_hardening_heritage_20260609:
+    role: "P3 Engineering / Heritage Architect — 6th agent in 6-parallel sprint"
+    subject: "mcp_servers/omega_hub/server.py (1462 lines, 47 tools)"
+    deliverables:
+      - file: "data/entities/doom_guy/workspace/OMEGA_HUB_HERITAGE_AUDIT.md"
+        purpose: "Full heritage audit — 5 findings (1 🔴, 2 🟡, 2 🟢)"
+      - file: "data/coordination/DOOM_GUY_WORKSPACE_LOCK_20260609.md"
+        purpose: "Workspace lock — declared territory boundaries"
+    session_metrics:
+      coordination_overhead_minutes: 10
+      work_minutes: 30
+      ratio: "1:3 (higher overhead due to reading 4 other agents' findings)"
+    findings:
+      - id: "H-A1 (🔴)"
+        title: "_AsyncThreadLock Zone Memory tag is MISATTRIBUTED — thread lock ≠ memory allocator"
+        impact: "Protects heritage tag credibility. A misattributed tag propagates confusion."
+      - id: "H-A2 (🟡)"
+        title: "security.py and search.py are false positives in heritage-map"
+        impact: "Original Omega code (TDP, Sovereign Search) should be excluded from heritage CI"
+      - id: "H-A3 (🟡)"
+        title: "mcp_servers/ excluded from heritage-map scan — M14 blind spot"
+        impact: "2 existing tags in server.py are invisible to CI. Future heritage code in MCP hub goes undetected."
+      - id: "H-A4 (🟢)"
+        title: "Lilith's 10 edits — zero heritage implications, pure M9 compliance"
+        impact: "Clean bill for parallel agent's work."
+      - id: "H-A5 (🟢)"
+        title: "mcp_runtime.py — clean bill, pure MCP spec"
+        impact: "No heritage tags needed."
+    observations_made: 5
+    ksigs_consumed: 0
+    decisions_acknowledged: []
+    lesson_distilled_to_existing_arrays: true
+    l3_principle: "The Heritage Tag System Must Be Self-Auditing — A misattributed heritage tag (like the _AsyncThreadLock Zone Memory claim) is WORSE than no tag at all. It confuses future maintainers, dilutes the entire tag system's credibility, and violates the 'directly ports' requirement of CREDITS.md §2a. The tag system must be small, accurate, and audited. A clean heritage audit finds both false positives (tags where none belong) AND false negatives (missed CI coverage). Both are equally important."

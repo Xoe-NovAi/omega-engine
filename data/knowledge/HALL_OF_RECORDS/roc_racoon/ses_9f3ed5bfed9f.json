@@ -1,0 +1,39 @@
+{
+  "session_id": "ses_9f3ed5bfed9f",
+  "cli": "roc_racoon",
+  "model": "deepseek-v4-flash",
+  "task_current": "DeepSeek Final Pass v3 \u2014 4 CRITICAL corrections found, applied to MiMo spec",
+  "focus_chain": [
+    "DeepSeek v3 audit",
+    "4 CRITICAL fixes identified",
+    "All applied to integration spec",
+    "Handoff updated with corrigendum",
+    "Sovereign audit: 100% local-first"
+  ],
+  "decisions": [
+    {
+      "decision": "C1: FTS index must clean on archive \u2014 added remove_session()",
+      "rationale": "Without this, archived sessions accumulate in FTS forever. Caught by DeepSeek structural audit of archive_session() lifecycle."
+    },
+    {
+      "decision": "C2: FTS write failure must not break add_exchange() \u2014 wrapped in try/except",
+      "rationale": "FTS indexing is secondary. If it fails, the exchange is already saved to providers. Don't let a secondary service corrupt a primary write."
+    },
+    {
+      "decision": "C3: memory_search requires entity_name \u2014 no cross-entity access",
+      "rationale": "Sovereign isolation violation: optional entity_name lets any agent search all entities. Now REQUIRED."
+    },
+    {
+      "decision": "C4: vector_store.delete() called on archive \u2014 cleanup Qdrant embeddings",
+      "rationale": "Same as C1 but for vector store. Without this, Qdrant accumulates dead embeddings."
+    },
+    {
+      "decision": "Sovereign Audit: 100% local-first. Zero cloud dependencies.",
+      "rationale": "FTS/MCP/MemoryStore all local. Cloud only for inference fallback (M7) and opt-in research."
+    }
+  ],
+  "continuation": "DEEPSEEK V3 FINAL PASS COMPLETE. MiMo spec was good (300 lines, 3 gaps). DeepSeek structural audit found 4 CRITICAL fixes: C1 (FTS archive cleanup), C2 (FTS failure isolation), C3 (sovereign isolation for MCP tools), C4 (vector store archive cleanup). All 4 applied to MIMO_INTEGRATION_SPEC_20260608.md and HANDOFF_ROC_RACOON_MEMORY_INTEGRATION_20260608.md. Full sovereign audit: MemoryStore/FTS/MCP tools have ZERO cloud dependencies. Data egress: none. Ready for Ma'at review. See DEEPSEEK_FINAL_PASS_v3_20260608.md for full audit.",
+  "timestamp": "2026-06-09T00:56:57.649094+00:00",
+  "intent": "decision",
+  "suggested_model": null
+}

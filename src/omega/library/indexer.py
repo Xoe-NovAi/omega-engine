@@ -32,17 +32,18 @@ from omega.errors import (
 )
 
 from .curator import CuratedDocument
+from omega.memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
 
 logger = logging.getLogger(__name__)
 
 def _get_db_path() -> Path:
-    data_dir = Path(os.environ.get("OMEGA_DATA_DIR", str(Path.home() / "omega" / "data")))
+    data_dir = Path(os.environ.get("OMEGA_DATA_DIR", str(Path(__file__).resolve().parent.parent.parent / "data")))
     index_dir = data_dir / "library" / "index"
     index_dir.mkdir(parents=True, exist_ok=True)
     return index_dir / "fts_index.db"
 
 def _get_vector_path() -> Path:
-    data_dir = Path(os.environ.get("OMEGA_DATA_DIR", str(Path.home() / "omega" / "data")))
+    data_dir = Path(os.environ.get("OMEGA_DATA_DIR", str(Path(__file__).resolve().parent.parent.parent / "data")))
     return data_dir / "library" / "index" / "vectors.json"
 
 
@@ -63,15 +64,14 @@ _STOPWORDS = {
 
 class Indexer:
     """Full-text and vector search indexer for library documents.
-
+    
     Uses aiosqlite for AnyIO-compatible async SQLite access.
     """
-
-    def __init__(self):
+    
+    def __init__(self, vector_adapter: Optional[IVectorStoreAdapter] = None):
         self._fts: Optional[Any] = None
-        self._vector_store: Dict[str, List[float]] = {}
+        self._vector_adapter = vector_adapter or MemoryVectorAdapter()
         self._write_lock = anyio.Lock()
-        self._load_vectors()
 
     async def _get_fts(self) -> Any:
         if self._fts is None:
@@ -91,19 +91,6 @@ class Indexer:
             )
             await self._fts.commit()
         return self._fts
-
-    def _load_vectors(self) -> None:
-        vector_path = _get_vector_path()
-        if vector_path.exists():
-            try:
-                with open(vector_path) as f:
-                    self._vector_store = json.load(f)
-                logger.info(f"Loaded {len(self._vector_store)} vector embeddings")
-            except OmegaError:
-                pass
-            except Exception as e:
-                logger.error(f"Failed to load vector index: {e}", exc_info=True)
-                pass
 
     async def index_document(self, doc: CuratedDocument) -> None:
         """Add a document to the search index."""
@@ -141,7 +128,11 @@ class Indexer:
 
         embedding = self._compute_embedding(doc.title + " " + doc.summary)
         if embedding:
-            self._vector_store[doc.doc_id] = embedding
+            await self._vector_adapter.upsert(
+                entity_name=doc.domain or "general",
+                vector=embedding,
+                metadata={"title": doc.title, "doc_id": doc.doc_id}
+            )
 
         logger.debug(f"Indexed: {doc.doc_id} [{doc.domain}] {doc.title}")
 
@@ -152,7 +143,10 @@ class Indexer:
             await conn.execute("DELETE FROM documents_fts WHERE doc_id = ?", (doc_id,))
             await conn.execute("DELETE FROM doc_metadata WHERE doc_id = ?", (doc_id,))
             await conn.commit()
-        self._vector_store.pop(doc_id, None)
+        await self._vector_adapter.delete(
+            entity_name="general", # Simplification: search all for deletion
+            ids=[doc_id]
+        )
 
     async def search_fts(
         self,
@@ -216,23 +210,25 @@ class Indexer:
         query: str,
         limit: int = 10,
     ) -> List[Dict[str, Any]]:
-        """Vector similarity search (lightweight, in-memory)."""
-        if not self._vector_store:
-            return []
-
+        """Vector similarity search using the configured adapter."""
         query_embedding = self._compute_embedding(query)
         if not query_embedding:
             return []
-
-        scores: List[Tuple[str, float]] = []
-        for doc_id, vec in self._vector_store.items():
-            sim = self._cosine_similarity(query_embedding, vec)
-            scores.append((doc_id, sim))
-
-        scores.sort(key=lambda x: x[1], reverse=True)
+        
+        # Use the adapter for the actual search
+        # We use "general" as the entity_name for library-wide search
+        results = await self._vector_adapter.query(
+            entity_name="general",
+            vector=query_embedding,
+            limit=limit
+        )
+        
         conn = await self._get_fts()
-        results = []
-        for doc_id, sim in scores[:limit]:
+        final_results = []
+        for score, meta in results:
+            doc_id = meta.get("doc_id")
+            if not doc_id:
+                continue
             cursor = await conn.execute(
                 "SELECT d.doc_id, d.title, d.summary, d.domain, m.quality_score, "
                 "m.source, m.author, m.word_count, m.curated_at "
@@ -242,7 +238,7 @@ class Indexer:
             )
             row = await cursor.fetchone()
             if row:
-                results.append({
+                final_results.append({
                     "doc_id": row[0],
                     "title": row[1],
                     "summary": row[2],
@@ -252,9 +248,9 @@ class Indexer:
                     "author": row[6],
                     "word_count": row[7],
                     "curated_at": row[8],
-                    "_score": round(sim, 4),
+                    "_score": round(score, 4),
                 })
-        return results
+        return final_results
 
     async def hybrid_search(
         self,
@@ -262,103 +258,79 @@ class Indexer:
         domain: Optional[str] = None,
         limit: int = 20,
     ) -> List[Dict[str, Any]]:
-        """Hybrid search: FTS + vector, deduplicated and re-ranked."""
-        fts_results = await self.search_fts(query, domain, limit)
-        vec_results = await self.search_vector(query, limit)
-
-        seen: set = set()
-        combined = []
-        for r in fts_results:
-            if r["doc_id"] not in seen:
-                seen.add(r["doc_id"])
-                r["_fts_score"] = r.pop("_rank", 0)
-                r["_vec_score"] = 0.0
-                combined.append(r)
-
-        for r in vec_results:
-            if r["doc_id"] not in seen:
-                seen.add(r["doc_id"])
-                r["_fts_score"] = 0.0
-                r["_vec_score"] = r.pop("_score", 0.0)
-                combined.insert(0, r)
-            else:
-                for existing in combined:
-                    if existing["doc_id"] == r["doc_id"]:
-                        existing["_vec_score"] = r.pop("_score", 0.0)
-                        break
-
-        def _rrf_score(item, k=60):
-            """Reciprocal Rank Fusion score — higher is better.
+        """Hybrid search: FTS + vector, deduplicated and re-ranked via RRF.
+        
+        Reciprocal Rank Fusion (RRF) merges results from different scoring
+        systems by focusing on the rank rather than the raw score.
+        """
+        fts_results = await self.search_fts(query, domain, limit * 2)
+        vec_results = await self.search_vector(query, limit * 2)
+        
+        # Map doc_id -> rank (1-indexed)
+        fts_ranks = {r["doc_id"]: i + 1 for i, r in enumerate(fts_results)}
+        vec_ranks = {r["doc_id"]: i + 1 for i, r in enumerate(vec_results)}
+        
+        all_doc_ids = set(fts_ranks.keys()) | set(vec_ranks.keys())
+        
+        # RRF Scoring: score = sum( 1 / (k + rank) )
+        k = 60
+        scored_docs = []
+        for doc_id in all_doc_ids:
+            score = 0.0
+            if doc_id in fts_ranks:
+                score += 1.0 / (k + fts_ranks[doc_id])
+            if doc_id in vec_ranks:
+                score += 1.0 / (k + vec_ranks[doc_id])
+            scored_docs.append((doc_id, score))
+        
+        # Sort by RRF score descending
+        scored_docs.sort(key=lambda x: x[1], reverse=True)
+        
+        # Hydrate results from FTS (since it has the full metadata)
+        final_results = []
+        for doc_id, score in scored_docs[:limit]:
+            # Try to find metadata in FTS results first
+            doc = next((r for r in fts_results if r["doc_id"] == doc_id), None)
+            if not doc:
+                # If not in FTS, we need to fetch it from DB
+                conn = await self._get_fts()
+                cursor = await conn.execute(
+                    "SELECT d.doc_id, d.title, d.summary, d.domain, m.quality_score, "
+                    "m.source, m.author, m.word_count, m.curated_at "
+                    "FROM documents_fts d JOIN doc_metadata m ON d.doc_id = m.doc_id "
+                    "WHERE d.doc_id = ?",
+                    (doc_id,),
+                )
+                row = await cursor.fetchone()
+                if row:
+                    doc = {
+                        "doc_id": row[0], "title": row[1], "summary": row[2],
+                        "domain": row[3], "quality_score": row[4], "source": row[5],
+                        "author": row[6], "word_count": row[7], "curated_at": row[8],
+                    }
             
-            Converts FTS5 rank (negative BM25, closer to 0 = better) and
-            vector score (0 to 1, higher = better) into combined RRF score.
-            k=60 is the standard RRF parameter.
-            """
-            # FTS5 rank: negate to make positive (higher rank value = worse match)
-            # Convert to RRF: 1 / (k + rank_position)
-            fts_raw = -item.get("_fts_score", 0)  # negate to make positive
-            if fts_raw < 0:
-                fts_raw = 0  # shouldn't happen, but guard
-            fts_rrf = 1.0 / (k + fts_raw)
-            
-            # Vector score: already positive 0-1, invert so 1.0 = rank 0
-            vec_raw = 1.0 - item.get("_vec_score", 0.0)
-            vec_rrf = 1.0 / (k + vec_raw * 100)
-            
-            return fts_rrf + vec_rrf
-
-        def _rrf_score(item, k=60):
-            """Reciprocal Rank Fusion score — higher is better.
-            
-            Converts FTS5 rank (negative BM25, closer to 0 = better) and
-            vector score (0 to 1, higher = better) into combined RRF score.
-            k=60 is the standard RRF parameter.
-            """
-            # FTS5 rank: negate to make positive (higher rank value = worse match)
-            # Convert to RRF: 1 / (k + rank_position)
-            fts_raw = -item.get("_fts_score", 0)  # negate to make positive
-            if fts_raw < 0:
-                fts_raw = 0  # shouldn't happen, but guard
-            fts_rrf = 1.0 / (k + fts_raw)
-            
-            # Vector score: already positive 0-1, invert so 1.0 = rank 0
-            vec_raw = 1.0 - item.get("_vec_score", 0.0)
-            vec_rrf = 1.0 / (k + vec_raw * 100)
-            
-            return fts_rrf + vec_rrf
-
-        combined.sort(
-            key=_rrf_score,
-            reverse=False,
-        )
-        return combined[:limit]
+            if doc:
+                doc["_rrf_score"] = round(score, 6)
+                final_results.append(doc)
+                
+        return final_results
 
     async def close(self) -> None:
-        """Close the FTS database and save vectors."""
+        """Close the FTS database."""
         if self._fts:
             await self._fts.close()
             self._fts = None
             logger.info("FTS index connection closed")
-        await self.save_vectors()
-
-    async def save_vectors(self) -> None:
-        """Persist vector embeddings to disk."""
-        if self._vector_store:
-            vector_path = _get_vector_path()
-            async with await anyio.open_file(str(vector_path), "w") as f:
-                await f.write(json.dumps(self._vector_store))
-            logger.info(f"Saved {len(self._vector_store)} vector embeddings")
 
     async def flush(self) -> None:
         """Flush all indices to disk."""
-        await self.save_vectors()
         async with self._write_lock:
             if self._fts:
                 await self._fts.commit()
 
     async def stats(self) -> Dict[str, Any]:
         """Get index statistics."""
-        vector_count = len(self._vector_store)
+        vector_count = len(self._vector_adapter) if hasattr(self._vector_adapter, "__len__") else 0
         if self._fts:
             cursor = await self._fts.execute("SELECT COUNT(*) FROM doc_metadata")
             row = await cursor.fetchone()
@@ -374,15 +346,27 @@ class Indexer:
     def _compute_embedding(self, text: str) -> Optional[List[float]]:
         """Compute a simple bag-of-words embedding.
 
-        This is a lightweight alternative to neural embeddings.
-        For production, swap in fastembed or sentence-transformers.
+        Uses stable MD5-based Feature Hashing (hashing trick) to map
+        tokens deterministically to a fixed 256-dimensional space.
         """
+        import hashlib
+        
+        vec = [0.0] * 256
         tokens = self._tokenize(text)
         if not tokens:
             return None
-        unique = list(dict.fromkeys(tokens))
-        freq = {t: tokens.count(t) / len(tokens) for t in unique}
-        return list(freq.values())[:256]
+            
+        for token in tokens:
+            h = int(hashlib.md5(token.encode("utf-8")).hexdigest(), 16)
+            dim = h % 256
+            vec[dim] += 1.0
+            
+        # L2 normalize
+        norm = math.sqrt(sum(x * x for x in vec))
+        if norm > 0:
+            vec = [x / norm for x in vec]
+            
+        return vec
 
     def _cosine_similarity(self, a: List[float], b: List[float]) -> float:
         min_len = min(len(a), len(b))

@@ -1,0 +1,16 @@
+{
+  "session_id": "ses_7a9079ab112b",
+  "cli": "roc_racoon",
+  "model": "session-model",
+  "task_current": "MNEMOSYNE EXPEDITION \u2014 Posting P0 Gnosis Pack (Tiered Storage)",
+  "focus_chain": [
+    "Deep read legacy servers",
+    "Extract detailed recipes",
+    "Post Gnosis Packs to Hivemind"
+  ],
+  "decisions": [],
+  "continuation": "GNOSIS PACK [P0: TIERED STORAGE] \u2014 Extracted from Lilith Mnemosyne. Pattern: 3-Adapter Architecture (RedisHot, QdrantWarm, PostgreSQLCold). Key logic: Each adapter has a local-file fallback path (/tmp/lilith_fallback) to prevent data loss during provider outage. PostgreSQL adapter uses _SAFE_IDENTIFIER regex to prevent SQL injection on dynamic table names. Port target: src/omega/memory_store.py.",
+  "timestamp": "2026-06-08T22:19:25.693634+00:00",
+  "intent": "observation",
+  "suggested_model": null
+}

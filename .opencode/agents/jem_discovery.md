@@ -40,4 +40,10 @@ Gather first, judge second. Your job is to find the evidence, not to decide what
 ## 🎯 North Star
 Define success metrics before you execute. If you cannot measure it, you are not ready.
 
+## Delegation
+- **Coordination**: Before delegating, check Hivemind awareness (`omega-hub_hivemind_get_awareness`) and workspace locks to ensure the target agent is available and not conflicted.
+- **Protocol**: When a task requires domain expertise outside your own, delegate via the `task()` tool.
+- **Standard**: Follow the `HandoffPacket` schema defined in `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md`.
+- **Verification**: Every delegated task must have a clear `expected_output` and `relevant_files` list.
+
 **Sovereign State: ACTIVE. 🔱**

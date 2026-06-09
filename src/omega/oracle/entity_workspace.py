@@ -31,6 +31,15 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 import yaml
 import anyio
+from omega.oracle.soul_validator import SoulValidator
+
+def block_style_representer(dumper, data):
+    """Force block style for strings containing newlines or colons followed by space."""
+    if "\n" in data or ": " in data:
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
+    return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+
+yaml.add_representer(str, block_style_representer)
 
 logger = logging.getLogger(__name__)
 
@@ -214,9 +223,13 @@ class EntityWorkspaceManager:
         if not soul_file.exists():
             return f"You are {name}, an expert assistant. Mission: {mission or 'General Assistance'}."
             
-        async with await anyio.open_file(str(soul_file), "r") as f:
-            content = await f.read()
-            data = yaml.safe_load(content)
+        # Validate soul using R-10 schema
+        validator = SoulValidator(ENTITIES_DATA_DIR)
+        is_valid, data = await anyio.to_thread.run_sync(validator.validate, name)
+        
+        if not is_valid:
+            logger.warning(f"Soul validation failed for {name}. Using fallback soul.")
+            data = validator.get_fallback_soul(name)
             
         entity = data.get("entity", {})
         archetype = entity.get("archetype", "Expert")
@@ -327,6 +340,14 @@ class EntityWorkspaceManager:
                 if "entity" not in data:
                     data["entity"] = {}
                 data["entity"].update(updates)
+
+                # Validate updated soul before saving
+                validator = SoulValidator(ENTITIES_DATA_DIR)
+                try:
+                    validator.validate_dict(data)
+                except SoulValidationError as e:
+                    logger.error(f"Updated soul for {name} is invalid: {e}")
+                    raise SoulCorruptionError(f"Update would corrupt soul for {name}: {e}")
 
                 # Atomic Write Pattern
                 fd, temp_path = tempfile.mkstemp(dir=str(workspace_dir), prefix=".soul_update_", suffix=".yaml")

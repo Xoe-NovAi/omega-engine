@@ -4,6 +4,7 @@ AP: AP-TDP-v1.0.0
 
 import logging
 from dataclasses import dataclass, field
+from functools import wraps
 from typing import Any, Dict, Optional, Union
 
 logger = logging.getLogger(__name__)
@@ -74,3 +75,25 @@ class TDPGate:
             sanitized = re.sub(p, "[REDACTED INJECTION PATTERN]", sanitized)
             
         return sanitized
+
+def tdp_wrap(source: str, taint_level: int = 1):
+    """Decorator to wrap async tool returns in TaintedData and isolate them.
+    
+    [S2-A: Tainted Data Protocol]
+    Ensures that any string returned by the decorated function is treated
+    as untrusted and wrapped in the TDP isolation gate.
+    """
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            result = await func(*args, **kwargs)
+            if isinstance(result, str):
+                tainted = TaintedData(
+                    content=result, 
+                    source=source, 
+                    taint_level=taint_level
+                )
+                return TDPGate.isolate(tainted)
+            return result
+        return wrapper
+    return decorator

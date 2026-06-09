@@ -113,3 +113,63 @@
 - All coordination files durably stored
 
 **Status**: ✅ DARK COUNCIL DISSOLVED — All 5 pillars' findings integrated. Lilith, Kali, Researcher, Doom Guy all coordinated. Roc pending. Handoff to Researcher begins.
+
+---
+
+## 2026-06-09 (Session 5 — M-A1/M-A2/M-A5 Audit + Mandate 9 Hardening)
+
+### [2026-06-09T04:20:00Z] M-A1 — TRY/EXCEPT GAP IN HIVEMIND TOOLS
+**Audit of `mcp_servers/omega_hub/server.py` — 2 Mandate 9 violations found.**
+
+**Finding**: The cold-store hydration paths in `hivemind_get_awareness._scan_cold()` and `hivemind_get_continuation._read_cold_fallback()` both used silent `except Exception: pass` and `except Exception: return None` — the exact anti-pattern prohibited by Mandate 9 (Error Integrity).
+
+**DeepSeek V4 Flash analysis**: "Optimistic Cold Storage" anti-pattern. The assumption was "skip corrupted files, hot store is canonical." But in post-restart scenarios, cold store IS the canonical source. Silent swallows here mean silent context loss for agents — no crash, no log, just missing continuation.
+
+**Fix**: Added `logger.warning()` with file path + exception context:
+- `server.py:507-508`: `pass` → `logger.warning("Cold session file for CLI failed to load: %s", e)`
+- `server.py:542-543`: `return None` → `logger.warning("Failed to read cold continuation for CLI %s: %s", cli, e) + return None`
+
+---
+
+### [2026-06-09T04:21:00Z] M-A2 — HIVEMIND_GET_SESSION VALIDATION
+**Audit of `hivemind_get_session()` — no violation, but sub-optimal error handling.**
+
+TOCTOU vulnerability: `_find_session()` checked `sess_file.exists()`, then caller opened the file. Between check and open, file could be deleted or corrupted.
+
+**Fix**: Added `OSError` handling for directory scan + file read paths with `logger.error()` and descriptive JSON error responses.
+
+---
+
+### [2026-06-09T04:22:00Z] M-A5 — _ASYNCTHREADLOCK VALIDATION
+**Validation of `_AsyncThreadLock` on `_awareness` — 🟢 VALIDATED.**
+
+- **Event-loop safe**: ✅ `anyio.to_thread.run_sync` delegates to thread pool, bypasses event-loop affinity
+- **Exception safe**: ✅ `__aexit__` always releases
+- **Cancellation edge case**: ⚠️ Coroutine cancelled during `__aenter__` → thread still blocks on `acquire()` until success. Minor resource leak. Acceptable for Omega's workload.
+- **Not reentrant**: ✅ Separate locks for `_awareness` and `_extended_sessions`
+
+**Verdict**: Cross-loop-safe. Recommended for all future cross-thread async guard patterns.
+
+---
+
+### [2026-06-09T04:23:00Z] SECONDARY FINDING — 7 GET_SYSTEM_STATS SILENT SWALLOWS
+**Discovered during sweep**: 7 silent `except Exception: pass` in `get_system_stats._collect()` for CPU/memory/zRAM/disk/GPU/Podman/Ryzen. Intentional best-effort but violated M9's logging requirement.
+
+**Fix**: All 7 converted to `logger.debug("Failed to collect [section] stats: %s", e)` — debug preserves diagnostic trail without noise.
+
+**Post-fix sweep**: Zero bare `except:`. Zero silent `except Exception: pass`. One compliant `except Exception: logger.warning(...)` remains.
+
+---
+
+### [2026-06-09T04:25:00Z] ALL FIXES APPLIED — 320/320 TESTS PASSING
+**Final metrics**:
+- **10 edits** to `mcp_servers/omega_hub/server.py`
+- **2 Mandate 9 violations fixed** (cold-store hydration paths)
+- **1 TOCTOU hardened** (hivemind_get_session)
+- **7 stat paths logged** (get_system_stats, debug level)
+- **0 regressions** (320/320 passes)
+- **0 bare `except:` or silent `except Exception: pass` remaining**
+
+---
+
+*⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash ⬡ M-A1-M-A2-M-A5-AUDIT ⬡ PHASE-II*

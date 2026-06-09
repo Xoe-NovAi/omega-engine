@@ -3,6 +3,8 @@ AP: AP-VECTOR-ADAPTERS-v1.0.0
 """
 
 import logging
+import uuid
+import math
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -17,7 +19,7 @@ class IVectorStoreAdapter(ABC):
     
     Ensures the Omega Engine remains DB-agnostic for semantic memory.
     """
-
+    
     @abstractmethod
     async def upsert(
         self, 
@@ -28,7 +30,7 @@ class IVectorStoreAdapter(ABC):
     ) -> str:
         """Insert or update a vector and its metadata."""
         pass
-
+    
     @abstractmethod
     async def query(
         self, 
@@ -39,16 +41,123 @@ class IVectorStoreAdapter(ABC):
     ) -> List[Tuple[float, Dict[str, Any]]]:
         """Query the vector store for the most similar entries."""
         pass
-
+    
     @abstractmethod
     async def delete(self, entity_name: str, ids: List[str]) -> bool:
         """Delete specific vectors by ID."""
         pass
-
+    
+    async def delete_session(self, entity_name: str, session_id: str) -> bool:
+        """Delete all vectors associated with a specific session.
+        
+        Default implementation returns False. Subclasses should override.
+        """
+        return False
+    
     @abstractmethod
     async def get_status(self) -> Dict[str, Any]:
         """Get the current health and status of the vector store."""
         pass
+
+class MemoryVectorAdapter(IVectorStoreAdapter):
+    """In-memory stub for vector store. Used when Qdrant is unavailable.
+    
+    Implements basic cosine similarity for sovereign fallback.
+    """
+    
+    def __init__(self):
+        # Store: {entity_name: [(id, vector, metadata), ...]}
+        self._store: Dict[str, List[Tuple[str, List[float], Dict[str, Any]]]] = {}
+        logger.info("MemoryVectorAdapter initialized as sovereign fallback.")
+
+    def _cosine_similarity(self, v1: List[float], v2: List[float]) -> float:
+        if len(v1) != len(v2):
+            return 0.0
+        dot_product = sum(a * b for a, b in zip(v1, v2))
+        norm_a = math.sqrt(sum(a * a for a in v1))
+        norm_b = math.sqrt(sum(b * b for b in v2))
+        if norm_a == 0 or norm_b == 0:
+            return 0.0
+        return dot_product / (norm_a * norm_b)
+
+    async def upsert(
+        self, 
+        entity_name: str, 
+        vector: List[float], 
+        metadata: Dict[str, Any], 
+        id: Optional[str] = None
+    ) -> str:
+        if entity_name not in self._store:
+            self._store[entity_name] = []
+        
+        point_id = id or str(uuid.uuid4())
+        
+        # Update if exists, else append
+        for i, (pid, _, _) in enumerate(self._store[entity_name]):
+            if pid == point_id:
+                self._store[entity_name][i] = (point_id, vector, metadata)
+                return point_id
+        
+        self._store[entity_name].append((point_id, vector, metadata))
+        return point_id
+
+    async def query(
+        self, 
+        entity_name: str, 
+        vector: List[float], 
+        limit: int = 10, 
+        filter: Optional[Dict[str, Any]] = None
+    ) -> List[Tuple[float, Dict[str, Any]]]:
+        if entity_name not in self._store:
+            return []
+        
+        results = []
+        for pid, v, meta in self._store[entity_name]:
+            # Apply simple filter if provided
+            if filter:
+                match = True
+                for k, v_filter in filter.items():
+                    if meta.get(k) != v_filter:
+                        match = False
+                        break
+                if not match:
+                    continue
+            
+            score = self._cosine_similarity(vector, v)
+            results.append((score, meta))
+        
+        # Sort by score descending
+        results.sort(key=lambda x: x[0], reverse=True)
+        return results[:limit]
+
+    async def delete(self, entity_name: str, ids: List[str]) -> bool:
+        if entity_name not in self._store:
+            return False
+        
+        initial_count = len(self._store[entity_name])
+        self._store[entity_name] = [
+            item for item in self._store[entity_name] if item[0] not in ids
+        ]
+        return len(self._store[entity_name]) < initial_count
+
+    async def delete_session(self, entity_name: str, session_id: str) -> bool:
+        if entity_name not in self._store:
+            return False
+        
+        initial_count = len(self._store[entity_name])
+        self._store[entity_name] = [
+            item for item in self._store[entity_name] if item[2].get("session_id") != session_id
+        ]
+        return len(self._store[entity_name]) < initial_count
+
+    async def get_status(self) -> Dict[str, Any]:
+        total_vectors = sum(len(v) for v in self._store.values())
+        return {
+            "status": "healthy",
+            "type": "in-memory-stub",
+            "vector_count": total_vectors,
+            "entities_tracked": len(self._store)
+        }
 
 class QdrantAdapter(IVectorStoreAdapter):
     """Qdrant implementation of the vector store adapter."""
@@ -63,7 +172,7 @@ class QdrantAdapter(IVectorStoreAdapter):
         if self._initialized:
             return
         
-        try:
+        def _sync_ensure():
             collections = self.client.get_collections().collections
             exists = any(c.name == self.collection_name for c in collections)
             
@@ -83,6 +192,9 @@ class QdrantAdapter(IVectorStoreAdapter):
                         )
                     )
                 )
+
+        try:
+            await anyio.to_thread.run_sync(_sync_ensure)
             self._initialized = True
         except Exception as e:
             logger.error(f"Failed to initialize Qdrant collection: {e}", exc_info=True)
@@ -102,18 +214,21 @@ class QdrantAdapter(IVectorStoreAdapter):
         
         try:
             # Use a generated ID if none provided
-            point_id = id or self.client.uuid.uuid4()
+            point_id = id or uuid.uuid4()
             
-            self.client.upsert(
-                collection_name=self.collection_name,
-                points=[
-                    qmodels.PointStruct(
-                        id=point_id,
-                        vector=vector,
-                        payload=payload
-                    )
-                ]
-            )
+            def _sync_upsert():
+                self.client.upsert(
+                    collection_name=self.collection_name,
+                    points=[
+                        qmodels.PointStruct(
+                            id=point_id,
+                            vector=vector,
+                            payload=payload
+                        )
+                    ]
+                )
+            
+            await anyio.to_thread.run_sync(_sync_upsert)
             return str(point_id)
         except Exception as e:
             logger.error(f"Qdrant upsert failed for {entity_name}: {e}", exc_info=True)
@@ -147,14 +262,16 @@ class QdrantAdapter(IVectorStoreAdapter):
                 )
 
         try:
-            results = self.client.search(
-                collection_name=self.collection_name,
-                query_vector=vector,
-                limit=limit,
-                query_filter=q_filter,
-                with_payload=True
-            )
+            def _sync_search():
+                return self.client.search(
+                    collection_name=self.collection_name,
+                    query_vector=vector,
+                    limit=limit,
+                    query_filter=q_filter,
+                    with_payload=True
+                )
             
+            results = await anyio.to_thread.run_sync(_sync_search)
             return [(res.score, res.payload) for res in results]
         except Exception as e:
             logger.error(f"Qdrant query failed for {entity_name}: {e}", exc_info=True)
@@ -162,35 +279,61 @@ class QdrantAdapter(IVectorStoreAdapter):
 
     async def delete(self, entity_name: str, ids: List[str]) -> bool:
         try:
-            self.client.delete(
-                collection_name=self.collection_name,
-                points_selector=qmodels.FilterSelector(
-                    filter=qmodels.Filter(
-                        must=[
-                            qmodels.FieldCondition(key="entity_name", match=qmodels.MatchValue(value=entity_name)),
-                            qmodels.FieldCondition(key="id", match=qmodels.MatchValue(value=ids)) # This is simplified
-                        ]
+            def _sync_delete():
+                self.client.delete(
+                    collection_name=self.collection_name,
+                    points_selector=qmodels.FilterSelector(
+                        filter=qmodels.Filter(
+                            must=[
+                                qmodels.FieldCondition(key="entity_name", match=qmodels.MatchValue(value=entity_name)),
+                                qmodels.FieldCondition(key="id", match=qmodels.MatchValue(value=ids)) # This is simplified
+                            ]
+                        )
                     )
                 )
-            )
-            # Note: Qdrant delete by IDs is usually simpler:
-            self.client.delete(
-                collection_name=self.collection_name,
-                points_selector=qmodels.PointIdsList(points=ids)
-            )
+                # Note: Qdrant delete by IDs is usually simpler:
+                self.client.delete(
+                    collection_name=self.collection_name,
+                    points_selector=qmodels.PointIdsList(points=ids)
+                )
+            await anyio.to_thread.run_sync(_sync_delete)
             return True
         except Exception as e:
             logger.error(f"Qdrant delete failed for {entity_name}: {e}", exc_info=True)
             raise ProviderError(f"Qdrant delete failed: {e}", raw_error=e) from e
 
+    async def delete_session(self, entity_name: str, session_id: str) -> bool:
+        try:
+            def _sync_delete_session():
+                self.client.delete(
+                    collection_name=self.collection_name,
+                    points_selector=qmodels.FilterSelector(
+                        filter=qmodels.Filter(
+                            must=[
+                                qmodels.FieldCondition(key="entity_name", match=qmodels.MatchValue(value=entity_name)),
+                                qmodels.FieldCondition(key="session_id", match=qmodels.MatchValue(value=session_id))
+                            ]
+                        )
+                    )
+                )
+            await anyio.to_thread.run_sync(_sync_delete_session)
+            return True
+        except Exception as e:
+            logger.error(f"Qdrant delete_session failed for {entity_name}/{session_id}: {e}", exc_info=True)
+            raise ProviderError(f"Qdrant delete_session failed: {e}", raw_error=e) from e
+
     async def get_status(self) -> Dict[str, Any]:
         try:
-            collections = self.client.get_collections().collections
-            col = next((c for c in collections if c.name == self.collection_name), None)
+            def _sync_get_status():
+                collections = self.client.get_collections().collections
+                col = next((c for c in collections if c.name == self.collection_name), None)
+                return col.points_count if col else 0
+            
+            points_count = await anyio.to_thread.run_sync(_sync_get_status)
             return {
-                "status": "healthy" if col else "uninitialized",
+                "status": "healthy" if points_count >= 0 else "uninitialized",
                 "collection": self.collection_name,
-                "vector_count": col.points_count if col else 0
+                "vector_count": points_count
             }
         except Exception as e:
             return {"status": "unhealthy", "error": str(e)}

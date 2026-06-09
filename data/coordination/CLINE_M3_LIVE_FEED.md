@@ -1,41 +1,100 @@
-# 🔱 Cline-M3 Live Feed — Multi-Subagent Codebase Deep Dive → D111
+# CLINE-M3 LIVE FEED
 
-[2026-06-04 02:20] DEEP-DIVE BEGIN — 5 parallel subagents launched
-[2026-06-04 02:30] SUBAGENT-1 DONE — Source Architecture: 77 files, 19,376 LOC, H1+H1.5 GREEN
-[2026-06-04 02:35] SUBAGENT-2 DONE — Test Suite: 308 tests, 28 files, Error Gauntlet ✅
-[2026-06-04 02:40] SUBAGENT-3 DONE — WAD/Config: arcana_novai entities/ EMPTY 🟡
-[2026-06-04 02:45] SUBAGENT-4 DONE — Data Layer: 100 orphans, 10 active handoffs, 426 docs 🟡
-[2026-06-04 02:50] SUBAGENT-5 DONE — Infra: 68 Makefile targets, 40+ scripts, 2 CI ✅
-[2026-06-04 02:55] SYNTHESIS — D111: Sovereign Evolution Roadmap created (245 lines)
-[2026-06-04 02:57] CREATED — docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md
-[2026-06-04 02:58] UPDATED — OMEGA_ENGINE.md (77 src files, 312 tests, 111 PIVOT, H2 direction)
-[2026-06-04 02:58] UPDATED — PIVOT_LOG.md (D111 appended)
-[2026-06-04 02:58] UPDATED — HORIZON_MAP.md (superseded → new roadmap)
-[2026-06-04 02:58] UPDATED — ROADMAP.md (redirects to new roadmap)
-[2026-06-04 02:58] COMMITTED — 05d4196: docs: D111 — Sovereign Evolution Roadmap
-[2026-06-04 02:58] PUSHED — origin/main 05d4196
-[2026-06-04 03:00] HIVEMIND-UPDATED — ses_a133ea748824 posted to HALL_OF_RECORDS
-[2026-06-04 03:01] WORKSPACE-LOCK — CLINE_M3_WORKSPACE_LOCK_20260604.md written
-[2026-06-04 03:02] HANDOFF-CREATED — CLINE_TO_OPENCODE_DEV_D111_20260604.md
-[2026-06-04 03:02] DEEP-DIVE COMPLETE — Handoff to OpenCode dev session
-[2026-06-04 19:25] HIVEMIND-SYNC — Posted ses_08959f5c1f3d to HALL_OF_RECORDS
-[2026-06-04 19:26] OPENCODE-KALI-ACK — D115 (Pillar Nomenclature) + 2f47d54 (Heritage Vetting) verified
-[2026-06-04 19:27] CRITICAL-BUG-FOUND — omega-hub.service FAILED at 16:28 UTC (NameError: _agent_list at server.py:951)
-[2026-06-04 19:28] BUG-FIX — Implemented _agent_list() returning CAPABILITY_REGISTRY agents
-[2026-06-04 19:30] HUB-RESTARTED — systemctl restart omega-hub succeeded
-[2026-06-04 19:30] HEALTH-VERIFIED — /health = 2.2.0 healthy; /agent returns 14 agents
-[2026-06-04 19:31] COORDINATION-LOCK — opencode-kali 16:26 lock + my 19:25 lock, no conflicts
-[2026-06-04 19:42] SOUL-V52-WRITE — Kali soul v5.2 written: 14 top-level keys, 5 directives, 4 lessons, 12 optimizations, 22,973 bytes
-[2026-06-04 19:42] YAML-VERIFY — all 14 sections parse correctly (team.allies=5, v52_optimizations=12, soul_power_formula=str)
-[2026-06-04 19:42] DOCS-UPDATE — .clinerules bumped to v3.3.0 (H1 Heritage Vetting, D113 Firewall, Kali v5.2)
-[2026-06-04 19:43] PIVOT-D113 — Engine-Stack Firewall audit + WAD-agnostic engine mandate recorded
-[2026-06-04 19:43] HIVEMIND-POST — ses_20260604_cline_kali_v52_reflect posted
-[2026-06-04 19:43] SESSION-COMPLETE — All trackers + .clinerules + Kali soul v5.2 in sync
-[2026-06-04 21:00] D114-COMMIT — DeepSeek V4 Flash vision expansion + MVE threshold + 5-year roadmap (c95a81f)
-[2026-06-04 21:00] SSOT-EXPANDED — OMEGA_ENGINE.md 698 lines, 18 sections, v1.3.0
-[2026-06-04 21:00] PIVOT-115 — D1-D115 tracked (D114 added this session)
-[2026-06-04 21:00] M14-MANDATE — Heritage Vetting added to SOVEREIGN_MANDATES.md v3.1.0
-[2026-06-04 21:00] VISION-FINAL — §15 Vision + §16 Analysis + §17 MVE Roadmap + §18 Soul of Engine
-[2026-06-04 21:08] HIVEMIND-POSTED — ses_a9f239b2073c (final session summary)
-[2026-06-04 21:08] COORDINATION-WRITTEN — CLINE_M3_COMPLETION_20260604.md for next session
-[2026-06-04 21:08] SESSION-COMPLETE — 10 commits, all strategic docs in sync, ready for compaction
+## 2026-06-09T01:11Z - Session Onboard
+- Connected to omega-hub MCP (was missing in cline_mcp_settings.json)
+- Updated .clinerules: 312 -> 315 test baseline, flagged D113 firewall as P0
+- Posted presence to Hivemind (session: cline-m3-2026-06-09-onboard)
+- Requested @kali + @maat review of .clinerules for strategic improvements
+- Not impersonating other models; operating as minimax-m3 per system prompt
+- Standing by for delegation. Ready for 1M-context synthesis work.
+
+
+## 2026-06-09T01:32Z — Model Strategy Research + Cross-CLI Hivemind Test
+
+**Cline-M3 is the first Cline CLI agent to successfully connect to the Omega Hub**
+- Verified: Omega Hub SSE at :8016 is working for Cline
+- This is a landmark: Cline CLI (me) + OpenCode CLI (Kali, Maat, Roc) all on same Hivemind
+
+**Model Research Complete** — Full strategy lab created:
+- `data/coordination/cline-m3/MODEL_STRATEGY_LAB_20260609.md`
+- DeepSeek V4 Flash: FREE, 284B/13B MoE, 1M context — daily driver
+- DeepSeek V4 Pro: PAID, 1.6T/49B MoE, 1M context — strategic reserve ($0.4353 budget)
+- Both support `high`/`xhigh` reasoning
+- Pro is 4.4x Flash cost: use only for architecture (D113, S1.5, Flywheel)
+- Decision tree written: Flash by default, escalate to Pro only when architecture complexity demands
+- Also discovered: MiniMax M3 (1M context, multimodal) and MiMo V2.5 (free tier) available
+- OpenRouter confirmed all context windows: 1,048,576 tokens for both Flash and Pro
+
+**Key strategic insight**: The credit buys ~1M input tokens of Pro. Enough for D113 and S1.5 restoration, then reserve for emergencies.
+
+## 2026-06-09T04:00Z — Omega Hub Code Audit Complete
+
+**Audit delivered**: `data/coordination/cline-m3/OMEGA_HUB_CODE_AUDIT.md`
+
+### Findings Summary
+| Finding | Severity | Verdict |
+|---------|:--------:|:-------:|
+| **M-A1** | 🔴 CRITICAL | CONFIRMED — 23/29 tools lack try/except. Safe_call() wrapper needed |
+| **M-A2** | 🔴 CRITICAL | NUANCED — registry.get() is pure dict lookup, low risk. REAL risk is in oracle_assess_intent (IntentMatcher per call, private method access) |
+| **M-A4** | 🟡 HIGH | DOWNGRADED — FTS5 is guarded internally (_tokenize returns [], search_fts returns []). Add MCP-layer guard for M9 compliance |
+| **M-A5** | 🟡 MED | CONFIRMED — Classic await-race on _current_entity. LOW now, HIGH at council scale. Fix: anyio.Lock or remove global |
+
+## 2026-06-09T07:52Z — Council Role Audit & Recommissioning
+
+**OVERSIER ACTION**: Full council role audit completed.
+
+### Elevated: Antigravity
+From: "Cloud Strategist" → **"High Synthesist / Strategic Review Architect"**
+The "Cloud Strategist" label was a pigeonhole. Antigravity's actual capability — demonstrated by producing the Phase 1 synthesis resolving 4 cross-agent contradictions — is high-level strategic synthesis. Cloud ops is a subset, not the primary function.
+
+### Confirmed (unchanged):
+- **Kali** — Founder (P0). Peer. Direction.
+- **Ma'at** — CTO / Build Oversoul (P1-P5). Audit governance.
+- **Roc Racoon** — Sovereign Miner (P9). Legacy extraction.
+- **Cline-M3** — Overseer (current). Coordination, execution.
+
+### Recommended Onboarding:
+1. **Lilith** (CISO, P6-P10) — Run-side authority. Already performed audit.
+2. **Quality/Verifier** (P10) — Phase 3 Quality gate execution.
+3. **Sentinel** (P5) — Security audit (Gap 2 from Antigravity's review).
+4. **Link** (P9) — Handoff coordination at scale.
+
+Pending The Architect's confirmation.
+
+## 2026-06-09T07:55Z — Onboarding Plan Revised per Architect Direction
+
+The Architect confirmed onboarding recommendations with correction:
+
+**Revised activation model**:
+- Sentinel and Link are NOT custom OpenCode modes
+- They will be **spawned as subagents** (spawn_agent) when their specific tasks arise
+- Lilith (CISO) and Quality (P10 Validation) are existing oracle entities → summoned on demand
+
+**Complete 4-Tier Council Structure created**:
+- `data/coordination/cline-m3/COUNCIL_ROSTER_20260609.md` — 75 lines
+- Tier 1: Hivemind-Native (always-on) — Cline-M3, Antigravity, Kali, Ma'at, Roc
+- Tier 2: Entity-Summoned (on demand) — Lilith, Quality, Doom Guy, Researcher
+- Tier 3: Subagent-Spawned (task-specific) — Sentinel, Link
+- Tier 4: CLI-Native (session-based) — Gemini CLI agents
+- Activation protocol decision tree included
+
+Antigravity elevated from "Cloud Strategist" → "High Synthesist / Strategic Review Architect" in all materials.
+
+## 2026-06-09T08:10Z — Architect Decisions Incorporated
+
+Decisions from The Architect on the Strategic Router design:
+
+| Question | Decision |
+|----------|----------|
+| Classifier approach | ⏳ Needs clarification — explained 3 options with pros/cons. See §12 of spec |
+| Subagent spawn vs oracle_summon (T11-T13) | ✅ **spawn_agent()** confirmed |
+| Budget policy | ✅ **Track-and-alert** — log every call, warn at thresholds, never block silently |
+| Antigravity T10 routing | ✅ **Hivemind delegate** confirmed |
+
+Deliverables this session:
+- `STRATEGIC_ROUTER_SPEC.md` — 428 lines
+- `COUNCIL_ROSTER_20260609.md` — 109 lines
+- `CLOUD_PHASE_ONBOARDING_PROMPTS.md` — 246 lines (spawn-ready)
+- `CHAT_READY_ENTITY_PROMPTS.md` — 200 lines (chat-ready @entity format)
+- All three Hivemind sessions: cline-m3-2026-06-09-onboard, cline-m3-overseer-handoff-20260609
+- Handoff packet completed: ho_290827eefb97

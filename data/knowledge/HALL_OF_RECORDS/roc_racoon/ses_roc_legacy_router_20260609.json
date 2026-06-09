@@ -1,0 +1,23 @@
+{
+  "session_id": "ses_roc_legacy_router_20260609",
+  "cli": "roc_racoon",
+  "model": "deepseek-v4-flash",
+  "task_current": "Strategic Router Legacy Mining complete \u2014 extracted 5-pattern routing and variant-routing patterns. Cost tracking is a new capability. Findings reported to Hivemind.",
+  "focus_chain": [
+    "strategic-router",
+    "legacy-mining",
+    "routing-patterns"
+  ],
+  "decisions": [
+    {
+      "Sovereign-Siloing": "The Strategic Router must enforce the Engine-Stack Firewall by using model_override parameters for TriageRouter, not by replacing it."
+    },
+    {
+      "Interaction-Modes": "T03 entity_summon should support DIRECT, CONSULT, COMPARE, PANEL, and CONSULT_OTHER modes from legacy EnhancedEntityHandler."
+    }
+  ],
+  "continuation": "Strategic Router legacy mining complete. Findings distilled in STRATEGIC_ROUTER_LEGACY_MINING.md. Key Gnosis: (1) Port the 'EnhancedEntityHandler' 5-pattern routing (PANEL, COMPARE, etc.) into T03 entity_summon logic. (2) Use 'thinking_model_router' variant-routing (Fast vs Deep) for T04/T08. (3) Cost tracking is a new capability \u2014 no legacy patterns found. (4) Avoid the 'multi_provider_dispatcher' local stub. (5) Strategic Router is the runtime enforcement of Sovereign-Siloing and Symmetry. Ready for implementation phase.",
+  "timestamp": "2026-06-09T08:49:20.928846+00:00",
+  "intent": "status",
+  "suggested_model": "deepseek-v4-flash"
+}

@@ -1,0 +1,7 @@
+# data/entities/duplicate/knowledge/INDEX.yaml
+# Entity knowledge discovery index
+# Topics are promoted from workspace/ → knowledge/ via the T1→T2 gate
+
+entity: duplicate
+updated: '2026-06-07T21:22:24.735282'
+topics: []

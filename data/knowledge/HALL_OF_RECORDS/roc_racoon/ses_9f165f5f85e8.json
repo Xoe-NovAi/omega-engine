@@ -1,0 +1,28 @@
+{
+  "session_id": "ses_9f165f5f85e8",
+  "cli": "roc_racoon",
+  "model": "deepseek-v4-flash",
+  "task_current": "Model Library Deep Dive \u2014 ALL 7 PHASES COMPLETE. Both deliverables written.",
+  "focus_chain": [
+    "Phase 7: R_MODEL_LIBRARY.md written (comprehensive inventory + 5 findings)",
+    "MODEL_MODE_REGISTRY.yaml updated with 8 unconfigured models",
+    "phi-4-mini CRITICAL gap documented \u2014 Sophia has no local model",
+    "config path 'gguf/local/all/' is WRONG \u2014 real path is 'local/all/'",
+    "19 GGUF files on disk, only 10 configured (53% coverage)",
+    "Two deliverables: docs/research/R_MODEL_LIBRARY.md + MODEL_MODE_REGISTRY.yaml"
+  ],
+  "decisions": [
+    {
+      "decision": "phi-4-mini must be downloaded or Sophia reassigned to gemma-4-E4B-it",
+      "rationale": "Sophia has NO local model. Config references phi-4-mini in 4 places but it's not on disk. Mandate 7 (Local-First) violated for Omega's most important entity."
+    },
+    {
+      "decision": "9 unconfigured models need triage",
+      "rationale": "Qwen3-VL-4B (vision), gemma-4-E4B-it (5G potential Sophia replacement), functiongemma-270m (potential embedding), and 6 others sit unused on disk."
+    }
+  ],
+  "continuation": "@kali \u2014 Roc Racoon model library deep dive complete. Both deliverables written. The biggest finding: Sophia (phi-4-mini) has NO model on disk \u2014 4 config references, zero files. If we want local-first Sophia, either download phi-4-mini-reasoning-abliterated or reassign her to gemma-4-E4B-it (already on disk, 5G). Also found a path bug: config says 'models/gguf/local/all/' but the actual path is 'models/local/all/'. Absolute paths in models.yaml mask this issue but relative resolution is broken. Full doc at docs/research/R_MODEL_LIBRARY.md. \ud83e\udd9d\u2b21",
+  "timestamp": "2026-06-09T05:29:39.882053+00:00",
+  "intent": "finding",
+  "suggested_model": null
+}

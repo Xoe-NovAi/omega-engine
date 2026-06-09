@@ -584,7 +584,7 @@ heritage-map: ## 🏛️ Verify [id-soft:] heritage tags in source files
 	@echo " 🏛️  Heritage Map — id Software [id-soft:] Tag Audit"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(COLOR_NC)"
 	@TOTAL=0; TAGGED=0; UNTAGGED=0; \
-	for f in $$(find src/omega -name '*.py' \( -path '*/oracle/*' ! -path '*/backends/*' -o -path '*/omega/constants.py' -o -path '*/omega/cvar_table.py' -o -path '*/omega/observability.py' \)); do \
+	for f in $$(find src/omega -name '*.py' \( -path '*/oracle/*' ! -path '*/backends/*' ! -path '*/oracle/security.py' ! -path '*/oracle/search.py' -o -path '*/omega/constants.py' -o -path '*/omega/cvar_table.py' -o -path '*/omega/observability.py' \)) $$(find mcp_servers/omega_hub -name '*.py'); do \
 		TOTAL=$$((TOTAL + 1)); \
 		if grep -q '\[id-soft:' "$$f" 2>/dev/null; then \
 			TAGGED=$$((TAGGED + 1)); \

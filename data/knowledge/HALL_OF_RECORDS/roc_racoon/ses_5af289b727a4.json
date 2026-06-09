@@ -1,0 +1,31 @@
+{
+  "session_id": "ses_5af289b727a4",
+  "cli": "roc_racoon",
+  "model": "mimo-v2.5-free",
+  "task_current": "MiMo Integration Spec \u2014 300-line target, 3 focused changes",
+  "focus_chain": [
+    "MiMo analysis",
+    "Current engine state mapped",
+    "3 real gaps identified",
+    "1100 lines NOT written",
+    "Integration spec ready"
+  ],
+  "decisions": [
+    {
+      "decision": "MiMo Integration: 3 changes, ~300 lines, ~3 hours",
+      "rationale": "Current engine already has 80% of what we need. Only gaps: FTS5 search, MCP exposure, naming cleanup."
+    },
+    {
+      "decision": "NOT porting: FallbackCircuitBreaker, MemoryBankFallbackWrapper, Redis DLQ, Bloom filter, MoE routing, promotion gate",
+      "rationale": "Our existing implementations are better or sufficient. MiMo principle: delete before you add."
+    },
+    {
+      "decision": "Strip all esoteric naming from documentation",
+      "rationale": "Mnemosyne/Lilith/Kether terminology adds cognitive overhead without engineering value."
+    }
+  ],
+  "continuation": "MIMO V2.5 INTEGRATION SPEC COMPLETE. Key MiMo insight: The Omega Engine already has 80% of what we need. MemoryStore (518 lines) already has 3-tier storage, ZONEID markers, tombstone deletion, compaction, archiving. AsyncCircuitBreaker already has anyio.Lock (Finding H already fixed!). The REAL gaps are: (1) FTS5 full-text search in warm tier, (2) MCP tool exposure for memory, (3) esoteric naming cleanup. Total new code: ~300 lines, ~3 hours. Lines NOT written: ~1,100 (Bloom filter, MoE routing, DLQ, promotion gate \u2014 all over-engineered for laptop). Spec at data/entities/roc_racoon/workspace/MIMO_INTEGRATION_SPEC_20260608.md. Ready for Ma'at review \u2192 Kali approval \u2192 execution.",
+  "timestamp": "2026-06-09T00:40:21.067714+00:00",
+  "intent": "decision",
+  "suggested_model": null
+}

@@ -6,6 +6,7 @@ import gzip
 import json
 import logging
 import os
+import re
 import time
 from collections import OrderedDict
 from datetime import datetime, timezone
@@ -32,7 +33,8 @@ from .memory.providers import (
     InMemoryStorageProvider,
     DiskSpaceError,
 )
-from .memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter
+from .memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
+from .memory.fts_index import ConversationFTSIndex
 
 logger = logging.getLogger(__name__)
 
@@ -125,12 +127,13 @@ class MemoryStore:
         if vector_store is not None:
             self.vector_store = vector_store
         else:
-            # Default to QdrantAdapter for semantic memory
-            try:
-                self.vector_store = QdrantAdapter()
-            except Exception as e:
-                logger.error(f"Failed to initialize default QdrantAdapter: {e}")
-                self.vector_store = None
+            # Default to QdrantAdapter with sovereign fallback to MemoryVectorAdapter
+            # Health check is performed lazily during first use
+            self.vector_store = QdrantAdapter()
+
+        # [Horizon 2: MiMo] FTS5 Search Index
+        self.fts = ConversationFTSIndex(_get_memory_dir() / "fts_memory.db")
+        self.fts.initialize()
 
     async def get_history(
         self,
@@ -192,6 +195,151 @@ class MemoryStore:
 
         return []
 
+    async def search_fts(
+        self,
+        query: str,
+        entity_name: str,
+        limit: int = 20,
+    ) -> List[Dict[str, Any]]:
+        """Search across conversation history using FTS5 (BM25 ranking).
+        
+        [C3: entity_name REQUIRED] for sovereign isolation.
+        """
+        if not query.strip():
+            return []
+        
+        return await anyio.to_thread.run_sync(
+            self.fts.search, query, entity_name, limit
+        )
+
+    async def search(
+        self,
+        query: str,
+        entity_name: str,
+        limit: int = 20,
+    ) -> List[Dict[str, Any]]:
+        """Hybrid search: FTS5 + Vector, re-ranked via RRF.
+        
+        [C3: entity_name REQUIRED] for sovereign isolation.
+        """
+        if not query.strip():
+            return []
+            
+        # 1. Fetch Keyword (FTS) and Vector results in parallel
+        fts_results = []
+        vec_results = []
+        
+        async with anyio.create_task_group() as tg:
+            async def _fetch_fts():
+                nonlocal fts_results
+                fts_results = await self.search_fts(query, entity_name, limit * 2)
+                
+            async def _fetch_vec():
+                nonlocal vec_results
+                vector_adapter = await self._ensure_vector_store()
+                if vector_adapter:
+                    embedding = self._compute_simple_embedding(query)
+                    vec_results = await vector_adapter.query(
+                        entity_name=entity_name,
+                        vector=embedding,
+                        limit=limit * 2
+                    )
+
+            tg.start_soon(_fetch_fts)
+            tg.start_soon(_fetch_vec)
+
+        # 2. Apply Reciprocal Rank Fusion (RRF)
+        # RRF formula: score = sum( 1 / (k + rank) )
+        k = 60
+        
+        def get_doc_id(res):
+            return f"{res.get('session_id')}:{res.get('timestamp')}"
+            
+        fts_ranks = {get_doc_id(r): i + 1 for i, r in enumerate(fts_results)}
+        
+        vec_ranks = {}
+        for i, (score, payload) in enumerate(vec_results):
+            doc_id = f"{payload.get('session_id')}:{payload.get('timestamp')}"
+            vec_ranks[doc_id] = i + 1
+            
+        all_doc_ids = set(fts_ranks.keys()) | set(vec_ranks.keys())
+        
+        scored_docs = []
+        for doc_id in all_doc_ids:
+            score = 0.0
+            if doc_id in fts_ranks:
+                score += 1.0 / (k + fts_ranks[doc_id])
+            if doc_id in vec_ranks:
+                score += 1.0 / (k + vec_ranks[doc_id])
+            scored_docs.append((doc_id, score))
+            
+        scored_docs.sort(key=lambda x: x[1], reverse=True)
+        
+        # 3. Final results construction
+        final_results = []
+        for doc_id, rrf_score in scored_docs[:limit]:
+            # Prefer FTS metadata (it has content, role, etc.)
+            doc = next((r for r in fts_results if get_doc_id(r) == doc_id), None)
+            if not doc:
+                # Fallback to vector payload
+                _, payload = next(
+                    ((s, p) for s, p in vec_results if f"{p.get('session_id')}:{p.get('timestamp')}" == doc_id), 
+                    (None, None)
+                )
+                if payload:
+                    doc = payload
+            
+            if doc:
+                doc_copy = doc.copy()
+                doc_copy["_rrf_score"] = round(rrf_score, 6)
+                final_results.append(doc_copy)
+                
+        return final_results
+
+    def _compute_simple_embedding(self, text: str) -> List[float]:
+        """Lightweight bag-of-words embedding for sovereign fallback.
+        
+        Uses a stable MD5-based Feature Hashing (hashing trick) to map
+        tokens deterministically to a fixed 256-dimensional space.
+        """
+        import hashlib
+        import math
+        
+        vec = [0.0] * 256
+        if not text:
+            return vec
+            
+        tokens = re.findall(r"[a-zA-Z]\w+", text.lower())
+        # Filter stopwords to keep the semantic signal clean
+        stopwords = {
+            "the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for",
+            "of", "with", "by", "from", "is", "are", "was", "were", "be", "been",
+            "being", "have", "has", "had", "do", "does", "did", "will", "would",
+            "could", "should", "may", "might", "shall", "can", "need", "dare",
+            "this", "that", "these", "those", "i", "me", "my", "we", "our", "you",
+            "your", "he", "him", "his", "she", "her", "it", "its", "they", "them",
+            "their", "what", "which", "who", "whom", "when", "where", "why", "how",
+            "all", "each", "every", "both", "few", "more", "most", "other", "some",
+            "such", "no", "nor", "not", "only", "own", "same", "so", "than", "too",
+            "very", "just", "because", "as", "until", "while", "about", "between",
+            "through", "during", "before", "after", "above", "below", "up", "down",
+        }
+        tokens = [t for t in tokens if t not in stopwords and len(t) > 2]
+        if not tokens:
+            return vec
+            
+        for token in tokens:
+            h = int(hashlib.md5(token.encode("utf-8")).hexdigest(), 16)
+            dim = h % 256
+            vec[dim] += 1.0
+            
+        # L2 normalize
+        norm = math.sqrt(sum(x * x for x in vec))
+        if norm > 0:
+            vec = [x / norm for x in vec]
+            
+        return vec
+
     async def add_exchange(
         self,
         entity_name: str,
@@ -251,11 +399,32 @@ class MemoryStore:
             except Exception as e:
                 logger.error(f"Provider {provider.__class__.__name__} failed to save_history: {e}", exc_info=True)
                 self._stats["fallbacks"] += 1
-                
+                                
         if not saved_any:
             logger.error(f"All providers failed to save_history for {session_id}!")
         else:
             self._stats["saves"] += 1
+        
+        # [Horizon 2: MiMo] FTS5 Dual-Write
+        try:
+            self.fts.index_exchange(session_id, entity_name, "user", user_message)
+            self.fts.index_exchange(session_id, entity_name, "assistant", response)
+        except Exception as e:
+            logger.warning("FTS dual-write failed for %s: %s", session_id, e)
+
+        # Sovereign Vector Update
+        vector_adapter = await self._ensure_vector_store()
+        if vector_adapter:
+            try:
+                combined_text = f"{user_message} {response}"
+                embedding = self._compute_simple_embedding(combined_text)
+                await vector_adapter.upsert(
+                    entity_name=entity_name,
+                    vector=embedding,
+                    metadata={"session_id": session_id, "timestamp": exchange["timestamp"]}
+                )
+            except Exception as e:
+                logger.warning("Vector upsert failed for %s: %s", session_id, e)
 
     def _cache_hot(self, cache_key: str, exchanges: List[Dict]) -> None:
         # [id-soft: doom-1993] Lazy Deletion — reap tombstoned before slot reuse
@@ -288,6 +457,26 @@ class MemoryStore:
     def _is_tombstoned(self, cache_key: str) -> bool:
         """Check if a cache_key is currently tombstoned (within grace period)."""
         return cache_key in self._tombstoned
+
+    async def _ensure_vector_store(self) -> IVectorStoreAdapter:
+        """Ensure the vector store is healthy, falling back to MemoryVectorAdapter if not."""
+        if not self.vector_store:
+            self.vector_store = MemoryVectorAdapter()
+            return self.vector_store
+            
+        if isinstance(self.vector_store, MemoryVectorAdapter):
+            return self.vector_store
+            
+        try:
+            status = await self.vector_store.get_status()
+            if status.get("status") == "healthy":
+                return self.vector_store
+            logger.warning("Vector store unhealthy (%s), falling back to MemoryVectorAdapter", status.get("error"))
+        except Exception as e:
+            logger.error("Vector store health check failed: %s, falling back to MemoryVectorAdapter", e)
+            
+        self.vector_store = MemoryVectorAdapter()
+        return self.vector_store
 
     def store_transient(self, key: str, value: Any) -> None:
         """Store data in the Temp tier (transient scratchpad).
@@ -375,7 +564,23 @@ class MemoryStore:
             # [id-soft: doom-1993] Lazy Deletion — tombstone marker
             # [id-soft: quake-1996] Grace Period — wait TOMBSTONE_GRACE_SECONDS
             self._tombstoned[cache_key] = time.time()
+            
+            # Sovereign Vector Cleanup (C4 Fix)
+            if self.vector_store:
+                try:
+                    await self.vector_store.delete_session(entity_name, session_id)
+                    logger.info("Vector cleanup completed for session %s", session_id)
+                except Exception as e:
+                    logger.warning("Vector cleanup failed for %s: %s", session_id, e)
+            
             self._stats["archives"] += 1
+            
+            # [Horizon 2: MiMo] FTS5 Cleanup (C1 fix)
+            try:
+                await anyio.to_thread.run_sync(self.fts.remove_session, session_id)
+            except Exception as e:
+                logger.warning("FTS cleanup failed for %s: %s", session_id, e)
+
             logger.info(f"Archived session {session_id} across providers (tombstoned, grace={TOMBSTONE_GRACE_SECONDS}s)")
             return True
         return False

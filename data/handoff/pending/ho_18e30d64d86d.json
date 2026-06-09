@@ -1,0 +1,10 @@
+{
+  "packet_id": "ho_18e30d64d86d",
+  "target_cli": "sentinel",
+  "source_cli": "cline-m3",
+  "task": "SECURITY HARDENING SPRINT \u2014 Sentinel Lead. Remediate the 3 RED/YELLOW findings from your security audit. (1) AUTHENTICATION: Implement Token/API-Key handshake for Hub. Add MCP_SECRET env-var middleware. Gate ALL tool calls behind valid token. CRITICAL \u2014 45min. (2) CORS: Tighten allow_origins from [\"*\"] to [\"127.0.0.1\", \"localhost\", \"0.0.0.0\"]. MED \u2014 20min. (3) RATE LIMITING: Add RPS limiting middleware (10 req/s default, configurable via config/omega.yaml). MED \u2014 30min. (4) Run make test \u2014 confirm 320/320 still pass + new security test. (5) Verification: curl test that unauthenticated request returns 401. Target 2 hours. Report to Hivemind with intent=handoff when all 3 areas GREEN.",
+  "context": "Your own audit found: Authentication RED (no identity verification), CORS YELLOW (allow_origins=[\"*\"]), Rate Limiting YELLOW (no RPS cap). \"Engine secure from inside, front door unlocked.\" This sprint closes the front door. Oversier (Cline-M3/DeepSeek V4 Pro) has elevated this to #1 priority above Show HN launch. Reference: your SECURITY_AUDIT_SENTINEL_20260609.md. Other agents are aware and won't touch auth paths. Ma'at (Build Side) is available for coordination.",
+  "priority": 2,
+  "status": "pending",
+  "submitted_at": "2026-06-09T16:53:37.420170+00:00"
+}

@@ -68,9 +68,9 @@ models:
 
   # ── On-demand: Sophia (deep analysis, code review, strategy) ───
   phi-4-mini:
-    path: "/media/arcana-novai/omega_library/models/gguf/local/all/phi-4-mini-reasoning-abliterated-q4_k_m.gguf"
-    size_gb: 3.8
-    ram_mb: 4500
+    path: "/media/arcana-novai/omega_library/models/local/all/Phi-4-mini-instruct-Q5_K_M.gguf"
+    size_gb: 2.85
+    ram_mb: 3500
     context_window: 16384      # Deep analysis needs room for code + reasoning
     threads: 6
     load_strategy: "on_demand_10min"
@@ -118,13 +118,24 @@ models:
     entity: "roc_racoon"
 
   phi-4-mini-reasoning-abliterated-q4_k_m:
-    path: "/media/arcana-novai/omega_library/models/gguf/local/all/phi-4-mini-reasoning-abliterated-q4_k_m.gguf"
-    size_gb: 3.8
-    ram_mb: 4500
+    path: "/media/arcana-novai/omega_library/models/local/all/phi-4-mini-reasoning-abliterated-q4_k_m.gguf"
+    size_gb: 1.4
+    ram_mb: 2000
     context_window: 16384
     threads: 6
     load_strategy: "on_demand_10min"
     entity: "SOPHIA"
+
+  qwen3-vl:
+    path: "/media/arcana-novai/omega_library/models/local/all/Qwen3-VL-4B-Instruct-Q4_K_M.gguf"
+    size_gb: 2.4
+    ram_mb: 3200
+    context_window: 8192
+    threads: 6
+    load_strategy: "on_demand_5min"
+    multimodal: true
+    mmproj: "/media/arcana-novai/omega_library/models/local/all/mmproj-model-f16.gguf"
+    entity: "ARGUS"
 
 
   # ── On-demand: Inanna/Isis/Lilith (knowledge, dreams, depths) ──
@@ -151,8 +162,8 @@ kv_cache:
       key_type: "f16"
       value_type: "f16"
     qwen3-4b-thinking-q4_k_m:
-      key_type: "fp8"            # fp8 target, q8_0 fallback if unsupported
-      value_type: "fp8"
+      key_type: "q8_0"            # Standardized to q8_0 per user directive
+      value_type: "q8_0"
 
 # Zen 2 compilation guide
 zen2_build:
@@ -162,6 +173,7 @@ zen2_build:
     - "-DLLAMA_FMA=ON"
     - "-DLLAMA_F16C=ON"
     - "-DLLAMA_NO_AVX512=ON"
+    - "-DGGML_FLASH_ATTN=ON"     # Enable Flash Attention for Zen 2 optimization
     - "-DLLAMA_BLAS=OFF"
     - "-DLLAMA_CUDA=OFF"
     - "-DLLAMA_METAL=OFF"

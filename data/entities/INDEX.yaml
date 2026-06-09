@@ -36,7 +36,7 @@ entities:
   context: { status: ACTIVE, description: "Pillar 7: Gnosis — Context, Memory & Soul Evolution" }
   sentinel: { status: ACTIVE, description: "Pillar 5: Governance — Mandate Enforcement" }
   omnidroid: { status: ACTIVE, description: "Universal Sovereign Agent — Adaptive Resonance framework" }
-  antigravity: { status: STUB, description: "Subagent persona lab — A2A verification" }
+  antigravity: { status: ACTIVE, description: "Hivemind Citizen — Antigravity IDE, cloud-based strategy, OAuth pool manager" }
   arch: { status: ACTIVE, description: "Soul evolution architect — 45KB soul, deep history" }
   datastore: { status: ACTIVE, description: "Data persistence entity — 70KB soul" }
   # ── Pillar Slot Aliases (STUB — duplicates of named entities above) ──
@@ -50,6 +50,9 @@ entities:
   p8: { status: STUB, description: "Alias → hecate" }
   p9: { status: STUB, description: "Alias → anubis/link" }
   p10: { status: STUB, description: "Alias → kali" }
+  # ── Hivemind Citizens (ACTIVE — cross-platform coordination endpoints) ──
+  cli_cline: { status: ACTIVE, description: "Hivemind Citizen — Cline CLI, cross-platform execution, model strategy" }
+  cli_gemini: { status: ACTIVE, description: "Hivemind Citizen — Gemini CLI, heavy research, 1M context, 8-account OAuth pool" }
   # ── Quarantined / Legacy (ARCHIVE) ──
   direntity: { status: ARCHIVE, description: "Legacy test entity" }
   duplicate: { status: ARCHIVE, description: "Duplicate test entity" }

@@ -25,13 +25,60 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 from dataclasses import asdict
 import yaml
+import contextvars
 import threading
 
 import anyio
 from mcp.server.fastmcp import FastMCP
+from mcp.types import CallToolResult, TextContent
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 from starlette.routing import Route
+from starlette.middleware.cors import CORSMiddleware
+
+# --- SECURITY MIDDLEWARE (Gap 2) ---
+class RequestSizeLimitMiddleware:
+    """Limits incoming request size to prevent OOM/DOS attacks."""
+    def __init__(self, app, max_size: int = 10 * 1024 * 1024): # 10MB default
+        self.app = app
+        self.max_size = max_size
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http":
+            content_length = 0
+            for header, value in scope.get("headers", []):
+                if header == b"content-length":
+                    content_length = int(value)
+                    break
+            if content_length > self.max_size:
+                from starlette.responses import Response
+                response = Response("Request too large", status_code=413)
+                await response(scope, receive, send)
+                return
+        await self.app(scope, receive, send)
+
+def apply_security(app):
+    """Apply CORS and size limits to the Starlette app."""
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"], # Tighten this in production
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    app.add_middleware(RequestSizeLimitMiddleware, max_size=25 * 1024 * 1024) # 25MB for context posts
+
+    @app.on_event("shutdown")
+    async def shutdown():
+        logger.info("Shutting down Omega Core Hub...")
+        try:
+            await indexer.close()
+        except Exception as e:
+            logger.error(f"Failed to close indexer: {e}")
+        try:
+            await library.close()
+        except Exception as e:
+            logger.error(f"Failed to close library: {e}")
+
 
 # Ensure omega module is importable
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -40,6 +87,8 @@ sys.path.insert(0, str(SRC_DIR))
 from omega.oracle.oracle import Oracle
 from omega.oracle.entity_registry import EntityRegistry
 from omega.oracle.hierarchy import SovereignHierarchy
+from omega.oracle.security import tdp_wrap
+
 from omega.library.inbox import InboxManager
 from omega.library.curator import CurationPipeline
 from omega.library.library import Library
@@ -47,12 +96,45 @@ from omega.library.indexer import Indexer
 from omega.library.discovery import DiscoveryOrchestrator
 from omega.observability import new_trace_id, get_engine
 from omega.library.research import ResearchEngine, RESEARCH_DEPTHS
+from omega.memory_store import get_memory_store
 from omega.ics import render as ics_render
 from omega.mcp_runtime import run_mcp
 
 logger = logging.getLogger("omega.hub")
 
 # --- INITIALIZATION ---
+# --- M9-COMPLIANT TOOL DECORATOR (P0-A) ---
+# Gemini CLI spec-correct: catches exceptions, returns CallToolResult(isError=True).
+from functools import wraps
+
+def m9_safe(tool_name: str):
+    """Decorator: wrap an async MCP tool with M9-compliant error boundary.
+
+    On exception, returns CallToolResult(content=[TextContent(...)], isError=True)
+    so MCP clients see isError=True, not isError=False with embedded "error" key.
+    [H-A1-aligned: zero id-soft heritage, pure MCP spec pattern.]
+    """
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(*args, **kwargs):
+            try:
+                return await func(*args, **kwargs)
+            except Exception as e:
+                trace_id = new_trace_id()
+                logger.error("[%s] %s: %s", tool_name, trace_id, e)
+                error_payload = json.dumps({
+                    "error": str(e),
+                    "trace_id": trace_id,
+                    "tool": tool_name,
+                }, indent=2)
+                return CallToolResult(
+                    content=[TextContent(type="text", text=error_payload)],
+                    isError=True,
+                )
+        return wrapper
+    return decorator
+
+
 mcp = FastMCP("Omega Core Hub")
 
 # Oracle / Registry
@@ -68,7 +150,8 @@ indexer = Indexer()
 discovery = DiscoveryOrchestrator()
 
 # Research engine (consolidated from omega-research MCP)
-research_engine = ResearchEngine()
+research_engine = ResearchEngine(library=library, indexer=indexer)
+
 
 # --- HIVEMIND STATE ---
 HALL_OF_RECORDS = PROJECT_ROOT / "data" / "knowledge" / "HALL_OF_RECORDS"
@@ -82,9 +165,13 @@ _hot_store_lock = anyio.Lock()
 # but anyio.Lock is tied to the creating event loop — crash on cross-loop
 # access. Threading.Lock works across threads regardless of event loop.
 #
-# [id-soft: quake-1996] Zone Memory: thread-safe allocator pattern
 class _AsyncThreadLock:
-    """threading.Lock wrapped for async with — safe across event loops."""
+    """threading.Lock wrapped for async with — safe across event loops.
+
+    Standard Python pattern for cross-event-loop thread safety.
+    No id Software heritage — Zone Memory (z_zone.c) is a memory allocator;
+    this is a concurrency primitive. (H-A1: tag removed 2026-06-09)
+    """
     def __init__(self):
         self._lock = threading.Lock()
     async def __aenter__(self):
@@ -103,7 +190,27 @@ _awareness_lock = _AsyncThreadLock()
 # long-running tasks.
 # Heritage: matches Doom 1993 thinker grace period pattern (id-soft: doom-1993).
 HEARTBEAT_TTL = 2700  # TTL for agent presence in seconds (45 minutes)
-_current_entity: Optional[str] = None  # Tracks the last entity used by oracle_talk/oracle_summon
+# --- P1-A: ContextVar swap for _current_entity (M-A5/AG-1 fix) ---
+# Each async context gets isolated state, eliminating global race condition.
+_current_entity: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar(
+    "_current_entity", default=None
+)  # Tracks the last entity used by oracle_talk/oracle_summon per-context
+
+# --- P0-B: IntentMatcher singleton (M-A2b fix) ---
+# Avoid fresh IntentMatcher per call (M-A2b). Lazy-init on first use.
+_intent_matcher: Optional[object] = None
+_intent_matcher_lock = threading.Lock()
+
+
+def _get_intent_matcher():
+    """Module-level singleton accessor for IntentMatcher (P0-B)."""
+    global _intent_matcher
+    if _intent_matcher is None:
+        with _intent_matcher_lock:
+            if _intent_matcher is None:
+                from omega.iris.matcher import IntentMatcher
+                _intent_matcher = IntentMatcher()
+    return _intent_matcher
 
 
 def _canonicalize_cli(cli: str) -> str:
@@ -173,12 +280,19 @@ async def _run_discovery_background(job_id: str) -> None:
 
 # === ORACLE TOOLS (8) ===
 
+@m9_safe("oracle_talk")
 @mcp.tool()
 async def oracle_talk(query: str) -> str:
-    """Route a query through the Omega Oracle. Speculative decoding handled internally."""
-    global _current_entity
+    """Route a query through the Omega Oracle. Speculative decoding handled internally.
+    
+    Args:
+        query: The natural language query or command to route.
+        
+    Returns:
+        JSON string containing the response text, entity, pillars, and metadata.
+    """
     response = await oracle.talk(query)
-    _current_entity = response.entity
+    _current_entity.set(response.entity)
     return json.dumps({
         "text": response.text,
         "entity": response.entity,
@@ -193,12 +307,20 @@ async def oracle_talk(query: str) -> str:
     }, indent=2)
 
 
+@m9_safe("oracle_summon")
 @mcp.tool()
 async def oracle_summon(entity_name: str, query: str) -> str:
-    """Directly summon a specific entity by name."""
-    global _current_entity
+    """Directly summon a specific entity by name.
+    
+    Args:
+        entity_name: The name of the entity to summon.
+        query: The message or task for the summoned entity.
+        
+    Returns:
+        JSON string containing the response text and entity metadata.
+    """
     response = await oracle.summon(entity_name, query)
-    _current_entity = response.entity
+    _current_entity.set(response.entity)
     return json.dumps({
         "text": response.text,
         "entity": response.entity,
@@ -210,6 +332,7 @@ async def oracle_summon(entity_name: str, query: str) -> str:
     }, indent=2)
 
 
+@m9_safe("oracle_summon_local")
 @mcp.tool()
 async def oracle_summon_local(entity_name: str, query: str, model: str) -> str:
     """Summon an entity with a specific model override.
@@ -221,11 +344,13 @@ async def oracle_summon_local(entity_name: str, query: str, model: str) -> str:
         entity_name: Name of the entity to summon
         query: The user query
         model: Model name to use (e.g., 'qwen3-1.7b', 'rocracoon-3b-instruct')
+        
+    Returns:
+        JSON string containing the local model response or an error hint.
     """
-    global _current_entity
     try:
         response = await oracle.summon(entity_name, query, model_override=model)
-        _current_entity = response.entity
+        _current_entity.set(response.entity)
         return json.dumps({
             "text": response.text,
             "entity": response.entity,
@@ -245,9 +370,14 @@ async def oracle_summon_local(entity_name: str, query: str, model: str) -> str:
         }, indent=2)
 
 
+@m9_safe("oracle_list_entities")
 @mcp.tool()
 async def oracle_list_entities() -> str:
-    """List all entities in the Omega pantheon."""
+    """List all entities in the Omega pantheon.
+    
+    Returns:
+        JSON string containing a list of all entities and their primary attributes.
+    """
     entities = await anyio.to_thread.run_sync(registry.list)
     result = [{
         "name": e.name,
@@ -265,9 +395,14 @@ async def oracle_list_entities() -> str:
     return json.dumps(result, indent=2)
 
 
+@m9_safe("oracle_list_pillar_keepers")
 @mcp.tool()
 async def oracle_list_pillar_keepers() -> str:
-    """List only the 10 Pillar Keepers (core pantheon)."""
+    """List only the 10 Pillar Keepers (core pantheon).
+    
+    Returns:
+        JSON string containing the 10 core entities responsible for engine pillars.
+    """
     entities = await anyio.to_thread.run_sync(registry.list_pillar_keepers)
     result = [{
         "name": e.name,
@@ -280,9 +415,17 @@ async def oracle_list_pillar_keepers() -> str:
     return json.dumps(result, indent=2)
 
 
+@m9_safe("oracle_entity_info")
 @mcp.tool()
 async def oracle_entity_info(name: str) -> str:
-    """Get detailed information about a specific entity."""
+    """Get detailed information about a specific entity.
+    
+    Args:
+        name: Name or fragment of the entity name to look up.
+        
+    Returns:
+        JSON string containing the full entity profile or an error.
+    """
     def _get():
         return registry.get(name) or registry.find_by_name_fragment(name)
     entity = await anyio.to_thread.run_sync(_get)
@@ -306,14 +449,24 @@ async def oracle_entity_info(name: str) -> str:
     }, indent=2)
 
 
+@m9_safe("oracle_assess_intent")
 @mcp.tool()
 async def oracle_assess_intent(query: str) -> str:
-    """Test how the Oracle would classify a query without generating a response."""
+    """Test how the Oracle would classify a query without generating a response.
+    
+    Args:
+        query: The message to analyze for intent and confidence.
+        
+    Returns:
+        JSON string containing the classification result and confidence metrics.
+    """
     def _assess():
-        from omega.iris.matcher import IntentMatcher
-        classification = IntentMatcher().classify(query)
+        # P0-B: Use module-level singleton (not fresh IntentMatcher per call)
+        matcher = _get_intent_matcher()
+        classification = matcher.classify(query)
         domain_entity = registry.find_by_domain(query)
-        iris_confidence = oracle._assess_iris_confidence(query)
+        # P0-B: Use public assess_confidence() alias, not private _assess_iris_confidence
+        iris_confidence = oracle.assess_confidence(query)
         return classification, domain_entity, iris_confidence
 
     classification, domain_entity, iris_confidence = await anyio.to_thread.run_sync(_assess)
@@ -327,6 +480,7 @@ async def oracle_assess_intent(query: str) -> str:
     }, indent=2)
 
 
+@m9_safe("oracle_discover_entity")
 @mcp.tool()
 async def oracle_discover_entity(query: str) -> str:
     """Find the best entity in the pantheon to handle a specific task or domain.
@@ -346,6 +500,7 @@ async def oracle_discover_entity(query: str) -> str:
     }, indent=2)
 
 
+@m9_safe("delegate_task")
 @mcp.tool()
 async def delegate_task(target_entity: str, query: str, context: str = "") -> str:
     """Delegate a task to another entity and receive their response.
@@ -374,6 +529,7 @@ async def delegate_task(target_entity: str, query: str, context: str = "") -> st
 
 # === HIVEMIND TOOLS (6) ===
 
+@m9_safe("hivemind_post_context")
 @mcp.tool()
 async def hivemind_post_context(
     cli: str,
@@ -394,6 +550,20 @@ async def hivemind_post_context(
         prioritized queue.
       - suggested_model: D118 model override hint that cascades to subagents.
         If the receiving agent spawns a child, this becomes its default model.
+        
+    Args:
+        cli: The CLI identifier (e.g., 'kali', 'cli_gemini').
+        model: The current model being used by the CLI.
+        task_current: Concise description of the active task.
+        focus_chain: List of previous sub-tasks or focus areas.
+        decisions: List of architectural or strategic decisions made.
+        continuation: Next steps or handoff notes for the next session.
+        session_id: Optional UUID for the session. Auto-generated if omitted.
+        intent: The semantic intent of the post (status, decision, handoff, etc).
+        suggested_model: Optional hint for the next model to use.
+        
+    Returns:
+        JSON string confirming acceptance and providing the session_id.
     """
     cli = _canonicalize_cli(cli)
     sid = session_id or f"ses_{uuid.uuid4().hex[:12]}"
@@ -429,9 +599,17 @@ async def hivemind_post_context(
     return json.dumps({"status": "accepted", "session_id": sid, "timestamp": snapshot["timestamp"]})
 
 
+@m9_safe("hivemind_heartbeat")
 @mcp.tool()
 async def hivemind_heartbeat(cli: str) -> str:
-    """Signal presence to the hivemind to avoid being pruned as stale."""
+    """Signal presence to the hivemind to avoid being pruned as stale.
+    
+    Args:
+        cli: The CLI identifier to refresh.
+        
+    Returns:
+        JSON string confirming the heartbeat status.
+    """
     cli = _canonicalize_cli(cli)
     async with _awareness_lock:
         now_str = datetime.now(timezone.utc).isoformat()
@@ -447,6 +625,7 @@ async def hivemind_heartbeat(cli: str) -> str:
         return json.dumps({"status": "presence_registered", "cli": cli})
 
 
+@m9_safe("hivemind_get_awareness")
 @mcp.tool()
 async def hivemind_get_awareness() -> str:
     """Get real-time awareness of all active CLI agents.
@@ -455,6 +634,9 @@ async def hivemind_get_awareness() -> str:
     after a server restart), performs a shallow scan of HALL_OF_RECORDS
     to recover agent presence from disk. Agents whose session files
     were modified within HEARTBEAT_TTL are treated as active.
+    
+    Returns:
+        JSON string containing a list of all active or recently seen agents.
     """
     now = datetime.now(timezone.utc)
     async with _awareness_lock:
@@ -514,6 +696,7 @@ async def hivemind_get_awareness() -> str:
     return json.dumps(awareness_list, indent=2)
 
 
+@m9_safe("hivemind_get_continuation")
 @mcp.tool()
 async def hivemind_get_continuation(cli: str) -> str:
     """Get the latest continuation note for a specific CLI.
@@ -521,6 +704,12 @@ async def hivemind_get_continuation(cli: str) -> str:
     D-kal-051: Fixed cold-store fallback. Previously only checked
     in-memory _awareness (lost on server restart). Now falls back
     to HALL_OF_RECORDS cold store for the most recent session file.
+    
+    Args:
+        cli: The CLI identifier to retrieve the continuation note for.
+        
+    Returns:
+        The text of the latest continuation note or an error message.
     """
     cli = _canonicalize_cli(cli)
     async with _awareness_lock:
@@ -558,6 +747,7 @@ _extended_sessions_lock = _AsyncThreadLock()
 EXTENDED_SAFETY_TTL_DEFAULT = 3 * 60 * 60  # 3 hours = 10800s
 
 
+@m9_safe("hivemind_extended_checkin")
 @mcp.tool()
 async def hivemind_extended_checkin(
     cli: str,
@@ -583,7 +773,7 @@ async def hivemind_extended_checkin(
         ttl_seconds: Override default 3-hour TTL (max 24h = 86400s)
 
     Returns:
-        JSON status with the registered TTL and expiry timestamp.
+        JSON string containing the registered TTL and expiry timestamp.
     """
     ttl_seconds = min(ttl_seconds, 86400)  # cap at 24h
     async with _extended_sessions_lock:
@@ -602,12 +792,19 @@ async def hivemind_extended_checkin(
     })
 
 
+@m9_safe("hivemind_extended_checkout")
 @mcp.tool()
 async def hivemind_extended_checkout(cli: str) -> str:
     """Cancel an extended-session check-in.
 
     Call this when ending the session cleanly so the pruning loop
     reverts to the default 20-minute TTL behavior.
+    
+    Args:
+        cli: The CLI identifier to check out.
+        
+    Returns:
+        JSON string confirming completion or stating no extended session was found.
     """
     async with _extended_sessions_lock:
         if cli in _extended_sessions:
@@ -616,9 +813,17 @@ async def hivemind_extended_checkout(cli: str) -> str:
         return json.dumps({"status": "no_extended_session", "cli": cli})
 
 
+@m9_safe("hivemind_get_session")
 @mcp.tool()
 async def hivemind_get_session(session_id: str) -> str:
-    """Retrieve a session snapshot by ID."""
+    """Retrieve a session snapshot by ID.
+    
+    Args:
+        session_id: The UUID of the session to retrieve.
+        
+    Returns:
+        JSON string containing the session snapshot or an error.
+    """
     async with _hot_store_lock:
         if session_id in _hot_store:
             return json.dumps(_hot_store[session_id], indent=2)
@@ -639,9 +844,18 @@ async def hivemind_get_session(session_id: str) -> str:
     return json.dumps({"error": f"Session '{session_id}' not found"})
 
 
+@m9_safe("hivemind_list_sessions")
 @mcp.tool()
 async def hivemind_list_sessions(cli: Optional[str] = None, limit: int = 10) -> str:
-    """List recent session snapshots."""
+    """List recent session snapshots.
+    
+    Args:
+        cli: Optional CLI identifier to filter sessions for.
+        limit: Maximum number of sessions to return.
+        
+    Returns:
+        JSON string containing a list of session IDs and their CLI associations.
+    """
     if cli:
         cli = _canonicalize_cli(cli)
     def _list_sessions():
@@ -674,6 +888,7 @@ for d in (HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED):
     d.mkdir(parents=True, exist_ok=True)
 
 
+@m9_safe("hivemind_submit_handoff")
 @mcp.tool()
 async def hivemind_submit_handoff(
     target_cli: str,
@@ -693,6 +908,9 @@ async def hivemind_submit_handoff(
         task: The task description for the target agent.
         context: Optional background context.
         priority: 0=normal, 1=high, 2=critical.
+        
+    Returns:
+        JSON string containing the packet_id and storage path.
     """
     packet_id = f"ho_{uuid.uuid4().hex[:12]}"
     packet = {
@@ -717,6 +935,7 @@ async def hivemind_submit_handoff(
     return json.dumps({"status": "submitted", "packet_id": packet_id, "path": str(path)})
 
 
+@m9_safe("hivemind_accept_handoff")
 @mcp.tool()
 async def hivemind_accept_handoff(packet_id: str, accepting_cli: str) -> str:
     """Accept a handoff packet. [hardening-p9] Moves pending -> active/.
@@ -724,6 +943,9 @@ async def hivemind_accept_handoff(packet_id: str, accepting_cli: str) -> str:
     Args:
         packet_id: The packet_id from hivemind_submit_handoff.
         accepting_cli: The CLI that is accepting the handoff.
+        
+    Returns:
+        JSON string confirming acceptance or stating an error.
     """
     src = HANDOFF_PENDING / f"{packet_id}.json"
     dst = HANDOFF_ACTIVE / f"{packet_id}.json"
@@ -749,6 +971,7 @@ async def hivemind_accept_handoff(packet_id: str, accepting_cli: str) -> str:
     return json.dumps({"status": "accepted", "packet_id": packet_id, "accepted_by": accepting_cli})
 
 
+@m9_safe("hivemind_complete_handoff")
 @mcp.tool()
 async def hivemind_complete_handoff(packet_id: str, result: str = "") -> str:
     """Complete a handoff packet. [hardening-p9] Moves active -> completed/.
@@ -756,6 +979,9 @@ async def hivemind_complete_handoff(packet_id: str, result: str = "") -> str:
     Args:
         packet_id: The packet_id from hivemind_accept_handoff.
         result: The outcome or result of the handoff.
+        
+    Returns:
+        JSON string confirming completion or stating an error.
     """
     src = HANDOFF_ACTIVE / f"{packet_id}.json"
     dst = HANDOFF_COMPLETED / f"{packet_id}.json"
@@ -783,33 +1009,69 @@ async def hivemind_complete_handoff(packet_id: str, result: str = "") -> str:
 
 # === LIBRARY TOOLS (12) ===
 
+@m9_safe("library_inbox_add_url")
 @mcp.tool()
 async def library_inbox_add_url(url: str, tags: str = "", priority: int = 0) -> str:
-    """Add a URL to the intake inbox for later curation."""
+    """Add a URL to the intake inbox for later curation.
+    
+    Args:
+        url: The web address to ingest.
+        tags: Optional comma-separated list of tags.
+        priority: Processing priority (0=normal, higher=sooner).
+        
+    Returns:
+        JSON string containing the item_id and source metadata.
+    """
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
     item = await inbox.add_url(url, tags=tag_list, priority=priority)
     return json.dumps({"status": "added", "item_id": item.item_id, "source": item.source, "source_type": item.source_type})
 
 
+@m9_safe("library_inbox_add_note")
 @mcp.tool()
 async def library_inbox_add_note(text: str, tags: str = "") -> str:
-    """Add a text note to the intake inbox."""
+    """Add a text note to the intake inbox.
+    
+    Args:
+        text: The content of the note.
+        tags: Optional comma-separated list of tags.
+        
+    Returns:
+        JSON string containing the item_id and title.
+    """
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
     item = await inbox.add_note(text, tags=tag_list)
     return json.dumps({"status": "added", "item_id": item.item_id, "title": item.title})
 
 
+@m9_safe("library_inbox_add_file")
 @mcp.tool()
 async def library_inbox_add_file(path: str, tags: str = "") -> str:
-    """Add a local file path to the intake inbox."""
+    """Add a local file path to the intake inbox.
+    
+    Args:
+        path: The absolute path to the file on disk.
+        tags: Optional comma-separated list of tags.
+        
+    Returns:
+        JSON string containing the item_id and file source.
+    """
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
     item = await inbox.add_file(path, tags=tag_list)
     return json.dumps({"status": "added", "item_id": item.item_id, "source": item.source})
 
 
+@m9_safe("library_inbox_list")
 @mcp.tool()
 async def library_inbox_list(limit: int = 20) -> str:
-    """List pending items in the intake inbox."""
+    """List pending items in the intake inbox.
+    
+    Args:
+        limit: Maximum number of pending items to retrieve.
+        
+    Returns:
+        JSON string containing the total counts and a list of pending items.
+    """
     items = await inbox.list_pending(limit=limit)
     counts = await inbox.count()
     return json.dumps({
@@ -818,16 +1080,29 @@ async def library_inbox_list(limit: int = 20) -> str:
     }, indent=2)
 
 
+@m9_safe("library_inbox_stats")
 @mcp.tool()
 async def library_inbox_stats() -> str:
-    """Get inbox statistics (pending, processing, failed counts)."""
+    """Get inbox statistics (pending, processing, failed counts).
+    
+    Returns:
+        JSON string with counts for each inbox item status.
+    """
     counts = await inbox.count()
     return json.dumps(counts)
 
 
+@m9_safe("library_ingest_pending")
 @mcp.tool()
 async def library_ingest_pending(limit: int = 5) -> str:
-    """Process pending inbox items through curation into the library."""
+    """Process pending inbox items through curation into the library.
+    
+    Args:
+        limit: Maximum number of items to process in this batch.
+        
+    Returns:
+        JSON string containing the number of ingested items and their summaries.
+    """
     ingested = await library.ingest_from_inbox(inbox, curator, limit=limit)
     return json.dumps({
         "ingested": len(ingested),
@@ -835,42 +1110,88 @@ async def library_ingest_pending(limit: int = 5) -> str:
     }, indent=2)
 
 
+@m9_safe("library_search")
 @mcp.tool()
 async def library_search(query: str, domain: str = "", limit: int = 20) -> str:
-    """Search the offline library for documents. Uses hybrid search."""
+    """Search the offline library for documents. Uses hybrid search.
+    
+    Args:
+        query: The search query (max 500 chars).
+        domain: Optional domain filter (e.g., 'security', 'research').
+        limit: Maximum number of results to return.
+        
+    Returns:
+        JSON string containing the search results and hit count.
+    """
+    # P1-C: MCP-layer input guards (M-A4 compliance fix, defense-in-depth)
+    if not query.strip():
+        return json.dumps({"error": "Search query cannot be empty", "count": 0, "results": []})
+    if len(query) > 500:
+        return json.dumps({"error": "Query exceeds 500-char limit", "count": 0, "results": []})
     domain_filter = domain if domain else None
     results = await indexer.hybrid_search(query, domain=domain_filter, limit=limit)
     return json.dumps({"query": query, "count": len(results), "results": results}, indent=2, default=str)
 
 
+@m9_safe("library_get_document")
 @mcp.tool()
 async def library_get_document(doc_id: str) -> str:
-    """Get the full content of a library document by ID."""
+    """Get the full content of a library document by ID.
+    
+    Args:
+        doc_id: The unique identifier of the document.
+        
+    Returns:
+        JSON string containing the complete document content and metadata.
+    """
     doc = await library.get(doc_id)
     if not doc:
         return json.dumps({"error": f"Document '{doc_id}' not found"})
     return json.dumps(doc.to_dict(), indent=2, default=str)
 
 
+@m9_safe("library_domains")
 @mcp.tool()
 async def library_domains() -> str:
-    """Get document counts grouped by domain."""
+    """Get document counts grouped by domain.
+    
+    Returns:
+        JSON string containing domain names and their document counts.
+    """
     domains = await library.domains()
     return json.dumps(domains, indent=2)
 
 
+@m9_safe("library_stats")
 @mcp.tool()
 async def library_stats() -> str:
-    """Get comprehensive library statistics."""
+    """Get comprehensive library statistics.
+    
+    Returns:
+        JSON string containing library and indexer usage metrics.
+    """
+    # P1-D: Guard indexer.stats() outside the library's error boundary (M-A6 fix)
     stats = await library.stats()
-    idx_stats = indexer.stats()
-    stats["index"] = idx_stats
+    try:
+        idx_stats = indexer.stats()
+        stats["index"] = idx_stats
+    except Exception as e:
+        logger.warning("library_stats: indexer.stats() failed: %s", e)
+        stats["index"] = {"error": str(e)}
     return json.dumps(stats, indent=2)
 
 
+@m9_safe("library_recent")
 @mcp.tool()
 async def library_recent(limit: int = 20) -> str:
-    """List most recently curated library documents."""
+    """List most recently curated library documents.
+    
+    Args:
+        limit: Maximum number of recent documents to retrieve.
+        
+    Returns:
+        JSON string containing a list of recently ingested document summaries.
+    """
     docs = await library.recent(limit=limit)
     return json.dumps([{
         "doc_id": d.doc_id,
@@ -882,9 +1203,14 @@ async def library_recent(limit: int = 20) -> str:
     } for d in docs], indent=2, default=str)
 
 
+@m9_safe("library_index_flush")
 @mcp.tool()
 async def library_index_flush() -> str:
-    """Flush search indices to disk."""
+    """Flush search indices to disk.
+    
+    Returns:
+        JSON string confirming the flush status and providing current index stats.
+    """
     await indexer.flush()
     stats = indexer.stats()
     return json.dumps({"status": "flushed", "stats": stats})
@@ -892,21 +1218,37 @@ async def library_index_flush() -> str:
 
 # === DISCOVERY TOOLS (3) ===
 
+@m9_safe("library_discovery_research")
 @mcp.tool()
 async def library_discovery_research(query: str, depth: int = 2) -> str:
     """Execute the tiered external discovery pipeline (Gemini -> Exa -> Brave -> Tavily).
 
-    Returns a consolidated discovery report. Note: This is synchronous/blocking.
+    This performs real-time web discovery and returns a consolidated report.
+    Async — non-blocking (P2-A: M-A8 docstring fix).
+    
+    Args:
+        query: The search or discovery query.
+        depth: Discovery depth (1-3).
+        
+    Returns:
+        JSON string containing the consolidated discovery report.
     """
     report = await discovery.discover(query, depth=depth)
     return json.dumps(report.to_dict(), indent=2)
 
 
+@m9_safe("library_discovery_start")
 @mcp.tool()
 async def library_discovery_start(query: str) -> str:
     """Start a background discovery job and return the job ID.
 
     Use library_discovery_status to poll for results.
+    
+    Args:
+        query: The discovery query to run in the background.
+        
+    Returns:
+        JSON string containing the job_id.
     """
     job_id = await discovery.start_discovery(query)
     if _global_tg:
@@ -917,15 +1259,99 @@ async def library_discovery_start(query: str) -> str:
     return json.dumps({"status": "started", "job_id": job_id})
 
 
+@m9_safe("library_discovery_status")
 @mcp.tool()
 async def library_discovery_status(job_id: str) -> str:
-    """Get the current status and partial results of a background discovery job."""
+    """Get the current status and partial results of a background discovery job.
+    
+    Args:
+        job_id: The job identifier returned by library_discovery_start.
+        
+    Returns:
+        JSON string containing the job status and any results found so far.
+    """
     result = discovery.get_job_status(job_id)
     return json.dumps(result, indent=2)
 
 
+# === MEMORY TOOLS (3) ===
+
+@m9_safe("omega_memory_search")
+@tdp_wrap(source="memory_store", taint_level=1)
+@mcp.tool()
+async def omega_memory_search(query: str, entity_name: str, limit: int = 20) -> str:
+    """Search across conversation history using Hybrid Search (RRF: FTS5 + Vector).
+    
+    Provides sovereign memory retrieval for specific entities by merging
+    keyword results (BM25) and semantic results (Vector).
+    
+    Args:
+        query: The search query (natural language or keywords).
+        entity_name: The sovereign owner of the memory (REQUIRED).
+        limit: Maximum number of results to return.
+        
+    Returns:
+        JSON string containing the matched exchanges and RRF re-ranking.
+    """
+    memory_store = get_memory_store()
+    results = await memory_store.search(query, entity_name, limit)
+    return json.dumps({
+        "query": query,
+        "entity": entity_name,
+        "count": len(results),
+        "results": results
+    }, indent=2)
+
+
+@m9_safe("omega_memory_get_history")
+@tdp_wrap(source="memory_store", taint_level=1)
+@mcp.tool()
+async def omega_memory_get_history(entity_name: str, session_id: str, limit: int = 20) -> str:
+    """Retrieve conversation history for a specific entity and session.
+    
+    Args:
+        entity_name: The sovereign owner of the memory (REQUIRED).
+        session_id: The session identifier (REQUIRED).
+        limit: Maximum number of exchanges to return.
+        
+    Returns:
+        JSON string containing the conversation history.
+    """
+    memory_store = get_memory_store()
+    results = await memory_store.get_history(entity_name, session_id, limit)
+    return json.dumps({
+        "entity": entity_name,
+        "session_id": session_id,
+        "count": len(results),
+        "history": results
+    }, indent=2)
+
+
+@m9_safe("omega_memory_list_sessions")
+@tdp_wrap(source="memory_store", taint_level=1)
+@mcp.tool()
+async def omega_memory_list_sessions(entity_name: Optional[str] = None, limit: int = 20) -> str:
+    """List recent sessions, optionally filtered by entity.
+    
+    Args:
+        entity_name: Optional entity name to filter by.
+        limit: Maximum number of sessions to return.
+        
+    Returns:
+        JSON string containing the list of sessions.
+    """
+    memory_store = get_memory_store()
+    results = await memory_store.list_sessions(entity_name, limit)
+    return json.dumps({
+        "entity_filter": entity_name,
+        "count": len(results),
+        "sessions": results
+    }, indent=2)
+
+
 # === RESEARCH TOOLS (5) ===
 
+@m9_safe("research")
 @mcp.tool()
 async def research(query: str, depth: int = 2, domain: str = "") -> str:
     """Execute multi-depth research on a query using the offline library.
@@ -937,6 +1363,9 @@ async def research(query: str, depth: int = 2, domain: str = "") -> str:
         query: The research question or topic
         depth: Research depth (1-4)
         domain: Optional domain filter
+        
+    Returns:
+        JSON string containing the research result and citations.
     """
     depth = max(1, min(4, depth))
     domain_filter = domain if domain else None
@@ -944,12 +1373,16 @@ async def research(query: str, depth: int = 2, domain: str = "") -> str:
     return json.dumps(result.to_dict(), indent=2, default=str)
 
 
+@m9_safe("research_get")
 @mcp.tool()
 async def research_get(research_id: str) -> str:
     """Retrieve a previous research result by ID.
 
     Args:
         research_id: Research ID (e.g. res_abc123)
+        
+    Returns:
+        JSON string containing the research result or an error.
     """
     result = await research_engine.get_result(research_id)
     if not result:
@@ -957,26 +1390,40 @@ async def research_get(research_id: str) -> str:
     return json.dumps(result.to_dict(), indent=2, default=str)
 
 
+@m9_safe("research_list")
 @mcp.tool()
 async def research_list(limit: int = 20) -> str:
     """List recent research results.
 
     Args:
         limit: Maximum results to return
+        
+    Returns:
+        JSON string containing a list of recent research IDs and queries.
     """
     results = await research_engine.list_results(limit=limit)
     return json.dumps(results, indent=2, default=str)
 
 
+@m9_safe("research_depths")
 @mcp.tool()
 async def research_depths() -> str:
-    """List available research depth levels and their configurations."""
+    """List available research depth levels and their configurations.
+    
+    Returns:
+        JSON string containing the available depth levels and source counts.
+    """
     return json.dumps(RESEARCH_DEPTHS, indent=2)
 
 
+@m9_safe("research_stats")
 @mcp.tool()
 async def research_stats() -> str:
-    """Get research engine statistics."""
+    """Get research engine statistics.
+    
+    Returns:
+        JSON string containing the total count and depth distribution of research tasks.
+    """
     results = await research_engine.list_results(limit=1000)
     depths = {}
     for r in results:
@@ -990,9 +1437,14 @@ async def research_stats() -> str:
 
 # === STATS TOOLS (5) ===
 
+@m9_safe("get_system_stats")
 @mcp.tool()
 async def get_system_stats() -> str:
-    """Get comprehensive system stats: zRAM, CPU, disk, GPU, memory, Podman."""
+    """Get comprehensive system stats: zRAM, CPU, disk, GPU, memory, Podman.
+    
+    Returns:
+        JSON string containing real-time hardware and process metrics.
+    """
     def _collect():
         stats = {
             "timestamp": datetime.now().isoformat(),
@@ -1112,9 +1564,14 @@ async def get_system_stats() -> str:
     return json.dumps(stats, indent=2)
 
 
+@m9_safe("get_omega_metrics")
 @mcp.tool()
 async def get_omega_metrics() -> str:
-    """Get aggregated Omega Engine metrics (Inference, Research, Memory, and Errors)."""
+    """Get aggregated Omega Engine metrics (Inference, Research, Memory, and Errors).
+    
+    Returns:
+        JSON string containing high-level engine performance and error metrics.
+    """
     metrics_path = PROJECT_ROOT / "data" / "logs" / "metrics.json"
     if not metrics_path.exists():
         return json.dumps({"error": "Metrics file not found. No metrics have been recorded yet."}, indent=2)
@@ -1128,9 +1585,14 @@ async def get_omega_metrics() -> str:
         return json.dumps({"error": f"Failed to read metrics: {str(e)}"}, indent=2)
 
 
+@m9_safe("check_models_directory")
 @mcp.tool()
 async def check_models_directory() -> str:
-    """Check available GGUF models on omega_library partition."""
+    """Check available GGUF models on omega_library partition.
+    
+    Returns:
+        JSON string listing available local GGUF models and their sizes.
+    """
     def _collect():
         models_dir = Path("/media/arcana-novai/omega_library/models/gguf")
         if not models_dir.exists():
@@ -1149,9 +1611,14 @@ async def check_models_directory() -> str:
     return json.dumps(result, indent=2)
 
 
+@m9_safe("check_podman_storage")
 @mcp.tool()
 async def check_podman_storage() -> str:
-    """Check Podman storage usage on omega_library."""
+    """Check Podman storage usage on omega_library.
+    
+    Returns:
+        JSON string containing Podman storage path and size metrics.
+    """
     def _collect():
         storage_dir = Path("/media/arcana-novai/omega_library/podman-storage")
         if not storage_dir.exists():
@@ -1173,6 +1640,7 @@ async def check_podman_storage() -> str:
 
 # === OBSERVABILITY TOOLS (2) ===
 
+@m9_safe("observability_check_recursion")
 @mcp.tool()
 async def observability_check_recursion(entity_name: str, current_depth: int) -> str:
     """Check if an entity is allowed to spawn a subagent at the given depth.
@@ -1180,6 +1648,9 @@ async def observability_check_recursion(entity_name: str, current_depth: int) ->
     Args:
         entity_name: The name of the entity attempting to spawn a subagent.
         current_depth: The current depth of the subagent chain (0-indexed).
+        
+    Returns:
+        JSON string containing the recursion check results (allowed/blocked).
     """
     if not hierarchy._hierarchy:
         await hierarchy.load()
@@ -1187,6 +1658,7 @@ async def observability_check_recursion(entity_name: str, current_depth: int) ->
     return json.dumps(result, indent=2)
 
 
+@m9_safe("observability_log_boundary_violation")
 @mcp.tool()
 async def observability_log_boundary_violation(tool_name: str, reason: str, entity: str) -> str:
     """Log a sovereign boundary violation from the OpenCode plugin.
@@ -1195,6 +1667,9 @@ async def observability_log_boundary_violation(tool_name: str, reason: str, enti
         tool_name: The tool that was blocked
         reason: Why the entity blocked it
         entity: The entity currently active
+        
+    Returns:
+        JSON string confirming the violation was logged.
     """
     trace_id = new_trace_id()
     get_engine().log_event(
@@ -1236,6 +1711,7 @@ async def observability_log_boundary_violation(tool_name: str, reason: str, enti
 
 # === ICS TOOLS (1) ===
 
+@m9_safe("ics_render")
 @mcp.tool()
 async def ics_render(
     entity: str,
@@ -1257,6 +1733,9 @@ async def ics_render(
         trace_id: Optional trace ID. Auto-generated if omitted.
         phase: Optional phase string. Auto-detected from ROADMAP if omitted.
         mode: "full" | "compact" | "off" (default: "full")
+        
+    Returns:
+        JSON string containing the rendered ICS-S header.
     """
     header = ics_render(
         entity=entity,
@@ -1279,7 +1758,7 @@ async def _health(request: Request) -> JSONResponse:
     })
 
 async def _entity_current(request: Request) -> JSONResponse:
-    entity_name = _current_entity or "SOPHIA"
+    entity_name = _current_entity.get() or "SOPHIA"
     entity = registry.get(entity_name)
     if entity:
         return JSONResponse(asdict(entity))
@@ -1445,4 +1924,4 @@ if __name__ == "__main__":
         daemon=True,
     )
     bg_thread.start()
-    run_mcp(mcp, custom_routes=hub_routes)
+    run_mcp(mcp, custom_routes=hub_routes, modify_app=apply_security)

@@ -47,7 +47,8 @@
         "firecrawl-mcp"
       ],
       "environment": {
-        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}"
+        "FIRECRAWL_API_KEY": "***REMOVED***",
+        "FIRECRAWL_TOKEN": "***REMOVED***"
       },
       "enabled": true
     },

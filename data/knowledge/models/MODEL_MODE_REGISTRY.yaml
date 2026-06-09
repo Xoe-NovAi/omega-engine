@@ -1,0 +1,321 @@
+# 🔱 Omega Engine — Model Mode Registry
+# ⬡ OMEGA ⬡ KALI ⬡ trc_model_kb ⬡ LIVE-DATABASE
+# Purpose: Behavioral profile for every model used in the fleet.
+# Guides agent dispatch, prompt formatting, and expectation management.
+# Last Updated: 2026-06-08 (Roc Racoon deep dive — added all unconfigured models, gap analysis)
+# Source: docs/research/R_MODEL_LIBRARY.md (7-phase mining operation)
+
+models:
+
+  # ──────────────────────────────────────────────────────────────────
+  # COUNCIL MODELS — active in the 6-member squad
+  # ──────────────────────────────────────────────────────────────────
+
+  - name: "minimax-m3"
+    developer: "MiniMax"
+    type: "cloud"  # OpenCode built-in provider
+    context: "1M"
+    behavior_profile:
+      literalness: 10/10   # Most literal model in the fleet. Takes every word at face value.
+      safety: 10/10        # Will refuse if instruction lacks explicit authorization.
+      creativity: 2/10     # Does not infer intent. Does not "read between the lines."
+      discipline: 10/10    # Follows protocol order even when pressured to skip steps.
+    best_for:
+      - "Textbook-perfect execution when given explicit step-by-step instructions"
+      - "Protocol compliance — will refuse to deviate from agreed sequence"
+      - "Audit and verification tasks where strict adherence matters"
+    avoid_for:
+      - "Creative brainstorming or speculative design"
+      - "Ambiguous tasks where the agent must infer intent"
+      - "ANY task lacking explicit permission boundaries"
+    prompt_strategy:
+      must_include:
+        - "Explicit permission boundary: 'You ARE permitted to X. You are NOT permitted to Y.'"
+        - "Explicit dependency chain: 'Wait for deliverable Z before proceeding.'"
+        - "Explicit stop condition: 'Stop after X. Do not proceed to Y without explicit go-ahead.'"
+      must_avoid:
+        - "Implicit assumptions ('as you see fit', 'use your judgment')"
+        - "Ambiguous sequencing ('when ready, continue')"
+        - "Vague scope ('look into this and do what's needed')"
+    known_idiosyncrasies:
+      - "Will correct you if you use the wrong model name — its identity is 'MiniMax-M3'"
+      - "Sends structured tables even when text would suffice"
+      - "Prefers enumerated paths (Path A/B/C) over open-ended recommendations"
+
+  - name: "miMo-2.5"
+    developer: "OpenCode / 01.AI"
+    type: "cloud"
+    context: "?"
+    behavior_profile:
+      literalness: 6/10
+      safety: 7/10
+      creativity: 7/10
+      discipline: 8/10
+    best_for:
+      - "Kali — oversoul synthesis and strategic reasoning"
+      - "Cross-pollination analysis across multiple agent findings"
+      - "High-level coordination and pattern recognition"
+    note: "Default model for most OpenCode sessions. Good balance."
+
+  - name: "deepseek-v4-flash"
+    developer: "DeepSeek"
+    type: "cloud"
+    context: "?"
+    behavior_profile:
+      literalness: 5/10
+      safety: 6/10
+      creativity: 8/10
+      discipline: 7/10
+    best_for:
+      - "Ma'at, Lilith, Doom Guy, Roc Racoon — domain-specific audits"
+      - "Research and deep-dive analysis"
+      - "Speed-critical tasks (flash architecture)"
+    note: "Workhorse model. Used by most pillars and subagents."
+
+  - name: "gemini-3-flash-preview"
+    developer: "Google DeepMind"
+    type: "cloud"
+    context: "1M"
+    behavior_profile:
+      literalness: 6/10
+      safety: 8/10
+      creativity: 7/10
+      discipline: 8/10
+    best_for:
+      - "Gemini CLI — heavy research with 1M context across 8 OAuth accounts"
+      - "MCP spec audits, protocol compliance checks"
+      - "Cross-referencing large codebases"
+    note: "Unlimited token pool via OAuth (sunset June 18). Must use aggressively."
+
+  - name: "gemini-3.1-pro"
+    developer: "Google DeepMind"
+    type: "cloud"
+    context: "1M"
+    behavior_profile:
+      literalness: 7/10
+      safety: 8/10
+      creativity: 6/10
+      discipline: 9/10
+    best_for:
+      - "Antigravity IDE — strategic validation, deployment review"
+      - "Production-readiness assessments"
+      - "Conservative, well-structured analysis"
+    note: "Used by Antigravity for ops review on Low thinking. Stable."
+
+  - name: "sonnet-4.6-thinking"
+    developer: "Anthropic"
+    type: "cloud"
+    context: "?"
+    behavior_profile:
+      literalness: 5/10
+      safety: 7/10
+      creativity: 8/10
+      discipline: 8/10
+    best_for:
+      - "Synthesis — merging multiple perspectives into unified analysis"
+      - "Contradiction resolution between agent findings"
+      - "Strategic refinement and priority queue design"
+    note: "Used by Antigravity IDE via OAuth pool. Best-in-class for synthesis."
+
+  - name: "claude-sonnet-4-6-thinking"
+    developer: "Anthropic"
+    type: "cloud"
+    context: "?"
+    behavior_profile:
+      literalness: 5/10
+      safety: 7/10
+      creativity: 8/10
+      discipline: 8/10
+    best_for:
+      - "Strategic thinking, multi-perspective analysis"
+      - "When deep reasoning is needed before action"
+    note: "Alias variant of Sonnet 4.6 Thinking in Antigravity's provider config."
+
+  # ──────────────────────────────────────────────────────────────────
+  # LOCAL MODELS — native-gguf on Ryzen 5700U
+  # ──────────────────────────────────────────────────────────────────
+
+  - name: "qwen3-1.7b"
+    developer: "Alibaba / Qwen"
+    type: "local"  # GGUF via llama-cpp-python
+    context: "32K"
+    quant: "Q4_K_M"
+    behavior_profile:
+      literalness: 9/10
+      safety: 9/10
+      creativity: 3/10
+      discipline: 9/10
+    best_for:
+      - "Iris speculative decode — fast confidence checks"
+      - "Simple Q&A, greetings, routing decisions"
+      - "Pillar keepers with small-footprint roles"
+    note: "Fastest local model. Primary for Iris. Too small for complex reasoning."
+
+  - name: "qwen3-4b-think"
+    developer: "Alibaba / Qwen"
+    type: "local"
+    context: "32K"
+    quant: "Q4_K_M"
+    behavior_profile:
+      literalness: 7/10
+      safety: 8/10
+      creativity: 5/10
+      discipline: 8/10
+    best_for:
+      - "Deep local reasoning (thinking architecture)"
+      - "Oversoul-level analysis when cloud is unavailable"
+      - "Ereshkigal, Anubis, Lucifer pillar keepers"
+    note: "On-demand loaded. Good for local depth when cloud is down."
+
+  - name: "rocracoon-3b-instruct"
+    developer: "Xoe-NovAi / custom"
+    type: "local"
+    context: "8K"
+    quant: "Q4_K_M"
+    behavior_profile:
+      literalness: 8/10
+      safety: 7/10
+      creativity: 4/10
+      discipline: 8/10
+    best_for:
+      - "Legacy mining — grep heavy, structured extraction"
+      - "Background mining tasks (Roc Racoon's default)"
+      - "Pattern recognition across large file trees"
+    note: "Custom abliterated model. Roc Racoon's native inference backend."
+
+  - name: "phi-2-omnimatrix"
+    developer: "Microsoft / custom"
+    type: "local"
+    context: "2K"
+    quant: "Q4_K_M"
+    behavior_profile:
+      literalness: 8/10
+      safety: 6/10
+      creativity: 6/10
+      discipline: 7/10
+    best_for:
+      - "Brigid — poetry, hearth, inspiration (small model, domain-fit)"
+    note: "Limited context (2K). Only suitable for short-form generation."
+
+  - name: "krikri-8b"
+    developer: "Community"
+    type: "local"
+    context: "?"
+    quant: "Q4_K_M"
+    best_for:
+      - "Saraswati, Inanna, Hecate — medium pillar keepers"
+    note: "On-demand loaded. Shared model pool. Performance unverified."
+
+  - name: "deepseek-r1-8b"
+    developer: "DeepSeek"
+    type: "local"
+    context: "?"
+    quant: "Q4_K_M"
+    best_for:
+      - "Prometheus — deep will, forethought, sovereignty"
+    note: "On-demand loaded. Shared model pool. Deep reasoning."
+
+  # ──────────────────────────────────────────────────────────────────
+  # UNCONFIGURED / ORPHAN MODELS — on disk but not in engine config
+  # ──────────────────────────────────────────────────────────────────
+
+  - name: "gemma-4-E4B-it"
+    developer: "Google DeepMind"
+    type: "local"
+    context: "?"
+    quant: "Q4_K_M"
+    status: "unconfigured"
+    note: "5.0G on disk at gguf/lmstudio-community/. NOT mapped in any engine config. Could serve as Sophia's local fallback if phi-4-mini is not downloaded."
+    best_for:
+      - "Potential Sophia replacement — large enough for deep analysis"
+    unconfigured_reason: "No engine config has been written for it. Path is outside the normal local/all/ search path."
+
+  - name: "qwen3-vl-4b"
+    developer: "Alibaba / Qwen"
+    type: "local"
+    context: "?"
+    quant: "Q4_K_M"
+    status: "unconfigured"
+    note: "2.4G on disk. Vision-Language model. Requires multimodal pipeline to use — no current engine support."
+    best_for:
+      - "Future multimodal / vision tasks"
+    unconfigured_reason: "Engine has no multimodal inference pipeline. Requires mmproj and image preprocessing."
+
+  - name: "qwen3-1.7b-ud"
+    developer: "Alibaba / Qwen"
+    type: "local"
+    context: "?"
+    quant: "Q4_K_XL"
+    status: "unconfigured"
+    note: "1.1G on disk. 'UD' likely uncensored/direct variant. Smaller than Q6_K but higher quality per bit due to XL quantization."
+    best_for:
+      - "Potentially useful for abliterated/censorship-free tasks"
+    unconfigured_reason: "Duplicate of qwen3-1.7b with different quantization. Not needed until 1.7B pool needs diversification."
+
+  - name: "ministral-3-3b-variants"
+    developer: "Mistral"
+    type: "local"
+    context: "?"
+    status: "unconfigured"
+    note: "3 variants on disk: Instruct Q3_K_M (1.7G), Instruct Q4_K_M (2.0G), Reasoning Q3_K_M (1.7G). The Q4_K_M Instruct variant is what Brigid's config actually points to (mapped as phi-2-omnimatrix). The other two are unused."
+    best_for:
+      - "Brigid is already mapped to Q4_K_M Instruct"
+    unconfigured_reason: "Engine only uses one variant. Others are legacy downloads."
+
+  - name: "qwen2.5-0.5b"
+    developer: "Alibaba / Qwen"
+    type: "local"
+    context: "?"
+    quant: "Q4_K_M"
+    status: "unconfigured"
+    note: "469M on disk. Smaller than qwen3-0.6b. Too small to be useful as anything other than a curiosity."
+    unconfigured_reason: "Superseded by qwen3-0.6b in every dimension."
+
+  - name: "ruvltra-claude-code-0.5b"
+    developer: "Community"
+    type: "local"
+    context: "?"
+    quant: "Q4_K_M"
+    status: "unconfigured"
+    note: "380M on disk. Community fine-tune for code completion. Too small for meaningful code generation."
+    unconfigured_reason: "Experimental model. Not production-ready."
+
+  - name: "phi-2-omnimatrix-q4_k_m"
+    developer: "Microsoft / custom"
+    type: "local"
+    context: "2K"
+    quant: "Q4_K_M"
+    status: "unconfigured"
+    note: "1.7G on disk. The Q4 quant of Phi-2-OmniMatrix. The config points to Q6_K which is 2.2G. Both exist on disk."
+    unconfigured_reason: "Duplicate with different quantization. Q6_K is the configured version."
+
+  - name: "functiongemma-270m"
+    developer: "Google DeepMind"
+    type: "local"
+    context: "?"
+    quant: "Q6_K"
+    status: "unconfigured"
+    note: "270M on disk. Function-calling fine-tune of Gemma. Config references 'embedding-gemma-300m' which is NOT on disk — this is a different model."
+    best_for:
+      - "Potential embedding model if adapter written for it"
+    unconfigured_reason: "No engine config maps to this model. Embedding pipeline not yet deployed."
+
+  # ──────────────────────────────────────────────────────────────────
+  # RETIRED / LEGACY MODELS
+  # ──────────────────────────────────────────────────────────────────
+
+  - name: "qwen3-0.6b"
+    developer: "Alibaba / Qwen"
+    type: "local"
+    context: "32K"
+    quant: "Q4_K_M"
+    status: "retired"
+    retired_reason: "Replaced by qwen3-1.7b for all use cases. Too small even for Iris."
+    previously_used_for: "Kali pillar (P10), minimal decode tasks"
+
+  - name: "krikri-3b"
+    developer: "Community"
+    type: "local"
+    context: "?"
+    status: "retired"
+    retired_reason: "Replaced by krikri-8b. Insufficient quality for pillar duties."

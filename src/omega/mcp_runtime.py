@@ -1,23 +1,29 @@
 """Standardized MCP Runtime for Omega Engine.
-AP: AP-MCP-RUNTIME-v1.0.2
+AP: AP-MCP-RUNTIME-v1.0.3
 """
 
 import os
 import logging
+import contextlib
 from typing import Any, Callable, Optional
 
 logger = logging.getLogger("omega.mcp_runtime")
 
 def run_mcp(mcp: Any, modify_app: Optional[Callable[[Any], None]] = None,
             custom_routes: Optional[list] = None):
-    """Run an MCP server with transport selection via environment variables.
+    """Run an MCP server with dual-transport support.
+
+    Serves both SSE (for OpenCode/Cline) and Streamable HTTP (for
+    Antigravity IDE / VS Code forks) from a single server instance.
+
+    Transport endpoints:
+        SSE:            GET  /sse → SSE stream → POST /messages/
+        Streamable HTTP: POST /mcp → direct JSON-RPC
 
     Args:
         mcp: FastMCP instance to run.
         modify_app: Optional callback to add custom HTTP routes to the
-            underlying Starlette ASGI app (returned by mcp.sse_app()).
-            Called before the server starts accepting connections.
-            Ignored when transport is 'stdio'.
+            underlying Starlette ASGI app. Ignored when transport is 'stdio'.
         custom_routes: Optional list of Starlette Route objects to add
             at the TOP level of the app, before the MCP sub-app mount.
             These take priority over MCP framework routing.
@@ -25,19 +31,24 @@ def run_mcp(mcp: Any, modify_app: Optional[Callable[[Any], None]] = None,
     transport = os.getenv("OMEGA_MCP_TRANSPORT", "stdio").lower()
 
     def _build_app():
-        """Build a Starlette app with MCP mounted + custom routes.
+        """Build a Starlette app with SSE + Streamable HTTP + custom routes.
 
-        Uses a custom SSE handler with stateless=True so that clients
-        (e.g. OpenCode) can reconnect and send tool calls without
-        re-sending the InitializeRequest — which MCP SDK currently
-        requires per-session.
+        SSE handler uses stateless=True so clients (e.g. OpenCode) can
+        reconnect without re-sending InitializeRequest.
+
+        Streamable HTTP endpoint (/mcp) enables Antigravity IDE and other
+        VS Code-fork MCP clients that POST directly to the serverURL.
         """
+        import contextlib as _ctx
         from starlette.applications import Starlette
         from starlette.routing import Mount, Route
         from starlette.responses import Response
         from starlette.requests import Request
         from mcp.server.sse import SseServerTransport
+        from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
+        from mcp.server.fastmcp.server import StreamableHTTPASGIApp
 
+        # ── SSE transport (legacy — OpenCode, Cline) ──────────────────
         sse = SseServerTransport(
             mcp.settings.message_path,
             security_settings=mcp.settings.transport_security,
@@ -54,26 +65,51 @@ def run_mcp(mcp: Any, modify_app: Optional[Callable[[Any], None]] = None,
                 )
             return Response()
 
-        routes = [
+        sse_routes = [
             Route(mcp.settings.sse_path, endpoint=handle_sse, methods=["GET"]),
             Mount(mcp.settings.message_path, app=sse.handle_post_message),
         ]
 
+        # ── Streamable HTTP transport (new — Antigravity IDE) ────────
+        streamable_mgr = StreamableHTTPSessionManager(
+            app=mcp._mcp_server,
+            json_response=mcp.settings.json_response,
+            stateless=True,
+            security_settings=mcp.settings.transport_security,
+        )
+        streamable_app = StreamableHTTPASGIApp(streamable_mgr)
+
+        streamable_routes = [
+            Route(mcp.settings.streamable_http_path, endpoint=streamable_app),
+        ]
+
+        all_routes = sse_routes + streamable_routes
+
+        # ── Lifespan: run StreamableHTTP session manager ──────────────
+        @_ctx.asynccontextmanager
+        async def lifespan(app):
+            async with streamable_mgr.run():
+                yield
+
+        # ── Assemble final app ────────────────────────────────────────
         if modify_app:
             # Legacy support: modify_app expected a full Starlette app.
-            # Build one for compatibility.
-            from starlette.applications import Starlette
-            legacy_app = Starlette(routes=routes)
+            legacy_app = Starlette(routes=all_routes)
             modify_app(legacy_app)
             return Starlette(
                 routes=(custom_routes or []) + [Mount("/", app=legacy_app)],
                 debug=mcp.settings.debug,
+                lifespan=lifespan,
             )
 
         if custom_routes:
-            all_routes = custom_routes + routes
-            return Starlette(routes=all_routes, debug=mcp.settings.debug)
-        return Starlette(routes=routes, debug=mcp.settings.debug)
+            all_routes = custom_routes + all_routes
+
+        return Starlette(
+            routes=all_routes,
+            debug=mcp.settings.debug,
+            lifespan=lifespan,
+        )
 
     # --- Systemd Socket Activation Logic ---
     listen_fds = os.getenv("LISTEN_FDS")

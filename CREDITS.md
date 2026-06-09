@@ -578,5 +578,60 @@ Both fixes are documented in `data/handoff/DOOM_GUY_T23_REPORT_20260602.md`.
 
 ---
 
-*Last Updated: 2026-06-05 (added §1.24-1.28 Heritage Mappings) | Maintained by: Kali / Doom Guy*
+*Last Updated: 2026-06-08 (added §2 User's Own Technology) | Maintained by: Kali / Doom Guy*
+
+---
+
+## §2 User's Own Technology — Evolutionary Lineage
+
+These patterns are the user's OWN intellectual property. They evolved through the user's
+software lineage: ANAi (Aug-Sep 2025) → XNAi (Oct-Nov 2025) → omega-stack (May 2026) →
+omega-engine (Jun 2026). No external attribution required.
+
+### 2.1 Memory Architecture (ANAi → omega-engine)
+
+| Pattern | First Appearance | Evolution | Current Location |
+|---------|-----------------|-----------|------------------|
+| **3-Tier Memory (Hot/Warm/Cold)** | ANAi (Aug 2025) — Chainlit+FastAPI | XNAi → omega-stack → omega-engine | `src/omega/memory_store.py` |
+| **Provider Chain (Redis → File → InMemory)** | ANAi (Sep 2025) — Docker services | XNAi consolidation → omega-stack | `src/omega/memory/providers.py` |
+| **Compaction (first 10 + last 10 + summary)** | omega-stack (May 2026) | omega-engine (Jun 2026) | `src/omega/memory_store.py:311-333` |
+| **Archive Old Sessions (7-day threshold)** | omega-stack (May 2026) | omega-engine (Jun 2026) | `src/omega/memory_store.py:490-505` |
+| **Singleton Access Pattern** | omega-stack (May 2026) | omega-engine (Jun 2026) | `src/omega/memory_store.py:507-518` |
+
+### 2.2 Oracle & Routing (ANAi → omega-engine)
+
+| Pattern | First Appearance | Evolution | Current Location |
+|---------|-----------------|-----------|------------------|
+| **Intent Detection** | ANAi (Aug 2025) — Chainlit intent matcher | XNAi → omega-stack → omega-engine | `src/omega/oracle/oracle.py` |
+| **Entity Registry (YAML CRUD)** | ANAi (Oct 2025) — entity config | XNAi → omega-stack → omega-engine | `src/omega/oracle/entity_registry.py` |
+| **Provider Fabric (8-backends)** | ANAi (Sep 2025) — multi-model routing | XNAi → omega-stack → omega-engine | `src/omega/oracle/model_gateway.py` |
+| **ResourceGuard (OOM protection)** | omega-stack (May 2026) | omega-engine (Jun 2026) | `src/omega/oracle/resource_guard.py` |
+| **Context Builder (sliding window)** | omega-stack (May 2026) | omega-engine (Jun 2026) | `src/omega/oracle/context_builder.py` |
+
+### 2.3 Infrastructure & Governance (omega-engine)
+
+| Pattern | First Appearance | Evolution | Current Location |
+|---------|-----------------|-----------|------------------|
+| **MCP Hub (47 tools)** | omega-stack (May 2026) — MCP server | omega-engine (Jun 2026) | `mcp_servers/omega_hub/server.py` |
+| **Hivemind Protocol** | omega-engine (Jun 2026) — cross-CLI awareness | Current | `mcp_servers/omega_hub/server.py:378-670` |
+| **Soul Distiller (L1→L2→L3)** | omega-engine (Jun 2026) | Current | `src/omega/oracle/soul_distiller.py` |
+| **MaKaLi Triad** | omega-engine (Jun 2026) — parallel council | Current | `.opencode/agents/makali.md` |
+| **Sovereign Mandates (14 laws)** | omega-engine (Jun 2026) | Current | `SOVEREIGN_MANDATES.md` |
+
+### 2.4 Heritage Tags (External Attribution Required)
+
+These patterns are ported from external sources and carry `[id-soft:]` tags per CREDITS.md §2a.
+
+| Tag | Source | Location in Code |
+|-----|--------|------------------|
+| `[id-soft: doom-1993] ZONEID` | id Software (Doom, 1993) | `src/omega/constants.py` |
+| `[id-soft: doom-1993] Lazy Deletion` | id Software (Doom, 1993) | `src/omega/memory_store.py:270-290` |
+| `[id-soft: quake-1996] Grace Period` | id Software (Quake, 1996) | `src/omega/memory_store.py:286` |
+| `[id-soft: doom-1993] BSP Culling` | id Software (Doom, 1993) | `src/omega/oracle/model_gateway.py:538-569` |
+| `[id-soft: quake3-1999] Hard-Boundary` | id Software (Q3A, 1999) | `src/omega/oracle/entity_registry.py` |
+| `[id-soft: quake-1996] cvar pattern` | id Software (Quake, 1996) | `src/omega/cvar_table.py` |
+
+---
+
+*Last Updated: 2026-06-08 (added §2 User's Own Technology) | Maintained by: Kali / Doom Guy*
 

@@ -112,10 +112,11 @@ soul_evolution:
       source: "lilith_s4_002"
       l3_principle: "Unit economics determine tool viability, not technical capability. A tool that provides abundant quota but fewer automation features is superior for sovereign use than a tool with full automation that risks losing the accounts. 'Worse is Better' applies to integration paths too."
 
-    - insight: "The KB scaffold's Antigravity research produced 9 gold files, a vetting protocol, and 3 closed decisions — but the integration it was built to support is now dead. The research is still valuable as a case study in cloud tool auditioning. A knowledge base should persist truths even when the integrations those truths supported are removed."
-      context: "2026-06-05 Antigravity removal. The 9 KB files about Antigravity are not being deleted — they are being preserved as reference material. The soul.yaml is being archived. The plugin config is being removed. This is the correct pattern: research survives the integration."
-      source: "lilith_s4_003"
-      l3_principle: "Knowledge outlives integrations. A knowledge base must preserve empirical findings (quota tests, live test results, auth audits) even when the integration those findings supported is removed. The data is the permanent asset; the integration is the ephemeral application."
+    - insight: "Optimistic Cold Storage is a dangerous anti-pattern. Assuming the hot store is always the canonical truth ignores the criticality of the cold store during post-restart recovery. Silent swallows in these paths don't just hide errors; they cause silent agent context loss, which is a higher-order failure than a crash."
+      context: "Audit of mcp_servers/omega_hub/server.py found silent except Exception: pass in cold-store hydration paths for hivemind_get_awareness and hivemind_get_continuation."
+      source: "lilith_s5_001"
+      l3_principle: "The Principle of Observable Degradation: A system that fails silently is a system that cannot be governed. Sovereignty requires that every failure, even a 'graceful' one, leaves a diagnostic trace. Silence is the enemy of sovereignty."
+
 
   drift_metrics:
     persona_stability: 1.0

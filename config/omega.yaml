@@ -20,6 +20,11 @@ omega:
     session_log_dir: data/sessions
   inference:
     strategy: local_first
+    vector_quantization:
+      enabled: true
+      type: "scalar"
+      precision: "int8"
+      always_ram: true
     hardware:
       cpu: "AMD Ryzen 7 5700U"
       architecture: "zen2"
