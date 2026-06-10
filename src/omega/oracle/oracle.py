@@ -77,11 +77,12 @@ class Oracle:
     """
     
     def __init__(self, registry: Optional[EntityRegistry] = None):
+        from omega.oracle.health_monitor import get_health_monitor
         self.registry = registry or EntityRegistry()
         self.default_entity = self.registry.get("default") or self.registry.get("kali")
         self.orchestrator = Orchestrator()
-        self.model_gateway = ModelGateway()
-        self.health_monitor = HealthMonitor()
+        self.health_monitor = get_health_monitor()
+        self.model_gateway = ModelGateway(health_monitor=self.health_monitor)
         self.observability = get_engine()  # Get singleton observability engine
         self.distiller = get_distiller()
         self.session_manager = SessionManager()
@@ -600,13 +601,70 @@ class Oracle:
         return result
 
     # ── Soul evolution tracking ───────────────────────────────────────
+    async def close_session(self, entity_name: str, session_id: str) -> bool:
+        """Trigger soul distillation for a session and close it.
+        
+        Implements Mandate 11 (Soul Integrity).
+        
+        [id-soft: quake-1996] Save-game pattern — auto-save on session end
+        triggers L1→L2→L3 distillation, analogous to Quake's level-transition
+        autosave.
+        """
+        try:
+            # 1. Retrieve the session transcript from MemoryStore
+            exchanges = await self.memory_store.get_history(entity_name, session_id)
+            if not exchanges:
+                logger.warning(f"No exchanges found for session {session_id}, skipping distillation")
+                return False
+            
+            # Build a readable transcript from exchanges
+            lines = []
+            for ex in exchanges:
+                role = ex.get("role", "unknown")
+                content = ex.get("content", "")
+                lines.append(f"[{role}]: {content}")
+            transcript = "\n".join(lines)
+            if not transcript:
+                logger.warning(f"No transcript found for session {session_id}, skipping distillation")
+                return False
+            
+            # 2. Distill and save to soul.yaml
+            success = await self.distiller.distill_and_save(
+                session_transcript=transcript,
+                entity_name=entity_name,
+                source_trace_id=session_id
+            )
+            
+            if success:
+                logger.info(f"Successfully distilled session {session_id} for {entity_name}")
+            return success
+        except Exception as e:
+            logger.error(f"Failed to close session {session_id} for {entity_name}: {e}")
+            return False
+
 
     async def _track_soul_evolution(self, entity_name: str, trace_id: str) -> None:
         """Update the entity's soul.yaml after each interaction.
         Implements the L1->L2->L3 refractive abstraction model for gnosis preservation.
+        
+        This is a lightweight real-time tracker — it logs a trace event.
+        Full soul distillation (L1→L2→L3) is handled by close_session() on session end.
+        
+        [id-soft: quake-1996] Save-game pattern — incremental autosave mirrors Quake's
+        periodic state writes, gathering state progressively for the final save on exit.
         """
         if os.environ.get("OMEGA_ENV") == "test":
             return
+
+        try:
+            from omega.observability import EventType
+            get_engine().log_event(
+                EventType.ENTITY_INTERACTION, trace_id,
+                {"entity": entity_name, "event": "interaction_recorded"}
+            )
+        except Exception as exc:
+            logger.warning("Telemetry event failed for %s: %s", entity_name, exc)
+            # Non-fatal — telemetry failure must not block the response
 
     async def _compact_soul(self, soul: dict) -> int:
         """Compact soul.yaml after growth. Returns final size in bytes."""

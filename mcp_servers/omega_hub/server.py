@@ -686,8 +686,8 @@ async def hivemind_get_awareness() -> str:
                             "last_seen": snap.get("timestamp", mtime.isoformat()),
                             "source": "cold_store",
                         })
-                    except Exception:
-                        pass
+                    except Exception as exc:
+                        logger.debug("Failed to load cold session file %s: %s", latest, exc)
             return recovered
 
         cold_results = await anyio.to_thread.run_sync(_scan_cold)
@@ -1469,8 +1469,8 @@ async def get_system_stats() -> str:
                     "running_processes": int(parts[3].split("/")[0]),
                     "total_processes": int(parts[3].split("/")[1]),
                 }
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug("Failed to collect CPU stats: %s", exc)
 
         # Memory
         try:
@@ -1486,8 +1486,8 @@ async def get_system_stats() -> str:
                     "available_mb": mem.get("MemAvailable", 0),
                     "used_mb": mem.get("MemTotal", 0) - mem.get("MemAvailable", 0),
                 }
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug("Failed to collect memory stats: %s", exc)
 
         # zRAM
         zram_path = Path("/sys/block/zram0/mm_stat")
@@ -1502,8 +1502,8 @@ async def get_system_stats() -> str:
                     "mem_used_mb": round(int(mm[2]) / 1048576, 1),
                     "ratio": round(int(mm[0]) / max(int(mm[1]), 1), 2),
                 }
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.debug("Failed to collect zRAM stats: %s", exc)
 
         # Disk — omega_library partition
         try:
@@ -1518,8 +1518,8 @@ async def get_system_stats() -> str:
                 "used_gb": total - free,
                 "used_pct": round((total - free) / total * 100, 1) if total > 0 else 0,
             }
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug("Failed to collect disk stats: %s", exc)
 
         # Vulkan iGPU
         gpu_path = Path("/sys/class/drm/card1/device/gpu_busy_percent")
@@ -1530,8 +1530,8 @@ async def get_system_stats() -> str:
                         "available": True,
                         "utilization_pct": int(f.read().strip()),
                     }
-            except Exception:
-                pass
+            except Exception as exc:
+                logger.debug("Failed to collect GPU stats: %s", exc)
 
         # Podman
         try:
@@ -1544,8 +1544,8 @@ async def get_system_stats() -> str:
                     "total": len(containers),
                     "names": [c.get("Names", [""])[0] for c in containers],
                 }
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug("Failed to collect Podman stats: %s", exc)
 
         # Ryzen tuning check
         try:
@@ -1555,8 +1555,8 @@ async def get_system_stats() -> str:
                 "available": True,
                 "governor": governor,
             }
-        except Exception:
-            pass
+        except Exception as exc:
+            logger.debug("Failed to collect Ryzen tuning stats: %s", exc)
 
         return stats
 

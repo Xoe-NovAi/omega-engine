@@ -60,8 +60,8 @@ async def verify_parity():
         try:
             client.delete_collection(collection_name=collection_name)
             print("Cleanup complete.")
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"⚠ Cleanup warning: {e}")
 
 if __name__ == "__main__":
     anyio.run(verify_parity)

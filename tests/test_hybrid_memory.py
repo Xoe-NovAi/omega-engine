@@ -34,8 +34,8 @@ def store(tmp_path, monkeypatch):
     # cleanup
     try:
         anyio.run(store.close)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"Warning: cleanup failed: {e}")
     import shutil
     shutil.rmtree(data_dir)
 

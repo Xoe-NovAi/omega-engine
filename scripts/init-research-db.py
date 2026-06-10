@@ -365,8 +365,8 @@ def seed_from_docs():
             try:
                 cursor.execute("INSERT OR IGNORE INTO tags (document_id, tag) VALUES (?, ?)",
                             (doc_id, tag.lower()))
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"   ⚠ Failed to insert tag '{tag}' for {doc_id}: {e}")
 
         # Insert related documents
         related = metadata.get('related', [])
@@ -374,8 +374,8 @@ def seed_from_docs():
             try:
                 cursor.execute("INSERT OR IGNORE INTO related_documents (source_id, target_id) VALUES (?, ?)",
                             (doc_id, rel_id))
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"   ⚠ Failed to insert related doc '{rel_id}' for {doc_id}: {e}")
 
         # Insert sources
         sources = metadata.get('sources', [])
@@ -386,8 +386,8 @@ def seed_from_docs():
                 try:
                     cursor.execute("INSERT INTO sources (document_id, url, source_type) VALUES (?, ?, 'web')",
                                 (doc_id, source))
-                except Exception:
-                    pass
+                except Exception as e:
+                    print(f"   ⚠ Failed to insert source '{source}' for {doc_id}: {e}")
 
         print(f"   ✓ {doc_id}: {title[:50]}")
 
