@@ -23,6 +23,17 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Callable, Deque, Dict, Optional
+# Module-level singleton
+_health_monitor: Optional[HealthMonitor] = None
+
+def get_health_monitor() -> HealthMonitor:
+    """Get or create the singleton HealthMonitor."""
+    global _health_monitor
+    if _health_monitor is None:
+        _health_monitor = HealthMonitor()
+    return _health_monitor
+
+
 
 from omega.constants import ZONEID_BREAKER, validate_zoneid
 

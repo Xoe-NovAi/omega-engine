@@ -301,8 +301,8 @@ class ForensicsManager:
             state["dataset_size"] = len(self._obs_engine._dataset)
 
         try:
-            from omega.oracle.model_gateway import ModelGateway
-            gw = ModelGateway()
+            from omega.oracle.health_monitor import get_health_monitor
+            gw = ModelGateway(health_monitor=get_health_monitor())
             providers = gw.providers if hasattr(gw, 'providers') else []
             state["providers_count"] = len(providers)
             state["providers_available"] = len([

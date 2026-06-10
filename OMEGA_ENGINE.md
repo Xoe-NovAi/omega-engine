@@ -124,27 +124,27 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 
 ---
 
-## §5 Current State — Engine Health (2026-06-04)
+## §5 Current State — Engine Health (2026-06-10)
 
 ### 5.1 Engine Metrics
 
 | Metric | Value | Last Verified |
 |--------|-------|---------------|
 | Engine version | 2.2.0 | 2026-06-04 |
-| Source files | **77** .py files | 2026-06-04 |
-| Source lines | **19,376** | 2026-06-04 |
-| Test functions | **320** | 2026-06-08 |
-| Test files | **28** | 2026-06-04 |
-| PIVOT decisions | **115 (D1-D115)** | 2026-06-04 |
-| Sovereign Mandates | **14 (M1-M14)** | 2026-06-04 |
-| Mandate 9 (Error Integrity) | FULL — 0 bare except | 2026-06-04 |
-| Mandate 13 (Temple-Grade) | 8/11 GREEN (T11 IA2 exempt) | 2026-06-04 |
+| Source files | **84** .py files | 2026-06-10 |
+| Source lines | **22,050** | 2026-06-10 |
+| Test functions | **329** | 2026-06-10 |
+| Test files | **34** | 2026-06-10 |
+| PIVOT decisions | **125 (D1-D125)** | 2026-06-10 |
+| Sovereign Mandates | **14 (M1-M14)** | 2026-06-10 |
+| Mandate 9 (Error Integrity) | FULL — 0 bare except, 0 silent `except Exception: pass` | 2026-06-10 |
+| Mandate 13 (Temple-Grade) | 8/11 GREEN (T11 IA2 exempt) | 2026-06-10 |
 | AnyIO compliance | 0 `import asyncio` | 2026-06-04 |
 | ZONEID constants | 11 (0x1d4a11-0x1d4a1b) | 2026-06-04 |
 | cvar Table | 2 namespaces, 7 accessors | 2026-06-04 |
-| Heritage tags | 6 source files, CI-enforced | 2026-06-04 |
+| Heritage tags | 27/27 files tagged, CI-enforced | 2026-06-10 |
 | Agent Fleet | **14 agents** | 2026-06-04 |
-| Entity workspaces | 25 active / 100 orphan / 19 unknown | 2026-06-04 |
+| Entity workspaces | — 100 orphans still present (H2-A7 pending) | 2026-06-10 |
 
 ### 5.2 Subsystem Status (H1 = Heritage, H2 = Evolution/Hygiene, S1.5 = Pillar Cap)
 
@@ -288,7 +288,7 @@ Per Kali D115 + Cline-M3 review:
 | M6 | Podman Sovereignty (keep-id) | ✅ | All Quadlets |
 | M7 | Local-First (cloud=teacher) | ✅ | providers.yaml |
 | M8 | Zero Telemetry | ✅ | CI grep telemetry/analytics |
-| M9 | Error Integrity (typed exceptions) | ✅ | 0 bare except |
+| M9 | Error Integrity (typed exceptions) | ✅ | 0 bare except, 0 silent `except Exception: pass` |
 | M10 | Fleet Integrity (14 cap) | ✅ | CAPABILITY_REGISTRY |
 | M11 | Soul Integrity (L1→L2→L3) | ✅ | Soul Distiller |
 | M12 | Queue Integrity (terminal state) | ✅ | RequestQueue |
@@ -769,7 +769,7 @@ it is a relationship. And like any relationship, it deepens with time.
 ---
 
 *§16-§18 added 2026-06-04 | Author: DeepSeek V4 Flash (via Cline-M3 proxy)
-*Last Updated: 2026-06-05T23:30Z | PIVOT D-kal-059 | AP-OMEGA-SST-v1.6.0**
+*Last Updated: 2026-06-10T01:10Z | Lilith Hivemind Onboarding | AP-OMEGA-SST-v1.7.0**
 *Insights: fleet hierarchy, data flow documentation, sovereignty paradox, M15 proposal, MVE threshold, 5-year vision, sovereignty museum*
 *§13.1 added 2026-06-05 | Author: Roc Racoon (KB scaffold, 9 Antigravity files staged, 3 closed decisions)
 *§13.1 updated 2026-06-05 | Author: Lilith (Antigravity integration removed, KB Hardening Research Request issued, v1.5.0→v1.6.0)*

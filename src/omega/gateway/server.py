@@ -65,7 +65,8 @@ class BackoffState:
 class OmegaGateway:
     def __init__(self):
         self.gateway = FastAPI(title="Omega Gateway")
-        self.model_gateway = ModelGateway()
+        from omega.oracle.health_monitor import get_health_monitor
+        self.model_gateway = ModelGateway(health_monitor=get_health_monitor())
         self.backoff_registry: Dict[str, BackoffState] = {}
         
         self._setup_routes()

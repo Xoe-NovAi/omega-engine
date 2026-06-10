@@ -367,15 +367,15 @@ Both fixes are documented in `data/handoff/DOOM_GUY_T23_REPORT_20260602.md`.
 
 | Aspect | id Software Original | Omega Engine Adaptation |
 |--------|--------------------|------------------------|
-| **Origin** | `zone.h:24-80` (Quake 1, 1996) — Hunk (stack) / Zone (heap) / Cache (LRU) / Temp (transient) | `src/omega/memory_store.py` — Hot/Warm/Cold tiers + static allocation |
-| **Memory layout** | Single contiguous block: low hunk → zone → temp → cache → high hunk | `HotMemoryTier` (dict, fast), `WarmMemoryTier` (SQLite, moderate), `ColdMemoryTier` (YAML, persistent) |
-| **Hunk = Stack** | Fast push/pop, used for client + server allocations | Hot tier — O(1) dict operations, for active entity state |
-| **Zone = Heap** | Tag-based allocator (`Z_Malloc` with PU_ tags), rover pointer merges free blocks | Warm tier — SQLite-backed, for recent entity memory |
-| **Cache = LRU** | `Z_Malloc(PU_CACHE)` — purged when rover wraps or OOM | Cold tier — YAML on disk, for long-term persistence |
-| **Temp = Transient** | Short-lived allocations, freed each frame | Not yet implemented — temporary inference results freed after response |
-| **Purge levels** | `PU_STATIC=1, PU_SOUND=2, PU_LEVEL=50, PU_PURGELEVEL=100, PU_CACHE=101` | `HOT_TTL=300`, `WARM_TTL=3600`, `COLD_TTL=86400` — time-based instead of tag-based |
-| **Omega evolution** | Static contiguous block → dynamic tiered storage with TTL-based promotion/demotion | id Software's physical memory model → logical tiered storage for LLM context |
-| **Status** | **MAPPED** — formal correspondence documented. 4th tier (Temp) pending implementation. |
+| **Origin** | `zone.h:24-80` (Quake 1, 1996) — Hunk (stack) / Zone (heap) / Cache (LRU) / Temp (transient) | `src/omega/memory_store.py` — Hot/Temp/Warm/Cold tiers with LRU caching |
+| **Memory layout** | Single contiguous block: low hunk → zone → temp → cache → high hunk | `_hot` (dict, O(1)), `_temp` (dict, transient), providers chain: Redis → File → InMemory |
+| **Hunk = Stack** | Fast push/pop, used for client + server allocations | Hot tier (`_hot: Dict[str, OrderedDict]`) — O(1) dict operations for active entity sessions |
+| **Temp = Transient** | Short-lived allocations, freed each frame | Temp tier (`_temp: Dict[str, Any]`) — inference scratchpad, NOT persisted |
+| **Zone = Heap** | Tag-based allocator (`Z_Malloc` with PU_ tags), rover pointer merges free blocks | Warm tier — `FileStorageProvider` (gzip+JSON on disk), for recent entity memory. NOT SQLite. |
+| **Cache = LRU** | `Z_Malloc(PU_CACHE)` — purged when rover wraps or OOM | Cold tier — `InMemoryStorageProvider` (volatile fallback). NOT YAML. |
+| **Purge levels** | `PU_STATIC=1, PU_SOUND=2, PU_LEVEL=50, PU_PURGELEVEL=100, PU_CACHE=101` | `ARCHIVE_AFTER_DAYS=7` — sessions older than 7 days archived. No TTL-based tier promotion. |
+| **Omega evolution** | Tag-based purge levels → time-based archival. Static contiguous block → dynamic provider chain with Redis/File/InMemory fallback. | id Software's physical memory model → logical tiered storage for LLM context. |
+| **Status** | **MAPPED** — formal correspondence documented. 4th tier (Temp) implemented as `_temp`. Provider chain replaces discrete tier classes. |
 
 **Attribution format**: `[4-Tier Memory: id Software 1996]`
 **Inline tag format**: `# [id-soft: quake-1996] 4-Tier Memory — description`

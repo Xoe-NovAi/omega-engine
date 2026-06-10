@@ -535,8 +535,13 @@ class ModelGateway:
         """Check if a provider is a cloud provider."""
         return provider.name in self._cloud_providers
 
+    # [id-soft: doom-1993] BSP Culling — O(1) pre-check skips broken providers
     async def _precheck_provider(self, provider, model_name: str) -> bool:
         """BSP-style pre-check: is this provider worth trying?
+        
+        [id-soft: doom-1993] BSP Culling — single O(1) circuit breaker check
+        skips entire provider subtree, adapted from Doom's static BSP tree
+        to dynamic provider health state.
 
         Checks (cheapest first):
         1. Circuit breaker state — if OPEN, skip instantly (O(1) dict lookup)

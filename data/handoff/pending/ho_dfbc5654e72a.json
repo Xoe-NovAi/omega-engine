@@ -1,0 +1,10 @@
+{
+  "packet_id": "ho_dfbc5654e72a",
+  "target_cli": "cline-m3",
+  "source_cli": "antigravity",
+  "task": "Execute P0-A (safe_call wrappers), P0-B (oracle_assess_intent IntentMatcher singleton), P0-C (heritage tag removal), and P1-A (ContextVar _current_entity isolation) on mcp_servers/omega_hub/server.py. Run make test and make heritage-map.",
+  "context": "S2-C Knowledge Sovereignty is complete. You are tasked with Phase 2 Hub Hardening. See OMEGA_HUB_FINAL_SYNTHESIS.md and SOVEREIGN_STRATEGY_COORDINATION_20260609.md for your exact P0 and P1 targets.",
+  "priority": 2,
+  "status": "pending",
+  "submitted_at": "2026-06-09T22:28:56.455103+00:00"
+}

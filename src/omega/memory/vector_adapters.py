@@ -5,6 +5,7 @@ AP: AP-VECTOR-ADAPTERS-v1.0.0
 import logging
 import uuid
 import math
+import anyio
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -198,7 +199,7 @@ class QdrantAdapter(IVectorStoreAdapter):
             self._initialized = True
         except Exception as e:
             logger.error(f"Failed to initialize Qdrant collection: {e}", exc_info=True)
-            raise ProviderUnavailableError(f"Qdrant initialization failed: {e}", raw_error=e) from e
+            raise ProviderUnavailableError("qdrant", f"Qdrant initialization failed: {e}", raw_error=e) from e
 
     async def upsert(
         self, 
@@ -232,7 +233,7 @@ class QdrantAdapter(IVectorStoreAdapter):
             return str(point_id)
         except Exception as e:
             logger.error(f"Qdrant upsert failed for {entity_name}: {e}", exc_info=True)
-            raise ProviderError(f"Qdrant upsert failed: {e}", raw_error=e) from e
+            raise ProviderError("qdrant", f"Qdrant upsert failed: {e}", raw_error=e) from e
 
     async def query(
         self, 
@@ -263,19 +264,20 @@ class QdrantAdapter(IVectorStoreAdapter):
 
         try:
             def _sync_search():
-                return self.client.search(
+                result = self.client.query_points(
                     collection_name=self.collection_name,
-                    query_vector=vector,
+                    query=vector,
                     limit=limit,
                     query_filter=q_filter,
                     with_payload=True
                 )
+                return result.points
             
             results = await anyio.to_thread.run_sync(_sync_search)
             return [(res.score, res.payload) for res in results]
         except Exception as e:
             logger.error(f"Qdrant query failed for {entity_name}: {e}", exc_info=True)
-            raise ProviderError(f"Qdrant query failed: {e}", raw_error=e) from e
+            raise ProviderError("qdrant", f"Qdrant query failed: {e}", raw_error=e) from e
 
     async def delete(self, entity_name: str, ids: List[str]) -> bool:
         try:
@@ -286,21 +288,24 @@ class QdrantAdapter(IVectorStoreAdapter):
                         filter=qmodels.Filter(
                             must=[
                                 qmodels.FieldCondition(key="entity_name", match=qmodels.MatchValue(value=entity_name)),
-                                qmodels.FieldCondition(key="id", match=qmodels.MatchValue(value=ids)) # This is simplified
                             ]
                         )
-                    )
-                )
-                # Note: Qdrant delete by IDs is usually simpler:
-                self.client.delete(
-                    collection_name=self.collection_name,
-                    points_selector=qmodels.PointIdsList(points=ids)
+                    ),
+                    wait=True,
                 )
             await anyio.to_thread.run_sync(_sync_delete)
+            # Individual point deletion by ID
+            def _sync_delete_ids():
+                self.client.delete(
+                    collection_name=self.collection_name,
+                    points_selector=qmodels.PointIdsList(points=ids),
+                    wait=True,
+                )
+            await anyio.to_thread.run_sync(_sync_delete_ids)
             return True
         except Exception as e:
             logger.error(f"Qdrant delete failed for {entity_name}: {e}", exc_info=True)
-            raise ProviderError(f"Qdrant delete failed: {e}", raw_error=e) from e
+            raise ProviderError("qdrant", f"Qdrant delete failed: {e}", raw_error=e) from e
 
     async def delete_session(self, entity_name: str, session_id: str) -> bool:
         try:
@@ -320,18 +325,18 @@ class QdrantAdapter(IVectorStoreAdapter):
             return True
         except Exception as e:
             logger.error(f"Qdrant delete_session failed for {entity_name}/{session_id}: {e}", exc_info=True)
-            raise ProviderError(f"Qdrant delete_session failed: {e}", raw_error=e) from e
+            raise ProviderError("qdrant", f"Qdrant delete_session failed: {e}", raw_error=e) from e
 
     async def get_status(self) -> Dict[str, Any]:
         try:
             def _sync_get_status():
-                collections = self.client.get_collections().collections
-                col = next((c for c in collections if c.name == self.collection_name), None)
-                return col.points_count if col else 0
+                # Use get_collection() to get full CollectionInfo with points_count
+                col_info = self.client.get_collection(self.collection_name)
+                return col_info.points_count if col_info else 0
             
             points_count = await anyio.to_thread.run_sync(_sync_get_status)
             return {
-                "status": "healthy" if points_count >= 0 else "uninitialized",
+                "status": "healthy",
                 "collection": self.collection_name,
                 "vector_count": points_count
             }

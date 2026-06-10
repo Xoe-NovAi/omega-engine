@@ -43,7 +43,9 @@ class Library:
 
     def __init__(self):
         self._documents: Dict[str, CuratedDocument] = {}
-        self._indexer = Indexer()
+        # Use QdrantAdapter with sovereign fallback to MemoryVectorAdapter
+        from .vector_adapters import QdrantAdapter
+        self._indexer = Indexer(vector_adapter=QdrantAdapter())
         self._load()
 
     def _load(self) -> None:
@@ -91,18 +93,23 @@ class Library:
         return None
 
     async def search(self, query: str, domain: Optional[str] = None, limit: int = 20) -> List[CuratedDocument]:
-        """Full-text search across all documents using the FTS5 index."""
-        # Use the FTS5 index instead of linear scan to avoid O(n) performance cliff
-        fts_results = await self._indexer.search_fts(query, domain, limit)
+        """Hybrid search across all documents using FTS5 + vector RRF.
+
+        Uses Reciprocal Rank Fusion to merge BM25 keyword scores with
+        Qdrant vector cosine similarity. Falls back to FTS5-only if
+        Qdrant is unavailable (handled by vector adapter).
+        """
+        # Call hybrid_search which uses RRF to merge FTS + vector results
+        results = await self._indexer.hybrid_search(query, domain, limit)
         
-        results = []
-        for res in fts_results:
-            doc_id = res["doc_id"]
-            doc = await self.get(doc_id)
+        # Look up full CuratedDocument for each result
+        docs = []
+        for res in results:
+            doc = await self.get(res["doc_id"])
             if doc:
-                results.append(doc)
+                docs.append(doc)
         
-        return results
+        return docs
 
     async def search_by_domain(self, domain: str, limit: int = 50) -> List[CuratedDocument]:
         """List all documents in a domain."""

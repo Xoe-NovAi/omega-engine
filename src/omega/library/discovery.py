@@ -3,11 +3,11 @@
 AP: AP-DISCOVERY-ORCHESTRATOR-v1.0.0
 ICS: [NODE: ARCHON | ARCHETYPE: PROMETHEUS | CONTEXT: DISCOVERY-PIPELINE]
 
-Implements the 4-phase research pipeline using FREE tools:
-  1. Reconnaissance (Gemini 2.0 Flash) -> High-level synthesis
-  2. Semantic Discovery (Exa) -> Gold-standard sources
-  3. Broad Validation (Brave Search) -> Verification
-  4. Deep Extraction (Tavily/Exa Fetch) -> High-fidelity content
+Implements the 4-phase research pipeline using free/sovereign tools:
+  1. Reconnaissance (Gemini 2.0 Flash) — High-level synthesis + Brave validation
+  2. Semantic Discovery (Exa) — Gold-standard sources
+  3. Broad Validation (Brave Search) — Cross-reference verification
+  4. Deep Extraction (Tavily) — High-fidelity content extraction
 """
 
 import json
@@ -78,9 +78,12 @@ class DiscoveryOrchestrator:
     """Orchestrates multiple search providers into a unified discovery report."""
 
     def __init__(self, model_gateway: Optional[Any] = None):
+        from omega.oracle.health_monitor import get_health_monitor
         from omega.oracle.model_gateway import ModelGateway
-        self.model_gateway = model_gateway or ModelGateway()
+
+        self.model_gateway = model_gateway or ModelGateway(health_monitor=get_health_monitor())
         self.exa_key = os.getenv("EXA_API_KEY")
+        self.firecrawl_key = os.getenv("FIRECRAWL_API_KEY")
         self.brave_key = os.getenv("BRAVE_API_KEY")
         self.tavily_key = os.getenv("TAVILY_API_KEY")
         self._jobs: Dict[str, DiscoveryReport] = {}
@@ -209,7 +212,7 @@ class DiscoveryOrchestrator:
         return self._jobs[job_id]
 
     async def _phase_recon(self, query: str) -> str:
-        """Phase 1: High-level synthesis via Gemini 2.0 Flash (Free Tier)."""
+        """Phase 1: High-level synthesis via Gemini 2.0 Flash + Brave context."""
         context = ""
         if self.brave_key:
             brave_results = await self._phase_validation(query, [])
@@ -329,7 +332,6 @@ class DiscoveryOrchestrator:
             "x-api-key": self.exa_key,
             "Content-Type": "application/json"
         }
-        # type: "deep" is recommended for research. useAutoprompt is deprecated.
         payload = {
             "query": query,
             "type": "deep",

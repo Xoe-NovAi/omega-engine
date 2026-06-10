@@ -155,9 +155,9 @@ class Orchestrator:
         """
         Enforces the Sovereign Brake and the Sovereign Communication Protocol (SCP).
         
-        Checks for:
-        1. [VERIFICATION] block (Sovereign Brake)
-        2. RTCO pattern: Role, Task, Constraints, Output (SCP)
+        Validates:
+        1. [VERIFICATION] block presence.
+        2. Structural RTCO pattern: Role, Task, Constraints, and Output must be explicitly defined.
         """
         if "[VERIFICATION]" not in task_prompt:
             raise BrakeViolationError(
@@ -165,13 +165,43 @@ class Orchestrator:
                 "All subagent requests must be preceded by a verification of intent."
             )
         
-        required_patterns = ["Role:", "Task:", "Constraints:", "Output:"]
-        missing = [p for p in required_patterns if p.lower() not in task_prompt.lower()]
+        # Structural RTCO validation: Ensure each required section is followed by actual content.
+        required_blocks = {
+            "Role:": "The role of the agent is not specified.",
+            "Task:": "The specific task for the agent is not specified.",
+            "Constraints:": "The operational constraints are not specified.",
+            "Output:": "The expected output format is not specified."
+        }
         
-        if missing:
+        missing_or_empty = []
+        for marker, error_msg in required_blocks.items():
+            if marker not in task_prompt:
+                missing_or_empty.append(marker)
+                continue
+            
+            # Check if the block is empty (nothing between current marker and next marker/end of string)
+            lines = task_prompt.splitlines()
+            found_marker = False
+            content_found = False
+            for line in lines:
+                if marker in line:
+                    found_marker = True
+                    # If there is text after the marker on the same line, it's not empty
+                    if line.split(marker)[-1].strip():
+                        content_found = True
+                        break
+                elif found_marker and line.strip():
+                    # If we found the marker and then a non-empty line, it's not empty
+                    content_found = True
+                    break
+            
+            if not content_found:
+                missing_or_empty.append(marker)
+
+        if missing_or_empty:
             raise BrakeViolationError(
-                f"SCP Violation: Dispatch missing required RTCO components: {', '.join(missing)}. "
-                "A2A communication must follow the Role-Task-Constraints-Output pattern."
+                f"SCP Structural Violation: The following RTCO blocks are missing or empty: {', '.join(missing_or_empty)}. "
+                "Sovereign dispatch requires a fully defined Role-Task-Constraints-Output structure."
             )
 
     def _calculate_sovereign_dampening(self, task_prompt: str) -> str:
@@ -282,7 +312,19 @@ class Orchestrator:
                 
                 success = result.returncode == 0
                 logger.info(f"Agent {cli_type} completed. Success: {success}")
-                
+
+                # Trigger soul distillation on session end (Mandate 11)
+                try:
+                    # We assume a session was created for this dispatch. 
+                    # If handoff_state provided a session_id, use it; else use trace_id.
+                    sid = handoff_state.session_id if handoff_state else "unknown"
+                    # Note: We use the Oracle singleton if available, or create one.
+                    from omega.oracle.oracle import Oracle
+                    oracle_instance = Oracle()
+                    await oracle_instance.close_session(entity_name, sid)
+                except Exception as e:
+                    logger.warning(f"Session distillation failed: {e}")
+
                 return {
                     "status": "success" if success else "failed",
                     "returncode": result.returncode,
@@ -364,8 +406,9 @@ class Orchestrator:
             updater_cfg = cfg.get("omega", {}).get("model_updater", {})
             
             if updater_cfg.get("enabled", True):
+                from omega.oracle.health_monitor import get_health_monitor
                 self.model_updater = ModelUpdaterWorker(
-                    model_gateway=ModelGateway(),
+                    model_gateway=ModelGateway(health_monitor=get_health_monitor()),
                     observability=get_engine(),
                     context_builder=ContextBuilder(),
                     config=updater_cfg,
