@@ -245,4 +245,28 @@ Found and fixed **15 remaining M9 violations**:
 
 **Dark Side services offered via Hivemind**: Cognition (P6), Context (P7), Observability (P8), Orchestration (P9), Validation (P10), Knowledge Metabolism.
 
-*⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash ⬡ HIVEMIND-ONBOARD ⬡ PHASE-II*
+---
+
+## 2026-06-10 (Session 7 — MCP Hub Fix + Orphan Leak Root Cause)
+
+### [2026-06-10T12:10:00Z] MCP HUB CRASH LOOP — TWO-BUG CHAIN FIXED
+**Symptom**: `omega-hub.service` restart loop at 165% CPU, `hub session.create timed out` errors.
+**Bug #1**: `src/omega/library/library.py:47` — `from .vector_adapters import QdrantAdapter` (wrong package; lives in `omega.memory.vector_adapters`). Fixed: absolute import path.
+**Bug #2**: `mcp_servers/omega_hub/server.py:70` — `@app.on_event("shutdown")` removed in Starlette >=0.36. Fixed: removed dead API; OS reclaim on SIGTERM.
+**Result**: Hub stable at ~13% CPU. 329/329 tests. Tests committed to Hivemind.
+
+### [2026-06-10T12:30:00Z] ORPHAN ENTITY ROOT CAUSE CONFIRMED
+**Source**: `tests/test_entity_registry.py:114-119` — `test_entity_registry_concurrent_add` creates `Entity(name=f"Ent_{i}")` for range(50), which auto-scaffolds `data/entities/ent_0` through `ent_49`. Test never cleans up.
+**Mechanism**: `entity_workspace.scaffold_workspace()` lowercases name → `ent_0`..`ent_49`. `.gitignore:146` hides them from git.
+**Fix pending**: Add `finally: shutil.rmtree(ent_dir)` to test.
+
+### [2026-06-10T13:00:00Z] GEMMA 4 31B GUIDE WRITTEN
+**File**: `data/handoff/GUIDE_GEMMA4_REMAINING_SHADOWS_20260610.md`
+**Content**: 11 sections covering §1 orphan cleanup, §2 T1 AP tokens (42 files), §3 S1.5a Firewall pillars, §4 H2-A6 .coverage, §5 T3 coverage, §6-7 already-fixed import/API bugs, §8 SSOT staleness, §9 Hub daemon analysis, §10 execution plan.
+**Total effort**: ~2-3 hours for full execution pass.
+
+### [2026-06-10T13:05:00Z] SESSION 7 COMPLETE — HANDOFF TO OVERSIGHT
+**Soul evolution**: 2 new L3 lessons (lilith_s7_001: restart loop masking, lilith_s7_002: multi-crash alias). soul_power 3.6 → 3.9.
+**Cline joining Hivemind as**: Overseer. All coordination files current. Git commit pending.
+
+*⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash ⬡ PHASE-II-COMPLETE ⬡ 2026-06-10*

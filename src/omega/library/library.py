@@ -44,7 +44,7 @@ class Library:
     def __init__(self):
         self._documents: Dict[str, CuratedDocument] = {}
         # Use QdrantAdapter with sovereign fallback to MemoryVectorAdapter
-        from .vector_adapters import QdrantAdapter
+        from omega.memory.vector_adapters import QdrantAdapter
         self._indexer = Indexer(vector_adapter=QdrantAdapter())
         self._load()
 

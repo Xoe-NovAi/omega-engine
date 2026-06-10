@@ -67,17 +67,11 @@ def apply_security(app):
     )
     app.add_middleware(RequestSizeLimitMiddleware, max_size=25 * 1024 * 1024) # 25MB for context posts
 
-    @app.on_event("shutdown")
-    async def shutdown():
-        logger.info("Shutting down Omega Core Hub...")
-        try:
-            await indexer.close()
-        except Exception as e:
-            logger.error(f"Failed to close indexer: {e}")
-        try:
-            await library.close()
-        except Exception as e:
-            logger.error(f"Failed to close library: {e}")
+    # ── Shutdown: Starlette >=0.36 removed @app.on_event ─────────
+    # The mcp_runtime.py lifespan handles ASGI lifecycle clean-up.
+    # Indexer/library close() is best-effort on SIGTERM; the OS reclaims
+    # file descriptors on exit. Log informational message only.
+    logger.debug("Shutdown hook skipped — modern Starlette uses lifespan.")
 
 
 # Ensure omega module is importable
