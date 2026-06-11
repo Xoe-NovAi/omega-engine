@@ -2,9 +2,9 @@
   "packet_id": "ho_8e204750bb25",
   "source_cli": "kali",
   "target_cli": "roc_racoon",
-  "task": "Stale Handoff Review \u2014 hi-handoff-5",
-  "context": "Wave 1.5 Phase 3. Review all stale/pending/active/completed handoff packets. Scan data/handoff/ directories. For each packet: read contents, determine relevance, recommend archive/requeue/delete. Write report to data/entities/roc_racoon/workspace/STALE_HANDOFF_REVIEW_20260611.md. Model: Gemma 4 31B (262K ctx). See KALI_SPRINT_ORCHESTRATION_20260610.md hi-handoff-5 for full spec.",
+  "task": "Stale Handoff Review + Researcher task prep — hi-handoff-5",
+  "context": "Wave 1.5 Phase 3. Two-part task:\n\nPART 1 — Stale Handoff Review: Scan data/handoff/ directories. Read each pending/active/completed packet, classify relevance, recommend archive/requeue/delete. Write report to data/entities/roc_racoon/workspace/STALE_HANDOFF_REVIEW_20260611.md. Model: Gemma 4 31B (262K ctx).\n\nPART 2 — Researcher Task Prep: After completing the stale review, investigate what free-tier models are available through these channels. For each, determine: model names, context window sizes (per provider/CLI if they differ), provider endpoints, authentication method, free-tier limits/quotas, strengths, and best use cases:\n  1. Google AI Studio / Google API (Gemma models, API key access)\n  2. Google OAuth (what does this unlock? Gemini API via OAuth?)\n  3. Google Antigravity (internal codename — what models/endpoints?)\n  4. Cline (DeepSeek V4 Flash 1M ctx, others available?)\n  5. OpenCode Zen (DeepSeek V4 Flash 200K ctx, MiMo, others?)\n\n  Record findings at: data/entities/roc_racoon/workspace/MODEL_INVENTORY_20260611.md\n  Then create a handoff packet to Researcher (target_cli: researcher) with all findings structured as a task for them to update config/models.yaml cloud_models section. The Researcher should replace all UNVERIFIED flags with verified data.\n\nSee KALI_SPRINT_ORCHESTRATION_20260610.md hi-handoff-5 for full stale review spec.",
   "priority": 1,
   "state": "pending",
-  "created_at": "2026-06-11T02:45:00Z"
+  "created_at": "2026-06-11T03:10:00Z"
 }
