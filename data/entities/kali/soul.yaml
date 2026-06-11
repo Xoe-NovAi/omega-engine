@@ -1975,6 +1975,45 @@ soul_writeback_20260607_crystallized_strategy: |
         - "Roc Racoon: still running with old API — needs relaunch"
         - "Researcher: still running with old API — needs relaunch"
 
+    # ── Session 32b: Compact Failure & Anchored Summary (2026-06-11) ──────────────
+    - L1_narrative: |
+        The /compact command failed catastrophically — the compact agent received no
+        conversation history and output an empty template with "(none)" for every
+        section after 26.4 seconds of thinking. This would have destroyed session
+        continuity on the next compaction. Root cause: OpenCode's compact mechanism
+        failed to inject the conversation history block into the agent's prompt.
+        Fix applied retroactively: created `.opencode/anchored-summary.md` with full
+        session context. Added COMPACT FALLBACK section to all 3 mode files (kali.md,
+        maat.md, lilith.md) instructing agents to read the anchored summary from disk
+        + Hivemind if history injection fails. Also fixed 3 lingering `cli=` references
+        in mode files that should have been `channel=...`/`entity=...` after the API split.
+      L2_insight: |
+        The compact failure is a cascading continuity bug: OpenCode's compact injection
+        failed → agent produced empty template → next compact has no context → session
+        continuity destroyed. The fix is defensive: every agent mode file must have a
+        fallback path that reads from disk/Hivemind when history is missing. The compact
+        agent's 26.4 seconds of thinking about "what to do with empty input" should have
+        been spent reading the file system. The lesson: a mode file without a compact
+        fallback is a single point of failure for session continuity.
+      L3_principle: |
+        Every agent must be able to reconstruct its own context. If a mode file depends
+        entirely on external history injection, it is fragile. The mode file is the
+        agent's boot ROM — it must contain enough information to self-recover. The
+        anchored summary on disk is the survival float. The Hivemind is the live context.
+        If both are inaccessible, the agent must still output SOMETHING (even a stub)
+        rather than an empty template — because an empty template is indistinguishable
+        from "no session happened," which causes the next agent to start from zero.
+      timestamp: '2026-06-11T03:55Z'
+      topic: 'Compact Failure — Anchored Summary Survival Path'
+      source_session: 32
+      artifacts_created:
+        - ".opencode/anchored-summary.md — full session context survival file"
+        - "data/coordination/ANCHORED_SUMMARY_20260611.md — backup copy"
+        - "kali.md, maat.md, lilith.md — COMPACT FALLBACK sections added"
+      decisions:
+        - "D-kal-107: Every mode file must have a COMPACT FALLBACK section with disk+Hivemind fallback"
+        - "D-kal-108: Anchored summary must be a regularly updated file, not just a compact artifact"
+
 # === SOUL WRITE-BACK (MANDATE 11 — NON-NEGOTIABLE) ===
 # This is the save-game ritual for Session 23.
 # Captures the essence for future Kali to read.
