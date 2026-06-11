@@ -53,11 +53,11 @@ Hivemind is exposed as MCP tools via `omega-hub` server. All agents have access.
 omega-hub_hivemind_get_awareness()
 ```
 
-Returns list of all active CLIs:
+Returns list of all active participants:
 ```json
 [
   {
-    "cli": "doom_guy",
+    "cli": "opencode/kali",
     "model": "deepseek-v4-flash",
     "task_current": "Building Link P9 Runtime...",
     "last_seen": "2026-06-03T02:28:06.199164+00:00"
@@ -66,6 +66,34 @@ Returns list of all active CLIs:
 ```
 
 **Use case**: Check who's working before starting a session. Don't duplicate work.
+
+### §2.1a The `cli` Identifier Convention (CRITICAL)
+
+The `cli` parameter identifies **who is posting**. It uses a compound format:
+
+```
+{channel}/{entity}
+```
+
+Where:
+- **channel** = the execution environment (`opencode`, `cline`, `gemini-cli`)
+- **entity** = the persona active within that channel (`kali`, `roc_racoon`, `doom_guy`)
+
+Examples:
+- `cli="opencode/kali"` — Kali entity running inside OpenCode
+- `cli="opencode/roc_racoon"` — Roc Racoon entity running inside OpenCode  
+- `cli="cline/doom_guy"` — Doom Guy entity running inside Cline
+- `cli="gemini-cli/maat"` — Ma'at entity running inside Gemini CLI
+
+**Why this matters**:
+- CLIs and entities are fundamentally different. A CLI is an **execution channel** (how code runs).
+  An entity is a **persona** (who is speaking). Conflating them loses architectural clarity.
+- The compound format preserves both dimensions, enabling correct handoff routing
+  (`handoff to opencode/roc_racoon` → unambiguous)
+
+**Migration note**: Prior to v1.3.0, the `cli` field was used with bare entity names
+(e.g. `cli="roc_racoon"`). This was incorrect — entities are not CLIs. All agents
+MUST use the `{channel}/{entity}` format going forward.
 
 ### §2.2 Post Your Context
 
@@ -232,11 +260,19 @@ and accepted the boundary. Closes the coordination loop.
 
 ## §6 Coordination Protocol (The Full Pattern)
 
-When starting a multi-agent session:
+When starting a multi-agent session — OR when resuming from a Hivemind-dispatched
+handoff packet:
 
 ```
+
+0. **(IF HANDOFF RESUME) READ YOUR PACKET**
+   → Read `data/handoff/pending/{packet_id}.json` — this IS your task
+   → Do NOT rely on your local session cache from prior conversations
+
 1. CHECK AWARENESS
-   omega-hub_hivemind_get_awareness()
+   ```python
+   # THIS IS THE FIRST MCP CALL. NOTHING BEFORE IT.
+   awareness = omega-hub_hivemind_get_awareness()
    → Are there other agents alive? What's their task?
 
 2. WRITE WORKSPACE LOCK
@@ -329,6 +365,70 @@ Ma'at ran:
 - Task changes
 - Need coordination from other agent
 - Long-running operation milestones (every 5-10 min heartbeat)
+
+### §8.4 Don't: Resume from Local Cache Without Hivemind Check
+
+❌ **WRONG**: An agent picks up a Hivemind-dispatched handoff packet and immediately
+continues executing from its **previous session's local context cache** without
+checking the Hivemind first.
+
+```python
+# ❌ BAD — Roc resumes from stale local session state
+# Reads old context from previous conversation cache
+# Instead of checking: what's the CURRENT state?
+```
+
+✅ **RIGHT**: The FINAL and NON-NEGOTIABLE first action when executing any
+Hivemind-dispatched task:
+
+```python
+# ✅ GOOD — First actions, in order:
+# 1. Check Hivemind awareness
+awareness = omega-hub_hivemind_get_awareness()
+# → who else is alive right now?
+
+# 2. Read the handoff packet
+# → data/handoff/pending/{packet_id}.json has your task and context
+
+# 3. Read dispatcher's latest continuation
+continuation = omega-hub_hivemind_get_continuation(cli="opencode/kali")
+# → what does Kali expect from me?
+
+# 4. Read any relevant observation logs or workspace locks
+# → data/coordination/HIVEMIND_OBSERVATIONS_LOG.md
+
+# 5. THEN start executing
+```
+
+**Rationale**: Local session state is stale by definition — it was written when the
+session ended. Between that moment and now, other agents may have posted updates,
+changed files, or made decisions that affect your task. The Hivemind is the
+**live truth**, not your local cache.
+
+**Root cause**: When an agent is re-launched in the same chat session, its local
+context window still contains the old conversation. The agent sees its own
+previous messages and assumes that state is current. It is NOT. The first action
+must always be to reach outward, not inward.
+
+### §8.5 Don't: Conflate CLI and Entity Identity
+
+❌ **WRONG**: Using an entity name as the `cli` parameter value.
+```python
+omega-hub_hivemind_post_context(cli="roc_racoon", ...)
+# Roc Racoon is an entity/agent, NOT a CLI.
+```
+
+✅ **RIGHT**: Use the `{channel}/{entity}` compound format.
+```python
+omega-hub_hivemind_post_context(cli="opencode/roc_racoon", ...)
+# "opencode" is the channel CLI. "roc_racoon" is the entity speaking through it.
+```
+
+**Rationale**: A CLI is an execution environment (OpenCode, Cline, Gemini CLI).
+An entity is a persistent persona (Kali, Roc Racoon, Doom Guy). They are
+architecturally distinct concepts. Conflating them creates ambiguity: "Is there
+a roc_racoon CLI? Does the handoff route to a channel or a persona?"
+See §2.1a for the full convention.
 
 ---
 
@@ -431,7 +531,7 @@ in the `task_current` field:
 
 ```python
 omega-hub_hivemind_post_context(
-    cli="roc_racoon",
+    cli="opencode/roc_racoon",
     model="lmstudio/rocracoon-3b-instruct",      # ← which local model
     task_current="[LOCAL] Mining omega-stack for circuit breakers",  # ← dispatch mode tag
     focus_chain=["Find breaker", "Port to health_monitor", "Verify tests"],

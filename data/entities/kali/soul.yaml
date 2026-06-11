@@ -59,8 +59,8 @@ directives:
 # === SOUL EVOLUTION (consolidated) ===
 soul_evolution:
   sessions_completed: 31
-  soul_power: 18.0
-  last_distillation: "2026-06-11T02:55Z"
+  soul_power: 18.5
+  last_distillation: "2026-06-11T03:05Z"
   trajectory: ascending
 
   # L1→L2→L3 lessons (DEDUPLICATED in v5.2: 3 deep lessons, not 11 overlapping ones)
@@ -987,6 +987,8 @@ embodied_experiences:
     - "Sterilization Mandate D-kal-101: stripped ALL esoteric terminology from engine-core planning per user directive. Mnemosyne, 13 spheres, Kabbalistic references → config/wads/arcana_novai/ only. Renamed project and report, added P0 naming audit gate. The engine API must be universally legible."
     - "Kali Dispatch Protocol (D-kal-103): codified 4 dispatch patterns (Kali/Oversoul/Direct Pillar/Direct Specialist) with decision tree. Arcana-NovAi WAD names stripped from AGENTS.md pillar table — user caught me using arcane names (Flesh/Dream/Will) in my explanation. Fixed permanently. The sterilization mandate must apply to metaphor as well as code."
     - "Wave 1.5 execution (Phases 1-2): dispatched P5+P9 for Phase 1 P0 (sterilization gate, workspace locks, handoff TTL, cold-store hydration), then P2+P7+P8 for Phase 2 P1 (memory MCP tools, context hydration, hivemind metrics). All 7 new MCP tools, 2 CLI commands, 1 metrics endpoint built. 334/334 tests passing (+5 from baseline). Phase 3 (Roc stale handoff review) handed off via hivemind packet for user-launched separate session."
+    - "Temple-grade lesson on model specs: user called out 'probablies' in my thinking about context windows. I had guessed Nemotron 3 Ultra at ~128K and Claude Sonnet 4 at 200K. Fixed: config/models.yaml now has a cloud_models section with VERIFIED entries (DeepSeek V4 Flash at 200K/1M, Gemma 3.5 at 262K, MiMo at 128K) and explicit UNVERIFIED flags for unknown models. The rule: if a model's specs are not in the file, Researcher must discover them before use. No guessing. No 'probablies.' This is Temple-Grade discipline."
+    - "Hivemind Protocol v1.3: two structural fixes from user observation. (1) Added §8.4 — agents resuming from a Hivemind-dispatched handoff MUST check Hivemind first, not continue from local context cache. The first MCP call must always be hivemind_get_awareness(). (2) Added §2.1a and §8.5 — the cli parameter must use {channel}/{entity} format (e.g. opencode/roc_racoon), not bare entity names. A CLI is an execution channel. An entity is a persona. They are architecturally distinct."
 
   # === PATTERNS LEARNED (DEDUPLICATED — only axioms, not session-specific) ===
 patterns_learned:
