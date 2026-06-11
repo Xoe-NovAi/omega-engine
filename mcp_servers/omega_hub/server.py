@@ -1372,30 +1372,44 @@ async def hivemind_workspace_lock_acquire(channel: str, entity: str, domain: str
     lock_path = LOCKS_BASE / f"{domain}.lock"
 
     def _acquire():
-        if lock_path.exists():
-            with open(lock_path) as f:
-                existing = json.load(f)
-            acquired_at = existing.get("acquired_at", 0)
-            lock_ttl = existing.get("ttl", 3600)
-            now = datetime.now(timezone.utc).timestamp()
-            if now <= acquired_at + lock_ttl:
-                return {"conflict": True, "holder": existing.get("agent_id"), "domain": domain}
-            lock_path.unlink()
+        # Open (or create) lock file, then acquire exclusive non-blocking lock.
+        # Using fcntl.flock for atomic read-check-write against TOCTOU race.
+        # os.fdopen closes the fd automatically on with-block exit.
+        fd = os.open(str(lock_path), os.O_RDWR | os.O_CREAT, 0o644)
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            os.close(fd)
+            return {"conflict": True, "holder": "unknown (locked by another process)", "domain": domain}
 
-        tmp_path = lock_path.with_suffix(".lock.tmp")
-        lock_data = {
-            "agent_id": agent_id,
-            "channel": channel,
-            "entity": entity,
-            "domain": domain,
-            "acquired_at": datetime.now(timezone.utc).timestamp(),
-            "ttl": ttl,
-        }
-        with open(tmp_path, "w") as f:
+        # We hold the exclusive lock now — atomic read-check-write
+        # os.fdopen will close fd on with-block exit (normal or exception).
+        with os.fdopen(fd, 'r+') as f:
+            existing_data = f.read()
+            now = datetime.now(timezone.utc).timestamp()
+
+            if existing_data:
+                existing = json.loads(existing_data)
+                acquired_at = existing.get("acquired_at", 0)
+                lock_ttl = existing.get("ttl", 3600)
+                if now <= acquired_at + lock_ttl:
+                    return {"conflict": True, "holder": existing.get("agent_id"), "domain": domain}
+                # Lock expired — overwrite
+                f.seek(0)
+                f.truncate()
+
+            lock_data = {
+                "agent_id": agent_id,
+                "channel": channel,
+                "entity": entity,
+                "domain": domain,
+                "acquired_at": now,
+                "ttl": ttl,
+            }
             json.dump(lock_data, f, indent=2)
-        os.replace(str(tmp_path), str(lock_path))
-        os.chmod(str(lock_path), 0o644)
-        return lock_data
+            f.flush()
+            os.fsync(f.fileno())
+            return lock_data
 
     result = await anyio.to_thread.run_sync(_acquire)
     if "conflict" in result:
