@@ -1,8 +1,0 @@
-[2026-06-05T15:32:24.497559+00:00] ACTION: WORKSPACE_CREATE | DETAILS: Created root workspace at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/ent_14
-[2026-06-05T15:32:24.497649+00:00] ACTION: DIR_CREATE | DETAILS: Created knowledge directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/ent_14/knowledge
-[2026-06-05T15:32:24.497672+00:00] ACTION: DIR_CREATE | DETAILS: Created workspace directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/ent_14/workspace
-[2026-06-05T15:32:24.498272+00:00] ACTION: SOUL_CREATE | DETAILS: Scaffolded initial soul file at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/ent_14/soul.yaml
-[2026-06-05T15:32:24.498554+00:00] ACTION: INDEX_CREATE | DETAILS: Scaffolded INDEX.yaml at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/ent_14/knowledge/INDEX.yaml
-[2026-06-05T16:58:41.803089+00:00] ACTION: WORKSPACE_CREATE | DETAILS: Created root workspace at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/ent_14
-[2026-06-05T16:58:41.803294+00:00] ACTION: DIR_CREATE | DETAILS: Created knowledge directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/ent_14/knowledge
-[2026-06-05T16:58:41.803326+00:00] ACTION: DIR_CREATE | DETAILS: Created workspace directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/ent_14/workspace

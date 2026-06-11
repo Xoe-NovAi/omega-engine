@@ -117,6 +117,8 @@ data/entities/soulentity/
 data/entities/sysadmin/
 data/entities/verifier/
 data/entities/watchtower/
+data/entities/_archive/
+data/entities/_quarantine/
 
 # ── Stale Container Artifacts (Roc_Racoon legacy, replaced by Hub) ──
 Dockerfile.roc_racoon

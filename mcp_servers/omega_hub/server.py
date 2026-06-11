@@ -82,6 +82,7 @@ sys.path.insert(0, str(SRC_DIR))
 from omega.oracle.oracle import Oracle
 from omega.oracle.entity_registry import EntityRegistry
 from omega.oracle.sovereign_search_service import SovereignSearchService
+from omega.oracle.model_gateway import ModelGateway
 from omega.oracle.hierarchy import SovereignHierarchy
 from omega.oracle.security import tdp_wrap
 

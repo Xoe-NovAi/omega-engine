@@ -1,7 +1,0 @@
-# data/entities/ent_21/knowledge/INDEX.yaml
-# Entity knowledge discovery index
-# Topics are promoted from workspace/ → knowledge/ via the T1→T2 gate
-
-entity: ent_21
-updated: '2026-06-08T18:14:28.410281'
-topics: []

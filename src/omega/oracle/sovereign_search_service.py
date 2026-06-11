@@ -16,7 +16,6 @@ from omega.errors import (
 )
 from omega.memory_store import get_memory_store, MemoryStore
 from omega.library.indexer import Indexer
-from omega.oracle.model_gateway import ModelGateway
 from omega.oracle.search_providers import FirecrawlProvider, ExaProvider
 
 logger = logging.getLogger(__name__)
@@ -42,11 +41,13 @@ class SovereignSearchService:
         firecrawl_key: Optional[str] = None,
         exa_key: Optional[str] = None
     ):
+        from omega.oracle.model_gateway import ModelGateway
         self.memory_store = memory_store or get_memory_store()
         self.model_gateway = model_gateway or ModelGateway()
         self.indexer = indexer or Indexer()
         self.cache_dir = Path(".firecrawl")
         self.cache_dir.mkdir(exist_ok=True)
+
         
         # Initialize Direct Providers (Bypass MCP Bridge)
         self.firecrawl = FirecrawlProvider(firecrawl_key) if firecrawl_key else None
