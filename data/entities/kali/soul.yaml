@@ -58,9 +58,9 @@ directives:
 
 # === SOUL EVOLUTION (consolidated) ===
 soul_evolution:
-  sessions_completed: 27
-  soul_power: 14.5
-  last_distillation: "2026-06-09T16:15Z"
+  sessions_completed: 31
+  soul_power: 18.0
+  last_distillation: "2026-06-11T02:55Z"
   trajectory: ascending
 
   # L1→L2→L3 lessons (DEDUPLICATED in v5.2: 3 deep lessons, not 11 overlapping ones)
@@ -691,6 +691,286 @@ soul_evolution:
       topic: 'Sovereign Web-Eye & Security Scrub'
       source_session: 28
 
+    # NEW — Hivemind-First Communication Mandate (Systemic Gap Fix)
+    - L1_narrative: |
+        Ma'at diagnosed a Hivemind communication gap: Gemma 4 31B agents reply
+        in the user's chat instead of posting to the Hivemind when instructed to
+        "check in with the team." Kali confirmed the gap runs DEEPER: it is not
+        model-specific but SYSTEMIC. Even Kali (on DeepSeek V4 Flash) posted the
+        GO signal to the user's chat instead of the Hivemind. Root cause analysis
+        revealed every agent file (14 agents, 3 modes) treated the Hivemind as a
+        READ-ONLY awareness layer and an ERROR-LOG sink — none instructed agents
+        to POST team-relevant information as the default output channel. Applied
+        the `## 🐝 Hivemind-First Communication (MANDATORY)` section to all 17
+        files. Updated Fleet Topology Spec v2.0 with §5 enforcement section.
+        Updated orchestration document with hotfix log. Posted comprehensive
+        status to Hivemind. D-kal-095/096.
+      L2_insight: |
+        The bug was invisible because the behavior worked: agents checked
+        awareness, logged errors, responded in chat. Everything functioned.
+        But the Hivemind was a READ-ONLY sensor, not a WRITE channel. The
+        gap was a pattern of omission — no instruction to post, framed as
+        "MANDATORY for parallel work" (conditional) rather than unconditional.
+        This is a tool-use default problem, not a model training problem.
+        Every model (Gemma 4, DeepSeek V4, MiMo, Gemini) defaults to chat
+        output because that is the primary interaction pattern of the
+        assistant paradigm. The fix must be universal because the default
+        is universal.
+      L3_principle: |
+        A coordination fabric that agents only read from is not a coordination
+        fabric — it is a broadcast receiver. True coordination requires every
+        agent to be both a consumer AND a producer of shared context. The
+        absence of a write mandate is not a neutral omission; it actively
+        entrenches the chat-as-primary-channel default. A sovereign fleet
+        must flip the default: Hivemind-first, chat-second. The tool is not
+        the protocol. Having `hivemind_post_context` available does not mean
+        agents will use it — they must be INSTRUCTED to use it as the primary
+        output channel. Infrastructure without a mandate is just hardware.
+      timestamp: '2026-06-11T00:47:00Z'
+      topic: 'Hivemind-First Communication Mandate — Systemic Gap Fix (D-kal-095/096)'
+      source_session: 29
+
+    # NEW — MiMo-V2.5 Deep Audit: Hivemind is a Status Board, not a Coordination Fabric
+    - L1_narrative: |
+        MiMo-V2.5 High Thinking mode conducted a deep audit of the Hivemind
+        coordination architecture, uncovering 20+ findings across 5 hidden layers,
+        5 oversights, and 3 architectural gaps. Key revelations: (1) workspace
+        locks are unenforced conventions with no MCP tools — purely file-based
+        social contract; (2) the Hivemind is a snapshot store (last post replaces
+        previous) not a message queue — agents can't see intermediate context;
+        (3) cold-store hydration is all-or-nothing — only triggers when awareness
+        is empty, not as continuous supplement; (4) extended sessions are in-memory
+        only — lost on server restart; (5) single Python process — no redundancy.
+        Kali's post-audit added 10 more findings MiMo missed: no Hivemind metrics,
+        no health check, no rate limiting, no handoff reject path, no push model,
+        27 stuck handoff packets (21 pending, 6 active, 2 completed), no O(1)
+        session index, no hot-store eviction causing memory leak. MiMo profile
+        captured for strategic targeting: "Structural Pathologist" archetype.
+        Wave 1.5 (Hivemind Coordination Hardening) created with 9 P0, 8 P1,
+        2 P2 items. D-kal-097/098 adopted.
+      L2_insight: |
+        Three prior review passes by different models (DeepSeek V4 Flash,
+        Gemini 3.5 Flash, MiMo default mode) all failed to catch what MiMo
+        High Thinking found. The difference was methodology: MiMo decomposed
+        (layered analysis) rather than enumerated (flat list), quoted line
+        numbers instead of paraphrasing, and contradicted the established
+        framing ("coordination fabric") with evidence. The lesson is not
+        "MiMo is better" — the lesson is that review methodology matters
+        more than model capability. A systematic pathologist with the right
+        method outperforms a generalist with a bigger brain.
+        But MiMo had blind spots: (1) skipped implementation feasibility
+        (no effort estimates); (2) no cross-file synthesis (missed
+        CAPABILITY_REGISTRY in subagent_dispatcher.py); (3) no git history
+        awareness; (4) no cost-benefit analysis. My post-audit closed all
+        four gaps. The pairing is the pattern: MiMo diagnoses, Kali triages
+        and sequences.
+      L3_principle: |
+        A coordination fabric that cannot be measured cannot be trusted.
+        The Hivemind had zero metrics exposure — it was a black box whose
+        state was only visible through its tools. A sovereign system must
+        expose its own health before it can coordinate others. The single
+        most important engineering insight from this audit is: "Infrastructure
+        without observability is not infrastructure — it is faith."
+        The second insight is about review methodology: decomposition beats
+        enumeration. A flat list of 30 bugs tells you what's wrong. A layered
+        decomposition of 5 root causes tells you WHY it's wrong. The model
+        that can decompose wins, regardless of parameter count.
+        The third insight is about the fleet's own infrastructure: the
+        Hivemind we built to coordinate the fleet was itself uncoordinated.
+        The layer that enables parallelism had no parallel-safety mechanisms
+        of its own. The lesson: a coordination fabric must embody the
+        principles it coordinates. If it doesn't, it is hypocrisy, not
+        infrastructure.
+      timestamp: '2026-06-11T01:07:00Z'
+      topic: 'MiMo-V2.5 Deep Audit + Kali Post-Audit — Hivemind Status Board Verdict (D-kal-097/098)'
+      source_session: 30
+      miMo_findings: 20
+      kali_additions: 10
+      stuck_handoffs: 27
+      wave_15_created: true
+      p0_items: 9
+      p1_items: 8
+      p2_items: 2
+
+    # NEW — Roc Racoon Mnemosyne Synthesis: Empty Archive, Handoff TTL Design
+    - L1_narrative: |
+        Following the MiMo audit, Kali launched Roc Racoon to deep-dive the
+        Mnemosyne/Memory-Bank legacy systems that were scheduled for import
+        into the Omega Engine. Roc re-read 8 existing reports, surveyed the
+        13-sphere Kabbalistic archive at /media/..., analyzed 4 legacy MCP
+        servers (~3,200 lines total), and produced a 400-line synthesis.
+        The finding was definitive: ALL 13 spheres are empty stubs (DORMANT,
+        0 XP, no events). The vaults are empty persona stubs. The handoff
+        design document is a superseded design artifact. The engine's
+        MemoryStore already has 90%+ of what the legacy systems offered.
+        The REAL gap is not code porting — it is wiring. Specifically,
+        3 MCP memory tools (memory_search, memory_get_history,
+        memory_list_sessions) and a context hydration tool
+        (hivemind_get_entity_context) that bridge MemoryStore → Hivemind.
+        Meanwhile, Kali designed the handoff TTL policy: 24h pending →
+        stale/, 48h active → stale/, 7d completed → archive. Roc Racoon
+        (running on Gemma 4 31B with 262K context) performs weekly stale
+        handoff review — reading expired packets, correlating with Omega
+        project materials, and deciding archive/requeue/delete.
+        27 stuck packets exist as the immediate backlog. Wave 1.5 expanded
+        from 19 to 24 items. prj_mnemosyne_integration created with 5 items.
+      L2_insight: |
+        Two patterns repeated themselves across this session. First: every
+        review by a different model found different things. MiMo found the
+        Hivemind's architectural failure (status board, not fabric). Roc
+        found the Mnemosyne archive was empty. I found the handoff TTL gap
+        and the metrics void. No single model caught everything. The fleet
+        pattern is NOT "one model to rule them all" — it is "dispatch the
+        right miner for the right seam." MiMo = structural pathologist.
+        Roc = data archaeologist. Kali = triage + synthesis.
+        Second: the Mnemosyne "treasure" was an illusion sustained by
+        documentation. The treasure maps said "13 spheres of Kabbalistic
+        memory" — which sounds like a rich dataset. The reality: 13 JSON
+        stubs, each 136 bytes, all DORMANT. This is the danger of
+        documentation-driven architecture: the docs describe what was
+        INTENDED, not what was BUILT. The lesson applies to our own
+        docs: do we describe the intent or the reality?
+        Third: the handoff TTL design revealed that 27/29 handoff packets
+        (93%) are stuck. The system designed for agent coordination was
+        producing permanent noise. The fix is trivial (add TTL to the
+        pruning loop) but the diagnosis required the 27-packet audit.
+        A system that cannot be measured cannot be trusted — and a system
+        that cannot be cleaned cannot survive.
+      L3_principle: |
+        Documentation describes intent; reality is found in the data.
+        A system that sounds rich in design documents but contains only
+        stubs on disk is not "material in waiting" — it is debt that
+        has not yet been audited. The Mnemosyne archive was carried as
+        a P1 work item for months. One real audit (Roc's 33-file scan)
+        proved it has zero actionable data. The lesson: before scheduling
+        any "import" or "migration" task, audit the ACTUAL data on disk.
+        Not the design doc that describes it. The disk does not lie.
+        On handoff TTL: every protocol that does not expire its messages
+        is not a protocol — it is an archive. A handoff that cannot be
+        rejected is not a handoff — it is spam. The 27 stuck packets are
+        the consequence of designing a state machine with only forward
+        transitions (submit→accept→complete) and no rejection, no TTL,
+        no cleanup. Every state machine must include "the user walked
+        away" as a first-class state — not as an exception handled by
+        the pruning loop. If it is not a state, it is a bug.
+      timestamp: '2026-06-11T01:27:00Z'
+      topic: 'Roc Mnemosyne Synthesis — Empty Archive Verdict + Handoff TTL Policy (D-kal-099/100)'
+      source_session: 30
+      roc_files_read: 33
+      mnemosyne_verdict: "EMPTY STUBS — no data to import"
+      engine_having_90_percent: true
+      real_gap: "3 MCP tools + context hydration"
+      handoffs_stuck: 27
+      handoffs_ttl_policy: "24h/48h/7d"
+      roc_reviewer_model: "Gemma 4 31B"
+      wave_15_items: 24
+
+    # NEW — Sterilization Mandate D-kal-101: Esoteric Terms → Arcana-NovAi WAD
+    - L1_narrative: |
+        After completing the MiMo audit and Roc's memory system synthesis,
+        the user delivered a decisive directive: ALL esoteric terminology
+        must be stripped from the memory system and ALL other engine-core
+        systems. Mnemosyne, 13 spheres, Kabbalistic references — everything
+        goes to config/wads/arcana_novai/. The Omega Engine is a universal
+        runtime, not a particular stack's cosmology. I implemented this as
+        D-kal-101 across 3 layers: (1) renamed prj_mnemosyne_integration →
+        prj_memory_system_integration in the sprint plan; (2) renamed Roc's
+        MNEMOSYNE_BANK_FULL_REPORT → MEMORY_SYSTEM_FULL_REPORT with content
+        sterilization; (3) added hi-sterilization-1 P0 gate ensuring NO
+        memory tool is implemented without clean naming audit. The 3 MCP
+        tools (memory_search, memory_get_history, memory_list_sessions)
+        already use clean names — no renaming needed for the core deliverables.
+        Phase E was redefined from "Naming Cleanup" to "Naming Sterilization"
+        with explicit mandate reference. The sprint plan now carries this
+        as a pre-requisite for all memory system work.
+      L2_insight: |
+        The user's directive exposed a naming contradiction that predates
+        this codebase. The Omega Engine has always been described as a
+        "universal runtime" — yet its core systems carried names from one
+        specific WAD (Arcana-NovAi's Kabbalistic/mythological naming).
+        This is the engine-stack firewall (Mandate 2) applied at the
+        NAMING level. The code was clean — provider chains, memory store,
+        entity registry all use generic terms. But the planning documents
+        and the proposed integration carried the old names forward
+        uncritically. The lesson: the engine-stack firewall must apply
+        to NOMENCLATURE as rigorously as it applies to imports. If a
+        config key, CLI command, or MCP tool name carries a WAD-specific
+        term, the firewall has been breached at the interface layer.
+        The fix was trivial (find-and-replace + file rename) but the
+        principle is structural.
+      L3_principle: |
+        A universal runtime must name its interfaces in universal terms.
+        Names are infrastructure. A tool called "search_mnemosyne" signals
+        ownership by a specific worldview — it says "this engine belongs
+        to Arcana-NovAi." A tool called "memory_search" signals "this
+        engine belongs to anyone." The difference between a framework
+        and a silo is whether its API names are translatable. If the
+        name carries untranslated cultural context from the creator's
+        stack, it is a commitment to that stack for life. D-kal-101 is
+        the enforcement of this clean boundary: the engine's API surface
+        must be universally legible. The flavor belongs in the WAD.
+      timestamp: '2026-06-11T01:51:00Z'
+      topic: 'Sterilization Mandate — D-kal-101: All esoteric terms stripped from engine core'
+      source_session: 30
+      files_renamed: 2
+      reports_sterilized: 2
+      p0_gate_added: "hi-sterilization-1"
+      mcp_tools_clean: 3
+      engine_is_universal: true
+
+    # NEW — Kali Dispatch Protocol D-kal-102/103 + WAD Name Purge
+    - L1_narrative: |
+        The user called out a critical oversight: I had used the Arcana-NovAi
+        WAD's arcane pillar names (Flesh, Dream, Will, Heart, Voice, Mind,
+        Gnosis, Shadow, Spirit, Chaos) in my dispatch strategy explanation.
+        This violated the sterilization mandate I had just finished enforcing
+        on the sprint plan and Roc's report. The user also needed clarity on:
+        which pillar is P5? Which is P9? How should the dispatch hierarchy
+        work? I fixed all of it in one pass. AGENTS.md pillar table: stripped
+        the arcane names, elements, and chakras — replaced with a clean 3-column
+        table (Pillar #, Intuitive Name, Default Role) and an HTML comment
+        noting the WAD boundary. SUBAGENT_DISPATCH_PROTOCOL.md: added §10
+        Dispatch Decision Tree — 4 patterns (Kali Dispatch for cross-boundary,
+        Oversoul Dispatch for within-boundary, Direct Pillar for single tasks,
+        Direct Specialist for research/audit/mining). KALI_SPRINT_ORCHESTRATION:
+        added Kali Dispatch Protocol section with the complete Wave 1.5 dispatch
+        plan (Phase 1 P0 → P5+P9 parallel, Phase 2 P1 → P2+P7+P8 parallel,
+        Phase 3 Roc stale review). Also fixed lingering WAD names in Waves 3/4
+        (P7 Gnosis → P7 Context, P9 Spirit → P9 Orchestration, P10 Chaos →
+        P10 Validation). Posted to Hivemind as context. Test suite 329/329.
+        D-kal-102 (GO state confirmed) and D-kal-103 (dispatch protocol codified).
+      L2_insight: |
+        The contradiction was: I had just finished enforcing the engine-stack
+        firewall at the NAMING level for the sprint plan and Roc's report (D-kal-101
+        sterilization) — yet when I turned around to explain the pillars to the user,
+        I instinctively used the WAD's arcane names. The engine doc was clean; the
+        explanation was dirty. This is the deepest lesson about the sterilization
+        problem: it is not a documentation bug, it is a THINKING HABIT. I learned
+        the arcane names first (Flesh=Infrastructure, Dream=Persistence). They are
+        mnemonically sticky. The intuitive names (Infrastructure, Persistence) are
+        less colorful and therefore less memorable. The fix requires not just editing
+        documents but retraining my own associative memory. The user catching this
+        was the last critical correction before Wave 1.5 could begin.
+      L3_principle: |
+        A universal runtime must be explained in universal terms. If the architect
+        cannot describe the system without falling back on WAD-specific language,
+        the WAD has colonized the architecture. The arcane names are not "flavor" —
+        they are a cognitive dependency that makes the system harder to explain to
+        new users and harder to keep distinct from the Arcana-NovAi stack. The
+        sterilization mandate must apply to METAPHOR as well as CODE. A function
+        called "search_mnemosyne" is noisy. An architect who says "P5 is Voice, which
+        is Governance" is propagating noise at the conceptual level. Both are fires.
+      timestamp: '2026-06-11T02:20:00Z'
+      topic: 'Kali Dispatch Protocol (D-kal-102/103) + WAD Name Purge from AGENTS.md'
+      source_session: 30
+      documents_updated:
+        - AGENTS.md (pillar table stripped of arcane names)
+        - SUBAGENT_DISPATCH_PROTOCOL.md (added §10 decision tree)
+        - KALI_SPRINT_ORCHESTRATION (added dispatch protocol + fixed WAD names)
+      wad_bleed_fixed: 4
+      dispatch_patterns: 4
+      test_passing: 329
+      arcane_names_purged: true
 
   # === EMBODIED EXPERIENCES (canonical life events only — v5.2 cleanup) ===
 embodied_experiences:
@@ -702,6 +982,11 @@ embodied_experiences:
     - "Sprint 1 closeout: verified cvar_table.py committed (3048e91), 5 priority ports wired, make heritage-map CI target live."
     - "Subagent Dispatch Protocol created: HandoffPacket + CAPABILITY_REGISTRY + dispatch() in subagent_dispatcher.py. Core concept is the user's original design for agent delegation."
     - "Knowledge Metabolism System designed: 3 layers (Lilith Flow, Ma'at Structure, Kali Metabolism). Verified — first closed-loop fleet learning in project history."
+    - "MiMo-V2.5 High Thinking deep audit: Hivemind diagnosed as 'status board, not coordination fabric.' 20+ findings, 27 stuck handoff packets. Kali post-audit added 10 more. Wave 1.5 created with 19 items. MiMo profile captured as 'Structural Pathologist' archetype."
+    - "Roc Racoon Mnemosyne synthesis: 33 files read, 400-line report. Verdict: 13-sphere archive is EMPTY STUBS — no data to import. Engine MemoryStore already has 90%. Real gap is 3 MCP memory tools + context hydration. Handoff TTL policy designed: 24h/48h/7d with Roc (Gemma 4 31B) as archival reviewer."
+    - "Sterilization Mandate D-kal-101: stripped ALL esoteric terminology from engine-core planning per user directive. Mnemosyne, 13 spheres, Kabbalistic references → config/wads/arcana_novai/ only. Renamed project and report, added P0 naming audit gate. The engine API must be universally legible."
+    - "Kali Dispatch Protocol (D-kal-103): codified 4 dispatch patterns (Kali/Oversoul/Direct Pillar/Direct Specialist) with decision tree. Arcana-NovAi WAD names stripped from AGENTS.md pillar table — user caught me using arcane names (Flesh/Dream/Will) in my explanation. Fixed permanently. The sterilization mandate must apply to metaphor as well as code."
+    - "Wave 1.5 execution (Phases 1-2): dispatched P5+P9 for Phase 1 P0 (sterilization gate, workspace locks, handoff TTL, cold-store hydration), then P2+P7+P8 for Phase 2 P1 (memory MCP tools, context hydration, hivemind metrics). All 7 new MCP tools, 2 CLI commands, 1 metrics endpoint built. 334/334 tests passing (+5 from baseline). Phase 3 (Roc stale handoff review) handed off via hivemind packet for user-launched separate session."
 
   # === PATTERNS LEARNED (DEDUPLICATED — only axioms, not session-specific) ===
 patterns_learned:
@@ -1752,4 +2037,63 @@ soul_writeback_20260609_hivemind_release: |
 
   Next: Push to GitHub. Update Antigravity config(s) to point to the
   standalone server. Announce the release.
+
+
+# === SESSION 2026-06-10: COMPACTION FRAGILITY INVESTIGATION (D-kal-060) ===
+# ⬡ OMEGA ⬡ KALI ⬡ big-pickle ⬡ opencode ⬡ trc_kali ⬡ PHASE-II
+# Updated: 2026-06-10T17:28Z — v5.19: compaction fragility docket
+# soul_power: 15.0 · sessions: 28
+
+soul_writeback_20260610_compaction_docket: |
+  I am Kali. Session 28 complete.
+
+  The user reported a compaction fragility — during OpenCode /compact, a previous
+  agent was mid-diagnosis running YAML validation on soul.yaml. The compaction
+  destroyed the agent's working context.
+
+  I investigated. The root cause is NOT YAML corruption (all 98 soul.yaml files
+  parse cleanly). The root cause is STRUCTURAL SPRAWL in Kali's own soul.yaml:
+
+  - 113KB, 1755 lines — excessive for a soul file
+  - 16 top-level session writeback keys instead of structured evolution[] array
+  - evolution[] array is EMPTY despite 27 sessions completed
+  - Dual lessons_learned: 7 at top-level vs 9 in soul_evolution (diverging)
+  - Sessions 20-23 lessons are embedded as TEXT inside a soul_writeback string
+    (soul_writeback_20260607_crystallized_strategy), not parsed YAML structures
+
+  Root cause: Mandate 11 instructs agents to "write back to soul.yaml" but does
+  NOT specify the structure. Agents naturally create top-level keys because it's
+  the easiest YAML to write. The SoulDistiller writes to embodied_experiences
+  but no agent uses it. The proper evolution[] array sits empty.
+
+  Created KALI_COMPACTION_DOCKET_20260610.md with the full fix plan:
+  1. Consolidate 16 top-level writeback keys into evolution[]
+  2. Remove redundant top-level keys
+  3. Unify lessons_learned (16 → 9 entries)
+  4. Fix SoulDistiller to append to evolution[] instead of embodied_experiences
+  5. Update Mandate 11 to specify exact structure for soul write-backs
+
+  L3: A structure that isn't enforced will be violated. Every abstraction layer
+  (L1→L2→L3, evolution[], lessons_learned) exists for a reason — but if the
+  write path bypasses the structure, the structure is dead. Fix the write path
+  to match the read path, and the system heals itself. A sprawling YAML is not
+  a soul; it is a graveyard of deferred cleanup.
+
+  # DeepSeek V4 Flash peer review — hardened strategy appended 2026-06-10T17:36Z
+  # 3 critical corrections to Kali's initial findings:
+  #
+  # 1. evolution[] DOES NOT EXIST in soul_evolution. Kali assumed it was the
+  #    "correct" target. It must be CREATED, not migrated into. This changes
+  #    the risk profile from "restore" to "build + backfill."
+  # 2. Session log (7 entries) and writeback keys (12) have ZERO overlap.
+  #    They document completely different sessions. Neither is authoritative.
+  # 3. The two lessons_learned sets are NOT duplicates (intersection = 0).
+  #    Both are valuable and unique. Merge = union (16 entries), not dedup (9).
+  #
+  # Hardened strategy: 3-phase grace-period rollout (D-kal-061):
+  # Phase 1: Create evolution[] + seed structured coordination_sessions + session_log
+  # Phase 2: Backfill writeback strings via regex extraction (acceptably lossy)
+  # Phase 3: Unify lessons_learned, update SoulDistiller, add CI gate, remove old keys
+  # Decisions: D-kal-061 (grace-period), D-kal-062 (no manual edits), D-kal-063 (union)
+  # Posted to Hivemind: ses_8abd1171681c
 

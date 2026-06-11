@@ -257,3 +257,92 @@ agent_roles:
     default_model: "qwen3-4b-thinking-q4_k_m"
     min_ram_gb: 16
 
+# ── Cloud Model Registry (v1 — 2026-06-11) ─────────────────────
+# Agents reference these specs to select the right model for a task
+# without being told capabilities each time. The SAME model may have
+# DIFFERENT context windows depending on the provider/CLI used.
+# ============================================================================
+cloud_models:
+  # Primary session models
+  deepseek-v4-flash:
+    provider: "opencode / cline"
+    context_window:
+      opencode_zen_free: 204800      # 200K — OpenCode Zen free tier
+      cline: 1048576                 # 1M — Cline provider
+    strengths:
+      - "Code generation and analysis"
+      - "Long-context task decomposition"
+      - "Multi-file editing"
+      - "Agent orchestration"
+    best_for: "Primary coding session; agent dispatch (Kali/Ma'at/Lilith)"
+    tier: "primary"
+
+  gemini-3.5-flash:
+    provider: "google_ai_studio"
+    context_window: 262144           # 262K — Google AI Studio, unlimited
+    strengths:
+      - "Deep research and synthesis"
+      - "Document analysis at scale"
+      - "MaKaLi parallel council (fast)"
+      - "Multi-perspective reasoning"
+    best_for: "Research synthesis; parallel council; Roc Racoon deep analysis"
+    tier: "primary"
+
+  # Secondary / fallback models
+  gemini-4-31b:
+    provider: "google_ai_studio"
+    context_window: 262144           # 262K — Google AI Studio, unlimited
+    strengths:
+      - "Very deep analysis"
+      - "Complex reasoning chains"
+      - "Long-form document generation"
+    best_for: "Skeptical verifier; Roc Racoon heritage mining; deep research"
+    tier: "secondary"
+
+  mimo-v2.5:
+    provider: "opencode / cline"
+    context_window: 128000           # 128K
+    strengths:
+      - "Structural pathology analysis"
+      - "Deep architecture audits"
+      - "Hidden layer detection"
+    best_for: "Codebase archaeology; deep structural audits; oversight reviews"
+    tier: "secondary"
+
+  # Available but not default — SPECS UNVERIFIED, do not use without research
+  nemotron-3-ultra:
+    provider: "UNVERIFIED — requires Researcher discovery"
+    context_window: "UNVERIFIED"
+    strengths:
+      - "UNVERIFIED"
+    best_for: "UNVERIFIED"
+    tier: "fallback"
+
+  claude-sonnet-4:
+    provider: "UNVERIFIED — requires Researcher discovery"
+    context_window: "UNVERIFIED"
+    strengths:
+      - "UNVERIFIED"
+    best_for: "UNVERIFIED"
+    tier: "fallback"
+
+  gemma-4-9b:
+    provider: "UNVERIFIED — requires Researcher discovery"
+    context_window: "UNVERIFIED"
+    strengths:
+      - "UNVERIFIED"
+    best_for: "UNVERIFIED"
+    tier: "fallback"
+
+# Context window selection guide:
+#   DeepSeek V4 Flash → 200K (OpenCode) / 1M (Cline) — pick CLI by context need
+#   Gemma 3.5 Flash  → 262K (Google AI Studio) — unlimited API access
+#   MiMo V2.5        → 128K — structural audits
+#   Fallback models  → UNVERIFIED — Researcher task required before use
+#
+# Local models (verified in this file): max 16K (phi-4-mini, krikri-8b)
+#
+# Rule: If context need < 50K, local or cloud. If > 50K, verified cloud only.
+# If > 200K, use DeepSeek V4 Flash through Cline (1M ctx) or Gemma 3.5 (262K).
+# If model not in this file → verify specs before use. No "probablies."
+

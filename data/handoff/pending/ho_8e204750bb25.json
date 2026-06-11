@@ -1,0 +1,10 @@
+{
+  "packet_id": "ho_8e204750bb25",
+  "source_cli": "kali",
+  "target_cli": "roc_racoon",
+  "task": "Stale Handoff Review \u2014 hi-handoff-5",
+  "context": "Wave 1.5 Phase 3. Review all stale/pending/active/completed handoff packets. Scan data/handoff/ directories. For each packet: read contents, determine relevance, recommend archive/requeue/delete. Write report to data/entities/roc_racoon/workspace/STALE_HANDOFF_REVIEW_20260611.md. Model: Gemma 4 31B (262K ctx). See KALI_SPRINT_ORCHESTRATION_20260610.md hi-handoff-5 for full spec.",
+  "priority": 1,
+  "state": "pending",
+  "created_at": "2026-06-11T02:45:00Z"
+}

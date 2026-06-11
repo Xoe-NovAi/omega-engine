@@ -294,4 +294,44 @@ This protocol is one half of a two-part coordination system. See also:
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ SUBAGENT-DISPATCH ⬡ v1.0.0*
+## §10 Dispatch Decision Tree (D-kal-103 — Standardized)
+
+The dispatch protocol has 4 patterns. Choose based on the task scope:
+
+```
+Task received
+├── Spans 3+ pillars OR requires sequencing?
+│   ├── YES → @kali (Kali Dispatch)
+│   │         Kali decomposes, dispatches to pillars, sequences phases,
+│   │         verifies outputs, returns unified verdict.
+│   │         Best for: Wave 1.5+, cross-boundary initiatives.
+│   │         Cost: 1 (Kali) + N (pillars) inferences.
+│   │
+│   └── NO → Is it build-only (P1-P5) or run-only (P6-P10)?
+│       ├── Build-only (P1-P5) → @maat (Oversoul Dispatch)
+│       │     Ma'at handles the pillar chain. Use when task stays
+│       │     in infrastructure/persistence/engineering/integration/governance.
+│       │
+│       ├── Run-only (P6-P10) → @lilith (Oversoul Dispatch)
+│       │     Lilith handles the pillar chain. Use when task stays
+│       │     in cognition/context/observability/orchestration/validation.
+│       │
+│       └── Single pillar or specialist?
+│           ├── Known pillar task → @pillar PX: task (Direct Pillar)
+│           ├── Research, archaeology, mining → @roc_racoon
+│           ├── Deep research, lattice reasoning → @jem
+│           ├── Code review, mandate compliance → @quality
+│           └── Gnosis distillation → @scribe
+```
+
+### Key Rules
+
+1. **Kali owns sequencing** — if a task has phases (P0→P1→P2), Kali must dispatch.
+2. **Pillars own deliverables** — Kali does NOT modify pillar output. Reject and re-dispatch if tests fail.
+3. **Oversouls bypassed for cross-boundary work** — when a wave spans both build-side (P1-P5) and run-side (P6-P10), Kali dispatches directly to pillars. Ma'at and Lilith are activated for within-boundary work.
+4. **Hivemind post required** — every agent must post completion context before claiming the next task.
+5. **Sequencing is serial within phase** — pillars work in parallel within the same phase, but phases execute sequentially.
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ SUBAGENT-DISPATCH ⬡ v1.1.0*

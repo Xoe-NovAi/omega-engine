@@ -19,6 +19,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
+import yaml
 import pytest
 
 # Ensure MCP server is importable
@@ -49,6 +50,7 @@ class MockFastMCP:
 
 
 mock_mcp_fastmcp.FastMCP = MockFastMCP
+mock_mcp_fastmcp.Context = object  # FastMCP Context type — mock as plain object
 mock_mcp_server.fastmcp = mock_mcp_fastmcp
 
 # Mock mcp.types (used by m9_safe decorator for CallToolResult/TextContent)
@@ -158,3 +160,190 @@ async def test_u003_post_context_suggested_model(temp_data_dir, reset_state):
     snapshot = server._hot_store.get(sid)
     assert snapshot is not None
     assert snapshot["suggested_model"] == "qwen3-4b-thinking-q4_k_m"
+
+
+# ── hivemind_get_entity_context tests ──
+
+@pytest.fixture
+def entity_context_env(monkeypatch, tmp_path):
+    """Set up a temp PROJECT_ROOT with test entity data for entity context tool."""
+    monkeypatch.setattr(server, "PROJECT_ROOT", tmp_path)
+
+    # Create entity base directory
+    entity_base = tmp_path / "data" / "entities" / "testentity"
+    knowledge_dir = entity_base / "knowledge"
+    workspace_dir = entity_base / "workspace"
+    sessions_dir = tmp_path / "data" / "sessions"
+    knowledge_dir.mkdir(parents=True, exist_ok=True)
+    workspace_dir.mkdir(parents=True, exist_ok=True)
+    sessions_dir.mkdir(parents=True, exist_ok=True)
+
+    # Create soul.yaml
+    soul = {
+        "entity": {
+            "echo": "testentity",
+            "role": "Test Entity",
+            "soul_power": 3.5,
+            "soul_version": "1.0.0",
+            "sessions_completed": 7,
+            "last_distillation": "2026-06-10T12:00:00Z",
+            "lessons": [
+                {
+                    "id": "ls-te-001",
+                    "date": "2026-06-10",
+                    "l1_narrative": "Test lesson about entity context hydration.",
+                    "l2_insight": "Context hydration requires multi-source fusion.",
+                    "l3_principle": "Knowledge without context is noise.",
+                }
+            ],
+            "embodied_experiences": [
+                {"context": "Built the hivemind protocol", "date": "2026-06-09"},
+                {"context": "Designed workspace lock tools", "date": "2026-06-08"},
+            ],
+        }
+    }
+    with open(entity_base / "soul.yaml", "w") as f:
+        yaml.dump(soul, f)
+
+    # Create knowledge files
+    with open(knowledge_dir / "README.md", "w") as f:
+        f.write("# Test Knowledge Doc\n\n**Purpose**: A sample knowledge document for testing.\n\nThis is the body content.")
+    with open(knowledge_dir / "ARCHITECTURE.md", "w") as f:
+        f.write("# Architecture Overview\n\nPurpose: System architecture notes.\n\nDetailed architecture content here.")
+    with open(knowledge_dir / "notes.txt", "w") as f:
+        f.write("Plain text notes file.\n")
+
+    # Create workspace files
+    with open(workspace_dir / "current_task.md", "w") as f:
+        f.write("# Current Task\n\nWorking on the context hydration tool.")
+    (workspace_dir / "subdir").mkdir(exist_ok=True)
+    with open(workspace_dir / "subdir" / "draft.md", "w") as f:
+        f.write("# Draft\n\nWork in progress.")
+
+    # Create active session file
+    session = {
+        "date": "20260610",
+        "session_id": "ses_20260610_testentity_001",
+        "counter": 1,
+        "entity": "TESTENTITY",
+        "created_at": "2026-06-10T22:00:00+00:00",
+    }
+    with open(sessions_dir / "testentity.active", "w") as f:
+        json.dump(session, f)
+
+    # Mock registry.get to return a mock entity
+    from omega.oracle.entity_registry import Entity
+    mock_entity = Entity(
+        name="testentity",
+        domains=["testing", "context"],
+        model="qwen3-1.7b",
+        personality="A test entity",
+        pillars=["P7"],
+        role="Test Context Entity",
+        pantheon="test",
+    )
+    monkeypatch.setattr(server.registry, "get", lambda name, _orig=mock_entity: mock_entity if name.lower() == "testentity" else None)
+    monkeypatch.setattr(server.registry, "find_by_name_fragment", lambda name: mock_entity if "test" in name.lower() else None)
+
+    yield tmp_path
+
+
+@pytest.mark.asyncio
+async def test_u004_entity_context_hydrated(entity_context_env):
+    """U-004: hivemind_get_entity_context — fully hydrated entity."""
+    result = await server.hivemind_get_entity_context(entity_name="testentity")
+    payload = json.loads(result)
+
+    assert payload["entity"]["name"] == "testentity"
+    assert payload["entity"]["pillar"] == "P7"
+    assert payload["entity"]["role"] == "Test Context Entity"
+
+    assert payload["soul_state"]["soul_power"] == 3.5
+    assert payload["soul_state"]["sessions_completed"] == 7
+    assert len(payload["soul_state"]["recent_lessons"]) >= 1
+    assert payload["soul_state"]["recent_lessons"][0]["l3_principle"] == "Knowledge without context is noise."
+
+    assert payload["knowledge_base"]["file_count"] == 3
+    assert payload["knowledge_base"]["total_size_bytes"] > 0
+
+    assert payload["workspace"]["file_count"] == 2
+
+    assert len(payload["active_sessions"]) == 1
+    assert "testentity" in payload["active_sessions"][0]["session_id"]
+
+    assert payload["readiness"]["status"] == "HYDRATED"
+
+
+@pytest.mark.asyncio
+async def test_u005_entity_context_missing_soul(entity_context_env):
+    """U-005: hivemind_get_entity_context — entity with missing soul.yaml."""
+    # Remove the soul.yaml
+    soul_path = entity_context_env / "data" / "entities" / "testentity" / "soul.yaml"
+    soul_path.unlink()
+
+    result = await server.hivemind_get_entity_context(entity_name="testentity")
+    payload = json.loads(result)
+
+    assert payload["soul_state"]["status"] in ("missing", "error")
+    assert payload["readiness"]["status"] == "DORMANT"
+    assert "NO_SOUL" in payload["readiness"]["flags"]
+
+
+@pytest.mark.asyncio
+async def test_u006_entity_context_nonexistent(entity_context_env):
+    """U-006: hivemind_get_entity_context — nonexistent entity."""
+    result = await server.hivemind_get_entity_context(entity_name="nonexistent")
+    payload = json.loads(result)
+
+    assert payload["entity"]["name"] == "nonexistent"
+    assert payload["knowledge_base"]["file_count"] == 0
+    assert payload["workspace"]["file_count"] == 0
+    assert payload["active_sessions"] == []
+
+
+@pytest.mark.asyncio
+async def test_u007_entity_context_empty_knowledge_workspace(entity_context_env, monkeypatch):
+    """U-007: hivemind_get_entity_context — entity with empty knowledge/workspace dirs."""
+    from omega.oracle.entity_registry import Entity
+    low_power = Entity(
+        name="newentity",
+        domains=["new"],
+        model="qwen3-0.6b",
+        personality="A new entity",
+        pillars=[],
+        role="New Entity",
+    )
+    monkeypatch.setattr(server.registry, "get", lambda name: low_power if name.lower() == "newentity" else None)
+    monkeypatch.setattr(server.registry, "find_by_name_fragment", lambda name: low_power if "new" in name.lower() else None)
+
+    entity_base = entity_context_env / "data" / "entities" / "newentity"
+    entity_base.mkdir(parents=True, exist_ok=True)
+
+    soul = {"entity": {"echo": "newentity", "role": "New", "soul_power": 0.5, "sessions_completed": 0}}
+    with open(entity_base / "soul.yaml", "w") as f:
+        yaml.dump(soul, f)
+
+    (entity_base / "knowledge").mkdir(exist_ok=True)
+    (entity_base / "workspace").mkdir(exist_ok=True)
+
+    result = await server.hivemind_get_entity_context(entity_name="newentity")
+    payload = json.loads(result)
+
+    assert payload["soul_state"]["soul_power"] == 0.5
+    assert payload["knowledge_base"]["file_count"] == 0
+    assert payload["workspace"]["file_count"] == 0
+    assert payload["active_sessions"] == []
+
+
+@pytest.mark.asyncio
+async def test_u008_entity_context_malformed_soul(entity_context_env):
+    """U-008: hivemind_get_entity_context — malformed soul.yaml."""
+    soul_path = entity_context_env / "data" / "entities" / "testentity" / "soul.yaml"
+    with open(soul_path, "w") as f:
+        f.write("{{{{invalid yaml::::\n")
+
+    result = await server.hivemind_get_entity_context(entity_name="testentity")
+    payload = json.loads(result)
+
+    assert payload["soul_state"]["status"] == "malformed"
+    assert payload["readiness"]["status"] == "DORMANT"

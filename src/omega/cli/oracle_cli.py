@@ -153,6 +153,128 @@ def entity_cmd(
     console.print(table)
 
 
+# ── ENTITY WORKSPACE STATUS — Block utilization ────────────────────────
+@app.command()
+def entity_workspace_status(
+    entity: str = typer.Argument(..., help="Entity name to inspect workspace for"),
+):
+    """Show workspace block utilization for an entity (knowledge + workspace).
+    
+    Reads data/entities/{entity}/knowledge/ and data/entities/{entity}/workspace/
+    and calculates character counts per file, per-domain breakdowns, and
+    total utilization. Block limits are displayed if defined in entity config.
+    """
+    DATA_DIR = Path(__file__).resolve().parent.parent.parent.parent / "data"
+    entity_dir = DATA_DIR / "entities" / entity.lower()
+
+    if not entity_dir.exists():
+        console.print(f"[red]Error: Entity directory not found: {entity_dir}[/red]")
+        registry = EntityRegistry()
+        available = [e.name for e in registry.list()]
+        if available:
+            console.print(f"[dim]Available entities: {', '.join(available[:15])}{'...' if len(available) > 15 else ''}[/dim]")
+        raise typer.Exit(1)
+
+    knowledge_dir = entity_dir / "knowledge"
+    workspace_dir = entity_dir / "workspace"
+    soul_path = entity_dir / "soul.yaml"
+
+    def _count_chars(directory: Path) -> list:
+        """Count characters in all files under a directory."""
+        file_stats = []
+        if not directory.exists():
+            return file_stats
+        for f in sorted(directory.rglob("*")):
+            if f.is_file():
+                try:
+                    text = f.read_text(encoding="utf-8", errors="replace")
+                    file_stats.append({
+                        "path": str(f.relative_to(entity_dir)),
+                        "chars": len(text),
+                        "lines": text.count("\n") + 1,
+                    })
+                except Exception as e:
+                    file_stats.append({
+                        "path": str(f.relative_to(entity_dir)),
+                        "chars": 0,
+                        "lines": 0,
+                        "error": str(e),
+                    })
+        return file_stats
+
+    knowledge_files = _count_chars(knowledge_dir)
+    workspace_files = _count_chars(workspace_dir)
+
+    # Soul file counts toward entity total
+    soul_stats = None
+    if soul_path.exists():
+        text = soul_path.read_text(encoding="utf-8", errors="replace")
+        soul_stats = {
+            "path": str(soul_path.relative_to(entity_dir)),
+            "chars": len(text),
+            "lines": text.count("\n") + 1,
+        }
+        all_files = knowledge_files + workspace_files + [soul_stats]
+    else:
+        all_files = knowledge_files + workspace_files
+
+    knowledge_chars = sum(f["chars"] for f in knowledge_files)
+    workspace_chars = sum(f["chars"] for f in workspace_files)
+    soul_chars = soul_stats["chars"] if soul_stats else 0
+    total_chars = knowledge_chars + workspace_chars + soul_chars
+
+    # Check for block limits in entity registry
+    registry = EntityRegistry()
+    entity_obj = registry.get(entity)
+    block_limit = None
+    if entity_obj:
+        if hasattr(entity_obj, "config"):
+            block_limit = getattr(entity_obj.config, "block_limit", None)
+        elif hasattr(entity_obj, "block_limit"):
+            block_limit = entity_obj.block_limit
+
+    table = Table(title=f"Workspace Block Utilization: {entity}", show_header=True, header_style="bold cyan")
+    table.add_column("Domain", style="cyan")
+    table.add_column("Files", style="white")
+    table.add_column("Characters", style="yellow")
+    table.add_column("Lines", style="green")
+    table.add_column("Block Limit", style="magenta")
+
+    n_knowledge = len(knowledge_files)
+    n_workspace = len(workspace_files)
+    k_lines = sum(f["lines"] for f in knowledge_files)
+    w_lines = sum(f["lines"] for f in workspace_files)
+    s_lines = soul_stats["lines"] if soul_stats else 0
+
+    table.add_row("knowledge/", str(n_knowledge), f"{knowledge_chars:,}", f"{k_lines:,}", str(block_limit or "N/A"))
+    table.add_row("workspace/", str(n_workspace), f"{workspace_chars:,}", f"{w_lines:,}", str(block_limit or "N/A"))
+    table.add_row("soul.yaml", "1" if soul_stats else "0", f"{soul_chars:,}", f"{s_lines:,}", "—")
+    table.add_row("", "", "", "", "")
+    table.add_row("TOTAL", str(len(all_files)), f"{total_chars:,}", f"{k_lines + w_lines + s_lines:,}", str(block_limit or "N/A"))
+
+    console.print(table)
+
+    # Per-file detail
+    if knowledge_files or workspace_files:
+        detail_table = Table(title="File Detail", show_header=True, header_style="dim")
+        detail_table.add_column("Path", style="cyan")
+        detail_table.add_column("Chars", style="yellow")
+        detail_table.add_column("Lines", style="green")
+        for f in (knowledge_files + workspace_files):
+            detail_table.add_row(
+                f["path"],
+                f"{f['chars']:,}",
+                f"{f['lines']:,}",
+            )
+        if soul_stats:
+            detail_table.add_row(
+                soul_stats["path"],
+                f"{soul_stats['chars']:,}",
+                f"{soul_stats['lines']:,}",
+            )
+        console.print(detail_table)
+
+
 # ── TRANSIENT — Toggle transient mode ──────────────────────────────────
 @app.command()
 def transient(

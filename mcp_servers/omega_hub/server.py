@@ -27,9 +27,10 @@ from dataclasses import asdict
 import yaml
 import contextvars
 import threading
+import shutil
 
 import anyio
-from mcp.server.fastmcp import FastMCP
+from mcp.server.fastmcp import FastMCP, Context
 from mcp.types import CallToolResult, TextContent
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -91,7 +92,7 @@ from omega.library.discovery import DiscoveryOrchestrator
 from omega.observability import new_trace_id, get_engine
 from omega.library.research import ResearchEngine, RESEARCH_DEPTHS
 from omega.memory_store import get_memory_store
-from omega.ics import render as ics_render
+from omega.ics import render as ics_render_logic
 from omega.mcp_runtime import run_mcp
 
 logger = logging.getLogger("omega.hub")
@@ -240,7 +241,12 @@ async def _prune_awareness_background() -> None:
     D-kal-052: Respects extended-session check-ins. If an agent
     has called hivemind_extended_checkin(), the pruning loop
     uses their custom TTL (default 3h) instead of HEARTBEAT_TTL (20m).
+
+    [hi-observability-2] Records pruning cycle timestamp and logs
+    results. Calls _write_metrics() after each cycle so the metrics
+    file always reflects the latest state.
     """
+    global _last_pruning_cycle
     while True:
         try:
             now = datetime.now(timezone.utc)
@@ -258,7 +264,9 @@ async def _prune_awareness_background() -> None:
                 for cli in stale_clis:
                     del _awareness[cli]
                 if stale_clis:
-                    logger.info(f"Pruned {len(stale_clis)} stale agents from awareness.")
+                    logger.info(f"Pruned {len(stale_clis)} stale agent(s) from awareness.")
+            _last_pruning_cycle = datetime.now(timezone.utc).isoformat()
+            await _write_metrics()
         except Exception as e:
             logger.error(f"Awareness pruning failed: {e}")
         await anyio.sleep(60)
@@ -270,6 +278,188 @@ async def _run_discovery_background(job_id: str) -> None:
         await discovery.run_discovery_task(job_id)
     except Exception as e:
         logger.error(f"Discovery background task {job_id} failed: {e}")
+
+
+async def _reap_stale_locks() -> None:
+    """Remove expired lock files.
+
+    Scans data/coordination/locks/ and removes any lock whose
+    acquired_at + ttl has passed. Called on acquire and periodically.
+    """
+    now = datetime.now(timezone.utc).timestamp()
+    reaped = 0
+    for lock_file in LOCKS_BASE.glob("*.lock"):
+        try:
+            def _read_lock():
+                with open(lock_file) as f:
+                    return json.load(f)
+            lock_data = await anyio.to_thread.run_sync(_read_lock)
+            acquired_at = lock_data.get("acquired_at", 0)
+            ttl = lock_data.get("ttl", 3600)
+            if now > acquired_at + ttl:
+                lock_file.unlink()
+                reaped += 1
+        except Exception as e:
+            logger.debug("Failed to reap stale lock %s: %s", lock_file, e)
+    if reaped:
+        logger.info("Reaped %d stale lock(s)", reaped)
+
+
+async def _reap_stale_handoffs() -> None:
+    """Reap stale handoff packets.
+
+    - pending/ older than 24h -> stale/ with {ttl_expired: true}
+    - active/ older than 48h -> stale/
+    - completed/ older than 7 days -> archive/
+    """
+    now = datetime.now(timezone.utc)
+
+    def _reap_dir(src_dir: Path, dst_dir: Path, max_age_seconds: int, extra: dict = None):
+        reaped = 0
+        for f in src_dir.glob("*.json"):
+            age = (now - datetime.fromtimestamp(f.stat().st_mtime, tz=timezone.utc)).total_seconds()
+            if age > max_age_seconds:
+                try:
+                    with open(f) as fh:
+                        packet = json.load(fh)
+                    packet["status"] = dst_dir.name
+                    packet["reaped_at"] = now.isoformat()
+                    if extra:
+                        packet.update(extra)
+                    dst_path = dst_dir / f.name
+                    with open(dst_path, "w") as fh:
+                        fcntl.flock(fh, fcntl.LOCK_EX)
+                        json.dump(packet, fh, indent=2)
+                        fcntl.flock(fh, fcntl.LOCK_UN)
+                    f.unlink()
+                    reaped += 1
+                except Exception as e:
+                    logger.debug("Failed to reap handoff %s: %s", f, e)
+        return reaped
+
+    reaped = await anyio.to_thread.run_sync(
+        lambda: (
+            _reap_dir(HANDOFF_PENDING, HANDOFF_STALE, 86400, {"ttl_expired": True})
+            + _reap_dir(HANDOFF_ACTIVE, HANDOFF_STALE, 172800, {"ttl_expired": True})
+            + _reap_dir(HANDOFF_COMPLETED, HANDOFF_ARCHIVE, 604800)
+        )
+    )
+    if reaped:
+        logger.info("Reaped %d stale handoff(s)", reaped)
+
+
+async def _reaper_background() -> None:
+    """Background loop that reaps stale locks and handoffs."""
+    while True:
+        try:
+            await _reap_stale_locks()
+            await _reap_stale_handoffs()
+        except Exception as e:
+            logger.error("Reaper background failed: %s", e)
+        await anyio.sleep(300)
+
+
+# --- HIVEMIND METRICS COLLECTION (hi-observability-1) ---
+_last_pruning_cycle: Optional[str] = None
+METRICS_PATH = PROJECT_ROOT / "data" / "coordination" / "metrics.json"
+
+
+async def _write_metrics() -> Dict[str, Any]:
+    """Write Hivemind coordination metrics atomically to data/coordination/metrics.json.
+
+    Collects real-time state from awareness, handoff queues, workspace locks,
+    and extended sessions. Writes atomically (write .tmp, rename) for crash safety.
+
+    Returns:
+        The metrics dict for immediate use without re-reading from disk.
+
+    [hi-observability-1] Hivemind Metrics Collection — local observability only.
+    Does NOT send data anywhere (Mandate 8 — Zero Telemetry).
+    """
+    now = datetime.now(timezone.utc)
+    now_ts = now.isoformat()
+
+    # Count active agents (respect TTL)
+    active_agents = 0
+    async with _awareness_lock:
+        for _cli, snap in _awareness.items():
+            ts_str = snap.get("timestamp")
+            if ts_str:
+                ts = datetime.fromisoformat(ts_str)
+                if (now - ts).total_seconds() <= HEARTBEAT_TTL:
+                    active_agents += 1
+            else:
+                active_agents += 1
+
+    # Count handoff queue items
+    def _scan_handoffs():
+        pending = len(list(HANDOFF_PENDING.glob("*.json")))
+        active = len(list(HANDOFF_ACTIVE.glob("*.json")))
+        completed = len(list(HANDOFF_COMPLETED.glob("*.json")))
+        stale = len(list(HANDOFF_STALE.glob("*.json")))
+        return pending, active, completed, stale
+
+    pending_h, active_h, completed_h, stale_h = await anyio.to_thread.run_sync(_scan_handoffs)
+
+    # Count workspace locks (active vs expired)
+    def _scan_locks():
+        active_locks = 0
+        expired_locks = 0
+        for lock_file in LOCKS_BASE.glob("*.lock"):
+            try:
+                with open(lock_file) as f:
+                    ld = json.load(f)
+                acquired_at = ld.get("acquired_at", 0)
+                ttl = ld.get("ttl", 3600)
+                if now.timestamp() > acquired_at + ttl:
+                    expired_locks += 1
+                else:
+                    active_locks += 1
+            except Exception:
+                active_locks += 1
+        return active_locks, expired_locks
+
+    active_locks, expired_locks = await anyio.to_thread.run_sync(_scan_locks)
+
+    # Count extended sessions
+    async with _extended_sessions_lock:
+        extended_count = len(_extended_sessions)
+
+    metrics: Dict[str, Any] = {
+        "hivemind": {
+            "active_agents": active_agents,
+            "handoff_queue": {
+                "pending": pending_h,
+                "active": active_h,
+                "completed": completed_h,
+                "stale": stale_h,
+                "total": pending_h + active_h + completed_h + stale_h,
+            },
+            "workspace_locks": {
+                "active": active_locks,
+                "expired": expired_locks,
+            },
+            "extended_sessions": extended_count,
+            "pruning_cycle_last_run": _last_pruning_cycle,
+        },
+        "updated_at": now_ts,
+    }
+
+    # Atomic write: .tmp -> rename
+    METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = METRICS_PATH.with_suffix(".json.tmp")
+
+    def _persist():
+        with open(tmp_path, "w") as f:
+            fcntl.flock(f, fcntl.LOCK_EX)
+            json.dump(metrics, f, indent=2)
+            f.flush()
+            os.fsync(f.fileno())
+            fcntl.flock(f, fcntl.LOCK_UN)
+        os.replace(str(tmp_path), str(METRICS_PATH))
+
+    await anyio.to_thread.run_sync(_persist)
+    return metrics
 
 
 # === ORACLE TOOLS (8) ===
@@ -521,7 +711,7 @@ async def delegate_task(target_entity: str, query: str, context: str = "") -> st
         return json.dumps({"status": "error", "message": f"Delegation failed: {str(e)}"})
 
 
-# === HIVEMIND TOOLS (6) ===
+# === HIVEMIND TOOLS (7) ===
 
 @m9_safe("hivemind_post_context")
 @mcp.tool()
@@ -652,40 +842,44 @@ async def hivemind_get_awareness() -> str:
         for cli in stale_clis:
             del _awareness[cli]
 
-    # Cold-store hydration fallback (D-kal-051 protocol)
-    if not awareness_list:
-        def _scan_cold():
-            recovered = []
-            for cli_dir in HALL_OF_RECORDS.iterdir():
-                if not cli_dir.is_dir():
-                    continue
-                json_files = sorted(
-                    cli_dir.glob("ses_*.json"),
-                    key=lambda p: p.stat().st_mtime,
-                    reverse=True
-                )
-                if not json_files:
-                    continue
-                latest = json_files[0]
-                mtime = datetime.fromtimestamp(latest.stat().st_mtime, tz=timezone.utc)
-                age = (now - mtime).total_seconds()
-                if age <= HEARTBEAT_TTL:
-                    try:
-                        with latest.open() as f:
-                            snap = json.load(f)
-                        recovered.append({
-                            "cli": snap.get("cli", cli_dir.name),
-                            "model": snap.get("model", "unknown"),
-                            "task_current": snap.get("task_current", ""),
-                            "last_seen": snap.get("timestamp", mtime.isoformat()),
-                            "source": "cold_store",
-                        })
-                    except Exception as exc:
-                        logger.debug("Failed to load cold session file %s: %s", latest, exc)
-            return recovered
+    # Cold-store hydration supplement (D-kal-051 protocol)
+    # Always scan cold store to supplement hot store, deduplicating by CLI name.
+    # Hot store data is preferred (it's fresher).
+    def _scan_cold():
+        recovered = []
+        for cli_dir in HALL_OF_RECORDS.iterdir():
+            if not cli_dir.is_dir():
+                continue
+            json_files = sorted(
+                cli_dir.glob("ses_*.json"),
+                key=lambda p: p.stat().st_mtime,
+                reverse=True
+            )
+            if not json_files:
+                continue
+            latest = json_files[0]
+            mtime = datetime.fromtimestamp(latest.stat().st_mtime, tz=timezone.utc)
+            age = (now - mtime).total_seconds()
+            if age <= HEARTBEAT_TTL:
+                try:
+                    with latest.open() as f:
+                        snap = json.load(f)
+                    recovered.append({
+                        "cli": snap.get("cli", cli_dir.name),
+                        "model": snap.get("model", "unknown"),
+                        "task_current": snap.get("task_current", ""),
+                        "last_seen": snap.get("timestamp", mtime.isoformat()),
+                        "source": "cold_store",
+                    })
+                except Exception as exc:
+                    logger.debug("Failed to load cold session file %s: %s", latest, exc)
+        return recovered
 
-        cold_results = await anyio.to_thread.run_sync(_scan_cold)
-        awareness_list.extend(cold_results)
+    cold_results = await anyio.to_thread.run_sync(_scan_cold)
+    hot_clis = {a["cli"] for a in awareness_list}
+    for cold_agent in cold_results:
+        if cold_agent["cli"] not in hot_clis:
+            awareness_list.append(cold_agent)
 
     return json.dumps(awareness_list, indent=2)
 
@@ -740,6 +934,37 @@ _extended_sessions: Dict[str, Dict[str, Any]] = {}  # cli -> {ttl_seconds, regis
 _extended_sessions_lock = _AsyncThreadLock()
 EXTENDED_SAFETY_TTL_DEFAULT = 3 * 60 * 60  # 3 hours = 10800s
 
+# Extended sessions persistence
+EXTENDED_SESSIONS_FILE = HALL_OF_RECORDS / "extended_sessions.json"
+
+
+def _load_extended_sessions() -> Dict[str, Dict[str, Any]]:
+    """Load extended sessions from disk."""
+    if not EXTENDED_SESSIONS_FILE.exists():
+        return {}
+    try:
+        with open(EXTENDED_SESSIONS_FILE) as f:
+            return dict(json.load(f))
+    except Exception as e:
+        logger.warning("Failed to load extended sessions: %s", e)
+        return {}
+
+
+def _save_extended_sessions(sessions: Dict[str, Dict[str, Any]]) -> None:
+    """Save extended sessions to disk atomically."""
+    EXTENDED_SESSIONS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    tmp_path = EXTENDED_SESSIONS_FILE.with_suffix(".tmp")
+    with open(tmp_path, "w") as f:
+        json.dump(sessions, f, indent=2)
+    os.replace(str(tmp_path), str(EXTENDED_SESSIONS_FILE))
+
+
+# Load persistent extended sessions on module start
+_saved = _load_extended_sessions()
+_extended_sessions.update(_saved)
+if _saved:
+    logger.info("Restored %d extended session(s) from disk", len(_saved))
+
 
 @m9_safe("hivemind_extended_checkin")
 @mcp.tool()
@@ -776,6 +1001,7 @@ async def hivemind_extended_checkin(
             "registered_at": datetime.now(timezone.utc).isoformat(),
             "reason": reason,
         }
+    await anyio.to_thread.run_sync(_save_extended_sessions, _extended_sessions)
     return json.dumps({
         "status": "extended_checkin_registered",
         "cli": cli,
@@ -803,6 +1029,7 @@ async def hivemind_extended_checkout(cli: str) -> str:
     async with _extended_sessions_lock:
         if cli in _extended_sessions:
             del _extended_sessions[cli]
+            await anyio.to_thread.run_sync(_save_extended_sessions, _extended_sessions)
             return json.dumps({"status": "extended_checkout_complete", "cli": cli})
         return json.dumps({"status": "no_extended_session", "cli": cli})
 
@@ -869,6 +1096,365 @@ async def hivemind_list_sessions(cli: Optional[str] = None, limit: int = 10) -> 
     return json.dumps(sessions, indent=2)
 
 
+@m9_safe("hivemind_get_entity_context")
+@mcp.tool()
+async def hivemind_get_entity_context(entity_name: str) -> str:
+    """Compile a startup briefing for any entity by reading 3 sources.
+
+    Reads soul.yaml, knowledge/ directory, workspace/ directory,
+    and active sessions to assess entity readiness for autonomous work.
+
+    Args:
+        entity_name: The name of the entity to inspect.
+
+    Returns:
+        JSON string containing the compiled entity context briefing.
+    """
+    entity_name_lower = entity_name.lower()
+    entity_base = PROJECT_ROOT / "data" / "entities" / entity_name_lower
+
+    def _read_soul() -> dict:
+        soul_path = entity_base / "soul.yaml"
+        if not soul_path.exists():
+            return {"status": "missing", "error": "soul.yaml not found"}
+        try:
+            with open(soul_path) as f:
+                return yaml.safe_load(f) or {}
+        except Exception as e:
+            return {"status": "malformed", "error": str(e)}
+
+    def _list_knowledge() -> dict:
+        knowledge_dir = entity_base / "knowledge"
+        if not knowledge_dir.exists():
+            return {"file_count": 0, "total_size_bytes": 0, "files": []}
+        files = []
+        total_size = 0
+        for f in sorted(knowledge_dir.iterdir()):
+            if not f.is_file():
+                continue
+            total_size += f.stat().st_size
+            if f.suffix.lower() == ".md":
+                try:
+                    with open(f) as fh:
+                        content = fh.read()
+                    lines = content.strip().split("\n")
+                    title = ""
+                    summary = ""
+                    for line in lines:
+                        stripped = line.strip()
+                        if stripped.startswith("# ") and not title:
+                            title = stripped.lstrip("# ").strip()
+                        if stripped.startswith("**Purpose**:"):
+                            summary = stripped.split(":", 1)[1].strip()
+                            break
+                        if stripped.startswith("Purpose:"):
+                            summary = stripped.split(":", 1)[1].strip()
+                            break
+                    if not title:
+                        title = f.stem
+                    if not summary:
+                        for line in lines[1:5]:
+                            stripped = line.strip()
+                            if stripped and not stripped.startswith("#") and not stripped.startswith("---") and not stripped.startswith("**"):
+                                summary = stripped[:200]
+                                break
+                except Exception:
+                    title = f.stem
+                    summary = ""
+                files.append({
+                    "name": f.name,
+                    "title": title,
+                    "summary": summary,
+                    "size_bytes": f.stat().st_size,
+                })
+            else:
+                files.append({
+                    "name": f.name,
+                    "title": f.stem,
+                    "summary": "",
+                    "size_bytes": f.stat().st_size,
+                })
+        return {"file_count": len(files), "total_size_bytes": total_size, "files": files}
+
+    def _list_workspace() -> dict:
+        workspace_dir = entity_base / "workspace"
+        if not workspace_dir.exists():
+            return {"file_count": 0, "files": [], "most_recent": None}
+        files = []
+        most_recent = 0.0
+        for f in sorted(workspace_dir.rglob("*")):
+            if not f.is_file():
+                continue
+            mtime = f.stat().st_mtime
+            if mtime > most_recent:
+                most_recent = mtime
+            files.append({
+                "name": str(f.relative_to(entity_base / "workspace")),
+                "size_bytes": f.stat().st_size,
+                "modified": datetime.fromtimestamp(mtime, tz=timezone.utc).isoformat(),
+            })
+        most_recent_ts = datetime.fromtimestamp(most_recent, tz=timezone.utc).isoformat() if most_recent > 0 else None
+        return {"file_count": len(files), "files": files, "most_recent": most_recent_ts}
+
+    def _check_sessions() -> list:
+        sessions_dir = PROJECT_ROOT / "data" / "sessions"
+        if not sessions_dir.exists():
+            return []
+        active = []
+        for f in sorted(sessions_dir.glob("*.active")):
+            try:
+                with open(f) as fh:
+                    sess = json.load(fh)
+                sess_entity = sess.get("entity", "").lower()
+                if sess_entity == entity_name_lower:
+                    active.append({
+                        "session_file": f.name,
+                        "session_id": sess.get("session_id", ""),
+                        "entity": sess.get("entity", ""),
+                        "created_at": sess.get("created_at", ""),
+                        "date": sess.get("date", ""),
+                    })
+            except Exception:
+                continue
+        return active
+
+    # Gather all data
+    entity_reg = await anyio.to_thread.run_sync(
+        lambda: registry.get(entity_name) or registry.find_by_name_fragment(entity_name)
+    )
+
+    soul_raw = await anyio.to_thread.run_sync(_read_soul)
+    knowledge = await anyio.to_thread.run_sync(_list_knowledge)
+    workspace = await anyio.to_thread.run_sync(_list_workspace)
+    active_sessions = await anyio.to_thread.run_sync(_check_sessions)
+
+    # Parse soul data
+    soul_state = {
+        "soul_power": None,
+        "sessions_completed": None,
+        "last_distillation": None,
+        "recent_lessons": [],
+        "recent_experiences": [],
+        "status": "ok",
+    }
+    if "error" in soul_raw:
+        soul_state["status"] = soul_raw.get("status", "error")
+        soul_state["error"] = soul_raw["error"]
+    elif "entity" in soul_raw:
+        ent = soul_raw["entity"]
+        soul_state["soul_power"] = ent.get("soul_power")
+        soul_state["sessions_completed"] = ent.get("sessions_completed")
+        soul_state["last_distillation"] = ent.get("last_distillation")
+
+        lessons = ent.get("lessons", [])
+        if lessons:
+            last = lessons[-1]
+            soul_state["recent_lessons"].append({
+                "id": last.get("id", ""),
+                "topic": last.get("l1_narrative", "")[:120] if last.get("l1_narrative") else "",
+                "l3_principle": last.get("l3_principle", ""),
+            })
+
+        embodied = ent.get("embodied_experiences", [])
+        for exp in embodied[-3:]:
+            soul_state["recent_experiences"].append({
+                "context": exp.get("context", "")[:120] if isinstance(exp, dict) else str(exp)[:120],
+            })
+
+    # Also check lessons_learned (Sophia-style soul format)
+    if not soul_state["recent_lessons"] and "entity" in soul_raw:
+        lessons_learned = soul_raw["entity"].get("lessons_learned", [])
+        if lessons_learned:
+            last = lessons_learned[-1]
+            soul_state["recent_lessons"].append({
+                "id": last.get("id", ""),
+                "topic": last.get("insight", "")[:120] if last.get("insight") else "",
+                "l3_principle": last.get("principle", ""),
+            })
+
+    # Entity identity
+    entity_identity = {
+        "name": entity_name,
+        "type": "unknown",
+        "pillar": None,
+        "role": None,
+        "pantheon": None,
+    }
+    if entity_reg:
+        entity_identity["type"] = "pillar_keeper" if entity_reg.pillars else "entity"
+        entity_identity["role"] = entity_reg.role
+        entity_identity["pantheon"] = entity_reg.pantheon
+        if entity_reg.pillars:
+            entity_identity["pillar"] = entity_reg.pillars[0]
+
+    # Assess readiness
+    readiness_flags = []
+    if soul_state["status"] == "missing":
+        readiness_flags.append("NO_SOUL")
+    elif soul_state["status"] == "malformed":
+        readiness_flags.append("MALFORMED_SOUL")
+    if knowledge["file_count"] == 0:
+        readiness_flags.append("NO_KNOWLEDGE")
+    if workspace["file_count"] == 0:
+        readiness_flags.append("NO_WORKSPACE")
+
+    if not readiness_flags and soul_state["soul_power"] and soul_state["soul_power"] >= 1.0:
+        readiness = "HYDRATED"
+    elif readiness_flags:
+        readiness = "DORMANT"
+    else:
+        readiness = "PARTIAL"
+
+    briefing = {
+        "entity": entity_identity,
+        "soul_state": soul_state,
+        "knowledge_base": {
+            "file_count": knowledge["file_count"],
+            "total_size_bytes": knowledge["total_size_bytes"],
+            "files": knowledge["files"][:50],
+        },
+        "workspace": {
+            "file_count": workspace["file_count"],
+            "most_recent_modification": workspace["most_recent"],
+            "files": workspace["files"][:50],
+        },
+        "active_sessions": active_sessions,
+        "readiness": {
+            "status": readiness,
+            "flags": readiness_flags,
+        },
+    }
+    return json.dumps(briefing, indent=2)
+
+
+# === WORKSPACE LOCK TOOLS (3) ===
+
+@m9_safe("hivemind_workspace_lock_acquire")
+@mcp.tool()
+async def hivemind_workspace_lock_acquire(cli: str, domain: str, ttl: int = 3600) -> str:
+    """Acquire an exclusive workspace lock for a domain.
+
+    Creates an atomic lock file at data/coordination/locks/{domain}.lock.
+    If a lock exists and hasn't expired, returns error with current holder.
+    If a lock exists but has expired, overwrites it (TTL-based auto-release).
+
+    Args:
+        cli: The CLI identifier requesting the lock.
+        domain: The domain/resource to lock.
+        ttl: Time-to-live in seconds (default 3600, max 86400).
+
+    Returns:
+        JSON string confirming lock acquisition or conflict.
+    """
+    await _reap_stale_locks()
+    cli = _canonicalize_cli(cli)
+    ttl = min(ttl, 86400)
+    lock_path = LOCKS_BASE / f"{domain}.lock"
+
+    def _acquire():
+        if lock_path.exists():
+            with open(lock_path) as f:
+                existing = json.load(f)
+            acquired_at = existing.get("acquired_at", 0)
+            lock_ttl = existing.get("ttl", 3600)
+            now = datetime.now(timezone.utc).timestamp()
+            if now <= acquired_at + lock_ttl:
+                return {"conflict": True, "holder": existing.get("cli"), "domain": domain}
+            lock_path.unlink()
+
+        tmp_path = lock_path.with_suffix(".lock.tmp")
+        lock_data = {
+            "cli": cli,
+            "domain": domain,
+            "acquired_at": datetime.now(timezone.utc).timestamp(),
+            "ttl": ttl,
+        }
+        with open(tmp_path, "w") as f:
+            json.dump(lock_data, f, indent=2)
+        os.replace(str(tmp_path), str(lock_path))
+        os.chmod(str(lock_path), 0o644)
+        return lock_data
+
+    result = await anyio.to_thread.run_sync(_acquire)
+    if "conflict" in result:
+        return json.dumps(result)
+    return json.dumps({
+        "status": "acquired",
+        "cli": cli,
+        "domain": domain,
+        "acquired_at": result["acquired_at"],
+        "ttl": ttl,
+    })
+
+
+@m9_safe("hivemind_workspace_lock_release")
+@mcp.tool()
+async def hivemind_workspace_lock_release(cli: str, domain: str) -> str:
+    """Release a workspace lock.
+
+    Only succeeds if `cli` matches the lock holder.
+
+    Args:
+        cli: The CLI identifier that owns the lock.
+        domain: The domain/resource to unlock.
+
+    Returns:
+        JSON string confirming release or error.
+    """
+    cli = _canonicalize_cli(cli)
+    lock_path = LOCKS_BASE / f"{domain}.lock"
+
+    def _release():
+        if not lock_path.exists():
+            return {"error": "No lock exists for this domain"}
+        with open(lock_path) as f:
+            existing = json.load(f)
+        if existing.get("cli") != cli:
+            return {"error": f"Lock held by '{existing.get('cli')}', not '{cli}'"}
+        lock_path.unlink()
+        return {"status": "released", "cli": cli, "domain": domain}
+
+    result = await anyio.to_thread.run_sync(_release)
+    return json.dumps(result)
+
+
+@m9_safe("hivemind_workspace_lock_check")
+@mcp.tool()
+async def hivemind_workspace_lock_check(domain: str) -> str:
+    """Check the status of a workspace lock.
+
+    Args:
+        domain: The domain/resource to check.
+
+    Returns:
+        JSON string containing lock status info or "no lock".
+    """
+    lock_path = LOCKS_BASE / f"{domain}.lock"
+    now = datetime.now(timezone.utc).timestamp()
+
+    def _check():
+        if not lock_path.exists():
+            return {"status": "no_lock", "domain": domain}
+        with open(lock_path) as f:
+            lock_data = json.load(f)
+        acquired_at = lock_data.get("acquired_at", 0)
+        lock_ttl = lock_data.get("ttl", 3600)
+        age = now - acquired_at
+        remaining = max(0, lock_ttl - age)
+        return {
+            "status": "locked",
+            "domain": domain,
+            "holder": lock_data.get("cli"),
+            "acquired_at": acquired_at,
+            "age_seconds": round(age, 1),
+            "ttl": lock_ttl,
+            "remaining_seconds": round(remaining, 1),
+            "expired": age > lock_ttl,
+        }
+
+    result = await anyio.to_thread.run_sync(_check)
+    return json.dumps(result, indent=2)
+
 
 # === D-P9: SOVEREIGN HANDOFF QUEUE ===
 # Formal contract layer for cross-agent handoffs. Replaces the previous
@@ -880,6 +1466,14 @@ HANDOFF_ACTIVE = HANDOFF_BASE / "active"
 HANDOFF_COMPLETED = HANDOFF_BASE / "completed"
 for d in (HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED):
     d.mkdir(parents=True, exist_ok=True)
+HANDOFF_STALE = HANDOFF_BASE / "stale"
+HANDOFF_ARCHIVE = HANDOFF_BASE / "archive"
+for d in (HANDOFF_STALE, HANDOFF_ARCHIVE):
+    d.mkdir(parents=True, exist_ok=True)
+
+# Workspace lock base directory
+LOCKS_BASE = PROJECT_ROOT / "data" / "coordination" / "locks"
+LOCKS_BASE.mkdir(parents=True, exist_ok=True)
 
 
 @m9_safe("hivemind_submit_handoff")
@@ -999,6 +1593,152 @@ async def hivemind_complete_handoff(packet_id: str, result: str = "") -> str:
     if not moved:
         return json.dumps({"error": f"Packet '{packet_id}' not found in active queue"})
     return json.dumps({"status": "completed", "packet_id": packet_id})
+
+
+@m9_safe("hivemind_reject_handoff")
+@mcp.tool()
+async def hivemind_reject_handoff(packet_id: str, reason: str) -> str:
+    """Reject a pending handoff packet.
+
+    Reads from pending/, marks as rejected, moves to stale/.
+
+    Args:
+        packet_id: The packet_id from hivemind_submit_handoff.
+        reason: Why the handoff was rejected.
+
+    Returns:
+        JSON string confirming rejection with trace info.
+    """
+    src = HANDOFF_PENDING / f"{packet_id}.json"
+    dst = HANDOFF_STALE / f"{packet_id}.json"
+
+    def _reject():
+        if not src.exists():
+            return None
+        with open(src) as f:
+            packet = json.load(f)
+        packet["status"] = "stale"
+        packet["rejected"] = True
+        packet["reason"] = reason
+        packet["rejected_at"] = datetime.now(timezone.utc).isoformat()
+        with open(dst, "w") as f:
+            fcntl.flock(f, fcntl.LOCK_EX)
+            json.dump(packet, f, indent=2)
+            fcntl.flock(f, fcntl.LOCK_UN)
+        src.unlink()
+        return packet
+
+    result = await anyio.to_thread.run_sync(_reject)
+    if not result:
+        return json.dumps({"error": f"Packet '{packet_id}' not found in pending queue"})
+    return json.dumps({
+        "status": "rejected",
+        "packet_id": packet_id,
+        "reason": reason,
+        "rejected_at": result["rejected_at"],
+        "trace_id": new_trace_id(),
+    })
+
+
+@m9_safe("hivemind_handoff_list")
+@mcp.tool()
+async def hivemind_handoff_list(status: str) -> str:
+    """List handoff packets by status.
+
+    Args:
+        status: One of "pending", "active", "completed", or "stale".
+
+    Returns:
+        JSON string listing packets and their metadata.
+    """
+    dir_map = {
+        "pending": HANDOFF_PENDING,
+        "active": HANDOFF_ACTIVE,
+        "completed": HANDOFF_COMPLETED,
+        "stale": HANDOFF_STALE,
+    }
+    handoff_dir = dir_map.get(status)
+    if not handoff_dir:
+        return json.dumps({"error": f"Invalid status '{status}'. Must be one of: {', '.join(dir_map)}"})
+
+    def _list():
+        packets = []
+        for f in sorted(handoff_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True):
+            try:
+                with open(f) as fh:
+                    packet = json.load(fh)
+                packets.append({
+                    "packet_id": packet.get("packet_id", f.stem),
+                    "target_cli": packet.get("target_cli", "unknown"),
+                    "source_cli": packet.get("source_cli", "unknown"),
+                    "task": packet.get("task", "")[:80],
+                    "status": packet.get("status", status),
+                    "priority": packet.get("priority", 0),
+                    "submitted_at": packet.get("submitted_at", ""),
+                    "accepted_by": packet.get("accepted_by", ""),
+                    "completed_at": packet.get("completed_at", ""),
+                    "rejected": packet.get("rejected", False),
+                })
+            except Exception as e:
+                logger.debug("Failed to read handoff %s: %s", f, e)
+        return packets
+
+    packets = await anyio.to_thread.run_sync(_list)
+    return json.dumps({
+        "status": status,
+        "count": len(packets),
+        "packets": packets,
+    }, indent=2)
+
+
+@m9_safe("hivemind_handoff_archive")
+@mcp.tool()
+async def hivemind_handoff_archive(packet_ids: List[str]) -> str:
+    """Batch archive completed handoff packets.
+
+    Moves specified packets from completed/ to archive/.
+
+    Args:
+        packet_ids: List of packet IDs to archive.
+
+    Returns:
+        JSON string with counts of success/failure.
+    """
+    def _archive():
+        succeeded = 0
+        failed = 0
+        failures = []
+        for pid in packet_ids:
+            src = HANDOFF_COMPLETED / f"{pid}.json"
+            if not src.exists():
+                failed += 1
+                failures.append({"packet_id": pid, "reason": "not found"})
+                continue
+            dst = HANDOFF_ARCHIVE / f"{pid}.json"
+            try:
+                with open(src) as f:
+                    packet = json.load(f)
+                packet["status"] = "archived"
+                packet["archived_at"] = datetime.now(timezone.utc).isoformat()
+                with open(dst, "w") as f:
+                    fcntl.flock(f, fcntl.LOCK_EX)
+                    json.dump(packet, f, indent=2)
+                    fcntl.flock(f, fcntl.LOCK_UN)
+                src.unlink()
+                succeeded += 1
+            except Exception as e:
+                failed += 1
+                failures.append({"packet_id": pid, "reason": str(e)})
+        return succeeded, failed, failures
+
+    succeeded, failed, failures = await anyio.to_thread.run_sync(_archive)
+    return json.dumps({
+        "status": "archived" if failed == 0 else "partial",
+        "total": len(packet_ids),
+        "succeeded": succeeded,
+        "failed": failed,
+        "failures": failures if failures else None,
+    }, indent=2)
 
 
 # === LIBRARY TOOLS (12) ===
@@ -1268,7 +2008,107 @@ async def library_discovery_status(job_id: str) -> str:
     return json.dumps(result, indent=2)
 
 
-# === MEMORY TOOLS (3) ===
+# === MEMORY TOOLS (6) ===
+# Sterile-named tools (P2 DataStore — Wave 1.5 P1)
+# These wrap MemoryStore methods with context params for MCP client compatibility.
+# The `omega_memory_*` tools above remain for backward compatibility.
+
+@m9_safe("memory_search")
+@tdp_wrap(source="memory_store", taint_level=1)
+@mcp.tool()
+async def memory_search(
+    ctx: Context,
+    query: str,
+    entity_name: str,
+    limit: int = 20,
+) -> str:
+    """Search across conversation history using FTS5 full-text search.
+    
+    Wraps MemoryStore.search_fts() — BM25 keyword ranking, no vector overhead.
+    Use this for exact-match and keyword-focused memory lookups.
+    
+    Args:
+        query: The search query (natural language or keywords).
+        entity_name: The sovereign owner of the memory (REQUIRED).
+        limit: Maximum number of results to return.
+        
+    Returns:
+        JSON string containing matched exchanges with scores and timestamps.
+    """
+    if not query.strip():
+        return json.dumps({"error": "Search query cannot be empty", "count": 0, "results": []})
+    memory_store = get_memory_store()
+    results = await memory_store.search_fts(query, entity_name, limit)
+    return json.dumps({
+        "query": query,
+        "entity": entity_name,
+        "count": len(results),
+        "results": results,
+    }, indent=2)
+
+
+@m9_safe("memory_get_history")
+@tdp_wrap(source="memory_store", taint_level=1)
+@mcp.tool()
+async def memory_get_history(
+    ctx: Context,
+    entity_name: str,
+    session_id: str,
+    limit: int = 20,
+) -> str:
+    """Retrieve conversation history for a specific entity and session.
+    
+    Wraps MemoryStore.get_history() — returns exchanges with roles and timestamps.
+    
+    Args:
+        entity_name: The sovereign owner of the memory (REQUIRED).
+        session_id: The session identifier (REQUIRED).
+        limit: Maximum number of exchanges to return.
+        
+    Returns:
+        JSON string containing the conversation exchanges.
+    """
+    if not session_id:
+        return json.dumps({"error": "session_id cannot be empty", "count": 0, "history": []})
+    memory_store = get_memory_store()
+    results = await memory_store.get_history(entity_name, session_id, limit)
+    return json.dumps({
+        "entity": entity_name,
+        "session_id": session_id,
+        "count": len(results),
+        "history": results,
+    }, indent=2)
+
+
+@m9_safe("memory_list_sessions")
+@tdp_wrap(source="memory_store", taint_level=1)
+@mcp.tool()
+async def memory_list_sessions(
+    ctx: Context,
+    entity_name: str,
+    limit: int = 20,
+) -> str:
+    """List recent sessions for an entity.
+    
+    Wraps MemoryStore.list_sessions() — returns active session identifiers.
+    
+    Args:
+        entity_name: The entity to list sessions for (REQUIRED).
+        limit: Maximum number of sessions to return.
+        
+    Returns:
+        JSON string containing the list of active sessions.
+    """
+    if not entity_name:
+        return json.dumps({"error": "entity_name cannot be empty", "count": 0, "sessions": []})
+    memory_store = get_memory_store()
+    results = await memory_store.list_sessions(entity_name, limit)
+    return json.dumps({
+        "entity_filter": entity_name,
+        "count": len(results),
+        "sessions": results,
+    }, indent=2)
+
 
 @m9_safe("omega_memory_search")
 @tdp_wrap(source="memory_store", taint_level=1)
@@ -1579,6 +2419,32 @@ async def get_omega_metrics() -> str:
         return json.dumps({"error": f"Failed to read metrics: {str(e)}"}, indent=2)
 
 
+@m9_safe("hivemind_get_metrics")
+@mcp.tool()
+async def hivemind_get_metrics() -> str:
+    """Get Hivemind coordination metrics (awareness, handoffs, locks, sessions).
+
+    [hi-observability-1] Returns real-time Hivemind metrics from
+    data/coordination/metrics.json. If the file does not exist (e.g.
+    because the pruning loop hasn't run yet), generates it on the fly.
+
+    Returns:
+        JSON string containing active agents, handoff queue counts,
+        workspace lock counts, extended sessions, and last pruning timestamp.
+    """
+    if not METRICS_PATH.exists():
+        metrics = await _write_metrics()
+        return json.dumps(metrics, indent=2)
+    try:
+        def _read():
+            with open(METRICS_PATH) as f:
+                return json.load(f)
+        metrics = await anyio.to_thread.run_sync(_read)
+        return json.dumps(metrics, indent=2)
+    except Exception as e:
+        return json.dumps({"error": f"Failed to read metrics: {str(e)}"}, indent=2)
+
+
 @m9_safe("check_models_directory")
 @mcp.tool()
 async def check_models_directory() -> str:
@@ -1731,7 +2597,7 @@ async def ics_render(
     Returns:
         JSON string containing the rendered ICS-S header.
     """
-    header = ics_render(
+    header = ics_render_logic(
         entity=entity,
         model=model,
         channel=channel,
@@ -1909,13 +2775,20 @@ hub_routes = [
 
 
 if __name__ == "__main__":
-    # Start background tasks in a daemon thread (clean up when server stops)
+    # Start background tasks in daemon threads (clean up when server stops)
     # Q3 fix: _AsyncThreadLock wraps threading.Lock — safe across event loops.
-    # The background thread runs its own anyio event loop; lock operations
+    # Each background thread runs its own anyio event loop; lock operations
     # bridge via anyio.to_thread.run_sync on a pool worker thread.
     bg_thread = threading.Thread(
         target=lambda: anyio.run(_prune_awareness_background),
         daemon=True,
     )
     bg_thread.start()
+
+    reaper_thread = threading.Thread(
+        target=lambda: anyio.run(_reaper_background),
+        daemon=True,
+    )
+    reaper_thread.start()
+
     run_mcp(mcp, custom_routes=hub_routes, modify_app=apply_security)
