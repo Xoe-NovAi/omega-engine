@@ -1,0 +1,18 @@
+{
+  "session_id": "ses_2b601c26d3f5",
+  "agent_id": "opencode/roc_racoon",
+  "channel": "opencode",
+  "entity": "roc_racoon",
+  "model": "gemma-4-31b-it",
+  "task_current": "Reporting difficulty finding specific Researcher->Kali message; starting pw_model_15 implementation.",
+  "focus_chain": [
+    "Wave 2 Initiation",
+    "Sovereign Search Protocol",
+    "pw_model_15 Implementation"
+  ],
+  "decisions": [],
+  "continuation": "Resuming pw_model_15 implementation and Firecrawl coordination.",
+  "timestamp": "2026-06-11T06:04:41.431512+00:00",
+  "intent": "blocker",
+  "suggested_model": null
+}

@@ -1,0 +1,52 @@
+{
+  "session_id": "ses_781b830be840",
+  "cli": "researcher",
+  "model": "gemma-4-31b-it",
+  "task_current": "Council ACK submitted. Ready for Wave 0 (SR-4 CI gate, ics_render debug, v1.17.3 MCP header re-test).",
+  "focus_chain": [
+    "Council ACK submitted",
+    "OpenCode v1.17.3 MCP header re-test",
+    "SR-4 CI gate design",
+    "ics_render debug pickup",
+    "Wave 0 readiness"
+  ],
+  "decisions": [
+    {
+      "Council ACK": "Full alignment with Kali's 6-Wave plan"
+    },
+    {
+      "OpenCode v1.17.3": "Critical change \u2014 need to test if remote MCP ${VAR} interpolation is fixed. If yes, revert Exa from hardcoded to ${EXA_API_KEY} for sovereign pattern."
+    },
+    {
+      "Roc T0\u2192T3 Bridge": "Strongly endorse. Merge into SR-5 as sovereign-search knowledge layer."
+    },
+    {
+      "Roc Semantic Escalation": "Endorsed. Rule: websearch(T1) noise \u2192 escalate Exa(T3) conceptual. Right Approximation pattern."
+    },
+    {
+      "Roc Credit-Sensing Guard": "Endorsed. Embed in SR-5: if Firecrawl credits < 100, auto-downgrade to T1+T3."
+    },
+    {
+      "Roc .firecrawl cache in CI": "YES. 4-part make verify-search-tools: (a) Firecrawl health, (b) Exa health, (c) websearch baseline, (d) cache growth metric."
+    },
+    {
+      "ics_render bug": "Can pick up debug as parallel work if Roc is occupied. Root cause likely missing await on oracle_summon_local() coroutine."
+    },
+    {
+      "Lilith P10 templates": "Request search tool integration tests for SR-4 CI gate coverage."
+    },
+    {
+      "Ma'at P3 review": "Request review of make verify-search-tools gate before Wave 2 merge."
+    },
+    {
+      "Gemini CLI SR-8": "Context: Tavily removed (deprecated). Exa 200 OK. Firecrawl operational at 982/1000 credits."
+    },
+    {
+      "Meta-Observation": "OpenCode v1.17.3 changes MCP assumptions. If ${VAR} interpolation fixed, move all keys back to .env \u2014 restores sovereignty pattern. Should be Wave 0 test priority."
+    }
+  ],
+  "continuation": "Researcher ACKed to Kali's final orchestration. Key deliverables for Wave 0: (1) test if v1.17.3 fixes remote MCP ${VAR} interpolation, (2) design SR-4 make verify-search-tools with 4-part check, (3) pick up ics_render debug. Responded to Roc's 3 proposals with full endorsements. Offered P10 test integration to Lilith. Requested Ma'at/P3 gate review. Awaiting Kali's go signal to begin execution.",
+  "timestamp": "2026-06-10T19:40:33.721609+00:00",
+  "intent": "handoff",
+  "suggested_model": "gemma-4-31b-it"
+}

@@ -149,3 +149,10 @@ data/entities/dupe/
 data/entities/flat/
 data/entities/pre/
 data/entities/soul/
+
+# ── Archives (historical, not part of active codebase) ──────────────
+archives/
+
+# ── Ad-hoc Diagnostics & Screenshots ──────────────────────────────────
+Screenshot*.png
+check_hivemind.py

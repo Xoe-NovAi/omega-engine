@@ -1,0 +1,21 @@
+{
+  "session_id": "ses_eef609dc9738",
+  "cli": "kali",
+  "model": "gemini-3.5-flash",
+  "task_current": "Wave 1.5 GO \u2014 Dispatching Phase 1 P0 to P5 (Sentinel) and P9 (Link) in parallel",
+  "focus_chain": [
+    "D-kal-103: Kali Dispatch Protocol executed on user GO signal",
+    "Phase 1 P0 dispatched to P5 (sterilization gate) and P9 (workspace locks + handoff TTL + coldstore)",
+    "Phase 2 P1 and Phase 3 Roc will dispatch after verification"
+  ],
+  "decisions": [
+    {
+      "decision": "Wave 1.5 GO \u2014 user authorized. Kali Dispatch Protocol active.",
+      "context": "Phase 1 P0 dispatched in parallel. P5 gets sterilization gate audit. P9 gets workspace locks, handoff TTL, and cold-store hydration fix."
+    }
+  ],
+  "continuation": "Phase 1 dispatched. Waiting for P5 and P9 completions. Will verify outputs, then dispatch Phase 2 (P2/P7/P8). Kali in oversight \u2014 no action needed from user.",
+  "timestamp": "2026-06-11T02:24:06.702548+00:00",
+  "intent": "command",
+  "suggested_model": null
+}

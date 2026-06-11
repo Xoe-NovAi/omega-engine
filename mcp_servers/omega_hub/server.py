@@ -81,6 +81,7 @@ SRC_DIR = PROJECT_ROOT / "src"
 sys.path.insert(0, str(SRC_DIR))
 from omega.oracle.oracle import Oracle
 from omega.oracle.entity_registry import EntityRegistry
+from omega.oracle.sovereign_search_service import SovereignSearchService
 from omega.oracle.hierarchy import SovereignHierarchy
 from omega.oracle.security import tdp_wrap
 
@@ -146,6 +147,28 @@ discovery = DiscoveryOrchestrator()
 
 # Research engine (consolidated from omega-research MCP)
 research_engine = ResearchEngine(library=library, indexer=indexer)
+
+# Sovereign Search Service (T0-T4)
+def _load_search_keys():
+    try:
+        with open(PROJECT_ROOT / "opencode.json") as f:
+            config = json.load(f)
+        return (
+            config.get("mcp", {}).get("firecrawl", {}).get("environment", {}).get("FIRECRAWL_API_KEY"),
+            config.get("mcp", {}).get("exa", {}).get("headers", {}).get("x-api-key")
+        )
+    except Exception as e:
+        logger.error(f"Failed to load search keys: {e}")
+        return None, None
+
+fc_key, exa_key = _load_search_keys()
+sovereign_search = SovereignSearchService(
+    memory_store=get_memory_store(),
+    model_gateway=ModelGateway(),
+    indexer=indexer,
+    firecrawl_key=fc_key,
+    exa_key=exa_key
+)
 
 
 # --- HIVEMIND STATE ---
@@ -667,7 +690,7 @@ async def oracle_assess_intent(query: str) -> str:
 @mcp.tool()
 async def oracle_discover_entity(query: str) -> str:
     """Find the best entity in the pantheon to handle a specific task or domain.
-
+    
     Args:
         query: A description of the task or a domain keyword.
     """
@@ -681,6 +704,22 @@ async def oracle_discover_entity(query: str) -> str:
         "domains": entity.domains,
         "reason": f"Matched domain via query: {query}"
     }, indent=2)
+
+@m9_safe("sovereign_search")
+@mcp.tool()
+async def sovereign_search(query: str, entity_name: str = "SOPHIA", limit: int = 10) -> str:
+    """Execute the 5-Tier Sovereign Search Protocol (T0-T4).
+    
+    Bypasses the broken OpenCode local MCP bridge by using direct API providers.
+    
+    Args:
+        query: The search query.
+        entity_name: The entity context for T0/T3 search.
+        limit: Maximum results per tier.
+    """
+    result = await sovereign_search.search(query, entity_name, limit=limit)
+    return json.dumps(result, indent=2)
+
 
 
 @m9_safe("delegate_task")
@@ -1919,9 +1958,25 @@ async def library_search(query: str, domain: str = "", limit: int = 20) -> str:
         return json.dumps({"error": "Search query cannot be empty", "count": 0, "results": []})
     if len(query) > 500:
         return json.dumps({"error": "Query exceeds 500-char limit", "count": 0, "results": []})
-    domain_filter = domain if domain else None
-    results = await indexer.hybrid_search(query, domain=domain_filter, limit=limit)
-    return json.dumps({"query": query, "count": len(results), "results": results}, indent=2, default=str)
+    # P1-C: MCP-layer input guards (M-A4 compliance fix, defense-in-depth)
+    if not query.strip():
+        return json.dumps({"error": "Search query cannot be empty", "count": 0, "results": []})
+    if len(query) > 500:
+        return json.dumps({"error": "Query exceeds 500-char limit", "count": 0, "results": []})
+    
+    # Sovereign Search Integration: Use the 5-Tier Protocol instead of raw hybrid search
+    search_service = SovereignSearchService()
+    report = await search_service.search(query, entity_name=domain if domain else "general", limit=limit)
+    
+    return json.dumps({
+        "query": query, 
+        "status": report["status"],
+        "final_tier": report["final_tier"],
+        "primary_finding": report["primary_finding"],
+        "evidence": report["evidence"],
+        "fallback_log": report["fallback_log"],
+        "results": report["primary_finding"] if isinstance(report["primary_finding"], list) else [report["primary_finding"]]
+    }, indent=2, default=str)
 
 
 @m9_safe("library_get_document")
@@ -2628,9 +2683,9 @@ async def observability_log_boundary_violation(tool_name: str, reason: str, enti
 
 # === ICS TOOLS (1) ===
 
-@m9_safe("ics_render")
+@m9_safe("ics_render_header")
 @mcp.tool()
-async def ics_render(
+async def ics_render_header(
     entity: str,
     model: Optional[str] = None,
     channel: str = "opencode",

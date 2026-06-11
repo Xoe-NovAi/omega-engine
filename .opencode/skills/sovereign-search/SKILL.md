@@ -1,41 +1,63 @@
 ---
 name: "sovereign-search"
-description: "Intelligent search orchestration across Exa, Tavily, and Serper.dev to optimize for depth and verification."
+description: "Intelligent search orchestration across local cache, websearch, Firecrawl, Omega Hub, and Exa to optimize for depth, cost, and verification."
 ---
 
-# Sovereign Search Fabric Skill
+# 🔱 Sovereign Search Fabric Skill (v2.0)
 
-Use this skill when you need to perform high-quality web research. To ensure absolute resilience against API key expiration or MCP transport failures, the search fabric uses a **strict fallback hierarchy** prioritizing built-in, local-first, and highly stable tools.
+This skill implements the **Sovereign Search Protocol (SSP)**. It replaces ad-hoc tool selection with a mandatory, cost-aware, failure-resilient pipeline. Agents MUST follow this hierarchy to ensure absolute resilience and credit efficiency.
 
-## Search Provider Matrix (Hardened)
+## 🛡️ The 5-Tier Sovereign Search Protocol
 
-| Priority | Provider / Tool | Strength | Use Case | Strategy |
-|---|---|---|---|---|
-| **1 (Primary)** | **`websearch`** | Built-in, Zero-Config | Fast, general-purpose web search, recency, and broad discovery | **Default fallback** for all queries. Always try this first if specialized MCPs fail. |
-| **2 (Primary)** | **`firecrawl`** | Full-Page Scrape/Crawl | Deep content extraction, sitemaps, and reading full pages | Use `firecrawl_scrape` or `firecrawl_search` for comprehensive page-level data. |
-| **3 (Secondary)** | **Exa (MCP)** | Neural/Semantic Search | Technical papers, deep research, "similar to this" queries | **Currently Restricted (401)**. Use `websearch` $\rightarrow$ `firecrawl` as the primary path. |
-| **4 (Secondary)** | **Tavily/Serper (MCP)** | AI-Optimized Retrieval | High-precision facts and curated summaries | **Disabled**. Do not attempt. |
+Agents MUST execute search operations sequentially. Do not skip tiers.
 
-## Workflow
+| Tier | Tool | Cost | Use Case | Action |
+| :--- | :--- | :--- | :--- | :--- |
+| **T0** | **Local Cache** | Free | `.firecrawl/` directory, Omega Hub offline library | **Check first.** If hit $\rightarrow$ return. If miss $\rightarrow$ T1. |
+| **T1** | **`websearch`** | Free | General facts, recency, broad discovery | **Primary tool.** If sufficient $\rightarrow$ return. If need full content $\rightarrow$ T2. |
+| **T2** | **Firecrawl** | Credits | Full-page scrape, bulk crawl, structured JSON | **Deep extraction.** If 402 $\rightarrow$ T3. If success $\rightarrow$ cache to T0. |
+| **T3** | **Omega Hub** | Free | Scholarly/technical deep dives, indexed archives | **Local Gnosis.** Use `hub.library_research(depth=1-4)`. If miss $\rightarrow$ T4. |
+| **T4** | **Exa MCP** | API Key | Neural/semantic search, "similar to this" queries | **High-fidelity.** Final escalation. If 401 $\rightarrow$ Log to Hivemind. |
 
-### Step 1: Intent Analysis
-Analyze the user's query to determine the optimal search focus:
-- **General/Recency/Facts**: "What is the latest version of X?", "How do I fix Y?" $\rightarrow$ Use **`websearch`** immediately.
-- **Deep Scrape/Crawl**: "Get the full content of X", "Crawl the docs of Y" $\rightarrow$ Use **`firecrawl`** immediately.
-- **Academic/Technical**: "Find research papers on X" $\rightarrow$ Attempt **Exa**, fall back to **`websearch`** if 401 occurs.
+## ⚠️ Credit-Sensing Guard (Mandatory)
+Before initiating any **Tier 2 (Firecrawl)** operation:
+1.  **Check Status**: Call `firecrawl --status` via bash.
+2.  **Evaluate**:
+    - **Credits > 100**: Proceed with T2.
+    - **Credits < 100**: **AUTO-DOWNGRADE**. Skip T2 and escalate directly to T3 (Omega Hub) or T1 (`websearch`).
+3.  **Log**: Post a `[CREDIT-LOW]` warning to the Hivemind if a downgrade occurs.
 
-### Step 2: Mandatory Execution Gate (No Lazy Responses)
-- **The Mandate**: The agent **MUST** perform at least one active tool call (`websearch` or `firecrawl`) for any query requiring factual, technical, or recent information.
-- **Anti-Laziness Rule**: Relying solely on internal parametric weights for research queries is a **violation of the Temple Grade standard**. If a tool fails, try another. Do not give up.
+## 📉 Error Handling Matrix
+When a tool returns an error, follow this matrix immediately.
 
-### Step 3: Fallback & Recovery
-If a specialized MCP tool (like Exa or Tavily) returns a `401 Unauthorized`, `Connection Error`, or `Timeout`:
-1.  **Do not crash or report failure.**
-2.  Immediately fall back to the built-in **`websearch`** tool.
-3.  Use **`firecrawl_scrape`** or **`webfetch`** to read the top URLs returned by `websearch`.
+| Error | Meaning | Immediate Action | Escalation Path |
+| :--- | :--- | :--- | :--- |
+| **401** | Unauthorized | Fall back to T1 (`websearch`) | Log to Hivemind $\rightarrow$ Kali |
+| **402** | Credits Exhausted | Fall back to T1 $\rightarrow$ T3 | Wait for reset or upgrade |
+| **429** | Rate Limited | Exponential backoff (5s $\rightarrow$ 15s $\rightarrow$ 30s) | Track in observability |
+| **500** | Server Error | Retry once after 2s $\rightarrow$ Fall back to T1 | Log trace in Hivemind |
+| **Timeout** | No Response | Retry with timeout=60s $\rightarrow$ Fall back to T1 | Log to Hivemind |
 
-### Step 4: Synthesis & Output
-Present the findings as a **Sovereign Search Report**:
+**Mandatory Error Log Format**:
+`[SEARCH-ERROR] tool={tool_name} error={error_code} tier={0-4} fallback={fallback_tool} timestamp={ISO8601}`
+
+## 🚀 Execution Workflow
+
+### 1. Intent Analysis
+- **Factual/Recent**: $\rightarrow$ T1 (`websearch`)
+- **Deep Content/Crawl**: $\rightarrow$ T0 $\rightarrow$ T1 $\rightarrow$ T2 (if credits > 100)
+- **Academic/Technical**: $\rightarrow$ T0 $\rightarrow$ T1 $\rightarrow$ T3 $\rightarrow$ T4
+
+### 2. The "No Lazy Response" Mandate
+Relying solely on internal parametric weights for research queries is a **violation of the Temple Grade standard**.
+- **Requirement**: Perform at least one active tool call for any factual/technical query.
+- **Failure Path**: If all tools fail $\rightarrow$ Log failure chain to Hivemind $\rightarrow$ Respond with "Parametric Knowledge (Unverified)".
+
+### 3. Caching Protocol
+- **Before T2+**: Check `.firecrawl/{site}-{path}.md`.
+- **After T2+**: Save result to `.firecrawl/{site}-{path}.md`.
+
+## 📝 Output Format: Sovereign Search Report
 - **Primary Finding**: Concise, direct answer.
-- **Supporting Evidence**: Bullet points with citations (Tool $\rightarrow$ URL).
-- **Fallback Log**: Note if any primary tools failed and how the fallback was handled.
+- **Supporting Evidence**: Bullet points with citations (Tier $\rightarrow$ Tool $\rightarrow$ URL).
+- **Fallback Log**: Note any tool failures and the escalation path taken.

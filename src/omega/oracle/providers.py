@@ -2,6 +2,7 @@
 import logging
 import httpx
 import os
+from concurrent.futures import ThreadPoolExecutor
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 from ..errors import (
@@ -50,8 +51,12 @@ class GoogleAIProvider(BaseProvider):
     async def is_available(self) -> bool:
         return bool(os.environ.get("GOOGLE_API_KEY"))
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None) -> Optional[str]:
-        api_key = os.environ.get("GOOGLE_API_KEY")
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, api_key: Optional[str] = None) -> Optional[str]:
+        # Use provided api_key or fallback to environment
+        key = api_key or os.environ.get("GOOGLE_API_KEY")
+        if not key:
+            raise ProviderAuthError(provider="google", message="No Google API key provided or found in environment", trace_id=trace_id)
+
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
         
         payload = {
@@ -69,7 +74,7 @@ class GoogleAIProvider(BaseProvider):
                 response = await client.post(
                     url, 
                     json=payload, 
-                    headers={"x-goog-api-key": api_key}
+                    headers={"x-goog-api-key": key}
                 )
                 
                 if response.status_code == 429:
@@ -103,6 +108,51 @@ class GoogleAIProvider(BaseProvider):
         except Exception as e:
             logger.error(f"Unexpected Google API failure: {e}", exc_info=True)
             raise ProviderError(provider="google", message=f"Unexpected Google API failure: {e}", trace_id=trace_id, raw_error=e) from e
+
+class GoogleKeyPoolProvider(BaseProvider):
+    """Google KeyPool provider for high-throughput parallel sensing.
+    
+    Implements round-robin rotation across multiple API keys to bypass rate limits.
+    [Sovereign Workhorse Protocol: pw_model_15]
+    """
+    def __init__(self, name: str, config: Dict[str, Any]):
+        super().__init__(name, config)
+        self._keys = []
+        for key_cfg in config.get("keys", []):
+            env_var = key_cfg.get("env")
+            if env_var:
+                val = os.environ.get(env_var)
+                if val:
+                    self._keys.append(val)
+        
+        if not self._keys:
+            logger.warning(f"GoogleKeyPoolProvider {name} initialized with no valid keys.")
+            
+        self._current_index = 0
+        self._inner = GoogleAIProvider(name, config)
+
+    async def is_available(self) -> bool:
+        return len(self._keys) > 0
+
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None) -> Optional[str]:
+        if not self._keys:
+            raise ProviderUnavailableError(provider=self.name, message="No API keys available in pool", trace_id=trace_id)
+        
+        # Round-robin selection
+        api_key = self._keys[self._current_index]
+        self._current_index = (self._current_index + 1) % len(self._keys)
+        
+        # Delegate to GoogleAIProvider with the selected key
+        return await self._inner.generate(
+            model=model, 
+            system_prompt=system_prompt, 
+            user_query=user_query, 
+            temperature=temperature, 
+            max_tokens=max_tokens, 
+            trace_id=trace_id, 
+            session_id=session_id,
+            api_key=api_key
+        )
 
 class LocallmsterProvider(BaseProvider):
     """LM Studio headless server provider."""
@@ -330,6 +380,8 @@ class NativeGGUFProvider(BaseProvider):
         self._loaded_ctx = 0
         self._loaded_model = None
         self._affinity_applied = False
+        # Isolated pool for synchronous C-calls to prevent anyio global pool exhaustion
+        self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="gguf_inference")
 
     async def is_available(self) -> bool:
         """Check if llama-cpp-python is installed and model path exists."""
@@ -530,7 +582,11 @@ class NativeGGUFProvider(BaseProvider):
             logger.debug("Session-aware inference [session_id=%s, trace_id=%s]", session_id, trace_id)
         
         try:
-            response = await anyio.to_thread.run_sync(
+            # Use isolated executor for synchronous C-calls to prevent global pool exhaustion
+            import asyncio
+            loop = asyncio.get_running_loop()
+            response = await loop.run_in_executor(
+                self._executor,
                 lambda: self.llm(
                     prompt,
                     max_tokens=max_tokens,
@@ -619,3 +675,7 @@ class NativeGGUFProvider(BaseProvider):
             "kv_cache": f"k={self._type_k},v={self._type_v}",
             "affinity_applied": self._affinity_applied,
         }
+
+    def shutdown(self):
+        """Cleanly shut down the isolated inference executor."""
+        self._executor.shutdown(wait=False)

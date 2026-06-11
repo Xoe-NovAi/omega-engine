@@ -1,9 +1,9 @@
-# 📊 Sovereign Model Catalog – May 2026
-# ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b ⬡ opencode ⬡ model_db ⬡ CURRENT-MODELS
+# 📊 Sovereign Model Catalog – June 2026 (Updated)
+# ⬡ OMEGA ⬡ KALI ⬡ big-pickle ⬡ opencode ⬡ model_db ⬡ CURRENT-MODELS
 
-**AP Token**: `AP-CURRENT-MODELS-v1.0.0`
-**Last Verified**: 2026-05-17
-**Status**: PURIFIED
+**AP Token**: `AP-CURRENT-MODELS-v2.0.0`
+**Last Verified**: 2026-06-10
+**Status**: LIVE — Model Intelligence Layer active
 
 | Tier | Model ID | Provider | Context | Capabilities | Notes |
 |------|----------|----------|---------|--------------|-------|
@@ -14,7 +14,7 @@
 | **T3** | `minimax/minimax-m2.5:free` | OpenRouter | 197K | Creative, Coding | Exceptional for long-form synthesis. |
 | **T3** | `llama-3.3-70b` | SambaNova | 128K | Reasoning, Instruction | 10-30 RPM. High reliability. |
 | **T2** | `google/gemma-4-26b-a4b-it:free` | OpenRouter | 262K | Balanced, Vision | Optimized for efficiency. |
-| **T2** | `opencode/big-pickle` | Zen | 128K | Coding, Review | Zen-exclusive for complex programming. |
+| **T2** | `opencode/big-pickle` | **Zen (stealth)** | **200K** | **Tool calling, Reasoning, Coding** | **⚠️ Identity tracking active. Currently DeepSeek V4 Flash alias. CLI-exclusive.** |
 | **T2** | `qwen3.6-plus-free` | Zen | 128K | General, Fast | Zen-optimized for non-sensitive projects. |
 | **T2** | `mistral-small-3.2-24b` | Together | 32K | Concise, Logic | Fast reasoning at scale. |
 | **T1** | `qwen3-1.7b` | Together | 32K | Reflex, Fast | Near-instant response for simple tasks. |
@@ -67,23 +67,36 @@ models:
     last_verified_free: "2026-05-17"
 
   opencode/big-pickle:
-    provider: zen
-    context_window: 131072
+    provider: opencode-zen
+    context_window: 200000
     free_tier: true
     capabilities:
-      reasoning: 0.85
+      reasoning: 0.88
       code_generation: 0.94
       knowledge: 0.80
       creative: 0.70
+      tool_use: true
+      structured_output: true
     cost_per_1k_tokens_usd: 0.0
     latency_p99_ms: 3200
     uptime_percent: 99.0
     community_rating: "4.5/5.0"
     community_notes:
-      - "Optimized for heavy coding tasks."
+      - "STEALTH MODEL — identity may swap without notice. Current: DeepSeek V4 Flash. Originally: GLM-4.6. Tracked in R_BIG_PICKLE_IDENTITY_20260610.md"
+      - "CLI-exclusive — NOT routable from Engine provider fabric. Use deepseek/deepseek-v4-flash for equivalent."
       - "Limited-time free; prioritize for dev work."
-    last_updated: "2026-05-17"
-    last_verified_free: "2026-05-17"
+      - "Stability: known AI_APICallError regression (GitHub #28141, May 2026)"
+    routing:
+      engine_routable: false
+      opencode_cli_only: true
+      recommended_engine_alternative: "deepseek/deepseek-v4-flash"
+    identity_history:
+      original: "glm-4.6"
+      current: "deepseek-v4-flash"
+      swap_detected: true
+      last_verified: "2026-06-10"
+    last_updated: "2026-06-10"
+    last_verified_free: "2026-06-10"
 
   qwen3-1.7b:
     provider: together

@@ -35,6 +35,7 @@ from .memory.providers import (
 )
 from .memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
 from .memory.fts_index import ConversationFTSIndex
+from .memory.embeddings import EmbeddingManager, SovereignFallbackEmbeddingProvider
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +85,7 @@ class MemoryStore:
 
     ZONEID = ZONEID_MEMORY
 
-    def __init__(self, providers: Optional[List[StorageProvider]] = None, vector_store: Optional[IVectorStoreAdapter] = None):
+    def __init__(self, providers: Optional[List[StorageProvider]] = None, vector_store: Optional[IVectorStoreAdapter] = None, embedding_manager: Optional[EmbeddingManager] = None):
         self._hot: Dict[str, OrderedDict] = {}
         # [id-soft: doom-1993] Lazy Deletion — tombstone registry
         # Maps cache_key -> time.time() when tombstoned
@@ -123,7 +124,7 @@ class MemoryStore:
                 
             # 3. InMemory Provider (Cold/Volatile Fallback)
             self.providers.append(InMemoryStorageProvider())
-
+        
         if vector_store is not None:
             self.vector_store = vector_store
         else:
@@ -131,6 +132,11 @@ class MemoryStore:
             # Health check is performed lazily during first use
             self.vector_store = QdrantAdapter()
 
+        if embedding_manager is not None:
+            self.embedding_manager = embedding_manager
+        else:
+            self.embedding_manager = EmbeddingManager([SovereignFallbackEmbeddingProvider()])
+        
         # [Horizon 2: MiMo] FTS5 Search Index
         self.fts = ConversationFTSIndex(_get_memory_dir() / "fts_memory.db")
         self.fts.initialize()
@@ -238,7 +244,7 @@ class MemoryStore:
                 nonlocal vec_results
                 vector_adapter = await self._ensure_vector_store()
                 if vector_adapter:
-                    embedding = self._compute_simple_embedding(query)
+                    embedding = await self.embedding_manager.get_embedding(query)
                     vec_results = await vector_adapter.query(
                         entity_name=entity_name,
                         vector=embedding,
@@ -417,7 +423,7 @@ class MemoryStore:
         if vector_adapter:
             try:
                 combined_text = f"{user_message} {response}"
-                embedding = self._compute_simple_embedding(combined_text)
+                embedding = await self.embedding_manager.get_embedding(combined_text)
                 await vector_adapter.upsert(
                     entity_name=entity_name,
                     vector=embedding,

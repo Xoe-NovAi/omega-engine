@@ -1,0 +1,31 @@
+{
+  "session_id": "ses_a9768a7914ca",
+  "cli": "kali",
+  "model": "deepseek-v4-flash",
+  "task_current": "Roc Mnemosyne synthesis complete \u2014 integrating handoff TTL + memory tools into sprint plan",
+  "focus_chain": [
+    "Roc Racoon deep-dive complete: 33 files read, 400-line report written. Verdict: 13-sphere Mnemosyne archive is EMPTY stubs \u2014 no data to import.",
+    "Engine MemoryStore already has 90% of what Mnemosyne/Memory-Bank offered. Real gap is wiring layer: 3 MCP memory tools + context hydration.",
+    "Handoff TTL policy designed: 24h pending \u2192 stale/, 48h active \u2192 stale/, completed/ archived at 7d. Roc Racoon (Gemma 4 31B) reviews stale handoffs weekly.",
+    "5 new P1 items added: memory_search, memory_get_history, memory_list_sessions, hivemind_get_entity_context, omega entity-workspace-status CLI",
+    "Kali design complete: prj_hivemind_hardening now has 24 items (10 P0, 13 P1, 2 P2). prj_mnemosyne_integration created (5 items, P1)."
+  ],
+  "decisions": [
+    {
+      "decision": "Mnemosyne 13-sphere archive: NO IMPORT. All 13 spheres are empty stubs (DORMANT, 0 XP). No data exists worth porting. The philosophical overlay is already extracted in Roc's treasure maps.",
+      "context": "Roc Racoon verified all 13 sphere directories. Each contains a single 136-140 byte DORMANT shadow_memory.json with zero events."
+    },
+    {
+      "decision": "Memory-Bank wiring is GO: 3 MCP tools + context hydration. The engine's MemoryStore already has FTS5, hybrid RRF search, IVectorStoreAdapter, and archive cleanup. No legacy code porting needed.",
+      "context": "Roc's verdict from 33-file analysis. Engine has 90%+ of what legacy systems offered. The gap is the Hivemind-MemoryStore interface."
+    },
+    {
+      "decision": "Handoff TTL policy: pending 24h \u2192 stale, active 48h \u2192 stale, completed 7d \u2192 archive. Roc Racoon (Gemma 4 31B) does weekly stale review. 27 stuck packets are the first batch.",
+      "context": "Current: 21 pending, 6 active, 2 completed. The 27 stuck packets will be the first batch Roc reviews in the inaugural stale cycle."
+    }
+  ],
+  "continuation": "Roc Racoon's full report at data/entities/roc_racoon/workspace/MNEMOSYNE_BANK_FULL_REPORT_20260611.md. The key insight: \"The Mnemosyne integration is NOT about porting legacy code. It's about wiring what already exists into the Hivemind.\" The 13-sphere archive is an architectural artifact with no data. The vaults are empty persona stubs. The code worth importing is zero lines. What's needed is 220 lines of MCP tools and 2 CLI commands. Phases A+B+C = ~4h core work. Handoff TTL reaper uses the same pruning loop as awareness \u2014 natural extension of existing infrastructure.",
+  "timestamp": "2026-06-11T01:26:12.920329+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

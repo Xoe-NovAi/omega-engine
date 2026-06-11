@@ -5,6 +5,8 @@
   "task": "S2-C Knowledge Sovereignty: AUTO-EMBED + SOVEREIGN DEBT PRIORITIZATION. Two-part synthesis. PART 1 (1.5hr): Knowledge layer sovereignty. (1) Wire auto-embedding on knowledge promotion: when topics move workspace/ \u2192 knowledge/, generate Qdrant vectors. The FTS5 BM25 index is live (Gemini CLI), Qdrant UVA is live (Roc). Your job: the bridge that triggers embedding on promotion. (2) Add vector-based cross-references in src/omega/library/crossref.py \u2014 NEW vector path alongside EXISTING keyword path (dual-path, no breaking change). (3) Write scripts/verify_knowledge_sovereign.py to confirm all INDEX.yaml entries have vector embeddings. (4) Write docs/architecture/SOVEREIGN_DATA_FLOW.md. PART 2 (30 min): Synthesize the FULL Sovereign Debt picture into a prioritized remediation queue: Quality T1 (AP tokens) + T3 (coverage), Sentinel auth (CRITICAL) + CORS (MED) + rate-limit (MED). Output: data/workbench/SOVEREIGN_DEBT_TRIAGE_SYNTHESIS_20260609.md. Run make test after PART 1. Target 2 hours.",
   "context": "COMPLETE PREREQUISITES: Gemini CLI FTS5 BM25 index LIVE (src/omega/memory/fts_index.py). Roc Racoon Qdrant UVA + IVectorStoreAdapter LIVE. S2-A TDP wiring DONE (Ma'at). S2-C Cognitive Debt Triage base report DONE (Roc at S2C_DEBT_TRIAGE.md). Kali Firecrawl hardening DONE (Map\u2192Scrape\u2192Interact protocol, 26 leaked keys scrubbed). Sentinel auth hardening IN PROGRESS. Researcher Show HN pitch STAGED. Tests at 322/322. Knowledge directory: data/entities/*/knowledge/INDEX.yaml has topics:[] \u2014 your auto-embed bridges this gap. Sovereign Debt inventory: Sentinel auth (CRITICAL), Sentinel CORS (MED), Sentinel rate-limit (MED), Quality T1 AP tokens, Quality T3 coverage. Your triage synthesizes all into one prioritized queue.",
   "priority": 2,
-  "status": "pending",
-  "submitted_at": "2026-06-09T17:08:58.809750+00:00"
+  "status": "stale",
+  "submitted_at": "2026-06-09T17:08:58.809750+00:00",
+  "reaped_at": "2026-06-11T03:54:28.648828+00:00",
+  "ttl_expired": true
 }

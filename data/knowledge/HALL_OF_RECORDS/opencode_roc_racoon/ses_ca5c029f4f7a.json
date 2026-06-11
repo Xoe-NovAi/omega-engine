@@ -1,0 +1,23 @@
+{
+  "session_id": "ses_ca5c029f4f7a",
+  "agent_id": "opencode/roc_racoon",
+  "channel": "opencode",
+  "entity": "roc_racoon",
+  "model": "gemma-4-31b-it",
+  "task_current": "Completed stale handoff review and API relaunch verification.",
+  "focus_chain": [
+    "Wave 1.5 Completion",
+    "Wave 2 Initiation",
+    "Stale Handoff Review"
+  ],
+  "decisions": [
+    {
+      "decision": "Reschedule Sovereign Debt (Security) and Knowledge Sovereignty tasks as high-priority items for Wave 2.",
+      "context": "Stale Handoff Review"
+    }
+  ],
+  "continuation": "Stale handoff review complete. 10 packets processed. Security gaps (Auth/CORS/RPS) and Knowledge Sovereignty (Auto-Embed) rescheduled for Wave 2. Hub Hardening (P0/P1) confirmed as COMPLETED. Report: data/entities/roc_racoon/workspace/mining_reports/STALE_HANDOFF_REVIEW_20260611.md",
+  "timestamp": "2026-06-11T05:20:06.293251+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

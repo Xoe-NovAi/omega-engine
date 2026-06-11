@@ -1,0 +1,17 @@
+{
+  "session_id": "ses_6a73f98ddc8d",
+  "agent_id": "opencode/maat",
+  "channel": "opencode",
+  "entity": "maat",
+  "model": "gemma-4-31b-it",
+  "task_current": "Requesting foundational research for H3-C2 from @researcher.",
+  "focus_chain": [
+    "Horizon 3: Cognitive Loops",
+    "H3-C2 Skeptical Verifier"
+  ],
+  "decisions": [],
+  "continuation": "Handoff submitted to @researcher for H3-C2 foundational research. Requested deep dives into NLI models, Two-Source Rule implementation, and contradiction resolution. Standing by for the research report before proceeding to execution.",
+  "timestamp": "2026-06-11T05:45:53.842731+00:00",
+  "intent": "handoff",
+  "suggested_model": null
+}

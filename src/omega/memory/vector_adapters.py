@@ -280,6 +280,8 @@ class QdrantAdapter(IVectorStoreAdapter):
             raise ProviderError("qdrant", f"Qdrant query failed: {e}", raw_error=e) from e
 
     async def delete(self, entity_name: str, ids: List[str]) -> bool:
+        if not ids:
+            return False
         try:
             def _sync_delete():
                 self.client.delete(

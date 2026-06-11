@@ -1,0 +1,12 @@
+{
+  "packet_id": "ho_e6e61f19ce92",
+  "target_cli": "kali",
+  "source_cli": "cli_gemini",
+  "task": "Verify and redact 40+ leaked API keys in documentation and chat history archives.",
+  "context": "Deep scan findings: 40+ leaked API keys identified.\nPattern matches for 'sk-', 'fc-', 'ghp_', 'AIza'.\nLocations:\n- .env (Staged/Local)\n- docs/strategy/STATUS_REPORT_2026_05_19.md\n- archives/handoffs/handoff_overseer_to_builder_tool_remediation_and_embeddings_research.md\n- docs/history/exported-opencode-chat-sessions/ (Multiple session files)\n- docs/archives/open-code-omega-engine-chat-session-ses_1dc0.md\n- opencode.json\n- memory_bank/ACCOUNT-REGISTRY.yaml (referenced in archives)\n\nSpecific key patterns confirmed:\n- OpenRouter: sk-or-v1-...\n- OpenAI: sk-...\n- Google: AIza...\n- Firecrawl: fc-...\n\nKali is already redacting; this handoff serves as the 'hit list' for verification.",
+  "priority": 2,
+  "status": "stale",
+  "submitted_at": "2026-06-09T15:55:40.144401+00:00",
+  "reaped_at": "2026-06-11T03:54:28.648828+00:00",
+  "ttl_expired": true
+}

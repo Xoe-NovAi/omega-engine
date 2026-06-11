@@ -100,6 +100,7 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo ""
 	@echo "$(COLOR_BOLD)🧹 MAINTENANCE$(COLOR_NC)"
 	@echo "  $(COLOR_CYAN)make clean$(COLOR_NC)        🧹 Clean Python cache"
+	@echo "  $(COLOR_CYAN)make firecrawl-status$(COLOR_NC) 📊 Check Firecrawl credits & status"
 	@echo "  $(COLOR_CYAN)make doctor$(COLOR_NC)       🩺 Full diagnosis"
 	@echo "  $(COLOR_CYAN)make setup$(COLOR_NC)        🚀 Install dependencies"
 	@echo "  $(COLOR_CYAN)make bootstrap$(COLOR_NC)    🔱 Full system bootstrap"
@@ -232,7 +233,7 @@ wad-reset: ## 🔄 Reset to reference IWAD (_omega_default)
 # 🚀 CORE COMMANDS
 # ============================================================================
 
-.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank wad-load wad-status wad-list audit-no-rag-v1 setup bootstrap demo test test-cov test-oracle-bootstrap mcp-check lint typecheck guard clean doctor verify-pending verify-stale verify-mining verify-rollup verify-cleanup verify-status knowledge-index knowledge-flow
+.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank wad-load wad-status wad-list audit-no-rag-v1 setup bootstrap demo test test-cov test-oracle-bootstrap mcp-check lint typecheck guard clean doctor verify-pending verify-stale verify-mining verify-rollup verify-cleanup verify-status knowledge-index knowledge-flow verify-search-tools firecrawl-status
 
 help: ## 📚 Show this help
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z_-]+:.*## / {printf "  $(COLOR_CYAN)%-20s$(COLOR_NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -351,6 +352,8 @@ rag-reindex: ## 🔄 Reindex all documents in Qdrant
 # 🧪 TESTING & QUALITY
 # ============================================================================
 
+.PHONY: test test-cov test-oracle-bootstrap mcp-check lint typecheck guard verify-all
+
 guard: ## 🛡️ Run the Sovereign UID Guard to fix permission drift
 	@echo "$(COLOR_CYAN)🛡️  Running Sovereign UID Guard...$(COLOR_NC)"
 	@bash scripts/uid_guard.sh
@@ -358,6 +361,9 @@ guard: ## 🛡️ Run the Sovereign UID Guard to fix permission drift
 
 test: guard ## 🧪 Run tests (uses mock backend when OMEGA_ENV=test)
 	flock -x /tmp/omega_test.lock -c "OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m pytest $(ARGS)"
+
+verify-all: test lint temple-grade verify-search-tools ## 🛡️  Run all verification gates (T1-T11 + Search Protocol)
+	@echo "$(COLOR_GREEN)✅ All verification gates passed.$(COLOR_NC)"
 
 test-cov: ## 📊 Run tests with coverage
 	$(PYTHON) -m pytest --cov=omega --cov-report=term-missing $(ARGS)
@@ -374,6 +380,9 @@ lint: ## 🔍 Lint with flake8
 
 typecheck: ## 🔍 Type check with mypy
 	mypy src/omega/
+
+verify-search-tools: ## 🔌 Verify search tool connectivity & credits
+	PYTHONPATH=src $(PYTHON) -m pytest tests/test_search_tools.py
 
 # ============================================================================
 # 🤖 LOCAL INFERENCE (LM Studio / lmster)
@@ -432,6 +441,9 @@ clean: ## 🧹 Clean Python cache and build artifacts
 	find . -name "*.pyc" -delete 2>/dev/null || true
 	rm -rf .pytest_cache .ruff_cache .mypy_cache 2>/dev/null || true
 	@echo "$(COLOR_GREEN)✅ Clean.$(COLOR_NC)"
+
+firecrawl-status: ## 📊 Check Firecrawl credits & status
+	firecrawl --status
 
 doctor: ## 🩺 System diagnosis
 	@echo "$(COLOR_CYAN)🩺 Omega System Diagnosis$(COLOR_NC)"
@@ -634,3 +646,8 @@ pivot-watchdog: ## 🛡️  Flag pending PIVOT decisions > 7 days
 
 hivemind-test: ## 🧪 Run Hivemind test suite (U-001..U-020)
 	PYTHONPATH=src $(PYTHON) -m pytest tests/test_hivemind.py -v 2>&1 | tail -20
+
+platform-sync: ## 🔄 Verify platform synchronization against MANDATES_SYNC.md
+	@echo "$(COLOR_CYAN)🔄 Verifying platform synchronization...$(COLOR_NC)"
+	$(PYTHON) scripts/platform_sync.py
+

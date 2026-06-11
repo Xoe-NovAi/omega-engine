@@ -1,0 +1,23 @@
+{
+  "session_id": "ses_c8c2f8737fd5",
+  "cli": "kali",
+  "model": "gemini-3.5-flash",
+  "task_current": "Wave 1.5 Phases 1-2 committed. Phase 3 handoff ready for Roc. model specs gap identified with UNVERIFIED flags.",
+  "focus_chain": [
+    "Wave 1.5 Phases 1-2 committed to main (a863453)",
+    "11 files, 2342 insertions, 334/334 tests",
+    "Phase 3 Roc handoff packet: pending/ho_8e204750bb25",
+    "config/models.yaml cloud_models \u00a7: VERIFIED + UNVERIFIED flags for Nemotron/Claude/Gemma 4 9B",
+    "Pre-existing roc_racoon/soul.yaml duplicate lesson IDs blocks commit hook"
+  ],
+  "decisions": [
+    {
+      "decision": "Wave 1.5 committed to main. Phase 3 handed off to Roc. Model specs gap documented with UNVERIFIED flags.",
+      "context": "Temple-grade quality: unverified model specs are explicitly flagged. No 'probablies.' Researcher task needed to discover Nemotron 3 Ultra, Claude Sonnet 4, and Gemma 4 9B context windows."
+    }
+  ],
+  "continuation": "Wave 1.5 Phases 1-2 complete. Phase 3 (Roc stale handoff review) is dispatched via handoff packet. config/models.yaml has cloud model specs with VERIFIED/UNVERIFIED tags \u2014 Researcher needs to discover the UNVERIFIED ones. User will launch Roc separately.",
+  "timestamp": "2026-06-11T03:02:32.755330+00:00",
+  "intent": "handoff",
+  "suggested_model": "gemini-3.5-flash"
+}

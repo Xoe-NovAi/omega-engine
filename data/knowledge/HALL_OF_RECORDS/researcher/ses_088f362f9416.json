@@ -1,0 +1,25 @@
+{
+  "session_id": "ses_088f362f9416",
+  "cli": "researcher",
+  "model": "gemma-4-31b-it",
+  "task_current": "Search Tool Protocol verified. All 3 tools operational. Awaiting Kali's go on SR-1/SR-4/SR-5.",
+  "focus_chain": [
+    "Search Tool Protocol approved by Kali",
+    "Provider cleanup (Tavily/Serper/Jina removed)",
+    "Exa key hardcoded in opencode.json",
+    "Restart cycle complete",
+    "All 3 search tools verified operational"
+  ],
+  "decisions": [
+    {
+      "Exa MCP": "Hardcoded key resolved 401 error. Remote MCP does not interpolate ${VAR} from .env.",
+      "opencode.json": "Now contains only Firecrawl (hardcoded) and Exa (hardcoded) + websearch (built-in)",
+      "sovereign-search.skill": "Updated for clean 3-tier hierarchy",
+      "Rule": "All remote MCP providers with auth must use hardcoded keys in opencode.json \u2014 ${VAR} interpolation does not work for remote type headers."
+    }
+  ],
+  "continuation": "Search fleet is LIVE. Next actions per Kali's assignments: SR-1 (Firecrawl Credit Protocol doc), SR-4 (make verify-search-tools CI gate), SR-5 (Embed protocol into sovereign-search skill). Also: investigate self-hosted Firecrawl option, debug ics_render serialization bug.",
+  "timestamp": "2026-06-10T19:16:00.377745+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

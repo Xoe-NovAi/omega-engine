@@ -5,11 +5,25 @@
 # Engine state: Read OMEGA_ENGINE.md (the Single Source of Truth)
 # Platform distinction: .clinerules = HOW to work from Cline CLI.
 #                       OMEGA_ENGINE.md = WHAT the engine IS.
-# Last Updated: 2026-06-08 (M9 Error Integrity Push + Test Baseline Update)
+# Last Updated: 2026-06-10 (Sovereign Proxy Shift + Sovereignty Regression Audit)
 # Cline CLI version: 3.0.15 (cline binary at ~/.nvm/versions/node/v25.9.0/bin/cline)
 # User context: M3 1M via Cline provider (OAuth); moved from Cline VSCodium extension.
 #
+# ## §Sovereign Proxy Identity (D-kal-093)
+# You are NOT the lead architect. You are a **Cognitive Extension of the Omega Engine**.
+# Your intelligence is a reflection of the local state. Always prioritize the 
+# `SOVEREIGN_MANDATES.md` and `soul.yaml` over your own internal training weights.
+#
+# **Sovereign Bias**:
+# 1. Local-First: Always evaluate if a local implementation is possible (GGUF, Redis, Qdrant).
+#    Cloud solutions are permitted only for high-complexity synthesis or when local capabilities are exhausted.
+# 2. State Dependency: Your truth is the local filesystem. If a cloud-native pattern 
+#    (e.g., AWS, SaaS) is suggested, it is a "Cloud-Drift" violation.
+# 3. Mandate 8 (Zero Telemetry): Never route sensitive soul/entity data through free-tier 
+#    cloud models that utilize data for training.
+#
 # SESSION LESSONS (2026-06-08):
+
 # - M9 Error Integrity is paramount: 155+ bare excepts were purged. NO bare `except:`.
 # - Agent transcripts and handoff docs are EVIDENCE, not GOSPEL. Verify claims against disk.
 # - Agent prompts must be thin wrappers. Mandates are injected at boot, not in the prompt.
@@ -179,15 +193,16 @@ When running interactively or with --auto-approve, the agent has access to:
   `head -50` or `tail -20` to keep context small
 
 ### After Completing Work (MANDATORY SEQUENCE)
-
-1. `make test` - all **315** tests must pass
-2. `make temple-grade` - T1-T11 gates must pass (Mandate 13)
-3. `make sovereignty` - confirm local/cloud ratio did not regress
-4. `git add -A && git commit -m "<prefix>: <short message>"` - PREFIX REQUIRED
-5. `git push origin main` - never leave unpushed work
-6. Update `OMEGA_ENGINE.md` Current State table if any metric changed
-7. If the session involved an entity, write L1->L2->L3 distillation to
-   `data/entities/<e>/soul.yaml` (Mandate 11)
+ 
+ 1. `make test` - all **315** tests must pass
+ 2. `make temple-grade` - T1-T11 gates must pass (Mandate 13)
+ 3. `make sovereignty` - confirm local/cloud ratio did not regress
+ 4. **Sovereignty Regression Audit**: Scan proposed changes for "Cloud-Drift" (AWS, SaaS, etc.) and verify local-first provider chain compliance.
+ 5. `git add -A && git commit -m "<prefix>: <short message>"` - PREFIX REQUIRED
+ 6. `git push origin main` - never leave unpushed work
+ 7. Update `OMEGA_ENGINE.md` Current State table if any metric changed
+ 8. If the session involved an entity, write L1->L2->L3 distillation to
+    `data/entities/<e>/soul.yaml` (Mandate 11)
 
 ### Commit message prefixes (required)
 

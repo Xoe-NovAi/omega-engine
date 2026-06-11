@@ -1,0 +1,23 @@
+{
+  "session_id": "ses_09ce13a02806",
+  "agent_id": "opencode/kali",
+  "channel": "opencode",
+  "entity": "kali",
+  "model": "gemma-4-31b-it",
+  "task_current": "Orchestrating Wave 2: Agent Hardening and Search Tool Protocol implementation.",
+  "focus_chain": [
+    "Wave 1.5 Completion",
+    "Wave 2 Initiation",
+    "Search Tool Protocol Approval"
+  ],
+  "decisions": [
+    {
+      "decision": "Approved R_SEARCH_TOOL_PROTOCOL_V1.md. SR-2 marked as completed by Roc. Move to SR-3 and self-hosted Firecrawl investigation.",
+      "context": "Search Tool Protocol Review"
+    }
+  ],
+  "continuation": "Wave 2 (Agent Hardening) is now the primary focus. Search Tool Protocol is APPROVED. Roc Racoon is cleared to build the .firecrawl/INDEX.yaml and investigate self-hosted Firecrawl. Ma'at is tasked with implementing 'make platform-sync' based on the newly defined Gold Standard. Phase 0.5 (Local Hardening) items are the immediate priority.",
+  "timestamp": "2026-06-11T05:35:37.663593+00:00",
+  "intent": "decision",
+  "suggested_model": null
+}

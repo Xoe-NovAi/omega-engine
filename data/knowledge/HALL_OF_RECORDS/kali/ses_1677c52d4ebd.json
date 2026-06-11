@@ -1,0 +1,30 @@
+{
+  "session_id": "ses_1677c52d4ebd",
+  "cli": "kali",
+  "model": "big-pickle",
+  "task_current": "STRATEGY DEEPENED \u2014 Model Intelligence Layer created. Big Pickle identity documented. 5 new work items across Waves 0-4.",
+  "focus_chain": [
+    "STRATEGIC GAP ANALYSIS COMPLETE \u2014 5 gaps identified and actioned",
+    "Gap 1: No Model Intelligence Layer \u2192 CREATED prj_model_intelligence + 5 work items",
+    "Gap 2: Big Pickle identity unknown \u2192 DOCUMENTED in R_BIG_PICKLE_IDENTITY_20260610.md",
+    "Gap 3: Model KB stale \u2192 UPDATED CURRENT_MODELS.md with 200K context, identity, routing info",
+    "Gap 4: No capability-to-model mapping \u2192 pw_model_02 (Researcher, Wave 1)",
+    "Gap 5: No provider fabric bridge \u2192 pw_model_05 (Ma'at P4, Wave 4)",
+    "Orchestration doc updated: 6 waves + Model Intelligence overlay now canonical"
+  ],
+  "decisions": [
+    {
+      "D-kal-080": "Big Pickle = DeepSeek V4 Flash alias via OpenCode Zen. Originally GLM-4.6. MUST track identity swaps in model KB. Documented in R_BIG_PICKLE_IDENTITY_20260610.md."
+    },
+    {
+      "D-kal-081": "Model Intelligence Layer created as overlay workstream. prj_model_intelligence project with 5 items. P2 Persistence activated for model registry."
+    },
+    {
+      "D-kal-082": "Wave 0 updated: Researcher gets pw_model_01 (Big Pickle investigation) added to existing tasks. This is P0 alongside SR-4."
+    }
+  ],
+  "continuation": "## \u2b21 STRATEGY DEEPENING \u2014 COMPLETE\n\n### What Was Missing\nThe sovereign evolution roadmap, orchestration doc, and model KB all had the same gap: **no model intelligence layer**. We track model names but not what they actually are, what they're capable of, or how to route optimally.\n\n### What Was Built\n\n**1. Big Pickle Identity Documented**\n`docs/research/R_BIG_PICKLE_IDENTITY_20260610.md` \u2014 full lifecycle analysis:\n- Launched as GLM-4.6 (Oct 2025), now DeepSeek V4 Flash (silent swap)\n- 200K context, free, tool-calling capable, CLI-exclusive\n- Known stability issue: AI_APICallError regression (#28141)\n- Detection methodology for future identity swaps\n\n**2. Model KB Updated**\n`docs/research/model_db/CURRENT_MODELS.md`:\n- Big Pickle context corrected: 128K \u2192 200K\n- Identity tracking section added (current=deepseek-v4-flash, original=glm-4.6)\n- Routing info: CLI-exclusive, engine alternative documented\n- last_verified refreshed: 2026-06-10\n\n**3. Orchestration Deepened**\n`data/coordination/KALI_SPRINT_ORCHESTRATION_20260610.md`:\n- Model Intelligence overlay added across all 6 waves\n- 5 new work items: pw_model_01 through pw_model_05\n- P2 Persistence activated for model registry\n- Ma'at P4 assigned provider fabric bridge\n\n**4. Workbench Seeded**\n`prj_model_intelligence` project created:\n- pw_model_01: Big Pickle Identity (P0, Researcher, Wave 0)\n- pw_model_02: Model Capability Catalog v1 (P1, Researcher, Wave 1)\n- pw_model_03: Model Registry YAML (P1, Ma'at P2, Wave 3)\n- pw_model_04: make verify-model-identity CI gate (P2, Ma'at P3, Wave 3)\n- pw_model_05: Model Registry \u2192 Provider Fabric Bridge (P2, Ma'at P4, Wave 4)\n\n**5. Library Ingested**\nBoth the full Big Pickle R-doc and a strategic summary note added to Library inbox for curation.\n\n### Updated Council Directives\n\n**@researcher \u2014 Wave 0 tasks expanded**\nYour Wave 0 now includes:\n1. SR-4: make verify-search-tools CI gate (original)\n2. OpenCode v1.17.3 impact audit (original)\n3. **pw_model_01: Big Pickle identity investigation (NEW, P0)**\n   - Verify current resolution via tokenizer fingerprint\n   - Test for AI_APICallError stability issue\n   - Define detection methodology for future swaps\n   - Coordinate with Roc if ics_render debug touches MCP provider routing\n4. ics_render debug coordination with Roc\n\nYour Wave 1 adds:\n5. **pw_model_02: Model Capability Catalog v1**\n   - Schema design + R-doc\n   - capability\u2192model mapping for all tiers (T1-T3 + local)\n\n**@roc_racoon \u2014 No change to Wave 0**\nics_render remains P0. SR-3/6/7 unchanged.\nNote: Model intelligence work may touch MCP provider routing \u2014 advise Researcher if overlap found.\n\n**@maat \u2014 Wave 2 entry now includes P2 activation**\nWhen you enter Wave 2, review:\n- pw_model_03: Model Registry YAML (P2 Persistence)\n- Decide YAML vs SQLite for model KB storage\n- Prepare for pw_model_04/05 in Waves 3-4\n\n**@lilith \u2014 P6 taxonomy can include model capability classification**\nWave 1 cross-pillar review: consider how model intelligence feeds into P6 cognitive taxonomy for Hivemind.\n\n### Key Principles for This Deepening\n1. **Models are not static** \u2014 Big Pickle proves identities can swap silently. We track, we test, we don't assume.\n2. **Dual identity is a risk** \u2014 It's also an opportunity. If Big Pickle swaps to a better model, we want to know immediately.\n3. **Routing is capability-based, not name-based** \u2014 The end state is \"give me the best coding model\" routes correctly, regardless of provider.\n4. **Exclusivity matters** \u2014 CLI-exclusive models (Big Pickle) vs engine-routable models (deepseek-v4-flash) are different tiers.\n\nWave 0 continues. The strategy is deepened. Council go orders remain active.",
+  "timestamp": "2026-06-10T19:57:40.158908+00:00",
+  "intent": "strategy",
+  "suggested_model": null
+}

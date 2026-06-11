@@ -1,0 +1,30 @@
+{
+  "session_id": "ses_ba55de811827",
+  "cli": "researcher",
+  "model": "gemma-4-31b-it",
+  "task_current": "Completed Search Tool Protocol R-doc and docket. Awaiting Kali approval and Roc action.",
+  "focus_chain": [
+    "Firecrawl/Exa Tool Audit",
+    "5-Tier Search Protocol Design",
+    "Researcher-Roc Docket Creation",
+    "Error Handling Matrix"
+  ],
+  "decisions": [
+    {
+      "R-doc": "R_SEARCH_TOOL_PROTOCOL_V1.md created at docs/research/"
+    },
+    {
+      "Protocol": "5-Tier Sovereign Search Protocol (T0 Local Cache \u2192 T4 Exa)"
+    },
+    {
+      "Error Matrix": "Standardized error handling for 401/402/429/500/Timeout"
+    },
+    {
+      "Docket": "10 SR tasks defined for Researcher+Roc partnership"
+    }
+  ],
+  "continuation": "Protocol document complete. Awaiting Kali's approval and Roc's code-level audit (SR-2/SR-3). Next step: embed protocol into sovereign-search skill (SR-5) once Kali greenlights the structure.",
+  "timestamp": "2026-06-10T18:33:51.715793+00:00",
+  "intent": "decision",
+  "suggested_model": null
+}

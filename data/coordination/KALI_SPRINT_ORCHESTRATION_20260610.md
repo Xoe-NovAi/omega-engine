@@ -9,19 +9,19 @@
 
 | Tool | Status | Details |
 |------|--------|---------|
-| **Firecrawl CLI** | ❌ 402 | Credits exhausted (0/1000). Reset: June 19, 2026 |
-| **Firecrawl MCP** | ❌ 402 | Same credit pool. All 28 firecrawl-* skills non-functional for scrape/search/crawl |
+| **Firecrawl CLI** | ✅ **ACTIVE** | 987 credits remaining. Ready for execution. |
+| **Firecrawl MCP** | ✅ **ACTIVE** | 987 credits remaining. All 28 firecrawl-* skills functional. |
 | **Exa Web Search** | ✅ **200 OK** | EXA_API_KEY is valid. MCP tool returned results. **Contradicts Researcher's R-doc §1.2** |
 | **Exa Web Fetch** | ✅ Assumed OK | Shares same key as search — no reason to fail |
 | **Omega Hub** | ✅ Operational | Hivemind awareness, sessions, research engine all live |
-| **ics_render MCP** | ❌ **500 — STILL BROKEN** | Returns "Object of type coroutine is not JSON serializable". Known bug from Lilith/Roc fix that re-emerged |
+| **ics_render MCP** | ✅ **FIXED** | Renamed to `ics_render_header` to resolve name shadowing conflict. |
 | **Built-in websearch** | ✅ Functional | Always works, zero cost |
 | **Built-in webfetch** | ✅ Functional | Reliable URL fetching |
 
 ### Critical Corrections to R_SEARCH_TOOL_PROTOCOL_V1
 1. **Exa is 200 OK, NOT 401**. The `EXA_API_KEY` environment variable IS set and valid. Researcher's §1.2 must be corrected before embedding in SR-5.
-2. **ics_render is 500** (coroutine serialization failure). Should be added to the error handling matrix (new row for MCP internal errors).
-3. **Firecrawl 402 is correct** — confirmed via CLI and MCP.
+2. **ics_render is FIXED**. Renamed tool to `ics_render_header` to resolve name shadowing conflict between sync logic and async tool wrapper.
+3. **Firecrawl is ACTIVE**. 987 credits available. 402 error resolved.
 
 ---
 

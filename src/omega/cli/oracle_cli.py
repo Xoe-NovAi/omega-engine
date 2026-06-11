@@ -24,7 +24,7 @@ except ImportError:
     TYPER_AVAILABLE = False
     typer = None
 
-from omega.oracle import Oracle, OracleResponse, EntityRegistry, Entity
+from omega.oracle import Oracle, OracleResponse, EntityRegistry, Entity, Orchestrator
 from omega.errors import (
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
     ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
@@ -780,6 +780,34 @@ def demand_fulfill(
         console.print(f"[red]Demand not found: {demand_id}[/red]")
         raise typer.Exit(1)
     console.print(f"[green]✓ Demand {demand_id} fulfilled by signal: {signal_id}[/green]")
+
+# ── WORKER COMMANDS ───────────────────────────────────────────────────────
+@app.command()
+def worker_spawn(
+    task_id: str = typer.Argument(..., help="Unique identifier for the worker task"),
+    model: str = typer.Argument(..., help="Target Gemma 4 model (e.g., gemma-4-31b-it)"),
+    prompt: str = typer.Argument(..., help="The sensing/discovery prompt"),
+    context: str = typer.Option("", "--context", "-c", help="Optional background context"),
+):
+    """
+    Spawn a background worker for high-throughput sensing.
+    [Sovereign Workhorse Protocol: pw_model_15]
+    """
+    async def _run():
+        orchestrator = Orchestrator()
+        try:
+            result = await orchestrator.spawn_background_worker(
+                task_id=task_id,
+                model=model,
+                prompt=prompt,
+                context=context
+            )
+            console.print(f"[green]✅ {result}[/green]")
+        except OmegaError as e:
+            console.print(f"[red]OmegaError spawning worker: {e}[/red]")
+        except Exception as e:
+            console.print(f"[red]Unexpected error spawning worker: {e}[/red]")
+    anyio.run(_run)
 
 # ── Entry point ─────────────────────────────────────────────────────────
 

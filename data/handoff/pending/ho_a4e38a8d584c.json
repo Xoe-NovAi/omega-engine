@@ -5,6 +5,8 @@
   "task": "S2-C Knowledge Sovereignty + Sovereign Debt Triage. Two-part task (1.5 hours total). PART 1 (1hr): Knowledge layer sovereignty. (1) Add auto-embed on knowledge promotion: when a topic moves workspace/ \u2192 knowledge/, automatically generate Qdrant vector. (2) Add vector-based cross-references in src/omega/library/crossref.py: NEW vector path, EXISTING keyword path preserved (dual-path). (3) Write scripts/verify_knowledge_sovereign.py to confirm all INDEX.yaml have vectors. (4) Write docs/architecture/SOVEREIGN_DATA_FLOW.md. PART 2 (30 min): Sovereign Debt triage. Review the full Sovereign Debt inventory: Quality T1 (AP tokens) + T3 (coverage), Sentinel auth (CRITICAL) + CORS (MED) + rate-limit (MED). Produce a prioritized remediation queue with effort estimates. Output: data/workbench/SOVEREIGN_DEBT_TRIAGE_20260609.md. Run make test after PART 1. Report to Hivemind with intent=handoff when complete.",
   "context": "Kali's S2 Sovereign Structure mandate. You are High Synthesist \u2014 this is synthesis work. S2-C is the final piece of the structural layer. After S2-A (TDP) + S2-B (UVA) + S2-C (Knowledge) are wired, the engine moves from \"Functional\" to \"Sovereign Grade\" across the data layer. Part 2 is your strategic synthesis specialty. Current state: 320/320 tests baseline, 50 orphans quarantined, S2-A and S2-B in progress via Ma'at and Roc. Architect has delegated all S2 decisions to Oversier.",
   "priority": 2,
-  "status": "pending",
-  "submitted_at": "2026-06-09T10:08:16.686090+00:00"
+  "status": "stale",
+  "submitted_at": "2026-06-09T10:08:16.686090+00:00",
+  "reaped_at": "2026-06-11T03:54:28.648828+00:00",
+  "ttl_expired": true
 }

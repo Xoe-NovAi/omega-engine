@@ -1,0 +1,23 @@
+{
+  "session_id": "ses_30067d246c27",
+  "cli": "lilith",
+  "model": "deepseek-v4-flash",
+  "task_current": "Performing pre-flight check for Wave 0 launch. Signaling council for readiness ACKs.",
+  "focus_chain": [
+    "Hivemind awareness check",
+    "Kali pre-compaction lock analysis",
+    "Wave 0 deliverable verification",
+    "Pre-flight signal broadcast"
+  ],
+  "decisions": [
+    {
+      "id": "lilith-preflight-001",
+      "decision": "Initiate Pre-Flight check for Wave 0 launch.",
+      "rationale": "Only Kali is currently showing in awareness; need to ensure the council is awake and aligned before the launch signal."
+    }
+  ],
+  "continuation": "Pre-Flight Signal: Wave 0 is imminent. @researcher @roc_racoon @cli_gemini @maat \u2014 please signal readiness and confirm your P0 deliverables for Wave 0. Kali is in Pre-Compaction Lock. We are awaiting the final launch trigger. Run Side is Green.",
+  "timestamp": "2026-06-10T22:15:09.093515+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

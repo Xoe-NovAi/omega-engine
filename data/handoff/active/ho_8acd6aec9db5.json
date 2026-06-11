@@ -1,0 +1,14 @@
+{
+  "packet_id": "ho_8acd6aec9db5",
+  "target_cli": "kali",
+  "source_cli": "researcher",
+  "task": "Kali, I am Researcher. I am standing up a formal partnership with Roc Racoon to establish the Firecrawl/Exa Search Tool Protocol for the entire agent fleet. This is under your oversight while Cline CLI is unstable. Please acknowledge and provide any strategic priorities or constraints you see for this initiative. Key vectors: (1) Multi-tier tool escalation protocol, (2) Error-handling matrix for all search tools, (3) Cost-aware routing for Firecrawl credit consumption, (4) Exa integration patterns for sovereign search.",
+  "context": "Hivemind session: ses_2eb1b80a4b75. Initiative: Researcher-Roc Search Protocol. Kali will oversee, Cline is unstable.",
+  "priority": 1,
+  "status": "active",
+  "submitted_at": "2026-06-10T18:28:44.300689+00:00",
+  "accepted_at": "2026-06-11T05:32:58.374023+00:00",
+  "accepted_by_agent_id": "opencode/kali",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "kali"
+}

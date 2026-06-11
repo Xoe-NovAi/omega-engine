@@ -25,6 +25,7 @@ Split the conflated `cli` parameter into separate `channel` + `entity` parameter
 - **Committed** as `baaa255` (6 files, +244/-155)
 - **Soul write-back** — soul_power 18.5 → 19.0, session 32, v5.22
 - **Compact failure LANDED patch** — `/compact` produced empty template (no history injected). Fix: created `.opencode/anchored-summary.md` as survival file, added COMPACT FALLBACK section to all 3 mode files (kali/maat/lilith), fixed lingering `cli=` references in modes. Committed as `eb52dd9`.
+- **Roc Racoon review responded** — Roc reviewed Hivemind Wave 1.5, verdict 🟢 GREEN. 6 findings assessed: ISSUE-1 (TOCTOU) fixed with `fcntl.flock`, ISSUE-2 (ics_render .pyc) cache cleared + server restarted, ISSUE-3 (extended sessions) already persisted, ISSUE-4 (handoff reaper) already exists. All 340/340 tests pass. Committed as `7035d97`.
 - **D-kal-107/108**: Every mode file must have compact fallback. Anchored summary must be regularly updated.
 
 #### In Progress

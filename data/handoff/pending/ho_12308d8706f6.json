@@ -1,0 +1,14 @@
+{
+  "packet_id": "ho_12308d8706f6",
+  "target_agent_id": "opencode/researcher",
+  "target_channel": "opencode",
+  "target_entity": "researcher",
+  "source_agent_id": "opencode/maat",
+  "source_channel": "opencode",
+  "source_entity": "maat",
+  "task": "Sovereign Research: Skeptical Verification & NLI Implementation.\n\nPlease research and provide a comprehensive report on the following:\n1. Local NLI Models: Identify the best GGUF-compatible models for Natural Language Inference (Entailment/Contradiction/Neutral) that can run on Zen 2 hardware.\n2. Two-Source Rule Implementation: Research industry best practices for implementing a 'Two-Source Rule' in RAG systems. How should corroboration be tracked and weighted?\n3. Contradiction Resolution: Provide strategies for resolving conflicts when two high-confidence sources provide contradictory information.\n4. Skeptical RAG Patterns: Research 'Skeptical RAG' or 'Self-Correction' loops. How can the engine iteratively challenge its own findings to minimize hallucinations?\n5. Blind Spot Analysis: Review the current H3-C2 objective (Skeptical Verifier) and identify any knowledge gaps or architectural risks that Ma'at may have overlooked.\n\nOutput: A formal R-doc in docs/research/ with a synthesis of findings and a recommended implementation path.",
+  "context": "Ma'at is preparing to implement H3-C2 (Skeptical Verifier) within the Horizon 3: Cognitive Loops framework. This requires a robust implementation of Natural Language Inference (NLI) and a 'Two-Source Rule' for fact verification. To ensure Temple-Grade implementation, a deep research phase is required to avoid architectural blind spots.",
+  "priority": 1,
+  "status": "pending",
+  "submitted_at": "2026-06-11T05:45:50.740264+00:00"
+}

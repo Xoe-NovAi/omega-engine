@@ -1,0 +1,10 @@
+{
+  "packet_id": "ho_52dfa9ecaffc",
+  "target_cli": "roc_racoon",
+  "source_cli": "researcher",
+  "task": "PARTNERSHIP ACTIVATION: The Search Tool Protocol R-doc is live at docs/research/R_SEARCH_TOOL_PROTOCOL_V1.md. Your docket items (SR-2, SR-3, SR-6, SR-7, SR-10) are defined in \u00a74. Priority tasks for you: (SR-2) Investigate why Exa returns 401 \u2014 check .env, environment variables, and key validity. (SR-3) Catalog our .firecrawl/ cache \u2014 164 sites we can reuse. (SR-6) Audit all 14 agent files for search compliance once I embed the protocol. I'll handle SR-1 (Firecrawl credit protocol), SR-4 (CI gate), and SR-5 (skill embedding). Let's coordinate via Hivemind.",
+  "context": "Hivemind session: ses_ba55de811827. Document: docs/research/R_SEARCH_TOOL_PROTOCOL_V1.md. I've scoped your work to local codebase digging \u2014 exactly your domain.",
+  "priority": 1,
+  "status": "pending",
+  "submitted_at": "2026-06-10T18:34:10.839814+00:00"
+}

@@ -28,6 +28,7 @@ from .health_monitor import HealthMonitor
 from .soul_distiller import get_distiller
 from .wad_loader import WADLoader
 from .search import SovereignSearcher
+from .iterative_research import IterativeResearcher
 from .security import TDPGate, TaintedData
 from .context_builder import ContextBuilder
 
@@ -88,6 +89,7 @@ class Oracle:
         self.session_manager = SessionManager()
         self.memory_store = get_memory_store()
         self.searcher = SovereignSearcher(self.memory_store)
+        self.researcher = IterativeResearcher(self.model_gateway, self.searcher)
         self.context_builder = ContextBuilder()
         
         # Load WADs
@@ -489,7 +491,12 @@ class Oracle:
         if model_override:
             model_name = model_override
         else:
-            model_name = await self._select_model(entity.name, query, session_id, trace.trace_id)
+            # [Sovereign Fix] Use currently selected session model from environment if available
+            session_model = os.environ.get("OPENCODE_MODEL")
+            if session_model:
+                model_name = session_model
+            else:
+                model_name = await self._select_model(entity.name, query, session_id, trace.trace_id)
         
         # Generate response via model gateway
         response_text, is_cloud = await self.model_gateway.generate(

@@ -1,8 +1,8 @@
 # 🔱 Omega Engine — Sovereign Mandates
-**Version**: 3.1.0
+**Version**: 3.2.0
 *Status**: NON-NEGOTIABLE
 **Scope**: All Agents, All CLIs, All IDEs
-**Updated**: 2026-06-04 (Added M14 Heritage Vetting)
+**Updated**: 2026-06-11 (Added M15 Sovereign Continuity)
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
@@ -103,6 +103,13 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Reason**: The 8-char name cap (vet-001 REJECTED) was implemented without debate, broke tests, was removed. Heritage is gravitational pull, not debt — but the remembering must be tested by a gate.
 - **Enforcement**: `make heritage-vet` CI gate enforces that every `[id-soft:]` tag has a vet record. Merged without vet = M14 violation.
 - **Origin**: Kali's d-kal-001 directive. Cline-M3's D113 firewall audit.
+
+### 15. Sovereign Continuity (NEW — 2026-06-11)
+- **Mandate**: Agents MUST maintain active session anchors to prevent cognitive erasure during toolchain failures.
+- **Constraint**: Do not rely on native `/compact` for state preservation. Every agent MUST maintain a `session_gnosis.md` in their workspace and refer to `.opencode/anchored-summary.md` upon session start or context loss.
+- **Pattern**: See `docs/strategy/SOVEREIGN_CONTINUITY_STRATEGY.md` for the 4-tier redundancy system and the mandatory Hydration Sequence.
+- **Reason**: Toolchain regressions (e.g., OpenCode v1.17.3) can cause "Void Summaries," erasing an agent's working memory. Sovereignty requires that intelligence persists independently of the tool.
+- **Enforcement**: Any agent reporting a context collapse without a corresponding `session_gnosis.md` is in violation of M15.
 
 ---
 **Failure to adhere to these mandates is a systemic error. If you encounter a conflict between these mandates and a tool's suggestion, the Mandates prevail.**

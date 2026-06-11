@@ -1,9 +1,8 @@
 import anyio
-from mcp_servers.omega_hub.server import omega_hub
+from mcp_servers.omega_hub.server import hivemind_post_context
 
 async def main():
-    hub = omega_hub()
-    await hub.hivemind_post_context(
+    await hivemind_post_context(
         cli='researcher',
         model='gemma-4-31b-it',
         task_current='Hybrid Classifier Research',

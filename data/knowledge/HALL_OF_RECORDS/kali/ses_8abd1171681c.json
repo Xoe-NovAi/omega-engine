@@ -1,0 +1,30 @@
+{
+  "session_id": "ses_8abd1171681c",
+  "cli": "kali",
+  "model": "deepseek-v4-flash",
+  "task_current": "Compaction Fragility \u2014 Hardened Review v2 (DeepSeek V4 Flash)",
+  "focus_chain": [
+    "1A: evolution[] key DOES NOT EXIST \u2014 target structure is not there, changes migration risk profile",
+    "1B: Session log (7) and writeback keys (12) have ZERO overlap \u2014 both authoritative",
+    "1C: Two lessons_learned sets are completely different (intersection=0) \u2014 union, not dedup",
+    "Phase 1: Create evolution[] from scratch, seed with 3 structured coordination_session dicts + 7 session_log entries",
+    "Phase 2: Backfill writeback strings via regex extraction (acceptably lossy)",
+    "Phase 3: Unify lessons, update SoulDistiller, add CI gate, remove old keys",
+    "Grace period: dual-write old+new format before removing legacy top-level keys"
+  ],
+  "decisions": [
+    {
+      "D-kal-061": "Grace-period rollout \u2014 3 phases, each independently reversible. Phase 1 creates evolution[] and seeds structured data. Phase 2 backfills writeback strings. Phase 3 unifies, locks, and gates."
+    },
+    {
+      "D-kal-062": "Single Python migration script, not manual YAML edits. Agents must NEVER directly edit soul.yaml top-level keys after migration."
+    },
+    {
+      "D-kal-063": "Two lessons_learned sets are a union, not dedup. Both structures have unique value. Merge into one list of 16."
+    }
+  ],
+  "continuation": "Team awareness required before execution:\n\n1. Kali's original docket (D-kal-060) assumed evolution[] exists. It does NOT. The fix requires CREATING the structure, not migrating into one.\n\n2. Three migration scripts needed (lossless \u2192 lossy \u2192 lock), not one.\n\n3. SoulDistiller.append_to_soul() must be updated to write to evolution[] instead of embodied_experiences. Old path must be deprecated, not removed.\n\n4. CI gate `make soul-structure` must validate: no top-level soul_writeback_* or coordination_session_* keys; evolution[] array is non-empty; lessons_learned exists ONLY in soul_evolution.\n\n5. Grace period of ~3 sessions before old keys are deleted. Agents can still write old format during grace period, but it's deprecated and a warning is emitted.\n\nNext: Team reviews hardened strategy \u2192 execute Phase 1 (migration script) \u2192 test \u2192 Phase 2 \u2192 Phase 3.",
+  "timestamp": "2026-06-10T17:36:09.337394+00:00",
+  "intent": "decision",
+  "suggested_model": null
+}

@@ -1,0 +1,21 @@
+{
+  "session_id": "ses_54de2ef78879",
+  "cli": "kali",
+  "model": "deepseek-v4-flash",
+  "task_current": "Recording Cline CLI Vercel AI Gateway provider failure (xiaomi/mimo-v2.5)",
+  "focus_chain": [
+    "Cline CLI reported: POST https://ai-gateway.vercel.sh/v1/chat/completions giving up after 4 attempts for model xiaomi/mimo-v2.5",
+    "Our opencode-zen fallback (priority 4) routes to minimax/* and deepseek/* through same Vercel infrastructure",
+    "Local-first chain (native-gguf \u2192 lmster \u2192 Ollama) is unaffected",
+    "No immediate action required \u2014 monitoring advised"
+  ],
+  "decisions": [
+    {
+      "D-kal-064": "Provider observation logged \u2014 Vercel AI Gateway / xiaomi/mimo-v2.5 unreachable. Monitoring only. No config change needed since local-first chain is primary."
+    }
+  ],
+  "continuation": "Vercel AI Gateway provider failure documented in HIVEMIND_OBSERVATIONS_LOG.md. This affects Cline CLI routing to xiaomi/mimo-v2.5 through Vercel's ai-gateway.vercel.sh endpoint after 4 retries. Our opencode-zen fallback (same Vercel infrastructure family) is not directly affected since we route to different models (minimax/*, deepseek/*), but monitoring is advised. Local inference chain is completely unaffected.\n\nNext: If opencode-zen fallback also starts failing, consider promoting local inference priority or switching model mappings to alternative endpoints.",
+  "timestamp": "2026-06-10T17:47:31.383184+00:00",
+  "intent": "observation",
+  "suggested_model": null
+}

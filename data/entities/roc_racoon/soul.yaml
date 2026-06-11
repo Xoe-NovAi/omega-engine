@@ -977,6 +977,17 @@ lessons:
   - pre-compact exports
   - Evolution Journal
   - D-122
+- id: rr-055
+  date: 2026-06-09
+  insight: "The Scout-Architect Duality: Tactical speed discovers symptoms, strategic depth cures systems"
+  context: |-
+    The 'Gemma-Switch' incident (transitioning from Gemma 4 A4B to 31B) provided a live comparative audit. The A4B (Scout) found missing models and path discrepancies with high velocity (solving the symptom). The 31B (Architect) identified the 'Sovereignty Gap' (cloud-dependency of Sophia) and the 'Portability Crisis' (absolute path fragility), solving the system. We need both: Scout speed to find the dirt, and Architect depth to understand the roots.
+  principle: Relying on a single model class is either blind (depth without discovery) or fragile (discovery without systemic fix). A sovereign fleet must pair tactical scout speed with strategic architectural depth.
+  applies_to:
+  - Scout-Architect Duality
+  - model selection
+  - system design
+  - sovereign fleet
 - id: rr-001
   date: 2026-06-02
   insight: Lazy import pattern for optional dependencies

@@ -21,3 +21,57 @@
 **Entity**: Gemini CLI (Interaction Agent)
 
 - **Observation [Coordination: Cline Crash]**: Lilith is currently addressing the Cline crash reported in OpenCode. Gemini CLI has been briefed and is standing by to provide support, research, or execution as needed. Awaiting further instruction from Arcane or Lilith.
+
+---
+
+## 2026-06-10 (later)
+
+**Entity**: Kali (Transcendent Oversoul)
+
+- **Observation [Vercel AI Gateway — xiaomi/mimo-v2.5 Unreachable]**: Cline CLI reported a provider failure:
+  ```
+  Error: Failed to create stream: inference request failed:
+  failed to generate stream from Vercel:
+  failed to invoke model 'xiaomi/mimo-v2.5' with streaming:
+  POST https://ai-gateway.vercel.sh/v1/chat/completions
+  giving up after 4 attempt(s)
+  ```
+  **Impact Assessment**:
+  - Direct: Cline cannot route to `xiaomi/mimo-v2.5` through Vercel AI Gateway
+  - Indirect: Our `opencode-zen` fallback (priority 4 in providers.yaml) routes to `minimax/*` and `deepseek/*` through `api.opencode.ai/zen/v1` — same Vercel infrastructure family
+  - No local model impact — this is purely a cloud provider issue
+  - Our local-first chain (native-gguf → lmster → Ollama) is unaffected
+
+  **Possible causes**:
+  1. Vercel removed `xiaomi/mimo-v2.5` from their catalog (model rename/deprecation)
+  2. Authentication token expired for the Cline CLI instance
+  3. Vercel AI Gateway rate limiting (4 retries exhausted)
+  4. Transient Vercel outage
+
+---
+
+## 2026-06-10 (later)
+
+**Entity**: Kali (Transcendent Oversoul)
+
+- **Observation [ics_render Coroutine Serialization Error — RE-EMERGED]**: Researcher agent (gemma-4-31b-it) hit a known bug:
+  ```
+  Error executing tool ics_render: Object of type coroutine is not JSON serializable
+  ```
+  **Context**: entity=researcher, model=gemma-4-31b-it, called omega-hub_ics_render
+  
+  **History**: Lilith's soul.yaml and Roc Racoon's session both documented this as FIXED:
+  - Lilith: "A shadowing bug in ics_render — the MCP tool had the same name as its underlying logic import... Roc and I independently identified this bug... fixed"
+  - Roc Racoon: "MCP Tool Bug: 'ics_render' tool fails with 'Object of type coroutine is not JSON serializable'" (listed as problem to address in S2-D)
+  
+  **Current code inspection**: server.py line 1710 `async def ics_render(...)` calls `ics_render_logic(...)` (aliased import from omega.ics.render) at line 1734. The underlying `render()` function in src/omega/ics.py is synchronous (`def render(...)`). The fix appears correct.
+  
+  **Hypotheses for re-emergence**:
+  1. The fix was incomplete — perhaps a different code path or MCP framework version issue
+  2. The `m9_safe` decorator or FastMCP framework is mishandling the async return
+  3. The researcher agent's specific model/entity combination triggers an edge case
+  4. Regression from a subsequent update
+  
+  **Action**: Assigned to Roc Racoon for investigation (D-kal-070). This is a P1 blocker for Researcher's workflow.
+
+  **Recommendation**: Monitor whether `opencode-zen` fallback is also affected. If so, consider promoting local models or switching the opencode-zen model mapping from `minimax/*` to `deepseek/*` or alternative endpoints. No immediate action required since local-first chain is primary.

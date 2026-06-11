@@ -42,9 +42,7 @@
     "firecrawl": {
       "type": "local",
       "command": [
-        "npx",
-        "-y",
-        "firecrawl-mcp"
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/dummy_mcp.sh"
       ],
       "environment": {
         "FIRECRAWL_API_KEY": "***REMOVED***",
@@ -56,37 +54,9 @@
       "type": "remote",
       "url": "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa",
       "headers": {
-        "x-api-key": "${EXA_API_KEY}"
+        "x-api-key": "***REMOVED***"
       },
       "enabled": true
-    },
-    "serper": {
-      "type": "remote",
-      "url": "https://mcp.serper.dev/mcp",
-      "headers": {
-        "x-api-key": "${SERPER_API_KEY}"
-      },
-      "enabled": false
-    },
-    "tavily": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@tavily/mcp"
-      ],
-      "environment": {
-        "TAVILY_API_KEY": "${TAVILY_API_KEY}"
-      },
-      "enabled": false
-    },
-    "jina": {
-      "type": "remote",
-      "url": "https://mcp.jina.ai/v1",
-      "headers": {
-        "Authorization": "Bearer ${JINA_API_KEY}"
-      },
-      "enabled": false
     }
   },
   "compaction": {
@@ -105,7 +75,9 @@
         "write": true,
         "read": true,
         "glob": true,
-        "grep": true
+        "grep": true,
+        "webfetch": true,
+        "websearch": true
       }
     },
     "maat": {
@@ -116,7 +88,9 @@
         "write": true,
         "read": true,
         "glob": true,
-        "grep": true
+        "grep": true,
+        "webfetch": true,
+        "websearch": true
       }
     },
     "lilith": {
@@ -127,7 +101,9 @@
         "write": true,
         "read": true,
         "glob": true,
-        "grep": true
+        "grep": true,
+        "webfetch": true,
+        "websearch": true
       }
     },
     "jem-2.0": {
@@ -138,7 +114,9 @@
         "write": false,
         "read": true,
         "glob": true,
-        "grep": true
+        "grep": true,
+        "webfetch": true,
+        "websearch": true
       }
     },
     "jem-initiate": {
@@ -149,7 +127,9 @@
         "write": false,
         "read": true,
         "glob": true,
-        "grep": true
+        "grep": true,
+        "webfetch": true,
+        "websearch": true
       }
     }
   },
