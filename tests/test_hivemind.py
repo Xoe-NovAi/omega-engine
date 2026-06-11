@@ -108,7 +108,8 @@ def reset_state(monkeypatch):
 async def test_u001_post_context_basic(temp_data_dir, reset_state):
     """U-001: hivemind_post_context — basic call with required fields."""
     result = await server.hivemind_post_context(
-        cli="test-cli",
+        channel="opencode",
+        entity="test-entity",
         model="minimax-m3-free",
         task_current="Testing post context",
         focus_chain=["step1", "step2"],
@@ -125,7 +126,8 @@ async def test_u001_post_context_basic(temp_data_dir, reset_state):
 async def test_u002_post_context_intent_field(temp_data_dir, reset_state):
     """U-002: hivemind_post_context — intent field captured (P6 ship-now #1)."""
     result = await server.hivemind_post_context(
-        cli="test-cli",
+        channel="opencode",
+        entity="test-entity",
         model="minimax-m3-free",
         task_current="Asking a question",
         focus_chain=[],
@@ -146,7 +148,8 @@ async def test_u002_post_context_intent_field(temp_data_dir, reset_state):
 async def test_u003_post_context_suggested_model(temp_data_dir, reset_state):
     """U-003: hivemind_post_context — suggested_model field (P6 ship-now #2)."""
     result = await server.hivemind_post_context(
-        cli="test-cli",
+        channel="opencode",
+        entity="test-entity",
         model="minimax-m3-free",
         task_current="Suggesting a model",
         focus_chain=[],

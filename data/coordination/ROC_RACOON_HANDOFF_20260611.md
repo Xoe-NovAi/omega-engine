@@ -35,7 +35,7 @@ Return a markdown report with:
 - Recommended actions list
 
 ### When Done
-Post to Hivemind: `omega-hub_hivemind_post_context` with cli="roc_racoon", intent="handoff", summary of findings.
+Post to Hivemind: `omega-hub_hivemind_post_context` with channel="opencode", entity="roc_racoon", intent="handoff", summary of findings.
 Then `hivemind_accept_handoff` (your packet_id) and `hivemind_complete_handoff` when finished.
 
 ## ⚠️ PART 2 — Researcher Task Prep (AFTER stale review)
@@ -63,8 +63,10 @@ But the REAL gap: the file is incomplete — we don't have a full inventory of w
 
 **Then create a handoff packet for Researcher:**
 Use `omega-hub_hivemind_submit_handoff` with:
-- target_cli: "researcher"
-- source_cli: "roc_racoon"
+- source_channel: "opencode"
+- source_entity: "roc_racoon"
+- target_channel: "opencode"
+- target_entity: "researcher"
 - task: "Update config/models.yaml cloud_models section with verified model specs"
 - context: Reference your MODEL_INVENTORY_20260611.md findings and the current UNVERIFIED flags
 - priority: 1

@@ -58,9 +58,9 @@ directives:
 
 # === SOUL EVOLUTION (consolidated) ===
 soul_evolution:
-  sessions_completed: 31
-  soul_power: 18.5
-  last_distillation: "2026-06-11T03:05Z"
+  sessions_completed: 32
+  soul_power: 19.0
+  last_distillation: "2026-06-11T03:45Z"
   trajectory: ascending
 
   # L1→L2→L3 lessons (DEDUPLICATED in v5.2: 3 deep lessons, not 11 overlapping ones)
@@ -1935,6 +1935,45 @@ soul_writeback_20260607_crystallized_strategy: |
         - "Ma'at: M2 Firewall restoration, 99 bare except fix, blocking I/O fix"
         - "Roc Racoon: Mnemosyne/Memory-Bank treasure map"
         - "User opens Ma'at + Roc Racoon sessions separately"
+
+    # ── Session 32: Hivemind API Channel/Entity Split (2026-06-11) ─────────────────
+    - L1_narrative: |
+        Hivemind Protocol v1.3 exposed a fundamental conflation: the `cli` parameter
+        was used for both execution channel (opencode, cline) AND entity persona
+        (kali, roc_racoon). The server's `_canonicalize_cli()` actively destroyed
+        this information by stripping channel prefixes. Final fix: split `cli: str`
+        into `channel: str, entity: str` across all 11 Hivemind MCP tools — no
+        compound format, no canonicalization, no backward compatibility. Removed
+        `_canonicalize_cli()` entirely. Updated 10 tool functions, handoff packet
+        schema, protocol docs, and tests. 340/340 tests passing. Omega Hub server
+        restarted with new API.
+      L2_insight: |
+        The conflation was architectural, not cosmetic. A compound string `cli` with
+        a `channel/entity` convention can never be cleanly queried, tracked, or
+        validated — it relies on human discipline. Separate API parameters force the
+        separation at the protocol level. The proof: the `_canonicalize_cli()` function
+        was added to "fix" the compound format by stripping the channel — exactly
+        the wrong direction. It should have been split from day one.
+      L3_principle: |
+        A concept that cannot be represented in the API will be conflated. If channel
+        and entity are architecturally distinct, they must be distinct parameters —
+        no convention, no compound format, no parsing. The API is the truth. If the
+        API conflates them, the system will conflate them. The cost of splitting
+        later is always higher than the cost of splitting at design time — but zero
+        backward compatibility eliminates that cost entirely.
+      timestamp: '2026-06-11T03:30:00Z'
+      topic: 'Hivemind API: channel/entity separation'
+      source_session: 32
+      artifacts_created:
+        - "Hivemind Protocol v1.3a — §2.1 rewritten, all `cli=` examples → `channel=`/`entity=`"
+        - "data/handoff/pending/ho_8e204750bb25 updated to new schema"
+        - "tests/test_hivemind.py — U-001/002/003 updated"
+      decisions:
+        - "D-kal-104: cli parameter is dead. channel + entity are now separate."
+        - "D-kal-105: No backward compatibility — unreleased software."
+      next_actions:
+        - "Roc Racoon: still running with old API — needs relaunch"
+        - "Researcher: still running with old API — needs relaunch"
 
 # === SOUL WRITE-BACK (MANDATE 11 — NON-NEGOTIABLE) ===
 # This is the save-game ritual for Session 23.

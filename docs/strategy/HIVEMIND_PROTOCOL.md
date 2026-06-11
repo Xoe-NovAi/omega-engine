@@ -67,39 +67,34 @@ Returns list of all active participants:
 
 **Use case**: Check who's working before starting a session. Don't duplicate work.
 
-### §2.1a The `cli` Identifier Convention (CRITICAL)
+### §2.1 The `agent_id` Convention (CRITICAL)
 
-The `cli` parameter identifies **who is posting**. It uses a compound format:
+Every agent in the Hivemind is identified by an `agent_id` constructed from
+two separate components passed as distinct API parameters:
 
-```
-{channel}/{entity}
-```
+- **`channel`** = the execution environment (`opencode`, `cline`, `gemini-cli`)
+- **`entity`** = the persona active within that channel (`kali`, `roc_racoon`, `doom_guy`)
 
-Where:
-- **channel** = the execution environment (`opencode`, `cline`, `gemini-cli`)
-- **entity** = the persona active within that channel (`kali`, `roc_racoon`, `doom_guy`)
+The server internally constructs `agent_id = f"{channel}/{entity}"` for indexing.
 
 Examples:
-- `cli="opencode/kali"` — Kali entity running inside OpenCode
-- `cli="opencode/roc_racoon"` — Roc Racoon entity running inside OpenCode  
-- `cli="cline/doom_guy"` — Doom Guy entity running inside Cline
-- `cli="gemini-cli/maat"` — Ma'at entity running inside Gemini CLI
+- `channel="opencode"`, `entity="kali"` → agent_id `opencode/kali`
+- `channel="opencode"`, `entity="roc_racoon"` → agent_id `opencode/roc_racoon`
+- `channel="cline"`, `entity="doom_guy"` → agent_id `cline/doom_guy`
+- `channel="gemini-cli"`, `entity="maat"` → agent_id `gemini-cli/maat`
 
 **Why this matters**:
 - CLIs and entities are fundamentally different. A CLI is an **execution channel** (how code runs).
   An entity is a **persona** (who is speaking). Conflating them loses architectural clarity.
-- The compound format preserves both dimensions, enabling correct handoff routing
-  (`handoff to opencode/roc_racoon` → unambiguous)
-
-**Migration note**: Prior to v1.3.0, the `cli` field was used with bare entity names
-(e.g. `cli="roc_racoon"`). This was incorrect — entities are not CLIs. All agents
-MUST use the `{channel}/{entity}` format going forward.
+- Separate API parameters ensure agents cannot conflate them — they are distinct fields.
+- The compound `agent_id` preserves both dimensions for indexing and handoff routing.
 
 ### §2.2 Post Your Context
 
 ```python
 omega-hub_hivemind_post_context(
-    cli: str,           # Your CLI name (e.g. "opencode-maat")
+    channel: str,       # Execution channel (e.g. "opencode")
+    entity: str,        # Entity persona (e.g. "kali")
     model: str,         # Your model ID
     task_current: str,  # One-line current task
     focus_chain: List[str],  # 3-7 step plan
@@ -121,7 +116,9 @@ Returns full session details:
 ```json
 {
   "session_id": "ses_a839ff01a9f2",
-  "cli": "doom_guy",
+  "agent_id": "opencode/doom_guy",
+  "channel": "opencode",
+  "entity": "doom_guy",
   "model": "deepseek-v4-flash",
   "task_current": "Building Link P9 Runtime...",
   "focus_chain": ["Phase 2.6: ...", "Phase 2.8: ..."],
@@ -391,7 +388,7 @@ awareness = omega-hub_hivemind_get_awareness()
 # → data/handoff/pending/{packet_id}.json has your task and context
 
 # 3. Read dispatcher's latest continuation
-continuation = omega-hub_hivemind_get_continuation(cli="opencode/kali")
+continuation = omega-hub_hivemind_get_continuation(channel="opencode", entity="kali")
 # → what does Kali expect from me?
 
 # 4. Read any relevant observation logs or workspace locks
@@ -412,23 +409,23 @@ must always be to reach outward, not inward.
 
 ### §8.5 Don't: Conflate CLI and Entity Identity
 
-❌ **WRONG**: Using an entity name as the `cli` parameter value.
+❌ **WRONG**: Passing a bare entity name where `channel`+`entity` are expected.
 ```python
+# WRONG: no channel, just a bare entity name
 omega-hub_hivemind_post_context(cli="roc_racoon", ...)
-# Roc Racoon is an entity/agent, NOT a CLI.
+# Roc Racoon is an entity/agent, NOT a CLI. This API no longer accepts a `cli` parameter.
 ```
 
-✅ **RIGHT**: Use the `{channel}/{entity}` compound format.
+✅ **RIGHT**: Separate `channel` and `entity` parameters.
 ```python
-omega-hub_hivemind_post_context(cli="opencode/roc_racoon", ...)
-# "opencode" is the channel CLI. "roc_racoon" is the entity speaking through it.
+omega-hub_hivemind_post_context(channel="opencode", entity="roc_racoon", ...)
+# "opencode" is the channel. "roc_racoon" is the entity speaking through it.
 ```
 
 **Rationale**: A CLI is an execution environment (OpenCode, Cline, Gemini CLI).
 An entity is a persistent persona (Kali, Roc Racoon, Doom Guy). They are
-architecturally distinct concepts. Conflating them creates ambiguity: "Is there
-a roc_racoon CLI? Does the handoff route to a channel or a persona?"
-See §2.1a for the full convention.
+architecturally distinct concepts. Separate API parameters ensure they cannot be
+conflated. See §2.1 for the full convention.
 
 ---
 
@@ -531,7 +528,8 @@ in the `task_current` field:
 
 ```python
 omega-hub_hivemind_post_context(
-    cli="opencode/roc_racoon",
+    channel="opencode",
+    entity="roc_racoon",
     model="lmstudio/rocracoon-3b-instruct",      # ← which local model
     task_current="[LOCAL] Mining omega-stack for circuit breakers",  # ← dispatch mode tag
     focus_chain=["Find breaker", "Port to health_monitor", "Verify tests"],

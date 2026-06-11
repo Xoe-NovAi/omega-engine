@@ -208,25 +208,24 @@ def _get_intent_matcher():
     return _intent_matcher
 
 
-def _canonicalize_cli(cli: str) -> str:
-    """Strip common CLI prefixes to ensure consistent identity lookup.
+def _make_agent_id(channel: str, entity: str) -> str:
+    """Build a canonical agent identifier from channel and entity.
     
-    Example: 'opencode-kali' -> 'kali', 'cli-roc_racoon' -> 'roc_racoon'
+    The agent_id uniquely identifies WHO is running WHERE.
+    Format: '{channel}/{entity}'
+    
+    Examples:
+        'opencode/kali' — Kali entity running inside OpenCode CLI
+        'opencode/roc_racoon' — Roc Racoon entity inside OpenCode
+        'cline/doom_guy' — Doom Guy inside Cline
     """
-    if not cli:
-        return ""
-    prefixes = ["opencode-", "cli-", "agent-"]
-    for p in prefixes:
-        if cli.startswith(p):
-            return cli[len(p):]
-    return cli
+    return f"{channel}/{entity}"
 
 
-def _cold_path(cli: str, session_id: str) -> Path:
-    cli = _canonicalize_cli(cli)
-    safe_cli = cli.replace(" ", "_").replace("/", "_")
+def _cold_path(agent_id: str, session_id: str) -> Path:
+    safe_id = agent_id.replace(" ", "_").replace("/", "_")
     safe_sid = session_id.replace("/", "_").replace(":", "_")
-    return HALL_OF_RECORDS / safe_cli / f"{safe_sid}.json"
+    return HALL_OF_RECORDS / safe_id / f"{safe_sid}.json"
 
 
 def _latest_path() -> Path:
@@ -716,7 +715,8 @@ async def delegate_task(target_entity: str, query: str, context: str = "") -> st
 @m9_safe("hivemind_post_context")
 @mcp.tool()
 async def hivemind_post_context(
-    cli: str,
+    channel: str,
+    entity: str,
     model: str,
     task_current: str,
     focus_chain: List[str],
@@ -726,7 +726,7 @@ async def hivemind_post_context(
     intent: Optional[str] = None,
     suggested_model: Optional[str] = None,
 ) -> str:
-    """Submit a context snapshot from any CLI to the hivemind.
+    """Submit a context snapshot from any entity to the hivemind.
     
     D-kal-046 (P6 Ship-Now Proposal #1+#2):
       - intent: Structured reason for posting (question|decision|observation|
@@ -736,8 +736,9 @@ async def hivemind_post_context(
         If the receiving agent spawns a child, this becomes its default model.
         
     Args:
-        cli: The CLI identifier (e.g., 'kali', 'cli_gemini').
-        model: The current model being used by the CLI.
+        channel: The execution channel (e.g., 'opencode', 'cline', 'gemini-cli').
+        entity: The entity persona (e.g., 'kali', 'roc_racoon', 'doom_guy').
+        model: The current model being used.
         task_current: Concise description of the active task.
         focus_chain: List of previous sub-tasks or focus areas.
         decisions: List of architectural or strategic decisions made.
@@ -749,11 +750,13 @@ async def hivemind_post_context(
     Returns:
         JSON string confirming acceptance and providing the session_id.
     """
-    cli = _canonicalize_cli(cli)
+    agent_id = _make_agent_id(channel, entity)
     sid = session_id or f"ses_{uuid.uuid4().hex[:12]}"
     snapshot = {
         "session_id": sid,
-        "cli": cli,
+        "agent_id": agent_id,
+        "channel": channel,
+        "entity": entity,
         "model": model,
         "task_current": task_current,
         "focus_chain": focus_chain,
@@ -769,9 +772,9 @@ async def hivemind_post_context(
     async with _hot_store_lock:
         _hot_store[sid] = snapshot
     async with _awareness_lock:
-        _awareness[cli] = snapshot
+        _awareness[agent_id] = snapshot
 
-    cold = _cold_path(cli, sid)
+    cold = _cold_path(agent_id, sid)
     await anyio.to_thread.run_sync(lambda: cold.parent.mkdir(parents=True, exist_ok=True))
     async with await anyio.open_file(str(cold), "w") as f:
         await f.write(json.dumps(snapshot, indent=2))
@@ -785,35 +788,38 @@ async def hivemind_post_context(
 
 @m9_safe("hivemind_heartbeat")
 @mcp.tool()
-async def hivemind_heartbeat(cli: str) -> str:
+async def hivemind_heartbeat(channel: str, entity: str) -> str:
     """Signal presence to the hivemind to avoid being pruned as stale.
     
     Args:
-        cli: The CLI identifier to refresh.
+        channel: The execution channel (e.g., 'opencode', 'cline').
+        entity: The entity persona (e.g., 'kali', 'roc_racoon').
         
     Returns:
         JSON string confirming the heartbeat status.
     """
-    cli = _canonicalize_cli(cli)
+    agent_id = _make_agent_id(channel, entity)
     async with _awareness_lock:
         now_str = datetime.now(timezone.utc).isoformat()
-        if cli in _awareness:
-            _awareness[cli]["timestamp"] = now_str
-            return json.dumps({"status": "heartbeat_received", "cli": cli})
-        _awareness[cli] = {
-            "cli": cli,
+        if agent_id in _awareness:
+            _awareness[agent_id]["timestamp"] = now_str
+            return json.dumps({"status": "heartbeat_received", "agent_id": agent_id})
+        _awareness[agent_id] = {
+            "agent_id": agent_id,
+            "channel": channel,
+            "entity": entity,
             "timestamp": now_str,
             "model": "unknown",
             "task_current": "heartbeat-only"
         }
-        return json.dumps({"status": "presence_registered", "cli": cli})
+        return json.dumps({"status": "presence_registered", "agent_id": agent_id})
 
 
 @m9_safe("hivemind_get_awareness")
 @mcp.tool()
 async def hivemind_get_awareness() -> str:
-    """Get real-time awareness of all active CLI agents.
-
+    """Get real-time awareness of all active agents.
+    
     [hardening-p9] Cold-Store Hydration: if the hot store is empty (e.g.
     after a server restart), performs a shallow scan of HALL_OF_RECORDS
     to recover agent presence from disk. Agents whose session files
@@ -821,37 +827,38 @@ async def hivemind_get_awareness() -> str:
     
     Returns:
         JSON string containing a list of all active or recently seen agents.
+        Each entry includes agent_id, channel, entity, model, task_current, last_seen.
     """
     now = datetime.now(timezone.utc)
     async with _awareness_lock:
-        stale_clis = []
+        stale_ids = []
         awareness_list = []
-        for cli, snap in _awareness.items():
+        for agent_id, snap in _awareness.items():
             ts_str = snap.get("timestamp")
             if ts_str:
                 ts = datetime.fromisoformat(ts_str)
                 if (now - ts).total_seconds() > HEARTBEAT_TTL:
-                    stale_clis.append(cli)
+                    stale_ids.append(agent_id)
                     continue
             awareness_list.append({
-                "cli": cli,
+                "agent_id": agent_id,
+                "channel": snap.get("channel", ""),
+                "entity": snap.get("entity", ""),
                 "model": snap.get("model"),
                 "task_current": snap.get("task_current", ""),
                 "last_seen": ts_str or ""
             })
-        for cli in stale_clis:
-            del _awareness[cli]
+        for agent_id in stale_ids:
+            del _awareness[agent_id]
 
     # Cold-store hydration supplement (D-kal-051 protocol)
-    # Always scan cold store to supplement hot store, deduplicating by CLI name.
-    # Hot store data is preferred (it's fresher).
     def _scan_cold():
         recovered = []
-        for cli_dir in HALL_OF_RECORDS.iterdir():
-            if not cli_dir.is_dir():
+        for agent_dir in HALL_OF_RECORDS.iterdir():
+            if not agent_dir.is_dir():
                 continue
             json_files = sorted(
-                cli_dir.glob("ses_*.json"),
+                agent_dir.glob("ses_*.json"),
                 key=lambda p: p.stat().st_mtime,
                 reverse=True
             )
@@ -865,7 +872,9 @@ async def hivemind_get_awareness() -> str:
                     with latest.open() as f:
                         snap = json.load(f)
                     recovered.append({
-                        "cli": snap.get("cli", cli_dir.name),
+                        "agent_id": snap.get("agent_id", agent_dir.name),
+                        "channel": snap.get("channel", ""),
+                        "entity": snap.get("entity", agent_dir.name),
                         "model": snap.get("model", "unknown"),
                         "task_current": snap.get("task_current", ""),
                         "last_seen": snap.get("timestamp", mtime.isoformat()),
@@ -876,9 +885,9 @@ async def hivemind_get_awareness() -> str:
         return recovered
 
     cold_results = await anyio.to_thread.run_sync(_scan_cold)
-    hot_clis = {a["cli"] for a in awareness_list}
+    hot_ids = {a["agent_id"] for a in awareness_list}
     for cold_agent in cold_results:
-        if cold_agent["cli"] not in hot_clis:
+        if cold_agent["agent_id"] not in hot_ids:
             awareness_list.append(cold_agent)
 
     return json.dumps(awareness_list, indent=2)
@@ -886,31 +895,33 @@ async def hivemind_get_awareness() -> str:
 
 @m9_safe("hivemind_get_continuation")
 @mcp.tool()
-async def hivemind_get_continuation(cli: str) -> str:
-    """Get the latest continuation note for a specific CLI.
+async def hivemind_get_continuation(channel: str, entity: str) -> str:
+    """Get the latest continuation note for a specific agent.
     
     D-kal-051: Fixed cold-store fallback. Previously only checked
     in-memory _awareness (lost on server restart). Now falls back
     to HALL_OF_RECORDS cold store for the most recent session file.
     
     Args:
-        cli: The CLI identifier to retrieve the continuation note for.
+        channel: The execution channel (e.g., 'opencode', 'cline').
+        entity: The entity persona (e.g., 'kali', 'roc_racoon').
         
     Returns:
         The text of the latest continuation note or an error message.
     """
-    cli = _canonicalize_cli(cli)
+    agent_id = _make_agent_id(channel, entity)
     async with _awareness_lock:
-        snap = _awareness.get(cli)
+        snap = _awareness.get(agent_id)
     if snap:
         return snap.get("continuation", "No continuation note found.")
     
-    # Cold-store fallback: scan HALL_OF_RECORDS/<cli>/*.json for latest
+    # Cold-store fallback: scan HALL_OF_RECORDS/<agent_id>/*.json for latest
     def _read_cold_fallback():
-        cli_dir = HALL_OF_RECORDS / cli
-        if not cli_dir.exists():
+        safe_id = agent_id.replace(" ", "_").replace("/", "_")
+        agent_dir = HALL_OF_RECORDS / safe_id
+        if not agent_dir.exists():
             return None
-        json_files = sorted(cli_dir.glob("ses_*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+        json_files = sorted(agent_dir.glob("ses_*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
         if not json_files:
             return None
         try:
@@ -919,11 +930,10 @@ async def hivemind_get_continuation(cli: str) -> str:
         except Exception:
             return None
 
-
     cold = await anyio.to_thread.run_sync(_read_cold_fallback)
     if cold:
         return cold.get("continuation", "No continuation note found in cold store.")
-    return f"No awareness data for CLI '{cli}' (checked hot + cold stores)."
+    return f"No awareness data for '{agent_id}' (checked hot + cold stores)."
 
 
 # === D-kal-052: EXTENDED SESSION CHECK-IN (3-Hour Safety TTL) ===
@@ -969,7 +979,8 @@ if _saved:
 @m9_safe("hivemind_extended_checkin")
 @mcp.tool()
 async def hivemind_extended_checkin(
-    cli: str,
+    channel: str,
+    entity: str,
     reason: str = "Extended Hivemind session — user may forget to check out",
     ttl_seconds: int = EXTENDED_SAFETY_TTL_DEFAULT,
 ) -> str:
@@ -987,16 +998,21 @@ async def hivemind_extended_checkin(
     With this, they persist for the full 3 hours.
 
     Args:
-        cli: CLI identifier (e.g., "opencode-kali")
+        channel: The execution channel (e.g., 'opencode', 'cline').
+        entity: The entity persona (e.g., 'kali', 'roc_racoon').
         reason: Human-readable explanation (for the Hivemind audit log)
         ttl_seconds: Override default 3-hour TTL (max 24h = 86400s)
 
     Returns:
         JSON string containing the registered TTL and expiry timestamp.
     """
+    agent_id = _make_agent_id(channel, entity)
     ttl_seconds = min(ttl_seconds, 86400)  # cap at 24h
     async with _extended_sessions_lock:
-        _extended_sessions[cli] = {
+        _extended_sessions[agent_id] = {
+            "agent_id": agent_id,
+            "channel": channel,
+            "entity": entity,
             "ttl_seconds": ttl_seconds,
             "registered_at": datetime.now(timezone.utc).isoformat(),
             "reason": reason,
@@ -1004,34 +1020,36 @@ async def hivemind_extended_checkin(
     await anyio.to_thread.run_sync(_save_extended_sessions, _extended_sessions)
     return json.dumps({
         "status": "extended_checkin_registered",
-        "cli": cli,
+        "agent_id": agent_id,
         "ttl_seconds": ttl_seconds,
-        "ttl_hours": ttl_seconds / 3600,
-        "reason": reason,
-        "expires_at": (datetime.now(timezone.utc).timestamp() + ttl_seconds),
+        "expires_at": (
+            datetime.now(timezone.utc).timestamp() + ttl_seconds
+        ),
     })
 
 
 @m9_safe("hivemind_extended_checkout")
 @mcp.tool()
-async def hivemind_extended_checkout(cli: str) -> str:
+async def hivemind_extended_checkout(channel: str, entity: str) -> str:
     """Cancel an extended-session check-in.
 
     Call this when ending the session cleanly so the pruning loop
     reverts to the default 20-minute TTL behavior.
     
     Args:
-        cli: The CLI identifier to check out.
+        channel: The execution channel (e.g., 'opencode', 'cline').
+        entity: The entity persona (e.g., 'kali', 'roc_racoon').
         
     Returns:
         JSON string confirming completion or stating no extended session was found.
     """
+    agent_id = _make_agent_id(channel, entity)
     async with _extended_sessions_lock:
-        if cli in _extended_sessions:
-            del _extended_sessions[cli]
+        if agent_id in _extended_sessions:
+            del _extended_sessions[agent_id]
             await anyio.to_thread.run_sync(_save_extended_sessions, _extended_sessions)
-            return json.dumps({"status": "extended_checkout_complete", "cli": cli})
-        return json.dumps({"status": "no_extended_session", "cli": cli})
+            return json.dumps({"status": "extended_checkout_complete", "agent_id": agent_id})
+        return json.dumps({"status": "no_extended_session", "agent_id": agent_id})
 
 
 @m9_safe("hivemind_get_session")
@@ -1067,30 +1085,31 @@ async def hivemind_get_session(session_id: str) -> str:
 
 @m9_safe("hivemind_list_sessions")
 @mcp.tool()
-async def hivemind_list_sessions(cli: Optional[str] = None, limit: int = 10) -> str:
+async def hivemind_list_sessions(channel: Optional[str] = None, entity: Optional[str] = None, limit: int = 10) -> str:
     """List recent session snapshots.
     
     Args:
-        cli: Optional CLI identifier to filter sessions for.
+        channel: Optional channel to filter sessions for.
+        entity: Optional entity to filter sessions for.
         limit: Maximum number of sessions to return.
         
     Returns:
-        JSON string containing a list of session IDs and their CLI associations.
+        JSON string containing a list of session IDs and agent associations.
     """
-    if cli:
-        cli = _canonicalize_cli(cli)
+    filter_id = _make_agent_id(channel, entity) if (channel and entity) else None
     def _list_sessions():
         sessions = []
-        if cli:
-            cli_dir = HALL_OF_RECORDS / cli
-            if cli_dir.exists():
-                for f in sorted(cli_dir.glob("*.json"), reverse=True)[:limit]:
+        if filter_id:
+            safe_id = filter_id.replace(" ", "_").replace("/", "_")
+            agent_dir = HALL_OF_RECORDS / safe_id
+            if agent_dir.exists():
+                for f in sorted(agent_dir.glob("*.json"), reverse=True)[:limit]:
                     sessions.append(f.stem)
         else:
-            for cli_dir in HALL_OF_RECORDS.iterdir():
-                if cli_dir.is_dir():
-                    for f in sorted(cli_dir.glob("*.json"), reverse=True)[:limit]:
-                        sessions.append({"cli": cli_dir.name, "session_id": f.stem})
+            for agent_dir in HALL_OF_RECORDS.iterdir():
+                if agent_dir.is_dir():
+                    for f in sorted(agent_dir.glob("*.json"), reverse=True)[:limit]:
+                        sessions.append({"agent_id": agent_dir.name, "session_id": f.stem})
         return sessions
     sessions = await anyio.to_thread.run_sync(_list_sessions)
     return json.dumps(sessions, indent=2)
@@ -1331,7 +1350,7 @@ async def hivemind_get_entity_context(entity_name: str) -> str:
 
 @m9_safe("hivemind_workspace_lock_acquire")
 @mcp.tool()
-async def hivemind_workspace_lock_acquire(cli: str, domain: str, ttl: int = 3600) -> str:
+async def hivemind_workspace_lock_acquire(channel: str, entity: str, domain: str, ttl: int = 3600) -> str:
     """Acquire an exclusive workspace lock for a domain.
 
     Creates an atomic lock file at data/coordination/locks/{domain}.lock.
@@ -1339,7 +1358,8 @@ async def hivemind_workspace_lock_acquire(cli: str, domain: str, ttl: int = 3600
     If a lock exists but has expired, overwrites it (TTL-based auto-release).
 
     Args:
-        cli: The CLI identifier requesting the lock.
+        channel: The execution channel (e.g., 'opencode', 'cline').
+        entity: The entity persona requesting the lock.
         domain: The domain/resource to lock.
         ttl: Time-to-live in seconds (default 3600, max 86400).
 
@@ -1347,7 +1367,7 @@ async def hivemind_workspace_lock_acquire(cli: str, domain: str, ttl: int = 3600
         JSON string confirming lock acquisition or conflict.
     """
     await _reap_stale_locks()
-    cli = _canonicalize_cli(cli)
+    agent_id = _make_agent_id(channel, entity)
     ttl = min(ttl, 86400)
     lock_path = LOCKS_BASE / f"{domain}.lock"
 
@@ -1359,12 +1379,14 @@ async def hivemind_workspace_lock_acquire(cli: str, domain: str, ttl: int = 3600
             lock_ttl = existing.get("ttl", 3600)
             now = datetime.now(timezone.utc).timestamp()
             if now <= acquired_at + lock_ttl:
-                return {"conflict": True, "holder": existing.get("cli"), "domain": domain}
+                return {"conflict": True, "holder": existing.get("agent_id"), "domain": domain}
             lock_path.unlink()
 
         tmp_path = lock_path.with_suffix(".lock.tmp")
         lock_data = {
-            "cli": cli,
+            "agent_id": agent_id,
+            "channel": channel,
+            "entity": entity,
             "domain": domain,
             "acquired_at": datetime.now(timezone.utc).timestamp(),
             "ttl": ttl,
@@ -1380,7 +1402,9 @@ async def hivemind_workspace_lock_acquire(cli: str, domain: str, ttl: int = 3600
         return json.dumps(result)
     return json.dumps({
         "status": "acquired",
-        "cli": cli,
+        "agent_id": agent_id,
+        "channel": channel,
+        "entity": entity,
         "domain": domain,
         "acquired_at": result["acquired_at"],
         "ttl": ttl,
@@ -1389,19 +1413,20 @@ async def hivemind_workspace_lock_acquire(cli: str, domain: str, ttl: int = 3600
 
 @m9_safe("hivemind_workspace_lock_release")
 @mcp.tool()
-async def hivemind_workspace_lock_release(cli: str, domain: str) -> str:
+async def hivemind_workspace_lock_release(channel: str, entity: str, domain: str) -> str:
     """Release a workspace lock.
 
-    Only succeeds if `cli` matches the lock holder.
+    Only succeeds if the agent matches the lock holder.
 
     Args:
-        cli: The CLI identifier that owns the lock.
+        channel: The execution channel that owns the lock.
+        entity: The entity persona that owns the lock.
         domain: The domain/resource to unlock.
 
     Returns:
         JSON string confirming release or error.
     """
-    cli = _canonicalize_cli(cli)
+    agent_id = _make_agent_id(channel, entity)
     lock_path = LOCKS_BASE / f"{domain}.lock"
 
     def _release():
@@ -1409,10 +1434,10 @@ async def hivemind_workspace_lock_release(cli: str, domain: str) -> str:
             return {"error": "No lock exists for this domain"}
         with open(lock_path) as f:
             existing = json.load(f)
-        if existing.get("cli") != cli:
-            return {"error": f"Lock held by '{existing.get('cli')}', not '{cli}'"}
+        if existing.get("agent_id") != agent_id:
+            return {"error": f"Lock held by '{existing.get('agent_id')}', not '{agent_id}'"}
         lock_path.unlink()
-        return {"status": "released", "cli": cli, "domain": domain}
+        return {"status": "released", "agent_id": agent_id, "domain": domain}
 
     result = await anyio.to_thread.run_sync(_release)
     return json.dumps(result)
@@ -1479,8 +1504,10 @@ LOCKS_BASE.mkdir(parents=True, exist_ok=True)
 @m9_safe("hivemind_submit_handoff")
 @mcp.tool()
 async def hivemind_submit_handoff(
-    target_cli: str,
-    source_cli: str,
+    target_channel: str,
+    target_entity: str,
+    source_channel: str,
+    source_entity: str,
     task: str,
     context: str = "",
     priority: int = 0,
@@ -1488,11 +1515,13 @@ async def hivemind_submit_handoff(
     """Submit a handoff packet to the queue. [hardening-p9] Contract Layer.
 
     Writes the packet to data/handoff/pending/ and returns the packet_id.
-    The target CLI must call hivemind_accept_handoff() to move it to active/.
+    The target agent must call hivemind_accept_handoff() to move it to active/.
 
     Args:
-        target_cli: The CLI that should accept this handoff.
-        source_cli: The CLI submitting the handoff.
+        target_channel: The channel of the target agent (e.g., 'opencode').
+        target_entity: The entity of the target agent (e.g., 'roc_racoon').
+        source_channel: The channel of the submitting agent.
+        source_entity: The entity of the submitting agent.
         task: The task description for the target agent.
         context: Optional background context.
         priority: 0=normal, 1=high, 2=critical.
@@ -1500,11 +1529,17 @@ async def hivemind_submit_handoff(
     Returns:
         JSON string containing the packet_id and storage path.
     """
+    target_agent_id = _make_agent_id(target_channel, target_entity)
+    source_agent_id = _make_agent_id(source_channel, source_entity)
     packet_id = f"ho_{uuid.uuid4().hex[:12]}"
     packet = {
         "packet_id": packet_id,
-        "target_cli": target_cli,
-        "source_cli": source_cli,
+        "target_agent_id": target_agent_id,
+        "target_channel": target_channel,
+        "target_entity": target_entity,
+        "source_agent_id": source_agent_id,
+        "source_channel": source_channel,
+        "source_entity": source_entity,
         "task": task,
         "context": context,
         "priority": priority,
@@ -1525,16 +1560,18 @@ async def hivemind_submit_handoff(
 
 @m9_safe("hivemind_accept_handoff")
 @mcp.tool()
-async def hivemind_accept_handoff(packet_id: str, accepting_cli: str) -> str:
+async def hivemind_accept_handoff(packet_id: str, accepting_channel: str, accepting_entity: str) -> str:
     """Accept a handoff packet. [hardening-p9] Moves pending -> active/.
 
     Args:
         packet_id: The packet_id from hivemind_submit_handoff.
-        accepting_cli: The CLI that is accepting the handoff.
+        accepting_channel: The channel of the accepting agent.
+        accepting_entity: The entity of the accepting agent.
         
     Returns:
         JSON string confirming acceptance or stating an error.
     """
+    acceptor_agent_id = _make_agent_id(accepting_channel, accepting_entity)
     src = HANDOFF_PENDING / f"{packet_id}.json"
     dst = HANDOFF_ACTIVE / f"{packet_id}.json"
 
@@ -1545,7 +1582,9 @@ async def hivemind_accept_handoff(packet_id: str, accepting_cli: str) -> str:
             packet = json.load(f)
         packet["status"] = "active"
         packet["accepted_at"] = datetime.now(timezone.utc).isoformat()
-        packet["accepted_by"] = accepting_cli
+        packet["accepted_by_agent_id"] = acceptor_agent_id
+        packet["accepted_by_channel"] = accepting_channel
+        packet["accepted_by_entity"] = accepting_entity
         with open(dst, "w") as f:
             fcntl.flock(f, fcntl.LOCK_EX)
             json.dump(packet, f, indent=2)
@@ -1556,7 +1595,7 @@ async def hivemind_accept_handoff(packet_id: str, accepting_cli: str) -> str:
     moved = await anyio.to_thread.run_sync(_move)
     if not moved:
         return json.dumps({"error": f"Packet '{packet_id}' not found in pending queue"})
-    return json.dumps({"status": "accepted", "packet_id": packet_id, "accepted_by": accepting_cli})
+    return json.dumps({"status": "accepted", "packet_id": packet_id, "accepted_by": acceptor_agent_id})
 
 
 @m9_safe("hivemind_complete_handoff")
@@ -1669,13 +1708,17 @@ async def hivemind_handoff_list(status: str) -> str:
                     packet = json.load(fh)
                 packets.append({
                     "packet_id": packet.get("packet_id", f.stem),
-                    "target_cli": packet.get("target_cli", "unknown"),
-                    "source_cli": packet.get("source_cli", "unknown"),
+                    "target_agent_id": packet.get("target_agent_id", packet.get("target_cli", "unknown")),
+                    "target_channel": packet.get("target_channel", ""),
+                    "target_entity": packet.get("target_entity", packet.get("target_cli", "")),
+                    "source_agent_id": packet.get("source_agent_id", packet.get("source_cli", "unknown")),
+                    "source_channel": packet.get("source_channel", ""),
+                    "source_entity": packet.get("source_entity", packet.get("source_cli", "")),
                     "task": packet.get("task", "")[:80],
                     "status": packet.get("status", status),
                     "priority": packet.get("priority", 0),
                     "submitted_at": packet.get("submitted_at", ""),
-                    "accepted_by": packet.get("accepted_by", ""),
+                    "accepted_by": packet.get("accepted_by", packet.get("accepted_by_agent_id", "")),
                     "completed_at": packet.get("completed_at", ""),
                     "rejected": packet.get("rejected", False),
                 })
