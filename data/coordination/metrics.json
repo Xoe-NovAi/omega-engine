@@ -2,18 +2,18 @@
   "hivemind": {
     "active_agents": 0,
     "handoff_queue": {
-      "pending": 14,
+      "pending": 15,
       "active": 11,
       "completed": 5,
       "stale": 0,
-      "total": 30
+      "total": 31
     },
     "workspace_locks": {
       "active": 0,
       "expired": 0
     },
     "extended_sessions": 0,
-    "pruning_cycle_last_run": "2026-06-11T07:32:35.950439+00:00"
+    "pruning_cycle_last_run": "2026-06-11T07:42:36.447615+00:00"
   },
-  "updated_at": "2026-06-11T07:32:35.950468+00:00"
+  "updated_at": "2026-06-11T07:42:36.447641+00:00"
 }
