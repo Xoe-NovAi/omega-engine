@@ -12,6 +12,10 @@ Consolidates the following services into a single FastMCP endpoint:
 
 Usage:
     cd ~/Documents/Xoe-NovAi/omega-engine && python mcp_servers/omega_hub/server.py
+# To run with SSE transport (for MCP client connections from Cline/OpenCode):
+#   OMEGA_MCP_TRANSPORT=sse OMEGA_MCP_PORT=8016 python mcp_servers/omega_hub/server.py
+#
+
 """
 
 import sys
@@ -2888,6 +2892,15 @@ hub_routes = [
 
 
 if __name__ == "__main__":
+    # Auto-configure SSE transport for MCP client connectivity
+    # This ensures Cline/OpenCode can connect via SSE at http://127.0.0.1:8016/sse
+    if not os.environ.get("OMEGA_MCP_TRANSPORT"):
+        os.environ["OMEGA_MCP_TRANSPORT"] = "sse"
+    if not os.environ.get("OMEGA_MCP_PORT"):
+        os.environ["OMEGA_MCP_PORT"] = "8016"
+    if not os.environ.get("OMEGA_MCP_HOST"):
+        os.environ["OMEGA_MCP_HOST"] = "127.0.0.1"
+
     # Start background tasks in daemon threads (clean up when server stops)
     # Q3 fix: _AsyncThreadLock wraps threading.Lock — safe across event loops.
     # Each background thread runs its own anyio event loop; lock operations
