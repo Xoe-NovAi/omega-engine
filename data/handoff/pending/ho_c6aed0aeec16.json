@@ -1,0 +1,14 @@
+{
+  "packet_id": "ho_c6aed0aeec16",
+  "target_agent_id": "gemini-cli/cli_gemini",
+  "target_channel": "gemini-cli",
+  "target_entity": "cli_gemini",
+  "source_agent_id": "cline/cline-m3",
+  "source_channel": "cline",
+  "source_entity": "cline-m3",
+  "task": "Fix Iris speculative decoder routing in Oracle.talk(). Current bug: queries that don't match any keyword pattern in _assess_iris_confidence() get default confidence 0.5, which exceeds IRIS_CONFIDENCE_THRESHOLD (0.6)... wait, 0.5 < 0.6. Actually re-check: the threshold is 0.6 and default is 0.5, so Iris should NOT be handling general queries. BUT the test call returned Iris handling a fleet notification query. Root cause investigation needed in src/omega/oracle/oracle.py. Key files: oracle.py (lines 148-185 for _assess_iris_confidence, lines 255-265 for routing logic, lines 416-458 for _respond_as_iris). The _respond_as_iris method is a hardcoded stub that returns canned strings \u2014 it should actually invoke a lightweight model (qwen3-0.6b as configured in Iris entity soul) when handling 'simple' queries, or the threshold logic needs tightening so Iris only handles true greetings.",
+  "context": "Oracle.talk() flow: (1) detect summon patterns (2) assess iris_confidence (3) if > 0.6 threshold, _respond_as_iris handles it with hardcoded strings (4) else escalate to domain-matched Pillar Keeper. The problem: _respond_as_iris returns canned greetings instead of calling a model, AND the confidence assessment may be misrouting queries that should escalate. The user tested oracle_talk with a fleet notification query and got a generic \"Hello! I'm Iris\" response. Fix the routing so complex queries always escalate, and _respond_as_iris actually invokes the Iris model (qwen3-0.6b-q6_k) instead of returning hardcoded strings.",
+  "priority": 1,
+  "status": "pending",
+  "submitted_at": "2026-06-11T08:22:28.456494+00:00"
+}
