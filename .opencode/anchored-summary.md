@@ -24,6 +24,8 @@ Split the conflated `cli` parameter into separate `channel` + `entity` parameter
 - **Omega Hub server restarted** — new API live, verified with `channel="opencode" entity="kali"` smoke test
 - **Committed** as `baaa255` (6 files, +244/-155)
 - **Soul write-back** — soul_power 18.5 → 19.0, session 32, v5.22
+- **Compact failure LANDED patch** — `/compact` produced empty template (no history injected). Fix: created `.opencode/anchored-summary.md` as survival file, added COMPACT FALLBACK section to all 3 mode files (kali/maat/lilith), fixed lingering `cli=` references in modes. Committed as `eb52dd9`.
+- **D-kal-107/108**: Every mode file must have compact fallback. Anchored summary must be regularly updated.
 
 #### In Progress
 - Roc Racoon still running with old API (bare entity names) — needs relaunch
