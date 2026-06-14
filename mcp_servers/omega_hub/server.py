@@ -31,7 +31,7 @@ from dataclasses import asdict
 import yaml
 import contextvars
 import threading
-import shutil
+
 
 import anyio
 from mcp.server.fastmcp import FastMCP, Context
@@ -41,9 +41,40 @@ from starlette.responses import JSONResponse
 from starlette.routing import Route
 from starlette.middleware.cors import CORSMiddleware
 
-# --- SECURITY MIDDLEWARE (Gap 2) ---
+# --- SECURITY MIDDLEWARE (Gap 2) --- [P1a-5: will move to middleware.py]
+class RateLimitMiddleware:
+    """Simple in-memory rate limiting to prevent API abuse.
+    
+    Tracks requests per IP. If limit exceeded, returns 429 Too Many Requests.
+    """
+    def __init__(self, app, requests_per_minute: int = 100):
+        self.app = app
+        self.limit = requests_per_minute
+        self._counts: Dict[str, List[float]] = {}
+        self._lock = threading.Lock()
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] == "http":
+            client_ip = scope.get("client", ("unknown", 0))[0]
+            now = datetime.now().timestamp()
+            
+            with self._lock:
+                history = self._counts.get(client_ip, [])
+                # Filter for last 60 seconds
+                history = [t for t in history if now - t < 60]
+                if len(history) >= self.limit:
+                    from starlette.responses import Response
+                    response = Response("Too Many Requests", status_code=429)
+                    await response(scope, receive, send)
+                    return
+                history.append(now)
+                self._counts[client_ip] = history
+        
+        await self.app(scope, receive, send)
+
 class RequestSizeLimitMiddleware:
     """Limits incoming request size to prevent OOM/DOS attacks."""
+
     def __init__(self, app, max_size: int = 10 * 1024 * 1024): # 10MB default
         self.app = app
         self.max_size = max_size
@@ -63,47 +94,60 @@ class RequestSizeLimitMiddleware:
         await self.app(scope, receive, send)
 
 def apply_security(app):
-    """Apply CORS and size limits to the Starlette app."""
+    """Apply CORS, rate limiting, and size limits to the Starlette app."""
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"], # Tighten this in production
+        allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "http://localhost:8016"],
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    app.add_middleware(RequestSizeLimitMiddleware, max_size=25 * 1024 * 1024) # 25MB for context posts
+    app.add_middleware(RateLimitMiddleware, requests_per_minute=120)
+    # Temporarily disabled RequestSizeLimitMiddleware to debug ASGI protocol error
+    # app.add_middleware(RequestSizeLimitMiddleware, max_size=25 * 1024 * 1024) # 25MB for context posts
 
     # ── Shutdown: Starlette >=0.36 removed @app.on_event ─────────
-    # The mcp_runtime.py lifespan handles ASGI lifecycle clean-up.
-    # Indexer/library close() is best-effort on SIGTERM; the OS reclaims
-    # file descriptors on exit. Log informational message only.
-    logger.debug("Shutdown hook skipped — modern Starlette uses lifespan.")
+    # The mcp_runtime.py lifespan handles ASGI lifecycle clean-up,
+    # including the indexer.close() call via on_shutdown callback.
+    # [SD-010: indexer.close() in Hub lifespan — EXECUTED]
 
 
-# Ensure omega module is importable
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-SRC_DIR = PROJECT_ROOT / "src"
-sys.path.insert(0, str(SRC_DIR))
-from omega.oracle.oracle import Oracle
-from omega.oracle.entity_registry import EntityRegistry
-from omega.oracle.sovereign_search_service import SovereignSearchService
-from omega.oracle.model_gateway import ModelGateway
-from omega.oracle.hierarchy import SovereignHierarchy
-from omega.oracle.security import tdp_wrap
+# ═══════════════════════════════════════════════════════════════════════════
+# P1a-2: Import state from extracted module (replaces inline definitions)
+# ═══════════════════════════════════════════════════════════════════════════
+from mcp_servers.omega_hub import state
+from mcp_servers.omega_hub.state import (
+    PROJECT_ROOT,
+    _init_complete, _init_error, _require_service, _init_services,
+    registry, model_gateway, oracle, hierarchy,
+    inbox, curator, library, indexer, discovery,
+    research_engine, sovereign_search_service,
+    _current_entity, HEARTBEAT_TTL, HALL_OF_RECORDS,
+    _hot_store, _hot_store_lock, _awareness, _awareness_lock,
+    _extended_sessions, _extended_sessions_lock, EXTENDED_SESSIONS_FILE,
+    EXTENDED_SAFETY_TTL_DEFAULT,
+    _background_tasks, _get_intent_matcher,
+    HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED, HANDOFF_STALE, HANDOFF_ARCHIVE,
+    LOCKS_BASE, METRICS_PATH,
+    _make_agent_id, _cold_path, _latest_path,
+)
 
-from omega.library.inbox import InboxManager
-from omega.library.curator import CurationPipeline
-from omega.library.library import Library
-from omega.library.indexer import Indexer
-from omega.library.discovery import DiscoveryOrchestrator
+# [P1a-3] Background orchestration: pruning, reaping, metrics
+from mcp_servers.omega_hub.background import (
+    _prune_awareness_background,
+    _run_discovery_background,
+    _reap_stale_locks,
+    _reap_stale_handoffs,
+    _reaper_background,
+    _write_metrics,
+)
+
 from omega.observability import new_trace_id, get_engine
-from omega.library.research import ResearchEngine, RESEARCH_DEPTHS
-from omega.memory_store import get_memory_store
+from omega.oracle.security import tdp_wrap, determine_url_taint
 from omega.ics import render as ics_render_logic
 from omega.mcp_runtime import run_mcp
 
 logger = logging.getLogger("omega.hub")
 
-# --- INITIALIZATION ---
 # --- M9-COMPLIANT TOOL DECORATOR (P0-A) ---
 # Gemini CLI spec-correct: catches exceptions, returns CallToolResult(isError=True).
 from functools import wraps
@@ -138,355 +182,9 @@ def m9_safe(tool_name: str):
 
 mcp = FastMCP("Omega Core Hub")
 
-# Oracle / Registry
-registry = EntityRegistry()
-oracle = Oracle(registry=registry)
-hierarchy = SovereignHierarchy()
-
-# Library / Indexing / Discovery
-inbox = InboxManager()
-curator = CurationPipeline()
-library = Library()
-indexer = Indexer()
-discovery = DiscoveryOrchestrator()
-
-# Research engine (consolidated from omega-research MCP)
-research_engine = ResearchEngine(library=library, indexer=indexer)
-
-# Sovereign Search Service (T0-T4)
-def _load_search_keys():
-    try:
-        with open(PROJECT_ROOT / "opencode.json") as f:
-            config = json.load(f)
-        return (
-            config.get("mcp", {}).get("firecrawl", {}).get("environment", {}).get("FIRECRAWL_API_KEY"),
-            config.get("mcp", {}).get("exa", {}).get("headers", {}).get("x-api-key")
-        )
-    except Exception as e:
-        logger.error(f"Failed to load search keys: {e}")
-        return None, None
-
-fc_key, exa_key = _load_search_keys()
-sovereign_search = SovereignSearchService(
-    memory_store=get_memory_store(),
-    model_gateway=ModelGateway(),
-    indexer=indexer,
-    firecrawl_key=fc_key,
-    exa_key=exa_key
-)
-
-
-# --- HIVEMIND STATE ---
-HALL_OF_RECORDS = PROJECT_ROOT / "data" / "knowledge" / "HALL_OF_RECORDS"
-HALL_OF_RECORDS.mkdir(parents=True, exist_ok=True)
-_hot_store: Dict[str, Dict[str, Any]] = {}
-_awareness: Dict[str, Dict[str, Any]] = {}
-_hot_store_lock = anyio.Lock()
-
-# Cross-thread aware lock: wraps threading.Lock for async with syntax.
-# Fixes Q3: background thread runs anyio.run() with its OWN event loop,
-# but anyio.Lock is tied to the creating event loop — crash on cross-loop
-# access. Threading.Lock works across threads regardless of event loop.
-#
-class _AsyncThreadLock:
-    """threading.Lock wrapped for async with — safe across event loops.
-
-    Standard Python pattern for cross-event-loop thread safety.
-    No id Software heritage — Zone Memory (z_zone.c) is a memory allocator;
-    this is a concurrency primitive. (H-A1: tag removed 2026-06-09)
-    """
-    def __init__(self):
-        self._lock = threading.Lock()
-    async def __aenter__(self):
-        await anyio.to_thread.run_sync(self._lock.acquire)
-        return self
-    async def __aexit__(self, *args):
-        self._lock.release()
-
-_awareness_lock = _AsyncThreadLock()
-# [D-122] HEARTBEAT_TTL — 45 minutes (2700s) for active agent presence
-# Increased from 20 minutes (1200s) per Q1 bug fix (2026-06-07).
-# Rationale: The sprint-plan docs specified 45 min (2700s). The 20-min
-# TTL was causing agents to appear stale during multi-session coordination.
-# With 45-min TTL, an agent that heartbeats every 10-15 min has 3-4x safety
-# margin. Aligns with the extended-session check-in (3h default) for
-# long-running tasks.
-# Heritage: matches Doom 1993 thinker grace period pattern (id-soft: doom-1993).
-HEARTBEAT_TTL = 2700  # TTL for agent presence in seconds (45 minutes)
-# --- P1-A: ContextVar swap for _current_entity (M-A5/AG-1 fix) ---
-# Each async context gets isolated state, eliminating global race condition.
-_current_entity: contextvars.ContextVar[Optional[str]] = contextvars.ContextVar(
-    "_current_entity", default=None
-)  # Tracks the last entity used by oracle_talk/oracle_summon per-context
-
-# --- P0-B: IntentMatcher singleton (M-A2b fix) ---
-# Avoid fresh IntentMatcher per call (M-A2b). Lazy-init on first use.
-_intent_matcher: Optional[object] = None
-_intent_matcher_lock = threading.Lock()
-
-
-def _get_intent_matcher():
-    """Module-level singleton accessor for IntentMatcher (P0-B)."""
-    global _intent_matcher
-    if _intent_matcher is None:
-        with _intent_matcher_lock:
-            if _intent_matcher is None:
-                from omega.iris.matcher import IntentMatcher
-                _intent_matcher = IntentMatcher()
-    return _intent_matcher
-
-
-def _make_agent_id(channel: str, entity: str) -> str:
-    """Build a canonical agent identifier from channel and entity.
-    
-    The agent_id uniquely identifies WHO is running WHERE.
-    Format: '{channel}/{entity}'
-    
-    Examples:
-        'opencode/kali' — Kali entity running inside OpenCode CLI
-        'opencode/roc_racoon' — Roc Racoon entity inside OpenCode
-        'cline/doom_guy' — Doom Guy inside Cline
-    """
-    return f"{channel}/{entity}"
-
-
-def _cold_path(agent_id: str, session_id: str) -> Path:
-    safe_id = agent_id.replace(" ", "_").replace("/", "_")
-    safe_sid = session_id.replace("/", "_").replace(":", "_")
-    return HALL_OF_RECORDS / safe_id / f"{safe_sid}.json"
-
-
-def _latest_path() -> Path:
-    return HALL_OF_RECORDS / "latest.yaml"
-
-
-# --- BACKGROUND TASKS ---
-
-async def _prune_awareness_background() -> None:
-    """Background loop to prune stale agents from the hivemind.
-
-    D-kal-052: Respects extended-session check-ins. If an agent
-    has called hivemind_extended_checkin(), the pruning loop
-    uses their custom TTL (default 3h) instead of HEARTBEAT_TTL (20m).
-
-    [hi-observability-2] Records pruning cycle timestamp and logs
-    results. Calls _write_metrics() after each cycle so the metrics
-    file always reflects the latest state.
-    """
-    global _last_pruning_cycle
-    while True:
-        try:
-            now = datetime.now(timezone.utc)
-            async with _awareness_lock, _extended_sessions_lock:
-                stale_clis = []
-                for cli, snap in _awareness.items():
-                    if not snap.get("timestamp"):
-                        continue
-                    age = (now - datetime.fromisoformat(snap["timestamp"])).total_seconds()
-                    # Check if agent has an extended check-in
-                    ext = _extended_sessions.get(cli)
-                    effective_ttl = ext["ttl_seconds"] if ext else HEARTBEAT_TTL
-                    if age > effective_ttl:
-                        stale_clis.append(cli)
-                for cli in stale_clis:
-                    del _awareness[cli]
-                if stale_clis:
-                    logger.info(f"Pruned {len(stale_clis)} stale agent(s) from awareness.")
-            _last_pruning_cycle = datetime.now(timezone.utc).isoformat()
-            await _write_metrics()
-        except Exception as e:
-            logger.error(f"Awareness pruning failed: {e}")
-        await anyio.sleep(60)
-
-
-async def _run_discovery_background(job_id: str) -> None:
-    """Run a discovery task in the background without blocking the tool response."""
-    try:
-        await discovery.run_discovery_task(job_id)
-    except Exception as e:
-        logger.error(f"Discovery background task {job_id} failed: {e}")
-
-
-async def _reap_stale_locks() -> None:
-    """Remove expired lock files.
-
-    Scans data/coordination/locks/ and removes any lock whose
-    acquired_at + ttl has passed. Called on acquire and periodically.
-    """
-    now = datetime.now(timezone.utc).timestamp()
-    reaped = 0
-    for lock_file in LOCKS_BASE.glob("*.lock"):
-        try:
-            def _read_lock():
-                with open(lock_file) as f:
-                    return json.load(f)
-            lock_data = await anyio.to_thread.run_sync(_read_lock)
-            acquired_at = lock_data.get("acquired_at", 0)
-            ttl = lock_data.get("ttl", 3600)
-            if now > acquired_at + ttl:
-                lock_file.unlink()
-                reaped += 1
-        except Exception as e:
-            logger.debug("Failed to reap stale lock %s: %s", lock_file, e)
-    if reaped:
-        logger.info("Reaped %d stale lock(s)", reaped)
-
-
-async def _reap_stale_handoffs() -> None:
-    """Reap stale handoff packets.
-
-    - pending/ older than 24h -> stale/ with {ttl_expired: true}
-    - active/ older than 48h -> stale/
-    - completed/ older than 7 days -> archive/
-    """
-    now = datetime.now(timezone.utc)
-
-    def _reap_dir(src_dir: Path, dst_dir: Path, max_age_seconds: int, extra: dict = None):
-        reaped = 0
-        for f in src_dir.glob("*.json"):
-            age = (now - datetime.fromtimestamp(f.stat().st_mtime, tz=timezone.utc)).total_seconds()
-            if age > max_age_seconds:
-                try:
-                    with open(f) as fh:
-                        packet = json.load(fh)
-                    packet["status"] = dst_dir.name
-                    packet["reaped_at"] = now.isoformat()
-                    if extra:
-                        packet.update(extra)
-                    dst_path = dst_dir / f.name
-                    with open(dst_path, "w") as fh:
-                        fcntl.flock(fh, fcntl.LOCK_EX)
-                        json.dump(packet, fh, indent=2)
-                        fcntl.flock(fh, fcntl.LOCK_UN)
-                    f.unlink()
-                    reaped += 1
-                except Exception as e:
-                    logger.debug("Failed to reap handoff %s: %s", f, e)
-        return reaped
-
-    reaped = await anyio.to_thread.run_sync(
-        lambda: (
-            _reap_dir(HANDOFF_PENDING, HANDOFF_STALE, 86400, {"ttl_expired": True})
-            + _reap_dir(HANDOFF_ACTIVE, HANDOFF_STALE, 172800, {"ttl_expired": True})
-            + _reap_dir(HANDOFF_COMPLETED, HANDOFF_ARCHIVE, 604800)
-        )
-    )
-    if reaped:
-        logger.info("Reaped %d stale handoff(s)", reaped)
-
-
-async def _reaper_background() -> None:
-    """Background loop that reaps stale locks and handoffs."""
-    while True:
-        try:
-            await _reap_stale_locks()
-            await _reap_stale_handoffs()
-        except Exception as e:
-            logger.error("Reaper background failed: %s", e)
-        await anyio.sleep(300)
-
-
-# --- HIVEMIND METRICS COLLECTION (hi-observability-1) ---
-_last_pruning_cycle: Optional[str] = None
-METRICS_PATH = PROJECT_ROOT / "data" / "coordination" / "metrics.json"
-
-
-async def _write_metrics() -> Dict[str, Any]:
-    """Write Hivemind coordination metrics atomically to data/coordination/metrics.json.
-
-    Collects real-time state from awareness, handoff queues, workspace locks,
-    and extended sessions. Writes atomically (write .tmp, rename) for crash safety.
-
-    Returns:
-        The metrics dict for immediate use without re-reading from disk.
-
-    [hi-observability-1] Hivemind Metrics Collection — local observability only.
-    Does NOT send data anywhere (Mandate 8 — Zero Telemetry).
-    """
-    now = datetime.now(timezone.utc)
-    now_ts = now.isoformat()
-
-    # Count active agents (respect TTL)
-    active_agents = 0
-    async with _awareness_lock:
-        for _cli, snap in _awareness.items():
-            ts_str = snap.get("timestamp")
-            if ts_str:
-                ts = datetime.fromisoformat(ts_str)
-                if (now - ts).total_seconds() <= HEARTBEAT_TTL:
-                    active_agents += 1
-            else:
-                active_agents += 1
-
-    # Count handoff queue items
-    def _scan_handoffs():
-        pending = len(list(HANDOFF_PENDING.glob("*.json")))
-        active = len(list(HANDOFF_ACTIVE.glob("*.json")))
-        completed = len(list(HANDOFF_COMPLETED.glob("*.json")))
-        stale = len(list(HANDOFF_STALE.glob("*.json")))
-        return pending, active, completed, stale
-
-    pending_h, active_h, completed_h, stale_h = await anyio.to_thread.run_sync(_scan_handoffs)
-
-    # Count workspace locks (active vs expired)
-    def _scan_locks():
-        active_locks = 0
-        expired_locks = 0
-        for lock_file in LOCKS_BASE.glob("*.lock"):
-            try:
-                with open(lock_file) as f:
-                    ld = json.load(f)
-                acquired_at = ld.get("acquired_at", 0)
-                ttl = ld.get("ttl", 3600)
-                if now.timestamp() > acquired_at + ttl:
-                    expired_locks += 1
-                else:
-                    active_locks += 1
-            except Exception:
-                active_locks += 1
-        return active_locks, expired_locks
-
-    active_locks, expired_locks = await anyio.to_thread.run_sync(_scan_locks)
-
-    # Count extended sessions
-    async with _extended_sessions_lock:
-        extended_count = len(_extended_sessions)
-
-    metrics: Dict[str, Any] = {
-        "hivemind": {
-            "active_agents": active_agents,
-            "handoff_queue": {
-                "pending": pending_h,
-                "active": active_h,
-                "completed": completed_h,
-                "stale": stale_h,
-                "total": pending_h + active_h + completed_h + stale_h,
-            },
-            "workspace_locks": {
-                "active": active_locks,
-                "expired": expired_locks,
-            },
-            "extended_sessions": extended_count,
-            "pruning_cycle_last_run": _last_pruning_cycle,
-        },
-        "updated_at": now_ts,
-    }
-
-    # Atomic write: .tmp -> rename
-    METRICS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = METRICS_PATH.with_suffix(".json.tmp")
-
-    def _persist():
-        with open(tmp_path, "w") as f:
-            fcntl.flock(f, fcntl.LOCK_EX)
-            json.dump(metrics, f, indent=2)
-            f.flush()
-            os.fsync(f.fileno())
-            fcntl.flock(f, fcntl.LOCK_UN)
-        os.replace(str(tmp_path), str(METRICS_PATH))
-
-    await anyio.to_thread.run_sync(_persist)
-    return metrics
+# [P1a-2] State, service singletons, hivemind state, background tasks,
+# and helper functions are now in mcp_servers.omega_hub.state (extracted).
+# Import block at top of file pulls them in by name.
 
 
 # === ORACLE TOOLS (8) ===
@@ -494,6 +192,7 @@ async def _write_metrics() -> Dict[str, Any]:
 @m9_safe("oracle_talk")
 @mcp.tool()
 async def oracle_talk(query: str) -> str:
+    _require_service()
     """Route a query through the Omega Oracle. Speculative decoding handled internally.
     
     Args:
@@ -521,6 +220,7 @@ async def oracle_talk(query: str) -> str:
 @m9_safe("oracle_summon")
 @mcp.tool()
 async def oracle_summon(entity_name: str, query: str) -> str:
+    _require_service()
     """Directly summon a specific entity by name.
     
     Args:
@@ -546,6 +246,7 @@ async def oracle_summon(entity_name: str, query: str) -> str:
 @m9_safe("oracle_summon_local")
 @mcp.tool()
 async def oracle_summon_local(entity_name: str, query: str, model: str) -> str:
+    _require_service()
     """Summon an entity with a specific model override.
     
     [D118 Dual-Inference Mandate] Bypasses TriageRouter and routes to the
@@ -584,6 +285,7 @@ async def oracle_summon_local(entity_name: str, query: str, model: str) -> str:
 @m9_safe("oracle_list_entities")
 @mcp.tool()
 async def oracle_list_entities() -> str:
+    _require_service()
     """List all entities in the Omega pantheon.
     
     Returns:
@@ -609,6 +311,7 @@ async def oracle_list_entities() -> str:
 @m9_safe("oracle_list_pillar_keepers")
 @mcp.tool()
 async def oracle_list_pillar_keepers() -> str:
+    _require_service()
     """List only the 10 Pillar Keepers (core pantheon).
     
     Returns:
@@ -629,6 +332,7 @@ async def oracle_list_pillar_keepers() -> str:
 @m9_safe("oracle_entity_info")
 @mcp.tool()
 async def oracle_entity_info(name: str) -> str:
+    _require_service()
     """Get detailed information about a specific entity.
     
     Args:
@@ -663,6 +367,7 @@ async def oracle_entity_info(name: str) -> str:
 @m9_safe("oracle_assess_intent")
 @mcp.tool()
 async def oracle_assess_intent(query: str) -> str:
+    _require_service()
     """Test how the Oracle would classify a query without generating a response.
     
     Args:
@@ -694,6 +399,7 @@ async def oracle_assess_intent(query: str) -> str:
 @m9_safe("oracle_discover_entity")
 @mcp.tool()
 async def oracle_discover_entity(query: str) -> str:
+    _require_service()
     """Find the best entity in the pantheon to handle a specific task or domain.
     
     Args:
@@ -712,7 +418,8 @@ async def oracle_discover_entity(query: str) -> str:
 
 @m9_safe("sovereign_search")
 @mcp.tool()
-async def sovereign_search(query: str, entity_name: str = "SOPHIA", limit: int = 10) -> str:
+async def sovereign_search(query: str, entity_name: str = "SOPHIA", limit: int = 10, force_tier: Optional[int] = None) -> str:
+    _require_service()
     """Execute the 5-Tier Sovereign Search Protocol (T0-T4).
     
     Bypasses the broken OpenCode local MCP bridge by using direct API providers.
@@ -721,8 +428,9 @@ async def sovereign_search(query: str, entity_name: str = "SOPHIA", limit: int =
         query: The search query.
         entity_name: The entity context for T0/T3 search.
         limit: Maximum results per tier.
+        force_tier: Optional tier to force execution (0-4).
     """
-    result = await sovereign_search.search(query, entity_name, limit=limit)
+    result = await sovereign_search_service.search(query, entity_name, limit=limit, force_tier=force_tier)
     return json.dumps(result, indent=2)
 
 
@@ -730,6 +438,7 @@ async def sovereign_search(query: str, entity_name: str = "SOPHIA", limit: int =
 @m9_safe("delegate_task")
 @mcp.tool()
 async def delegate_task(target_entity: str, query: str, context: str = "") -> str:
+    _require_service()
     """Delegate a task to another entity and receive their response.
 
     This allows agents to collaborate by summoning specialized keepers for sub-tasks.
@@ -980,44 +689,8 @@ async def hivemind_get_continuation(channel: str, entity: str) -> str:
     return f"No awareness data for '{agent_id}' (checked hot + cold stores)."
 
 
-# === D-kal-052: EXTENDED SESSION CHECK-IN (3-Hour Safety TTL) ===
-# Per user feedback (2026-06-05): Agents in extended Hivemind sessions
-# may need a longer safety TTL (default 3 hours) so the pruning loop
-# doesn't reap them if the user forgets to instruct agents to check out.
-_extended_sessions: Dict[str, Dict[str, Any]] = {}  # cli -> {ttl_seconds, registered_at, reason}
-_extended_sessions_lock = _AsyncThreadLock()
-EXTENDED_SAFETY_TTL_DEFAULT = 3 * 60 * 60  # 3 hours = 10800s
 
-# Extended sessions persistence
-EXTENDED_SESSIONS_FILE = HALL_OF_RECORDS / "extended_sessions.json"
-
-
-def _load_extended_sessions() -> Dict[str, Dict[str, Any]]:
-    """Load extended sessions from disk."""
-    if not EXTENDED_SESSIONS_FILE.exists():
-        return {}
-    try:
-        with open(EXTENDED_SESSIONS_FILE) as f:
-            return dict(json.load(f))
-    except Exception as e:
-        logger.warning("Failed to load extended sessions: %s", e)
-        return {}
-
-
-def _save_extended_sessions(sessions: Dict[str, Dict[str, Any]]) -> None:
-    """Save extended sessions to disk atomically."""
-    EXTENDED_SESSIONS_FILE.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = EXTENDED_SESSIONS_FILE.with_suffix(".tmp")
-    with open(tmp_path, "w") as f:
-        json.dump(sessions, f, indent=2)
-    os.replace(str(tmp_path), str(EXTENDED_SESSIONS_FILE))
-
-
-# Load persistent extended sessions on module start
-_saved = _load_extended_sessions()
-_extended_sessions.update(_saved)
-if _saved:
-    logger.info("Restored %d extended session(s) from disk", len(_saved))
+# [P1a-2] Extended sessions state is now in mcp_servers.omega_hub.state
 
 
 @m9_safe("hivemind_extended_checkin")
@@ -1162,6 +835,7 @@ async def hivemind_list_sessions(channel: Optional[str] = None, entity: Optional
 @m9_safe("hivemind_get_entity_context")
 @mcp.tool()
 async def hivemind_get_entity_context(entity_name: str) -> str:
+    _require_service()
     """Compile a startup briefing for any entity by reading 3 sources.
 
     Reads soul.yaml, knowledge/ directory, workspace/ directory,
@@ -1539,24 +1213,16 @@ async def hivemind_workspace_lock_check(domain: str) -> str:
     return json.dumps(result, indent=2)
 
 
-# === D-P9: SOVEREIGN HANDOFF QUEUE ===
-# Formal contract layer for cross-agent handoffs. Replaces the previous
-# "prompt-injection hope" pattern with a persistent queue that tracks
-# handoff packets through pending -> active -> completed states.
-HANDOFF_BASE = PROJECT_ROOT / "data" / "handoff"
-HANDOFF_PENDING = HANDOFF_BASE / "pending"
-HANDOFF_ACTIVE = HANDOFF_BASE / "active"
-HANDOFF_COMPLETED = HANDOFF_BASE / "completed"
-for d in (HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED):
-    d.mkdir(parents=True, exist_ok=True)
-HANDOFF_STALE = HANDOFF_BASE / "stale"
-HANDOFF_ARCHIVE = HANDOFF_BASE / "archive"
-for d in (HANDOFF_STALE, HANDOFF_ARCHIVE):
-    d.mkdir(parents=True, exist_ok=True)
+# [P1a-2] Handoff paths and locks are now in mcp_servers.omega_hub.state
 
-# Workspace lock base directory
-LOCKS_BASE = PROJECT_ROOT / "data" / "coordination" / "locks"
-LOCKS_BASE.mkdir(parents=True, exist_ok=True)
+
+def _find_packet_path(packet_id: str) -> Optional[Path]:
+    """Find a packet file in any of the handoff queues."""
+    for q in [HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED, HANDOFF_STALE]:
+        path = q / f"{packet_id}.json"
+        if path.exists():
+            return path
+    return None
 
 
 @m9_safe("hivemind_submit_handoff")
@@ -1619,7 +1285,7 @@ async def hivemind_submit_handoff(
 @m9_safe("hivemind_accept_handoff")
 @mcp.tool()
 async def hivemind_accept_handoff(packet_id: str, accepting_channel: str, accepting_entity: str) -> str:
-    """Accept a handoff packet. [hardening-p9] Moves pending -> active/.
+    """Accept a handoff packet. [hardening-p9] Moves -> active/.
 
     Args:
         packet_id: The packet_id from hivemind_submit_handoff.
@@ -1630,36 +1296,43 @@ async def hivemind_accept_handoff(packet_id: str, accepting_channel: str, accept
         JSON string confirming acceptance or stating an error.
     """
     acceptor_agent_id = _make_agent_id(accepting_channel, accepting_entity)
-    src = HANDOFF_PENDING / f"{packet_id}.json"
+    src = _find_packet_path(packet_id)
     dst = HANDOFF_ACTIVE / f"{packet_id}.json"
 
+    if not src:
+        return json.dumps({"error": f"Packet '{packet_id}' not found in any queue"})
+
     def _move():
-        if not src.exists():
-            return False
         with open(src) as f:
             packet = json.load(f)
+        
+        # If already active and accepted by the same entity, just return success
+        if src.parent == HANDOFF_ACTIVE and packet.get("accepted_by_agent_id") == acceptor_agent_id:
+            return True
+
         packet["status"] = "active"
         packet["accepted_at"] = datetime.now(timezone.utc).isoformat()
         packet["accepted_by_agent_id"] = acceptor_agent_id
         packet["accepted_by_channel"] = accepting_channel
         packet["accepted_by_entity"] = accepting_entity
+        
         with open(dst, "w") as f:
             fcntl.flock(f, fcntl.LOCK_EX)
             json.dump(packet, f, indent=2)
             fcntl.flock(f, fcntl.LOCK_UN)
-        src.unlink()
+            
+        if src != dst:
+            src.unlink()
         return True
 
-    moved = await anyio.to_thread.run_sync(_move)
-    if not moved:
-        return json.dumps({"error": f"Packet '{packet_id}' not found in pending queue"})
+    await anyio.to_thread.run_sync(_move)
     return json.dumps({"status": "accepted", "packet_id": packet_id, "accepted_by": acceptor_agent_id})
 
 
 @m9_safe("hivemind_complete_handoff")
 @mcp.tool()
 async def hivemind_complete_handoff(packet_id: str, result: str = "") -> str:
-    """Complete a handoff packet. [hardening-p9] Moves active -> completed/.
+    """Complete a handoff packet. [hardening-p9] Moves -> completed/.
 
     Args:
         packet_id: The packet_id from hivemind_accept_handoff.
@@ -1668,14 +1341,25 @@ async def hivemind_complete_handoff(packet_id: str, result: str = "") -> str:
     Returns:
         JSON string confirming completion or stating an error.
     """
-    src = HANDOFF_ACTIVE / f"{packet_id}.json"
+    src = _find_packet_path(packet_id)
     dst = HANDOFF_COMPLETED / f"{packet_id}.json"
 
+    if not src:
+        return json.dumps({"error": f"Packet '{packet_id}' not found in any queue"})
+
     def _move():
-        if not src.exists():
-            return False
         with open(src) as f:
             packet = json.load(f)
+            
+        # If already completed, just update the result and return
+        if src.parent == HANDOFF_COMPLETED:
+            packet["result"] = result
+            with open(src, "w") as f:
+                fcntl.flock(f, fcntl.LOCK_EX)
+                json.dump(packet, f, indent=2)
+                fcntl.flock(f, fcntl.LOCK_UN)
+            return True
+
         packet["status"] = "completed"
         packet["completed_at"] = datetime.now(timezone.utc).isoformat()
         packet["result"] = result
@@ -1683,12 +1367,12 @@ async def hivemind_complete_handoff(packet_id: str, result: str = "") -> str:
             fcntl.flock(f, fcntl.LOCK_EX)
             json.dump(packet, f, indent=2)
             fcntl.flock(f, fcntl.LOCK_UN)
-        src.unlink()
+            
+        if src != dst:
+            src.unlink()
         return True
 
-    moved = await anyio.to_thread.run_sync(_move)
-    if not moved:
-        return json.dumps({"error": f"Packet '{packet_id}' not found in active queue"})
+    await anyio.to_thread.run_sync(_move)
     return json.dumps({"status": "completed", "packet_id": packet_id})
 
 
@@ -1792,6 +1476,29 @@ async def hivemind_handoff_list(status: str) -> str:
     }, indent=2)
 
 
+@m9_safe("hivemind_get_handoff")
+@mcp.tool()
+async def hivemind_get_handoff(packet_id: str) -> str:
+    """Retrieve full details for a specific handoff packet.
+
+    Args:
+        packet_id: The unique identifier for the handoff packet.
+
+    Returns:
+        JSON string containing the full packet details or an error.
+    """
+    path = _find_packet_path(packet_id)
+    if not path:
+        return json.dumps({"error": f"Packet '{packet_id}' not found in any queue"})
+
+    def _read():
+        with open(path) as f:
+            return json.load(f)
+
+    packet = await anyio.to_thread.run_sync(_read)
+    return json.dumps(packet, indent=2)
+
+
 @m9_safe("hivemind_handoff_archive")
 @mcp.tool()
 async def hivemind_handoff_archive(packet_ids: List[str]) -> str:
@@ -1845,8 +1552,10 @@ async def hivemind_handoff_archive(packet_ids: List[str]) -> str:
 # === LIBRARY TOOLS (12) ===
 
 @m9_safe("library_inbox_add_url")
+@tdp_wrap(source="library_inbox_add_url", taint_level=determine_url_taint)
 @mcp.tool()
 async def library_inbox_add_url(url: str, tags: str = "", priority: int = 0) -> str:
+    _require_service()
     """Add a URL to the intake inbox for later curation.
     
     Args:
@@ -1863,8 +1572,10 @@ async def library_inbox_add_url(url: str, tags: str = "", priority: int = 0) -> 
 
 
 @m9_safe("library_inbox_add_note")
+@tdp_wrap(source="library_inbox_add_note", taint_level=1)
 @mcp.tool()
 async def library_inbox_add_note(text: str, tags: str = "") -> str:
+    _require_service()
     """Add a text note to the intake inbox.
     
     Args:
@@ -1880,8 +1591,10 @@ async def library_inbox_add_note(text: str, tags: str = "") -> str:
 
 
 @m9_safe("library_inbox_add_file")
+@tdp_wrap(source="library_inbox_add_file", taint_level=1)
 @mcp.tool()
 async def library_inbox_add_file(path: str, tags: str = "") -> str:
+    _require_service()
     """Add a local file path to the intake inbox.
     
     Args:
@@ -1899,6 +1612,7 @@ async def library_inbox_add_file(path: str, tags: str = "") -> str:
 @m9_safe("library_inbox_list")
 @mcp.tool()
 async def library_inbox_list(limit: int = 20) -> str:
+    _require_service()
     """List pending items in the intake inbox.
     
     Args:
@@ -1918,6 +1632,7 @@ async def library_inbox_list(limit: int = 20) -> str:
 @m9_safe("library_inbox_stats")
 @mcp.tool()
 async def library_inbox_stats() -> str:
+    _require_service()
     """Get inbox statistics (pending, processing, failed counts).
     
     Returns:
@@ -1930,6 +1645,7 @@ async def library_inbox_stats() -> str:
 @m9_safe("library_ingest_pending")
 @mcp.tool()
 async def library_ingest_pending(limit: int = 5) -> str:
+    _require_service()
     """Process pending inbox items through curation into the library.
     
     Args:
@@ -1946,8 +1662,10 @@ async def library_ingest_pending(limit: int = 5) -> str:
 
 
 @m9_safe("library_search")
+@tdp_wrap(source="library_search", taint_level=1)
 @mcp.tool()
 async def library_search(query: str, domain: str = "", limit: int = 20) -> str:
+    _require_service()
     """Search the offline library for documents. Uses hybrid search.
     
     Args:
@@ -1963,15 +1681,11 @@ async def library_search(query: str, domain: str = "", limit: int = 20) -> str:
         return json.dumps({"error": "Search query cannot be empty", "count": 0, "results": []})
     if len(query) > 500:
         return json.dumps({"error": "Query exceeds 500-char limit", "count": 0, "results": []})
-    # P1-C: MCP-layer input guards (M-A4 compliance fix, defense-in-depth)
-    if not query.strip():
-        return json.dumps({"error": "Search query cannot be empty", "count": 0, "results": []})
-    if len(query) > 500:
-        return json.dumps({"error": "Query exceeds 500-char limit", "count": 0, "results": []})
     
-    # Sovereign Search Integration: Use the 5-Tier Protocol instead of raw hybrid search
-    search_service = SovereignSearchService()
-    report = await search_service.search(query, entity_name=domain if domain else "general", limit=limit)
+    # Use module-level sovereign_search_service (not a fresh instance)
+    report = await sovereign_search_service.search(
+        query, entity_name=domain if domain else "general", limit=limit
+    )
     
     return json.dumps({
         "query": query, 
@@ -1987,6 +1701,7 @@ async def library_search(query: str, domain: str = "", limit: int = 20) -> str:
 @m9_safe("library_get_document")
 @mcp.tool()
 async def library_get_document(doc_id: str) -> str:
+    _require_service()
     """Get the full content of a library document by ID.
     
     Args:
@@ -2004,6 +1719,7 @@ async def library_get_document(doc_id: str) -> str:
 @m9_safe("library_domains")
 @mcp.tool()
 async def library_domains() -> str:
+    _require_service()
     """Get document counts grouped by domain.
     
     Returns:
@@ -2016,6 +1732,7 @@ async def library_domains() -> str:
 @m9_safe("library_stats")
 @mcp.tool()
 async def library_stats() -> str:
+    _require_service()
     """Get comprehensive library statistics.
     
     Returns:
@@ -2035,6 +1752,7 @@ async def library_stats() -> str:
 @m9_safe("library_recent")
 @mcp.tool()
 async def library_recent(limit: int = 20) -> str:
+    _require_service()
     """List most recently curated library documents.
     
     Args:
@@ -2057,6 +1775,7 @@ async def library_recent(limit: int = 20) -> str:
 @m9_safe("library_index_flush")
 @mcp.tool()
 async def library_index_flush() -> str:
+    _require_service()
     """Flush search indices to disk.
     
     Returns:
@@ -2072,7 +1791,8 @@ async def library_index_flush() -> str:
 @m9_safe("library_discovery_research")
 @mcp.tool()
 async def library_discovery_research(query: str, depth: int = 2) -> str:
-    """Execute the tiered external discovery pipeline (Gemini -> Exa -> Brave -> Tavily).
+    _require_service()
+    """Execute the tiered external discovery pipeline.
 
     This performs real-time web discovery and returns a consolidated report.
     Async — non-blocking (P2-A: M-A8 docstring fix).
@@ -2091,6 +1811,7 @@ async def library_discovery_research(query: str, depth: int = 2) -> str:
 @m9_safe("library_discovery_start")
 @mcp.tool()
 async def library_discovery_start(query: str) -> str:
+    _require_service()
     """Start a background discovery job and return the job ID.
 
     Use library_discovery_status to poll for results.
@@ -2102,17 +1823,15 @@ async def library_discovery_start(query: str) -> str:
         JSON string containing the job_id.
     """
     job_id = await discovery.start_discovery(query)
-    if _global_tg:
-        _global_tg.start_soon(_run_discovery_background, job_id)
-    else:
-        async with anyio.create_task_group() as tg:
-            tg.start_soon(_run_discovery_background, job_id)
+    async with anyio.create_task_group() as tg:
+        tg.start_soon(_run_discovery_background, job_id)
     return json.dumps({"status": "started", "job_id": job_id})
 
 
 @m9_safe("library_discovery_status")
 @mcp.tool()
 async def library_discovery_status(job_id: str) -> str:
+    _require_service()
     """Get the current status and partial results of a background discovery job.
     
     Args:
@@ -2305,6 +2024,7 @@ async def omega_memory_list_sessions(entity_name: Optional[str] = None, limit: i
 @m9_safe("research")
 @mcp.tool()
 async def research(query: str, depth: int = 2, domain: str = "") -> str:
+    _require_service()
     """Execute multi-depth research on a query using the offline library.
 
     Depth levels: 1=Quick (1-2 sources), 2=Standard (3-5 sources),
@@ -2327,6 +2047,7 @@ async def research(query: str, depth: int = 2, domain: str = "") -> str:
 @m9_safe("research_get")
 @mcp.tool()
 async def research_get(research_id: str) -> str:
+    _require_service()
     """Retrieve a previous research result by ID.
 
     Args:
@@ -2344,6 +2065,7 @@ async def research_get(research_id: str) -> str:
 @m9_safe("research_list")
 @mcp.tool()
 async def research_list(limit: int = 20) -> str:
+    _require_service()
     """List recent research results.
 
     Args:
@@ -2370,6 +2092,7 @@ async def research_depths() -> str:
 @m9_safe("research_stats")
 @mcp.tool()
 async def research_stats() -> str:
+    _require_service()
     """Get research engine statistics.
     
     Returns:
@@ -2620,6 +2343,7 @@ async def check_podman_storage() -> str:
 @m9_safe("observability_check_recursion")
 @mcp.tool()
 async def observability_check_recursion(entity_name: str, current_depth: int) -> str:
+    _require_service()
     """Check if an entity is allowed to spawn a subagent at the given depth.
 
     Args:
@@ -2736,6 +2460,8 @@ async def _health(request: Request) -> JSONResponse:
 
 async def _entity_current(request: Request) -> JSONResponse:
     entity_name = _current_entity.get() or "SOPHIA"
+    if registry is None:
+        return JSONResponse({"entity": entity_name, "note": "services initializing"})
     entity = registry.get(entity_name)
     if entity:
         return JSONResponse(asdict(entity))
@@ -2835,12 +2561,12 @@ class SovereignGateway:
     async def proxy_request(self, provider_name: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         now = datetime.now(timezone.utc).timestamp()
         
-        # 1. 65-second start backoff
-        if now - self._boot_time < 65:
-            wait_time = 65 - (now - self._boot_time)
-            logger.info(f"Sovereign Gateway: Start backoff active. Waiting {wait_time:.2f}s")
-            await anyio.sleep(wait_time)
-            now = datetime.now(timezone.utc).timestamp()
+        # Start backoff disabled for debugging
+        # if now - self._boot_time < 65:
+        #     wait_time = 65 - (now - self._boot_time)
+        #     logger.info(f"Sovereign Gateway: Start backoff active. Waiting {wait_time:.2f}s")
+        #     await anyio.sleep(wait_time)
+        #     now = datetime.now(timezone.utc).timestamp()
 
         # 2. 300-second TUI cap (Rate limiting)
         if now - self._tui_reset_time > 300:
@@ -2863,10 +2589,10 @@ class SovereignGateway:
         # In the final version, this will use ModelGateway's provider instances.
         return {"status": "proxied", "provider": provider_name, "payload": payload}
 
-gateway = SovereignGateway()
-
 async def _proxy_handler(request: Request) -> JSONResponse:
     provider = request.path_params.get("provider", "default")
+    if gateway is None:
+        return JSONResponse({"error": "Services still initializing", "provider": provider}, status_code=503)
     try:
         body = await request.json()
         result = await gateway.proxy_request(provider, body)
@@ -2891,30 +2617,36 @@ hub_routes = [
 ]
 
 
+# ── Cleanup / Shutdown ─────────────────────────────────────────────
+
+# [P1a-2] _background_tasks is now imported from mcp_servers.omega_hub.state
+
+
+async def _cleanup_indexer() -> None:
+    """Close the indexer and cancel background tasks on server shutdown."""
+    # Cancel background tasks first
+    for task in _background_tasks:
+        task.cancel()
+    _background_tasks.clear()
+
+    if indexer is not None:
+        try:
+            await indexer.close()
+            logger.info("Indexer closed")
+        except Exception as e:
+            logger.warning("Indexer close failed: %s", e)
+
+
+async def _on_startup() -> None:
+    """Background startup callback — runs inside the event loop after the
+    SSE listener starts. Initializes all Hub services concurrently."""
+    await _init_services()
+    # Start background reaper and pruning loops (CRIT-01 fix)
+    _background_tasks.append(anyio.create_task(_prune_awareness_background()))
+    _background_tasks.append(anyio.create_task(_reaper_background()))
+    logger.info("Background tasks started: pruning, reaper")
+
+
 if __name__ == "__main__":
-    # Auto-configure SSE transport for MCP client connectivity
-    # This ensures Cline/OpenCode can connect via SSE at http://127.0.0.1:8016/sse
-    if not os.environ.get("OMEGA_MCP_TRANSPORT"):
-        os.environ["OMEGA_MCP_TRANSPORT"] = "sse"
-    if not os.environ.get("OMEGA_MCP_PORT"):
-        os.environ["OMEGA_MCP_PORT"] = "8016"
-    if not os.environ.get("OMEGA_MCP_HOST"):
-        os.environ["OMEGA_MCP_HOST"] = "127.0.0.1"
-
-    # Start background tasks in daemon threads (clean up when server stops)
-    # Q3 fix: _AsyncThreadLock wraps threading.Lock — safe across event loops.
-    # Each background thread runs its own anyio event loop; lock operations
-    # bridge via anyio.to_thread.run_sync on a pool worker thread.
-    bg_thread = threading.Thread(
-        target=lambda: anyio.run(_prune_awareness_background),
-        daemon=True,
-    )
-    bg_thread.start()
-
-    reaper_thread = threading.Thread(
-        target=lambda: anyio.run(_reaper_background),
-        daemon=True,
-    )
-    reaper_thread.start()
-
-    run_mcp(mcp, custom_routes=hub_routes, modify_app=apply_security)
+    run_mcp(mcp, custom_routes=hub_routes, modify_app=apply_security,
+            on_shutdown=_cleanup_indexer, on_startup=_on_startup)

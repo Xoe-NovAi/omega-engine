@@ -238,3 +238,74 @@ def test_record_interaction_memory_failure_does_not_crash():
 
     result = _run(t)
     assert result is True
+
+
+def test_talk_mention_at_start():
+    async def t():
+        # Use a known entity from the default IWAD (e.g., 'sysAdmin' as seen in other tests)
+        return await Oracle().talk("@sysAdmin how do I deploy a container?")
+    result = _run(t)
+    assert result.entity == "SysAdmin"
+
+
+def test_talk_mention_within_text():
+    async def t():
+        # '@sysAdmin' is within the text
+        return await Oracle().talk("Hello @sysAdmin, can you help me with the server?")
+    result = _run(t)
+    assert result.entity == "SysAdmin"
+
+
+def test_talk_invalid_mention():
+    async def t():
+        # '@fakeAgent' should not be recognized as a summon
+        # It should fall back to normal talk() routing
+        return await Oracle().talk("@fakeAgent hello")
+    result = _run(t)
+    # Should not be 'fakeAgent', likely 'Iris' or a domain-routed entity
+    assert result.entity != "fakeAgent"
+
+
+def test_talk_mention_case_insensitive():
+    async def t():
+        return await Oracle().talk("Can you help me @SYSADMIN?")
+    result = _run(t)
+    assert result.entity == "SysAdmin"
+
+
+def test_talk_mention_email_false_positive():
+    """Verify that email addresses do NOT trigger a summon."""
+    async def t():
+        # 'test@example.com' should not be recognized as a summon to 'example'
+        return await Oracle().talk("send an email to test@example.com")
+    result = _run(t)
+    # Should not be 'example', likely 'Iris' or a domain-routed entity
+    assert result.entity != "example"
+
+
+def test_talk_multiple_mentions():
+    """Verify that the first valid mention takes priority."""
+    async def t():
+        # Both @sysAdmin and @watchTower are likely valid (based on other tests)
+        # The first one found by findall should be returned
+        return await Oracle().talk("Hello @sysAdmin and @watchTower")
+    result = _run(t)
+    assert result.entity == "SysAdmin"
+
+
+def test_get_valid_agents_missing_file():
+    """Verify graceful degradation if AGENTS.md is missing."""
+    from unittest.mock import patch
+    from pathlib import Path
+
+    def t():
+        with patch("pathlib.Path.exists", return_value=False):
+            oracle = Oracle()
+            # Clear cache if it was populated
+            Oracle._valid_agents_cache = None
+            agents = oracle._get_valid_agents_from_md()
+            return agents
+    
+    result = t()
+    assert result == set()
+

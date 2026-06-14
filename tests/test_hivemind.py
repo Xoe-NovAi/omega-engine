@@ -83,9 +83,14 @@ def temp_data_dir(monkeypatch):
     """Redirect Hivemind data storage to a temp directory."""
     with tempfile.TemporaryDirectory() as tmp:
         tmp_path = Path(tmp)
-        # Patch all data directory constants used by the server.
+        # Patch all data directory constants used by the server and state.
+        from mcp_servers.omega_hub import state
+        monkeypatch.setattr(state, "HALL_OF_RECORDS", tmp_path / "HALL_OF_RECORDS")
+        monkeypatch.setattr(state, "HANDOFF_BASE", tmp_path / "handoff")
+        monkeypatch.setattr(state, "HANDOFF_PENDING", tmp_path / "handoff" / "pending")
+        monkeypatch.setattr(state, "HANDOFF_ACTIVE", tmp_path / "handoff" / "active")
+        monkeypatch.setattr(state, "HANDOFF_COMPLETED", tmp_path / "handoff" / "completed")
         monkeypatch.setattr(server, "HALL_OF_RECORDS", tmp_path / "HALL_OF_RECORDS")
-        monkeypatch.setattr(server, "HANDOFF_BASE", tmp_path / "handoff")
         monkeypatch.setattr(server, "HANDOFF_PENDING", tmp_path / "handoff" / "pending")
         monkeypatch.setattr(server, "HANDOFF_ACTIVE", tmp_path / "handoff" / "active")
         monkeypatch.setattr(server, "HANDOFF_COMPLETED", tmp_path / "handoff" / "completed")
@@ -99,6 +104,9 @@ def temp_data_dir(monkeypatch):
 @pytest.fixture
 def reset_state(monkeypatch):
     """Reset the in-memory stores between tests."""
+    from mcp_servers.omega_hub import state
+    monkeypatch.setattr(state, "_hot_store", {})
+    monkeypatch.setattr(state, "_awareness", {})
     monkeypatch.setattr(server, "_hot_store", {})
     monkeypatch.setattr(server, "_awareness", {})
     yield
@@ -170,6 +178,8 @@ async def test_u003_post_context_suggested_model(temp_data_dir, reset_state):
 @pytest.fixture
 def entity_context_env(monkeypatch, tmp_path):
     """Set up a temp PROJECT_ROOT with test entity data for entity context tool."""
+    from mcp_servers.omega_hub import state
+    monkeypatch.setattr(state, "PROJECT_ROOT", tmp_path)
     monkeypatch.setattr(server, "PROJECT_ROOT", tmp_path)
 
     # Create entity base directory
@@ -234,8 +244,17 @@ def entity_context_env(monkeypatch, tmp_path):
     with open(sessions_dir / "testentity.active", "w") as f:
         json.dump(session, f)
 
+    # Mark services as initialized to bypass _require_service() check
+    from mcp_servers.omega_hub import state
+    monkeypatch.setattr(state, "_init_complete", True)
+    monkeypatch.setattr(server, "_init_complete", True)
+    
     # Mock registry.get to return a mock entity
-    from omega.oracle.entity_registry import Entity
+    from omega.oracle.entity_registry import Entity, EntityRegistry
+    mock_registry = EntityRegistry()
+    monkeypatch.setattr(state, "registry", mock_registry)
+    monkeypatch.setattr(server, "registry", mock_registry)
+    
     mock_entity = Entity(
         name="testentity",
         domains=["testing", "context"],
@@ -245,8 +264,8 @@ def entity_context_env(monkeypatch, tmp_path):
         role="Test Context Entity",
         pantheon="test",
     )
-    monkeypatch.setattr(server.registry, "get", lambda name, _orig=mock_entity: mock_entity if name.lower() == "testentity" else None)
-    monkeypatch.setattr(server.registry, "find_by_name_fragment", lambda name: mock_entity if "test" in name.lower() else None)
+    monkeypatch.setattr(mock_registry, "get", lambda name, _orig=mock_entity: mock_entity if name.lower() == "testentity" else None)
+    monkeypatch.setattr(mock_registry, "find_by_name_fragment", lambda name: mock_entity if "test" in name.lower() else None)
 
     yield tmp_path
 
@@ -316,8 +335,12 @@ async def test_u007_entity_context_empty_knowledge_workspace(entity_context_env,
         pillars=[],
         role="New Entity",
     )
-    monkeypatch.setattr(server.registry, "get", lambda name: low_power if name.lower() == "newentity" else None)
-    monkeypatch.setattr(server.registry, "find_by_name_fragment", lambda name: low_power if "new" in name.lower() else None)
+    # Use server.registry if it's already set by fixture, otherwise mock it
+    reg = server.registry if server.registry else EntityRegistry()
+    if not server.registry:
+        monkeypatch.setattr(server, "registry", reg)
+    monkeypatch.setattr(reg, "get", lambda name: low_power if name.lower() == "newentity" else None)
+    monkeypatch.setattr(reg, "find_by_name_fragment", lambda name: low_power if "new" in name.lower() else None)
 
     entity_base = entity_context_env / "data" / "entities" / "newentity"
     entity_base.mkdir(parents=True, exist_ok=True)

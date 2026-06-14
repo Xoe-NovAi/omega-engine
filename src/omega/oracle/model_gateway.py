@@ -53,15 +53,12 @@ from .backends.remote_provider import ProviderConfig
 from .resource_guard import ResourceGuard
 from .providers import GoogleAIProvider, LocallmsterProvider, OllamaProvider, MockProvider, NativeGGUFProvider
 from .health_monitor import CircuitOpenError
-from ..errors import (
 
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError
-)
 from .gnosis_proxy import GnosisProxy
 from .entity_registry import EntityRegistry
+from .entity_affinity import EntityAffinityResolver, AffinityResult
+from .budget_gate import BudgetGate
+from omega.observability.token_ledger import TokenLedger
 
 logger = logging.getLogger(__name__)
 
@@ -139,8 +136,44 @@ class ModelGateway:
         self._gnosis_proxy = GnosisProxy(self._entity_registry)
         # B5: HealthMonitor for latency and success/failure recording
         self._health_monitor = health_monitor
+        # Entity→Model Affinity Resolver (YAML-backed routing DB)
+        # Handoff: ho_8135d6122230 — Lilith Phase 1 port from xna-omega-legacy
+        # R3: Cross-references provider IDs against config/providers.yaml
+        self.affinity_resolver = EntityAffinityResolver(
+            yaml_path=Path(__file__).resolve().parent.parent.parent.parent / "config" / "entity_model_affinity.yaml"
+        )
+        # Seed known providers from loaded fabric for R3 validation
+        provider_names = {p.name for p in self.providers}
+        self.affinity_resolver.set_known_providers(provider_names)
         # Sovereign Guard: Prevent leak amplification by limiting concurrent gateway entries
         self._limiter = anyio.CapacityLimiter(10)
+
+    def list_providers(self) -> List[Dict[str, Any]]:
+        """Return a list of all registered providers and their current health."""
+        def _get_prio(p):
+            if hasattr(p, 'priority'): return p.priority
+            if hasattr(p, 'config'):
+                if isinstance(p.config, dict): return p.config.get('priority', 999)
+                if hasattr(p.config, 'priority'): return p.config.priority
+            return 999
+
+        return [
+            {
+                "name": p.name,
+                "priority": _get_prio(p),
+                "type": p.__class__.__name__,
+                "healthy": self._backend_cache.get(p.name, False)
+            }
+            for p in self.providers
+        ]
+
+
+    def list_models(self) -> List[Dict[str, Any]]:
+        """Return a list of all configured models and their specs."""
+        return [
+            {"name": name, **spec}
+            for name, spec in self.models.items()
+        ]
 
     def _load_sovereign_secrets(self) -> None:
         """Load API keys from .env file into environment variables.
@@ -224,7 +257,18 @@ class ModelGateway:
         return merged
 
     def _load_provider_fabric(self) -> List[Any]:
-        """Load provider chain from providers.yaml."""
+        """Load provider chain from providers.yaml.
+
+        [test-mode] When OMEGA_ENV=test, short-circuit to MockProvider only.
+        This prevents real GGUF model loading during tests — each fresh
+        Oracle() creates a fresh ModelGateway, and loading even a 1.7B model
+        takes 15-60s on Ryzen 5700U (no GPU). With 26 oracle tests each
+        creating fresh instances, the cumulative time exceeds any reasonable
+        timeout. MockProvider returns deterministic responses in <1ms.
+        """
+        if os.environ.get("OMEGA_ENV") == "test":
+            return [MockProvider("mock", {"timeout_seconds": 5.0})]
+
         providers_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "providers.yaml"
         if not providers_path.exists():
             logger.warning(f"Provider config not found at {providers_path}. Using defaults.")
@@ -425,22 +469,41 @@ class ModelGateway:
 
     def set_entity_model(self, entity_name: str, model_name: str) -> None:
         """Set a per-entity model override.
-
-        Args:
-            entity_name: Case-insensitive entity name.
-            model_name: Model identifier (e.g. "qwen3-1.7b", "deepseek-r1-8b").
+        
+        DEPRECATED: Use config/entity_model_affinity.yaml for persistent routing.
+        This method still works for temporary runtime overrides.
         """
+        logger.warning(
+            "set_entity_model() is deprecated. Use config/entity_model_affinity.yaml "
+            "for sovereign routing. Runtime override applied: %s -> %s",
+            entity_name, model_name
+        )
         self._entity_model_map[entity_name.lower().strip()] = model_name
         logger.debug("Entity model affinity set: %s -> %s", entity_name.lower(), model_name)
 
+
     def remove_entity_model(self, entity_name: str) -> None:
-        """Remove a per-entity model override, reverting to default resolution."""
+        """Remove a per-entity model override, reverting to default resolution.
+        
+        DEPRECATED: Use config/entity_model_affinity.yaml for persistent routing.
+        """
+        logger.warning(
+            "remove_entity_model() is deprecated. Use config/entity_model_affinity.yaml "
+            "for sovereign routing."
+        )
         self._entity_model_map.pop(entity_name.lower().strip(), None)
 
-    def get_model_for_entity(self, entity_name: Optional[str] = None) -> str:
+    def get_model_for_entity(
+        self,
+        entity_name: Optional[str] = None,
+        affinity_context: Optional[Dict[str, Any]] = None,
+    ) -> str:
         """Resolve the best model for an entity using fallback chain.
 
         Resolution priority:
+        0. YAML Affinity Resolver — Entity→Model Affinity DB (entity_model_affinity.yaml)
+           NEW: Ported from xna-omega-legacy by Lilith (ho_8135d6122230).
+           Provides 3-tier model preferences, routing rules, inference presets.
         1. Entity override (set_entity_model) — runtime overrides for entity-specific routing
         2. Entity registry field — the entity's configured ``model`` in its YAML definition
         3. Domain-based mapping — entity's first domain linked to model config
@@ -448,6 +511,8 @@ class ModelGateway:
 
         Args:
             entity_name: Entity name to resolve. If None, returns system default.
+            affinity_context: Optional context dict for YAML affinity resolver
+                (domain, complexity, online, requires, prompt_length).
 
         Returns:
             Model identifier string.
@@ -456,6 +521,23 @@ class ModelGateway:
             return self._system_default_model()
 
         key = entity_name.lower().strip()
+
+        # Tier 0: YAML Affinity Resolver — Entity→Model Affinity DB
+        # [id-soft: quake-1996] cvar pattern — YAML-backed config, hot-reloadable
+        if self.affinity_resolver.is_loaded() or affinity_context is not None:
+            try:
+                result = self.affinity_resolver.resolve(
+                    entity_name=key,
+                    context=affinity_context or {},
+                )
+                if result and result.best_match:
+                    logger.debug(
+                        "Affinity resolver matched '%s' → model=%s tier=%s provider=%s",
+                        key, result.best_match, result.tier, result.provider,
+                    )
+                    return result.best_match
+            except Exception:
+                logger.warning("Affinity resolver failed (non-fatal)", exc_info=True)
 
         # Tier 1: Runtime override via set_entity_model()
         override = self._entity_model_map.get(key)
@@ -479,6 +561,43 @@ class ModelGateway:
 
         # Tier 4: System default
         return self._system_default_model()
+
+    async def resolve_entity_affinity(
+        self,
+        entity_name: str,
+        query: str = "",
+        context: Optional[Dict[str, Any]] = None,
+    ) -> Optional[AffinityResult]:
+        """Resolve full entity→model affinity including inference presets.
+        
+        Returns the full AffinityResult dataclass with model, provider, tier,
+        and inference_presets (temperature, system_prompt, preferred_context).
+        
+        This is the primary integration point for Oracle._summon() to apply
+        entity-specific inference tuning from the YAML affinity database.
+        
+        Args:
+            entity_name: Entity to resolve affinity for.
+            query: The user query (used for prompt_length_lt matching).
+            context: Optional context dict (domain, complexity, online, requires).
+        """
+        # Ensure resolver is loaded (lazy init)
+        if not self.affinity_resolver.is_loaded():
+            try:
+                await self.affinity_resolver.load()
+            except Exception:
+                logger.warning("Affinity resolver load failed (non-fatal)", exc_info=True)
+                return None
+        
+        try:
+            return await self.affinity_resolver.resolve(
+                entity_name=entity_name,
+                query=query,
+                context=context,
+            )
+        except Exception:
+            logger.warning("Entity affinity resolution failed (non-fatal)", exc_info=True)
+            return None
 
     @staticmethod
     def _system_default_model() -> str:
@@ -632,7 +751,7 @@ class ModelGateway:
     async def generate(
         self, model_name: str, system_prompt: str, user_query: str,
         temperature: float = 0.7, max_tokens: int = 1024, trace_id: Optional[str] = None,
-        session_id: Optional[str] = None
+        session_id: Optional[str] = None, entity_name: Optional[str] = None
     ) -> tuple:
         """Iterate provider fabric with circuit breaker protection.
         
@@ -649,25 +768,25 @@ class ModelGateway:
         search_order = []
         fabric_by_name = {p.name: p for p in self.providers}
         seen = set()
-
+        
         # Tier 1: Local active set (LRU)
         for p_name in self._local_active:
             if p_name in fabric_by_name:
                 search_order.append(fabric_by_name[p_name])
                 seen.add(p_name)
-
+        
         # Tier 2: Remaining local fabric
         for p in self.providers:
             if p.name not in seen and p.name not in self._cloud_providers:
                 search_order.append(p)
                 seen.add(p.name)
-
+        
         # Tier 3: Cloud active set (LRU)
         for p_name in self._cloud_active:
             if p_name in fabric_by_name and p_name not in seen:
                 search_order.append(fabric_by_name[p_name])
                 seen.add(p_name)
-
+        
         # Tier 4: Remaining cloud fabric
         for p in self.providers:
             if p.name not in seen:
@@ -680,6 +799,13 @@ class ModelGateway:
                 errors.append(f"{provider.name}: culled by precheck")
                 continue
             
+            # Step 1.5: Sovereign Budget Gate (Shatter-Glass Phase 3)
+            # Only check budget for cloud providers
+            if self._is_cloud_provider(provider) and entity_name:
+                if not await BudgetGate.check_budget(entity_name, trace_id or "unknown"):
+                    errors.append(f"{provider.name}: cloud budget exhausted for {entity_name}")
+                    continue
+
             # Step 2: Execute with Hardware Lock and breaker protection
             timeout = self._get_provider_timeout(provider)
             breaker = None  # Initialize for else-clause scope
@@ -720,12 +846,28 @@ class ModelGateway:
                                 self._health_monitor.record_success(model_name)
                             self._update_active_set(provider.name)
                             success_provider = provider
+                            
+                            # Sovereign Token Ledger Integration
+                            # Capture actual usage from provider or estimate
+                            # Note: In a full implementation, providers would return a structured response
+                            # containing usage metadata. For now, we use the bridge's estimation.
+                            tokens_in = len(system_prompt) // 4
+                            tokens_out = len(result) // 4
+                            
+                            await TokenLedger().record_transaction(
+                                trace_id=trace_id or "unknown",
+                                entity=entity_name or "system",
+                                tokens_in=tokens_in,
+                                tokens_out=tokens_out,
+                                is_cloud=self._is_cloud_provider(provider)
+                            )
+                            
                             break
-                    
-                    if cancel_scope.cancelled_caught:
-                        errors.append(f"{provider.name}: timed out ({timeout}s)")
-                        self._record_provider_failure(provider, model_name, trace_id)
-                        continue
+                        
+                        if cancel_scope.cancelled_caught:
+                            errors.append(f"{provider.name}: timed out ({timeout}s)")
+                            self._record_provider_failure(provider, model_name, trace_id)
+                            continue
             except CircuitOpenError:
                 errors.append(f"{provider.name}: circuit OPEN")
                 continue
@@ -744,6 +886,7 @@ class ModelGateway:
         
         logger.warning("All providers failed. Trace: %s | Errors: %s", trace_id, '; '.join(errors))
         return self._fallback_response(model_name, system_prompt, user_query), False
+
 
 
     async def _call_provider_with_resilience(self, provider, model_name, system_prompt, user_query, temperature, max_tokens, trace_id=None):
@@ -917,21 +1060,6 @@ class ModelGateway:
         # In production, this would call a real embedding model.
         import numpy as np
         return np.random.rand(384).tolist()
-        """Return a graceful fallback with setup instructions."""
-        entity_name = "Oracle"
-        for name, spec in self.models.items():
-            if name == model_name:
-                entity_name = spec.get("entity", "Oracle").split(",")[0].strip()
-                break
-
-        return (
-            f"{entity_name} is here, but no inference backend is running.\n\n"
-            f"Quick options:\n"
-            f"  1. Start lmster (LM Studio headless server) — `lmster --model path/to/model.gguf` on :1234\n"
-            f"  2. `ollama run qwen3:1.7b` — lightweight fallback, auto-detected at :11434\n"
-            f"  3. Run llama-server: `llama-server --model path/to/model.gguf` on :8080\n\n"
-            f"Then try: `omega summon {entity_name.title()} \"{user_query}\"`"
-        )
 
     # ── Diagnostics ───────────────────────────────────────────────────
     async def check_health(self) -> Dict[str, Any]:
