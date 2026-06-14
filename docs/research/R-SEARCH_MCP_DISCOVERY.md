@@ -1,5 +1,8 @@
 # R-SEARCH_MCP_DISCOVERY – Search MCP Integration Deep Dive
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-SEARCH-MCP-DISCOVERY`
 **Date**: 2026-05-15
 **Prepared by**: Omega Master Researcher (DeepSeek Flash V4)

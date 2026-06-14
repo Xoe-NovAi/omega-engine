@@ -1,7 +1,7 @@
 # AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 WAD Loader — Universal Runtime Container Loader
 # AP: AP-WAD-LOADER-v1.0.0
-# ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: RUNTIME-LOADING]
+# ICS: [NODE: CORE | ARCHETYPE: SOPHIA | CONTEXT: RUNTIME-LOADING]
 #
 # Implements the WAD (Where's All Data) architecture.
 # Loads self-contained stacks from config/wads/ and registers them into the
@@ -25,6 +25,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import anyio
 from .entity_registry import EntityRegistry, Entity
+from .world_state import world_state, WorldLump
+
 
 logger = logging.getLogger(__name__)
 
@@ -155,10 +157,27 @@ class WADLoader:
                 if await anyio.Path(default_h_path).exists():
                     hierarchy_path = default_h_path
 
+            # 3. Resolve Hierarchy Path (if specified in manifest or exists in WAD root)
+            hierarchy_path = None
+            if "hierarchy" in manifest:
+                h_path = wad_path / manifest["hierarchy"]
+                if await anyio.Path(h_path).exists():
+                    hierarchy_path = h_path
+            else:
+                default_h_path = wad_path / "hierarchy.yaml"
+                if await anyio.Path(default_h_path).exists():
+                    hierarchy_path = default_h_path
+
             if hierarchy_path:
                 self.active_hierarchy_path = hierarchy_path
 
+            # 4. Load World State (First Breath)
+            world_dir = wad_path / "world"
+            if await anyio.Path(world_dir).exists():
+                await self._load_world_state(world_dir, wad_source=stack_name)
+
             return True, hierarchy_path
+
         except Exception as e:
             logger.error(f"Failed to load WAD {stack_name}: {e}")
             return False, None
@@ -203,6 +222,14 @@ class WADLoader:
                     ent_data = data.get("entity", {})
 
 
+                    # Collect WAD-specific metadata into traits dict
+                    # (these are game-zone fields, not Entity dataclass fields)
+                    wad_traits = {}
+                    for trait_field in ("secondary_keeper", "element", "chakra", "planet", "glyph", "invocation"):
+                        val = ent_data.get(trait_field)
+                        if val is not None:
+                            wad_traits[trait_field] = val
+
                     entity = Entity(
                         name=ent_data.get("name", entity_name),
                         domains=ent_data.get("domains", []),
@@ -211,14 +238,9 @@ class WADLoader:
                         temperature=ent_data.get("temperature", 0.7),
                         context_window=ent_data.get("context_window", 8192),
                         pillars=ent_data.get("pillars", []),
-                        secondary_keeper=ent_data.get("secondary_keeper"),
+                        traits=wad_traits,
                         pantheon=ent_data.get("pantheon"),
-                        element=ent_data.get("element"),
-                        chakra=ent_data.get("chakra"),
-                        planet=ent_data.get("planet"),
                         sigil=ent_data.get("sigil"),
-                        glyph=ent_data.get("glyph"),
-                        invocation=ent_data.get("invocation"),
                         role=ent_data.get("role"),
                         container=ent_data.get("container", False),
                         port=ent_data.get("port"),
@@ -264,6 +286,34 @@ class WADLoader:
                 )
                 await self.registry.add(entity)
                 logger.info(f"Registered voice {voice_name} from WAD")
-
+                
             except Exception as e:
                 logger.warning(f"Failed to load voice from {path}: {e}")
+
+    async def _load_world_state(self, world_dir: Path, wad_source: str = "") -> None:
+        """Load world-lumps for VR Omegaverse. [id-soft: doom-1993]
+        
+        Structure: world/<sector_id>/<lump_id>.yaml
+        """
+        async for sector_path in anyio.Path(world_dir).iterdir():
+            if await sector_path.is_dir():
+                sector_id = sector_path.name
+                async for lump_path in anyio.Path(sector_path).glob("*.yaml"):
+                    try:
+                        async with await anyio.open_file(str(lump_path), "r") as f:
+                            data = yaml.safe_load(await f.read())
+                        
+                        lump_id = lump_path.stem
+                        lump = WorldLump(
+                            lump_id=lump_id,
+                            data=data.get("world_data", {}),
+                            metadata={
+                                "wad_source": wad_source,
+                                "path": str(lump_path)
+                            }
+                        )
+                        await world_state.load_lump(sector_id, lump)
+                        logger.info(f"World State: Loaded lump {lump_id} in sector {sector_id} from {wad_source}")
+                    except Exception as e:
+                        logger.warning(f"Failed to load world lump {lump_path}: {e}")
+

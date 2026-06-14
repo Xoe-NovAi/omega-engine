@@ -1,7 +1,7 @@
 # AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Entity Registry — YAML-backed Entity CRUD
 # AP: AP-ENTITY-REGISTRY-v1.0.0
-# ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: ENTITY-MANAGEMENT]
+# ICS: [NODE: CORE | ARCHETYPE: SOPHIA | CONTEXT: ENTITY-MANAGEMENT]
 #
 # Replaces:
 #   - omega-stack enhanced_handler.py hardcoded ENTITY_ALIASES/ENTITY_DOMAINS dicts
@@ -36,6 +36,8 @@ from omega.constants import ZONEID_ENTITY, ZONEID_TOMBSTONE, validate_zoneid
 from omega.errors import EntityTombstonedError
 
 logger = logging.getLogger(__name__)
+# [id-soft: doom-1993] WAD System — base IWAD identifier
+DEFAULT_IWAD = "_omega_default"
 
 
 @dataclass
@@ -54,15 +56,11 @@ class Entity:
     temperature: Optional[float] = None
     context_window: Optional[int] = None
     pillars: List[str] = field(default_factory=list)
-    secondary_keeper: Optional[str] = None
-    pantheon: Optional[str] = None
-    element: Optional[str] = None
-    chakra: Optional[str] = None
-    planet: Optional[str] = None
-    sigil: Optional[str] = None
-    glyph: Optional[str] = None
-    invocation: Optional[str] = None
+    traits: Dict[str, Any] = field(default_factory=dict)
     role: Optional[str] = None
+    first_breath: Optional[str] = None
+    pantheon: Optional[str] = None
+    sigil: Optional[str] = None
     container: bool = False
     port: Optional[int] = None
     wad_source: Optional[str] = None
@@ -103,24 +101,27 @@ class Entity:
             "personality": self.personality,
             "temperature": self.temperature,
             "context_window": self.context_window,
-            "secondary_keeper": self.secondary_keeper,
-            "pantheon": self.pantheon,
-            "element": self.element,
-            "chakra": self.chakra,
-            "planet": self.planet,
-            "sigil": self.sigil,
-            "glyph": self.glyph,
-            "invocation": self.invocation,
+            **self.traits,
         }
 
     def is_system(self) -> bool:
         """Check if this is a system-level entity (high-bit flag).
-
+        
         [id-soft: doom-1993] High-Bit Trick — single bit check
         instead of separate boolean field. 1 AND instruction vs 1 struct field.
         """
         return bool(self.flags & EntityRegistry.FLAG_SYSTEM)
 
+    def __getattr__(self, name: str) -> Any:
+        """Proxy attribute access to the traits dictionary for WAD-specific metadata.
+        
+        This ensures backward compatibility with tests and legacy code while 
+        maintaining the M2 Firewall by avoiding hardcoded fields in the dataclass.
+        """
+        if name in self.traits:
+            return self.traits[name]
+        raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+    
     def mark_system(self) -> None:
         """Mark this entity as system-level (high-bit).
 
@@ -138,7 +139,7 @@ class Entity:
                 continue
             if isinstance(v, (list, dict)) and not v:
                 continue
-            if k == "magic":
+            if k in ("magic", "_engine_zone", "_game_zone", "__engine_zone__", "__game_zone__"):
                 continue  # Runtime-only; not stored in YAML
             result[k] = v
         return result
@@ -188,7 +189,7 @@ class EntityRegistry:
                 config_path = str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / active_iwad / "entities.yaml")
             except Exception as e:
                 logger.error(f"Failed to resolve active IWAD from omega.yaml: {e}. Falling back to default.")
-                config_path = str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / "_omega_default" / "entities.yaml")
+                config_path = str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / DEFAULT_IWAD / "entities.yaml")
         
         self.config_path = Path(config_path)
         # [Project 3: Shadow-Stacking] Store entities as a list of layers sorted by priority
@@ -223,6 +224,17 @@ class EntityRegistry:
             if raw is None or not isinstance(raw, dict):
                 logger.warning(f"Entity '{key}' has empty or malformed definition, skipping")
                 continue
+            
+            # Define core structural fields that belong to the Engine Zone
+            core_fields = {
+                "name", "domains", "capabilities", "model", "personality", 
+                "temperature", "context_window", "pillars", "role", 
+                "container", "port", "wad_source", "pantheon", "sigil"
+            }
+            
+            # Everything else is a WAD-specific trait
+            traits = {k: v for k, v in raw.items() if k not in core_fields}
+            
             entity = Entity(
                 name=raw.get("name", key),
                 domains=raw.get("domains", []),
@@ -232,14 +244,9 @@ class EntityRegistry:
                 temperature=raw.get("temperature"),
                 context_window=raw.get("context_window"),
                 pillars=raw.get("pillars", []),
-                secondary_keeper=raw.get("secondary_keeper"),
                 pantheon=raw.get("pantheon"),
-                element=raw.get("element"),
-                chakra=raw.get("chakra"),
-                planet=raw.get("planet"),
                 sigil=raw.get("sigil"),
-                glyph=raw.get("glyph"),
-                invocation=raw.get("invocation"),
+                traits=traits,
                 role=raw.get("role"),
                 container=raw.get("container", False),
                 port=raw.get("port"),
@@ -339,18 +346,14 @@ class EntityRegistry:
             temperature=base.temperature,
             context_window=base.context_window,
             pillars=list(base.pillars),
-            secondary_keeper=base.secondary_keeper,
-            pantheon=base.pantheon,
-            element=base.element,
-            chakra=base.chakra,
-            planet=base.planet,
-            sigil=base.sigil,
-            glyph=base.glyph,
-            invocation=base.invocation,
+            traits=dict(base.traits),
             role=base.role,
             container=base.container,
             port=base.port,
             wad_source=base.wad_source,
+            pantheon=base.pantheon,
+            sigil=base.sigil,
+            first_breath=base.first_breath,
             priority=layers[0].priority, # Highest priority of the stack
         )
         
@@ -362,29 +365,28 @@ class EntityRegistry:
             projected.container = layer.container if layer.container else projected.container
             projected.port = layer.port or projected.port
             projected.wad_source = layer.wad_source or projected.wad_source
+            projected.pantheon = layer.pantheon or projected.pantheon
+            projected.sigil = layer.sigil or projected.sigil
+            projected.first_breath = layer.first_breath or projected.first_breath
             
             # 2. Game Zone: Merge/Union
             # Domains & Capabilities: Set Union
             projected.domains = list(set(projected.domains + layer.domains))
             projected.capabilities = list(set(projected.capabilities + layer.capabilities))
             
+            # Traits: Merge dictionaries (Highest priority wins)
+            projected.traits.update(layer.traits)
+            
             # Personality & Invocation: Concatenation
             if layer.personality and layer.personality != projected.personality:
                 projected.personality = f"{layer.personality}\n\n{projected.personality}" if projected.personality else layer.personality
             
-            if layer.invocation and layer.invocation != projected.invocation:
-                projected.invocation = f"{layer.invocation}\n\n{projected.invocation}" if projected.invocation else layer.invocation
+            # Invocation is now a trait, handled by .update() above.
                 
-            # Other traits: Highest priority wins
+            # Other core traits: Highest priority wins
             projected.temperature = layer.temperature or projected.temperature
             projected.context_window = layer.context_window or projected.context_window
-            projected.secondary_keeper = layer.secondary_keeper or projected.secondary_keeper
-            projected.pantheon = layer.pantheon or projected.pantheon
-            projected.element = layer.element or projected.element
-            projected.chakra = layer.chakra or projected.chakra
-            projected.planet = layer.planet or projected.planet
-            projected.sigil = layer.sigil or projected.sigil
-            projected.glyph = layer.glyph or projected.glyph
+
             
         # Final validation
         projected.magic = ZONEID_ENTITY
@@ -672,6 +674,9 @@ class EntityRegistry:
         [id-soft: doom-1993] Lazy Deletion — reap tombstoned entities before save.
         This prevents tombstoned entities from persisting to disk and coming
         back alive on the next _load().
+        
+        Integrity Guard: Detects recursive/bloated entity data (>1MB) and aborts the
+        save to prevent `entities.yaml` corruption from circular serialization bugs.
         """
         self._reap_tombstoned()
 
@@ -686,12 +691,27 @@ class EntityRegistry:
                 projected = self._project_entity(active_layers)
                 data["entities"][key] = projected.to_dict()
             
+            # Integrity Guard: Check for bloated data before writing
+            # (prevents recursive/circular serialization bugs from corrupting entities.yaml)
+            serialized = yaml.dump(data, default_flow_style=False, sort_keys=False, allow_unicode=True)
+            if len(serialized) > 1_000_000:  # 1MB threshold
+                logger.error(
+                    f"INTEGRITY GUARD: entities.yaml serialization is {len(serialized)} bytes "
+                    f"(>{1_000_000}). Aborting save to prevent corruption. "
+                    f"Check Entity.to_dict() for circular references in traits."
+                )
+                # Log the first and last entity key to help debug the cause
+                if data["entities"]:
+                    first_key = next(iter(data["entities"]))
+                    logger.error(f"First entity key: {first_key}, dict size: {len(str(data['entities'][first_key]))}")
+                return
+            
             temp_dir = self.config_path.parent
             fd, temp_path = tempfile.mkstemp(dir=str(temp_dir), suffix=".tmp")
             try:
                 # 1. Write and Sync File
                 with os.fdopen(fd, "w") as tf:
-                    yaml.dump(data, tf, default_flow_style=False, sort_keys=False, allow_unicode=True)
+                    tf.write(serialized)
                     tf.flush()
                     os.fsync(tf.fileno())
                 

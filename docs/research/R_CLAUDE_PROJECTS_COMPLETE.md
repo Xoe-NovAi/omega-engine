@@ -1,6 +1,9 @@
 # 🔱 Claude Projects & Claude Code — Complete Reference & Best Practices
 # ⬡ OMEGA ⬡ JEM ⬡ big-pickle ⬡ opencode ⬡ trc_jem_editor ⬡ PHASE-E
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-CLAUDE-PROJECTS-REFERENCE-v1.0.0`
 **Created**: 2026-05-22
 **Status**: COMPLETE — L3 Editor Verified

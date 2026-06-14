@@ -1,5 +1,8 @@
 # 🔱 OpenCode lmster Provider Investigation
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-OC-LMSTER-PROV-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ big-pickle ⬡ opencode ⬡ trc_lmster_provider ⬡ PHASE-E
 

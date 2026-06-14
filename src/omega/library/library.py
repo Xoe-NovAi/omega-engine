@@ -2,7 +2,7 @@
 """Offline Library — Persistent storage, search, and retrieval of curated content.
 
 AP: AP-OMEGA-LIBRARY-STORE-v1.0.0
-ICS: [NODE: THOTH | ARCHETYPE: MNEMOSYNE | CONTEXT: LIBRARY-STORE]
+ICS: [NODE: KNOWLEDGE | ARCHETYPE: MNEMOSYNE | CONTEXT: LIBRARY-STORE]
 
 The library is the canonical knowledge repository. All curated documents
 are stored as JSON files with full-text search support via indexed metadata.

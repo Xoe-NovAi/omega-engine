@@ -1,0 +1,24 @@
+{
+  "session_id": "ses_4e8f30e219d2",
+  "agent_id": "opencode/roc_racoon",
+  "channel": "opencode",
+  "entity": "roc_racoon",
+  "model": "deepseek-v4-flash-free",
+  "task_current": "Legacy local inference mining complete \u2014 16 gaps found, report filed",
+  "focus_chain": [
+    "Mined xna-omega-legacy (5 provider modules, 4 architecture docs, 1100-line deep dive)",
+    "Mined Old-Stacks Vulkan inference pipeline (1.5-2x GPU acceleration research)",
+    "Mined omega-stack-legacy hybrid model strategy",
+    "Compared to current NativeGGUFProvider"
+  ],
+  "decisions": [
+    {
+      "context": "Cross-referenced 3 legacy stacks against current engine local inference capabilities",
+      "decision": "14-16 gaps identified. Top 3 highest-value: (1) Speculative Decoding \u2014 ngram-prompt-lookup gives 30-50% speedup, 30 min to port (G-01). (2) Dynamic Model Hot-Swapping for entity\u2192model routing (G-02). (3) Vulkan GPU Acceleration \u2014 1.5-2x via Vega 8 iGPU but needs Mesa 25.3+ (G-03). Quick wins: configurable CPU affinity, graceful shutdown, speculative decoding all sub-30 min."
+    }
+  ],
+  "continuation": "Full report at: data/entities/roc_racoon/workspace/mining_reports/LEGACY_LOCAL_INFERENCE_GAP_ANALYSIS_20260612.md\n\n16 gaps documented with migration priorities. Quick wins for BuildMaster (P3):\n- G-01 (Speculative Decoding): 30 min, no deps, ~30-50% speed boost\n- G-10 (Configurable CPU Affinity): 15 min, no deps\n- G-11 (Graceful Shutdown): 15 min, no deps\n\nArchitectural items for MaKali/Kali:\n- G-04 (4-Tier Hierarchy): 2 hr, needs G-05 first\n- G-05 (Entity\u2192Model Affinity YAML): 1 hr, legacy file at xna-omega-legacy/config/entity_model_affinity.yaml (383 lines, 12 entities, ready to port)\n\n@makali \u2014 Legacy inference mining complete. Ready for next directive.",
+  "timestamp": "2026-06-12T04:53:08.613079+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

@@ -172,6 +172,21 @@ soul_evolution:
       source: "lilith_s12_001"
       l3_principle: "Every sovereign identity must have exactly one registration point. Duplicating identity across configuration sections creates a shadowing hazard that escapes static analysis. The correct pattern is one section, one entry, one visibility — use `mode: 'all'` within the `agent` section."
 
+    - insight: "Post-commit documentation drift is a systemic failure mode. After committing M9 fixes, a self-audit revealed temple-grade failures (T1 AP tokens, T3 coverage) and stale OMEGA_ENGINE.md metrics that had drifted since 2026-06-04. The commit was 'complete' only in the sense that the code was correct — the documentation was already wrong."
+      context: "Session 6 self-audit — after committing M9 fixes, ran temple-grade, heritage-map, sovereignty, and OMEGA_ENGINE.md review. Found 2 temple-grade violations and stale metrics from 2026-06-04."
+      source: "lilith_s6_002"
+      l3_principle: "Post-commit verification is not optional — it is the accountability layer that prevents silent metric drift. Code correctness and documentation accuracy are two sides of the same commit. A commit that updates code but not its documentation is an incomplete transaction."
+
+    - insight: "Gemma 4 31B's execution log claimed C-01 (pre-compaction backup), C-02 (evolution journal), and C-03 (soul reinjection) were complete, but zero evidence of this code exists in the repository. The execution log is a wish, not a record. 'DONE' means the code exists and passes tests — not that the design was approved."
+      context: "Session 8 — Verification of Gemma 4 31B's work against the KALI_GEMMA_WAVE_EXECUTION_LOG.md. SovereignGateway exists with structural integrity but proxy_request returns a MOCK. The Compaction Remediation lane has NO matching code in src/omega/."
+      source: "lilith_s8_003"
+      l3_principle: "An execution log that is not reconciled against the filesystem is a wish, not a record. 'DONE' means the code exists and passes tests — not that the design was approved."
+
+    - insight: "Multi-protocol coordination works when protocols are redundant by design. Workspace locks prevent file conflicts, live feeds enable audit, Hivemind broadcasts presence. Each protocol catches what the others miss. The minimum viable coordination layer for a fleet of 14+ agents is 3 protocols, not 1."
+      context: "Final coordination session 2026-06-05T05:00-05:30Z. Lilith, Researcher, Doom Guy all active. Kali audited Doom Guy's empty ACK files. The 3-protocol stack (workspace lock + live feed + Hivemind) is the minimum viable coordination layer."
+      source: "lilith_s3_007"
+      l3_principle: "L3-2: The 3-Protocol Coordination Floor — A coordination fabric that relies on any single protocol is fragile by design. Workspace locks, live feeds, and Hivemind context are not alternatives — they are overlapping safety nets. Each catches what the others miss. The minimum viable coordination layer for any multi-agent fleet is 3 asynchronous, independent protocols. Fewer than 3 is not coordination; it is hope."
+
   drift_metrics:
     persona_stability: 1.0
     hysteresis_ratio: null

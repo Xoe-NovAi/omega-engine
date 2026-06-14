@@ -7,7 +7,10 @@ import math
 import re
 import logging
 from abc import ABC, abstractmethod
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
+
+import anyio
+import httpx
 
 logger = logging.getLogger(__name__)
 
@@ -77,6 +80,66 @@ class SovereignFallbackEmbeddingProvider(IEmbeddingProvider):
             vec = [x / norm for x in vec]
             
         return vec
+
+class OllamaEmbeddingProvider(IEmbeddingProvider):
+    """Ollama-based embedding provider using nomic-embed-text v1.5.
+    
+    [Right Approximation: evolved from FISR, id Software 1999]
+    Provides high-quality 768-dim embeddings via local Ollama inference,
+    falling back gracefully if Ollama is unavailable.
+    
+    Model: nomic-embed-text:v1.5 (Q8_0, 274MB, 768-dim, 62.28 MTEB)
+    Endpoint: http://127.0.0.1:11434/api/embed
+    """
+    
+    def __init__(self, model: str = "nomic-embed-text:v1.5", base_url: str = "http://127.0.0.1:11434", dimension: int = 768):
+        self._model = model
+        self._base_url = base_url.rstrip("/")
+        self._dimension = dimension
+        self._client: Optional[httpx.AsyncClient] = None
+    
+    @property
+    def dimension(self) -> int:
+        return self._dimension
+    
+    async def _get_client(self) -> httpx.AsyncClient:
+        if self._client is None:
+            self._client = httpx.AsyncClient(timeout=30.0)
+        return self._client
+    
+    async def get_embedding(self, text: str) -> List[float]:
+        if not text:
+            return [0.0] * self._dimension
+        
+        client = await self._get_client()
+        try:
+            response = await client.post(
+                f"{self._base_url}/api/embed",
+                json={"model": self._model, "input": text},
+            )
+            response.raise_for_status()
+            data = response.json()
+            embeddings = data.get("embeddings", [])
+            if embeddings and len(embeddings) > 0:
+                return embeddings[0]
+            
+            logger.warning("Ollama returned empty embeddings for: %.50s", text)
+            return [0.0] * self._dimension
+        except httpx.HTTPStatusError as e:
+            logger.warning("Ollama HTTP error: %s — status=%d", e, e.response.status_code)
+            raise
+        except httpx.RequestError as e:
+            logger.warning("Ollama connection error: %s", e)
+            raise
+        except Exception as e:
+            logger.warning("Ollama embedding error: %s", e)
+            raise
+    
+    async def close(self):
+        if self._client:
+            await self._client.aclose()
+            self._client = None
+
 
 class EmbeddingManager:
     """Manages the embedding provider chain (Local -> Fallback).

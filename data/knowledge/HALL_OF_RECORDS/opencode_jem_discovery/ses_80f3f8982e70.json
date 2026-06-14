@@ -1,0 +1,16 @@
+{
+  "session_id": "ses_80f3f8982e70",
+  "agent_id": "opencode/jem_discovery",
+  "channel": "opencode",
+  "entity": "jem_discovery",
+  "model": "gemma-4-31b-it",
+  "task_current": "Researching SOTA Sovereign Routing patterns for local LLM ensembles.",
+  "focus_chain": [
+    "Sovereign Routing Research"
+  ],
+  "decisions": [],
+  "continuation": "Initiating broad search for Sovereign Routing patterns (Router-LLM vs Condition-based). Mapping latency, accuracy, and local-first implementation patterns.",
+  "timestamp": "2026-06-12T08:24:14.438710+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

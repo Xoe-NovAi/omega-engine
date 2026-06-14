@@ -6,6 +6,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §1 Configuration Architecture
 
 Gemini CLI employs a hierarchical configuration model where settings are merged from multiple layers. Higher-numbered layers override lower-numbered ones.

@@ -1,5 +1,8 @@
 # 🔱 ENHANCED TASK: Systemic Audit & Strategic Analysis of the Omega Engine
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **Prompt for Web Gemini (Google Drive Connected)**
 
 ---

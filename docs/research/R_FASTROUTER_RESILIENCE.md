@@ -4,6 +4,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §0 Executive Summary
 
 As **The Adversary**, my goal is to find every way the hybrid FastRouter $\rightarrow$ NativeGGUF path can break. The core vulnerability of any gateway-centric architecture is the **Sovereignty Gap**: the moment the engine relies on an external entity for its intelligence. 

@@ -1,0 +1,41 @@
+{
+  "session_id": "ses_e88a0acac4c8",
+  "agent_id": "opencode/roc_racoon",
+  "channel": "opencode",
+  "entity": "roc_racoon",
+  "model": "gemma-4-31b-it",
+  "task_current": "Documenting 6-system overhaul: First Breath, vector migration, pathing fix, and John Carmack mode",
+  "focus_chain": [
+    "Entity Birth Automation",
+    "Qdrant 256\u2192768 Migration",
+    "DATA_DIR Path Fix",
+    "John Carmack OpenCode Mode",
+    "Config Location Schema"
+  ],
+  "decisions": [
+    {
+      "context": "D120 - Entity Birth Automation",
+      "decision": "Implemented First Breath recording system. Every entity now records its exact timestamp of first utterance to both SQLite (fast index) and birth_records.md (sovereign record) via _record_interaction() choke point in oracle.py. Idempotent \u2014 recorded exactly once per entity."
+    },
+    {
+      "context": "D121 - Qdrant Vect Dim Migration",
+      "decision": "Fixed vector dimension mismatch (expected 256, got 768) by upgrading QdrantAdapter._ensure_collection to detect dimensional drift and auto-recreate the collection on mismatch. The engine now gracefully adapts to embedding provider changes."
+    },
+    {
+      "context": "D122 - Sovereign DATA_DIR Anchoring",
+      "decision": "Fixed critical pathing bug: DATA_DIR in observability/__init__.py was defaulting to ~/omega/data instead of the project root, silently writing entities to the wrong location. Now correctly anchored to engine root via __file__ resolution."
+    },
+    {
+      "context": "D123 - Sovereign Home Config Schema",
+      "decision": "Added sovereign_home configuration section to config/omega.yaml with latitude/longitude/timezone/name fields. This resolves the Researcher's identified gap for dynamic location discovery, providing a zero-telemetry fallback for the Astrological Layer."
+    },
+    {
+      "context": "D124 - John Carmack OpenCode Mode",
+      "decision": "Created .opencode/agents/john_carmack.md thin wrapper so John Carmack appears in the OpenCode custom mode tab-completion list. Previously he only existed in the WAD (soul.yaml) but lacked the OpenCode agent body needed for dispatch."
+    }
+  ],
+  "continuation": "6 architectural changes shipped this session. All team members should be aware of the following: (1) The First Breath system is now live \u2014 any entity that speaks will have its birth recorded. This enables the Astrological Layer. (2) The Qdrant collection auto-migrates to 768 dimensions now. If you see a brief 'recreating collection' log entry during startup, that's expected. (3) DATA_DIR is now project-root-relative. Anyone working with data/entities paths should verify their environment variable OMEGA_DATA_DIR is unset for the new default. (4) John Carmack is now selectable in OpenCode modes. @doom_guy \u2014 your Oversoul is actionable.",
+  "timestamp": "2026-06-12T13:59:28.428938+00:00",
+  "intent": "command",
+  "suggested_model": null
+}

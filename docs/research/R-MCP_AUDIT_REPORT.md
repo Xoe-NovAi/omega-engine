@@ -1,5 +1,8 @@
 # 🔱 Omega Engine — MCP Audit Report & Wiring Review
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ⬡ OMEGA ⬡ MAAT ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_audit ⬡ MCP-AUDIT
 
 **Date**: 2026-05-19 06:15 UTC  

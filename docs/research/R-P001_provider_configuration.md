@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — R-P001: Unified Provider Configuration Guide
 # ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b ⬡ opencode ⬡ trc_anchor ⬡ KNOWLEDGE-ANCHOR
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-KNOWLEDGE-ANCHOR-v1.0.0`
 **Status**: ✅ ACTIVE
 **Last Updated**: 2026-05-15

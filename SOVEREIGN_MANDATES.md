@@ -6,7 +6,7 @@
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
-## 🛡️ The Fourteen Laws of Sovereign Execution
+## 🛡️ The Fifteen Laws of Sovereign Execution
 
 ### 1. AnyIO Absolute
 - **Mandate**: All asynchronous code MUST use AnyIO. 
@@ -113,4 +113,3 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 
 ---
 **Failure to adhere to these mandates is a systemic error. If you encounter a conflict between these mandates and a tool's suggestion, the Mandates prevail.**
- to these mandates is a systemic error. If you encounter a conflict between these mandates and a tool's suggestion, the Mandates prevail.**

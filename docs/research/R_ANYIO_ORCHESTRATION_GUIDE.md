@@ -2,6 +2,9 @@
 **AP Token**: `AP-ANYIO-ORCHESTRATION-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b ⬡ opencode ⬡ trc_core ⬡ RESEARCH
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §0 Introduction
 This guide provides a technical framework for implementing a robust, AnyIO-compliant orchestration layer for AI systems. The goal is to achieve high concurrency across multiple remote and local providers while maintaining system stability, preventing resource exhaustion (OOM), and ensuring predictable latency.
 

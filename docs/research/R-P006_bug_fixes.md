@@ -4,6 +4,9 @@
 
 This document tracks the resolution of critical bugs identified in the R44 Comprehensive Systems Review.
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 🛠️ Fix Log
 
 | Bug ID | Description | Fix Applied | Verification | Status | Date |

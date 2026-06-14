@@ -7,6 +7,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §0 Purpose
 
 This document is the canonical reference for all OpenCode Zen models used within the Omega Engine. It maps every available model to its capabilities, cost, context window, benchmark scores, and — most critically — which Omega Engine blocker each model is best suited to resolve.

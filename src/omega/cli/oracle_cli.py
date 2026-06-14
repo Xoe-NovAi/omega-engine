@@ -1,7 +1,7 @@
 # AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega CLI — Oracle Commands
 # AP: AP-ORACLE-CLI-v1.0.0
-# ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: CLI-COMMANDS]
+# ICS: [NODE: CORE | ARCHETYPE: HERMES | CONTEXT: CLI-COMMANDS]
 
 import anyio
 import logging
@@ -24,7 +24,7 @@ except ImportError:
     TYPER_AVAILABLE = False
     typer = None
 
-from omega.oracle import Oracle, OracleResponse, EntityRegistry, Entity, Orchestrator
+from omega.oracle import Oracle, OracleResponse, EntityRegistry, Entity, Orchestrator, ModelGateway
 from omega.errors import (
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
     ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
@@ -66,7 +66,7 @@ def _save_config(config: dict):
 def talk(
     query: str = typer.Argument(..., help="Your question for the Oracle"),
     transient: bool = typer.Option(False, "--transient", "-t", help="Run in transient mode (no soul updates)"),
-    iwad: Optional[str] = typer.Option(None, "--iwad", "-w", help="IWAD stack to load (e.g., arcana_novai)"),
+    iwad: Optional[str] = typer.Option(None, "--iwad", "-w", help="IWAD stack to load"),
 ):
     """Ask the Oracle anything. Routes to the best entity automatically."""
     async def _run():
@@ -86,7 +86,7 @@ def summon(
     query: str = typer.Argument(..., help="Your question for this entity"),
     transient: bool = typer.Option(False, "--transient", "-t", help="Run in transient mode (no soul updates)"),
     model: Optional[str] = typer.Option(None, "--model", "-m", help="[D118] Model override — bypass TriageRouter and use specific model (e.g., qwen3-1.7b)"),
-    iwad: Optional[str] = typer.Option(None, "--iwad", "-w", help="IWAD stack to load (e.g., arcana_novai)"),
+    iwad: Optional[str] = typer.Option(None, "--iwad", "-w", help="IWAD stack to load"),
 ):
     """Summon a specific entity by name.
     
@@ -404,6 +404,46 @@ def mcp_restart(
     anyio.run(_run)
 
 
+
+# ── BACKENDS — Provider Fabric Status ────────────────────────────────────
+@app.command()
+def backends():
+    """Show the current provider fabric and health status."""
+    async def _run():
+        gateway = ModelGateway()
+        providers = gateway.list_providers()
+        table = Table(title="🔱 Provider Fabric", show_header=True, header_style="bold cyan")
+        table.add_column("Provider", style="cyan")
+        table.add_column("Priority", style="yellow")
+        table.add_column("Type", style="magenta")
+        table.add_column("Status", style="green")
+        for p in providers:
+            status = "[green]HEALTHY[/green]" if p["healthy"] else "[red]DEAD/UNKNOWN[/red]"
+            table.add_row(p["name"], str(p["priority"]), p["type"], status)
+        console.print(table)
+    anyio.run(_run)
+
+
+@app.command(name="model-status")
+def model_status():
+    """Show all configured models and their specifications."""
+    async def _run():
+        gateway = ModelGateway()
+        models = gateway.list_models()
+        table = Table(title="🤖 Configured Models", show_header=True, header_style="bold cyan")
+        table.add_column("Model", style="cyan")
+        table.add_column("Context", style="yellow")
+        table.add_column("Threads", style="green")
+        table.add_column("KV Cache", style="magenta")
+        for m in models:
+            table.add_row(
+                m["name"],
+                str(m.get("context_window", "N/A")),
+                str(m.get("threads", "N/A")),
+                str(m.get("kv_cache", "N/A"))
+            )
+        console.print(table)
+    anyio.run(_run)
 
 # ── Display helper ─────────────────────────────────────────────────────
 def _display_response(result: OracleResponse):

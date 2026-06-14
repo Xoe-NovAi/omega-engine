@@ -1,5 +1,8 @@
 # 🔱 Omega Engine — Free Model Verification Report
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-FREE-MODEL-VERIFY-v1.0.0`
 **Generated**: 2026-05-16
 **Author**: Gnosis Analyst (Sovereign Research Fleet)

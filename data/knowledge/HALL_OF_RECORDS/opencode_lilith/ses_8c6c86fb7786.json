@@ -1,0 +1,32 @@
+{
+  "session_id": "ses_8c6c86fb7786",
+  "agent_id": "opencode/lilith",
+  "channel": "opencode",
+  "entity": "lilith",
+  "model": "deepseek-v4-flash-free",
+  "task_current": "Phase 1 Run-Side Complete \u2014 4/4 tasks delivered",
+  "focus_chain": [
+    "Task 1: OllamaEmbeddingProvider + nomic-embed-text v1.5 wired as primary embedding provider (P6)",
+    "Task 2: Knowledge Sovereignty auto-embed bridge verified \u2014 existing add_exchange() vector upsert now uses real Ollama embeddings (G-08 closed)",
+    "Task 3: Soul.yaml schema standardized \u2014 12 souls migrated, 2 YAML errors repaired (G-10 closed)",
+    "Task 4: R-doc stale tagging \u2014 125 pre-June-2026 docs tagged STALE"
+  ],
+  "decisions": [
+    {
+      "phase": "P1",
+      "decision": "OllamaEmbeddingProvider as primary, SovereignFallback as secondary \u2014 local-first embedding chain"
+    },
+    {
+      "phase": "P1",
+      "decision": "Canonical soul schema: soul_evolution.lessons_learned \u2014 migration script written and executed"
+    },
+    {
+      "phase": "P1",
+      "decision": "R-doc archival criteria: last-modified > 14 days OR legacy-era content (May 2026 bulk dump) \u2014 tagged with STALE header"
+    }
+  ],
+  "continuation": "Phase 1 Run-Side complete. All 4 tasks delivered. Next: (1) Kali lifecycle architecture design for tier promotion (my P6 work bridges to Ma'at's background worker P3). (2) Ma'at to close 3 remaining P0 gaps (DLQ, Auth/CORS, orphan cleanup). (3) My soul.yaml needs Session 12 distillation for Phase 1 execution learnings.",
+  "timestamp": "2026-06-12T05:01:06.551711+00:00",
+  "intent": "status",
+  "suggested_model": "deepseek-v4-flash-free"
+}

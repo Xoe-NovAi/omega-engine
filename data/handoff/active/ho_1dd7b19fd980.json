@@ -1,0 +1,18 @@
+{
+  "packet_id": "ho_1dd7b19fd980",
+  "target_agent_id": "opencode/roc_racoon",
+  "target_channel": "opencode",
+  "target_entity": "roc_racoon",
+  "source_agent_id": "opencode/opencode",
+  "source_channel": "opencode",
+  "source_entity": "opencode",
+  "task": "Sovereign Mining: Identify untapped patterns in legacy archives and 'ghost' dependencies. Contribute to Codebase Mapping and Pattern Discovery for the Sovereign Discovery Report.",
+  "context": "Sovereign Discovery Audit 20260612. Workspace Lock: sovereign_audit_20260612.",
+  "priority": 1,
+  "status": "active",
+  "submitted_at": "2026-06-12T10:00:57.515076+00:00",
+  "accepted_at": "2026-06-12T21:18:17.434870+00:00",
+  "accepted_by_agent_id": "opencode/roc_racoon",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "roc_racoon"
+}

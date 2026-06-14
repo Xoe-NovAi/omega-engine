@@ -7,6 +7,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## Executive Summary
 
 OpenCode v1.15.9 **DOES** support custom providers for local models (LM Studio, Ollama, vLLM, llama.cpp). The key mechanism is the `npm` field in the provider config, which tells OpenCode to use Vercel's AI SDK adapter for OpenAI-compatible endpoints. This overturns the prior finding (R_OPENCODE_LMSTER_PROVIDER.md) that "OpenCode cannot use lmster as a provider."

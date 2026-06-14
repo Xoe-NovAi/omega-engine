@@ -26,6 +26,7 @@ from typing import Any, Dict, List, Optional
 
 from ..memory_store import get_memory_store, MemoryStore
 from ..constants import DEFAULT_CONTEXT_LIMIT
+from .world_state import world_state
 # New constant for token-aware sliding window
 DEFAULT_TOKEN_LIMIT = 4000 
 
@@ -56,33 +57,36 @@ class ContextBuilder:
         session_id: str,
         token_limit: int = DEFAULT_TOKEN_LIMIT,
     ) -> str:
-        """Fetch recent memory for an entity/session and format as a token-aware sliding window.
-
+        """Fetch recent memory and current world state for an entity/session.
+        
         Args:
             entity_name: Name of the entity (e.g., 'EntityA', 'EntityB').
             session_id: Unique session identifier for the conversation.
             token_limit: Maximum tokens for the memory block.
-
+        
         Returns:
-            A formatted string block of recent conversation history,
-            or an empty string if no memory is available.
+            A formatted string block containing recent conversation history
+            and the current world state, or an empty string if no context is available.
         """
         try:
-            # Fetch a larger batch to perform sliding window truncation locally
+            # 1. Fetch recent memory
             exchanges = await self.memory_store.get_history(
                 entity_name=entity_name,
                 session_id=session_id,
-                limit=MAX_EXCHANGE_DISPLAY_LENGTH, # Use a safe upper bound for fetching
+                limit=MAX_EXCHANGE_DISPLAY_LENGTH,
             )
+            memory_block = self._format_exchanges_sliding_window(exchanges, token_limit) if exchanges else ""
+            
+            # 2. Fetch and format world state
+            world_block = self._format_world_state()
+            
+            # Combine blocks
+            full_context = f"{world_block}\n{memory_block}"
+            return full_context.strip()
+            
         except Exception as e:
-            logger.warning(f"Failed to fetch memory for {entity_name}/{session_id}: {e}")
+            logger.warning(f"Failed to build context for {entity_name}/{session_id}: {e}")
             return ""
-
-        if not exchanges:
-            return ""
-        
-        # Implement sliding window based on token estimation
-        return self._format_exchanges_sliding_window(exchanges, token_limit)
 
     async def build_context_for_user(
         self,
@@ -90,26 +94,76 @@ class ContextBuilder:
         session_id: str,
         token_limit: int = DEFAULT_TOKEN_LIMIT,
     ) -> str:
-        """Fetch recent traces for a user across all entities.
+        """Fetch recent traces for a user across all entities and include world state.
         
         Implements a token-aware sliding window for user-level context.
         """
         try:
+            # 1. Fetch user memory
             exchanges = await self.memory_store.get_history(
                 entity_name="user",
                 session_id=session_id,
                 limit=MAX_EXCHANGE_DISPLAY_LENGTH,
             )
+            memory_block = self._format_exchanges_sliding_window(exchanges, token_limit) if exchanges else ""
+            
+            # 2. Fetch and format world state
+            world_block = self._format_world_state()
+            
+            # Combine blocks
+            full_context = f"{world_block}\n{memory_block}"
+            return full_context.strip()
+            
         except Exception as e:
-            logger.warning(f"Failed to fetch user context for {user_id}/{session_id}: {e}")
+            logger.warning(f"Failed to build user context for {user_id}/{session_id}: {e}")
             return ""
-
-        if not exchanges:
-            return ""
-
-        return self._format_exchanges_sliding_window(exchanges, token_limit)
 
     # ── Formatting ────────────────────────────────────────────────────
+    
+    def _format_world_state(self) -> str:
+        """Format the current active world state into a readable context block.
+        
+        Queries the WorldState singleton for global parameters and active sectors.
+        """
+        # Get global state
+        globals_data = {}
+        # Use public API if possible, but world_state._global_state is accessible
+        # Let's just iterate over the keys if it were a public method, 
+        # but since we are inside the engine, we can access it or use a loop.
+        # Wait, world_state doesn't have a get_all_globals().
+        # I'll just use the internal dict for now as this is internal core logic.
+        globals_dict = world_state._global_state
+        if globals_dict:
+            globals_data = {k: v for k, v in globals_dict.items()}
+        
+        # Get active sectors
+        sectors = world_state.get_all_sectors()
+        sector_data = {}
+        for s_id in sectors:
+            data = world_state.lattice_query(sector_id=s_id, lump_id=None)
+            if data:
+                sector_data[s_id] = data
+        
+        if not globals_data and not sector_data:
+            return ""
+            
+        lines = ["## Active World State Context\n"]
+        
+        if globals_data:
+            lines.append("### Global Parameters")
+            for k, v in globals_data.items():
+                lines.append(f"- {k}: {v}")
+            lines.append("")
+            
+        if sector_data:
+            lines.append("### Active Sectors")
+            for s_id, lumps in sector_data.items():
+                lines.append(f"- Sector [{s_id}]:")
+                for l_id, l_data in lumps.items():
+                    lines.append(f"  - Lump {l_id}: {l_data}")
+            lines.append("")
+            
+        return "".join(lines) + "---\n\n"
 
     def _format_exchanges_sliding_window(self, exchanges: List[Dict[str, Any]], token_limit: int) -> str:
         """Format exchanges into a context block using a sliding token window.

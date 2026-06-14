@@ -14,7 +14,7 @@
 The Omega Engine is **functionally complete** for Phase 1 (Minimum Viable Sovereign Loop). All critical infrastructure is in place:
 - ✅ Provider Fabric (Gemma 4-31B direct + MiniMax fallback)
 - ✅ Background Researcher (autonomous 24/7 loop)
-- ✅ Search Fleet (Exa, Tavily, Serper.dev, SearXNG, Jina, Firecrawl)
+- ✅ Search Fleet (Exa, SearXNG, Firecrawl)
 - ✅ 230 tests (core suite passing)
 - ✅ Systemd services (all enabled for boot)
 - ✅ Custom instructions (builder.md, researcher.md, jem-2.0.md updated)
@@ -62,10 +62,9 @@ The Omega Engine is **functionally complete** for Phase 1 (Minimum Viable Sovere
 | Provider | Status | Endpoint | Purpose |
 |----------|--------|----------|---------|
 | **Exa** | ✅ Working | Remote MCP (`mcp.exa.ai/mcp`) | Neural-link discovery |
-| **Tavily** | ✅ Working | `api.tavily.com` | Precision extraction + fact-checking |
-| **Serper.dev** | ✅ NEW | `serper.dev/search` | Scale, recency, AI-optimized JSON |
+| **Tavily** | ❌ REMOVED | `api.tavily.com` | Precision extraction + fact-checking |
 | **Firecrawl** | ⚠️ Ready | MCP stdio (`npx -y firecrawl-mcp`) | Full-page extraction (needs verification) |
-| **Jina** | ✅ Working | `r.jina.ai/` | Reader mode extraction |
+| **Jina** | ❌ REMOVED | `r.jina.ai/` | Reader mode extraction |
 | **SearXNG** | ⚠️ Container down | `http://127.0.0.1:8888` | Local fallback (not critical) |
 
 **Config**: `opencode.json` has all 6 providers configured with API keys in `.env`.
@@ -75,7 +74,7 @@ The Omega Engine is **functionally complete** for Phase 1 (Minimum Viable Sovere
 | File | Status | Updates |
 |------|--------|---------|
 | **builder.md** | ✅ Updated | Provider Fabric details, Gemma 500 mitigation, Background Researcher architecture |
-| **researcher.md** | ✅ Updated | Search fleet (Serper.dev added, Brave removed), Background Researcher integration note |
+| **researcher.md** | ✅ Updated | Search fleet (Brave removed), Background Researcher integration note |
 | **jem-2.0.md** | ✅ Updated | Model inference chain, 24/7 background researcher context, tool access table |
 
 ### 1.5 Research Index (138 Items)
@@ -139,7 +138,7 @@ All services enabled via `systemctl --user enable` for boot persistence.
 1. Verify `npx` can run `firecrawl-mcp` without errors
 2. Test MCP handshake (OpenCode should auto-detect)
 3. Run a sample Firecrawl extraction to confirm it works
-4. Add Firecrawl to the background researcher's search fleet (currently only uses Tavily/Exa/Serper/SearXNG)
+4. Add Firecrawl to the background researcher's search fleet (currently only uses Exa/SearXNG)
 
 **Estimated effort**: 30 min (verify + test + integrate)
 
@@ -171,10 +170,9 @@ All services enabled via `systemctl --user enable` for boot persistence.
 | MCP | Type | Status | Config |
 |-----|------|--------|--------|
 | **Exa** | Remote | ✅ Working | `mcp.exa.ai/mcp` + x-api-key header |
-| **Tavily** | Remote | ✅ Working | `api.tavily.com` + Bearer token |
-| **Serper.dev** | Remote | ✅ Working | `serper.dev/mcp` + x-api-key header |
+| **Tavily** | Remote | ❌ REMOVED | `api.tavily.com` + Bearer token |
 | **Firecrawl** | Stdio | ⚠️ Untested | `npx -y firecrawl-mcp` |
-| **Jina** | HTTP | ✅ Working | `r.jina.ai/` (no auth) |
+| **Jina** | HTTP | ❌ REMOVED | `r.jina.ai/` (no auth) |
 | **SearXNG** | HTTP | ⚠️ Container down | `http://127.0.0.1:8888` (local) |
 
 **Wiring review checklist**:
@@ -294,10 +292,10 @@ For each MCP, document:
 python3 -c "import json; config = json.load(open('opencode.json')); print([k for k in config.get('mcp_servers', {}).keys()])"
 
 # 2. Verify all API keys in .env
-grep -E "EXA_API_KEY|TAVILY_API_KEY|SERPER_API_KEY|FIRECRAWL_API_KEY|OPENCODEZEN" .env
+grep -E "EXA_API_KEY|FIRECRAWL_API_KEY|OPENCODEZEN" .env
 
 # 3. Test each MCP connection
-for mcp in exa tavily serper firecrawl jina searxng; do
+for mcp in exa firecrawl searxng; do
   echo "Testing $mcp..."
   # Attempt to call a simple tool from each MCP
 done
@@ -330,7 +328,7 @@ OMEGA_ENV=test PYTHONPATH=src .venv/bin/python3 -m pytest tests/ -v --tb=short -
 **Step 2: Fix timeout issues**
 
 - Add `@pytest.mark.timeout(30)` to network-dependent tests
-- Mock external API calls (Exa, Tavily, etc.) in tests
+- Mock external API calls (Exa, etc.) in tests
 - Use `pytest-vcr` to record/replay HTTP interactions
 
 **Step 3: Run full suite**
@@ -373,8 +371,6 @@ OPENCODEZEN=your_opencode_zen_key_here
 
 # Search providers
 EXA_API_KEY=your_exa_key_here
-TAVILY_API_KEY=your_tavily_key_here
-SERPER_API_KEY=your_serper_key_here
 
 # Content extraction
 FIRECRAWL_API_KEY=your_firecrawl_key_here
@@ -422,7 +418,7 @@ EOF
 |-------|----------|--------|-----------|
 | Gemma 500 errors | Medium | Transient | 5 retries + exponential backoff handle it |
 | OpenCode Zen 429 rate limits | Medium | Transient | MiniMax retries, falls back to mock |
-| SearXNG container down | Low | Known | Falls back to Tavily/Exa/Serper.dev |
+| SearXNG container down | Low | Known | Falls back to Exa |
 | Full test suite timeout | Medium | Blocking | Need to identify culprit test |
 | `.env` tracked by git | High | Security | Remove from git, add to .gitignore |
 | Firecrawl untested | Low | Blocking 3A | Need to verify MCP works |

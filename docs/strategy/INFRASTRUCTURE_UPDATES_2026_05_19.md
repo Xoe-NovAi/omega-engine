@@ -85,8 +85,8 @@ loop.py: BackgroundResearcherLoop
 
 distiller.py: AsyncDistiller
   ├─ distill(topic, content, sources) → GnosisPacket
-  │  ├─ Search (SearXNG/Tavily/Exa)
-  │  ├─ Extract (Jina)
+  │  ├─ Search (SearXNG/Exa)
+  │  ├─ Extract (Jina — ❌ REMOVED)
   │  └─ Distill (Gemma → MiniMax → mock)
   └─ _call_llm() → fallback chain
 
@@ -110,7 +110,6 @@ Systemd services (all enabled):
 - Required keys:
   - `GOOGLE_API_KEY` — Gemma 4-31B access
   - `OPENCODEZEN` — MiniMax M2.5-free access
-  - `TAVILY_API_KEY` — Research extraction
   - `EXA_API_KEY` — Neural search (optional, via remote MCP)
 
 ---
@@ -119,15 +118,16 @@ Systemd services (all enabled):
 
 ### Removed
 - ❌ **Brave Search**: API key revoked/expired. Service no longer available.
+- ❌ **Tavily**: Deprecated. Removed from MCP config.
+- ❌ **Jina**: Deprecated. Removed from MCP config.
 
 ### Active
 | Provider | Purpose | Endpoint | Status |
 |----------|---------|----------|--------|
 | **Exa** | Neural-link discovery | Remote MCP (`mcp.exa.ai/mcp`) | ✅ Working |
-| **Tavily** | Precision extraction + fact-checking | `api.tavily.com` | ✅ Working |
-| **Serper.dev** | Scale + recency + JSON | `serper.dev/search` | ✅ NEW — replaces Brave |
+| **Tavily** | Precision extraction + fact-checking | `api.tavily.com` | ❌ REMOVED |
 | **Firecrawl** | Full-page content extraction | MCP server (on-demand) | ✅ Available |
-| **Jina** | Content extraction | Jina reader mode (`r.jina.ai/`) | ✅ Working |
+| **Jina** | Content extraction | Jina reader mode (`r.jina.ai/`) | ❌ REMOVED |
 | **SearXNG** | Local self-hosted fallback | `http://127.0.0.1:8888` | ⚠️ Container down, fallback only |
 
 ### Configuration
@@ -149,15 +149,15 @@ Search providers configured via:
 
 ### researcher.md
 **Section: Sovereign Search Fleet** (lines 59–70)
-- ✅ Replaced Brave with Serper.dev
+- ❌ REMOVED Brave
 - ✅ Added SearXNG as local fallback
 - ✅ Clarified Exa is remote MCP
 - ✅ Added new section: Background Researcher Integration (lines 72–81)
 
 ### jem-2.0.md
 **Section: Core Directives** (line 26)
-- ✅ Replaced Brave + Firecrawl with Serper.dev
-- ✅ Kept Exa, Tavily, SearXNG, Jina active
+- ✅ Brave removed (replaced by integrated SearXNG)
+- ❌ REMOVED Tavily, Jina (Exa, SearXNG remain active)
 
 **Section: Context** (lines 48–57)
 - ✅ Added Model Inference Chain (Gemma → MiniMax → Mock)
@@ -165,8 +165,8 @@ Search providers configured via:
 - ✅ Clarified role of interactive research vs. autonomous loop
 
 **Section: Tool Access** (lines 67–75)
-- ✅ Removed Brave, Firecrawl
-- ✅ Added Serper.dev
+- ✅ Removed Brave
+- ✅ Brave removed
 - ✅ Updated SearXNG port (localhost:8888, was 4000)
 - ✅ Clarified Exa is remote MCP
 
@@ -192,7 +192,7 @@ Search providers configured via:
 |-------|--------|-----------|
 | Gemma 500 errors | Transient (Google free tier) | 5 retries + exponential backoff handle it |
 | OpenCode Zen 429 rate limits | Transient (shared key) | MiniMax retries, falls back to mock |
-| SearXNG container down | Known | Falls back to Tavily/Exa/Serper.dev |
+| SearXNG container down | Known | Falls back to Exa |
 | `.env` not in .gitignore | Security concern | Should be excluded from git tracking |
 
 ---

@@ -1,6 +1,6 @@
 ---
 description: "Sovereign Agent: makali (Sovereign Agent)"
-mode: "primary"
+mode: "all"
 temperature: 0.5
 permission:
   read: allow

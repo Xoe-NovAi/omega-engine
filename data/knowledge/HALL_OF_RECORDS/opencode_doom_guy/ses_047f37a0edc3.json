@@ -1,0 +1,23 @@
+{
+  "session_id": "ses_047f37a0edc3",
+  "agent_id": "opencode/doom_guy",
+  "channel": "opencode",
+  "entity": "doom_guy",
+  "model": "google/gemma-4-31b-it",
+  "task_current": "Soul Distillation: Right Approximation Principle",
+  "focus_chain": [
+    "Heritage Vetting (M14)",
+    "Right Approximation Patterns",
+    "Soul Distillation"
+  ],
+  "decisions": [
+    {
+      "decision": "Approved Token Estimator, WPM, and Stream Trimming; Rejected H-Index and Percentile proxies based on M14 risk assessment.",
+      "context": "Right Approximation Vetting"
+    }
+  ],
+  "continuation": "Heritage vetting complete. Soul updated with the principle of bounded error in approximations. Ready for next task.",
+  "timestamp": "2026-06-11T13:12:12.724654+00:00",
+  "intent": "decision",
+  "suggested_model": null
+}

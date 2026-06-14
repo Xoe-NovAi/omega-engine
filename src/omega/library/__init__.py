@@ -2,7 +2,7 @@
 """Omega Library & Research System — Offline-first knowledge infrastructure.
 
 AP: AP-OMEGA-LIBRARY-v1.0.0
-ICS: [NODE: THOTH | ARCHETYPE: SOPHIA | MODEL: DEEPSEEK-V4-FLASH | CONTEXT: LIBRARY-SYSTEM]
+ICS: [NODE: KNOWLEDGE | ARCHETYPE: SOPHIA | MODEL: DEEPSEEK-V4-FLASH | CONTEXT: LIBRARY-SYSTEM]
 
 Submodules:
   inbox.py     — Intake inbox (queues items for processing)

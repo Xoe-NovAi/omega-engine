@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — R-## Multi-Agent Council Orchestration Patterns
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_research ⬡ R##
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-RESEARCH-COUNCIL-v1.0.0`
 **Author**: Web Research Fleet (Deep Research)
 **Date**: 2026-05-26

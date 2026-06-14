@@ -1,5 +1,8 @@
 # 🔱 B5: HealthMonitor Wiring into ModelGateway.generate()
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-B5-HEALTHMONITOR-WIRING-v1.0.0`
 **Status**: ✅ Complete — Implementation Spec
 **Entity**: SOPHIA

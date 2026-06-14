@@ -641,6 +641,19 @@ sovereignty: ## 🏛️ Show local vs cloud inference ratio
 verify-model-spelling: ## 🤖 Verify model name consistency (D119)
 	PYTHONPATH=src $(PYTHON) scripts/verify_model_spelling.py
 
+verify-firewall: ## 🛡️  Assert no WAD-specific strings in core engine
+	@echo "$(COLOR_CYAN)🛡️  M2 Firewall Leak Audit$(COLOR_NC)"
+	@FAIL=0; \
+	LEAKS=$$(grep -rE "arcana_novai|doom_universe|torment_stack" src/omega/ | grep -v "docs/\|tests/" || true); \
+	if [ -n "$$LEAKS" ]; then \
+		echo "$(COLOR_RED)✗ Firewall Breach Detected!$(COLOR_NC)"; \
+		echo "$$LEAKS"; \
+		FAIL=1; \
+	else \
+		echo "$(COLOR_GREEN)✓ No WAD-specific leaks found in core.$(COLOR_NC)"; \
+	fi; \
+	exit $$FAIL
+
 pivot-watchdog: ## 🛡️  Flag pending PIVOT decisions > 7 days
 	PYTHONPATH=src $(PYTHON) scripts/pivot_watchdog.py
 

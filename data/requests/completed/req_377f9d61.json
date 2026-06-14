@@ -1,0 +1,21 @@
+{
+  "id": "req_377f9d61",
+  "query": "curate P7 knowledge",
+  "priority": "P0",
+  "context": "",
+  "created_by": "unknown",
+  "created_at": "2026-06-14T19:39:53.900587+00:00",
+  "requires": [
+    "websearch"
+  ],
+  "fallback_tools": [
+    "webfetch"
+  ],
+  "timeout_sec": 300,
+  "max_retries": 2,
+  "status": "completed",
+  "completed_at": "2026-06-14T19:39:53.903939+00:00",
+  "result": {
+    "result": "curated"
+  }
+}

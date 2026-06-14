@@ -1,5 +1,8 @@
 # 🔱 R-FIRSTHAND: Database & Cross-CLI Audit — Firsthand Findings
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_firsthand_audit ⬡ PHASE-I**
 
 **Version**: 1.0.0

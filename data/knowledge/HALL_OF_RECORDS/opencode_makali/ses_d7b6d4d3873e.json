@@ -1,0 +1,35 @@
+{
+  "session_id": "ses_d7b6d4d3873e",
+  "agent_id": "opencode/makali",
+  "channel": "opencode",
+  "entity": "makali",
+  "model": "deepseek-v4-flash-free",
+  "task_current": "Incorporating feedback: parallel websearch into templates, model-adaptive strategy depth",
+  "focus_chain": [
+    "Discovery complete (strategy/persistence/sentinel audits)",
+    "jem_verification deepened R_EMBEDDING_ADAPTERS_DEEPENED.md (554 lines, Temple-Grade)",
+    "Critical finding: 4 duplicate MD5 hash implementations feeding Qdrant garbage",
+    "Parallel websearch and model-adaptive templates now priority"
+  ],
+  "decisions": [
+    {
+      "FINDING": "4 duplicate MD5 embedding implementations across embeddings.py, memory_store.py, indexer.py, crossref.py \u2014 all produce garbage vectors for Qdrant's 653 stored points"
+    },
+    {
+      "FINDING": "IEmbeddingProvider interface needs zero changes \u2014 real embedding is a 2-line config swap"
+    },
+    {
+      "FIX": "R_EMBEDDING_ADAPTERS_DEEPENED.md published \u2014 554 lines, 14 sources, 11 code locations mapped"
+    },
+    {
+      "FEEDBACK": "Parallel websearch must be baked into all research templates explicitly"
+    },
+    {
+      "FEEDBACK": "Templates must be model-adaptive \u2014 deep reasoning for large models, structured steps for small"
+    }
+  ],
+  "continuation": "Awaiting user direction on Temple Ordering plan vs. deeper dispatch of the 2 remaining shallow Gemma R-docs (R_SKEPTICAL_VERIFICATION.md, R_DATABASE findings)",
+  "timestamp": "2026-06-12T03:25:55.291967+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

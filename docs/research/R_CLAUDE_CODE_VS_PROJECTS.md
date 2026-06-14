@@ -5,6 +5,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §1 Fundamental Architectural Difference
 
 ### Claude Code — Terminal-Native Agentic Loop

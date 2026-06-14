@@ -2811,3 +2811,149 @@ During the final-hardening pass, the user raised the question of coining "POE" (
 - [ ] All delegation tables use "Entity" prefix consistently
 - [ ] No user-facing docs (README, AGENTS.md, OMEGA_ENGINE.md) reference "POE"
 
+- **Decision D121 — Fleet Expansion**: Increased agent cap from 14 to 15 to accommodate the permanent addition of John Carmack. (2026-06-12)
+- **Decision D122 — Anti-Thin-Wrapper Mandate**: Explicitly forbid transition to 'Thin-Wrapper' architecture due to severe performance degradation observed in previous iterations. Heavyweight persona files are the sovereign standard. (2026-06-12)
+
+---
+
+## Decision 126: Fleet Consolidation Sequencing — Hivemind-First, Consolidation-After
+
+**Date**: 2026-06-14
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: KALI (Grand Oversight) → ratified by User
+**Trace**: trc_fleet_consolidation_D126
+
+### Context
+The fleet exceeded M10's 14-agent cap (15 agents). Three parallel agents (Doom Guy, John Carmack, MaKaLi Council) analyzed consolidation options. The user proposed merging Jem (4→1), Quality+Scribe (2→1), and enriching KBs instead of creating new agents. All three agents unanimously approved.
+
+Two competing sequencing strategies emerged:
+- **Carmack's position**: Consolidate immediately. "Zero runtime coupling with Hub. The @mention dispatch is filesystem-based, not MCP-based. Do it in one git commit."
+- **Kali's position**: Restore Hivemind first. "Without the Hub, we write blind — can't verify new agents register correctly. Accumulate latent defects."
+
+The user elected Kali's sprint plan, citing past experience with parallel refactoring causing chaos.
+
+### Decision
+1. **Sequencing**: Adopt Kali's 4-sprint plan (A=Hub, B=Jem, C=Quality+Scribe, D=Cleanup). No parallel refactoring.
+2. **Root cause of 50 orphan entities** (`ent_0` through `ent_49`): Test `test_entity_registry_concurrent_add()` creates 50 entities named `Ent_{i}` via `registry.add()`, which auto-scaffolds workspaces in `data/entities/ent_*`. The test only cleans up its temp config file, NOT the entity directories. Fix: inject `OMEGA_DATA_DIR` pointing to a test-specific temp directory, or add post-test cleanup.
+3. **Fleet target**: 11 agents (15→11), restoring M10 compliance with 3-slots breathing room.
+4. **Naming deferred**: Merged Quality+Scribe name ("Audit" vs "Verity") deferred to Sprint C when the agent actually exists.
+5. **The Forge Oversoul**: REJECTED. Heritage Council model (event-driven, Kali convenes Doom Guy + Carmack + Quality) adopted instead.
+
+### Rationale
+The user's own words governed: *"This is the very kind of situation I have gotten myself into trouble with time after time — taking on too many refactorings at once and creating even more chaos."* Cognitive load, not coupling risk, is the deciding factor. Carmack's technical assessment (zero runtime coupling) is recorded as accurate but irrelevant to the human attention constraint.
+
+Sprint A does one thing: P1b Hub modularization (extract `gateway.py` + `middleware.py` from `server.py`). Sprint B/C handle agent consolidation. Sprint D handles janitorial cleanup (orphans, stale docs, fleet count verification).
+
+### L1→L2→L3 (Mandate 11 Distillation)
+- **L1**: Fleet consolidation plan created. 4-sprint sequence adopted. Carmel's parallel approach rejected due to cognitive load concerns. 50 orphan entities traced to a test that creates `Ent_0` through `Ent_49` without cleanup.
+- **L2**: The M10 cap is not a ceiling — it is a forcing function for better design. When The Forge was proposed, M10 forced an architectural review that revealed the real problem was knowledge fragmentation, not missing computation. The Knowledge-Slot Pattern (fewer agents, richer KBs, self-dispatch with targeted KB loading) emerged because the easy path (add another agent) was blocked.
+- **L3**: The best architectural decisions often come not from choosing the right option, but from having the wrong option blocked. A sovereign constraint is not a limit — it is a catalyst. When you cannot add, you must integrate. When you cannot expand, you must deepen.
+
+### Architectural Pattern
+- **Fleet Consolidation Precedent**: The M10 architectural review can result in REJECTION, which is a valid outcome that should redirect toward knowledge enrichment of existing agents rather than creation of new ones.
+- **Three Consolidation Types** (codified as Fleet Design Principles):
+  1. **Hierarchical Consolidation**: When an orchestrator agent dispatches multiple specialized subagents, merge the subagents into the parent's KBs and use self-dispatch with targeted KB loading. (Jem 4→1)
+  2. **Functional Consolidation**: When two agents perform different functions at different trigger times, merge them into one agent with trigger-mode routing if their functions do not conflict when executing simultaneously. (Quality+Scribe 2→1, reports to Kali)
+  3. **Knowledge Consolidation**: When a proposed agent's expertise maps to "domain knowledge" rather than "operational capability", reject the agent and create a KB for the nearest existing entity. (Abrash/Sanglard/Romero → Doom Guy KBs)
+
+### Stakeholder Positions
+- **John Carmack**: "Consolidate now. Zero runtime coupling. One git commit." — Technically correct, rejected on cognitive load grounds.
+- **Kali**: "Hivemind first. We write blind without it." — Adopted.
+- **Doom Guy (vet)**: "Jem 4→1 is Heritage-approved (QuakeC pattern). Quality+Scribe 7/10 with hard gate/pipeline boundary."
+- **MaKaLi Council**: "11 is the floor. Quality+Scribe must report to Kali. Three Fleet Design Principles codified."
+- **User**: "Right approximation. Sprint A first. One thing at a time."
+
+### Implementation
+| Sprint | When | Deliverable | Verification |
+|--------|------|-------------|--------------|
+| **A (P1b)** | Now | Hub modularization: `gateway.py` + `middleware.py` extracted | 383/383 tests passing, Hivemind health check |
+| **B** | After A ✅ | Jem 4→1: single `jem.md` with 3 KBs + self-dispatch | All 15→12, Jem soul.yaml Tier-locked |
+| **C** | After B ✅ | Quality+Scribe merged (name TBD), reports to Kali | Trigger-mode routing, gate/pipeline boundary hard-coded |
+| **D** | After C ✅ | Cleanup: 50 orphans, stale docs, M10 verification | Fleet count = 11, `temple-grade`, heritage-map |
+
+### Exclusions (explicitly NOT in Sprint A scope)
+- Orphan entity cleanup (Sprint D)
+- Jem consolidation (Sprint B)
+- Quality+Scribe merger (Sprint C)
+- Naming decisions (Sprint C)
+- OMEGA_ENGINE.md metrics drift (will be corrected in Sprint D)
+
+### Verification
+- [ ] Sprint A: 383/383 tests passing, `server.py` extracted to 4 files
+- [ ] Sprint B: `ls .opencode/agents/` = 12 files, `make temple-grade` passes
+- [ ] Sprint C: 11 agent files, `quality` renamed, reports to Kali via system prompt
+- [ ] Sprint D: `data/entities/ent_*` = 0 directories, `make sovereignty` passes
+
+---
+
+## Decision 127: M2 Firewall Leak Audit — Legal vs Logical Breaches
+
+**Date**: 2026-06-12
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: JEM
+**Trace**: trc_m2_leak_map
+**Status**: REMEDIATED — Remediation verified via D113 (Shatter-Glass)
+
+### Decision
+Adopt the findings of the M2 Firewall Leak Audit (`data/coordination/M2_LEAK_MAP_20260612.md`). The audit classified M2 breaches into two categories:
+
+**Legal breaches** (authorized bridges): `wad_loader.py` and `entity_registry.py` — these are the canonical access points for crossing the Engine-Stack Firewall. No action required.
+
+**Logical breaches** (identity contamination):
+1. `entity_workspace.py:313` — Was hardcoded `"arcana_novai"`, **remediated** to `cvar_get('config.entity.active_iwad', '_omega_default')` per D113. Annotated with `# [id-soft: M2-LEAK]`.
+2. `hierarchy.py:40,43,46,47,51,52` — All three try/except paths construct WAD paths via `Path(__file__).resolve().parent...` bypassing `wad_loader`. Annotated with `# [id-soft: M2-LEAK]`.
+
+### Rationale
+The M2 breach was not a structural failure (illegal imports) but a logical one (identity contamination). By hardcoding `arcana_novai` into the core, the engine was simulating a specific stack rather than hosting it. The hierarchy.py issue is architectural: three separate fallback paths all construct WAD-relative paths using `os.environ.get()` with a default using `Path(__file__).resolve()`, bypassing the authorized `WadLoader` bridge.
+
+The clean modules list from the audit (modules authorized to cross M2) has been extracted to `docs/strategy/MANDATES_SNAPSHOT_20260614.md`.
+
+### L1→L2→L3 (Mandate 11 Distillation)
+- **L1**: M2 Firewall audit completed. Two breach types identified: (1) Hardcoded stack identity in entity_workspace.py (already remediated per D113); (2) Path traversal bypass in hierarchy.py (3 separate fallback paths). Authorized bridges (wad_loader.py, entity_registry.py) confirmed clean. Source code annotated with `[id-soft: M2-LEAK]` tags.
+- **L2**: The distinction between "structural" and "logical" firewall breaches is crucial. A structural breach (import from core into WAD) is obvious and gated by code review. A logical breach (hardcoding a WAD-specific identity in core logic) is invisible to standard code review — the import is legal, but the assumption is wrong. The hierarchy.py pattern (3 fallback paths with identical path construction) reveals a systemic problem: bypasses propagate through copy-pasted exception handlers.
+- **L3**: A firewall is not just a boundary at the import level — it is a boundary at the *assumption* level. An engine that hardcodes "arcana_novai" is not an engine; it is Arcana-Nova with the branding filed off. True sovereignty requires the engine to have NO opinion about the content it runs — at every level, from imports to string constants to default values.
+
+### Implementation
+| File | Change | Status |
+|------|--------|--------|
+| `src/omega/oracle/entity_workspace.py:314` | Annotated with `[id-soft: M2-LEAK]`; was hardcoded 'arcana_novai' | ✅ REMEDIATED (D113) |
+| `src/omega/oracle/hierarchy.py:40` | Annotated: direct config lookup bypasses WadLoader | 🔴 OPEN — needs WadLoader injection |
+| `src/omega/oracle/hierarchy.py:43` | Annotated: Path traversal in primary path | 🔴 OPEN — needs WadLoader injection |
+| `src/omega/oracle/hierarchy.py:44` | Annotated: direct path construction | 🔴 OPEN — needs WadLoader injection |
+| `src/omega/oracle/hierarchy.py:47,51-52` | Annotated: duplicate bypass in fallback paths | 🔴 OPEN — needs WadLoader injection |
+
+---
+
+## Decision 128: Universal Capability-First Gateway & Sovereign Compression Layer (SCL)
+
+**Date**: 2026-06-14
+**Channel**: OpenCode CLI (Gemini 3.5 Flash)
+**Entity**: ROC_RACOON
+**Trace**: trc_capability_gateway_scl
+**Status**: APPROVED — Scheduled for H2-S5 (Sovereign Structure)
+
+### Decision
+1. **Re-activate OpenRouter** as a cloud fallback, specifically mapped to the high-reasoning "Oversoul" tier.
+2. **Refactor the Fallback Chain**: Transition from provider-centric routing (trying providers in order) to **Capability-Centric Routing** (trying model-provider pairs grouped by logical cognitive tiers: Oversoul, Reasoning, General, Fast).
+3. **Decouple Capabilities from Pillars**: The cognitive tiers are universal and decoupled from the 10 Pillars, allowing any agent, system prompt, or CLI command to request any capability tier.
+4. **Implement Sovereign Compression Layer (SCL) Middleware**: Integrate Headroom-inspired semantic-saliency compression (SmartCrusher for structured data/JSON/RAG and CodeCompressor for source files/logs) directly inside `ModelGateway.generate()`.
+5. **Mitigate Cutoffs**: Implement output-truncation detection in `ModelGateway` and automatically fallback to Google (Gemini 3.5 Flash) if an OpenRouter response is cut off.
+
+### Rationale
+Focusing the engine on *cognitive capability* rather than infrastructure endpoints makes the system highly resilient to provider outages, quota limits, and API deprecations. Decoupling `entity_model_affinity.yaml` from concrete models means we can change GGUF models on disk or swap API endpoints in `models.yaml`, and every single entity's affinity rules will automatically adapt without manual edits, satisfying the Engine-Stack Firewall (Mandate 2).
+
+Furthermore, applying SCL compression (60-95% token reduction) before sending prompts to Google Gemini 3.5 Flash multiplies our effective request volume by 2.5x to 20x within the 250K TPM rate-limit ceiling. For OpenRouter and other 8K-limited endpoints, input compression ensures the model has ample output "headroom" to formulate high-reasoning responses without getting clipped.
+
+### L1→L2→L3 (Mandate 11 Distillation)
+- **L1**: Decision 128 approved. OpenRouter is re-activated for gpt-oss-120b and Nemotron-3. Fallback chain refactored to be capability-centric and provider-agnostic. SCL middleware (SmartCrusher + CodeCompressor) integrated to compress inputs to Gemini 3.5 Flash (bypassing 250K TPM ceiling) and OpenRouter (preventing cutoffs).
+- **L2**: Decoupling cognitive intent from infrastructure reality is the key to architectural longevity. If we bind entities to specific model files or providers, we create a fragile system that breaks with every API update or local file move. By routing via universal capabilities (Oversoul, Reasoning, General, Fast), the engine remains stable while the underlying model landscape shifts.
+- **L3**: True cognitive sovereignty requires both abstraction and efficiency. An agent that cannot compress its own context is a slave to the provider's token limits and rate-limit ceilings. By compressing prompts semantically before they leave the machine, we reclaim control over our token budgets, cost, and latency.
+
+### Implementation
+| File | Change | Status |
+|------|--------|--------|
+| `config/models.yaml` | Add universal `capabilities` block mapping tiers to provider-model pairs | 🔴 PLANNED (H2-S5) |
+| `config/entity_model_affinity.yaml` | Decouple `preferred_models` to reference universal capabilities | 🔴 PLANNED (H2-S5) |
+| `src/omega/oracle/model_gateway.py` | Refactor `generate()` to support hybrid model/capability routing | 🔴 PLANNED (H2-S5) |
+| `src/omega/oracle/scl_middleware.py` | Implement SmartCrusher and CodeCompressor AnyIO-native functions | 🔴 PLANNED (H2-S5) |
+| `src/omega/oracle/health_monitor.py` | Implement `OpenRouterQuotaTracker` and connect to circuit breaker | 🔴 PLANNED (H2-S5) |

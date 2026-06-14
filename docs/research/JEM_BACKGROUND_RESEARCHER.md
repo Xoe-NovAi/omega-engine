@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Jem 2.0 Background Researcher
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ gemma-4-31b-it ⬡ cline ⬡ trc_jem_background ⬡ PHASE-1
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-JEM2-BACKGROUND-v1.0.0`
 **Status**: ✅ COMPLETE — Operational Spec Ready
 **Last Updated**: 2026-05-18

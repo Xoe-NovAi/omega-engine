@@ -2,6 +2,9 @@
 **AP Token**: `AP-ARSENAL-v1.0.0`
 **Status**: ACTIVE | **Last Updated**: 2026-05-17
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## ⬡ The Discovery
 Through the discovery of the Kilo CLI and the GitHub Copilot free-tier integration, the Omega Engine has expanded its inference reach. We have moved from a restricted set of providers to a comprehensive frontier access layer.
 

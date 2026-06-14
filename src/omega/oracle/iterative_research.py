@@ -1,4 +1,5 @@
 """Iterative Research Loops — Cognitive retrieval with gap analysis.
+# [id-soft: quake-1996] Sovereign-Symmetry — iterative cognitive loop
 AP: AP-ITERATIVE-RESEARCH-v1.0.0
 """
 
@@ -8,6 +9,7 @@ from ..memory_store import get_memory_store
 from .search import SovereignSearcher
 from .model_gateway import ModelGateway
 from .security import TaintedData, TDPGate
+from .skeptical_verifier import SkepticalVerifier, VerificationResult
 
 logger = logging.getLogger(__name__)
 
@@ -21,9 +23,10 @@ class IterativeResearcher:
     missing information and iteratively filling the gaps.
     """
     
-    def __init__(self, model_gateway: ModelGateway, searcher: Optional[SovereignSearcher] = None):
+    def __init__(self, model_gateway: ModelGateway, searcher: Optional[SovereignSearcher] = None, verifier: Optional[SkepticalVerifier] = None):
         self.model_gateway = model_gateway
         self.searcher = searcher or SovereignSearcher(get_memory_store())
+        self.verifier = verifier
         self.max_iterations = 3
         self.confidence_threshold = 0.8
 
@@ -142,5 +145,36 @@ class IterativeResearcher:
             user_query=synthesis_prompt,
             temperature=0.3,
         )
+        
+        # --- SKEPTICAL VERIFICATION STEP ---
+        if self.verifier:
+            # 1. Extract key claims for verification
+            claims_prompt = (
+                f"Extract the top 3 most critical factual claims from the following synthesis. "
+                f"Output each claim on a new line, starting with 'CLAIM: '.\n\n"
+                f"Synthesis:\n{response_text}"
+            )
+            claims_text, _ = await self.model_gateway.generate(
+                model_name="qwen3-4b-think",
+                system_prompt="You are a claim extractor. Extract only factual, verifiable claims.",
+                user_query=claims_prompt,
+                temperature=0.0
+            )
+            
+            claims = [line.replace("CLAIM: ", "").strip() for line in claims_text.splitlines() if "CLAIM:" in line]
+            
+            if claims:
+                verification_results = []
+                # Convert TaintedData to the format expected by SkepticalVerifier
+                formatted_evidence = [
+                    {"content": res.content, "source_id": res.source} for res in evidence
+                ]
+                
+                for claim in claims:
+                    res = await self.verifier.verify(claim, formatted_evidence)
+                    verification_results.append(f"- {claim}: {res.status} ({res.reasoning})")
+                
+                if verification_results:
+                    response_text += "\n\n--- 🛡️ SKEPTICAL VERIFICATION ---\n" + "\n".join(verification_results)
         
         return response_text

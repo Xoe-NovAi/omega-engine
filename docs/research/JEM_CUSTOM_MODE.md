@@ -4,6 +4,9 @@
 > **Background Worker**: For the automated Gemma 4 31B background researcher, see `JEM_BACKGROUND_RESEARCHER.md`.
 > **Full Pipeline**: For the 3-tier speculative decoding architecture, see `JEM_SPECULATIVE_DECODING_PIPELINE.md`.
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## Overview
 The **Jem Custom Mode** is a first‑class OpenCode plugin that turns the CLI into Jem’s lead‑research persona. It operates within the **MaKaLi governance hierarchy**:
 - **Grand Oversoul**: Kali — synthesis and unification.

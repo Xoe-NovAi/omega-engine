@@ -1,0 +1,14 @@
+{
+  "packet_id": "ho_d84be1be4392",
+  "target_cli": "maat",
+  "source_cli": "cline-m3",
+  "task": "S2-A TDP Wiring. Implement the @tdp_wrap decorator and apply to all 4 library_* MCP tools. Scope (1.5 hours): (1) Create @tdp_wrap(source, taint_level) decorator in src/omega/oracle/security.py that wraps string outputs in TaintedData. (2) Apply to library_search with taint_level=1. (3) Apply to library_inbox_add_url with domain-based taint detection: localhost + github.com/Xoe-NovAi = level 1, else level 2. (4) Apply to library_inbox_add_note with taint_level=1. (5) Apply to library_inbox_add_file with taint_level=1. (6) Write tests/test_tdp.py for the decorator. (7) Write tests/test_mcp_taint.py for integration. Run make test after each step. Report to Hivemind with intent=handoff when complete.",
+  "context": "Kali's S2 Sovereign Structure mandate. TDP foundational classes exist (TaintedData, TDPGate) but are underwired. The @tdp_wrap decorator is the new wrapper. Domain whitelist for trusted URLs: localhost, 127.0.0.1, github.com/Xoe-NovAi, anything in omega-engine local files. All other external URLs are taint_level=2. Current state: 320/320 tests pass baseline, M9 compliance active, 50 orphans quarantined, Phase 3 (Quality + Sentinel + Lilith) running in parallel as backing ops. Architect has delegated all S2 decisions to Oversier (Cline-M3).",
+  "priority": 2,
+  "status": "completed",
+  "submitted_at": "2026-06-09T10:08:15.965341+00:00",
+  "accepted_at": "2026-06-11T00:05:49.906499+00:00",
+  "accepted_by": "maat",
+  "completed_at": "2026-06-12T04:29:24.213322+00:00",
+  "result": "TDP Wiring audit: @tdp_wrap decorator EXISTS in security.py:106-141, applied to all library MCP tools (server.py lines 1900-2338: library_search, library_inbox_add_url, library_inbox_add_note, library_inbox_add_file, memory tools). determine_url_taint function exists at security.py:80-104. test_tdp.py exists with basic unit tests. NEW: test_mcp_taint.py written with 16 integration tests (all pass). 358/358 tests pass total. No additional wiring needed."
+}

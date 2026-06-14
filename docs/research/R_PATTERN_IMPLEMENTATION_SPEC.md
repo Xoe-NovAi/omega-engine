@@ -4,6 +4,9 @@
 **Entity**: PROMETHEUS (Sovereign Master Researcher)
 **Date**: 2026-05-27
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §0: Executive Summary
 This document defines the technical implementation of the **Mandatory Design Patterns** required for "Temple Grade" quality in the Omega Engine core. These patterns ensure that the engine is resilient to provider failures, protects data integrity during state changes, and maintains a non-blocking execution flow.
 

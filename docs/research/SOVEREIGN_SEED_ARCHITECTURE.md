@@ -6,6 +6,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §0 Executive Summary
 
 The Sovereign Seed Architecture is the formalization of the "Jem and the Holograms" super-archetype discovered in the legacy Gemini CLI strategy.

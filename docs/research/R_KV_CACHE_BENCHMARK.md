@@ -4,6 +4,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## Objective
 
 Benchmark the impact of KV-cache quantization (f16, q8_0, q4_0) on Zen 2 performance metrics:

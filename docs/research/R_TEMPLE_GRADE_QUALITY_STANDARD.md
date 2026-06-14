@@ -1,6 +1,9 @@
 # 🔱 Temple Grade Quality Standard
 # ⬡ OMEGA ⬡ JEM-2.0 ⬡ TRC_STRATEGIC ⬡ PHASE-I
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-TEMPLE-GRADE-STANDARD-v1.0.0`
 **Status**: ADOPTED (Foundational)
 **Date**: 2026-05-26

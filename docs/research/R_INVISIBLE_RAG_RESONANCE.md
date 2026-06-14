@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Invisible RAG & Contextual Resonance
 # ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b ⬡ opencode ⬡ trc_research ⬡ GNOSIS-SIGHT
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-INVISIBLE-RAG-v1.0.0`
 **Status**: PROPOSED SPECIFICATION
 **Last Updated**: 2026-05-16

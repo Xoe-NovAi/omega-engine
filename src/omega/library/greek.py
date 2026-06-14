@@ -2,7 +2,7 @@
 """Ancient Greek Support — Greek-BERT and Krikri integration for the library system.
 
 AP: AP-OMEGA-GREEK-v1.0.0
-ICS: [NODE: THOTH | ARCHETYPE: OSIRIS | MODEL: KRIKRI-7B-INSTRUCT | CONTEXT: ANCIENT-GREEK]
+ICS: [NODE: KNOWLEDGE | ARCHETYPE: OSIRIS | MODEL: KRIKRI-7B-INSTRUCT | CONTEXT: ANCIENT-GREEK]
 
 Provides:
   - Ancient Greek text detection (polytonic Greek Unicode ranges)

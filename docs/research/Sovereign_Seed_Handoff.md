@@ -2,6 +2,9 @@
 **Date**: 2026-05-17
 **Context**: Pre-Compaction State Transfer
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 🚩 Current State
 The "Cognitive Cathedral" (Design) is complete. The "Simple Room" (Runtime) is now being expanded. We have moved from Discovery to Materialization.
 

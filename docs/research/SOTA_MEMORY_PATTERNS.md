@@ -1,4 +1,7 @@
 # 🔱 Omega Engine — SOTA AI Memory Patterns (2025-2026)
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## Sovereign Gnosis Analysis: SOTA vs Legacy
 
 **AP Token**: `AP-SOTA-MEM-v1.0.0`

@@ -2,7 +2,7 @@
 """Omega CLI Orchestrator.
 
 AP: AP-ORCHESTRATOR-v1.0.0
-ICS: [NODE: ARCHON | ARCHETYPE: HERMES | MODEL: GEMINI-3.1-PRO | CONTEXT: ORCHESTRATOR]
+ICS: [NODE: CORE | ARCHETYPE: HERMES | MODEL: GEMINI-3.1-PRO | CONTEXT: ORCHESTRATOR]
 
 Manages the lifecycle of headless AI subagents (Cline, OpenCode).
 Uses AnyIO for subprocess spawning and ResourceGuard to protect RAM.
@@ -41,6 +41,7 @@ from .handoff import HandoffState, format_handoff_prompt
 from omega.workers.model_updater import ModelUpdaterWorker
 from omega.observability import ObservabilityEngine, get_engine
 from omega.oracle.model_gateway import ModelGateway
+from omega.oracle.health_monitor import get_health_monitor
 from omega.errors import BrakeViolationError
 
 logger = logging.getLogger(__name__)
@@ -140,7 +141,7 @@ class Orchestrator:
         # Initialize Background Worker
         keys = os.environ.get("GOOGLE_API_KEYS", "").split(",")
         self.background_worker = BackgroundWorker(
-            model_gateway=ModelGateway(health_monitor=None), # Simplified for now
+            model_gateway=ModelGateway(health_monitor=get_health_monitor()),
             api_keys=keys
         )
         

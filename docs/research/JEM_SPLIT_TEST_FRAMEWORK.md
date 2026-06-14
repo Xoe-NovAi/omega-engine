@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Jem 2.0 Split Test Framework
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ gemma-4-31b-it ⬡ cline ⬡ trc_split_test ⬡ PHASE-1
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-JEM2-SPLIT-TEST-v1.0.0`
 **Status**: ✅ COMPLETE — Runbook Ready
 **Last Updated**: 2026-05-18

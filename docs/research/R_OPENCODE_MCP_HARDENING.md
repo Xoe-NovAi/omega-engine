@@ -2,6 +2,9 @@
 **AP Token**: `AP-MCP-HARDENING-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_core ⬡ INTERFACE-HARDENING
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 🛡️ Executive Summary
 This document outlines the critical configuration and runtime requirements for maintaining a stable MCP (Model Context Protocol) fabric within the OpenCode environment.
 

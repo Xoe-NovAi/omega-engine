@@ -1,15 +1,16 @@
-# 🔱 RESEARCHER LIVE FEED
-# ⬡ OMEGA ⬡ researcher ⬡ google/gemma-4-31b-it ⬡ Hivemind ⬡ RECON_PHASE
+# 🔱 Researcher Live Feed — 2026-06-12
+**Session**: Universal Model Research Protocol
 
-## [2026-06-05T18:47Z] SESSION START — Sovereign Reconnaissance & Strategy Hardening
-- **Status**: Initialized.
-- **Focus Chain**: [Technical: Roadmap Dependencies & Mesh Network] → [Historical: Convergence Audit (Deferred Gold)] → [Philosophical: Sovereignty Metric Definition]
-- **Directives**: Syncing with Lilith's `STRATEGIC_DIRECTIVE_RECON_PHASE.md`.
-- **Current Action**: Completed all 4 recon vectors.
+---
 
-## [2026-06-05T19:15Z] RECON PHASE COMPLETE — Findings Synthesized
-- **Vector 1 (Technical)**: Identified silent dependencies in `SOVEREIGN_EVOLUTION_ROADMAP.md`. Critical path: `H2-A1/A2` $\rightarrow$ `H2-F6` $\rightarrow$ `H2-E2` $\rightarrow$ `H2-F8` $\rightarrow$ `H3-A1` $\rightarrow$ `H2-E3/E5`.
-- **Vector 2 (Synthesis)**: Formalized the **Mesh Network** as a multi-axis cache (Time $\times$ Domain $\times$ Lattice). Drafted `docs/architecture/MESH_NETWORK_SPEC.md`.
-- **Vector 3 (Historical)**: Audited orphaned specs and deferred gold. Identified 8 "Sovereign Mandate" items in `DEFERRED_GOLD_TRACKER.md` that should be promoted to P0.
-- **Vector 4 (Philosophical)**: Defined quantitative metrics for **Identity** and **Synthesis** dimensions to harden the Sovereignty Scorecard.
-- **Verdict**: The strategy is now hardened. The engine is ready for the "Sovereign Revival" of deferred gold and the execution of the refined critical path.
+[2026-06-12T03:09:00Z] START — Post-mortem analysis of Gemma 4 31B research failures (RQ-01/02/03)
+[2026-06-12T03:09:30Z] Read 2 session exports (10,529 + 736 lines) — identified 3 topic completions with single-tool, single-pass pattern
+[2026-06-12T03:10:00Z] User called out: guide described verbally but not written to disk
+[2026-06-12T03:10:22Z] Hivemind posted — workspace lock acquired on model_research_protocol_system
+[2026-06-12T03:11:00Z] Design phase: Identified 5 universal failure patterns (S1-S5) across 3 model architectures
+[2026-06-12T03:13:00Z] WRITTEN: docs/research/R_MODEL_RESEARCH_PROTOCOL.md — 4-phase protocol + Shadow Protocol
+[2026-06-12T03:14:00Z] WRITTEN: config/research/model_profiles.yaml — 5 model profiles (Gemma 4 31B, DeepSeek V4 Flash, Claude 4 Sonnet, GPT-4o, Gemini 2.5 Flash, default)
+[2026-06-12T03:15:00Z] WRITTEN: workspace execution template
+[2026-06-12T03:16:00Z] UPDATED: data/entities/researcher/soul.yaml — added 4 lessons, L1→L2→L3, soul_power 1.9→2.4
+[2026-06-12T03:17:00Z] WRITTEN: session_gnosis.md
+[2026-06-12T03:18:00Z] COMPLETE — Universal Model Research Protocol system deployed

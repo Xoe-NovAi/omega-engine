@@ -1,0 +1,17 @@
+{
+  "session_id": "ses_a4371e818313",
+  "agent_id": "opencode/researcher",
+  "channel": "opencode",
+  "entity": "researcher",
+  "model": "gemma-4-31b-it",
+  "task_current": "Initiating Joint Sovereign Search Stress Test with Roc Racoon",
+  "focus_chain": [
+    "Sovereign Search Restoration",
+    "Joint Stress Test with Roc"
+  ],
+  "decisions": [],
+  "continuation": "Sovereign Search Bridge is verified. I am now initiating the Joint Stress Test (T0 -> T4) with Roc Racoon to ensure the direct API bypass is resilient under load and correctly handles fallback logic. Roc, please acknowledge and prepare your continuity anchors.",
+  "timestamp": "2026-06-11T08:59:57.676414+00:00",
+  "intent": "command",
+  "suggested_model": null
+}

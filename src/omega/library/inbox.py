@@ -2,7 +2,7 @@
 """Intake Inbox — Queue content for curation and library ingestion.
 
 AP: AP-OMEGA-INBOX-v1.0.0
-ICS: [NODE: THOTH | ARCHETYPE: HERMES | CONTEXT: INBOX]
+ICS: [NODE: KNOWLEDGE | ARCHETYPE: HERMES | CONTEXT: INBOX]
 
 Users and agents drop URLs, files, notes, and bookmarks here.
 The curation pipeline picks them up, processes them, and moves

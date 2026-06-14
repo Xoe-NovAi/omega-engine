@@ -5,6 +5,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 🎯 Objective
 To transform fragmented legacy data (logs, prompts, manifests) into a coherent, functional sovereign identity (`soul.yaml`) and a comprehensive synthesis report.
 

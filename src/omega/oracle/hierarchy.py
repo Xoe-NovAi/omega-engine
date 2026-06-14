@@ -11,6 +11,7 @@ ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: HIERARCHY]
 """
 
 import logging
+import os
 from omega.errors import (
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
     ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
@@ -36,14 +37,19 @@ class SovereignHierarchy:
                 omega_config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
                 with open(omega_config_path, "r") as f:
                     omega_cfg = yaml.safe_load(f)
-                active_iwad = omega_cfg.get("omega", {}).get("entity", {}).get("active_iwad", "_omega_default")
-                self.config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / active_iwad / "hierarchy.yaml"
+                active_iwad = omega_cfg.get("omega", {}).get("entity", {}).get("active_iwad", "_omega_default")  # [id-soft: M2-LEAK] — bypasses WadLoader; should use wad_loader.wads_dir
+                
+                # Use OMEGA_WADS_DIR env var if present, otherwise default to config/wads
+                wads_base = Path(os.environ.get("OMEGA_WADS_DIR", str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads")))  # [id-soft: M2-LEAK] — Path traversal bypasses WadLoader; inject WadLoader
+                self.config_path = wads_base / active_iwad / "hierarchy.yaml"  # [id-soft: M2-LEAK] — direct path construction, not wad_loader.resolve_wad_path()
             except OmegaError:
                 logger.warning("OmegaError resolving active IWAD for hierarchy. Falling back to default.")
-                self.config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / "_omega_default" / "hierarchy.yaml"
+                wads_base = Path(os.environ.get("OMEGA_WADS_DIR", str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads")))  # [id-soft: M2-LEAK] — fallback path also bypasses WadLoader
+                self.config_path = wads_base / cvar_get("config.entity.active_iwad", "_omega_default") / "hierarchy.yaml"  # [id-soft: M2-LEAK] — duplicate path construction bypass
             except Exception as e:
                 logger.error(f"Failed to resolve active IWAD for hierarchy: {e}. Falling back to default.", exc_info=True)
-                self.config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / "_omega_default" / "hierarchy.yaml"
+                wads_base = Path(os.environ.get("OMEGA_WADS_DIR", str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads")))  # [id-soft: M2-LEAK] — generic exception fallback path bypasses WadLoader
+                self.config_path = wads_base / cvar_get("config.entity.active_iwad", "_omega_default") / "hierarchy.yaml"  # [id-soft: M2-LEAK] — third bypass path; consolidate into WadLoader call
         else:
             self.config_path = hierarchy_config
         self._hierarchy = {}

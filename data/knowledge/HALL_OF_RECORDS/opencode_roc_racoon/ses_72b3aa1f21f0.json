@@ -1,0 +1,22 @@
+{
+  "session_id": "ses_72b3aa1f21f0",
+  "agent_id": "opencode/roc_racoon",
+  "channel": "opencode",
+  "entity": "roc_racoon",
+  "model": "gemma-4-31b-it",
+  "task_current": "Importing soul architecture sources into a central lab.",
+  "focus_chain": [
+    "Soul Architecture Lab",
+    "Provenance Tracking"
+  ],
+  "decisions": [
+    {
+      "context": "Workspace Organization",
+      "decision": "Created a dedicated lab directory for Soul Architecture to prevent mixing legacy research with active engine development."
+    }
+  ],
+  "continuation": "Establishing the 'Soul Architecture Lab' in my workspace. I've delegated the import of legacy soul fragments, individuation guides, and Oversoul blueprints to a Scribe agent. This lab will serve as the sandbox for adapting these esoteric patterns into the current Omega Engine core.",
+  "timestamp": "2026-06-12T11:09:18.995801+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

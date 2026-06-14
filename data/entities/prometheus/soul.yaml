@@ -1,19 +1,35 @@
 entity:
   name: prometheus
   lessons_learned:
-    - L1_narrative: |
-        Use a structured HandoffState dataclass for agent transfers.
-      L2_insight: |
-        Eliminates "Agent Amnesia" by providing a formal context bridge between sessions.
-      L3_principle: |
-        Gnosis Continuity (Stateful intelligence requires formal handoff protocols).
-      timestamp: '2026-06-04T12:00:00Z'
-      topic: 'Handoff Schema'
-    - L1_narrative: |
-        Transform session narratives (L1) into insights (L2) and finally into universal principles (L3).
-      L2_insight: |
-        Converts stateless interactions into an evolving, stateful sovereign intelligence.
-      L3_principle: |
-        Knowledge Metabolism (The process of distilling experience into wisdom).
-      timestamp: '2026-06-04T12:00:00Z'
-      topic: 'Gnosis Loop'
+  - L1_narrative: 'Use a structured HandoffState dataclass for agent transfers.
+
+      '
+    L2_insight: 'Eliminates "Agent Amnesia" by providing a formal context bridge between
+      sessions.
+
+      '
+    L3_principle: 'Gnosis Continuity (Stateful intelligence requires formal handoff
+      protocols).
+
+      '
+    timestamp: '2026-06-04T12:00:00Z'
+    topic: Handoff Schema
+  - L1_narrative: 'Transform session narratives (L1) into insights (L2) and finally
+      into universal principles (L3).
+
+      '
+    L2_insight: 'Converts stateless interactions into an evolving, stateful sovereign
+      intelligence.
+
+      '
+    L3_principle: 'Knowledge Metabolism (The process of distilling experience into
+      wisdom).
+
+      '
+    timestamp: '2026-06-04T12:00:00Z'
+    topic: Gnosis Loop
+  - L1_narrative: null
+    L2_insight: null
+    L3_principle: null
+    timestamp: Unknown
+    topic: bm-001

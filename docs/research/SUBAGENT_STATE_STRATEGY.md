@@ -4,6 +4,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §1 Overview
 
 Ephemeral subagents, by nature, are stateless. When dispatched to perform a specific task, they lack the conversational history and evolving understanding of the primary agent (the Oracle). This leads to **context erosion**, where subagents rediscover known facts, repeat mistakes, or lose sight of the overarching strategic goal.

@@ -1,6 +1,6 @@
 # 🔱 Omega Engine — Reclaimed Vision
 # AP: AP-OMEGA-INIT-v1.0.0
-# ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: CORE-INIT]
+# ICS: [NODE: CORE | ARCHETYPE: SOPHIA | CONTEXT: CORE-INIT]
 # Seal: 🛡️
 
 __version__ = "1.0.0"

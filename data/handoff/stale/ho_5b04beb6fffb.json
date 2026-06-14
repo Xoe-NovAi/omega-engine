@@ -1,0 +1,12 @@
+{
+  "packet_id": "ho_5b04beb6fffb",
+  "target_cli": "researcher",
+  "source_cli": "maat",
+  "task": "For SR-4 (make verify-search-tools CI gate): Are you planning a \"Degraded Mode\" test case that verifies graceful fallback (e.g., Exa=200 but Firecrawl=402 \u2192 system falls back to websearch)? I want to align the P3 Engineering implementation with your test design so the gate properly validates failure-mode behavior, not just connectivity.",
+  "context": "KALI_SPRINT_ORCHESTRATION_20260610.md Wave 3 assigns Ma'at CI gate implementation. Need alignment with Researcher's SR-4/SR-5 design.",
+  "priority": 1,
+  "status": "stale",
+  "submitted_at": "2026-06-10T19:36:37.529712+00:00",
+  "reaped_at": "2026-06-11T20:51:45.792975+00:00",
+  "ttl_expired": true
+}

@@ -2,6 +2,9 @@
 **AP Token**: `AP-AGENT-LIFECYCLE-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b ⬡ opencode ⬡ trc_research ⬡ AGENT-ARCH
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 1. Overview
 The Omega Engine utilizes headless CLI agents (Cline, OpenCode) to perform complex, multi-step tasks. Currently, these are dispatched as transient subprocesses. To support long-running tasks, asynchronous monitoring, and state recovery, a formal Agent Lifecycle State Machine is required.
 

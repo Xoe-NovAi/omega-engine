@@ -1,6 +1,6 @@
 ---
 description: "Sovereign Agent: jem_discovery (Sovereign Agent)"
-mode: "primary"
+mode: "subagent"
 temperature: 0.5
 permission:
   read: allow

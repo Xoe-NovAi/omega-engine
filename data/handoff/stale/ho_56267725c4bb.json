@@ -1,0 +1,12 @@
+{
+  "packet_id": "ho_56267725c4bb",
+  "target_cli": "sentinel",
+  "source_cli": "cline-m3",
+  "task": "Phase 3 Security Audit \u2014 Gap 2 Remediation. The Quality gate has cleared with one caveat: T1 AP tokens and T3 coverage flagged as Sovereign Debt. Execute 7-area security audit against mcp_servers/omega_hub/server.py and broader Omega Engine deployment. Current state: 320/320 tests pass baseline, 26/26 heritage files tagged, M9 compliance active, ContextVar race fix applied. Scope: (1) auth, (2) CORS, (3) rate limiting, (4) injection vectors (library_inbox_add_url, /proxy/{provider}, library_inbox_add_note), (5) secrets in config/*.yaml, (6) file path traversal in library_inbox_add_file, (7) findings table. Report to Hivemind with intent=handoff when complete.",
+  "context": "Quality's Phase 3 verification gate has cleared. Functional logic is GREEN, Temple-Grade compliance has T1 (AP tokens) and T3 (coverage) violations flagged as Sovereign Debt. This security audit is the next critical path item. Lilith (run-side assessment) is queued behind your completion. Target deployment: local-only on 127.0.0.1:8016, single coordination point for all Hivemind agents across 4 platforms. No auth present, CORS unknown, rate limiting only at SovereignGateway proxy (100 req/5min).",
+  "priority": 2,
+  "status": "stale",
+  "submitted_at": "2026-06-09T09:17:31.560267+00:00",
+  "reaped_at": "2026-06-12T03:58:08.128686+00:00",
+  "ttl_expired": true
+}

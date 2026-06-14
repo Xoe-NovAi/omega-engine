@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — OpenCode Permissions Fix
 # ⬡ OMEGA ⬡ MAAT ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_research ⬡ PERMISSIONS-FIX
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-OPENCODE-PERMS-v1.0.0`
 **Status**: READY FOR IMPLEMENTATION
 **Date**: 2026-05-16

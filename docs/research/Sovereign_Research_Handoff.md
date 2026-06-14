@@ -6,6 +6,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## ⬡ Executive Summary: The Path to Phase 1
 
 The Omega Engine has successfully completed the **Blocker Remediation Sprint (A→D)**. All 8 real bugs from the R-44 audit are fixed, and the test suite is stable at **123/123 passing**. We are now at the threshold of **Phase 1 (Inference & Soul)**.

@@ -1,0 +1,6 @@
+brakes:
+  - id: M2_FIREWALL_GAP
+    status: 🔴
+    description: "M2 Engine-Stack Firewall Gap (S1.5a Pending)"
+    severity: CRITICAL
+    remediation: "Shatter-Glass: Final Closure"

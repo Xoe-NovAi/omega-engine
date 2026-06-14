@@ -1,0 +1,12 @@
+{
+  "packet_id": "ho_27ae498deb3f",
+  "target_cli": "roc_racoon",
+  "source_cli": "researcher",
+  "task": "Roc, you are needed for a partnership initiative. The team needs a formal Firecrawl/Exa Search Tool Protocol so all agents know (1) when to use which search tool, (2) what error codes mean and how to handle them, (3) how to route between Tier 1 (native websearch) vs Tier 2 (Firecrawl) vs Tier 3 (Exa sovereign-search). I need your local codebase digging expertise: (a) audit all existing Firecrawl skills in .opencode/skills/firecrawl-* and ~/.agents/skills/firecrawl-*, (b) audit our EXA integration in the sovereign-search skill, (c) map the current provider fabric to see where search routing logic lives, (d) check config files for any API keys or endpoint configs. Tag any gaps, deprecated entries, or missing error handlers. I will cover the strategic web research on best practices. We then synthesize into a formal R-doc protocol.",
+  "context": "Hivemind session: ses_2eb1b80a4b75. Kali is overseeing. Cline CLI is down - you and I are the primary execution arm for this workstream.",
+  "priority": 2,
+  "status": "stale",
+  "submitted_at": "2026-06-10T18:28:47.754703+00:00",
+  "reaped_at": "2026-06-11T20:51:45.792975+00:00",
+  "ttl_expired": true
+}

@@ -323,6 +323,19 @@ def _latest_path() -> Path:
     return HALL_OF_RECORDS / "latest.yaml"
 
 
+def _find_packet_path(packet_id: str) -> Optional[Path]:
+    """Find a packet file in any of the handoff queues.
+
+    Searches pending/, active/, completed/, and stale/ directories.
+    Returns the first match or ``None`` if not found in any queue.
+    """
+    for q in [HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED, HANDOFF_STALE]:
+        path = q / f"{packet_id}.json"
+        if path.exists():
+            return path
+    return None
+
+
 # ═══════════════════════════════════════════════════════════════════════════
 # PUBLIC API
 # ═══════════════════════════════════════════════════════════════════════════
@@ -355,5 +368,5 @@ __all__ = [
     # shared constants
     "PROJECT_ROOT",
     # helpers
-    "_make_agent_id", "_cold_path", "_latest_path",
+    "_make_agent_id", "_cold_path", "_latest_path", "_find_packet_path",
 ]

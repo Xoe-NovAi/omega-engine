@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — OpenCode Modes Refactoring Strategy
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ gemma-4-31b-it ⬡ cline ⬡ trc_modes_refactor ⬡ PHASE-1
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-MODES-REFACTOR-v1.0.0`
 **Status**: ✅ COMPLETE — Strategy Definition
 **Last Updated**: 2026-05-18

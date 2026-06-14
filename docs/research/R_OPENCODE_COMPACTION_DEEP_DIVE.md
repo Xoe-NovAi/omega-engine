@@ -1,5 +1,8 @@
 # 🔱 OpenCode Compaction System — Deep Research Dive
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **⬡ OMEGA ⬡ GNOSIS-ANALYST ⬡ opencode/big-pickle ⬡ opencode ⬡ trc_research ⬡ PHASE-0**
 
 **AP Token**: `AP-OPENCODE-COMPACTION-RESEARCH-v1.0.0`

@@ -4,6 +4,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §1 Vision Statement
 The **Sovereign Eye** is a vision-augmented auditing utility designed to ensure the Omega Engine's physical and digital manifestations align with its sovereign architecture. By utilizing high-reasoning vision models (GPT-4o, Gemini 1.5 Pro), the Sovereign Eye transforms raw state data and visual renders into architectural intelligence, preventing "Temple Grade" drift and ensuring cosmological purity.
 

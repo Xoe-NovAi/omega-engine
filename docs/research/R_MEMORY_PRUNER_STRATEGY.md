@@ -1,5 +1,8 @@
 # 🔱 Omega Engine — Memory Pruner Agent: Design & Strategy
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-MEMORY-PRUNER-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ big-pickle ⬡ opencode ⬡ trc_research ⬡ R-MEMORY-PRUNER
 

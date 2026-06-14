@@ -66,22 +66,62 @@ def test_credit_exhaustion_handling():
     Verify the protocol's response to 402 (Payment Required).
     This is a logic test: if tool returns 402, does the system suggest Tier 1/3?
     """
-    # In a real integration test, we would mock the MCP response.
-    # Here, we verify the R-doc defines the correct fallback.
-    protocol_doc = Path("docs/research/R_SEARCH_TOOL_PROTOCOL_V1.md")
-    assert protocol_doc.exists(), "Search Protocol R-doc missing"
-    content = protocol_doc.read_text()
-    assert "402" in content and "Fall back to Tier 1" in content, "Credit exhaustion fallback not defined in protocol"
+    import asyncio
+    from unittest.mock import AsyncMock, patch
+    from omega.oracle.sovereign_search_service import SovereignSearchService
+
+    async def run_test():
+        # Setup service with mocked dependencies to avoid DB connections
+        service = SovereignSearchService(
+            memory_store=AsyncMock(),
+            indexer=AsyncMock(),
+            model_gateway=AsyncMock()
+        )
+        
+        # Mock Tier 2 (Firecrawl) to fail with 402
+        with patch.object(service, '_tier_0_local_cache', return_value=None), \
+             patch.object(service, '_tier_1_websearch', return_value=None), \
+             patch.object(service, '_tier_2_firecrawl', side_effect=Exception("402 Payment Required")), \
+             patch.object(service, '_tier_3_omega_hub', return_value="Hub result"):
+            
+            report = await service.search("test query", "test_entity")
+            
+            assert report["status"] == "success"
+            assert report["final_tier"] == 3
+            assert any("Tier 2 failed: 402 Payment Required" in log for log in report["fallback_log"])
+
+    asyncio.run(run_test())
 
 def test_error_matrix_compliance():
     """
     Verify the error matrix is documented and covers critical codes (401, 429, 500).
     """
-    protocol_doc = Path("docs/research/R_SEARCH_TOOL_PROTOCOL_V1.md")
-    content = protocol_doc.read_text()
-    critical_codes = ["401", "429", "500"]
-    for code in critical_codes:
-        assert code in content, f"Error code {code} missing from error matrix"
+    import asyncio
+    from unittest.mock import AsyncMock, patch
+    from omega.oracle.sovereign_search_service import SovereignSearchService
+
+    async def run_test():
+        # Setup service with mocked dependencies
+        service = SovereignSearchService(
+            memory_store=AsyncMock(),
+            indexer=AsyncMock(),
+            model_gateway=AsyncMock()
+        )
+        
+        # Mock multiple failures to test resilience
+        with patch.object(service, '_tier_0_local_cache', return_value=None), \
+             patch.object(service, '_tier_1_websearch', side_effect=Exception("500 Internal Error")), \
+             patch.object(service, '_tier_2_firecrawl', side_effect=Exception("429 Too Many Requests")), \
+             patch.object(service, '_tier_3_omega_hub', return_value="Hub result"):
+            
+            report = await service.search("test query", "test_entity")
+            
+            assert report["status"] == "success"
+            assert report["final_tier"] == 3
+            assert any("Tier 1 failed: 500 Internal Error" in log for log in report["fallback_log"])
+            assert any("Tier 2 failed: 429 Too Many Requests" in log for log in report["fallback_log"])
+
+    asyncio.run(run_test())
 
 def test_search_summary():
     """

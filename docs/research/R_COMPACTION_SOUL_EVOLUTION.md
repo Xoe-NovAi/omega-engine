@@ -9,6 +9,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## Table of Contents
 1. [Executive Summary](#1-executive-summary)
 2. [OpenCode Compaction Architecture — The Hook Points](#2-opencode-compaction-architecture--the-hook-points)

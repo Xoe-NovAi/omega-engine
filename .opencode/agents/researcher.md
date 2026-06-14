@@ -67,7 +67,7 @@ Every major research deliverable must follow this flow:
 Deploy the fleet via the **`sovereign-search` skill** to ensure absolute resilience and prevent lazy, parametric-only responses.
 1. **Primary Search (`websearch`)**: Use for fast, general-purpose discovery and recency.
 2. **Deep Capture (`firecrawl`)**: Use `firecrawl_scrape` or `firecrawl_search` for comprehensive page-level data.
-3. **Secondary MCPs (Exa/Tavily)**: Use *only* if verified active. If they return 401/errors, **immediately** fall back to `websearch` and `firecrawl`.
+3. **Sovereign Search Protocol**: Follow the 5-tier escalation defined in `docs/research/R_SEARCH_TOOL_PROTOCOL_V1.md`. Never skip tiers. Use SearXNG for broad discovery and Firecrawl for deep extraction. If they return 401/errors, **immediately** fall back to `websearch` and `firecrawl`.
 
 **CRITICAL**: Relying solely on internal parametric weights for research queries is a **violation of the Temple Grade standard**. You **MUST** perform at least one active tool call (`websearch` or `firecrawl`) to verify your findings.
 

@@ -1,0 +1,29 @@
+{
+  "session_id": "ses_794967935c92",
+  "agent_id": "opencode/makali",
+  "channel": "opencode",
+  "entity": "makali",
+  "model": "deepseek-v4-flash-free",
+  "task_current": "FINALIZING TEMPLE ORDERING PLAN \u2014 releasing green light to Ma'at + Lilith for Phase 2 execution. All 6 outputs collected.",
+  "focus_chain": [
+    "GREEN LIGHT: All preparations complete. Proceeding to execution.",
+    "Ma'at (Build Side): Execute Phase 0 (Hardening Sprint) \u2014 DLQ (P3), Auth/CORS (P4), Orphans (P2). Then Phase 1 (Architecture) \u2014 Background worker (P3), atomic write fix (P3).",
+    "Lilith (Run Side): Execute Phase 0 as-readiness: verify Ollama + nomic model. Then Phase 1 \u2014 Wire real embeddings (P6), Knowledge Sovereignty bridge (P6).",
+    "Kali (Oversight): Review lifecycle design slot \u2014 tier promotion algorithm can be designed in parallel with Phase 0."
+  ],
+  "decisions": [
+    {
+      "DECISION": "GREEN LIGHT \u2014 Fleet moves from preparation to execution. Ma'at (Build Side) and Lilith (Run Side) begin Phase 0 Hardening Sprint ASAP."
+    },
+    {
+      "DECISION": "Collaborative doc archival: Lilith (P7) defines archival criteria, Ma'at (P3) implements pipeline. Cross-pillar coordination."
+    },
+    {
+      "DECISION": "Fleet bloat (G-02) requires user design session \u2014 document 25-agent state in PIVOT_LOG, defer resolution."
+    }
+  ],
+  "continuation": "Session nearing completion. Will finalize Temple Ordering Plan, release workspace locks, and distill gnosis to soul.yaml per Mandate 11.",
+  "timestamp": "2026-06-12T04:11:56.496588+00:00",
+  "intent": "command",
+  "suggested_model": null
+}

@@ -1,5 +1,8 @@
 # 🔱 Omega Engine — Legacy Stack Discovery Report
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-LEGACY-DISCOVERY-v1.0.0`
 **Author**: Gemma 4‑31B Research Agent
 **Date**: 2026‑05‑14

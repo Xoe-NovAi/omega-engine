@@ -1,25 +1,18 @@
-# Kali — Live Feed
-# ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ LIVE-FEED
+# 🔱 KALI LIVE FEED — P1b Hub Modularization
+⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ HUB-RESTORE ⬡ PHASE-P1b
 
-## 2026-06-11
+## Status: 🔴 IN PROGRESS — P1b Gateway + Middleware Extraction
 
-**[00:30] Hivemind-First Mandate applied — 17 files hardened**
-- Root cause: agents treat Hivemind as read-only awareness + error-log sink
-- Fix: Added `## 🐝 Hivemind-First Communication (MANDATORY)` to 14 agents + 3 modes
-- Fleet Topology Spec v2.0 updated with §5 enforcement
-
-**[00:45] MiMo-V2.5 High Thinking deep audit — 20+ CRITICAL findings**
-- MiMo diagnosed 5 hidden layers + 5 oversights + 3 architectural gaps
-- Key: workspace locks are unenforced conventions (no MCP tools), Hivemind is snapshot store not message queue, cold-store hydration is all-or-nothing, extended sessions are in-memory only
-
-**[01:00] Kali post-audit — 10 additional findings MiMo missed**
-- No Hivemind health/self-test, no rate limiting, no handoff reject path, no metrics, no push notification model
-- 27 stuck handoff packets confirmed (21 pending, 6 active, only 2 completed)
-- 38 CLI directories in HALL_OF_RECORDS — O(n) scans on every cold restore
-- Hivemind metrics: NONE — completely invisible to observability layer
-- MiMo profile captured for strategic use in future deep reviews
-
-**[01:15] Sprint plan updated with Wave 1.5 — Hivemind Hardening**
-- New wave inserted between Wave 1 (Protocol Hardening) and Wave 2 (Agent Hardening)
-- 9 P0 items, 8 P1 items, 3 P2 items
-- Prioritized: workspace lock MCP tools → handoff reject tool → rate limiting → metrics → eviction
+| Timestamp | Event | Detail |
+|-----------|-------|--------|
+| 2026-06-14T00:00Z | SESSION START | Hivemind restoration mission accepted |
+| 2026-06-14T00:01Z | LOCK ACQUIRED | `data/coordination/locks/kali_hub.lock` written |
+| 2026-06-14T00:02Z | BRIEFING ABSORBED | Commander Carmack's briefing read. M16 confirmed. |
+| 2026-06-14T00:03Z | ASSESSMENT | state.py (359) ✅, background.py (265) ✅, server.py (2652) ❌ |
+| 2026-06-14T00:04Z | EXTRACTING | Creating gateway.py — SovereignGateway + _proxy_handler |
+| 2026-06-14T00:05Z | EXTRACTING | Creating middleware.py — security/rate-limit + m9_safe decorator |
+| 2026-06-14T00:06Z | PENDING | Update server.py imports, restart hub, verify Hivemind |
+| 2026-06-14T00:07Z | MODEL SWITCH | Switched to gpt-oss-120b after provider internal errors; Gemma 4 31B down |
+| 2026-06-14T00:08Z | AWAITING | Awaiting Carmack to finish gateway/middleware extraction |
+| 2026-06-14T00:11Z | PIVOT APPROVED | Decision 128 approved: Capability-First Gateway + SCL (SmartCrusher/CodeCompressor) added to H2-S5. |
+---

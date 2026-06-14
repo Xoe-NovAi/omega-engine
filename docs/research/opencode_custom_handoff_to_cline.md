@@ -1,5 +1,8 @@
 # 🔱 OpenCode — Cline-Customized Handoff v2
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ⬡ OMEGA ⬡ COO ⬡ openrouter/deepseek/deepseek-v4-flash:free ⬡ opencode ⬡ trc_handoff_v2 ⬡ PHASE-1.5
 
 **AP Token**: `AP-HANDOFF-CLINE-V2`  

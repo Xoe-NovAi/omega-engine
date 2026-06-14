@@ -2,6 +2,9 @@
 **AP Token**: `AP-R-FASTROUTER-v1.0.0`
 ⬡ OMEGA ⬡ PROMETHEUS ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_research ⬡ RESEARCH
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 1. Executive Summary
 FastRouter.ai is a high-performance LLM gateway that acts as a control plane for managing and routing requests across multiple language models and providers. It transforms the routing process from a static fallback chain into a dynamic, intent-aware orchestration fabric.
 

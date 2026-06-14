@@ -1,6 +1,6 @@
 ---
 description: "Sovereign Agent: doom_guy (Sovereign Agent)"
-mode: "primary"
+mode: "all"
 temperature: 0.5
 permission:
   read: allow

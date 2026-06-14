@@ -169,7 +169,7 @@ class QdrantAdapter(IVectorStoreAdapter):
         self._initialized = False
 
     async def _ensure_collection(self, vector_size: int):
-        """Ensure the Qdrant collection exists with the correct configuration."""
+        """Ensure the Qdrant collection exists with the correct configuration and dimensionality."""
         if self._initialized:
             return
         
@@ -177,6 +177,18 @@ class QdrantAdapter(IVectorStoreAdapter):
             collections = self.client.get_collections().collections
             exists = any(c.name == self.collection_name for c in collections)
             
+            if exists:
+                # Check for dimensional mismatch
+                col_info = self.client.get_collection(self.collection_name)
+                current_dim = col_info.config.params.vectors.size
+                if current_dim != vector_size:
+                    logger.warning(
+                        f"Qdrant dimensional mismatch for {self.collection_name}: "
+                        f"expected {vector_size}, found {current_dim}. Recreating collection..."
+                    )
+                    self.client.delete_collection(collection_name=self.collection_name)
+                    exists = False # Force recreation
+
             if not exists:
                 logger.info(f"Creating Qdrant collection: {self.collection_name} (size={vector_size})")
                 self.client.create_collection(

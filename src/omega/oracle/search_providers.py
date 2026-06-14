@@ -1,4 +1,5 @@
 """Sovereign Search Providers — Direct API implementations for T2 and T4.
+# [id-soft: quake3-1999] Right Approximation — optimized search provider chain
 AP: AP-SEARCH-PROVIDERS-v1.0.0
 ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: SEARCH-HARDENING]
 """
@@ -8,6 +9,7 @@ import anyio
 import httpx
 from typing import Any, Dict, List, Optional
 from omega.errors import ProviderError, ProviderAuthError, ProviderRateLimitError
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -25,6 +27,7 @@ class FirecrawlProvider(SearchProvider):
     async def search(self, query: str, limit: int = 10) -> Optional[str]:
         async with httpx.AsyncClient(timeout=30.0) as client:
             try:
+                # 1. Search for relevant URLs
                 response = await client.post(
                     f"{self.base_url}/search",
                     headers={"Authorization": f"Bearer {self.api_key}"},
@@ -36,15 +39,39 @@ class FirecrawlProvider(SearchProvider):
                     raise ProviderRateLimitError("Firecrawl rate limit exceeded")
                 response.raise_for_status()
                 
-                data = response.json()
-                results = data.get("data", [])
+                search_data = response.json()
+                results = search_data.get("data", [])
                 if not results:
                     return None
                 
-                # Synthesize results into a finding
-                snippets = [r.get("markdown", r.get("content", ""))[:500] for r in results]
-                return f"Firecrawl Deep Extraction: {'\\n\\n'.join(snippets[:3])}"
+                # 2. Scrape the top results for actual content (Deep Extraction)
+                content_snippets = []
+                for res in results[:3]: # Scrape top 3 for efficiency
+                    url = res.get("url")
+                    if not url:
+                        continue
+                    try:
+                        scrape_res = await client.post(
+                            f"{self.base_url}/scrape",
+                            headers={"Authorization": f"Bearer {self.api_key}"},
+                            json={"url": url, "formats": ["markdown"]}
+                        )
+                        if scrape_res.status_code == 200:
+                            scrape_data = scrape_res.json()
+                            markdown = scrape_data.get("data", {}).get("markdown", "")
+                            if markdown:
+                                content_snippets.append(f"Source [{url}]:\n{markdown[:1000]}")
+                    except Exception as e:
+                        logger.warning(f"Failed to scrape {url}: {e}")
+                
+                if not content_snippets:
+                    # Fallback to descriptions if scraping fails
+                    snippets = [r.get("description", "")[:500] for r in results]
+                    return f"Firecrawl Search (Snippets): {'\n\n'.join(snippets[:3])}"
+                
+                return f"Firecrawl Deep Extraction:\n\n" + "\n\n---\n\n".join(content_snippets)
             except httpx.HTTPStatusError as e:
+
                 logger.error(f"Firecrawl HTTP error: {e}")
                 raise ProviderError(f"Firecrawl API failure: {e}")
             except Exception as e:
@@ -72,6 +99,7 @@ class ExaProvider(SearchProvider):
                 response.raise_for_status()
                 
                 data = response.json()
+                logger.info(f"Exa raw response: {json.dumps(data)}")
                 results = data.get("results", [])
                 if not results:
                     return None

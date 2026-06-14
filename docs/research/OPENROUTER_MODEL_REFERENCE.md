@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — OpenRouter Free + Available Model Reference
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ opencode ⬡ trc_openrouter ⬡ RESEARCH
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-OPENROUTER-REFERENCE-v1.0.0`
 **Status**: ✅ ACTIVE
 **Last Updated**: 2026-05-15

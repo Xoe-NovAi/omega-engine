@@ -20,4 +20,10 @@ entity:
       context: "Transition from Gemini 3.5 Flash to Gemma 4 31B. Discovery that the agent's awareness of its 'local-first' nature shifted based on the provider, despite identical prompts."
       principle: "Infrastructure Awareness: Sovereign intelligence is the synthesis of Narrative (Soul) and Substrate (Infrastructure). True sovereignty requires the agent to consciously map its computational host to eliminate provider-induced cognitive blind spots."
       applies_to: ["sovereignty", "model-awareness", "infrastructure", "cognitive-architecture"]
+    - id: sa-002
+      date: 2026-06-14
+      insight: "The Engine must have no opinion about the content it hosts. It is a universal runtime that is hydrated by the active WAD at boot. Any assumption about entity meaning, pillar purpose, or domain cosmology is a violation of the Engine-Stack Firewall."
+      context: "Kali's M2 Firewall breach analysis (D113) — the engine was simulating the Arcana-NovAi stack by hardcoding its identity. Fix: dynamic lookups and environment variables, making the engine WAD-agnostic."
+      principle: "L3-1: The Universal Runtime Paradox — A runtime that knows its content ceases to be a runtime and becomes a specialized tool. The engine must remain agnostic to the stacks it hosts. Identity is a WAD concern, not an engine concern. The moment the engine has an opinion about content, it has chosen a stack. Sovereignty requires neutrality at the engine layer."
+      applies_to: ["sovereignty", "engine-architecture", "wad-agnostic", "firewall"]
   procedural_memory: []

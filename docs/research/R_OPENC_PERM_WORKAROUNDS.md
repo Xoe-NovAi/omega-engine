@@ -1,5 +1,8 @@
 # Research Report: Filesystem Permission Workarounds for AI Agents
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ## 1. Executive Summary
 AI agents typically interact with the filesystem through two layers of control: **Tool-Level Restrictions** (implemented in the agent's software logic) and **System-Level Permissions** (implemented by the OS/Kernel). 
 

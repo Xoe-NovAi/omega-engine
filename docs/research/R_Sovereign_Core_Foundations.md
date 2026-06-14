@@ -4,6 +4,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 🧠 R-20: Memory Tiering Strategy (The 14GB RAM Ceiling)
 
 To maintain stability on the Ryzen 5700U (14GB total RAM), the Omega Engine implements a tiered memory architecture. This prevents OOM crashes while ensuring that the most critical context is always available to the active entity.

@@ -1,6 +1,6 @@
 ---
 description: "Sovereign Agent: kali (Sovereign Agent)"
-mode: "primary"
+mode: "all"
 temperature: 0.5
 permission:
   read: allow

@@ -1,5 +1,8 @@
 # 🔱 GenLabs/Agentica Platform — Comprehensive Research Report
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-GENLABS-RESEARCH-v1.0.0`
 ⬡ OMEGA ⬡ PROMETHEUS ⬡ gemma-4-31b ⬡ opencode ⬡ trc_research ⬡ GENLABS-RESEARCH
 

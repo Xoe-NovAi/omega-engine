@@ -100,6 +100,13 @@ class ConversationFTSIndex:
     def close(self):
         """Close the database connection."""
         if self._conn:
+            try:
+                # [G-12] Optimize FTS index before closing
+                self._conn.execute("PRAGMA optimize")
+                logger.debug("FTS5 index optimized")
+            except Exception as e:
+                logger.warning("FTS index optimize failed: %s", e)
+            
             self._conn.close()
             self._conn = None
             self._initialized = False

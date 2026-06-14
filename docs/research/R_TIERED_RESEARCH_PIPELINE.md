@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Tiered Research Pipeline (Investigative Journalism Model)
 # ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ cline ⬡ trc_pipeline_spec ⬡ PHASE-DESIGN
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-PIPELINE-TIERED-v2.1.0`
 **Status**: 🔲 DESIGN — Ready for Implementation
 **Last Updated**: 2026-05-22

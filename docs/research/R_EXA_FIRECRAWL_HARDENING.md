@@ -3,6 +3,9 @@
 **Date**: 2026-05-19
 **Status**: ACTIVE
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §1 Executive Summary
 This document formalizes the hardening of the Omega Engine's web search and extraction layer. We identified a critical instability in the remote MCP bridge for Exa and a need for token-efficient extraction patterns for AI agents.
 

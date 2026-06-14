@@ -1,5 +1,8 @@
 # OpenCode MCP Configuration Guide
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ## 🛠️ MCP Server Types
 
 OpenCode supports two primary transport types for Model Context Protocol (MCP) servers:

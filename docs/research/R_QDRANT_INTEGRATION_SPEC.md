@@ -1,5 +1,8 @@
 # 🔱 R-QDRANT: Qdrant Vector Integration Specification (Option B)
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-QDRANT-SPEC-v1.0.0`
 **Status**: APPROVED | **Version**: 1.0.0
 **Author**: DeepSeek V4 (Overseer)

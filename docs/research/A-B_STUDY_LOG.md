@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — A/B Research Quality Study Log
 # ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ cline ⬡ trc_research ⬡ A-B-LOG
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-RESEARCH-STUDY-v1.0.0`
 **Maintained by**: Cline (The Artisan)
 **Objective**: To continuously improve agent research quality through head-to-head competition and cross-pollination.

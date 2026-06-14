@@ -1,0 +1,33 @@
+{
+  "session_id": "ses_d686ad4789e5",
+  "agent_id": "opencode/jem_verification",
+  "channel": "opencode",
+  "entity": "jem_verification",
+  "model": "deepseek-v4-flash-free",
+  "task_current": "Deepen R_EMBEDDING_ADAPTERS.md from S1:Shallow to Temple-Grade",
+  "focus_chain": [
+    "Read protocol failure analysis",
+    "Discovery pass: Exa+websearch+library search",
+    "Deepen pass: webfetch 3 pages + code exploration agent",
+    "Synthesis: 11 source files mapped, 3 integration paths, 5 heritage tags",
+    "Shadow Protocol: adversarial self-review passed"
+  ],
+  "decisions": [
+    {
+      "Recommend nomic-embed-text v1.5 Q8_0 as primary": "Best quality/size ratio on CPU, 274MB, 8K context, 73.8M Ollama pulls"
+    },
+    {
+      "Ollama integration path fastest to production": "Ollama already installed; HTTP API needs no new packages"
+    },
+    {
+      "Consolidate 4 duplicate MD5 functions": "embeddings.py:60-79, memory_store.py:305-347, indexer.py:346-369, crossref.py:65-85"
+    },
+    {
+      "SwiGLU models require Q8_0 minimum": "Q4_K causes ~15% cosine loss for NomicBERT/Qwen3"
+    }
+  ],
+  "continuation": "Document deepened and written to docs/research/R_EMBEDDING_ADAPTERS_DEEPENED.md (400+ lines). Next: implement OllamaEmbeddingProvider as Step 1 of roadmap.",
+  "timestamp": "2026-06-12T03:24:23.379238+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

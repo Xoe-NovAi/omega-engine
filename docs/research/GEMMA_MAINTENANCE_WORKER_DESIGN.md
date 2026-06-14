@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Gemma Maintenance Worker Design
 # ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b ⬡ opencode ⬡ trc_research ⬡ GEMMA-MAINTENANCE-WORKER
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-GEMMA-MAINTENANCE-WORKER-v1.0.0`
 **Status**: ✅ COMPLETE — Technical Design Ready
 **Last Updated**: 2026-05-16

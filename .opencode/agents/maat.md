@@ -1,6 +1,6 @@
 ---
 description: "Sovereign Agent: maat (Sovereign Agent)"
-mode: "primary"
+mode: "all"
 temperature: 0.5
 permission:
   read: allow

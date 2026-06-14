@@ -2,6 +2,9 @@
 # AP: R-PLUGIN-ARCH-v1.0.0
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ web-research ⬡ trc_w2 ⬡ RESEARCH
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **Date**: 2026-05-25
 **Purpose**: Research into plugin/extension architecture patterns applicable to Omega Engine's IWAD system.
 

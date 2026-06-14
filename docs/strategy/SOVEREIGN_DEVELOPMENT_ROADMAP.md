@@ -21,9 +21,9 @@ The Omega Engine is a **Sovereign AI Runtime** — a platform where:
 
 ---
 
-## Phase 0: Noise Removal & Clean Slate (NOW)
+## Phase 0: Sovereign Integration — Blocker Clearance (NOW)
 
-**Goal**: Remove chaos, establish clean baselines, make the engine trustworthy.
+**Goal**: Remove chaos, establish clean baselines, and restore the M2 Firewall to ensure a trustable foundation.
 
 | # | Task | Status | Impact |
 |---|------|--------|--------|
@@ -38,9 +38,9 @@ The Omega Engine is a **Sovereign AI Runtime** — a platform where:
 
 ---
 
-## Phase 1: Engine Core — The Team Foundation
+## Phase 1: Sovereign Integration — Senses & The Team Foundation
 
-**Goal**: Every agent knows itself, its team, and how to work together.
+**Goal**: Establish the "Sense-Net" (connectivity/API) and ensure every agent knows itself, its team, and how to work together.
 
 | # | Task | Priority | What Changes |
 |---|------|:--------:|-------------|
@@ -68,9 +68,9 @@ session_log:     # When I last worked (dated summaries)
 
 ---
 
-## Phase 2: The Flywheel — Local Intelligence
+## Phase 2: Sovereign Integration — World, Space & Local Intelligence
 
-**Goal**: Engine gets smarter the more you use it, fully sovereign.
+**Goal**: Implement environmental awareness (WADs/Local State) and create a local intelligence flywheel that grows with use.
 
 | # | Task | Priority | What Changes |
 |---|------|:--------:|-------------|
@@ -102,9 +102,9 @@ USER TALKS → Oracle → ModelGateway → Local/Cloud inference → Response
 
 ---
 
-## Phase 3: The Experience — Visible Intelligence
+## Phase 3: Sovereign Integration — Actors & Visible Intelligence
 
-**Goal**: The engine is alive and you can see it.
+**Goal**: Activate sovereign personas (Soul Evolution) and make the engine's intelligence visible and interactive.
 
 | # | Task | Priority | What Changes |
 |---|------|:--------:|-------------|
@@ -149,7 +149,7 @@ Developer forks Omega Engine → Builds custom IWAD
 | # | Law | What It Means | Status |
 |---|-----|---------------|--------|
 | M1 | AnyIO Absolute | No asyncio. Runtime portability. | ✅ CI-enforced |
-| M2 | Engine-Stack Firewall | Engine knows slots, WADs know meanings | 🔴 D113 GAP |
+| M2 | Engine-Stack Firewall | Engine knows slots, WADs know meanings | ✅ Restored (D113) |
 | M3 | Iris Constant | Messenger, not a Pillar | ✅ Trust-based |
 | M4 | Sequentiality | Plan→Verify→Execute | ✅ Trust-based |
 | M5 | Gnosis Preservation | L1→L2→L3 from every session | 🟡 Distiller orphaned |

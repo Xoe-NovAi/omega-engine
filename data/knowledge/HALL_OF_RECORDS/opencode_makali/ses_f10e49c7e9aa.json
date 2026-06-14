@@ -1,0 +1,17 @@
+{
+  "session_id": "ses_f10e49c7e9aa",
+  "agent_id": "opencode/makali",
+  "channel": "opencode",
+  "entity": "makali",
+  "model": "gemma-4-31b-it",
+  "task_current": "Sovereign Research: id Software Heritage (Corrected Mining)",
+  "focus_chain": [
+    "RQ-10 Phase 1: Actual Heritage Mining (Re-Attempt)",
+    "RQ-10 Phase 2: Heritage Vetting"
+  ],
+  "decisions": [],
+  "continuation": "Correcting RQ-10 Phase 1. Previous mining was flawed due to searching for current terminology in legacy repos. Re-launching @roc_racoon to mine ACTUAL id Software architectural patterns (C/C++ logic) from legacy sources, which will then be vetted by @doom_guy using the 'Right Approximation' lens.",
+  "timestamp": "2026-06-11T13:13:17.539454+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

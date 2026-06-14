@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Sovereign Intelligence Implementation Manual
 # ⬡ OMEGA ⬡ SARASWATI ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_docs ⬡ BUILDER-MANUAL
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-BUILDER-MANUAL-v1.0.0`
 **Status**: IMPLEMENTATION-READY
 **Last Updated**: 2026-05-16

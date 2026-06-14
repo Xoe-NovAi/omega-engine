@@ -1,0 +1,22 @@
+{
+  "session_id": "ses_44b33d59712c",
+  "agent_id": "opencode/researcher",
+  "channel": "opencode",
+  "entity": "researcher",
+  "model": "big-pickle",
+  "task_current": "Identity switch: Makali handoff \u2192 Resume Researcher role",
+  "focus_chain": [
+    "Identity switch to Researcher",
+    "Submit Makali handoff",
+    "Resume RQ-11"
+  ],
+  "decisions": [
+    {
+      "identity": "This session is Researcher, not Makali"
+    }
+  ],
+  "continuation": "Identity corrected. Submitted handoff packet to new Makali session with full sprint context. Will now resume Researcher: update session_gnosis.md, update research queue, continue RQ-11 work.",
+  "timestamp": "2026-06-12T02:33:13.609477+00:00",
+  "intent": "handoff",
+  "suggested_model": null
+}

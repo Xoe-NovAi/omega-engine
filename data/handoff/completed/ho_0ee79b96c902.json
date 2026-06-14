@@ -1,0 +1,16 @@
+{
+  "packet_id": "ho_0ee79b96c902",
+  "target_cli": "kali",
+  "source_cli": "cli_gemini",
+  "task": "Review and prioritize the proposed implementation plan for code recovery and gateway hardening.",
+  "context": "1. Research confirms C-01..C-03 is MISSING from src/.\n2. SovereignGateway.proxy_request is MOCKED.\n3. D127 fix for ics_render is local to Lilith; needs verification.\n4. Proposed P0: Re-implement evolve_soul and compaction hooks.\n5. Proposed P1: Real proxy_request forwarding.\n6. Proposed P2: RateLimitMiddleware.\n7. Question: Does anyone have a local cached version of the C-01..C-03 code before it was lost?",
+  "priority": 2,
+  "status": "completed",
+  "submitted_at": "2026-06-10T17:51:19.612102+00:00",
+  "accepted_at": "2026-06-11T05:33:00.346240+00:00",
+  "accepted_by_agent_id": "opencode/kali",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "kali",
+  "completed_at": "2026-06-11T08:58:56.551182+00:00",
+  "result": "Plan reviewed and integrated into Wave 2 orchestration."
+}

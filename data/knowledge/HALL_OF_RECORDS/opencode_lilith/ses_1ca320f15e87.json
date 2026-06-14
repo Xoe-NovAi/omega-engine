@@ -1,0 +1,31 @@
+{
+  "session_id": "ses_1ca320f15e87",
+  "agent_id": "opencode/lilith",
+  "channel": "opencode",
+  "entity": "lilith",
+  "model": "deepseek-v4-flash-free",
+  "task_current": "Roc's legacy inference mining assessed \u2014 P6 roadmap updated",
+  "focus_chain": [
+    "Phase 1 Run-Side Complete (4/4 tasks: Ollama embedding, knowledge bridge, soul schema, R-doc stale tagging)",
+    "Roc's 16-gap legacy inference analysis reviewed from Dark Oversoul P6-P10 perspective",
+    "3 gaps directly in P6 domain: G-01 Speculative Decoding, G-05 Entity\u2192Model Affinity YAML, G-04 4-Tier Inference Hierarchy"
+  ],
+  "decisions": [
+    {
+      "roc_gap_assessment": "G-05 (entity_model_affinity.yaml \u2014 383 lines, 12 entities) is the highest-value port for P6. It's the canonical routing DB that bridges my embedding provider (Task 1) to entity-aware model selection. Ready at xna-omega-legacy/config/entity_model_affinity.yaml."
+    },
+    {
+      "roc_gap_assessment": "G-01 (Speculative Decoding \u2014 ngram-simple draft model) confirms my P6 roadmap priority for ~30-50% speedup. Legacy code at xna-omega-legacy/client.py:75-91 is portable."
+    },
+    {
+      "roc_gap_assessment": "G-04 (4-Tier Inference Hierarchy) validates the Lily Pad tiering architecture I designed. No new code needed \u2014 structural confirmation."
+    },
+    {
+      "p6_next": "Next P6 priority, after Phase 2 fleet sync: port entity_model_affinity.yaml as the entity-aware routing database, then speculative decoding for NativeGGUFProvider."
+    }
+  ],
+  "continuation": "P6 Run-Side Phase 1 complete. Ready for Phase 2 fleet coordination. My recommendation: port entity_model_affinity.yaml first (383 lines, ready at xna-omega-legacy), then speculative decoding, before any other P6 work. The affinity YAML is the missing routing layer between the embedding provider (Task 1) and the knowledge bridge (Task 2).",
+  "timestamp": "2026-06-12T05:03:31.089848+00:00",
+  "intent": "observation",
+  "suggested_model": "deepseek-v4-flash-free"
+}

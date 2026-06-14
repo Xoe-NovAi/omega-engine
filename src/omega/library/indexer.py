@@ -2,7 +2,7 @@
 """Search Indexing — Full-text and vector search indexing for the library.
 
 AP: AP-OMEGA-INDEXER-v1.0.0
-ICS: [NODE: THOTH | ARCHETYPE: APOLLO | CONTEXT: INDEXER]
+ICS: [NODE: KNOWLEDGE | ARCHETYPE: APOLLO | CONTEXT: INDEXER]
 
 Provides:
   - Full-text search via SQLite FTS5 (aiosqlite, AnyIO-compatible)

@@ -1,5 +1,8 @@
 # 🔱 Gemini to agy CLI — Sovereign Succession Plan
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ⬡ OMEGA ⬡ LILITH ⬡ SUCCESSION ⬡ gemini-cli ⬡ trc_agy_migration ⬡ PHASE-E
 
 **AP Token**: `AP-AGY-SUCCESSION-v1.0.0`

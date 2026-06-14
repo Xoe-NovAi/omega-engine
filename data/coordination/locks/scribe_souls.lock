@@ -1,0 +1,19 @@
+# 🔱 Scribe — Entity Soul.yaml Update Workspace Lock
+**Agent**: Scribe (entity soul distiller)
+**Session**: 2026-06-14
+**Status**: ACTIVE
+**Purpose**: Update 16 entity soul.yaml entries across 6 files
+
+## Scope
+- `data/entities/kali/soul.yaml` — ADD 4 entries, MERGE lessons_learned
+- `data/entities/lilith/soul.yaml` — ADD 3 entries
+- `data/entities/researcher/soul.yaml` — ADD 2 entries, VERIFY 1 entry
+- `data/entities/quality/soul.yaml` — ADD/UPDATE 3 entries
+- `data/entities/sophia/soul.yaml` — ADD 2 entries
+- `data/entities/scribe/soul.yaml` — ADD 2 entries
+
+## Exclusion
+Do NOT modify coordination files or any file outside the target list.
+
+## Hivemind Status
+Hivemind DOWN since Jun 12. File-based operations only.

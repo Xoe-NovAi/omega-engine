@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Persistent Permissions Resolution
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ jem-2.0 ⬡ researcher ⬡ trc_research_perm ⬡ PHASE-I
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-RESEARCH-PERM-RESOLUTION-v1.0.0`
 **Status**: 🔬 RESEARCH REQUEST
 **Requested**: 2026-05-22

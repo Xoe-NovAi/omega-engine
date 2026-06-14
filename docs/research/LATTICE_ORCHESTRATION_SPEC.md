@@ -4,6 +4,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §1 Lattice Dispatch: Multi-Agent Topology
 
 Lattice Dispatch moves beyond linear task execution, allowing the Oracle to dynamically select between **Linear Chaining** and **Triad Spawning** based on the cognitive requirements of the query.

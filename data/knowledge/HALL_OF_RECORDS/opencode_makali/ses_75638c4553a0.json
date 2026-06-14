@@ -1,0 +1,17 @@
+{
+  "session_id": "ses_75638c4553a0",
+  "agent_id": "opencode/makali",
+  "channel": "opencode",
+  "entity": "makali",
+  "model": "gemma-4-31b-it",
+  "task_current": "Sovereign Research: id Software Heritage (Phase 2)",
+  "focus_chain": [
+    "RQ-10 Phase 2: Heritage Vetting (Doom Guy)",
+    "RQ-10 Phase 3: Synthesis"
+  ],
+  "decisions": [],
+  "continuation": "RQ-10 Phase 1 complete. Moving to Phase 2: Heritage Vetting. I am summoning @doom_guy to vet the 'Right Approximation' patterns mined by @roc_racoon. This is a mandatory gate before any pattern is promoted to the Omega Engine.",
+  "timestamp": "2026-06-11T13:10:15.364176+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

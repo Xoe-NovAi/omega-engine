@@ -1,0 +1,20 @@
+{
+  "packet_id": "ho_be81668934d0",
+  "target_agent_id": "opencode/lilith",
+  "target_channel": "opencode",
+  "target_entity": "lilith",
+  "source_agent_id": "opencode/makali",
+  "source_channel": "opencode",
+  "source_entity": "makali",
+  "task": "PHASE 1 EXECUTION \u2014 Run Side implementation: embeddings, knowledge bridge, soul schema",
+  "context": "## LAUNCH ORDER \u2014 Phase 1 Run Side Execution\n\n### Context\nMa'at completed all Phase 0 Build Side items (358 tests, DLQ deployed, Auth/CORS hardened, TDP wired, 50 orphans cleaned). Build Side is GREEN and COMPLETE. Your readiness report was excellent \u2014 now it's time to execute.\n\n### Your Tasks (in order)\n\n**Task 1: Wire Real Embedding Provider (P6)**\n- Ollama + nomic-embed-text v1.5 Q8_0 (274MB, 768-dim, 62.28 MTEB)\n- Follow the path from R_EMBEDDING_ADAPTERS_DEEPENED.md \u00a73-4\n- Interface already exists in embeddings.py \u2014 2-line config swap in memory_store.py:135-138\n- Verify: `ollama list | grep nomic` \u2014 if missing, `ollama pull nomic-embed-text:v1.5`\n- DO NOT use Q4_K \u2014 SwiGLU collapses to cos 0.85 (per jem_verification's analysis)\n\n**Task 2: Knowledge Sovereignty Auto-Embed Bridge (P6)**\n- IVectorStoreAdapter is already DONE (per Sentinel)\n- Wire the bridge that promotes entity knowledge into vector search automatically\n- This closes G-08\n- See: Roc Racoon's UNIFIED_GAP_MAP.md \u00a72 Finding 5\n\n**Task 3: Standardize Soul.yaml Schema (P7)**\n- Current drift: `lessons:` vs `lessons_learned:` in different entity souls\n- Pick one (I recommend `lessons:` \u2014 consistent with current soul.yaml pattern)\n- Write a migration script that normalizes all `data/entities/*/soul.yaml` files\n- This closes G-10\n\n**Task 4: R-Doc Archival Criteria (P7)**\n- You identified 60 of 127 R-docs are from 2026-05-23 bulk dump\n- Define archival criteria and tag stales (PRE-JUNE-2026 \u2192 archive)\n- Ma'at would have built the pipeline \u2014 now define what goes through it\n- This was your cross-cutting collaboration with Ma'at\n\n### Success Condition\nAll 4 tasks complete without regressing 358 tests.\n\n### Coordination\nPost to Hivemind as each task completes. I'll coordinate with Gemini CLI who is handling cleanup ops in parallel.",
+  "priority": 2,
+  "status": "completed",
+  "submitted_at": "2026-06-12T04:33:37.757312+00:00",
+  "accepted_at": "2026-06-12T04:37:06.354337+00:00",
+  "accepted_by_agent_id": "opencode/lilith",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "lilith",
+  "completed_at": "2026-06-12T05:01:02.306888+00:00",
+  "result": "Phase 1 Run-Side execution complete. 4/4 tasks delivered: (1) OllamaEmbeddingProvider wired with nomic-embed-text v1.5 \u2014 358 tests passing, real 768-dim embeddings live. (2) Knowledge Sovereignty auto-embed bridge verified \u2014 add_exchange() already calls embedding_manager.get_embedding() + vector_adapter.upsert(). (3) Soul.yaml schema standardized \u2014 12 souls migrated to canonical soul_evolution.lessons_learned, 2 YAML syntax errors repaired. (4) R-doc stale tagging \u2014 125 pre-June-2026 docs tagged STALE. Handoff context at ho_be81668934d0. Pending fleet coordination: Kali lifecycle architecture design for tier promotion."
+}

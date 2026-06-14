@@ -4,6 +4,9 @@
 **Entity**: PROMETHEUS (Sovereign Master Researcher)
 **Date**: 2026-05-27
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §0: Executive Summary
 This framework establishes a systemic methodology to detect and quantify **Identity Hysteresis**—the residual behavioral drift that persists after an entity's visible identity (Soul/Persona) has been reverted. By implementing the **Ratchet Experiment**, the Omega Engine can distinguish between healthy plasticity and pathological drift.
 

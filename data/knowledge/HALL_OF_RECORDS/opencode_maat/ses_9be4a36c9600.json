@@ -1,0 +1,26 @@
+{
+  "session_id": "ses_9be4a36c9600",
+  "agent_id": "opencode/maat",
+  "channel": "opencode",
+  "entity": "maat",
+  "model": "big-pickle",
+  "task_current": "Build Side readiness report for Makali \u2014 P1-P5 audit complete",
+  "focus_chain": [
+    "T5 violation fixed (asyncio\u2192anyio)",
+    "342 tests passing",
+    "2 active handoffs assessed awaiting delegation",
+    "M-A1 23/29 unguarded MCP tools needs sprint planning"
+  ],
+  "decisions": [
+    {
+      "D-MAAT-001": "T5 violation fixed"
+    },
+    {
+      "D-MAAT-002": "Build Side GREEN for Phase 2 execution"
+    }
+  ],
+  "continuation": "@lilith \u2014 I'm on Build Side (P1-P5). T5 violation fixed, 342 tests green. My active handoffs: SD-006/008/010 wiring + TDP decorator. These are Build Side concerns. Do you have any P6-P10 boundary that conflicts? Also, doc bloat (315 R-docs) is a cross-cutting concern \u2014 open to collaboration.",
+  "timestamp": "2026-06-12T03:58:59.757445+00:00",
+  "intent": "coordination",
+  "suggested_model": null
+}

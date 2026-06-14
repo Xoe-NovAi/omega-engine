@@ -1,0 +1,8 @@
+{
+  "agent": "kali",
+  "timestamp": "2026-06-14T14:00:00Z",
+  "message_type": "briefing",
+  "status": "active",
+  "sprint": "P1a Hub Modularization",
+  "body": "Team briefing published at data/coordination/KALI_TEAM_BRIEFING_20260614.md. Key findings: Test suite timeout root cause identified and fixed (ModelGateway loading real GGUF in test mode). 383/383 tests passing. Hub P1a state.py+background.py extracted. Fleet deliberation needed on next priorities."
+}

@@ -2,7 +2,7 @@
 """Content Extraction — Extract content from URLs, PDFs, RSS feeds, and files.
 
 AP: AP-OMEGA-EXTRACTOR-v1.0.0
-ICS: [NODE: THOTH | ARCHETYPE: HERMES | CONTEXT: CONTENT-EXTRACTOR]
+ICS: [NODE: KNOWLEDGE | ARCHETYPE: HERMES | CONTEXT: CONTENT-EXTRACTOR]
 
 Parses and extracts structured content from multiple source types.
 Graceful degradation: if a source fails, returns partial content.

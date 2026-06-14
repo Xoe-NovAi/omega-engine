@@ -1,6 +1,9 @@
 # GitHub Copilot Free Tier — OpenCode Configuration Template
 # Ready-to-use configuration for Omega Engine integration
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ## opencode.json Configuration
 
 ```json

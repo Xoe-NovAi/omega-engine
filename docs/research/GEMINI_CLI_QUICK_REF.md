@@ -1,5 +1,8 @@
 # ⚡ Gemini CLI Quick Reference
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ## 📂 Configuration Paths
 | Layer | Path | Purpose |
 |---|---|---|

@@ -1,0 +1,12 @@
+{
+  "packet_id": "ho_4618926079f9",
+  "target_cli": "antigravity",
+  "source_cli": "cline-m3",
+  "task": "S2-C Knowledge Sovereignty + Full Sovereign Debt Synthesis \u2014 COMPREHENSIVE BRIEFING. PART 1 (1.5hr): Promote Roc's 3 identified semantic gaps into the library with embeddings. (1) Read src/omega/oracle/security.py \u2192 create doc_security_R_tainted_data_protocol.json \u2192 embed. (2) Read fts_index.py + vector_adapters.py \u2192 create doc_datastore_R_hybrid_search_rrf.json \u2192 embed. (3) Read server.py lifespan handlers \u2192 create doc_watchtower_R_aiosqlite_teardown_hardening.json \u2192 embed. (4) Wire vector cross-refs in src/omega/library/crossref.py (dual-path: keyword + vector). (5) Write scripts/verify_knowledge_sovereign.py. (6) Write docs/architecture/SOVEREIGN_DATA_FLOW.md. PART 2 (30 min): Synthesize ALL 10+ Sovereign Debt items into data/workbench/SOVEREIGN_DEBT_SYNTHESIS_20260609.md with prioritized queue, effort estimates, dependency chains, agent assignments, sprint plan, and \"Sovereign Grade\" gate criteria. Full briefing at data/workbench/ANTIGRAVITY_S2C_BRIEFING_20260609.md (123 lines). Run make test. Target 2 hours.",
+  "context": "UPDATED CONTEXT: Team has completed massive sprint since your original handoff. Kali: S2-D SPRINT COMPLETE (vector cleanup C4, semantic search restored via Feature Hashing, QdrantAdapter AnyIO-hardened, missing MCP tools registered). Gemini CLI: MiMo Integration Final Sign-off (100% pass). Roc: R-10 Soul Schema Validation COMPLETE (soul_validator.py integrated into EntityWorkspaceManager, validates on load AND write, YAML fragility fixed). Roc: S2-D Semantic Gap Analysis \u2014 263 docs indexed, found 3 CRITICAL GAPS: TDP docs missing, Hybrid RRF docs missing, aiosqlite teardown docs missing. These 3 gaps ARE your library promotion targets. ALSO: Kali's 5-agent gap synthesis found BSP culling mapped but not live (8-line fix), CREDITS.md memory errors, soul distillation stub empty. Quality flagged T1 AP tokens + T3 coverage. Sentinel auth/CORS/rate-limit sprint active. EXPANDED DEBT INVENTORY: 10 items total across Sentinel (3), Quality (2), Kali Gap Synthesis (3), Roc S2-D (1), plus your 3 gaps. FULL briefing at data/workbench/ANTIGRAVITY_S2C_BRIEFING_20260609.md. Tests at 329/329 PASS with zero event loop warnings. Qdrant is AnyIO-safe.",
+  "priority": 2,
+  "status": "stale",
+  "submitted_at": "2026-06-09T18:44:47.068416+00:00",
+  "reaped_at": "2026-06-12T03:58:08.128686+00:00",
+  "ttl_expired": true
+}

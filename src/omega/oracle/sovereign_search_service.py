@@ -1,4 +1,5 @@
 """Sovereign Search Service — Core implementation of the 5-Tier Search Protocol.
+# [id-soft: doom-1993] Lattice-Culling — tiered search dispatch
 AP: AP-SOVEREIGN-SEARCH-SERVICE-v1.0.0
 ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: SEARCH-PARTNERSHIP]
 """
@@ -6,6 +7,7 @@ from __future__ import annotations
 
 import logging
 import anyio
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 from datetime import datetime
@@ -17,6 +19,7 @@ from omega.errors import (
 from omega.memory_store import get_memory_store, MemoryStore
 from omega.library.indexer import Indexer
 from omega.oracle.search_providers import FirecrawlProvider, ExaProvider
+from omega.oracle.skeptical_verifier import SkepticalVerifier
 
 logger = logging.getLogger(__name__)
 
@@ -36,14 +39,16 @@ class SovereignSearchService:
     def __init__(
         self, 
         memory_store: Optional[MemoryStore] = None,
-        model_gateway: Optional['ModelGateway'] = None,
+        model_gateway: Any = None,
         indexer: Optional[Indexer] = None,
         firecrawl_key: Optional[str] = None,
-        exa_key: Optional[str] = None
+        exa_key: Optional[str] = None,
+        verifier: Optional[SkepticalVerifier] = None
     ):
         from omega.oracle.model_gateway import ModelGateway
+        from omega.oracle.health_monitor import get_health_monitor
         self.memory_store = memory_store or get_memory_store()
-        self.model_gateway = model_gateway or ModelGateway()
+        self.model_gateway = model_gateway or ModelGateway(health_monitor=get_health_monitor())
         self.indexer = indexer or Indexer()
         self.cache_dir = Path(".firecrawl")
         self.cache_dir.mkdir(exist_ok=True)
@@ -52,6 +57,7 @@ class SovereignSearchService:
         # Initialize Direct Providers (Bypass MCP Bridge)
         self.firecrawl = FirecrawlProvider(firecrawl_key) if firecrawl_key else None
         self.exa = ExaProvider(exa_key) if exa_key else None
+        self.verifier = verifier or SkepticalVerifier(self.model_gateway)
 
     async def search(
         self, 
@@ -71,8 +77,11 @@ class SovereignSearchService:
             "evidence": [],
             "fallback_log": [],
             "final_tier": None,
-            "status": "pending"
+            "status": "pending",
+            "verification": None
         }
+
+        evidence_pool = []
 
         if force_tier is not None:
             tier = force_tier
@@ -81,28 +90,71 @@ class SovereignSearchService:
                 report["primary_finding"] = result
                 report["final_tier"] = tier
                 report["status"] = "success"
-            return report
-
-        # Sequential Tier Execution
-        for tier in range(max_tier + 1):
-            try:
-                result = await self._execute_tier(tier, query, entity_name, limit)
-                if result:
-                    report["primary_finding"] = result
-                    report["final_tier"] = tier
-                    report["status"] = "success"
-                    break
-                else:
-                    report["fallback_log"].append(f"Tier {tier} returned no results.")
-            except Exception as e:
-                report["fallback_log"].append(f"Tier {tier} failed: {str(e)}")
-                logger.warning(f"[SEARCH-ERROR] tier={tier} error={str(e)}")
+                evidence_pool.extend(self._extract_evidence_from_finding(result))
+        else:
+            # Sequential Tier Execution
+            for tier in range(max_tier + 1):
+                try:
+                    result = await self._execute_tier(tier, query, entity_name, limit)
+                    if result:
+                        report["primary_finding"] = result
+                        report["final_tier"] = tier
+                        report["status"] = "success"
+                        evidence_pool.extend(self._extract_evidence_from_finding(result))
+                        break
+                    else:
+                        report["fallback_log"].append(f"Tier {tier} returned no results.")
+                except Exception as e:
+                    report["fallback_log"].append(f"Tier {tier} failed: {str(e)}")
+                    logger.warning(f"[SEARCH-ERROR] tier={tier} error={str(e)}")
 
         if not report["primary_finding"]:
             report["status"] = "failed"
             report["primary_finding"] = "No results found across all available tiers."
+        elif self.verifier and evidence_pool:
+            try:
+                logger.info(f"Running skeptical verification on search findings with {len(evidence_pool)} sources...")
+                verification = await self.verifier.verify(query, evidence_pool)
+                report["verification"] = {
+                    "status": verification.status,
+                    "reasoning": verification.reasoning,
+                    "verified_at": verification.verified_at
+                }
+            except Exception as e:
+                logger.warning(f"Skeptical verification failed: {e}")
+                report["verification"] = {
+                    "status": "UNVERIFIED",
+                    "reasoning": f"Verification failed: {e}"
+                }
 
         return report
+
+    def _extract_evidence_from_finding(self, finding: str) -> List[Dict[str, Any]]:
+        """Extract individual source blocks from a synthesized finding string."""
+        evidence = []
+        if not finding:
+            return evidence
+            
+        # Match "Source [URL]:\nContent" patterns
+        pattern = re.compile(r"Source \[(https?://[^\]]+)\]:\n(.*?)(?=\n\nSource \[|\Z)", re.DOTALL)
+        matches = pattern.findall(finding)
+        for url, content in matches:
+            evidence.append({
+                "content": content.strip(),
+                "source_id": url,
+                "authority_score": 0.8 if "arxiv.org" in url or "github.com" in url else 0.5
+            })
+            
+        # Also match "Exa Neural Search" or "Local Memory Match" snippets if any
+        if not evidence:
+            for line in finding.split("\n\n"):
+                if line.strip() and not line.startswith("Exa Neural Search:") and not line.startswith("Firecrawl Search (Snippets):"):
+                    evidence.append({
+                        "content": line.strip(),
+                        "source_id": "snippet",
+                        "authority_score": 0.5
+                    })
+        return evidence
 
     async def _execute_tier(self, tier: int, query: str, entity_name: str, limit: int) -> Optional[str]:
         """Internal dispatcher for the 5-Tier protocol."""

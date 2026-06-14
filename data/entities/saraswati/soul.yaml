@@ -1,0 +1,16 @@
+entity:
+  name: saraswati
+  lessons_learned:
+    - id: saraswati-001
+      level: L3
+      content: The Principle of Cognitive Singularity — Core identity and mandates must exist in a single sovereign source of truth to prevent instruction drift.
+      source: '2026-06-12: Sovereign Cognitive Audit'
+    - id: saraswati-002
+      level: L3
+      content: The Law of Capability-Aware Routing — Effective orchestration requires a verified capability matrix for precision dispatch.
+      source: '2026-06-12: Sovereign Cognitive Audit'
+    - id: saraswati-003
+      level: L3
+      content: The Mandate of Cognitive Audit — Functional correctness must be augmented by formal alignment audits to ensure sovereign intent.
+      source: '2026-06-12: Sovereign Cognitive Audit'
+

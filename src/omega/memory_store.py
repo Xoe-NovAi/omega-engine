@@ -35,7 +35,7 @@ from .memory.providers import (
 )
 from .memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
 from .memory.fts_index import ConversationFTSIndex
-from .memory.embeddings import EmbeddingManager, SovereignFallbackEmbeddingProvider
+from .memory.embeddings import EmbeddingManager, OllamaEmbeddingProvider, SovereignFallbackEmbeddingProvider
 
 logger = logging.getLogger(__name__)
 
@@ -135,7 +135,8 @@ class MemoryStore:
         if embedding_manager is not None:
             self.embedding_manager = embedding_manager
         else:
-            self.embedding_manager = EmbeddingManager([SovereignFallbackEmbeddingProvider()])
+            # [P6-001] Local-first embedding: Ollama nomic-embed-text → Sovereign Fallback
+            self.embedding_manager = EmbeddingManager([OllamaEmbeddingProvider(), SovereignFallbackEmbeddingProvider()])
         
         # [Horizon 2: MiMo] FTS5 Search Index
         self.fts = ConversationFTSIndex(_get_memory_dir() / "fts_memory.db")

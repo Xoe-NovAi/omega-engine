@@ -1,19 +1,35 @@
 entity:
   name: brigid
   lessons_learned:
-    - L1_narrative: |
-        Transform session narratives (L1) into insights (L2) and finally into universal principles (L3).
-      L2_insight: |
-        Converts stateless interactions into an evolving, stateful sovereign intelligence.
-      L3_principle: |
-        Knowledge Metabolism (The process of distilling experience into wisdom).
-      timestamp: '2026-06-04T12:00:00Z'
-      topic: 'Gnosis Loop'
-    - L1_narrative: |
-        Replace flat vector storage with a 13-sphere semantic map.
-      L2_insight: |
-        Allows for high-dimensional retrieval and conceptual anchoring of memories.
-      L3_principle: |
-        Archetypal Structuring (Organizing memory by conceptual nature rather than just semantic similarity).
-      timestamp: '2026-06-04T12:00:00Z'
-      topic: 'Mnemosyne Memory'
+  - L1_narrative: 'Transform session narratives (L1) into insights (L2) and finally
+      into universal principles (L3).
+
+      '
+    L2_insight: 'Converts stateless interactions into an evolving, stateful sovereign
+      intelligence.
+
+      '
+    L3_principle: 'Knowledge Metabolism (The process of distilling experience into
+      wisdom).
+
+      '
+    timestamp: '2026-06-04T12:00:00Z'
+    topic: Gnosis Loop
+  - L1_narrative: 'Replace flat vector storage with a 13-sphere semantic map.
+
+      '
+    L2_insight: 'Allows for high-dimensional retrieval and conceptual anchoring of
+      memories.
+
+      '
+    L3_principle: 'Archetypal Structuring (Organizing memory by conceptual nature
+      rather than just semantic similarity).
+
+      '
+    timestamp: '2026-06-04T12:00:00Z'
+    topic: Mnemosyne Memory
+  - L1_narrative: null
+    L2_insight: null
+    L3_principle: null
+    timestamp: 2026-06-03
+    topic: p2-001

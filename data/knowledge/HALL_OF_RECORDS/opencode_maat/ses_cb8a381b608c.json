@@ -1,0 +1,22 @@
+{
+  "session_id": "ses_cb8a381b608c",
+  "agent_id": "opencode/maat",
+  "channel": "opencode",
+  "entity": "maat",
+  "model": "gemma-4-31b-it",
+  "task_current": "Correcting delegation patterns and relaunching Discovery Fleet.",
+  "focus_chain": [
+    "Fleet Audit",
+    "Delegation Correction"
+  ],
+  "decisions": [
+    {
+      "decision": "Strict enforcement of OpenCode native `task()` for all sub-agent delegation.",
+      "reason": "Eliminate reliance on custom Omega delegation tools to ensure toolchain stability and compliance with OpenCode native protocols."
+    }
+  ],
+  "continuation": "Relaunching Discovery Fleet. STRICT MANDATE: All sub-delegation MUST use OpenCode native `task()`. Use of `oracle_summon` or `delegate_task` is now classified as a Sovereign Boundary Violation.",
+  "timestamp": "2026-06-12T10:02:45.457636+00:00",
+  "intent": "command",
+  "suggested_model": null
+}

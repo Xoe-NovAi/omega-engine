@@ -5,6 +5,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §0 Purpose
 
 This document captures the systemic failures, workarounds, and structural improvements discovered during the operation of the subagent fleet across multiple research sprints. These lessons inform how custom agent and subagent instructions should be written going forward.

@@ -24,25 +24,23 @@
     "CREDITS.md"
   ],
   "mcp": {
-    "filesystem": {
-      "type": "local",
-      "command": [
-        "npx",
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine"
-      ],
-      "enabled": false
-    },
     "omega-hub": {
       "type": "remote",
       "url": "http://127.0.0.1:8016/sse",
       "enabled": true
     },
+    "searxng": {
+      "type": "local",
+      "command": [
+        "python",
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/searxng/server.py"
+      ],
+      "enabled": true
+    },
     "firecrawl": {
       "type": "local",
       "command": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/dummy_mcp.sh"
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/firecrawl_wrapper.sh"
       ],
       "environment": {
         "FIRECRAWL_API_KEY": "***REMOVED***",
@@ -65,73 +63,6 @@
     "tail_turns": 3,
     "preserve_recent_tokens": 40000,
     "reserved": 10000
-  },
-  "mode": {
-    "kali": {
-      "prompt": "{file:.opencode/modes/kali.md}",
-      "tools": {
-        "bash": true,
-        "edit": true,
-        "write": true,
-        "read": true,
-        "glob": true,
-        "grep": true,
-        "webfetch": true,
-        "websearch": true
-      }
-    },
-    "maat": {
-      "prompt": "{file:.opencode/modes/maat.md}",
-      "tools": {
-        "bash": true,
-        "edit": true,
-        "write": true,
-        "read": true,
-        "glob": true,
-        "grep": true,
-        "webfetch": true,
-        "websearch": true
-      }
-    },
-    "lilith": {
-      "prompt": "{file:.opencode/modes/lilith.md}",
-      "tools": {
-        "bash": true,
-        "edit": true,
-        "write": true,
-        "read": true,
-        "glob": true,
-        "grep": true,
-        "webfetch": true,
-        "websearch": true
-      }
-    },
-    "jem-2.0": {
-      "prompt": "{file:.opencode/modes/jem-2.0.md}",
-      "tools": {
-        "bash": false,
-        "edit": false,
-        "write": false,
-        "read": true,
-        "glob": true,
-        "grep": true,
-        "webfetch": true,
-        "websearch": true
-      }
-    },
-    "jem-initiate": {
-      "prompt": "{file:.opencode/modes/jem-initiate.md}",
-      "tools": {
-        "bash": false,
-        "edit": false,
-        "write": false,
-        "read": true,
-        "glob": true,
-        "grep": true,
-        "webfetch": true,
-        "websearch": true
-      }
-    }
   },
   "provider": {
     "lmstudio": {
@@ -195,7 +126,7 @@
   },
   "agent": {
     "makali": {
-      "mode": "primary",
+      "mode": "all",
       "description": "MaKaLi Parallel Council — decomposes query, dispatches Ma'at+Lilith in parallel, synthesizes (D117)",
       "instructions": [
         ".opencode/agents/makali.md",
@@ -203,7 +134,8 @@
       ]
     },
     "jem": {
-      "mode": "primary",
+      "mode": "all",
+      "description": "Research Orchestrator — 3-tier local model pipeline",
       "instructions": [
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem.md",
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/research/JEM_2_MASTER_RESEARCH_MISSION.md",
@@ -212,75 +144,95 @@
     },
     "jem_discovery": {
       "mode": "subagent",
+      "description": "Tier 1 Research — broad search, evidence logging",
       "instructions": [
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem_discovery.md"
       ]
     },
     "jem_synthesis": {
       "mode": "subagent",
+      "description": "Tier 2 Research — pattern recognition, synthesis",
       "instructions": [
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem_synthesis.md"
       ]
     },
     "jem_verification": {
       "mode": "subagent",
+      "description": "Tier 3 Research — fact-check, R-doc, gnosis",
       "instructions": [
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem_verification.md"
       ]
     },
     "doom_guy": {
-      "mode": "primary",
+      "mode": "all",
+      "description": "Sovereign id Software Architect — WAD translation & performance",
       "instructions": [
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/doom_guy.md",
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/CREDITS.md"
       ]
     },
     "roc_racoon": {
-      "mode": "primary",
+      "mode": "all",
+      "description": "Sovereign Miner — Legacy archaeology & pattern extraction",
       "instructions": [
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/roc_racoon.md"
       ]
     },
     "researcher": {
-      "mode": "primary",
+      "mode": "subagent",
+      "description": "Sovereign Master Researcher — Polymathic Council for deep research, dialectic synthesis, and knowledge base curation",
       "instructions": [
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/researcher.md"
       ]
     },
     "kali": {
-      "mode": "primary",
+      "mode": "all",
+      "description": "Grand Oversight — Sees all, delegates to Ma'at/Lilith, destroys drift",
       "instructions": [
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/kali.md"
       ]
     },
     "maat": {
-      "mode": "primary",
+      "mode": "all",
+      "description": "Light Oversoul — Governs P1-P5 (build side), delegates to pillar",
       "instructions": [
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/maat.md"
       ]
     },
     "lilith": {
-      "mode": "primary",
+      "mode": "all",
+      "description": "Dark Oversoul — Governs P6-P10 (run side), delegates to pillar",
       "instructions": [
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/lilith.md"
       ]
     },
     "scribe": {
       "mode": "subagent",
+      "description": "Gnosis Keeper — L1→L2→L3 distillation",
       "instructions": [
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/scribe.md"
       ]
     },
     "quality": {
-      "mode": "subagent",
+      "mode": "all",
+      "description": "Code Review & Stress Testing — mandate compliance and chaos engineering",
       "instructions": [
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/quality.md"
       ]
     },
     "pillar": {
-      "mode": "subagent",
+      "mode": "all",
+      "description": "Slot-based domain agent — parameterized by --slot PX for any Pillar domain",
       "instructions": [
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/pillar.md"
+      ]
+    },
+    "john_carmack": {
+      "mode": "all",
+      "description": "Ultimate Technical Consultant — id Software heritage, systems architecture, sovereign engineering",
+      "instructions": [
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/john_carmack.md",
+        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/CREDITS.md"
       ]
     }
   }

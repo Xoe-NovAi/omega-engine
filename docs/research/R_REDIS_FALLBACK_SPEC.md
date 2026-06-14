@@ -1,6 +1,9 @@
 # 🔱 R&D Alpha: Redis Session Store & Graceful Fallback (Hardened v2)
 # ⬡ OMEGA ⬡ JEM-2.0 ⬡ research ⬡ trc_redis_spec_v2 ⬡ PHASE-E
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ## §0 Objective
 Transition the Omega Engine's session management from a fragile, filesystem-dependent model to a resilient, memory-first architecture using Redis, ensuring zero-crash operation via a multi-tier fallback chain, atomic state transitions, and disaster recovery patterns.
 

@@ -29,8 +29,9 @@ import threading
 import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-import yaml
 import anyio
+import yaml
+from omega.cvar_table import cvar_get
 from omega.oracle.soul_validator import SoulValidator
 
 def block_style_representer(dumper, data):
@@ -210,7 +211,38 @@ class EntityWorkspaceManager:
         return workspace_dir
 
     @staticmethod
+    def _get_current_horizon() -> str:
+        """Extract the current strategic horizon from the Sovereign Evolution Roadmap."""
+        roadmap_path = BASE_DIR / "docs" / "strategy" / "SOVEREIGN_EVOLUTION_ROADMAP.md"
+        try:
+            if roadmap_path.exists():
+                with open(roadmap_path, "r") as f:
+                    for line in f:
+                        if "HERE →" in line:
+                            # Extract the horizon name (e.g., 'HORIZON 2: HYGIENE & STR.')
+                            return line.split("────")[0].strip()
+        except Exception as e:
+            logger.warning(f"Failed to read roadmap for horizon: {e}")
+        return "Unknown Horizon"
+
+    @staticmethod
+    def _get_active_brakes() -> str:
+        """Retrieve active sovereign brakes from the coordination registry."""
+        brakes_path = BASE_DIR / "data" / "coordination" / "SOVEREIGN_BRAKES.yaml"
+        try:
+            if brakes_path.exists():
+                with open(brakes_path, "r") as f:
+                    data = yaml.safe_load(f)
+                    brakes = data.get("brakes", [])
+                    if brakes:
+                        return "\n".join([f"- {b['status']} {b['description']}" for b in brakes])
+        except Exception as e:
+            logger.warning(f"Failed to read sovereign brakes: {e}")
+        return "No active brakes reported."
+
+    @staticmethod
     async def get_soul_prompt(name: str, mission: Optional[str] = None) -> str:
+
         """Load an entity's soul.yaml and format it as a Situated Identity system prompt.
         
         Implements the Situated Identity Framework to eliminate Instructional Entropy by 
@@ -246,6 +278,7 @@ class EntityWorkspaceManager:
         if wardrobe:
             soul_section += f"\n- Identity Anchors: {', '.join(wardrobe)}"
         
+        # [id-soft: M2-LEAK] — formerly hardcoded "arcana_novai", remediated to cvar_get dynamic lookup
         # Sovereign Firewall (Mandates)
         mandates_path = BASE_DIR / "SOVEREIGN_MANDATES.md"
         if mandates_path.exists():
@@ -278,18 +311,19 @@ class EntityWorkspaceManager:
         env_section = (
             "🌍 THE ENVIRONMENT (Where):\n"
             "- Engine Version: 2.2.0\n"
-            "- Active IWAD: arcana_novai\n"
-            "- Strategic Horizon: Horizon 2: Hygiene (Focus: Data Hygiene & Firewall Restoration)"
+            f"- Active IWAD: {cvar_get('config.entity.active_iwad', '_omega_default')}\n"  # [id-soft: M2-LEAK] — was hardcoded 'arcana_novai', now dynamic via cvar_get
+            f"- Strategic Horizon: {EntityWorkspaceManager._get_current_horizon()}"
         )
-
+        
         # -------------------------------------------------------------------------
         # ⚙️ THE STATE (What): Systemic Health & Sovereign Brakes
         # -------------------------------------------------------------------------
         state_section = (
             "⚙️ THE STATE (What):\n"
             "- Systemic Health: 308/308 Tests Passing ✅\n"
-            "- Active Sovereign Brakes: 🔴 M2 Engine-Stack Firewall Gap (S1.5a Pending)"
+            f"- Active Sovereign Brakes:\n{EntityWorkspaceManager._get_active_brakes()}"
         )
+
 
         # -------------------------------------------------------------------------
         # 🎯 THE MISSION (Why): Immediate Objective

@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Sovereign Aura Injection Specification
 # ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_arch ⬡ AURA-INJECTION
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-AURA-INJECTION-v1.0.0`
 **Status**: DESIGN-READY
 **Last Updated**: 2026-05-16

@@ -1,5 +1,8 @@
 # 📂 Cline Integration – Jem Custom Mode
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ## Purpose
 Provide the Cline VS Code extension with the information it needs to load the **Jem Custom Mode** plugin and to use **DeepSeek V4 Flash** as the default inference backend for Jem‑mode sessions within the **MaKaLi governance hierarchy** (Kali→Ma'at→Lilith) and the **Dynamic Inference Protocol** (`docs/gnosis/Omega_Architectural_Sync.md`).
 

@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Generic Archetype Final Prompts
 # ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_prompts ⬡ ARCHETYPE-FINAL
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-ARCHETYPE-PROMPTS-v1.0.0`
 **Status**: PRODUCTION-READY
 **Last Updated**: 2026-05-16

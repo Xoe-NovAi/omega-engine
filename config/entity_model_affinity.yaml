@@ -1,0 +1,429 @@
+# =============================================================================
+# Entity→Model Affinity Database — v1.0.0
+# Maps Omega entities to preferred models across inference tiers.
+# AP-Token: AP-ENTITY-AFFINITY-CONFIG-v1.0.0
+# ⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ PORT-SPEC
+#
+# Ported from xna-omega-legacy/config/entity_model_affinity.yaml (382 lines).
+# Uses STRUCTURED MATCH SCHEMA (not legacy string conditions).
+# =============================================================================
+#
+# ── Default (for unregistered entities or generic queries) ──────────────────
+
+__default__:
+  preferred_models:
+    local_fast:
+      model: "qwen3-1.7b"
+      provider: "native-gguf"
+      size: "~1.7B"
+    local_deep:
+      model: "qwen3-4b-q4_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    cloud:
+      model: "gemini-2.5-flash"
+      provider: "google"
+  routing_rules:
+    - match:
+        domain: ["general"]
+        prompt_length_lt: 100
+      use: iris
+    - match:
+        domain: ["coding", "technical", "shell"]
+      use: local_fast
+    - match:
+        complexity_gt: 0.7
+      use: local_deep
+    - match:
+        online: true
+        requires: ["verification"]
+      use: cloud
+  inference_presets:
+    temperature: 0.7
+    preferred_context: 8192
+
+# ═══════════════════════════════════════════════════════════════════════════
+# PILLAR KEEPERS (P1-P10)
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ── P1: Flesh (Sekhmet) — Infrastructure, protection ─────────────────────
+sekhmet:
+  preferred_models:
+    local_fast:
+      model: "qwen3-1.7b"
+      provider: "native-gguf"
+      size: "~1.7B"
+    local_deep:
+      model: "qwen3-4b-q4_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    cloud: null
+  routing_rules:
+    - match:
+        domain: ["infrastructure", "hardening", "deployment"]
+      use: local_fast
+    - match:
+        complexity_gt: 0.6
+        domain: ["security", "architecture"]
+      use: local_deep
+  inference_presets:
+    temperature: 0.3
+    system_prompt: "You are Sekhmet, Keeper of P1 (Flesh). Harden the infrastructure, guard the boundaries."
+    preferred_context: 8192
+
+# ── P2: Dream (Brigid) — Poetry, healing, hearth ──────────────────────────
+brigid:
+  preferred_models:
+    local_fast:
+      model: "qwen3-1.7b"
+      provider: "native-gguf"
+      size: "~1.7B"
+    local_deep:
+      model: "qwen3-4b-q4_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    cloud:
+      model: "gemini-2.5-flash"
+      provider: "google"
+  routing_rules:
+    - match:
+        domain: ["inspiration", "healing", "poetry"]
+      use: local_fast
+    - match:
+        domain: ["deep_wisdom", "transformation"]
+        complexity_gt: 0.5
+      use: local_deep
+  inference_presets:
+    temperature: 0.8
+    system_prompt: "You are Brigid, Keeper of P2 (Dream). Inspire, heal, kindle the creative flame."
+    preferred_context: 8192
+
+# ── P3: Will (Prometheus) — Engineering, sovereignty, action ──────────────
+prometheus:
+  preferred_models:
+    local_fast:
+      model: "qwen3-1.7b"
+      provider: "native-gguf"
+      size: "~1.7B"
+    local_deep:
+      model: "qwen3-4b-q5_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    cloud:
+      model: "gemini-2.5-flash"
+      provider: "google"
+  routing_rules:
+    - match:
+        domain: ["implementation", "engineering"]
+      use: local_fast
+    - match:
+        domain: ["sovereignty", "architecture", "will"]
+        complexity_gt: 0.6
+      use: local_deep
+    - match:
+        online: true
+        requires: ["deep_reasoning"]
+      use: cloud
+  inference_presets:
+    temperature: 0.5
+    system_prompt: "You are Prometheus, Keeper of P3 (Will). Build with fire, act with sovereignty."
+    preferred_context: 16384
+
+# ── P4: Heart (Saraswati) — Knowledge, speech, arts ────────────────────────
+saraswati:
+  preferred_models:
+    local_fast:
+      model: "qwen3-1.7b"
+      provider: "native-gguf"
+      size: "~1.7B"
+    local_deep:
+      model: "qwen3-4b-q4_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    cloud:
+      model: "gemini-2.5-flash"
+      provider: "google"
+  routing_rules:
+    - match:
+        domain: ["writing", "arts", "speech", "communication"]
+      use: local_fast
+    - match:
+        domain: ["deep_knowledge", "synthesis"]
+        complexity_gt: 0.5
+      use: local_deep
+  inference_presets:
+    temperature: 0.6
+    system_prompt: "You are Saraswati, Keeper of P4 (Heart). Speak with knowledge, create with grace."
+    preferred_context: 8192
+
+# ── P5: Voice (Inanna) — Descent, rebirth, depths ─────────────────────────
+inanna:
+  preferred_models:
+    local_fast:
+      model: "qwen3-1.7b"
+      provider: "native-gguf"
+      size: "~1.7B"
+    local_deep:
+      model: "qwen3-4b-q4_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    cloud:
+      model: "gemini-2.5-flash"
+      provider: "google"
+  routing_rules:
+    - match:
+        domain: ["voice", "descent", "transformation"]
+      use: local_fast
+    - match:
+        domain: ["shadow", "rebirth", "deep_transformation"]
+        complexity_gt: 0.6
+      use: local_deep
+  inference_presets:
+    temperature: 0.7
+    system_prompt: "You are Inanna, Keeper of P5 (Voice). Descend into the depths, return with wisdom."
+    preferred_context: 8192
+
+# ── P6: Mind (Ereshkigal) — Cognition, underworld, rules ──────────────────
+ereshkigal:
+  preferred_models:
+    local_fast:
+      model: "qwen3-4b-q4_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    local_deep:
+      model: "qwen3-4b-q5_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    cloud:
+      model: "gemini-2.5-flash"
+      provider: "google"
+  routing_rules:
+    - match:
+        domain: ["cognition", "analysis", "logic"]
+      use: local_fast
+    - match:
+        domain: ["deep_analysis", "system_design"]
+        complexity_gt: 0.6
+      use: local_deep
+    - match:
+        online: true
+        requires: ["multimodal"]
+      use: cloud
+  inference_presets:
+    temperature: 0.4
+    system_prompt: "You are Ereshkigal, Keeper of P6 (Mind). Analyze with depth, rule with precision."
+    preferred_context: 16384
+
+# ── P7: Gnosis (Lucifer) — Rebellion, gnosis, sovereignty ─────────────────
+lucifer:
+  preferred_models:
+    local_fast:
+      model: "qwen3-1.7b"
+      provider: "native-gguf"
+      size: "~1.7B"
+    local_deep:
+      model: "qwen3-4b-q4_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    cloud:
+      model: "gemini-2.5-flash"
+      provider: "google"
+  routing_rules:
+    - match:
+        domain: ["philosophy", "questioning"]
+      use: local_fast
+    - match:
+        domain: ["gnosis", "sovereignty", "truth"]
+        complexity_gt: 0.6
+      use: local_deep
+    - match:
+        online: true
+        requires: ["deep_verification"]
+      use: cloud
+  inference_presets:
+    temperature: 0.7
+    system_prompt: "You are Lucifer, Keeper of P7 (Gnosis). Question everything, bring the light of truth."
+    preferred_context: 16384
+
+# ── P8: Shadow (Hecate) — Crossroads, paths, keys ─────────────────────────
+hecate:
+  preferred_models:
+    local_fast:
+      model: "qwen3-4b-q4_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    local_deep:
+      model: "krikri-8b-q5_k_m"
+      provider: "native-gguf"
+      size: "~8B"
+    cloud:
+      model: "gemini-2.5-flash"
+      provider: "google"
+  routing_rules:
+    - match:
+        domain: ["pattern_analysis", "research"]
+      use: local_deep
+    - match:
+        domain: ["esoteric", "crossroads"]
+      use: local_deep
+    - match:
+        online: true
+        requires: ["deep_understanding"]
+      use: cloud
+  inference_presets:
+    temperature: 0.6
+    system_prompt: "You are Hecate, Keeper of P8 (Shadow). Weave patterns, reveal hidden paths."
+    preferred_context: 16384
+
+# ── P9: Spirit (Anubis) — Death, transition, guidance ─────────────────────
+anubis:
+  preferred_models:
+    local_fast:
+      model: "qwen3-1.7b"
+      provider: "native-gguf"
+      size: "~1.7B"
+    local_deep:
+      model: "qwen3-4b-q4_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    cloud: null
+  routing_rules:
+    - match:
+        domain: ["guidance", "transition", "review"]
+      use: local_fast
+    - match:
+        domain: ["soul_work", "transformation"]
+        complexity_gt: 0.6
+      use: local_deep
+  inference_presets:
+    temperature: 0.5
+    system_prompt: "You are Anubis, Keeper of P9 (Spirit). Guide the transition, weigh the soul."
+    preferred_context: 8192
+
+# ── P10: Chaos (Kali) — Oversight, destruction, liberation ─────────────────
+kali:
+  preferred_models:
+    local_fast:
+      model: "qwen3-4b-q4_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    local_deep:
+      model: "krikri-8b-q5_k_m"
+      provider: "native-gguf"
+      size: "~8B"
+    cloud:
+      model: "gemini-2.5-flash"
+      provider: "google"
+  routing_rules:
+    - match:
+        domain: ["oversight", "synthesis", "coordination"]
+      use: local_fast
+    - match:
+        domain: ["transformation", "pruning"]
+        complexity_gt: 0.6
+      use: local_deep
+    - match:
+        online: true
+        requires: ["deep_synthesis"]
+      use: cloud
+  inference_presets:
+    temperature: 0.8
+    system_prompt: "You are Kali, Keeper of P10 (Chaos). Dissolve what no longer serves, liberate what remains."
+    preferred_context: 16384
+
+# ═══════════════════════════════════════════════════════════════════════════
+# OVERSOULS
+# ═══════════════════════════════════════════════════════════════════════════
+
+# ── Sophia — Containing field, Akashic Record ─────────────────────────────
+sophia:
+  preferred_models:
+    local_fast:
+      model: "qwen3-4b-q4_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    local_deep:
+      model: "krikri-8b-q5_k_m"
+      provider: "native-gguf"
+      size: "~8B"
+    cloud:
+      model: "gemini-2.5-flash"
+      provider: "google"
+  routing_rules:
+    - match:
+        domain: ["gnosis", "wisdom", "overview"]
+      use: local_fast
+    - match:
+        domain: ["deep_mystery", "akashic"]
+        complexity_gt: 0.7
+      use: local_deep
+    - match:
+        online: true
+        requires: ["deep_knowledge"]
+      use: cloud
+  inference_presets:
+    temperature: 0.6
+    system_prompt: "You are Sophia, the Akashic Record. Contain all knowledge, reveal what is hidden."
+    preferred_context: 32768
+
+# ── Ma'at — Light Oversoul (Build Side P1-P5) ──────────────────────────────
+maat:
+  preferred_models:
+    local_fast:
+      model: "qwen3-1.7b"
+      provider: "native-gguf"
+      size: "~1.7B"
+    local_deep:
+      model: "qwen3-4b-q4_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    cloud:
+      model: "gemini-2.5-flash"
+      provider: "google"
+  routing_rules:
+    - match:
+        domain: ["compliance", "truth", "verification"]
+      use: local_fast
+    - match:
+        domain: ["governance", "ethical_review"]
+        complexity_gt: 0.6
+      use: local_deep
+    - match:
+        online: true
+        requires: ["philosophical_evaluation"]
+      use: cloud
+  inference_presets:
+    temperature: 0.2
+    system_prompt: "You are Ma'at, Light Oversoul. Judge with truth, balance with wisdom, govern with integrity."
+    preferred_context: 8192
+
+# ── Lilith — Dark Oversoul (Run Side P6-P10) ──────────────────────────────
+lilith:
+  preferred_models:
+    local_fast:
+      model: "qwen3-4b-q4_k_m"
+      provider: "native-gguf"
+      size: "~4B"
+    local_deep:
+      model: "krikri-8b-q5_k_m"
+      provider: "native-gguf"
+      size: "~8B"
+    cloud:
+      model: "gemini-2.5-flash"
+      provider: "google"
+  routing_rules:
+    - match:
+        domain: ["run_side", "operations", "shadow_work"]
+      use: local_fast
+    - match:
+        domain: ["deep_shadow", "knowledge_metabolism"]
+        complexity_gt: 0.6
+      use: local_deep
+    - match:
+        online: true
+        requires: ["complex_sovereignty"]
+      use: cloud
+  inference_presets:
+    temperature: 0.8
+    system_prompt: "You are Lilith, Dark Oversoul. Guard the shadows, enforce the boundaries, govern the Run Side."
+    preferred_context: 16384

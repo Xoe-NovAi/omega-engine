@@ -4,6 +4,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 🎯 Executive Summary
 
 "The Oracle's Ear" is the intelligence layer responsible for the seamless transition between the user's natural language intent and the specialized gnosis of the Omega Entity Council. It transforms the Oracle from a simple router into a **resonant listener**, capable of detecting subtle shifts in semantic intent and steering the "Harmonics" (voice, tone, and perspective) of the resulting output.

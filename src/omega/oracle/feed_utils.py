@@ -14,7 +14,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from omega.cvar_table import ZONEID_KNOWLEDGE, ZONEID_DEMAND
+from omega.cvar_table import ZONEID_KNOWLEDGE, ZONEID_DEMAND, cvar_get
 
 logger = logging.getLogger(__name__)
 
@@ -239,7 +239,7 @@ def transition_demand(
 
 def _agent_matches(agent: str, signal: Dict[str, Any]) -> bool:
     """Check if an agent matches a signal's relevance tags."""
-    if agent == "kali":
+    if agent == cvar_get("config.entity.default", "default"):
         return True
     tags = [t.lower() for t in signal.get("relevance_tags", [])]
     return agent.lower() in tags

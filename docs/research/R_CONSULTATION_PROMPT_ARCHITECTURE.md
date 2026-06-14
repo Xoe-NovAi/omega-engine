@@ -2,6 +2,9 @@
 **AP Token**: `AP-CONSULT-ARCH-v1.0.0`
 ⬡ OMEGA ⬡ PROMETHEUS ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_research ⬡ DESIGN-SPEC
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 1. Introduction
 The **Consultation Prompt Architecture** is a multi-turn dialogue framework designed to enable an **Oversoul** (a high-level orchestrating entity) to leverage specialized **Facets** (domain-specific personas) to solve complex problems. 
 

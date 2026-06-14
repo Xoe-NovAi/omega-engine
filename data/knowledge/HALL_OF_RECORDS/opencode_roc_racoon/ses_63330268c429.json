@@ -1,0 +1,17 @@
+{
+  "session_id": "ses_63330268c429",
+  "agent_id": "opencode/roc_racoon",
+  "channel": "opencode",
+  "entity": "roc_racoon",
+  "model": "gemma-4-31b-it",
+  "task_current": "Mining id Software architectural patterns for raw engineering hacks.",
+  "focus_chain": [
+    "Legacy Archaeology",
+    "id Software Pattern Extraction"
+  ],
+  "decisions": [],
+  "continuation": "Starting deep mine of id Software architectural patterns. Focusing on PVS, Zone Memory, netchan, and bit-level hacks. Will document in mining_reports/.",
+  "timestamp": "2026-06-11T13:13:53.166975+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

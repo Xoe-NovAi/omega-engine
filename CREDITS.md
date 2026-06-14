@@ -566,19 +566,79 @@ Both fixes are documented in `data/handoff/DOOM_GUY_T23_REPORT_20260602.md`.
 
 ---
 
-### 1.28 Sovereign-Symmetry (Quake III, 1999)
+### 1.29 "In-Flight" Pipeline (Quake, 1996)
 | Aspect | id Software Original | Omega Engine Adaptation |
 |--------|--------------------|------------------------|
-| **Origin** | `g_local.h` (Q3A 1999) — local-first primary | Dual-Inference Mandate (D118) |
-| **Core idea** | Local-first primary with cloud-fallback safety net | `native-gguf` $\rightarrow$ `Google` $\rightarrow$ `OpenCode` provider chain |
-| **Omega evolution** | Local rendering $\rightarrow$ Local inference | Mandate 7 (Local-First) |
-| **Status** | MAPPED | Provider Fabric implementation |
+| **Origin** | Michael Abrash — Quake renderer overlap | Speculative Context Hydration |
+| **Core idea** | Overlap slow FPU operations with fast integer drawing | Overlap prompt construction with model inference |
+| **Omega evolution** | Instruction pipelining $\rightarrow$ cognitive pipelining | Prefetching next-turn context while current token is generated |
+| **Status** | PROPOSED |-
 
-**Attribution format**: `[Sovereign-Symmetry: id Software 1999]`
+**Attribution format**: `[In-Flight Pipeline: id Software 1996]`
 
 ---
 
-*Last Updated: 2026-06-08 (added §2 User's Own Technology) | Maintained by: Kali / Doom Guy*
+### 1.30 Branch Collapse (Quake, 1996)
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | Jump tables for span boundaries | Flat-Map Intent Dispatch |
+| **Core idea** | Direct jump to label instead of if/else chain | IntentID $\rightarrow$ Handler mapping |
+| **Omega evolution** | Branch prediction optimization $\rightarrow$ routing simplification | O(1) dispatch for entity/intent routing |
+| **Status** | PROPOSED |-
+
+**Attribution format**: `[Branch Collapse: id Software 1996]`
+
+---
+
+### 1.31 Symmetric Range Guard (Quake, 1996)
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | Unsigned comparison (`ja`) for signed ranges | Symmetric Constraint Validation |
+| **Core idea** | Test high and low boundaries in one instruction | Collapsing multiple boundary checks into single primitives |
+| **Omega evolution** | CPU cycle saving $\rightarrow$ validation gate efficiency | High-frequency trait/parameter guarding |
+| **Status** | PROPOSED |-
+
+**Attribution format**: `[Symmetric Guard: id Software 1996]`
+
+---
+
+### 1.32 Sovereign Job-Worker Queue (Doom 3 BFG, 2012)
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | `ParalleleJobManager` / Worker threads | Atomic Cognitive Jobs |
+| **Core idea** | Decompose tasks into jobs (1k-100k cycles) for load balance | Decompose research into atomic tasks with token budgets |
+| **Omega evolution** | Thread scheduling $\rightarrow$ agent orchestration | Load balancing across local/cloud provider fabric |
+| **Status** | PROPOSED |-
+
+**Attribution format**: `[Job-Worker Queue: id Software 2012]`
+
+---
+
+### 1.33 Specialized Prompt Baking (Quake, 1996)
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | Self-modifying code for colormap bases | Persona-Fused System Prompts |
+| **Core idea** | Bake constants into instruction stream at runtime | Fuse soul principles into task-specific system prompts |
+| **Omega evolution** | Register lookup avoidance $\rightarrow$ context window optimization | Reducing persona drift via prompt specialization |
+| **Status** | PROPOSED |-
+
+**Attribution format**: `[Prompt Baking: id Software 1996]`
+
+---
+
+### 1.34 Knowledge Leak Detection (Doom 3, 2004)
+| Aspect | id Software Original | Omega Engine Adaptation |
+|--------|--------------------|------------------------|
+| **Origin** | Flood-fill for map leak detection | Gnosis Leak Detection |
+| **Core idea** | Find where internal space touches the void | Find where semantic logic is inconsistent or "leaks" |
+| **Omega evolution** | Geometry validation $\rightarrow$ semantic validation | Automated blind-spot discovery in soul.yaml |
+| **Status** | PROPOSED |-
+
+**Attribution format**: `[Knowledge Leak Detection: id Software 2004]`
+
+---
+
+*Last Updated: 2026-06-11 (added Heritage Deep Dive findings) | Maintained by: Kali / Doom Guy*
 
 ---
 

@@ -5,6 +5,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 🏛️ The "Lost" Concepts
 
 ### 1. The Jem / Gemini Oversoul

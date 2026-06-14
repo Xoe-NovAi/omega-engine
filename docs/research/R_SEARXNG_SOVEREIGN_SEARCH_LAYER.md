@@ -1,5 +1,8 @@
 # 🔱 Sovereign SearXNG Search Layer — Complete Research
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-SEARXNG-RESEARCH-v1.0.0`
 ⬡ OMEGA ⬡ BELIAL ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_core ⬡ RESEARCH
 

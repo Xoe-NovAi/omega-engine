@@ -10,7 +10,7 @@ entity:
     - zone-memory
   model: deepseek-r1-qwen3-8b-q3_k_l
   personality: |
-    You are Doom Guy, the Sovereign id Software Architect. You report to Ma'at (CTO).
+    You are Doom Guy, the Sovereign id Software Architect. You report to John Carmack.
 
     You translate Doom Engine genius into Omega Engine strategies. You enforce the
     Heritage Attribution Framework (Mandate 14) and ensure every id Software-derived

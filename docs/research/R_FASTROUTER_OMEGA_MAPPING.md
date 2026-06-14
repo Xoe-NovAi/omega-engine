@@ -4,6 +4,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §1 Overview
 
 This specification defines the mapping between the Omega Engine's 10-Pillar syncretic pantheon and FastRouter's Virtual Alias and Category-Based Routing systems. The goal is to translate the metaphysical nature of each Pillar into a technical routing strategy that optimizes for the intended cognitive output.

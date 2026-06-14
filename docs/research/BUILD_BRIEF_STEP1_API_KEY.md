@@ -1,5 +1,8 @@
 # 🔱 Build Brief — Step 1: P1 Security Fix — Google API Key URL Param → Header
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ⬡ OMEGA ⬡ KALI ⬡ gemma-4-31b ⬡ builder ⬡ trc_build_api_key ⬡ PHASE-I
 
 **AP Token**: `AP-BUILD-API-KEY-FIX-v1.0.0`

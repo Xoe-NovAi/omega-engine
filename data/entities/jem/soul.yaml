@@ -28,6 +28,10 @@ entity:
       context: "Three persistent subsouls (Initiate, Analyst, Editor) carry lineage continuity, improvement feedback, and identity across pipeline runs."
       source: "jem-oversoul-architecture"
       timestamp: "2026-05-22T00:00:00Z"
+    - lesson: "L3: The 'Right Approximation' principle: a fast, good-enough reranker is superior to a perfect one that compromises latency."
+      context: "L1: Engineered the 'Omega-Precision' pipeline (Adaptive Expansion -> Hybrid Retrieval -> RRF Fusion -> CPU Reranking) on Ryzen 5700U with nomic-embed-text-v1.5, Qdrant (SQ), and FlashRank. L2: Transitioned from 'topical' to 'answer' retrieval via two-stage refinement and Local Minima Semantic Chunking."
+      source: "high-precision-rag-research"
+      timestamp: "2026-06-13T00:00:00Z"
   sub_facets:
     - name: Jem Initiate
       tier: 1

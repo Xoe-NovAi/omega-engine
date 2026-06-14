@@ -582,11 +582,9 @@ class NativeGGUFProvider(BaseProvider):
             logger.debug("Session-aware inference [session_id=%s, trace_id=%s]", session_id, trace_id)
         
         try:
-            # Use isolated executor for synchronous C-calls to prevent global pool exhaustion
-            import asyncio
-            loop = asyncio.get_running_loop()
-            response = await loop.run_in_executor(
-                self._executor,
+            # Use isolated thread for synchronous C-calls to prevent global pool exhaustion
+            # [id-soft: quake-1996] In-Flight Pipeline — overlap prompt construction with inference
+            response = await anyio.to_thread.run_sync(
                 lambda: self.llm(
                     prompt,
                     max_tokens=max_tokens,

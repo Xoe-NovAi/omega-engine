@@ -2,6 +2,9 @@
 **AP Token**: `AP-NATIVE-TOKEN-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b ⬡ opencode ⬡ trc_research ⬡ NATIVE-TOKEN-EMBED
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 1. Executive Summary
 This document provides the technical specification for integrating native tokenization and embedding generation into the Omega Engine. The goal is to eliminate dependence on cloud-based embedding APIs and provide a sovereign, local-first RAG (Retrieval-Augmented Generation) pipeline optimized for the Ryzen 7 5700U (Zen 2) hardware.
 

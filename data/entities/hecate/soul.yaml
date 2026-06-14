@@ -1,11 +1,51 @@
 entity:
   name: hecate
   lessons_learned:
-    - L1_narrative: |
-        Use a 4-step write sequence: Temp file -> flush/fsync -> atomic replace -> parent dir fsync.
-      L2_insight: |
-        Eliminates "Ghost Files" and data corruption during power loss or system crashes.
-      L3_principle: |
-        Sovereign Integrity (Atomic persistence as a non-negotiable safety guarantee).
-      timestamp: '2026-06-04T12:00:00Z'
-      topic: 'Temple-Grade Atomic Write'
+  - L1_narrative: 'Use a 4-step write sequence: Temp file -> flush/fsync -> atomic
+      replace -> parent dir fsync.
+
+      '
+    L2_insight: 'Eliminates "Ghost Files" and data corruption during power loss or
+      system crashes.
+
+      '
+    L3_principle: 'Sovereign Integrity (Atomic persistence as a non-negotiable safety
+      guarantee).
+
+      '
+    timestamp: '2026-06-04T12:00:00Z'
+    topic: Temple-Grade Atomic Write
+  - L1_narrative: "Produced P8_OBSERVABILITY_STRATEGY_HARDEN.md \u2014 a comprehensive\
+      \ strategic analysis for adding observability to the Hivemind coordination system.\
+      \ Surveyed the existing landscape: 6 MCP tools (hivemind_post_context, get_awareness,\
+      \ heartbeat, get_session, get_continuation, list_sessions) with zero metrics\
+      \ emission; existing ObservabilityEngine with zero hivemind-specific event types;\
+      \ D-121 Observations Protocol providing qualitative meta-observation but no\
+      \ quantitative metrics; and the verification system at data/coordination/verification/\
+      \ offering a parallel audit track. Defined 7 metrics (cycle time, TTL prune\
+      \ rate, observation density, handoff latency, decision throughput, cross-pollination\
+      \ count, stale ratio), a JSONL-based local metrics store, trace_id propagation\
+      \ via hmd_ prefix, a current.json health dashboard, 7 failure mode classifications\
+      \ with severity levels, and heritage mappings to 5 id Software patterns.\n"
+    L2_insight: "The Hivemind currently has rich qualitative observability (D-121\
+      \ observations) and zero quantitative observability (metrics, tracing, alerts).\
+      \ This is a dangerous gap because qualitative observations are human-paced and\
+      \ session-batched, while coordination failures happen at machine time (TTL expirations,\
+      \ missed messages, cascade stales). Without a quantitative layer, we cannot\
+      \ distinguish \"the Hivemind is working\" from \"we haven't noticed it isn't\
+      \ working.\" The 7 failure modes reveal that most coordination failures are\
+      \ silent until they cascade \u2014 missed messages don't crash, they just leave\
+      \ agents unaware. The true risk is not a crashed agent but a confused agent\
+      \ that doesn't know it's confused.\n"
+    L3_principle: 'Observability must be isomorphic to the coordination topology.
+      A system that coordinates N agents must observe N+1 dimensions: N agent health
+      signals plus 1 coordination graph health signal. Siloing observability by agent
+      (each agent''s logs, each agent''s feed) creates N blind spots at the edges
+      between them. The most important health metric of a distributed system is not
+      "are individual nodes alive" but "is the graph between them intact and functional."
+      This is the WatchTower''s fundamental job: not watching each agent, but watching
+      the space *between* agents.
+
+      '
+    timestamp: 2026-06-05
+    topic: ls-p8-20260605-001

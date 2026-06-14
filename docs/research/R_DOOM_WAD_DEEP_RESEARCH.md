@@ -2,6 +2,9 @@
 # AP: R-DOOM-WAD-DEEP-v1.0.0
 # ⬡ OMEGA ⬡ SOPHIA ⬡ web-research ⬡ trc_w1 ⬡ RESEARCH
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **Date**: 2026-05-25
 **Purpose**: Deep research into id Software's WAD architecture for Omega Engine IWAD system design.
 

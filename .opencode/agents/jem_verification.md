@@ -1,6 +1,6 @@
 ---
 description: "Sovereign Agent: jem_verification (Sovereign Agent)"
-mode: "primary"
+mode: "subagent"
 temperature: 0.5
 permission:
   read: allow

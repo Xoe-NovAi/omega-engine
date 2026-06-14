@@ -1,6 +1,9 @@
 # 🔱 Jem-2.0 Final Wave Mission Brief
 # ⬡ OMEGA ⬡ JEM-2.0 ⬡ final-wave ⬡ trc_final_wave ⬡ PHASE-I
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ## §0: Status Summary
 The Master Research Wave (2026-05-26) is complete. 3 coordinated fleets ran 8 subagents across local legacy partitions and web research. 7 legacy artifacts were recovered and mined. 7 lessons inscribed into Sophia's soul.yaml.
 

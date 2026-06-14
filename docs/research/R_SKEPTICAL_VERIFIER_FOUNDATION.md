@@ -1,3 +1,5 @@
+# ⚠️ SUPERSEDED — See Deepened Version
+
 # R-SKEPTICAL-VERIFIER-FOUNDATION: NLI and the Two-Source Rule
 
 **Status**: FOUNDATIONAL RESEARCH

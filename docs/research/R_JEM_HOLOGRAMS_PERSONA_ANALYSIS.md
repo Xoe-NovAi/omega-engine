@@ -1,4 +1,7 @@
 # 🔱 Jem and The Holograms Persona Analysis
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## Character Inspiration & AI Design Architecture
 
 **AP Token**: `AP-JEM-ANALYSIS-v1.0.0`

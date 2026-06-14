@@ -2,6 +2,9 @@
 # AP: R-CONTAINER-DIST-v1.0.0
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ web-research ⬡ trc_w4 ⬡ RESEARCH
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **Date**: 2026-05-25
 **Purpose**: Research distribution models for self-contained application packages (analogous to Omega Engine's .xoe format).
 

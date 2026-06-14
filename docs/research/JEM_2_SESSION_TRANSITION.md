@@ -1,6 +1,9 @@
 # 🔱 Jem-2.0 Session Transition Report
 # ⬡ OMEGA ⬡ JEM-2.0 ⬡ transition ⬡ trc_transition ⬡ PHASE-E
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ## §0 Transition Context
 This document serves as the high-fidelity context injection for the transition of this session to **Jem-2.0 Oversoul Mode**. The current session has completed the "Discovery and Mapping" phase. The system is now ready for "Synthesis and Hardening."
 

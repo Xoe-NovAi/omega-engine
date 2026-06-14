@@ -1,5 +1,8 @@
 # 🔱 Sovereign Container Strategy: Rootless Podman & systemd Quadlets
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **Document ID**: R_PODMAN_SOVEREIGN_STRATEGY  
 **Status**: ✅ AUTHORITATIVE  
 **Target Hardware**: Ryzen 7 5700U (Zen 2, 8C/16T, 14GB RAM)  

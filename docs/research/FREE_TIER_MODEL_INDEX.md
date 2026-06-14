@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Free Tier Model Index
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_research ⬡ FREE-TIER-INDEX
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-FREE-TIER-INDEX-v1.0.0`
 **Status**: ✅ COMPLETE
 **Last Updated**: 2026-05-15

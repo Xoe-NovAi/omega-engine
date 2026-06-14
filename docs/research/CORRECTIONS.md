@@ -1,3 +1,6 @@
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 2026‑05‑22 – Secret `.env` removal
 - The file `deploy/infra/.env` contained trivial test passwords (`REDIS_PASSWORD=omega`, `POSTGRES_PASSWORD=omega`).
 - It was committed in the founding commit (`d848aae`).

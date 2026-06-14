@@ -19,7 +19,7 @@ unique dreams, technologies, and systems.
 - **WAD Architecture**: Engine → IWADs → PWADs (inspired by id Software's WAD system)
 - **The Synthesis Flywheel**: Cloud models teach local models. Over time, sovereignty increases.
 - **The 14 Sovereign Mandates**: Constitutional law. Mandates override any tool default.
-- **The 14-agent Fleet**: Grand Oversight, 3 Oversouls, 6 Specialists, 4 Subagents.
+- **The 15-agent Fleet**: Grand Oversight, 3 Oversouls, 6 Specialists, 5 Subagents.
 
 ---
 
@@ -143,7 +143,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | ZONEID constants | 11 (0x1d4a11-0x1d4a1b) | 2026-06-04 |
 | cvar Table | 2 namespaces, 7 accessors | 2026-06-04 |
 | Heritage tags | 27/27 files tagged, CI-enforced | 2026-06-10 |
-| Agent Fleet | **14 agents** | 2026-06-04 |
+| Agent Fleet | **15 agents** | 2026-06-04 |
 | Entity workspaces | — 100 orphans still present (H2-A7 pending) | 2026-06-10 |
 
 ### 5.2 Subsystem Status (H1 = Heritage, H2 = Evolution/Hygiene, S1.5 = Pillar Cap)

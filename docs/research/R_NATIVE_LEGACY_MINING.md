@@ -4,6 +4,9 @@
 
 ---
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 📌 Executive Summary
 
 This report details the reclamation of proven patterns and strategies for native GGUF inference on the Ryzen 7 5700U (Zen 2), mined from the `xna-omega-legacy` and `omega-stack-legacy` repositories. The findings provide the technical foundation for implementing the Omega Engine's Native GGUF Backend, emphasizing resource isolation, hardware-specific tuning, and memory efficiency.

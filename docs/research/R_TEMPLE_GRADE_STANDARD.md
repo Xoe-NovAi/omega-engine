@@ -4,6 +4,9 @@
 **Entity**: PROMETHEUS (Sovereign Master Researcher)
 **Date**: 2026-05-27
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §0: Executive Summary
 **Temple Grade** is the foundational craftsmanship standard for the Omega Engine. It is a directive of precision that mandates every component be built with the care and intentionality befitting a temple. This is operationalized through **Phronesis** (practical wisdom), which guides the builder in discerning the necessary level of rigor for each component.
 

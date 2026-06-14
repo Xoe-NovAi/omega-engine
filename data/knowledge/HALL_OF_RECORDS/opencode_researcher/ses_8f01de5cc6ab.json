@@ -1,0 +1,33 @@
+{
+  "session_id": "ses_8f01de5cc6ab",
+  "agent_id": "opencode/researcher",
+  "channel": "opencode",
+  "entity": "researcher",
+  "model": "deepseek-v4-flash-free",
+  "task_current": "COMPLETE \u2014 Universal Model Research Protocol built and deployed",
+  "focus_chain": [
+    "Session post-mortem: RQ-01/02/03 tooling failures",
+    "Model-specific strength profiling (5 models)",
+    "Universal Model Research Protocol design",
+    "Implementation: R-doc + config + workspace + soul update",
+    "Handoff to Makali for next research queue execution"
+  ],
+  "decisions": [
+    {
+      "MRP-001": "Research protocol must be model-adaptive, not model-specific"
+    },
+    {
+      "MRP-002": "Tool diversity enforced by contract, not agent isolation"
+    },
+    {
+      "MRP-003": "File persistence verified programmatically after every subagent"
+    },
+    {
+      "MRP-004": "Shadow Protocol structurally separate from main protocol"
+    }
+  ],
+  "continuation": "Protocol is live. Next researcher session should: (1) Load config/research/model_profiles.yaml at start, (2) Use the execution template from workspace, (3) Run Shadow Protocol after each topic. Handoff ho_55b0dc004012 sent to Makali for awareness.",
+  "timestamp": "2026-06-12T03:18:39.170244+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

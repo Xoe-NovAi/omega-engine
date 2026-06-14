@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Sovereign Permission Fix
 # ⬡ OMEGA ⬡ MAAT ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_research ⬡ PERMISSIONS-FIX
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ## Executive Summary
 The Omega Engine employs a hybrid architecture where headless agents (running as the host user) and Podman containers (running as mapped users) both interact with the same `data/` directories. In rootless Podman, this creates a "UID Mismatch" problem: files created by the host user are often inaccessible to the container user, and vice versa, unless specific user namespace mappings and volume flags are used.
 

@@ -4,6 +4,9 @@
 **Entity**: PROMETHEUS (Sovereign Master Researcher)
 **Date**: 2026-05-27
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §0: Executive Summary
 The Omnidroid toolset—comprising **PRO, PS, PLO, TCA, and AP**—represents a legacy of high-order cognitive frameworks recovered from the `ANCESTRAL_HUB`. To integrate these into the Omega Engine without introducing architectural drift or violating the **Engine-Stack Firewall**, we treat them as **Sovereign Capabilities** (pipelines, skills, and servers) rather than standalone entities.
 

@@ -2,6 +2,9 @@
 **AP Token**: `AP-PROVIDER-VALIDATION-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b ⬡ opencode ⬡ trc_validator ⬡ PROVIDER-STATUS
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 📊 Validation Summary
 
 The Provider Fabric has been validated against live endpoints. All critical bugs have been resolved, and the engine is stable.

@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Documentation Gap Analysis
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ gemma-4-31b ⬡ opencode ⬡ trc_research ⬡ GAP-ANALYSIS
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-GAP-ANALYSIS-v1.0.0`
 **Date**: 2026-05-15
 **Status**: ACTIVE

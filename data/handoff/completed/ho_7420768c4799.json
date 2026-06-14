@@ -1,0 +1,14 @@
+{
+  "packet_id": "ho_7420768c4799",
+  "target_cli": "roc_racoon",
+  "source_cli": "cline-m3",
+  "task": "S2-B UVA Wiring. Wire the Unified Vector Abstraction to library_search. Scope (2.5 hours): (1) Check if Qdrant is running locally (port 6333). If NOT, write a stub adapter (MemoryVectorAdapter) that uses cosine similarity on in-memory vectors. The IVectorStoreAdapter pattern (vector_adapters.py:15) is already abstract. (2) Update library_search in src/omega/library/qdrant_index.py to call IVectorStoreAdapter.search() and merge with FTS5 BM25 via Reciprocal Rank Fusion. (3) Add scalar quantization config to config/omega.yaml (H2-S4 from roadmap). (4) Wire IVectorStoreAdapter into memory_store.py. (5) Write tests/test_qdrant_index.py with mocked Qdrant. (6) Update knowledge_catalog_build.py to use Qdrant for the manifest. (7) Cross-references: keep keyword paths, ADD vector-based similarity scoring. Dual-path, no breaking change. Run make test after each step. Report to Hivemind with intent=handoff when complete.",
+  "context": "Kali's S2 Sovereign Structure mandate. IVectorStoreAdapter and QdrantAdapter already exist. They are reference-only \u2014 not yet wired into library_search. If Qdrant is not running locally, use stub adapter. Embedding model: embeddinggemma-300m-q6_k per models.yaml (200MB). Your S2-A TDP work (Ma'at) will be the taint wrapper. S2-C (Antigravity) depends on your vector work. Current state: 320/320 tests pass baseline, 50 orphans quarantined. Architect has delegated all S2 decisions to Oversier.",
+  "priority": 2,
+  "status": "completed",
+  "submitted_at": "2026-06-09T10:08:16.667288+00:00",
+  "accepted_at": "2026-06-09T17:08:37.695303+00:00",
+  "accepted_by": "roc_racoon",
+  "completed_at": "2026-06-11T09:40:48.586658+00:00",
+  "result": "S2-B UVA Wiring COMPLETE. Implemented IVectorStoreAdapter for SovereignSearcher, integrated it into SovereignSearchService, and wired the service into the library_search MCP tool. Verified T0 and T3 retrieval pipelines via tests/verify_sovereign_search.py. All results wrapped in TaintedData."
+}

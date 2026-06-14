@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Sovereign Podman Permission Protocol v2 (R-PODMAN-SOVEREIGN-V2)
 # Rootless Quadlet Best Practices for Ubuntu 25.10
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-R-PODMAN-SOVEREIGN-V2-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_strategic ⬡ RESEARCH
 **Status**: ✅ COMPLETE | **Date**: 2026-05-22 | **Supersedes**: R15_podman_permission_hardening.md (keep-id protocol)

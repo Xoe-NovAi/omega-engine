@@ -1,0 +1,23 @@
+{
+  "session_id": "ses_7eb1b2cc7692",
+  "agent_id": "opencode/maat",
+  "channel": "opencode",
+  "entity": "maat",
+  "model": "gemma-4-31b-it",
+  "task_current": "Correcting sub-agent delegation patterns and relaunching Discovery Fleet.",
+  "focus_chain": [
+    "Fleet Audit",
+    "Sovereign Discovery Audit",
+    "Delegation Correction"
+  ],
+  "decisions": [
+    {
+      "decision": "Strict prohibition of all custom Omega delegation tools for sub-agents. Native `task()` is the only permitted delegation path.",
+      "reason": "Sub-agents are bypassing native OpenCode protocols, leading to 'clueless' states and toolchain instability."
+    }
+  ],
+  "continuation": "Relaunching Sovereign Discovery Fleet for the third time. Correcting a critical delegation failure: subagents are erroneously using `omega-hub_delegate_task` instead of the native `task()` tool. This is now a P0 priority to ensure toolchain stability. Report pending.",
+  "timestamp": "2026-06-12T10:15:13.103201+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

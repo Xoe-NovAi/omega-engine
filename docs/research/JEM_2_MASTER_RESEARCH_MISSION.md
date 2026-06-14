@@ -1,6 +1,9 @@
 # 🔱 JEM-2.0 Master Research Mission
 # ⬡ OMEGA ⬡ JEM-2.0 ⬡ research-fleet ⬡ trc_master_research ⬡ PHASE-E
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ## §0 Mission Objective
 Close all remaining knowledge gaps in the Omega Engine's architectural and strategic foundation. Recover all "Strategic Gold" from legacy eras (0-5) and synthesize it with modern sovereign AI best practices to produce a Hardened Master Strategy.
 

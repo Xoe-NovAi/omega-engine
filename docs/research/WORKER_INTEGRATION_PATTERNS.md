@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Background Worker Integration Patterns
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_worker_integration ⬡ PHASE-1
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-WORKER-INTEGRATION-v1.0.0`
 **Status**: ✅ READY FOR IMPLEMENTATION
 **Last Updated**: 2026-05-16

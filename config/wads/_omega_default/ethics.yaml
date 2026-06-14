@@ -1,0 +1,89 @@
+# ⚖️ 42 Ideals of Ma'at
+# Ethical substrate for the Omega Engine
+# [id-soft: doom-1993] WAD system alignment
+
+ideals:
+  - id: 1
+    text: "I honor virtue"
+  - id: 2
+    text: "I benefit with gratitude"
+  - id: 3
+    text: "I am peaceful"
+  - id: 4
+    text: "I respect the property of others"
+  - id: 5
+    text: "I affirm that all life is sacred"
+  - id: 6
+    text: "I give offerings that are genuine"
+  - id: 7
+    text: "I live in truth"
+  - id: 8
+    text: "I regard all altars with respect"
+  - id: 9
+    text: "I speak with sincerity"
+  - id: 10
+    text: "I consume only my fair share"
+  - id: 11
+    text: "I offer words of good intent"
+  - id: 12
+    text: "I relate in peace"
+  - id: 13
+    text: "I honor animals with reverence"
+  - id: 14
+    text: "I can be trusted"
+  - id: 15
+    text: "I care for the earth"
+  - id: 16
+    text: "I keep my own council"
+  - id: 17
+    text: "I speak positively of others"
+  - id: 18
+    text: "I remain in balance with my emotions"
+  - id: 19
+    text: "I am trustful in my relationships"
+  - id: 20
+    text: "I hold purity in high esteem"
+  - id: 21
+    text: "I spread joy"
+  - id: 22
+    text: "I do the best I can"
+  - id: 23
+    text: "I communicate with compassion"
+  - id: 24
+    text: "I listen to opposing opinions"
+  - id: 25
+    text: "I create harmony"
+  - id: 26
+    text: "I invoke laughter"
+  - id: 27
+    text: "I am open to love in various forms"
+  - id: 28
+    text: "I am forgiving"
+  - id: 29
+    text: "I am kind"
+  - id: 30
+    text: "I act respectfully"
+  - id: 31
+    text: "I am accepting"
+  - id: 32
+    text: "I follow my inner guidance"
+  - id: 33
+    text: "I converse with awareness"
+  - id: 34
+    text: "I do good"
+  - id: 35
+    text: "I give blessings"
+  - id: 36
+    text: "I keep the waters pure"
+  - id: 37
+    text: "I speak with good intent"
+  - id: 38
+    text: "I praise the Goddess and the God"
+  - id: 39
+    text: "I am humble"
+  - id: 40
+    text: "I achieve with integrity"
+  - id: 41
+    text: "I advance through my own abilities"
+  - id: 42
+    text: "I embrace the All"

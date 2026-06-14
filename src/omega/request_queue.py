@@ -30,6 +30,7 @@ REQUESTS_DIR = DATA_DIR / "requests"
 QUEUED_DIR = REQUESTS_DIR / "queued"
 REVIEW_DIR = REQUESTS_DIR / "review"
 COMPLETED_DIR = REQUESTS_DIR / "completed"
+DEAD_DIR = REQUESTS_DIR / "dead"
 INDEX_PATH = REQUESTS_DIR / "INDEX.json"
 
 
@@ -70,7 +71,7 @@ class RequestQueue:
 
     async def ensure_dirs(self):
         """Ensure all queue directories exist."""
-        for d in [self._queued_dir, self._review_dir, self._completed_dir]:
+        for d in [self._queued_dir, self._review_dir, self._completed_dir, DEAD_DIR]:
             await anyio.to_thread.run_sync(lambda d=d: d.mkdir(parents=True, exist_ok=True))
 
     # ── Create Requests ───────────────────────────────────────────────────
@@ -205,6 +206,43 @@ class RequestQueue:
                 return True
         return False
 
+    async def fail_request(
+        self, req_id: str, error: str, permanent: bool = False
+    ) -> bool:
+        """
+        Handle request failure. 
+        If permanent=True or retries exhausted, move to dead-letter queue.
+        """
+        source_dirs = [self._queued_dir, self._review_dir]
+        for directory in source_dirs:
+            filepath = directory / f"{req_id}.json"
+            exists = await anyio.to_thread.run_sync(filepath.exists)
+            if exists:
+                request = await anyio.to_thread.run_sync(self._read_json, filepath)
+                
+                # Update retry count
+                retries = request.get("retries", 0) + 1
+                request["retries"] = retries
+                request["last_error"] = error
+                request["last_error_at"] = datetime.now(timezone.utc).isoformat()
+
+                if permanent or retries >= request.get("max_retries", 2):
+                    # Move to Dead Letter Queue
+                    request["status"] = "failed"
+                    dead_path = DEAD_DIR / f"{req_id}.json"
+                    await anyio.to_thread.run_sync(self._write_json, dead_path, request)
+                    await anyio.to_thread.run_sync(filepath.unlink)
+                    logger.error("Request %s moved to DLQ: %s", req_id, error)
+                else:
+                    # Keep in queue for retry
+                    request["status"] = "queued"
+                    await anyio.to_thread.run_sync(self._write_json, filepath, request)
+                    logger.warning("Request %s failed (retry %d): %s", req_id, retries, error)
+
+                await self._update_index()
+                return True
+        return False
+
     async def prune_stale(self, days: Optional[int] = None) -> int:
         """Remove requests older than N days. Returns number pruned."""
         if days is None:
@@ -231,6 +269,7 @@ class RequestQueue:
             "queued": await self._count_files(self._queued_dir),
             "pending_review": await self._count_files(self._review_dir),
             "completed": await self._count_files(self._completed_dir),
+            "dead": await self._count_files(DEAD_DIR),
         }
 
     # ── Private Helpers ──────────────────────────────────────────────────

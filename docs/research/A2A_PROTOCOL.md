@@ -3,6 +3,9 @@
 
 ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_core ⬡ A2A-PROTOCOL
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## §1 Overview
 To eliminate context collapse and "re-discovery" loops, all Omega agents must use a standardized **State Packet** when transferring a task, insight, or project to another agent.
 

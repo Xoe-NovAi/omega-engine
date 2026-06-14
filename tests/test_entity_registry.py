@@ -98,9 +98,19 @@ def test_entity_to_dict():
 
 
 @pytest.mark.anyio
-async def test_entity_registry_concurrent_add():
-    """Stress test concurrent add() calls to ensure lock prevents corruption."""
+async def test_entity_registry_concurrent_add(monkeypatch, tmp_path):
+    """Stress test concurrent add() calls to ensure lock prevents corruption.
+    
+    Uses monkeypatched OMEGA_DATA_DIR (temp dir) to prevent leaking
+    50 entity workspaces into production data/entities/ on each run.
+    """
     import anyio
+    import omega.oracle.entity_workspace as ew
+    
+    # Redirect entity workspace creation to a temp dir
+    test_entities_dir = tmp_path / "entities"
+    test_entities_dir.mkdir()
+    monkeypatch.setattr(ew, 'ENTITIES_DATA_DIR', test_entities_dir)
     
     # Use a temporary config file
     with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:

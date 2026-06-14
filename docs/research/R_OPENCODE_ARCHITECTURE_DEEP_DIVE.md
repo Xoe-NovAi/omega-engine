@@ -1,5 +1,8 @@
 # 🔱 Omega Engine — OpenCode Architecture Deep Research
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **⬡ OMEGA ⬡ SOPHIA ⬡ big-pickle ⬡ opencode ⬡ trc_oc_arch ⬡ RESEARCH**
 
 **AP Token**: `AP-OPENCODE-ARCH-DEEP-DIVE-v1.0.0`

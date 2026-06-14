@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Automated Model Updater Design
 # ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_model_updater ⬡ PHASE-1
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-MODEL-UPDATER-DESIGN-v1.0.0`
 **Status**: 🔲 DESIGN PHASE — Ready for implementation
 **Last Updated**: 2026-05-16

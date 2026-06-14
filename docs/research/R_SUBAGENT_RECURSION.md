@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Subagent Recursion Analysis
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ gemma-4-31b ⬡ opencode ⬡ trc_research ⬡ R-SUB-REC
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-RESEARCH-SUB-REC-v1.0.0`
 **Author**: Gemma 4-31B (Master Researcher)
 **Date**: 2026-05-14

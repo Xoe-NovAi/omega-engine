@@ -1,5 +1,8 @@
 # 🔱 Sovereign Deep Researcher — Strategic Plan & Roadmap
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_research ⬡ SOVEREIGN-RESEARCHER-PLAN
 
 **AP Token**: `AP-SOVEREIGN-RESEARCHER-v1.0.0`

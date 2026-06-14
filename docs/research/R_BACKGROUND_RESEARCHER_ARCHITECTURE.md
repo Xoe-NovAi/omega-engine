@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Background Researcher Architecture
 # ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_research ⬡ RESEARCHER-ARCH
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-BACKGROUND-RESEARCHER-ARCH-v1.0.0`
 **Status**: ✅ ACTIVE (Phase 1 complete)
 **Last Updated**: 2026-05-18

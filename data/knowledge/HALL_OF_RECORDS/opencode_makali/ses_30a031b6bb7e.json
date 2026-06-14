@@ -1,0 +1,23 @@
+{
+  "session_id": "ses_30a031b6bb7e",
+  "agent_id": "opencode/makali",
+  "channel": "opencode",
+  "entity": "makali",
+  "model": "gemini-3.5-flash",
+  "task_current": "Initiate Sprint Shatter-Glass and execute Phase 1: Total Sterilization.",
+  "focus_chain": [
+    "Shatter-Glass Sprint Initiation",
+    "Sovereign Sweep Planning"
+  ],
+  "decisions": [
+    {
+      "context": "Sovereign Purity and Sterilization",
+      "decision": "Completely scrub legacy esoteric names (THOTH, ARCHON, METATRON, GANESHA) from configuration and ICS headers to prevent stack-level bleed.",
+      "status": "active"
+    }
+  ],
+  "continuation": "Proceeding to Phase 1: Total Sterilization. Purging 50 orphan entities (ent_0..49), cleaning legacy comments in affinity YAML, and scrubbing node namespaces (THOTH -> KNOWLEDGE, ARCHON -> CORE) across the repository.",
+  "timestamp": "2026-06-12T07:41:58.033411+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

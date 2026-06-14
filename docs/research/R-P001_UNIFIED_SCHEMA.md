@@ -2,6 +2,9 @@
 **AP Token**: `AP-UNIFIED-SCHEMA-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b ⬡ opencode ⬡ trc_research ⬡ SCHEMA-DESIGN
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 1. Overview
 To ensure the Omega Engine remains provider-agnostic and can seamlessly switch between local GGUF, local servers (lmster, Ollama), and remote APIs (Google AI Studio), a unified internal communication schema is required. 
 

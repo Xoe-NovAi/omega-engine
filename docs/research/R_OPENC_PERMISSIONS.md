@@ -1,5 +1,8 @@
 # OpenCode `external_directory` Permission Guide
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 The `external_directory` permission is a safety guard triggered whenever a tool (such as `read`, `edit`, `glob`, `grep`, or `bash`) attempts to access a file or directory outside the working directory where OpenCode was started.
 
 ## 🛠️ Correct Syntax

@@ -1,5 +1,8 @@
 # 🔱 Sovereign Maintenance & Autonomous Evolution Strategy
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **Document ID**: R_SOVEREIGN_MAINTENANCE_STRATEGY  
 **Status**: ✅ PROPOSED / ARCHITECTURAL  
 **Target LLM**: Gemma 4-31B (via Google API Gateway)  

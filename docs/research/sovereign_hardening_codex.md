@@ -1,5 +1,8 @@
 # 🔱 Sovereign Gnosis: The Omega Engine Hardening Codex
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-HARDENING-CODEX-v1.0.0`
 **Status**: ACTIVE | **Version**: 1.0.0
 **Scope**: All Agents, All CLIs, All IDEs

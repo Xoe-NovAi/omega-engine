@@ -13,6 +13,7 @@ import logging
 import os
 import re
 import errno
+from functools import lru_cache
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -29,14 +30,17 @@ from .soul_distiller import get_distiller
 from .wad_loader import WADLoader
 from .search import SovereignSearcher
 from .iterative_research import IterativeResearcher
+from .skeptical_verifier import SkepticalVerifier, VerificationResult
 from .security import TDPGate, TaintedData
 from .context_builder import ContextBuilder
+from ..iris.matcher import IntentMatcher
 
 from ..observability import new_trace_id, ObservabilityEngine, TraceSession, get_engine, DATA_DIR
 from ..errors import OmegaError, SovereignDiskFullError, SoulCorruptionError, StateIntegrityError
 from ..cvar_table import cvar_get, cvar_set, cvar_namespace
 from .entity_registry import EntityRegistry, Entity
 from ..memory_store import get_memory_store
+from ..astrology import record_first_breath
 from ..orchestration.triage_router import TriageRouter, TriageRequest, TaskRequest, EntityContext, Constraints, SessionContext, ModelSelection
 
 logger = logging.getLogger(__name__)
@@ -77,24 +81,33 @@ class Oracle:
     6. Cloud critique integration (TDP quarantine)
     """
     
-    def __init__(self, registry: Optional[EntityRegistry] = None):
+    _valid_agents_cache: Optional[Set[str]] = None
+
+    def __init__(self, registry: Optional[EntityRegistry] = None, model_gateway: Optional[ModelGateway] = None):
         from omega.oracle.health_monitor import get_health_monitor
         self.registry = registry or EntityRegistry()
-        self.default_entity = self.registry.get("default") or self.registry.get("kali")
+        self.default_entity = self.registry.get(cvar_get("config.entity.default", "default"))
         self.orchestrator = Orchestrator()
         self.health_monitor = get_health_monitor()
-        self.model_gateway = ModelGateway(health_monitor=self.health_monitor)
+        # Accept injected model_gateway to prevent double initialization
+        # (hub creates ModelGateway at module level; Oracle was creating a second one)
+        self.model_gateway = model_gateway or ModelGateway(health_monitor=self.health_monitor)
         self.observability = get_engine()  # Get singleton observability engine
         self.distiller = get_distiller()
         self.session_manager = SessionManager()
         self.memory_store = get_memory_store()
         self.searcher = SovereignSearcher(self.memory_store)
-        self.researcher = IterativeResearcher(self.model_gateway, self.searcher)
+        self.verifier = SkepticalVerifier(self.model_gateway)
+        self.researcher = IterativeResearcher(self.model_gateway, self.searcher, verifier=self.verifier)
         self.context_builder = ContextBuilder()
+        self.intent_matcher = IntentMatcher()
         
         # Load WADs
         self.wad_loader = WADLoader(self.registry)
         self.triage_router = TriageRouter()
+        
+        # Load valid agents from AGENTS.md for mention validation
+        self.valid_agents = self._get_valid_agents_from_md()
         
         self._bootstrapped = False
 
@@ -107,28 +120,89 @@ class Oracle:
 
     # ── INTENT DETECTION ───────────────────────────────────────────
     
+    def _get_valid_agents_from_md(self) -> Set[str]:
+        """Parse AGENTS.md to get a list of valid @-mention names.
+        
+        Returns a set of lowercase agent names found in the "Named Agents" table.
+        """
+        if Oracle._valid_agents_cache is not None:
+            return Oracle._valid_agents_cache
+
+        try:
+            agents_md_path = Path(__file__).resolve().parent.parent.parent.parent / "AGENTS.md"
+            if not agents_md_path.exists():
+                return set()
+            
+            content = agents_md_path.read_text(encoding="utf-8")
+            
+            # Find the "Named Agents" table
+            # We look for the section starting with "#### Named Agents" and take the table following it
+            section_match = re.search(r'#### Named Agents.*?\n\| @-Mention \|.*?\|.*?\n\|---|---|---|---|', content, re.DOTALL | re.IGNORECASE)
+            if not section_match:
+                return set()
+            
+            # Extract the table body
+            table_start = section_match.end()
+            table_lines = content[table_start:].splitlines()
+            
+            agents = set()
+            for line in table_lines:
+                if line.strip() == "" or not line.startswith('|'):
+                    break
+                # The first column is the @-Mention: | `@kali` | ...
+                cols = line.split('|')
+                if len(cols) > 1:
+                    mention = cols[1].strip().strip('`').strip()
+                    if mention.startswith('@'):
+                        agents.add(mention[1:].lower())
+            
+            Oracle._valid_agents_cache = agents
+            return agents
+        except Exception as e:
+            logger.warning(f"Failed to parse AGENTS.md for valid agents: {e}")
+            return set()
+
     def _detect_summon(self, query: str) -> Optional[tuple]:
         """Detect Entity summon patterns.
         
         Supports:
-        - @Entity query
+        - @Entity query (at start)
+        - @Entity within text (anywhere)
         - hey Entity, query
         - summon Entity, query
         
         Returns (entity_name, query) or None.
         """
         query_stripped = query.strip()
-        
-        # Pattern 1: @Entity query
-        match = re.match(r'^@(\w+)\s+(.*)', query_stripped)
-        if match:
-            return (match.group(1).lower(), match.group(2))
-        
-        # Pattern 2: hey Entity, query
-        match = re.match(r'^(?:hey|hi|summon)\s+(\w+),?\s+(.*)', query_stripped, re.IGNORECASE)
-        if match:
-            return (match.group(1).lower(), match.group(2))
-        
+        if not query_stripped:
+            return None
+
+        # Pattern 1: @Entity query (at start)
+        # Matches '@maat help me' -> ('maat', 'help me')
+        start_match = re.match(r'^@(\w+)\s+(.*)', query_stripped)
+        if start_match:
+            entity_name = start_match.group(1).lower()
+            # Validate against registry AND AGENTS.md list
+            if self.registry.get(entity_name) or entity_name in self.valid_agents:
+                return (entity_name, start_match.group(2))
+
+        # Pattern 2: @Entity within text
+        # Matches 'Hello @maat, help me' -> ('maat', 'Hello @maat, help me')
+        # NOTE: Python 3.13+ rejects alternation inside lookbehinds; using (?:...) non-capturing group instead
+        mentions = re.findall(r'(?:^|\s)@(\w+)', query_stripped)
+        for m in mentions:
+            entity_name = m.lower()
+            if self.registry.get(entity_name) or entity_name in self.valid_agents:
+                return (entity_name, query_stripped)
+
+        # Pattern 3: hey Entity, query
+        # Matches 'hey Maat, help me' -> ('maat', 'help me')
+        hey_match = re.match(r'^(?:hey|hi|summon)\s+(\w+),?\s+(.*)', query_stripped, re.IGNORECASE)
+        if hey_match:
+            entity_name = hey_match.group(1).lower()
+            if self.registry.get(entity_name) or entity_name in self.valid_agents:
+                return (entity_name, hey_match.group(2))
+
         return None
     
     def _detect_consult(self, query: str) -> Optional[tuple]:
@@ -148,32 +222,18 @@ class Oracle:
     def _assess_iris_confidence(self, query: str) -> float:
         """Assess whether Iris (speculative decoder) can answer alone.
         
-        Iris handles:
-        - Greetings ("hello", "hi", "how are you")
-        - Simple factual questions ("what time is it", "what's your name")
-        - Meta-oracle questions ("how do you work", "who are you")
-        
-        Iris defers to pillars for:
-        - Entity-specific queries (@entity pattern)
-        - Complex technical queries (contain API, code, architecture, etc.)
-        - Philosophical/abstract questions (meaning, why, metaphysical)
-        - Multi-step workflows
+        [D-kal-053] Refactored to use IntentMatcher for whole-word matching.
         """
-        query_lower = query.lower()
+        if self.intent_matcher.is_iris_capable(query):
+            return 0.9
         
         # Zero-confidence patterns (escalate immediately)
+        query_lower = query.lower()
         if any(kw in query_lower for kw in ["explain the meaning", "why is", "how does", 
                                               "meaning of", "purpose of", "philosophy",
                                               "metaphysical", "abstract", "gravity",
                                               "justice", "morality", "ethics"]):
             return 0.0
-        
-        # High-confidence patterns (Iris handles alone)
-        if any(kw in query_lower for kw in ["hello", "hi", "hey", "greetings",
-                                             "how are you", "what's your name", 
-                                             "who are you", "how do you work",
-                                             "what are you", "thanks", "thank you"]):
-            return 0.9
         
         # Low-confidence patterns (escalate to pillars)
         if any(kw in query_lower for kw in ["@", "/", "code", "api", "architecture",
@@ -253,8 +313,13 @@ class Oracle:
                 return resp
             
             # Step 2: Speculative decode — Iris tries first
-            iris_confidence = self._assess_iris_confidence(processed_query)
-            trace.log("iris.speculative", confidence=iris_confidence, query=processed_query)
+            # [D-kal-054] Restrict Iris to local chat channels only per user instruction.
+            # Bypassed for OpenCode, Gemini, Cline, and Antigravity.
+            channel = cvar_get("config.channel", "unknown")
+            skip_iris = channel in ["opencode", "gemini-cli", "cline", "antigravity"]
+            
+            iris_confidence = self._assess_iris_confidence(processed_query) if not skip_iris else 0.0
+            trace.log("iris.speculative", confidence=iris_confidence, query=processed_query, channel=channel, skipped=skip_iris)
             
             if iris_confidence > IRIS_CONFIDENCE_THRESHOLD:
                 resp = await self._respond_as_iris(processed_query, trace, iris_confidence, session_id, transient=transient)
@@ -313,6 +378,12 @@ class Oracle:
             return resp
 
 
+    async def verify_claim(self, claim: str, evidence: List[Dict[str, Any]]) -> VerificationResult:
+        """
+        Public API to verify a claim against evidence using the Skeptical Verifier.
+        """
+        return await self.verifier.verify(claim, evidence)
+
     # ── INTERNAL: Triage Router bridge ─────────────────────────────────
 
     async def _select_model(self, entity_name: str, query: str, session_id: str, trace_id: str, domain: Optional[str] = None) -> str:
@@ -333,16 +404,14 @@ class Oracle:
             )
             
             req = TriageRequest(
+                task=TaskRequest(description=query, domain=domain or "general"),
                 entity=entity_ctx,
-                query=query,
-                domain=domain or "general",
-                session_id=session_id,
-                trace_id=trace_id,
                 constraints=Constraints(),
+                session=SessionContext(id=session_id, trace_id=trace_id)
             )
             
-            selection = await self.triage_router.select(req)
-            return selection.model_name or entity.model or "default"
+            response = await self.triage_router.select_model(req)
+            return response.selected_model.name or entity.model or "default"
         except Exception as e:
             logger.warning(f"TriageRouter unavailable (falling back to entity model): {e}")
             return entity.model or "default"
@@ -360,7 +429,7 @@ class Oracle:
         
         # Inject context from MemoryStore
         try:
-            from ..context_builder import ContextBuilder
+            from omega.oracle.context_builder import ContextBuilder
             ctx_builder = ContextBuilder()
             memory_context = await ctx_builder.build_context(entity_name, session_id, query or "")
             if memory_context:
@@ -418,20 +487,18 @@ class Oracle:
         
         [id-soft: quake3-1999] Speculative Decode — lightweight, fast path for
         simple queries that don't require domain expertise.
-        """
-        # Determine Iris' response based on query content
-        query_lower = query.lower()
         
-        if any(kw in query_lower for kw in ["hello", "hi", "hey"]):
-            text = "Hello! I'm Iris, the voice of the Oracle. How can I help you today?"
-        elif any(kw in query_lower for kw in ["who are you", "what are you"]):
-            text = "I'm Iris, the speculative decoder for the Omega Engine. I handle simple questions and route complex queries to the appropriate Pillar Keeper."
-        elif any(kw in query_lower for kw in ["how are you", "how do you do"]):
-            text = "I'm operating normally and ready to assist. Thank you for asking!"
-        elif any(kw in query_lower for kw in ["thanks", "thank you"]):
-            text = "You're welcome! Is there anything else you'd like to know?"
-        else:
-            text = f"I'm not sure about that. Let me connect you with someone who might know better."
+        [D-kal-053] Now attempts model invocation for Iris via _summon.
+        """
+        try:
+            # Attempt to invoke Iris as a real model-backed entity
+            if self.registry.get("iris"):
+                return await self._summon("iris", query, trace, session_id, transient=transient)
+        except Exception as e:
+            logger.warning(f"Iris model invocation failed (falling back to hardcoded): {e}")
+
+        # Fallback to hardcoded response if Iris entity is missing or fails
+        text = self.intent_matcher.iris_response(query) or "Hello! I'm Iris, the voice of the Oracle. How can I help you today?"
         
         backend = await self.model_gateway.get_preferred_backend()
         
@@ -440,21 +507,12 @@ class Oracle:
             entity="Iris",
             confidence=confidence,
             trace_id=trace.trace_id,
-            session_id=session_id,  # Include session_id for memory recording
+            session_id=session_id,
             backend=backend,
             escalated=False,
         )
         
-        trace.log("iris.responded", confidence=confidence, backend=backend)
-        trace.record(
-            query=query,
-            system_prompt="You are Iris, the speculative decoder.",
-            response=text,
-            entity="Iris",
-            model="iris-speculative",
-            backend=backend,
-            confidence=confidence,
-        )
+        trace.log("iris.responded", confidence=confidence, backend=backend, fallback=True)
         return result
 
     async def _summon(
@@ -498,25 +556,48 @@ class Oracle:
             else:
                 model_name = await self._select_model(entity.name, query, session_id, trace.trace_id)
         
+        # Resolve entity affinity for inference presets (temperature, system_prompt, context window)
+        # [id-soft: quake-1996] cvar pattern — YAML-backed affinity DB, hot-reloadable
+        first_domain = entity.domains[0] if entity.domains else None
+        affinity_result = await self.model_gateway.resolve_entity_affinity(
+            entity_name=entity.name,
+            query=query,
+            context={"domain": first_domain},
+        )
+        effective_temperature = entity.temperature
+        effective_system_prompt = system_prompt
+        effective_max_tokens = 1024
+        if affinity_result and affinity_result.inference_presets:
+            # Affinity presets override entity defaults when present
+            if affinity_result.inference_presets.temperature and affinity_result.inference_presets.temperature != 0.7:
+                effective_temperature = affinity_result.inference_presets.temperature
+            if affinity_result.inference_presets.system_prompt:
+                effective_system_prompt = (
+                    f"{affinity_result.inference_presets.system_prompt}\n\n"
+                    f"{system_prompt}"
+                )
+            if affinity_result.inference_presets.preferred_context:
+                effective_max_tokens = min(affinity_result.inference_presets.preferred_context, 4096)
+        
         # Generate response via model gateway
         response_text, is_cloud = await self.model_gateway.generate(
             model_name=model_name,
-            system_prompt=system_prompt,
+            system_prompt=effective_system_prompt,
             user_query=query,
-            temperature=entity.temperature,
-            max_tokens=1024,
+            temperature=effective_temperature,
+            max_tokens=effective_max_tokens,
         )
         
         backend = await self.model_gateway.get_preferred_backend()
-        sigil_str = f" {entity.sigil}" if entity.sigil else ""
+        sigil_str = f" {getattr(entity, 'sigil', None)}" if getattr(entity, 'sigil', None) else ""
         
         result = OracleResponse(
             text=f"{entity.name} says: {response_text}{sigil_str}",
             entity=entity.name,
             pillars=entity.pillars,
-            sigil=entity.sigil,
-            glyph=entity.glyph,
-            pantheon=entity.pantheon,
+            sigil=getattr(entity, 'sigil', None),
+            glyph=getattr(entity, 'glyph', None),
+            pantheon=getattr(entity, 'pantheon', None),
             domains=entity.domains,
             confidence=1.0,
             trace_id=trace.trace_id,
@@ -539,6 +620,8 @@ class Oracle:
             confidence=1.0,
             session_id=session_id,
         )
+        # [Sovereign] Record the "First Breath" for astrological alignment
+        await record_first_breath(entity.name, response_text, trace.trace_id)
         return result
 
     async def _route_by_domain(self, text: str, trace: TraceSession, session_id: str, transient: bool = False) -> OracleResponse:
@@ -575,15 +658,15 @@ class Oracle:
         )
         
         backend = await self.model_gateway.get_preferred_backend()
-        sigil_str = f" {entity.sigil}" if entity.sigil else ""
+        sigil_str = f" {getattr(entity, 'sigil', None)}" if getattr(entity, 'sigil', None) else ""
         
         result = OracleResponse(
             text=f"{entity.name} says: {response_text}{sigil_str}",
             entity=entity.name,
             pillars=entity.pillars,
-            sigil=entity.sigil,
-            glyph=entity.glyph,
-            pantheon=entity.pantheon,
+            sigil=getattr(entity, 'sigil', None),
+            glyph=getattr(entity, 'glyph', None),
+            pantheon=getattr(entity, 'pantheon', None),
             domains=entity.domains,
             confidence=confidence,
             trace_id=trace.trace_id,
@@ -605,6 +688,9 @@ class Oracle:
             confidence=confidence,
             session_id=session_id,
         )
+        # [Sovereign] Record the "First Breath" for astrological alignment
+        logger.info(f"Recording first breath for routed entity: {entity.name}")
+        await record_first_breath(entity.name, response_text, trace.trace_id)
         return result
 
     # ── Soul evolution tracking ───────────────────────────────────────

@@ -105,10 +105,8 @@ def temp_data_dir(monkeypatch):
 def reset_state(monkeypatch):
     """Reset the in-memory stores between tests."""
     from mcp_servers.omega_hub import state
-    monkeypatch.setattr(state, "_hot_store", {})
-    monkeypatch.setattr(state, "_awareness", {})
-    monkeypatch.setattr(server, "_hot_store", {})
-    monkeypatch.setattr(server, "_awareness", {})
+    state._hot_store.clear()
+    state._awareness.clear()
     yield
 
 
@@ -147,7 +145,8 @@ async def test_u002_post_context_intent_field(temp_data_dir, reset_state):
     assert payload["status"] == "accepted"
     sid = payload["session_id"]
     # The snapshot should be stored in _hot_store
-    snapshot = server._hot_store.get(sid)
+    from mcp_servers.omega_hub import state
+    snapshot = state._hot_store.get(sid)
     assert snapshot is not None
     assert snapshot["intent"] == "question"
 
@@ -168,7 +167,8 @@ async def test_u003_post_context_suggested_model(temp_data_dir, reset_state):
     payload = json.loads(result)
     assert payload["status"] == "accepted"
     sid = payload["session_id"]
-    snapshot = server._hot_store.get(sid)
+    from mcp_servers.omega_hub import state
+    snapshot = state._hot_store.get(sid)
     assert snapshot is not None
     assert snapshot["suggested_model"] == "qwen3-4b-thinking-q4_k_m"
 

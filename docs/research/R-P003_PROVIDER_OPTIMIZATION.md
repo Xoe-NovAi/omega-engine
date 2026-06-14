@@ -2,6 +2,9 @@
 **AP Token**: `AP-PROVIDER-OPT-v1.0.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b ⬡ opencode ⬡ trc_research ⬡ PROVIDER-OPT
 
+
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
 ## 1. Current Chain Analysis
 **Existing Chain (`providers.yaml`)**:
 `native-gguf` (P1) $\rightarrow$ `google` (P2) $\rightarrow$ `lmster` (P3) $\rightarrow$ `ollama` (P4) $\rightarrow$ `mock` (P10)

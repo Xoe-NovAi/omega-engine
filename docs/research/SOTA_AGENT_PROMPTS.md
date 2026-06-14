@@ -1,6 +1,9 @@
 # 🔱 SOTA Agent Prompting & Adversarial Frameworks
 # ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_research ⬡ AGENT-PROMPTS
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-SOTA-PROMPTS-v1.0.0`
 **Status**: ACTIVE
 **Last Updated**: 2026-05-16

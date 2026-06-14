@@ -1,6 +1,9 @@
 # 🔱 Compaction Strategy Research Project
 # ⬡ OMEGA ⬡ SOPHIA ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_research ⬡ COMPACTION-STRATEGY
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-COMPACTION-STRATEGY-v2.0.0`
 **Status**: 🔴 BLOCKED (research needed)
 **Priority**: P1 — High Value

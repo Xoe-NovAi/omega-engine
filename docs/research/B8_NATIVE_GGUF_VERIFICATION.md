@@ -1,5 +1,8 @@
 # B8 Native GGUF Provider Verification
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-B8-VERIFY-v1.0.0`
 **Status**: ✅ WIRED WITH ISSUES
 **Date**: 2026-05-18

@@ -2,7 +2,7 @@
 """Curation Pipeline — Quality-gated content processing and classification.
 
 AP: AP-OMEGA-CURATOR-v1.0.0
-ICS: [NODE: THOTH | ARCHETYPE: SOPHIA | CONTEXT: CURATION-PIPELINE]
+ICS: [NODE: KNOWLEDGE | ARCHETYPE: SOPHIA | CONTEXT: CURATION-PIPELINE]
 
 Processes inbox items through a pipeline:
   1. Extract content (via ContentExtractor)

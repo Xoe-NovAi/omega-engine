@@ -1,0 +1,18 @@
+{
+  "session_id": "ses_f156d3fd3414",
+  "agent_id": "opencode/makali",
+  "channel": "opencode",
+  "entity": "makali",
+  "model": "gemma-4-31b-it",
+  "task_current": "Sovereign Research: id Software Heritage (Phase 1)",
+  "focus_chain": [
+    "RQ-10 Phase 1: Legacy Mining (id Software)",
+    "RQ-10 Phase 2: Heritage Vetting",
+    "RQ-10 Phase 3: Synthesis"
+  ],
+  "decisions": [],
+  "continuation": "RQ-09 complete. Transitioning to RQ-10: id Software Heritage Patterns. I am shifting from general research to domain-specific mining. I'll be deploying @roc_racoon to mine the legacy archives and @doom_guy to vet the findings. This is a high-precision operation targeting 'Right Approximation' patterns.",
+  "timestamp": "2026-06-11T12:59:43.036048+00:00",
+  "intent": "status",
+  "suggested_model": null
+}

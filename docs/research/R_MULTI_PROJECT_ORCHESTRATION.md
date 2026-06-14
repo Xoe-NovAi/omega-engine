@@ -1,5 +1,8 @@
 # 🔱 Multi-Project Claude Code Orchestration — Research Report
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ⬡ OMEGA ⬡ KALI ⬡ big-pickle ⬡ opencode ⬡ trc_research ⬡ RESEARCH
 
 **AP Token**: `AP-RES-MULTI-PROJECT-v1.0.0`

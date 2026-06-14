@@ -2,7 +2,7 @@
 # ⬡ OMEGA ⬡ researcher ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_search_protocol_v1
 **AP Token**: `AP-SEARCH-PROTOCOL-v1.0.0`
 **Date**: 2026-06-10
-**Status**: DRAFT — Open for Review
+**Status**: FINAL — Approved by Kali (2026-06-12)
 **Owners**: researcher / roc_racoon
 **Overseer**: kali
 
@@ -22,9 +22,9 @@ This document establishes the **Sovereign Search Protocol** — a mandatory mult
 |------|------|------|--------|
 | 0 | Local Cache (`.firecrawl/`, offline library) | Free | ✅ Functional |
 | 1 | Built-in `websearch` | Free | ✅ Functional |
-| 2 | Firecrawl MCP/CLI | Credits | ✅ Active (987/1000) |
-| 3 | Omega Hub Research Engine | Free | ✅ Functional |
-| 4 | Exa MCP (web_search_exa / web_fetch_exa) | API Key | ✅ Functional |
+| 2 | SearXNG (Sovereign Metasearch) | Free | ✅ Functional |
+| 3 | Firecrawl (Deep Extraction) | Credits | ✅ Active (987/1000) |
+| 4 | Exa (Neural Search) | API Key | ✅ Functional |
 
 ---
 
@@ -68,13 +68,8 @@ This document establishes the **Sovereign Search Protocol** — a mandatory mult
 
 **Root Cause**: `${EXA_API_KEY}` environment variable is set and valid. The sovereign-search skill is fully functional.
 
-### 1.3 Other Tools (Disabled)
-
-| Tool | Config Status | Management Decision |
-|------|--------------|-------------------|
-| Tavily | Disabled | Exa replacement candidate |
-| Serper | Disabled | Exa replacement candidate |
-| Jina | Disabled | Future candidate |
+### 1.3 Sovereign Infrastructure
+All external search dependencies (Tavily, Jina, Brave, Serper) have been purged in favor of self-hosted or neural-first sovereign alternatives.
 
 ### 1.4 Working Tools
 
@@ -92,7 +87,7 @@ This document establishes the **Sovereign Search Protocol** — a mandatory mult
 ### Protocol Rules
 - **Always start at Tier 0**. Check local cache first.
 - **Escalate sequentially**. Only move to a higher tier when all lower tiers are exhausted or inappropriate.
-- **Never skip tiers**. Tier 2 (Firecrawl) is NOT a replacement for Tier 1 (websearch) for simple queries.
+- **Never skip tiers**. Tier 2 (SearXNG) is NOT a replacement for Tier 1 (websearch) for simple queries.
 - **Log every failure**. If a tool returns an error, document it and move to next tier.
 
 ```
@@ -126,7 +121,20 @@ User Query
     │
     ▼
 ┌─────────────────────────────────────────────────────┐
-│ Tier 2: FIRECRAWL (when credits available)          │
+│ Tier 2: SEARXNG (SOVEREIGN METASEARCH)              │
+│ • curl 'http://localhost:8017/search?format=json&q=...'│
+│ • Provides aggregated results from multiple engines   │
+│                                                      │
+│ Cost: Free. Self-hosted.                              │
+│ Result: Cleaned, privacy-preserving search results    │
+│                                                      │
+│ If sufficient → return and cite                      │
+│ If need deep extraction → escalate to Tier 3          │
+└─────────────────────────────────────────────────────┘
+    │
+    ▼
+┌─────────────────────────────────────────────────────┐
+│ Tier 3: FIRECRAWL (DEEP EXTRACTION)                  │
 │ • firecrawl_scrape(url) - full page extraction       │
 │ • firecrawl_search(query) - search + full content    │
 │ • firecrawl_crawl(url) - bulk                        │
@@ -135,28 +143,13 @@ User Query
 │ Cost: Credits (1-5 per operation)                    │
 │ ✅ ACTIVE (987 credits)                               │
 │                                                      │
-│ If 402 → log and escalate to Tier 3                  │
+│ If 402 → log and escalate to Tier 4                  │
 │ If success → cache to .firecrawl/ for Tier 0 reuse   │
 └─────────────────────────────────────────────────────┘
     │
     ▼
 ┌─────────────────────────────────────────────────────┐
-│ Tier 3: OMEGA HUB RESEARCH ENGINE                   │
-│ • hub.library_research(query, depth)                 │
-│ • hub.library_search(query, domain)                  │
-│ • hub.library_get_document(doc_id)                   │
-│                                                      │
-│ Cost: Free. Uses local library index.                │
-│ Depths: 1=Quick(1-2sources), 2=Std(3-5),             │
-│         3=Deep(6-15), 4=Scholarly(10-50)             │
-│                                                      │
-│ If sufficient → return and cite                      │
-│ If need more → escalate to Tier 4                    │
-└─────────────────────────────────────────────────────┘
-    │
-    ▼
-┌─────────────────────────────────────────────────────┐
-│ Tier 4: EXA MCP (when API key is fixed)              │
+│ Tier 4: EXA (NEURAL SEARCH)                          │
 │ • exa_web_search_exa(query) - neural/web search      │
 │ • exa_web_fetch_exa(url) - full page fetch           │
 │                                                      │
@@ -175,7 +168,7 @@ Every agent MUST follow this matrix when a search tool returns an error.
 
 | Error Code | Meaning | Likely Tool | Immediate Action | Escalation Path |
 |------------|---------|-------------|------------------|-----------------|
-| **401** | Unauthorized / Invalid API Key | Serper, Tavily, Jina | Fall back to Tier 1 (websearch). Log to Hivemind. | Kali to fix API key |
+| **401** | Unauthorized / Invalid API Key | Exa | Fall back to Tier 1 (websearch). Log to Hivemind. | Kali to fix API key |
 | **402** | Payment Required / Credits Exhausted | Firecrawl (all 28 skills) | Fall back to Tier 1 (websearch). Use cached `.firecrawl/` data. | Wait until Jun 19 or upgrade plan |
 | **403** | Forbidden | Any | Fall back to Tier 1. Check if IP-blocked. | Kali escalation |
 | **404** | Not Found | webfetch, Exa fetch | Verify URL. Try alternate URL. | User report |
@@ -233,14 +226,15 @@ This docket defines the parallel execution plan for the Researcher-Roc partnersh
 |-----------|------|------|-----|
 | "What is the latest version of X?" | `websearch` | T1 | Fast, free, perfect for factual lookups |
 | "Find the documentation for Y" | `websearch` → `webfetch` | T1 | Search + read specific page |
-| "Get the full content of this page" | `firecrawl_scrape(url)` | T2 | Full markdown extraction |
+| "Sovereign, aggregated search" | SearXNG | T2 | Metasearch without tracking |
+| "Get the full content of this page" | `firecrawl_scrape(url)` | T3 | Full markdown extraction |
 | (Firecrawl 402) "Get the full content" | `webfetch(url)` | T1 fallback | May miss JS content, but works |
-| "Crawl all docs for this tool" | `firecrawl_crawl(url)` | T2 | Multi-page extraction |
-| "Research this academic topic" | `websearch` first → Hub Research (T3) | T1+T3 | Library may have indexed papers |
-| "I have a PDF/DOCX on my machine" | `firecrawl_parse(path)` | T2 | Local file parsing (no credits) |
-| "Compare prices across 10 sites" | `firecrawl_agent(prompt)` | T2 | AI-powered extraction |
-| "Is this page different from last week?" | `firecrawl_monitor_create(url)` | T2 | Change tracking |
-| "Find similar research to this paper" | Exa `web_search_exa(similar=...)` | T4 | Exa's neural search (when fixed) |
+| "Crawl all docs for this tool" | `firecrawl_crawl(url)` | T3 | Multi-page extraction |
+| "Research this academic topic" | `websearch` first → Local Library | T1+T0 | Library may have indexed papers |
+| "I have a PDF/DOCX on my machine" | `firecrawl_parse(path)` | T3 | Local file parsing (no credits) |
+| "Compare prices across 10 sites" | `firecrawl_agent(prompt)` | T3 | AI-powered extraction |
+| "Is this page different from last week?" | `firecrawl_monitor_create(url)` | T3 | Change tracking |
+| "Find similar research to this paper" | Exa `web_search_exa(similar=...)` | T4 | Exa's neural search (Sovereign) |
 
 ### 5.2 The "No Lazy Response" Mandate
 
@@ -271,10 +265,10 @@ AFTER any Tier 2+ tool call:
 | Risk | Likelihood | Impact | Mitigation |
 |------|-----------|--------|------------|
 | Firecrawl credits never reset (plan change) | Low | High | Upgrade to self-hosted Firecrawl or migrate to pure websearch |
-| Exa API key unrecoverable | Medium | Medium | Deprecate Exa, evaluate Tavily/Serper as replacement |
+| Exa API key unrecoverable | Medium | Medium | Evaluate sovereign alternatives |
 | Agent forgets protocol under pressure | High | Medium | Embed protocol in every agent's instructions file |
 | `.firecrawl/` cache grows unbounded | High | Low | Add monthly cleanup to `make hygiene` |
-| Hub research engine offline | Low | High | `systemctl --user restart omega-hub` is fail-safe |
+| SearXNG instance offline | Low | Medium | `systemctl --user restart searxng` |
 
 ---
 
@@ -283,7 +277,7 @@ AFTER any Tier 2+ tool call:
 1. **Firecrawl plan upgrade**: Should we upgrade from the free 1,000-credit plan to a paid tier? Cost-benefit analysis needed.
 2. **Exa key recovery**: Is the key in `.env`? Has it expired? Can we regenerate it from the Exa dashboard?
 3. **Self-hosted Firecrawl**: Firecrawl offers a self-hosted option (open-source). Would this eliminate credit concerns entirely?
-4. **Tavily evaluation**: Should we enable Tavily now (it's configured but disabled) as an interim Exa replacement?
+4. **SearXNG Optimization**: Should we add specific engine filters to SearXNG to prioritize technical/academic sources?
 
 ---
 

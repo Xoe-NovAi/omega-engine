@@ -1,6 +1,9 @@
 # 🔱 Omega Engine — Sovereign Memory Architecture
 # ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_gnosis ⬡ RESEARCH-SOTA
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-SOVEREIGN-MEMORY-v1.0.0`
 **Status**: PROPOSED ARCHITECTURE
 **Last Updated**: 2026-05-16

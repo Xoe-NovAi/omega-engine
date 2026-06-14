@@ -6,3 +6,6 @@
 ## Sovereign Patterns
 - `data/entities/sophia/knowledge/recovered_artifacts.md` — §Artifact 3 (Omnidroid Toolset) — 5 tools recovered from ANCESTRAL_HUB
 - `data/entities/modelgate/knowledge/circuit_breaker_spec.md` — Circuit Breaker pattern for Dark Pillar governance
+
+## Fleet Architecture
+- `AGENT_VISIBILITY_PARADOX.md` — Configuration shadowing analysis: how the legacy `mode` section silently overrode `agent` section visibility in `opencode.json`. Documents the root cause (key-collision), resolution (remove `mode` section, use `mode: "all"`), and the L3 principle of Singular Identity Registration. **(295 lines, v1.0.0)**

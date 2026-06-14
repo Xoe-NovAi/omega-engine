@@ -1,6 +1,9 @@
 # 🔱 GitHub Copilot Free Tier — Complete Research Report
 # Model Availability, Specifications, and OpenCode Integration
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 ⬡ OMEGA ⬡ PROMETHEUS ⬡ gemma-4-31b ⬡ opencode ⬡ trc_research ⬡ RESEARCH-REPORT
 
 **AP Token**: `AP-COPILOT-FREE-TIER-v1.0.0`

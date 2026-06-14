@@ -1,5 +1,8 @@
 # 🔱 Sovereign Intelligence Reclamation: The Holographic Memory Lattice
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **Document ID**: R_HOLOGRAPHIC_MEMORY_LATTICE  
 **Status**: ✅ ARCHITECTURAL BLUEPRINT  
 **Target Hardware**: Ryzen 7 5700U (Zen 2)  

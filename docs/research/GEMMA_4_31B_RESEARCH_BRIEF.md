@@ -1,5 +1,8 @@
 # 🔱 Gemma 4-31B Research Specialist — Strategic Brief
 
+**Status**: 🔴 STALE — Legacy document from pre-June 2026. Contents may be outdated.
+
+
 **AP Token**: `AP-GEMMA-RESEARCH-BRIEF-v1.0.0`
 ⬡ OMEGA ⬡ PROMETHEUS ⬡ qwen3.6-plus-free ⬡ opencode ⬡ trc_research ⬡ BRIEF
 
