@@ -1,7 +1,7 @@
 omega:
   identity:
     name: Omega Engine
-    version: 2.2.0
+    version: 2.3.0
     description: Local-first, entity-centric, provider-agnostic AI council runtime
     maintainer: Xoe-NovAi
     license: Apache-2.0
@@ -36,7 +36,7 @@ omega:
       ram_available_ai_mb: 12336
       nova_resident_mb: 300
   observability:
-    enable_dataset_collection: false
+    enable_dataset_collection: true
     enable_trace_logging: true
     trace_length: 12
   location:
@@ -72,3 +72,12 @@ omega:
       on_change: true
       on_error: true
       channel: observability
+  sovereignty:
+    mandates:
+      ratified: [M1, M2, M3, M4, M5, M6, M7, M8, M9, M10, M11, M12, M13, M14, M15, M16, M17, M18, M19, M20, M21, M22]
+      count: 22
+      version: 3.5.0
+    fleet:
+      agent_count: 11
+      max_slots: 10
+      cap_with_review: 14

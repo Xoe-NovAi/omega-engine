@@ -133,7 +133,7 @@ Returns full session details:
 ### §2.4 Heartbeat (Stay Alive)
 
 ```python
-omega-hub_hivemind_heartbeat(cli: str)
+omega-hub_hivemind_heartbeat(channel: str, entity: str)
 ```
 
 **Use case**: Long-running operations should heartbeat every 5-10 minutes to
@@ -142,7 +142,7 @@ avoid being pruned as stale.
 ### §2.5 List Recent Sessions
 
 ```python
-omega-hub_hivemind_list_sessions(cli: str = None, limit: int = 10)
+omega-hub_hivemind_list_sessions(channel: str = None, entity: str = None, limit: int = 10)
 ```
 
 **Use case**: Audit trail — what was done across recent sessions.
@@ -534,7 +534,7 @@ omega-hub_hivemind_post_context(
     task_current="[LOCAL] Mining omega-stack for circuit breakers",  # ← dispatch mode tag
     focus_chain=["Find breaker", "Port to health_monitor", "Verify tests"],
     decisions=[],
-    continuation="Next: verify with @quality",
+    continuation="Next: verify with @verity",
     session_id="ses_20260604_roc_racoon",
 )
 ```

@@ -84,7 +84,7 @@ The `pillar.md` agent is evolved from a generic executor to a **Consultative Rou
 
 1. **Post first**: `omega-hub_hivemind_post_context(...)` before responding in chat for any team-relevant information (status, decisions, findings, blockers, results, GO signals)
 2. **Check first**: `omega-hub_hivemind_get_awareness()` before delegating
-3. **Heartbeat**: `omega-hub_hivemind_heartbeat(cli="{you}")` every 5-10 min during long-running ops
+3. **Heartbeat**: `omega-hub_hivemind_heartbeat(channel="opencode", entity="{you}")` every 5-10 min during long-running ops
 4. **Coordination**: Workspace lock + live feed + wait for ACK before parallel execution
 
 **Exceptions**: User explicitly asks for chat-only output, or information is not team-relevant (greetings, simple clarifications).

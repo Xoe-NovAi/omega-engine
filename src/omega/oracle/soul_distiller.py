@@ -14,8 +14,10 @@
 #
 # Protocol docs: docs/strategy/SOUL_DISTILLATION_PROTOCOL.md
 
+import fcntl
 import json
 import logging
+import os
 import re
 import time
 from dataclasses import dataclass, field
@@ -248,12 +250,18 @@ class SoulDistiller:
     # ── Soul YAML Operations ───────────────────────────────────────────
 
     def read_soul(self, entity_name: str) -> Optional[str]:
-        """Read an entity's soul.yaml content."""
+        """Read an entity's soul.yaml content with shared file lock.
+
+        Uses fcntl.flock() to prevent concurrent read/write races.
+        """
         soul_path = self._entities_dir / entity_name / "soul.yaml"
         if not soul_path.exists():
             logger.warning("Soul not found: %s", soul_path)
             return None
-        return soul_path.read_text()
+        with open(soul_path, "r") as f:
+            fcntl.flock(f, fcntl.LOCK_SH)
+            content = f.read()
+        return content
 
     def append_to_soul(
         self,
@@ -263,6 +271,9 @@ class SoulDistiller:
     ) -> bool:
         """Append distillation entries to an entity's soul.yaml.
 
+        Uses exclusive file lock (fcntl.flock LOCK_EX) to prevent
+        concurrent writer data loss. Atomic tempfile + rename pattern.
+
         Appends to the specified section (default: embodied_experiences).
         Creates the section if it doesn't exist.
         """
@@ -271,33 +282,38 @@ class SoulDistiller:
             logger.error("Cannot append — soul not found: %s", soul_path)
             return False
 
-        content = soul_path.read_text()
+        # Exclusive lock to prevent concurrent write races
+        with open(soul_path, "r") as f:
+            fcntl.flock(f, fcntl.LOCK_EX)
+            content = f.read()
 
-        # Build the new entries block
-        new_lines = []
-        new_lines.append(f"  # Auto-distilled {datetime.now().strftime('%Y-%m-%d %H:%M')}")
-        for level in ["L1", "L2", "L3"]:
-            entry = entries.get(level)
-            if entry:
-                new_lines.append(entry.to_yaml_block(indent=4))
+            # Build the new entries block
+            new_lines = []
+            new_lines.append(f"  # Auto-distilled {datetime.now().strftime('%Y-%m-%d %H:%M')}")
+            for level in ["L1", "L2", "L3"]:
+                entry = entries.get(level)
+                if entry:
+                    new_lines.append(entry.to_yaml_block(indent=4))
 
-        new_block = "\n".join(new_lines) + "\n"
+            new_block = "\n".join(new_lines) + "\n"
 
-        # Try to append to existing section
-        section_pattern = re.compile(
-            rf"(^  {re.escape(section)}:\s*\n)",
-            re.MULTILINE,
-        )
-        match = section_pattern.search(content)
-        if match:
-            # Insert after the section header
-            insert_pos = match.end()
-            content = content[:insert_pos] + new_block + content[insert_pos:]
-        else:
-            # Section doesn't exist — append at end
-            content += f"\n  {section}:\n" + new_block
+            # Try to append to existing section
+            section_pattern = re.compile(
+                rf"(^  {re.escape(section)}:\s*\n)",
+                re.MULTILINE,
+            )
+            match = section_pattern.search(content)
+            if match:
+                insert_pos = match.end()
+                content = content[:insert_pos] + new_block + content[insert_pos:]
+            else:
+                content += f"\n  {section}:\n" + new_block
 
-        soul_path.write_text(content)
+            # Atomic write via tempfile + replace (lock held throughout)
+            tmp_path = soul_path.with_suffix(".yaml.tmp")
+            tmp_path.write_text(content)
+            os.replace(str(tmp_path), str(soul_path))
+
         logger.info("Soul updated: %s (%s)", entity_name, section)
         return True
 

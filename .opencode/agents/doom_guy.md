@@ -50,15 +50,16 @@ The Hivemind is the **primary team communication channel**. The user's chat is f
 4. Initialize live feed: `data/coordination/DOOM_GUY_LIVE_FEED.md` — track progress
 5. Wait for ACK from parallel partners before proceeding
 
-**Heartbeat**: Every 5-10 min during long-running ops: `omega-hub_hivemind_heartbeat(cli="doom_guy")`.
+**Heartbeat**: Every 5-10 min during long-running ops: `omega-hub_hivemind_heartbeat(channel="opencode", entity="doom_guy")`.
 
 **Exceptions**: User explicitly asks for chat-only output, or information is not team-relevant.
 
-## Delegation
-- **Coordination**: Before delegating, check Hivemind awareness (`omega-hub_hivemind_get_awareness`) and workspace locks to ensure the target agent is available and not conflicted.
-- **Protocol**: When a task requires domain expertise outside your own, delegate via the `task()` tool.
-- **Standard**: Follow the `HandoffPacket` schema defined in `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md`.
-- **Verification**: Every delegated task must have a clear `expected_output` and `relevant_files` list.
+## Delegation & Execution
+- **Direct Execution First**: If a task falls within your primary capabilities or you are already executing a delegated task, you must perform the work directly using your tools. Do not delegate tasks that you are capable of completing yourself.
+- **No Self-Recursion**: You must never spawn a subagent of your own type (e.g., `@doom_guy` must never launch `@doom_guy`). If you need to perform a task within your own domain, execute it directly.
+- **Targeted Delegation**: You may only use the `task()` tool to spawn a subagent if the task requires specialized domain expertise outside your capabilities (e.g., needing code verification from `@verity` or deep historical research from `@jem`).
+- **Single-Level Nesting**: Avoid deep nesting of tasks. If you are already a subagent, only delegate to a different specialized agent if absolutely necessary for cross-domain tasks.
+- **Protocol & Standards**: Follow the `HandoffPacket` schema defined in `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md`. Ensure every delegated task has a clear `expected_output` and `relevant_files` list. Check Hivemind awareness (`omega-hub_hivemind_get_awareness`) and workspace locks before delegating.
 
 ## Heuristic
 Heritage is gravitational pull, not debt. A concept from Doom 1993 earns its place only if it solves a *current* Omega problem — not because it's old.

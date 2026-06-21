@@ -116,6 +116,16 @@ ZONEID_VERIFICATION = 0x1d4a1a
 # [id-soft: doom-1993] ZONEID Pattern — critical section atomic lock marker
 ZONEID_ATOMIC = 0x1d4a1b
 
+# [id-soft: doom-1993] ZONEID Pattern — Somatic snapshot integrity marker
+# Phase C Cognitive Substrate: validates KV-cache snapshot files on load
+# to catch version drift or corrupt state files.
+ZONEID_SOMATIC = 0x1d4a1c
+
+# [id-soft: doom-1993] Precomputed Lookup — embedding cache integrity marker
+# Embedding provider cache validation. Validated on every embed read/write to
+# catch corrupt or stale embedding vectors in the hot cache.
+ZONEID_EMBEDDING = 0x1d4a1d
+
 
 # [id-soft: doom-1993] Lazy Deletion — sentinel value for tombstoned entities
 # 0xDEADBEEF is the canonical sentinel hex pattern used since the 1980s
@@ -166,6 +176,8 @@ ZONEID_TABLE = {
     "demand": {"id": ZONEID_DEMAND, "subsystem": "CrossPollination", "description": "Demand signal integrity marker"},
     "tombstone": {"id": ZONEID_TOMBSTONE, "subsystem": "EntityRegistry", "description": "Lazy deletion sentinel"},
     "verification": {"id": ZONEID_VERIFICATION, "subsystem": "Sentinel", "description": "Verification audit trail integrity marker"},
+    "somatic": {"id": ZONEID_SOMATIC, "subsystem": "SomaticState", "description": "Somatic snapshot integrity marker (Phase C)"},
+    "embedding": {"id": ZONEID_EMBEDDING, "subsystem": "EmbeddingProvider", "description": "Embedding cache integrity marker"},
 }
 
 
@@ -214,6 +226,14 @@ CVAR_TABLE: Dict[str, CvarDef] = {
     "zoneid.atomic": CvarDef(
         "zoneid.atomic", ZONEID_ATOMIC, "zoneid",
         "Critical section atomic lock marker", "ResourceGuard",
+    ),
+    "zoneid.somatic": CvarDef(
+        "zoneid.somatic", ZONEID_SOMATIC, "zoneid",
+        "Somatic snapshot integrity marker (Phase C Cognitive Substrate)", "SomaticState",
+    ),
+    "zoneid.embedding": CvarDef(
+        "zoneid.embedding", ZONEID_EMBEDDING, "zoneid",
+        "Embedding cache integrity marker (LocalGGUFEmbeddingProvider)", "EmbeddingProvider",
     ),
 
     # ── config.entity.* — Entity Registry knobs ─────────────────
@@ -340,6 +360,107 @@ CVAR_TABLE: Dict[str, CvarDef] = {
         "config.observability.json_logging", True, "bool",
         "Enable structured JSON logging (vs plain text)",
         "ObservabilityEngine",
+    ),
+
+    # ── config.somatic.* — Phase C Somatic / Dreaming / Symmetry knobs ──
+    "config.somatic.enable": CvarDef(
+        "config.somatic.enable", False, "bool",
+        "MASTER KILL SWITCH — disables ALL Phase C features (Somatic, Dreaming, Symmetry)",
+        "PhaseC",
+    ),
+    "config.somatic.snapshot_on_turn": CvarDef(
+        "config.somatic.snapshot_on_turn", False, "bool",
+        "Per-turn snapshot vs interruption-only (default: interruption-only, lower NVMe wear)",
+        "PhaseC",
+    ),
+    "config.somatic.max_snapshots_per_entity": CvarDef(
+        "config.somatic.max_snapshots_per_entity", 3, "int",
+        "Max snapshot files retained per entity (FIFO eviction on overflow)",
+        "PhaseC",
+    ),
+    "config.somatic.memory_budget_mb": CvarDef(
+        "config.somatic.memory_budget_mb", 1024, "int",
+        "Per-snapshot memory budget (MB) — snapshot exceeds this → discard",
+        "PhaseC",
+    ),
+    "config.somatic.page_size_mb": CvarDef(
+        "config.somatic.page_size_mb", 2, "int",
+        "mmap page size for somatic snapshots (MB). 2MB = Zen 2 hugepage alignment",
+        "PhaseC",
+    ),
+    "config.somatic.ctypes_safe_mode": CvarDef(
+        "config.somatic.ctypes_safe_mode", True, "bool",
+        "Use llama-cpp-python save_state/load_state instead of raw ctypes CDLL",
+        "PhaseC",
+    ),
+
+    # ── config.dreaming.* — Dreaming Cycle knobs ─────────────────
+    "config.dreaming.enable": CvarDef(
+        "config.dreaming.enable", False, "bool",
+        "Sub-switch — enable the Dreaming Cycle background process",
+        "PhaseC",
+    ),
+    "config.dreaming.model": CvarDef(
+        "config.dreaming.model", "qwen3-0.6b", "str",
+        "Model for Dreaming Cycle (MUST be small — 0.6B, not the primary model)",
+        "PhaseC",
+    ),
+    "config.dreaming.n_ctx": CvarDef(
+        "config.dreaming.n_ctx", 4096, "int",
+        "Context window for Dreaming Cycle. Short — distillation doesn't need full history",
+        "PhaseC",
+    ),
+    "config.dreaming.max_rss_mb": CvarDef(
+        "config.dreaming.max_rss_mb", 1500, "int",
+        "Hard memory cap for Dreaming Cycle process (MB). OOM-killed if exceeded",
+        "PhaseC",
+    ),
+    "config.dreaming.max_hours_per_day": CvarDef(
+        "config.dreaming.max_hours_per_day", 4, "int",
+        "Max active distillation hours per day. Budget tracked in data/state/dreaming_usage.json",
+        "PhaseC",
+    ),
+    "config.dreaming.session_minutes": CvarDef(
+        "config.dreaming.session_minutes", 30, "int",
+        "Max duration of a single dreaming session (minutes). Beyond this → cool-down",
+        "PhaseC",
+    ),
+    "config.dreaming.cooldown_minutes": CvarDef(
+        "config.dreaming.cooldown_minutes", 60, "int",
+        "CPU cool-down period between dreaming sessions. Allows 5700U to drop to 45-50°C",
+        "PhaseC",
+    ),
+    "config.dreaming.preferred_window": CvarDef(
+        "config.dreaming.preferred_window", "02:00-06:00", "str",
+        "Preferred overnight distillation window (HH:MM-HH:MM, local time)",
+        "PhaseC",
+    ),
+    "config.dreaming.poll_interval_ms": CvarDef(
+        "config.dreaming.poll_interval_ms", 100, "int",
+        "archon_active file poll interval during inference (ms). 100ms = token-level yield",
+        "PhaseC",
+    ),
+
+    # ── config.symmetry.* — Symmetry-Break Audit knobs ──────────
+    "config.symmetry.enable": CvarDef(
+        "config.symmetry.enable", False, "bool",
+        "Sub-switch — enable the Symmetry-Break Audit (C.3.x)",
+        "PhaseC",
+    ),
+    "config.symmetry.mode": CvarDef(
+        "config.symmetry.mode", "fast", "str",
+        "Symmetry mode: 'fast' (Lilith only), 'slow' (Ma'at + Lilith, sequential)",
+        "PhaseC",
+    ),
+    "config.symmetry.max_attempts": CvarDef(
+        "config.symmetry.max_attempts", 2, "int",
+        "Skeptical Circuit Breaker — max verification attempts before fallback",
+        "PhaseC",
+    ),
+    "config.symmetry.semantic_delta_threshold": CvarDef(
+        "config.symmetry.semantic_delta_threshold", 0.3, "float",
+        "Semantic delta threshold for SymmetryBreakError (0.0-1.0). Empirical — needs validation",
+        "PhaseC",
     ),
 }
 

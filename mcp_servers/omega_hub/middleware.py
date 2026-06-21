@@ -1,3 +1,5 @@
+# [id-soft: quake3-1999] Hub Middleware — netchan OOB-style rate limiting and error boundary for MCP transport
+
 """Omega Hub — Security middleware: rate limiting, request size limits, M9 error boundary.
 
 AP: AP-OMEGA-HUB-MIDDLEWARE-v1.0.0
@@ -187,8 +189,10 @@ def apply_security(app):
         allow_headers=["*"],
     )
     app.add_middleware(RateLimitMiddleware, requests_per_minute=120)
-    # Temporarily disabled RequestSizeLimitMiddleware to debug ASGI protocol error
-    # app.add_middleware(RequestSizeLimitMiddleware, max_size=25 * 1024 * 1024)  # 25MB for context posts
+    # NOTE: Was disabled to debug ASGI protocol error with 25MB context posts.
+    # If Starlette raises "ASGI protocol violation" on large posts, check
+    # Content-Length vs Transfer-Encoding: chunked compatibility in the client.
+    app.add_middleware(RequestSizeLimitMiddleware, max_size=25 * 1024 * 1024)  # 25MB for context posts
 
 
 __all__ = [

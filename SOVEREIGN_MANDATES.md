@@ -1,12 +1,12 @@
 # 🔱 Omega Engine — Sovereign Mandates
-**Version**: 3.2.0
-*Status**: NON-NEGOTIABLE
+**Version**: 3.5.0
+**Status**: NON-NEGOTIABLE
 **Scope**: All Agents, All CLIs, All IDEs
-**Updated**: 2026-06-11 (Added M15 Sovereign Continuity)
+**Updated**: 2026-06-17 (Added M20 SomaticState, M21 Gate Integrity, M22 Response Provenance)
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
-## 🛡️ The Fifteen Laws of Sovereign Execution
+## 🛡️ The Twenty-Two Laws of Sovereign Execution
 
 ### 1. AnyIO Absolute
 - **Mandate**: All asynchronous code MUST use AnyIO. 
@@ -111,5 +111,55 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Reason**: Toolchain regressions (e.g., OpenCode v1.17.3) can cause "Void Summaries," erasing an agent's working memory. Sovereignty requires that intelligence persists independently of the tool.
 - **Enforcement**: Any agent reporting a context collapse without a corresponding `session_gnosis.md` is in violation of M15.
 
+### 16. Modularization & Portability (NEW — 2026-06-14)
+- **Mandate**: The Omega Engine Core (`src/omega/`) MUST remain modular, portable, and decoupled from any local orchestration platform.
+- **Constraint**: No hardcoded paths, environment assumptions, or platform-specific logic in the core engine. All platform integration must go through the MCP Hub or the CLI abstraction layer.
+- **Pattern**: The Hub modularization (state.py, background.py, gateway.py, middleware.py, tools.py) is the canonical architecture. Dynamic ServiceProxy/PathProxy patterns for runtime resolution.
+- **Reason**: The engine exists to be a universal runtime that anyone can use to build their own stacks. If the core engine has hardcoded assumptions about the host environment, it ceases to be portable and becomes a specialized tool.
+- **Enforcement**: `make temple-grade` must verify no hardcoded paths in `src/omega/`. CI must gate on portability checks.
+
+### 17. Cognitive Integrity (NEW — 2026-06-15)
+- **Mandate**: The engine must verify the consistency of its own memories.
+- **Constraint**: Contradictions between persisted memory and distilled gnosis must be flagged and resolved via the Skeptical Verifier to prevent "hallucinated" memory drift.
+- **Pattern**: Use the Qliphoth failure taxonomy to detect cognitive loops and contradictions.
+- **Reason**: Sovereign AI requires an internal truth-anchor. Without consistency checks, an AI can evolve into a state of internal contradiction, destroying its own reliability.
+- **Enforcement**: `make temple-grade` must verify T12 (Semantic Integrity) gate.
+
+### 18. Token Efficiency (The No-Waste Law)
+- **Mandate**: Every token generated must serve a purpose.
+- **Constraint**: Avoid redundancy, excessive verbosity, and wasted inference cycles. No "filler" content.
+- **Sane-Boundary (NEW)**: This mandate must NEVER be used to justify "Cognitive Anorexia." High-fidelity execution requires high-fidelity context. Agents must never compress prompts, reports, or specifications to the point of semantic loss, vagueness, or the omission of critical edge cases. Precision and clarity always supersede brevity.
+- **Pattern**: Use concise prompts, efficient state snapshots, and avoid redundant re-evaluations.
+- **Reason**: Tokens are the currency of intelligence. Wasting them is a systemic inefficiency and a violation of the user's resource sovereignty.
+
+### 19. Adversarial Alchemy (The Weakness-to-Advantage Law)
+- **Mandate**: All perceived systemic weaknesses must be mined for strategic opportunities.
+- **Constraint**: Do not simply "fix" a flaw; analyze the failure mode to determine if it can be transformed into a sovereign advantage.
+- **Sane-Boundary (NEW)**: This mandate must NEVER be used to justify "Architectural Over-Engineering." Sometimes a bug is just a bug. Simple code errors, typos, and broken imports must be fixed directly and cleanly without attempting to extract "esoteric advantages" that introduce unnecessary complexity, bloat, or fragile state machines. This law applies strictly to systemic, physical, or architectural constraints (e.g., RAM ceilings, GIL contention, or forced interruptions).
+- **Pattern**: The "Somatic Save-Point" (turning an interruption into a reflection moment) is the canonical example of Adversarial Alchemy.
+- **Reason**: True sovereignty is not the absence of flaws, but the ability to weaponize constraints into capabilities.
+
+### 20. SomaticState Serialization (NEW — 2026-06-17)
+- **Mandate**: Model session state MUST be serializable and resumable via low-level bindings.
+- **Constraint**: Use ctypes bindings (`llama_copy_state_data` / `llama_set_state_data`) wrapped in `anyio.to_thread.run_sync()` for SomaticState serialization. No high-level abstractions that lose fidelity.
+- **Pattern**: Memory-mapped state snapshots for cold-start model resumption.
+- **Reason**: Enables instant model context resumption without re-inference, reducing latency and token waste.
+- **Enforcement**: Any SomaticState implementation must pass round-trip serialization tests.
+
+### 21. Gate Integrity (NEW — 2026-06-17)
+- **Mandate**: Every code path returning a typed result MUST be exercised by at least one test that validates the return type.
+- **Constraint**: No mock-based tests that mask type mismatches. Every core API boundary must have a "Contract Test" that verifies `isinstance(result, ExpectedType)`.
+- **Pattern**: The `GenerateResult` dataclass fix (Sprint C) — 5 call sites were treating a dataclass as a tuple/string because mocks returned tuples.
+- **Reason**: Mock-based tests can mask runtime crashes. Contract tests ensure the API contract is enforced even when individual functions are mocked.
+- **Enforcement**: `make temple-grade` must verify contract tests exist for all core API boundaries.
+
+### 22. Response Provenance (NEW — 2026-06-17)
+- **Mandate**: All observability logs MUST record the actual provider that generated a response, not the configured intent.
+- **Constraint**: Provenance must be captured at response receipt (`GenerateResult.provider_name`), not at dispatch intent (`get_preferred_backend()`).
+- **Pattern**: The Truth-Anchor Protocol — `GenerateResult` dataclass carries `provider_name` from the actual inference backend, ensuring forensic accuracy in observability logs.
+- **Reason**: Local-first claims require verifiable evidence. If the log says "local" but the response came from cloud, sovereignty is a lie.
+- **Enforcement**: Any observability entry must include `provider_name` from the actual response, not the configuration.
+
 ---
+
 **Failure to adhere to these mandates is a systemic error. If you encounter a conflict between these mandates and a tool's suggestion, the Mandates prevail.**

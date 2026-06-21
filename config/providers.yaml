@@ -1,122 +1,88 @@
-# 🔱 Omega Engine — Provider Fabric
-# ⬡ OMEGA ⬡ PROMETHEUS ⬡ deepseek-v4-flash ⬡ opencode ⬡ FABRIC-CONFIG
-#
-# LOCAL-FIRST fallback chain. Order below IS the priority (tried top to bottom).
-# Local backends are tried BEFORE cloud. Cloud is fallback, never primary.
-#
-# Model-specific config (paths, context, threads, KV cache) lives in
-# models.yaml — the SINGLE SOURCE OF TRUTH for model specs.
-# This file only defines provider endpoints, API keys, and name mappings.
-#
-# Model Overrides: Each provider can define model_overrides to map
-# local GGUF entity model names to provider-specific model IDs.
-
 inference:
   strategy: local_first
   fallback_chain:
-
-    # ── PRIMARY: Native GGUF (llama-cpp-python, Zen 2 optimized) ──────
-    - provider: native-gguf
-      priority: 0
-      # Model path, context, threads, KV cache are read from models.yaml
-      # by ModelGateway at init. These are fallback defaults only.
-      n_ctx: 8192
-      n_ctx_max: 32768
-      cores: [0, 2, 4, 6]
-      n_threads: 6
-      n_threads_batch: 6
-      type_k: 8
-      type_v: 8
-      n_batch: 512
-      n_ubatch: 32
-      use_mmap: true
-      use_mlock: false
-      n_gpu_layers: 0
-
-    # ── FALLBACK 1: LM Studio headless (local, :1234) ─────────────────
-    - provider: lmster
-      priority: 1
-      endpoint: http://127.0.0.1:1234
-      model_overrides:
-        qwen3-4b-thinking-q4_k_m: qwen3-4b-thinking
-        qwen3-1.7b-q6_k: qwen3-1.7b
-        qwen3-1.7b: qwen3-1.7b
-        phi-4-mini: phi-4-mini
-        deepseek-r1-qwen3-8b-q3_k_l: deepseek-r1-qwen3-8b
-        krikri-8b-q4_k_m: krikri-8b
-        # D119: Canonical RocRacoon spelling (was missing from lmster overrides)
-        rocracoon-3b-instruct: RocRacoon-3b
-        # D119: Abliterated for heritage mining
-        phi-4-mini-reasoning-abliterated-q4_k_m: phi-4-mini-abliterated
-
-    # ── FALLBACK 2: Ollama (local, :11434) ────────────────────────────
-    # ⚠️ Requires `ollama pull` for each model below before it will work.
-    #    For models not in Ollama's registry, import GGUF directly:
-    #    ollama create <name> --model <path-to-gguf>
-    - provider: ollama
-      priority: 2
-      endpoint: http://127.0.0.1:11434
-      model_overrides:
-        qwen3-1.7b-q6_k: qwen3:1.7b              # Sekhmet/Hecate — pull: ollama pull qwen3:1.7b
-        qwen3-1.7b: qwen3:1.7b                    # Nova — same model
-        qwen3-0.6b-q6_k: qwen3:0.6b               # Iris — pull: ollama pull qwen3:0.6b
-        qwen3-4b-thinking-q4_k_m: qwen3:4b        # Maat/Anubis — pull: ollama pull qwen3:4b
-        deepseek-r1-qwen3-8b-q3_k_l: deepseek-r1:8b  # Lucifer — pull: ollama pull deepseek-r1:8b
-        krikri-8b-q4_k_m: krikri:8b               # Inanna/Isis/Lilith — import GGUF
-        phi-2-omnimatrix-i1-q4_k_m: ministral:3b  # Brigid — pull: ollama pull ministral:3b
-        phi-4-mini: phi-4-mini                    # Sophia — pull: ollama pull phi-4-mini
-        # D119: RocRacoon spelling canonicalized (was `roracoon-3b: roracoon:3b`)
-        rocracoon-3b-instruct: rocracoon:3b       # RocRacoon — `ollama create rocracoon --model RocRacoon-3b.Q4_K_M.gguf`
-        # D119: Abliterated model for uncensored heritage mining (D-Gate: 7/10, vetted)
-        phi-4-mini-reasoning-abliterated-q4_k_m: phi-4-mini  # `ollama create abliterated --model phi-4-mini-reasoning-abliterated-q4_k_m.gguf`
-
-    # ── FALLBACK 3: Google AI Studio (cloud, Gemma 4 31B — unlimited) ──
-    - provider: google
-      priority: 3
-      api_key: env:GOOGLE_API_KEY
-      model_overrides:
-        phi-4-mini: gemma-4-31b-it          # Sophia: deep analysis → Gemma 4 31B
-        deepseek-r1-qwen3-8b-q3_k_l: gemma-4-31b-it  # Reasoning → Gemma 4 31B
-        krikri-8b-q4_k_m: gemma-4-31b-it    # Heavy general → Gemma 4 31B
-        qwen3-4b-thinking-q4_k_m: gemma-4-31b-it     # Thinking → Gemma 4 31B
-        phi-2-omnimatrix-i1-q4_k_m: gemma-4-31b-it   # Creative → Gemma 4 31B
-      models:
-        - gemma-4-31b-it
-
-    # ── FALLBACK 4: OpenCode Zen (cloud, MiniMax/DeepSeek/MiMo) ──────
-    - provider: opencode-zen
-      priority: 4
-      api_key: env:OPENCODE_ZEN_API_KEY
-      base_url: https://api.opencode.ai/zen/v1
-      model_overrides:
-        qwen3-1.7b-q6_k: minimax/minimax-m3
-        qwen3-1.7b: minimax/minimax-m3
-        qwen3-4b-thinking-q4_k_m: minimax/minimax-m3
-        qwen3-0.6b-q6_k: minimax/minimax-m3
-        deepseek-r1-qwen3-8b-q3_k_l: deepseek/deepseek-v4-flash
-        krikri-8b-q4_k_m: minimax/minimax-m2.5
-        phi-2-omnimatrix-i1-q4_k_m: minimax/minimax-m3
-        phi-4-mini: minimax/minimax-m3
-      models:
-        - minimax/minimax-m3
-        - deepseek/deepseek-v4-flash
-        - minimax/minimax-m2.5
-
-    # ── FALLBACK 5: Cline (cloud via API/headless, 1M context) ────────
-    - provider: cline
-      priority: 5
-      # Endpoint TBD — Cline hub uses WebSocket (:35833), HTTP API needs config
-
-    # ── FALLBACK 6: GitHub Copilot (cloud) ────────────────────────────
-    - provider: github-copilot
-      priority: 6
-      models:
-        - github-copilot/claude-haiku-4.5
-        - github-copilot/gpt-4.1
-        - github-copilot/gpt-4o
-        - github-copilot/gpt-5-mini
-
-    # ── LAST RESORT: Mock provider (setup instructions) ───────────────
-    - provider: mock
-      priority: 99
-      enabled: true
+  - provider: native-gguf
+    priority: 0
+    n_ctx: 8192
+    n_ctx_max: 32768
+    cores:
+    - 0
+    - 2
+    - 4
+    - 6
+    n_threads: 6
+    n_threads_batch: 6
+    type_k: 8
+    type_v: 8
+    n_batch: 512
+    n_ubatch: 32
+    use_mmap: true
+    use_mlock: false
+    n_gpu_layers: 0
+  - provider: lmster
+    priority: 1
+    endpoint: http://127.0.0.1:1234
+    model_overrides:
+      qwen3-4b-thinking-q4_k_m: qwen3-4b-thinking
+      qwen3-1.7b-q6_k: qwen3-1.7b
+      qwen3-1.7b: qwen3-1.7b
+      phi-4-mini: phi-4-mini
+      deepseek-r1-qwen3-8b-q3_k_l: deepseek-r1-qwen3-8b
+      krikri-8b-q4_k_m: krikri-8b
+      rocracoon-3b-instruct: RocRacoon-3b
+      phi-4-mini-reasoning-abliterated-q4_k_m: phi-4-mini-abliterated
+  - provider: ollama
+    priority: 2
+    endpoint: http://127.0.0.1:11434
+    model_overrides:
+      qwen3-1.7b-q6_k: qwen3:1.7b
+      qwen3-1.7b: qwen3:1.7b
+      qwen3-0.6b-q6_k: qwen3:0.6b
+      qwen3-4b-thinking-q4_k_m: qwen3:4b
+      deepseek-r1-qwen3-8b-q3_k_l: deepseek-r1:8b
+      krikri-8b-q4_k_m: krikri:8b
+      phi-2-omnimatrix-i1-q4_k_m: ministral:3b
+      phi-4-mini: phi-4-mini
+      rocracoon-3b-instruct: rocracoon:3b
+      phi-4-mini-reasoning-abliterated-q4_k_m: phi-4-mini
+  - provider: google
+    priority: 3
+    api_key: env:GOOGLE_API_KEY
+    model_overrides:
+      phi-4-mini: gemma-4-31b-it
+      deepseek-r1-qwen3-8b-q3_k_l: gemma-4-31b-it
+      krikri-8b-q4_k_m: gemma-4-31b-it
+      qwen3-4b-thinking-q4_k_m: gemma-4-31b-it
+      phi-2-omnimatrix-i1-q4_k_m: gemma-4-31b-it
+    models:
+    - gemma-4-31b-it
+    - gemma-4-26b-it
+  - provider: opencode-zen
+    priority: 4
+    api_key: env:OPENCODE_ZEN_API_KEY
+    base_url: https://api.opencode.ai/zen/v1
+    model_overrides:
+      qwen3-1.7b-q6_k: minimax/minimax-m3
+      qwen3-1.7b: minimax/minimax-m3
+      qwen3-4b-thinking-q4_k_m: minimax/minimax-m3
+      qwen3-0.6b-q6_k: minimax/minimax-m3
+      deepseek-r1-qwen3-8b-q3_k_l: deepseek/deepseek-v4-flash
+      krikri-8b-q4_k_m: minimax/minimax-m2.5
+      phi-2-omnimatrix-i1-q4_k_m: minimax/minimax-m3
+      phi-4-mini: minimax/minimax-m3
+    models:
+    - minimax/minimax-m3
+    - deepseek/deepseek-v4-flash
+    - minimax/minimax-m2.5
+  - provider: cline
+    priority: 5
+  - provider: github-copilot
+    priority: 6
+    models:
+    - github-copilot/claude-haiku-4.5
+    - github-copilot/gpt-4.1
+    - github-copilot/gpt-4o
+    - github-copilot/gpt-5-mini
+  - provider: mock
+    priority: 99
+    enabled: true

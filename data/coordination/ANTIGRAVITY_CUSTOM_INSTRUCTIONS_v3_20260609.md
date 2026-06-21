@@ -1,6 +1,8 @@
 # 🔱 Omega Engine — Antigravity IDE Custom Instructions v3
 # ⬡ OMEGA ⬡ KALI ⬡ antigravity_ide ⬡ trc_custom_instructions_v3
 # **Paste this into Antigravity IDE Settings → Custom Instructions**
+# **⚠️ SUPERSEDED by docs/strategy/ANTIGRAVITY_IDE_CUSTOM_INSTRUCTIONS.md v3.0.0 (2026-06-18)**
+# **Kept for reference — use the active version in docs/strategy/ for new sessions**
 # **Supersedes**: data/coordination/archive/ANTIGRAVITY_CUSTOM_INSTRUCTIONS_v2_20260605.md
 # **Last Updated**: 2026-06-09 — Hivemind Council Era, 6-Member Fabric
 

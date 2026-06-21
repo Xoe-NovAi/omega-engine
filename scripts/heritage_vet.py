@@ -40,7 +40,7 @@ SCAN_PATTERNS = [
 ]
 
 TAG_REGEX = re.compile(r"\[id-soft:\s*([^\]]+)\]")
-VET_SECTION_REGEX = re.compile(r"^##\s+(vet-\d+):", re.MULTILINE)
+VET_SECTION_REGEX = re.compile(r"^###+\s+(vet-\d+):", re.MULTILINE)
 SCORE_REGEX = re.compile(r"\*\*Score\*\*:.*?=\s*(\d+)/10", re.IGNORECASE)
 DECISION_REGEX = re.compile(r"\*\*Decision\*\*:\s*(.*?)$", re.IGNORECASE | re.MULTILINE)
 
@@ -76,7 +76,7 @@ def parse_vet_log(content: str) -> Dict[str, Dict]:
     entries: Dict[str, Dict] = {}
 
     # Split on section headers
-    sections = re.split(r"^##\s+(vet-\d+):\s*(.*?)$", content, flags=re.MULTILINE)
+    sections = re.split(r"^###+\s+(vet-\d+):\s*(.*?)$", content, flags=re.MULTILINE)
     # sections[0] is preamble, then groups of (vet_id, concept, body)
     i = 1
     while i < len(sections):

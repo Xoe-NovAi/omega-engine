@@ -1,348 +1,294 @@
-# ============================================================================
-# Omega Engine — Models Configuration v2.0.0
-# ============================================================================
-# Alethia Pointer: AP-MODELS-CONFIG-v2.0.0
-# Purpose: Single source of truth for all model specs, paths, context, threads,
-#          KV cache config, and loading strategies.
-# Hardware: AMD Ryzen 7 5700U (Zen 2, 8C/16T), 14Gi RAM, AMD iGPU
-# RAM budget: 14336 total - 2000 OS = 12336 available for AI
-#             Nova always-on: 300MB → 12036MB for pillar models
-# Strategy: max_concurrent_models = 1 (plus Nova always-on)
-#
-# Context window philosophy (v2.0.0):
-#   Context is NOT free. Every token costs KV cache RAM. Windows are set to
-#   the MINIMUM that serves the entity's actual use case, not the model's max.
-#   This frees RAM for model weights, a second concurrent model, or OS headroom.
-# ============================================================================
-
 embedding:
-  model: "embeddinggemma-300m-q6_k"
-  local_path: "/media/arcana-novai/omega_library/models/gguf/local/all/embedding-gemma-300m.gguf"
+  model: embeddinggemma-300m-q6_k
+  local_path: /media/arcana-novai/omega_library/lmstudio-models/local/all/embeddinggemma-300m-Q6_K.gguf
   dimensions: 768
-  backend: "llama-server"
-  quantization: "Q6_K"
-  device: "cpu"
+  backend: llama-server
+  quantization: Q6_K
+  device: cpu
   ram_estimate_mb: 200
-
 llama_server:
   port: 8080
-  host: "127.0.0.1"
-  log_level: "info"
-  threads: 6                  # Zen 2: 6 physical cores (0,2,4,6), leave 1 for OS
+  host: 127.0.0.1
+  log_level: info
+  threads: 6
   batch_size: 512
   ubatch_size: 32
-  context_size: 8192          # Default context (per-model overrides below)
-  gpu_layers: 0               # CPU-only on 5700U (no discrete GPU)
+  context_size: 8192
+  gpu_layers: 0
   startup_timeout_sec: 120
-
 models:
-  # ── Always-on: Nova (voice assistant, speculative decoder) ──────
   qwen3-1.7b:
-    path: "/media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-1.7B-Q6_K.gguf"
+    path: /media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-1.7B-Q6_K.gguf
     size_gb: 0.27
     ram_mb: 300
-    context_window: 4096       # Short Q&A, greetings, routing — no need for 32K
-    threads: 4                 # Tiny model, 4 threads sufficient
-    load_strategy: "always"
-    entity: "nova"
-
-  # ── Warm: Iris (speculative decode check, quick tasks) ──────────
+    context_window: 4096
+    threads: 4
+    load_strategy: always
+    entity: nova
   qwen3-0.6b-q6_k:
-    path: "/media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-0.6B-Q6_K.gguf"
+    path: /media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-0.6B-Q6_K.gguf
     size_gb: 0.47
     ram_mb: 500
-    context_window: 4096       # Speculative decode check only
+    context_window: 4096
     threads: 4
-    load_strategy: "warm"
-    entity: "iris"
-
-  # ── On-demand: Sekhmet/Hecate (boundary, protection, shadow) ───
+    load_strategy: warm
+    entity: iris
   qwen3-1.7b-q6_k:
-    path: "/media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-1.7B-Q6_K.gguf"
+    path: /media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-1.7B-Q6_K.gguf
     size_gb: 1.6
     ram_mb: 1800
-    context_window: 8192       # Medium conversations
+    context_window: 8192
     threads: 6
-    load_strategy: "on_demand_10min"
-    entity: "sekhmet, hecate"
-
-  # ── On-demand: Sophia (deep analysis, code review, strategy) ───
+    load_strategy: on_demand_10min
+    entity: sekhmet, hecate
   phi-4-mini:
-    path: "/media/arcana-novai/omega_library/models/local/all/Phi-4-mini-instruct-Q5_K_M.gguf"
+    path: /media/arcana-novai/omega_library/models/local/all/Phi-4-mini-instruct-Q5_K_M.gguf
     size_gb: 2.85
     ram_mb: 3500
-    context_window: 16384      # Deep analysis needs room for code + reasoning
+    context_window: 16384
     threads: 6
-    load_strategy: "on_demand_10min"
-    entity: "SOPHIA"
-
-  # ── On-demand: Brigid (creative, poetry, healing) ──────────────
+    load_strategy: on_demand_10min
+    entity: SOPHIA
   phi-2-omnimatrix-i1-q4_k_m:
-    path: "/media/arcana-novai/omega_library/models/gguf/local/all/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf"
+    path: /media/arcana-novai/omega_library/models/gguf/local/all/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf
     size_gb: 2.5
     ram_mb: 2800
-    context_window: 8192       # Creative work, moderate context
+    context_window: 8192
     threads: 6
-    load_strategy: "on_demand_10min"
-    entity: "brigid"
-
-  # ── On-demand: Maat/Anubis (reasoning, judgment, soul guidance) ─
+    load_strategy: on_demand_10min
+    entity: brigid
   qwen3-4b-thinking-q4_k_m:
-    path: "/media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-4B-Thinking-2507-Q4_K_M.gguf"
+    path: /media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-4B-Thinking-2507-Q4_K_M.gguf
     size_gb: 2.4
     ram_mb: 2700
-    context_window: 8192       # Reasoning chains, not long-context
+    context_window: 8192
     threads: 6
-    load_strategy: "on_demand_5min"
-    entity: "maat, anubis"
-    kv_cache_key_type: "fp8"
-    kv_cache_value_type: "fp8"
-
-  # ── On-demand: Lucifer (deep reasoning, rebellion, gnosis) ──────
+    load_strategy: on_demand_5min
+    entity: maat, anubis
+    kv_cache_key_type: fp8
+    kv_cache_value_type: fp8
+    thinking_budget: 512
   deepseek-r1-qwen3-8b-q3_k_l:
-    path: "/media/arcana-novai/omega_library/models/gguf/local/all/DeepSeek-R1-0528-Qwen3-8B-Q3_K_L.gguf"
+    path: /media/arcana-novai/omega_library/models/gguf/local/all/DeepSeek-R1-0528-Qwen3-8B-Q3_K_L.gguf
     size_gb: 4.2
     ram_mb: 4500
-    context_window: 8192       # Heavy model, limit context to save RAM
+    context_window: 8192
     threads: 6
-    load_strategy: "on_demand_5min"
-    entity: "lucifer"
-
+    load_strategy: on_demand_5min
+    entity: lucifer
+    thinking_budget: 512
   rocracoon-3b-instruct:
-    path: "/media/arcana-novai/omega_library/models/gguf/local/all/RocRacoon-3b.Q4_K_M.gguf"
+    path: /media/arcana-novai/omega_library/models/gguf/local/all/RocRacoon-3b.Q4_K_M.gguf
     size_gb: 2.1
     ram_mb: 2500
     context_window: 8192
     threads: 6
-    load_strategy: "on_demand_10min"
-    entity: "roc_racoon"
-
+    load_strategy: on_demand_10min
+    entity: roc_racoon
   phi-4-mini-reasoning-abliterated-q4_k_m:
-    path: "/media/arcana-novai/omega_library/models/local/all/phi-4-mini-reasoning-abliterated-q4_k_m.gguf"
+    path: /media/arcana-novai/omega_library/models/local/all/phi-4-mini-reasoning-abliterated-q4_k_m.gguf
     size_gb: 1.4
     ram_mb: 2000
     context_window: 16384
     threads: 6
-    load_strategy: "on_demand_10min"
-    entity: "SOPHIA"
-
+    load_strategy: on_demand_10min
+    entity: SOPHIA
   qwen3-vl:
-    path: "/media/arcana-novai/omega_library/models/local/all/Qwen3-VL-4B-Instruct-Q4_K_M.gguf"
+    path: /media/arcana-novai/omega_library/models/local/all/Qwen3-VL-4B-Instruct-Q4_K_M.gguf
     size_gb: 2.4
     ram_mb: 3200
     context_window: 8192
     threads: 6
-    load_strategy: "on_demand_5min"
+    load_strategy: on_demand_5min
     multimodal: true
-    mmproj: "/media/arcana-novai/omega_library/models/local/all/mmproj-model-f16.gguf"
-    entity: "ARGUS"
-
-
-  # ── On-demand: Inanna/Isis/Lilith (knowledge, dreams, depths) ──
+    mmproj: /media/arcana-novai/omega_library/models/local/all/mmproj-model-f16.gguf
+    entity: ARGUS
   krikri-8b-q4_k_m:
-    path: "/media/arcana-novai/omega_library/models/gguf/local/all/Krikri-8B-Instruct.Q4_K_M.gguf"
+    path: /media/arcana-novai/omega_library/models/gguf/local/all/Krikri-8B-Instruct.Q4_K_M.gguf
     size_gb: 4.7
     ram_mb: 4900
-    context_window: 16384      # Knowledge work, Greek texts can be long
+    context_window: 16384
     threads: 6
-    load_strategy: "on_demand_5min"
-    entity: "inanna, isis, lilith"
-
-# KV Cache optimization (Zen 2)
-# Note: fp8 requires llama.cpp build with FP8_KV support; fallback to q8_0 if unsupported
-# Per-model overrides only — defaults apply to any model not listed here.
+    load_strategy: on_demand_5min
+    entity: inanna, isis, lilith
 kv_cache:
-  default_key_type: "q8_0"
-  default_value_type: "q8_0"
+  default_key_type: q8_0
+  default_value_type: q8_0
   models:
     qwen3-1.7b:
-      key_type: "f16"            # Tiny model, KV cache is negligible
-      value_type: "f16"
+      key_type: f16
+      value_type: f16
     qwen3-0.6b-q6_k:
-      key_type: "f16"
-      value_type: "f16"
+      key_type: f16
+      value_type: f16
     qwen3-4b-thinking-q4_k_m:
-      key_type: "q8_0"            # Standardized to q8_0 per user directive
-      value_type: "q8_0"
-
-# Zen 2 compilation guide
+      key_type: q8_0
+      value_type: q8_0
 zen2_build:
-  march: "znver2"
+  march: znver2
   cmake_flags:
-    - "-DLLAMA_AVX2=ON"
-    - "-DLLAMA_FMA=ON"
-    - "-DLLAMA_F16C=ON"
-    - "-DLLAMA_NO_AVX512=ON"
-    - "-DGGML_FLASH_ATTN=ON"     # Enable Flash Attention for Zen 2 optimization
-    - "-DLLAMA_BLAS=OFF"
-    - "-DLLAMA_CUDA=OFF"
-    - "-DLLAMA_METAL=OFF"
-    - "-DCMAKE_C_FLAGS='-march=znver2'"
-    - "-DCMAKE_CXX_FLAGS='-march=znver2'"
+  - -DLLAMA_AVX2=ON
+  - -DLLAMA_FMA=ON
+  - -DLLAMA_F16C=ON
+  - -DLLAMA_NO_AVX512=ON
+  - -DGGML_FLASH_ATTN=ON
+  - -DLLAMA_BLAS=OFF
+  - -DLLAMA_CUDA=OFF
+  - -DLLAMA_METAL=OFF
+  - -DCMAKE_C_FLAGS='-march=znver2'
+  - -DCMAKE_CXX_FLAGS='-march=znver2'
   runtime_env:
-    OMP_NUM_THREADS: "6"         # Match cpu_optimizer.py ZEN2_RECOMMENDED_THREADS
-    OMP_PROC_BIND: "close"
-    OMP_PLACES: "cores"
-    OPENBLAS_CORETYPE: "ZEN"
-
-# Loading strategy rules
+    OMP_NUM_THREADS: '6'
+    OMP_PROC_BIND: close
+    OMP_PLACES: cores
+    OPENBLAS_CORETYPE: ZEN
 loading:
   max_concurrent_models: 1
-  nova_always_on: true           # qwen3-1.7b stays loaded (~300MB)
-  warm_models: ["qwen3-0.6b-q6_k"]
+  nova_always_on: true
+  warm_models:
+  - qwen3-0.6b-q6_k
   unload_after_idle_minutes: 5
   emergency_swap_threshold_mb: 1024
-
-# ── Agent Role-to-Model Tier Mapping ──────────────────────────
-# The engine detects available RAM at startup and recommends
-# tier assignments. Users override any role's model here.
-# Hardware: 14GB RAM → lite tier fine-tunable locally
-#           Heavy tier fine-tuning deferred to cloud/hardware upgrade
-
 agent_roles:
   jem_discovery:
+    # CONSOLIDATED into jem (Sprint B)
     tier: lite
-    default_model: "qwen3-0.6b-q6_k"
+    default_model: qwen3-0.6b-q6_k
     min_ram_gb: 8
   jem_synthesis:
+    # CONSOLIDATED into jem (Sprint B)
     tier: medium
-    default_model: "qwen3-1.7b"
+    default_model: qwen3-1.7b
     min_ram_gb: 16
   jem_verification:
+    # CONSOLIDATED into jem (Sprint B)
     tier: heavy
-    default_model: "qwen3-4b-thinking-q4_k_m"
+    default_model: qwen3-4b-thinking-q4_k_m
     min_ram_gb: 16
   scribe:
-    tier: heavy
-    default_model: "qwen3-4b-thinking-q4_k_m"
+    # CONSOLIDATED into verity (Sprint C)
+    tier: medium
+    default_model: qwen3-4b-thinking-q4_k_m
+    min_ram_gb: 16
+  quality:
+    # CONSOLIDATED into verity (Sprint C)
+    tier: medium
+    default_model: qwen3-1.7b
+    min_ram_gb: 16
+  verity:
+    # Sprint C: Unified Sentry (compliance/audit) + Scribe (gnosis distillation)
+    tier: medium
+    default_model: qwen3-4b-thinking-q4_k_m
     min_ram_gb: 16
   doom_guy:
     tier: heavy
-    default_model: "qwen3-4b-thinking-q4_k_m"
+    default_model: qwen3-4b-thinking-q4_k_m
     min_ram_gb: 16
   roc_racoon:
     tier: lite
-    default_model: "qwen3-1.7b"
+    default_model: qwen3-1.7b
     min_ram_gb: 8
-  quality:
-    tier: medium
-    default_model: "qwen3-1.7b"
-    min_ram_gb: 16
   kali:
     tier: heavy
-    default_model: "qwen3-4b-thinking-q4_k_m"
+    default_model: qwen3-4b-thinking-q4_k_m
     min_ram_gb: 16
   pillar:
     tier: lite
-    default_model: "qwen3-1.7b"
+    default_model: qwen3-1.7b
     min_ram_gb: 8
   plan:
+    # REPLACED by makali (D117)
     tier: heavy
-    default_model: "qwen3-4b-thinking-q4_k_m"
+    default_model: qwen3-4b-thinking-q4_k_m
     min_ram_gb: 16
   jem:
     tier: medium
-    default_model: "qwen3-1.7b"
+    default_model: qwen3-1.7b
     min_ram_gb: 16
+    # Sprint B: 3 KBs consolidated (Discovery/Synthesis/Verification) with self-dispatch
   maat:
     tier: heavy
-    default_model: "qwen3-4b-thinking-q4_k_m"
+    default_model: qwen3-4b-thinking-q4_k_m
     min_ram_gb: 16
   lilith:
     tier: heavy
-    default_model: "qwen3-4b-thinking-q4_k_m"
+    default_model: qwen3-4b-thinking-q4_k_m
     min_ram_gb: 16
   researcher:
     tier: heavy
-    default_model: "qwen3-4b-thinking-q4_k_m"
+    default_model: qwen3-4b-thinking-q4_k_m
     min_ram_gb: 16
-
-# ── Cloud Model Registry (v1 — 2026-06-11) ─────────────────────
-# Agents reference these specs to select the right model for a task
-# without being told capabilities each time. The SAME model may have
-# DIFFERENT context windows depending on the provider/CLI used.
-# ============================================================================
 cloud_models:
-  # Primary session models
   deepseek-v4-flash:
-    provider: "opencode / cline"
+    provider: opencode / cline
     context_window:
-      opencode_zen_free: 204800      # 200K — OpenCode Zen free tier
-      cline: 1048576                 # 1M — Cline provider
+      opencode_zen_free: 204800
+      cline: 1048576
     strengths:
-      - "Code generation and analysis"
-      - "Long-context task decomposition"
-      - "Multi-file editing"
-      - "Agent orchestration"
-    best_for: "Primary coding session; agent dispatch (Kali/Ma'at/Lilith)"
-    tier: "primary"
-
+    - Code generation and analysis
+    - Long-context task decomposition
+    - Multi-file editing
+    - Agent orchestration
+    best_for: Primary coding session; agent dispatch (Kali/Ma'at/Lilith)
+    tier: primary
   gemini-3.5-flash:
-    provider: "google_ai_studio"
-    context_window: 262144           # 262K — Google AI Studio, unlimited
+    provider: google_ai_studio
+    context_window: 262144
     strengths:
-      - "Deep research and synthesis"
-      - "Document analysis at scale"
-      - "MaKaLi parallel council (fast)"
-      - "Multi-perspective reasoning"
-    best_for: "Research synthesis; parallel council; Roc Racoon deep analysis"
-    tier: "primary"
-
-  # Secondary / fallback models
+    - Deep research and synthesis
+    - Document analysis at scale
+    - MaKaLi parallel council (fast)
+    - Multi-perspective reasoning
+    best_for: Research synthesis; parallel council; Roc Racoon deep analysis
+    tier: primary
   gemini-4-31b:
-    provider: "google_ai_studio"
-    context_window: 262144           # 262K — Google AI Studio, unlimited
+    provider: google_ai_studio
+    context_window: 262144
     strengths:
-      - "Very deep analysis"
-      - "Complex reasoning chains"
-      - "Long-form document generation"
-    best_for: "Skeptical verifier; Roc Racoon heritage mining; deep research"
-    tier: "secondary"
-
+    - Very deep analysis
+    - Complex reasoning chains
+    - Long-form document generation
+    best_for: Skeptical verifier; Roc Racoon heritage mining; deep research
+    tier: secondary
+  gemma-4-26b-it:
+    provider: google_ai_studio
+    context_window: 262144
+    strengths:
+    - Strict structural output (YAML/JSON/Code) with low entropy
+    - Deep reasoning with Grouped-Query Attention
+    - Scribe gnosis distillation and structural formatting
+    - Multi-turn technical auditing with high precision
+    best_for: Scribe gnosis distillation; structural code audits; Lucifer reasoning
+      chains; SOPHIA deep analysis (cloud fallback)
+    tier: secondary
+    tuning_guide: data/entities/JOHN_CARMACK/workspace/gemma_4_26b_tuning_guide.md
   mimo-v2.5:
-    provider: "opencode / cline"
-    context_window: 128000           # 128K
+    provider: opencode / cline
+    context_window: 128000
     strengths:
-      - "Structural pathology analysis"
-      - "Deep architecture audits"
-      - "Hidden layer detection"
-    best_for: "Codebase archaeology; deep structural audits; oversight reviews"
-    tier: "secondary"
-
-  # Available but not default — SPECS UNVERIFIED, do not use without research
+    - Structural pathology analysis
+    - Deep architecture audits
+    - Hidden layer detection
+    best_for: Codebase archaeology; deep structural audits; oversight reviews
+    tier: secondary
   nemotron-3-ultra:
-    provider: "UNVERIFIED — requires Researcher discovery"
-    context_window: "UNVERIFIED"
+    provider: UNVERIFIED — requires Researcher discovery
+    context_window: UNVERIFIED
     strengths:
-      - "UNVERIFIED"
-    best_for: "UNVERIFIED"
-    tier: "fallback"
-
+    - UNVERIFIED
+    best_for: UNVERIFIED
+    tier: fallback
   claude-sonnet-4:
-    provider: "UNVERIFIED — requires Researcher discovery"
-    context_window: "UNVERIFIED"
+    provider: UNVERIFIED — requires Researcher discovery
+    context_window: UNVERIFIED
     strengths:
-      - "UNVERIFIED"
-    best_for: "UNVERIFIED"
-    tier: "fallback"
-
+    - UNVERIFIED
+    best_for: UNVERIFIED
+    tier: fallback
   gemma-4-9b:
-    provider: "UNVERIFIED — requires Researcher discovery"
-    context_window: "UNVERIFIED"
+    provider: UNVERIFIED — requires Researcher discovery
+    context_window: UNVERIFIED
     strengths:
-      - "UNVERIFIED"
-    best_for: "UNVERIFIED"
-    tier: "fallback"
-
-# Context window selection guide:
-#   DeepSeek V4 Flash → 200K (OpenCode) / 1M (Cline) — pick CLI by context need
-#   Gemma 3.5 Flash  → 262K (Google AI Studio) — unlimited API access
-#   MiMo V2.5        → 128K — structural audits
-#   Fallback models  → UNVERIFIED — Researcher task required before use
-#
-# Local models (verified in this file): max 16K (phi-4-mini, krikri-8b)
-#
-# Rule: If context need < 50K, local or cloud. If > 50K, verified cloud only.
-# If > 200K, use DeepSeek V4 Flash through Cline (1M ctx) or Gemma 3.5 (262K).
-# If model not in this file → verify specs before use. No "probablies."
-
+    - UNVERIFIED
+    best_for: UNVERIFIED
+    tier: fallback

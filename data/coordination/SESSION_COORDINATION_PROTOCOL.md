@@ -111,7 +111,7 @@ Every entity MUST follow this polling schedule:
 
 ### Every 15 Minutes (Heartbeat + Awareness Check)
 ```
-1. hivemind_heartbeat(cli="{entity}")
+1. hivemind_heartbeat(channel="opencode", entity="{entity}")
 2. hivemind_get_awareness()  ← Check for messages targeted to you
 3. If you see a message with intent="question" or intent="command" or intent="blocker" targeted to you → respond
 ```
@@ -209,7 +209,7 @@ Step 3: After EVERY major step, post an update AND check awareness
   → omega-hub_hivemind_get_awareness()  ← Check for messages from Quality, Roc Racoon, or Kali
 
 Step 4: Every 15 minutes, heartbeat + check awareness
-  → omega-hub_hivemind_heartbeat(cli="maat")
+  → omega-hub_hivemind_heartbeat(channel="opencode", entity="maat")
   → omega-hub_hivemind_get_awareness()
 
 Step 5: If you have a question for another entity:
@@ -256,7 +256,7 @@ Step 3: After EVERY finding, post it immediately
   → omega-hub_hivemind_post_context(cli="quality", task_current="Finding: {severity} at {file}:{line}", continuation="FINDING: {description}. Severity: {CRITICAL|HIGH|MEDIUM|LOW}. Mandate: M{N}.", intent="finding")
 
 Step 4: Every 15 minutes, heartbeat + check awareness
-  → omega-hub_hivemind_heartbeat(cli="quality")
+  → omega-hub_hivemind_heartbeat(channel="opencode", entity="quality")
   → omega-hub_hivemind_get_awareness()
 
 Step 5: If you find a CRITICAL violation, post immediately
@@ -295,7 +295,7 @@ Step 3: After EACH pattern discovery, post it
   → omega-hub_hivemind_post_context(cli="roc_racoon", task_current="Pattern found: {name}", continuation="PATTERN: {name}. Source: {file}. Applicability: {how it helps}. Effort: {Low|Medium|High}.", intent="observation")
 
 Step 4: Every 15 minutes, heartbeat + check awareness
-  → omega-hub_hivemind_heartbeat(cli="roc_racoon")
+  → omega-hub_hivemind_heartbeat(channel="opencode", entity="roc_racoon")
   → omega-hub_hivemind_get_awareness()
 
 Step 5: If you find a conflict with current engine design

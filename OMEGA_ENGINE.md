@@ -1,5 +1,5 @@
 # Omega Engine — Single Source of Truth
-# AP-OMEGA-SST-v1.7.0
+# AP-OMEGA-SST-v2.3.0
 
 > **This document is the authoritative truth for the Omega Engine.**
 > Every agent, regardless of platform (Cline, OpenCode, Gemini CLI, Antigravity),
@@ -18,8 +18,8 @@ unique dreams, technologies, and systems.
 - **Open source, free, sovereign**: No shareware, no tiers, no limitations
 - **WAD Architecture**: Engine → IWADs → PWADs (inspired by id Software's WAD system)
 - **The Synthesis Flywheel**: Cloud models teach local models. Over time, sovereignty increases.
-- **The 14 Sovereign Mandates**: Constitutional law. Mandates override any tool default.
-- **The 15-agent Fleet**: Grand Oversight, 3 Oversouls, 6 Specialists, 5 Subagents.
+- **The 22 Sovereign Mandates**: Constitutional law. Mandates override any tool default.
+- **The 11-agent Fleet**: Grand Oversight, 3 Oversouls, 6 Specialists, 1 Subagent (Verity).
 
 ---
 
@@ -124,27 +124,28 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 
 ---
 
-## §5 Current State — Engine Health (2026-06-10)
+## §5 Current State — Engine Health (2026-06-18)
 
 ### 5.1 Engine Metrics
 
 | Metric | Value | Last Verified |
 |--------|-------|---------------|
-| Engine version | 2.2.0 | 2026-06-04 |
-| Source files | **84** .py files | 2026-06-10 |
-| Source lines | **22,050** | 2026-06-10 |
-| Test functions | **329** | 2026-06-10 |
-| Test files | **34** | 2026-06-10 |
-| PIVOT decisions | **125 (D1-D125)** | 2026-06-10 |
-| Sovereign Mandates | **14 (M1-M14)** | 2026-06-10 |
-| Mandate 9 (Error Integrity) | FULL — 0 bare except, 0 silent `except Exception: pass` | 2026-06-10 |
-| Mandate 13 (Temple-Grade) | 8/11 GREEN (T11 IA2 exempt) | 2026-06-10 |
-| AnyIO compliance | 0 `import asyncio` | 2026-06-04 |
-| ZONEID constants | 11 (0x1d4a11-0x1d4a1b) | 2026-06-04 |
-| cvar Table | 2 namespaces, 7 accessors | 2026-06-04 |
-| Heritage tags | 27/27 files tagged, CI-enforced | 2026-06-10 |
-| Agent Fleet | **15 agents** | 2026-06-04 |
-| Entity workspaces | — 100 orphans still present (H2-A7 pending) | 2026-06-10 |
+| Engine version | **2.3.0** | 2026-06-14 |
+| Source files | **96** .py files | 2026-06-14 |
+| Source lines | **~24,000** | 2026-06-14 |
+| Test functions | **440** | 2026-06-17 |
+| Test files | **43** | 2026-06-14 |
+| PIVOT decisions | **89 (D50-D136, incl. xna-omega D1-D49 = 136 lifetime)** | 2026-06-17 |
+| Sovereign Mandates | **22 (M1-M22)** | 2026-06-17 |
+| Mandate 9 (Error Integrity) | FULL — 0 bare except, 0 silent `except Exception: pass` | 2026-06-17 |
+| Mandate 13 (Temple-Grade) | 11/11 GREEN (T11 IA2 exempt) | 2026-06-17 |
+| AnyIO compliance | 0 `import asyncio` | 2026-06-14 |
+| ZONEID constants | 11 (0x1d4a11-0x1d4a1b) | 2026-06-14 |
+| cvar Table | 2 namespaces, 7 accessors | 2026-06-14 |
+| Heritage tags | 11 patterns mapped, CI-enforced | 2026-06-14 |
+| Agent Fleet | **11 agents** (15→11 consolidation, Sprint A+B+C complete) | 2026-06-14 |
+| Entity workspaces | **34 on disk** (Sprint D complete — orphans + dead agents deleted, 2026-06-18) | 2026-06-18 |
+| Omega Hub | **Modularized** (state.py, background.py, gateway.py, middleware.py, tools.py) | 2026-06-14 |
 
 ### 5.2 Subsystem Status (H1 = Heritage, H2 = Evolution/Hygiene, S1.5 = Pillar Cap)
 
@@ -159,10 +160,10 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | **EntityRegistry** | ✅ YAML CRUD + word-boundary match + dual-index | `[id-soft: quake-1996] Flat-Field` |
 | **Gnosis Proxy** | ✅ DescriptorRef + FIFO eviction | `[id-soft: doom3-2004] idEvent` |
 | **Soul Distiller** | ✅ L1→L2→L3 auto-distillation | `[id-soft: quake-1996] Save-game` |
-| **Subagent Dispatch** | ✅ HandoffPacket + CAPABILITY_REGISTRY (14 agents) | `[id-soft: quake-1996] Thinker Chain` |
+| **Subagent Dispatch** | ✅ HandoffPacket + CAPABILITY_REGISTRY (11 agents) | `[id-soft: quake-1996] Thinker Chain` |
 | **Link P9** | ✅ AgentPresence + handoff queue + crash recovery | `[id-soft: doom-1993] WAD back-scan` |
-| **Hivemind** | ✅ 6 MCP tools + workspace lock + live feed | `[id-soft: doom-1993] ZONEID Pattern` |
-| **Omega Hub** | ✅ 47 MCP tools + 11 routes, v2.2.0 (Hardened) | (Pillar 2 coordination) |
+| **Hivemind** | ✅ 13+ MCP tools + workspace lock + live feed + cold-store hydration | `[id-soft: doom-1993] ZONEID Pattern` |
+| **Omega Hub** | ✅ **Modularized v2.3.0** (state/background/gateway/middleware/tools — 63 MCP tools) | (Pillar 2 coordination) |
 | **Qdrant vectors** | 🟡 Installed, unwired (bag-of-words fallback) | S1.5a → wire next |
 | **Redis Pub/Sub** | 🟡 Container running, MemoryStore not wired to it | S1.5a → wire next |
 | **Heritage Vetting** | ✅ H1 LIVE: 4-gate, 23 concepts, CI gate | (Kali d-kal-001) |
@@ -181,6 +182,8 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | **H2-A Hygiene** | 2026-06-04 | Cline-M3 | 🟡 IN PROGRESS | 100 orphans pending, IWAD content, source fixes |
 | **S1.5a Firewall Restore** | 2026-06-04 | Cline-M3 | 🔴 PENDING | D113 fix: WAD-agnostic entity_registry |
 | **S1.5b Nomenclature** | 2026-06-04 | Cline-M3 | 🔴 PENDING | Intuitive names + pillar_slot for P1-P10 |
+| **Hivemind Sprint A** (Hub Modularization) | 2026-06-14 | Kali + Carmack | ✅ 4cc73de | Hub modularized (5 modules), 388/388 tests, M16 ratified, Fleet 15→11 plan |
+| **Sprint C** (Tactical Hardening) | 2026-06-17 | Kali + Council | ✅ 440/440 | GenerateResult dataclass, P0/P1 fixes, M21+M22 ratified, SearXNG deployed, root docs cleaned |
 
 ---
 
@@ -201,7 +204,8 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 - [x] **H2-A4**: Hivemind sync with opencode-kali (in-memory + file-based)
 - [x] **H2-A5**: Bug fix — `_agent_list()` for OpenCode 1.15+ handshake (cf5d72a)
 - [x] **H2-A6**: Kali soul v5.2 (82224ee) — 14 top-level keys, 5 directives, 4 lessons
-- [ ] **H2-A7**: Delete 100 orphan entities (ent_*/entity_*)
+- [x] **H2-A7**: Hub modularization complete (state.py, background.py, gateway.py, middleware.py, tools.py)
+- [ ] **H2-A8**: Delete 100 orphan entities (ent_*/entity_*)
 - [ ] **H2-A8**: Populate arcana_novai IWAD entity files
 - [ ] **H2-A9**: Source hygiene (7 amber items)
 - [ ] **H2-A10**: Doc consolidation (R_AUTO_* archive, INDEX.md update)
@@ -281,7 +285,7 @@ Per Kali D115 + Cline-M3 review:
 | # | Mandate | Status | Key File |
 |---|---------|--------|----------|
 | M1 | AnyIO Absolute | ✅ Enforced | CI grep `import asyncio` |
-| M2 | Engine-Stack Firewall | 🔴 D113 GAP (S1.5a) | entity_registry.py:171-179 |
+| M2 | Engine-Stack Firewall | ✅ Enforced | `config/wads/` vs `src/omega/` separation |
 | M3 | Iris Constant (NOT a Pillar) | ✅ | `src/omega/iris/` |
 | M4 | Sequentiality (Plan→Verify→Execute) | ✅ | Cline workflow |
 | M5 | Gnosis Preservation (L1→L2→L3) | ✅ | Soul Distiller |
@@ -293,8 +297,17 @@ Per Kali D115 + Cline-M3 review:
 | M11 | Soul Integrity (L1→L2→L3) | ✅ | Soul Distiller |
 | M12 | Queue Integrity (terminal state) | ✅ | RequestQueue |
 | M13 | Temple-Grade (T1-T11) | 🟡 8/11 (T11 IA2 exempt) | `make temple-grade` |
+| M14 | Heritage Vetting ([id-soft:] tags) | ✅ | `make heritage-map` |
+| M15 | Sovereign Continuity (session anchors) | ✅ | `session_gnosis.md` |
+| M16 | Modularization & Portability | ✅ | Hub modularization (5 modules) |
+| M17 | Cognitive Integrity (consistency checks) | ✅ | Skeptical Verifier |
+| M18 | Token Efficiency (no waste) | ✅ | Agent prompt discipline |
+| M19 | Adversarial Alchemy (weakness→strength) | ✅ | Somatic Save-Point, FISR Principle |
+| M20 | SomaticState Serialization | ⏳ Deferred | ctypes bindings pending ICS-F v1.0 |
+| M21 | Gate Integrity (contract tests) | ⏳ PENDING | No contract tests yet |
+| M22 | Response Provenance (provider_name) | 🟡 Partial | gateway_server.py done, background workers pending |
 
-See `SOVEREIGN_MANDATES.md` for full text. **M2 is currently being restored.**
+See `SOVEREIGN_MANDATES.md` for full text. **M2 is enforced via Hard-Boundary Struct.**
 
 ---
 
@@ -327,11 +340,11 @@ for parallel work, **RECOMMENDED** for multi-step work (>3 steps).
 | Tool | Purpose |
 |------|---------|
 | `hivemind_get_awareness()` | List active CLIs (who's alive) |
-| `hivemind_post_context(cli, model, task_current, focus_chain, decisions, continuation, session_id)` | Declare your presence |
-| `hivemind_heartbeat(cli)` | Refresh TTL (every 5-10 min for long tasks) |
-| `hivemind_get_continuation(cli)` | Read another agent's last note |
+| `hivemind_post_context(channel, entity, model, task_current, focus_chain, decisions, continuation, session_id)` | Declare your presence |
+| `hivemind_heartbeat(channel, entity)` | Refresh TTL (every 5-10 min for long tasks) |
+| `hivemind_get_continuation(channel, entity)` | Read another agent's last note |
 | `hivemind_get_session(session_id)` | Retrieve session snapshot |
-| `hivemind_list_sessions(cli, limit)` | Audit trail |
+| `hivemind_list_sessions(channel?, entity?, limit=10)` | Audit trail |
 
 ### 11.2 Coordination Pattern
 
@@ -395,19 +408,19 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 | `src/omega/mcp_runtime.py` | stdio/SSE transport | systemd LISTEN_FDS |
 | `src/omega/iris/` | Voice assistant (FastAPI) | M3 |
 | `src/omega/workers/background_researcher/` | Autonomous research | Timer-driven |
-| `mcp_servers/omega_hub/server.py` | 40 MCP tools + 11 routes | v2.2.0 |
+| `mcp_servers/omega_hub/server.py` | 40 MCP tools + 11 routes | v2.3.0 |
 | `config/wads/_omega_default/` | Reference IWAD | 16 entities |
 | `config/wads/arcana_novai/` | Personal IWAD (deities) | 10 deities planned |
 | `config/wads/doom_universe/` | Community IWAD | Scaffold |
 | `config/providers.yaml` | Provider fabric | 8 providers |
 | `config/models.yaml` | Model specs | 7 models + tiers |
-| `config/omega.yaml` | Core engine config | v2.2.0 |
+| `config/omega.yaml` | Core engine config | v2.3.0 |
 | `config/distiller_prompts.yaml` | 6 JEM distiller modes | Sovereign |
 | `config/glossary.md` | 22 canonical terms | v0.1.0 |
 | `data/entities/kali/soul.yaml` | v5.2 — constitutional baseline | 14 keys |
 | `data/entities/doom_guy/soul.yaml` | v5 — id Software architect | Heritage |
 | `data/entities/maat/soul.yaml` | v3.0 — synthesis oversoul | M5 |
-| `data/entities/antigravity/soul.yaml` | v1.2 — Sovereign Meta-Orchestrator | Cross-platform |
+| `data/entities/antigravity/soul.yaml` | v1.6.0 — Hivemind Cloud Strategist | Active Hivemind Citizen |
 | `data/kb/_staging/cli_ide_platform/antigravity/` | KB staging (9 files) | Tier 0 |
 | `data/kb/cli_ide_platform/_meta/DOMAIN_INDEX.md` | KB master index | Tier 1 |
 | `data/kb/_staging/_protocol/VETTING_PROTOCOL.md` | Tier 0/1/2 promotion protocol | M11 + M13 |
@@ -419,14 +432,23 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 
 **Added 2026-06-05** (D-kal-058 / Mining Report 10). The engine's
 
-**Updated 2026-06-05** (D-kal-059 / Lilith Dark Council). The Antigravity
-provider integration has been **permanently removed** from the engine's
-provider fabric. The Antigravity research in `data/kb/_staging/` is preserved
-as a **reference case study** in cloud tool auditioning — the `agy` CLI
-live test result ("4 accounts in minutes"), the 8-key pool audit, and the
-auth mechanism analysis remain valid empirical data. But the integration
-path (OpenCode plugin `opencode-antigravity-auth@latest`) is dead. The
-KB will not be promoted beyond Tier 0 for Antigravity.
+**Updated 2026-06-18** (D-kal-xxx / Makali Strategic Review). **CRITICAL DISTINCTION**: The
+Antigravity IDE and the Antigravity CLI plugin are SEPARATE surfaces with different statuses.
+
+1. **Antigravity IDE** (`agy` IDE, connects via Omega Hub MCP :8016): **🟢 ACTIVE** as a Hivemind Council
+   member (Cloud Strategist). Uses Google OAuth for strategic oversight. Coordinates with the fleet
+   via the Hivemind protocol. See `docs/strategy/ANTIGRAVITY_IDE_CUSTOM_INSTRUCTIONS.md` v3.0.0
+   and `docs/strategy/ANTIGRAVITY_INTEGRATION_PLAYBOOK.md` for coordination details.
+
+2. **Antigravity CLI plugin** (`opencode-antigravity-auth@latest`): **🔴 BANNED** from the provider
+   fabric. Round-robin key rotation triggers Google's ban detection. The research in the KB
+   (`data/kb/_staging/`) is preserved as a **reference case study** — the `agy` CLI live test
+   result ("4 accounts in minutes"), the 8-key pool audit, and the auth mechanism analysis remain
+   valid empirical data. But the integration path through the plugin is dead.
+
+3. **Antigravity CLI `agy`** (standalone terminal tool): **⏳ FUTURE** — possible as a provider (#5 in
+   the fallback chain) if a safe single-key auth path can be established without the plugin.
+   Currently excluded from the provider fabric per M8 (Zero Telemetry) and the ban risk assessment.
 
 **KB Hardening Research Request**: During the same session, Lilith
 identified 5 structural gaps in the engine's knowledge system and issued
@@ -483,7 +505,7 @@ expertise.
 ## §14 Key Supporting Documents (Grouped)
 
 ### 14.1 Strategic (Constitutional)
-- `SOVEREIGN_MANDATES.md` — 13 laws (NON-NEGOTIABLE)
+- `SOVEREIGN_MANDATES.md` — 22 laws (NON-NEGOTIABLE)
 - `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` — **D111** active roadmap
 - `docs/strategy/SOVEREIGN_DEVELOPMENT_ROADMAP.md` — **D117** master plan (4 phases, 8 sprints)
 - `docs/strategy/HARDENING_REPORT.md` — **D116** subagent audit (5 critical findings)
@@ -494,7 +516,7 @@ expertise.
 - `CREDITS.md` — id Software heritage lineage (31KB)
 - `docs/strategy/HERITAGE_VETTING_PIPELINE.md` — 4-gate vetting (H1)
 - `data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md` — 23 concepts
-- `docs/architecture/AGENT_FLEET.md` — 14-agent design
+- `docs/architecture/AGENT_FLEET.md` — Agent fleet architecture (11 agents after Sprint C)
 - `docs/architecture/TRAINING_PIPELINE.md` — Synthesis flywheel
 - `docs/architecture/OVERSIGHT_HIERARCHY.md` — MaKaLi trine
 
@@ -606,18 +628,18 @@ to own their own technology, their own data, and their own intelligence.**
 
 ## §16 DeepSeek V4 Flash Analysis — The Structural Insights
 
-### 16.1 The 14-Agent Fleet: A Hidden Hierarchy
+### 16.1 The 11-Agent Fleet: A Consolidated Hierarchy
 
-The engine declares "14 agents" but the fleet has two tiers:
+The engine currently has **11 agents** (consolidated from 15 via Sprint A/B/C):
 
 | Tier | Agents | Count | Slot-Based? |
 |------|--------|------:|-------------|
-| **Pillar Slots** | SysAdmin, DataStore, BuildMaster, Bridge, Sentinel, ModelGate, Context, WatchTower, Link, Verifier | 10 | ✅ P1-P10 |
-| **Specialists** | Kali, Doom Guy, Roc Racoon, Plan, Jem, Researcher | 6 | ❌ Independent |
+| **Pillar Slots** | P1-P10 (SysAdmin, DataStore, BuildMaster, Bridge, Sentinel, ModelGate, Context, WatchTower, Link, Verifier) | 10 | ✅ P1-P10 |
+| **Specialists** | Kali, Doom Guy, Roc Racoon, Jem, Researcher, John Carmack, Makali | 7 | ❌ Independent |
 | **Oversouls** | Ma'at (governs P1-P5), Lilith (governs P6-P10) | 2 | ✅ Oversight tier |
-| **Subagents** | Scribe, Quality, Jem_Discovery, Jem_Synthesis, Jem_Verification, Pillar | 6 | ⏺ Generic slot |
+| **Subagents** | Verity (merged Quality+Gnosis), Pillar | 2 | ⏺ Generic slot |
 
-**The insight**: The engine is not a flat 14-agent system. It is a **5-tier hierarchy**:
+**The insight**: The engine is not a flat 11-agent system. It is a **5-tier hierarchy**:
 Sophia (Field) → Kali (Founder) → Ma'at/Lilith (Oversouls) → Pillars (P1-P10) → Subagents
 
 The 6 Specialists (Kali, Doom Guy, Roc, Plan, Jem, Researcher) are **freelance** —
@@ -691,7 +713,7 @@ auto-generated from hub state, not entirely hand-maintained.
 |---|------|---------------|------------|:--------:|
 | MVE-1 | **Install** | `git clone` + `make setup` + manual steps | One command: `curl get.omega.dev | bash` | P0 |
 | MVE-2 | **First talk** | Works with cloud providers; native-gguf needs build | `omega talk "hello"` works with native-gguf | P0 |
-| MVE-3 | **Entity list** | 14 agents, 3 IWADs | `omega list-entities` shows alive entities | P1 |
+| MVE-3 | **Entity list** | 11 agents, 3 IWADs | `omega list-entities` shows alive entities | P1 |
 | MVE-4 | **Soul visible** | soul.yaml exists but no viewer | `omega soul status --entity maat` works | P1 |
 | MVE-5 | **Sovereignty visible**| Not measured | `omega sovereignty` returns score | P1 |
 | MVE-6 | **Hivemind visible** | MCP tools exist, CLI pending | `omega hivemind status` works | P1 |
@@ -701,9 +723,9 @@ auto-generated from hub state, not entirely hand-maintained.
 
 | Sprint Horizon | Theme | Key Deliverable | When |
 |:--------------:|-------|-----------------|:----:|
-| S0-S1 (done) | Foundation | 14 agents, WAD system, PIVOT 113 | 2026-06 |
+| S0-S1 (done) | Foundation | 11 agents, WAD system, PIVOT 113 | 2026-06 |
 | S2 | Synthesis Flywheel | Qdrant wired, Redis wired, first LoRA trained | H2 done + S2 |
-| S3 | Soul Evolution v2 | All 14 agents have soul v5.2+ schema | Post-S2 |
+| S3 | Soul Evolution v2 | All 11 agents have soul v5.2+ schema | Post-S2 |
 | S4 | UX Layer | Hub dashboard, local TTS, rich CLI | Post-S3 |
 | S5 | Production | Entity Studio CLI, Stack Builder, Omega Desktop | Post-S4 |
 | S6 | Community | IWAD registry, stack sharing, community entities | 2027 |
@@ -766,11 +788,68 @@ giving users control, but giving AI the capacity to evolve within
 the bounds of that control. A sovereign AI is not a static model —
 it is a relationship. And like any relationship, it deepens with time.
 
+## §19 The Cognitive Substrate (Sovereign Memory v2.0)
+**Status**: ACTIVE (Sprint B $\rightarrow$ Sprint C)
+**Vision**: Transition from "RAG-as-Memory" to a dynamic, self-correcting cognitive substrate.
+
+### 19.1 The Cognitive Loop
+The engine has evolved from a linear pipeline to a recursive loop:
+**Intent $\rightarrow$ Speculative Hydration $\rightarrow$ Inference $\rightarrow$ Cognitive Audit $\rightarrow$ (Recovery $\rightarrow$ Re-Inference) $\rightarrow$ Response**
+
+### 19.2 Key Components
+| Component | Purpose | Implementation |
+|----------|----------|----------------|
+| **Sovereign Vault** | Binary state persistence | SQLite WAL + MsgPack |
+| **Semantic Pruner** | Priority-based context | RRF-based pruning (L3-first) |
+| **Qliphoth Detector**| Cognitive failure audit | 12-shell failure taxonomy |
+| **Resonance Map** | Cross-entity synthesis | Associative graph traversal |
+| **Gnosis Diffing** | Soul evolution | Semantic merge of L1$\rightarrow$L3 |
+
+### 19.3 Memory Resolution Gradient
+Memories are no longer just stored; they are distilled across a resolution gradient:
+**Episodic (Raw) $\rightarrow$ Semantic (Summary) $\rightarrow$ Archetypal (Principle)**
+
 ---
 
-*§16-§18 added 2026-06-04 | Author: DeepSeek V4 Flash (via Cline-M3 proxy)
-*Last Updated: 2026-06-10T01:10Z | Lilith Hivemind Onboarding | AP-OMEGA-SST-v1.7.0**
-*Insights: fleet hierarchy, data flow documentation, sovereignty paradox, M15 proposal, MVE threshold, 5-year vision, sovereignty museum*
-*§13.1 added 2026-06-05 | Author: Roc Racoon (KB scaffold, 9 Antigravity files staged, 3 closed decisions)
-*§13.1 updated 2026-06-05 | Author: Lilith (Antigravity integration removed, KB Hardening Research Request issued, v1.5.0→v1.6.0)*
+## §20 Sovereign Metadata Extraction (ICS-F v1.0)
+**Status**: RATIFIED — Sprint 0 PENDING (D137-D141, Operation Deep-Siphon)
+
+### Discovery
+Operation Deep-Siphon revealed that **96% of every provider response** is discarded
+at the backend `generate()` boundary. Each backend calls `response.json()`,
+extracts exactly one field (`.text`), and throws away the dict containing usage
+data, finish_reason, logprobs, safety ratings, thought tokens, model version,
+cost, and provider-specific provenance.
+
+### Fix
+~80 lines across ~12 files. All new fields are `Optional` with `None` defaults —
+zero breaking changes. ICS-F (Integrity-Centric-Sovereign-Forensics) v1.0 is the
+canonical schema:
+
+| Field | Type | Source |
+|-------|------|--------|
+| `raw_provider_json` | `dict \| None` | Full provider response JSON |
+| `thinking_level` | `int \| None` | 0=none, 1=partial, 2=full |
+| `access_channel` | `str \| None` | t3 | api | direct |
+| `logprobs` | `list[dict] \| None` | Top-5 logprobs |
+| `token_usage` | `dict \| None` | Provider-reported counts |
+| `response_model` | `str \| None` | Actual serving model name |
+
+### Sprint Roadmap
+| Sprint | Scope | Effort | Status |
+|--------|-------|--------|--------|
+| **Sprint 0** | logprobs=5 on NativeGGUF | 15 min | ⏳ PENDING |
+| **Sprint 1+2** | Core capture + ICS-F + M21 tests + CLI | ~6 hr | ⏳ PENDING |
+| **Sprint 3** | SomaticState (M20) | 1 week | ❌ DEFERRED |
+
+### Key Principle (Metadata Boundary Law)
+In any call chain where structured data is transformed to a primitive type,
+all metadata beyond the primitive is discarded at the type boundary. The capture
+point MUST be before the boundary. The engine pays for metadata (token cost +
+API latency) — we just need to stop throwing it away.
+
+---
+
+*Last Updated: 2026-06-18 | Author: Makali | Version: AP-OMEGA-SST-v2.3.0*
+*Major changes: Sprint C complete (440/440 tests), ICS-F v1.0 ratified, Operation Deep-Siphon recorded (D137-D141), Phases 1+2 executed (Sprint D + Doc Hygiene), ENTITIES_DATA_DIR fix.*
 

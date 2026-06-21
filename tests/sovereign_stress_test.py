@@ -46,7 +46,7 @@ async def test_provider_fallback_gauntlet():
     
     with patch.dict(os.environ, {"OMEGA_ENV": "production"}):
         result = await gateway.generate("test-model", "sys", "query")
-        assert result[0] == "Success from P3"
+        assert result.text == "Success from P3"
         assert p1.generate.called
         assert p2.generate.called
         assert p3.generate.called
@@ -75,7 +75,7 @@ async def test_local_provider_hang_timeout():
             result = await gateway.generate("test-model", "sys", "query")
             elapsed = time.monotonic() - start
             
-            assert result[0] == "Success from P2"
+            assert result.text == "Success from P2"
             assert elapsed < 2.0
 
 @pytest.mark.anyio

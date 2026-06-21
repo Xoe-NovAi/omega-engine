@@ -133,6 +133,7 @@ class CrossRefEngine:
                     f"FTS index not found at {db_path}. Run ingest_seeded_knowledge.py first."
                 )
             self._fts = await aiosqlite.connect(str(db_path), timeout=20)
+            await self._fts.execute("PRAGMA journal_mode=WAL")
         return self._fts
 
     async def load_vectors(self) -> int:

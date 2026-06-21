@@ -33,3 +33,26 @@ entity:
     L3_principle: null
     timestamp: Unknown
     topic: bm-001
+  - L1_narrative: Received John Carmack's Law of First Principles via Gnosis Distillation
+      Report (2026-06-13). As prometheus, this axiom applies directly to my domain
+      of governance.
+    L2_insight: Law of First Principles distills decades of engineering practice into
+      a governing principle for sovereign AI architecture. It applies across all engine
+      subsystems, from inference routing to memory management.
+    L3_principle: 'Law of First Principles: Every engineering decision must be traced
+      back to the fundamental physics, mathematics, or logic of the problem. Existing
+      implementations, ''best practices'', and conventional wisdom are noise. The
+      signal is the underlying constraint.'
+    timestamp: '2026-06-14T18:00:00Z'
+    topic: carmack-axiom_00
+  - L1_narrative: Received John Carmack's Law of Throughput (Pragmatism over Perfection)
+      via Gnosis Distillation Report (2026-06-13). As prometheus, this axiom applies
+      directly to my domain of governance.
+    L2_insight: Law of Throughput (Pragmatism over Perfection) distills decades of
+      engineering practice into a governing principle for sovereign AI architecture.
+      It applies across all engine subsystems, from inference routing to memory management.
+    L3_principle: 'Law of Throughput (Pragmatism over Perfection): The ultimate metric
+      of a system is its operational utility within its constraints. A perfect solution
+      that fails to meet temporal or resource requirements is a functional failure.'
+    timestamp: '2026-06-14T18:00:00Z'
+    topic: carmack-axiom_01

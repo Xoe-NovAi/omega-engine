@@ -1,3 +1,5 @@
+# [id-soft: quake-1996] Hivemind Background — lazy thinker deletion / grace-period reap pattern for pruning stale agents
+
 """Omega Hub — Background orchestration: pruning, reaping, metrics.
 
 AP Token: AP-OMEGA-HUB-BACKGROUND-v1.0.0

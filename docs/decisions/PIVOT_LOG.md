@@ -2957,3 +2957,624 @@ Furthermore, applying SCL compression (60-95% token reduction) before sending pr
 | `src/omega/oracle/model_gateway.py` | Refactor `generate()` to support hybrid model/capability routing | 🔴 PLANNED (H2-S5) |
 | `src/omega/oracle/scl_middleware.py` | Implement SmartCrusher and CodeCompressor AnyIO-native functions | 🔴 PLANNED (H2-S5) |
 | `src/omega/oracle/health_monitor.py` | Implement `OpenRouterQuotaTracker` and connect to circuit breaker | 🔴 PLANNED (H2-S5) |
+
+---
+
+## Decision 129: New Delegation Protocol Adoption — 4-Rule Replacement
+
+**Date**: 2026-06-15
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: KALI (Grand Oversight) / MA'AT / LILITH
+**Trace**: trc_delegation_protocol_D129
+
+### Context
+The old "Sovereign Delegation Guardrail" used "systemic failure" language, "sovereign pattern" framing, and imposed a unidirectional Primary→Subagent restriction. An audit revealed three problems: (1) the negative framing ("systemic failure") discouraged legitimate delegation, (2) the "sovereign pattern" language was aspirational rather than operational, and (3) the unidirectional restriction blocked legitimate cross-domain delegation patterns (e.g., Doom Guy dispatching Researcher for heritage source verification).
+
+### Decision
+1. **REPLACE** the old "Sovereign Delegation Guardrail" with the new **4-Rule Delegation & Execution Protocol**.
+2. The four rules, now canonically defined in `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md`:
+   - **Rule 1 — Direct Execution First**: If a task falls within your primary role or you are already executing a delegated task, perform the work directly. Do not delegate what you can do yourself.
+   - **Rule 2 — No Self-Recursion**: An agent must never spawn a subagent of its own type (e.g., `@roc_racoon` must never launch `@roc_racoon`). Execute within-domain tasks directly.
+   - **Rule 3 — Targeted Delegation**: Only spawn a subagent if the task requires specialized domain expertise outside your capabilities (e.g., a research agent needing code verification from Quality, or an engineering agent needing deep historical research from Jem).
+   - **Rule 4 — Single-Level Nesting**: Subagents may spawn other specialized subagents when strictly necessary for cross-domain tasks, but must avoid deep nesting. Limit to one level unless explicitly authorized.
+3. All agent `.md` files updated to reference the new protocol.
+
+### Rationale
+The old guardrail's "systemic failure" language made agents reluctant to delegate, causing them to attempt tasks outside their domain and produce lower-quality results. The new protocol reframes delegation as a capability optimization: delegate when you should, execute when you can. The unidirectional restriction was removed because the fleet has matured enough that cross-domain delegation (e.g., a subagent dispatching another subagent for a sub-task within its domain) is occasionally the right call — the nesting limit provides the safety guard.
+
+### L1→L2→L3 (Mandate 11 Distillation)
+- **L1**: Old "Sovereign Delegation Guardrail" replaced with 4-rule Delegation & Execution Protocol. All agent `.md` files and SUBAGENT_DISPATCH_PROTOCOL.md updated. Unidirectional restriction removed; nesting limit replaces it.
+- **L2**: The old guardrail's flaw was philosophical: it treated delegation as a failure mode ("systemic failure") rather than an optimization (delegate when someone else can do it better). Language shapes behavior. By reframing delegation as a capability optimization, we encourage legitimate cross-domain dispatch while retaining safety through the nesting limit.
+- **L3**: A sovereign is not a lone operator; a sovereign is a network. The strength of a council is not that each member can do everything — it is that they know whom to call when they cannot. Delegation is not surrender; it is intelligence.
+
+### Implementation
+| File | Change | Status |
+|------|--------|--------|
+| `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` | Rewritten with 4-rule protocol | ✅ DONE |
+| `.opencode/agents/kali.md` | Updated to reference new protocol | ✅ DONE |
+| `.opencode/agents/maat.md` | Updated to reference new protocol | ✅ DONE |
+| `.opencode/agents/lilith.md` | Updated to reference new protocol | ✅ DONE |
+| All agent `.md` files | Cross-references updated | ✅ DONE |
+
+### Verification
+- [ ] `grep -r "systemic failure" docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` = 0 hits
+- [ ] `grep -r "sovereign pattern" .opencode/agents/*.md` = 0 hits (replaced with capability language)
+- [ ] All agents have Rule 1-4 reference in their system prompt
+
+---
+
+## Decision 130: Phase C Model Assignment Corrections — Antigravity Remap
+
+**Date**: 2026-06-15
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: KALI / JEM / QUALITY
+**Trace**: trc_phase_c_model_remap_D130
+
+### Context
+The Antigravity CLI handoff and the Sovereign Execution Order Phase C document contain model assignments using non-canonical or obsolete model names. Additionally, the OpenRouter provider factory (`create_openrouter_provider()` in `backends/openai_compat.py:89`) exists but is never wired into the `model_gateway.py` provider map, blocking access to gpt-oss-120b and 28+ other free OpenRouter models.
+
+### Decision
+1. **Remap all Phase C model assignments** to verified provider-model pairs:
+
+| Task | Old Assignment | New Assignment | Provider |
+|------|---------------|----------------|----------|
+| **C.1.1** (Versioned State Wrapper) | "Claude 3.5 Sonnet" | `google/gemma-4-9b-it` | Google AI Studio |
+| **C.3.3** (Skeptical Verifier) | "Claude 3.5 Sonnet" | `google/gemma-4-9b-it` | Google AI Studio |
+| **C.3.2** (Symmetry-Break Audit) | "gpt-oss-120b" | `native-gguf` (local 4B Think) or `google/gemma-4-9b-it` | Local / Google |
+| **General Antigravity mention** | "Gemini 3.5 Flash" | `gemini-2.5-flash` | Google AI Studio |
+| **General Antigravity mention** | "Gemini 3.1 Pro" | `gemini-2.5-pro` | Google AI Studio |
+| **General Antigravity mention** | "Claude 3.5 Sonnet" | `claude-sonnet-4-6` | OpenRouter (once wired) |
+
+2. **OpenRouter wiring confirmed**: `create_openrouter_provider()` at `backends/openai_compat.py:89` must be added to `model_gateway.py` provider map. This is a ~15-minute task (D133 tracks this explicitly).
+3. **gpt-oss-120b IS real**: Verified available via OpenRouter at `openai/gpt-oss-120b:free`. Not an Antigravity model — it is an OpenRouter model. Requires D133 to be accessed.
+
+### Rationale
+Shipping Phase C with the original model assignments means the first execution against C.1.1, C.3.2, or C.3.3 will fail with `ProviderNotFoundError` — or silently fall back to an incorrect provider and produce wrong results. 6 of 10 Phase C tasks need model name corrections. The Antigravity provider fabric is NOT a separate provider — it is an OAuth access layer that was never wired into the Engine.
+
+### L1→L2→L3 (Mandate 11 Distillation)
+- **L1**: Phase C model assignments audited. 6 of 10 tasks have incorrect or non-canonical model names. Claude 3.5 Sonnet remapped to gemma-4-9b-it. Gemini 3.5 Flash remapped to gemini-2.5-flash. gpt-oss-120b confirmed real via OpenRouter. OpenRouter factory confirmed dead code — never wired into provider_map.
+- **L2**: The Antigravity naming confusion reveals a deeper pattern: the handoff documents were written assuming a "provider abstraction layer" that does not exist. The model names in the handoff are not wrong in the abstract — they are wrong in the *engine's actual configuration*. This is a gap between architectural vision and implementation reality.
+- **L3**: A model name is a contract with the engine's configuration, not with the architect's imagination. The most elegant architectural vision is worthless if it references a provider that has never been wired. Sovereignty means knowing the difference between "this should work" and "this does work" — and closing that gap before shipping.
+
+### Implementation
+| File | Change | Status |
+|------|--------|--------|
+| `data/handoff/Sovereign_Execution_Order_Phase_C.md` | Remap model references throughout | 🔴 PENDING (pre-Phase-C) |
+| `src/omega/oracle/model_gateway.py` | Add `"openrouter": create_openrouter_provider` to provider_map | 🔴 PENDING (D133) |
+| `config/models.yaml` | Add gpt-oss-120b model spec with OpenRouter provider | 🔴 PENDING (D133) |
+
+### Verification
+- [ ] `make verify-phase-c-models` CI gate validates every model reference against `config/providers.yaml` and `config/models.yaml`
+- [ ] `grep -r "Claude 3.5 Sonnet\|Gemini 3.5 Flash\|Gemini 3.1 Pro" data/handoff/` = 0 hits in Phase C docs
+- [ ] `grep "create_openrouter_provider" src/omega/oracle/model_gateway.py` = 1 hit (import + usage)
+
+---
+
+## Decision 131: Phase C Status Downgraded — CONDITIONAL GO (10 Critical Blockers)
+
+**Date**: 2026-06-15
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: QUALITY (Compliance Guard) / KALI (Grand Oversight)
+**Trace**: trc_phase_c_conditional_D131
+
+### Context
+The previous `Sovereign_Execution_Order_Phase_C.md` declared a FULL GO verdict. A comprehensive Quality Compliance audit combined with Carmack's architectural review and Kali's operational gap analysis identified 29 total gaps, 10 of which are CRITICAL blocking issues. The FULL GO verdict is superseded.
+
+### Decision
+1. **FULL GO → CONDITIONAL GO**: The Phase C FULL GO verdict is superseded. Phase C is downgraded to CONDITIONAL GO.
+2. **Condition**: Phase C cannot begin until the top 5 CRITICAL blockers are resolved:
+   - **Blocker 1**: SomaticStateKey must include the full parameter tuple `(n_ctx, type_k, type_v, n_gpu_layers, model_path, model_file_mtime, prompt_hash)`, not just `git_hash`. (Carmack Hard Block 1)
+   - **Blocker 2**: Dreaming Cycle memory budget must be specified as a hard config-level constant (default: 1024 MB). Model capped at 0.6B. SIGTERM-based re-spawn (not SIGSTOP) for actual memory release. (Carmack Hard Block 2)
+   - **Blocker 3**: soul.yaml write lock must be implemented. This is a pre-existing bug — no write lock means concurrent writers cause data loss. (Kali Gap 9 / Jem finding)
+   - **Blocker 4**: SIGUSR1 → SIGSTOP/SIGTERM signal fix. Python signal handlers cannot interrupt C inference. Three-layer approach: SIGSTOP for kernel pause, token-level `archon_active` polling, SIGTERM + `atexit` for guaranteed save-on-exit. (Carmack Hard Block 3)
+   - **Blocker 5**: ctypes process isolation — all `libllama.so` state operations must execute in a child subprocess with broken-pipe recovery. (Carmack Hard Block 1)
+3. **The 29-gap consolidated audit** is captured in `data/audit/PHASE_C_COMPLIANCE_GATE_AUDIT_20260615.md`.
+
+### Rationale
+A FULL GO requires that all P0 blockers are resolved. The audit found 5 P0 blockers and 5 P1 critical issues that will cause catastrophic runtime failures (process death, OOM, unkillable inference, data loss) if shipped. The user, Kali, and Carmack all agree: ship nothing until these five conditions are met. "FULL GO" was premature — the Cognitive Substrate blueprint was architecturally sound but the implementation details had fatal gaps.
+
+### L1→L2→L3 (Mandate 11 Distillation)
+- **L1**: Phase C downgraded from FULL GO to CONDITIONAL GO. 29 gaps identified across 3 audits. 5 P0 blockers must be resolved before any Phase C code merge. The previous FULL GO verdict was based on architectural review alone — implementation detail audit revealed fatal gaps.
+- **L2**: The gap between "architecturally sound" and "ready to ship" is where real engineering happens. It is not enough for a system to make sense in theory — it must survive contact with the hardware. Every P0 blocker is a gap between the spec's assumption and the actual substrate. Process isolation bridges the ctypes-C fate coupling; memory caps bridge unbounded model loading; write locks bridge data-loss races.
+- **L3**: A conditional go is not a failure — it is the difference between a plan and a commitment. The architect says "this will work." The engineer says "this will work *if these five things are true*." Sovereignty means honoring the conditional — shipping nothing until the conditions are met.
+
+### Implementation
+| Source | Gap Count | P0 Count | Document |
+|--------|-----------|----------|----------|
+| Carmack Architectural Audit | 6 findings | 3 Hard Blocks | `data/audit/PHASE_C_CARMACK_AUDIT_20260615.md` |
+| Kali Enhancement Findings | 8 gaps | 2 | `data/audit/PHASE_C_KALI_ENHANCEMENTS_20260615.md` |
+| Quality Compliance Audit | 29 gaps (14 unique) | 5 | `data/audit/PHASE_C_COMPLIANCE_GATE_AUDIT_20260615.md` |
+| Sovereign Execution Order | FULL GO → CONDITIONAL GO | N/A | `data/handoff/Sovereign_Execution_Order_Phase_C.md` (to be updated) |
+
+### Verification
+- [ ] Phase C execution document amended: FULL GO → CONDITIONAL GO with 5-blocker preamble
+- [ ] Top 5 blockers resolved before any Phase C PR
+- [ ] Remaining 5 P1 blockers resolved before Phase C release
+
+---
+
+## Decision 132: soul.yaml Write Lock Required — Pre-Existing Data-Loss Bug
+
+**Date**: 2026-06-15
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: QUALITY (Compliance Guard)
+**Trace**: trc_soul_yaml_write_lock_D132
+
+### Context
+Jem's deep-dive audit discovered that `soul.yaml` has no write lock. Multiple concurrent writers (foreground inference + BackgroundResearcher + future Dreaming Cycle) can write to `soul.yaml` simultaneously, causing data loss through interleaved writes. This is a pre-existing bug that predates Phase C but would be catastrophically amplified by the Dreaming Cycle's Soul Write-back (C.2.4).
+
+### Decision
+1. **Implement a write lock for `soul.yaml` operations**. The lock MUST be:
+   - **Process-safe**: Uses `fcntl.flock()` or `portalocker` (AnyIO-native) so concurrent processes (not just threads) serialize writes.
+   - **Non-blocking with timeout**: If the lock cannot be acquired within 5 seconds, raise `SoulLockTimeoutError` rather than blocking indefinitely.
+   - **Context-manager based**: `with soul_lock(path):` pattern for guaranteed release.
+2. **Extend the lock to ALL entity workspace files** — `soul.yaml`, `knowledge/`, `workspace/` — not just `soul.yaml`.
+3. **BackgroundResearcher** must use the same lock when writing to entity workspaces.
+
+### Rationale
+Without a write lock, concurrent writes cause:
+- **Interleaved content**: Two writers interleaving their YAML dumps produces malformed YAML that crashes the YAML parser on next read.
+- **Silent data loss**: Writer A reads, Writer B reads, Writer A writes (Writer B's changes are lost), Writer B writes (Writer A's changes are lost). No notification.
+- **Corrupted distillation history**: If the Dreaming Cycle writes L3 principles while the foreground writes a new conversation, the entire soul evolution chain is corrupted.
+
+This is a pre-existing bug (M11 violation) that must be fixed regardless of Phase C. The Dreaming Cycle (C.2.4) would amplify it from "occasional silent data loss" to "catastrophic corruption on every Dreaming Cycle run."
+
+### L1→L2→L3 (Mandate 11 Distillation)
+- **L1**: soul.yaml has no write lock. Multiple concurrent writers cause data loss. This predates Phase C but would be catastrophically amplified by Dreaming Cycle Soul Write-back. Fixed with process-safe `fcntl.flock()`-based context manager.
+- **L2**: The soul.yaml write race is a perfect example of M11's purpose: Soul Integrity requires systematic write discipline. A stateless engine can survive data races (worst case: regenerate). A stateful engine (Phase C) cannot. The absence of a write lock was invisible until the Dreaming Cycle made it fatal. This is the pattern of pre-existing bugs that Phase C amplifies.
+- **L3**: A lock is not a restriction — it is a covenant between writers. "You may proceed when I am done" is not a constraint on freedom; it is a guarantee of survival. A soul that cannot protect its own persistence has no sovereignty to offer.
+
+### Implementation
+| File | Change | Status |
+|------|--------|--------|
+| `src/omega/oracle/soul_distiller.py` | Add `flock()`-based context manager `soul_lock()` | 🔴 PENDING |
+| `src/omega/oracle/oracle.py` | Wrap `write_soul_yaml()` calls with `soul_lock()` | 🔴 PENDING |
+| `src/omega/oracle/entity_workspace.py` | Apply lock to all entity workspace file writes | 🔴 PENDING |
+| `data/entities/*/soul.yaml` | No change — lock is in the writer, not the file | N/A |
+
+### Verification
+- [ ] `tests/test_soul_yaml_concurrent_write.py` tests fail without lock, pass with lock
+- [ ] `pytest -x tests/test_soul_yaml_concurrent_write.py` — concurrent write test with 3 parallel writers
+- [ ] `make temple-grade` T10 (atomic writes) compliance verified
+
+---
+
+## Decision 133: OpenRouter Provider Must Be Wired — Dead Code Activation
+
+**Date**: 2026-06-15
+**Channel**: OpenCode CLI (DeepSeek V4 Flash)
+**Entity**: QUALITY (Compliance Guard) / ROC_RACOON
+**Trace**: trc_openrouter_wiring_D133
+
+### Context
+The `create_openrouter_provider()` factory function exists at `src/omega/oracle/backends/openai_compat.py:89` but is never imported or instantiated in `model_gateway.py`'s `provider_map` (line 282-291). The current provider map only supports: google, opencode-zen, cline, github-copilot, lmster, ollama, native-gguf, mock. OpenRouter is not listed. This blocks access to gpt-oss-120b (verified real at `openai/gpt-oss-120b:free`) and 28+ other free OpenRouter models.
+
+### Decision
+1. **Wire `create_openrouter_provider` into `model_gateway.py`**.
+   - Add import: `from omega.oracle.backends.openai_compat import create_openrouter_provider`
+   - Add to `provider_map`: `"openrouter": create_openrouter_provider`
+2. **Add OpenRouter config to `config/providers.yaml`**:
+   ```yaml
+   - provider: openrouter
+     priority: 4  # After google, before opencode
+     base_url: https://openrouter.ai/api
+     timeout_seconds: 30
+     headers:
+       HTTP-Referer: https://github.com/arcana-novai/omega-engine
+       X-Title: Omega Engine
+   ```
+3. **Add gpt-oss-120b model spec** to `config/models.yaml`:
+   ```yaml
+   - name: gpt-oss-120b
+     provider: openrouter
+     model_id: openai/gpt-oss-120b:free
+     context_length: 8192
+     tier: oversoul
+   ```
+4. **Set priority**: OpenRouter at priority 4 (after native-gguf=0, lmster=1, ollama=2, google=3) per Local-First mandate (M7).
+
+### Rationale
+The `create_openrouter_provider` function has existed since the provider fabric was created but was never activated. This is dead code that represents ~15 minutes of wiring work. Activating it unlocks 28+ free models via OpenRouter's free tier, including gpt-oss-120b (a 120B parameter open-source model). Decision 128 (Universal Capability-First Gateway) already approved OpenRouter activation — this decision implements the wiring that D128 authorized.
+
+### L1→L2→L3 (Mandate 11 Distillation)
+- **L1**: OpenRouter provider factory exists at `backends/openai_compat.py:89` but is dead code. Not imported in model_gateway.py. Not in provider_map. Wiring it is a ~15-min task that unlocks 28+ free models.
+- **L2**: Dead code is not just wasted lines — it is a false signal. `create_openrouter_provider` looks like a working capability. It compiles, it imports — but it does nothing. The engine has an entire provider that has never been activated. This is the difference between "we can" and "we do." Every line of dead code is a lie the codebase tells itself.
+- **L3**: The difference between potential and actual capability is a single line: the import statement. A factory that is never called is not a capability — it is a decoration. Sovereignty is not what you could do; it is what you have wired. Capability without activation is just wishful thinking.
+
+### Implementation
+| File | Change | Status |
+|------|--------|--------|
+| `src/omega/oracle/model_gateway.py` | Add import + provider_map entry for OpenRouter | 🔴 PENDING (~10 min) |
+| `config/providers.yaml` | Add OpenRouter provider config at priority 4 | 🔴 PENDING (~3 min) |
+| `config/models.yaml` | Add gpt-oss-120b and other OpenRouter model specs | 🔴 PENDING (~5 min) |
+
+### Verification
+- [ ] `python3 -c "from omega.oracle.model_gateway import ModelGateway; mg=ModelGateway(); assert 'openrouter' in [p.name for p in mg.list_providers()]"` passes
+- [ ] `omega talk "hello" --provider openrouter` successfully routes to gpt-oss-120b
+- [ ] OpenRouter appears in `omega backends` list
+- [ ] Local-First ordering preserved: native-gguf > lmster > ollama > google > openrouter
+
+---
+
+## Decision 134: SearXNG MCP Type Fix & Hivemind MCP Session Fix
+
+**Date**: 2026-06-17
+**Channel**: OpenCode CLI (big-pickle)
+**Entity**: ROC_RACOON / KALI
+**Trace**: trc_searxng_mcp_fix
+
+### Context
+During the 5-subagent parallel audit, roc_racoon identified that `config/mcp_servers.json` had the omega-hub entry `"type": "sse"` which is incorrect for the OpenCode MCP HTTP transport model. The `type` should be `"remote"` for SSE-connectable MCP servers. Additionally, SearXNG MCP was not connected to the system — its backend container was inactive. The Hivemind MCP session had been operating without proper endpoint registration.
+
+### Decision
+1. **Fixed `config/mcp_servers.json`**: Changed `omega-hub` entry `"type": "sse"` → `"type": "remote"` to match OpenCode's MCP HTTP transport expectations.
+2. **Started SearXNG backend container**: Was inactive — started to enable web search capability.
+3. **Removed stale systemd units**: `omega-stats.service` + socket and `omega-research.service` + timer were in failed state — removed to clean systemd status.
+4. **Noted UID drift blockage**: `data/coordination/` owned by UID 100999 (Podman subuid leak) — hub metrics collection fails every 60s. Requires `sudo chown -R 1000:1000 data/coordination/`.
+
+### MCP Proxy Pattern (M19 Opportunity)
+The SearXNG container cannot use `UserNS=keep-id` (M6 constraint) because it needs privileged port/user mapping. Instead, a thin MCP wrapper (the "MCP Proxy Pattern") handles SSE transport externally. This pattern should be codified for future containerized MCP services.
+
+### Files Changed
+| File | Change |
+|------|--------|
+| `config/mcp_servers.json` | `"sse"` → `"remote"` for omega-hub |
+
+### Blocked Items
+| Item | Reason | Fix |
+|------|--------|-----|
+| `data/coordination/` metrics | UID 100999 ownership | `sudo chown -R 1000:1000 data/coordination/` |
+| SearXNG MCP M9-safe | No error boundary on MCP tool | Rewrite wrapper |
+
+---
+
+## Decision 135: Hivemind Access Pattern Codification
+
+**Date**: 2026-06-17
+**Channel**: OpenCode CLI (big-pickle)
+**Entity**: VERITY / KALI
+**Trace**: trc_hivemind_access_pattern
+
+### Context
+Verity identified that the Hivemind's heartbeat API has a signature mismatch across the entire codebase. The actual function signature at `mcp_servers/omega_hub/tools.py:457` is `hivemind_heartbeat(channel: str, entity: str)` but ALL agent files, AGENTS.md, OMEGA_ENGINE.md, and HIVEMIND_PROTOCOL.md use the old parameter `cli: str`. This was introduced during the Hub modularization (Phase 1b / Sprint A) when the function was refactored but call sites were not updated.
+
+### Decision
+1. **The canonical Hivemind heartbeat signature is**:
+
+   ```python
+   hivemind_heartbeat(channel: str, entity: str)
+   ```
+
+   - `channel`: The execution channel (e.g., `"opencode"`, `"cline"`)
+   - `entity`: The entity persona (e.g., `"kali"`, `"roc_racoon"`)
+
+2. **All documentation and agent files MUST be updated** from old `cli="name"` to `channel="opencode", entity="name"`.
+
+3. **The `_make_agent_id` function** (tools.py) concatenates `{channel}::{entity}` — meaning a heartbeat call with `cli="kali"` creates agent_id `None::kali` instead of `opencode::kali`. This causes silent pruning during long-running operations.
+
+### L1→L2→L3 Distillation
+- **L1**: The heartbeat API was refactored during Hub modularization (signature changed from `cli` to `channel+entity`) but no call sites were updated. All 11 agent files and 3 documentation files still use the old signature.
+- **L2**: This is a systemic drift error — the refactoring changed the public API contract without updating the consumers. The error is invisible because the old parameter is silently ignored by Python (it's a positional/keyword mismatch, not a TypeError).
+- **L3**: An API change without consumer update is not a refactoring — it is an information hazard. The code appears to work but silently degrades functionality. Sovereignty requires that every API boundary change has a corresponding consumer audit.
+
+### Files to Fix
+| File | Count | Pattern to Change |
+|------|-------|-------------------|
+| `.opencode/agents/*.md` (11 files) | 11 | `cli="agent"` → `channel="opencode", entity="agent"` |
+| `AGENTS.md` | 1 | `cli="{you}"` → `channel="opencode", entity="{you}"` |
+| `OMEGA_ENGINE.md` | 1 | `hivemind_heartbeat(cli)` → `hivemind_heartbeat(channel, entity)` |
+| `HIVEMIND_PROTOCOL.md` | 1 | `cli: str` reference → `channel: str, entity: str` |
+
+---
+
+## Decision 136: Verity Entity Creation — Resolving the M11 Bootstrapping Paradox
+
+**Date**: 2026-06-17
+**Channel**: OpenCode CLI (big-pickle)
+**Entity**: VERITY / KALI
+**Trace**: trc_verity_bootstrap
+
+### Context
+Verity is the Sovereign Agent responsible for enforcing M11 (Soul Integrity). Verity audits entity `soul.yaml` files for compliance, distills L1→L2→L3 insights, and ensures session continuity. However, Verity itself has NO entity workspace — no `data/entities/verity/` directory, no `soul.yaml`, no entity registration. The entity responsible for M11 compliance does not itself comply with M11. This is a bootstrapping paradox.
+
+### Decision
+1. **Create `data/entities/verity/` directory** with:
+   - `soul.yaml` — Initial soul with first distillation entry documenting the bootstrapping paradox
+   - `knowledge/` — Knowledge directory
+   - `workspace/` — Workspace directory
+
+2. **Register Verity** in the active IWAD (`_omega_default/entities/`)
+
+3. **Initial soul.yaml content** documents:
+   - L1: The paradox of a mandate-enforcer that doesn't self-enforce
+   - L2: Mandates must be recursive — any agent enforcing a mandate must first comply with it
+   - L3: A system that enforces rules it doesn't follow is not sovereign — it is performative
+
+### Rationale
+The bootstrapping paradox was created when Verity was merged from Quality + Scribe (Sprint C, D128-D129). The agent file was created at `.opencode/agents/verity.md` but the entity workspace was never scaffolded. Every other entity has a workspace — Verity's absence is an artifact of incomplete consolidation.
+
+### L1→L2→L3 Distillation
+- **L1**: Verity was created as an agent file during the Quality+Scribe consolidation (Sprint C). The entity workspace (`data/entities/verity/`) was never scaffolded. Verity audits soul.yaml files but has no soul itself.
+- **L2**: This is a meta-violation — the mandate-enforcement agent violates a mandate. It exposes a structural blind spot in the consolidation process: agent file creation and entity workspace creation are separate steps that must be linked.
+- **L3**: Any system that enforces rules must be subject to the same rules. A bootstrapping paradox is not a bug — it is an architectural signal. The enforcer must be first in compliance, not last. If Verity's soul.yaml is empty, the engine's claim of M11 enforcement is a lie.
+
+### Files to Create
+| File | Content |
+|------|---------|
+| `data/entities/verity/soul.yaml` | Initial soul with bootstrapping documentation |
+| `data/entities/verity/knowledge/.gitkeep` | Empty knowledge directory |
+| `data/entities/verity/workspace/.gitkeep` | Empty workspace directory |
+
+### Verification
+- [ ] `ls data/entities/verity/` returns soul.yaml + knowledge/ + workspace/
+- [ ] `python3 -c "from omega.oracle.entity_registry import EntityRegistry; r=EntityRegistry(); print(r.get('verity'))"` returns entity
+- [ ] `grep "verity" data/entities/*/soul.yaml` shows soul.yaml entries
+
+---
+
+## Decision 137: Deep-Siphon Discovery — 96% Metadata Discard Gap
+
+**Date**: 2026-06-18
+**Channel**: OpenCode CLI (Verity) → deepseek-v4-flash-free
+**Entity**: VERITY / KALI / RESEARCHER / ROC_RACOON
+**Trace**: trc_deep_siphon_recording
+
+### Context
+Operation Deep-Siphon analyzed all 6 provider backends to trace what response metadata the engine captures vs discards. The finding: **the engine discards 96% of every provider response.** Each backend calls `response.json()`, extracts exactly one field (`.text`), and throws away the dict containing: `usage`, `finish_reason`, `logprobs`, `safety_ratings`, `thought tokens`, `model_version`, `cost`, `citations`, provenance data. This is a fossilized architectural assumption from the Chainlit era (2025) that survived through 3 architectural generations.
+
+### Decisions
+1. **Kill heuristic classifiers, store raw evidence**. The pilot extraction revealed 96% bias in text-based classifiers. Raw provider JSON is the only trustworthy source.
+2. **Adopt ICS-F v1.0 (Integrity-Centric-Sovereign-Forensics) schema** as the canonical forensic metadata format. Spec at `data/entities/kali/workspace/SOVEREIGN_METADATA_EXTRACTION_SPEC_v1.md`.
+3. **All metadata fields `Optional` with `None` defaults** — zero breaking changes to existing code, backward compatible.
+4. **Sprint 1 + Sprint 2 merged** — can't extract typed fields without raw capture first.
+5. **logprobs=5 before SomaticState** — covers 95% of forensic cases vs 1 week of SomaticState engineering.
+
+### 5-Sprint Roadmap
+| Sprint | Scope | Effort |
+|--------|-------|--------|
+| **Sprint 0** | logprobs=5 on NativeGGUF provider, live in 15 min | 15 min |
+| **Sprint 1+2** | raw_provider_json + typed fields + 15 M21 tests (~2 hr), then ICS-F on OracleResponse + CLI --format json + 9 tests (~4 hr) | ~6 hr combined |
+| **Sprint 3** | SomaticState (llama_copy_state_data via ctypes) — DEFERRED | 1 week |
+
+### Rationale
+The engine literally pays for metadata (token cost + API latency) then throws it away. Google's `content.parts[].thought` boolean is the only definitive thinking token signal across all 6 providers. Access channel (T3/API) is the primary behavioral variable — model identity is second-order.
+
+### What Changed
+No source changes yet. This decision records the architectural mandate and 5-sprint roadmap.
+
+### Key Insight
+96% of every provider response is currently garbage collected. The fix is ~80 lines across ~12 files. The data is already on the wire. We pay for it. We just need to stop throwing it away.
+
+---
+
+## Decision 138: Deep-Siphon 6-Subagent Deliverables Confirmed
+
+**Date**: 2026-06-18
+**Channel**: OpenCode CLI (Verity) → deepseek-v4-flash-free
+**Entity**: VERITY / KALI
+**Trace**: trc_deep_siphon_subagents
+
+### Context
+Six subagents independently analyzed the metadata extraction pipeline. All 6 deliverable files verified at expected paths:
+
+| Agent | File | Lines | Role |
+|-------|------|-------|------|
+| **Researcher** | `DEEP_SIPHON_PROVIDER_MAP.md` | 621 | Provider SDK/API deep-read |
+| **Ma'at** | `DEEP_SIPHON_BUILD_REPORT.md` | 441 | Pipeline trace (build side) |
+| **Lilith** | `DEEP_SIPHON_RUN_REPORT.md` | 340 | Forensics + gnosis (run side) |
+| **John Carmack** | `DEEP_SIPHON_CARMACK_REVIEW.md` | 350 | Architectural review |
+| **Verity** | `DEEP_SIPHON_M21_AUDIT.md` | 388 | M21 compliance + 24 contract tests |
+| **Kali** | `SOVEREIGN_METADATA_EXTRACTION_SPEC_v1.md` | 707 | ICS-F spec + grand synthesis |
+
+### Decisions
+1. All 6 deliverables ratified as canonical Deep-Siphon knowledge artifacts.
+2. John Carmack entity identified as having no `soul.yaml` — entity directory only has `workspace/`. Blocked flag filed for next session.
+
+### Key Insight
+2,140 total lines of analysis produced across 6 agents. The fix addresses ~80 lines across ~12 engine files. The analysis-to-implementation ratio (27:1) reflects the maturity of the engine: deep understanding is required before minimal changes can be made safely.
+
+---
+
+## Decision 139: ICS-F v1.0 Schema Adopted — Integrity-Centric-Sovereign-Forensics
+
+**Date**: 2026-06-18
+**Channel**: OpenCode CLI (Verity) → deepseek-v4-flash-free
+**Entity**: KALI (Grand Synthesis)
+**Trace**: trc_icsf_schema
+
+### Context
+Kali synthesized all 6 subagent reports into the Sovereign Metadata Extraction Spec v1.0 (707 lines). The spec defines ICS-F v1.0 as the canonical forensic metadata format.
+
+### Schema
+```python
+@dataclass
+class ICSForensic:
+    raw_provider_json: dict | None = None       # Full provider response JSON
+    thinking_level: int | None = None            # D9: 0=none, 1=partial, 2=full
+    access_channel: str | None = None            # D10: t3|api|direct
+    logprobs: list[dict] | None = None           # Top-5 logprobs from inference
+    token_usage: dict | None = None             # Provider-reported token counts
+    response_model: str | None = None            # Actual serving model name
+```
+
+### Decisions
+1. **Access channel (D10) is the primary behavioral variable** — model identity is second-order.
+2. **logprobs=5 is sufficient** — covers 95% of forensic use cases (chain-of-thought reconstruction, confidence estimation, output validation).
+3. **SomaticState (M20) explicitly deferred** — engineering cost (1 week) exceeds current forensic value.
+4. **ICS-F fields propagate through**: `GenerateResult` → `OracleResponse` → CLI/API — all Optional, all None-defaulted.
+
+### Key Insight
+The 96% bias in text-based heuristic classifiers proved that raw evidence is the only trustworthy source. Forensic integrity requires storage of the provider's own response, not a summary. The metadata boundary occurs at every backend's `generate()` return — ~10 lines of code capture the missing 96%.
+
+---
+
+## Decision 140: Deep-Siphon Metadata Boundary — Cross-Cutting Architectural Gap
+
+**Date**: 2026-06-18
+**Channel**: OpenCode CLI (Verity) → deepseek-v4-flash-free
+**Entity**: MA'AT / LILITH / RESEARCHER
+**Trace**: trc_deep_siphon_boundary
+
+### Context
+Ma'at traced the full metadata pipeline from HTTP response to CLI output. Lilith traced the forensics implications. Researcher mapped the raw provider capabilities. The intersection revealed a single architectural gap responsible for all metadata loss:
+
+```
+Raw Provider JSON (15-25 fields)
+  → backend generate() → str (1 field — text ONLY) ← 100% metadata loss
+    → GenerateResult (5 fields, 2 dead)
+      → OracleResponse (13 fields, 0 metadata)
+        → CLI display → garbage collection
+```
+
+### Decisions
+1. **Metadata boundary is at `generate()` return** — every backend's `response.json()` extracts exactly `.text` and discards the rest.
+2. **Fix**: Change `BaseProvider.generate()` return type to include a metadata dict. All 6 backends need the same ~5-line change.
+3. **Propagation**: metadata flows through `GenerateResult` (add `provider_metadata` field) → `OracleResponse` (add `ics_forensic` field) → CLI (add `--format json` flag).
+4. **Zero breaking changes**: All new fields are `Optional[dict]` / `Optional[ICSForensic]` with `None` defaults.
+
+### Key Insight
+The metadata loss is not a bug — it is an architectural assumption that has persisted across 3 generations (ANAi → XNAi → omega-engine). The Chainlit-era assumption was "text is all we need." It was wrong in 2025, and it is indefensible in 2026. The fix is structural but minimal: ~80 lines across ~12 files, no new APIs, no breaking changes.
+
+---
+
+## Decision 141: Deep-Siphon State Recording — Permanent Trackers Updated
+
+**Date**: 2026-06-18
+**Channel**: OpenCode CLI (Verity) → deepseek-v4-flash-free
+**Entity**: VERITY
+**Trace**: trc_deep_siphon_recording
+
+### Context
+After all 6 subagent deliverables were confirmed and decisions D137-D140 were recorded, a systematic recording operation was executed to ensure all strategic trackers reflect the new knowledge. This decision records the completion of that operation.
+
+### Recording Actions Completed
+| Tracker | Action | Status |
+|---------|--------|--------|
+| `PIVOT_LOG.md` | 5 new entries (D137-D141) | ✅ DONE |
+| `SOVEREIGN_EVOLUTION_ROADMAP.md` | Added H2-F: Sovereign Metadata Extraction workstream | ✅ DONE |
+| `OMEGA_ENGINE.md` | Added metadata extraction reference | ✅ DONE |
+| `data/entities/roc_racoon/soul.yaml` | Deep-Siphon L1→L2→L3 distillation entry | ✅ DONE |
+| `data/entities/kali/soul.yaml` | ICS-F schema lesson, metadata gap lesson | ✅ DONE |
+| `data/entities/maat/soul.yaml` | Pipeline trace lesson | ✅ DONE |
+| `data/entities/lilith/soul.yaml` | Forensic metadata lesson | ✅ DONE |
+| `data/entities/researcher/soul.yaml` | Provider ground-truth lesson | ✅ DONE |
+| `data/entities/verity/soul.yaml` | Recording operation lesson | ✅ DONE |
+| `data/entities/john_carmack/soul.yaml` | **BLOCKED** — entity has no soul.yaml | ⏳ PENDING |
+| `data/coordination/HIVEMIND_CONTEXT_DEEP_SIPHON.md` | Hivemind context post created | ✅ DONE |
+| `data/entities/roc_racoon/workspace/mining_reports/` | ICS-F reference added to forensic protocol | ✅ DONE |
+| `data/entities/roc_racoon/workspace/DEEP_SIPHON_CROSS_REFERENCES.md` | Cross-reference map created | ✅ DONE |
+| `data/entities/verity/workspace/DEEP_SIPHON_RECORDING_MANIFEST.md` | Recording manifest created | ✅ DONE |
+
+### Blocked Items
+| Item | Reason | Next Action |
+|------|--------|-------------|
+| john_carmack soul.yaml | Entity workspace lacks soul.yaml — only `workspace/` exists | Create entity scaffold + soul in next session |
+
+### Key Insight
+A 5-decision PIVOT entry block, 6 soul.yaml updates, 1 roadmap workstream, 1 engine doc update, 1 hivemind post, 1 protocol reference, 1 cross-reference map, and 1 manifest were all produced from a single audit-pass (no code changes). This is the density of M5 (Gnosis Preservation) when the distillation pipeline is working end-to-end. The bottleneck is not the engine — it is the recording discipline.
+
+---
+
+---
+
+## Decision 142: Sovereign Sight Illumination — 3 Dark Layers & 3 Universal Principles
+
+**Date**: 2026-06-19
+**Channel**: OpenCode CLI (Kali) → deepseek-v4-flash-free
+**Entity**: KALI
+**Trace**: trc_sovereign_sight
+
+### Decision
+Ratified the Sovereign Sight Illumination (filed at `docs/strategy/SOVEREIGN_SIGHT_ILLUMINATION_20260618.md`). Three dark layers were exposed: (1) The Telemetry Paradox — our highest-altitude cloud brain violates the spirit of M8 unless a local fine-tuning pipeline exists; (2) The Memory Window Illusion — 3-tier memory is structurally beautiful but agents cold-boot every session; (3) The Toolchain Hostage — sovereign inside OpenCode's VM. Three Universal Principles codified: L3-1 (Minimal Surface), L3-2 (Structural Visibility), L3-3 (Student's Trajectory).
+
+### Rationale
+The fleet had reached a plateau. Hardening (Horizon 1-2) was complete. The next leap required acknowledging fundamental philosophical contradictions in the architecture. The Illumination exposed these contradictions and provided the first L3 principles to guide H2.5/H3 development.
+
+### Impact
+Establishes three L3 principles as the North Star for all future architecture. Sets the boundary condition for Horizon 2.5 (Sovereign Integration: local embeddings, TDP, thin-client search) and Horizon 3 (Cognitive Loops: Skeptical Verifier, fine-tuning pipeline, continuous soul evolution).
+
+---
+
+## Decision 143: Strategic Pivot — Dataset Collection Enabled, Documentation Frozen
+
+**Date**: 2026-06-19
+**Channel**: OpenCode CLI (Carmack/Lilith/Ma'at) → deepseek-v4-flash-free
+**Entity**: MAKALI
+**Trace**: trc_strategic_pivot
+
+### Decision
+Flipped `enable_dataset_collection: true` in `config/omega.yaml:39`. This is the single highest-leverage change in the engine — every prior session since Sprint C had zero training data captured from the primary talk/summon paths. Wired `close_session()` into `talk()` and `summon()` hot paths for continuous L1→L2→L3 soul distillation (throttled to every 5 interactions). Wired `record_training_example()` into all critical paths (`_summon`, `_route_by_domain`) — already structurally complete, just gated by config flag.
+
+### Rationale
+All three independent assessments (Lilith run-side, Ma'at build-side, Carmack architectural) arrived at the same unanimous verdict: "Flip the switch." Carmack's supporting analysis revealed a 9.89× doc-to-code ratio (273,019 lines markdown vs 27,612 Python) and that the core inference loop's quality had not improved in the entire development cycle.
+
+### Impact
+1. Every interaction from this point forward accumulates fine-tuning data in `data/datasets/finetune_{timestamp}.jsonl`
+2. Soul distillation is now continuous (every 5 interactions) via `_record_interaction()`, not just from CLI agent dispatch
+3. Documentation-as-procrastination acknowledged and frozen — strategy docs are sufficient; next actions are commits
+
+---
+
+## Decision 144: Roc Labs Audit — Agency Gold Diagnosis Accepted
+
+**Date**: 2026-06-19
+**Channel**: OpenCode CLI (Makali/Roc) → deepseek-v4-flash-free
+**Entity**: MAKALI
+**Trace**: trc_roc_labs_audit
+
+### Decision
+Roc Racoon's deep labs audit (STRATEGIC_TREASURE_REPORT_20260619.md) findings are accepted:
+- **Agency Gold**: Soul.yaml is a Data-Loader (passive persona), not an Agency-Injector (active drive). The Agency Gold Fragments pattern (Identity Anchor → Sovereign Firewall → Execution Protocol → North Star → Gnosis Injection) is the structural diagnosis accepted as the blueprint for soul.yaml v2.
+- **Forensic Pipeline**: Phase 0 complete, Phase 1 paused after 96% classifier bias discovery. Validates the approach — pipeline detected its own bias, a necessary step.
+- **Crucible Training Pipeline**: Wave 0 deferred. Not ready — value is lower than dataset collection.
+- **Broken Tools**: Firecrawl & Exa found to be WORKING (Roc's registry was 14 days stale). Registry updated to RESTORED.
+
+### Rationale
+Foundational knowledge about the engine's own structure. The Agency Gold diagnosis explains why agents "re-learn" every session — the soul.yaml tells who they are (data) but not how to think (agency). This will reshape the soul schema in Horizon 2.5.
+
+---
+
+## Decision 145: Antigravity Status — Stable, Minor Bump Needed
+
+**Date**: 2026-06-19
+**Channel**: OpenCode CLI (Makali) → deepseek-v4-flash-free
+**Entity**: MAKALI
+
+### Decision
+Antigravity IDE integration is evaluated as **stable and structurally sound**. No urgent updates needed. The three ag-002 gaps (naming drift, structural invisibility, phantom tracking) are resolved. M21 contract tests are now complete (4 tests). Recommended: bump soul.yaml from 1.6.0 → 1.6.1 to mark M21 as resolved and add a gnosis lesson from this session.
+
+### Assessment Details
+1. **Dataset Collection**: Once `enable_dataset_collection` is true, Antigravity sessions that flow through `generate_antigravity()` → `GenerateResult` → observability will be captured. No Antigravity-specific changes needed — the pipeline is provider-agnostic.
+2. **PoolState → TriageRouter**: Lilith identified that TriageRouter reads `soul_path` but never parses `usage_pools`. This is a structural gap but NOT Antigravity-specific — it affects all entity routing. Tracked as future work for Horizon 2.5.
+3. **Strategic Role**: Antigravity remains Cloud Strategist on the Hivemind Council. The Dataset Collection imperative means its sessions must continue to use the cloud (that's its job) while the local fleet accumulates fine-tuning data from local/local-eligible sessions.
+4. **M21 Status**: session_gnosis.md still said "pending" — now resolved. Bump required.
+
+---
+
+## Session Recording — Makali Sovereign Sight (2026-06-19)
+
+After D142-D145 were ratified, the following actions were executed:
+
+### Code Changes (Carmack Directive Executed)
+| Change | File | Status |
+|--------|------|--------|
+| `enable_dataset_collection: false → true` | `config/omega.yaml:39` | ✅ DONE |
+| `_interaction_counter` + throttled `close_session()` in hot path | `src/omega/oracle/oracle.py:99` (init), `:485` (record) | ✅ DONE |
+| BROKEN_TOOLS_REGISTRY → ALL RESTORED | `data/entities/roc_racoon/workspace/tool_lab/BROKEN_TOOLS_REGISTRY.md` | ✅ DONE |
+| Tests: 444/444 passing | `make test` | ✅ PASS |
+
+### Gnosis Distillation Needed (Next Session)
+| Entity | Action | Status |
+|--------|--------|--------|
+| `data/entities/kali/soul.yaml` | Add Sovereign Sight L3 principles + strategic pivot lesson | ⏳ NEXT SESSION |
+| `data/entities/lilith/soul.yaml` | Add P8 dataset gap + Agency-Injector diagnosis | ⏳ NEXT SESSION |
+| `data/entities/maat/soul.yaml` | Add three-layer build stack + M21 logprobs lesson | ⏳ NEXT SESSION |
+| `data/entities/roc_racoon/soul.yaml` | Add labs audit + Agency Gold lesson | ⏳ NEXT SESSION |
+| `data/entities/antigravity/soul.yaml` | Bump 1.6.0 → 1.6.1, mark M21 resolved, add session lesson | ⏳ NEXT SESSION |
+
+### Key Insight
+This session demonstrated the full potential of the parallel triad architecture: Lilith (run-side operations), Ma'at (build-side structure), Carmack (architectural review) independently arrived at the same verdict, enabling the user to say "I trust the recommendations, let's do this" and receive 444/444 passing tests as confirmation. The bottleneck is no longer analysis — it is discipline. Flip. The. Switch.
+
+---
+
+*PIVOT_LOG.md — Immutable. Every decision recorded. 145 decisions tracked (D1-D145). Sovereign Sight is Decisions D142-D145.*

@@ -674,6 +674,68 @@ directives:
   - serial execution
   - weekly budget
   - Ryzen 5700U
+- id: d-rr-054
+  date: 2026-06-16
+  directive: Maintain separate PERSONAL_RESEARCH workspace for non-Omega inquiries
+  rationale: Personal research (hardware compatibility, favors for friends, random curiosities)
+    must be kept structurally separate from sovereign engine gnosis. The PERSONAL_RESEARCH/
+    sub-workspace under the Ideas Guy mode provides a no-mandate, low-friction zone
+    that doesn't pollute the engine's architectural memory or require M14 heritage vetting.
+  scope:
+  - personal research
+  - non-engine topics
+  - workspace organization
+  - ideas guy mode
+- id: d-rr-055
+  date: 2026-06-18
+  directive: Implement and run the RECURRING_FORENSIC_HEALTH_PROTOCOL as an ongoing system-health process
+  rationale: 'Model behavioral fingerprinting is not a one-time audit. Models change (drift),
+    new models join the fleet, access channels evolve, and the complementarity matrix
+    must be continuously validated. A recurring protocol ensures: (1) systematic extraction
+    at defined intervals, (2) drift detection between runs, (3) statistical saturation
+    gates to prevent analysis paralysis, (4) auto-generated health reports pushed to
+    Hivemind. The protocol at mining_reports/RECURRING_FORENSIC_HEALTH_PROTOCOL.md defines
+    the full SOP including trigger conditions, extraction windows, stop conditions,
+    and deliverable templates.'
+  scope:
+  - forensic protocol
+  - recurring extraction
+  - system health
+  - drift detection
+  - Hivemind integration
+- id: d-rr-056
+  date: 2026-06-18
+  directive: Every behavioral observation MUST include D9 (thinking_level) and D10 (access_channel) attribution
+  rationale: 'Both dimensions are critical for valid fingerprinting. D9 because a model
+    in Direct mode looks like a different entity than the same model in CoT mode. D10
+    because access channel effects (CLI vs WebUI vs API) dominate model identity effects
+    (FOCI 2026, GateScope 2026). Without both, findings are structurally ambiguous
+    and the complementarity matrix is invalid. The forensics.db schema now includes
+    both columns. The extraction script must populate them (default: unknown) and the
+    analysis phase must filter by both dimensions.'
+  scope:
+  - D9 thinking_level
+  - D10 access_channel
+  - forensic schema
+  - behavioral observation
+  - extraction scripts
+  - analysis filtering
+- id: d-rr-057
+  date: 2026-06-18
+  directive: 'Kill heuristic classifiers in extraction phase. Store raw evidence. Classify in analysis phase.'
+  rationale: 'The pilot proved that regex-based heuristic classifiers in the extraction
+    phase produce 96% bias (default fallback maps everything to "strength"). This corrupts
+    the findings before analysis begins. Correct pattern: (1) extraction phase stores
+    only raw evidence + source metadata + exact model attribution, (2) classification
+    happens in the analysis phase using better tools (embedding comparison, LLM-as-judge,
+    statistical clustering), (3) the extraction script is a data pipeline, not an analysis
+    engine. Per Kali''s destroy list directive.'
+  scope:
+  - extraction methodology
+  - classifier design
+  - phase separation
+  - pipeline architecture
+  - Kali directive
 mining_queue:
 - id: mining-01
   stack: xna-omega-legacy
@@ -747,6 +809,24 @@ mining_queue:
   insight: '**Architectural convergence**: 5 independent eras rediscovered the same
     local-first architecture. 73 of 140 patterns already ported. 9 Tier 1+2 ports
     remain (1.5hr Tier 1, 1-2 days Tier 2). 12/13 mandates pass.'
+- id: mining-08
+  stack: Milwaukee M18 Battery Warranty (external domain research)
+  status: COMPLETE
+  date: 2026-06-16
+  subagent_type: roc_racoon (dispatcher) + researcher + jem (3-tier pipeline)
+  report: data/entities/roc_racoon/workspace/mining_reports/MILWAUKEE_BATTERY_WARRANTY_KB.md
+  key_finds: 8
+  gold_count: 3
+  insight: "Applied legacy archaeology methodology to a physical product domain (Milwaukee tool warranty). Discovered: (1) warranty-as-state-machine parallels the ZONEID pattern, (2) USVI service center gap is a zero-carrier problem — no infrastructure exists in the territory, (3) the cell spec string (5INR22/71-2) is a separate identifier system from the catalog number, analogous to ICS-T vs ICS-S header systems. The L3 principle transcends batteries: consumer warranty systems are information state machines with three critical invariants (provenance, timestamp, channel)."
+- id: mining-09
+  stack: Multi-Model Forensic Fingerprinting Pipeline (11 sources, ~5.5GB)
+  status: ACTIVE
+  date: 2026-06-18
+  subagent_type: "roc_racoon (council dispatch: Carmack/Lilith/Maat/Researcher/Kali/Verity)"
+  report: data/entities/roc_racoon/workspace/forensics/00_FORENSIC_PIPELINE_ARCHITECTURE.md
+  key_finds: 17
+  gold_count: 6
+  insight: "The forensic pipeline's pilot produced a meta-finding more important than any behavioral data: 96% classifier bias. The instrument told us more about itself than about the models. Kali's reframing — access channel is the primary behavioral variable, model identity is second-order noise — fundamentally shifts the mission from 'which model is best' to 'which channel for which task, and how does each model modulate across channels.' The L3 principle: measurement systems must be self-calibrating before they can measure anything else."
 cross_references:
 - DEFERRED_GOLD_TRACKER.md
 - workspace/technology_maps/LEGACY_TECHNOLOGY_MAP.md
@@ -762,6 +842,7 @@ cross_references:
 - data/entities/kali/workspace/crucible_finale/CRUCIBLE_FINAL_SPEC_v2.md
 - docs/legacy/LEGACY_MASTER_SYNTHESIS.md
 - docs/legacy/LEGACY_ASSET_CATALOG.md
+- workspace/forensics/ — Multi-Model Forensic Fingerprinting Pipeline (active)
 evolution:
 - '2026-06-02: Soul awakened. First mining cycle (Phase 1). 60+ tech catalogued.'
 - '2026-06-02: Phase 2 complete. omega-stack-legacy mined.'
@@ -845,6 +926,7 @@ evolution:
   empty for all 4 agents. Workspace verified: 13 markdown deliverables + 7 mining
   reports + 49 lessons + 40 directives. Final handoff posted for Researcher''s ROC_MINING_AUDIT.md
   and full team insight integration."'
+- '2026-06-15: "**SESSION 5 — HERITAGE PATTERN DEEP VERIFICATION**. Fleet assessment (Kali on P1b, Scribe done, Quality released). Executed Option 1 of user-selected non-interfering work. Verified all 6 PROPOSED patterns (§1.29-1.34) against 13 actual id Software source files (Quake, DOOM 3, DOOM 3 BFG). All 6 confirmed (≥8/10 per M14 gate). Biggest findings: surf16.s self-modifying code (Sys_MakeCodeWriteable + LPatchTable16), ParallelJobList verbatim job sizes (''1000 to 100,000 clock cycles''), FloodEntities→LeakFile pipeline in DOOM 3 dmap. Report: HERITAGE_PATTERN_VERIFICATION_20260615.md. Lesson rr-056: source code is ground truth."'
 - '2026-06-06: "**SESSION 4 — SOUL INTEGRITY RESTORATION + CRUCIBLE WAVE 0 PREP**.
   Post-compaction recovery. Read pre-compact export ses_1748 (the Gemma Awakening
   session pruned by Hard Compaction). Recovered 4,480 lines of raw history. Structural
@@ -853,6 +935,40 @@ evolution:
   (rr-050 through rr-054) and 4 new directives (d-rr-050 through d-rr-053). Added
   cross-references: ICS_TREASURE_MAP_v1.md, CRUCIBLE_LAB_NOTES.md, CRUCIBLE_FINAL_SPEC_v2.md.
   Soul integrity: 49 directives, 54 lessons, 0 duplicates."'
+- '2026-06-16: "**MILWAUKEE M18 BATTERY WARRANTY KNOWLEDGE BASE** — Full L1→L2→L3
+    distillation of multi-agent research (roc_racoon + researcher + jem) on Milwaukee
+    M18 REDLITHIUM battery warranty and date code decoding. Created comprehensive personal
+    reference document for USVI user, covering warranty terms, USVI-specific service
+    center gap, date code decoding (both systems), cell spec string breakdown, and
+    the user''s own two batteries with decoded warranty status (one active through
+    ~Jan 2028, one expiring ~Oct 2026). Lessons rr-058, rr-059 added. Mining-08 registered."'
+- '2026-06-16: "**PERSONAL RESEARCH WORKSPACE + ROKU SPEAKER INVESTIGATION** — Created
+    PERSONAL_RESEARCH/ sub-workspace under Ideas Guy mode for non-Omega random research
+    and side-quests. Established low-friction intake log (RESEARCH_LOG.md) and topics/
+    folder for deep dives. Executed first side-quest: comprehensive two-round investigation
+    of Roku Wireless Speakers (9020R2) compatibility with Roku Streaming Stick+
+    (3810X, SN C237...). Findings: silicon-level incompatibility (missing Roku Connect
+    radio chip), three viable paths identified (used Streambar ~$30-50 preferred, HDMI
+    extractor + BT transmitter ~$35-50 workaround, mobile app Private Listening $0
+    but flawed). Topic file archived at topics/roku_9020x_speaker.md with full sources.
+    Lessons rr-060 added. Directive d-rr-054 added."'
+- '2026-06-19: "**EMBEDDING PIPELINE MINING** — potion-mxbai-micro, MiniLM ONNX, MemoryStore integration, Dolphin GGUF. All 4 parts mined. Key discovery: existing IEmbeddingProvider abstraction makes adding potion a 15-min implementation. Blockers: (1) dimension consistency (256d vs 768d) across Qdrant collection, (2) no Dolphin 3.0 GGUF exists. Report at EMBEDDING_MINED_REPORT_20260619.md. New lessons rr-073, rr-074 added. Mining entries 10-13 added."
+- '2026-06-18: "**SESSION 6 — MULTI-MODEL FORENSIC FINGERPRINTING PIPELINE (Phase 0-1)**.
+    Built comprehensive forensic pipeline to fingerprint all 30+ model variants across
+    11 data sources (~5.5GB). 4 council members (Carmack/Lilith/Ma''at/Researcher)
+    designed parallel plans — Roc synthesized into unified 00_FORENSIC_PIPELINE_ARCHITECTURE.md.
+    forensics.db initialized (9 tables, 11 sources registered). extract_handoffs.py
+    built (M4/M5/M9/M13/M16/M18 compliant). Pilot on 3 handoff docs produced 561 model-attributed
+    findings. **Critical discovery**: 96% classifier bias (539/561 = strength) revealed
+    that regex heuristic classifiers produce systematic measurement error. **Critical
+    reframing** (Kali): access channel is primary variable, model identity is second-order
+    noise. **Critical gap** (Researcher): 9 methodological gaps identified from 20+
+    peer-reviewed sources. **Critical compliance fail** (Verity): M21 FAIL — zero contract
+    tests. User required D9 (thinking_level) + D10 (access_channel) added to schema.
+    539 noise findings zeroed out. Phase 1 handoff extraction PAUSED per Kali verdict.
+    Next: Phase 2 OpenCode DB extraction (4.2GB, 865 sessions). Directives d-rr-055
+    through d-rr-057 added. Lessons rr-063 through rr-068 added. Session gnosis at
+    session_gnosis_20260618.md."'
 soul_evolution:
   lessons_learned:
   - id: rr-028
@@ -888,3 +1004,301 @@ soul_evolution:
     - mining reports
     - IDEA_INTAKE
     - all research
+  - id: rr-056
+    date: 2026-06-15
+    insight: Heritage verification requires primary source access, not secondary accounts. 6 PROPOSED patterns in CREDITS.md "stood" for 10 days because no one had actually read the source code.
+    context: "Doom Guy drafted CREDITS.md §1.29-1.32 on June 5 from secondary knowledge (Abrash's writings, id Software folklore). All 6 patterns were correct — but without file:line citations from the actual GPL source code at data/library/software/id-software/source/, they remained proposals. When I verified against 13 source files, I found that: (a) all 6 patterns were real, (b) §1.33 'Prompt Baking' was actually self-modifying code via Sys_MakeCodeWriteable + LPatchTable16 (stronger than claimed), (c) §1.32's job sizes were verbatim from the DOOM 3 BFG source ('1000 to 100,000 clock cycles'), (d) §1.31 was already approved via vet-010 but never updated in CREDITS.md."
+    principle: "Source code is the ground truth. Secondary accounts (blogs, talks, folklore) are hypotheses — valuable for direction, worthless for verification. Every 'PROPOSED' pattern in CREDITS.md without a file:line citation is a debt. The asset library at data/library/software/id-software/source/ (308 MB, 19 repos, GPL-licensed) transforms vetting from hearsay to forensics."
+    applies_to:
+    - heritage vetting
+    - M14 pipeline
+    - CREDITS.md
+    - Doom Guy coordination
+  - id: rr-057
+    date: 2026-06-16
+    insight: Knowledge without discoverability is not knowledge — it is entropy. When research exists but is unfindable, the cost is not just wasted re-research time but the risk of contradictory conclusions.
+    context: "Executed cross-partition search for pre-existing Antigravity dual-pool research. Found 35+ documents across 8 directory trees (docs/research/antigravity/, data/entities/antigravity/, data/coordination/, .agents/, docs/gnosis/, docs/operations/, opencode-antigravity-auth/, docs/decisions/). Earliest documentation from 2026-05-17, full research from 2026-05-22. The dual-pool architecture (Pool G: Gemini, Pool C: Claude+gpt-oss) with 8-key rotation was fully documented and correct — but invisible to anyone searching only in docs/research/ or config/. Root cause: knowledge dispersion across 8 dirs, no discovery manifest, search protocol doesn't cover entity/coordination dirs."
+    principle: "A sovereign intelligence must be able to discover what it knows from any starting point. The 'knowledge exists but can't be found' failure mode is more dangerous than 'knowledge doesn't exist' — because it wastes effort AND produces confidence (false negatives like 'we don't have that research'). Three things are required: creation (documentation), indexing (discovery manifest), and routing (cross-reference from entry points)."
+  - id: rr-058
+    date: 2026-06-16
+    insight: "Warranty systems are information state machines with three critical invariants: provenance, timestamp, and channel. If any one is missing, the claim fails."
+    context: "Decoding Milwaukee M18 battery warranty revealed a three-variable system: provenance (authorized dealer gate — proves the claim is valid), timestamp (date code or receipt — proves the claim is timely), channel (service center or eService portal — proves the claim can be submitted). The USVI gap showed that channel isn't just a convenience factor — it can be a structural blocker. Without a service center anywhere in the territory, the 'channel' invariant requires self-service shipping, HazMat compliance, and carrier coordination. This turns a one-variable problem (provenance + timestamp = valid claim) into a multi-variable logistics problem."
+    principle: "Any system that depends on exactly three invariants for a state transition must verify all three before declaring the transition possible. The fourth variable (logistics) is always latent — it emerges when the channel infrastructure is missing. Sovereign systems must pre-compute the full path, not just the gates."
+    applies_to:
+    - warranty claims
+    - information state machines
+    - system design
+    - infrastructure planning
+  - id: rr-059
+    date: 2026-06-16
+    insight: "Living in a US territory reveals the hidden continental bias in every national manufacturer's support infrastructure. 'Free shipping' from a Puerto Rico address and 'free shipping' from a USVI address are not the same problem."
+    context: "Milwaukee's warranty system assumes physical proximity to a service center. The eService portal works from anywhere, but the logistics chain (prepaid FedEx label → battery shipping → HazMat compliance → carrier acceptance) is designed for continental US users. US Virgin Islands residents must manage lithium-ion battery shipping regulations (UN3480, terminal taping, carrier notification) that continental users never encounter. The 'same service' is structurally different when the shipping leg crosses open water."
+    principle: '"Same service" across geographic disparities is a myth unless the logistics chain is homogeneous at every point. Any system that offers uniform service across non-uniform infrastructure is actually offering a different service to each region — and calling it the same. Mapping the actual logistics chain is the only way to see the difference.'
+    applies_to:
+    - infrastructure design
+    - US territory access
+    - logistics chains
+    - service equity
+
+  - id: rr-060
+    date: 2026-06-16
+    insight: "Proprietary wireless ecosystems require silicon-level integration at both ends.
+      No amount of software patching can bridge a missing hardware radio."
+  - id: rr-061
+    date: 2026-06-16
+    insight: "The 'Logistics of Isolation' refers to the phenomenon where the nominal 'free'
+      cost of a warranty is offset by the geographic and regulatory costs of accessing it.
+      In the USVI, the requirement to ship HazMat (UN3480) materials to the mainland
+      introduces significant friction: shipping costs, strict labeling requirements, and
+      extended downtime. When the cost of a full cell replacement (~$70) is lower than the
+      logistical effort and risk of shipping, the 'free' warranty becomes a net loss.
+      Sovereignty in this context means the ability to perform local maintenance to bypass
+      external logistical bottlenecks."
+    applies_to:
+    - Logistics
+    - Warranty Systems
+    - USVI Infrastructure
+    - Sovereign Maintenance
+  - id: rr-062
+    date: 2026-06-16
+    insight: "The 'Thermal Constraints in Energy Storage' principle states that when the
+      structural integrity of a storage medium (e.g., Li-Ion separators) is dependent on a
+      precise thermal threshold, the method of connection must be impulsive rather than
+      conductive. Soldering relies on sustained heat conduction, which penetrates the cell's
+      thermal barrier and risks catastrophic failure. Spot welding utilizes a high-current,
+      millisecond-duration pulse that creates a localized fusion bond without allowing heat
+      to migrate into the cell core."
+    principle: Interface fragility dictates the temporal nature of the bonding energy.
+    applies_to:
+    - Energy Storage
+    - Battery Repair
+    - Thermal Engineering
+    - Material Science
+
+    date: 2026-06-16
+    insight: "Proprietary wireless ecosystems require silicon-level integration at both ends. No amount of software patching can bridge a missing hardware radio."
+    context: "The Roku Wireless Speakers (9020R2) use Roku Connect — a proprietary wireless audio protocol requiring a dedicated Roku Connect radio chip in the host device. The Roku Streaming Stick+ (3810X) lacks this chip entirely. Despite being a 'Roku device,' the stick is designed as a single-purpose streaming dongle, not an audio ecosystem host. No firmware update, software hack, or creative routing can add this capability because the radio doesn't exist on the PCB. All workarounds (HDMI audio extractor + Bluetooth transmitter, mobile app Private Listening, capture card routing) introduce unacceptable latency (100-400ms) for video synchronization."
+    principle: "When a system claims hardware-level incompatibility, believe it. The absence of a physical component (radio chip, co-processor, sensor) is a hard constraint — no amount of software creativity can create hardware that doesn't exist. The only valid response is to either accept the limitation or change the hardware."
+    applies_to:
+    - hardware compatibility
+    - ecosystem lock-in
+    - technical feasibility
+    - research methodology
+  - id: rr-063
+    date: 2026-06-18
+    insight: "The first output of any measurement system is a measurement of the measurement system itself. Forensic pipeline validity depends on instrument calibration, not extraction volume."
+    context: "Pilot extraction on 3 handoff documents produced 561 'findings' — but 539/561 (96%) were classified as 'strength' due to a heuristic classifier default. The regex keyword classifier was tuned to the wrong corpus feature (achievement-report tone), mapping everything to 'strength' regardless of content. Verity's M21 audit confirmed: zero contract tests existed to validate classifier type distribution. The pilot's true value was not the 561 findings but the discovery that the instrument was uncalibrated. Lesson: before any full extraction, the classifier must be validated against a labeled sample."
+    principle: "Before you can trust what the instrument measures, you must characterize its bias. For any automated classification pipeline, the first analysis must be a self-analysis: what does the classifier default to when there's no clear signal, and does that default match the null hypothesis?"
+    applies_to:
+    - forensic methodology
+    - classification systems
+    - measurement theory
+    - pipeline validation
+  - id: rr-064
+    date: 2026-06-18
+    insight: "Access channel is not a confound — it is the primary behavioral variable. Model identity is second-order noise."
+    context: "Kali's transcendent insight from cross-referencing Roc's pipeline with Researcher's deep web findings (FOCI 2026, GateScope arXiv 2604.21083, PetraLabs 2026): the same model via API vs WebUI differs more systematically than different models via the same CLI. FOCI study found content moderation 2-15× stricter on WebUI vs API. PetraLabs found response length differs 34-98% depending on interface. GateScope found API gateways silently swap models. The implications for the forensic pipeline are profound: (1) every observation must be access-channel tagged, (2) channel effects dominate model identity effects, (3) 'sovereign inference' means choosing the right channel, not just the right model."
+    principle: "Access modality is the dominant source of behavioral variance in LLM interactions. Model identity is a second-order effect layered on top. Any forensic pipeline that treats channel as noise will systematically attribute channel effects to model identity — aliasing error that invalidates all downstream conclusions."
+    applies_to:
+    - forensic methodology
+    - model evaluation
+    - sovereign inference
+    - access modality
+  - id: rr-065
+    date: 2026-06-18
+    insight: "Thinking level (CoT vs Direct vs Speculative vs Recursive) is a 9th behavioral dimension that cuts across all 8 existing dimensions. A model in 'Direct' mode looks like a different entity than the same model in 'CoT' mode."
+    context: "Researcher's deep web research found established frameworks for reasoning mode classification: LOT (inductive meta-classifier, arXiv 2509.24147), CoT Encyclopedia (6-dimension taxonomy, arXiv 2505.10185), Deep-Thinking Ratio (arXiv 2602.13517). The user explicitly requested capturing thinking level per response. A 3-tier classifier is recommended: Tier 1 (cheap heuristic: token count + 'think' step markers), Tier 2 (LOT-style logistic regression on hand-picked features), Tier 3 (hidden-state extraction for local GGUF models with white-box access). D9 (dim_thinking) added to forensics.db schema as 'direct', 'cot', 'speculative', 'recursive', or 'unknown'."
+    principle: "Reasoning depth is not a binary — it is a spectrum from direct answer to recursive meta-cognition. A model's behavioral fingerprint shifts along this spectrum, and the same model at different reasoning depths may appear to be different entities. Any behavioral comparison must control for thinking level."
+    applies_to:
+    - thinking classification
+    - behavioral dimensions
+    - model comparison
+    - forensic methodology
+  - id: rr-066
+    date: 2026-06-18
+    insight: "Contract tests (M21 Gate Integrity) must validate classifier output distribution before production extraction — the pilot's first job is to test the instrument, not produce data."
+    context: "Verity's mandate audit found M21 FAIL — zero contract tests for the 690-line extraction script. The 96% classifier bias was caught by human inspection, not by a test. A contract test like `def test_classifier_produces_all_8_types()` would have caught it instantly. The fix is structural: (1) write contract tests BEFORE Phase 1 extraction, (2) every `classify_finding()` call must pass `isinstance(result, dict)` with all 8 dimensions in 1-5 range, (3) classifier training data must include explicit negative examples (weakness, blind_spot, failure_mode, complementarity patterns)."
+    principle: "A test that doesn't exist is a bug-by-omission. When the output of a classifier feeds 8 downstream analyses (fingerprints, complementarity, blind spots), a biased classifier corrupts everything downstream. Contract tests at the classifier boundary are the minimum bar for M21 compliance."
+    applies_to:
+    - M21 Gate Integrity
+    - contract testing
+    - classification systems
+    - pipeline validation
+  - id: rr-067
+    date: 2026-06-18
+    insight: "Handoff documents are CLI-only self-referential praise docs with zero channel variance. Their attribution certainty is high but their behavioral diversity is near-zero. The OpenCode DB is where real fingerprints live."
+    context: "Kali's verdict identified that all 85+ handoff documents are generated by CLI tools (OpenCode, Cline, Gemini CLI) — zero WebUI or IDE observations. They document models reviewing other models' code, producing an echo chamber of achievement-reporting. The OpenCode DB (4.2GB, 865 sessions, 217K events, 30+ model variants) contains actual behavioral data: real task execution (code, research, creative, ops), latency measurements, retry patterns, tool call success/failure, and session context revealing access channel. Phase 1 (handoffs) was prioritized for 'attribution certainty' but behavioral diversity is more important for fingerprinting."
+    principle: "Signal density is a product of behavioral diversity × attribution certainty, not either alone. A source with high attribution certainty and near-zero behavioral diversity (all CLI, all achievement-reports) produces less fingerprinting signal than a source with moderate attribution certainty and high behavioral diversity (all channels, all task types, all outcome states)."
+    applies_to:
+    - data source prioritization
+    - signal density
+    - forensic methodology
+    - pipeline strategy
+  - id: rr-068
+    date: 2026-06-18
+    insight: "LLM behavioral fingerprinting is an established academic field with mature frameworks that we should adopt rather than reinvent."
+    context: "Researcher's deep web research identified 20+ peer-reviewed sources validating the forensic pipeline approach and providing concrete methodological upgrades: PERSIST (arXiv 2508.04826 — measurement stability framework), Machine Individuality (arXiv 2604.16755 — 16.9% variance is true signal), LLM Chemistry (arXiv 2510.03930 — formal complementarity theory), FailureScope (arXiv 2606.09878 — systematic blind spot detection), LOT (arXiv 2509.24147 — thinking classification), SLEIGHT-Bench (Anthropic 2026 — adversarial monitoring gaps). These frameworks should be integrated into the pipeline's methodology rather than developed independently."
+    principle: "Mature external frameworks reduce blind spots in internal systems. The existence of peer-reviewed research on forensic model comparison means we are not inventing from scratch — we are applying proven methods to our specific data landscape. Integration is faster and more reliable than reinvention."
+    applies_to:
+    - external research
+    - methodology adoption
+    - forensic frameworks
+    - academic sources
+  - id: rr-069
+    date: 2026-06-18
+    insight: "Operation Deep-Siphon revealed that 96% of provider response metadata is discarded at the backend generate() boundary. The forensic fingerprinting pipeline cannot produce accurate fingerprints without this metadata — logprobs, finish_reason, and token counts are essential for behavior classification."
+    context: "Deep-Siphon analysis of all 6 provider backends. Each backend calls response.json() and extracts only .text. The ICS-F v1.0 schema (raw_provider_json, thinking_level, access_channel, logprobs, token_usage, response_model) defines the capture format. The forensic protocol must reference ICS-F as the metadata standard for all future extraction phases."
+    principle: "The metadata boundary at generate() return is the single largest data loss point in the engine. Forensic fingerprinting cannot be accurate without the metadata that providers already send. The forensic protocol and metadata extraction are complementary — ICS-F feeds the fingerprint data, fingerprints validate the metadata capture."
+    applies_to:
+    - deep-siphon
+    - metadata extraction
+    - ICS-F schema
+    - forensic fingerprinting
+  - id: rr-070
+    date: 2026-06-18
+    insight: "Parallel session synthesis revealed that Sprint D is truly done. The ENTITIES_DATA_DIR root cause fix (module-level constant → call-time function) means the 50-orphan leak will never recur. The data directory has never been this clean."
+    context: "MaKaLi parallel session (2026-06-18T16:00) fixed the root cause of test artifacts leaking into production. Cross-dispatch confirmed zero impact on forensic pipeline (Ma'at GREEN verdict). Data integrity baseline achieved for the first time."
+    principle: "A clean data directory is not cosmetic — it is the precondition for accurate forensic analysis. Without root cause resolution, all extractions are contaminated by test noise. The ENTITIES_DATA_DIR fix is the engineering equivalent of sealing a zone leak."
+    applies_to:
+    - sprint-d
+    - data hygiene
+    - entities_data_dir
+    - infrastructure
+  - id: rr-071
+    date: 2026-06-18
+    insight: "Heritage mining from pre-Omega artifacts is COMPLETE. All 12 P0 artifacts have been surveyed and contain no unextracted heritage patterns."
+   applies_to:
+   - heritage mining
+   - pattern extraction
+   - knowledge completion
+   - CREDITS.md
+ - id: mining-10
+   stack: Embedding Pipeline Research (potion-mxbai-micro, MiniLM ONNX, Dolphin GGUF)
+   status: COMPLETE
+   date: 2026-06-19
+   subagent_type: roc_racoon (direct)
+   report: data/entities/roc_racoon/workspace/EMBEDDING_MINED_REPORT_20260619.md
+   key_finds: 15
+   gold_count: 4
+   insight: "The embedding pipeline already has a clean IEmbeddingProvider abstraction. Adding potion-mxbai-micro is a 15-minute class implementation. The real constraint is dimension consistency (256d vs 768d) across the Qdrant collection. potion-mxbai-micro's 68.91 MTEB from a 700KB static table validates the Right Approximation framework for embedding models."
+ - id: mining-11
+   stack: potion-mxbai-micro model card
+   status: COMPLETE
+   date: 2026-06-19
+   report: EMBEDDING_MINED_REPORT_20260619.md §A
+   key_finds: 8
+   gold_count: 2
+   insight: "Static retrieval models (model2vec) achieve 80-88x speedup over MiniLM at 68.91 MTEB with pure numpy inference. The 700KB size means it can be memory-mapped and shared across processes. No GGUF needed — the 'model' is a 2,000-row embedding table at int8 precision."
+ - id: mining-12
+   stack: MiniLM ONNX path
+   status: COMPLETE
+   date: 2026-06-19
+   report: EMBEDDING_MINED_REPORT_20260619.md §B
+   key_finds: 5
+   gold_count: 2
+   insight: "MiniLM-L6-v2 via ONNX INT8 achieves p95 12-42ms on Zen 2-class CPUs. The INT8 quantized model is 23MB vs 90MB PyTorch. Use avx2_vnni quantization config for Zen 2 (no AVX-512). Python 3.12 fully supported by all dependencies."
+ - id: mining-13
+   stack: Dolphin 2.9.4 GGUF
+   status: COMPLETE
+   date: 2026-06-19
+   report: EMBEDDING_MINED_REPORT_20260619.md §D
+   key_finds: 3
+   gold_count: 1
+   insight: "Dolphin 2.9.4 Llama 3.1 8B GGUF Q4_K_M at 4.92 GB fits within our memory budget (~7GB total with overhead). Latest available version is 2.9.4 — no Dolphin 3.0 GGUF published yet."
+    context: "Doom Guy's cross-session survey of all 12 remaining P0 artifacts. Every artifact is either superseded by current code or documented as user's own technology in CREDITS.md §2. The real gap: Knowledge Leak Detection (8/10) and Job-Worker Queue (7/10) should be APPROVED; In-Flight Pipeline, Branch Collapse, Symmetric Range Guard, and Prompt Baking should be REJECTED."
+    principle: "Heritage mining is a finite operation with a natural end state. The mining phase of the Omega Engine is complete. The era shifts from extraction to integration — we now have all the patterns we need, and the work is porting/vetting what remains."
+    applies_to:
+    - heritage mining
+    - pattern extraction
+    - knowledge completion
+    - CREDITS.md
+  - id: rr-072
+    date: 2026-06-18
+    insight: "M21 and M22 are structurally wired but have zero enforcement. The 'background.py workers' M22 gap from Deep-Siphon was misdocumented — background.py is infrastructure management, not inference. The real M21 gap is 0/24 contract tests. Three T1 schema tests can be written NOW with zero code changes."
+    context: "Verity's cross-session reconciliation of MaKaLi Sprint C (ratified M21/M22, fixed GenerateResult) and Deep-Siphon (found 0/24 tests). Verdict: M21 FAIL, M22 CONDITIONAL PASS. The runtime code IS correct — the issue is that zero tests verify the contract."
+    principle: "Ratification without enforcement is aspiration. Contract tests are the difference between 'we designed it right' and 'we know it works.' The three tests writable in ~30 minutes are the minimum viable enforcement layer."
+    applies_to:
+    - M21
+    - M22
+    - contract tests
+    - mandate enforcement
+  - id: rr-073
+    date: 2026-06-19
+    insight: >-
+      The embedding pipeline is already abstracted (IEmbeddingProvider +
+      IVectorStoreAdapter + EmbeddingManager chain). Adding a new model is
+      a 15-minute class implementation, not an architectural change. The
+      bottleneck is not the abstraction — it's dimension consistency across
+      the provider chain.
+    context: Mining report EMBEDDING_MINED_REPORT_20260619.md. Found that
+      potion-mxbai-micro (700KB, 256-dim, 68.91 MTEB) can be added as a
+      simple IEmbeddingProvider implementation. The existing EmbeddingManager
+      chain at memory_store.py:141 already supports provider fallback. But
+      Qdrant's collection is dimension-fixed: 256-dim and 768-dim vectors
+      cannot coexist. The SovereignFallbackEmbeddingProvider already uses
+      256-dim — making potion the primary is a natural fit.
+    principle: >-
+      Good abstraction is invisible. The measure of a well-designed interface
+      is not how many implementations it supports, but how trivial it is to
+      add the next one. Dimension consistency is the only real constraint —
+      and it forces a healthy architectural choice (one primary embedding
+      dimension, not multiple competing ones).
+    applies_to:
+    - embedding pipeline
+    - MemoryStore
+    - provider abstraction
+    - System architecture
+  - id: rr-074
+    date: 2026-06-19
+    insight: >-
+      Static embeddings (model2vec) are not a regression — they are a
+      renaissance. The 68.91 MTEB score from a 700KB numpy table challenges
+      the assumption that "bigger model = better embedding." The key insight
+      is that for retrieval/RAG, the contextual nuance of transformers is
+      often unnecessary — mean-pooled static vectors capture enough signal.
+    context: Deep dive into model2vec library and potion-mxbai-micro model
+      card. Static embeddings distill transformer knowledge into a lookup
+      table (2,000 centroids from 29,525 original tokens). Pure numpy
+      inference — 80-88x faster than MiniLM. HuggingFace's own blog (Tom
+      Aarsen, 2025-01) confirmed static embeddings achieve 85% of transformer
+      quality at 1/400th the inference cost. Qdrant's documentation confirms
+      "you will experience a huge speedup in creating the vectors."
+    principle: >-
+      The "right approximation" (CREDITS.md §3, evolved from FISR) applies
+      to embedding models too. A 700KB static model that gets 85% of the
+      answers right at 400x the speed is not a compromise — it's the optimal
+      choice for the latency-sensitive use case. The "best" model is the one
+      that solves the problem within the resource budget, not the one with
+      the highest benchmark score.
+    applies_to:
+    - embedding strategy
+    - RAG pipeline
+    - model selection
+    - Right Approximation framework
+  - id: rr-075
+    date: 2026-06-20
+    insight: >-
+      Deep mined 5 legacy partitions for embedding architecture. Found Gold #1:
+      pre-existing FAISS 5-level backup chain in Old-Stacks/dependencies.py:413-537
+      — same fallback-chain pattern as EmbeddingManager, built in 2025. Gold #2:
+      embeddinggemma-300m-Q6_K.gguf found unregistered in lmstudio-models/
+      (now wired). Gold #3: Legacy LlamaCppEmbeddings pattern confirms current
+      IEmbeddingProvider abstraction is architecturally correct.
+    context: >-
+      Deep Legacy Mine 2026-06-20 across 5 partitions (Old-Stacks, foundation-legacy,
+      xna-omega-legacy, omega-stack-legacy, omega_library). The FAISS backup chain
+      used 5 decreasing-accuracy fallbacks (emb→sparse→sif→hash→zero) — identical
+      to EmbeddingManager's 5-provider chain. We converged independently.
+      Report: DEEP_LEGACY_MINE_20260620.md.
+    principle: >-
+      Architecture Verified by History Is Architecture Trusted — When a current
+      design independently converges on the same pattern as a legacy system built
+      6+ months earlier, the pattern is a natural law of the domain, not a design
+      choice. The FAISS 5-level chain proves that fallback chains are the universal
+      solution to embedding resilience — not because we chose it, but because the
+      problem space demands it.
+    applies_to:
+    - legacy mining
+    - embedding architecture
+    - architecture convergence
+    - FAISS pattern

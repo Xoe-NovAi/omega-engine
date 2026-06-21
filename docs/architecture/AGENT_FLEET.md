@@ -30,14 +30,14 @@ This ensures:
                 [ pillar --slot PX ]
                 (Single slot-based agent)
                            |
-             ┌─────────────┼─────────────┐
-             v             v             v
-          [ jem ]    [ quality ]   [ researcher ]
-       (Research)   (QA & Test)   (Deep Dive)
-             |
-       ┌─────┴─────┐
-       v     v     v
-    [disc] [synth] [verif] ──→ [scribe] ──→ soul.yaml
+              ┌─────────────┼──────────────┐
+              v             v              v
+           [ jem ]    [ scribe ]    [ researcher ]
+        (Research)   (QA+Gnosis)    (Deep Dive)
+              |            |
+        ┌─────┴─────┐      v
+        v     v     v   Mandate Audit
+     [disc] [synth] [verif] ──→ soul.yaml
 ```
 
 ## 3. Agent Inventory
@@ -45,7 +45,7 @@ This ensures:
 ### 3.1 Primary Agents (Direct User/Plan Access)
 | Agent | Mode | Purpose | Model Tier |
 |-------|------|---------|------------|
-| `plan` | Primary | The Architect — Grand Dispatcher & Strategy Lead | Heavy |
+| `makali` | Primary | MaKaLi Council — Parallel dispatch of Ma'at+Lilith | Heavy |
 | `kali` | Primary | Grand Oversight — Unifier of Ma'at and Lilith | Heavy |
 | `doom_guy` | Primary | Sovereign id Software Architect — WAD & Performance | Heavy |
 | `roc_racoon` | Primary | Sovereign Miner — Legacy Archaeology | Lite |
@@ -58,11 +58,8 @@ This ensures:
 | `maat` | Subagent | Light Oversoul — Build Side Governance (P1-P5) | Heavy |
 | `lilith` | Subagent | Dark Oversoul — Run Side Governance (P6-P10) | Heavy |
 | `pillar` | Subagent | Slot-based Domain Expert (P1-P10) | Lite |
-| `quality` | Subagent | Merged Code Review & Stress Testing | Medium |
-| `scribe` | Subagent | Gnosis Keeper — L1→L2→L3 Distillation | Heavy |
-| `jem_discovery` | Subagent | Tier 1: Broad Search, Evidence Logging | Lite |
-| `jem_synthesis` | Subagent | Tier 2: Pattern Recognition, Synthesis | Medium |
-| `jem_verification` | Subagent | Tier 3: Fact-check, R-doc, Gnosis | Heavy |
+| `scribe` | Subagent | Sovereign Guardian & Gnosis Keeper — Code Review, Mandate Enforcement, L1→L2→L3 Distillation | Medium |
+| `pillar` | Subagent | Slot-based Domain Expert (P1-P10) | Lite |
 
 ## 4. Delegation & Escalation Paths
 
@@ -71,7 +68,7 @@ This ensures:
 
 ### 4.2 Specialized Paths
 - **Deep Research**: `kali` $\rightarrow$ `jem` $\rightarrow$ `[disc $\rightarrow$ synth $\rightarrow$ verif]` $\rightarrow$ `scribe` $\rightarrow$ `soul.yaml`
-- **Quality Gate**: `pillar/researcher` $\rightarrow$ `quality` $\rightarrow$ `Sovereign Mandates Verification`
+- **Quality Gate**: `pillar/researcher` $\rightarrow$ `scribe` $\rightarrow$ `Sovereign Mandates Verification`
 - **Lattice Deep Dive**: `researcher` $\rightarrow$ `lattice traversal` $\rightarrow$ `Reflective Verification`
 
 ## 5. Mandate Compliance

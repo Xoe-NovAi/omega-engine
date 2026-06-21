@@ -92,8 +92,7 @@ class OmegaGateway:
             # We use the ModelGateway's built-in provider fabric
             try:
                 # We wrap the call to handle 429s empirically
-                # ModelGateway.generate returns (response, is_cloud)
-                response, is_cloud = await self.model_gateway.generate(
+                res = await self.model_gateway.generate(
                     model_name=request.model,
                     system_prompt=system_prompt,
                     user_query=user_query,
@@ -101,11 +100,11 @@ class OmegaGateway:
                     max_tokens=request.max_tokens
                 )
 
-                if not response:
+                if not res.text:
                     raise HTTPException(status_code=503, detail="No available providers could generate a response.")
                 
-                # Record success for the primary provider used (if we could track it)
-                # In this simplified proxy, we assume if it worked, the fabric is healthy.
+                response = res.text
+                is_cloud = res.is_cloud
                 
                 # 3. Format as OpenAI response
                 return ChatCompletionResponse(

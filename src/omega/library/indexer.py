@@ -77,6 +77,7 @@ class Indexer:
         if self._fts is None:
             import aiosqlite
             self._fts = await aiosqlite.connect(str(_get_db_path()), timeout=20)
+            await self._fts.execute("PRAGMA journal_mode=WAL")
             await self._fts.execute(
                 "CREATE VIRTUAL TABLE IF NOT EXISTS documents_fts USING fts5("
                 "doc_id, title, body, summary, domain, tags, tokenize='unicode61 remove_diacritics 2'"

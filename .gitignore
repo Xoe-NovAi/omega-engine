@@ -17,7 +17,6 @@ virtualenv/
 .env
 .env.local
 *.env*
-# Also add explicit rule for .env backup/key files to protect from any edge cases
 .env.*
 
 # ── Build Artifacts ──────────────────────────────────────────────────
@@ -27,19 +26,6 @@ build/
 *.egg
 *.whl
 *.tar.gz
-
-# ── Data Artifacts (fine-tuning datasets, embeddings) ────────────────
-data/datasets/
-data/embeddings/
-src/data/datasets/
-
-# ── Eradicated Directories (NEVER re-create, NEVER re-track) ────────
-# Per D87: rag-v1/ was an LM Studio plugin artifact that kept recreating
-# itself. Source: ~/.lmstudio/extensions/plugins/lmstudio/rag-v1/
-# Removed from LM Studio settings (pinnedPlugins: []) on 2026-06-02.
-# If this ever reappears: it's a regression of the LM Studio bundled plugin.
-rag-v1/
-rag-v1/**/*
 
 # ── Test & Cache ─────────────────────────────────────────────────────
 .pytest_cache/
@@ -67,6 +53,27 @@ desktop.ini
 # ── Docker ───────────────────────────────────────────────────────────
 .docker/
 
+# ── Session Artifacts ───────────────────────────────────────────────
+docs/history/exported-opencode-chat-sessions/
+OCCE-*.md
+open-code-*.md
+opencode.json.bak
+
+# ── Web Research Caches ──────────────────────────────────────────────
+.firecrawl/
+
+# ── Temp & Ad-Hoc Files ──────────────────────────────────────────────
+tmp_*
+*.bak
+mcp_test.py
+test_discovery.py
+check_hivemind.py
+Screenshot*.png
+
+# ═════════════════════════════════════════════════════════════════════
+# DATA — Runtime artifacts NOT part of source code
+# ═════════════════════════════════════════════════════════════════════
+
 # ── Runtime Data (generated at runtime, not source) ────────────────
 data/logs/
 data/traces/
@@ -78,28 +85,60 @@ data/rejected/
 data/mining_queue/
 data/library/
 data/embeddings/
+data/datasets/
+src/data/datasets/
 
-# ── Test Entity Artifacts (created by EntityRegistry test scaffold) ─
+# ── Research & Analysis (transient, regenerated per session) ────────
+data/research/
+data/audit/
+data/strategy/
+data/archive/
+
+# ── Session & Coordination (runtime, regenerated per session) ───────
+data/coordination/*
+!data/coordination/*.md
+data/coordination/**/*_LIVE_FEED.md
+data/coordination/**/*_WORKSPACE_LOCK_*.md
+data/coordination/**/*_ACK_*.md
+data/sessions/*.active
+data/benchmarks/
+
+# ── Handoff Packets (runtime, not source) ───────────────────────────
+data/handoff/active/
+data/handoff/completed/
+data/handoff/pending/
+data/handoff/stale/
+
+# ── Request Queue (runtime artifacts) ───────────────────────────────
+data/requests/completed/
+data/requests/dead/
+data/requests/processing/
+
+# ── Knowledge Hall of Records (session JSON exports, auto-generated) ─
+data/knowledge/HALL_OF_RECORDS/
+
+# ── Eradicated Directories (NEVER re-create, NEVER re-track) ────────
+# Per D87: rag-v1/ was an LM Studio plugin artifact.
+rag-v1/
+rag-v1/**/*
+
+# ═════════════════════════════════════════════════════════════════════
+# ENTITY DATA — Exclude test/transient artifacts, keep soul/knowledge
+# ═════════════════════════════════════════════════════════════════════
+
+# Transient entity workspace content (binary DBs, personal research)
+data/entities/*/workspace/forensics/
+data/entities/*/workspace/PERSONAL_RESEARCH/
+data/entities/*/workspace/tool_lab/
+
+# Orphan/Test entity dirs
 data/entities/entity_*/
-
-# ── Session Artifacts ───────────────────────────────────────────────
-docs/history/exported-opencode-chat-sessions/
-OCCE-*.md
-open-code-*.md
-opencode.json.bak
-mcp_test.py
-test_discovery.py
-
-# ── Web Research Caches ──────────────────────────────────────────────
-.firecrawl/
-
-# ── Temp Files ───────────────────────────────────────────────────────
-tmp_*
-*.bak
-
-# ── Stale/Orphaned Entity Artifacts ─────────────────────────────────
+data/entities/dir/
+data/entities/dupe/
+data/entities/flat/
+data/entities/pre/
+data/entities/soul/
 data/entities/duplicate/
-data/entities/entity_*/
 data/entities/bridge/
 data/entities/buildmaster/
 data/entities/context/
@@ -120,7 +159,11 @@ data/entities/watchtower/
 data/entities/_archive/
 data/entities/_quarantine/
 
-# ── Stale Container Artifacts (Roc_Racoon legacy, replaced by Hub) ──
+# ═════════════════════════════════════════════════════════════════════
+# LEGACY — Orphaned artifacts that must never return to tracking
+# ═════════════════════════════════════════════════════════════════════
+
+# Stale container artifacts (Roc_Racoon legacy, replaced by Hub)
 Dockerfile.roc_racoon
 scripts/omega-roc_racoon-entrypoint.py
 quadlet-test/omega-roc_racoon.container
@@ -128,33 +171,14 @@ quadlet-test/omega-roc_racoon.timer
 src/omega/entity_roc_racoon.py
 tests/test_entity_roc_racoon.py
 
-# ── Ad-hoc Test Scripts (not part of test suite) ─────────────────────
+# Ad-hoc Test Scripts (not part of test suite)
 tests/sovereign_stress_test.py
 tests/verify_jem_pipeline.py
 
-# ── Research & Runtime Artifacts ─────────────────────────────────────
-data/research/checkpoints/
-data/research/scheduler_state.json
-data/research/credit_budget.json
-data/research/metrics/
-data/sessions/*.active
+# Archives (historical, not part of active codebase)
+archives/
 
-# ── External/Reference Dirs ─────────────────────────────────────────
+# External/Reference Dirs
 ../omega/
 ../omega-stack-legacy/
 ../xna-omega-legacy/.firecrawl/
-
-# ── Orphan Test Entity Dirs (ent_*) ────────────────────────────
-data/entities/ent_*/
-data/entities/dir/
-data/entities/dupe/
-data/entities/flat/
-data/entities/pre/
-data/entities/soul/
-
-# ── Archives (historical, not part of active codebase) ──────────────
-archives/
-
-# ── Ad-hoc Diagnostics & Screenshots ──────────────────────────────────
-Screenshot*.png
-check_hivemind.py

@@ -8,9 +8,9 @@
 
 from .oracle import Oracle, OracleResponse
 from .entity_registry import EntityRegistry, Entity
-from .model_gateway import ModelGateway
+from .model_gateway import ModelGateway, GenerateResult
 from .entity_affinity import EntityAffinityResolver, AffinityResult
 from .orchestrator import Orchestrator
 
 __all__ = ["Oracle", "OracleResponse", "EntityRegistry", "Entity", "ModelGateway",
-           "EntityAffinityResolver", "AffinityResult", "Orchestrator"]
+           "GenerateResult", "EntityAffinityResolver", "AffinityResult", "Orchestrator"]

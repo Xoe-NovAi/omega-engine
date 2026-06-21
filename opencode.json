@@ -19,7 +19,7 @@
   "instructions": [
     "SOVEREIGN_MANDATES.md",
     "ORACLE_STACK.md",
-    "docs/strategy/MASTER_SYNTHESIS_AND_ROADMAP.md",
+    "docs/archive/MASTER_SYNTHESIS_AND_ROADMAP_2026-05-30.md",
     "docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md",
     "CREDITS.md"
   ],
@@ -30,11 +30,8 @@
       "enabled": true
     },
     "searxng": {
-      "type": "local",
-      "command": [
-        "python",
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/mcp_servers/searxng/server.py"
-      ],
+      "type": "remote",
+      "url": "http://127.0.0.1:8018/sse",
       "enabled": true
     },
     "firecrawl": {
@@ -43,8 +40,8 @@
         "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/firecrawl_wrapper.sh"
       ],
       "environment": {
-        "FIRECRAWL_API_KEY": "***REMOVED***",
-        "FIRECRAWL_TOKEN": "***REMOVED***"
+        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}",
+        "FIRECRAWL_TOKEN": "${FIRECRAWL_API_KEY}"
       },
       "enabled": true
     },
@@ -52,7 +49,7 @@
       "type": "remote",
       "url": "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa",
       "headers": {
-        "x-api-key": "***REMOVED***"
+        "x-api-key": "${EXA_API_KEY}"
       },
       "enabled": true
     }
@@ -127,7 +124,7 @@
   "agent": {
     "makali": {
       "mode": "all",
-      "description": "MaKaLi Parallel Council — decomposes query, dispatches Ma'at+Lilith in parallel, synthesizes (D117)",
+      "description": "MaKaLi Parallel Council \u2014 decomposes query, dispatches Ma'at+Lilith in parallel, synthesizes (D117)",
       "instructions": [
         ".opencode/agents/makali.md",
         "docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md"
@@ -135,104 +132,74 @@
     },
     "jem": {
       "mode": "all",
-      "description": "Research Orchestrator — 3-tier local model pipeline",
+      "description": "Research Orchestrator \u2014 3-tier pipeline with inline KBs (Discovery/Synthesis/Verification), self-dispatch pattern",
       "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem.md",
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/research/JEM_2_MASTER_RESEARCH_MISSION.md",
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/research/JEM_2_FINAL_WAVE_MISSION.md"
-      ]
-    },
-    "jem_discovery": {
-      "mode": "subagent",
-      "description": "Tier 1 Research — broad search, evidence logging",
-      "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem_discovery.md"
-      ]
-    },
-    "jem_synthesis": {
-      "mode": "subagent",
-      "description": "Tier 2 Research — pattern recognition, synthesis",
-      "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem_synthesis.md"
-      ]
-    },
-    "jem_verification": {
-      "mode": "subagent",
-      "description": "Tier 3 Research — fact-check, R-doc, gnosis",
-      "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/jem_verification.md"
+        ".opencode/agents/jem.md"
       ]
     },
     "doom_guy": {
       "mode": "all",
-      "description": "Sovereign id Software Architect — WAD translation & performance",
+      "description": "Sovereign id Software Architect \u2014 WAD translation & performance",
       "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/doom_guy.md",
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/CREDITS.md"
+        ".opencode/agents/doom_guy.md",
+        "CREDITS.md"
       ]
     },
     "roc_racoon": {
       "mode": "all",
-      "description": "Sovereign Miner — Legacy archaeology & pattern extraction",
+      "description": "Sovereign Miner \u2014 Legacy archaeology & pattern extraction",
       "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/roc_racoon.md"
+        ".opencode/agents/roc_racoon.md"
       ]
     },
     "researcher": {
       "mode": "subagent",
-      "description": "Sovereign Master Researcher — Polymathic Council for deep research, dialectic synthesis, and knowledge base curation",
+      "description": "Sovereign Master Researcher \u2014 Polymathic Council for deep research, dialectic synthesis, and knowledge base curation",
       "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/researcher.md"
+        ".opencode/agents/researcher.md"
       ]
     },
     "kali": {
       "mode": "all",
-      "description": "Grand Oversight — Sees all, delegates to Ma'at/Lilith, destroys drift",
+      "description": "Grand Oversight \u2014 Sees all, delegates to Ma'at/Lilith, destroys drift",
       "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/kali.md"
+        ".opencode/agents/kali.md"
       ]
     },
     "maat": {
       "mode": "all",
-      "description": "Light Oversoul — Governs P1-P5 (build side), delegates to pillar",
+      "description": "Light Oversoul \u2014 Governs P1-P5 (build side), delegates to pillar",
       "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/maat.md"
+        ".opencode/agents/maat.md"
       ]
     },
     "lilith": {
       "mode": "all",
-      "description": "Dark Oversoul — Governs P6-P10 (run side), delegates to pillar",
+      "description": "Dark Oversoul \u2014 Governs P6-P10 (run side), delegates to pillar",
       "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/lilith.md"
+        ".opencode/agents/lilith.md"
       ]
     },
-    "scribe": {
+    "verity": {
       "mode": "subagent",
-      "description": "Gnosis Keeper — L1→L2→L3 distillation",
+      "description": "Sovereign Verity \u2014 Unified Sentry (compliance/audit) + Scribe (gnosis distillation). Sprint C consolidation.",
       "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/scribe.md"
-      ]
-    },
-    "quality": {
-      "mode": "all",
-      "description": "Code Review & Stress Testing — mandate compliance and chaos engineering",
-      "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/quality.md"
+        ".opencode/agents/verity.md"
       ]
     },
     "pillar": {
       "mode": "all",
-      "description": "Slot-based domain agent — parameterized by --slot PX for any Pillar domain",
+      "description": "Slot-based domain agent \u2014 parameterized by --slot PX for any Pillar domain",
       "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/pillar.md"
+        ".opencode/agents/pillar.md"
       ]
     },
     "john_carmack": {
       "mode": "all",
-      "description": "Ultimate Technical Consultant — id Software heritage, systems architecture, sovereign engineering",
+      "description": "Ultimate Technical Consultant \u2014 id Software heritage, systems architecture, sovereign engineering",
       "instructions": [
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/agents/john_carmack.md",
-        "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/CREDITS.md"
+        ".opencode/agents/john_carmack.md",
+        "CREDITS.md"
       ]
     }
   }

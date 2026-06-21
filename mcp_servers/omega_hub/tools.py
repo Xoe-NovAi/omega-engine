@@ -1,3 +1,5 @@
+# [id-soft: quake3-1999] Hub Tools — netchan-style typed message dispatch for Hivemind coordination tools
+
 """Omega Hub — MCP Tool Definitions (extracted from server.py Phase 1b).
 
 AP: AP-OMEGA-HUB-TOOLS-v1.0.0
@@ -24,12 +26,15 @@ Public API:
 
 import json
 import logging
+import os
 import uuid
 import fcntl
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from dataclasses import asdict
+
+from omega.library.research import RESEARCH_DEPTHS
 
 import anyio
 import yaml
@@ -91,6 +96,25 @@ discovery = ServiceProxy("discovery")
 research_engine = ServiceProxy("research_engine")
 sovereign_search_service = ServiceProxy("sovereign_search_service")
 gateway = ServiceProxy("gateway")
+
+# ── M16-compliant path resolution ──────────────────────────────────────────────
+# [M16: Modularization & Portability] Read omega_library paths from env var
+# with canonical default. This avoids hardcoded paths in core engine code.
+_OMEGA_LIBRARY_PATH = Path(os.environ.get(
+    "OMEGA_LIBRARY_PATH",
+    "/media/arcana-novai/omega_library"
+))
+_OMEGA_MODELS_PATH = Path(os.environ.get(
+    "OMEGA_MODELS_PATH",
+    str(_OMEGA_LIBRARY_PATH / "models" / "gguf")
+))
+_OMEGA_PODMAN_STORAGE = Path(os.environ.get(
+    "OMEGA_PODMAN_STORAGE",
+    str(_OMEGA_LIBRARY_PATH / "podman-storage")
+))
+
+
+
 
 # ── Background tasks ──
 from mcp_servers.omega_hub.background import (
@@ -179,26 +203,18 @@ async def oracle_summon_local(entity_name: str, query: str, model: str) -> str:
     Returns:
         JSON string containing the local model response or an error hint.
     """
-    try:
-        response = await oracle.summon(entity_name, query, model_override=model)
-        _current_entity.set(response.entity)
-        return json.dumps({
-            "text": response.text,
-            "entity": response.entity,
-            "pillars": response.pillars,
-            "sigil": response.sigil,
-            "pantheon": response.pantheon,
-            "confidence": response.confidence,
-            "trace_id": response.trace_id,
-            "model_override": model,
-        }, indent=2)
-    except Exception as e:
-        return json.dumps({
-            "error": str(e),
-            "entity": entity_name,
-            "model_override": model,
-            "hint": f"Model '{model}' may not be available. Check config/providers.yaml for available models.",
-        }, indent=2)
+    response = await oracle.summon(entity_name, query, model_override=model)
+    _current_entity.set(response.entity)
+    return json.dumps({
+        "text": response.text,
+        "entity": response.entity,
+        "pillars": response.pillars,
+        "sigil": response.sigil,
+        "pantheon": response.pantheon,
+        "confidence": response.confidence,
+        "trace_id": response.trace_id,
+        "model_override": model,
+    }, indent=2)
 
 
 @m9_safe("oracle_list_entities")
@@ -368,18 +384,15 @@ async def delegate_task(target_entity: str, query: str, context: str = "") -> st
         context: Optional background context or findings to pass along.
     """
     full_query = f"CONTEXT: {context}\n\nREQUEST: {query}" if context else query
-    try:
-        response = await oracle.summon(target_entity, full_query)
-        return json.dumps({
-            "status": "delegated",
-            "target": response.entity,
-            "response": response.text,
-            "trace_id": response.trace_id,
-            "backend": response.backend,
-            "model": response.model,
-        }, indent=2)
-    except Exception as e:
-        return json.dumps({"status": "error", "message": f"Delegation failed: {str(e)}"})
+    response = await oracle.summon(target_entity, full_query)
+    return json.dumps({
+        "status": "delegated",
+        "target": response.entity,
+        "response": response.text,
+        "trace_id": response.trace_id,
+        "backend": response.backend,
+        "model": response.model,
+    }, indent=2)
 
 
 # === HIVEMIND TOOLS (7) ===
@@ -599,7 +612,8 @@ async def hivemind_get_continuation(channel: str, entity: str) -> str:
         try:
             with json_files[0].open() as f:
                 return json.load(f)
-        except Exception:
+        except Exception as e:
+            logger.debug(f"Cold fallback read failed for {json_files[0].name}: {e}")
             return None
 
     cold = await anyio.to_thread.run_sync(_read_cold_fallback)
@@ -815,7 +829,8 @@ async def hivemind_get_entity_context(entity_name: str) -> str:
                                 if stripped and not stripped.startswith("#") and not stripped.startswith("---") and not stripped.startswith("**"):
                                     summary = stripped[:200]
                                     break
-                    except Exception:
+                    except Exception as e:
+                        logger.debug(f"Knowledge file parse failed for {f.name}: {e}")
                         title = f.stem
                         summary = ""
                     files.append({
@@ -871,7 +886,8 @@ async def hivemind_get_entity_context(entity_name: str) -> str:
                             "created_at": sess.get("created_at", ""),
                             "date": sess.get("date", ""),
                         })
-                except Exception:
+                except Exception as e:
+                    logger.debug(f"Session file parse failed for {f.name}: {e}")
                     continue
             return active
 
@@ -1123,7 +1139,7 @@ async def hivemind_workspace_lock_check(domain: str) -> str:
         return {
             "status": "locked",
             "domain": domain,
-            "holder": lock_data.get("cli"),
+            "holder": lock_data.get("agent_id"),
             "acquired_at": acquired_at,
             "age_seconds": round(age, 1),
             "ttl": lock_ttl,
@@ -1796,69 +1812,6 @@ async def memory_search(
     }, indent=2)
 
 
-@m9_safe("memory_get_history")
-@tdp_wrap(source="memory_store", taint_level=1)
-@mcp.tool()
-async def memory_get_history(
-    ctx: Context,
-    entity_name: str,
-    session_id: str,
-    limit: int = 20,
-) -> str:
-    """Retrieve conversation history for a specific entity and session.
-    
-    Wraps MemoryStore.get_history() — returns exchanges with roles and timestamps.
-    
-    Args:
-        entity_name: The sovereign owner of the memory (REQUIRED).
-        session_id: The session identifier (REQUIRED).
-        limit: Maximum number of exchanges to return.
-        
-    Returns:
-        JSON string containing the conversation exchanges.
-    """
-    if not session_id:
-        return json.dumps({"error": "session_id cannot be empty", "count": 0, "history": []})
-    memory_store = get_memory_store()
-    results = await memory_store.get_history(entity_name, session_id, limit)
-    return json.dumps({
-        "entity": entity_name,
-        "session_id": session_id,
-        "count": len(results),
-        "history": results,
-    }, indent=2)
-
-
-@m9_safe("memory_list_sessions")
-@tdp_wrap(source="memory_store", taint_level=1)
-@mcp.tool()
-async def memory_list_sessions(
-    ctx: Context,
-    entity_name: str,
-    limit: int = 20,
-) -> str:
-    """List recent sessions for an entity.
-    
-    Wraps MemoryStore.list_sessions() — returns active session identifiers.
-    
-    Args:
-        entity_name: The entity to list sessions for (REQUIRED).
-        limit: Maximum number of sessions to return.
-        
-    Returns:
-        JSON string containing the list of active sessions.
-    """
-    if not entity_name:
-        return json.dumps({"error": "entity_name cannot be empty", "count": 0, "sessions": []})
-    memory_store = get_memory_store()
-    results = await memory_store.list_sessions(entity_name, limit)
-    return json.dumps({
-        "entity_filter": entity_name,
-        "count": len(results),
-        "sessions": results,
-    }, indent=2)
-
-
 @m9_safe("omega_memory_search")
 @tdp_wrap(source="memory_store", taint_level=1)
 @mcp.tool()
@@ -2092,14 +2045,14 @@ async def get_system_stats() -> str:
             except Exception as exc:
                 logger.debug("Failed to collect zRAM stats: %s", exc)
 
-        # Disk — omega_library partition
+        # Disk — omega_library partition (M16: path from env var)
         try:
-            statvfs = os.statvfs("/media/arcana-novai/omega_library")
+            statvfs = os.statvfs(str(_OMEGA_LIBRARY_PATH))
             total = statvfs.f_frsize * statvfs.f_blocks // (1024**3)
             free = statvfs.f_frsize * statvfs.f_bfree // (1024**3)
             stats["disk"] = {
                 "available": True,
-                "mount": "/media/arcana-novai/omega_library",
+                "mount": str(_OMEGA_LIBRARY_PATH),
                 "total_gb": total,
                 "free_gb": free,
                 "used_gb": total - free,
@@ -2207,7 +2160,7 @@ async def check_models_directory() -> str:
         JSON string listing available local GGUF models and their sizes.
     """
     def _collect():
-        models_dir = Path("/media/arcana-novai/omega_library/models/gguf")
+        models_dir = _OMEGA_MODELS_PATH
         if not models_dir.exists():
             return {"error": "Models directory not found"}
         models = []
@@ -2233,7 +2186,7 @@ async def check_podman_storage() -> str:
         JSON string containing Podman storage path and size metrics.
     """
     def _collect():
-        storage_dir = Path("/media/arcana-novai/omega_library/podman-storage")
+        storage_dir = _OMEGA_PODMAN_STORAGE
         if not storage_dir.exists():
             return {"error": "Podman storage directory not found"}
         try:
@@ -2302,8 +2255,8 @@ async def observability_log_boundary_violation(tool_name: str, reason: str, enti
                 with open(metrics_path) as f:
                     return json.load(f)
             metrics = await anyio.to_thread.run_sync(_read)
-        except Exception:
-            logger.warning(f"Could not read metrics file: {metrics_path}, starting fresh")
+        except Exception as e:
+            logger.warning(f"Could not read metrics file {metrics_path}: {e}; starting fresh")
 
     metrics["violations"].append({
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -2360,5 +2313,4 @@ async def ics_render_header(
         mode=mode,
     )
     return json.dumps({"header": header, "entity": entity, "mode": mode})
-
 

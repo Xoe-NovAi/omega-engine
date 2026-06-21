@@ -10,6 +10,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 from omega.oracle.sovereign_search_service import SovereignSearchService
 from omega.oracle.skeptical_verifier import SkepticalVerifier, VerificationResult, VerificationSource
+from omega.oracle.model_gateway import GenerateResult
 from omega.oracle.search_providers import FirecrawlProvider
 
 @pytest.mark.anyio
@@ -18,7 +19,11 @@ async def test_skeptical_verifier_search_integration():
     # 1. Mock ModelGateway
     mock_gateway = AsyncMock()
     # Mock NLI response to return "[ENTAIL]"
-    mock_gateway.generate.return_value = ("[ENTAIL]", "meta")
+    mock_gateway.generate.return_value = GenerateResult(
+        text="[ENTAIL]", 
+        provider_name="mock", 
+        is_cloud=False
+    )
 
     # 2. Mock MemoryStore and Indexer
     mock_store = AsyncMock()

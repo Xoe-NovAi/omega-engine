@@ -160,7 +160,7 @@ Since you're a Cline CLI agent (not OpenCode), there are a few differences:
 1. **Workspace lock**: Create `data/coordination/CLINE_M3_WORKSPACE_LOCK_YYYYMMDD.md`
 2. **Live feed**: Append to `data/coordination/CLINE_M3_LIVE_FEED.md`
 3. **MCP tools**: You have Omega Hub MCP at :8016 — use `use_mcp_tool` to access it
-4. **Heartbeat**: Call `omega-hub_hivemind_heartbeat(cli="cline-m3")` every 5-10 min during long tasks
+4. **Heartbeat**: Call `omega-hub_hivemind_heartbeat(channel="opencode", entity="cline-m3")` every 5-10 min during long tasks
 5. **Session close**: Git commit + soul.yaml distillation — same as OpenCode agents
 
 ---

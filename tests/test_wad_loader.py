@@ -24,6 +24,15 @@ def wad_env():
     wads_dir = Path(temp_dir) / "wads"
     wads_dir.mkdir()
     
+    # Override OMEGA_DATA_DIR to prevent entity workspace scaffolding from
+    # leaking test entities (direntity, duplicate, etc.) into production data/entities/.
+    # EntityRegistry.add() auto-scaffolds workspaces via EntityWorkspaceManager,
+    # which uses OMEGA_DATA_DIR to locate the entities directory.
+    old_data_dir = os.environ.pop("OMEGA_DATA_DIR", None)
+    test_data_dir = Path(temp_dir) / "data"
+    test_data_dir.mkdir()
+    os.environ["OMEGA_DATA_DIR"] = str(test_data_dir)
+    
     # Create a valid WAD
     stack_name = "test_stack"
     stack_path = wads_dir / stack_name
@@ -38,7 +47,11 @@ def wad_env():
     
     yield wads_dir, secret_dir
     
-    # Cleanup
+    # Restore original OMEGA_DATA_DIR and cleanup temp dir
+    if old_data_dir is not None:
+        os.environ["OMEGA_DATA_DIR"] = old_data_dir
+    else:
+        os.environ.pop("OMEGA_DATA_DIR", None)
     shutil.rmtree(temp_dir)
 
 @pytest.mark.anyio

@@ -8,25 +8,19 @@
 
 ## §1 Purpose
 
-The Subagent Dispatch Protocol enables any primary agent (Kali, BuildMaster,
-Ma'at, Lilith) to **launch specialized agents as subagents** when a task
-requires knowledge outside the agent's domain.
+The Subagent Dispatch Protocol enables any active agent to delegate tasks to specialized subagents when a task requires domain expertise outside the current agent's capabilities.
 
-Example: Kali needs Doom Guy's id Software heritage expertise. Kali formulates
-a `HandoffPacket`, launches a subagent via the Task tool with Doom Guy's
-persona injected, and receives the specialized response.
+### 📋 Intelligent Delegation Rules (The Guardrail)
 
-**Origin**: The core concept — agents spawning subagents for specialized
-tasks — is the **user's original design**, part of the Omega Engine's
-sovereign architecture.
+To maintain execution efficiency and prevent infinite recursion or redundant processing loops, all agents must adhere to these four rules:
 
-**Enhancements from id Software heritage**:
-- `[id-soft: doom-1993]` **ZONEID Pattern** — used for packet integrity
-  constant (`ZONEID_HANDOFF = 0x1d4a16`) to detect corruption.
-- `[id-soft: quake-1996]` **Thinker chain** — used as a lifecycle metaphor
-  (spawn → execute → reap) to mirror the pattern's proven reliability.
+1. **Direct Execution First**: If a task falls within your primary role or you are already executing a delegated task, you must perform the work directly using your tools. Do not delegate tasks that you are capable of completing yourself.
+2. **No Self-Recursion**: An agent must never spawn a subagent of its own type (e.g., `@roc_racoon` must never launch `@roc_racoon`). If you need to perform a task within your own domain, execute it directly.
+3. **Cross-Domain Delegation**: You may only spawn a subagent if the task requires specialized domain expertise that you do not possess (e.g., a research agent needing code verification from `@scribe`, or an engineering agent needing deep historical research from `@jem`).
+4. **Single-Level Nesting**: Subagents may spawn other specialized subagents when strictly necessary for cross-domain tasks, but they must avoid deep nesting. Limit delegation to a single level of nesting unless explicitly authorized.
 
 ---
+
 
 ## §2 The HandoffPacket (Schema)
 
@@ -59,7 +53,7 @@ ZONEID_HANDOFF = 0x1d4a16  # [id-soft: doom-1993] Handoff Packet integrity
 
 ## §3 Agent Capability Registry
 
-This registry defines what each of the 14 agents can do. Primary agents use
+This registry defines what each of the 11 agents can do. Primary agents use
 this to decide WHOM to dispatch.
 
 | Agent | Type | Capabilities | Domains | Task Tool Type |
@@ -75,8 +69,7 @@ this to decide WHOM to dispatch.
 | `jem_discovery` | Subagent | Tier 1 research, broad search | Fact gathering | `jem_discovery` |
 | `jem_synthesis` | Subagent | Tier 2 research, pattern recognition | Conceptual mapping | `jem_synthesis` |
 | `jem_verification` | Subagent | Tier 3 research, fact-checking | Gnosis distillation | `jem_verification` |
-| `scribe` | Subagent | Gnosis keeper, L1→L2→L3 distillation | Soul.yaml updates | `scribe` |
-| `quality` | Subagent | Code review, stress testing, mandate compliance | Verification | `quality` |
+| `scribe` | Subagent | Sovereign Guardian & Gnosis Keeper — Code review, mandate enforcement, L1→L2→L3 distillation | Code review + soul.yaml updates | `scribe` |
 | `pillar` | Subagent | Slot-based domain agent | Parameterized by `--slot PX` | `pillar` |
 
 ---
@@ -251,7 +244,7 @@ These must be implemented in Sprint 2:
 | Item | Status | Notes |
 |------|--------|-------|
 | `HandoffPacket` dataclass in Python | ✅ DONE | `src/omega/oracle/subagent_dispatcher.py` |
-| Capability Registry in Python | ✅ DONE | `src/omega/oracle/subagent_dispatcher.py` — 14 agents registered |
+| Capability Registry in Python | ✅ DONE | `src/omega/oracle/subagent_dispatcher.py` — 11 agents registered |
 | `dispatch_subagent()` helper → `dispatch()` | ✅ DONE | Returns Task tool prompt string |
 | Redis Pub/Sub channel | 🔴 PENDING | Reuse existing redis container |
 | MCP Hub integration | 🔴 PENDING | Share agent state across CLIs |
@@ -262,15 +255,14 @@ These must be implemented in Sprint 2:
 
 ## §8 Heritage
 
-**Original design**: The Subagent Dispatch Protocol is the **user's original
-architectural innovation**. The concept of agents spawning specialized
-subagents for domain-specific tasks is a sovereign Omega Engine pattern.
+**Original design**: The Subagent Dispatch Protocol is the **user's original architectural innovation**. The concept of agents spawning specialized subagents for domain-specific tasks is a core Omega Engine pattern.
+
+**Delegation Guardrail**: To prevent infinite loops, self-recursion (an agent spawning its own type) is strictly forbidden. Subagents should execute tasks directly unless a task requires specialized domain expertise outside their capabilities, in which case they may delegate to a different specialized agent.
 
 **id Software enhancements**:
-- `[id-soft: doom-1993]` ZONEID Pattern — packet integrity via
-  `ZONEID_HANDOFF = 0x1d4a16` constant.
-- `[id-soft: quake-1996]` Thinker chain — lifecycle metaphor for
-  the spawn → execute → reap flow.
+- `[id-soft: doom-1993]` ZONEID Pattern — packet integrity via `ZONEID_HANDOFF = 0x1d4a16` constant.
+- `[id-soft: quake-1996]` Thinker chain — lifecycle metaphor for the spawn → execute → reap flow.
+
 
 ---
 
@@ -320,8 +312,8 @@ Task received
 │           ├── Known pillar task → @pillar PX: task (Direct Pillar)
 │           ├── Research, archaeology, mining → @roc_racoon
 │           ├── Deep research, lattice reasoning → @jem
-│           ├── Code review, mandate compliance → @quality
-│           └── Gnosis distillation → @scribe
+│           ├── Code review, mandate audit, gnosis distillation → @scribe
+│           └── (scribe handles both quality and gnosis via trigger-mode routing)
 ```
 
 ### Key Rules

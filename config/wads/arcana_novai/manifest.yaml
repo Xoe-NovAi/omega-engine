@@ -3,7 +3,7 @@ wad:
   version: "0.1.0"
   requires_engine: ">=0.4.0"
   author: "Arcana-NovAi"
-  description: "Your personal AI OS — esoteric Pillar Keepers (Sekhmet, Brigid, Prometheus, Saraswati, Inanna, Ereshkigal, Lucifer, Hecate, Anubis, Kali). Entities scaffold pending Phase 1b."
+  description: "Your personal AI OS — esoteric Pillar Keepers (Sekhmet, Brigid, Prometheus, Saraswati, Inanna, Ereshkigal, Lucifer, Hecate, Anubis, Kali) with Mnemosyne 13-sphere memory."
   type: iwad
   mode: personal
   license: "Apache 2.0"
@@ -14,9 +14,14 @@ wad:
     primary: "jem.yaml"
     secondary: []
 
+  adapters:
+    memory:
+      module: "config.wads.arcana_novai.adapters.mnemosyne_adapter"
+      class: "MnemosyneAdapter"
+
   vr_scenes: []
 
   dependencies: []
 
   startup:
-    message: "Arcana-NovAi OS loaded. Your council awaits: Sekhmet stands guard. Brigid tends the hearth."
+    message: "Arcana-NovAi OS loaded. Mnemosyne remembers. Your council awaits: Sekhmet stands guard. Brigid tends the hearth."

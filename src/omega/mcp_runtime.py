@@ -7,12 +7,14 @@ import logging
 import contextlib
 from typing import Any, Awaitable, Callable, Optional
 
+import anyio
+
 logger = logging.getLogger("omega.mcp_runtime")
 
 def run_mcp(mcp: Any, modify_app: Optional[Callable[[Any], None]] = None,
             custom_routes: Optional[list] = None,
             on_shutdown: Optional[Callable] = None,
-            on_startup: Optional[Callable[[], Awaitable[None]]] = None):
+            on_startup: Optional[Callable[[Optional[anyio.abc.TaskGroup]], Awaitable[None]]] = None):
     """Run an MCP server with dual-transport support.
 
     Serves both SSE (for OpenCode/Cline) and Streamable HTTP (for
@@ -96,20 +98,17 @@ def run_mcp(mcp: Any, modify_app: Optional[Callable[[Any], None]] = None,
         # ── Lifespan: run StreamableHTTP session manager + cleanup ────
         @_ctx.asynccontextmanager
         async def lifespan(app):
-            import anyio
-            # Start background initialization task (runs concurrently with server)
-            _startup_task = None
-            if on_startup:
-                _startup_task = anyio.create_task(on_startup())
-            async with streamable_mgr.run():
-                yield
-            # Cancel startup task if still running on shutdown
-            if _startup_task and not _startup_task.done():
-                _startup_task.cancel()
-                try:
-                    await _startup_task
-                except anyio.CancelledError:
-                    pass
+            # Wrap server run + background tasks in AnyIO TaskGroup
+            # [id-soft: quake-1996] Zone Memory — TaskGroup auto-cancels
+            # all background tasks on shutdown (circuit breaker pattern)
+            async with anyio.create_task_group() as tg:
+                if on_startup:
+                    result = on_startup(tg)
+                    if hasattr(result, '__await__'):
+                        await result
+                async with streamable_mgr.run():
+                    yield
+            # TaskGroup exit: all background tasks cancelled
             # Shutdown cleanup — call on_shutdown if provided
             # [id-soft: quake-1996] Zone Memory — free allocated resources on exit
             if on_shutdown:

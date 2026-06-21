@@ -11,15 +11,26 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(autouse=True)
-def _set_test_env(monkeypatch):
-    """Ensure OMEGA_ENV=test for all tests — prevents RedisProvider from connecting."""
+def _set_test_env(tmp_path, monkeypatch):
+    """Ensure OMEGA_ENV=test and isolated temp data dir for all tests.
+    
+    OMEGA_DATA_DIR is set to an autouse temp directory to prevent entity workspace
+    scaffolding (EntityRegistry.add() → EntityWorkspaceManager.scaffold_workspace)
+    from leaking test entities into the production data/entities/ directory.
+    Previously, tests like test_wad_loader.py created direntity/, duplicate/, etc.
+    in the live data/entities/ tree.
+    """
     monkeypatch.setenv("OMEGA_ENV", "test")
+    monkeypatch.setenv("OMEGA_DATA_DIR", str(tmp_path))
 
 
 @pytest.fixture
 def temp_data_dir(tmp_path, monkeypatch):
-    """Create isolated temp data directory for tests."""
-    monkeypatch.setenv("OMEGA_DATA_DIR", str(tmp_path))
+    """Create isolated temp data directory for tests.
+    
+    This fixture exists for tests that need explicit access to the temp data path.
+    The autouse _set_test_env already ensures OMEGA_DATA_DIR is isolated.
+    """
     logger.debug("temp_data_dir: OMEGA_DATA_DIR=%s, OMEGA_ENV=%s", tmp_path, os.environ.get("OMEGA_ENV"))
     reset_memory_store()
     yield tmp_path

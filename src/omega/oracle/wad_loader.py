@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 class WADLoader:
     """Loads Omega Engine stacks (WADs) from the filesystem."""
 
-    def __init__(self, registry: EntityRegistry, wads_dir: Optional[Path] = None):
+    def __init__(self, registry: EntityRegistry, wads_dir: Optional[Path] = None, adapter_registry: Optional[Any] = None):
         self.registry = registry
         self.wads_dir = wads_dir or Path(os.environ.get(
             "OMEGA_WADS_DIR",
@@ -41,6 +41,7 @@ class WADLoader:
         ))
         self._startup_messages: Dict[str, str] = {}  # stack_name -> startup message
         self.active_hierarchy_path: Optional[Path] = None
+        self._adapter_registry = adapter_registry  # MemoryAdapterRegistry (optional)
         
         if os.environ.get("OMEGA_ENV") != "test":
             try:
@@ -157,17 +158,6 @@ class WADLoader:
                 if await anyio.Path(default_h_path).exists():
                     hierarchy_path = default_h_path
 
-            # 3. Resolve Hierarchy Path (if specified in manifest or exists in WAD root)
-            hierarchy_path = None
-            if "hierarchy" in manifest:
-                h_path = wad_path / manifest["hierarchy"]
-                if await anyio.Path(h_path).exists():
-                    hierarchy_path = h_path
-            else:
-                default_h_path = wad_path / "hierarchy.yaml"
-                if await anyio.Path(default_h_path).exists():
-                    hierarchy_path = default_h_path
-
             if hierarchy_path:
                 self.active_hierarchy_path = hierarchy_path
 
@@ -176,11 +166,85 @@ class WADLoader:
             if await anyio.Path(world_dir).exists():
                 await self._load_world_state(world_dir, wad_source=stack_name)
 
+            # 5. Register Memory Adapter (if specified in manifest)
+            if self._adapter_registry and "adapters" in manifest:
+                await self._register_adapters(manifest["adapters"], stack_name)
+
             return True, hierarchy_path
 
         except Exception as e:
             logger.error(f"Failed to load WAD {stack_name}: {e}")
             return False, None
+
+    async def _register_adapters(self, adapters_config: Dict[str, Any], stack_name: str) -> None:
+        """Register memory adapters from WAD manifest.
+
+        Supports:
+          adapters:
+            memory:
+              module: "config.wads.arcana_novai.adapters.mnemosyne_adapter"
+              class: "MnemosyneAdapter"
+
+        Dynamically imports the module, instantiates the class, and
+        registers the instance with the MemoryAdapterRegistry.
+        All entities in this WAD are then mapped to this adapter.
+        """
+        memory_adapter_cfg = adapters_config.get("memory")
+        if not memory_adapter_cfg:
+            return
+
+        module_path = memory_adapter_cfg.get("module")
+        class_name = memory_adapter_cfg.get("class")
+        if not module_path or not class_name:
+            logger.warning(f"WAD {stack_name} has incomplete memory adapter config: {memory_adapter_cfg}")
+            return
+
+        try:
+            # Dynamic import
+            import importlib
+            module = importlib.import_module(module_path)
+            adapter_class = getattr(module, class_name)
+
+            if self._adapter_registry is None:
+                logger.warning(f"Cannot register adapter for WAD {stack_name}: no adapter registry set")
+                return
+
+            # Import IMemoryAdapter for type check
+            from omega.memory.adapters import IMemoryAdapter
+
+            instance = adapter_class()
+
+            # P0: Must call initialize() after construction
+            # Adapters load sphere/qliphoth data and create vault directories here
+            await instance.initialize()
+
+            if not isinstance(instance, IMemoryAdapter):
+                logger.error(
+                    f"WAD {stack_name} adapter class {class_name} does not implement IMemoryAdapter"
+                )
+                return
+
+            self._adapter_registry.register(stack_name, instance)
+            logger.info(f"Registered memory adapter {class_name} for WAD '{stack_name}'")
+
+            # Map all entities loaded from this WAD to the adapter
+            for entity_key, entity in self.registry.list().items():
+                if hasattr(entity, 'wad_source') and entity.wad_source == stack_name:
+                    # P2: Conflict detection — warn if entity already mapped to different WAD
+                    existing_wad = self._adapter_registry._entity_to_adapter.get(entity.name)
+                    if existing_wad and existing_wad != stack_name:
+                        logger.warning(
+                            f"Entity '{entity.name}' already mapped to WAD '{existing_wad}', "
+                            f"overwriting with WAD '{stack_name}'"
+                        )
+                    self._adapter_registry.register_entity_to_wad(entity.name, stack_name)
+
+        except ImportError as e:
+            logger.error(f"Failed to import adapter module '{module_path}' for WAD {stack_name}: {e}")
+        except AttributeError as e:
+            logger.error(f"Adapter class '{class_name}' not found in '{module_path}' for WAD {stack_name}: {e}")
+        except Exception as e:
+            logger.error(f"Failed to register adapter for WAD {stack_name}: {e}", exc_info=True)
 
     async def _load_entities(self, entities_dir: Path, wad_source: str = "", priority: int = 0) -> None:
         """Load all .yaml files from the entities directory.

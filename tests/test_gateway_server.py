@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from src.omega.gateway.server import app, OmegaGateway
 from unittest.mock import AsyncMock, patch
+from omega.oracle.model_gateway import GenerateResult
 
 client = TestClient(app)
 
@@ -17,7 +18,7 @@ def test_gateway_health():
 @pytest.mark.asyncio
 async def test_chat_completions_success():
     with patch("src.omega.gateway.server.ModelGateway.generate", new_callable=AsyncMock) as mock_generate:
-        mock_generate.return_value = ("Hello from Omega!", False)
+        mock_generate.return_value = GenerateResult(text="Hello from Omega!", provider_name="mock", is_cloud=False)
         
         response = client.post("/v1/chat/completions", json={
             "model": "gemma-4",
@@ -38,7 +39,7 @@ async def test_chat_completions_success():
 @pytest.mark.asyncio
 async def test_chat_completions_no_provider():
     with patch("src.omega.gateway.server.ModelGateway.generate", new_callable=AsyncMock) as mock_generate:
-        mock_generate.return_value = (None, False)
+        mock_generate.return_value = GenerateResult(text="", provider_name="mock", is_cloud=False)
         
         response = client.post("/v1/chat/completions", json={
             "model": "nonexistent",

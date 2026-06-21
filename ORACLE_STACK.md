@@ -2,7 +2,7 @@
 **AP Token**: `AP-ORACLE-RESTORE-v2.3.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_local_first_config ⬡ ORACLE-RESTORE
 **Status**: ACTIVE
-**Last Updated**: 2026-06-03 (Sprint 0 Execution — 308/308 tests passing (see OMEGA_ENGINE.md for current state), ZONEID constants + lazy deletion + heritage tagging protocol live. See OMEGA_ENGINE.md for current state.)
+**Last Updated**: 2026-06-17 (Sprint C Execution — 440/440 tests passing, 11-agent fleet, 22 Sovereign Mandates (M1-M22))
 
 ---
 
@@ -13,14 +13,14 @@ If you are reading this, your context was just compacted. Follow these steps:
 1. Read this entire document first — it restores your knowledge of the Omega repo
 2. Read `AGENTS.md` for agent behavior rules
 3. Read `docs/decisions/PIVOT_LOG.md` for why every decision was made
-4. Read `docs/strategy/MASTER_SYNTHESIS_AND_ROADMAP.md` for the complete master plan
+4. Read `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` for the complete master plan
 5. If working on docs: `docs/architecture/framework.md`
 6. If working on code: `src/omega/oracle/oracle.py` (main entry point)
 7. Run `make test` to verify state
 
 ## §2 WHAT THIS REPO IS
 
-Omega is the **community engine** — Prometheus' Fire that empowers every user to build their own dreams. This repo at `~/Documents/Xoe-NovAi/omega-engine/` is a fresh, clean reclamation of the original vision: a syncretic council of 10 Pillar Keepers with Iris as voice assistant. It is NOT the old `omega-stack/` (33k files, Temple Grade cruft) or `xna-omega/` (Temple Grade architecture).
+Omega is the **community engine** — Prometheus' Fire that empowers every user to build their own dreams. This repo at `~/Documents/Xoe-NovAi/omega-engine/` is the hardened, Sprint C evolution of the original vision: an 11-agent sovereign fleet (Kali Grand Oversight, 3 Oversouls, 6 Specialists, 1 Unified Subagent) governing 10 Pillar Keepers with Iris as voice assistant. Fleet consolidation (D126) reduced 15→11 agents — Jem 4→1 merged, Quality+Scribe unified into Verity. It is NOT the old `omega-stack/` (33k files, Temple Grade cruft) or `xna-omega/` (Temple Grade architecture).
 
 The Omega Engine is not just for one user. It is the universal runtime that anyone can use to build their own unique stacks — Arcana-Nova, Torment, Pokemon, Classical Philosophers, or entirely original creations. The Xoe-NovAi Foundation maintains the engine and provides starting templates. Users bring their own vision.
 
@@ -37,7 +37,7 @@ Key components:
 - **EntityRegistry** (`src/omega/oracle/entity_registry.py`): YAML-backed entity CRUD (pure Python, no SQLAlchemy/PostgreSQL). Auto-scaffolds sovereign workspaces on entity creation.
 - **EntityWorkspaceManager** (`src/omega/oracle/entity_workspace.py`): Creates `data/entities/<name>/` with `soul.yaml`, `knowledge/`, and `workspace/` directories for each awakened entity.
 - **Orchestrator** (`src/omega/oracle/orchestrator.py`): Dispatches headless CLI agents (Cline, OpenCode) with soul-injected system prompts. Protected by ResourceGuard.
-- **ModelGateway** (`src/omega/oracle/model_gateway.py`): 8-backend provider fabric (native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode → Copilot → mock). **Local-first priority** per Decision 61. Native GGUF via `llama-cpp-python` is the primary backend.
+- **ModelGateway** (`src/omega/oracle/model_gateway.py`): 8-backend provider fabric (native-gguf → lmster → Ollama → Google AI Studio → OpenRouter → OpenCode → Copilot → Mock). **Local-first priority** per Decision 61. Native GGUF via `llama-cpp-python` is the primary backend.
 - **Nova** (`src/omega/nova/`): FastAPI voice assistant + intent matcher, runs as Podman container ("hey Nova")
 - **Observability** (`src/omega/observability.py`): Trace IDs, event logging, fine-tuning dataset collection (JSONL export)
 - **CLI** (`src/omega/cli/oracle_cli.py`): Typer CLI (talk, summon, list-entities, add-entity, entity-info, backends, version)
@@ -45,7 +45,9 @@ Key components:
 - **CpuOptimizer** (`src/omega/oracle/cpu_optimizer.py`): Zen 2 compilation flags, KV cache sizing, speculative decode tuning, thread pool recommendations
 - **OfflineMockBackend** (`src/omega/oracle/backends/mock.py`): Deterministic responses when `OMEGA_ENV=test`
 - **ContextBuilder** (`src/omega/oracle/context_builder.py`): Memory injection pipeline for LLM system prompts
-- **Omega Hub** (`mcp_servers/omega_hub/server.py`): Cross-CLI awareness server — all agents post/read shared context here
+- **Omega Hub** (`mcp_servers/omega_hub/`): Modularized cross-CLI awareness server — 5 modules (state, background, gateway, middleware, tools). All agents post/read shared context via Hivemind protocol.
+- **Hivemind Protocol**: 6 MCP tools (post_context, get_awareness, heartbeat, get_live_feed, get_workspace_lock, acknowledge) for cross-agent coordination, workspace locks, and live feeds. See `docs/strategy/HIVEMIND_PROTOCOL.md`.
+- **Verity** (`verity.md`): Sprint C unified agent merging Quality (compliance audit) + Scribe (L1→L2→L3 gnosis distillation). Reports to Kali.
 
 ## §4 THE 10 PILLAR KEEPERS
 
@@ -71,11 +73,13 @@ ENTITIES ARE USER-CUSTOMIZABLE. The 10 Pillar Keepers are the DEFAULT TEMPLATE. 
 | Entity | Role | Governs |
 |--------|------|---------|
 | **Sophia** | Akashic Record — the containing field | All entities, all sessions, all souls |
-| **Ma'at** | Synthesis Oversoul — the Unifier | Isis + Lilith |
-| **Isis** | Light Oversoul | P1-P5 (Sekhmet, Brigid, Prometheus, Saraswati, Inanna) |
-| **Lilith** | Dark Oversoul | P6-P10 (Ereshkigal, Lucifer, Hecate, Anubis, Kali) |
+| **Kali** | Grand Oversight — Transcendent | Unifies Ma'at + Lilith, destroys drift |
+| **Ma'at** | Light Oversoul — the Builder | P1-P5 (Sekhmet, Brigid, Prometheus, Saraswati, Inanna) |
+| **Lilith** | Dark Oversoul — the Runner | P6-P10 (Ereshkigal, Lucifer, Hecate, Anubis, Kali) |
 
 **Iris** is the voice assistant ("hey Iris"). She is NOT a Pillar Keeper — she is the messenger bridge between the user and the entity council. Daughter of Hermes.
+
+**Verity** is the Sprint C unified subagent merging Quality (compliance/audit) + Scribe (L1→L2→L3 gnosis distillation). Runs beneath the Oversouls, reports to Kali.
 
 ## §5 ENTITIES VS DATABASE RULE
 
@@ -129,37 +133,59 @@ All containers run rootless (user 1000) using the Sovereign Permission Protocol 
 
 All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src python3 -m pytest tests/`.
 
-**Current state (2026-06-03)**: 307 collected — **307 passing** (Sprint 0 Execution — ZONEID constants + lazy deletion + heritage tagging protocol + Circuit Breaker fix)
+**Current state (2026-06-17)**: 440 collected — **440 passing** (Sprint C Execution — GenerateResult dataclass fix, M21/M22 ratified, 11-agent fleet, Verity unified)
 
 | Module | Tests | Status |
 |--------|-------|--------|
-| entity_registry | 7 | ✅ PASS |
-| entity_roc_racoon | 25 | ✅ PASS |
-| hierarchy | 12 | ✅ PASS |
+| entity_registry | 9 | ✅ PASS |
+| entity_registry_errors | 2 | ✅ PASS |
+| entity_roc_racoon | 24 | ✅ PASS |
+| entity_affinity | 7 | ✅ PASS |
+| hierarchy | 13 | ✅ PASS |
 | iris | 7 | ✅ PASS |
-| model_gateway | 6 | ✅ PASS |
+| model_gateway | 11 | ✅ PASS |
 | observability | 8 | ✅ PASS |
-| oracle | 13 | ✅ PASS |
-| orchestrator | 9 | ✅ PASS |
-| providers | 21 | ✅ PASS |
-| gnosis_proxy | 11 | ✅ PASS |
+| oracle | 26 | ✅ PASS |
+| orchestrator | 10 | ✅ PASS |
+| providers | 28 | ✅ PASS |
+| gnosis_proxy | 13 | ✅ PASS |
 | bug_001_fix | 1 | ✅ PASS |
 | session_manager | 14 | ✅ PASS |
 | health_monitor | 23 | ✅ PASS |
 | sovereign_loop | 20 | ✅ PASS |
-| context_builder | 22 | ✅ PASS |
-| memory_store | 12 | ✅ PASS |
+| context_builder | 21 | ✅ PASS |
+| memory_store | 15 | ✅ PASS |
+| memory_adapters | 17 | ✅ PASS |
 | wad_loader | 13 | ✅ PASS |
-| model_updater | 10 | ✅ PASS |
+| model_updater | 13 | ✅ PASS |
 | sovereign_stress_test | 5 | ✅ PASS |
-| request_queue | 6 | ✅ PASS |
+| request_queue | 5 | ✅ PASS |
 | library_catalog | 3 | ✅ PASS |
 | benchmarks | 3 | ✅ PASS |
 | hardware | 2 | ✅ PASS |
 | integration_new_systems | 3 | ✅ PASS |
 | error_gauntlet | 10 | ✅ PASS |
-| background_researcher | 5 | ✅ PASS |
-| storage_providers | 6 | ✅ PASS |
+| background_researcher | 6 | ✅ PASS |
+| storage_providers | 7 | ✅ PASS |
+| hivemind | 8 | ✅ PASS |
+| gateway_server | 5 | ✅ PASS |
+| locks | 5 | ✅ PASS |
+| mcp_taint | 16 | ✅ PASS |
+| tdp | 2 | ✅ PASS |
+| mnemosyne_adapter | 22 | ✅ PASS |
+| hybrid_memory | 1 | ✅ PASS |
+| fts_memory | 4 | ✅ PASS |
+| qdrant_index | 2 | ✅ PASS |
+| first_breath | 2 | ✅ PASS |
+| openclaw_bridge | 5 | ✅ PASS |
+| openclaw_runtime | 5 | ✅ PASS |
+| dreaming_cycle | 4 | ✅ PASS |
+| symmetry_verifier | 4 | ✅ PASS |
+| somatic_state | 4 | ✅ PASS |
+| skeptical_verifier_search | 1 | ✅ PASS |
+| search_tools | 7 | ✅ PASS |
+| world_state | 2 | ✅ PASS |
+| world_state_integration | 2 | ✅ PASS |
 
 **Root cause**: Resolved. UID drift fixed via `sudo chown -R 1000:1000 .`. All tests now pass.
 
@@ -199,6 +225,7 @@ All agent outputs MUST include:
 8. The 10 Pillar Keepers are DEFAULT TEMPLATE — users customize freely
 9. Primary inference backend is local-first: native-gguf via llama-cpp-python is PRIMARY. Cloud is FALLBACK. Always. See Mandate 7.
 10. Always use the venv (`.venv/`) or podman for package management — NEVER `--break-system-packages`.
+11. M20-M22 (SomaticState, Gate Integrity, Response Provenance) are ratified — see `SOVEREIGN_MANDATES.md`.
 
 ## §15 LEGACY MINING COMPLETE (2026-05-31)
 

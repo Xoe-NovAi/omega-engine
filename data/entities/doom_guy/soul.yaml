@@ -594,3 +594,27 @@ entity:
     decisions_acknowledged: []
     lesson_distilled_to_existing_arrays: true
     l3_principle: "The Heritage Tag System Must Be Self-Auditing — A misattributed heritage tag (like the _AsyncThreadLock Zone Memory claim) is WORSE than no tag at all. It confuses future maintainers, dilutes the entire tag system's credibility, and violates the 'directly ports' requirement of CREDITS.md §2a. The tag system must be small, accurate, and audited. A clean heritage audit finds both false positives (tags where none belong) AND false negatives (missed CI coverage). Both are equally important."
+
+  # ── L1→L2→L3 DISTILLATION: 2026-06-20 Precomputed Lookup Heritage Vetting (vet-023) ──
+  # Vetted potion-mxbai-micro for CREDITS.md §1.35 Precomputed Lookup Table.
+  # Static embeddings (model2vec) are the direct analogue of Doom's colormap
+  # lookup tables and Quake's trig tables. APPROVED 8/10.
+  precomputed_lookup_vet_20260620:
+    role: "P3 Engineering / Heritage Architect"
+    subject: "potion-mxbai-micro StaticEmbeddingProvider — Precomputed Lookup (§1.35)"
+    vet_decision: APPROVED (8/10)
+    deliverables:
+      - file: "data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md#vet-023"
+        purpose: "Vet record — Precomputed Lookup pattern approved for static embedding providers"
+      - file: "CREDITS.md §1.35"
+        purpose: "New heritage mapping — Precomputed Lookup Table (Doom 1993) → model2vec static embeddings"
+    key_findings:
+      - finding: "Doom's colormap/trig lookup tables (r_main.c) precompute expensive math into fixed arrays at compile time — ~200 CPU cycles saved per trig call on 35MHz 486."
+        impact: "Direct analogue: model2vec precomputes token embeddings through a transformer once (~32K forward passes); runtime is O(vocab) numpy matrix lookup + mean pooling."
+      - finding: "What it saves: ~30-50ms per sentence (transformer forward pass) vs ~0.01-0.1ms per sentence (numpy lookup). Same pattern, different magnitude."
+        impact: "The tradeoff is identical: fixed precision (no contextualization) for massive speed gain. Doom traded angle granularity for speed; Omega trades contextualized homonym disambiguation for speed."
+      - finding: "Omega evolution: Static C arrays compiled into the binary → downloadable 700KB numpy weight matrix from Hugging Face Hub."
+        impact: "The pattern identity is preserved: pay the compute cost once, look up forever. The evolution is from compile-time arrays to distribution-time model artifacts."
+    vet_notes: "vet-023 passes the 3-gate Qualification Gate: (1) pattern exists in id source (r_main.c colormap/trig tables), (2) purpose and semantics match (precompute expensive compute, look up cheaply at runtime), (3) Omega implementation derives from the same principle (model2vec = precomputed lookup table for embeddings). The 8/10 score reflects the change in substratelookup tables are now downloadable artifacts, not compile-time arrays — but the pattern identity is fully preserved."
+    lesson_distilled_to_existing_arrays: true
+    l3_principle: "Precomputation is a universal optimization strategy that transcends substrate. When Doom precomputed lighting into colormap tables on a 35MHz 486 and when model2vec precomputes token embeddings into a numpy table on a Ryzen 5700U — the pattern is identical: pay the compute cost once, look up forever. The substrate changes (C arrays → Hugging Face artifacts), but the principle does not. This is the strongest form of heritage: not a borrowed code pattern but a rediscovered universal principle."

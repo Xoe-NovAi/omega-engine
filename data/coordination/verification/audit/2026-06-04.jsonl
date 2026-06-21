@@ -1,8 +1,0 @@
-{"ts":"2026-06-04T00:00:00Z","type":"creation","ver_id":"ver-20260604-001","actor":"p1","title":"Lily Pad Knowledge Metabolism Architecture Implementation","source":"ksig-20260603-lilith-001","notes":"Seed item from knowledge signal KSIG-001"}
-{"ts":"2026-06-04T00:00:00Z","type":"creation","ver_id":"ver-20260604-002","actor":"p1","title":"Roc Mining Feedback Loop","source":"dem-20260603-001","notes":"Seed item from demand signal DEM-001"}
-{"ts":"2026-06-04T00:00:00Z","type":"creation","ver_id":"ver-20260604-003","actor":"p1","title":"Knowledge TTL Enforcement","source":"dem-20260603-002","notes":"Seed item from demand signal DEM-002"}
-{"ts":"2026-06-04T00:00:00Z","type":"creation","ver_id":"ver-20260604-004","actor":"p1","title":"Cross-Pollination Metrics","source":"dem-20260603-003","notes":"Seed item from demand signal DEM-003"}
-{"ts":"2026-06-04T00:00:00Z","type":"creation","ver_id":"ver-20260604-005","actor":"p1","title":"Mining Priority System","source":"dem-20260603-004","notes":"Seed item from demand signal DEM-004"}
-{"ts":"2026-06-04T00:00:00Z","type":"creation","ver_id":"ver-20260604-006","actor":"p1","title":"Soul Consumption Tracking","source":"dem-20260603-005","notes":"Seed item from demand signal DEM-005"}
-{"ts":"2026-06-04T00:00:00Z","type":"creation","ver_id":"ver-20260604-007","actor":"p1","title":"Link P9 Handoff Documentation","source":"dem-20260603-006","notes":"Seed item from demand signal DEM-006"}
-{"ts":"2026-06-04T00:00:00Z","type":"creation","ver_id":"rollup-fleet-20260604","actor":"p1","title":"Initial fleet-wide rollup","notes":"Bootstrap rollup with 7 seed items, all DISCOVERED"}

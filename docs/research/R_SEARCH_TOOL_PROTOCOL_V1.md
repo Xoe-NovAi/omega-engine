@@ -20,7 +20,7 @@ This document establishes the **Sovereign Search Protocol** — a mandatory mult
 **Five-Tier Protocol Defined**:
 | Tier | Tool | Cost | Status |
 |------|------|------|--------|
-| 0 | Local Cache (`.firecrawl/`, offline library) | Free | ✅ Functional |
+| 0 | Local Cache (`.firecrawl/`, offline library, **`data/entities/*/soul.yaml`**, **`data/coordination/`**, **`.agents/`**, **`.opencode/agents/`**) | Free | ✅ Functional |
 | 1 | Built-in `websearch` | Free | ✅ Functional |
 | 2 | SearXNG (Sovereign Metasearch) | Free | ✅ Functional |
 | 3 | Firecrawl (Deep Extraction) | Credits | ✅ Active (987/1000) |

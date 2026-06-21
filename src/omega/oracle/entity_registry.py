@@ -36,6 +36,11 @@ from omega.constants import ZONEID_ENTITY, ZONEID_TOMBSTONE, validate_zoneid
 from omega.errors import EntityTombstonedError
 
 logger = logging.getLogger(__name__)
+
+# Test-mode YAML cache: parses entities.yaml once per test run (~5.8s → ~0.001s)
+# The 982KB file takes 5.8s to parse; caching it cuts total test suite from 7m to ~2m.
+_entity_yaml_cache: Dict[str, Any] = {}
+
 # [id-soft: doom-1993] WAD System — base IWAD identifier
 DEFAULT_IWAD = "_omega_default"
 
@@ -204,17 +209,28 @@ class EntityRegistry:
 
 
     def _load(self) -> None:
-        """Load entities from YAML file."""
+        """Load entities from YAML file.
+
+        In test mode (OMEGA_ENV=test), caches parsed YAML to avoid re-parsing
+        the 982KB entities.yaml on every Oracle() initialization.
+        """
         if not self.config_path.exists():
             logger.warning(f"Entity config not found at {self.config_path}")
             self._entities = {}
             return
 
-        try:
-            with open(self.config_path, "r") as f:
-                data = yaml.safe_load(f)
-        except yaml.YAMLError as e:
-            raise ValueError(f"entities.yaml is empty or malformed: {e}")
+        cache_key = str(self.config_path)
+        # Use cached data in test mode to avoid 5.8s YAML parse per Oracle init
+        if os.environ.get("OMEGA_ENV") == "test" and cache_key in _entity_yaml_cache:
+            data = _entity_yaml_cache[cache_key]
+        else:
+            try:
+                with open(self.config_path, "r") as f:
+                    data = yaml.safe_load(f)
+            except yaml.YAMLError as e:
+                raise ValueError(f"entities.yaml is empty or malformed: {e}")
+            if os.environ.get("OMEGA_ENV") == "test":
+                _entity_yaml_cache[cache_key] = data
         
         if data is None:
             raise ValueError("entities.yaml is empty or malformed")

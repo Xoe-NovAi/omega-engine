@@ -1,4 +1,5 @@
 # AP Token: AP-ORACLE-RESTORE-v2.3.0
+import atexit
 import logging
 import httpx
 import os
@@ -380,8 +381,13 @@ class NativeGGUFProvider(BaseProvider):
         self._loaded_ctx = 0
         self._loaded_model = None
         self._affinity_applied = False
+        # [Operation Deep-Siphon] ICS-F v1.0 Sprint 0: last inference logprobs.
+        # Populated after each successful generate() call with logprobs=5.
+        # Reset on error to prevent stale data propagation.
+        self._last_logprobs = None
         # Isolated pool for synchronous C-calls to prevent anyio global pool exhaustion
         self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="gguf_inference")
+        atexit.register(self.shutdown)
 
     async def is_available(self) -> bool:
         """Check if llama-cpp-python is installed and model path exists."""
@@ -581,9 +587,16 @@ class NativeGGUFProvider(BaseProvider):
         if session_id:
             logger.debug("Session-aware inference [session_id=%s, trace_id=%s]", session_id, trace_id)
         
+        # [Operation Deep-Siphon] Reset last logprobs before each inference.
+        # Prevents stale data from a previous successful call leaking
+        # after a subsequent error (ICS-F v1.0 Sprint 0).
+        self._last_logprobs = None
+        
         try:
             # Use isolated thread for synchronous C-calls to prevent global pool exhaustion
             # [id-soft: quake-1996] In-Flight Pipeline — overlap prompt construction with inference
+            # [Operation Deep-Siphon] Sprint 0: logprobs=5 unlocks per-token probabilities
+            # for ICS-F v1.0 forensic metadata capture (see GenerateResult.logprobs).
             response = await anyio.to_thread.run_sync(
                 lambda: self.llm(
                     prompt,
@@ -591,11 +604,16 @@ class NativeGGUFProvider(BaseProvider):
                     temperature=temperature,
                     stop=["</s>", "User:", "\n\n"],
                     echo=False,
+                    logprobs=5,
                 )
             )
         
             if response and "choices" in response:
                 text = response["choices"][0]["text"].strip()
+                # Capture logprobs from response for ICS-F v1.0 compliance
+                # Raw top_logprobs is a list of dicts {token_str: logprob, ...}
+                # one entry per token position, each containing up to 5 candidates.
+                self._last_logprobs = response["choices"][0].get("logprobs", {}).get("top_logprobs")
                 # [id-soft: quake3-1999] Cvar System — trace_id propagated
                 # Port 1.5: atomic trace_id logging for observability
                 if trace_id:

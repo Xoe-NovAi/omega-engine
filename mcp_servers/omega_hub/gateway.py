@@ -1,3 +1,5 @@
+# [id-soft: quake3-1999] Hub Gateway — netchan qport-style session re-association and provider routing
+
 """Omega Hub — SovereignGateway: AI provider proxy and rate-limiting gateway.
 
 AP: AP-OMEGA-HUB-GATEWAY-v1.0.0

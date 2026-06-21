@@ -126,7 +126,7 @@ class SkepticalVerifier:
         )
         
         try:
-            response, _ = await self.model_gateway.generate(
+            res = await self.model_gateway.generate(
                 model_name=self.nli_model,
                 system_prompt="You are a high-precision NLI classifier. Output only the requested tag.",
                 user_query=prompt,
@@ -134,10 +134,10 @@ class SkepticalVerifier:
                 max_tokens=10
             )
             
-            res = response.strip().upper()
-            if "[ENTAIL]" in res or "ENTAIL" in res:
+            response = res.text.strip().upper()
+            if "[ENTAIL]" in response or "ENTAIL" in response:
                 return "ENTAIL"
-            if "[CONTRADICT]" in res or "CONTRADICT" in res:
+            if "[CONTRADICT]" in response or "CONTRADICT" in response:
                 return "CONTRADICT"
             return "NEUTRAL"
             
@@ -167,13 +167,14 @@ class SkepticalVerifier:
         )
         
         try:
-            response, _ = await self.model_gateway.generate(
+            res = await self.model_gateway.generate(
                 model_name=self.nli_model,
                 system_prompt="You are a Sovereign Resolution Engine. Resolve factual contradictions with extreme skepticism.",
                 user_query=divergence_prompt,
                 temperature=0.2
             )
             
+            response = res.text
             if "VERDICT: VERIFIED" in response:
                 return {"status": "VERIFIED", "reasoning": response}
             return {"status": "CONTRADICTED", "reasoning": response}

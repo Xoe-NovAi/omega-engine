@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "omega-hub": {
-      "type": "sse",
+      "type": "remote",
       "url": "http://127.0.0.1:8016/sse"
     },
     "exa": {

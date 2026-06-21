@@ -36,6 +36,7 @@ from .memory.providers import (
 from .memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
 from .memory.fts_index import ConversationFTSIndex
 from .memory.embeddings import EmbeddingManager, OllamaEmbeddingProvider, SovereignFallbackEmbeddingProvider
+from .memory.adapters import MemoryAdapterRegistry, IMemoryAdapter
 
 logger = logging.getLogger(__name__)
 
@@ -85,8 +86,9 @@ class MemoryStore:
 
     ZONEID = ZONEID_MEMORY
 
-    def __init__(self, providers: Optional[List[StorageProvider]] = None, vector_store: Optional[IVectorStoreAdapter] = None, embedding_manager: Optional[EmbeddingManager] = None):
+    def __init__(self, providers: Optional[List[StorageProvider]] = None, vector_store: Optional[IVectorStoreAdapter] = None, embedding_manager: Optional[EmbeddingManager] = None, adapter_registry: Optional[MemoryAdapterRegistry] = None):
         self._hot: Dict[str, OrderedDict] = {}
+        self._adapter_registry = adapter_registry
         # [id-soft: doom-1993] Lazy Deletion — tombstone registry
         # Maps cache_key -> time.time() when tombstoned
         self._tombstoned: Dict[str, float] = {}
@@ -354,6 +356,7 @@ class MemoryStore:
         user_message: str,
         response: str,
         metadata: Optional[Dict[str, Any]] = None,
+        trace_id: Optional[str] = None,
     ) -> None:
         """Record a user-assistant exchange in entity memory."""
         if not session_id:
@@ -367,7 +370,7 @@ class MemoryStore:
             raise EntityTombstonedError(
                 cache_key=cache_key,
                 message=f"Cannot add exchange to tombstoned session '{session_id}' for entity '{entity_name}' — session was archived within grace period {TOMBSTONE_GRACE_SECONDS}s",
-                trace_id=None,
+                trace_id=trace_id,
             )
         exchange = {
             # [id-soft: doom-1993] ZONEID Pattern — integrity marker
@@ -377,6 +380,8 @@ class MemoryStore:
             "assistant": response,
             "metadata": metadata or {},
         }
+        if trace_id:
+            exchange["metadata"]["trace_id"] = trace_id
 
         if cache_key not in self._hot:
             existing = await self.get_history(entity_name, session_id, limit=MAX_HISTORY)
@@ -411,6 +416,25 @@ class MemoryStore:
             logger.error(f"All providers failed to save_history for {session_id}!")
         else:
             self._stats["saves"] += 1
+        
+        # ── Vault Update via Adapter Registry ──
+        if self._adapter_registry:
+            adapter = self._adapter_registry.get_for_entity(entity_name)
+            if adapter:
+                try:
+                    vault = await adapter.get_vault(entity_name, "shadow") or {}
+                    vault["last_exchange_ts"] = exchange.get("timestamp", time.time())
+                    vault["exchange_count"] = vault.get("exchange_count", 0) + 1
+                    vault["last_session_id"] = session_id
+                    # P2: Propagate trace_id to vault for observability correlation
+                    if trace_id:
+                        vault["last_trace_id"] = trace_id
+                    await adapter.put_vault(entity_name, "shadow", vault)
+                except Exception as e:
+                    logger.warning(
+                        "Vault update failed for %s/%s: %s",
+                        entity_name, session_id, e
+                    )
         
         # [Horizon 2: MiMo] FTS5 Dual-Write
         try:

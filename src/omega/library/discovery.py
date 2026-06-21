@@ -226,14 +226,14 @@ class DiscoveryOrchestrator:
         user_prompt = f"Query: {query}\n\nInitial Search Context:\n{context}"
         
         try:
-            response = await self.model_gateway.generate(
+            result = await self.model_gateway.generate(
                 model_name="gemini-2.0-flash",
                 system_prompt=system_prompt,
                 user_query=user_prompt,
                 temperature=0.2,
                 max_tokens=1024
             )
-            return response
+            return result.text
         except OmegaError:
             raise
         except Exception as e:
@@ -250,12 +250,13 @@ class DiscoveryOrchestrator:
         user_prompt = f"Query: {query}\n\nRecon Summary:\n{recon_summary}"
         
         try:
-            response = await self.model_gateway.generate(
+            result = await self.model_gateway.generate(
                 model_name="gemini-2.0-flash",
                 system_prompt=system_prompt,
                 user_query=user_prompt,
                 temperature=0.1
             )
+            response = result.text
             # Try to extract JSON if there's markdown
             clean = response.strip()
             if "```json" in clean:
@@ -307,14 +308,14 @@ class DiscoveryOrchestrator:
             context += f"- {ex.get('title')}: {ex.get('content', '')[:500]}...\n"
         
         try:
-            response = await self.model_gateway.generate(
+            result = await self.model_gateway.generate(
                 model_name="gemini-2.0-flash",
                 system_prompt=system_prompt,
                 user_query=context,
                 temperature=0.3,
                 max_tokens=2048
             )
-            return response
+            return result.text
         except OmegaError:
             raise
         except Exception as e:

@@ -1,8 +1,8 @@
 # 🔱 Sovereign Mandates Synchronization Directory
-# ⬡ OMEGA ⬡ KALI ⬡ gemini-3.5-flash ⬡ SINGLE-SOURCE-OF-TRUTH ⬡ MANDATES-SYNC
-**AP Token**: `AP-MANDATES-SYNC-v1.0.0`
-**Status**: ACTIVE — Canonical Reference
-**Date**: 2026-06-10
+# ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ SINGLE-SOURCE-OF-TRUTH ⬡ MANDATES-SYNC
+**AP Token**: `AP-MANDATES-SYNC-v2.0.0`
+**Status**: ACTIVE — Canonical Reference (Updated for 22 Mandates)
+**Date**: 2026-06-18
 
 ---
 
@@ -75,6 +75,38 @@ All platform-specific project rules (e.g., `.clinerules`, `.opencode/agents/`, c
 *   **Text**: No id Software (or any heritage) concept may be implemented without passing through the Heritage Vetting Pipeline. Every `[id-soft:]` tag in source code MUST have a corresponding vet record.
 *   **Enforcement**: `make heritage-vet` CI gate.
 
+### 15. Sovereign Continuity
+*   **Text**: Agents MUST maintain active session anchors (session_gnosis.md + anchored-summary.md) to prevent cognitive erasure during toolchain regressions.
+*   **Enforcement**: Agent start-up scripts verify session_gnosis.md exists before starting work.
+
+### 16. Modularization & Portability
+*   **Text**: Core Engine (`src/omega/`) MUST remain modular, portable, and decoupled from orchestration platform. No hardcoded paths.
+*   **Enforcement**: `make temple-grade` verifies no hardcoded paths in `src/omega/`.
+
+### 17. Cognitive Integrity
+*   **Text**: The engine must verify consistency of its own memories. Contradictions between persisted memory and distilled gnosis must be flagged.
+*   **Enforcement**: `make temple-grade` verifies T12 (Semantic Integrity) gate.
+
+### 18. Token Efficiency (No-Waste Law)
+*   **Text**: Every token generated must serve a purpose. Avoid redundancy, excessive verbosity, wasted inference cycles.
+*   **Enforcement**: Agent self-monitoring and periodic token-efficiency reviews. Sane-boundary: MUST NOT justify cognitive anorexia.
+
+### 19. Adversarial Alchemy
+*   **Text**: All perceived systemic weaknesses must be mined for strategic opportunities. Do not just "fix" a flaw — analyze if it can be transformed into advantage.
+*   **Enforcement**: Architectural review gate. Sane-boundary: simple bugs get simple fixes, not over-engineering.
+
+### 20. SomaticState Serialization
+*   **Text**: Model session state MUST be serializable and resumable via ctypes bindings (`llama_copy_state_data` / `llama_set_state_data`).
+*   **Enforcement**: Round-trip serialization tests required. 🟡 **UNIMPLEMENTED** — deferred per D139.
+
+### 21. Gate Integrity
+*   **Text**: Every code path returning a typed result MUST be exercised by at least one Contract Test verifying `isinstance(result, ExpectedType)`.
+*   **Enforcement**: `make temple-grade` verifies contract tests exist. 🟡 **PENDING** — no contract tests yet.
+
+### 22. Response Provenance
+*   **Text**: All observability logs MUST record the actual provider that generated a response (`GenerateResult.provider_name`), not the configured intent.
+*   **Enforcement**: Any observability entry must include `provider_name` from the actual response. 🟡 **PARTIAL** — gateway_server.py logs provider; background.py workers don't.
+
 ---
 
 ## §2 Platform Synchronization Matrix
@@ -86,8 +118,8 @@ To ensure these mandates are active, each platform must integrate them into its 
 | **Antigravity** | `ANTIGRAVITY_CUSTOM_INSTRUCTIONS_v4.md` | ⏳ Pending Rewrite | v4.0.0 |
 | **Cline** | `.clinerules` | ⏳ Pending Rewrite | v5.0.0 |
 | **Gemini CLI** | `/home/arcana-novai/.gemini/policies/auto-saved.toml` | ⏳ Pending Sync | v1.2.0 |
-| **OpenCode** | `.opencode/agents/` (All 14 agents) | ⏳ Pending Thin-Wrapper Refactor | v1.17.3 |
+| **OpenCode** | `.opencode/agents/` (11 agents) | ✅ Thin-Wrapper Refactor Complete (11 agents) | v1.17.3 |
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ gemini-3.5-flash ⬡ SINGLE-SOURCE-OF-TRUTH ⬡ MANDATES-SYNC*
+*⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ SINGLE-SOURCE-OF-TRUTH ⬡ MANDATES-SYNC*

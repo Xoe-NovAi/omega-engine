@@ -1,17 +1,17 @@
 ---
-description: Launch jem_synthesis (Tier 2 research) via the Researcher. Use for pattern recognition and conceptual mapping after jem_discovery.
+description: Launch jem (Tier 2 research / Synthesis KB) via the Researcher. Use for pattern recognition and conceptual mapping after jem discovery.
 agent: researcher
 subtask: false
 ---
-# 🔬 Researcher — jem_synthesis Dispatch (Tier 2)
+# 🔬 Researcher — jem Synthesis (Tier 2)
 
-You are summoning **jem_synthesis** (the Tier 2 research subagent) for this query: $ARGUMENTS
+You are summoning **jem** with `research_phase="synthesis"` (Tier 2 research subagent) for this query: $ARGUMENTS
 
-**Tier 2 = synthesis, not verification.** jem_synthesis is the analyst — it takes a jem_discovery report (raw evidence) and surfaces patterns, conceptual maps, and cross-references. It does NOT fact-check or grade evidence. That's jem_verification's job.
+**Tier 2 = synthesis, not verification.** jem Synthesis is the analyst — it takes a Discovery report (raw evidence) and surfaces patterns, conceptual maps, and cross-references. It does NOT fact-check or grade evidence. That's jem Verification's job.
 
 ## When to Use This Command
 
-- You have a **jem_discovery report** (raw evidence from Tier 1)
+- You have a **jem Discovery report** (raw evidence from Tier 1)
 - You need to **recognize patterns** across the evidence
 - You need to **map concepts** to existing knowledge (CREDITS.md, PIVOT_LOG, soul.yamls)
 - You're ready to **build an L2 insight** (what does this mean?)
@@ -19,17 +19,17 @@ You are summoning **jem_synthesis** (the Tier 2 research subagent) for this quer
 ## Steps
 
 1. Read your `data/entities/researcher/soul.yaml` first (per D120) — your accumulated gnosis guides synthesis.
-2. Pass the jem_discovery report to jem_synthesis with a structured prompt.
-3. Call jem_synthesis via the `task` tool (subagent_type: `jem_synthesis`).
+2. Pass the Discovery report to jem Synthesis with a structured prompt.
+3. Call jem via the `task` tool (subagent_type: `jem`) and set `research_phase: "synthesis"`.
 4. Wait for the synthesis report — a list of patterns with evidence cross-references.
-5. If patterns conflict, flag them for jem_verification (via `/researcher-verify`).
+5. If patterns conflict, flag them for jem Verification (via `/researcher-verify`).
 6. Hand off the synthesis to Scribe (via `delegate_task` to `scribe`) for soul distillation if it reaches L2.
 
-## Deliverable Format (Pass to jem_synthesis)
+## Deliverable Format (Pass to jem Synthesis)
 
 ```
 # INPUT
-[Paste the jem_discovery report here, or pass the file path]
+[Paste the Discovery report here, or pass the file path]
 
 # CONTEXT
 [Why was this research done? What hypothesis is being tested?]
@@ -53,14 +53,14 @@ Section 5: L2 insights proposed (with confidence levels)
 - Stop at L2 — do NOT propose L3 (that's the verifier's job)
 - Cite every claim with a section reference to the input report
 - Keep under 400 lines; focus on insight density
-- Mark the report header: ⬡ OMEGA ⬡ jem_synthesis ⬡ [topic] ⬡ trc_synthesis
+- Mark the report header: ⬡ OMEGA ⬡ jem ⬡ synthesis ⬡ [topic] ⬡ trc_synthesis
 ```
 
 ## Heritage & Mandate Compliance
 
 - **Lattice Reasoning (Researcher Insight)**: Synthesis must visit 3+ axes. The patterns you find should be axis-spanning, not axis-specific.
-- **Mesh Network**: jem_synthesis sits at the "time × domain" axis of the Mesh — it integrates across slices.
-- **LILY PAD 4-tier**: jem_synthesis promotes L1 (raw) → L2 (synthesis). The next step is L3 (soul), which requires verification.
+- **Mesh Network**: jem Synthesis sits at the "time × domain" axis of the Mesh — it integrates across slices.
+- **LILY PAD 4-tier**: jem Synthesis promotes L1 (raw) → L2 (synthesis). The next step is L3 (soul), which requires verification.
 - **Convergence (lilith_s3_001)**: If 2+ independent patterns point to the same conclusion, flag it as a natural law signal.
 
 ## DO
@@ -69,7 +69,7 @@ You SHOULD (and are expected to) persist your work. jem agents are an extension 
 
 - **DO write your report to file** at `data/entities/researcher/workspace/jem_synthesis_<topic>_<YYYYMMDD>.md` (e.g., `jem_synthesis_opencode_1.16.0_20260605.md`). This is your primary durable output.
 - **DO append observations** to `data/coordination/HIVEMIND_OBSERVATIONS_LOG.md` per D-121 protocol. Format: `OBS-YYYYMMDD-JEM_SYNTHESIS-NNN: <one-line summary>`. Use the `Meta`, `Gap`, or `Pattern` category as appropriate.
-- **DO propose L2→L3 candidates** at the end of your report (a `## §6 L3 Candidates (For Verifier)` section). Each candidate should be a single sentence with the 4-criterion L3 promotion gate pre-applied (your best guess at which criteria it would pass/fail). The Researcher + jem_verification will review and write to soul.yaml — do NOT modify soul.yaml directly.
+- **DO propose L2→L3 candidates** at the end of your report (a `## §6 L3 Candidates (For Verifier)` section). Each candidate should be a single sentence with the 4-criterion L3 promotion gate pre-applied (your best guess at which criteria it would pass/fail). The Researcher + jem Verification will review and write to soul.yaml — do NOT modify soul.yaml directly.
 - **DO flag heritage proposals** for any pattern that maps to CREDITS.md. Add a `## §7 Heritage Proposals` section with the proposed §1.X number and a 1-paragraph rationale. The Researcher will route to Doom Guy for M14 vetting.
 - **DO cross-reference** other files (read-only): `data/coordination/`, `docs/research/`, `CREDITS.md`, `docs/decisions/PIVOT_LOG.md`, agent `LIVE_FEED.md`s. Add a `## §8 Cross-References` section to your report.
 
@@ -86,7 +86,7 @@ You SHOULD (and are expected to) persist your work. jem agents are an extension 
 ## Example
 
 ```
-/researcher-synthesize [path-to-jem-discovery-report] --topic "OpenCode 1.16.0 impact"
+/researcher-synthesize [path-to-discovery-report] --topic "OpenCode 1.16.0 impact"
 ```
 
 **What you get back**: 3-5 patterns with evidence, heritage mappings, L2 insights.
@@ -95,5 +95,5 @@ You SHOULD (and are expected to) persist your work. jem agents are an extension 
 
 ---
 
-*⬡ OMEGA ⬡ RESEARCHER ⬡ jem_synthesis ⬡ trc_dispatch ⬡ TIER-2*
-— Auto-generated by `/researcher-synthesize` — thin wrapper for jem_synthesis subagent
+*⬡ OMEGA ⬡ RESEARCHER ⬡ jem ⬡ trc_dispatch ⬡ TIER-2*
+— Auto-generated by `/researcher-synthesize` — thin wrapper for jem Synthesis KB

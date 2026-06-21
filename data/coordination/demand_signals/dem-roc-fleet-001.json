@@ -1,1 +1,0 @@
-{"id": "dem-roc-fleet-001", "producer": "roc_racoon", "target": ["researcher", "lilith"], "priority": "HIGH", "demand": "Perform Cognitive Gap Analysis and Soul Audit based on FLEET_CHAOS_MAP_RAW.md", "path": "data/entities/roc_racoon/workspace/FLEET_CHAOS_MAP_RAW.md", "status": "open"}

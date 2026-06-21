@@ -4,6 +4,7 @@ AP: AP-EMBEDDINGS-v1.0.0
 
 import hashlib
 import math
+import os
 import re
 import logging
 from abc import ABC, abstractmethod
@@ -11,6 +12,8 @@ from typing import Any, Dict, List, Optional
 
 import anyio
 import httpx
+
+from omega.cvar_table import ZONEID_EMBEDDING, validate_zoneid
 
 logger = logging.getLogger(__name__)
 
@@ -141,15 +144,217 @@ class OllamaEmbeddingProvider(IEmbeddingProvider):
             self._client = None
 
 
+class LocalGGUFEmbeddingProvider(IEmbeddingProvider):
+    """Local GGUF embedding provider via llama-cpp-python.
+
+    [id-soft: doom-1993] Precomputed Lookup — embedding cache integrity
+    Loads an existing GGUF embedding model (e.g. all-MiniLM-L6-v2-f16.gguf)
+    via llama-cpp-python's embedding mode. Runs entirely locally — zero
+    network calls, zero cloud dependencies.
+
+    This is the PRIMARY embedding provider for the local-first chain.
+    No sentence-transformers or PyTorch dependency needed.
+
+    ZONEID: 0x1d4a1d — embedding cache integrity marker
+    """
+
+    def __init__(
+        self,
+        model_path: str = "/media/arcana-novai/omega_library/models/gguf/all-MiniLM-L6-v2-Q4_K_M.gguf",
+        dimension: int = 384,
+        n_ctx: int = 512,
+        n_threads: int = 6,
+        zoneid: int = ZONEID_EMBEDDING,
+    ):
+        self._model_path = os.path.abspath(model_path)
+        self._zoneid = zoneid
+        self._dimension = dimension
+        self._llama: any = None
+        self._n_ctx = n_ctx
+        self._n_threads = n_threads
+        self._loaded = False
+
+        # Validate model path exists before import
+        if not os.path.isfile(self._model_path):
+            logger.warning(
+                "LocalGGUFEmbeddingProvider: model not found at %s — "
+                "provider will raise on get_embedding()",
+                self._model_path,
+            )
+
+    @property
+    def dimension(self) -> int:
+        return self._dimension
+
+    async def _ensure_loaded(self) -> None:
+        """Lazy-load the model on first use (prevents OOM at import time)."""
+        if self._loaded and self._llama is not None:
+            return
+        if not os.path.isfile(self._model_path):
+            raise FileNotFoundError(
+                f"Embedding model not found: {self._model_path}. "
+                "Expected all-MiniLM-L6-v2-f16.gguf at the configured path."
+            )
+
+        # Load via llama-cpp-python in a thread (blocking init)
+        import llama_cpp  # lazy import — heavy module
+
+        def _load():
+            return llama_cpp.Llama(
+                model_path=self._model_path,
+                embedding=True,
+                n_ctx=self._n_ctx,
+                n_threads=self._n_threads,
+                verbose=False,
+            )
+
+        self._llama = await anyio.to_thread.run_sync(_load)
+        self._loaded = True
+        logger.info(
+            "LocalGGUFEmbeddingProvider: loaded %s (dim=%d, n_ctx=%d, threads=%d)",
+            os.path.basename(self._model_path),
+            self._dimension,
+            self._n_ctx,
+            self._n_threads,
+        )
+
+    async def get_embedding(self, text: str) -> List[float]:
+        if not text:
+            return [0.0] * self._dimension
+
+        await self._ensure_loaded()
+
+        def _embed():
+            # llama_cpp.Llama.embed() with newer GGUF returns flat List[float]
+            # (e.g., 384 elements). Older GGUFs return List[List[float]].
+            # Handle both formats transparently.
+            result = self._llama.embed(text)
+            if result and len(result) > 0:
+                # New GGUF: flat list [f1, f2, ...] — return as-is
+                if isinstance(result[0], float):
+                    return list(result)
+                # Old GGUF: nested list [[f1, f2, ...]] — unwrap first
+                return result[0]
+            return [0.0] * self._dimension
+
+        vec = await anyio.to_thread.run_sync(_embed)
+        if len(vec) != self._dimension:
+            logger.warning(
+                "LocalGGUFEmbeddingProvider: expected dim=%d, got %d — padding",
+                self._dimension,
+                len(vec),
+            )
+            if len(vec) < self._dimension:
+                vec = vec + [0.0] * (self._dimension - len(vec))
+            else:
+                vec = vec[: self._dimension]
+        return vec
+
+    async def close(self):
+        """Unload the model to free memory."""
+        self._llama = None
+        self._loaded = False
+        logger.info("LocalGGUFEmbeddingProvider: unloaded")
+
+
+class StaticEmbeddingProvider(IEmbeddingProvider):
+    """Static embedding provider via model2vec (potion models).
+    
+    [id-soft: doom-1993] Precomputed Lookup — static embeddings computed
+    once, looked up via numpy at inference time. ~0.01ms per sentence,
+    zero GPU, zero cloud dependencies.
+    
+    Model: minishlab/potion-base-2M (2M params, 64-dim, ~2MB)
+    Fallback: blobbybob/potion-mxbai-micro (768-dim, ~14MB) for higher quality
+    """
+    
+    def __init__(self, model_name: str = "minishlab/potion-base-2M"):
+        self._model_name = model_name
+        self._model: any = None
+        self._dimension = 0
+        self._loaded = False
+    
+    @property
+    def dimension(self) -> int:
+        return self._dimension
+    
+    async def _ensure_loaded(self):
+        if self._loaded and self._model is not None:
+            return
+        from model2vec import StaticModel
+        
+        def _load():
+            return StaticModel.from_pretrained(self._model_name)
+        
+        self._model = await anyio.to_thread.run_sync(_load)
+        # Attempt to discover dimension via encode
+        test_emb = await anyio.to_thread.run_sync(self._model.encode, "test")
+        self._dimension = test_emb.shape[0] if hasattr(test_emb, 'shape') else len(test_emb)
+        self._loaded = True
+        logger.info(
+            "StaticEmbeddingProvider: loaded %s (dim=%d)",
+            self._model_name,
+            self._dimension,
+        )
+    
+    async def get_embedding(self, text: str) -> List[float]:
+        if not text:
+            return [0.0] * self._dimension
+        await self._ensure_loaded()
+        
+        def _encode():
+            vec = self._model.encode(text)
+            return vec.tolist() if hasattr(vec, 'tolist') else list(vec)
+        
+        return await anyio.to_thread.run_sync(_encode)
+    
+    async def close(self):
+        self._model = None
+        self._loaded = False
+
+
+class GemmaGGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
+    """Google EmbeddingGemma 300M via llama-cpp-python.
+
+    768-dim, 300M params, Q6_K quantized (249MB).
+    Higher quality than MiniLM for the cost of more RAM.
+    Sits in the chain as an intermediate-quality option.
+
+    [id-soft: doom-1993] Precomputed Lookup — embedding cache integrity
+    """
+
+    def __init__(self):
+        super().__init__(
+            model_path="/media/arcana-novai/omega_library/lmstudio-models/local/all/embeddinggemma-300m-Q6_K.gguf",
+            dimension=768,
+        )
+
+
 class EmbeddingManager:
-    """Manages the embedding provider chain (Local -> Fallback).
+    """Manages the embedding provider chain (Local -> Static -> Ollama -> Fallback).
     
     Ensures that the engine always has a way to vectorize text,
     preferring high-quality local models over the sovereign fallback.
+    
+    Default provider chain (local-first):
+        1. LocalGGUFEmbeddingProvider — all-MiniLM via llama-cpp-python (384-dim)
+        2. GemmaGGUFEmbeddingProvider — EmbeddingGemma 300M via llama-cpp-python (768-dim)
+        3. StaticEmbeddingProvider — potion-base-2M via model2vec (64-dim)
+        4. OllamaEmbeddingProvider — nomic-embed-text via Ollama (768-dim)
+        5. SovereignFallbackEmbeddingProvider — deterministic hashing (256-dim)
     """
     
     def __init__(self, providers: Optional[List[IEmbeddingProvider]] = None):
-        self._providers = providers or [SovereignFallbackEmbeddingProvider()]
+        if providers is not None:
+            self._providers = providers
+        else:
+            self._providers = [
+                LocalGGUFEmbeddingProvider(),
+                GemmaGGUFEmbeddingProvider(),
+                StaticEmbeddingProvider(),
+                OllamaEmbeddingProvider(),
+                SovereignFallbackEmbeddingProvider(),
+            ]
         
     async def get_embedding(self, text: str) -> List[float]:
         for provider in self._providers:

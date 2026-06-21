@@ -5,6 +5,7 @@ import json
 import pytest
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
+from omega.oracle.model_gateway import GenerateResult
 
 import anyio
 
@@ -20,16 +21,20 @@ def mock_model_gateway():
         {"name": "gemma-4-31b-it", "provider": "google", "context_window": 256000},
         {"name": "deepseek-v4-flash", "provider": "opencode", "context_window": 1000000},
     ])
-    # ModelGateway.generate() returns a plain string
-    gateway.generate = AsyncMock(return_value=json.dumps({
-        "verified_models": [],
-        "new_models": [
-            {"name": "new-model-1", "provider": "openrouter",
-             "context_window": 128000, "status": "active"}
-        ],
-        "deprecated_models": [],
-        "discrepancies": []
-    }))
+    # ModelGateway.generate() returns a GenerateResult
+    gateway.generate = AsyncMock(return_value=GenerateResult(
+        text=json.dumps({
+            "verified_models": [],
+            "new_models": [
+                {"name": "new-model-1", "provider": "openrouter",
+                 "context_window": 128000, "status": "active"}
+            ],
+            "deprecated_models": [],
+            "discrepancies": []
+        }),
+        provider_name="mock",
+        is_cloud=False
+    ))
     return gateway
 
 
@@ -78,12 +83,12 @@ def worker(mock_model_gateway, mock_observability, mock_guard, worker_config, tm
     return w
 
 
-    @pytest.mark.anyio
-    async def test_worker_initialization(worker):
-        assert worker.cfg["enabled"] is True
-        assert worker.cfg["model"] == "gemma-4-31b-it"
-        assert worker.db_path.exists() is False
-        assert worker._running_lock is not None
+@pytest.mark.anyio
+async def test_worker_initialization(worker):
+    assert worker.cfg["enabled"] is True
+    assert worker.cfg["model"] == "gemma-4-31b-it"
+    assert worker.db_path.exists() is False
+    assert worker._running_lock is not None
 
 
 

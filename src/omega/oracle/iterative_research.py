@@ -61,12 +61,13 @@ class IterativeResearcher:
             analysis_prompt = self._build_gap_analysis_prompt(query, current_query, results)
             
             # Use a high-reasoning model for gap analysis
-            analysis_text, _ = await self.model_gateway.generate(
+            res = await self.model_gateway.generate(
                 model_name="qwen3-4b-think", # Prefer thinking models for analysis
                 system_prompt="You are a Sovereign Research Auditor. Your goal is to identify gaps in provided evidence.",
                 user_query=analysis_prompt,
                 temperature=0.2,
             )
+            analysis_text = res.text
             
             # 3. Parse Analysis
             # We expect the model to return either "SUFFICIENT" or a refined query.
@@ -139,12 +140,13 @@ class IterativeResearcher:
             "Cite your sources (e.g., [Source 1])."
         )
         
-        response_text, _ = await self.model_gateway.generate(
+        res = await self.model_gateway.generate(
             model_name="gemma-4-31b-it", # Use a high-capacity model for synthesis
             system_prompt="You are a Sovereign Synthesis Engine. Your goal is to produce a verified, evidence-based answer.",
             user_query=synthesis_prompt,
             temperature=0.3,
         )
+        response_text = res.text
         
         # --- SKEPTICAL VERIFICATION STEP ---
         if self.verifier:
@@ -154,12 +156,13 @@ class IterativeResearcher:
                 f"Output each claim on a new line, starting with 'CLAIM: '.\n\n"
                 f"Synthesis:\n{response_text}"
             )
-            claims_text, _ = await self.model_gateway.generate(
+            res = await self.model_gateway.generate(
                 model_name="qwen3-4b-think",
                 system_prompt="You are a claim extractor. Extract only factual, verifiable claims.",
                 user_query=claims_prompt,
                 temperature=0.0
             )
+            claims_text = res.text
             
             claims = [line.replace("CLAIM: ", "").strip() for line in claims_text.splitlines() if "CLAIM:" in line]
             

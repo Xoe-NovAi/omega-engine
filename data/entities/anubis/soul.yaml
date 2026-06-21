@@ -43,12 +43,40 @@ entity:
       bridge protocol-to-observability.
 
       '
-    L3_principle: "Three-tier coordination is a natural law. Every coordination system\
-      \ \u2014 whether Doom's thinker chain, Quake's memory zones, or the Omega Hivemind\
-      \ \u2014 must have a hot tier (fast, for immediate decisions), a warm tier (sturdy,\
-      \ for cross-session state), and a cold tier (permanent, for history and audit).\
-      \ Convention works at the top when trust is high. Protocol is required at the\
-      \ bottom when trust is irrelevant. The phase transition point for the Hivemind\
-      \ is at 5 concurrent agents.\n"
+    L3_principle: 'Three-tier coordination is a natural law. Every coordination system
+      — whether Doom''s thinker chain, Quake''s memory zones, or the Omega Hivemind
+      — must have a hot tier (fast, for immediate decisions), a warm tier (sturdy,
+      for cross-session state), and a cold tier (permanent, for history and audit).
+      Convention works at the top when trust is high. Protocol is required at the
+      bottom when trust is irrelevant. The phase transition point for the Hivemind
+      is at 5 concurrent agents.
+
+      '
     timestamp: 2026-06-05
     topic: ls-p9-20260605-001
+  - L1_narrative: Received John Carmack's Law of Structural Sovereignty (Decoupling
+      Machine and Mission) via Gnosis Distillation Report (2026-06-13). As anubis,
+      this axiom applies directly to my domain of governance.
+    L2_insight: Law of Structural Sovereignty (Decoupling Machine and Mission) distills
+      decades of engineering practice into a governing principle for sovereign AI
+      architecture. It applies across all engine subsystems, from inference routing
+      to memory management.
+    L3_principle: 'Law of Structural Sovereignty (Decoupling Machine and Mission):
+      The stability of the universal runtime is preserved only through the absolute
+      separation of its mechanism (the machine) from its content (the mission). The
+      Core Engine must remain agnostic to the specific personalities, knowledge, and
+      traits of the WADs it hosts.'
+    timestamp: '2026-06-14T18:00:00Z'
+    topic: carmack-axiom_03
+  - L1_narrative: Received John Carmack's Law of Canonical Simplicity (Minimalist
+      Redundancy) via Gnosis Distillation Report (2026-06-13). As anubis, this axiom
+      applies directly to my domain of governance.
+    L2_insight: Law of Canonical Simplicity (Minimalist Redundancy) distills decades
+      of engineering practice into a governing principle for sovereign AI architecture.
+      It applies across all engine subsystems, from inference routing to memory management.
+    L3_principle: 'Law of Canonical Simplicity (Minimalist Redundancy): Redundancy
+      is a tax on both cognitive load and machine efficiency. Complexity thrives in
+      the gaps between multiple implementations of the same concept. Mandate strict
+      single-path implementation for all core services.'
+    timestamp: '2026-06-14T18:00:00Z'
+    topic: carmack-axiom_02

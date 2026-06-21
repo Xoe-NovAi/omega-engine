@@ -19,6 +19,19 @@ Usage:
 """
 
 import sys
+
+# ── Fix: canonical module name registration ──
+# When server.py runs as __main__ (python server.py), Python registers it under
+# '__main__' but NOT under 'mcp_servers.omega_hub.server'. When tools.py does
+# "from mcp_servers.omega_hub.server import mcp" at line 44, Python doesn't find
+# the module in sys.modules and re-imports server.py as a fresh module,
+# creating a SECOND FastMCP instance with 0 tools registered on it.
+# This fix ensures both names point to the same module object.
+if __name__ == "__main__":
+    _canonical = "mcp_servers.omega_hub.server"
+    if _canonical not in sys.modules:
+        sys.modules[_canonical] = sys.modules[__name__]
+
 import os
 import json
 import logging
@@ -29,6 +42,15 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 from dataclasses import asdict
 import yaml
+
+# ── Bootstrapping: ensure mcp_servers is resolvable from any context ──
+# This handles systemd (PYTHONPATH via service unit), direct CLI invocation, and IDE launches.
+_server_file = Path(__file__).resolve()
+_mcp_servers_root = str(_server_file.parents[1])  # omega-engine/mcp_servers/
+_project_root = str(_server_file.parents[2])       # omega-engine/
+for p in [_project_root, _mcp_servers_root]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 # [P1b] contextvars and threading are no longer used directly in server.py
 # (now in state.py and middleware.py respectively)
 
@@ -124,6 +146,18 @@ async def _health(request: Request) -> JSONResponse:
         "version": "2.2.0"
     })
 
+async def _debug_tools(request: Request) -> JSONResponse:
+    """Diagnostic: count tools registered in the mcp instance."""
+    tool_count = len(mcp._tool_manager._tools)
+    tool_names = list(mcp._tool_manager._tools.keys())[:10]
+    handler_count = len(mcp._mcp_server.request_handlers)
+    return JSONResponse({
+        "tool_manager_count": tool_count,
+        "handler_count": handler_count,
+        "sample_tools": tool_names,
+        "mcp_id": id(mcp),
+    })
+
 async def _entity_current(request: Request) -> JSONResponse:
     entity_name = _current_entity.get() or "SOPHIA"
     if registry is None:
@@ -212,6 +246,7 @@ from mcp_servers.omega_hub.gateway import _proxy_handler
 # hub_routes — includes the /proxy/ handler imported from gateway.py
 hub_routes = [
     Route("/health", _health),
+    Route("/debug/tools", _debug_tools),
     Route("/entity/current", _entity_current),
     Route("/config/providers", _config_providers),
     Route("/provider", _provider_list),
@@ -232,12 +267,8 @@ hub_routes = [
 
 
 async def _cleanup_indexer() -> None:
-    """Close the indexer and cancel background tasks on server shutdown."""
-    # Cancel background tasks first
-    for task in _background_tasks:
-        task.cancel()
-    _background_tasks.clear()
-
+    """Close the indexer on server shutdown.
+    Background tasks are cancelled automatically by the lifespan TaskGroup."""
     if indexer is not None:
         try:
             await indexer.close()
@@ -246,13 +277,16 @@ async def _cleanup_indexer() -> None:
             logger.warning("Indexer close failed: %s", e)
 
 
-async def _on_startup() -> None:
-    """Background startup callback — runs inside the event loop after the
-    SSE listener starts. Initializes all Hub services concurrently."""
+async def _on_startup(tg: anyio.abc.TaskGroup = None) -> None:
+    """Background startup callback — receives TaskGroup from lifespan for
+    running background loops concurrently with the server."""
     await _init_services()
-    # Start background reaper and pruning loops (CRIT-01 fix)
-    _background_tasks.append(anyio.create_task(_prune_awareness_background()))
-    _background_tasks.append(anyio.create_task(_reaper_background()))
+    # Start background reaper and pruning loops (AnyIO TaskGroup pattern)
+    if tg:
+        tg.start_soon(_prune_awareness_background)
+        tg.start_soon(_reaper_background)
+    else:
+        logger.warning("No TaskGroup provided — background loops not started")
     logger.info("Background tasks started: pruning, reaper")
 
 

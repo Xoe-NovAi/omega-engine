@@ -28,7 +28,11 @@ echo "🛠️  Initiating automatic reclamation via podman unshare..."
 
 # 2. Reclaim ownership
 if command -v podman &> /dev/null; then
-    podman unshare chown -R "$HOST_UID:$HOST_GID" "$PROJECT_ROOT"
+    # INSIDE podman unshare: host UID 1000 maps to namespace UID 0.
+    # Using "$HOST_UID" here would try to chown to 1000 inside the namespace,
+    # which is WRONG — it would set ownership to subuid 101000 on the host.
+    # Use 0:0 to match the mapped namespace root.
+    podman unshare chown -R 0:0 "$PROJECT_ROOT"
     echo "✓ Reclamation command executed."
 else
     echo "❌ Error: podman not found. Cannot reclaim files automatically."
@@ -36,10 +40,11 @@ else
 fi
 
 # 3. Final Verification
-FINAL_CHECK=$(find "$PROJECT_ROOT" -maxdepth 4 -not -user "$HOST_UID" -not -path "*/.git/*" -not -path "*/.venv/*" 2>/dev/null)
+# Check that files are owned by namespace root (UID 0) = host UID 1000
+FINAL_CHECK=$(find "$PROJECT_ROOT" -maxdepth 4 -not -user 0 -not -path "*/.git/*" -not -path "*/.venv/*" 2>/dev/null)
 
 if [ -z "$FINAL_CHECK" ]; then
-    echo "✅ Drift successfully remediated. Ownership restored to $HOST_UID."
+    echo "✅ Drift successfully remediated. Ownership restored to namespace root (host UID 1000)."
 else
     echo "❌ Reclamation failed. Some files still have incorrect ownership."
     echo "$FINAL_CHECK"

@@ -46,6 +46,19 @@ from omega.errors import BrakeViolationError
 
 logger = logging.getLogger(__name__)
 
+def _parse_comma_env(raw: str) -> List[str]:
+    """Parse a comma-separated environment variable safely.
+
+    Handles edge cases:
+    - Empty string or whitespace-only → returns empty list
+    - Trailing/leading commas → filtered out
+    - Whitespace around items → stripped
+    """
+    if not raw or not raw.strip():
+        return []
+    return [item.strip() for item in raw.split(",") if item.strip()]
+
+
 class BackgroundWorker:
     """
     Manages a pool of concurrent background research tasks.
@@ -79,21 +92,21 @@ class BackgroundWorker:
             async with self.semaphore:
                 # 1. Sensing: Use the key-rotating pool
                 # We use the 'google-keypool' provider explicitly
-                raw_sensing = await self.gateway.generate(
-                    model=model,
+                result = await self.gateway.generate(
+                    model_name=model,
                     system_prompt=f"Sovereign Sensing Task. Context: {context}",
                     user_query=prompt,
-                    provider_override="google-keypool"
+                    trace_id=task_id,
                 )
                 
-                if not raw_sensing:
+                if not result.text:
                     raise InferenceError(message="Sensing returned no data", trace_id=task_id)
 
                 # 2. Sovereign Gold Filter Pipeline
                 # Step A: Sentry Triage (Fast discard)
                 # Step B: Local Distillation (Gemma 4 L2/L3)
                 # Step C: Gold Synthesis (Final assembly)
-                gold_sheet = await self._apply_gold_filter(raw_sensing, task_id)
+                gold_sheet = await self._apply_gold_filter(result.text, task_id)
                 
                 # 3. Hivemind Registration
                 from omega.hub import hivemind_post_context # hypothetical import, check actual
@@ -139,7 +152,8 @@ class Orchestrator:
         self.registry = CapabilityRegistry()
         
         # Initialize Background Worker
-        keys = os.environ.get("GOOGLE_API_KEYS", "").split(",")
+        keys_raw = os.environ.get("GOOGLE_API_KEYS", "")
+        keys = _parse_comma_env(keys_raw)
         self.background_worker = BackgroundWorker(
             model_gateway=ModelGateway(health_monitor=get_health_monitor()),
             api_keys=keys

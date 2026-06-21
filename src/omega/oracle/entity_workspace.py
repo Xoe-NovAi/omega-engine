@@ -48,7 +48,23 @@ SOUL_FILE_HEADER = "# 🔱 Omega Engine — Entity Soul File\n"
 
 # Usually omega-engine/data/entities/
 BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
-ENTITIES_DATA_DIR = BASE_DIR / os.getenv("OMEGA_DATA_DIR", "data") / "entities"
+
+
+def _get_entities_data_dir() -> Path:
+    """Resolve entities data directory at call time.
+    
+    Reads OMEGA_DATA_DIR from the environment on every call, rather than
+    evaluating it once at module import time. This allows tests using
+    monkeypatch.setenv("OMEGA_DATA_DIR", tmp_path) to properly isolate
+    entity workspace scaffolding without leaking into production.
+    
+    The ENTITIES_DATA_DIR constant below is preserved for backward compatibility
+    but is deprecated — prefer _get_entities_data_dir() for all new code.
+    """
+    return BASE_DIR / os.getenv("OMEGA_DATA_DIR", "data") / "entities"
+
+
+ENTITIES_DATA_DIR = _get_entities_data_dir()
 
 
 class SovereignAuditLog:
@@ -102,7 +118,7 @@ class EntityWorkspaceManager:
             Path to the entity's root workspace directory.
         """
         safe_name = name.lower().replace(" ", "_").replace("'", "")
-        workspace_dir = ENTITIES_DATA_DIR / safe_name
+        workspace_dir = _get_entities_data_dir() / safe_name
         
         # Create directories
         knowledge_dir = workspace_dir / "knowledge"
@@ -250,13 +266,13 @@ class EntityWorkspaceManager:
         Soul (Who), Environment (Where), State (What), and Mission (Why).
         """
         safe_name = name.lower().replace(" ", "_").replace("'", "")
-        soul_file = ENTITIES_DATA_DIR / safe_name / "soul.yaml"
+        soul_file = _get_entities_data_dir() / safe_name / "soul.yaml"
         
         if not soul_file.exists():
             return f"You are {name}, an expert assistant. Mission: {mission or 'General Assistance'}."
             
         # Validate soul using R-10 schema
-        validator = SoulValidator(ENTITIES_DATA_DIR)
+        validator = SoulValidator(_get_entities_data_dir())
         is_valid, data = await anyio.to_thread.run_sync(validator.validate, name)
         
         if not is_valid:
@@ -357,7 +373,7 @@ class EntityWorkspaceManager:
         """
         def _sync_update():
             safe_name = name.lower().replace(" ", "_").replace("'", "")
-            workspace_dir = ENTITIES_DATA_DIR / safe_name
+            workspace_dir = _get_entities_data_dir() / safe_name
             soul_file = workspace_dir / "soul.yaml"
 
             if not soul_file.exists():
@@ -376,7 +392,7 @@ class EntityWorkspaceManager:
                 data["entity"].update(updates)
 
                 # Validate updated soul before saving
-                validator = SoulValidator(ENTITIES_DATA_DIR)
+                validator = SoulValidator(_get_entities_data_dir())
                 try:
                     validator.validate_dict(data)
                 except SoulValidationError as e:

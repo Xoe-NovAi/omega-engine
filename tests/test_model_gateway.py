@@ -88,7 +88,7 @@ async def test_model_gateway_fallback_chain(monkeypatch):
         max_tokens=100
     )
     
-    assert result[0] == "Success from P3"
+    assert result.text == "Success from P3"
     assert p1.generate.called
     assert p2.generate.called
     assert p3.generate.called
@@ -191,7 +191,7 @@ async def test_none_response_trips_breaker(monkeypatch):
         max_tokens=100,
     )
     # Provider returned nothing → fallback response
-    assert result[1] is False, "None response should return fallback (success=False)"
+    assert result.is_cloud is False, "None response should return fallback (success=False)"
     breaker = hm._breakers["silent_provider"]
     assert breaker.failure_count == 1, f"First None response should record 1 failure, got {breaker.failure_count}"
     assert breaker.state == CircuitState.CLOSED, "One failure should not open the circuit yet"
@@ -239,9 +239,9 @@ async def test_successful_response_keeps_breaker_closed(monkeypatch):
         temperature=0.7,
         max_tokens=100,
     )
-
-    assert result[0] == "Real response from provider"
-    assert result[1] is False  # not cloud
+    
+    assert result.text == "Real response from provider"
+    assert result.is_cloud is False  # not cloud
     breaker = hm._breakers["good_provider"]
     assert breaker.failure_count == 0, "Successful response must not count as failure"
     assert breaker.state == CircuitState.CLOSED, "Successful response must keep circuit CLOSED"

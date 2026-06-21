@@ -287,14 +287,16 @@ class ModelUpdaterWorker:
     ) -> Dict:
         """Use Gemma 4-31B to verify and enrich the fetched model data."""
         prompt = self._build_research_prompt(provider_data)
+        response_str = ""
         async with self.guard.lock():
-            response_str = await self.model_gateway.generate(
+            result = await self.model_gateway.generate(
                 model_name=self.cfg.get("model", "gemma-4-31b-it"),
                 system_prompt="You are a model database researcher. Return ONLY valid JSON.",
                 user_query=prompt,
                 temperature=0.1,
                 max_tokens=4096,
             )
+            response_str = result.text
         # Parse the response string as JSON (may be wrapped in ```json ... ```)
         try:
             content = response_str.strip()
@@ -305,9 +307,10 @@ class ModelUpdaterWorker:
         except OmegaError:
             raise
         except Exception as e:
+            preview = response_str[:200] if response_str else "<no response>"
             logger.error(f"Gemma JSON parse failure: {e}", exc_info=True)
             raise RuntimeError(
-                f"Gemma returned non-JSON content: {response_str[:200]}... Error: {e}"
+                f"Gemma returned non-JSON content: {preview}... Error: {e}"
             ) from e
 
     def _build_research_prompt(self, provider_data: List[Dict]) -> str:
