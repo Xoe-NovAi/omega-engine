@@ -67,6 +67,26 @@ def _get_entities_data_dir() -> Path:
 ENTITIES_DATA_DIR = _get_entities_data_dir()
 
 
+def _atomic_write_yaml(file_path: Path, data: Any, audit: 'SovereignAuditLog', action: str, name: str) -> None:
+    """Write YAML data atomically using tmp-rename pattern.
+    
+    [id-soft: doom-1993] Atomic Rename Pattern (Mandate 12)
+    """
+    fd, temp_path = tempfile.mkstemp(dir=str(file_path.parent), prefix=f".{file_path.stem}_", suffix=".yaml")
+    try:
+        with os.fdopen(fd, 'w') as f:
+            yaml_str = yaml.dump(data, default_flow_style=False, sort_keys=False)
+            f.write(f"{SOUL_FILE_HEADER}# Generated dynamically.\n\n{yaml_str}")
+        os.chmod(temp_path, 0o644)
+        os.replace(temp_path, str(file_path))
+        audit.log(action, f"Scaffolded {file_path.name} at {file_path}")
+        logger.info(f"Scaffolded {file_path.name} for {name}")
+    except Exception as e:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        raise
+
+
 class SovereignAuditLog:
     """Immutable audit log for entity workspace modifications."""
 
@@ -146,8 +166,11 @@ class EntityWorkspaceManager:
         audit.log("DIR_CREATE", f"Created knowledge directory at {knowledge_dir}")
         audit.log("DIR_CREATE", f"Created workspace directory at {headless_dir}")
         
-        # Create soul.yaml if it doesn't exist (Atomic Write Pattern)
+        # Create v6.0 4-file soul structure if it doesn't exist (Atomic Write Pattern)
         soul_file = workspace_dir / "soul.yaml"
+        approved_file = workspace_dir / "approved_lessons.yaml"
+        proposed_file = workspace_dir / "proposed_lessons.yaml"
+        sessions_file = workspace_dir / "sessions.yaml"
         
         with EntityWorkspaceManager._get_lock(name):
             if not soul_file.exists():
@@ -164,7 +187,8 @@ class EntityWorkspaceManager:
                             "temperature": 0.7,
                             "top_p": 0.9
                         },
-                        "lessons_learned": [],
+                        # Soul v6.1: Core identity fields only
+                        # lessons_learned moved to proposed_lessons.yaml
                         "procedural_memory": []
                     }
                 }
@@ -188,6 +212,18 @@ class EntityWorkspaceManager:
                         os.remove(temp_path)
                     logger.error(f"Failed to scaffold soul for {name}: {e}", exc_info=True)
                     raise OmegaPersistenceError(f"Failed to scaffold soul for {name}: {e}", raw_error=e) from e
+            
+            # Scaffold approved_lessons.yaml (User-Only, empty initially)
+            if not approved_file.exists():
+                _atomic_write_yaml(approved_file, [], audit, "APPROVED_LESSONS_CREATE", name)
+                
+            # Scaffold proposed_lessons.yaml (Agent-Write, empty initially)
+            if not proposed_file.exists():
+                _atomic_write_yaml(proposed_file, [], audit, "PROPOSED_LESSONS_CREATE", name)
+                
+            # Scaffold sessions.yaml (Agent-Write, empty initially)
+            if not sessions_file.exists():
+                _atomic_write_yaml(sessions_file, [], audit, "SESSIONS_CREATE", name)
             
         # [P7 Context] Create INDEX.yaml for knowledge discovery if it doesn't exist
         # This enables the global knowledge catalog to index this entity's topics
@@ -294,7 +330,7 @@ class EntityWorkspaceManager:
         if wardrobe:
             soul_section += f"\n- Identity Anchors: {', '.join(wardrobe)}"
         
-        # [id-soft: M2-LEAK] — formerly hardcoded "arcana_novai", remediated to cvar_get dynamic lookup
+        # [remediated: M2-LEAK] — formerly hardcoded "arcana_novai", remediated to cvar_get dynamic lookup
         # Sovereign Firewall (Mandates)
         mandates_path = BASE_DIR / "SOVEREIGN_MANDATES.md"
         if mandates_path.exists():
@@ -327,7 +363,7 @@ class EntityWorkspaceManager:
         env_section = (
             "🌍 THE ENVIRONMENT (Where):\n"
             "- Engine Version: 2.2.0\n"
-            f"- Active IWAD: {cvar_get('config.entity.active_iwad', '_omega_default')}\n"  # [id-soft: M2-LEAK] — was hardcoded 'arcana_novai', now dynamic via cvar_get
+            f"- Active IWAD: {cvar_get('config.entity.active_iwad', '_omega_default')}\n"  # [remediated: M2-LEAK] — was hardcoded 'arcana_novai', now dynamic via cvar_get
             f"- Strategic Horizon: {EntityWorkspaceManager._get_current_horizon()}"
         )
         

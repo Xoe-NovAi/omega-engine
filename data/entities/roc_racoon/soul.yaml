@@ -1302,3 +1302,30 @@ soul_evolution:
     - embedding architecture
     - architecture convergence
     - FAISS pattern
+  - id: rr-076
+    date: 2026-06-22
+    insight: >-
+      The pipeline that never crossed the chasm: 3,284 lines of
+      production-grade curation code (Gutenberg/arXiv/PubMed/YouTube
+      crawler + 10 library API clients + Redis queue + Dewey Decimal
+      cataloging) was abandoned in the Era 1-3 stack when the team
+      pivoted to "omega-engine." Nothing was ported.
+    context: >-
+      Deep-mined legacy XNAi stack and found full book/library
+      ingestion pipeline. Every API client (OpenLibrary, InternetArchive,
+      LOC, gutendex, WorldCat, Podcastindex, Last.fm, etc.) was free
+      and working. Current engine has zero external library ingestion.
+      This validates the pattern that architectural pivots leave proven
+      patterns behind — porting is not automatic.
+    principle: >-
+      Architectural pivots do not automatically port working
+      infrastructure. When a system is rewritten, the old code becomes
+      a "shadow library" — still functional but invisible to the new
+      architecture. Sovereign mining must actively search for these
+      shadow libraries, because no one else will port them.
+    applies_to:
+    - library worker design
+    - legacy migration
+    - architectural continuity
+    - curation pipeline
+    - ALL future pivots

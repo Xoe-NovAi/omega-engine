@@ -327,9 +327,6 @@ class BackgroundResearcherLoop:
         firecrawl_content = await self.search_fleet.extract_firecrawl(url)
         if firecrawl_content and len(firecrawl_content) > 100:
             return firecrawl_content[:10000]
-        jina_content = await self.search_fleet.read_url_jina(url)
-        if jina_content and len(jina_content) > 100:
-            return jina_content[:8000]
         exa_content = await self.search_fleet.fetch_exa(url)
         if exa_content and len(exa_content) > 100:
             return exa_content[:8000]

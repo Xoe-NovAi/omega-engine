@@ -33,7 +33,7 @@ class SovereignSearchService:
     T1: WebSearch (Broad Discovery)
     T2: Firecrawl (Deep Extraction)
     T3: Omega Hub (Sovereign Gnosis)
-    T4: Neural Search (Exa/Tavily)
+     T4: Neural Search (Exa)
     """
 
     def __init__(

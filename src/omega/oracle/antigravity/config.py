@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 # ── Antigravity Configuration ──
 # [Mandate 16: Modularization & Portability] — all paths configurable, no hardcoded defaults.
 # Reads from environment variables or explicit constructor args.

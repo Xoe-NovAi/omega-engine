@@ -6,13 +6,7 @@
 
 import logging
 from omega.errors import (
-    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
-    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
-    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
-    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
-    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
-    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
-    EntityTombstonedError, ModelNotFoundError,
+    OmegaError,
 )
 from typing import Optional
 
@@ -21,7 +15,7 @@ import httpx
 logger = logging.getLogger(__name__)
 
 SEARXNG_URL = "http://localhost:8017"
-DEFAULT_ENGINES = ["brave", "wikipedia", "arxiv", "semantischolar"]
+DEFAULT_ENGINES = ["google", "duckduckgo", "brave", "wikipedia", "arxiv", "semantic scholar"]
 MAX_RESULTS = 10
 TIMEOUT = 10.0
 
@@ -66,6 +60,8 @@ class SearXNGClient:
                     "language": "auto",
                     "categories": "general",
                 }
+                if engines:
+                    form_data["engines"] = ",".join(engines)
                 resp = await client.post(
                     f"{self.base_url}/search",
                     data=form_data,  # form-encoded, NOT json!
@@ -78,7 +74,8 @@ class SearXNGClient:
         except httpx.RequestError as e:
             logger.warning(f"SearXNG request failed: {e}")
             return []
-        except OmegaError:
+        except OmegaError as e:
+            logger.warning(f"SearXNG OmegaError: {e}")
             return []
         except Exception as e:
             logger.error(f"SearXNG search error: {e}", exc_info=True)

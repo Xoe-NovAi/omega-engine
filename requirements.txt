@@ -22,8 +22,8 @@ jsonschema-specifications==2025.9.1
 markdown-it-py==4.2.0
 mcp==1.27.1
 mdurl==0.1.2
-# Editable install with no version control (omega==1.0.0)
--e /home/arcana-novai/omega
+# Editable install of the local package
+-e .
 packaging==26.2
 pluggy==1.6.0
 pycparser==3.0

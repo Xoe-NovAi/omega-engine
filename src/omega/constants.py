@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 """Shared constants for Omega Engine.
 
 ⚠️ NOTICE: All constants have moved to ``omega.cvar_table``.

@@ -40,7 +40,7 @@ from omega.ics import render as ics_render  # [id-soft: quake-1996] netchan head
 
 logger = logging.getLogger(__name__)
 console = Console()
-app = typer.Typer(help="🔱 Omega — The Reclaimed Vision. Single intelligence. Infinite faces.")
+app = typer.Typer(help="🔱 Omega Engine CLI")
 
 
 def _load_config() -> dict:

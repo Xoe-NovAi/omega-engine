@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 # ── Antigravity OAuth Client ──
 # Handles OAuth token refresh and API calls to Google's internal Unified Gateway.
 # [id-soft: doom-1993] Sovereign-Siloing — this module is self-contained, no cross-stack imports.

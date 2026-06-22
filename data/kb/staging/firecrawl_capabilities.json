@@ -1,0 +1,53 @@
+{
+  "tool": "Firecrawl",
+  "version": "v2",
+  "capabilities": {
+    "discovery": {
+      "endpoint": "/map",
+      "description": "Fast URL discovery via sitemaps and SERP",
+      "cost": "1 credit/call",
+      "best_for": ["Site mapping", "Targeted URL discovery"]
+    },
+    "extraction": {
+      "endpoint": "/scrape",
+      "description": "Single page content extraction",
+      "formats": ["markdown", "html", "rawHtml", "links", "images", "summary", "branding", "audio", "video", "json", "query"],
+      "cost": "1 credit/page + format add-ons",
+      "best_for": ["Known URLs", "Structured data extraction"]
+    },
+    "bulk_acquisition": {
+      "endpoint": "/crawl",
+      "description": "Recursive domain scraping",
+      "cost": "1 credit/page + format add-ons",
+      "best_for": ["Full site mirrors", "Domain-wide data collection"]
+    },
+    "autonomous_extraction": {
+      "endpoint": "/agent",
+      "description": "AI-driven multi-page extraction (FIRE-1)",
+      "cost": "Agentic (High)",
+      "best_for": ["Complex navigation", "Multi-page synthesis"]
+    },
+    "dynamic_interaction": {
+      "endpoint": "/interact",
+      "description": "Stateful browser sessions",
+      "modes": ["prompt", "node", "python", "bash"],
+      "cost": "Per session minute",
+      "best_for": ["Auth bypass", "Form filling", "Dynamic content"]
+    },
+    "monitoring": {
+      "endpoint": "/monitor",
+      "description": "Recurring checks with change detection",
+      "features": ["Meaningful Change Judging", "JSON Change Tracking"],
+      "cost": "Underlying scrape cost + 1 credit/judged page",
+      "best_for": ["Competitor tracking", "Doc monitoring"]
+    }
+  },
+  "advanced_options": {
+    "waitFor": "Delay before scrape",
+    "actions": "Sequential browser steps (click, write, press, etc.)",
+    "branding": "Design system extraction",
+    "lockdown": "Isolated execution",
+    "mobile": "Mobile emulation",
+    "onlyMainContent": "Boilerplate removal"
+  }
+}

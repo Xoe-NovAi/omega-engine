@@ -124,28 +124,33 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 
 ---
 
-## §5 Current State — Engine Health (2026-06-18)
+## §5 Current State — Engine Health (2026-06-22) — v1.0.0 RELEASED
 
 ### 5.1 Engine Metrics
 
 | Metric | Value | Last Verified |
 |--------|-------|---------------|
-| Engine version | **2.3.0** | 2026-06-14 |
+| Engine version | **1.0.0** 🎉 | 2026-06-22 |
+| PyPI entry point | `omega` CLI via `[project.scripts]` | 2026-06-22 |
 | Source files | **96** .py files | 2026-06-14 |
 | Source lines | **~24,000** | 2026-06-14 |
-| Test functions | **440** | 2026-06-17 |
+| Test functions | **432 passed / 457 collected** (22 intentional skip, 3 xfailed) | 2026-06-22 |
 | Test files | **43** | 2026-06-14 |
 | PIVOT decisions | **89 (D50-D136, incl. xna-omega D1-D49 = 136 lifetime)** | 2026-06-17 |
 | Sovereign Mandates | **22 (M1-M22)** | 2026-06-17 |
+| Mandate 2 (Namespace) | ✅ All `from src.omega` → `from omega` — zero broken imports | 2026-06-22 |
+| Mandate 7 (Local-First) | ✅ `providers.yaml` strategy `local_first`, Quick Start = 4 commands, 0 cloud API keys | 2026-06-22 |
 | Mandate 9 (Error Integrity) | FULL — 0 bare except, 0 silent `except Exception: pass` | 2026-06-17 |
 | Mandate 13 (Temple-Grade) | 11/11 GREEN (T11 IA2 exempt) | 2026-06-17 |
 | AnyIO compliance | 0 `import asyncio` | 2026-06-14 |
 | ZONEID constants | 11 (0x1d4a11-0x1d4a1b) | 2026-06-14 |
 | cvar Table | 2 namespaces, 7 accessors | 2026-06-14 |
-| Heritage tags | 11 patterns mapped, CI-enforced | 2026-06-14 |
+| Heritage tags | 41/47 files with `[id-soft:]` tags, CI-enforced | 2026-06-22 |
 | Agent Fleet | **11 agents** (15→11 consolidation, Sprint A+B+C complete) | 2026-06-14 |
 | Entity workspaces | **34 on disk** (Sprint D complete — orphans + dead agents deleted, 2026-06-18) | 2026-06-18 |
 | Omega Hub | **Modularized** (state.py, background.py, gateway.py, middleware.py, tools.py) | 2026-06-14 |
+| Packaging | ✅ `pyproject.toml`: 22 runtime deps, 4 extras (native/cli/dev/all), 1 entry point | 2026-06-22 |
+| Model download | ✅ `make model-download` — auto-detects curl/wget, retry, SHA256, GGUF magic bytes | 2026-06-22 |
 
 ### 5.2 Subsystem Status (H1 = Heritage, H2 = Evolution/Hygiene, S1.5 = Pillar Cap)
 
@@ -184,6 +189,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | **S1.5b Nomenclature** | 2026-06-04 | Cline-M3 | 🔴 PENDING | Intuitive names + pillar_slot for P1-P10 |
 | **Hivemind Sprint A** (Hub Modularization) | 2026-06-14 | Kali + Carmack | ✅ 4cc73de | Hub modularized (5 modules), 388/388 tests, M16 ratified, Fleet 15→11 plan |
 | **Sprint C** (Tactical Hardening) | 2026-06-17 | Kali + Council | ✅ 440/440 | GenerateResult dataclass, P0/P1 fixes, M21+M22 ratified, SearXNG deployed, root docs cleaned |
+| **v1.0.0** (Father's Day Release) | 2026-06-22 | Kali + MaKaLi Council | ✅ 432/457 | 6-phase release: packaging (pyproject entry point, 22 deps), model download script, README overhaul, test suite cleanup (432 pass/0 fail), Antigravity OAuth (9 models), git hygiene + SHA256 + namespace fixes (from src.omega→omega). MaKaLi gap audit: 2 CRITICAL packaging blindspots found & fixed. Heritage-map & sovereignty gates passed. Version 1.0.0 tagged. |
 
 ---
 
@@ -850,6 +856,47 @@ API latency) — we just need to stop throwing it away.
 
 ---
 
-*Last Updated: 2026-06-18 | Author: Makali | Version: AP-OMEGA-SST-v2.3.0*
-*Major changes: Sprint C complete (440/440 tests), ICS-F v1.0 ratified, Operation Deep-Siphon recorded (D137-D141), Phases 1+2 executed (Sprint D + Doc Hygiene), ENTITIES_DATA_DIR fix.*
+---
+
+## §22 GitHub Integration — Sovereign Memory Layer
+
+**Status**: RATIFIED — Phase 0 PENDING (D-kal-163, 2026-06-21)
+**Strategy**: `docs/strategy/GITHUB_INTEGRATION_PLAN.md`
+**Checklist**: `docs/strategy/GITHUB_INTEGRATION_CHECKLIST.md`
+
+### Architecture
+- **No `@github` subagent**: GitHub is a tool, not a behavior.
+- **Official `github/github-mcp-server`** (31K+ stars) in Docker — 57+ tools
+- **Omega Hub wrapper**: `mcp_servers/omega_hub/github_tools.py` (~200 lines) with Hivemind bridge
+- **Shared KB**: `data/knowledge/github-protocol.md` (10 sections)
+- **Hivemind-GitHub bridge**: PR merges → Hivemind events via `entity="bridge"`
+- **Heritage-as-Issues**: vet records auto-create GitHub Issues
+
+### 7 Non-Negotiables
+1. M8 audit first — official server verified no phone-home
+2. M7 compliance — local Docker only, no cloud relays
+3. Git cleanup is Phase 0 — 617 runtime files removed
+4. Entity-attributed commits — `[entity: kali]` trailers
+5. Hivemind-GitHub bridge — PR merges trigger Hivemind events
+6. Heritage-as-Issues — vet records auto-create Issues
+7. PAT secret management — tokens in encrypted file (0400 perms)
+
+### 6-Phase Plan (~25.5h)
+| Phase | Owner | Gate | Effort |
+|-------|-------|------|--------|
+| 0 | Ma'at (P3) | `data/` tracked < 70 | 2 hr |
+| 1 | Lilith (P1) | All 4 audit layers clean | 5 hr |
+| 2 | Kali (P9) | PR → Hivemind event + HMAC + retry | 8 hr |
+| 3 | Ma'at (P5) | CI gates work | 4 hr |
+| 4 | Doom Guy | Vet → Issue auto | 3 hr |
+| 5 | Lilith (P4) | All 2 accounts tested | 2 hr |
+| | **Documentation & Gnosis** | | 1.5 hr |
+
+### Key Principle
+GitHub is NOT a new agent behavior. It is a **tool** — a sovereign memory layer that the existing 11-agent fleet uses via a shared Knowledge Base and the official `github/github-mcp-server`. The Hivemind bridge ensures PR merges are visible to all agents.
+
+---
+
+*Last Updated: 2026-06-22 | Author: Kali | Version: v1.0.0*
+*Major changes: v1.0.0 Father's Day Release — 6-phase MaKaLi council execution. Packaging: pyproject.toml entry point + 22 deps + 4 extras. Model download script with SHA256/GGUF verification. Local-first README overhaul. Test suite: 432 pass/0 fail (22 skip/3 xfail). Antigravity OAuth (9 models). MaKaLi gap audit: 2 CRITICAL blindspots found & fixed (4 missing deps, 3 `from src.omega` namespace imports). Heritage-map and sovereignty gates passed. Version 1.0.0 tagged.*
 

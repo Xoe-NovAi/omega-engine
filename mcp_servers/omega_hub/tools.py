@@ -46,6 +46,9 @@ from mcp_servers.omega_hub.server import mcp
 # ── Extracted middleware ──
 from mcp_servers.omega_hub.middleware import m9_safe
 
+# ── GitHub Integration Tools ──
+import mcp_servers.omega_hub.github_tools as github_tools # noqa: F401
+
 # ── State (service singletons + hivemind state) ──
 from mcp_servers.omega_hub import state as _state
 from mcp_servers.omega_hub.state import (

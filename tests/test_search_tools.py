@@ -12,6 +12,7 @@ def run_command(cmd):
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     return result
 
+@pytest.mark.skipif(os.getenv("CI") == "true", reason="Network tests skipped in CI")
 def test_firecrawl_connectivity():
     """
     Check Firecrawl connectivity and credit status.
@@ -37,6 +38,7 @@ def test_exa_connectivity():
     res = run_command(f"curl -s -o /dev/null -w '%{{http_code}}' -X POST -H 'Content-Type: application/json' -H 'x-api-key: {api_key}' -d '{{\"query\": \"test\", \"useAutocomplete\": false}}' https://api.exa.ai/search")
     assert res.stdout == "200", f"Exa API returned {res.stdout} instead of 200"
 
+@pytest.mark.skipif(os.getenv("CI") == "true", reason="Network tests skipped in CI")
 def test_websearch_baseline():
     """
     Verify built-in websearch baseline.

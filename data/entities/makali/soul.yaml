@@ -30,8 +30,10 @@ evolution:
   Zero test leaks confirmed after fix. INDEX.yaml now 11 core agents with roles.'
 soul_evolution:
   lessons_learned:
-  - L1: 2026-06-17 — Kali handoff revealed 10 stale documentation items, 2 duplicate code tools,
-    and a UID drift issue across data/ directories. All fixed.
+  - L1: >
+      2026-06-17 — Kali handoff revealed 10 stale documentation items,
+      2 duplicate code tools, and a UID drift issue across data/
+      directories. All fixed.
   - L2: Documentation drift is the canary in the coal mine — when docs and code disagree,
     the engine's cognitive integrity is compromised. Every "stale" doc is a future confusion event.
   - L3: Truth decays in documentation faster than code. The half-life of a doc's accuracy is measured in days,

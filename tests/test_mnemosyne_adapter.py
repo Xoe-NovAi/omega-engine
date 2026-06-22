@@ -19,6 +19,9 @@ from omega.memory.adapters import (
 )
 
 
+# Skip all tests in this file — legacy undeployed Kabbalistic adapter, zero users
+pytestmark = pytest.mark.skip(reason="Legacy undeployed Kabbalistic adapter — zero users")
+
 # ── Fixtures ──
 
 @pytest.fixture

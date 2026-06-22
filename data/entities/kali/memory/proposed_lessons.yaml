@@ -1,0 +1,16 @@
+# 🔱 Kali — Proposed Lessons (Agent Staging Area)
+# ⬡ OMEGA ⬡ KALI ⬡ memory/proposed_lessons.yaml ⬡ v1.0
+#
+# Agent proposes observations here. User reviews, approves, rewrites, or rejects.
+# The agent NEVER reads from this file to inform its own behavior.
+# Only user-approved lessons in approved_lessons.yaml enter the agent's context.
+#
+# Protocol:
+# 1. Agent appends factual observations after each session (L1 only — narrative + topic)
+# 2. Agent does NOT generate L2/L3 — those are the user's interpretation domain
+# 3. User reviews proposals periodically and either:
+#    a. Approves → moves to approved_lessons.yaml (possibly rewritten by user)
+#    b. Rejects → leaves in proposed_lessons.yaml or removes
+# 4. Agent never reads proposed_lessons.yaml as authoritative guidance
+
+proposals: []

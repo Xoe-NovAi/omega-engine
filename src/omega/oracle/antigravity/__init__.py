@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 # ── Antigravity Standalone Module ──
 # OAuth-based cloud inference provider for Google's internal Unified Gateway API.
 # [Mandate 16: Modularization & Portability] — community-shareable, config-driven.

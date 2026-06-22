@@ -18,6 +18,7 @@ virtualenv/
 .env.local
 *.env*
 .env.*
+config/github_webhook_secret
 
 # ── Build Artifacts ──────────────────────────────────────────────────
 *.egg-info/
@@ -26,6 +27,9 @@ build/
 *.egg
 *.whl
 *.tar.gz
+
+# ── Downloaded Models (large binaries, not source) ────────────────────
+models/
 
 # ── Test & Cache ─────────────────────────────────────────────────────
 .pytest_cache/
@@ -130,6 +134,9 @@ rag-v1/**/*
 data/entities/*/workspace/forensics/
 data/entities/*/workspace/PERSONAL_RESEARCH/
 data/entities/*/workspace/tool_lab/
+
+# Legacy dev workspace (odysseus)
+data/entities/roc_racoon/workspace/odysseus-dev/
 
 # Orphan/Test entity dirs
 data/entities/entity_*/

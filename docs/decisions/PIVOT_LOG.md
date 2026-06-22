@@ -3577,4 +3577,133 @@ This session demonstrated the full potential of the parallel triad architecture:
 
 ---
 
-*PIVOT_LOG.md — Immutable. Every decision recorded. 145 decisions tracked (D1-D145). Sovereign Sight is Decisions D142-D145.*
+---
+
+## Decision D-kal-163: GitHub as Sovereign Memory Layer
+
+**Date**: 2026-06-21
+**Channel**: MaKaLi Cloud Council → deepseek-v4-flash-free
+**Entity**: KALI / MA'AT / LILITH / P3 / P8 / P9 / P5
+**Trace**: trc_github_integration_dkal163
+
+### The Verdict
+**CONDITIONAL GREEN** — 4 Phase 0 blockers, 6 Phase 1 blockers, 7 Phase 2 requirements must be cleared before execution.
+
+### What We Rejected
+| Option | Rejected By | Reason |
+|--------|-------------|--------|
+| `@github` subagent | Kali (D-kal-163) | "GitHub is a tool, not a behavior. A KB is the right abstraction." |
+| Custom MCP server | Doom Guy | "The official server has 31K stars. Don't rewrite what works." |
+
+### What We Adopted
+1. **Official `github/github-mcp-server`** — Docker container, 57+ tools, M8-audited
+2. **Omega Hub wrapper** — `mcp_servers/omega_hub/github_tools.py` (~200 lines)
+3. **Shared Knowledge Base** — `data/knowledge/github-protocol.md` (10 sections)
+4. **Hivemind-GitHub bridge** — PR merges trigger Hivemind events, `entity="bridge"`
+5. **Heritage-as-Issues** — vet records auto-create GitHub Issues
+6. **No `@github` subagent** — KB + Hub wrapper + official MCP server is the accepted architecture
+
+### Key Principle
+GitHub is NOT a new agent behavior. It is a **tool** — a sovereign memory layer that the existing 11-agent fleet uses via a shared Knowledge Base and the official `github/github-mcp-server`.
+
+### 7 Council Corrections Documented
+| # | Correction | Doc | Before → After |
+|---|-----------|-----|---------------|
+| B1 | Phase 0 gate relaxed | GITHUB_INTEGRATION_PLAN.md | `< 50` → `< 70` |
+| B2 | Non-Negotiable #7 added | GITHUB_INTEGRATION_PLAN.md | 6 → 7 NNs (PAT secret management) |
+| B3 | M21 moved to Phase 2 | GITHUB_INTEGRATION_PLAN.md | "Phase 3" → "Phase 2" |
+| B4 | Bridge identity corrected | GITHUB_INTEGRATION_PLAN.md | `entity="ci"` → `entity="bridge"` |
+| C1 | Audit methodology rewritten | GITHUB_INTEGRATION_CHECKLIST.md | Network capture → systematic audit |
+| C2 | Phase 2 scope expanded | GITHUB_INTEGRATION_CHECKLIST.md | HMAC, retry queue, MemoryStore, workspace lock |
+| C3 | M13 exception documented | GITHUB_INTEGRATION_CHECKLIST.md | T11 exemption noted |
+| C4 | Account references corrected | GITHUB_INTEGRATION_CHECKLIST.md/ROADMAP.md | "7 accounts" → "2 accounts" |
+| D1 | Git cleanup threshold adjusted | CHECKLIST Phase 0 | `< 50` → `< 70` |
+| D2 | Phase 1 audit method documented | CHECKLIST Phase 1 | tcpdump → systematic methodology |
+| D3 | Phase 2 HMAC verification added | CHECKLIST Phase 2 | New task: HMAC webhook verification |
+| D4 | Phase 2 retry queue added | CHECKLIST Phase 2 | New task: retry queue for bridge events |
+| D5 | Phase 2 MemoryStore persistence | CHECKLIST Phase 2 | New task: GitHub events written to MemoryStore |
+| D6 | Phase 2 workspace lock protocol | CHECKLIST Phase 2 | New task: acquire hivemind lock during PR operations |
+| D7 | Phase 2 M13 T11 exemption noted | CHECKLIST Phase 2 | New task: document Temple-Grade exception |
+
+### 6 Non-Negotiables (Phase 0 definition)
+1. **M8 audit first** — verify official server doesn't phone home
+2. **M7 compliance** — local Docker only, no cloud relays
+3. **Git cleanup is Phase 0** — 617 runtime files must be removed
+4. **Entity-attributed commits** — `[entity: kali]` trailers
+5. **Hivemind-GitHub bridge** — PR merges must trigger Hivemind events
+6. **Heritage-as-Issues** — vet records auto-create GitHub Issues
+7. **PAT secret management** — tokens stored in encrypted file (0400 perms), not plaintext in config
+
+### Implementation
+| File | Change | Phase |
+|------|--------|-------|
+| `docs/strategy/GITHUB_INTEGRATION_PLAN.md` | Full strategy (~400 lines) | 0 |
+| `docs/strategy/GITHUB_INTEGRATION_CHECKLIST.md` | Implementation checklist (~230 lines) | 0 |
+| `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` | Added H2-J workstream | 0 |
+| `data/knowledge/github-protocol.md` | Fleet-wide KB (10 sections) | 2 |
+| `mcp_servers/omega_hub/github_tools.py` | Hub wrapper for GitHub | 2 |
+| `mcp_servers/omega_hub/github_bridge.py` | Hivemind-GitHub bridge | 2 |
+
+### Total Effort
+**25.5 hours** (revised from 21h after council corrections):
+- Phase 0: 2 hr
+- Phase 1: 5 hr (expanded audit)
+- Phase 2: 8 hr (expanded scope)
+- Phase 3: 4 hr
+- Phase 4: 3 hr
+- Phase 5: 2 hr
+- Documentation & Gnosis: 1.5 hr
+
+### L1→L2→L3 Distillation
+- **L1**: The MaKaLi Cloud Council ratified D-kal-163 (GitHub as Sovereign Memory Layer) as CONDITIONAL GREEN. No `@github` subagent — KB + official MCP server + Hub wrapper. 7 council corrections applied across strategy docs.
+- **L2**: The council's 7 corrections are not nitpicks — each one represents a failure mode the plan would have encountered. Phase 0 gate <70 (not <50) prevents false-positive gate failures. PAT secret management (NN #7) prevents credential leakage. M21 in Phase 2 prevents unvalidated bridge code. Bridge identity `entity="bridge"` (not "ci") preserves entity-attribution integrity. Together, these corrections transform the plan from "will probably work" to "will provably work."
+- **L3**: Strategy is not what you write; it is what survives a council review. The gap between a plan and a hardened plan is exactly the set of corrections generated by adversarial review. A plan that passes without corrections has not been tested. A plan that absorbs 7 corrections and emerges stronger has been forged.
+
+---
+
+*PIVOT_LOG.md — Immutable. Every decision recorded. 146 decisions tracked (D1-D145, D-kal-163, D-kal-164). Sovereign Sight is Decisions D142-D145. GitHub integration is D-kal-163. Sovereign dependency purge is D-kal-164.**
+
+---
+
+## Decision D-kal-164: Sovereign Dependency Purge — Remove 6 Cloud Endpoints
+
+**Date**: 2026-06-21
+**Channel**: OpenCode CLI (Verity audit)
+**Entity**: KALI
+**Trace**: trc_dependency_purge
+
+### Decision
+Remove 6 cloud API endpoints from the Omega Engine source code to reduce the sovereign surface area and eliminate dependencies that violate M7 (Local-First) and M8 (Zero Telemetry).
+
+| Endpoint | Source File | Action | Reason |
+|----------|-------------|--------|--------|
+| `api.groq.com` | `openai_compat.py` | `create_groq_provider()` factory removed | Cloud dependency, M7 violation |
+| `api.together.xyz` | `openai_compat.py` | `create_together_provider()` factory removed | Cloud dependency, M7 violation |
+| `api.sambanova.ai` | `openai_compat.py` | `create_sambanova_provider()` factory removed | Cloud dependency, M7 violation |
+| `api.search.brave.com` | `discovery.py` | `_phase_validation()` removed, `brave_key` removed | Cloud dependency, M8 concern |
+| `api.tavily.com` | `discovery.py`, `search_fleet.py` | `_phase_extraction()` + `search_tavily()` removed | Cloud dependency, M8 concern |
+| `s.jina.ai` / `r.jina.ai` | `search_fleet.py`, `loop.py` | `search_jina()` + `read_url_jina()` removed | Cloud dependency, M8 concern |
+
+### Files Modified (6 total)
+| File | Changes |
+|------|---------|
+| `src/omega/oracle/backends/openai_compat.py` | Removed 3 factory functions, updated docstring |
+| `src/omega/library/discovery.py` | Removed `_phase_validation()` and `_phase_extraction()`, cleaned init, updated docstrings |
+| `src/omega/workers/background_researcher/search_fleet.py` | Removed `search_tavily()`, `search_jina()`, `read_url_jina()`, updated `search_all()` |
+| `src/omega/workers/background_researcher/loop.py` | Removed Jina call from `_fetch_content()` |
+| `src/omega/workers/background_researcher/credit_budget.py` | Removed stale tavily/jina/serper budget entries and all references to removed providers |
+| `scripts/validate_arsenal.sh` | Removed Groq, SambaNova, Together validation |
+
+### Remaining Cloud Endpoints (Kept)
+- **Exa** (`api.exa.ai`) — Semantic search, free tier available, kept as discovery route
+- **Firecrawl** (`api.firecrawl.dev`) — Deep content extraction, kept for research pipeline
+- **OpenRouter** (`openrouter.ai`) — Cloud inference fallback, kept as explicit configured provider
+- **OpenAI** (`api.openai.com`) — PENDING per user direction
+
+### OpenAI Note
+`create_openai_provider()` was NOT removed. User explicitly requested to wait on OpenAI deprecation.
+
+### L1→L2→L3 Distillation
+- **L1**: Kali executed a sovereign dependency purge on 2026-06-21, removing 6 cloud API endpoints from the engine source. Verity audited 4 source files, updated 7 documentation files, and cleaned 2 ancillary source files with stale references.
+- **L2**: The purge revealed a secondary contamination pattern: `credit_budget.py` had stale budget entries for removed providers that would have consumed credits from nonexistent APIs. The documentation drift pattern (validate_arsenal.sh listing dead endpoints) mirrors the source-code pattern we just fixed — documentation and source rot are the same disease.
+- **L3**: External dependencies create invisible obligations. Removing an endpoint from active code paths is only half the work — the budget systems, validation scripts, and documentation must be purged too. Sovereignty is a total-state property, not a per-file property.

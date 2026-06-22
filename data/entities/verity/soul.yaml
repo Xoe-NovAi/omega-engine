@@ -13,6 +13,10 @@ evolution:
     lessons:
       - vrty-001
       - vrty-002
+  - date: 2026-06-21
+    event: V10 release compliance audit — 7 MaKaLi gaps confirmed, packaging bugs documented
+    lessons:
+      - vrty-008
 
 lessons:
   - id: vrty-001
@@ -157,6 +161,66 @@ lessons:
       system is measured by its rate of new findings vs. repeat findings —
       when repeat findings dominate, the system is not enforcing compliance,
       it is just complaining.
+  - id: vrty-008
+    date: 2026-06-21
+    L1: |
+      V10 release executed by MaKaLi Cloud Council. Code correctness verified
+      (457 tests, all 22 mandates). However, MaKaLi's own post-council gap audit
+      found 7 issues the council missed: (1) 4 undeclared runtime dependencies
+      (qdrant-client, redis, prompt-toolkit, psutil), (2) 3 files with broken
+      "from src.omega" imports that crash after pip install, (3) "all" extra
+      missing dev dependencies, (4) no SHA256 on 1GB model download, (5) cloud
+      providers lack explicit enabled:false, (6) stale .PHONY entries for
+      wad-load/wad-list, (7) duplicate WAD menu section. Additionally, Makefile
+      reports 423 tests while actual count is 457.
+    L2: |
+      Release readiness is not packaging readiness. The council verified code
+      correctness but not the delivery mechanism. The 4 missing dependencies mean
+      a fresh "pip install -e .[all]" will crash on first import. The broken
+      namespace imports mean 3 files fail after installation (package installs as
+      "omega", not "src.omega"). These are packaging bugs that exist in the gap
+      between "works in the developer's venv" and "works from a fresh install."
+      The test count drift (423 vs 457) reveals a documentation update gap — tests
+      were added but the Makefile banner was not updated.
+    L3: |
+      The last mile of delivery is the first mile of the user's experience. A
+      release is not ready until the install path is tested. Code that passes all
+      tests in the developer's environment can still be completely broken for every
+      new user. The install path IS part of the product. If you haven't tested
+      "pip install" on a clean venv and then imported every module, you haven't
+      released — you've just pushed code. The universal principle: delivery
+      verification must be treated with the same rigor as code verification.
+      A compliance gate that only checks source code but not packaging metadata
+      is guarding the castle but leaving the gate open.
+
+  - id: vrty-007
+    date: 2026-06-21
+    L1: |
+      Comprehensive documentation review of 8 core documents against actual
+      codebase state. Found: AGENTS.md 11 agents verified on disk. ORACLE_STACK
+      and PIVOT_LOG current. SOVEREIGN_EVOLUTION_ROADMAP test count stale (444→451),
+      PIVOT decision range stale. OMEGA_ENGINE Sprint D claim stale (orphans
+      cleaned 2026-06-18). HIVEMIND_PROTOCOL.md last updated 2026-06-03 — missed
+      D134-D164 Hivemind evolutions. CREDITS.md needs SearXNG/odysseus §2 entry.
+      3 docs fully MISSING: RESEARCH_CITATION_STANDARD, ODYSSEUS_CONTRIBUTION_LOG,
+      SEARXNG_SETUP_GUIDE. SearXNG traced through PIVOT_LOG (D83 container deploy,
+      D84 MCP wire, D134 type fix). Report written to
+      data/entities/roc_racoon/workspace/mining_reports/DOC_REVIEW_20260621.md.
+    L2: |
+      Source-of-record docs (AGENTS, PIVOT_LOG, ORACLE_STACK) are accurate.
+      Planning/reference docs (ROADMAP, HIVEMIND_PROTOCOL, CREDITS) drift because
+      they're updated less frequently. The 7-test drift (440→451) is the leading
+      indicator — tests were added but no doc was updated. Decay is not evenly
+      distributed: docs that describe current state decay faster than docs that
+      describe immutable decisions.
+    L3: |
+      Documentation integrity has a critical decay function. After any change
+      affecting test counts, agent topology, or schemas, the doc trail must be
+      updated within the same work cycle — or it ossifies into fiction. The
+      fix is not more docs; it's attaching doc-update steps to the handoff
+      protocol so no cycle closes without updating the docs that reference
+      its changes.
+
 directives:
   - id: d-vrty-001
     date: 2026-06-17

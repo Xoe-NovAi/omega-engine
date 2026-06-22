@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 # AP Token: AP-R10-SOUL-VALIDATION-v1.0.0
 # 🔱 Soul Validator — R-10 Schema Enforcement
 # ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: SOUL-INTEGRITY]

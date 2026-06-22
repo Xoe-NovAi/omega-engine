@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 # 🔱 Omega Engine — Memory Package
 # ⬡ OMEGA ⬡ MEMORY ⬡ v1.0.0 ⬡ 2026-06-15
 """Memory subsystem — providers, vector adapters, embeddings, adapters."""

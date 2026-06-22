@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 """
 PoolState — Typed dataclasses for Antigravity dual-pool configuration.
 

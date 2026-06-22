@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 """ElevenLabs Sovereign Bridge — Conversational Webhook Adapter.
 
 AP Token: AP-ELEVENLABS-BRIDGE-v1.0.0

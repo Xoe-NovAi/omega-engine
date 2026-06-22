@@ -35,7 +35,13 @@ from .memory.providers import (
 )
 from .memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
 from .memory.fts_index import ConversationFTSIndex
-from .memory.embeddings import EmbeddingManager, OllamaEmbeddingProvider, SovereignFallbackEmbeddingProvider
+from .memory.embeddings import (
+    EmbeddingManager, 
+    OllamaEmbeddingProvider, 
+    SovereignFallbackEmbeddingProvider,
+    GemmaGGUFEmbeddingProvider,
+    StaticEmbeddingProvider
+)
 from .memory.adapters import MemoryAdapterRegistry, IMemoryAdapter
 
 logger = logging.getLogger(__name__)
@@ -137,9 +143,13 @@ class MemoryStore:
         if embedding_manager is not None:
             self.embedding_manager = embedding_manager
         else:
-            # [P6-001] Local-first embedding: Ollama nomic-embed-text → Sovereign Fallback
-            self.embedding_manager = EmbeddingManager([OllamaEmbeddingProvider(), SovereignFallbackEmbeddingProvider()])
-        
+            # Corrected: Local-first 768-dim chain (Gemma -> Potion -> Hash)
+            # Eliminates Ollama dependency and enforces dimensional consistency.
+            self.embedding_manager = EmbeddingManager([
+                GemmaGGUFEmbeddingProvider(), 
+                StaticEmbeddingProvider(model_name="blobbybob/potion-mxbai-micro"), 
+                SovereignFallbackEmbeddingProvider(dimension=768)
+            ])
         # [Horizon 2: MiMo] FTS5 Search Index
         self.fts = ConversationFTSIndex(_get_memory_dir() / "fts_memory.db")
         self.fts.initialize()

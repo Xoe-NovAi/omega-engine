@@ -2,6 +2,7 @@ inference:
   strategy: local_first
   fallback_chain:
   - provider: native-gguf
+    # Default model path: models/gguf/ (created by make model-download)
     priority: 0
     n_ctx: 8192
     n_ctx_max: 32768

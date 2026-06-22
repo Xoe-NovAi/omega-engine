@@ -53,9 +53,6 @@ validate_provider() {
 
 validate_provider "OpenRouter" "https://openrouter.ai/api/v1" "OPENROUTER_API_KEY" "openrouter/free"
 validate_provider "Google AI Studio" "https://generativelanguage.googleapis.com/v1beta/openai" "GOOGLE_API_KEY" "gemini-2.0-flash"
-validate_provider "Groq" "https://api.groq.com/openai/v1" "GROQ_API_KEY" "llama-3.3-70b-versatile"
-validate_provider "SambaNova" "https://api.sambanova.ai/v1" "SAMBANOVA_API_KEY" "Meta-Llama-3.1-8B-Instruct"
-validate_provider "Together AI" "https://api.together.xyz/v1" "TOGETHER_API_KEY" "mistralai/Mistral-7B-Instruct-v0.1"
 validate_provider "OpenCode Zen" "https://opencode.ai/zen/v1" "OPENCODE_ZEN_API_KEY" "opencode/gpt-5-nano"
 validate_provider "GenAI Labs" "https://api.genlabs.ai/v1" "GENLABS_API_KEY" "gpt-4o"
 

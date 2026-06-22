@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 """SQLite FTS5 Full-Text Search Index for Omega Memory.
 
 [FTS5 Search Pattern: SQLite public domain]

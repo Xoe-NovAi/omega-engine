@@ -273,3 +273,11 @@ Ollama → OpenRouter        Copilot(3) → Lmster(4) → Ollama(5) →
 - **Status**: All coordination docs updated
 - **Handoffs**: STRATEGIC_FINAL_REPORT_TEMPLE_GRADE_20260602.md, CLINE_M3_RESPONSE_TO_DOOM_GUY_TIER2_20260602.md
 - **Next**: OpenCode dev session proceeds with Stream F
+
+---
+
+## 2026-06-21 — roc_racoon (Sovereign Knowledge Graph Spec)
+- **Work**: Drafted technical specification for Sovereign Knowledge Graph Adapter (`R-SVR-GRAPH`) inspired by `codebase-memory-mcp` patterns.
+- **Status**: Registered in Research Index (`docs/research/INDEX.md`) and ready for implementation.
+- **Handoff**: `docs/research/R_SOVEREIGN_KNOWLEDGE_GRAPH_ADAPTER.md`
+- **Next**: Implement `SovereignGraphAdapter` in `src/omega/memory/graph_adapter.py`.

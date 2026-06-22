@@ -1,9 +1,11 @@
-# 🔱 Omega Engine — Search Fleet (Exa + Tavily + Jina + Firecrawl)
+# 🔱 Omega Engine — Search Fleet (Exa + Firecrawl)
 # AP: AP-BACKGROUND-RESEARCHER-FLEET-v1.0.0
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ sovereign ⬡ search_fleet ⬡ WORKER
 #
 # Quota-managed cloud search providers with graceful fallback chain.
 # Works alongside SearXNGClient for the sovereign (zero-cost) layer.
+#
+# NOTE: Tavily and Jina removed per D-kal-164 sovereign dependency purge.
 
 import logging
 from omega.errors import (
@@ -88,97 +90,6 @@ class SearchFleet:
             logger.error(f"Exa fetch failed for {url}: {e}", exc_info=True)
             return None
 
-    # ── Tavily ──────────────────────────────────────────────────────────────
-
-    async def search_tavily(self, query: str, max_results: int = 8) -> list[str]:
-        """RAG-optimized search via Tavily. ~1 credit per call."""
-        self.budget.consume("search")
-        self.budget.increment_daily("search_ops")
-
-        api_key = os.getenv("TAVILY_API_KEY", "")
-        if not api_key:
-            logger.warning("TAVILY_API_KEY not set")
-            return []
-
-        try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                resp = await client.post(
-                    "https://api.tavily.com/search",
-                    headers={
-                        "Content-Type": "application/json",
-                    },
-                    json={
-                        "api_key": api_key,
-                        "query": query,
-                        "max_results": max_results,
-                        "search_depth": "advanced",
-                    },
-                )
-                resp.raise_for_status()
-                data = resp.json()
-                return [r["url"] for r in data.get("results", [])]
-        except OmegaError:
-            return []
-        except Exception as e:
-            logger.error(f"Tavily search failed: {e}", exc_info=True)
-            return []
-
-    # ── Jina ────────────────────────────────────────────────────────────────
-
-    async def search_jina(self, query: str, max_results: int = 10) -> list[str]:
-        """Web search via Jina Reader API."""
-        self.budget.consume("jina")
-        self.budget.increment_daily("search_ops")
-
-        api_key = os.getenv("JINA_API_KEY", "")
-        if not api_key:
-            logger.warning("JINA_API_KEY not set")
-            return []
-
-        try:
-            async with httpx.AsyncClient(timeout=15.0) as client:
-                resp = await client.get(
-                    f"https://s.jina.ai/{query}",
-                    headers={
-                        "Authorization": f"Bearer {api_key}",
-                        "X-Retain-Images": "none",
-                    },
-                )
-                resp.raise_for_status()
-                text = resp.text
-                # Parse URLs from the Jina Reader markdown response
-                import re
-                urls = re.findall(r"\[.*?\]\((https?://[^\s)]+)\)", text)
-                return urls[:max_results]
-        except OmegaError:
-            return []
-        except Exception as e:
-            logger.error(f"Jina search failed: {e}", exc_info=True)
-            return []
-
-    async def read_url_jina(self, url: str) -> Optional[str]:
-        """Read URL content via Jina Reader API."""
-        api_key = os.getenv("JINA_API_KEY", "")
-        if not api_key:
-            return None
-        try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                resp = await client.get(
-                    f"https://r.jina.ai/{url}",
-                    headers={
-                        "Authorization": f"Bearer {api_key}",
-                        "X-Retain-Images": "none",
-                        "X-With-Links-Summary": "false",
-                    },
-                )
-                resp.raise_for_status()
-                return resp.text
-        except OmegaError:
-            return None
-        except Exception as e:
-            logger.error(f"Jina read failed for {url}: {e}", exc_info=True)
-            return None
-
     # ── Firecrawl ───────────────────────────────────────────────────────────
 
     async def extract_firecrawl(self, url: str) -> Optional[str]:
@@ -228,38 +139,23 @@ class SearchFleet:
         if searxng_results:
             results["searxng"] = searxng_results
 
-        # Cloud providers based on depth
+        # Cloud providers based on depth (Exa only — Tavily/Jina removed per D-kal-164)
         if depth >= 2:
-            # Try one provider at a time
-            for provider in ("tavily", "jina", "exa"):
-                if self.budget.has_quota("search"):
-                    try:
-                        if provider == "tavily":
-                            urls = await self.search_tavily(query)
-                        elif provider == "jina":
-                            urls = await self.search_jina(query)
-                        else:
-                            urls = await self.search_exa(query)
-                        if urls:
-                            results[provider] = urls
-                            break  # One cloud provider is enough for depth=2
-                    except APICreditExhausted:
-                        continue
+            if self.budget.has_quota("search"):
+                try:
+                    urls = await self.search_exa(query)
+                    if urls:
+                        results["exa"] = urls
+                except APICreditExhausted:
+                    pass
 
         if depth >= 3:
-            # Deep: try all remaining providers
-            for provider in ("exa", "jina", "tavily"):
-                if provider not in results and self.budget.has_quota("search"):
-                    try:
-                        if provider == "exa":
-                            urls = await self.search_exa(query, num_results=15)
-                        elif provider == "jina":
-                            urls = await self.search_jina(query, max_results=15)
-                        else:
-                            urls = await self.search_tavily(query, max_results=12)
-                        if urls:
-                            results[provider] = urls
-                    except APICreditExhausted:
-                        continue
+            if "exa" not in results and self.budget.has_quota("search"):
+                try:
+                    urls = await self.search_exa(query, num_results=15)
+                    if urls:
+                        results["exa"] = urls
+                except APICreditExhausted:
+                    pass
 
         return results

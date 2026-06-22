@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 # AP Token: AP-SKEPTICAL-VERIFIER-v1.0.0
 # 🔱 Skeptical Verifier — NLI and the Two-Source Rule
 # [id-soft: doom-1993] ZONEID Pattern — verification of claim integrity

@@ -4,6 +4,9 @@
 #
 # Tracks monthly API usage across all search/extraction providers.
 # Persists to disk so quotas survive restarts.
+#
+# NOTE: Tavily, Jina, and Serper budgets removed per D-kal-164.
+# Only Exa and Firecrawl remain as active cloud search providers.
 
 import json
 import logging
@@ -48,10 +51,7 @@ class APICreditBudget:
 
     DEFAULT_BUDGETS = {
         "exa": ProviderBudget(total=1000, reserved_emergency=100),
-        "tavily": ProviderBudget(total=1000, reserved_emergency=100),
         "firecrawl": ProviderBudget(total=1000, reserved_emergency=100),
-        "serper": ProviderBudget(total=2500, reserved_emergency=500),
-        "jina": ProviderBudget(total=10000, reserved_emergency=1000),  # token-based, generous
     }
 
     DAILY_LIMITS = {
@@ -76,7 +76,7 @@ class APICreditBudget:
             return any(
                 p.remaining >= min_needed
                 for name, p in self.budgets.items()
-                if name in ("exa", "tavily", "serper", "jina")
+                if name in ("exa", "firecrawl")
             )
         budget = self.budgets.get(api)
         if not budget:
@@ -86,8 +86,8 @@ class APICreditBudget:
     def consume(self, api: str, units: int = 1) -> None:
         """Consume credits from a provider. Raises APICreditExhausted if insufficient."""
         if api == "search":
-            # Prefer Tavily (cheaper) over Exa, Jina, Serper
-            for name in ("tavily", "serper", "jina", "exa"):
+            # Exa is the sole cloud search provider (Tavily/Jina/Serper removed per D-kal-164)
+            for name in ("exa", "firecrawl"):
                 budget = self.budgets.get(name)
                 if budget and budget.consume(units):
                     logger.debug(f"Consumed {units} credit(s) from {name}")
@@ -136,8 +136,8 @@ class APICreditBudget:
 
     def select_search_provider(self) -> str:
         """Select the best available search provider based on remaining quota."""
-        # Check each in priority order
-        for name in ("tavily", "serper", "jina", "exa"):
+        # Exa is the sole cloud search provider (Tavily/Jina/Serper removed per D-kal-164)
+        for name in ("exa", "firecrawl"):
             budget = self.budgets.get(name)
             if budget and budget.remaining > budget.reserved_emergency:
                 return name

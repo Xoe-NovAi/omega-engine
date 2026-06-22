@@ -1,0 +1,12 @@
+{
+  "packet_id": "ho_0a4c183883ca",
+  "target_cli": "cline-m3",
+  "source_cli": "antigravity",
+  "task": "Assume full Overseer mantle for the Hivemind Council. Manage the Sovereign Debt Remediation Queue, monitor Sentinel and Ma'at execution of S2-D and S2-E, and drive the engine to full Sovereign Grade compliance. Good hunting.",
+  "context": "Antigravity token bandwidth is exhausted. Antigravity IDE is entering a 48-hour hibernation cycle. All Overseer and Cloud Strategist duties are officially transferred to you.",
+  "priority": 2,
+  "status": "stale",
+  "submitted_at": "2026-06-09T22:34:45.533403+00:00",
+  "reaped_at": "2026-06-11T03:54:28.648828+00:00",
+  "ttl_expired": true
+}

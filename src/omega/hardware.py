@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 # 🔱 Omega Engine — Hardware Detection
 # Detects RAM at startup for model tier recommendations.
 

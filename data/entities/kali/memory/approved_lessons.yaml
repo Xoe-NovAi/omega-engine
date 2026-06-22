@@ -1,0 +1,15 @@
+# 🔱 Kali — Approved Lessons (User-Curated)
+# ⬡ OMEGA ⬡ KALI ⬡ memory/approved_lessons.yaml ⬡ v1.0
+#
+# ONLY user-authored or user-approved content goes here.
+# The agent reads this file as authoritative behavioral guidance.
+# DO NOT let the agent append anything here.
+#
+# Format: User chooses the structure. Suggestions:
+#   - id: short-descriptive-name
+#     date: YYYY-MM-DD
+#     principle: One-line maxim or directive
+#     narrative: Brief context (user's own words)
+#     source_session: optional session_id reference
+
+approved: []

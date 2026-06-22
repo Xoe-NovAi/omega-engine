@@ -34,6 +34,8 @@ from omega.oracle.model_gateway import ModelGateway
 from omega.oracle.hierarchy import SovereignHierarchy
 from omega.oracle.health_monitor import get_health_monitor
 
+from mcp_servers.omega_hub.mcp_client import SovereignMCPClient
+
 from omega.library.inbox import InboxManager
 from omega.library.curator import CurationPipeline
 from omega.library.library import Library
@@ -74,6 +76,7 @@ discovery: Optional[DiscoveryOrchestrator] = None
 research_engine: Optional[ResearchEngine] = None
 sovereign_search_service: Optional[SovereignSearchService] = None
 gateway: Optional["SovereignGateway"] = None
+mcp_client: Optional[SovereignMCPClient] = None
 
 
 def _require_service() -> None:
@@ -98,7 +101,7 @@ async def _init_services() -> None:
     global _init_complete, _init_error
     global registry, model_gateway, oracle, hierarchy
     global inbox, curator, library, indexer, discovery
-    global research_engine, sovereign_search_service, gateway
+    global research_engine, sovereign_search_service, gateway, mcp_client
 
     try:
         logger.info("Background service initialization starting...")
@@ -154,8 +157,14 @@ async def _init_services() -> None:
                 exa_key=_exa_key,
             )
         )
-
+        
+        # Phase 1 MCP Client: Connect to SearXNG MCP server
+        mcp_client = SovereignMCPClient(server_url="http://127.0.0.1:8018/sse")
+        # Note: We don't 'await' the context manager here because it's a singleton.
+        # Tools will use 'async with state.mcp_client as client:' to ensure session lifecycle.
+        
         # SovereignGateway is imported from gateway.py (P1a-4).
+
         # At runtime, gateway.py is already available — the forward-ref
         # in this module (TYPE_CHECKING) is only for static analysis.
         from mcp_servers.omega_hub.gateway import SovereignGateway as _SG
@@ -348,7 +357,7 @@ __all__ = [
     # service singletons
     "registry", "model_gateway", "oracle", "hierarchy",
     "inbox", "curator", "library", "indexer", "discovery",
-    "research_engine", "sovereign_search_service", "gateway",
+    "research_engine", "sovereign_search_service", "gateway", "mcp_client",
     # context tracking
     "_current_entity", "_get_intent_matcher",
     # hivemind store

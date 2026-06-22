@@ -1,10 +1,11 @@
-# 🔱 Omega Engine — Sovereign Evolution Roadmap v1.5
+# 🔱 Omega Engine — Sovereign Evolution Roadmap v1.6
 # ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ trc_fleet_consolidation ⬡ STRATEGY
-**AP Token**: AP-EVOLUTION-ROADMAP-v1.5.0
-**Date**: 2026-06-14
-**Baseline**: 440 tests passing · 98 source files · 89 PIVOT decisions (D50-D136) · 22 Sovereign Mandates
+**AP Token**: AP-EVOLUTION-ROADMAP-v1.6.0
+**Date**: 2026-06-22
+**Baseline**: 457 tests passing · 98 source files · 89 PIVOT decisions (D50-D136) · 22 Sovereign Mandates
 **Engine version**: 2.3.0 · Hub version: 2.3.0
-**Change from v1.4**: Hivemind Sprint A complete — Hub modularization (5 modules), 388/388 tests passing, M16 ratified, Fleet Consolidation Sprint A done (15→11 agents, 4-sprint plan active).
+**Change from v1.5**: MaKaLi Council completed Antigravity handoff assessment (4/10 readiness). Soul Architecture Protocol (v6.0) ratified — write-permission separation. Full Local Inference Engine & UI roadmap designed (H2-M). Kali soul rebuilt lean.
+**Change from v1.6**: Curation worker deep design added (H2-N). Background researcher stuck-fix scheduled. 20 gaps found (3 CRITICAL) via Researcher+Jem hardening audit.
 
 ---
 
@@ -30,7 +31,7 @@ Five parallel agents and the MaKaLi Cloud Council analyzed:
 ### ✅ ENGINE — GREEN
 | Metric | Value | Status |
 |--------|-------|--------|
-| Tests passing | **440/440** | ✅ Sprint C complete |
+| Tests passing | **444/444** | ✅ Sprint C complete |
 | PIVOT decisions tracked | **89** (D50-D136, 136 lifetime incl. xna-omega) | ✅ Immutable record |
 | Sovereign Mandates | **22** (M1-M22) | ✅ FULL COMPLIANCE |
 | Mandate 9 (bare except) | **0 violations** | ✅ Enforced |
@@ -48,6 +49,8 @@ Five parallel agents and the MaKaLi Cloud Council analyzed:
 | The Forge Oversoul | Proposed → Rejected via M10 architectural review | ❌ REJECTED — Heritage Council model adopted |
 | Omega Hub Modularization | **5 modules** (state, background, gateway, middleware, tools) | ✅ Sprint A COMPLETE |
 | M16 Modularization & Portability | Ratified | ✅ 2026-06-14 |
+| MaKaLi Antigravity Handoff Assessment | 7 agents, 4 cross-pillar review, 4/10 readiness | ✅ VERDICT FILED |
+| Soul Architecture Protocol (v6.0) | Write-permission separation, Kali baseline done | ✅ PROTOCOL DOC |
 
 ---
 
@@ -213,6 +216,23 @@ Full strategy at `docs/strategy/ANTIGRAVITY_INTEGRATION_PLAYBOOK.md`.
 | H2-I8 | **OMEGA_ENGINE.md update** — distinguish Antigravity IDE (Hivemind active) vs plugin (banned) | `OMEGA_ENGINE.md` | 15 min | 🟡 MED — doc accuracy | ✅ DONE |
 | H2-I9 | **ACCOUNT_MAP.yaml + quota checker** — email-to-key mapping, Python quota check script | `data/entities/antigravity/knowledge/ACCOUNT_MAP.yaml`, `scripts/antigravity_check_quota.py` | 2h | 🔴 HIGH — closes phantom tracking + mapping gap | ✅ IMPLEMENTED |
 
+### Phase H2-J: GitHub Integration (NEW — D-kal-163, 2026-06-21)
+**Goal**: Establish GitHub as the Sovereign Memory Layer — PR intelligence, Heritage-as-Issues, entity-attributed commits, Hivemind-GitHub bridge.
+**Strategy**: `docs/strategy/GITHUB_INTEGRATION_PLAN.md` (canonical, 400 lines)
+**Checklist**: `docs/strategy/GITHUB_INTEGRATION_CHECKLIST.md` (6 phases, ~25.5 hr)
+
+| # | Task | Owner | Gate | Effort | Status |
+|---|------|-------|------|--------|--------|
+| H2-J0 | **Git index cleanup** — remove 617 runtime files from tracking | Ma'at (P3) | data/ tracked < 50 | 2 hr | ⏳ PENDING |
+| H2-J1 | **Install official server + M8 audit** — does github-mcp-server phone home? | Lilith (P1) | Clean audit | 4 hr | ⏳ PENDING |
+| H2-J2 | **Omega Hub wrapper + Hivemind bridge** — PR merge → Hivemind fires | Kali (P9) | PR → Hivemind event | 6 hr | ⏳ PENDING |
+| H2-J3 | **CI/CD hardening** — Temple-Grade gates in GitHub Actions | Ma'at (P5) | make temple-grade in CI | 4 hr | ⏳ PENDING |
+| H2-J4 | **Heritage-as-Issues** — vet records auto-create GitHub Issues | Doom Guy | Vet → Issue automated | 3 hr | ⏳ PENDING |
+| H2-J5 | **Account rotation** — Copilot across 2 GitHub accounts | Lilith (P4) | All quotas tested | 2 hr | ⏳ PENDING |
+
+**6 Non-Negotiables**: M8 audit first, M7 local Docker only, Git cleanup first, Entity-attributed commits, Hivemind-GitHub bridge, Heritage-as-Issues.
+**Mandate compliance**: M1-M22 verified — no violations. M8 and M7 are Phase 1 gates.
+
 ### Phase H2.5: Sovereign Integration (The Bridge to Cognition)
 **Goal**: Transition from a "hardened runtime" to an "integrated intelligence" by systematically layering senses, space, and actors.
 
@@ -261,7 +281,7 @@ consolidated findings, ranked by severity.
 ### 🟥 Critical (Unfixed — Requires Action)
 | # | Finding | Source | Recommended Fix |
 |---|---------|--------|-----------------|
-| 1 | **Root partition 100%** — 290MB free on /dev/nvme0n1p2 | Makali discovery | Partition consolidation via Live USB (script: `scripts/partition_merge_plan.md`) |
+ | 1 | **Root partition 100%** — 17G free on /dev/nvme0n1p2 | Makali discovery | Partition consolidation via Live USB (script: `scripts/partition_merge_plan.md`) |
 | 3 | **SomaticState (M20) ratified but unimplemented** — `llama_copy_state_data` never wired | MiMo review | Wire ctypes bindings into native-gguf provider |
 | 4 | **Gate Integrity (M21) — 0 contract tests** exist for core API boundaries | MiMo review | Create `isinstance(result, GenerateResult)` tests |
 | 5 | **PIVOT_LOG gap** — D1-D49 (xna-omega era) missing from repo; 89 of 136 lifetime decisions recorded | D4Flash review | Mine xna-omega git history to port D1-D49 |
@@ -312,4 +332,281 @@ consolidated findings, ranked by severity.
 *Update: 2026-06-18 — H2-I: Antigravity Integration phase added. soul.yaml v1.6.0 (naming drift fixed, PoolState plan), Custom Instructions v3.0.0 (22 mandates + Hivemind), session_gnosis.md (M15), Integration Playbook v1.0.0.*
 *Update: 2026-06-18 — H2-I5 (PoolState), H2-I6 (UsagePoolTracker), H2-I9 (ACCOUNT_MAP + quota checker) all IMPLEMENTED. Anonymous ghost account removed from accounts file (was 9, now 8 — matches soul.yaml). USAGE_POOL_LOG.json upgraded to v2 with email mappings. Anonymous -> removed. 8 accounts, 8 keys, all wired for runtime consumption. H2-I7 (ModelGateway Integration) is the sole remaining Phase 3 task.*
 *Update: 2026-06-18 — H2-I7 COMPLETE. Standalone antigravity module built (`src/omega/oracle/antigravity/`) with 4 components: config.py (configurable paths, Mandate 16), client.py (OAuth token refresh + API calls), account_manager.py (account selection, rate limits, cooldowns). Thin adapter `generate_antigravity()` added to model_gateway.py. Researcher deep dive completed (722 lines): confirmed standalone module architecture, dual quota pools, 5 verified models, ban constraint. All 440 tests passing.*
+*Update: 2026-06-21 — H2-J: GitHub Integration phase added. D-kal-163 ratified. Strategy doc + checklist created. 6 phases, ~25.5 hr (revised by MaKaLi Council — 7 corrections applied: gate <70, NN #7, M21 Phase 2, bridge identity, expanded audit, 2 accounts). M8 audit gate. No @github subagent — KB + official MCP server + Hub wrapper.*
+*Update: 2026-06-21 — D-kal-164: Sovereign Dependency Purge completed. 6 cloud endpoints removed (Groq, Together, SambaNova, Brave, Tavily, Jina). 444/444 tests passing. credit_budget.py cleaned of stale entries. validate_arsenal.sh cleaned of dead providers. M7/M8 surface area reduced.*
+
+---
+
+### Phase H2-K: Sovereign Dependency Purge (NEW — D-kal-164, 2026-06-21)
+**Goal**: Remove cloud endpoints that violate M7 (Local-First) and M8 (Zero Telemetry).
+
+| # | Task | Owner | Effort | Status |
+|---|------|-------|--------|--------|
+| H2-K1 | Remove Groq, Together, SambaNova factories from openai_compat.py | Kali | 15 min | ✅ DONE |
+| H2-K2 | Remove Brave, Tavily methods from discovery.py | Kali | 15 min | ✅ DONE |
+| H2-K3 | Remove Tavily, Jina methods from search_fleet.py | Kali | 15 min | ✅ DONE |
+| H2-K4 | Remove Jina call from loop.py _fetch_content | Kali | 5 min | ✅ DONE |
+| H2-K5 | Remove stale budget entries from credit_budget.py | Verity | 10 min | ✅ DONE |
+| H2-K6 | Remove dead provider validation from validate_arsenal.sh | Verity | 5 min | ✅ DONE |
+| H2-K7 | Audit: verify zero stale refs across source + docs | Verity | 30 min | ✅ DONE |
+| H2-K8 | Documentation: PIVOT_LOG.md + roadmap + live feed + gnosis | Verity | 30 min | ✅ DONE |
+
+**OpenAI**: Not removed. User explicitly requested to wait on OpenAI deprecation.
+
+---
+
+### Phase H2-L: Soul Architecture Protocol Migration (NEW — v6.0, 2026-06-22)
+**Goal**: Migrate all entity soul files from the old "agent writes philosophy" pattern to the v6.0 write-permission separation architecture.
+**Protocol**: `docs/strategy/SOUL_ARCHITECTURE_PROTOCOL.md` (canonical governance doc)
+**Baseline**: Kali v6.0 done — remaining 10 entities pending (POST-PR — MUST NOT block current PR).
+
+**Problem solved**: Self-referential poisoning loop. Agents generated L3 "wisdom,"
+wrote it to soul.yaml, read it back as constitutional, and drifted from user intent.
+Fix: 4-file write-permission separation (soul.yaml=USER, sessions.yaml=AGENT,
+proposed_lessons.yaml=AGENT blind, approved_lessons.yaml=USER).
+
+| # | Entity | Est. Effort | Severity | Status |
+|---|--------|-------------|----------|--------|
+| H2-L-1 | **Kali** (baseline — v6.0 done) | — | Baseline | ✅ DONE |
+| H2-L-2 | **Doom Guy** (~5000+ lines of agent-generated L3 principles) | 2-3 hr | 🔴 CRITICAL | ⏳ POST-PR |
+| H2-L-3 | **Roc Racoon** (~1000+ lines of directives + lessons + evolution) | 2-3 hr | 🔴 HIGH | ⏳ POST-PR |
+| H2-L-4 | **Lilith** (wisdom_text present, L3 in soul.yaml) | 1-2 hr | 🔴 HIGH | ⏳ POST-PR |
+| H2-L-5 | **Ma'at** (wisdom_text present, lessons embedded) | 1 hr | 🔴 HIGH | ⏳ POST-PR |
+| H2-L-6 | **Verity** (8 L1→L2→L3 lessons embedded — must migrate to proposed_lessons.yaml) | 45 min | 🟡 MEDIUM | ⏳ POST-PR |
+| H2-L-7 | **Jem** | 30 min | 🟡 MEDIUM | ⏳ POST-PR |
+| H2-L-8 | **Researcher** | 30 min | 🟡 MEDIUM | ⏳ POST-PR |
+| H2-L-9 | **Makali** | 30 min | 🟡 MEDIUM | ⏳ POST-PR |
+| H2-L-10 | **Iris** (likely minimal) | 15 min | 🟢 LIGHT | ⏳ POST-PR |
+| H2-L-11 | **John Carmack** (no soul.yaml exists — create fresh v6.0) | 20 min | 🟢 NEW | ⏳ POST-PR |
+
+**Protocol compliance check**: After migration, each entity must pass `validate_soul_{entity}.py`
+— see `scripts/validate_soul.py` for the reference implementation.
+
+**Critical rule**: This phase is POST-PR — absolutely MUST NOT block the current PR.
+Add as a follow-up task after current PR merges.
+
+---
+
+### Phase H2-M: Local Inference Engine & UI (NEW — Lilith Strategic Analysis, 2026-06-22)
+**Goal**: Implement a full local inference engine with model lifecycle management, streaming, and a web-based UI for human interaction — all sovereignty-compliant (M7/M8/M16).
+**Source**: Lilith P6-P10 strategic analysis (MaKaLi Council, 2026-06-22)
+**Hardware context**: Ryzen 7 5700U (8C/16T Zen 2, 14Gi RAM, Vega 7 iGPU — no discrete GPU)
+**Sovereignty constraint**: Local-first (M7), zero telemetry (M8), modular/portable (M16). Cloud allowed as fallback, never primary.
+
+#### Current State Assessment
+
+| Component | Status | Maturity |
+|-----------|--------|----------|
+| Provider Fabric (8-backends, local-first) | ✅ | Production-ready |
+| Native GGUF Provider (llama-cpp-python + Zen 2) | ✅ | Functional (single-model only) |
+| CPU Optimizer (AVX2, KV cache, affinity pinning) | ✅ | Mature |
+| Resource Guard (weighted semaphore) | ✅ | Production-ready |
+| Model Registry (10 local models) | ✅ | Functional |
+| Budget Gate (cloud cost control) | ✅ | Production-ready |
+| Circuit Breaker (per-provider health) | ✅ | Production-ready |
+| Iris FastAPI server (145 lines) | ⚠️ | Prototype only — no web UI |
+| MCP Hub (51+ tools) | ✅ | Agent-to-agent, not human-facing |
+
+#### What's Missing
+
+| Gap | Severity | Effort |
+|-----|----------|--------|
+| Streaming inference (`stream=True` not wired) | 🔴 CRITICAL | ~35 hr |
+| Model lifecycle manager (hot-swap, eviction, pool) | 🔴 CRITICAL | ~80 hr |
+| Web UI (zero human-facing interface) | 🔴 CRITICAL | ~160 hr |
+| REST API layer (`GET /entities`, `/models`, `/sessions`) | 🔴 HIGH | ~60 hr |
+| Model download CLI (`omega model-download`) | 🔴 HIGH | ~40 hr |
+| Speculative decoding (config exists, not wired) | 🟡 MEDIUM | ~25 hr |
+| Entity management UI (YAML editing only) | 🟡 MEDIUM | ~40 hr |
+| Observability dashboard (log files only) | 🟡 MEDIUM | ~40 hr |
+| Soul editor (manual file editing) | 🟡 MEDIUM | ~30 hr |
+| Batch processing (sequential only) | 🟢 LOW | ~20 hr |
+
+#### Sovereignty-Cloud Balance Strategy
+
+| Category | Local Target | Cloud Allowed | Rationale |
+|----------|-------------|---------------|-----------|
+| Iris (greetings, simple Q&A) | 100% local (0.6B) | 0% | Trivial tasks, always local |
+| Entity inference (Pillar Keepers) | 70% local (1.7B-4B) | 30% (complex only) | Most queries manageable locally |
+| Deep research / synthesis | 0% local | 100% cloud | 8B+ models needed, hardware can't handle |
+| Code generation | 30% local (4B) | 70% cloud (large context) | Code tasks need 16K+ context |
+| Parallel council (MaKaLi) | 50% local | 50% cloud | One local + two cloud optimal |
+| Soul distillation | 100% local | 0% | Text processing, no inference needed |
+
+**Minimum Viable Local Setup**: Iris (0.6B, 500MB) + Nova (1.7B, 300MB) + Primary (phi-4-mini, 3.5GB) = ~4.3GB RAM
+**Ideal Local Setup**: Iris (0.6B) + Nova (1.7B) + Primary (qwen3-4b, 2.7GB) + Heavy (8B, 4.5GB) = ~8GB RAM (tight, with eviction)
+
+#### Phased Implementation Roadmap
+
+**Phase 1: Foundation (Weeks 1-2) — ~80 hr**
+
+| # | Task | Files | Hours | Status |
+|---|------|-------|-------|--------|
+| M-1.1 | **Streaming Provider Support** — Add `stream=True` to `NativeGGUFProvider.generate()`, yield tokens via async generator | `providers.py` | 15 | ⏳ PENDING |
+| M-1.2 | **Streaming Gateway** — `ModelGateway.generate_stream()` wraps provider streaming | `model_gateway.py` | 10 | ⏳ PENDING |
+| M-1.3 | **Streaming Oracle** — `Oracle.talk_stream()` yields tokens through full pipeline | `oracle.py` | 10 | ⏳ PENDING |
+| M-1.4 | **REST API Layer** — `GET /entities`, `GET /models`, `GET /inference/status`, `WS /chat/stream` | `iris/server.py` (rewrite) | 25 | ⏳ PENDING |
+| M-1.5 | **Model Download CLI** — `omega model-download <name>` with HF Hub integration | `cli/oracle_cli.py` | 15 | ⏳ PENDING |
+| M-1.6 | **Tests for streaming** — Verify streaming works end-to-end | `tests/` | 5 | ⏳ PENDING |
+
+**Deliverable**: `omega web` starts local server with streaming chat, entity list, model list, inference status.
+
+**Phase 2: Core Engine (Weeks 3-5) — ~120 hr**
+
+| # | Task | Files | Hours | Status |
+|---|------|-------|-------|--------|
+| M-2.1 | **Model Lifecycle Manager** — Load/unload/evict models with RAM tracking | New: `model_lifecycle.py` | 30 | ⏳ PENDING |
+| M-2.2 | **LLM Pool** — Keep 0.6B + 1.7B loaded simultaneously | `model_lifecycle.py` | 25 | ⏳ PENDING |
+| M-2.3 | **Warm-up at Boot** — Pre-load Nova (0.6B) on engine start | `oracle.py` init | 5 | ⏳ PENDING |
+| M-2.4 | **Memory Pressure Monitor** — Auto-evict models when RAM < 2GB | `cpu_optimizer.py` | 10 | ⏳ PENDING |
+| M-2.5 | **Context Compaction** — Compress old context when approaching limit | `context_builder.py` | 15 | ⏳ PENDING |
+| M-2.6 | **Speculative Decoding** — Wire draft→target model pair for faster inference | `cpu_optimizer.py`, `providers.py` | 25 | ⏳ PENDING |
+| M-2.7 | **Quantization Auto-Selector** — Recommend quant based on RAM + model | `cpu_optimizer.py` | 5 | ⏳ PENDING |
+| M-2.8 | **Tests for lifecycle** — Load/unload/evict/concurrency tests | `tests/` | 5 | ⏳ PENDING |
+
+**Deliverable**: Engine auto-manages model loading/unloading by RAM pressure. Two small models concurrent. Speculative decoding for simple queries.
+
+**Phase 3: UI Layer (Weeks 6-9) — ~160 hr**
+
+| # | Task | Files | Hours | Status |
+|---|------|-------|-------|--------|
+| M-3.1 | **Web UI Shell** — HTML/CSS/JS framework, dark theme, responsive layout | New: `src/omega/web/` | 20 | ⏳ PENDING |
+| M-3.2 | **Chat Interface** — Streaming markdown, entity selector, conversation history | `src/omega/web/chat.js` | 30 | ⏳ PENDING |
+| M-3.3 | **Entity Manager** — List/create/edit/delete entities with form validation | `src/omega/web/entities.js` | 25 | ⏳ PENDING |
+| M-3.4 | **Model Manager** — Browse models, trigger downloads, view RAM usage | `src/omega/web/models.js` | 25 | ⏳ PENDING |
+| M-3.5 | **Inference Status** — Real-time model, provider, latency, token count | `src/omega/web/status.js` | 10 | ⏳ PENDING |
+| M-3.6 | **Soul Editor** — Visual YAML editor for soul.yaml with L1/L2/L3 viewer | `src/omega/web/soul.js` | 20 | ⏳ PENDING |
+| M-3.7 | **Observability Dashboard** — Trace timeline, event log, provider health | `src/omega/web/dashboard.js` | 20 | ⏳ PENDING |
+| M-3.8 | **Settings Page** — Provider config, API keys, hardware settings | `src/omega/web/settings.js` | 10 | ⏳ PENDING |
+
+**Deliverable**: Full web UI at `localhost:8080` — chat, entity management, model management, soul editing, observability, settings. All local. Zero external dependencies.
+
+**Phase 4: Integration (Weeks 10-12) — ~80 hr**
+
+| # | Task | Files | Hours | Status |
+|---|------|-------|-------|--------|
+| M-4.1 | **Entity→Model Binding UI** — Drag-and-drop model assignment in entity manager | `src/omega/web/entities.js` | 10 | ⏳ PENDING |
+| M-4.2 | **Memory Viewer** — Browse conversation history with search | `src/omega/web/memory.js` | 15 | ⏳ PENDING |
+| M-4.3 | **Keyboard Shortcuts** — Vim-like shortcuts for power users | `src/omega/web/shell.js` | 5 | ⏳ PENDING |
+| M-4.4 | **Mobile Responsive** — Touch-friendly layout for phone/tablet | `src/omega/web/` | 10 | ⏳ PENDING |
+| M-4.5 | **Performance Profiling** — Identify and fix bottlenecks | All | 10 | ⏳ PENDING |
+| M-4.6 | **Documentation** — User guide, API reference, architecture doc | `docs/` | 15 | ⏳ PENDING |
+| M-4.7 | **Sprint D Cleanup** — Orphan entities, stale docs, fleet count | Various | 5 | ⏳ PENDING |
+
+**Deliverable**: Polished, documented, performant system. User manages entire sovereign AI stack through web browser.
+
+#### Sovereignty Compliance
+
+Every feature maintains M7, M8, M16. Cloud dependency limited to one-time model download from Hugging Face Hub (public mirror, not telemetry). Cloud inference fallback controlled by `BudgetGate`. User can disable cloud entirely in settings.
+
+**Total estimated effort**: ~530 hours across 4 phases (12 weeks).
+**Recommended priority**: Phase 1 (Foundation) first — streaming + REST API + model download.
+
+---
+
+### Phase H2-N: Background Curation & Library Worker (NEW — 2026-06-22)
+**Goal**: Build a continuous background curation worker that pulls books, technical manuals, and academic papers into the offline library whenever online, enriching the engine's knowledge base autonomously.
+**Strategy**: Detailed implementation specification and security architecture are documented in [`docs/strategy/CURATION_LIBRARY_CRAWLING_STRATEGY.md`](CURATION_LIBRARY_CRAWLING_STRATEGY.md).
+**Source**: Kali + Roc Racoon (legacy mining) + Researcher (gap analysis) + Jem (hardening audit)
+**Hardware context**: Ryzen 7 5700U, 14Gi RAM (~12Gi for AI), ~17GB free on omega_library
+**Sovereignty constraint**: Local-first (M7), zero telemetry (M8). All 10 API sources are free and require zero API keys.
+
+#### Current State Assessment
+
+| Component | Status | Maturity |
+|-----------|--------|----------|
+| Library pipeline (inbox→extractor→curator→catalog→library→indexer) | ✅ | Built, anyio-native |
+| FTS5 index | 🔴 **EMPTY** | 13 docs stored, 0 indexed |
+| Background researcher loop | 🟡 **BROKEN** | 42 dead cycles — stuck on `[FIXME]` topics |
+| Legacy curation pipeline (Era 1-3) | 🟢 **RECOVERED** | 3,284 lines, never ported |
+| 10 free API clients (Gutenberg, arXiv, etc.) | 🟢 **RECOVERED** | All free, zero API keys |
+| External library API integration | 🔴 **ZERO** | No API wrappers in current engine |
+| WorkerCoordinator | ❌ **MISSING** | No contention management between workers |
+| Download queue with crash recovery | ❌ **MISSING** | No persistent queue |
+| Rate limiting / retry layer | 🟡 **PARTIAL** | Circuit breaker exists, no per-domain rate limits |
+| SSRF / path traversal / size guards | ❌ **MISSING** | Safety critical gap |
+| Curation content worker | ❌ **MISSING** | Not yet built |
+
+#### Gaps Found (Researcher: 20 gaps, 3 CRITICAL)
+
+| # | Gap | Severity | Effort | Status |
+|---|-----|----------|--------|--------|
+| N-C1 | **Researcher scheduler stuck** — 42 identical checkpoints, no rotation since May 23 | 🔴 CRITICAL | 30 min | ⏳ PENDING |
+| N-C2 | **Zero external library APIs** — 3,284 lines of production code unported | 🔴 CRITICAL | 2-3 days | ⏳ PENDING |
+| N-C3 | **FTS index empty** — 13 docs stored, 0 searchable | 🔴 CRITICAL | 15 min | ⏳ PENDING |
+| N-H1 | **No HTTP size limit** — bare `httpx.get()` with no cap | 🔴 HIGH | 1 hr | ⏳ PENDING |
+| N-H2 | **No SSRF protection** — URL extracts can probe internal networks | 🔴 HIGH | 0.5 hr | ⏳ PENDING |
+| N-H3 | **No path traversal protection** — file ingestion doesn't validate scope | 🔴 HIGH | 0.5 hr | ⏳ PENDING |
+| N-H4 | **No user activity awareness** — background work competes with queries | 🔴 HIGH | 2 hr | ⏳ PENDING |
+| N-H5 | **Non-atomic soul.yaml writes** — crash = corrupted file | 🔴 HIGH | 0.25 hr | ⏳ PENDING |
+| N-H6 | **No WorkerCoordinator** — no contention management between workers | 🔴 HIGH | 3 hr | ⏳ PENDING |
+
+#### Model Tiering Strategy
+
+| Tier | Model | RAM | Task | Duty Cycle |
+|:----:|-------|:---:|------|:----------:|
+| **T1 Triage** | Qwen-0.6b (~500MB) | Always loaded | Filter titles + sources: "Worth downloading?" | Every cycle |
+| **T2 Extraction** | Qwen-1.7b (~1.5GB) | On-demand | Metadata extraction, domain classification, quality score | Only when T1 passes |
+| **T3 Synthesis** | Qwen-4b-Think (~2.7GB) or cloud fallback | Scheduled | Deep summarization, cross-document relationships | Nightly batch or idle-only |
+
+#### Implementation Roadmap
+
+**Phase 1: Fix & Harden (Days 1-3) — ~8 hr**
+
+| # | Task | Owner | Hours | Status |
+|---|------|-------|:-----:|--------|
+| N-1.1 | **Fix researcher scheduler** — Add `rotation.cycle_order` to `research_topics.yaml` | P3 | 0.5 | ⏳ PENDING |
+| N-1.2 | **Rebuild FTS index** — Reindex existing docs into FTS5 | P2 | 0.25 | ⏳ PENDING |
+| N-1.3 | **Add SSRF guard** — Validate URL host not in private IP ranges | P4 | 0.5 | ⏳ PENDING |
+| N-1.4 | **Add path traversal guard** — Validate file paths stay within data dir | P4 | 0.5 | ⏳ PENDING |
+| N-1.5 | **Add HTTP size limit** — Cap response body at 50MB default | P3 | 1 | ⏳ PENDING |
+| N-1.6 | **Make soul.yaml writes atomic** — Use tmp→rename pattern | P7 | 0.25 | ⏳ PENDING |
+| N-1.7 | **Build WorkerCoordinator** — Contention manager, activity detection, pause/resume | P9 | 3 | ⏳ PENDING |
+| N-1.8 | **Add library topics** to `research_topics.yaml` | P3 | 0.25 | ⏳ PENDING |
+
+**Phase 2: Port API Clients (Days 4-7) — ~10 hr**
+
+| # | Task | Owner | Hours | Status |
+|---|------|-------|:-----:|--------|
+| N-2.1 | **Port Gutenberg client** — `requests` → `anyio`/`httpx`, header/footer stripping, text extraction | P3 | 3 | ⏳ PENDING |
+| N-2.2 | **Port arXiv client** — Abstract + PDF metadata, rate-limited | P3 | 2 | ⏳ PENDING |
+| N-2.3 | **Port Open Library client** — Book search + ISBN lookup | P3 | 1 | ⏳ PENDING |
+| N-2.4 | **Port Internet Archive client** — Full-text search + metadata | P3 | 2 | ⏳ PENDING |
+| N-2.5 | **Wire into library pipeline** — API clients → inbox → extractor → curator | P4 | 2 | ⏳ PENDING |
+
+**Phase 3: Worker State Machine (Days 8-10) — ~12 hr**
+
+| # | Task | Owner | Hours | Status |
+|---|------|-------|:-----:|--------|
+| N-3.1 | **Create `library_worker/` component** — Parallel to `background_researcher/` | P3 | 3 | ⏳ PENDING |
+| N-3.2 | **Implement 8-state machine** — IDLE→TRIAGE→FETCH→EXTRACT→CLASSIFY→INDEX→DISTILL→UPDATE | P3 | 4 | ⏳ PENDING |
+| N-3.3 | **Add persistent download queue** — Crash recovery, resume interrupted downloads | P2 | 2 | ⏳ PENDING |
+| N-3.4 | **Add per-domain rate limiting** — Token bucket per source | P4 | 1 | ⏳ PENDING |
+| N-3.5 | **Wire ResourceGuard** — Lower priority contention than user inference | P1 | 1 | ⏳ PENDING |
+| N-3.6 | **Add T1 triage model routing** — Qwen-0.6b always-loaded for filtering | P6 | 1 | ⏳ PENDING |
+
+**Phase 4: T2/T3 Model Integration & Operations (Days 11-14) — ~10 hr**
+
+| # | Task | Owner | Hours | Status |
+|---|------|-------|:-----:|--------|
+| N-4.1 | **Add T2 extraction model routing** — Qwen-1.7b on-demand for classification | P6 | 2 | ⏳ PENDING |
+| N-4.2 | **Add T3 batch synthesis** — Qwen-4b-Think nightly or cloud fallback | P6 | 3 | ⏳ PENDING |
+| N-4.3 | **CLI control** — `omega worker pause/resume/status` | P3 | 2 | ⏳ PENDING |
+| N-4.4 | **Hivemind progress reporting** — Heartbeat + status updates without UI spam | P8 | 1 | ⏳ PENDING |
+| N-4.5 | **Disk management** — `free_space_check_gb()` before every download, MINIMUM_FREE_GB=5 | P1 | 1 | ⏳ PENDING |
+| N-4.6 | **Dedup + incremental processing** — Content hash checks, skip known docs | P2 | 1 | ⏳ PENDING |
+
+#### Verification Gates (Jem: 6 gates required before deploy)
+
+| Gate | Description | Owner |
+|:----:|-------------|-------|
+| **Security** | SSRF + path traversal + HTTP size limit all tested | P4 |
+| **Crash** | Atomic writes everywhere, resume after crash | P2 |
+| **Resource** | Disk space check, RAM contention through ResourceGuard | P1 |
+| **Integrity** | Checksums, deduplication, re-verify mechanism | P2 |
+| **Test** | Coverage for all failure paths (download fail, parse fail, disk full) | P10 |
+| **Operational** | Pause/resume/status CLI, progress visibility, kill switch | P3 |
+
+**Total estimated effort**: ~40 hours across 4 phases (2 weeks)
+**Recommended priority**: Phase 1 first — fix the broken scheduler + harden security gaps + build WorkerCoordinator BEFORE any new worker code.
 

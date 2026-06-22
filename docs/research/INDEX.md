@@ -192,3 +192,4 @@
 | R-SOUL-EVOLUTION | Soul Evolution & Persistent Identity Patterns — soul-file-spec, Letta, Woven Imprint | 🔴 Critical | ✅ | [R_SOUL_EVOLUTION_PATTERNS.md](R_SOUL_EVOLUTION_PATTERNS.md) | 2026-05-26 |
 | R-KB-SEEDING | Knowledge Base Seeding & Entity Knowledge Patterns | 🟡 High | ✅ | [R_KNOWLEDGE_BASE_SEEDING_PATTERNS.md](R_KNOWLEDGE_BASE_SEEDING_PATTERNS.md) | 2026-05-26 |
 | R-FLEET-FINDINGS | Fleet Discovery Master Synthesis — Local + Web findings for mode architecture | 🔴 Critical | ✅ | [FLEET_DISCOVERY_SYNTHESIS.md](../strategy/FLEET_DISCOVERY_SYNTHESIS.md) | 2026-05-26 |
+| R-SVR-GRAPH | Sovereign Knowledge Graph Adapter Spec | 🔴 Critical | ✅ | [R_SOVEREIGN_KNOWLEDGE_GRAPH_ADAPTER.md](R_SOVEREIGN_KNOWLEDGE_GRAPH_ADAPTER.md) | 2026-06-21 |

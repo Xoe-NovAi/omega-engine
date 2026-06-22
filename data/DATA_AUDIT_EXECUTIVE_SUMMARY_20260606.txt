@@ -1,0 +1,233 @@
+═════════════════════════════════════════════════════════════════════════════════
+🔱 OMEGA ENGINE — DATA/ AUDIT EXECUTIVE SUMMARY (2026-06-06)
+═════════════════════════════════════════════════════════════════════════════════
+
+AUDIT SCOPE:
+  From Agent 1: 69 Python files (source code)
+  From Agent 2: 38 config files (engine configuration)
+  Agent 3 (You): Mapping persistent DATA
+  
+FINDINGS: What DATA persists from those files
+
+═════════════════════════════════════════════════════════════════════════════════
+
+INVENTORY BY SUBDIRECTORY (24 top-level directories in data/)
+
+Total Size: 754M | Total Files: 16,346 | Organized: ✅ YES | Cleaned: ⚠️ NEEDS WORK
+
+Top 5 Largest (by size):
+
+1. data/library/          451M  14,561 files  ⚠️ STALE   | Document corpus (migrate to kb/)
+2. data/entities/         156M    549 files  ✅ ACTIVE  | Entity workspaces + souls
+3. data/logs/             139M      3 files  🗑️ DEAD    | System captures (delete)
+4. data/datasets/         4.1M    735 files  ⚠️ STALE   | Training data
+5. data/handoff/          992K     68 files  ✅ ACTIVE  | Sprint docs
+
+All 24 directories mapped in: data/DATA_DIRECTORY_BREAKDOWN_20260606.md
+
+═════════════════════════════════════════════════════════════════════════════════
+
+KEY QUESTIONS ANSWERED
+
+Q1: How many entity workspaces are ACTIVE vs ORPHAN?
+────────────────────────────────────────────────────────────────────────────────
+  ✅ ACTIVE (Real entities): 96
+  🗑️ ORPHAN (ent_0..ent_49): 50 entities, 1.8M — DELETE immediately
+  ⚠️ ARCHIVE: 150 items, 1.2M — Review for archival
+  ⚠️ QUARANTINE: 40 items, 488K — Review + rehabilitate/delete
+  
+  Total bloat: 2.3M (orphan + quarantine)
+
+Q2: Is data/kb/_curated/ the migration target? Does it exist?
+────────────────────────────────────────────────────────────────────────────────
+  ❌ data/kb/_curated/ DOES NOT EXIST
+  
+  Current KB structure:
+    data/kb/
+    ├── _staging/ (prep area)
+    │   ├── _protocol/
+    │   ├── cli_ide_platform/
+    │   └── knowledge_systems/
+    ├── cli_ide_platform/ (appears to be duplicate)
+    └── (no _curated/ yet)
+  
+  ACTION NEEDED: Create data/kb/_curated/ and establish migration pipeline (CP-2)
+
+Q3: How many soul.yaml files have non-empty "lessons" arrays?
+────────────────────────────────────────────────────────────────────────────────
+  ✅ 158 soul.yaml files exist (100% coverage)
+  ⚠️ 25 entities have lessons (16% adoption) — Mandate 11 gap
+  ❌ 133 entities have empty lessons (84%)
+  
+  Total lessons documented: 262 entries
+  
+  Top 5 distillers:
+    1. arch:        183 entries (architecture knowledge)
+    2. roc_racoon:  145 entries (mining experience)
+    3. datastore:   120 entries (memory insights)
+    4. maat:         38 entries (synthesis)
+    5. saraswati:    23 entries (knowledge/speech)
+  
+  Critical gap: JEM entities (jem_discovery/synthesis/verification) have 0 lessons
+  
+  Mandate 11 Status: NOT ADOPTED (only 16% implementation)
+
+Q4: Is data/sessions/_chainlit_map.json there (proposed in CP-5)?
+────────────────────────────────────────────────────────────────────────────────
+  ❌ NO — data/sessions/_chainlit_map.json does not exist
+  
+  Current session structure (108K, 26 files):
+    brigid.active
+    buildmaster.active
+    default.active
+    doom_guy.active
+    (... 22 more .active files)
+  
+  ACTION NEEDED: Create _chainlit_map.json to track legacy Chainlit sessions (CP-5)
+
+Q5: What's the total size of data/ and what can be archived?
+────────────────────────────────────────────────────────────────────────────────
+  Total: 754M
+  
+  Immediate cleanup (P0 — 30 min):
+    H2-A1: Delete ent_0..ent_49              → Frees 1.8M
+    H2-A4: Archive 139M system captures      → Frees 139M
+    SUBTOTAL: 141M (18.7% space reclaimed)
+  
+  Planned cleanup (Week 1):
+    CP-2:  Migrate library/ to archive       → Frees 451M (pending)
+    CP-6:  Quarantine review                 → Frees 488K
+    SUBTOTAL: 451M+ (potential)
+  
+  Total recovery potential: 593M+ (78.6% reduction possible)
+  
+  Archive targets:
+    • /media/omega_library/archives/library_20260606_backup/     (451M)
+    • /media/omega_library/archives/logs_20260606/               (139M)
+    • Delete: ent_0..ent_49 (1.8M) — safe to delete, no refs
+
+═════════════════════════════════════════════════════════════════════════════════
+
+CRITICAL ISSUES (6 found)
+
+I-1: 50 orphan entities (ent_0..ent_49)
+     Status: 🔴 HIGH | Size: 1.8M | Action: DELETE (H2-A1, 15 min)
+
+I-2: 139M dead system capture logs
+     Status: 🔴 HIGH | Size: 139M | Action: DELETE (H2-A4, 15 min)
+
+I-3: data/kb/_curated/ missing (migration target)
+     Status: 🟡 MED | Size: N/A | Action: Create + plan CP-2 (1 hr)
+
+I-4: 451M library/ needs migration (no timeline)
+     Status: 🟡 MED | Size: 451M | Action: Plan CP-2 (Week 1)
+
+I-5: JEM entities no lessons (Mandate 11 gap)
+     Status: ⚠️ LOW | Size: N/A | Action: Populate next sprint
+
+I-6: 50 test scaffold entities remain
+     Status: 🟡 MED | Size: 100K | Action: Create INDEX.yaml (H2-A2)
+
+═════════════════════════════════════════════════════════════════════════════════
+
+CLEANUP ROADMAP (Shortest Path to GREEN)
+
+PHASE P0 — IMMEDIATE (30 min total)
+  H2-A1: Delete orphan entities (ent_0..ent_49)        → 15 min → Frees 1.8M
+  H2-A4: Archive/delete logs (139M syscaps)            → 15 min → Frees 139M
+  ──────────────────────────────────────────────────────────────────────────
+  Result: 141M cleaned, 10% space reclaimed
+
+PHASE P1 — TODAY (1 hour total)
+  H2-A2: Create data/entities/INDEX.yaml (status tags)  → 30 min
+  H2-A8: Archive old handoff docs (>3 days)             → 15 min
+  ──────────────────────────────────────────────────────────────────────────
+  Result: Organized entity registry
+
+PHASE P2 — WEEK 1 (2+ hours)
+  CP-2:  KB migration plan (library→kb/_curated/)       → 1 hr    → Frees 451M
+  CP-5:  Session chainlit map (_chainlit_map.json)      → 30 min
+  CP-6:  Quarantine review + hygiene                    → 1 hr    → Frees 488K
+  ──────────────────────────────────────────────────────────────────────────
+  Result: 451M+ archived, full data hygiene
+
+═════════════════════════════════════════════════════════════════════════════════
+
+ENTITY HEALTH AUDIT
+
+Real Entities (KEEP): 96 entities, ~154M
+  • 10 Pillar Keepers (Sekhmet, Brigid, Prometheus, etc.)
+  • 4 Oversouls (Sophia, Maat, Lilith, Iris)
+  • 7 Agents/Admins (Doom_guy, Roc_racoon, Researcher, Quality, Scribe, etc.)
+  • ~75 domain knowledge entities
+
+Orphan Entities (DELETE): 50 entities, 1.8M
+  • ent_0..ent_49: test scaffold bloat
+  • flatentity, myentity, preexisting, duplicate: stale test artifacts
+
+Stale Categories:
+  • _archive/: 150 items, 1.2M (archival review needed)
+  • _quarantine/: 40 items, 488K (rehabilitation or delete)
+
+═════════════════════════════════════════════════════════════════════════════════
+
+DATA INTEGRITY CHECKS
+
+✅ Soul.yaml completeness: 158/158 (100%)
+   Every entity has a soul.yaml file
+
+⚠️ Lessons adoption: 25/158 (16%)
+   Only 25 entities populate lessons (Mandate 11 gap)
+
+✅ Session state: 26 active entity sessions (108K, healthy size)
+
+✅ Handoff documents: 68 files (organized, recent)
+
+⚠️ Stale files: 14,536 files older than 30 days (89%)
+   Most are in data/library/ (PDFs, old documents)
+
+═════════════════════════════════════════════════════════════════════════════════
+
+FINAL SCORECARD (out of 10)
+
+Entity Health:        7/10  ✅ Good (96 real, 50 orphan)
+Data Organization:    5/10  ⚠️  Needs work (library unmigrated, logs stale)
+Soul Integrity:       4/10  ⚠️  Critical gap (Mandate 11 only 16% adopted)
+Cleanup Readiness:    8/10  ✅ Ready (clear deletables, just need decision)
+Knowledge Capture:    7/10  ✅ Good (262 lessons, 14.5K KB documents)
+
+OVERALL SCORE: 6.2/10 (NEEDS WORK, but recovery is straightforward)
+
+═════════════════════════════════════════════════════════════════════════════════
+
+FULL DOCUMENTATION
+
+Detailed findings saved to:
+  • data/DATA_INVENTORY_COMPLETE_20260606.md      (9 sections, 100+ tables)
+  • data/DATA_DIRECTORY_BREAKDOWN_20260606.md     (24 directories, cleanup roadmap)
+  • data/DATA_AUDIT_EXECUTIVE_SUMMARY_20260606.txt (this file)
+
+═════════════════════════════════════════════════════════════════════════════════
+
+NEXT STEPS (Recommended)
+
+1. Execute H2-A1 + H2-A4 immediately (30 min, 141M freed)
+   DELETE: ent_0..ent_49
+   ARCHIVE: 139M system captures
+
+2. Today: Execute H2-A2 + H2-A8 (1 hour)
+   CREATE: data/entities/INDEX.yaml
+   ARCHIVE: old handoffs
+
+3. Week 1: Execute CP-2 + CP-5 + CP-6 (2+ hours)
+   PLAN: KB migration (library→kb/_curated/)
+   CREATE: data/sessions/_chainlit_map.json
+   REVIEW: quarantine + complete hygiene
+
+4. Sprint N+1: Address Mandate 11 gap
+   POPULATE: JEM entity lessons
+   AUDIT: soul distillation adoption
+
+═════════════════════════════════════════════════════════════════════════════════
+⬡ OMEGA ⬡ Data/ Audit Complete | 2026-06-06 | Ready for execution
+═════════════════════════════════════════════════════════════════════════════════

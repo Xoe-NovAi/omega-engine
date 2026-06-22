@@ -1,7 +1,7 @@
 omega:
   identity:
     name: Omega Engine
-    version: 2.3.0
+    version: 1.0.0-alpha
     description: Local-first, entity-centric, provider-agnostic AI council runtime
     maintainer: Xoe-NovAi
     license: Apache-2.0
@@ -14,7 +14,7 @@ omega:
     user: arch
     allow_transient: true
   data:
-    dir: /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data
+    dir: data
     entities_dir: data/entities
     session_log: true
     session_log_dir: data/sessions

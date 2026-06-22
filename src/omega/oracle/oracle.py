@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 # AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 The Oracle — Routing, Summoning, and Entity Intelligence
 # ⬡ OMEGA ⬡ ORACLE ⬡ oracle.py (1100 lines)

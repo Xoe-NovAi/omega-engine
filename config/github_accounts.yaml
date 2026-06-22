@@ -1,0 +1,26 @@
+# 🔱 GitHub Accounts Configuration
+# ⬡ OMEGA ⬡ LILITH ⬡ CONFIG ⬡ v1.0.0
+# Decision: D-kal-163
+# Security: 0400 permissions required. Contains Personal Access Tokens (PATs).
+
+# Map GitHub usernames to Omega entity personas
+accounts:
+  - username: "xoe-nova-ai"
+    entity: "kali"
+    pat: "ghp_placeholder_system_primary_token_kali"
+    rate_limits:
+      requests_per_hour: 5000
+      cooldown_seconds: 300
+    rotation:
+      priority: 0
+      status: "active"
+
+  - username: "arcana-novai"
+    entity: "maat"
+    pat: "ghp_placeholder_governance_token_maat"
+    rate_limits:
+      requests_per_hour: 5000
+      cooldown_seconds: 300
+    rotation:
+      priority: 1
+      status: "active"

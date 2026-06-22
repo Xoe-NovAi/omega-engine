@@ -1,11 +1,12 @@
+# AP: AP-PR-READINESS-v1.0.0
 import anyio
 import logging
 from pathlib import Path
 from typing import Any, Dict, Optional
 
-from src.omega.oracle.oracle import Oracle
-from src.omega.oracle.model_gateway import ModelGateway
-from src.omega.oracle.health_monitor import get_health_monitor
+from omega.oracle.oracle import Oracle
+from omega.oracle.model_gateway import ModelGateway
+from omega.oracle.health_monitor import get_health_monitor
 
 logger = logging.getLogger("omega.runtime.openclaw")
 

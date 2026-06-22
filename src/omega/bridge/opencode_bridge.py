@@ -1,11 +1,12 @@
+# AP: AP-PR-READINESS-v1.0.0
 import logging
 from pathlib import Path
 from typing import Optional, AsyncGenerator, Dict, Any, Union
 
 import anyio
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, status
-from src.omega.oracle.oracle import Oracle, OracleResponse
-from src.omega.errors import OmegaError
+from omega.oracle.oracle import Oracle, OracleResponse
+from omega.errors import OmegaError
 
 # ── Conceptual Equivalents ────────────────────────────────────────────────
 # As per requirements, these provide the necessary gates and ledgering 

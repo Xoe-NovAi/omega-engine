@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 # AP Token: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Capability Registry — Agent Skill Discovery
 #

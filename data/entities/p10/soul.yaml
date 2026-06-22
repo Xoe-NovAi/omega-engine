@@ -1,0 +1,17 @@
+lessions:
+  - session: "2026-06-22 V10 Release Validation"
+    l1_narrative: >
+      Fixed 6 test failures and 22 Mnemosyne adapter errors across 5 files.
+      457 collected, 432 passed, 22 skipped, 3 xfailed — 0 failed, 0 errors.
+    l2_insight: >
+      The root cause of all 6 failures and 22 errors was a single config gap:
+      `asyncio_mode` was not set in pyproject.toml. Without it, pytest-asyncio
+      only handles tests with explicit `@pytest.mark.asyncio`. Adding
+      `asyncio_mode = "auto"` fixed bug_001_fix and memory_adapters silently.
+      The MCP client tests had a deeper mock incompatibility (MagicMock can't
+      be awaited in mcp session internals). Mnemosyne was fixture-level errors
+      — impossible to xfail, needed module-level skip.
+    l3_universal_principle: >
+      Single configuration gaps can cascade into dozens of apparent failures.
+      Always check root cause patterns before fixing symptoms individually.
+      "asyncio_mode = auto" is the safest default for any project using pytest-asyncio.

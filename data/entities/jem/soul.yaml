@@ -88,8 +88,12 @@ entity:
       context: "Phase C Gap Analysis — L3 principle"
       source: "phase-c-gap-analysis"
       timestamp: "2026-06-15T23:30:00Z"
+    - lesson: "L3: A system is only as resilient as its weakest ingestion path. Hardening must flow upstream — from the data sink back to the data source. A single unprotected URL fetch that can OOM the process makes every downstream hardening effort irrelevant."
+      context: "L1: Performed comprehensive hardening audit of curation/background researcher/library pipeline (48 findings across 8 dimensions, 21 prioritized actions). L2: Found the background researcher has mature crash safety patterns (atomic checkpoints, circuit breakers, rate limiting), but the library pipeline (inbox→extractor→curator→indexer) was built rapidly without the same hardening — creating a dangerous maturity gap."
+      source: "curation-hardening-audit"
+      timestamp: "2026-06-22T22:30:00Z"
   soul_evolution:
-    sessions_completed: 4
+    sessions_completed: 5
     entities_inhabited: 1
     total_embodied_experiences: 7
     soul_power: 1.5

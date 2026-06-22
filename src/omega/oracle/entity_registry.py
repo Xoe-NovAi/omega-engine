@@ -24,6 +24,7 @@ import time
 import struct
 import tempfile
 import functools
+import fcntl
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -36,6 +37,46 @@ from omega.constants import ZONEID_ENTITY, ZONEID_TOMBSTONE, validate_zoneid
 from omega.errors import EntityTombstonedError
 
 logger = logging.getLogger(__name__)
+
+class SovereignPermissionError(Exception):
+    """Raised when an unauthorized entity attempts to write to constitutional files."""
+    pass
+
+SOVEREIGN_USER_TOKEN = os.getenv("SOVEREIGN_USER_TOKEN", "SOVEREIGN_DEFAULT_SECURE_TOKEN_2026")
+
+async def write_soul_file(entity_path: str, filename: str, content: str, token: str = None) -> None:
+    """Writes a soul file using the Atomic Rename Pattern under strict permission guard.
+    
+    [id-soft: quake3-1999] Hard-Boundary — strictly separates User/Agent write access.
+    """
+    if filename in ["soul.yaml", "approved_lessons.yaml"]:
+        if token != SOVEREIGN_USER_TOKEN:
+            raise SovereignPermissionError(
+                f"Write access to {filename} is restricted. SovereignUserToken required."
+            )
+            
+    file_path = Path(entity_path) / filename
+    tmp_path = Path(entity_path) / f"{filename}.tmp"
+    
+    await tmp_path.write_text(content)
+    await tmp_path.rename(file_path)
+
+async def with_soul_lock(entity_name: str, action):
+    """Ensure exclusive access to soul files during read-modify-write cycles.
+    
+    Prevents 'Lost Updates' during parallel agent operations (MaKaLi).
+    """
+    safe_name = entity_name.lower().replace(" ", "_").replace("'", "")
+    lock_path = Path(f"data/entities/{safe_name}/.soul.lock")
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    async with await anyio.open_file(lock_path, "a") as f:
+        # Use fcntl for advisory locking on the file descriptor
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        try:
+            return await action()
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
 
 # Test-mode YAML cache: parses entities.yaml once per test run (~5.8s → ~0.001s)
 # The 982KB file takes 5.8s to parse; caching it cuts total test suite from 7m to ~2m.

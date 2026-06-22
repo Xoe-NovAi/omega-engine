@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 # 🔱 Omega Engine — Memory Adapters
 # ⬡ OMEGA ⬡ MEMORY ⬡ ADAPTERS ⬡ v1.0.0 ⬡ 2026-06-15
 """WAD-pluggable memory adapter — dual-interface bridge for memory subsystems.

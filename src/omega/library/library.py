@@ -43,6 +43,7 @@ class Library:
 
     def __init__(self):
         self._documents: Dict[str, CuratedDocument] = {}
+        self._index_ensured: bool = False
         # Use QdrantAdapter with sovereign fallback to MemoryVectorAdapter
         from omega.memory.vector_adapters import QdrantAdapter
         self._indexer = Indexer(vector_adapter=QdrantAdapter())
@@ -59,8 +60,35 @@ class Library:
                 logger.warning(f"Failed to load document {path}: {e}")
         logger.info(f"Library loaded: {len(self._documents)} documents")
 
+    async def _ensure_index(self) -> None:
+        """Auto-rebuild the FTS5 index if it's empty but documents exist.
+
+        [id-soft: doom-1993] FTS5 Index Rebuild — WAD directory rebuild pattern.
+        Called once at startup to ensure search is functional immediately.
+        """
+        stats = await self._indexer.stats()
+        if stats.get("fts_documents", 0) == 0 and self._documents:
+            logger.info(
+                "FTS index empty (%d docs stored). Auto-rebuilding...",
+                len(self._documents),
+            )
+            count = 0
+            for doc in self._documents.values():
+                await self._indexer.index_document(doc)
+                count += 1
+            await self._indexer.flush()
+            stats = await self._indexer.stats()
+            logger.info("FTS index rebuilt: %s", stats)
+
+    async def _ensure_index_lazy(self) -> None:
+        """Lazily rebuild the FTS5 index on the first async call, if needed."""
+        if not self._index_ensured:
+            self._index_ensured = True
+            await self._ensure_index()
+
     async def store(self, document: CuratedDocument) -> None:
         """Store a curated document in the library."""
+        await self._ensure_index_lazy()
         path = DOCUMENTS_DIR / f"{document.doc_id}.json"
         async with await anyio.open_file(str(path), "w") as f:
             await f.write(json.dumps(document.to_dict(), indent=2, default=str))
@@ -74,10 +102,17 @@ class Library:
 
         self._documents[document.doc_id] = document
         await self._indexer.index_document(document)
+        # Notify Hivemind about new knowledge (Phase 4 H2-N)
+        try:
+            from .hivemind_bridge import BRIDGE
+            await BRIDGE.publish_new_document(document)
+        except ImportError:
+            pass  # hivemind_bridge not yet created
         logger.info(f"Library stored: {document.title} [{document.domain}]")
 
     async def get(self, doc_id: str) -> Optional[CuratedDocument]:
         """Retrieve a document by ID."""
+        await self._ensure_index_lazy()
         if doc_id in self._documents:
             return self._documents[doc_id]
         path = DOCUMENTS_DIR / f"{doc_id}.json"
@@ -99,6 +134,7 @@ class Library:
         Qdrant vector cosine similarity. Falls back to FTS5-only if
         Qdrant is unavailable (handled by vector adapter).
         """
+        await self._ensure_index_lazy()
         # Call hybrid_search which uses RRF to merge FTS + vector results
         results = await self._indexer.hybrid_search(query, domain, limit)
         
@@ -145,6 +181,7 @@ class Library:
         await self._indexer.close()
 
     async def stats(self) -> Dict[str, Any]:
+        await self._ensure_index_lazy()
         domains = await self.domains()
         total = await self.count()
         avg_score = sum(d.quality_score for d in self._documents.values()) / max(total, 1)
@@ -157,6 +194,7 @@ class Library:
 
     async def delete(self, doc_id: str) -> bool:
         """Delete a document from the library."""
+        await self._ensure_index_lazy()
         if doc_id not in self._documents:
             return False
         doc = self._documents[doc_id]

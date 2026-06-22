@@ -1,0 +1,69 @@
+# 🔱 Omega SearXNG — Sovereign Search Configuration (Minimal)
+use_default_settings: true
+general:
+  instance_name: "Omega SearXNG"
+  debug: false
+  privacypolicy_url: false
+  contact_url: false
+  enable_metrics: false
+
+search:
+  safe_search: 0
+  autocomplete: ""
+  formats:
+    - html
+    - json
+
+server:
+  secret_key: "${SEARXNG_SECRET}"
+  bind_address: "0.0.0.0"
+  port: 8080
+  base_url: "http://localhost:8017"
+  limiter: false
+  image_proxy: false
+  method: "POST"
+
+ui:
+  static_use_hash: true
+  default_theme: simple
+  default_locale: ""
+  results_on_new_tab: true
+
+engines:
+  - name: duckduckgo
+    engine: duckduckgo
+    shortcut: ddg
+    disabled: false
+  - name: google
+    engine: google
+    shortcut: g
+    disabled: false
+  - name: bing
+    engine: bing
+    shortcut: bi
+    disabled: false
+  - name: brave
+    engine: brave
+    shortcut: bv
+    disabled: false
+  - name: wikipedia
+    engine: wikipedia
+    shortcut: wp
+    disabled: false
+  - name: arxiv
+    engine: arxiv
+    shortcut: arx
+    disabled: false
+  - name: github
+    engine: github
+    shortcut: gh
+    disabled: false
+  - name: semantic scholar
+    engine: semantic_scholar
+    shortcut: ss
+    disabled: false
+
+outgoing:
+  request_timeout: 5.0
+  max_request_timeout: 10.0
+  useragent_suffix: ""

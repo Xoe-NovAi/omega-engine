@@ -3,11 +3,15 @@
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ opus-4.6 ⬡ antigravity ⬡ trc_core ⬡ OPENAI-COMPAT
 #
 # Handles any API that speaks the OpenAI /v1/chat/completions protocol.
-# This covers: OpenRouter, Groq, Together, SambaNova, Azure OpenAI,
-# Google Vertex AI (with Gemma), and any other compatible endpoint.
+# This covers: OpenRouter, Azure OpenAI, Google Vertex AI (with Gemma),
+# and any other compatible endpoint with explicit base_url configuration.
 #
 # The Gemma provider, OpenRouter provider, etc. are all instances of this
 # class with different base_url and api_key values — no code duplication.
+#
+# NOTE: Cloud provider defaults (Groq, Together, SambaNova, OpenAI) were removed
+# per D-kal-164 sovereign dependency purge. Only OpenRouter remains as
+# the cloud fallback. Any other provider must be configured explicitly.
 
 import logging
 from typing import Optional
@@ -20,8 +24,8 @@ logger = logging.getLogger(__name__)
 class OpenAICompatProvider(RemoteProvider):
     """Remote provider for any OpenAI-compatible chat completions API.
 
-    Works with: OpenRouter, Groq, Together, SambaNova, Vertex AI,
-    Azure OpenAI, vLLM, and any /v1/chat/completions endpoint.
+    Works with: OpenRouter, Vertex AI, Azure OpenAI, vLLM,
+    and any /v1/chat/completions endpoint with explicit base_url.
     """
 
     async def _send_request(
@@ -96,27 +100,4 @@ def create_openrouter_provider(config: ProviderConfig) -> OpenAICompatProvider:
     return OpenAICompatProvider(config)
 
 
-def create_groq_provider(config: ProviderConfig) -> OpenAICompatProvider:
-    """Create a Groq provider with correct base URL."""
-    config.base_url = config.base_url or "https://api.groq.com/openai"
-    if config.timeout_seconds is None:
-        config.timeout_seconds = 15.0  # Groq is fast
-    return OpenAICompatProvider(config)
-
-
-def create_together_provider(config: ProviderConfig) -> OpenAICompatProvider:
-    """Create a Together AI provider with correct base URL."""
-    config.base_url = config.base_url or "https://api.together.xyz"
-    return OpenAICompatProvider(config)
-
-
-def create_sambanova_provider(config: ProviderConfig) -> OpenAICompatProvider:
-    """Create a SambaNova provider with correct base URL."""
-    config.base_url = config.base_url or "https://api.sambanova.ai"
-    return OpenAICompatProvider(config)
-
-
-def create_openai_provider(config: ProviderConfig) -> OpenAICompatProvider:
-    """Create a standard OpenAI provider."""
-    config.base_url = config.base_url or "https://api.openai.com"
-    return OpenAICompatProvider(config)
+# OpenAI provider factory removed per D-kal-164 sovereign dependency purge.

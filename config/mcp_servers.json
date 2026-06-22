@@ -10,6 +10,10 @@
       "headers": {
         "x-api-key": "${EXA_API_KEY}"
       }
+    },
+    "searxng": {
+      "type": "remote",
+      "url": "http://127.0.0.1:8018/sse"
     }
   }
 }

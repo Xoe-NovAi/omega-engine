@@ -108,9 +108,7 @@ async def test_entity_registry_concurrent_add(monkeypatch, tmp_path):
     import omega.oracle.entity_workspace as ew
     
     # Redirect entity workspace creation to a temp dir
-    test_entities_dir = tmp_path / "entities"
-    test_entities_dir.mkdir()
-    monkeypatch.setattr(ew, 'ENTITIES_DATA_DIR', test_entities_dir)
+    monkeypatch.setenv("OMEGA_DATA_DIR", str(tmp_path))
     
     # Use a temporary config file
     with tempfile.NamedTemporaryFile(mode="w", suffix=".yaml", delete=False) as f:

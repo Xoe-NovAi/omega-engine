@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 """
 UsagePoolTracker — Runtime key rotation, usage tracking, and pool health.
 
@@ -17,7 +18,7 @@ from typing import Dict, List, Optional, Tuple
 
 import anyio
 
-from src.omega.oracle.pool_state import (
+from omega.oracle.pool_state import (
     AccountMapping,
     KeyHealth,
     PoolConfig,

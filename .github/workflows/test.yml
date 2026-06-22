@@ -2,8 +2,8 @@
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ github-actions ⬡ trc_ci ⬡ PHASE-1a
 #
 # Runs on every push and pull request to the main branch.
-# Tests use MockProvider (OMEGA_ENV=test) — no cloud APIs needed.
-# Native GGUF (llama-cpp-python) is NOT installed — deferred to v0.6.0.
+# Tests use MockProvider (OMEGA_ENV=test) — no live inference needed.
+# Native GGUF is available via `.[all]` extra but tests don't require it.
 
 name: Test
 

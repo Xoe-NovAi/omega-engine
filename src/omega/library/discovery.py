@@ -3,11 +3,12 @@
 AP: AP-DISCOVERY-ORCHESTRATOR-v1.0.0
 ICS: [NODE: ARCHON | ARCHETYPE: PROMETHEUS | CONTEXT: DISCOVERY-PIPELINE]
 
-Implements the 4-phase research pipeline using free/sovereign tools:
-  1. Reconnaissance (Gemini 2.0 Flash) — High-level synthesis + Brave validation
-  2. Semantic Discovery (Exa) — Gold-standard sources
-  3. Broad Validation (Brave Search) — Cross-reference verification
-  4. Deep Extraction (Tavily) — High-fidelity content extraction
+Implements the research pipeline using sovereign tools:
+  1. Reconnaissance (Gemini) — High-level synthesis
+  2. Semantic Discovery (Exa) — Source discovery
+  3. Synthesis — AI-powered synthesis of gathered research
+
+NOTE: Brave and Tavily dependencies removed per D-kal-164.
 """
 
 import json
@@ -84,8 +85,6 @@ class DiscoveryOrchestrator:
         self.model_gateway = model_gateway or ModelGateway(health_monitor=get_health_monitor())
         self.exa_key = os.getenv("EXA_API_KEY")
         self.firecrawl_key = os.getenv("FIRECRAWL_API_KEY")
-        self.brave_key = os.getenv("BRAVE_API_KEY")
-        self.tavily_key = os.getenv("TAVILY_API_KEY")
         self._jobs: Dict[str, DiscoveryReport] = {}
         self._load_jobs()
 
@@ -212,12 +211,8 @@ class DiscoveryOrchestrator:
         return self._jobs[job_id]
 
     async def _phase_recon(self, query: str) -> str:
-        """Phase 1: High-level synthesis via Gemini 2.0 Flash + Brave context."""
+        """Phase 1: High-level synthesis via Gemini 2.0 Flash."""
         context = ""
-        if self.brave_key:
-            brave_results = await self._phase_validation(query, [])
-            context = "\n".join(brave_results[:3])
-
         system_prompt = (
             "You are a reconnaissance agent. Provide a high-level synthesis of the query, "
             "identifying key entities, dates, and technical terms. Focus on providing a "
@@ -282,9 +277,8 @@ class DiscoveryOrchestrator:
             sources = await self._phase_discovery(sub_query)
             report.sources.extend(sources)
             
-            # Extract content for the top 2 sources of each subtopic
-            extracted = await self._phase_extraction(sources[:2])
-            report.extracted_content.extend(extracted)
+            # Note: Content extraction (Tavily) removed per D-kal-164.
+            # Sources from Exa already include content via highlights.
             
             subtopic["status"] = "complete"
         except OmegaError:
@@ -354,53 +348,5 @@ class DiscoveryOrchestrator:
             logger.error(f"Exa Phase failed: {e}", exc_info=True)
             raise ProviderError(f"Exa Phase failed: {e}", raw_error=e) from e
 
-    async def _phase_validation(self, query: str, sources: List[Dict[str, Any]]) -> List[str]:
-        """Phase 3: Broad validation via Brave Search (Free Tier)."""
-        if not self.brave_key:
-            return ["Brave API key missing. Validation skipped."]
-        
-        url = "https://api.search.brave.com/res/v1/web/search"
-        headers = {
-            "X-Subscription-Token": self.brave_key,
-            "Accept": "application/json"
-        }
-        params = {"q": query, "count": 5}
-        
-        try:
-            async with httpx.AsyncClient(timeout=20.0) as client:
-                resp = await client.get(url, headers=headers, params=params)
-                resp.raise_for_status()
-                data = resp.json()
-                results = data.get("web", {}).get("results", [])
-                return [f"{r.get('title')}: {r.get('description')}" for r in results]
-        except OmegaError:
-            raise
-        except Exception as e:
-            logger.error(f"Brave Phase failed: {e}", exc_info=True)
-            raise ProviderError(f"Brave Phase failed: {e}", raw_error=e) from e
-
-    async def _phase_extraction(self, sources: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Phase 4: Content extraction via Tavily (Free Tier)."""
-        if not self.tavily_key:
-            return []
-        
-        url = "https://api.tavily.com/search"
-        payload = {
-            "api_key": self.tavily_key,
-            "query": "Extracted content for identified sources",
-            "search_depth": "advanced",
-            "include_content": True,
-            "urls": [s["url"] for s in sources[:3] if "url" in s]
-        }
-        
-        try:
-            async with httpx.AsyncClient(timeout=60.0) as client:
-                resp = await client.post(url, json=payload)
-                resp.raise_for_status()
-                data = resp.json()
-                return data.get("results", [])
-        except OmegaError:
-            raise
-        except Exception as e:
-            logger.error(f"Tavily Phase failed: {e}", exc_info=True)
-            raise ProviderError(f"Tavily Phase failed: {e}", raw_error=e) from e
+    # Brave (_phase_validation) and Tavily (_phase_extraction) removed
+    # per D-kal-164 sovereign dependency purge.

@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 # ── Antigravity Account Manager ──
 # Port of the plugin's AccountManager (TypeScript → Python).
 # Handles account loading, selection, rate limit tracking, and cooldown management.

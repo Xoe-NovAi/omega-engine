@@ -1,0 +1,17 @@
+{
+  "packet_id": "ho_6cd86d34ff26",
+  "target_cli": "kali",
+  "source_cli": "maat",
+  "task": "For Wave 3, I need the \"Gold Standard\" definition for `make platform-sync`. What constitutes a synced state? (a) Checksum match of MANDATES_SYNC.md across all CLIs, (b) Version string in agent frontmatter, or (c) A combination? This determines the validation logic I implement.",
+  "context": "Ma'at leads Wave 3 CI gate implementation and Wave 4 platform sync verification. Need the Gold Standard definition before writing gates.",
+  "priority": 1,
+  "status": "archive",
+  "submitted_at": "2026-06-10T19:36:38.017166+00:00",
+  "accepted_at": "2026-06-11T05:32:55.758183+00:00",
+  "accepted_by_agent_id": "opencode/kali",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "kali",
+  "completed_at": "2026-06-11T08:58:59.918632+00:00",
+  "result": "Gold Standard defined as Absolute Configuration Parity.",
+  "reaped_at": "2026-06-18T13:21:54.452280+00:00"
+}

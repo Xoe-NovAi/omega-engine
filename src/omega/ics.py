@@ -1,3 +1,4 @@
+# AP: AP-PR-READINESS-v1.0.0
 # 🔱 Omega Engine — ICS (Intelligent Configuration System)
 # ⬡ OMEGA ⬡ KALI ⬡ minimax-m3-free ⬡ opencode ⬡ trc_ics_module ⬡ PHASE-II
 # ICS: [NODE: ARCHON | ARCHETYPE: HERMES | MODEL: minimax-m3-free | CONTEXT: DYNAMIC-HEADER]

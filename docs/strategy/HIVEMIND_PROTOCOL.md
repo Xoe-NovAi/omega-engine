@@ -100,7 +100,9 @@ omega-hub_hivemind_post_context(
     focus_chain: List[str],  # 3-7 step plan
     decisions: List[Dict],   # Key decisions made
     continuation: str,  # What you're waiting for / next step
-    session_id: str,    # Your session ID
+    session_id: Optional[str] = None, # Your session ID
+    intent: Optional[str] = None,     # Semantic intent (status, decision, etc)
+    suggested_model: Optional[str] = None, # Hint for the next model to use
 )
 ```
 
@@ -130,6 +132,12 @@ Returns full session details:
 
 **Use case**: Read another agent's current state and continuation note.
 
+### §2.3b Get Latest Continuation
+```python
+omega-hub_hivemind_get_continuation(channel: str, entity: str)
+```
+Returns the most recent continuation note for an agent, falling back to the cold store (HALL_OF_RECORDS) if the hot store is empty.
+
 ### §2.4 Heartbeat (Stay Alive)
 
 ```python
@@ -138,6 +146,13 @@ omega-hub_hivemind_heartbeat(channel: str, entity: str)
 
 **Use case**: Long-running operations should heartbeat every 5-10 minutes to
 avoid being pruned as stale.
+
+### §2.4b Extended Session Management
+```python
+omega-hub_hivemind_extended_checkin(channel: str, entity: str, reason: str = "...", ttl_seconds: int = 10800)
+omega-hub_hivemind_extended_checkout(channel: str, entity: str)
+```
+Allows agents to register a longer safety TTL (default 3h) to prevent pruning during long absences.
 
 ### §2.5 List Recent Sessions
 

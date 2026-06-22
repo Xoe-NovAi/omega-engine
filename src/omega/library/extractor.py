@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import anyio
+from omega.library.security import SSRFGuard, validate_path_scope, validate_download_size
 from omega.errors import (
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
     ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
@@ -121,7 +122,32 @@ class ContentExtractor:
             )
 
     async def _extract_url(self, url: str) -> ExtractedContent:
-        """Extract content from a web URL."""
+        """Extract content from a web URL.
+
+        Security gates (Phase 1 H2-N):
+          1. SSRFGuard — blocks internal/private IP ranges [id-soft: doom-1993]
+          2. DownloadSizeGuard — checks Content-Length before streaming [id-soft: quake-1996]
+        """
+        # ── [id-soft: doom-1993] SSRF Gate ──
+        if not await SSRFGuard.validate(url):
+            return ExtractedContent(
+                source=url,
+                source_type="url",
+                title=f"SSRF blocked: {url[:60]}",
+                body="",
+                error="URL resolves to a private or internal IP range",
+            )
+
+        # ── [id-soft: quake-1996] Size Gate ──
+        if not await validate_download_size(url):
+            return ExtractedContent(
+                source=url,
+                source_type="url",
+                title=f"Download blocked: {url[:60]}",
+                body="",
+                error="Content-Length exceeds maximum download size (50MB)",
+            )
+
         if not self._httpx:
             import httpx
             self._httpx = httpx
@@ -191,8 +217,22 @@ class ContentExtractor:
         )
 
     async def _extract_file(self, path: str) -> ExtractedContent:
-        """Extract content from a local file."""
+        """Extract content from a local file.
+
+        Security gate:
+          - PathScopeGuard — prevents directory traversal [id-soft: quake-1996]
+        """
+        # ── [id-soft: quake-1996] Path Scope Gate ──
+        from omega.library.library import DATA_DIR as LIBRARY_BASE
         file_path = Path(path)
+        if not validate_path_scope(file_path, LIBRARY_BASE):
+            return ExtractedContent(
+                source=path,
+                source_type="file",
+                title="Path traversal blocked",
+                body="",
+                error=f"Path {path} escapes the library data directory",
+            )
         if not file_path.exists():
             return ExtractedContent(source=path, source_type="file", title="File not found", body="", error="File not found")
 

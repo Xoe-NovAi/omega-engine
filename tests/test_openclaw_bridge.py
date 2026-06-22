@@ -3,9 +3,9 @@ import pytest
 import anyio
 from unittest.mock import AsyncMock, MagicMock, patch
 from fastapi.testclient import TestClient
-from src.omega.bridge.opencode_bridge import bridge, BudgetGate, TokenLedger
-from src.omega.oracle.oracle import OracleResponse
-from src.omega.errors import OmegaError
+from omega.bridge.opencode_bridge import bridge, BudgetGate, TokenLedger
+from omega.oracle.oracle import OracleResponse
+from omega.errors import OmegaError
 
 client = TestClient(bridge.app)
 
