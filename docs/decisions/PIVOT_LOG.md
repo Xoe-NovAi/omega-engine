@@ -3707,3 +3707,60 @@ Remove 6 cloud API endpoints from the Omega Engine source code to reduce the sov
 - **L1**: Kali executed a sovereign dependency purge on 2026-06-21, removing 6 cloud API endpoints from the engine source. Verity audited 4 source files, updated 7 documentation files, and cleaned 2 ancillary source files with stale references.
 - **L2**: The purge revealed a secondary contamination pattern: `credit_budget.py` had stale budget entries for removed providers that would have consumed credits from nonexistent APIs. The documentation drift pattern (validate_arsenal.sh listing dead endpoints) mirrors the source-code pattern we just fixed — documentation and source rot are the same disease.
 - **L3**: External dependencies create invisible obligations. Removing an endpoint from active code paths is only half the work — the budget systems, validation scripts, and documentation must be purged too. Sovereignty is a total-state property, not a per-file property.
+
+## Decision 146: Tri-Model Hardening of Curation Pipeline
+**Date**: 2026-06-22
+**Channel**: OpenCode CLI (Gemini 3.1 Pro -> Claude Sonnet 4.6 -> Claude Opus 4.6)
+**Entity**: KALI
+**Trace**: trc_curation_hardening_h2n
+
+### Decision
+Before proceeding to Phase 4 (autonomous background execution) of the Curation & Library subsystem, the Phase 1-3 implementation must undergo a mandatory hardening pass to resolve vulnerabilities identified during the Tri-Model Peer Review.
+1. **SSRF Redirect Bypass**: Disable `follow_redirects=True` in httpx. Implement manual redirect following (max 3 hops) with `SSRFGuard.validate()` executed on every hop.
+2. **Streaming Byte-Cap**: Replace the `HEAD` size check with an in-flight byte counter during `client.stream("GET")`.
+3. **M8 Violation**: Remove the `httpbin.org` network check from the background researcher.
+4. **AnyIO Concurrency**: Use `anyio.Lock()` for the lazy FTS5 rebuild, and wrap all filesystem/psutil operations in `to_thread.run_sync()`.
+5. **Coordinator Architecture**: Fix the `start()` method (which currently blocks indefinitely) by adopting an external TaskGroup dependency injection pattern.
+
+### Rationale
+The initial Phase 1-3 implementation achieved the functional requirements but introduced structural fault lines. The SSRF guard checked the initial hostname but allowed httpx to follow redirects to internal IP spaces (e.g., `169.254.169.254`). The download size guard relied on a `HEAD` request, which a malicious server can spoof before streaming a massive payload. The coordinator's use of synchronous `psutil` calls and `Path.rglob()` violated Mandate 1 (AnyIO Absolute) and would stall the event loop.
+
+These fixes are required before autonomous ingestion is enabled, as the crawler will be exposed to adversarial web content.
+
+### Execution
+Documented in `docs/strategy/CURATION_LIBRARY_H2N_STRATEGIC_REVIEW.md`. Immediate execution prioritized over Phase 3.2 feature work.
+
+## Decision 147: The Sovereign Ark & Omegaverse Grand Strategy
+**Date**: 2026-06-22
+**Channel**: OpenCode CLI (Gemini 3.1 Pro)
+**Entity**: KALI
+**Trace**: trc_grand_strategy_elevation
+
+### Decision
+Elevate the Omega Engine's architectural mandate from a "local RAG toolchain" to a "Decentralized AI OS (The Sovereign Ark)". All future development must align with the Five Transcendent Pillars:
+1. **The Elder Protocol**: Immutable provenance for cultural/historical preservation.
+2. **The Sovereign Mesh**: P2P CRDT-based offline-first synchronization.
+3. **Spatial-Semantic Memory**: 3D coordinate mapping for VR Omegaverse integration.
+4. **Acoustic Sovereignty**: Offline, locally fine-tunable STT/TTS.
+5. **Hardware Empathy**: Zero-config hardware abstraction and automatic model scaling.
+
+### Rationale
+The user clarified the ultimate vision: a system that shifts timelines, empowers non-technical users globally (including indigenous communities preserving elder wisdom), and connects to a P2P VR universe. Building for this requires cryptographic truth, absolute offline resilience, and spatial data structures. We cannot cut corners or rely on fragile third-party behaviors.
+
+### Execution
+Documented in `docs/strategy/OMEGAVERSE_GRAND_STRATEGY_2026.md`. D146 tasks (H2-N Hardening) are upgraded: fixes must be implemented as permanent Sovereign Primitives (e.g., `OmegaHttpClient`, `CancelScope` panic buttons) rather than localized patches.
+
+## Decision 148: Headroom Integration & Epoch I Resequencing
+**Date**: 2026-06-22
+**Channel**: OpenCode CLI (Gemini 3.1 Pro)
+**Entity**: MAKALI
+**Trace**: trc_ark_blueprint
+
+### Decision
+Integrate `headroom-ai` into the core engine as the foundational layer for Epoch I (The Compressed Core). Resequence the roadmap into Epoch I (Compressed Core), Epoch II (Hivemind Awakens), and Epoch III (The Omegaverse).
+
+### Rationale
+Headroom provides 60-95% token compression, Context Compression Reversibility (CCR), and cross-agent memory. It natively solves the "Elder Protocol" requirement (preserving uncompressed originals while feeding compressed context to the LLM) and acts as a massive multiplier for "Hardware Empathy" by effectively tripling the 12Gi RAM semantic density. This allows 8B and 1.7B models to run concurrently on the target hardware.
+
+### Execution
+Documented in `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md`. Immediate execution begins with Headroom pipeline wiring (Strike 1), HardwareHAL creation using legacy Zen 2 flags (Strike 2), and Autonomous Knowledge Ingestion hardening (Strike 3).

@@ -1,3 +1,8 @@
+> **⚠️ SUPERSEDED BY SOVEREIGN ARK BLUEPRINT**
+> As of 2026-06-22, this roadmap has been elevated and superseded by `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md`. 
+> The engine has transitioned from Horizon-based planning to Epoch-based execution (Epoch I: Compressed Core, Epoch II: Hivemind Awakens, Epoch III: Omegaverse).
+> This document remains for historical context.
+
 # 🔱 Omega Engine — Sovereign Evolution Roadmap v1.6
 # ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ trc_fleet_consolidation ⬡ STRATEGY
 **AP Token**: AP-EVOLUTION-ROADMAP-v1.6.0
@@ -259,6 +264,15 @@ After H2 (all GREEN), the engine is ready for iterative, skeptical reasoning.
 | H3-C3 | **Cross-Agent Delegation (A2A)** | `src/omega/oracle/` | Med | 🟡 HIGH (Link P9 automation) |
 | H3-C4 | **Automated Soul Distillation** | `src/omega/oracle/` | Med | 🟡 HIGH (L1 $\rightarrow$ L3 auto-flow) |
 
+
+### H3-D: Spatial & Acoustic Foundations (D147 Elevation)
+**Goal**: Prepare the engine for VR and voice-native interaction.
+| # | Task | Impact |
+|---|------|--------|
+| H3-D1 | **Spatial-Semantic Mapping** — Add (x,y,z) coordinates to Qdrant payloads | 🔴 CRITICAL (VR) |
+| H3-D2 | **AcousticGateway** — Local STT/TTS Podman integration | 🔴 CRITICAL (Voice) |
+| H3-D3 | **HardwareHAL** — Zero-config hardware profiling & auto-scaling | 🟡 HIGH (Empathy) |
+
 ### H3-A: Hivemind Productionization
 | # | Task | Priority | Status |
 |---|------|----------|--------|
@@ -271,6 +285,15 @@ After H2 (all GREEN), the engine is ready for iterative, skeptical reasoning.
 | **H3-A7** | **Cold-store awareness fallback** | 🟢 **DONE** | ✅ Shipped 2026-06-05 |
 
 ---
+
+
+### H4-B: The Sovereign Ark (D147 Elevation)
+**Goal**: Decentralization, cultural preservation, and the Omegaverse.
+| # | Task | Impact |
+|---|------|--------|
+| H4-B1 | **The Elder Protocol** — Cryptographic provenance chain for documents | 🔴 CRITICAL (Truth) |
+| H4-B2 | **The Sovereign Mesh** — P2P CRDT-based offline sync | 🔴 CRITICAL (P2P) |
+| H4-B3 | **Omegaverse VR Bridge** — 3D Memory Palace integration | 🟡 HIGH (VR) |
 
 ## §4. Two-Pass Deep Review Findings (2026-06-17)
 
@@ -595,6 +618,8 @@ Every feature maintains M7, M8, M16. Cloud dependency limited to one-time model 
 | N-4.4 | **Hivemind progress reporting** — Heartbeat + status updates without UI spam | P8 | 1 | ⏳ PENDING |
 | N-4.5 | **Disk management** — `free_space_check_gb()` before every download, MINIMUM_FREE_GB=5 | P1 | 1 | ⏳ PENDING |
 | N-4.6 | **Dedup + incremental processing** — Content hash checks, skip known docs | P2 | 1 | ⏳ PENDING |
+| N-4.7 | **Tri-Model Remediation (D146)** — SSRF redirect bypass, M8 violation, streaming byte-caps, sync I/O fixes, and AnyIO locks | P3/P4 | 4 | ⏳ PENDING |
+
 
 #### Verification Gates (Jem: 6 gates required before deploy)
 
