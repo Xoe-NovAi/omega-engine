@@ -3764,3 +3764,48 @@ Headroom provides 60-95% token compression, Context Compression Reversibility (C
 
 ### Execution
 Documented in `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md`. Immediate execution begins with Headroom pipeline wiring (Strike 1), HardwareHAL creation using legacy Zen 2 flags (Strike 2), and Autonomous Knowledge Ingestion hardening (Strike 3).
+
+## Decision 149: Inference Middleware Plugin Architecture
+**Date**: 2026-06-23
+**Channel**: OpenCode CLI (Sonnet 4.6)
+**Entity**: MAKALI
+**Trace**: trc_strategic_synthesis
+
+### Decision
+All inference-layer capabilities SHALL be implemented as `OmegaMiddlewareBase` plugins in `src/omega/oracle/middleware/`. The `ModelGateway.generate()` method signature is sacred and MUST NOT be modified. Plugins are config-driven via `omega.yaml`, fault-isolated per M9, metrics-emitting per M22, and A/B testable via `shadow_mode`. Headroom is the first tenant. Future tenants in order: TDPMiddleware (Epoch I), SkepticalVerifierMiddleware (Epoch II), SomaticStateMiddleware (Epoch II), SovereignVeilMiddleware (Epoch III).
+
+### Rationale
+Without a plugin bus, every new inference-layer capability requires surgery on `generate()` — the most critical and tested method in the engine. A plugin bus allows capabilities to be added, removed, tested, and A/B compared entirely via config. The `shadow_mode` flag enables compression benchmarking without affecting response quality. The bus is the structural foundation for all three Epochs.
+
+### Execution
+Full implementation guide at `docs/strategy/MIDDLEWARE_PLUGIN_IMPLEMENTATION_GUIDE.md`. Six-phase implementation sequence: Phase 0 (bugfixes) → Phase 1 (dataset infra) → Phase 2 (middleware interface) → Phase 3 (Headroom plugin) → Phase 4 (wire-up) → Phase 5 (MCP tools) → Phase 6 (verification). 37 new tests required before implementation (M21).
+
+## Decision 150: Training Dataset Schema v1.0.0
+**Date**: 2026-06-23
+**Channel**: OpenCode CLI (Sonnet 4.6)
+**Entity**: MAKALI
+**Trace**: trc_strategic_synthesis
+
+### Decision
+The training dataset SHALL use a versioned `TrainingRecord` dataclass (schema v1.0.0) that extends the existing `ObservabilityEngine.record_training_example()` format. It adds: `schema_version`, `compression_metadata`, `domain`, `is_transient`, `quality_score`, and `flagged_for_review` fields. Export formats: native JSONL (existing), Alpaca JSON (Axolotl/LLaMA-Factory), ShareGPT JSON (Unsloth/FastChat). The `DatasetCollector` class wraps `ObservabilityEngine` — it does NOT replace it. Original (pre-compression) prompts are ALWAYS stored, never compressed versions.
+
+### Rationale
+The existing `record_training_example()` is structurally sound but lacks schema versioning (unsafe migration), compression metadata (can't train compression LoRAs), domain tagging (can't produce entity-scoped LoRAs), and export format support (Axolotl/Unsloth incompatible). The `latency_ms` field in `GenerateResult` is always 0.0 (never populated from timing). These gaps make the existing pipeline a data sink rather than a training asset. The `TrainingRecord` schema closes all gaps without replacing any existing infrastructure.
+
+### Execution
+`DatasetCollector` at `src/omega/observability/dataset_collector.py`. `DatasetExporter` produces Alpaca/ShareGPT/JSONL from `data/datasets/`. `dataset_export` MCP tool surfaces exports to agents. See `docs/strategy/MIDDLEWARE_PLUGIN_IMPLEMENTATION_GUIDE.md` §7.
+
+## Decision 151: CCR Store Format (Elder Protocol)
+**Date**: 2026-06-23
+**Channel**: OpenCode CLI (Sonnet 4.6)
+**Entity**: MAKALI
+**Trace**: trc_strategic_synthesis
+
+### Decision
+The CCR (Compress-Cache-Retrieve) store for Headroom originals SHALL use flat JSON files at `data/ccr/{trace_id}_{field}_{uuid8}.json`. Format: `{ccr_key, trace_id, field, original_text, compressed_text, strategy, compression_ratio, original_tokens, compressed_tokens, latency_ms, shadow_mode}`. Directory is gitignored. No database dependency. Human-inspectable. The `headroom_retrieve` MCP tool is the programmatic read interface for all 11 agents (Elder Protocol).
+
+### Rationale
+The simplest possible format that satisfies the Elder Protocol requirement: uncompressed originals are always recoverable by any agent via a stable key. Flat JSON files are inspectable without tooling, portable across machines, and trivially backed up. A database would add a dependency, a schema migration burden, and operational complexity with no benefit at this data volume. The CCR store is a runtime artifact, not source — gitignored by design.
+
+### Execution
+`data/ccr/` directory, created by `HeadroomMiddleware.__init__()`. Keys generated as `{trace_id}_{field}_{uuid8}` — unique per compression call. `headroom_retrieve` MCP tool reads by key. See `docs/strategy/MIDDLEWARE_PLUGIN_IMPLEMENTATION_GUIDE.md` §8.2.
