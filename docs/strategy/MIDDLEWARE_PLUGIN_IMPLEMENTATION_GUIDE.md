@@ -230,7 +230,7 @@ class MiddlewareContext:
     session_id: Optional[str] = None
     domain: Optional[str] = None
     model_name: Optional[str] = None
-    model_context_limit: Optional[int] = None  # ← FIX: No hardcoded default
+    hardware_context_ceiling: Optional[int] = None  # ← D153: Absolute RAM limit, not current active ctx
     is_cloud: bool = False
     # Accumulated output from all plugins. Each plugin writes:
     #   context.plugin_metadata["headroom"] = HeadroomResult(...)
@@ -575,7 +575,7 @@ class HeadroomMiddleware(OmegaMiddlewareBase):
 
     def _compress_text(
         self, text: str, field: str, trace_id: str, 
-        max_context: Optional[int], is_cloud: bool
+        hardware_ceiling: Optional[int], is_cloud: bool
     ) -> tuple[str, HeadroomResult]:
         """Compress a single text field. Returns (output_text, HeadroomResult).
 
@@ -660,22 +660,22 @@ class HeadroomMiddleware(OmegaMiddlewareBase):
                 trace_id, field, e, exc_info=True
             )
             
-            # D152: Context-Aware Fallback Guard
-            # If the original text exceeds the model's context window, falling back
-            # to it will cause a catastrophic OOM/context crash in local llama.cpp.
-            # For cloud models, we let the provider's API handle the rejection gracefully.
-            if max_context and original_tokens > max_context:
+            # D152/D153: Context-Aware Fallback Guard
+            # If the original text exceeds the absolute hardware ceiling, falling back
+            # to it will cause a catastrophic OOM crash in local llama.cpp, even with
+            # Elastic Context Auto-Scaling.
+            if hardware_ceiling and original_tokens > hardware_ceiling:
                 if not is_cloud:
                     from omega.errors import ProviderValidationError
                     raise ProviderValidationError(
                         f"Compression failed and original text ({original_tokens} tokens) "
-                        f"exceeds local model context limit ({max_context}). Cannot fallback safely."
+                        f"exceeds absolute hardware ceiling ({hardware_ceiling}). Cannot fallback safely."
                     ) from e
                 else:
                     logger.warning(
-                        "[%s] Original text (%d) exceeds known context (%d), but is_cloud=True. "
+                        "[%s] Original text (%d) exceeds hardware ceiling (%d), but is_cloud=True. "
                         "Proceeding with fallback; provider may reject.",
-                        trace_id, original_tokens, max_context
+                        trace_id, original_tokens, hardware_ceiling
                     )
                 
             return text, HeadroomResult(
@@ -737,7 +737,7 @@ class HeadroomMiddleware(OmegaMiddlewareBase):
         if self._compress_system:
             sys_out, hr_sys = self._compress_text(
                 ctx.system_prompt, "system_prompt", ctx.trace_id, 
-                ctx.model_context_limit, ctx.is_cloud
+                ctx.hardware_context_ceiling, ctx.is_cloud
             )
             results.append(hr_sys)
             self._update_counters(hr_sys)
@@ -745,7 +745,7 @@ class HeadroomMiddleware(OmegaMiddlewareBase):
         if self._compress_query:
             qry_out, hr_qry = self._compress_text(
                 ctx.user_query, "user_query", ctx.trace_id, 
-                ctx.model_context_limit, ctx.is_cloud
+                ctx.hardware_context_ceiling, ctx.is_cloud
             )
             results.append(hr_qry)
             self._update_counters(hr_qry)
@@ -1186,7 +1186,7 @@ if not self._middleware.is_empty:
         entity_name=entity_name,
         session_id=session_id,
         model_name=model_name,
-        model_context_limit=self.get_model_spec(model_name).get("context_length"),
+        hardware_context_ceiling=self.get_model_spec(model_name).get("context_length"),
         is_cloud=self._is_cloud_provider(self.get_provider_for_model(model_name)) if hasattr(self, 'get_provider_for_model') else False
     )
     _mw_ctx = await self._middleware.run_pre(_mw_ctx)

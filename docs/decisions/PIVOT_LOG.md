@@ -3827,3 +3827,20 @@ To fulfill the Foundation's mission of empowering the community, we are not just
 
 ### Execution
 Documented in `docs/strategy/MIDDLEWARE_PLUGIN_IMPLEMENTATION_GUIDE.md`. Phase 0 expanded to include `_persist_event` async patch. `MiddlewareContext` expanded to include `model_context_limit`. `HeadroomMiddleware` refactored to use SHA-256 and `anyio.Path`.
+
+## Decision 153: Elastic Context Allocation & Somatic Auto-Scaling
+**Date**: 2026-06-23
+**Channel**: OpenCode CLI (Gemini 3.1 Pro)
+**Entity**: MAKALI
+**Trace**: trc_elastic_context
+
+### Decision
+The Omega Engine SHALL implement Elastic Context Allocation for local models. The `MiddlewareContext` will track `hardware_context_ceiling` (the absolute RAM limit) rather than the currently allocated context. The `NativeGGUFProvider` SHALL utilize Flash Attention and KV Cache Quantization to minimize baseline RAM, and utilize M20 SomaticState bindings to dynamically grow the `n_ctx` allocation at runtime when a prompt exceeds the current active window.
+
+### Rationale
+Statically allocating 32K context windows for local models wastes gigabytes of RAM when the average prompt is <4K. By combining Headroom (which compresses the prompt before allocation) with Somatic Auto-Scaling (which grows the `llama.cpp` context window on-demand), the engine achieves maximum semantic density. The model only uses the RAM mathematically required for the current active context.
+
+### Execution
+1. `MiddlewareContext` updated to use `hardware_context_ceiling`.
+2. `NativeGGUFProvider` configured to use `flash_attn=True` and `kv_cache_type="q8_0"`.
+3. Epoch II (SomaticState) will implement the `llama_copy_state_data` / `llama_set_state_data` reload loop for dynamic `n_ctx` expansion.
