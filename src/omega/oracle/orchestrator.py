@@ -62,7 +62,7 @@ def _parse_comma_env(raw: str) -> List[str]:
 class BackgroundWorker:
     """
     Manages a pool of concurrent background research tasks.
-    Ensures rate-limit compliance via the GoogleKeyPool provider.
+    Uses standard ModelGateway provider fabric for inference.
     [Sovereign Workhorse Protocol: pw_model_15]
     """
     def __init__(self, model_gateway: Any, api_keys: List[str]):
@@ -84,14 +84,13 @@ class BackgroundWorker:
         """
         The core execution loop:
         1. Acquire semaphore
-        2. Use google-keypool provider for high-throughput sensing
+        2. Use ModelGateway provider fabric for inference
         3. Apply Sovereign Gold Filter (Triage -> Distillation -> Synthesis)
         4. Register result in Hivemind
         """
         try:
             async with self.semaphore:
-                # 1. Sensing: Use the key-rotating pool
-                # We use the 'google-keypool' provider explicitly
+                # 1. Sensing: Use the ModelGateway's standard provider fabric
                 result = await self.gateway.generate(
                     model_name=model,
                     system_prompt=f"Sovereign Sensing Task. Context: {context}",
@@ -152,8 +151,22 @@ class Orchestrator:
         self.registry = CapabilityRegistry()
         
         # Initialize Background Worker
-        keys_raw = os.environ.get("GOOGLE_API_KEYS", "")
-        keys = _parse_comma_env(keys_raw)
+        # Collect all Google API keys: vault (resolve_all) + env fallback
+        keys = []
+        try:
+            from omega.vault import KeyVault
+            vault_keys = KeyVault().resolve_all("google")
+            keys.extend(vault_keys)
+        except Exception:
+            # Fallback to environment variable pattern
+            primary_key = os.environ.get("GOOGLE_API_KEY", "")
+            if primary_key:
+                keys.append(primary_key)
+            for i in range(1, 9):
+                suffix = f"_{i:02d}"
+                key = os.environ.get(f"GOOGLE_API_KEY{suffix}", "")
+                if key:
+                    keys.append(key)
         self.background_worker = BackgroundWorker(
             model_gateway=ModelGateway(health_monitor=get_health_monitor()),
             api_keys=keys

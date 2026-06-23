@@ -20,9 +20,18 @@ class SearchProvider:
 
 class FirecrawlProvider(SearchProvider):
     """T2: Firecrawl Deep Extraction Provider."""
-    def __init__(self, api_key: str):
-        self.api_key = api_key
+    def __init__(self, api_key: Optional[str] = None):
+        self.api_key = api_key or self._resolve_from_vault()
         self.base_url = "https://api.firecrawl.dev/v1"
+    
+    @staticmethod
+    def _resolve_from_vault() -> str:
+        """Fallback to vault if no key passed explicitly."""
+        try:
+            from omega.vault import KeyVault
+            return KeyVault().resolve("firecrawl")
+        except Exception:
+            return os.environ.get("FIRECRAWL_API_KEY", "")
 
     async def search(self, query: str, limit: int = 10) -> Optional[str]:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -80,9 +89,18 @@ class FirecrawlProvider(SearchProvider):
 
 class ExaProvider(SearchProvider):
     """T4: Neural Search (Exa) Provider."""
-    def __init__(self, api_key: str):
-        self.api_key = api_key
+    def __init__(self, api_key: Optional[str] = None):
+        self.api_key = api_key or self._resolve_from_vault()
         self.base_url = "https://api.exa.ai/search"
+    
+    @staticmethod
+    def _resolve_from_vault() -> str:
+        """Fallback to vault if no key passed explicitly."""
+        try:
+            from omega.vault import KeyVault
+            return KeyVault().resolve("exa")
+        except Exception:
+            return os.environ.get("EXA_API_KEY", "")
 
     async def search(self, query: str, limit: int = 10) -> Optional[str]:
         async with httpx.AsyncClient(timeout=30.0) as client:

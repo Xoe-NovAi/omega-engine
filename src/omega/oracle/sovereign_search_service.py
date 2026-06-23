@@ -55,8 +55,9 @@ class SovereignSearchService:
 
         
         # Initialize Direct Providers (Bypass MCP Bridge)
-        self.firecrawl = FirecrawlProvider(firecrawl_key) if firecrawl_key else None
-        self.exa = ExaProvider(exa_key) if exa_key else None
+        # Keys are resolved from vault if not passed explicitly
+        self.firecrawl = FirecrawlProvider(firecrawl_key) if firecrawl_key else FirecrawlProvider()
+        self.exa = ExaProvider(exa_key) if exa_key else ExaProvider()
         self.verifier = verifier or SkepticalVerifier(self.model_gateway)
 
     async def search(

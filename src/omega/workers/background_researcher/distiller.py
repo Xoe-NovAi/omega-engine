@@ -333,12 +333,21 @@ class T2Backend:
     the draft becomes the starting point for the enrichment.
     """
     
+    @staticmethod
+    def _resolve_key(provider: str, env_var: str) -> str:
+        """Resolve API key from vault, falling back to env var."""
+        try:
+            from omega.vault import KeyVault
+            return KeyVault().resolve(provider)
+        except Exception:
+            return os.environ.get(env_var, "")
+    
     def __init__(self):
         self.circuit = JemCircuitBreaker()
         self.timeout = 90.0
         
         # Google AI Studio config
-        self.google_api_key = os.getenv("GOOGLE_API_KEY", "")
+        self.google_api_key = self._resolve_key("google", "GOOGLE_API_KEY")
         self.google_endpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent"
         self.model = "gemma-4-31b-it"
 
@@ -482,10 +491,19 @@ class T3Backend:
     and recommended directions.
     """
     
+    @staticmethod
+    def _resolve_key(provider: str, env_var: str) -> str:
+        """Resolve API key from vault, falling back to env var."""
+        try:
+            from omega.vault import KeyVault
+            return KeyVault().resolve(provider)
+        except Exception:
+            return os.environ.get(env_var, "")
+    
     def __init__(self):
         self.circuit = JemCircuitBreaker()
         self.timeout = 60.0
-        self.zen_api_key = os.getenv("OPENCODEZEN", "")
+        self.zen_api_key = self._resolve_key("opencode_zen", "OPENCODEZEN")
         self.zen_endpoint = "https://opencode.ai/zen/v1/chat/completions"
         self.model = "deepseek-v4-flash"
 

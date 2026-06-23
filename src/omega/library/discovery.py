@@ -31,6 +31,7 @@ from omega.errors import (
     ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
     EntityTombstonedError, ModelNotFoundError,
 )
+from omega.vault import KeyVault
 
 logger = logging.getLogger(__name__)
 
@@ -83,8 +84,14 @@ class DiscoveryOrchestrator:
         from omega.oracle.model_gateway import ModelGateway
 
         self.model_gateway = model_gateway or ModelGateway(health_monitor=get_health_monitor())
-        self.exa_key = os.getenv("EXA_API_KEY")
-        self.firecrawl_key = os.getenv("FIRECRAWL_API_KEY")
+        try:
+            self.exa_key = KeyVault().resolve("exa")
+        except Exception:
+            self.exa_key = os.getenv("EXA_API_KEY")
+        try:
+            self.firecrawl_key = KeyVault().resolve("firecrawl")
+        except Exception:
+            self.firecrawl_key = os.getenv("FIRECRAWL_API_KEY")
         self._jobs: Dict[str, DiscoveryReport] = {}
         self._load_jobs()
 

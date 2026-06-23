@@ -92,6 +92,9 @@ data/embeddings/
 data/datasets/
 src/data/datasets/
 
+# ── Sovereign Key Vault (encrypted API key storage) ─────────────────
+data/vault/
+
 # ── Research & Analysis (transient, regenerated per session) ────────
 data/research/
 data/audit/

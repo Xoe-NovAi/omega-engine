@@ -35,12 +35,20 @@ class SearchFleet:
 
     # ── Exa ─────────────────────────────────────────────────────────────────
 
+    def _resolve_key(self, provider: str, env_var: str) -> str:
+        """Resolve API key from vault, falling back to env var."""
+        try:
+            from omega.vault import KeyVault
+            return KeyVault().resolve(provider)
+        except Exception:
+            return os.environ.get(env_var, "")
+
     async def search_exa(self, query: str, num_results: int = 10) -> list[str]:
         """Semantic search via Exa. ~1 credit per call."""
         self.budget.consume("search")
         self.budget.increment_daily("search_ops")
 
-        api_key = os.getenv("EXA_API_KEY", "")
+        api_key = self._resolve_key("exa", "EXA_API_KEY")
         if not api_key:
             logger.warning("EXA_API_KEY not set")
             return []
@@ -68,7 +76,7 @@ class SearchFleet:
 
     async def fetch_exa(self, url: str) -> Optional[str]:
         """Fetch content from a URL via Exa contents endpoint."""
-        api_key = os.getenv("EXA_API_KEY", "")
+        api_key = self._resolve_key("exa", "EXA_API_KEY")
         if not api_key:
             return None
         try:
@@ -97,7 +105,7 @@ class SearchFleet:
         self.budget.consume("firecrawl")
         self.budget.increment_daily("deep_extracts")
 
-        api_key = os.getenv("FIRECRAWL_API_KEY", "")
+        api_key = self._resolve_key("firecrawl", "FIRECRAWL_API_KEY")
         if not api_key:
             logger.warning("FIRECRAWL_API_KEY not set")
             return None

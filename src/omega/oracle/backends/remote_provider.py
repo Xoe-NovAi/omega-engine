@@ -111,17 +111,45 @@ class RemoteProvider(ABC):
         return ProviderHealth.HEALTHY
 
     def resolve_api_key(self) -> Optional[str]:
-        """Resolve API key from config — supports env: prefix."""
+        """Resolve API key from config — supports env: prefix.
+        
+        Resolution chain:
+        1. Already resolved (cached) → return
+        2. Config has inline key → return as-is
+        3. Config has env:VAR → try vault, fallback to os.environ
+        4. No config → try vault by provider name
+        5. Nothing → return None
+        """
         if self._resolved_api_key is not None:
             return self._resolved_api_key
 
         key = self.config.api_key
         if not key:
+            # Try vault by provider name
+            try:
+                from omega.vault import KeyVault
+                vault_key = KeyVault().resolve(self.config.name)
+                if vault_key:
+                    self._resolved_api_key = vault_key
+                    return vault_key
+            except Exception:
+                pass
             return None
 
         import os
         if key.startswith("env:"):
             env_var = key[4:]
+            # Try vault first (it may have a value the env doesn't)
+            import os
+            try:
+                from omega.vault import KeyVault
+                vault_key = KeyVault().resolve(self.config.name)
+                if vault_key:
+                    self._resolved_api_key = vault_key
+                    return vault_key
+            except Exception:
+                pass
+            # Fallback to environment
             self._resolved_api_key = os.environ.get(env_var)
         else:
             self._resolved_api_key = key
