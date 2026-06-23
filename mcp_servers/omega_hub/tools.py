@@ -31,7 +31,7 @@ import uuid
 import fcntl
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 from dataclasses import asdict
 
 from omega.library.research import RESEARCH_DEPTHS
@@ -408,7 +408,7 @@ async def hivemind_post_context(
     model: str,
     task_current: str,
     focus_chain: List[str],
-    decisions: List[Dict[str, str]],
+    decisions: List[str],
     continuation: str,
     session_id: Optional[str] = None,
     intent: Optional[str] = None,
@@ -429,7 +429,7 @@ async def hivemind_post_context(
         model: The current model being used.
         task_current: Concise description of the active task.
         focus_chain: List of previous sub-tasks or focus areas.
-        decisions: List of architectural or strategic decisions made.
+        decisions: List of architectural or strategic decisions made (strings, not dicts).
         continuation: Next steps or handoff notes for the next session.
         session_id: Optional UUID for the session. Auto-generated if omitted.
         intent: The semantic intent of the post (status, decision, handoff, etc).

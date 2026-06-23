@@ -101,6 +101,14 @@ class ConversationFTSIndex:
         except Exception as e:
             logger.error("Failed to remove session %s from FTS: %s", session_id, e)
 
+    def __del__(self):
+        """Best-effort safety net: close the connection on garbage collection."""
+        if self._conn is not None:
+            try:
+                self._conn.close()
+            except Exception:
+                pass
+
     def close(self):
         """Close the database connection."""
         if self._conn:

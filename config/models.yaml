@@ -19,11 +19,11 @@ llama_server:
 models:
   qwen3-1.7b:
     path: /media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-1.7B-Q6_K.gguf
-    size_gb: 0.27
-    ram_mb: 300
+    size_gb: 1.6
+    ram_mb: 1800
     context_window: 4096
     threads: 4
-    load_strategy: always
+    load_strategy: on_demand_5min
     entity: nova
   qwen3-0.6b-q6_k:
     path: /media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-0.6B-Q6_K.gguf

@@ -115,8 +115,9 @@ class TestRedisStorageProvider:
         provider.client.expire = AsyncMock()
         provider.client.delete = AsyncMock()
         
-        # Mock pipeline
+        # Mock pipeline (xadd is sync — return plain MagicMock for that call)
         mock_pipeline = AsyncMock()
+        mock_pipeline.xadd = MagicMock(return_value=None)
         provider.client.pipeline.return_value = mock_pipeline
         
         assert await provider.check_health() is True

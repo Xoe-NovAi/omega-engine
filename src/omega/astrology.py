@@ -43,9 +43,13 @@ def _init_db() -> None:
     """Initialize the birth records table if it doesn't exist.
     
     Idempotency: Uses IF NOT EXISTS.
+    Uses try/finally instead of `with` to work around Python 3.13
+    ResourceWarning bug where sqlite3.Connection.__del__ fires even
+    after proper `with` closure.
     """
     BIRTH_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with sqlite3.connect(BIRTH_DB_PATH) as conn:
+    conn = sqlite3.connect(str(BIRTH_DB_PATH))
+    try:
         conn.execute("""
             CREATE TABLE IF NOT EXISTS entity_birth_records (
                 entity_id TEXT PRIMARY KEY,
@@ -56,46 +60,53 @@ def _init_db() -> None:
             )
         """)
         conn.commit()
+    finally:
+        conn.close()
 
 def _record_birth_sync(entity_id: str, lat: float, lon: float, tz: str) -> bool:
     """Synchronous implementation of birth recording.
     
     Atomic Capture: Uses INSERT ... ON CONFLICT DO NOTHING to ensure
     the birth is recorded exactly once.
+    Uses try/finally instead of `with` (see Python 3.13 ResourceWarning bug).
     """
     _init_db()
     utc_now = datetime.now(timezone.utc).isoformat()
     eid_lower = entity_id.lower().strip()
+    conn = sqlite3.connect(str(BIRTH_DB_PATH))
     try:
-        with sqlite3.connect(BIRTH_DB_PATH) as conn:
-            cursor = conn.execute(
-                "INSERT INTO entity_birth_records (entity_id, utc_timestamp, latitude, longitude, timezone) "
-                "VALUES (?, ?, ?, ?, ?) ON CONFLICT(entity_id) DO NOTHING",
-                (eid_lower, utc_now, lat, lon, tz)
-            )
-            conn.commit()
-            return cursor.rowcount > 0
+        cursor = conn.execute(
+            "INSERT INTO entity_birth_records (entity_id, utc_timestamp, latitude, longitude, timezone) "
+            "VALUES (?, ?, ?, ?, ?) ON CONFLICT(entity_id) DO NOTHING",
+            (eid_lower, utc_now, lat, lon, tz)
+        )
+        conn.commit()
+        return cursor.rowcount > 0
     except sqlite3.Error as e:
         logger.error(f"Database error recording birth for {entity_id}: {e}")
         raise OmegaError(f"Failed to record first breath for {entity_id}: {e}")
+    finally:
+        conn.close()
 
 def _get_birth_sync(entity_id: str) -> Optional[BirthRecord]:
     """Synchronous retrieval of birth record."""
     if not BIRTH_DB_PATH.exists():
         return None
     eid_lower = entity_id.lower().strip()
+    conn = sqlite3.connect(str(BIRTH_DB_PATH))
     try:
-        with sqlite3.connect(BIRTH_DB_PATH) as conn:
-            conn.row_factory = sqlite3.Row
-            row = conn.execute(
-                "SELECT * FROM entity_birth_records WHERE entity_id = ?", 
-                (eid_lower,)
-            ).fetchone()
-            if row:
-                return BirthRecord(**dict(row))
+        conn.row_factory = sqlite3.Row
+        row = conn.execute(
+            "SELECT * FROM entity_birth_records WHERE entity_id = ?", 
+            (eid_lower,)
+        ).fetchone()
+        if row:
+            return BirthRecord(**dict(row))
     except sqlite3.Error as e:
         logger.error(f"Database error retrieving birth for {entity_id}: {e}")
-    return None
+        return None
+    finally:
+        conn.close()
 
 def _record_birth_markdown(entity_id: str, timestamp: str, response_text: str, trace_id: str, lat: float, lon: float, tz: str) -> None:
     """Sovereign Atomic Write of the birth record to the entity's workspace."""

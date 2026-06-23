@@ -19,9 +19,15 @@ def _set_test_env(tmp_path, monkeypatch):
     from leaking test entities into the production data/entities/ directory.
     Previously, tests like test_wad_loader.py created direntity/, duplicate/, etc.
     in the live data/entities/ tree.
+    
+    Teardown: reset_memory_store() closes the FTS5 SQLite connection on the
+    MemoryStore singleton, preventing ResourceWarning: unclosed database.
     """
     monkeypatch.setenv("OMEGA_ENV", "test")
     monkeypatch.setenv("OMEGA_DATA_DIR", str(tmp_path))
+    reset_memory_store()
+    yield
+    reset_memory_store()
 
 
 @pytest.fixture

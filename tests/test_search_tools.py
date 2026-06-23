@@ -70,14 +70,19 @@ def test_credit_exhaustion_handling():
     """
     import asyncio
     from unittest.mock import AsyncMock, patch
+    from omega.oracle.model_gateway import GenerateResult
     from omega.oracle.sovereign_search_service import SovereignSearchService
 
     async def run_test():
         # Setup service with mocked dependencies to avoid DB connections
+        mock_gateway = AsyncMock()
+        mock_gateway.generate = AsyncMock(
+            return_value=GenerateResult(text="NEUTRAL", provider_name="mock", is_cloud=False)
+        )
         service = SovereignSearchService(
             memory_store=AsyncMock(),
             indexer=AsyncMock(),
-            model_gateway=AsyncMock()
+            model_gateway=mock_gateway
         )
         
         # Mock Tier 2 (Firecrawl) to fail with 402
@@ -100,14 +105,19 @@ def test_error_matrix_compliance():
     """
     import asyncio
     from unittest.mock import AsyncMock, patch
+    from omega.oracle.model_gateway import GenerateResult
     from omega.oracle.sovereign_search_service import SovereignSearchService
 
     async def run_test():
         # Setup service with mocked dependencies
+        mock_gateway = AsyncMock()
+        mock_gateway.generate = AsyncMock(
+            return_value=GenerateResult(text="NEUTRAL", provider_name="mock", is_cloud=False)
+        )
         service = SovereignSearchService(
             memory_store=AsyncMock(),
             indexer=AsyncMock(),
-            model_gateway=AsyncMock()
+            model_gateway=mock_gateway
         )
         
         # Mock multiple failures to test resilience

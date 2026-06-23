@@ -731,6 +731,14 @@ class MemoryStore:
                 logger.error(f"Failed to close provider {provider.__class__.__name__}: {e}", exc_info=True)
                 pass
 
+        # Close FTS5 index (must be called here, not in reset_memory_store,
+        # because close() is async and needs the event loop)
+        if hasattr(self, 'fts') and self.fts is not None:
+            try:
+                await anyio.to_thread.run_sync(self.fts.close)
+            except Exception as e:
+                logger.warning("Failed to close FTS index: %s", e)
+
         logger.info("Memory store flushed and closed")
 
     async def archive_old_sessions(self, older_than_days: int = ARCHIVE_AFTER_DAYS) -> int:
@@ -753,9 +761,25 @@ class MemoryStore:
 _memory_store: Optional[MemoryStore] = None
 
 def reset_memory_store() -> None:
-    """Reset the singleton instance. Used for testing."""
+    """Reset the singleton instance. Used for testing.
+    
+    Closes the FTS5 SQLite connection before abandoning the store.
+    This is the synchronous sibling of MemoryStore.close() — it only
+    closes the FTS index (the one external resource that leaks if
+    abandoned), not the async providers.
+    """
     global _memory_store
-    _memory_store = None
+    if _memory_store is not None:
+        # Close the FTS5 SQLite connection before abandoning to prevent
+        # ResourceWarning from sqlite3 connections being garbage-collected.
+        if hasattr(_memory_store, 'fts') and _memory_store.fts is not None:
+            try:
+                _memory_store.fts.close()
+            except Exception:
+                pass  # Best-effort — MemoryStore is being abandoned anyway
+        _memory_store = None
+    else:
+        _memory_store = None
 
 def get_memory_store() -> MemoryStore:
     global _memory_store

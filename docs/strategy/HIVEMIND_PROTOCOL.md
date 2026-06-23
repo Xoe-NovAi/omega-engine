@@ -98,7 +98,7 @@ omega-hub_hivemind_post_context(
     model: str,         # Your model ID
     task_current: str,  # One-line current task
     focus_chain: List[str],  # 3-7 step plan
-    decisions: List[Dict],   # Key decisions made
+    decisions: List[str],   # Key decisions made
     continuation: str,  # What you're waiting for / next step
     session_id: Optional[str] = None, # Your session ID
     intent: Optional[str] = None,     # Semantic intent (status, decision, etc)
@@ -124,7 +124,7 @@ Returns full session details:
   "model": "deepseek-v4-flash",
   "task_current": "Building Link P9 Runtime...",
   "focus_chain": ["Phase 2.6: ...", "Phase 2.8: ..."],
-  "decisions": [{"text": "..."}],
+  "decisions": ["D110: Consolidate circuit breakers", "D111: Port lazy deletion"],
   "continuation": "Doom Guy: Link P9 Runtime building...",
   "timestamp": "2026-06-03T02:28:06.199164+00:00"
 }
@@ -317,7 +317,7 @@ handoff packet:
 
 9. CLOSE SESSION
    → Final live feed entry: "SPRINT-N COMPLETE"
-   → Distill L1→L2→L3 to your soul.yaml
+   → Distill L1→L2→L3 to proposed_lessons.yaml (blind staging per Soul Architecture v6.1)
    → Post Hivemind continuation: "Session complete, handoff to ..."
 ```
 
