@@ -3809,3 +3809,21 @@ The simplest possible format that satisfies the Elder Protocol requirement: unco
 
 ### Execution
 `data/ccr/` directory, created by `HeadroomMiddleware.__init__()`. Keys generated as `{trace_id}_{field}_{uuid8}` — unique per compression call. `headroom_retrieve` MCP tool reads by key. See `docs/strategy/MIDDLEWARE_PLUGIN_IMPLEMENTATION_GUIDE.md` §8.2.
+
+## Decision 152: Headroom Harness Community Extraction Strategy
+**Date**: 2026-06-23
+**Channel**: OpenCode CLI (Gemini 3.1 Pro)
+**Entity**: MAKALI
+**Trace**: trc_community_strategy
+
+### Decision
+The Headroom plugin SHALL be architected as a decoupled `HeadroomHarness` class, independent of Omega Engine internals, wrapped by a thin `HeadroomMiddleware`. It MUST implement SHA-256 content-addressable caching for CCR keys, Context-Aware Fallbacks (M9), and strictly asynchronous I/O for all persistence.
+
+### Rationale
+To fulfill the Foundation's mission of empowering the community, we are not just building a feature; we are building the **Production Harness for Headroom**. By decoupling the core logic, we can later extract it into a standalone PyPI package (`headroom-harness`) that developers can drop into LangChain, LiteLLM, or OpenAI SDKs. 
+- **SHA-256 caching** prevents compressing the same system prompt thousands of times, dropping latency from 50ms to 0.1ms.
+- **Context-Aware Fallback** prevents the "Context-Overflow Trap": if compression fails, falling back to a 10k-token original prompt will crash an 8k-context local model. The harness must check the model's context limit before falling back.
+- **Async I/O** prevents file writes (CCR store, event logs) from blocking the AnyIO event loop under heavy load.
+
+### Execution
+Documented in `docs/strategy/MIDDLEWARE_PLUGIN_IMPLEMENTATION_GUIDE.md`. Phase 0 expanded to include `_persist_event` async patch. `MiddlewareContext` expanded to include `model_context_limit`. `HeadroomMiddleware` refactored to use SHA-256 and `anyio.Path`.

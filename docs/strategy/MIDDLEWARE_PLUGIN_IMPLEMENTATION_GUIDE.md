@@ -230,6 +230,7 @@ class MiddlewareContext:
     session_id: Optional[str] = None
     domain: Optional[str] = None
     model_name: Optional[str] = None
+    model_context_limit: int = 8192  # ← NEW (D152): For Context-Aware Fallback
     is_cloud: bool = False
     # Accumulated output from all plugins. Each plugin writes:
     #   context.plugin_metadata["headroom"] = HeadroomResult(...)
@@ -434,10 +435,11 @@ from __future__ import annotations
 import json
 import logging
 import time
-import uuid
+import hashlib
 from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import Any, Dict, Optional
+import anyio
 
 from . import OmegaMiddlewareBase, MiddlewareContext, MiddlewareResult
 
@@ -572,14 +574,16 @@ class HeadroomMiddleware(OmegaMiddlewareBase):
         return max(1, len(text) // _CHARS_PER_TOKEN)
 
     def _compress_text(
-        self, text: str, field: str, trace_id: str
+        self, text: str, field: str, trace_id: str, max_context: int
     ) -> tuple[str, HeadroomResult]:
         """Compress a single text field. Returns (output_text, HeadroomResult).
 
         If compression is bypassed or fails, output_text == text (original).
         This is the single point of contact with the headroom-ai library.
         """
-        ccr_key = f"{trace_id}_{field}_{uuid.uuid4().hex[:8]}"
+        # D152: SHA-256 Content-Addressable CCR Key
+        text_hash = hashlib.sha256(text.encode("utf-8")).hexdix[:16]
+        ccr_key = f"{field}_{text_hash}"
         original_tokens = self._estimate_tokens(text)
 
         # Bypass: below threshold
@@ -654,6 +658,17 @@ class HeadroomMiddleware(OmegaMiddlewareBase):
                 "[%s] HeadroomMiddleware compression failed for '%s': %s",
                 trace_id, field, e, exc_info=True
             )
+            
+            # D152: Context-Aware Fallback Guard
+            # If the original text exceeds the model's context window, falling back
+            # to it will cause a catastrophic OOM/context crash in llama.cpp.
+            if original_tokens > max_context:
+                from omega.errors import ProviderValidationError
+                raise ProviderValidationError(
+                    f"Compression failed and original text ({original_tokens} tokens) "
+                    f"exceeds model context limit ({max_context}). Cannot fallback safely."
+                ) from e
+                
             return text, HeadroomResult(
                 ccr_key=ccr_key, trace_id=trace_id,
                 original_tokens=original_tokens,
@@ -665,12 +680,16 @@ class HeadroomMiddleware(OmegaMiddlewareBase):
                 error=str(e),
             )
 
-    def _write_ccr(
+    async def _write_ccr(
         self, key: str, original: str, compressed: str, hr: HeadroomResult
     ) -> None:
-        """Write CCR record to disk. D151: flat JSON, gitignored."""
+        """Write CCR record to disk. D151: flat JSON, gitignored. D152: Async I/O."""
         try:
             path = self._ccr_dir / f"{key}.json"
+            # D152: O(1) Cache Hit Check
+            if await anyio.Path(path).exists():
+                return  # Already cached, skip write
+                
             record = {
                 "ccr_key": key,
                 "trace_id": hr.trace_id,
@@ -684,7 +703,7 @@ class HeadroomMiddleware(OmegaMiddlewareBase):
                 "latency_ms": hr.compression_latency_ms,
                 "shadow_mode": hr.shadow_mode,
             }
-            path.write_text(
+            await anyio.Path(path).write_text(
                 json.dumps(record, ensure_ascii=False, indent=2),
                 encoding="utf-8"
             )
@@ -708,14 +727,14 @@ class HeadroomMiddleware(OmegaMiddlewareBase):
 
         if self._compress_system:
             sys_out, hr_sys = self._compress_text(
-                ctx.system_prompt, "system_prompt", ctx.trace_id
+                ctx.system_prompt, "system_prompt", ctx.trace_id, ctx.model_context_limit
             )
             results.append(hr_sys)
             self._update_counters(hr_sys)
 
         if self._compress_query:
             qry_out, hr_qry = self._compress_text(
-                ctx.user_query, "user_query", ctx.trace_id
+                ctx.user_query, "user_query", ctx.trace_id, ctx.model_context_limit
             )
             results.append(hr_qry)
             self._update_counters(hr_qry)
@@ -1156,6 +1175,7 @@ if not self._middleware.is_empty:
         entity_name=entity_name,
         session_id=session_id,
         model_name=model_name,
+        model_context_limit=self.get_model_spec(model_name).get("context_length", 8192)
     )
     _mw_ctx = await self._middleware.run_pre(_mw_ctx)
     # Use transformed prompts for provider calls
@@ -1381,7 +1401,12 @@ Agents MUST follow this order. Each phase is a discrete unit of work.
    - Pass `latency_ms=(time.monotonic() - _generate_start) * 1000` to GenerateResult
    - Run `make test` — must still pass. Commit: `fix: populate latency_ms in GenerateResult`
 
-### Phase 1 — Dataset Infrastructure (write tests first, then implement)
+### Phase 0.5 — Async I/O Patch (implement before Phase 1)
+
+1. `src/omega/observability/__init__.py`
+   - In `_persist_event()`, the `with open(...)` call is synchronous and will block the event loop under heavy load.
+   - Wrap the write operation in `anyio.to_thread.run_sync()` or use `anyio.open_file()`.
+   - Run `make test` — must still pass. Commit: `fix: make observability event persistence async`
 
 1. Write `tests/test_dataset_collector.py` (10 tests, all failing)
 2. Write `src/omega/observability/dataset_collector.py` (TrainingRecord + DatasetCollector + DatasetExporter)
