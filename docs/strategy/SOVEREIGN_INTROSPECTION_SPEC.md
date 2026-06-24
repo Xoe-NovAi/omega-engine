@@ -68,9 +68,12 @@ Reading files or running vector searches during the inference critical path is a
 
 To prevent the AI from becoming a "Yes-Man" that reinforces the user's delusions, we implement **Sovereign Doubt**:
 
-1.  **Sovereign Doubt Language**: The AI is forbidden from using definitive psychological labeling. It must frame all patterns as "Resonances" or "Reflections."
+1.  **Sovereign Doubt Language**: The AI is forbidden from using definitive psychological labeling. It must frame all patterns as "Socratic Inquiries" rather than "Thematic Resonances" to prevent demoralizing or sweeping statements.
     *   *Forbidden*: "You have a fear of failure."
-    *   *Mandated*: "The mirror reflects a resonance with the theme of failure. Does this align with your current experience?"
+    *   *Incorrect Attempt*: "The mirror reflects a resonance with the theme of failure." (Critique: Too broad; sounds like the user *is* a failure).
+    *   *Mandated (Socratic)*: "I notice a pattern of hesitation when starting new initiatives in your recent journals. What do you feel is holding you back?"
+    *   *R&D Note*: Linguistic nuance in psychological mirroring is incredibly delicate. Simple prompt engineering is insufficient. This system will require **curated dataset collection and fine-tuned models/LoRAs** to teach the model how to speak with true Socratic gentleness and behavioral precision.
+    *   *Scheduling*: To prevent feature creep, the implementation of this complex R&D layer is deferred to the **Post-PR Scheduled Features Calendar**. We ship the core bedrock first.
 2.  **The Parallel Skeptic**: The Skeptical Verifier audits proposed patterns. If the AI identifies a pattern (e.g., "User is avoiding confrontation"), it must actively search for *counter-examples* in the user's history before presenting the pattern, ensuring the reflection is balanced.
 3.  **Pattern Fragility**: All discovered patterns are marked as `Fragile` and are not saved to the `soul.yaml` until the user explicitly confirms: *"Yes, this is a part of me."*
 4.  **The "Veil" Mechanism (Pull-Only)**: The system must never proactively "alert" the user to a pattern. Introspection analysis is "veiled" (invisible) until the user explicitly enters an `Introspection Session` and asks: *"What does the mirror see?"*

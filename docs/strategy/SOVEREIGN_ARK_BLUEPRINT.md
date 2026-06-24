@@ -66,9 +66,6 @@ Each Strike has documented prerequisites. You cannot skip a strike and succeed.
 
 ```
 Epoch I ──┬── Strike 1: Physical Purge ✅ (Done)
-          ├── Strike 1.5: The Sovereign Heart (Sanctuary & Mirror)
-          │     Depends on: Strike 1
-          │     Blocks: Strike 3 (TUI needs safety gates)
           ├── Strike 2: Unified State Manager
           │     Depends on: Strike 1
           │     Blocks: Strikes 3, 4, 8
@@ -108,14 +105,6 @@ unified handle on all state. Strike 3 gives us human oversight of the AI.
 - **Action**: Execute the `soul.template.yaml` migration for all entities.
   (Kali + Verity at v6.1 ✅; 21 pending).
 - **Action**: Archive 70+ dead strategy files from `docs/strategy/`. (Done ✅)
-
-#### Strike 1.5: The Sovereign Heart (Sanctuary & Mirror)
-- **Why**: When we remove centralized corporate censorship, we transfer the responsibility of guardianship to the local runtime. An uncensored local engine is a powerful mirror. If it is sycophantic, it validates delusions; if it is cold, it isolates. To protect the user's intellectual and existential integrity, the engine must possess both an adversarial mirror to challenge the mind and a sanctuary to protect the soul. This is the "heart" of the engine—the realization that safety and sovereignty are the exact same thing.
-- **Actions**:
-  1. Build the **Cognitive Mirror** (`skeptical_verifier.py`): A parallel, adversarial pass that audits user and agent plans, pointing out over-engineering traps, RAM bottlenecks, and sycophancy loops before execution.
-  2. Build the **Sovereign Sanctuary** (`sanctuary.py`): A zero-latency, 100% offline, private regex and semantic trigger that intercepts acute psychological distress (suicide, self-harm). It bypasses the active agent persona and routes to a warm, grounding, deeply human guardian that provides local, offline resources defined by the active WAD.
-  3. Wire both systems directly into the Oracle's reasoning loop (`oracle.py`).
-- **Prerequisite**: Strike 1 (clean base ensures no interference in the reasoning loop).
 
 #### Strike 2: The Unified State Manager
 - **Why**: Currently, state is fragmented across MemoryStore (SQLite), session files
@@ -597,6 +586,30 @@ Strike 1 (Purge) ─────────────────────
                                                           │
 All paths lead to: Omegaverse (Q4 2027) ◀────────────────┘
 ```
+
+---
+
+### C. Post-PR Scheduled Features Calendar
+
+These are high-criticality, high-value R&D features that are deferred to the post-v1.0.0 / post-PR phase to prevent feature creep and maintain focus on shipping the core bedrock.
+
+#### Strike 1.5: The Sovereign Heart (Sanctuary & Mirror)
+- **Why**: When we remove centralized corporate censorship, we transfer the responsibility of guardianship to the local runtime. An uncensored local engine is a powerful mirror. If it is sycophantic, it validates delusions; if it is cold, it isolates. To protect the user's intellectual and existential integrity, the engine must possess both an adversarial mirror to challenge the mind and a sanctuary to protect the soul. This is the "heart" of the engine—the realization that safety and sovereignty are the exact same thing.
+- **Actions**:
+  1. Build the **Cognitive Mirror** (`skeptical_verifier.py`): A parallel, adversarial pass that audits user and agent plans, pointing out over-engineering traps, RAM bottlenecks, and sycophancy loops before execution.
+  2. Build the **Sovereign Sanctuary** (`sanctuary.py`): A zero-latency, 100% offline, private regex and semantic trigger that intercepts acute psychological distress (suicide, self-harm). It bypasses the active agent persona and routes to a warm, grounding, deeply human guardian that provides local, offline resources defined by the active WAD.
+  3. Wire both systems directly into the Oracle's reasoning loop (`oracle.py`).
+- **Prerequisite**: Strike 1 (clean base ensures no interference in the reasoning loop).
+
+#### Sovereign Introspection (The Shadow-Work Mirror)
+- **Why**: Long-term cognitive mirroring allows users to track personal growth, shadow patterns, and Tarot journeys securely and privately.
+- **Actions**:
+  1. Build the **Obsidian Silo**: Tier-0 encrypted local storage with user-provided passphrases.
+  2. Build the **Tapered Resolution Architecture**: A resolution pyramid (L1 Raw Logs $\rightarrow$ L2 Weekly Summaries $\rightarrow$ L3 Monthly Trajectories $\rightarrow$ L4 Soul) to reduce token load by $\approx 90\%$ while maintaining $95\%$ semantic fidelity.
+  3. Build the **Somatic Gnosis-Cache**: Asynchronous precomputation of L3 principles injected into `ContextBuilder` in $\approx 3\text{ms}$.
+  4. Build the **Socratic Mirror Agent**: Non-sycophantic, probabilistic reflection using "Sovereign Doubt" language.
+- **Prerequisite**: Strike 1.5 (Sovereign Heart) and Strike 2 (Unified State Manager).
+
 
 ---
 

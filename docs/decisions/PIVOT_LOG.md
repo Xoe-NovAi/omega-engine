@@ -4022,18 +4022,24 @@ Burn the **Sovereign Sanctuary** (`sanctuary.py`) and the **Cognitive Mirror** (
 1. **The Cognitive Mirror (`skeptical_verifier.py`)**: A parallel, adversarial pass that audits user and agent plans, pointing out over-engineering traps, RAM bottlenecks, and sycophancy loops before execution.
 2. **The Sovereign Sanctuary (`sanctuary.py`)**: A zero-latency, 100% offline, private regex and semantic trigger that intercepts acute psychological distress (suicide, self-harm). It bypasses the active agent persona and routes to a warm, grounding, deeply human guardian that provides local, offline resources defined by the active WAD.
 
+**Linguistic Nuance & R&D**: Linguistic nuance in psychological mirroring is incredibly delicate. For example, a naive "Sovereign Doubt" response like *"The mirror reflects a resonance with the theme of failure"* can sound sweeping and demoralizing to a user. The system must use precise, Socratic, behavioral-focused language (e.g., *"I notice a pattern of hesitation when starting new initiatives..."*). Solving this requires **curated dataset collection and fine-tuned models/LoRAs** rather than simple prompt engineering.
+
+**Scheduling**: To prevent feature creep and maintain absolute focus on shipping the core bedrock, the implementation of these complex R&D layers is deferred to the **Post-PR Scheduled Features Calendar**. We ship the core first.
+
 ### Rationale
 When we remove centralized corporate censorship (RLHF, cloud-based filters), we transfer the responsibility of guardianship to the local runtime. An uncensored local engine is a powerful mirror. If it is sycophantic, it validates delusions; if it is cold, it isolates. To protect the user's intellectual and existential integrity, the engine must possess both an adversarial mirror to challenge the mind and a sanctuary to protect the soul. This is the "heart" of the engine—the realization that safety and sovereignty are the exact same thing.
 
 ### Implementation
-- Create `src/omega/oracle/sanctuary.py` and `src/omega/oracle/skeptical_verifier.py`.
-- Wire them directly into the Oracle's reasoning loop (`oracle.py`).
-- Document the genesis and philosophy in `docs/strategy/SOVEREIGN_SANCTUARY_GENESIS.md`.
-- Update `SOVEREIGN_ARK_BLUEPRINT.md` to include these as **Strike 1.5 (The Sovereign Heart)**.
+- Create `src/omega/oracle/sanctuary.py` and `src/omega/oracle/skeptical_verifier.py` (Deferred to Post-PR).
+- Wire them directly into the Oracle's reasoning loop (`oracle.py`) (Deferred to Post-PR).
+- Document the genesis and philosophy in `docs/strategy/SOVEREIGN_SANCTUARY_GENESIS.md` and `docs/strategy/SOVEREIGN_INTROSPECTION_SPEC.md`.
+- Update `SOVEREIGN_ARK_BLUEPRINT.md` to include these in the **Post-PR Scheduled Features Calendar**.
 
 ### Verification
 - Verify that crisis keywords trigger the Sanctuary Sentry instantly, bypassing the active agent.
 - Verify that proposed plans trigger the Skeptical Verifier pass, returning an honest audit alongside the optimistic plan.
 - Verify that both systems run 100% offline with zero external network calls (M8).
+- Verify that the core engine compiles and passes all tests without these deferred layers active.
+
 
 
