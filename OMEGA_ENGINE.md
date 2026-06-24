@@ -132,11 +132,11 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 |--------|-------|---------------|
 | Engine version | **1.0.0** 🎉 | 2026-06-22 |
 | PyPI entry point | `omega` CLI via `[project.scripts]` | 2026-06-22 |
-| Source files | **96** .py files | 2026-06-14 |
-| Source lines | **~24,000** | 2026-06-14 |
-| Test functions | **440 passed / 440 collected** (22 intentional skip, 3 xfailed) | 2026-06-24 |
-| Test files | **43** | 2026-06-14 |
-| PIVOT decisions | **137 (D50-D159, incl. xna-omega D1-D49 = 159 lifetime)** | 2026-06-24 |
+| Source files | **111** .py files | 2026-06-24 |
+| Source lines | **~25,000** | 2026-06-24 |
+| Test functions | **489 collected** | 2026-06-24 |
+| Test files | **54** | 2026-06-24 |
+| PIVOT decisions | **111 (D50-D160), incl. xna-omega D1-D49 = 160 lifetime** | 2026-06-24 |
 | Sovereign Mandates | **22 (M1-M22)** | 2026-06-17 |
 | Mandate 2 (Namespace) | ✅ All `from src.omega` → `from omega` — zero broken imports | 2026-06-22 |
 | Mandate 7 (Local-First) | ✅ `providers.yaml` strategy `local_first`, Quick Start = 4 commands, 0 cloud API keys | 2026-06-22 |
@@ -146,8 +146,8 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | ZONEID constants | 11 (0x1d4a11-0x1d4a1b) | 2026-06-14 |
 | cvar Table | 2 namespaces, 7 accessors | 2026-06-14 |
 | Heritage tags | 41/47 files with `[id-soft:]` tags, CI-enforced | 2026-06-22 |
-| Agent Fleet | **11 agents** (15→11 consolidation, Sprint A+B+C complete) | 2026-06-14 |
-| Entity workspaces | **34 on disk** (Sprint D complete — orphans + dead agents deleted, 2026-06-18) | 2026-06-18 |
+| Agent Fleet | **13 agents** (11 fleet + 1 pillar + 1 messenger) | 2026-06-24 |
+| Entity workspaces | **39 on disk** (22 registered entity definitions) | 2026-06-24 |
 | Omega Hub | **Modularized** (state.py, background.py, gateway.py, middleware.py, tools.py) | 2026-06-14 |
 | Packaging | ✅ `pyproject.toml`: 22 runtime deps, 4 extras (native/cli/dev/all), 1 entry point | 2026-06-22 |
 | Model download | ✅ `make model-download` — auto-detects curl/wget, retry, SHA256, GGUF magic bytes | 2026-06-22 |

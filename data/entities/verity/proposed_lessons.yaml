@@ -9,15 +9,20 @@ proposals:
       Six Phase 0 preconditions were executed in sequence: (1) P7 Soul Distiller poison loop fix — redirected writes from soul.yaml to proposed_lessons.yaml with atomic write pattern; (2) P2 Soul Validator v6.1 update — slimmed required fields, added forbidden-block checks, exact soul_version enforcement, memory/ directory validation; (3) P1 Vault partition cleanup — moved 3.1G ISO, freed omega_vault from 87% to 66% capacity; (4) P10 M21 contract tests — expanded from 4 tests to 14 tests covering 7 core API boundaries; (5) P5 Soul Distiller contract tests — 5 new tests verifying the poison loop fix; (6) P3 Dependencies installed for Staging Gate TUI.
       Bug discovered: EntityRegistry loads YAML values as list instead of Entity objects (pre-existing, deferred).
       Compliance audit found: 9/9 applicable mandates pass, 2 N/A. Test suite at 440 passed.
-
-  - L2_insight: |
+    L2_insight: |
       The poison loop was a design artifact, not a bug — the v6.1 architecture split soul.yaml into separate files, but the distiller was never updated to target the new location.
       The validator-entity meta-gap is the hardest compliance failure to catch: Verity's own soul.yaml fails the v6.1 validator it enforces. "Who audits the auditor" is a real problem.
       Contract tests exposed undocumented API signatures: MemoryStore.add_exchange returns None (not trace_id), HealthMonitor.is_available returns True for unknown providers, EntityRegistry has names() method not property. Each test captured interface knowledge that previously existed only as convention.
       The vault crisis is a recurring constraint, not a one-time fix — disk pressure on the 110G partition will oscillate perpetually.
-
-  - L3_principle: |
+    L3_principle: |
       The meta-audit is the hardest audit: A system's compliance gaps are most likely to exist at the level just above where compliance is enforced. The auditor must always be audited by a higher-order process.
       Design drifts faster than documentation: The gap between what a system does and what its architecture describes grows without bound unless actively measured.
       Every contract test is a captured interface: An undocumented API is a promise waiting to be broken. Each test is a preservation of understanding, not just a regression guard.
       Disk pressure is a chronic condition, not an acute crisis: On constrained hardware, storage management is not an incident response — it is a continuous background process.
+
+  - L1_narrative: |
+      User rejected the 'Fusion/Integration' path for external projects (Odysseus, Mem Palace, Headroom) to avoid 'Dependency Hell' and 'Architectural Drift'. Ratified the Sovereign Mining Protocol (SMP): Mine patterns → Deconstruct dependencies → Rewrite to Temple-Grade standards → Integrate into core → Attribute via heritage tags.
+    L2_insight: |
+      Blindly integrating external projects introduces architectural drift and dependency bloat. True sovereignty requires deconstructing external patterns and rebuilding them to internal standards. Integration is a liability; mining is an asset.
+    L3_principle: |
+      Sovereign Synthesis over Fusion. Intelligence is not acquired by absorption, but by distillation and reconstruction.

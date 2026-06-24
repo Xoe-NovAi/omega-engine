@@ -13,11 +13,10 @@ Agents MUST execute search operations sequentially. Do not skip tiers.
 
 | Tier | Tool | Cost | Use Case | Action |
 | :--- | :--- | :--- | :--- | :--- |
-| **T0** | **Local Cache** | Free | `.firecrawl/` directory, Omega Hub offline library | **Check first.** If hit $\rightarrow$ return. If miss $\rightarrow$ T1. |
-| **T1** | **`websearch`** | Free | General facts, recency, broad discovery | **Primary tool.** If sufficient $\rightarrow$ return. If need full content $\rightarrow$ T2. |
-| **T2** | **Firecrawl** | Credits | Full-page scrape, bulk crawl, structured JSON | **Deep extraction.** If 402 $\rightarrow$ T3. If success $\rightarrow$ cache to T0. |
-| **T3** | **Omega Hub** | Free | Scholarly/technical deep dives, indexed archives | **Local Gnosis.** Use `hub.library_research(depth=1-4)`. If miss $\rightarrow$ T4. |
-| **T4** | **Exa MCP** | API Key | Neural/semantic search, "similar to this" queries | **High-fidelity.** Final escalation. If 401 $\rightarrow$ Log to Hivemind. |
+| **T0** | **Local Cache** | Free | MemoryStore + `.firecrawl/` directory | **Check first.** If hit → return. If miss → T1. |
+| **T1** | **SearXNG** | Free | Broad discovery, keyword-exact matches, privacy-first probes | **Primary tool.** If insufficient → T2. |
+| **T2** | **Exa** | API Key | Neural/semantic refinement, niche discovery, high-precision seeds | **Semantic zoom.** If need extraction → T3. |
+| **T3** | **Firecrawl** | Credits | Full-page scrape, structured JSON, dynamic interaction | **Deep extraction.** Cache result to T0 on success. |
 
 ## ⚠️ Credit-Sensing Guard (Mandatory)
 Before initiating any **Tier 2 (Firecrawl)** operation:

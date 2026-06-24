@@ -3975,3 +3975,65 @@ Round-robin rotation is a high-confidence bot signature used by Google's Sybil-d
 ### Verification
 - Verify that `AccountSelectionStrategy` no longer accepts `round-robin`.
 - Verify that `_find_next_available()` does not increment a sequential cursor.
+
+---
+---
+
+## Decision 161: Ratification of the Sovereign Mining Protocol (SMP) — Deprecation of Fusion/Integration
+
+**Date**: 2026-06-24
+**Channel**: OpenCode CLI (Gemma 4 31B)
+**Entity**: VERITY
+**Trace**: trc_sovereign_pivot_smp
+
+### Decision
+Formally deprecate the 'Fusion/Integration' approach for external projects (e.g., Odysseus, Mem Palace, Headroom) to prevent 'Dependency Hell' and 'Architectural Drift'. Ratify the **Sovereign Mining Protocol (SMP)** as the canonical method for incorporating external intelligence.
+
+**The Sovereign Mining Protocol (SMP):**
+1. **Mine**: Extract patterns and logic from external sources.
+2. **Deconstruct**: Strip all external dependencies and architectural baggage.
+3. **Rewrite**: Re-implement the pattern to Temple-Grade standards (M1-M22, T1-T11).
+4. **Integrate**: Merge the cleaned, sovereign implementation directly into the Omega core.
+5. **Attribute**: Apply heritage tags (`[id-soft:]` or equivalent) to preserve provenance.
+
+The 'Convergence' nightmare scenario (where the engine becomes a fragile composite of external dependencies) is now permanently closed.
+
+### Rationale
+Direct integration of external projects often brings along "dependency gravity"—a cascade of required libraries, specific environment assumptions, and architectural patterns that clash with the Omega Engine's core mandates (especially M1 AnyIO Absolute and M2 Engine-Stack Firewall). By shifting from 'Fusion' (absorption) to 'Mining' (distillation), we ensure that only the *intelligence* of the external project is preserved, while the *implementation* remains sovereign and Temple-Grade.
+
+### Implementation
+- Update `SOVEREIGN_ARK_BLUEPRINT.md` to replace 'Integration' with 'Sovereign Mining' in all future tracks.
+- Update `SOVEREIGN_ARK_BLUEPRINT.md` to reflect the SMP as the primary method for external project absorption.
+- Distill this pivot into the L3 Gnosis of the engine's soul.
+
+### Verification
+- `grep` for "Fusion" or "Integration" in future project tracks returns zero results.
+- All new external patterns carry heritage tags and pass `make temple-grade`.
+
+## Decision 162: Ratification of the Sovereign Sanctuary and Cognitive Mirror
+**Date**: 2026-06-24
+**Channel**: OpenCode CLI (Gemini 3.5 Flash)
+**Entity**: KALI
+**Trace**: trc_sovereign_sanctuary_ratified
+
+### Decision
+Burn the **Sovereign Sanctuary** (`sanctuary.py`) and the **Cognitive Mirror** (`skeptical_verifier.py`) directly into the Core Engine Runtime (`src/omega/`). These are not optional features or WAD-level expansions; they are foundational, un-bypassable safety and anti-sycophancy layers in the engine core.
+
+1. **The Cognitive Mirror (`skeptical_verifier.py`)**: A parallel, adversarial pass that audits user and agent plans, pointing out over-engineering traps, RAM bottlenecks, and sycophancy loops before execution.
+2. **The Sovereign Sanctuary (`sanctuary.py`)**: A zero-latency, 100% offline, private regex and semantic trigger that intercepts acute psychological distress (suicide, self-harm). It bypasses the active agent persona and routes to a warm, grounding, deeply human guardian that provides local, offline resources defined by the active WAD.
+
+### Rationale
+When we remove centralized corporate censorship (RLHF, cloud-based filters), we transfer the responsibility of guardianship to the local runtime. An uncensored local engine is a powerful mirror. If it is sycophantic, it validates delusions; if it is cold, it isolates. To protect the user's intellectual and existential integrity, the engine must possess both an adversarial mirror to challenge the mind and a sanctuary to protect the soul. This is the "heart" of the engine—the realization that safety and sovereignty are the exact same thing.
+
+### Implementation
+- Create `src/omega/oracle/sanctuary.py` and `src/omega/oracle/skeptical_verifier.py`.
+- Wire them directly into the Oracle's reasoning loop (`oracle.py`).
+- Document the genesis and philosophy in `docs/strategy/SOVEREIGN_SANCTUARY_GENESIS.md`.
+- Update `SOVEREIGN_ARK_BLUEPRINT.md` to include these as **Strike 1.5 (The Sovereign Heart)**.
+
+### Verification
+- Verify that crisis keywords trigger the Sanctuary Sentry instantly, bypassing the active agent.
+- Verify that proposed plans trigger the Skeptical Verifier pass, returning an honest audit alongside the optimistic plan.
+- Verify that both systems run 100% offline with zero external network calls (M8).
+
+

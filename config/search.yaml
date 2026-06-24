@@ -14,7 +14,7 @@ tiers:
   T1:
     name: searxng
     provider: searxng_mcp
-    url: "http://127.0.0.1:8018"
+    url: "http://127.0.0.1:8017"
     timeout_seconds: 15
     retries: 2
     retry_delay_seconds: [5, 10]

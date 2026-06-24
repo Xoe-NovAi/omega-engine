@@ -93,10 +93,19 @@ class FirecrawlProvider(SearchProvider):
 
 class SearXNGProvider(SearchProvider):
     """T1: SearXNG Broad Discovery Provider — privacy-first metasearch."""
-    
-    def __init__(self, base_url: str = "http://127.0.0.1:8017"):
+
+    def __init__(
+        self,
+        base_url: str = "http://127.0.0.1:8017",
+        timeout: float = 15.0,
+        retries: int = 2,
+        retry_delays: Optional[List[float]] = None,
+    ):
         self.base_url = base_url.rstrip("/")
-    
+        self.timeout = timeout
+        self.retries = retries
+        self.retry_delays = retry_delays or [5.0, 10.0]
+
     async def search(
         self,
         query: str,
@@ -114,43 +123,60 @@ class SearXNGProvider(SearchProvider):
         }
         if engines:
             form_data["engines"] = engines
-        
-        async with httpx.AsyncClient(timeout=15.0) as client:
+
+        last_error: Optional[Exception] = None
+        for attempt in range(self.retries + 1):
             try:
-                resp = await client.post(
-                    f"{self.base_url}/search",
-                    data=form_data,
-                )
-                resp.raise_for_status()
-                data = resp.json()
-                
-                results = data.get("results", [])
-                if not results:
-                    suggestions = data.get("suggestions", [])
-                    if suggestions:
-                        return f"SearXNG suggestions: {', '.join(suggestions)}"
-                    return None
-                
-                # Format top results
-                snippets = []
-                for r in results[:limit]:
-                    title = r.get("title", "")
-                    url = r.get("url", "")
-                    content = r.get("content", "")
-                    engine = r.get("engine", "unknown")
-                    if content:
-                        snippets.append(f"Source [{url}] ({engine}):\n{content[:500]}")
-                
-                if not snippets:
-                    return None
-                
-                return f"SearXNG Search ({len(results)} results):\n\n" + "\n\n---\n\n".join(snippets[:5])
+                async with httpx.AsyncClient(timeout=self.timeout) as client:
+                    resp = await client.post(
+                        f"{self.base_url}/search",
+                        data=form_data,
+                    )
+                    resp.raise_for_status()
+                    data = resp.json()
+
+                    results = data.get("results", [])
+                    if not results:
+                        suggestions = data.get("suggestions", [])
+                        if suggestions:
+                            return f"SearXNG suggestions: {', '.join(suggestions)}"
+                        return None
+
+                    snippets = []
+                    for r in results[:limit]:
+                        title = r.get("title", "")
+                        url = r.get("url", "")
+                        content = r.get("content", "")
+                        engine = r.get("engine", "unknown")
+                        if content:
+                            snippets.append(f"Source [{url}] ({engine}):\n{content[:500]}")
+
+                    if not snippets:
+                        return None
+
+                    return f"SearXNG Search ({len(results)} results):\n\n" + "\n\n---\n\n".join(snippets[:5])
+
             except httpx.HTTPStatusError as e:
-                logger.error(f"SearXNG HTTP error: {e}")
-                raise ProviderError("searxng", f"SearXNG API failure: {e}")
+                last_error = e
+                if e.response.status_code in (429, 502, 503, 504):
+                    delay = self.retry_delays[attempt] if attempt < len(self.retry_delays) else self.retry_delays[-1]
+                    logger.info(f"SearXNG attempt {attempt + 1}/{self.retries + 1} failed ({e.response.status_code}), retrying in {delay}s")
+                    await anyio.sleep(delay)
+                else:
+                    logger.error(f"SearXNG HTTP error: {e}")
+                    raise ProviderError("searxng", f"SearXNG API failure: {e}")
+            except httpx.TimeoutException as e:
+                last_error = e
+                delay = self.retry_delays[attempt] if attempt < len(self.retry_delays) else self.retry_delays[-1]
+                logger.info(f"SearXNG attempt {attempt + 1}/{self.retries + 1} timed out, retrying in {delay}s")
+                await anyio.sleep(delay)
             except Exception as e:
+                last_error = e
                 logger.error(f"SearXNG unexpected error: {e}")
                 raise ProviderError("searxng", f"SearXNG system failure: {e}")
+
+        logger.error(f"SearXNG exhausted {self.retries + 1} attempts: {last_error}")
+        return None
 
 
 class ExaProvider(SearchProvider):

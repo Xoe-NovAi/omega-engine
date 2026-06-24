@@ -92,7 +92,11 @@ class SearchRouter:
         # Signal 2: Confidence
         signals["iris_confidence"] = iris_confidence
         
-        # Signal 3: Entity domain (inferred from entity name)
+        # Signal 3: Entity domain (inferred from entity name or traits)
+        # In a full implementation, this would lookup traits in EntityRegistry
+        domain = entity_name or "general"
+        signals["entity_domain"] = domain
+        
         query_category = self._classify_query(query)
         signals["query_category"] = query_category
         
@@ -133,7 +137,17 @@ class SearchRouter:
                 signals_used=signals,
                 routing_reasoning=reasoning,
             )
-        
+
+        # Rule 2.5: Provider Health - Route away from DOWN providers
+        # If the primary intended tier is DOWN, move to the next healthy tier
+        primary_tier = TIER_SEARXNG # Default primary
+        if provider_health and provider_health.get(primary_tier) is False:
+            reasoning.append(f"T{primary_tier} is DOWN → escalating to T2")
+            primary_tier = TIER_EXA
+            if provider_health and provider_health.get(primary_tier) is False:
+                reasoning.append(f"T{primary_tier} is also DOWN → escalating to T3")
+                primary_tier = TIER_FIRECRAWL
+
         # Rule 3: No credits → skip cloud tiers
         if not has_credits:
             reasoning.append("No credits → T0-T1 only (local + SearXNG)")
@@ -147,7 +161,7 @@ class SearchRouter:
                 signals_used=signals,
                 routing_reasoning=reasoning,
             )
-        
+
         # Rule 4: High confidence → minimal search
         if iris_confidence is not None and iris_confidence > 0.7:
             reasoning.append(f"High confidence ({iris_confidence:.2f}) → T0-T1 only")
@@ -156,6 +170,19 @@ class SearchRouter:
                 max_tier=TIER_SEARXNG,
                 query_category=query_category,
                 search_depth="quick",
+                entity_name=entity_name,
+                signals_used=signals,
+                routing_reasoning=reasoning,
+            )
+
+        # Rule 5: Domain-based priority
+        if entity_name and any(x in entity_name.lower() for x in ["dev", "eng", "tech", "architect"]):
+            reasoning.append(f"Technical entity ({entity_name}) → prefer T2 (Exa)")
+            return SearchIntent(
+                primary_tier=TIER_EXA,
+                max_tier=TIER_FIRECRAWL,
+                query_category=query_category,
+                search_depth="standard",
                 entity_name=entity_name,
                 signals_used=signals,
                 routing_reasoning=reasoning,

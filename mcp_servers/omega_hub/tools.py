@@ -358,18 +358,60 @@ async def oracle_discover_entity(query: str) -> str:
 @mcp.tool()
 async def sovereign_search(query: str, entity_name: str = "SOPHIA", limit: int = 10, force_tier: Optional[int] = None) -> str:
     _require_service()
-    """Execute the 5-Tier Sovereign Search Protocol (T0-T4).
+    """Execute the 4-Tier Sovereign Search Protocol (SSP-V2).
     
-    Bypasses the broken OpenCode local MCP bridge by using direct API providers.
+    T0 (Local) -> T1 (SearXNG) -> T2 (Exa) -> T3 (Firecrawl).
+    T0 includes both MemoryStore and a local filesystem cache.
     
     Args:
         query: The search query.
-        entity_name: The entity context for T0/T3 search.
+        entity_name: The entity context for T0 cache and routing signals.
         limit: Maximum results per tier.
-        force_tier: Optional tier to force execution (0-4).
+        force_tier: Optional tier to force execution (0-3).
     """
     result = await sovereign_search_service.search(query, entity_name, limit=limit, force_tier=force_tier)
     return json.dumps(result, indent=2)
+
+@m9_safe("search_extract")
+@mcp.tool()
+async def search_extract(query: str, limit: int = 10) -> str:
+    _require_service()
+    """Force a T3 (Firecrawl) Deep Extraction for a specific query.
+    
+    Bypasses the tiered routing to ensure full-page content extraction
+    and structured markdown results.
+    
+    Args:
+        query: The query to extract content for.
+        limit: Number of sources to scrape.
+    """
+    result = await sovereign_search_service.extract(query, limit=limit)
+    return json.dumps({"result": result, "tier": 3, "provider": "firecrawl"}, indent=2)
+
+@m9_safe("search_status")
+@mcp.tool()
+async def search_status() -> str:
+    _require_service()
+    """Get the current health and configuration status of the Sovereign Search pipeline.
+    
+    Returns:
+        JSON string containing tier availability, credit status, and cache metrics.
+    """
+    # Gather health from the gateway's health monitor
+    tier_map = {0: "local", 1: "searxng", 2: "exa", 3: "firecrawl"}
+    health = {name: gateway.health_monitor.is_available(name) for tier, name in tier_map.items()} # Wait, tier_map is {int: str}
+    # Correcting the loop
+    health = {name: gateway.health_monitor.is_available(name) for tier, name in tier_map.items()}
+    
+    status = {
+        "pipeline_version": "SSP-V2",
+        "tier_health": health,
+        "firecrawl_credits": sovereign_search_service.budget.has_quota("firecrawl", 100),
+        "cache_dir": str(sovereign_search_service.cache_dir),
+        "config_version": sovereign_search_service.config.get("version", "unknown")
+    }
+    return json.dumps(status, indent=2)
+
 
 
 

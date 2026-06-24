@@ -66,6 +66,9 @@ Each Strike has documented prerequisites. You cannot skip a strike and succeed.
 
 ```
 Epoch I ──┬── Strike 1: Physical Purge ✅ (Done)
+          ├── Strike 1.5: The Sovereign Heart (Sanctuary & Mirror)
+          │     Depends on: Strike 1
+          │     Blocks: Strike 3 (TUI needs safety gates)
           ├── Strike 2: Unified State Manager
           │     Depends on: Strike 1
           │     Blocks: Strikes 3, 4, 8
@@ -105,6 +108,14 @@ unified handle on all state. Strike 3 gives us human oversight of the AI.
 - **Action**: Execute the `soul.template.yaml` migration for all entities.
   (Kali + Verity at v6.1 ✅; 21 pending).
 - **Action**: Archive 70+ dead strategy files from `docs/strategy/`. (Done ✅)
+
+#### Strike 1.5: The Sovereign Heart (Sanctuary & Mirror)
+- **Why**: When we remove centralized corporate censorship, we transfer the responsibility of guardianship to the local runtime. An uncensored local engine is a powerful mirror. If it is sycophantic, it validates delusions; if it is cold, it isolates. To protect the user's intellectual and existential integrity, the engine must possess both an adversarial mirror to challenge the mind and a sanctuary to protect the soul. This is the "heart" of the engine—the realization that safety and sovereignty are the exact same thing.
+- **Actions**:
+  1. Build the **Cognitive Mirror** (`skeptical_verifier.py`): A parallel, adversarial pass that audits user and agent plans, pointing out over-engineering traps, RAM bottlenecks, and sycophancy loops before execution.
+  2. Build the **Sovereign Sanctuary** (`sanctuary.py`): A zero-latency, 100% offline, private regex and semantic trigger that intercepts acute psychological distress (suicide, self-harm). It bypasses the active agent persona and routes to a warm, grounding, deeply human guardian that provides local, offline resources defined by the active WAD.
+  3. Wire both systems directly into the Oracle's reasoning loop (`oracle.py`).
+- **Prerequisite**: Strike 1 (clean base ensures no interference in the reasoning loop).
 
 #### Strike 2: The Unified State Manager
 - **Why**: Currently, state is fragmented across MemoryStore (SQLite), session files
@@ -301,7 +312,7 @@ Engine-Stack Firewall (M2) ensures no PWAD logic leaks into `src/omega/`.
 | H2-D1-D14 | **Agent purge, protocol fixes, engine doc sync, MCP consolidation** | ✅ 13/14 DONE |
 | H2-D13 | **Compress stale MCP archives** | ⏳ PENDING |
 
-### 5.4 H2-E: Dual-Inference & Cross-Agent Integration
+### 5.4 H2-E: Dual-Inference & Cross-Agent Sovereign Mining
 | # | Task | Status |
 |---|------|--------|
 | H2-E1-E8 | **Path bug, thin wrappers, council-local, oracle_summon_local, MaKaLi, Model mapping** | ✅ ALL DONE |
@@ -338,7 +349,7 @@ Engine-Stack Firewall (M2) ensures no PWAD logic leaks into `src/omega/`.
 | **D160** | **Eradicate round-robin from engine core** (`_find_next_available` → stochastic) | ✅ DONE |
 | **D160** | **Eradicate round-robin from CLI plugin schema** (pending opencode-antigravity-auth PR) | ⏳ PENDING |
 
-### 5.9 H2-J: GitHub Integration
+### 5.9 H2-J: GitHub Sovereign Mining
 | # | Task | Owner | Effort | Status |
 |---|------|-------|--------|--------|
 | H2-J0 | **Git index cleanup** | Ma'at (P3) | 2 hr | ⏳ PENDING |
@@ -371,7 +382,7 @@ Requires Strike 3 (TUI) for human review bottleneck. Programmatic migration path
 | 1 | Foundation (Streaming Provider, REST API, Model Download CLI) | ⏳ PENDING |
 | 2 | Core Engine (Model Lifecycle Manager, LLM Pool, Speculative Decoding) | ⏳ PENDING |
 | 3 | UI Layer (Web UI Shell, Chat Interface, Entity/Model Manager) | ⏳ PENDING |
-| 4 | Integration (Entity->Model Binding, Memory Viewer, Performance) | ⏳ PENDING |
+| 4 | Sovereign Mining (Entity->Model Binding, Memory Viewer, Performance) | ⏳ PENDING |
 
 ### 5.12 H2-N: Background Curation & Library Worker (~40hr)
 | Phase | Focus | Status |

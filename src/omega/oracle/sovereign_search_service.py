@@ -1,6 +1,6 @@
 """Sovereign Search Service — Core implementation of the SSP-V2 4-Tier Search Protocol.
 # [id-soft: doom-1993] Lattice-Culling — tiered search dispatch
-AP: AP-SOVEREIGN-SEARCH-SERVICE-v2.0.0
+AP: AP-SOVEREIGN-SEARCH-SERVICE-v2.2.0
 ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: SEARCH-PARTNERSHIP]
 
 SSP-V2 Canonical Tier Mapping:
@@ -14,9 +14,11 @@ from __future__ import annotations
 import logging
 import anyio
 import re
+import uuid
+import yaml
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
-from datetime import datetime
+from datetime import datetime, timezone
 
 from omega.errors import (
     OmegaError, ProviderError, ProviderRateLimitError,
@@ -28,10 +30,27 @@ from omega.oracle.search_providers import (
     FirecrawlProvider, ExaProvider, SearXNGProvider
 )
 from omega.oracle.search_router import SearchRouter, SearchIntent, TIER_LOCAL, TIER_SEARXNG, TIER_EXA, TIER_FIRECRAWL
+from omega.oracle.search_cache import SovereignCache
 from omega.oracle.skeptical_verifier import SkepticalVerifier
 from omega.workers.background_researcher.credit_budget import APICreditBudget
 
 logger = logging.getLogger(__name__)
+
+_CONFIG_PATH = Path(__file__).parent.parent.parent.parent / "config" / "search.yaml"
+
+
+def _load_search_config() -> Dict[str, Any]:
+    """Load SSP-V2 configuration from config/search.yaml."""
+    try:
+        if _CONFIG_PATH.exists():
+            with open(_CONFIG_PATH) as f:
+                return yaml.safe_load(f) or {}
+        else:
+            logger.warning("config/search.yaml not found, using defaults")
+            return {}
+    except Exception as e:
+        logger.warning(f"Failed to load config/search.yaml: {e}")
+        return {}
 
 
 class SovereignSearchService:
@@ -41,12 +60,13 @@ class SovereignSearchService:
     The SSP-V2 ensures credit efficiency and intent-aware routing by executing
     search operations across a 4-tier hierarchy:
 
-    T0: Local Cache (MemoryStore + .firecrawl/)
+    T0: Local Cache (MemoryStore + SovereignCache)
     T1: SearXNG (Broad Discovery — zero-cost, privacy-first)
     T2: Exa (Neural Refinement — semantic search)
     T3: Firecrawl (Deep Extraction — structured content)
 
     Routing is driven by SearchRouter (signal-based intent classification).
+    Configuration is loaded from config/search.yaml.
     """
 
     def __init__(
@@ -56,25 +76,49 @@ class SovereignSearchService:
         indexer: Optional[Indexer] = None,
         firecrawl_key: Optional[str] = None,
         exa_key: Optional[str] = None,
-        searxng_url: str = "http://127.0.0.1:8017",
+        searxng_url: Optional[str] = None,
         verifier: Optional[SkepticalVerifier] = None,
         router: Optional[SearchRouter] = None,
     ):
         from omega.oracle.model_gateway import ModelGateway
         from omega.oracle.health_monitor import get_health_monitor
+
+        # Load SSP-V2 configuration
+        self.config = _load_search_config()
+        tiers_cfg = self.config.get("tiers", {})
+        routing_cfg = self.config.get("routing", {})
+        cache_cfg = self.config.get("cache", {})
+
         self.memory_store = memory_store or get_memory_store()
         self.model_gateway = model_gateway or ModelGateway(health_monitor=get_health_monitor())
         self.indexer = indexer or Indexer()
-        self.cache_dir = Path(".firecrawl")
-        self.cache_dir.mkdir(exist_ok=True)
+        
+        # Initialize SovereignCache (Sovereign persistence for T0/T3)
+        self.cache = SovereignCache(
+            cache_dir=cache_cfg.get("directory", ".firecrawl"),
+            ttl_seconds=cache_cfg.get("ttl_seconds", 86400)
+        )
+        
         self.budget = APICreditBudget()
 
+        # Configure T1 (SearXNG) from config with caller override
+        t1_cfg = tiers_cfg.get("T1", {})
+        resolved_searxng_url = searxng_url or t1_cfg.get("url", "http://127.0.0.1:8017")
+        t1_timeout = t1_cfg.get("timeout_seconds", 15)
+        t1_retries = t1_cfg.get("retries", 2)
+        t1_delays = t1_cfg.get("retry_delay_seconds", [5.0, 10.0])
+
         # SSP-V2 Providers — direct API (bypass MCP bridge for internal use)
-        self.searxng = SearXNGProvider(base_url=searxng_url)
+        self.searxng = SearXNGProvider(
+            base_url=resolved_searxng_url,
+            timeout=t1_timeout,
+            retries=t1_retries,
+            retry_delays=t1_delays,
+        )
         self.firecrawl = FirecrawlProvider(firecrawl_key) if firecrawl_key else FirecrawlProvider()
         self.exa = ExaProvider(exa_key) if exa_key else ExaProvider()
         self.verifier = verifier or SkepticalVerifier(self.model_gateway)
-        self.router = router or SearchRouter()
+        self.router = router or SearchRouter(config=routing_cfg)
 
     async def search(
         self,
@@ -94,18 +138,26 @@ class SovereignSearchService:
 
         Returns a report containing the primary finding, evidence, and fallback log.
         """
+        trace_id = f"srch_{uuid.uuid4().hex[:12]}"
+        has_credits = self._has_firecrawl_credits()
+
         # Obtain SearchIntent
         if search_intent is None:
-            has_credits = self._has_firecrawl_credits()
+            # Gather real-time provider health for the router
+            tier_map = {TIER_SEARXNG: "searxng", TIER_EXA: "exa", TIER_FIRECRAWL: "firecrawl"}
+            health_status = {tier: self.model_gateway.health_monitor.is_available(name) for tier, name in tier_map.items()}
+
             search_intent = self.router.route(
                 query=query,
                 entity_name=entity_name,
                 iris_confidence=iris_confidence,
                 force_tier=force_tier,
                 has_credits=has_credits,
+                provider_health=health_status,
             )
 
         report: Dict[str, Any] = {
+            "trace_id": trace_id,
             "primary_finding": None,
             "evidence": [],
             "fallback_log": [],
@@ -140,46 +192,56 @@ class SovereignSearchService:
                         "tier": tier,
                         "outcome": "empty",
                         "message": f"Tier {tier} returned no results.",
+                        "trace_id": trace_id,
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
                     })
             except ProviderAuthError as e:
                 report["fallback_log"].append({
                     "tier": tier,
                     "outcome": "auth_error",
                     "message": str(e),
+                    "trace_id": trace_id,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
-                logger.warning(f"[SEARCH-ERROR] tier={tier} auth_error: {e}")
+                logger.warning(f"[SEARCH-ERROR] trace={trace_id} tier={tier} auth_error: {e}")
             except ProviderRateLimitError as e:
                 report["fallback_log"].append({
                     "tier": tier,
                     "outcome": "rate_limited",
                     "message": str(e),
+                    "trace_id": trace_id,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
-                logger.warning(f"[SEARCH-ERROR] tier={tier} rate_limited: {e}")
+                logger.warning(f"[SEARCH-ERROR] trace={trace_id} tier={tier} rate_limited: {e}")
             except Exception as e:
                 report["fallback_log"].append({
                     "tier": tier,
                     "outcome": "error",
                     "message": str(e),
+                    "trace_id": trace_id,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
-                logger.warning(f"[SEARCH-ERROR] tier={tier} error: {e}")
+                logger.warning(f"[SEARCH-ERROR] trace={trace_id} tier={tier} error: {e}")
 
         if not report["primary_finding"]:
             report["status"] = "failed"
             report["primary_finding"] = "No results found across all available tiers."
         elif self.verifier and evidence_pool:
             try:
-                logger.info(f"Running skeptical verification on search findings with {len(evidence_pool)} sources...")
+                logger.info(f"[SEARCH] trace={trace_id} verifying {len(evidence_pool)} sources...")
                 verification = await self.verifier.verify(query, evidence_pool)
                 report["verification"] = {
                     "status": verification.status,
                     "reasoning": verification.reasoning,
-                    "verified_at": verification.verified_at
+                    "verified_at": verification.verified_at,
+                    "trace_id": trace_id,
                 }
             except Exception as e:
-                logger.warning(f"Skeptical verification failed: {e}")
+                logger.warning(f"[SEARCH] trace={trace_id} verification failed: {e}")
                 report["verification"] = {
                     "status": "UNVERIFIED",
-                    "reasoning": f"Verification failed: {e}"
+                    "reasoning": f"Verification failed: {e}",
+                    "trace_id": trace_id,
                 }
 
         return report
@@ -224,13 +286,19 @@ class SovereignSearchService:
         return None
 
     async def _tier_0_local_cache(self, query: str, entity_name: str, limit: int) -> Optional[str]:
-        """T0: Local Cache (MemoryStore + .firecrawl/)."""
-        # MemoryStore Hybrid Search (The "Sovereign" part of T0)
+        """T0: Local Cache (MemoryStore + SovereignCache)."""
+        # 1. MemoryStore Hybrid Search
         results = await self.memory_store.search(query, entity_name, limit=limit)
         if results:
-            logger.info(f"T0 match found for {entity_name}: {len(results)} results")
+            logger.info(f"T0 MemoryStore match found for {entity_name}: {len(results)} results")
             snippets = [r.get("assistant", r.get("content", "")) for r in results]
             return f"Local Memory Match: {' '.join(snippets[:3])}"
+
+        # 2. SovereignCache (filesystem)
+        cached_result = self.cache.get(query, entity_name)
+        if cached_result:
+            logger.info(f"T0 SovereignCache HIT for {query} (entity={entity_name})")
+            return f"Sovereign Cache Match: {cached_result}"
 
         return None
 
@@ -262,10 +330,21 @@ class SovereignSearchService:
             logger.warning("Firecrawl provider not configured. Skipping T3.")
             return None
         try:
-            return await self.firecrawl.search(query, limit)
+            result = await self.firecrawl.search(query, limit)
+            if result:
+                # Persist to SovereignCache for future T0 hits
+                self.cache.set(query, "global", result)
+            return result
         except Exception as e:
             logger.error(f"T3 Firecrawl failed: {e}")
             return None
+
+    async def extract(self, query: str, limit: int = 10) -> Optional[str]:
+        """Direct access to T3 (Firecrawl) Deep Extraction.
+        
+        Bypasses the tiered routing to force a high-fidelity extraction.
+        """
+        return await self._tier_3_firecrawl(query, limit)
 
     def _has_firecrawl_credits(self) -> bool:
         """Check if Firecrawl credits are above the 100-credit threshold."""

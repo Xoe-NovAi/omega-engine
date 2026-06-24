@@ -85,8 +85,25 @@ class TestSearchRouter:
         intent = self.router.route("test query", entity_name="sophia")
         assert intent.entity_name == "sophia"
 
+    def test_technical_entity_prefer_t2(self):
+        """Entities with technical names prefer T2 (Exa)."""
+        intent = self.router.route("test query", entity_name="Chief-Architect-Xoe")
+        assert intent.primary_tier == TIER_EXA
+        assert any("Technical entity" in r for r in intent.routing_reasoning)
+
+    def test_provider_health_escalation(self):
+        """Routing escalates if the primary tier is DOWN."""
+        # T1 is DOWN -> should go to T2
+        intent = self.router.route(
+            "test query", 
+            provider_health={TIER_SEARXNG: False, TIER_EXA: True}
+        )
+        assert intent.primary_tier == TIER_EXA
+        assert any("T1 is DOWN" in r for r in intent.routing_reasoning)
+
     def test_signals_recorded(self):
         """All input signals are recorded in SearchIntent."""
+
         intent = self.router.route(
             "test query",
             entity_name="kali",
