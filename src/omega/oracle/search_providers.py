@@ -109,10 +109,20 @@ class ExaProvider(SearchProvider):
     async def search(self, query: str, limit: int = 10) -> Optional[str]:
         async with httpx.AsyncClient(timeout=30.0) as client:
             try:
+                # [id-soft: quake3-1999] Right Approximation — Neural Zoom pattern
+                # We default to 'auto' type and 'highlights' for token efficiency.
+                payload = {
+                    "query": query,
+                    "numResults": limit,
+                    "type": "auto",
+                    "contents": {
+                        "highlights": True
+                    }
+                }
                 response = await client.post(
                     self.base_url,
                     headers={"x-api-key": self.api_key},
-                    json={"query": query, "numResults": limit, "useAutoprompt": True}
+                    json=payload
                 )
                 if response.status_code == 401:
                     raise ProviderAuthError("exa", "Exa API key invalid")
@@ -123,13 +133,21 @@ class ExaProvider(SearchProvider):
                 response.raise_for_status()
                 
                 data = response.json()
-                logger.info(f"Exa raw response: {json.dumps(data)}")
                 results = data.get("results", [])
                 if not results:
                     return None
                 
-                snippets = [r.get("text", r.get("highlights", ""))[:500] for r in results]
-                return f"Exa Neural Search: {'\\n\\n'.join(snippets[:3])}"
+                # Extract highlights as the primary signal for the triage phase
+                snippets = []
+                for r in results:
+                    content = r.get("highlights", r.get("text", ""))
+                    if content:
+                        snippets.append(f"Source [{r.get('url')}]:\n{content[:500]}")
+                
+                if not snippets:
+                    return None
+                    
+                return f"Exa Neural Search (Highlights):\n\n" + "\n\n---\n\n".join(snippets[:3])
             except ProviderError:
                 raise
             except httpx.HTTPStatusError as e:

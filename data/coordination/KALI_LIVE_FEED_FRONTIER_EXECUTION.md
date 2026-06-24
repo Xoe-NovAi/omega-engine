@@ -31,3 +31,13 @@
 - P3: textual + ruamel.yaml installed
 - Verification: 440/440 tests passing, heritage map green
 - SOVEREIGN_ARK_BLUEPRINT.md rebuilt as comprehensive SSOT
+
+## [T+0003] Phase 0 Precondition Execution Complete (2026-06-24)
+- P7: soul_distiller.py poison loop fixed (writes to proposed_lessons.yaml)
+- P2: soul_validator.py updated to v6.1 schema enforcement (backward compatible)
+- P1: Vault partition freed 87% -> 66% (3.1G recovered)
+- P10: 14 M21 contract tests written + 5 soul distiller tests (19 total, all pass)
+- P3: textual + ruamel.yaml installed
+- Verification: 440/440 tests passing, heritage map green
+- SOVEREIGN_ARK_BLUEPRINT.md rebuilt as comprehensive SSOT
+- Antigravity round-robin rotation eradicated from core and plugin

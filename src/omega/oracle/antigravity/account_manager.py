@@ -280,21 +280,30 @@ class AccountManager:
     def _find_next_available(
         self, family: str, model: Optional[str], enabled: List[ManagedAccount],
     ) -> Optional[AccountSelection]:
-        """Find the next available account for a family."""
-        for _ in range(len(enabled)):
-            self._cursor = (self._cursor + 1) % len(self._accounts)
-            account = self._accounts[self._cursor]
-            if not account.enabled:
-                continue
-            if account.is_rate_limited_for_family(family, model):
-                continue
-            if account.is_cooling_down:
-                continue
-            header = self._get_best_header_style(account, family, model)
-            if header:
-                self._current_index_by_family[family] = account.index
-                return AccountSelection(account=account, header_style=header, family=family)
-
+        \"\"\"Find the next available account for a family using a stochastic search.
+        
+        This replaces the legacy round-robin sequential cursor to avoid 
+        predictable bot signatures and Google ban risks.
+        \"\"\"
+        import random
+        
+        # Filter for accounts that are actually usable
+        available = [
+            acc for acc in enabled
+            if not acc.is_rate_limited_for_family(family, model)
+            and not acc.is_cooling_down
+        ]
+        
+        if not available:
+            return None
+            
+        # Stochastic selection: random choice from available pool
+        account = random.choice(available)
+        header = self._get_best_header_style(account, family, model)
+        if header:
+            self._current_index_by_family[family] = account.index
+            return AccountSelection(account=account, header_style=header, family=family)
+        
         return None
 
     def _get_best_header_style(

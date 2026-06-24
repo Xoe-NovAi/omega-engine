@@ -326,7 +326,7 @@ See `SOVEREIGN_MANDATES.md` for full text. **M2 is enforced via Hard-Boundary St
 | **Sovereignty** | Cloud dependency (basic ops) | 0 | ✅ 0 |
 | **Sovereignty** | Data residency | 100% | ✅ 100% |
 | **Sovereignty** | Telemetry events | 0 | ✅ 0 |
-| **Identity** | Agents with soul.yaml v6.1 (4-file split) | All 11 | ✅ 11/11 migrated |
+| **Identity** | Agents with soul.yaml v6.1 (4-file split) | All 11 | 🟡 2/11 migrated (Kali, Verity) |
 | **Identity** | Soul distillation rate | ≥1 L3/3 sessions | ✅ 1.0 |
 | **Identity** | Cross-entity L3 sharing | ≥5 principles | 🟡 2 (Engine-Stack + LMS) |
 | **UX** | Hub dashboard | Live :8016 | 🟡 REST only (no HTML) |

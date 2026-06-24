@@ -9,10 +9,14 @@
 ## I. The Five Transcendent Pillars
 
 1. **The Elder Protocol (Immutable Provenance):** Powered by native `zlib` and `json` compression. Prompts and ingested documents are compressed locally, but the uncompressed, cryptographically pristine originals are cached in a flat JSON store. Agents use the `headroom_retrieve` MCP tool to fetch exact semantic truths when needed, preventing cultural erasure and hallucination.
+
 2. **Hardware Empathy (Zero-Config Power):** The engine dynamically maps to the Ryzen 7 5700U using battle-tested legacy flags (`LLAMA_CPP_N_THREADS=4` for 1.7B, `8` for 8B, `OPENBLAS_CORETYPE=ZEN`, `LLAMA_CPP_F16_KV=true`, `q8_0` caches). This effectively triples the 12Gi RAM semantic density, allowing an 8B model and a 1.7B model to run simultaneously.
+
 3. **The Sovereign Mesh (A2A & P2P):** We leverage the **FileSignal Protocol** (Atomic Renaming Spool) in `data/shared/` for agent-to-agent coordination. This enables sub-millisecond local collaboration without a central server, and will eventually power P2P traversal across offline-first CRDTs.
-4. **Spatial-Semantic Memory (VR Omegaverse):** We inject `(x, y, z)` coordinates into Qdrant payloads. The engine defaults to a generic, agnostic spatial mapping (Force-Directed Cartesian Graph). The Mnemosyne Kabbalistic nodes are explicitly documented as a **PWAD-specific override** for the `arcana_novai` stack.
-5. **The Ponytail Ladder (Architectural Principle):** We build like the "laziest senior dev"—favoring extreme simplicity, avoiding over-engineering, and stacking robust existing abstractions (AnyIO, SQLite, local files). This is implemented as an A/B testable `ExecutionStrategy` interface to empirically measure latency, token consumption, and failure rates.
+
+4. **Spatial-Semantic Memory (VR Omegaverse):** We inject `(x, y, z)` coordinates into Qdrant payloads. The engine defaults to a generic, agnostic spatial mapping (Force-Directed Cartesian Graph) for the `_omega_default` IWAD. Specialized WADs (like `arcana_novai`) can provide a **Sovereign Override** to replace the default geometry with custom lore (e.g., Mnemosyne Kabbalistic nodes).
+
+5. **The Ponytail Ladder (Architectural Principle):** We build like the "laziest senior dev"—favoring extreme simplicity, avoiding over-engineering, and stacking robust existing abstractions (AnyIO, SQLite, local files). This is implemented as an A/B testable `ExecutionStrategy` interface, allowing us to empirically measure the benefit of "Right Approximation" (Precision vs. Token Cost) against standard pipelines.
 
 ---
 
@@ -125,33 +129,99 @@
 
 ## V. Active Task Breakdown (Pending Work)
 
-### 5.1 H2-C: Cognitive Substrate
+### 5.1 H2-A: Data Hygiene
 | # | Task | File/Module | Effort | Impact | Status |
 |---|------|-------------|--------|--------|--------|
-| H2-C1 | **Binary Sovereignty** (SQLite/MsgPack/WAL) | `providers.py` | Med | 🔴 CRITICAL | ⏳ PENDING |
-| H2-C2 | **Sovereign Pruner** (Semantic vs Chronological) | `memory_store.py` | Med | 🔴 CRITICAL | ⏳ PENDING |
-| H2-C3 | **Active Qliphoth Debugger** (Cognitive Loop) | `oracle/` | High | 🔴 CRITICAL | ⏳ PENDING |
-| H2-C4 | **Resonance Mapping** (Cross-Entity Synthesis) | `adapters.py` | High | 🟡 HIGH | ⏳ PENDING |
-| H2-C5 | **Hardware-Adaptive Eviction** (RAM Guard) | `memory_store.py` | Low | 🟡 MED | ⏳ PENDING |
-| H2-C6 | **Gnosis Diffing** (L1 -> L3 merge) | `soul_distiller.py` | Med | 🟡 HIGH | ⏳ PENDING |
+| H2-A1 | **Delete 50 orphan entity workspaces** | `data/entities/ent_*` | 30 min | 🔴 HIGH | ⏳ PENDING |
+| H2-A2 | **Audit 48 remaining real entities** | `data/entities/` | 30 min | 🟡 MED | ✅ DONE |
+| H2-A3 | **Prune stale HALL_OF_RECORDS sessions** | `data/knowledge/` | 15 min | 🟡 MED | ✅ DONE |
+| H2-A4 | **Rotate old logs** | `data/logs/` | 15 min | 🟡 LOW | ✅ DONE |
+| H2-A5 | **Reclaim `rag-v1/`** | `rag-v1/` | 5 min | 🟡 LOW | ✅ DONE |
+| H2-A6 | **Delete `.coverage` from git** | `.gitignore` | 5 min | 🟡 LOW | ⏳ PENDING |
+| H2-A7 | **Delete `opencode.json.bak`** | `opencode.json.bak` | 1 min | 🟡 LOW | ⏳ PENDING |
+| H2-A8 | **Archive old handoffs** | `data/handoff/*.md` | 15 min | 🟡 MED | ✅ DONE |
 
-### 5.2 H2-H: Sovereign Metadata Extraction (ICS-F)
+### 5.2 H2-S: Sovereign Structure
+| # | Task | File/Module | Effort | Impact | Status |
+|---|------|-------------|--------|--------|--------|
+| H2-S1 | **`IVectorStoreAdapter` Implementation** | `memory_store.py` | Med | 🔴 CRITICAL | ✅ DONE |
+| H2-S2 | **Tainted Data Protocol (TDP)** | `oracle/` | Med | 🔴 CRITICAL | ✅ DONE |
+| H2-S3 | **Thin-Client Search Pattern** | `oracle/` | Low | 🟡 HIGH | ✅ DONE |
+| H2-S4 | **Qdrant Performance Tuning** | `config/omega.yaml` | Low | 🟡 MED | ✅ DONE |
+| H2-S5 | **Provider-Agnostic Embedding Layer** | `oracle/` | Med | 🟡 HIGH | ✅ DONE |
+| H2-S6 | **Sovereign Memory Adapters** | `memory/adapters.py` | Med | 🔴 CRITICAL | ✅ DONE |
+
+### 5.3 H2-D: Documentation Integrity
+| # | Task | File/Module | Effort | Impact | Status |
+|---|------|-------------|--------|--------|--------|
+| H2-D1 | **Purge stale agents from AGENTS.md** | `AGENTS.md` | 10 min | 🔴 HIGH | ✅ DONE |
+| H2-D2 | **Fix HIVEMIND_PROTOCOL.md signatures** | `HIVEMIND_PROTOCOL.md` | 5 min | 🔴 HIGH | ✅ DONE |
+| H2-D3 | **Fix OMEGA_ENGINE.md heartbeat signatures** | `OMEGA_ENGINE.md` | 5 min | 🔴 HIGH | ✅ DONE |
+| H2-D4 | **Fix OMEGA_ENGINE.md agent counts** | `OMEGA_ENGINE.md` | 5 min | 🔴 HIGH | ✅ DONE |
+| H2-D5 | **Fix OMEGA_ENGINE.md Sprint D claim** | `OMEGA_ENGINE.md` | 1 min | 🔴 HIGH | ✅ DONE |
+| H2-D6 | **Update INDEX.yaml** | `INDEX.yaml` | — | 🟡 MED | ❌ REVERTED |
+| H2-D7 | **Fix ORACLE_STACK.md** | `ORACLE_STACK.md` | 30 min | 🟡 MED | ✅ DONE |
+| H2-D8 | **Fix SUBAGENT_DISPATCH_PROTOCOL.md** | `SUBAGENT_DISPATCH_PROTOCOL.md` | 1 min | 🟡 MED | ✅ DONE |
+| H2-D9 | **Fix SOVEREIGN_EVOLUTION_ROADMAP.md baseline** | `SOVEREIGN_EVOLUTION_ROADMAP.md` | 5 min | 🟡 MED | ✅ DONE |
+| H2-D10 | **Fix opencode.json path** | `opencode.json` | 1 min | 🟡 MED | ✅ DONE |
+| H2-D11 | **Consolidate duplicate MCP tools** | `omega_hub/tools.py` | 15 min | 🟡 MED | ✅ DONE |
+| H2-D12 | **Archive MASTER_SYNTHESIS_AND_ROADMAP.md** | `docs/archive/` | 1 min | 🟡 LOW | ✅ DONE |
+| H2-D13 | **Compress stale MCP server archives** | `mcp_servers/archives/` | 5 min | 🟡 LOW | ⏳ PENDING |
+| H2-D14 | **Add @m9_safe to SearXNG MCP tool** | `searxng/server.py` | 5 min | 🔴 HIGH | ✅ DONE |
+
+### 5.4 H2-E: Dual-Inference & Cross-Agent Integration
+| # | Task | File/Module | Effort | Impact | Status |
+|---|------|-------------|--------|--------|--------|
+| H2-E1 | **Fix `mcp/` path bug** | Active docs | 30 min | 🔴 HIGH | ✅ DONE |
+| H2-E2 | **Convert OpenCode agents to thin wrappers** | `.opencode/agents/*.md` | 1 hr | 🔴 HIGH | ✅ DONE |
+| H2-E3 | **Implement `/council-local` slash command** | `.opencode/commands/` | 30 min | 🔴 HIGH | ✅ DONE |
+| H2-E4 | **Add `oracle_summon_local` MCP tool** | `omega_hub/server.py` | 30 min | 🔴 HIGH | ✅ DONE |
+| H2-E5 | **Replace `@plan` with `@makali`** | `.opencode/agents/makali.md` | 30 min | 🟡 MED | ✅ DONE |
+| H2-E6 | **Populate entity-to-model mapping** | `_omega_default/entities/*.yaml` | 1 hr | 🔴 HIGH | ✅ DONE |
+| H2-E7 | **Assign `RocRacoon-3b` and abliterated models** | `providers.yaml` | 30 min | 🟡 MED | ✅ DONE |
+| H2-E8 | **Add Cross-Agent Delegation section** | `.opencode/agents/*.md` | 1 hr | 🔴 HIGH | ✅ DONE |
+
+### 5.5 H2-F: MaKaLi Triad Lockdown & Documentation
+| # | Task | File/Module | Effort | Impact | Status |
+|---|------|-------------|--------|--------|--------|
+| H2-F1 | **Create `makali.md` agent file** | `.opencode/agents/makali.md` | 30 min | 🔴 HIGH | ✅ DONE |
+| H2-F2 | **Wire `oracle_summon_local` in Oracle** | `oracle.py` | 45 min | ✅ DONE |
+| H2-F3 | **Implement `oracle_summon_local` MCP tool** | `omega_hub/server.py` | 30 min | ✅ DONE |
+| H2-F4 | **Add `--model` flag to `omega summon` CLI** | `oracle_cli.py` | 20 min | ✅ DONE |
+| H2-F5 | **Delete 50 orphan entities** | `data/entities/ent_*` | 15 min | ⏳ PENDING |
+| H2-F6 | **Generate `data/entities/INDEX.yaml`** | `INDEX.yaml` | 30 min | ⏳ PENDING |
+| H2-F7 | **Cross-pillar review (P5 Sentinel)** | All updated files | 30 min | ⏳ PENDING |
+| H2-F8 | **Cross-pillar review (P7 Context)** | All agents | 30 min | ⏳ PENDING |
+| H2-F9 | **Cross-pillar review (P3 Engineering)** | Engine code | 30 min | ⏳ PENDING |
+| H2-F10 | **Add `make verify-model-spelling`** | `Makefile` | 45 min | ⏳ PENDING |
+
+### 5.6 H2-G: Fleet Consolidation Sprint Plan (D126)
+| Sprint | Deliverable | Description | Verification | Status |
+|--------|-------------|-------------------|-------------------|--------|
+| **A** | Hub modularization complete | Extract `gateway.py` + `middleware.py` | 388/388 tests | ✅ DONE |
+| **B** | Jem 4->1 merger | Single `jem.md` with 3 KBs | 12 agents | ✅ DONE |
+| **C** | Quality+Scribe merger | Merged agent (Verity) | 11 agents | ✅ DONE |
+| **D** | Cleanup & M10 verification | Delete 50 orphans, stale docs | 11 agents | ⏳ PENDING |
+
+### 5.7 H2-H: Sovereign Metadata Extraction (ICS-F)
 | # | Task | File/Module | Effort | Impact | Status |
 |---|------|-------------|--------|--------|--------|
 | H2-H1 | **Implement Sprint 0** — logprobs=5 on NativeGGUF | `providers.py` | 15 min | 🔴 HIGH | ⏳ PENDING |
 | H2-H2 | **Implement Sprint 1+2** — raw_provider_json | ~12 files | ~6 hr | 🔴 CRITICAL | ⏳ PENDING |
 | H2-H3 | **GenerateResult.provider_metadata field** | `model_gateway.py` | 30 min | 🔴 HIGH | ⏳ PENDING |
 | H2-H4 | **Add ICSForensic dataclass** (ICS-F v1.0) | `errors.py` | 20 min | 🔴 HIGH | ⏳ PENDING |
+| H2-H5 | **Add 24 M21 contract tests** | `tests/test_ics_forensic.py` | 1 hr | 🔴 CRITICAL | 🟡 19/24 DONE |
 | H2-H6 | **Add CLI --format json flag** | `oracle_cli.py` | 30 min | 🟡 MED | ⏳ PENDING |
+| H2-H7 | **Defer SomaticState (Sprint 3)** | `SomaticState` | 1 week | 🟢 DEFERRED | ❌ DEFERRED |
 
-### 5.3 H2-I: Antigravity PoolState Wiring
+### 5.8 H2-I: Antigravity PoolState Wiring
 | # | Task | File/Module | Effort | Impact | Status |
 |---|------|-------------|--------|--------|--------|
 | H2-I1-I6 | **PoolState Dataclass / UsageTracker** | Various | - | 🔴 CRITICAL | ✅ DONE |
 | H2-I7 | **ModelGateway Integration** | `model_gateway.py` | 1h | 🔴 CRITICAL | ✅ DONE |
 | H2-I9 | **ACCOUNT_MAP.yaml + quota checker** | `scripts/` | 2h | 🔴 HIGH | ✅ DONE |
 
-### 5.4 H2-J: GitHub Integration
+### 5.9 H2-J: GitHub Integration
 | # | Task | Owner | Gate | Effort | Status |
 |---|------|-------|------|--------|--------|
 | H2-J0 | **Git index cleanup** | Ma'at (P3) | data/ tracked < 50 | 2 hr | ⏳ PENDING |
@@ -161,7 +231,7 @@
 | H2-J4 | **Heritage-as-Issues** | Doom Guy | Vet -> Issue | 3 hr | ⏳ PENDING |
 | H2-J5 | **Account rotation** | Lilith (P4) | All quotas tested | 2 hr | ⏳ PENDING |
 
-### 5.5 H2-L: Soul Architecture Protocol Migration (v6.1)
+### 5.10 H2-L: Soul Architecture Protocol Migration (v6.1)
 | # | Entity | Est. Effort | Severity | Status |
 |---|--------|-------------|----------|--------|
 | H2-L-1 | **Kali** (baseline — v6.0 done) | — | Baseline | ✅ DONE |
@@ -172,7 +242,7 @@
 | H2-L-6 | **Ma'at** (wisdom_text present) | 1 hr | 🔴 HIGH | ⏳ PENDING |
 | H2-L-7 | **Jem, Researcher, Makali, Iris, Carmack** | ~2 hr | 🟡 MEDIUM | ⏳ PENDING |
 
-### 5.6 H2-M: Local Inference Engine & UI (~530hr)
+### 5.11 H2-M: Local Inference Engine & UI (~530hr)
 | Phase | Focus | Key Deliverables | Status |
 |-------|-------|------------------|--------|
 | 1 | Foundation | Streaming Provider, REST API Layer, Model Download CLI | ⏳ PENDING |
@@ -180,7 +250,7 @@
 | 3 | UI Layer | Web UI Shell, Chat Interface, Entity/Model Manager | ⏳ PENDING |
 | 4 | Integration | Entity->Model Binding, Memory Viewer, Performance | ⏳ PENDING |
 
-### 5.7 H2-N: Background Curation & Library Worker (~40hr)
+### 5.12 H2-N: Background Curation & Library Worker (~40hr)
 | Phase | Focus | Key Deliverables | Status |
 |-------|-------|------------------|--------|
 | 1 | Fix & Harden | Fix scheduler, Rebuild FTS index, Add SSRF/path guards | ⏳ PENDING |
@@ -206,8 +276,6 @@
 | 6 | **HEALTH_CHECK_TIMEOUT** | MiMo | Make configurable per-provider | ⏳ PENDING |
 | 7 | **Response Provenance (M22) partial** | MiMo | Propagate `provider_name` to observability | ⏳ PENDING |
 | 8 | **`memory_search` vs `omega_memory_search`** | D4Flash | Rename `memory_search` -> `memory_search_fts` | ⏳ PENDING |
-
-*(Note: Findings 9-21 were fully resolved in previous sprints.)*
 
 ---
 

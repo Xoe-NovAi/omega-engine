@@ -1,52 +1,82 @@
-# 🔱 Firecrawl Skill Audit & Refactoring Proposal
-**Date**: 2026-06-24
-**Orchestrator**: jem
-**Context**: Sovereign Search Protocol V2 (SSP) Alignment
+# 🔱 Firecrawl Skill Audit & Consolidation Report
+**Version**: 1.0.0
+**Status**: PROPOSED
+**Audit Date**: 2026-06-24
 
-## 🔍 Current State Analysis
-The `.opencode/skills/` directory contains 27+ Firecrawl-related skills. These are currently organized by **Business Use Case** (e.g., `firecrawl-lead-gen`, `firecrawl-market-research`, `firecrawl-company-directories`).
+## 📉 Current State Analysis
 
-### Issues Identified:
-1. **Cognitive Bloat**: Too many skills for the agent to choose from, leading to "skill paralysis" or suboptimal selection.
-2. **Functional Overlap**: Many use-case skills are just wrappers around the same core API calls (`/scrape` or `/crawl`).
-3. **SSP Misalignment**: The current structure focuses on *what* to extract (the business goal) rather than *how* to extract (the technical modality), which conflicts with the SSP's "The Scalpel" (Sovereign Extraction) philosophy.
-4. **Maintenance Overhead**: Updating the core Firecrawl API requires updating dozens of individual skill files.
+### The "Bloat" Inventory
+The current `.agents/skills/` directory contains **30+ Firecrawl-related skills**. 
+These are divided into two distinct categories:
+1. **Core Capabilities** (e.g., `firecrawl-scrape`, `firecrawl-search`): Direct wrappers for API endpoints.
+2. **Workflow Templates** (e.g., `firecrawl-lead-gen`, `firecrawl-market-research`): Prompt-heavy guides that instruct the agent on *how* to use the core capabilities for a specific business outcome.
 
----
-
-## 🏗️ Proposed Refactored Architecture
-
-The skills should be reorganized to align with the **Core Modalities** of the Firecrawl API and the **SSP V2 Routing Logic**.
-
-### 1. Core Modality Skills (The "Primitives")
-These skills should be the only ones directly exposed as "tools" for the agent. They map 1:1 to the technical capabilities of the "Scalpel."
-
-| Skill Name | API Endpoint | Purpose |
-| :--- | :--- | :--- |
-| `firecrawl-scrape` | `/scrape` | Single page $\rightarrow$ Markdown/JSON. |
-| `firecrawl-crawl` | `/crawl` | Site-wide $\rightarrow$ Bulk Markdown/JSON. |
-| `firecrawl-map` | `/map` | Domain $\rightarrow$ URL List. |
-| `firecrawl-interact` | `/interact` | Live Session $\rightarrow$ Dynamic Interaction. |
-| `firecrawl-agent` | `/agent` | Autonomous $\rightarrow$ Structured Data. |
-
-### 2. Workflow Templates (The "Recipes")
-The existing business use-case skills should be converted from **Skills** to **Workflow Templates**. A template is a structured prompt that tells the agent how to combine the Core Modality Skills to achieve a goal.
-
-**Example: `lead-gen` Workflow**
-- **Step 1**: Use `firecrawl-map` to find the `/team` or `/about` pages.
-- **Step 2**: Use `firecrawl-scrape` with a specific `lead_gen` JSON schema.
-- **Step 3**: Synthesize results into a CRM-ready list.
+### The Redundancy Problem
+Workflow skills like `firecrawl-company-directories` do not provide new *tools*; they provide new *instructions*. 
+- **Cognitive Load**: The agent must search through 30+ skills to find the "right" one, even though they all use the same 6 underlying tools.
+- **Maintenance Debt**: Updating the core CLI syntax requires updating every single workflow skill.
+- **Overlap**: `firecrawl-lead-gen` and `firecrawl-company-directories` are 90% identical in their execution pattern.
 
 ---
 
-## 🚀 Implementation Roadmap
+## 🛠️ Proposed Canonical Skill Set
 
-1. **Deprecation Phase**: Mark all use-case skills (e.g., `firecrawl-lead-gen`) as `[DEPRECATED]`.
-2. **Primitive Hardening**: Ensure the 5 Core Modality Skills are robust, well-documented, and align with the SSP's "Sovereign Usage" patterns (Local LLM extraction, Markdown caching).
-3. **Template Migration**: Move the logic from the deprecated skills into a `docs/workflows/firecrawl/` directory as Markdown templates.
-4. **Pruning**: Delete the redundant skill files from `.opencode/skills/`.
+To eliminate cognitive bloat, we will collapse the 30+ skills into a **Three-Tier Hierarchy**.
 
-## ⚖️ Expected Outcome
-- **Reduced Latency**: Faster skill selection for the agent.
-- **Increased Reliability**: Centralized logic for API interactions.
-- **SSP Compliance**: Clear alignment between the "Sovereign Path" and the toolset.
+### Tier 1: The Core Toolkit (`firecrawl-core`)
+A single, unified skill (or a small set of core skills) that provides raw access to the endpoints.
+- `firecrawl-search`
+- `firecrawl-scrape`
+- `firecrawl-map`
+- `firecrawl-crawl`
+- `firecrawl-interact`
+- `firecrawl-agent`
+- `firecrawl-parse`
+
+### Tier 2: The Workflow Library (`firecrawl-workflows`)
+A single skill containing a **Library of Templates**. Instead of a separate skill for "Lead Gen", the agent loads the `firecrawl-workflows` skill and selects the appropriate template:
+- **Template: Lead Generation** (Targets, Field Mapping, Deduplication)
+- **Template: Market Research** (Financials, Trends, Comparison Tables)
+- **Template: Company Directories** (Sourcing, Filtering, CSV Export)
+- **Template: SEO Audit** (Metadata, Heading Structure, Sitemap Analysis)
+
+### Tier 3: The Utilities (`firecrawl-utils`)
+Supporting tools for data management.
+- `firecrawl-download` (Bulk local saving)
+- `firecrawl-qa` (Browser-based validation)
+
+---
+
+## 🔌 Integration Gap: The Sovereign Wrapper
+
+The current implementation relies on `Bash(firecrawl *)`. This is fragile and exposes the raw CLI to the agent.
+
+### Missing Component: `.opencode/firecrawl_wrapper.sh`
+We require a platform-agnostic wrapper to act as the "Sovereign Gatekeeper".
+
+**Required Functional Specifications**:
+1. **Key Encapsulation**: Handle `FIRECRAWL_API_KEY` internally so it never appears in LLM logs.
+2. **Sovereign Guard (Credit Limiter)**:
+    - Intercept `crawl` and `map` requests.
+    - If `--limit` is missing, inject a default (e.g., 50).
+    - Warn the agent if a request is likely to cost > 100 credits.
+3. **Output Standardization**:
+    - Automatically save all outputs to `.firecrawl/` using a consistent naming convention: `{timestamp}_{modality}_{hash}.json`.
+    - Ensure JSON output is always pretty-printed for LLM readability.
+4. **Escalation Logic**:
+    - Provide a simplified command `firecrawl escalate <url>` that attempts `scrape` $\rightarrow$ `map` $\rightarrow$ `interact` automatically until content is retrieved.
+5. **Automatic Feedback Loop**:
+    - Hook into `search` calls to automatically prompt the agent for `search-feedback` after the results are processed.
+
+---
+
+## 🎯 Implementation Roadmap
+
+1. **Phase 1 (Consolidation)**: 
+   - Create `firecrawl-core` and `firecrawl-workflows`.
+   - Deprecate the 20+ use-case skills.
+2. **Phase 2 (Wrapper)**: 
+   - Implement `.opencode/firecrawl_wrapper.sh`.
+   - Update `allowed-tools` in core skills to use the wrapper.
+3. **Phase 3 (Verification)**: 
+   - Run a "Sovereign Stress Test" to ensure the credit limiter prevents "Crawl Traps".

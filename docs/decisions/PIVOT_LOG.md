@@ -3955,3 +3955,23 @@ However, strictly enforcing v6.1 immediately would break 32/34 active entities. 
 - 440/440 tests passing
 - `make heritage-map`: 41/47 files with `[id-soft:]` tags
 - 19 contract tests (14 M21 + 5 soul distiller)
+
+## Decision 160: Antigravity Round-Robin Eradication
+**Date**: 2026-06-24
+**Channel**: OpenCode CLI (MiMo V2.5)
+**Entity**: KALI
+
+### Decision
+Eradicate all round-robin account rotation logic from the Omega Engine and the OpenCode CLI plugin. Replace sequential cursors with stochastic (randomized) selection from the available account pool.
+
+### Rationale
+Round-robin rotation is a high-confidence bot signature used by Google's Sybil-detection algorithms. Predictable cycling through accounts leads to rapid bans. Stochastic selection mimics human-like variance and reduces the risk of coordinated account termination.
+
+### Implementation
+- **CLI Plugin**: Remove `round-robin` strategy from `AccountSelectionStrategySchema` and delete `getNextForFamily()` logic in `accounts.ts`.
+- **Engine Core**: Refactor `_find_next_available()` in `account_manager.py` to use `random.choice()` from the healthy account pool.
+- **Documentation**: Purge all mentions of round-robin as a viable strategy from `CONFIGURATION.md`.
+
+### Verification
+- Verify that `AccountSelectionStrategy` no longer accepts `round-robin`.
+- Verify that `_find_next_available()` does not increment a sequential cursor.

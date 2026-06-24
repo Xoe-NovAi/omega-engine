@@ -1,6 +1,6 @@
 # 🔱 Omega SearXNG MCP Server
 # AP: AP-SEARXNG-MCP-v1.1.0
-# ⬡ OMEGA ⬡ SOPHIA ⬡ la-llama ⬡ opencode ⬡ trc_searxng_mcp
+# ⬡ OMEGA ⬡ SOPHIA ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_searxng_mcp
 #
 # Runs as SSE MCP server on port 8018 (configurable via MCP_PORT env var).
 # Proxies queries to the SearXNG container on port 8017.
