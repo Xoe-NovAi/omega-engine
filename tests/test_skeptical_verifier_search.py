@@ -12,6 +12,7 @@ from omega.oracle.sovereign_search_service import SovereignSearchService
 from omega.oracle.skeptical_verifier import SkepticalVerifier, VerificationResult, VerificationSource
 from omega.oracle.model_gateway import GenerateResult
 from omega.oracle.search_providers import FirecrawlProvider
+from omega.oracle.search_router import TIER_FIRECRAWL
 
 @pytest.mark.anyio
 async def test_skeptical_verifier_search_integration():
@@ -54,17 +55,17 @@ async def test_skeptical_verifier_search_integration():
     )
     search_service.firecrawl.search = AsyncMock(return_value=mock_finding)
 
-    # 5. Run search (forcing Tier 2 to trigger Firecrawl)
+    # 5. Run search (forcing Tier 3 to trigger Firecrawl)
     report = await search_service.search(
         query="Natural Language Inference Two-Source Rule",
         entity_name="SOPHIA",
-        force_tier=2
+        force_tier=TIER_FIRECRAWL
     )
 
     # 6. Verify report structure and verification outcome
     assert report["status"] == "success"
     assert report["primary_finding"] == mock_finding
-    assert report["final_tier"] == 2
+    assert report["final_tier"] == TIER_FIRECRAWL
     assert report["verification"] is not None
     assert report["verification"]["status"] == "VERIFIED"
     assert "verified by 2 independent sources" in report["verification"]["reasoning"].lower()

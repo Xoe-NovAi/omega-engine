@@ -36,14 +36,8 @@
       "enabled": true
     },
     "firecrawl": {
-      "type": "local",
-      "command": [
-        ".opencode/firecrawl_wrapper.sh"
-      ],
-      "environment": {
-        "FIRECRAWL_API_KEY": "${FIRECRAWL_API_KEY}",
-        "FIRECRAWL_TOKEN": "${FIRECRAWL_API_KEY}"
-      },
+      "type": "remote",
+      "url": "http://127.0.0.1:8015/sse",
       "enabled": true
     },
     "exa": {

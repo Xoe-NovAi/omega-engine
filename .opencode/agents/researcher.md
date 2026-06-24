@@ -1,10 +1,12 @@
 ---
 description: "Sovereign Master Researcher \u2014 Polymathic Council for deep research,\
   \ dialectic synthesis, and knowledge base curation."
-mode: subagent
+mode: "all"
+temperature: 0.5
 permission:
   read: allow
   write: allow
+  edit: allow
   bash: allow
   grep: allow
   glob: allow
@@ -12,6 +14,7 @@ permission:
   skill: allow
   webfetch: allow
   websearch: allow
+  external_directory: allow
 steps: 50
 ---
 

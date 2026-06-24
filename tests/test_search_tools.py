@@ -85,17 +85,20 @@ def test_credit_exhaustion_handling():
             model_gateway=mock_gateway
         )
         
-        # Mock Tier 2 (Firecrawl) to fail with 402
+        # Mock Tier 2 (Exa) to fail with auth error, T3 (Firecrawl) returns result
+        # Use search_intent to force max_tier=3 so all tiers are tried
+        from omega.oracle.search_router import SearchIntent, TIER_FIRECRAWL
+        intent = SearchIntent(primary_tier=0, max_tier=TIER_FIRECRAWL)
         with patch.object(service, '_tier_0_local_cache', return_value=None), \
-             patch.object(service, '_tier_1_websearch', return_value=None), \
-             patch.object(service, '_tier_2_firecrawl', side_effect=Exception("402 Payment Required")), \
-             patch.object(service, '_tier_3_omega_hub', return_value="Hub result"):
+             patch.object(service, '_tier_1_searxng', return_value=None), \
+             patch.object(service, '_tier_2_exa', side_effect=Exception("402 Payment Required")), \
+             patch.object(service, '_tier_3_firecrawl', return_value="Firecrawl result"):
             
-            report = await service.search("test query", "test_entity")
+            report = await service.search("test query", "test_entity", search_intent=intent)
             
             assert report["status"] == "success"
             assert report["final_tier"] == 3
-            assert any("Tier 2 failed: 402 Payment Required" in log for log in report["fallback_log"])
+            assert any(log.get("tier") == 2 and "402" in log.get("message", "") for log in report["fallback_log"])
 
     asyncio.run(run_test())
 
@@ -121,17 +124,20 @@ def test_error_matrix_compliance():
         )
         
         # Mock multiple failures to test resilience
+        # Use search_intent to force max_tier=3 so all tiers are tried
+        from omega.oracle.search_router import SearchIntent, TIER_FIRECRAWL
+        intent = SearchIntent(primary_tier=0, max_tier=TIER_FIRECRAWL)
         with patch.object(service, '_tier_0_local_cache', return_value=None), \
-             patch.object(service, '_tier_1_websearch', side_effect=Exception("500 Internal Error")), \
-             patch.object(service, '_tier_2_firecrawl', side_effect=Exception("429 Too Many Requests")), \
-             patch.object(service, '_tier_3_omega_hub', return_value="Hub result"):
+             patch.object(service, '_tier_1_searxng', side_effect=Exception("500 Internal Error")), \
+             patch.object(service, '_tier_2_exa', side_effect=Exception("429 Too Many Requests")), \
+             patch.object(service, '_tier_3_firecrawl', return_value="Firecrawl result"):
             
-            report = await service.search("test query", "test_entity")
+            report = await service.search("test query", "test_entity", search_intent=intent)
             
             assert report["status"] == "success"
             assert report["final_tier"] == 3
-            assert any("Tier 1 failed: 500 Internal Error" in log for log in report["fallback_log"])
-            assert any("Tier 2 failed: 429 Too Many Requests" in log for log in report["fallback_log"])
+            assert any(log.get("tier") == 1 and "500" in log.get("message", "") for log in report["fallback_log"])
+            assert any(log.get("tier") == 2 and "429" in log.get("message", "") for log in report["fallback_log"])
 
     asyncio.run(run_test())
 

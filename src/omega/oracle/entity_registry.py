@@ -283,10 +283,14 @@ class EntityRegistry:
                 continue
             
             # Define core structural fields that belong to the Engine Zone
+            # [id-soft: quake3-1999] Hard-Boundary — traits is a core field,
+            # NOT a WAD-specific trait. Without this, nested traits dicts from
+            # YAML are absorbed as WAD-specific traits, causing recursive nesting.
             core_fields = {
                 "name", "domains", "capabilities", "model", "personality", 
                 "temperature", "context_window", "pillars", "role", 
-                "container", "port", "wad_source", "pantheon", "sigil"
+                "container", "port", "wad_source", "pantheon", "sigil",
+                "traits",  # D-kal-180: prevent recursive nesting corruption
             }
             
             # Everything else is a WAD-specific trait

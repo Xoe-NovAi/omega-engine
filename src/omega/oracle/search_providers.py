@@ -91,8 +91,70 @@ class FirecrawlProvider(SearchProvider):
                 logger.error(f"Firecrawl unexpected error: {e}")
                 raise ProviderError("firecrawl", f"Firecrawl system failure: {e}")
 
+class SearXNGProvider(SearchProvider):
+    """T1: SearXNG Broad Discovery Provider — privacy-first metasearch."""
+    
+    def __init__(self, base_url: str = "http://127.0.0.1:8017"):
+        self.base_url = base_url.rstrip("/")
+    
+    async def search(
+        self,
+        query: str,
+        limit: int = 10,
+        categories: str = "general",
+        engines: str = "",
+        language: str = "auto",
+    ) -> Optional[str]:
+        form_data: Dict[str, str] = {
+            "q": query,
+            "format": "json",
+            "language": language,
+            "categories": categories,
+            "pageno": "1",
+        }
+        if engines:
+            form_data["engines"] = engines
+        
+        async with httpx.AsyncClient(timeout=15.0) as client:
+            try:
+                resp = await client.post(
+                    f"{self.base_url}/search",
+                    data=form_data,
+                )
+                resp.raise_for_status()
+                data = resp.json()
+                
+                results = data.get("results", [])
+                if not results:
+                    suggestions = data.get("suggestions", [])
+                    if suggestions:
+                        return f"SearXNG suggestions: {', '.join(suggestions)}"
+                    return None
+                
+                # Format top results
+                snippets = []
+                for r in results[:limit]:
+                    title = r.get("title", "")
+                    url = r.get("url", "")
+                    content = r.get("content", "")
+                    engine = r.get("engine", "unknown")
+                    if content:
+                        snippets.append(f"Source [{url}] ({engine}):\n{content[:500]}")
+                
+                if not snippets:
+                    return None
+                
+                return f"SearXNG Search ({len(results)} results):\n\n" + "\n\n---\n\n".join(snippets[:5])
+            except httpx.HTTPStatusError as e:
+                logger.error(f"SearXNG HTTP error: {e}")
+                raise ProviderError("searxng", f"SearXNG API failure: {e}")
+            except Exception as e:
+                logger.error(f"SearXNG unexpected error: {e}")
+                raise ProviderError("searxng", f"SearXNG system failure: {e}")
+
+
 class ExaProvider(SearchProvider):
-    """T4: Neural Search (Exa) Provider."""
+    """T2: Neural Search (Exa) Provider."""
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key or self._resolve_from_vault()
         self.base_url = "https://api.exa.ai/search"
