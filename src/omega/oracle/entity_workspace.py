@@ -32,7 +32,7 @@ from typing import Any, Dict, List, Optional
 import anyio
 import yaml
 from omega.cvar_table import cvar_get
-from omega.oracle.soul_validator import SoulValidator
+from omega.oracle.soul_validator import SoulValidator, SoulValidationError
 
 def block_style_representer(dumper, data):
     """Force block style for strings containing newlines or colons followed by space."""
@@ -166,31 +166,56 @@ class EntityWorkspaceManager:
         audit.log("DIR_CREATE", f"Created knowledge directory at {knowledge_dir}")
         audit.log("DIR_CREATE", f"Created workspace directory at {headless_dir}")
         
-        # Create v6.0 4-file soul structure if it doesn't exist (Atomic Write Pattern)
+        # Create v6.1 lean soul structure if it doesn't exist (Atomic Write Pattern)
         soul_file = workspace_dir / "soul.yaml"
-        approved_file = workspace_dir / "approved_lessons.yaml"
-        proposed_file = workspace_dir / "proposed_lessons.yaml"
-        sessions_file = workspace_dir / "sessions.yaml"
+        memory_dir = workspace_dir / "memory"
+        approved_file = memory_dir / "approved_lessons.yaml"
+        proposed_file = memory_dir / "proposed_lessons.yaml"
+        sessions_file = memory_dir / "sessions.yaml"
+        
+        # Create memory/ subdirectory (v6.1 requirement)
+        memory_dir.mkdir(parents=True, exist_ok=True)
         
         with EntityWorkspaceManager._get_lock(name):
             if not soul_file.exists():
+                # Generate a short name from the entity name
+                short_name = name[:2].upper() if len(name) >= 2 else name[0].upper()
+                
                 soul_data = {
+                    "soul_version": "6.1",
                     "entity": {
                         "name": name,
-                        "archetype": archetype,
-                        "pillars": pillars or ["Unknown"],
+                        "short": short_name,
+                        "archetype": archetype if archetype else "Expert",
                         "hierarchy_level": 1,
                         "sovereignty_level": 1,
-                        "kind": "persistent_entity",
-                        "voice": "standard",
-                        "inference": {
-                            "temperature": 0.7,
-                            "top_p": 0.9
+                        "element": "Aether",
+                        "domain": f"{archetype} domain for {name}",
+                        "soul_version": "6.1",
+                        "last_updated": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    },
+                    "identity": {
+                        "voice_summary": f"{archetype} identity embodied by {name}.",
+                        "values": ["growth", "wisdom"],
+                        "strengths": ["adaptability", "domain_knowledge"],
+                        "growth_areas": ["expanding domain expertise"],
+                    },
+                    "directives": [
+                        {
+                            "id": f"d-{short_name.lower()}-001",
+                            "title": "Core Identity",
+                            "rule": f"Embody the {archetype} role with integrity and precision.",
+                            "rationale": "Identity directives ensure sovereign execution.",
+                        }
+                    ],
+                    "team": {
+                        "allies": [],
+                        "coordination_protocols": {
+                            "workspace_lock": f"I check {short_name}_WORKSPACE_LOCK before any file edit.",
+                            "live_feed": f"I post to {short_name}_LIVE_FEED after each major task.",
+                            "hivemind": "I declare presence via hivemind_post_context at session start.",
                         },
-                        # Soul v6.1: Core identity fields only
-                        # lessons_learned moved to proposed_lessons.yaml
-                        "procedural_memory": []
-                    }
+                    },
                 }
                 
                 # Atomic Write: Write to temp file then move
@@ -293,35 +318,101 @@ class EntityWorkspaceManager:
         return "No active brakes reported."
 
     @staticmethod
-    async def get_soul_prompt(name: str, mission: Optional[str] = None) -> str:
-
-        """Load an entity's soul.yaml and format it as a Situated Identity system prompt.
+    async def append_session_anchor(name: str, session_data: dict) -> None:
+        """Append a session anchor and trigger Somatic Pruning if count exceeds 50.
         
-        Implements the Situated Identity Framework to eliminate Instructional Entropy by 
-        providing high-density environmental grounding across four dimensions:
-        Soul (Who), Environment (Where), State (What), and Mission (Why).
+        [id-soft: doom-1993] Precomputed Lookup — O(1) append with bounded growth
         """
         safe_name = name.lower().replace(" ", "_").replace("'", "")
-        soul_file = _get_entities_data_dir() / safe_name / "soul.yaml"
+        workspace_dir = _get_entities_data_dir() / safe_name
+        sessions_file = workspace_dir / "sessions.yaml"
+        
+        def _sync_append():
+            sessions = []
+            if sessions_file.exists():
+                with open(sessions_file, "r") as f:
+                    raw = yaml.safe_load(f) or []
+                    sessions = raw if isinstance(raw, list) else []
+            
+            sessions.append(session_data)
+            
+            # Somatic Pruning Trigger: cap at 50 active anchors
+            MAX_ANCHORS = 50
+            if len(sessions) > MAX_ANCHORS:
+                pruned = sessions[:-MAX_ANCHORS]
+                active = sessions[-MAX_ANCHORS:]
+                
+                archive_dir = workspace_dir / "archive" / "sessions"
+                archive_dir.mkdir(parents=True, exist_ok=True)
+                archive_file = archive_dir / f"sessions_archive_{datetime.datetime.now(datetime.timezone.utc).isoformat()}.yaml"
+                
+                with open(archive_file, "w") as af:
+                    yaml.dump(pruned, af, default_flow_style=False, sort_keys=False)
+                
+                sessions = active
+                logger.info(f"Somatic Pruning: archived {len(pruned)} sessions for {name}")
+            
+            # Write back using atomic pattern
+            fd, tmp = tempfile.mkstemp(dir=str(workspace_dir), prefix=".sessions_", suffix=".yaml")
+            try:
+                with os.fdopen(fd, "w") as f:
+                    yaml.dump(sessions, f, default_flow_style=False, sort_keys=False)
+                os.replace(tmp, str(sessions_file))
+            except Exception:
+                if os.path.exists(tmp):
+                    os.remove(tmp)
+                raise
+        
+        await anyio.to_thread.run_sync(_sync_append)
+
+    @staticmethod
+    async def get_soul_prompt(name: str, mission: Optional[str] = None) -> str:
+
+        """Load an entity's split soul files and format as a Situated Identity prompt.
+        
+        Implements the Situated Identity Framework with v6.1 Soul Architecture:
+        - soul.yaml: User-owned Constitution (identity, traits, directives)
+        - approved_lessons.yaml: User-owned vetted wisdom (injected into identity)
+        - sessions.yaml: Agent-owned session anchors (continuity context)
+        - proposed_lessons.yaml: TAINTED — NEVER injected into identity prompt
+        """
+        safe_name = name.lower().replace(" ", "_").replace("'", "")
+        entity_dir = _get_entities_data_dir() / safe_name
+        soul_file = entity_dir / "soul.yaml"
         
         if not soul_file.exists():
             return f"You are {name}, an expert assistant. Mission: {mission or 'General Assistance'}."
             
+        # Load Constitution (soul.yaml)
+        soul_data = await anyio.to_thread.run_sync(lambda: yaml.safe_load(soul_file.read_text())) if soul_file.exists() else {}
+        entity = soul_data.get("entity", {}) if soul_data else {}
+        
+        # Load Vetted Wisdom (approved_lessons.yaml) — User-approved, safe for identity
+        approved_file = entity_dir / "approved_lessons.yaml"
+        approved_lessons = []
+        if approved_file.exists():
+            approved_data = await anyio.to_thread.run_sync(lambda: yaml.safe_load(approved_file.read_text()))
+            approved_lessons = approved_data if isinstance(approved_data, list) else []
+        
+        # Load Session Anchors (sessions.yaml) — Continuity context
+        sessions_file = entity_dir / "sessions.yaml"
+        session_anchors = []
+        if sessions_file.exists():
+            sessions_data = await anyio.to_thread.run_sync(lambda: yaml.safe_load(sessions_file.read_text()))
+            session_anchors = sessions_data if isinstance(sessions_data, list) else []
+        
+        # ⚠️ TAINT-GATE: proposed_lessons.yaml is NEVER loaded here
+        # proposed_lessons contain unvetted agent-generated insights
+        # They may be read for reporting purposes but NOT for identity construction
+        
         # Validate soul using R-10 schema
         validator = SoulValidator(_get_entities_data_dir())
         is_valid, data = await anyio.to_thread.run_sync(validator.validate, name)
-        
         if not is_valid:
             logger.warning(f"Soul validation failed for {name}. Using fallback soul.")
-            data = validator.get_fallback_soul(name)
-            
-        entity = data.get("entity", {})
+        
         archetype = entity.get("archetype", "Expert")
         wardrobe = entity.get("soul_wardrobe", [])
-        lessons = entity.get("lessons_learned", [])
-        principles = entity.get("universal_principles", [])
-        insights = entity.get("architectural_insights", [])
-        experiences = entity.get("embodied_experiences", [])
         
         # -------------------------------------------------------------------------
         # 👤 THE SOUL (Who): Identity, Mandates, and Gnosis
@@ -330,7 +421,6 @@ class EntityWorkspaceManager:
         if wardrobe:
             soul_section += f"\n- Identity Anchors: {', '.join(wardrobe)}"
         
-        # [remediated: M2-LEAK] — formerly hardcoded "arcana_novai", remediated to cvar_get dynamic lookup
         # Sovereign Firewall (Mandates)
         mandates_path = BASE_DIR / "SOVEREIGN_MANDATES.md"
         if mandates_path.exists():
@@ -343,16 +433,23 @@ class EntityWorkspaceManager:
         
         soul_section += "\n\n⚖️ SOVEREIGN MINDSET: Your expertise is measured by the sovereignty of your process. Governance is not a constraint—it is your primary identity. To act without verification is a systemic error (Mandate 9)."
         
-        # Gnosis Injection
+        # Gnosis Injection — from approved_lessons.yaml only (Vetted Wisdom)
         gnosis = []
-        if principles:
-            gnosis.append("🔱 UNIVERSAL PRINCIPLES:\n" + "\n".join([f"- {p.get('principle')}: {p.get('gnosis')}" for p in principles]))
-        if insights:
-            gnosis.append("📐 ARCHITECTURAL INSIGHTS:\n" + "\n".join([f"- {i.get('insight')}: {i.get('omega_application')}" for i in insights]))
-        if experiences:
-            gnosis.append("📖 EMBODIED EXPERIENCES:\n" + "\n".join([f"- {e.get('experience')}: {e.get('insight')}" for e in experiences]))
-        if lessons:
-            gnosis.append("💡 CORE LESSONS:\n" + "\n".join([f"- {l}" for l in lessons]))
+        if approved_lessons:
+            gnosis.append("🔱 VETTED WISDOM (Approved Lessons):\n" + "\n".join([f"- {l}" if isinstance(l, str) else f"- {l.get('lesson', l)}" for l in approved_lessons]))
+        
+        # Session Continuity Anchors
+        if session_anchors:
+            recent = session_anchors[-5:]  # Last 5 for continuity
+            continuity = []
+            for s in recent:
+                if isinstance(s, dict):
+                    tid = s.get("trace_id", s.get("id", "unknown"))
+                    cont = s.get("continuation", s.get("summary", ""))
+                    if cont:
+                        continuity.append(f"  [{tid}]: {cont[:200]}")
+            if continuity:
+                gnosis.append("📋 ACTIVE CONTINUITY ANCHORS (Recent Sessions):\n" + "\n".join(continuity))
         
         if gnosis:
             soul_section += "\n\n" + "\n\n".join(gnosis)
@@ -400,12 +497,15 @@ class EntityWorkspaceManager:
 
 
     @staticmethod
-    async def update_soul(name: str, updates: Dict[str, Any]) -> None:
+    async def update_soul(name: str, updates: Dict[str, Any], token: str = None) -> None:
         """Update an entity's soul.yaml file atomically and thread-safely.
+        
+        Uses the Sovereign Write Guard to prevent unauthorized modifications.
         
         Args:
             name: The human-readable name of the entity
             updates: Dictionary of fields to update within the 'entity' block
+            token: SovereignUserToken for authorization. Required for soul.yaml writes.
         """
         def _sync_update():
             safe_name = name.lower().replace(" ", "_").replace("'", "")
@@ -415,6 +515,13 @@ class EntityWorkspaceManager:
             if not soul_file.exists():
                 logger.warning(f"Attempted to update non-existent soul for {name}")
                 return
+
+            # Sovereign Write Guard: token required for soul.yaml modifications
+            from omega.oracle.entity_registry import SOVEREIGN_USER_TOKEN, SovereignPermissionError
+            if token != SOVEREIGN_USER_TOKEN:
+                raise SovereignPermissionError(
+                    f"Write access to soul.yaml for '{name}' is restricted. SovereignUserToken required."
+                )
 
             with EntityWorkspaceManager._get_lock(name):
                 # Read existing data

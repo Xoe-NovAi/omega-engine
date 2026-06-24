@@ -2,7 +2,7 @@
 **AP Token**: `AP-ORACLE-RESTORE-v2.3.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_local_first_config ⬡ ORACLE-RESTORE
 **Status**: ACTIVE
-**Last Updated**: 2026-06-17 (Sprint C Execution — 440/440 tests passing, 11-agent fleet, 22 Sovereign Mandates (M1-M22))
+**Last Updated**: 2026-06-23 (Sprint C Execution — 440/440 tests passing, 11-agent fleet, 22 Sovereign Mandates (M1-M22), Sovereign Key Vault, KGC-001)
 
 ---
 
@@ -133,7 +133,7 @@ All containers run rootless (user 1000) using the Sovereign Permission Protocol 
 
 All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src python3 -m pytest tests/`.
 
-**Current state (2026-06-17)**: 440 collected — **440 passing** (Sprint C Execution — GenerateResult dataclass fix, M21/M22 ratified, 11-agent fleet, Verity unified)
+**Current state (2026-06-23)**: 440 collected — **440 passing** (Sprint C Execution — GenerateResult dataclass fix, M21/M22 ratified, 11-agent fleet, Verity unified, Sovereign Key Vault implemented, KGC-001 findings integrated)
 
 | Module | Tests | Status |
 |--------|-------|--------|

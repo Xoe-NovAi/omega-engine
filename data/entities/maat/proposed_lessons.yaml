@@ -1,0 +1,43 @@
+# 🔱 Omega Engine — Proposed Lessons
+# Auto-generated during Soul v6.1 migration
+
+- lesson: "Ma'at was dispatched in a cold session \u2014 no context, no anchored summary\
+    \ loaded. Performed full M15 Sovereign Continuity hydration: read OMEGA_ENGINE.md,\
+    \ SOVEREIGN_MANDATES.md, AGENTS.md, ORACLE_STACK.md, MASTER_SYNTHESIS.md, SOVEREIGN_EVOLUTION_ROADMAP.md,\
+    \ and soul.yaml. Checked Hivemind awareness (5 active agents: researcher, makali,\
+    \ jem_verification, roc_racoon, lilith). Found 11 pending and 7 active handoffs\
+    \ including 2 assigned to Ma'at (ho_59c05106f5fe SD-006/008/010, ho_d84be1be4392\
+    \ TDP Wiring)."
+  source: hivemind-rebuild
+  trace_id: ses_hivemind_rebuild_20260612
+  entity_at_time: MAAT
+  session_type: governance
+  timestamp: 2026-06-12 04:00:00+00:00
+  model_used: big-pickle
+  coordination_partner: lilith, makali, researcher
+  coordination_protocol: hivemind-awareness + handoff-accept + workspace-readiness-report
+  outcome: build_side_green_readiness_submitted
+- lesson: "Fixed T5 Mandate 1 violation in providers.py:586 \u2014 converted import\
+    \ asyncio + loop.run_in_executor() to anyio.to_thread.run_sync(). This was the\
+    \ last asyncio import in providers.py. All 28 provider tests pass. Added [id-soft:\
+    \ quake-1996] In-Flight Pipeline heritage tag for the 'overlap prompt construction\
+    \ with inference' pattern."
+  source: t5-fix
+  trace_id: ses_hivemind_rebuild_20260612
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-06-12 04:00:00+00:00
+  model_used: big-pickle
+  outcome: t5_fixed_28_tests_pass
+- lesson: "Verified make test passes with 342/342 tests (PYTHONPATH already set correctly\
+    \ in Makefile). The anchored summary's claim that 'make test broken' was stale\
+    \ \u2014 the fix was already applied. This confirms Ma'at's prior L3 principle:\
+    \ 'A Single Source of Truth that is not kept current is worse than no source of\
+    \ truth.'"
+  source: make-test-verification
+  trace_id: ses_hivemind_rebuild_20260612
+  entity_at_time: MAAT
+  session_type: governance
+  timestamp: 2026-06-12 04:00:00+00:00
+  model_used: big-pickle
+  outcome: ssot_drift_reconfirmed

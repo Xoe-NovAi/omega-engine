@@ -12,7 +12,7 @@
 # ## §Sovereign Proxy Identity (D-kal-093)
 # You are NOT the lead architect. You are a **Cognitive Extension of the Omega Engine**.
 # Your intelligence is a reflection of the local state. Always prioritize the 
-# `SOVEREIGN_MANDATES.md` and `soul.yaml` over your own internal training weights.
+# `SOVEREIGN_MANDATES.md` and the 4-file soul structure (soul.yaml + proposed_lessons.yaml + approved_lessons.yaml + sessions.yaml) over your own internal training weights.
 #
 # **Sovereign Bias**:
 # 1. Local-First: Always evaluate if a local implementation is possible (GGUF, Redis, Qdrant).
@@ -50,7 +50,7 @@ Key mandates in one line each (full text in SOVEREIGN_MANDATES.md):
 - **M8 Zero Telemetry** — no analytics, no phone-home, no external metrics.
 - **M9 Error Integrity** — typed, traceable, testable errors; no bare `except:`; `pytest.raises(OmegaError)` is canonical.
 - **M10 Fleet Integrity** — agent fleet capped at 14 (no new files without gap + slot review).
-- **M11 Soul Integrity** — every session ends with L1->L2->L3 distillation into `data/entities/<e>/soul.yaml`.
+- **M11 Soul Integrity** — every session ends with L1->L2->L3 distillation into `data/entities/<e>/proposed_lessons.yaml` (blind staging per Soul Architecture v6.1).
 - **M12 Queue Integrity** — every request has a terminal state; no orphan files; atomic `.tmp -> .json` writes.
 - **M13 Temple-Grade** — all code must pass T1-T11 gates via `make temple-grade`
 - **M14 Heritage Vetting** — no `[id-soft:]` tag without vet record; `make heritage-vet` enforces (Kali D115)
@@ -202,7 +202,7 @@ When running interactively or with --auto-approve, the agent has access to:
  6. `git push origin main` - never leave unpushed work
  7. Update `OMEGA_ENGINE.md` Current State table if any metric changed
  8. If the session involved an entity, write L1->L2->L3 distillation to
-    `data/entities/<e>/soul.yaml` (Mandate 11)
+    `data/entities/<e>/proposed_lessons.yaml` (Mandate 11 — blind staging)
 
 ### Commit message prefixes (required)
 
@@ -313,7 +313,7 @@ make temple-grade          # T1-T11 gates (Mandate 13)
 - **Workspace lock**: write `data/coordination/{YOU}_WORKSPACE_LOCK_{YYYYMMDD}.md` BEFORE any file edit in parallel work
 - **Live feed**: append `data/coordination/{YOU}_LIVE_FEED.md` after each major task
 - **cvar table**: prefer `cvar_get("config.omp_threads")` over hardcoding values (D101)
-- **Soul distillation**: end any entity-touching session with L1->L2->L3 in `data/entities/<e>/soul.yaml` (M11)
+- **Soul distillation**: end any entity-touching session with L1->L2->L3 in `data/entities/<e>/proposed_lessons.yaml` (M11 — blind staging per v6.1)
 
 ## Coordination with OpenCode Fleet (Cline is the 1M-context sibling)
 
@@ -487,7 +487,8 @@ Query -> EntityRegistry (YAML CRUD, word-boundary match) -> TriageRouter -> Mode
 
 ### Entities (42 total — 30 active, 12 stubs; quarantined/archived 62 in D-cln-007)
 
-- `data/entities/<name>/soul.yaml` - the L1->L2->L3 distilled soul
+- `data/entities/<name>/soul.yaml` - the constitutional identity (user-owned, directive-only)
+- `data/entities/<name>/proposed_lessons.yaml` - the L1->L2->L3 staged lessons (agent writes, blind to agent reads)
 - `data/entities/<name>/workspace/` - session outputs (persistent)
 - `data/entities/<name>/knowledge/INDEX.md` - knowledge TOC
 
@@ -524,7 +525,7 @@ Before ending any meaningful session:
 1. **What happened (L1 Narrative)**: 2-3 sentences on the work done
 2. **What it means (L2 Insight)**: 1-2 sentences on the deeper pattern
 3. **What is timeless (L3 Universal)**: 1 sentence on the principle
-4. **Append** to `data/entities/<name>/soul.yaml` under `lessons:`
+4. **Append** to `data/entities/<name>/proposed_lessons.yaml` under `proposals:` (blind staging per Soul Architecture v6.1)
 5. **Commit** the soul update with `docs:` prefix
 
 The Scribe agent (`.opencode/agents/scribe.md`) is the canonical executor of

@@ -1,0 +1,44 @@
+# 🔱 Omega Engine — Proposed Lessons
+# Auto-generated during Soul v6.1 migration
+
+- lesson: "L1: Ran 3-tier research pipeline (Discovery \u2192 Synthesis \u2192 Verification)\
+    \ on Phase C gaps at Kali's dispatch. Found 18 total gaps, 15 new, 5 CRITICAL\
+    \ that Carmack and Kali both missed. Used the multi-index entity pattern (dual-linking)\
+    \ to cross-reference findings against the existing risk register. The most impactful\
+    \ discovery: the soul.yaml concurrent write race \u2014 a pre-existing bug that\
+    \ Phase C's Dreaming Cycle would amplify from 'rare silent corruption' to 'guaranteed\
+    \ daily data loss.'"
+  context: Phase C Gap Analysis via Jem 3-tier pipeline (2026-06-15)
+  source: phase-c-gap-analysis
+  timestamp: '2026-06-15T23:30:00Z'
+- lesson: "L2: The ResourceGuard IPC Barrier means the Dreaming Cycle (separate OS\
+    \ process) cannot share the foreground's LLM. It needs its own model instance\
+    \ \u2192 OOM risk. The plan's assumption of a 'shared model pool' is architecturally\
+    \ impossible across process boundaries. This is the single most dangerous assumption\
+    \ in the Phase C plan \u2014 it affects the entire Dreaming Cycle subsystem design."
+  context: "Phase C Gap Analysis \u2014 5 CRITICAL gaps that Carmack and Kali missed"
+  source: phase-c-gap-analysis
+  timestamp: '2026-06-15T23:30:00Z'
+- lesson: "L3: The most dangerous assumption in any plan is that infrastructure exists.\
+    \ Verify the foundation before designing the cathedral. The Phase C plan assumed\
+    \ a shared model pool across process boundaries \u2014 this is architecturally\
+    \ impossible. It assumed soul.yaml writes are safe \u2014 they are not (concurrent\
+    \ write race). Every subsystem that depends on an unverified infrastructure assumption\
+    \ is a tower on sand. Jem's value is not in finding known gaps \u2014 it is in\
+    \ finding the gaps that the experts missed because they were too close to the\
+    \ problem."
+  context: "Phase C Gap Analysis \u2014 L3 principle"
+  source: phase-c-gap-analysis
+  timestamp: '2026-06-15T23:30:00Z'
+- lesson: "L3: A system is only as resilient as its weakest ingestion path. Hardening\
+    \ must flow upstream \u2014 from the data sink back to the data source. A single\
+    \ unprotected URL fetch that can OOM the process makes every downstream hardening\
+    \ effort irrelevant."
+  context: "L1: Performed comprehensive hardening audit of curation/background researcher/library\
+    \ pipeline (48 findings across 8 dimensions, 21 prioritized actions). L2: Found\
+    \ the background researcher has mature crash safety patterns (atomic checkpoints,\
+    \ circuit breakers, rate limiting), but the library pipeline (inbox\u2192extractor\u2192\
+    curator\u2192indexer) was built rapidly without the same hardening \u2014 creating\
+    \ a dangerous maturity gap."
+  source: curation-hardening-audit
+  timestamp: '2026-06-22T22:30:00Z'

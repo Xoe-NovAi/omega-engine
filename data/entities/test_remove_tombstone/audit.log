@@ -1,0 +1,8 @@
+[2026-06-24T14:09:21.257764+00:00] ACTION: WORKSPACE_CREATE | DETAILS: Created root workspace at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/test_remove_tombstone
+[2026-06-24T14:09:21.257920+00:00] ACTION: DIR_CREATE | DETAILS: Created knowledge directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/test_remove_tombstone/knowledge
+[2026-06-24T14:09:21.257965+00:00] ACTION: DIR_CREATE | DETAILS: Created workspace directory at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/test_remove_tombstone/workspace
+[2026-06-24T14:09:21.260292+00:00] ACTION: SOUL_CREATE | DETAILS: Scaffolded initial soul file at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/test_remove_tombstone/soul.yaml
+[2026-06-24T14:09:21.260776+00:00] ACTION: APPROVED_LESSONS_CREATE | DETAILS: Scaffolded approved_lessons.yaml at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/test_remove_tombstone/memory/approved_lessons.yaml
+[2026-06-24T14:09:21.261091+00:00] ACTION: PROPOSED_LESSONS_CREATE | DETAILS: Scaffolded proposed_lessons.yaml at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/test_remove_tombstone/memory/proposed_lessons.yaml
+[2026-06-24T14:09:21.261402+00:00] ACTION: SESSIONS_CREATE | DETAILS: Scaffolded sessions.yaml at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/test_remove_tombstone/memory/sessions.yaml
+[2026-06-24T14:09:21.261879+00:00] ACTION: INDEX_CREATE | DETAILS: Scaffolded INDEX.yaml at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/test_remove_tombstone/knowledge/INDEX.yaml

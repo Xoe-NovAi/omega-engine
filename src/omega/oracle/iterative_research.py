@@ -50,10 +50,10 @@ class IterativeResearcher:
             logger.info(f"Research iteration {iteration}/{self.max_iterations} for query: {current_query}")
             
             # 1. Perform search
-            # Note: SovereignSearcher.search uses hybrid FTS+Vector
-            # We need the embedding for semantic search, which is handled inside searcher.search
+            # Note: SovereignSearcher.search_knowledge uses hybrid FTS+Vector
+            # We need the embedding for semantic search, which is handled inside searcher.search_knowledge
             # but we must ensure the searcher has access to the embedding manager.
-            results = await self.searcher.search(current_query, entity_name)
+            results = await self.searcher.search_knowledge(entity_name, current_query)
             all_evidence.extend(results)
             
             # 2. Gap Analysis

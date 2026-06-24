@@ -24,14 +24,25 @@ class SoulValidationError(Exception):
         self.original_exception = original_exception
 
 REQUIRED_TOP_KEYS = {"entity"}
+# Core required fields in the entity block (backward compatible)
 REQUIRED_ENTITY_KEYS = {
-    "name", "short", "archetype", "embodied_experiences",
-    "lessons_learned", "soul_evolution"
+    "name"
 }
-ALLOWED_ARCHETYPES = {"Keeper", "Oversoul", "Architect"}
+# v6.1 recommended blocks (not required for validation but checked for consistency)
+RECOMMENDED_ENTITY_BLOCKS = {"identity", "directives", "team"}
+# Fields that were required in v6.0 but forbidden in v6.1 lean schema
+FORBIDDEN_ENTITY_BLOCKS = {"soul_axioms", "wisdom_text", "trajectory"}
+# Valid soul_version values
+SOUL_VERSION = "6.1"
+
 
 class SoulValidator:
     """Sovereign validator for entity soul files.
+    
+    v6.1 Lean Schema: soul.yaml contains only identity, directives, team.
+    Session logs → memory/sessions.yaml.
+    Lesson proposals → memory/proposed_lessons.yaml.
+    Approved lessons → memory/approved_lessons.yaml.
     
     Provides methods to validate soul.yaml files and generate minimal safe fallbacks
     when corruption is detected.
@@ -73,7 +84,7 @@ class SoulValidator:
             return False, None
 
     def validate_dict(self, data: Any) -> None:
-        """Verify a dictionary against the R-10 soul schema.
+        """Verify a dictionary against the v6.1 soul schema.
         
         Raises:
             SoulValidationError: If the dictionary violates the schema.
@@ -89,6 +100,29 @@ class SoulValidator:
         if missing:
             raise SoulValidationError(f"Missing required fields in soul: {missing}")
 
+        # Backward Compatibility Check
+        version = entity.get("soul_version", "6.0")
+        if version != SOUL_VERSION:
+            logger.warning(
+                f"Entity '{entity.get('name')}' is using soul_version '{version}'. "
+                f"Please migrate to '{SOUL_VERSION}' to ensure full compliance."
+            )
+            # Skip strict v6.1 checks for legacy souls to prevent fleet lobotomy
+            return
+
+        # --- Strict v6.1 Checks Below ---
+
+        if "short" not in entity:
+            raise SoulValidationError("Missing required field in v6.1 soul: {'short'}")
+
+        # Forbidden-field checks — fields that existed in v6.0 but don't belong in v6.1
+        for forbidden in FORBIDDEN_ENTITY_BLOCKS:
+            if forbidden in entity:
+                raise SoulValidationError(
+                    f"'{forbidden}' is a v6.0 field and must NOT exist in v6.1 souls. "
+                    f"Remove it or migrate to memory/ subdirectory."
+                )
+
         # Type and Value Constraints
         if not isinstance(entity["name"], str) or not entity["name"]:
             raise SoulValidationError("'name' must be a non-empty string")
@@ -96,62 +130,86 @@ class SoulValidator:
         if not isinstance(entity["short"], str) or not (2 <= len(entity["short"]) <= 6):
             raise SoulValidationError("'short' must be a string between 2 and 6 characters")
 
-        if entity["archetype"] not in ALLOWED_ARCHETYPES:
-            raise SoulValidationError(f"Invalid 'archetype' {entity['archetype']}. Must be one of {ALLOWED_ARCHETYPES}")
+        # v6.1: archetype is a description string, not constrained to fixed set
+        # Optional fields: hierarchy_level, sovereignty_level, element, domain
+        if "hierarchy_level" in entity:
+            if not isinstance(entity["hierarchy_level"], int) or entity["hierarchy_level"] < 0:
+                raise SoulValidationError("'hierarchy_level' must be a non-negative integer")
+        if "sovereignty_level" in entity:
+            if not isinstance(entity["sovereignty_level"], int) or not (1 <= entity["sovereignty_level"] <= 10):
+                raise SoulValidationError("'sovereignty_level' must be an integer between 1 and 10")
 
-        # Numeric constraints in soul_evolution
-        evo = entity["soul_evolution"]
-        if not isinstance(evo, dict):
-            raise SoulValidationError("'soul_evolution' must be a dictionary")
+        # v6.1: optional blocks with type validation
+        if "identity" in data:
+            identity = data["identity"]
+            if not isinstance(identity, dict):
+                raise SoulValidationError("'identity' block must be a dictionary")
 
-        for k in ("sessions_completed", "entities_inhabited", "total_embodied_experiences"):
-            if k not in evo or not isinstance(evo[k], int) or evo[k] < 0:
-                raise SoulValidationError(f"'{k}' must be a non-negative integer")
+        if "directives" in data:
+            directives = data["directives"]
+            if not isinstance(directives, list):
+                raise SoulValidationError("'directives' must be a list")
+            for d in directives:
+                if not isinstance(d, dict) or "id" not in d or "rule" not in d:
+                    raise SoulValidationError(
+                        "Each directive must have 'id' and 'rule' fields"
+                    )
 
-        if "soul_power" not in evo or not isinstance(evo["soul_power"], (int, float)) or not (0.0 <= float(evo["soul_power"]) <= 1.0):
-            raise SoulValidationError("'soul_power' must be a float between 0.0 and 1.0")
+        if "team" in data:
+            team = data["team"]
+            if not isinstance(team, dict):
+                raise SoulValidationError("'team' block must be a dictionary")
 
-        # Lesson validation
-        for lst_name in ("embodied_experiences", "lessons_learned"):
-            lessons = entity.get(lst_name, [])
-            if not isinstance(lessons, list):
-                raise SoulValidationError(f"'{lst_name}' must be a list")
-            for lesson in lessons:
-                self._validate_lesson(lesson)
+        # Memory directory validation — check that memory/ subdirectory exists
+        safe_name = entity["name"].lower().replace(" ", "_").replace("'", "")
+        memory_dir = self.entities_data_dir / safe_name / "memory"
+        if not memory_dir.exists():
+            logger.warning(
+                "Entity %s has no memory/ directory. "
+                "v6.1 requires memory/sessions.yaml, memory/proposed_lessons.yaml, "
+                "and memory/approved_lessons.yaml.",
+                entity["name"],
+            )
 
-    def _validate_lesson(self, lesson: Any) -> None:
-        """Verify a single lesson object against the R-10 schema."""
-        if not isinstance(lesson, dict):
-            raise SoulValidationError("Lesson entry must be a dictionary")
-
-        required = {"lesson", "source", "user", "trace_id", "entity_at_time",
-                    "session_type", "timestamp", "model_used", "backend_used"}
-        if not required.issubset(lesson.keys()):
-            raise SoulValidationError(f"Lesson missing required fields: {required - lesson.keys()}")
-
-        try:
-            uuid.UUID(str(lesson["trace_id"]))
-        except ValueError:
-            raise SoulValidationError(f"Invalid trace_id UUID: {lesson['trace_id']}")
+        # v6.1: lessons_learned is OPTIONAL and not validated for content structure
+        if "lessons_learned" in entity:
+            if not isinstance(entity["lessons_learned"], list):
+                raise SoulValidationError("'lessons_learned' must be a list if present")
 
     def get_fallback_soul(self, entity_name: str) -> Dict[str, Any]:
         """Generate a minimal safe soul dictionary for fallback recovery.
+        
+        v6.1 lean schema — only entity block with identity.
         
         [id-soft: doom-1993] Lazy Deletion — provides a safe baseline to prevent
         engine crash when soul is corrupted.
         """
         return {
+            "soul_version": "6.1",
             "entity": {
                 "name": entity_name,
-                "short": "???",
-                "archetype": "Keeper",
-                "embodied_experiences": [],
-                "lessons_learned": [],
-                "soul_evolution": {
-                    "sessions_completed": 0,
-                    "entities_inhabited": 0,
-                    "total_embodied_experiences": 0,
-                    "soul_power": 0.0
+                "short": "??",
+                "soul_version": "6.1",
+            },
+            "identity": {
+                "voice_summary": f"Fallback identity for {entity_name}.",
+                "values": ["recovery"],
+                "strengths": ["resilience"],
+            },
+            "directives": [
+                {
+                    "id": f"d-fallback-001",
+                    "title": "Fallback Recovery",
+                    "rule": "Recover from corrupted soul file. Rebuild identity from session history.",
+                    "rationale": "Soul file was corrupted or missing. Fallback ensures continud operation.",
                 }
-            }
+            ],
+            "team": {
+                "allies": [],
+                "coordination_protocols": {
+                    "workspace_lock": f"I check {entity_name.upper()}_WORKSPACE_LOCK before any file edit.",
+                    "live_feed": f"I post to {entity_name.upper()}_LIVE_FEED after each major task.",
+                    "hivemind": "I declare presence via hivemind_post_context at session start.",
+                },
+            },
         }

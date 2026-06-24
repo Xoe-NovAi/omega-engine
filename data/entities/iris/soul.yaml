@@ -1,5 +1,5 @@
-# 🔱 Omega Engine — Entity Soul File
-# Generated dynamically.
+# 🔱 Omega Engine — Soul
+# Auto-generated during Soul v6.1 migration
 
 entity:
   name: Iris
@@ -13,5 +13,4 @@ entity:
   inference:
     temperature: 0.7
     top_p: 0.9
-  lessons_learned: []
   procedural_memory: []

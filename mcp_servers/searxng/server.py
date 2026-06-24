@@ -106,4 +106,23 @@ async def searxng_search(
 
 
 if __name__ == "__main__":
-    mcp.run(transport="sse")
+    # [id-soft: quake3-1999] netchan — Auto-reconnect on transport crash
+    # FastMCP SSE transport has a known ASGI race on client disconnect.
+    # Instead of crashing permanently, retry with exponential backoff.
+    import time as _time
+    max_retries = 5
+    for attempt in range(max_retries):
+        try:
+            mcp.run(transport="sse")
+            break  # clean exit
+        except RuntimeError as e:
+            if "http.response" in str(e):
+                logger.warning("MCP SSE transport crashed (ASGI race), restarting (attempt %d/%d): %s",
+                               attempt + 1, max_retries, e)
+                if attempt < max_retries - 1:
+                    _time.sleep(2 ** attempt)  # exponential backoff: 1s, 2s, 4s, 8s
+                else:
+                    logger.error("MCP SSE transport exhausted %d retries — giving up", max_retries)
+                    raise
+            else:
+                raise  # non-transport errors propagate immediately

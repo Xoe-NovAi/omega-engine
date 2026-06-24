@@ -20,6 +20,7 @@ from omega.memory_store import get_memory_store, MemoryStore
 from omega.library.indexer import Indexer
 from omega.oracle.search_providers import FirecrawlProvider, ExaProvider
 from omega.oracle.skeptical_verifier import SkepticalVerifier
+from omega.workers.background_researcher.credit_budget import APICreditBudget
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +53,7 @@ class SovereignSearchService:
         self.indexer = indexer or Indexer()
         self.cache_dir = Path(".firecrawl")
         self.cache_dir.mkdir(exist_ok=True)
+        self.budget = APICreditBudget()
 
         
         # Initialize Direct Providers (Bypass MCP Bridge)
@@ -237,9 +239,7 @@ class SovereignSearchService:
 
     def _has_firecrawl_credits(self) -> bool:
         """Check if Firecrawl credits are above the 100-credit threshold."""
-        # In a real implementation, this would call the Firecrawl API /status
-        # For now, we assume True or check an env var
-        return True
+        return self.budget.has_quota("firecrawl", 100)
 
     async def get_degraded_mode_status(self) -> bool:
         """Check if the system should be in Degraded Mode (Sovereign Fallback)."""

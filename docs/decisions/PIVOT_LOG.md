@@ -3844,3 +3844,114 @@ Statically allocating 32K context windows for local models wastes gigabytes of R
 1. `MiddlewareContext` updated to use `hardware_context_ceiling`.
 2. `NativeGGUFProvider` configured to use `flash_attn=True` and `kv_cache_type="q8_0"`.
 3. Epoch II (SomaticState) will implement the `llama_copy_state_data` / `llama_set_state_data` reload loop for dynamic `n_ctx` expansion.
+
+## Decision 154: Sovereign Key Vault Implementation (D-kal-169)
+**Date**: 2026-06-23
+**Channel**: OpenCode CLI (Gemini 3.5 Flash)
+**Entity**: KALI
+**Trace**: trc_key_vault_implementation
+
+### Decision
+Implement a secure, AES-256-GCM encrypted **Sovereign Key Vault** at `src/omega/vault/` to manage all API credentials (Exa, Firecrawl, Google AI Studio, OpenRouter). Decouple key resolution from platform-specific configuration files (like `opencode.json`) by migrating 8 critical engine files to use the `KeyVault` singleton with a graceful fallback to environment variables (`os.getenv()`).
+
+### Rationale
+Storing API keys in plaintext inside version-controlled configuration files (`opencode.json`, `.env`) is a severe security vulnerability. Furthermore, accessing keys via raw file parses in the engine core introduces platform-specific dependencies. The Sovereign Key Vault provides authenticated encryption, automatic key rotation, rate-limit failover, and a standard, platform-agnostic key resolution interface.
+
+### Execution
+1.  **Sovereign Key Vault**: Implemented at `src/omega/vault/` (AES-256-GCM, 696 lines, 432 tests passing).
+2.  **Engine Migration**: Migrated `discovery.py`, `search_providers.py`, `remote_provider.py`, `orchestrator.py`, `search_fleet.py`, and `distiller.py` to use `KeyVault().resolve()`.
+3.  **MCP Hub Integration**: Updated `state.py` to query the `KeyVault` singleton for search keys, replacing raw `opencode.json` parses.
+
+## Decision 155: Sovereign Subagent Disk-Reporting Mandate (D-kal-170)
+**Date**: 2026-06-23
+**Channel**: OpenCode CLI (Gemini 3.5 Flash)
+**Entity**: KALI
+**Trace**: trc_subagent_disk_reporting
+
+### Decision
+Establish a mandatory **Sovereign Subagent Disk-Reporting Mandate** (D-kal-170). All subagents dispatched via the Subagent Dispatch Protocol MUST write their final deliverables and reports to disk (`data/entities/<agent>/workspace/` or `data/coordination/`) before returning control to the parent agent. 
+
+### Rationale
+Returning subagent reports solely through transient chat sessions (e.g., nested OpenCode CLI windows) results in severe token waste and cognitive erasure on context compaction. Writing reports to disk ensures absolute continuity of Gnosis (M11/M15), allows other agents to reference past findings via the Hivemind, and provides a permanent, auditable on-disk knowledge base.
+
+### Execution
+1.  **Protocol Update**: Updated `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` §1 and §4 to enforce the disk-reporting mandate.
+2.  **Master Blueprint**: Added the mandate as a core architectural unification protocol in `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` §II.b.
+
+## Decision 156: Platform Agnosticism & Scaffolding Strategy (D-kal-171)
+**Date**: 2026-06-23
+**Channel**: OpenCode CLI (Gemini 3.5 Flash)
+**Entity**: KALI
+**Trace**: trc_platform_agnosticism
+
+### Decision
+Formally declare the `.opencode/` directory (skills, agents, and local configs) as **temporary development scaffolding**. All core engine logic, protocols, and state management must reside in platform-agnostic engine code (`src/omega/`) or be exposed as standard MCP tools via the **Omega Hub (`mcp_servers/omega_hub/`)**.
+
+### Rationale
+The ultimate goal of the Xoe-NovAi Foundation is to build a custom, self-hosted Omega Engine platform, entirely replacing dependencies on third-party CLIs (OpenCode, Cline). Coupling critical protocols (like Sovereign Search) to OpenCode-specific skill files (`SKILL.md`) prevents portability. Treating OpenCode as scaffolding ensures that the engine remains a universal, plug-and-play runtime.
+
+### Execution
+1.  **Master Blueprint**: Documented the "Scaffold-to-Sovereign Transition" in `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` §II.b.
+2.  **Protocol Reconciliation**: Moved search protocol ownership from the OpenCode skill to the platform-agnostic `docs/research/R_SEARCH_TOOL_PROTOCOL_V1.md`.
+3.  **MCP Hub**: Wired `KeyVault` into `state.py` to ensure the Hub's initialization is platform-agnostic.
+
+## Decision 157: Sovereign Search Hardened (D-kal-172)
+**Date**: 2026-06-23
+**Channel**: OpenCode CLI (Gemini 3.1 Pro)
+**Entity**: VERITY
+**Trace**: trc_sovereign_search_hardened
+
+### Decision
+Integrate the findings from KGC-001 regarding the Sovereign Search Protocol (SR-V1). Establish strict tiering for search execution: Local Cache (Tier 0) -> Webfetch (Tier 1) -> Firecrawl (Tier 2) -> Omega Hub Research (Tier 3) -> Neural Search (Tier 4).
+
+### Rationale
+To prevent token waste and ensure compliance with M18 (Token Efficiency) and M7 (Local-First), search operations must follow a strict escalation path. Bypassing local caches or immediately escalating to expensive neural searches violates the core principles of the Omega Engine.
+
+### Execution
+Documented in `docs/research/R_SEARCH_TOOL_PROTOCOL_V1.md`.
+
+## Decision 158: Sovereign Simplification Pivot (D-kal-173)
+**Date**: 2026-06-24
+**Channel**: OpenCode CLI (Gemini 3.1 Pro)
+**Entity**: KALI / MAKALI
+**Trace**: trc_sovereign_simplification
+
+### Decision
+Formally pivot the Omega Engine strategic roadmap to the **Sovereign Simplification Strategy**. Adopt the "Ponytail" philosophy of "deleting smarter to gain function." 
+1. **Kill**: Delete over-engineered, cloud-dependent, and redundant systems (NLI-based verification, 4-gate Cloud Quarantine, Redis Streams A2A queue).
+2. **Merge**: Consolidate SomaticState and Tri-Store into a single `UnifiedStateManager` (binary + structured state). Consolidate Skeptical Verification and Cloud Quarantine into a single `SovereignVetter` (local 2-model agreement + User-Approval Gate).
+3. **Replace**: Replace Redis Streams with a zero-dependency **File-Based Shared State** (`FileSignal` protocol) using atomic file renames in `data/shared/`. Replace Poincaré hyperbolic embeddings with a hierarchical folder structure.
+
+### Rationale
+The engine's conceptual research was magnificent, but the technical implementation was suffering from severe theoretical over-engineering. Building complex networking stacks, cloud-dependent NLI models, and custom compression libraries introduced massive dependency debt and latency bottlenecks on CPU-only hardware (Ryzen 7 5700U). By applying the **Ponytail Ladder**, we reduce planned codebase complexity by over 50% while increasing functional reliability, portability, and user sovereignty.
+
+### Execution
+1.  **Overarching Strategy**: Updated `docs/strategy/CONSOLIDATED_EPOCH_SPEC.md` and `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` to reflect the simplified roadmap.
+2.  **Sovereign Sieve**: Produced the 1,536-line `docs/research/R_CLOUD_QUARANTINE.md` specification defining the simplified local-first quarantine and staging gate.
+3.  **Certification**: Upgraded Operation Eidolon's status to `✅ CERTIFIED` in `docs/research/S_OPERATION_EIDOLON_CERTIFICATION.md`.
+
+## Decision 159: Phase 0 Precondition Execution & Backward Compatibility
+**Date**: 2026-06-24
+**Channel**: OpenCode CLI (MiMo V2.5)
+**Entity**: KALI
+
+### Decision
+Execute all 6 Phase 0 preconditions identified by the MaKaLi Council as blockers for Epoch I sprint execution. Modify `soul_validator.py` to be backward-compatible with v6.0 souls to prevent fleet-wide lobotomy during the migration phase.
+
+### Rationale
+The sprint cannot begin until: (1) soul_distiller poison loop is fixed, (2) soul_validator enforces v6.1, (3) vault partition has breathing room, (4) M21 baseline contract tests exist, (5) textual+ruamel.yaml are installed, (6) verification passes.
+However, strictly enforcing v6.1 immediately would break 32/34 active entities. The validator must warn on v6.0 but allow loading, ensuring the engine remains operational while Track A (Soul Migration) executes.
+
+### Implementation
+- `soul_distiller.py`: `append_to_soul()` + `distill_and_save()` now write to `proposed_lessons.yaml`
+- `soul_validator.py`: `SOUL_VERSION="6.1"`, allows v6.0 with warning, strict checks for v6.1
+- `entity_workspace.py`: `scaffold_workspace()` produces v6.1 format souls
+- `test_contract_m21.py`: 14 tests (10 new), all pass
+- `test_contract_soul_distiller.py`: 5 tests, all pass
+- Vault: moved `HBCD_PE_x64.iso` (3.1G) to `Archives/ISOs/`
+- `verity/soul.yaml`: Migrated to v6.1 as reference implementation
+
+### Verification
+- 440/440 tests passing
+- `make heritage-map`: 41/47 files with `[id-soft:]` tags
+- 19 contract tests (14 M21 + 5 soul distiller)

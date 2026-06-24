@@ -216,7 +216,7 @@ class OmegaREPL:
                 mode=self.header_mode,
             )
             if header:
-                print(f"\n[dim]{header}[/dim]")
+                self.session.print(f"\n[dim]{header}[/dim]")
 
         # Entity prefix
         prefix = result.entity
@@ -225,8 +225,8 @@ class OmegaREPL:
         if result.sigil:
             prefix += f" {result.sigil}"
 
-        print(f"\n{prefix}")
-        print(f"{result.text}\n")
+        self.session.print(f"\n{prefix}")
+        self.session.print(f"{result.text}\n")
 
     async def _handle_command(self, command: str):
         """Handle slash commands."""

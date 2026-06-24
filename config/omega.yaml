@@ -34,7 +34,8 @@ omega:
       ram_total_mb: 14336
       ram_os_overhead_mb: 2000
       ram_available_ai_mb: 12336
-      nova_resident_mb: 300
+      draft_resident_mb: 300
+      draft_entity: iris
   observability:
     enable_dataset_collection: true
     enable_trace_logging: true

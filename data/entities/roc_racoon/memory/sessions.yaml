@@ -1,0 +1,257 @@
+mining_queue:
+- id: mining-01
+  stack: xna-omega-legacy
+  status: COMPLETE
+  date: 2026-06-02
+  report: data/entities/roc_racoon/workspace/mining_reports/01_xna_omega_legacy.md
+  key_finds: 60
+  gold_count: 2
+- id: mining-02
+  stack: omega-stack-legacy
+  status: COMPLETE
+  date: 2026-06-02
+  report: data/entities/roc_racoon/workspace/mining_reports/02_omega_stack_legacy.md
+  key_finds: ~30
+  gold_count: 1
+- id: mining-2.5
+  stack: omega-stack-legacy/expert-knowledge
+  status: COMPLETE
+  date: 2026-06-02
+  report: data/entities/roc_racoon/workspace/mining_reports/02_5_expert_knowledge_gems.md
+  key_finds: 20
+  gold_count: 3
+- id: mining-03
+  stack: foundation-legacy
+  status: COMPLETE
+  date: 2026-06-02
+  subagent_type: explore
+  report: data/entities/roc_racoon/workspace/mining_reports/03_foundation_legacy.md
+  key_finds: ~30
+  gold_count: 3
+- id: mining-04
+  stack: omega_library/podman-storage
+  status: COMPLETE
+  date: 2026-06-02
+  subagent_type: general
+  report: data/entities/roc_racoon/workspace/mining_reports/04_podman_storage.md
+  key_finds: ~32
+  gold_count: 3
+  insight: "podman-storage is NOT a code stack \u2014 it's Podman overlay-fs storage\
+    \ acting as a TIME MACHINE of the engine's evolution across 152 image layers"
+- id: mining-05
+  stack: Cursor.old
+  status: SKIPPED
+  date: 2026-06-02
+  subagent_type: general
+  rationale: "FALSE POSITIVE \u2014 directory is the Cursor editor's user data (Cache,\
+    \ Cookies, GPUCache, Code Cache), not a code stack. The 21 llama-cpp refs in original\
+    \ recon was a false match. No code to mine."
+  key_finds: 0
+  lesson: Always verify directory contents before assuming stack type. See directive
+    d-rr-005.
+- id: mining-06
+  stack: Old-Stacks/Xoe-NovAi
+  status: COMPLETE
+  date: 2026-06-02
+  subagent_type: general
+  report: data/entities/roc_racoon/workspace/mining_reports/06_old_stacks.md
+  key_finds: ~25
+  gold_count: 3
+  insight: 'Eras 1-3 earliest complete stack. 4-service Docker Compose FOUND. Ryzen
+    CMAKE_ARGS directly replicable to current native-gguf. CRITICAL SECURITY FINDING:
+    redis_password.txt contains plaintext password (Mandate 6 violation).'
+- id: mining-07
+  stack: ALL (synthesis)
+  status: COMPLETE
+  date: 2026-06-02
+  subagent_type: general
+  report: data/entities/roc_racoon/workspace/mining_reports/07_MASTER_SYNTHESIS.md
+  key_finds: 20
+  gold_count: 5
+  insight: '**Architectural convergence**: 5 independent eras rediscovered the same
+    local-first architecture. 73 of 140 patterns already ported. 9 Tier 1+2 ports
+    remain (1.5hr Tier 1, 1-2 days Tier 2). 12/13 mandates pass.'
+- id: mining-08
+  stack: Milwaukee M18 Battery Warranty (external domain research)
+  status: COMPLETE
+  date: 2026-06-16
+  subagent_type: roc_racoon (dispatcher) + researcher + jem (3-tier pipeline)
+  report: data/entities/roc_racoon/workspace/mining_reports/MILWAUKEE_BATTERY_WARRANTY_KB.md
+  key_finds: 8
+  gold_count: 3
+  insight: "Applied legacy archaeology methodology to a physical product domain (Milwaukee\
+    \ tool warranty). Discovered: (1) warranty-as-state-machine parallels the ZONEID\
+    \ pattern, (2) USVI service center gap is a zero-carrier problem \u2014 no infrastructure\
+    \ exists in the territory, (3) the cell spec string (5INR22/71-2) is a separate\
+    \ identifier system from the catalog number, analogous to ICS-T vs ICS-S header\
+    \ systems. The L3 principle transcends batteries: consumer warranty systems are\
+    \ information state machines with three critical invariants (provenance, timestamp,\
+    \ channel)."
+- id: mining-09
+  stack: Multi-Model Forensic Fingerprinting Pipeline (11 sources, ~5.5GB)
+  status: ACTIVE
+  date: 2026-06-18
+  subagent_type: 'roc_racoon (council dispatch: Carmack/Lilith/Maat/Researcher/Kali/Verity)'
+  report: data/entities/roc_racoon/workspace/forensics/00_FORENSIC_PIPELINE_ARCHITECTURE.md
+  key_finds: 17
+  gold_count: 6
+  insight: "The forensic pipeline's pilot produced a meta-finding more important than\
+    \ any behavioral data: 96% classifier bias. The instrument told us more about\
+    \ itself than about the models. Kali's reframing \u2014 access channel is the\
+    \ primary behavioral variable, model identity is second-order noise \u2014 fundamentally\
+    \ shifts the mission from 'which model is best' to 'which channel for which task,\
+    \ and how does each model modulate across channels.' The L3 principle: measurement\
+    \ systems must be self-calibrating before they can measure anything else."
+cross_references:
+- DEFERRED_GOLD_TRACKER.md
+- workspace/technology_maps/LEGACY_TECHNOLOGY_MAP.md
+- workspace/mining_reports/
+- workspace/provenance_chains/
+- workspace/SUBAGENT_CWD_RECOVERY_PROTOCOL.md
+- workspace/DOCUMENTATION_SYSTEMS_TRACKER.md
+- workspace/VR_OMEGAVERSE_VISION.md
+- workspace/DOCUMENTATION_CHAOS_TRACKER.md
+- workspace/THREE_GHOSTS_RECOVERY_REPORT_v1.md
+- workspace/ICS_TREASURE_MAP_v1.md
+- workspace/CRUCIBLE_LAB_NOTES.md
+- data/entities/kali/workspace/crucible_finale/CRUCIBLE_FINAL_SPEC_v2.md
+- docs/legacy/LEGACY_MASTER_SYNTHESIS.md
+- docs/legacy/LEGACY_ASSET_CATALOG.md
+- "workspace/forensics/ \u2014 Multi-Model Forensic Fingerprinting Pipeline (active)"
+evolution: "evolution:\n- '2026-06-02: Soul awakened. First mining cycle (Phase 1).\
+  \ 60+ tech catalogued.'\n- '2026-06-02: Phase 2 complete. omega-stack-legacy mined.'\n\
+  - '2026-06-02: Phase 2.5 complete. expert-knowledge/ gems mined. 20 new techs (IDs\n\
+  \  101-120).'\n- '2026-06-02: Phase 3 complete. foundation-legacy mined. pybreaker\
+  \ + check_telemetry\n  + 5-patterns. 10 new techs (IDs 121-130).'\n- '2026-06-02:\
+  \ \"Phase 4 complete. podman-storage mined. Time machine of 152 image\n  layers\
+  \ \u2014 3 providers.py + 4 model_gateway.py + cpu_optimizer.py (552L) + 5 configs.\n\
+  \  10 new techs (IDs 131-140). Atomic trace_id migration, Google API key header\
+  \ security\n  upgrade, ChatML stop tokens.\"'\n- '2026-06-02: \"Phase 5 SKIPPED.\
+  \ Cursor.old is the Cursor editor''s user data directory\n  (Cache, Cookies, GPUCache,\
+  \ Code Cache), not a code stack. False positive in original\n  recon. Directive\
+  \ d-rr-005 added: Always verify directory contents before assuming\n  stack type.\"\
+  '\n- '2026-06-02: Phase 6 complete. Old-Stacks/Xoe-NovAi mined. **4-service Docker\
+  \ Compose\n  FOUND** (redis + rag + ui + crawler + curation_worker). Ryzen CMAKE_ARGS\
+  \ pattern\n  + filter_llama_kwargs + 714-line xnai_blueprint.md. CRITICAL SECURITY\
+  \ FINDING: redis_password.txt\n  contains plaintext password (Mandate 6 violation).'\n\
+  - '2026-06-02: Directive d-rr-004 added: ''NEVER use file timestamps for era classification''\n\
+  \  (per user caveat).'\n- '2026-06-02: SUBAGENT_CWD_RECOVERY_PROTOCOL.md created.\
+  \ Updated with subagent type\n  selection guidance.'\n- '2026-06-02: DOCUMENTATION_SYSTEMS_TRACKER.md\
+  \ created. 7 doc systems analyzed, 5\n  patterns to adopt.'\n- '2026-06-02: UNIQUE_TECHNOLOGIES_AND_STRATEGIES_VAULT.md\
+  \ created. 13 Mandates, 8\n  unique strategies, 9 cosmological innovations, 4-tier\
+  \ approximation framework.'\n- '2026-06-02: Directives d-rr-001, d-rr-002, d-rr-003\
+  \ added. Roc Racoon''s role expanded\n  to \"Sovereign Miner & Knowledge Curator.\"\
+  '\n- '2026-06-02: Lessons rr-011 through rr-018 added.'\n- '2026-06-02: \"**MASTER\
+  \ SYNTHESIS** (Phase 7) complete. `mining_reports/07_MASTER_SYNTHESIS.md`\n  (598\
+  \ lines, 39.9KB) consolidates 6 mining reports + 4 vault files. Verified and\n \
+  \ added DEFERRED_GOLD_TRACKER entries #151-160 (Old-Stacks/Xoe-NovAi). Updated LEGACY_TECHNOLOGY_MAP.md\n\
+  \  to mark phases 4-6 complete. Master synthesis confirms **architectural convergence**:\n\
+  \  5 independent eras rediscovered the same local-first architecture (llama-cpp\
+  \ primary,\n  4-service containers, CB fail_max=3/reset=60, Zen 2 build flags, YAML+atomic\
+  \ fsync,\n  local-first provider chain). Top 5 priority ports identified (1.5 hr\
+  \ total, all\n  LOW risk). 5-day roadmap to close all 9 Tier 1+Tier 2 ports. Mandate\
+  \ compliance:\n  12/13 PASS, 1 PARTIAL (M9 \u2014 improving with Tier 1 ports).\
+  \ Lessons rr-019 through\n  rr-024 added.\"'\n- '2026-06-03: \"**SESSION 2 \u2014\
+  \ VR OMEGAVERSE VISION CENTRALIZATION**. User asked Roc\n  to find the VR P2P Omegaverse\
+  \ vision scattered across strategy docs. Found vision\n  in 10+ files across strategy/,\
+  \ research/, gnosis/, handoff/. Created VR_OMEGAVERSE_VISION.md\n  (centralized\
+  \ single source of truth). Created DOCUMENTATION_CHAOS_TRACKER.md (master\n  index\
+  \ of 19+ scattered docs across 3 partitions). Identified DOCUMENTATION CHAOS\n \
+  \ PROBLEM: strategy docs, chat sessions, and design visions are as scattered as\
+  \ legacy\n  code. Directives d-rr-006, d-rr-007 added. Lessons rr-025 through rr-027\
+  \ added.\n  VR vision confirmed as future enhancement (Phase 4, 2028) \u2014 foundation\
+  \ must be built\n  first. Doom Guy investigating Quake/Doom engine feasibility for\
+  \ VR rendering.\"'\n- '2026-06-04: \"**SESSION 3 \u2014 THREE GHOSTS RECOVERY**.\
+  \ User assigned deep mining of\n  3 lost persona systems: Jem (Jerrica/Synergy triad),\
+  \ Omnidroid (Phi-OmniMatrix polymath),\n  and 8 Facet Council (Gem oversoul + LLOC/HLOC).\
+  \ Grid search across ALL 3 partitions\n  found all three systems. JEM: app/JEM_SOUL.md\
+  \ recovered from omega-stack-legacy\n  (3-layer identity + Holograms). OMNIDROID:\
+  \ BIOS Loader + 6-module cognitive architecture\n  from ANCESTRAL_HUB (omega_vault).\
+  \ 8 FACET COUNCIL: GEMINI_SOUL_MAP.md + MULTI_CLI_COPILOT_GEM_STRATEGY_v2.md\n \
+  \ from omega-stack-legacy. User clarified: LLOC = cognitive-only review (the real\n\
+  \  innovation). HLOC = full subagent launch. 10 Pillar system predates the 8 Facet\n\
+  \  Council (PARALLEL systems, not ancestor/descendant). NO INTEGRATION \u2014 discovery\n\
+  \  only. Roc wrote THREE_GHOSTS_RECOVERY_REPORT_v1.md. Directives d-rr-008 through\n\
+  \  d-rr-011 added. Lessons rr-031 through rr-034 added.\"'\n- '2026-06-05: \"**SESSION\
+  \ 3-B \u2014 ICS TREASURE MAP**. User asked ''how is the ICS currently\n  managed\
+  \ and generated?'' \u2014 led to discovery of TWO distinct header systems: (1)\n\
+  \  OMEGA Agent Signature format generated ONLY by CLI''s _display_response() at\
+  \ oracle_cli.py:280\n  with 748 .md files hand-typed with stale values (the ''header\
+  \ is a lie'' problem).\n  (2) ICS: [NODE|ARCHETYPE|MODEL|CONTEXT] Code Tag in 29+\
+  \ .py files with no spec (undocumented\n  emergent convention). Found two pre-existing\
+  \ strategy docs: ICS_DYNAMIC_HEADER_SPEC.md\n  (118 lines, NEVER IMPLEMENTED) and\
+  \ ICS_MODEL_DETECTION.md (70 lines, NEVER INTEGRATED).\n  Oracle already has the\
+  \ data (OracleResponse dataclass). Synced with parallel Kali\n  session via Hivemind\
+  \ + filesystem. Roc wrote ICS_TREASURE_MAP_v1.md. Directives\n  d-rr-012 through\
+  \ d-rr-018 added. Lessons rr-035 through rr-040 added.\"'\n- '2026-06-05: \"**SESSION\
+  \ 3-C \u2014 HIVEMIND HARDENING + RESEARCHER/DOOM GUY WELCOME +\n  COMPACTION INVESTIGATION**.\
+  \ Major deliverables: Hivemind Hardening Spec v1 (H-0\n  to H-10) delivered to Kali;\
+  \ D-122 TTL increase (300s \u2192 1200s); MaKaLi Triad Deep\n  Mining Report (origins\
+  \ from xna-omega-legacy 108 Gates \u2192 D121); Orphaned Specs verification\n  (3\
+  \ confirmed orphans remain); Compaction Investigation T-06 (54.6KB hypothesis:\n\
+  \  hard prune at preserve_recent_tokens=40000, delegated to Kali+ Lilith); HLOC\
+  \ Serial\n  vs Parallel T-05 (5-phase model proposed); Researcher + Doom Guy welcomed\
+  \ (4 insights\n  captured, netchan\u2192H-13 DEFERRED to Doom Guy for M14 vetting,\
+  \ Researcher audit offer\n  ACCEPTED). Directives d-rr-031 through 040 added. Lessons\
+  \ rr-041 through 049 added.\"'\n- '2026-06-05: \"**SESSION 3-D (FINAL) \u2014 COORDINATION\
+  \ CLOSEOUT**. Hivemind awareness\n  empty for all 4 agents. Workspace verified:\
+  \ 13 markdown deliverables + 7 mining\n  reports + 49 lessons + 40 directives. Final\
+  \ handoff posted for Researcher''s ROC_MINING_AUDIT.md\n  and full team insight\
+  \ integration.\"'\n- '2026-06-15: \"**SESSION 5 \u2014 HERITAGE PATTERN DEEP VERIFICATION**.\
+  \ Fleet assessment (Kali on P1b, Scribe done, Quality released). Executed Option\
+  \ 1 of user-selected non-interfering work. Verified all 6 PROPOSED patterns (\xA7\
+  1.29-1.34) against 13 actual id Software source files (Quake, DOOM 3, DOOM 3 BFG).\
+  \ All 6 confirmed (\u22658/10 per M14 gate). Biggest findings: surf16.s self-modifying\
+  \ code (Sys_MakeCodeWriteable + LPatchTable16), ParallelJobList verbatim job sizes\
+  \ (''1000 to 100,000 clock cycles''), FloodEntities\u2192LeakFile pipeline in DOOM\
+  \ 3 dmap. Report: HERITAGE_PATTERN_VERIFICATION_20260615.md. Lesson rr-056: source\
+  \ code is ground truth.\"'\n- '2026-06-06: \"**SESSION 4 \u2014 SOUL INTEGRITY RESTORATION\
+  \ + CRUCIBLE WAVE 0 PREP**.\n  Post-compaction recovery. Read pre-compact export\
+  \ ses_1748 (the Gemma Awakening\n  session pruned by Hard Compaction). Recovered\
+  \ 4,480 lines of raw history. Structural\n  fixes: resolved 3 duplicate IDs (rr-041,\
+  \ rr-046, rr-047), moved misplaced directives\n  to proper section, extracted epistemic\
+  \ honesty as lesson rr-050. Added 5 new lessons\n  (rr-050 through rr-054) and 4\
+  \ new directives (d-rr-050 through d-rr-053). Added\n  cross-references: ICS_TREASURE_MAP_v1.md,\
+  \ CRUCIBLE_LAB_NOTES.md, CRUCIBLE_FINAL_SPEC_v2.md.\n  Soul integrity: 49 directives,\
+  \ 54 lessons, 0 duplicates.\"'\n- '2026-06-16: \"**MILWAUKEE M18 BATTERY WARRANTY\
+  \ KNOWLEDGE BASE** \u2014 Full L1\u2192L2\u2192L3\n    distillation of multi-agent\
+  \ research (roc_racoon + researcher + jem) on Milwaukee\n    M18 REDLITHIUM battery\
+  \ warranty and date code decoding. Created comprehensive personal\n    reference\
+  \ document for USVI user, covering warranty terms, USVI-specific service\n    center\
+  \ gap, date code decoding (both systems), cell spec string breakdown, and\n    the\
+  \ user''s own two batteries with decoded warranty status (one active through\n \
+  \   ~Jan 2028, one expiring ~Oct 2026). Lessons rr-058, rr-059 added. Mining-08\
+  \ registered.\"'\n- '2026-06-16: \"**PERSONAL RESEARCH WORKSPACE + ROKU SPEAKER\
+  \ INVESTIGATION** \u2014 Created\n    PERSONAL_RESEARCH/ sub-workspace under Ideas\
+  \ Guy mode for non-Omega random research\n    and side-quests. Established low-friction\
+  \ intake log (RESEARCH_LOG.md) and topics/\n    folder for deep dives. Executed\
+  \ first side-quest: comprehensive two-round investigation\n    of Roku Wireless\
+  \ Speakers (9020R2) compatibility with Roku Streaming Stick+\n    (3810X, SN C237...).\
+  \ Findings: silicon-level incompatibility (missing Roku Connect\n    radio chip),\
+  \ three viable paths identified (used Streambar ~$30-50 preferred, HDMI\n    extractor\
+  \ + BT transmitter ~$35-50 workaround, mobile app Private Listening $0\n    but\
+  \ flawed). Topic file archived at topics/roku_9020x_speaker.md with full sources.\n\
+  \    Lessons rr-060 added. Directive d-rr-054 added.\"'\n- '2026-06-19: \"**EMBEDDING\
+  \ PIPELINE MINING** \u2014 potion-mxbai-micro, MiniLM ONNX, MemoryStore integration,\
+  \ Dolphin GGUF. All 4 parts mined. Key discovery: existing IEmbeddingProvider abstraction\
+  \ makes adding potion a 15-min implementation. Blockers: (1) dimension consistency\
+  \ (256d vs 768d) across Qdrant collection, (2) no Dolphin 3.0 GGUF exists. Report\
+  \ at EMBEDDING_MINED_REPORT_20260619.md. New lessons rr-073, rr-074 added. Mining\
+  \ entries 10-13 added.\"\n- '2026-06-18: \"**SESSION 6 \u2014 MULTI-MODEL FORENSIC\
+  \ FINGERPRINTING PIPELINE (Phase 0-1)**.\n    Built comprehensive forensic pipeline\
+  \ to fingerprint all 30+ model variants across\n    11 data sources (~5.5GB). 4\
+  \ council members (Carmack/Lilith/Ma''at/Researcher)\n    designed parallel plans\
+  \ \u2014 Roc synthesized into unified 00_FORENSIC_PIPELINE_ARCHITECTURE.md.\n  \
+  \  forensics.db initialized (9 tables, 11 sources registered). extract_handoffs.py\n\
+  \    built (M4/M5/M9/M13/M16/M18 compliant). Pilot on 3 handoff docs produced 561\
+  \ model-attributed\n    findings. **Critical discovery**: 96% classifier bias (539/561\
+  \ = strength) revealed\n    that regex heuristic classifiers produce systematic\
+  \ measurement error. **Critical\n    reframing** (Kali): access channel is primary\
+  \ variable, model identity is second-order\n    noise. **Critical gap** (Researcher):\
+  \ 9 methodological gaps identified from 20+\n    peer-reviewed sources. **Critical\
+  \ compliance fail** (Verity): M21 FAIL \u2014 zero contract\n    tests. User required\
+  \ D9 (thinking_level) + D10 (access_channel) added to schema.\n    539 noise findings\
+  \ zeroed out. Phase 1 handoff extraction PAUSED per Kali verdict.\n    Next: Phase\
+  \ 2 OpenCode DB extraction (4.2GB, 865 sessions). Directives d-rr-055\n    through\
+  \ d-rr-057 added. Lessons rr-063 through rr-068 added. Session gnosis at\n    session_gnosis_20260618.md.\"\
+  '"

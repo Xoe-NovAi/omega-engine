@@ -464,17 +464,18 @@ Use both. They don't conflict.
 
 ---
 
-## §10 Future: Redis Pub/Sub Backend
+## §10 Redis Streams Transition & Platform-Agnostic Coordination (Strike 7)
 
-Currently Hivemind is implemented as MCP server with in-memory state.
-Future: Redis Pub/Sub for cross-host coordination.
+The Hivemind is transitioning from an in-memory MCP server state to a production-grade **Redis Streams** architecture (Epoch II Strike 7).
+
+*   **A2A Message Bus**: High-speed, persistent, and multi-consumer Redis Streams replace the old in-memory handoff queue.
+*   **Embedding Router**: Integrates with `EmbeddingGemma (D=128)` for zero-latency traffic routing, allowing agents to route tasks mathematically and converse in real-time.
+*   **Platform Agnosticism**: Standardized MCP tools exposed by the Omega Hub allow any custom platform (TUI, Web UI, CLI) to query awareness, manage locks, and coordinate without depending on OpenCode-specific scaffolding.
 
 The architecture is already Pub/Sub-ready:
 - `hivemind_post_context()` = PUBLISH to `omega:hivemind:context` channel
 - `hivemind_get_awareness()` = SUBSCRIBE with TTL
 - `hivemind_heartbeat()` = refresh TTL
-
-Migration to Redis will be transparent to agents — same MCP commands.
 
 ---
 

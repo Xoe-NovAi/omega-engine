@@ -111,51 +111,6 @@ class GoogleAIProvider(BaseProvider):
             logger.error(f"Unexpected Google API failure: {e}", exc_info=True)
             raise ProviderError(provider="google", message=f"Unexpected Google API failure: {e}", trace_id=trace_id, raw_error=e) from e
 
-class GoogleKeyPoolProvider(BaseProvider):
-    """Google KeyPool provider for high-throughput parallel sensing.
-    
-    Implements round-robin rotation across multiple API keys to bypass rate limits.
-    [Sovereign Workhorse Protocol: pw_model_15]
-    """
-    def __init__(self, name: str, config: Dict[str, Any]):
-        super().__init__(name, config)
-        self._keys = []
-        for key_cfg in config.get("keys", []):
-            env_var = key_cfg.get("env")
-            if env_var:
-                val = os.environ.get(env_var)
-                if val:
-                    self._keys.append(val)
-        
-        if not self._keys:
-            logger.warning(f"GoogleKeyPoolProvider {name} initialized with no valid keys.")
-            
-        self._current_index = 0
-        self._inner = GoogleAIProvider(name, config)
-
-    async def is_available(self) -> bool:
-        return len(self._keys) > 0
-
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None) -> Optional[str]:
-        if not self._keys:
-            raise ProviderUnavailableError(provider=self.name, message="No API keys available in pool", trace_id=trace_id)
-        
-        # Round-robin selection
-        api_key = self._keys[self._current_index]
-        self._current_index = (self._current_index + 1) % len(self._keys)
-        
-        # Delegate to GoogleAIProvider with the selected key
-        return await self._inner.generate(
-            model=model, 
-            system_prompt=system_prompt, 
-            user_query=user_query, 
-            temperature=temperature, 
-            max_tokens=max_tokens, 
-            trace_id=trace_id, 
-            session_id=session_id,
-            api_key=api_key
-        )
-
 class LocallmsterProvider(BaseProvider):
     """LM Studio headless server provider."""
     async def is_available(self) -> bool:
@@ -425,7 +380,7 @@ class NativeGGUFProvider(BaseProvider):
         Returns dict with model_mb, kv_cache_mb, total_mb, fits_in_ram.
         """
         try:
-            from .cpu_optimizer import RAM_AVAILABLE_AI_MB, RAM_NOVA_RESIDENT_MB
+            from .cpu_optimizer import RAM_AVAILABLE_AI_MB, RAM_DRAFT_RESIDENT_MB
 
             # Estimate model size from file
             model_size_mb = 0
@@ -438,7 +393,7 @@ class NativeGGUFProvider(BaseProvider):
             kv_per_1k_tokens_mb = 2.0
             kv_cache_mb = (n_ctx / 1000) * kv_per_1k_tokens_mb
 
-            total_mb = model_size_mb + kv_cache_mb + RAM_NOVA_RESIDENT_MB
+            total_mb = model_size_mb + kv_cache_mb + RAM_DRAFT_RESIDENT_MB
             fits = total_mb < RAM_AVAILABLE_AI_MB
 
             return {

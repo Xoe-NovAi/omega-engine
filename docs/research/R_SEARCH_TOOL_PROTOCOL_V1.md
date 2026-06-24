@@ -20,10 +20,10 @@ This document establishes the **Sovereign Search Protocol** — a mandatory mult
 **Five-Tier Protocol Defined**:
 | Tier | Tool | Cost | Status |
 |------|------|------|--------|
-| 0 | Local Cache (`.firecrawl/`, offline library, **`data/entities/*/soul.yaml`**, **`data/coordination/`**, **`.agents/`**, **`.opencode/agents/`**) | Free | ✅ Functional |
+| 0 | Local Cache (`.firecrawl/` + MemoryStore) | Free | ✅ Functional |
 | 1 | Built-in `websearch` | Free | ✅ Functional |
-| 2 | SearXNG (Sovereign Metasearch) | Free | ✅ Functional |
-| 3 | Firecrawl (Deep Extraction) | Credits | ✅ Active (987/1000) |
+| 2 | SearXNG (Sovereign Metasearch) | Free | ✅ Active (Self-hosted) |
+| 3 | Firecrawl / Hub (Deep Extraction / Gnosis) | Credits/Free | ✅ Active (987/1000) / Functional |
 | 4 | Exa (Neural Search) | API Key | ✅ Functional |
 
 ---
@@ -97,8 +97,7 @@ User Query
 ┌─────────────────────────────────────────────────────┐
 │ Tier 0: LOCAL CACHE CHECK                           │
 │ • .firecrawl/ directory (164 cached sites)          │
-│ • Omega Hub offline library (research depths 1-4)    │
-│ • data/kb/ for ingested manuals                      │
+│ • MemoryStore hybrid search                         │
 │                                                      │
 │ If cached hit → return result                        │
 │ If miss → escalate to Tier 1                         │
@@ -108,21 +107,19 @@ User Query
 ┌─────────────────────────────────────────────────────┐
 │ Tier 1: BUILT-IN WEBSEARCH                          │
 │ • websearch(query) - general purpose                 │
-│ • websearch(query, livecrawl="preferred") - live    │
-│ • websearch(query, type="deep") - comprehensive     │
 │ • webfetch(url) - read specific page                 │
 │                                                      │
 │ Cost: Free. Always works. No API key needed.          │
 │ Result: Snippets + URLs                              │
 │                                                      │
 │ If sufficient → return and cite                      │
-│ If need full content → escalate to Tier 2             │
+│ If need deep extraction → escalate to Tier 2          │
 └─────────────────────────────────────────────────────┘
     │
     ▼
 ┌─────────────────────────────────────────────────────┐
 │ Tier 2: SEARXNG (SOVEREIGN METASEARCH)              │
-│ • curl 'http://localhost:8017/search?format=json&q=...'│
+│ • curl 'http://localhost:8018/sse'                  │
 │ • Provides aggregated results from multiple engines   │
 │                                                      │
 │ Cost: Free. Self-hosted.                              │
@@ -134,13 +131,11 @@ User Query
     │
     ▼
 ┌─────────────────────────────────────────────────────┐
-│ Tier 3: FIRECRAWL (DEEP EXTRACTION)                  │
+│ Tier 3: FIRECRAWL / HUB (DEEP EXTRACTION / GNOSIS)  │
 │ • firecrawl_scrape(url) - full page extraction       │
-│ • firecrawl_search(query) - search + full content    │
-│ • firecrawl_crawl(url) - bulk                        │
-│ • bash(firecrawl ...) - CLI fallback when MCP fails  │
+│ • library_search(query) - offline library            │
 │                                                      │
-│ Cost: Credits (1-5 per operation)                    │
+│ Cost: Credits (Firecrawl) / Free (Hub)               │
 │ ✅ ACTIVE (987 credits)                               │
 │                                                      │
 │ If 402 → log and escalate to Tier 4                  │
@@ -257,6 +252,27 @@ AFTER any Tier 2+ tool call:
   1. Save result to .firecrawl/ with proper naming
   2. If it's a manual ingestion, save to data/kb/manuals/<tool>/
 ```
+
+---
+
+## §5.4 Sovereign Key Vault Integration (D-kal-169)
+
+To secure API credentials and decouple the engine from platform-specific config files (like `opencode.json`), the **Sovereign Key Vault** was implemented at `src/omega/vault/`.
+
+*   **Encryption**: AES-256-GCM authenticated encryption with a random 12-byte nonce.
+*   **Storage**: Encrypted payload saved at `data/vault/keys.json.enc`.
+*   **Resolution**: Providers resolve keys dynamically via `KeyVault().resolve("exa"/"firecrawl")` with a graceful fallback to environment variables (`os.getenv()`).
+*   **MCP Hub**: `state.py` initializes search keys by querying the `KeyVault` singleton, eliminating raw file parses of `opencode.json`.
+
+## §5.5 Search System Bug Fixes (Sprint C Unification)
+
+During the June 23, 2026 Sovereign Audit, five critical bugs in the search infrastructure were identified and remediated:
+
+1.  **Missing `os` Import**: `search_providers.py` was calling `os.environ.get()` inside `_resolve_from_vault()` without importing `os`, causing runtime `NameError` crashes on vault fallback. **Fixed** by adding `import os`.
+2.  **AttributeError in Iterative Research**: `iterative_research.py` was calling `self.searcher.search(...)` instead of the correct `self.searcher.search_knowledge(...)` method on `SovereignSearcher`, causing immediate runtime crashes. **Fixed** by correcting the method call and parameter order.
+3.  **KeyVault Singleton Initialization Bug**: `KeyVault.__init__` was setting `self._initialized = True` before running initialization code. If initialization failed, subsequent calls would return a broken, uninitialized vault. **Fixed** by moving the initialization flag to the end of `__init__()`.
+4.  **Exa MCP Config Merge Conflict**: Three separate files defined Exa with conflicting transport protocols (`http` vs `streamable-http`). **Fixed** by consolidating to a single project-level `opencode.json` with `streamable-http` and removing stale entries from `config/mcp_servers.json`.
+5.  **Broken T1 Websearch Stub**: `sovereign_search_service.py` had a dead `None` placeholder for Tier 1 websearch. **Fixed** by wiring a direct httpx provider.
 
 ---
 

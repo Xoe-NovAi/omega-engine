@@ -29,7 +29,7 @@ KV cache quantization (llama-server flags):
   -mli 1      — mul matq input (enables Q8_0 input optimization)
 
 Speculative decoding (Oracle already implements this):
-  Draft: Nova (qwen3-1.7b-270m, always-on, ~300MB)
+  Draft: speculative-decoder (qwen3-1.7b-270m, always-on, ~300MB)
   Target: Pillar Keeper (loaded on demand)
   Acceptance: heuristic-based confidence check
   
@@ -74,7 +74,7 @@ ZEN2_RECOMMENDED_THREADS = 7
 RAM_TOTAL_MB = 14 * 1024  # ~14336
 RAM_OS_OVERHEAD_MB = 2000
 RAM_AVAILABLE_AI_MB = RAM_TOTAL_MB - RAM_OS_OVERHEAD_MB  # ~12336
-RAM_NOVA_RESIDENT_MB = 300
+RAM_DRAFT_RESIDENT_MB = 300
 
 # Model RAM with KV cache at various context lengths
 KV_CACHE_BYTES_PER_TOKEN = {
@@ -84,7 +84,7 @@ KV_CACHE_BYTES_PER_TOKEN = {
 }
 
 # Speculative decoding defaults
-DEFAULT_SPEC_ACCEPTANCE_THRESHOLD = 0.4  # Nova confidence threshold
+DEFAULT_SPEC_ACCEPTANCE_THRESHOLD = 0.4  # Draft confidence threshold
 MIN_DRAFT_TOKENS = 1
 MAX_DRAFT_TOKENS = 5
 TARGET_ACCEPTANCE_RATE = 0.6  # Aim for 60% draft acceptance
@@ -146,7 +146,7 @@ class KVCacheConfig:
 
 @dataclass
 class SpeculativeDecodeConfig:
-    """Configuration for the speculative decoder (Nova → Pillar Keeper)."""
+    """Configuration for the speculative decoder (Draft → Pillar Keeper)."""
     draft_model: str = "qwen3-1.7b"
     target_acceptance_rate: float = TARGET_ACCEPTANCE_RATE
     min_draft_tokens: int = MIN_DRAFT_TOKENS
@@ -239,7 +239,7 @@ class Zen2Optimizer:
         if available_ram_mb is None:
             available_ram_mb = RAM_AVAILABLE_AI_MB
 
-        remaining_ram_mb = available_ram_mb - model_ram_estimate_mb - RAM_NOVA_RESIDENT_MB
+        remaining_ram_mb = available_ram_mb - model_ram_estimate_mb - RAM_DRAFT_RESIDENT_MB
 
         # KV cache size per token (bytes) = 2 * layers * num_heads * head_dim * 2 (K+V)
         kv_per_token_bytes = 2 * layers * num_heads * head_dim * 2  # *2 for both K and V
@@ -337,7 +337,7 @@ class Zen2Optimizer:
         """Recommend thread count for model inference.
 
         On Zen 2, 6 threads is optimal for most models:
-        - Uses 3 of 4 CCX cores (leaves 1 for OS + Nova)
+        - Uses 3 of 4 CCX cores (leaves 1 for OS + Draft)
         - Avoids SMT contention on compute-bound workloads
         - Scales well up to 8B param models
 
@@ -469,7 +469,7 @@ class Zen2Optimizer:
             "model_mb": round(model_mb, 0),
             "kv_cache_mb": round(kv_mb, 0),
             "total_mb": round(model_mb + kv_mb, 0),
-            "fits_in_ram": (model_mb + kv_mb + RAM_NOVA_RESIDENT_MB) < RAM_AVAILABLE_AI_MB,
+            "fits_in_ram": (model_mb + kv_mb + RAM_DRAFT_RESIDENT_MB) < RAM_AVAILABLE_AI_MB,
         }
 
     # ── Diagnostics ────────────────────────────────────────────────────
@@ -556,7 +556,7 @@ class Zen2Optimizer:
             "memory": {
                 "total_mb": RAM_TOTAL_MB,
                 "available_ai_mb": RAM_AVAILABLE_AI_MB,
-                "nova_resident_mb": RAM_NOVA_RESIDENT_MB,
+                "draft_resident_mb": RAM_DRAFT_RESIDENT_MB,
             },
         }
 
@@ -802,7 +802,7 @@ class Zen2Optimizer:
             },
             "model_recommendations": {
                 "max_concurrent": 1,
-                "nova_resident_mb": RAM_NOVA_RESIDENT_MB,
+                "draft_resident_mb": RAM_DRAFT_RESIDENT_MB,
                 "available_ai_mb": RAM_AVAILABLE_AI_MB,
             },
         }

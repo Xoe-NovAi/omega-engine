@@ -87,7 +87,6 @@ class KeyVault:
         """
         if hasattr(self, "_initialized") and self._initialized:
             return
-        self._initialized = True
         
         self._vault_path = vault_path or Path(
             os.environ.get(
@@ -123,6 +122,9 @@ class KeyVault:
             self._load()
         elif auto_init:
             self._auto_init_from_env()
+        
+        # [M21 Gate Integrity] Only mark initialized AFTER all init code succeeds
+        self._initialized = True
     
     # ── Public API ─────────────────────────────────────────────────────
     

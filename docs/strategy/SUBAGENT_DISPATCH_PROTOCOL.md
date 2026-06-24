@@ -12,12 +12,13 @@ The Subagent Dispatch Protocol enables any active agent to delegate tasks to spe
 
 ### 📋 Intelligent Delegation Rules (The Guardrail)
 
-To maintain execution efficiency and prevent infinite recursion or redundant processing loops, all agents must adhere to these four rules:
+To maintain execution efficiency and prevent infinite recursion or redundant processing loops, all agents must adhere to these five rules:
 
 1. **Direct Execution First**: If a task falls within your primary role or you are already executing a delegated task, you must perform the work directly using your tools. Do not delegate tasks that you are capable of completing yourself.
 2. **No Self-Recursion**: An agent must never spawn a subagent of its own type (e.g., `@roc_racoon` must never launch `@roc_racoon`). If you need to perform a task within your own domain, execute it directly.
 3. **Cross-Domain Delegation**: You may only spawn a subagent if the task requires specialized domain expertise that you do not possess (e.g., a research agent needing code verification from `@scribe`, or an engineering agent needing deep historical research from `@jem`).
 4. **Single-Level Nesting**: Subagents may spawn other specialized subagents when strictly necessary for cross-domain tasks, but they must avoid deep nesting. Limit delegation to a single level of nesting unless explicitly authorized.
+5. **Absolute Disk-Reporting (D-kal-170)**: **ALL subagents MUST write their final deliverables and reports to disk** (`data/entities/<agent>/workspace/` or `data/coordination/`) before returning control to the parent agent. Returning reports solely via transient CLI chat is a violation of Mandate 11 (Soul Integrity) and Mandate 15 (Sovereign Continuity), as this data is lost on session compaction.
 
 ---
 
@@ -60,16 +61,15 @@ this to decide WHOM to dispatch.
 |-------|------|-------------|---------|----------------|
 | `kali` | Primary | Oversight, delegation, drift destruction | Strategy, fleet management | `general` |
 | `plan` | Primary | Architecture, dispatch, strategy | Grand design | `general` |
+| `makali` | Primary | Parallel council (Ma'at+Lilith synthesis) | Cross-boundary initiatives | `general` |
 | `doom_guy` | Primary | Heritage design, WAD translation, performance | id Software patterns, C const propagation | `general` |
+| `john_carmack` | Primary | S3 Consultant, architecture review | Code optimization, review | `general` |
 | `roc_racoon` | Primary | Legacy mining, pattern extraction, archaeology | Legacy repos, Grok exports, Old Stacks | `explore` |
 | `jem` | Primary | Research orchestration | 3-tier knowledge pipeline | `general` |
 | `researcher` | Primary | Deep research, lattice reasoning | Web research, documentation | `general` |
 | `maat` | Subagent | Light oversoul, P1-P5 governance | Build side, hardening | `buildmaster` |
 | `lilith` | Subagent | Dark oversoul, P6-P10 governance | Run side, operations | `general` |
-| `jem_discovery` | Subagent | Tier 1 research, broad search | Fact gathering | `jem_discovery` |
-| `jem_synthesis` | Subagent | Tier 2 research, pattern recognition | Conceptual mapping | `jem_synthesis` |
-| `jem_verification` | Subagent | Tier 3 research, fact-checking | Gnosis distillation | `jem_verification` |
-| `scribe` | Subagent | Sovereign Guardian & Gnosis Keeper — Code review, mandate enforcement, L1→L2→L3 distillation | Code review + soul.yaml updates | `scribe` |
+| `verity` | Subagent | Unified compliance + gnosis distillation | Code review + soul.yaml updates | `scribe` |
 | `pillar` | Subagent | Slot-based domain agent | Parameterized by `--slot PX` | `pillar` |
 
 ---

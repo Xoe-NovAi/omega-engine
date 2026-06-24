@@ -128,25 +128,38 @@ async def _init_services() -> None:
             lambda: ResearchEngine(library=library, indexer=indexer)
         )
 
-        # Load search keys from opencode.json
+        # Load search keys from Sovereign KeyVault with opencode.json fallback
         try:
-            with open(PROJECT_ROOT / "opencode.json") as f:
-                _cfg = json.load(f)
-            _fc_key = (
-                _cfg.get("mcp", {})
-                .get("firecrawl", {})
-                .get("environment", {})
-                .get("FIRECRAWL_API_KEY")
-            )
-            _exa_key = (
-                _cfg.get("mcp", {})
-                .get("exa", {})
-                .get("headers", {})
-                .get("x-api-key")
-            )
-        except Exception as e:
-            logger.warning("Failed to load search keys: %s", e)
-            _fc_key = _exa_key = None
+            from omega.vault import KeyVault
+            vault = KeyVault()
+            _fc_key = vault.resolve("firecrawl")
+            _exa_key = vault.resolve("exa")
+            logger.info("Search keys successfully resolved from Sovereign KeyVault")
+        except Exception as vault_err:
+            logger.warning("Failed to resolve search keys from KeyVault, checking environment variables: %s", vault_err)
+            _fc_key = os.environ.get("FIRECRAWL_API_KEY")
+            _exa_key = os.environ.get("EXA_API_KEY")
+            
+            if not _fc_key or not _exa_key:
+                try:
+                    with open(PROJECT_ROOT / "opencode.json") as f:
+                        _cfg = json.load(f)
+                    _fc_key = _fc_key or (
+                        _cfg.get("mcp", {})
+                        .get("firecrawl", {})
+                        .get("environment", {})
+                        .get("FIRECRAWL_API_KEY")
+                    )
+                    _exa_key = _exa_key or (
+                        _cfg.get("mcp", {})
+                        .get("exa", {})
+                        .get("headers", {})
+                        .get("x-api-key")
+                    )
+                except Exception as e:
+                    logger.warning("Failed to load search keys from opencode.json fallback: %s", e)
+                    if not _fc_key or not _exa_key:
+                        _fc_key = _exa_key = None
 
         sovereign_search_service = await anyio.to_thread.run_sync(
             lambda: SovereignSearchService(

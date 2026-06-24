@@ -1,0 +1,7 @@
+# data/entities/test_remove_check/knowledge/INDEX.yaml
+# Entity knowledge discovery index
+# Topics are promoted from workspace/ → knowledge/ via the T1→T2 gate
+
+entity: test_remove_check
+updated: '2026-06-24T11:09:32.498609'
+topics: []

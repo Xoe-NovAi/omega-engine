@@ -242,14 +242,12 @@ class AccountManager:
         self,
         family: str,
         model: Optional[str] = None,
-        strategy: str = "sticky",
     ) -> Optional[AccountSelection]:
         """Select the best account for a model family.
 
         Args:
             family: "claude" or "gemini"
             model: Optional model name for model-specific rate limits
-            strategy: "sticky" (use current until rate-limited) or "round-robin"
 
         Returns:
             AccountSelection or None if no accounts available.
@@ -261,10 +259,7 @@ class AccountManager:
         if not enabled:
             return None
 
-        if strategy == "round-robin":
-            return self._select_round_robin(family, model, enabled)
-        else:
-            return self._select_sticky(family, model, enabled)
+        return self._select_sticky(family, model, enabled)
 
     def _select_sticky(
         self, family: str, model: Optional[str], enabled: List[ManagedAccount],
@@ -281,25 +276,6 @@ class AccountManager:
 
         # Current account is rate-limited — find next
         return self._find_next_available(family, model, enabled)
-
-    def _select_round_robin(
-        self, family: str, model: Optional[str], enabled: List[ManagedAccount],
-    ) -> Optional[AccountSelection]:
-        """Round-robin selection: cycle through all enabled accounts."""
-        available = [
-            a for a in enabled
-            if not a.is_rate_limited_for_family(family, model) and not a.is_cooling_down
-        ]
-        if not available:
-            return None
-
-        account = available[self._cursor % len(available)]
-        self._cursor += 1
-        self._current_index_by_family[family] = account.index
-        header = self._get_best_header_style(account, family, model)
-        if not header:
-            return None
-        return AccountSelection(account=account, header_style=header, family=family)
 
     def _find_next_available(
         self, family: str, model: Optional[str], enabled: List[ManagedAccount],

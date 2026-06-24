@@ -1,0 +1,53 @@
+# 🔱 Omega Engine — Proposed Lessons
+# Generated: 2026-06-23 (MaKaLi Council Work Items #2 & #3)
+
+proposals:
+  - id: lilith-proposal-20260623-001
+    category: observability
+    l1_narrative: >
+      During a research recovery mission, all 7 search tools were tested. Exa returned 401
+      (invalid API key), webfetch timed out, and Firecrawl blocked Reddit. SearXNG returned
+      37 results across multiple engines — the most sovereign option. The Google AI Studio
+      KB was verified accurate, but two major gaps were found: the April 2026 billing cap
+      enforcement and the new Google Cloud Starter Tier (Google I/O 2026).
+    l2_insight: >
+      Search tool reliability is asymmetric — sovereign tools (SearXNG) work consistently,
+      while API-key-dependent tools (Exa, Firecrawl Reddit) have single points of failure.
+      The KB was well-researched but missed two critical developments from the same month.
+    l3_universal_principle: >
+      Sovereignty requires redundancy. Any system that depends on a single API key or
+      external service has a hidden fragility. True sovereignty means multiple independent
+      paths to the same information, with automatic fallback.
+
+  - id: lilith-proposal-20260623-002
+    category: process
+    l1_narrative: >
+      The serial pillar dispatch pattern (P6 → P7 → P8) was used for the first time.
+      Each pillar received a focused sub-task and built on the previous pillar's output.
+      P6 tested search tools, P7 filled research gaps using P6's findings, P8 created the
+      error report using both prior outputs.
+    l2_insight: >
+      Serial pillar dispatch works well when each pillar's output is the input for the next.
+      Unlike parallel dispatch (which is faster), serial ensures coherence — each pillar
+      has the full context of what came before.
+    l3_universal_principle: >
+      When tasks form a dependency chain, execute serially; when they are independent,
+      execute in parallel. The topology of the dependency graph determines the optimal
+      dispatch pattern.
+
+  - id: lilith-proposal-20260623-003
+    category: research
+    l1_narrative: >
+      The Google AI Studio KB was verified against live docs and found accurate on all
+      data privacy and tier structure claims. However, two major gaps were discovered:
+      the April 2026 billing cap enforcement (mandatory tier spend caps, prepay billing)
+      and the Google Cloud Starter Tier (deploy 2 apps without billing, from I/O 2026).
+    l2_insight: >
+      The KB was written before these changes went into effect. The billing caps were
+      announced in March 2026 and enforced from April 1, 2026. The Starter Tier was
+      announced at Google I/O 2026 (May 19). Neither was in the KB because both happened
+      within the current month.
+    l3_universal_principle: >
+      Knowledge bases are snapshots in time. Their value degrades logarithmically without
+      active maintenance. Every KB should have a freshness score and an automated review
+      reminder.

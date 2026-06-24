@@ -42,7 +42,7 @@ from omega.workers.model_updater import ModelUpdaterWorker
 from omega.observability import ObservabilityEngine, get_engine
 from omega.oracle.model_gateway import ModelGateway
 from omega.oracle.health_monitor import get_health_monitor
-from omega.errors import BrakeViolationError
+from omega.errors import BrakeViolationError, BoundaryViolationError
 
 logger = logging.getLogger(__name__)
 
@@ -312,6 +312,30 @@ class Orchestrator:
         else:
             return "Sovereign Drive: STANDARD. Execute with standard rigor and verification."
 
+    async def _check_coordination_hazard(self, entity_name: str):
+        """
+        Check for coordination hazards before spawning an agent.
+        [M10 Fleet Integrity] Prevents redundant or conflicting agent instances.
+        """
+        try:
+            from mcp_servers.omega_hub.state import _awareness, _awareness_lock
+            async with _awareness_lock:
+                # Check if any agent with this entity name is currently active in the Hivemind
+                active_agents = [aid for aid in _awareness if aid.endswith(f"/{entity_name}")]
+                if active_agents:
+                    if entity_name.lower() == "kali":
+                        raise BoundaryViolationError(
+                            f"Coordination Hazard: Agent 'kali' is already active ({active_agents[0]}). "
+                            "Sovereign protocol forbids spawning multiple KALI instances."
+                        )
+                    logger.info(f"Agent '{entity_name}' is already active ({active_agents[0]}). Proceeding with caution.")
+        except ImportError:
+            logger.warning("Hivemind state not available for coordination check. Skipping hazard detection.")
+        except BoundaryViolationError:
+            raise
+        except Exception as e:
+            logger.warning(f"Coordination check failed (non-fatal): {e}")
+
     async def dispatch_agent(
         self, 
         cli_type: str, 
@@ -334,6 +358,10 @@ class Orchestrator:
         """
         # Sovereign Brake & SCP Enforcement
         self._verify_sovereign_brake(task_prompt)
+        
+        # Coordination Hazard Check (C-8)
+        await self._check_coordination_hazard(entity_name)
+        
         dampening_field = self._calculate_sovereign_dampening(task_prompt)
 
         logger.info(f"Preparing to dispatch {cli_type} for entity '{entity_name}'")

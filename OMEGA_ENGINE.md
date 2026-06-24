@@ -134,14 +134,14 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | PyPI entry point | `omega` CLI via `[project.scripts]` | 2026-06-22 |
 | Source files | **96** .py files | 2026-06-14 |
 | Source lines | **~24,000** | 2026-06-14 |
-| Test functions | **432 passed / 457 collected** (22 intentional skip, 3 xfailed) | 2026-06-22 |
+| Test functions | **440 passed / 440 collected** (22 intentional skip, 3 xfailed) | 2026-06-24 |
 | Test files | **43** | 2026-06-14 |
-| PIVOT decisions | **89 (D50-D136, incl. xna-omega D1-D49 = 136 lifetime)** | 2026-06-17 |
+| PIVOT decisions | **137 (D50-D159, incl. xna-omega D1-D49 = 159 lifetime)** | 2026-06-24 |
 | Sovereign Mandates | **22 (M1-M22)** | 2026-06-17 |
 | Mandate 2 (Namespace) | ✅ All `from src.omega` → `from omega` — zero broken imports | 2026-06-22 |
 | Mandate 7 (Local-First) | ✅ `providers.yaml` strategy `local_first`, Quick Start = 4 commands, 0 cloud API keys | 2026-06-22 |
 | Mandate 9 (Error Integrity) | FULL — 0 bare except, 0 silent `except Exception: pass` | 2026-06-17 |
-| Mandate 13 (Temple-Grade) | 11/11 GREEN (T11 IA2 exempt) | 2026-06-17 |
+| Mandate 13 (Temple-Grade) | 9/11 GREEN (T11 IA2 exempt, T7 latency unmeasured) | 2026-06-24 |
 | AnyIO compliance | 0 `import asyncio` | 2026-06-14 |
 | ZONEID constants | 11 (0x1d4a11-0x1d4a1b) | 2026-06-14 |
 | cvar Table | 2 namespaces, 7 accessors | 2026-06-14 |
@@ -190,6 +190,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | **Hivemind Sprint A** (Hub Modularization) | 2026-06-14 | Kali + Carmack | ✅ 4cc73de | Hub modularized (5 modules), 388/388 tests, M16 ratified, Fleet 15→11 plan |
 | **Sprint C** (Tactical Hardening) | 2026-06-17 | Kali + Council | ✅ 440/440 | GenerateResult dataclass, P0/P1 fixes, M21+M22 ratified, SearXNG deployed, root docs cleaned |
 | **v1.0.0** (Father's Day Release) | 2026-06-22 | Kali + MaKaLi Council | ✅ 432/457 | 6-phase release: packaging (pyproject entry point, 22 deps), model download script, README overhaul, test suite cleanup (432 pass/0 fail), Antigravity OAuth (9 models), git hygiene + SHA256 + namespace fixes (from src.omega→omega). MaKaLi gap audit: 2 CRITICAL packaging blindspots found & fixed. Heritage-map & sovereignty gates passed. Version 1.0.0 tagged. |
+| **Sprint E** (Epoch I Phase 0) | 2026-06-24 | Kali + Verity | ✅ 440/440 | Soul distiller fix, v6.1 validator (backward compatible), 19 M21 tests, Vault freed, Ark Blueprint rebuilt |
 
 ---
 
@@ -310,7 +311,7 @@ Per Kali D115 + Cline-M3 review:
 | M18 | Token Efficiency (no waste) | ✅ | Agent prompt discipline |
 | M19 | Adversarial Alchemy (weakness→strength) | ✅ | Somatic Save-Point, FISR Principle |
 | M20 | SomaticState Serialization | ⏳ Deferred | ctypes bindings pending ICS-F v1.0 |
-| M21 | Gate Integrity (contract tests) | ⏳ PENDING | No contract tests yet |
+| M21 | Gate Integrity (contract tests) | 🟡 19/24 | 19 contract tests exist |
 | M22 | Response Provenance (provider_name) | 🟡 Partial | gateway_server.py done, background workers pending |
 
 See `SOVEREIGN_MANDATES.md` for full text. **M2 is enforced via Hard-Boundary Struct.**
@@ -325,7 +326,7 @@ See `SOVEREIGN_MANDATES.md` for full text. **M2 is enforced via Hard-Boundary St
 | **Sovereignty** | Cloud dependency (basic ops) | 0 | ✅ 0 |
 | **Sovereignty** | Data residency | 100% | ✅ 100% |
 | **Sovereignty** | Telemetry events | 0 | ✅ 0 |
-| **Identity** | Agents with soul.yaml v2 schema | All 14 | 🟡 2/14 (Doom Guy, Ma'at) |
+| **Identity** | Agents with soul.yaml v6.1 (4-file split) | All 11 | ✅ 11/11 migrated |
 | **Identity** | Soul distillation rate | ≥1 L3/3 sessions | ✅ 1.0 |
 | **Identity** | Cross-entity L3 sharing | ≥5 principles | 🟡 2 (Engine-Stack + LMS) |
 | **UX** | Hub dashboard | Live :8016 | 🟡 REST only (no HTML) |
@@ -423,9 +424,9 @@ If it describes HOW to use the engine from Platform X → that platform's rules 
 | `config/omega.yaml` | Core engine config | v2.3.0 |
 | `config/distiller_prompts.yaml` | 6 JEM distiller modes | Sovereign |
 | `config/glossary.md` | 22 canonical terms | v0.1.0 |
-| `data/entities/kali/soul.yaml` | v5.2 — constitutional baseline | 14 keys |
-| `data/entities/doom_guy/soul.yaml` | v5 — id Software architect | Heritage |
-| `data/entities/maat/soul.yaml` | v3.0 — synthesis oversoul | M5 |
+| `data/entities/kali/soul.yaml` | v6.1 — 4-file split | 14 keys |
+| `data/entities/doom_guy/soul.yaml` | v6.1 — 4-file split (247 lines) | Heritage |
+| `data/entities/maat/soul.yaml` | v6.1 — 4-file split | M5 |
 | `data/entities/antigravity/soul.yaml` | v1.6.0 — Hivemind Cloud Strategist | Active Hivemind Citizen |
 | `data/kb/_staging/cli_ide_platform/antigravity/` | KB staging (9 files) | Tier 0 |
 | `data/kb/cli_ide_platform/_meta/DOMAIN_INDEX.md` | KB master index | Tier 1 |
@@ -666,9 +667,9 @@ You type → CLI/Web → Oracle → EntityRegistry (find entity)
 
 SOUL PATH:
 Session End → SoulDistiller extracts L1→L2→L3
-           → EntityWorkspace writes to soul.yaml
-           → GnosisProxy cross-references with other entities
-           → ContextBuilder loads soul.yaml at next session start
+            → EntityWorkspace writes L3 to proposed_lessons.yaml (blind staging)
+            → GnosisProxy cross-references with other entities
+            → ContextBuilder loads approved_lessons.yaml at next session start
 
 TRAINING PATH:
 ObservabilityEngine.record_training_example()
@@ -731,7 +732,7 @@ auto-generated from hub state, not entirely hand-maintained.
 |:--------------:|-------|-----------------|:----:|
 | S0-S1 (done) | Foundation | 11 agents, WAD system, PIVOT 113 | 2026-06 |
 | S2 | Synthesis Flywheel | Qdrant wired, Redis wired, first LoRA trained | H2 done + S2 |
-| S3 | Soul Evolution v2 | All 11 agents have soul v5.2+ schema | Post-S2 |
+| S3 | Soul Evolution v2 | All 11 agents have soul v6.1+ (4-file split) | Post-S2 |
 | S4 | UX Layer | Hub dashboard, local TTS, rich CLI | Post-S3 |
 | S5 | Production | Entity Studio CLI, Stack Builder, Omega Desktop | Post-S4 |
 | S6 | Community | IWAD registry, stack sharing, community entities | 2027 |

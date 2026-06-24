@@ -7,6 +7,7 @@ ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: SEARCH-HARDENING]
 import logging
 import anyio
 import httpx
+import os
 from typing import Any, Dict, List, Optional
 from omega.errors import ProviderError, ProviderAuthError, ProviderRateLimitError
 import json
@@ -29,7 +30,7 @@ class FirecrawlProvider(SearchProvider):
         """Fallback to vault if no key passed explicitly."""
         try:
             from omega.vault import KeyVault
-            return KeyVault().resolve("firecrawl")
+            return KeyVault().resolve_and_handle_429("firecrawl")
         except Exception:
             return os.environ.get("FIRECRAWL_API_KEY", "")
 
@@ -43,9 +44,11 @@ class FirecrawlProvider(SearchProvider):
                     json={"query": query, "limit": limit}
                 )
                 if response.status_code == 401:
-                    raise ProviderAuthError("Firecrawl API key invalid")
+                    raise ProviderAuthError("firecrawl", "Firecrawl API key invalid")
                 if response.status_code == 429:
-                    raise ProviderRateLimitError("Firecrawl rate limit exceeded")
+                    from omega.vault import KeyVault
+                    KeyVault().mark_rate_limited("firecrawl")
+                    raise ProviderRateLimitError("firecrawl", "Firecrawl rate limit exceeded")
                 response.raise_for_status()
                 
                 search_data = response.json()
@@ -79,13 +82,14 @@ class FirecrawlProvider(SearchProvider):
                     return f"Firecrawl Search (Snippets): {'\n\n'.join(snippets[:3])}"
                 
                 return f"Firecrawl Deep Extraction:\n\n" + "\n\n---\n\n".join(content_snippets)
+            except ProviderError:
+                raise
             except httpx.HTTPStatusError as e:
-
                 logger.error(f"Firecrawl HTTP error: {e}")
-                raise ProviderError(f"Firecrawl API failure: {e}")
+                raise ProviderError("firecrawl", f"Firecrawl API failure: {e}")
             except Exception as e:
                 logger.error(f"Firecrawl unexpected error: {e}")
-                raise ProviderError(f"Firecrawl system failure: {e}")
+                raise ProviderError("firecrawl", f"Firecrawl system failure: {e}")
 
 class ExaProvider(SearchProvider):
     """T4: Neural Search (Exa) Provider."""
@@ -98,7 +102,7 @@ class ExaProvider(SearchProvider):
         """Fallback to vault if no key passed explicitly."""
         try:
             from omega.vault import KeyVault
-            return KeyVault().resolve("exa")
+            return KeyVault().resolve_and_handle_429("exa")
         except Exception:
             return os.environ.get("EXA_API_KEY", "")
 
@@ -111,9 +115,11 @@ class ExaProvider(SearchProvider):
                     json={"query": query, "numResults": limit, "useAutoprompt": True}
                 )
                 if response.status_code == 401:
-                    raise ProviderAuthError("Exa API key invalid")
+                    raise ProviderAuthError("exa", "Exa API key invalid")
                 if response.status_code == 429:
-                    raise ProviderRateLimitError("Exa rate limit exceeded")
+                    from omega.vault import KeyVault
+                    KeyVault().mark_rate_limited("exa")
+                    raise ProviderRateLimitError("exa", "Exa rate limit exceeded")
                 response.raise_for_status()
                 
                 data = response.json()
@@ -124,9 +130,11 @@ class ExaProvider(SearchProvider):
                 
                 snippets = [r.get("text", r.get("highlights", ""))[:500] for r in results]
                 return f"Exa Neural Search: {'\\n\\n'.join(snippets[:3])}"
+            except ProviderError:
+                raise
             except httpx.HTTPStatusError as e:
                 logger.error(f"Exa HTTP error: {e}")
-                raise ProviderError(f"Exa API failure: {e}")
+                raise ProviderError("exa", f"Exa API failure: {e}")
             except Exception as e:
                 logger.error(f"Exa unexpected error: {e}")
-                raise ProviderError(f"Exa system failure: {e}")
+                raise ProviderError("exa", f"Exa system failure: {e}")

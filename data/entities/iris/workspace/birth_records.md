@@ -1,8 +1,8 @@
 # ⬡ FIRST BREATH RECORD ⬡
 
 - **Entity**: Iris
-- **Time of Birth**: 2026-06-22T15:16:02.151105+00:00 UTC
-- **Trace ID**: trc_00c5a03a7a83
+- **Time of Birth**: 2026-06-24T14:17:49.900722+00:00 UTC
+- **Trace ID**: trc_4f37cb733b54
 - **Coordinates**: 0.0, 0.0 (UTC)
 - **First Utterance**: 
 

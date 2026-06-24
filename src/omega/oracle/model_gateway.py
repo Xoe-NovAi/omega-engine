@@ -71,7 +71,7 @@ from .backends.mock import OfflineMockBackend
 from .backends.openai_compat import OpenAICompatProvider
 from .backends.remote_provider import ProviderConfig
 from .resource_guard import ResourceGuard
-from .providers import GoogleAIProvider, GoogleKeyPoolProvider, LocallmsterProvider, OllamaProvider, MockProvider, NativeGGUFProvider
+from .providers import GoogleAIProvider, LocallmsterProvider, OllamaProvider, MockProvider, NativeGGUFProvider
 from .health_monitor import CircuitOpenError
 
 from .gnosis_proxy import GnosisProxy
@@ -301,7 +301,6 @@ class ModelGateway:
 
         provider_map = {
             "google": GoogleAIProvider,
-            "google-keypool": GoogleKeyPoolProvider,
             "openrouter": ModelGateway._create_openrouter,
             "opencode-zen": ModelGateway._create_openrouter,
             "cline": ModelGateway._create_openrouter,
@@ -1132,132 +1131,6 @@ class ModelGateway:
                 },
             },
         }
-
-    # ── Antigravity Standalone Module ───────────────────────────────
-    # [Mandate 16: Modularization & Portability] — standalone module,
-    # NOT a provider in the round-robin chain. Invoked explicitly only.
-
-    def _get_antigravity_manager(self):
-        """Lazy-initialize Antigravity AccountManager.
-
-        Only created when generate_antigravity() is first called.
-        Reads configurable path from AntigravityConfig (Mandate 16).
-        """
-        if not hasattr(self, '_antigravity_manager'):
-            from .antigravity import AntigravityConfig, AccountManager
-            config = AntigravityConfig.from_env()
-            self._antigravity_manager = AccountManager(config)
-        return self._antigravity_manager
-
-    def _get_antigravity_client(self):
-        """Lazy-initialize Antigravity OAuth client."""
-        if not hasattr(self, '_antigravity_client'):
-            from .antigravity import AntigravityConfig, AntigravityClient
-            config = AntigravityConfig.from_env()
-            self._antigravity_client = AntigravityClient(config)
-        return self._antigravity_client
-
-    async def generate_antigravity(
-        self,
-        model: str,
-        system_prompt: str,
-        user_query: str,
-        temperature: float = 0.7,
-        max_tokens: int = 4096,
-        trace_id: Optional[str] = None,
-        family: Optional[str] = None,
-    ) -> 'GenerateResult':
-        """Generate via the Antigravity standalone module.
-
-        This method is the thin adapter between the gateway and the
-        antigravity module. It is NEVER called by the automatic search
-        order in generate() — it must be called explicitly by the oracle
-        or by user intent when Claude/GPT-OSS models are requested.
-
-        Args:
-            model: Model name (e.g., "claude-sonnet-4.6", "gemini-3.5-flash")
-            system_prompt: System prompt
-            user_query: User query
-            temperature: Generation temperature
-            max_tokens: Maximum output tokens
-            trace_id: Optional trace ID for observability
-            family: Optional model family ("claude" or "gemini"). Auto-detected if None.
-
-        Returns:
-            GenerateResult with provider_name="antigravity"
-        """
-        import time as _time
-        start = _time.monotonic()
-
-        manager = self._get_antigravity_manager()
-        client = self._get_antigravity_client()
-
-        await manager.load()
-
-        # Auto-detect family from model name
-        if family is None:
-            if "claude" in model.lower() or "opus" in model.lower():
-                family = "claude"
-            else:
-                family = "gemini"
-
-        selection = manager.select_account(family, model)
-        if not selection:
-            return GenerateResult(
-                text="",
-                provider_name="antigravity",
-                is_cloud=True,
-                latency_ms=(_time.monotonic() - start) * 1000,
-                model_used=model,
-            )
-
-        try:
-            from .antigravity.client import AntigravityRateLimitError, AntigravityAuthError
-
-            response = await client.generate(
-                model=model,
-                system_prompt=system_prompt,
-                user_query=user_query,
-                refresh_token=selection.account.refresh_token,
-                project_id=selection.account.project_id,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                trace_id=trace_id,
-            )
-
-            manager.mark_used(selection.account)
-            latency_ms = (_time.monotonic() - start) * 1000
-
-            return GenerateResult(
-                text=response.text,
-                provider_name="antigravity",
-                is_cloud=True,
-                latency_ms=latency_ms,
-                model_used=model,
-            )
-
-        except AntigravityRateLimitError as e:
-            manager.handle_rate_limit(selection.account, family, model, e)
-            latency_ms = (_time.monotonic() - start) * 1000
-            return GenerateResult(
-                text="",
-                provider_name="antigravity",
-                is_cloud=True,
-                latency_ms=latency_ms,
-                model_used=model,
-            )
-
-        except AntigravityAuthError as e:
-            logger.warning("Antigravity auth error for %s: %s", selection.account.email, e)
-            selection.account.enabled = False
-            latency_ms = (_time.monotonic() - start) * 1000
-            return GenerateResult(
-                text="",
-                provider_name="antigravity",
-                is_cloud=True,
-                latency_ms=latency_ms,
-                model_used=model,
-            )
 
     async def is_server_alive(self) -> bool:
         """Check if any inference backend is available."""

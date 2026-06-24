@@ -18,6 +18,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 import anyio
+from omega.library.coordinator import COORDINATOR, WorkerState
+from omega.library.rate_limiter import RATE_LIMITER
 from omega.errors import (
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
     ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
@@ -73,6 +75,9 @@ class BackgroundResearcherLoop:
         self.review_queue = ReviewQueue()
         self.metrics = ResearchMetrics()
 
+        # H2-N Phase 2: WorkerCoordinator
+        self.coordinator = COORDINATOR
+
         # State
         self._running = False
         self._cycle_count = 0
@@ -82,6 +87,9 @@ class BackgroundResearcherLoop:
 
     async def run_cycle(self) -> dict:
         """Execute one complete research cycle with atomic locking and scheduling."""
+        # 0. Register with WorkerCoordinator (idempotent)
+        await self.coordinator.register("researcher")
+
         # 1. Atomic Lock to prevent concurrent execution
         try:
             self.lock_path.mkdir(parents=True)
@@ -97,135 +105,137 @@ class BackgroundResearcherLoop:
         start_time = time.monotonic()
         cycle_metrics = {}
 
-        try:
-            logger.info(f"Starting research cycle {cycle_id}")
+        # 1b. Wrap in WorkerCoordinator for pause/resume lifecycle
+        async with self.coordinator.run("researcher"):
+            await self.coordinator.wait_if_paused()
+            try:
+                logger.info(f"Starting research cycle {cycle_id}")
 
-            if not await self._is_network_available():
-                return {"cycle_id": cycle_id, "skipped": True, "reason": "no_network"}
+                if not await self._is_network_available():
+                    return {"cycle_id": cycle_id, "skipped": True, "reason": "no_network"}
 
-            # 2. Scheduling: Inject next scheduled topic into the queue
-            scheduled_task = self.scheduler.get_next_topic()
-            if scheduled_task:
-                self.queue.enqueue(
-                    scheduled_task.topic, 
-                    base_priority=scheduled_task.priority, 
-                    user_requested=False
-                )
-                logger.info(f"Scheduled topic enqueued: {scheduled_task.topic}")
+                # 2. Scheduling: Inject next scheduled topic into the queue
+                scheduled_task = self.scheduler.get_next_topic()
+                if scheduled_task:
+                    self.queue.enqueue(
+                        scheduled_task.topic, 
+                        base_priority=scheduled_task.priority, 
+                        user_requested=False
+                    )
+                    logger.info(f"Scheduled topic enqueued: {scheduled_task.topic}")
 
-            # 3. Get next task (Weighted Fair)
-            task = self.queue.dequeue()
-            if task is None:
-                await self._grow_frontier()
+                # 3. Get next task (Weighted Fair)
                 task = self.queue.dequeue()
                 if task is None:
-                    # Idle: Process one item from the review queue
-                    review_item = self.review_queue.dequeue()
-                    if review_item:
-                        logger.info(f"Processing review item: {review_item['topic']}")
-                        return {"cycle_id": cycle_id, "action": "review", "topic": review_item['topic']}
-                    
-                    result = {"cycle_id": cycle_id, "trace_id": trace_id, "skipped": True, "reason": "empty_queue"}
-                    await self._post_to_hivemind(result)
-                    return result
+                    await self._grow_frontier()
+                    task = self.queue.dequeue()
+                    if task is None:
+                        # Idle: Process one item from the review queue
+                        review_item = self.review_queue.dequeue()
+                        if review_item:
+                            logger.info(f"Processing review item: {review_item['topic']}")
+                            return {"cycle_id": cycle_id, "action": "review", "topic": review_item['topic']}
+                        
+                        result = {"cycle_id": cycle_id, "trace_id": trace_id, "skipped": True, "reason": "empty_queue"}
+                        await self._post_to_hivemind(result)
+                        return result
 
-            logger.info(f"Researching: '{task.topic}' (priority={task.priority:.2f})")
+                logger.info(f"Researching: '{task.topic}' (priority={task.priority:.2f})")
 
-            # 4. Discovery-First Local Scan
-            local_context = await self._local_discovery_scan(task)
-            
-            # 5. Triage
-            triage = await self._triage(task)
-            if triage.skip:
-                await self.checkpoint.mark_skip(task)
-                return {"cycle_id": cycle_id, "task": task.topic, "skipped": True, "action": "skip", "reason": triage.reason}
+                # 4. Discovery-First Local Scan
+                local_context = await self._local_discovery_scan(task)
+                
+                # 5. Triage
+                triage = await self._triage(task)
+                if triage.skip:
+                    await self.checkpoint.mark_skip(task)
+                    return {"cycle_id": cycle_id, "task": task.topic, "skipped": True, "action": "skip", "reason": triage.reason}
 
-            # 6. Search (SearXNG + Cloud)
-            sources = await self._search(task, triage)
-            if not sources:
-                task.attempts += 1
-                await self.checkpoint.save(task)
-                return {"cycle_id": cycle_id, "task": task.topic, "skipped": True, "action": "defer", "reason": "no_sources"}
+                # 6. Search (SearXNG + Cloud)
+                sources = await self._search(task, triage)
+                if not sources:
+                    task.attempts += 1
+                    await self.checkpoint.save(task)
+                    return {"cycle_id": cycle_id, "task": task.topic, "skipped": True, "action": "defer", "reason": "no_sources"}
 
-            all_urls = []
-            for provider_urls in sources.values():
-                all_urls.extend(provider_urls)
-            task.sources = list(set(all_urls))[:50]
-            task.state = "searched"
-            await self.checkpoint.save(task)
-
-            # 7. Extract
-            content = await self._extract(task, sources)
-            # Merge local context with web content
-            full_content = f"--- LOCAL CONTEXT ---\n{local_context}\n\n--- WEB CONTENT ---\n{content}"
-            task.state = "extracted"
-            await self.checkpoint.save(task)
-
-            if not content and not local_context:
-                return {"cycle_id": cycle_id, "task": task.topic, "skipped": True, "action": "skip", "reason": "no_content"}
-
-            # 8. Distill (3-Tier Pipeline)
-            t1_start = time.monotonic()
-            gnosis = await self.distiller.distill(
-                topic=task.topic,
-                content=full_content,
-                sources=list(sources.keys()),
-                prompt_mode=None,
-            )
-            t1_end = time.monotonic()
-            
-            # Log metrics for this cycle
-            cycle_metrics = {
-                "t1_latency": t1_end - t1_start,
-                "t1_quality": 1.0 if gnosis else 0.0,
-                "circuit_states": {"t1": "CLOSED", "t2": "CLOSED", "t3": "CLOSED"},
-                "training_triple_saved": True
-            }
-            await self.metrics.log_cycle(task.topic, cycle_metrics)
-
-            task.state = "distilled"
-            await self.checkpoint.save(task)
-
-            # 9. Convergence & Update
-            converged = await self.convergence.check(task, gnosis)
-            updated = await self.soul_updater.update(task, gnosis)
-
-            if converged or updated:
-                await self.checkpoint.mark_done(task)
-            else:
-                task.verification_count += 1
+                all_urls = []
+                for provider_urls in sources.values():
+                    all_urls.extend(provider_urls)
+                task.sources = list(set(all_urls))[:50]
+                task.state = "searched"
                 await self.checkpoint.save(task)
 
-            # 10. Grow frontier
-            await self._enqueue_adjacent(task, gnosis)
+                # 7. Extract
+                content = await self._extract(task, sources)
+                # Merge local context with web content
+                full_content = f"--- LOCAL CONTEXT ---\n{local_context}\n\n--- WEB CONTENT ---\n{content}"
+                task.state = "extracted"
+                await self.checkpoint.save(task)
 
-            result = {
-                "cycle_id": cycle_id,
-                "trace_id": trace_id,
-                "task": task.topic,
-                "action": "done" if converged else "partial",
-                "converged": converged,
-                "updated": updated,
-            }
-            await self._post_to_hivemind(result)
-            return result
+                if not content and not local_context:
+                    return {"cycle_id": cycle_id, "task": task.topic, "skipped": True, "action": "skip", "reason": "no_content"}
 
-        except OmegaError:
-            logger.error(f"Research cycle failed (OmegaError): {e}")
-            return {"cycle_id": cycle_id, "error": str(e)}
-        except Exception as e:
-            logger.error(f"Research cycle failed (Unexpected): {e}", exc_info=True)
-            return {"cycle_id": cycle_id, "error": str(e)}
+                # 8. Distill (3-Tier Pipeline)
+                t1_start = time.monotonic()
+                gnosis = await self.distiller.distill(
+                    topic=task.topic,
+                    content=full_content,
+                    sources=list(sources.keys()),
+                    prompt_mode=None,
+                )
+                t1_end = time.monotonic()
+                
+                # Log metrics for this cycle
+                cycle_metrics = {
+                    "t1_latency": t1_end - t1_start,
+                    "t1_quality": 1.0 if gnosis else 0.0,
+                    "circuit_states": {"t1": "CLOSED", "t2": "CLOSED", "t3": "CLOSED"},
+                    "training_triple_saved": True
+                }
+                await self.metrics.log_cycle(task.topic, cycle_metrics)
 
-        finally:
-            self._running = False
-            try:
-                self.lock_path.rmdir()
-            except OmegaError:
-                pass
+                task.state = "distilled"
+                await self.checkpoint.save(task)
+
+                # 9. Convergence & Update
+                converged = await self.convergence.check(task, gnosis)
+                updated = await self.soul_updater.update(task, gnosis)
+
+                if converged or updated:
+                    await self.checkpoint.mark_done(task)
+                else:
+                    task.verification_count += 1
+                    await self.checkpoint.save(task)
+
+                # 10. Grow frontier
+                await self._enqueue_adjacent(task, gnosis)
+
+                result = {
+                    "cycle_id": cycle_id,
+                    "trace_id": trace_id,
+                    "task": task.topic,
+                    "action": "done" if converged else "partial",
+                    "converged": converged,
+                    "updated": updated,
+                }
+                await self._post_to_hivemind(result)
+                return result
+
+            except OmegaError as e:
+                logger.error(f"Research cycle failed (OmegaError): {e}")
+                return {"cycle_id": cycle_id, "error": str(e)}
             except Exception as e:
-                logger.error("Failed to remove research lock: %s", e, exc_info=True)
-                pass
+                logger.error(f"Research cycle failed (Unexpected): {e}", exc_info=True)
+                return {"cycle_id": cycle_id, "error": str(e)}
+            finally:
+                self._running = False
+                try:
+                    self.lock_path.rmdir()
+                except OSError:
+                    pass
+                except Exception as e:
+                    logger.error("Failed to remove research lock: %s", e, exc_info=True)
+                    pass
 
     async def _local_discovery_scan(self, task: ResearchTask) -> str:
         """Perform a 'Discovery-First' scan of the local codebase for relevant snippets."""
@@ -324,6 +334,8 @@ class BackgroundResearcherLoop:
         return "\n\n---\n\n".join(content_chunks[:3])
 
     async def _fetch_content(self, url: str) -> Optional[str]:
+        # [id-soft: quake3-1999] netchan Rate Limiting — pace outbound fetches
+        await RATE_LIMITER.wait(url)
         firecrawl_content = await self.search_fleet.extract_firecrawl(url)
         if firecrawl_content and len(firecrawl_content) > 100:
             return firecrawl_content[:10000]
@@ -369,6 +381,10 @@ class BackgroundResearcherLoop:
             for py_file in src_dir.rglob("*.py"):
                 try:
                     content = py_file.read_text()
+                    # NOTE: FIXME/HACK/TODO pattern extraction kept for local debt tracking
+                    # but NOT added to search candidates — these garbage queries broke SearXNG
+                    # by sending [FIXME] as literal search terms (D-kal-163 remediation).
+                    # See docs/archive/SEARXNG_FRAGILITY_POSTMORTEM.md for full chain.
                     for keyword, base_priority in [("FIXME", 0.9), ("HACK", 0.8), ("TODO", 0.5)]:
                         if keyword in content:
                             for line in content.split("\n"):
@@ -377,7 +393,10 @@ class BackgroundResearcherLoop:
                                     comment = line[idx + len(keyword):].strip().lstrip(": ")
                                     rel_path = py_file.relative_to(project_root)
                                     topic = f"[{keyword}] {comment} — {rel_path}" if comment else f"[{keyword}] {rel_path}"
-                                    candidates.append({"topic": topic, "source": "codebase", "priority": base_priority, "depth": 1})
+                                                    # ⚠️ SKIP sending [FIXME]/[HACK]/[TODO] as search queries
+                                    # These are code-debt markers, not research topics.
+                                    # Log for local tracking only — never enqueue as search.
+                                    logger.debug("Code debt found (search-skipped): %s", topic)
                                     break
                 except (IOError, OSError):
                     continue
