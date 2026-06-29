@@ -219,7 +219,7 @@ The `_omega_default` IWAD provides the universal runtime entities (sysadmin, dat
 | M4 | Sequentiality | ✅ Enforced | Plan->Verify->Execute |
 | M5 | Gnosis Preservation | ❌ VIOLATED | Soul Distiller exists but NOT wired as session-end hook — 8/10 Pillar Keepers stale >10 days, 5 >14 days. **Council P7 Finding — requires auto-distillation trigger.** |
 | M6 | Podman Sovereignty | ✅ Enforced | keep-id protocol |
-| M7 | Local-First | ⚠️ RISK | providers.yaml local_first, but no observation masking means PII leaks to cloud fallback. **Council P7 Finding — PIIMasker required.** |
+| M7 | Local-First | ⚠️ RISK (reduced) | providers.yaml local_first. PII masking implemented — cloud providers receive tokenized prompts, local providers bypass entirely. Risk reduced from HIGH. |
 | M8 | Zero Telemetry | ✅ Enforced | CI grep telemetry. PII masking does not count as telemetry (local-only). |
 | M9 | Error Integrity | ✅ Enforced | 0 bare except |
 | M10 | Fleet Integrity | ✅ Enforced | 11 agents cap (M10 compliant — 3 slots remaining) |
@@ -233,7 +233,7 @@ The `_omega_default` IWAD provides the universal runtime entities (sysadmin, dat
 | M18 | Token Efficiency | ✅ Enforced | Prompt discipline |
 | M19 | Adversarial Alchemy | ✅ Enforced | Somatic Save-Point |
 | M20 | SomaticState | ⏳ PENDING | **Strike 2** — ctypes bindings. Fallback: YAML-only UVS. |
-| M21 | Gate Integrity | 🟡 19/24 | 19 contract tests. 5 more needed (contract tests for GenerateResult to verify latency_ms + model_used). |
+| M21 | Gate Integrity | 🟡 22/24 | 22 contract tests. 3 added for GenerateResult (latency_ms, model_used on success, model_used on fallback). 2 more needed for edge cases. |
 | M22 | Response Provenance | ✅ **RESOLVED** | `provider_name` flows correctly through GenerateResult → TokenLedger. Contextvars safety net eliminates `trace_id="unknown"`. `latency_ms` and `model_used` now populated on both success and fallback GenerateResult paths. **All 4 breaks fixed by Trace ID gap implementation.** |
 
 ---
@@ -494,7 +494,7 @@ Which agent owns which H2 tracks and Epoch Strikes:
 | **Identity** | Cross-entity L3 sharing | >=5 principles | 🟡 2 (Engine-Stack + LMS) |
 | **UX** | Hub dashboard | Live :8016 | 🟡 REST only (no HTML) |
 | **Compliance** | M21 contract tests | >=24 | 🟡 19/24 |
-| **Compliance** | M22 Provenance wired | Full | ❌ NOT STARTED |
+| **Compliance** | M22 Provenance wired | Full | ✅ **RESOLVED** |
 | **Synthesis** | Local model quality | +10% on bench | ⏳ (planned S2) |
 | **Synthesis** | Training examples | >=500 | 🟡 Auto-collecting |
 

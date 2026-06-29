@@ -908,7 +908,7 @@ class ModelGateway:
         return GenerateResult(
             text=self._fallback_response(model_name, system_prompt, user_query),
             provider_name="fallback",
-            is_cloud=False,
+            is_cloud=self._is_cloud_provider_name("fallback"),  # Derived from provider_name per M22
             latency_ms=_latency_ms,   # [M22] Report measured latency (0.0 if never reached a provider)
             model_used=model_name,    # [M22] Report the model that was requested
         )

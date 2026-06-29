@@ -9,6 +9,13 @@ import re
 import pytest
 from unittest.mock import MagicMock, AsyncMock, patch
 
+# ── pii-shield availability check ──────────────────────────────────
+try:
+    import pii_shield  # noqa: F401
+    _PII_SHIELD_AVAILABLE = True
+except ImportError:
+    _PII_SHIELD_AVAILABLE = False
+
 from omega.oracle.pii_masker import (
     PIIMasker,
     PIIRedactionStyle,
@@ -324,13 +331,15 @@ class TestPIIMaskerLegacyPatterns:
 class TestPIIMaskerPiiShield:
     """Tests for pii-shield integration (when available)."""
 
+    @pytest.mark.skipif(
+        not _PII_SHIELD_AVAILABLE,
+        reason="pii-shield not installed (pip install pii-shield)",
+    )
     @pytest.mark.asyncio
     async def test_pii_shield_available(self):
         """Verify pii-shield is loaded when available."""
         masker = PIIMasker()
-        assert masker._pii_scanner is not None, (
-            "pii-shield should be loaded. If not installed, this test is skipped."
-        )
+        assert masker._pii_scanner is not None
         if masker._pii_scanner:
             detections = await masker.detect("test@example.com", use_pii_shield=True)
             # At least one detection by either pii-shield or regex
