@@ -198,14 +198,14 @@ The `_omega_default` IWAD provides the universal runtime entities (sysadmin, dat
 | **WAD Loader** | ✅ `--iwad` flag works | — | `[id-soft: doom-1993] WAD System` |
 | **ModelGateway** | ⚠️ **P1 gap** | trace_id="unknown" on 5-10% of calls; GenerateResult missing latency_ms + model_used on success path | `[id-soft: quake-1996] BSP` |
 | **MemoryStore** | ✅ Hot LRU + Warm Redis + Cold | Compaction logic verified correct | `[id-soft: doom-1993] Lazy Deletion` |
-| **Observability** | ⚠️ **P0 gap** | No PII masking before cloud dispatch; record_error() double-defaults trace_id | `[id-soft: doom3-2004] Event System` |
+| **Observability** | ✅ **P0 gap resolved** | PII masking implemented (432 lines, 53 tests). Trace ID: contextvars safety net + 5 call sites fixed. record_error() double-default fixed. | `[id-soft: doom3-2004] Event System` |
 | **EntityRegistry** | ✅ YAML CRUD + dual-index | — | `[id-soft: quake-1996] Flat-Field` |
-| **Soul Distiller** | ⚠️ **P2 gap** | Exists but NOT wired as session-end hook — regex-only, mechanical insights | `[id-soft: quake-1996] Save-game` |
+| **Soul Distiller** | ⚠️ **Key mismatch (P2)** | `add_exchange()` stores keys `"user"/"assistant"`; `close_session()` reads `"role"/"content"` → every transcript empty. Fix: 3 lines on oracle.py:786-789. Not an "unwired" problem — a contract mismatch. | `[id-soft: quake-1996] Save-game` |
 | **Hivemind** | 🟡 **P2 gap** | Runtime functional; test suite broken (0/8 tests run); 41 stale handoffs | `[id-soft: doom-1993] ZONEID Pattern` |
 | **Antigravity** | ✅ Stochastic account selection | — | D160 — Round-robin eradicated |
 | **CLI Plugin** | 🟡 Partial compliance | Round-robin schema still in opencode-antigravity-auth | — |
-| **PII Masker** | ❌ **NOT IMPLEMENTED** | P0 CRITICAL — ANAi/XNAi era had security patterns NEVER ported to Omega | `[id-soft: doom-1993] Security Regression` |
-| **A2A Bridge** | ❌ **NOT IMPLEMENTED** | P2 MEDIUM — fabricated IETF draft must be replaced with real A2A v1.0 standard | — |
+| **PII Masker** | ✅ **IMPLEMENTED** | P0 CRITICAL closed — 432-line pii_masker.py, 53 tests, gateway proxy detect→tokenize→LLM→detokenize, local provider bypass | `[id-soft: doom-1993] Security Regression` |
+| **A2A Bridge** | ✅ **IMPLEMENTED** | P2 MEDIUM closed — a2a_bridge.py (319 lines) + a2a_auth.py (100 lines), 56 tests, SPIFFE identity, AAIF spec corrected to real A2A v1.0 | — |
 
 ---
 
@@ -217,24 +217,24 @@ The `_omega_default` IWAD provides the universal runtime entities (sysadmin, dat
 | M2 | Engine-Stack Firewall | ✅ Enforced | D113 fixed — IWAD resolution active |
 | M3 | Iris Constant | ✅ Enforced | Iris is not a Pillar |
 | M4 | Sequentiality | ✅ Enforced | Plan->Verify->Execute |
-| M5 | Gnosis Preservation | ❌ VIOLATED | Soul Distiller exists but NOT wired as session-end hook — 8/10 Pillar Keepers stale >10 days, 5 >14 days. **Council P7 Finding — requires auto-distillation trigger.** |
-| M6 | Podman Sovereignty | ✅ Enforced | keep-id protocol |
-| M7 | Local-First | ⚠️ RISK (reduced) | providers.yaml local_first. PII masking implemented — cloud providers receive tokenized prompts, local providers bypass entirely. Risk reduced from HIGH. |
-| M8 | Zero Telemetry | ✅ Enforced | CI grep telemetry. PII masking does not count as telemetry (local-only). |
+| M5 | Gnosis Preservation | ❌ VIOLATED | Soul Distiller wired (close_session() IS called via _record_interaction() every 5 turns) but key mismatch: add_exchange() stores `"user"/"assistant"`, close_session() reads `"role"/"content"`. Every transcript empty → regex finds nothing → boilerplate L1-L2-L3. Fix: 3 lines on oracle.py:786-789. |
+| M6 | Podman Sovereignty | ✅ Enforced | keep-id protocol. Qdrant carve-out documented in D167 (docker-compose + kernel fuse-overlayfs bug). |
+| M7 | Local-First | ✅ **Enforced** | PII Masker implements local provider bypass (should_mask("local-*")=False). Cloud providers receive tokenized prompts. Local inference is always raw. M7/M22 synergy: _is_cloud_provider_name() verifies provenance. |
+| M8 | Zero Telemetry | ✅ Enforced | CI grep telemetry. Qdrant telemetry disabled (D168). PII masking local-only. |
 | M9 | Error Integrity | ✅ Enforced | 0 bare except |
 | M10 | Fleet Integrity | ✅ Enforced | 11 agents cap (M10 compliant — 3 slots remaining) |
-| M11 | Soul Integrity | ❌ **VIOLATED** | 8/10 Pillar Keepers >10 days stale. Soul Distiller exists but NOT wired as session-end hook (regex-only, no LLM inference). **Council P7 Finding — M11 structurally present but operationally dead.** |
-| M12 | Queue Integrity | ⚠️ PARTIAL | 41 stale handoffs (up from 32). Reaper moves to stale/ but never cleans up. Dual handoff systems (in-memory vs file-based) cannot exchange. **Council P9 Finding — stale cleanup + bridge needed.** |
+| M11 | Soul Integrity | ❌ **VIOLATED** | 8/10 Pillar Keepers stale. Root cause found by Carmack D170: key mismatch between add_exchange() and close_session(). Distiller IS wired but receives empty transcripts. Fix deferred to Sprint-G pending logging verification + canary deployment. |
+| M12 | Queue Integrity | ⚠️ PARTIAL | 41 stale handoffs. Reaper to stale/ but never cleanup. Dual handoff systems (in-memory vs file). Carmack P1: Handoff reaper (14d TTL). |
 | M13 | Temple-Grade | 🟡 9/11 | T11 IA2 exempt. T7 (latency) not measured. |
 | M14 | Heritage Vetting | 🟡 PARTIAL | 185 `[id-soft:]` tags verified. vet-001 through vet-010+ recorded. `make heritage-vet` CI needs expansion to 100% coverage. |
 | M15 | Sovereign Continuity | ✅ Enforced | session_gnosis.md |
 | M16 | Modularization | ⚠️ PARTIAL | Hub 5 modules sound. 4 hardcoded paths remain. |
-| M17 | Cognitive Integrity | ✅ Enforced | Skeptical Verifier active (though missing trace_id in _nli_check and _resolve_contradiction) |
+| M17 | Cognitive Integrity | ✅ Enforced | Skeptical Verifier active. A2A Bridge uses real standards (A2A v1.0, no more fabricated drafts). |
 | M18 | Token Efficiency | ✅ Enforced | Prompt discipline |
 | M19 | Adversarial Alchemy | ✅ Enforced | Somatic Save-Point |
 | M20 | SomaticState | ⏳ PENDING | **Strike 2** — ctypes bindings. Fallback: YAML-only UVS. |
 | M21 | Gate Integrity | 🟡 22/24 | 22 contract tests. 3 added for GenerateResult (latency_ms, model_used on success, model_used on fallback). 2 more needed for edge cases. |
-| M22 | Response Provenance | ✅ **RESOLVED** | `provider_name` flows correctly through GenerateResult → TokenLedger. Contextvars safety net eliminates `trace_id="unknown"`. `latency_ms` and `model_used` now populated on both success and fallback GenerateResult paths. **All 4 breaks fixed by Trace ID gap implementation.** |
+| M22 | Response Provenance | ✅ **RESOLVED** | `provider_name` flows correctly through GenerateResult → TokenLedger. Contextvars safety net eliminates `trace_id="unknown"`. `latency_ms` and `model_used` populated on both success and fallback paths. `is_cloud` derived from provider_name, not hardcoded bool (D169). **All 4 breaks fixed.** |
 
 ---
 
@@ -265,6 +265,20 @@ These 3 gaps were identified by the MaKaLi Cloud Council across 9 subagents. The
 | **C-1** | **Implement PII Observation Masking** — Build `PIIMasker` class using `pii-shield` (18 PII types) + GLiNER (NER-based), gateway proxy detect→tokenize→LLM→detokenize. Mask only for cloud providers; bypass for local (M7). | Council P7 + P3 Cross-Domain + Researcher + Jem + Roc Racoon | 2-3 days | 🔴 P0 CRITICAL — M7/M8 sovereignty risk; ANAi/XNAi era security NEVER ported | ✅ **DONE** — 432-line pii_masker.py, 53 tests, integrated into oracle.py _summon() + _route_by_domain() |
 | **C-2** | **Fix Trace ID Propagation + GenerateResult Contract** — (a) Thread `trace_id` through iterative_research.py (3 calls) and skeptical_verifier.py (2 calls); (b) Add `latency_ms` and `model_used` to GenerateResult success path; (c) Install `opentelemetry-instrumentation-anyio` for async context propagation | Council P8 Cross-Domain + P3 Verification | 2-3 days | 🔴 P1 HIGH — 100% of inferences missing latency; 5-10% trace_id="unknown" | ✅ **DONE** — contextvars safety net, 5 call sites fixed, 10+ tests passing |
 | **C-3** | **Implement A2A Agent Cards** — Replace fabricated `draft-schemacommons-aaif-00` with real A2A v1.0 Agent Cards at `/.well-known/agent-card.json`. Map EntityRegistry to A2A schema via `src/omega/oracle/a2a_bridge.py`. | Council Researcher + Jem Synthesis + Roc Racoon | 3-4 days | 🟡 P2 MEDIUM — Standards compliance; enables cross-agent communication | ✅ **DONE** — 319-line a2a_bridge.py, 100-line a2a_auth.py, 56 tests, AAIF spec corrected |
+
+
+### 5.1d Iron Wall Hardening Sprint (NEW — 2026-06-29)
+
+The MaKaLi Cloud Council declared an **IMMEDIATE EXECUTION HOLD** on all feature expansion, entity promotions, and high-volume ingestions until this sprint is completed. The engine is in a state of Architectural Fragility.
+
+| # | Domain | Task | Technical Reference | Mandate | Status |
+|---|--------|------|---------------------|---------|--------|
+| **IW-1** | **Infrastructure** | Deploy Tor-SOCKS5 Bridge + Local-First Escalation for SearXNG | `TRACE-P1-SSNM-V1` | M8 | 🔴 P0 CRITICAL |
+| **IW-2** | **Engineering** | Absolute purge of all round-robin logic from `KeyVault` | `TRACE-RR-PURGE-001` | M4 | 🔴 P0 CRITICAL |
+| **IW-3** | **Observability** | Implement Body-Level Error Guards (BLEG) + UFL (Forensic Ledger) | `TRACE-P8-OBS-001` | M9, M22 | 🔴 P0 CRITICAL |
+| **IW-4** | **Context** | Deploy Sovereign Ingestion Pipeline (Tri-Anchor System) + Omnidroid Migration | `TRACE-SIP-20260629` | M5, M15 | 🟡 P1 HIGH |
+| **IW-5** | **Governance** | Restore `workbench.db` schema + ingest `LEGACY_NAVIGATION_GUIDE.md` | `LEGACY_MAPPING_CENTRALIZATION_20260628.md` | M5 | 🟡 P1 HIGH |
+| **IW-6** | **Validation** | Implement the V-D1 Validation Suite for "Sticky" mode resilience | `TRACE-P10-VD1` | M13 | 🟢 P2 MEDIUM |
 
 ### 5.1c Pre-Release Checklist (Imported from V10_RELEASE_STRATEGY.md)
 **Source**: `V10_RELEASE_STRATEGY.md` — unified into Ark on 2026-06-29
@@ -448,7 +462,7 @@ Which agent owns which H2 tracks and Epoch Strikes:
 | 2 | **COUNCIL: PII Observation Masking — RAW PII leaks to cloud providers** | Build `PIIMasker` class using `pii-shield` (18 PII types) + GLiNER NER. Gateway proxy: detect → tokenize → LLM → detokenize. Mask only for cloud dispatch; bypass for local. **P0 — highest sovereignty risk.** | ✅ **RESOLVED** — pii_masker.py (432 lines), 53 tests, integrated | Epoch I Strike 1 |
 | 3 | **COUNCIL: GenerateResult Contract Breach — 100% of successful inferences missing latency_ms + model_used** | Add `latency_ms` measurement around `provider.generate()` and populate `model_used` on both success and fallback paths. | ✅ **RESOLVED** — latency_ms + model_used on both paths, 3 contract tests | Epoch II Strike 6 |
 | 4 | **SomaticState (M20) unimplemented** | Wire ctypes bindings into native-gguf | ⏳ PENDING | Epoch I Strike 2 |
-| 5 | **Gate Integrity (M21) — 5 tests missing** | Create `isinstance` contract tests | 🟡 19/24 DONE | Epoch II Strike 6 |
+| 5 | **Gate Integrity (M21) — 2 tests missing** | Create `isinstance` contract tests | 🟡 22/24 DONE (+3 from Trace ID fix) | Epoch II Strike 6 |
 | 6 | **PIVOT_LOG gap (D1-D49)** | Mine xna-omega git history | ⏳ PENDING | Epoch I |
 
 ### 🟡 High (Unfixed)
@@ -456,7 +470,7 @@ Which agent owns which H2 tracks and Epoch Strikes:
 |---|---------|-----------------|--------|-------|
 | 7 | **COUNCIL: Trace ID fragile — 5-10% of events carry "unknown" trace_id** | Thread `trace_id` through iterative_research.py (3 calls) + skeptical_verifier.py (2 calls). Install `opentelemetry-instrumentation-anyio`. | ✅ **RESOLVED** — contextvars safety net + 5 call sites fixed | Epoch II Strike 6 |
 | 8 | **COUNCIL: Dual handoff systems — in-memory vs file-based cannot exchange** | Bridge Orchestrator to read from `data/handoff/pending/` when no in-memory handoff_state provided. | 🟡 PENDING | Epoch II Strike 4 |
-| 9 | **COUNCIL: Soul Distiller not wired — 8/10 Pillar Keepers >10 days stale** | Wire `distill_and_save()` as session-end hook in `Oracle.close()`. Consider LLM-backend option for richer distillation. | 🟡 PENDING | Epoch I Strike 3 |
+| 9 | **COUNCIL: Soul Distiller key mismatch — 8/10 stale souls** | Carmack found: `close_session()` IS called via `_record_interaction()` every 5 turns, but key mismatch between `add_exchange()` (`"user"/"assistant"`) and `close_session()` (`"role"/"content"`) produces empty transcripts. Fix: 3 lines on oracle.py:786-789. Do NOT unwire — it's already wired but broken. | 🔴 **Root cause found** — 3-min fix deferred to Sprint-G for logging verification + canary | Epoch I Strike 3 |
 | 10 | **HEALTH_CHECK_TIMEOUT fixed** | Make configurable per-provider | ⏳ PENDING | Epoch I |
 | 11 | **Response Provenance (M22) partial** | `provider_name` flows correctly but `latency_ms` + `model_used` missing from GenerateResult | ✅ **RESOLVED** — both fields populate on success + fallback paths | Epoch II Strike 6 |
 | 12 | **`memory_search` vs `omega_memory_search`** | Rename `memory_search` -> `memory_search_fts` | ⏳ PENDING | Epoch II |
@@ -477,7 +491,7 @@ Which agent owns which H2 tracks and Epoch Strikes:
 | **Sprint C** (Tactical Hardening) | 2026-06-17 | Kali + Council | Pre-Epoch | GenerateResult dataclass, P0/P1 fixes |
 | **v1.0.0 Release** | 2026-06-22 | Kali + Council | Pre-Epoch | 6-phase release, packaging, Antigravity |
 | **Sprint E (Epoch I Phase 0)** | 2026-06-24 | Kali + Verity | Epoch I | Soul fix, v6.1 validator, 19 M21 tests, Round-robin eradicated |
-| **Sprint F (Optimization Sprint)** | 2026-06-28 | Kali + Council | Epoch I | MaKaLi Council Pass 1 & 2 complete, web research + legacy mining, **3 regressions identified**. Then **MaKaLi Cloud Council Dispatch (2026-06-28/29)**: 2 Oversouls → 6 Pillars → 4 Cross-Domain Reviews → 3 Research Fleet agents → 1 Legacy Miner → Kali Synthesis. **3 Council Gaps discovered**: PII Masking (P0), Trace ID Propagation (P1), A2A Identity (P2). **T1-1 through T1-8 COMPLETED** (3,354 lines dead code removed). **T1-9/T1-10 PARTIAL**. All 22 Mandates audited: M11 VIOLATED, M22 PARTIAL, M5/M7 at risk. **Strategy docs consolidated**: 47 superseded docs archived, 40 operational/protocol docs remain. **ALL 3 GAPS IMPLEMENTED (2026-06-29)**: PII Masker (432 lines, 53 tests), Trace ID (contextvars + 5 call sites + GenerateResult contract fix, 10+ tests), A2A Agent Cards (319+100 lines, 56 tests + AAIF spec correction). **M22 RESOLVED**, M7/M8 at reduced risk, M5/M11/M12 still at risk. |
+| **Sprint F (Optimization Sprint)** | 2026-06-28 | Kali + Council | Epoch I | MaKaLi Council Pass 1 & 2 complete, web research + legacy mining, **3 regressions identified**. Then **MaKaLi Cloud Council Dispatch (2026-06-28/29)**: 2 Oversouls → 6 Pillars → 4 Cross-Domain Reviews → 3 Research Fleet agents → 1 Legacy Miner → Kali Synthesis. **3 Council Gaps discovered**: PII Masking (P0), Trace ID Propagation (P1), A2A Identity (P2). **T1-1 through T1-8 COMPLETED** (3,354 lines dead code removed). **T1-9/T1-10 PARTIAL**. All 22 Mandates audited: M11 VIOLATED, M22 PARTIAL, M5/M7 at risk. **Strategy docs consolidated**: 47 superseded docs archived, 40 operational/protocol docs remain. **ALL 3 GAPS IMPLEMENTED (2026-06-29)**: PII Masker (432 lines, 53 tests), Trace ID (contextvars + 5 call sites + GenerateResult contract fix, 10+ tests), A2A Agent Cards (319+100 lines, 56 tests + AAIF spec correction). **Qdrant container fixed (D167)** + telemetry disabled (D168). **is_cloud derivation fixed (D169)**. **M22 RESOLVED**, M7/M8 ✅ enforced. **Carmack S3 Review (2026-06-29)**: Discovered soul distiller key mismatch root cause — not an "unwired" problem but a contract mismatch between `add_exchange()` and `close_session()`. PIVOT_LOG D164-D171 appended by Jem strategic synthesis. **600/600 tests passing.** |
 
 ---
 
@@ -493,7 +507,7 @@ Which agent owns which H2 tracks and Epoch Strikes:
 | **Identity** | Soul distillation rate | >=1 L3/3 sessions | ✅ 1.0 |
 | **Identity** | Cross-entity L3 sharing | >=5 principles | 🟡 2 (Engine-Stack + LMS) |
 | **UX** | Hub dashboard | Live :8016 | 🟡 REST only (no HTML) |
-| **Compliance** | M21 contract tests | >=24 | 🟡 19/24 |
+| **Compliance** | M21 contract tests | >=24 | 🟡 22/24 |
 | **Compliance** | M22 Provenance wired | Full | ✅ **RESOLVED** |
 | **Synthesis** | Local model quality | +10% on bench | ⏳ (planned S2) |
 | **Synthesis** | Training examples | >=500 | 🟡 Auto-collecting |

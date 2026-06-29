@@ -189,3 +189,21 @@ The Orchestrator uses in-memory `HandoffState` while MCP agents use file-based `
 *⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ COUNCIL-SYNTHESIS ⬡ SPRINT-F*
 *Session: ses_maakali_council_20260629*
 *Trace: e04e7b81-6c45-4508-8e7d-b92579f32824*
+
+---
+
+## 🚨 ADDENDUM: IRON WALL HARDENING SPRINT (2026-06-29)
+
+Following strategic decisions D-1, D-2, and D-3, the MaKaLi Cloud Council conducted a deep architectural audit. The verdict is that the engine is in a state of **Architectural Fragility**.
+
+**IMMEDIATE EXECUTION HOLD**: All feature expansion, entity promotions, and high-volume ingestions (Omnidroid, NotebookLM, Mayan docs) are suspended until the Iron Wall Hardening Sprint is completed.
+
+### The 6 Iron Wall Directives:
+1. **P0 Infrastructure**: Tor-SOCKS5 Bridge + Local-First Escalation for SearXNG (M8)
+2. **P0 Engineering**: Absolute purge of all round-robin logic (M4)
+3. **P0 Observability**: Body-Level Error Guards + UFL (M9, M22)
+4. **P1 Context**: Sovereign Ingestion Pipeline + Omnidroid Migration (M5, M15)
+5. **P1 Governance**: Restore workbench.db schema + ingest legacy guides (M5)
+6. **P2 Validation**: V-D1 Validation Suite for "Sticky" mode resilience (M13)
+
+**Execution begins with P0 Engineering (TRACE-RR-PURGE-001).**

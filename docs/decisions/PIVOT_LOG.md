@@ -1632,7 +1632,7 @@ The existing R-09 (in `R_ID_SOFTWARE_EXTRACTION_MATRIX.md:48` and `R_DOOM_GUY_ID
 
 ---
 
-*PIVOT_LOG.md — Immutable. Every decision recorded. 89 decisions tracked.*
+*PIVOT_LOG.md — Immutable. Every decision recorded. 172 decisions tracked (D1-D172).*
 
 ---
 
@@ -2322,7 +2322,7 @@ Entity dispatch in oracle.py already used `entity.model` as a fallback, but ther
 
 ---
 
-*PIVOT_LOG.md — Immutable. Every decision recorded. 110 decisions tracked (D1-D110).*
+*PIVOT_LOG.md — Immutable. Every decision recorded. 172 decisions tracked (D1-D172).*
 
 ---
 
@@ -4280,3 +4280,306 @@ The engine is architecturally sound but operationally broken at the wiring layer
 ---
 
 ---
+
+## Decision 164: PII Observation Masker Implementation
+
+**Date**: 2026-06-28
+**Channel**: OpenCode (Kali→Council Execution)
+**Entity**: KALI
+**Trace**: trc_pii_masker_impl
+
+### Context
+The MaKaLi Cloud Council (D163) found that raw PII (emails, SSNs, API keys, credit cards) was flowing unmasked to cloud providers. The ANAi/XNAi era had security patterns (`validate_safe_input()`, `sanitize_content()`) that were NEVER ported to Omega — an 8-month security regression. This was the highest-severity sovereignty risk (P0 CRITICAL).
+
+### Decision
+Implement a comprehensive PII Observation Masker using a gateway proxy pattern: detect → tokenize → LLM → detokenize. The masker must:
+1. Detect 18 PII types via `pii-shield` library with regex fallback
+2. Tokenize detected PII before cloud provider dispatch
+3. Bypass masking entirely for local providers (M7 compliance)
+4. Detokenize LLM responses before returning to caller
+5. Use GLiNER NER as a future enhancement (Phase 2)
+
+### Rationale
+The gateway proxy pattern ensures PII is stripped BEFORE it enters the cloud inference path, not after. This is the only architecture that prevents data leaks — auditing after dispatch is too late. Local bypass is essential: local providers never see masked data, preserving full context for local inference.
+
+### Implementation
+- `src/omega/oracle/pii_masker.py` — 432 lines, PIIMasker class with pii-shield Scanner + regex fallback, PIITokenMap dataclass, provider-aware bypass
+- `src/omega/oracle/oracle.py` — PII integration in `_summon()` (line 607) and `_route_by_domain()` (line 703)
+- `tests/test_pii_masker.py` — 53 tests covering all major paths
+- Heritage: Legacy patterns from ANAi/XNAi era ported: `validate_safe_input()`, `sanitize_id()`
+
+### Verification
+- `make test` — all 53 PII masker tests pass
+- `should_mask("native-gguf")` returns False (local bypass)
+- `should_mask("google")` returns True (cloud masking)
+- Round-trip tokenize/detokenize preserves content
+- Empty text returns empty results (edge case)
+
+**Status**: ✅ ACTIVE — P0 CRITICAL gap closed
+
+---
+
+## Decision 165: Trace ID Propagation — Contextvars Safety Net & GenerateResult Contract Fix
+
+**Date**: 2026-06-28
+**Channel**: OpenCode (Kali→Council Execution)
+**Entity**: KALI
+**Trace**: trc_trace_id_impl
+
+### Context
+D163 found that 7/8 call sites to `model_gateway.generate()` didn't pass `trace_id`, causing ~99.5% of observability events to log as "unknown". Additionally, `GenerateResult` was missing `latency_ms` and `model_used` on the success path — 100% of successful inferences had broken latency observability.
+
+### Decision
+1. Create a `contextvars` safety net (`src/omega/observability/context.py`) — auto-generates trace_id on first call, survives async boundaries
+2. Thread `trace_id` through all 5 call sites in `iterative_research.py` (3) and `skeptical_verifier.py` (2)
+3. Add `latency_ms` and `model_used` to `GenerateResult` on both success and fallback paths
+4. Fix `record_error()` in `observability/__init__.py` to fall back to `get_current_trace_id()` before defaulting
+
+### Rationale
+The contextvars approach is simpler than OTel instrumentation and sufficient for the current need: ensuring no event ever logs "unknown" as trace_id. The `GenerateResult` dataclass is the contract boundary — every field must be populated on every code path.
+
+### Implementation
+- `src/omega/observability/context.py` — 61 lines, `TraceContext` with `get_current_trace_id()`, context safety net
+- `src/omega/oracle/model_gateway.py` — lines 790, 844, 898, 911-912: latency_ms measurement, model_used population
+- `src/omega/observability/__init__.py` — lines 782-783: record_error() contextvars fallback
+- `src/omega/oracle/iterative_research.py` — 3 call sites wired
+- `src/omega/oracle/skeptical_verifier.py` — 2 call sites wired
+- `tests/test_model_gateway.py` — 3 new M21 contract tests
+
+### Verification
+- `make test` — all 10+ trace ID tests pass
+- `get_current_trace_id()` returns consistent UUID within same async context
+- `GenerateResult` on success has both `latency_ms` and `model_used` populated
+- `GenerateResult` on fallback also has both fields
+
+**Status**: ✅ ACTIVE — M22 RESOLVED, M21 +3 contract tests
+
+---
+
+## Decision 166: A2A Agent Cards — Real Standard Implementation
+
+**Date**: 2026-06-28
+**Channel**: OpenCode (Kali→Council Execution)
+**Entity**: KALI
+**Trace**: trc_a2a_cards_impl
+
+### Context
+The handoff spec referenced `draft-schemacommons-aaif-00` — a fabricated IETF draft that never existed. The real standard is Google A2A v1.0 (150+ orgs, Linux Foundation, March 2026) with IETF `draft-klrc-aiagent-auth-02` for WIMSE/SPIFFE agent identity. This was both a standards compliance issue and an M17 (Cognitive Integrity) violation — the engine hallucinated its own identity framework.
+
+### Decision
+1. Replace fabricated AAIF draft with real A2A v1.0 Agent Card schema at `/.well-known/agent-card.json`
+2. Map EntityRegistry entities to A2A Agent Cards via `A2ABridge`
+3. Implement SPIFFE identity verification with trust domain routing
+4. Correct the AAIF mapping spec with inline annotations and rename to SUPERSEDED
+
+### Rationale
+Real standards constrain design in productive ways — they provide testable boundaries, documented behavior, and community-verified correctness. A fabricated standard produces untestable architecture.
+
+### Implementation
+- `src/omega/oracle/a2a_bridge.py` — 319 lines, `A2ABridge` class with `build_agent_card()`, `get_agent_card_json()`, EntityRegistry→AgentCard mapping, SPIFFE identity verification
+- `src/omega/oracle/a2a_auth.py` — 100 lines, `SPIFFEID` parsing, `AgentCredential` with expiry, `OAuthDelegation`
+- `data/handoff/SUPERSEDED_P7_AAIF_MAPPING_SPEC_20260628.md` — corrected spec with inline annotations
+- `tests/test_a2a_bridge.py` — 56 tests covering card building, identity verification, authorization
+
+### Verification
+- `make test` — all 56 A2A tests pass
+- `A2ABridge.to_dict()` produces all required A2A v1.0 fields
+- SPIFFE identity `spiffe://omega/entity/kali` verifies correctly
+- `grep -r "draft-schemacommons" src/omega/` — zero matches (clean sweep)
+
+**Status**: ✅ ACTIVE — M17 resolved, AAIF correction complete
+
+---
+
+## Decision 167: Qdrant Container Fix — UserNS=keep-id Removed
+
+**Date**: 2026-06-28
+**Channel**: OpenCode (Kali→Infrastructure)
+**Entity**: KALI
+**Trace**: trc_qdrant_container_fix
+
+### Context
+The Qdrant container was configured with `UserNS=keep-id` + `User=1000` per M6 (Podman Sovereignty). However, on the Ryzen 5700U's kernel, `UserNS=keep-id` breaks `fuse-overlayfs` — the overlay mount used by Podman for volume management. This caused the Qdrant container to fail to start, leaving vector search dead for weeks.
+
+### Decision
+Remove `UserNS=keep-id` + `User=1000` from the Qdrant container unit entirely. Use `podman unshare chown` to fix volume ownership after removal. This is a kernel compatibility carve-out, not a permanent M6 violation.
+
+### Rationale
+`UserNS=keep-id` + `User=1000` is the RECOMMENDED pattern for Quadlets (M6), but Qdrant runs in a docker-compose environment where `userns_mode: keep-id` is incompatible with `--pod` in podman-compose v5.x. The kernel's `fuse-overlayfs` implementation has a known bug where user namespace remapping breaks overlay mounts. The fix: remove the user remapping entirely and fix ownership post-hoc.
+
+### Implementation
+- Removed `user: "1000:1000"` from `deploy/infra/docker-compose.yml` Qdrant service
+- Ran `podman unshare chown -R 1000:1000 /media/arcana-novai/omega_library/podman-storage/volumes/qdrant_storage/_data`
+- Verified Qdrant starts cleanly with `curl http://127.0.0.1:6333/collections`
+
+### Heritage
+`[id-soft: quake-1996]` — "The right approximation for the problem is better than the exact solution you can't afford." UserNS=keep-id is the exact solution for Quadlets; kernel-free chown + no UserNS is the right approximation for docker-compose on this kernel.
+
+**Status**: ✅ ACTIVE — Qdrant restored and operational
+
+---
+
+## Decision 168: Qdrant Telemetry Disable — M8 Compliance
+
+**Date**: 2026-06-28
+**Channel**: OpenCode (Kali→Infrastructure)
+**Entity**: KALI
+**Trace**: trc_qdrant_telemetry
+
+### Context
+Qdrant collects telemetry by default (usage statistics, version info). This violates M8 (Zero Telemetry) — the engine must not phone home to any external service. The docker-compose environment variable was set but not taking effect due to precedence issues with the container's default config.
+
+### Decision
+Set `QDRANT__TELEMETRY_DISABLED=true` as an environment variable in the Qdrant container definition with documented precedence over default config files.
+
+### Rationale
+M8 is non-negotiable. Qdrant's telemetry is an external transmission, even if only usage statistics. The engine's sovereignty requires zero external transmissions.
+
+### Implementation
+- Added `QDRANT__TELEMETRY_DISABLED: "true"` to `deploy/infra/docker-compose.yml` Qdrant environment
+- Verified via `docker exec qdrant curl -s http://127.0.0.1:6333/telemetry | jq '.telemetry_disabled'` returns `true`
+
+**Status**: ✅ ACTIVE — M8 compliant
+
+---
+
+## Decision 169: is_cloud Derivation Fix — Provider Name, Not Hardcoded Bool
+
+**Date**: 2026-06-28
+**Channel**: OpenCode (Kali→Council Execution)
+**Entity**: KALI
+**Trace**: trc_is_cloud_derivation
+
+### Context
+The `GenerateResult` dataclass had an `is_cloud: bool` field that was being set via hardcoded boolean in the fallback path. This meant the sovereignty alert (which fires when `is_cloud=True`) would be inaccurate in fallback scenarios — potentially flagging a local provider as "cloud" or vice versa.
+
+### Decision
+Derive `is_cloud` from the actual `provider_name` at response time, not from a hardcoded configuration flag. Use `_is_cloud_provider_name()` in `model_gateway.py` to classify providers by name membership.
+
+### Rationale
+M22 (Response Provenance) requires that observability records capture the actual provider, not the configured intent. Hardcoded booleans are a provenance violation — they represent what the author thought at config time, not what actually served the request.
+
+### Implementation
+- `src/omega/oracle/model_gateway.py:911` — fallback path now uses `self._is_cloud_provider_name("fallback")` instead of `False`
+- `src/omega/oracle/model_gateway.py` — `_is_cloud_provider_name()` uses provider name membership
+- Verified: all 4 classification points (2 success, 2 fallback) use the same derivation logic
+
+**Status**: ✅ ACTIVE — M22 fully enforced
+
+---
+
+## Decision 170: Soul Distiller Key Mismatch Discovered — Root Cause of M11 Violation
+
+**Date**: 2026-06-29
+**Channel**: OpenCode (John Carmack S3 Review)
+**Entity**: JOHN_CARMACK / JEM
+**Trace**: trc_soul_distiller_key_mismatch
+
+### Context
+The SOVEREIGN_ARK_BLUEPRINT had long flagged M11 (Soul Integrity) as "❌ VIOLATED — Soul Distiller exists but NOT wired as session-end hook." Sprint-G synthesis by Jem (3-agent chain: Researcher → John Carmack → Jem) discovered this was **misdiagnosed**.
+
+Carmack traced the full call graph and found:
+1. `close_session()` IS called — `_record_interaction()` at oracle.py:502-507 fires every 5 interactions via `anyio.create_task(self.close_session(...))`
+2. BUT the transcript is always empty because of a key mismatch:
+   - `add_exchange()` at `memory_store.py:389-390` stores keys `"user"`/`"assistant"`
+   - `close_session()` at `oracle.py:786-789` reads keys `"role"`/`"content"`
+   - Every exchange produces `[unknown]: ` — empty content → regex finds nothing → boilerplate L1-L2-L3
+
+### Decision
+Document the root cause. The fix is a 3-line change to `oracle.py:786-789`:
+- Change `ex.get("role", "unknown")` → `"user" if "user" in ex else "assistant"`
+- Change `ex.get("content", "")` → `ex.get("user", ex.get("assistant", ""))`
+
+Do NOT apply the fix yet — verify the transcript format first by adding logging, then apply on a single entity canary.
+
+### Rationale
+This explains the 8/10 stale souls (Blind Spot 5) and the M11 violation. The distiller was "working" but receiving empty input — like a save-game system that writes files with all zeros. The root cause was NOT an unwired distiller but a contract mismatch between two subsystems.
+
+### Implementation
+- Root cause documented in `data/entities/john_carmack/workspace/S3_REVIEW_20260629.md` (507 lines)
+- Fix deferred pending logging verification and canary deployment
+- Heritage: `[id-soft: quake-1996] Save-game pattern` — the tag is aspirational until the fix lands
+
+**Status**: ⏳ PENDING — root cause known, fix deferred to Sprint-G
+
+---
+
+## Decision 171: Sprint-F Close — 3 Gaps Closed, 17 Doc Action Items
+
+**Date**: 2026-06-29
+**Channel**: OpenCode (Kali→Jem Strategic Synthesis)
+**Entity**: KALI / JEM
+**Trace**: trc_sprint_f_close
+
+### Context
+Sprint-F (MaKaLi Council execution phase) produced:
+- 3 critical gaps closed (PII Masker, Trace ID/GenerateResult, A2A Agent Cards)
+- 109 new tests (53 PII + 56 A2A)
+- 600/600 tests passing
+- Qdrant restored and telemetry-disabled
+- is_cloud derivation fixed
+
+However, Verity's documentation audit (13 documents reviewed) found 17 action items — 4 P0, 6 P1, 7 P2 — meaning documentation is NOT locked for Sprint-F.
+
+Additionally, Carmack's S3 review discovered the soul distiller key mismatch — changing the priority order significantly.
+
+### Decision
+Close Sprint-F with **CONDITIONAL PASS** — code deliverable is production-ready, but documentation requires ~40 min of P0 fixes before the sprint can be declared fully complete.
+
+### Re-Prioritized Task Order (Carmack)
+
+| Priority | Task | Effort | Why |
+|----------|------|--------|-----|
+| P0 🔴 | Fix oracle.py:786-789 key mismatch | 3 min | Unlocks M11, fixes 8/10 stale souls |
+| P0 🔴 | PIVOT_LOG D164-D171 | 20 min | Immutable audit trail for Sprint-F |
+| P1 🟡 | Handoff reaper (14d TTL) | 2 hr | 41 stale packets, M12 cleanup |
+| P1 🟡 | Mandate scorecard refresh | 30 min | SSOT accuracy |
+| P2 🟢 | LLM path for soul_distiller | 2-3 days | After key fix verified |
+| P2 🟢 | Categorize Verity's 17 items | 1 hr | Triage against roadmap |
+
+### Metrics
+- **Tests**: 600 collected, 600 passing
+- **Source files**: 111 `.py`
+- **PIVOT decisions**: 172 (D1-D172, incl. xna-omega D1-D49)
+- **Sovereign Mandates**: 22 (M1-M22)
+- **Heritage tags**: 42/50 files mapped
+- **Agent Fleet**: 11 agents (M10 compliant)
+- **Mandate compliance**: 15/22 enforced, 4 partial, 2 violated (M5, M11), 1 pending (M20)
+- **PII Masker**: 432 lines, 53 tests, local bypass
+- **A2A Bridge**: 319+100 lines, 56 tests, SPIFFE identity
+- **Trace ID**: contextvars, 5 call sites, 3 contract tests
+- **M22**: ✅ RESOLVED (provider_name, latency_ms, model_used all correct)
+- **Doc actions**: 17 remaining (4 P0, 6 P1, 7 P2)
+
+### Heritage
+`[id-soft: doom-1993]` WAD System — Sprint-F closed 3 content gaps while keeping the engine framework stable.
+
+**Status**: ✅ ACTIVE — Sprint-F codebase complete, documentation pending
+## Decision 172: Iron Wall Hardening Sprint Execution Hold
+
+**Date**: 2026-06-29
+**Channel**: OpenCode (MaKaLi Cloud Council)
+**Entity**: MAKALI / KALI
+**Trace**: trc_iron_wall_hardening
+
+### Context
+The MaKaLi Cloud Council was summoned to audit the engine's current state following strategic decisions D-1, D-2, and D-3, and to prepare for the ingestion of Genesis artifacts (Omnidroid, NotebookLM 0.1, Mayan Preservation Vision). The Council's verdict is absolute: The engine is in a state of Architectural Fragility ("phantom sovereignty").
+
+### Decision
+Declare an IMMEDIATE EXECUTION HOLD on all feature expansion, entity promotions, and high-volume ingestions until the "Iron Wall" Hardening Sprint is completed. The sprint consists of 6 tasks:
+1. Deploy Tor-SOCKS5 Bridge + Local-First Escalation (M8)
+2. Absolute purge of all round-robin logic (M4)
+3. Implement Body-Level Error Guards + UFL (M9, M22)
+4. Deploy Sovereign Ingestion Pipeline + Omnidroid Migration (M5, M15)
+5. Restore workbench.db schema + ingest legacy guides (M5)
+6. Implement V-D1 Validation Suite for "Sticky" mode resilience (M13)
+
+### Rationale
+Operating with "phantom sovereignty" means we have the strategic documents, but the implementation is leaking. Proceeding with high-volume ingestions (like Omnidroid) before hardening the context and observability pillars risks "Void Summaries" and silent failures.
+
+### Implementation
+- Added Iron Wall Hardening Sprint to `SOVEREIGN_ARK_BLUEPRINT.md` §5.1d.
+- Updated `KALI_LIVE_FEED.md` with the execution hold directive.
+- Execution begins with P0 Engineering (TRACE-RR-PURGE-001).
+
+**Status**: ✅ ACTIVE — Execution Hold in effect
