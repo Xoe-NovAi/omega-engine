@@ -14,6 +14,8 @@
 |--------|------|---------|-------------|------------|
 | Agent-KB Interaction Protocol | `AGENT_KB_PROTOCOL.md` | 1.0.0 | 2026-06-13 | Kali |
 | Claude Projects Collaboration | `CLAUDE_PROJECTS.md` | 2.0.0 | 2026-06-13 | Kali |
+| Cline CLI Integration | `CLINE_CLI_INTEGRATION.md` | 1.0.0 | 2026-06-25 | Kali |
+| Omega Hub Multi-Platform | `OMEGA_HUB_MULTI_PLATFORM.md` | 1.0.0 | 2026-06-25 | Kali |
 | Entry Template | `TEMPLATE.md` | 1.0.0 | 2026-06-13 | System |
 
 ---

@@ -4,6 +4,13 @@
 
 ## Vetting Entries
 
+### vet-001: 8-Character Name Caps
+- **Verdict**: REJECTED
+- **Score**: 3/10 — REJECTED
+- **Justification**: Cargo-cult optimization; Python dicts are O(1) by hash
+- **Vetted by**: Doom Guy, Verity
+- **Date**: 2026-06-28
+
 ### vet-002: Linear Token Estimator
 - **Verdict**: APPROVED
 - **Score**: 8/10

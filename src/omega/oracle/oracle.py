@@ -119,6 +119,13 @@ class Oracle:
         """Initialize Oracle systems on first use."""
         if self._bootstrapped:
             return
+        
+        # Archive old sessions (M12 Queue Integrity)
+        try:
+            await self.memory_store.archive_old_sessions()
+        except Exception as e:
+            logger.warning(f"Session archival failed during bootstrap: {e}")
+
         # Registry is initialized in __init__, no bootstrap needed
         self._bootstrapped = True
 
@@ -255,6 +262,7 @@ class Oracle:
             entity="Oracle",
             confidence=0.0,
             trace_id=trace.trace_id,
+            session_id=None,
         )
 
     # ── PUBLIC API ────────────────────────────────────────────────────
@@ -551,6 +559,7 @@ class Oracle:
                 entity="Oracle",
                 confidence=0.0,
                 trace_id=trace.trace_id,
+                session_id=session_id,
             )
         
         trace.log("summon.direct", entity=entity.name, query=query, session_id=session_id,
@@ -600,6 +609,7 @@ class Oracle:
             user_query=query,
             temperature=effective_temperature,
             max_tokens=effective_max_tokens,
+            trace_id=trace.trace_id,
         )
         
         # Use the ACTUAL provider that served the response, not the preferred one
@@ -657,6 +667,8 @@ class Oracle:
                 entity="Oracle",
                 confidence=0.0,
                 trace_id=trace.trace_id,
+                session_id=session_id,
+                escalated=True,
             )
         
         # Build context and prepend to personality
@@ -670,6 +682,7 @@ class Oracle:
             user_query=text,
             temperature=entity.temperature,
             max_tokens=1024,
+            trace_id=trace.trace_id,
         )
         
         # Use the ACTUAL provider that served the response, not the preferred one

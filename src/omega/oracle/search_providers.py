@@ -31,7 +31,8 @@ class FirecrawlProvider(SearchProvider):
         try:
             from omega.vault import KeyVault
             return KeyVault().resolve_and_handle_429("firecrawl")
-        except Exception:
+        except Exception as e:
+            logger.debug(f"Firecrawl key fallback failed: {e}")
             return os.environ.get("FIRECRAWL_API_KEY", "")
 
     async def search(self, query: str, limit: int = 10) -> Optional[str]:
@@ -191,7 +192,8 @@ class ExaProvider(SearchProvider):
         try:
             from omega.vault import KeyVault
             return KeyVault().resolve_and_handle_429("exa")
-        except Exception:
+        except Exception as e:
+            logger.debug(f"Exa key fallback failed: {e}")
             return os.environ.get("EXA_API_KEY", "")
 
     async def search(self, query: str, limit: int = 10) -> Optional[str]:

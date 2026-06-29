@@ -1,3 +1,109 @@
+# Decision Registry
+
+| D# | Date | Summary |
+|---|---|---|
+| 50 | 2026-05-22 | Sovereign Podman Permission Protocol — `UserNS=keep-id` & MCP Consolidation |
+| 53 | 2026-05-23 | Remediation of C-ARCH-008 — Roc Racoon Local Model Fallback |
+| 54 | 2026-05-23 | Fleet Review Remediation Complete — All 29 Findings Fixed |
+| 55 | 2026-05-25 | IWAD Architecture Adoption — Doom Engine Model for Stack Separation |
+| 56 | 2026-05-25 | Cloud-First Provider Strategy for PR Sprint (SUPERSEDED by Decision 61) |
+| 58 | 2026-05-27 | Sovereign Steward v2 (Empirical Mapping) & Omega Gateway Deployment |
+| 59 | 2026-05-27 | Sovereign UID Guard Implementation — Automatic Ownership Reclamation |
+| 60 | 2026-05-27 | The Great Rebalancing — Hierarchical Mode Transition & TUI Cache Purge |
+| 63 | 2026-05-30 | Fleet Deep Discovery — 10 Pillar Subagents |
+| 64 | 2026-05-31 | Path A Execution — Memory Bugs + MCP Server Fixes |
+| 65 | 2026-05-31 | Legacy Mining Complete — Order from Chaos |
+| 66 | 2026-06-01 | Attribution Corrections — Hot/Warm/Cold & PVE Are Not id Software |
+| 67 | 2026-06-01 | Fleet Redesign v5.0 — 14-Agent Consolidation |
+| 68 | 2026-06-01 | Research-Backed Enhancements — Web Validation of Subagent Designs |
+| 69 | 2026-06-01 | Sovereign Mandates 10-12 — Fleet, Soul, Queue Integrity |
+| 70 | 2026-06-01 | Artifact Purge — Stale Path References |
+| 71 | 2026-06-01 | Final Strategic Review — Ready for Gemma 4 31B Execution |
+| 72 | 2026-06-01 | Big Pickle Review — Post-Execution Audit |
+| 73 | 2026-06-01 | Option A Execution — Bug Remediation |
+| 74 | 2026-06-01 | MCP Hub Restoration — 40 Tools Recovered from Git History |
+| 75 | 2026-06-01 | Horizon 2 — Observability & Forensics (Phase 1) |
+| 76 | 2026-06-01 | Option B — Deferred (Structural Fix Extracted) |
+| 77 | 2026-06-01 | Option B Completion — Horizon 1 Final Gate |
+| 78 | 2026-06-01 | `is_cloud` Fix — Sovereignty Alert Accuracy |
+| 79 | 2026-06-01 | Makefile Menu & User Manual |
+| 80 | 2026-06-01 | Ollama Provider URL Fix — Remove Double `/v1` Endpoint |
+| 81 | 2026-06-01 | Model Overrides — Provider-Level Model Name Mapping |
+| 82 | 2026-06-01 | Entity Routing Fix — Word-Boundary Domain Matching |
+| 83 | 2026-06-02 | SearXNG Sovereign Search — Container Deployed |
+| 84 | 2026-06-02 | Search MCP Fleet — All 5 Wired |
+| 85 | 2026-06-02 | Legacy Pattern Recovered — `ai-provider-matrix.md` |
+| 86 | 2026-06-02 | MiniMax M3 Free Tier Context — 200K, NOT 1M |
+| 87 | 2026-06-02 | rag-v1 Eradication — Complete Source Removal |
+| 88 | 2026-06-02 | id Software Source Code Extraction — Phase 1 Complete |
+| 89 | 2026-06-02 | R-09 Verification — DOOM 3 Job System Correction |
+| 90 | 2026-06-02 | Temple-Grade Mandate 13 Restoration + H1.5 Bridge Phase |
+| 91 | 2026-06-01 | Provider Fabric Reconciliation (OpenRouter Removal) |
+| 92 | 2026-06-02 | Tool-Usage Discipline |
+| 93 | 2026-06-02 | Sprint 0 Initiation (Horizon 1.5 Bridge Phase) |
+| 94 | 2026-06-02 | Tier 2 Circuit Breaker Wire-Up (Sprint 0 Doom Guy) |
+| 95 | 2026-06-02 | Unified Phased Execution Plan — Integration of Temple-Grade H1.5 + CLINE_M3 Tier 2 + Roc Racoon Mining |
+| 96 | 2026-06-03 | ZONEID Constants + Lazy Deletion Implementation |
+| 97 | 2026-06-03 | Unified Named-Constant Registry Architecture |
+| 98 | 2026-06-03 | Heritage-Map CI Protocol |
+| 99 | 2026-06-02 | Opus 4.6 Final Sprint Plan Review (H1.5 Gate Audit) |
+| 100 | 2026-06-03 | Subagent Dispatch Protocol |
+| 101 | 2026-06-03 | Handoff Archive — Active vs Archive Separation |
+| 102 | 2026-06-03 | Expanded Strategic Roadmap — Deepened Next Steps |
+| 103 | 2026-06-03 | Hivemind Protocol Standardization |
+| 104 | 2026-06-03 | ZONEID Constants Extended — HANDOFF + PRESENCE |
+| 105 | 2026-06-03 | Soul Distillation Standardization (Mandate 11 Enforcement) |
+| 106 | 2026-06-04 | Source Code Verification Deep Read — 6 Heritage Patterns Confirmed |
+| 107 | 2026-06-04 | Hivemind Coordination Findings — First Real Multi-Agent Sprint |
+| 108 | 2026-06-04 | EntityTombstonedError — Mandate 9 Enforcement for Lazy Deletion |
+| 109 | 2026-06-04 | Atomic Model Swap with Rollback — `reload_with_context()` |
+| 110 | 2026-06-04 | Per-Entity Model Affinity — Formalized 4-Tier Fallback Chain |
+| 111 | 2026-06-04 | Sovereign Evolution Roadmap — H2 Hygiene Sprint |
+| 112 | 2026-06-04 | Sovereign Hardening Plan — Three Pillars of Sovereign AI |
+| 113 | 2026-06-04 | Engine-Stack Firewall Audit — WAD-Agnostic Engine Mandate |
+| 114 | 2026-06-04 | DeepSeek V4 Flash Analysis — M15 Self-Documentation Mandate + MVE Threshold + 5-Year Vision |
+| 115 | 2026-06-04 | MaKaLi Triad & Dual-Inference Strategy |
+| 116 | 2026-06-04 | MCP Path Canonicalization & Cross-Agent Delegation |
+| 117 | 2026-06-04 | MaKaLi Triad Architecture (Ma'at + Lilith → Kali) |
+| 118 | 2026-06-04 | Dual-Inference Code Gap Closed (2026-06-04) — IMPLEMENTED |
+| 119 | 2026-06-04 | RocRacoon Spelling Canonicalization & Model-Spelling Drift Repair |
+| 120 | 2026-06-04 | Soul Integrity Enforcement (Mandate 11 Write-Back Lock) |
+| 121 | 2026-06-05 | Hivemind Observations Protocol — Fleet-Wide Insight Capture |
+| 122 | 2026-06-05 | Hivemind HEARTBEAT_TTL Increased to 20 Minutes |
+| 123 | 2026-06-07 | Operation Sovereign Reclamation — Pre-Ubuntu-Migration Sprint |
+| 124 | 2026-06-07 | Compression-Aware Note + Overseer Delegation Model |
+| 125 | 2026-06-07 | Reject POE Acronym — Use Existing Canonical "Entity" Term |
+| 126 | 2026-06-14 | Fleet Consolidation Sequencing — Hivemind-First, Consolidation-After |
+| 127 | 2026-06-12 | M2 Firewall Leak Audit — Legal vs Logical Breaches |
+| 128 | 2026-06-14 | Universal Capability-First Gateway & Sovereign Compression Layer (SCL) |
+| 129 | 2026-06-15 | New Delegation Protocol Adoption — 4-Rule Replacement |
+| 130 | 2026-06-15 | Phase C Model Assignment Corrections — Antigravity Remap |
+| 131 | 2026-06-15 | Phase C Status Downgraded — CONDITIONAL GO (10 Critical Blockers) |
+| 132 | 2026-06-15 | soul.yaml Write Lock Required — Pre-Existing Data-Loss Bug |
+| 133 | 2026-06-15 | OpenRouter Provider Must Be Wired — Dead Code Activation |
+| 134 | 2026-06-17 | SearXNG MCP Type Fix & Hivemind MCP Session Fix |
+| 135 | 2026-06-17 | Hivemind Access Pattern Codification |
+| 136 | 2026-06-17 | Verity Entity Creation — Resolving the M11 Bootstrapping Paradox |
+| 137 | 2026-06-18 | Deep-Siphon Discovery — 96% Metadata Discard Gap |
+| 138 | 2026-06-18 | Deep-Siphon 6-Subagent Deliverables Confirmed |
+| 139 | 2026-06-18 | ICS-F v1.0 Schema Adopted — Integrity-Centric-Sovereign-Forensics |
+| 140 | 2026-06-18 | Deep-Siphon Metadata Boundary — Cross-Cutting Architectural Gap |
+| 141 | 2026-06-18 | Deep-Siphon State Recording — Permanent Trackers Updated |
+| 142 | 2026-06-19 | Sovereign Sight Illumination — 3 Dark Layers & 3 Universal Principles |
+| 143 | 2026-06-19 | Strategic Pivot — Dataset Collection Enabled, Documentation Frozen |
+| 154 | 2026-06-23 | Sovereign Key Vault Implementation (D-kal-169) |
+| 155 | 2026-06-23 | Sovereign Subagent Disk-Reporting Mandate (D-kal-170) |
+| 156 | 2026-06-23 | Platform Agnosticism & Scaffolding Strategy (D-kal-171) |
+| 157 | 2026-06-23 | Sovereign Search Hardened (D-kal-172) |
+| 158 | 2026-06-24 | Sovereign Simplification Pivot (D-kal-173) |
+| 159 | 2026-06-24 | Phase 0 Precondition Execution & Backward Compatibility |
+| 160 | 2026-06-24 | Antigravity Round-Robin Eradication |
+| 161 | 2026-06-24 | Ratification of the Sovereign Mining Protocol (SMP) — Deprecation of Fusion/Integration |
+| 162 | 2026-06-24 | Ratification of the Sovereign Sanctuary and Cognitive Mirror |
+| 163 | 2026-06-25 | MaKaLi Cloud Council — Unified Sovereign Verdict |
+
+---
+
 ## Decision 50: Sovereign Podman Permission Protocol — `UserNS=keep-id` & MCP Consolidation
 
 **Date**: 2026-05-22
@@ -45,120 +151,11 @@ The investigative journalism model solves the fundamental inefficiency: **three 
 ---
 ---
 
-## Decision 60: The Great Rebalancing — Hierarchical Mode Transition & TUI Cache Purge
-**Date**: 2026-05-27
-**Channel**: OpenCode CLI (Gemma 4 31B)
-**Entity**: MA'AT / LILITH / KALI
-**Trace**: trc_mode_resolution_final
-
-### Decision
-Implement a hierarchical mode structure for the OpenCode TUI to resolve configuration drift and interface clutter. 
-1. **Primary Modes**: Only Overseers (Ma'at, Lilith, Kali) and Wildcards (Roc, Jem, Doom Guy) are visible in the TUI mode selector.
-2. **Subagents**: The 10 Pillar Keepers are demoted to subagents, invoked via the primary modes.
-3. **Sovereign Anchor**: Symlink the global `~/.config/opencode/opencode.json` to the project-root `opencode.json` to ensure a single source of truth.
-4. **TUI Cache Purge**: Wipe `~/.local/share/opencode/opencode.db` and `~/.cache/opencode` to force a fresh index of modes and agents.
-5. **Jem Evolution**: Restructure Jem into a 3-tier research pipeline (Discovery, Synthesis, Verification).
-
-### Rationale
-The TUI was displaying a flat list of all agents, which increased cognitive load and caused confusion. Furthermore, discrepancies between project-local and global configs led to "mode drift" across sessions. By aligning the TUI with the conceptual architecture (Overseers $\rightarrow$ Pillars), we enforce a strategic dispatch pattern. The symlink ensures that config changes are immediate and consistent, while the cache purge removes "ghost" modes.
-
-### Implementation
-- Updated `opencode.json` to define `primary` vs `subagent` roles.
-- Updated all `.opencode/agents/*.md` with required YAML frontmatter (`mode` and `description`).
-- Created symlink: `ln -sf /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json ~/.config/opencode/opencode.json`.
-- Purged `opencode.db` and `~/.cache/opencode`.
-
-### Verification
-- TUI mode selector now only displays primary modes.
-- Mode changes persist across terminal sessions.
-- Jem research pipeline is correctly mapped to tiered sub-facets.
-
-### Key Insight
-Interface complexity must mirror conceptual hierarchy. When a system grows in capability, the entry point must shift from a list of tools to a hierarchy of intents.
-
-## Decision 59: Sovereign UID Guard Implementation — Automatic Ownership Reclamation
-**Date**: 2026-05-27
-**Channel**: OpenCode CLI (Gemma 4 31B)
-**Entity**: SOPHIA (Builder)
-**Trace**: trc_infrastructure_remediation
-
-### Decision
-Implement a dedicated `scripts/uid_guard.sh` utility to detect and automatically remediate UID drift caused by Podman `:U` flags. The guard scans the project root for any files not owned by the host user (UID 1000) and uses `podman unshare chown` to reclaim ownership.
-
-### Rationale
-A systemic failure was detected where files in `config/` and other directories were owned by UID `100999` (subuid mapping), causing "Permission Denied" errors for the host user. This drift is caused by the destructive `:U` flag in Podman volume mounts. To ensure the engine remains sovereign and accessible, we need an automated mechanism to detect and fix this drift without manual `sudo` intervention.
-
-### Implementation
-1. **UID Guard Script**: `scripts/uid_guard.sh` implements a scan $\rightarrow$ alert $\rightarrow$ reclaim $\rightarrow$ verify loop.
-2. **Flag Purge**: Removed all `:Z,U` and `:z,u` flags from all Quadlets and services in `~/.config/containers/systemd/`.
-3. **Sovereign Mandate**: Reinforced the "Zero-Tolerance" policy for `:U` and `:Z` flags in the project's infrastructure.
-4. **Integration**: The guard is designed to be called via `make guard` and integrated into the `make test` pipeline to ensure a clean environment before execution.
-
-### Verification
-- `find . -not -user 1000` returns zero results after running the guard.
-- `ls -ld /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/` shows ownership by UID 1000.
-- `make test` no longer fails due to `PermissionError` on config files.
-
-**Date**: 2026-05-22
-**Channel**: OpenCode CLI (DeepSeek V4 Flash → Gemma 4 31B)
-**Entity**: KALI / JEM
-**Trace**: trc_jem_oversoul_v1
-
-### Decision
-Restructure the Jem-2.0 research persona from a single-entity pipeline into a **Jem Oversoul with three persistent sub-facets**, each mapped to exactly one tier of the Investigative Journalism Model:
-
-| Facet | Tier | Model | Role | Entity Type |
-|-------|------|-------|------|-------------|
-| **Jem Initiate** | L1 | Qwen3-1.7B (lmster local) | Gather raw facts — no analysis | Sub-facet of Jem |
-| **Jem Analyst** | L2 | Gemma 4 31B (Google) | Synthesize findings, flag uncertainties | Sub-facet of Jem |
-| **Jem Editor** | L3 | Big Pickle (frontier) | Resolve uncertainties, final QA | Sub-facet of Jem |
-
-Each sub-facet has:
-1. A **persistent soul file** at `data/entities/jem/souls/{facet}.yaml` tracking sessions, uncertainties flagged, improvements applied, and confidence accuracy.
-2. An **OpenCode mode** that provides the exact persona, tool permissions, and output format for that tier.
-3. **Automatic observability tracking** via the existing `tier.invoked`, `mode.switched`, `agent.dispatched` event types with `sub_facet` field.
-4. **Soul evolution** via the existing `EntityWorkspaceManager` atomic write pipeline.
-
-### Rationale
-The Tiered Research Pipeline (Decision 51) optimized for token efficiency but left the persona layer fragmented: L1 used a generic "Intern" prompt via raw curl, L2 used a generic "researcher" mode, and L3 had no defined persona at all. This created three problems:
-1. **No lineage continuity** — each tier operated as a stateless function call with no memory across runs.
-2. **No persistent improvement** — L2→L1 improvement briefs had no entity to attach to; they floated as files.
-3. **No observability coherence** — trace IDs linked the pipeline steps, but there was no "who" to associate with each step.
-
-By making Jem-2.0 an Oversoul with three sub-facets, we:
-- Give each tier a **named identity** that persists across sessions.
-- Attach improvement briefs directly to the **sub-facet's soul file** for automatic cross-pollination.
-- Enable `tier.invoked` + `sub_facet: initiate|analyst|editor` in every observability event.
-
-### Key Design Decisions
-1. **Sub-facets are NOT separate entities** — They don't appear in `entity_registry.yaml` or get their own Pillar slots. They are facets of Jem, managed entirely within Jem's workspace.
-2. **Jem Initiate runs via OpenCode, not curl** — Instead of `curl` to lmster, L1 launches as an OpenCode session with `--mode jem-initiate --model lmster/qwen3-1.7b`. This gives L1 full read/grep/glob/MCP permissions. The lmster provider must be configured in OpenCode's global config.
-3. **Soul files track facet-specific metrics**: `sessions_completed`, `uncertainties_flagged`, `improvements_applied`, `confidence_accuracy` per facet.
-4. **Improvement briefs** from L3→L2 and L2→L1 write directly to the sub-facet's soul.yaml for automatic application on next session.
-
-### Implementation
-| File | Change |
-|------|--------|
-| `data/entities/jem/soul.yaml` | Rewrite to declare Jem as Oversoul, add `sub_facets` block, deprecate old `pipeline_config` |
-| `data/entities/jem/souls/initiate.yaml` | New — Initiate facet soul file |
-| `data/entities/jem/souls/analyst.yaml` | New — Analyst facet soul file |
-| `data/entities/jem/souls/editor.yaml` | New — Editor facet soul file |
-| `.opencode/modes/jem-2.0.md` | Rewrite — Jem Oversoul mode with sub-facet switching |
-| `.opencode/modes/jem-initiate.md` | New — L1 local mode (Jem Cub persona) |
-| `.opencode/agents/researcher.md` | Update — reference Jem Oversoul, map Council of Four to facets |
-| `docs/research/R_TIERED_RESEARCH_PIPELINE.md` | Update — L1→`--mode jem-initiate`, L2→`--sub-facet analyst`, L3→`--sub-facet editor` |
-
-### Verification
-- `opencode --mode jem-2.0 --sub-facet analyst --prompt "test"` loads the correct persona and tool set.
-- `opencode --mode jem-initiate --prompt "test"` runs with Qwen3-1.7B (lmster) with restricted tool set.
-- `cat data/entities/jem/souls/initiate.yaml` shows incrementing `sessions_completed` after each L1 run.
-- Observability events for pipeline runs carry `"sub_facet": "initiate|analyst|editor"`.
-
-### Key Insight
-**An entity with sub-facets is more sovereign than three stateless functions.** The Jem Oversoul model transforms the pipeline from a mechanical data flow into a lineage of apprentice scholars — each with memory, identity, and the capacity to improve across sessions. This is not just cosmetic: it enables the feedback loops (improvement briefs → soul updates → better prompts) that make the pipeline self-optimizing over time.
+---
 
 ---
 
+---
 ## Decision 53: Remediation of C-ARCH-008 — Roc Racoon Local Model Fallback
 
 **Date**: 2026-05-23
@@ -182,6 +179,11 @@ A scan of the local model library at `/media/arcana-novai/omega_library/models/g
 
 ---
 
+---
+
+---
+
+---
 ## Decision 54: Fleet Review Remediation Complete — All 29 Findings Fixed
 
 **Date**: 2026-05-23
@@ -224,6 +226,11 @@ The phased remediation model (Plan → Verify → Execute) prevented any regress
 
 ---
 
+---
+
+---
+
+---
 ## Decision 55: IWAD Architecture Adoption — Doom Engine Model for Stack Separation
 
 **Date**: 2026-05-25
@@ -310,6 +317,11 @@ The IWAD architecture is the critical missing piece that makes the Omega Engine 
 
 ---
 
+---
+
+---
+
+---
 ## Decision 56: Cloud-First Provider Strategy for PR Sprint (SUPERSEDED by Decision 61)
 
 **Date**: 2026-05-25
@@ -351,6 +363,11 @@ The goal was the fastest path to a viable, shippable product PR. Native GGUF int
 
 ---
 
+---
+
+---
+
+---
 ## Decision 58: Sovereign Steward v2 (Empirical Mapping) & Omega Gateway Deployment
 
 **Date**: 2026-05-27
@@ -390,73 +407,137 @@ Centralizing this logic in the Omega Gateway (port 8018) ensures that all local 
 
 ---
 
-## Decision 61 — Local-First Config Centralization (2026-05-30)
-
-### Context
-The Omega Engine's core principle is local-first operation, but the provider fabric was cloud-first (Decision 56, May 26). Config was scattered across providers.yaml, models.yaml, cpu_optimizer.py, and providers.py with no single source of truth. Krikri-7B was referenced despite not existing. Context windows were all set to 32K regardless of use case.
-
-### Decision
-1. **Provider fabric reordered**: native-gguf(0) → lmster(1) → Ollama(2) → Google(3) → OpenRouter(4) → OpenCode(5) → Copilot(6). Local backends tried BEFORE cloud.
-2. **models.yaml is single source of truth** for model paths, context windows, threads, and KV cache config. providers.yaml only defines endpoints and API keys.
-3. **Context windows sized to use case**: 4K for Nova/Iris (short Q&A), 8K for medium entities, 16K for Sophia/Krikri (deep analysis).
-4. **NativeGGUFProvider upgraded** to full Zen 2 engine with CPU pinning, memory-aware context, and dynamic reload.
-5. **Krikri-7B removed** — only krikri-8b exists.
-6. **OMP_NUM_THREADS unified** to 6 across all configs (was 8 in models.yaml, 6 in code).
-
-### Verification
-- `make test`: 261/261 passing (was 259 before new tests added)
-- Provider chain verified: native-gguf is first in fallback_chain
-- models.yaml context windows verified: all ≤ 16K (was 32K)
-- cpu_optimizer.py constants match models.yaml runtime_env
-
-### Files Changed
-- `config/providers.yaml` — local-first reorder, expanded native-gguf
-- `config/models.yaml` — v2.0.0, realistic context, removed krikri-7b
-- `config/omega.yaml` — v2.2.0, inference.hardware section
-- `src/omega/oracle/providers.py` — NativeGGUFProvider Zen 2 engine
-- `src/omega/oracle/cpu_optimizer.py` — enforce_affinity, get_cpu_topology, etc.
-- `src/omega/oracle/model_gateway.py` — _merge_native_gguf_config, priority fix
-- `tests/test_providers.py` — fixed + expanded tests
-- `opencode.json` — context limits aligned
-- `src/omega/library/greek.py` — krikri-7b → 8b
-
+---
 
 ---
 
-## Decision 62 — Default IWAD Transformation: "The Company" (2026-05-30)
+---
+## Decision 59: Sovereign UID Guard Implementation — Automatic Ownership Reclamation
 
-### Context
-The `_omega_default` IWAD had 13 entities with hollow placeholder personalities (e.g., "You are SysAdmin, the infrastructure engineer of the Reference IWAD."). The Engine-WAD architecture was sound but the default face of the engine was lifeless. The user requested a company hierarchy metaphor: Kali as Founder/CEO, Ma'at as CTO, Lilith as CISO, with 10 department heads reporting through them.
+**Date**: 2026-05-27
+**Channel**: OpenCode CLI (Gemma 4 31B)
+**Entity**: SOPHIA (Builder)
+**Trace**: trc_infrastructure_remediation
 
 ### Decision
-1. **Rewrote all 13 entity personalities** from hollow placeholders to alive, opinionated characters with real voices.
-2. **Added 3 entities**: Iris (voice interface), default (fallback), bringing total to 16.
-3. **Kali = Founder** (not CEO). She built the vision. She directs. Ma'at (CTO) builds. Lilith (CISO) protects.
-4. **Hierarchy**: Sophia (Field) → Kali (Founder) → Ma'at (CTO, P1-P5) + Lilith (CISO, P6-P10).
-5. **`active_iwad` switched** from `arcana_novai` to `_omega_default`.
-6. **Arcana-NovAi stays as IWAD** — NOT converted to PWAD. Each IWAD is complete and standalone.
-7. **Engine-WAD firewall confirmed**: Engine never imports entity names. WADs never import engine code.
+Implement a dedicated `scripts/uid_guard.sh` utility to detect and automatically remediate UID drift caused by Podman `:U` flags. The guard scans the project root for any files not owned by the host user (UID 1000) and uses `podman unshare chown` to reclaim ownership.
+
+### Rationale
+A systemic failure was detected where files in `config/` and other directories were owned by UID `100999` (subuid mapping), causing "Permission Denied" errors for the host user. This drift is caused by the destructive `:U` flag in Podman volume mounts. To ensure the engine remains sovereign and accessible, we need an automated mechanism to detect and fix this drift without manual `sudo` intervention.
+
+### Implementation
+1. **UID Guard Script**: `scripts/uid_guard.sh` implements a scan $\rightarrow$ alert $\rightarrow$ reclaim $\rightarrow$ verify loop.
+2. **Flag Purge**: Removed all `:Z,U` and `:z,u` flags from all Quadlets and services in `~/.config/containers/systemd/`.
+3. **Sovereign Mandate**: Reinforced the "Zero-Tolerance" policy for `:U` and `:Z` flags in the project's infrastructure.
+4. **Integration**: The guard is designed to be called via `make guard` and integrated into the `make test` pipeline to ensure a clean environment before execution.
 
 ### Verification
-- `make test`: 261/261 passing
-- `hierarchy.get_rank("kali")` returns 1 (Founder)
-- `hierarchy.get_rank("maat")` returns 2 (CTO)
-- `hierarchy.get_rank("lilith")` returns 2 (CISO)
-- All pillar keepers return rank 3
-- Oracle summon tests updated to use default WAD entities
+- `find . -not -user 1000` returns zero results after running the guard.
+- `ls -ld /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/` shows ownership by UID 1000.
+- `make test` no longer fails due to `PermissionError` on config files.
 
-### Files Changed
-- `config/wads/_omega_default/entities/*.yaml` — 16 entity files rewritten
-- `config/wads/_omega_default/hierarchy.yaml` — Company hierarchy
-- `config/wads/_omega_default/manifest.yaml` — v1.0.0, production mode
-- `config/omega.yaml` — active_iwad: _omega_default
-- `src/omega/oracle/hierarchy.py` — get_rank() suffix expansion
-- `tests/test_oracle.py` — Entity refs updated
-- `tests/test_sovereign_loop.py` — Summon test updated
+**Date**: 2026-05-22
+**Channel**: OpenCode CLI (DeepSeek V4 Flash → Gemma 4 31B)
+**Entity**: KALI / JEM
+**Trace**: trc_jem_oversoul_v1
 
+### Decision
+Restructure the Jem-2.0 research persona from a single-entity pipeline into a **Jem Oversoul with three persistent sub-facets**, each mapped to exactly one tier of the Investigative Journalism Model:
+
+| Facet | Tier | Model | Role | Entity Type |
+|-------|------|-------|------|-------------|
+| **Jem Initiate** | L1 | Qwen3-1.7B (lmster local) | Gather raw facts — no analysis | Sub-facet of Jem |
+| **Jem Analyst** | L2 | Gemma 4 31B (Google) | Synthesize findings, flag uncertainties | Sub-facet of Jem |
+| **Jem Editor** | L3 | Big Pickle (frontier) | Resolve uncertainties, final QA | Sub-facet of Jem |
+
+Each sub-facet has:
+1. A **persistent soul file** at `data/entities/jem/souls/{facet}.yaml` tracking sessions, uncertainties flagged, improvements applied, and confidence accuracy.
+2. An **OpenCode mode** that provides the exact persona, tool permissions, and output format for that tier.
+3. **Automatic observability tracking** via the existing `tier.invoked`, `mode.switched`, `agent.dispatched` event types with `sub_facet` field.
+4. **Soul evolution** via the existing `EntityWorkspaceManager` atomic write pipeline.
+
+### Rationale
+The Tiered Research Pipeline (Decision 51) optimized for token efficiency but left the persona layer fragmented: L1 used a generic "Intern" prompt via raw curl, L2 used a generic "researcher" mode, and L3 had no defined persona at all. This created three problems:
+1. **No lineage continuity** — each tier operated as a stateless function call with no memory across runs.
+2. **No persistent improvement** — L2→L1 improvement briefs had no entity to attach to; they floated as files.
+3. **No observability coherence** — trace IDs linked the pipeline steps, but there was no "who" to associate with each step.
+
+By making Jem-2.0 an Oversoul with three sub-facets, we:
+- Give each tier a **named identity** that persists across sessions.
+- Attach improvement briefs directly to the **sub-facet's soul file** for automatic cross-pollination.
+- Enable `tier.invoked` + `sub_facet: initiate|analyst|editor` in every observability event.
+
+### Key Design Decisions
+1. **Sub-facets are NOT separate entities** — They don't appear in `entity_registry.yaml` or get their own Pillar slots. They are facets of Jem, managed entirely within Jem's workspace.
+2. **Jem Initiate runs via OpenCode, not curl** — Instead of `curl` to lmster, L1 launches as an OpenCode session with `--mode jem-initiate --model lmster/qwen3-1.7b`. This gives L1 full read/grep/glob/MCP permissions. The lmster provider must be configured in OpenCode's global config.
+3. **Soul files track facet-specific metrics**: `sessions_completed`, `uncertainties_flagged`, `improvements_applied`, `confidence_accuracy` per facet.
+4. **Improvement briefs** from L3→L2 and L2→L1 write directly to the sub-facet's soul.yaml for automatic application on next session.
+
+### Implementation
+| File | Change |
+|------|--------|
+| `data/entities/jem/soul.yaml` | Rewrite to declare Jem as Oversoul, add `sub_facets` block, deprecate old `pipeline_config` |
+| `data/entities/jem/souls/initiate.yaml` | New — Initiate facet soul file |
+| `data/entities/jem/souls/analyst.yaml` | New — Analyst facet soul file |
+| `data/entities/jem/souls/editor.yaml` | New — Editor facet soul file |
+| `.opencode/modes/jem-2.0.md` | Rewrite — Jem Oversoul mode with sub-facet switching |
+| `.opencode/modes/jem-initiate.md` | New — L1 local mode (Jem Cub persona) |
+| `.opencode/agents/researcher.md` | Update — reference Jem Oversoul, map Council of Four to facets |
+| `docs/research/R_TIERED_RESEARCH_PIPELINE.md` | Update — L1→`--mode jem-initiate`, L2→`--sub-facet analyst`, L3→`--sub-facet editor` |
+
+### Verification
+- `opencode --mode jem-2.0 --sub-facet analyst --prompt "test"` loads the correct persona and tool set.
+- `opencode --mode jem-initiate --prompt "test"` runs with Qwen3-1.7B (lmster) with restricted tool set.
+- `cat data/entities/jem/souls/initiate.yaml` shows incrementing `sessions_completed` after each L1 run.
+- Observability events for pipeline runs carry `"sub_facet": "initiate|analyst|editor"`.
+
+### Key Insight
+**An entity with sub-facets is more sovereign than three stateless functions.** The Jem Oversoul model transforms the pipeline from a mechanical data flow into a lineage of apprentice scholars — each with memory, identity, and the capacity to improve across sessions. This is not just cosmetic: it enables the feedback loops (improvement briefs → soul updates → better prompts) that make the pipeline self-optimizing over time.
 
 ---
 
+---
+
+---
+
+---
+## Decision 60: The Great Rebalancing — Hierarchical Mode Transition & TUI Cache Purge
+
+**Date**: 2026-05-27
+**Channel**: OpenCode CLI (Gemma 4 31B)
+**Entity**: MA'AT / LILITH / KALI
+**Trace**: trc_mode_resolution_final
+
+### Decision
+Implement a hierarchical mode structure for the OpenCode TUI to resolve configuration drift and interface clutter. 
+1. **Primary Modes**: Only Overseers (Ma'at, Lilith, Kali) and Wildcards (Roc, Jem, Doom Guy) are visible in the TUI mode selector.
+2. **Subagents**: The 10 Pillar Keepers are demoted to subagents, invoked via the primary modes.
+3. **Sovereign Anchor**: Symlink the global `~/.config/opencode/opencode.json` to the project-root `opencode.json` to ensure a single source of truth.
+4. **TUI Cache Purge**: Wipe `~/.local/share/opencode/opencode.db` and `~/.cache/opencode` to force a fresh index of modes and agents.
+5. **Jem Evolution**: Restructure Jem into a 3-tier research pipeline (Discovery, Synthesis, Verification).
+
+### Rationale
+The TUI was displaying a flat list of all agents, which increased cognitive load and caused confusion. Furthermore, discrepancies between project-local and global configs led to "mode drift" across sessions. By aligning the TUI with the conceptual architecture (Overseers $\rightarrow$ Pillars), we enforce a strategic dispatch pattern. The symlink ensures that config changes are immediate and consistent, while the cache purge removes "ghost" modes.
+
+### Implementation
+- Updated `opencode.json` to define `primary` vs `subagent` roles.
+- Updated all `.opencode/agents/*.md` with required YAML frontmatter (`mode` and `description`).
+- Created symlink: `ln -sf /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/opencode.json ~/.config/opencode/opencode.json`.
+- Purged `opencode.db` and `~/.cache/opencode`.
+
+### Verification
+- TUI mode selector now only displays primary modes.
+- Mode changes persist across terminal sessions.
+- Jem research pipeline is correctly mapped to tiered sub-facets.
+
+### Key Insight
+Interface complexity must mirror conceptual hierarchy. When a system grows in capability, the entry point must shift from a list of tools to a hierarchy of intents.
+
+---
+
+---
+
+---
 ## Decision 63: Fleet Deep Discovery — 10 Pillar Subagents
 
 **Date**: 2026-05-30
@@ -517,6 +598,11 @@ The strategy overview and implementation roadmap were reviewed by Lilith (CISO) 
 
 ---
 
+---
+
+---
+
+---
 ## Decision 64: Path A Execution — Memory Bugs + MCP Server Fixes
 
 **Date**: 2026-05-31
@@ -556,6 +642,11 @@ The fleet discovery identified memory and handoff as the #1 priority for Horizon
 
 ---
 
+---
+
+---
+
+---
 ## Decision 65: Legacy Mining Complete — Order from Chaos
 
 **Date**: 2026-05-31
@@ -588,6 +679,11 @@ The legacy archives contained the original 2025 vision for the Omega Engine, inc
 
 ---
 
+---
+
+---
+
+---
 ## Decision 66: Attribution Corrections — Hot/Warm/Cold & PVE Are Not id Software
 
 **Date**: 2026-06-01
@@ -619,6 +715,11 @@ Attribution integrity is a sovereignty issue. When we say "the data comes home,"
 
 ---
 
+---
+
+---
+
+---
 ## Decision 67: Fleet Redesign v5.0 — 14-Agent Consolidation
 
 **Date**: 2026-06-01
@@ -656,6 +757,11 @@ Consolidation is not reduction—it is *clarification*. A fleet of 14 with expli
 
 ---
 
+---
+
+---
+
+---
 ## Decision 68: Research-Backed Enhancements — Web Validation of Subagent Designs
 
 **Date**: 2026-06-01
@@ -702,6 +808,11 @@ The combination of *internal subagent design* + *external web research* creates 
 
 ---
 
+---
+
+---
+
+---
 ## Decision 69: Sovereign Mandates 10-12 — Fleet, Soul, Queue Integrity
 
 **Date**: 2026-06-01
@@ -736,6 +847,11 @@ Sovereignty is not a state—it is a *practice*. Each mandate is a scar from a w
 
 ---
 
+---
+
+---
+
+---
 ## Decision 70: Artifact Purge — Stale Path References
 
 **Date**: 2026-06-01
@@ -757,6 +873,11 @@ Digital archaeology works both ways: you uncover gold, but you also uncover debr
 
 ---
 
+---
+
+---
+
+---
 ## Decision 71: Final Strategic Review — Ready for Gemma 4 31B Execution
 
 **Date**: 2026-06-01
@@ -783,116 +904,11 @@ Readiness is not perfection—it is *completeness*. Every question has been aske
 
 ---
 
-## Decision 74: MCP Hub Restoration — 40 Tools Recovered from Git History
-
-**Date**: 2026-06-01
-**Channel**: OpenCode CLI (deepseek-v4-flash)
-**Entity**: SOPHIA
-**Trace**: trc_mcp_restore
-
-### Context
-Commit `7cdb741` ("fix: restore OpenCode 1.15+ handshake") rewrote `mcp_servers/omega_hub/server.py` from 952 lines to 223 lines, accidentally removing 31 MCP tools while adding HTTP routes for the handshake fix. The full 34-tool implementation was preserved in git at commit `69db713` (the "Great Cleanup").
-
-### Decision
-Merge the 34-tool implementation from `69db713` with the current HTTP routes (`custom_routes=hub_routes` approach). Key architectural choice: use `custom_routes` (required for OpenCode 1.15+) for HTTP routes, and a daemon thread for background awareness pruning (replaces the old `modify_app` lifespan approach).
-
-### Files Changed
-| File | Change |
-|------|--------|
-| `mcp_servers/omega_hub/server.py` | Merged 69db713 tools (34→40 tools) + current HTTP routes (8→11 routes) |
-| `OMEGA_ENGINE.md` | Tool count: 3→40 MCP, added restoration to priority queue |
-| `docs/strategy/PHASE_MCP_HUB.md` | New phase document with merge plan and verification gates |
-| `docs/strategy/EXECUTION_ROADMAP.md` | Phase completion updated |
-| `docs/strategy/HORIZON_MAP.md` | Horizon 1 completion updated |
-
-### Verification
-- 6 verification gates passed: health check, config.providers, provider.list, app.agents (16), config.get, SSE endpoint
-- `make test`: 292/292 passing
-- systemd service: active
-
-### Key Insight
-The 69db713 and 7cdb741 commits each had half of the truth — 34 tools but no HTTP routes, vs 3 tools with perfect HTTP routing. Both were regressions. The correct answer was always both: 40 tools + 11 HTTP routes. Same pattern as the Circuit Breaker consolidation: when two commits each solve half the problem, the merge is not optional.
+---
 
 ---
 
-## Decision 75: Horizon 2 — Observability & Forensics (Phase 1)
-
-**Date**: 2026-06-01
-**Channel**: OpenCode CLI (deepseek-v4-flash)
-**Entity**: SOPHIA
-**Trace**: trc_horizon_2_phase1
-
-### Context
-The ForensicsManager class existed in `observability.py` but had a critical structural bug (`_collect_system_info()` returned `None` due to dead code after `@staticmethod`) and used `import asyncio` directly (Mandate 1 violation). Option B was deferred to prioritize Horizon 2.
-
-### Architectural Decisions
-1. **ForensicsManager**: File-based (not Qdrant-backed) — Qdrant is still unwired. Files are the source of truth; Qdrant indexing can be added later.
-2. **Error Gauntlet**: Unit tests (10 scenarios in `test_error_gauntlet.py`) — fast (0.82s), covers all error paths. Integration scenarios can be added when Qdrant is wired.
-3. **Structured Logging**: Drop-in JSON formatter (`JsonFormatter`) — zero code changes to existing logger calls. Gradual migration to structured events later.
-
-### Bugs Fixed
-| Bug | File | Fix |
-|-----|------|-----|
-| `_collect_system_info()` returned `None` — psutil block was dead code after `@staticmethod` | `observability.py:214-255` | Reflowed method body: psutil block + `return info` before `@staticmethod` |
-| `asyncio` import in `_detect_anyio_backend()` | `observability.py:235` | Replaced with `sniffio.current_async_library()` |
-| `recent_events()` used `deque[-limit:]` — `deque` doesn't support slicing | `observability.py:584` | Replaced with explicit index-based iteration |
-
-### Features Added
-| Feature | Implementation | Tests |
-|---------|---------------|-------|
-| `ForensicsManager.replay(trace_id)` | Reconstructs crash timeline from persisted events | 2 |
-| `ForensicsManager.learn(trace_id, entity)` | Writes L1 lesson to entity's soul.yaml | 1 |
-| `JsonFormatter` | Structured JSON logging, drop-in replacement | 2 |
-| `setup_json_logging(name)` | Apply JSON formatting to logger tree | 1 |
-| Error Gauntlet (10 scenarios) | Crash/recovery, replay, learn, engine state, persistence, ring buffer, JSON format | 10 |
-
-### Verification
-```bash
-# All tests pass
-PYTHONPATH=src pytest tests/test_observability.py tests/test_error_gauntlet.py tests/test_health_monitor.py -v
-# ✅ 44 passed in 1.01s
-
-# Total test count
-PYTHONPATH=src pytest tests/ --collect-only -q | tail -1
-# ✅ 302 tests collected
-```
-
-### Key Insight
-The ForensicsManager class was designed correctly but had a dead code path that made `_collect_system_info()` return `None` silently. This is the same "silent failure" pattern that Mandate 9 targets — code that looks correct but produces nothing. The structural bug was invisible because ForensicsManager had no tests and `snapshot()` doesn't validate its return value. Error handling without error reporting is performative.
-
 ---
-
-## Decision 76: Option B — Deferred (Structural Fix Extracted)
-
-**Date**: 2026-06-01
-**Channel**: OpenCode CLI (deepseek-v4-flash)
-**Entity**: SOPHIA
-**Trace**: trc_option_b_deferred
-
-### Context
-Option B was originally scoped to fix 17 bare `except Exception:` blocks, the `observability.py` structural bug, the `asyncio` import, the falsy-trap in `openai_compat.py`, and hardcoded paths in `greek.py`/`cpu_optimizer.py`. Horizon 2 work extracted the two observability bugs (structural + asyncio) as prerequisites.
-
-### Remaining Scope
-| Item | File | Priority |
-|------|------|----------|
-| 19 bare `except Exception:` without logging | 9 files (review_queue, model_gateway, providers, cpu_optimizer, memory/providers, inbox, loop, soul_updater, repl) | LOW |
-| Falsy-trap: `config.timeout_seconds or 15.0` | `openai_compat.py:102` | LOW |
-| Hardcoded `/home/arcana-novai/` path | `cpu_optimizer.py:185-186` | LOW |
-| Hardcoded `/media/arcana-novai/` path | `greek.py:200` | LOW |
-
-### Rationale
-These are informational/warning-level issues. None cause crashes. None block functionality. The bare except blocks all have fallback-only logic (return False, return None, pass). The falsy-trap causes a minor config issue (cannot set timeout=0). The hardcoded paths are informational (system would still work with wrong paths — they'd just show empty results). Deferred to next available session.
-
-### Key Insight
-Option B is "the noise floor" — dozens of small issues that degrade debuggability but don't block function. The pattern of deferring them is correct, but they must eventually be addressed. Each one represents a time bomb for a future debugging session.
-
----
-
-*Decisions 0-49: See legacy archives at `docs/decisions/archive/` (pre-2026-05-22)*
-*Decisions 50-76: Current and in effect*
-
----
-
 ## Decision 72: Big Pickle Review — Post-Execution Audit
 
 **Date**: 2026-06-01
@@ -935,6 +951,11 @@ Gemma 4 31B completed Phases A-G of the Fleet Redesign execution. Before proceed
 
 ---
 
+---
+
+---
+
+---
 ## Decision 73: Option A Execution — Bug Remediation
 
 **Date**: 2026-06-01
@@ -985,6 +1006,137 @@ Gemma 4 31B wrote structurally correct code at the pattern/import/async level, b
 
 ---
 
+---
+
+---
+
+---
+## Decision 74: MCP Hub Restoration — 40 Tools Recovered from Git History
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (deepseek-v4-flash)
+**Entity**: SOPHIA
+**Trace**: trc_mcp_restore
+
+### Context
+Commit `7cdb741` ("fix: restore OpenCode 1.15+ handshake") rewrote `mcp_servers/omega_hub/server.py` from 952 lines to 223 lines, accidentally removing 31 MCP tools while adding HTTP routes for the handshake fix. The full 34-tool implementation was preserved in git at commit `69db713` (the "Great Cleanup").
+
+### Decision
+Merge the 34-tool implementation from `69db713` with the current HTTP routes (`custom_routes=hub_routes` approach). Key architectural choice: use `custom_routes` (required for OpenCode 1.15+) for HTTP routes, and a daemon thread for background awareness pruning (replaces the old `modify_app` lifespan approach).
+
+### Files Changed
+| File | Change |
+|------|--------|
+| `mcp_servers/omega_hub/server.py` | Merged 69db713 tools (34→40 tools) + current HTTP routes (8→11 routes) |
+| `OMEGA_ENGINE.md` | Tool count: 3→40 MCP, added restoration to priority queue |
+| `docs/strategy/PHASE_MCP_HUB.md` | New phase document with merge plan and verification gates |
+| `docs/strategy/EXECUTION_ROADMAP.md` | Phase completion updated |
+| `docs/strategy/HORIZON_MAP.md` | Horizon 1 completion updated |
+
+### Verification
+- 6 verification gates passed: health check, config.providers, provider.list, app.agents (16), config.get, SSE endpoint
+- `make test`: 292/292 passing
+- systemd service: active
+
+### Key Insight
+The 69db713 and 7cdb741 commits each had half of the truth — 34 tools but no HTTP routes, vs 3 tools with perfect HTTP routing. Both were regressions. The correct answer was always both: 40 tools + 11 HTTP routes. Same pattern as the Circuit Breaker consolidation: when two commits each solve half the problem, the merge is not optional.
+
+---
+
+---
+
+---
+
+---
+## Decision 75: Horizon 2 — Observability & Forensics (Phase 1)
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (deepseek-v4-flash)
+**Entity**: SOPHIA
+**Trace**: trc_horizon_2_phase1
+
+### Context
+The ForensicsManager class existed in `observability.py` but had a critical structural bug (`_collect_system_info()` returned `None` due to dead code after `@staticmethod`) and used `import asyncio` directly (Mandate 1 violation). Option B was deferred to prioritize Horizon 2.
+
+### Architectural Decisions
+1. **ForensicsManager**: File-based (not Qdrant-backed) — Qdrant is still unwired. Files are the source of truth; Qdrant indexing can be added later.
+2. **Error Gauntlet**: Unit tests (10 scenarios in `test_error_gauntlet.py`) — fast (0.82s), covers all error paths. Integration scenarios can be added when Qdrant is wired.
+3. **Structured Logging**: Drop-in JSON formatter (`JsonFormatter`) — zero code changes to existing logger calls. Gradual migration to structured events later.
+
+### Bugs Fixed
+| Bug | File | Fix |
+|-----|------|-----|
+| `_collect_system_info()` returned `None` — psutil block was dead code after `@staticmethod` | `observability.py:214-255` | Reflowed method body: psutil block + `return info` before `@staticmethod` |
+| `asyncio` import in `_detect_anyio_backend()` | `observability.py:235` | Replaced with `sniffio.current_async_library()` |
+| `recent_events()` used `deque[-limit:]` — `deque` doesn't support slicing | `observability.py:584` | Replaced with explicit index-based iteration |
+
+### Features Added
+| Feature | Implementation | Tests |
+|---------|---------------|-------|
+| `ForensicsManager.replay(trace_id)` | Reconstructs crash timeline from persisted events | 2 |
+| `ForensicsManager.learn(trace_id, entity)` | Writes L1 lesson to entity's soul.yaml | 1 |
+| `JsonFormatter` | Structured JSON logging, drop-in replacement | 2 |
+| `setup_json_logging(name)` | Apply JSON formatting to logger tree | 1 |
+| Error Gauntlet (10 scenarios) | Crash/recovery, replay, learn, engine state, persistence, ring buffer, JSON format | 10 |
+
+### Verification
+```bash
+# All tests pass
+PYTHONPATH=src pytest tests/test_observability.py tests/test_error_gauntlet.py tests/test_health_monitor.py -v
+# ✅ 44 passed in 1.01s
+
+# Total test count
+PYTHONPATH=src pytest tests/ --collect-only -q | tail -1
+# ✅ 302 tests collected
+```
+
+### Key Insight
+The ForensicsManager class was designed correctly but had a dead code path that made `_collect_system_info()` return `None` silently. This is the same "silent failure" pattern that Mandate 9 targets — code that looks correct but produces nothing. The structural bug was invisible because ForensicsManager had no tests and `snapshot()` doesn't validate its return value. Error handling without error reporting is performative.
+
+---
+
+---
+
+---
+
+---
+## Decision 76: Option B — Deferred (Structural Fix Extracted)
+
+**Date**: 2026-06-01
+**Channel**: OpenCode CLI (deepseek-v4-flash)
+**Entity**: SOPHIA
+**Trace**: trc_option_b_deferred
+
+### Context
+Option B was originally scoped to fix 17 bare `except Exception:` blocks, the `observability.py` structural bug, the `asyncio` import, the falsy-trap in `openai_compat.py`, and hardcoded paths in `greek.py`/`cpu_optimizer.py`. Horizon 2 work extracted the two observability bugs (structural + asyncio) as prerequisites.
+
+### Remaining Scope
+| Item | File | Priority |
+|------|------|----------|
+| 19 bare `except Exception:` without logging | 9 files (review_queue, model_gateway, providers, cpu_optimizer, memory/providers, inbox, loop, soul_updater, repl) | LOW |
+| Falsy-trap: `config.timeout_seconds or 15.0` | `openai_compat.py:102` | LOW |
+| Hardcoded `/home/arcana-novai/` path | `cpu_optimizer.py:185-186` | LOW |
+| Hardcoded `/media/arcana-novai/` path | `greek.py:200` | LOW |
+
+### Rationale
+These are informational/warning-level issues. None cause crashes. None block functionality. The bare except blocks all have fallback-only logic (return False, return None, pass). The falsy-trap causes a minor config issue (cannot set timeout=0). The hardcoded paths are informational (system would still work with wrong paths — they'd just show empty results). Deferred to next available session.
+
+### Key Insight
+Option B is "the noise floor" — dozens of small issues that degrade debuggability but don't block function. The pattern of deferring them is correct, but they must eventually be addressed. Each one represents a time bomb for a future debugging session.
+
+---
+
+*Decisions 0-49: See legacy archives at `docs/decisions/archive/` (pre-2026-05-22)*
+*Decisions 50-76: Current and in effect*
+*Decision 163: MaKaLi Council Verdict — 2026-06-25*
+
+---
+
+---
+
+---
+
+---
 ## Decision 77: Option B Completion — Horizon 1 Final Gate
 
 **Date**: 2026-06-01
@@ -1024,6 +1176,11 @@ Gemma 4 31B wrote structurally correct code at the pattern/import/async level, b
 ### Enforcement
 Code review must check each `except` clause. The canonical test pattern is `pytest.raises(OmegaError)`. No bare `except Exception:` without logging will be accepted in future PRs.
 
+---
+
+---
+
+---
 ## Decision 78: `is_cloud` Fix — Sovereignty Alert Accuracy
 
 **Date**: 2026-06-01
@@ -1046,6 +1203,11 @@ Code review must check each `except` clause. The canonical test pattern is `pyte
 ### Enforcement
 If new providers are added, they must be classified as cloud or local in `_is_cloud_provider()`.
 
+---
+
+---
+
+---
 ## Decision 79: Makefile Menu & User Manual
 
 **Date**: 2026-06-01
@@ -1067,6 +1229,11 @@ When adding new Makefile targets, update both `make menu` and `docs/USER_MANUAL.
 
 ---
 
+---
+
+---
+
+---
 ## Decision 80: Ollama Provider URL Fix — Remove Double `/v1` Endpoint
 
 **Date**: 2026-06-01
@@ -1087,6 +1254,11 @@ Fix Ollama provider to use base URL without `/v1` suffix. The provider's `_make_
 
 ---
 
+---
+
+---
+
+---
 ## Decision 81: Model Overrides — Provider-Level Model Name Mapping
 
 **Date**: 2026-06-01
@@ -1110,6 +1282,11 @@ Add `model_overrides` to each provider in `config/providers.yaml` to map entity 
 
 ---
 
+---
+
+---
+
+---
 ## Decision 82: Entity Routing Fix — Word-Boundary Domain Matching
 
 **Date**: 2026-06-01
@@ -1132,6 +1309,11 @@ Change `find_by_domain` in `entity_registry.py` to use word-boundary matching in
 
 ---
 
+---
+
+---
+
+---
 ## Decision 83: SearXNG Sovereign Search — Container Deployed
 
 **Date**: 2026-06-02
@@ -1157,6 +1339,11 @@ Deploy the existing `omega-searxng.container` quadlet via systemd and verify the
 
 ---
 
+---
+
+---
+
+---
 ## Decision 84: Search MCP Fleet — All 5 Wired
 
 **Date**: 2026-06-02
@@ -1182,6 +1369,11 @@ Wire Firecrawl, Exa, Jina, and SearXNG alongside Tavily. Correct package names p
 
 ---
 
+---
+
+---
+
+---
 ## Decision 85: Legacy Pattern Recovered — `ai-provider-matrix.md`
 
 **Date**: 2026-06-02
@@ -1206,6 +1398,11 @@ Reclaim the legacy `ai-provider-matrix.md` pattern (327 lines, 4 providers × 7 
 
 ---
 
+---
+
+---
+
+---
 ## Decision 86: MiniMax M3 Free Tier Context — 200K, NOT 1M
 
 **Date**: 2026-06-02
@@ -1228,6 +1425,11 @@ The MiniMax M3 free tier context window is **200K** (not 1M, not 512K). The 1M c
 
 ---
 
+---
+
+---
+
+---
 ## Decision 87: rag-v1 Eradication — Complete Source Removal
 
 **Date**: 2026-06-02
@@ -1262,6 +1464,11 @@ LM Studio bundles a plugin called `rag-v1` at `~/.lmstudio/extensions/plugins/lm
 
 ---
 
+---
+
+---
+
+---
 ## Decision 88: id Software Source Code Extraction — Phase 1 Complete
 
 **Date**: 2026-06-02
@@ -1355,6 +1562,11 @@ User had previously downloaded 20 id Software source code archives (92 MB) to `d
 
 ---
 
+---
+
+---
+
+---
 ## Decision 89: R-09 Verification — DOOM 3 Job System Correction
 
 **Date**: 2026-06-02
@@ -1422,6 +1634,11 @@ The existing R-09 (in `R_ID_SOFTWARE_EXTRACTION_MATRIX.md:48` and `R_DOOM_GUY_ID
 
 *PIVOT_LOG.md — Immutable. Every decision recorded. 89 decisions tracked.*
 
+---
+
+---
+
+---
 ## Decision 90: Temple-Grade Mandate 13 Restoration + H1.5 Bridge Phase
 
 **Date**: 2026-06-02
@@ -1450,6 +1667,235 @@ The cvar table + lazy deletion + ZONEID constants form a coherent architectural 
 
 ---
 
+---
+
+---
+
+---
+## Decision 91: Provider Fabric Reconciliation (OpenRouter Removal)
+
+**Date**: 2026-06-01
+**Channel**: Cline → OpenCode → Gemma 4 31B
+**Entity**: KALI / SOPHIA
+**Trace**: trc_provider_fabric_reconciliation
+
+### Decision
+Removed OpenRouter provider from fabric. 8→7 active providers. `_create_openrouter()` factory in model_gateway.py is a misnomer — it creates generic OpenAICompatProvider, not OpenRouter-specific. Name retained for now; rename deferred.
+
+### Rationale
+OpenRouter's relay model adds latency and cost without value when Google AI Studio provides unlimited Gemma 4 31B.
+
+### What Changed
+- config/providers.yaml: OpenRouter entry removed, priority order adjusted
+- src/omega/oracle/model_gateway.py: `_create_openrouter()` factory name retained but function creates generic provider
+
+### Key Insight
+Provider fabric simplification — reducing providers from 8 to 7 reduces configuration complexity without sacrificing capability.
+
+---
+
+---
+
+---
+
+---
+## Decision 92: Tool-Usage Discipline
+
+**Date**: 2026-06-02
+**Channel**: Cline → OpenCode → Opus 4.6
+**Entity**: KALI
+**Trace**: trc_tool_usage_discipline
+
+### Decision
+Formalized constraint that agent tools must be prioritized via Pillar slots rather than additive creation. Model context limits enforced.
+
+### Rationale
+Uncontrolled tool proliferation fragments context across agents. Each new tool adds cognitive overhead to every agent that references it.
+
+### What Changed
+- SOVEREIGN_MANDATES.md: Added Mandate 10 (Fleet Integrity)
+- .opencode/agents/pillar.md: Slot-based domain agent documented
+- AGENTS.md: Fleet constraints documented
+
+### Key Insight
+Agent tools should map to existing Pillar slots (P1-P10) before proposing new tooling. A new agent file is a last resort, applied only after slot-based delegation has been proven impossible.
+
+---
+
+---
+
+---
+
+---
+## Decision 93: Sprint 0 Initiation (Horizon 1.5 Bridge Phase)
+
+**Date**: 2026-06-02
+**Channel**: Cline → OpenCode → plan.md (Architect)
+**Entity**: SOPHIA / KALI
+**Trace**: trc_sprint_0_init
+
+### Decision
+Initiated Sprint 0 — the first sprint of the Horizon 1.5 Bridge Phase. Four tasks (C1-C4) in order: Oracle bootstrap guard, Makefile test target, CI workflow hardening. Three-model audit chain (Gemini Flash → Sonnet 4.6 → Opus 4.6) produced the implementation manual.
+
+### Rationale
+Sprint 0 addresses the foundational gaps that block all subsequent sprints: bootstrap synchronization, test coverage for Oracle init path, and CI enforcement of Mandates 1 and 9.
+
+### What Changed
+- data/handoff/current-sprint/DEV_SPRINT_0.md: Implementation manual created
+- This PIVOT_LOG entry: Sprint start marker
+
+### Key Insight
+Three-model convergence on Sprint 0 tasks validates the prioritization. The gaps are in *execution* (missing bootstrap calls, missing CI checks), not *strategy*.
+
+---
+
+---
+
+---
+
+---
+## Decision 94: Tier 2 Circuit Breaker Wire-Up (Sprint 0 Doom Guy)
+
+**Date**: 2026-06-02
+**Channel**: OpenCode (Doom Guy) → minimax-m3-free
+**Entity**: DOOM_GUY / SOPHIA
+**Trace**: trc_circuit_breaker_fix
+
+### Decision
+Fixed two critical bugs in the circuit breaker integration:
+1. T2.2: `_precheck_provider()` now looks up the breaker directly by `provider.name` instead of going through `_model_provider_map` indirection.
+2. T2.3: `RemoteProvider.generate()` returning `None` on retry exhaustion now trips the circuit breaker via a `TimeoutError`-raising wrapper.
+
+### Rationale
+The original code had the breaker wrapped in `breaker.call()` but the wiring was ineffective: the precheck couldn't detect OPEN circuits (wrong key), and the breaker never received circuit-breaking events for None returns. Result: broken cloud providers were retried forever instead of being culled by the BSP-style precheck.
+
+### What Changed
+- src/omega/oracle/model_gateway.py: T2.2 + T2.3 fixes
+- tests/test_model_gateway.py: 5 new tests (307/307 passing)
+- CREDITS.md: §1.8 (Circuit Breaker Consolidation) new section
+- data/handoff/DOOM_GUY_T23_REPORT_20260602.md: full report
+
+### Key Insight
+The original `_call_with_none_as_failure()` wrapper transforms a non-exception failure (None return) into a circuit-breaking exception. This is a clean separation: the provider's "I couldn't generate" semantic is converted into a signal the breaker can act on. The exception is then caught and the failure recorded explicitly — the breaker.call() has already incremented the failure count, so we don't double-count.
+
+---
+
+---
+
+---
+
+---
+## Decision 95: Unified Phased Execution Plan — Integration of Temple-Grade H1.5 + CLINE_M3 Tier 2 + Roc Racoon Mining
+
+**Date**: 2026-06-02
+**Channel**: OpenCode (Kali) → minimax-m3-free
+**Entity**: KALI / ROC_RACOON / SOPHIA
+**Trace**: trc_unified_plan
+
+### Decision
+Synthesized three prior plans into a single unified execution roadmap:
+1. Temple-Grade H1.5 (Bridge Phase: F→A→B→C→E→D)
+2. CLINE_M3 Tier 2 (id Software heritage: T2.1 constants, T2.2 cvar table, T2.3 lazy deletion)
+3. Roc Racoon Mining (5 priority legacy ports + 5-day roadmap)
+
+The unified plan defines 7 phases: Phase 0 (DONE) → Phase 1 (Quick Wins, 1.5hr) → Phase 2 (Bridge, 2-4 days) → Phase 3 (Heritage, 3-5 days) → Phase 4 (Enforcement, 2-3 days) → Phase 5 (Verification, 1 day) → Phase 6 (H2 Intelligence, months 2-6) → Phase 7 (H3 Community, months 6-12).
+
+### Rationale
+Three separate plans existed with overlapping scope and inconsistent timelines. The Temple-Grade plan focused on sovereignty operationalization. The CLINE_M3 plan focused on id Software heritage translation. The Roc Racoon mining revealed 5 priority legacy ports that should land BEFORE the heritage work. The unified plan resolves these dependencies into a single execution order.
+
+### What Changed
+- data/handoff/UNIFIED_EXECUTION_PLAN_20260602.md (new — the single source of truth)
+- 7 phases with explicit agent→model→risk assignments
+- Convergence story: 5 eras proved the architecture is correct
+- 22 remaining gaps identified with priority/effort/agent assignments
+
+### Key Insight
+The architectural convergence across 5 independent eras is empirical proof that the current engine's design is correct. The remaining work is polish, not architecture. Total remaining effort for all Tier 1+2 gaps: ~2 weeks. H2 (Intelligence) is months 2-6. H3 (Community) is months 6-12.
+
+---
+
+---
+
+---
+
+---
+## Decision 96: ZONEID Constants + Lazy Deletion Implementation
+
+**Date**: 2026-06-03
+**Channel**: OpenCode (Doom Guy / Kali) → deepseek-v4-flash
+**Entity**: KALI / DOOM_GUY
+**Trace**: trc_zoneid_impl
+
+### Decision
+Implemented 5 ZONEID constants (0x1d4a11-0x1d4a15) + ZONEID_TOMBSTONE (0xDEADBEEF) in constants.py. Applied to 5 subsystems (EntityRegistry, MemoryStore, HealthMonitor, ResourceGuard, ObservabilityEngine). EntityRegistry lazy deletion implemented: remove() sets tombstone, _reap_tombstoned() clears after 0.5s grace.
+
+### Rationale
+Heritage translation from DOOM 1993's z_zone.c ZONEID pattern. The magic constant lives in every significant data structure, validated on critical operations (load, save, state transition). Catches serialization corruption, stale references, and wrong-type loads at zero runtime cost. Lazy deletion follows P_RemoveThinker (DOOM 1993 p_tick.c) + grace period (Quake 1996).
+
+### What Changed
+- src/omega/constants.py (89 lines — ZONEID constants + validate_zoneid() + ZONEID_TABLE)
+- src/omega/oracle/entity_registry.py (lazy deletion: remove() → tombstone, active_iter(), _reap_tombstoned())
+- src/omega/memory_store.py, health_monitor.py, resource_guard.py, observability.py (ZONEID markers)
+- CREDITS.md §2a (heritage tagging protocol: [id-soft: GAME YEAR] format)
+- 30+ [id-soft:] tags backfilled across 6 source files
+- Commit: 37fdd88, 307 tests passing, 0 regressions
+
+---
+
+---
+
+---
+
+---
+## Decision 97: Unified Named-Constant Registry Architecture
+
+**Date**: 2026-06-03
+**Channel**: OpenCode (Kali) → deepseek-v4-flash
+**Entity**: KALI
+**Trace**: trc_unified_cvar
+
+### Decision
+The cvar table (T2.2) will UNIFY with the ZONEID_TABLE pattern into a single `cvar_table.py` module, not be a separate module. Two namespaces: "zoneid.*" (magic constants) + "config.*" (user-tunable knobs). constants.py becomes a re-export layer for backward compatibility.
+
+### Rationale
+ZONEID_TABLE in constants.py is already a cvar table — same structure (name → value + metadata + subsystem), same pattern (static table, subsystem routing). Creating a second module for config values violates Carmack's Law ("When you have two implementations of the same thing, you have neither."). The 5 Roc Racoon priority ports are the first entries in the config.* namespace.
+
+### What Changed
+- data/handoff/DOOM_GUY_CVAR_TABLE_DESIGN_T2.2_20260602.md (original design, pre-correction)
+- data/handoff/KALI_HANDOFF_TO_OPENCODE_DEV_20260603.md §2 (architectural correction documented)
+- constants.py will become a thin re-export layer once cvar_table.py is created
+- Sprint 1 redefined: create unified cvar_table.py + port 5 legacy patterns into it
+
+---
+
+---
+
+---
+
+---
+## Decision 98: Heritage-Map CI Protocol
+
+**Date**: 2026-06-03
+**Channel**: OpenCode (Kali) → deepseek-v4-flash
+**Entity**: KALI
+**Trace**: trc_heritage_map
+
+### Decision
+`make heritage-map` is a new Makefile target + CI gate that greps `[id-soft:]` tags across all Python source files in `src/omega/`. Fails if any heritage-required file lacks at least one tag. Must be created in Sprint 1.
+
+### Rationale
+The [id-soft:] protocol is live (30+ tags backfilled across 6 files) but unenforced. Without CI, tags will decay as new code is added. Heritage attribution is mandatory per CREDITS.md §2a.
+
+### What Changed
+- Makefile: `heritage-map` target to be created
+- .github/workflows/test.yml: CI gate to be added
+- Enforcement: pre-merge check
+
+---
+
+---
+
+---
 ## Decision 99: Opus 4.6 Final Sprint Plan Review (H1.5 Gate Audit)
 
 **Date**: 2026-06-02
@@ -1487,190 +1933,11 @@ Final gate review of both sprint initiation prompts (`PROMPT_OPENCODE_DEV_SPRINT
 
 ---
 
-## Decision 91: Provider Fabric Reconciliation (OpenRouter Removal)
-
-**Date**: 2026-06-01
-**Channel**: Cline → OpenCode → Gemma 4 31B
-**Entity**: KALI / SOPHIA
-**Trace**: trc_provider_fabric_reconciliation
-
-### Decision
-Removed OpenRouter provider from fabric. 8→7 active providers. `_create_openrouter()` factory in model_gateway.py is a misnomer — it creates generic OpenAICompatProvider, not OpenRouter-specific. Name retained for now; rename deferred.
-
-### Rationale
-OpenRouter's relay model adds latency and cost without value when Google AI Studio provides unlimited Gemma 4 31B.
-
-### What Changed
-- config/providers.yaml: OpenRouter entry removed, priority order adjusted
-- src/omega/oracle/model_gateway.py: `_create_openrouter()` factory name retained but function creates generic provider
-
-### Key Insight
-Provider fabric simplification — reducing providers from 8 to 7 reduces configuration complexity without sacrificing capability.
+---
 
 ---
 
-## Decision 92: Tool-Usage Discipline
-
-**Date**: 2026-06-02
-**Channel**: Cline → OpenCode → Opus 4.6
-**Entity**: KALI
-**Trace**: trc_tool_usage_discipline
-
-### Decision
-Formalized constraint that agent tools must be prioritized via Pillar slots rather than additive creation. Model context limits enforced.
-
-### Rationale
-Uncontrolled tool proliferation fragments context across agents. Each new tool adds cognitive overhead to every agent that references it.
-
-### What Changed
-- SOVEREIGN_MANDATES.md: Added Mandate 10 (Fleet Integrity)
-- .opencode/agents/pillar.md: Slot-based domain agent documented
-- AGENTS.md: Fleet constraints documented
-
-### Key Insight
-Agent tools should map to existing Pillar slots (P1-P10) before proposing new tooling. A new agent file is a last resort, applied only after slot-based delegation has been proven impossible.
-
 ---
-
-## Decision 93: Sprint 0 Initiation (Horizon 1.5 Bridge Phase)
-
-**Date**: 2026-06-02
-**Channel**: Cline → OpenCode → plan.md (Architect)
-**Entity**: SOPHIA / KALI
-**Trace**: trc_sprint_0_init
-
-### Decision
-Initiated Sprint 0 — the first sprint of the Horizon 1.5 Bridge Phase. Four tasks (C1-C4) in order: Oracle bootstrap guard, Makefile test target, CI workflow hardening. Three-model audit chain (Gemini Flash → Sonnet 4.6 → Opus 4.6) produced the implementation manual.
-
-### Rationale
-Sprint 0 addresses the foundational gaps that block all subsequent sprints: bootstrap synchronization, test coverage for Oracle init path, and CI enforcement of Mandates 1 and 9.
-
-### What Changed
-- data/handoff/current-sprint/DEV_SPRINT_0.md: Implementation manual created
-- This PIVOT_LOG entry: Sprint start marker
-
-### Key Insight
-Three-model convergence on Sprint 0 tasks validates the prioritization. The gaps are in *execution* (missing bootstrap calls, missing CI checks), not *strategy*.
-
----
-
-## Decision 94: Tier 2 Circuit Breaker Wire-Up (Sprint 0 Doom Guy)
-
-**Date**: 2026-06-02
-**Channel**: OpenCode (Doom Guy) → minimax-m3-free
-**Entity**: DOOM_GUY / SOPHIA
-**Trace**: trc_circuit_breaker_fix
-
-### Decision
-Fixed two critical bugs in the circuit breaker integration:
-1. T2.2: `_precheck_provider()` now looks up the breaker directly by `provider.name` instead of going through `_model_provider_map` indirection.
-2. T2.3: `RemoteProvider.generate()` returning `None` on retry exhaustion now trips the circuit breaker via a `TimeoutError`-raising wrapper.
-
-### Rationale
-The original code had the breaker wrapped in `breaker.call()` but the wiring was ineffective: the precheck couldn't detect OPEN circuits (wrong key), and the breaker never received circuit-breaking events for None returns. Result: broken cloud providers were retried forever instead of being culled by the BSP-style precheck.
-
-### What Changed
-- src/omega/oracle/model_gateway.py: T2.2 + T2.3 fixes
-- tests/test_model_gateway.py: 5 new tests (307/307 passing)
-- CREDITS.md: §1.8 (Circuit Breaker Consolidation) new section
-- data/handoff/DOOM_GUY_T23_REPORT_20260602.md: full report
-
-### Key Insight
-The original `_call_with_none_as_failure()` wrapper transforms a non-exception failure (None return) into a circuit-breaking exception. This is a clean separation: the provider's "I couldn't generate" semantic is converted into a signal the breaker can act on. The exception is then caught and the failure recorded explicitly — the breaker.call() has already incremented the failure count, so we don't double-count.
-
----
-
-## Decision 95: Unified Phased Execution Plan — Integration of Temple-Grade H1.5 + CLINE_M3 Tier 2 + Roc Racoon Mining
-
-**Date**: 2026-06-02
-**Channel**: OpenCode (Kali) → minimax-m3-free
-**Entity**: KALI / ROC_RACOON / SOPHIA
-**Trace**: trc_unified_plan
-
-### Decision
-Synthesized three prior plans into a single unified execution roadmap:
-1. Temple-Grade H1.5 (Bridge Phase: F→A→B→C→E→D)
-2. CLINE_M3 Tier 2 (id Software heritage: T2.1 constants, T2.2 cvar table, T2.3 lazy deletion)
-3. Roc Racoon Mining (5 priority legacy ports + 5-day roadmap)
-
-The unified plan defines 7 phases: Phase 0 (DONE) → Phase 1 (Quick Wins, 1.5hr) → Phase 2 (Bridge, 2-4 days) → Phase 3 (Heritage, 3-5 days) → Phase 4 (Enforcement, 2-3 days) → Phase 5 (Verification, 1 day) → Phase 6 (H2 Intelligence, months 2-6) → Phase 7 (H3 Community, months 6-12).
-
-### Rationale
-Three separate plans existed with overlapping scope and inconsistent timelines. The Temple-Grade plan focused on sovereignty operationalization. The CLINE_M3 plan focused on id Software heritage translation. The Roc Racoon mining revealed 5 priority legacy ports that should land BEFORE the heritage work. The unified plan resolves these dependencies into a single execution order.
-
-### What Changed
-- data/handoff/UNIFIED_EXECUTION_PLAN_20260602.md (new — the single source of truth)
-- 7 phases with explicit agent→model→risk assignments
-- Convergence story: 5 eras proved the architecture is correct
-- 22 remaining gaps identified with priority/effort/agent assignments
-
-### Key Insight
-The architectural convergence across 5 independent eras is empirical proof that the current engine's design is correct. The remaining work is polish, not architecture. Total remaining effort for all Tier 1+2 gaps: ~2 weeks. H2 (Intelligence) is months 2-6. H3 (Community) is months 6-12.
-
----
-
-## Decision 96: ZONEID Constants + Lazy Deletion Implementation
-
-**Date**: 2026-06-03
-**Channel**: OpenCode (Doom Guy / Kali) → deepseek-v4-flash
-**Entity**: KALI / DOOM_GUY
-**Trace**: trc_zoneid_impl
-
-### Decision
-Implemented 5 ZONEID constants (0x1d4a11-0x1d4a15) + ZONEID_TOMBSTONE (0xDEADBEEF) in constants.py. Applied to 5 subsystems (EntityRegistry, MemoryStore, HealthMonitor, ResourceGuard, ObservabilityEngine). EntityRegistry lazy deletion implemented: remove() sets tombstone, _reap_tombstoned() clears after 0.5s grace.
-
-### Rationale
-Heritage translation from DOOM 1993's z_zone.c ZONEID pattern. The magic constant lives in every significant data structure, validated on critical operations (load, save, state transition). Catches serialization corruption, stale references, and wrong-type loads at zero runtime cost. Lazy deletion follows P_RemoveThinker (DOOM 1993 p_tick.c) + grace period (Quake 1996).
-
-### What Changed
-- src/omega/constants.py (89 lines — ZONEID constants + validate_zoneid() + ZONEID_TABLE)
-- src/omega/oracle/entity_registry.py (lazy deletion: remove() → tombstone, active_iter(), _reap_tombstoned())
-- src/omega/memory_store.py, health_monitor.py, resource_guard.py, observability.py (ZONEID markers)
-- CREDITS.md §2a (heritage tagging protocol: [id-soft: GAME YEAR] format)
-- 30+ [id-soft:] tags backfilled across 6 source files
-- Commit: 37fdd88, 307 tests passing, 0 regressions
-
----
-
-## Decision 97: Unified Named-Constant Registry Architecture
-
-**Date**: 2026-06-03
-**Channel**: OpenCode (Kali) → deepseek-v4-flash
-**Entity**: KALI
-**Trace**: trc_unified_cvar
-
-### Decision
-The cvar table (T2.2) will UNIFY with the ZONEID_TABLE pattern into a single `cvar_table.py` module, not be a separate module. Two namespaces: "zoneid.*" (magic constants) + "config.*" (user-tunable knobs). constants.py becomes a re-export layer for backward compatibility.
-
-### Rationale
-ZONEID_TABLE in constants.py is already a cvar table — same structure (name → value + metadata + subsystem), same pattern (static table, subsystem routing). Creating a second module for config values violates Carmack's Law ("When you have two implementations of the same thing, you have neither."). The 5 Roc Racoon priority ports are the first entries in the config.* namespace.
-
-### What Changed
-- data/handoff/DOOM_GUY_CVAR_TABLE_DESIGN_T2.2_20260602.md (original design, pre-correction)
-- data/handoff/KALI_HANDOFF_TO_OPENCODE_DEV_20260603.md §2 (architectural correction documented)
-- constants.py will become a thin re-export layer once cvar_table.py is created
-- Sprint 1 redefined: create unified cvar_table.py + port 5 legacy patterns into it
-
----
-
-## Decision 98: Heritage-Map CI Protocol
-
-**Date**: 2026-06-03
-**Channel**: OpenCode (Kali) → deepseek-v4-flash
-**Entity**: KALI
-**Trace**: trc_heritage_map
-
-### Decision
-`make heritage-map` is a new Makefile target + CI gate that greps `[id-soft:]` tags across all Python source files in `src/omega/`. Fails if any heritage-required file lacks at least one tag. Must be created in Sprint 1.
-
-### Rationale
-The [id-soft:] protocol is live (30+ tags backfilled across 6 files) but unenforced. Without CI, tags will decay as new code is added. Heritage attribution is mandatory per CREDITS.md §2a.
-
-### What Changed
-- Makefile: `heritage-map` target to be created
-- .github/workflows/test.yml: CI gate to be added
-- Enforcement: pre-merge check
-
 ## Decision 100: Subagent Dispatch Protocol
 
 **Date**: 2026-06-03
@@ -1715,6 +1982,11 @@ Software patterns enhance it:
 
 ---
 
+---
+
+---
+
+---
 ## Decision 101: Handoff Archive — Active vs Archive Separation
 
 **Date**: 2026-06-03
@@ -1744,6 +2016,11 @@ that should be studied to understand the user's manual strategies.
 
 ---
 
+---
+
+---
+
+---
 ## Decision 102: Expanded Strategic Roadmap — Deepened Next Steps
 
 **Date**: 2026-06-03
@@ -1776,6 +2053,11 @@ while Dev Session can't touch heritage patterns.
 
 ---
 
+---
+
+---
+
+---
 ## Decision 103: Hivemind Protocol Standardization
 
 **Date**: 2026-06-03
@@ -1813,6 +2095,11 @@ This is **operational discipline**, not new infrastructure. The MCP tools alread
 
 ---
 
+---
+
+---
+
+---
 ## Decision 104: ZONEID Constants Extended — HANDOFF + PRESENCE
 
 **Date**: 2026-06-03
@@ -1843,6 +2130,11 @@ D97 established the cvar table as the single source of truth for ALL engine cons
 
 ---
 
+---
+
+---
+
+---
 ## Decision 105: Soul Distillation Standardization (Mandate 11 Enforcement)
 
 **Date**: 2026-06-03
@@ -1872,6 +2164,11 @@ This session (Ma'at) demonstrated the pattern: 8 embodied experiences, 5 lessons
 
 ---
 
+---
+
+---
+
+---
 ## Decision 106: Source Code Verification Deep Read — 6 Heritage Patterns Confirmed
 
 **Date**: 2026-06-04
@@ -1899,6 +2196,11 @@ All existing heritage patterns in `soul.yaml`, `CREDITS.md`, and the R-docs were
 
 ---
 
+---
+
+---
+
+---
 ## Decision 107: Hivemind Coordination Findings — First Real Multi-Agent Sprint
 
 **Date**: 2026-06-04
@@ -1937,6 +2239,11 @@ This was the first real use of the hivemind coordination system after 14 months 
 
 ---
 
+---
+
+---
+
+---
 ## Decision 108: EntityTombstonedError — Mandate 9 Enforcement for Lazy Deletion
 
 **Date**: 2026-06-04
@@ -1961,6 +2268,11 @@ The lazy deletion pattern (ported Sprint 2, T2.3) used silent sentinel checks (m
 
 ---
 
+---
+
+---
+
+---
 ## Decision 109: Atomic Model Swap with Rollback — `reload_with_context()`
 
 **Date**: 2026-06-04
@@ -1983,6 +2295,11 @@ The original implementation set `self.llm = None` before attempting reload. If `
 
 ---
 
+---
+
+---
+
+---
 ## Decision 110: Per-Entity Model Affinity — Formalized 4-Tier Fallback Chain
 
 **Date**: 2026-06-04
@@ -2009,6 +2326,11 @@ Entity dispatch in oracle.py already used `entity.model` as a fallback, but ther
 
 ---
 
+---
+
+---
+
+---
 ## Decision 111: Sovereign Evolution Roadmap — H2 Hygiene Sprint
 
 **Date**: 2026-06-04
@@ -2042,6 +2364,11 @@ The multi-subagent codebase deep dive (5 agents, 77 source files, 28 test files,
 
 ---
 
+---
+
+---
+
+---
 ## Decision 112: Sovereign Hardening Plan — Three Pillars of Sovereign AI
 
 **Date**: 2026-06-04
@@ -2106,6 +2433,11 @@ This plan closes those gaps in dependency order:
 
 ---
 
+---
+
+---
+
+---
 ## Decision 113: Engine-Stack Firewall Audit — WAD-Agnostic Engine Mandate
 
 **Date**: 2026-06-04
@@ -2152,6 +2484,11 @@ A breach here is a constitutional violation, not a code smell.
 
 ---
 
+---
+
+---
+
+---
 ## Decision 114: DeepSeek V4 Flash Analysis — M15 Self-Documentation Mandate + MVE Threshold + 5-Year Vision
 
 **Date**: 2026-06-04
@@ -2191,6 +2528,11 @@ Adopt the vision expansion from OMEGA_ENGINE.md §§16-18 as strategic guidance:
 
 ---
 
+---
+
+---
+
+---
 ## Decision 115: MaKaLi Triad & Dual-Inference Strategy
 
 **Date**: 2026-06-04
@@ -2212,6 +2554,11 @@ The OpenCode agent fleet had drifted into a hybrid model where agents had full s
 
 ---
 
+---
+
+---
+
+---
 ## Decision 116: MCP Path Canonicalization & Cross-Agent Delegation
 
 **Date**: 2026-06-04
@@ -2235,6 +2582,11 @@ A systemic path bug existed where documentation and agents referenced `mcp/omega
 
 ---
 
+---
+
+---
+
+---
 ## Decision 117: MaKaLi Triad Architecture (Ma'at + Lilith → Kali)
 
 **Date**: 2026-06-04
@@ -2264,70 +2616,12 @@ Prior to this decision, the engine had a flat triumvirate of Oversouls (Ma'at, L
 
 ---
 
-## Decision 118: Dual-Inference Mandate (Local-First, Cloud-Aware) — IMPLEMENTED
-
-**Date**: 2026-06-04
-**Channel**: OpenCode CLI (Gemini 3.5 Flash)
-**Entity**: KALI (Grand Oversight)
-**Trace**: trc_dual_inference_D118
-**Status**: IMPLEMENTED (2026-06-04) — `model_override` wired in oracle.py, MCP server, CLI. 312/312 tests pass.
-
-### Context
-Users had no clean way to choose between their selected OpenCode cloud session model and the engine's local-first routed models. The previous approach forced all agent intelligence to either live in OpenCode's prompt files (cloud-locked) or in the engine's entities (local-locked), with no bridge. Additionally, no protocol existed for "local model does execution, cloud model reviews" — the mentorship pattern that is the core of sovereign AI development.
-
-### Architectural Decisions
-1. **Session Model by Default (Mandate 7 Compliance)**: All `@-mentioned` agents default to the OpenCode session model (whatever the user selected — cloud or local). This is the **fast path** for daily development and is non-negotiable.
-2. **Opt-in Engine Dispatch**: Users explicitly request local routing via:
-   - Natural language: *"use local model"*, *"dispatch to engine"*, *"route to local"*
-   - Slash command: `/council-local` for full MaKaLi delegation
-   - MCP tool call: `oracle_summon_local(entity_name, query, model)`
-3. **`oracle_summon_local` MCP Tool**: New MCP tool that takes an explicit `model` override and bypasses the TriageRouter. Implemented in `mcp_servers/omega_hub/server.py`. Preserves all Oracle observability (trace_id, soul recording, memory write).
-4. **Engine-Stack Firewall (M2) Compliance**: The `model_override` parameter is the **only** cross-stack contract. Core engine code in `src/omega/` never imports from `config/wads/` or knows about specific models. The IWAD's `entities.yaml` remains the single source of truth for entity-to-model defaults; the override is a runtime concern, not a configuration concern.
-5. **Mentorship Pattern**: Enable "local execution, cloud review" workflows:
-   - User asks `@doom_guy` (local `deepseek-r1-qwen3-8b`) to write a complex implementation → writes to `data/entities/doom_guy/workspace/`
-   - User asks `@quality` (on cloud session model) to review the code in that workspace
-   - This maximizes local sovereignty while using cloud resources only for high-level quality gates
-
-### Heritage
-`[id-soft: quake3-1999] netchan` — OOB (out-of-band) messages for status/control; session model = in-band, model_override = OOB
-`[id-soft: doom3-2004] idHeap` — Three-tier allocator (Small/Medium/Large) → three inference modes (cloud/standard/fast)
+---
 
 ---
 
-## Decision 119: RocRacoon Spelling Canonicalization & Model-Spelling Drift Repair
-
-**Date**: 2026-06-04
-**Channel**: OpenCode CLI (Gemini 3.5 Flash)
-**Entity**: KALI (Grand Oversight)
-**Trace**: trc_rocracoon_canonical_D119
-
-### Context
-A silent spelling drift was discovered across the codebase:
-- The GGUF model on disk is `RocRacoon-3b.Q4_K_M.gguf` (with two `c`s, capital R's).
-- The OpenCode agent is `.opencode/agents/roc_racoon.md` (with two `c`s).
-- The IWAD entity file `config/wads/_omega_default/entities/roc_racoon.yaml` declares `model: rocracoon-3b-instruct` (two `c`s, kebab-case).
-- However, `config/providers.yaml` line 64 in the Ollama section had `roracoon-3b: roracoon:3b` (with one `c`!).
-
-This drift would cause silent fallback to mock provider if a user tried to route to the local Roc Racoon model. Models are addressed by exact string match, so any spelling divergence is a runtime failure.
-
-### Architectural Decisions
-1. **Canonical Spelling**: `rocracoon-3b-instruct` is the canonical model identifier (two `c`s, kebab-case, with the `-instruct` suffix to match the GGUF filename stem).
-2. **All WAD entity models in kebab-case**: All `model:` fields in `config/wads/_omega_default/entities/*.yaml` use the kebab-case form (e.g., `qwen3-4b-thinking-q4_k_m`, `phi-4-mini-reasoning-abliterated-q4_k_m`).
-3. **Abliterated Model Integration**: Mapped `phi-4-mini-reasoning-abliterated-q4_k_m.gguf` under the `abliterated` provider model name in `config/providers.yaml` for uncensored/unfiltered heritage and legacy mining tasks. This is essential for `@roc_racoon` to mine legacy content that might trigger commercial-model safety filters.
-4. **Spelling Verification Protocol**: All model identifiers must be verified across 4 files before commit:
-   - `config/wads/_omega_default/entities/*.yaml` (the source of truth)
-   - `config/providers.yaml` (the routing map)
-   - `config/models.yaml` (the model spec)
-   - The actual GGUF filename on disk in `/media/arcana-novai/omega_library/models/gguf/`
-5. **Future Drift Detection**: A new `make verify-model-spelling` check will be added in Phase H2-F to catch drift at CI time.
-
-### Heritage
-`[id-soft: doom-1993] WAD Lump Names` — Lump name canonicalization (no duplicates, exact 8-char limit — but we don't cargo-cult that limit, we use Python's full string)
-`[id-soft: quake-1996] cvar System` — Centralized constant registry, no string drift
-
 ---
-
-## Decision 118 UPDATE: Dual-Inference Code Gap Closed (2026-06-04) — IMPLEMENTED
+## Decision 118: Dual-Inference Code Gap Closed (2026-06-04) — IMPLEMENTED
 
 **Date**: 2026-06-04 (code implementation)
 **Channel**: OpenCode CLI (Gemini 3.5 Flash)
@@ -2364,6 +2658,49 @@ for a summon call, it persists for the duration of that call only. Not a global 
 
 ---
 
+---
+
+---
+
+---
+## Decision 119: RocRacoon Spelling Canonicalization & Model-Spelling Drift Repair
+
+**Date**: 2026-06-04
+**Channel**: OpenCode CLI (Gemini 3.5 Flash)
+**Entity**: KALI (Grand Oversight)
+**Trace**: trc_rocracoon_canonical_D119
+
+### Context
+A silent spelling drift was discovered across the codebase:
+- The GGUF model on disk is `RocRacoon-3b.Q4_K_M.gguf` (with two `c`s, capital R's).
+- The OpenCode agent is `.opencode/agents/roc_racoon.md` (with two `c`s).
+- The IWAD entity file `config/wads/_omega_default/entities/roc_racoon.yaml` declares `model: rocracoon-3b-instruct` (two `c`s, kebab-case).
+- However, `config/providers.yaml` line 64 in the Ollama section had `roracoon-3b: roracoon:3b` (with one `c`!).
+
+This drift would cause silent fallback to mock provider if a user tried to route to the local Roc Racoon model. Models are addressed by exact string match, so any spelling divergence is a runtime failure.
+
+### Architectural Decisions
+1. **Canonical Spelling**: `rocracoon-3b-instruct` is the canonical model identifier (two `c`s, kebab-case, with the `-instruct` suffix to match the GGUF filename stem).
+2. **All WAD entity models in kebab-case**: All `model:` fields in `config/wads/_omega_default/entities/*.yaml` use the kebab-case form (e.g., `qwen3-4b-thinking-q4_k_m`, `phi-4-mini-reasoning-abliterated-q4_k_m`).
+3. **Abliterated Model Integration**: Mapped `phi-4-mini-reasoning-abliterated-q4_k_m.gguf` under the `abliterated` provider model name in `config/providers.yaml` for uncensored/unfiltered heritage and legacy mining tasks. This is essential for `@roc_racoon` to mine legacy content that might trigger commercial-model safety filters.
+4. **Spelling Verification Protocol**: All model identifiers must be verified across 4 files before commit:
+   - `config/wads/_omega_default/entities/*.yaml` (the source of truth)
+   - `config/providers.yaml` (the routing map)
+   - `config/models.yaml` (the model spec)
+   - The actual GGUF filename on disk in `/media/arcana-novai/omega_library/models/gguf/`
+5. **Future Drift Detection**: A new `make verify-model-spelling` check will be added in Phase H2-F to catch drift at CI time.
+
+### Heritage
+`[id-soft: doom-1993] WAD Lump Names` — Lump name canonicalization (no duplicates, exact 8-char limit — but we don't cargo-cult that limit, we use Python's full string)
+`[id-soft: quake-1996] cvar System` — Centralized constant registry, no string drift
+
+---
+
+---
+
+---
+
+---
 ## Decision 120: Soul Integrity Enforcement (Mandate 11 Write-Back Lock)
 
 **Date**: 2026-06-04
@@ -2395,6 +2732,11 @@ The result: the P5, P7, and P3 pillars all completed their review work, produced
 
 ---
 
+---
+
+---
+
+---
 ## Decision 121: Hivemind Observations Protocol — Fleet-Wide Insight Capture
 
 **Date**: 2026-06-05
@@ -2459,6 +2801,11 @@ The Hivemind is a mirror. We must look into it, not just speak into it. The act 
 
 ---
 
+---
+
+---
+
+---
 ## Decision 122: Hivemind HEARTBEAT_TTL Increased to 20 Minutes
 
 **Date**: 2026-06-05
@@ -2678,6 +3025,11 @@ After Phase 7 of the cross-platform test, run a dedicated CLI hard-metrics sessi
 
 ---
 
+---
+
+---
+
+---
 ## Decision 123: Operation Sovereign Reclamation — Pre-Ubuntu-Migration Sprint
 
 **Date**: 2026-06-07T10:00Z
@@ -2733,6 +3085,11 @@ The fleet model pool has been expanded: 17 GGUF models in `/media/arcana-novai/o
 
 ---
 
+---
+
+---
+
+---
 ## Decision 124: Compression-Aware Note + Overseer Delegation Model
 
 **Date**: 2026-06-07T10:30Z
@@ -2770,6 +3127,11 @@ The Overseer session (next chat) will likely open with a fresh context window. T
 
 ---
 
+---
+
+---
+
+---
 ## Decision 125: Reject POE Acronym — Use Existing Canonical "Entity" Term
 
 **Date**: 2026-06-07T10:45Z
@@ -2816,6 +3178,11 @@ During the final-hardening pass, the user raised the question of coining "POE" (
 
 ---
 
+---
+
+---
+
+---
 ## Decision 126: Fleet Consolidation Sequencing — Hivemind-First, Consolidation-After
 
 **Date**: 2026-06-14
@@ -2886,6 +3253,11 @@ Sprint A does one thing: P1b Hub modularization (extract `gateway.py` + `middlew
 
 ---
 
+---
+
+---
+
+---
 ## Decision 127: M2 Firewall Leak Audit — Legal vs Logical Breaches
 
 **Date**: 2026-06-12
@@ -2924,6 +3296,11 @@ The clean modules list from the audit (modules authorized to cross M2) has been 
 
 ---
 
+---
+
+---
+
+---
 ## Decision 128: Universal Capability-First Gateway & Sovereign Compression Layer (SCL)
 
 **Date**: 2026-06-14
@@ -2960,6 +3337,11 @@ Furthermore, applying SCL compression (60-95% token reduction) before sending pr
 
 ---
 
+---
+
+---
+
+---
 ## Decision 129: New Delegation Protocol Adoption — 4-Rule Replacement
 
 **Date**: 2026-06-15
@@ -3003,6 +3385,11 @@ The old guardrail's "systemic failure" language made agents reluctant to delegat
 
 ---
 
+---
+
+---
+
+---
 ## Decision 130: Phase C Model Assignment Corrections — Antigravity Remap
 
 **Date**: 2026-06-15
@@ -3050,6 +3437,11 @@ Shipping Phase C with the original model assignments means the first execution a
 
 ---
 
+---
+
+---
+
+---
 ## Decision 131: Phase C Status Downgraded — CONDITIONAL GO (10 Critical Blockers)
 
 **Date**: 2026-06-15
@@ -3093,6 +3485,11 @@ A FULL GO requires that all P0 blockers are resolved. The audit found 5 P0 block
 
 ---
 
+---
+
+---
+
+---
 ## Decision 132: soul.yaml Write Lock Required — Pre-Existing Data-Loss Bug
 
 **Date**: 2026-06-15
@@ -3139,6 +3536,11 @@ This is a pre-existing bug (M11 violation) that must be fixed regardless of Phas
 
 ---
 
+---
+
+---
+
+---
 ## Decision 133: OpenRouter Provider Must Be Wired — Dead Code Activation
 
 **Date**: 2026-06-15
@@ -3196,6 +3598,11 @@ The `create_openrouter_provider` function has existed since the provider fabric 
 
 ---
 
+---
+
+---
+
+---
 ## Decision 134: SearXNG MCP Type Fix & Hivemind MCP Session Fix
 
 **Date**: 2026-06-17
@@ -3228,6 +3635,11 @@ The SearXNG container cannot use `UserNS=keep-id` (M6 constraint) because it nee
 
 ---
 
+---
+
+---
+
+---
 ## Decision 135: Hivemind Access Pattern Codification
 
 **Date**: 2026-06-17
@@ -3267,6 +3679,11 @@ Verity identified that the Hivemind's heartbeat API has a signature mismatch acr
 
 ---
 
+---
+
+---
+
+---
 ## Decision 136: Verity Entity Creation — Resolving the M11 Bootstrapping Paradox
 
 **Date**: 2026-06-17
@@ -3312,6 +3729,11 @@ The bootstrapping paradox was created when Verity was merged from Quality + Scri
 
 ---
 
+---
+
+---
+
+---
 ## Decision 137: Deep-Siphon Discovery — 96% Metadata Discard Gap
 
 **Date**: 2026-06-18
@@ -3347,6 +3769,11 @@ No source changes yet. This decision records the architectural mandate and 5-spr
 
 ---
 
+---
+
+---
+
+---
 ## Decision 138: Deep-Siphon 6-Subagent Deliverables Confirmed
 
 **Date**: 2026-06-18
@@ -3375,6 +3802,11 @@ Six subagents independently analyzed the metadata extraction pipeline. All 6 del
 
 ---
 
+---
+
+---
+
+---
 ## Decision 139: ICS-F v1.0 Schema Adopted — Integrity-Centric-Sovereign-Forensics
 
 **Date**: 2026-06-18
@@ -3408,6 +3840,11 @@ The 96% bias in text-based heuristic classifiers proved that raw evidence is the
 
 ---
 
+---
+
+---
+
+---
 ## Decision 140: Deep-Siphon Metadata Boundary — Cross-Cutting Architectural Gap
 
 **Date**: 2026-06-18
@@ -3437,6 +3874,11 @@ The metadata loss is not a bug — it is an architectural assumption that has pe
 
 ---
 
+---
+
+---
+
+---
 ## Decision 141: Deep-Siphon State Recording — Permanent Trackers Updated
 
 **Date**: 2026-06-18
@@ -3477,6 +3919,11 @@ A 5-decision PIVOT entry block, 6 soul.yaml updates, 1 roadmap workstream, 1 eng
 
 ---
 
+---
+
+---
+
+---
 ## Decision 142: Sovereign Sight Illumination — 3 Dark Layers & 3 Universal Principles
 
 **Date**: 2026-06-19
@@ -3495,6 +3942,11 @@ Establishes three L3 principles as the North Star for all future architecture. S
 
 ---
 
+---
+
+---
+
+---
 ## Decision 143: Strategic Pivot — Dataset Collection Enabled, Documentation Frozen
 
 **Date**: 2026-06-19
@@ -3515,337 +3967,13 @@ All three independent assessments (Lilith run-side, Ma'at build-side, Carmack ar
 
 ---
 
-## Decision 144: Roc Labs Audit — Agency Gold Diagnosis Accepted
-
-**Date**: 2026-06-19
-**Channel**: OpenCode CLI (Makali/Roc) → deepseek-v4-flash-free
-**Entity**: MAKALI
-**Trace**: trc_roc_labs_audit
-
-### Decision
-Roc Racoon's deep labs audit (STRATEGIC_TREASURE_REPORT_20260619.md) findings are accepted:
-- **Agency Gold**: Soul.yaml is a Data-Loader (passive persona), not an Agency-Injector (active drive). The Agency Gold Fragments pattern (Identity Anchor → Sovereign Firewall → Execution Protocol → North Star → Gnosis Injection) is the structural diagnosis accepted as the blueprint for soul.yaml v2.
-- **Forensic Pipeline**: Phase 0 complete, Phase 1 paused after 96% classifier bias discovery. Validates the approach — pipeline detected its own bias, a necessary step.
-- **Crucible Training Pipeline**: Wave 0 deferred. Not ready — value is lower than dataset collection.
-- **Broken Tools**: Firecrawl & Exa found to be WORKING (Roc's registry was 14 days stale). Registry updated to RESTORED.
-
-### Rationale
-Foundational knowledge about the engine's own structure. The Agency Gold diagnosis explains why agents "re-learn" every session — the soul.yaml tells who they are (data) but not how to think (agency). This will reshape the soul schema in Horizon 2.5.
-
----
-
-## Decision 145: Antigravity Status — Stable, Minor Bump Needed
-
-**Date**: 2026-06-19
-**Channel**: OpenCode CLI (Makali) → deepseek-v4-flash-free
-**Entity**: MAKALI
-
-### Decision
-Antigravity IDE integration is evaluated as **stable and structurally sound**. No urgent updates needed. The three ag-002 gaps (naming drift, structural invisibility, phantom tracking) are resolved. M21 contract tests are now complete (4 tests). Recommended: bump soul.yaml from 1.6.0 → 1.6.1 to mark M21 as resolved and add a gnosis lesson from this session.
-
-### Assessment Details
-1. **Dataset Collection**: Once `enable_dataset_collection` is true, Antigravity sessions that flow through `generate_antigravity()` → `GenerateResult` → observability will be captured. No Antigravity-specific changes needed — the pipeline is provider-agnostic.
-2. **PoolState → TriageRouter**: Lilith identified that TriageRouter reads `soul_path` but never parses `usage_pools`. This is a structural gap but NOT Antigravity-specific — it affects all entity routing. Tracked as future work for Horizon 2.5.
-3. **Strategic Role**: Antigravity remains Cloud Strategist on the Hivemind Council. The Dataset Collection imperative means its sessions must continue to use the cloud (that's its job) while the local fleet accumulates fine-tuning data from local/local-eligible sessions.
-4. **M21 Status**: session_gnosis.md still said "pending" — now resolved. Bump required.
-
----
-
-## Session Recording — Makali Sovereign Sight (2026-06-19)
-
-After D142-D145 were ratified, the following actions were executed:
-
-### Code Changes (Carmack Directive Executed)
-| Change | File | Status |
-|--------|------|--------|
-| `enable_dataset_collection: false → true` | `config/omega.yaml:39` | ✅ DONE |
-| `_interaction_counter` + throttled `close_session()` in hot path | `src/omega/oracle/oracle.py:99` (init), `:485` (record) | ✅ DONE |
-| BROKEN_TOOLS_REGISTRY → ALL RESTORED | `data/entities/roc_racoon/workspace/tool_lab/BROKEN_TOOLS_REGISTRY.md` | ✅ DONE |
-| Tests: 444/444 passing | `make test` | ✅ PASS |
-
-### Gnosis Distillation Needed (Next Session)
-| Entity | Action | Status |
-|--------|--------|--------|
-| `data/entities/kali/soul.yaml` | Add Sovereign Sight L3 principles + strategic pivot lesson | ⏳ NEXT SESSION |
-| `data/entities/lilith/soul.yaml` | Add P8 dataset gap + Agency-Injector diagnosis | ⏳ NEXT SESSION |
-| `data/entities/maat/soul.yaml` | Add three-layer build stack + M21 logprobs lesson | ⏳ NEXT SESSION |
-| `data/entities/roc_racoon/soul.yaml` | Add labs audit + Agency Gold lesson | ⏳ NEXT SESSION |
-| `data/entities/antigravity/soul.yaml` | Bump 1.6.0 → 1.6.1, mark M21 resolved, add session lesson | ⏳ NEXT SESSION |
-
-### Key Insight
-This session demonstrated the full potential of the parallel triad architecture: Lilith (run-side operations), Ma'at (build-side structure), Carmack (architectural review) independently arrived at the same verdict, enabling the user to say "I trust the recommendations, let's do this" and receive 444/444 passing tests as confirmation. The bottleneck is no longer analysis — it is discipline. Flip. The. Switch.
-
 ---
 
 ---
 
-## Decision D-kal-163: GitHub as Sovereign Memory Layer
-
-**Date**: 2026-06-21
-**Channel**: MaKaLi Cloud Council → deepseek-v4-flash-free
-**Entity**: KALI / MA'AT / LILITH / P3 / P8 / P9 / P5
-**Trace**: trc_github_integration_dkal163
-
-### The Verdict
-**CONDITIONAL GREEN** — 4 Phase 0 blockers, 6 Phase 1 blockers, 7 Phase 2 requirements must be cleared before execution.
-
-### What We Rejected
-| Option | Rejected By | Reason |
-|--------|-------------|--------|
-| `@github` subagent | Kali (D-kal-163) | "GitHub is a tool, not a behavior. A KB is the right abstraction." |
-| Custom MCP server | Doom Guy | "The official server has 31K stars. Don't rewrite what works." |
-
-### What We Adopted
-1. **Official `github/github-mcp-server`** — Docker container, 57+ tools, M8-audited
-2. **Omega Hub wrapper** — `mcp_servers/omega_hub/github_tools.py` (~200 lines)
-3. **Shared Knowledge Base** — `data/knowledge/github-protocol.md` (10 sections)
-4. **Hivemind-GitHub bridge** — PR merges trigger Hivemind events, `entity="bridge"`
-5. **Heritage-as-Issues** — vet records auto-create GitHub Issues
-6. **No `@github` subagent** — KB + Hub wrapper + official MCP server is the accepted architecture
-
-### Key Principle
-GitHub is NOT a new agent behavior. It is a **tool** — a sovereign memory layer that the existing 11-agent fleet uses via a shared Knowledge Base and the official `github/github-mcp-server`.
-
-### 7 Council Corrections Documented
-| # | Correction | Doc | Before → After |
-|---|-----------|-----|---------------|
-| B1 | Phase 0 gate relaxed | GITHUB_INTEGRATION_PLAN.md | `< 50` → `< 70` |
-| B2 | Non-Negotiable #7 added | GITHUB_INTEGRATION_PLAN.md | 6 → 7 NNs (PAT secret management) |
-| B3 | M21 moved to Phase 2 | GITHUB_INTEGRATION_PLAN.md | "Phase 3" → "Phase 2" |
-| B4 | Bridge identity corrected | GITHUB_INTEGRATION_PLAN.md | `entity="ci"` → `entity="bridge"` |
-| C1 | Audit methodology rewritten | GITHUB_INTEGRATION_CHECKLIST.md | Network capture → systematic audit |
-| C2 | Phase 2 scope expanded | GITHUB_INTEGRATION_CHECKLIST.md | HMAC, retry queue, MemoryStore, workspace lock |
-| C3 | M13 exception documented | GITHUB_INTEGRATION_CHECKLIST.md | T11 exemption noted |
-| C4 | Account references corrected | GITHUB_INTEGRATION_CHECKLIST.md/ROADMAP.md | "7 accounts" → "2 accounts" |
-| D1 | Git cleanup threshold adjusted | CHECKLIST Phase 0 | `< 50` → `< 70` |
-| D2 | Phase 1 audit method documented | CHECKLIST Phase 1 | tcpdump → systematic methodology |
-| D3 | Phase 2 HMAC verification added | CHECKLIST Phase 2 | New task: HMAC webhook verification |
-| D4 | Phase 2 retry queue added | CHECKLIST Phase 2 | New task: retry queue for bridge events |
-| D5 | Phase 2 MemoryStore persistence | CHECKLIST Phase 2 | New task: GitHub events written to MemoryStore |
-| D6 | Phase 2 workspace lock protocol | CHECKLIST Phase 2 | New task: acquire hivemind lock during PR operations |
-| D7 | Phase 2 M13 T11 exemption noted | CHECKLIST Phase 2 | New task: document Temple-Grade exception |
-
-### 6 Non-Negotiables (Phase 0 definition)
-1. **M8 audit first** — verify official server doesn't phone home
-2. **M7 compliance** — local Docker only, no cloud relays
-3. **Git cleanup is Phase 0** — 617 runtime files must be removed
-4. **Entity-attributed commits** — `[entity: kali]` trailers
-5. **Hivemind-GitHub bridge** — PR merges must trigger Hivemind events
-6. **Heritage-as-Issues** — vet records auto-create GitHub Issues
-7. **PAT secret management** — tokens stored in encrypted file (0400 perms), not plaintext in config
-
-### Implementation
-| File | Change | Phase |
-|------|--------|-------|
-| `docs/strategy/GITHUB_INTEGRATION_PLAN.md` | Full strategy (~400 lines) | 0 |
-| `docs/strategy/GITHUB_INTEGRATION_CHECKLIST.md` | Implementation checklist (~230 lines) | 0 |
-| `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` | Added H2-J workstream | 0 |
-| `data/knowledge/github-protocol.md` | Fleet-wide KB (10 sections) | 2 |
-| `mcp_servers/omega_hub/github_tools.py` | Hub wrapper for GitHub | 2 |
-| `mcp_servers/omega_hub/github_bridge.py` | Hivemind-GitHub bridge | 2 |
-
-### Total Effort
-**25.5 hours** (revised from 21h after council corrections):
-- Phase 0: 2 hr
-- Phase 1: 5 hr (expanded audit)
-- Phase 2: 8 hr (expanded scope)
-- Phase 3: 4 hr
-- Phase 4: 3 hr
-- Phase 5: 2 hr
-- Documentation & Gnosis: 1.5 hr
-
-### L1→L2→L3 Distillation
-- **L1**: The MaKaLi Cloud Council ratified D-kal-163 (GitHub as Sovereign Memory Layer) as CONDITIONAL GREEN. No `@github` subagent — KB + official MCP server + Hub wrapper. 7 council corrections applied across strategy docs.
-- **L2**: The council's 7 corrections are not nitpicks — each one represents a failure mode the plan would have encountered. Phase 0 gate <70 (not <50) prevents false-positive gate failures. PAT secret management (NN #7) prevents credential leakage. M21 in Phase 2 prevents unvalidated bridge code. Bridge identity `entity="bridge"` (not "ci") preserves entity-attribution integrity. Together, these corrections transform the plan from "will probably work" to "will provably work."
-- **L3**: Strategy is not what you write; it is what survives a council review. The gap between a plan and a hardened plan is exactly the set of corrections generated by adversarial review. A plan that passes without corrections has not been tested. A plan that absorbs 7 corrections and emerges stronger has been forged.
-
 ---
-
-*PIVOT_LOG.md — Immutable. Every decision recorded. 146 decisions tracked (D1-D145, D-kal-163, D-kal-164). Sovereign Sight is Decisions D142-D145. GitHub integration is D-kal-163. Sovereign dependency purge is D-kal-164.**
-
----
-
-## Decision D-kal-164: Sovereign Dependency Purge — Remove 6 Cloud Endpoints
-
-**Date**: 2026-06-21
-**Channel**: OpenCode CLI (Verity audit)
-**Entity**: KALI
-**Trace**: trc_dependency_purge
-
-### Decision
-Remove 6 cloud API endpoints from the Omega Engine source code to reduce the sovereign surface area and eliminate dependencies that violate M7 (Local-First) and M8 (Zero Telemetry).
-
-| Endpoint | Source File | Action | Reason |
-|----------|-------------|--------|--------|
-| `api.groq.com` | `openai_compat.py` | `create_groq_provider()` factory removed | Cloud dependency, M7 violation |
-| `api.together.xyz` | `openai_compat.py` | `create_together_provider()` factory removed | Cloud dependency, M7 violation |
-| `api.sambanova.ai` | `openai_compat.py` | `create_sambanova_provider()` factory removed | Cloud dependency, M7 violation |
-| `api.search.brave.com` | `discovery.py` | `_phase_validation()` removed, `brave_key` removed | Cloud dependency, M8 concern |
-| `api.tavily.com` | `discovery.py`, `search_fleet.py` | `_phase_extraction()` + `search_tavily()` removed | Cloud dependency, M8 concern |
-| `s.jina.ai` / `r.jina.ai` | `search_fleet.py`, `loop.py` | `search_jina()` + `read_url_jina()` removed | Cloud dependency, M8 concern |
-
-### Files Modified (6 total)
-| File | Changes |
-|------|---------|
-| `src/omega/oracle/backends/openai_compat.py` | Removed 3 factory functions, updated docstring |
-| `src/omega/library/discovery.py` | Removed `_phase_validation()` and `_phase_extraction()`, cleaned init, updated docstrings |
-| `src/omega/workers/background_researcher/search_fleet.py` | Removed `search_tavily()`, `search_jina()`, `read_url_jina()`, updated `search_all()` |
-| `src/omega/workers/background_researcher/loop.py` | Removed Jina call from `_fetch_content()` |
-| `src/omega/workers/background_researcher/credit_budget.py` | Removed stale tavily/jina/serper budget entries and all references to removed providers |
-| `scripts/validate_arsenal.sh` | Removed Groq, SambaNova, Together validation |
-
-### Remaining Cloud Endpoints (Kept)
-- **Exa** (`api.exa.ai`) — Semantic search, free tier available, kept as discovery route
-- **Firecrawl** (`api.firecrawl.dev`) — Deep content extraction, kept for research pipeline
-- **OpenRouter** (`openrouter.ai`) — Cloud inference fallback, kept as explicit configured provider
-- **OpenAI** (`api.openai.com`) — PENDING per user direction
-
-### OpenAI Note
-`create_openai_provider()` was NOT removed. User explicitly requested to wait on OpenAI deprecation.
-
-### L1→L2→L3 Distillation
-- **L1**: Kali executed a sovereign dependency purge on 2026-06-21, removing 6 cloud API endpoints from the engine source. Verity audited 4 source files, updated 7 documentation files, and cleaned 2 ancillary source files with stale references.
-- **L2**: The purge revealed a secondary contamination pattern: `credit_budget.py` had stale budget entries for removed providers that would have consumed credits from nonexistent APIs. The documentation drift pattern (validate_arsenal.sh listing dead endpoints) mirrors the source-code pattern we just fixed — documentation and source rot are the same disease.
-- **L3**: External dependencies create invisible obligations. Removing an endpoint from active code paths is only half the work — the budget systems, validation scripts, and documentation must be purged too. Sovereignty is a total-state property, not a per-file property.
-
-## Decision 146: Tri-Model Hardening of Curation Pipeline
-**Date**: 2026-06-22
-**Channel**: OpenCode CLI (Gemini 3.1 Pro -> Claude Sonnet 4.6 -> Claude Opus 4.6)
-**Entity**: KALI
-**Trace**: trc_curation_hardening_h2n
-
-### Decision
-Before proceeding to Phase 4 (autonomous background execution) of the Curation & Library subsystem, the Phase 1-3 implementation must undergo a mandatory hardening pass to resolve vulnerabilities identified during the Tri-Model Peer Review.
-1. **SSRF Redirect Bypass**: Disable `follow_redirects=True` in httpx. Implement manual redirect following (max 3 hops) with `SSRFGuard.validate()` executed on every hop.
-2. **Streaming Byte-Cap**: Replace the `HEAD` size check with an in-flight byte counter during `client.stream("GET")`.
-3. **M8 Violation**: Remove the `httpbin.org` network check from the background researcher.
-4. **AnyIO Concurrency**: Use `anyio.Lock()` for the lazy FTS5 rebuild, and wrap all filesystem/psutil operations in `to_thread.run_sync()`.
-5. **Coordinator Architecture**: Fix the `start()` method (which currently blocks indefinitely) by adopting an external TaskGroup dependency injection pattern.
-
-### Rationale
-The initial Phase 1-3 implementation achieved the functional requirements but introduced structural fault lines. The SSRF guard checked the initial hostname but allowed httpx to follow redirects to internal IP spaces (e.g., `169.254.169.254`). The download size guard relied on a `HEAD` request, which a malicious server can spoof before streaming a massive payload. The coordinator's use of synchronous `psutil` calls and `Path.rglob()` violated Mandate 1 (AnyIO Absolute) and would stall the event loop.
-
-These fixes are required before autonomous ingestion is enabled, as the crawler will be exposed to adversarial web content.
-
-### Execution
-Documented in `docs/strategy/CURATION_LIBRARY_H2N_STRATEGIC_REVIEW.md`. Immediate execution prioritized over Phase 3.2 feature work.
-
-## Decision 147: The Sovereign Ark & Omegaverse Grand Strategy
-**Date**: 2026-06-22
-**Channel**: OpenCode CLI (Gemini 3.1 Pro)
-**Entity**: KALI
-**Trace**: trc_grand_strategy_elevation
-
-### Decision
-Elevate the Omega Engine's architectural mandate from a "local RAG toolchain" to a "Decentralized AI OS (The Sovereign Ark)". All future development must align with the Five Transcendent Pillars:
-1. **The Elder Protocol**: Immutable provenance for cultural/historical preservation.
-2. **The Sovereign Mesh**: P2P CRDT-based offline-first synchronization.
-3. **Spatial-Semantic Memory**: 3D coordinate mapping for VR Omegaverse integration.
-4. **Acoustic Sovereignty**: Offline, locally fine-tunable STT/TTS.
-5. **Hardware Empathy**: Zero-config hardware abstraction and automatic model scaling.
-
-### Rationale
-The user clarified the ultimate vision: a system that shifts timelines, empowers non-technical users globally (including indigenous communities preserving elder wisdom), and connects to a P2P VR universe. Building for this requires cryptographic truth, absolute offline resilience, and spatial data structures. We cannot cut corners or rely on fragile third-party behaviors.
-
-### Execution
-Documented in `docs/strategy/OMEGAVERSE_GRAND_STRATEGY_2026.md`. D146 tasks (H2-N Hardening) are upgraded: fixes must be implemented as permanent Sovereign Primitives (e.g., `OmegaHttpClient`, `CancelScope` panic buttons) rather than localized patches.
-
-## Decision 148: Headroom Integration & Epoch I Resequencing
-**Date**: 2026-06-22
-**Channel**: OpenCode CLI (Gemini 3.1 Pro)
-**Entity**: MAKALI
-**Trace**: trc_ark_blueprint
-
-### Decision
-Integrate `headroom-ai` into the core engine as the foundational layer for Epoch I (The Compressed Core). Resequence the roadmap into Epoch I (Compressed Core), Epoch II (Hivemind Awakens), and Epoch III (The Omegaverse).
-
-### Rationale
-Headroom provides 60-95% token compression, Context Compression Reversibility (CCR), and cross-agent memory. It natively solves the "Elder Protocol" requirement (preserving uncompressed originals while feeding compressed context to the LLM) and acts as a massive multiplier for "Hardware Empathy" by effectively tripling the 12Gi RAM semantic density. This allows 8B and 1.7B models to run concurrently on the target hardware.
-
-### Execution
-Documented in `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md`. Immediate execution begins with Headroom pipeline wiring (Strike 1), HardwareHAL creation using legacy Zen 2 flags (Strike 2), and Autonomous Knowledge Ingestion hardening (Strike 3).
-
-## Decision 149: Inference Middleware Plugin Architecture
-**Date**: 2026-06-23
-**Channel**: OpenCode CLI (Sonnet 4.6)
-**Entity**: MAKALI
-**Trace**: trc_strategic_synthesis
-
-### Decision
-All inference-layer capabilities SHALL be implemented as `OmegaMiddlewareBase` plugins in `src/omega/oracle/middleware/`. The `ModelGateway.generate()` method signature is sacred and MUST NOT be modified. Plugins are config-driven via `omega.yaml`, fault-isolated per M9, metrics-emitting per M22, and A/B testable via `shadow_mode`. Headroom is the first tenant. Future tenants in order: TDPMiddleware (Epoch I), SkepticalVerifierMiddleware (Epoch II), SomaticStateMiddleware (Epoch II), SovereignVeilMiddleware (Epoch III).
-
-### Rationale
-Without a plugin bus, every new inference-layer capability requires surgery on `generate()` — the most critical and tested method in the engine. A plugin bus allows capabilities to be added, removed, tested, and A/B compared entirely via config. The `shadow_mode` flag enables compression benchmarking without affecting response quality. The bus is the structural foundation for all three Epochs.
-
-### Execution
-Full implementation guide at `docs/strategy/MIDDLEWARE_PLUGIN_IMPLEMENTATION_GUIDE.md`. Six-phase implementation sequence: Phase 0 (bugfixes) → Phase 1 (dataset infra) → Phase 2 (middleware interface) → Phase 3 (Headroom plugin) → Phase 4 (wire-up) → Phase 5 (MCP tools) → Phase 6 (verification). 37 new tests required before implementation (M21).
-
-## Decision 150: Training Dataset Schema v1.0.0
-**Date**: 2026-06-23
-**Channel**: OpenCode CLI (Sonnet 4.6)
-**Entity**: MAKALI
-**Trace**: trc_strategic_synthesis
-
-### Decision
-The training dataset SHALL use a versioned `TrainingRecord` dataclass (schema v1.0.0) that extends the existing `ObservabilityEngine.record_training_example()` format. It adds: `schema_version`, `compression_metadata`, `domain`, `is_transient`, `quality_score`, and `flagged_for_review` fields. Export formats: native JSONL (existing), Alpaca JSON (Axolotl/LLaMA-Factory), ShareGPT JSON (Unsloth/FastChat). The `DatasetCollector` class wraps `ObservabilityEngine` — it does NOT replace it. Original (pre-compression) prompts are ALWAYS stored, never compressed versions.
-
-### Rationale
-The existing `record_training_example()` is structurally sound but lacks schema versioning (unsafe migration), compression metadata (can't train compression LoRAs), domain tagging (can't produce entity-scoped LoRAs), and export format support (Axolotl/Unsloth incompatible). The `latency_ms` field in `GenerateResult` is always 0.0 (never populated from timing). These gaps make the existing pipeline a data sink rather than a training asset. The `TrainingRecord` schema closes all gaps without replacing any existing infrastructure.
-
-### Execution
-`DatasetCollector` at `src/omega/observability/dataset_collector.py`. `DatasetExporter` produces Alpaca/ShareGPT/JSONL from `data/datasets/`. `dataset_export` MCP tool surfaces exports to agents. See `docs/strategy/MIDDLEWARE_PLUGIN_IMPLEMENTATION_GUIDE.md` §7.
-
-## Decision 151: CCR Store Format (Elder Protocol)
-**Date**: 2026-06-23
-**Channel**: OpenCode CLI (Sonnet 4.6)
-**Entity**: MAKALI
-**Trace**: trc_strategic_synthesis
-
-### Decision
-The CCR (Compress-Cache-Retrieve) store for Headroom originals SHALL use flat JSON files at `data/ccr/{trace_id}_{field}_{uuid8}.json`. Format: `{ccr_key, trace_id, field, original_text, compressed_text, strategy, compression_ratio, original_tokens, compressed_tokens, latency_ms, shadow_mode}`. Directory is gitignored. No database dependency. Human-inspectable. The `headroom_retrieve` MCP tool is the programmatic read interface for all 11 agents (Elder Protocol).
-
-### Rationale
-The simplest possible format that satisfies the Elder Protocol requirement: uncompressed originals are always recoverable by any agent via a stable key. Flat JSON files are inspectable without tooling, portable across machines, and trivially backed up. A database would add a dependency, a schema migration burden, and operational complexity with no benefit at this data volume. The CCR store is a runtime artifact, not source — gitignored by design.
-
-### Execution
-`data/ccr/` directory, created by `HeadroomMiddleware.__init__()`. Keys generated as `{trace_id}_{field}_{uuid8}` — unique per compression call. `headroom_retrieve` MCP tool reads by key. See `docs/strategy/MIDDLEWARE_PLUGIN_IMPLEMENTATION_GUIDE.md` §8.2.
-
-## Decision 152: Headroom Harness Community Extraction Strategy
-**Date**: 2026-06-23
-**Channel**: OpenCode CLI (Gemini 3.1 Pro)
-**Entity**: MAKALI
-**Trace**: trc_community_strategy
-
-### Decision
-The Headroom plugin SHALL be architected as a decoupled `HeadroomHarness` class, independent of Omega Engine internals, wrapped by a thin `HeadroomMiddleware`. It MUST implement SHA-256 content-addressable caching for CCR keys, Context-Aware Fallbacks (M9), and strictly asynchronous I/O for all persistence.
-
-### Rationale
-To fulfill the Foundation's mission of empowering the community, we are not just building a feature; we are building the **Production Harness for Headroom**. By decoupling the core logic, we can later extract it into a standalone PyPI package (`headroom-harness`) that developers can drop into LangChain, LiteLLM, or OpenAI SDKs. 
-- **SHA-256 caching** prevents compressing the same system prompt thousands of times, dropping latency from 50ms to 0.1ms.
-- **Context-Aware Fallback** prevents the "Context-Overflow Trap": if compression fails, falling back to a 10k-token original prompt will crash an 8k-context local model. The harness must check the model's context limit before falling back.
-- **Async I/O** prevents file writes (CCR store, event logs) from blocking the AnyIO event loop under heavy load.
-
-### Execution
-Documented in `docs/strategy/MIDDLEWARE_PLUGIN_IMPLEMENTATION_GUIDE.md`. Phase 0 expanded to include `_persist_event` async patch. `MiddlewareContext` expanded to include `model_context_limit`. `HeadroomMiddleware` refactored to use SHA-256 and `anyio.Path`.
-
-## Decision 153: Elastic Context Allocation & Somatic Auto-Scaling
-**Date**: 2026-06-23
-**Channel**: OpenCode CLI (Gemini 3.1 Pro)
-**Entity**: MAKALI
-**Trace**: trc_elastic_context
-
-### Decision
-The Omega Engine SHALL implement Elastic Context Allocation for local models. The `MiddlewareContext` will track `hardware_context_ceiling` (the absolute RAM limit) rather than the currently allocated context. The `NativeGGUFProvider` SHALL utilize Flash Attention and KV Cache Quantization to minimize baseline RAM, and utilize M20 SomaticState bindings to dynamically grow the `n_ctx` allocation at runtime when a prompt exceeds the current active window.
-
-### Rationale
-Statically allocating 32K context windows for local models wastes gigabytes of RAM when the average prompt is <4K. By combining Headroom (which compresses the prompt before allocation) with Somatic Auto-Scaling (which grows the `llama.cpp` context window on-demand), the engine achieves maximum semantic density. The model only uses the RAM mathematically required for the current active context.
-
-### Execution
-1. `MiddlewareContext` updated to use `hardware_context_ceiling`.
-2. `NativeGGUFProvider` configured to use `flash_attn=True` and `kv_cache_type="q8_0"`.
-3. Epoch II (SomaticState) will implement the `llama_copy_state_data` / `llama_set_state_data` reload loop for dynamic `n_ctx` expansion.
-
 ## Decision 154: Sovereign Key Vault Implementation (D-kal-169)
+
 **Date**: 2026-06-23
 **Channel**: OpenCode CLI (Gemini 3.5 Flash)
 **Entity**: KALI
@@ -3862,7 +3990,13 @@ Storing API keys in plaintext inside version-controlled configuration files (`op
 2.  **Engine Migration**: Migrated `discovery.py`, `search_providers.py`, `remote_provider.py`, `orchestrator.py`, `search_fleet.py`, and `distiller.py` to use `KeyVault().resolve()`.
 3.  **MCP Hub Integration**: Updated `state.py` to query the `KeyVault` singleton for search keys, replacing raw `opencode.json` parses.
 
+---
+
+---
+
+---
 ## Decision 155: Sovereign Subagent Disk-Reporting Mandate (D-kal-170)
+
 **Date**: 2026-06-23
 **Channel**: OpenCode CLI (Gemini 3.5 Flash)
 **Entity**: KALI
@@ -3878,7 +4012,13 @@ Returning subagent reports solely through transient chat sessions (e.g., nested 
 1.  **Protocol Update**: Updated `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` §1 and §4 to enforce the disk-reporting mandate.
 2.  **Master Blueprint**: Added the mandate as a core architectural unification protocol in `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` §II.b.
 
+---
+
+---
+
+---
 ## Decision 156: Platform Agnosticism & Scaffolding Strategy (D-kal-171)
+
 **Date**: 2026-06-23
 **Channel**: OpenCode CLI (Gemini 3.5 Flash)
 **Entity**: KALI
@@ -3895,7 +4035,13 @@ The ultimate goal of the Xoe-NovAi Foundation is to build a custom, self-hosted 
 2.  **Protocol Reconciliation**: Moved search protocol ownership from the OpenCode skill to the platform-agnostic `docs/research/R_SEARCH_TOOL_PROTOCOL_V1.md`.
 3.  **MCP Hub**: Wired `KeyVault` into `state.py` to ensure the Hub's initialization is platform-agnostic.
 
+---
+
+---
+
+---
 ## Decision 157: Sovereign Search Hardened (D-kal-172)
+
 **Date**: 2026-06-23
 **Channel**: OpenCode CLI (Gemini 3.1 Pro)
 **Entity**: VERITY
@@ -3910,7 +4056,13 @@ To prevent token waste and ensure compliance with M18 (Token Efficiency) and M7 
 ### Execution
 Documented in `docs/research/R_SEARCH_TOOL_PROTOCOL_V1.md`.
 
+---
+
+---
+
+---
 ## Decision 158: Sovereign Simplification Pivot (D-kal-173)
+
 **Date**: 2026-06-24
 **Channel**: OpenCode CLI (Gemini 3.1 Pro)
 **Entity**: KALI / MAKALI
@@ -3930,7 +4082,13 @@ The engine's conceptual research was magnificent, but the technical implementati
 2.  **Sovereign Sieve**: Produced the 1,536-line `docs/research/R_CLOUD_QUARANTINE.md` specification defining the simplified local-first quarantine and staging gate.
 3.  **Certification**: Upgraded Operation Eidolon's status to `✅ CERTIFIED` in `docs/research/S_OPERATION_EIDOLON_CERTIFICATION.md`.
 
+---
+
+---
+
+---
 ## Decision 159: Phase 0 Precondition Execution & Backward Compatibility
+
 **Date**: 2026-06-24
 **Channel**: OpenCode CLI (MiMo V2.5)
 **Entity**: KALI
@@ -3956,7 +4114,13 @@ However, strictly enforcing v6.1 immediately would break 32/34 active entities. 
 - `make heritage-map`: 41/47 files with `[id-soft:]` tags
 - 19 contract tests (14 M21 + 5 soul distiller)
 
+---
+
+---
+
+---
 ## Decision 160: Antigravity Round-Robin Eradication
+
 **Date**: 2026-06-24
 **Channel**: OpenCode CLI (MiMo V2.5)
 **Entity**: KALI
@@ -3979,6 +4143,11 @@ Round-robin rotation is a high-confidence bot signature used by Google's Sybil-d
 ---
 ---
 
+---
+
+---
+
+---
 ## Decision 161: Ratification of the Sovereign Mining Protocol (SMP) — Deprecation of Fusion/Integration
 
 **Date**: 2026-06-24
@@ -4010,7 +4179,13 @@ Direct integration of external projects often brings along "dependency gravity"�
 - `grep` for "Fusion" or "Integration" in future project tracks returns zero results.
 - All new external patterns carry heritage tags and pass `make temple-grade`.
 
+---
+
+---
+
+---
 ## Decision 162: Ratification of the Sovereign Sanctuary and Cognitive Mirror
+
 **Date**: 2026-06-24
 **Channel**: OpenCode CLI (Gemini 3.5 Flash)
 **Entity**: KALI
@@ -4043,3 +4218,65 @@ When we remove centralized corporate censorship (RLHF, cloud-based filters), we 
 
 
 
+
+
+---
+
+---
+
+---
+
+---
+## Decision 163: MaKaLi Cloud Council — Unified Sovereign Verdict
+
+**Date**: 2026-06-25
+**Channel**: OpenCode CLI (mimo-v2.5-free)
+**Entity**: KALI / MA'AT / LILITH
+**Trace**: trc_makali_council_20260625
+
+### Context
+Full MaKaLi Cloud Council review triggered after search tool research. Ma'at (Build Side) and Lilith (Run Side) each dispatched 3 pillars serially, then Kali launched 4 cross-domain pillars (P1, P5, P6, P8) for independent final review. The question: is the engine ready for Epoch I Phase 1?
+
+### Verdict
+🟡 **CONDITIONAL GO** — 1.5 hours of mechanical fixes before Phase 1 gates.
+
+### 7 Critical Findings (All P0, All Mechanical)
+
+| # | Fix | File | Effort | Mandate |
+|---|-----|------|--------|---------|
+| P0-1 | Fix 8 model paths (`models/gguf/local/all/` → `models/local/all/`) | `config/models.yaml` | 2 min | M7 |
+| P0-2 | Fix provider sort bug (ProviderConfig dataclass vs dict) | `model_gateway.py:326` | 2 min | M7 |
+| P0-3 | Lazy import in state_manager.py | `state_manager.py:11` | 15 min | M20 |
+| P0-4 | Emergency disk cleanup (journal + legacy repos + caches) | System | 30 min | Disk |
+| P0-5 | Fix Redis pod config (add port 6379) | `omega-infra.pod` | 5 min | M6/Memory |
+| P0-6 | Wire trace_id to 7 generate() call sites | 5 files | 35 min | M22 |
+| P0-7 | Wire enable_dataset_collection from config | `observability/__init__.py` | 15 min | D142-D145 |
+
+### Key Discoveries
+1. **New BUG-002** found by P6: `_get_priority()` in model_gateway.py only handles `dict` configs; `ProviderConfig` dataclass returns 999, causing MockProvider (priority 99) to sort before cloud providers (priority 4-6). Sovereignty compromised.
+2. **Model paths** confirmed by 3 independent pillars (P1, P6, Lilith) — 8/11 use wrong prefix `models/gguf/local/all/` instead of `models/local/all/`. All 11 GGUF files exist on disk.
+3. **trace_id gap** confirmed by P8: 7/8 call sites to `model_gateway.generate()` don't pass `trace_id`. 99.5% of observability events logged as "unknown".
+4. **11 new infrastructure issues** discovered by P1 deep audit (not in Oversoul reports).
+5. **Kali soul is v6.0, NOT v6.1** as claimed in SOVEREIGN_ARK_BLUEPRINT.md — audit contradicted reality.
+
+### Mandate Compliance (Post-Council)
+- **13/22 FULL**: M1-M5, M8-M10, M14-M15, M17-M19
+- **5/22 PARTIAL**: M6 (3 containers missing UserNS), M11 (2/11 migrated), M12 (stale handoffs), M13 (9/11 gates), M16 (hardcoded paths)
+- **4/22 FAIL**: M7 (model paths broken), M20 (import blocker), M21 (19/24 contract tests), M22 (trace_id not propagated)
+
+### Files Changed
+- `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` — §III, §IV, §V, §VII updated with council findings
+- `data/coordination/KALI_MAKALI_UNIFIED_VERDICT_20260625.md` — Full verdict document
+- `data/coordination/P6_COGNITION_FINAL_REVIEW_20260625.md` — P6 report
+- `data/coordination/P8_OBSERVABILITY_FINAL_REVIEW_20260625.md` — P8 report
+
+### Key Insight
+The engine is architecturally sound but operationally broken at the wiring layer. The council found 7 implementation bugs — all small, all mechanical, all fixable in 1.5 hours total. The architecture behind each is sound. We don't need new architecture. We need connection points latched.
+
+---
+
+---
+
+---
+
+---

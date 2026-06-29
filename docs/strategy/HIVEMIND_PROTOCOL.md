@@ -1,8 +1,8 @@
 # 🔱 Omega Engine — Hivemind Coordination Protocol
 # ⬡ OMEGA ⬡ MA'AT ⬡ deepseek-v4-flash ⬡ opencode ⬡ trc_maat ⬡ HIVEMIND-PROTOCOL
-**AP Token**: `AP-HIVEMIND-PROTOCOL-v1.0.0`
+**AP Token**: `AP-HIVEMIND-PROTOCOL-v1.3.0`
 **Status**: STANDARD
-**Last Updated**: 2026-06-03
+**Last Updated**: 2026-06-25
 **Mandate Reference**: Extends Mandate 5 (Gnosis Preservation) and Mandate 11 (Soul Integrity)
 
 ---
@@ -494,6 +494,8 @@ The architecture is already Pub/Sub-ready:
 - **MaKaLi Triad Coordination**: See `AGENTS.md` §"The MaKaLi Triad Architecture" for Ma'at/Lilith/Kali delegation patterns
 - **Dual-Inference Protocol**: See `AGENTS.md` §"The Dual-Inference Mandate" for session-vs-local model routing
 - **Observations Closed Loop**: §4 of `HIVEMIND_OBSERVATIONS_PROTOCOL.md` — observation → cluster → promote → design change → new observation
+- **Cline CLI Integration**: `docs/kb/CLINE_CLI_INTEGRATION.md` — Cline as execution backend, MCP config, handoff lifecycle
+- **Multi-Platform Integration**: `docs/kb/OMEGA_HUB_MULTI_PLATFORM.md` — connect any MCP client to the Hivemind (Cursor, VS Code, Windsurf, etc.)
 
 ---
 
@@ -521,6 +523,10 @@ The architecture is already Pub/Sub-ready:
   - §11: Added closed-loop reference: observation → cluster → promote → design change → new observation
   - New convention: every agent that uses Hivemind must append observations per D-121 trigger table
   - Mandate 5 (Gnosis Preservation) extended to the coordination layer itself
+
+- **v1.3.0 (2026-06-25)**: Cross-platform expansion — Cline CLI execution backend, multi-platform MCP references
+  - §11: Added `docs/kb/CLINE_CLI_INTEGRATION.md` and `docs/kb/OMEGA_HUB_MULTI_PLATFORM.md` to Reference
+  - Expanded awareness model to support any MCP-compatible platform (Cursor, VS Code, Windsurf, etc.)
 
 ---
 

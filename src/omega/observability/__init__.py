@@ -124,8 +124,7 @@ class EventType:
     AGENT_DISPATCHED = "agent.dispatched"
     RESEARCH_COMPLETE = "research.complete"
     TOKEN_CONSUMPTION = "token.consumption"
-    TOKEN_CONSUMPTION = "token.consumption"
-    TOKEN_CONSUMPTION = "token.consumption"
+    ENTITY_INTERACTION = "entity.interaction"
 
 
 # ── Forensics Manager (Last Gasp Protocol) ────────────────────────────

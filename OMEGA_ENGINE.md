@@ -124,7 +124,42 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 
 ---
 
-## §5 Current State — Engine Health (2026-06-22) — v1.0.0 RELEASED
+## §5 Sovereign Decree — Current State (2026-06-28)
+**Status**: `Architecturally Sovereign | Operationally Restored | Optimization In Progress`
+
+### Phase 0 COMPLETE (2026-06-27)
+- ✅ **Fixed `ModelGateway.generate`**: `search_order` → `self.providers` (crash-free inference restored)
+- ✅ **M9 Global Sweep**: 20 bare `except Exception:` blocks replaced with typed logging
+- ✅ **Secret Rotation**: `SOVEREIGN_USER_TOKEN` now uses `os.getenv()` with env var fallback
+- ✅ **All 440 tests passing** — zero regressions
+
+### Council Pass 1 & 2 Complete (2026-06-28)
+- ✅ **Holistic Review**: Ma'at + Lilith + 4 Pillars (P3, P5, P7, P10) → Sovereign Decree issued
+- ✅ **Optimization Pass**: Ma'at + Lilith + 4 Pillars (P5, P7, P8, P9) → 64+ findings, 17-action sprint
+- ✅ **Web Research**: @researcher web research + @roc_racoon local mining → 3 REGRESSIONS identified
+
+### 🔴 3 REGRESSIONS (Legacy Patterns Lost in Rewrite)
+1. **CompactionOrchestrator**: Legacy had 690-line system with 4 strategies. Current engine has 20-line stub.
+2. **Soul Distillation Pipeline**: Legacy had LangGraph 5-node pipeline. Current engine does fire-and-forget batch.
+3. **4-State Provider Metrics**: Legacy had HEALTHY/DEGRADED/CRITICAL/UNKNOWN with EWMA scoring. Current engine has 3-state binary breaker.
+
+### 🟡 2 TRULY MISSING Patterns
+1. **trace_id Propagation**: 2 call sites in oracle.py drop trace_id → 98.4% of events are "unknown"
+2. **Handoff Loop Guard**: No visited-agent tracking, no contract enforcement, no stale→archive lifecycle
+
+### 📋 17-Action Optimization Sprint (Active)
+| Tier | Actions | Effort |
+|------|---------|--------|
+| 🔴 T1 Emergency | 6 critical fixes | ~2 hr |
+| 🟡 T2 Regression Recovery | 6 pattern recovery items | ~20 hr |
+| 🟢 T3 Hardening | 5 structural improvements | ~12 hr |
+
+### 📁 Council Reports (25 files)
+All reports filed in `data/reviews/` — 4 consolidated, 20 pillar-level, 1 mining report, 1 web research follow-up.
+
+---
+
+## §6 Current State — Engine Health (2026-06-22) — v1.0.0 RELEASED
 
 ### 5.1 Engine Metrics
 
@@ -132,11 +167,11 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 |--------|-------|---------------|
 | Engine version | **1.0.0** 🎉 | 2026-06-22 |
 | PyPI entry point | `omega` CLI via `[project.scripts]` | 2026-06-22 |
-| Source files | **111** .py files | 2026-06-24 |
-| Source lines | **~25,000** | 2026-06-24 |
-| Test functions | **489 collected** | 2026-06-24 |
-| Test files | **54** | 2026-06-24 |
-| PIVOT decisions | **111 (D50-D160), incl. xna-omega D1-D49 = 160 lifetime** | 2026-06-24 |
+| Source files | **111** .py files | 2026-06-26 |
+| Source lines | **~25,000** | 2026-06-26 |
+| Test functions | **493 collected (468 pass, 22 skip, 3 xfail)** | 2026-06-26 |
+| Test files | **54** | 2026-06-26 |
+| PIVOT decisions | **115 (D50-D147), incl. xna-omega D1-D49 = 164 lifetime** | 2026-06-26 |
 | Sovereign Mandates | **22 (M1-M22)** | 2026-06-17 |
 | Mandate 2 (Namespace) | ✅ All `from src.omega` → `from omega` — zero broken imports | 2026-06-22 |
 | Mandate 7 (Local-First) | ✅ `providers.yaml` strategy `local_first`, Quick Start = 4 commands, 0 cloud API keys | 2026-06-22 |
@@ -287,7 +322,7 @@ Per Kali D115 + Cline-M3 review:
 - [ ] Stack Builder Wizard
 - [ ] Omega Desktop (Tauri)
 
-## §9 Sovereign Mandates (Quick Reference)
+## §9 Sovereign Mandates (Quick Reference) — MaKaLi Council Audit 2026-06-25
 
 | # | Mandate | Status | Key File |
 |---|---------|--------|----------|
@@ -296,23 +331,23 @@ Per Kali D115 + Cline-M3 review:
 | M3 | Iris Constant (NOT a Pillar) | ✅ | `src/omega/iris/` |
 | M4 | Sequentiality (Plan→Verify→Execute) | ✅ | Cline workflow |
 | M5 | Gnosis Preservation (L1→L2→L3) | ✅ | Soul Distiller |
-| M6 | Podman Sovereignty (keep-id) | ✅ | All Quadlets |
-| M7 | Local-First (cloud=teacher) | ✅ | providers.yaml |
+| M6 | Podman Sovereignty (keep-id) | ⚠️ PARTIAL | 3/5 containers missing UserNS (caddy, postgres, redis) |
+| M7 | Local-First (cloud=teacher) | ❌ FAIL | 8/11 model paths broken + provider sort bug |
 | M8 | Zero Telemetry | ✅ | CI grep telemetry/analytics |
 | M9 | Error Integrity (typed exceptions) | ✅ | 0 bare except, 0 silent `except Exception: pass` |
-| M10 | Fleet Integrity (14 cap) | ✅ | CAPABILITY_REGISTRY |
-| M11 | Soul Integrity (L1→L2→L3) | ✅ | Soul Distiller |
-| M12 | Queue Integrity (terminal state) | ✅ | RequestQueue |
-| M13 | Temple-Grade (T1-T11) | 🟡 8/11 (T11 IA2 exempt) | `make temple-grade` |
+| M10 | Fleet Integrity (14 cap) | ✅ | 11 agents (under 14 cap) |
+| M11 | Soul Integrity (L1→L2→L3) | ⚠️ PARTIAL | 2/11 migrated (Kali, Verity). 21 pending. |
+| M12 | Queue Integrity (terminal state) | ⚠️ PARTIAL | 32+ stale handoffs. Auto-reaping not implemented. |
+| M13 | Temple-Grade (T1-T11) | 🟡 9/11 | T11 IA2 exempt. T7 (latency) unmeasured. |
 | M14 | Heritage Vetting ([id-soft:] tags) | ✅ | `make heritage-map` |
 | M15 | Sovereign Continuity (session anchors) | ✅ | `session_gnosis.md` |
-| M16 | Modularization & Portability | ✅ | Hub modularization (5 modules) |
+| M16 | Modularization & Portability | ⚠️ PARTIAL | 2 hardcoded paths in `embeddings.py:163,328`. |
 | M17 | Cognitive Integrity (consistency checks) | ✅ | Skeptical Verifier |
 | M18 | Token Efficiency (no waste) | ✅ | Agent prompt discipline |
 | M19 | Adversarial Alchemy (weakness→strength) | ✅ | Somatic Save-Point, FISR Principle |
-| M20 | SomaticState Serialization | ⏳ Deferred | ctypes bindings pending ICS-F v1.0 |
-| M21 | Gate Integrity (contract tests) | 🟡 19/24 | 19 contract tests exist |
-| M22 | Response Provenance (provider_name) | 🟡 Partial | gateway_server.py done, background workers pending |
+| M20 | SomaticState Serialization | ❌ FAIL | `state_manager.py:11` import blocker. 4 tests excluded. |
+| M21 | Gate Integrity (contract tests) | 🟡 79% | 19/24 contract tests. 5 missing. |
+| M22 | Response Provenance (provider_name) | ❌ FAIL | trace_id not propagated (7/8 call sites). 99.5% events "unknown". |
 
 See `SOVEREIGN_MANDATES.md` for full text. **M2 is enforced via Hard-Boundary Struct.**
 
@@ -342,16 +377,22 @@ See `SOVEREIGN_MANDATES.md` for full text. **M2 is enforced via Hard-Boundary St
 The **Hivemind** is the live coordination layer for multi-agent work. **MANDATORY**
 for parallel work, **RECOMMENDED** for multi-step work (>3 steps).
 
-### 11.1 The 6 Hivemind Tools (omega-hub MCP)
+### 11.1 The Hivemind Tools (omega-hub MCP)
 
 | Tool | Purpose |
 |------|---------|
-| `hivemind_get_awareness()` | List active CLIs (who's alive) |
+| `hivemind_get_awareness()` | List active agents across ALL platforms (OpenCode, Cline, etc.) |
 | `hivemind_post_context(channel, entity, model, task_current, focus_chain, decisions, continuation, session_id)` | Declare your presence |
 | `hivemind_heartbeat(channel, entity)` | Refresh TTL (every 5-10 min for long tasks) |
 | `hivemind_get_continuation(channel, entity)` | Read another agent's last note |
 | `hivemind_get_session(session_id)` | Retrieve session snapshot |
 | `hivemind_list_sessions(channel?, entity?, limit=10)` | Audit trail |
+| `hivemind_submit_handoff(...)` | Delegate task to another agent |
+| `hivemind_accept_handoff(packet_id)` | Claim a pending handoff |
+| `hivemind_complete_handoff(packet_id, result)` | Mark handoff as complete |
+| `hivemind_workspace_lock_acquire(...)` | Acquire exclusive domain lock |
+| `hivemind_workspace_lock_release(...)` | Release domain lock |
+| `hivemind_workspace_lock_check(domain)` | Check lock status |
 
 ### 11.2 Coordination Pattern
 
@@ -374,16 +415,28 @@ for parallel work, **RECOMMENDED** for multi-step work (>3 steps).
 
 ## §12 Engine vs Platform Distinction
 
+The Omega Engine is runtime-agnostic. Any platform implementing the MCP client protocol can connect to the Omega Hub.
+
 | What | Where | Who Updates |
 |------|-------|-------------|
 | **OMEGA_ENGINE.md** (this file) | Repo root | Any agent changing engine state |
 | `.clinerules` | Repo root | Cline CLI agents only |
 | `AGENTS.md` | Repo root | OpenCode agents only |
-| `GEMINI.md` | Repo root | Gemini CLI only |
-| Omega Hub (`:8016`) | Live service | Runtime state |
+| Omega Hub (`:8016`) | Live service | Runtime state (shared across platforms) |
+
+**Primary platform**: OpenCode CLI (11 custom agents, soul architecture, Hivemind orchestration)
+**Execution backend**: Cline CLI (1M-context analysis, parallel execution, headless CI/CD)
+**Visual clients**: VS Code, Cursor, Windsurf (MCP tools via Omega Hub)
 
 **The rule**: If it describes WHAT the engine is → this file.
 If it describes HOW to use the engine from Platform X → that platform's rules file.
+
+### Cross-Platform Integration Reference
+
+- `docs/kb/CLINE_CLI_INTEGRATION.md` — Cline CLI execution backend guide
+- `docs/kb/OMEGA_HUB_MULTI_PLATFORM.md` — Multi-platform MCP integration patterns
+- `mcp_servers/omega_hub/server.py` — Omega Hub MCP server implementation
+- `docs/strategy/HIVEMIND_PROTOCOL.md` — Hivemind coordination protocol (all platforms)
 
 ---
 

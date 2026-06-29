@@ -1,5 +1,5 @@
 # 🔱 Omega Engine — Proposed Lessons
-# Generated: 2026-06-23 (MaKaLi Council Work Items #2 & #3)
+# Generated: 2026-06-26 (MaKaLi Council Run-Side — P6/P8/P10 audit)
 
 proposals:
   - id: lilith-proposal-20260623-001
@@ -34,6 +34,94 @@ proposals:
       When tasks form a dependency chain, execute serially; when they are independent,
       execute in parallel. The topology of the dependency graph determines the optimal
       dispatch pattern.
+
+  - id: lilith-proposal-20260626-001
+    category: observability
+    l1_narrative: >
+      The MaKaLi Council Run-Side (P6-P10) audit found 12 gaps in the inference pipeline.
+      Ma'at identified type_v:8 (q8_0) crashes llama-cpp-python model load. The Run-Side
+      investigation confirmed this and found 5 additional pipeline gaps: phi-4-mini static
+      binding prevents multi-model native-gguf, KV cache config is not synchronized between
+      models.yaml and providers.yaml, is_available() does not validate config values,
+      Llama() constructor has no try/except wrapper, and every inference burn 15-60s on
+      load failure before falling back. P8 found ENTITY_INTERACTION missing from EventType
+      enum (silent event loss for all entity interactions). P10 found no crash-path tests
+      for NativeGGUF in the 468-test suite.
+    l2_insight: >
+      Ma'at's Build-Side lens found the root cause (bad type_v value), but the Run-Side
+      lens found 5x more issues in the same code path because it traced the actual runtime
+      flow rather than the config chain. A type_v mismatch manifests as a 15-60s timeout
+      per inference, not a startup crash — so it remained hidden across sessions. The
+      ENTITY_INTERACTION gap shows that telemetry failures are designed to be silent
+      (try/except catch-all), which means monitoring never detects when monitoring is broken.
+    l3_universal_principle: >
+      A system's failures are bounded by its weakest silence — not its loudest crash.
+      Silent errors (try/except swallow, config mismatch, missing enum values) persist
+      indefinitely because they don't trigger alerts. Runtime tracing (Run-Side lens)
+      catches what config analysis (Build-Side lens) misses. Both are necessary.
+
+  - id: lilith-proposal-20260626-002
+    category: architecture
+    l1_narrative: >
+      The NativeGGUF provider has a hardcoded phi-4-mini dependency at model_gateway.py:247
+      (`default_spec = models.get("phi-4-mini", {})`). This means only phi-4-mini can be
+      loaded via the native GGUF provider — all other models are served by cloud fallbacks
+      or not at all. The per-model KV cache config in models.yaml:kv_cache (which specifies
+      e.g. f16 for qwen3-1.7b) is only used by get_kv_cache_flags() for llama-server, not
+      by NativeGGUFProvider.
+    l2_insight: >
+      Two independent configuration subsystems (providers.yaml for native-gguf, models.yaml
+      kv_cache for llama-server) define the same parameters (KV cache type) but are never
+      synchronized. This is a config-level invariant: when two config sources define the
+      same parameter, at least one will be wrong, and there is no cross-validation.
+    l3_universal_principle: >
+      Dual configuration sources for the same parameter are an invariant violation waiting
+      to happen. Every parameter should have exactly one authoritative source, with all
+      consumers referencing it. If legacy dual sources exist, a validation gate must
+      enforce that they agree until consolidation.
+
+  - id: lilith-proposal-20260626-003
+    category: testing
+    l1_narrative: >
+      The test_model_gateway.py (297 lines) has excellent coverage for circuit breaker
+      behavior and provider fallback with mocks, but has zero tests for:
+      (a) NativeGGUF crash-on-load behavior
+      (b) _merge_native_gguf_config() KV cache merging
+      (c) phi-4-mini static binding behavior
+      (d) is_available() config validation
+      (e) GenerateResult type contract at the generate boundary
+      The type_v:8 bug passed through 468 tests because no test exercises the NativeGGUF
+      config validation path.
+    l2_insight: >
+      The test suite prioritizes behavioral correctness (do providers fall through?) over
+      configuration correctness (is the config valid?). Both are necessary. The M21 Gate
+      Integrity mandate requires contract tests at API boundaries (e.g., isinstance(result,
+      GenerateResult)), but no such test exists for model_gateway.generate().
+    l3_universal_principle: >
+      A test suite that only tests behavior but not configuration is only half a test suite.
+      The type_v:8 bug was invisible to tests because no config validation test existed.
+      Every configuration path should have a test that validates the configuration at load
+      time, not just at runtime. Contract tests at every API boundary enforce type discipline.
+
+  - id: lilith-proposal-20260626-004
+    category: process
+    l1_narrative: >
+      The Run-Side investigation traced 6 distinct crash-masking patterns:
+      (1) Load crash → except Exception at model_gateway.py:905
+      (2) Telemetry fail → try/except at oracle.py:778
+      (3) Missing enum value → no AttributeError (plain class, not StrEnum)
+      (4) Bad config → no precheck failure (is_available only checks file existence)
+      (5) Missing test → no CI failure
+      (6) 15-60s timeout → silently wastes time before fallback
+    l2_insight: >
+      Each masking layer is individually "correct" — you don't want telemetry failures to
+      crash the engine, you do want graceful fallback in the provider chain. But the
+      combination of all 6 layers means a fundamentally broken config (type_v:8) produces
+      no error signal visible to the user except a slow fallback to the mock provider.
+    l3_universal_principle: >
+      Graceful degradation and silent error are separated by exactly one logging statement.
+      Every except: clause should be questioned: "If this fires, will anyone know?"
+      A system that gracefully masks every failure has no incentive to fix the root cause.
 
   - id: lilith-proposal-20260623-003
     category: research

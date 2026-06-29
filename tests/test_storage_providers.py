@@ -95,8 +95,9 @@ class TestFileStorageProvider:
 class TestRedisStorageProvider:
     @pytest.mark.anyio
     async def test_health_check_failure(self):
-        # Redis is not running or fails health check
+        # Redis is not running or fails health check — mock ping to fail fast
         provider = RedisStorageProvider(host="nonexistent_host", port=1234)
+        provider.client.ping = AsyncMock(side_effect=ConnectionError("Connection refused"))
         assert await provider.check_health() is False
         
         # Operations should fail gracefully and return empty/None

@@ -155,8 +155,8 @@ class AsyncCircuitBreaker:
                         {"provider": self.name, "event": "circuit_closed",
                          "from": old_state.value, "to": self.state.value}
                     )
-                except Exception:
-                    logger.warning("Circuit closed event failed — observability unavailable (non-blocking)")
+                except Exception as e:
+                    logger.warning(f"Circuit closed event failed — observability unavailable (non-blocking): {e}")
                     pass
 
     async def _on_failure(self, trace_id: Optional[str] = None):
@@ -183,8 +183,8 @@ class AsyncCircuitBreaker:
                          "from": old_state.value, "to": self.state.value,
                          "failure_count": self.failure_count}
                     )
-                except Exception:
-                    logger.warning("Circuit opened event failed — observability unavailable (non-blocking)")
+                except Exception as e:
+                    logger.warning(f"Circuit opened event failed — observability unavailable (non-blocking): {e}")
                     pass
 
     def _should_transition_to_half_open(self) -> bool:

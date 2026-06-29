@@ -9,7 +9,7 @@ for HTTP rate-limiting and payload size enforcement, the ``apply_security``
 composer, and the ``m9_safe`` decorator for MCP tool error boundaries.
 
 Dependencies:
-  - threading (stdlib) — per-IP rate counter locking
+  - anyio — async locking for per-IP rate counter (M1 compliant)
   - starlette.middleware.cors (third-party) — CORS headers
   - starlette.responses (third-party) — HTTP 429/413 responses
   - functools (stdlib) — @wraps for decorator preservation
@@ -30,11 +30,11 @@ Mandate compliance:
 
 import json
 import logging
-import threading
 from datetime import datetime
 from functools import wraps
 from typing import Any, Dict, List
 
+import anyio
 from mcp.types import CallToolResult, TextContent
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import Response
@@ -96,7 +96,7 @@ class RateLimitMiddleware:
     per-minute limit is exceeded, returns HTTP 429.
 
     **Dependency footprint:**
-      - ``threading.Lock`` (stdlib)
+      - ``anyio.Lock`` (async, M1 compliant)
       - ``datetime.datetime`` (stdlib)
       - ``starlette.responses.Response`` (third-party)
     """
@@ -105,14 +105,14 @@ class RateLimitMiddleware:
         self.app = app
         self.limit = requests_per_minute
         self._counts: Dict[str, List[float]] = {}
-        self._lock = threading.Lock()
+        self._lock = anyio.Lock()
 
     async def __call__(self, scope, receive, send):
         if scope["type"] == "http":
             client_ip = scope.get("client", ("unknown", 0))[0]
             now = datetime.now().timestamp()
 
-            with self._lock:
+            async with self._lock:
                 history = self._counts.get(client_ip, [])
                 # Filter for last 60 seconds
                 history = [t for t in history if now - t < 60]

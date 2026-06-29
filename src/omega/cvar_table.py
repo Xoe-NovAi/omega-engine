@@ -324,12 +324,12 @@ CVAR_TABLE: Dict[str, CvarDef] = {
     ),
     "config.gguf.type_k": CvarDef(
         "config.gguf.type_k", 8, "int",
-        "KV cache key quantization type (8=q8_0, 0=f16, 9=q4_0)",
+        "KV cache key quantization type (8=q8_0, 1=f16, 2=q4_0, 0=F32)",
         "NativeGGUFProvider",
     ),
     "config.gguf.type_v": CvarDef(
         "config.gguf.type_v", 8, "int",
-        "KV cache value quantization type (8=q8_0, 0=f16, 9=q4_0)",
+        "KV cache value quantization type (8=q8_0, 1=f16, 2=q4_0, 0=F32)",
         "NativeGGUFProvider",
     ),
 

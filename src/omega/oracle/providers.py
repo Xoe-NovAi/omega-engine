@@ -319,7 +319,7 @@ class NativeGGUFProvider(BaseProvider):
 
         # KV cache configuration
         self._type_k = config.get("type_k", 8)  # 8 = q8_0
-        self._type_v = config.get("type_v", 8)  # 8 = q8_0
+        self._type_v = config.get("type_v", 8)  # 8 = q8_0, 1 = f16
 
         # Batch configuration (tuned for Zen 2 L2 cache: 512KB/core)
         self._n_batch = config.get("n_batch", 512)
@@ -501,7 +501,15 @@ class NativeGGUFProvider(BaseProvider):
         def _load():
             return Llama(**llama_kwargs)
 
-        self.llm = await anyio.to_thread.run_sync(_load)
+        try:
+            self.llm = await anyio.to_thread.run_sync(_load)
+        except InferenceLoadError:
+            raise
+        except Exception as e:
+            raise InferenceLoadError(
+                f"Failed to load model {self.model_path}: {e}",
+                raw_error=e,
+            ) from e
         self._loaded_ctx = target_ctx
         self._loaded_model = self.model_path
         logger.info(f"Model loaded: {target_ctx} context, {threads} threads")
@@ -549,26 +557,44 @@ class NativeGGUFProvider(BaseProvider):
         self._last_logprobs = None
         
         try:
-            # Use isolated thread for synchronous C-calls to prevent global pool exhaustion
-            # [id-soft: quake-1996] In-Flight Pipeline — overlap prompt construction with inference
-            # [Operation Deep-Siphon] Sprint 0: logprobs=5 unlocks per-token probabilities
-            # for ICS-F v1.0 forensic metadata capture (see GenerateResult.logprobs).
-            response = await anyio.to_thread.run_sync(
-                lambda: self.llm(
-                    prompt,
-                    max_tokens=max_tokens,
-                    temperature=temperature,
-                    stop=["</s>", "User:", "\n\n"],
-                    echo=False,
-                    logprobs=5,
+            try:
+                response = await anyio.to_thread.run_sync(
+                    lambda: self.llm(
+                        prompt,
+                        max_tokens=max_tokens,
+                        temperature=temperature,
+                        stop=["</s>", "User:", "\n\n"],
+                        echo=False,
+                        logprobs=5,
+                    )
                 )
-            )
-        
-            if response and "choices" in response:
+            except ValueError as ve:
+                if "logprobs is not supported for models created with logits_all=False" in str(ve):
+                    # Model doesn't support logprobs, call without it
+                    response = await anyio.to_thread.run_sync(
+                        lambda: self.llm(
+                            prompt,
+                            max_tokens=max_tokens,
+                            temperature=temperature,
+                            stop=["</s>", "User:", "\n\n"],
+                            echo=False,
+                        )
+                    )
+                else:
+                    raise
+            
+            if response is None:
+                logger.warning("NativeGGUF inference returned None response")
+                return None
+            elif "choices" not in response:
+                logger.warning("NativeGGUF inference returned response without choices")
+                return None
+            else:
                 text = response["choices"][0]["text"].strip()
                 # Capture logprobs from response for ICS-F v1.0 compliance
                 # Raw top_logprobs is a list of dicts {token_str: logprob, ...}
                 # one entry per token position, each containing up to 5 candidates.
+                # Note: logprobs may not be present if model doesn't support it
                 self._last_logprobs = response["choices"][0].get("logprobs", {}).get("top_logprobs")
                 # [id-soft: quake3-1999] Cvar System — trace_id propagated
                 # Port 1.5: atomic trace_id logging for observability

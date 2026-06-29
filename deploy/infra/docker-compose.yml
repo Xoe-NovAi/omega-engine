@@ -3,7 +3,10 @@
 # AP: AP-DOCKER-COMPOSE-v2.0.0
 #
 # Patterns:
-#   - Rootless Podman: user "1000:1000", init: true
+#   - Rootless Podman (D144): OMIT `user: "1000:1000"` — in rootless mode,
+#     container UID 0 maps to host UID 1000 by default. Setting `--user 1000:1000`
+#     maps to subuid 101000, breaking volume writes. Use only with `userns_mode: keep-id`.
+#     See SOVEREIGN_MANDATES.md M6 and docs/decisions/PIVOT_LOG.md#D144.
 #   - Network isolation: db-net internal, app-net bridge
 #   - RAM gating: strict resource limits aligned with 14Gi total
 #   - CPU core steering: compute pinned to physical cores (even)
@@ -24,8 +27,9 @@ services:
     container_name: omega-redis
     restart: unless-stopped
     init: true
-    user: "1000:1000"
     cpuset: "1,3"  # SMT threads — lightweight I/O
+    ports:
+      - "127.0.0.1:6379:6379"
     command: >
       redis-server
       --requirepass ${REDIS_PASSWORD:-omega}
@@ -63,7 +67,6 @@ services:
     container_name: omega-qdrant
     restart: unless-stopped
     init: true
-    user: "1000:1000"
     cpuset: "0,2"  # Physical cores — compute-heavy indexing
     ports:
       - "127.0.0.1:6333:6333"
@@ -97,7 +100,6 @@ services:
     container_name: omega-postgres
     restart: unless-stopped
     init: true
-    user: "1000:1000"
     cpuset: "5,7"  # SMT threads — moderate I/O
     environment:
       POSTGRES_USER: omega
@@ -128,7 +130,6 @@ services:
     container_name: omega-caddy
     restart: unless-stopped
     init: true
-    user: "1000:1000"
     cpuset: "9,11"  # SMT threads — negligible CPU
     ports:
       - "127.0.0.1:8088:80"
@@ -162,7 +163,6 @@ services:
     container_name: omega-iris
     restart: unless-stopped
     init: true
-    user: "1000:1000"
     cpuset: "4,6"  # Physical cores — light inference
     ports:
       - "127.0.0.1:8080:8080"

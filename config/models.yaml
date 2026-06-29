@@ -18,7 +18,7 @@ llama_server:
   startup_timeout_sec: 120
 models:
   qwen3-1.7b:
-    path: /media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-1.7B-Q6_K.gguf
+    path: /media/arcana-novai/omega_library/models/local/all/Qwen3-1.7B-Q6_K.gguf
     size_gb: 1.6
     ram_mb: 1800
     context_window: 4096
@@ -26,7 +26,7 @@ models:
     load_strategy: on_demand_5min
     entity: nova
   qwen3-0.6b-q6_k:
-    path: /media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-0.6B-Q6_K.gguf
+    path: /media/arcana-novai/omega_library/models/local/all/Qwen3-0.6B-Q6_K.gguf
     size_gb: 0.47
     ram_mb: 500
     context_window: 4096
@@ -34,7 +34,7 @@ models:
     load_strategy: warm
     entity: iris
   qwen3-1.7b-q6_k:
-    path: /media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-1.7B-Q6_K.gguf
+    path: /media/arcana-novai/omega_library/models/local/all/Qwen3-1.7B-Q6_K.gguf
     size_gb: 1.6
     ram_mb: 1800
     context_window: 8192
@@ -50,7 +50,7 @@ models:
     load_strategy: on_demand_10min
     entity: SOPHIA
   phi-2-omnimatrix-i1-q4_k_m:
-    path: /media/arcana-novai/omega_library/models/gguf/local/all/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf
+    path: /media/arcana-novai/omega_library/models/local/all/Ministral-3-3B-Instruct-2512-Q4_K_M.gguf
     size_gb: 2.5
     ram_mb: 2800
     context_window: 8192
@@ -58,18 +58,18 @@ models:
     load_strategy: on_demand_10min
     entity: brigid
   qwen3-4b-thinking-q4_k_m:
-    path: /media/arcana-novai/omega_library/models/gguf/local/all/Qwen3-4B-Thinking-2507-Q4_K_M.gguf
+    path: /media/arcana-novai/omega_library/models/local/all/Qwen3-4B-Thinking-2507-Q4_K_M.gguf
     size_gb: 2.4
     ram_mb: 2700
     context_window: 8192
     threads: 6
     load_strategy: on_demand_5min
     entity: maat, anubis
-    kv_cache_key_type: fp8
-    kv_cache_value_type: fp8
+    kv_cache_key_type: q8_0
+    kv_cache_value_type: q8_0
     thinking_budget: 512
   deepseek-r1-qwen3-8b-q3_k_l:
-    path: /media/arcana-novai/omega_library/models/gguf/local/all/DeepSeek-R1-0528-Qwen3-8B-Q3_K_L.gguf
+    path: /media/arcana-novai/omega_library/models/local/all/DeepSeek-R1-0528-Qwen3-8B-Q3_K_L.gguf
     size_gb: 4.2
     ram_mb: 4500
     context_window: 8192
@@ -78,7 +78,7 @@ models:
     entity: lucifer
     thinking_budget: 512
   rocracoon-3b-instruct:
-    path: /media/arcana-novai/omega_library/models/gguf/local/all/RocRacoon-3b.Q4_K_M.gguf
+    path: /media/arcana-novai/omega_library/models/local/all/RocRacoon-3b.Q4_K_M.gguf
     size_gb: 2.1
     ram_mb: 2500
     context_window: 8192
@@ -104,7 +104,7 @@ models:
     mmproj: /media/arcana-novai/omega_library/models/local/all/mmproj-model-f16.gguf
     entity: ARGUS
   krikri-8b-q4_k_m:
-    path: /media/arcana-novai/omega_library/models/gguf/local/all/Krikri-8B-Instruct.Q4_K_M.gguf
+    path: /media/arcana-novai/omega_library/models/local/all/Krikri-8B-Instruct.Q4_K_M.gguf
     size_gb: 4.7
     ram_mb: 4900
     context_window: 16384

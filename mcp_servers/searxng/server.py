@@ -13,6 +13,7 @@
 #
 import os
 import sys
+import logging
 import httpx
 from mcp.server.fastmcp import FastMCP
 
@@ -23,11 +24,12 @@ if _project_root not in sys.path:
 
 from mcp_servers.omega_hub.middleware import m9_safe
 
+logger = logging.getLogger("omega.searxng.mcp")
 SEARXNG_URL = os.environ.get("SEARXNG_BASE_URL", "http://localhost:8017")
 MCP_PORT = int(os.environ.get("MCP_PORT", "8018"))
 
 # Initialize FastMCP server — port 8018 (SSE transport)
-mcp = FastMCP("Sovereign SearXNG", port=MCP_PORT, host="127.0.0.1")
+mcp = FastMCP("Sovereign SearXNG", port=MCP_PORT, host="127.0.0.1", log_level="WARNING")
 
 
 @m9_safe("searxng_search")

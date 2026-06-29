@@ -7,6 +7,7 @@ import anyio
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, status
 from omega.oracle.oracle import Oracle, OracleResponse
 from omega.errors import OmegaError
+from omega.observability.token_ledger import TokenLedger
 
 # ── Conceptual Equivalents ────────────────────────────────────────────────
 # As per requirements, these provide the necessary gates and ledgering 
@@ -32,35 +33,6 @@ class BudgetGate:
         # Default to True for bridge implementation; 
         # real implementation would query a budget store.
         return True
-
-class TokenLedger:
-    """
-    conceptual equivalent to src/omega/observability/token_ledger.py.
-    Tracks token usage per request for cost and auditing.
-    """
-    @staticmethod
-    async def record_transaction(
-        trace_id: str, 
-        entity: str, 
-        tokens_in: int, 
-        tokens_out: int, 
-        is_cloud: bool
-    ) -> None:
-        """
-        Record the token usage of a completed inference transaction.
-        
-        Args:
-            trace_id: Unique identifier for the trace.
-            entity: The entity that generated the response.
-            tokens_in: Number of input tokens.
-            tokens_out: Number of output tokens.
-            is_cloud: Whether the response was generated via cloud provider.
-        """
-        # Log to observability or local ledger
-        logging.info(
-            f"[TOKEN_LEDGER] Trace {trace_id} | Entity {entity} | "
-            f"In: {tokens_in} | Out: {tokens_out} | Cloud: {is_cloud}"
-        )
 
 # ── Bridge Implementation ────────────────────────────────────────────────
 
@@ -123,12 +95,12 @@ class OpenCodeBridge:
             tokens_in = len(query) // 4
             tokens_out = len(response.text) // 4
             
-            await TokenLedger.record_transaction(
+            await TokenLedger().record_transaction(
                 trace_id=response.trace_id or trace_id,
                 entity=response.entity,
                 tokens_in=tokens_in,
                 tokens_out=tokens_out,
-                is_cloud=response.cost_warning is not None
+                provider_name=response.backend or "unknown"
             )
 
             # 4. Stream tokens back

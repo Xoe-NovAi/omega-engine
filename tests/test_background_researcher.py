@@ -105,6 +105,12 @@ async def test_background_loop_atomic_lock():
     """Test that BackgroundResearcherLoop prevents concurrent cycles via file lock."""
     loop = BackgroundResearcherLoop()
     
+    # Mock all I/O to prevent real network/storage calls
+    loop.search_fleet.search_all = AsyncMock(return_value={})
+    loop.search_fleet.extract_firecrawl = AsyncMock(return_value=None)
+    loop.search_fleet.fetch_exa = AsyncMock(return_value=None)
+    loop._is_network_available = AsyncMock(return_value=False)
+    
     # Manually create the lock
     loop.lock_path.mkdir(parents=True, exist_ok=True)
     
@@ -113,7 +119,7 @@ async def test_background_loop_atomic_lock():
     assert result["skipped"] is True
     assert result["reason"] == "locked"
     
-    # Remove lock and run - should proceed (will likely skip due to no network/tasks)
+    # Remove lock and run - should proceed (skips due to no network)
     loop.lock_path.rmdir()
     result = await loop.run_cycle()
     assert result.get("skipped") is not True or result.get("reason") != "locked"

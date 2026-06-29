@@ -85,33 +85,17 @@ class SearchRouter:
         signals: Dict[str, Any] = {}
         reasoning: List[str] = []
         
-        # Signal 1: URL detection
         has_url = bool(_URL_PATTERN.search(query))
         signals["has_url"] = has_url
-        
-        # Signal 2: Confidence
         signals["iris_confidence"] = iris_confidence
-        
-        # Signal 3: Entity domain (inferred from entity name or traits)
-        # In a full implementation, this would lookup traits in EntityRegistry
-        domain = entity_name or "general"
-        signals["entity_domain"] = domain
-        
+        signals["entity_domain"] = entity_name or "general"
         query_category = self._classify_query(query)
         signals["query_category"] = query_category
-        
-        # Signal 4: Credit status
         signals["has_credits"] = has_credits
-        
-        # Signal 5: Provider health
         signals["provider_health"] = provider_health or {}
-        
-        # Signal 6: Query complexity
         signals["query_length"] = len(query)
-        
-        # === Routing decisions (highest priority wins) ===
-        
-        # Rule 1: Direct URL → FORCE T3 (Firecrawl scrape)
+
+        # 1. Terminal Rules (Overrides)
         if has_url:
             reasoning.append("URL detected → T3 (Firecrawl scrape)")
             return SearchIntent(
@@ -124,8 +108,7 @@ class SearchRouter:
                 signals_used=signals,
                 routing_reasoning=reasoning,
             )
-        
-        # Rule 2: Force tier override
+
         if force_tier is not None:
             reasoning.append(f"force_tier={force_tier} → bypass routing")
             return SearchIntent(
@@ -138,102 +121,60 @@ class SearchRouter:
                 routing_reasoning=reasoning,
             )
 
-        # Rule 2.5: Provider Health - Route away from DOWN providers
-        # If the primary intended tier is DOWN, move to the next healthy tier
-        primary_tier = TIER_SEARXNG # Default primary
+        # 2. Base Intent (Category-based)
+        primary_tier = TIER_SEARXNG
+        max_tier = TIER_SEARXNG
+        search_depth = "standard"
+
+        if query_category == "technical":
+            reasoning.append("Technical query → T1 (SearXNG)")
+        elif query_category == "research":
+            reasoning.append("Research query → T1→T2 (SearXNG → Exa)")
+            max_tier = TIER_EXA
+            search_depth = "deep"
+        elif query_category == "deep" or len(query) > 80:
+            reasoning.append("Complex query → T1→T2→T3 (full pipeline)")
+            max_tier = TIER_FIRECRAWL
+            search_depth = "deep"
+        else:
+            reasoning.append("Default factual → T1 (SearXNG)")
+
+        # 3. Constraints (Credits & Confidence)
+        allow_cloud_search = has_credits
+        if not has_credits:
+            reasoning.append("No credits → T0-T1 only (local + SearXNG)")
+            primary_tier = TIER_LOCAL
+            max_tier = TIER_SEARXNG
+            search_depth = "quick"
+        elif iris_confidence is not None and iris_confidence > 0.7:
+            reasoning.append(f"High confidence ({iris_confidence:.2f}) → T0-T1 only")
+            primary_tier = TIER_LOCAL
+            max_tier = TIER_SEARXNG
+            search_depth = "quick"
+
+        # 4. Availability (Provider Health)
         if provider_health and provider_health.get(primary_tier) is False:
             reasoning.append(f"T{primary_tier} is DOWN → escalating to T2")
             primary_tier = TIER_EXA
-            if provider_health and provider_health.get(primary_tier) is False:
+            if provider_health.get(primary_tier) is False:
                 reasoning.append(f"T{primary_tier} is also DOWN → escalating to T3")
                 primary_tier = TIER_FIRECRAWL
 
-        # Rule 3: No credits → skip cloud tiers
-        if not has_credits:
-            reasoning.append("No credits → T0-T1 only (local + SearXNG)")
-            return SearchIntent(
-                primary_tier=TIER_LOCAL,
-                max_tier=TIER_SEARXNG,
-                query_category=query_category,
-                search_depth="quick",
-                entity_name=entity_name,
-                allow_cloud_search=False,
-                signals_used=signals,
-                routing_reasoning=reasoning,
-            )
-
-        # Rule 4: High confidence → minimal search
-        if iris_confidence is not None and iris_confidence > 0.7:
-            reasoning.append(f"High confidence ({iris_confidence:.2f}) → T0-T1 only")
-            return SearchIntent(
-                primary_tier=TIER_LOCAL,
-                max_tier=TIER_SEARXNG,
-                query_category=query_category,
-                search_depth="quick",
-                entity_name=entity_name,
-                signals_used=signals,
-                routing_reasoning=reasoning,
-            )
-
-        # Rule 5: Domain-based priority
+        # 5. Special Case: Technical Entity
         if entity_name and any(x in entity_name.lower() for x in ["dev", "eng", "tech", "architect"]):
             reasoning.append(f"Technical entity ({entity_name}) → prefer T2 (Exa)")
-            return SearchIntent(
-                primary_tier=TIER_EXA,
-                max_tier=TIER_FIRECRAWL,
-                query_category=query_category,
-                search_depth="standard",
-                entity_name=entity_name,
-                signals_used=signals,
-                routing_reasoning=reasoning,
-            )
-        
-        # Rule 5: Category-based dispatch
-        if query_category == "technical":
-            reasoning.append("Technical query → T1 (SearXNG)")
-            return SearchIntent(
-                primary_tier=TIER_SEARXNG,
-                max_tier=TIER_SEARXNG,
-                query_category=query_category,
-                search_depth="standard",
-                entity_name=entity_name,
-                signals_used=signals,
-                routing_reasoning=reasoning,
-            )
-        
-        if query_category == "research":
-            reasoning.append("Research query → T1→T2 (SearXNG → Exa)")
-            return SearchIntent(
-                primary_tier=TIER_SEARXNG,
-                max_tier=TIER_EXA,
-                query_category=query_category,
-                search_depth="deep",
-                entity_name=entity_name,
-                signals_used=signals,
-                routing_reasoning=reasoning,
-            )
-        
-        # Rule 6: Deep/complex query → full pipeline
-        if len(query) > 80 or query_category == "deep":
-            reasoning.append("Complex query → T1→T2→T3 (full pipeline)")
-            return SearchIntent(
-                primary_tier=TIER_SEARXNG,
-                max_tier=TIER_FIRECRAWL,
-                query_category=query_category,
-                search_depth="deep",
-                entity_name=entity_name,
-                signals_used=signals,
-                routing_reasoning=reasoning,
-            )
-        
-        # Default: standard factual search
-        reasoning.append("Default factual → T1 (SearXNG)")
+            if primary_tier < TIER_EXA:
+                primary_tier = TIER_EXA
+            if max_tier < TIER_FIRECRAWL:
+                max_tier = TIER_FIRECRAWL
+
         return SearchIntent(
-            primary_tier=TIER_SEARXNG,
-            max_tier=TIER_SEARXNG,
+            primary_tier=primary_tier,
+            max_tier=max_tier,
             query_category=query_category,
-            search_depth="standard",
+            search_depth=search_depth,
             entity_name=entity_name,
+            allow_cloud_search=allow_cloud_search,
             signals_used=signals,
             routing_reasoning=reasoning,
         )

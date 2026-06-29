@@ -235,8 +235,7 @@ class ModelGateway:
             extra=extra,
         ))
 
-    @staticmethod
-    def _merge_native_gguf_config(p_cfg: dict, models: dict) -> dict:
+    def _merge_native_gguf_config(self, p_cfg: dict, models: dict) -> dict:
         """Merge models.yaml model spec into native-gguf provider config.
 
         models.yaml is the single source of truth for model paths, context,
@@ -244,7 +243,7 @@ class ModelGateway:
         provider defaults from providers.yaml.
         """
         # Find first on-demand model as default path
-        default_spec = models.get("phi-4-mini", {})
+        default_spec = models.get(self._system_default_model(), {})
         merged = dict(p_cfg)
 
         # Keys to pull from models.yaml
@@ -268,7 +267,7 @@ class ModelGateway:
             merged["n_threads"] = merged.pop("threads")
 
         # Map string KV cache types → llama.cpp enum ints
-        kv_map = {"f16": 0, "q8_0": 8, "q4_0": 9, "fp8": 7}
+        kv_map = {"f16": 1, "q8_0": 8, "q4_0": 2}
         for yaml_key, prov_key in [("kv_cache_key_type", "type_k"),
                                     ("kv_cache_value_type", "type_v")]:
             if yaml_key in merged:
@@ -324,8 +323,14 @@ class ModelGateway:
                 instances.append(provider_map[name](name, p_cfg))
 
         def _get_priority(p):
-            if hasattr(p, 'config') and isinstance(p.config, dict):
-                return p.config.get('priority', 999)
+            """Extract priority from provider config — handles both dict and dataclass (ProviderConfig)."""
+            cfg = getattr(p, 'config', None)
+            if cfg is None:
+                return 999
+            if isinstance(cfg, dict):
+                return cfg.get('priority', 999)
+            if hasattr(cfg, 'priority'):
+                return cfg.priority
             return 999
         instances.sort(key=_get_priority)
 
@@ -557,8 +562,8 @@ class ModelGateway:
                         key, result.best_match, result.tier, result.provider,
                     )
                     return result.best_match
-            except Exception:
-                logger.warning("Affinity resolver failed (non-fatal)", exc_info=True)
+            except Exception as e:
+                logger.warning("Affinity resolver failed (non-fatal): %s", str(e), exc_info=True)
 
         # Tier 1: Runtime override via set_entity_model()
         override = self._entity_model_map.get(key)
@@ -606,8 +611,8 @@ class ModelGateway:
         if not self.affinity_resolver.is_loaded():
             try:
                 await self.affinity_resolver.load()
-            except Exception:
-                logger.warning("Affinity resolver load failed (non-fatal)", exc_info=True)
+            except Exception as e:
+                logger.warning("Affinity resolver load failed (non-fatal): %s", str(e), exc_info=True)
                 return None
         
         try:
@@ -616,8 +621,8 @@ class ModelGateway:
                 query=query,
                 context=context,
             )
-        except Exception:
-            logger.warning("Entity affinity resolution failed (non-fatal)", exc_info=True)
+        except Exception as e:
+            logger.warning("Entity affinity resolution failed (non-fatal): %s", str(e), exc_info=True)
             return None
 
     @staticmethod
@@ -779,42 +784,10 @@ class ModelGateway:
         [id-soft: doom-1993] Fixed-Size Active Set — first try the 32 most recently
         successful providers before falling back to the full fabric.
         """
+        last_exception = None
         errors = []
         success_provider = None
-        
-        # 1. Build the search order: Sovereignty-Tiered (P6 Hardening)
-        #    Local Active (LRU) -> Local Fabric -> Cloud Active (LRU) -> Cloud Fabric
-        #    This prevents sovereignty drift (Mandate 7): a known-good local
-        #    provider is always preferred over a known-good cloud provider.
-        search_order = []
-        fabric_by_name = {p.name: p for p in self.providers}
-        seen = set()
-        
-        # Tier 1: Local active set (LRU)
-        for p_name in self._local_active:
-            if p_name in fabric_by_name:
-                search_order.append(fabric_by_name[p_name])
-                seen.add(p_name)
-        
-        # Tier 2: Remaining local fabric
-        for p in self.providers:
-            if p.name not in seen and p.name not in self._cloud_providers:
-                search_order.append(p)
-                seen.add(p.name)
-        
-        # Tier 3: Cloud active set (LRU)
-        for p_name in self._cloud_active:
-            if p_name in fabric_by_name and p_name not in seen:
-                search_order.append(fabric_by_name[p_name])
-                seen.add(p_name)
-        
-        # Tier 4: Remaining cloud fabric
-        for p in self.providers:
-            if p.name not in seen:
-                search_order.append(p)
-                seen.add(p.name)
-        
-        for provider in search_order:
+        for provider in self.providers:
             # Step 1: BSP-style pre-check — fast fail if circuit is OPEN
             if not await self._precheck_provider(provider, model_name):
                 errors.append(f"{provider.name}: culled by precheck")
@@ -826,7 +799,7 @@ class ModelGateway:
                 if not await BudgetGate.check_budget(entity_name, trace_id or "unknown"):
                     errors.append(f"{provider.name}: cloud budget exhausted for {entity_name}")
                     continue
-
+            
             # Step 2: Execute with Hardware Lock and breaker protection
             timeout = self._get_provider_timeout(provider)
             breaker = None  # Initialize for else-clause scope
@@ -880,7 +853,7 @@ class ModelGateway:
                                 entity=entity_name or "system",
                                 tokens_in=tokens_in,
                                 tokens_out=tokens_out,
-                                is_cloud=self._is_cloud_provider(provider)
+                                provider_name=provider.name
                             )
                             
                             break
@@ -897,6 +870,11 @@ class ModelGateway:
                 self._record_provider_failure(provider, model_name, trace_id)
                 continue
             except Exception as e:
+                last_exception = e
+                logger.error(
+                    "ModelGateway.generate: unexpected error from provider=%s trace=%s err=%s",
+                    provider.name, trace_id, str(e), exc_info=True
+                )
                 errors.append(f"{provider.name}: {e}")
                 self._record_provider_failure(provider, model_name, trace_id)
                 continue
@@ -913,6 +891,11 @@ class ModelGateway:
                 logprobs=logprobs,
             )
         
+        # If all providers failed, propagate the last critical error if it exists
+        if last_exception and isinstance(last_exception, (InferenceError, OmegaError)):
+            logger.critical(f"All providers failed. Propagating last critical error: {last_exception}")
+            raise last_exception
+
         logger.warning("All providers failed. Trace: %s | Errors: %s", trace_id, '; '.join(errors))
         return GenerateResult(
             text=self._fallback_response(model_name, system_prompt, user_query),

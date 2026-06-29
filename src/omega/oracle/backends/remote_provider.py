@@ -132,7 +132,8 @@ class RemoteProvider(ABC):
                 if vault_key:
                     self._resolved_api_key = vault_key
                     return vault_key
-            except Exception:
+            except Exception as e:
+                logger.debug(f"Vault resolution failed for {self.config.name}: {e}")
                 pass
             return None
 
@@ -147,7 +148,8 @@ class RemoteProvider(ABC):
                 if vault_key:
                     self._resolved_api_key = vault_key
                     return vault_key
-            except Exception:
+            except Exception as e:
+                logger.debug(f"Vault resolution failed for {self.config.name}: {e}")
                 pass
             # Fallback to environment
             self._resolved_api_key = os.environ.get(env_var)

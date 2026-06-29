@@ -305,6 +305,14 @@ class TestNativeGGUFProvider:
         """__init__ defaults to Zen 2 physical cores."""
         p = NativeGGUFProvider("native", {"model_path": "/tmp/test.gguf"})
         assert p._cores == [0, 2, 4, 6]
+    
+    @pytest.mark.anyio
+    async def test_ensure_loaded_raises_inferenceloaderror(self, provider):
+        """_ensure_loaded should raise InferenceLoadError when Llama fails to load."""
+        from omega.errors import InferenceLoadError
+        with patch("llama_cpp.Llama", side_effect=RuntimeError("Load failed")):
+            with pytest.raises(InferenceLoadError):
+                await provider._ensure_loaded()
 
     def test_init_kv_cache_types(self):
         """__init__ reads type_k and type_v from config."""

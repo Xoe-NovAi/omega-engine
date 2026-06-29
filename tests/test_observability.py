@@ -99,3 +99,11 @@ def test_dataset_collection_disabled():
     tid = new_trace_id()
     engine.record_training_example(tid, "q?", "sys", "resp", "E", "m", "b", 0.5, 100)
     assert engine._dataset == []
+
+
+def test_eventtype_enum_completeness():
+    from omega.observability import EventType
+    # Ensure no duplicate values in EventType
+    values = [getattr(EventType, attr) for attr in dir(EventType) if not attr.startswith("__")]
+    assert len(values) == len(set(values)), f"Duplicate EventType values found: {values}"
+

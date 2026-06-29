@@ -42,7 +42,7 @@ class TokenLedger:
         entity: str, 
         tokens_in: int, 
         tokens_out: int, 
-        is_cloud: bool
+        provider_name: str
     ) -> None:
         """
         Record the token usage of a completed inference transaction.
@@ -52,7 +52,7 @@ class TokenLedger:
             entity: The entity that generated the response.
             tokens_in: Number of input tokens.
             tokens_out: Number of output tokens.
-            is_cloud: Whether the response was generated via cloud provider.
+            provider_name: The name of the provider that served the response.
         """
         # 1. Log to the ObservabilityEngine event stream
         # This allows the BudgetGate to query current spend in real-time.
@@ -65,11 +65,11 @@ class TokenLedger:
                 "prompt_tokens": tokens_in,
                 "completion_tokens": tokens_out,
                 "total_tokens": tokens_in + tokens_out,
-                "is_cloud": is_cloud,
+                "provider_name": provider_name,
                 "timestamp": datetime.now(timezone.utc).isoformat()
             }
         )
-
+        
         # 2. Persist to the local JSONL ledger for auditing
         transaction = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -78,7 +78,7 @@ class TokenLedger:
             "prompt_tokens": tokens_in,
             "completion_tokens": tokens_out,
             "total_tokens": tokens_in + tokens_out,
-            "is_cloud": is_cloud,
+            "provider_name": provider_name,
         }
         
         try:

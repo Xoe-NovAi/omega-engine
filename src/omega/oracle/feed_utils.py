@@ -4,7 +4,7 @@
 # AP: FEED-UTILS-v1.0.0
 #
 # Shared utilities for knowledge feed and demand signal operations.
-# Used by both link_p9_cli.py (standalone) and oracle_cli.py (integrated).
+# Used by oracle_cli.py (integrated). link_p9_cli.py has been consolidated.
 #
 # [id-soft: doom-1993] ZONEID Pattern — knowledge and demand signal validation
 

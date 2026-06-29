@@ -44,6 +44,7 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Constraint**: Never use `:U` on volume mounts that the host user needs to access. Never use `:Z` or `:z` — they are SELinux flags, and Ubuntu uses AppArmor.
 - **Pattern**: See `docs/research/R_PODMAN_SOVEREIGN_V2.md` for the verified Quadlet pattern.
 - **Reason**: The `:U` flag destructively chowns host directories to UID 101000, locking the host user out. `UserNS=keep-id` maps host UID 1000 directly into the container — no chown needed.
+- **IMPORTANT (D144)**: `UserNS=keep-id` + `User=1000` is the QUADLET-ONLY pattern. For `docker-compose` or `podman run`, OMIT `--user`/`user:` entirely — in rootless Podman, container UID 0 maps to host UID 1000 by default. Setting `user: "1000:1000"` maps to subuid 101000, breaking volume writes. Use `user:` only if also setting `userns_mode: keep-id` (incompatible with `--pod` in podman-compose v5.x). See PIVOT_LOG.md D144.
 
 ### 7. Local-First (Non-Negotiable)
 - **Mandate**: Local inference is PRIMARY. Cloud is FALLBACK. Always.

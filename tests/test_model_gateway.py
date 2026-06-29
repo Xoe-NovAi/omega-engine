@@ -295,3 +295,41 @@ async def test_exception_still_trips_breaker(monkeypatch):
     assert breaker.state == CircuitState.OPEN, (
         f"Circuit must be OPEN after 2 ConnectionError failures, got {breaker.state.value}"
     )
+
+@pytest.mark.anyio
+async def test_all_providers_fail_falls_to_mock(monkeypatch):
+    """Verify that if all providers in the chain fail, the ModelGateway returns the fallback response."""
+    from unittest.mock import AsyncMock, MagicMock
+    
+    gateway = ModelGateway()
+    
+    # Create mock providers that all fail
+    p1 = MagicMock()
+    p1.name = "provider1"
+    p1.is_available = AsyncMock(return_value=True)
+    p1.generate = AsyncMock(side_effect=Exception("P1 Failed"))
+    
+    p2 = MagicMock()
+    p2.name = "provider2"
+    p2.is_available = AsyncMock(return_value=True)
+    p2.generate = AsyncMock(side_effect=Exception("P2 Failed"))
+    
+    gateway.providers = [p1, p2]
+    
+    # Set to production to avoid the automatic mock_backend in test mode
+    import os
+    monkeypatch.setenv("OMEGA_ENV", "production")
+    
+    result = await gateway.generate(
+        model_name="test-model",
+        system_prompt="sys",
+        user_query="query",
+        temperature=0.7,
+        max_tokens=100
+    )
+    
+    # Should return the fallback response
+    assert "no inference backend is running" in result.text
+    assert p1.generate.called
+    assert p2.generate.called
+
