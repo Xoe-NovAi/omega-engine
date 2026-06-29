@@ -772,11 +772,20 @@ class ObservabilityEngine:
         trace_id: Optional[str] = None,
         context: Optional[Dict[str, Any]] = None,
     ) -> None:
-        """Record an error for forensic analysis."""
+        """Record an error for forensic analysis.
+        
+        Uses contextvars safety net if trace_id is not explicitly provided,
+        ensuring errors never carry trace_id="unknown".
+        """
+        # [M22] Use contextvars safety net if trace_id not provided
+        if trace_id is None:
+            from .context import get_current_trace_id
+            trace_id = get_current_trace_id()
+        
         self._forensics.record_error(error, trace_id=trace_id, context=context)
         self.log_event(
             EventType.ERROR,
-            trace_id or "unknown",
+            trace_id,  # No more "unknown" — guaranteed by safety net
             {
                 "error_type": type(error).__name__,
                 "error_message": str(error)[:300],

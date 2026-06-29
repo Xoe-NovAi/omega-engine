@@ -44,14 +44,16 @@ class SkepticalVerifier:
         self.model_gateway = model_gateway
         self.nli_model = nli_model
         
-    async def verify(self, claim: str, evidence_list: List[Dict[str, Any]]) -> VerificationResult:
+    async def verify(self, claim: str, evidence_list: List[Dict[str, Any]], trace_id: Optional[str] = None) -> VerificationResult:
         """
         Verify a claim against a list of evidence snippets using the Two-Source Rule.
         
         Args:
             claim: The hypothesis to verify.
             evidence_list: List of evidence dicts containing 'content', 'source_id', etc.
+            trace_id: Current trace ID for observability propagation.
         """
+        self._trace_id = trace_id  # Store for sub-calls
         sources = []
         entailments = []
         contradictions = []
@@ -132,7 +134,8 @@ class SkepticalVerifier:
                 system_prompt="You are a high-precision NLI classifier. Output only the requested tag.",
                 user_query=prompt,
                 temperature=0.0,
-                max_tokens=10
+                max_tokens=10,
+                trace_id=self._trace_id,  # [M22] Propagate trace context
             )
             
             response = res.text.strip().upper()
@@ -172,7 +175,8 @@ class SkepticalVerifier:
                 model_name=self.nli_model,
                 system_prompt="You are a Sovereign Resolution Engine. Resolve factual contradictions with extreme skepticism.",
                 user_query=divergence_prompt,
-                temperature=0.2
+                temperature=0.2,
+                trace_id=self._trace_id,  # [M22] Propagate trace context
             )
             
             response = res.text

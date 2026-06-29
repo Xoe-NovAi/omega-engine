@@ -333,3 +333,91 @@ async def test_all_providers_fail_falls_to_mock(monkeypatch):
     assert p1.generate.called
     assert p2.generate.called
 
+
+# ── M21/M22 Contract Tests: GenerateResult ──────────────────────────────
+
+
+@pytest.mark.anyio
+async def test_generate_result_success_has_latency(monkeypatch):
+    """M22: Success path GenerateResult must have real latency_ms > 0."""
+    from unittest.mock import AsyncMock, MagicMock
+
+    gateway = ModelGateway()
+    monkeypatch.setenv("OMEGA_ENV", "production")
+
+    mock_provider = MagicMock()
+    mock_provider.name = "test_provider"
+    mock_provider.is_available = AsyncMock(return_value=True)
+    mock_provider.generate = AsyncMock(return_value="Success response")
+
+    gateway.providers = [mock_provider]
+
+    result = await gateway.generate(
+        model_name="test-model",
+        system_prompt="sys",
+        user_query="query",
+        temperature=0.7,
+        max_tokens=100,
+        trace_id="contract-test-trace-001",
+    )
+
+    assert isinstance(result.latency_ms, float), "latency_ms must be a float"
+    assert result.latency_ms > 0, "Latency must be > 0 on success path"
+
+
+@pytest.mark.anyio
+async def test_generate_result_success_has_model_used(monkeypatch):
+    """M22: Success path GenerateResult must have model_used populated."""
+    from unittest.mock import AsyncMock, MagicMock
+
+    gateway = ModelGateway()
+    monkeypatch.setenv("OMEGA_ENV", "production")
+
+    mock_provider = MagicMock()
+    mock_provider.name = "test_provider"
+    mock_provider.is_available = AsyncMock(return_value=True)
+    mock_provider.generate = AsyncMock(return_value="Success response")
+
+    gateway.providers = [mock_provider]
+
+    result = await gateway.generate(
+        model_name="test-model",
+        system_prompt="sys",
+        user_query="query",
+        temperature=0.7,
+        max_tokens=100,
+        trace_id="contract-test-trace-002",
+    )
+
+    assert result.model_used == "test-model", "model_used must match the requested model"
+
+
+@pytest.mark.anyio
+async def test_generate_result_fallback_has_model_used(monkeypatch):
+    """M22: Fallback path should still report the model name."""
+    from unittest.mock import AsyncMock, MagicMock
+
+    gateway = ModelGateway()
+    monkeypatch.setenv("OMEGA_ENV", "production")
+
+    # All providers fail — triggers fallback path
+    p = MagicMock()
+    p.name = "failing_provider"
+    p.is_available = AsyncMock(return_value=True)
+    p.generate = AsyncMock(side_effect=Exception("Failure"))
+
+    gateway.providers = [p]
+
+    result = await gateway.generate(
+        model_name="fallback-model-test",
+        system_prompt="sys",
+        user_query="query",
+        temperature=0.7,
+        max_tokens=100,
+        trace_id="contract-test-trace-003",
+    )
+
+    # Fallback should still report the model that was requested
+    assert result.model_used == "fallback-model-test"
+    assert result.provider_name == "fallback"
+

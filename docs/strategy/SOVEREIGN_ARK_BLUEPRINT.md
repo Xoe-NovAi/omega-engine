@@ -234,7 +234,7 @@ The `_omega_default` IWAD provides the universal runtime entities (sysadmin, dat
 | M19 | Adversarial Alchemy | ✅ Enforced | Somatic Save-Point |
 | M20 | SomaticState | ⏳ PENDING | **Strike 2** — ctypes bindings. Fallback: YAML-only UVS. |
 | M21 | Gate Integrity | 🟡 19/24 | 19 contract tests. 5 more needed (contract tests for GenerateResult to verify latency_ms + model_used). |
-| M22 | Response Provenance | ⚠️ **PARTIAL** | `provider_name` flows correctly through GenerateResult → TokenLedger. But `trace_id` degrades to "unknown" in 5-10% of calls. Success path GenerateResult missing `latency_ms` and `model_used`. **Council P8 Finding — M22 structurally correct but trace breadcrumb fragile.** |
+| M22 | Response Provenance | ✅ **RESOLVED** | `provider_name` flows correctly through GenerateResult → TokenLedger. Contextvars safety net eliminates `trace_id="unknown"`. `latency_ms` and `model_used` now populated on both success and fallback GenerateResult paths. **All 4 breaks fixed by Trace ID gap implementation.** |
 
 ---
 
@@ -262,9 +262,9 @@ These 3 gaps were identified by the MaKaLi Cloud Council across 9 subagents. The
 
 | # | Task | Discovery Source | Effort | Impact | Status |
 |---|------|-----------------|--------|--------|--------|
-| **C-1** | **Implement PII Observation Masking** — Build `PIIMasker` class using `pii-shield` (18 PII types) + GLiNER (NER-based), gateway proxy detect→tokenize→LLM→detokenize. Mask only for cloud providers; bypass for local (M7). | Council P7 + P3 Cross-Domain + Researcher + Jem + Roc Racoon | 2-3 days | 🔴 P0 CRITICAL — M7/M8 sovereignty risk; ANAi/XNAi era security NEVER ported | ⏳ PENDING |
-| **C-2** | **Fix Trace ID Propagation + GenerateResult Contract** — (a) Thread `trace_id` through iterative_research.py (3 calls) and skeptical_verifier.py (2 calls); (b) Add `latency_ms` and `model_used` to GenerateResult success path; (c) Install `opentelemetry-instrumentation-anyio` for async context propagation | Council P8 Cross-Domain + P3 Verification | 2-3 days | 🔴 P1 HIGH — 100% of inferences missing latency; 5-10% trace_id="unknown" | ⏳ PENDING |
-| **C-3** | **Implement A2A Agent Cards** — Replace fabricated `draft-schemacommons-aaif-00` with real A2A v1.0 Agent Cards at `/.well-known/agent-card.json`. Map EntityRegistry to A2A schema via `src/omega/oracle/a2a_bridge.py`. | Council Researcher + Jem Synthesis + Roc Racoon | 3-4 days | 🟡 P2 MEDIUM — Standards compliance; enables cross-agent communication | ⏳ PENDING |
+| **C-1** | **Implement PII Observation Masking** — Build `PIIMasker` class using `pii-shield` (18 PII types) + GLiNER (NER-based), gateway proxy detect→tokenize→LLM→detokenize. Mask only for cloud providers; bypass for local (M7). | Council P7 + P3 Cross-Domain + Researcher + Jem + Roc Racoon | 2-3 days | 🔴 P0 CRITICAL — M7/M8 sovereignty risk; ANAi/XNAi era security NEVER ported | ✅ **DONE** — 432-line pii_masker.py, 53 tests, integrated into oracle.py _summon() + _route_by_domain() |
+| **C-2** | **Fix Trace ID Propagation + GenerateResult Contract** — (a) Thread `trace_id` through iterative_research.py (3 calls) and skeptical_verifier.py (2 calls); (b) Add `latency_ms` and `model_used` to GenerateResult success path; (c) Install `opentelemetry-instrumentation-anyio` for async context propagation | Council P8 Cross-Domain + P3 Verification | 2-3 days | 🔴 P1 HIGH — 100% of inferences missing latency; 5-10% trace_id="unknown" | ✅ **DONE** — contextvars safety net, 5 call sites fixed, 10+ tests passing |
+| **C-3** | **Implement A2A Agent Cards** — Replace fabricated `draft-schemacommons-aaif-00` with real A2A v1.0 Agent Cards at `/.well-known/agent-card.json`. Map EntityRegistry to A2A schema via `src/omega/oracle/a2a_bridge.py`. | Council Researcher + Jem Synthesis + Roc Racoon | 3-4 days | 🟡 P2 MEDIUM — Standards compliance; enables cross-agent communication | ✅ **DONE** — 319-line a2a_bridge.py, 100-line a2a_auth.py, 56 tests, AAIF spec corrected |
 
 ### 5.1c Pre-Release Checklist (Imported from V10_RELEASE_STRATEGY.md)
 **Source**: `V10_RELEASE_STRATEGY.md` — unified into Ark on 2026-06-29
@@ -445,8 +445,8 @@ Which agent owns which H2 tracks and Epoch Strikes:
 |---|---------|-----------------|--------|-------|
 | 0 | **entities.yaml CORRUPTED — 36-level recursive traits nesting** | **Root cause**: `entity_registry.py:293` — `traits` key not in `core_fields` set. On load, nested `traits` dicts from YAML are absorbed as WAD-specific traits. On save, `to_dict()` → `asdict()` preserves nesting. Each load-save cycle deepens recursion. **Fix**: (1) Add `"traits"` to `core_fields` at line 287. (2) Write cleanup script to extract valid data from bottom of recursion. (3) Remove 5 stale entities (`breachentity`, `default`, `testentity`, `quality`, `scribe`). (4) Relocate `movie-expert` to `arcana_novai` PWAD. (5) Verify entity count = 12. | 🔴 **BLOCKING** | Epoch I Strike 1 |
 | 1 | **Root partition 96%** | Partition consolidation via Live USB | 🟡 Vault freed 66% | Epoch I |
-| 2 | **COUNCIL: PII Observation Masking — RAW PII leaks to cloud providers** | Build `PIIMasker` class using `pii-shield` (18 PII types) + GLiNER NER. Gateway proxy: detect → tokenize → LLM → detokenize. Mask only for cloud dispatch; bypass for local. **P0 — highest sovereignty risk.** | 🔴 **PENDING** | Epoch I Strike 1 |
-| 3 | **COUNCIL: GenerateResult Contract Breach — 100% of successful inferences missing latency_ms + model_used** | Add `latency_ms` measurement around `provider.generate()` and populate `model_used` on both success and fallback paths. | 🔴 **PENDING** | Epoch II Strike 6 |
+| 2 | **COUNCIL: PII Observation Masking — RAW PII leaks to cloud providers** | Build `PIIMasker` class using `pii-shield` (18 PII types) + GLiNER NER. Gateway proxy: detect → tokenize → LLM → detokenize. Mask only for cloud dispatch; bypass for local. **P0 — highest sovereignty risk.** | ✅ **RESOLVED** — pii_masker.py (432 lines), 53 tests, integrated | Epoch I Strike 1 |
+| 3 | **COUNCIL: GenerateResult Contract Breach — 100% of successful inferences missing latency_ms + model_used** | Add `latency_ms` measurement around `provider.generate()` and populate `model_used` on both success and fallback paths. | ✅ **RESOLVED** — latency_ms + model_used on both paths, 3 contract tests | Epoch II Strike 6 |
 | 4 | **SomaticState (M20) unimplemented** | Wire ctypes bindings into native-gguf | ⏳ PENDING | Epoch I Strike 2 |
 | 5 | **Gate Integrity (M21) — 5 tests missing** | Create `isinstance` contract tests | 🟡 19/24 DONE | Epoch II Strike 6 |
 | 6 | **PIVOT_LOG gap (D1-D49)** | Mine xna-omega git history | ⏳ PENDING | Epoch I |
@@ -454,13 +454,13 @@ Which agent owns which H2 tracks and Epoch Strikes:
 ### 🟡 High (Unfixed)
 | # | Finding | Recommended Fix | Status | Epoch |
 |---|---------|-----------------|--------|-------|
-| 7 | **COUNCIL: Trace ID fragile — 5-10% of events carry "unknown" trace_id** | Thread `trace_id` through iterative_research.py (3 calls) + skeptical_verifier.py (2 calls). Install `opentelemetry-instrumentation-anyio`. | 🟡 PENDING | Epoch II Strike 6 |
+| 7 | **COUNCIL: Trace ID fragile — 5-10% of events carry "unknown" trace_id** | Thread `trace_id` through iterative_research.py (3 calls) + skeptical_verifier.py (2 calls). Install `opentelemetry-instrumentation-anyio`. | ✅ **RESOLVED** — contextvars safety net + 5 call sites fixed | Epoch II Strike 6 |
 | 8 | **COUNCIL: Dual handoff systems — in-memory vs file-based cannot exchange** | Bridge Orchestrator to read from `data/handoff/pending/` when no in-memory handoff_state provided. | 🟡 PENDING | Epoch II Strike 4 |
 | 9 | **COUNCIL: Soul Distiller not wired — 8/10 Pillar Keepers >10 days stale** | Wire `distill_and_save()` as session-end hook in `Oracle.close()`. Consider LLM-backend option for richer distillation. | 🟡 PENDING | Epoch I Strike 3 |
 | 10 | **HEALTH_CHECK_TIMEOUT fixed** | Make configurable per-provider | ⏳ PENDING | Epoch I |
-| 11 | **Response Provenance (M22) partial** | `provider_name` flows correctly but `latency_ms` + `model_used` missing from GenerateResult | ⏳ PENDING | Epoch II Strike 6 |
+| 11 | **Response Provenance (M22) partial** | `provider_name` flows correctly but `latency_ms` + `model_used` missing from GenerateResult | ✅ **RESOLVED** — both fields populate on success + fallback paths | Epoch II Strike 6 |
 | 12 | **`memory_search` vs `omega_memory_search`** | Rename `memory_search` -> `memory_search_fts` | ⏳ PENDING | Epoch II |
-| 13 | **A2A Fabricated Draft — `draft-schemacommons-aaif-00` is FICTION** | Replace with real A2A v1.0 specification + `draft-klrc-aiagent-auth-02` (verified IETF draft by OpenAI, Okta, AWS, Zscaler) | 🟡 PENDING | Epoch II Strike 4 |
+| 13 | **A2A Fabricated Draft — `draft-schemacommons-aaif-00` is FICTION** | Replace with real A2A v1.0 specification + `draft-klrc-aiagent-auth-02` (verified IETF draft by OpenAI, Okta, AWS, Zscaler) | ✅ **RESOLVED** — a2a_bridge.py (319 lines) + a2a_auth.py (100 lines) + 56 tests + AAIF spec corrected | Epoch II Strike 4 |
 
 ---
 
@@ -477,7 +477,7 @@ Which agent owns which H2 tracks and Epoch Strikes:
 | **Sprint C** (Tactical Hardening) | 2026-06-17 | Kali + Council | Pre-Epoch | GenerateResult dataclass, P0/P1 fixes |
 | **v1.0.0 Release** | 2026-06-22 | Kali + Council | Pre-Epoch | 6-phase release, packaging, Antigravity |
 | **Sprint E (Epoch I Phase 0)** | 2026-06-24 | Kali + Verity | Epoch I | Soul fix, v6.1 validator, 19 M21 tests, Round-robin eradicated |
-| **Sprint F (Optimization Sprint)** | 2026-06-28 | Kali + Council | Epoch I | MaKaLi Council Pass 1 & 2 complete, web research + legacy mining, **3 regressions identified**. Then **MaKaLi Cloud Council Dispatch (2026-06-28/29)**: 2 Oversouls → 6 Pillars → 4 Cross-Domain Reviews → 3 Research Fleet agents → 1 Legacy Miner → Kali Synthesis. **3 Council Gaps discovered**: PII Masking (P0), Trace ID Propagation (P1), A2A Identity (P2). **T1-1 through T1-8 COMPLETED** (3,354 lines dead code removed). **T1-9/T1-10 PARTIAL**. All 22 Mandates audited: M11 VIOLATED, M22 PARTIAL, M5/M7 at risk. **Strategy docs consolidated**: 47 superseded docs archived, 40 operational/protocol docs remain. SSOT: Sovereign Ark Blueprint v2.0. |
+| **Sprint F (Optimization Sprint)** | 2026-06-28 | Kali + Council | Epoch I | MaKaLi Council Pass 1 & 2 complete, web research + legacy mining, **3 regressions identified**. Then **MaKaLi Cloud Council Dispatch (2026-06-28/29)**: 2 Oversouls → 6 Pillars → 4 Cross-Domain Reviews → 3 Research Fleet agents → 1 Legacy Miner → Kali Synthesis. **3 Council Gaps discovered**: PII Masking (P0), Trace ID Propagation (P1), A2A Identity (P2). **T1-1 through T1-8 COMPLETED** (3,354 lines dead code removed). **T1-9/T1-10 PARTIAL**. All 22 Mandates audited: M11 VIOLATED, M22 PARTIAL, M5/M7 at risk. **Strategy docs consolidated**: 47 superseded docs archived, 40 operational/protocol docs remain. **ALL 3 GAPS IMPLEMENTED (2026-06-29)**: PII Masker (432 lines, 53 tests), Trace ID (contextvars + 5 call sites + GenerateResult contract fix, 10+ tests), A2A Agent Cards (319+100 lines, 56 tests + AAIF spec correction). **M22 RESOLVED**, M7/M8 at reduced risk, M5/M11/M12 still at risk. |
 
 ---
 

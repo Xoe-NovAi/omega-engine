@@ -107,3 +107,119 @@ def test_eventtype_enum_completeness():
     values = [getattr(EventType, attr) for attr in dir(EventType) if not attr.startswith("__")]
     assert len(values) == len(set(values)), f"Duplicate EventType values found: {values}"
 
+
+# ── Contextvars Safety Net Tests ─────────────────────────────────────
+
+
+def test_contextvars_generates_new_trace_id():
+    """get_current_trace_id() generates a new trace_id when none is set."""
+    from omega.observability.context import get_current_trace_id, reset_current_trace_id
+
+    reset_current_trace_id()  # Ensure clean state
+    tid = get_current_trace_id()
+    assert tid.startswith("trc_"), f"Expected trc_ prefix, got {tid}"
+    assert len(tid) == 16, f"Expected 16 chars, got {len(tid)}: {tid}"
+
+
+def test_contextvars_returns_same_id_when_set():
+    """get_current_trace_id() returns the same ID after set_current_trace_id()."""
+    from omega.observability.context import get_current_trace_id, set_current_trace_id, reset_current_trace_id
+
+    reset_current_trace_id()  # Ensure clean state
+    set_current_trace_id("explicit-trace-123")
+    assert get_current_trace_id() == "explicit-trace-123"
+
+
+def test_contextvars_persists_across_calls():
+    """get_current_trace_id() returns the same ID when called multiple times."""
+    from omega.observability.context import get_current_trace_id, reset_current_trace_id
+
+    reset_current_trace_id()
+    first = get_current_trace_id()
+    second = get_current_trace_id()
+    assert first == second, "Multiple calls should return the same trace_id"
+
+
+def test_reset_trace_id_generates_new():
+    """After reset_current_trace_id(), get_current_trace_id() generates a new ID."""
+    from omega.observability.context import get_current_trace_id, set_current_trace_id, reset_current_trace_id
+
+    set_current_trace_id("first-trace")
+    assert get_current_trace_id() == "first-trace"
+
+    reset_current_trace_id()
+    new_tid = get_current_trace_id()
+    assert new_tid != "first-trace", "After reset, should get a new trace ID"
+    assert new_tid.startswith("trc_")
+
+
+# ── record_error trace_id Tests ────────────────────────────────────────
+
+
+def test_record_error_with_trace_id():
+    """record_error() uses the provided trace_id."""
+    engine = ObservabilityEngine(enable_dataset_collection=False)
+    engine.clear_log()
+
+    error = ValueError("test error")
+    engine.record_error(error, trace_id="explicit-trace-456")
+
+    recent = engine._forensics.recent_errors
+    assert len(recent) >= 1
+    # The most recent error should have our trace_id
+    last_err = recent[-1]
+    assert last_err["trace_id"] == "explicit-trace-456"
+
+    # Check event log too
+    found = any(
+        e["event"] == "error" and e["trace_id"] == "explicit-trace-456"
+        for e in engine._event_log
+    )
+    assert found, "Error event must carry the explicit trace_id"
+
+
+def test_record_error_without_trace_id():
+    """record_error() uses contextvars safety net when trace_id is None."""
+    from omega.observability.context import set_current_trace_id, reset_current_trace_id
+
+    reset_current_trace_id()
+    set_current_trace_id("context-trace-789")
+
+    engine = ObservabilityEngine(enable_dataset_collection=False)
+    engine.clear_log()
+
+    error = RuntimeError("error without trace_id")
+    engine.record_error(error, trace_id=None)
+
+    # Error should NOT have "unknown" as trace_id
+    recent = engine._forensics.recent_errors
+    last_err = recent[-1]
+    assert last_err["trace_id"] != "unknown", "trace_id must never be 'unknown'"
+    # Should have picked up the contextvar
+    assert last_err["trace_id"] == "context-trace-789"
+
+    # Check event log too
+    found = any(
+        e["event"] == "error" and e["trace_id"] == "context-trace-789"
+        for e in engine._event_log
+    )
+    assert found, "Error event must carry contextvar trace_id"
+
+
+def test_record_error_generates_new_trace_id_when_no_context():
+    """record_error() generates a new trace_id when no contextvar is set."""
+    from omega.observability.context import reset_current_trace_id
+
+    reset_current_trace_id()  # Ensure no context trace
+
+    engine = ObservabilityEngine(enable_dataset_collection=False)
+    engine.clear_log()
+
+    error = RuntimeError("error with no context")
+    engine.record_error(error, trace_id=None)
+
+    recent = engine._forensics.recent_errors
+    last_err = recent[-1]
+    assert last_err["trace_id"] != "unknown", "trace_id must never be 'unknown'"
+    assert last_err["trace_id"].startswith("trc_"), "Should generate new trace_id"
+

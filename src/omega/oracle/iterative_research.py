@@ -35,15 +35,24 @@ class IterativeResearcher:
         query: str, 
         entity_name: str, 
         max_iterations: Optional[int] = None,
-        min_confidence: float = 0.8
+        min_confidence: float = 0.8,
+        trace_id: Optional[str] = None,
     ) -> Tuple[str, List[TaintedData]]:
         """Execute an iterative research loop to answer a query.
+        
+        Args:
+            query: The research query.
+            entity_name: The entity to search knowledge for.
+            max_iterations: Maximum number of research iterations.
+            min_confidence: Minimum confidence threshold.
+            trace_id: Current trace ID for observability propagation.
         
         Returns a tuple of (final_synthesis, all_gathered_evidence).
         """
         current_query = query
         all_evidence: List[TaintedData] = []
         iteration = 0
+        self._trace_id = trace_id  # Store for sub-calls
         
         while iteration < (max_iterations or self.max_iterations):
             iteration += 1
@@ -66,6 +75,7 @@ class IterativeResearcher:
                 system_prompt="You are a Sovereign Research Auditor. Your goal is to identify gaps in provided evidence.",
                 user_query=analysis_prompt,
                 temperature=0.2,
+                trace_id=self._trace_id,  # [M22] Propagate trace context
             )
             analysis_text = res.text
             
@@ -145,6 +155,7 @@ class IterativeResearcher:
             system_prompt="You are a Sovereign Synthesis Engine. Your goal is to produce a verified, evidence-based answer.",
             user_query=synthesis_prompt,
             temperature=0.3,
+            trace_id=self._trace_id,  # [M22] Propagate trace context
         )
         response_text = res.text
         
@@ -160,7 +171,8 @@ class IterativeResearcher:
                 model_name="qwen3-4b-think",
                 system_prompt="You are a claim extractor. Extract only factual, verifiable claims.",
                 user_query=claims_prompt,
-                temperature=0.0
+                temperature=0.0,
+                trace_id=self._trace_id,  # [M22] Propagate trace context
             )
             claims_text = res.text
             

@@ -33,6 +33,7 @@ from .search import SovereignSearcher
 from .iterative_research import IterativeResearcher
 from .skeptical_verifier import SkepticalVerifier, VerificationResult
 from .security import TDPGate, TaintedData
+from .pii_masker import PIIMasker
 from .context_builder import ContextBuilder
 from ..iris.matcher import IntentMatcher
 
@@ -104,6 +105,7 @@ class Oracle:
         self._interaction_counter: Dict[str, int] = {}
         self.researcher = IterativeResearcher(self.model_gateway, self.searcher, verifier=self.verifier)
         self.context_builder = ContextBuilder()
+        self.pii_masker = PIIMasker()
         self.intent_matcher = IntentMatcher()
         
         # Load WADs
@@ -602,15 +604,35 @@ class Oracle:
             if affinity_result.inference_presets.preferred_context:
                 effective_max_tokens = min(affinity_result.inference_presets.preferred_context, 4096)
         
-        # Generate response via model gateway
-        res = await self.model_gateway.generate(
-            model_name=model_name,
-            system_prompt=effective_system_prompt,
-            user_query=query,
-            temperature=effective_temperature,
-            max_tokens=effective_max_tokens,
-            trace_id=trace.trace_id,
-        )
+        # [PII Masking] Check if cloud provider will be used and mask PII if so
+        # Use get_preferred_backend to determine if we're likely sending to cloud
+        preferred_backend = await self.model_gateway.get_preferred_backend()
+        if self.pii_masker.should_mask(preferred_backend):
+            masked_prompt, masked_query, token_map = await self.pii_masker.process_system_prompt(
+                system_prompt=effective_system_prompt,
+                user_query=query,
+                provider_name=preferred_backend,
+            )
+            res = await self.model_gateway.generate(
+                model_name=model_name,
+                system_prompt=masked_prompt,
+                user_query=masked_query,
+                temperature=effective_temperature,
+                max_tokens=effective_max_tokens,
+                trace_id=trace.trace_id,
+            )
+            # Detokenize response to restore original PII values
+            res.text = await self.pii_masker.process_response(res.text, token_map)
+        else:
+            # Local provider — no PII masking needed
+            res = await self.model_gateway.generate(
+                model_name=model_name,
+                system_prompt=effective_system_prompt,
+                user_query=query,
+                temperature=effective_temperature,
+                max_tokens=effective_max_tokens,
+                trace_id=trace.trace_id,
+            )
         
         # Use the ACTUAL provider that served the response, not the preferred one
         backend = res.provider_name
@@ -676,14 +698,34 @@ class Oracle:
         
         # Generate response via model gateway with TriageRouter
         model_name = await self._select_model(entity.name, text, session_id, trace.trace_id)
-        res = await self.model_gateway.generate(
-            model_name=model_name,
-            system_prompt=system_prompt,
-            user_query=text,
-            temperature=entity.temperature,
-            max_tokens=1024,
-            trace_id=trace.trace_id,
-        )
+        
+        # [PII Masking] Check if cloud provider will be used and mask PII if so
+        preferred_backend = await self.model_gateway.get_preferred_backend()
+        if self.pii_masker.should_mask(preferred_backend):
+            masked_prompt, masked_query, token_map = await self.pii_masker.process_system_prompt(
+                system_prompt=system_prompt,
+                user_query=text,
+                provider_name=preferred_backend,
+            )
+            res = await self.model_gateway.generate(
+                model_name=model_name,
+                system_prompt=masked_prompt,
+                user_query=masked_query,
+                temperature=entity.temperature,
+                max_tokens=1024,
+                trace_id=trace.trace_id,
+            )
+            # Detokenize response
+            res.text = await self.pii_masker.process_response(res.text, token_map)
+        else:
+            res = await self.model_gateway.generate(
+                model_name=model_name,
+                system_prompt=system_prompt,
+                user_query=text,
+                temperature=entity.temperature,
+                max_tokens=1024,
+                trace_id=trace.trace_id,
+            )
         
         # Use the ACTUAL provider that served the response, not the preferred one
         backend = res.provider_name

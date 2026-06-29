@@ -787,6 +787,7 @@ class ModelGateway:
         last_exception = None
         errors = []
         success_provider = None
+        _latency_ms = 0.0  # [M22] Initialize before loop for fallback path
         for provider in self.providers:
             # Step 1: BSP-style pre-check — fast fail if circuit is OPEN
             if not await self._precheck_provider(provider, model_name):
@@ -811,6 +812,9 @@ class ModelGateway:
             try:
                 async with self.resource_guard.lock(weight=weight, model_spec=spec):
                     with anyio.move_on_after(timeout) as cancel_scope:
+                        # [M22 Response Provenance] Start latency measurement
+                        _start_time = time.monotonic()
+                        
                         # Use HealthMonitor's breaker if available, otherwise direct call.
                         if self._health_monitor:
                             breaker = self._health_monitor._breakers.get(provider.name)
@@ -836,6 +840,8 @@ class ModelGateway:
                             )
                         
                         if result:
+                            # [M22 Response Provenance] Record latency immediately after provider returns
+                            _latency_ms = (time.monotonic() - _start_time) * 1000
                             if self._health_monitor:
                                 self._health_monitor.record_success(model_name)
                             self._update_active_set(provider.name)
@@ -889,6 +895,8 @@ class ModelGateway:
                 provider_name=success_provider.name,
                 is_cloud=self._is_cloud_provider(success_provider),
                 logprobs=logprobs,
+                latency_ms=_latency_ms,      # [M22] Actual latency from measurement
+                model_used=model_name,        # [M22] Actual model that served
             )
         
         # If all providers failed, propagate the last critical error if it exists
@@ -900,7 +908,9 @@ class ModelGateway:
         return GenerateResult(
             text=self._fallback_response(model_name, system_prompt, user_query),
             provider_name="fallback",
-            is_cloud=False
+            is_cloud=False,
+            latency_ms=_latency_ms,   # [M22] Report measured latency (0.0 if never reached a provider)
+            model_used=model_name,    # [M22] Report the model that was requested
         )
 
 
