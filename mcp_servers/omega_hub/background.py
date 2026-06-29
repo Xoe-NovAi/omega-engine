@@ -113,6 +113,8 @@ async def _reap_stale_handoffs() -> None:
     - pending/ older than 24h -> stale/ with {ttl_expired: true}
     - active/ older than 48h -> stale/
     - completed/ older than 7 days -> archive/
+    - stale/ older than 14 days -> delete (M12)
+    - archive/ older than 30 days -> delete (M12)
     """
     now = datetime.now(timezone.utc)
 
@@ -139,15 +141,29 @@ async def _reap_stale_handoffs() -> None:
                     logger.debug("Failed to reap handoff %s: %s", f, e)
         return reaped
 
-    reaped = await anyio.to_thread.run_sync(
+    def _delete_dir(src_dir: Path, max_age_seconds: int):
+        deleted = 0
+        for f in src_dir.glob("*.json"):
+            age = (now - datetime.fromtimestamp(f.stat().st_mtime, tz=timezone.utc)).total_seconds()
+            if age > max_age_seconds:
+                try:
+                    f.unlink()
+                    deleted += 1
+                except Exception as e:
+                    logger.debug("Failed to delete handoff %s: %s", f, e)
+        return deleted
+
+    reaped_and_deleted = await anyio.to_thread.run_sync(
         lambda: (
             _reap_dir(state.HANDOFF_PENDING, state.HANDOFF_STALE, 86400, {"ttl_expired": True})
             + _reap_dir(state.HANDOFF_ACTIVE, state.HANDOFF_STALE, 172800, {"ttl_expired": True})
             + _reap_dir(state.HANDOFF_COMPLETED, state.HANDOFF_ARCHIVE, 604800)
+            + _delete_dir(state.HANDOFF_STALE, 14 * 86400)
+            + _delete_dir(state.HANDOFF_ARCHIVE, 30 * 86400)
         )
     )
-    if reaped:
-        logger.info("Reaped %d stale handoff(s)", reaped)
+    if reaped_and_deleted:
+        logger.info("Reaped/deleted %d handoff(s)", reaped_and_deleted)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
