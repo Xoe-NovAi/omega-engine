@@ -223,8 +223,8 @@ The `_omega_default` IWAD provides the universal runtime entities (sysadmin, dat
 | M8 | Zero Telemetry | ✅ Enforced | CI grep telemetry. Qdrant telemetry disabled (D168). PII masking local-only. |
 | M9 | Error Integrity | ✅ Enforced | 0 bare except |
 | M10 | Fleet Integrity | ✅ Enforced | 11 agents cap (M10 compliant — 3 slots remaining) |
-| M11 | Soul Integrity | ❌ **VIOLATED** | 8/10 Pillar Keepers stale. Root cause found by Carmack D170: key mismatch between add_exchange() and close_session(). Distiller IS wired but receives empty transcripts. Fix deferred to Sprint-G pending logging verification + canary deployment. |
-| M12 | Queue Integrity | ⚠️ PARTIAL | 41 stale handoffs. Reaper to stale/ but never cleanup. Dual handoff systems (in-memory vs file). Carmack P1: Handoff reaper (14d TTL). |
+| M11 | Soul Integrity | ✅ **RESOLVED** | Key mismatch fixed in oracle.py:786-789. Soul Distiller now receives correct transcripts. 8/10 stale souls will update on next session close. |
+| M12 | Queue Integrity | ✅ **RESOLVED** | 14d archive / 30d delete TTL added to handoff reaper in background.py. 41 stale packets now have a cleanup path. |
 | M13 | Temple-Grade | 🟡 9/11 | T11 IA2 exempt. T7 (latency) not measured. |
 | M14 | Heritage Vetting | 🟡 PARTIAL | 185 `[id-soft:]` tags verified. vet-001 through vet-010+ recorded. `make heritage-vet` CI needs expansion to 100% coverage. |
 | M15 | Sovereign Continuity | ✅ Enforced | session_gnosis.md |
