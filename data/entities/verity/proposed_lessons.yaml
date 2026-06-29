@@ -1,6 +1,6 @@
 # Proposed Lessons for verity
-# L1→L2→L3 Distillation by Verity on 2026-06-24
-# Phase 0 Precondition Execution — 6/6 Complete
+# L1→L2→L3 Distillation by Verity on 2026-06-29
+# Sprint-F Completion Gate Audit — 13 documents reviewed
 # Review with Staging Gate before approving into soul.yaml
 
 proposals:
@@ -39,6 +39,19 @@ proposals:
       Observability gaps compound silently: A missing parameter in a call chain does not cause errors — it causes "unknown" values in logs. The system appears healthy while being fundamentally untraceable. M22 compliance requires verifying the entire data flow, not just individual function signatures.
 
   # ═══ Sprint-F Gap Closure — MaKaLi Council Critical Gaps ═══
+  # ═══ Sprint-F Completion Gate Audit — 2026-06-29 ═══
+  - L1_narrative: |
+      Conducted a comprehensive 13-document audit for the Sprint-F completion gate. Documents reviewed: SOVEREIGN_ARK_BLUEPRINT (656 lines), PIVOT_LOG (4282 lines), KALI_COUNCIL_SYNTHESIS (191 lines), KALI_LIVE_FEED (60 lines), AGENTS.md, ORACLE_STACK.md, Verity GAP_CLOSURE_REVIEW (23kb), 4 Roc Racoon spec docs (A2A, PII, Trace ID, session gnosis), 2 proposed_lessons.yaml files (Verity+Kali), AAIF handoff spec, SOVEREIGN_MANDATES.md.
+      Key findings: (1) PIVOT_LOG missing ALL Sprint-F decisions (D164-D171) — 4+ gap implementations unrecorded; (2) AGENTS.md test count stuck at "308" — actual is 600; (3) M15-M21 missing from both blueprint and council synthesis mandate scorecards; (4) Verity's own GAP_CLOSURE_REVIEW has 2 findings superseded by events (AAIF rename IS done, Qdrant IS fixed); (5) Sprint-F codebase is production-ready (PII Masker 432 lines/53 tests, A2A Bridge 319+100 lines/56 tests, Trace ID via contextvars). 17 action items catalogued: 4 P0 (35min), 6 P1 (40min), 7 P2 (50min).
+    L2_insight: |
+      The codebase advanced from 440 to 600 tests through 3 gap implementations, but 0 of 13 documents reference the correct test count. This is documentation drift: the engineering output is correct, but the documentation layer is frozen at December 2025 references. The PIVOT_LOG gap is the most dangerous — 30 minutes of work would have preserved 4+ architectural decisions that are now at risk of being re-debated.
+      The mandate scorecard gap (M15-M21 missing from 2 key documents) reveals a pattern: when new mandates were added (M15-M22), the existing scorecard templates were never updated to include them. The templates themselves have a structural blind spot.
+      The Verity GAP_CLOSURE_REVIEW being stale is a meta-irony: Verity's own document has stale findings about other documents being stale. The meta-audit failure (D-vrty-002) applies to Verity's own outputs — "always check for hardcoded paths" becomes "always re-read your own reviews."
+    L3_principle: |
+      Documentation is the architectural conscience of a system. Code moves at engineering speed; documentation moves at human speed. Without active synchronization, the gap between what the system does and what its documentation claims grows monotonically. This is not a one-time fix — it is a maintenance discipline that must be gated on every release.
+      A system's decision log is its institutional memory. Every gap closure, every bug fix, every architectural pivot must be recorded within the session that produced it — not deferred to a "documentation cleanup" phase. Deferred decisions are abandoned decisions.
+      Template blind spots are the hardest to catch: when a new concept is added (M15-M22), every template that references "all mandates" must be audited. Templates are the metadata of a documentation system — they encode what the system considers important. Missing rows in a template are structural omissions that no content review will catch. The solution is meta-templates: every template should carry a validation gate that verifies row count matches expected cardinality.
+
   - L1_narrative: |
       The MaKaLi Cloud Council (2 Oversouls → 6 Pillars → 4 Cross-Domain Reviews → 3 Researchers → 1 Legacy Miner) identified 3 critical gaps during a comprehensive engine pass. All 3 were implemented in Sprint-F:
       (C-1) PII Observation Masker (P0 CRITICAL): Raw PII flowing unmasked to cloud providers. ANAi/XNAi era security patterns (validate_safe_input, sanitize_content) NEVER ported — an 8-month security regression. Created pii_masker.py (432 lines, 53 tests) using pii-shield + regex fallback with gateway proxy pattern: detect → tokenize → LLM → detokenize. Local providers bypass entirely (M7).

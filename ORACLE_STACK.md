@@ -2,7 +2,7 @@
 **AP Token**: `AP-ORACLE-RESTORE-v2.3.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_local_first_config ⬡ ORACLE-RESTORE
 **Status**: ACTIVE
-**Last Updated**: 2026-06-23 (Sprint C Execution — 440/440 tests passing, 11-agent fleet, 22 Sovereign Mandates (M1-M22), Sovereign Key Vault, KGC-001)
+**Last Updated**: 2026-06-29 (Sprint F Execution — 600/600 tests passing, 11-agent fleet, 22 Sovereign Mandates (M1-M22), all 3 Council Gaps closed)
 
 ---
 
@@ -133,7 +133,7 @@ All containers run rootless (user 1000) using the Sovereign Permission Protocol 
 
 All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src python3 -m pytest tests/`.
 
-**Current state (2026-06-23)**: 440 collected — **440 passing** (Sprint C Execution — GenerateResult dataclass fix, M21/M22 ratified, 11-agent fleet, Verity unified, Sovereign Key Vault implemented, KGC-001 findings integrated)
+**Current state (2026-06-29)**: 600 collected — **600 passing** (Sprint F Execution — MaKaLi Council gap closures: PII Masker, Trace ID/GenerateResult, A2A Agent Cards)
 
 | Module | Tests | Status |
 |--------|-------|--------|
@@ -143,8 +143,10 @@ All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src py
 | entity_affinity | 7 | ✅ PASS |
 | hierarchy | 13 | ✅ PASS |
 | iris | 7 | ✅ PASS |
-| model_gateway | 11 | ✅ PASS |
-| observability | 8 | ✅ PASS |
+| model_gateway | 14 | ✅ PASS |
+| observability | 15 | ✅ PASS |
+| pii_masker | 53 | ✅ PASS |
+| a2a_bridge | 56 | ✅ PASS |
 | oracle | 26 | ✅ PASS |
 | orchestrator | 10 | ✅ PASS |
 | providers | 28 | ✅ PASS |

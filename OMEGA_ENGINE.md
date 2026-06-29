@@ -131,7 +131,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 - ✅ **Fixed `ModelGateway.generate`**: `search_order` → `self.providers` (crash-free inference restored)
 - ✅ **M9 Global Sweep**: 20 bare `except Exception:` blocks replaced with typed logging
 - ✅ **Secret Rotation**: `SOVEREIGN_USER_TOKEN` now uses `os.getenv()` with env var fallback
-- ✅ **All 440 tests passing** — zero regressions
+- ✅ **All 600 tests passing** — zero regressions
 
 ### Council Pass 1 & 2 Complete (2026-06-28)
 - ✅ **Holistic Review**: Ma'at + Lilith + 4 Pillars (P3, P5, P7, P10) → Sovereign Decree issued
@@ -167,11 +167,11 @@ All reports filed in `data/reviews/` — 4 consolidated, 20 pillar-level, 1 mini
 |--------|-------|---------------|
 | Engine version | **1.0.0** 🎉 | 2026-06-22 |
 | PyPI entry point | `omega` CLI via `[project.scripts]` | 2026-06-22 |
-| Source files | **111** .py files | 2026-06-26 |
-| Source lines | **~25,000** | 2026-06-26 |
-| Test functions | **493 collected (468 pass, 22 skip, 3 xfail)** | 2026-06-26 |
-| Test files | **54** | 2026-06-26 |
-| PIVOT decisions | **115 (D50-D147), incl. xna-omega D1-D49 = 164 lifetime** | 2026-06-26 |
+| Source files | **116** .py files (5 new: pii_masker, a2a_bridge, a2a_auth, context) | 2026-06-29 |
+| Source lines | **~27,000** | 2026-06-29 |
+| Test functions | **600 collected — 600 passing** | 2026-06-29 |
+| Test files | **57** (3 new: test_pii_masker, test_a2a_bridge, test_pii_contracts) | 2026-06-29 |
+| PIVOT decisions | **163 (D50-D163), incl. xna-omega D1-D49 = 212 lifetime** | 2026-06-29 |
 | Sovereign Mandates | **22 (M1-M22)** | 2026-06-17 |
 | Mandate 2 (Namespace) | ✅ All `from src.omega` → `from omega` — zero broken imports | 2026-06-22 |
 | Mandate 7 (Local-First) | ✅ `providers.yaml` strategy `local_first`, Quick Start = 4 commands, 0 cloud API keys | 2026-06-22 |
@@ -226,6 +226,7 @@ All reports filed in `data/reviews/` — 4 consolidated, 20 pillar-level, 1 mini
 | **Sprint C** (Tactical Hardening) | 2026-06-17 | Kali + Council | ✅ 440/440 | GenerateResult dataclass, P0/P1 fixes, M21+M22 ratified, SearXNG deployed, root docs cleaned |
 | **v1.0.0** (Father's Day Release) | 2026-06-22 | Kali + MaKaLi Council | ✅ 432/457 | 6-phase release: packaging (pyproject entry point, 22 deps), model download script, README overhaul, test suite cleanup (432 pass/0 fail), Antigravity OAuth (9 models), git hygiene + SHA256 + namespace fixes (from src.omega→omega). MaKaLi gap audit: 2 CRITICAL packaging blindspots found & fixed. Heritage-map & sovereignty gates passed. Version 1.0.0 tagged. |
 | **Sprint E** (Epoch I Phase 0) | 2026-06-24 | Kali + Verity | ✅ 440/440 | Soul distiller fix, v6.1 validator (backward compatible), 19 M21 tests, Vault freed, Ark Blueprint rebuilt |
+| **Sprint F** (Optimization Sprint) | 2026-06-29 | Kali + Council | ✅ 600/600 | MaKaLi Cloud Council: 3 gaps found & closed (PII Masker 53 tests, Trace ID/GenerateResult 10+ tests, A2A Cards 56 tests). Qdrant fixed (rootless overlay mount). M22 RESOLVED, M7/M8 risk reduced, M21 22/24. 3,354 lines dead code purged. 47 strategy docs archived. Qdrant container restored with telemetry disabled. |
 
 ---
 

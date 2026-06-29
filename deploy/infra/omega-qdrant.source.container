@@ -1,0 +1,37 @@
+[Unit]
+Description=Omega Qdrant Vector Store
+After=omega-infra-pod.service
+
+[Container]
+# NOTE: UserNS=keep-id and User=1000 are OMITTED — they trigger
+# 'remount-private: permission denied' with fuse-overlayfs on this kernel.
+# Rootless Podman maps container UID 0 → host UID 1000 by default,
+# so Qdrant (USER 0) already has the correct volume permissions.
+Image=docker.io/qdrant/qdrant:v1.17.1
+ContainerName=omega-qdrant
+Pod=omega-infra.pod
+# Zen 2 Core Steering
+# Sovereign Volume
+Volume=/media/arcana-novai/omega_library/podman-storage/volumes/qdrant:/qdrant/storage
+Volume={{OMEGA_ROOT}}/deploy/infra/qdrant_config.yaml:/qdrant/config/config.yaml:ro
+Environment=QDRANT__SERVICE__GRPC_PORT=6334
+Environment=QDRANT__STORAGE__PERFORMANCE__MAX_SEARCH_THREADS=4
+Environment=QDRANT__STORAGE__OPTIMIZER__CPU_LIMIT=4
+# M8 Zero Telemetry — disable Qdrant phone-home via env var
+# Qdrant reads: QDRANT__{section}__{key}  ->  service.enable_telemetry
+# Both double-underscore section+key AND flat key tried below.
+Environment=QDRANT__SERVICE__ENABLE_TELEMETRY=false
+Environment=QDRANT_TELEMETRY_DISABLED=true
+HealthCmd=true
+HealthInterval=30s
+Notify=healthy
+
+[Service]
+TimeoutStartSec=300
+Memory=1G
+CPUAffinity=0,2
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=default.target

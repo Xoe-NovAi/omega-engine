@@ -19,3 +19,31 @@ proposals:
     l3: "Default values lie — every contract field must be exercised by a contract test that verifies real data on all paths (M21 Gate Integrity)."
     domain: "code_quality"
     tags: ["m21", "m22", "contract_testing", "observability"]
+
+  - lesson_id: roc-20260628-004
+    l1: "Identified 20+ legacy locations across 3 partitions — only 6 are cataloged in the MASTER_SYNTHESIS. The workbench DB at data/workbench/workbench.db is completely empty (no tables exist)."
+    l2: "Without a centralized catalog, legacy knowledge is effectively lost. No single agent can answer 'what have we mined and what haven't we?'"
+    l3: "Cataloging is not documentation — it is the prerequisite for all sovereign mining."
+    domain: "legacy_mapping"
+    tags: ["centralization", "workbench", "inventory"]
+
+  - lesson_id: roc-20260628-005
+    l1: "The entities-archive at /media/arcana-novai/omega_library/entities-archive/ contains 90+ entity directories spanning the complete entity evolution — never mined."
+    l2: "The entity lineage from Omnidroid through experimental entities (ent_0 to ent_49+) to the current 11-agent fleet is all in one unmined location."
+    l3: "The largest gold mine is always the one you haven't looked at yet."
+    domain: "legacy_mapping"
+    tags: ["entities-archive", "lineage", "evolution"]
+
+  - lesson_id: roc-20260628-006
+    l1: "The mayan-preservation-vision.html (1,092 lines) is NOT an external project document — it is an Omega Stack deployment vision produced by Claude during a pivotal March-April 2026 session."
+    l2: "The Living Word Initiative is the Omega Engine applied to indigenous language preservation. It should be treated as strategic planning content, not external."
+    l3: "A deployment vision IS part of the engine lineage — the engine's purpose is to be deployed."
+    domain: "vision"
+    tags: ["mayan", "deployment", "preservation"]
+
+  - lesson_id: roc-20260628-007
+    l1: "Two files named session_gnosis.md exist in different locations (data/entities/roc_racoon/ and workspace/). The workspace one is stale (Jun 22) and causes confusion."
+    l2: "Dual tracking files with the same name create ambiguity about which is authoritative."
+    l3: "A single source of truth requires unique identifiers."
+    domain: "tracking"
+    tags: ["gnosis", "standardization"]
