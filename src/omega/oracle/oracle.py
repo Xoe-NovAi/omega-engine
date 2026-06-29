@@ -784,9 +784,12 @@ class Oracle:
             # Build a readable transcript from exchanges
             lines = []
             for ex in exchanges:
-                role = ex.get("role", "unknown")
-                content = ex.get("content", "")
-                lines.append(f"[{role}]: {content}")
+                user_msg = ex.get("user", "")
+                asst_msg = ex.get("assistant", "")
+                if user_msg:
+                    lines.append(f"[user]: {user_msg}")
+                if asst_msg:
+                    lines.append(f"[assistant]: {asst_msg}")
             transcript = "\n".join(lines)
             if not transcript:
                 logger.warning(f"No transcript found for session {session_id}, skipping distillation")
