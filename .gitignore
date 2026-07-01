@@ -88,6 +88,7 @@ data/processed/
 data/rejected/
 data/mining_queue/
 data/library/
+src/data/library/index/
 data/embeddings/
 data/datasets/
 src/data/datasets/
@@ -109,6 +110,7 @@ data/coordination/**/*_WORKSPACE_LOCK_*.md
 data/coordination/**/*_ACK_*.md
 data/sessions/*.active
 data/benchmarks/
+data/somatic/
 
 # ── Handoff Packets (runtime, not source) ───────────────────────────
 data/handoff/active/
@@ -120,6 +122,7 @@ data/handoff/stale/
 data/requests/completed/
 data/requests/dead/
 data/requests/processing/
+data/requests/INDEX.json
 
 # ── Knowledge Hall of Records (session JSON exports, auto-generated) ─
 data/knowledge/HALL_OF_RECORDS/
@@ -135,6 +138,7 @@ rag-v1/**/*
 
 # Transient entity workspace content (binary DBs, personal research)
 data/entities/*/workspace/forensics/
+data/entities/*/workspace/birth_records.md
 data/entities/*/workspace/PERSONAL_RESEARCH/
 data/entities/*/workspace/tool_lab/
 
