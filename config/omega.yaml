@@ -1,7 +1,7 @@
 omega:
   identity:
     name: Omega Engine
-    version: 1.0.0-alpha
+    version: 1.0.0
     description: Local-first, entity-centric, provider-agnostic AI council runtime
     maintainer: Xoe-NovAi
     license: Apache-2.0

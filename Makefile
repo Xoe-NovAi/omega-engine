@@ -34,7 +34,7 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo ""
 	@echo "$(COLOR_PURPLE)╔══════════════════════════════════════════════════════╗$(COLOR_NC)"
 	@echo "$(COLOR_PURPLE)║$(COLOR_BOLD)  🔱 OMEGA ENGINE — PUBLIC RELEASE v1.0.0           $(COLOR_PURPLE)║$(COLOR_NC)"
-	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  $(COLOR_GREEN)457 tests ✅  |  77 modules  |  All 22 Mandates enforced$(COLOR_PURPLE)║$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  $(COLOR_GREEN)575 tests ✅  |  600 collected  |  All 22 Mandates enforced$(COLOR_PURPLE)║$(COLOR_NC)"
 	@echo "$(COLOR_PURPLE)╚══════════════════════════════════════════════════════╝$(COLOR_NC)"
 	@echo ""
 	@echo "$(COLOR_BOLD)🔥 CORE$(COLOR_NC)"
@@ -47,7 +47,7 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo "  $(COLOR_CYAN)make menu$(COLOR_NC)         📋 This menu"
 	@echo ""
 	@echo "$(COLOR_BOLD)🧪 TESTING$(COLOR_NC)"
-	@echo "  $(COLOR_CYAN)make test$(COLOR_NC)         🧪 Run all 423 tests"
+	@echo "  $(COLOR_CYAN)make test$(COLOR_NC)         🧪 Run all 600 tests (575 active + 22 skipped + 3 xfail)"
 	@echo "  $(COLOR_CYAN)make test ARGS='-k name'$(COLOR_NC)  Filter tests by name"
 	@echo "  $(COLOR_CYAN)make test-cov$(COLOR_NC)     📊 Run tests with coverage"
 	@echo "  $(COLOR_CYAN)make lint$(COLOR_NC)         🔍 Lint with flake8"
@@ -281,7 +281,7 @@ bootstrap: ## 🔱 Complete system bootstrap (setup + infra + verify)
 	@bash scripts/setup.sh
 
 demo: ## 🔱 Run the Oracle demo
-	@echo "$(COLOR_CYAN)🔱 Omega Engine v1.0.0 — Sovereign AI Demo$(COLOR_NC)"
+	@echo "$(COLOR_CYAN)🔱 Omega Engine v1.0.0 — Sovereign AI Runtime$(COLOR_NC)"
 	@echo ""
 	@omega list-entities
 	@echo ""
