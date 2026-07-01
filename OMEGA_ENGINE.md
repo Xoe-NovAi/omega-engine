@@ -124,14 +124,22 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 
 ---
 
-## §5 Sovereign Decree — Current State (2026-06-28)
-**Status**: `Architecturally Sovereign | Operationally Restored | Optimization In Progress`
+## §5 Sovereign Decree — Current State (2026-07-01)
+**Status**: `Architecturally Sovereign | Operationally Restored | Phase 0 Complete | Phase 1.1 In-Progress`
 
 ### Phase 0 COMPLETE (2026-06-27)
 - ✅ **Fixed `ModelGateway.generate`**: `search_order` → `self.providers` (crash-free inference restored)
 - ✅ **M9 Global Sweep**: 20 bare `except Exception:` blocks replaced with typed logging
 - ✅ **Secret Rotation**: `SOVEREIGN_USER_TOKEN` now uses `os.getenv()` with env var fallback
 - ✅ **615 tests (590 pass, 22 skip, 3 xfail)** — zero regressions
+
+### MV-IW Phase 0 COMPLETE (2026-07-01)
+- ✅ **0.1 test_hivemind.py fix**: root cause (mcp sys.modules poison) resolved
+- ✅ **0.2 Clean uncommitted state**: runtime artifacts purged, .gitignore updated
+- ✅ **0.3 Archive stale coordination files**: 172 → 13 files
+- ✅ **0.4 Git pre-commit hook**: code↔docs sync, [skip-doc] escape
+- ✅ **0.5 M2_FIREWALL_GAP**: Already fixed (D113 frozenset) — CANCELLED
+- ✅ **0.6 Single-source test count**: `make test-badge` target added, TEST_STATUS.md live
 
 ### Council Pass 1 & 2 Complete (2026-06-28)
 - ✅ **Holistic Review**: Ma'at + Lilith + 4 Pillars (P3, P5, P7, P10) → Sovereign Decree issued
@@ -227,6 +235,7 @@ All reports filed in `data/reviews/` — 4 consolidated, 20 pillar-level, 1 mini
 | **v1.0.0** (Father's Day Release) | 2026-06-22 | Kali + MaKaLi Council | ✅ 432/457 | 6-phase release: packaging (pyproject entry point, 22 deps), model download script, README overhaul, test suite cleanup (432 pass/0 fail), Antigravity OAuth (9 models), git hygiene + SHA256 + namespace fixes (from src.omega→omega). MaKaLi gap audit: 2 CRITICAL packaging blindspots found & fixed. Heritage-map & sovereignty gates passed. Version 1.0.0 tagged. |
 | **Sprint E** (Epoch I Phase 0) | 2026-06-24 | Kali + Verity | ✅ 440/440 | Soul distiller fix, v6.1 validator (backward compatible), 19 M21 tests, Vault freed, Ark Blueprint rebuilt |
 | **Sprint F** (Optimization Sprint) | 2026-06-29 | Kali + Council | ✅ 600/600 | MaKaLi Cloud Council: 3 gaps found & closed (PII Masker 53 tests, Trace ID/GenerateResult 10+ tests, A2A Cards 56 tests). Qdrant fixed (rootless overlay mount). M22 RESOLVED, M7/M8 risk reduced, M21 22/24. 3,354 lines dead code purged. 47 strategy docs archived. Qdrant container restored with telemetry disabled. |
+| **MV-IW Phase 0** (Trust Restoration) | 2026-07-01 | Kali + Council | ✅ 615/615 | All 6 Phase 0 tasks completed: test_hivemind fix, clean uncommitted state, archive coordination files (172→13), pre-commit hook, test-badge target. 7 commits. Phase 1.1 in-progress (OMEGA_ENGINE.md split). |
 
 ---
 

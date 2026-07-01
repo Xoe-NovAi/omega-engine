@@ -742,12 +742,12 @@ The MV-IW replaces all prior Iron Wall execution plans. It is the single source 
 **Phase 0: Trust Restoration (Days 1-5)**
 | Order | Task | Effort | Status |
 |-------|------|--------|--------|
-| 0.1 | Fix test_hivemind.py (root cause: mcp sys.modules poison) | 2h | ⏳ PENDING |
-| 0.2 | Clean uncommitted state + add missing IW-2 test | 30m | ⏳ PENDING |
-| 0.3 | Archive stale coordination files (172 → <30) | 1h | ⏳ PENDING |
-| 0.4 | Git pre-commit hook (code↔docs sync, [skip-doc] escape) | 30m | ⏳ PENDING |
+| 0.1 | Fix test_hivemind.py (root cause: mcp sys.modules poison) | 2h | ✅ **DONE** — commits b005d97, 8cd03dc |
+| 0.2 | Clean uncommitted state + add missing IW-2 test | 30m | ✅ **DONE** — commit 0c39451 |
+| 0.3 | Archive stale coordination files (172 → <30) | 1h | ✅ **DONE** — commit fddcdbe (172→13) |
+| 0.4 | Git pre-commit hook (code↔docs sync, [skip-doc] escape) | 30m | ✅ **DONE** — commit 9b167ea |
 | 0.5 | ~~Fix M2_FIREWALL_GAP~~ CANCELLED — already fixed (D113 frozenset) | 0h | ✅ DONE |
-| 0.6 | Single-source test count (make test-badge) | 30m | ⏳ PENDING |
+| 0.6 | Single-source test count (make test-badge) | 30m | ✅ **DONE** — commit 7433194 |
 
 **Phase 1: Documentation Sanity (Days 6-7)**
 | Order | Task | Effort | Status |
