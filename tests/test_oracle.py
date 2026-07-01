@@ -25,7 +25,7 @@ def test_talk_summon_pattern():
         return await Oracle().talk("@SysAdmin how do I deploy a container?")
     result = _run(t)
     assert result.entity == "SysAdmin"
-    assert "1" in result.pillars
+    assert "1" in result.slots
 
 
 def test_talk_summon_hey():
@@ -33,7 +33,7 @@ def test_talk_summon_hey():
         return await Oracle().talk("hey Sentinel, check the security audit")
     result = _run(t)
     assert result.entity == "Sentinel"
-    assert "5" in result.pillars
+    assert "5" in result.slots
 
 
 def test_talk_summon_command():
@@ -88,7 +88,7 @@ def test_all_pillar_keepers_have_required_fields():
     assert len(keepers) >= 1  # At least one keeper exists
     for k in keepers:
         assert k.name is not None, "Pillar keeper missing name"
-        assert k.pillars, "Pillar keeper must have pillar assignments"
+        assert k.slots, "Pillar keeper must have slot assignments"
         assert k.domains is not None, "Pillar keeper must have domains"
 
 

@@ -145,17 +145,14 @@ async def oracle_talk(query: str) -> str:
         query: The natural language query or command to route.
         
     Returns:
-        JSON string containing the response text, entity, pillars, and metadata.
+        JSON string containing the response text, entity, slots, and metadata.
     """
     response = await oracle.talk(query)
     _current_entity.set(response.entity)
     return json.dumps({
         "text": response.text,
         "entity": response.entity,
-        "pillars": response.pillars,
-        "sigil": response.sigil,
-        "glyph": response.glyph,
-        "pantheon": response.pantheon,
+        "slots": response.slots,
         "confidence": response.confidence,
         "trace_id": response.trace_id,
         "backend": response.backend,
@@ -181,9 +178,7 @@ async def oracle_summon(entity_name: str, query: str) -> str:
     return json.dumps({
         "text": response.text,
         "entity": response.entity,
-        "pillars": response.pillars,
-        "sigil": response.sigil,
-        "pantheon": response.pantheon,
+        "slots": response.slots,
         "confidence": response.confidence,
         "trace_id": response.trace_id,
     }, indent=2)
@@ -211,9 +206,7 @@ async def oracle_summon_local(entity_name: str, query: str, model: str) -> str:
     return json.dumps({
         "text": response.text,
         "entity": response.entity,
-        "pillars": response.pillars,
-        "sigil": response.sigil,
-        "pantheon": response.pantheon,
+        "slots": response.slots,
         "confidence": response.confidence,
         "trace_id": response.trace_id,
         "model_override": model,
@@ -232,14 +225,8 @@ async def oracle_list_entities() -> str:
     entities = await anyio.to_thread.run_sync(registry.list)
     result = [{
         "name": e.name,
-        "pillars": e.pillars,
+        "slots": e.slots,
         "role": e.role,
-        "pantheon": e.pantheon,
-        "element": e.element,
-        "chakra": e.chakra,
-        "planet": e.planet,
-        "glyph": e.glyph,
-        "sigil": e.sigil,
         "domains": e.domains,
         "model": e.model,
     } for e in entities]
@@ -250,19 +237,20 @@ async def oracle_list_entities() -> str:
 @mcp.tool()
 async def oracle_list_pillar_keepers() -> str:
     _require_service()
-    """List only the 10 Pillar Keepers (core pantheon).
+    """List entities with slot assignments (backward-compat name).
+    
+    The concept of "Pillar Keepers" is Arcana-NovAi WAD content. The engine
+    discovers slot-holding entities dynamically. WAD-specific display fields
+    are in Entity.metadata and passed through for client use.
     
     Returns:
-        JSON string containing the 10 core entities responsible for engine pillars.
+        JSON string containing entities with slot assignments.
     """
     entities = await anyio.to_thread.run_sync(registry.list_pillar_keepers)
     result = [{
         "name": e.name,
-        "pillars": e.pillars,
-        "element": e.element,
-        "chakra": e.chakra,
-        "planet": e.planet,
-        "sigil": e.sigil,
+        "slots": e.slots,
+        "metadata": e.metadata,  # WAD content: element, chakra, planet, sigil, etc.
     } for e in entities]
     return json.dumps(result, indent=2)
 
@@ -286,16 +274,10 @@ async def oracle_entity_info(name: str) -> str:
         return json.dumps({"error": f"Entity '{name}' not found"})
     return json.dumps({
         "name": entity.name,
-        "pillars": entity.pillars,
+        "slots": entity.slots,
         "role": entity.role,
         "personality": entity.personality,
-        "pantheon": entity.pantheon,
-        "element": entity.element,
-        "chakra": entity.chakra,
-        "planet": entity.planet,
-        "glyph": entity.glyph,
-        "sigil": entity.sigil,
-        "invocation": entity.invocation,
+        "metadata": entity.metadata,  # WAD content: pantheon, element, chakra, sigil, etc.
         "domains": entity.domains,
         "model": entity.model,
         "temperature": entity.temperature,
@@ -348,7 +330,7 @@ async def oracle_discover_entity(query: str) -> str:
         return json.dumps({"error": "No matching entity found for this domain."})
     return json.dumps({
         "entity": entity.name,
-        "pillars": entity.pillars,
+        "slots": entity.slots,
         "role": entity.role,
         "domains": entity.domains,
         "reason": f"Matched domain via query: {query}"
@@ -999,11 +981,11 @@ async def hivemind_get_entity_context(entity_name: str) -> str:
             "pantheon": None,
         }
         if entity_reg:
-            entity_identity["type"] = "pillar_keeper" if entity_reg.pillars else "entity"
+            entity_identity["type"] = "pillar_keeper" if entity_reg.slots else "entity"
             entity_identity["role"] = entity_reg.role
-            entity_identity["pantheon"] = entity_reg.pantheon
-            if entity_reg.pillars:
-                entity_identity["pillar"] = entity_reg.pillars[0]
+            entity_identity["pantheon"] = entity_reg.metadata.get("pantheon")
+            if entity_reg.slots:
+                entity_identity["pillar"] = entity_reg.slots[0]
 
         # Assess readiness
         readiness_flags = []

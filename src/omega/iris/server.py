@@ -48,8 +48,9 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     response: str
     entity: str
-    pillars: list[str] = []
-    sigil: Optional[str] = None
+    slots: list[str] = []
+    # [M2] WAD display fields (sigil, pantheon) are in Entity.metadata,
+    # not in the transport schema. They are embedded in the response text.
 
 
 class HealthResponse(BaseModel):
@@ -85,8 +86,7 @@ async def chat(request: ChatRequest):
         return ChatResponse(
             response=result.text,
             entity=result.entity,
-            pillars=result.pillars,
-            sigil=result.sigil,
+            slots=result.slots,
         )
     except OmegaError as e:
         logger.error(f"Chat OmegaError: {e}")
@@ -110,8 +110,7 @@ async def voice(request: ChatRequest):
         return ChatResponse(
             response=result.text,
             entity=result.entity,
-            pillars=result.pillars,
-            sigil=result.sigil,
+            slots=result.slots,
         )
     except OmegaError as e:
         logger.error(f"Voice OmegaError: {e}")
@@ -129,9 +128,7 @@ async def list_entities():
         "entities": [
             {
                 "name": e.name,
-                "pillar": e.pillars,
-                "pantheon": e.pantheon,
-                "sigil": e.sigil,
+                "slots": e.slots,
                 "domains": e.domains,
             }
             for e in entities

@@ -281,9 +281,9 @@ def entity_context_env(monkeypatch, tmp_path):
         domains=["testing", "context"],
         model="qwen3-1.7b",
         personality="A test entity",
-        pillars=["P7"],
+        slots=["P7"],
         role="Test Context Entity",
-        pantheon="test",
+        metadata={"pantheon": "test"},
     )
     monkeypatch.setattr(mock_registry, "get", lambda name, _orig=mock_entity: mock_entity if name.lower() == "testentity" else None)
     monkeypatch.setattr(mock_registry, "find_by_name_fragment", lambda name: mock_entity if "test" in name.lower() else None)
@@ -353,7 +353,6 @@ async def test_u007_entity_context_empty_knowledge_workspace(entity_context_env,
         domains=["new"],
         model="qwen3-0.6b",
         personality="A new entity",
-        pillars=[],
         role="New Entity",
     )
     # Use server.registry if it's already set by fixture, otherwise mock it

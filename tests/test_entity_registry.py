@@ -45,10 +45,12 @@ def test_load_entities(temp_config):
     entity = registry.get("testentity")
     assert entity is not None
     assert entity.name == "TestEntity"
-    assert entity.pillars == ["P0: Test"]
-    assert entity.pantheon == "Test"
-    assert entity.element == "Earth 🜃"
-    assert entity.sigil == "★ Test Star"
+    # pillars migrated to slots (preserving "P0: Test" → slot key)
+    assert entity.slots == ["P0"]
+    # WAD-specific fields are now in metadata dict
+    assert entity.metadata["pantheon"] == "Test"
+    assert entity.metadata["element"] == "Earth 🜃"
+    assert entity.metadata["sigil"] == "★ Test Star"
 
 
 def test_list_entities(temp_config):
@@ -88,13 +90,13 @@ def test_entity_to_dict():
         domains=["test"],
         model="qwen3-1.7b-q6_k",
         personality="Test personality",
-        pillars=["P0: Test"],
+        slots=["P0"],
     )
     d = entity.to_dict()
     assert d["name"] == "Test"
-    assert d["pillars"] == ["P0: Test"]
-    # Fields with None should not be included
-    assert "element" not in d
+    assert d["slots"] == ["P0"]
+    # Metadata with None/empty should not be included
+    assert "metadata" not in d or d["metadata"] == {}
 
 
 @pytest.mark.anyio

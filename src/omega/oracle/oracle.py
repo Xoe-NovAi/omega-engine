@@ -53,15 +53,17 @@ IRIS_CONFIDENCE_THRESHOLD = 0.6
 
 @dataclass
 class OracleResponse:
-    """Structured response from the Oracle."""
+    """Structured response from the Oracle.
+    
+    Engine fields: text, entity, confidence, trace_id, slots, domains.
+    WAD-specific display fields (sigil, glyph, pantheon, etc.) are in
+    the Entity.metadata dict — accessed via entity.metadata.get("sigil").
+    """
     text: str
     entity: str = "Oracle"
     confidence: float = 0.5
     trace_id: str = ""
-    sigil: Optional[str] = None
-    glyph: Optional[str] = None
-    pantheon: Optional[str] = None
-    pillars: Optional[List[str]] = None
+    slots: Optional[List[str]] = None
     domains: Optional[List[str]] = None
     backend: Optional[str] = None
     model: Optional[str] = None
@@ -636,15 +638,15 @@ class Oracle:
         
         # Use the ACTUAL provider that served the response, not the preferred one
         backend = res.provider_name
-        sigil_str = f" {getattr(entity, 'sigil', None)}" if getattr(entity, 'sigil', None) else ""
+        # [id-soft: quake3-1999] Hard-Boundary — WAD display fields accessed
+        # via metadata dict, not as engine-level OracleResponse fields.
+        sigil_tag = entity.metadata.get("sigil", "")
+        sigil_str = f" {sigil_tag}" if sigil_tag else ""
         
         result = OracleResponse(
             text=f"{entity.name} says: {res.text}{sigil_str}",
             entity=entity.name,
-            pillars=entity.pillars,
-            sigil=getattr(entity, 'sigil', None),
-            glyph=getattr(entity, 'glyph', None),
-            pantheon=getattr(entity, 'pantheon', None),
+            slots=entity.slots,
             domains=entity.domains,
             confidence=1.0,
             trace_id=trace.trace_id,
@@ -729,15 +731,13 @@ class Oracle:
         
         # Use the ACTUAL provider that served the response, not the preferred one
         backend = res.provider_name
-        sigil_str = f" {getattr(entity, 'sigil', None)}" if getattr(entity, 'sigil', None) else ""
+        sigil_tag = entity.metadata.get("sigil", "")
+        sigil_str = f" {sigil_tag}" if sigil_tag else ""
         
         result = OracleResponse(
             text=f"{entity.name} says: {res.text}{sigil_str}",
             entity=entity.name,
-            pillars=entity.pillars,
-            sigil=getattr(entity, 'sigil', None),
-            glyph=getattr(entity, 'glyph', None),
-            pantheon=getattr(entity, 'pantheon', None),
+            slots=entity.slots,
             domains=entity.domains,
             confidence=confidence,
             trace_id=trace.trace_id,

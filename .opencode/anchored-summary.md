@@ -1,57 +1,63 @@
 # ⬡ OMEGA ⬡ ANCHORED SUMMARY ⬡ 2026-07-01
-## Session 39 — KALI: MV-IW Phase 0 Complete + Phase 1 Execution (D178 Pivot)
+## Session 40 — KALI: Phase 1 Closed + Phase 2 Pillar Decoupling Planned
 
 ### Goal
-Execute Minimum Viable Iron Wall (MV-IW) plan. Phase 0 (Trust Restoration) complete. Executing Phase 1:
-Documentation Sanity & Trivial Infra: (1.1a) Makefile hook, (1.1b) anchored-summary update, 
-(1.1) Trim OMEGA_ENGINE.md (§7-§10 duplicates removed), (1.2) SearXNG env var fix.
+Complete Phase 1 closure (last-mile fixes, pillar gate removal, Verity audit fixes, doc cleanup).
+Plan Phase 2 pillar decoupling — move esoteric content (elements, chakras, planets) from engine
+core into Arcana-NovAi WAD where it always belonged.
 
 ### Progress
 
-#### Phase 0 COMPLETE (7 commits)
-| Commit | Description |
-|--------|-------------|
-| `8354c92` | SSOT docs sync — test counts, D113 resolved, MV-IW plan committed |
-| `b005d97` | Partial test_hivemind fix |
-| `8cd03dc` | Complete test_hivemind fix — proper save/restore of mcp modules |
-| `0c39451` | Runtime artifact cleanup — deleted ingest_legacy.py, .gitignore |
-| `fddcdbe` | Coordination files archive — 172→13 files |
-| `9b167ea` | Pre-commit hook — code↔docs sync guard |
-| `7433194` | `make test-badge` target — single-source test count |
+#### Phase 1 CLOSED (commits `8f43afb`, `d4b72c4`, `6708eff`)
+| Task | Status | Detail |
+|------|--------|--------|
+| 1.1a Makefile hook auto-install | ✅ DONE | chmod +x in setup + bootstrap |
+| 1.1b anchored-summary.md update | ✅ DONE | |
+| 1.1 Trim OMEGA_ENGINE.md | ✅ DONE | 966→243 lines |
+| 1.2 SearXNG env var fix | ✅ DONE | 4 call sites normalized |
+| 1.3 Dead link removal | ✅ DONE | DOMAIN_INDEX.md reference purged |
+| 1.4 Pillar gate removal (D179) | ✅ DONE | `find_by_domain()` no longer skips non-pillar entities |
+| 1.5 Verity audit fixes | ✅ DONE | Kali model corrected, CONTRIBUTING.md test count 40+→600+ |
+| 1.6 Deprecated doc purge | ✅ DONE | ~25 refs to SOVEREIGN_EVOLUTION_ROADMAP.md → SOVEREIGN_ARK_BLUEPRINT.md |
 
-#### D178 — Strategic Pivot (2026-07-01)
-- **Decision**: EXTREME TRIM OMEGA_ENGINE.md instead of splitting.
-- **Rationale**: Splitting the SSOT creates a distributed source of truth (entropy).
-  Per John Carmack's directive, we executed a Phase 2 Extreme Trim, stripping roadmaps,
-  dated specs, and external tool trivia. OMEGA_ENGINE.md reduced from 966→243 lines.
-- **Documented in**: `PIVOT_LOG.md` (D178), `SOVEREIGN_ARK_BLUEPRINT.md`,
-  `COMPACTION_GNOSIS_20260701.md`
-- **Insights from**: Sonnet 4.6 (tactical) + Opus 4.6 (strategic "Don't Split. Trim.") +
-  John Carmack (architectural "Right Approximation for Entrypoint", 243-line target).
+#### Phase 2 Planned (commits `6708eff`)
+| Task | Status | Detail |
+|------|--------|--------|
+| Pillar Design Map recovered | ✅ DONE | Roc Racoon: 535-line `PILLAR_DESIGN_MAP_COMPLETE.md` from 12+ legacy sources |
+| Phase 2 design doc | ✅ DONE | `docs/strategy/PILLAR_DECOUPLING_PHASE2.md` (370 lines) |
+| Carmack S3 architecture review | ✅ DONE | `Entity.slots` + `Entity.metadata` opaque dict schema |
+| D180 recorded | ✅ DONE | Full decoupling architecture in PIVOT_LOG.md |
 
-#### Phase 1 In Progress
-| Task | Status |
-|------|--------|
-| 1.1a Makefile hook auto-install | ✅ DONE |
-| 1.1b anchored-summary.md update | ✅ DONE |
-| 1.1 Trim OMEGA_ENGINE.md | ✅ DONE (243 lines) |
-| 1.2 SearXNG env var fix | ✅ DONE |
+#### Key Discovery: 10 Pillars NEVER Engine Core
+The Roc Racoon deep mining confirmed definitively: the 10-pillar system (5 elements × 2 polarities,
+10 chakras, planetary alignments, sigils, invocations) was ALWAYS Arcana-NovAi WAD content —
+documented in Project Charter §5.0 "Dual Architecture" (Jan 2026). The engine had absorbed this
+content as a taxonomy that served no runtime purpose except as a routing gate that **broke entities
+without pillar assignments**. D179 removed the gate.
 
 ### Test Suite
 - **615 collected — 590 passing, 22 skipped, 3 xfailed** — zero regressions
 
 ### Key Decisions
 - **D178**: SSOT Trimming vs Splitting — RATIFIED. Don't fragment the Single Source of Truth.
-- Pre-commit hook now auto-installs via `make setup` and `make bootstrap`.
-- SearXNG URL hardcodes (4 files) → `SEARXNG_BASE_URL` env var with fallback.
-- `.opencode/anchored-summary.md` is the **M15 continuity anchor** — updated this session.
+- **D179**: Pillar gate removed from `find_by_domain()` — domain routing only, no pillar filter.
+- **D180**: Full pillar decoupling for Phase 2 — rename pillars→slots, traits→metadata, move
+  pantheon/sigil/element/chakra/planet into metadata, remove `PILLAR_SLOTS` and
+  `list_pillar_keepers()` from engine core. ~15h, 7 steps.
 
 ### Relevant Files
-- `OMEGA_ENGINE.md` — Trimmed this session (966→243 lines)
-- `Makefile` — setup/bootstrap targets now install .githooksPath
-- `src/omega/oracle/search_providers.py:107` — SearXNG URL hardcode
-- `src/omega/oracle/sovereign_search_service.py:106` — SearXNG URL hardcode
-- `src/omega/workers/background_researcher/loop.py:495` — SearXNG URL hardcode
-- `src/omega/workers/background_researcher/searxng_client.py:17` — SearXNG URL hardcode
-- `docs/decisions/PIVOT_LOG.md` — D178 appended
-- `data/verity/COMPACTION_GNOSIS_20260701.md` — Full compaction gnosis
+- `docs/strategy/PILLAR_DECOUPLING_PHASE2.md` — Phase 2 execution plan (370 lines)
+- `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` — Master SSOT (all deprecated refs purged)
+- `docs/decisions/PIVOT_LOG.md` — D178, D179, D180 appended
+- `data/entities/roc_racoon/workspace/mining_reports/PILLAR_DESIGN_MAP_COMPLETE.md` — 535-line esoteric architecture recovery
+- `src/omega/oracle/entity_registry.py` — pillar gate removed (D179)
+
+### Next Steps (Phase 2 — ~15h)
+1. Rename `Entity.pillars` → `Entity.slots` in entity_registry.py
+2. Rename `Entity.traits` → `Entity.metadata`, make it a free-form dict
+3. Remove `PILLAR_SLOTS` from constants/zoneid.py
+4. Remove `list_pillar_keepers()` from engine core → WAD responsibility
+5. Update `OracleResponse` to use `slots` instead of `pillars`
+6. Create `FailureModeRegistry` (move severity from traits)
+7. Update WAD entities.yaml — move esoteric fields into metadata
+8. Run `make temple-grade` + `make heritage-map` — verify no M2 violations

@@ -139,9 +139,7 @@ def entity_cmd(
     table.add_column("Value", style="white")
 
     table.add_row("Name", entity.name)
-    table.add_row("Pillars", ", ".join(entity.pillars) if entity.pillars else "—")
-    table.add_row("Pantheon", entity.pantheon or "—")
-    table.add_row("Sigil", entity.sigil or "—")
+    table.add_row("Slots", ", ".join(entity.slots) if entity.slots else "—")
     table.add_row("Domains", ", ".join(entity.domains) if entity.domains else "—")
     table.add_row("Model", entity.model or "—")
     table.add_row("Temperature", str(entity.temperature))
@@ -327,9 +325,7 @@ def list_entities():
     table = Table(title="🔱 Omega Entity Registry")
 
     table.add_column("Name", style="cyan", no_wrap=True)
-    table.add_column("Pillar", style="magenta")
-    table.add_column("Pantheon", style="green")
-    table.add_column("Sigil", style="yellow")
+    table.add_column("Slots", style="magenta")
     table.add_column("Model", style="blue")
     table.add_column("Temperature")
 
@@ -339,17 +335,13 @@ def list_entities():
                 table.add_row(
                     entity.name,
                     "Voice Interface",
-                    entity.pantheon or "Greek",
-                    "—",
                     entity.model,
                     str(entity.temperature),
                 )
         else:
             table.add_row(
                 entity.name,
-                ", ".join(entity.pillars) if entity.pillars else "—",
-                entity.pantheon or "—",
-                entity.sigil or "—",
+                ", ".join(entity.slots) if entity.slots else "—",
                 entity.model,
                 str(entity.temperature),
             )
@@ -465,12 +457,10 @@ def _display_response(result: OracleResponse):
             console.print(f"[dim]{header}[/dim]")
 
     prefix = f"[bold cyan]{result.entity}[/bold cyan]"
-    if result.pillars:
-        prefix += f" [dim]({', '.join(str(p) for p in result.pillars)})[/dim]"
-    if result.sigil:
-        prefix += f" [bold yellow]{result.sigil}[/bold yellow]"
-    if result.pantheon:
-        prefix += f" [dim]{result.pantheon}[/dim]"
+    if result.slots:
+        prefix += f" [dim]({', '.join(str(s) for s in result.slots)})[/dim]"
+    # Sigil and pantheon are in the response text (via Entity.metadata) and are
+    # no longer carried in OracleResponse — they are WAD content, not engine data.
 
     console.print(f"{prefix}")
     

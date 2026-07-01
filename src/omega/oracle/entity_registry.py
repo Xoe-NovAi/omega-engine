@@ -88,12 +88,17 @@ DEFAULT_IWAD = "_omega_default"
 
 @dataclass
 class Entity:
-    """A user-definable entity — a Pillar Keeper or custom persona.
+    """A user-definable entity — a Pillar Keeper, custom persona, or free agent.
+    
+    Engine knows: name, slots, domains, model, personality, capabilities.
+    Everything else: metadata dict (WAD-defined, engine-agnostic).
     
     [id-soft: doom-1993] ZONEID Pattern — magic constant validated on get()
     to catch stale references and tombstoned entities.
+    [id-soft: quake3-1999] Hard-Boundary — engine zone vs game zone separation.
     """
     
+    # ── Engine Zone (structural, read-only for game logic) ──
     name: str
     domains: List[str]
     model: str
@@ -101,19 +106,26 @@ class Entity:
     capabilities: List[str] = field(default_factory=list)
     temperature: Optional[float] = None
     context_window: Optional[int] = None
-    pillars: List[str] = field(default_factory=list)
-    traits: Dict[str, Any] = field(default_factory=dict)
     role: Optional[str] = None
-    first_breath: Optional[str] = None
-    pantheon: Optional[str] = None
-    sigil: Optional[str] = None
     container: bool = False
     port: Optional[int] = None
     wad_source: Optional[str] = None
     priority: int = 0  # [Project 3] Layer priority for Shadow-Stacking
+    
+    # ── Slot System (replaces hardcoded PILLAR_SLOTS) ──
+    # Engine uses these for get("P1") resolution.
+    # The engine does NOT interpret what "P1" means — that's WAD content.
+    slots: List[str] = field(default_factory=list)
+    
+    # ── Generic Metadata (WAD-defined, engine-agnostic) ──
+    # Replaces: traits, pantheon, sigil, first_breath, element, chakra,
+    # planet, invocation, secondary_keeper — all WAD-specific fields.
+    # The engine NEVER reads specific keys from this dict.
+    # The WAD fills it; the engine passes it through.
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    
     # [id-soft: doom-1993] ZONEID Pattern — runtime marker, not serialized
     magic: int = field(default=ZONEID_ENTITY, compare=False)
-
     # [id-soft: doom-1993] High-Bit Trick — flags as bitfield, high bit = system
     # 0x80000000 = system entity, 0x40000000 = WAD-loaded entity
     flags: int = field(default=0, compare=False)
@@ -139,7 +151,7 @@ class Entity:
             "container": self.container,
             "port": self.port,
             "wad_source": self.wad_source,
-            "pillars": self.pillars,
+            "slots": self.slots,
             "flags": self.flags,
         }
         # Game zone: personality/behavior fields (freely modifiable)
@@ -147,7 +159,7 @@ class Entity:
             "personality": self.personality,
             "temperature": self.temperature,
             "context_window": self.context_window,
-            **self.traits,
+            **self.metadata,
         }
 
     def is_system(self) -> bool:
@@ -159,13 +171,14 @@ class Entity:
         return bool(self.flags & EntityRegistry.FLAG_SYSTEM)
 
     def __getattr__(self, name: str) -> Any:
-        """Proxy attribute access to the traits dictionary for WAD-specific metadata.
+        """Proxy attribute access to the metadata dictionary for WAD-specific content.
         
         This ensures backward compatibility with tests and legacy code while 
         maintaining the M2 Firewall by avoiding hardcoded fields in the dataclass.
+        Example: entity.element -> entity.metadata["element"]
         """
-        if name in self.traits:
-            return self.traits[name]
+        if name in self.metadata:
+            return self.metadata[name]
         raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
     
     def mark_system(self) -> None:
@@ -210,19 +223,24 @@ class EntityRegistry:
     # [id-soft: quake3-1999] Hard-Boundary Struct — engine zone vs game zone
     ENGINE_ZONE_ATTRS = frozenset({
         "magic", "name", "domains", "model", "role",
-        "container", "port", "wad_source", "pillars",
+        "container", "port", "wad_source", "slots",
     })
     GAME_ZONE_ATTRS = frozenset({
         "personality", "temperature", "context_window",
-        "secondary_keeper", "pantheon", "element", "chakra",
-        "planet", "sigil", "glyph", "invocation",
     })
     
-    # 1. Define Core Slots — The Holographic Grid (D113 Firewall Fix)
-    PILLAR_SLOTS = frozenset({
-        "p1", "p2", "p3", "p4", "p5",
-        "p6", "p7", "p8", "p9", "p10",
-    })
+    # Slot system is fully dynamic — no hardcoded PILLAR_SLOTS.
+    # The engine discovers occupied slots from loaded entities.
+    # WADs define slot labels ("P1: Flesh"); the engine sees only "P1".
+    # [id-soft: quake3-1999] vvar pattern — dynamic set, not hardcoded
+    @property
+    def occupied_slots(self) -> frozenset:
+        """All slot IDs currently occupied by loaded entities (engine-agnostic)."""
+        return frozenset(
+            s.lower()
+            for e in self.active_iter()
+            for s in e.slots
+        )
     
     def __init__(self, config_path: Optional[str] = None):
         if config_path is None:
@@ -283,18 +301,38 @@ class EntityRegistry:
                 continue
             
             # Define core structural fields that belong to the Engine Zone
-            # [id-soft: quake3-1999] Hard-Boundary — traits is a core field,
-            # NOT a WAD-specific trait. Without this, nested traits dicts from
-            # YAML are absorbed as WAD-specific traits, causing recursive nesting.
+            # [id-soft: quake3-1999] Hard-Boundary — metadata is a core field,
+            # NOT a WAD-specific field. Without this, nested metadata dicts from
+            # YAML are absorbed as WAD-specific metadata, causing recursive nesting.
             core_fields = {
                 "name", "domains", "capabilities", "model", "personality", 
-                "temperature", "context_window", "pillars", "role", 
-                "container", "port", "wad_source", "pantheon", "sigil",
-                "traits",  # D-kal-180: prevent recursive nesting corruption
+                "temperature", "context_window", "slots", "role", 
+                "container", "port", "wad_source", "priority",
+                "metadata",  # D-kal-180: prevent recursive nesting corruption
             }
             
-            # Everything else is a WAD-specific trait
-            traits = {k: v for k, v in raw.items() if k not in core_fields}
+            # Everything else is WAD-specific metadata
+            wad_metadata = {k: v for k, v in raw.items() if k not in core_fields}
+            
+            # ── Backward-Compatible Slot Migration ──
+            # Old YAML format used "pillars: ['P1: Flesh']" or "pillars: ['1']".
+            # New format uses "slots: ['P1']". Migrate automatically.
+            raw_slots = raw.get("slots", [])
+            if not raw_slots and "pillars" in raw:
+                raw_pillars = raw.get("pillars", [])
+                # Extract slot ID from "P1: Flesh" → "P1", or use bare value
+                for p in raw_pillars:
+                    p_str = str(p)
+                    # Handle "P1: Flesh" format — extract before colon
+                    if ":" in p_str and not p_str.startswith("pillar"):
+                        slot_id = p_str.split(":")[0].strip()
+                    else:
+                        slot_id = p_str
+                    raw_slots.append(slot_id)
+                logger.info(f"Migrated pillars→slots for '{key}': {raw_pillars} → {raw_slots}")
+            # If "pillars" key exists in raw YAML, remove from wad_metadata
+            # (it's been consumed for migration; don't duplicate in metadata dict)
+            wad_metadata.pop("pillars", None)
             
             entity = Entity(
                 name=raw.get("name", key),
@@ -304,10 +342,8 @@ class EntityRegistry:
                 personality=raw.get("personality", ""),
                 temperature=raw.get("temperature"),
                 context_window=raw.get("context_window"),
-                pillars=raw.get("pillars", []),
-                pantheon=raw.get("pantheon"),
-                sigil=raw.get("sigil"),
-                traits=traits,
+                slots=raw_slots,
+                metadata=wad_metadata,
                 role=raw.get("role"),
                 container=raw.get("container", False),
                 port=raw.get("port"),
@@ -337,7 +373,11 @@ class EntityRegistry:
         logger.info(f"Loaded {len(self._entities)} entities from config")
 
     def get(self, name: str, raise_on_tombstoned: bool = False) -> Optional[Entity]:
-        """Get entity by name, role, or Pillar Slot (3-Tier Resolution).
+        """Get entity by name, role, or Slot ID (3-Tier Resolution).
+        
+        Tier 1: Direct entity match (e.g., "sekhmet")
+        Tier 2: Slot match (e.g., "p1" or "pillar 1") — dynamic, no hardcoded slots
+        Tier 3: Role match (e.g., "sysadmin")
         
         [Project 3: Shadow-Stacking] Projects a single Entity by merging layers.
         [id-soft: doom-1993] ZONEID Pattern — validates magic on matched entities
@@ -365,17 +405,16 @@ class EntityRegistry:
             return self._project_entity(active_layers)
             
         # Tier 2: Slot Match (e.g., "p1" or "pillar 1")
+        # Fully dynamic — no hardcoded PILLAR_SLOTS. The engine discovers
+        # occupied slots from loaded entities. WADs define slot semantics.
         slot_key = name_lower.replace("pillar ", "p").replace("pillar", "p")
-        if slot_key in self.PILLAR_SLOTS:
-            # Resolve the slot to its active role in the default/active IWAD
-            # We look for any entity that has this slot in its .pillars list
-            for key, layers in self._entities.items():
-                active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
-                if not active_layers:
-                    continue
-                projected = self._project_entity(active_layers)
-                if any(p.lower() == slot_key for p in projected.pillars):
-                    return projected
+        for key, layers in self._entities.items():
+            active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
+            if not active_layers:
+                continue
+            projected = self._project_entity(active_layers)
+            if any(s.lower() == slot_key for s in projected.slots):
+                return projected
         
         # Tier 3: Role Match (e.g., "sysadmin")
         for key, layers in self._entities.items():
@@ -392,7 +431,7 @@ class EntityRegistry:
         """Project a single Entity by merging multiple layers.
         
         Engine Zone: Highest priority layer wins (Standard Override).
-        Game Zone: Traits are merged (Concatenation/Union).
+        Game Zone: metadata is merged (Highest priority wins for shared keys).
         """
         # Base layer is the lowest priority (last in list)
         base = layers[-1]
@@ -406,45 +445,37 @@ class EntityRegistry:
             capabilities=list(base.capabilities),
             temperature=base.temperature,
             context_window=base.context_window,
-            pillars=list(base.pillars),
-            traits=dict(base.traits),
+            slots=list(base.slots),
+            metadata=dict(base.metadata),
             role=base.role,
             container=base.container,
             port=base.port,
             wad_source=base.wad_source,
-            pantheon=base.pantheon,
-            sigil=base.sigil,
-            first_breath=base.first_breath,
             priority=layers[0].priority, # Highest priority of the stack
         )
         
         # Merge layers from lowest to highest priority
         for layer in reversed(layers):
-            # 1. Engine Zone: Override
+            # 1. Engine Zone: Override (Highest priority wins)
             projected.model = layer.model or projected.model
             projected.role = layer.role or projected.role
             projected.container = layer.container if layer.container else projected.container
             projected.port = layer.port or projected.port
             projected.wad_source = layer.wad_source or projected.wad_source
-            projected.pantheon = layer.pantheon or projected.pantheon
-            projected.sigil = layer.sigil or projected.sigil
-            projected.first_breath = layer.first_breath or projected.first_breath
             
             # 2. Game Zone: Merge/Union
             # Domains & Capabilities: Set Union
             projected.domains = list(set(projected.domains + layer.domains))
             projected.capabilities = list(set(projected.capabilities + layer.capabilities))
             
-            # Traits: Merge dictionaries (Highest priority wins)
-            projected.traits.update(layer.traits)
+            # Metadata: Merge dictionaries (Highest priority wins for shared keys)
+            projected.metadata.update(layer.metadata)
             
-            # Personality & Invocation: Concatenation
+            # Personality: Concatenation
             if layer.personality and layer.personality != projected.personality:
                 projected.personality = f"{layer.personality}\n\n{projected.personality}" if projected.personality else layer.personality
-            
-            # Invocation is now a trait, handled by .update() above.
                 
-            # Other core traits: Highest priority wins
+            # Other core fields: Highest priority wins
             projected.temperature = layer.temperature or projected.temperature
             projected.context_window = layer.context_window or projected.context_window
 
@@ -476,8 +507,14 @@ class EntityRegistry:
         return self.active_iter()
     
     def list_pillar_keepers(self) -> List[Entity]:
-        """List only the 10 Pillar Keepers (non-tombstoned entities with pillars)."""
-        return [e for e in self.active_iter() if e.pillars]
+        """List entities with slot assignments (forward-compat alias).
+        
+        The term "Pillar Keeper" is Arcana-NovAi WAD content. The engine
+        discovers slot-holding entities dynamically rather than enforcing
+        a hardcoded 10-slot grid. This method queries any entity that has
+        at least one slot assigned.
+        """
+        return [e for e in self.active_iter() if e.slots]
     
     def names(self) -> List[str]:
         """Return list of non-tombstoned entity names."""
@@ -554,7 +591,7 @@ class EntityRegistry:
             # Automatically scaffold persistent workspace for the awakened entity
             scaffold_fn = functools.partial(
                 EntityWorkspaceManager.scaffold_workspace,
-                entity.name, entity.role, entity.pillars
+                entity.name, entity.role, entity.slots
             )
             await anyio.to_thread.run_sync(scaffold_fn)
 
@@ -758,7 +795,7 @@ class EntityRegistry:
                 logger.error(
                     f"INTEGRITY GUARD: entities.yaml serialization is {len(serialized)} bytes "
                     f"(>{1_000_000}). Aborting save to prevent corruption. "
-                    f"Check Entity.to_dict() for circular references in traits."
+                    f"Check Entity.to_dict() for circular references in metadata."
                 )
                 # Log the first and last entity key to help debug the cause
                 if data["entities"]:

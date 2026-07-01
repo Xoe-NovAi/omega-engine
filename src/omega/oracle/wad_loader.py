@@ -286,13 +286,18 @@ class WADLoader:
                     ent_data = data.get("entity", {})
 
 
-                    # Collect WAD-specific metadata into traits dict
-                    # (these are game-zone fields, not Entity dataclass fields)
-                    wad_traits = {}
-                    for trait_field in ("secondary_keeper", "element", "chakra", "planet", "glyph", "invocation"):
-                        val = ent_data.get(trait_field)
-                        if val is not None:
-                            wad_traits[trait_field] = val
+                    # Collect WAD-specific metadata (everything not in engine core)
+                    # [M2] Engine-Stack Firewall: engine sees slots + opaque metadata.
+                    # WAD defines: element, chakra, planet, sigil, glyph, pantheon, etc.
+                    core_entity_fields = {
+                        "name", "domains", "model", "personality", "temperature",
+                        "context_window", "slots", "role", "container", "port",
+                        "wad_source", "priority",
+                    }
+                    wad_metadata = {
+                        k: v for k, v in ent_data.items()
+                        if k not in core_entity_fields and v is not None
+                    }
 
                     entity = Entity(
                         name=ent_data.get("name", entity_name),
@@ -301,10 +306,8 @@ class WADLoader:
                         personality=ent_data.get("personality", ""),
                         temperature=ent_data.get("temperature", 0.7),
                         context_window=ent_data.get("context_window", 8192),
-                        pillars=ent_data.get("pillars", []),
-                        traits=wad_traits,
-                        pantheon=ent_data.get("pantheon"),
-                        sigil=ent_data.get("sigil"),
+                        slots=ent_data.get("slots", []),
+                        metadata=wad_metadata,
                         role=ent_data.get("role"),
                         container=ent_data.get("container", False),
                         port=ent_data.get("port"),

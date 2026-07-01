@@ -36,7 +36,7 @@ async def oracle_setup(tmp_path):
         domains=["test"],
         model="mock",
         personality="A test entity",
-        pillars=["p1"],
+        slots=["p1"],
         role="Test Entity",
     )
     await registry.add(test_entity)

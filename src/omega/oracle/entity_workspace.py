@@ -125,14 +125,14 @@ class EntityWorkspaceManager:
     def scaffold_workspace(
         name: str, 
         archetype: str = "Awakened Expert", 
-        pillars: Optional[List[str]] = None
+        slots: Optional[List[str]] = None
     ) -> Path:
         """Create the directory structure and initial soul.yaml for an entity.
         
         Args:
             name: The human-readable name (e.g., 'Kurt Cobain')
             archetype: The conceptual archetype of the entity
-            pillars: Associated domain pillars
+            slots: Associated engine slots (WAD-defined labels)
             
         Returns:
             Path to the entity's root workspace directory.
