@@ -749,11 +749,13 @@ The MV-IW replaces all prior Iron Wall execution plans. It is the single source 
 | 0.5 | ~~Fix M2_FIREWALL_GAP~~ CANCELLED — already fixed (D113 frozenset) | 0h | ✅ DONE |
 | 0.6 | Single-source test count (make test-badge) | 30m | ✅ **DONE** — commit 7433194 |
 
-**Phase 1: Documentation Sanity (Days 6-7)**
+**Phase 1: Documentation Sanity & Trivial Infra (Days 6-7)**
 | Order | Task | Effort | Status |
 |-------|------|--------|--------|
-| 1.1 | Split OMEGA_ENGINE.md into domain files (~200 lines each) | 3h | ⏳ PENDING |
-| 1.2 | One-pass doc sync (stale counts, sprint status) | 2h | ⏳ PENDING |
+| 1.1a | Fix pre-commit hook auto-install in Makefile (`make setup`) | 5m | ⏳ PENDING |
+| 1.1b | Update `.opencode/anchored-summary.md` to reflect trimmed SSOT | 10m | ⏳ PENDING |
+| 1.1 | Trim OMEGA_ENGINE.md: remove §7-§10 duplicates, compact sprint index | 45m | ⏳ PENDING |
+| 1.2 | SearXNG env var fix (4 files) + one-pass doc sync | 30m | ⏳ PENDING |
 
 **Phase 2: IW-1 (Infrastructure) — Days 8-9**
 | Order | Task | Effort | Status |

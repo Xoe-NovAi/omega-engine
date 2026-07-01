@@ -70,47 +70,42 @@ chore: add make test-badge target for single-source test count
 
 ---
 
-## L2: Unfinished Business — Phase 1.1 State
+## L2: Unfinished Business — Phase 1 State
 
 ### What Was Done
 - OMEGA_ENGINE.md §5 and §6 were updated with Phase 0 completion status
 - SSOT doc sync (test counts, D113, MV-IW plan) committed in `8354c92`
 
-### What Remains (Phase 1.1 — Documentation Sanity)
+### What Remains (Phase 1 — Documentation Sanity & Trivial Infra)
 
-**Task 1.1: Split OMEGA_ENGINE.md into domain files (~200 lines each)**
+**Strategic Pivot (D178): Trim, Don't Split**
+Based on insights from Sonnet 4.6 and Opus 4.6, the plan to split `OMEGA_ENGINE.md` has been abandoned. Splitting a "Single Source of Truth" creates a distributed source of truth, causing navigation burdens and documentation entropy. Instead, the file will be **trimmed** by removing duplicated sections.
 
-The file is **957 lines** and must be split into focused domain documents. Proposed structure:
+**Task 1.1a: Fix pre-commit hook auto-install**
+Add `git config core.hooksPath .githooks` to the `Makefile` `setup`/`bootstrap` targets so fresh clones get the hook automatically.
 
-| Domain File | Content | Est. Lines |
-|-------------|---------|------------|
-| `docs/OMEGA_IDENTITY.md` | §1 Identity + §2 Architecture Layers | ~120 |
-| `docs/OMEGA_MANDATES.md` | §3 Sovereign Mandates reference | ~80 |
-| `docs/OMEGA_HARDWARE.md` | §4 Hardware Target (Ryzen 5700U) | ~60 |
-| `docs/OMEGA_STATUS.md` | §5 Current Status + Sprint Index | ~120 |
-| `docs/OMEGA_METRICS.md` | §6 Engine Health Metrics + Subsystem Status | ~120 |
-| `docs/OMEGA_STRATEGY.md` | §7 Strategic Pillars (D111/D112/H1) | ~80 |
-| Remainder (entity/config docs) | §8+ entity registry, config reference, changelog | ~200 |
+**Task 1.1b: Update `.opencode/anchored-summary.md`**
+Ensure M15 continuity is preserved alongside the SSOT trim.
 
-After splitting, OMEGA_ENGINE.md becomes a ~50-line **table of contents/index** that reads:
-> "I am the index. For identity, see OMEGA_IDENTITY.md. For status, see OMEGA_STATUS.md..."
+**Task 1.1: Trim `OMEGA_ENGINE.md`**
+- Remove §7 (Strategic Pillars) -> belongs in `SOVEREIGN_ARK_BLUEPRINT.md`
+- Remove §8 (Priority Queue) -> belongs in `SOVEREIGN_ARK_BLUEPRINT.md`
+- Remove §9 (Mandates Quick Ref) -> belongs in `SOVEREIGN_MANDATES.md`
+- Remove §10 (Sovereignty Scorecard) -> belongs in `SOVEREIGN_ARK_BLUEPRINT.md`
+- Compact §6 Sprint Index to only the last 3 entries -> history belongs in `PIVOT_LOG.md`
+This will reduce the file from 957 lines to ~400 without losing critical start-up context.
 
-**Task 1.2: One-pass doc sync**
-After the split, verify cross-references, test counts, and sprint status across:
-- `ORACLE_STACK.md`
-- `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md`
-- `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md`
-- `docs/TEST_STATUS.md`
-- `Makefile` (if targets reference split paths)
+**Task 1.2: SearXNG env var fix + one-pass doc sync**
+Update 4 hardcoded SearXNG URLs (`search_providers.py`, `sovereign_search_service.py`, `searxng_client.py`, `background_researcher/loop.py`) to use `os.environ.get("SEARXNG_BASE_URL", ...)`. Verify cross-references.
 
 ### Open Decisions
-- **MV-IW Phase 1.1 approach**: Split in-place or create new files first? Recommend: create new files, then thin OMEGA_ENGINE.md to an index in one commit to reduce merge conflicts.
-- **`config/wads/_omega_default/entities.yaml`** has uncommitted changes — source unknown, may be WIP from a prior session.
-- **`DOCUMENTATION_ENTROPY_RESOLUTION_20260701.md`** is an untracked mining report from roc_racoon — review before commit.
+- **`config/wads/_omega_default/entities.yaml`** has uncommitted changes — format-only, commit or revert.
+- **`DOCUMENTATION_ENTROPY_RESOLUTION_20260701.md`** is an untracked mining report from roc_racoon — review and commit.
+- **TEST_STATUS.json sidecar potential**: Consider adding a JSON output to `make test-badge` for future automated doc updates.
 
 ---
 
-## L3: Universal Principle — Trust Restoration as Foundation
+## L3: Universal Principle — Trust Restoration & SSOT Integrity## L3: Universal Principle — Trust Restoration as Foundation
 
 > **"Before you optimize the machine, fix the leak. Before you add a feature, ensure the test suite is green."**
 
@@ -119,6 +114,9 @@ Phase 0 of the MV-IW plan demonstrated a fundamental truth of sovereign engineer
 The pattern generalizes: **any system where you cannot trust the verification gate is a system that will produce untrustworthy output.** Before engineering features, engineer confidence. This is the architectural translation of Carmack's principle: "The first 90% of the work is making the tools reliable. The second 90% is building the product."
 
 For Phase 1.1 (documentation split), the same principle applies: the OMEGA_ENGINE.md monolith (957 lines) has become a single point of failure — any edit risks merge conflicts, any stale section poisons context. Splitting it into domain files is not cosmetic; it is trust restoration for the documentation layer, enabling parallel doc maintenance and reducing cognitive load on every agent that reads it.
+
+Furthermore, **the Single Source of Truth must remain singular.** Fragmentation in the name of organization creates entropy. When a document becomes too large, the correct action is usually to prune redundancy and extract duplicated state, not to shatter the document into pieces. A centralized truth topology is easier for agents to parse, provided it respects the DRY (Don't Repeat Yourself) principle.
+
 
 ---
 

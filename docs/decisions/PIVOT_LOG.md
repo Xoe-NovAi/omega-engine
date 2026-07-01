@@ -954,3 +954,27 @@ A single flat file for forensic logging creates unbounded disk growth and violat
 ✅ **COMPLETED** — Divergence ratified.
 
 ---
+
+## Decision 178: SSOT Trimming vs Splitting
+
+**Date**: 2026-07-01
+**Channel**: OpenCode CLI (antigravity-claude-opus-4-6-thinking)
+**Entity**: KALI
+**Trace**: trc_iw_phase1_ssot_trim
+
+### Context
+The original MV-IW Phase 1.1 plan called for splitting the 957-line `OMEGA_ENGINE.md` (the Single Source of Truth) into 5 separate domain files. However, a strategic review before execution highlighted a fundamental flaw: splitting the SSOT creates a "Distributed" Source of Truth, which introduces navigation burdens and re-creates the documentation entropy problem the plan was meant to solve.
+
+### Decision
+Do NOT split `OMEGA_ENGINE.md`. Instead, **TRIM** it. Sections §7-§10 duplicate information that already exists canonically elsewhere (`SOVEREIGN_ARK_BLUEPRINT.md`, `SOVEREIGN_MANDATES.md`, `PIVOT_LOG.md`). We will remove these redundancies and compact the sprint index to only show the last 3 entries, reducing the file from ~957 lines to ~400 lines without fragmenting the trust topology. 
+
+We also consolidate tasks: Phase 1.1a (Makefile setup for hook), Phase 1.1b (update anchored-summary), Phase 1.1 (Trim OMEGA_ENGINE.md), and Phase 1.2 (SearXNG env var fix) into a single streamlined Phase 1.
+
+### Rationale
+- **Trust Topology**: Agents rely on a single file on startup. A split requires agents to know which file to read for which context.
+- **DRY (Don't Repeat Yourself)**: OMEGA_ENGINE.md is bloated because it duplicates other documents, not because its unique content is too long.
+- **M15 Continuity Gap**: Splitting would invalidate `.opencode/anchored-summary.md` references. Trimming preserves existing pointers.
+- **Efficiency**: "Don't reach for AI when a shell script solves the problem." (Carmack) — Trimming solves the length issue without structural overhaul.
+
+### Status
+✅ **RATIFIED** — MV-IW Phase 1 plan updated.
