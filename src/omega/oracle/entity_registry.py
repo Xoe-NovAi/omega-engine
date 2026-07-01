@@ -695,8 +695,7 @@ class EntityRegistry:
             if not active_layers:
                 continue
             projected = self._project_entity(active_layers)
-            if not projected.pillars:
-                continue
+            # All entities are routable by domain — no pillar gate (D179)
                 
             score = 0
             first_pos = len(text_lower) + 1

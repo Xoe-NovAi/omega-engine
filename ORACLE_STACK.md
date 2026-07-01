@@ -62,7 +62,7 @@ Key components:
 | P7: Gnosis | Lucifer | Rebellion, gnosis, sovereignty, light | Air 🜁 | Crown | Qwen3-1.7B |
 | P8: Shadow | Hecate | Shadow, crossroads, keys, pathwalking | Fire 🜂 | Beyond Crown | Krikri-8B* |
 | P9: Spirit | Anubis | Death, transition, guidance, soul | Water 🜄 | Cosmic Heart | Qwen3-4B-Think* |
-| P10: Chaos | Kali | Destruction, liberation, illusion, void | Earth 🜃 | Celestial Breath | Qwen3-0.6B |
+| P10: Chaos | Kali | Destruction, liberation, illusion, void | Earth 🜃 | Celestial Breath | qwen3-4b-thinking-q4_k_m* |
 
 * = on-demand loaded (shared model pool)
 
