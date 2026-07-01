@@ -1371,7 +1371,7 @@ Override previous "no new feature expansion" constraint. Ship v1.1.0 ~1-2 weeks 
 ### Updated Schedule
 | Phase | Days | Deliverable |
 |-------|------|-------------|
-| Semantic Router | 1-2 | `semantic_router.py` — cosine similarity routing |
+| Semantic Router | 1-2 | `semantic_router.py` — cosine similarity routing | IMPLEMENTED |
 | Headroom | 3-5 | `headroom.py` — zlib middleware + flat JSON cache |
 | Mem Palace | 5-8 | `spatial_resolver.py` — Force-Directed Graph + Qdrant coords |
 | Kabbalistic Override | 8-9 | `config/wads/arcana_novai/spatial.yaml` |

@@ -35,6 +35,7 @@ from .skeptical_verifier import SkepticalVerifier, VerificationResult
 from .security import TDPGate, TaintedData
 from .pii_masker import PIIMasker
 from .context_builder import ContextBuilder
+from .semantic_router import SemanticRouter
 from ..iris.matcher import IntentMatcher
 
 from ..observability import new_trace_id, ObservabilityEngine, TraceSession, get_engine, DATA_DIR
@@ -110,6 +111,12 @@ class Oracle:
         self.pii_masker = PIIMasker()
         self.intent_matcher = IntentMatcher()
         
+        # [D187] Semantic Router — embedding-based entity routing
+        self.semantic_router = SemanticRouter(
+            registry=self.registry,
+            embedding_manager=self.memory_store.embedding_manager,
+        )
+        
         # Load WADs
         self.wad_loader = WADLoader(self.registry)
         self.triage_router = TriageRouter()
@@ -129,6 +136,12 @@ class Oracle:
             await self.memory_store.archive_old_sessions()
         except Exception as e:
             logger.warning(f"Session archival failed during bootstrap: {e}")
+
+        # [D187] Bootstrap semantic router — pre-compute entity vectors
+        try:
+            await self.semantic_router.bootstrap()
+        except Exception as e:
+            logger.warning(f"Semantic router bootstrap failed: {e}")
 
         # Registry is initialized in __init__, no bootstrap needed
         self._bootstrapped = True
@@ -680,16 +693,19 @@ class Oracle:
         return result
 
     async def _route_by_domain(self, text: str, trace: TraceSession, session_id: str, transient: bool = False) -> OracleResponse:
-        """Route query to entity by domain keyword matching."""
-        entity = self.registry.find_by_domain(text)
+        """Route query to entity by domain keyword matching.
         
-        if not entity:
-            entity = self.default_entity
-            confidence = 0.3
-        else:
-            confidence = 0.7
+        [D187] Routing chain: semantic → keyword → default.
+        """
+        # [D187] Semantic routing — embedding-based entity matching
+        keyword_entity = self.registry.find_by_domain(text)
+        entity, confidence, method = await self.semantic_router.route(
+            query=text,
+            keyword_fallback=keyword_entity,
+            default_entity=self.default_entity,
+        )
         
-        trace.log("domain.routed", entity=entity.name if entity else None, confidence=confidence, session_id=session_id)
+        trace.log("domain.routed", entity=entity.name if entity else None, confidence=confidence, method=method, session_id=session_id)
         
         if not entity:
             return OracleResponse(
