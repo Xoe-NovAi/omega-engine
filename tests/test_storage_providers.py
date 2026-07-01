@@ -148,6 +148,9 @@ class TestMemoryStoreFallbackChain:
         # Add exchange - should fall back to File and InMemory
         await store.add_exchange("Sophia", "ses_fallback", "Hello", "Hi")
         
+        # Flush batch buffer to providers
+        await store.flush()
+        
         # Verify it was saved to File
         path = temp_data_dir / "entities" / "sophia" / "ses_fallback.json"
         assert path.exists()

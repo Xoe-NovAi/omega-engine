@@ -3,7 +3,7 @@ import pytest
 import os
 import json
 from pathlib import Path
-from omega.memory_store import MemoryStore, get_memory_store, reset_memory_store
+from omega.memory_store import MemoryStore, get_memory_store, reset_memory_store, async_reset_memory_store
 
 @pytest.mark.anyio
 async def test_get_history_empty_returns_list(temp_data_dir):
@@ -28,8 +28,8 @@ async def test_add_exchange_persists_to_warm_file(temp_data_dir):
     store = get_memory_store()
     await store.add_exchange("Sophia", "ses_123", "Hello", "Hi there!")
     
-    # Clear hot cache by creating a new store instance or resetting
-    reset_memory_store()
+    # Async reset: flushes batch buffer to providers before abandoning
+    await async_reset_memory_store()
     store_new = get_memory_store()
     
     history = await store_new.get_history("Sophia", "ses_123")
@@ -65,6 +65,9 @@ async def test_get_history_from_warm_file(temp_data_dir):
     store = get_memory_store()
     await store.add_exchange("Sophia", "ses_123", "Hello", "Hi there!")
     
+    # Flush batch buffer to providers before checking file
+    await store.flush()
+    
     # Manually verify file exists
     safe_name = "sophia"
     path = Path(os.environ["OMEGA_DATA_DIR"]) / "memory" / "entities" / safe_name / "ses_123.json"
@@ -88,6 +91,9 @@ async def test_archive_session_moves_to_cold(temp_data_dir):
     reset_memory_store()
     store = get_memory_store()
     await store.add_exchange("Sophia", "ses_123", "Hello", "Hi there!")
+    
+    # Flush batch buffer to providers before archive (providers need the data)
+    await store.flush()
     
     success = await store.archive_session("Sophia", "ses_123")
     assert success is True

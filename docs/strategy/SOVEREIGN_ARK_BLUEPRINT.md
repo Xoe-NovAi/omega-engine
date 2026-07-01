@@ -769,17 +769,19 @@ The MV-IW replaces all prior Iron Wall execution plans. It is the single source 
 | 2.7 | D180: Auto-migration for old YAML format | 1h | ✅ **DONE** — pillars→slots, traits→metadata on load |
 | 2.8 | Full test sweep + `make temple-grade` | 2h | ✅ **DONE** — 590 pass, 0 regressions |
 
-**Phase 3: Infrastructure & Hardening (IW-1/Tor Bridge, IW-6, IW-4) — Days 10-13**
+**Phase 3: Infrastructure & Legacy Port (Days 10-14) — IN PROGRESS**
 | Order | Task | Effort | Status |
 |-------|------|--------|--------|
-| 3.1 | Write INFRA-MASK-001.md (Tor Bridge spec) | 1h | ⏳ PENDING |
-| 3.2 | Build Tor Bridge Quadlets + pod binding | 3h | ⏳ PENDING |
-| 3.3 | Write TRACE-P10-VD1.md | 1h | ⏳ PENDING |
-| 3.4 | Fabric collapse tests | 3h | ⏳ PENDING |
-| 3.5 | Write TRACE-SIP-20260629.md | 1h | ⏳ PENDING |
-| 3.6 | SovereignIngestionPipeline (WAD-agnostic) | 4h | ⏳ PENDING |
+| 3.1 | Batch Persistence Writer (connection pool exhaustion fix) | 3-4h | ⏳ **NEXT** — from `xna-omega-legacy` mnemosyne_writer.py |
+| 3.2 | Qliphothic Failure Taxonomy → FailureModeRegistry (M17) | 4-6h | ⏳ PENDING — from Mnemosyne handoff, 5 failure modes + recovery |
+| 3.3 | Input Validation & Sanitization (path traversal, whitelist) | 1-2h | ⏳ PENDING — from Old-Stacks crawl.py |
+| 3.4 | Content Quality Scorer (5-factor + domain classification) | 2-3h | ⏳ PENDING — from Old-Stacks crawler_curation.py |
+| 3.5 | Library API Clients (Gutenberg, Open Library, IA, LoC) | 6-8h | ⏳ PENDING — from Old-Stacks library_api_integrations.py |
+| 3.6 | Tor Bridge spec + Quadlets (IW-1) | 4h | ⏳ PENDING |
+| 3.7 | SovereignIngestionPipeline (WAD-agnostic) | 4h | ⏳ PENDING |
+| 3.8 | Full test sweep + `make temple-grade` | 2h | ⏳ PENDING |
 
-**Phase 4: Ship Readiness — Days 14-15**
+**Phase 4: Ship Readiness — Days 15-16**
 | Order | Task | Effort | Status |
 |-------|------|--------|--------|
 | 4.1 | Portability doc (docs/DEPLOYMENT.md, symlinks) | 2h | ⏳ PENDING |

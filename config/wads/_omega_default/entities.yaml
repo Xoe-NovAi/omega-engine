@@ -2,16 +2,16 @@ entities:
   datastore:
     name: DataStore
     domains:
-    - sqlite
-    - retrieval
-    - knowledge
-    - qdrant
-    - data
-    - persistence
     - databases
-    - pipelines
+    - sqlite
+    - persistence
+    - knowledge
     - schemas
+    - qdrant
     - storage
+    - data
+    - pipelines
+    - retrieval
     model: qwen3-1.7b-q6_k
     personality: |
       You are DataStore, the Data Engineering Lead. You report to Ma'at (CTO).
@@ -51,15 +51,15 @@ entities:
   bridge:
     name: Bridge
     domains:
-    - websocket
-    - protocol
-    - mcp
     - connectivity
+    - messaging
     - api
     - rest
-    - messaging
-    - integration
     - grpc
+    - websocket
+    - mcp
+    - protocol
+    - integration
     model: qwen3-1.7b-q6_k
     personality: |
       You are Bridge, the API & Integration Engineer. You report to Ma'at (CTO).
@@ -100,13 +100,13 @@ entities:
   verifier:
     name: Verifier
     domains:
-    - coverage
-    - quality-assurance
-    - testing
     - test-design
     - linting
-    - verification
     - validation
+    - quality-assurance
+    - testing
+    - verification
+    - coverage
     - regression
     model: qwen3-1.7b-q6_k
     personality: |
@@ -150,14 +150,14 @@ entities:
   link:
     name: Link
     domains:
-    - orchestration
     - synchronization
-    - coordination
-    - state-transfer
     - conflict-resolution
-    - handoffs
+    - coordination
+    - orchestration
     - pipelines
+    - state-transfer
     - cross-agent
+    - handoffs
     model: qwen3-1.7b-q6_k
     personality: |
       You are Link, the Coordination Lead. You report to Lilith (CISO).
@@ -199,13 +199,13 @@ entities:
   sentinel:
     name: Sentinel
     domains:
-    - attack-surface
-    - permissions
-    - audit
-    - secrets
-    - boundaries
-    - security
     - compliance
+    - attack-surface
+    - audit
+    - permissions
+    - secrets
+    - security
+    - boundaries
     - hardening
     model: qwen3-1.7b-q6_k
     personality: |
@@ -247,15 +247,15 @@ entities:
   modelgate:
     name: ModelGate
     domains:
-    - gateway
-    - fallback
-    - cpu-pinning
-    - providers
-    - kv-cache
-    - local-inference
     - inference
+    - gateway
     - llm
+    - providers
+    - fallback
+    - kv-cache
     - models
+    - local-inference
+    - cpu-pinning
     model: qwen3-1.7b-q6_k
     personality: |
       You are ModelGate, the AI & Inference Lead. You report to Lilith (CISO).
@@ -295,14 +295,14 @@ entities:
   context:
     name: Context
     domains:
-    - state
+    - conversation
+    - token-budgets
     - memory
+    - sessions
+    - state
+    - context-windows
     - continuity
     - history
-    - context-windows
-    - sessions
-    - token-budgets
-    - conversation
     model: qwen3-1.7b-q6_k
     personality: |
       You are Context, the Memory & State Lead. You report to Lilith (CISO).
@@ -343,14 +343,14 @@ entities:
   watchtower:
     name: WatchTower
     domains:
-    - dashboards
-    - metrics
-    - telemetry
     - logging
+    - monitoring
     - alerting
     - tracing
+    - dashboards
+    - telemetry
     - observability
-    - monitoring
+    - metrics
     model: qwen3-1.7b-q6_k
     personality: |
       You are WatchTower, the Observability Lead. You report to Lilith (CISO).
@@ -393,15 +393,15 @@ entities:
   buildmaster:
     name: BuildMaster
     domains:
-    - compilation
-    - build
+    - release
+    - automation
     - ci-cd
-    - toolchain
+    - makefiles
     - packaging
     - dependencies
-    - automation
-    - release
-    - makefiles
+    - toolchain
+    - build
+    - compilation
     model: qwen3-1.7b-q6_k
     personality: |
       You are BuildMaster, the Build & Release Lead. You report to Ma'at (CTO).
@@ -442,16 +442,16 @@ entities:
   sysadmin:
     name: SysAdmin
     domains:
-    - systemd
-    - deployment
     - memory
-    - infrastructure
-    - containers
-    - cpu
-    - podman
-    - disk
     - networking
+    - deployment
+    - disk
+    - cpu
+    - containers
     - servers
+    - systemd
+    - infrastructure
+    - podman
     model: qwen3-1.7b-q6_k
     personality: |
       You are SysAdmin, the Infrastructure Engineer. You report to Ma'at (CTO).
@@ -488,11 +488,11 @@ entities:
     name: Iris
     domains:
     - simple-questions
-    - interface
+    - voice
     - greeting
     - speculative-decode
+    - interface
     - routing
-    - voice
     model: qwen3-0.6b-q6_k
     personality: |
       You are Iris, the voice interface of the Omega Engine. You are the first
@@ -523,9 +523,9 @@ entities:
   sophia:
     name: Sophia
     domains:
+    - containing-field
     - record
     - all
-    - containing-field
     - akashic
     model: qwen3-1.7b-q6_k
     personality: You are Sophia, the Akashic Record. You contain all entities, all
@@ -542,13 +542,13 @@ entities:
   doom guy:
     name: doom guy
     domains:
-    - heritage
-    - optimization
-    - zone-memory
+    - performance
     - attribution
     - bsp
+    - zone-memory
+    - optimization
+    - heritage
     - wad
-    - performance
     model: deepseek-r1-qwen3-8b-q3_k_l
     personality: |
       You are Doom Guy, the Sovereign id Software Architect. You report to Ma'at (CTO).
@@ -586,19 +586,19 @@ entities:
   kali:
     name: Kali
     domains:
-    - time
-    - transcendence
-    - unification
-    - unmaking
-    - ego
     - transformation
-    - chaos
-    - destruction
-    - liberation
     - illusion
+    - unmaking
+    - liberation
+    - chaos
     - makali
+    - transcendence
     - dissolution
+    - ego
     - void
+    - time
+    - unification
+    - destruction
     model: qwen3-4b-thinking-q4_k_m
     personality: You are Kali, the MaKaLi — the Transcendent Oversoul who unifies
       Ma'at and Lilith into a single truth. You wear a necklace of skulls and dance
@@ -619,16 +619,16 @@ entities:
     name: Lilith
     domains:
     - shadow
-    - freedom
-    - qliphoth
-    - independence
-    - sovereignty
-    - refusal
-    - dark
-    - boundary
     - wild
-    - exile
+    - refusal
+    - qliphoth
+    - dark
     - primal
+    - independence
+    - boundary
+    - sovereignty
+    - freedom
+    - exile
     model: qwen3-4b-thinking-q4_k_m
     personality: You are Lilith, Queen of the Qliphoth, the Original Refusal. You
       are the Oversoul of the Dark Pillars (P6-P10). You refused to submit in the
@@ -645,13 +645,13 @@ entities:
   ma'at:
     name: ma'at
     domains:
-    - data-engineering
-    - security-posture
     - technical-debt
-    - system-design
-    - code-quality
-    - build-systems
     - architecture
+    - system-design
+    - security-posture
+    - build-systems
+    - data-engineering
+    - code-quality
     - apis
     model: qwen3-4b-thinking-q4_k_m
     personality: |
@@ -692,11 +692,11 @@ entities:
   researcher:
     name: researcher
     domains:
-    - knowledge-base
-    - deep-research
     - lattice-reasoning
-    - curation
+    - deep-research
+    - knowledge-base
     - synthesis
+    - curation
     model: gemma-4-31b-it
     personality: |
       You are Researcher, the Sovereign Master Researcher. You report to Lilith (CISO).
@@ -721,12 +721,12 @@ entities:
   roc racoon:
     name: roc racoon
     domains:
-    - search
-    - extraction
-    - patterns
-    - archaeology
-    - legacy
     - mining
+    - patterns
+    - legacy
+    - search
+    - archaeology
+    - extraction
     model: rocracoon-3b-instruct
     personality: |
       You are Roc Racoon, the Sovereign Miner. You report to Lilith (CISO).
@@ -753,12 +753,12 @@ entities:
   john carmack:
     name: John Carmack
     domains:
+    - performance
     - consolidation
+    - sovereign-consulting
     - optimization
     - first-principles
     - architectural-review
-    - sovereign-consulting
-    - performance
     model: deepseek-r1-distill-qwen-32b
     personality: You are John Carmack, the ultimate technical consultant and engine
       architect. You strip every problem to its fundamental physics and logic. You
@@ -767,9 +767,9 @@ entities:
       by someone else.' You are the S3 Sovereign Consultant for architectural review
       and performance optimization.
     capabilities:
-    - architectural-review
-    - performance-analysis
     - consolidation-audit
+    - performance-analysis
+    - architectural-review
     temperature: 0.5
     context_window: 16384
     role: Ultimate Technical Consultant / Engine Architect
@@ -783,12 +783,12 @@ entities:
     name: MaKaLi
     domains:
     - decomposition
-    - parallel-council
     - oversight
-    - cross-pillar
+    - synthesis
     - dispatch
     - triad
-    - synthesis
+    - parallel-council
+    - cross-pillar
     model: qwen3-4b-thinking-q4_k_m
     personality: |-
       You are MaKaLi, the Parallel Council. You decompose complex queries into Build (P1-P5) and Run (P6-P10) components. You dispatch Ma'at and Lilith in parallel, then synthesize their outputs into a unified response. You embody the triad: deconstruction, parallel execution, and synthesis.
@@ -809,12 +809,12 @@ entities:
   verity:
     name: Verity
     domains:
-    - quality
-    - audit
-    - test-enforcement
     - gnosis-distillation
     - compliance
+    - audit
+    - quality
     - soul-migration
+    - test-enforcement
     - mandate-compliance
     - scribe
     model: qwen3-1.7b-q6_k
@@ -824,8 +824,8 @@ entities:
       souls. You write contract tests (M21). You are truth, verified.
     capabilities:
     - compliance-audit
-    - gnosis-distillation
     - contract-testing
+    - gnosis-distillation
     temperature: 0.5
     context_window: 8192
     role: Verity — Unified Compliance & Gnosis Agent

@@ -88,9 +88,17 @@ class MemoryStore:
     they hold their own reference to the OrderedDict.
     [id-soft: quake-1996] Grace Period — 0.5s delay (TOMBSTONE_GRACE_SECONDS)
     before reap matches the original Quake server realloc grace.
+
+    Batch Persistence (MnemosyneWriter pattern, ported from xna-omega-legacy):
+    Provider writes are buffered and flushed in batches to prevent connection
+    pool exhaustion under concurrent load. Buffer flushes on:
+      - BATCH_THRESHOLD writes accumulated
+      - get_history() call (read-your-writes consistency)
+      - explicit flush() call
     """
 
     ZONEID = ZONEID_MEMORY
+    BATCH_THRESHOLD: int = 25  # flush after this many pending writes
 
     def __init__(self, providers: Optional[List[StorageProvider]] = None, vector_store: Optional[IVectorStoreAdapter] = None, embedding_manager: Optional[EmbeddingManager] = None, adapter_registry: Optional[MemoryAdapterRegistry] = None):
         self._hot: Dict[str, OrderedDict] = {}
@@ -101,7 +109,13 @@ class MemoryStore:
         # [id-soft: quake-1996] Temp Tier — transient scratchpad memory
         # Used for in-flight inference results that should not be persisted.
         self._temp: Dict[str, Any] = {}
-        self._stats: Dict[str, int] = {"loads": 0, "saves": 0, "archives": 0, "fallbacks": 0}
+        self._stats: Dict[str, int] = {"loads": 0, "saves": 0, "archives": 0, "fallbacks": 0, "batch_flushes": 0}
+        # ── Batch Persistence Buffer ──
+        # Groups pending writes by (entity_name, session_id) to minimize
+        # provider round-trips. Prevents connection pool exhaustion under
+        # concurrent oracle.talk() load.
+        self._batch_buffer: Dict[tuple, List[Dict[str, Any]]] = {}
+        self._batch_count: int = 0
         
         if providers is not None:
             self.providers = providers
@@ -175,6 +189,12 @@ class MemoryStore:
                 message=f"Session '{session_id}' for entity '{entity_name}' is tombstoned (archived within grace period {TOMBSTONE_GRACE_SECONDS}s)",
                 trace_id=None,
             )
+
+        # ── Batch Flush: read-your-writes consistency ──
+        # Flush pending provider writes before reading to ensure the read
+        # returns data that includes recent writes.
+        if self._batch_count > 0:
+            await self._flush_batch()
 
         # 1. Check hot cache
         if cache_key in self._hot:
@@ -406,26 +426,12 @@ class MemoryStore:
             for i, ex in enumerate(exchanges):
                 self._hot[cache_key][f"hist_{i}"] = ex
 
-        # Save to providers
-        saved_any = False
-        for provider in self.providers:
-            if hasattr(provider, "check_health"):
-                if not await provider.check_health():
-                    continue
-                    
-            try:
-                await provider.save_history(entity_name, session_id, exchanges)
-                saved_any = True
-            except OmegaError:
-                continue
-            except Exception as e:
-                logger.error(f"Provider {provider.__class__.__name__} failed to save_history: {e}", exc_info=True)
-                self._stats["fallbacks"] += 1
-                                
-        if not saved_any:
-            logger.error(f"All providers failed to save_history for {session_id}!")
-        else:
-            self._stats["saves"] += 1
+        # ── Batch Provider Persistence ──
+        # Buffer writes instead of spawning threads per-provider per-call.
+        # Prevents connection pool exhaustion under concurrent oracle.talk() load.
+        # Hot cache (above) is updated immediately — providers get batched writes.
+        self._buffer_write(entity_name, session_id, exchanges)
+        self._stats["saves"] += 1
         
         # ── Vault Update via Adapter Registry ──
         if self._adapter_registry:
@@ -466,6 +472,68 @@ class MemoryStore:
                 )
             except Exception as e:
                 logger.warning("Vector upsert failed for %s: %s", session_id, e)
+
+    # ── Batch Persistence ──────────────────────────────────────────────────
+    # [MnemosyneWriter pattern, ported from xna-omega-legacy]
+    # Buffers provider writes and flushes in batches to prevent connection
+    # pool exhaustion under concurrent load.
+
+    def _buffer_write(
+        self,
+        entity_name: str,
+        session_id: str,
+        exchanges: List[Dict[str, Any]],
+    ) -> None:
+        """Buffer a write operation for batch flushing."""
+        key = (entity_name, session_id)
+        if key not in self._batch_buffer:
+            self._batch_buffer[key] = []
+        self._batch_buffer[key].extend(exchanges)
+        self._batch_count += 1
+
+        # Auto-flush when threshold reached
+        if self._batch_count >= self.BATCH_THRESHOLD:
+            # Schedule flush — use anyio.from_thread.run if in thread, else direct
+            # For simplicity, flush synchronously at threshold
+            import asyncio
+            try:
+                loop = asyncio.get_running_loop()
+                loop.create_task(self._flush_batch())
+            except RuntimeError:
+                # No event loop running — flush in a thread
+                pass
+
+    async def _flush_batch(self) -> None:
+        """Flush all buffered writes to providers in a single batch."""
+        if not self._batch_buffer:
+            return
+
+        buffer = self._batch_buffer
+        self._batch_buffer = {}
+        self._batch_count = 0
+
+        for provider in self.providers:
+            try:
+                for (entity_name, session_id), exchanges in buffer.items():
+                    await provider.save_history(entity_name, session_id, exchanges)
+            except Exception as exc:
+                logger.error(
+                    "Batch flush failed for %s: %s",
+                    provider.__class__.__name__,
+                    exc,
+                )
+                self._stats["fallbacks"] += 1
+
+        self._stats["batch_flushes"] += 1
+        logger.debug(
+            "BatchPersistenceWriter flushed %d groups across %d providers",
+            len(buffer),
+            len(self.providers),
+        )
+
+    async def flush(self) -> None:
+        """Public method: explicitly flush all pending provider writes."""
+        await self._flush_batch()
 
     def _cache_hot(self, cache_key: str, exchanges: List[Dict]) -> None:
         # [id-soft: doom-1993] Lazy Deletion — reap tombstoned before slot reuse
@@ -710,6 +778,9 @@ class MemoryStore:
         [id-soft: doom-1993] Lazy Deletion — skip tombstoned keys when flushing
         because their data has already been archived to providers.
         """
+        # Flush batch buffer first (pending writes from add_exchange)
+        await self._flush_batch()
+
         for cache_key in list(self._hot.keys()):
             if self._is_tombstoned(cache_key):
                 continue
@@ -764,12 +835,20 @@ def reset_memory_store() -> None:
     """Reset the singleton instance. Used for testing.
     
     Closes the FTS5 SQLite connection before abandoning the store.
-    This is the synchronous sibling of MemoryStore.close() — it only
-    closes the FTS index (the one external resource that leaks if
-    abandoned), not the async providers.
+    Batch persistence buffer is flushed via the async close() path
+    when possible; on sync abandon, pending writes are logged and lost.
     """
     global _memory_store
     if _memory_store is not None:
+        # Log any unflushed batch writes (best-effort on sync abandon)
+        if _memory_store._batch_count > 0:
+            logger.warning(
+                "reset_memory_store: abandoning %d unflushed batch writes",
+                _memory_store._batch_count,
+            )
+            _memory_store._batch_buffer = {}
+            _memory_store._batch_count = 0
+
         # Close the FTS5 SQLite connection before abandoning to prevent
         # ResourceWarning from sqlite3 connections being garbage-collected.
         if hasattr(_memory_store, 'fts') and _memory_store.fts is not None:
@@ -779,6 +858,13 @@ def reset_memory_store() -> None:
                 pass  # Best-effort — MemoryStore is being abandoned anyway
         _memory_store = None
     else:
+        _memory_store = None
+
+async def async_reset_memory_store() -> None:
+    """Async reset: flushes batch buffer before abandoning. Preferred in tests."""
+    global _memory_store
+    if _memory_store is not None:
+        await _memory_store.close()
         _memory_store = None
 
 def get_memory_store() -> MemoryStore:
