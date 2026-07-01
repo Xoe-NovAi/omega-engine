@@ -113,7 +113,7 @@ This document is the **Single Source of Truth** for the Omega Engine's 196+ rese
 
 | Topic | SSoT Document | Supplementary | Status |
 |-------|--------------|---------------|--------|
-| **Master Roadmap** | **`SOVEREIGN_EVOLUTION_ROADMAP.md`** | `MASTER_SYNTHESIS_AND_ROADMAP.md` | ✅ **LIVE SSoT** |
+| **Master Roadmap** | **`SOVEREIGN_ARK_BLUEPRINT.md`** | `MASTER_SYNTHESIS_AND_ROADMAP.md` | ✅ **LIVE SSoT** |
 | Strategic Execution | `STRATEGIC_EXECUTION_ROADMAP_V2.md` | — | ✅ LIVE |
 | Horizon Map | `HORIZON_MAP.md` | — | ⚠️ SUPERSEDED by Evolution Roadmap |
 | Phase C Plan | `PHASE_C_EXECUTION_PLAN.md` | `R_PHASE_C_DEEP_RESEARCH.md` | ✅ LIVE |
@@ -170,7 +170,7 @@ This document is the **Single Source of Truth** for the Omega Engine's 196+ rese
 
 | Document | Reason | Archive Action | Target |
 |----------|--------|---------------|--------|
-| `HORIZON_MAP.md` | Superseded by `SOVEREIGN_EVOLUTION_ROADMAP.md` | Move to `docs/_archive/` | 📦 |
+| `HORIZON_MAP.md` | Superseded by `SOVEREIGN_ARK_BLUEPRINT.md` | Move to `docs/_archive/` | 📦 |
 | `R_EMBEDDING_ADAPTERS.md` | Superseded by `R_EMBEDDING_ADAPTERS_DEEPENED.md` | Add "SUPERSEDED" header, keep for reference | 📦 |
 | `R_QDRANT_OPTIMIZATION.md` | Superseded by `R_QDRANT_OPTIMIZATION_DEEPENED.md` | Add "SUPERSEDED" header, keep for reference | 📦 |
 | `R_SKEPTICAL_VERIFICATION.md` | Superseded by `R_SKEPTICAL_VERIFICATION_DEEPENED.md` | Add "SUPERSEDED" header, keep for reference | 📦 |
@@ -189,7 +189,7 @@ This document is the **Single Source of Truth** for the Omega Engine's 196+ rese
 |-----------|-----------|--------|
 | `R_PODMAN_SOVEREIGN_V2.md` + `R_PODMAN_SOVEREIGN_STRATEGY.md` + `R_PODMAN_SOVEREIGN_DEPLOYMENT_BLUEPRINT.md` | `R_PODMAN_SOVEREIGN_V2.md` (most current) | Add cross-references to others, archive others |
 | `R_FIRECRAWL_CORE_CAPABILITIES.md` + `R_FIRECRAWL_EXTRACTION_STRATEGIES.md` + `R_FIRECRAWL_DYNAMIC_INTERACTION.md` + `R_FIRECRAWL_ADVANCED.md` + `R_FIRECRAWL_MONITORING_SYSTEM.md` + `R_FIRECRAWL_CREDIT_PROTOCOL.md` | Create single `R_FIRECRAWL_COMPLETE.md` | Consolidation PENDING — 6 docs is fragmentation |
-| `SOVEREIGN_EVOLUTION_ROADMAP.md` + `MASTER_SYNTHESIS_AND_ROADMAP.md` | Keep both — different scope (engine vs foundation) | ✅ Already properly scoped |
+| `SOVEREIGN_ARK_BLUEPRINT.md` | Keep — master SSOT | ✅ Already properly scoped |
 | `TEMPLE_GRADE_QUALITY_STANDARD.md` + `R_TEMPLE_GRADE_STANDARD.md` + `R_TEMPLE_GRADE_COMPLIANCE_FINAL.md` | `TEMPLE_GRADE_QUALITY_STANDARD.md` (adopted) | ✅ `R_TEMPLE_GRADE_STANDARD.md` = draft history |
 | `R_SOVEREIGN_MEMORY_ARCHITECTURE.md` + `R_HOLOGRAPHIC_MEMORY_LATTICE.md` | Keep both — different paradigms (practical vs speculative) | ✅ Complementary, not conflicting |
 
@@ -272,7 +272,7 @@ For quick reference, all 123 named R-docs organized by domain:
 1. `ORACLE_STACK.md` — What the engine is (5 min)
 2. `SOVEREIGN_MANDATES.md` — The 15 non-negotiable rules (3 min)
 3. `docs/MASTER_DOCUMENT_SSOT.md` — This index (2 min)
-4. `SOVEREIGN_EVOLUTION_ROADMAP.md` — What we're building toward (5 min)
+4. `SOVEREIGN_ARK_BLUEPRINT.md` — What we're building toward (5 min)
 5. Find your topic in §1 above → read the SSoT document
 
 **Need to contribute a new R-doc?**

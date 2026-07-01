@@ -13,7 +13,7 @@ If you are reading this, your context was just compacted. Follow these steps:
 1. Read this entire document first — it restores your knowledge of the Omega repo
 2. Read `AGENTS.md` for agent behavior rules
 3. Read `docs/decisions/PIVOT_LOG.md` for why every decision was made
-4. Read `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` for the complete master plan
+4. Read `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` for the complete master plan
 5. If working on docs: `docs/architecture/framework.md`
 6. If working on code: `src/omega/oracle/oracle.py` (main entry point)
 7. Run `make test` to verify state

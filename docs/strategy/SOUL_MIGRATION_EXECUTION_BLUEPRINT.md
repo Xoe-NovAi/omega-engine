@@ -204,4 +204,4 @@ async def cleanup_orphans():
 ---
 
 *Blueprint recorded by Kali · 2026-06-22 · Ratified by MaKaLi Triad*
-*Cross-reference: SOUL_ARCHITECTURE_PROTOCOL.md, SOVEREIGN_EVOLUTION_ROADMAP.md §H2-L*
+*Cross-reference: SOUL_ARCHITECTURE_PROTOCOL.md, SOVEREIGN_ARK_BLUEPRINT.md*

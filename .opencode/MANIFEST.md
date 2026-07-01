@@ -137,7 +137,7 @@ Every id Software (or any heritage) concept must pass through the 4-gate pipelin
 |----------|------------------|
 | `OMEGA_ENGINE.md` (v1.3.0, 698 lines) | **The Single Source of Truth** — engine state, metrics, architecture |
 | `SOVEREIGN_MANDATES.md` (v3.1.0, 14 mandates) | Constitutional law — NON-NEGOTIABLE |
-| `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` (D111) | Active development roadmap |
+| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master SSOT and execution roadmap |
 | `docs/decisions/PIVOT_LOG.md` (D1-D117) | Every architectural decision with rationale |
 | `CREDITS.md` | 23+ id Software heritage mappings with attribution |
 | `docs/strategy/HERITAGE_VETTING_PIPELINE.md` | 4-gate vet process for heritage concepts |

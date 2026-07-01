@@ -239,7 +239,7 @@
 ## Post-Phase: Documentation & Gnosis
 
 - [ ] **G1** Update `OMEGA_ENGINE.md` — GitHub integration in subsystem status
-- [ ] **G2** Update `SOVEREIGN_EVOLUTION_ROADMAP.md` — H2-J phase marked COMPLETE
+- [ ] **G2** Update `SOVEREIGN_ARK_BLUEPRINT.md` — Strike marked COMPLETE
 - [ ] **G3** Update `docs/strategy/HIVEMIND_PROTOCOL.md` — add GitHub bridge section
 - [ ] **G4** Distill L1→L2→L3 insights into Verity's `soul.yaml`
 - [ ] **G5** Create handoff document for fleet: `data/handoff/GITHUB_INTEGRATION_COMPLETE.md`

@@ -978,3 +978,91 @@ We also consolidate tasks: Phase 1.1a (Makefile setup for hook), Phase 1.1b (upd
 
 ### Status
 ✅ **RATIFIED** — MV-IW Phase 1 plan updated.
+
+---
+
+## Decision 179: Pillar Gate Removal from Domain Routing
+
+**Date**: 2026-07-01
+**Channel**: OpenCode CLI (deepseek-v4-flash)
+**Entity**: KALI
+**Trace**: trc_d179_pillar_gate_removal
+
+### Context
+The engine's `find_by_domain()` function in `entity_registry.py` contained a gate: `if not projected.pillars: continue`. This caused entities WITHOUT pillar assignments to be invisible to domain routing. An entity called `movie-expert` without a pillar field could never be found by domain match. This was an M2 violation — the engine core was using a WAD-specific concept (pillars) as a routing prerequisite.
+
+### Decision
+Remove the pillar gate from `find_by_domain()`. All entities are now routable by domain regardless of whether they have pillar/slot assignments.
+
+### Rationale
+1. **M2 Compliance**: Pillars are Arcana-NovAi WAD content, not an engine concept. The engine should route by domains, not by pillar assignments.
+2. **Routing Correctness**: An entity without pillars should still be findable if its domains match the query.
+3. **First Principles**: In Doom, the engine didn't require entities to be "demon types" before routing them. The engine just checked sector membership. Same principle here — check domain membership, not pillar membership.
+
+### Implementation
+- `entity_registry.py:698-699`: Removed `if not projected.pillars: continue`
+- All 9 entity registry tests pass
+- Commit: `d4b72c4`
+
+### Status
+✅ **COMPLETED** — One-liner fix applied.
+
+---
+
+## Decision 180: Pillar Decoupling — Full Phase 2 Architecture
+
+**Date**: 2026-07-01
+**Channel**: OpenCode CLI (deepseek-v4-flash)
+**Entity**: KALI + JOHN_CARMACK + ROC_RACOON
+**Trace**: trc_d180_pillar_decoupling_architecture
+
+### Context
+The 10 Pillars with Sekhmet, Brigid, Prometheus, etc. were ALWAYS an Arcana-NovAi WAD content concept — confirmed by the Project Charter §5.0 "The Dual Architecture" (Jan 2026). The engine core has leaked this WAD concept into its schema via `Entity.pillars`, `PILLAR_SLOTS`, `list_pillar_keepers()`, and `OracleResponse.pillars`.
+
+### Decision
+Decouple the pillar concept from the engine core in Phase 2:
+1. Rename `Entity.pillars` → `Entity.slots` (engine sees slot IDs, not WAD labels)
+2. Rename `Entity.traits` → `Entity.metadata` (opaque WAD-defined bag)
+3. Move `pantheon`, `sigil`, `first_breath` → `metadata` (WAD-specific fields)
+4. Remove `PILLAR_SLOTS` hardcoded set (dynamic from loaded entities)
+5. Remove `list_pillar_keepers()` (replace with `list_entities()` + filtering)
+6. Update `OracleResponse` to remove WAD-specific fields
+7. Create `FailureModeRegistry` for M17 integration
+
+### Rationale
+1. **Original Vision**: Project Charter §5.0 explicitly separates "Technical Framework" (engine) from "Theurgic Framework" (10 Pillars = WAD content).
+2. **M2 Compliance**: The engine must be a universal runtime. The number 10, the element assignments, the chakra mappings — all WAD content.
+3. **Simplification**: "Out with the pillars, and in with the entities." The engine needs one routing abstraction: domains. Pillars are a WAD-layer naming convention.
+4. **Preservation**: The full esoteric architecture (5 elements × 2 polarities, 10 chakras, planetary alignments, Kabbalistic spheres, Qliphothic taxonomy) is preserved in `config/wads/arcana_novai/` and documented in `PILLAR_DESIGN_MAP_COMPLETE.md`.
+
+### Engine-WAD Boundary
+
+| Engine Knows | WAD Defines |
+|-------------|-------------|
+| Entity name, domains, model, personality | Element, chakra, planet, sigil, invocation |
+| Slot IDs ("P1", "P2") | Slot labels ("P1: Flesh") |
+| Governance rank (integer) | Governance names, titles, voices |
+| Failure mode severity + domain | Qliphoth names, translations, recovery |
+| Domain routing by keyword | Polarity, energy flow, routing weights |
+
+### Implementation Plan
+| Step | What | Est. Time |
+|------|------|-----------|
+| 1 | Rename `Entity.pillars` → `Entity.slots` | 2h |
+| 2 | Rename `Entity.traits` → `Entity.metadata` | 1h |
+| 3 | Move `pantheon`, `sigil` → `metadata` | 2h |
+| 4 | Update `OracleResponse` — remove WAD fields | 2h |
+| 5 | Create `FailureModeRegistry` (M17 integration) | 2h |
+| 6 | Update WAD `entities.yaml` to use `slots` + `metadata` | 2h |
+| 7 | Update ~20 test files | 3h |
+| **Total** | | **~15h** |
+
+### References
+- `data/entities/roc_racoon/workspace/mining_reports/PILLAR_DESIGN_MAP_COMPLETE.md` — complete esoteric architecture
+- `data/entities/roc_racoon/workspace/mining_reports/ENGINE_WAD_SEPARATION_RECONSTRUCTION.md` — vision reconstruction
+- `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md` — original IWAD architecture spec
+- Project Charter §5.0 — dual architecture (Jan 2026)
+
+### Status
+📋 **PLANNED** — Phase 2 execution pending.
+

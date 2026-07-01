@@ -289,18 +289,17 @@ class EntityWorkspaceManager:
 
     @staticmethod
     def _get_current_horizon() -> str:
-        """Extract the current strategic horizon from the Sovereign Evolution Roadmap."""
-        roadmap_path = BASE_DIR / "docs" / "strategy" / "SOVEREIGN_EVOLUTION_ROADMAP.md"
+        """Extract the current strategic epoch from the Sovereign Ark Blueprint."""
+        roadmap_path = BASE_DIR / "docs" / "strategy" / "SOVEREIGN_ARK_BLUEPRINT.md"
         try:
             if roadmap_path.exists():
                 with open(roadmap_path, "r") as f:
                     for line in f:
-                        if "HERE →" in line:
-                            # Extract the horizon name (e.g., 'HORIZON 2: HYGIENE & STR.')
-                            return line.split("────")[0].strip()
+                        if "Strike" in line and "✅" in line:
+                            return line.strip()
         except Exception as e:
-            logger.warning(f"Failed to read roadmap for horizon: {e}")
-        return "Unknown Horizon"
+            logger.warning(f"Failed to read blueprint for epoch: {e}")
+        return "Unknown Epoch"
 
     @staticmethod
     def _get_active_brakes() -> str:

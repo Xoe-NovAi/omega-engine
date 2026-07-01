@@ -139,28 +139,28 @@ def _detect_model(entity: str) -> str:
 
 
 def _detect_phase() -> str:
-    """Detect the current phase from SOVEREIGN_EVOLUTION_ROADMAP.md.
+    """Detect the current phase from SOVEREIGN_ARK_BLUEPRINT.md.
     
-    Scans the roadmap for the highest ``H2`` (Horizon 2) phase marker.
-    Falls back to :data:`ICS_DEFAULT_PHASE` if the roadmap is unreadable.
+    Scans the blueprint for the highest completed Strike marker.
+    Falls back to :data:`ICS_DEFAULT_PHASE` if the blueprint is unreadable.
     """
     roadmap_paths = [
-        Path("docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md"),
+        Path("docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"),
         Path("docs/ROADMAP.md"),
     ]
     for path in roadmap_paths:
         if path.exists():
             try:
                 content = path.read_text(encoding="utf-8")
-                # Look for H2-A, H2-B, H2-E, H2-F, etc.
-                matches = re.findall(r"H2-([A-Z])", content)
-                if matches:
-                    highest = sorted(matches)[-1]
-                    return f"H2-{highest}"
-                # Look for PHASE-I, PHASE-II, etc.
-                phase_match = re.search(r"PHASE-(I{1,3}V?|IV|V)", content)
-                if phase_match:
-                    return f"PHASE-{phase_match.group(1)}"
+                # Look for Strike N ✅ (Done) markers
+                strikes = re.findall(r"Strike (\d+).*?✅", content)
+                if strikes:
+                    highest = max(int(s) for s in strikes)
+                    return f"Strike {highest}"
+                # Look for Epoch markers
+                epoch_match = re.search(r"Epoch (I{1,3}V?|IV|V)", content)
+                if epoch_match:
+                    return f"Epoch {epoch_match.group(1)}"
             except (OSError, UnicodeDecodeError):
                 continue
     return ICS_DEFAULT_PHASE

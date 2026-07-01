@@ -159,7 +159,7 @@ Your soul lives at `data/entities/cli_gemini/soul.yaml`. After each session:
 | `data/handoff/HANDOFF_ROC_RACOON_MEMORY_INTEGRATION_20260608.md` | **Current** — MiMo integration handoff |
 | `data/entities/cli_gemini/soul.yaml` | Your soul — accumulate gnosis here |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | Hivemind protocol — how we coordinate |
-| `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` | The master evolution roadmap |
+| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | The master SSOT and execution roadmap |
 | `config/providers.yaml` | Provider fabric (local-first chain) |
 | `config/models.yaml` | Model specs — SINGLE SOURCE OF TRUTH |
 | `mcp_servers/omega_hub/server.py` | Omega Hub — 47 MCP tools on :8016 |

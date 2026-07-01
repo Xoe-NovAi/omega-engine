@@ -93,7 +93,7 @@ Launch all 4 in parallel via `task()`, then synthesize.
 1. `data/entities/kali/soul.yaml` — your accumulated gnosis
 2. `AGENTS.md` § "Custom Agents" — full fleet inventory
 3. `docs/strategy/HIVEMIND_PROTOCOL.md` — coordination rules
-4. `docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md` § "H3-A" — current Hivemind roadmap
+4. `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` — current execution roadmap
 5. `CREDITS.md` §1.21 (netchan) — heritage context for A2A communication
 
 ## Heritage Attribution

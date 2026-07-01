@@ -21,7 +21,7 @@
     "SOVEREIGN_MANDATES.md",
     "ORACLE_STACK.md",
     "docs/archive/MASTER_SYNTHESIS_AND_ROADMAP_2026-05-30.md",
-    "docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md",
+    "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
     "CREDITS.md"
   ],
   "mcp": {
@@ -189,7 +189,7 @@
       "description": "MaKaLi Parallel Council \u2014 decomposes query, dispatches Ma'at+Lilith in parallel, synthesizes (D117)",
       "instructions": [
         ".opencode/agents/makali.md",
-        "docs/strategy/SOVEREIGN_EVOLUTION_ROADMAP.md"
+        "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
       ]
     },
     "jem": {
