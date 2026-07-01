@@ -192,3 +192,10 @@ archives/
 ../omega/
 ../omega-stack-legacy/
 ../xna-omega-legacy/.firecrawl/
+
+# ── Research/Test Artifacts ──────────────────────────────────────────
+4Runner_*.md
+CLAUDE.md
+
+# ── External Projects (separate repos, not part of Omega Engine) ──
+opencode-antigravity-auth/
