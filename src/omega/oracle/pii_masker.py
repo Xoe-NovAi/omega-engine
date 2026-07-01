@@ -181,6 +181,39 @@ class PIIMasker:
         safe = re.sub(r'[^a-zA-Z0-9_-]', '', raw_id)
         return safe[:100]
     
+    # ── Legacy: Content Sanitization (ANAi/XNAi era port) ────────────
+    # Source: crawl.py:236-263
+    def sanitize_content(self, content: str, remove_scripts: bool = True) -> str:
+        """Sanitize content by removing script/style tags and normalizing whitespace.
+
+        [Legacy: ANAi/XNAi era crawl.py:236-263]
+
+        Args:
+            content: Raw content string
+            remove_scripts: Remove <script>/<style> tags if True
+
+        Returns:
+            Sanitized content string
+        """
+        if not content:
+            return ""
+
+        sanitized = content
+
+        if remove_scripts:
+            sanitized = re.sub(
+                r"<script[^>]*>.*?</script>", "", sanitized,
+                flags=re.DOTALL | re.IGNORECASE,
+            )
+            sanitized = re.sub(
+                r"<style[^>]*>.*?</style>", "", sanitized,
+                flags=re.DOTALL | re.IGNORECASE,
+            )
+
+        # Normalize excessive whitespace
+        sanitized = re.sub(r"\s+", " ", sanitized)
+        return sanitized.strip()
+    
     # ── Primary: Detect PII ───────────────────────────────────────────
     async def detect(
         self,
