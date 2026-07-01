@@ -1,1 +1,79 @@
-[]
+proposals:
+  - id: proposal-20260701-001
+    title: "C-FFI Boundary Law — Process Isolation for Native Code"
+    l1_narrative: >
+      The NativeGGUFProvider was running llama.cpp's C-FFI within the main Python
+      process via anyio.to_thread.run_sync(). When llama.cpp crashed (segfault, OOM,
+      illegal instruction), it took down the entire engine process. Rewrote the provider
+      to spawn a multiprocessing.Process worker with IPC queues. Even with the overhead
+      of cross-process serialization, the crash isolation benefit justifies the latency
+      cost. A ready/load-error acknowledgment protocol was needed to detect worker init
+      failures properly.
+    l2_insights:
+      - "A C-FFI crash in a thread pool kills the whole process. Process isolation is the correct boundary."
+      - "multiprocessing.Queue.get() is blocking — must be wrapped in anyio.to_thread.run_sync() to not stall the event loop."
+      - "Worker initialization failures are silent (child crashes, parent doesn't know). Explicit ready/error signals are mandatory."
+      - "multiprocessing.Process inherits parent mocks on Linux (fork), which breaks the naive expectation that tests are transparent."
+    l3_universal_principles:
+      - "Native code boundaries must be process-level, not thread-level. Threads share address space; a segfault in any thread kills all threads."
+      - "Distributed initialization requires explicit acknowledgment. Silence is indistinguishable from success in a decoupled system."
+      - "The simplicity of fork()-based multiprocessing in tests is a liability — it silently propagates test state into child processes."
+    sovereignty_impact: >
+      Without this fix, a single C-level crash in the GGUF inference engine could
+      bring down the entire Omega runtime, destroying ongoing conversations, memory
+      state, and session continuity. With process isolation, the engine survives
+      corrupt model loads and runtime crashes, maintaining sovereign continuity.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: doom3-2004] idHeap — process isolation for native memory", "[id-soft: quake3-1999] Cvar System — config boundary validation"]
+
+  - id: proposal-20260701-002
+    title: "Arena Hygiene Law — MALLOC fragmentation prevention in multi-threaded Python"
+    l1_narrative: >
+      Python's pymalloc allocator assigns each thread its own arena (default 1MB).
+      In multi-threaded inference workloads (6 concurrent tasks), each thread's
+      arena persists even after the thread finishes, because a single surviving
+      Python object pins the entire arena. Without MALLOC_ARENA_MAX=2, this causes
+      silent heap fragmentation and eventual OOM on the Ryzen 5700U's 12Gi RAM.
+      A stress-test script was created to empirically validate the fix with RSS
+      monitoring.
+    l2_insights:
+      - "pymalloc arenas are per-thread, never freed until all objects in them are GC'd."
+      - "One surviving object pins 1MB of arena memory — a classic fragmentation vector."
+      - "MALLOC_ARENA_MAX=2 caps arena count, preventing unbounded fragmentation."
+      - "MALLOC_MMAP_THRESHOLD_=65536 forces small allocations to use mmap instead of brk(), reducing heap fragmentation."
+    l3_universal_principles:
+      - "Physical constraints (RAM ceiling) must be understood before optimization. The Ryzen 5700U has 12Gi total; ~2Gi is OS overhead. That's a firm ceiling for all inference."
+      - "Fragmentation is a silent killer. It doesn't crash immediately — it degrades over hours. Only empirical stress testing reveals it."
+      - "System-level env vars (MALLOC_ARENA_MAX) are performance knobs, not configuration. They belong in the service file, not the code."
+    sovereignty_impact: >
+      Without arena cap, a long-running session (hours of chat) would silently
+      accumulate heap fragmentation until the OOM killer terminates the engine.
+      With env var injection, the engine runs indefinitely with stable memory
+      footprint, enabling continuous sovereign operation.
+    confidence: 8/10
+    heritage_tags: ["[id-soft: doom3-2004] idHeap — unified memory allocator", "[id-soft: quake-1996] Zone Memory — tag-based allocation"]
+
+  - id: proposal-20260701-003
+    title: "Queue Discipline — synchronous operations in async contexts"
+    l1_narrative: >
+      During the C-FFI fix, two instances of synchronous Queue operations were
+      identified in async methods: Queue.put() blocks on serialization, and
+      Queue.get() blocks on I/O. Both were initially used without anyio wrappers,
+      which would stall the event loop under contention. Additionally,
+      anyio.to_process.run_sync was used for a queue get, which spawns a wasteful
+      subprocess just to block on an I/O operation. Fixed by wrapping both in
+      anyio.to_thread.run_sync.
+    l2_insights:
+      - "multiprocessing.Queue.put() blocks during serialization — always use anyio.to_thread.run_sync."
+      - "multiprocessing.Queue.get() blocks on I/O — always use anyio.to_thread.run_sync."
+      - "anyio.to_process.run_sync spawns a subprocess. Use only for actual compute, never for I/O waits."
+    l3_universal_principles:
+      - "Any blocking call in an async context requires explicit thread-offload. Assume every stdlib/sync operation blocks unless proven otherwise."
+      - "The right tool for queue waits is anyio.to_thread.run_sync, not anyio.to_process.run_sync. Process pools are for compute isolation, not I/O waits."
+    sovereignty_impact: >
+      Blocking the event loop would cause request timeouts, heartbeat failures,
+      and cascading context losses across the engine. Correct queue discipline
+      ensures the engine remains responsive under load, preserving session
+      continuity.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: quake3-1999] netchan — out-of-band message handling"]

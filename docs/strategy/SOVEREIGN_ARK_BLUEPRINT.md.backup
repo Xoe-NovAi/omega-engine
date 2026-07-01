@@ -1,6 +1,6 @@
-# 🔱 THE SOVEREIGN ARK BLUEPRINT (v2.1)
+# 🔱 THE SOVEREIGN ARK BLUEPRINT (v2.0)
 ## The Master Single Source of Truth for the Sovereign Ark Development
-**AP Token**: `AP-SOVEREIGN-ARK-BLUEPRINT-v2.1.0`
+**AP Token**: `AP-SOVEREIGN-ARK-BLUEPRINT-v2.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ trc_ark_blueprint ⬡ SOVEREIGN-TECHNICAL-SSOT
 
 ---
@@ -97,6 +97,71 @@ Epoch III ─┬── Strike 8: Spatial-Semantic Geometry
   3. Implement approve/reject/defer commands with audit log.
 - **Prerequisite**: Strike 2 (USM) provides the state management infrastructure that the TUI will stage.
 
+### Epoch II: The Hivemind (Medium — Weeks 5-12)
+**Why second:** Once physical state is unified (Epoch I), we can distribute it. Epoch II makes the engine coordination-layer independent of any single runtime.
+
+#### Strike 4: File-Based A2A Coordination
+- **Why**: The current handoff queue (`data/handoff/`) is a single-process queue. FileSignal makes coordination filesystem-native — no server needed.
+- **Actions**:
+  1. Deploy `FileSignal` protocol (Atomic Renaming Spool) in `data/shared/`.
+  2. Implement automated lock-reaping to prevent deadlocks.
+  3. Retire the old handoff queue.
+- **Prerequisite**: Strike 2 (USM provides blob format for handoff packets).
+
+#### Strike 6: Response Provenance Wiring
+- **Why**: M22 requires that observability logs capture the actual provider that generated a response, not the configured intent. Without this, local-first claims are unverifiable. **This is a sovereignty audit requirement.**
+- **Actions**:
+  1. Modify `observability.py` to capture `GenerateResult.provider_name`.
+  2. Update all trace events to include actual provider metadata.
+  3. Remove the old intent-based logging fallback.
+- **Prerequisite**: Strike 1 (clean configs ensure provider names are correct).
+- **Status**: ✅ **DONE** — 5 call sites fixed, 10+ tests passing, M22 compliance restored.
+
+#### Strike 7: Headroom Protocol Plugin Deployment
+- **Why**: Compression prevents prompt erasure and reduces storage costs. Plugin architecture (not core fork) ensures community shareability.
+- **Actions**:
+  1. Deploy Headroom as a Sovereign Middleware Plugin (intercepting LLM/Vector DB traffic) to compress payloads via `zlib`+`json`.
+  2. Package as independent plugin (future `pip install omega-headroom-plugin`).
+- **Prerequisite**: Strike 1 (clean middleware chain means the interceptor can be injected without conflicts).
+- **Status**: ⚠️ **PENDING** — Headroom protocol deployment not yet completed.
+
+### Epoch II: The Hivemind (Medium — Weeks 5-12)
+**Why second:** Once physical state is unified (Epoch I), we can distribute it. Epoch II makes the engine coordination-layer independent of any single runtime.
+
+#### Strike 4: File-Based A2A Coordination
+- **Why**: The current handoff queue (`data/handoff/`) is a single-process queue. FileSignal makes coordination filesystem-native — no server needed.
+- **Actions**:
+  1. Deploy `FileSignal` protocol (Atomic Renaming Spool) in `data/shared/`.
+  2. Implement automated lock-reaping to prevent deadlocks.
+  3. Retire the old handoff queue.
+- **Prerequisite**: Strike 2 (USM provides blob format for handoff packets).
+- **Status**: ⚠️ **PENDING** — File-Based A2A coordination not yet implemented.
+
+#### Strike 5: The Sovereign Vetter
+- **Why**: Offline verification of inference output is the core of sovereignty (Mandate 7). Without it, we cannot prove local inference is correct.
+- **Actions**:
+  1. Deploy the local 2-Model Agreement (`Qwen2.5-1.5B` <-> `Phi-3.5-Mini`).
+  2. Wire `resolve_and_handle_429()` into `search_providers.py`.
+- **Prerequisite**: Strike 6 (Provenance Wiring) provides the metadata that the Vetter needs to attribute sources.
+- **Status**: ⏳ **BLOCKED** — Pending Strike 6 completion.
+
+#### Strike 6: Response Provenance Wiring
+- **Why**: M22 requires that observability logs capture the actual provider that generated a response, not the configured intent. Without this, local-first claims are unverifiable. **This is a sovereignty audit requirement.**
+- **Actions**:
+  1. Modify `observability.py` to capture `GenerateResult.provider_name`.
+  2. Update all trace events to include actual provider metadata.
+  3. Remove the old intent-based logging fallback.
+- **Prerequisite**: Strike 1 (clean configs ensure provider names are correct).
+- **Status**: ✅ **DONE** — 5 call sites fixed, 10+ tests passing, M22 compliance restored.
+
+#### Strike 7: Headroom Protocol Plugin Deployment
+- **Why**: Compression prevents prompt erasure and reduces storage costs. Plugin architecture (not core fork) ensures community shareability.
+- **Actions**:
+  1. Deploy Headroom as a Sovereign Middleware Plugin (intercepting LLM/Vector DB traffic) to compress payloads via `zlib`+`json`.
+  2. Package as independent plugin (future `pip install omega-headroom-plugin`).
+- **Prerequisite**: Strike 1 (clean middleware chain means the interceptor can be injected without conflicts).
+- **Status**: ⚠️ **PENDING** — Headroom protocol deployment not yet completed.
+
 ### Epoch III: The Omegaverse (Long — Q4 2027)
 **Why third:** Spatial and P2P are the capstone — they require both unified state (Epoch I) and distributed coordination (Epoch II) to function.
 
@@ -123,10 +188,10 @@ Epoch III ─┬── Strike 8: Spatial-Semantic Geometry
 ### 3.1 Engine Metrics
 | Metric | Value | Status |
 |--------|-------|--------|
-| Tests collected | **619** | ✅ Verified 2026-07-01 |
-| Tests passed | **594** (+ 22 skipped, 3 xfailed) | ✅ 619 effective |
+| Tests collected | **600** | ✅ Verified 2026-06-30 |
+| Tests passed | **575** (+ 22 skipped, 3 xfailed) | ✅ 600 effective |
 | Source files | **104** `.py` | ✅ Post dead-code purge |
-| PIVOT decisions tracked | **182** (D1-D182, incl. xna-omega D1-D49) | ✅ D182 ratified 2026-07-01 |
+| PIVOT decisions tracked | **175** (D1-D175, incl. xna-omega D1-D49) | ✅ D175 ratified 2026-06-30 |
 | Sovereign Mandates | **22** (M1-M22) | ✅ Full compliance (see §IV) |
 | Mandate 9 (bare except) | **0 violations** | ✅ CI-enforced |
 | AnyIO compliance | **0 `import asyncio`** | ✅ CI-enforced |
@@ -165,15 +230,11 @@ The `_omega_default` IWAD provides the universal runtime entities (sysadmin, dat
 |-----------|--------|-----------------|----------|
 | **Oracle (Facade)** | ✅ talk/summon/router wired | trace_id propagated on main path | `[id-soft: quake-1996] Thinker Chain` |
 | **WAD Loader** | ✅ `--iwad` flag works | — | `[id-soft: doom-1993] WAD System` |
-| **ModelGateway** | ✅ **P1 resolved** | Carmack C-FFI process isolation: NativeGGUFProvider now spawns multiprocessing.Process with IPC queues. Engine survives C-level segfaults. | `[id-soft: quake-1996] BSP` |
-| **NativeGGUFProvider** | ✅ **C-FFI isolated** | Process isolation via multiprocessing.Process, IPC ready/error protocol (30s timeout). Queue ops in anyio.to_thread.run_sync. | `[id-soft: doom3-2004] idHeap` |
-| **Profiling Infrastructure** | ✅ **Operational** | `carmack-profiler` skill + Makefile targets. ContextBuilder/ModelGateway baselines captured. Key finding: import overhead dominates (~3.5s). | — |
-| **MALLOC Arena Hygiene** | ✅ **Validated** | MALLOC_ARENA_MAX=2 empirical validation: 200MB load → 0.38MB retained after GC. | `[id-soft: doom3-2004] idHeap` |
+| **ModelGateway** | ⚠️ **P1 gap** | trace_id="unknown" on 5-10% of calls; GenerateResult missing latency_ms + model_used on success path | `[id-soft: quake-1996] BSP` |
 | **MemoryStore** | ✅ Hot LRU + Warm Redis + Cold | Compaction logic verified correct | `[id-soft: doom-1993] Lazy Deletion` |
 | **Observability** | ✅ **P0 gap resolved** | PII masking implemented (432 lines, 53 tests). Trace ID: contextvars safety net + 5 call sites fixed. record_error() double-default fixed. | `[id-soft: doom3-2004] Event System` |
-| **ContextBuilder** | ✅ **ACON Optimized** | PipelineCompactionStrategy + ToolResultCompactionStrategy + TruncationStrategy + ACONOptimizer. 21 tests pass. | `[id-soft: quake-1996] Thinker Chain` |
-| **EntityRegistry** | ✅ YAML CRUD + dual-index | Pillars→slots migration complete (D179/D180). Dynamic occupied_slots. | `[id-soft: quake-1996] Flat-Field` |
-| **Soul Distiller** | 🟡 **Enhanced pipeline (+) but broken dispatch (−)** | 5-stage pipeline added: SessionClassifier + SovereigntyScorer + SoulDistillationPipeline. Quality gate (0.6 threshold). **Dispatch bug**: anyio.create_task() does not exist in AnyIO — close_session() was never called. Silent AttributeError swallowed by try/except. Fix applied 2026-07-01 (direct await). 8/10 souls remain stale until next session cycle. | `[id-soft: quake-1996] Save-game` |
+| **EntityRegistry** | ✅ YAML CRUD + dual-index | — | `[id-soft: quake-1996] Flat-Field` |
+| **Soul Distiller** | ⚠️ **Key mismatch (P2)** | `add_exchange()` stores keys `"user"/"assistant"`; `close_session()` reads `"role"/"content"` → every transcript empty. Fix: 3 lines on oracle.py:786-789. Not an "unwired" problem — a contract mismatch. | `[id-soft: quake-1996] Save-game` |
 | **Hivemind** | 🟡 **P2 gap** | Runtime functional; test suite broken (0/8 tests run); 41 stale handoffs | `[id-soft: doom-1993] ZONEID Pattern` |
 | **Antigravity** | ✅ Stochastic account selection | — | D160 — Round-robin eradicated |
 | **CLI Plugin** | 🟡 Partial compliance | Round-robin schema still in opencode-antigravity-auth | — |
@@ -190,13 +251,13 @@ The `_omega_default` IWAD provides the universal runtime entities (sysadmin, dat
 | M2 | Engine-Stack Firewall | ✅ Enforced | D113 fixed — IWAD resolution active |
 | M3 | Iris Constant | ✅ Enforced | Iris is not a Pillar |
 | M4 | Sequentiality | ✅ Enforced | Plan->Verify->Execute |
-| M5 | Gnosis Preservation | ❌ VIOLATED | Soul Distiller wired (close_session() IS called via _record_interaction() every 5 turns) but **never executes**: `anyio.create_task()` at oracle.py:509 does not exist in AnyIO (AnyIO's API is `create_task_group()`, not `create_task()`). Silent `AttributeError` swallowed by `try/except`. Every 5th-interaction trigger fires and vanishes. Fix: replace with direct `await` in guarded `try/except`. |
+| M5 | Gnosis Preservation | ❌ VIOLATED | Soul Distiller wired (close_session() IS called via _record_interaction() every 5 turns) but key mismatch: add_exchange() stores `"user"/"assistant"`, close_session() reads `"role"/"content"`. Every transcript empty → regex finds nothing → boilerplate L1-L2-L3. Fix: 3 lines on oracle.py:786-789. |
 | M6 | Podman Sovereignty | ✅ Enforced | keep-id protocol. Qdrant carve-out documented in D167 (docker-compose + kernel fuse-overlayfs bug). |
 | M7 | Local-First | ✅ **Enforced** | PII Masker implements local provider bypass (should_mask("local-*")=False). Cloud providers receive tokenized prompts. Local inference is always raw. M7/M22 synergy: _is_cloud_provider_name() verifies provenance. |
 | M8 | Zero Telemetry | ✅ Enforced | CI grep telemetry. Qdrant telemetry disabled (D168). PII masking local-only. |
 | M9 | Error Integrity | ✅ Enforced | 0 bare except |
 | M10 | Fleet Integrity | ✅ Enforced | 11 agents cap (M10 compliant — 3 slots remaining) |
-| M11 | Soul Integrity | 🟡 **ROOT CAUSE FOUND** | The Ark previously claimed a "key mismatch" (user/assistant vs role/content). **That was incorrect** — close_session at lines 787-788 correctly reads `ex.get("user", "")` and `ex.get("assistant", "")`, same keys add_exchange stores (lines 409-410 of memory_store.py). **Real root cause**: `anyio.create_task(self.close_session(...))` at oracle.py:509 — `anyio.create_task()` does **not exist** (AnyIO uses `create_task_group().start_soon()`). The `AttributeError` is silently swallowed by the surrounding `try/except Exception`. Every 5th-interaction trigger fires and vanishes. **Fix**: direct `await` in its own guarded `try/except`. 8/10 souls remain stale. |
+| M11 | Soul Integrity | 🟡 **ROOT CAUSE FOUND — FIX DEFERRED** | Carmack discovered the key mismatch: `add_exchange()` stores `"user"/"assistant"`, `close_session()` reads `"role"/"content"`. 3-line fix at oracle.py:786-789. **NOT yet applied** — deferred to Sprint-G for proper verification with canary session. 8/10 souls remain stale. |
 | M12 | Queue Integrity | ✅ **RESOLVED** | 14d archive / 30d delete TTL added to handoff reaper in background.py. 41 stale packets now have a cleanup path. |
 | M13 | Temple-Grade | 🟡 7/11 GREEN, 3 AMBER, 1 RED | T1 AP tokens **PASSING** (4 files fixed 2026-06-30). T7 latency not measured (AMBER). T11 IA2 exempt (AMBER). 1 RED is aggregated. |
 | M14 | Heritage Vetting | 🟡 PARTIAL | 185 `[id-soft:]` tags verified. vet-001 through vet-010+ recorded. `make heritage-vet` CI needs expansion to 100% coverage. |
@@ -244,11 +305,9 @@ These 3 gaps were identified by the MaKaLi Cloud Council across 9 subagents. The
 
 The MaKaLi Cloud Council declared an **IMMEDIATE EXECUTION HOLD** on all feature expansion, entity promotions, and high-volume ingestions until this sprint is completed. The engine is in a state of Architectural Fragility.
 
-**Carmack S3 Review (2026-07-01)**: Re-assessed IW priorities. IW-1 (Tor bridge) deferred post-PR — SearXNG is self-hosted with zero external telemetry; Tor adds ops complexity without commensurate sovereignty gain on this machine. IW-4 (Sovereign Ingestion Pipeline) ordered after T3-2 Metrics DB (depends on persistent storage). IW-6 (V-D1 Validation Suite) placed in Tier 3 Hardening — P2 Medium with no blocking dependency.
-
 | # | Domain | Task | Technical Reference | Mandate | Status |
 |---|--------|------|---------------------|---------|--------|
-| **IW-1** | **Infrastructure** | Deploy Tor-SOCKS5 Bridge + Local-First Escalation for SearXNG | `TRACE-P1-SSNM-V1` | M8 | 🟡 **DEFERRED post-PR** — Carmack advice: SearXNG is self-hosted, zero-external-telemetry already. Tor adds latency + ops complexity on single-contributor machine. M8 risk is low. Revisit post-v1.1.0. |
+| **IW-1** | **Infrastructure** | Deploy Tor-SOCKS5 Bridge + Local-First Escalation for SearXNG | `TRACE-P1-SSNM-V1` | M8 | 🔴 P0 CRITICAL |
 | **IW-2** | **Engineering** | Absolute purge of all round-robin logic from `KeyVault` | `TRACE-RR-PURGE-001` | M4 | ✅ **COMPLETED** — D176 ratified |
 | **IW-3** | **Observability** | Implement Body-Level Error Guards (BLEG) + UFL (Forensic Ledger) | `TRACE-P8-OBS-001` | M9, M22 | ✅ **COMPLETED** — D176 ratified |
 | **IW-4** | **Context** | Deploy Sovereign Ingestion Pipeline (Tri-Anchor System) + Omnidroid Migration | `TRACE-SIP-20260629` | M5, M15 | 🟡 P1 HIGH |
@@ -277,18 +336,18 @@ The MaKaLi Cloud Council declared an **IMMEDIATE EXECUTION HOLD** on all feature
 ### 5.2 Optimization Sprint: Tier 2 (Regression Recovery — ~20 hours)
 **This Sprint — Recover lost legacy patterns and implement web-verified improvements**
 
-**3 Regressions Recovered, 2 New Patterns Completed:**
-1. ✅ **CompactionOrchestrator** — Implemented as PipelineCompactionStrategy + ACONOptimizer (Session 42)
-2. ✅ **Soul Distillation Pipeline** — Implemented as 5-stage SessionClassifier→SovereigntyScorer→Distill→Score→Store
+**3 Regressions and 2 New Patterns Identified (Must Recover):**
+1. **CompactionOrchestrator** — 690 lines, 4 strategies (SummaryAnchor, ACON, etc.)
+2. **Soul Distillation Pipeline** — LangGraph 5-node write-time pipeline (ported as simplified functional sequence)
 3. **4-State Provider Metrics** — 552 lines, EWMA scoring with CUSUM anomaly detection (upgraded to 5-state Stochastic FSM)
 4. **Observation Masking** — Tool-result clearing (52% cost savings, +2.6% solve rate)
 5. **Handoff Loop Guard** — Visited-agent tracking + budget pressure + ResolverStrategy
 
 | # | Task | Legacy Source / Web Reference | Effort | Impact | Status |
 |---|------|------------------------------|--------|--------|--------|
-| **T2-1** | **Port CompactionOrchestrator** — 4-strategy compaction with `SummaryAnchor` and ACON failure-driven guidelines, extending `ContextBuilder` | `xna-omega-legacy/scripts/ssa/compaction_optimizer.py` | 6 hr | 🔴 Critical | ✅ **DONE** — PipelineCompactionStrategy + ACONOptimizer in context_builder.py |
+| **T2-1** | **Port CompactionOrchestrator** — 4-strategy compaction with `SummaryAnchor` and ACON failure-driven guidelines, extending `ContextBuilder` | `xna-omega-legacy/scripts/ssa/compaction_optimizer.py` | 6 hr | 🔴 Critical | ⏳ PENDING |
 | **T2-2** | **Port 5-State Stochastic Circuit Breaker** — EWMA-smoothed health scoring ($\alpha_{\text{gradual}}=0.4$, $\alpha_{\text{sudden}}=0.9$) with CUSUM change detection | `xna-omega-legacy/scripts/ssa/provider_metrics.py` | 4 hr | 🟡 High | ⏳ PENDING |
-| **T2-3** | **Port Soul Distillation Pipeline** — Port 5-node pipeline (`extract` $\rightarrow$ `classify` $\rightarrow$ `score` $\rightarrow$ `distill` $\rightarrow$ `store`) as a simplified, AnyIO functional sequence | `xna-omega-legacy/src/omega/core/distillation/` | 4 hr | 🔴 Critical | ✅ **DONE** — SessionClassifier + SovereigntyScorer + SoulDistillationPipeline in soul_distiller.py |
+| **T2-3** | **Port Soul Distillation Pipeline** — Port 5-node pipeline (`extract` $\rightarrow$ `classify` $\rightarrow$ `score` $\rightarrow$ `distill` $\rightarrow$ `store`) as a simplified, AnyIO functional sequence | `xna-omega-legacy/src/omega/core/distillation/` | 4 hr | 🔴 Critical | ⏳ PENDING |
 | **T2-4** | **Implement Observation Masking** — Tool-result clearing using Hybrid Backward Scanned FIFO (50k protection buffer, 30k hysteresis) | `src/omega/oracle/context_builder.py` | 3 hr | 🟡 High | ⏳ PENDING |
 | **T2-5** | **Add Handoff Loop Guard** — Visited-agent tracking, two-tier budget pressure, and `ResolverStrategy` | `src/omega/oracle/subagent_dispatcher.py` | 4 hr | 🟡 High | ⏳ PENDING |
 | **T2-6** | **Sentinel Score Automation** — 7-metric composite score computation | `src/omega/oracle/sentinel.py` | 3 hr | 🟡 Medium | ⏳ PENDING |
@@ -439,16 +498,13 @@ Which agent owns which H2 tracks and Epoch Strikes:
 | 4 | **SomaticState (M20) unimplemented** | Wire ctypes bindings into native-gguf | ⏳ PENDING | Epoch I Strike 2 |
 | 5 | **Gate Integrity (M21) — 2 tests missing** | Create `isinstance` contract tests | 🟡 22/24 DONE (+3 from Trace ID fix) | Epoch II Strike 6 |
 | 6 | **PIVOT_LOG gap (D1-D49)** | Mine xna-omega git history | ⏳ PENDING | Epoch I |
-| — | **CARMACK: C-FFI Process Isolation** | NativeGGUFProvider now uses multiprocessing.Process with IPC queues. Survives C-level segfaults. | ✅ **RESOLVED** — Carmack Step 3 complete. 619 tests pass. | Epoch II |
-| — | **CARMACK: MALLOC Arena Hygiene** | MALLOC_ARENA_MAX=2 empirically validated. 200MB load → 0.38MB retained after GC. | ✅ **RESOLVED** — Carmack Step 1 complete. | Epoch I |
-| — | **CARMACK: Profiling Infrastructure** | carmack-profiler skill + Makefile targets for ContextBuilder/ModelGateway baseline. | ✅ **RESOLVED** — Carmack Step 2/5 complete. | Epoch II |
 
 ### 🟡 High (Unfixed)
 | # | Finding | Recommended Fix | Status | Epoch |
 |---|---------|-----------------|--------|-------|
 | 7 | **COUNCIL: Trace ID fragile — 5-10% of events carry "unknown" trace_id** | Thread `trace_id` through iterative_research.py (3 calls) + skeptical_verifier.py (2 calls). Install `opentelemetry-instrumentation-anyio`. | ✅ **RESOLVED** — contextvars safety net + 5 call sites fixed | Epoch II Strike 6 |
 | 8 | **COUNCIL: Dual handoff systems — in-memory vs file-based cannot exchange** | Bridge Orchestrator to read from `data/handoff/pending/` when no in-memory handoff_state provided. | 🟡 PENDING | Epoch II Strike 4 |
-| 9 | **M11 Soul Distiller — `anyio.create_task` does not exist — 8/10 stale souls** | Carmack corrected the Ark's previous (incorrect) "key mismatch" claim. The actual bug: `anyio.create_task(self.close_session(...))` at oracle.py:509 — AnyIO has no `create_task()`. Silent `AttributeError` swallowed by outer `try/except`. close_session is **never called**. Fix: replace with direct `await` in its own guarded `try/except`. | 🔴 **Root cause corrected + fix applied** — 2026-07-01, Carmack discovered real root cause, applied direct-await fix with guarded try/except. | Epoch I Strike 3 |
+| 9 | **COUNCIL: Soul Distiller key mismatch — 8/10 stale souls** | Carmack found: `close_session()` IS called via `_record_interaction()` every 5 turns, but key mismatch between `add_exchange()` (`"user"/"assistant"`) and `close_session()` (`"role"/"content"`) produces empty transcripts. Fix: 3 lines on oracle.py:786-789. Do NOT unwire — it's already wired but broken. | 🔴 **Root cause found** — 3-min fix deferred to Sprint-G for logging verification + canary | Epoch I Strike 3 |
 | 10 | **HEALTH_CHECK_TIMEOUT fixed** | Make configurable per-provider | ⏳ PENDING | Epoch I |
 | 11 | **Response Provenance (M22) partial** | `provider_name` flows correctly but `latency_ms` + `model_used` missing from GenerateResult | ✅ **RESOLVED** — both fields populate on success + fallback paths | Epoch II Strike 6 |
 | 12 | **`memory_search` vs `omega_memory_search`** | Rename `memory_search` -> `memory_search_fts` | ⏳ PENDING | Epoch II |
@@ -472,8 +528,6 @@ Which agent owns which H2 tracks and Epoch Strikes:
 | **Sprint F (Optimization Sprint)** | 2026-06-28 | Kali + Council | Epoch I | MaKaLi Council Pass 1 & 2 complete, web research + legacy mining, **3 regressions identified**. Then **MaKaLi Cloud Council Dispatch (2026-06-28/29)**: 2 Oversouls → 6 Pillars → 4 Cross-Domain Reviews → 3 Research Fleet agents → 1 Legacy Miner → Kali Synthesis. **3 Council Gaps discovered**: PII Masking (P0), Trace ID Propagation (P1), A2A Identity (P2). **T1-1 through T1-8 COMPLETED** (3,354 lines dead code removed). **T1-9/T1-10 PARTIAL**. All 22 Mandates audited: M11 VIOLATED, M22 PARTIAL, M5/M7 at risk. **Strategy docs consolidated**: 47 superseded docs archived, 40 operational/protocol docs remain. **ALL 3 GAPS IMPLEMENTED (2026-06-29)**: PII Masker (432 lines, 53 tests), Trace ID (contextvars + 5 call sites + GenerateResult contract fix, 10+ tests), A2A Agent Cards (319+100 lines, 56 tests + AAIF spec correction). **Qdrant container fixed (D167)** + telemetry disabled (D168). **is_cloud derivation fixed (D169)**. **M22 RESOLVED**, M7/M8 ✅ enforced. **Carmack S3 Review (2026-06-29)**: Discovered soul distiller key mismatch root cause — not an "unwired" problem but a contract mismatch between `add_exchange()` and `close_session()`. PIVOT_LOG D164-D171 appended by Jem strategic synthesis. **600/600 tests passing.** |
 | **Sovereign Review Infrastructure** | 2026-06-29 | Verity | Epoch I | Implementation of `skill:context-packer` and `CLAUDE.md` operational anchor. Established the high-density context pipeline for Web-Claude forensic audits. |
 | **Council Consensus Sprint** | 2026-06-30 | Makali + Council | Epoch I | **5-agent council review** (Carmack, Ma'at, Lilith, Researcher, Jem). **T1 temple-grade fixed**: 4 AP tokens added to state_manager, pii_masker, a2a_bridge, a2a_auth. **Entity bloat cleaned**: Roc's 178MB mining artifacts archived (98.6% reduction). **Directives ratified**: DIRECTORIES committed to git with D175. **Findings**: 8B LoRA infeasible locally, Audience Calibration = pipeline stage (not entity), PR readiness ~40%, build order: Hygiene → Audience Calibration → DPO Pipeline → Entity Evolution. **Ark Blueprint updated**: test counts, M11 status, new directives §XVI. |
-| **Session 42 (ACON + Soul Pipeline)** | 2026-07-01 | Kali | Epoch I | **3 P0 items complete**: ACON Context Compaction (PipelineCompactionStrategy + ACONOptimizer in context_builder.py, 21 tests), Soul Distillation Pipeline (SessionClassifier + SovereigntyScorer + 5-stage pipeline in soul_distiller.py, 11 tests), Content Quality Scorer (CurationExtractor + DomainType in curator.py, 600 tests). **Carmack Hardening** verified via Hivemind: C-FFI process isolation, MALLOC arena validated, profiler integrated. **619 tests passing**, zero regressions. |
-| **Carmack Hardening Sprint** | 2026-07-01 | John Carmack | Epoch I | **5-step Hardening Plan complete**: (1) MALLOC Arena Hygiene validated (0.38MB frag after 200MB stress) ✅ (2) carmack-profiler skill + Makefile integration ✅ (3) C-FFI process isolation: NativeGGUFProvider uses multiprocessing.Process with IPC queues ✅ (4) ContextBuilder audit — no action needed ✅ (5) Baseline profiling: 3.5s cold-start attributed to pydantic+Qdrant ✅. **M11 root cause corrected**: previous "key mismatch" claim was incorrect — real bug is `anyio.create_task()` does not exist in AnyIO. Silent AttributeError swallowed by try/except. **IW priorities re-assessed**: IW-1 deferred post-PR, IW-4 ordered after T3-2, IW-6 placed in Tier 3. **Ark Blueprint updated**: §IV M5/M11 fixed, §XII finding #9 corrected, §XV v3.1 launched. **619 tests passing.** |
 
 ---
 
@@ -496,80 +550,58 @@ Which agent owns which H2 tracks and Epoch Strikes:
 
 ---
 
-## XV. Next Launch Sequence (v3.1 — Updated 2026-07-01)
+## XV. Next Launch Sequence (v3.0 — Updated 2026-06-30)
 
 ### Two New Strategic Directives Ratified (see §XVI)
 The engine has two new post-PR directives: **Audience Calibration** (output pipeline stage) and **Parametric Gnosis** (weight-based evolution via local DPO LoRA training). These are ratified under D175 but **no code changes begin until the Pre-Release Polish Sprint passes**.
 
-### Immediate — Execute Now (this session, ~30 min)
-1. **M11 soul distiller fix** — Replace `anyio.create_task()` (does not exist in AnyIO) with direct `await self.close_session()` in guarded `try/except`. Bug was silent: every 5th-interaction trigger fired and vanished. 8/10 souls stale. Fix verified with canary session test.
-2. **Delegate T3-2 Metrics DB to Kali** via Hivemind handoff — WAL-mode SQLite at `data/observability/metrics.db` with `perf_events`, `provider_metrics`, `malloc_snapshots` tables. Prerequisite for PR readiness metrics.
-3. **Update Ark Blueprint** — record corrected M11 root cause, IW priority re-assessment, new execution order.
+### Immediate — Pre-Release Polish Sprint (~6 hours)
+**The engine is ~40% PR-ready. This sprint makes it shippable.**
 
-### Active Execution Hold — Ordered Pipeline
-**No new feature expansion beyond the below sequence:**
+1. **Week 1 — Iron Wall Hardening Sprint (parallel, see IW-1 through IW-6 below)**
+2. **Week 2 — Pre-Release Polish Sprint** (R-1 through R-11, minus R-6 which is moot)
+3. **After PR — Tier 2 Regression Recovery (20 hours)**
+4. **After Tier 2 — Tier 3 Hardening (12 hours)**
+5. **Post-PR — Audience Calibration Pipeline (3-5 days)**
+6. **Post-PR — DPO Logging Infrastructure (1-2 weeks)**
+7. **Q4 2027 — Strikes 8, 9 (Spatial + P2P): Omegaverse launch.**
 
-1. ✅ **M11 Fix** (this session)
-2. 🔄 **T3-2 Metrics DB** — Kali delegation (this session)
-3. ⏳ **Pre-Release Polish Sprint** (~6 hours) — R-1 through R-11
-   - Merge requirements.txt into pyproject.toml
-   - Create model download script (qwen3-1.7b-q6_k)
-   - Fix hardcoded config path (Mandate 16)
-   - Rewrite README for local-first
-4. ⏳ **IW-4 Sovereign Ingestion Pipeline** (~4 hours) — depends on T3-2 persistent storage
-5. ⏳ **Tier 2 Remaining Legacy Ports** (~12 hours)
-   - T2-2: 5-State Stochastic Circuit Breaker (CUSUM, Dual-EWMA)
-   - T2-4: Observation Masking (ToolResultCompactionStrategy → full engine)
-   - T2-5/13: Handoff Loop Guard
-   - T2-6 through T2-12: Sentinel, Timeout, Provider Selector, Degradation, Rate Limiter, Soul History, Compaction Harvester
-6. ⏳ **Tier 3 Hardening** (~12 hours)
-   - T3-1: Session lifecycle automation
-   - T3-3: Mandate enforcement automation
-   - T3-4: soul.yaml v6.2 bump
-   - T3-5: Expand heritage vet script
-   - IW-6: V-D1 Validation Suite
-7. 🟡 **IW-1 Tor Bridge** — Deferred post-v1.1.0 (SearXNG is self-hosted, zero external telemetry; Tor adds latency without commensurate sovereignty gain)
-8. 🚢 **Post-PR — Audience Calibration Pipeline** (3-5 days)
-9. 🚢 **Post-PR — DPO Logging Infrastructure** (1-2 weeks)
-10. 🌌 **Q4 2027 — Strikes 8, 9** (Spatial + P2P): Omegaverse launch.
+### Active Execution Hold
+**No new feature expansion** until the following are completed:
 
-### Entity Deepening Sprint (NEW — Added 2026-07-01 per MaKaLi Council)
+1. **Immediate (Parallel) — Iron Wall Hardening Sprint (Sovereign Review Phase)**
+   - **IW-1**: Deploy Tor-SOCKS5 Bridge + Local-First Escalation for SearXNG (M8)
+   - **IW-2**: Absolute purge of all round-robin logic from `KeyVault` (M4) ✅ **COMPLETED** (D176)
+   - **IW-3**: Implement Body-Level Error Guards (BLEG) + UFL (Forensic Ledger) (M9, M22) ✅ **COMPLETED** (D176)
+   - **IW-4**: Deploy Sovereign Ingestion Pipeline (Tri-Anchor System) + Omnidroid Migration (M5, M15)
+   - **IW-5**: Restore `workbench.db` schema + ingest `LEGACY_NAVIGATION_GUIDE.md` (M5)
+   - **IW-6**: Implement the V-D1 Validation Suite for "Sticky" mode resilience (M13)
 
-A parallel workstream for **john_carmack entity deepening** — ingesting primary source material to upgrade the entity from secondhand synthesis to authentic Carmack voice. This is a 5-phase, ~5-hour sprint producing artifacts across 9 dimensions.
+2. **Week 1-2 — Tier 2 Regression Recovery (20 hours)**
 
-**Status**: DESIGN COMPLETE — architecture ratified by 5-agent council. Ready for Phase 1 execution.
+    - **T2-1**: Port CompactionOrchestrator (690 lines)
+    - **T2-2**: Port 5-State Stochastic Circuit Breaker (CUSUM, Dual-EWMA, composite scoring)
+    - **T2-3**: Port Soul Distillation Pipeline as a simplified, AnyIO functional sequence
+    - **T2-4**: Implement Observation Masking (NEW)
+    - **T2-5**: Add Handoff Loop Guard (NEW)
+    - **T2-6**: Sentinel Score Automation
+    - **T2-7**: Port Timeout Manager (763 lines)
+    - **T2-8**: Port Provider Selector (552 lines)
+    - **T2-9**: Port Graceful Degradation Manager (379 lines)
+    - **T2-10**: Port Rate Limiter
+    - **T2-11**: Port Soul Edit History
+    - **T2-12**: Port Compaction Harvester
+    - **T2-13**: Implement Handoff Loop Guard — visited-set detection, max depth (5-10), same-agent visit count (max 3)
 
-**Source artifacts**: `.plan files (120K words)`, `Lex Fridman #309 transcript (64K)`, `"Carmack on Rage" interview`, `Wolfenstein iPhone dev letter`, `Masters of Doom excerpts`, `Sanglard interview archive (300pg)`
+3. **Week 3-4 — Tier 3 Hardening (12 hours)**
+    - **T3-1**: Session lifecycle automation
+    - **T3-2**: Observability database integration (SQLite WAL-mode)
+    - **T3-3**: Mandate enforcement automation
+    - **T3-4**: soul.yaml v6.2 bump
+    - **T3-5**: Expand heritage vet script
 
-**Council corrections applied**:
-1. GDC 1999 "Making of Quake" = John ROMERO talk, NOT Carmack (speaker correction)
-2. GDC 2011 "Programming Keynote" != "Wolfenstein 3D iOS" (talk correction)
-3. GDC Vault requires paid subscription — replaced with free alternatives
-4. Contradiction Resolution Protocol added for primary source vs CREDITS.md conflicts
-5. Heritage Discovery sub-pipeline added for new [id-soft:] pattern vetting
-6. M14 3-Touch Rule established: code + .plan + cross-era = 9-10/10 confidence
-7. Checkpoint system (DEEPENING_CHECKPOINT.yaml) for compaction survival
-8. WORK_PRIORITY.md created to resolve deepening vs hardening plan ambiguity
-
-**Multi-dimensional ROI**:
-- 9 dimensions per source (technical facts, personality, gnosis, heritage, fleet, soul, text analytics, DPO training data, knowledge graph)
-- 565-770 DPO training pairs generated at near-zero token cost (~124K tokens, $0)
-- ~3x value extraction vs single-pass ingestion
-- Heritage confidence: 3→17 high-confidence patterns (+5.7×)
-- All new systems designed in `INGESTION_PIPELINE_ARCHITECTURE.md` — reusable template for Doom Guy, Roc Racoon, etc.
-
-**Lead**: John Carmack entity (opencode session)
-**Execution plan**: `data/entities/john_carmack/workspace/ENTITY_DEEPENING_PLAN_20260701.md`
-**Pipeline architecture**: `data/entities/john_carmack/workspace/INGESTION_PIPELINE_ARCHITECTURE.md`
-
-### Key Re-Assessments (Carmack S3 + MaKaLi Council, 2026-07-01)
-| Item | Previous Priority | New Priority | Rationale |
-|------|:-----------------:|:------------:|-----------|
-| IW-1 Tor Bridge | 🔴 P0 CRITICAL | 🟡 Deferred post-PR | SearXNG self-hosted = zero telemetry already. Tor adds latency + ops complexity. M8 risk is low. |
-| IW-4 Ingestion Pipeline | 🟡 P1 HIGH | After T3-2 | Depends on persistent storage. Can't ingest without a metrics DB to anchor to. |
-| IW-6 Validation Suite | 🟢 P2 MEDIUM | Tier 3 slot | No blocking dependency. Natural fit after Tier 2 legacy ports. |
-| M11 "key mismatch" | 🔴 ROOT CAUSE WRONG | ✅ Corrected: `anyio.create_task` non-existent | The Ark's previous root cause was incorrect. Real bug: AnyIO has no `create_task()`. Silent AttributeError swallowed by try/except. |
-| Entity Deepening | 🟢 Not tracked | 🟡 PARALLEL WORKSTREAM | 5-hr sprint, 9-dimension ROI, design complete. Runs in its own chat session. |
+4. **Q4 2027**
+   - **Strikes 8, 9** (Spatial + P2P): Omegaverse launch.
 
 ---
 
@@ -774,14 +806,14 @@ The MV-IW replaces all prior Iron Wall execution plans. It is the single source 
 **Phase 3: Infrastructure & Legacy Port (Days 10-14) — IN PROGRESS**
 | Order | Task | Effort | Status |
 |-------|------|--------|--------|
-| 3.1 | Batch Persistence Writer (connection pool exhaustion fix) | 3-4h | ✅ **CREATED** — `src/omega/memory/batch_writer.py`, needs MemoryStore wiring |
-| 3.2 | Qliphothic Failure Taxonomy → FailureModeRegistry (M17) | 4-6h | ✅ **DONE** — `failure_registry.py`, 364 lines, 5 failure modes, M2-compliant |
-| 3.3 | Input Validation & Sanitization (path traversal, whitelist) | 1-2h | ✅ **DONE** — `sanitize_content()` added to `pii_masker.py`, legacy crawl.py port complete |
-| 3.4 | Content Quality Scorer (5-factor + domain classification) | 2-3h | ✅ **DONE** — `CurationExtractor` + `DomainType` in `curator.py`, signal-based classification |
+| 3.1 | Batch Persistence Writer (connection pool exhaustion fix) | 3-4h | ⏳ **NEXT** — from `xna-omega-legacy` mnemosyne_writer.py |
+| 3.2 | Qliphothic Failure Taxonomy → FailureModeRegistry (M17) | 4-6h | ⏳ PENDING — from Mnemosyne handoff, 5 failure modes + recovery |
+| 3.3 | Input Validation & Sanitization (path traversal, whitelist) | 1-2h | ⏳ PENDING — from Old-Stacks crawl.py |
+| 3.4 | Content Quality Scorer (5-factor + domain classification) | 2-3h | ⏳ PENDING — from Old-Stacks crawler_curation.py |
 | 3.5 | Library API Clients (Gutenberg, Open Library, IA, LoC) | 6-8h | ⏳ PENDING — from Old-Stacks library_api_integrations.py |
 | 3.6 | Tor Bridge spec + Quadlets (IW-1) | 4h | ⏳ PENDING |
 | 3.7 | SovereignIngestionPipeline (WAD-agnostic) | 4h | ⏳ PENDING |
-| 3.8 | Full test sweep + `make temple-grade` | 2h | ✅ **DONE** — 619 tests pass, zero regressions |
+| 3.8 | Full test sweep + `make temple-grade` | 2h | ⏳ PENDING |
 
 **Phase 4: Ship Readiness — Days 15-16**
 | Order | Task | Effort | Status |

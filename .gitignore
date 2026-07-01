@@ -28,6 +28,10 @@ build/
 *.whl
 *.tar.gz
 
+# ── Profiling Artifacts (carmack-profiler) ──────────────────────────
+.carmack_profile.stats
+.carmack_profile.txt
+
 # ── Downloaded Models (large binaries, not source) ────────────────────
 models/
 

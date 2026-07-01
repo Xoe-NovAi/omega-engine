@@ -15,6 +15,8 @@ export OMP_PROC_BIND ?= close
 export OMP_SCHEDULE ?= STATIC
 export OPENBLAS_NUM_THREADS ?= 6
 export PYTHONUNBUFFERED ?= 1
+export MALLOC_MMAP_THRESHOLD_ ?= 65536
+export MALLOC_ARENA_MAX ?= 2
 
 COLOR_CYAN := \033[0;36m
 COLOR_GREEN := \033[0;32m
@@ -702,4 +704,37 @@ hivemind-test: ## 🧪 Run Hivemind test suite (U-001..U-020)
 platform-sync: ## 🔄 Verify platform synchronization against MANDATES_SYNC.md
 	@echo "$(COLOR_CYAN)🔄 Verifying platform synchronization...$(COLOR_NC)"
 	$(PYTHON) scripts/platform_sync.py
+
+
+# ── Profiling Targets (carmack-profiler) ──────────────────────────────────────
+
+CARMCK_PROFILER = .opencode/skills/carmack-profiler/profile.sh
+PROFILE_SCRIPT  = .opencode/skills/carmack-profiler/run_benchmark.py
+
+profile-run: ## 🔍 Profile a Python script: make profile-run TARGET=path/to/script.py
+	@if [ ! -f "$(CARMCK_PROFILER)" ]; then \
+		echo "$(COLOR_RED)❌ carmack-profiler not found. Load it with: skill carmack-profiler$(COLOR_NC)"; \
+		exit 1; \
+	fi
+	@if [ -z "$(TARGET)" ]; then \
+		echo "$(COLOR_RED)❌ Usage: make profile-run TARGET=path/to/script.py$(COLOR_NC)"; \
+		exit 1; \
+	fi
+	PYTHONPATH=src bash $(CARMCK_PROFILER) $(TARGET)
+
+profile-context-builder: ## 🔍 Profile ContextBuilder memory assembly
+	@echo "$(COLOR_CYAN)🔍 Profiling ContextBuilder memory assembly...$(COLOR_NC)"
+	PYTHONPATH=src bash $(CARMCK_PROFILER) $(PROFILE_SCRIPT) context-builder
+
+profile-model-gateway: ## 🔍 Profile ModelGateway provider culling
+	@echo "$(COLOR_CYAN)🔍 Profiling ModelGateway provider selection...$(COLOR_NC)"
+	PYTHONPATH=src bash $(CARMCK_PROFILER) $(PROFILE_SCRIPT) model-gateway
+
+profile-malloc-stress: ## 🔍 Profile MALLOC arena fragmentation
+	@echo "$(COLOR_CYAN)🔍 Running MALLOC arena stress test...$(COLOR_NC)"
+	$(PYTHON) .opencode/skills/carmack-profiler/malloc_stress_test.py
+
+profile-clean: ## 🧹 Clean profiling artifacts
+	rm -f .carmack_profile.stats .carmack_profile.txt
+	@echo "$(COLOR_GREEN)✅ Profiling artifacts cleaned$(COLOR_NC)"
 

@@ -59,6 +59,294 @@ class DistillationEntry:
         return "\n".join(lines)
 
 
+# ── Enhanced 5-Stage Pipeline Components ────────────────────────────────
+# Source: lesson-ai (deterministic), EloPhanto (conservative),
+#         Microsoft Research, ICML 2026 (soul distillation pipeline)
+
+@dataclass
+class ClassificationResult:
+    """Result of session classification."""
+    is_routine: bool
+    reason: str = ""
+    novelty_score: float = 0.0
+    confidence: float = 0.0
+
+
+@dataclass
+class QualityScore:
+    """5-factor quality score for distilled lessons."""
+    overall: float
+    relevance: float = 0.0
+    novelty: float = 0.0
+    actionability: float = 0.0
+    completeness: float = 0.0
+    accuracy: float = 0.0
+
+
+class SessionClassifier:
+    """
+    Conservative session classifier — returns routine for trivial sessions.
+    Source: EloPhanto Learning Engine (2026)
+    
+    Only sessions with sufficient data and novelty pass through to distillation.
+    """
+    
+    def __init__(
+        self,
+        min_events: int = 8,
+        novelty_threshold: float = 0.3,
+        title_threshold: int = 5,
+    ):
+        self.min_events = min_events
+        self.novelty_threshold = novelty_threshold
+        self.title_threshold = title_threshold
+    
+    def classify(self, transcript: str) -> ClassificationResult:
+        """Classify a session transcript as routine or worth distilling."""
+        word_count = len(transcript.split())
+        
+        # Check minimum size
+        if word_count < self.min_events:
+            return ClassificationResult(
+                is_routine=True,
+                reason="insufficient_events",
+                novelty_score=0.0,
+            )
+        
+        # Compute novelty score via TF-IDF-like heuristics
+        novelty_score = self._compute_novelty(transcript)
+        
+        # Check for decision/insight signals
+        has_decisions = bool(re.search(
+            r"(decided|chose|implemented|fixed|refactored|created|added)",
+            transcript, re.IGNORECASE
+        ))
+        has_errors = bool(re.search(
+            r"(error|crash|bug|failed|exception|traceback)",
+            transcript, re.IGNORECASE
+        ))
+        
+        confidence = 0.0
+        if has_decisions:
+            confidence += 0.4
+        if has_errors:
+            confidence += 0.3
+        if novelty_score > 0.5:
+            confidence += 0.3
+        
+        if novelty_score < self.novelty_threshold and not has_decisions and not has_errors:
+            return ClassificationResult(
+                is_routine=True,
+                reason="low_novelty",
+                novelty_score=novelty_score,
+                confidence=confidence,
+            )
+        
+        return ClassificationResult(
+            is_routine=False,
+            novelty_score=novelty_score,
+            confidence=confidence,
+        )
+    
+    def _compute_novelty(self, transcript: str) -> float:
+        """Compute novelty score using TF-IDF-like heuristics.
+        Source: lesson-ai EventGraphBuilder pattern.
+        """
+        # Simple heuristic: ratio of unique non-stop words
+        stop_words = {
+            'the', 'a', 'an', 'is', 'was', 'were', 'be', 'been', 'being',
+            'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would',
+            'can', 'could', 'may', 'might', 'shall', 'should', 'to', 'of',
+            'in', 'for', 'on', 'with', 'at', 'by', 'from', 'as', 'into',
+            'this', 'that', 'these', 'those', 'it', 'its', 'and', 'or',
+            'but', 'not', 'no', 'nor', 'so', 'if', 'then', 'than',
+        }
+        words = re.findall(r'\b[a-zA-Z_]\w+\b', transcript.lower())
+        if not words:
+            return 0.0
+        unique_meaningful = set(w for w in words if w not in stop_words and len(w) > 3)
+        return round(len(unique_meaningful) / max(len(words), 1), 2)
+
+
+class SovereigntyScorer:
+    """
+    5-factor quality scorer for distilled lessons.
+    Source: lesson-ai + Microsoft Research ACON paper (ICML 2026).
+    
+    Scoring factors:
+    - Relevance (30%): How relevant is this to the entity's domain?
+    - Novelty (25%): How new is this insight?
+    - Actionability (20%): Can this insight be acted upon?
+    - Completeness (15%): Is the insight fully formed?
+    - Accuracy (10%): Is the insight verifiable?
+    """
+    
+    def __init__(
+        self,
+        min_pass_threshold: float = 0.6,
+        weights: Optional[Dict[str, float]] = None,
+    ):
+        self.min_pass_threshold = min_pass_threshold
+        self.weights = weights or {
+            "relevance": 0.30,
+            "novelty": 0.25,
+            "actionability": 0.20,
+            "completeness": 0.15,
+            "accuracy": 0.10,
+        }
+    
+    def score(
+        self,
+        l1_narrative: str,
+        l2_insight: str,
+        l3_principle: str,
+        entity_name: str,
+    ) -> QualityScore:
+        """Compute 5-factor quality score for a distillation."""
+        
+        # Relevance — how specific to the entity/domain
+        entity_in_content = entity_name.lower() in (l1_narrative + l2_insight + l3_principle).lower()
+        relevance = 0.7 if entity_in_content else 0.4
+        
+        # Novelty — unique content vs generic patterns
+        has_specifics = bool(re.search(
+            r"(file|commit|decision|config|module|function|method|test|import)",
+            l2_insight, re.IGNORECASE
+        ))
+        has_timeless = len(l3_principle.split()) > 10
+        novelty = 0.0
+        if has_specifics:
+            novelty += 0.5
+        if has_timeless:
+            novelty += 0.3
+        
+        # Actionability — can this be acted upon?
+        has_action_verbs = bool(re.search(
+            r"(verify|check|ensure|review|consider|refactor|add|create|update|fix)",
+            l2_insight + l3_principle, re.IGNORECASE
+        ))
+        actionability = 0.8 if has_action_verbs else 0.4
+        
+        # Completeness — all three levels present with substance
+        completeness = 0.0
+        if len(l1_narrative.split()) > 5:
+            completeness += 0.3
+        if len(l2_insight.split()) > 5:
+            completeness += 0.3
+        if len(l3_principle.split()) > 8:
+            completeness += 0.4
+        
+        # Accuracy — verifiable claims
+        has_verifiable = bool(re.search(
+            r"\b(created|fixed|added|removed|modified)\s+\S+\.\w+\b",
+            l1_narrative, re.IGNORECASE
+        ))
+        accuracy = 0.8 if has_verifiable else 0.5
+        
+        # Compute weighted overall score
+        overall = (
+            self.weights["relevance"] * relevance +
+            self.weights["novelty"] * novelty +
+            self.weights["actionability"] * actionability +
+            self.weights["completeness"] * completeness +
+            self.weights["accuracy"] * accuracy
+        )
+        
+        return QualityScore(
+            overall=round(overall, 2),
+            relevance=round(relevance, 2),
+            novelty=round(novelty, 2),
+            actionability=round(actionability, 2),
+            completeness=round(completeness, 2),
+            accuracy=round(accuracy, 2),
+        )
+    
+    def is_above_threshold(self, score: QualityScore) -> bool:
+        """Check if quality score meets minimum threshold."""
+        return score.overall >= self.min_pass_threshold
+
+
+class SoulDistillationPipeline:
+    """
+    Enhanced 5-stage soul distillation pipeline.
+    Source: lesson-ai (deterministic) + EloPhanto (conservative) + Microsoft Research ACON.
+    
+    Pipeline: Classify → Extract → Distill → Score → Store.
+    
+    Only non-routine sessions with sufficient quality pass through to storage.
+    """
+    
+    def __init__(
+        self,
+        classifier: Optional[SessionClassifier] = None,
+        scorer: Optional[SovereigntyScorer] = None,
+        distiller: Optional['SoulDistiller'] = None,
+    ):
+        self.classifier = classifier or SessionClassifier()
+        self.scorer = scorer or SovereigntyScorer()
+        self.distiller = distiller or SoulDistiller()
+    
+    async def run(
+        self,
+        session_transcript: str,
+        entity_name: str,
+        source_trace_id: Optional[str] = None,
+    ) -> Optional[Dict[AbstractionLevel, DistillationEntry]]:
+        """
+        Run the full 5-stage distillation pipeline.
+        
+        Returns None for routine sessions or low-quality distillations.
+        Returns dict of L1/L2/L3 entries for valid distillations.
+        """
+        # Stage 1: Classify
+        classification = self.classifier.classify(session_transcript)
+        if classification.is_routine:
+            logger.debug(
+                "Skipping distillation for %s: %s (novelty=%.2f)",
+                entity_name, classification.reason, classification.novelty_score,
+            )
+            return None
+        
+        # Stage 2-3: Distill (Extract + Distill)
+        try:
+            entries = self.distiller.distill_session(
+                session_transcript,
+                entity_name,
+                source_trace_id,
+            )
+        except Exception as e:
+            logger.error("Distillation failed for %s: %s", entity_name, e)
+            return None
+        
+        # Stage 4: Score
+        score = self.scorer.score(
+            entries["L1"].content,
+            entries["L2"].content,
+            entries["L3"].content,
+            entity_name,
+        )
+        
+        if not self.scorer.is_above_threshold(score):
+            logger.info(
+                "Distillation below threshold for %s (score=%.2f, min=%.2f)",
+                entity_name, score.overall, self.scorer.min_pass_threshold,
+            )
+            return None
+        
+        logger.info(
+            "Distillation passed quality gate for %s (score=%.2f)",
+            entity_name, score.overall,
+        )
+        
+        # Stage 5: Store
+        self.distiller.append_to_soul(entity_name, entries)
+        
+        return entries
+
+
+# ── Soul Distillation Engine ─────────────────────────────────────────────
+
+
 # ── Soul Distillation Engine ─────────────────────────────────────────────
 
 

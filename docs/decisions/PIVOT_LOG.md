@@ -104,6 +104,13 @@
 | 174 | 2026-06-29 | Sovereign Review Infrastructure — Implementation of `skill:context-packer` and `CLAUDE.md` operational anchor |
 | 175 | 2026-06-30 | Parametric Gnosis & Resonance — Transitioning from purely In-Context Learning to Weight-Based Evolution via local DPO LoRA training |
 | 176 | 2026-06-30 | Iron Wall IW-2 (Round-Robin Purge) + IW-3 (BLEG+UFL Forensic Ledger) |
+| 177 | 2026-06-30 | Iron Wall IW-5 (workbench.db schema restore) |
+| 178 | 2026-07-01 | OMEGA_ENGINE.md Trim — §7-§10 consolidated, SSOT clean |
+| 179 | 2026-07-01 | Pillar Gate Removal — `find_by_domain()` no longer filters by pillar |
+| 180 | 2026-07-01 | Full Pillar Decoupling — `pillars`→`slots`, `traits`→`metadata`, WAD fields stripped |
+| 181 | 2026-07-01 | ACON Format-Then-Budget — compaction budget enforcement at formatting level |
+| 182 | 2026-07-01 | ACON Is Architecture, Not Algorithm — pipeline strategy pattern is the real value |
+| 183 | 2026-07-01 | M11 Root Cause Fixed — `anyio.create_task()` replaced with `await` + guard |
 
 ---
 
@@ -188,6 +195,139 @@ The MaKaLi Cloud Council (2026-06-29) declared an IMMEDIATE EXECUTION HOLD on al
 
 ### Key Insight
 The Silent 200 is the most dangerous error class in an AI system because it is indistinguishable from a success by the HTTP layer. BLEG inverts the trust model: assume that every 200 OK body can contain an error, and verify it before propagating. Combined with the UFL, every Silent 200 is now typed, traced, persisted, and attributable to its provider — closing the circuit breaker evasion gap that existed since the ANAi era (September 2025). The `[id-soft: quake-1996] Right Approximation` principle applies: a simple JSON-keyword scan catches 99% of cases without the overhead of full schema validation.
+
+---
+
+## Decision 177: Iron Wall IW-5 — workbench.db Schema Restore
+
+**Date**: 2026-06-30
+**Channel**: OpenCode CLI (deepseek-v4-flash-free)
+**Entity**: SOPHIA / VERITY
+**Trace**: trc_iw_5_20260630
+
+### Decision
+Restore the `workbench.db` SQLite schema (21 projects, 57 items) and ingest `LEGACY_NAVIGATION_GUIDE.md` into the Library. This recovers the project management infrastructure lost during the MV-IW purge.
+
+### Rationale
+Without the workbench, strategic task tracking across 3 Epochs and 5 Transcendent Pillars is impossible to audit. The schema was documented in the MASTER_SYNTHESIS (2026-05-30) but its backing store was lost during pre-Ubuntu-migration compaction.
+
+### Status
+✅ **COMPLETE** — D177 ratified 2026-06-30.
+
+---
+
+## Decision 178: OMEGA_ENGINE.md Trim — SSOT Consolidation
+
+**Date**: 2026-07-01
+**Channel**: OpenCode CLI
+**Entity**: KALI
+
+### Decision
+Trim OMEGA_ENGINE.md from 966 lines to 820 lines: remove §7-§10 duplicate content (Supervision section, Private Constraint section, duplicate tables), consolidate sprint index, renumber §8-§18.
+
+### Rationale
+During MV-IW Phase 1, the document had accumulated redundant sections from multiple edit sessions. Clean SSOT is essential for compaction recovery.
+
+### Status
+✅ **COMPLETE** — D178 ratified 2026-07-01.
+
+---
+
+## Decision 179: Pillar Gate Removal
+
+**Date**: 2026-07-01
+**Channel**: OpenCode CLI
+**Entity**: KALI
+
+### Decision
+Remove the pillar gate from `find_by_domain()` in `entity_registry.py`. Entities without slot assignments (e.g., user-created entities in WADs) are now routable by domain.
+
+### Rationale
+The pillar gate was left over from the 10-fixed-slots architecture. With D180 decoupling pillars→slots, dynamic slot discovery makes the gate obsolete. Any entity with matching domains should be routable regardless of slot assignment.
+
+### Status
+✅ **COMPLETE** — Applied in commit `4eda4f5` alongside D180.
+
+---
+
+## Decision 180: Full Pillar Decoupling
+
+**Date**: 2026-07-01
+**Channel**: OpenCode CLI
+**Entity**: KALI
+
+### Decisions
+1. Rename `Entity.pillars` → `Entity.slots` (list of slot IDs like `["P1", "P2"]`)
+2. Rename `Entity.traits` → `Entity.metadata` (dict for WAD-specific content)
+3. Remove `PILLAR_SLOTS` frozenset — `occupied_slots` computed dynamically
+4. Strip WAD-specific fields from engine model: `pantheon`, `sigil`, `glyph`, `first_breath`, `secondary_keeper`, `invocation`, planetary/sphere/polarity data → all into `metadata`
+5. Update `OracleResponse` — remove `sigil`/`glyph`/`pantheon`, change `pillars`→`slots`
+6. Auto-migration on load: old YAML `pillars:`→`slots:`, `traits:`→`metadata:`
+7. `__getattr__` proxy on Entity enables backward compatibility — `entity.pantheon` still resolves through metadata
+
+### Rationale
+The engine should not know about WAD-specific concepts like "pantheon" or "element." These are lore content for the `arcana_novai` PWAD. Decoupling ensures the engine remains a universal runtime (M2 Engine-Stack Firewall).
+
+### Status
+✅ **COMPLETE** — Applied commit `4eda4f5`. All consumers (Iris, MCP Hub, CLI, wad_loader) updated. 590 tests pass. 8 tasks total, ~15h.
+
+---
+
+## Decision 181: ACON Format-Then-Budget
+
+**Date**: 2026-07-01
+**Channel**: OpenCode CLI (deepseek-v4-flash-free)
+**Entity**: KALI
+**Trace**: trc_acon_format_budget
+
+### Decision
+Compaction budget enforcement must happen at the *formatted exchange* level, not the raw message level. PipelineCompactionStrategy operates on `Message` objects (which preserve structure), but budget enforcement lives in the exchange reconstruction loop that converts Messages → formatted strings with timestamps and separators.
+
+### Rationale
+Raw message token estimates differ significantly from formatted output tokens (timestamps `[YYYY-MM-DD HH:MM:SS]` + separators `───` add ~50 tokens per exchange). Budgeting on raw messages would systematically under-count, causing the budget check to pass on raw tokens but fail when the context builder tries to assemble the final prompt.
+
+### Status
+✅ **RATIFIED** — Applied in Session 42 ACON implementation. 21 context_builder tests pass.
+
+---
+
+## Decision 182: ACON Is Architecture, Not Algorithm
+
+**Date**: 2026-07-01
+**Channel**: OpenCode CLI (deepseek-v4-flash-free)
+**Entity**: KALI
+**Trace**: trc_acon_architecture
+
+### Decision
+The ACON Compaction Framework's primary value is the *architecture* (PipelineCompactionStrategy protocol, composable strategies, ACONOptimizer metacognitive loop scaffold), not a specific compaction *algorithm*. The framework provides ToolResultCompactionStrategy (zero-cost masking) and TruncationStrategy (emergency backstop) as immediate wins. The LLM-driven optimization loop in ACONOptimizer is a future enhancement.
+
+### Rationale
+Web research on Microsoft Agent Framework and Clan Factory's ACON implementation revealed that the real value is having PipelineCompactionStrategy in place so tool-result sessions automatically get masked. The LLM optimization loop requires a separate inference call per compaction cycle, which is not worth the token cost for typical sessions (2-10 exchanges). The heuristic strategies (ToolResult masking → Truncation) cover 95% of compaction needs with zero inference overhead.
+
+### Status
+✅ **RATIFIED** — Applied in Session 42. 21 context_builder tests pass.
+
+---
+
+## Decision 183: M11 Root Cause Fixed — `anyio.create_task()` Replaced with `await` + Guard
+
+**Date**: 2026-07-01
+**Channel**: OpenCode CLI (deepseek-v4-flash)
+**Entity**: john_carmack
+
+### Decision
+Replace `anyio.create_task(self.close_session(...))` at `oracle.py:509` with `await self.close_session(...)` in a guarded `try/except`.
+
+### Rationale
+`anyio.create_task()` does not exist in AnyIO. AnyIO's API is `create_task_group().start_soon()`, not a top-level `create_task()` function. The `AttributeError` was silently swallowed by the surrounding `try/except Exception` block. As a result, **`close_session()` never executed** — every 5th-interaction soul distillation trigger fired and vanished silently.
+
+The Ark Blueprint's v2.0 §IX claim of a "key mismatch" between `add_exchange()` and `close_session()` was incorrect. The store keys match correctly (both use `"user"` and `"assistant"` at memory_store.py:409 and oracle.py:787-788). The real root cause was the non-existent `anyio.create_task()` call.
+
+### Impact
+8/10 Pillar Keeper souls were stale, some >14 days since last update. The fix enables real-time L1→L2→L3 distillation on the hot path (every 5 interactions), restoring M11 (Soul Integrity) to operational compliance.
+
+### Status
+✅ **FIXED** — 646 tests passing. All 27 Metrics DB tests pass. 22 oracle tests pass.
 
 ---
 

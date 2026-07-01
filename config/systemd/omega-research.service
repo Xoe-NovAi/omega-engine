@@ -17,6 +17,8 @@ WorkingDirectory=%h/Documents/Xoe-NovAi/omega-engine
 Environment=PYTHONPATH=%h/Documents/Xoe-NovAi/omega-engine/src
 EnvironmentFile=%h/Documents/Xoe-NovAi/omega-engine/.env
 Environment=OMEGA_ENV=production
+Environment=MALLOC_MMAP_THRESHOLD_=65536
+Environment=MALLOC_ARENA_MAX=2
 StandardOutput=journal
 StandardError=journal
 

@@ -430,7 +430,7 @@ class MemoryStore:
         # Buffer writes instead of spawning threads per-provider per-call.
         # Prevents connection pool exhaustion under concurrent oracle.talk() load.
         # Hot cache (above) is updated immediately — providers get batched writes.
-        self._buffer_write(entity_name, session_id, exchanges)
+        await self._buffer_write(entity_name, session_id, exchanges)
         self._stats["saves"] += 1
         
         # ── Vault Update via Adapter Registry ──
@@ -478,30 +478,26 @@ class MemoryStore:
     # Buffers provider writes and flushes in batches to prevent connection
     # pool exhaustion under concurrent load.
 
-    def _buffer_write(
+    async def _buffer_write(
         self,
         entity_name: str,
         session_id: str,
         exchanges: List[Dict[str, Any]],
     ) -> None:
-        """Buffer a write operation for batch flushing."""
+        """Buffer a write operation for batch flushing.
+
+        [M1: AnyIO Absolute] Replaces legacy asyncio.get_running_loop().create_task()
+        with direct await. Called from async add_exchange(), so can safely await.
+        """
         key = (entity_name, session_id)
         if key not in self._batch_buffer:
             self._batch_buffer[key] = []
         self._batch_buffer[key].extend(exchanges)
         self._batch_count += 1
 
-        # Auto-flush when threshold reached
+        # Auto-flush when threshold reached — direct await instead of asyncio task
         if self._batch_count >= self.BATCH_THRESHOLD:
-            # Schedule flush — use anyio.from_thread.run if in thread, else direct
-            # For simplicity, flush synchronously at threshold
-            import asyncio
-            try:
-                loop = asyncio.get_running_loop()
-                loop.create_task(self._flush_batch())
-            except RuntimeError:
-                # No event loop running — flush in a thread
-                pass
+            await self._flush_batch()
 
     async def _flush_batch(self) -> None:
         """Flush all buffered writes to providers in a single batch."""

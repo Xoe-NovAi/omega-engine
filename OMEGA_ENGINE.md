@@ -152,6 +152,16 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 - ✅ **590 tests passing** — zero regressions
 - 🔶 **Deferred**: `FailureModeRegistry` (M17 work, not M2-critical)
 
+### MV-IW Phase 3 COMPLETE (2026-07-01) — ACON + Soul Pipeline + Carmack Hardening
+- ✅ **ACON Context Compaction**: PipelineCompactionStrategy + ToolResultCompactionStrategy + TruncationStrategy + ACONOptimizer in `context_builder.py` (345 lines, 21 tests)
+- ✅ **Soul Distillation Pipeline**: SessionClassifier + SovereigntyScorer + 5-stage pipeline in `soul_distiller.py`
+- ✅ **Content Quality Scorer**: CurationExtractor + DomainType + 5-factor scoring in `curator.py`
+- ✅ **Carmack C-FFI Isolation**: NativeGGUFProvider now process-isolated via multiprocessing.Process
+- ✅ **Carmack MALLOC Arena Validation**: MALLOC_ARENA_MAX=2 empirically validated
+- ✅ **Carmack Profiling Infrastructure**: carmack-profiler skill + Makefile targets integrated
+- ✅ **619 tests passing** — zero regressions
+- 🔶 **Pending**: BatchPersistenceWriter wiring, Metrics DB (T3-2 Carmack delegation)
+
 
 ## §6 Engine Health & Subsystem Status
 
@@ -162,8 +172,8 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | PyPI entry point | `omega` CLI via `[project.scripts]` | 2026-06-22 |
 | Source files | **116** .py files | 2026-06-29 |
 | Source lines | **~27,000** | 2026-06-29 |
-| Test functions | **615 collected — 590 passing, 22 skipped, 3 xfailed** | 2026-06-29 |
-| PIVOT decisions | **165 (D50-D180)** | 2026-07-01 |
+| Test functions | **619 collected — 594 passing, 22 skipped, 3 xfailed** | 2026-07-01 |
+| PIVOT decisions | **182 (D50-D182)** | 2026-07-01 |
 | Sovereign Mandates | **22 (M1-M22)** | 2026-06-17 |
 | Agent Fleet | **13 agents** (11 fleet + 1 pillar + 1 messenger) | 2026-06-24 |
 
@@ -172,10 +182,14 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 |-----------|--------|----------|
 | **Oracle (Facade)** | ✅ talk/summon/router wired | `[id-soft: quake-1996] Thinker Chain` |
 | **WAD Loader** | ✅ `--iwad` flag works | `[id-soft: doom-1993] WAD System` |
-| **ModelGateway** | ✅ breaker + BSP culling | `[id-soft: quake-1996] BSP` |
+| **ModelGateway** | ✅ breaker + BSP culling, **C-FFI process isolated** (Carmack) | `[id-soft: quake-1996] BSP` |
+| **NativeGGUFProvider** | ✅ **C-FFI isolated** (multiprocessing.Process + IPC queues) | `[id-soft: doom3-2004] idHeap` |
 | **MemoryStore** | ✅ Hot LRU + Warm Redis + Cold File | `[id-soft: doom-1993] Lazy Deletion` |
-| **EntityRegistry** | ✅ YAML CRUD + dual-index | `[id-soft: quake-1996] Flat-Field` |
-| **Soul Distiller** | ✅ L1→L2→L3 auto-distillation | `[id-soft: quake-1996] Save-game` |
+| **EntityRegistry** | ✅ YAML CRUD + dual-index, pillars→slots migrated | `[id-soft: quake-1996] Flat-Field` |
+| **ContextBuilder** | ✅ **ACON Optimized** (PipelineCompactionStrategy + ACONOptimizer) | `[id-soft: quake-1996] Thinker Chain` |
+| **Soul Distiller** | ✅ **Enhanced 5-stage pipeline** (Classify→Extract→Distill→Score→Store) | `[id-soft: quake-1996] Save-game` |
+| **FailureRegistry** | ✅ **364 lines, 5 failure modes** (M17 Cognitive Integrity) | — |
+| **Curator** | ✅ **Content Quality Scorer** (CurationExtractor + DomainType) | — |
 | **Omega Hub** | ✅ **Modularized v2.3.0** | (Pillar 2 coordination) |
 | **Heritage Vetting** | ✅ H1 LIVE: 4-gate, 23 concepts | (Kali d-kal-001) |
 | **Engine Firewall** | ✅ D113 GAP RESOLVED | **S1.5a NEXT** |

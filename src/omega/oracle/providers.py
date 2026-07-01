@@ -333,13 +333,13 @@ class NativeGGUFProvider(BaseProvider):
         self._n_gpu_layers = config.get("n_gpu_layers", n_gpu)
 
         # State
-        self.llm = None
+        self._worker_process = None
+        self._req_queue = None
+        self._res_queue = None
         self._loaded_ctx = 0
         self._loaded_model = None
         self._affinity_applied = False
         # [Operation Deep-Siphon] ICS-F v1.0 Sprint 0: last inference logprobs.
-        # Populated after each successful generate() call with logprobs=5.
-        # Reset on error to prevent stale data propagation.
         self._last_logprobs = None
         # Isolated pool for synchronous C-calls to prevent anyio global pool exhaustion
         self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="gguf_inference")
@@ -437,12 +437,12 @@ class NativeGGUFProvider(BaseProvider):
     async def _ensure_loaded(self, n_ctx: Optional[int] = None):
         """Load or reload the model with optimal Zen 2 settings.
 
-        Applies CPU pinning, selects context size, and configures KV cache.
+        Spawns a worker process for inference to isolate C++ crashes.
         """
         target_ctx = self._select_optimal_context(n_ctx)
 
         # Skip reload if same model and context already loaded
-        if self.llm is not None and self._loaded_model == self.model_path and self._loaded_ctx >= target_ctx:
+        if self._worker_process is not None and self._loaded_model == self.model_path and self._loaded_ctx >= target_ctx:
             return
 
         # Apply CPU affinity before loading
@@ -450,69 +450,142 @@ class NativeGGUFProvider(BaseProvider):
         if affinity_result.get("success"):
             logger.info(f"CPU affinity applied: cores {self._cores}")
 
-        from llama_cpp import Llama
+        # Spawn worker process for inference
         import anyio
+        from multiprocessing import Process, Queue
 
-        # Determine thread count based on model size using Zen2Optimizer
-        optimizer = _get_cpu_optimizer()
-        # Estimate model size from path if possible, otherwise use default
-        model_size_b = 1.7
-        if self.model_path and os.path.exists(self.model_path):
-            size_mb = os.path.getsize(self.model_path) / (1024 * 1024)
-            model_size_b = size_mb / 700 # Rough estimate: 700MB per 1B params at Q4
-        
-        threads = optimizer.get_recommended_threads(model_size_b)
+        # Create queues for inter-process communication
+        self._req_queue = Queue()
+        self._res_queue = Queue()
 
-        logger.info(
-            f"Loading GGUF model: {self.model_path}\n"
-            f"  Context: {target_ctx} tokens\n"
-            f"  Threads: {threads} (physical cores: {self._cores})\n"
-            f"  KV cache: k={self._type_k} v={self._type_v}\n"
-            f"  Batch: {self._n_batch}/{self._n_ubatch}\n"
-            f"  mmap: {self._use_mmap}, mlock: {self._use_mlock}"
+        # Worker function that loads the model and runs inference
+        def _worker(req_queue, res_queue, model_path, n_threads, n_threads_batch,
+                     n_ctx, n_batch, n_ubatch, type_k, type_v,
+                     use_mmap, use_mlock, n_gpu_layers, kwarg_filter_enabled):
+            from llama_cpp import Llama
+            try:
+                from omega.cvar_table import validate_llama_kwargs
+            except ImportError:
+                validate_llama_kwargs = None
+
+            # Build the exact kwargs we'll pass to Llama(), then validate them
+            llama_kwargs = {
+                "model_path": model_path,
+                "n_threads": n_threads,
+                "n_threads_batch": n_threads_batch,
+                "n_ctx": n_ctx,
+                "n_batch": n_batch,
+                "n_ubatch": n_ubatch,
+                "type_k": type_k,
+                "type_v": type_v,
+                "use_mmap": use_mmap,
+                "use_mlock": use_mlock,
+                "n_gpu_layers": n_gpu_layers,
+                "verbose": False,
+            }
+            if kwarg_filter_enabled and validate_llama_kwargs:
+                kwarg_warnings = validate_llama_kwargs(llama_kwargs, "NativeGGUFProvider.worker")
+                if kwarg_warnings:
+                    import logging
+                    logging.getLogger("omega.workers").warning(
+                        "NativeGGUFProvider.worker: %d kwarg warnings:\n  %s",
+                        len(kwarg_warnings), "\n  ".join(kwarg_warnings)
+                    )
+
+            # Load the model — wrap in try/except to signal load failure
+            try:
+                llm = Llama(**llama_kwargs)
+            except Exception as e:
+                # Send load failure back to parent, then exit
+                res_queue.put({"status": "load_error", "error": repr(e)})
+                return
+
+            # Signal that loading succeeded
+            res_queue.put({"status": "ready"})
+
+            # Keep the worker alive, waiting for requests
+            while True:
+                try:
+                    # Get request from queue
+                    request = req_queue.get()
+                    if request is None:  # Shutdown signal
+                        break
+
+                    # Unpack request
+                    prompt = request["prompt"]
+                    max_tokens = request["max_tokens"]
+                    temperature = request["temperature"]
+                    stop = request["stop"]
+                    logprobs = request.get("logprobs", False)
+
+                    # Run inference
+                    response = llm(
+                        prompt,
+                        max_tokens=max_tokens,
+                        temperature=temperature,
+                        stop=stop,
+                        echo=False,
+                        logprobs=logprobs,
+                    )
+
+                    # Send response back to main process
+                    res_queue.put(response)
+
+                except Exception as e:
+                    import logging
+                    logging.getLogger("omega.workers").error(
+                        f"Worker process error: {e}", exc_info=True
+                    )
+                    # Send error back to main process
+                    res_queue.put(e)
+
+        # Start the worker process with explicit args (avoid closure over self)
+        self._worker_process = Process(
+            target=_worker,
+            args=(
+                self._req_queue, self._res_queue,
+                self.model_path, self._n_threads, self._n_threads_batch,
+                target_ctx, self._n_batch, self._n_ubatch,
+                self._type_k, self._type_v,
+                self._use_mmap, self._use_mlock, self._n_gpu_layers,
+                self._kwarg_filter_enabled,
+            ),
         )
+        self._worker_process.start()
 
-        # Build the exact kwargs we'll pass to Llama(), then validate them
-        # [id-soft: quake3-1999] Cvar System — config validation at the cvar boundary
-        # Port 1.1 fix: validate the actual llama_cpp kwargs, not the raw provider config
-        llama_kwargs = {
-            "model_path": self.model_path,
-            "n_threads": threads,
-            "n_threads_batch": self._n_threads_batch,
-            "n_ctx": target_ctx,
-            "n_batch": self._n_batch,
-            "n_ubatch": self._n_ubatch,
-            "type_k": self._type_k,
-            "type_v": self._type_v,
-            "use_mmap": self._use_mmap,
-            "use_mlock": self._use_mlock,
-            "n_gpu_layers": self._n_gpu_layers,
-            "verbose": False,
-        }
-        if self._kwarg_filter_enabled:
-            from omega.cvar_table import validate_llama_kwargs
-            kwarg_warnings = validate_llama_kwargs(llama_kwargs, "NativeGGUFProvider.load")
-            if kwarg_warnings:
-                logger.warning(
-                    "NativeGGUFProvider.load: %d kwarg warnings:\n  %s",
-                    len(kwarg_warnings), "\n  ".join(kwarg_warnings)
-                )
-
-        def _load():
-            return Llama(**llama_kwargs)
-
+        # Wait for the worker to signal ready or load failure (30s timeout)
         try:
-            self.llm = await anyio.to_thread.run_sync(_load)
-        except InferenceLoadError:
-            raise
-        except Exception as e:
+            init_signal = await anyio.to_thread.run_sync(
+                lambda: self._res_queue.get(timeout=30)
+            )
+            if isinstance(init_signal, dict) and init_signal.get("status") == "load_error":
+                error_msg = init_signal.get("error", "Unknown load error")
+                self._worker_process.terminate()
+                self._worker_process = None
+                self._req_queue = None
+                self._res_queue = None
+                raise InferenceLoadError(
+                    f"Failed to load model {self.model_path}: {error_msg}",
+                    raw_error=error_msg,
+                )
+        except (TimeoutError, Exception) as e:
+            if isinstance(e, InferenceLoadError):
+                raise
+            # Worker process likely crashed — terminate and raise
+            if self._worker_process is not None:
+                self._worker_process.terminate()
+                self._worker_process = None
+            self._req_queue = None
+            self._res_queue = None
             raise InferenceLoadError(
-                f"Failed to load model {self.model_path}: {e}",
+                f"Worker process did not initialize within 30s: {e}",
                 raw_error=e,
             ) from e
+
         self._loaded_ctx = target_ctx
         self._loaded_model = self.model_path
-        logger.info(f"Model loaded: {target_ctx} context, {threads} threads")
+        logger.info(f"Worker process initialized: {target_ctx} context, {self._n_threads} threads")
+
 
     async def generate(
         self,
@@ -556,32 +629,25 @@ class NativeGGUFProvider(BaseProvider):
         # after a subsequent error (ICS-F v1.0 Sprint 0).
         self._last_logprobs = None
         
+        # Send request to worker process
+        request = {
+            "prompt": prompt,
+            "max_tokens": max_tokens,
+            "temperature": temperature,
+            "stop": ["</s>", "User:", "\n\n"],
+            "logprobs": 5,
+        }
+        
         try:
-            try:
-                response = await anyio.to_thread.run_sync(
-                    lambda: self.llm(
-                        prompt,
-                        max_tokens=max_tokens,
-                        temperature=temperature,
-                        stop=["</s>", "User:", "\n\n"],
-                        echo=False,
-                        logprobs=5,
-                    )
-                )
-            except ValueError as ve:
-                if "logprobs is not supported for models created with logits_all=False" in str(ve):
-                    # Model doesn't support logprobs, call without it
-                    response = await anyio.to_thread.run_sync(
-                        lambda: self.llm(
-                            prompt,
-                            max_tokens=max_tokens,
-                            temperature=temperature,
-                            stop=["</s>", "User:", "\n\n"],
-                            echo=False,
-                        )
-                    )
-                else:
-                    raise
+            # Send request to worker (threaded — Queue.put blocks on serialization)
+            await anyio.to_thread.run_sync(self._req_queue.put, request)
+            
+            # Wait for response (threaded — Queue.get blocks on I/O)
+            response = await anyio.to_thread.run_sync(self._res_queue.get)
+            
+            # Check if response is an exception
+            if isinstance(response, Exception):
+                raise response
             
             if response is None:
                 logger.warning("NativeGGUF inference returned None response")
@@ -592,9 +658,6 @@ class NativeGGUFProvider(BaseProvider):
             else:
                 text = response["choices"][0]["text"].strip()
                 # Capture logprobs from response for ICS-F v1.0 compliance
-                # Raw top_logprobs is a list of dicts {token_str: logprob, ...}
-                # one entry per token position, each containing up to 5 candidates.
-                # Note: logprobs may not be present if model doesn't support it
                 self._last_logprobs = response["choices"][0].get("logprobs", {}).get("top_logprobs")
                 # [id-soft: quake3-1999] Cvar System — trace_id propagated
                 # Port 1.5: atomic trace_id logging for observability
@@ -622,14 +685,11 @@ class NativeGGUFProvider(BaseProvider):
                     raw_error=e
                 )
             
-            logger.error(f"Native GGUF inference failed: {e}", exc_info=True)
-            # Reset model state on error to force reload
-            self.llm = None
+            logger.error(f"NativeGGUF inference failed: {e}", exc_info=True)
+            # Reset worker process state on error to force reload
+            self._worker_process = None
             self._loaded_ctx = 0
             raise InferenceError(message=f"Native GGUF inference failed: {e}", trace_id=trace_id, raw_error=e) from e
-
-
-        return None
 
     async def reload_with_context(self, n_ctx: int) -> bool:
         """Explicitly reload the model with a new context length.
@@ -645,9 +705,9 @@ class NativeGGUFProvider(BaseProvider):
             True if reload succeeded.
         """
         # [id-soft: quake-1996] Atomic Swap — save old state before mutation
-        old_llm = self.llm
+        old_worker = self._worker_process
         old_ctx = self._loaded_ctx
-        self.llm = None  # Signal unloading
+        self._worker_process = None  # Signal unloading
         try:
             await self._ensure_loaded(n_ctx)
             logger.info(f"Context reloaded: {old_ctx} -> {self._loaded_ctx}")
@@ -656,8 +716,8 @@ class NativeGGUFProvider(BaseProvider):
             raise
         except Exception as e:
             # [id-soft: quake-1996] Rollback — restore old state on failure
-            self.llm = old_llm
-            self._loaded_ctx = old_ctx if old_llm else 0
+            self._worker_process = old_worker
+            self._loaded_ctx = old_ctx if old_worker else 0
             logger.error(f"Context reload failed, rolled back to {self._loaded_ctx}: {e}", exc_info=True)
             return False
 
@@ -666,7 +726,7 @@ class NativeGGUFProvider(BaseProvider):
         return {
             "provider": self.name,
             "model_path": self.model_path,
-            "loaded": self.llm is not None,
+            "loaded": self._worker_process is not None,
             "loaded_context": self._loaded_ctx,
             "cores": self._cores,
             "threads": self._n_threads,
@@ -676,4 +736,13 @@ class NativeGGUFProvider(BaseProvider):
 
     def shutdown(self):
         """Cleanly shut down the isolated inference executor."""
+        if self._worker_process is not None:
+            if self._req_queue is not None:
+                try:
+                    self._req_queue.put(None)  # Send shutdown signal
+                except Exception:
+                    pass
+            self._worker_process.join(timeout=10)
+            if self._worker_process.is_alive():
+                self._worker_process.terminate()
         self._executor.shutdown(wait=False)

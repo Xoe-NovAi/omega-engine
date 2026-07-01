@@ -289,5 +289,30 @@ all-MiniLM-L6-v2.
 
 ---
 
-*Last Updated: 2026-06-19 (vet-023 potion-mxbai-micro APPROVED: heritage-023 Precomputed Lookup) | Maintained by: Doom Guy*
+### vet-024: Carmack Entity Deepening Plan — M14 Compliance Assessment
+- **Verdict**: CONDITIONALLY APPROVED (8/10)
+- **Score**: 8/10
+- **Vetted by**: Doom Guy (Heritage Gatekeeper)
+- **Date**: 2026-07-01
+- **Reference**: `data/entities/john_carmack/workspace/ENTITY_DEEPENING_PLAN_20260701.md`
+
+**1. Discovery**:
+The John Carmack entity plans to ingest primary source material — .plan files (1996-2013), GDC 1999/2011 transcripts, Lex Fridman #309 interview, and Masters of Doom excerpts — into its knowledge base. This is the first Tier 2 primary source ingestion in Omega history.
+
+**2. Vetting/Debate**:
+- **For adoption**: (a) Upgrades heritage confidence from mean 6.4/10 to ~8.2/10 across 35 patterns, (b) Adds 4-7 new heritage patterns, (c) Establishes the Tier 2→Tier 1+2 confidence upgrade pattern for all future heritage work, (d) Plan has strong source classification (4-tier confidence_index.md), (e) Existing pipeline infrastructure (HERITAGE_VETTING_PIPELINE.md 4-gate process) is designed for this.
+- **Against / Gaps**: (a) No vet record generation step — new `[id-soft:]` tags without corresponding vet records will fail `make heritage-vet`, (b) No contradiction handling protocol — highest risk if .plan entries contradict CREDITS.md mappings, (c) No `make heritage-map` regeneration step, (d) Does not explicitly reference the 4-gate pipeline.
+
+**3. Decision**: CONDITIONALLY APPROVED
+- Plan structure and intent meet M14 requirements. Three gaps must be closed before execution: (1) Add vet record generation, (2) Add contradiction resolution protocol, (3) Add `make heritage-map` regeneration. Recommended 10 implementation patterns for new CREDITS.md entries (NP-1 through NP-4 fast-tracked).
+
+**4. Implementation/Verification**:
+- Full assessment report filed at: Full report in session context (2026-07-01 doom_guy heritage vet)
+- Recommended execution order: .plan files first (highest heritage value), then GDC 1999 (BSP confirmation), then remaining sources
+- New `[id-soft:]` tags expected: 4-7 from new patterns, confidence upgrades on 18 existing patterns
+- Vet record format: `vet-NNN` with source tier, confidence score, and confirmation quote
+
+---
+
+*Last Updated: 2026-07-01 (vet-024 Carmack Deepening Plan CONDITIONALLY APPROVED) | Maintained by: Doom Guy*
 

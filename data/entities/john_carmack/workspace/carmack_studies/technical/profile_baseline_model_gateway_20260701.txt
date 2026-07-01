@@ -1,0 +1,60 @@
+Wed Jul  1 11:00:29 2026    .carmack_profile.stats
+
+         3167279 function calls (3012906 primitive calls) in 3.745 seconds
+
+   Ordered by: cumulative time
+   List reduced from 6488 to 50 due to restriction <50>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+      133    0.007    0.000   16.546    0.124 __init__.py:1(<module>)
+   1416/1    0.126    0.000    3.755    3.755 {built-in method builtins.exec}
+        1    0.000    0.000    3.755    3.755 run_benchmark.py:1(<module>)
+   1255/3    0.011    0.000    3.751    1.250 <frozen importlib._bootstrap>:1349(_find_and_load)
+   1242/3    0.008    0.000    3.751    1.250 <frozen importlib._bootstrap>:1304(_find_and_load_unlocked)
+   1188/5    0.007    0.000    3.750    0.750 <frozen importlib._bootstrap>:911(_load_unlocked)
+   1123/5    0.004    0.000    3.750    0.750 <frozen importlib._bootstrap_external>:1020(exec_module)
+   2657/6    0.004    0.000    3.749    0.625 <frozen importlib._bootstrap>:480(_call_with_frames_removed)
+   563/14    0.001    0.000    3.688    0.263 {built-in method builtins.__import__}
+        1    0.000    0.000    3.660    3.660 run_benchmark.py:76(main)
+        1    0.000    0.000    3.660    3.660 _eventloop.py:38(run)
+        1    0.000    0.000    3.631    3.631 _asyncio.py:2326(run)
+        3    0.000    0.000    3.630    1.210 base_events.py:689(run_until_complete)
+        1    0.000    0.000    3.630    3.630 runners.py:86(run)
+        3    0.000    0.000    3.630    1.210 base_events.py:678(run_forever)
+        6    0.000    0.000    3.630    0.605 base_events.py:1970(_run_once)
+        6    0.000    0.000    3.629    0.605 events.py:87(_run)
+        6    0.000    0.000    3.629    0.605 {method 'run' of '_contextvars.Context' objects}
+        1    0.000    0.000    3.629    3.629 _asyncio.py:2334(wrapper)
+        1    0.001    0.001    3.629    3.629 run_benchmark.py:37(benchmark_model_gateway)
+        1    0.000    0.000    3.625    3.625 oracle.py:1(<module>)
+        1    0.000    0.000    3.557    3.557 orchestrator.py:1(<module>)
+        1    0.000    0.000    3.283    3.283 context_builder.py:1(<module>)
+        1    0.000    0.000    3.280    3.280 memory_store.py:1(<module>)
+        1    0.000    0.000    3.111    3.111 vector_adapters.py:1(<module>)
+        1    0.000    0.000    3.100    3.100 async_qdrant_client.py:1(<module>)
+ 1375/440    0.003    0.000    3.037    0.007 <frozen importlib._bootstrap>:1390(_handle_fromlist)
+        1    0.000    0.000    2.167    2.167 async_client_base.py:1(<module>)
+        1    0.000    0.000    2.164    2.164 common_types.py:1(<module>)
+      550    0.026    0.000    1.603    0.003 _model_construction.py:600(complete_model_class)
+      332    0.001    0.000    1.449    0.004 _pydantic_compat.py:23(update_forward_refs)
+      332    0.005    0.000    1.448    0.004 main.py:632(model_rebuild)
+ 5650/364    0.024    0.000    1.223    0.003 _generate_schema.py:717(generate_schema)
+ 8843/364    0.050    0.000    1.214    0.003 _generate_schema.py:1017(_generate_schema_inner)
+ 3397/364    0.042    0.000    1.205    0.003 _generate_schema.py:756(_model_schema)
+2315/1158    0.036    0.000    1.126    0.001 _generate_schema.py:1238(_generate_md_field_schema)
+2315/1158    0.035    0.000    1.088    0.001 _generate_schema.py:1278(_common_field_schema)
+3193/1158    0.021    0.000    1.039    0.001 _generate_schema.py:2210(_apply_annotations)
+4072/1158    0.006    0.000    1.027    0.001 _schema_generation_shared.py:82(__call__)
+3193/1158    0.009    0.000    1.025    0.001 _generate_schema.py:2227(inner_handler)
+4568/1100    0.065    0.000    0.967    0.001 _generate_schema.py:1045(match_type)
+3849/3838    0.066    0.000    0.914    0.000 {built-in method builtins.__build_class__}
+ 2238/833    0.010    0.000    0.899    0.001 _generate_schema.py:1167(_match_generic_type)
+ 1611/797    0.017    0.000    0.861    0.001 _generate_schema.py:1335(_union_schema)
+        1    0.000    0.000    0.603    0.603 api_client.py:1(<module>)
+        5    0.001    0.000    0.596    0.119 models.py:1(<module>)
+        1    0.000    0.000    0.592    0.592 aliases_api.py:1(<module>)
+        1    0.000    0.000    0.580    0.580 async_qdrant_fastembed.py:1(<module>)
+        1    0.000    0.000    0.574    0.574 embedder.py:1(<module>)
+        1    0.000    0.000    0.571    0.571 fastembed_common.py:1(<module>)
+
+

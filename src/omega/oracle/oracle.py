@@ -501,12 +501,18 @@ class Oracle:
         # Throttled soul distillation — close_session every 5 interactions
         # [M11: Soul Integrity] Ensures L1→L2→L3 distillation happens continuously
         # on the hot path, not just from orchestrator.py CLI dispatch.
+        # [M11-FIX-2026-07-01] Root cause: anyio.create_task() does NOT exist in
+        # AnyIO (silent AttributeError swallowed by outer try/except). Replaced with
+        # direct await + guarded try/except. close_session was NEVER executing.
         entity_key = f"{resp.entity}:{resp.session_id or trace.trace_id}"
         self._interaction_counter[entity_key] = self._interaction_counter.get(entity_key, 0) + 1
         if self._interaction_counter[entity_key] >= 5:
             self._interaction_counter[entity_key] = 0
             if resp.session_id:
-                anyio.create_task(self.close_session(resp.entity, resp.session_id))
+                try:
+                    await self.close_session(resp.entity, resp.session_id)
+                except Exception:
+                    logger.warning("Throttled soul distillation failed for %s (non-fatal)", resp.entity)
 
     async def _respond_as_iris(self, query: str, trace: TraceSession, confidence: float, session_id: Optional[str] = None, transient: bool = False) -> OracleResponse:
         """Iris (speculative decoder) responds directly without invoking a pillar.
