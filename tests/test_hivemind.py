@@ -35,7 +35,8 @@ spec = importlib.util.spec_from_file_location("server_under_test", MCP_SERVER_PA
 # We need to mock mcp.server.fastmcp specifically since that's what's imported
 import types
 mock_mcp_pkg = types.ModuleType("mcp")
-mock_mcp_pkg.ClientSession = object  # Prevent ImportError in other tests
+mock_mcp_pkg.ClientSession = object  # Needed by mcp_client.py:11
+mock_mcp_pkg.ServerSession = object
 mock_mcp_server = types.ModuleType("mcp.server")
 mock_mcp_fastmcp = types.ModuleType("mcp.server.fastmcp")
 
@@ -70,13 +71,32 @@ class MockTextContent:
 mock_mcp_types.CallToolResult = MockCallToolResult
 mock_mcp_types.TextContent = MockTextContent
 
+# Mock mcp.client and mcp.client.sse (needed by mcp_client.py)
+mock_mcp_client = types.ModuleType("mcp.client")
+mock_mcp_client_sse = types.ModuleType("mcp.client.sse")
+mock_mcp_client_sse.sse_client = AsyncMock()
+
+# Save originals before mocking (Carmack fix: restore after load to prevent
+# polluting subsequent test modules that need the real mcp library)
+_saved_keys = ["mcp", "mcp.server", "mcp.server.fastmcp", "mcp.types", "mcp.client", "mcp.client.sse"]
+_originals = {k: sys.modules.get(k) for k in _saved_keys}
+
 sys.modules["mcp"] = mock_mcp_pkg
 sys.modules["mcp.server"] = mock_mcp_server
 sys.modules["mcp.server.fastmcp"] = mock_mcp_fastmcp
 sys.modules["mcp.types"] = mock_mcp_types
+sys.modules["mcp.client"] = mock_mcp_client
+sys.modules["mcp.client.sse"] = mock_mcp_client_sse
 
 server = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(server)
+
+# Restore original mcp modules so other tests get the real library
+for k, orig in _originals.items():
+    if orig is not None:
+        sys.modules[k] = orig
+    else:
+        sys.modules.pop(k, None)
 
 
 @pytest.fixture
