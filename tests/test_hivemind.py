@@ -35,6 +35,7 @@ spec = importlib.util.spec_from_file_location("server_under_test", MCP_SERVER_PA
 # We need to mock mcp.server.fastmcp specifically since that's what's imported
 import types
 mock_mcp_pkg = types.ModuleType("mcp")
+mock_mcp_pkg.ClientSession = object  # Prevent ImportError in other tests
 mock_mcp_server = types.ModuleType("mcp.server")
 mock_mcp_fastmcp = types.ModuleType("mcp.server.fastmcp")
 
