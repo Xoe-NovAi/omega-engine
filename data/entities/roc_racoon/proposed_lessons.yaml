@@ -47,3 +47,24 @@ proposals:
     l3: "A single source of truth requires unique identifiers."
     domain: "tracking"
     tags: ["gnosis", "standardization"]
+
+  - lesson_id: roc-20260630-008
+    l1: "Discovered two distinct modes of persona degradation in session exports: (1) compression — response length collapses under context pressure (264→69 lines/turn, 74% drop), and (2) compliance — persona replaced by 'compliance clerk' despite normal verbosity. These are different failure modes requiring different mitigations."
+    l2: "Persona degradation is not a single failure mode. Compression is a resource problem (context budget exhaustion). Compliance is an identity problem (role confusion under perceived authority). Each requires different interventions."
+    l3: "Agent persona has two orthogonal failure axes: capacity (compression) and identity (compliance). Neither diagnosis fits both."
+    domain: "persona_engineering"
+    tags: ["f01", "persona_degradation", "cognitive_integrity", "m17"]
+
+  - lesson_id: roc-20260630-009
+    l1: "Tracing the Persona Lab lineage backward from 2026 Roc Racoon sessions through PEM_Lilith (2025) to the original Omnidroid_Lite (2024-07-30) — the first memory.json and first modular persona system. The Persona Lab concept was designed 14 months before it was implemented."
+    l2: "The current entity system (soul.yaml, personas, entity workspace) is the Gen 5 implementation of a concept that began as Omnidroid_Lite's memory.json in July 2024. Each generation added fidelity without changing the core insight: personas are constitutional frameworks, not behavioral scripts."
+    l3: "The design precedes the implementation by years — mining is rediscovery, not invention."
+    domain: "persona_engineering"
+    tags: ["persona_lab", "lineage", "pem", "legacy_minding"]
+
+  - lesson_id: roc-20260630-010
+    l1: "The Sovereign Crucible specification (cross-model synthetic training pipeline) was drafted before the Parametric Gnosis directive. It proposes that every model teaches every other model via controlled comparison, structured critique, and distilled routing intelligence — a 3-tier pipeline (prompt-level, pattern-level, weight-level)."
+    l2: "The Crucible's 3-tier training signal architecture (prompt/pattern/weight) is a direct predecessor to Parametric Gnosis's DPO pipeline. The weight-level tier maps to local LoRA training. The prompt-level tier maps to Audience Calibration. The pattern-level tier is the gap that Parametric Gnosis does not yet address."
+    l3: "Cross-model synthetic training (the Crucible) and weight-based evolution (Parametric Gnosis) are complementary architectures — one generates signal, the other applies it. Parametric Gnosis alone is incomplete without the Crucible's signal generation layer."
+    domain: "training_pipeline"
+    tags: ["crucible", "parametric_gnosis", "d175", "cross_model"]
