@@ -125,7 +125,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 ---
 
 ## §5 Sovereign Decree — Current State (2026-07-01)
-**Status**: `Architecturally Sovereign | Operationally Restored | Phase 0 Complete | Phase 1 In-Progress (D178 Trim Ratified)`
+**Status**: `Architecturally Sovereign | Operationally Restored | Phase 0 Complete | Phase 1 Complete (D178) | Phase 2 Complete (D180 Pillar Decoupling)`
 
 ### Phase 0 COMPLETE (2026-06-27)
 - ✅ **Fixed `ModelGateway.generate`**: `search_order` → `self.providers` (crash-free inference restored)
@@ -141,6 +141,17 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 - ✅ **0.5 M2_FIREWALL_GAP**: Already fixed (D113 frozenset) — CANCELLED
 - ✅ **0.6 Single-source test count**: `make test-badge` target added, TEST_STATUS.md live
 
+### MV-IW Phase 2 COMPLETE (2026-07-01) — D179/D180 Pillar Decoupling
+- ✅ **D179 — Pillar Gate Removed**: `find_by_domain()` no longer filters by pillar assignment
+- ✅ **D180 — Full Decoupling**: `Entity.pillars`→`Entity.slots`, `Entity.traits`→`Entity.metadata`
+- ✅ **PILLAR_SLOTS removed** — `occupied_slots` property discovers slots dynamically
+- ✅ **WAD-specific fields stripped**: `pantheon`, `sigil`, `first_breath` no longer engine dataclass fields (→ `metadata` dict via `__getattr__` proxy)
+- ✅ **OracleResponse simplified**: removed `sigil`/`glyph`/`pantheon`, `pillars`→`slots`
+- ✅ **All consumers updated**: Iris, MCP Hub, CLI, wad_loader, entity_workspace
+- ✅ **Auto-migration**: old YAML `pillars:`→`slots:`, `traits:`→`metadata:` on load
+- ✅ **590 tests passing** — zero regressions
+- 🔶 **Deferred**: `FailureModeRegistry` (M17 work, not M2-critical)
+
 
 ## §6 Engine Health & Subsystem Status
 
@@ -152,7 +163,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | Source files | **116** .py files | 2026-06-29 |
 | Source lines | **~27,000** | 2026-06-29 |
 | Test functions | **615 collected — 590 passing, 22 skipped, 3 xfailed** | 2026-06-29 |
-| PIVOT decisions | **163 (D50-D163)** | 2026-06-29 |
+| PIVOT decisions | **165 (D50-D180)** | 2026-07-01 |
 | Sovereign Mandates | **22 (M1-M22)** | 2026-06-17 |
 | Agent Fleet | **13 agents** (11 fleet + 1 pillar + 1 messenger) | 2026-06-24 |
 
@@ -178,6 +189,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | **Sprint F** (Optimization) | 2026-06-29 | Kali + Council | ✅ | 600/600 tests. PII Masker, A2A Cards, Qdrant fixed. |
 | **MV-IW Phase 0** (Trust) | 2026-07-01 | Kali + Council | ✅ | 615/615 tests. test_hivemind fix, archive, pre-commit hook. |
 | **MV-IW Phase 1** (Trim) | 2026-07-01 | Kali | ✅ DONE | D178 Trim vs Split ratified. SSOT Trimmed to ~340 lines. |
+| **MV-IW Phase 2** (Decouple) | 2026-07-01 | Kali | ✅ DONE | D179/D180 Pillar Decoupling. PILLAR_SLOTS removed, slots+metadata schema, M2 Firewall enforced. 590 tests pass. |
 
 > **Full sprint history:** See `docs/decisions/PIVOT_LOG.md`.
 
@@ -238,5 +250,5 @@ For detailed architectural specifications, roadmaps, and historical analyses, re
 
 ---
 
-*Last Updated: 2026-07-01 | Author: Kali (Phase 2 Trim) | Version: v1.1.0-rc*
+*Last Updated: 2026-07-01 | Author: Kali (Phase 2 Pillar Decoupling) | Version: v1.1.0-rc*
 *Major changes this revision: D178 Extreme Trim. OMEGA_ENGINE.md has been stripped of ~600 lines of detailed specs, dated analyses, and cargo-cult roadmaps. Deep lore pointers consolidated to §12 to optimize agent context window loading and eliminate attention dilution.*

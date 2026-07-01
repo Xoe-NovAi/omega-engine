@@ -735,7 +735,7 @@ Instead of pulling in the heavy `langgraph` dependency, we build an asynchronous
 ### 5.1e Minimum Viable Iron Wall (MV-IW) — Carmack-Approved Plan
 **Date**: 2026-07-01
 **Source**: John Carmack S3 Audit + Kali Synthesis
-**Status**: ACTIVE EXECUTION
+**Status**: ACTIVE EXECUTION — Phase 0, 1, 2 COMPLETE
 
 The MV-IW replaces all prior Iron Wall execution plans. It is the single source of truth for the remaining work.
 
@@ -757,22 +757,29 @@ The MV-IW replaces all prior Iron Wall execution plans. It is the single source 
 | 1.1 | Trim OMEGA_ENGINE.md: remove §7-§10 duplicates, compact sprint index | 45m | ✅ **DONE** — 966→820 lines, D178 ratified, sections renumbered §8-§18 |
 | 1.2 | SearXNG env var fix (4 files) + one-pass doc sync | 30m | ✅ **DONE** — all 4 files using `SEARXNG_BASE_URL` env var |
 
-**Phase 2: IW-1 (Infrastructure) — Days 8-9**
+**Phase 2: MV-IW Pillar Decoupling (D179/D180) — Days 8-9 — COMPLETE**
 | Order | Task | Effort | Status |
 |-------|------|--------|--------|
-| 2.1 | Write INFRA-MASK-001.md (Tor Bridge spec) | 1h | ⏳ PENDING |
-| 2.2 | Build Tor Bridge Quadlets + pod binding | 3h | ⏳ PENDING |
-| 2.3 | ~~SearXNG env var fix~~ CANCELLED — absorbed into Phase 1.2 | — | ✅ DONE |
+| 2.1 | D179: Remove pillar gate from `find_by_domain()` | 30m | ✅ **DONE** — entity_registry.py, 4eda4f5 |
+| 2.2 | D180: Entity.pillars→slots, Entity.traits→metadata | 2h | ✅ **DONE** — Entity dataclass, 4eda4f5 |
+| 2.3 | D180: Remove PILLAR_SLOTS frozenset | 30m | ✅ **DONE** — dynamic occupied_slots, 4eda4f5 |
+| 2.4 | D180: Strip WAD-specific fields (pantheon, sigil, first_breath) | 1h | ✅ **DONE** — all in metadata dict, 4eda4f5 |
+| 2.5 | D180: Update OracleResponse (remove sigil/glyph/pantheon) | 1h | ✅ **DONE** — oracle.py, 4eda4f5 |
+| 2.6 | D180: Update all consumers (Iris, MCP Hub, CLI, wad_loader) | 2h | ✅ **DONE** — 15 sites, 4eda4f5 |
+| 2.7 | D180: Auto-migration for old YAML format | 1h | ✅ **DONE** — pillars→slots, traits→metadata on load |
+| 2.8 | Full test sweep + `make temple-grade` | 2h | ✅ **DONE** — 590 pass, 0 regressions |
 
-**Phase 3: IW-6 & IW-4 — Days 10-12**
+**Phase 3: Infrastructure & Hardening (IW-1/Tor Bridge, IW-6, IW-4) — Days 10-13**
 | Order | Task | Effort | Status |
 |-------|------|--------|--------|
-| 3.1 | Write TRACE-P10-VD1.md | 1h | ⏳ PENDING |
-| 3.2 | Fabric collapse tests | 3h | ⏳ PENDING |
-| 3.3 | Write TRACE-SIP-20260629.md | 1h | ⏳ PENDING |
-| 3.4 | SovereignIngestionPipeline (WAD-agnostic) | 4h | ⏳ PENDING |
+| 3.1 | Write INFRA-MASK-001.md (Tor Bridge spec) | 1h | ⏳ PENDING |
+| 3.2 | Build Tor Bridge Quadlets + pod binding | 3h | ⏳ PENDING |
+| 3.3 | Write TRACE-P10-VD1.md | 1h | ⏳ PENDING |
+| 3.4 | Fabric collapse tests | 3h | ⏳ PENDING |
+| 3.5 | Write TRACE-SIP-20260629.md | 1h | ⏳ PENDING |
+| 3.6 | SovereignIngestionPipeline (WAD-agnostic) | 4h | ⏳ PENDING |
 
-**Phase 4: Ship Readiness — Days 13-14**
+**Phase 4: Ship Readiness — Days 14-15**
 | Order | Task | Effort | Status |
 |-------|------|--------|--------|
 | 4.1 | Portability doc (docs/DEPLOYMENT.md, symlinks) | 2h | ⏳ PENDING |

@@ -1,63 +1,51 @@
 # ⬡ OMEGA ⬡ ANCHORED SUMMARY ⬡ 2026-07-01
-## Session 40 — KALI: Phase 1 Closed + Phase 2 Pillar Decoupling Planned
+## Session 40 — KALI: Phase 2 Pillar Decoupling EXECUTED (D180)
 
 ### Goal
-Complete Phase 1 closure (last-mile fixes, pillar gate removal, Verity audit fixes, doc cleanup).
-Plan Phase 2 pillar decoupling — move esoteric content (elements, chakras, planets) from engine
-core into Arcana-NovAi WAD where it always belonged.
+Execute Phase 2 pillar decoupling — strip esoteric WAD content (elements, chakras, planets, 
+solar systems, sigils) from the engine core and put it in the Arcana-NovAi WAD where it 
+always belonged. Achieve M2 Firewall compliance.
 
 ### Progress
 
-#### Phase 1 CLOSED (commits `8f43afb`, `d4b72c4`, `6708eff`)
-| Task | Status | Detail |
-|------|--------|--------|
-| 1.1a Makefile hook auto-install | ✅ DONE | chmod +x in setup + bootstrap |
-| 1.1b anchored-summary.md update | ✅ DONE | |
-| 1.1 Trim OMEGA_ENGINE.md | ✅ DONE | 966→243 lines |
-| 1.2 SearXNG env var fix | ✅ DONE | 4 call sites normalized |
-| 1.3 Dead link removal | ✅ DONE | DOMAIN_INDEX.md reference purged |
-| 1.4 Pillar gate removal (D179) | ✅ DONE | `find_by_domain()` no longer skips non-pillar entities |
-| 1.5 Verity audit fixes | ✅ DONE | Kali model corrected, CONTRIBUTING.md test count 40+→600+ |
-| 1.6 Deprecated doc purge | ✅ DONE | ~25 refs to SOVEREIGN_EVOLUTION_ROADMAP.md → SOVEREIGN_ARK_BLUEPRINT.md |
+#### Phase 2 COMPLETE (commit `4eda4f5`) — 590 tests, zero regressions
 
-#### Phase 2 Planned (commits `6708eff`)
-| Task | Status | Detail |
-|------|--------|--------|
-| Pillar Design Map recovered | ✅ DONE | Roc Racoon: 535-line `PILLAR_DESIGN_MAP_COMPLETE.md` from 12+ legacy sources |
-| Phase 2 design doc | ✅ DONE | `docs/strategy/PILLAR_DECOUPLING_PHASE2.md` (370 lines) |
-| Carmack S3 architecture review | ✅ DONE | `Entity.slots` + `Entity.metadata` opaque dict schema |
-| D180 recorded | ✅ DONE | Full decoupling architecture in PIVOT_LOG.md |
+| Change | Before | After | Why |
+|--------|--------|-------|-----|
+| **Hardcoded slots** | `PILLAR_SLOTS = frozenset({"p1"..."p10"})` | `occupied_slots` property (dynamic from loaded entities) | M2: no hardcoded slot IDs in engine |
+| **Entity identity** | `pillars: List[str]`, `traits: Dict` | `slots: List[str]`, `metadata: Dict` | Generic → engine agnostic |
+| **WAD-specific fields** | `pantheon`, `sigil`, `first_breath` as dataclass fields | Removed — all in `metadata` dict | M2: engine doesn't know WAD content |
+| **OracleResponse** | `pillars`, `sigil`, `glyph`, `pantheon` | `slots` only | Transport carries engine data, not WAD display |
+| **Serialization** | Old YAML: `pillars: ['1']`, `traits: {priority: 0}` | New YAML: `slots: ['1']`, `metadata: {...}` | Auto-migration on load |
+| **Backward compat** | N/A | `__getattr__` proxy: `entity.pantheon` → `entity.metadata["pantheon"]` | All existing code works unchanged |
 
-#### Key Discovery: 10 Pillars NEVER Engine Core
-The Roc Racoon deep mining confirmed definitively: the 10-pillar system (5 elements × 2 polarities,
-10 chakras, planetary alignments, sigils, invocations) was ALWAYS Arcana-NovAi WAD content —
-documented in Project Charter §5.0 "Dual Architecture" (Jan 2026). The engine had absorbed this
-content as a taxonomy that served no runtime purpose except as a routing gate that **broke entities
-without pillar assignments**. D179 removed the gate.
+**Key consumers updated**: EntityRegistry, oracle.py, CLI, Iris server, MCP Hub, wad_loader, entity_workspace
+
+### Phase 2 Not Yet Done
+- **FailureModeRegistry** (Step 6 in design doc) — deferred, not critical for M2 compliance
+- **Full WAD entities.yaml re-format** — auto-migration handles it; YAML was rewritten on `_save()`
 
 ### Test Suite
 - **615 collected — 590 passing, 22 skipped, 3 xfailed** — zero regressions
 
 ### Key Decisions
-- **D178**: SSOT Trimming vs Splitting — RATIFIED. Don't fragment the Single Source of Truth.
-- **D179**: Pillar gate removed from `find_by_domain()` — domain routing only, no pillar filter.
-- **D180**: Full pillar decoupling for Phase 2 — rename pillars→slots, traits→metadata, move
-  pantheon/sigil/element/chakra/planet into metadata, remove `PILLAR_SLOTS` and
-  `list_pillar_keepers()` from engine core. ~15h, 7 steps.
+- **D179**: Pillar gate removed from `find_by_domain()`
+- **D180**: Full pillar decoupling — slots+metadata abstraction, all WAD fields out of engine
+
+### Key Insight
+> An abstraction that doesn't serve a runtime purpose but gates runtime behavior is 
+> worse than useless — it's a taxonomy error. The engine must only know what it needs 
+> to execute: domain routing, model selection, personality injection. Esoteric meaning 
+> (elements, chakras, planets, sigils) is content, not infrastructure.
 
 ### Relevant Files
-- `docs/strategy/PILLAR_DECOUPLING_PHASE2.md` — Phase 2 execution plan (370 lines)
-- `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` — Master SSOT (all deprecated refs purged)
-- `docs/decisions/PIVOT_LOG.md` — D178, D179, D180 appended
-- `data/entities/roc_racoon/workspace/mining_reports/PILLAR_DESIGN_MAP_COMPLETE.md` — 535-line esoteric architecture recovery
-- `src/omega/oracle/entity_registry.py` — pillar gate removed (D179)
+- `docs/strategy/PILLAR_DECOUPLING_PHASE2.md` — design doc (all 8 steps documented)
+- `data/entities/roc_racoon/workspace/mining_reports/PILLAR_DESIGN_MAP_COMPLETE.md` (535 lines)
+- `src/omega/oracle/entity_registry.py` — core decoupling changes
+- `mcp_servers/omega_hub/tools.py` — consumer updates
+- `config/wads/_omega_default/entities.yaml` — auto-migrated to new format
 
-### Next Steps (Phase 2 — ~15h)
-1. Rename `Entity.pillars` → `Entity.slots` in entity_registry.py
-2. Rename `Entity.traits` → `Entity.metadata`, make it a free-form dict
-3. Remove `PILLAR_SLOTS` from constants/zoneid.py
-4. Remove `list_pillar_keepers()` from engine core → WAD responsibility
-5. Update `OracleResponse` to use `slots` instead of `pillars`
-6. Create `FailureModeRegistry` (move severity from traits)
-7. Update WAD entities.yaml — move esoteric fields into metadata
-8. Run `make temple-grade` + `make heritage-map` — verify no M2 violations
+### Next Steps
+1. `FailureModeRegistry` — create when needed for M17 Cognitive Integrity
+2. Full WAD YAML cleanup (cosmetic — migration already works)
+3. Phase 3 planning (if applicable)
