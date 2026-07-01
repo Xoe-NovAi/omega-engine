@@ -1,3 +1,4 @@
+# AP: AP-A2A-BRIDGE-v1.0.0
 """
 A2A Bridge — Sovereign Agent Identity.
 

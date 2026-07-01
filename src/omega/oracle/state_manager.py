@@ -1,3 +1,4 @@
+# AP: AP-STATE-MANAGER-v1.0.0
 import os
 import hashlib
 import shutil
