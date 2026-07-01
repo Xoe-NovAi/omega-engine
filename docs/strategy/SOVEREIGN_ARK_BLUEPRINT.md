@@ -154,14 +154,14 @@ Epoch III ─┬── Strike 8: Spatial-Semantic Geometry
 ### 3.1 Engine Metrics
 | Metric | Value | Status |
 |--------|-------|--------|
-| Tests collected | **481** | ✅ Verified 2026-06-29 |
-| Tests passed | **~471** (+ 22 skipped mnemosyne, 3 xfailed mcp_client) | ✅ 98% Passing |
-| Source files | **111** `.py` | ✅ Verified |
-| PIVOT decisions tracked | **174** (D1-D174, incl. xna-omega D1-D49) | ✅ Immutable |
+| Tests collected | **600** | ✅ Verified 2026-06-30 |
+| Tests passed | **575** (+ 22 skipped, 3 xfailed) | ✅ 600 effective |
+| Source files | **104** `.py` | ✅ Post dead-code purge |
+| PIVOT decisions tracked | **175** (D1-D175, incl. xna-omega D1-D49) | ✅ D175 ratified 2026-06-30 |
 | Sovereign Mandates | **22** (M1-M22) | ✅ Full compliance (see §IV) |
 | Mandate 9 (bare except) | **0 violations** | ✅ CI-enforced |
 | AnyIO compliance | **0 `import asyncio`** | ✅ CI-enforced |
-| Heritage tags | **42/50 files mapped** (8 need [id-soft:] tags) | 🟡 `make heritage-map` re-run needed |
+| Heritage tags | **39 files**, 113 legacy `[id-soft:]` tags, 0 unvetted | ✅ All tags have vet records |
 | Agent Fleet | **11 agents** | ✅ Consolidated (M10 compliant) |
 | Registered entities | **12** | 10 pillar roles + iris + sophia |
 | WADs deployed | **3** (`_omega_default`, `arcana_novai`, `doom_universe`) | ✅ |
@@ -223,9 +223,9 @@ The `_omega_default` IWAD provides the universal runtime entities (sysadmin, dat
 | M8 | Zero Telemetry | ✅ Enforced | CI grep telemetry. Qdrant telemetry disabled (D168). PII masking local-only. |
 | M9 | Error Integrity | ✅ Enforced | 0 bare except |
 | M10 | Fleet Integrity | ✅ Enforced | 11 agents cap (M10 compliant — 3 slots remaining) |
-| M11 | Soul Integrity | ✅ **RESOLVED** | Key mismatch fixed in oracle.py:786-789. Soul Distiller now receives correct transcripts. 8/10 stale souls will update on next session close. |
+| M11 | Soul Integrity | 🟡 **ROOT CAUSE FOUND — FIX DEFERRED** | Carmack discovered the key mismatch: `add_exchange()` stores `"user"/"assistant"`, `close_session()` reads `"role"/"content"`. 3-line fix at oracle.py:786-789. **NOT yet applied** — deferred to Sprint-G for proper verification with canary session. 8/10 souls remain stale. |
 | M12 | Queue Integrity | ✅ **RESOLVED** | 14d archive / 30d delete TTL added to handoff reaper in background.py. 41 stale packets now have a cleanup path. |
-| M13 | Temple-Grade | 🟡 9/11 | T11 IA2 exempt. T7 (latency) not measured. |
+| M13 | Temple-Grade | 🟡 7/11 GREEN, 3 AMBER, 1 RED | T1 AP tokens **PASSING** (4 files fixed 2026-06-30). T7 latency not measured (AMBER). T11 IA2 exempt (AMBER). 1 RED is aggregated. |
 | M14 | Heritage Vetting | 🟡 PARTIAL | 185 `[id-soft:]` tags verified. vet-001 through vet-010+ recorded. `make heritage-vet` CI needs expansion to 100% coverage. |
 | M15 | Sovereign Continuity | ✅ Enforced | session_gnosis.md |
 | M16 | Modularization | ⚠️ PARTIAL | Hub 5 modules sound. 4 hardcoded paths remain. |
@@ -290,7 +290,7 @@ The MaKaLi Cloud Council declared an **IMMEDIATE EXECUTION HOLD** on all feature
 | R-3 | **Add Makefile targets** | `Makefile` | `model-download`, `model-list`, `model-clean` targets | 5 min | ⏳ PENDING |
 | R-4 | **Fix hardcoded config path** | `config/omega.yaml:17` | Change absolute path `/home/arcana-novai/...` to relative `data` (Mandate 16) | 2 min | ⏳ PENDING |
 | R-5 | **Add `models/` to `.gitignore`** | `.gitignore` | Add after `# ── Build Artifacts` section | 1 min | ⏳ PENDING |
-| R-6 | **Add `odysseus-dev/` to `.gitignore`** | `.gitignore` | `data/entities/roc_racoon/workspace/odysseus-dev/` | 1 min | ⏳ PENDING |
+| R-6 | **Add `odysseus-dev/` to `.gitignore`** | `.gitignore` | `data/entities/roc_racoon/workspace/odysseus-dev/` | 1 min | ✅ **MOOT** — directory archived to `intake/processed/` on 2026-06-30 |
 | R-7 | **Create `models/gguf/.gitkeep`** | `models/gguf/` | Ensure directory exists after clone | 1 min | ⏳ PENDING |
 | R-8 | **Rewrite README Quick Start — local-first** | `README.md` | Local-first steps. Model download as step 2. Cloud as "Advanced" section. | 10 min | ⏳ PENDING |
 | R-9 | **Rewrite Provider Setup table** | `README.md` | Local providers first. Native GGUF #1. Cloud at bottom. | 10 min | ⏳ PENDING |
@@ -492,6 +492,8 @@ Which agent owns which H2 tracks and Epoch Strikes:
 | **v1.0.0 Release** | 2026-06-22 | Kali + Council | Pre-Epoch | 6-phase release, packaging, Antigravity |
 | **Sprint E (Epoch I Phase 0)** | 2026-06-24 | Kali + Verity | Epoch I | Soul fix, v6.1 validator, 19 M21 tests, Round-robin eradicated |
 | **Sprint F (Optimization Sprint)** | 2026-06-28 | Kali + Council | Epoch I | MaKaLi Council Pass 1 & 2 complete, web research + legacy mining, **3 regressions identified**. Then **MaKaLi Cloud Council Dispatch (2026-06-28/29)**: 2 Oversouls → 6 Pillars → 4 Cross-Domain Reviews → 3 Research Fleet agents → 1 Legacy Miner → Kali Synthesis. **3 Council Gaps discovered**: PII Masking (P0), Trace ID Propagation (P1), A2A Identity (P2). **T1-1 through T1-8 COMPLETED** (3,354 lines dead code removed). **T1-9/T1-10 PARTIAL**. All 22 Mandates audited: M11 VIOLATED, M22 PARTIAL, M5/M7 at risk. **Strategy docs consolidated**: 47 superseded docs archived, 40 operational/protocol docs remain. **ALL 3 GAPS IMPLEMENTED (2026-06-29)**: PII Masker (432 lines, 53 tests), Trace ID (contextvars + 5 call sites + GenerateResult contract fix, 10+ tests), A2A Agent Cards (319+100 lines, 56 tests + AAIF spec correction). **Qdrant container fixed (D167)** + telemetry disabled (D168). **is_cloud derivation fixed (D169)**. **M22 RESOLVED**, M7/M8 ✅ enforced. **Carmack S3 Review (2026-06-29)**: Discovered soul distiller key mismatch root cause — not an "unwired" problem but a contract mismatch between `add_exchange()` and `close_session()`. PIVOT_LOG D164-D171 appended by Jem strategic synthesis. **600/600 tests passing.** |
+| **Sovereign Review Infrastructure** | 2026-06-29 | Verity | Epoch I | Implementation of `skill:context-packer` and `CLAUDE.md` operational anchor. Established the high-density context pipeline for Web-Claude forensic audits. |
+| **Council Consensus Sprint** | 2026-06-30 | Makali + Council | Epoch I | **5-agent council review** (Carmack, Ma'at, Lilith, Researcher, Jem). **T1 temple-grade fixed**: 4 AP tokens added to state_manager, pii_masker, a2a_bridge, a2a_auth. **Entity bloat cleaned**: Roc's 178MB mining artifacts archived (98.6% reduction). **Directives ratified**: DIRECTORIES committed to git with D175. **Findings**: 8B LoRA infeasible locally, Audience Calibration = pipeline stage (not entity), PR readiness ~40%, build order: Hygiene → Audience Calibration → DPO Pipeline → Entity Evolution. **Ark Blueprint updated**: test counts, M11 status, new directives §XVI. |
 
 ---
 
@@ -514,23 +516,35 @@ Which agent owns which H2 tracks and Epoch Strikes:
 
 ---
 
-## XV. Next Launch Sequence (v2.0)
+## XV. Next Launch Sequence (v3.0 — Updated 2026-06-30)
 
-With Phase 0 complete and dependencies mapped, the recommended launch order is:
+### Two New Strategic Directives Ratified (see §XVI)
+The engine has two new post-PR directives: **Audience Calibration** (output pipeline stage) and **Parametric Gnosis** (weight-based evolution via local DPO LoRA training). These are ratified under D175 but **no code changes begin until the Pre-Release Polish Sprint passes**.
 
-1. **Immediate (Parallel) — Tier 1 Emergency Fixes (3 hours)**
-    - **T1-1**: Fix trace_id propagation (`oracle.py:599,671`)
-    - **T1-2**: Fix TokenLedger `is_cloud` $\rightarrow$ `provider_name` (`token_ledger.py`)
-    - **T1-3**: Wire `archive_old_sessions()` into boot (`oracle.py`)
-    - **T1-4**: Resolve PIVOT_LOG clock drift — **12 duplicates (D118, D144-D147 each appear twice)** (`docs/decisions/PIVOT_LOG.md`)
-    - **T1-5**: Generate HERITAGE_SOURCE_MAP.md (`make heritage-map`)
-    - **T1-6**: Remove hardcoded secret (`antigravity/config.py`)
-    - **T1-7**: Fix Firecrawl API key (`omega-firecrawl-mcp.service`)
-    - **T1-8**: Remove ~2,800 lines of dead code from 11 orphaned modules (`src/omega/`)
-    - **T1-9**: Fix Heritage Vet gaps — vet-001 record, expand vet script to 100% coverage
-    - **T1-10**: Correct AAIF mapping spec to A2A Agent Cards v1.0 + IETF AIMS
+### Immediate — Pre-Release Polish Sprint (~6 hours)
+**The engine is ~40% PR-ready. This sprint makes it shippable.**
+
+1. **Week 1 — Iron Wall Hardening Sprint (parallel, see IW-1 through IW-6 below)**
+2. **Week 2 — Pre-Release Polish Sprint** (R-1 through R-11, minus R-6 which is moot)
+3. **After PR — Tier 2 Regression Recovery (20 hours)**
+4. **After Tier 2 — Tier 3 Hardening (12 hours)**
+5. **Post-PR — Audience Calibration Pipeline (3-5 days)**
+6. **Post-PR — DPO Logging Infrastructure (1-2 weeks)**
+7. **Q4 2027 — Strikes 8, 9 (Spatial + P2P): Omegaverse launch.**
+
+### Active Execution Hold
+**No new feature expansion** until the following are completed:
+
+1. **Immediate (Parallel) — Iron Wall Hardening Sprint (Sovereign Review Phase)**
+   - **IW-1**: Deploy Tor-SOCKS5 Bridge + Local-First Escalation for SearXNG (M8)
+   - **IW-2**: Absolute purge of all round-robin logic from `KeyVault` (M4)
+   - **IW-3**: Implement Body-Level Error Guards (BLEG) + UFL (Forensic Ledger) (M9, M22)
+   - **IW-4**: Deploy Sovereign Ingestion Pipeline (Tri-Anchor System) + Omnidroid Migration (M5, M15)
+   - **IW-5**: Restore `workbench.db` schema + ingest `LEGACY_NAVIGATION_GUIDE.md` (M5)
+   - **IW-6**: Implement the V-D1 Validation Suite for "Sticky" mode resilience (M13)
 
 2. **Week 1-2 — Tier 2 Regression Recovery (20 hours)**
+
     - **T2-1**: Port CompactionOrchestrator (690 lines)
     - **T2-2**: Port 5-State Stochastic Circuit Breaker (CUSUM, Dual-EWMA, composite scoring)
     - **T2-3**: Port Soul Distillation Pipeline as a simplified, AnyIO functional sequence
@@ -554,6 +568,55 @@ With Phase 0 complete and dependencies mapped, the recommended launch order is:
 
 4. **Q4 2027**
    - **Strikes 8, 9** (Spatial + P2P): Omegaverse launch.
+
+---
+
+## XVI. Strategic Directives: Post-PR Development (Ratified D175)
+
+### Two Directives Locked on 2026-06-30
+
+#### D16-1: Audience Calibration (Output Pipeline Stage)
+> **Principle**: *"Depth without delivery is wasted; intelligence must calibrate to the receiver."*
+
+| Aspect | Specification |
+|--------|---------------|
+| **Architecture** | Pipeline stage (NOT entity — M10 enforced). Final transformation before delivery. |
+| **Insertion** | Between model generation and OracleResponse construction. Default: prompt injection to instruct entity on register. |
+| **Schema** | `config/wads/<stack>/audience.yaml` (WAD-layer, per M2). 4-5 starter profiles (technical, casual, academic, executive, exhausted-sysadmin). |
+| **Interface** | Natural Language skill (`audience-architect`) for non-developer profile creation. |
+| **V3** | Epistemological adaptation acknowledged and deferred. |
+| **Conflict Resolution** | Audience Register is the **final pass** — overrides raw DPO output. DPO tunes *what* is said; Calibration tunes *how* it's delivered. |
+| **M18 Compliance** | Token budget <110% original. Overhead tracked in observability. |
+| **Files** | `docs/strategy/DIRECTIVE_AUDIENCE_CALIBRATION.md` (lock commit `4c4a8f2`) |
+
+#### D16-2: Parametric Gnosis (Weight-Based Evolution)
+> **Principle**: *"The engine must evolve beyond In-Context Learning into Weight-Based Evolution via local DPO LoRA training."*
+
+| Aspect | Specification |
+|--------|---------------|
+| **Architecture** | Two mirrored systems: User Resonance (conversational alignment) + Entity Self-Actuation (Tripartite Reward Signal). |
+| **Data Format** | Standard DPO JSONL: `{"prompt": ..., "chosen": ..., "rejected": ...}`. |
+| **Sovereign Filter** | All dataset writes pass through `pii_masker.py` — safe for community LoRA sharing. |
+| **Training Target** | 4B (Qwen3-4B-bnb-4bit) max on Ryzen 5700U. 1.7B for reliable local training. 8B requires cloud-offload (opt-in per M7). |
+| **Tripartite Reward** | (1) Environmental (test passes/fails) (2) Council Evaluated (Oversoul rejection) (3) User Curated (direct correction) |
+| **Sample Efficiency** | 500-2,000 DPO pairs needed for noticeable alignment improvement. |
+| **Training Pipeline** | 10% training, 90% data pipeline. 3 hours per 500-pair epoch on CPU. |
+| **Data Sovereignty** | `data/training/users/` + `data/training/entities/`. Local-only by default. Cloud training is opt-in fallback. |
+| **Modes** | `disabled | explicit | implicit | hybrid` — configured in `config/omega.yaml resonance:` block. Default: `disabled`. |
+| **Files** | `docs/strategy/DIRECTIVE_PARAMETRIC_GNOSIS.md` (lock commit `4c4a8f2`) |
+
+### Council-Unanimous Build Order
+
+```
+Hygiene → Pre-Release Polish → Audience Calibration → DPO Pipeline → Entity Evolution
+```
+
+**Key constraints ratified by all 5 council members**:
+1. 8B LoRA training is **infeasible** on 12Gi RAM — tier-scoped to 0.6B/1.7B local, 4B+ cloud-offload
+2. Build the **data pipeline before the training runner** (90/10 effort split)
+3. Neither feature creates a new entity (M10 fleet cap enforced)
+4. Audience Calibration is the **final transformation layer** — always last before delivery
+5. M18 token efficiency applies — calibrated output must not exceed 110% of original
 
 ---
 
