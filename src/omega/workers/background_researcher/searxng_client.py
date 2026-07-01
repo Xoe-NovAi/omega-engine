@@ -5,6 +5,7 @@
 # Zero-cost, always-on search via the local SearXNG instance (port 8017).
 
 import logging
+import os
 from omega.errors import (
     OmegaError,
 )
@@ -14,7 +15,7 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-SEARXNG_URL = "http://localhost:8017"
+SEARXNG_URL = os.environ.get("SEARXNG_BASE_URL", "http://localhost:8017")
 DEFAULT_ENGINES = ["google", "duckduckgo", "brave", "wikipedia", "arxiv", "semantic scholar"]
 MAX_RESULTS = 10
 TIMEOUT = 10.0

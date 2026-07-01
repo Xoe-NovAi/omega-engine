@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import logging
 import anyio
+import os
 import re
 import uuid
 import yaml
@@ -103,7 +104,7 @@ class SovereignSearchService:
 
         # Configure T1 (SearXNG) from config with caller override
         t1_cfg = tiers_cfg.get("T1", {})
-        resolved_searxng_url = searxng_url or t1_cfg.get("url", "http://127.0.0.1:8017")
+        resolved_searxng_url = searxng_url or os.environ.get("SEARXNG_BASE_URL") or t1_cfg.get("url", "http://127.0.0.1:8017")
         t1_timeout = t1_cfg.get("timeout_seconds", 15)
         t1_retries = t1_cfg.get("retries", 2)
         t1_delays = t1_cfg.get("retry_delay_seconds", [5.0, 10.0])

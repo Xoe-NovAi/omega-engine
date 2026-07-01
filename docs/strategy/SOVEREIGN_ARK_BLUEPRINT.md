@@ -749,20 +749,20 @@ The MV-IW replaces all prior Iron Wall execution plans. It is the single source 
 | 0.5 | ~~Fix M2_FIREWALL_GAP~~ CANCELLED — already fixed (D113 frozenset) | 0h | ✅ DONE |
 | 0.6 | Single-source test count (make test-badge) | 30m | ✅ **DONE** — commit 7433194 |
 
-**Phase 1: Documentation Sanity & Trivial Infra (Days 6-7)**
+**Phase 1: Documentation Sanity & Trivial Infra (Days 6-7) — COMPLETE**
 | Order | Task | Effort | Status |
 |-------|------|--------|--------|
-| 1.1a | Fix pre-commit hook auto-install in Makefile (`make setup`) | 5m | ⏳ PENDING |
-| 1.1b | Update `.opencode/anchored-summary.md` to reflect trimmed SSOT | 10m | ⏳ PENDING |
-| 1.1 | Trim OMEGA_ENGINE.md: remove §7-§10 duplicates, compact sprint index | 45m | ⏳ PENDING |
-| 1.2 | SearXNG env var fix (4 files) + one-pass doc sync | 30m | ⏳ PENDING |
+| 1.1a | Fix pre-commit hook auto-install in Makefile (`make setup`) | 5m | ✅ **DONE** — git config added to setup + bootstrap |
+| 1.1b | Update `.opencode/anchored-summary.md` to reflect trimmed SSOT | 10m | ✅ **DONE** — consolidated Session 39 entry with D178 pivot |
+| 1.1 | Trim OMEGA_ENGINE.md: remove §7-§10 duplicates, compact sprint index | 45m | ✅ **DONE** — 966→820 lines, D178 ratified, sections renumbered §8-§18 |
+| 1.2 | SearXNG env var fix (4 files) + one-pass doc sync | 30m | ✅ **DONE** — all 4 files using `SEARXNG_BASE_URL` env var |
 
 **Phase 2: IW-1 (Infrastructure) — Days 8-9**
 | Order | Task | Effort | Status |
 |-------|------|--------|--------|
 | 2.1 | Write INFRA-MASK-001.md (Tor Bridge spec) | 1h | ⏳ PENDING |
 | 2.2 | Build Tor Bridge Quadlets + pod binding | 3h | ⏳ PENDING |
-| 2.3 | Oracle T0→T1→T2 cascade + SearXNG env var (3 files) | 2h | ⏳ PENDING |
+| 2.3 | ~~SearXNG env var fix~~ CANCELLED — absorbed into Phase 1.2 | — | ✅ DONE |
 
 **Phase 3: IW-6 & IW-4 — Days 10-12**
 | Order | Task | Effort | Status |

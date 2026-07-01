@@ -2,7 +2,7 @@
 **AP Token**: `AP-ORACLE-RESTORE-v2.3.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_local_first_config ⬡ ORACLE-RESTORE
 **Status**: ACTIVE
-**Last Updated**: 2026-07-01 (MV-IW Phase 0 Complete — 615 tests (590 pass, 22 skip, 3 xfail), 11-agent fleet, 22 Sovereign Mandates (M1-M22), Phase 1.1 in-progress)
+**Last Updated**: 2026-07-01 (MV-IW Phase 0 Complete — 615 tests (590 pass, 22 skip, 3 xfail), 11-agent fleet, 22 Sovereign Mandates (M1-M22), Phase 1 In-Progress — D178 Trim Ratified)
 
 ---
 
@@ -133,7 +133,7 @@ All containers run rootless (user 1000) using the Sovereign Permission Protocol 
 
 All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src python3 -m pytest tests/`.
 
-**Current state (2026-07-01)**: 615 collected — **590 passing, 22 skipped, 3 xfailed** (MV-IW Phase 0 Complete — Trust Restoration: test_hivemind fix, pre-commit hook, test-badge target, 172→13 stale files archived)
+**Current state (2026-07-01)**: 615 collected — **590 passing, 22 skipped, 3 xfailed** (MV-IW Phase 0 Complete — Phase 1 In-Progress: OMEGA_ENGINE.md trimmed 966→820 lines (D178), SearXNG env vars, pre-commit hook auto-install)
 
 | Module | Tests | Status |
 |--------|-------|--------|

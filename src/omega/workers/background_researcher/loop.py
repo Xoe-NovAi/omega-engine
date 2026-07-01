@@ -492,7 +492,8 @@ class BackgroundResearcherLoop:
             logger.debug("Network check (httpbin) failed: %s", e)
         try:
             async with httpx.AsyncClient(timeout=5.0) as client:
-                resp = await client.get("http://localhost:8017/healthz")
+                searxng_url = os.environ.get("SEARXNG_BASE_URL", "http://localhost:8017")
+                resp = await client.get(f"{searxng_url}/healthz")
                 return resp.status_code == 200
         except Exception as e:
             logger.warning("Network check (SearXNG health) failed: %s", e)

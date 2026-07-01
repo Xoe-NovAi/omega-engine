@@ -104,12 +104,12 @@ class SearXNGProvider(SearchProvider):
 
     def __init__(
         self,
-        base_url: str = "http://127.0.0.1:8017",
+        base_url: Optional[str] = None,
         timeout: float = 15.0,
         retries: int = 2,
         retry_delays: Optional[List[float]] = None,
     ):
-        self.base_url = base_url.rstrip("/")
+        self.base_url = (base_url or os.environ.get("SEARXNG_BASE_URL", "http://127.0.0.1:8017")).rstrip("/")
         self.timeout = timeout
         self.retries = retries
         self.retry_delays = retry_delays or [5.0, 10.0]

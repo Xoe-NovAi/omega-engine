@@ -87,13 +87,14 @@ Add `git config core.hooksPath .githooks` to the `Makefile` `setup`/`bootstrap` 
 **Task 1.1b: Update `.opencode/anchored-summary.md`**
 Ensure M15 continuity is preserved alongside the SSOT trim.
 
-**Task 1.1: Trim `OMEGA_ENGINE.md`**
-- Remove §7 (Strategic Pillars) -> belongs in `SOVEREIGN_ARK_BLUEPRINT.md`
-- Remove §8 (Priority Queue) -> belongs in `SOVEREIGN_ARK_BLUEPRINT.md`
-- Remove §9 (Mandates Quick Ref) -> belongs in `SOVEREIGN_MANDATES.md`
-- Remove §10 (Sovereignty Scorecard) -> belongs in `SOVEREIGN_ARK_BLUEPRINT.md`
-- Compact §6 Sprint Index to only the last 3 entries -> history belongs in `PIVOT_LOG.md`
-This will reduce the file from 957 lines to ~400 without losing critical start-up context.
+**Task 1.1: Trim `OMEGA_ENGINE.md` (Extreme Trim)**
+- Removed §7 (Strategic Pillars) -> belongs in `SOVEREIGN_ARK_BLUEPRINT.md`
+- Removed §8 (Priority Queue) -> belongs in `SOVEREIGN_ARK_BLUEPRINT.md`
+- Removed §9 (Mandates Quick Ref) -> belongs in `SOVEREIGN_MANDATES.md`
+- Removed §10 (Sovereignty Scorecard) -> belongs in `SOVEREIGN_ARK_BLUEPRINT.md`
+- Compacted §6 Sprint Index to only the last 3 entries
+- **Phase 2 Extreme Trim (Per Carmack)**: Removed dated Structural Insights, Expanded Roadmaps, External Tool KB, and Metadata Specs. Replaced with `§12 Appendices, Specs, & Deep Lore`.
+- Final result: 966 lines → 243 lines. Zero data loss. Massive context reduction.
 
 **Task 1.2: SearXNG env var fix + one-pass doc sync**
 Update 4 hardcoded SearXNG URLs (`search_providers.py`, `sovereign_search_service.py`, `searxng_client.py`, `background_researcher/loop.py`) to use `os.environ.get("SEARXNG_BASE_URL", ...)`. Verify cross-references.
