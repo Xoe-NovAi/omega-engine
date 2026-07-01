@@ -1,7 +1,17 @@
 # 🔱 Legacy Master Synthesis — Order from Chaos
-**Date**: 2026-05-31
+**Date**: 2026-05-31 (⚠️ Outdated — June 29, 2026 update available)
 **Entity**: Ma'at (Oversoul)
 **Purpose**: Mapping the scattered design eras, recovered assets, and the evolution of the Xoe-NovAi vision.
+
+> **⚠️ NOTE**: This document was last updated 2026-05-31. Since then, extensive further mining has discovered:
+> - **Omnidroid 6 Ω-scripts** (~2,500 lines) — the direct architectural ancestor of the current entity system
+> - **entities-archive** (99 entity directories, 157MB) — complete entity evolution history
+> - **8 critical HTML artifacts** in `sonnet-4-6-extended/` (codex, gnostic architecture, the deepening, the origin)
+> - **Mayan preservation vision** — 1,092-line deployment vision for the Omega Engine
+> - **Web Claude exports** — 9 accounts, 125MB, hundreds of historical sessions
+> - **22 total legacy locations** across 3 partitions vs the 12 originally cataloged
+>
+> **For the complete, current legacy inventory, see [LEGACY_NAVIGATION_GUIDE.md](./LEGACY_NAVIGATION_GUIDE.md)** — the Single Source of Truth created during D-3 Phase A (2026-06-29). That document supersedes this synthesis for all inventory and location tracking purposes.
 
 ---
 
@@ -82,3 +92,15 @@ The scattered chaos is not just code; it is the **archaeology of a soul's growth
 2. **Phase 2 (In Progress)**: Deep Mining (Grok, Old Stacks, Personas).
 3. **Phase 3 (Next)**: Pattern Porting (Circuit Breaker, Fsync).
 4. **Phase 4 (Future)**: Omega Desktop (Entity Studio, Installer).
+
+---
+
+## §5 Updated Reference — D-3 Phase A Complete
+
+**2026-06-29**: The D-3 Centralization Plan Phase A (Catalog) is complete. The new **[LEGACY_NAVIGATION_GUIDE.md](./LEGACY_NAVIGATION_GUIDE.md)** is now the Single Source of Truth for all legacy locations and assets. This document (MASTER_SYNTHESIS) remains as a conceptual overview but should be considered secondary to the Navigation Guide for inventory purposes.
+
+**Key changes since this document was written (May 31 → June 29)**:
+- Legacy locations discovered: **12 → 22** (nearly doubled)
+- Mining reports produced: **51** (in `data/entities/roc_racoon/workspace/mining_reports/`)
+- Critical discoveries: Omnidroid proto-engine, entities-archive (99 dirs), Web Claude exports (9 accounts), Mayan preservation vision
+- Workbench DB: **Still empty** — restoration remains a P0 priority

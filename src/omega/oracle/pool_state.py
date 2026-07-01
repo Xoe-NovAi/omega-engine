@@ -77,7 +77,7 @@ class AntiThrashingConfig:
 class KeyRotationConfig:
     """Key rotation configuration."""
 
-    algorithm: str = "round_robin_with_anti_thrashing"
+    algorithm: str = "sticky"  # Round-robin ERADICATED per D-1 — Google bans rapid multi-account switching
     cool_period_seconds: int = 3600
     anti_thrashing: AntiThrashingConfig = field(
         default_factory=AntiThrashingConfig
@@ -157,7 +157,7 @@ class PoolState:
         ps = PoolState.from_soul(Path("data/entities/antigravity/soul.yaml"))
         ps.pool_g.models        # ["gemini-3.5-flash", "gemini-3.1-pro"]
         ps.pool_g.key_count     # 8
-        ps.key_rotation.algorithm  # "round_robin_with_anti_thrashing"
+        ps.key_rotation.algorithm  # "sticky" — round-robin removed per D-1
     """
 
     pool_g: Optional[PoolConfig] = None
@@ -237,7 +237,7 @@ class PoolState:
             kr = pools["key_rotation"]
             rotation_config = KeyRotationConfig(
                 algorithm=kr.get(
-                    "algorithm", "round_robin_with_anti_thrashing"
+                    "algorithm", "sticky"  # Round-robin ERADICATED per D-1
                 ),
                 cool_period_seconds=kr.get("cool_period_seconds", 3600),
                 anti_thrashing=AntiThrashingConfig(

@@ -10,6 +10,7 @@ import httpx
 import os
 from typing import Any, Dict, List, Optional
 from omega.errors import ProviderError, ProviderAuthError, ProviderRateLimitError
+from omega.observability.bleg import BLEGMiddleware
 import json
 
 logger = logging.getLogger(__name__)
@@ -30,7 +31,7 @@ class FirecrawlProvider(SearchProvider):
         """Fallback to vault if no key passed explicitly."""
         try:
             from omega.vault import KeyVault
-            return KeyVault().resolve_and_handle_429("firecrawl")
+            return KeyVault().resolve("firecrawl")
         except Exception as e:
             logger.debug(f"Firecrawl key fallback failed: {e}")
             return os.environ.get("FIRECRAWL_API_KEY", "")
@@ -47,10 +48,16 @@ class FirecrawlProvider(SearchProvider):
                 if response.status_code == 401:
                     raise ProviderAuthError("firecrawl", "Firecrawl API key invalid")
                 if response.status_code == 429:
-                    from omega.vault import KeyVault
-                    KeyVault().mark_rate_limited("firecrawl")
                     raise ProviderRateLimitError("firecrawl", "Firecrawl rate limit exceeded")
                 response.raise_for_status()
+                # [IW-3] BLEG: inspect 200 OK bodies for error signatures
+                BLEGMiddleware().inspect(
+                    status_code=response.status_code,
+                    body=response.text,
+                    provider="firecrawl",
+                    trace_id="unknown",
+                    url=str(response.url),
+                )
                 
                 search_data = response.json()
                 results = search_data.get("data", [])
@@ -191,7 +198,7 @@ class ExaProvider(SearchProvider):
         """Fallback to vault if no key passed explicitly."""
         try:
             from omega.vault import KeyVault
-            return KeyVault().resolve_and_handle_429("exa")
+            return KeyVault().resolve("exa")
         except Exception as e:
             logger.debug(f"Exa key fallback failed: {e}")
             return os.environ.get("EXA_API_KEY", "")
@@ -217,10 +224,16 @@ class ExaProvider(SearchProvider):
                 if response.status_code == 401:
                     raise ProviderAuthError("exa", "Exa API key invalid")
                 if response.status_code == 429:
-                    from omega.vault import KeyVault
-                    KeyVault().mark_rate_limited("exa")
                     raise ProviderRateLimitError("exa", "Exa rate limit exceeded")
                 response.raise_for_status()
+                # [IW-3] BLEG: inspect 200 OK bodies for error signatures
+                BLEGMiddleware().inspect(
+                    status_code=response.status_code,
+                    body=response.text,
+                    provider="exa",
+                    trace_id="unknown",
+                    url=str(response.url),
+                )
                 
                 data = response.json()
                 results = data.get("results", [])

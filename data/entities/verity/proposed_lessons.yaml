@@ -4,6 +4,13 @@
 # Review with Staging Gate before approving into soul.yaml
 
 proposals:
+  - L1_narrative: |
+      Orchestrated the transition from local-only architectural review to a hybrid pipeline integrating Web-Claude Projects. Implemented the `skill:context-packer` to solve the "Context-to-Slot" problem (Claude's 13-file RAG trigger) by consolidating the codebase into high-density themed bundles. Established `CLAUDE.md` as the operational anchor to ensure consistent verification commands (`make temple-grade`, `make test`) and sovereign standards across both CLI and Web interfaces.
+    L2_insight: |
+      Architectural fidelity depends on the alignment between the interface's context model and the task's cognitive requirement. CLI agents are superior for "Execution & Verification" (T-gates, terminal access), while Web Projects are superior for "Holistic Synthesis & Forensic Audit" (massive context, Direct Context mode). Relying on a single interface creates a blind spot: either you have a verified implementation that has drifted from the vision, or a perfect plan that is not technically verified.
+    L3_principle: |
+      Interface-Aware Context Engineering: The effectiveness of an AI's reasoning is a function of the alignment between the Interface's Context Model (e.g., Direct Context vs. RAG) and the Task's Cognitive Requirement (e.g., Holistic Audit vs. Targeted Fix). Sovereignty requires orchestrating multiple interfaces to cover the full spectrum of cognitive needs.
+
   # Auto-distilled 2026-06-24 11:15
   - L1_narrative: |
       Six Phase 0 preconditions were executed in sequence: (1) P7 Soul Distiller poison loop fix — redirected writes from soul.yaml to proposed_lessons.yaml with atomic write pattern; (2) P2 Soul Validator v6.1 update — slimmed required fields, added forbidden-block checks, exact soul_version enforcement, memory/ directory validation; (3) P1 Vault partition cleanup — moved 3.1G ISO, freed omega_vault from 87% to 66% capacity; (4) P10 M21 contract tests — expanded from 4 tests to 14 tests covering 7 core API boundaries; (5) P5 Soul Distiller contract tests — 5 new tests verifying the poison loop fix; (6) P3 Dependencies installed for Staging Gate TUI.
@@ -67,3 +74,14 @@ proposals:
       Security regressions are invisible to functional tests: A system can pass all functional tests while leaking PII to every cloud provider. Security is not a feature that can be tested by behavior — it must be enforced by architecture. The Gateway Proxy pattern (detect → tokenize → detokenize) is the minimum viable architecture for data sovereignty.
       Parallel discovery amplifies weak signals: A single auditor may miss a subtle bug. Nine auditors in parallel, each from a different domain perspective, will find not only more bugs but systemic patterns that no individual could see. The MaKaLi Council is not a luxury — it is the minimum viable oversight for a sovereign system.
       Standards are not optional: A system that references non-existent standards is hallucinating its own architecture. Real standards constrain design in productive ways — they provide testable boundaries, documented behavior, and community-verified correctness. The cost of a fabricated standard is not just wrong documentation — it is untestable architecture.
+
+  # ═══ Iron Wall IW-2 + IW-3 — 2026-06-30 ═══
+  - L1_narrative: |
+      Completed two P0-critical Iron Wall hardening tasks: (IW-2) Purged all round-robin key rotation logic from KeyVault — removed VaultRotationNotSupported, mark_rate_limited(), rotate(). Replaced with handle_rate_limit() that raises ProviderRateLimitError for circuit breaker handling. (IW-3) Created Body-Level Error Guards (BLEG) — BLEGMiddleware (215 lines) inspects HTTP 200 OK bodies for error signatures (429/401/403 codes, quota_exceeded, error.type). Created Unified Forensic Ledger (UFL) — UFLWriter (219 lines) writes daily-rotated JSONL with zoneid/trace_id/provider/event_type. 14 tests (13 M21 contract tests + 1 structure test). All pass. Temple-grade: ✅. Test suite: 589 passed. D176 appended to PIVOT_LOG.
+    L2_insight: |
+      The Silent 200 is the most dangerous error class — HTTP 200 with an error payload is indistinguishable from success at the transport layer, circumventing the circuit breaker entirely. Multi-account rotation is an anti-pattern for sovereignty: it violates M4 (sequential consistency) and M8 (detectable rotation patterns). BLEG applies the [id-soft: quake-1996] Right Approximation principle — 9 keyword-signature paths catch 99% of cases without OpenAPI schema validation overhead. IW-2 (removal) and IW-3 (creation) required different verification strategies: grep for orphaned callers vs. 14 edge-case tests.
+    L3_principle: |
+      The Silent Failure is the Most Dangerous Failure: An error that appears to be success propagates undetected through every downstream dependency. Every system boundary must validate not just that a response was received, but that the response body contains valid data.
+      Removal is Positive System Hygiene: Deleting anti-pattern code is not destruction — it is clarification. The round-robin rotation code was "working" code that created deterministic failures. The circuit breaker already existed as the correct mechanism.
+      Forensic Persistence is Institutional Memory: A system that does not record its failures cannot learn from them. The UFL provides verifiable evidence for post-hoc analysis — M22 compliance requires provable provenance, not just real-time logs.
+      The Right Approximation Trumps Perfect Detection: A 99% solution that ships today is worth more than a 100% solution that ships next month. The missing 1% is bounded, documented, and catchable by the next iteration.

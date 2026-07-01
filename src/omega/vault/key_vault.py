@@ -18,12 +18,11 @@
 import json
 import logging
 import os
-import time
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
-from omega.errors import OmegaError
+from omega.errors import OmegaError, ProviderRateLimitError
 from omega.vault.crypto import encrypt, decrypt, VaultCryptoError
 
 logger = logging.getLogger(__name__)
@@ -34,28 +33,32 @@ class VaultKeyNotFound(OmegaError):
     pass
 
 
-class VaultRotationNotSupported(OmegaError):
-    """Raised when a provider has no rotation accounts configured."""
-    pass
-
-
 class VaultLockedError(OmegaError):
     """Raised when the vault cannot be decrypted (wrong key or corruption)."""
     pass
 
 
+# NOTE: VaultRotationNotSupported was removed in IW-2 (2026-06-30).
+# Round-robin key rotation is banned. Rate limits are handled by the
+# circuit breaker fabric via ProviderRateLimitError.
+
+
 class KeyVault:
-    """Sovereign Key Vault — encrypted API key management with rotation.
+    """Sovereign Key Vault — encrypted API key management.
     
     This is the single source of truth for all API keys used by the Omega
     Engine. It replaces the previous pattern of scattered os.getenv() calls.
+    
+    **Round-robin rotation was ERADICATED per IW-2 (2026-06-30).**
+    Multi-account rotation violates M4 (Sequentiality) and M8 (Zero Telemetry)
+    because Google and other providers ban rapid account switching.
+    Rate limits are now handled by the circuit breaker fabric via
+    ``ProviderRateLimitError`` — the vault is a simple O(1) key store.
     
     Usage:
         vault = KeyVault()
         exa_key = vault.resolve("exa")
         all_google = vault.resolve_all("google")
-        vault.mark_rate_limited("exa")
-        new_key = vault.rotate("exa", reason="rate_limit")
     
     The vault file is encrypted at rest with AES-256-GCM. The master key
     is read from the VAULT_MASTER_KEY environment variable (or auto-generated
@@ -98,11 +101,6 @@ class KeyVault:
             "vault_version": 1,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "keys": {},
-            "rotation_policy": {
-                "strategy": "round_robin",
-                "rate_limit_cooldown_seconds": 60,
-                "failover_on": ["rate_limit", "auth_error"],
-            },
         }
         self._loaded = False
         
@@ -221,101 +219,30 @@ class KeyVault:
         
         return [str(entry)]
     
-    def rotate(self, provider: str, reason: str = "") -> str:
-        """Rotate to the next account key for a provider.
-        
+    def handle_rate_limit(self, provider: str) -> str:
+        """Sovereign rate-limit handler — raises ProviderRateLimitError.
+
+        Rate limits are handled by the circuit breaker fabric, NOT by
+        rotating API keys. This method exists as an explicit replacement
+        for the removed ``mark_rate_limited()`` + ``rotate()`` pattern.
+
         Args:
-            provider: Provider name with rotation accounts.
-            reason: Why the rotation was triggered (for audit log).
-            
-        Returns:
-            The new active key.
-            
+            provider: Provider name that returned a 429.
+
         Raises:
-            VaultRotationNotSupported: If the provider has no rotation accounts.
-            VaultKeyNotFound: If no key found for the provider.
-        """
-        if not self._loaded:
-            if self._vault_path.exists():
-                self._load()
-            else:
-                raise VaultKeyNotFound(
-                    f"Cannot rotate '{provider}' — vault not initialized"
-                )
-        
-        entry = self._data.get("keys", {}).get(provider)
-        if not entry:
-            raise VaultKeyNotFound(f"No key for provider '{provider}' in vault")
-        
-        if isinstance(entry, str):
-            raise VaultRotationNotSupported(
-                f"Provider '{provider}' has a single key, no rotation accounts"
-            )
-        
-        accounts = list(entry.get("accounts", {}).keys())
-        if not accounts:
-            raise VaultRotationNotSupported(
-                f"Provider '{provider}' has no rotation accounts configured"
-            )
-        
-        current = entry.get("active_account", accounts[0])
-        current_idx = accounts.index(current) if current in accounts else -1
-        next_idx = (current_idx + 1) % len(accounts)
-        
-        entry["active_account"] = accounts[next_idx]
-        entry["_last_rotation"] = datetime.now(timezone.utc).isoformat()
-        entry["_rotation_reason"] = reason or "manual"
-        entry["_rotation_count"] = entry.get("_rotation_count", 0) + 1
-        
-        self._save()
-        logger.info(
-            f"Key rotated for '{provider}': {current} -> {accounts[next_idx]} "
-            f"({reason})"
-        )
-        return entry["accounts"][accounts[next_idx]]
-    
-    def resolve_and_handle_429(self, provider: str) -> str:
-        """Resolve key, automatically rotating if cooldown is active.
-        
-        Args:
-            provider: Provider name.
-            
+            ProviderRateLimitError: Always — the caller is responsible
+                for retry/backoff via circuit breaker integration.
+
         Returns:
-            The key to use (may be a rotated key if previous was rate-limited).
+            This method does not return — it always raises.
         """
-        try:
-            entry = self._data.get("keys", {}).get(provider, {})
-            cooldown_until = entry.get("_cooldown_until", 0)
-            
-            if time.time() < cooldown_until:
-                return self.rotate(provider, "rate_limit_auto_failover")
-            
-            return self.resolve(provider)
-        except VaultKeyNotFound:
-            return self._fallback_to_env(provider) or ""
-        except VaultRotationNotSupported:
-            return self.resolve(provider)
-    
-    def mark_rate_limited(self, provider: str, cooldown_seconds: int = 60):
-        """Mark the current key as rate-limited (sets cooldown).
-        
-        Next call to resolve_and_handle_429() will automatically rotate.
-        
-        Args:
-            provider: Provider name.
-            cooldown_seconds: Seconds to wait before retrying the key.
-        """
-        if not self._loaded:
-            return  # Silently ignore if vault not initialized
-        
-        entry = self._data.get("keys", {}).get(provider)
-        if not entry:
-            return
-        
-        entry["_cooldown_until"] = time.time() + cooldown_seconds
-        entry["_last_rate_limit"] = datetime.now(timezone.utc).isoformat()
-        self._save()
-        logger.info(f"Rate limit recorded for '{provider}', {cooldown_seconds}s cooldown")
+        logger.info(f"Rate limit detected for '{provider}' — delegating to circuit breaker")
+        raise ProviderRateLimitError(
+            provider,
+            f"Provider '{provider}' is rate-limited. "
+            f"The circuit breaker fabric will handle retry/backoff. "
+            f"Key rotation is intentionally disabled (IW-2).",
+        )
     
     # ── Vault Management ──────────────────────────────────────────────
     
@@ -536,7 +463,7 @@ class KeyVault:
         }
         if self._loaded:
             status["providers"] = list(self._data.get("keys", {}).keys())
-            status["rotation_policy"] = self._data.get("rotation_policy", {})
+            status["rotation_policy"] = "sticky (round-robin ERADICATED per IW-2)"
             key_count = 0
             for provider, entry in self._data.get("keys", {}).items():
                 if isinstance(entry, str):

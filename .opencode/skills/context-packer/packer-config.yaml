@@ -1,0 +1,35 @@
+profiles:
+  sovereign-audit:
+    description: "Core Engine and Mandates Audit"
+    max_slots: 12
+    include:
+      - "CLAUDE.md"
+      - "SOVEREIGN_MANDATES.md"
+      - "OMEGA_ENGINE.md"
+      - "src/omega/**/*.py"
+      - "config/providers.yaml"
+      - "config/models.yaml"
+      - "docs/strategy/**/*.md"
+    exclude:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+      - "**/*.log"
+    themes:
+      mandates: ["CLAUDE.md", "SOVEREIGN_MANDATES.md", "OMEGA_ENGINE.md"]
+      core_engine: ["src/omega/**/*.py"]
+      config: ["config/providers.yaml", "config/models.yaml"]
+      strategy: ["docs/strategy/**/*.md"]
+
+  engineering-p3:
+    description: "Full context for P3 Engineering Pillar"
+    max_slots: 12
+    include:
+      - "src/omega/oracle/orchestrator.py"
+      - "src/omega/oracle/model_gateway.py"
+      - "tests/test_orchestrator.py"
+    exclude:
+      - "**/__pycache__/**"
+    themes:
+      core_logic: ["src/omega/oracle/orchestrator.py", "src/omega/oracle/model_gateway.py"]
+      validation: ["tests/**"]
+      docs: ["docs/strategy/**"]

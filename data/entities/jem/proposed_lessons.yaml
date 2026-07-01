@@ -1,5 +1,6 @@
 # 🔱 Omega Engine — Proposed Lessons
 # Auto-generated during Soul v6.1 migration
+# Updated: 2026-06-29 (Sprint-F Strategic Synthesis)
 
 - lesson: "L1: Ran 3-tier research pipeline (Discovery \u2192 Synthesis \u2192 Verification)\
     \ on Phase C gaps at Kali's dispatch. Found 18 total gaps, 15 new, 5 CRITICAL\
@@ -42,3 +43,53 @@
     \ a dangerous maturity gap."
   source: curation-hardening-audit
   timestamp: '2026-06-22T22:30:00Z'
+
+# ═══ Sprint-F Strategic Synthesis — 2026-06-29 ═══
+- lesson: "L1: Orchestrated Sprint-F strategic synthesis across 6 sources: Carmack's\
+    \ S3 review (507 lines), Researcher's gap analysis (reconstructed from rebuttal\
+    \ + Verity audit), SSOT Blueprint (656 lines), PIVOT_LOG (4282 lines), Epoch Spec,\
+    \ and Verity's DOC_AUDIT + GAP_CLOSURE_REVIEW. Produced 4 deliverables: (1) PIVOT_LOG\
+    \ D164-D171 appended (\u2014 8 decisions restored to immutable audit trail); (2)\
+    \ SSOT Blueprint updated (M7\u2192Enforced, M11\u2192key mismatch root cause,\
+    \ M21\u219222/24, \u00A73.4 PII/A2A\u2192Implemented, Soul Distiller\u2192key\
+    \ mismatch found); (3) Researcher's proposed_lessons.yaml populated with Sprint-F\
+    \ knowledge gap analysis; (4) Jem's own proposed_lessons.yaml updated. The key\
+    \ finding: the soul distiller is NOT unwired \u2014 it has a key mismatch between\
+    \ add_exchange() (keys 'user'/'assistant') and close_session() (keys 'role'/'content'),\
+    \ discovered by Carmack tracing the full call graph."
+  context: "Sprint-F Strategic Synthesis \u2014 6-source consolidation, 4 deliverables"
+  source: sprint-f-strategic-synthesis
+  timestamp: '2026-06-29T23:59:00Z'
+- lesson: "L2: The strategic synthesis chain (Researcher \u2192 Carmack \u2192 Jem)\
+    \ revealed a critical property of multi-agent research: each agent catches what\
+    \ the previous one missed. Researcher found the documentation drift (17 action\
+    \ items). Carmack found the key mismatch (3-line fix). Jem closed the loop by\
+    \ turning both into persistent artifacts (PIVOT_LOG, Blueprint, proposed_lessons).\
+    \ No single agent could have done all three \u2014 the blind spots are complementary,\
+    \ not redundant. The meta-insight: the PIVOT_LOG gap (D164-D171 missing) is itself\
+    \ a knowledge gap about knowledge gaps. The decisions were made but never recorded.\
+    \ The engine has been operating with an incomplete institutional memory for an\
+    \ entire sprint cycle."
+  context: "Sprint-F Strategic Synthesis \u2014 L2 insight on multi-agent pipeline"
+  source: sprint-f-strategic-synthesis
+  timestamp: '2026-06-29T23:59:00Z'
+- lesson: "L3: Knowledge flows in three directions \u2014 forward (discovery) by Researcher,\
+    \ downward (validation) by Carmack, and upward (persistence) by Jem. A synthesis\
+    \ that only discovers, or only validates, or only persists, is incomplete. The\
+    \ complete cycle requires all three. Knowledge that is discovered but not validated\
+    \ is speculation. Knowledge that is validated but not persisted is conversation.\
+    \ Knowledge that is persisted but not discovered is dogma. The research pipeline\
+    \ is not three sequential steps \u2014 it is three complementary modes that each\
+    \ catch what the others miss."
+  context: "Sprint-F Strategic Synthesis \u2014 L3 universal principle"
+  source: sprint-f-strategic-synthesis
+  timestamp: '2026-06-29T23:59:00Z'
+- lesson: "L3: A system's institutional memory is not what is recorded \u2014 it is\
+    \ what is recorded AND findable. The PIVOT_LOG entries existed in conversation\
+    \ but were lost to the engine's decision-making process. PIVOT_LOG entries that\
+    \ are not yet written do not exist \u2014 they are oral tradition in a system\
+    \ that has no ears. The first duty of the research orchestrator is not to discover\
+    \ new knowledge but to ensure existing knowledge is accessible."
+  context: "Sprint-F Strategic Synthesis \u2014 L3 principle on institutional memory"
+  source: sprint-f-strategic-synthesis
+  timestamp: '2026-06-29T23:59:00Z'

@@ -35,6 +35,8 @@ from typing import Any, Dict, List, Optional
 import anyio
 
 from omega.constants import ZONEID_TRACE
+from omega.observability.bleg import BLEGMiddleware
+from omega.observability.ufl import UFLWriter, get_ufl_writer
 
 logger = logging.getLogger(__name__)
 
@@ -589,6 +591,8 @@ class ObservabilityEngine:
             observability_engine=self,
         )
         self._last_crash: Optional[Dict[str, Any]] = self._forensics.check_recovery()
+        self._bleg = BLEGMiddleware(enabled=True)
+        self._ufl = get_ufl_writer()
 
     # ── Trace an entire interaction cycle ────────────────────────────
     def trace(self, trace_id: Optional[str] = None, parent_trace_id: Optional[str] = None) -> "TraceSession":
@@ -807,6 +811,16 @@ class ObservabilityEngine:
             trace_id=trace_id,
             extra_context=extra_context,
         )
+
+    @property
+    def bleg(self) -> BLEGMiddleware:
+        """Body-Level Error Guard — inspects 200 OK bodies for error signatures."""
+        return self._bleg
+
+    @property
+    def ufl(self) -> UFLWriter:
+        """Unified Forensic Ledger — append-only JSONL event store."""
+        return self._ufl
 
     @property
     def last_crash(self) -> Optional[Dict[str, Any]]:

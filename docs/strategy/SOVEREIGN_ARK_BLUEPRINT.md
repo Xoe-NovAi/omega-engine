@@ -274,8 +274,8 @@ The MaKaLi Cloud Council declared an **IMMEDIATE EXECUTION HOLD** on all feature
 | # | Domain | Task | Technical Reference | Mandate | Status |
 |---|--------|------|---------------------|---------|--------|
 | **IW-1** | **Infrastructure** | Deploy Tor-SOCKS5 Bridge + Local-First Escalation for SearXNG | `TRACE-P1-SSNM-V1` | M8 | 🔴 P0 CRITICAL |
-| **IW-2** | **Engineering** | Absolute purge of all round-robin logic from `KeyVault` | `TRACE-RR-PURGE-001` | M4 | 🔴 P0 CRITICAL |
-| **IW-3** | **Observability** | Implement Body-Level Error Guards (BLEG) + UFL (Forensic Ledger) | `TRACE-P8-OBS-001` | M9, M22 | 🔴 P0 CRITICAL |
+| **IW-2** | **Engineering** | Absolute purge of all round-robin logic from `KeyVault` | `TRACE-RR-PURGE-001` | M4 | ✅ **COMPLETED** — D176 ratified |
+| **IW-3** | **Observability** | Implement Body-Level Error Guards (BLEG) + UFL (Forensic Ledger) | `TRACE-P8-OBS-001` | M9, M22 | ✅ **COMPLETED** — D176 ratified |
 | **IW-4** | **Context** | Deploy Sovereign Ingestion Pipeline (Tri-Anchor System) + Omnidroid Migration | `TRACE-SIP-20260629` | M5, M15 | 🟡 P1 HIGH |
 | **IW-5** | **Governance** | Restore `workbench.db` schema + ingest `LEGACY_NAVIGATION_GUIDE.md` | `LEGACY_MAPPING_CENTRALIZATION_20260628.md` | M5 | 🟡 P1 HIGH |
 | **IW-6** | **Validation** | Implement the V-D1 Validation Suite for "Sticky" mode resilience | `TRACE-P10-VD1` | M13 | 🟢 P2 MEDIUM |
@@ -537,8 +537,8 @@ The engine has two new post-PR directives: **Audience Calibration** (output pipe
 
 1. **Immediate (Parallel) — Iron Wall Hardening Sprint (Sovereign Review Phase)**
    - **IW-1**: Deploy Tor-SOCKS5 Bridge + Local-First Escalation for SearXNG (M8)
-   - **IW-2**: Absolute purge of all round-robin logic from `KeyVault` (M4)
-   - **IW-3**: Implement Body-Level Error Guards (BLEG) + UFL (Forensic Ledger) (M9, M22)
+   - **IW-2**: Absolute purge of all round-robin logic from `KeyVault` (M4) ✅ **COMPLETED** (D176)
+   - **IW-3**: Implement Body-Level Error Guards (BLEG) + UFL (Forensic Ledger) (M9, M22) ✅ **COMPLETED** (D176)
    - **IW-4**: Deploy Sovereign Ingestion Pipeline (Tri-Anchor System) + Omnidroid Migration (M5, M15)
    - **IW-5**: Restore `workbench.db` schema + ingest `LEGACY_NAVIGATION_GUIDE.md` (M5)
    - **IW-6**: Implement the V-D1 Validation Suite for "Sticky" mode resilience (M13)

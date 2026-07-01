@@ -26,6 +26,11 @@ class TopicScheduler:
     
     Ensures that the background researcher rotates through a set of high-priority
     strategic topics while allowing them to deepen over time.
+
+    NOTE: This is RESEARCH TOPIC rotation (cycles through topics A→B→C→A).
+    This is NOT the same as Google account rotation (which was multi-account
+    round-robin banned per D-1 2026-06-29). Research topic scheduling is
+    a legitimate, single-process technique unrelated to API provider rotation.
     """
     
     def __init__(self, config_path: str = "config/research_topics.yaml", state_path: str = "data/research/scheduler_state.json"):

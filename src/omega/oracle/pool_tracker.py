@@ -5,7 +5,15 @@ UsagePoolTracker — Runtime key rotation, usage tracking, and pool health.
 Closes the "phantom tracking" gap (ag-002): USAGE_POOL_LOG.json is now
 read and written by this module using atomic JSON writes.
 
+⚠️ D-1 (2026-06-29): Round-robin with anti-thrashing algorithm ERADICATED.
+Google bans rapid multi-account switching. This module still contains
+anti_thrashing logic that was never wired into any engine component
+(confirmed dead code — ag-002). The default algorithm is now "sticky".
+When this module is activated, algorithm MUST be verified against the
+updated pool_state.py default.
+
 ⬡ OMEGA ⬡ POOLTRACKER ⬡ v1.0.0 ⬡ 2026-06-18
+D-1 NOTICE: 2026-06-29 — anti_thrashing refers to removed algorithm
 """
 
 from __future__ import annotations
