@@ -277,7 +277,7 @@ The MaKaLi Cloud Council declared an **IMMEDIATE EXECUTION HOLD** on all feature
 | **IW-2** | **Engineering** | Absolute purge of all round-robin logic from `KeyVault` | `TRACE-RR-PURGE-001` | M4 | ✅ **COMPLETED** — D176 ratified |
 | **IW-3** | **Observability** | Implement Body-Level Error Guards (BLEG) + UFL (Forensic Ledger) | `TRACE-P8-OBS-001` | M9, M22 | ✅ **COMPLETED** — D176 ratified |
 | **IW-4** | **Context** | Deploy Sovereign Ingestion Pipeline (Tri-Anchor System) + Omnidroid Migration | `TRACE-SIP-20260629` | M5, M15 | 🟡 P1 HIGH |
-| **IW-5** | **Governance** | Restore `workbench.db` schema + ingest `LEGACY_NAVIGATION_GUIDE.md` | `LEGACY_MAPPING_CENTRALIZATION_20260628.md` | M5 | 🟡 P1 HIGH |
+| **IW-5** | **Governance** | Restore `workbench.db` schema + ingest `LEGACY_NAVIGATION_GUIDE.md` | `LEGACY_MAPPING_CENTRALIZATION_20260628.md` | M5 | ✅ **COMPLETED** — D177 ratified |
 | **IW-6** | **Validation** | Implement the V-D1 Validation Suite for "Sticky" mode resilience | `TRACE-P10-VD1` | M13 | 🟢 P2 MEDIUM |
 
 ### 5.1c Pre-Release Checklist (Imported from V10_RELEASE_STRATEGY.md)
@@ -732,27 +732,55 @@ Instead of pulling in the heavy `langgraph` dependency, we build an asynchronous
 
 *🔱 OMEGA ⬡ KALI ⬡ trc_ark_blueprint ⬡ SOVEREIGN-COMPREHENSIVE*
 
-### 5.1e Community-Ready Execution Plan (IW-1, IW-4, IW-5, IW-6)
+### 5.1e Minimum Viable Iron Wall (MV-IW) — Carmack-Approved Plan
 **Date**: 2026-07-01
-**Source**: Synthesized by Kali (Gemini 3.1 Pro)
+**Source**: John Carmack S3 Audit + Kali Synthesis
+**Status**: ACTIVE EXECUTION
 
-To ensure the Omega Engine remains a universal runtime (Mandate 2 & 16), the remaining Iron Wall tasks must be executed with strict WAD-agnosticism.
+The MV-IW replaces all prior Iron Wall execution plans. It is the single source of truth for the remaining work.
 
-**PHASE 1: IW-5 (Governance) — State Recovery**
-1. Run `cp workbench.db.bak workbench.db` to restore project tracking.
-2. Ingest `LEGACY_NAVIGATION_GUIDE.md` into the Library catalog.
+**Phase 0: Trust Restoration (Days 1-5)**
+| Order | Task | Effort | Status |
+|-------|------|--------|--------|
+| 0.1 | Fix test_hivemind.py (root cause: mcp sys.modules poison) | 2h | ⏳ PENDING |
+| 0.2 | Clean uncommitted state + add missing IW-2 test | 30m | ⏳ PENDING |
+| 0.3 | Archive stale coordination files (172 → <30) | 1h | ⏳ PENDING |
+| 0.4 | Git pre-commit hook (code↔docs sync, [skip-doc] escape) | 30m | ⏳ PENDING |
+| 0.5 | ~~Fix M2_FIREWALL_GAP~~ CANCELLED — already fixed (D113 frozenset) | 0h | ✅ DONE |
+| 0.6 | Single-source test count (make test-badge) | 30m | ⏳ PENDING |
 
-**PHASE 2: IW-1 (Infrastructure) — Tor Bridge & Routing**
-1. **Spec**: Write `INFRA-MASK-001.md`.
-2. **Infrastructure**: Create `omega-tor.container`, modify `omega-searxng.container` (remove hardcoded port), and bind both to `omega-search.pod`.
-3. **WAD-Isolation**: Update `search_providers.py` to ensure `SEARXNG_BASE_URL` reads from environment variables, preventing hardcoded local host assumptions.
-4. **Oracle Integration**: Implement the graceful `T0 (Local Cache) -> T1 (Hub Library) -> T2 (Sovereign Memory)` cascade in `oracle.py`.
+**Phase 1: Documentation Sanity (Days 6-7)**
+| Order | Task | Effort | Status |
+|-------|------|--------|--------|
+| 1.1 | Split OMEGA_ENGINE.md into domain files (~200 lines each) | 3h | ⏳ PENDING |
+| 1.2 | One-pass doc sync (stale counts, sprint status) | 2h | ⏳ PENDING |
 
-**PHASE 3: IW-6 (Validation) — Sticky-Mode Resilience**
-1. **Spec**: Write `TRACE-P10-VD1.md`.
-2. **Tests**: Add "Fabric Collapse" simulation tests to `test_health_monitor.py`.
+**Phase 2: IW-1 (Infrastructure) — Days 8-9**
+| Order | Task | Effort | Status |
+|-------|------|--------|--------|
+| 2.1 | Write INFRA-MASK-001.md (Tor Bridge spec) | 1h | ⏳ PENDING |
+| 2.2 | Build Tor Bridge Quadlets + pod binding | 3h | ⏳ PENDING |
+| 2.3 | Oracle T0→T1→T2 cascade + SearXNG env var (3 files) | 2h | ⏳ PENDING |
 
-**PHASE 4: IW-4 (Context) — Sovereign Ingestion Pipeline (WAD-Agnostic)**
-1. **Spec**: Write `TRACE-SIP-20260629.md` emphasizing complete domain-agnosticism.
-2. **Build**: Implement `SovereignIngestionPipeline` (Raw Anchor $\rightarrow$ SCA $\rightarrow$ L1-L3 Distillation).
-3. **Build**: Implement `RawArtifactIngester` (the engine-agnostic tool to handle the Omnidroid migration).
+**Phase 3: IW-6 & IW-4 — Days 10-12**
+| Order | Task | Effort | Status |
+|-------|------|--------|--------|
+| 3.1 | Write TRACE-P10-VD1.md | 1h | ⏳ PENDING |
+| 3.2 | Fabric collapse tests | 3h | ⏳ PENDING |
+| 3.3 | Write TRACE-SIP-20260629.md | 1h | ⏳ PENDING |
+| 3.4 | SovereignIngestionPipeline (WAD-agnostic) | 4h | ⏳ PENDING |
+
+**Phase 4: Ship Readiness — Days 13-14**
+| Order | Task | Effort | Status |
+|-------|------|--------|--------|
+| 4.1 | Portability doc (docs/DEPLOYMENT.md, symlinks) | 2h | ⏳ PENDING |
+| 4.2 | Final test sweep (document 22 skips) | 3h | ⏳ PENDING |
+| 4.3 | Temple-Grade Certification (make temple-grade) | 1h | ⏳ PENDING |
+| 4.4 | Tag & Ship (v1.1.0) | 30m | ⏳ PENDING |
+
+**Deferred Post-Ship (not blocking v1.1.0)**
+- M23 Documentation Integrity Mandate (premature — git hook suffices)
+- OMEGA_MODELS_DIR env var (symlink workaround documented in DEPLOYMENT.md)
+- PROVENANCE_MANIFEST.json (git log is the manifest)
+- ADR formalization (PIVOT_LOG already works)
+- MkDocs + Caddy wiki (polish, not blocking)

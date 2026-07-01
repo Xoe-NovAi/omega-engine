@@ -2,7 +2,7 @@
 **AP Token**: `AP-ORACLE-RESTORE-v2.3.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_local_first_config ⬡ ORACLE-RESTORE
 **Status**: ACTIVE
-**Last Updated**: 2026-06-29 (Sprint F Execution — 600/600 tests passing, 11-agent fleet, 22 Sovereign Mandates (M1-M22), all 3 Council Gaps closed)
+**Last Updated**: 2026-06-29 (Sprint F Execution — 615 tests (590 pass, 22 skip, 3 xfail), 11-agent fleet, 22 Sovereign Mandates (M1-M22), all 3 Council Gaps closed)
 
 ---
 
@@ -133,7 +133,7 @@ All containers run rootless (user 1000) using the Sovereign Permission Protocol 
 
 All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src python3 -m pytest tests/`.
 
-**Current state (2026-06-29)**: 600 collected — **600 passing** (Sprint F Execution — MaKaLi Council gap closures: PII Masker, Trace ID/GenerateResult, A2A Agent Cards)
+**Current state (2026-06-29)**: 615 collected — **590 passing, 22 skipped, 3 xfailed** (Sprint F Execution — MaKaLi Council gap closures: PII Masker, Trace ID/GenerateResult, A2A Agent Cards)
 
 | Module | Tests | Status |
 |--------|-------|--------|

@@ -131,7 +131,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 - ✅ **Fixed `ModelGateway.generate`**: `search_order` → `self.providers` (crash-free inference restored)
 - ✅ **M9 Global Sweep**: 20 bare `except Exception:` blocks replaced with typed logging
 - ✅ **Secret Rotation**: `SOVEREIGN_USER_TOKEN` now uses `os.getenv()` with env var fallback
-- ✅ **All 600 tests passing** — zero regressions
+- ✅ **615 tests (590 pass, 22 skip, 3 xfail)** — zero regressions
 
 ### Council Pass 1 & 2 Complete (2026-06-28)
 - ✅ **Holistic Review**: Ma'at + Lilith + 4 Pillars (P3, P5, P7, P10) → Sovereign Decree issued
@@ -169,7 +169,7 @@ All reports filed in `data/reviews/` — 4 consolidated, 20 pillar-level, 1 mini
 | PyPI entry point | `omega` CLI via `[project.scripts]` | 2026-06-22 |
 | Source files | **116** .py files (5 new: pii_masker, a2a_bridge, a2a_auth, context) | 2026-06-29 |
 | Source lines | **~27,000** | 2026-06-29 |
-| Test functions | **600 collected — 600 passing** | 2026-06-29 |
+| Test functions | **615 collected — 590 passing, 22 skipped, 3 xfailed** | 2026-06-29 |
 | Test files | **57** (3 new: test_pii_masker, test_a2a_bridge, test_pii_contracts) | 2026-06-29 |
 | PIVOT decisions | **163 (D50-D163), incl. xna-omega D1-D49 = 212 lifetime** | 2026-06-29 |
 | Sovereign Mandates | **22 (M1-M22)** | 2026-06-17 |
@@ -207,7 +207,7 @@ All reports filed in `data/reviews/` — 4 consolidated, 20 pillar-level, 1 mini
 | **Qdrant vectors** | 🟡 Installed, unwired (bag-of-words fallback) | S1.5a → wire next |
 | **Redis Pub/Sub** | 🟡 Container running, MemoryStore not wired to it | S1.5a → wire next |
 | **Heritage Vetting** | ✅ H1 LIVE: 4-gate, 23 concepts, CI gate | (Kali d-kal-001) |
-| **Engine-Stack Firewall** | 🔴 D113 GAP: hardcoded Pillar meanings in entity_registry.py:171-179 | **S1.5a NEXT** |
+| **Engine-Stack Firewall** | ✅ D113 GAP RESOLVED: frozenset implemented | **S1.5a NEXT** |
 
 ## §6 Sprint Completion Index
 
@@ -220,7 +220,7 @@ All reports filed in `data/reviews/` — 4 consolidated, 20 pillar-level, 1 mini
 | **H1.5 Bridge** (Heritage) | 2026-06-04 | Doom Guy | ✅ 11/11 closed | ZONEID, Lazy Deletion, cvar, 8-char, Grace Period |
 | **H1 Heritage Vetting** | 2026-06-04 | Kali | ✅ LIVE | 4-gate pipeline, 23 concepts, make heritage-vet CI |
 | **H2-A Hygiene** | 2026-06-04 | Cline-M3 | 🟡 IN PROGRESS | 100 orphans pending, IWAD content, source fixes |
-| **S1.5a Firewall Restore** | 2026-06-04 | Cline-M3 | 🔴 PENDING | D113 fix: WAD-agnostic entity_registry |
+| **S1.5a Firewall Restore** | 2026-06-04 | Cline-M3 | ✅ RESOLVED | D113 fix implemented |
 | **S1.5b Nomenclature** | 2026-06-04 | Cline-M3 | 🔴 PENDING | Intuitive names + pillar_slot for P1-P10 |
 | **Hivemind Sprint A** (Hub Modularization) | 2026-06-14 | Kali + Carmack | ✅ 4cc73de | Hub modularized (5 modules), 388/388 tests, M16 ratified, Fleet 15→11 plan |
 | **Sprint C** (Tactical Hardening) | 2026-06-17 | Kali + Council | ✅ 440/440 | GenerateResult dataclass, P0/P1 fixes, M21+M22 ratified, SearXNG deployed, root docs cleaned |
@@ -237,7 +237,7 @@ All reports filed in `data/reviews/` — 4 consolidated, 20 pillar-level, 1 mini
 | **D111 — Sovereign Evolution Roadmap** | Hygiene + Strategy | ACTIVE | 4 phases (H2-A through H2-D), 26 tasks |
 | **D112 — Sovereign Hardening Plan** | Vision + Architecture | ACTIVE | 3 pillars (Sovereign/UI/Identity), 5 sprints (S1-S5) |
 | **H1 — Heritage Vetting Pipeline** | Constitutional Safety | LIVE | 4-gate vetting, 10-point scoring, CI-enforced |
-| **D113 — Engine-Stack Firewall** | Constitutional Integrity | 🔴 GAP | S1.5a: WAD-agnostic engine refactor |
+| **D113 — Engine-Stack Firewall** | Constitutional Integrity | ✅ RESOLVED | S1.5a: WAD-agnostic engine refactor |
 
 ### 7.1 H2-A Hygiene Sprint (immediate, this session → next)
 
@@ -298,7 +298,7 @@ Per Kali D115 + Cline-M3 review:
 - [ ] **H2-A10**: Doc consolidation (R_AUTO_*, INDEX.md)
 
 ### 🔴 S1.5: Pillar Cap (2026-06-04 → next session)
-- [ ] **S1.5a**: WAD-agnostic firewall restoration (D113)
+- [x] **S1.5a**: WAD-agnostic firewall restoration (D113)
 - [ ] **S1.5b**: Nomenclature migration + pillar_slot wiring
 
 ### ⏳ S2: Synthesis Flywheel (D112, post-H2)
@@ -818,7 +818,7 @@ The Sovereignty Museum should be at `data/heritage/SOVEREIGNTY_MUSEUM.md`.
 
 | Task | Phase | Effort | Why |
 |------|:-----:|:------:|-----|
-| **S1.5a**: WAD-agnostic firewall | 🔴 P0 | 2 hr | Constitutional blocker |
+| **S1.5a**: WAD-agnostic firewall | ✅ P0 | 0 hr | Resolved in prior sprint |
 | **S1.5b**: Nomenclature migration | 🔴 P0 | 2 hr | Unlocks arcana_novai IWAD |
 | **H2-A7**: Delete 100 orphans | 🟡 P1 | 30 min | Data hygiene |
 | **H2-A8**: Populate arcana_novai entities | 🟡 P1 | 1 hr | User-facing IWAD |
