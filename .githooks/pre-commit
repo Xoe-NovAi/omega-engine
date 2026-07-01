@@ -1,0 +1,16 @@
+#!/bin/bash
+# 🔱 Omega Engine — Pre-commit Hook
+# Carmack's Directive: "Don't use AI where a shell script works."
+# Guards code↔docs drift: if src/omega/ changed, docs/ must too.
+# Escape hatch: git commit --no-verify
+
+set -e
+
+changed_src=$(git diff --cached --name-only -- 'src/omega/' | wc -l)
+changed_docs=$(git diff --cached --name-only -- 'docs/' | wc -l)
+
+if [ "$changed_src" -gt 0 ] && [ "$changed_docs" -eq 0 ]; then
+    echo "⚠️  src/omega/ changed but docs/ did not."
+    echo "   Use --no-verify to bypass this check."
+    exit 1
+fi
