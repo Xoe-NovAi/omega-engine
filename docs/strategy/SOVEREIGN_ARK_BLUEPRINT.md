@@ -123,10 +123,10 @@ Epoch III ─┬── Strike 8: Spatial-Semantic Geometry
 ### 3.1 Engine Metrics
 | Metric | Value | Status |
 |--------|-------|--------|
-| Tests collected | **619** | ✅ Verified 2026-07-01 |
-| Tests passed | **594** (+ 22 skipped, 3 xfailed) | ✅ 619 effective |
+| Tests collected | **671** | ✅ Verified 2026-07-01 |
+| Tests passed | **646** (+ 22 skipped, 3 xfailed) | ✅ 671 effective |
 | Source files | **104** `.py` | ✅ Post dead-code purge |
-| PIVOT decisions tracked | **182** (D1-D182, incl. xna-omega D1-D49) | ✅ D182 ratified 2026-07-01 |
+| PIVOT decisions tracked | **183** (D1-D183, incl. xna-omega D1-D49) | ✅ D183 ratified 2026-07-01 |
 | Sovereign Mandates | **22** (M1-M22) | ✅ Full compliance (see §IV) |
 | Mandate 9 (bare except) | **0 violations** | ✅ CI-enforced |
 | AnyIO compliance | **0 `import asyncio`** | ✅ CI-enforced |
@@ -173,7 +173,7 @@ The `_omega_default` IWAD provides the universal runtime entities (sysadmin, dat
 | **Observability** | ✅ **P0 gap resolved** | PII masking implemented (432 lines, 53 tests). Trace ID: contextvars safety net + 5 call sites fixed. record_error() double-default fixed. | `[id-soft: doom3-2004] Event System` |
 | **ContextBuilder** | ✅ **ACON Optimized** | PipelineCompactionStrategy + ToolResultCompactionStrategy + TruncationStrategy + ACONOptimizer. 21 tests pass. | `[id-soft: quake-1996] Thinker Chain` |
 | **EntityRegistry** | ✅ YAML CRUD + dual-index | Pillars→slots migration complete (D179/D180). Dynamic occupied_slots. | `[id-soft: quake-1996] Flat-Field` |
-| **Soul Distiller** | 🟡 **Enhanced pipeline (+) but broken dispatch (−)** | 5-stage pipeline added: SessionClassifier + SovereigntyScorer + SoulDistillationPipeline. Quality gate (0.6 threshold). **Dispatch bug**: anyio.create_task() does not exist in AnyIO — close_session() was never called. Silent AttributeError swallowed by try/except. Fix applied 2026-07-01 (direct await). 8/10 souls remain stale until next session cycle. | `[id-soft: quake-1996] Save-game` |
+| **Soul Distiller** | ✅ **FIXED (2026-07-01)** | 5-stage pipeline running. `anyio.create_task()` dispatch bug fixed — replaced with `await close_session()` in guarded try/except (D183). close_session now executes every 5 interactions on the hot path. | `[id-soft: quake-1996] Save-game` |
 | **Hivemind** | 🟡 **P2 gap** | Runtime functional; test suite broken (0/8 tests run); 41 stale handoffs | `[id-soft: doom-1993] ZONEID Pattern` |
 | **Antigravity** | ✅ Stochastic account selection | — | D160 — Round-robin eradicated |
 | **CLI Plugin** | 🟡 Partial compliance | Round-robin schema still in opencode-antigravity-auth | — |
@@ -190,13 +190,13 @@ The `_omega_default` IWAD provides the universal runtime entities (sysadmin, dat
 | M2 | Engine-Stack Firewall | ✅ Enforced | D113 fixed — IWAD resolution active |
 | M3 | Iris Constant | ✅ Enforced | Iris is not a Pillar |
 | M4 | Sequentiality | ✅ Enforced | Plan->Verify->Execute |
-| M5 | Gnosis Preservation | ❌ VIOLATED | Soul Distiller wired (close_session() IS called via _record_interaction() every 5 turns) but **never executes**: `anyio.create_task()` at oracle.py:509 does not exist in AnyIO (AnyIO's API is `create_task_group()`, not `create_task()`). Silent `AttributeError` swallowed by `try/except`. Every 5th-interaction trigger fires and vanishes. Fix: replace with direct `await` in guarded `try/except`. |
+| M5 | Gnosis Preservation | ✅ **FIXED** | close_session now executes every 5 interactions via direct `await` (D183). L1→L2→L3 distillation runs on the hot path. |
 | M6 | Podman Sovereignty | ✅ Enforced | keep-id protocol. Qdrant carve-out documented in D167 (docker-compose + kernel fuse-overlayfs bug). |
 | M7 | Local-First | ✅ **Enforced** | PII Masker implements local provider bypass (should_mask("local-*")=False). Cloud providers receive tokenized prompts. Local inference is always raw. M7/M22 synergy: _is_cloud_provider_name() verifies provenance. |
 | M8 | Zero Telemetry | ✅ Enforced | CI grep telemetry. Qdrant telemetry disabled (D168). PII masking local-only. |
 | M9 | Error Integrity | ✅ Enforced | 0 bare except |
 | M10 | Fleet Integrity | ✅ Enforced | 11 agents cap (M10 compliant — 3 slots remaining) |
-| M11 | Soul Integrity | 🟡 **ROOT CAUSE FOUND** | The Ark previously claimed a "key mismatch" (user/assistant vs role/content). **That was incorrect** — close_session at lines 787-788 correctly reads `ex.get("user", "")` and `ex.get("assistant", "")`, same keys add_exchange stores (lines 409-410 of memory_store.py). **Real root cause**: `anyio.create_task(self.close_session(...))` at oracle.py:509 — `anyio.create_task()` does **not exist** (AnyIO uses `create_task_group().start_soon()`). The `AttributeError` is silently swallowed by the surrounding `try/except Exception`. Every 5th-interaction trigger fires and vanishes. **Fix**: direct `await` in its own guarded `try/except`. 8/10 souls remain stale. |
+| M11 | Soul Integrity | ✅ **FIXED (2026-07-01)** | Root cause: `anyio.create_task()` at oracle.py:509 does NOT exist in AnyIO (silent `AttributeError` swallowed by `try/except`). `close_session()` never executed. Fixed: replaced with `await self.close_session()` in guarded `try/except`. D183 ratified. 646 tests pass. |
 | M12 | Queue Integrity | ✅ **RESOLVED** | 14d archive / 30d delete TTL added to handoff reaper in background.py. 41 stale packets now have a cleanup path. |
 | M13 | Temple-Grade | 🟡 7/11 GREEN, 3 AMBER, 1 RED | T1 AP tokens **PASSING** (4 files fixed 2026-06-30). T7 latency not measured (AMBER). T11 IA2 exempt (AMBER). 1 RED is aggregated. |
 | M14 | Heritage Vetting | 🟡 PARTIAL | 185 `[id-soft:]` tags verified. vet-001 through vet-010+ recorded. `make heritage-vet` CI needs expansion to 100% coverage. |
@@ -448,7 +448,7 @@ Which agent owns which H2 tracks and Epoch Strikes:
 |---|---------|-----------------|--------|-------|
 | 7 | **COUNCIL: Trace ID fragile — 5-10% of events carry "unknown" trace_id** | Thread `trace_id` through iterative_research.py (3 calls) + skeptical_verifier.py (2 calls). Install `opentelemetry-instrumentation-anyio`. | ✅ **RESOLVED** — contextvars safety net + 5 call sites fixed | Epoch II Strike 6 |
 | 8 | **COUNCIL: Dual handoff systems — in-memory vs file-based cannot exchange** | Bridge Orchestrator to read from `data/handoff/pending/` when no in-memory handoff_state provided. | 🟡 PENDING | Epoch II Strike 4 |
-| 9 | **M11 Soul Distiller — `anyio.create_task` does not exist — 8/10 stale souls** | Carmack corrected the Ark's previous (incorrect) "key mismatch" claim. The actual bug: `anyio.create_task(self.close_session(...))` at oracle.py:509 — AnyIO has no `create_task()`. Silent `AttributeError` swallowed by outer `try/except`. close_session is **never called**. Fix: replace with direct `await` in its own guarded `try/except`. | 🔴 **Root cause corrected + fix applied** — 2026-07-01, Carmack discovered real root cause, applied direct-await fix with guarded try/except. | Epoch I Strike 3 |
+| 9 | **M11 Soul Distiller — `anyio.create_task` does not exist — 8/10 stale souls** | Carmack corrected the Ark's previous (incorrect) "key mismatch" claim. The actual bug: `anyio.create_task(self.close_session(...))` at oracle.py:509 — AnyIO has no `create_task()`. Silent `AttributeError` swallowed by outer `try/except`. close_session is **never called**. Fix: replace with direct `await` in its own guarded `try/except`. | ✅ **FIXED — D183 ratified. 646 tests pass. close_session now executes every 5 interactions on hot path.** | Epoch I Strike 3 |
 | 10 | **HEALTH_CHECK_TIMEOUT fixed** | Make configurable per-provider | ⏳ PENDING | Epoch I |
 | 11 | **Response Provenance (M22) partial** | `provider_name` flows correctly but `latency_ms` + `model_used` missing from GenerateResult | ✅ **RESOLVED** — both fields populate on success + fallback paths | Epoch II Strike 6 |
 | 12 | **`memory_search` vs `omega_memory_search`** | Rename `memory_search` -> `memory_search_fts` | ⏳ PENDING | Epoch II |
@@ -502,9 +502,9 @@ Which agent owns which H2 tracks and Epoch Strikes:
 The engine has two new post-PR directives: **Audience Calibration** (output pipeline stage) and **Parametric Gnosis** (weight-based evolution via local DPO LoRA training). These are ratified under D175 but **no code changes begin until the Pre-Release Polish Sprint passes**.
 
 ### Immediate — Execute Now (this session, ~30 min)
-1. **M11 soul distiller fix** — Replace `anyio.create_task()` (does not exist in AnyIO) with direct `await self.close_session()` in guarded `try/except`. Bug was silent: every 5th-interaction trigger fired and vanished. 8/10 souls stale. Fix verified with canary session test.
-2. **Delegate T3-2 Metrics DB to Kali** via Hivemind handoff — WAL-mode SQLite at `data/observability/metrics.db` with `perf_events`, `provider_metrics`, `malloc_snapshots` tables. Prerequisite for PR readiness metrics.
-3. **Update Ark Blueprint** — record corrected M11 root cause, IW priority re-assessment, new execution order.
+1. ✅ **M11 soul distiller fix** — Applied. `anyio.create_task()` → `await self.close_session()` with guard. D183 ratified. 646 tests pass.
+2. ✅ **T3-2 Metrics DB** — Implemented by Kali (332 lines, 27 tests, WAL-mode SQLite, regression detection). Handoffs reaped.
+3. ✅ **Ark Blueprint updated** — §IV M5/M11/M22 corrected, test counts 646/671, D183 added, M11 finding #9 fixed.
 
 ### Active Execution Hold — Ordered Pipeline
 **No new feature expansion beyond the below sequence:**
