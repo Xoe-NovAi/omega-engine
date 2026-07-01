@@ -230,12 +230,11 @@ The Omega Engine is the first sovereign AI runtime. The engine verifies its own 
 
 For detailed architectural specifications, roadmaps, and historical analyses, refer to their canonical sources:
 
-* **Sovereign Evolution Roadmap (Master Plan):** `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` (Note: consolidated from 47 legacy strategy files)
-* **Constitutional Laws:** `SOVEREIGN_MANDATES.md`
-* **GitHub Integration Plan:** `docs/strategy/GITHUB_INTEGRATION_PLAN.md`
-* **External Tool Knowledge Base (Antigravity, etc.):** `data/kb/cli_ide_platform/_meta/DOMAIN_INDEX.md`
-* **Historical Structural Insights & Decisions:** See `docs/decisions/PIVOT_LOG.md`
-* **id Software Heritage / Attribution:** `CREDITS.md` and `docs/strategy/HERITAGE_VETTING_PIPELINE.md`
+*   **Sovereign Evolution Roadmap (Master Plan):** `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` (Note: consolidated from 47 legacy strategy files)
+*   **Constitutional Laws:** `SOVEREIGN_MANDATES.md`
+*   **GitHub Integration Plan:** `docs/strategy/GITHUB_INTEGRATION_PLAN.md`
+*   **Historical Structural Insights & Decisions:** See `docs/decisions/PIVOT_LOG.md`
+*   **id Software Heritage / Attribution:** `CREDITS.md` and `docs/strategy/HERITAGE_VETTING_PIPELINE.md`
 
 ---
 

@@ -275,14 +275,16 @@ audit-no-rag-v1: ## 🛡️  Assert rag-v1/ is eradicated (engine + LM Studio + 
 
 setup: ## 🚀 Quick setup (all deps including native GGUF)
 	$(PIP) install -e ".[all]"
-	@git config core.hooksPath .githooks 2>/dev/null || true
+	@git config core.hooksPath .githooks
+	@chmod +x .githooks/pre-commit
 	@echo "$(COLOR_GREEN)✅ Omega Engine installed. Run 'omega --help' to verify.$(COLOR_NC)"
-	@echo "$(COLOR_GREEN)✅ Pre-commit hook installed via git config.$(COLOR_NC)"
+	@echo "$(COLOR_GREEN)✅ Pre-commit hook installed and made executable.$(COLOR_NC)"
 
 bootstrap: ## 🔱 Complete system bootstrap (setup + infra + verify)
 	@bash scripts/setup.sh
-	@git config core.hooksPath .githooks 2>/dev/null || true
-	@echo "$(COLOR_GREEN)✅ Pre-commit hook installed via git config.$(COLOR_NC)"
+	@git config core.hooksPath .githooks
+	@chmod +x .githooks/pre-commit
+	@echo "$(COLOR_GREEN)✅ Pre-commit hook installed and made executable.$(COLOR_NC)"
 
 demo: ## 🔱 Run the Oracle demo
 	@echo "$(COLOR_CYAN)🔱 Omega Engine v1.0.0 — Sovereign AI Runtime$(COLOR_NC)"

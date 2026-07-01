@@ -15,7 +15,7 @@ import httpx
 
 logger = logging.getLogger(__name__)
 
-SEARXNG_URL = os.environ.get("SEARXNG_BASE_URL", "http://localhost:8017")
+SEARXNG_URL = (os.environ.get("SEARXNG_BASE_URL") or "http://localhost:8017").rstrip("/")
 DEFAULT_ENGINES = ["google", "duckduckgo", "brave", "wikipedia", "arxiv", "semantic scholar"]
 MAX_RESULTS = 10
 TIMEOUT = 10.0
