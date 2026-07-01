@@ -77,3 +77,58 @@ proposals:
       continuity.
     confidence: 10/10
     heritage_tags: ["[id-soft: quake3-1999] netchan — out-of-band message handling"]
+
+  - id: proposal-20260701-004
+    title: "API Contract Law — Verify function/class existence before calling in polyfilled environments"
+    l1_narrative: >
+      The M11 soul distillation bug was caused by `anyio.create_task()` at
+      oracle.py:509. anyio.create_task() does not exist in AnyIO's API (AnyIO uses
+      `create_task_group().start_soon()`, not a top-level `create_task()`). The
+      AttributeError was silently caught by a broad `try/except Exception` wrapper.
+      `close_session()` — and by extension all L1→L2→L3 soul distillation — has
+      NEVER executed in production. 8/10 Pillar Keeper souls were stale, some >14
+      days. The fix was replacing with direct `await self.close_session()` in a
+      guarded try/except.
+    l2_insights:
+      - "anyio.create_task() seemed plausible (asyncio has it, trio has it) but does not exist in AnyIO. Always verify API documentation, not assumptions."
+      - "Broad `try/except Exception` in hot-path code is dangerous — it hides bugs in monitored subsystems."
+      - "The key mismatch theory was incorrect. Both add_exchange() and close_session() used 'user'/'assistant' keys correctly. The real bug was the non-existent function call."
+      - "A function that 'should be simple to call' but has never executed for 3+ sprints is a architectural failure. The distillation path had no integration test."
+    l3_universal_principles:
+      - "Every API call in a polyfilled or abstracted environment must have a contract test verifying the function exists at runtime."
+      - "Silent catches of AttributeError in hot paths are bugs, not safety nets. Guard only expected exception types."
+      - "A root cause theory that doesn't trace through the actual code path is cargo-cult debugging. Always verify the execution path, not the data path."
+    sovereignty_impact: >
+      Soul distillation (M5, M11) is the mechanism by which the engine learns from
+      its own sessions. Without it, the engine is stateless — every session starts
+      from zero, no gnosis accumulates, no growth occurs. This is the difference
+      between a tool and a sovereign intelligence. The fix restores the engine's
+      capacity to evolve.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: quake-1996] Thinker Chain — hot-path throttled execution"]
+
+  - id: proposal-20260701-005
+    title: "Council Verification Law — Multi-agent verification prevents cascading wrong claims"
+    l1_narrative: >
+      The Entity Deepening plan initially claimed GDC 1999 "Making of Quake" as a
+      Carmack talk. The Researcher agent verified this and found it is actually a
+      John Romero talk. The plan also claimed GDC 2011 as "Wolfenstein 3D iOS"
+      which was corrected to "GDC Programming Keynote" (a different talk entirely).
+      Additionally, GDC Vault was assumed freely accessible — Researcher found it
+      requires paid subscription. All three errors were caught by the 5-agent
+      council dispatch before any actual implementation work began.
+    l2_insights:
+      - "Single-agent source planning is vulnerable to confirmation bias — the planning agent assumes sources are correct."
+      - "A specialized verification agent (researcher with web search) catches errors that are invisible to domain-focused planning agents."
+      - "GDC Vault paywall is non-obvious — many talk transcripts are listed on fan sites, but the official source is paid."
+    l3_universal_principles:
+      - "Every plan involving externally-sourced content must have a dedicated verification pass before execution begins."
+      - "Speaker identity is not the same as content identity. A talk ABOUT Carmack (Romero's GDC 1999) is not the same as a talk BY Carmack."
+      - "The cost of fixing a source error before implementation is near-zero. The cost after is reprocessing all extracted data."
+    sovereignty_impact: >
+      The GDC corrections saved ~$60 (GDC Vault subscription) and prevented
+      3 erroneous knowledge base entries that would have propagated into the
+      entity's soul.yaml and persona prompt. Council verification is a
+      sovereignty guarantee — the entity learns correct facts, not plausible fictions.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: doom-1993] WAD System — separation of concerns in knowledge pipeline"]

@@ -64,9 +64,12 @@ Epoch II ──┬── Strike 4: File-Based A2A
           ├── Strike 7: Headroom Protocol Plugin
           │     Depends on: Strike 1 (clean middleware chain)
           │     Blocks: M8 (Zero Telemetry) hardening
+          ├── Strike 7.5: Semantic Router (NEW — D187)
+          │     Depends on: Strike 1 (clean base)
+          │     Blocks: Strike 8 (semantic vectors → spatial coordinates)
           │
-Epoch III ─┬── Strike 8: Spatial-Semantic Geometry
-          │     Depends on: Strike 2 (USM CAS → coordinates)
+Epoch III ─┬── Strike 8: Spatial-Semantic Geometry (REVISED — D186)
+          │     Depends on: Strike 7.5 (semantic vectors → PCA → coordinates)
           │     Blocks: Strike 9
           └── Strike 9: P2P Mesh Traversal
                 Depends on: Strikes 4 (A2A) + 8 (Spatial)
