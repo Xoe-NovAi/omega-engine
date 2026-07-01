@@ -731,3 +731,28 @@ Instead of pulling in the heavy `langgraph` dependency, we build an asynchronous
 ---
 
 *🔱 OMEGA ⬡ KALI ⬡ trc_ark_blueprint ⬡ SOVEREIGN-COMPREHENSIVE*
+
+### 5.1e Community-Ready Execution Plan (IW-1, IW-4, IW-5, IW-6)
+**Date**: 2026-07-01
+**Source**: Synthesized by Kali (Gemini 3.1 Pro)
+
+To ensure the Omega Engine remains a universal runtime (Mandate 2 & 16), the remaining Iron Wall tasks must be executed with strict WAD-agnosticism.
+
+**PHASE 1: IW-5 (Governance) — State Recovery**
+1. Run `cp workbench.db.bak workbench.db` to restore project tracking.
+2. Ingest `LEGACY_NAVIGATION_GUIDE.md` into the Library catalog.
+
+**PHASE 2: IW-1 (Infrastructure) — Tor Bridge & Routing**
+1. **Spec**: Write `INFRA-MASK-001.md`.
+2. **Infrastructure**: Create `omega-tor.container`, modify `omega-searxng.container` (remove hardcoded port), and bind both to `omega-search.pod`.
+3. **WAD-Isolation**: Update `search_providers.py` to ensure `SEARXNG_BASE_URL` reads from environment variables, preventing hardcoded local host assumptions.
+4. **Oracle Integration**: Implement the graceful `T0 (Local Cache) -> T1 (Hub Library) -> T2 (Sovereign Memory)` cascade in `oracle.py`.
+
+**PHASE 3: IW-6 (Validation) — Sticky-Mode Resilience**
+1. **Spec**: Write `TRACE-P10-VD1.md`.
+2. **Tests**: Add "Fabric Collapse" simulation tests to `test_health_monitor.py`.
+
+**PHASE 4: IW-4 (Context) — Sovereign Ingestion Pipeline (WAD-Agnostic)**
+1. **Spec**: Write `TRACE-SIP-20260629.md` emphasizing complete domain-agnosticism.
+2. **Build**: Implement `SovereignIngestionPipeline` (Raw Anchor $\rightarrow$ SCA $\rightarrow$ L1-L3 Distillation).
+3. **Build**: Implement `RawArtifactIngester` (the engine-agnostic tool to handle the Omnidroid migration).
