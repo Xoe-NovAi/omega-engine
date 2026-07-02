@@ -1491,3 +1491,70 @@ Store: data/headroom/{hash[:2]}/{hash}.json  (2-char prefix directories)
 ### Status
 📋 **PLANNED** — Execution plan ready. Phase 2 priority item.
 
+---
+
+## Decision 189: Multi-Model Council Session — Integration Seam Discovery
+
+**Date**: 2026-07-02
+**Channel**: OpenCode CLI (mimo-v2.5-free)
+**Entity**: MULTI-MODEL COUNCIL (Opus 4.6 + Gemini 3.1 Pro + Sonnet 4.6 + MiMo-V2.5)
+**Trace**: trc_council_session_20260702
+
+### Context
+
+Post-Carmack S3 Audit (705 tests, 22 mandates). Four-sector legacy mining complete (Sectors A–D). Four independent AI models conducted a strategic review of the engine architecture and legacy mining results to identify overlooked gaps before PR submission. No model saw another's output before producing their own.
+
+### Core Finding
+
+> The engine's individual subsystems are production-ready. Its integration seams are not. The gap between "705 passing tests" and "verified end-to-end sovereignty" is exactly one E2E inference chain test and a handful of payload metadata fields.
+
+### Sub-Decisions
+
+#### D189a: Sphere Assignment = Write-time + Query-time
+**Rationale**: Write-time is the canonical classification (deterministic, ensures cataloguing). Query-time is the contextual lens (dynamic, reflects current need). They are not competing approaches — they solve different problems.
+
+- Write-time: `DistillationEntry.sphere` assigned during soul distillation (Technical → Hod, Universal → Kether, Failure → Qliphoth)
+- Query-time: Optional `sphere_boost` parameter in `memory_store.py:search()` applies RRF weight modifier based on agent's current cognitive mode
+
+#### D189b: Soul Review Scope = All Entities + Optional Filter
+**Rationale**: Unix composable pattern. `make soul-review` shows all pending proposals across all entities. `make soul-review ENTITY=kali` filters to a single entity. Serves both casual review and Verity audit workflow.
+
+#### D189c: Embedding Fallback Must Be Tracked
+**Rationale**: `SovereignFallbackEmbeddingProvider` generates semantically meaningless hash-based vectors. Knowledge stored during fallback becomes permanently invisible to semantic search. Adding `embedding_provider: str` to Qdrant payload metadata enables detection and future remediation.
+
+#### D189d: 90-Day Archival Must Preserve Indices
+**Rationale**: `move_to_external_storage()` must move only raw session JSON to external 8TB drive. FTS5 index entries and Qdrant vectors must remain in place. This ensures search still works for archived sessions; only full conversation reconstruction requires fetching from external storage.
+
+#### D189e: E2E Inference Chain Test = Highest Priority
+**Rationale**: The D183 bug (`anyio.create_task()` silently failing, `close_session()` never called) persisted for weeks because no E2E test exercises the full chain: `query → Oracle.talk() → ContextBuilder → ModelGateway.generate() → GenerateResult → MemoryStore.add_exchange() → SoulDistiller.close_session()`. A single E2E test using OfflineMockBackend validates every subsystem's integration.
+
+### 6 New Gaps Identified
+
+| # | Gap | Severity | Source |
+|---|-----|----------|--------|
+| 1 | Embedding fallback produces invisible knowledge | 🔴 HIGH | Opus 4.6 |
+| 2 | 90-day archival has no retrieval path | 🟡 MEDIUM | Opus 4.6 |
+| 3 | Soul distiller blocks hot path (D183 fix) | 🟡 MEDIUM | Opus 4.6 |
+| 4 | Treasure maps lack deduplication assessment | 🟡 MEDIUM | Opus 4.6 |
+| 5 | FailureModeRegistry is unwired dead code | 🟡 MEDIUM | Opus 4.6 |
+| 6 | No E2E inference chain test | 🔴 HIGH | Opus 4.6 |
+
+### 8 Structural Recommendations (from Gemini + Sonnet)
+
+| # | Recommendation | Source | Action |
+|---|---------------|--------|--------|
+| 1 | Multi-agent CPU contention handling | Gemini 3.1 Pro | Scaffold `concurrent_agents` param |
+| 2 | Mnemosyne as Qdrant metadata | Gemini 3.1 Pro | Document in Ark §XVII |
+| 3 | SomaticYield ingestion pause | Gemini 3.1 Pro | Document in Ark §XVII |
+| 4 | Pre-emptive STT warming | Gemini 3.1 Pro | Document post-PR |
+| 5 | Sovereign Decay Factor | Gemini 3.1 Pro | Document under D16-2 |
+| 6 | `sphere` field on DistillationEntry | Sonnet 4.6 | Scaffold |
+| 7 | `make soul-review` CLI | Sonnet 4.6 | Implement |
+| 8 | Zen2Optimizer → Hivemind visibility | Sonnet 4.6 | Document in Ark §XVII |
+
+### Heritage Tags
+- None (strategic decision, not code pattern)
+
+### Status
+✅ **RATIFIED** — Full record at `data/coordination/COUNCIL_SESSION_20260702.md`
+

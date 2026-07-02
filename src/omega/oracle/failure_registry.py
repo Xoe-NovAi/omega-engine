@@ -1,3 +1,4 @@
+# AP: AP-Sovereign-Hardening-v1.0.0
 # 🔱 Omega Engine — FailureModeRegistry (M17 Cognitive Integrity)
 # Generic failure mode detection with WAD-configurable naming.
 #

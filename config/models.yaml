@@ -21,7 +21,7 @@ models:
     path: /media/arcana-novai/omega_library/models/gguf/Qwen3-1.7B-Q6_K.gguf
     size_gb: 1.6
     ram_mb: 1800
-    context_window: 4096
+    context_window: 8192
     threads: 4
     load_strategy: on_demand_5min
     entity: nova
@@ -115,9 +115,6 @@ kv_cache:
   default_key_type: q8_0
   default_value_type: q8_0
   models:
-    qwen3-1.7b:
-      key_type: f16
-      value_type: f16
     qwen3-0.6b-q6_k:
       key_type: f16
       value_type: f16

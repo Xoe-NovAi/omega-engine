@@ -1,11 +1,69 @@
-# ⬡ OMEGA ⬡ ANCHORED SUMMARY ⬡ 2026-07-01
-## Session 43 — KALI: Dep-vs-Port Mining, Semantic Router, Headroom+Mem Palace Planning
+# ⬡ OMEGA ⬡ ANCHORED SUMMARY ⬡ 2026-07-02
+## Session 44 — John Carmack: Model KB, Platform KB, Thinking Mode Fix
+
+### Goal
+1. ✅ Deep web research: Qwen3-1.7B model KB + Platform KB (2 researcher instances)
+2. ✅ Legacy mining: Roc Racoon found 20 assets, 10 top discoveries
+3. ✅ Save all research to `data/knowledge/` KB structure
+4. ✅ Implement thinking mode fix: NativeGGUFProvider migrated to `create_chat_completion()`
+5. ✅ Upgrade llama-cpp-python v0.3.28 → v0.3.32
+6. ✅ Session gnosis written for compaction survival
+
+### What Was Built
+
+#### 1. Model Knowledge Base — `data/knowledge/models/qwen3-1.7b/`
+- `README.md` — Full model reference (specs, params, quantization, competitors, benchmarks)
+- `thinking-mode.md` — Definitive thinking mode control guide (6 methods ranked)
+- `platforms/llama-cpp-python.md` — Platform-specific notes
+- `platforms/ollama.md` — Platform-specific notes
+- `platforms/lm-studio.md` — Platform-specific notes
+- `benchmarks/ryzen-5700u-results.md` — Thread count benchmarks, KV cache memory
+
+#### 2. Platform Knowledge Base — `data/knowledge/platforms/`
+- `llama-cpp-python/README.md` — Full API reference (30+ params, chat templates, KV cache, threading)
+- `ollama/README.md` — API endpoints, Modelfile syntax, thinking mode control
+- `lm-studio/README.md` — model.yaml config, 9 configs documented from disk
+- `comparison.md` — Cross-platform comparison matrix
+
+#### 3. Legacy Mining — `data/knowledge/legacy/`
+- `mining_findings_20260702.md` — 20 assets cataloged, 10 top discoveries
+
+#### 4. Thinking Mode Fix — `providers.py`
+- **Problem**: Raw `llm(**kwargs)` doesn't apply chat templates → `/no_think` ineffective
+- **Solution**: Migrated to `create_chat_completion()` with handler-wrapped `chat_template_kwargs`
+- **Key insight**: `chat_template_kwargs` NOT in llama-cpp-python Python API (even v0.3.32) — only in server settings. Workaround: wrap chat handler matching `llama_cpp/server/model.py:328-333`
+- **Response parsing**: Updated from `choice["text"]` to `choice["message"]["content"]`
+
+#### 5. llama-cpp-python Upgrade
+- v0.3.28 → v0.3.32 (4 llama.cpp submodule bumps, ~3 months upstream)
+- Key fix: "Preserve recurrent/hybrid model state on cache hit" (#2306)
+- No breaking changes to our API surface
+
+### Key Research Findings
+| Finding | Confidence | Source |
+|---------|:----------:|--------|
+| `n_threads=8` gives +18% throughput vs 4 on 5700U | 10/10 | Our benchmarks |
+| Never use q4_0 KV cache (SLOWER than f16) | 9/10 | DGX Spark benchmarks |
+| q8_0 KV: +0.002 PPL (negligible), 2x compression | 9/10 | NVIDIA benchmarks |
+| `temp=0.7, top_p=0.8, top_k=20` optimal for Qwen3 | 9/10 | Official docs |
+| 9 LM Studio configs all use q8_0 KV, flash_attn | 10/10 | Verified on disk |
+
+### Test Status
+- 705 passed, 22 skipped, 3 xfailed, 1 warning
+- Zero regressions from thinking mode fix + library upgrade
+
+### Next Session Should
+1. **A/B test**: Qwen3-1.7B thinking-disabled vs Qwen3-Instruct-2507
+2. Commit all changes (KB files + providers.py fix)
+3. Continue MV-IW Phase 3 tasks
 
 ### Goal
 1. ✅ Research and formalize dep-vs-port philosophy (Roc Racoon mining)
 2. ✅ Design Semantic Router architecture (embedding-based entity routing)
 3. ✅ Plan Headroom + Mem Palace integration (pre-PR feature expansion)
 4. ✅ Update all strategy documents (PIVOT_LOG D184-D188, Ark Blueprint, OMEGA_ENGINE.md)
+5. ✅ Deepen and expand research specs via @jem and @roc_racoon
+6. ✅ Save specifications and mining reports to workspace to prevent drift
 
 ### What Was Built
 
@@ -23,10 +81,6 @@
 
 **Result**: Headroom (stdlib zlib+json) and Mem Palace (pure math) both conform. Zero new pip packages.
 
-### What Was Built
-
-#### 1. Dep-vs-Port Philosophy Formalized — D185
-...
 #### 2. Semantic Router Implemented — D187
 **Architecture**: `SemanticRouter` class at `src/omega/oracle/semantic_router.py`
 - Boot-time: embeds entity signatures (domains + role) using GemmaGGUF (768-dim)
@@ -35,44 +89,33 @@
 - Integration: wired into `oracle.py:_route_by_domain()`
 - Heritage: `[id-soft: doom-1993] BSP Culling` + `[id-soft: doom-1993] Precomputed Lookup`
 - Zero new deps; pure Python math.
-...
 
 #### 3. Headroom Protocol Design — D188
 **Architecture**: `HeadroomMiddleware` + `HeadroomStore` at `src/omega/oracle/headroom.py`
-
-```
-Compress: prompt → zlib.compress → base64 → SHA256 → flat JSON
-Decompress: hash → flat JSON → base64 → zlib.decompress → prompt
-Store: data/headroom/{hash[:2]}/{hash}.json
-```
-
-**MCP tool**: `headroom_retrieve(hash)` following `m9_safe` pattern.
-**CLI**: `omega headroom status`
-**Integration**: `oracle.py:_prepare_system_prompt()`, `memory_store.py:add_exchange()`
+- Compress: prompt → zlib.compress → base64 → SHA256 → flat JSON
+- Decompress: hash → flat JSON → base64 → zlib.decompress → prompt
+- Store: data/headroom/{hash[:2]}/{hash}.json
+- Spec written to: `docs/research/R_SOVEREIGN_INFRA_HARDENING_SPEC_20260701.md`
 
 #### 4. Mem Palace Spatial Geometry — D186
 **Architecture**: `ISpatialResolver` + `ForceDirectedSpatialResolver` at `src/omega/oracle/spatial_resolver.py`
-
-```
-Boot:  embed entities → PCA/project to 3D → inject x/y/z into Qdrant payload
-Query: nearest-entity by spatial distance + semantic similarity
-WADs:  config/wads/<stack>/spatial.yaml overrides default geometry
-```
-
-**Integration**: `memory_store.py:471` — inject coordinates at vector storage time.
+- Boot:  embed entities → PCA/project to 3D → inject x/y/z into Qdrant payload
+- Query: nearest-entity by spatial distance + semantic similarity
+- WADs:  config/wads/<stack>/spatial.yaml overrides default geometry
+- Spec written to: `docs/research/R_SOVEREIGN_INFRA_HARDENING_SPEC_20260701.md`
 
 ### Intel from @roc_racoon — Dep-vs-Port Mining
+- **Mining Report**: `docs/research/R_T2_REGRESSION_RECOVERY_MINING_20260701.md`
 
 | Finding | Source | Portable? | Notes |
 |---------|--------|-----------|-------|
-| **Formal Rule** | `SOVEREIGN_MINING_PROTOCOL.md §4.1` | ✅ YES | "No PR may be merged that adds an external repository as a core dependency without council approval" |
-| **SMP Pipeline** | `SOVEREIGN_MINING_PROTOCOL.md` | ✅ YES | 5-Step Smelting: Mine→Deconstruct→Rewrite→Integrate→Attribute |
-| **25 Core Deps** | `pyproject.toml` | ✅ YES | anyio, llama-cpp-python, httpx, etc. — all infrastructure/mature libs |
-| **Known Exceptions** | `pyproject.toml` optional deps | ✅ YES | Qdrant, Google AI SDK — lazy imports, not loaded unless configured |
-| **Headroom Heritage** | `memory_store.py` gzip archive | ✅ YES | Existing compression is gzip-only. Headroom adds zlib for prompt compression |
-| **Mem Palace Heritage** | Qdrant payload dict | ✅ YES | Payload is flat pass-through. Adding x/y/z is 3 lines at `memory_store.py:471` |
+| **T2-2: Stochastic Breakers** | `provider_metrics.py` | ✅ YES | Implements EMA and composite health scoring |
+| **T2-4: Observation Masking** | `compaction_optimizer.py` | ✅ YES | Culls "logged" and "confirmed" lines to save context |
+| **T2-5: Handoff Loop Guards** | N/A | ❌ GAP | **[GAP IDENTIFIED]** - Must design from first principles |
+| **T2-7: Timeout Manager** | `timeout_policies.yaml` | ✅ YES | Strict hierarchy: tool -> group -> turn -> workflow |
+| **T2-8: Provider Selector** | `provider_selector.py` | ✅ YES | Weighted scoring with PII-based local penalties |
 
-### Current State (Ready for Compaction)
+### Current State (Ready for Code Execution)
 
 | Metric | Value | Status |
 |--------|-------|--------|
@@ -80,7 +123,7 @@ WADs:  config/wads/<stack>/spatial.yaml overrides default geometry
 | **PIVOT decisions** | D1-D188 (188 total) | ✅ |
 | **Ark Blueprint** | SSOT fully current with D186-D188 | ✅ |
 | **OMEGA_ENGINE.md** | Sprint index, metrics, subsystems updated | ✅ |
-| **proposed_lessons.yaml** | 6 distillations (proposal-20260701-001 to 006) | ✅ |
+| **proposed_lessons.yaml** | 7 distillations (proposal-20260701-001 to 007) | ✅ |
 | **Hivemind** | 4 active agents, 2 pending handoffs, 28 stale (legacy) | ✅ |
 | **Fleet** | Carmack deepening ready, Doom Guy M14 vetting done | ✅ |
 
@@ -115,6 +158,8 @@ Post-PR:             Audience Calibration → DPO Pipeline            ⏳
 6. **User override**: "No new feature expansion" constraint overridden by user authorization. Strategic value justified timeline extension.
 
 ### Next Code Action
-1. **Semantic Router** — build `src/omega/oracle/semantic_router.py` (Phase 1 priority)
-2. **Headroom** — build `src/omega/oracle/headroom.py` (Phase 2)
-3. **Mem Palace** — build `src/omega/oracle/spatial_resolver.py` (Phase 3)
+1. **Temple-Grade Audit** — Run `make temple-grade` and resolve any T1-T11 violations.
+2. **v1.1.0 PR** — Finalize release notes and submit PR.
+3. **Sovereign Ingestion Pipeline** — Begin IW-4 implementation (depends on T3-2).
+4. **Remaining Tier 2 Ports** — T2-6 through T2-12.
+5. **Tier 3 Hardening** — Session lifecycle, Mandate automation, etc.

@@ -512,21 +512,49 @@ class NativeGGUFProvider(BaseProvider):
                         break
 
                     # Unpack request
-                    prompt = request["prompt"]
+                    system_prompt = request["system_prompt"]
+                    user_query = request["user_query"]
                     max_tokens = request["max_tokens"]
                     temperature = request["temperature"]
                     stop = request["stop"]
                     logprobs = request.get("logprobs", False)
+                    enable_thinking = request.get("enable_thinking", False)
 
-                    # Run inference
-                    response = llm(
-                        prompt,
-                        max_tokens=max_tokens,
-                        temperature=temperature,
-                        stop=stop,
-                        echo=False,
-                        logprobs=logprobs,
-                    )
+                    # [id-soft: quake3-1999] Right Approximation — use create_chat_completion()
+                    # to properly apply the GGUF's embedded Jinja chat template.
+                    # This enables thinking mode control via chat_template_kwargs.
+                    # Raw llm(prompt=...) does NOT apply the template.
+                    #
+                    # chat_template_kwargs is NOT in the Python bindings (v0.3.32).
+                    # Workaround: wrap the default chat handler to inject kwargs,
+                    # matching the pattern from llama_cpp/server/model.py:328-333.
+                    if enable_thinking is not None and not enable_thinking:
+                        import llama_cpp.llama_chat_format as _chat_fmt
+                        base_handler = (
+                            llm.chat_handler
+                            or llm._chat_handlers.get(llm.chat_format)
+                            or _chat_fmt.get_chat_completion_handler(llm.chat_format)
+                        )
+                        _template_kwargs = {"enable_thinking": False}
+                        def _handler_with_kwargs(*args, **kwargs):
+                            return base_handler(*args, **{**_template_kwargs, **kwargs})
+                        llm.chat_handler = _handler_with_kwargs
+                    elif llm.chat_handler and hasattr(llm.chat_handler, '__name__') and llm.chat_handler.__name__ == '_handler_with_kwargs':
+                        llm.chat_handler = None  # Reset if re-loaded
+
+                    messages = [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_query},
+                    ]
+                    kwargs = {k: v for k, v in {
+                        "messages": messages,
+                        "max_tokens": max_tokens,
+                        "temperature": temperature,
+                        "stop": stop,
+                    }.items() if v is not None}
+                    if logprobs:
+                        kwargs["logprobs"] = logprobs
+                    response = llm.create_chat_completion(**kwargs)
 
                     # Send response back to main process
                     res_queue.put(response)
@@ -615,11 +643,10 @@ class NativeGGUFProvider(BaseProvider):
         import anyio
         await self._ensure_loaded(n_ctx)
         
-        # Format prompt (ChatML-style for most GGUF models)
-        # [id-soft: quake3-1999] Right Approximation — stable prompt prefix for KV cache hits
-        # By keeping the system prompt constant for a session, we maximize the 
-        # probability that llama-cpp-python's internal KV cache is reused.
-        prompt = f"<|system|>{system_prompt}</s><|user|>{user_query}</s><|assistant|>"
+        # [id-soft: quake3-1999] Right Approximation — send system_prompt and user_query
+        # separately. The worker uses create_chat_completion() which applies the GGUF's
+        # embedded Jinja chat template, enabling proper thinking mode control via
+        # chat_template_kwargs={"enable_thinking": False}.
         
         if session_id:
             logger.debug("Session-aware inference [session_id=%s, trace_id=%s]", session_id, trace_id)
@@ -629,13 +656,14 @@ class NativeGGUFProvider(BaseProvider):
         # after a subsequent error (ICS-F v1.0 Sprint 0).
         self._last_logprobs = None
         
-        # Send request to worker process
+        # Send request to worker process (system_prompt + user_query, not pre-formatted)
         request = {
-            "prompt": prompt,
+            "system_prompt": system_prompt,
+            "user_query": user_query,
             "max_tokens": max_tokens,
             "temperature": temperature,
             "stop": ["</s>", "User:", "\n\n"],
-            "logprobs": 5,
+            "enable_thinking": False,
         }
         
         try:
@@ -656,9 +684,20 @@ class NativeGGUFProvider(BaseProvider):
                 logger.warning("NativeGGUF inference returned response without choices")
                 return None
             else:
-                text = response["choices"][0]["text"].strip()
+                choice = response["choices"][0]
+                # [id-soft: quake3-1999] Response format difference:
+                # Raw completion: choice["text"]
+                # Chat completion: choice["message"]["content"]
+                text = ""
+                if "message" in choice and "content" in choice["message"]:
+                    text = (choice["message"]["content"] or "").strip()
+                elif "text" in choice:
+                    text = choice["text"].strip()
+                
                 # Capture logprobs from response for ICS-F v1.0 compliance
-                self._last_logprobs = response["choices"][0].get("logprobs", {}).get("top_logprobs")
+                # Use `or {}` because logprobs key may exist with None value
+                # when logprobs were not requested (logprobs=False in worker).
+                self._last_logprobs = (choice.get("logprobs") or {}).get("top_logprobs")
                 # [id-soft: quake3-1999] Cvar System — trace_id propagated
                 # Port 1.5: atomic trace_id logging for observability
                 if trace_id:

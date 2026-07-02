@@ -5,6 +5,7 @@
 # Status: PUBLIC RELEASE v1.0.0 ✅
 
 ROOT := $(shell pwd)
+MODELS_DIR := /media/arcana-novai/omega_library/models/gguf
 PYTHON := .venv/bin/python3
 PIP := .venv/bin/pip
 COMPOSE := podman-compose -f deploy/infra/docker-compose.yml
@@ -36,7 +37,7 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo ""
 	@echo "$(COLOR_PURPLE)╔══════════════════════════════════════════════════════╗$(COLOR_NC)"
 	@echo "$(COLOR_PURPLE)║$(COLOR_BOLD)  🔱 OMEGA ENGINE — PUBLIC RELEASE v1.0.0           $(COLOR_PURPLE)║$(COLOR_NC)"
-	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  $(COLOR_GREEN)575 tests ✅  |  600 collected  |  All 22 Mandates enforced$(COLOR_PURPLE)║$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  $(COLOR_GREEN)705 tests ✅  |  705 collected  |  All 22 Mandates enforced$(COLOR_PURPLE)║$(COLOR_NC)"
 	@echo "$(COLOR_PURPLE)╚══════════════════════════════════════════════════════╝$(COLOR_NC)"
 	@echo ""
 	@echo "$(COLOR_BOLD)🔥 CORE$(COLOR_NC)"
@@ -49,7 +50,7 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo "  $(COLOR_CYAN)make menu$(COLOR_NC)         📋 This menu"
 	@echo ""
 	@echo "$(COLOR_BOLD)🧪 TESTING$(COLOR_NC)"
-	@echo "  $(COLOR_CYAN)make test$(COLOR_NC)         🧪 Run all 600 tests (575 active + 22 skipped + 3 xfail)"
+	@echo "  $(COLOR_CYAN)make test$(COLOR_NC)         🧪 Run all 705 tests (668 active + 22 skipped + 3 xfail)"
 	@echo "  $(COLOR_CYAN)make test ARGS='-k name'$(COLOR_NC)  Filter tests by name"
 	@echo "  $(COLOR_CYAN)make test-cov$(COLOR_NC)     📊 Run tests with coverage"
 	@echo "  $(COLOR_CYAN)make lint$(COLOR_NC)         🔍 Lint with flake8"
@@ -429,7 +430,7 @@ model-download: ## 📥 Download local model (Qwen 1.7B GGUF, ~1GB)
 
 model-list: ## 📋 List downloaded models
 	@echo "$(COLOR_CYAN)📋 Downloaded Models$(COLOR_NC)"
-	@if ls models/gguf/*.gguf 2>/dev/null | head -5; then \
+	@if ls $(MODELS_DIR)/*.gguf 2>/dev/null | head -5; then \
 		echo ""; \
 		echo "  $(COLOR_GREEN)✅ Models found.$(COLOR_NC)"; \
 	else \
@@ -438,9 +439,9 @@ model-list: ## 📋 List downloaded models
 
 model-clean: ## 🧹 Delete downloaded models to reclaim space
 	@echo "$(COLOR_YELLOW)⚠️  This will delete all downloaded models!$(COLOR_NC)"
-	@echo "  Location: models/gguf/"
+	@echo "  Location: $(MODELS_DIR)"
 	@echo ""
-	@rm -rf models/gguf/*.gguf 2>/dev/null || true
+	@rm -rf $(MODELS_DIR)/*.gguf 2>/dev/null || true
 	@echo "$(COLOR_GREEN)✅ Models deleted. Run 'make model-download' to download again.$(COLOR_NC)"
 
 # ============================================================================

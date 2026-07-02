@@ -11,8 +11,8 @@ inference:
     - 2
     - 4
     - 6
-    n_threads: 6
-    n_threads_batch: 6
+    n_threads: 4
+    n_threads_batch: 4
     type_k: 8
     type_v: 1
     n_batch: 512

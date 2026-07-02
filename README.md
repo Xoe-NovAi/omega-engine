@@ -7,27 +7,30 @@
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 [![Local-First](https://img.shields.io/badge/Local--First-Primary-8A2BE2)]()
-[![Version](https://img.shields.io/badge/version-1.1.0-blue)]()
-[![Tests](https://img.shields.io/badge/tests-646%20passing-brightgreen)]()
+ [![Version](https://img.shields.io/badge/version-1.1.0-blue)]()
+ [![Tests](https://img.shields.io/badge/tests-667%20passing-brightgreen)]()
+
 
 ---
 
 ## Quick Start — 3 Commands, No Cloud Key Needed
+ 
+ ```bash
+ # 1. Clone and install (Python 3.12+, venv auto-setup)
+ git clone https://github.com/Xoe-NovAi/omega-engine.git
+ cd omega-engine
+ make setup
+ 
+ # 2. Download the default local model (Qwen 1.7B GGUF, ~1.6GB)
+ # This is the primary sovereign backend. No internet needed after this step.
+ make model-download
+ 
+ # 3. Talk to it — entirely on your CPU, zero cloud calls
+ omega talk "hello"
+ ```
+ 
+ **No API keys. No GPU. No cloud account.** Your first sovereign AI interaction in under 5 minutes.
 
-```bash
-# 1. Clone and install (Python 3.12+, venv auto-setup)
-git clone https://github.com/Xoe-NovAi/omega-engine.git
-cd omega-engine
-make setup
-
-# 2. Download the default local model (Qwen 1.7B GGUF, ~1.6GB)
-make model-download
-
-# 3. Talk to it — entirely on your CPU, zero cloud calls
-omega talk "hello"
-```
-
-**No API keys. No GPU. No cloud account.** Your first sovereign AI interaction in under 5 minutes.
 
 ---
 
@@ -71,13 +74,14 @@ make menu                                # Full command menu
 Omega auto-detects available inference backends. **Local providers are tried first** — no cloud keys required for basic operation.
 
 ### Local Providers (tried first, in order)
+ 
+ | Priority | Provider | Setup | Speed | Sovereign |
+ |:--------:|----------|-------|-------|:---------:|
+ | **1** | **Native GGUF** | `make model-download` | 🏠 CPU, llama-cpp-python | ✅ Full |
+ | **2** | **LM Studio** | `lms server start` (port 1234) | 🏠 CPU/GPU | ✅ Full |
+ | **3** | **Ollama** | `ollama pull qwen3:1.7b` (port 11434) | 🏠 CPU/GPU | ✅ Full |
+ | **4** | **Mock** | Automatic in `OMEGA_ENV=test` | Instant, deterministic | ✅ Test |
 
-| Priority | Provider | Setup | Speed | Sovereign |
-|:--------:|----------|-------|-------|:---------:|
-| **1** | **Native GGUF** | Auto-installed by `make setup` | 🏠 CPU, llama-cpp-python | ✅ Full |
-| **2** | **LM Studio** | `lms server start` (port 1234) | 🏠 CPU/GPU | ✅ Full |
-| **3** | **Ollama** | `ollama pull qwen3:1.7b` (port 11434) | 🏠 CPU/GPU | ✅ Full |
-| **4** | **Mock** | Automatic in `OMEGA_ENV=test` | Instant, deterministic | ✅ Test |
 
 **No configuration needed** — the engine discovers running local backends automatically at startup.
 
@@ -114,12 +118,13 @@ Cloud providers are **optional** and **never called unless local inference fails
                     ┌──────▼──────┐
                     │ ModelGateway│  Provider fabric with fallback chain:
                     │             │
-                    │  1. native-gguf  ← PRIMARY (llama-cpp-python)
-                    │  2. lmster       ← LOCAL (LM Studio :1234)
-                    │  3. ollama       ← LOCAL (:11434)
-                    │  4. google       ← CLOUD FALLBACK (Gemma 4)
-                    │  5. openrouter   ← CLOUD FALLBACK (300+ models)
-                    │  ...            (opencode, copilot, mock)
+                     │  1. native-gguf  ← PRIMARY (Sovereign local-first)
+                     │  2. lmster       ← LOCAL (LM Studio :1234)
+                     │  3. ollama       ← LOCAL (:11434)
+                     │  4. google       ← CLOUD FALLBACK (Gemma 4)
+                     │  5. openrouter   ← CLOUD FALLBACK (300+ models)
+                     │  ...            (opencode, copilot, mock)
+
                     └──────┬──────────┘
                            │
               ┌────────────┴────────────┐
@@ -185,8 +190,8 @@ Switch IWADs at runtime: `omega talk --iwad arcana_novai "hello"`
 
 | Gate | Status |
 |------|--------|
-| Test Suite | **600/600 collected, 575+22+3 passing** |
-| Temple-Grade (T1-T11) | **7/11 GREEN, 3 AMBER, 1 RED (IA2 exempt)** |
+| Test Suite | **693 collected, 667 passing/skipped/xfail** |
+| Temple-Grade (T1-T11) | **✅ VERIFIED (v7.5.4)** |
 | Sovereign Mandates (M1-M22) | **All 22 enforced** (see `SOVEREIGN_MANDATES.md`) |
 | Agent Fleet | **11 agents** (10 Pillar + 1 Oversoul), M10 compliant |
 | AnyIO Compliance | **Zero `import asyncio`** in core (M1) |

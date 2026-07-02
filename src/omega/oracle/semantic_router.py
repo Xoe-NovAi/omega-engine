@@ -1,4 +1,4 @@
-# AP Token: AP-SEMANTIC-ROUTER-v1.0.0
+# AP: AP-SEMANTIC-ROUTER-v1.0.0
 # 🔱 Semantic Router — Embedding-Based Entity Routing
 # ⬡ OMEGA ⬡ ORACLE ⬡ semantic_router.py
 #

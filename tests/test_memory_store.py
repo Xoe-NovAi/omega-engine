@@ -180,3 +180,78 @@ async def test_get_history_none_session_id_returns_empty(temp_data_dir):
     store = get_memory_store()
     history = await store.get_history("Sophia", None)
     assert history == []
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# HYBRID SEARCH (RRF) TESTS
+# ═══════════════════════════════════════════════════════════════════════════
+
+@pytest.mark.anyio
+async def test_search_empty_query_returns_empty(temp_data_dir):
+    """search() with empty query returns empty list."""
+    reset_memory_store()
+    store = get_memory_store()
+    results = await store.search("", "Sophia")
+    assert results == []
+
+
+@pytest.mark.anyio
+async def test_search_whitespace_query_returns_empty(temp_data_dir):
+    """search() with whitespace-only query returns empty list."""
+    reset_memory_store()
+    store = get_memory_store()
+    results = await store.search("   ", "Sophia")
+    assert results == []
+
+
+@pytest.mark.anyio
+async def test_search_fts_results_have_rrf_score(temp_data_dir):
+    """search() results include _rrf_score field from RRF fusion."""
+    reset_memory_store()
+    store = get_memory_store()
+    # Add exchanges with searchable content
+    await store.add_exchange("Sophia", "ses_search_001", "What is sovereignty?", "Sovereignty means self-governance.")
+    await store.add_exchange("Sophia", "ses_search_002", "Tell me about courage.", "Courage is strength in the face of fear.")
+    await store.flush()
+
+    results = await store.search("sovereignty", "Sophia", limit=10)
+    # At least the FTS result should be present
+    assert len(results) >= 1
+    # Results should have _rrf_score from RRF fusion
+    for r in results:
+        assert "_rrf_score" in r
+        assert r["_rrf_score"] > 0
+
+
+@pytest.mark.anyio
+async def test_search_fts_only_when_vector_unavailable(temp_data_dir):
+    """search() gracefully degrades to FTS-only when vector store is unavailable."""
+    reset_memory_store()
+    store = get_memory_store()
+    # Force vector store to MemoryVectorAdapter (always available, no Qdrant needed)
+    from omega.memory.vector_adapters import MemoryVectorAdapter
+    store.vector_store = MemoryVectorAdapter()
+
+    await store.add_exchange("Sophia", "ses_hybrid_001", "What is sovereignty?", "Sovereignty means self-governance.")
+    await store.flush()
+
+    results = await store.search("sovereignty", "Sophia", limit=10)
+    assert len(results) >= 1
+    # FTS results have 'content' field (not 'user'/'assistant')
+    # Check that at least one result has relevant content
+    all_text = " ".join(r.get("content", "").lower() for r in results)
+    assert "sovereignt" in all_text  # stemmer may strip suffix
+
+
+@pytest.mark.anyio
+async def test_search_respects_limit(temp_data_dir):
+    """search() respects the limit parameter."""
+    reset_memory_store()
+    store = get_memory_store()
+    # Add multiple exchanges
+    for i in range(5):
+        await store.add_exchange("Sophia", f"ses_limit_{i:03d}", f"Query about topic {i}", f"Response about topic {i}")
+    await store.flush()
+
+    results = await store.search("topic", "Sophia", limit=2)
+    assert len(results) <= 2

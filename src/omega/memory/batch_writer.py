@@ -1,3 +1,4 @@
+# AP: AP-Sovereign-Hardening-v1.0.0
 """
 🔱 BATCH PERSISTENCE WRITER
 Role: Singleton background batch writer. Buffers provider save_history() calls

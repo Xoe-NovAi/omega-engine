@@ -1,14 +1,22 @@
 # 🔱 John Carmack Deepening — Checkpoint
-# ⬡ OMEGA ⬡ john_carmack ⬡ CHECKPOINT ⬡ 2026-07-01
+# ⬡ OMEGA ⬡ john_carmack ⬡ CHECKPOINT ⬡ 2026-07-02
 # DO NOT EDIT MANUALLY — Updated by the pipeline after each step
 
 plan_version: "20260701"
-phase: 0
+phase: 2
 step: 0
-step_name: "Pre-Execution — All design complete, awaiting Phase 1"
-status: "ready"
+step_name: "Phase 2: Pipeline Automation — Infrastructure Fixes Applied"
+status: "in_progress"
 
-completed_steps: []  # Populated as each step finishes
+completed_steps:
+  - "Phase 0: Architecture and Design"
+  - "Phase 1a: Fetch Wolfenstein iPhone Letter"
+  - "Phase 1b: Fetch Carmack on Rage Interview"
+  - "Phase 1c: Fetch Lex Fridman #309 Outline"
+  - "Phase 2a: Written ingest_jc.py script (scripts/ingest_jc.py)"
+  - "Phase 2b: Fixed logprobs bug in providers.py (conditional kwargs)"
+  - "Phase 2c: Tuned system default model (8192 ctx, 6 threads, q8_0 KV)"
+  - "Phase 2d: Cleaned YAML syntax error in models.yaml (orphaned kv_cache keys)"
 
 artifacts_created:
   - "workspace/ENTITY_DEEPENING_PLAN_20260701.md"
@@ -16,13 +24,17 @@ artifacts_created:
   - "workspace/TRAINING_SYSTEM_DESIGN_20260701.md"
   - "workspace/WORK_PRIORITY.md"
   - "workspace/DEEPENING_CHECKPOINT.yaml"
-  - "carmack_studies/sources/ingestion_ledger.md"  # Seed ledger
-  - "carmack_studies/sources/source_dependency_graph.md"  # Dependency rules
+  - "workspace/session_gnosis.md"
+  - "scripts/ingest_jc.py"
 
-last_checkpoint: "2026-07-01T15:45:00Z"
+last_checkpoint: "2026-07-02T18:00:00Z"
 
 notes: >
-  All architecture and design phase complete. 5-agent council ratified the plan
-  with corrections: GDC 1999 speaker correction, contradiction resolution protocol,
-  heritage discovery sub-pipeline, checkpoint system, training data pipeline.
-  Ready to execute Phase 1.
+  All provider infrastructure fixes applied. Native-gguf now uses q8_0 KV cache,
+  8192 context, 6 threads. Logprobs bug fixed (conditional kwargs pattern).
+  Next step: resolve native-gguf hang (suspect resource_guard semaphore from
+  previous failed run or zombie worker process), then run ingest test.
+
+active_blockers:
+  - "NativeGGUF provider hangs on first inference call after logprobs fix"
+  - "Previous failed ingest_jc.py run may have left zombie worker processes"

@@ -44,9 +44,11 @@ logger = logging.getLogger("omega.health_monitor")
 # ── Enums ──────────────────────────────────────────────────────────────
 
 class CircuitState(Enum):
-    CLOSED = "closed"         # Normal operation
-    OPEN = "open"             # Failing fast, no requests
-    HALF_OPEN = "half_open"   # Probe allowed
+    CLOSED = "closed"         # Normal operation (HEALTHY)
+    DEGRADED = "degraded"     # High latency or minor error spikes
+    OPEN = "open"             # Failing fast, no requests (CRITICAL)
+    HALF_OPEN = "half_open"   # Probe allowed (PROBATION)
+    UNKNOWN = "unknown"       # Initial state / Cold start
 
 
 class ProviderStatus(Enum):
@@ -95,7 +97,19 @@ class AsyncCircuitBreaker:
         # [id-soft: doom-1993] ZONEID Pattern — circuit breaker state marker
         self.magic = ZONEID_BREAKER
         self.state = CircuitState.CLOSED
+        
+        # --- Stochastic Metrics ---
+        self.ema_latency = 0.0
+        self.ema_quality = 1.0
+        self.cusum_g = 0.0
         self.failure_count = 0
+        
+        # Constants from R_SOVEREIGN_INFRA_HARDENING
+        self.alpha_lat = 0.2
+        self.alpha_qual = 0.3
+        self.cusum_drift = 0.5
+        self.cusum_threshold = 4.0
+        
         self.failure_threshold = failure_threshold
         self.recovery_timeout = recovery_timeout
         self.half_open_max_requests = half_open_max_requests
@@ -125,27 +139,54 @@ class AsyncCircuitBreaker:
                 self.half_open_requests += 1
 
         try:
+            start = time.monotonic()
             if inspect.iscoroutinefunction(func):
                 result = await func(*args, **kwargs)
             else:
                 result = func(*args, **kwargs)
-            await self._on_success(trace_id=trace_id)
+            latency = (time.monotonic() - start) * 1000
+            
+            # We assume success if no exception. Quality is 1.0 for basic success.
+            await self._on_success(latency=latency, quality=1.0, trace_id=trace_id)
             return result
         except Exception as e:
             if self._is_circuit_breaking_error(e):
                 await self._on_failure(trace_id=trace_id)
             raise
 
-    async def _on_success(self, trace_id: Optional[str] = None):
+    async def _on_success(self, latency: float, quality: float = 1.0, trace_id: Optional[str] = None):
         # [id-soft: doom-1993] ZONEID Pattern — pre-transition integrity check
         validate_zoneid(self.magic, ZONEID_BREAKER, f"AsyncCircuitBreaker._on_success({self.name})")
         async with self._lock:
             old_state = self.state
+            
+            # 1. Update EMA Latency
+            if self.ema_latency == 0:
+                self.ema_latency = latency
+            else:
+                self.ema_latency = (self.alpha_lat * latency) + ((1 - self.alpha_lat) * self.ema_latency)
+            
+            # 2. Update EMA Quality
+            self.ema_quality = (self.alpha_qual * quality) + ((1 - self.alpha_qual) * self.ema_quality)
+            
+            # 3. Update CUSUM (success = 0 error)
+            # Z_t = (0 - mu_0) / sigma_0. Using simplified Z_t = -0.5 for success
+            self.cusum_g = max(0.0, self.cusum_g - 0.5)
+            
+            # 4. Determine State based on Health Score
+            # Health = (0.4 * LatScore) + (0.35 * ErrScore) + (0.25 * QualScore)
+            # Simplified: If CUSUM is low and EMA latency is reasonable, we are CLOSED.
+            if self.cusum_g < 1.0 and self.ema_latency < 2000:
+                self.state = CircuitState.CLOSED
+            elif self.cusum_g < self.cusum_threshold:
+                self.state = CircuitState.DEGRADED
+            
             if self.state == CircuitState.HALF_OPEN:
                 self.state = CircuitState.CLOSED
+                
             self.failure_count = 0
             self.half_open_requests = 0
-            # Log state transition to observability (non-blocking, best-effort)
+            
             if trace_id and old_state != self.state:
                 try:
                     from omega.observability import get_engine, EventType
@@ -156,7 +197,7 @@ class AsyncCircuitBreaker:
                          "from": old_state.value, "to": self.state.value}
                     )
                 except Exception as e:
-                    logger.warning(f"Circuit closed event failed — observability unavailable (non-blocking): {e}")
+                    logger.warning(f"Circuit closed event failed — observability unavailable: {e}")
                     pass
 
     async def _on_failure(self, trace_id: Optional[str] = None):
@@ -166,13 +207,23 @@ class AsyncCircuitBreaker:
             self.failure_count += 1
             self.last_failure_time = time.monotonic()
             old_state = self.state
-
-            if self.state == CircuitState.HALF_OPEN:
+            
+            # 1. Update CUSUM (failure = 1 error)
+            # Z_t = (1 - mu_0) / sigma_0. Using simplified Z_t = 1.0 for failure
+            self.cusum_g = max(0.0, self.cusum_g + 1.0 - self.cusum_drift)
+            
+            # 2. State Transition
+            if self.cusum_g > self.cusum_threshold:
+                self.state = CircuitState.OPEN
+            elif self.state == CircuitState.HALF_OPEN:
                 self.state = CircuitState.OPEN
             elif self.failure_count >= self.failure_threshold:
                 self.state = CircuitState.OPEN
+            elif self.failure_count > (self.failure_threshold // 2):
+                self.state = CircuitState.DEGRADED
+            else:
+                self.state = CircuitState.CLOSED
 
-            # Log state transition to observability (non-blocking, best-effort)
             if trace_id and old_state != self.state:
                 try:
                     from omega.observability import get_engine, EventType
@@ -181,11 +232,12 @@ class AsyncCircuitBreaker:
                         trace_id,
                         {"provider": self.name, "event": "circuit_opened",
                          "from": old_state.value, "to": self.state.value,
-                         "failure_count": self.failure_count}
+                         "failure_count": self.failure_count, "cusum": self.cusum_g}
                     )
                 except Exception as e:
-                    logger.warning(f"Circuit opened event failed — observability unavailable (non-blocking): {e}")
+                    logger.warning(f"Circuit opened event failed — observability unavailable: {e}")
                     pass
+
 
     def _should_transition_to_half_open(self) -> bool:
         if self.last_failure_time is None:

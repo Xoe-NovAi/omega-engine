@@ -1,11 +1,11 @@
 ---
 id: il-ledger-001
 title: "John Carmack Entity — Ingestion Ledger"
-generated_at: "2026-07-01T15:30:00Z"
-total_sources: 0
+generated_at: "2026-07-01T16:05:00Z"
+total_sources: 3
 total_artifacts: 0
 pipeline_version: "1.0.0"
-status: "initialized"
+status: "fetching"
 ---
 
 # 🔱 Ingestion Ledger — John Carmack
@@ -14,6 +14,9 @@ status: "initialized"
 
 | # | Source ID | File | Tier | Status | Date | Artifacts | ROI |
 |---|-----------|------|------|--------|------|-----------|-----|
+| 1 | `int-2009-wolf-001` | `knowledge/gdc/supplementary/2009_wolfenstein_iphone_letter.md` | 2 | ingested | 2009-03-26 | 0 | - |
+| 2 | `int-2011-rage-001` | `knowledge/gdc/supplementary/2011_carmack_on_rage_interview.md` | 2 | ingested | 2011-08-19 | 0 | - |
+| 3 | `int-2022-lex-001` | `knowledge/interviews/2022_lex_fridman_309_carmack.md` | 2 | processing | 2022-08-04 | 0 | - |
 
 ## Artifact Count per Dimension
 
@@ -37,6 +40,7 @@ ROI = (unique_concepts_extracted × artifact_completeness) / ingestion_effort_ho
 
 | Batch | Date | Sources | Artifacts | Commit |
 |-------|------|---------|-----------|--------|
+| 1 | 2026-07-01 | 3 | 0 | pending |
 
 ---
-*Pipeline initialized: 2026-07-01. No sources ingested yet.*
+*Pipeline initialized: 2026-07-01. Phase 1 in progress.*

@@ -21,6 +21,7 @@
 #   MemoryStore's hot tier (most recent) and falls back to warm/cold.
 
 import logging
+import re
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple, Protocol
 from dataclasses import dataclass, field
@@ -68,28 +69,39 @@ class PipelineCompactionStrategy:
                 return True
         return False
 
-class ToolResultCompactionStrategy:
-    """Low aggressiveness — collapses old tool results into summary placeholders.
-    Zero inference cost.
+class ObservationMaskingStrategy:
+    """High-efficiency filter that culls repetitive 'logged' or 'confirmed' 
+    lines in tool outputs to save context tokens.
+    
+    Source: [id-soft: doom-1993] BSP Culling (O(1) culling of redundant data)
     """
-    def __init__(self, keep_last: int = 1):
-        self.keep_last = keep_last
+    def __init__(self, cull_keywords: List[str] = None, preserve_first_n: int = 2):
+        self.cull_keywords = cull_keywords or ["logged", "confirmed", "processed"]
+        self.preserve_first_n = preserve_first_n
     
     async def __call__(self, messages: List[Message], budget: int) -> bool:
-        # Simple implementation: mask tool results older than keep_last
-        tool_msgs = [i for i, m in enumerate(messages) if m.role == "tool"]
-        if len(tool_msgs) <= self.keep_last:
-            return False
-            
-        for i in tool_msgs[:-self.keep_last]:
-            msg = messages[i]
-            # Mask content but keep metadata (exit code, etc)
-            msg.content = f"[Tool result masked: {msg.metadata.get('tool_name', 'unknown')}]"
-            
-        return self._estimate_tokens(messages) <= budget
+        modified = False
+        for msg in messages:
+            if msg.role == "tool" and len(msg.content) > 20:
+                lines = msg.content.splitlines()
+                if len(lines) <= self.preserve_first_n:
+                    continue
+                
+                # Preserve headers, cull the rest based on keywords
+                new_lines = lines[:self.preserve_first_n]
+                for line in lines[self.preserve_first_n:]:
+                    if not any(kw in line.lower() for kw in self.cull_keywords):
+                        new_lines.append(line)
+                
+                if len(new_lines) < len(lines):
+                    msg.content = "\n".join(new_lines)
+                    modified = True
+        
+        return modified or (self._estimate_tokens(messages) <= budget)
 
     def _estimate_tokens(self, messages: List[Message]) -> int:
         return sum(len(m.content) // 4 for m in messages)
+
 
 class TruncationStrategy:
     """Emergency backstop — hard truncate to budget."""
@@ -144,6 +156,56 @@ class ContextBuilder:
 
     def __init__(self, memory_store: Optional[MemoryStore] = None):
         self.memory_store = memory_store or get_memory_store()
+
+    @staticmethod
+    def _score_exchange_quality(exchange: Dict[str, Any]) -> float:
+        """Score a conversation exchange pair for quality (0.0-1.0).
+
+        Lightweight inline scorer for conversation data. Uses four signals:
+        - Message length (substantive messages score higher)
+        - Technical content indicators (code, references)
+        - Contains a question (Q&A is more valuable than chitchat)
+        - Recency boost (newer exchanges get a small advantage)
+
+        This is the 'Right Approximation' for exchange quality — simple,
+        fast, no external dependencies, and sufficient for sliding window
+        prioritization.
+        """
+        user_msg = exchange.get("user", "")
+        assistant_msg = exchange.get("assistant", "")
+        combined = user_msg + " " + assistant_msg
+        score = 0.0
+
+        # 1. Message length (0.0-0.3): substantive messages score higher
+        word_count = len(combined.split())
+        if word_count > 50:
+            score += 0.3
+        elif word_count > 20:
+            score += 0.2
+        elif word_count > 5:
+            score += 0.1
+
+        # 2. Technical content (0.0-0.2): code blocks, references, specific terms
+        has_code = bool(re.search(r'```|`[^`]+`|import |def |class |function ', combined))
+        has_reference = bool(re.search(r'\[\d+\]|\(.*\d{4}\)|http[s]?://|arXiv|doi:', combined))
+        if has_code:
+            score += 0.15
+        if has_reference:
+            score += 0.05
+
+        # 3. Contains a question (0.0-0.2): Q&A pairs are more valuable
+        has_question = "?" in user_msg or any(
+            kw in user_msg.lower()
+            for kw in ["what", "how", "why", "when", "where", "who", "which", "can you", "could you"]
+        )
+        if has_question:
+            score += 0.2
+
+        # 4. Recency (0.0-0.3): newer exchanges get a small boost
+        # Default 0.15 for all; adjusted if timestamp is available
+        score += 0.15
+
+        return min(1.0, score)
 
     # ── Primary API ───────────────────────────────────────────────────
 
@@ -261,10 +323,15 @@ class ContextBuilder:
             
         return "".join(lines) + "---\n\n"
 
-    async def _compact_and_format_exchanges(self, exchanges: List[Dict[str, Any]], token_limit: int) -> str:
+    async def _compact_and_format_exchanges(self, exchanges: List[Dict[str, Any]], token_limit: int, quality_weighted: bool = False) -> str:
         """Format exchanges into a context block using the ACON compaction pipeline.
         
         Implements the PipelineCompactionStrategy: ToolResult -> Summarization -> SlidingWindow -> Truncation.
+        
+        When quality_weighted=True, exchanges are scored and sorted by quality
+        before the sliding window, ensuring higher-quality exchanges fill the
+        token budget first. Default behavior (quality_weighted=False) preserves
+        the existing newest-first sliding window for backward compatibility.
         """
         if not exchanges:
             return ""
@@ -283,10 +350,10 @@ class ContextBuilder:
                 metadata={"timestamp": ex.get("timestamp")}
             ))
 
-        # Run the ToolResultMasking pass — masks old tool results (zero cost).
+        # Run the Observation Masking pass — culls repetitive 'logged' lines (zero cost).
         # Budget enforcement is done in the formatting loop below.
-        tool_masking = ToolResultCompactionStrategy(keep_last=1)
-        await tool_masking(messages, token_limit)
+        obs_masking = ObservationMaskingStrategy()
+        await obs_masking(messages, token_limit)
 
         # Format with sliding window — iterate from newest to oldest,
         # collecting exchanges that fit within token budget.
@@ -308,8 +375,18 @@ class ContextBuilder:
             else:
                 i += 1
 
-        # Sliding window: newest to oldest, fill budget
-        for pair in reversed(pairs):
+        # Quality-weighted selection: score and sort by quality before sliding window
+        if quality_weighted and pairs:
+            for pair in pairs:
+                pair["_quality_score"] = self._score_exchange_quality(pair)
+            # Sort by quality descending — highest quality fills budget first
+            pairs.sort(key=lambda p: p["_quality_score"], reverse=True)
+
+        # Sliding window: newest to oldest (or highest quality first if quality_weighted), fill budget
+        # When quality_weighted, iterate in sorted order (highest quality first).
+        # When not quality_weighted, iterate in reverse chronological (newest first).
+        window = pairs if quality_weighted else reversed(pairs)
+        for pair in window:
             ts = self._format_timestamp(pair["timestamp"])
             exchange_block = (
                 f"[{ts}] User: {self._truncate(pair['user'])}\n"

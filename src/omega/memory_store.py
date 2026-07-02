@@ -76,6 +76,11 @@ ARCHIVE_AFTER_DAYS = 7
 # server (15 packets at 30Hz ≈ 0.5s) to prevent client-side entity morphing.
 TOMBSTONE_GRACE_SECONDS = 0.5
 
+# External storage for long-term session archival (90-day policy)
+# Sessions older than 90 days are moved to external 8TB storage drive
+EXTERNAL_STORAGE_PATH = Path("/media/arcana-novai/omega_library/archive/sessions")
+ARCHIVE_TO_EXTERNAL_DAYS = 90
+
 
 class MemoryStore:
     """Hot/Warm/Cold entity memory with LRU caching and 3-tier provider fallback.
@@ -809,7 +814,12 @@ class MemoryStore:
         logger.info("Memory store flushed and closed")
 
     async def archive_old_sessions(self, older_than_days: int = ARCHIVE_AFTER_DAYS) -> int:
-        """Auto-archive sessions older than N days."""
+        """Auto-archive sessions older than N days.
+        
+        Session Lifecycle Policy:
+        - 7 days: Archive to cold storage (local disk)
+        - 90 days: Move to external 8TB storage drive for permanent archival
+        """
         count = 0
         now = time.time()
         async for ent_dir in anyio.Path(_get_entity_dir()).iterdir():
@@ -823,6 +833,43 @@ class MemoryStore:
                     session_id = path.stem
                     if await self.archive_session(entity_name, session_id):
                         count += 1
+        return count
+
+    async def move_to_external_storage(self, older_than_days: int = ARCHIVE_TO_EXTERNAL_DAYS) -> int:
+        """Move sessions older than N days to external 8TB storage drive.
+        
+        This implements the 90-day permanent archival policy. Sessions are moved
+        (not deleted) to preserve data while freeing local disk space.
+        """
+        count = 0
+        now = time.time()
+        
+        # Ensure external storage directory exists
+        await anyio.Path(EXTERNAL_STORAGE_PATH).mkdir(parents=True, exist_ok=True)
+        
+        # Check archive directory for old sessions
+        archive_dir = _get_archive_dir()
+        if not await anyio.Path(archive_dir).exists():
+            return 0
+            
+        async for ent_dir in anyio.Path(archive_dir).iterdir():
+            if not await anyio.Path(ent_dir).is_dir():
+                continue
+            async for path in anyio.Path(ent_dir).glob("*.json"):
+                stat = await anyio.Path(path).stat()
+                age_days = (now - stat.st_mtime) / 86400
+                if age_days > older_than_days:
+                    # Move to external storage
+                    entity_name = ent_dir.name
+                    external_entity_dir = EXTERNAL_STORAGE_PATH / entity_name
+                    await anyio.Path(external_entity_dir).mkdir(parents=True, exist_ok=True)
+                    
+                    # Move the file
+                    dest_path = external_entity_dir / path.name
+                    await anyio.Path(path).rename(dest_path)
+                    count += 1
+                    logger.info("Moved session %s to external storage: %s", path.name, dest_path)
+        
         return count
 
 _memory_store: Optional[MemoryStore] = None

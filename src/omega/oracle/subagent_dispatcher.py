@@ -38,10 +38,10 @@ from omega.cvar_table import ZONEID_HANDOFF  # noqa: F401
 @dataclass
 class HandoffPacket:
     """Typed handoff between agents. Mandate 9 (Error Integrity) compliant.
-
+    
     Every dispatch creates one of these. It tracks the full lifecycle:
     pending -> accepted -> completed/failed, with traceable IDs at every step.
-
+    
     Core concept (agent dispatch) is the user's original design.
     Uses [id-soft: doom-1993] ZONEID Pattern for packet integrity.
     """
@@ -64,6 +64,11 @@ class HandoffPacket:
     error: Optional[str] = None
     result: Optional[str] = None
     created_at: float = 0.0
+    
+    # Loop Guard Fields (T2-5)
+    visited_agents: List[str] = field(default_factory=list)
+    hop_count: int = 0
+    max_hops: int = 10
 
     def __post_init__(self) -> None:
         if not self.packet_id:
@@ -76,6 +81,23 @@ class HandoffPacket:
             self.created_at = datetime.now().timestamp()
         if self.zoneid != ZONEID_HANDOFF:
             raise ValueError(f"Invalid ZONEID_HANDOFF: expected {ZONEID_HANDOFF:#x}, got {self.zoneid:#x}")
+        
+        # Initialize visited set with source
+        if self.source_agent not in self.visited_agents:
+            self.visited_agents.append(self.source_agent)
+
+    def is_loop(self, target: str) -> bool:
+        """Check if delegating to target would create a loop."""
+        return target.lower() in [a.lower() for a in self.visited_agents]
+
+    def increment_hop(self) -> bool:
+        """Increment hop count and check against max_hops. Returns True if budget remains."""
+        self.hop_count += 1
+        return self.hop_count <= self.max_hops
+
+    @property
+    def expired(self) -> bool:
+
 
     @property
     def expired(self) -> bool:

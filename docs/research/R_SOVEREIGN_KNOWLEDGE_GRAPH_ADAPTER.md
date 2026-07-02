@@ -4,12 +4,34 @@
 **AP Token**: `AP-RESEARCH-SVR-GRAPH-v1.0.0`
 **Author**: roc_racoon (Sovereign Miner & Ideas Guy)
 **Date**: 2026-06-21
-**Status**: READY
+**Status**: ⚠️ PHANTOM GAP — Investigation Complete (2026-07-02)
 
 ---
 
 ## Summary
 This specification defines the architecture, database schema, and implementation plan for the **Sovereign Knowledge Graph Adapter** (`SovereignGraphAdapter`). Inspired by the architectural patterns of `codebase-memory-mcp`, this adapter transitions the Omega Engine from a flat vector-similarity memory model to a **multi-signal structural memory model**. By combining SQLite-based graph storage, multi-signal semantic scoring, and local Random Indexing (RI), Omega achieves high-performance relational memory and local verification with zero external dependencies, fully adhering to Mandate 7 (Local-First) and Mandate 8 (Zero Telemetry).
+
+---
+
+## ⚠️ PHANTOM GAP INVESTIGATION (2026-07-02)
+
+### Executive Summary
+**This spec was over-engineered.** The Omega Engine already has hybrid FTS+Vector search with Reciprocal Rank Fusion (RRF) implemented in `memory_store.py:search()`. The "missing" Knowledge Graph Adapter was a phantom gap — the functionality already exists.
+
+### What Already Exists
+- **Hybrid Search**: `memory_store.py:search()` combines FTS5 lexical search with vector similarity using RRF (k=60)
+- **Multi-Signal Scoring**: The existing implementation already blends vector similarity + text overlap
+- **Local-First**: All search is local via SQLite FTS5 + Qdrant vector store
+- **Zero Dependencies**: No NetworkX or external graph database required
+
+### Why This Spec Was Over-Engineered
+1. **Graph traversal** is not needed for current use cases — entity relationships are handled by the EntityRegistry
+2. **Random Indexing** is unnecessary when Qdrant already provides efficient vector search
+3. **Community detection** is a future feature that doesn't align with current engine needs
+4. **The existing RRF fusion is the "right approximation"** — lightweight, local-first, no additional dependencies
+
+### Recommendation
+**No implementation needed.** The spec should be archived as a reference for future graph-based features if needed. The existing hybrid search in `memory_store.py` already provides the multi-signal scoring capability described in this spec.
 
 ---
 

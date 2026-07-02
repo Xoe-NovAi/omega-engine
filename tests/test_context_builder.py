@@ -189,3 +189,83 @@ async def test_sliding_window_keeps_newest_exchanges(mock_memory_store):
     pos_4 = context.find("msg-4")
     pos_newest = context.find("msg-newest-5")
     assert pos_3 < pos_4 < pos_newest  # chronological order preserved
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# QUALITY WEIGHTING TESTS
+# ═══════════════════════════════════════════════════════════════════════════
+
+def test_score_exchange_quality_empty():
+    """Empty exchange gets minimum score."""
+    score = ContextBuilder._score_exchange_quality({"user": "", "assistant": ""})
+    assert 0.0 <= score <= 1.0
+    # Empty = only recency base (0.15)
+    assert score == 0.15
+
+
+def test_score_exchange_quality_substantive():
+    """Longer, technical exchange scores higher than empty."""
+    empty_score = ContextBuilder._score_exchange_quality({"user": "", "assistant": ""})
+    technical_score = ContextBuilder._score_exchange_quality({
+        "user": "How do I implement a circuit breaker pattern in Python?",
+        "assistant": "```python\nclass CircuitBreaker:\n    def __init__(self):\n        self.state = 'closed'\n```"
+    })
+    assert technical_score > empty_score
+
+
+def test_score_exchange_quality_question_bonus():
+    """Exchange with a question in user message gets bonus."""
+    no_question = ContextBuilder._score_exchange_quality({
+        "user": "Thanks for the help.",
+        "assistant": "You're welcome."
+    })
+    with_question = ContextBuilder._score_exchange_quality({
+        "user": "What is the meaning of life?",
+        "assistant": "42."
+    })
+    assert with_question > no_question
+
+
+def test_score_exchange_quality_code_bonus():
+    """Exchange with code blocks gets technical content bonus."""
+    no_code = ContextBuilder._score_exchange_quality({
+        "user": "Tell me about design patterns.",
+        "assistant": "Design patterns are reusable solutions."
+    })
+    with_code = ContextBuilder._score_exchange_quality({
+        "user": "Show me a singleton.",
+        "assistant": "```python\nclass Singleton:\n    _instance = None\n```"
+    })
+    assert with_code > no_code
+
+
+@pytest.mark.anyio
+async def test_quality_weighted_selects_higher_quality(mock_memory_store):
+    """quality_weighted=True prioritizes substantive exchanges over chitchat."""
+    exchanges = [
+        {"user": "ok", "assistant": "k"},  # chitchat, low quality
+        {"user": "How does the memory store work? What are the tiers?", "assistant": "The memory store uses a 3-tier architecture: Hot (in-memory LRU), Warm (file-based), and Cold (archival). Each tier has different persistence and access characteristics."},  # substantive Q&A
+    ]
+    mock_memory_store.get_history.return_value = exchanges
+    cb = ContextBuilder(memory_store=mock_memory_store)
+
+    # Budget fits only 1 exchange. Quality-weighted should pick the substantive one.
+    context = await cb._compact_and_format_exchanges(exchanges, token_limit=80, quality_weighted=True)
+    assert "3-tier architecture" in context
+
+
+@pytest.mark.anyio
+async def test_quality_weighted_false_preserves_chronological(mock_memory_store):
+    """quality_weighted=False (default) preserves newest-first order."""
+    exchanges = [
+        {"timestamp": "2026-05-16T10:00:00Z", "user": "msg-oldest", "assistant": "resp-oldest"},
+        {"timestamp": "2026-05-16T10:04:00Z", "user": "msg-newest", "assistant": "resp-newest"},
+    ]
+    mock_memory_store.get_history.return_value = exchanges
+    cb = ContextBuilder(memory_store=mock_memory_store)
+
+    context = await cb._compact_and_format_exchanges(exchanges, token_limit=200, quality_weighted=False)
+    # Output is chronological: oldest first (lower index), newest later (higher index)
+    pos_oldest = context.find("msg-oldest")
+    pos_newest = context.find("msg-newest")
+    assert pos_oldest < pos_newest  # chronological order preserved

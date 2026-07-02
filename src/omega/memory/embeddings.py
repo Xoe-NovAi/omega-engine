@@ -160,7 +160,7 @@ class LocalGGUFEmbeddingProvider(IEmbeddingProvider):
 
     def __init__(
         self,
-        model_path: str = "/media/arcana-novai/omega_library/models/gguf/all-MiniLM-L6-v2-Q4_K_M.gguf",
+        model_path: str = "/media/arcana-novai/omega_library/models/embeddings/all-MiniLM-L6-v2-Q4_K_M.gguf",
         dimension: int = 384,
         n_ctx: int = 512,
         n_threads: int = 6,
@@ -325,7 +325,7 @@ class GemmaGGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
 
     def __init__(self):
         super().__init__(
-            model_path="/media/arcana-novai/omega_library/lmstudio-models/local/all/embeddinggemma-300m-Q6_K.gguf",
+            model_path="/media/arcana-novai/omega_library/models/embeddings/embeddinggemma-300m-Q6_K.gguf",
             dimension=768,
         )
 
@@ -349,11 +349,11 @@ class EmbeddingManager:
             self._providers = providers
         else:
             self._providers = [
-                LocalGGUFEmbeddingProvider(),
-                GemmaGGUFEmbeddingProvider(),
-                StaticEmbeddingProvider(),
-                OllamaEmbeddingProvider(),
-                SovereignFallbackEmbeddingProvider(),
+                GemmaGGUFEmbeddingProvider(),        # 768-dim, 300M, primary (quality-first)
+                OllamaEmbeddingProvider(),            # 768-dim, nomic-embed-text, local fallback
+                LocalGGUFEmbeddingProvider(),         # 384-dim, all-MiniLM, fast fallback
+                StaticEmbeddingProvider(),            # 64-dim, model2vec, zero-cost fallback
+                SovereignFallbackEmbeddingProvider(), # 256-dim, hash-based, last resort
             ]
         
     async def get_embedding(self, text: str) -> List[float]:
