@@ -839,6 +839,116 @@ def worker_spawn(
             console.print(f"[red]Unexpected error spawning worker: {e}[/red]")
     anyio.run(_run)
 
+# ── HARDWARE STATS ───────────────────────────────────────────────────────────
+@app.command(name="hardware-stats")
+def hardware_stats(
+    watch: float = typer.Option(0, "--watch", "-w", help="Continuous monitoring interval in seconds (0 = one-shot)"),
+    json_output: bool = typer.Option(False, "--json", "-j", help="Output raw JSON"),
+    oom_check: bool = typer.Option(False, "--oom", "-o", help="Quick OOM risk check only"),
+):
+    """📊 Show real-time hardware stats: per-core CPU, memory pressure, OOM risk, thermal.
+
+    Uses HardwareMonitor (psutil-based with /proc fallback). Always available.
+
+    Examples:
+        omega hardware-stats              # One-shot summary
+        omega hardware-stats --watch 2    # Poll every 2 seconds
+        omega hardware-stats --oom        # Quick OOM risk check
+        omega hardware-stats --json       # Structured JSON output
+    """
+    try:
+        from omega.monitoring import HardwareMonitor
+    except ImportError:
+        console.print("[red]HardwareMonitor not available. Install: pip install psutil[/red]")
+        raise typer.Exit(1)
+
+    hm = HardwareMonitor()
+
+    if oom_check:
+        risk = hm.get_oom_risk_level()
+        mem = hm.get_memory_status()
+        console.print(f"[bold]OOM Risk:[/bold] [{'red' if risk in ('HIGH','CRITICAL') else 'yellow' if risk == 'MODERATE' else 'green'}]{risk}[/]")
+        console.print(f"Memory: {mem['used_mb']:.0f}/{mem['total_mb']:.0f}MB ({mem['percent']:.1f}%)")
+        console.print(f"Available: {mem['available_mb']:.0f}MB")
+        console.print(f"Swap: {mem['swap_used_mb']:.0f}/{mem['swap_total_mb']:.0f}MB ({mem['swap_percent']:.1f}%)")
+        return
+
+    def _show():
+        stats = hm.collect_all()
+        if json_output:
+            import json
+            console.print(json.dumps(stats, indent=2, default=str))
+            return
+
+        cpu = stats["cpu"]
+        mem = stats["memory"]
+        temps = stats["temperatures"]
+        topo = stats["topology"]
+
+        console.print("[bold cyan]══════════════════════════════════════════[/]")
+        console.print(f"[bold cyan]  OMEGA HARDWARE MONITOR[/]")
+        console.print(f"[bold cyan]  {topo.get('model', '')}[/]")
+        console.print("[bold cyan]══════════════════════════════════════════[/]")
+
+        console.print(f"\n[bold]CPU:[/] {topo.get('physical_cores', '?')}C/{topo.get('logical_threads', '?')}T "
+                      f"| L3: {topo.get('l3_cache_mb', '?')}MB ({topo.get('l3_instances', '?')} instances)")
+        console.print(f"   Avg: {cpu['avg_percent']:.1f}%  "
+                      f"Load: {cpu['load'].get('load_1min', 0):.2f}/{cpu['load'].get('load_5min', 0):.2f}/{cpu['load'].get('load_15min', 0):.2f}")
+
+        per_core = cpu.get("per_core_percent", {})
+        if per_core:
+            lines = []
+            for i in range(0, 16, 4):
+                parts = []
+                for j in range(i, min(i + 4, 16)):
+                    key = f"cpu{j}"
+                    val = per_core.get(key, 0)
+                    # Color code: green < 50%, yellow 50-80%, red > 80%
+                    color = "green" if val < 50 else "yellow" if val < 80 else "red"
+                    parts.append(f"[{color}]CPU{j}:{val:5.1f}%[/]")
+                lines.append("  " + "  ".join(parts))
+            for line in lines:
+                console.print(line)
+
+        if cpu.get("thermal_throttling"):
+            console.print("   [red]⚠ THERMAL THROTTLING ACTIVE[/red]")
+
+        if temps.get("available") and temps["celsius"]:
+            temp_parts = [f"{t['label']}: {t['temp']:.0f}°C" for t in temps["celsius"]]
+            console.print(f"   Temp: {' | '.join(temp_parts)}")
+
+        # Memory with color
+        mem_pct = mem["percent"]
+        mem_color = "green" if mem_pct < 60 else "yellow" if mem_pct < 80 else "red"
+        console.print(f"\n[bold]Memory:[/] [{mem_color}]{mem['used_mb']:.0f}/{mem['total_mb']:.0f}MB ({mem_pct:.1f}%)[/]")
+        console.print(f"   Available: {mem['available_mb']:.0f}MB"
+                      f"  Swap: {mem['swap_used_mb']:.0f}/{mem['swap_total_mb']:.0f}MB ({mem['swap_percent']:.1f}%)")
+
+        oom = mem.get("oom_risk", {})
+        oom_color = "green" if oom.get("risk_level") == "SAFE" else "yellow" if oom.get("risk_level") == "LOW" else "red"
+        console.print(f"   OOM Risk: [{oom_color}]{oom.get('risk_level', 'UNKNOWN')}[/]"
+                      f"  Pressure: {stats.get('memory_pressure', 0):.3f}")
+
+        thread_info = stats.get("threads", {})
+        if thread_info:
+            console.print(f"\n[bold]Threads:[/] Python total: {thread_info.get('total_python_threads', 0)}")
+
+        console.print(f"\n[dim]Disk I/O: nvme0 reads: {stats.get('disk_io', {}).get('nvme0n1', {}).get('reads_completed', 0)} | "
+                      f"writes: {stats.get('disk_io', {}).get('nvme0n1', {}).get('writes_completed', 0)}[/]")
+        console.print("[bold cyan]══════════════════════════════════════════[/]")
+
+    if watch > 0:
+        try:
+            while True:
+                _show()
+                import time
+                time.sleep(watch)
+        except KeyboardInterrupt:
+            console.print("\n[dim]Stopped.[/]")
+    else:
+        _show()
+
+
 # ── Entry point ─────────────────────────────────────────────────────────
 
 def main():

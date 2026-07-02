@@ -2131,6 +2131,59 @@ async def get_system_stats() -> str:
     return json.dumps(stats, indent=2)
 
 
+@m9_safe("get_hardware_stats")
+@mcp.tool()
+async def get_hardware_stats(
+    interval: float = 0.3,
+    include_threads: bool = False,
+) -> str:
+    """Get detailed per-core hardware stats: CPU utilization, memory pressure, OOM risk, thread contention, thermal.
+
+    More granular than get_system_stats — shows per-CPU-core utilization,
+    memory pressure score, OOM risk analysis, and thread counts.
+
+    Args:
+        interval: Sampling interval in seconds for CPU utilization (default 0.3).
+        include_threads: Include detailed per-process thread counts (default False).
+
+    Returns:
+        JSON string with per-core CPU %, memory status with OOM risk, thermal data, and thread info.
+    """
+    try:
+        from omega.monitoring import HardwareMonitor
+    except ImportError:
+        return json.dumps({
+            "available": False,
+            "error": "HardwareMonitor module not available (import omega.monitoring failed)",
+        })
+
+    def _collect():
+        hm = HardwareMonitor()
+        stats = hm.collect_all()
+        # Override CPU with fresh per-core at requested interval
+        stats["cpu"]["per_core_percent"] = hm.get_per_core_utilization(interval=interval)
+        stats["cpu"]["avg_percent"] = round(
+            sum(stats["cpu"]["per_core_percent"].values())
+            / max(len(stats["cpu"]["per_core_percent"]), 1), 1
+        )
+
+        if include_threads:
+            stats["threads"] = hm.get_process_thread_count()
+        else:
+            stats.pop("threads", None)
+
+        # Add topology info
+        stats["topology"] = hm.get_cpu_topology()
+        return stats
+
+    try:
+        stats = await anyio.to_thread.run_sync(_collect)
+        return json.dumps(stats, indent=2, default=str)
+    except Exception as exc:
+        logger.exception("get_hardware_stats failed")
+        return json.dumps({"available": False, "error": str(exc)})
+
+
 @m9_safe("get_omega_metrics")
 @mcp.tool()
 async def get_omega_metrics() -> str:

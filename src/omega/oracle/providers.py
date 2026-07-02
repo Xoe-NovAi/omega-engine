@@ -345,6 +345,21 @@ class NativeGGUFProvider(BaseProvider):
         self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="gguf_inference")
         atexit.register(self.shutdown)
 
+    def __del__(self):
+        """Destructor — clean up worker process on garbage collection.
+        
+        BUG-002 (2026-07-02): Without this, when a NativeGGUFProvider goes
+        out of scope (e.g., during A/B testing with multiple instances),
+        the worker subprocess keeps running as a zombie holding model memory.
+        
+        atexit.register(self.shutdown) at line 346 only fires on clean exit.
+        __del__ catches GC-time collection.
+        """
+        try:
+            self.shutdown()
+        except Exception:
+            pass
+
     async def is_available(self) -> bool:
         """Check if llama-cpp-python is installed and model path exists."""
         if not self.model_path or not os.path.exists(self.model_path):
@@ -528,8 +543,16 @@ class NativeGGUFProvider(BaseProvider):
                     # chat_template_kwargs is NOT in the Python bindings (v0.3.32).
                     # Workaround: wrap the default chat handler to inject kwargs,
                     # matching the pattern from llama_cpp/server/model.py:328-333.
+                    #
+                    # BUG-002 (2026-07-02): Reset llm.chat_handler BEFORE getting
+                    # base_handler. On the 2nd+ call with enable_thinking=False,
+                    # llm.chat_handler was already set to _handler_with_kwargs from
+                    # the first call, causing base_handler → _handler_with_kwargs
+                    # which wraps itself → infinite recursion.
                     if enable_thinking is not None and not enable_thinking:
                         import llama_cpp.llama_chat_format as _chat_fmt
+                        # Reset to prevent self-wrapping recursion
+                        llm.chat_handler = None
                         base_handler = (
                             llm.chat_handler
                             or llm._chat_handlers.get(llm.chat_format)
@@ -539,8 +562,6 @@ class NativeGGUFProvider(BaseProvider):
                         def _handler_with_kwargs(*args, **kwargs):
                             return base_handler(*args, **{**_template_kwargs, **kwargs})
                         llm.chat_handler = _handler_with_kwargs
-                    elif llm.chat_handler and hasattr(llm.chat_handler, '__name__') and llm.chat_handler.__name__ == '_handler_with_kwargs':
-                        llm.chat_handler = None  # Reset if re-loaded
 
                     messages = [
                         {"role": "system", "content": system_prompt},
@@ -725,7 +746,11 @@ class NativeGGUFProvider(BaseProvider):
                 )
             
             logger.error(f"NativeGGUF inference failed: {e}", exc_info=True)
-            # Reset worker process state on error to force reload
+            # BUG-002 (2026-07-02): Must call shutdown() before dropping the
+            # worker reference. Previously, self._worker_process = None was set
+            # without terminating the process, leaving a zombie worker holding
+            # ~2-5GB of model memory in RAM.
+            self.shutdown()
             self._worker_process = None
             self._loaded_ctx = 0
             raise InferenceError(message=f"Native GGUF inference failed: {e}", trace_id=trace_id, raw_error=e) from e

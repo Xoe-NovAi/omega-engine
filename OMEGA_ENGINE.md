@@ -112,7 +112,17 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | phi-4-mini (reasoning) | 3.8GB | 4500MB | 16384 | SOPHIA |
 | krikri-8b-q4_k_m | 4.7GB | 4900MB | 16384 | Inanna, Isis, Lilith |
 | deepseek-r1-qwen3-8b-q3_k_l | 4.2GB | 4500MB | 8192 | Lucifer (reasoning) |
+### 4.2 Model Capacity (Q4_K_M, current models.yaml)
+...
 | embedding-gemma-300m-q6_k | — | 200MB | — | Vector search |
+| la-native-hardware-monitor | — | — | — | Real-time telemetry |
+
+### 4.3 Hardware Telemetry
+The engine provides real-time hardware telemetry via the `omega hardware-stats` CLI and `get_hardware_stats` MCP tool.
+- **Per-Core Monitoring**: Tracks utilization across all 16 logical threads to detect SMT contention.
+- **Memory Pressure**: Calculates a pressure score (0.0-1.0) based on available RAM and swap usage.
+- **OOM Risk Analysis**: Predicts risk level (SAFE → CRITICAL) based on model size and current available memory.
+- **Thermal Tracking**: Monitors CPU temperature and detects thermal throttling.
 
 ### 4.2 Model Capacity (Q4_K_M quantization, theoretical)
 
