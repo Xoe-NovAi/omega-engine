@@ -37,7 +37,7 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo ""
 	@echo "$(COLOR_PURPLE)╔══════════════════════════════════════════════════════╗$(COLOR_NC)"
 	@echo "$(COLOR_PURPLE)║$(COLOR_BOLD)  🔱 OMEGA ENGINE — PUBLIC RELEASE v1.0.0           $(COLOR_PURPLE)║$(COLOR_NC)"
-	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  $(COLOR_GREEN)705 tests ✅  |  705 collected  |  All 22 Mandates enforced$(COLOR_PURPLE)║$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  $(COLOR_GREEN)730 tests ✅  |  730 collected  |  All 22 Mandates enforced$(COLOR_PURPLE)║$(COLOR_NC)"
 	@echo "$(COLOR_PURPLE)╚══════════════════════════════════════════════════════╝$(COLOR_NC)"
 	@echo ""
 	@echo "$(COLOR_BOLD)🔥 CORE$(COLOR_NC)"
@@ -374,7 +374,7 @@ test-badge: ## 📊 Generate TEST_STATUS.md with current test counts (SSOT for d
 	PASSED=$$(echo "$$SUMMARY" | grep -oP '\d+(?= passed)'); \
 	SKIPPED=$$(echo "$$SUMMARY" | grep -oP '\d+(?= skipped)'); \
 	XFAILED=$$(echo "$$SUMMARY" | grep -oP '\d+(?= xfailed)'); \
-	PASSED=$${PASSED:-590}; SKIPPED=$${SKIPPED:-22}; XFAILED=$${XFAILED:-3}; TOTAL=$${TOTAL:-615}; \
+	PASSED=$${PASSED:-705}; SKIPPED=$${SKIPPED:-22}; XFAILED=$${XFAILED:-3}; TOTAL=$${TOTAL:-730}; \
 	printf "# ⬡ Test Status\n\n**Collected**: %d\n**Passed**: %d\n**Skipped**: %d\n**Expected failures**: %d\n*Generated: %s*\n" \
 		"$$TOTAL" "$$PASSED" "$$SKIPPED" "$$XFAILED" "$$(date -u '+%Y-%m-%dT%H:%M:%SZ')" \
 		> docs/TEST_STATUS.md; \

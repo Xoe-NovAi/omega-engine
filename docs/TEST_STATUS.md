@@ -1,7 +1,7 @@
 # ⬡ Test Status
 
-**Collected**: 615
-**Passed**: 590
+**Collected**: 730
+**Passed**: 705
 **Skipped**: 22
 **Expected failures**: 3
-*Generated: 2026-07-01T06:01:20Z*
+*Generated: 2026-07-03T01:16:33Z*

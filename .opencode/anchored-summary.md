@@ -119,7 +119,7 @@
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| **Tests** | 646 collected — 621 passing, 22 skipped, 3 xfailed | ✅ |
+| **Tests** | 730 collected — 705 passing, 22 skipped, 3 xfailed | ✅ |
 | **PIVOT decisions** | D1-D188 (188 total) | ✅ |
 | **Ark Blueprint** | SSOT fully current with D186-D188 | ✅ |
 | **OMEGA_ENGINE.md** | Sprint index, metrics, subsystems updated | ✅ |
