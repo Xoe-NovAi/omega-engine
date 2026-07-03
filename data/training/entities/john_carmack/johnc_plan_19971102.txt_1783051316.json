@@ -1,0 +1,82 @@
+{
+  "source": "johnc_plan_19971102.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "Implemented fixed pitch clamping",
+      "Added Com_PageInMemory functionality",
+      "Fixed menu cursor timing",
+      "Resolved a bug where net connect occurred during gameplay",
+      "Implemented custom skins",
+      "Fixed a bug where server updates could occur without game updates",
+      "Updated version numbers",
+      "Modified console behavior to prevent entering half console until connected",
+      "Added a delay before firing the BFG",
+      "Modified stairup logic to allow wall climbing",
+      "Resolved issues with previous frames",
+      "Optimized frame.packetentities by avoiding copying all entities",
+      "Disabled server pause in deathmatch (dm) mode",
+      "Normalized skin texture coordinates for software rendering",
+      "Added splashing sounds for swimming in water",
+      "Implemented IPX support",
+      "Implemented software rendering for underwater surfaces",
+      "Added a 'nopredict' option at the server level",
+      "Implemented inventory scrolling",
+      "Implemented smooth step-up logic",
+      "Removed rand1k",
+      "Configured func_explosive targets to fire when starting in deathmatch"
+    ],
+    "personality_patterns": [
+      "Preference for concise, bulleted progress tracking",
+      "Focus on iterative bug fixing and feature refinement",
+      "Direct and technical communication style",
+      "High volume of small, discrete task completion"
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Iterative Refinement",
+        "description": "Continuous improvement of game mechanics and stability through a series of small, targeted fixes and additions."
+      },
+      {
+        "principle": "Performance Optimization",
+        "description": "Avoiding unnecessary data copying (e.g., frame.packetentities) to maintain efficiency."
+      },
+      {
+        "principle": "User Experience Polish",
+        "description": "Adding sensory details (splashing sounds) and smoothing movement (smooth step up) to improve the feel of the game."
+      }
+    ],
+    "heritage_patterns": [
+      "Use of .plan files for public, transparent development logs",
+      "Low-level memory management and coordinate normalization for software renderers",
+      "Network synchronization and prediction options (nopredict) for multiplayer stability",
+      "Entity-based game logic (func_explosive)"
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "What change did Carmack make to the BFG weapon in the 1997-11-02 plan file?",
+        "chosen": "He added a delay before firing the BFG.",
+        "rejected": "He increased the damage of the BFG."
+      },
+      {
+        "prompt": "How did Carmack handle skin textures for software rendering in this update?",
+        "chosen": "He normalized the skin texture coordinates for software rendering.",
+        "rejected": "He removed skin textures to improve software performance."
+      },
+      {
+        "prompt": "What was the fix regarding frame.packetentities?",
+        "chosen": "He decided not to copy all of frame.packetentities to optimize the process.",
+        "rejected": "He deleted the frame.packetentities system entirely."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19971102.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 21.69326376914978,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T04:01:39.511171+00:00",
+    "trace_id": "ingest_e83c9601e764"
+  },
+  "trace_id": "ingest_e83c9601e764"
+}

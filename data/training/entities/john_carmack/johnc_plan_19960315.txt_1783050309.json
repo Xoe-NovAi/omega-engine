@@ -1,0 +1,46 @@
+{
+  "source": "johnc_plan_19960315.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "Implemented an execution stack for programs",
+      "Implemented spawn flags",
+      "Needs to fix NaNs (Not-a-Number) floating point issues",
+      "Implementing proper level changing",
+      "PVS (Potentially Visible Set) for network updates",
+      "Checking entity relinking for excess",
+      "Improving temporary entities ('tempents')"
+    ],
+    "personality_patterns": [
+      "Concise, bulleted list format for task tracking",
+      "Action-oriented focus on low-level system architecture",
+      "Direct and technical communication style"
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Low-level Resource Management",
+        "description": "Prioritizing the stability of and efficiency of the execution stack and entity management to ensure game engine performance."
+      }
+    ],
+    "heritage_patterns": [
+      "Task-driven development cycle using .plan files for public accountability and progress tracking",
+      "Optimization of network visibility through PVS (Potentially Visible Set)"
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "What was John Carmack working on regarding network updates in March 1996?",
+        "chosen": "He was working on implementing PVS (Potentially Visible Set) for network updates.",
+        "rejected": "He was working on general network lag reduction and latency optimization."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19960315.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 8.713457107543945,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T03:45:01.076403+00:00",
+    "trace_id": "ingest_51093c7756db"
+  },
+  "trace_id": "ingest_51093c7756db"
+}

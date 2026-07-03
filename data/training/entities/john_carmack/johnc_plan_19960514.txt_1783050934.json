@@ -1,0 +1,62 @@
+{
+  "source": "johnc_plan_19960514.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "fixed recursive barrel death",
+      "new characters",
+      "better ambient name parsing",
+      "con_dprintf for developer messages",
+      "start messages out of maps",
+      "directional touch triggers",
+      "remove qtest license stuff",
+      "fixed off by one error with ambient leaf calc",
+      "level spawning messages",
+      "level spawning messages",
+      "clear input line every time console goes up",
+      "moved all non-refresh vid.buffer access into draw.c",
+      "removed alphalumpy and replaced with qlumpy",
+      "automatic extension and dest file creation for qbsp",
+      "merged id1 and id1_ development hierarchies",
+      "Made QuakeEd projects directory independent",
+      "static point ambients",
+      "hell knight smash",
+      "hell knight smash",
+      "static point ambients",
+      " "
+    ],
+    "personality_patterns": [
+      "Iterative development style",
+      "Detailed tracking of bug fixes and bug tracking",
+      "Focus on efficiency and technical precision",
+      "High level of detail in shorthand notation"
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Modularization of Buffer Access",
+        "description": "Moving non-refresh video buffer access into a dedicated file (draw.c) to isolate and optimize rendering logic."
+      }
+    ],
+    "heritage_patterns": [
+      "Development hierarchies merging (id1 and id1_)",
+      "Console-based developer messaging (con_dprintf)",
+      "id Software's iterative 'plan' file system for a detailed task list"
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "What did Carmack do with the video buffer access in the 1996-05-14 plan?",
+        "chosen": "He moved all non-refresh vid.buffer access into draw.c.",
+        "rejected": "He updated the video buffer to support high resolution."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19960514.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 12.09340786933899,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T03:55:13.105094+00:00",
+    "trace_id": "ingest_a1529f22d64f"
+  },
+  "trace_id": "ingest_a1529f22d64f"
+}

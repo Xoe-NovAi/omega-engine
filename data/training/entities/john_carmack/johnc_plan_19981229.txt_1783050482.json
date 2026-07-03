@@ -1,0 +1,55 @@
+{
+  "source": "johnc_plan_19981229.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "The entity is implementing a virtual machine (VM) for interpreted code.",
+      "The VM implementation considers allowing interpreted code to live in the global address space rather than a private 0-based address space.",
+      "Allowing global address space access allows for full interpreted speed access to variables shared between main code and interpreted modules.",
+      "System calls in a global address space model can return pointers directly instead of filling allocated space in the interpreter's address space.",
+      "A global address space model avoids the need for cvar_t uses and cvar caches, as variables can be updated transparently as in Quake 2.",
+      "A private address space model (like in Quake 1) is more robust and prevents bus errors caused by bugs in client game modules.",
+      "Read-only access to the entire address space for the interpreter interpreter's load instructions would be confined to the interpreter's address space, but loads could access any structures."
+    ],
+    "personality_patterns": [
+      "Analytical approach to weighing pros and cons of a technical decision.",
+      "Openness to feedback from others regarding potential security risks ('if anyone thinks of something, let me know').",
+      "Pragmatism over purity: considering a shortcut shortcut to ease integration and potentially save development time."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Trade-off Analysis of Isolation vs. Performance",
+        "description": "When choosing between a strict isolation (private address space) and shared memory (global address space), the primary trade-off is between system stability (preventing bus errors) and execution speed/development convenience (avoiding expensive lookups and caching)."
+      },
+      {
+        "principle": "The Cost of Abstraction",
+        "description": ""
+      }
+    ],
+    "heritage_patterns": [
+      "Use of 'cvar' (console variables) for transparently updated shared state between engine and game logic.",
+      "Preference for performance-driven architectural decisions over strict software engineering abstractions that introduce overhead."
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "What is the technical trade-off John Carmack is considering regarding his VM implementation?",
+        "chosen": "Carmack is weighing the variance between using a private 0-based address space for the VM, which provides better isolation and prevents bus errors, versus a global address space, which allows for faster access to shared variables and simplifies system calls by allowing them to return pointers.",
+        "rejected": "He is deciding whether to make the VM faster or slower by changing how it uses memory address spaces."
+      },
+      {
+        "prompt": "How does the address space decision affect the way console variables (cvars) are handled?",
+        "chosen": "A global address space allows cvars to be updated transparently and accessed for free, similar to Quake 2, whereas a private address space requires potentially time-consuming lookups and the need for cvar caches, similar to Quake 1.",
+        "rejected": "He is not mentioning cvars in the community's VM implementation."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19981229.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 18.791385412216187,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T03:47:44.919124+00:00",
+    "trace_id": "ingest_c1810f045725"
+  },
+  "trace_id": "ingest_c1810f045725"
+}

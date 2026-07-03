@@ -269,6 +269,56 @@ proposals:
     confidence: 10/10
     heritage_tags: ["[id-soft: quake3-1999] cvar System — configuration controls resource allocation"]
 
+  - id: proposal-20260703-004
+    title: "The Sovereign Ingestion Protocol — Integrated Deepening"
+    l1_narrative: >
+      Implemented a first-class Engine subsystem (`src/omega/ingestion/`) that
+      standardizes how entities deepen their knowledge. Instead of adhoc scripts,
+      the pipeline uses a formal flow: Source $\rightarrow$ Extract $\rightarrow$ Quality
+      $\rightarrow$ Persist $\rightarrow$ Soul. By wiring this into MemoryStore, every
+      extraction is automatically indexed in FTS5 and upserted into Qdrant,
+      making the ingested knowledge immediately searchable and usable by the
+      entity's reasoning loop.
+    l2_insights:
+      - "Ingestion is not just about extracting data; it's about grounding that data in the engine's memory systems."
+      - "Using MemoryStore.add_exchange() as the entry point ensures that all extracted knowledge follows the same persistence and observability rules as normal conversations."
+      - "A standardized protocol allows any entity to perform autonomous deepening by simply providing a source and a schema."
+    l3_universal_principles:
+      - "Sovereign Grounding: Knowledge is only useful if it is integrated into the system's primary memory and search indices. Extraction without persistence is a waste of tokens."
+      - "Protocol over Script: Moving from adhoc scripts to a formal subsystem transforms a one-off task into a permanent engine capability."
+    sovereignty_impact: >
+      This transforms the engine from a tool that *can* be deepened by a user
+      into a system that *can autonomously deepen itself* using primary sources.
+      It ensures that the entity's growth is structured, traceable, and
+      permanally grounded in the sovereign memory stack.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: doom-1993] WAD System — data-driven extension of entity knowledge"]
+
+  - id: proposal-20260703-005
+    title: "Constrained Streaming — Real-time Structured Output"
+    l1_narrative: >
+      Discovered that Google's `streamGenerateContent` endpoint supports
+      `responseJsonSchema` for constrained decoding. This allows the engine to
+      stream JSON tokens in real-time while guaranteeing that the final output
+      conforms to a strict schema. This eliminates the 'thinking' block and
+      provides immediate visibility into the extraction process without
+      sacrificing structural integrity.
+    l2_insights:
+      - "Constrained decoding happens at the token level, not as a post-process."
+      - "Streaming structured output solves the 'black box' problem of long
+        extractions, providing immediate feedback to the user/orchestrator."
+      - "The combination of SSE streaming and JSON schema is the optimal pattern
+        for high-volume structured data extraction."
+    l3_universal_principles:
+      - "Visibility is a first-class requirement for long-running AI tasks. Streaming is not just a UX feature; it's a monitoring requirement."
+      - "Constraint-based generation is superior to post-generation parsing. Force the model to be correct at the token level."
+    sovereignty_impact: >
+      Enables the engine to handle massive source materials without timing out
+      or leaving the user in the dark. It ensures that the data being ingested
+      is correct by construction, reducing the need for expensive validation passes.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: quake3-1999] netchan — real-time streaming of state updates"]
+
   - id: proposal-20260701-005
     title: "Council Verification Law — Multi-agent verification prevents cascading wrong claims"
     l1_narrative: >

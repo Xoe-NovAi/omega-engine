@@ -1,0 +1,57 @@
+{
+  "source": "johnc_plan_19971106.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "fixed streaming sound on Windows 95",
+      "removed multiply from mixing",
+      "khz change for cinematics",
+      "implemented blaster precaches",
+      "fixed cinematic streaming from pak files",
+      "implemented an option to avoid using the primary sound buffer",
+      "implemented hostname resolution by IP",
+      "implemented a 'rename map to start' function",
+      "verified game stability without assembly code",
+      "removed mouse cursor during fullscreen mode",
+      "stopped ticking sound when dying with grenades"
+    ],
+    "personality_patterns": [
+      "Iterative, task-oriented approach to bug fixing",
+      "Focus on low-level system optimization",
+      "Detail-oriented regarding audio-visual synchronization",
+      "Prefers a systematic checklist of checklists (the .plan file format)"
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Elimination of Redundancy",
+        "description": "Removing unnecessary mathematical operations (like 'multiply from mixing') to optimize performance in real-time systems."
+      },
+      {
+        "principle": "Resource Pre-loading",
+        "description": "Using precaching (e.g., 'blaster precaches') to reduce latency and latency spikes during runtime execution."
+      }
+    ],
+    "heritage_patterns": [
+      "Low-level audio driver management",
+      "Pak file streaming architectures",
+      "PAK-based asset management",
+      "Direct hardware interface management (Sound Blaster)"
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "What did Carmack do to optimize audio mixing?",
+        "chosen": "He removed the multiply operation from the mixing process to improve efficiency.",
+        "rejected": "He updated the audio drivers to the latest version."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19971106.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 9.932779788970947,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T03:59:15.752497+00:00",
+    "trace_id": "ingest_f053fc5379cc"
+  },
+  "trace_id": "ingest_f053fc5379cc"
+}

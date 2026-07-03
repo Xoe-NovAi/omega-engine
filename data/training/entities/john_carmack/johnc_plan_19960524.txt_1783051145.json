@@ -1,0 +1,80 @@
+{
+  "source": "johnc_plan_19960524.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "Implemented client PVS (Potentially Visible Set) for checkclient based on viewofs",
+      "Implemented a blob explosion core",
+      "Added logic to clear the program stack on program errors to prevent recursion overflow errors",
+      "Updated settriggermodel() to handle angle, movetype, and solid initialization",
+      "Reduced the size of client-to-server packets to optimize network traffic",
+      "Configured trigger_changelevel to fire targets",
+      "Implemented a multi-platform C shell script for makefiles",
+      "Generalization of input buttons from button0/button1 to a range of button 0 - button 7",
+      "Implemented dynamic reconfiguration of listen clients",
+      "Added gamma settings to the options menu",
+      "Optimized sky volumes by filling the inside to save polygons",
+      "Implemented a system to cull distant sounds and particle effects on the server side",
+      "Changed the vector view_ofs to a scalar viewheight",
+      "Investigated non-thrashing precache mechanisms",
+      "Renamed host_client to sv_client",
+      "Analyzed surface cache size performance figures"
+    ],
+    "personality_patterns": [
+      "Highly task-oriented and focused on granular technical fixes",
+      "preference for concise, bulleted lists for tracking progress (plan file style)",
+      "Iterative approach to development, alternating between bug fixes and feature additions",
+      "Attention to detail regarding performance optimization (e.g., packet size, polygon counts, cache sizes)"
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Resource Conservation",
+        "description": "Reducing polygon counts in non-visible areas (sky volumes) and culling distant effects on the server side to maintain performance."
+      },
+      {
+        "principle": "Robust Error Handling",
+        "description": "Clearing the program stack during errors to prevent catastrophic failures like recursion overflow."
+      },
+      {
+        "principle": "Interface Generalization",
+        "description": "Moving from hardcoded specific inputs (button0, button1) to a generalized range (button 0-7) to allow for greater flexibility and scalability."
+      },
+      {
+        "principle": "Network Optimization",
+        "description": "Reducing packet sizes to minimize latency and overhead in client-server communication."
+      }
+    ],
+    "heritage_patterns": [
+      "The use of '.plan' files for public-facing, transparent development logging",
+      "The 'id Software' style of rapid prototyping and iterative refinement of game engine mechanics",
+      "Server-side culling of effects to reduce client load",
+      "Focus on low-level memory and cache management (surface cache, precache)"
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "How did Carmack handle program errors related to recursion overflow in this period?",
+        "chosen": "He implemented a fix to clear the program stack upon a program error, ensuring that recursion overflows would not trigger a system error.",
+        "rejected": "He simply ignored the errors or restarted the game when they occurred."
+      },
+      {
+        "prompt": "What was the objective of filling the inside of sky volumes?",
+        "chosen": "The goal was to save polygons, thereby optimizing the rendering performance of the game.",
+        "rejected": "It was done to improve the visual quality of the sky textures."
+      },
+      {
+        "prompt": "How did he approach the input system for buttons?",
+        "chosen": "He generalized the specific button0 and button1 inputs to a broader range of button 0 through button 7.",
+        "rejected": "He created a complex input mapping system with a GUI for the user."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19960524.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 25.027841329574585,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T03:58:54.274647+00:00",
+    "trace_id": "ingest_9f0ea06f61cb"
+  },
+  "trace_id": "ingest_9f0ea06f61cb"
+}

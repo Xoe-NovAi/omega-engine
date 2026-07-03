@@ -1,0 +1,58 @@
+{
+  "source": "johnc_plan_19981014.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "Portability in games is defined by the ability to display output and receive platform-specific inputs.",
+      "The four primary inputs to a game are keystrokes, mouse moves, network packets, and time.",
+      "In Quake 2, inputs were handled in separate locations (e.g., Sys_SendKeyEvents() for keys/mouse, separate network system checks, and Sys_Milliseconds() calls throughout the code).",
+      "For Quake 3, Carmack implemented a single system event queue to unify all forms of input, similar to the Windows message queue.",
+      "A journaling system was created to record all inputs from the system event queue.",
+      "Journaling of time and inputs converts a real-time application into a batch process for debugging and quality control.",
+      "This approach allows for accurate session restarts, conditional breakpoints on frame numbers, and playback at degraded speeds without changing code paths.",
+      "Commander Keen 1 featured an adaptive play rate based on frame speed to prevent the game from becoming unplayable on faster computers."
+    ],
+    "personality_patterns": [
+      "Struggles with the pressure of writing detailed .plan updates due to the fear of being misinterpreted or overwhelmed by follow-up emails.",
+      "Prefers terse comments but recognizes they are often misinterpreted.",
+      "Self-reflective and critical of his own past technical decisions (e.g., admitting he 'slipped' on portability in Q2).",
+      "Deeply focused on the intersection of time and input/output in real-time applications.",
+      "Values clarity and the 'aha' moment when a problem is seen clearly in its entirety."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Input Unification",
+        "description": "Combining all external inputs (including time) into a single event queue simplifies the system architecture and enables advanced debugging tools like journaling."
+      },
+      {
+        "principle": "Real-time to Batch Conversion",
+        "description": "By journaling all inputs and time, a real-time interactive application can be treated as a batch process, eliminating non-determinism and enabling precise debugging of transient flaws."
+      },
+      {
+        "principle": "Time as Input",
+        "description": "Viewing time as an explicit input value rather than a system property allows for deterministic playback and simulation control."
+      }
+    ],
+    "heritage_patterns": [
+      "Cross-developing from NEXTSTEP to ensure portability across platforms.",
+      "Defining clear system interfaces to separate game logic from platform-specific code.",
+      " "
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "What was the primary technical change Carmack made for Quake 3's input system?",
+        "chosen": "He unified all forms of input\u2014keystrokes, mouse moves, network packets, and time\u2014into a single system event queue, similar to the Windows message queue.",
+        "rejected": "He created a new system for handling keystrokes and mouse movements to make the game more than just a portable game."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19981014.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 18.167160272598267,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T03:44:33.521274+00:00",
+    "trace_id": "ingest_20b23bd50e5b"
+  },
+  "trace_id": "ingest_20b23bd50e5b"
+}

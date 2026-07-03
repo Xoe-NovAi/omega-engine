@@ -1,0 +1,59 @@
+{
+  "source": "johnc_plan_19980504.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "Research into lummigraphs (digital holograms) revealed immense space requirements (several gigabytes uncompressed for a single room).",
+      "Proposed 'lumigraphlets' as view-dependent texture imposters for large clusters of areas.",
+      "Explored extending Quake 2 sky box rendering into a full system using interpolation between up to four environment map snapshots in a tetrahedral arrangement.",
+      "Determined that simple image-based interpolation between environment maps causes 'ghosting' and lacks a sense of motion.",
+      "Discovered that adding depth values to environment map cubes allows rendering as small triangles at world coordinates, enabling movement within a map and better blending.",
+      "Identified texture smearing during occlusion reveals and blurring when moving far from the camera point as drawbacks of the depth-mapped environment map approach.",
+      "Noted that low-res environment maps (700k per snapshot) would generate too excessive data if used throughout a level.",
+      "Proposed a fractal compression method for environment maps using projective maps to handle redundant surface images across multiple snapshots.",
+      "Identified a connection between lummigraphs, environment maps, specularity, convolution, and dynamic indirect lighting."
+    ],
+    "personality_patterns": [
+      "Willingness to engage in 'wide open research' for months without a guaranteed outcome.",
+      "Acceptance of failure in early research directions; views learning as a long-term payoff ('Ah well, I learned a lot').",
+      "Analytical approach to identifying the specific failures of a technology (e.g., ghosting, memory requirements, 'silhouette crease' in depth data).",
+      "Intellectual curiosity and naggingging interest in unsolved problems ('Its nagging at me, but it hasn't come completely clear').",
+      "Critical view of hardware-suggested bump mapping approaches, labeling them as 'bogus'."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Research-Driven Iteration",
+        "description": "Allowing periods of open-ended research to explore potential technologies, accepting that not all paths will lead to the final implementation, but the cumulative knowledge gained is valuable."
+      },
+      {
+        "principle": "Complexity Insensitivity",
+        "description": "The goal of creating rendering techniques that are completely complexity insensitive, meaning performance remains stable regardless of the scene's geometric complexity."
+      },
+      {
+        "principle": "Data Redundancy Elimination",
+        "description": "Identifying redundancies in image-based rendering (e.g., the same wall appearing in multiple snapshots) and seeking mathematical transformations (like projective maps) to compress the data efficiently."
+      }
+    ],
+    "heritage_patterns": [
+      "Iterative refinement of existing engine technology (extending Quake 2 sky box logic to a full rendering system).",
+      "Focus on high-performance, id Software-style optimization of memory and memory bandwidth (addressing the 'immense' space requirements of lummigraphs).",
+      "Preference for first-person shooter (FPS) suitability over general-purpose rendering techniques."
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "What happened to the research John Carmack did at the start of the Quake 3 development?",
+        "chosen": "Carmack spent a few months of wide open research that ultimately had no bearing on the directions he finally decided on for the Quake 3/trinity engine, though he viewed the learning experience as a valuable long-term investment.",
+        "rejected": "He used the research to build the core of the Quake 3 engine."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19980504.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 21.127054929733276,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T03:55:56.114215+00:00",
+    "trace_id": "ingest_26b873deaace"
+  },
+  "trace_id": "ingest_26b873deaace"
+}

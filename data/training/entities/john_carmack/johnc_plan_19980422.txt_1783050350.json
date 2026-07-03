@@ -1,0 +1,56 @@
+{
+  "source": "johnc_plan_19980422.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "The F50 features adjustable front suspension that can be raised two inches via a button, improving practicality for daily driving.",
+      "The F50 has better off-idle torque compared to the F40, eliminating the need to rev high to get moving.",
+      "The F50 utilizes a six-speed transmission, whereas the F40 has a five-speed.",
+      "The F50 features a flat underbody with tunnels for improved aerodynamics at high speeds.",
+      "The F50's rear-wheel horsepower was measured at 385 hp (estimated 450 hp at the crank).",
+      "The F40's rear-wheel horsepower was measured at 415 hp (with boost slightly above stock).",
+      "Carmack considers a mild twin-turbo modification to reach 500 hp at the rear wheels for the F50."
+    ],
+    "personality_patterns": [
+      "Analytical comparison: He breaks down the differences between two high-performance vehicles based on specific metrics (torque, visibility, shifting, aerodynamics).",
+      "Optimization mindset: He is dissatisfied with the F50's power output relative to the F40 and immediately seeks a technical solution to increase it.",
+      "Preference for practical utility in high-performance machines: He values the adjustable suspension for its ability to navigate strip malls.",
+      "Aversion to 'science projects': While he likes modifying cars, he prefers a targeted, effective upgrade over an overly complex or unstable project."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Quantitative Validation",
+        "description": "Avoid relying on 'feel' or intuition (e.g., the 'lack of non-linear turbo rush') and instead use objective measurements (e.g., a dyno test) to determine actual performance."
+      },
+      {
+        "principle": "Utility-Driven Performance",
+        "description": "High-end performance is diminished if the machine is impractical to use; features that bridge the gap between extreme performance and daily utility (like adjustable ride height) add significant value."
+      }
+    ],
+    "heritage_patterns": [
+      "Iterative benchmarking: Comparing a new version of a system (F50) against a previous baseline (F40) to identify regressions and improvements.",
+      "Performance tuning: The drive to push a system beyond its 'stock' limits to ensure it is 'well out of the range of any normal' systems."
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "How did Carmack feel about the F50's power compared to the F40?",
+        "chosen": "He found the F50 felt slower and confirmed via a dyno test that it produced 385 hp at the rear wheels, compared to the F40's 415 hp. Consequently, he planned a mild twin-turbo modification to reach 500 hp.",
+        "rejected": "He thought the F50 was faster because it had better torque and a six-speed transmission."
+      },
+      {
+        "prompt": "What practical advantage does the F50 have over the F40 for daily driving?",
+        "chosen": "The F50 has adjustable front suspension that can be raised two inches with a button, allowing it to be driven into strip malls without rubbing, unlike the F40 which had to be driven into the garage at an angle.",
+        "rejected": "The F50 is better for daily driving because it has a six-speed transmission and better rearward visibility."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19980422.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 23.255674839019775,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T03:45:32.922186+00:00",
+    "trace_id": "ingest_f05bc4a5d912"
+  },
+  "trace_id": "ingest_f05bc4a5d912"
+}

@@ -1,4 +1,87 @@
 # ⬡ OMEGA ⬡ ANCHORED SUMMARY ⬡ 2026-07-03
+## Session 46 — Sovereign Ingestion Pipeline Implemented
+
+### Goal
+1. ✅ Implemented `src/omega/ingestion/` as a first-class Engine subsystem
+2. ✅ GoogleExtractor with `streamGenerateContent` + `responseJsonSchema` for real-time structured output
+3. ✅ Full integration: MemoryStore (SQLite FTS5, warm storage), Qdrant vector upsert, Observability tracing
+4. ✅ Redis started to enable MemoryStore hot tier
+5. ✅ Verified pipeline with `.plan 1996` sources using Gemma 4 31B
+6. ✅ Session gnosis + proposed lessons written
+
+### What Was Built
+
+#### 1. Sovereign Ingestion Pipeline
+**Architecture**: `src/omega/ingestion/` — a permanent, reusable protocol for autonomous entity deepening.
+
+**Core Components**:
+- **`extractors.py`**: `GoogleExtractor` using `streamGenerateContent` (SSE) + `responseJsonSchema`
+- **`persistence.py`**: Wires extraction results into `MemoryStore.add_exchange()` (handles hot cache, warm storage, FTS5 indexing, Qdrant vector upsert)
+- **`pipeline.py`**: Orchestrator that loads sources, runs extractor, persists results
+- **`sources.py`**: File source loaders
+- **`cli.py`**: CLI entry point for `omega ingest`
+
+**Integration Points**:
+- **MemoryStore**: Every extraction → `add_exchange()` → Hot cache (Redis), Warm storage (gzip JSON), FTS5 SQLite index, Qdrant vector upsert
+- **Observability**: Each run gets a unique `trace_id` and logs events
+- **Qdrant**: Every extraction is automatically vectorized and upserted into `omega_memory` collection
+- **Redis**: Started to enable MemoryStore hot tier for low-latency access
+
+#### 2. Streaming JSON Breakthrough
+**Problem**: Gemma 4 models output thinking text instead of JSON, even with `responseMimeType: "application/json"`.
+
+**Solution**: Provide BOTH `responseMimeType` AND `responseJsonSchema` with a complete schema definition. The schema suppresses thinking entirely.
+
+**Source**: [DEV.to article](https://dev.to/ai_made_tools/responsejsonschema-the-undocumented-gemma-4-feature-that-changed-everything-2obm) — undocumented Gemma 4 feature.
+
+```python
+"generationConfig": {
+    "temperature": 0.6,
+    "maxOutputTokens": 8192,
+    "responseMimeType": "application/json",
+    "responseJsonSchema": { ... full schema ... }
+}
+```
+
+#### 3. Model Comparison Results
+| Source | 31B Items | 26B Items | 31B Time | 26B Time |
+|--------|----------:|----------:|---------:|---------:|
+| Masters of Doom | 20 | 0 (timeout) | 23.6s | 180s |
+| .plan 1996 | 33 | 24 | 28.7s | 17.4s |
+| Lex Fridman | 29 | **35** | 30.6s | 28.7s |
+
+**Key insight**: 31B more consistent, 26B faster when warm and higher yield on large sources.
+
+#### 4. Knowledge Bases Created
+- `docs/kb/gemma4_31b/KNOWLEDGE_BASE.md` — JSON trick, benchmarks, config, thinking behavior
+- `docs/kb/gemma4_26b/KNOWLEDGE_BASE.md` — MoE notes, cold-start, separate keys
+- `docs/kb/gemma4_comparison.md` — Head-to-head comparison
+
+#### 5. OpenRouter Key Diagnosis
+- Keys #1 & #3: Management keys (401 on /api/v1/auth/key) — NOT for inference
+- Keys #2, #4-#8: Valid free-tier inference keys (200 on /api/v1/auth/key)
+- Free tier: 50 RPD, 20 RPM. `:free` models saturate quickly.
+- OpenRouter tabled per user request — hand off to Kali.
+
+#### 6. Multi-Key Strategy
+- `GOOGLE_API_KEY_1` → Gemma 4 31B (separate key, no collision)
+- `GOOGLE_API_KEY_2` → Gemma 4 26b (separate key, no collision)
+- Effectively doubles daily request budget (50 each instead of 25 each)
+
+### Test Status
+- **Pipeline**: Verified working with Gemma 4 31B.
+- **Persistence**: Verified Qdrant points created and Redis hot tier active.
+- **Observability**: Trace IDs and events correctly logged.
+
+### Next Session Should
+1. Run full ingestion across all remaining Carmack sources.
+2. Verify Qdrant semantic search results for the ingested data.
+3. Wire the `CurationExtractor` and `ContentQualityScorer` into the pipeline for quality gating.
+4. Feed extracted gnosis into the `SoulDistillationPipeline` to update `soul.yaml`.
+
+---
+
+# ⬡ OMEGA ⬡ ANCHORED SUMMARY ⬡ 2026-07-03
 ## Session 45 — Gemma 4 JSON Breakthrough + Model Comparison + KBs
 
 ### Goal

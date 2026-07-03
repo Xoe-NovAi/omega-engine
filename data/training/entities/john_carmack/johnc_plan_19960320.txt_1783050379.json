@@ -1,0 +1,58 @@
+{
+  "source": "johnc_plan_19960320.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "Implemented drowning damage in Quake",
+      "Modified QuakeEd to retrieve programs from id1_",
+      "Added color support to QuakeEd entities",
+      "Removed /lquake and migrated QuakeEd caches to /qcache",
+      "Implemented a mechanism to wait for a second message acknowledgment before accepting datagrams",
+      "Added water friction and swimming bubble sound effects",
+      "Implemented keyboard-based freelook",
+      "Modified QuakeEd start position to use playerstart",
+      "Combined damage messages for super shotgun blasts"
+    ],
+    "personality_patterns": [
+      "Highly task-oriented, focusing on a granular list of bug fixes and feature additions",
+      "Preference for concise, shorthand notation in tracking progress",
+      "Systematic approach to iterating on game mechanics (physics, audio, visuals)"
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Granular Iteration",
+        "description": "Breaking down complex system development into small, verifiable tasks (e.g., 'swimming bubble noise', 'drowning damage') to ensure steady progress."
+      },
+      {
+        "principle": "Cache Optimization",
+        "description": "Consolidating and relocating cache directories (e.g., moving QuakeEd caches to /qcache) to streamline system organization."
+      }
+    ],
+    "heritage_patterns": [
+      "The use of a '.plan' file for public, transparent development logging",
+      "Fast-paced, iterative bug-fixing cycles typical of early id Software development",
+      "Low-level optimization of network datagram handling for multiplayer stability"
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "What changes did Carmack make to QuakeEd in the March 1996 plan?",
+        "chosen": "Carmack updated QuakeEd to retrieve programs from id1_, added colors to entities, and moved caches from /lquake to /qcache.",
+        "rejected": "He made some general improvements to the editor and changed how files were stored."
+      },
+      {
+        "prompt": "How did Carmack handle network datagrams in this update?",
+        "chosen": "He implemented a rule to not take datagrams until the second message is acknowledged.",
+        "rejected": "He optimized the network code to make the game run faster."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19960320.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 16.551827430725098,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T03:46:06.919573+00:00",
+    "trace_id": "ingest_f39905f2c499"
+  },
+  "trace_id": "ingest_f39905f2c499"
+}

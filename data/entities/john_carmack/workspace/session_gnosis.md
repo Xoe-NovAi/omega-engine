@@ -1,42 +1,38 @@
-# Session Gnosis — 2026-07-03
+# Session Gnosis — 2026-07-03 (Part 2)
 
 ## What Happened
-- OpenRouter API key investigation: 8 keys tested, 6 valid (200), 2 management keys (401)
-- Discovered OpenRouter 404/429 errors are free-tier provider saturation, not account deletion
-- Key #3 specifically identified as management key (401 on /v1/auth/key)
-- OpenRouter free tier: 50 RPD, 20 RPM, `:free` models saturate quickly
-- **Google API JSON breakthrough**: Gemma 4 requires `responseMimeType` + `responseJsonSchema` to output clean JSON
-- Gemma 4 31B vs 26B comparison test across 3 Carmack sources
-- Created knowledge bases for both models + comparison doc
+- **Sovereign Ingestion Pipeline Implemented**: Created `src/omega/ingestion/` as a first-class Engine subsystem.
+- **Streaming Breakthrough**: Implemented `GoogleExtractor` using `streamGenerateContent` with SSE parsing. This allows real-time token display during extraction.
+- **JSON Schema Constraint**: Verified that `responseJsonSchema` is mandatory for suppressing thinking and forcing clean JSON in Gemma 4.
+- **Full Engine Integration**:
+  - **MemoryStore**: Wired `add_exchange()` to persist extractions to hot cache, warm files, and FTS5 SQLite index.
+  - **Qdrant**: Integrated vector upserts for every extraction, enabling semantic search of ingested knowledge.
+  - **Observability**: Integrated `TraceSession` and event logging for full provenance of the ingestion process.
+- **Infrastructure Hardening**: Started Redis to enable the MemoryStore hot tier.
+- **Verification Run**: Successfully processed `.plan 1996` sources with Gemma 4 31B, extracting high-fidelity technical facts and DPO pairs.
 
 ## Key Discoveries
-1. **responseJsonSchema is mandatory for Gemma 4** — Without it, the model outputs thinking text instead of JSON. The `responseMimeType: "application/json"` alone is insufficient. This is undocumented on the official Gemma 4 capabilities page but works via the Gemini API infrastructure.
-2. **Gemma 4 thinking behavior** — Even with `includeThoughts: false`, the model generates `thought: true` parts (GitHub issue #1198). `responseJsonSchema` suppresses this entirely.
-3. **31B is more reliable** — Never timed out across all tests, consistent 23-31s latency, 20-33 items extracted.
-4. **26B is faster when warm** — MoE architecture (4B active vs 31B dense) gives 17-29s latency but 180s cold-start timeout.
-5. **26B extracted more on Lex Fridman** — 35 items vs 31B's 29. MoE may better route diverse content to specialized experts.
-6. **Separate API keys are essential** — Free tier is 50 req/day per key. Using same key for both models halves throughput.
-7. **OpenRouter key validation** — `/api/v1/auth/key` (200=valid, 401=management/expired). `/api/v1/models` is public/unauthenticated — returns 200 for ANY key (false positive).
+1. **Streaming JSON is possible**: By using `streamGenerateContent` with `responseJsonSchema`, we get the best of both worlds: real-time visibility and structured, parseable output.
+2. **Sovereign Ingestion as a Protocol**: The pipeline (Source $\rightarrow$ Extract $\rightarrow$ Quality $\rightarrow$ Persist $\rightarrow$ Soul) is a reusable pattern for any entity deepening, not just Carmack.
+3. **MemoryStore as the Grounding Layer**: Using `add_exchange()` as the primary ingestion entry point ensures that all extracted knowledge is immediately searchable via FTS5 and Qdrant.
+4. **Redis Hot Tier**: Redis is essential for low-latency access to active ingestion sessions.
 
 ## Files Created/Modified
-- `scripts/ab_test_ingestion.py` — A/B test script (31B vs 26B, multi-key, responseJsonSchema)
-- `docs/kb/gemma4_31b/KNOWLEDGE_BASE.md` — 31B KB: JSON trick, benchmarks, config, thinking behavior
-- `docs/kb/gemma4_26b/KNOWLEDGE_BASE.md` — 26B KB: MoE notes, cold-start, separate keys, model name
-- `docs/kb/gemma4_comparison.md` — Head-to-head comparison with recommendations
-- `config/providers.yaml` — OpenRouter provider added, github-copilot removed, canonical chain restored
-- `.env` — OPENROUTER_API_KEY set from key #2, GOOGLE_API_KEY set from key #1
+- `src/omega/ingestion/types.py` (renamed from `types.py` to avoid collision) — Standard schemas
+- `src/omega/ingestion/extractors.py` — Google streaming extractor
+- `src/omega/ingestion/persistence.py` — MemoryStore/Qdrant/Obs wiring
+- `src/omega/ingestion/sources.py` — File source loaders
+- `src/omega/ingestion/pipeline.py` — The orchestrator
+- `src/omega/ingestion/cli.py` — CLI entry point
+- `.env` — Updated API keys for multi-model routing
 
 ## Test Status
-- 705 passed, 22 skipped, 3 xfailed (unchanged from previous session)
-- No code changes to engine core — only config and scripts
-
-## Session Costs
-- Google API: 6 requests (31B: 3, 26B: 3) — 6 of 50 daily free tier per key
-- OpenRouter: 0 inference requests (all failed on free tier saturation)
-- No local inference used (skipped per user request)
+- **Pipeline**: Verified working with Gemma 4 31B.
+- **Persistence**: Verified Qdrant points created and Redis hot tier active.
+- **Observability**: Trace IDs and events correctly logged.
 
 ## Next Session Should
-1. Wire `responseJsonSchema` into `ingest_jc.py` for production extraction
-2. Run full ingestion pipeline across all 6 source groups
-3. Commit KBs and test results
-4. Continue MV-IW Phase 3 tasks (E2E test, sphere field, soul-review CLI)
+1. Run full ingestion across all remaining Carmack sources.
+2. Verify Qdrant semantic search results for the ingested data.
+3. Wire the `CurationExtractor` and `ContentQualityScorer` into the pipeline for quality gating.
+4. Feed extracted gnosis into the `SoulDistillationPipeline` to update `soul.yaml`.

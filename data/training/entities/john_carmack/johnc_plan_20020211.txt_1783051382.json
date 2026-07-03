@@ -1,0 +1,59 @@
+{
+  "source": "johnc_plan_20020211.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "Radeon 8500 support for Doom was implemented using ATI custom extensions and standard OpenGL calls.",
+      "Nvidia OpenGL drivers are considered the 'gold standard' for correctness and documentation accuracy.",
+      "ATI vertex programs are invariant with normal OpenGL vertex processing, allowing for code reuse.",
+      "Nvidia vertex programs generate tiny differences in depth values, which prevents their use in multipass algorithms with standard OpenGL passes unless an optional invariant mode is enabled.",
+      "The Radeon 8500's fragment level processing is superior to GF4, allowing up to eleven texture accesses in a single pass (six individual textures, some accessed twice).",
+      "Doom's light/surface interaction rendering on the Radeon 8500 is typically a single pass, compared to two or three passes on GF3/GF4.",
+      "Non-textured stencil shadow speed is approximately 20% faster on GF3 than on the Radeon 8500, likely due to a performance memory architecture.",
+      "Radeon 8500 initially showed slower light interaction speed due to driver issues, but once fixed, it became 30%+ faster in some combinations of texture attributes due to reduced memory traffic.",
+      "The GeForce4-MX (NV17) lacks vertex shaders and has only two texture units, falling back to the NV10 codepath for Doom."
+    ],
+    "personality_patterns": [
+      "Strong preference for correctness and 'gold standards' in external APIs and drivers.",
+      "Analytical and detailed approach to performance testing, using extreme cases to exercise different hardware characteristics.",
+      "Systematic approach to debugging: assumes driver bugs when using non-Nvidia hardware, and assumes personal error when using Nvidia hardware.",
+      "Direct and blunt communication style regarding hardware naming conventions and Nvidia's naming of the GF4-MX.",
+      "Pragmatic approach to hardware support: prioritizes functionality and correctness over early adoption of untested extensions."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Correctness over Stability",
+        "description": "Stability can be influenced by many outside factors, whereas correctness (the API behaving as documented) is the \u0111\u00fang same as regardless of the environment."
+      },
+      {
+        "principle": "Memory Traffic Reduction",
+        "description": "Reducing the number of passes required for rendering (e.g., moving from three passes to one) significantly reduces memory traffic and improves performance, especially for light/surface interaction."
+      },
+      {
+        "principle": "Invariant Processing",
+        "description": "Ensuring that vertex processing is invariant between different paths (e.g., vertex programs vs. fixed-function pipeline) is critical for multipass rendering to prevent depth-fighting or precision errors."
+      }
+    ],
+    "heritage_patterns": [
+      "Rigorous hardware abstraction and codepath branching based on hardware capabilities (e.g., NV10 vs. NV17 codepaths).",
+      "Direct collaboration with hardware vendors (ATI/Nvidia) to identify and debug driver bugs.",
+      " "
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "How does Carmack view the difference between stability and correctness in GPU drivers?",
+        "chosen": "He tracks stability separately from correctness because stability can be influenced by many outside factors, while correctness refers to whether the drivers work as documented.",
+        "rejected": "He believes stability and correctness are the same thing and that he considers Nvidia drivers to be the most stable."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_20020211.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 20.286519289016724,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T04:02:46.379169+00:00",
+    "trace_id": "ingest_a65c5765db53"
+  },
+  "trace_id": "ingest_a65c5765db53"
+}

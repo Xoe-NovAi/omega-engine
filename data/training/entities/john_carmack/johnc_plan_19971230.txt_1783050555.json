@@ -1,0 +1,39 @@
+{
+  "source": "johnc_plan_19971230.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "The GAME_API_VERSION should be set to 2 for mods to work with version 3.09.",
+      "Bumping the API version number is used as a mechanism to detect and prevent the use of old q2test dlls."
+    ],
+    "personality_patterns": [
+      "Direct and technical communication style",
+      "Concern for modders and providing workarounds for compatibility"
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Version Bumping for Compatibility Detection",
+        "description": "Increasing a version number to invalidate old binaries (like DLLs) to prevent crashes or instability caused by incompatible legacy versions."
+      }
+    ],
+    "heritage_patterns": [
+      "API versioning as a a way to manage binary compatibility in game engine architecture"
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "How can mods be made compatible with version 3.09?",
+        "chosen": "Change the GAME_API_VERSION to 2 and recompile the mod.",
+        "rejected": "Update the entire mod source code to match the new API changes."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19971230.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 7.430504322052002,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T03:49:03.024755+00:00",
+    "trace_id": "ingest_5a502be7d875"
+  },
+  "trace_id": "ingest_5a502be7d875"
+}
