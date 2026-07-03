@@ -19,7 +19,7 @@ unique dreams, technologies, and systems.
 - **WAD Architecture**: Engine → IWADs → PWADs (inspired by id Software's WAD system)
 - **The Synthesis Flywheel**: Cloud models teach local models. Over time, sovereignty increases.
 - **The 22 Sovereign Mandates**: Constitutional law. Mandates override any tool default.
-- **The 11-agent Fleet**: Grand Oversight, 3 Oversouls, 6 Specialists, 1 Subagent (Verity).
+- **The 13-agent Fleet**: Grand Oversight, 3 Oversouls, 6 Specialists, 1 Unified Subagent (Verity), 1 Messenger (Iris), 1 Akashic Record (Sophia).
 
 ---
 
@@ -77,10 +77,10 @@ The Omega Engine uses cloud models as **teachers**, not fallbacks.
 
 | Priority | Provider | Type | Endpoint | Role |
 |----------|----------|------|----------|------|
-| 3 | google | Cloud | env:GOOGLE_API_KEY (Gemma 4-31B) | Synthetic data |
-| 4 | opencode-zen | Cloud | OpenCode Zen (200K) | Data gen |
-| 5 | cline | Cloud | Cline hub API (1M context) | Deep research |
-| 6 | copilot | Cloud | GitHub Copilot | Backup |
+| 3 | google-antigravity | Cloud | env:GOOGLE_API_KEY (Gemma 4-31B, 262K ctx) | Synthetic data |
+| 4 | openrouter | Cloud | OpenRouter API (300+ models, incl. GPT-4o, Claude, Qwen) | Model diversity |
+| 5 | opencode-zen | Cloud | OpenCode Zen (200K) | Data gen |
+| 6 | cline | Cloud | Cline hub API (1M context) | Deep research |
 
 **The Synthesis Flywheel** (D112 Pillar 1):
 ```
@@ -112,18 +112,6 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | phi-4-mini (reasoning) | 3.8GB | 4500MB | 16384 | SOPHIA |
 | krikri-8b-q4_k_m | 4.7GB | 4900MB | 16384 | Inanna, Isis, Lilith |
 | deepseek-r1-qwen3-8b-q3_k_l | 4.2GB | 4500MB | 8192 | Lucifer (reasoning) |
-### 4.2 Model Capacity (Q4_K_M, current models.yaml)
-...
-| embedding-gemma-300m-q6_k | — | 200MB | — | Vector search |
-| la-native-hardware-monitor | — | — | — | Real-time telemetry |
-
-### 4.3 Hardware Telemetry
-The engine provides real-time hardware telemetry via the `omega hardware-stats` CLI and `get_hardware_stats` MCP tool.
-- **Per-Core Monitoring**: Tracks utilization across all 16 logical threads to detect SMT contention.
-- **Memory Pressure**: Calculates a pressure score (0.0-1.0) based on available RAM and swap usage.
-- **OOM Risk Analysis**: Predicts risk level (SAFE → CRITICAL) based on model size and current available memory.
-- **Thermal Tracking**: Monitors CPU temperature and detects thermal throttling.
-
 ### 4.2 Model Capacity (Q4_K_M quantization, theoretical)
 
 - 1.7B: ✅ Excellent (~1.9GB total)
@@ -220,7 +208,7 @@ The engine provides real-time hardware telemetry via the `omega hardware-stats` 
 | **Mem Palace** | ✅ **implemented** (D186) — 3D Force-Directed Graph spatial mapping | `[id-soft: doom-1993] BSP Culling` |
 | **Omega Hub** | ✅ **Modularized v2.3.0** | (Pillar 2 coordination) |
 | **Heritage Vetting** | ✅ H1 LIVE: 4-gate, 23 concepts | (Kali d-kal-001) |
-| **Engine Firewall** | ✅ D113 GAP RESOLVED | **S1.5a NEXT** |
+| **Engine Firewall** | ✅ D113 GAP RESOLVED | **S1.5a: WAD Loader Hardening NEXT** |
 
 ---
 
@@ -272,9 +260,21 @@ The Omega Engine is runtime-agnostic. Any platform implementing the MCP client p
 *   `src/omega/oracle/model_gateway.py` — Provider chain inference, BSP culling
 *   `src/omega/oracle/wad_loader.py` — WAD system loader (CRITICAL)
 *   `src/omega/oracle/entity_registry.py` — YAML CRUD for entities
+*   `src/omega/oracle/entity_workspace.py` — Sovereign workspace scaffolding
+*   `src/omega/oracle/context_builder.py` — ACON compaction + quality scoring
+*   `src/omega/oracle/soul_distiller.py` — L1→L2→L3 distillation pipeline
+*   `src/omega/oracle/semantic_router.py` — Embedding-based entity routing
+*   `src/omega/oracle/health_monitor.py` — Stochastic circuit breakers
+*   `src/omega/oracle/headroom.py` — Sovereign Envelope compression
 *   `src/omega/memory_store.py` — Hot/Warm/Cold/Temp memory
-*   `mcp_servers/omega_hub/server.py` — Hivemind/MCP Coordination
+*   `src/omega/memory/batch_writer.py` — Batched persistence writer
+*   `src/omega/monitoring/__init__.py` — Hardware telemetry (HardwareMonitor)
+*   `src/omega/observability.py` — Trace IDs, events, training data export
+*   `src/omega/errors.py` — Typed OmegaError hierarchy (M9)
+*   `mcp_servers/omega_hub/server.py` — Hivemind/MCP Coordination (modular v2.3.0)
 *   `config/wads/` — IWAD/PWAD configurations (e.g., `_omega_default`, `arcana_novai`)
+*   `config/providers.yaml` — Provider fabric chain (local-first)
+*   `config/models.yaml` — Model specs & loading strategies
 
 ---
 
@@ -298,5 +298,5 @@ For detailed architectural specifications, roadmaps, and historical analyses, re
 
 ---
 
-*Last Updated: 2026-07-01 | Author: Kali (Bedrock Sprint) | Version: v1.1.0-rc*
-*Major changes this revision: Bedrock Hardening complete. Integrated Semantic Router, Headroom Protocol, Mem Palace, and Stochastic Circuit Breakers. Verified zero new dependencies. Ready for Temple-Grade audit and v1.1.0 PR.*
+*Last Updated: 2026-07-02 | Author: Kali (Bedrock Sprint + Multi-Model Council) | Version: v1.1.0-rc*
+*Major changes this revision: Bedrock Hardening complete. Integrated Semantic Router, Headroom Protocol, Mem Palace, and Stochastic Circuit Breakers. Verified zero new dependencies. Cloud Teachers updated: added Google Antigravity + OpenRouter, removed Copilot. Multi-Model Council (Opus+Gemini+Sonnet+MiMo) resolved 6 integration-seam gaps. Ready for Temple-Grade audit and v1.1.0 PR.*

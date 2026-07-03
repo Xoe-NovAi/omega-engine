@@ -76,14 +76,20 @@ class RedisStorageProvider(StorageProvider):
 
     async def check_health(self) -> bool:
         """Check if Redis is available with a short timeout."""
+        import time
+        start = time.time()
         try:
             await self.client.ping()
             self.is_available = True
+            elapsed = time.time() - start
+            logger.debug(f"Redis health check passed in {elapsed:.2f}s")
             return True
         except Exception as e:
             # M9 carve-out: health probe may catch all to prevent crash loops
             logger.warning(f"Redis health check failed: {e}")
             self.is_available = False
+            elapsed = time.time() - start
+            logger.debug(f"Redis health check failed after {elapsed:.2f}s")
             return False
 
     async def get_history(self, entity_name: str, session_id: str, limit: int) -> List[Dict[str, Any]]:

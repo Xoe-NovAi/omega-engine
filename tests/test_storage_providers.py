@@ -135,7 +135,7 @@ class TestMemoryStoreFallbackChain:
     async def test_fallback_flow(self, temp_data_dir):
         # Setup providers:
         # 1. Redis (fails health check)
-        redis_provider = RedisStorageProvider(host="nonexistent_host")
+        redis_provider = RedisStorageProvider(host="10.255.255.1")
         
         # 2. File (succeeds)
         file_provider = FileStorageProvider(data_dir=temp_data_dir)

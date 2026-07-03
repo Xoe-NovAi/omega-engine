@@ -3,6 +3,7 @@ inference:
   fallback_chain:
   - provider: native-gguf
     # Default model path: models/gguf/ (created by make model-download)
+    model_path: /media/arcana-novai/omega_library/models/gguf/Qwen3-1.7B-Q6_K.gguf
     priority: 0
     n_ctx: 8192
     n_ctx_max: 32768

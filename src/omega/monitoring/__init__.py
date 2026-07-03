@@ -1,5 +1,7 @@
 # ── Hardware Monitor ──
 # ⬡ OMEGA ⬡ Sovereign Hardware Telemetry
+# AP: AP-HARDWARE-MONITOR-v1.0.0
+# AP Token: AP-HARDWARE-MONITOR-v1.0.0
 # 
 # Captures per-core CPU utilization, memory pressure, thread contention,
 # and thermal/throttling data. Designed to be always-available to agents
@@ -14,12 +16,15 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import time
 import json
 import struct
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
+
+logger = logging.getLogger(__name__)
 
 # Always-available fallback when psutil not installed
 _PSUTIL_AVAILABLE = False
@@ -172,8 +177,8 @@ class HardwareMonitor:
                 l3_path = cpu_dir / "cache" / "index3" / "shared_cpu_list"
                 if l3_path.exists():
                     l3_indices.add(l3_path.read_text().strip())
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning("Failed to read L3 topology: %s", e)
 
         return {
             "model": "AMD Ryzen 7 5700U (Zen 2)",
@@ -188,6 +193,7 @@ class HardwareMonitor:
             "ccx0_cores": [0, 1, 2, 3],
             "ccx1_cores": [4, 5, 6, 7],
         }
+
 
     def get_per_core_utilization(self, interval: float = 0.5) -> Dict[str, float]:
         """Get per-CPU utilization % over an interval."""
@@ -240,14 +246,14 @@ class HardwareMonitor:
                 proc = _psutil.Process(pid) if _PSUTIL_AVAILABLE else None
                 if proc:
                     return {"pid": pid, "name": proc.name(), "threads": proc.num_threads()}
-            except Exception:
-                pass
-            # Fallback to /proc
-            data = _read_proc(f"/proc/{pid}/status")
-            for line in data.splitlines():
-                if line.startswith("Threads:"):
-                    return {"pid": pid, "threads": int(line.split()[1])}
-            return {"pid": pid, "threads": 0}
+            except Exception as e:
+                logger.warning("Failed to get thread count for PID %s: %s", pid, e)
+                # Fallback to /proc
+                data = _read_proc(f"/proc/{pid}/status")
+                for line in data.splitlines():
+                    if line.startswith("Threads:"):
+                        return {"pid": pid, "threads": int(line.split()[1])}
+                return {"pid": pid, "threads": 0}
 
         # Count all python process threads
         if _PSUTIL_AVAILABLE:
@@ -356,23 +362,25 @@ class HardwareMonitor:
         # Try k10temp (AMD) first
         k10_path = Path("/sys/class/hwmon")
         try:
-            for hwmon in k10_path.iterdir():
-                name_path = hwmon / "name"
-                if name_path.exists() and "k10temp" in name_path.read_text():
-                    for temp_input in hwmon.glob("temp*_input"):
-                        idx = temp_input.name.replace("temp", "").replace("_input", "")
-                        label_path = hwmon / f"temp{idx}_label"
-                        label = label_path.read_text().strip() if label_path.exists() else f"T{idx}"
-                        try:
-                            temp = int(temp_input.read_text()) / 1000
-                            result["celsius"].append({"label": label, "temp": temp})
-                        except Exception:
-                            pass
-                    result["available"] = len(result["celsius"]) > 0
-                    break
-        except Exception:
-            pass
-        
+            if k10_path.exists():
+                for hwmon in k10_path.iterdir():
+                    name_path = hwmon / "name"
+                    if name_path.exists() and "k10temp" in name_path.read_text():
+                        for temp_input in hwmon.glob("temp*_input"):
+                            idx = temp_input.name.replace("temp", "").replace("_input", "")
+                            label_path = hwmon / f"temp{idx}_label"
+                            label = label_path.read_text().strip() if label_path.exists() else f"T{idx}"
+                            try:
+                                temp = int(temp_input.read_text()) / 1000
+                                result["celsius"].append({"label": label, "temp": temp})
+                            except Exception as e:
+                                logger.warning("Failed to read temperature from hwmon: %s", e)
+                
+                if result["celsius"]:
+                    result["available"] = True
+        except Exception as e:
+            logger.warning("Failed to read k10temp: %s", e)
+
         # Fallback to thermal zones
         if not result["available"]:
             try:
@@ -380,13 +388,16 @@ class HardwareMonitor:
                     try:
                         temp = int(tz.read_text()) / 1000
                         result["celsius"].append({"label": tz.name, "temp": temp})
-                    except Exception:
-                        pass
-                result["available"] = len(result["celsius"]) > 0
-            except Exception:
-                pass
+                    except Exception as e:
+                        logger.warning("Failed to read thermal zone %s: %s", tz.name, e)
+                
+                if result["celsius"]:
+                    result["available"] = True
+            except Exception as e:
+                logger.warning("Thermal fallback failed: %s", e)
         
         return result
+
 
     def is_thermal_throttling(self) -> bool:
         """Check if CPU is currently thermal throttling."""
