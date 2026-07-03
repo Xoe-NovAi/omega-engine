@@ -1,0 +1,92 @@
+[
+  {
+    "run_id": "ab_092c3484",
+    "timestamp": "2026-07-03T01:20:03.287377+00:00",
+    "source": "plan_1996",
+    "source_label": ".plan files \u2014 1996 (Quake development year)",
+    "source_path": "data/entities/john_carmack/knowledge/source/plan_files/by_year/johnc_plan_1996.txt",
+    "source_chars": 153544,
+    "source_words": 24567,
+    "google": {
+      "provider": "google",
+      "model": "gemma-4-31b-it",
+      "latency_s": 46.57,
+      "input_chars": 153544,
+      "status": "parse_error",
+      "result": {
+        "raw_text": "Omega Engine Ingestion Pipeline.\nAnalyze primary source text from John Carmack (his .plan files from 1996).\nExtract data across multiple dimensions: `technical_facts`, `personality_patterns`, `gnosis_principles`, `heritage_patterns`, `dpo_pairs`.\nValid JSON only. No markdown, no extra text.\n\n    *   *Technical Facts:*\n        *   Quake development: BSP portalization, PVS (Potentially Visible Set), networking (reliable vs unreliable packets), client-side prediction (QuakeWorld), sound mixing, lighting (radiosity, lightmaps), 3D APIs (OpenGL vs Direct-3D).\n        *   Hardware: SGI, Intergraph, Rendition, 3DFX, 3Dlabs.\n        *   Specifics: `sys_ticrate`, `sv_friction`, `qcc` compiler, `qbsp` utility.\n        *   QuakeWorld: Master server, persistent accounts, latency reduction (under 4ms response), client-side movement simulation.\n\n    *   *Personality Patterns:*\n        *   Iterative improvement: Constant tweaking, fixing bugs, optimizing.\n        *   Bluntness/Honesty: \"I made a bad call,\" \"Direct-3D IM is a horribly broken API,\" \"Vacation? I don't need a vacation!\"\n        *   Pragmatism over Idealism: \"I am practical above idealistic\" (regarding client-side simulation).\n        *   High standards/Work ethic: \"18+ months of sweating over it,\" \"hermit mode.\"\n        *   Technical obsession: Deep dives into API design, hardware benchmarks, and memory optimization.\n\n    *   *Gnosis Principles (Underlying philosophies/laws of his approach):*\n        *   *Latency Minimization:* The core goal of QuakeWorld; reducing the gap between input and visual feedback.\n        *   *Authoritative Server:* The server is the final word; clients predict but must be corrected.\n        *   *API Ergonomics:* Ease of use (procedural vs. execute buffers) directly impacts development speed and quality.\n        *   *Performance via Simplification:* Removing redundant checks or changing data structures (e.g., edicts from indexes to pointers) to gain speed.\n\n    *   *Heritage Patterns (Influence/Legacy/Recurring themes):*\n        *   The transition from software rendering to hardware acceleration.\n        *   The shift from LAN-centric networking to WAN/Internet-centric networking.\n        *   The \"id Software\" culture of rapid prototyping and public .plan updates.\n\n    *   *DPO Pairs (Prompt, Chosen, Rejected):*\n        *   Prompt: \"What is Carmack's opinion on Direct-3D Immediate Mode?\"\n        *   Chosen: \"He considers it a horribly broken API that inflicts pain on programmers without providing significant advantages over OpenGL.\"\n        *   Rejected: \"He thinks it's a viable alternative to OpenGL for game development.\"\n\n    *   *Technical Facts:*\n        *   \"QuakeWorld uses an unreliable packet as its basic primitive to reduce latency.\"\n        *   \"The original Quake server model was a game-style loop; QuakeWorld moved to a fileserver/database style loop.\"\n        *   \"Client-side prediction allows the client to guess movement results before the server responds.\"\n        *   \"OpenGL is preferred over Direct-3D IM due to its procedural interface and ease of use.\"\n        *   \"SGI IMPACT is noted as having an excellent fill rate and geometry rate.\"\n\n    *   *Personality Patterns:*\n        *   \"Extreme technical transparency (publicly admitting 'I made a bad call' regarding PPP latency).\"\n        *   \"Preference for pragmatic results over architectural elegance.\"\n        *   \"Intense focus on optimization and performance metrics.\"\n        *   \"Blunt, opinionated critique of software APIs.\"\n\n    *   *Gnosis Principles:*\n        *   Principle: \"Latency is the Enemy.\" Description: \"The primary goal of networking is to minimize the time between user input and visual feedback.\"\n        *   Principle: \"Pragmatic Prediction.\" Description: \"Use client-side simulation to hide latency, but maintain the server as the absolute authority.\"\n        *   Principle: \"API Ergonomics.\" Description: \"The ease of use of a programming interface directly correlates to the speed of iteration and the reduction of bugs.\"\n\n    *   *Heritage Patterns:*\n        *   \"Transition from software-driven rendering to hardware-accelerated 3D graphics.\"\n        *   \"Evolution of networking from low-latency LAN assumptions to high-latency WAN realities.\"\n\n    *   *DPO Pairs:*\n        *   Prompt: \"Why did Carmack prefer OpenGL over Direct-3D Immediate Mode?\"\n        *   Chosen: \"Because OpenGL's procedural interface is simpler and more intuitive, whereas D3D's use of COM and execute buffers is cumbersome and slows down development.\"\n        *   Rejected: \"Because OpenGL had better hardware support on consumer-grade cards in 1996.\" (Actually, he noted D3D had more consumer drivers at the time).\n\n    *   Check JSON validity.\n    *   Ensure no markdown.\n    *   Ensure no extra text.",
+        "parse_error": "Omega Engine Ingestion Pipeline.\nAnalyze primary source text from John Carmack (his .plan files from 1996).\nExtract data across multiple dimensions: `technical_facts`, `personality_patterns`, `gnosis_principles`, `heritage_patterns`, `dpo_pairs`.\nValid JSON only. No markdown, no extra text.\n\n    *   *Technical Facts:*\n        *   Quake development: BSP portalization, PVS (Potentially Visible Set), networking (reliable vs unreliable packets), client-side prediction (QuakeWorld), sound mixing, lig"
+      }
+    },
+    "openrouter": {
+      "provider": "openrouter",
+      "model": "google/gemma-4-31b-it",
+      "latency_s": 2.25,
+      "input_chars": 153544,
+      "status": "error",
+      "result": {
+        "error": "OpenRouter 401 \u2014 account deleted"
+      }
+    }
+  },
+  {
+    "run_id": "ab_092c3484",
+    "timestamp": "2026-07-03T01:20:03.287377+00:00",
+    "source": "lex_fridman_309",
+    "source_label": "Lex Fridman #309 \u2014 Full transcript (58K words)",
+    "source_path": "data/entities/john_carmack/knowledge/interviews/2022_lex_fridman_309_carmack.md",
+    "source_chars": 310099,
+    "source_words": 58126,
+    "google": {
+      "provider": "google",
+      "model": "gemma-4-31b-it",
+      "latency_s": 52.04,
+      "input_chars": 240000,
+      "status": "parse_error",
+      "result": {
+        "raw_text": "Omega Engine Ingestion Pipeline.\nAnalyze primary source text from John Carmack and extract data across multiple dimensions.\nValid JSON ONLY. No markdown, no extra text.\n\n        *   `technical_facts`: List of strings.\n        *   `personality_patterns`: List of strings.\n        *   `gnosis_principles`: List of objects (`principle`, `description`).\n        *   `heritage_patterns`: List of strings.\n        *   `dpo_pairs`: List of objects (`prompt`, `chosen`, `rejected`).\n\n    *   *Technical Facts:*\n        *   First program: `10 print, John Carmack` on TRS-80.\n        *   Apple II hack: Used text screen line feed to scroll low-res graphics.\n        *   Programming languages: C++ (C-flavored), Python (for AI/ML), used Pascal (Turbo Pascal), Assembly (thousands of lines for games).\n        *   Opinion on Python: Slow for loops, needs vector operations or C++ libraries.\n        *   Opinion on C/C++: Simple, allows low-level control, but prone to memory safety issues (buffer overruns).\n        *   Opinion on Go: Simple, similar to C, good for handover.\n        *   Opinion on Rust: Used for video decompression exercise.\n        *   Opinion on Garbage Collection: Generally good for 99%+ of software, except tight real-time systems.\n        *   Wolfenstein 3D: Used ray casting and \"compiled scalers\" (pre-calculated scaling routines).\n        *   Doom: Used Binary Space Partitioning (BSP) trees, WAD files for modding.\n        *   Quake: 6 degrees of freedom, client-server networking (TCP/UDP), QuakeC language.\n        *   Hardware: Triple monitors, Visual Studio, Diet Coke (8-9 cans/day).\n        *   BSP Trees: Carves walls to create a fixed ordering for rendering (painter's algorithm optimization).\n        *   Ray Casting: Casting rays from origin to find wall intersections.\n        *   Compiled Scalers: Hard-coding pixel values into programs to avoid slow general-purpose scaling loops.\n\n    *   *Personality Patterns:*\n        *   Obsessive work ethic (60+ hours/week, 10-hour days, 6 days/week).\n        *   Consistency over intensity (prefers 8 hours sleep, avoids all-nighters).\n        *   Unsentimental about the past.\n        *   High tolerance for stress/pressure; claims immunity to burnout.\n        *   Pragmatic/Value-driven (everything should flow from user value).\n        *   Intellectual humility (acknowledges he could do all his old projects better now).\n        *   Preference for \"speed of light\" solutions (theoretical maximum efficiency).\n        *   Direct, opinionated, and transparent.\n\n    *   *Gnosis Principles (Deep philosophical/engineering beliefs):*\n        *   *User Value Primacy:* Technical pride is a \"dopamine hit,\" but the only true metric is the net value provided to the user.\n        *   *The Full Stack Perspective:* To bring the future forward, one must understand the entire stack from hardware to high-level software.\n        *   *The Power of Constraints:* Resource limitations (memory, CPU) drive the most significant technical innovations.\n        *   *The Value Gradient:* Progress happens by following a gradient of increasing value rather than seeking a single \"silver bullet.\"\n        *   *Faking it to Make it:* \"Smoke and mirrors\" (approximations) are often the necessary first step to achieving a breakthrough.\n\n    *   *Heritage Patterns (Influence/Lineage):*\n        *   Hacker Ethic (sharing information, joy in others' accomplishments).\n        *   Arcade/Console influence (Nintendo, Sega) on PC gaming.\n        *   Unix/C culture (though he entered it later).\n        *   Influence of Michael Abrash (optimization).\n        *   Influence of Steve Jobs (NeXT systems).\n\n    *   *DPO Pairs (Prompt, Chosen, Rejected):*\n        *   Prompt: \"Is garbage collection bad for programming?\"\n        *   Chosen: \"Garbage collection is a great thing for the vast majority of programs, only becoming a cost in the tightest real-time systems.\"\n        *   Rejected: \"Yes, garbage collection makes programmers lazy and slows down the system.\"\n        *   Prompt: \"What is the best way to improve a product?\"\n        *   Chosen: \"Focus on user value and the value gradient, ensuring the product provides more value to the user than the resources spent to create it.\"\n        *   Rejected: \"Use the most state-of-the-art programming language and the most complex architecture available.\"\n\n    *   Ensure no markdown (no ```json ... ```).\n    *   Ensure all keys match the schema.\n    *   Check for valid JSON syntax.",
+        "parse_error": "Omega Engine Ingestion Pipeline.\nAnalyze primary source text from John Carmack and extract data across multiple dimensions.\nValid JSON ONLY. No markdown, no extra text.\n\n        *   `technical_facts`: List of strings.\n        *   `personality_patterns`: List of strings.\n        *   `gnosis_principles`: List of objects (`principle`, `description`).\n        *   `heritage_patterns`: List of strings.\n        *   `dpo_pairs`: List of objects (`prompt`, `chosen`, `rejected`).\n\n    *   *Technical Facts"
+      }
+    },
+    "openrouter": {
+      "provider": "openrouter",
+      "model": "google/gemma-4-31b-it",
+      "latency_s": 4.08,
+      "input_chars": 240000,
+      "status": "error",
+      "result": {
+        "error": "OpenRouter 401 \u2014 account deleted"
+      }
+    }
+  },
+  {
+    "run_id": "ab_092c3484",
+    "timestamp": "2026-07-03T01:20:03.287377+00:00",
+    "source": "masters_of_doom",
+    "source_label": "Masters of Doom \u2014 Key excerpts (4.2K words)",
+    "source_path": "data/entities/john_carmack/knowledge/source/masters_of_doom_excerpts.md",
+    "source_chars": 15922,
+    "source_words": 2685,
+    "google": {
+      "provider": "google",
+      "model": "gemma-4-31b-it",
+      "latency_s": 47.87,
+      "input_chars": 15922,
+      "status": "parse_error",
+      "result": {
+        "raw_text": "Omega Engine Ingestion Pipeline.\nAnalyze primary source text (excerpts from \"Masters of Doom\") and extract data.\nValid JSON only. No markdown, no extra text.\n\n        *   `technical_facts`: Array of strings.\n        *   `personality_patterns`: Array of strings.\n        *   `gnosis_principles`: Array of objects (`principle`, `description`).\n        *   `heritage_patterns`: Array of strings.\n        *   `dpo_pairs`: Array of objects (`prompt`, `chosen`, `rejected`).\n\n    *   *Technical Facts:*\n        *   Adaptive Tile Refresh: Duping the computer to think a specific tile is the first on screen to allow smooth scrolling on PC.\n        *   Wolfenstein 3D shareware episode completed May 5, 1992, at 4:00 AM.\n        *   Doom name origin: *The Color of Money* (1986 film).\n        *   Quake focus: True 3D rendering and network code.\n        *   Shareware model: Giving away the first portion of a game and selling the rest directly.\n\n    *   *Personality Patterns:*\n        *   Extreme focus/minimalism (no mattress, no keepsakes from the past).\n        *   Fanatical devotion to coding (80-hour weeks, solo hotel room coding vacations).\n        *   Late talker (first sentence at 15 months: \"Here's your loofah, Daddy\").\n        *   Low empathy/analytical nature (\"walking brain with legs\").\n        *   Disciplined physical training (weights, judo, wrestling).\n        *   Disdain for \"highfalutin\" concepts like legacy.\n\n    *   *Gnosis Principles (Deep-seated beliefs/philosophies):*\n        *   Anti-Patent/Hacker Ethic: Technology is built on the work of others; patents hinder problem-solving.\n        *   Minimalist Resource Requirement: Grand things don't need millions; they need pizza, Diet Coke, a cheap PC, and dedication.\n        *   Tool-making vs. Empire-building: Preference for creating good programs/sublime tools over building a corporate empire.\n        *   Present-moment focus: Time exists in the present condition of problems and solutions.\n\n    *   *Heritage Patterns (Background/Origins):*\n        *   Juvenile detention for stealing an Apple II.\n        *   Psychiatric evaluation at 14.\n        *   Inspiration from *Star Trek: The Next Generation* (Holodeck).\n        *   Influence of the \"Hacker Ethic.\"\n\n    *   *DPO Pairs (Prompt, Chosen, Rejected):*\n        *   Prompt: \"What is your view on patenting software?\"\n        *   Chosen: \"It's fundamentally wrong. All of science and technology is built upon using the work others have done before. Patents jeopardize the ability to solve problems.\"\n        *   Rejected: \"Patents are a useful way to protect intellectual property and ensure a company can profit from its inventions.\"\n        *   Prompt: \"How do you approach your daily work and tracking?\"\n        *   Chosen: \"I use a simple system: a '*' for accomplishments and notes for bugs or missing features. I mark them with a '+' once they are fixed.\"\n        *   Rejected: \"I use a complex project management suite with Jira tickets and sprint planning to track my progress.\"\n\n    *   Check against schema.\n    *   Ensure no markdown.\n    *   Ensure all data is derived from the provided text.",
+        "parse_error": "Omega Engine Ingestion Pipeline.\nAnalyze primary source text (excerpts from \"Masters of Doom\") and extract data.\nValid JSON only. No markdown, no extra text.\n\n        *   `technical_facts`: Array of strings.\n        *   `personality_patterns`: Array of strings.\n        *   `gnosis_principles`: Array of objects (`principle`, `description`).\n        *   `heritage_patterns`: Array of strings.\n        *   `dpo_pairs`: Array of objects (`prompt`, `chosen`, `rejected`).\n\n    *   *Technical Facts:*\n   "
+      }
+    },
+    "openrouter": {
+      "provider": "openrouter",
+      "model": "google/gemma-4-31b-it",
+      "latency_s": 2.03,
+      "input_chars": 15922,
+      "status": "error",
+      "result": {
+        "error": "OpenRouter 401 \u2014 account deleted"
+      }
+    }
+  }
+]

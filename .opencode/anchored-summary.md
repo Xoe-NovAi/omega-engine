@@ -1,3 +1,68 @@
+# ⬡ OMEGA ⬡ ANCHORED SUMMARY ⬡ 2026-07-03
+## Session 45 — Gemma 4 JSON Breakthrough + Model Comparison + KBs
+
+### Goal
+1. ✅ OpenRouter API key investigation (8 keys tested, 6 valid, 2 management)
+2. ✅ Google API JSON breakthrough: responseJsonSchema suppresses thinking mode
+3. ✅ Gemma 4 31B vs 26B comparison across 3 Carmack sources
+4. ✅ Knowledge bases created for both models
+5. ✅ Session gnosis + proposed lessons written
+
+### What Was Built
+
+#### 1. responseJsonSchema Breakthrough
+**Problem**: Gemma 4 models output thinking text instead of JSON, even with `responseMimeType: "application/json"`.
+
+**Solution**: Provide BOTH `responseMimeType` AND `responseJsonSchema` with a complete schema definition. The schema suppresses thinking entirely.
+
+**Source**: [DEV.to article](https://dev.to/ai_made_tools/responsejsonschema-the-undocumented-gemma-4-feature-that-changed-everything-2obm) — undocumented Gemma 4 feature.
+
+```python
+"generationConfig": {
+    "temperature": 0.6,
+    "maxOutputTokens": 8192,
+    "responseMimeType": "application/json",
+    "responseJsonSchema": { ... full schema ... }
+}
+```
+
+#### 2. Model Comparison Results
+| Source | 31B Items | 26B Items | 31B Time | 26B Time |
+|--------|----------:|----------:|---------:|---------:|
+| Masters of Doom | 20 | 0 (timeout) | 23.6s | 180s |
+| .plan 1996 | 33 | 24 | 28.7s | 17.4s |
+| Lex Fridman | 29 | **35** | 30.6s | 28.7s |
+
+**Key insight**: 31B more consistent, 26B faster when warm and higher yield on large sources.
+
+#### 3. Knowledge Bases Created
+- `docs/kb/gemma4_31b/KNOWLEDGE_BASE.md` — JSON trick, benchmarks, config, thinking behavior
+- `docs/kb/gemma4_26b/KNOWLEDGE_BASE.md` — MoE notes, cold-start, separate keys
+- `docs/kb/gemma4_comparison.md` — Head-to-head comparison
+
+#### 4. OpenRouter Key Diagnosis
+- Keys #1 & #3: Management keys (401 on /api/v1/auth/key) — NOT for inference
+- Keys #2, #4-#8: Valid free-tier inference keys (200 on /api/v1/auth/key)
+- Free tier: 50 RPD, 20 RPM. `:free` models saturate quickly.
+- OpenRouter tabled per user request — hand off to Kali.
+
+#### 5. Multi-Key Strategy
+- `GOOGLE_API_KEY_1` → Gemma 4 31B (separate key, no collision)
+- `GOOGLE_API_KEY_2` → Gemma 4 26B (separate key, no collision)
+- Effectively doubles daily request budget (50 each instead of 25 each)
+
+### Test Status
+- 705 passed, 22 skipped, 3 xfailed (no code changes to engine core)
+- Only config/scripts/KBs modified
+
+### Next Session Should
+1. Wire `responseJsonSchema` into `ingest_jc.py` for production extraction
+2. Run full ingestion pipeline across all 6 source groups
+3. Commit KBs and test results
+4. Continue MV-IW Phase 3 tasks (E2E test, sphere field, soul-review CLI)
+
+---
+
 # ⬡ OMEGA ⬡ ANCHORED SUMMARY ⬡ 2026-07-02
 ## Session 44 — John Carmack: Model KB, Platform KB, Thinking Mode Fix
 

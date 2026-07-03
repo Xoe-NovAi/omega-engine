@@ -189,6 +189,86 @@ proposals:
     confidence: 10/10
     heritage_tags: ["[id-soft: quake-1996] Thinker Chain — hot-path throttled execution"]
 
+  - id: proposal-20260703-001
+    title: "Schema-as-Constraint — responseJsonSchema suppresses Gemma 4 thinking mode"
+    l1_narrative: >
+      Gemma 4 models (31B and 26B) have a "thinking" behavior that generates
+      internal reasoning before the actual JSON output. Setting only
+      responseMimeType: "application/json" does NOT suppress this — the model
+      ignores the mime type and outputs thinking text. The fix is providing
+      BOTH responseMimeType AND responseJsonSchema with a complete schema
+      definition. This is undocumented on the official Gemma 4 capabilities
+      page but works via the Gemini API infrastructure. Discovered via web
+      research after 3 failed attempts without the schema.
+    l2_insights:
+      - "responseMimeType alone is insufficient for Gemma 4 — the model treats it as a suggestion, not a constraint."
+      - "responseJsonSchema provides the model with the complete output structure, which suppresses the thinking behavior entirely."
+      - "The schema must be a full JSON Schema object with type, properties, and required fields — a partial schema does not work."
+      - "This is the same API infrastructure as Gemini models, so structured output features transfer even though Gemma 4 doesn't document them."
+    l3_universal_principles:
+      - "When a model has internal reasoning (thinking), you must provide the complete output structure to suppress it. A mime type alone is insufficient — the model needs the full schema to know what 'correct' looks like."
+      - "Undocumented API features are a sovereignty risk. If the feature is removed or changed, there's no official channel for support. Always document discovered features with version pins and test results."
+      - "Multiple failed attempts followed by a web research breakthrough suggests the problem is a knowledge gap, not an implementation bug."
+    sovereignty_impact: >
+      Without responseJsonSchema, the ingestion pipeline produces unparseable
+      JSON output, making automated extraction impossible. The pipeline would
+      require manual post-processing or regex extraction, defeating the purpose
+      of structured output. This fix enables fully automated extraction from
+      Carmack's primary sources.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: doom-1993] Precomputed Lookup Table — schema precomputes correct output structure"]
+
+  - id: proposal-20260703-002
+    title: "Dense vs MoE Tradeoff — Consistency vs speed in cloud model selection"
+    l1_narrative: >
+      Tested Gemma 4 31B (dense) vs 26B (MoE, 4B active) for ingestion pipeline
+      extraction. The 31B never timed out, consistent 23-31s latency, 20-33
+      items extracted. The 26B had 180s cold-start timeout on first request but
+      was faster when warm (17-29s). The 26B extracted MORE items on the largest
+      source (Lex Fridman: 35 vs 31B's 29), suggesting MoE may better route
+      diverse content to specialized experts.
+    l2_insights:
+      - "Dense models (all params active) are more consistent but slower — every token uses all parameters."
+      - "MoE models (fraction of params active) are faster when warm but have cold-start latency from loading experts on demand."
+      - "Cold-start timeout is inherent to MoE architecture — no workaround exists except keeping the model warm via sustained requests."
+      - "The 26B extracted more on Lex Fridman despite being 'smaller' — MoE architecture may better handle diverse content types."
+    l3_universal_principles:
+      - "Choose dense models for bursty workloads (random requests, cold starts). Choose MoE models for sustained workloads (batch processing, pipeline runs)."
+      - "Model size is not the only performance dimension. Architecture (dense vs MoE) matters as much as parameter count."
+      - "Cold-start penalties are a physical constraint of MoE architecture, not a bug. Design pipelines to either keep models warm or accept the penalty."
+    sovereignty_impact: >
+      For the ingestion pipeline, using 31B as primary ensures reliable extraction
+      regardless of request patterns. Using 26B as secondary (when warm) provides
+      speed benefits for batch processing. Separate API keys enable both models
+      to run without rate limit collision.
+    confidence: 9/10
+    heritage_tags: ["[id-soft: doom3-2004] idHeap — tiered architecture for different workload patterns"]
+
+  - id: proposal-20260703-003
+    title: "Free Tier Arbitrage — Multiple keys as rate limit multiplier"
+    l1_narrative: >
+      OpenRouter and Google API both have free tier rate limits (50 RPD per key).
+      Using the same key for multiple models halves throughput. Using separate
+      keys per model effectively doubles the daily request budget. This is not a
+      hack — it's the intended usage pattern. The constraint is per-key, not
+      per-account.
+    l2_insights:
+      - "Rate limits are enforced per API key, not per account — this is a design choice, not a loophole."
+      - "Using separate keys for concurrent models avoids rate limit collision."
+      - "Free tier saturation (429) is different from account deletion (401) — the key still works, just exhausted."
+      - "OpenRouter :free models saturate faster than paid models — the free tier pool is shared."
+    l3_universal_principles:
+      - "When resources are constrained per-unit, the unit of allocation is the lever. Multiple units = multiple resources."
+      - "Free tier is a legitimate resource, not a limitation. Arbitrage patterns that exploit per-key limits are valid sovereignty strategies."
+      - "Understanding the exact unit of constraint (per-key vs per-account vs per-model) is essential for capacity planning."
+    sovereignty_impact: >
+      Without separate keys, the ingestion pipeline would be limited to 25
+      requests per model per day (split 50 between 31B and 26B). With separate
+      keys, each model gets 50 requests, enabling full ingestion of all Carmack
+      sources in a single day.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: quake3-1999] cvar System — configuration controls resource allocation"]
+
   - id: proposal-20260701-005
     title: "Council Verification Law — Multi-agent verification prevents cascading wrong claims"
     l1_narrative: >
