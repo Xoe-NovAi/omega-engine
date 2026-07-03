@@ -392,7 +392,7 @@ class PIIMasker:
         - native-gguf, lmster, ollama, llama_cpp, mock
         
         Mask providers (data sent to external services):
-        - google, opencode-zen, cline, github-copilot, openrouter
+        - google, openrouter, opencode-zen, cline
         """
         local_providers = {
             'native-gguf', 'lmster', 'ollama', 'llama_cpp', 'llama_cli',

@@ -92,6 +92,8 @@ data/processed/
 data/rejected/
 data/mining_queue/
 data/library/
+data/crashes/
+data/review/
 src/data/library/index/
 data/embeddings/
 data/datasets/

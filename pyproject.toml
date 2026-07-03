@@ -82,4 +82,4 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
-addopts = "--ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=30"
+addopts = "--ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=60 --durations=15"

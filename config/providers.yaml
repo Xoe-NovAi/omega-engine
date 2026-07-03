@@ -59,8 +59,26 @@ inference:
     models:
     - gemma-4-31b-it
     - gemma-4-26b-it
-  - provider: opencode-zen
+  - provider: openrouter
     priority: 4
+    api_key: env:OPENROUTER_API_KEY
+    base_url: https://openrouter.ai/api
+    model_overrides:
+      qwen3-1.7b-q6_k: qwen/qwen3-1.7b
+      qwen3-4b-thinking-q4_k_m: qwen/qwen3-4b
+      deepseek-r1-qwen3-8b-q3_k_l: deepseek/deepseek-r1
+      phi-4-mini: microsoft/phi-4-mini
+      krikri-8b-q4_k_m: nvidia/krikri-8b
+      phi-2-omnimatrix-i1-q4_k_m: microsoft/phi-2
+    models:
+    - qwen/qwen3-1.7b
+    - qwen/qwen3-4b
+    - deepseek/deepseek-r1
+    - microsoft/phi-4-mini
+    - nvidia/krikri-8b
+    - microsoft/phi-2
+  - provider: opencode-zen
+    priority: 5
     api_key: env:OPENCODE_ZEN_API_KEY
     base_url: https://api.opencode.ai/zen/v1
     model_overrides:
@@ -77,14 +95,7 @@ inference:
     - deepseek/deepseek-v4-flash
     - minimax/minimax-m2.5
   - provider: cline
-    priority: 5
-  - provider: github-copilot
     priority: 6
-    models:
-    - github-copilot/claude-haiku-4.5
-    - github-copilot/gpt-4.1
-    - github-copilot/gpt-4o
-    - github-copilot/gpt-5-mini
   - provider: mock
     priority: 99
     enabled: true

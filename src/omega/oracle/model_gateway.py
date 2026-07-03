@@ -674,7 +674,7 @@ class ModelGateway:
     @property
     def _cloud_providers(self) -> set:
         """Set of cloud provider names for sovereignty tracking."""
-        return {"google", "opencode-zen", "cline", "github-copilot"}
+        return {"google", "openrouter", "opencode-zen", "cline"}
 
     def _is_cloud_provider(self, provider) -> bool:
         """Check if a provider is a cloud provider."""

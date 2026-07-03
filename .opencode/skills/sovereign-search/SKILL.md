@@ -7,6 +7,10 @@ description: "Intelligent search orchestration across local cache, websearch, Fi
 
 This skill implements the **Sovereign Search Protocol (SSP)**. It replaces ad-hoc tool selection with a mandatory, cost-aware, failure-resilient pipeline. Agents MUST follow this hierarchy to ensure absolute resilience and credit efficiency.
 
+## ⚠️ Antigravity google_search — CLI Only
+
+The Antigravity `google_search` tool (from the `opencode-antigravity-auth` plugin) is **CLI-only**. It requires Google Gemini via the Antigravity OAuth endpoint and is hidden when `AGENT_MODE=true` is set. Agents MUST NEVER use `google_search` — fall back to this skill's Sovereign Search Protocol instead.
+
 ## 🛡️ The 5-Tier Sovereign Search Protocol
 
 Agents MUST execute search operations sequentially. Do not skip tiers.

@@ -1,4 +1,86 @@
 proposals:
+  - id: proposal-20260702-001
+    title: "The Embedded Model Law — Every add_exchange() triggered an embedding model load"
+    l1_narrative: >
+      The test suite was consuming 873MB RAM and pinning 4 cores at 100% despite
+      OMEGA_ENV=test. Root cause: memory_store.py:add_exchange() calls
+      EmbeddingManager.get_embedding() to generate a vector for every recorded
+      interaction. The first embedding provider (GemmaGGUFEmbeddingProvider, 300M
+      params) loaded llama_cpp.Llama() on first call, taking ~15-30s and 600MB.
+      The SemanticRouter correctly short-circuited in test mode, but the memory
+      store's add_exchange() path had no such guard. Test time dropped from 197s
+      to 73s after adding a zero-vector early return when OMEGA_ENV=test.
+    l2_insights:
+      - "OMEGA_ENV=test was inconsistently enforced — model_gateway._load_provider_fabric() had it, but EmbeddingManager.get_embedding() did not."
+      - "Every Oracle.talk() or .summon() triggers memory_store.add_exchange(), which triggers embedding. Even with MockProvider for inference, the embedding model loads."
+      - "The 4-core 100% CPU signature indicated llama.cpp model load (LLAMA_CPP_N_THREADS=4), which we verified was the 300M Gemma GGUF embedding model."
+      - "A test env check at a single choke point (EmbeddingManager.get_embedding()) eliminated the load across ALL test paths."
+    l3_universal_principles:
+      - "Short-circuit environment checks must be enforced at EVERY integration seam, not just the obvious one. The inference path had it; the memory/embedding path did not."
+      - "A test mode that loads a 300M model on every interaction is not a test mode — it's a performance test that happens to assert things."
+      - "CPU resource signatures are diagnostic gold. The 4-core flat-line told us exactly what was running before any code inspection."
+    sovereignty_impact: >
+      Without this fix, every developer running `make test` wastes 3+ minutes of
+      CPU time and 600MB+ RAM for no testing value. The embedding model is not
+      needed for unit tests — vectors are never queried or validated. The fix
+      respects the developer's compute sovereignty by not burning resources
+      unnecessarily.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: doom-1993] BSP Culling — short-circuit before expensive operation"]
+
+  - id: proposal-20260702-002
+    title: "The Tool Boundary Law — Antigravity google_search is Gemini-specific, not generic"
+    l1_narrative: >
+      The Antigravity google_search tool was being treated as a general web search
+      fallback by agents, but it's hardcoded to gemini-3-flash via the Gemini
+      grounding API. It only works when the underlying model request routes through
+      the Antigravity endpoint with a Gemini model. Non-Gemini models (OpenRouter,
+      Ollama, local GGUF) cannot use it. Added AGENT_MODE=true guard to hide the
+      tool from agents, updated error messages to direct to Sovereign Search
+      Protocol, and documented the CLI-only constraint in AGENTS.md.
+    l2_insights:
+      - "google_search is not a general tool — it's a Gemini feature exposed through the Antigravity OAuth endpoint."
+      - "The grounding API (googleSearch + urlContext) is a Gemini-only capability not available via OpenAI-compatible endpoints."
+      - "Agents using non-Gemini models were failing silently or confusingly when google_search returned Gemini-specific errors."
+      - "The Sovereign Search Protocol (SearXNG → Exa → Firecrawl) is the correct fallback for all agents regardless of model."
+    l3_universal_principles:
+      - "A tool name that implies generality ('google_search') but requires specific model backend ('gemini-3-flash') is a naming bug. Name should reflect actual constraints."
+      - "Agents must not be exposed to tools that cannot work with their configured model backend. Tool visibility should be model-aware."
+      - "Error messages should always include the correct alternative, not just what failed."
+    sovereignty_impact: >
+      Without this fix, developers building local-first workflows (non-Gemini
+      models) would encounter confusing failures when agents tried to search the
+      web. The fix ensures every tool either works correctly or clearly directs to
+      its sovereign alternative.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: quake3-1999] Hard-Boundary Struct — tool access must respect model boundaries"]
+
+  - id: proposal-20260702-003
+    title: "The Provider Chain Law — Config must match the canonical fallback order"
+    l1_narrative: >
+      The providers.yaml had github-copilot (which was removed from active use) at
+      priority 6, but no explicit openrouter entry (which is the preferred cloud
+      fallback after Google). Updated the chain to match the canonical order:
+      native-gguf → lmster → ollama → google → openrouter → opencode-zen → cline
+      → mock. Removed github-copilot references from model_gateway.py cloud_providers
+      set and pii_masker.py comments.
+    l2_insights:
+      - "The config drifted from the canonical provider chain documented in ORACLE_STACK.md."
+      - "github-copilot was in the fallback chain but had been deprecated — config was never updated to reflect the change."
+      - "openrouter was supported by the code (provider_map entry, factory function) but had no config entry."
+      - "pii_masker.py and model_gateway.py had stale github-copilot references that would confuse sovereignty tracking."
+    l3_universal_principles:
+      - "Config drift is inevitable without periodic audit against the canonical source."
+      - "Removed providers must be cleaned from all code references, not just the config file."
+      - "The cloud provider set drives M7 (local-first) sovereignty tracking — stale entries there cause incorrect sovereignty metrics."
+    sovereignty_impact: >
+      Accurate provider configuration ensures the local-first fallback chain
+      works as intended. A stale github-copilot entry could cause the engine to
+      think it's using a cloud provider when the config is actually ignored,
+      skewing sovereignty metrics.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: quake3-1999] Cvar System — configuration must match runtime reality"]
+
   - id: proposal-20260701-001
     title: "C-FFI Boundary Law — Process Isolation for Native Code"
     l1_narrative: >
