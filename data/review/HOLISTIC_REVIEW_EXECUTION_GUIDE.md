@@ -2,7 +2,54 @@
 ## Companion Document to HOLISTIC_REVIEW_PLAN_V3.md
 
 **Date**: 2026-07-03
-**Purpose**: Step-by-step execution instructions for the 1M token context review
+**Purpose**: Step-by-step execution instructions for DeepSeek V4 Flash via Cline CLI (1M token context)
+
+---
+
+## Cline Execution Protocol (Mandatory)
+
+This review is executed by **DeepSeek V4 Flash** running under **Cline CLI** (headless agent mode). Cline has read/write access to the filesystem and MCP tools to the Omega Hub server.
+
+### Execution Model
+- **File Loading**: Cline reads files via its `read` tool on-demand. Load the files listed in each Phase batch before starting the tracer audit.
+- **Output**: Findings are written to `data/review/` as markdown files.
+- **Coordination**: Use Hivemind MCP tools to stay visible to the OpenCode fleet.
+- **Handoff**: When complete, submit a handoff packet to Kali via `hivemind_submit_handoff()`.
+
+### Hivemind Coordination Steps
+Before starting, post context to the Hivemind:
+```bash
+# Check awareness
+omega-hub_hivemind_get_awareness()
+
+# Post presence
+omega-hub_hivemind_post_context(
+    channel="cline",
+    entity="omega-engine",
+    model="deepseek-v4-flash",
+    task_current="Holistic Review Phase A: Hot Scan",
+    focus_chain=["Spatial analysis of oracle.py, model_gateway.py, entity_registry.py"],
+    decisions=[],
+    continuation="Acknowledge and I will proceed through all 4 phases"
+)
+
+# Heartbeat every 5-10 minutes
+omega-hub_hivemind_heartbeat(channel="cline", entity="omega-engine")
+```
+
+### Result Delivery
+When all 4 phases are complete, submit findings back to Kali:
+```bash
+omega-hub_hivemind_submit_handoff(
+    target_channel="opencode",
+    target_entity="kali",
+    source_channel="cline",
+    source_entity="omega-engine",
+    task="Holistic Review complete — findings from Phases A-D",
+    priority=1,
+    context="All 4 phases executed. 3 finding files written to data/review/."
+)
+```
 
 ---
 
@@ -11,7 +58,7 @@
 ### 1. Environment Verification
 ```bash
 # Verify all source files exist
-find src/omega -name "*.py" | wc -l  # Expected: ~116
+find src/omega -name "*.py" | wc -l  # Expected: ~113
 
 # Verify all test files exist
 find tests -name "*.py" | wc -l  # Expected: ~66
@@ -52,7 +99,7 @@ mkdir -p data/review
 
 ### Step 1: Load All Hot Path Files
 
-Load these files simultaneously into the 1M context:
+Read these files via Cline's `read` tool. Load the full content of each — all are well within the 1M context window:
 
 **Source Files**:
 1. `src/omega/oracle/oracle.py` (860 lines)
@@ -152,6 +199,8 @@ For each finding, record:
 
 ### Step 1: Load All Warm Path Files
 
+Read these files via Cline's `read` tool. If the Phase A files are still in context, keep them accessible for cross-referencing.
+
 **Observability Files**:
 1. `src/omega/observability/__init__.py`
 2. `src/omega/observability/token_ledger.py`
@@ -235,6 +284,8 @@ Same format as Phase A.
 ## Phase C: Cold Scan (Infrastructure & Governance)
 
 ### Step 1: Load All Cold Path Files
+
+Read these files via Cline's `read` tool. Load the documentation files last (they are long-form reference material).
 
 **Core Infrastructure**:
 1. `src/omega/errors.py`
@@ -394,10 +445,12 @@ By Mandate:
 
 ### Step 3: Write Findings Reports
 
-Write three files:
+Write three files (Cline: use `write_to_file`):
 1. `data/review/FINDINGS_CRITICAL.md` — Critical findings (block release)
 2. `data/review/FINDINGS_MAJOR.md` — High findings (fix before next sprint)
 3. `data/review/FINDINGS_MINOR.md` — Medium/Low findings (technical debt)
+
+Each file should follow the Finding Template from §Finding Template below. Start each with a summary table of all findings in that file.
 
 ### Step 4: Generate Remediation Roadmap
 
@@ -418,6 +471,42 @@ make temple-grade
 
 # Run heritage-map to verify heritage tag coverage
 make heritage-map
+```
+
+### Step 6: Hivemind Handoff Delivery
+
+After writing all finding files and passing validation, deliver results to the OpenCode fleet:
+
+```bash
+# 1. Post completion context
+omega-hub_hivemind_post_context(
+    channel="cline",
+    entity="omega-engine",
+    model="deepseek-v4-flash",
+    task_current="Holistic Review COMPLETE",
+    focus_chain=[
+        "Phase A: Hot Scan — Spatial anomalies traced",
+        "Phase B: Warm Scan — Support systems audited",
+        "Phase C: Cold Scan — Heritage, mandates, config verified",
+        "Phase D: Synthesis — Findings consolidated, reports written"
+    ],
+    decisions=["Holistic Review executed by DeepSeek V4 Flash via Cline CLI"],
+    continuation="No handoff required. Finding files in data/review/."
+)
+
+# 2. Submit handoff to Kali with finding summary
+omega-hub_hivemind_submit_handoff(
+    target_channel="opencode",
+    target_entity="kali",
+    source_channel="cline",
+    source_entity="omega-engine",
+    task="Holistic Review complete — findings ready for triage",
+    priority=1,
+    context="All 4 phases executed. Validation passed. See data/review/FINDINGS_*.md"
+)
+
+# 3. Final heartbeat
+omega-hub_hivemind_heartbeat(channel="cline", entity="omega-engine")
 ```
 
 ---
@@ -459,35 +548,28 @@ Use this template for each finding:
 
 ---
 
-## Post-Review Actions
+## Post-Review Actions (OpenCode Fleet — Kali Awaiting Handoff)
 
-After the review is complete:
+After the review is complete and the handoff packet has been submitted:
 
-1. **Immediate** (Critical findings):
-   - Fix each critical finding
-   - Add contract tests
-   - Commit with descriptive message
-   - Run `make test` and `make temple-grade`
+1. **Kali Triage** (Opencode fleet):
+   - Kali reads `data/review/FINDINGS_*.md` from the handoff
+   - Critical findings → immediate execution sprint
+   - High findings → next sprint backlog
+   - Medium/Low → technical debt registry
 
-2. **Next Sprint** (High findings):
-   - Add to sprint backlog
-   - Estimate effort
-   - Assign to appropriate pillar
+2. **Fixes** (assigned by pillar):
+   - Each finding gets a fix, contract test, and commit
+   - Run `make test` and `make temple-grade` per fix
 
-3. **Technical Debt Registry** (Medium/Low findings):
-   - Add to technical debt tracker
-   - Prioritize based on impact
-   - Schedule for future sprints
+3. **Documentation Update**:
+   - OMEGA_ENGINE.md and SOVEREIGN_ARK_BLUEPRINT.md updated per findings
+   - Any documentation-vs-code drift corrected
 
-4. **Documentation Update**:
-   - Update OMEGA_ENGINE.md with current test count
-   - Update SOVEREIGN_ARK_BLUEPRINT.md with current subsystem status
-   - Update any documentation that was found to be drift from code
-
-5. **Hivemind Update**:
-   - Post summary of findings to Hivemind
-   - Update live feed with review completion
-   - Release workspace lock
+4. **Session Close**:
+   - Post final summary to Hivemind
+   - Release any workspace locks
+   - Cline session completes
 
 ---
 

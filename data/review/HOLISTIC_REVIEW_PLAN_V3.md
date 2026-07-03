@@ -3,8 +3,8 @@
 
 **Date**: 2026-07-03
 **Purpose**: Comprehensive cross-file architectural review leveraging 1M token context window
-**Execution Target**: Nemotron 3 Ultra (1M context)
-**Contributing Models**: Nemotron 3 Ultra, DeepSeek V4 Flash, MiMo-V2.5
+**Execution Target**: DeepSeek V4 Flash via Cline CLI (1M context)
+**Contributing Models**: Nemotron 3 Ultra (plan author), DeepSeek V4 Flash (executor), MiMo-V2.5
 
 ---
 
@@ -14,11 +14,11 @@ This plan is the unified product of three AI models working in concert:
 
 | Model | Role | Contribution |
 |-------|------|--------------|
-| **Nemotron 3 Ultra (1M context)** | Strategic Architect | Original plan structure, 7 phases, token budget analysis |
+| **Nemotron 3 Ultra (1M context)** | Plan Author | Original plan structure, 7 phases, token budget analysis |
 | **DeepSeek V4 Flash** | Deep Analyst | 4-dimensional analysis framework, 8 anomaly signatures, causal tracing |
 | **MiMo-V2.5** | Model-Level Insights | 5th dimension (model-level), 10th anomaly signature, execution checklist, automation protocol |
 
-The plan is designed to be executed by the **Nemotron 3 Ultra** model using its 1M token context window. The other models contribute analytical frameworks that the 1M model will apply.
+The plan is designed to be executed by **DeepSeek V4 Flash via Cline CLI**, leveraging its 1M token context window. Cline follows the 4-phase protocol via its file-reading and MCP tools, then returns findings to Kali via Hivemind handoff.
 
 ---
 
@@ -544,7 +544,7 @@ find tests -name "*.py" -exec wc -l {} + | tail -1
 ```
 
 ### 2. Scan Execution
-The 1M model should follow the 4-phase protocol, producing intermediate findings after each phase.
+DeepSeek V4 Flash (via Cline CLI) should follow the 4-phase protocol, producing intermediate findings after each phase. Cline's headless batch-mode execution enables full phase completion before proceeding.
 
 ### 3. Post-Scan Validation
 ```bash
@@ -560,12 +560,12 @@ make heritage-map  # Verify heritage tag coverage
 
 ---
 
-## Final Checklist for the 1M Model
+## Final Checklist for the Executing Model (DeepSeek V4 Flash via Cline CLI)
 
 Before starting the scan, verify:
 
-- [ ] You have access to all source files (116 .py files in src/omega/)
-- [ ] You have access to all test files (730 tests across ~50 test files)
+- [ ] You have access to all source files (113 .py files in src/omega/)
+- [ ] You have access to all test files (730 tests across ~66 test files)
 - [ ] You have access to key documentation (SOVEREIGN_MANDATES.md, CREDITS.md, ORACLE_STACK.md)
 - [ ] You have access to configuration files (config/omega.yaml, config/providers.yaml, config/models.yaml)
 - [ ] You understand the 5 dimensions of analysis
