@@ -1,0 +1,12 @@
+# ⬡ John Carmack .plan File — 1998-03-20
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19980320.txt
+#
+Robert Duffy, the maintainer of Radiant QE4 is now "officially" in charge of further development of the editor codebase. He joins Zoid as a (part time) contractor for us.
+
+A modified version of Radiant will be the level editor for Quake 3. The primary changes will be support for curved surfaces and more general surface shaders. All changes will be publicly released, either after Q3 ships or possibly at the release of Q3Test, depending on how things are going.
+
+The other major effort is to get Radiant working properly on all of the 3D cards that are fielding full OpenGL ICDs. If you want to do level development, you should probably get an 8mb video card. Permedia II cards have been the mainstay for developers that can't afford intergraph systems, but 8mb rendition v2200 (thriller 3D) cards are probably a better bet as soon as their ICD gets all the bugs worked out.

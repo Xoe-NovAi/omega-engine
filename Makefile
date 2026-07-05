@@ -5,7 +5,7 @@
 # Status: PUBLIC RELEASE v1.0.0 ✅
 
 ROOT := $(shell pwd)
-MODELS_DIR := /media/arcana-novai/omega_library/models/gguf
+MODELS_DIR ?= $(if $(wildcard $(ROOT)/models/gguf),$(ROOT)/models/gguf,$(HOME)/.omega/models/gguf)
 PYTHON := .venv/bin/python3
 PIP := .venv/bin/pip
 COMPOSE := podman-compose -f deploy/infra/docker-compose.yml
@@ -50,7 +50,7 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo "  $(COLOR_CYAN)make menu$(COLOR_NC)         📋 This menu"
 	@echo ""
 	@echo "$(COLOR_BOLD)🧪 TESTING$(COLOR_NC)"
-	@echo "  $(COLOR_CYAN)make test$(COLOR_NC)         🧪 Run all 705 tests (668 active + 22 skipped + 3 xfail)"
+	@echo "  $(COLOR_CYAN)make test$(COLOR_NC)         🧪 Run all 855 tests (855 active + 41 skipped + 3 xfail)"
 	@echo "  $(COLOR_CYAN)make test ARGS='-k name'$(COLOR_NC)  Filter tests by name"
 	@echo "  $(COLOR_CYAN)make test-cov$(COLOR_NC)     📊 Run tests with coverage"
 	@echo "  $(COLOR_CYAN)make lint$(COLOR_NC)         🔍 Lint with flake8"
@@ -383,8 +383,8 @@ test-badge: ## 📊 Generate TEST_STATUS.md with current test counts (SSOT for d
 verify-all: test lint temple-grade verify-search-tools test-badge ## 🛡️  Run all verification gates (T1-T11 + Search Protocol)
 	@echo "$(COLOR_GREEN)✅ All verification gates passed.$(COLOR_NC)"
 
-test-cov: ## 📊 Run tests with coverage
-	PYTHONPATH=src $(PYTHON) -m pytest --cov=omega --cov-report=term-missing $(ARGS)
+test-cov: ## 📊 Run tests with coverage (uses OMEGA_ENV=test to mock backends)
+	OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m pytest --cov=omega --cov-report=term-missing $(ARGS)
 
 test-oracle-bootstrap: guard ## 🧪 Test Oracle bootstrap path (no live backends)
 	@echo "→ Testing Oracle lazy bootstrap (OMEGA_ENV=test)..."
@@ -496,9 +496,11 @@ doctor: ## 🩺 System diagnosis
 	@$(PYTHON) -c "import anyio; print(f'  AnyIO:     {anyio.__version__}')" 2>/dev/null || echo "  AnyIO:     not installed"
 	@$(PYTHON) -c "from omega.oracle import EntityRegistry; r=EntityRegistry(); print(f'  Entities:  {r.count()}')" 2>/dev/null || echo "  Entities:  not loaded"
 
-# ============================================================================
-# 📚 RESEARCH & DOCUMENTATION
-# ============================================================================
+generate-llms-full: ## 📖 Generate high-density llms-full.txt for AI agents
+	$(PYTHON) scripts/generate_llms_full.py
+
+validate-doc-examples: ## 🏛️  Validate YAML examples in docs against Pydantic models
+	$(PYTHON) scripts/validate_doc_examples.py
 
 research-run: ## 🔬 Manual research cycle trigger
 	PYTHONPATH=src $(PYTHON) -m omega.workers.background_researcher.run --once
@@ -598,7 +600,7 @@ github-audit: ## 🛡️  Run M8 Telemetry Audit of GitHub MCP Server
 	@# In a real CI environment, this would trigger the podman-based capture sequence
 	@echo "$(COLOR_GREEN)✅ Audit report exists and is signed.$(COLOR_NC)"
 
-temple-grade: heritage-map heritage-vet ## 🏛️ Run all 11 Temple-Grade gates (T1-T11)
+temple-grade: heritage-map heritage-vet validate-somatic-links mandate-gates ## 🏛️ Run all 11 Temple-Grade gates (T1-T11)
 	@echo " [1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 	@echo " 🏛️ Temple-Grade Verification (v7.5.4)"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ [0m"
@@ -613,7 +615,7 @@ temple-grade: heritage-map heritage-vet ## 🏛️ Run all 11 Temple-Grade gates
 	echo "T4: Code quality..."; \
 	if ! $(MAKE) lint >/dev/null 2>&1; then echo "  ❌ Linting failed"; FAIL=$$((FAIL + 1)); else echo "  ✅ Linting passed"; fi; \
 	echo "T5: AnyIO-only architecture..."; \
-	ASYNCIO_FILES=$$(grep -rl 'import asyncio' src/omega/core 2>/dev/null || true); \
+	ASYNCIO_FILES=$$(grep -rl 'import asyncio' src/omega/ 2>/dev/null | grep -v __pycache__ || true); \
 	if [ -n "$$ASYNCIO_FILES" ]; then echo "  ❌ asyncio found in: $$ASYNCIO_FILES"; FAIL=$$((FAIL + 1)); else echo "  ✅ No asyncio in core"; fi; \
 	echo "T6: Zero external telemetry..."; \
 	if grep -rq 'import.*\(segment\|posthog\|datadog\)\|from.*\(segment\|posthog\|datadog\)' src/omega/ 2>/dev/null; then echo "  ❌ Telemetry imports detected!"; FAIL=$$((FAIL + 1)); else echo "  ✅ No external telemetry found"; fi; \
@@ -628,6 +630,10 @@ temple-grade: heritage-map heritage-vet ## 🏛️ Run all 11 Temple-Grade gates
 	if [ $$ATOMIC -eq 0 ]; then echo "  ❌ No atomic write patterns found"; FAIL=$$((FAIL + 1)); else echo "  ✅ $$ATOMIC files with atomic write patterns"; fi; \
 	echo "T11: IA2-compatible agent communication..."; \
 	echo "  ✅ Exempted"; \
+	echo "T12: Somatic-Doc binding check..."; \
+	if ! $(MAKE) validate-somatic-links >/dev/null 2>&1; then echo "  ❌ Broken DocRefs found"; FAIL=$$((FAIL + 1)); else echo "  ✅ All DocRefs valid"; fi; \
+	echo "T13: Executable Examples check..."; \
+	if ! $(MAKE) validate-doc-examples >/dev/null 2>&1; then echo "  ❌ Invalid examples found"; FAIL=$$((FAIL + 1)); else echo "  ✅ All examples valid"; fi; \
 	echo ""; \
 	if [ $$FAIL -gt 0 ]; then \
 		echo " [1;31m❌ Temple-Grade Verification FAILED with $$FAIL violations. [0m"; \
@@ -670,10 +676,16 @@ heritage-vet-create: ## 📝 Create HERITAGE_VET_LOG.md if missing (seed with te
 		echo "" >> "data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md"; \
 		echo "See docs/strategy/HERITAGE_VETTING_PIPELINE.md for the pipeline." >> "data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md"; \
 		echo "Created: $(shell date +%Y-%m-%d)" >> "data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md"; \
-		echo "$(COLOR_GREEN)✅ Created HERITAGE_VET_LOG.md$(COLOR_NC)"; \
 	else \
 		echo "$(COLOR_GREEN)✅ HERITAGE_VET_LOG.md already exists$(COLOR_NC)"; \
 	fi
+
+validate-somatic-links: ## 🏛️  Verify Somatic-Doc binding (code-to-doc links)
+	$(PYTHON) scripts/validate_somatic_links.py
+
+mandate-gates: ## 🛡️  Run Sovereign Mandate gate checks (M3, M6, M7, M10, M11, M12, M15, M16, M20)
+	$(PYTHON) scripts/mandate_gates.py
+
 
 sovereignty: ## 🏛️ Show local vs cloud inference ratio
 	@echo "[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m"

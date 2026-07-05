@@ -1,5 +1,8 @@
-# 🔱 Omega Engine — Oracle Restoration Context
-**AP Token**: `AP-ORACLE-RESTORE-v2.3.0`
+# 🔱 Omega Engine — Architecture Guide
+# ⚠️ THIS IS THE ARCHITECTURAL REFERENCE — NOT THE SYSTEM STATE SSOT.
+# For the current engine state, metrics, and latest updates, see `OMEGA_ENGINE.md`.
+#
+# **AP Token**: `AP-ORACLE-RESTORE-v2.3.0`
 ⬡ OMEGA ⬡ SOPHIA ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_local_first_config ⬡ ORACLE-RESTORE
 **Status**: ACTIVE
 **Last Updated**: 2026-07-01 (MV-IW Phase 0 Complete — 615 tests (590 pass, 22 skip, 3 xfail), 11-agent fleet, 22 Sovereign Mandates (M1-M22), Phase 1 In-Progress — D178 Trim Ratified)
@@ -45,6 +48,7 @@ Key components:
 - **CpuOptimizer** (`src/omega/oracle/cpu_optimizer.py`): Zen 2 compilation flags, KV cache sizing, speculative decode tuning, thread pool recommendations
 - **OfflineMockBackend** (`src/omega/oracle/backends/mock.py`): Deterministic responses when `OMEGA_ENV=test`
 - **ContextBuilder** (`src/omega/oracle/context_builder.py`): Memory injection pipeline for LLM system prompts
+- **SessionLifecycleManager** (`src/omega/oracle/session_lifecycle.py`): Bidirectional session lifecycle (ACTIVE→ARCHIVED→EXTERNAL→DELETED) with recall-from-external capability
 - **Omega Hub** (`mcp_servers/omega_hub/`): Modularized cross-CLI awareness server — 5 modules (state, background, gateway, middleware, tools). All agents post/read shared context via Hivemind protocol.
 - **Hivemind Protocol**: 6 MCP tools (post_context, get_awareness, heartbeat, get_live_feed, get_workspace_lock, acknowledge) for cross-agent coordination, workspace locks, and live feeds. See `docs/strategy/HIVEMIND_PROTOCOL.md`.
 - **Verity** (`verity.md`): Sprint C unified agent merging Quality (compliance audit) + Scribe (L1→L2→L3 gnosis distillation). Reports to Kali.
@@ -133,7 +137,7 @@ All containers run rootless (user 1000) using the Sovereign Permission Protocol 
 
 All tests in `tests/`. Run with `make test` or `OMEGA_ENV=test PYTHONPATH=src python3 -m pytest tests/`.
 
-**Current state (2026-07-01)**: 615 collected — **590 passing, 22 skipped, 3 xfailed** (MV-IW Phase 0 Complete — Phase 1 In-Progress: OMEGA_ENGINE.md trimmed 966→820 lines (D178), SearXNG env vars, pre-commit hook auto-install)
+**Current state (2026-07-05)**: 855 collected — **855 passing, 41 skipped, 3 xfailed** (FTS5 Library Search + WARP Deployment + Team Sprint Complete)
 
 | Module | Tests | Status |
 |--------|-------|--------|

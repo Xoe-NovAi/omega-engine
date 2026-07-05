@@ -63,7 +63,7 @@ services:
   # Config: AVX2 on, AVX512 off (Zen 2), on-disk vectors, mmap
   # ─────────────────────────────────────────────────────────────
   qdrant:
-    image: qdrant/qdrant:v1.13.1
+    image: qdrant/qdrant:v1.18.0
     container_name: omega-qdrant
     restart: unless-stopped
     init: true

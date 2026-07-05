@@ -1,0 +1,64 @@
+{
+  "source": "lex_fridman_309.md",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "Implemented early 3D navigation in games where characters moved in a 3D space, causing startle reactions in users unfamiliar with the perspective.",
+      "First program written was '10 print John Carmack' on a TRS80 computer.",
+      "Used 'go to' statements in early BASIC programming due to a lack of structured loops (for, while), though he avoids them in modern code except in low-level infrastructure.",
+      "Developed a scrolling hack on Apple II by leveraging the hardware's text-screen scrolling capability to scroll low-resolution graphics.",
+      "Used C++ (C-flavored) for serious programming and Python for AI/ML work, noting Python's inefficiency in loops compared to GPU tensor operations.",
+      "Advocated for the simplicity of C and Go, noting that simple languages are easier for engineers to jump into and maintain over long periods.",
+      "Views garbage collection as a net positive for most software to avoid memory safety vulnerabilities common in C/C++.",
+      "Implemented 'adaptive tile refresh' for early PC scrolling games, redrawing only changed tiles to increase frame rates.",
+      "Discovered that graphics memory on certain VGA cards wrapped around, allowing for smooth scrolling by drawing only one new line of tiles.",
+      "Developed 'compiled scalars' for Wolfenstein 3D, creating optimized assembly routines for specific image heights to accelerate scaling.",
+      "Used ray casting for Wolfenstein 3D, casting rays from the origin to find wall intersections in a tiled world.",
+      "Implemented Binary Space Partitioning (BSP) trees in Doom to provide a fixed ordering of surfaces for efficient rendering.",
+      "Developed Quake as a true 3D engine with 6 degrees of freedom, surface caching, and a client-server networking model over TCP/IP.",
+      "Created QuakeC, a pseudo-object-oriented language for modding the game's logic.",
+      "Advocated for OpenGL over Direct3D to maintain an open standard that eventually benefited mobile graphics (OpenGL ES).",
+      "Utilized static analysis tools to scrub large codebases, finding a high regularity of errors like incorrect printf format strings and missing null checks.",
+      "Prefers using asserts in private code (10-20% of the code) to catch logical errors and world-view shifts."
+    ],
+    "personality_patterns": [
+      "Highly consistent work ethic, typically working 60 hours a week (10 hours a day, 6 days a week).",
+      "Avoids all-nighters, noting that cognitive productivity drops significantly after 12 hours.",
+      "Driven by 'user value' as the primary metric for success, rather than technical elegance or 'CodeGolf' puzzles.",
+      "Possesses an 'obsessive' personality trait, finding happiness in pushing through difficult technical problems.",
+      "Unsentimental about his early work, believing he could do a better job on every project he's ever completed.",
+      "Prefers a 'full-stack' understanding, from hardware registers up to high-level design.",
+      "Maintains a ritualistic approach to work, including consuming 8-9 Diet Cokes a day.",
+      "Values directness and efficiency, often pushing for 'speed of light' solutions.",
+      "Avoids 'fictional users' in design, insisting on analyzing data from real users."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "User Value Primacy",
+        "description": "All engineering efforts should flow from the value provided to the user; technical pride in architecture is secondary to the net value created for the person using the product."
+      }
+    ],
+    "heritage_patterns": [
+      "The 'Hacker Ethic': Sharing information and source code to foster community growth and collective improvement.",
+      "Rapid Iteration/Pressure Cooker Development: Using tight deadlines and resource constraints to force innovative technical hacks.",
+      "The 'Smoke and Mirrors' Approach: Implementing targeted illusions that provide the perceived value of a complex system without the full overhead of a general-purpose solution.",
+      "Full-Stack Optimization: Understanding the entire system from hardware to UI to find non-obvious leverage points for performance."
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "What is John Carmack's view on the use of 'go to' statements in programming?",
+        "chosen": "He believes they aren't poisonous and can be the right choice when language features like nested breaks are missing, although they are rare in his modern code.",
+        "rejected": "He believes 'go to' statements are bad programming and should never be used in any professional codebase."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "lex_fridman_309.md",
+    "model": "gemma-4-31b-it",
+    "latency_s": 24.75989866256714,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T18:41:24.984647+00:00",
+    "trace_id": "ingest_de8445a3abbb"
+  },
+  "trace_id": "ingest_de8445a3abbb"
+}

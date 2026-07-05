@@ -89,6 +89,16 @@ All external search dependencies (Tavily, Jina, Brave, Serper) have been purged 
 - **Escalate sequentially**. Only move to a higher tier when all lower tiers are exhausted or inappropriate.
 - **Never skip tiers**. Tier 2 (SearXNG) is NOT a replacement for Tier 1 (websearch) for simple queries.
 - **Log every failure**. If a tool returns an error, document it and move to next tier.
+- **The Sovereign Verification Mandate**: Search snippets (T1/T2) are indicators, NOT evidence. For any critical finding, a "Sovereign Verification Step" is mandatory: you MUST extract the full page using `firecrawl_scrape` or `webfetch`. Relying on truncated snippets is a violation of the Temple-Grade standard.
+- **Truncation Awareness**: Be alert for truncated results. If a scraped page seems incomplete or ends abruptly, try an alternate tool (e.g., switch from `firecrawl_scrape` to `webfetch`).
+- **The Sovereign Fallback Hierarchy**: If a result is flagged as truncated via a Truncation Audit, escalate as follows:
+    `webfetch (T1)` $\rightarrow$ `firecrawl_scrape (T3)` $\rightarrow$ `firecrawl_actions (T3+ / Interactive)` $\rightarrow$ `Sovereign Playwright (Local)`
+
+```
+User Query
+
+```
+User Query
 
 ```
 User Query
@@ -234,6 +244,18 @@ This docket defines the parallel execution plan for the Researcher-Roc partnersh
 ### 5.2 The "No Lazy Response" Mandate
 
 Per Temple-Grade standard: **agents MUST perform at least one active tool call** for any query requiring factual, technical, or recent information. Relying solely on internal parametric weights for research queries is a violation.
+
+**Sovereign Verification Requirement**:
+1.  **No Snippet-Only Research**: Using search result descriptions as the sole source for a finding is forbidden.
+2.  **Full-Page Extraction**: Every critical finding must be verified by reading the full source page.
+3.  **Verification Evidence**: Citations must include the full URL and a confirmation that the full page was analyzed (e.g., "Verified via full-page scrape of [URL]").
+4.  **Truncation Check**: If the extracted content appears truncated, the agent must attempt a second extraction method (e.g., `webfetch` as fallback for `firecrawl_scrape`) before declaring the source unavailable.
+
+**Truncation Audit Criteria**:
+A result is flagged as `TRUNCATED` if:
+-   It contains sentinel strings like `"Loading..."`, `"Click to expand"`, or `"Read more"`.
+-   The markdown ends abruptly (mid-sentence or mid-section) without a proper footer.
+-   The content length is an anomaly compared to the expected page size.
 
 If all tools fail:
 1. Try `websearch` (Tier 1) — it almost never fails

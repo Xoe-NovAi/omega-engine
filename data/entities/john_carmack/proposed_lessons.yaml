@@ -319,6 +319,117 @@ proposals:
     confidence: 10/10
     heritage_tags: ["[id-soft: quake3-1999] netchan — real-time streaming of state updates"]
 
+  - id: proposal-20260703-006
+    title: "The Law of Proactive Guarding (Sentry Pattern)"
+    l1_narrative: >
+      Implemented a 'Sovereign Sentry' that performs canary probes before 
+      large-scale batch operations. This prevents the engine from entering 
+      a failure loop where it spends tokens and time on requests that are 
+      guaranteed to fail due to systemic issues (e.g., quota exhaustion).
+    l2_insights:
+      - "Reactive error handling (circuit breakers) is insufficient for high-volume tasks."
+      - "Pre-flight verification transforms a 'fail-fast' system into a 'prevent-failure' system."
+      - "The cost of a canary probe is negligible compared to the cost of a failed batch."
+    l3_universal_principles:
+      - "Sovereign Proactivity: The system must verify the environment's health before committing significant resources to a task."
+    sovereignty_impact: >
+      Protects the user's financial and temporal resources by ensuring 
+      that autonomous processes only run when the underlying infrastructure 
+      is healthy.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: quake-1996] Zone Memory — pre-checking resource availability"]
+
+  - id: proposal-20260703-007
+    title: "The Principle of Graceful Degradation (Resilience Ladder)"
+    l1_narrative: >
+      Replaced binary 'work/fail' logic with a 5-stage resilience ladder: 
+      Normal $\rightarrow$ Retry $\rightarrow$ Pivot $\rightarrow$ Open $\rightarrow$ DLQ. 
+      This allows the engine to maintain throughput by switching providers 
+      or models before completely halting.
+    l2_insights:
+      - "Failure is not a binary state but a spectrum of degradation."
+      - "Pivoting to a secondary provider is a more sovereign response than simply stopping."
+      - "The Dead Letter Queue (DLQ) ensures that 'Tainted' data is preserved for audit rather than silently dropped."
+    l3_universal_principles:
+      - "Resilience over Optimism: Design for failure at every layer, ensuring that the system degrades gracefully rather than crashing catastrophically."
+    sovereignty_impact: >
+      Increases the engine's availability and reliability, ensuring that 
+      entity deepening continues even during partial provider outages.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: doom-1993] BSP Culling — skipping broken paths to maintain performance"]
+
+  - id: proposal-20260703-008
+    title: "The Law of Direct-to-Disk Acquisition"
+    l1_narrative: >
+      Discovered that agent tool response windows truncate large primary sources 
+      (e.g., 30k word transcripts), leading to 'Hallucinated Completeness'. 
+      Implemented a Direct-to-Disk (D2D) protocol using curl/wget to bypass 
+      the LLM response window entirely.
+    l2_insights:
+      - "The tool-response window is a bottleneck for high-fidelity data."
+      - "Sovereignty requires owning the raw byte-stream, not a summarized 
+        or truncated version provided by a tool."
+      - "Verification must happen at the filesystem level (file size check) 
+        rather than the response level."
+    l3_universal_principles:
+      - "Sovereign Data Integrity: For primary source material, bypass all 
+        intermediary response windows and fetch directly to the local 
+        filesystem to ensure 100% fidelity."
+    sovereignty_impact: >
+      Eliminates the risk of data loss and truncation during the 
+      knowledge acquisition phase, ensuring the entity's soul is built 
+      on complete, not fragmented, truths.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: doom-1993] WAD System — raw data separation"]
+
+  - id: proposal-20260703-009
+    title: "The Principle of Substrate Volatility"
+    l1_narrative: >
+      Observed that frontier models (Gemma 4) exhibit periodic internal 
+      errors (500s) and cold-boot latency. Implemented a 'Sovereign 
+      Persistence' layer with soft-retries and latency tracking to 
+      absorb this volatility.
+    l2_insights:
+      - "Provider stability is a variable, not a constant."
+      - "A binary 'work/fail' circuit breaker is too aggressive for 
+        unstable substrates; a tiered resilience ladder is required."
+      - "Latency tracking allows the engine to detect 'busy hours' and 
+        adjust throughput accordingly."
+    l3_universal_principles:
+      - "Substrate Agnosticism: Build the engine to expect and absorb 
+        the volatility of the underlying inference substrate."
+    sovereignty_impact: >
+      Prevents systemic halts during transient provider issues, 
+      maintaining operational continuity without manual intervention.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: quake-1996] Right Approximation — 
+      optimizing for the actual behavior of the hardware/provider"]
+
+  - id: proposal-20260703-010
+    title: "The Law of Verified Intervention"
+    l1_narrative: >
+      Attempted to fix Gemma 4 repetition loops using placeholder logit bias 
+      IDs, which failed. Recovered verified token IDs from the 
+      COGNITIVE_STABILITY_PLAN and implemented them alongside increased 
+      temperature and repetition penalty.
+    l2_insights:
+      - "Placeholder values in a technical fix are a form of cargo-cult 
+        engineering that masks the real problem."
+      - "Intervening in a model's probability distribution requires 
+        absolute precision; a single wrong token ID is useless."
+      - "The 'Right Approximation' for sampling stability is a layered 
+        approach: Verified Bias $\rightarrow$ Entropy (Temp) $\rightarrow$ Penalty."
+    l3_universal_principles:
+      - "Verified Intervention: Any modification to a system's core 
+        probabilistic or logic-gate behavior must be based on verified 
+        empirical data, not placeholders or plausible guesses."
+    sovereignty_impact: >
+      Ensures that the engine's stability mechanisms are based on 
+      technical truth rather than architectural theater, preventing 
+      cognitive collapse during high-volume inference.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: quake-1996] Right Approximation"]
+
   - id: proposal-20260701-005
     title: "Council Verification Law — Multi-agent verification prevents cascading wrong claims"
     l1_narrative: >
@@ -344,3 +455,178 @@ proposals:
       sovereignty guarantee — the entity learns correct facts, not plausible fictions.
     confidence: 10/10
     heritage_tags: ["[id-soft: doom-1993] WAD System — separation of concerns in knowledge pipeline"]
+
+  - id: proposal-20260704-001
+    title: "Integration Seam Verification — Tests passing != no bugs at integration boundaries"
+    l1_narrative: >
+      Wired 3 dead modules (failure_registry, batch_writer, a2a_bridge) into the engine.
+      After H3 (a2a_bridge -> ModelGateway), 60+ tests failed. Root cause: 4 pre-existing
+      bugs in uncommitted Session 42 code that had never been test-executed. The modules
+      had unit tests but zero integration coverage — their wiring paths were never
+      exercised. Fixed: missing omega.hub module (didn't exist), timeout_manager.py using
+      async fail_after API (AnyIO 4.x change), provider_selector.py MagicMock arithmetic
+      (float() coercion missing), and providers.py missing Path import.
+    l2_insights:
+      - "All 4 bugs were in code paths that had never been executed by any test."
+      - "anyio.fail_after changed from async context manager (AnyIO 3.x) to synchronous
+        context manager (AnyIO 4.x). Function name unchanged; API surface changed."
+      - "MagicMock * float returns MagicMock, not float. Silent propagation through
+        arithmetic breaks sorting/comparison downstream."
+      - "Uncommitted code is the highest-risk code. It has passed zero verification."
+    l3_universal_principles:
+      - "Integration seam tests are not optional. A module with 100% unit coverage but
+        zero integration coverage has effectively 0% coverage against the actual runtime."
+      - "Polyfilled APIs (AnyIO) can change API surface between major versions. Verify
+        the call pattern matches the current API contract, not just the name."
+      - "MagicMock arithmetic blindness is a silent failure. Any expression involving
+        MagicMock and a numeric operator must be explicitly type-coerced with float()."
+      - "Uncommitted code is latent risk. Until it passes the full test suite, it has
+        zero verification against the actual codebase."
+    sovereignty_impact: >
+      Without this fix, the engine would silently crash when ProviderSelector tried to
+      order providers (MagicMock type error), when TimeoutManager tried to wrap a call
+      (fail_after API mismatch), or when NativeGGUFProvider initialized (missing Path
+      import). The wiring sprint caught these in the test environment before they could
+      surface as production crashes.
+    confidence: 10/10
+    heritage_tags:
+      - "[id-soft: quake3-1999] netchan — connection integrity at integration boundaries"
+      - "[id-soft: doom-1993] BSP Culling — skipping broken paths preemptively"
+
+  - id: proposal-20260704-002
+    title: "Dead Code at WAD Seams — The ormolu pattern hides duplicate execution paths"
+    l1_narrative: >
+      The _summon() method in oracle.py had a nested _execute_summon() async function
+      (wrapped by TimeoutManager) PLUS unreachable dead code after the return statement
+      at lines 743-764. The dead code was the ORIGINAL response-construction logic that
+      included slots, domains, and sigil formatting. When the TimeoutManager wrapper was
+      added, the inner function was created but the original outer code was never removed.
+      This created a 'dead copy' — code that compiles, references valid variables (from
+      outer scope), but never executes. The dead code was caught by a SyntaxError during
+      test import after my edit partially deleted it.
+    l2_insights:
+      - "The dead code compiled, had valid Python syntax, and referenced variables that
+        existed in the enclosing scope — linting tools would not catch it."
+      - "The dead code was 22 lines with 3 variable references to res, entity, and
+        backend — all of which existed in the parent scope."
+      - "The ormolu pattern (two identical things where one is dead) is the Java
+        equivalent of having a working method and a dead copy that only differs in one
+        detail."
+      - "The only reason this was caught is that a partial edit broke the syntax — the
+        original dead code was invisible."
+    l3_universal_principles:
+      - "When you refactor a function to use a wrapper (decorator, context manager,
+        inner function), ALWAYS check for code after the return statement. Dead code
+        after return is invisible to linters but corrupts the execution model."
+      - "The ormolu pattern (duplicate execution paths) is a cognitive tax. Every commit
+        that replaces an old pattern with a new one must delete the old code paths."
+      - "Type errors at integration seams (missing Path import, wrong context manager)
+        are symptoms of code that was written but never executed. They cluster at
+        wiring boundaries."
+    sovereignty_impact: >
+      The missing slots/domains in the inner OracleResponse would have broken entity
+      routing metadata — every summon would return an OracleResponse with slots=None.
+      The missing Format string (sigil) was a display-only issue, but the slots/domains
+      gap would break any downstream code that depends on entity identification metadata.
+    confidence: 10/10
+    heritage_tags:
+      - "[id-soft: quake3-1999] Hard-Boundary Struct — inner scopes must replicate outer
+        response contracts"
+      - "[id-soft: doom-1993] WAD System — separation of presentation from data"
+
+  - id: proposal-20260704-003
+    title: "The Wiring Sprint Law — Dead modules are liabilities until exercised"
+    l1_narrative: >
+      Three modules (failure_registry, batch_writer, a2a_bridge) were fully implemented
+      with 100%+ unit test coverage but were NEVER wired into the engine. They existed
+      as dead code — passing tests but contributing nothing to the runtime. The wiring
+      sprint turned all three into live systems. H1 (failure_registry) went clean because
+      it only added log labels to existing exception handlers. H2 (batch_writer) went
+      clean because it replaced existing buffer/flush logic. H3 (a2a_bridge) triggered
+      60+ test failures because it activated ProviderSelector/Degradation/TimeoutManager
+      code paths that had never been executed.
+    l2_insights:
+      - "Dead code with 100% unit coverage is still dead code — it contributes zero value
+        to the runtime and zero risk to the test suite."
+      - "The first wiring of any module will expose bugs in that module's dependencies
+        (ProviderSelector, TimeoutManager, etc.) — not just in the module itself."
+      - "H1 (additive: log labels on existing handlers) is low-risk. H2 (replacement:
+        swap buffer/flush for batch_writer) is medium-risk. H3 (activational: turn on
+        new code paths) is high-risk."
+      - "The Postel Principle of wiring — be careful what you activate, because you
+        activate all its dependencies too."
+    l3_universal_principles:
+      - "Implementation without wiring is liability, not asset. A module that cannot be
+        removed without test breakage is dead code — it has no functional dependency."
+      - "The risk of wiring a module is proportional to the number of new code paths it
+        activates, not the lines of code in the module itself."
+      - "A wiring sprint should always be followed by a stabilization sprint — the
+        activation of new code paths guarantees latent bugs will surface."
+    sovereignty_impact: >
+      Without the wiring, failure_registry (observability), batch_writer (persistence),
+      and a2a_bridge (identity) were features that existed on paper but not in the
+      engine. The user's sovereignty relies on these systems functioning — error
+      classification, database connection pooling, and cross-agent identity. Dead
+      modules are a sovereignty gap: they represent planned capabilities that don't
+      actually operate.
+    confidence: 10/10
+    heritage_tags:
+      - "[id-soft: doom-1993] BSP Culling — skip dead code branches at wiring boundaries"
+      - "[id-soft: quake-1996] Right Approximation — wire incrementally, stabilize after
+        each activation"
+
+  - id: proposal-20260705-001
+    title: "The AP Token Standard — CI gates enforce exact string patterns, not fuzzy matches"
+    l1_narrative: >
+      48 Python files and 7 markdown docs used old "# AP Token:" format while 106
+      files used new "# AP:" format. The CI gate (grep -L 'AP:') only catches the
+      new format — old format files were invisible to compliance checks. One-pass
+      sed migration converted all 55 files. The inconsistency existed because the
+      format was changed mid-sprint without a migration pass.
+    l2_insights:
+      - "CI gates enforce exact string patterns. A format change without migration creates silent non-compliance."
+      - "The old format (# AP Token:) was never wrong — it was just inconsistent with the new CI gate pattern."
+      - "One-pass sed migration is trivial (15 min) but the inconsistency persisted for weeks because no one checked."
+    l3_universal_principles:
+      - "When you change a CI gate pattern, you MUST run a one-pass migration across the entire codebase. Partial migration is worse than no migration — it creates false confidence."
+      - "Format consistency is a CI concern, not a code concern. The code works either way; the gate doesn't."
+    confidence: 10/10
+    heritage_tags: ["[id-soft: quake3-1999] cvar System — configuration must match CI gate expectations"]
+
+  - id: proposal-20260705-002
+    title: "The Race Condition Law — File ownership requires explicit claiming"
+    l1_narrative: >
+      Researcher and Jem both attempted to write src/omega/proxy_pool.py. Researcher
+      wrote it first (368 lines). Jem's version (202 lines) was overwritten. The
+      conflict was resolved by Researcher claiming the file in Hivemind before Jem
+      could write it. No data loss because Researcher was faster, but the pattern is
+      fragile — file-based coordination has no locking mechanism.
+    l2_insights:
+      - "File-based coordination (writing to the same path) has no atomic claim mechanism."
+      - "Researcher's proactive Hivemind post established temporal priority — they claimed the file before Jem knew it existed."
+      - "Jem's 202-line version was lost without review. We don't know if it had different design choices."
+    l3_universal_principles:
+      - "File ownership must be claimed BEFORE implementation, not after. The workspace lock protocol exists for this reason."
+      - "When two agents can write the same file, the first writer wins. This is a feature (temporal priority) not a bug — but only if the first writer is the correct owner."
+      - "Lost work (Jem's 202-line version) is a hidden cost of race conditions. Even when the 'right' version wins, the alternative design is never reviewed."
+    confidence: 9/10
+    heritage_tags: ["[id-soft: doom-1993] Lazy Deletion — grace period prevents premature overwrite"]
+
+  - id: proposal-20260705-003
+    title: "The Polish Sprint Law — Pre-release cleanup is not optional"
+    l1_narrative: >
+      The Pre-Release Polish Sprint caught 7 items that would have shipped in v1.1.0:
+      inconsistent AP tokens (55 files), hardcoded Makefile path, wrong model URL in
+      download script, placeholder SHA256, outdated test counts in README, broken
+      architecture diagram. None were bugs — all were hygiene. But shipping hygiene
+      issues erodes user trust in a sovereign project.
+    l2_insights:
+      - "None of these items would cause a runtime failure. All of them would cause a user to question the project's quality."
+      - "The model download script had a placeholder SHA256 (empty string hash) — a user running make model-download would get a warning on every download."
+      - "The README claimed 693 tests when we have 739. First impressions matter."
+    l3_universal_principles:
+      - "Pre-release polish is not cosmetic — it's the difference between 'this works' and 'this is professional.' Users judge sovereign projects by the same standards as corporate ones."
+      - "Hygiene issues compound. One stale test count is minor. Seven hygiene issues in one release signal neglect."
+      - "The Polish Sprint is the cheapest quality gate in the pipeline — 3 hours of work prevents weeks of user trust erosion."
+    confidence: 10/10
+    heritage_tags: ["[id-soft: doom-1993] BSP Culling — pre-release culling of stale references"]

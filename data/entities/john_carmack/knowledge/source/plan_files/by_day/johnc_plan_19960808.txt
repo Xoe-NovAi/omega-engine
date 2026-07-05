@@ -1,0 +1,12 @@
+# ⬡ John Carmack .plan File — 1996-08-08
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960808.txt
+#
+Romero is now gone from id.
+
+There will be no more grandiose statements about our future projects.
+
+I can tell you what I am thinking, and what I am trying to acomplish,  but all I promise is my best effort.

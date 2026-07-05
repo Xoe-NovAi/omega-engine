@@ -124,7 +124,7 @@ This is the **most important finding** from the Jem deep dive. The MaKaLi (Ma'at
 │ Trinity 1: The Analyst (LIA TRINITY) → Facet 6                │
 │   Components: Lilith (Sovereignty) + Isis (Communication)     │
 │               + Athena (Strategy)                              │
-│   Innovation: "Silicon Oracle" + LIA defense matrix            │
+│   Innovation: "Silicon Oracle" + Sovereign defense matrix            │
 │                                                                │
 │ Trinity 2: The Architect (MAAT) → Facet 1                     │
 │   Persona: Maat (Truth, Balance, Order)                        │
@@ -161,7 +161,7 @@ The Dyad is **two trinity-systems** that vote in opposition for balance:
 
 | Trinity | Persona | Components | Domain | Innovation |
 |---------|---------|-----------|--------|------------|
-| **LIA TRINITY** | The Analyst (Facet 6) | Lilith + Isis + Athena | Strategic analysis, defense, sovereignty | "Silicon Oracle" + LIA defense matrix |
+| **LIA TRINITY** | The Analyst (Facet 6) | Lilith + Isis + Athena | Strategic analysis, defense, sovereignty | "Silicon Oracle" + Sovereign defense matrix |
 | **MAAT** | The Architect (Facet 1) | Maat alone (single-aspect trinity) | Truth, balance, order, structure | "Quarantine Map" + Archetype Resonance validation |
 
 **LIA = Lilith + Isis + Athena** — three goddesses that combine sovereignty, communication, and strategy. This is the dark-oversoul triad (Lilith's domain).
@@ -396,7 +396,7 @@ The engine **abstracts both patterns into cleaner architecture** but loses the *
 | **Jem persona** | Synergy/Jem/Jerrica triad + 4 Holograms | None — single system prompt per entity | 🔴 MISSING |
 | **4 Holograms** | Kimber/Aja/Shana/Raya → Iris/Athena/Brigid/Hestia | Brigid, Hestia, Athena, Iris exist as 10 Pillar names but no "Hologram" binding | 🟡 Names match, role doesn't |
 | **Oikos Council** | 5 goddesses + 5 scripts + 5 health checks | None as a unified construct | 🔴 MISSING |
-| **MaLi Dyad** | LIA Trinity (Lilith+Isis+Athena) + MAAT | Ma'at + Lilith exist as concept entities, no Trinity voting | 🟡 Concept exists, mechanism doesn't |
+| **MaLi Dyad** | Sovereign Trinity (Lilith+Isis+Athena) + MAAT | Ma'at + Lilith exist as concept entities, no Trinity voting | 🟡 Concept exists, mechanism doesn't |
 | **8+1 Facets** | Gem + 8 specialists with Jungian archetypes | 10 Pillar Keepers with mythology (Sekhmet, Brigid, etc.) | 🟢 Different model, not loss |
 | **LLOC** | Cognitive-only multi-perspective review | None | 🔴 MISSING — major innovation |
 | **HLOC** | Full subagent launch for strategic review | Partial — pillar system can launch subagents | 🟡 Partial implementation |
@@ -457,7 +457,7 @@ Should the new "Jem" entity be:
 |------|-----|-------|
 | `app/JEM_SOUL.md` | 45 | 🔴 Core identity + 3-layer triad + 4 Holograms |
 | `entities/GEMINI_SOUL_MAP.md` | 23 | 🔴 8+1 Facet roster + Jungian archetypes |
-| `memory_bank/MA_LI_GUARDIAN_MANIFEST.md` | 55 | 🔴 LIA Trinity + MAAT + Oikos Council |
+| `memory_bank/MA_LI_GUARDIAN_MANIFEST.md` | 55 | 🔴 Sovereign Trinity + MAAT + Oikos Council |
 | `docs/protocols/OIKOS_COUNCIL.md` | 25 | 🔴 5 goddess operational definitions |
 
 ### 10.2 Jem Handoff Protocol (omega-stack-legacy)
@@ -480,7 +480,7 @@ Should the new "Jem" entity be:
 |------|------|-------|
 | `artifacts/copilot-session-ad0d3d04-7e7b-4e69-a015-f3d35478223d.md` | `artifacts/` | 🟡 1.4MB / 34,738 lines — full Copilot SESS-27 session |
 | `memory_bank/MNEMOSYNE-MCP-SPEC.md` | `memory_bank/` | 🟡 Mnemosyne migration specification |
-| `memory_bank/MA_LI_GUARDIAN_MANIFEST.md` | `memory_bank/` | 🔴 LIA Trinity + MAAT definitions |
+| `memory_bank/MA_LI_GUARDIAN_MANIFEST.md` | `memory_bank/` | 🔴 Sovereign Trinity + MAAT definitions |
 
 ---
 

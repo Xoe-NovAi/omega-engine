@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 """Search Indexing — Full-text and vector search indexing for the library.
 
 AP: AP-OMEGA-INDEXER-v1.0.0

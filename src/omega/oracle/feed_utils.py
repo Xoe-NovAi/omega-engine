@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Cross-Pollination Feed Utilities
 # ⬡ OMEGA ⬡ P9:LINK ⬡ deepseek-v4-flash ⬡ opencode ⬡ FEED-UTILS
 # AP: FEED-UTILS-v1.0.0

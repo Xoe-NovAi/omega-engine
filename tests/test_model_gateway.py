@@ -421,3 +421,41 @@ async def test_generate_result_fallback_has_model_used(monkeypatch):
     assert result.model_used == "fallback-model-test"
     assert result.provider_name == "fallback"
 
+@pytest.mark.anyio
+async def test_sovereign_sampling_overrides(monkeypatch):
+    """Verify that Gemma 4 31B triggers sampling overrides (logit_bias, repetition_penalty)."""
+    from unittest.mock import AsyncMock, MagicMock
+    
+    gateway = ModelGateway()
+    monkeypatch.setenv("OMEGA_ENV", "production")
+    
+    mock_provider = MagicMock()
+    mock_provider.name = "test_provider"
+    mock_provider.is_available = AsyncMock(return_value=True)
+    mock_provider.generate = AsyncMock(return_value="Success response")
+    
+    gateway.providers = [mock_provider]
+    
+    # Use the target model name
+    model_name = "gemma-4-31b-it"
+    
+    result = await gateway.generate(
+        model_name=model_name,
+        system_prompt="sys",
+        user_query="query",
+        temperature=0.1, # Should be overridden to 0.8
+        max_tokens=100,
+    )
+    
+    # Verify that the provider's generate was called with the overrides
+    args, kwargs = mock_provider.generate.call_args
+    
+    # Check temperature override — code clamps to max(temperature, 0.85)
+    assert args[3] == 0.85
+    # Check repetition penalty override — code clamps to max(penalty, 1.2)
+    assert kwargs["repetition_penalty"] == 1.2
+    # Check logit_bias is present as keyword argument
+    assert "logit_bias" in kwargs
+    assert isinstance(kwargs["logit_bias"], dict)
+    assert len(kwargs["logit_bias"]) > 0
+

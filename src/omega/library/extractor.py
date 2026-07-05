@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 """Content Extraction — Extract content from URLs, PDFs, RSS feeds, and files.
 
 AP: AP-OMEGA-EXTRACTOR-v1.0.0
@@ -13,6 +13,7 @@ import json
 import logging
 import os
 import re
+import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -123,7 +124,7 @@ class ContentExtractor:
 
     async def _extract_url(self, url: str) -> ExtractedContent:
         """Extract content from a web URL.
-
+        
         Security gates (Phase 1 H2-N):
           1. SSRFGuard — blocks internal/private IP ranges [id-soft: doom-1993]
           2. DownloadSizeGuard — checks Content-Length before streaming [id-soft: quake-1996]
@@ -148,6 +149,14 @@ class ContentExtractor:
                 error="Content-Length exceeds maximum download size (50MB)",
             )
 
+        # ── Surgical Path: arXiv PDF Fallback ──
+        if "arxiv.org/abs/" in url:
+            pdf_url = url.replace("/abs/", "/pdf/")
+            # We attempt PDF extraction first for arXiv to get the full paper
+            pdf_content = await self._extract_pdf_from_url(pdf_url)
+            if pdf_content and pdf_content.body:
+                return pdf_content
+
         if not self._httpx:
             import httpx
             self._httpx = httpx
@@ -161,6 +170,11 @@ class ContentExtractor:
 
         title = self._parse_title(html) or url
         body = self._parse_body(html)
+        
+        # ── Surgical Path: Project Gutenberg Stripping ──
+        if "gutenberg.org" in url:
+            body = self._apply_gutenberg_stripping(body)
+            
         headings = self._parse_headings(html)
         links = self._parse_links(html, url)
 
@@ -180,6 +194,47 @@ class ContentExtractor:
         )
         content.summary = self._generate_summary(body)
         return content
+
+    async def _extract_pdf_from_url(self, url: str) -> Optional[ExtractedContent]:
+        """Fetch and extract text from a remote PDF URL."""
+        try:
+            if not self._httpx:
+                import httpx
+                self._httpx = httpx
+            
+            async with self._httpx.AsyncClient(timeout=60.0, follow_redirects=True) as client:
+                response = await client.get(url)
+                response.raise_for_status()
+                
+                # Save temporarily to use the existing _extract_pdf logic
+                temp_path = Path(f"/tmp/omega_pdf_{uuid.uuid4().hex}.pdf")
+                async with await anyio.open_file(str(temp_path), "wb") as f:
+                    await f.write(response.content)
+                
+                content = await self._extract_pdf(str(temp_path))
+                # Cleanup
+                if temp_path.exists():
+                    temp_path.unlink()
+                return content
+        except Exception as e:
+            logger.warning(f"Remote PDF extraction failed for {url}: {e}")
+            return None
+
+    def _apply_gutenberg_stripping(self, body: str) -> str:
+        """Remove Project Gutenberg boilerplate using boundary markers."""
+        start_marker = "*** START OF THIS PROJECT GUTENBERG EBOOK ***"
+        end_marker = "*** END OF THIS PROJECT GUTENBERG EBOOK ***"
+        
+        start_idx = body.find(start_marker)
+        if start_idx != -1:
+            body = body[start_idx + len(start_marker):]
+            
+        end_idx = body.find(end_marker)
+        if end_idx != -1:
+            body = body[:end_idx]
+            
+        return body.strip()
+
 
     async def _extract_rss(self, url: str) -> ExtractedContent:
         """Extract content from an RSS/Atom feed."""

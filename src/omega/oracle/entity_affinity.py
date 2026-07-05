@@ -1,5 +1,5 @@
 # AP: AP-PR-READINESS-v1.0.0
-# AP Token: AP-ENTITY-AFFINITY-v1.0.0
+# AP: AP-ENTITY-AFFINITY-v1.0.0
 # 🔱 Entity→Model Affinity Resolver — v1.0.0
 # ⬡ OMEGA ⬡ LILITH ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ PORT-SPEC
 #

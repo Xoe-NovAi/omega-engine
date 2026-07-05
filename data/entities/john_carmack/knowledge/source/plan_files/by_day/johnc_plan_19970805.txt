@@ -1,0 +1,19 @@
+# ⬡ John Carmack .plan File — 1997-08-05
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19970805.txt
+#
+At siggraph
+
+* fix qe4 autosave
+* merged qlumpy into qdata, save seperate files
+* changed quaked to use texture directories
+
++ fix leaktest option
++ show texture directory on inspector window
++ show full texture name somewhere when clicked on
++ texture info overrides
+
+remap maps to share common textures?

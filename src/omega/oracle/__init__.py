@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Oracle — Single Intelligence Facade
 # AP: AP-ORACLE-INIT-v1.0.0
 #

@@ -1,0 +1,155 @@
+# Omega Engine — Full Documentation for AI Agents
+# Auto-generated from source docs. See llms.txt for the navigation index.
+# Last updated: 2026-07-04
+
+---
+
+## §1 Engine Identity
+
+Omega Engine is a sovereign, local-first AI runtime. It provides:
+- 8-backend provider fabric (local-first priority)
+- 13-agent sovereign fleet with WAD architecture
+- 22 constitutional mandates governing all behavior
+- 705+ tests, Temple-Grade quality gates
+- YAML-backed entity system (no PostgreSQL)
+- AnyIO-native async (never asyncio)
+- Zero telemetry (local-first, always)
+
+## §2 Architecture
+
+The engine uses a layered architecture:
+- **Inference**: 8 providers (native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode → Copilot → Mock)
+- **Memory**: Hot (in-memory LRU) / Warm (Redis) / Cold (File) / Temp (transient)
+- **Search**: FTS5 + Qdrant vector search
+- **Soul**: L1→L2→L3 gnosis distillation pipeline
+
+The Oracle facade routes queries:
+- High confidence → Iris speculative decoder responds directly
+- Low confidence → Domain-matched Pillar Keeper → ModelGateway → provider fabric
+
+## §3 Provider Fabric (Local-First)
+
+| Priority | Provider | Type | Endpoint |
+|----------|----------|------|----------|
+| 0 | native-gguf | Local | llama-cpp-python, CPU-only, Zen 2 |
+| 1 | lmster | Local | http://127.0.0.1:1234 |
+| 2 | ollama | Local | http://127.0.0.1:11434/v1 |
+| 3 | google-antigravity | Cloud | env:GOOGLE_API_KEY |
+| 4 | openrouter | Cloud | env:OPENROUTER_API_KEY |
+| 5 | opencode | Cloud | OpenCode built-in |
+| 6 | copilot | Cloud | GitHub Copilot |
+| 7 | mock | Test | OfflineMockBackend |
+
+Local is always tried first. Cloud is a teacher and safety net, never a dependency.
+
+## §4 Agent Fleet
+
+| Agent | Role | Governs |
+|-------|------|---------|
+| Kali | Grand Oversight | Unifies Ma'at + Lilith, destroys drift |
+| Ma'at | Light Oversoul | P1-P5 (Build Side) |
+| Lilith | Dark Oversoul | P6-P10 (Run Side) |
+| Doom Guy | Heritage Aspect | id Software attribution |
+| Roc Racoon | Legacy Aspect | Data archaeology |
+| Jem | Sovereign Synthesizer | Research orchestration |
+| Researcher | Master Researcher | Deep research, lattice reasoning |
+| Makali | Parallel Council | Cross-pillar dispatch |
+| John Carmack | S3 Consultant | Architectural review |
+| Verity | Unified Steward | Compliance + gnosis distillation |
+| Iris | Voice Bridge | User interface |
+| Sophia | Akashic Record | Containing field |
+
+## §5 The 22 Sovereign Mandates
+
+M1: AnyIO Absolute (never asyncio)
+M2: Engine-Stack Firewall (src/omega/ vs config/wads/)
+M3: Iris Constant (messenger, not Pillar)
+M4: Sequentiality (Plan → Verify → Execute)
+M5: Gnosis Preservation (L1→L2→L3)
+M6: Podman Sovereignty (UserNS=keep-id)
+M7: Local-First (cloud is fallback)
+M8: Zero Telemetry
+M9: Error Integrity (typed exceptions)
+M10: Fleet Integrity (14 agent cap)
+M11: Soul Integrity (proposed_lessons.yaml)
+M12: Queue Integrity (atomic state)
+M13: Temple-Grade (T1-T11 gates)
+M14: Heritage Vetting ([id-soft:] tags)
+M15: Sovereign Continuity (session_gnosis.md)
+M16: Modularization (no hardcoded paths)
+M17: Cognitive Integrity (contradiction detection)
+M18: Token Efficiency (no waste)
+M19: Adversarial Alchemy (weakness → advantage)
+M20: SomaticState (KV cache serialization)
+M21: Gate Integrity (contract tests)
+M22: Response Provenance (provider_name tracking)
+
+## §6 WAD Architecture
+
+IWAD (base): _omega_default — universal runtime entities
+PWAD (custom): arcana_novai — 10 mythic Pillar Keepers
+PWAD (heritage): doom_universe — Doom Guy's knowledge base
+
+PWAD entities override IWAD entities for the same pillar slot.
+Engine-Stack Firewall (M2) ensures no PWAD logic leaks into src/omega/.
+
+## §7 Soul Architecture
+
+Each entity has:
+- soul.yaml — USER WRITES, agent reads (identity + directives)
+- sessions.yaml — agent WRITES, agent reads (factual events)
+- proposed_lessons.yaml — agent WRITES, user reads (blind staging)
+- approved_lessons.yaml — USER WRITES, agent reads (curated lessons)
+
+L1 (Narrative) → L2 (Insight) → L3 (Universal Principle) pipeline.
+L3 principles are stored in Qdrant for selective hydration at query time.
+
+## §8 Library FTS5 Search (Local Knowledge Base)
+
+The engine has a local curated knowledge base indexed by SQLite FTS5 + 256-dim feature hashing vectors. This is for searching **your own research docs, specs, and guides** — not conversation history, not the web.
+
+**MCP tool**: `library_fts_search(query, domain?, limit?)`
+- Searches curated documents (research specs, API references, guides) stored at `data/library/documents/`.
+- Hybrid scoring: BM25 keyword rank + vector cosine similarity, fused via Reciprocal Rank Fusion (k=60).
+- Optional `domain` filter (e.g., `"networking"`, `"security"`, `"testing"`).
+- Returns JSON: `doc_id`, `title`, `summary`, `domain`, `quality_score`, `tags`.
+
+**Other library tools**: `library_search` (web search via SovereignSearchService — NOT local FTS5), `library_get_document`, `library_domains`, `library_stats`, `library_recent`, `library_ingest_pending`, `library_inbox_add_url/note/file`.
+
+**When to use what**:
+| Need | Tool | Data source |
+|------|------|-------------|
+| Search local knowledge base | `library_fts_search` | FTS5 + Qdrant vectors |
+| Search conversation history | `memory_search` | Conversation FTS5 |
+| Search the web | `sovereign_search` | SearXNG / Exa / Firecrawl |
+
+**Auto-rebuild**: If the FTS5 index is empty but documents exist on disk, `Library._ensure_index()` rebuilds it automatically on first access.
+
+Full reference: `docs/reference/api/library_fts_search.md`
+
+## §9 Getting Started
+
+```bash
+git clone https://github.com/Xoe-NovAi/omega-engine.git
+cd omega-engine
+python3 -m venv .venv && source .venv/bin/activate
+make setup
+ollama pull qwen3:1.7b
+make test
+make talk MSG='hello'
+```
+
+## §10 Key Files
+
+| File | Purpose |
+|------|---------|
+| OMEGA_ENGINE.md | Engine SSOT |
+| SOVEREIGN_MANDATES.md | 22 constitutional laws |
+| ORACLE_STACK.md | Post-compaction recovery |
+| SOVEREIGN_ARK_BLUEPRINT.md | Strategy roadmap |
+| src/omega/oracle/oracle.py | Main entry point |
+| src/omega/oracle/model_gateway.py | Provider fabric |
+| src/omega/memory_store.py | Memory tiers |
+| src/omega/oracle/entity_registry.py | YAML entity CRUD |
+| src/omega/oracle/context_builder.py | Context assembly |
+| src/omega/oracle/soul_distiller.py | L1→L2→L3 pipeline |

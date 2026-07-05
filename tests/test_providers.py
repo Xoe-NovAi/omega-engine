@@ -309,8 +309,9 @@ class TestNativeGGUFProvider:
     @pytest.mark.anyio
     async def test_ensure_loaded_raises_inferenceloaderror(self, provider):
         """_ensure_loaded should raise InferenceLoadError when Llama fails to load."""
+        llama_cpp = pytest.importorskip("llama_cpp", reason="llama-cpp-python not installed (optional native backend)")
         from omega.errors import InferenceLoadError
-        with patch("llama_cpp.Llama", side_effect=RuntimeError("Load failed")):
+        with patch.object(llama_cpp, "Llama", side_effect=RuntimeError("Load failed")):
             with pytest.raises(InferenceLoadError):
                 await provider._ensure_loaded()
 

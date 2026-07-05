@@ -1,0 +1,71 @@
+{
+  "source": "johnc_plan_19990724.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "The virtual machine interpreter is functional, allowing cgame to switch between binary .dll and interpreted .qvm files via cvar.",
+      "A modified version of the lcc compiler generates assembly files, which are then processed by 'q3asm' into .qvm files.",
+      "The .qvm format is designed for portability across platforms (mac, linux) and security, preventing programs from modifying memory outside their private address space.",
+      "The VM provides security for client-side programming in Q3, limiting system calls to strictly controlled areas.",
+      "VM programs can be included in pak files and are handled through the search path.",
+      "The interpreter currently causes a 20% slowdown in timedemos compared to native code.",
+      "Performance optimization paths include: writing more efficient cgame code, moving calculations to system calls (e.g., memset, matrixmultiply), implementing LCC compiler optimizations, implementing complex interpreted instructions/peephole combinations, assembly coding the interpreter loop, or load-time compilation (JIT)."
+    ],
+    "personality_patterns": [
+      "Strong preference for 'hermit mode' to maximize productivity by eliminating distractions (phone calls, email, coworkers).",
+      "Strong commitment to technical goals (e.g., running cgame interpreted) despite performance penalties.",
+      "Pragmatic approach to performance optimization: prioritizes high-level optimizations and efficient code over low-level assembly or complex compiler optimizations unless necessary.",
+      "Honest and transparent about technical challenges and performance overheads (e.g., the 20% slowdown).",
+      "Analytical approach to breaking down potential optimization paths into a list of possible strategies with an evaluation of their likely effectiveness."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Hermit Mode",
+        "description": "The practice of intentional isolation to achieve deep work and avoid the fragmented attention caused by meetings and daily interruptions."
+      },
+      {
+        "principle": "Sandboxing for Security",
+        "description": "The system calls and private address space of a virtual machine VM provide a security layer that prevents untrusted client-side code from executing arbitrary system commands."
+      },
+      {
+        "principle": "Portability vs Performance Trade-off",
+        "description": "The architecture decision to move from native binaries to an interpreted VM for cross-platform compatibility and security, accepting an initial performance hit for these benefits."
+      },
+      {
+        "principle": "Optimization Hierarchy",
+        "description": "The process of prioritizing high-level code efficiency and the restructurings of stateless functions over low-level assembly tweaks or complex compiler optimizations."
+      }
+    ],
+    "heritage_patterns": [
+      "Use of a modified compiler (LCC) to custom bytecode for custom VM",
+      "Implementation of a virtual machine to allow user-side modding without providing source code or platform-specific binaries",
+      "Implementation of a search path system for pak files to integrate VM bytecode of mods"
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "Why did John Carmack implement a virtual machine for Q3?",
+        "chosen": "To ensure portability across platforms like Mac and Linux and to provide security for client-side programming, preventing mods from accessing memory outside their private address space.",
+        "rejected": "To make the game engine more efficient and faster than native DLLs."
+      },
+      {
+        "prompt": " ",
+        "chosen": "John Carmack prefers to work in 'hermit mode' to avoid distractions like email and coworkers, though he admitted that meetings in San Jose failed to disrupt this attempt.",
+        "rejected": "John Carmack prefers to work in a collaborative environment with meetings every day."
+      },
+      {
+        "prompt": "How does the .qvm system work technically?",
+        "chosen": "A modified LCC compiler generates assembly files, which q3asm processes into .qvm files that the game's interpreter executes.",
+        "rejected": "It is a simple script interpreter that doesn't require a compiler."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19990724.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 28.132103204727173,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T15:41:11.188566+00:00",
+    "trace_id": "ingest_ec3fb30adafa"
+  },
+  "trace_id": "ingest_ec3fb30adafa"
+}

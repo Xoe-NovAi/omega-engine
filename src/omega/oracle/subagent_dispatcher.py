@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Subagent Dispatch Protocol
 # ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ SUBAGENT-DISPATCH
 # AP: SUBAGENT-DISPATCH-v1.0.0
@@ -94,10 +94,6 @@ class HandoffPacket:
         """Increment hop count and check against max_hops. Returns True if budget remains."""
         self.hop_count += 1
         return self.hop_count <= self.max_hops
-
-    @property
-    def expired(self) -> bool:
-
 
     @property
     def expired(self) -> bool:

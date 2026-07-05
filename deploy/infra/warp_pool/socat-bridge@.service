@@ -1,0 +1,24 @@
+[Unit]
+Description=Host-to-Namespace Loopback Bridge for WARP Node %i
+Documentation=file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/research/warp_proxy_pool/WARP_PROXY_POOL_SPEC.md
+After=warp-node@%i.service
+Requires=warp-ns-prep@%i.service
+PartOf=warp-pool.target
+
+[Service]
+Type=simple
+# Instance %i = node ID (1, 2, 3). Port = 8080 + %i.
+# Runs socat on host, forwards into namespace via ip netns exec
+# NOTE: $$ escapes dollar signs in systemd ExecStart — needed for bash ${port} expansion
+ExecStart=/usr/bin/bash -c 'port=$((8080 + %i)); exec /usr/bin/socat TCP-LISTEN:$${port},fork,reuseaddr,bind=127.0.0.1 EXEC:"/usr/sbin/ip netns exec warp_node_%i /usr/bin/socat - TCP:127.0.0.1:$${port}"'
+Restart=always
+RestartSec=2s
+PrivateTmp=true
+ProtectHome=yes
+RestrictAddressFamilies=AF_INET AF_UNIX AF_NETLINK
+# CAP_SYS_ADMIN needed for ip netns exec (setns syscall)
+# ProtectSystem=strict would break ip netns exec (mount namespace isolation)
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_SYS_ADMIN
+
+[Install]
+WantedBy=multi-user.target

@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 """Sovereign Entity Workspaces.
 
 AP: AP-ENTITY-WORKSPACE-v1.0.0

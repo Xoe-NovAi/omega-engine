@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Entity Registry — YAML-backed Entity CRUD
 # AP: AP-ENTITY-REGISTRY-v1.0.0
 # ICS: [NODE: CORE | ARCHETYPE: SOPHIA | CONTEXT: ENTITY-MANAGEMENT]
@@ -206,6 +206,7 @@ class Entity:
 
 class EntityRegistry:
     """Loads, saves, and manages entities from YAML config.
+    DocRef: docs/reference/api/entity_registry.md
     
     [id-soft: doom-1993] Lazy Deletion — entities are tombstoned (magic =
     ZONEID_TOMBSTONE) on remove() and reaped after a grace period.

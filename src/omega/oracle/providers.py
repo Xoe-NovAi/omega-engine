@@ -1,9 +1,10 @@
 # AP: AP-PR-READINESS-v1.0.0
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 import atexit
 import logging
 import httpx
 import os
+from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
@@ -41,7 +42,7 @@ class BaseProvider(ABC):
         return overrides.get(model_name, model_name)
 
     @abstractmethod
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0) -> Optional[str]:
         pass
 
     @abstractmethod
@@ -53,12 +54,12 @@ class GoogleAIProvider(BaseProvider):
     async def is_available(self) -> bool:
         return bool(os.environ.get("GOOGLE_API_KEY"))
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, api_key: Optional[str] = None) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, api_key: Optional[str] = None) -> Optional[str]:
         # Use provided api_key or fallback to environment
         key = api_key or os.environ.get("GOOGLE_API_KEY")
         if not key:
             raise ProviderAuthError(provider="google", message="No Google API key provided or found in environment", trace_id=trace_id)
-
+        
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
         
         payload = {
@@ -68,8 +69,13 @@ class GoogleAIProvider(BaseProvider):
             "generationConfig": {
                 "temperature": temperature,
                 "maxOutputTokens": max_tokens,
+                "repetitionPenalty": repetition_penalty,
             }
         }
+        if logit_bias:
+            # Google AI Studio uses a different format for logit bias (if supported)
+            # For now, we pass it in a way that doesn't crash, or omit if not supported by the specific model
+            payload["generationConfig"]["logitBias"] = logit_bias
         
         try:
             async with httpx.AsyncClient(timeout=60.0) as client:
@@ -122,7 +128,7 @@ class LocallmsterProvider(BaseProvider):
         except (httpx.HTTPError, OSError):
             return False
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0) -> Optional[str]:
         url = self.config.get("endpoint", "http://127.0.0.1:1234")
         resolved_model = self.resolve_model(model)
         messages = [
@@ -135,15 +141,18 @@ class LocallmsterProvider(BaseProvider):
             stop_tokens = cvar_get("config.gguf.stop_tokens", ["</s>", "User:", "\n\n"])
         except ImportError:
             stop_tokens = ["</s>", "User:", "\n\n"]
-
+        
         payload = {
             "model": resolved_model,
             "messages": messages,
             "temperature": temperature,
             "max_tokens": max_tokens,
             "stop": stop_tokens,
+            "repetition_penalty": repetition_penalty,
             "stream": False,
         }
+        if logit_bias:
+            payload["logit_bias"] = logit_bias
         try:
             async with httpx.AsyncClient(timeout=120.0) as client:
                 response = await client.post(f"{url}/v1/chat/completions", json=payload)
@@ -182,7 +191,7 @@ class OllamaProvider(BaseProvider):
         except (httpx.HTTPError, OSError):
             return False
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0) -> Optional[str]:
         url = self.config.get("endpoint", "http://127.0.0.1:11434")
         resolved_model = self.resolve_model(model)
         messages = [
@@ -196,15 +205,18 @@ class OllamaProvider(BaseProvider):
             stop_tokens = cvar_get("config.gguf.stop_tokens", ["</s>", "User:", "\n\n"])
         except ImportError:
             stop_tokens = ["</s>", "User:", "\n\n"]
-
+        
         payload = {
             "model": resolved_model,
             "messages": messages,
             "temperature": temperature,
             "max_tokens": max_tokens,
             "stop": stop_tokens,
+            "repetition_penalty": repetition_penalty,
             "stream": False,
         }
+        if logit_bias:
+            payload["logit_bias"] = logit_bias
         try:
             async with httpx.AsyncClient(timeout=120.0) as client:
                 response = await client.post(f"{url}/v1/chat/completions", json=payload)
@@ -238,7 +250,7 @@ class MockProvider(BaseProvider):
     async def is_available(self) -> bool:
         return True
 
-    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None) -> Optional[str]:
+    async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0) -> Optional[str]:
         demo = os.environ.get("OMEGA_DEMO")
         if demo:
             return (
@@ -343,6 +355,8 @@ class NativeGGUFProvider(BaseProvider):
         self._last_logprobs = None
         # Isolated pool for synchronous C-calls to prevent anyio global pool exhaustion
         self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="gguf_inference")
+        from .somatic_state import SomaticStateManager
+        self._somatic_manager = SomaticStateManager(Path("data/somatic"))
         atexit.register(self.shutdown)
 
     def __del__(self):
@@ -475,14 +489,14 @@ class NativeGGUFProvider(BaseProvider):
 
         # Worker function that loads the model and runs inference
         def _worker(req_queue, res_queue, model_path, n_threads, n_threads_batch,
-                     n_ctx, n_batch, n_ubatch, type_k, type_v,
-                     use_mmap, use_mlock, n_gpu_layers, kwarg_filter_enabled):
+                      n_ctx, n_batch, n_ubatch, type_k, type_v,
+                      use_mmap, use_mlock, n_gpu_layers, kwarg_filter_enabled):
             from llama_cpp import Llama
             try:
                 from omega.cvar_table import validate_llama_kwargs
             except ImportError:
                 validate_llama_kwargs = None
-
+            
             # Build the exact kwargs we'll pass to Llama(), then validate them
             llama_kwargs = {
                 "model_path": model_path,
@@ -506,7 +520,7 @@ class NativeGGUFProvider(BaseProvider):
                         "NativeGGUFProvider.worker: %d kwarg warnings:\n  %s",
                         len(kwarg_warnings), "\n  ".join(kwarg_warnings)
                     )
-
+            
             # Load the model — wrap in try/except to signal load failure
             try:
                 llm = Llama(**llama_kwargs)
@@ -514,10 +528,10 @@ class NativeGGUFProvider(BaseProvider):
                 # Send load failure back to parent, then exit
                 res_queue.put({"status": "load_error", "error": repr(e)})
                 return
-
+            
             # Signal that loading succeeded
             res_queue.put({"status": "ready"})
-
+            
             # Keep the worker alive, waiting for requests
             while True:
                 try:
@@ -525,6 +539,27 @@ class NativeGGUFProvider(BaseProvider):
                     request = req_queue.get()
                     if request is None:  # Shutdown signal
                         break
+                    
+                    # Handle Somatic State Commands
+                    if "command" in request:
+                        cmd = request["command"]
+                        if cmd == "SAVE_STATE":
+                            try:
+                                # [M20] Somatic capture: copy internal KV state to bytes
+                                state_bytes = llama_cpp.llama_copy_state_data(llm)
+                                res_queue.put({"status": "state_captured", "data": state_bytes})
+                            except Exception as e:
+                                res_queue.put(e)
+                            continue
+                        elif cmd == "LOAD_STATE":
+                            try:
+                                # [M20] Somatic restore: set internal KV state from bytes
+                                state_bytes = request.get("state_bytes")
+                                llama_cpp.llama_set_state_data(llm, state_bytes)
+                                res_queue.put({"status": "state_restored"})
+                            except Exception as e:
+                                res_queue.put(e)
+                            continue
 
                     # Unpack request
                     system_prompt = request["system_prompt"]
@@ -534,7 +569,9 @@ class NativeGGUFProvider(BaseProvider):
                     stop = request["stop"]
                     logprobs = request.get("logprobs", False)
                     enable_thinking = request.get("enable_thinking", False)
-
+                    logit_bias = request.get("logit_bias")
+                    repetition_penalty = request.get("repetition_penalty", 1.0)
+                    
                     # [id-soft: quake3-1999] Right Approximation — use create_chat_completion()
                     # to properly apply the GGUF's embedded Jinja chat template.
                     # This enables thinking mode control via chat_template_kwargs.
@@ -562,7 +599,7 @@ class NativeGGUFProvider(BaseProvider):
                         def _handler_with_kwargs(*args, **kwargs):
                             return base_handler(*args, **{**_template_kwargs, **kwargs})
                         llm.chat_handler = _handler_with_kwargs
-
+                    
                     messages = [
                         {"role": "system", "content": system_prompt},
                         {"role": "user", "content": user_query},
@@ -572,6 +609,8 @@ class NativeGGUFProvider(BaseProvider):
                         "max_tokens": max_tokens,
                         "temperature": temperature,
                         "stop": stop,
+                        "logit_bias": logit_bias,
+                        "repetition_penalty": repetition_penalty,
                     }.items() if v is not None}
                     if logprobs:
                         kwargs["logprobs"] = logprobs
@@ -636,6 +675,71 @@ class NativeGGUFProvider(BaseProvider):
         logger.info(f"Worker process initialized: {target_ctx} context, {self._n_threads} threads")
 
 
+    async def save_state(self, state_id: str) -> bool:
+        """Captures the current model state and saves it to disk.
+        
+        Returns:
+            True if state was captured and saved successfully.
+        """
+        if self._worker_process is None:
+            return False
+        
+        try:
+            # Send SAVE_STATE command to worker
+            await anyio.to_thread.run_sync(self._req_queue.put, {"command": "SAVE_STATE"})
+            
+            # Wait for state bytes from worker
+            response = await anyio.to_thread.run_sync(self._res_queue.get)
+            
+            if isinstance(response, dict) and response.get("status") == "state_captured":
+                state_bytes = response.get("data")
+                # Save bytes using the SomaticStateManager
+                # We pass the state_id and bytes directly since we already have them
+                file_path = self._somatic_manager.state_dir / f"{state_id}.somatic"
+                async with await anyio.to_thread.run_sync(open, file_path, "wb") as f:
+                    f.write(state_bytes)
+                logger.info(f"Somatic state saved for {state_id}")
+                return True
+            
+            return False
+        except Exception as e:
+            logger.error(f"Failed to save somatic state {state_id}: {e}")
+            return False
+
+    async def load_state(self, state_id: str) -> bool:
+        """Restores a model state from disk into the worker process.
+        
+        Returns:
+            True if state was restored successfully.
+        """
+        if self._worker_process is None:
+            return False
+        
+        try:
+            # Retrieve state bytes from disk
+            file_path = self._somatic_manager.state_dir / f"{state_id}.somatic"
+            if not file_path.exists():
+                return False
+            
+            state_bytes = await anyio.to_thread.run_sync(lambda: file_path.read_bytes())
+            
+            # Send LOAD_STATE command to worker
+            await anyio.to_thread.run_sync(self._req_queue.put, {
+                "command": "LOAD_STATE", 
+                "state_bytes": state_bytes
+            })
+            
+            # Wait for confirmation
+            response = await anyio.to_thread.run_sync(self._res_queue.get)
+            if isinstance(response, dict) and response.get("status") == "state_restored":
+                logger.info(f"Somatic state restored for {state_id}")
+                return True
+            
+            return False
+        except Exception as e:
+            logger.error(f"Failed to load somatic state {state_id}: {e}")
+            return False
+
     async def generate(
         self,
         model: str,
@@ -646,6 +750,8 @@ class NativeGGUFProvider(BaseProvider):
         trace_id: Optional[str] = None,
         n_ctx: Optional[int] = None,
         session_id: Optional[str] = None,
+        logit_bias: Optional[Dict[int, float]] = None,
+        repetition_penalty: float = 1.0,
     ) -> Optional[str]:
         """Perform local inference with Zen 2 optimizations.
         
@@ -657,6 +763,9 @@ class NativeGGUFProvider(BaseProvider):
             max_tokens: Maximum tokens to generate.
             trace_id: Observability trace ID.
             n_ctx: Optional context length override. If None, auto-selects.
+            session_id: Optional session ID.
+            logit_bias: Optional mapping of token IDs to bias values.
+            repetition_penalty: Penalty for repeating tokens.
         
         Returns:
             Generated text or None on failure.

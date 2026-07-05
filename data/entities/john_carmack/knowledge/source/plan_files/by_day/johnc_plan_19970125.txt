@@ -1,0 +1,10 @@
+# ⬡ John Carmack .plan File — 1997-01-25
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19970125.txt
+#
+I fixed a couple problems in glquake with some addon stuff -- the goats demo actually showed up a crashing problem with 256*256 textures, and the rangers demos showed that players with non-player models and colormaps were all messed up.
+
+I'll make another release when 3dfx has their next driver drop finished. 

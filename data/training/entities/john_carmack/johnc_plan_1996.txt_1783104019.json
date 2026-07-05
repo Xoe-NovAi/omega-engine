@@ -1,0 +1,79 @@
+{
+  "source": "johnc_plan_1996.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "Quake's initial networking was based on a reliable stream, later retrofitted with an unreliable sideband.",
+      "QuakeWorld shifted to an unreliable packet as the basic primitive to better handle high-latency internet connections (300ms+).",
+      "Implemented client-side movement simulation in QuakeWorld to mask latency, though later scaled back to smooth out beat frequency interactions.",
+      "Server model in QuakeWorld changed from a game-style loop to a fileserver/database style loop, processing packets as they arrive.",
+      "Implemented PVS (Potentially Visible Set) specific network updates to reduce bandwidth.",
+      "The qcc compiler was optimized by moving frequently used definitions to the head of the search list, resulting in a 4x speed increase.",
+      "Developed a radiosity replacement for lighting maps that allows textures to be light emitters and simulates light reflecting off surfaces.",
+      "OpenGL was chosen over Direct-3D Immediate Mode due to its procedural API, ease of use, and established conformance tests.",
+      "Direct-3D Immediate Mode was criticized for its use of COM, execute buffers, and lack of a clean procedural interface.",
+      "Quake's physics engine includes features like air acceleration, friction, and bounding box checks for Bmodels.",
+      "Implemented 'rcon' for remote server administration using a shared password cvar.",
+      "The 'hunk' memory allocator was used to manage memory for surface caches and other game data."
+    ],
+    "personality_patterns": [
+      "Extreme focus on technical efficiency and performance optimization.",
+      "Blunt and honest communication style, especially regarding technical failures ('I made a bad call').",
+      "Preference for practical, working solutions over idealistic or 'elegant' architectures when performance is at stake.",
+      "Tendency to work in 'hermit mode' for deep research and development.",
+      "Strong advocacy for open standards and developer-friendly APIs (e.g., his stance on OpenGL).",
+      "Disciplined approach to iterative development, as evidenced by the daily .plan logs.",
+      "High tolerance for intense workloads ('Vacation? I don't need a vacation!')."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Latency Masking via Prediction",
+        "description": "In high-latency environments, the client should simulate the results of user input immediately and then reconcile that state with the authoritative server response."
+      },
+      {
+        "principle": "Primitive-First Networking",
+        "description": "Network APIs should be built on the most basic, reliable primitive (e.g., unreliable packets for twitch games) rather than layering complex protocols on top of mismatched primitives."
+      },
+      {
+        "principle": "API Ergonomics as a Velocity Multiplier",
+        "description": "The ease of use of an API (procedural vs. complex state-based) directly impacts development speed, the ability to experiment, and the likelihood of introducing bugs."
+      },
+      {
+        "principle": "Data-Driven Optimization",
+        "description": "Identify the dominant bottleneck through profiling (e.g., linear search in qcc) and apply the simplest possible fix to achieve massive gains."
+      }
+    ],
+    "heritage_patterns": [
+      "Daily public progress logging (.plan files) for transparency and tracking.",
+      "Use of a custom memory management system ('hunks') to avoid fragmentation and improve allocation speed.",
+      "Iterative refinement of network protocols to adapt to real-world user hardware (modems vs. T1).",
+      "Strict separation of client and server logic, moving toward a 'thin client' and then selectively adding simulation for UX."
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "Why did Carmack switch from the original Quake network code to QuakeWorld?",
+        "chosen": "The original code assumed latencies <200ms and used a reliable stream primitive. Most users on modems experienced 300ms+ latencies, so he scrapped it for a system based on unreliable packets and client-side movement simulation to improve responsiveness.",
+        "rejected": "He wanted to make the game faster and add a master server for global rankings."
+      },
+      {
+        "prompt": "What is Carmack's primary criticism of Direct-3D Immediate Mode compared to OpenGL?",
+        "chosen": "He found Direct-3D's interface (COM, execute buffers) to be a 'gigantic pain-in-the-ass' that required significantly more code to perform simple tasks, whereas OpenGL's procedural interface was clean, simple, and allowed for rapid experimentation.",
+        "rejected": "Direct-3D was slower in terms of raw frames per second than OpenGL on the same hardware."
+      },
+      {
+        "prompt": "How did Carmack optimize the qcc compiler?",
+        "chosen": "He noticed that the linear search for definitions was a major bottleneck and optimized it by moving the most recently found definition to the head of the search list, which made subsequent lookups much faster.",
+        "rejected": "He rewrote the compiler in assembly language to take advantage of P6 processor instructions."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_1996.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 29.467185497283936,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T18:40:15.928700+00:00",
+    "trace_id": "ingest_de748bf7d3c8"
+  },
+  "trace_id": "ingest_de748bf7d3c8"
+}

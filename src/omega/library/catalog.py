@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Library Catalog
 # AP: AP-LIBRARY-CATALOG-v1.1.0
 # SQLite-backed catalog for document metadata and search.

@@ -1,0 +1,77 @@
+{
+  "source": "johnc_plan_1997.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "QuakeWorld was updated to support up to 32 players, improving scalability over modems.",
+      "glQuake was developed as an OpenGL-accelerated version of Quake, with support for 3dfx drivers.",
+      "Quake 2 transitioned from the QC (QuakeC) language to a native C DLL for game logic to improve efficiency (estimated 5-10% speed increase) and enable better debugging.",
+      "The Quake 2 BSP format (version 38) introduced 'areaportals' to allow topological flood-filling for culling areas, improving rendering speed and network bandwidth by ignoring areas unreachable via open portals.",
+      "Quake 2 introduced a unified rendering architecture to combine software, glQuake, and vQuake into a single executable.",
+      "SGI Origin-2000 servers with MIPS R10000 processors were used for heavy compute tasks (e.g., qvis3) due to high scalability (14:1 on 16 CPUs) and better cost-per-CPU compared to high-end Intel/Alpha systems.",
+      "Quake 2's sound engine supports 22kHz/16-bit source samples, spatialization for moving objects, and a research-based radiosity solution for ambient soundscapes.",
+      "The MD2 triangle model format was used for Quake 2, featuring a simplified structure compared to Quake 1's auto-animation system to reduce codebase fragility.",
+      "Client-side prediction was implemented in Quake 2 to hide network latency, with later fixes for 'jerky' behavior on platforms (plats) and self-blocking on missiles.",
+      "Quake 2 uses UDP for network communication to avoid TCP's error recovery latency; a fix was implemented to handle routers that incorrectly change UDP ports during address translation."
+    ],
+    "personality_patterns": [
+      "Extreme focus on technical excellence: 'I want to write the best software I can. There isn't even a close second place.'",
+      "Pragmatic approach to feature sets: Willing to cut 'pet features' (like auto-animation) if they obstruct future architectural expansion.",
+      "Direct and blunt communication style, especially regarding technical incompetence or bad corporate decisions (e.g., criticizing Microsoft's OpenGL driver model).",
+      "High tolerance for sleep deprivation and intense work cycles ('withdrawal' when not coding for a few days).",
+      "Strong preference for meritocracy and skill over formality, as evidenced by his admiration for 'master players' like Thresh.",
+      "Transparent about mistakes and bugs, often posting detailed post-mortems in his .plan files."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "The Cost of a Feature",
+        "description": "The true cost of adding a feature is not just the initial coding time, but the long-term obstacle it creates for future expansion and the fragility it adds to the codebase."
+      },
+      {
+        "principle": "Optimal Team Size",
+        "description": "There is a limit to programming team size beyond which adding more people increases development time due to communication overhead, entropy, and the loss of global architectural insight."
+      },
+      {
+        "principle": "The shipping tradeoff",
+        "description": "Software is never truly finished; the decision to ship is a balance between the desire for perfection and the necessity of delivering the product to users so they can actually enjoy it."
+      },
+      {
+        "principle": "Global vs. Local Insight",
+        "description": "One developer with a global scope of knowledge across the editor, utilities, and game engine is more efficient than multiple developers with local knowledge of fragmented parts."
+      }
+    ],
+    "heritage_patterns": [
+      "Use of BSP (Binary Space Partitioning) trees for visibility and collision detection.",
+      "Client-side prediction and delta compression for real-time network synchronization.",
+      "Separation of the core engine (rendering/physics) from the game logic (DLLs/scripts).",
+      "Iterative refinement of 3D model formats (from vertex-based to triangle-based MD2).",
+      "Strategic use of high-end SMP (Symmetric Multiprocessing) hardware for offline toolchains (compiling/vising)."
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "Why did Carmack move from QuakeC to DLLs for Quake 2?",
+        "chosen": "He moved to native C DLLs to increase efficiency (estimating a 5-10% speed boost), enable the use of real debuggers, and allow the game logic to access system-level functions (like the registry) that were inaccessible via a virtual machine like QuakeC.",
+        "rejected": "He wanted to make the game harder to mod and more secure from binary patches."
+      },
+      {
+        "prompt": "What is Carmack's view on adding more programmers to a project to speed it up?",
+        "chosen": "He believes there is a very small optimal team size for id Software; adding more people beyond that point actually slows down development due to communication overhead and the loss of global architectural insight.",
+        "rejected": "He believes that more programmers always lead to a better product if they are managed correctly."
+      },
+      {
+        "prompt": "How do 'areaportals' improve Quake 2's performance?",
+        "chosen": "They allow the engine to perform a topological flood-fill to determine if an area is reachable via open portals; if not, the entire area is culled regardless of what the PVS (Potentially Visible Set) says, reducing rendering and network load.",
+        "rejected": "They are a type of texture that tells the engine not to render the area behind the portal."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_1997.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 30.406738996505737,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T18:29:02.816960+00:00",
+    "trace_id": "ingest_b0dc5a323c1f"
+  },
+  "trace_id": "ingest_b0dc5a323c1f"
+}

@@ -1,0 +1,48 @@
+{
+  "source": "johnc_plan_19960308.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "The entity is working on game engine features including ammo dropping, zombie gibs (non-solid), and zombie attack patterns.",
+      "Implementation of scrolling notify text and shooters that fire superspikes.",
+      "Technical fixes for noclip functionality in water.",
+      "Work on sound code, item flags for deathmatch (dm), and collision detection for shooting through complex bmodels.",
+      "Addressing 'NaN stuff' (Not-a-Number floating point issues).",
+      "Refactoring impulse events from 'impulse1' to a numeric 'impulse #'.",
+      "Optimization to prevent blitting the entire screen when the window is resized down.",
+      "Fixing a teleporter vulnerability in jrbase3 where it could be hit behind dmonly flags."
+    ],
+    "personality_patterns": [
+      "Highly task-oriented and list-driven workflow.",
+      "Direct and concise communication style, focusing on technical requirements rather than narrative.",
+      "Preference for iterative improvement (fixing pain issues across all monsters)."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Atomic Task Management",
+        "description": "Breaking down complex development into a highly granular list of small, actionable items to ensure steady progress and visibility."
+      }
+    ],
+    "heritage_patterns": [
+      "The use of 'bmodels' and 'dmonly' flags is characteristic of the Quake engine architecture.",
+      "Implementation of 'gibs' (fragmented entity parts) as a staple of id Software's visceral combat style.",
+      "The use of 'impulse' events for triggering specific entity behaviors."
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "How did Carmack handle screen resizing in the engine?",
+        "chosen": "He identified that the engine should not blit the entire screen when it is sized down to optimize performance.",
+        "rejected": "He implemented a standard window resizing algorithm provided by the operating system."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19960308.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 13.628312587738037,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T15:43:29.194121+00:00",
+    "trace_id": "ingest_2dc771261b05"
+  },
+  "trace_id": "ingest_2dc771261b05"
+}

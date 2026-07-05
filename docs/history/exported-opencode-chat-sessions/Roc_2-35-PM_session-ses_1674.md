@@ -2957,7 +2957,7 @@ I'm going to dive into the protocol and the hub's logic to see where this drift 
 <content>
 1: """Omega Core Hub MCP Server — Consolidated runtime services.
 2: 
-3: AP Token: AP-OMEGA-CORE-HUB-v1.0.0
+3: AP: AP-OMEGA-CORE-HUB-v1.0.0
 4: ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | MODEL: MiMo-2.5 | CONTEXT: CORE-HUB-MCP]
 5: 
 6: Consolidates the following services into a single FastMCP endpoint:
@@ -7045,7 +7045,7 @@ I'll start by analyzing `src/omega/oracle/wad_loader.py` and `src/omega/oracle/e
 <path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/wad_loader.py</path>
 <type>file</type>
 <content>
-1: # AP Token: AP-ORACLE-RESTORE-v2.3.0
+1: # AP: AP-ORACLE-RESTORE-v2.3.0
 2: # 🔱 WAD Loader — Universal Runtime Container Loader
 3: # AP: AP-WAD-LOADER-v1.0.0
 4: # ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: RUNTIME-LOADING]
@@ -7332,7 +7332,7 @@ I'll start by analyzing `src/omega/oracle/wad_loader.py` and `src/omega/oracle/e
 <path>/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/src/omega/oracle/entity_registry.py</path>
 <type>file</type>
 <content>
-1: # AP Token: AP-ORACLE-RESTORE-v2.3.0
+1: # AP: AP-ORACLE-RESTORE-v2.3.0
 2: # 🔱 Entity Registry — YAML-backed Entity CRUD
 3: # AP: AP-ENTITY-REGISTRY-v1.0.0
 4: # ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: ENTITY-MANAGEMENT]

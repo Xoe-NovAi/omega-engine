@@ -9,7 +9,6 @@ from pathlib import Path
 
 import anyio
 from anyio.to_thread import run_sync
-import llama_cpp
 
 logger = logging.getLogger("omega.state_manager")
 
@@ -87,6 +86,7 @@ class SomaticStateSerializer:
     def _capture(self) -> bytes:
         # Use the low-level C-API bindings for maximum fidelity
         # llama_get_state_size -> llama_copy_state_data
+        import llama_cpp
         try:
             size = llama_cpp.llama_cpp.llama_get_state_size(self.model.model)
             buffer = bytearray(size)
@@ -101,6 +101,7 @@ class SomaticStateSerializer:
         await run_sync(self._apply, state_data)
 
     def _apply(self, data: bytes):
+        import llama_cpp
         try:
             # Verify size before applying to prevent segfaults
             expected_size = llama_cpp.llama_cpp.llama_get_state_size(self.model.model)

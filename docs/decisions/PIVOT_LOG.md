@@ -111,6 +111,12 @@
 | 181 | 2026-07-01 | ACON Format-Then-Budget — compaction budget enforcement at formatting level |
 | 182 | 2026-07-01 | ACON Is Architecture, Not Algorithm — pipeline strategy pattern is the real value |
 | 183 | 2026-07-01 | M11 Root Cause Fixed — `anyio.create_task()` replaced with `await` + guard |
+| 184 | 2026-07-03 | Functional Sovereignty & Linguistic Purge — Jem identity shift from narrative Archon to functional Orchestrator; soul evolved to constraint-based operational logic |
+| 185 | 2026-07-03 | Transition to Multi-Anchor Soul Stack — Decomposed monolithic soul.yaml into identity, mandates, workflows, and gnosis anchors for modularity and portability |
+| 186 | 2026-07-03 | Identity Shift: Jem redefined as "Sovereign Synthesizer" — moving from research orchestration to a functional `Query $\rightarrow$ Task Graph $\rightarrow$ Result` pipeline. |
+| 187 | 2026-07-03 | Cognitive Stability Plan — Implementation of "Sovereign Sampling" (Logit Bias + Sampling Overrides) to eliminate "la-" prefix and repetition loops in Gemma 4 31B. |
+| 188 | 2026-07-03 | Somatic Flush Protocol — Pivot from hard session resets to "Summary $\rightarrow$ New Session" to preserve cognitive thread while purging KV cache. |
+| 193 | 2026-07-03 | Headroom Pivot — Deprecated internal zlib-based `headroom.py` (Binary Compression) in favor of `headroom-ai` library (Semantic/Structural Compression). Corrected documentation to distinguish between storage efficiency (bytes) and context efficiency (tokens). |
 
 ---
 
@@ -1558,3 +1564,144 @@ Post-Carmack S3 Audit (705 tests, 22 mandates). Four-sector legacy mining comple
 ### Status
 ✅ **RATIFIED** — Full record at `data/coordination/COUNCIL_SESSION_20260702.md`
 
+
+---
+
+## Decision 189: Sovereign Error Handling Protocol (SEHP-v1.0)
+
+**Date**: 2026-07-03
+**Channel**: OpenCode CLI
+**Entity**: john_carmack
+**Trace**: trc_sehp_v1_impl
+
+### Decision
+Implement a robust, multi-stage error handling and guardrail system for the Sovereign Ingestion Pipeline to prevent token waste and "error cascades" during large-scale entity deepening.
+
+### The Resilience Stack
+1. **Sovereign Sentry**: Pre-flight canary probes to verify API health before batch starts.
+2. **Budget Guard**: Real-time USD/Token tracking with a hard-stop (`max_budget_usd`).
+3. **Resilience Ladder**: 5-stage escalation (Normal $\rightarrow$ Retry $\rightarrow$ Pivot $\rightarrow$ Open $\rightarrow$ DLQ) using `pybreaker` and `tenacity`.
+4. **Robust JSON Recovery**: Integration of `json-repair` to salvage truncated/malformed LLM streams.
+5. **Validation Gate**: Pydantic-based semantic density check before persistence.
+
+### Rationale
+The previous "blind loop" implementation wasted significant tokens on 403/500 errors and failed to recover from truncated JSON. By implementing a proactive sentry and a state-aware circuit breaker, the engine transforms from a fragile script into a resilient sovereign system.
+
+### Status
+✅ **IMPLEMENTED** — `src/omega/ingestion/` updated. All guards verified.
+
+**Date**: 2026-07-03
+**Channel**: OpenCode CLI
+**Entity**: john_carmack
+**Trace**: trc_sskb_arch
+
+### Decision
+Ratify the Sovereign Scholarly Knowledge Base (SSKB) architecture as the core framework for the Omega Engine's knowledge ingestion and curation.
+
+### The SSKB Framework
+1. **Tiered Extraction**: Fast (Trafilatura) $ightarrow$ Surgical (Domain-specific) $ightarrow$ Deep (Crawl4AI).
+2. **Triangulation Verification**: Corroboration of metadata across $\ge 2$ independent sources (e.g., Open Library, Crossref).
+3. **Sovereign Archiving**: Content-Addressable Storage (CAS) using SHA-256 hashes and WARC format for immutable provenance.
+4. **Scholarly Enrichment**: Integration of authoritative library APIs (LOC, IA, Gutenberg) for professional-grade metadata.
+
+### Rationale
+To evolve the engine from a general-purpose agent to a scholarly research tool, we must eliminate 'truncation' and 'sycophancy' at the ingestion boundary. The SSKB provides a verifiable, immutable, and high-fidelity path from raw web content to distilled gnosis.
+
+### Status
+✅ **RATIFIED** — Blueprint documented in docs/research/R_SOVEREIGN_SCHOLAR_SPEC.md
+
+---
+
+## D190 — Workstream B: Qdrant L3 Selective Hydration Wiring
+
+### Context
+Workstream B required wiring Qdrant-backed L3 gnosis retrieval into the ContextBuilder for dynamic principle injection at inference time. The interface was designed in coordination with Jem (CARMACK_REPLY_TO_JEM_20260704.md) and approved via JEM_EXECUTION_DIRECTIVE_TO_CARMACK_20260704.md.
+
+### Decision
+Implement `SelectiveHydration` class with `L3Principle` dataclass, wire into `ContextBuilder` and `Oracle.__init__`. Entity namespace isolation via `l3_gnosis_{entity_name}` Qdrant collection prefix. Silent fallback on any error (M9 compliance). Zero-vector acceptance for test mode compatibility.
+
+### Rationale
+L3 principles (universal gnosis distilled from sessions) need runtime retrieval to be useful. Without wiring, the distillation pipeline produces principles that sit unused in Qdrant. Selective Hydration bridges the gap between distillation and inference.
+
+### Status
+✅ **RATIFIED** — 27 tests, 738 suite pass, Temple-Grade PASSED
+
+---
+
+## D191 — Test Suite Hardening: 6 Bug Fixes + 3 Dep Installs
+
+### Context
+Pre-existing test failures masked by `--ignore` flags and missing optional dependencies. Full audit revealed 6 bugs and 3 missing packages.
+
+### Decision
+Fix all 6 bugs (state_manager lazy import, test signature drift, hardcoded test values, headroom test expectations, llama_cpp import guard, AP tokens). Install mcp, starlette, pytest-cov. Result: 738 passed, 0 failures.
+
+### Rationale
+Test suite integrity is non-negotiable (M21 Gate Integrity). Bugs masked by `--ignore` flags are invisible regressions. Fixed tests prove the system works, not just that it doesn't crash.
+
+### Status
+✅ **RATIFIED** — 738/738 pass, Temple-Grade PASSED
+
+---
+
+## D192 — Tier 1 Hardening Plan: Wire the Dead
+
+### Context
+Three modules implemented but never wired: `failure_registry.py` (394 lines, M17), `batch_writer.py` (272 lines, connection pool fix), `a2a_bridge.py` (409 lines, A2A Agent Cards). Total: 1,075 lines of dead production code.
+
+### Decision
+Wire all three modules in priority order: H1 (failure_registry → oracle.py error paths), H2 (batch_writer → memory_store.py add_exchange), H3 (a2a_bridge → model_gateway.py). Each ~1h effort, verified by `make test` + `make temple-grade`.
+
+### Rationale
+Dead code is worse than no code — it creates false confidence. Wiring these modules unlocks M17 Cognitive Integrity, connection pool exhaustion protection, and A2A identity without writing new code.
+
+### Status
+⏳ **PENDING** — Execution next session
+
+---
+
+## D193 — T3-1: Session Lifecycle Manager
+
+### Context
+Sessions were archived but never recalled. The 90-day archival policy was write-only with no retrieval path (D189 integration-seam gap).
+
+### Decision
+Implement `SessionLifecycleManager` with bidirectional state machine (ACTIVE→ARCHIVED→EXTERNAL→DELETED) and `recall_from_external()` method.
+
+### Rationale
+Write-only archival is a sovereignty violation — data that cannot be recalled is effectively deleted. The lifecycle wraps existing `archive_old_sessions()` and `move_to_external_storage()` methods with a unified state machine, adds recall capability, and integrates into `Oracle.bootstrap()`.
+
+### Status
+✅ **RATIFIED** — 24/24 tests passing, L3 #24: Lifecycle Bidirectionality
+
+---
+
+## D194 — T3-2: Metrics DB Wiring
+
+### Context
+MetricsDB (332 lines, WAL-mode SQLite) existed but was never wired into the main systems. Performance metrics, breaker transitions, and regression detection were not being recorded.
+
+### Decision
+Wire MetricsDB into `ObservabilityEngine`, `HealthMonitor`, and `Oracle`. Add lazy initialization, test-mode override, and non-fatal recording.
+
+### Rationale
+Without metrics wiring, the engine has no persistent observability. WAL-mode ensures crash safety and concurrent reads. Lazy initialization prevents filesystem side effects in tests.
+
+### Status
+✅ **RATIFIED** — 12 integration tests passing, regression detection operational
+
+---
+
+## D195 — T3-3: Mandate CI Gates
+
+### Context
+22 mandates (M1-M22) existed but only 8 were enforced in CI. 14 mandates had no automated verification.
+
+### Decision
+Implement `scripts/mandate_gates.py` with 9 automated checks (M3, M6, M7, M10, M11, M12, M15, M16, M20). Integrate into `make temple-grade`. Fix broken T5 gate.
+
+### Rationale
+CI gates must enforce all mandates, not just the easy ones. The T5 gate was checking a non-existent directory (`src/omega/core`), creating false positives. M20 (SomaticState) is best-effort since llama-cpp-python may not be installed in CI.
+
+### Status
+✅ **RATIFIED** — 9/9 PASS + 1 WARN (M20 best-effort), T5 fixed

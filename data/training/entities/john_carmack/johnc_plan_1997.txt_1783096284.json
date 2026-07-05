@@ -1,0 +1,76 @@
+{
+  "source": "johnc_plan_1997.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "QuakeWorld scalability improved to support up to 32 players, though performance degrades if too many congregate in one room.",
+      "Quake 2 rendering architecture was designed to combine regular Quake, glQuake, and vQuake into a single executable.",
+      "SGI Origin-2000 server with 16 180MHz R10000 processors was used for compute tasks, showing 14:1 scalability on 16 CPUs.",
+      "Quake 2 moved game logic from the .qc language to a separate .dll file for efficiency and better debugging.",
+      "Implemented a 'func_areaportal' entity in Quake 2 to allow topological flood filling to cull areas of the map regardless of the PVS (Potentially Visible Set).",
+      "Quake 2 uses a new .bsp format that removes fixed clipping hull restrictions and moves textures outside the bsp file.",
+      "UDP headers are not compressed over PPP links, which consumes bandwidth and increases latency in network games.",
+      "Quake 2 sound system supports 22kHz/16-bit samples with automatic conversion to 11kHz/8-bit for lower memory footprints.",
+      "The .md2 triangle model format was replaced in Quake 2 with a simpler format that manages more precision and includes GL data.",
+      "DOOM source code was released as 32-bit portable code, though the original DOS version used a copyrighted sound library that had to be removed."
+    ],
+    "personality_patterns": [
+      "Extreme focus on technical excellence: 'I want to write the best software I can. There isn't even a close second place.'",
+      "Preference for direct, blunt communication and transparency regarding software bugs and technical tradeoffs.",
+      "High tolerance for risk and experimentation (e.g., buying an F40, pushing cars to 160mph).",
+      "Strong aversion to IRC and 'posturing' in public forums, preferring focused technical discourse.",
+      "Belief in small, highly efficient teams over large organizations to avoid communication overhead and entropy.",
+      "Disciplined approach to priority management, often sacrificing 'perfect' for 'done' to meet shipping goals."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "The Cost of Features",
+        "description": "The cost of adding a feature is not just the time to code it, but the obstacle it creates for future expansion. Features that fight each other should be avoided."
+      },
+      {
+        "principle": "The Mythical Man-Month Application",
+        "description": "Adding more programmers to a project beyond a certain optimal size increases development time due to communication overhead and the fragmentation of global knowledge."
+      },
+      {
+        "principle": "Tradeoff-Driven Design",
+        "description": "Software quality is a multi-dimensional metric; one cannot maximize functionality, quality, efficiency, and timeliness simultaneously. Decisions must be based on explicit evaluations of tradeoffs."
+      },
+      {
+        "principle": "Global vs. Local Insight",
+        "description": "One global insight (having a comprehensive understanding of the entire system) is worth more than several local insights (specialized knowledge of small parts)."
+      }
+    ],
+    "heritage_patterns": [
+      "Use of BSP (Binary Space Partitioning) trees for both rendering and environment testing.",
+      "Implementation of client-side prediction and delta compression for network synchronization.",
+      "Development of custom internal tools (e.g., 3D model painting programs, map editors) when commercial software fails to meet specific needs.",
+      "Preference for native code (DLLs) over interpreted languages for performance-critical game logic."
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "Why did Carmack decide to move Quake 2 game logic to a DLL instead of improving the QC language?",
+        "chosen": "He believed native code would be more efficient, providing a 5% to 10% speed improvement for full-size levels, and would allow for better debugging using real debuggers, despite the loss of portability and the requirement for a compiler.",
+        "rejected": "He simply didn't like the QC language and wanted to use a more modern language like Java for the game logic."
+      },
+      {
+        "prompt": "What is Carmack's view on increasing the size of the programming team to improve software quality?",
+        "chosen": "He contends that there is a maximum optimal team size, beyond which adding more people increases development time and reduces quality due to communication overhead and the loss of global scope of knowledge.",
+        "rejected": "He believes that hiring more programmers is the best way to ensure a product is bug-free and delivered on time."
+      },
+      {
+        "prompt": "How does the 'areaportal' feature in Quake 2 improve performance compared to the PVS?",
+        "chosen": "While the PVS only knows what is potentially visible from a rough position, areaportals allow the engine to lop off large amounts of the map using a topological flood fill, making areas invisible and inaudible if no open portals lead to them.",
+        "rejected": "Areaportals replace the PVS entirely, allowing the engine to render only the polygons that are directly in the player's line of sight."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_1997.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 30.054798364639282,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T16:31:05.177727+00:00",
+    "trace_id": "ingest_4c71f6ff2add"
+  },
+  "trace_id": "ingest_4c71f6ff2add"
+}

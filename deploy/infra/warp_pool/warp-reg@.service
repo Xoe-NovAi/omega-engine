@@ -1,0 +1,80 @@
+[Unit]
+Description=First-boot WARP Registration for Instance %i
+Documentation=file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/research/warp_proxy_pool/WARP_PROXY_POOL_SPEC.md
+After=warp-ns-prep@%i.service
+Before=warp-node@%i.service
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+# Runs on HOST — starts temp warp-svc inside namespace (for IPC), registers, copies config
+# warp-cli communicates with warp-svc via Unix socket — daemon MUST be running
+# Uses CUSTOM config dir (fresh, no history) + reset-settings to clear daemon state
+ExecStart=/usr/bin/bash -c '\
+  set -e; \
+  NS="warp_node_%i"; \
+  CONF="/var/lib/cloudflare-warp-%i"; \
+  DEFAULT="/var/lib/cloudflare-warp"; \
+  \
+  # 1. Stop host warp-svc (would conflict with namespace IPC socket); \
+  /usr/bin/systemctl stop warp-svc 2>/dev/null || true; \
+  \
+  # 2. Kill ALL warp-svc processes (even leftover from failed deploy); \
+  /usr/bin/pkill -9 warp-svc 2>/dev/null || true; \
+  \
+  # 3. Wait for process cleanup and socket release; \
+  sleep 1; \
+  \
+  # 4. Clean up stale IPC socket; \
+  rm -f /run/cloudflare-warp/warp_service 2>/dev/null || true; \
+  \
+  # 5. AGGRESSIVE: Remove immutable flag, then nuke ALL stale registration files + SQLite WAL; \
+  /usr/bin/chattr -i "$${DEFAULT}/reg.json" "$${DEFAULT}/conf.json" "$${DEFAULT}/warp.db" \
+    "$${DEFAULT}/settings.json" "$${DEFAULT}/final-overrides-settings.json" \
+    "$${DEFAULT}/warp.db-wal" "$${DEFAULT}/warp.db-shm" 2>/dev/null || true; \
+  /usr/bin/chattr -i "$${CONF}/reg.json" "$${CONF}/conf.json" "$${CONF}/warp.db" \
+    "$${CONF}/warp.db-wal" "$${CONF}/warp.db-shm" 2>/dev/null || true; \
+  rm -rf "$${DEFAULT}/reg.json" "$${DEFAULT}/conf.json" "$${DEFAULT}/warp.db" \
+         "$${DEFAULT}/settings.json" "$${DEFAULT}/final-overrides-settings.json" \
+         "$${DEFAULT}/warp.db-wal" "$${DEFAULT}/warp.db-shm" \
+         "$${CONF}/reg.json" "$${CONF}/conf.json" "$${CONF}/warp.db" \
+         "$${CONF}/warp.db-wal" "$${CONF}/warp.db-shm"; \
+  \
+  # 6. Ensure custom config dir exists (fresh, no history); \
+  mkdir -p "$${CONF}"; \
+  \
+  # 7. Start temp warp-svc INSIDE namespace using CUSTOM config dir (fresh!); \
+  /usr/sbin/ip netns exec "$${NS}" /usr/bin/warp-svc --config-dir "$${CONF}" & \
+  WARP_PID=$!; \
+  \
+  # Cleanup background warp-svc on script exit (success or failure); \
+  trap "kill $${WARP_PID} 2>/dev/null || true; wait $${WARP_PID} 2>/dev/null || true" EXIT; \
+  \
+  # 8. Wait for IPC readiness (poll warp-cli status up to 10s); \
+  for i in $(seq 1 20); do \
+    if /usr/sbin/ip netns exec "$${NS}" /usr/bin/warp-cli --accept-tos --config-dir "$${CONF}" status &>/dev/null 2>&1; then \
+      break; \
+    fi; \
+    sleep 0.5; \
+  done; \
+  \
+  # 9. Reset daemon internal state (clears "old registration" memory); \
+  /usr/sbin/ip netns exec "$${NS}" /usr/bin/warp-cli --accept-tos --config-dir "$${CONF}" reset-settings; \
+  \
+  # 10. Register new WARP license inside namespace (creates reg.json in CONF); \
+  /usr/sbin/ip netns exec "$${NS}" /usr/bin/warp-cli --accept-tos --config-dir "$${CONF}" registration new && \
+  \
+  # 11. Copy ALL config to default path for warp-node (which uses --config-dir CONF); \
+  cp -r "$${CONF}"/* "$${DEFAULT}"/'
+
+# SECURITY: CAP_NET_ADMIN for ip netns, CAP_SYS_ADMIN for setns + pkill + chattr
+NoNewPrivileges=true
+RestrictAddressFamilies=AF_INET AF_UNIX AF_NETLINK
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_SYS_ADMIN
+
+# Allow up to 60s for registration (warp-svc start ~5s + DNS + tunnel connect ~10s + registration ~5s)
+TimeoutStartSec=60
+
+[Install]
+WantedBy=multi-user.target

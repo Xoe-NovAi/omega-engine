@@ -269,6 +269,13 @@ hub_routes = [
 async def _cleanup_indexer() -> None:
     """Close the indexer on server shutdown.
     Background tasks are cancelled automatically by the lifespan TaskGroup."""
+    from omega.memory_store import get_memory_store
+    try:
+        await get_memory_store().stop_batch_writer()
+        logger.info("MemoryStore batch writer stopped")
+    except Exception as e:
+        logger.warning("MemoryStore batch writer stop failed: %s", e)
+
     if indexer is not None:
         try:
             await indexer.close()
@@ -285,6 +292,11 @@ async def _on_startup(tg: anyio.abc.TaskGroup = None) -> None:
     if tg:
         tg.start_soon(_prune_awareness_background)
         tg.start_soon(_reaper_background)
+        
+        # Start MemoryStore batch writer
+        from omega.memory_store import get_memory_store
+        store = get_memory_store()
+        tg.start_soon(store.start_batch_writer, tg)
     else:
         logger.warning("No TaskGroup provided — background loops not started")
     logger.info("Background tasks started: pruning, reaper")

@@ -1,6 +1,6 @@
 # 🔱 Omega Engine — User Manual
 # Sovereign AI Runtime — Terminal Edition
-# Version 3.1.0 | HORIZON 1 COMPLETE | 302 Tests Passing
+# Version 3.1.0 | 705 Tests Passing | 22 Sovereign Mandates
 
 ## Table of Contents
 1. [Quick Start](#quick-start)
@@ -77,7 +77,7 @@ ollama pull qwen2.5:0.5b   # Minimal (~397 MB, runs on any hardware)
 ollama pull qwen3:1.7b     # Better quality (~1.1 GB)
 
 # 6. Verify installation
-make test          # Should show 302/302 passing
+make test          # Should show 705/705 passing
 make talk MSG='hello'  # Should get a response
 
 # 7. (Optional) Start the MCP Hub for cross-agent awareness
@@ -105,7 +105,7 @@ The Omega Engine provides a polished text-based menu via `make menu`:
 ```
 ╔══════════════════════════════════════════════════════╗
 ║  🔱 OMEGA ENGINE — HORIZON 1 COMPLETE               ║
-║  302 tests ✅  |  71 modules  |  All 12 Mandates     ║
+║  705 tests ✅  |  71 modules  |  All 22 Mandates     ║
 ╚══════════════════════════════════════════════════════╝
 
 🔥 CORE
@@ -116,7 +116,7 @@ The Omega Engine provides a polished text-based menu via `make menu`:
   make menu         This menu
 
 🧪 TESTING
-  make test         Run all 302 tests
+  make test         Run all 705 tests
   make lint         Lint with flake8
   make guard        Fix permission drift (UID Guard)
 
@@ -860,7 +860,7 @@ OMEGA_DEMO=true make demo
 
 | Target | Description |
 |--------|-------------|
-| `make test` | Run all 302 tests (includes UID Guard) |
+| `make test` | Run all 705 tests (includes UID Guard) |
 | `make test ARGS='-k pattern'` | Run filtered tests |
 | `make test-cov` | Run tests with coverage report |
 | `make lint` | Lint with flake8 |

@@ -77,6 +77,10 @@ mcp_test.py
 test_discovery.py
 check_hivemind.py
 Screenshot*.png
+find_tokens.py
+verify_headroom.py
+ingestion.log
+*-Google-Search-Chat.md
 
 # ═════════════════════════════════════════════════════════════════════
 # DATA — Runtime artifacts NOT part of source code

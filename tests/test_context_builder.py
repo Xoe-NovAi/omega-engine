@@ -250,7 +250,7 @@ async def test_quality_weighted_selects_higher_quality(mock_memory_store):
     cb = ContextBuilder(memory_store=mock_memory_store)
 
     # Budget fits only 1 exchange. Quality-weighted should pick the substantive one.
-    context = await cb._compact_and_format_exchanges(exchanges, token_limit=80, quality_weighted=True)
+    context = await cb._compact_and_format_exchanges("user", exchanges, token_limit=80, quality_weighted=True)
     assert "3-tier architecture" in context
 
 
@@ -264,7 +264,7 @@ async def test_quality_weighted_false_preserves_chronological(mock_memory_store)
     mock_memory_store.get_history.return_value = exchanges
     cb = ContextBuilder(memory_store=mock_memory_store)
 
-    context = await cb._compact_and_format_exchanges(exchanges, token_limit=200, quality_weighted=False)
+    context = await cb._compact_and_format_exchanges("user", exchanges, token_limit=200, quality_weighted=False)
     # Output is chronological: oldest first (lower index), newest later (higher index)
     pos_oldest = context.find("msg-oldest")
     pos_newest = context.find("msg-newest")

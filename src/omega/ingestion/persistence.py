@@ -1,3 +1,4 @@
+# AP: AP-INGESTION-PERSISTENCE-v1.0.0
 """
 Sovereign Persistence — Wiring ingestion results into Engine systems.
 """
@@ -27,7 +28,10 @@ class IngestionPersistence:
         model_name: str, 
         extraction_data: Dict[str, Any], 
         latency_s: float, 
-        trace_id: str
+        trace_id: str,
+        quality_score: float,
+        domain: str,
+        enrichment: Optional[Dict[str, Any]] = None
     ) -> str:
         """
         Persists an extraction result through the full Engine stack:
@@ -47,6 +51,9 @@ class IngestionPersistence:
             "model": model_name,
             "latency_s": latency_s,
             "category": "ingestion_extraction",
+            "quality_score": quality_score,
+            "domain": domain,
+            "enrichment": enrichment,
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
         

@@ -95,7 +95,7 @@ async def _safe_call(coro, tool_name: str, **context):
 ```
 
 **Target tools (23)**:
-- Oracle (6): `oracle_talk`, `oracle_summon`, `oracle_list_entities`, `oracle_list_pillar_keepers`, `oracle_entity_info`, `oracle_assess_intent`, `oracle_discover_entity`
+- Oracle (6): `oracle_talk`, `oracle_summon`, `oracle_list_entities`, `oracle_list_entities`, `oracle_entity_info`, `oracle_assess_intent`, `oracle_discover_entity`
 - Library (12): all `library_inbox_*`, `library_ingest_pending`, `library_search`, `library_get_document`, `library_domains`, `library_stats`, `library_recent`, `library_index_flush`
 - Discovery (3): `library_discovery_research`, `library_discovery_start`, `library_discovery_status`
 - Research (5): `research`, `research_get`, `research_list`, `research_depths`, `research_stats`

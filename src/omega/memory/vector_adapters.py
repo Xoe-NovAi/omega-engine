@@ -164,7 +164,7 @@ class QdrantAdapter(IVectorStoreAdapter):
     """Qdrant implementation of the vector store adapter."""
 
     def __init__(self, host: str = "localhost", port: int = 6333, collection_name: str = "omega_memory"):
-        self.client = QdrantClient(host=host, port=port)
+        self.client = QdrantClient(host=host, port=port, check_compatibility=False)
         self.collection_name = collection_name
         self._initialized = False
 

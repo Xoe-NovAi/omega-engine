@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 WAD Loader — Universal Runtime Container Loader
 # AP: AP-WAD-LOADER-v1.0.0
 # ICS: [NODE: CORE | ARCHETYPE: SOPHIA | CONTEXT: RUNTIME-LOADING]

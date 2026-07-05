@@ -14,11 +14,6 @@ wad:
     primary: "jem.yaml"
     secondary: []
 
-  adapters:
-    memory:
-      module: "config.wads.arcana_novai.adapters.mnemosyne_adapter"
-      class: "MnemosyneAdapter"
-
   vr_scenes: []
 
   dependencies: []

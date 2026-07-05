@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Health Monitor — Provider Health & Circuit Breaking
 # AP: AP-HEALTH-MONITOR-v1.0.0
 #
@@ -190,11 +190,20 @@ class AsyncCircuitBreaker:
             if trace_id and old_state != self.state:
                 try:
                     from omega.observability import get_engine, EventType
-                    get_engine().log_event(
+                    engine = get_engine()
+                    engine.log_event(
                         EventType.BACKEND_FALLBACK,
                         trace_id,
                         {"provider": self.name, "event": "circuit_closed",
                          "from": old_state.value, "to": self.state.value}
+                    )
+                    # Also record to MetricsDB
+                    engine.record_breaker_transition(
+                        provider=self.name,
+                        from_state=old_state.value,
+                        to_state=self.state.value,
+                        trace_id=trace_id,
+                        reason="success_recovery",
                     )
                 except Exception as e:
                     logger.warning(f"Circuit closed event failed — observability unavailable: {e}")
@@ -227,12 +236,21 @@ class AsyncCircuitBreaker:
             if trace_id and old_state != self.state:
                 try:
                     from omega.observability import get_engine, EventType
-                    get_engine().log_event(
+                    engine = get_engine()
+                    engine.log_event(
                         EventType.BACKEND_FALLBACK,
                         trace_id,
                         {"provider": self.name, "event": "circuit_opened",
                          "from": old_state.value, "to": self.state.value,
                          "failure_count": self.failure_count, "cusum": self.cusum_g}
+                    )
+                    # Also record to MetricsDB
+                    engine.record_breaker_transition(
+                        provider=self.name,
+                        from_state=old_state.value,
+                        to_state=self.state.value,
+                        trace_id=trace_id,
+                        reason=f"failures={self.failure_count},cusum={self.cusum_g:.2f}",
                     )
                 except Exception as e:
                     logger.warning(f"Circuit opened event failed — observability unavailable: {e}")

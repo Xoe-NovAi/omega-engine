@@ -58,7 +58,7 @@
 | **Blocking I/O** | ✅ PASS | All async via Oracle |
 | **Error Handling** | ✅ PASS | Registry.get/find_by_name_fragment handle None gracefully |
 | **Logging** | ⚠️ PARTIAL | No logging beyond FastMCP defaults |
-| **Tools** | 5 | `talk`, `summon`, `list_entities`, `list_pillar_keepers`, `entity_info`, `assess_intent` |
+| **Tools** | 5 | `talk`, `summon`, `list_entities`, `list_entities`, `entity_info`, `assess_intent` |
 | **Duplication** | ❌ ISSUE | **6 tools duplicated in omega-hub** |
 
 **Issues**: Not wired in `opencode.json` — only hub (which duplicates these tools) is active.

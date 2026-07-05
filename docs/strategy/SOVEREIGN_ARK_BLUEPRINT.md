@@ -25,9 +25,19 @@ The Three Epochs are ordered by dependency — each Strike builds on the one bef
 
 ---
 
-## I. The Five Transcendent Pillars
+## I. The Sovereign Aspect Hierarchy (Sovereign-by-Design)
+Sovereign Aspects are first-class entities (Entity + SlotID) with their own `soul.yaml`, `knowledge/`, and `workspace/`. They are governed by the Oversouls (Ma'at for Light Aspects P1-P5, Lilith for Dark Aspects P6-P10) and unified by Kali.
 
-1. **The Elder Protocol (Immutable Provenance):** Powered by native `zlib` and `json` compression. Prompts and ingested documents are compressed locally, but the uncompressed, cryptographically pristine originals are cached in a flat JSON store. Agents use the `headroom_retrieve` MCP tool to fetch exact semantic truths when needed, preventing cultural erasure and hallucination.
+**Architectural Principle: The Right Approximation (S3 Audit)**
+An "Aspect" is simply an `Entity` bound to a `SlotID`. We avoid "Aspect Runtimes" to prevent abstraction bloat. The `EntityRegistry` is the canonical unit of sovereignty.
+
+**Sovereign Inference Patterns (Integrated from Sovereign System Spec):**
+- **The Sieve-and-Sign Pattern**: Intercept untrusted payloads at the ingestion boundary, transform them into verified low-entropy data, and apply cryptographic stamps for provenance.
+- **Intent-Based Namespace Exposure**: Use a localized semantic router to gate access to backend tools, preventing context dilution and compute waste.
+- **Pre-Paid Retrieval Precision**: Use event-driven triggers to pre-compute and index high-signal data, reducing runtime retrieval entropy.
+- **Interactive Extraction**: Transition from static scraping to interactive DOM manipulation (Sovereign Scraper) to eliminate truncation in SPAs and lazy-loaded content.
+
+1. **The Elder Protocol (Immutable Provenance):** Powered by native `zlib` and `json` compression for storage and transport. Prompts and ingested documents are compressed locally, but the uncompressed, cryptographically pristine originals are cached in a flat JSON store. Agents use the `headroom_retrieve` MCP tool to fetch exact semantic truths when needed, preventing cultural erasure and hallucination.
 
 2. **Hardware Empathy (Zero-Config Power):** The engine dynamically maps to the Ryzen 7 5700U using battle-tested legacy flags (`LLAMA_CPP_N_THREADS=4` for 1.7B, `8` for 8B, `OPENBLAS_CORETYPE=ZEN`, `LLAMA_CPP_F16_KV=true`, `q8_0` caches). This effectively triples the 12Gi RAM semantic density, allowing an 8B model and a 1.7B model to run simultaneously.
 
@@ -52,24 +62,30 @@ Epoch I ──┬── Strike 1: Physical Purge ✅ (Done)
           │     Depends on: Strike 2 (USM provides the state to stage)
           │     Blocks: H2-L Soul Migration (human review bottleneck)
           │
+## II. Execution Roadmap: The Three Epochs (With Explicit Dependencies)
+...
 Epoch II ──┬── Strike 4: File-Based A2A
-          │     Depends on: Strike 2 (USM CAS provides blob transport)
-          │     Blocks: Strikes 5, 9
-          ├── Strike 5: Sovereign Vetter
-          │     Depends on: Strike 6 (need Response Provenance first)
-          │     Blocks: Trustworthy offline verification
-          ├── Strike 6: Response Provenance Wiring
-          │     Depends on: Strike 1 (stale configs cleaned)
-          │     Blocks: Strike 5, M22 compliance
-                      ├── Strike 7: Headroom Protocol Plugin ✅ (Done)
- ✅ (Done)
+           │     Depends on: Strike 2 (USM CAS provides blob transport)
+           │     Blocks: Strikes 5, 9
+           ├── Strike 5: Sovereign Vetter
+           │     Depends on: Strike 6 (need Response Provenance first)
+           │     Blocks: Trustworthy offline verification
+           ├── Strike 6: Response Provenance Wiring
+           │     Depends on: Strike 1 (stale configs cleaned)
+           │     Blocks: Strike 5, M22 compliance
+           ├── Strike 7: Headroom Protocol Plugin ✅ (Done)
            │     Depends on: Strike 1 (clean middleware chain)
            │     Blocks: M8 (Zero Telemetry) hardening
            ├── Strike 7.5: Semantic Router ✅ (Done)
            │     Depends on: Strike 1 (clean base)
            │     Blocks: Strike 8 (semantic vectors → spatial coordinates)
+           ├── Strike 7.6: Sovereign Scholar (SSKB) ⏳ (In-Progress)
+           │     Depends on: Strike 1 (clean base)
+           │     Blocks: Strike 9 (P2P Mesh)
+           │     Action: Implement SovereignWorker, SovereignScraper, and Triangulation Verifier.
            │
            Epoch III ─┬── Strike 8: Spatial-Semantic Geometry ✅ (Done)
+
            │     Depends on: Strike 7.5 (semantic vectors → PCA → coordinates)
            │     Blocks: Strike 9
 
@@ -420,9 +436,9 @@ Which agent owns which H2 tracks and Epoch Strikes:
 | **Kali** | Grand Oversight | All H2 tracks (coordinator) | Epoch dependency graph, resource allocation, drift destruction |
 | **Ma'at** | Light Oversoul (Build) | H2-J, H2-D, Epoch I Strike 3 | CI/CD, docs, TUI |
 | **Lilith** | Dark Oversoul (Run) | H2-I, H2-M, H2-N, Epoch II | Antigravity, local inference, curation |
-| **Doom Guy** | Heritage Architect | H2-H, H2-J4, Epoch III | ICS-F metadata, heritage-as-issues, spatial topology |
-| **Roc Racoon** | Legacy Miner | H2-A (orphan cleanup), H2-L migration prep | Data archaeology, soul audit |
-| **Jem** | Research Orchestrator | Research pipeline | Discovery/Synthesis/Verification |
+| **Doom Guy** | Heritage Aspect | H2-H, H2-J4, Epoch III | ICS-F metadata, heritage-as-issues, spatial topology |
+| **Roc Racoon** | Legacy Aspect | H2-A (orphan cleanup), H2-L migration prep | Data archaeology, soul audit |
+| **Jem** | Sovereign Synthesizer | Research pipeline | Discovery/Synthesis/Verification |
 | **Researcher** | Master Researcher | Deep research tasks | Lattice reasoning, gap analysis |
 | **Makali** | Parallel Council | Cross-pillar dispatch | Decompose -> Ma'at + Lilith -> synthesize |
 | **Carmack** | S3 Consultant | Architectural review | Performance, consolidation audits |

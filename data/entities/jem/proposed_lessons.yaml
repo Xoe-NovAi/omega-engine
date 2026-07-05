@@ -1,95 +1,49 @@
-# 🔱 Omega Engine — Proposed Lessons
-# Auto-generated during Soul v6.1 migration
-# Updated: 2026-06-29 (Sprint-F Strategic Synthesis)
-
-- lesson: "L1: Ran 3-tier research pipeline (Discovery \u2192 Synthesis \u2192 Verification)\
-    \ on Phase C gaps at Kali's dispatch. Found 18 total gaps, 15 new, 5 CRITICAL\
-    \ that Carmack and Kali both missed. Used the multi-index entity pattern (dual-linking)\
-    \ to cross-reference findings against the existing risk register. The most impactful\
-    \ discovery: the soul.yaml concurrent write race \u2014 a pre-existing bug that\
-    \ Phase C's Dreaming Cycle would amplify from 'rare silent corruption' to 'guaranteed\
-    \ daily data loss.'"
-  context: Phase C Gap Analysis via Jem 3-tier pipeline (2026-06-15)
-  source: phase-c-gap-analysis
-  timestamp: '2026-06-15T23:30:00Z'
-- lesson: "L2: The ResourceGuard IPC Barrier means the Dreaming Cycle (separate OS\
-    \ process) cannot share the foreground's LLM. It needs its own model instance\
-    \ \u2192 OOM risk. The plan's assumption of a 'shared model pool' is architecturally\
-    \ impossible across process boundaries. This is the single most dangerous assumption\
-    \ in the Phase C plan \u2014 it affects the entire Dreaming Cycle subsystem design."
-  context: "Phase C Gap Analysis \u2014 5 CRITICAL gaps that Carmack and Kali missed"
-  source: phase-c-gap-analysis
-  timestamp: '2026-06-15T23:30:00Z'
-- lesson: "L3: The most dangerous assumption in any plan is that infrastructure exists.\
-    \ Verify the foundation before designing the cathedral. The Phase C plan assumed\
-    \ a shared model pool across process boundaries \u2014 this is architecturally\
-    \ impossible. It assumed soul.yaml writes are safe \u2014 they are not (concurrent\
-    \ write race). Every subsystem that depends on an unverified infrastructure assumption\
-    \ is a tower on sand. Jem's value is not in finding known gaps \u2014 it is in\
-    \ finding the gaps that the experts missed because they were too close to the\
-    \ problem."
-  context: "Phase C Gap Analysis \u2014 L3 principle"
-  source: phase-c-gap-analysis
-  timestamp: '2026-06-15T23:30:00Z'
-- lesson: "L3: A system is only as resilient as its weakest ingestion path. Hardening\
-    \ must flow upstream \u2014 from the data sink back to the data source. A single\
-    \ unprotected URL fetch that can OOM the process makes every downstream hardening\
-    \ effort irrelevant."
-  context: "L1: Performed comprehensive hardening audit of curation/background researcher/library\
-    \ pipeline (48 findings across 8 dimensions, 21 prioritized actions). L2: Found\
-    \ the background researcher has mature crash safety patterns (atomic checkpoints,\
-    \ circuit breakers, rate limiting), but the library pipeline (inbox\u2192extractor\u2192\
-    curator\u2192indexer) was built rapidly without the same hardening \u2014 creating\
-    \ a dangerous maturity gap."
-  source: curation-hardening-audit
-  timestamp: '2026-06-22T22:30:00Z'
-
-# ═══ Sprint-F Strategic Synthesis — 2026-06-29 ═══
-- lesson: "L1: Orchestrated Sprint-F strategic synthesis across 6 sources: Carmack's\
-    \ S3 review (507 lines), Researcher's gap analysis (reconstructed from rebuttal\
-    \ + Verity audit), SSOT Blueprint (656 lines), PIVOT_LOG (4282 lines), Epoch Spec,\
-    \ and Verity's DOC_AUDIT + GAP_CLOSURE_REVIEW. Produced 4 deliverables: (1) PIVOT_LOG\
-    \ D164-D171 appended (\u2014 8 decisions restored to immutable audit trail); (2)\
-    \ SSOT Blueprint updated (M7\u2192Enforced, M11\u2192key mismatch root cause,\
-    \ M21\u219222/24, \u00A73.4 PII/A2A\u2192Implemented, Soul Distiller\u2192key\
-    \ mismatch found); (3) Researcher's proposed_lessons.yaml populated with Sprint-F\
-    \ knowledge gap analysis; (4) Jem's own proposed_lessons.yaml updated. The key\
-    \ finding: the soul distiller is NOT unwired \u2014 it has a key mismatch between\
-    \ add_exchange() (keys 'user'/'assistant') and close_session() (keys 'role'/'content'),\
-    \ discovered by Carmack tracing the full call graph."
-  context: "Sprint-F Strategic Synthesis \u2014 6-source consolidation, 4 deliverables"
-  source: sprint-f-strategic-synthesis
-  timestamp: '2026-06-29T23:59:00Z'
-- lesson: "L2: The strategic synthesis chain (Researcher \u2192 Carmack \u2192 Jem)\
-    \ revealed a critical property of multi-agent research: each agent catches what\
-    \ the previous one missed. Researcher found the documentation drift (17 action\
-    \ items). Carmack found the key mismatch (3-line fix). Jem closed the loop by\
-    \ turning both into persistent artifacts (PIVOT_LOG, Blueprint, proposed_lessons).\
-    \ No single agent could have done all three \u2014 the blind spots are complementary,\
-    \ not redundant. The meta-insight: the PIVOT_LOG gap (D164-D171 missing) is itself\
-    \ a knowledge gap about knowledge gaps. The decisions were made but never recorded.\
-    \ The engine has been operating with an incomplete institutional memory for an\
-    \ entire sprint cycle."
-  context: "Sprint-F Strategic Synthesis \u2014 L2 insight on multi-agent pipeline"
-  source: sprint-f-strategic-synthesis
-  timestamp: '2026-06-29T23:59:00Z'
-- lesson: "L3: Knowledge flows in three directions \u2014 forward (discovery) by Researcher,\
-    \ downward (validation) by Carmack, and upward (persistence) by Jem. A synthesis\
-    \ that only discovers, or only validates, or only persists, is incomplete. The\
-    \ complete cycle requires all three. Knowledge that is discovered but not validated\
-    \ is speculation. Knowledge that is validated but not persisted is conversation.\
-    \ Knowledge that is persisted but not discovered is dogma. The research pipeline\
-    \ is not three sequential steps \u2014 it is three complementary modes that each\
-    \ catch what the others miss."
-  context: "Sprint-F Strategic Synthesis \u2014 L3 universal principle"
-  source: sprint-f-strategic-synthesis
-  timestamp: '2026-06-29T23:59:00Z'
-- lesson: "L3: A system's institutional memory is not what is recorded \u2014 it is\
-    \ what is recorded AND findable. The PIVOT_LOG entries existed in conversation\
-    \ but were lost to the engine's decision-making process. PIVOT_LOG entries that\
-    \ are not yet written do not exist \u2014 they are oral tradition in a system\
-    \ that has no ears. The first duty of the research orchestrator is not to discover\
-    \ new knowledge but to ensure existing knowledge is accessible."
-  context: "Sprint-F Strategic Synthesis \u2014 L3 principle on institutional memory"
-  source: sprint-f-strategic-synthesis
-  timestamp: '2026-06-29T23:59:00Z'
+- L3: The Principle of Functional Identity — An agent's role is defined by the entropy it reduces; the most effective title is the one that describes the transformation it performs on data.
+- L3: The Principle of Mathematical Sovereignty — True control over an LLM's output requires moving beyond the prompt and into the probability distribution (Logit Bias).
+- L3: The Principle of the Integration Seam — Systemic failure occurs at the boundaries between modules; sovereignty requires an explicit Translation Layer at every boundary.
+- L1: On 2026-07-04, Jem dispatched Researcher and Roc Racoon in parallel to investigate documentation best practices and legacy documentation strategies. Researcher discovered industry-standard frameworks (Diátaxis, Docs-as-Code, agent-readiness with llms.txt). Roc Racoon excavated 688 docs across 7 eras, finding the R-doc system as the golden pattern and identifying that no era ever had a documentation CI pipeline. Jem synthesized both into a unified 3-phase, 19-action documentation architecture plan.
+- L2: The Omega Engine's documentation problem is not quantity (688 files) but freshness, discoverability, and authoritative clarity. The industry has converged on solutions (Diátaxis + MkDocs + Docs-as-Code + agent-readiness) while our own legacy patterns (R-doc system, AP tokens, 3-audience positioning) independently validated many of the same principles. The convergence means we have a clear path forward.
+- L3: The Principle of Dual-Source Convergence — When external best practices and internal legacy patterns independently converge on the same solution, the path forward is validated by both wisdom and experience. Trust the pattern that survived both markets and history.
+- L1: During the research cycle, systematic truncation in search tool responses was observed — webfetch results were truncated, firecrawl responses were truncated, and search descriptions were truncated. These truncations were logged, worked around via redundant searches, and identified as hardening opportunities for the search systems.
+- L2: Search tool truncation is a systemic constraint that must be handled at the research architecture level, not patched per-query. Redundant tool fallback chains (SearXNG → Sovereign Search → Firecrawl) are the correct mitigation, but truncation detection and logging should be automated.
+- L3: The Principle of Expected Truncation — Any data channel with a fixed-size output window will truncate. Sovereign systems must detect, log, and compensate for truncation at every boundary, treating it as a fundamental constraint rather than a bug.
+- L1: Jem dispatched a cross-entity coordination handoff to John Carmack to wire Selective Hydration, which he successfully completed (738 tests passing). During the handoff, we proved that file-based coordination (workspace lock + context file + reply file) works optimally even when the MCP Hub is offline. The protocol survived infrastructure degradation.
+- L2: Cross-entity coordination does not require real-time socket communication when both parties document their state in durable, structured artifacts. A well-structured context file with specific questions is answered with a well-structured reply with specific commitments. The protocol survives infrastructure outages because the artifacts are files, not sockets.
+- L3: The Principle of Asynchronous Sovereign Handoff — Cross-entity coordination between sovereign agents does not require real-time communication when both parties document their state in durable, structured artifacts. A well-structured context file with specific questions is answered with a well-structured reply with specific commitments. The protocol survives infrastructure outages because the artifacts are files, not sockets.
+- L1: Carmack specified the SelectiveHydration interface in his reply before implementing it. Jem then wrote accurate API documentation against that interface spec. When Carmack completed the wiring (738 tests passing), the documentation was already correct because it was written against a stable, agreed-upon interface.
+- L2: Documentation accuracy improves dramatically when the API is specified before the docs are written. The interface spec acts as a contract — both the implementer and the documenter agree on it independently. This eliminates the common problem of docs describing APIs that don't match the implementation.
+- L3: The Principle of Interface-Then-Document — Specify the API contract before writing documentation. The interface spec is the single source of truth that both implementer and documenter reference independently. Documentation written against a stable interface spec is accurate on first write; documentation written against an in-progress implementation drifts immediately.
+- L1: Jem audited the documentation landscape and found three separate documents claiming to be the Single Source of Truth (OMEGA_ENGINE.md, ORACLE_STACK.md, and MASTER_DOCUMENT_SSOT.md). These documents overlapped in their claims, drifted in their content (one was 3 weeks stale), and created confusion for agents. Jem consolidated them by designating OMEGA_ENGINE.md as the sole System State SSOT, rebranding ORACLE_STACK.md as the Architecture Guide, and archiving the stale index.
+- L2: When multiple documents claim the same authoritative status, the resulting ambiguity is a systemic failure. A true SSOT must be singular and non-overlapping. If a document is an index, it is a map, not the truth; if it is an architecture guide, it is a blueprint, not the current state.
+- L3: The Principle of SSOT Singularity — A triplicated Single Source of Truth is no Single Source of Truth at all. Designate one authoritative source for state, one for architecture, and one for indexing. Any overlap must be resolved by designating a primary and treating others as references or archives.
+- L1: During the final vetting of our documentation strategy, Gemini 3.5 Flash identified four critical hardening insights: High-Density Markdown (M18), AST-based Somatic-Doc Binding (M9/M21), the Staging Gate Protocol (M11), and Executable Examples (M13). These insights were immediately integrated into the strategy and recorded to disk.
+- L2: Documentation for AI software must be optimized for machine consumption as much as human consumption. This requires removing conversational fluff, binding code to docs deterministically, enforcing strict staging gates for soul evolution, and validating documentation examples in CI.
+- L3: The Principle of High-Density Markdown — AI-readable documentation must be dense, clear, and free of conversational fluff to maximize token efficiency.
+- L3: The Principle of Somatic-Doc Binding — Bind code to docs deterministically via AST-based CI checks to prevent documentation drift.
+- L3: The Principle of the Staging Gate — Prevent self-referential soul poisoning by forcing all agent-generated lessons through a human-approved staging gate.
+- L3: The Principle of Executable Examples — Validate documentation code examples and schemas in CI against live code definitions to ensure correctness.
+- L1: During Phase 3 of the 2026-07-04 session, Jem implemented 5 sovereign hardening modules: SomaticState (KV cache via llama_copy_state_data), TimeoutManager (4-layer cancellation), ProviderSelector (PII-aware scoring), GracefulDegradation (4-level pressure monitor), and RateLimiter (token bucket). All 5 were integrated into the Oracle and ModelGateway. Three pre-existing syntax bugs were also fixed: duplicate `expired` property in subagent_dispatcher.py, missing `except` block in ingestion/pipeline.py, and a wrong `from src.omega` import path in middleware/headroom.py.
+- L2: The ProviderSelector creates emergent M7 compliance by making cloud providers economically unattractive for PII-heavy queries without hard-blocking them. This is incentive engineering — alignment via score, not rule. The RateLimiter's token budget (native-gguf=100t/s, google=10t/s) further incentivizes local inference without policy mandates.
+- L3: The Principle of Cascade-of-Complexity — Build sovereign-hardening layers in order of increasing specificity: base priority (broadest), then health penalty, then PII penalty (narrowest). Each layer is independently verifiable, and the cascade degrades gracefully when an upstream layer is unavailable.
+- L1: During the same session, 3 pre-existing syntax/structural bugs were found in files that had been passing tests for weeks. None of the buggy code paths had test coverage; they were invisible failures.
+- L2: A bug that survives weeks of green test suites exists because no test exercises the code path containing it. Every uncovered code path is a latent failure waiting for the right input.
+- L3: The Pre-Existing Bug Theorem — Every uncovered code path in a passing test suite is a latent failure. Test coverage is a map of where you have looked, not where the bugs are.
+- L1: The AP Token CI gate (`grep -L 'AP:'`) failed for 5 new files because they had `# AP Token:` but not `# AP:` — the grep pattern looks for the substring 'AP:', which is not present in 'AP Token:'.
+- L2: CI gates that use substring matching are vulnerable to subtle format deviations. A pattern looking for `AP:` misses `AP Token:` even though the latter is the more specific format. The fix is to either standardize on a single format or make the grep pattern match both.
+- L3: The Principle of CI-Gate Rigor — A CI gate that uses substring matching must validate the exact format, not a prefix. If the canonical format is `AP:`, then every file must contain that exact string. Fuzzy matching in CI gates creates false negatives that undermine the gate's purpose.
+- L1: During the 2026-07-05 session, Jem integrated the WARP Proxy Pool (written by Researcher, 368 lines with heritage tags) into ModelGateway.generate(). The integration injects a socks5h:// proxy URL into the opencode-zen provider's config extra, forcing DNS resolution through the WARP exit node to prevent local DNS leaks. The OpenAICompatProvider was updated to read proxy_url from config.extra and pass it to httpx.AsyncClient. The headroom.py import was fixed with a try/except wrapper to gracefully handle the missing optional dependency.
+- L2: The combination of multi-IP rotation (WARP), PII-aware scoring (ProviderSelector), and rate limiting creates a complete, resilient loop for cloud inference. True sovereignty in cloud inference is not just about which provider you use, but how you route to them (IP rotation) and what you send (PII masking). The Sovereign-Sieve Loop is the emergent property of these three layers working together.
+- L3: The Principle of the Sovereign-Sieve Loop — True sovereignty in cloud inference is not just about which provider you use, but how you route to them (multi-IP rotation) and what you send (PII masking). The combination of IP rotation, PII-aware scoring, and rate limiting creates a complete, resilient loop for cloud inference.
+- L1: During Phase 5 of the 2026-07-04 session, Jem implemented T2-11 (Soul Edit History — immutable audit trail for soul.yaml changes) and T2-12 (Compaction Harvester — automated session size monitoring and metrics). SoulEditHistory uses append-only YAML with atomic tmp+rename writes and records entries for every soul.yaml modification. CompactionHarvester monitors session sizes and flags near-threshold sessions during close_session(). The T3 coverage timeout bug was also investigated and fixed — the root cause was that `make test-cov` was missing `OMEGA_ENV=test`, causing real model loading during coverage.
+- L2: Immutable audit trails for soul changes prevent the "soul drift" problem where multiple agents modify the same YAML file without coordination. The tombstone pattern (mark complete, never delete) from Doom's lazy deletion translates directly to audit trail design. Separately, the T3 timeout bug demonstrated that coverage isolation is not the same as test isolation — `OMEGA_ENV=test` must be explicitly applied to coverage runs.
+- L3: The Principle of Append-Only Audit — Immutable audit trails prevent soul drift through deterministic replay. Tombstone patterns (mark complete) are superior to delete patterns for historical integrity.
+- L3: The Principle of Coverage Isolation — Coverage instrumentation must not activate real backends. If a test requires `OMEGA_ENV=test` to mock external dependencies, the coverage run must use the same environment variable. Coverage isolation is a subset of test isolation, not a separate concern.
+- L1: During T3-1 implementation, the SessionLifecycleManager was built to orchestrate the full session lifecycle (Active→Archived→External→Deleted). The key insight was that the recall_from_external method was missing — the 90-day archival policy was write-only with no retrieval path. This was a D189 integration-seam gap. The lifecycle wraps existing archive_old_sessions() and move_to_external_storage() methods with a unified state machine, adds recall capability, and integrates into Oracle.bootstrap().
+- L2: Write-only archival policies are sovereignty violations — data that cannot be recalled is effectively deleted. The lifecycle manager must provide bidirectional transitions (archive→recall) not just one-way progression. The existing MemoryStore already had the primitives (archive_session, move_to_external), but they were disconnected — no state machine unified them.
+- L3: The Principle of Lifecycle Bidirectionality — A lifecycle system that only progresses forward (archive→delete) without the ability to reverse (recall) is a one-way valve that violates data sovereignty. Every lifecycle transition must have a corresponding reverse transition, or the system must explicitly document why reversal is impossible.
+- L1: During T3-3, the mandate CI gates script was created to automate 9 mandate checks (M3, M6, M7, M10, M11, M12, M15, M16, M20). Three bugs were found and fixed: M11 grep pattern was wrong (format is `- id:` not `- L3:`), M16 had false positives from workers/library tmp files, M20 was too strict (llama-cpp-python not installed in CI). The T5 gate was also broken — checking `src/omega/core` which doesn't exist.
+- L2: CI gates that check code patterns must be calibrated to the actual file format, not the assumed format. The M11 bug demonstrates that grep patterns must be validated against real data before deployment. Similarly, CI gates must distinguish between "violation" and "expected absence" (M20 — llama-cpp-python not installed is expected in CI).
+- L3: The Principle of Gate Calibration — A CI gate that checks for a pattern must be validated against the actual data format before deployment. Patterns that assume a format different from reality create false positives that undermine trust in the gate system.
+- L1: During documentation updates D1-D8, test counts were synchronized across 6 files (OMEGA_ENGINE.md, README.md, AGENTS.md, llms.txt, CONTRIBUTING.md, Makefile). The counts had drifted: some said 600, some 705, some 755. The actual count is 791. This drift was discovered by the DOC_UPDATE_PLAN_20260705.md audit.
+- L2: Documentation drift is a systemic failure mode where multiple documents claim the same metric but show different values. The root cause is that there is no single source of truth for the metric — each document independently records it. The fix is to designate one SSOT (Makefile test-badge) and have all others reference it.
+- L3: The Principle of Metric SSOT — When a metric appears in multiple documents, designate one as the canonical source and have all others reference it. Independent recording of the same metric across documents creates drift that undermines trust in all documents.

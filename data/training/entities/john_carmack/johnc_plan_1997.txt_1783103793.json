@@ -1,0 +1,77 @@
+{
+  "source": "johnc_plan_1997.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "Quake 2 architecture uses a separate .dll file for game logic instead of the Quake 1 .qc language to improve efficiency (estimated 5-10% speed increase) and allow use of native code.",
+      "Quake 2 implements 'areaportals' to divide maps into areas, allowing the engine to cull rendering and sound for areas not reachable via open portals, regardless of the PVS (Potentially Visible Set).",
+      "The Quake 2 BSP format (version 38) supports up to 65,536 planes, nodes, leafs, and brush sides.",
+      "QuakeWorld networking uses delta compression to minimize bandwidth and supports up to 32 players.",
+      "The Quake 2 rendering architecture allows switching between software and OpenGL modes without restarting the game.",
+      "SGI Origin-2000 servers with MIPS R10000 processors were used for high-end compute tasks due to better scalability and cost-per-CPU compared to enterprise Intel systems.",
+      "The .md2 triangle model format uses a scaled byte representation for vertices to fit within frame mins/maxs.",
+      "UDP is preferred over TCP for real-time gaming to avoid the latency caused by TCP's error recovery mechanisms.",
+      "Quake 2 uses a dedicated network thread and checksums maps on the client side to prevent 'cheater maps'.",
+      "The 'Trinity' project research involves progressive mesh style LOD rendering and radiosity-based sound solutions."
+    ],
+    "personality_patterns": [
+      "Extreme focus on technical excellence and writing 'the best software I can'.",
+      "Pragmatic approach to feature sets: willing to cut 'pet features' if they obstruct future architectural expansion.",
+      "Transparent and direct communication style, often using public .plan files to document decisions and frustrations.",
+      "High tolerance for sleep deprivation in pursuit of development goals.",
+      "Preference for small, high-efficiency teams over large groups to avoid communication overhead and entropy.",
+      "Passion for high-performance machinery, specifically Ferraris and drag racing.",
+      "Openly welcomes insightful technical criticism but dislikes implied ulterior motives or cynicism regarding his motivations."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "The Cost of Feature Addition",
+        "description": "The true cost of adding a feature is not just the initial coding time, but the long-term obstacle it creates for future expansion and the fragility it adds to the codebase."
+      },
+      {
+        "principle": "Optimal Team Size",
+        "description": "There is a limit to programming team size beyond which adding more people increases development time due to communication overhead and the loss of global scope of knowledge."
+      },
+      {
+        "principle": "The Shipping Trade-off",
+        "description": "A software project is never truly finished; waiting for every feature to be perfect prevents shipping. The value of releasing a functional product early often outweighs the benefit of a 'perfect' later release."
+      },
+      {
+        "principle": "Global Insight vs. Local Insight",
+        "description": "A single developer with a global understanding of the entire system (editor, utilities, game) is more efficient than multiple developers with specialized, local knowledge."
+      }
+    ],
+    "heritage_patterns": [
+      "Use of BSP (Binary Space Partitioning) trees for both rendering and environment testing.",
+      "Client-side prediction to mask network latency in real-time multiplayer.",
+      "Modular game logic exported to external libraries (DLLs) to separate engine from game rules.",
+      "Development of custom internal tools (e.g., 3D model painting programs, map editors) when commercial options fail to meet specific technical needs."
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "Why did Carmack decide to move from .qc to DLLs for Quake 2?",
+        "chosen": "To improve efficiency by using native code, which provided a 5-10% speed increase, and to allow for more sophisticated game logic and easier debugging with real debuggers.",
+        "rejected": "Because he wanted to make the game harder to mod for people who didn't know how to use a compiler."
+      },
+      {
+        "prompt": "What is the purpose of 'areaportals' in Quake 2?",
+        "chosen": "They allow the engine to cull rendering and sound for entire areas of a map if no open portals lead to them, providing a more effective culling mechanism than PVS alone, especially for doors.",
+        "rejected": "They are used to create fancy teleportation effects between different levels of the game."
+      },
+      {
+        "prompt": "How does Carmack view the relationship between team size and productivity?",
+        "chosen": "He believes there is a maximum optimal team size, beyond which adding more programmers actually slows down development due to communication overhead and the loss of a global architectural perspective.",
+        "rejected": "He believes that more programmers always lead to a better product if they are managed correctly."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_1997.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 27.920703649520874,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T18:36:30.526681+00:00",
+    "trace_id": "ingest_ddb5277b7532"
+  },
+  "trace_id": "ingest_ddb5277b7532"
+}

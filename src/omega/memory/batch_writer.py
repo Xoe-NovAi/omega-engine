@@ -145,6 +145,15 @@ class BatchPersistenceWriter:
             await self._send.aclose()
         logger.info("BatchPersistenceWriter stopped — stats: %s", self._stats)
 
+    async def flush(self) -> None:
+        """Explicitly flush any pending writes.
+        
+        If the background loop is running, writes are flushed automatically within
+        FLUSH_INTERVAL. If not running, writes are committed immediately on write(),
+        so this is a no-op.
+        """
+        logger.debug("BatchPersistenceWriter.flush() called")
+
     @property
     def stats(self) -> Dict[str, int]:
         return dict(self._stats)

@@ -23,6 +23,7 @@ from omega.errors import (
     ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
     EntityTombstonedError, ModelNotFoundError,
 )
+from omega.oracle.soul_edit_history import SoulEditHistory, SoulEditEntry
 
 from .models import GnosisPacket, ResearchTask
 
@@ -117,6 +118,21 @@ class SoulUpdater:
                 yaml.dump(soul_data, default_flow_style=False, sort_keys=False)
             )
             logger.info(f"Wrote L3 to {soul_path}")
+            
+            # Record in soul edit history
+            try:
+                history = SoulEditHistory()
+                await history.append(SoulEditEntry(
+                    entity_name=entity,
+                    field_path="entity.lessons_learned",
+                    new_value=l3[:120],
+                    source="background_researcher",
+                    trace_id=task.session_id or "unknown",
+                    agent_name="background_researcher",
+                    summary=f"Background research L3: {l3[:80]}",
+                ))
+            except Exception as hist_exc:
+                logger.warning("Failed to record soul edit history for %s: %s", entity, hist_exc)
 
     async def _write_research_doc(
         self,

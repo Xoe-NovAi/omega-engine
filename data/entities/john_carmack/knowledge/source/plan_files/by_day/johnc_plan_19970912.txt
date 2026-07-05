@@ -1,0 +1,25 @@
+# ⬡ John Carmack .plan File — 1997-09-12
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19970912.txt
+#
++ tag_game, tag_level
++ new game must clear
+- need to save game state at last level entered as well as exact current
++ save level on exit..
++ spawnpoint to game dll wrong?
++ collapse sv_phys into something else?
++ skip all pixelformat stuff on minidrivers?
+
+get rid of Com_SetServerState() ?
+ERR_DROP?
+status command that prints out server and client state?
+don't allow anything but CRC checked pak file access in a demo
+client userinfo change updates
+worry about cvar info string lengths
+make sure IP is visible to game
+track deaths as well as fregs?
+directmouse?
+view shaking from explosions?

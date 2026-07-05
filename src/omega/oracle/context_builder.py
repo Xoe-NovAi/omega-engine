@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Context Builder — Memory Injection Pipeline
 # AP: AP-CONTEXT-BUILDER-v1.0.0
 # ICS: [NODE: MNEMOSYNE | ARCHETYPE: SOPHIA | CONTEXT: CONTEXT-BUILDING]
@@ -30,6 +30,8 @@ from enum import Enum
 from ..memory_store import get_memory_store, MemoryStore
 from ..constants import DEFAULT_CONTEXT_LIMIT
 from .world_state import world_state
+from .middleware.headroom import get_headroom_middleware, HeadroomResult
+from .selective_hydration import SelectiveHydration, L3Principle
 # New constant for token-aware sliding window
 DEFAULT_TOKEN_LIMIT = 4000 
 
@@ -148,14 +150,31 @@ MAX_EXCHANGE_DISPLAY_LENGTH = 500  # truncate individual messages to avoid promp
 
 class ContextBuilder:
     """Builds structured memory context blocks for LLM system prompts.
-
+    DocRef: docs/reference/api/context_builder.md
+    
     Fetches recent conversation history from MemoryStore and formats it
+
     as a clean, readable string block. Designed to be prepended to an
     entity's personality/system prompt before inference.
+
+    [id-soft: doom-1993] BSP Culling — L3 principle injection uses O(1)
+    culling: only top-K principles are injected, avoiding context bloat.
+
+    When selective_hydration is provided, L3 gnosis principles relevant to
+    the query are retrieved from Qdrant and injected into the context block
+    after the memory window. This is the Cache tier of quake-1996 4-Tier
+    Memory — reusable pre-distilled wisdom.
     """
 
-    def __init__(self, memory_store: Optional[MemoryStore] = None):
+    def __init__(
+        self,
+        memory_store: Optional[MemoryStore] = None,
+        selective_hydration: Optional[SelectiveHydration] = None,
+        l3_top_k: int = 5,
+    ):
         self.memory_store = memory_store or get_memory_store()
+        self._selective_hydration = selective_hydration
+        self._l3_top_k = l3_top_k
 
     @staticmethod
     def _score_exchange_quality(exchange: Dict[str, Any]) -> float:
@@ -223,8 +242,9 @@ class ContextBuilder:
             token_limit: Maximum tokens for the memory block.
         
         Returns:
-            A formatted string block containing recent conversation history
-            and the current world state, or an empty string if no context is available.
+            A formatted string block containing recent conversation history,
+            L3 gnosis principles, and the current world state, or an empty
+            string if no context is available.
         """
         try:
             # 1. Fetch recent memory
@@ -233,17 +253,54 @@ class ContextBuilder:
                 session_id=session_id,
                 limit=MAX_EXCHANGE_DISPLAY_LENGTH,
             )
-            memory_block = await self._compact_and_format_exchanges(exchanges, token_limit) if exchanges else ""
+            memory_block = await self._compact_and_format_exchanges(entity_name, exchanges, token_limit) if exchanges else ""
             
-            # 2. Fetch and format world state
+            # 2. Fetch L3 gnosis principles (Selective Hydration)
+            # [id-soft: doom-1993] BSP Culling — top-K principles only
+            gnosis_block = await self._build_gnosis_block(entity_name)
+            
+            # 3. Fetch and format world state
             world_block = self._format_world_state()
             
-            # Combine blocks
-            full_context = f"{world_block}\n{memory_block}"
-            return full_context.strip()
+            # Combine blocks: world state + gnosis + memory
+            # Gnosis is injected between world state and memory for context grounding
+            parts = [world_block, gnosis_block, memory_block]
+            full_context = "\n".join(p for p in parts if p and p.strip())
+            return full_context.strip() if full_context else ""
             
         except Exception as e:
             logger.warning(f"Failed to build context for {entity_name}/{session_id}: {e}")
+            return ""
+
+    async def _build_gnosis_block(self, entity_name: str) -> str:
+        """Build the L3 gnosis principles block via Selective Hydration.
+
+        Retrieves relevant L3 principles for the entity and formats them
+        as a context block. Silently returns empty string if Selective
+        Hydration is not configured or any step fails.
+
+        [id-soft: doom-1993] Precomputed Lookup — embeddings are
+        precomputed at store time; retrieval is O(1) cosine similarity.
+        """
+        if self._selective_hydration is None:
+            return ""
+
+        try:
+            # Use the entity's domain/role as the hydration query
+            # to get generally relevant principles.
+            principles = await self._selective_hydration.hydrate(
+                query=entity_name,
+                entity_name=entity_name,
+            )
+            if not principles:
+                return ""
+
+            return self._selective_hydration.format_principles_block(principles)
+        except Exception as e:
+            logger.debug(
+                "SelectiveHydration: gnosis block skipped for %s: %s",
+                entity_name, e,
+            )
             return ""
 
     async def build_context_for_user(
@@ -263,7 +320,7 @@ class ContextBuilder:
                 session_id=session_id,
                 limit=MAX_EXCHANGE_DISPLAY_LENGTH,
             )
-            memory_block = await self._compact_and_format_exchanges(exchanges, token_limit) if exchanges else ""
+            memory_block = await self._compact_and_format_exchanges("user", exchanges, token_limit) if exchanges else ""
             
             # 2. Fetch and format world state
             world_block = self._format_world_state()
@@ -323,7 +380,7 @@ class ContextBuilder:
             
         return "".join(lines) + "---\n\n"
 
-    async def _compact_and_format_exchanges(self, exchanges: List[Dict[str, Any]], token_limit: int, quality_weighted: bool = False) -> str:
+    async def _compact_and_format_exchanges(self, entity_name: str, exchanges: List[Dict[str, Any]], token_limit: int, quality_weighted: bool = False) -> str:
         """Format exchanges into a context block using the ACON compaction pipeline.
         
         Implements the PipelineCompactionStrategy: ToolResult -> Summarization -> SlidingWindow -> Truncation.
@@ -355,7 +412,21 @@ class ContextBuilder:
         obs_masking = ObservationMaskingStrategy()
         await obs_masking(messages, token_limit)
 
+        # ── Semantic Compression (Headroom) ──────────────────────────────────
+        # Apply semantic/structural compression to the messages.
+        # This reduces token usage by 60-95% while preserving meaning.
+        headroom_mw = get_headroom_middleware()
+        compressed_messages, _ = await headroom_mw.compress_context(entity_name, [
+            {"role": m.role, "content": m.content} for m in messages
+        ])
+        
+        # Update messages with compressed content
+        for i, msg in enumerate(messages):
+            if i < len(compressed_messages):
+                msg.content = compressed_messages[i].get("content", msg.content)
+        
         # Format with sliding window — iterate from newest to oldest,
+
         # collecting exchanges that fit within token budget.
         header = "## Recent Memory Context\n\n"
         lines: List[str] = []

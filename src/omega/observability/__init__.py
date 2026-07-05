@@ -37,6 +37,7 @@ import anyio
 from omega.constants import ZONEID_TRACE
 from omega.observability.bleg import BLEGMiddleware
 from omega.observability.ufl import UFLWriter, get_ufl_writer
+from omega.observability.metrics_db import MetricsDB
 
 logger = logging.getLogger(__name__)
 
@@ -89,6 +90,7 @@ LOG_DIR = DATA_DIR / "logs"
 DATASET_DIR = DATA_DIR / "datasets"
 TRACE_DIR = DATA_DIR / "traces"
 CRASH_DIR = DATA_DIR / "crashes"
+METRICS_DB_PATH = DATA_DIR / "observability" / "metrics.db"
 
 for d in [LOG_DIR, DATASET_DIR, TRACE_DIR, CRASH_DIR]:
     d.mkdir(parents=True, exist_ok=True)
@@ -578,6 +580,7 @@ class ObservabilityEngine:
         self,
         enable_dataset_collection: bool = False,
         forensics_manager: Optional[ForensicsManager] = None,
+        metrics_db: Optional[MetricsDB] = None,
     ):
         self.enable_dataset_collection = enable_dataset_collection
         self._session_id = uuid.uuid4().hex[:8]
@@ -593,6 +596,39 @@ class ObservabilityEngine:
         self._last_crash: Optional[Dict[str, Any]] = self._forensics.check_recovery()
         self._bleg = BLEGMiddleware(enabled=True)
         self._ufl = get_ufl_writer()
+
+        # MetricsDB — WAL-mode SQLite for profiling baselines & regression detection
+        # [id-soft: doom3-2004] Event System — structured event logging for observability.
+        self._metrics_db = metrics_db
+        self._metrics_db_initialized = False
+
+    def _ensure_metrics_db(self) -> Optional[MetricsDB]:
+        """Lazy-initialize MetricsDB if not already provided.
+
+        Creates the DB at data/observability/metrics.db on first access.
+        Returns None in test mode to avoid filesystem side effects.
+        Respects an injected metrics_db even in test mode.
+        """
+        if self._metrics_db_initialized:
+            return self._metrics_db
+        self._metrics_db_initialized = True
+        if self._metrics_db is not None:
+            # Already injected — respect it even in test mode
+            return self._metrics_db
+        if os.environ.get("OMEGA_ENV") == "test":
+            return None
+        try:
+            db = MetricsDB(METRICS_DB_PATH)
+            db.initialize()
+            self._metrics_db = db
+        except Exception as e:
+            logger.warning("Failed to initialize MetricsDB: %s", e)
+        return self._metrics_db
+
+    @property
+    def metrics_db(self) -> Optional[MetricsDB]:
+        """Access the MetricsDB instance (lazy-initialized)."""
+        return self._ensure_metrics_db()
 
     # ── Trace an entire interaction cycle ────────────────────────────
     def trace(self, trace_id: Optional[str] = None, parent_trace_id: Optional[str] = None) -> "TraceSession":
@@ -684,6 +720,19 @@ class ObservabilityEngine:
         self._event_log.append(event)
         self._persist_event(event)
 
+        # Also record to MetricsDB if available
+        metrics_db = self.metrics_db
+        if metrics_db:
+            try:
+                metrics_db.record_event(
+                    event_type=event_type,
+                    trace_id=trace_id,
+                    provider=data.get("provider"),
+                    payload=data,
+                )
+            except Exception as e:
+                logger.debug("MetricsDB event recording failed: %s", e)
+
         # Also log to standard logger
         logger.debug(f"[{trace_id}] {event_type}: {json.dumps(data, default=str)[:200]}")
 
@@ -727,6 +776,92 @@ class ObservabilityEngine:
         }
         self._dataset.append(example)
 
+    # ── Record performance to MetricsDB ──────────────────────────────
+    def record_performance(
+        self,
+        latency_ms: float,
+        provider: Optional[str] = None,
+        model_used: Optional[str] = None,
+        prompt_tokens: int = 0,
+        completion_tokens: int = 0,
+        is_cloud: bool = False,
+        trace_id: Optional[str] = None,
+    ) -> None:
+        """Record a performance measurement to MetricsDB.
+
+        Called after each inference to track latency, token usage, and cost.
+        [id-soft: doom3-2004] Event System — structured performance logging.
+        """
+        metrics_db = self.metrics_db
+        if not metrics_db:
+            return
+        try:
+            metrics_db.record_performance(
+                latency_ms=latency_ms,
+                provider=provider,
+                model_used=model_used,
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens,
+                is_cloud=is_cloud,
+                trace_id=trace_id,
+            )
+        except Exception as e:
+            logger.debug("MetricsDB performance recording failed: %s", e)
+
+    # ── Record error to MetricsDB ────────────────────────────────────
+    def record_metrics_error(
+        self,
+        error_type: str,
+        error_message: str,
+        trace_id: Optional[str] = None,
+        provider: Optional[str] = None,
+        context: Optional[Dict[str, Any]] = None,
+    ) -> None:
+        """Record an error to MetricsDB (separate from forensics recording).
+
+        [id-soft: doom3-2004] Event System — structured error logging.
+        """
+        metrics_db = self.metrics_db
+        if not metrics_db:
+            return
+        try:
+            metrics_db.record_error(
+                error_type=error_type,
+                error_message=error_message,
+                trace_id=trace_id,
+                provider=provider,
+                context=context,
+            )
+        except Exception as e:
+            logger.debug("MetricsDB error recording failed: %s", e)
+
+    # ── Record breaker transition to MetricsDB ────────────────────────
+    def record_breaker_transition(
+        self,
+        provider: str,
+        from_state: str,
+        to_state: str,
+        trace_id: Optional[str] = None,
+        reason: Optional[str] = None,
+    ) -> None:
+        """Record a circuit breaker state transition to MetricsDB.
+
+        [id-soft: doom3-2004] Event System — breaker transition logging.
+        """
+        metrics_db = self.metrics_db
+        if not metrics_db:
+            return
+        try:
+            metrics_db.record_breaker_transition(
+                provider=provider,
+                from_state=from_state,
+                to_state=to_state,
+                trace_id=trace_id,
+                reason=reason,
+            )
+        except Exception as e:
+            logger.debug("MetricsDB breaker recording failed: %s", e)
+
     # ── Persist dataset to disk ──────────────────────────────────────
     async def flush_dataset(self) -> Optional[Path]:
         """Write collected training examples to disk as JSONL."""
@@ -756,7 +891,7 @@ class ObservabilityEngine:
         event_counts: Dict[str, int] = {}
         for event in self._event_log:
             event_counts[event["event"]] = event_counts.get(event["event"], 0) + 1
-        return {
+        result = {
             "total_events": len(self._event_log),
             "dataset_size": len(self._dataset),
             "event_counts": event_counts,
@@ -767,6 +902,16 @@ class ObservabilityEngine:
                 "last_crash": self._last_crash["timestamp"] if self._last_crash else None,
             },
         }
+        # Add MetricsDB stats if available
+        metrics_db = self.metrics_db
+        if metrics_db:
+            try:
+                result["metrics_db"] = metrics_db.get_stats()
+            except Exception:
+                result["metrics_db"] = {"error": "unavailable"}
+        else:
+            result["metrics_db"] = {"status": "not_initialized"}
+        return result
 
     # ── Forensics / Crash Dump ──────────────────────────────────────
 

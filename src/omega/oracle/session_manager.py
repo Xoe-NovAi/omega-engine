@@ -1,5 +1,5 @@
 # AP: AP-PR-READINESS-v1.0.0
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 """Session Manager — Entity-scoped rolling sessions with daily counter.
 
 Implements the R50 session architecture. Each entity has one active session

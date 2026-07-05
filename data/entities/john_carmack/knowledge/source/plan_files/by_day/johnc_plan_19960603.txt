@@ -1,0 +1,29 @@
+# ⬡ John Carmack .plan File — 1996-06-03
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960603.txt
+#
+* gate_boss, gate_episode
+* item_sigil
+* fixed demo transition forcing console and menu away
+* setup for server transitions with connected clients
+
++ grab new explosions
++ console screen isn't coming down in deathmatch
++ non-pickup nails again
++ console cursor
++ check tim21
++ coop player starts
++ flip mouse y as a checkbox option
+
+monsters aren't telefragged?
+aim lighting gun up/down
+connect while demo is running fucks up
+sound for quad damage attack
+accumulate damage
+shoot flying gibs?
+add new gibs
+deathmatch intermission screen
+talk message buffer doesn't erase with sized down screen

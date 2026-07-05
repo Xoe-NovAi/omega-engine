@@ -1,0 +1,21 @@
+# ⬡ John Carmack .plan File — 1999-05-26
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19990526.txt
+#
+* basic joystick controls, some work still needed for advanced controlers
+* r_dlightBacksides 0 option
+* forced cvar_restart when version changes
+* fixed some flare-in-fog problems
+* fixed skin color in menus
+* print obituary message even when you are the killer, so all kills get an entry in the logfile
+* fixed bugs in line token parsing when quotes or commands aren't white space separated
+* multiprocessor acceleration "r_smp 1"
+* increase menu dimming
+* increased rocket damage radius from 120 to 150 units
+* check for running server in all server commands (dumpuser, etc)
+* new cvar cheat setup -- by default, only archived variables can be changed when not cheating
+* "cg_drawstatus 0" only removes status bar
+* "cg_draw2d 0" removes all 2d

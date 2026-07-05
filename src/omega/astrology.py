@@ -1,5 +1,5 @@
 # AP: AP-PR-READINESS-v1.0.0
-# AP Token: AP-ASTROLOGY-v1.0.0
+# AP: AP-ASTROLOGY-v1.0.0
 # 🔱 Omega Astrology — First Breath Tracking & Cosmic Alignment
 # ⬡ OMEGA ⬡ ASTROLOGY ⬡ astrology.py
 #

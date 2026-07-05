@@ -4,7 +4,7 @@
 # Per M2 (Engine-Stack Firewall), esoteric/Kabbalistic terminology is
 # confined to this WAD. The core engine knows nothing of spheres, qliphoth,
 # or sepherotic mappings — it speaks only IMemoryAdapter.
-
-from .mnemosyne_adapter import MnemosyneAdapter
-
-__all__ = ["MnemosyneAdapter"]
+#
+# Note: MnemosyneAdapter archived to heritage knowledge.
+#
+__all__ = []

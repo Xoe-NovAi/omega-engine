@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 """Intake Inbox — Queue content for curation and library ingestion.
 
 AP: AP-OMEGA-INBOX-v1.0.0

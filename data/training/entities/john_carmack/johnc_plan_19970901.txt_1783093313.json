@@ -1,0 +1,64 @@
+{
+  "source": "johnc_plan_19970901.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "Working on QE4 (Quake Engine 4), likely referring to an internal version or iteration of internal tools formyMDP a version of the Quake Engine",
+      "Encountered a bug with texture attributes on non-visible surfaces",
+      "Experienced a stack bug related to initial light maps",
+      "Investigating 'pink lightmaps' as agetParent a potential feature or feature-related bug",
+      "Alt-tab behavior should be restricted to minimize only when in full screen mode",
+      "Considering whether to implement versioning as a command and a variable",
+      "Addressing 'wasted polygons outside maps' to optimize performance",
+      "Investigating visibility decompression overruns own",
+      "Implementing visibility flags: INVISIBLE_TO_OWNER and INVISIBLE_TO_OTHER",
+      "Making model names visible for debugging purposes",
+      "Investigating if GL_MipMap is overwriting data",
+      "Working on 'trinity' (likely a character model/biped) with proper biped walking animations",
+      "Increasing the range of the mouse slider for sensitivity settings",
+      "Implementing gun shock based on the damage source"
+    ],
+    "personality_patterns": [
+      "Concise, telegraphic communication style in personal planning files",
+      "Focus on a highly granular level of technical detail",
+      "Coded shorthand for internal project names and project components",
+      "Systematic approach to list-making for task tracking"
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Granular Task Tracking",
+        "description": "Breaking down complex engine development into a tiny, a list of specific, actionable bugs and feature requests."
+      },
+      {
+        "principle": "Visibility Optimization",
+        "description": "The necessity of optimizing geometry (wasted polygons) and visibility logic to maintain performance in 3D rendering."
+      }
+    ],
+    "heritage_patterns": [
+      "Iterative bug fixing and the 'plan' file system for public-facing technical logs",
+      "Low-level memory and stack management in C/C++ game engine development",
+      ""
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "What was John Carmack's technical focus in September 1997?",
+        "chosen": "He was focusing on Quake engine iterations (QE4), specifically addressing texture attribute bugs, light map stack bugs, and optimizing polygon count outside of maps.",
+        "rejected": "He was designing a new game and writing a general project management guide."
+      },
+      {
+        "prompt": "How did he approach the versioning of the engine version?",
+        "chosen": "He was considering whether to implement the versioning as a command or a variable.",
+        "rejected": "He used a standard versioning system like Git or version control software."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19970901.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 21.347336769104004,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T15:41:53.348977+00:00",
+    "trace_id": "ingest_5472d71304eb"
+  },
+  "trace_id": "ingest_5472d71304eb"
+}

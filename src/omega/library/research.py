@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 """Research Engine — Multi-depth research on curated library content.
 
 AP: AP-OMEGA-RESEARCH-v1.0.0

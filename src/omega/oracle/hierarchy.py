@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 """Omega Sovereign Hierarchy — Rank and Recursion Management.
 
 AP: AP-HIERARCHY-LOGIC-v1.0.0

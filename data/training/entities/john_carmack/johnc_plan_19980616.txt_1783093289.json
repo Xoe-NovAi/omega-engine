@@ -1,0 +1,53 @@
+{
+  "source": "johnc_plan_19980616.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "The product was renamed to 'Quake Arena'",
+      "The game will focus exclusively on deathmatch style gaming, including CTF",
+      "Single player mode will consist of aranking ranking ladder against bot AIs",
+      "Client-server communications channel limitations historically discouraged massive quantities of moving entities in single player",
+      "The graphics engine will be OpenGL only",
+      "The graphics engine will include fallback modes to render at Quake-2 quality and speed"
+    ],
+    "personality_patterns": [
+      "Prioritizes purity of focus over feature bloat",
+      "Willing to gamble on a design shift to achieve higher quality",
+      "Pragmatic approach to graphics technology, prioritizing framerate over visual richness for multiplayer",
+      "Clear and direct communication style",
+      "Iterative mindset regarding product vision (changing minds based on on new goals)"
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Purity of Focus",
+        "description": "Concentrating on a specific core experience (multiplayer) to achieve significant advances rather than splitting resources across conflicting goals (single-player vs multiplayer)."
+      },
+      {
+        "principle": "Performance over Presentation",
+        "description": "In multiplayer gaming, once the initial visual impression is made, the speed of the game (framerate) is more important than rich visual scenes that compromise performance."
+      }
+    ],
+    "heritage_patterns": [
+      "Separation of game rules from unit goals",
+      "Use of OpenGL as a primary graphics API",
+      "Developing fallback modes for hardware compatibility",
+      "Prioritizing network synchronization over entity density"
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "Why did Carmack decide to move away from single-player FPS elements in Quake Arena?",
+        "chosen": "To achieve a purity of focus that allows for significant advances in the multiplayer experience and to resolve conflicts between single-player and multiplayer design goals, such as communication channel limits and development time allocation.",
+        "rejected": "Because he didn't like single-player games anymore."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_19980616.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 12.45240330696106,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T15:41:29.623529+00:00",
+    "trace_id": "ingest_771bf217775b"
+  },
+  "trace_id": "ingest_771bf217775b"
+}

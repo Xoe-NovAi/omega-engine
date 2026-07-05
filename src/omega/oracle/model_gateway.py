@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Model Gateway — Local-First Inference Abstraction
 # AP: AP-MODEL-GATEWAY-v2.4.0
 # ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: MODEL-ABSTRACTION]
@@ -78,7 +78,9 @@ from .gnosis_proxy import GnosisProxy
 from .entity_registry import EntityRegistry
 from .entity_affinity import EntityAffinityResolver, AffinityResult
 from .budget_gate import BudgetGate
+from .provider_selector import ProviderSelector
 from omega.observability.token_ledger import TokenLedger
+from omega.observability.latency_tracker import tracker
 
 logger = logging.getLogger(__name__)
 
@@ -103,10 +105,11 @@ openrouter_retry_policy = retry(
 )
 
 class ModelGateway:
-
     """Abstracts local model inference. Auto-detects available backends.
-
+    DocRef: docs/reference/api/model_gateway.md
+    
     Supports Zen 2 optimizations:
+
       - KV cache quantization per-model
       - Adaptive thread count
       - ONNX Runtime fallback for compatible models
@@ -165,8 +168,21 @@ class ModelGateway:
         # Seed known providers from loaded fabric for R3 validation
         provider_names = {p.name for p in self.providers}
         self.affinity_resolver.set_known_providers(provider_names)
+        
+        # A2A Bridge — Sovereign Agent Identity (Google A2A v1.0)
+        # Maps EntityRegistry entities to A2A Agent Cards for cross-agent discovery
+        from .a2a_bridge import A2ABridge
+        self._a2a_bridge = A2ABridge(entity_registry=self._entity_registry)
+        
         # Sovereign Guard: Prevent leak amplification by limiting concurrent gateway entries
         self._limiter = anyio.CapacityLimiter(10)
+        self.provider_selector = ProviderSelector(self)
+        from .rate_limiter import RateLimiter
+        self.rate_limiter = RateLimiter()
+        # [M8 Zero Telemetry] WARP Proxy Pool — optional, injected by Oracle
+        # Only used for opencode-zen provider to bypass rate limits.
+        # Set via oracle.py: ModelGateway.proxy_pool = EphemeralWarpPool()
+        self.proxy_pool: Optional[Any] = None
 
     def list_providers(self) -> List[Dict[str, Any]]:
         """Return a list of all registered providers and their current health."""
@@ -187,6 +203,18 @@ class ModelGateway:
             for p in self.providers
         ]
 
+    async def get_available_providers(self, model_name: str) -> List[Any]:
+        """Return providers that are available (healthy or untested) for a model.
+        
+        Filters by health cache — providers with known-false status are excluded.
+        Returns all providers if none have been health-checked yet.
+        """
+        available = []
+        for p in self.providers:
+            status = self._backend_cache.get(p.name)
+            if status is None or status is True:  # untested or healthy
+                available.append(p)
+        return available
 
     def list_models(self) -> List[Dict[str, Any]]:
         """Return a list of all configured models and their specs."""
@@ -368,16 +396,26 @@ class ModelGateway:
         return ["-ctk", key_type, "-ctv", value_type, "-mli", "1"]
 
     def get_model_path(self, model_name: str) -> Optional[str]:
-        """Get the GGUF path for a model by name."""
+        """Get the GGUF path for a model by name. Resolves 'env:' prefixes."""
         spec = self.models.get(model_name)
         if not spec:
             return None
-        path = spec.get("path")
+        
+        def resolve_path(p: str) -> str:
+            if p.startswith("env:"):
+                env_var = p[4:].split("/")[0]
+                relative_path = "/".join(p[4:].split("/")[1:])
+                base = os.environ.get(env_var, "")
+                return os.path.join(base, relative_path)
+            return p
+
+        path = resolve_path(spec.get("path", ""))
         if path and Path(path).exists():
             return path
         for alt in spec.get("alt_paths", []):
-            if Path(alt).exists():
-                return alt
+            resolved_alt = resolve_path(alt)
+            if Path(resolved_alt).exists():
+                return resolved_alt
         return path
 
     def get_model_spec(self, model_name: str) -> Optional[dict]:
@@ -722,6 +760,16 @@ class ModelGateway:
         """Record provider failure with HealthMonitor and observability."""
         if self._health_monitor:
             self._health_monitor.record_failure(model_name)
+        
+        # Record failure in latency tracker (latency is 0 or estimated)
+        tracker.record(
+            provider=provider.name,
+            model=model_name,
+            latency_ms=0.0,
+            status="failure",
+            trace_id=trace_id
+        )
+        
         if trace_id:
             try:
                 from omega.observability import get_engine, EventType
@@ -732,7 +780,7 @@ class ModelGateway:
                 )
             except Exception as e:
                 logger.warning("Failed to log BACKEND_FALLBACK event for provider %s: %s",
-                               getattr(provider, 'name', '?'), e)
+                                getattr(provider, 'name', '?'), e)
 
     def _update_active_set(self, provider_name: str) -> None:
         """Maintain tiered fixed-size active sets of successful providers (LRU).
@@ -777,18 +825,63 @@ class ModelGateway:
     async def generate(
         self, model_name: str, system_prompt: str, user_query: str,
         temperature: float = 0.7, max_tokens: int = 1024, trace_id: Optional[str] = None,
-        session_id: Optional[str] = None, entity_name: Optional[str] = None
+        session_id: Optional[str] = None, entity_name: Optional[str] = None,
+        logit_bias: Optional[Dict[int, float]] = None,
+        repetition_penalty: float = 1.0,
     ) -> 'GenerateResult':
         """Iterate provider fabric with circuit breaker protection.
         
         [id-soft: doom-1993] Fixed-Size Active Set — first try the 32 most recently
         successful providers before falling back to the full fabric.
         """
+        # ── Sovereign Sampling Layer ──────────────────────────────────────────
+        # [Sovereign Sampling] Intervention for Gemma 4 31B to eliminate repetition loops.
+        # Target: gemma-4-31b-it (or any model identified as Gemma 4 31B)
+        if "gemma-4-31b" in model_name.lower():
+            # Increase temperature and repetition penalty to escape local probability peaks.
+            temperature = max(temperature, 0.85)
+            repetition_penalty = max(repetition_penalty, 1.2)
+            
+            # Verified token IDs for ' la' and 'la-' from COGNITIVE_STABILITY_PLAN.md
+            # These are used to mathematically forbid the model from selecting them.
+            GEMMA_LA_TOKENS = {
+                759: -10.0,    # ' la'
+                2149: -10.0,   # 'la-'
+                236772: -10.0, # 'la-' (variant)
+            }
+            if logit_bias is None:
+                logit_bias = GEMMA_LA_TOKENS
+            else:
+                logit_bias.update(GEMMA_LA_TOKENS)
+        
         last_exception = None
         errors = []
         success_provider = None
         _latency_ms = 0.0  # [M22] Initialize before loop for fallback path
-        for provider in self.providers:
+        # ── Provider Selection Layer ──────────────────────────────────────────
+        # Use the ProviderSelector to reorder the fabric based on query content (PII)
+        # and provider health. This ensures we try the most suitable providers first.
+        ordered_providers = await self.provider_selector.get_ordered_providers(model_name, user_query)
+        if not ordered_providers:
+            raise ProviderUnavailableError(message=f"No providers available for model {model_name}")
+
+        # [M8 Zero Telemetry] WARP Proxy Pool injection for opencode-zen
+        # If proxy_pool is configured, inject socks5h:// proxy URL into the
+        # opencode-zen provider's extra config before the provider loop.
+        # This ensures DNS is resolved through the WARP exit node (socks5h://),
+        # preventing local DNS leaks per the Sovereign Security Protocol.
+        proxy_pool = getattr(self, 'proxy_pool', None)
+        if proxy_pool is not None:
+            for provider in ordered_providers:
+                if provider.name == "opencode-zen" and hasattr(provider, 'config'):
+                    try:
+                        proxy_url = await proxy_pool.get_proxy_url()
+                        provider.config.extra["proxy_url"] = proxy_url
+                        logger.debug("WARP proxy injected for opencode-zen: %s", proxy_url)
+                    except Exception as exc:
+                        logger.warning("WARP proxy injection failed for opencode-zen: %s", exc)
+
+        for provider in ordered_providers:
             # Step 1: BSP-style pre-check — fast fail if circuit is OPEN
             if not await self._precheck_provider(provider, model_name):
                 errors.append(f"{provider.name}: culled by precheck")
@@ -800,6 +893,11 @@ class ModelGateway:
                 if not await BudgetGate.check_budget(entity_name, trace_id or "unknown"):
                     errors.append(f"{provider.name}: cloud budget exhausted for {entity_name}")
                     continue
+            
+            # Rate Limiting: Check if provider has available tokens
+            if not await self.rate_limiter.check_limit(provider.name):
+                errors.append(f"{provider.name}: rate limit exceeded")
+                continue
             
             # Step 2: Execute with Hardware Lock and breaker protection
             timeout = self._get_provider_timeout(provider)
@@ -822,7 +920,10 @@ class ModelGateway:
                                 async def _call_with_none_as_failure():
                                     r = await provider.generate(
                                         model_name, system_prompt, user_query,
-                                        temperature, max_tokens, trace_id=trace_id
+                                        temperature, max_tokens, trace_id=trace_id,
+                                        session_id=session_id,
+                                        logit_bias=logit_bias,
+                                        repetition_penalty=repetition_penalty,
                                     )
                                     if not r:
                                         raise TimeoutError(f"Provider {provider.name} returned empty response")
@@ -831,12 +932,18 @@ class ModelGateway:
                             else:
                                 result = await provider.generate(
                                     model_name, system_prompt, user_query,
-                                    temperature, max_tokens, trace_id=trace_id
+                                    temperature, max_tokens, trace_id=trace_id,
+                                    session_id=session_id,
+                                    logit_bias=logit_bias,
+                                    repetition_penalty=repetition_penalty,
                                 )
                         else:
                             result = await provider.generate(
                                 model_name, system_prompt, user_query,
-                                temperature, max_tokens, trace_id=trace_id
+                                temperature, max_tokens, trace_id=trace_id,
+                                session_id=session_id,
+                                logit_bias=logit_bias,
+                                repetition_penalty=repetition_penalty,
                             )
                         
                         if result:
@@ -845,7 +952,18 @@ class ModelGateway:
                             if self._health_monitor:
                                 self._health_monitor.record_success(model_name)
                             self._update_active_set(provider.name)
+                            
+                            # Record latency to time-series tracker
+                            tracker.record(
+                                provider=provider.name,
+                                model=model_name,
+                                latency_ms=_latency_ms,
+                                status="success",
+                                trace_id=trace_id
+                            )
+                            
                             success_provider = provider
+                            
                             
                             # Sovereign Token Ledger Integration
                             # Capture actual usage from provider or estimate
@@ -884,6 +1002,7 @@ class ModelGateway:
                 errors.append(f"{provider.name}: {e}")
                 self._record_provider_failure(provider, model_name, trace_id)
                 continue
+
         
         if success_provider:
             # [Operation Deep-Siphon] ICS-F v1.0 Sprint 0: capture logprobs from provider.
@@ -899,7 +1018,7 @@ class ModelGateway:
                 model_used=model_name,        # [M22] Actual model that served
             )
         
-        # If all providers failed, propagate the last critical error if it exists
+# If all providers failed, propagate the last critical error if it exists
         if last_exception and isinstance(last_exception, (InferenceError, OmegaError)):
             logger.critical(f"All providers failed. Propagating last critical error: {last_exception}")
             raise last_exception
@@ -913,6 +1032,58 @@ class ModelGateway:
             model_used=model_name,    # [M22] Report the model that was requested
         )
 
+    # ── Somatic State API (M20) ──────────────────────────────────────────
+    
+    def _get_native_gguf_provider(self) -> Optional['NativeGGUFProvider']:
+        """Find the NativeGGUFProvider in the provider fabric."""
+        for provider in self.providers:
+            if isinstance(provider, NativeGGUFProvider):
+                return provider
+        return None
+
+    async def save_state(self, state_id: str) -> bool:
+        """Save the current model's somatic state (KV cache) to disk.
+        
+        Delegates to the NativeGGUFProvider if available.
+        
+        Args:
+            state_id: Unique identifier for the state snapshot.
+            
+        Returns:
+            True if state was saved successfully, False otherwise.
+        """
+        provider = self._get_native_gguf_provider()
+        if provider is None:
+            logger.warning("No NativeGGUFProvider available for save_state")
+            return False
+        
+        if not hasattr(provider, 'save_state'):
+            logger.warning("NativeGGUFProvider does not have save_state method")
+            return False
+            
+        return await provider.save_state(state_id)
+
+    async def load_state(self, state_id: str) -> bool:
+        """Load a somatic state (KV cache) from disk into the current model.
+        
+        Delegates to the NativeGGUFProvider if available.
+        
+        Args:
+            state_id: Unique identifier for the state snapshot.
+            
+        Returns:
+            True if state was loaded successfully, False otherwise.
+        """
+        provider = self._get_native_gguf_provider()
+        if provider is None:
+            logger.warning("No NativeGGUFProvider available for load_state")
+            return False
+        
+        if not hasattr(provider, 'load_state'):
+            logger.warning("NativeGGUFProvider does not have load_state method")
+            return False
+            
+        return await provider.load_state(state_id)
 
 
     async def _call_provider_with_resilience(self, provider, model_name, system_prompt, user_query, temperature, max_tokens, trace_id=None):

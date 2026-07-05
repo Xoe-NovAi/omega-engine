@@ -1,7 +1,7 @@
 # ── Hardware Monitor ──
 # ⬡ OMEGA ⬡ Sovereign Hardware Telemetry
 # AP: AP-HARDWARE-MONITOR-v1.0.0
-# AP Token: AP-HARDWARE-MONITOR-v1.0.0
+# AP: AP-HARDWARE-MONITOR-v1.0.0
 # 
 # Captures per-core CPU utilization, memory pressure, thread contention,
 # and thermal/throttling data. Designed to be always-available to agents

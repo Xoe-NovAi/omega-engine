@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Benchmark Runner
 # AP: AP-BENCHMARK-v1.1.0
 # Integrates with ObservabilityEngine for metrics tracking.

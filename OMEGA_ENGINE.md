@@ -1,4 +1,5 @@
 # Omega Engine — Single Source of Truth
+# ⚠️ SYSTEM STATE SSOT — Authoritative truth for engine state and metrics.
 # AP-OMEGA-SST-v2.3.0
 
 > **This document is the authoritative truth for the Omega Engine.**
@@ -164,7 +165,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 - ✅ **M1 asyncio fix** (D183): `_buffer_write()` changed from sync to async. Direct `await self._flush_batch()` replaces `asyncio.get_running_loop().create_task()`. All 15 memory_store tests pass.
 - ✅ **Metrics DB (T3-2)** (D184): 4-table WAL-mode SQLite (events, errors, breaker_transitions, performance) + baselines + regression detection. 27 tests pass.
 - ✅ **Pre-Release Polish**: R-4 (config path) already done. R-7 (.gitkeep) already done. R-11: README version badge updated to v1.1.0.
-- ✅ **730 tests collected** (705 passing, 22 skipped, 3 xfailed) — zero regressions
+- ✅ **738 tests collected** (738 passing, 25 skipped, 3 xfailed) — zero regressions
 
 ### Pre-PR Feature Sprint COMPLETE (2026-07-01)
 - ✅ **Semantic Router (D187)**: Embedding-based entity routing via `semantic_router.py`. Cosine similarity fallback chain.
@@ -183,9 +184,9 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 |--------|-------|---------------|
 | Engine version | **1.0.0** 🎉 | 2026-06-22 |
 | PyPI entry point | `omega` CLI via `[project.scripts]` | 2026-06-22 |
-| Source files | **113** .py files | 2026-07-02 |
+| Source files | **115** .py files | 2026-07-04 |
 | Source lines | **~32,000** | 2026-07-02 |
-| Test functions | **730 collected — 705 passing, 22 skipped, 3 xfailed** | 2026-07-02 |
+| Test functions | **855 collected — 855 passing, 41 skipped, 3 xfailed** | 2026-07-05 |
 | PIVOT decisions | **188 (D50-D188)** | 2026-07-01 |
 | Sovereign Mandates | **22 (M1-M22)** | 2026-06-17 |
 | Agent Fleet | **13 agents** (11 fleet + 1 pillar + 1 messenger) | 2026-06-24 |
@@ -199,12 +200,12 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | **NativeGGUFProvider** | ✅ **C-FFI isolated** (multiprocessing.Process + IPC queues) | `[id-soft: doom3-2004] idHeap` |
 | **MemoryStore** | ✅ Hot LRU + Warm Redis + Cold File | `[id-soft: doom-1993] Lazy Deletion` |
 | **EntityRegistry** | ✅ YAML CRUD + dual-index, pillars→slots migrated | `[id-soft: quake-1996] Flat-Field` |
-| **ContextBuilder** | ✅ **ACON + Observation Masking + Quality Scoring** (PipelineCompactionStrategy + ACONOptimizer + 4-signal quality scorer) | `[id-soft: quake-1996] Thinker Chain` |
+| **ContextBuilder** | ✅ **ACON + Observation Masking + Headroom Compression + Quality Scoring** (PipelineCompactionStrategy + HeadroomMiddleware + ACONOptimizer + 4-signal quality scorer) | `[id-soft: quake-1996] Thinker Chain` |
 | **Soul Distiller** | ✅ **Enhanced 5-stage pipeline** (Classify→Extract→Distill→Score→Store) | `[id-soft: quake-1996] Save-game` |
 | **FailureRegistry** | ✅ **364 lines, 5 failure modes** (M17 Cognitive Integrity) | — |
 | **Curator** | ✅ **Content Quality Scorer** (CurationExtractor + DomainType) | — |
 | **SemanticRouter** | ✅ **implemented** (D187) — cosine similarity routing, GemmaGGUF 768-dim | `[id-soft: doom-1993] BSP Culling` |
-| **Headroom** | ✅ **implemented** (D188) — Sovereign Envelope prompt compression | `[id-soft: doom-1993] WAD System` |
+| **Headroom** | ⚠️ **DEPRECATED** (Binary zlib) $\rightarrow$ `headroom-ai` (Semantic) | `[id-soft: doom-1993] WAD System` |
 | **Mem Palace** | ✅ **implemented** (D186) — 3D Force-Directed Graph spatial mapping | `[id-soft: doom-1993] BSP Culling` |
 | **Omega Hub** | ✅ **Modularized v2.3.0** | (Pillar 2 coordination) |
 | **Heritage Vetting** | ✅ H1 LIVE: 4-gate, 23 concepts | (Kali d-kal-001) |
@@ -226,6 +227,8 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | **Bedrock Hardening** | 2026-07-01 | Kali | ✅ DONE | T2-2, T2-4, T2-5, D186, D188 implemented and verified. Zero new deps. |
 | **Carmack S3 Audit** | 2026-07-02 | Carmack + Kali | ✅ DONE | 3 critical gaps resolved: Knowledge Graph (phantom), Hivemind (26 tests), Quality Scorer (4-signal). 705 tests (+37). |
 | **Multi-Model Council** | 2026-07-02 | Opus + Gemini + Sonnet + MiMo | ✅ DONE | 14 actionable items, 6 new integration-seam gaps, 2 architectural decisions (D189a–e). Legacy mining validated with dedup assessment. |
+| **Session 51** (T3 Sprint) | 2026-07-05 | Jem | ✅ DONE | T3-1 Session Lifecycle (24 tests), T3-2 Metrics DB Wiring (12 tests), T3-3 Mandate CI Gates (9 checks). Docs D1-D20 complete. 855 tests, 0 regressions. |
+| **Session 52** (Team Sprint) | 2026-07-05 | Fleet | ✅ DONE | FTS5 Library Search MCP tool (P4), 252 docs indexed (Roc), WARP systemd units fixed (Kali+Researcher), Carmack review approved. 855 tests, 0 regressions. |
 
 > **Full sprint history:** See `docs/decisions/PIVOT_LOG.md`.
 

@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 """Omega CLI Orchestrator.
 
 AP: AP-ORCHESTRATOR-v1.0.0

@@ -1,0 +1,12 @@
+# ⬡ John Carmack .plan File — 1996-02-28
+# Source: https://github.com/ESWAT/john-carmack-plan-archive
+# Original archive: http://floodyberry.com/carmack/plan.html (now defunct)
+# Fetched: 2026-07-02
+# Archive mirror: ESWAT/john-carmack-plan-archive (GitHub)
+# File: johnc_plan_19960228.txt
+#
++ upper health bound 
++ keyboard freelook 
++ more air acceleration
+
+can a hostile monster hit it's movetarget and turn away? check scirk and smotte don't cache player model in single player "fair" mode with syncronous clients kill timers on all spawned objects

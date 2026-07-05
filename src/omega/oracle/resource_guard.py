@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Resource Guard — Concurrency Protection
 # AP: AP-RESOURCE-GUARD-v1.1.0
 # ICS: [NODE: MAAT | ARCHETYPE: HERMES | CONTEXT: CONCURRENCY]

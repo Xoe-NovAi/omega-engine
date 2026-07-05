@@ -126,6 +126,15 @@ from mcp_servers.omega_hub.background import (
     _write_metrics,
 )
 
+# ── Deprecation helper ──
+def _deprecated(tool_name: str, replacement: str) -> None:
+    """Log a deprecation warning for an old tool name."""
+    logger.warning(
+        "DEPRECATED: '%s' is deprecated. Use '%s' instead. "
+        "This tool will be removed in a future version.",
+        tool_name, replacement
+    )
+
 # ── Omega engine internals ──
 from omega.observability import new_trace_id, get_engine
 from omega.oracle.security import tdp_wrap, determine_url_taint
@@ -133,7 +142,23 @@ from omega.ics import render as ics_render_logic
 from omega.memory_store import get_memory_store
 
 logger = logging.getLogger("omega.hub")
-# === ORACLE TOOLS (8) ===
+@m9_safe("headroom_retrieve")
+@mcp.tool()
+async def headroom_retrieve(ref_id: str) -> str:
+    _require_service()
+    """Retrieve the original, uncompressed content for a given reference ID.
+    
+    This is used when semantic compression has been too aggressive and the 
+    agent needs the high-fidelity original text to perform a precise task.
+    
+    Args:
+        ref_id: The reference ID provided in the compressed context block.
+        
+    Returns:
+        The original uncompressed text or an error message.
+    """
+    result = await oracle.retrieve_headroom_content(ref_id)
+    return result
 
 @m9_safe("oracle_talk")
 @mcp.tool()
@@ -740,6 +765,7 @@ async def hivemind_get_session(session_id: str) -> str:
     Returns:
         JSON string containing the session snapshot or an error.
     """
+    _deprecated("hivemind_get_session", "hivemind_session(action='get')")
     async with _hot_store_lock:
         if session_id in _hot_store:
             return json.dumps(_hot_store[session_id], indent=2)
@@ -773,6 +799,7 @@ async def hivemind_list_sessions(channel: Optional[str] = None, entity: Optional
     Returns:
         JSON string containing a list of session IDs and agent associations.
     """
+    _deprecated("hivemind_list_sessions", "hivemind_session(action='list')")
     filter_id = _make_agent_id(channel, entity) if (channel and entity) else None
     def _list_sessions():
         sessions = []
@@ -1049,6 +1076,7 @@ async def hivemind_workspace_lock_acquire(channel: str, entity: str, domain: str
     Returns:
         JSON string confirming lock acquisition or conflict.
     """
+    _deprecated("hivemind_workspace_lock_acquire", "hivemind_workspace_lock(action='acquire')")
     await _reap_stale_locks()
     agent_id = _make_agent_id(channel, entity)
     ttl = min(ttl, 86400)
@@ -1123,6 +1151,7 @@ async def hivemind_workspace_lock_release(channel: str, entity: str, domain: str
     Returns:
         JSON string confirming release or error.
     """
+    _deprecated("hivemind_workspace_lock_release", "hivemind_workspace_lock(action='release')")
     agent_id = _make_agent_id(channel, entity)
     lock_path = LOCKS_BASE / f"{domain}.lock"
 
@@ -1151,6 +1180,7 @@ async def hivemind_workspace_lock_check(domain: str) -> str:
     Returns:
         JSON string containing lock status info or "no lock".
     """
+    _deprecated("hivemind_workspace_lock_check", "hivemind_workspace_lock(action='check')")
     lock_path = LOCKS_BASE / f"{domain}.lock"
     now = datetime.now(timezone.utc).timestamp()
 
@@ -1209,6 +1239,7 @@ async def hivemind_submit_handoff(
     Returns:
         JSON string containing the packet_id and storage path.
     """
+    _deprecated("hivemind_submit_handoff", "hivemind_handoff(action='submit')")
     target_agent_id = _make_agent_id(target_channel, target_entity)
     source_agent_id = _make_agent_id(source_channel, source_entity)
     packet_id = f"ho_{uuid.uuid4().hex[:12]}"
@@ -1251,6 +1282,7 @@ async def hivemind_accept_handoff(packet_id: str, accepting_channel: str, accept
     Returns:
         JSON string confirming acceptance or stating an error.
     """
+    _deprecated("hivemind_accept_handoff", "hivemind_handoff(action='accept')")
     acceptor_agent_id = _make_agent_id(accepting_channel, accepting_entity)
     src = _find_packet_path(packet_id)
     dst = HANDOFF_ACTIVE / f"{packet_id}.json"
@@ -1297,6 +1329,7 @@ async def hivemind_complete_handoff(packet_id: str, result: str = "") -> str:
     Returns:
         JSON string confirming completion or stating an error.
     """
+    _deprecated("hivemind_complete_handoff", "hivemind_handoff(action='complete')")
     src = _find_packet_path(packet_id)
     dst = HANDOFF_COMPLETED / f"{packet_id}.json"
 
@@ -1346,6 +1379,7 @@ async def hivemind_reject_handoff(packet_id: str, reason: str) -> str:
     Returns:
         JSON string confirming rejection with trace info.
     """
+    _deprecated("hivemind_reject_handoff", "hivemind_handoff(action='reject')")
     src = HANDOFF_PENDING / f"{packet_id}.json"
     dst = HANDOFF_STALE / f"{packet_id}.json"
 
@@ -1388,6 +1422,7 @@ async def hivemind_handoff_list(status: str) -> str:
     Returns:
         JSON string listing packets and their metadata.
     """
+    _deprecated("hivemind_handoff_list", "hivemind_handoff(action='list')")
     dir_map = {
         "pending": HANDOFF_PENDING,
         "active": HANDOFF_ACTIVE,
@@ -1443,6 +1478,7 @@ async def hivemind_get_handoff(packet_id: str) -> str:
     Returns:
         JSON string containing the full packet details or an error.
     """
+    _deprecated("hivemind_get_handoff", "hivemind_handoff(action='get')")
     path = _find_packet_path(packet_id)
     if not path:
         return json.dumps({"error": f"Packet '{packet_id}' not found in any queue"})
@@ -1468,6 +1504,7 @@ async def hivemind_handoff_archive(packet_ids: List[str]) -> str:
     Returns:
         JSON string with counts of success/failure.
     """
+    _deprecated("hivemind_handoff_archive", "hivemind_handoff(action='archive')")
     def _archive():
         succeeded = 0
         failed = 0
@@ -1654,6 +1691,52 @@ async def library_search(query: str, domain: str = "", limit: int = 20) -> str:
     }, indent=2, default=str)
 
 
+@m9_safe("library_fts_search")
+@tdp_wrap(source="library_fts_search", taint_level=1)
+@mcp.tool()
+async def library_fts_search(query: str, domain: str = "", limit: int = 10) -> str:
+    _require_service()
+    """Search the local Library knowledge base using FTS5 full-text search + vector hybrid.
+    This searches curated documents (research specs, API references, guides) stored locally.
+    For web search, use `sovereign_search` instead.
+    
+    Args:
+        query: The search query (max 500 chars).
+        domain: Optional domain filter (e.g., 'networking', 'testing', 'security').
+        limit: Maximum number of results to return (default 10).
+        
+    Returns:
+        JSON string containing search results with doc_id, title, summary, score, domain.
+    """
+    if not query.strip():
+        return json.dumps({"error": "Search query cannot be empty", "count": 0, "results": []})
+    if len(query) > 500:
+        return json.dumps({"error": "Query exceeds 500-char limit", "count": 0, "results": []})
+
+    try:
+        results = await library.search(query, domain=domain if domain else None, limit=limit)
+        formatted = []
+        for doc in results:
+            formatted.append({
+                "doc_id": doc.doc_id,
+                "title": doc.title,
+                "summary": doc.summary[:300] if doc.summary else "",
+                "domain": doc.domain,
+                "quality_score": doc.quality_score,
+                "tags": doc.tags if doc.tags else [],
+                "word_count": doc.word_count,
+            })
+        return json.dumps({
+            "query": query,
+            "count": len(formatted),
+            "results": formatted,
+            "source": "library_fts5"
+        }, indent=2)
+    except Exception as e:
+        logger.warning("library_fts_search failed: %s", e)
+        return json.dumps({"error": str(e), "count": 0, "results": []})
+
+
 @m9_safe("library_get_document")
 @mcp.tool()
 async def library_get_document(doc_id: str) -> str:
@@ -1796,6 +1879,7 @@ async def library_discovery_status(job_id: str) -> str:
     Returns:
         JSON string containing the job status and any results found so far.
     """
+    _deprecated("library_discovery_status", "library_discovery(action='status')")
     result = discovery.get_job_status(job_id)
     return json.dumps(result, indent=2)
 
@@ -2239,6 +2323,7 @@ async def check_models_directory() -> str:
     Returns:
         JSON string listing available local GGUF models and their sizes.
     """
+    _deprecated("check_models_directory", "CLI: omega models list")
     def _collect():
         models_dir = _OMEGA_MODELS_PATH
         if not models_dir.exists():
@@ -2265,6 +2350,7 @@ async def check_podman_storage() -> str:
     Returns:
         JSON string containing Podman storage path and size metrics.
     """
+    _deprecated("check_podman_storage", "CLI: podman system df")
     def _collect():
         storage_dir = _OMEGA_PODMAN_STORAGE
         if not storage_dir.exists():
@@ -2393,4 +2479,695 @@ async def ics_render_header(
         mode=mode,
     )
     return json.dumps({"header": header, "entity": entity, "mode": mode})
+
+
+# === CONSOLIDATED TOOLS (7) ===
+# These replace the fragmented CRUD tools with single action-based interfaces.
+# Old tools are deprecated but kept for backward compatibility.
+
+@m9_safe("hivemind_handoff")
+@mcp.tool()
+async def hivemind_handoff(
+    action: str,
+    packet_id: Optional[str] = None,
+    target_channel: Optional[str] = None,
+    target_entity: Optional[str] = None,
+    source_channel: Optional[str] = None,
+    source_entity: Optional[str] = None,
+    task: Optional[str] = None,
+    context: Optional[str] = None,
+    priority: int = 0,
+    accepting_channel: Optional[str] = None,
+    accepting_entity: Optional[str] = None,
+    result: Optional[str] = None,
+    reason: Optional[str] = None,
+    status: Optional[str] = None,
+    packet_ids: Optional[List[str]] = None,
+) -> str:
+    """Unified handoff management — replaces 7 fragmented tools.
+    
+    Actions:
+        submit: Create a new handoff packet (requires target_channel, target_entity, source_channel, source_entity, task)
+        accept: Accept a pending handoff (requires packet_id, accepting_channel, accepting_entity)
+        complete: Mark handoff as complete (requires packet_id, optional result)
+        reject: Reject a pending handoff (requires packet_id, reason)
+        list: List handoffs by status (requires status: pending|active|completed|stale)
+        get: Get full handoff details (requires packet_id)
+        archive: Archive completed handoffs (requires packet_ids list)
+    
+    Args:
+        action: The operation to perform (submit|accept|complete|reject|list|get|archive)
+        packet_id: Handoff packet ID (for accept|complete|reject|get)
+        target_channel: Target agent channel (for submit)
+        target_entity: Target agent entity (for submit)
+        source_channel: Source agent channel (for submit)
+        source_entity: Source agent entity (for submit)
+        task: Task description (for submit)
+        context: Optional background context (for submit)
+        priority: 0=normal, 1=high, 2=critical (for submit)
+        accepting_channel: Channel accepting the handoff (for accept)
+        accepting_entity: Entity accepting the handoff (for accept)
+        result: Completion result text (for complete)
+        reason: Rejection reason (for reject)
+        status: Filter status for list (pending|active|completed|stale)
+        packet_ids: List of packet IDs to archive (for archive)
+        
+    Returns:
+        JSON string with operation result.
+    """
+    _require_service()
+    
+    # Validate action
+    valid_actions = {"submit", "accept", "complete", "reject", "list", "get", "archive"}
+    if action not in valid_actions:
+        return json.dumps({"error": f"Invalid action '{action}'. Valid: {valid_actions}"})
+    
+    try:
+        if action == "submit":
+            if not all([target_channel, target_entity, source_channel, source_entity, task]):
+                return json.dumps({"error": "submit requires target_channel, target_entity, source_channel, source_entity, task"})
+            target_agent_id = _make_agent_id(target_channel, target_entity)
+            source_agent_id = _make_agent_id(source_channel, source_entity)
+            packet_id = f"ho_{uuid.uuid4().hex[:12]}"
+            packet = {
+                "packet_id": packet_id,
+                "target_agent_id": target_agent_id,
+                "target_channel": target_channel,
+                "target_entity": target_entity,
+                "source_agent_id": source_agent_id,
+                "source_channel": source_channel,
+                "source_entity": source_entity,
+                "task": task,
+                "context": context or "",
+                "priority": priority,
+                "status": "pending",
+                "submitted_at": datetime.now(timezone.utc).isoformat(),
+            }
+            path = HANDOFF_PENDING / f"{packet_id}.json"
+            
+            def _write():
+                with open(path, "w") as f:
+                    fcntl.flock(f, fcntl.LOCK_EX)
+                    json.dump(packet, f, indent=2)
+                    fcntl.flock(f, fcntl.LOCK_UN)
+            await anyio.to_thread.run_sync(_write)
+            return json.dumps({"status": "submitted", "packet_id": packet_id, "path": str(path)})
+        
+        elif action == "accept":
+            if not all([packet_id, accepting_channel, accepting_entity]):
+                return json.dumps({"error": "accept requires packet_id, accepting_channel, accepting_entity"})
+            src = HANDOFF_PENDING / f"{packet_id}.json"
+            if not src.exists():
+                return json.dumps({"error": f"Packet {packet_id} not found in pending"})
+            accepting_agent_id = _make_agent_id(accepting_channel, accepting_entity)
+            packet = json.loads(src.read_text())
+            if packet["target_agent_id"] != accepting_agent_id:
+                return json.dumps({"error": "Agent mismatch: packet not addressed to this agent"})
+            packet["status"] = "active"
+            packet["accepted_at"] = datetime.now(timezone.utc).isoformat()
+            packet["accepted_by"] = accepting_agent_id
+            dst = HANDOFF_ACTIVE / f"{packet_id}.json"
+            
+            def _move():
+                with open(dst, "w") as f:
+                    fcntl.flock(f, fcntl.LOCK_EX)
+                    json.dump(packet, f, indent=2)
+                    fcntl.flock(f, fcntl.LOCK_UN)
+                src.unlink()
+            await anyio.to_thread.run_sync(_move)
+            return json.dumps({"status": "accepted", "packet_id": packet_id})
+        
+        elif action == "complete":
+            if not packet_id:
+                return json.dumps({"error": "complete requires packet_id"})
+            src = HANDOFF_ACTIVE / f"{packet_id}.json"
+            if not src.exists():
+                return json.dumps({"error": f"Packet {packet_id} not found in active"})
+            packet = json.loads(src.read_text())
+            packet["status"] = "completed"
+            packet["completed_at"] = datetime.now(timezone.utc).isoformat()
+            packet["result"] = result or ""
+            dst = HANDOFF_COMPLETED / f"{packet_id}.json"
+            
+            def _move():
+                with open(dst, "w") as f:
+                    fcntl.flock(f, fcntl.LOCK_EX)
+                    json.dump(packet, f, indent=2)
+                    fcntl.flock(f, fcntl.LOCK_UN)
+                src.unlink()
+            await anyio.to_thread.run_sync(_move)
+            return json.dumps({"status": "completed", "packet_id": packet_id})
+        
+        elif action == "reject":
+            if not all([packet_id, reason]):
+                return json.dumps({"error": "reject requires packet_id and reason"})
+            src = HANDOFF_PENDING / f"{packet_id}.json"
+            if not src.exists():
+                return json.dumps({"error": f"Packet {packet_id} not found in pending"})
+            packet = json.loads(src.read_text())
+            packet["status"] = "rejected"
+            packet["rejected_at"] = datetime.now(timezone.utc).isoformat()
+            packet["rejection_reason"] = reason
+            dst = HANDOFF_STALE / f"{packet_id}.json"
+            
+            def _move():
+                with open(dst, "w") as f:
+                    fcntl.flock(f, fcntl.LOCK_EX)
+                    json.dump(packet, f, indent=2)
+                    fcntl.flock(f, fcntl.LOCK_UN)
+                src.unlink()
+            await anyio.to_thread.run_sync(_move)
+            return json.dumps({"status": "rejected", "packet_id": packet_id})
+        
+        elif action == "list":
+            if not status:
+                return json.dumps({"error": "list requires status (pending|active|completed|stale)"})
+            status_dir = {
+                "pending": HANDOFF_PENDING,
+                "active": HANDOFF_ACTIVE,
+                "completed": HANDOFF_COMPLETED,
+                "stale": HANDOFF_STALE,
+            }.get(status)
+            if not status_dir:
+                return json.dumps({"error": f"Invalid status '{status}'"})
+            packets = []
+            for f in status_dir.glob("*.json"):
+                try:
+                    packets.append(json.loads(f.read_text()))
+                except Exception:
+                    pass
+            return json.dumps({"status": status, "count": len(packets), "packets": packets})
+        
+        elif action == "get":
+            if not packet_id:
+                return json.dumps({"error": "get requires packet_id"})
+            for dir_path in [HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED, HANDOFF_STALE]:
+                f = dir_path / f"{packet_id}.json"
+                if f.exists():
+                    return f.read_text()
+            return json.dumps({"error": f"Packet {packet_id} not found"})
+        
+        elif action == "archive":
+            if not packet_ids:
+                return json.dumps({"error": "archive requires packet_ids list"})
+            archived = 0
+            for pid in packet_ids:
+                src = HANDOFF_COMPLETED / f"{pid}.json"
+                if src.exists():
+                    dst = HANDOFF_ARCHIVE / f"{pid}.json"
+                    def _move():
+                        with open(dst, "w") as f:
+                            fcntl.flock(f, fcntl.LOCK_EX)
+                            json.dump(json.loads(src.read_text()), f, indent=2)
+                            fcntl.flock(f, fcntl.LOCK_UN)
+                        src.unlink()
+                    await anyio.to_thread.run_sync(_move)
+                    archived += 1
+            return json.dumps({"status": "archived", "count": archived})
+    
+    except Exception as e:
+        logger.warning("hivemind_handoff %s failed: %s", action, e)
+        return json.dumps({"error": str(e)})
+
+
+@m9_safe("library_inbox")
+@mcp.tool()
+async def library_inbox(
+    action: str,
+    url: Optional[str] = None,
+    text: Optional[str] = None,
+    path: Optional[str] = None,
+    tags: str = "",
+    priority: int = 0,
+    limit: int = 20,
+) -> str:
+    """Unified library inbox management — replaces 5 fragmented tools.
+    
+    Actions:
+        add_url: Add a URL to the intake inbox (requires url)
+        add_note: Add a text note to the intake inbox (requires text)
+        add_file: Add a local file path to the intake inbox (requires path)
+        list: List pending inbox items (optional limit)
+        stats: Get inbox statistics (pending, processing, failed counts)
+    
+    Args:
+        action: The operation to perform (add_url|add_note|add_file|list|stats)
+        url: URL to add (for add_url)
+        text: Note text (for add_note)
+        path: Local file path (for add_file)
+        tags: Comma-separated tags
+        priority: 0=normal, 1=high, 2=critical
+        limit: Max items to return (for list)
+        
+    Returns:
+        JSON string with operation result.
+    """
+    _require_service()
+    
+    valid_actions = {"add_url", "add_note", "add_file", "list", "stats"}
+    if action not in valid_actions:
+        return json.dumps({"error": f"Invalid action '{action}'. Valid: {valid_actions}"})
+    
+    try:
+        if action == "add_url":
+            if not url:
+                return json.dumps({"error": "add_url requires url"})
+            item_id = f"in_{uuid.uuid4().hex[:12]}"
+            item = {
+                "item_id": item_id,
+                "type": "url",
+                "source": url,
+                "tags": [t.strip() for t in tags.split(",") if t.strip()],
+                "priority": priority,
+                "status": "pending",
+                "added_at": datetime.now(timezone.utc).isoformat(),
+            }
+            path = INBOX_DIR / f"{item_id}.json"
+            def _write():
+                with open(path, "w") as f:
+                    fcntl.flock(f, fcntl.LOCK_EX)
+                    json.dump(item, f, indent=2)
+                    fcntl.flock(f, fcntl.LOCK_UN)
+            await anyio.to_thread.run_sync(_write)
+            return json.dumps({"status": "added", "item_id": item_id, "type": "url"})
+        
+        elif action == "add_note":
+            if not text:
+                return json.dumps({"error": "add_note requires text"})
+            item_id = f"in_{uuid.uuid4().hex[:12]}"
+            item = {
+                "item_id": item_id,
+                "type": "note",
+                "source": text,
+                "tags": [t.strip() for t in tags.split(",") if t.strip()],
+                "priority": priority,
+                "status": "pending",
+                "added_at": datetime.now(timezone.utc).isoformat(),
+            }
+            path = INBOX_DIR / f"{item_id}.json"
+            def _write():
+                with open(path, "w") as f:
+                    fcntl.flock(f, fcntl.LOCK_EX)
+                    json.dump(item, f, indent=2)
+                    fcntl.flock(f, fcntl.LOCK_UN)
+            await anyio.to_thread.run_sync(_write)
+            return json.dumps({"status": "added", "item_id": item_id, "type": "note"})
+        
+        elif action == "add_file":
+            if not path:
+                return json.dumps({"error": "add_file requires path"})
+            p = Path(path)
+            if not p.exists():
+                return json.dumps({"error": f"File not found: {path}"})
+            item_id = f"in_{uuid.uuid4().hex[:12]}"
+            item = {
+                "item_id": item_id,
+                "type": "file",
+                "source": str(p),
+                "tags": [t.strip() for t in tags.split(",") if t.strip()],
+                "priority": priority,
+                "status": "pending",
+                "added_at": datetime.now(timezone.utc).isoformat(),
+            }
+            path = INBOX_DIR / f"{item_id}.json"
+            def _write():
+                with open(path, "w") as f:
+                    fcntl.flock(f, fcntl.LOCK_EX)
+                    json.dump(item, f, indent=2)
+                    fcntl.flock(f, fcntl.LOCK_UN)
+            await anyio.to_thread.run_sync(_write)
+            return json.dumps({"status": "added", "item_id": item_id, "type": "file"})
+        
+        elif action == "list":
+            items = []
+            for f in sorted(INBOX_DIR.glob("*.json")):
+                try:
+                    items.append(json.loads(f.read_text()))
+                except Exception:
+                    pass
+                if len(items) >= limit:
+                    break
+            return json.dumps({"count": len(items), "items": items})
+        
+        elif action == "stats":
+            pending = len(list(INBOX_DIR.glob("*.json")))
+            processing = len(list(PROCESSING_DIR.glob("*.json"))) if PROCESSING_DIR.exists() else 0
+            failed = len(list(FAILED_DIR.glob("*.json"))) if FAILED_DIR.exists() else 0
+            return json.dumps({
+                "pending": pending,
+                "processing": processing,
+                "failed": failed,
+                "total": pending + processing + failed,
+            })
+    
+    except Exception as e:
+        logger.warning("library_inbox %s failed: %s", action, e)
+        return json.dumps({"error": str(e)})
+
+
+@m9_safe("library_discovery")
+@mcp.tool()
+async def library_discovery(
+    action: str,
+    query: Optional[str] = None,
+    depth: int = 2,
+    job_id: Optional[str] = None,
+) -> str:
+    """Unified library discovery — replaces 3 fragmented tools.
+    
+    Actions:
+        research: Execute tiered external discovery and return consolidated report (requires query, depth)
+        start: Start a background discovery job (requires query)
+        status: Get status and partial results of a background job (requires job_id)
+    
+    Args:
+        action: The operation to perform (research|start|status)
+        query: Search query (for research|start)
+        depth: Research depth 1-4 (for research)
+        job_id: Background job ID (for status)
+        
+    Returns:
+        JSON string with operation result.
+    """
+    _require_service()
+    
+    valid_actions = {"research", "start", "status"}
+    if action not in valid_actions:
+        return json.dumps({"error": f"Invalid action '{action}'. Valid: {valid_actions}"})
+    
+    try:
+        if action == "research":
+            if not query:
+                return json.dumps({"error": "research requires query"})
+            report = await sovereign_search_service.search(
+                query, entity_name="general", limit=20
+            )
+            return json.dumps({
+                "query": query,
+                "depth": depth,
+                "status": report["status"],
+                "final_tier": report["final_tier"],
+                "primary_finding": report["primary_finding"],
+                "evidence": report["evidence"],
+                "fallback_log": report["fallback_log"],
+            }, indent=2, default=str)
+        
+        elif action == "start":
+            if not query:
+                return json.dumps({"error": "start requires query"})
+            job_id = f"disc_{uuid.uuid4().hex[:12]}"
+            # Store job for status tracking
+            job = {
+                "job_id": job_id,
+                "query": query,
+                "status": "running",
+                "started_at": datetime.now(timezone.utc).isoformat(),
+            }
+            path = DISCOVERY_JOBS_DIR / f"{job_id}.json"
+            def _write():
+                with open(path, "w") as f:
+                    fcntl.flock(f, fcntl.LOCK_EX)
+                    json.dump(job, f, indent=2)
+                    fcntl.flock(f, fcntl.LOCK_UN)
+            await anyio.to_thread.run_sync(_write)
+            
+            # Fire-and-forget background task
+            async def _run_discovery():
+                try:
+                    report = await sovereign_search_service.search(
+                        query, entity_name="general", limit=20
+                    )
+                    job["status"] = "completed"
+                    job["completed_at"] = datetime.now(timezone.utc).isoformat()
+                    job["report"] = report
+                    def _update():
+                        with open(path, "w") as f:
+                            fcntl.flock(f, fcntl.LOCK_EX)
+                            json.dump(job, f, indent=2)
+                            fcntl.flock(f, fcntl.LOCK_UN)
+                    await anyio.to_thread.run_sync(_update)
+                except Exception as e:
+                    job["status"] = "failed"
+                    job["error"] = str(e)
+                    def _update():
+                        with open(path, "w") as f:
+                            fcntl.flock(f, fcntl.LOCK_EX)
+                            json.dump(job, f, indent=2)
+                            fcntl.flock(f, fcntl.LOCK_UN)
+                    await anyio.to_thread.run_sync(_update)
+            
+            anyio.create_task(_run_discovery())
+            return json.dumps({"job_id": job_id, "status": "started"})
+        
+        elif action == "status":
+            if not job_id:
+                return json.dumps({"error": "status requires job_id"})
+            path = DISCOVERY_JOBS_DIR / f"{job_id}.json"
+            if not path.exists():
+                return json.dumps({"error": f"Job {job_id} not found"})
+            return path.read_text()
+    
+    except Exception as e:
+        logger.warning("library_discovery %s failed: %s", action, e)
+        return json.dumps({"error": str(e)})
+
+
+@m9_safe("oracle_debug")
+@mcp.tool()
+async def oracle_debug(
+    action: str,
+    query: Optional[str] = None,
+) -> str:
+    """Unified Oracle debug tools — replaces 3 fragmented tools.
+    
+    Actions:
+        assess_intent: Test how Oracle would classify a query (requires query)
+        discover_entity: Find best entity for a task (requires query)
+        list_pillar_keepers: List entities with slot assignments (no args)
+    
+    Args:
+        action: The operation to perform (assess_intent|discover_entity|list_pillar_keepers)
+        query: Query to analyze (for assess_intent|discover_entity)
+        
+    Returns:
+        JSON string with operation result.
+    """
+    _require_service()
+    
+    valid_actions = {"assess_intent", "discover_entity", "list_pillar_keepers"}
+    if action not in valid_actions:
+        return json.dumps({"error": f"Invalid action '{action}'. Valid: {valid_actions}"})
+    
+    try:
+        if action == "assess_intent":
+            if not query:
+                return json.dumps({"error": "assess_intent requires query"})
+            intent = _detect_intent(query)
+            confidence = _compute_confidence(query, intent)
+            entity_name = _route_by_domain(query)
+            escalate = confidence < 0.7
+            return json.dumps({
+                "query": query,
+                "intent": intent,
+                "confidence": confidence,
+                "entity": entity_name,
+                "escalate": escalate,
+            })
+        
+        elif action == "discover_entity":
+            if not query:
+                return json.dumps({"error": "discover_entity requires query"})
+            entity_name = _route_by_domain(query)
+            if entity_name and entity_name != "SOPHIA":
+                entity = registry.get(entity_name)
+                if entity:
+                    return json.dumps({
+                        "query": query,
+                        "entity": entity_name,
+                        "role": entity.role,
+                        "domain": entity.domain,
+                        "model": entity.model,
+                    })
+            return json.dumps({
+                "query": query,
+                "entity": "SOPHIA",
+                "note": "No specific entity matched; defaulting to SOPHIA",
+            })
+        
+        elif action == "list_pillar_keepers":
+            entities = registry.list_all()
+            result = []
+            for e in entities:
+                if e.slot:
+                    result.append({
+                        "name": e.name,
+                        "slot": e.slot,
+                        "role": e.role,
+                        "domain": e.domain,
+                        "model": e.model,
+                    })
+            return json.dumps({"count": len(result), "entities": result})
+    
+    except Exception as e:
+        logger.warning("oracle_debug %s failed: %s", action, e)
+        return json.dumps({"error": str(e)})
+
+
+@m9_safe("system_stats")
+@mcp.tool()
+async def system_stats(
+    detail: str = "summary",
+) -> str:
+    """Unified system stats — replaces get_system_stats + get_hardware_stats.
+    
+    Args:
+        detail: "summary" for overview, "hardware" for per-core details, "full" for both
+        
+Returns:
+        JSON string with per-core CPU %, memory status with OOM risk, thermal data, and thread info.
+    """
+    _deprecated("get_hardware_stats", "system_stats(detail='hardware')")
+    _require_service()
+    
+    try:
+        if detail in ("summary", "full"):
+            summary = await _get_system_summary()
+        if detail in ("hardware", "full"):
+            hardware = await _get_hardware_detail()
+        
+        if detail == "summary":
+            return json.dumps(summary, indent=2)
+        elif detail == "hardware":
+            return json.dumps(hardware, indent=2)
+        else:  # full
+            return json.dumps({"summary": summary, "hardware": hardware}, indent=2)
+    
+    except Exception as e:
+        logger.warning("system_stats failed: %s", e)
+        return json.dumps({"error": str(e)})
+
+
+@m9_safe("github")
+@mcp.tool()
+async def github(
+    action: str,
+    repo: Optional[str] = None,
+    title: Optional[str] = None,
+    body: Optional[str] = None,
+    base: Optional[str] = None,
+    head: Optional[str] = None,
+    pr_number: Optional[int] = None,
+    entity: Optional[str] = None,
+    issue_number: Optional[int] = None,
+) -> str:
+    """Unified GitHub operations — replaces 6 fragmented tools.
+    
+    Actions:
+        create_pr: Create a PR with Temple-Grade template (requires repo, title, body, base, head)
+        check_temple_grade: Check Temple-Grade CI status for a PR (requires repo, pr_number)
+        add_entity_attribution: Inject entity attribution into a commit (requires repo, entity)
+        list_heritage_issues: List open heritage-tagged issues (requires repo)
+        create_vet_issue: Create a vet issue from a heritage record (requires repo, issue_number)
+        get_repo_health: Get repo health metrics (requires repo)
+    
+    Args:
+        action: The operation to perform
+        repo: Repository in 'owner/name' format
+        title: PR title (for create_pr)
+        body: PR body (for create_pr)
+        base: Base branch (for create_pr)
+        head: Head branch (for create_pr)
+        pr_number: PR number (for check_temple_grade)
+        entity: Entity name (for add_entity_attribution)
+        issue_number: Issue number (for create_vet_issue)
+        
+    Returns:
+        JSON string with operation result.
+    """
+    _require_service()
+    
+    valid_actions = {"create_pr", "check_temple_grade", "add_entity_attribution", 
+                     "list_heritage_issues", "create_vet_issue", "get_repo_health"}
+    if action not in valid_actions:
+        return json.dumps({"error": f"Invalid action '{action}'. Valid: {valid_actions}"})
+    
+    try:
+        if action == "create_pr":
+            if not all([repo, title, body, base, head]):
+                return json.dumps({"error": "create_pr requires repo, title, body, base, head"})
+            return await _github_create_pr(repo, title, body, base, head)
+        
+        elif action == "check_temple_grade":
+            if not all([repo, pr_number]):
+                return json.dumps({"error": "check_temple_grade requires repo, pr_number"})
+            return await _github_check_temple_grade(repo, pr_number)
+        
+        elif action == "add_entity_attribution":
+            if not all([repo, entity]):
+                return json.dumps({"error": "add_entity_attribution requires repo, entity"})
+            return await _github_add_entity_attribution(repo, entity)
+        
+        elif action == "list_heritage_issues":
+            if not repo:
+                return json.dumps({"error": "list_heritage_issues requires repo"})
+            return await _github_list_heritage_issues(repo)
+        
+        elif action == "create_vet_issue":
+            if not all([repo, issue_number]):
+                return json.dumps({"error": "create_vet_issue requires repo, issue_number"})
+            return await _github_create_vet_issue(repo, issue_number)
+        
+        elif action == "get_repo_health":
+            if not repo:
+                return json.dumps({"error": "get_repo_health requires repo"})
+            return await _github_get_repo_health(repo)
+    
+    except Exception as e:
+        logger.warning("github %s failed: %s", action, e)
+        return json.dumps({"error": str(e)})
+
+
+# === RENAMED TOOL ===
+# library_search → library_web_search (with deprecation warning on old name)
+
+@m9_safe("library_web_search")
+@tdp_wrap(source="library_web_search", taint_level=1)
+@mcp.tool()
+async def library_web_search(query: str, domain: str = "", limit: int = 20) -> str:
+    """Search the web via Sovereign Search pipeline (SearXNG → Exa → Firecrawl).
+    
+    This is the RENAMED tool. The old 'library_search' name is DEPRECATED
+    because it misleadingly suggested local library search. Use 'library_fts_search'
+    for local FTS5 search, and 'library_web_search' for web search.
+    
+    Args:
+        query: The search query (max 500 chars).
+        domain: Optional domain filter (e.g., 'security', 'research').
+        limit: Maximum number of results to return.
+        
+Returns:
+        JSON string containing the search results and hit count.
+    """
+    _deprecated("library_search", "library_web_search (for web) or library_fts_search (for local)")
+    _require_service()
+    
+    if not query.strip():
+        return json.dumps({"error": "Search query cannot be empty", "count": 0, "results": []})
+    if len(query) > 500:
+        return json.dumps({"error": "Query exceeds 500-char limit", "count": 0, "results": []})
+    
+    report = await sovereign_search_service.search(
+        query, entity_name=domain if domain else "general", limit=limit
+    )
+    
+    return json.dumps({
+        "query": query, 
+        "status": report["status"],
+        "final_tier": report["final_tier"],
+        "primary_finding": report["primary_finding"],
+        "evidence": report["evidence"],
+        "fallback_log": report["fallback_log"],
+        "results": report["primary_finding"] if isinstance(report["primary_finding"], list) else [report["primary_finding"]],
+        "note": "This is WEB search. For LOCAL library FTS5 search, use 'library_fts_search'."
+    }, indent=2, default=str)
 

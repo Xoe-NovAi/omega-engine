@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 """Zen 2 CPU Optimizer — llama.cpp compilation flags, KV cache, speculative decoding tuning.
 
 AP: AP-CPU-OPTIMIZER-v1.0.0

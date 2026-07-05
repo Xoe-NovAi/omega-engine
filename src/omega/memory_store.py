@@ -84,8 +84,10 @@ ARCHIVE_TO_EXTERNAL_DAYS = 90
 
 class MemoryStore:
     """Hot/Warm/Cold entity memory with LRU caching and 3-tier provider fallback.
-
+    DocRef: docs/reference/api/memory_store.md
+    
     [id-soft: doom-1993] ZONEID Pattern — integrity marker embedded in every
+
     persisted exchange entry, verified on load to catch data corruption.
     [id-soft: doom-1993] Lazy Deletion — archive_session() tombstones a
     cache_key for TOMBSTONE_GRACE_SECONDS before fully removing the hot
@@ -115,10 +117,13 @@ class MemoryStore:
         # Used for in-flight inference results that should not be persisted.
         self._temp: Dict[str, Any] = {}
         self._stats: Dict[str, int] = {"loads": 0, "saves": 0, "archives": 0, "fallbacks": 0, "batch_flushes": 0}
+        
         # ── Batch Persistence Buffer ──
         # Groups pending writes by (entity_name, session_id) to minimize
         # provider round-trips. Prevents connection pool exhaustion under
         # concurrent oracle.talk() load.
+        from .memory.batch_writer import BatchPersistenceWriter
+        self._batch_writer = BatchPersistenceWriter(providers=providers)
         self._batch_buffer: Dict[tuple, List[Dict[str, Any]]] = {}
         self._batch_count: int = 0
         
@@ -172,6 +177,17 @@ class MemoryStore:
         # [Horizon 2: MiMo] FTS5 Search Index
         self.fts = ConversationFTSIndex(_get_memory_dir() / "fts_memory.db")
         self.fts.initialize()
+        
+        # Ensure batch writer has the fully populated providers list
+        self._batch_writer._providers = self.providers
+
+    async def start_batch_writer(self, task_group: anyio.abc.TaskGroup) -> None:
+        """Start the background batch writer."""
+        await self._batch_writer.start(task_group)
+
+    async def stop_batch_writer(self) -> None:
+        """Stop the background batch writer."""
+        await self._batch_writer.stop()
 
     async def get_history(
         self,
@@ -435,7 +451,7 @@ class MemoryStore:
         # Buffer writes instead of spawning threads per-provider per-call.
         # Prevents connection pool exhaustion under concurrent oracle.talk() load.
         # Hot cache (above) is updated immediately — providers get batched writes.
-        await self._buffer_write(entity_name, session_id, exchanges)
+        await self._batch_writer.write(entity_name, session_id, exchanges)
         self._stats["saves"] += 1
         
         # ── Vault Update via Adapter Registry ──
@@ -478,63 +494,9 @@ class MemoryStore:
             except Exception as e:
                 logger.warning("Vector upsert failed for %s: %s", session_id, e)
 
-    # ── Batch Persistence ──────────────────────────────────────────────────
-    # [MnemosyneWriter pattern, ported from xna-omega-legacy]
-    # Buffers provider writes and flushes in batches to prevent connection
-    # pool exhaustion under concurrent load.
-
-    async def _buffer_write(
-        self,
-        entity_name: str,
-        session_id: str,
-        exchanges: List[Dict[str, Any]],
-    ) -> None:
-        """Buffer a write operation for batch flushing.
-
-        [M1: AnyIO Absolute] Replaces legacy asyncio.get_running_loop().create_task()
-        with direct await. Called from async add_exchange(), so can safely await.
-        """
-        key = (entity_name, session_id)
-        if key not in self._batch_buffer:
-            self._batch_buffer[key] = []
-        self._batch_buffer[key].extend(exchanges)
-        self._batch_count += 1
-
-        # Auto-flush when threshold reached — direct await instead of asyncio task
-        if self._batch_count >= self.BATCH_THRESHOLD:
-            await self._flush_batch()
-
-    async def _flush_batch(self) -> None:
-        """Flush all buffered writes to providers in a single batch."""
-        if not self._batch_buffer:
-            return
-
-        buffer = self._batch_buffer
-        self._batch_buffer = {}
-        self._batch_count = 0
-
-        for provider in self.providers:
-            try:
-                for (entity_name, session_id), exchanges in buffer.items():
-                    await provider.save_history(entity_name, session_id, exchanges)
-            except Exception as exc:
-                logger.error(
-                    "Batch flush failed for %s: %s",
-                    provider.__class__.__name__,
-                    exc,
-                )
-                self._stats["fallbacks"] += 1
-
-        self._stats["batch_flushes"] += 1
-        logger.debug(
-            "BatchPersistenceWriter flushed %d groups across %d providers",
-            len(buffer),
-            len(self.providers),
-        )
-
     async def flush(self) -> None:
         """Public method: explicitly flush all pending provider writes."""
-        await self._flush_batch()
+        await self._batch_writer.flush()
 
     def _cache_hot(self, cache_key: str, exchanges: List[Dict]) -> None:
         # [id-soft: doom-1993] Lazy Deletion — reap tombstoned before slot reuse
@@ -545,6 +507,16 @@ class MemoryStore:
             self._hot[cache_key][f"hist_{i}"] = ex
         while len(self._hot) > MAX_HOT_SESSIONS:
             self._hot.popitem(last=False)
+
+    # ── Lifecycle Directory Accessors ──────────────────────────────────────
+    # Expose module-level dir helpers as methods for SessionLifecycleManager
+    def _get_entity_dir(self) -> Path:
+        """Return the entities directory path."""
+        return _get_entity_dir()
+
+    def _get_archive_dir(self) -> Path:
+        """Return the archive directory path."""
+        return _get_archive_dir()
 
     def _reap_tombstoned(self) -> None:
         """Reap tombstoned hot cache entries past the grace period.
@@ -780,7 +752,7 @@ class MemoryStore:
         because their data has already been archived to providers.
         """
         # Flush batch buffer first (pending writes from add_exchange)
-        await self._flush_batch()
+        await self._batch_writer.flush()
 
         for cache_key in list(self._hot.keys()):
             if self._is_tombstoned(cache_key):

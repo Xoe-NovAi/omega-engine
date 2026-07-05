@@ -1,12 +1,10 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-HEADROOM-PROTOCOL-v1.0.0
 # 🔱 Headroom Protocol — Sovereign Prompt Compression
-# AP: AP-HEADROOM-v1.0.0
-# ICS: [NODE: CORE | ARCHETYPE: KALI | CONTEXT: COMPRESSION]
+# ⚠️ DEPRECATED: This implementation uses binary zlib compression, which does NOT reduce LLM tokens.
+# This file is kept for historical reference and rollback purposes.
 #
-# Implements the "Sovereign Envelope" pattern for prompt compression.
-# Uses zlib + base64 to compress large context blocks into flat JSON files,
-# allowing the engine to store and retrieve massive prompts without 
-# saturating the immediate context window.
+# The Omega Engine has pivoted to the `headroom-ai` library for semantic/structural compression.
+# See docs/research/R_HEADROOM_Sovereign_Analysis.md for the detailed audit.
 #
 # [id-soft: doom-1993] WAD System — Data-driven separation of engine and content
 #   The Headroom store acts as a "prompt WAD", where compressed content is

@@ -1,0 +1,78 @@
+{
+  "source": "johnc_plan_1996.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "Implemented a custom PVS (Potentially Visible Set) system to optimize rendering and network updates.",
+      "Developed the QuakeWorld network protocol to handle high-latency (300ms+) internet connections using unreliable packets as the basic primitive.",
+      "Introduced client-side movement simulation (prediction) in QuakeWorld to reduce perceived latency, though later scaled back to smooth out beat frequency interactions.",
+      "Transitioned from a game-style loop (fetch input, process world, send updates) to a database-style loop in QuakeWorld servers to process packets as they arrive.",
+      "Implemented a 'hunk' memory allocation system to manage memory and reduce fragmentation.",
+      "Developed a radiosity replacement for lighting maps that simulates realistic light reflection and flow around corners.",
+      "Ported Quake to OpenGL and Win32, advocating for OpenGL's procedural API over Direct-3D's execute buffer/COM-based approach.",
+      "Used a blend pass to implement light maps in GLQuake, which is fill-rate intensive.",
+      "Implemented a 'body queue' for managing corpses and gibs.",
+      "Utilized a 'signon' process for clients to synchronize initial state with the server.",
+      "Optimized qcc (Quake C compiler) by moving frequently accessed definitions to the head of the search list, resulting in a 4x speedup."
+    ],
+    "personality_patterns": [
+      "Extreme focus on technical efficiency and performance optimization.",
+      "Pragmatic approach to software design: 'practical above idealistic'.",
+      "Willingness to admit technical mistakes (e.g., admitting the original networking assumptions for Quake were wrong for PPP/modem users).",
+      "Strong preference for clean, procedural APIs and a distaste for overly complex or 'broken' abstractions (e.g., his critique of Direct-3D).",
+      "Direct and blunt communication style in public .plan files.",
+      "Workaholic tendencies ('Vacation? I don't need a vacation!').",
+      "Driven by research and 'next generation' technology over mere polishing of existing products."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Latency-Driven Architecture",
+        "description": "Design systems based on the worst-case real-world environment (e.g., 300ms modem latency) rather than the ideal environment (T1 line), as the ideal case is trivial and the worst case defines the user experience."
+      },
+      {
+        "principle": "Procedural Simplicity over Abstraction",
+        "description": "Prefer APIs that allow rapid experimentation and clear, readable code (procedural) over those that force complex boilerplate or intermediate structures (COM/Execute Buffers), as ease of use accelerates the iteration cycle."
+      },
+      {
+        "principle": "Authoritative Server with Client Prediction",
+        "description": "The server must remain the final authority on game state to prevent cheating and maintain consistency, but the client can simulate immediate feedback for the user to mask latency."
+      },
+      {
+        "principle": "Bottleneck Identification",
+        "description": "Identify the dominant performance sink (e.g., linear search in a compiler) and apply the simplest possible fix (e.g., move-to-front heuristic) to achieve massive gains."
+      }
+    ],
+    "heritage_patterns": [
+      "The use of a 'hunk' allocator for memory management.",
+      "The implementation of a PVS for visibility culling.",
+      "The pattern of using unreliable datagrams for time-critical state updates and reliable streams for critical events.",
+      "The 'plan' file as a public, daily technical log for transparent development progress."
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "Why did John Carmack move away from the original Quake networking code for QuakeWorld?",
+        "chosen": "He realized his original design assumed latencies under 200ms, which worked for T1 lines but failed for the 99% of users on PPP/modem connections with 300ms+ latency. He scrapped the reliable stream primitive in favor of unreliable packets to reduce latency and implemented client-side prediction.",
+        "rejected": "The old code was simply too slow and had too many bugs, so he decided to rewrite it from scratch to make it more modern."
+      },
+      {
+        "prompt": "What is Carmack's view on the difference between OpenGL and Direct-3D Immediate Mode?",
+        "chosen": "He considers OpenGL to be a superior, procedural API that is easy to use and allows for rapid experimentation. He views Direct-3D Immediate Mode as a 'horribly broken' API that uses cumbersome COM interfaces and execute buffers, which increases programmer pain without providing significant performance advantages.",
+        "rejected": "He thinks Direct-3D is better for software rendering, while OpenGL is better for high-end workstations."
+      },
+      {
+        "prompt": "How did Carmack improve the performance of the qcc compiler?",
+        "chosen": "He discovered that the linear search for definitions was the primary bottleneck and implemented a simple optimization where definitions are moved to the head of the search list each time they are accessed, resulting in a 4x speedup.",
+        "rejected": "He rewrote the compiler in a more efficient language and added a hash table for all definitions."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_1996.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 29.105043172836304,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T18:28:29.018686+00:00",
+    "trace_id": "ingest_0548e400eb24"
+  },
+  "trace_id": "ingest_0548e400eb24"
+}

@@ -1,0 +1,78 @@
+{
+  "source": "johnc_plan_1996.txt",
+  "model": "gemma-4-31b-it",
+  "extraction": {
+    "technical_facts": [
+      "Developed Quake using a custom engine with a focus on 3D polygon models and light maps.",
+      "Implemented a client-server architecture for multiplayer, initially targeting <200ms latency.",
+      "Created QuakeWorld to address high-latency internet play (300ms+), moving from a game-loop server to a fileserver/database style loop.",
+      "Introduced client-side movement simulation in QuakeWorld to hide latency, though later reined it in to avoid 'slippery slope' simulation issues.",
+      "Developed a custom BSP (Binary Space Partitioning) portalization process that was 20% faster and used 1/5 the memory.",
+      "Implemented a radiosity replacement for lighting that simulated realistic light reflection and emission from surfaces.",
+      "Ported Quake to OpenGL and Win32, advocating for OpenGL over Direct-3D due to its procedural API and ease of use.",
+      "Used a 'hunk' memory allocation system for managing game data and caches.",
+      "Implemented a PVS (Potentially Visible Set) system to optimize network updates and line-of-sight checks.",
+      "Developed the qcc compiler to compile .qc files into progs.dat.",
+      "Used binary object bit updates and bit fields to reduce network packet sizes.",
+      "Implemented a master server for QuakeWorld to handle server registration and global rankings."
+    ],
+    "personality_patterns": [
+      "Extreme technical transparency: maintains a public '.plan' file detailing daily progress, bugs, and decisions.",
+      "Pragmatism over idealism: willing to scrap 'elegant' architectures (like client-as-terminal) to solve real-world problems (latency).",
+      "Strongly opinionated about API design: publicly criticized Direct-3D's COM-based interface as 'horribly broken'.",
+      "Direct and blunt communication style: refers to certain technical failures as 'crap' or 'a big mess'.",
+      "High work ethic and intensity: mentions '18+ months of sweating over' the project and claims he doesn't need a vacation.",
+      "Iterative approach to development: frequently tweaks variables (like air acceleration or friction) based on feel and testing."
+    ],
+    "gnosis_principles": [
+      {
+        "principle": "Latency-First Design",
+        "description": "In twitch-reaction games, network latency is the primary constraint. The server model must shift from a synchronous game loop to an asynchronous packet-processing model to minimize response time."
+      },
+      {
+        "principle": "Procedural API Superiority",
+        "description": "APIs that allow for rapid prototyping and simple, readable code (procedural) are superior to those that force complex boilerplate (like COM/Execute Buffers) because they accelerate the research-and-development cycle."
+      },
+      {
+        "principle": "Client-Side Prediction Limits",
+        "description": "Simulation on the client side should be used to smooth out jitter and variability, but full simulation of high-speed interactions in twitch games leads to diverging states that are too costly to correct."
+      },
+      {
+        "principle": "The 'Wrong Assumption' Pivot",
+        "description": "Recognizing when a fundamental architectural assumption (e.g., targeting <200ms latency) is wrong and having the courage to scrap the entire network stack to rebuild it on the correct primitive."
+      }
+    ],
+    "heritage_patterns": [
+      "Public development logs (.plan files) as a form of community engagement and technical documentation.",
+      "Custom memory management (hunks) and data packing to maximize performance on limited hardware.",
+      "Heavy use of BSP and PVS for spatial partitioning and visibility optimization in 3D environments.",
+      "Prioritizing the 'feel' of movement (friction, acceleration) through constant iterative tuning."
+    ],
+    "dpo_pairs": [
+      {
+        "prompt": "Why did John Carmack move away from the original Quake network code for QuakeWorld?",
+        "chosen": "He realized his original design assumed connection latencies of <200ms, which didn't account for the 300ms+ latencies common for modem users. He scrapped the reliable stream primitive in favor of an unreliable packet primitive and changed the server from a game-loop to a database-style loop to process packets as they arrived.",
+        "rejected": "He wanted to add a master server and global rankings to make the game more competitive."
+      },
+      {
+        "prompt": "What is Carmack's view on Direct-3D Immediate Mode compared to OpenGL?",
+        "chosen": "He considers Direct-3D IM to be a 'horribly broken' API that inflicts pain on programmers through its use of COM and execute buffers, whereas OpenGL is a clean, procedural API that is easy to use and facilitates rapid experimentation.",
+        "rejected": "He prefers Direct-3D because it was designed specifically for games and has better software rendering support."
+      },
+      {
+        "prompt": "How does QuakeWorld handle player movement to hide latency?",
+        "chosen": "It uses client-side movement simulation, allowing the client to guess the results of user input until the authoritative server response arrives, smoothing out the variability in packet arrival times.",
+        "rejected": "It uses a high-speed master server that eliminates latency for all players regardless of their connection type."
+      }
+    ]
+  },
+  "metadata": {
+    "source": "johnc_plan_1996.txt",
+    "model": "gemma-4-31b-it",
+    "latency_s": 33.582756996154785,
+    "category": "ingestion_extraction",
+    "timestamp": "2026-07-03T16:34:00.598408+00:00",
+    "trace_id": "ingest_780252962599"
+  },
+  "trace_id": "ingest_780252962599"
+}

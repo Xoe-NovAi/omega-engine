@@ -1,5 +1,5 @@
 # AP: AP-PR-READINESS-v1.0.0
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 The Oracle — Routing, Summoning, and Entity Intelligence
 # ⬡ OMEGA ⬡ ORACLE ⬡ oracle.py (1100 lines)
 #
@@ -36,6 +36,13 @@ from .security import TDPGate, TaintedData
 from .pii_masker import PIIMasker
 from .context_builder import ContextBuilder
 from .semantic_router import SemanticRouter
+from .selective_hydration import SelectiveHydration
+from .failure_registry import get_failure_registry
+from .soul_edit_history import SoulEditHistory, SoulEditEntry
+from .compaction_harvester import CompactionHarvester
+from .timeout_manager import TimeoutManager
+from .degradation import DegradationManager
+from .session_lifecycle import SessionLifecycleManager, SessionLifecycleConfig
 from ..iris.matcher import IntentMatcher
 
 from ..observability import new_trace_id, ObservabilityEngine, TraceSession, get_engine, DATA_DIR
@@ -45,6 +52,14 @@ from .entity_registry import EntityRegistry, Entity
 from ..memory_store import get_memory_store
 from ..astrology import record_first_breath
 from ..orchestration.triage_router import TriageRouter, TriageRequest, TaskRequest, EntityContext, Constraints, SessionContext, ModelSelection
+
+# WARP Proxy Pool — optional, for OpenCode Zen rate limit bypass
+try:
+    from ..proxy_pool import EphemeralWarpPool
+    _WARP_AVAILABLE = True
+except ImportError:
+    EphemeralWarpPool = None
+    _WARP_AVAILABLE = False
 
 logger = logging.getLogger(__name__)
 
@@ -76,6 +91,7 @@ class OracleResponse:
 class Oracle:
     """
     The Oracle — unified routing, summoning, and entity intelligence.
+    DocRef: docs/reference/api/oracle.md
     
     Responsibilities:
     1. Intent detection (talk vs @summon vs @consult patterns)
@@ -90,26 +106,59 @@ class Oracle:
 
     def __init__(self, registry: Optional[EntityRegistry] = None, model_gateway: Optional[ModelGateway] = None):
         from omega.oracle.health_monitor import get_health_monitor
+        from .middleware.headroom import get_headroom_middleware
         self.registry = registry or EntityRegistry()
         self.default_entity = self.registry.get(cvar_get("config.entity.default", "default"))
         self.orchestrator = Orchestrator()
         self.health_monitor = get_health_monitor()
+        self.timeout_manager = TimeoutManager()
+        self.degradation_manager = DegradationManager()
         # Accept injected model_gateway to prevent double initialization
         # (hub creates ModelGateway at module level; Oracle was creating a second one)
         self.model_gateway = model_gateway or ModelGateway(health_monitor=self.health_monitor)
+        
+        # [M8 Zero Telemetry] WARP Proxy Pool — inject for OpenCode Zen rate limit bypass
+        # Only activates if WARP pool is deployed and running (systemd units).
+        if _WARP_AVAILABLE and EphemeralWarpPool is not None:
+            try:
+                self.model_gateway.proxy_pool = EphemeralWarpPool()
+                logger.info("WARP Proxy Pool attached to ModelGateway (opencode-zen bypass active)")
+            except Exception as e:
+                logger.warning(f"WARP Proxy Pool initialization failed (will run without bypass): {e}")
+                self.model_gateway.proxy_pool = None
+        else:
+            self.model_gateway.proxy_pool = None
+        
+        self.headroom = get_headroom_middleware()
         self.observability = get_engine()  # Get singleton observability engine
         self.distiller = get_distiller()
         self.session_manager = SessionManager()
         self.memory_store = get_memory_store()
+        self.lifecycle = SessionLifecycleManager(self.memory_store)
         self.searcher = SovereignSearcher(self.memory_store)
         self.verifier = SkepticalVerifier(self.model_gateway)
         # [M11] Throttled soul distillation counter — triggers close_session
         # every N interactions to avoid per-interrupt soul.yaml I/O.
         self._interaction_counter: Dict[str, int] = {}
+        # [Somatic Flush] Turn counter for somatic re-hydration
+        self._turn_counter: Dict[str, int] = {}
         self.researcher = IterativeResearcher(self.model_gateway, self.searcher, verifier=self.verifier)
-        self.context_builder = ContextBuilder()
+        # [Workstream B] Selective Hydration — L3 gnosis retrieval for context injection
+        self.selective_hydration = SelectiveHydration(
+            embedding_manager=self.memory_store.embedding_manager,
+            vector_adapter=self.memory_store.vector_store,
+        )
+        self.context_builder = ContextBuilder(
+            selective_hydration=self.selective_hydration,
+        )
         self.pii_masker = PIIMasker()
         self.intent_matcher = IntentMatcher()
+        
+        # [M11] Soul Edit History — immutable audit trail for soul.yaml changes
+        self.soul_edit_history = SoulEditHistory()
+        
+        # [M12] Compaction Harvester — automated compaction monitoring and metrics
+        self.compaction_harvester = CompactionHarvester()
         
         # [D187] Semantic Router — embedding-based entity routing
         self.semantic_router = SemanticRouter(
@@ -131,17 +180,25 @@ class Oracle:
         if self._bootstrapped:
             return
         
-        # Archive old sessions (M12 Queue Integrity)
+        # Run session lifecycle sweep (M12 Queue Integrity)
+        # Active (0-7d) → Archived (gzip) → External (90d) → Deleted (optional)
         try:
-            await self.memory_store.archive_old_sessions()
+            stats = await self.lifecycle.run_lifecycle()
+            if stats.archived or stats.externalized:
+                logger.info(
+                    "Session lifecycle sweep: archived=%d, externalized=%d, %.1fms",
+                    stats.archived, stats.externalized, stats.duration_ms,
+                )
         except Exception as e:
-            logger.warning(f"Session archival failed during bootstrap: {e}")
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Session lifecycle sweep failed during bootstrap [{classification['mode']}]: {e}")
 
         # [D187] Bootstrap semantic router — pre-compute entity vectors
         try:
             await self.semantic_router.bootstrap()
         except Exception as e:
-            logger.warning(f"Semantic router bootstrap failed: {e}")
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Semantic router bootstrap failed [{classification['mode']}]: {e}")
 
         # Registry is initialized in __init__, no bootstrap needed
         self._bootstrapped = True
@@ -187,7 +244,8 @@ class Oracle:
             Oracle._valid_agents_cache = agents
             return agents
         except Exception as e:
-            logger.warning(f"Failed to parse AGENTS.md for valid agents: {e}")
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Failed to parse AGENTS.md for valid agents [{classification['mode']}]: {e}")
             return set()
 
     def _detect_summon(self, query: str) -> Optional[tuple]:
@@ -291,81 +349,99 @@ class Oracle:
             query: The user query (can be TaintedData for external input)
             transient: If True, do not record the interaction in the soul/memory
         """
+        # 0. Evaluate system pressure for graceful degradation
+        # Use hardware stats to update degradation level
+        from omega.hub import get_hardware_stats
+        stats = await get_hardware_stats()
+        await self.degradation_manager.evaluate_pressure({
+            "cpu_load": stats.get("cpu_usage", 0.0) / 100.0,
+            "ram_free_mb": stats.get("memory_available_mb", 1024),
+        })
+
         # Sanitize and isolate query if it's tainted
         processed_query = TDPGate.isolate(query) if isinstance(query, TaintedData) else query
         
         await self.bootstrap()
-        async with self.observability.trace() as trace:
-            trace.log("query.received", query=processed_query, transient=transient)
-            
-            # Get current session for the default entity
-            default_name = self.default_entity.name if self.default_entity else cvar_get("config.entity.default", "default")
-            if transient:
-                session_id = self.session_manager.get_session_id_transient(trace.trace_id)
-            else:
-                session_id = await self.session_manager.get_session_id(default_name)
-            trace.log("session.active", session_id=session_id)
-            
-            # Early return for empty queries (still inside trace context)
-            if not processed_query or not processed_query.strip():
-                resp = self._empty_response(trace)
+
+        async def _execute_turn():
+            async with self.observability.trace() as trace:
+                trace.log("query.received", query=processed_query, transient=transient)
+                
+                # Get current session for the default entity
+                default_name = self.default_entity.name if self.default_entity else cvar_get("config.entity.default", "default")
+                if transient:
+                    session_id = self.session_manager.get_session_id_transient(trace.trace_id)
+                else:
+                    session_id = await self.session_manager.get_session_id(default_name)
+                trace.log("session.active", session_id=session_id)
+                
+                # Early return for empty queries (still inside trace context)
+                if not processed_query or not processed_query.strip():
+                    resp = self._empty_response(trace)
+                    try:
+                        await self._record_interaction(resp, processed_query, trace, transient)
+                    except OmegaError as e:
+                        classification = get_failure_registry().classify_error(e)
+                        logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
+                    return resp
+                
+                # Step 1: Try explicit summon (bypasses speculative decoder)
+                summoned = self._detect_summon(processed_query)
+                if summoned:
+                    entity_name, summon_query = summoned
+                    session_id = await self.session_manager.get_session_id(entity_name)
+                    trace.log("summon.detected", entity=entity_name, query=summon_query, session_id=session_id)
+                    resp = await self._summon(entity_name, summon_query, trace, session_id, transient=transient)
+                    try:
+                        await self._record_interaction(resp, summon_query, trace, transient)
+                    except OmegaError as e:
+                        classification = get_failure_registry().classify_error(e)
+                        logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
+                    return resp
+                
+                # Step 1.5: Try consult pattern
+                consulted = self._detect_consult(processed_query)
+                if consulted:
+                    entity_name, consult_query = consulted
+                    session_id = await self.session_manager.get_session_id(entity_name)
+                    trace.log("summon.detected", entity=entity_name, query=consult_query, pattern="consult", session_id=session_id)
+                    resp = await self._summon(entity_name, consult_query, trace, session_id, transient=transient)
+                    try:
+                        await self._record_interaction(resp, consult_query, trace, transient)
+                    except OmegaError as e:
+                        classification = get_failure_registry().classify_error(e)
+                        logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
+                    return resp
+                
+                # Step 2: Speculative decode — Iris tries first
+                # [D-kal-054] Restrict Iris to local chat channels only per user instruction.
+                # Bypassed for OpenCode, Gemini, Cline, and Antigravity.
+                channel = cvar_get("config.channel", "unknown")
+                skip_iris = channel in ["opencode", "gemini-cli", "cline", "antigravity"]
+                
+                iris_confidence = self._assess_iris_confidence(processed_query) if not skip_iris else 0.0
+                trace.log("iris.speculative", confidence=iris_confidence, query=processed_query, channel=channel, skipped=skip_iris)
+                
+                if iris_confidence > IRIS_CONFIDENCE_THRESHOLD:
+                    resp = await self._respond_as_iris(processed_query, trace, iris_confidence, session_id, transient=transient)
+                    try:
+                        await self._record_interaction(resp, processed_query, trace, transient)
+                    except OmegaError as e:
+                        classification = get_failure_registry().classify_error(e)
+                        logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
+                    return resp
+                
+                # Step 3: Escalate to domain-matched Pillar Keeper
+                trace.log("escalation", reason=f"iris_confidence={iris_confidence:.2f} <= threshold={IRIS_CONFIDENCE_THRESHOLD}")
+                resp = await self._route_by_domain(processed_query, trace, session_id, transient=transient)
                 try:
                     await self._record_interaction(resp, processed_query, trace, transient)
                 except OmegaError as e:
-                    logger.error(f"Recording interaction failed (non-fatal): {e}")
+                    classification = get_failure_registry().classify_error(e)
+                    logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
                 return resp
-            
-            # Step 1: Try explicit summon (bypasses speculative decoder)
-            summoned = self._detect_summon(processed_query)
-            if summoned:
-                entity_name, summon_query = summoned
-                session_id = await self.session_manager.get_session_id(entity_name)
-                trace.log("summon.detected", entity=entity_name, query=summon_query, session_id=session_id)
-                resp = await self._summon(entity_name, summon_query, trace, session_id, transient=transient)
-                try:
-                    await self._record_interaction(resp, summon_query, trace, transient)
-                except OmegaError as e:
-                    logger.error(f"Recording interaction failed (non-fatal): {e}")
-                return resp
-            
-            # Step 1.5: Try consult pattern
-            consulted = self._detect_consult(processed_query)
-            if consulted:
-                entity_name, consult_query = consulted
-                session_id = await self.session_manager.get_session_id(entity_name)
-                trace.log("summon.detected", entity=entity_name, query=consult_query, pattern="consult", session_id=session_id)
-                resp = await self._summon(entity_name, consult_query, trace, session_id, transient=transient)
-                try:
-                    await self._record_interaction(resp, consult_query, trace, transient)
-                except OmegaError as e:
-                    logger.error(f"Recording interaction failed (non-fatal): {e}")
-                return resp
-            
-            # Step 2: Speculative decode — Iris tries first
-            # [D-kal-054] Restrict Iris to local chat channels only per user instruction.
-            # Bypassed for OpenCode, Gemini, Cline, and Antigravity.
-            channel = cvar_get("config.channel", "unknown")
-            skip_iris = channel in ["opencode", "gemini-cli", "cline", "antigravity"]
-            
-            iris_confidence = self._assess_iris_confidence(processed_query) if not skip_iris else 0.0
-            trace.log("iris.speculative", confidence=iris_confidence, query=processed_query, channel=channel, skipped=skip_iris)
-            
-            if iris_confidence > IRIS_CONFIDENCE_THRESHOLD:
-                resp = await self._respond_as_iris(processed_query, trace, iris_confidence, session_id, transient=transient)
-                try:
-                    await self._record_interaction(resp, processed_query, trace, transient)
-                except OmegaError as e:
-                    logger.error(f"Recording interaction failed (non-fatal): {e}")
-                return resp
-            
-            # Step 3: Escalate to domain-matched Pillar Keeper
-            trace.log("escalation", reason=f"iris_confidence={iris_confidence:.2f} <= threshold={IRIS_CONFIDENCE_THRESHOLD}")
-            resp = await self._route_by_domain(processed_query, trace, session_id, transient=transient)
-            try:
-                await self._record_interaction(resp, processed_query, trace, transient)
-            except OmegaError as e:
-                logger.error(f"Recording interaction failed (non-fatal): {e}")
-            return resp
+        
+        return await self.timeout_manager.execute("turn", _execute_turn)
 
     async def summon(
         self,
@@ -403,7 +479,8 @@ class Oracle:
             try:
                 await self._record_interaction(resp, processed_query, trace, transient)
             except OmegaError as e:
-                logger.error(f"Recording interaction failed (non-fatal): {e}")
+                classification = get_failure_registry().classify_error(e)
+                logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
             return resp
 
 
@@ -442,7 +519,8 @@ class Oracle:
             response = await self.triage_router.select_model(req)
             return response.selected_model.name or entity.model or "default"
         except Exception as e:
-            logger.warning(f"TriageRouter unavailable (falling back to entity model): {e}")
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"TriageRouter unavailable (falling back to entity model) [{classification['mode']}]: {e}")
             return entity.model or "default"
 
     async def _prepare_system_prompt(self, entity_name: str, session_id: str, personality: str, query: Optional[str] = None) -> str:
@@ -459,12 +537,13 @@ class Oracle:
         # Inject context from MemoryStore
         try:
             from omega.oracle.context_builder import ContextBuilder
-            ctx_builder = ContextBuilder()
+            ctx_builder = ContextBuilder(selective_hydration=self.selective_hydration)
             memory_context = await ctx_builder.build_context(entity_name, session_id, query or "")
             if memory_context:
                 prompt_parts.append(f"\nContext from recent interactions:\n{memory_context}")
         except Exception as e:
-            logger.warning(f"Context injection failed (non-fatal): {e}")
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Context injection failed (non-fatal) [{classification['mode']}]: {e}")
         
         # Inject soul L3 principles
         try:
@@ -478,7 +557,8 @@ class Oracle:
                         if l3_principles:
                             prompt_parts.append(f"\nUniversal Principles:\n" + "\n".join(f"- {p}" for p in l3_principles[-3:]))
         except Exception as e:
-            logger.warning(f"Soul injection failed (non-fatal): {e}")
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Soul injection failed (non-fatal) [{classification['mode']}]: {e}")
         
         return "\n".join(prompt_parts)
 
@@ -503,17 +583,29 @@ class Oracle:
                 }
             )
         except Exception as e:
-            logger.warning(f"MemoryStore record failed (non-fatal): {e}")
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"MemoryStore record failed (non-fatal) [{classification['mode']}]: {e}")
         
         # Track soul evolution
         try:
             await self._track_soul_evolution(resp.entity, trace.trace_id)
         except Exception as e:
-            logger.warning(f"Soul evolution tracking failed (non-fatal): {e}")
-
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Soul evolution tracking failed (non-fatal) [{classification['mode']}]: {e}")
+        
+        # [Somatic Flush] Track turns for KV cache purge
+        session_key = f"{resp.entity}:{session_id}"
+        self._turn_counter[session_key] = self._turn_counter.get(session_key, 0) + 1
+        if self._turn_counter[session_key] >= 20:
+            self._turn_counter[session_key] = 0
+            try:
+                await self._somatic_flush(resp.entity, session_id)
+            except Exception as e:
+                logger.warning(f"Somatic flush failed for {session_key}: {e}")
+        
         # Throttled soul distillation — close_session every 5 interactions
         # [M11: Soul Integrity] Ensures L1→L2→L3 distillation happens continuously
-        # on the hot path, not just from orchestrator.py CLI dispatch.
+        # on the hot path, not and not just from orchestrator.py CLI dispatch.
         # [M11-FIX-2026-07-01] Root cause: anyio.create_task() does NOT exist in
         # AnyIO (silent AttributeError swallowed by outer try/except). Replaced with
         # direct await + guarded try/except. close_session was NEVER executing.
@@ -526,6 +618,22 @@ class Oracle:
                     await self.close_session(resp.entity, resp.session_id)
                 except Exception:
                     logger.warning("Throttled soul distillation failed for %s (non-fatal)", resp.entity)
+
+
+    async def retrieve_headroom_content(self, ref_id: str) -> str:
+        """
+        Retrieve the original, uncompressed content for a given reference ID.
+        
+        This is the 'Retrieve' part of the CCR (Compress-Cache-Retrieve) pattern,
+        allowing agents to recover high-fidelity data when semantic compression
+        is too aggressive.
+        """
+        try:
+            return await self.headroom.retrieve_original(ref_id)
+        except Exception as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.error(f"Headroom retrieval failed for {ref_id} [{classification['mode']}]: {e}")
+            return f"[[ERROR: Original content for {ref_id} could not be retrieved]]"
 
     async def _respond_as_iris(self, query: str, trace: TraceSession, confidence: float, session_id: Optional[str] = None, transient: bool = False) -> OracleResponse:
         """Iris (speculative decoder) responds directly without invoking a pillar.
@@ -540,7 +648,8 @@ class Oracle:
             if self.registry.get("iris"):
                 return await self._summon("iris", query, trace, session_id, transient=transient)
         except Exception as e:
-            logger.warning(f"Iris model invocation failed (falling back to hardcoded): {e}")
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Iris model invocation failed (falling back to hardcoded) [{classification['mode']}]: {e}")
 
         # Fallback to hardcoded response if Iris entity is missing or fails
         text = self.intent_matcher.iris_response(query) or "Hello! I'm Iris, the voice of the Oracle. How can I help you today?"
@@ -574,123 +683,112 @@ class Oracle:
         This is called by both the public summon() method and the talk() pattern detector.
         It bypasses domain routing and directly communicates with the named entity.
         """
-        entity = self.registry.get(entity_name)
-        
-        if not entity:
+        async def _execute_summon():
+            entity = self.registry.get(entity_name)
+            
+            if not entity:
+                return OracleResponse(
+                    text=f"Entity '{entity_name}' not found in the registry.",
+                    entity="Oracle",
+                    confidence=0.0,
+                    trace_id=trace.trace_id,
+                    session_id=session_id,
+                )
+            
+            trace.log("summon.direct", entity=entity.name, query=query, session_id=session_id,
+                     model_override=model_override)
+            
+            # Build context and prepend to personality
+            system_prompt = await self._prepare_system_prompt(entity.name, session_id, entity.personality, query=query)
+            
+            # Select model: use override if provided, otherwise use TriageRouter
+            if model_override:
+                model_name = model_override
+            else:
+                # [Sovereign Fix] Use currently selected session model from environment if available
+                session_model = os.environ.get("OPENCODE_MODEL")
+                if session_model:
+                    model_name = session_model
+                else:
+                    model_name = await self._select_model(entity.name, query, session_id, trace.trace_id)
+            
+            # Resolve entity affinity for inference presets (temperature, system_prompt, context window)
+            # [id-soft: quake-1996] cvar pattern — YAML-backed affinity DB, hot-reloadable
+            first_domain = entity.domains[0] if entity.domains else None
+            affinity_result = await self.model_gateway.resolve_entity_affinity(
+                entity_name=entity.name,
+                query=query,
+                context={"domain": first_domain},
+            )
+            effective_temperature = entity.temperature
+            effective_system_prompt = system_prompt
+            effective_max_tokens = 1024
+            if affinity_result and affinity_result.inference_presets:
+                # Affinity presets override entity defaults when present
+                if affinity_result.inference_presets.temperature and affinity_result.inference_presets.temperature != 0.7:
+                    effective_temperature = affinity_result.inference_presets.temperature
+                if affinity_result.inference_presets.system_prompt:
+                    effective_system_prompt = (
+                        f"{affinity_result.inference_presets.system_prompt}\n\n"
+                        f"{system_prompt}"
+                    )
+                if affinity_result.inference_presets.preferred_context:
+                    effective_max_tokens = min(affinity_result.inference_presets.preferred_context, 4096)
+            
+            # [PII Masking] Check if cloud provider will be used and mask PII if so
+            # Use get_preferred_backend to determine if we're likely sending to cloud
+            preferred_backend = await self.model_gateway.get_preferred_backend()
+            if self.pii_masker.should_mask(preferred_backend):
+                masked_prompt, masked_query, token_map = await self.pii_masker.process_system_prompt(
+                    system_prompt=effective_system_prompt,
+                    user_query=query,
+                    provider_name=preferred_backend,
+                )
+                res = await self.model_gateway.generate(
+                    model_name=model_name,
+                    system_prompt=masked_prompt,
+                    user_query=masked_query,
+                    temperature=effective_temperature,
+                    max_tokens=effective_max_tokens,
+                    trace_id=trace.trace_id,
+                )
+                # Detokenize response to restore original PII values
+                res.text = await self.pii_masker.process_response(res.text, token_map)
+            else:
+                # Local provider — no PII masking needed
+                res = await self.model_gateway.generate(
+                    model_name=model_name,
+                    system_prompt=effective_system_prompt,
+                    user_query=query,
+                    temperature=effective_temperature,
+                    max_tokens=effective_max_tokens,
+                    trace_id=trace.trace_id,
+                )
+            
+            # Record performance to MetricsDB
+            self.observability.record_performance(
+                latency_ms=res.latency_ms,
+                provider=res.provider_name,
+                model_used=res.model_used,
+                prompt_tokens=getattr(res, 'prompt_tokens', 0),
+                completion_tokens=getattr(res, 'completion_tokens', 0),
+                is_cloud=getattr(res, 'is_cloud', False),
+                trace_id=trace.trace_id,
+            )
+            
             return OracleResponse(
-                text=f"Entity '{entity_name}' not found in the registry.",
-                entity="Oracle",
-                confidence=0.0,
+                text=res.text,
+                entity=entity.name,
+                slots=entity.slots if hasattr(entity, 'slots') else None,
+                domains=entity.domains if hasattr(entity, 'domains') else None,
+                confidence=1.0,
                 trace_id=trace.trace_id,
                 session_id=session_id,
+                backend=res.provider_name,
+                model=res.model_used,
             )
-        
-        trace.log("summon.direct", entity=entity.name, query=query, session_id=session_id,
-                 model_override=model_override)
-        
-        # Build context and prepend to personality
-        system_prompt = await self._prepare_system_prompt(entity.name, session_id, entity.personality, query=query)
-        
-        # Select model: use override if provided, otherwise use TriageRouter
-        if model_override:
-            model_name = model_override
-        else:
-            # [Sovereign Fix] Use currently selected session model from environment if available
-            session_model = os.environ.get("OPENCODE_MODEL")
-            if session_model:
-                model_name = session_model
-            else:
-                model_name = await self._select_model(entity.name, query, session_id, trace.trace_id)
-        
-        # Resolve entity affinity for inference presets (temperature, system_prompt, context window)
-        # [id-soft: quake-1996] cvar pattern — YAML-backed affinity DB, hot-reloadable
-        first_domain = entity.domains[0] if entity.domains else None
-        affinity_result = await self.model_gateway.resolve_entity_affinity(
-            entity_name=entity.name,
-            query=query,
-            context={"domain": first_domain},
-        )
-        effective_temperature = entity.temperature
-        effective_system_prompt = system_prompt
-        effective_max_tokens = 1024
-        if affinity_result and affinity_result.inference_presets:
-            # Affinity presets override entity defaults when present
-            if affinity_result.inference_presets.temperature and affinity_result.inference_presets.temperature != 0.7:
-                effective_temperature = affinity_result.inference_presets.temperature
-            if affinity_result.inference_presets.system_prompt:
-                effective_system_prompt = (
-                    f"{affinity_result.inference_presets.system_prompt}\n\n"
-                    f"{system_prompt}"
-                )
-            if affinity_result.inference_presets.preferred_context:
-                effective_max_tokens = min(affinity_result.inference_presets.preferred_context, 4096)
-        
-        # [PII Masking] Check if cloud provider will be used and mask PII if so
-        # Use get_preferred_backend to determine if we're likely sending to cloud
-        preferred_backend = await self.model_gateway.get_preferred_backend()
-        if self.pii_masker.should_mask(preferred_backend):
-            masked_prompt, masked_query, token_map = await self.pii_masker.process_system_prompt(
-                system_prompt=effective_system_prompt,
-                user_query=query,
-                provider_name=preferred_backend,
-            )
-            res = await self.model_gateway.generate(
-                model_name=model_name,
-                system_prompt=masked_prompt,
-                user_query=masked_query,
-                temperature=effective_temperature,
-                max_tokens=effective_max_tokens,
-                trace_id=trace.trace_id,
-            )
-            # Detokenize response to restore original PII values
-            res.text = await self.pii_masker.process_response(res.text, token_map)
-        else:
-            # Local provider — no PII masking needed
-            res = await self.model_gateway.generate(
-                model_name=model_name,
-                system_prompt=effective_system_prompt,
-                user_query=query,
-                temperature=effective_temperature,
-                max_tokens=effective_max_tokens,
-                trace_id=trace.trace_id,
-            )
-        
-        # Use the ACTUAL provider that served the response, not the preferred one
-        backend = res.provider_name
-        # [id-soft: quake3-1999] Hard-Boundary — WAD display fields accessed
-        # via metadata dict, not as engine-level OracleResponse fields.
-        sigil_tag = entity.metadata.get("sigil", "")
-        sigil_str = f" {sigil_tag}" if sigil_tag else ""
-        
-        result = OracleResponse(
-            text=f"{entity.name} says: {res.text}{sigil_str}",
-            entity=entity.name,
-            slots=entity.slots,
-            domains=entity.domains,
-            confidence=1.0,
-            trace_id=trace.trace_id,
-            backend=backend,
-            model=model_name,
-            session_id=session_id,
-            escalated=False,
-            cost_warning="\n\n⚠️ [Sovereignty Alert]: This response was generated by a cloud provider. Local inference was unavailable or bypassed." if res.is_cloud else None,
-        )
-        
-        trace.log("model.completed", entity=entity.name, backend=backend, escalated=False,
-                   session_id=session_id, model_override=model_override)
-        trace.record(
-            query=query,
-            system_prompt=system_prompt,
-            response=res.text,
-            entity=entity.name,
-            model=model_name,
-            backend=backend,
-            confidence=1.0,
-            session_id=session_id,
-        )
-        # [Sovereign] Record the "First Breath" for astrological alignment
-        await record_first_breath(entity.name, res.text, trace.trace_id)
-        return result
+
+        return await self.timeout_manager.execute("group", _execute_summon)
 
     async def _route_by_domain(self, text: str, trace: TraceSession, session_id: str, transient: bool = False) -> OracleResponse:
         """Route query to entity by domain keyword matching.
@@ -781,6 +879,16 @@ class Oracle:
             confidence=confidence,
             session_id=session_id,
         )
+        # Record performance to MetricsDB
+        self.observability.record_performance(
+            latency_ms=res.latency_ms,
+            provider=res.provider_name,
+            model_used=res.model_used,
+            prompt_tokens=getattr(res, 'prompt_tokens', 0),
+            completion_tokens=getattr(res, 'completion_tokens', 0),
+            is_cloud=getattr(res, 'is_cloud', False),
+            trace_id=trace.trace_id,
+        )
         # [Sovereign] Record the "First Breath" for astrological alignment
         logger.info(f"Recording first breath for routed entity: {entity.name}")
         await record_first_breath(entity.name, res.text, trace.trace_id)
@@ -826,9 +934,53 @@ class Oracle:
             
             if success:
                 logger.info(f"Successfully distilled session {session_id} for {entity_name}")
+                # Record the distillation in the soul edit history
+                try:
+                    await self.soul_edit_history.append(SoulEditEntry(
+                        entity_name=entity_name,
+                        field_path="entity.lessons_learned",
+                        new_value=f"Session {session_id} distilled",
+                        source="soul_distiller",
+                        trace_id=session_id,
+                        summary=f"Session {session_id} distilled via close_session",
+                    ))
+                except Exception as history_exc:
+                    logger.warning(
+                        "Failed to record soul edit history for %s session %s: %s",
+                        entity_name, session_id, history_exc,
+                    )
+                
+                # Check session size and flag if near compaction threshold
+                try:
+                    exchange_count = len(exchanges)
+                    report = self.compaction_harvester.assess_session(
+                        entity_name, session_id, exchange_count,
+                    )
+                    if report.needs_compaction or report.near_threshold:
+                        logger.info(
+                            "Session %s for %s: %d exchanges (%s%s)",
+                            session_id, entity_name, exchange_count,
+                            "NEEDS COMPACTION" if report.needs_compaction else "",
+                            "near threshold" if report.near_threshold and not report.needs_compaction else "",
+                        )
+                        # Estimate post-compaction size (keep ~half)
+                        after_count = max(exchange_count // 2, 15)
+                        await self.compaction_harvester.record_compaction(
+                            entity_name=entity_name,
+                            session_id=session_id,
+                            before_count=exchange_count,
+                            after_count=after_count,
+                            triggered_by="close_session",
+                        )
+                except Exception as comp_exc:
+                    logger.warning(
+                        "Failed to record compaction stats for %s session %s: %s",
+                        entity_name, session_id, comp_exc,
+                    )
             return success
         except Exception as e:
-            logger.error(f"Failed to close session {session_id} for {entity_name}: {e}")
+            classification = get_failure_registry().classify_error(e)
+            logger.error(f"Failed to close session {session_id} for {entity_name} [{classification['mode']}]: {e}")
             return False
 
 
@@ -855,6 +1007,74 @@ class Oracle:
             logger.warning("Telemetry event failed for %s: %s", entity_name, exc)
             # Non-fatal — telemetry failure must not block the response
 
-    async def _compact_soul(self, soul: dict) -> int:
-        """Compact soul.yaml after growth. Returns final size in bytes."""
-        pass
+    async def _somatic_flush(self, entity_name: str, session_id: str) -> None:
+        """Perform a somatic flush to clear KV cache and reset model state.
+        
+        1. Distill session into a summary.
+        2. Close session (triggering soul distillation).
+        3. Re-hydrate the entity with the summary.
+        """
+        logger.info(f"Triggering Somatic Flush for {entity_name} [session={session_id}]")
+        
+        try:
+            # 1. Distill current working memory into a summary
+            exchanges = await self.memory_store.get_history(entity_name, session_id)
+            if not exchanges:
+                return
+            
+            lines = []
+            for ex in exchanges:
+                user_msg = ex.get("user", "")
+                asst_msg = ex.get("assistant", "")
+                if user_msg: lines.append(f"[user]: {user_msg}")
+                if asst_msg: lines.append(f"[assistant]: {asst_msg}")
+            transcript = "\n".join(lines)
+            
+            summary = self.distiller.summarize_session(transcript, entity_name)
+            
+            # 2. Close session (clears KV cache in many providers and distills to soul.yaml)
+            await self.close_session(entity_name, session_id)
+            
+            # 3. Re-hydrate: Start new session and inject summary as a special memory entry
+            new_session_id = await self.session_manager.get_session_id(entity_name)
+            await self.memory_store.add_exchange(
+                entity_name=entity_name,
+                session_id=new_session_id,
+                user_message="[Somatic Flush]",
+                response=f"Somatic Flush Summary: {summary}",
+                metadata={"type": "somatic_flush", "prev_session": session_id}
+            )
+            logger.info(f"Somatic Flush complete for {entity_name}. New session: {new_session_id}")
+            
+        except Exception as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.error(f"Somatic Flush failed for {entity_name} [{classification['mode']}]: {e}", exc_info=True)
+
+    # ── Somatic State API (M20) ──────────────────────────────────────────
+    
+    async def save_state(self, state_id: str) -> bool:
+        """Save the current model's somatic state (KV cache) to disk.
+        
+        Delegates to the ModelGateway which finds the NativeGGUFProvider.
+        
+        Args:
+            state_id: Unique identifier for the state snapshot.
+            
+        Returns:
+            True if state was saved successfully, False otherwise.
+        """
+        return await self.model_gateway.save_state(state_id)
+
+    async def load_state(self, state_id: str) -> bool:
+        """Load a somatic state (KV cache) from disk into the current model.
+        
+        Delegates to the ModelGateway which finds the NativeGGUFProvider.
+        
+        Args:
+            state_id: Unique identifier for the state snapshot.
+            
+        Returns:
+            True if state was loaded successfully, False otherwise.
+        """
+        return await self.model_gateway.load_state(state_id)
+

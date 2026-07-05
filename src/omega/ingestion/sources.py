@@ -1,3 +1,4 @@
+# AP: AP-INGESTION-SOURCES-v1.0.0
 """
 Sovereign Source Loaders — Loading primary material for ingestion.
 """

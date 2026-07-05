@@ -1,11 +1,17 @@
+# AP: AP-INGESTION-CLI-v1.0.0
 """
 Sovereign Ingestion CLI — Commands for entity deepening.
 """
-import asyncio
+"""
+Sovereign Ingestion CLI — Commands for entity deepening.
+"""
+import anyio
 import argparse
 import os
+import json
 from pathlib import Path
 from typing import List
+from datetime import datetime
 
 from omega.ingestion.ingestion_types import IngestionConfig
 from omega.ingestion.pipeline import create_pipeline
@@ -40,7 +46,10 @@ def main():
     
     args = parser.parse_args()
     
-    asyncio.run(run_ingest(args.entity, args.source, args.model, args.key))
+    anyio.run(run_ingest, args.entity, args.source, args.model, args.key)
+
+if __name__ == "__main__":
+    main()
 
 if __name__ == "__main__":
     main()

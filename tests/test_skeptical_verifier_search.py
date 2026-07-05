@@ -19,6 +19,8 @@ async def test_skeptical_verifier_search_integration():
     """Verify that SovereignSearchService extracts evidence and runs verification."""
     # 1. Mock ModelGateway
     mock_gateway = AsyncMock()
+    mock_gateway.health_monitor = MagicMock()
+    mock_gateway.health_monitor.is_available.return_value = True
     # Mock NLI response to return "[ENTAIL]"
     mock_gateway.generate.return_value = GenerateResult(
         text="[ENTAIL]", 

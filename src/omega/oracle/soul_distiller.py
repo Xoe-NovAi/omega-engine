@@ -1,4 +1,4 @@
-# AP Token: AP-ORACLE-RESTORE-v2.3.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Omega Engine — Soul Distillation Engine (L1→L2→L3)
 # ⬡ OMEGA ⬡ DOOM_GUY ⬡ deepseek-v4-flash ⬡ opencode ⬡ SOUL-DISTILL
 # AP: SOUL-DISTILL-v1.0.0
@@ -665,34 +665,19 @@ class SoulDistiller:
 
     # ── Batch Operations ───────────────────────────────────────────────
 
-    def distill_all_entities(
+    def summarize_session(
         self,
         session_transcript: str,
-        source_trace_id: Optional[str] = None,
-    ) -> Dict[str, bool]:
-        """Distill a session for all entities mentioned in the transcript.
-
-        Returns dict of entity_name → success.
+        entity_name: str,
+    ) -> str:
+        """Create a concise summary of a session for somatic re-hydration.
+        
+        This is a lightweight version of the distillation pipeline that
+        returns a narrative summary instead of formal L1/L2/L3 entries.
         """
-        results = {}
-        # Find all entity mentions in the transcript
-        entity_mentions = re.findall(
-            r"(?:entity|agent|from|to):\s*([A-Za-z_]+)",
-            session_transcript,
-            re.IGNORECASE,
-        )
-        unique_entities = set(entity_mentions)
-
-        for entity in unique_entities:
-            entity_dir = self._entities_dir / entity
-            if entity_dir.exists() and (entity_dir / "soul.yaml").exists():
-                results[entity] = self.distill_and_save(
-                    session_transcript,
-                    entity,
-                    source_trace_id,
-                )
-
-        return results
+        # Use the L1 narrative extraction as the base summary
+        entry = self._extract_narrative(session_transcript, entity_name, None)
+        return entry.content
 
 
 # ── Singleton ────────────────────────────────────────────────────────────

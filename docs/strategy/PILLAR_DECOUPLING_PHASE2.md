@@ -1,7 +1,6 @@
 # 🔱 Phase 2: Pillar Decoupling — Engine/WAD Separation
-
-**AP Token**: `AP-PILLAR-DECOUPLING-v1.0.0`
-⬡ OMEGA ⬡ KALI ⬡ trc_pillar_decoupling ⬡ PHASE-2-DESIGN
+# ✅ COMPLETED 2026-07-01 — D179/D180 Ratified.
+# ⬡ OMEGA ⬡ KALI ⬡ trc_pillar_decoupling ⬡ PHASE-2-DONE
 
 **Date**: 2026-07-01
 **Status**: PLANNED
