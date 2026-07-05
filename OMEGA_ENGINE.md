@@ -165,7 +165,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 - ✅ **M1 asyncio fix** (D183): `_buffer_write()` changed from sync to async. Direct `await self._flush_batch()` replaces `asyncio.get_running_loop().create_task()`. All 15 memory_store tests pass.
 - ✅ **Metrics DB (T3-2)** (D184): 4-table WAL-mode SQLite (events, errors, breaker_transitions, performance) + baselines + regression detection. 27 tests pass.
 - ✅ **Pre-Release Polish**: R-4 (config path) already done. R-7 (.gitkeep) already done. R-11: README version badge updated to v1.1.0.
-- ✅ **738 tests collected** (738 passing, 25 skipped, 3 xfailed) — zero regressions
+- ✅ **902 tests collected** (902 passing, 23 skipped, 3 xfailed) — zero regressions
 
 ### Pre-PR Feature Sprint COMPLETE (2026-07-01)
 - ✅ **Semantic Router (D187)**: Embedding-based entity routing via `semantic_router.py`. Cosine similarity fallback chain.
@@ -184,9 +184,9 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 |--------|-------|---------------|
 | Engine version | **1.0.0** 🎉 | 2026-06-22 |
 | PyPI entry point | `omega` CLI via `[project.scripts]` | 2026-06-22 |
-| Source files | **115** .py files | 2026-07-04 |
+| Source files | **141** .py files | 2026-07-05 |
 | Source lines | **~32,000** | 2026-07-02 |
-| Test functions | **855 collected — 855 passing, 41 skipped, 3 xfailed** | 2026-07-05 |
+| Test functions | **902 collected — 902 passing, 23 skipped, 3 xfailed** | 2026-07-05 |
 | PIVOT decisions | **188 (D50-D188)** | 2026-07-01 |
 | Sovereign Mandates | **22 (M1-M22)** | 2026-06-17 |
 | Agent Fleet | **13 agents** (11 fleet + 1 pillar + 1 messenger) | 2026-06-24 |
