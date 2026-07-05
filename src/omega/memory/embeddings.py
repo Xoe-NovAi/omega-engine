@@ -134,7 +134,7 @@ class OllamaEmbeddingProvider(IEmbeddingProvider):
         except httpx.RequestError as e:
             logger.warning("Ollama connection error: %s", e)
             raise
-        except Exception as e:
+        except (httpx.HTTPError, RuntimeError) as e:
             logger.warning("Ollama embedding error: %s", e)
             raise
     
@@ -368,7 +368,7 @@ class EmbeddingManager:
         for provider in self._providers:
             try:
                 return await provider.get_embedding(text)
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning(f"Embedding provider {provider.__class__.__name__} failed: {e}")
                 continue
         

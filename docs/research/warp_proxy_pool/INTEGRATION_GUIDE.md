@@ -67,7 +67,6 @@ if proxy_url:
 ## Usage
 
 ### Basic Usage
-
 ```python
 from omega.proxy_pool import EphemeralWarpPool
 
@@ -76,8 +75,11 @@ proxy_url = await pool.get_proxy_url()
 # Returns: "socks5h://127.0.0.1:8081"
 ```
 
-### With Health Check
+### ⚠️ Sovereign DNS Mandate
+**Always use `socks5h://` (with the 'h') instead of `socks5://`.**
+The `h` indicates that DNS resolution should be performed by the proxy (the WARP exit node) rather than the local host. This is critical to prevent **DNS leaks**, where the destination IP is resolved locally, exposing the user's real location and ISP to the DNS resolver even if the traffic is proxied.
 
+### With Health Check
 ```python
 healthy_port = await pool.get_healthy_port()
 if healthy_port:
@@ -88,7 +90,6 @@ else:
 ```
 
 ### Force Rotation
-
 ```python
 success = await pool.rotate()
 if success:

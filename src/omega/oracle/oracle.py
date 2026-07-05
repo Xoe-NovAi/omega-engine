@@ -52,6 +52,7 @@ from .entity_registry import EntityRegistry, Entity
 from ..memory_store import get_memory_store
 from ..astrology import record_first_breath
 from ..orchestration.triage_router import TriageRouter, TriageRequest, TaskRequest, EntityContext, Constraints, SessionContext, ModelSelection
+from ..state import get_usm, initialize_usm
 
 # WARP Proxy Pool — optional, for OpenCode Zen rate limit bypass
 try:
@@ -123,7 +124,7 @@ class Oracle:
             try:
                 self.model_gateway.proxy_pool = EphemeralWarpPool()
                 logger.info("WARP Proxy Pool attached to ModelGateway (opencode-zen bypass active)")
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning(f"WARP Proxy Pool initialization failed (will run without bypass): {e}")
                 self.model_gateway.proxy_pool = None
         else:
@@ -180,6 +181,13 @@ class Oracle:
         if self._bootstrapped:
             return
         
+        # Initialize Unified State Manager (USM)
+        try:
+            await initialize_usm()
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.error(f"USM initialization failed [{classification['mode']}]: {e}")
+        
         # Run session lifecycle sweep (M12 Queue Integrity)
         # Active (0-7d) → Archived (gzip) → External (90d) → Deleted (optional)
         try:
@@ -189,19 +197,20 @@ class Oracle:
                     "Session lifecycle sweep: archived=%d, externalized=%d, %.1fms",
                     stats.archived, stats.externalized, stats.duration_ms,
                 )
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"Session lifecycle sweep failed during bootstrap [{classification['mode']}]: {e}")
-
+        
         # [D187] Bootstrap semantic router — pre-compute entity vectors
         try:
             await self.semantic_router.bootstrap()
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"Semantic router bootstrap failed [{classification['mode']}]: {e}")
-
+        
         # Registry is initialized in __init__, no bootstrap needed
         self._bootstrapped = True
+
 
     # ── INTENT DETECTION ───────────────────────────────────────────
     
@@ -243,7 +252,7 @@ class Oracle:
             
             Oracle._valid_agents_cache = agents
             return agents
-        except Exception as e:
+        except (OSError, OmegaError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"Failed to parse AGENTS.md for valid agents [{classification['mode']}]: {e}")
             return set()
@@ -518,7 +527,7 @@ class Oracle:
             
             response = await self.triage_router.select_model(req)
             return response.selected_model.name or entity.model or "default"
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"TriageRouter unavailable (falling back to entity model) [{classification['mode']}]: {e}")
             return entity.model or "default"
@@ -538,10 +547,10 @@ class Oracle:
         try:
             from omega.oracle.context_builder import ContextBuilder
             ctx_builder = ContextBuilder(selective_hydration=self.selective_hydration)
-            memory_context = await ctx_builder.build_context(entity_name, session_id, query or "")
+            memory_context = await ctx_builder.build_context(entity_name, session_id)
             if memory_context:
                 prompt_parts.append(f"\nContext from recent interactions:\n{memory_context}")
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"Context injection failed (non-fatal) [{classification['mode']}]: {e}")
         
@@ -556,7 +565,7 @@ class Oracle:
                         l3_principles = [L["L3"] for L in lessons if "L3" in L]
                         if l3_principles:
                             prompt_parts.append(f"\nUniversal Principles:\n" + "\n".join(f"- {p}" for p in l3_principles[-3:]))
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"Soul injection failed (non-fatal) [{classification['mode']}]: {e}")
         
@@ -582,14 +591,14 @@ class Oracle:
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 }
             )
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"MemoryStore record failed (non-fatal) [{classification['mode']}]: {e}")
         
         # Track soul evolution
         try:
             await self._track_soul_evolution(resp.entity, trace.trace_id)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"Soul evolution tracking failed (non-fatal) [{classification['mode']}]: {e}")
         
@@ -600,8 +609,10 @@ class Oracle:
             self._turn_counter[session_key] = 0
             try:
                 await self._somatic_flush(resp.entity, session_id)
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning(f"Somatic flush failed for {session_key}: {e}")
+
+
         
         # Throttled soul distillation — close_session every 5 interactions
         # [M11: Soul Integrity] Ensures L1→L2→L3 distillation happens continuously
@@ -614,9 +625,10 @@ class Oracle:
         if self._interaction_counter[entity_key] >= 5:
             self._interaction_counter[entity_key] = 0
             if resp.session_id:
-                try:
-                    await self.close_session(resp.entity, resp.session_id)
-                except Exception:
+                    try:
+                        await self.close_session(resp.entity, resp.session_id)
+                    except (OmegaError, RuntimeError, OSError) as e:
+                        logger.warning(f"Throttled soul distillation failed for {resp.entity}: {e}")
                     logger.warning("Throttled soul distillation failed for %s (non-fatal)", resp.entity)
 
 
@@ -630,7 +642,7 @@ class Oracle:
         """
         try:
             return await self.headroom.retrieve_original(ref_id)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.error(f"Headroom retrieval failed for {ref_id} [{classification['mode']}]: {e}")
             return f"[[ERROR: Original content for {ref_id} could not be retrieved]]"
@@ -647,7 +659,7 @@ class Oracle:
             # Attempt to invoke Iris as a real model-backed entity
             if self.registry.get("iris"):
                 return await self._summon("iris", query, trace, session_id, transient=transient)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"Iris model invocation failed (falling back to hardcoded) [{classification['mode']}]: {e}")
 
@@ -944,7 +956,7 @@ class Oracle:
                         trace_id=session_id,
                         summary=f"Session {session_id} distilled via close_session",
                     ))
-                except Exception as history_exc:
+                except (OmegaError, RuntimeError, OSError) as history_exc:
                     logger.warning(
                         "Failed to record soul edit history for %s session %s: %s",
                         entity_name, session_id, history_exc,
@@ -972,13 +984,13 @@ class Oracle:
                             after_count=after_count,
                             triggered_by="close_session",
                         )
-                except Exception as comp_exc:
+                except (OmegaError, RuntimeError, OSError) as comp_exc:
                     logger.warning(
                         "Failed to record compaction stats for %s session %s: %s",
                         entity_name, session_id, comp_exc,
                     )
             return success
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.error(f"Failed to close session {session_id} for {entity_name} [{classification['mode']}]: {e}")
             return False
@@ -1003,7 +1015,7 @@ class Oracle:
                 EventType.ENTITY_INTERACTION, trace_id,
                 {"entity": entity_name, "event": "interaction_recorded"}
             )
-        except Exception as exc:
+        except (OmegaError, RuntimeError, OSError) as exc:
             logger.warning("Telemetry event failed for %s: %s", entity_name, exc)
             # Non-fatal — telemetry failure must not block the response
 
@@ -1046,7 +1058,7 @@ class Oracle:
             )
             logger.info(f"Somatic Flush complete for {entity_name}. New session: {new_session_id}")
             
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.error(f"Somatic Flush failed for {entity_name} [{classification['mode']}]: {e}", exc_info=True)
 

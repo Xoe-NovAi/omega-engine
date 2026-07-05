@@ -11,7 +11,8 @@ from pathlib import Path
 from datetime import datetime
 from typing import Dict, Any, List
 
-BASE_DIR = Path("/home/arcana-novai/Documents/Xoe-NovAi/omega-engine")
+# Project root is 2 levels up from src/scripts/
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SESSION_GNOSIS_FILE = BASE_DIR / "data/session_gnosis.md"
 # Defaulting to Ma'at for the initial implementation
 SOUL_FILE = BASE_DIR / "data/entities/maat/soul.yaml"

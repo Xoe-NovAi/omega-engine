@@ -46,7 +46,7 @@ class LatencyTracker:
                     (provider, model, latency_ms, status, trace_id)
                 )
                 conn.commit()
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to record latency metric: {e}")
 
     def get_recent_stats(self, provider: str, model: str, window_minutes: int = 15) -> Dict[str, Any]:
@@ -72,7 +72,7 @@ class LatencyTracker:
                     "min": latencies[0],
                     "max": latencies[-1]
                 }
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Error calculating latency stats: {e}")
             return {"status": "error", "message": str(e)}
 

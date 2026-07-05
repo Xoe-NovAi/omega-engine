@@ -79,7 +79,7 @@ class SoulValidator:
         except (yaml.YAMLError, SoulValidationError, TypeError, KeyError) as e:
             logger.error(f"Soul validation failure for {entity_name}: {e}")
             return False, None
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.critical(f"Unexpected error during soul validation for {entity_name}: {e}", exc_info=True)
             return False, None
 

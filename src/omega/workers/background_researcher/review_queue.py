@@ -113,7 +113,7 @@ class ReviewQueue:
                     continue # Already locked by another process
                 except OmegaError:
                     continue
-                except Exception as e:
+                except (OmegaError, RuntimeError, OSError) as e:
                     logger.error("Error processing review item %s: %s", file_path, e, exc_info=True)
                     continue
                     
@@ -131,8 +131,9 @@ class ReviewQueue:
                     if (now - file_path.stat().st_mtime) > ttl_seconds:
                         try:
                             file_path.unlink()
-                        except Exception as e:
+                        except (OmegaError, RuntimeError, OSError) as e:
                             logger.warning("Failed to remove stale review item: %s", e)
+
         
         await anyio.to_thread.run_sync(_sweep)
 
@@ -148,7 +149,7 @@ class ReviewQueue:
                     files[0].unlink()
                 except OmegaError:
                     pass
-                except Exception as e:
+                except (OmegaError, RuntimeError, OSError) as e:
                     logger.error("Error pruning review queue: %s", e, exc_info=True)
                     pass
         

@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import Dict, Any
 
 # Use the repository-relative path for persistence
-BASE_DIR = Path("/home/arcana-novai/Documents/Xoe-NovAi/omega-engine")
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SESSION_GNOSIS_FILE = BASE_DIR / "data/session_gnosis.md"
 
 def scribe_event(trace_id: str, event_type: str, data: Dict[str, Any]):

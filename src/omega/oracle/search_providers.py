@@ -32,7 +32,7 @@ class FirecrawlProvider(SearchProvider):
         try:
             from omega.vault import KeyVault
             return KeyVault().resolve("firecrawl")
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.debug(f"Firecrawl key fallback failed: {e}")
             return os.environ.get("FIRECRAWL_API_KEY", "")
 
@@ -81,7 +81,7 @@ class FirecrawlProvider(SearchProvider):
                             markdown = scrape_data.get("data", {}).get("markdown", "")
                             if markdown:
                                 content_snippets.append(f"Source [{url}]:\n{markdown[:1000]}")
-                    except Exception as e:
+                    except (OmegaError, RuntimeError, OSError) as e:
                         logger.warning(f"Failed to scrape {url}: {e}")
                 
                 if not content_snippets:
@@ -95,7 +95,7 @@ class FirecrawlProvider(SearchProvider):
             except httpx.HTTPStatusError as e:
                 logger.error(f"Firecrawl HTTP error: {e}")
                 raise ProviderError("firecrawl", f"Firecrawl API failure: {e}")
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.error(f"Firecrawl unexpected error: {e}")
                 raise ProviderError("firecrawl", f"Firecrawl system failure: {e}")
 
@@ -178,7 +178,7 @@ class SearXNGProvider(SearchProvider):
                 delay = self.retry_delays[attempt] if attempt < len(self.retry_delays) else self.retry_delays[-1]
                 logger.info(f"SearXNG attempt {attempt + 1}/{self.retries + 1} timed out, retrying in {delay}s")
                 await anyio.sleep(delay)
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 last_error = e
                 logger.error(f"SearXNG unexpected error: {e}")
                 raise ProviderError("searxng", f"SearXNG system failure: {e}")
@@ -199,7 +199,7 @@ class ExaProvider(SearchProvider):
         try:
             from omega.vault import KeyVault
             return KeyVault().resolve("exa")
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.debug(f"Exa key fallback failed: {e}")
             return os.environ.get("EXA_API_KEY", "")
 
@@ -256,6 +256,6 @@ class ExaProvider(SearchProvider):
             except httpx.HTTPStatusError as e:
                 logger.error(f"Exa HTTP error: {e}")
                 raise ProviderError("exa", f"Exa API failure: {e}")
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.error(f"Exa unexpected error: {e}")
                 raise ProviderError("exa", f"Exa system failure: {e}")

@@ -65,7 +65,7 @@ class OpenCodeBridge:
         if soul_path.exists():
             try:
                 return soul_path.read_text(encoding="utf-8")
-            except Exception as e:
+            except (OSError, RuntimeError) as e:
                 logger.error(f"Failed to load SOUL.md for {entity_name}: {e}")
         return ""
 
@@ -114,7 +114,7 @@ class OpenCodeBridge:
         except OmegaError as e:
             logger.error(f"Oracle error during bridge transfer: {e}")
             await websocket.send_text(f"⚠️ Engine Error: {str(e)}")
-        except Exception as e:
+        except (RuntimeError, OSError) as e:
             logger.exception(f"Unexpected bridge failure: {e}")
             await websocket.send_text("❌ A critical system error occurred.")
 
@@ -138,7 +138,7 @@ class OpenCodeBridge:
                     await self._handle_inference(websocket, data)
             except WebSocketDisconnect:
                 logger.info("OpenCode client disconnected from bridge.")
-            except Exception as e:
+            except (RuntimeError, OSError) as e:
                 logger.error(f"WebSocket session error: {e}")
 
 # Initialize the bridge for the FastAPI server

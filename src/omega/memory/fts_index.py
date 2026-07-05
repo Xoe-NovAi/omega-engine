@@ -51,7 +51,7 @@ class ConversationFTSIndex:
             self._conn.commit()
             self._initialized = True
             logger.info("FTS5 index initialized at %s", self.db_path)
-        except Exception as e:
+        except (sqlite3.Error, OSError) as e:
             logger.error("Failed to initialize FTS5 index: %s", e)
             self._initialized = False
 
@@ -66,7 +66,7 @@ class ConversationFTSIndex:
                 (session_id, entity_name, role, content, datetime.now(timezone.utc).isoformat())
             )
             self._conn.commit()
-        except Exception as e:
+        except (sqlite3.Error, RuntimeError) as e:
             logger.warning("FTS index write failed for session %s: %s", session_id, e)
 
     def search(self, query: str, entity_name: str, limit: int = 20) -> List[Dict[str, Any]]:
@@ -85,7 +85,7 @@ class ConversationFTSIndex:
             """, (query, entity_name, limit))
             
             return [dict(row) for row in cursor.fetchall()]
-        except Exception as e:
+        except (sqlite3.Error, RuntimeError) as e:
             logger.error("FTS search failed: %s", e)
             return []
 
@@ -98,7 +98,7 @@ class ConversationFTSIndex:
             self._conn.execute("DELETE FROM exchanges WHERE session_id = ?", (session_id,))
             self._conn.commit()
             logger.info("Removed session %s from FTS index", session_id)
-        except Exception as e:
+        except (sqlite3.Error, RuntimeError) as e:
             logger.error("Failed to remove session %s from FTS: %s", session_id, e)
 
     def __del__(self):
@@ -106,7 +106,7 @@ class ConversationFTSIndex:
         if self._conn is not None:
             try:
                 self._conn.close()
-            except Exception:
+            except (sqlite3.Error, RuntimeError):
                 pass
 
     def close(self):
@@ -116,7 +116,7 @@ class ConversationFTSIndex:
                 # [G-12] Optimize FTS index before closing
                 self._conn.execute("PRAGMA optimize")
                 logger.debug("FTS5 index optimized")
-            except Exception as e:
+            except (sqlite3.Error, RuntimeError) as e:
                 logger.warning("FTS index optimize failed: %s", e)
             
             self._conn.close()
@@ -130,5 +130,5 @@ class ConversationFTSIndex:
         try:
             cursor = self._conn.execute("SELECT count(*) FROM exchanges")
             return cursor.fetchone()[0]
-        except Exception:
+        except (sqlite3.Error, RuntimeError):
             return 0

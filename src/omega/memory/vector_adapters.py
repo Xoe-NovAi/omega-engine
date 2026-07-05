@@ -209,7 +209,7 @@ class QdrantAdapter(IVectorStoreAdapter):
         try:
             await anyio.to_thread.run_sync(_sync_ensure)
             self._initialized = True
-        except Exception as e:
+        except (RuntimeError, OSError) as e:
             logger.error(f"Failed to initialize Qdrant collection: {e}", exc_info=True)
             raise ProviderUnavailableError("qdrant", f"Qdrant initialization failed: {e}", raw_error=e) from e
 
@@ -243,7 +243,7 @@ class QdrantAdapter(IVectorStoreAdapter):
             
             await anyio.to_thread.run_sync(_sync_upsert)
             return str(point_id)
-        except Exception as e:
+        except (RuntimeError, OSError) as e:
             logger.error(f"Qdrant upsert failed for {entity_name}: {e}", exc_info=True)
             raise ProviderError("qdrant", f"Qdrant upsert failed: {e}", raw_error=e) from e
 
@@ -287,7 +287,7 @@ class QdrantAdapter(IVectorStoreAdapter):
             
             results = await anyio.to_thread.run_sync(_sync_search)
             return [(res.score, res.payload) for res in results]
-        except Exception as e:
+        except (RuntimeError, OSError) as e:
             logger.error(f"Qdrant query failed for {entity_name}: {e}", exc_info=True)
             raise ProviderError("qdrant", f"Qdrant query failed: {e}", raw_error=e) from e
 
@@ -317,7 +317,7 @@ class QdrantAdapter(IVectorStoreAdapter):
                 )
             await anyio.to_thread.run_sync(_sync_delete_ids)
             return True
-        except Exception as e:
+        except (RuntimeError, OSError) as e:
             logger.error(f"Qdrant delete failed for {entity_name}: {e}", exc_info=True)
             raise ProviderError("qdrant", f"Qdrant delete failed: {e}", raw_error=e) from e
 
@@ -337,7 +337,7 @@ class QdrantAdapter(IVectorStoreAdapter):
                 )
             await anyio.to_thread.run_sync(_sync_delete_session)
             return True
-        except Exception as e:
+        except (RuntimeError, OSError) as e:
             logger.error(f"Qdrant delete_session failed for {entity_name}/{session_id}: {e}", exc_info=True)
             raise ProviderError("qdrant", f"Qdrant delete_session failed: {e}", raw_error=e) from e
 
@@ -354,5 +354,5 @@ class QdrantAdapter(IVectorStoreAdapter):
                 "collection": self.collection_name,
                 "vector_count": points_count
             }
-        except Exception as e:
+        except (RuntimeError, OSError) as e:
             return {"status": "unhealthy", "error": str(e)}

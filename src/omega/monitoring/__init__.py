@@ -177,7 +177,7 @@ class HardwareMonitor:
                 l3_path = cpu_dir / "cache" / "index3" / "shared_cpu_list"
                 if l3_path.exists():
                     l3_indices.add(l3_path.read_text().strip())
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.warning("Failed to read L3 topology: %s", e)
 
         return {
@@ -246,7 +246,7 @@ class HardwareMonitor:
                 proc = _psutil.Process(pid) if _PSUTIL_AVAILABLE else None
                 if proc:
                     return {"pid": pid, "name": proc.name(), "threads": proc.num_threads()}
-            except Exception as e:
+            except (RuntimeError, OSError) as e:
                 logger.warning("Failed to get thread count for PID %s: %s", pid, e)
                 # Fallback to /proc
                 data = _read_proc(f"/proc/{pid}/status")
@@ -373,12 +373,12 @@ class HardwareMonitor:
                             try:
                                 temp = int(temp_input.read_text()) / 1000
                                 result["celsius"].append({"label": label, "temp": temp})
-                            except Exception as e:
+                            except (OSError, ValueError) as e:
                                 logger.warning("Failed to read temperature from hwmon: %s", e)
-                
-                if result["celsius"]:
-                    result["available"] = True
-        except Exception as e:
+                        
+                        if result["celsius"]:
+                            result["available"] = True
+        except (OSError, RuntimeError) as e:
             logger.warning("Failed to read k10temp: %s", e)
 
         # Fallback to thermal zones
@@ -388,12 +388,12 @@ class HardwareMonitor:
                     try:
                         temp = int(tz.read_text()) / 1000
                         result["celsius"].append({"label": tz.name, "temp": temp})
-                    except Exception as e:
+                    except (OSError, ValueError) as e:
                         logger.warning("Failed to read thermal zone %s: %s", tz.name, e)
-                
-                if result["celsius"]:
-                    result["available"] = True
-            except Exception as e:
+                    
+                    if result["celsius"]:
+                        result["available"] = True
+            except (OSError, RuntimeError) as e:
                 logger.warning("Thermal fallback failed: %s", e)
         
         return result

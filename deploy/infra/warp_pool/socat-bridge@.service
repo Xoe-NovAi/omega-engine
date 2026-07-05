@@ -2,7 +2,7 @@
 Description=Host-to-Namespace Loopback Bridge for WARP Node %i
 Documentation=file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/docs/research/warp_proxy_pool/WARP_PROXY_POOL_SPEC.md
 After=warp-node@%i.service
-Requires=warp-ns-prep@%i.service
+Requires=warp-node@%i.service
 PartOf=warp-pool.target
 
 [Service]

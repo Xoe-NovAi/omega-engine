@@ -65,9 +65,7 @@ ExecStop=/usr/bin/bash -c '\
   NS="warp_node_%i"; \
   VETH_HOST="veth_host_%i"; \
   SUBNET="10.0.%i"; \
-  DEFAULT_IF=$(/usr/sbin/ip route show default | /usr/bin/awk "{print \$$5}" | /usr/bin/head -1); \
-  /usr/sbin/ip netns exec "$${NS}" umount /etc/resolv.conf 2>/dev/null || true; \
-  /usr/sbin/iptables -t nat -D POSTROUTING -s "$${SUBNET}.0/24" -o "$${DEFAULT_IF}" -j MASQUERADE 2>/dev/null || true; \
+  # Keep NAT rules for running warp-nodes; only clean up on explicit destroy; \
   /usr/sbin/ip link del "$${VETH_HOST}" 2>/dev/null || true; \
   /usr/sbin/ip netns del "$${NS}" 2>/dev/null || true; \
   rm -rf /etc/netns/"$${NS}" 2>/dev/null || true'
@@ -77,6 +75,7 @@ ExecStop=/usr/bin/bash -c '\
 NoNewPrivileges=true
 RestrictAddressFamilies=AF_INET AF_UNIX AF_NETLINK
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_SYS_ADMIN
+AmbientCapabilities=CAP_NET_ADMIN CAP_SYS_ADMIN
 
 [Install]
 WantedBy=multi-user.target

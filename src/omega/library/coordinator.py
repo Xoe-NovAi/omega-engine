@@ -270,7 +270,7 @@ class WorkerCoordinator:
                     await self.resume()
             except anyio.get_cancelled_scope().cancel:
                 break
-            except Exception as exc:
+            except (OmegaError, RuntimeError, OSError) as exc:
                 logger.error("Resource monitor error: %s", exc)
 
     async def _check_resources(self) -> bool:

@@ -124,9 +124,10 @@ class SovereignWorker:
                 
             except anyio.CancelledError:
                 self._running = False
-            except Exception as e:
-                logger.error(f"Worker loop error: {str(e)}")
-                await anyio.sleep(1)
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Worker loop error: {str(e)}")
+            await anyio.sleep(1)
+
 
     async def _process_job(self, job: CurationJob):
         """Executes the scrape and handles the result."""

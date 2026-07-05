@@ -46,10 +46,7 @@ class SovereignHierarchy:
                 logger.warning("OmegaError resolving active IWAD for hierarchy. Falling back to default.")
                 wads_base = Path(os.environ.get("OMEGA_WADS_DIR", str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads")))  # [remediated: M2-LEAK] — fallback path also bypasses WadLoader
                 self.config_path = wads_base / cvar_get("config.entity.active_iwad", "_omega_default") / "hierarchy.yaml"  # [remediated: M2-LEAK] — duplicate path construction bypass
-            except Exception as e:
-                logger.error(f"Failed to resolve active IWAD for hierarchy: {e}. Falling back to default.", exc_info=True)
-                wads_base = Path(os.environ.get("OMEGA_WADS_DIR", str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads")))  # [remediated: M2-LEAK] — generic exception fallback path bypasses WadLoader
-                self.config_path = wads_base / cvar_get("config.entity.active_iwad", "_omega_default") / "hierarchy.yaml"  # [remediated: M2-LEAK] — third bypass path; consolidate into WadLoader call
+
         else:
             self.config_path = hierarchy_config
         self._hierarchy = {}

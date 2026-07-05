@@ -252,7 +252,7 @@ class EntityRegistry:
                     omega_cfg = yaml.safe_load(f)
                 active_iwad = omega_cfg.get("omega", {}).get("entity", {}).get("active_iwad", "_omega_default")
                 config_path = str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / active_iwad / "entities.yaml")
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.error(f"Failed to resolve active IWAD from omega.yaml: {e}. Falling back to default.")
                 config_path = str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / DEFAULT_IWAD / "entities.yaml")
         
@@ -824,10 +824,11 @@ class EntityRegistry:
                     os.close(dir_fd)
                 
                 logger.info(f"Saved {len(self._entities)} entities to {self.config_path}")
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 if os.path.exists(temp_path):
                     os.remove(temp_path)
                 raise e
+
 
         await anyio.to_thread.run_sync(_sync_save)
 

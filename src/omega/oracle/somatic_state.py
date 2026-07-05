@@ -47,7 +47,7 @@ class SomaticStateManager:
                 
             logger.info(f"Somatic state captured: {state_id} ({len(state_bytes)} bytes)")
             return True
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Somatic capture error for {state_id}: {e}", exc_info=True)
             return False
 
@@ -76,7 +76,7 @@ class SomaticStateManager:
             
             logger.info(f"Somatic state restored: {state_id}")
             return True
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Somatic restore error for {state_id}: {e}", exc_info=True)
             return False
 

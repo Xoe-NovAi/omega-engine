@@ -112,7 +112,7 @@ class ContentExtractor:
                 body="",
                 error=str(e),
             )
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Extraction unexpected error for {source}: {e}", exc_info=True)
             return ExtractedContent(
                 source=source,
@@ -216,7 +216,7 @@ class ContentExtractor:
                 if temp_path.exists():
                     temp_path.unlink()
                 return content
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(f"Remote PDF extraction failed for {url}: {e}")
             return None
 

@@ -32,6 +32,7 @@ from ..constants import DEFAULT_CONTEXT_LIMIT
 from .world_state import world_state
 from .middleware.headroom import get_headroom_middleware, HeadroomResult
 from .selective_hydration import SelectiveHydration, L3Principle
+from ..errors import OmegaError
 # New constant for token-aware sliding window
 DEFAULT_TOKEN_LIMIT = 4000 
 
@@ -268,7 +269,7 @@ class ContextBuilder:
             full_context = "\n".join(p for p in parts if p and p.strip())
             return full_context.strip() if full_context else ""
             
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(f"Failed to build context for {entity_name}/{session_id}: {e}")
             return ""
 
@@ -296,7 +297,7 @@ class ContextBuilder:
                 return ""
 
             return self._selective_hydration.format_principles_block(principles)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.debug(
                 "SelectiveHydration: gnosis block skipped for %s: %s",
                 entity_name, e,
@@ -329,7 +330,7 @@ class ContextBuilder:
             full_context = f"{world_block}\n{memory_block}"
             return full_context.strip()
             
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(f"Failed to build user context for {user_id}/{session_id}: {e}")
             return ""
 

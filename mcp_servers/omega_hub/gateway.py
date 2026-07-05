@@ -37,9 +37,12 @@ Circular-import note:
 
 import logging
 from datetime import datetime, timezone
-from typing import Any, Dict
+from pathlib import Path
+from typing import Any, Dict, Optional
+import yaml
 
 import anyio
+from omega.oracle.model_gateway import ModelGateway
 
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -56,9 +59,10 @@ class SovereignGateway:
 
     Implements:
       - Secret injection from ``.env`` / config (structure ready)
-      - 65-second start backoff (prevents thundering herd on boot)
-      - 300-second TUI cap (prevents excessive rapid-fire requests)
-      - Independent ``httpx`` client to avoid recursive loopbacks
+      - Configurable 65-second start backoff (prevents thundering herd on boot)
+      - Configurable TUI request rate limiting
+      - Independent ``httpx`` client with configurable connection pools
+      - Configuration-driven via ``config/omega.yaml`` under ``omega.gateway``
 
     **Dependency footprint:**
       - ``httpx.AsyncClient`` (third-party)
@@ -72,11 +76,47 @@ class SovereignGateway:
 
     def __init__(self):
         import httpx
-        self.client = httpx.AsyncClient(timeout=120.0)
+        
+        # Load gateway configuration from omega.yaml
+        config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
+        with open(config_path, "r") as f:
+            config = yaml.safe_load(f)
+        gateway_config = config.get("omega", {}).get("gateway", {})
+        
+        # HTTP client configuration
+        http_config = gateway_config.get("http_client", {})
+        self.client = httpx.AsyncClient(
+            timeout=httpx.Timeout(
+                http_config.get("timeout_total", 120.0),
+                connect=http_config.get("timeout_connect", 10.0)
+            ),
+            limits=httpx.Limits(
+                max_connections=http_config.get("max_connections", 20),
+                max_keepalive_connections=http_config.get("max_keepalive_connections", 10),
+                keepalive_expiry=http_config.get("keepalive_expiry", 30.0),
+            ),
+            http2=http_config.get("http2", True),
+            follow_redirects=http_config.get("follow_redirects", True),
+        )
+        
+        # Rate limiting configuration
+        rate_config = gateway_config.get("rate_limiting", {})
+        self._tui_cap_requests = rate_config.get("tui_cap_requests", 100)
+        self._tui_cap_window_seconds = rate_config.get("tui_cap_window_seconds", 300)
+        self._tui_throttle_delay = rate_config.get("tui_throttle_delay", 1.0)
+        
+        # Startup behavior configuration
+        startup_config = gateway_config.get("startup", {})
+        self._backoff_enabled = startup_config.get("backoff_enabled", True)
+        self._backoff_duration = startup_config.get("backoff_duration", 65.0)
+        
         self._last_request_time = 0.0
         self._boot_time = datetime.now(timezone.utc).timestamp()
         self._tui_count = 0
         self._tui_reset_time = self._boot_time
+        
+        # Wire to the engine's ModelGateway for actual provider forwarding
+        self.model_gateway = ModelGateway()
 
     async def proxy_request(self, provider_name: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         """Forward a request to an AI provider with rate-limiting and backoff.
@@ -91,26 +131,60 @@ class SovereignGateway:
         """
         now = datetime.now(timezone.utc).timestamp()
 
-        # Start backoff disabled for debugging
-        # if now - self._boot_time < 65:
-        #     wait_time = 65 - (now - self._boot_time)
-        #     logger.info(f"Sovereign Gateway: Start backoff active. Waiting {wait_time:.2f}s")
-        #     await anyio.sleep(wait_time)
-        #     now = datetime.now(timezone.utc).timestamp()
+        # Start backoff (if enabled)
+        if self._backoff_enabled and now - self._boot_time < self._backoff_duration:
+            wait_time = self._backoff_duration - (now - self._boot_time)
+            logger.info(f"Sovereign Gateway: Start backoff active. Waiting {wait_time:.2f}s")
+            await anyio.sleep(wait_time)
+            now = datetime.now(timezone.utc).timestamp()
 
         # 300-second TUI cap (Rate limiting)
-        if now - self._tui_reset_time > 300:
+        if now - self._tui_reset_time > self._tui_cap_window_seconds:
             self._tui_count = 0
             self._tui_reset_time = now
 
         self._tui_count += 1
-        if self._tui_count > 100:  # Example cap: 100 requests per 5 mins
+        if self._tui_count > self._tui_cap_requests:  # Configurable cap
             logger.warning("Sovereign Gateway: TUI cap reached. Throttling request.")
-            await anyio.sleep(1.0)
+            await anyio.sleep(self._tui_throttle_delay)
 
-        # Secret Injection & Forwarding (structure ready, mocked)
-        logger.info(f"Sovereign Gateway: Proxying request to {provider_name}")
-        return {"status": "proxied", "provider": provider_name, "payload": payload}
+        # Secret Injection & Forwarding
+        logger.info("Sovereign Gateway: Proxying request to %s", provider_name)
+        
+        try:
+            # Map payload to ModelGateway.generate arguments
+            result = await self.model_gateway.generate(
+                model_name=payload.get("model", "qwen3-1.7b"),
+                system_prompt=payload.get("system_prompt", ""),
+                user_query=payload.get("user_query", ""),
+                temperature=payload.get("temperature", 0.7),
+                max_tokens=payload.get("max_tokens", 1024),
+                trace_id=payload.get("trace_id")
+            )
+            return {
+                "status": "success",
+                "provider": result.provider_name,
+                "text": result.text,
+                "latency_ms": result.latency_ms,
+                "model_used": result.model_used
+            }
+        except Exception as e:
+            logger.error("Sovereign Gateway: Provider forwarding failed: %s", e, exc_info=True)
+            return {"status": "error", "provider": provider_name, "error": str(e)}
+
+    def _get_provider_url(self, provider_name: str) -> str:
+        """Map provider name to base URL."""
+        urls = {
+            "google": "https://generativelanguage.googleapis.com/v1beta/models",
+            "openrouter": "https://openrouter.ai/api/v1",
+            "lmstudio": "http://127.0.0.1:1234/v1",
+            "ollama": "http://127.0.0.1:11434/api",
+        }
+        return urls.get(provider_name, "http://127.0.0.1:8000")
+
+    def _build_provider_headers(self, provider_name: str) -> Dict[str, str]:
+        """Inject API keys from KeyVault/env. Stub for now."""
+        return {"Content-Type": "application/json", "User-Agent": "Omega-SovereignGateway/1.0"}
 
 
 # ═══════════════════════════════════════════════════════════════════════════

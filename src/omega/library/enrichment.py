@@ -199,7 +199,7 @@ class OpenLibraryClient(BaseLibraryClient):
                     ))
                 self._set_cache(cache_key, results)
                 return results
-        except Exception as e:
+        except (httpx.HTTPError, RuntimeError) as e:
             logger.error(f"OpenLibrary search failed: {e}")
             return []
 
@@ -232,7 +232,7 @@ class OpenLibraryClient(BaseLibraryClient):
                     )
                     self._set_cache(cache_key, meta)
                     return meta
-        except Exception as e:
+        except (httpx.HTTPError, RuntimeError) as e:
             logger.error(f"OpenLibrary lookup failed: {e}")
         return None
 
@@ -270,7 +270,7 @@ class InternetArchiveClient(BaseLibraryClient):
                     ))
                 self._set_cache(cache_key, results)
                 return results
-        except Exception as e:
+        except (httpx.HTTPError, RuntimeError) as e:
             logger.error(f"InternetArchive search failed: {e}")
             return []
 
@@ -294,7 +294,7 @@ class InternetArchiveClient(BaseLibraryClient):
                     source_apis=["internetarchive"],
                     enrichment_confidence=0.70
                 )
-        except Exception as e:
+        except (httpx.HTTPError, RuntimeError) as e:
             logger.error(f"InternetArchive lookup failed: {e}")
         return None
 
@@ -326,7 +326,7 @@ class LibraryOfCongressClient(BaseLibraryClient):
                     ))
                 self._set_cache(cache_key, results)
                 return results
-        except Exception as e:
+        except (httpx.HTTPError, RuntimeError) as e:
             logger.error(f"LOC search failed: {e}")
             return []
 
@@ -362,7 +362,7 @@ class ProjectGutenbergClient(BaseLibraryClient):
                     ))
                 self._set_cache(cache_key, results)
                 return results
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Gutenberg search failed: {e}")
             return []
 
@@ -381,7 +381,7 @@ class ProjectGutenbergClient(BaseLibraryClient):
                     source_apis=["gutenberg"],
                     enrichment_confidence=0.65
                 )
-        except Exception as e:
+        except (httpx.HTTPError, RuntimeError) as e:
             logger.error(f"Gutenberg lookup failed: {e}")
         return None
 
@@ -491,7 +491,7 @@ class EnrichmentEngine:
             
             return None
             
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(f"Failed to get authoritative value for '{field}': {e}")
             return None
 

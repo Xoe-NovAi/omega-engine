@@ -40,7 +40,7 @@ class SearchFleet:
         try:
             from omega.vault import KeyVault
             return KeyVault().resolve(provider)
-        except Exception:
+        except (OmegaError, RuntimeError):
             return os.environ.get(env_var, "")
 
     async def search_exa(self, query: str, num_results: int = 10) -> list[str]:
@@ -70,7 +70,7 @@ class SearchFleet:
                 return [r["url"] for r in data.get("results", [])]
         except OmegaError:
             return []
-        except Exception as e:
+        except (httpx.HTTPError, RuntimeError) as e:
             logger.error(f"Exa search failed: {e}", exc_info=True)
             return []
 
@@ -94,7 +94,7 @@ class SearchFleet:
                 return None
         except OmegaError:
             return None
-        except Exception as e:
+        except (httpx.HTTPError, RuntimeError) as e:
             logger.error(f"Exa fetch failed for {url}: {e}", exc_info=True)
             return None
 
@@ -122,7 +122,7 @@ class SearchFleet:
                 return data.get("data", {}).get("markdown", "")
         except OmegaError:
             return None
-        except Exception as e:
+        except (httpx.HTTPError, RuntimeError) as e:
             logger.error(f"Firecrawl failed for {url}: {e}", exc_info=True)
             return None
 

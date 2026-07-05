@@ -26,6 +26,8 @@ from typing import Any, Dict, List, Optional
 
 import anyio
 
+from omega.errors import OmegaError
+
 logger = logging.getLogger(__name__)
 
 
@@ -150,7 +152,7 @@ class SessionLifecycleManager:
             self._stats.archived = await self._store.archive_old_sessions(
                 older_than_days=self._config.archive_after_days
             )
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("Lifecycle archive step failed: %s", e, exc_info=True)
             self._stats.errors += 1
 
@@ -158,7 +160,7 @@ class SessionLifecycleManager:
         if self._config.enable_external_archive:
             try:
                 self._stats.externalized = await self._move_to_external()
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.error("Lifecycle external step failed: %s", e, exc_info=True)
                 self._stats.errors += 1
 
@@ -166,7 +168,7 @@ class SessionLifecycleManager:
         if self._config.enable_deletion:
             try:
                 self._stats.deleted = await self._delete_beyond_retention()
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.error("Lifecycle delete step failed: %s", e, exc_info=True)
                 self._stats.errors += 1
 
@@ -316,7 +318,7 @@ class SessionLifecycleManager:
             await anyio.to_thread.run_sync(shutil.copy2, str(external_path), str(local_path))
             logger.info("Recalled session %s/%s from external to local", entity_name, session_id)
             return True
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("Failed to recall session %s/%s: %s", entity_name, session_id, e)
             return False
 
@@ -365,22 +367,24 @@ class SessionLifecycleManager:
             if not await anyio.Path(ent_dir).is_dir():
                 continue
             async for path in anyio.Path(ent_dir).glob("*.json.gz"):
-                try:
-                    stat = await anyio.Path(path).stat()
-                    age_days = (now - stat.st_mtime) / 86400
-                    if age_days > self._config.external_after_days:
-                        entity_name = ent_dir.name
-                        external_entity_dir = self._config.external_storage_path / entity_name
-                        await anyio.Path(external_entity_dir).mkdir(parents=True, exist_ok=True)
+                    try:
+                        stat = await anyio.Path(path).stat()
+                        age_days = (now - stat.st_mtime) / 86400
+                        if age_days > self._config.external_after_days:
+                            entity_name = ent_dir.name
+                            external_entity_dir = self._config.external_storage_path / entity_name
+                            await anyio.Path(external_entity_dir).mkdir(parents=True, exist_ok=True)
+                            
+                            dest_path = external_entity_dir / path.name
+                            await anyio.Path(path).rename(dest_path)
+                            count += 1
+                            logger.info("Moved session %s to external storage: %s", path.name, dest_path)
+                    except (OmegaError, RuntimeError, OSError) as e:
+                        logger.warning("Failed to move %s to external: %s", path, e)
 
-                        dest_path = external_entity_dir / path.name
-                        await anyio.Path(path).rename(dest_path)
-                        count += 1
-                        logger.info("Moved session %s to external storage: %s", path.name, dest_path)
-                except Exception as e:
-                    logger.warning("Failed to move %s to external: %s", path, e)
 
         return count
+
 
     async def _delete_beyond_retention(self) -> int:
         """Delete sessions beyond retention policy.
@@ -406,9 +410,8 @@ class SessionLifecycleManager:
                         await anyio.Path(path).unlink()
                         count += 1
                         logger.info("Deleted session beyond retention: %s", path)
-                except Exception as e:
+                except (OmegaError, RuntimeError, OSError) as e:
                     logger.warning("Failed to delete %s: %s", path, e)
-
         return count
 
     def get_config_summary(self) -> Dict[str, Any]:

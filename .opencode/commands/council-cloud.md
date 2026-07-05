@@ -15,8 +15,9 @@ You are summoning the **MaKaLi cloud council** for this query: $ARGUMENTS
    - Launch **@maat** as a subagent to handle the **Build Side** (P1-P5).
    - Launch **@lilith** as a subagent to handle the **Run Side** (P6-P10).
 3. **Pillar Councils (Serial Execution)**:
-   - **Ma'at** must select the 3 most critical Pillars from P1-P5 and launch them in **serial** to vet the build-side sub-task.
-   - **Lilith** must select the 3 most critical Pillars from P6-P10 and launch them in **serial** to vet the run-side sub-task.
+   - **Ma'at** must select the **most critical Pillars from P1-P5** (up to 5, minimum 3) and launch them in **serial** to vet the build-side sub-task.
+   - **Lilith** must select the **most critical Pillars from P6-P10** (up to 5, minimum 3) and launch them in **serial** to vet the run-side sub-task.
+   - **Note**: Each Oversoul governs 5 pillars. They MAY launch all 5 if the task demands full domain coverage. The "3 minimum" is a floor, not a ceiling.
 4. **Oversoul Synthesis**:
    - Ma'at and Lilith deliver their consolidated reports back to you (Kali).
 5. **Final Sovereign Review**:

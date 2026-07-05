@@ -31,6 +31,7 @@ from .memory.providers import (
     RedisStorageProvider,
     FileStorageProvider,
     InMemoryStorageProvider,
+    USMStorageProvider,
     DiskSpaceError,
 )
 from .memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
@@ -132,6 +133,9 @@ class MemoryStore:
         else:
             self.providers = []
             
+            # 0. USM Provider (Sovereign Primary)
+            self.providers.append(USMStorageProvider())
+            
             # Skip Redis in test environment to keep tests fast
             is_test = os.environ.get("OMEGA_ENV") == "test"
             
@@ -144,15 +148,15 @@ class MemoryStore:
                     self.providers.append(RedisStorageProvider(host=redis_host, port=redis_port, password=redis_password))
                 except OmegaError:
                     raise
-                except Exception as e:
+                except (ConnectionError, RuntimeError) as e:
                     logger.error(f"Failed to initialize RedisStorageProvider: {e}", exc_info=True)
                     raise OmegaPersistenceError(f"Redis init failed: {e}", raw_error=e) from e
-            
-            # 2. File Provider (Warm)
-            try:
-                self.providers.append(FileStorageProvider(data_dir=_get_memory_dir()))
-            except Exception as e:
-                logger.warning(f"Failed to initialize FileStorageProvider: {e}")
+                
+                # 2. File Provider (Warm)
+                try:
+                    self.providers.append(FileStorageProvider(data_dir=_get_memory_dir()))
+                except (OSError, RuntimeError) as e:
+                    logger.warning(f"Failed to initialize FileStorageProvider: {e}")
                 
             # 3. InMemory Provider (Cold/Volatile Fallback)
             self.providers.append(InMemoryStorageProvider())
@@ -248,7 +252,7 @@ class MemoryStore:
                     return validated[-limit:]
             except OmegaError:
                 continue
-            except Exception as e:
+            except (RuntimeError, OSError) as e:
                 logger.error(f"Provider {provider.__class__.__name__} failed to get_history: {e}", exc_info=True)
                 self._stats["fallbacks"] += 1
                 continue
@@ -467,7 +471,7 @@ class MemoryStore:
                     if trace_id:
                         vault["last_trace_id"] = trace_id
                     await adapter.put_vault(entity_name, "shadow", vault)
-                except Exception as e:
+                except (OmegaError, RuntimeError) as e:
                     logger.warning(
                         "Vault update failed for %s/%s: %s",
                         entity_name, session_id, e
@@ -477,9 +481,9 @@ class MemoryStore:
         try:
             self.fts.index_exchange(session_id, entity_name, "user", user_message)
             self.fts.index_exchange(session_id, entity_name, "assistant", response)
-        except Exception as e:
+        except (RuntimeError, OSError) as e:
             logger.warning("FTS dual-write failed for %s: %s", session_id, e)
-
+        
         # Sovereign Vector Update
         vector_adapter = await self._ensure_vector_store()
         if vector_adapter:
@@ -491,7 +495,7 @@ class MemoryStore:
                     vector=embedding,
                     metadata={"session_id": session_id, "timestamp": exchange["timestamp"]}
                 )
-            except Exception as e:
+            except (OmegaError, RuntimeError) as e:
                 logger.warning("Vector upsert failed for %s: %s", session_id, e)
 
     async def flush(self) -> None:
@@ -554,7 +558,7 @@ class MemoryStore:
             if status.get("status") == "healthy":
                 return self.vector_store
             logger.warning("Vector store unhealthy (%s), falling back to MemoryVectorAdapter", status.get("error"))
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("Vector store health check failed: %s, falling back to MemoryVectorAdapter", e)
             
         self.vector_store = MemoryVectorAdapter()
@@ -624,7 +628,7 @@ class MemoryStore:
         session_id: str,
     ) -> bool:
         """Move a session to cold storage / archive across all providers.
-
+        
         [id-soft: doom-1993] Lazy Deletion — instead of popping the hot cache
         entry immediately, tombstone it for TOMBSTONE_GRACE_SECONDS so any
         in-flight add_exchange operations complete safely. The slot is
@@ -637,10 +641,10 @@ class MemoryStore:
                     archived_any = True
             except OmegaError:
                 continue
-            except Exception as e:
+            except (RuntimeError, OSError) as e:
                 logger.error(f"Provider {provider.__class__.__name__} failed to archive: {e}", exc_info=True)
                 continue
-
+        
         if archived_any:
             cache_key = f"{entity_name.lower()}:{session_id}"
             # [id-soft: doom-1993] Lazy Deletion — tombstone marker
@@ -652,7 +656,7 @@ class MemoryStore:
                 try:
                     await self.vector_store.delete_session(entity_name, session_id)
                     logger.info("Vector cleanup completed for session %s", session_id)
-                except Exception as e:
+                except (OmegaError, RuntimeError) as e:
                     logger.warning("Vector cleanup failed for %s: %s", session_id, e)
             
             self._stats["archives"] += 1
@@ -660,9 +664,9 @@ class MemoryStore:
             # [Horizon 2: MiMo] FTS5 Cleanup (C1 fix)
             try:
                 await anyio.to_thread.run_sync(self.fts.remove_session, session_id)
-            except Exception as e:
+            except (RuntimeError, OSError) as e:
                 logger.warning("FTS cleanup failed for %s: %s", session_id, e)
-
+            
             logger.info(f"Archived session {session_id} across providers (tombstoned, grace={TOMBSTONE_GRACE_SECONDS}s)")
             return True
         return False
@@ -763,7 +767,7 @@ class MemoryStore:
                 for provider in self.providers:
                     try:
                         await provider.save_history(entity_name, session_id, exchanges)
-                    except Exception as e:
+                    except (OmegaError, RuntimeError, OSError) as e:
                         logger.warning(f"Failed to flush to {provider.__class__.__name__} on close: {e}")
 
         for provider in self.providers:
@@ -771,7 +775,7 @@ class MemoryStore:
                 await provider.close()
             except OmegaError:
                 pass
-            except Exception as e:
+            except (RuntimeError, OSError) as e:
                 logger.error(f"Failed to close provider {provider.__class__.__name__}: {e}", exc_info=True)
                 pass
 
@@ -780,7 +784,7 @@ class MemoryStore:
         if hasattr(self, 'fts') and self.fts is not None:
             try:
                 await anyio.to_thread.run_sync(self.fts.close)
-            except Exception as e:
+            except (RuntimeError, OSError) as e:
                 logger.warning("Failed to close FTS index: %s", e)
 
         logger.info("Memory store flushed and closed")
@@ -869,7 +873,7 @@ def reset_memory_store() -> None:
         if hasattr(_memory_store, 'fts') and _memory_store.fts is not None:
             try:
                 _memory_store.fts.close()
-            except Exception:
+            except (RuntimeError, OSError):
                 pass  # Best-effort — MemoryStore is being abandoned anyway
         _memory_store = None
     else:

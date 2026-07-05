@@ -401,7 +401,7 @@ class Zen2Optimizer:
             pressure["available_mb"] = available_kb // 1024
         except OmegaError:
             pressure["available_mb"] = RAM_AVAILABLE_AI_MB
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("Failed to read RAM pressure via awk: %s", e, exc_info=True)
             pressure["available_mb"] = RAM_AVAILABLE_AI_MB
 
@@ -511,7 +511,7 @@ class Zen2Optimizer:
 
         except OmegaError as e:
             info["error"] = str(e)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"CPU info detection failed: {e}", exc_info=True)
             info["error"] = str(e)
 
@@ -639,7 +639,7 @@ class Zen2Optimizer:
 
         except OmegaError:
             pass
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"CPU topology detection failed, using Zen 2 defaults: {e}", exc_info=True)
             pass
 

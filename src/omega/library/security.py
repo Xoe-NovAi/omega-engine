@@ -157,7 +157,7 @@ async def validate_download_size(
 
             return True
 
-    except Exception as exc:
+    except (OmegaError, RuntimeError, OSError) as exc:
         # If HEAD fails (server doesn't support it), allow the GET
         # and enforce size limits during streaming instead.
         logger.debug("Size pre-check HEAD failed for %s: %s", url[:80], exc)

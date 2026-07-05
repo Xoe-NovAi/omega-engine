@@ -18,6 +18,7 @@ from typing import Any, Dict, Optional
 import anyio
 
 from mcp_servers.omega_hub import state
+from mcp_servers.omega_hub.state import handoff_index_rebuild
 
 logger = logging.getLogger("omega.hub")
 
@@ -38,6 +39,7 @@ async def _prune_awareness_background() -> None:
     file always reflects the latest state.
     """
     while True:
+        # Pruning and metrics are independent — failure of one must not block the other.
         try:
             now = datetime.now(timezone.utc)
             async with state._awareness_lock, state._extended_sessions_lock:
@@ -54,11 +56,17 @@ async def _prune_awareness_background() -> None:
                 for cli in stale_clis:
                     del state._awareness[cli]
                 if stale_clis:
-                    logger.info(f"Pruned {len(stale_clis)} stale agent(s) from awareness.")
+                    logger.info("Pruned %d stale agent(s) from awareness.", len(stale_clis))
+        except Exception as e:
+            logger.error("Awareness pruning failed: %s", e)
+
+        # Metrics always run, even if pruning failed
+        try:
             state._last_pruning_cycle = datetime.now(timezone.utc).isoformat()
             await _write_metrics()
         except Exception as e:
-            logger.error(f"Awareness pruning failed: {e}")
+            logger.error("Metrics write failed: %s", e)
+
         await anyio.sleep(60)
 
 
@@ -164,6 +172,12 @@ async def _reap_stale_handoffs() -> None:
     )
     if reaped_and_deleted:
         logger.info("Reaped/deleted %d handoff(s)", reaped_and_deleted)
+        # Rebuild index after reaping to prevent drift
+        try:
+            count = await handoff_index_rebuild()
+            logger.debug("Handoff index rebuilt after reaping: %d packets", count)
+        except Exception as e:
+            logger.warning("Handoff index rebuild after reaping failed: %s", e)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -171,13 +185,22 @@ async def _reap_stale_handoffs() -> None:
 # ═══════════════════════════════════════════════════════════════════════════
 
 async def _reaper_background() -> None:
-    """Background loop that reaps stale locks and handoffs."""
+    """Background loop that reaps stale locks and handoffs.
+
+    [id-soft: quake-1996] Lazy Thinker Deletion — each reap is independent.
+    If _reap_stale_locks() fails, _reap_stale_handoffs() still runs.
+    """
     while True:
         try:
             await _reap_stale_locks()
+        except Exception as e:
+            logger.error("Reaper: stale locks failed: %s", e)
+
+        try:
             await _reap_stale_handoffs()
         except Exception as e:
-            logger.error("Reaper background failed: %s", e)
+            logger.error("Reaper: stale handoffs failed: %s", e)
+
         await anyio.sleep(300)
 
 

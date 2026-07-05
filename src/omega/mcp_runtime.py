@@ -112,13 +112,13 @@ def run_mcp(mcp: Any, modify_app: Optional[Callable[[Any], None]] = None,
             # Shutdown cleanup — call on_shutdown if provided
             # [id-soft: quake-1996] Zone Memory — free allocated resources on exit
             if on_shutdown:
-                try:
-                    if hasattr(on_shutdown, '__call__'):
-                        result = on_shutdown()
-                        if hasattr(result, '__await__'):
-                            await result
-                except Exception as e:
-                    logger.warning(f"Shutdown callback failed: {e}")
+                    try:
+                        if hasattr(on_shutdown, '__call__'):
+                            result = on_shutdown()
+                            if hasattr(result, '__await__'):
+                                await result
+                    except (OmegaError, RuntimeError, OSError) as e:
+                        logger.warning(f"Shutdown callback failed: {e}")
 
         # ── Assemble final app ────────────────────────────────────────
         if modify_app:

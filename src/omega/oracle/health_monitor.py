@@ -149,7 +149,7 @@ class AsyncCircuitBreaker:
             # We assume success if no exception. Quality is 1.0 for basic success.
             await self._on_success(latency=latency, quality=1.0, trace_id=trace_id)
             return result
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             if self._is_circuit_breaking_error(e):
                 await self._on_failure(trace_id=trace_id)
             raise
@@ -205,7 +205,7 @@ class AsyncCircuitBreaker:
                         trace_id=trace_id,
                         reason="success_recovery",
                     )
-                except Exception as e:
+                except (OmegaError, RuntimeError, OSError) as e:
                     logger.warning(f"Circuit closed event failed — observability unavailable: {e}")
                     pass
 
@@ -252,7 +252,7 @@ class AsyncCircuitBreaker:
                         trace_id=trace_id,
                         reason=f"failures={self.failure_count},cusum={self.cusum_g:.2f}",
                     )
-                except Exception as e:
+                except (OmegaError, RuntimeError, OSError) as e:
                     logger.warning(f"Circuit opened event failed — observability unavailable: {e}")
                     pass
 

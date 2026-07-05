@@ -91,9 +91,11 @@ async def chat(request: ChatRequest):
     except OmegaError as e:
         logger.error(f"Chat OmegaError: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-    except Exception as e:
-        logger.error(f"Chat unexpected error: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+    except (RuntimeError, OSError) as e:
+        from omega.oracle.failure_registry import get_failure_registry
+        classification = get_failure_registry().classify_error(e)
+        logger.error(f"Chat system error [{classification['mode']}]: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"System error: {str(e)}")
 
 
 @app.get("/health", response_model=HealthResponse)
@@ -115,9 +117,11 @@ async def voice(request: ChatRequest):
     except OmegaError as e:
         logger.error(f"Voice OmegaError: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-    except Exception as e:
-        logger.error(f"Voice unexpected error: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+    except (RuntimeError, OSError) as e:
+        from omega.oracle.failure_registry import get_failure_registry
+        classification = get_failure_registry().classify_error(e)
+        logger.error(f"Voice system error [{classification['mode']}]: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"System error: {str(e)}")
 
 
 @app.get("/entities")

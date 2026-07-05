@@ -67,7 +67,7 @@ class SovereignCache:
             logger.info(f"SovereignCache HIT for {query} (entity={entity})")
             return entry.content
 
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(f"Cache read error for {key}: {e}")
             return None
 
@@ -87,7 +87,7 @@ class SovereignCache:
             with open(cache_file, "w", encoding="utf-8") as f:
                 json.dump(asdict(entry), f, indent=2)
             return True
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Cache write error for {key}: {e}")
             return False
 

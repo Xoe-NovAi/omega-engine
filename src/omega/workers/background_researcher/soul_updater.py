@@ -95,7 +95,7 @@ class SoulUpdater:
             soul_data = yaml.safe_load(content) or {}
         except OmegaError:
             soul_data = {"entity": {"name": entity, "lessons_learned": []}}
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("Failed to read soul.yaml for %s: %s", entity, e, exc_info=True)
             soul_data = {"entity": {"name": entity, "lessons_learned": []}}
 
@@ -131,8 +131,10 @@ class SoulUpdater:
                     agent_name="background_researcher",
                     summary=f"Background research L3: {l3[:80]}",
                 ))
-            except Exception as hist_exc:
+            except (OmegaError, RuntimeError, OSError) as hist_exc:
                 logger.warning("Failed to record soul edit history for %s: %s", entity, hist_exc)
+
+
 
     async def _write_research_doc(
         self,

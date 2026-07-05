@@ -41,6 +41,6 @@ async def get_hardware_stats() -> Dict[str, Any]:
     except ImportError:
         logger.debug("get_hardware_stats: omega.monitoring not available")
         return {"cpu_usage": 0.0, "memory_available_mb": 1024}
-    except Exception as e:
+    except (RuntimeError, OSError) as e:
         logger.warning("get_hardware_stats failed: %s", e)
         return {"cpu_usage": 0.0, "memory_available_mb": 1024}

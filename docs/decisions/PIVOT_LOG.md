@@ -115,8 +115,13 @@
 | 185 | 2026-07-03 | Transition to Multi-Anchor Soul Stack — Decomposed monolithic soul.yaml into identity, mandates, workflows, and gnosis anchors for modularity and portability |
 | 186 | 2026-07-03 | Identity Shift: Jem redefined as "Sovereign Synthesizer" — moving from research orchestration to a functional `Query $\rightarrow$ Task Graph $\rightarrow$ Result` pipeline. |
 | 187 | 2026-07-03 | Cognitive Stability Plan — Implementation of "Sovereign Sampling" (Logit Bias + Sampling Overrides) to eliminate "la-" prefix and repetition loops in Gemma 4 31B. |
-| 188 | 2026-07-03 | Somatic Flush Protocol — Pivot from hard session resets to "Summary $\rightarrow$ New Session" to preserve cognitive thread while purging KV cache. |
+| 189 | 2026-07-05 | Sovereign Ingestion Hardening Sprint — Implementation of stripped S3 pipeline (T1-T9) to resolve IW-4 and Strike 7.6. |
+| 190 | 2026-07-05 | CLTK Adoption — Transition from regex-based Greek normalization to Classical Language Toolkit (CLTK) for academic-grade processing. |
+| 191 | 2026-07-05 | Sovereign Proxy Requirement — Mandate for all external library API calls to route through a header-stripping, IP-rotating proxy to ensure M8 (Zero Telemetry) compliance. |
 | 193 | 2026-07-03 | Headroom Pivot — Deprecated internal zlib-based `headroom.py` (Binary Compression) in favor of `headroom-ai` library (Semantic/Structural Compression). Corrected documentation to distinguish between storage efficiency (bytes) and context efficiency (tokens). |
+| 189 | 2026-07-05 | Sovereign Ingestion Hardening Sprint — Implementation of stripped S3 pipeline (T1-T9) to resolve IW-4 and Strike 7.6. |
+| 190 | 2026-07-05 | CLTK Adoption — Transition from regex-based Greek normalization to Classical Language Toolkit (CLTK) for academic-grade processing. |
+| 191 | 2026-07-05 | Sovereign Proxy Requirement — Mandate for all external library API calls to route through a header-stripping, IP-rotating proxy to ensure M8 (Zero Telemetry) compliance. |
 
 ---
 

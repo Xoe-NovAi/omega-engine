@@ -58,7 +58,7 @@ class HeadroomMiddleware:
             
             return compressed_messages, results
             
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Headroom compression failed for {entity_name}: {e}")
             # Fallback: return original messages to ensure the system doesn't crash
             return messages, []
@@ -72,7 +72,7 @@ class HeadroomMiddleware:
         try:
             # [M1 AnyIO Absolute] Wrap blocking I/O retrieval in run_sync
             return await anyio.to_thread.run_sync(headroom.retrieve, ref_id)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Headroom retrieval failed for {ref_id}: {e}")
             return f"[[ERROR: Original content for {ref_id} could not be retrieved]]"
 

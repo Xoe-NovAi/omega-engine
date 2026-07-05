@@ -8,69 +8,65 @@ DefaultDependencies=no
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-# Runs on HOST — starts temp warp-svc with DEFAULT path (for IPC), registers, copies to custom path
-# warp-cli communicates with warp-svc via Unix socket — daemon MUST be running
+# Runs on HOST — orchestrates the registration daemon via systemctl
 ExecStart=/usr/bin/bash -c '\
-  set -e; \
+  set -euo pipefail; \
   NS="warp_node_%i"; \
   CONF="/var/lib/cloudflare-warp-%i"; \
   DEFAULT="/var/lib/cloudflare-warp"; \
+  REG_SVC="warp-reg-svc@%i.service"; \
   \
-  # 1. Stop host warp-svc (would conflict with namespace IPC socket); \
-  /usr/bin/systemctl stop warp-svc 2>/dev/null || true; \
+  echo "[warp-reg] Stopping any existing registration daemon..."; \
+  systemctl stop "$${REG_SVC}" 2>/dev/null || true; \
   \
-  # 2. Kill ALL warp-svc processes (even leftover from failed deploy); \
-  /usr/bin/pkill -9 warp-svc 2>/dev/null || true; \
-  \
-  # 3. Wait for process cleanup and socket release; \
-  sleep 1; \
-  \
-  # 4. Clean up stale IPC socket; \
-  rm -f /run/cloudflare-warp/warp_service 2>/dev/null || true; \
-  \
-  # 5. AGGRESSIVE: Remove immutable flag, then nuke ALL stale registration files + SQLite WAL; \
+  echo "[warp-reg] Cleaning host registration state..."; \
   /usr/bin/chattr -i "$${DEFAULT}/reg.json" "$${DEFAULT}/conf.json" "$${DEFAULT}/warp.db" \
     "$${DEFAULT}/settings.json" "$${DEFAULT}/final-overrides-settings.json" \
     "$${DEFAULT}/warp.db-wal" "$${DEFAULT}/warp.db-shm" 2>/dev/null || true; \
-  /usr/bin/chattr -i "$${CONF}/reg.json" "$${CONF}/conf.json" "$${CONF}/warp.db" \
-    "$${CONF}/warp.db-wal" "$${CONF}/warp.db-shm" 2>/dev/null || true; \
   rm -rf "$${DEFAULT}/reg.json" "$${DEFAULT}/conf.json" "$${DEFAULT}/warp.db" \
          "$${DEFAULT}/settings.json" "$${DEFAULT}/final-overrides-settings.json" \
          "$${DEFAULT}/warp.db-wal" "$${DEFAULT}/warp.db-shm" \
          "$${CONF}/reg.json" "$${CONF}/conf.json" "$${CONF}/warp.db" \
          "$${CONF}/warp.db-wal" "$${CONF}/warp.db-shm"; \
   \
-  # 6. Ensure custom config dir exists; \
-  mkdir -p "$${CONF}"; \
+  echo "[warp-reg] Preparing directories..."; \
+  mkdir -p "$${CONF}" "$${DEFAULT}" /run/cloudflare-warp /var/log/cloudflare-warp; \
+  chmod 755 /var/log/cloudflare-warp; \
   \
-  # 7. Start temp warp-svc with DEFAULT path (so it sees registration written by warp-cli); \
-  /usr/sbin/ip netns exec "$${NS}" /usr/bin/warp-svc & \
-  WARP_PID=$!; \
+  echo "[warp-reg] Starting registration daemon..."; \
+  systemctl start "$${REG_SVC}"; \
   \
-  # Cleanup background warp-svc on script exit (success or failure); \
-  trap "kill $${WARP_PID} 2>/dev/null || true; wait $${WARP_PID} 2>/dev/null || true" EXIT; \
-  \
-  # 8. Wait for IPC readiness (poll warp-cli status up to 10s); \
-  for i in $(seq 1 20); do \
-    if /usr/sbin/ip netns exec "$${NS}" /usr/bin/warp-cli --accept-tos status &>/dev/null 2>&1; then \
+  echo "[warp-reg] Polling daemon IPC..."; \
+  for i in $(seq 1 60); do \
+    if /usr/bin/warp-cli --accept-tos status &>/dev/null; then \
+      echo "[warp-reg] Daemon ready."; \
       break; \
     fi; \
     sleep 0.5; \
   done; \
   \
-  # 9. Register new WARP license inside namespace (creates reg.json in DEFAULT); \
-  /usr/sbin/ip netns exec "$${NS}" /usr/bin/warp-cli --accept-tos registration new && \
+  echo "[warp-reg] Resetting daemon state..."; \
+  /usr/bin/warp-cli --accept-tos settings reset; \
   \
-  # 10. Copy ALL config from DEFAULT to custom path for warp-node --config-dir; \
-  cp -r "$${DEFAULT}"/* "$${CONF}"/'
+  echo "[warp-reg] Registering new identity..."; \
+  /usr/bin/warp-cli --accept-tos registration new; \
+  \
+  echo "[warp-reg] Copying registration to instance config..."; \
+  cp -r "$${DEFAULT}"/* "$${CONF}"/; \
+  \
+  echo "[warp-reg] Stopping registration daemon..."; \
+  systemctl stop "$${REG_SVC}"; \
+  \
+  echo "[warp-reg] Registration complete for %i."; \
+'
 
-# SECURITY: CAP_NET_ADMIN for ip netns, CAP_SYS_ADMIN for setns + pkill + chattr
-NoNewPrivileges=true
-RestrictAddressFamilies=AF_INET AF_UNIX AF_NETLINK
+# Capabilities for systemctl operations
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_SYS_ADMIN
+AmbientCapabilities=CAP_NET_ADMIN CAP_SYS_ADMIN
+RestrictAddressFamilies=AF_INET AF_UNIX AF_NETLINK
+NoNewPrivileges=true
 
-# Allow up to 60s for registration (warp-svc start ~5s + DNS + tunnel connect ~10s + registration ~5s)
-TimeoutStartSec=60
+TimeoutStartSec=300
 
 [Install]
 WantedBy=multi-user.target

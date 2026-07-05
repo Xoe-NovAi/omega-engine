@@ -63,7 +63,7 @@ class WADLoader:
                     logger.info(f"Loading WAD: {stack_name}")
                     success, _ = await self.load_wad(stack_name)
                     results[stack_name] = success
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to iterate WADs directory: {e}")
             
         return results
@@ -172,7 +172,7 @@ class WADLoader:
 
             return True, hierarchy_path
 
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to load WAD {stack_name}: {e}")
             return False, None
 
@@ -243,7 +243,7 @@ class WADLoader:
             logger.error(f"Failed to import adapter module '{module_path}' for WAD {stack_name}: {e}")
         except AttributeError as e:
             logger.error(f"Adapter class '{class_name}' not found in '{module_path}' for WAD {stack_name}: {e}")
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to register adapter for WAD {stack_name}: {e}", exc_info=True)
 
     async def _load_entities(self, entities_dir: Path, wad_source: str = "", priority: int = 0) -> None:
@@ -316,9 +316,10 @@ class WADLoader:
                     )
                     await self.registry.add(entity)
                     logger.info(f"Registered entity {entity.name} from WAD {wad_source}")
-
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning(f"Failed to load entity from {path}: {e}")
+
+
 
     async def _load_voices(self, voices_dir: Path, wad_source: str = "") -> None:
         """Load voice configurations from the voices directory."""
@@ -353,9 +354,9 @@ class WADLoader:
                 )
                 await self.registry.add(entity)
                 logger.info(f"Registered voice {voice_name} from WAD")
-                
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning(f"Failed to load voice from {path}: {e}")
+
 
     async def _load_world_state(self, world_dir: Path, wad_source: str = "") -> None:
         """Load world-lumps for VR Omegaverse. [id-soft: doom-1993]
@@ -381,6 +382,6 @@ class WADLoader:
                         )
                         await world_state.load_lump(sector_id, lump)
                         logger.info(f"World State: Loaded lump {lump_id} in sector {sector_id} from {wad_source}")
-                    except Exception as e:
+                    except (OmegaError, RuntimeError, OSError) as e:
                         logger.warning(f"Failed to load world lump {lump_path}: {e}")
 

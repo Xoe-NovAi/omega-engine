@@ -198,7 +198,7 @@ class BatchPersistenceWriter:
             try:
                 for (entity_name, session_id), exchanges in grouped.items():
                     await provider.save_history(entity_name, session_id, exchanges)
-            except Exception as exc:
+            except (OmegaError, RuntimeError, OSError) as exc:
                 errors += 1
                 logger.error(
                     "Batch commit failed for %s: %s",
@@ -224,7 +224,7 @@ class BatchPersistenceWriter:
         for provider in self._providers:
             try:
                 await provider.save_history(op.entity_name, op.session_id, op.exchanges)
-            except Exception as exc:
+            except (OmegaError, RuntimeError, OSError) as exc:
                 logger.error(
                     "Direct write failed for %s/%s: %s",
                     op.entity_name,
@@ -266,14 +266,14 @@ class BatchPersistenceWriter:
             tmp_path = dlq_file.with_suffix(".tmp")
             tmp_path.write_text(json.dumps(entries, default=str, indent=2))
             tmp_path.rename(dlq_file)
-
+            
             self._stats["dlq_pushes"] += len(batch)
             logger.info(
                 "Pushed %d failed records to DLQ: %s",
                 len(batch),
                 dlq_file,
             )
-        except Exception as dlq_exc:
+        except (OSError, RuntimeError) as dlq_exc:
             logger.critical(
                 "DLQ push also failed: %s. %d records lost.",
                 dlq_exc,

@@ -29,10 +29,11 @@ SUDOERS_DIR="/etc/sudoers.d"
 SCRIPT_DEST="/usr/local/bin/spawn_warp_node.sh"
 SUDOERS_FILE="${SUDOERS_DIR}/omega-warp"
 
-# All 5 systemd units to deploy
+# All 6 systemd units to deploy (including registration daemon template)
 SERVICE_UNITS=(
     "warp-ns-prep@.service"
     "warp-reg@.service"
+    "warp-reg-svc@.service"
     "warp-node@.service"
     "socat-bridge@.service"
     "warp-pool.target"
@@ -228,11 +229,21 @@ enable_and_start_pool() {
     systemctl enable warp-pool.target
     systemctl start warp-pool.target
     log_ok "Pool target started"
+
+    # Ensure NAT rules for each node's namespace subnet
+    log_step "Configuring NAT rules for namespace subnets..."
+    DEFAULT_IF=$(ip route show default | awk '{print $5}' | head -1)
+    for i in $(seq 1 "${NODE_COUNT}"); do
+        SUBNET="10.0.${i}"
+        iptables -t nat -C POSTROUTING -s "${SUBNET}.0/24" -o "${DEFAULT_IF}" -j MASQUERADE 2>/dev/null || \
+            iptables -t nat -A POSTROUTING -s "${SUBNET}.0/24" -o "${DEFAULT_IF}" -j MASQUERADE
+        log_ok "  NAT rule for ${SUBNET}.0/24 via ${DEFAULT_IF}"
+    done
 }
 
 wait_for_nodes() {
-    log_step "Waiting for WARP nodes to become active (up to 120s)..."
-    local max_wait=120
+    log_step "Waiting for WARP nodes to become active (up to 300s)..."
+    local max_wait=300
     local waited=0
 
     while [[ $waited -lt $max_wait ]]; do

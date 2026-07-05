@@ -158,8 +158,10 @@ class EphemeralWarpPool:
         try:
             # Delegate to shell script (root-privileged for ip netns)
             result = await anyio.to_thread.run_sync(
-                lambda: SPAWN_SCRIPT.run_capture(
-                    [str(node_id), "recycle"],
+                lambda: __import__('subprocess').run(
+                    [str(SPAWN_SCRIPT), str(node_id), "recycle"],
+                    capture_output=True,
+                    text=True,
                     timeout=30
                 )
             )
@@ -181,7 +183,7 @@ class EphemeralWarpPool:
                 logger.warning(f"Rotation completed but node {node_id} unhealthy")
                 return False
             
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Rotation exception: {e}")
             self._current_index = old_index  # Rollback
             return False
@@ -269,7 +271,7 @@ class EphemeralWarpPool:
                 )
             )
             h.active = f":{port} " in result.stdout
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             h.active = False
             h.error = f"ss check failed: {e}"
         
@@ -316,7 +318,7 @@ class EphemeralWarpPool:
                 h.error = f"Connection refused: {e}"
             except httpx.TimeoutException as e:
                 h.error = f"Timeout: {e}"
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 h.error = f"Canary probe failed: {e}"
         
         h.last_checked = time.monotonic()

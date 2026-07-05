@@ -67,7 +67,7 @@ class BudgetGate:
                 
             return True
             
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"BudgetGate failure: {e}", exc_info=True)
             # Fail-safe: Allow inference if the budget gate itself crashes, 
             # but log a critical error.
@@ -84,5 +84,6 @@ class BudgetGate:
                 for event in obs._event_log
                 if event.get("event") == "token.consumption" and event.get("data", {}).get("entity") == entity_name
             )
-        except Exception:
+        except (RuntimeError, KeyError, TypeError) as e:
+            logger.debug(f"Token budget lookup failed for {entity_name}: {e}")
             return 0

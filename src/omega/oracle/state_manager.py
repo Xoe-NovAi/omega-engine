@@ -43,7 +43,7 @@ class CASBlobStore:
         tmp_path = blob_path.with_suffix(".tmp")
         try:
             await run_sync(self._write_atomic, tmp_path, blob_path, data)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to write blob {blob_hash}: {e}")
             raise
         
@@ -92,7 +92,7 @@ class SomaticStateSerializer:
             buffer = bytearray(size)
             llama_cpp.llama_cpp.llama_copy_state_data(self.model.model, buffer)
             return bytes(buffer)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Somatic capture failed: {e}")
             raise
 
@@ -109,7 +109,7 @@ class SomaticStateSerializer:
                 raise ValueError(f"Somatic state size mismatch: expected {expected_size}, got {len(data)}")
             
             llama_cpp.llama_cpp.llama_set_state_data(self.model.model, data)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Somatic apply failed: {e}")
             raise
 

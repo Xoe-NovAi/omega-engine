@@ -42,7 +42,8 @@ def temp_entities_dir():
     shutil.rmtree(tmp_dir)
 
 
-def test_distill_saves_to_proposed_lessons_not_soul(temp_entities_dir):
+@pytest.mark.anyio
+async def test_distill_saves_to_proposed_lessons_not_soul(temp_entities_dir):
     """M21: Contract test — distill_and_save() writes to proposed_lessons.yaml, NOT soul.yaml.
     
     The soul distiller poison loop fix (D-kal-173) redirects writes from
@@ -58,7 +59,7 @@ def test_distill_saves_to_proposed_lessons_not_soul(temp_entities_dir):
     soul_before = soul_path.read_text()
     
     # Run distill_and_save
-    result = distiller.distill_and_save(
+    result = await distiller.distill_and_save(
         session_transcript="Session: Made architectural decision to fix soul distiller poison loop. Decided to redirect writes to proposed_lessons.yaml.",
         entity_name="test_entity",
     )

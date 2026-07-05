@@ -81,6 +81,7 @@ from .budget_gate import BudgetGate
 from .provider_selector import ProviderSelector
 from omega.observability.token_ledger import TokenLedger
 from omega.observability.latency_tracker import tracker
+from omega.state.usm import USMManager
 
 logger = logging.getLogger(__name__)
 
@@ -155,6 +156,9 @@ class ModelGateway:
         self._http_client: Optional[Any] = None
         # Sprint 2 Governance: GnosisProxy for RAG-based tool discovery
 
+        # Sovereign State Manager (USM) for SomaticState (M20)
+        self.usm = USMManager()
+        
         self._entity_registry = EntityRegistry()
         self._gnosis_proxy = GnosisProxy(self._entity_registry)
         # B5: HealthMonitor for latency and success/failure recording
@@ -246,7 +250,7 @@ class ModelGateway:
             logger.info("Sovereign secrets loaded successfully from .env")
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to load sovereign secrets: {e}", exc_info=True)
             raise ConfigError(f"Sovereign secrets load failed: {e}", raw_error=e) from e
 
@@ -600,7 +604,7 @@ class ModelGateway:
                         key, result.best_match, result.tier, result.provider,
                     )
                     return result.best_match
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning("Affinity resolver failed (non-fatal): %s", str(e), exc_info=True)
 
         # Tier 1: Runtime override via set_entity_model()
@@ -649,7 +653,7 @@ class ModelGateway:
         if not self.affinity_resolver.is_loaded():
             try:
                 await self.affinity_resolver.load()
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning("Affinity resolver load failed (non-fatal): %s", str(e), exc_info=True)
                 return None
         
@@ -659,7 +663,7 @@ class ModelGateway:
                 query=query,
                 context=context,
             )
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning("Entity affinity resolution failed (non-fatal): %s", str(e), exc_info=True)
             return None
 
@@ -692,7 +696,7 @@ class ModelGateway:
                         return available[0]
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.debug(f"Ollama model resolution failed for {model_name}: {e}", exc_info=True)
             # Resolve to original as fallback
         return model_name
@@ -750,7 +754,7 @@ class ModelGateway:
                 else:
                     if not provider.is_available():
                         return False
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning("Provider %s availability check failed: %s", getattr(provider, 'name', '?'), e)
                 return False
 
@@ -778,7 +782,7 @@ class ModelGateway:
                     {"provider": provider.name, "model": model_name,
                      "event": "provider_failed"}
                 )
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning("Failed to log BACKEND_FALLBACK event for provider %s: %s",
                                 getattr(provider, 'name', '?'), e)
 
@@ -993,7 +997,7 @@ class ModelGateway:
                 errors.append(f"{provider.name}: {e}")
                 self._record_provider_failure(provider, model_name, trace_id)
                 continue
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 last_exception = e
                 logger.error(
                     "ModelGateway.generate: unexpected error from provider=%s trace=%s err=%s",
@@ -1042,31 +1046,41 @@ class ModelGateway:
         return None
 
     async def save_state(self, state_id: str) -> bool:
-        """Save the current model's somatic state (KV cache) to disk.
+        """Save the current model's somatic state (KV cache) to the USM.
         
-        Delegates to the NativeGGUFProvider if available.
+        Delegates to the NativeGGUFProvider to capture bytes, then
+        persists them via the Unified State Manager.
         
         Args:
             state_id: Unique identifier for the state snapshot.
             
         Returns:
-            True if state was saved successfully, False otherwise.
+            True if state was captured and saved successfully, False otherwise.
         """
         provider = self._get_native_gguf_provider()
         if provider is None:
             logger.warning("No NativeGGUFProvider available for save_state")
             return False
         
-        if not hasattr(provider, 'save_state'):
-            logger.warning("NativeGGUFProvider does not have save_state method")
-            return False
+        try:
+            # Capture raw bytes from the provider
+            state_bytes = await provider.save_state()
             
-        return await provider.save_state(state_id)
-
+            # Persist bytes in the USM
+            # We use a specific namespace for somatic states
+            usm_key = f"somatic:{state_id}"
+            await self.usm.put(usm_key, state_bytes)
+            
+            logger.info(f"Somatic state saved to USM for {state_id}")
+            return True
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Failed to save somatic state {state_id} to USM: {e}")
+            return False
+    
     async def load_state(self, state_id: str) -> bool:
-        """Load a somatic state (KV cache) from disk into the current model.
+        """Load a somatic state (KV cache) from the USM into the current model.
         
-        Delegates to the NativeGGUFProvider if available.
+        Delegates to the USM to retrieve bytes, then pushes them to the provider.
         
         Args:
             state_id: Unique identifier for the state snapshot.
@@ -1079,11 +1093,21 @@ class ModelGateway:
             logger.warning("No NativeGGUFProvider available for load_state")
             return False
         
-        if not hasattr(provider, 'load_state'):
-            logger.warning("NativeGGUFProvider does not have load_state method")
-            return False
+        try:
+            # Retrieve bytes from the USM
+            usm_key = f"somatic:{state_id}"
+            state_bytes = await self.usm.get(usm_key)
             
-        return await provider.load_state(state_id)
+            if state_bytes is None:
+                logger.warning(f"No somatic state found in USM for {state_id}")
+                return False
+            
+            # Push bytes to the provider
+            return await provider.load_state(state_bytes)
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Failed to load somatic state {state_id} from USM: {e}")
+            return False
+
 
 
     async def _call_provider_with_resilience(self, provider, model_name, system_prompt, user_query, temperature, max_tokens, trace_id=None):
@@ -1092,7 +1116,7 @@ class ModelGateway:
         async def _do_call():
             try:
                 return await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 # Map specific HTTP errors to Transient vs Fatal
                 err_msg = str(e).lower()
                 if "429" in err_msg and "provider returned error" in err_msg:
@@ -1233,7 +1257,7 @@ class ModelGateway:
                 return str(outputs[0][0])[:max_tokens]
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"ONNX inference failed: {e}", exc_info=True)
             return None
 

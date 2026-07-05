@@ -113,7 +113,7 @@ class GoogleAIProvider(BaseProvider):
             raise e
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Unexpected Google API failure: {e}", exc_info=True)
             raise ProviderError(provider="google", message=f"Unexpected Google API failure: {e}", trace_id=trace_id, raw_error=e) from e
 
@@ -176,7 +176,7 @@ class LocallmsterProvider(BaseProvider):
             raise e
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Unexpected LM Studio failure: {e}", exc_info=True)
             raise ProviderError(provider="lmster", message=f"Unexpected LM Studio failure: {e}", trace_id=trace_id, raw_error=e) from e
 
@@ -240,7 +240,7 @@ class OllamaProvider(BaseProvider):
             raise e
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Unexpected Ollama failure: {e}", exc_info=True)
             raise ProviderError(provider="ollama", message=f"Unexpected Ollama failure: {e}", trace_id=trace_id, raw_error=e) from e
 
@@ -371,7 +371,7 @@ class NativeGGUFProvider(BaseProvider):
         """
         try:
             self.shutdown()
-        except Exception:
+        except (RuntimeError, OSError):
             pass
 
     async def is_available(self) -> bool:
@@ -399,7 +399,7 @@ class NativeGGUFProvider(BaseProvider):
             return result
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"CPU affinity enforcement failed: {e}", exc_info=True)
             return {"success": False, "error": str(e)}
 
@@ -435,7 +435,7 @@ class NativeGGUFProvider(BaseProvider):
             }
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("Failed to estimate memory for model '%s': %s", self.model_path or '?', e, exc_info=True)
             return {"model_mb": 0, "kv_cache_mb": 0, "total_mb": 0, "fits_in_ram": True}
 
@@ -524,7 +524,7 @@ class NativeGGUFProvider(BaseProvider):
             # Load the model — wrap in try/except to signal load failure
             try:
                 llm = Llama(**llama_kwargs)
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 # Send load failure back to parent, then exit
                 res_queue.put({"status": "load_error", "error": repr(e)})
                 return
@@ -548,7 +548,7 @@ class NativeGGUFProvider(BaseProvider):
                                 # [M20] Somatic capture: copy internal KV state to bytes
                                 state_bytes = llama_cpp.llama_copy_state_data(llm)
                                 res_queue.put({"status": "state_captured", "data": state_bytes})
-                            except Exception as e:
+                            except (OmegaError, RuntimeError, OSError) as e:
                                 res_queue.put(e)
                             continue
                         elif cmd == "LOAD_STATE":
@@ -557,9 +557,12 @@ class NativeGGUFProvider(BaseProvider):
                                 state_bytes = request.get("state_bytes")
                                 llama_cpp.llama_set_state_data(llm, state_bytes)
                                 res_queue.put({"status": "state_restored"})
-                            except Exception as e:
+                            except (OmegaError, RuntimeError, OSError) as e:
                                 res_queue.put(e)
                             continue
+
+
+
 
                     # Unpack request
                     system_prompt = request["system_prompt"]
@@ -619,7 +622,7 @@ class NativeGGUFProvider(BaseProvider):
                     # Send response back to main process
                     res_queue.put(response)
 
-                except Exception as e:
+                except (OmegaError, RuntimeError, OSError) as e:
                     import logging
                     logging.getLogger("omega.workers").error(
                         f"Worker process error: {e}", exc_info=True
@@ -675,14 +678,14 @@ class NativeGGUFProvider(BaseProvider):
         logger.info(f"Worker process initialized: {target_ctx} context, {self._n_threads} threads")
 
 
-    async def save_state(self, state_id: str) -> bool:
-        """Captures the current model state and saves it to disk.
+    async def save_state(self) -> bytes:
+        """Captures the current model state and returns the raw bytes.
         
-        Returns:
-            True if state was captured and saved successfully.
+        This allows the ModelGateway to store the state in a sovereign
+        Content Addressable Storage (CAS) system.
         """
         if self._worker_process is None:
-            return False
+            raise InferenceRuntimeError("No worker process active; cannot capture state")
         
         try:
             # Send SAVE_STATE command to worker
@@ -692,38 +695,24 @@ class NativeGGUFProvider(BaseProvider):
             response = await anyio.to_thread.run_sync(self._res_queue.get)
             
             if isinstance(response, dict) and response.get("status") == "state_captured":
-                state_bytes = response.get("data")
-                # Save bytes using the SomaticStateManager
-                # We pass the state_id and bytes directly since we already have them
-                file_path = self._somatic_manager.state_dir / f"{state_id}.somatic"
-                async with await anyio.to_thread.run_sync(open, file_path, "wb") as f:
-                    f.write(state_bytes)
-                logger.info(f"Somatic state saved for {state_id}")
-                return True
+                return response.get("data")
             
-            return False
-        except Exception as e:
-            logger.error(f"Failed to save somatic state {state_id}: {e}")
-            return False
+            raise InferenceRuntimeError(f"Worker failed to capture state: {response}")
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Somatic capture failed: {e}")
+            raise InferenceRuntimeError(f"Somatic capture failed: {e}") from e
 
-    async def load_state(self, state_id: str) -> bool:
-        """Restores a model state from disk into the worker process.
+    async def load_state(self, state_bytes: bytes) -> bool:
+        """Restores a model state from raw bytes into the worker process.
         
         Returns:
             True if state was restored successfully.
         """
         if self._worker_process is None:
-            return False
+            raise InferenceRuntimeError("No worker process active; cannot restore state")
         
         try:
-            # Retrieve state bytes from disk
-            file_path = self._somatic_manager.state_dir / f"{state_id}.somatic"
-            if not file_path.exists():
-                return False
-            
-            state_bytes = await anyio.to_thread.run_sync(lambda: file_path.read_bytes())
-            
-            # Send LOAD_STATE command to worker
+            # Send LOAD_STATE command to worker with bytes
             await anyio.to_thread.run_sync(self._req_queue.put, {
                 "command": "LOAD_STATE", 
                 "state_bytes": state_bytes
@@ -732,13 +721,13 @@ class NativeGGUFProvider(BaseProvider):
             # Wait for confirmation
             response = await anyio.to_thread.run_sync(self._res_queue.get)
             if isinstance(response, dict) and response.get("status") == "state_restored":
-                logger.info(f"Somatic state restored for {state_id}")
+                logger.info("Somatic state restored successfully")
                 return True
             
-            return False
-        except Exception as e:
-            logger.error(f"Failed to load somatic state {state_id}: {e}")
-            return False
+            raise InferenceRuntimeError(f"Worker failed to restore state: {response}")
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Somatic restore failed: {e}")
+            raise InferenceRuntimeError(f"Somatic restore failed: {e}") from e
 
     async def generate(
         self,
@@ -838,7 +827,7 @@ class NativeGGUFProvider(BaseProvider):
                 return text
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             # Check for OOM patterns in the error message
             err_msg = str(e).lower()
             if "cuda malloc" in err_msg or "out of memory" in err_msg or "allocation failed" in err_msg:
@@ -887,7 +876,7 @@ class NativeGGUFProvider(BaseProvider):
             return True
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             # [id-soft: quake-1996] Rollback — restore old state on failure
             self._worker_process = old_worker
             self._loaded_ctx = old_ctx if old_worker else 0
@@ -913,7 +902,7 @@ class NativeGGUFProvider(BaseProvider):
             if self._req_queue is not None:
                 try:
                     self._req_queue.put(None)  # Send shutdown signal
-                except Exception:
+                except (RuntimeError, OSError):
                     pass
             self._worker_process.join(timeout=10)
             if self._worker_process.is_alive():

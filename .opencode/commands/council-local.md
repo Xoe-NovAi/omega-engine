@@ -15,8 +15,9 @@ You are summoning the **MaKaLi local council** for this query: $ARGUMENTS
    - Launch **@maat** as a subagent. Ma'at MUST use `oracle_summon_local` with `lmstudio/qwen3-4b-thinking` for all her internal reasoning.
    - Launch **@lilith** as a subagent. Lilith MUST use `oracle_summon_local` with `lmstudio/krikri-8b` for all her internal reasoning.
 3. **Pillar Councils (Serial Execution)**:
-   - **Ma'at** selects 3 Pillars from P1-P5; each Pillar uses its default local model.
-   - **Lilith** selects 3 Pillars from P6-P10; each Pillar uses its default local model.
+   - **Ma'at** selects the most critical Pillars from P1-P5 (up to 5, minimum 3); each Pillar uses its default local model.
+   - **Lilith** selects the most critical Pillars from P6-P10 (up to 5, minimum 3); each Pillar uses its default local model.
+   - **Note**: Each Oversoul governs 5 pillars. They MAY launch all 5 if the task demands full domain coverage.
 4. **Oversoul Synthesis**: Ma'at and Lilith report back to Kali.
 5. **Final Sovereign Review**:
    - Kali launches **any 4 of the 10 Pillars** (P1-P10) for cross-domain review.

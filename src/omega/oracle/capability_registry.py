@@ -52,7 +52,7 @@ class CapabilityRegistry:
                         self._registry = data
             except OmegaError:
                 pass
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.error(f"Failed to load capability registry: {e}", exc_info=True)
                 pass
 
@@ -67,7 +67,7 @@ class CapabilityRegistry:
             await anyio.to_thread.run_sync(_write)
         except OmegaError:
             pass
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to save capability registry: {e}", exc_info=True)
             pass
 

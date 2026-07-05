@@ -61,6 +61,12 @@ from mcp_servers.omega_hub.state import (
     HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED, HANDOFF_STALE, HANDOFF_ARCHIVE,
     LOCKS_BASE, METRICS_PATH,
     _make_agent_id, _cold_path, _latest_path, _find_packet_path,
+    # P0-2: Sharded hot store API
+    hot_store_set, hot_store_get, hot_store_get_all,
+    # P0-4: Cold-store awareness cache
+    get_cached_cold_awareness, invalidate_awareness_cache,
+    # P1-6: Handoff packet index
+    handoff_index_add, handoff_index_move, handoff_index_remove,
 )
 
 class PathProxy:
@@ -506,13 +512,13 @@ async def hivemind_post_context(
     }
 
 
-    async with _hot_store_lock:
-        _hot_store[sid] = snapshot
+    await hot_store_set(sid, snapshot)
     async with _awareness_lock:
         _awareness[agent_id] = snapshot
+    await invalidate_awareness_cache()
 
     cold = _cold_path(agent_id, sid)
-    await anyio.to_thread.run_sync(lambda: cold.parent.mkdir(parents=True, exist_ok=True))
+    await anyio.Path(str(cold)).parent.mkdir(parents=True, exist_ok=True)
     async with await anyio.open_file(str(cold), "w") as f:
         await f.write(json.dumps(snapshot, indent=2))
 
@@ -536,20 +542,24 @@ async def hivemind_heartbeat(channel: str, entity: str) -> str:
         JSON string confirming the heartbeat status.
     """
     agent_id = _make_agent_id(channel, entity)
+    result_status = None
     async with _awareness_lock:
         now_str = datetime.now(timezone.utc).isoformat()
         if agent_id in _awareness:
             _awareness[agent_id]["timestamp"] = now_str
-            return json.dumps({"status": "heartbeat_received", "agent_id": agent_id})
-        _awareness[agent_id] = {
-            "agent_id": agent_id,
-            "channel": channel,
-            "entity": entity,
-            "timestamp": now_str,
-            "model": "unknown",
-            "task_current": "heartbeat-only"
-        }
-        return json.dumps({"status": "presence_registered", "agent_id": agent_id})
+            result_status = "heartbeat_received"
+        else:
+            _awareness[agent_id] = {
+                "agent_id": agent_id,
+                "channel": channel,
+                "entity": entity,
+                "timestamp": now_str,
+                "model": "unknown",
+                "task_current": "heartbeat-only"
+            }
+            result_status = "presence_registered"
+    await invalidate_awareness_cache()
+    return json.dumps({"status": result_status, "agent_id": agent_id})
 
 
 @m9_safe("hivemind_get_awareness")
@@ -567,6 +577,7 @@ async def hivemind_get_awareness() -> str:
         Each entry includes agent_id, channel, entity, model, task_current, last_seen.
     """
     now = datetime.now(timezone.utc)
+    # 1. Get awareness (with lock, fast)
     async with _awareness_lock:
         stale_ids = []
         awareness_list = []
@@ -588,40 +599,8 @@ async def hivemind_get_awareness() -> str:
         for agent_id in stale_ids:
             del _awareness[agent_id]
 
-    # Cold-store hydration supplement (D-kal-051 protocol)
-    def _scan_cold():
-        recovered = []
-        for agent_dir in HALL_OF_RECORDS.iterdir():
-            if not agent_dir.is_dir():
-                continue
-            json_files = sorted(
-                agent_dir.glob("ses_*.json"),
-                key=lambda p: p.stat().st_mtime,
-                reverse=True
-            )
-            if not json_files:
-                continue
-            latest = json_files[0]
-            mtime = datetime.fromtimestamp(latest.stat().st_mtime, tz=timezone.utc)
-            age = (now - mtime).total_seconds()
-            if age <= HEARTBEAT_TTL:
-                try:
-                    with latest.open() as f:
-                        snap = json.load(f)
-                    recovered.append({
-                        "agent_id": snap.get("agent_id", agent_dir.name),
-                        "channel": snap.get("channel", ""),
-                        "entity": snap.get("entity", agent_dir.name),
-                        "model": snap.get("model", "unknown"),
-                        "task_current": snap.get("task_current", ""),
-                        "last_seen": snap.get("timestamp", mtime.isoformat()),
-                        "source": "cold_store",
-                    })
-                except Exception as exc:
-                    logger.debug("Failed to load cold session file %s: %s", latest, exc)
-        return recovered
-
-    cold_results = await anyio.to_thread.run_sync(_scan_cold)
+    # 2. Cold-store hydration (WITHOUT lock, cached — P0-4)
+    cold_results = await get_cached_cold_awareness()
     hot_ids = {a["agent_id"] for a in awareness_list}
     for cold_agent in cold_results:
         if cold_agent["agent_id"] not in hot_ids:
@@ -766,9 +745,9 @@ async def hivemind_get_session(session_id: str) -> str:
         JSON string containing the session snapshot or an error.
     """
     _deprecated("hivemind_get_session", "hivemind_session(action='get')")
-    async with _hot_store_lock:
-        if session_id in _hot_store:
-            return json.dumps(_hot_store[session_id], indent=2)
+    snapshot = await hot_store_get(session_id)
+    if snapshot is not None:
+        return json.dumps(snapshot, indent=2)
 
     def _find_session():
         for cli_dir in HALL_OF_RECORDS.iterdir():
@@ -1266,6 +1245,7 @@ async def hivemind_submit_handoff(
             fcntl.flock(f, fcntl.LOCK_UN)
 
     await anyio.to_thread.run_sync(_write)
+    handoff_index_add(packet_id, "pending")
     return json.dumps({"status": "submitted", "packet_id": packet_id, "path": str(path)})
 
 
@@ -1314,6 +1294,7 @@ async def hivemind_accept_handoff(packet_id: str, accepting_channel: str, accept
         return True
 
     await anyio.to_thread.run_sync(_move)
+    handoff_index_move(packet_id, "active")
     return json.dumps({"status": "accepted", "packet_id": packet_id, "accepted_by": acceptor_agent_id})
 
 
@@ -1362,6 +1343,7 @@ async def hivemind_complete_handoff(packet_id: str, result: str = "") -> str:
         return True
 
     await anyio.to_thread.run_sync(_move)
+    handoff_index_move(packet_id, "completed")
     return json.dumps({"status": "completed", "packet_id": packet_id})
 
 
@@ -1402,6 +1384,7 @@ async def hivemind_reject_handoff(packet_id: str, reason: str) -> str:
     result = await anyio.to_thread.run_sync(_reject)
     if not result:
         return json.dumps({"error": f"Packet '{packet_id}' not found in pending queue"})
+    handoff_index_move(packet_id, "stale")
     return json.dumps({
         "status": "rejected",
         "packet_id": packet_id,
@@ -1533,6 +1516,10 @@ async def hivemind_handoff_archive(packet_ids: List[str]) -> str:
         return succeeded, failed, failures
 
     succeeded, failed, failures = await anyio.to_thread.run_sync(_archive)
+    # Update index for successfully archived packets
+    for pid in packet_ids:
+        if (HANDOFF_ARCHIVE / f"{pid}.json").exists():
+            handoff_index_move(pid, "archive")
     return json.dumps({
         "status": "archived" if failed == 0 else "partial",
         "total": len(packet_ids),
@@ -2280,10 +2267,9 @@ async def get_omega_metrics() -> str:
     if not metrics_path.exists():
         return json.dumps({"error": "Metrics file not found. No metrics have been recorded yet."}, indent=2)
     try:
-        def _read():
-            with open(metrics_path, "r") as f:
-                return json.load(f)
-        metrics = await anyio.to_thread.run_sync(_read)
+        async with await anyio.open_file(str(metrics_path), "r") as f:
+            content = await f.read()
+        metrics = json.loads(content)
         return json.dumps(metrics, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Failed to read metrics: {str(e)}"}, indent=2)
@@ -2306,10 +2292,9 @@ async def hivemind_get_metrics() -> str:
         metrics = await _write_metrics()
         return json.dumps(metrics, indent=2)
     try:
-        def _read():
-            with open(METRICS_PATH) as f:
-                return json.load(f)
-        metrics = await anyio.to_thread.run_sync(_read)
+        async with await anyio.open_file(str(METRICS_PATH), "r") as f:
+            content = await f.read()
+        metrics = json.loads(content)
         return json.dumps(metrics, indent=2)
     except Exception as e:
         return json.dumps({"error": f"Failed to read metrics: {str(e)}"}, indent=2)
@@ -2412,7 +2397,7 @@ async def observability_log_boundary_violation(tool_name: str, reason: str, enti
     )
 
     metrics_path = PROJECT_ROOT / "data" / "logs" / "metrics.json"
-    await anyio.to_thread.run_sync(lambda: metrics_path.parent.mkdir(parents=True, exist_ok=True))
+    await anyio.Path(str(metrics_path)).parent.mkdir(parents=True, exist_ok=True)
 
     metrics = {"violations": []}
     if metrics_path.exists():
@@ -2571,6 +2556,7 @@ async def hivemind_handoff(
                     json.dump(packet, f, indent=2)
                     fcntl.flock(f, fcntl.LOCK_UN)
             await anyio.to_thread.run_sync(_write)
+            handoff_index_add(packet_id, "pending")
             return json.dumps({"status": "submitted", "packet_id": packet_id, "path": str(path)})
         
         elif action == "accept":
@@ -2595,6 +2581,7 @@ async def hivemind_handoff(
                     fcntl.flock(f, fcntl.LOCK_UN)
                 src.unlink()
             await anyio.to_thread.run_sync(_move)
+            handoff_index_move(packet_id, "active")
             return json.dumps({"status": "accepted", "packet_id": packet_id})
         
         elif action == "complete":
@@ -2616,6 +2603,7 @@ async def hivemind_handoff(
                     fcntl.flock(f, fcntl.LOCK_UN)
                 src.unlink()
             await anyio.to_thread.run_sync(_move)
+            handoff_index_move(packet_id, "completed")
             return json.dumps({"status": "completed", "packet_id": packet_id})
         
         elif action == "reject":
@@ -2637,6 +2625,7 @@ async def hivemind_handoff(
                     fcntl.flock(f, fcntl.LOCK_UN)
                 src.unlink()
             await anyio.to_thread.run_sync(_move)
+            handoff_index_move(packet_id, "stale")
             return json.dumps({"status": "rejected", "packet_id": packet_id})
         
         elif action == "list":
@@ -2661,11 +2650,14 @@ async def hivemind_handoff(
         elif action == "get":
             if not packet_id:
                 return json.dumps({"error": "get requires packet_id"})
-            for dir_path in [HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED, HANDOFF_STALE]:
-                f = dir_path / f"{packet_id}.json"
-                if f.exists():
-                    return f.read_text()
-            return json.dumps({"error": f"Packet {packet_id} not found"})
+            path = _find_packet_path(packet_id)
+            if not path:
+                return json.dumps({"error": f"Packet {packet_id} not found"})
+            def _read():
+                with open(path) as f:
+                    return json.load(f)
+            packet = await anyio.to_thread.run_sync(_read)
+            return json.dumps(packet, indent=2)
         
         elif action == "archive":
             if not packet_ids:
@@ -2682,6 +2674,7 @@ async def hivemind_handoff(
                             fcntl.flock(f, fcntl.LOCK_UN)
                         src.unlink()
                     await anyio.to_thread.run_sync(_move)
+                    handoff_index_move(pid, "archive")
                     archived += 1
             return json.dumps({"status": "archived", "count": archived})
     

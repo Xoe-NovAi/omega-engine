@@ -159,7 +159,7 @@ async def record_first_breath(entity_id: str, response_text: str, trace_id: str)
                 _record_birth_markdown, entity_id, timestamp, response_text, trace_id, lat, lon, tz
             )
             logger.info(f"Sovereign birth record created for {entity_id}")
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.error(f"Failed to write sovereign birth record for {entity_id}: {e}")
             # We don't raise here to avoid blocking the response, 
             # but the DB record still marks them as born.

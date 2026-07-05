@@ -21,8 +21,8 @@ ExecStart=/usr/sbin/ip netns exec warp_node_%i /usr/bin/warp-svc --config-dir /v
 # Post-start: configure WARP inside namespace (ip netns exec for each command)
 ExecStartPost=/usr/bin/sleep 2
 ExecStartPost=/usr/sbin/ip netns exec warp_node_%i /usr/bin/warp-cli --accept-tos mode proxy
-ExecStartPost=/usr/sbin/ip netns exec warp_node_%i /usr/bin/warp-cli --accept-tos proxy port %i
-ExecStartPost=/usr/sbin/ip netns exec warp_node_%i /usr/bin/warp-cli --accept-tos connect
+ExecStartPost=/usr/bin/bash -c 'port=$((8080 + %i)); /usr/sbin/ip netns exec warp_node_%i /usr/bin/warp-cli --accept-tos proxy port $${port}'
+ExecStartPost=/usr/bin/bash -c 'port=$((8080 + %i)); /usr/sbin/ip netns exec warp_node_%i /usr/bin/curl -s --fail -x socks5h://127.0.0.1:$${port} https://1.1.1.1/cdn-cgi/trace || exit 1'
 
 # Graceful shutdown
 KillMode=mixed

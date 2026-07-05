@@ -81,7 +81,7 @@ def _atomic_write_yaml(file_path: Path, data: Any, audit: 'SovereignAuditLog', a
         os.replace(temp_path, str(file_path))
         audit.log(action, f"Scaffolded {file_path.name} at {file_path}")
         logger.info(f"Scaffolded {file_path.name} for {name}")
-    except Exception as e:
+    except (OmegaError, RuntimeError, OSError) as e:
         if os.path.exists(temp_path):
             os.remove(temp_path)
         raise
@@ -102,7 +102,7 @@ class SovereignAuditLog:
                 f.write(entry)
         except OmegaError:
             pass
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Audit log failure: {e}", exc_info=True)
             pass
 
@@ -232,7 +232,7 @@ class EntityWorkspaceManager:
                     if os.path.exists(temp_path):
                         os.remove(temp_path)
                     raise
-                except Exception as e:
+                except (OmegaError, RuntimeError, OSError) as e:
                     if os.path.exists(temp_path):
                         os.remove(temp_path)
                     logger.error(f"Failed to scaffold soul for {name}: {e}", exc_info=True)
@@ -278,7 +278,7 @@ class EntityWorkspaceManager:
                 if os.path.exists(temp_path):
                     os.remove(temp_path)
                 pass
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 if os.path.exists(temp_path):
                     os.remove(temp_path)
                 logger.error(f"Failed to scaffold INDEX.yaml for {name}: {e}", exc_info=True)
@@ -297,7 +297,7 @@ class EntityWorkspaceManager:
                     for line in f:
                         if "Strike" in line and "✅" in line:
                             return line.strip()
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(f"Failed to read blueprint for epoch: {e}")
         return "Unknown Epoch"
 
@@ -312,7 +312,7 @@ class EntityWorkspaceManager:
                     brakes = data.get("brakes", [])
                     if brakes:
                         return "\n".join([f"- {b['status']} {b['description']}" for b in brakes])
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(f"Failed to read sovereign brakes: {e}")
         return "No active brakes reported."
 
@@ -357,7 +357,7 @@ class EntityWorkspaceManager:
                 with os.fdopen(fd, "w") as f:
                     yaml.dump(sessions, f, default_flow_style=False, sort_keys=False)
                 os.replace(tmp, str(sessions_file))
-            except Exception:
+            except (OSError, RuntimeError):
                 if os.path.exists(tmp):
                     os.remove(tmp)
                 raise
@@ -560,7 +560,7 @@ class EntityWorkspaceManager:
                     if os.path.exists(temp_path):
                         os.remove(temp_path)
                     raise
-                except Exception as e:
+                except (OmegaError, RuntimeError, OSError) as e:
                     if os.path.exists(temp_path):
                         os.remove(temp_path)
                     logger.error(f"Failed to update soul for {name}: {e}", exc_info=True)

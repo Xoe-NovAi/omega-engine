@@ -208,7 +208,7 @@ class SelectiveHydration:
                 vector=query_vector,
                 limit=self._top_k * 2,  # over-fetch for confidence filtering
             )
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(
                 "SelectiveHydration: vector query failed for %s: %s",
                 entity_name, e,
@@ -279,7 +279,7 @@ class SelectiveHydration:
                 principle.entity_name,
             )
             return returned_id or principle.principle_id
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(
                 "SelectiveHydration: failed to store principle for %s: %s",
                 principle.entity_name, e,
@@ -308,7 +308,7 @@ class SelectiveHydration:
                 vector=[0.0] * self._embedding_manager.current_dimension,
                 limit=100,
             )
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(
                 "SelectiveHydration: get_all failed for %s: %s",
                 entity_name, e,
@@ -342,7 +342,7 @@ class SelectiveHydration:
                 entity_name=entity_ns,
                 ids=[principle_id],
             )
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(
                 "SelectiveHydration: remove failed for %s/%s: %s",
                 entity_name, principle_id[:12], e,
@@ -363,7 +363,7 @@ class SelectiveHydration:
             if vector:
                 return vector
             return None
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.debug("SelectiveHydration: embedding failed for query: %s", e)
             return None
 

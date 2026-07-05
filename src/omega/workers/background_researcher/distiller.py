@@ -316,7 +316,7 @@ class LmsterBackend:
             raise CircuitBreakerError(f"lmster HTTP {e.response.status_code}")
         except OmegaError:
             raise
-        except Exception as e:
+        except (httpx.HTTPError, RuntimeError) as e:
             self.circuit.record_failure("lmster", str(e))
             logger.error(f"Lmster backend failure: {e}", exc_info=True)
             raise InferenceRuntimeError(f"lmster call failed: {e}", raw_error=e) from e
@@ -339,7 +339,7 @@ class T2Backend:
         try:
             from omega.vault import KeyVault
             return KeyVault().resolve(provider)
-        except Exception:
+        except (OmegaError, RuntimeError):
             return os.environ.get(env_var, "")
     
     def __init__(self):
@@ -439,7 +439,7 @@ class T2Backend:
         
         except OmegaError:
             raise
-        except Exception as e:
+        except (httpx.HTTPError, RuntimeError) as e:
             severity = self.circuit.record_failure("gemma_google", str(e))
             logger.error(f"Gemma Google backend failure: {e}", exc_info=True)
             raise ProviderError(f"Gemma Google failed: {e}", raw_error=e) from e
@@ -497,7 +497,7 @@ class T3Backend:
         try:
             from omega.vault import KeyVault
             return KeyVault().resolve(provider)
-        except Exception:
+        except (OmegaError, RuntimeError):
             return os.environ.get(env_var, "")
     
     def __init__(self):
@@ -557,7 +557,7 @@ class T3Backend:
         
         except OmegaError:
             raise
-        except Exception as e:
+        except (httpx.HTTPError, RuntimeError) as e:
             self.circuit.record_failure("opencode_zen", str(e))
             logger.error(f"Tier 3 call failed: {e}", exc_info=True)
             raise ProviderError(f"Tier 3 review failed: {e}", raw_error=e) from e
@@ -743,7 +743,7 @@ def load_distiller_prompts() -> dict:
         return data if data else {"modes": {}, "mappings": {}}
     except OmegaError:
         raise
-    except Exception as e:
+    except (yaml.YAMLError, OSError) as e:
         logger.error(f"Error loading distiller prompts: {e}", exc_info=True)
         raise ConfigError(f"Distiller prompt config failure: {e}", raw_error=e) from e
 
@@ -925,7 +925,7 @@ class Distiller:
                 logger.warning(f"[Jem] Tier 1 unavailable: {e}")
             except OmegaError:
                 raise
-            except Exception as e:
+            except (InferenceError, RuntimeError) as e:
                 logger.error(f"[Jem] Tier 1 unexpected error: {e}", exc_info=True)
                 raise InferenceError(f"Tier 1 speculative draft failed: {e}", raw_error=e) from e
 
@@ -954,7 +954,7 @@ class Distiller:
                         logger.info("[Jem] Tier 2 empty — using T1 draft as output")
             except OmegaError:
                 raise
-            except Exception as e:
+            except (ProviderError, RuntimeError) as e:
                 logger.error(f"[Jem] Tier 2 error: {e}", exc_info=True)
                 t2_enriched = t1_draft
                 t1_direct = bool(t1_draft)
@@ -982,7 +982,7 @@ class Distiller:
                         t3_review = ""
             except OmegaError:
                 raise
-            except Exception as e:
+            except (ProviderError, RuntimeError) as e:
                 logger.error(f"[Jem] Tier 3 error: {e}", exc_info=True)
                 # T3 failure is non-fatal to the result, but should be logged
         
@@ -1030,9 +1030,10 @@ class Distiller:
                 
             except OmegaError:
                 raise
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.error(f"[Jem] Failed to apply T3 review to GnosisPacket: {e}", exc_info=True)
                 # Non-fatal to the packet, but log as error
+
 
         # ── Save training triple ──────────────────────────────────────
         if self.enable_training_triples:
@@ -1055,7 +1056,7 @@ class Distiller:
                 )
             except OmegaError:
                 raise
-            except Exception as e:
+            except (OSError, RuntimeError) as e:
                 logger.error(f"[Jem] Failed to save training triple: {e}", exc_info=True)
                 raise OmegaPersistenceError(f"Training triple save failed: {e}", raw_error=e) from e
 

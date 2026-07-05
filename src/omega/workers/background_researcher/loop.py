@@ -224,7 +224,7 @@ class BackgroundResearcherLoop:
             except OmegaError as e:
                 logger.error(f"Research cycle failed (OmegaError): {e}")
                 return {"cycle_id": cycle_id, "error": str(e)}
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.error(f"Research cycle failed (Unexpected): {e}", exc_info=True)
                 return {"cycle_id": cycle_id, "error": str(e)}
             finally:
@@ -233,7 +233,7 @@ class BackgroundResearcherLoop:
                     self.lock_path.rmdir()
                 except OSError:
                     pass
-                except Exception as e:
+                except (OmegaError, RuntimeError, OSError) as e:
                     logger.error("Failed to remove research lock: %s", e, exc_info=True)
                     pass
 
@@ -265,7 +265,7 @@ class BackgroundResearcherLoop:
                                     snippets.append(f"[{file_path.name}]: {line.strip()}")
                         except OmegaError:
                             continue
-                        except Exception as e:
+                        except (OmegaError, RuntimeError, OSError) as e:
                             logger.error("Failed to read file %s: %s", file_path, e, exc_info=True)
                             continue
                             
@@ -328,7 +328,7 @@ class BackgroundResearcherLoop:
                     content_chunks.append(f"[Source: {url}]\n{chunk}")
             except OmegaError:
                 continue
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.error("Failed to fetch URL %s: %s", url, e, exc_info=True)
                 continue
         return "\n\n---\n\n".join(content_chunks[:3])
@@ -349,7 +349,7 @@ class BackgroundResearcherLoop:
                 return resp.text[:8000]
         except OmegaError:
             return None
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("HTTP fallback failed for %s: %s", url, e, exc_info=True)
             return None
 
@@ -479,7 +479,7 @@ class BackgroundResearcherLoop:
             await anyio.to_thread.run_sync(_atomic_append)
         except OmegaError:
             pass
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("Failed to append cycle log: %s", e, exc_info=True)
             pass
 
@@ -488,14 +488,14 @@ class BackgroundResearcherLoop:
             async with httpx.AsyncClient(timeout=5.0) as client:
                 await client.get("https://httpbin.org/get")
                 return True
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.debug("Network check (httpbin) failed: %s", e)
         try:
             async with httpx.AsyncClient(timeout=5.0) as client:
                 searxng_url = (os.environ.get("SEARXNG_BASE_URL") or "http://localhost:8017").rstrip("/")
                 resp = await client.get(f"{searxng_url}/healthz")
                 return resp.status_code == 200
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning("Network check (SearXNG health) failed: %s", e)
             return False
 

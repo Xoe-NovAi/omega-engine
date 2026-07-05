@@ -125,7 +125,7 @@ def tdp_wrap(source: str, taint_level: Union[int, callable] = 1):
             if callable(taint_level):
                 try:
                     actual_level = taint_level(*args, **kwargs)
-                except Exception as e:
+                except (OmegaError, RuntimeError, OSError) as e:
                     logger.error(f"TDP taint_level callable failed for {func.__name__}: {e}")
                     actual_level = 2 # Default to high-risk on error
             

@@ -56,7 +56,7 @@ class Library:
                     data = json.load(f)
                     doc = CuratedDocument(**data)
                     self._documents[doc.doc_id] = doc
-            except Exception as e:
+            except (json.JSONDecodeError, TypeError, OSError) as e:
                 logger.warning(f"Failed to load document {path}: {e}")
         logger.info(f"Library loaded: {len(self._documents)} documents")
 
@@ -123,7 +123,7 @@ class Library:
                 doc = CuratedDocument(**data)
                 self._documents[doc.doc_id] = doc
                 return doc
-            except Exception as e:
+            except (json.JSONDecodeError, TypeError, OSError) as e:
                 logger.warning(f"Failed to load {doc_id}: {e}")
         return None
 
@@ -237,7 +237,7 @@ class Library:
                 else:
                     logger.info(f"Below threshold, skipping: {doc.title} (score={doc.quality_score:.2f})")
                     await inbox_manager.mark_completed(item.item_id)
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.error(f"Failed to ingest {item.source}: {e}")
                 await inbox_manager.mark_failed(item.item_id, str(e))
         return ingested

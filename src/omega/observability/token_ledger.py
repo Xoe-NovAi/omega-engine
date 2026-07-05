@@ -84,7 +84,7 @@ class TokenLedger:
         try:
             async with await anyio.open_file(str(self.ledger_path), mode="a", encoding="utf-8") as f:
                 await f.write(json.dumps(transaction) + "\n")
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to persist token transaction to ledger: {e}")
 
     async def get_entity_spend(self, entity_name: str) -> int:
@@ -104,7 +104,7 @@ class TokenLedger:
                     tx = json.loads(line)
                     if tx.get("entity") == entity_name:
                         total += tx.get("total_tokens", 0)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to read token ledger for spend calculation: {e}")
             
         return total

@@ -49,7 +49,7 @@ def _load_search_config() -> Dict[str, Any]:
         else:
             logger.warning("config/search.yaml not found, using defaults")
             return {}
-    except Exception as e:
+    except (OmegaError, RuntimeError, OSError) as e:
         logger.warning(f"Failed to load config/search.yaml: {e}")
         return {}
 
@@ -214,7 +214,7 @@ class SovereignSearchService:
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
                 logger.warning(f"[SEARCH-ERROR] trace={trace_id} tier={tier} rate_limited: {e}")
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 report["fallback_log"].append({
                     "tier": tier,
                     "outcome": "error",
@@ -237,7 +237,7 @@ class SovereignSearchService:
                     "verified_at": verification.verified_at,
                     "trace_id": trace_id,
                 }
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning(f"[SEARCH] trace={trace_id} verification failed: {e}")
                 report["verification"] = {
                     "status": "UNVERIFIED",
@@ -307,7 +307,7 @@ class SovereignSearchService:
         """T1: SearXNG Broad Discovery — zero-cost, privacy-first metasearch."""
         try:
             return await self.searxng.search(query, limit)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"T1 SearXNG failed: {e}")
             return None
 
@@ -318,7 +318,7 @@ class SovereignSearchService:
             return None
         try:
             return await self.exa.search(query, limit)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"T2 Exa failed: {e}")
             return None
 
@@ -336,7 +336,7 @@ class SovereignSearchService:
                 # Persist to SovereignCache for future T0 hits
                 self.cache.set(query, "global", result)
             return result
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"T3 Firecrawl failed: {e}")
             return None
 

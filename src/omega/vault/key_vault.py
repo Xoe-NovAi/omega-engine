@@ -332,7 +332,7 @@ class KeyVault:
                 )
         except VaultLockedError:
             raise
-        except Exception as e:
+        except (VaultCryptoError, json.JSONDecodeError, OSError) as e:
             logger.error(f"Failed to load vault: {e}", exc_info=True)
             self._loaded = False
     
@@ -359,7 +359,7 @@ class KeyVault:
             self._loaded = True  # Mark loaded after successful save (P5 F-4)
             
             logger.info(f"Vault saved: {self._vault_path}")
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.error(f"Failed to save vault: {e}", exc_info=True)
     
     def _auto_init_from_env(self):

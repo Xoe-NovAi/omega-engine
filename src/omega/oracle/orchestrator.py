@@ -113,7 +113,7 @@ class BackgroundWorker:
                 # For now, we'll log it to the live feed.
                 logger.info(f"Worker {task_id} completed. Gold Sheet generated.")
                 
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             if retries > 0:
                 logger.warning(f"Worker {task_id} failed, retrying... ({retries} left): {e}")
                 await anyio.sleep(2)
@@ -157,7 +157,7 @@ class Orchestrator:
             from omega.vault import KeyVault
             vault_keys = KeyVault().resolve_all("google")
             keys.extend(vault_keys)
-        except Exception:
+        except (OmegaError, RuntimeError):
             # Fallback to environment variable pattern
             primary_key = os.environ.get("GOOGLE_API_KEY", "")
             if primary_key:
@@ -216,7 +216,7 @@ class Orchestrator:
                             )
                         except OmegaError:
                             raise
-                        except Exception as e:
+                        except (OmegaError, RuntimeError, OSError) as e:
                             logger.error(f"Failed to restart {name}: {e}", exc_info=True)
                             raise OmegaError(f"MCP restart failed: {e}", raw_error=e) from e
                 
@@ -333,7 +333,7 @@ class Orchestrator:
             logger.warning("Hivemind state not available for coordination check. Skipping hazard detection.")
         except BoundaryViolationError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning(f"Coordination check failed (non-fatal): {e}")
 
     async def dispatch_agent(
@@ -380,7 +380,7 @@ class Orchestrator:
             logger.info(f"Entity '{entity_name}' designated model: {entity_model}")
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to load entity model for '{entity_name}': {e}. Using default.", exc_info=True)
             entity_model = "qwen3-1.7b-q6_k"
         
@@ -446,7 +446,7 @@ class Orchestrator:
                     from omega.oracle.oracle import Oracle
                     oracle_instance = Oracle()
                     await oracle_instance.close_session(entity_name, sid)
-                except Exception as e:
+                except (OmegaError, RuntimeError, OSError) as e:
                     logger.warning(f"Session distillation failed: {e}")
 
                 return {
@@ -461,7 +461,7 @@ class Orchestrator:
             return {"status": "timeout", "message": "Agent execution timed out."}
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Error dispatching {cli_type}: {e}", exc_info=True)
             return {"status": "error", "message": str(e)}
 
@@ -541,7 +541,7 @@ class Orchestrator:
                 logger.info("ModelUpdaterWorker initialized successfully.")
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to initialize ModelUpdaterWorker: {e}", exc_info=True)
             raise OmegaError(f"ModelUpdater init failed: {e}", raw_error=e) from e
 
@@ -569,7 +569,7 @@ class Orchestrator:
             return {"status": "success", "message": "Model update cycle completed."}
         except OmegaError:
             raise
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Model update cycle failed: {e}", exc_info=True)
             return {"status": "error", "message": str(e)}
 

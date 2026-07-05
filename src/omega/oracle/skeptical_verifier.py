@@ -145,7 +145,7 @@ class SkepticalVerifier:
                 return "CONTRADICT"
             return "NEUTRAL"
             
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"NLI check failed: {e}")
             return "NEUTRAL"
 
@@ -184,6 +184,6 @@ class SkepticalVerifier:
                 return {"status": "VERIFIED", "reasoning": response}
             return {"status": "CONTRADICTED", "reasoning": response}
             
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Contradiction resolution failed: {e}")
             return {"status": "CONTRADICTED", "reasoning": "Contradiction detected and resolution failed."}

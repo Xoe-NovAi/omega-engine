@@ -118,7 +118,7 @@ class SemanticRouter:
                     entity.name,
                     len(vector),
                 )
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning("SemanticRouter: failed to embed entity '%s': %s", entity.name, e)
 
         logger.info(
@@ -182,7 +182,7 @@ class SemanticRouter:
                         best_score,
                     )
                     return best_entity, best_score, "semantic"
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning("SemanticRouter: embedding failed, falling back: %s", e)
 
         # 2. Keyword fallback

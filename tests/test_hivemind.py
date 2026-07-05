@@ -165,9 +165,9 @@ async def test_u002_post_context_intent_field(temp_data_dir, reset_state):
     payload = json.loads(result)
     assert payload["status"] == "accepted"
     sid = payload["session_id"]
-    # The snapshot should be stored in _hot_store
-    from mcp_servers.omega_hub import state
-    snapshot = state._hot_store.get(sid)
+    # The snapshot should be stored in sharded hot store (P0-2)
+    from mcp_servers.omega_hub.state import hot_store_get
+    snapshot = await hot_store_get(sid)
     assert snapshot is not None
     assert snapshot["intent"] == "question"
 
@@ -188,8 +188,8 @@ async def test_u003_post_context_suggested_model(temp_data_dir, reset_state):
     payload = json.loads(result)
     assert payload["status"] == "accepted"
     sid = payload["session_id"]
-    from mcp_servers.omega_hub import state
-    snapshot = state._hot_store.get(sid)
+    from mcp_servers.omega_hub.state import hot_store_get
+    snapshot = await hot_store_get(sid)
     assert snapshot is not None
     assert snapshot["suggested_model"] == "qwen3-4b-thinking-q4_k_m"
 

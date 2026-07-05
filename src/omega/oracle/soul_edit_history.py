@@ -146,7 +146,7 @@ class SoulEditHistory:
                         parsed = await anyio.to_thread.run_sync(yaml.safe_load, content)
                         if isinstance(parsed, list):
                             existing = parsed
-                except Exception as exc:
+                except (OmegaError, RuntimeError, OSError) as exc:
                     logger.warning(
                         "Failed to read existing soul edit history for %s: %s. "
                         "Starting fresh append.", entry.entity_name, exc
@@ -224,7 +224,7 @@ class SoulEditHistory:
             filtered.sort(key=lambda e: e.get("timestamp", 0), reverse=True)
             return filtered[:limit]
             
-        except Exception as exc:
+        except (OmegaError, RuntimeError, OSError) as exc:
             logger.warning(
                 "Failed to read soul edit history for %s: %s", entity_name, exc
             )
@@ -253,7 +253,7 @@ class SoulEditHistory:
             if isinstance(parsed, list):
                 return len(parsed)
             return 0
-        except Exception:
+        except (yaml.YAMLError, OSError):
             return 0
 
     async def get_unique_sources(self, entity_name: str) -> List[str]:
@@ -285,5 +285,5 @@ class SoulEditHistory:
                 if src:
                     sources.add(src)
             return sorted(sources)
-        except Exception:
+        except (yaml.YAMLError, OSError):
             return []

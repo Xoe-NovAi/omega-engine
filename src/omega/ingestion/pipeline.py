@@ -269,7 +269,7 @@ class IngestionPipeline:
                 quality_score=0.8,
                 domain="web"
             )
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Ingestion failed for {source_name}: {e}")
             return None
     async def run_batch(self, sources: List[FileSource]) -> List[IngestionResult]:

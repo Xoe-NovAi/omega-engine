@@ -45,7 +45,7 @@ async def test_build_context_respects_limit(mock_memory_store, sample_exchanges)
 
 @pytest.mark.anyio
 async def test_build_context_exception_returns_empty(mock_memory_store):
-    mock_memory_store.get_history.side_effect = Exception("DB Error")
+    mock_memory_store.get_history.side_effect = RuntimeError("DB Error")
     cb = ContextBuilder(memory_store=mock_memory_store)
     context = await cb.build_context("Sophia", "ses_123")
     assert context == ""
@@ -69,7 +69,7 @@ async def test_build_context_for_user_happy_path(mock_memory_store, sample_excha
 
 @pytest.mark.anyio
 async def test_build_context_for_user_exception(mock_memory_store):
-    mock_memory_store.get_history.side_effect = Exception("DB Error")
+    mock_memory_store.get_history.side_effect = RuntimeError("DB Error")
     cb = ContextBuilder(memory_store=mock_memory_store)
     context = await cb.build_context_for_user("user_1", "ses_123")
     assert context == ""

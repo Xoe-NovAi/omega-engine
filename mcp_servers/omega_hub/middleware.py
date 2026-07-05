@@ -30,6 +30,7 @@ Mandate compliance:
 
 import json
 import logging
+import time
 from datetime import datetime
 from functools import wraps
 from typing import Any, Dict, List
@@ -110,7 +111,7 @@ class RateLimitMiddleware:
     async def __call__(self, scope, receive, send):
         if scope["type"] == "http":
             client_ip = scope.get("client", ("unknown", 0))[0]
-            now = datetime.now().timestamp()
+            now = time.monotonic()  # [id-soft: quake-1996] Zone Memory — monotonic time is deterministic, never jumps
 
             async with self._lock:
                 history = self._counts.get(client_ip, [])

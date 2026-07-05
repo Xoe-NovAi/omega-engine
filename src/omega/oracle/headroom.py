@@ -72,7 +72,7 @@ class HeadroomStore:
             path.write_text(json.dumps(envelope))
             
             return content_hash
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to store headroom blob {content_hash}: {e}")
             raise HeadroomError(f"Compression failed: {e}")
 
@@ -92,7 +92,7 @@ class HeadroomStore:
             raw_content = zlib.decompress(compressed).decode('utf-8')
             
             return raw_content
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Failed to retrieve headroom blob {content_hash}: {e}")
             raise HeadroomError(f"Decompression failed: {e}")
 

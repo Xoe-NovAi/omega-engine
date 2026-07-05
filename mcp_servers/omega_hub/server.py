@@ -83,6 +83,12 @@ from mcp_servers.omega_hub.state import (
     HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED, HANDOFF_STALE, HANDOFF_ARCHIVE,
     LOCKS_BASE, METRICS_PATH,
     _make_agent_id, _cold_path, _latest_path, _find_packet_path,
+    # P0-2: Sharded hot store
+    hot_store_set, hot_store_get, hot_store_get_all,
+    # P0-4: Cold-store cache
+    get_cached_cold_awareness, invalidate_awareness_cache,
+    # P1-6: Handoff index
+    handoff_index_rebuild,
 )
 
 # [P1a-3] Background orchestration: pruning, reaping, metrics
@@ -268,13 +274,16 @@ hub_routes = [
 
 async def _cleanup_indexer() -> None:
     """Close the indexer on server shutdown.
-    Background tasks are cancelled automatically by the lifespan TaskGroup."""
+    Background tasks are cancelled automatically by the lifespan TaskGroup.
+    Order: batch writer flush FIRST, then indexer close, then gateway client.
+    [id-soft: doom3-2004] idHeap — explicit shutdown sequence for all allocations."""
     from omega.memory_store import get_memory_store
+    store = get_memory_store()
     try:
-        await get_memory_store().stop_batch_writer()
-        logger.info("MemoryStore batch writer stopped")
+        await store.stop_batch_writer()
+        logger.info("MemoryStore batch writer stopped cleanly")
     except Exception as e:
-        logger.warning("MemoryStore batch writer stop failed: %s", e)
+        logger.error("MemoryStore batch writer stop FAILED — pending writes may be lost: %s", e)
 
     if indexer is not None:
         try:
@@ -283,11 +292,27 @@ async def _cleanup_indexer() -> None:
         except Exception as e:
             logger.warning("Indexer close failed: %s", e)
 
+    # Close SovereignGateway httpx client (P0-1)
+    if state.gateway is not None:
+        try:
+            await state.gateway.client.aclose()
+            logger.info("SovereignGateway HTTP client closed")
+        except Exception as e:
+            logger.warning("Gateway client close failed: %s", e)
+
 
 async def _on_startup(tg: anyio.abc.TaskGroup = None) -> None:
     """Background startup callback — receives TaskGroup from lifespan for
     running background loops concurrently with the server."""
     await _init_services()
+
+    # P1-6: Rebuild handoff packet index from filesystem
+    try:
+        count = await handoff_index_rebuild()
+        logger.info("Handoff index rebuilt: %d packets", count)
+    except Exception as e:
+        logger.warning("Handoff index rebuild failed: %s", e)
+
     # Start background reaper and pruning loops (AnyIO TaskGroup pattern)
     if tg:
         tg.start_soon(_prune_awareness_background)

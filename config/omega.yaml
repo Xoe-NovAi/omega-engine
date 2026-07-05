@@ -82,3 +82,22 @@ omega:
       agent_count: 11
       max_slots: 10
       cap_with_review: 14
+  gateway:
+    # HTTP client configuration
+    http_client:
+      timeout_total: 120.0
+      timeout_connect: 10.0
+      max_connections: 20
+      max_keepalive_connections: 10
+      keepalive_expiry: 30.0
+      http2: true
+      follow_redirects: true
+    # Rate limiting
+    rate_limiting:
+      tui_cap_requests: 100
+      tui_cap_window_seconds: 300
+      tui_throttle_delay: 1.0
+    # Startup behavior
+    startup:
+      backoff_enabled: true
+      backoff_duration: 65.0

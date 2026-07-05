@@ -110,7 +110,7 @@ class ModelUpdaterWorker:
             except OmegaError as e:
                 logger.error(f"ModelUpdaterWorker loop OmegaError: {e}")
                 await anyio.sleep(60)
-            except Exception as e:
+            except (RuntimeError, OSError) as e:
                 logger.error(f"ModelUpdaterWorker loop unexpected error: {e}", exc_info=True)
                 await anyio.sleep(60)
 
@@ -169,7 +169,7 @@ class ModelUpdaterWorker:
                 {"event": "model_update_cycle_failed", "error": str(exc)},
             )
             raise
-        except Exception as exc:
+        except (RuntimeError, OSError) as exc:
             self.observability.log_event(
                 EventType.ERROR,
                 trace_id,
@@ -224,7 +224,7 @@ class ModelUpdaterWorker:
                             "error": str(e),
                         },
                     )
-                except Exception as e:
+                except (httpx.HTTPError, RuntimeError) as e:
                     await anyio.sleep(2**attempt)
                     logger.error(f"Provider {name} fetch error: {e}", exc_info=True)
                     self.observability.log_event(
@@ -306,7 +306,7 @@ class ModelUpdaterWorker:
             return json.loads(content)
         except OmegaError:
             raise
-        except Exception as e:
+        except (json.JSONDecodeError, RuntimeError) as e:
             preview = response_str[:200] if response_str else "<no response>"
             logger.error(f"Gemma JSON parse failure: {e}", exc_info=True)
             raise RuntimeError(

@@ -57,8 +57,9 @@ class SovereignScraper:
                     config = yaml.safe_load(f)
                     if config and "ingestion" in config and "domain_allowlist" in config["ingestion"]:
                         return config["ingestion"]["domain_allowlist"]
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning(f"Failed to load domain config from {config_path}: {e}")
+
         
         return default_allowlist
 
@@ -110,7 +111,7 @@ class SovereignScraper:
                 return await self._scrape_deep(url)
             else:
                 raise ValueError(f"Invalid scrape tier: {tier}")
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError, ValueError) as e:
             logger.error(f"Scrape failed for {url} [{tier}]: {str(e)}")
             latency = int((anyio.current_time() - start_time) * 1000)
             return ScrapeResult(url, "", {}, tier, False, str(e), provider_name="error", latency_ms=latency)
@@ -206,6 +207,6 @@ class SovereignScraper:
             if cid:
                 metadata["cas_cid"] = cid
             return ScrapeResult(url, res["content"], metadata, "deep", True, provider_name="crawl4ai", latency_ms=latency)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             latency = int((anyio.current_time() - start_time) * 1000)
             return ScrapeResult(url, "", {}, "deep", False, str(e), provider_name="crawl4ai", latency_ms=latency)

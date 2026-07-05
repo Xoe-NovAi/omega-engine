@@ -86,11 +86,13 @@ class DiscoveryOrchestrator:
         self.model_gateway = model_gateway or ModelGateway(health_monitor=get_health_monitor())
         try:
             self.exa_key = KeyVault().resolve("exa")
-        except Exception:
+        except (OmegaError, KeyError) as e:
+            logger.warning(f"KeyVault exa resolution failed: {e}. Falling back to env.")
             self.exa_key = os.getenv("EXA_API_KEY")
         try:
             self.firecrawl_key = KeyVault().resolve("firecrawl")
-        except Exception:
+        except (OmegaError, KeyError) as e:
+            logger.warning(f"KeyVault firecrawl resolution failed: {e}. Falling back to env.")
             self.firecrawl_key = os.getenv("FIRECRAWL_API_KEY")
         self._jobs: Dict[str, DiscoveryReport] = {}
         self._load_jobs()
@@ -134,7 +136,7 @@ class DiscoveryOrchestrator:
                     self._jobs[job_id] = report
                 except OmegaError:
                     raise
-                except Exception as e:
+                except (yaml.YAMLError, OSError) as e:
                     logger.error(f"Failed to load discovery job {path}: {e}", exc_info=True)
                     raise OmegaError(f"Job load failed: {e}", raw_error=e) from e
         if self._jobs:
@@ -154,7 +156,7 @@ class DiscoveryOrchestrator:
                         old_path.unlink()
         except OmegaError:
             raise
-        except Exception as e:
+        except (OSError, OmegaError) as e:
             logger.error(f"Failed to persist discovery job {job_id}: {e}", exc_info=True)
             raise OmegaPersistenceError(f"Job persist failed: {e}", raw_error=e) from e
 
@@ -196,7 +198,7 @@ class DiscoveryOrchestrator:
             report.status = "failed"
             report.final_synthesis = f"Error: {e}"
             self._persist_job(job_id, report)
-        except Exception as e:
+        except (RuntimeError, OSError, OmegaError) as e:
             logger.error(f"Discovery job {job_id} failed (Unexpected): {e}", exc_info=True)
             report.status = "failed"
             report.final_synthesis = f"Error: {e}"
@@ -238,7 +240,7 @@ class DiscoveryOrchestrator:
             return result.text
         except OmegaError:
             raise
-        except Exception as e:
+        except (RuntimeError, OSError, OmegaError) as e:
             logger.error(f"Gemini Recon Phase failed: {e}", exc_info=True)
             raise OmegaError(f"Gemini recon failed: {e}", raw_error=e) from e
 
@@ -270,7 +272,7 @@ class DiscoveryOrchestrator:
             return [{"query": t, "status": "pending"} for t in topics]
         except OmegaError:
             raise
-        except Exception as e:
+        except (json.JSONDecodeError, RuntimeError, OSError, OmegaError) as e:
             logger.error(f"Decomposition failed: {e}", exc_info=True)
             raise OmegaError(f"Decomposition failed: {e}", raw_error=e) from e
 
@@ -290,7 +292,7 @@ class DiscoveryOrchestrator:
             subtopic["status"] = "complete"
         except OmegaError:
             raise
-        except Exception as e:
+        except (RuntimeError, OSError, OmegaError) as e:
             logger.error(f"Subtopic research failed for '{sub_query}': {e}", exc_info=True)
             raise OmegaError(f"Subtopic research failed: {e}", raw_error=e) from e
 
@@ -319,7 +321,7 @@ class DiscoveryOrchestrator:
             return result.text
         except OmegaError:
             raise
-        except Exception as e:
+        except (RuntimeError, OSError, OmegaError) as e:
             logger.error(f"Final synthesis failed: {e}", exc_info=True)
             raise OmegaError(f"Final synthesis failed: {e}", raw_error=e) from e
 
@@ -351,7 +353,7 @@ class DiscoveryOrchestrator:
                 return data.get("results", [])
         except OmegaError:
             raise
-        except Exception as e:
+        except (httpx.HTTPError, OSError, OmegaError) as e:
             logger.error(f"Exa Phase failed: {e}", exc_info=True)
             raise ProviderError(f"Exa Phase failed: {e}", raw_error=e) from e
 

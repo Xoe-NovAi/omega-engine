@@ -119,7 +119,7 @@ class InboxManager:
                 with open(path) as f:
                     item = InboxItem.from_dict(json.load(f))
                     self._pending[item.item_id] = item
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning(f"Failed to load inbox item {path}: {e}")
 
     async def add(
@@ -210,7 +210,7 @@ class InboxManager:
             data = json.loads(text)
         except OmegaError:
             data = {"item_id": item_id}
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("Failed to load failed item %s: %s", item_id, e, exc_info=True)
             data = {"item_id": item_id}
         data["error"] = error
@@ -233,7 +233,7 @@ class InboxManager:
                         return InboxItem.from_dict(json.loads(text))
                     except OmegaError:
                         continue
-                    except Exception as e:
+                    except (OmegaError, RuntimeError, OSError) as e:
                         logger.error("Failed to load inbox item from %s: %s", path, e, exc_info=True)
                         continue
         return None

@@ -135,7 +135,7 @@ class PIIMasker:
                 "pii-shield not installed. Falling back to regex-only PII detection. "
                 "Install: pip install pii-shield"
             )
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.warning("pii-shield initialization failed: %s", e)
         
         # Optionally load GLiNER for NER-based detection
@@ -264,7 +264,7 @@ class PIIMasker:
                         len(detections), len(text)
                     )
                     return detections
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning("pii-shield detection failed (falling back): %s", e)
         
         # Method 2: Regex fallback (extends ANAi/XNAi sanitize_content pattern)
@@ -280,7 +280,7 @@ class PIIMasker:
                         confidence=0.7,  # Regex-based, lower confidence
                         placeholder='',
                     ))
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("Regex PII detection failed: %s", e)
         
         # Deduplicate by position (overlapping patterns)

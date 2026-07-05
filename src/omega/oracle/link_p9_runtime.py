@@ -341,7 +341,7 @@ class LinkP9Runtime:
             logger.info("Packet archived: %s", path)
         except OmegaError:
             logger.error("Failed to archive packet %s (OmegaError)", packet.packet_id)
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("Failed to archive packet %s: %s", packet.packet_id, e, exc_info=True)
 
     def save_state(self, state_dir: str = "data/coordination") -> Path:
@@ -393,6 +393,6 @@ class LinkP9Runtime:
             return True
         except OmegaError:
             return False
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("Failed to load Link P9 state: %s", e, exc_info=True)
             return False

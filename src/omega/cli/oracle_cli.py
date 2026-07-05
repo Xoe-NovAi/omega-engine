@@ -191,7 +191,7 @@ def entity_workspace_status(
                         "chars": len(text),
                         "lines": text.count("\n") + 1,
                     })
-                except Exception as e:
+                except (OmegaError, RuntimeError, OSError) as e:
                     file_stats.append({
                         "path": str(f.relative_to(entity_dir)),
                         "chars": 0,
@@ -390,7 +390,7 @@ def mcp_restart(
             console.print(f"[green]✅ {service} restarted.[/green]")
         except OmegaError as e:
             console.print(f"[red]OmegaError restarting {service}: {e}[/red]")
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Unexpected error restarting {service}: {e}", exc_info=True)
             console.print(f"[red]Unexpected error restarting {service}: {e}[/red]")
     anyio.run(_run)
@@ -835,7 +835,7 @@ def worker_spawn(
             console.print(f"[green]✅ {result}[/green]")
         except OmegaError as e:
             console.print(f"[red]OmegaError spawning worker: {e}[/red]")
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             console.print(f"[red]Unexpected error spawning worker: {e}[/red]")
     anyio.run(_run)
 

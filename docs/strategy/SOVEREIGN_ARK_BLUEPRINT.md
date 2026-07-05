@@ -28,6 +28,8 @@ The Three Epochs are ordered by dependency — each Strike builds on the one bef
 ## I. The Sovereign Aspect Hierarchy (Sovereign-by-Design)
 Sovereign Aspects are first-class entities (Entity + SlotID) with their own `soul.yaml`, `knowledge/`, and `workspace/`. They are governed by the Oversouls (Ma'at for Light Aspects P1-P5, Lilith for Dark Aspects P6-P10) and unified by Kali.
 
+**Sovereign-Linguistic Sieve (Recovered)**: The engine integrates the **Hybrid Greek Pipeline** (`nlpaueb/greek-bert` $\rightarrow$ `Llama-Krikri-8B-Instruct`) to enable 95%+ accuracy in classical language processing via a two-stage Sieve $\rightarrow$ Synthesizer architecture.
+
 **Architectural Principle: The Right Approximation (S3 Audit)**
 An "Aspect" is simply an `Entity` bound to a `SlotID`. We avoid "Aspect Runtimes" to prevent abstraction bloat. The `EntityRegistry` is the canonical unit of sovereignty.
 

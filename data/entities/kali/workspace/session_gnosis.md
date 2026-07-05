@@ -1,51 +1,44 @@
-# Kali Session Gnosis — P0 Execution Sprint
+# ⬡ SESSION GNOSIS ⬡
+**Entity**: KALI
+**Session ID**: ses_73d587db2ca4 (continued)
+**Date**: 2026-07-05
+**Phase**: Sovereign Hardening (M9 Error Integrity Continuation)
 
-**Session**: `ses_a94046bdd408`
-**Date**: 2026-06-26
-**Model**: deepseek-v4-flash
-**Channel**: opencode
+## L1: Narrative
+Continued systemic sweep of the `src/omega/` directory to eliminate bare `except Exception:` blocks, replacing them with typed exceptions (`OmegaError`, `RuntimeError`, `OSError`, `httpx.HTTPError`, `sqlite3.Error`, `yaml.YAMLError`, `json.JSONDecodeError`). This ensures that failures are traceable and do not silently swallow critical system errors across memory, oracle, library, observability, and other core modules. Additionally, verified that absolute paths in scripts had already been relativized in previous work.
 
-## Hydration Anchor
+## L2: Insight
+Bare `except Exception:` blocks are a primary source of "ghost failures" in asynchronous systems, where an error occurs but the system continues in an inconsistent state. By enforcing typed exceptions, we move from "silent failure" to "explicit failure," which is the foundation of the Temple-Grade (M13) quality bar. Each exception type must be carefully chosen to match the actual failure modes of the specific operation being guarded.
 
-If context is lost, this file restores working memory. Start by reading:
-1. `docs/decisions/PIVOT_LOG.md` — D144-D147 (new decisions)
-2. `data/entities/kali/proposed_lessons.yaml` — L1→L2→L3 insights
-3. `SOVEREIGN_MANDATES.md` — Mandate 6 updated for docker-compose vs quadlet distinction
-4. `deploy/infra/docker-compose.yml` — port 6379 added, `user:` flag trap documented
+## L3: Universal Principle
+**Sovereign Integrity through Explicit Boundaries**: A system is only as resilient as its most silent failure. True sovereignty requires the courage to fail explicitly and the discipline to match exception handling to the actual error semantics of each operation.
 
-## Task State
+## Changes Log (This Session)
+- `src/omega/library/enrichment.py`: Fixed 7 bare excepts (OpenLibrary, InternetArchive, LOC, Gutenberg clients)
+- `src/omega/library/library.py`: Fixed 3 bare excepts (_load, get, ingest_from_inbox)
+- `src/omega/vault/key_vault.py`: Fixed 2 bare excepts (_load, _save)
+- `src/omega/astrology.py`: Fixed 1 bare except (record_first_breath)
+- `src/omega/workers/model_updater.py`: Fixed 4 bare excepts (run_forever, _run_full_cycle, _fetch_single, _research_with_gemma)
+- `src/omega/bridge/opencode_bridge.py`: Fixed 3 bare excepts (_load_soul_context, _handle_inference, websocket_endpoint)
+- `src/omega/request_queue.py`: Fixed 1 bare except (_write_json)
+- `src/omega/monitoring/__init__.py`: Fixed 6 bare excepts (get_cpu_topology, get_process_thread_count, get_temperatures x2, _collect_fd_audit, _collect_memory_map)
+- `src/omega/hub.py`: Fixed 1 bare except (get_hardware_stats)
+- `src/omega/memory/batch_writer.py`: Fixed 3 bare excepts (_commit_batch, _direct_write, _push_to_dlq)
+- `src/omega/memory/providers.py`: Fixed 1 bare except (_check_disk_space)
+- `src/omega/memory_store.py`: Fixed 3 bare excepts (_ensure_vector_store, close x2)
+- `src/omega/observability/__init__.py`: Fixed multiple bare excepts (_detect_anyio_backend, _persist_event, _collect_engine_state, _collect_thread_dump, _collect_memory_map, _collect_fd_audit, check_recovery, replay, learn, record_performance, record_metrics_error, log_event)
 
-### COMPLETED
-- **P0-1**: Fixed 8 broken model paths in `config/models.yaml` — `models/gguf/local/all/` → `models/local/all/`
-- **P0-2**: Fixed provider sort bug in `model_gateway.py:326` — `isinstance(p.config, dict)` fails on `ProviderConfig` dataclass. Mock (priority 99) sorted before opcode-zen/cline/github-copilot (all 999). Used duck-typing fallback.
-- **P0-5**: Redis running on `localhost:6379`, health verified via Python `redis` client.
-- **P0-5b**: Stopped + disabled conflicting `omega-redis.service` systemd quadlet at `~/.config/containers/systemd/omega-redis.container`
-- **P0-5c**: Fixed volume permissions via `podman unshare chown -R 999:999 /path/to/redis/volume`
-- **Middleware**: `threading.Lock()` → `anyio.Lock()` + `with` → `async with` in `mcp_servers/omega_hub/middleware.py:108`
+## Sovereign Continuity
+All changes preserve the system's ability to recover state after compaction through:
+- Session gnosis documentation (this file)
+- Hivemind context posts
+- Proposed lessons distillation
+- Existing entity soul.yaml and workspace files
 
-### REMAINING (not started)
-- `omega talk "hello"` falls to demo/mock response — no local model responds
-- `EventType.ENTITY_INTERACTION` missing from telemetry enum
-- Disk space: 4.69% free on memory-archive partition
-- `n_ctx_seq (512) < n_ctx_train (2048)` — model loaded with reduced context
-
-## Key Decisions
-
-| ID | Decision | Rationale |
-|----|----------|-----------|
-| D144 | `user:` flag in rootless Podman: omit or use `userns_mode: keep-id` | `user: 1000:1000` maps to subuid 101000, not host 1000. Container UID 0 = host 1000 by default. |
-| D145 | Run Redis standalone (not in pod) | `--userns` and `--pod` are incompatible in podman v5.x |
-| D146 | Use duck-typing for `_get_priority` | `isinstance(p.config, dict)` fails on ProviderConfig dataclass |
-| D147 | Use `anyio.Lock()` in ASGI middleware | `threading.Lock()` blocks the event loop |
-
-## Files Changed (this session)
-- `mcp_servers/omega_hub/middleware.py` — threading.Lock → anyio.Lock
-- `src/omega/oracle/model_gateway.py` — _get_priority duck-typing fix
-- `config/models.yaml` — 8 model paths fixed
-- `deploy/infra/docker-compose.yml` — port 6379 added to Redis
-
-## Next Actions
-1. Debug native-gguf model loading (omega talk falls to demo)
-2. Fix telemetry enum (EventType.ENTITY_INTERACTION)
-3. Disk cleanup (memory-archive at 4.69%)
-4. Commit and push all changes
+## Next Steps for Hardening
+1. Complete remaining observability/__init__.py fixes (record_breaker_transition, stats)
+2. Verify all changes with `make test` and `make temple-grade`
+3. Address H-01: AnyIO compliance in `src/omega/ingestion/scraper.py`
+4. Address H-04: Wire `SovereignGateway` to actual `ModelGateway` provider instances
+5. Address H-05: Implement `ResourceGuard` for `SovereignGateway` to prevent OOM during proxy burstsM9 Error Integrity: Purged broad except blocks in Oracle, Iris, and Ingestion modules.
+M16 Portability: Verified zero absolute paths in src/omega/.

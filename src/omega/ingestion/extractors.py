@@ -137,7 +137,7 @@ class BaseExtractor:
             repaired_json = repair_json(full_text)
             data = json.loads(repaired_json)
             return ExtractionSchema.model_validate(data)
-        except Exception as e:
+        except (json.JSONDecodeError, ValidationError, RuntimeError, OSError) as e:
             raise SchemaError(f"Failed to parse extraction result even after repair: {str(e)}")
 
 class GoogleExtractor(BaseExtractor):

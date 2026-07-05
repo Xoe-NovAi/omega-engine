@@ -78,7 +78,7 @@ class SearXNGClient:
         except OmegaError as e:
             logger.warning(f"SearXNG OmegaError: {e}")
             return []
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"SearXNG search error: {e}", exc_info=True)
             return []
 

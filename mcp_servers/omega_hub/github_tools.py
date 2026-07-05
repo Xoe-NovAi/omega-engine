@@ -17,9 +17,29 @@ from mcp_servers.omega_hub.state import PROJECT_ROOT
 
 logger = logging.getLogger("omega.hub.github")
 
+# Shared HTTP client for GitHub API requests - connection pooling for efficiency
+_github_client: Optional[httpx.AsyncClient] = None
+
+def _get_github_client() -> httpx.AsyncClient:
+    """Get or create the shared GitHub HTTP client with connection pooling."""
+    global _github_client
+    if _github_client is None:
+        _github_client = httpx.AsyncClient(
+            timeout=httpx.Timeout(30.0, connect=10.0),
+            limits=httpx.Limits(
+                max_connections=10,
+                max_keepalive_connections=5,
+                keepalive_expiry=30.0,
+            ),
+            http2=True,
+            follow_redirects=True,
+            headers={"User-Agent": "Omega-Engine-Sovereign-Bridge"}
+        )
+    return _github_client
+
 # ── Configuration Loading ──────────────────────────────────────────────────────
 
-def _get_github_account(entity_name: str) -> Dict[str, Any]:
+async def _get_github_account(entity_name: str) -> Dict[str, Any]:
     """Load GitHub account details for a specific Omega entity.
     
     Returns:
@@ -33,7 +53,7 @@ def _get_github_account(entity_name: str) -> Dict[str, Any]:
         with open(config_path, "r") as f:
             return yaml.safe_load(f)
     
-    config = anyio.to_thread.run_sync(_read)
+    config = await anyio.to_thread.run_sync(_read)
     accounts = config.get("accounts", [])
     for acc in accounts:
         if acc.get("entity") == entity_name.lower():
@@ -56,7 +76,7 @@ async def _github_request(method: str, endpoint: str, entity: str, data: Optiona
         data: Request body
         params: Query parameters
     """
-    acc = _get_github_account(entity)
+    acc = await _get_github_account(entity)
     token = acc["pat"]
     headers = {
         "Authorization": f"token {token}",
@@ -64,13 +84,13 @@ async def _github_request(method: str, endpoint: str, entity: str, data: Optiona
         "User-Agent": "Omega-Engine-Sovereign-Bridge"
     }
     
-    async with httpx.AsyncClient() as client:
-        url = f"https://api.github.com{endpoint}"
-        response = await client.request(method, url, headers=headers, json=data, params=params)
-        if response.status_code >= 400:
-            logger.error(f"GitHub API Error [{response.status_code}]: {response.text}")
-            return {"error": f"GitHub API returned {response.status_code}", "details": response.text}
-        return response.json()
+    client = _get_github_client()
+    url = f"https://api.github.com{endpoint}"
+    response = await client.request(method, url, headers=headers, json=data, params=params)
+    if response.status_code >= 400:
+        logger.error(f"GitHub API Error [{response.status_code}]: {response.text}")
+        return {"error": f"GitHub API returned {response.status_code}", "details": response.text}
+    return response.json()
 
 # ── Specialized Tools ──────────────────────────────────────────────────────────
 
@@ -184,6 +204,17 @@ async def github_list_heritage_issues(owner: str, repo: str, entity: str = "kali
     params = {"state": "open", "labels": "heritage"}
     result = await _github_request("GET", endpoint, entity, params=params)
     return json.dumps(result, indent=2)
+
+
+async def github_cleanup() -> None:
+    """Cleanup GitHub HTTP client resources.
+    
+    Should be called during application shutdown to properly close connections.
+    """
+    global _github_client
+    if _github_client is not None:
+        await _github_client.aclose()
+        _github_client = None
 
 @m9_safe("github_create_vet_issue")
 @mcp.tool()

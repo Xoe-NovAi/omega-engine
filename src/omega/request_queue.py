@@ -322,7 +322,7 @@ class RequestQueue:
             if tmp.exists():
                 tmp.unlink()
             raise
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             if tmp.exists():
                 tmp.unlink()
             logger.error(f"Unexpected failure writing {filepath}: {e}", exc_info=True)

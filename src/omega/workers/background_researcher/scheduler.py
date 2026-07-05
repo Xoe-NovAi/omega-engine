@@ -48,7 +48,7 @@ class TopicScheduler:
                     return RotationState(**data)
             except OmegaError:
                 return RotationState()
-            except Exception as e:
+            except (OmegaError, RuntimeError, OSError) as e:
                 logger.error("Error loading scheduler state: %s", e, exc_info=True)
                 return RotationState()
         return RotationState()
@@ -61,7 +61,7 @@ class TopicScheduler:
                 json.dump(self.state.__dict__, f, indent=2)
         except OmegaError:
             pass
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("Error saving scheduler state: %s", e, exc_info=True)
             pass
         
@@ -71,7 +71,7 @@ class TopicScheduler:
                 return yaml.safe_load(f)
         except OmegaError:
             return {}
-        except Exception as e:
+        except (OmegaError, RuntimeError, OSError) as e:
             logger.error("Error loading research topics config: %s", e, exc_info=True)
             return {}
 

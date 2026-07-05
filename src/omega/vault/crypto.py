@@ -83,7 +83,7 @@ def encrypt(plaintext: str, master_key: bytes) -> str:
             "cryptography package not installed. "
             "Install with: pip install cryptography"
         )
-    except Exception as e:
+    except (RuntimeError, OSError) as e:
         raise VaultCryptoError(f"Encryption failed: {e}")
 
 
@@ -121,5 +121,5 @@ def decrypt(ciphertext_b64: str, master_key: bytes) -> str:
             "cryptography package not installed. "
             "Install with: pip install cryptography"
         )
-    except Exception as e:
+    except (RuntimeError, OSError) as e:
         raise VaultCryptoError(f"Decryption failed: {e}")

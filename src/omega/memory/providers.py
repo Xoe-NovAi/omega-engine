@@ -110,7 +110,7 @@ class RedisStorageProvider(StorageProvider):
             return exchanges
         except OmegaError:
             raise
-        except Exception as e:
+        except (redis.RedisError, RuntimeError) as e:
             logger.error(f"Redis get_history failed for {session_id}: {e}", exc_info=True)
             self.is_available = False
             raise OmegaPersistenceError(f"Redis get_history failed: {e}", raw_error=e) from e
@@ -127,7 +127,7 @@ class RedisStorageProvider(StorageProvider):
                 "count": len(exchanges)
             })
             await self.client.expire(meta_key, 86400)
-
+            
             hist_key = f"{self.hist_prefix}:{session_id}"
             await self.client.delete(hist_key)
             
@@ -141,7 +141,7 @@ class RedisStorageProvider(StorageProvider):
             await self.client.expire(hist_key, 86400)
         except OmegaError:
             raise
-        except Exception as e:
+        except (redis.RedisError, RuntimeError) as e:
             logger.error(f"Redis save_history failed for {session_id}: {e}", exc_info=True)
             self.is_available = False
             raise OmegaPersistenceError(f"Redis save_history failed: {e}", raw_error=e) from e
@@ -156,7 +156,7 @@ class RedisStorageProvider(StorageProvider):
             return True
         except OmegaError:
             raise
-        except Exception as e:
+        except (redis.RedisError, RuntimeError) as e:
             logger.error(f"Redis archive failed for {session_id}: {e}", exc_info=True)
             self.is_available = False
             raise OmegaPersistenceError(f"Redis archive failed: {e}", raw_error=e) from e
@@ -166,7 +166,7 @@ class RedisStorageProvider(StorageProvider):
             await self.client.close()
         except OmegaError:
             raise
-        except Exception as e:
+        except (redis.RedisError, RuntimeError) as e:
             logger.error("Failed to close Redis connection: %s", e, exc_info=True)
             raise OmegaError(f"Redis close failed: {e}", raw_error=e) from e
 
@@ -198,7 +198,7 @@ class FileStorageProvider(StorageProvider):
                 logger.error(f"Disk space guard triggered: {free_percent:.2%} free space remaining on {target_dir}")
                 return False
             return True
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             # M9 carve-out: health probe may catch all to prevent crash loops
             logger.warning(f"Failed to check disk space: {e}")
             return True
@@ -252,7 +252,7 @@ class FileStorageProvider(StorageProvider):
                         os.replace(temp_path, path)
                     finally:
                         fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
-            except Exception as e:
+            except (OSError, RuntimeError) as e:
                 logger.error(f"FileStorageProvider.save_history failed for {entity_name}/{session_id}: {e}", exc_info=True)
                 raise
                     
@@ -277,7 +277,7 @@ class FileStorageProvider(StorageProvider):
             raw = await anyio.to_thread.run_sync(_read_with_lock)
         except OmegaError:
             raise
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.error(f"Failed to read warm path for archiving: {e}", exc_info=True)
             raise OmegaPersistenceError(f"File archive read failed: {e}", raw_error=e) from e
         
@@ -297,7 +297,7 @@ class FileStorageProvider(StorageProvider):
             await anyio.Path(lock_path).unlink()
         except OmegaError:
             raise
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.error("Failed to remove lock file %s: %s", lock_path, e, exc_info=True)
             raise OmegaPersistenceError(f"Lock removal failed: {e}", raw_error=e) from e
         return True
@@ -325,3 +325,66 @@ class InMemoryStorageProvider(StorageProvider):
     
     async def close(self) -> None:
         self._storage.clear()
+
+class USMStorageProvider(StorageProvider):
+    """A StorageProvider that delegates all persistence to the Unified State Manager.
+    
+    This allows MemoryStore to benefit from CAS deduplication and atomic snapshots
+    without changing its internal API.
+    """
+
+    def __init__(self):
+        from omega.state import get_usm
+        self.usm = get_usm()
+        self.is_available = True
+
+    async def check_health(self) -> bool:
+        """Check if USM is initialized."""
+        try:
+            await self.usm.load_state("usm.health_check")
+            return True
+        except OmegaPersistenceError:
+            return True # It's fine if the key doesn't exist
+        except Exception as e:
+            logger.warning(f"USM health check failed: {e}")
+            return False
+
+    async def get_history(self, entity_name: str, session_id: str, limit: int) -> List[Dict[str, Any]]:
+        """Retrieve history from USM."""
+        state_key = f"mem:{entity_name}:{session_id}"
+        data = await self.usm.load_state(state_key)
+        
+        if not data:
+            return []
+            
+        # USM stores the whole session; we return the last 'limit' exchanges
+        exchanges = data.get("exchanges", [])
+        return exchanges[-limit:]
+
+    async def save_history(self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]) -> None:
+        """Save history to USM."""
+        state_key = f"mem:{entity_name}:{session_id}"
+        data = {
+            "entity": entity_name,
+            "session_id": session_id,
+            "exchange_count": len(exchanges),
+            "exchanges": exchanges,
+        }
+        await self.usm.save_state(state_key, data)
+
+    async def archive(self, entity_name: str, session_id: str) -> bool:
+        """Archive session in USM (by moving to an archive key)."""
+        state_key = f"mem:{entity_name}:{session_id}"
+        archive_key = f"archive:mem:{entity_name}:{session_id}"
+        
+        data = await self.usm.load_state(state_key)
+        if not data:
+            return False
+            
+        await self.usm.save_state(archive_key, data)
+        return True
+
+    async def close(self) -> None:
+        """Close USM resources."""
+        pass
+

@@ -171,7 +171,7 @@ class ForensicsManager:
                             pass
             except OmegaError:
                 logger.debug("OmegaError installing signal handler")
-            except Exception as e:
+            except (OSError, RuntimeError) as e:
                 logger.error("Unexpected error installing signal handler: %s", e, exc_info=True)
 
     def _sync_signal_handler(self, signum, frame):
@@ -260,7 +260,7 @@ class ForensicsManager:
             logger.critical(f"Crash dump written to {path}")
         except OmegaError:
             logger.error("Failed to write crash dump (OmegaError)")
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.error(f"Unexpected failure writing crash dump: {e}", exc_info=True)
 
         return path
@@ -310,6 +310,7 @@ class ForensicsManager:
 
         try:
             from omega.oracle.health_monitor import get_health_monitor
+            from omega.oracle.model_gateway import ModelGateway
             gw = ModelGateway(health_monitor=get_health_monitor())
             providers = gw.providers if hasattr(gw, 'providers') else []
             state["providers_count"] = len(providers)
@@ -319,7 +320,7 @@ class ForensicsManager:
             ])
         except OmegaError:
             pass
-        except Exception as e:
+        except (RuntimeError, OSError) as e:
             logger.error("Failed to collect provider state for crash dump: %s", e, exc_info=True)
             pass
 
@@ -336,9 +337,7 @@ class ForensicsManager:
                             if len(parts) >= 2:
                                 state["rss_mb"] = int(parts[1]) / 1024
                             break
-            except OmegaError:
-                pass
-            except Exception as e:
+            except (OSError, ValueError) as e:
                 logger.error("Failed to read /proc/self/status for RSS: %s", e, exc_info=True)
                 pass
 
@@ -364,7 +363,7 @@ class ForensicsManager:
                     "stack": "".join(stack)[:2000],
                 })
             return result
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             return [{"error": str(e)}]
 
     @staticmethod
@@ -377,9 +376,7 @@ class ForensicsManager:
             if len(lines) <= limit * 2:
                 return [l.strip() for l in lines]
             return [l.strip() for l in lines[:limit] + lines[-limit:]]
-        except OmegaError:
-            return []
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.error(f"Failed to collect memory map: {e}", exc_info=True)
             return []
 
@@ -390,9 +387,7 @@ class ForensicsManager:
             with open("/proc/self/fd", "r") as f:
                 fds = f.readlines()
             return {"total_open": len(fds)}
-        except OmegaError:
-            return {"total_open": -1}
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.error(f"Failed to collect FD audit: {e}", exc_info=True)
             return {"total_open": -1}
 
@@ -423,11 +418,9 @@ class ForensicsManager:
         try:
             import sniffio
             return sniffio.current_async_library()
-        except OmegaError:
-            logger.debug("OmegaError detecting anyio backend")
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.error("Unexpected error detecting anyio backend: %s", e, exc_info=True)
-        return "unknown"
+            return "unknown"
 
     def check_recovery(self) -> Optional[Dict[str, Any]]:
         """Check for crash dumps from previous runs.
@@ -464,7 +457,7 @@ class ForensicsManager:
             return dump
         except OmegaError:
             return None
-        except Exception as e:
+        except (OSError, json.JSONDecodeError) as e:
             logger.error(f"Unexpected failure processing crash dump {latest}: {e}", exc_info=True)
             return None
 
@@ -486,7 +479,7 @@ class ForensicsManager:
                 dump = json.load(f)
         except OmegaError:
             return None
-        except Exception as e:
+        except (OSError, json.JSONDecodeError) as e:
             logger.error("Unexpected failure loading crash dump for replay: %s", e, exc_info=True)
             return None
 
@@ -508,7 +501,7 @@ class ForensicsManager:
                                 continue
                 except OmegaError:
                     continue
-                except Exception as e:
+                except (OSError, json.JSONDecodeError) as e:
                     logger.error("Unexpected failure reading event log for crash dump: %s", e, exc_info=True)
                     continue
 
@@ -558,7 +551,7 @@ class ForensicsManager:
                 return lesson
             except OmegaError:
                 pass
-            except Exception as e:
+            except (OSError, yaml.YAMLError) as e:
                 logger.error("Unexpected failure writing lesson to soul.yaml: %s", e, exc_info=True)
                 pass
         return lesson
@@ -621,7 +614,7 @@ class ObservabilityEngine:
             db = MetricsDB(METRICS_DB_PATH)
             db.initialize()
             self._metrics_db = db
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.warning("Failed to initialize MetricsDB: %s", e)
         return self._metrics_db
 
@@ -655,7 +648,7 @@ class ObservabilityEngine:
                 f.write(json.dumps(event, default=str) + "\n")
         except OmegaError:
             pass
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.error(f"Unexpected failure persisting event: {e}", exc_info=True)
             pass
 
@@ -692,7 +685,7 @@ class ObservabilityEngine:
                                     continue
         except OmegaError:
             pass
-        except Exception as e:
+        except (OSError, json.JSONDecodeError) as e:
             logger.error(f"Unexpected failure loading persisted events: {e}", exc_info=True)
             pass
 
@@ -730,7 +723,7 @@ class ObservabilityEngine:
                     provider=data.get("provider"),
                     payload=data,
                 )
-            except Exception as e:
+            except (OSError, RuntimeError) as e:
                 logger.debug("MetricsDB event recording failed: %s", e)
 
         # Also log to standard logger
@@ -805,7 +798,7 @@ class ObservabilityEngine:
                 is_cloud=is_cloud,
                 trace_id=trace_id,
             )
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.debug("MetricsDB performance recording failed: %s", e)
 
     # ── Record error to MetricsDB ────────────────────────────────────
@@ -832,7 +825,7 @@ class ObservabilityEngine:
                 provider=provider,
                 context=context,
             )
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.debug("MetricsDB error recording failed: %s", e)
 
     # ── Record breaker transition to MetricsDB ────────────────────────
@@ -859,7 +852,7 @@ class ObservabilityEngine:
                 trace_id=trace_id,
                 reason=reason,
             )
-        except Exception as e:
+        except (OSError, RuntimeError) as e:
             logger.debug("MetricsDB breaker recording failed: %s", e)
 
     # ── Persist dataset to disk ──────────────────────────────────────
@@ -905,10 +898,10 @@ class ObservabilityEngine:
         # Add MetricsDB stats if available
         metrics_db = self.metrics_db
         if metrics_db:
-            try:
-                result["metrics_db"] = metrics_db.get_stats()
-            except Exception:
-                result["metrics_db"] = {"error": "unavailable"}
+                try:
+                    result["metrics_db"] = metrics_db.get_stats()
+                except (RuntimeError, OSError):
+                    result["metrics_db"] = {"error": "unavailable"}
         else:
             result["metrics_db"] = {"status": "not_initialized"}
         return result

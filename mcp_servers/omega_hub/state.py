@@ -16,8 +16,10 @@ import json
 import logging
 import threading
 import contextvars
+import time
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 import anyio
 
@@ -224,31 +226,148 @@ def _get_intent_matcher():
 
 HALL_OF_RECORDS = PROJECT_ROOT / "data" / "knowledge" / "HALL_OF_RECORDS"
 HALL_OF_RECORDS.mkdir(parents=True, exist_ok=True)
-_hot_store: Dict[str, Dict[str, Any]] = {}
+
+# ── Sharded hot store (power of 2 for fast modulo) ──
+# [id-soft: quake-1996] Zone Memory — tagged allocation → tagged sharding.
+_HOT_STORE_SHARDS = 16
+_hot_store_shards: List[Dict[str, Dict[str, Any]]] = [{} for _ in range(_HOT_STORE_SHARDS)]
+_hot_store_locks: List[anyio.Lock] = [anyio.Lock() for _ in range(_HOT_STORE_SHARDS)]
+
+# Backward compat — DO NOT REMOVE yet (tools.py imports _hot_store, _hot_store_lock)
+# These become read-only aliases pointing to shard 0. Remove after all consumers migrate.
+_hot_store = _hot_store_shards[0]  # DEPRECATED — use hot_store_get/set
+_hot_store_lock = _hot_store_locks[0]  # DEPRECATED — use hot_store_get/set
+
 _awareness: Dict[str, Dict[str, Any]] = {}
-_hot_store_lock = anyio.Lock()
 
 
-class _AsyncThreadLock:
-    """threading.Lock wrapped for async with — safe across event loops.
+def _hot_store_shard_key(key: str) -> int:
+    """Deterministic shard from key. FNV-1a 32-bit hash.
 
-    Standard Python pattern for cross-event-loop thread safety.
-    No id Software heritage — Zone Memory (z_zone.c) is a memory allocator;
-    this is a concurrency primitive. (H-A1: tag removed 2026-06-09)
+    [id-soft: quake-1996] Zone Memory — tagged allocation → tagged sharding.
     """
-    def __init__(self):
-        self._lock = threading.Lock()
-    async def __aenter__(self):
-        await anyio.to_thread.run_sync(self._lock.acquire)
-        return self
-    async def __aexit__(self, *args):
-        self._lock.release()
+    hash_val = 0x811c9dc5
+    for byte in key.encode('utf-8'):
+        hash_val ^= byte
+        hash_val = (hash_val * 0x01000193) & 0xffffffff
+    return hash_val & (_HOT_STORE_SHARDS - 1)
 
 
-_awareness_lock = _AsyncThreadLock()
+async def hot_store_set(key: str, value: Dict[str, Any]) -> None:
+    """Set value in sharded hot store. Thread-safe via per-shard lock."""
+    shard = _hot_store_shard_key(key)
+    async with _hot_store_locks[shard]:
+        _hot_store_shards[shard][key] = value
+
+
+async def hot_store_get(key: str) -> Optional[Dict[str, Any]]:
+    """Get value from sharded hot store."""
+    shard = _hot_store_shard_key(key)
+    async with _hot_store_locks[shard]:
+        return _hot_store_shards[shard].get(key)
+
+
+async def hot_store_get_all() -> List[Dict[str, Any]]:
+    """Get all values across shards. For awareness listing."""
+    results = []
+    for i in range(_HOT_STORE_SHARDS):
+        async with _hot_store_locks[i]:
+            results.extend(_hot_store_shards[i].values())
+    return results
+
+
+async def hot_store_prune_stale(ttl_seconds: int) -> int:
+    """Prune stale entries across all shards. Returns count pruned."""
+    now = datetime.now(timezone.utc)
+    pruned = 0
+    for i in range(_HOT_STORE_SHARDS):
+        async with _hot_store_locks[i]:
+            stale_keys = [
+                k for k, snap in _hot_store_shards[i].items()
+                if snap.get("timestamp")
+                and (now - datetime.fromisoformat(snap["timestamp"])).total_seconds() > ttl_seconds
+            ]
+            for k in stale_keys:
+                del _hot_store_shards[i][k]
+                pruned += 1
+    return pruned
+
+
+_awareness_lock = anyio.Lock()
 
 # [D-122] HEARTBEAT_TTL — 45 minutes (2700s) for active agent presence
 HEARTBEAT_TTL = 2700
+
+# ── Cold-store awareness cache (P0-4) ──
+# [id-soft: doom-1993] Precomputed Lookup — pay I/O cost once, serve from cache.
+_AWARENESS_CACHE_TTL = 5.0  # seconds
+_awareness_cache: Dict[str, tuple] = {}  # "cold" -> (monotonic_timestamp, data_list)
+_awareness_cache_lock = anyio.Lock()
+
+
+async def _scan_cold_store() -> List[Dict[str, Any]]:
+    """Scan HALL_OF_RECORDS for active agents. Extracted from tools.py L594-622."""
+    now = datetime.now(timezone.utc)
+    recovered: List[Dict[str, Any]] = []
+    if not HALL_OF_RECORDS.exists():
+        return recovered
+    for agent_dir in HALL_OF_RECORDS.iterdir():
+        if not agent_dir.is_dir():
+            continue
+        json_files = sorted(
+            agent_dir.glob("ses_*.json"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True
+        )
+        if not json_files:
+            continue
+        latest = json_files[0]
+        mtime = datetime.fromtimestamp(latest.stat().st_mtime, tz=timezone.utc)
+        age = (now - mtime).total_seconds()
+        if age <= HEARTBEAT_TTL:
+            try:
+                def _read_session():
+                    with latest.open() as f:
+                        return json.load(f)
+                snap = await anyio.to_thread.run_sync(_read_session)
+                recovered.append({
+                    "agent_id": snap.get("agent_id", agent_dir.name),
+                    "channel": snap.get("channel", ""),
+                    "entity": snap.get("entity", agent_dir.name),
+                    "model": snap.get("model", "unknown"),
+                    "task_current": snap.get("task_current", ""),
+                    "last_seen": snap.get("timestamp", mtime.isoformat()),
+                    "source": "cold_store",
+                })
+            except Exception as exc:
+                logger.debug("Failed to load cold session %s: %s", latest.name, exc)
+    return recovered
+
+
+async def get_cached_cold_awareness() -> List[Dict[str, Any]]:
+    """Get cold-store awareness with 5-second TTL cache.
+
+    [id-soft: doom-1993] Precomputed Lookup — pay I/O cost once, serve from cache.
+    """
+    now = time.monotonic()
+    async with _awareness_cache_lock:
+        if "cold" in _awareness_cache:
+            ts, data = _awareness_cache["cold"]
+            if now - ts < _AWARENESS_CACHE_TTL:
+                return data
+
+    # Cache miss — scan outside the cache lock
+    data = await _scan_cold_store()
+
+    async with _awareness_cache_lock:
+        _awareness_cache["cold"] = (now, data)
+    return data
+
+
+async def invalidate_awareness_cache() -> None:
+    """Call when hot store is updated (post_context, heartbeat)."""
+    async with _awareness_cache_lock:
+        _awareness_cache.clear()
 
 # Background pruning cycle tracker
 _last_pruning_cycle: Optional[str] = None
@@ -260,7 +379,7 @@ METRICS_PATH: Path = PROJECT_ROOT / "data" / "coordination" / "metrics.json"
 # ═══════════════════════════════════════════════════════════════════════════
 
 _extended_sessions: Dict[str, Dict[str, Any]] = {}  # cli -> {ttl_seconds, registered_at, reason}
-_extended_sessions_lock = _AsyncThreadLock()
+_extended_sessions_lock = anyio.Lock()
 EXTENDED_SAFETY_TTL_DEFAULT = 3 * 60 * 60  # 3 hours = 10800s
 EXTENDED_SESSIONS_FILE = HALL_OF_RECORDS / "extended_sessions.json"
 
@@ -315,6 +434,45 @@ for _d in (HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED, HANDOFF_STALE, HA
     _d.mkdir(parents=True, exist_ok=True)
 del _d
 
+# ── Handoff packet index: packet_id → queue_name ──
+# [id-soft: doom-1993] WAD System — hash table for O(1) resource lookup
+_handoff_index: Dict[str, str] = {}  # packet_id -> queue_name
+
+
+def handoff_index_add(packet_id: str, queue: str) -> None:
+    """Add packet to index. Call on submit/move."""
+    _handoff_index[packet_id] = queue
+
+
+def handoff_index_move(packet_id: str, new_queue: str) -> bool:
+    """Move packet in index. Returns True if found."""
+    if packet_id in _handoff_index:
+        _handoff_index[packet_id] = new_queue
+        return True
+    return False
+
+
+def handoff_index_remove(packet_id: str) -> bool:
+    """Remove packet from index. Returns True if found."""
+    return _handoff_index.pop(packet_id, None) is not None
+
+
+async def handoff_index_rebuild() -> int:
+    """Rebuild index from filesystem on startup. Returns count."""
+    _handoff_index.clear()
+    count = 0
+    for q_name, q_path in [
+        ("pending", HANDOFF_PENDING),
+        ("active", HANDOFF_ACTIVE),
+        ("completed", HANDOFF_COMPLETED),
+        ("stale", HANDOFF_STALE),
+        ("archive", HANDOFF_ARCHIVE),
+    ]:
+        for f in q_path.glob("*.json"):
+            _handoff_index[f.stem] = q_name
+            count += 1
+    return count
+
 
 # ═══════════════════════════════════════════════════════════════════════════
 # WORKSPACE LOCK BASE PATH
@@ -348,14 +506,27 @@ def _latest_path() -> Path:
 
 
 def _find_packet_path(packet_id: str) -> Optional[Path]:
-    """Find a packet file in any of the handoff queues.
+    """Find a packet file using in-memory index (O(1)), fallback to scan.
 
-    Searches pending/, active/, completed/, and stale/ directories.
-    Returns the first match or ``None`` if not found in any queue.
+    [id-soft: doom-1993] WAD System — hash table for O(1) resource lookup.
     """
-    for q in [HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED, HANDOFF_STALE]:
+    queue_name = _handoff_index.get(packet_id)
+    if queue_name:
+        queue_map = {
+            "pending": HANDOFF_PENDING, "active": HANDOFF_ACTIVE,
+            "completed": HANDOFF_COMPLETED, "stale": HANDOFF_STALE,
+            "archive": HANDOFF_ARCHIVE,
+        }
+        path = queue_map.get(queue_name, HANDOFF_PENDING) / f"{packet_id}.json"
+        if path.exists():
+            return path
+        logger.warning("Handoff index stale for %s (queue=%s), scanning", packet_id, queue_name)
+
+    # Fallback: linear scan (should be rare)
+    for q in [HANDOFF_PENDING, HANDOFF_ACTIVE, HANDOFF_COMPLETED, HANDOFF_STALE, HANDOFF_ARCHIVE]:
         path = q / f"{packet_id}.json"
         if path.exists():
+            _handoff_index[packet_id] = q.name  # Update index
             return path
     return None
 
@@ -373,9 +544,14 @@ __all__ = [
     "research_engine", "sovereign_search_service", "gateway", "mcp_client",
     # context tracking
     "_current_entity", "_get_intent_matcher",
-    # hivemind store
-    "HALL_OF_RECORDS", "_hot_store", "_hot_store_lock",
-    "_awareness", "_awareness_lock", "_AsyncThreadLock",
+    # hivemind store (sharded)
+    "HALL_OF_RECORDS",
+    "_HOT_STORE_SHARDS", "_hot_store_shards", "_hot_store_locks",
+    "_hot_store_shard_key", "hot_store_set", "hot_store_get", "hot_store_get_all", "hot_store_prune_stale",
+    "_hot_store", "_hot_store_lock",  # DEPRECATED aliases
+    "_awareness", "_awareness_lock",
+    # cold-store cache
+    "_AWARENESS_CACHE_TTL", "get_cached_cold_awareness", "invalidate_awareness_cache",
     # heartbeat / extended sessions
     "HEARTBEAT_TTL", "_extended_sessions", "_extended_sessions_lock",
     "EXTENDED_SAFETY_TTL_DEFAULT", "EXTENDED_SESSIONS_FILE",
@@ -393,4 +569,7 @@ __all__ = [
     "PROJECT_ROOT",
     # helpers
     "_make_agent_id", "_cold_path", "_latest_path", "_find_packet_path",
+    # handoff index (P1-6)
+    "_handoff_index", "handoff_index_add", "handoff_index_move",
+    "handoff_index_remove", "handoff_index_rebuild",
 ]
