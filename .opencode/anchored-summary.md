@@ -1,107 +1,102 @@
-# ⬡ OMEGA ⬡ ANCHORED SUMMARY ⬡ 2026-07-05
-## Session 53 — Hub Optimization Sprint (Post-Council Hardening)
+# ⬡ OMEGA ⬡ ANCHORED SUMMARY ⬡ 2026-07-06
+## Session — Git Filter-Repo Recovery & MCP Server Restoration
 
 ### Goal
-1. Execute all pillar implementation manuals via MaKaLi Council
-2. Fix three critical integration gaps identified by P9 (Link)
-3. Fix three P8 warning issues (FNV-1a, cache race, blocking I/O)
-4. Update documentation and trackers
+1. Recover Omega Engine from git filter-repo incident that removed origin remote
+2. Prepare WARP Proxy Pool for standalone extraction via fresh clone (not worktree)
+3. Restore Firecrawl & SearXNG MCP servers (deleted during reset)
+4. Fix MCP watchdog to spawn servers directly (not systemctl)
 
 ---
 
-## 🎯 Sprint Status: COMPLETE
+## 🎯 Current Status: ENGINE RESTORED, MCP SERVERS RESTORED, WATCHDOG FIXED
 
-**855 tests pass, 41 skipped, 3 xfailed — 0 regressions**
+### Recovery Summary
+| Component | Status | Details |
+|-----------|--------|---------|
+| **Git origin** | ✅ RESTORED | `git remote add origin https://github.com/Xoe-NovAi/omega-engine.git` + `git reset --hard origin/main` (7df375f) |
+| **Test suite** | ✅ 909 pass | 909 passed, 42 skipped, 3 xfailed in 110.82s |
+| **Mandate gates** | ✅ 22/22 PASS | All M1-M22 verified |
+| **Temple-Grade** | ✅ T1-T12 PASS | T13 minor doc examples non-blocking |
+| **Oracle** | ✅ OPERATIONAL | 28 entities, 8 backends (local-first chain active) |
+| **WARP docket** | ✅ PRESERVED | On `sprint/pre-release-polish-20260705` @ 93cdfb0 |
+| **Anchored summary** | ✅ UPDATED | This file |
 
-### Task Completion Matrix
+### WARP Extraction — Correct Method
+```bash
+# DO NOT USE WORKTREE (shared .git corrupts on filter-repo)
+git clone https://github.com/Xoe-NovAi/omega-engine.git warp-extraction
+cd warp-extraction
+git checkout sprint/pre-release-polish-20260705
+git filter-repo --path deploy/infra/warp_pool/ --path docs/research/warp_proxy_pool/ --path docs/kb/WARP_Sovereign_Knowledge_Base.md --subdirectory-filter deploy/infra/warp_pool/
+# Then restructure to flat layout, add pyproject.toml, LICENSE, CHANGELOG.md, tests/
+# Push to new repo: Xoe-NovAi/warp-proxy-pool
+```
 
-| Task | Owner | Status | Verified By |
-|------|-------|--------|-------------|
-| **P0-0**: Missing `await` in github_tools.py | Ma'at | ✅ FIXED | P4 |
-| **P0-1**: httpx Connection Pooling | Ma'at | ✅ DONE | P4 |
-| **P0-2**: Shard Hot-Store Lock (16) | Lilith | ✅ DONE | P8 |
-| **P0-3**: Replace `to_thread.run_sync` | Ma'at | ✅ DONE (6/42 converted; 37 correctly in thread) | P3 |
-| **P0-4**: TTL Cache Cold-Store | Lilith | ✅ DONE | P8 |
-| **P1-5**: Resolve ServiceProxy | Kali | ✅ DONE (Design decision: proxy is correct pattern for lazy-loading MCP services) | Kali |
-| **P1-6**: Handoff Packet Index | Lilith | ✅ DONE | P9 |
-| **P1-7**: Gateway Config | Kali | ✅ DONE (Loads config from omega.yaml, configurable timeouts/rate limits) | Kali |
-| **P1-8**: Monotonic Time | Ma'at | ✅ FIXED | P5 |
-| **P2-9**: Background Exceptions | Lilith | ✅ DONE | P8 |
-| **P2-10**: Batch Writer Shutdown | Ma'at | ✅ DONE | P3 |
-| **P2-11**: GitHub Client Pooling | Kali | ✅ DONE (Shared httpx.AsyncClient with connection pooling) | Kali |
-| **P2-12**: Replace `_AsyncThreadLock` | Ma'at | ✅ DONE | P5 |
-| **CRITICAL-1**: Wire index into unified tool | Kali | ✅ FIXED | P9 |
-| **CRITICAL-2**: Fix legacy reject/archive index | Kali | ✅ FIXED | P9 |
-| **CRITICAL-3**: Add reaper index rebuild | Kali | ✅ FIXED | P8 |
-| **P8-W1**: FNV-1a prime constant fix | Kali | ✅ FIXED | P8 |
-| **P8-W2**: Cache invalidation race fix | Kali | ✅ FIXED | P8 |
-| **P8-W3**: Blocking I/O in `_scan_cold_store` | Kali | ✅ FIXED | P8 |
+### Firecrawl & SearXNG MCP Servers — RESTORED
+| Server | Port | Source | Status |
+|--------|------|--------|--------|
+| **Firecrawl** | 8015 | `warp-extraction/mcp_servers/firecrawl/server.py` | ✅ Copied back |
+| **SearXNG** | 8018 | `warp-extraction/mcp_servers/searxng/server.py` | ✅ Copied back |
+| **Omega Hub** | 8016 | Already running | ✅ Running |
 
-**Completion**: 20/20 tasks (100%). All tasks complete.
+**Key fixes in `src/omega/oracle/orchestrator.py`:**
+- Added `_start_mcp_server()` — spawns Python subprocess with correct PYTHONPATH
+- Added `_restart_mcp()` — kills via pkill, spawns fresh via anyio.run_process
+- Updated `mcp_ports`: removed `omega-research` (8011), `omega-stats` (8012); added `firecrawl` (8015), `searxng` (8018)
+- Watchdog now manages MCP lifecycle directly (no systemctl dependency)
 
----
+### Watchdog — FIXED
+```python
+# In Orchestrator.__init__:
+self._mcp_scripts = {
+    "firecrawl": "mcp_servers/firecrawl/server.py",
+    "searxng": "mcp_servers/searxng/server.py",
+    "omega-hub": "mcp_servers/omega_hub/server.py",
+}
+# On init: starts all three via _start_mcp_server()
+# On health check failure: calls _restart_mcp(name)
+```
 
-## 🔧 Changes Made This Session (Kali Direct)
-
-### tools.py — Unified Tool Index Wiring
-- `hivemind_handoff(action='submit')`: Added `handoff_index_add(packet_id, "pending")` after write
-- `hivemind_handoff(action='accept')`: Added `handoff_index_move(packet_id, "active")` after move
-- `hivemind_handoff(action='complete')`: Added `handoff_index_move(packet_id, "completed")` after move
-- `hivemind_handoff(action='reject')`: Added `handoff_index_move(packet_id, "stale")` after move
-- `hivemind_handoff(action='get')`: Replaced hardcoded dir scan with `_find_packet_path(packet_id)`
-- `hivemind_handoff(action='archive')`: Added `handoff_index_move(pid, "archive")` after move
-- `hivemind_reject_handoff`: Added `handoff_index_move(packet_id, "stale")` after file move
-- `hivemind_handoff_archive`: Added `handoff_index_move(pid, "archive")` after file move
-- Fixed indentation bug in `_archive()` try/except block
-- Added `await` to `invalidate_awareness_cache()` calls (now async)
-
-### state.py — P8 Warning Fixes
-- L252: Fixed FNV-1a prime constant `0x010001939` → `0x01000193`
-- L365-367: Made `invalidate_awareness_cache()` async, wrapped clear in lock
-- L329: Wrapped blocking `latest.open()` in `anyio.to_thread.run_sync`
-
-### background.py — Reaper Index Rebuild
-- Added `from mcp_servers.omega_hub.state import handoff_index_rebuild`
-- Added `handoff_index_rebuild()` call after reaping to prevent index drift
-
-### P1-5 Design Decision
-- **11 ServiceProxy instances retained** — lazy-loading pattern is correct for MCP server where services may not be initialized at import time. Provides error handling and bool conversion. Not a performance issue.
+### Lilith Coordination (Hivemind)
+- **Root cause found**: Researcher agent violated protocol — didn't fall back to `websearch`/`webfetch` when MCP tools down
+- **Lilith's fix**: Updated `sovereign-search` skill v2.1 — websearch/webfetch now T1/T2 (primary, always available)
+- **Blocked**: Antigravity `google_search` permanently for agents (CLI-only, requires Gemini via Antigravity)
+- **Mandatory error format**: `[SEARCH-ERROR] tool={tool} error={code} tier={tier} fallback={fallback} timestamp={ISO}`
 
 ---
 
-## 📊 Test Suite Baseline
+## 🔑 Critical Context for Recovery
 
-| Metric | Value |
-|--------|-------|
-| Tests passed | **855** |
-| Tests skipped | **41** |
-| Tests xfailed | **3** |
-| Regressions | **0** |
+### Branch State
+| Branch | Commit | Purpose |
+|--------|--------|---------|
+| `main` | 7df375f | Production — engine fully restored |
+| `sprint/pre-release-polish-20260705` | 93cdfb0 | WARP docket + history preserved |
 
----
+### L3 Gnosis Distilled (8 Proposals)
+| ID | Principle |
+|----|-----------|
+| 004 | Safety features are documentation — never bypass without reading |
+| 005 | History rewrites require **fresh clone** — worktrees share .git (non-negotiable) |
+| 006 | Untracked files are your safety net — Git never touches them |
+| 007 | Remote repos are immutable backups — trust and verify with `git ls-remote origin` |
+| 008 | Parallel sessions need Hivemind coordination — it's the only shared truth |
 
-## 🔍 Key Line Numbers (Current Code — Post Fixes)
+### Files Modified This Session
+- `src/omega/oracle/orchestrator.py` — MCP lifecycle management (spawn/restart)
+- `mcp_servers/firecrawl/server.py` — RESTORED from warp-extraction
+- `mcp_servers/searxng/server.py` — RESTORED from warp-extraction
+- `scripts/mcp_watchdog.py` — RESTORED from warp-extraction
+- `.opencode/anchored-summary.md` — THIS FILE
+- `docs/kb/GITHUB_Sovereign_Knowledge_Base.md` — Created (extraction/distribution KB)
 
-### tools.py (Unified Handoff)
-- L2554: `handoff_index_add(packet_id, "pending")` — submit action
-- L2578: `handoff_index_move(packet_id, "active")` — accept action
-- L2599: `handoff_index_move(packet_id, "completed")` — complete action
-- L2620: `handoff_index_move(packet_id, "stale")` — reject action
-- L2641-2648: `_find_packet_path(packet_id)` — get action (replaces hardcoded scan)
-- L2665: `handoff_index_move(pid, "archive")` — archive action
-
-### tools.py (Legacy Tools)
-- L1387: `handoff_index_move(packet_id, "stale")` — legacy reject
-- L1518-1522: `handoff_index_move(pid, "archive")` — legacy archive
-
-### state.py (P8 Fixes)
-- L252: `0x01000193` — correct FNV-1a prime
-- L329: `anyio.to_thread.run_sync(_read_session)` — non-blocking cold store read
-- L365-367: `async def invalidate_awareness_cache()` — lock-protected cache clear
-
-### background.py
-- L21: `from mcp_servers.omega_hub.state import handoff_index_rebuild`
-- L175-178: `handoff_index_rebuild()` after reaping
+### Next Session Actions
+1. **Verify MCP tools**: `firecrawl_firecrawl_search`, `searxng_searxng_search` work via MCP
+2. **Run WARP extraction** via fresh clone (not worktree)
+3. **Create `Xoe-NovAi/warp-proxy-pool`** repo with flat structure
+4. **Set up distribution**: PyPI (OIDC), Homebrew (tap), AUR (SSH), GHCR (OIDC)
+5. **Update `src/omega/proxy_pool.py`** to delegate to external `warp-proxy-pool` package
 
 ---
 
@@ -112,13 +107,14 @@ Read these files in order:
 2. `AGENTS.md` — Agent behavior rules
 3. `OMEGA_ENGINE.md` — Engine state SSOT
 4. `SOVEREIGN_MANDATES.md` — 22 mandates
-5. `data/coordination/HUB_OPTIMIZATION_DELEGATION_REPORT_20260705.md` — Task assignment matrix
-6. Run `make test` — verify 855 tests pass
+5. `data/coordination/KALI_SESSION_GNOSIS_20260706_RECOMP.md` — Full incident analysis
+6. Run `make test` — verify 909 tests pass
+7. Run `make temple-grade` — verify T1-T12 pass
 
-**Current Task**: Sprint 53 complete. All tasks implemented and verified. Ready for v1.1.0 release.
+**Current Task**: WARP extraction via fresh clone → standalone distribution → engine delegation
 
-**Role**: Kali = review & enhance manuals only. Pillars execute.
+**Role**: Kali = coordinate extraction, verify MCP tools, oversee distribution pipeline
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ HUB_OPT_SPRINT ⬡ SESSION_53 ⬡ COUNCIL_COMPLETE ⬡ 855_TESTS_PASS*
+*⬡ OMEGA ⬡ KALI ⬡ RECOVERY_SESSION ⬡ 909_TESTS_PASS ⬡ MCP_RESTORED ⬡ WARP_READY*
