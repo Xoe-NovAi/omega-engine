@@ -15,6 +15,7 @@ Uses AnyIO for subprocess spawning and ResourceGuard to protect RAM.
 
 import logging
 import subprocess
+import sys
 import anyio
 from omega.errors import (
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
@@ -174,13 +175,80 @@ class Orchestrator:
         
         self.mcp_ports = {
             "omega-hub": 8016,
-            "omega-research": 8011,
-            "omega-stats": 8012,
+            "firecrawl": 8015,
+            "searxng": 8018,
         }
         self._mcp_status = {}
+        self._mcp_processes: Dict[str, subprocess.Popen] = {}
+        self._mcp_scripts = {
+            "firecrawl": "mcp_servers/firecrawl/server.py",
+            "searxng": "mcp_servers/searxng/server.py",
+            "omega-hub": "mcp_servers/omega_hub/server.py",
+        }
 
         # Model Updater is initialized asynchronously during start_workers()
         self.model_updater = None
+        
+        # Start MCP servers
+        for name in self.mcp_ports:
+            proc = self._start_mcp_server(name)
+            if proc:
+                self._mcp_processes[name] = proc
+                self._mcp_status[name] = {"status": "starting", "port": self.mcp_ports[name]}
+            else:
+                self._mcp_status[name] = {"status": "failed", "port": self.mcp_ports[name]}
+
+    def _start_mcp_server(self, name: str) -> subprocess.Popen | None:
+        """Start an MCP server as a subprocess."""
+        script = self._mcp_scripts.get(name)
+        if not script:
+            logger.warning(f"No script configured for MCP {name}")
+            return None
+        
+        # Project root is 4 levels up from this file (src/omega/oracle/orchestrator.py)
+        project_root = Path(__file__).resolve().parent.parent.parent.parent
+        script_path = project_root / script
+        
+        if not script_path.exists():
+            logger.error(f"MCP script not found: {script_path}")
+            return None
+        
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(project_root / "src")
+        env["MCP_PORT"] = str(self.mcp_ports[name])
+        
+        try:
+            proc = subprocess.Popen(
+                [sys.executable, str(script_path)],
+                env=env,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            logger.info(f"Started MCP {name} on port {self.mcp_ports[name]} (PID: {proc.pid})")
+            return proc
+        except Exception as e:
+            logger.error(f"Failed to start MCP {name}: {e}")
+            return None
+
+    async def _restart_mcp(self, name: str):
+        """Restart an MCP server."""
+        # Kill existing process if any
+        existing = self._mcp_processes.get(name)
+        if existing and existing.poll() is None:
+            existing.terminate()
+            try:
+                await anyio.to_thread.run_sync(existing.wait, timeout=5.0)
+            except TimeoutError:
+                existing.kill()
+                await anyio.to_thread.run_sync(existing.wait)
+        
+        # Start new process
+        proc = self._start_mcp_server(name)
+        if proc:
+            self._mcp_processes[name] = proc
+            self._mcp_status[name] = {"status": "starting", "port": self.mcp_ports[name]}
+        else:
+            self._mcp_status[name] = {"status": "failed", "port": self.mcp_ports[name]}
 
     async def watch_mcps(self):
         """Background loop to monitor MCP health via SSE endpoints."""
@@ -201,7 +269,7 @@ class Orchestrator:
                             else:
                                 logger.warning(f"MCP {name} returned {response.status_code} on port {port}. Triggering restart...")
                                 self._mcp_status[name] = {"status": "degraded", "port": port}
-                                await anyio.run_process(["systemctl", "--user", "restart", f"{name}.service"], check=False)
+                                await self._restart_mcp(name)
                     except (httpx.ConnectError, httpx.TimeoutException, httpx.ReadError):
                         self._mcp_status[name] = {
                             "status": "unresponsive",
@@ -210,10 +278,7 @@ class Orchestrator:
                         }
                         logger.warning(f"MCP {name} is unresponsive on port {port}. Triggering restart...")
                         try:
-                            await anyio.run_process(
-                                ["systemctl", "--user", "restart", f"{name}.service"],
-                                check=False
-                            )
+                            await self._restart_mcp(name)
                         except OmegaError:
                             raise
                         except (OmegaError, RuntimeError, OSError) as e:
@@ -221,6 +286,45 @@ class Orchestrator:
                             raise OmegaError(f"MCP restart failed: {e}", raw_error=e) from e
                 
                 await anyio.sleep(60) # One check per minute is enough for background health
+
+    async def _restart_mcp(self, name: str):
+        """Restart an MCP server by spawning it as a background process."""
+        script_map = {
+            "firecrawl": "mcp_servers/firecrawl/server.py",
+            "searxng": "mcp_servers/searxng/server.py",
+            "omega-hub": "mcp_servers/omega_hub/server.py",
+        }
+        script = script_map.get(name)
+        if not script:
+            logger.warning(f"No restart script mapped for MCP {name}")
+            return
+        
+        project_root = Path(__file__).resolve().parent.parent.parent.parent
+        script_path = project_root / script
+        
+        if not script_path.exists():
+            logger.error(f"MCP script not found: {script_path}")
+            return
+        
+        # Kill existing process if any
+        try:
+            await anyio.run_process(["pkill", "-f", f"{script}"], check=False)
+            await anyio.sleep(1)
+        except Exception:
+            pass
+        
+        # Spawn new process
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(project_root / "src")
+        try:
+            await anyio.run_process(
+                [sys.executable, str(script_path)],
+                env=env,
+                check=False
+            )
+            logger.info(f"Restarted MCP {name} ({script})")
+        except Exception as e:
+            logger.error(f"Failed to restart MCP {name}: {e}", exc_info=True)
 
     async def spawn_background_worker(
         self, 
