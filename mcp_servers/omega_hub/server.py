@@ -105,6 +105,9 @@ from omega.observability import new_trace_id, get_engine
 from omega.oracle.security import tdp_wrap, determine_url_taint
 from omega.ics import render as ics_render_logic
 from omega.mcp_runtime import run_mcp
+from omega.observability.observability_reader import SovereignReader
+from pathlib import Path
+import os
 
 logger = logging.getLogger("omega.hub")
 
@@ -117,6 +120,14 @@ mcp = FastMCP("Omega Core Hub")
 # [P1a-2] State, service singletons, hivemind state, background tasks,
 # and helper functions are now in mcp_servers.omega_hub.state (extracted).
 # Import block at top of file pulls them in by name.
+
+# Initialize SovereignReader for observability streaming
+data_dir = Path(os.environ.get("OMEGA_DATA_DIR", "data"))
+_sovereign_reader = SovereignReader(
+    db_path=data_dir / "observability" / "metrics.db",
+    trace_dir=data_dir / "traces",
+    crash_dir=data_dir / "crashes"
+)
 
 
 # [P1b] All MCP tool definitions moved to mcp_servers.omega_hub.tools
@@ -218,6 +229,53 @@ async def _config_get(request: Request) -> JSONResponse:
     return JSONResponse(data, status_code=status)
 
 
+# === OBSERVABILITY SSE STREAM ===
+
+async def _observability_stream(request: Request) -> None:
+    """Server-Sent Events stream for real-time observability data.
+    
+    Agents connect to this endpoint to receive live metrics, traces, and health updates.
+    Uses the SovereignReader to fetch data without blocking the event loop.
+    """
+    from sse_starlette.sse import EventSourceResponse
+    
+    async def event_generator():
+        import asyncio
+        while True:
+            try:
+                # Fetch data using SovereignReader (offloads to threads)
+                health = await _sovereign_reader.get_fleet_health()
+                traces = await _sovereign_reader.tail_live_traces(max_lines=10)
+                
+                # Build payload
+                payload = {
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "health": {
+                        "breaker_states": health.breaker_states,
+                        "global_error_rate": health.global_error_rate
+                    },
+                    "traces": [
+                        {
+                            "timestamp": t.timestamp,
+                            "level": t.level,
+                            "entity": t.entity,
+                            "message": t.message,
+                            "trace_id": t.trace_id
+                        }
+                        for t in traces
+                    ]
+                }
+                
+                yield {"event": "observability_update", "data": json.dumps(payload)}
+                
+            except Exception as e:
+                logger.error(f"Observability stream error: {e}")
+                yield {"event": "error", "data": json.dumps({"error": str(e)})}
+            
+            # Wait 2 seconds before next update
+            await asyncio.sleep(2)
+    
+    return EventSourceResponse(event_generator())
 
 
 async def _agent_list(request: Request) -> JSONResponse:
@@ -264,6 +322,7 @@ hub_routes = [
     Route("/provider.list", _provider_list),
     Route("/app.agents", _agent_list),
     Route("/proxy/{provider}", _proxy_handler),
+    Route("/obs/stream", _observability_stream),
 ]
 
 

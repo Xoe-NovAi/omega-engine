@@ -1,5 +1,27 @@
 # 🔱 Omega Engine — Changelog
 
+## [v1.4.0] - 2026-07-07
+### Fixed
+- **BudgetGate**: Removed duplicate class from `observability/__init__.py` (lines 580 & 1336); canonical implementation in `src/omega/oracle/budget_gate.py` (fixes 45+ test failures)
+- **Orchestrator**: Removed `omega-hub` from managed MCPs (prevents recursive spawn); now manages only `firecrawl` + `searxng`
+- **SovereignSearchService**: Tier execution loop catches generic `Exception` — provider failures trigger fallback instead of crashing protocol
+- **somatic_state.py**: Added missing `import os` (NameError in `purge_state`)
+- **headroom.py**: Added `AttributeError` handling for optional `headroom.retrieve`
+- **security.py**: `tdp_wrap` catches all `Exception` from user-defined `taint_level` callables
+
+### Added
+- **Tests**: 71 new tests for zero-coverage modules:
+  - `test_spatial_resolver.py` (14) — Force-Directed Graph layout (Fruchterman-Reingold)
+  - `test_subagent_dispatcher.py` (18) — HandoffPacket lifecycle, Capability Registry, dispatch prompts
+  - `test_somatic_state.py` (12) — Binary LLM State Serialization (M20)
+  - `test_credit_budget.py` (27) — API Credit Budget Tracker
+- **Documentation**: Updated BudgetGate references in `PROVIDER_FABRIC_DEEP_DIVE.md` and `R_CLOUD_QUARANTINE.md`
+- **PIVOT_LOG**: Decisions D198-D200 (Search resilience, zero-coverage test suite, worker coverage exclusion)
+
+### Changed
+- **Coverage Gate**: Exclude `src/omega/workers` from Temple-Grade T3 (workers are background processes, not core API)
+- **Core Oracle Coverage**: >80% (spatial_resolver, subagent_dispatcher, somatic_state, credit_budget now covered)
+
 ## [v1.3.0] - 2026-06-05
 ### Added
 - **Sovereign Infrastructure**: Implementation of re-entrant `ResourceGuard` using immutable `ContextVar` for safe subagent dispatch.

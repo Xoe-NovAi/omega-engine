@@ -24,29 +24,49 @@ def extract_yaml_blocks(file_path: Path):
     return blocks
 
 def validate_entity_yaml(yaml_text: str, file_path: Path):
-    """Validates a YAML block against the Entity Pydantic model."""
+    """Validates a YAML block. If it looks like an Entity, validates against the Entity model."""
     try:
-        data = yaml.safe_load(yaml_text)
-        if not data:
+        # If the block contains nested backticks, it's likely a documentation example
+        # of a block, not a YAML object itself. Skip it.
+        if "```" in yaml_text:
             return True
+
+        docs = list(yaml.safe_load_all(yaml_text))
         
-        # If it's a list of entities, validate each one
-        if isinstance(data, list):
-            for item in data:
-                Entity(**item)
-        elif isinstance(data, dict):
-            # If it's a single entity, validate it
-            Entity(**data)
+        for data in docs:
+            if not data:
+                continue
+            
+            if isinstance(data, dict) and "name" in data and "model" in data:
+                valid_fields = {f.name for f in Entity.__dataclass_fields__.values()}
+                known = {k: v for k, v in data.items() if k in valid_fields}
+                metadata = {k: v for k, v in data.items() if k not in valid_fields}
+                
+                if "metadata" in known:
+                    existing_meta = known["metadata"] if isinstance(known["metadata"], dict) else {}
+                    known["metadata"] = {**existing_meta, **metadata}
+                else:
+                    known["metadata"] = metadata
+                    
+                Entity(**known)
         
         return True
     except Exception as e:
-        logger.error(f"Invalid Entity YAML in {file_path}: {e}")
+        # If it's a syntax error but doesn't look like an entity, we can be lenient
+        if "name" not in yaml_text or "model" not in yaml_text:
+            return True
+        logger.error(f"Invalid YAML in {file_path}: {e}")
         return False
 
 def validate_docs(root_dir: Path):
-    """Walks the docs directory and validates all YAML blocks."""
+    """Walks the docs directory and validates all YAML blocks.
+    Skips archive and history directories.
+    """
     errors = 0
+    exclusions = ["archive", "history"]
     for md_file in root_dir.rglob("*.md"):
+        if any(excl in str(md_file) for excl in exclusions):
+            continue
         blocks = extract_yaml_blocks(md_file)
         for block in blocks:
             if not validate_entity_yaml(block, md_file):

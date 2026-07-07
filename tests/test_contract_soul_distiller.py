@@ -20,6 +20,7 @@ import shutil
 from pathlib import Path
 
 from omega.oracle.soul_distiller import SoulDistiller, DistillationEntry
+from omega.state import get_usm
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────
@@ -73,34 +74,35 @@ async def test_distill_saves_to_proposed_lessons_not_soul(temp_entities_dir):
         "The poison loop fix is not working — writes are still going to soul.yaml."
     )
     
-    # Verify proposed_lessons.yaml EXISTS
-    lessons_path = entity_dir / "proposed_lessons.yaml"
-    assert lessons_path.exists(), (
-        "proposed_lessons.yaml was not created. "
-        "The soul distiller should write to proposed_lessons.yaml."
+    # Verify proposed_lessons exists in USM
+    usm = get_usm()
+    content = await usm.load_state(f"proposed_lessons:test_entity")
+    assert content is not None, (
+        "proposed_lessons should be stored in USM. "
+        "The soul distiller should write to proposed_lessons:test_entity."
     )
     
     # Verify the 'proposals' section exists and contains L1/L2/L3 entries
-    content = lessons_path.read_text()
     assert "proposals:" in content, (
-        "proposed_lessons.yaml should contain a 'proposals:' section, "
+        "proposed_lessons should contain a 'proposals:' section, "
         f"got:\n{content}"
     )
     assert "L1_" in content or "L1_narrative" in content, (
-        "proposed_lessons.yaml should contain L1 narrative entries, "
+        "proposed_lessons should contain L1 narrative entries, "
         f"got:\n{content}"
     )
     assert "L2_" in content or "L2_insight" in content, (
-        "proposed_lessons.yaml should contain L2 insight entries, "
+        "proposed_lessons should contain L2 insight entries, "
         f"got:\n{content}"
     )
     assert "L3_" in content or "L3_principle" in content, (
-        "proposed_lessons.yaml should contain L3 principle entries, "
+        "proposed_lessons should contain L3 principle entries, "
         f"got:\n{content}"
     )
 
 
-def test_distill_creates_proposed_lessons_if_missing(temp_entities_dir):
+@pytest.mark.anyio
+async def test_distill_creates_proposed_lessons_if_missing(temp_entities_dir):
     """M21: Contract test — distill_and_save() creates proposed_lessons.yaml if missing.
     
     If an entity has no proposed_lessons.yaml yet, the soul distiller
@@ -109,18 +111,18 @@ def test_distill_creates_proposed_lessons_if_missing(temp_entities_dir):
     """
     tmp_dir, entity_dir, soul_path = temp_entities_dir
     
-    # Verify proposed_lessons.yaml does NOT exist before
-    lessons_path = entity_dir / "proposed_lessons.yaml"
-    assert not lessons_path.exists(), "Precondition failed: proposed_lessons.yaml should not exist yet"
-    
     distiller = SoulDistiller(str(tmp_dir))
-    result = distiller.distill_and_save(
+    result = await distiller.distill_and_save(
         session_transcript="Session: First session for this entity.",
         entity_name="test_entity",
     )
     
     assert result is True, "distill_and_save() should create proposed_lessons.yaml on first call"
-    assert lessons_path.exists(), "proposed_lessons.yaml should be created by distill_and_save()"
+    
+    # Verify proposed_lessons exists in USM
+    usm = get_usm()
+    content = await usm.load_state(f"proposed_lessons:test_entity")
+    assert content is not None, "proposed_lessons should be created in USM on first call"
 
 
 def test_distill_default_section_is_proposals(temp_entities_dir):
@@ -151,7 +153,8 @@ def test_distill_default_section_is_proposals(temp_entities_dir):
     )
 
 
-def test_soul_yaml_remains_readable_after_distill(temp_entities_dir):
+@pytest.mark.anyio
+async def test_soul_yaml_remains_readable_after_distill(temp_entities_dir):
     """M21: Contract test — soul.yaml remains valid YAML after soul distiller runs.
     
     The primary risk of the poison loop was that concurrent or sequential
@@ -163,7 +166,7 @@ def test_soul_yaml_remains_readable_after_distill(temp_entities_dir):
     
     # Run multiple distill calls to stress-test
     for i in range(3):
-        result = distiller.distill_and_save(
+        result = await distiller.distill_and_save(
             session_transcript=f"Session {i}: Test session number {i}.",
             entity_name="test_entity",
         )
@@ -181,7 +184,8 @@ def test_soul_yaml_remains_readable_after_distill(temp_entities_dir):
         pytest.fail(f"soul.yaml is no longer valid YAML after soul distiller runs:\n{e}")
 
 
-def test_proposed_lessons_is_valid_yaml(temp_entities_dir):
+@pytest.mark.anyio
+async def test_proposed_lessons_is_valid_yaml(temp_entities_dir):
     """M21: Contract test — proposed_lessons.yaml is valid YAML.
     
     The soul distiller must produce valid YAML that the Staging Gate TUI
@@ -191,22 +195,24 @@ def test_proposed_lessons_is_valid_yaml(temp_entities_dir):
     distiller = SoulDistiller(str(tmp_dir))
     
     # Run distill
-    distiller.distill_and_save(
+    await distiller.distill_and_save(
         session_transcript="Session: Testing YAML output validity.",
         entity_name="test_entity",
     )
     
-    lessons_path = entity_dir / "proposed_lessons.yaml"
-    content = lessons_path.read_text()
+    # Verify proposed_lessons is valid YAML in USM
+    usm = get_usm()
+    content = await usm.load_state(f"proposed_lessons:test_entity")
+    assert content is not None, "proposed_lessons should exist in USM"
     
     # Parse as YAML — should not raise
     import yaml
     try:
         parsed = yaml.safe_load(content)
-        assert parsed is not None, "proposed_lessons.yaml parsed to None"
+        assert parsed is not None, "proposed_lessons parsed to None"
         assert isinstance(parsed, dict), (
-            f"proposed_lessons.yaml should be a dict, got {type(parsed)}"
+            f"proposed_lessons should be a dict, got {type(parsed)}"
         )
-        assert "proposals" in parsed, "proposed_lessons.yaml should have 'proposals' key"
+        assert "proposals" in parsed, "proposed_lessons should have 'proposals' key"
     except yaml.YAMLError as e:
-        pytest.fail(f"proposed_lessons.yaml is not valid YAML:\n{content}\nError: {e}")
+        pytest.fail(f"proposed_lessons is not valid YAML:\n{content}\nError: {e}")

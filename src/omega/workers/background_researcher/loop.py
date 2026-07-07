@@ -20,8 +20,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 import anyio
+import redis.asyncio as redis
 from omega.library.coordinator import COORDINATOR, WorkerState
-from omega.library.rate_limiter import RATE_LIMITER
 from omega.errors import (
     OmegaError,
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
@@ -32,7 +32,7 @@ from omega.errors import (
     ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
     EntityTombstonedError, ModelNotFoundError,
 )
-import httpx
+from omega.oracle.resource_guard import ResourceGuard
 
 from .models import ResearchTask, TriageResult, GnosisPacket, EnhancedPriorityQueue, RotationState
 from .scheduler import TopicScheduler
@@ -45,6 +45,9 @@ from .search_fleet import SearchFleet
 from .distiller import Distiller
 from .convergence import ConvergenceDetector
 from .soul_updater import SoulUpdater
+from omega.ingestion.scraper import SovereignScraper
+from omega.ingestion.verifier import TriangulationVerifier
+from omega.archive.cas import CASArchiver
 
 logger = logging.getLogger(__name__)
 
@@ -81,10 +84,85 @@ class BackgroundResearcherLoop:
         # H2-N Phase 2: WorkerCoordinator
         self.coordinator = COORDINATOR
 
+        # Sovereign Ingestion Pipeline (IW-4)
+        self.cas = CASArchiver()
+        self.scraper = SovereignScraper(cas_archiver=self.cas)
+        self.verifier = TriangulationVerifier()
+
+        # SovereignWorker Unification: Redis-backed queue + ResourceGuard
+        self.redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
+        self._redis: Optional[redis.Redis] = None
+        self.resource_guard = ResourceGuard(total_capacity=4)
+        
+        # Somatic Save-Point: checkpoint path for state serialization
+        self.savepoint_path = Path("data/research/savepoints/background_researcher.json")
+        self.savepoint_path.parent.mkdir(parents=True, exist_ok=True)
+
         # State
         self._running = False
         self._cycle_count = 0
         self.lock_path = Path("/tmp/omega/research.lock")
+
+    # ── Redis Connection & Somatic Save-Points ────────────────────────────────
+
+    async def _get_redis(self) -> redis.Redis:
+        """Lazy-initialize Redis connection."""
+        if self._redis is None:
+            self._redis = redis.from_url(self.redis_url, decode_responses=True)
+        return self._redis
+
+    async def _save_somatic_state(self, cycle_id: str, task_topic: str, state: str):
+        """
+        Implements a Somatic Save-Point for the BackgroundResearcherLoop.
+        Serializes the current processing state to prevent restart-loops.
+        """
+        savepoint = {
+            "cycle_id": cycle_id,
+            "task_topic": task_topic,
+            "state": state,
+            "timestamp": time.time(),
+            "cycle_count": self._cycle_count,
+        }
+        try:
+            async with await anyio.open_file(self.savepoint_path, "w") as f:
+                await f.write(json.dumps(savepoint))
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.warning(f"Failed to save somatic state: {e}")
+
+    async def _load_somatic_state(self) -> Optional[Dict]:
+        """Loads the last known somatic state."""
+        if not await anyio.Path(self.savepoint_path).exists():
+            return None
+        try:
+            async with await anyio.open_file(self.savepoint_path, "r") as f:
+                content = await f.read()
+                return json.loads(content)
+        except (OmegaError, RuntimeError, OSError, json.JSONDecodeError) as e:
+            logger.warning(f"Failed to load somatic state: {e}")
+            return None
+
+    async def submit_deep_job(self, url: str, tier: str = "deep", priority: int = 0) -> str:
+        """Submit a deep extraction job to the Redis queue for SovereignWorker."""
+        r = await self._get_redis()
+        job_id = f"job_{uuid.uuid4().hex[:12]}"
+        job_data = {
+            "job_id": job_id,
+            "url": url,
+            "tier": tier,
+            "priority": priority,
+            "retry_count": 0,
+        }
+        await r.lpush("curation_queue", json.dumps(job_data))
+        logger.info(f"Deep job {job_id} submitted for {url} [{tier}]")
+        return job_id
+
+    async def get_job_result(self, job_id: str) -> Optional[Dict]:
+        """Retrieve a completed job result from Redis."""
+        r = await self._get_redis()
+        result_data = await r.get(f"job_result:{job_id}")
+        if result_data:
+            return json.loads(result_data)
+        return None
 
     # ── Public API ──────────────────────────────────────────────────────────
 
@@ -316,6 +394,10 @@ class BackgroundResearcherLoop:
         return results
 
     async def _extract(self, task: ResearchTask, sources: dict[str, list[str]]) -> str:
+        """
+        Extract content using the Sovereign Ingestion Pipeline (IW-4).
+        Implements T1 Fast → T3 Deep → Triangulation verification.
+        """
         content_chunks = []
         urls_seen = set()
         all_urls = []
@@ -324,37 +406,46 @@ class BackgroundResearcherLoop:
                 if url not in urls_seen and url.strip():
                     urls_seen.add(url)
                     all_urls.append(url)
+        
+        # Limit to top 5 URLs for processing
         for url in all_urls[:5]:
             try:
-                chunk = await self._fetch_content(url)
-                if chunk:
-                    content_chunks.append(f"[Source: {url}]\n{chunk}")
-            except OmegaError:
-                continue
+                # T1: Fast extraction (Trafilatura)
+                t1_result = await self.scraper.scrape(url, tier="fast")
+                
+                if not t1_result.success:
+                    logger.warning(f"T1 Fast scrape failed for {url}: {t1_result.error}")
+                    continue
+                
+                # T3: Deep extraction (Crawl4AI) for triangulation
+                t3_result = await self.scraper.scrape(url, tier="deep")
+                
+                if not t3_result.success:
+                    logger.warning(f"T3 Deep scrape failed for {url}: {t3_result.error}")
+                    # Fallback to T1 content
+                    content_chunks.append(f"[Source: {url}] [Tier: T1]\n{t1_result.content}")
+                    continue
+                
+                # Triangulation Verification
+                verification = await self.verifier.verify(
+                    t1_result={"content": t1_result.content, "metadata": t1_result.metadata},
+                    t3_result={"content": t3_result.content, "metadata": t3_result.metadata}
+                )
+                
+                if verification.is_verified:
+                    # Use T3 content (more complete)
+                    content_chunks.append(f"[Source: {url}] [Tier: T3-Verified]\n{t3_result.content}")
+                    logger.info(f"Triangulation verified for {url} (confidence: {verification.confidence_score:.2f})")
+                else:
+                    # Use T1 content but flag dispute
+                    content_chunks.append(f"[Source: {url}] [Tier: T1-Disputed]\n{t1_result.content}")
+                    logger.warning(f"Triangulation dispute for {url}: {verification.disputes}")
+                    
             except (OmegaError, RuntimeError, OSError) as e:
-                logger.error("Failed to fetch URL %s: %s", url, e, exc_info=True)
+                logger.error(f"Failed to extract from {url}: {e}", exc_info=True)
                 continue
+        
         return "\n\n---\n\n".join(content_chunks[:3])
-
-    async def _fetch_content(self, url: str) -> Optional[str]:
-        # [id-soft: quake3-1999] netchan Rate Limiting — pace outbound fetches
-        await RATE_LIMITER.wait(url)
-        firecrawl_content = await self.search_fleet.extract_firecrawl(url)
-        if firecrawl_content and len(firecrawl_content) > 100:
-            return firecrawl_content[:10000]
-        exa_content = await self.search_fleet.fetch_exa(url)
-        if exa_content and len(exa_content) > 100:
-            return exa_content[:8000]
-        try:
-            async with httpx.AsyncClient(timeout=10.0) as client:
-                resp = await client.get(url, follow_redirects=True)
-                resp.raise_for_status()
-                return resp.text[:8000]
-        except OmegaError:
-            return None
-        except (OmegaError, RuntimeError, OSError) as e:
-            logger.error("HTTP fallback failed for %s: %s", url, e, exc_info=True)
-            return None
 
     async def _enqueue_adjacent(self, task: ResearchTask, gnosis: GnosisPacket) -> None:
         if gnosis.recommendation in ("write_to_soul", "write_to_knowledge") and task.depth < 3:

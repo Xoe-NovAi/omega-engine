@@ -61,7 +61,8 @@ CREATE TABLE IF NOT EXISTS performance (
     prompt_tokens INTEGER DEFAULT 0,
     completion_tokens INTEGER DEFAULT 0,
     total_tokens INTEGER DEFAULT 0,
-    is_cloud INTEGER DEFAULT 0
+    is_cloud INTEGER DEFAULT 0,
+    cost_usd REAL DEFAULT 0.0
 );
 
 -- Baseline metrics for regression detection
@@ -126,6 +127,17 @@ class MetricsDB:
 
         # Create schema
         self._conn.executescript(_SCHEMA_SQL)
+
+        # Migration: add cost_usd column if missing (schema v1 -> v2)
+        try:
+            cursor = self._conn.execute("PRAGMA table_info(performance)")
+            columns = [row["name"] for row in cursor.fetchall()]
+            if "cost_usd" not in columns:
+                self._conn.execute("ALTER TABLE performance ADD COLUMN cost_usd REAL DEFAULT 0.0")
+                self._conn.commit()
+                logger.info("MetricsDB migration: added cost_usd column to performance table")
+        except Exception as e:
+            logger.warning("MetricsDB migration check failed: %s", e)
 
         # Record schema version
         now = int(time.time() * 1000)
@@ -202,16 +214,17 @@ class MetricsDB:
         completion_tokens: int = 0,
         is_cloud: bool = False,
         trace_id: Optional[str] = None,
+        cost_usd: float = 0.0,
     ) -> None:
         """Record a performance measurement (latency, tokens, cost)."""
         ts = int(time.time() * 1000)
         total_tokens = prompt_tokens + completion_tokens
         self._conn.execute(
             "INSERT INTO performance (ts, trace_id, provider, model_used, latency_ms, "
-            "prompt_tokens, completion_tokens, total_tokens, is_cloud) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "prompt_tokens, completion_tokens, total_tokens, is_cloud, cost_usd) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (ts, trace_id, provider, model_used, latency_ms,
-             prompt_tokens, completion_tokens, total_tokens, int(is_cloud)),
+             prompt_tokens, completion_tokens, total_tokens, int(is_cloud), cost_usd),
         )
         self._conn.commit()
 

@@ -96,7 +96,7 @@ class TestRollover:
         first = await manager.get_session_id("sophia")
         assert today in first
 
-        # Simulate tomorrow by writing a fake active file with yesterday's date
+        # Simulate tomorrow by writing a fake active file and USM state with yesterday's date
         active_file = manager.session_dir / "sophia.active"
         fake_data = {
             "date": "20260101",  # Old date
@@ -105,6 +105,10 @@ class TestRollover:
             "entity": "sophia",
         }
         active_file.write_text(json.dumps(fake_data))
+        
+        from omega.state import get_usm
+        usm = get_usm()
+        await usm.save_state(f"session:sophia:active", fake_data)
 
         # Next call should create new session with counter=6
         new_id = await manager.get_session_id("sophia")

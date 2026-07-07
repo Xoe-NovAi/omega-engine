@@ -204,10 +204,19 @@ Output: Timeout dict
 class TestGetMCPStatus:
     def test_get_mcp_status_empty(self, orchestrator):
         """get_mcp_status returns empty dict when no checks have run."""
+        orchestrator._mcp_status = {}
         assert orchestrator.get_mcp_status() == {}
 
     def test_get_mcp_status_after_check(self, orchestrator):
-        """get_mcp_status returns stored statuses."""
-        orchestrator._mcp_status["omega-hub"] = {"status": "healthy", "port": 8016}
+        """get_mcp_status returns stored statuses for managed MCPs only.
+        
+        Note: omega-hub is managed by systemd, not Orchestrator, so it won't
+        appear in _mcp_status. Only firecrawl and searxng are managed.
+        """
+        orchestrator._mcp_status["firecrawl"] = {"status": "healthy", "port": 8015}
+        orchestrator._mcp_status["searxng"] = {"status": "healthy", "port": 8018}
         status = orchestrator.get_mcp_status()
-        assert status["omega-hub"]["status"] == "healthy"
+        assert status["firecrawl"]["status"] == "healthy"
+        assert status["searxng"]["status"] == "healthy"
+        # omega-hub should NOT be in status (managed by systemd)
+        assert "omega-hub" not in status

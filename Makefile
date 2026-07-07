@@ -46,6 +46,7 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo "  $(COLOR_CYAN)make talk 'q'$(COLOR_NC)     🗣️  Quick query via Oracle (alias)"
 	@echo "  $(COLOR_CYAN)make summon E 'q'$(COLOR_NC) 🧞 Direct entity summon (alias)"
 	@echo "  $(COLOR_CYAN)make health$(COLOR_NC)       🩺 System health dashboard"
+	@echo "  $(COLOR_CYAN)make fleet-status$(COLOR_NC) 📊 Launch Sovereign Observatory TUI"
 	@echo "  $(COLOR_CYAN)make doctor$(COLOR_NC)       🩺 Full system diagnosis"
 	@echo "  $(COLOR_CYAN)make menu$(COLOR_NC)         📋 This menu"
 	@echo ""
@@ -231,7 +232,7 @@ wad-reset: ## 🔄 Reset to reference IWAD (_omega_default)
 # 🚀 CORE COMMANDS
 # ============================================================================
 
-.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank wad-status audit-no-rag-v1 setup bootstrap demo test test-cov test-oracle-bootstrap mcp-check lint typecheck guard clean doctor verify-pending verify-stale verify-mining verify-rollup verify-cleanup verify-status knowledge-index knowledge-flow verify-search-tools firecrawl-status model-download model-list model-clean
+.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank wad-status audit-no-rag-v1 setup bootstrap demo test test-cov test-oracle-bootstrap mcp-check lint typecheck guard clean doctor verify-pending verify-stale verify-mining verify-rollup verify-cleanup verify-status knowledge-index knowledge-flow verify-search-tools firecrawl-status model-download model-list model-clean fleet-status
 
 help: ## 📚 Show this help
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z_-]+:.*## / {printf "  $(COLOR_CYAN)%-20s$(COLOR_NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -456,6 +457,10 @@ repl: ## 💬 Launch interactive REPL
 
 health: ## 🩺 Show system health dashboard
 	omega health
+
+fleet-status: ## 📊 Launch the Sovereign Observatory TUI
+	@echo "$(COLOR_CYAN)📊 Launching Sovereign Observatory...$(COLOR_NC)"
+	@$(PYTHON) src/omega/cli/fleet_status_tui.py
 
 model-status: ## 🤖 Show available models across all providers
 	omega model-status

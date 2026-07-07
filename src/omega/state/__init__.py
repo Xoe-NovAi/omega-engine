@@ -5,6 +5,8 @@
 # 
 # Core state management for the Omega Engine, providing the USM singleton.
 # 
+from .cas import CASManager
+from .somatic_state import SomaticStateManager
 from .usm import USMManager
 from typing import Optional
 
@@ -26,3 +28,12 @@ async def reset_usm() -> None:
     """Reset the USM singleton for testing."""
     global _usm
     _usm = None
+
+__all__ = [
+    "CASManager",
+    "SomaticStateManager",
+    "UnifiedStateManager",
+    "get_usm",
+    "initialize_usm",
+    "reset_usm",
+]

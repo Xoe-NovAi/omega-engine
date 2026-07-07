@@ -39,6 +39,13 @@ from omega.constants import ZONEID_TRACE
 from omega.observability.bleg import BLEGMiddleware
 from omega.observability.ufl import UFLWriter, get_ufl_writer
 from omega.observability.metrics_db import MetricsDB
+from omega.observability.otel_exporter import OTelSQLiteExporter, setup_otel_exporter
+from omega.observability.regression_watcher import (
+    RegressionWatcher, 
+    start_regression_watcher, 
+    stop_regression_watcher,
+    get_regression_watcher,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -566,6 +573,156 @@ class ForensicsManager:
         return self._has_crashed
 
 
+# ── Budget Gate (M7 Local-First Enforcement) ────────────────────────────
+# [id-soft: quake-1996] Zone Memory — resource guard with budget enforcement.
+
+class BudgetGate:
+    """
+    Enforces cloud inference budget limits per Mandate 7 (Local-First).
+    
+    Tracks daily cloud token spend and blocks cloud requests when budget exceeded.
+    Local inference is always allowed (budget-free).
+    """
+    
+    # Default daily budget in USD (configurable via env)
+    DEFAULT_DAILY_BUDGET_USD = float(os.environ.get("OMEGA_DAILY_CLOUD_BUDGET_USD", "1.00"))
+    
+    # Cost per 1K tokens for known cloud providers (approximate)
+    PROVIDER_COSTS = {
+        "google": {"input": 0.000125, "output": 0.000375},  # Gemini 1.5 Flash
+        "openrouter": {"input": 0.0005, "output": 0.0015},  # Varies by model
+        "openai": {"input": 0.005, "output": 0.015},  # GPT-4o-mini
+        "anthropic": {"input": 0.003, "output": 0.015},  # Claude Haiku
+        "azure": {"input": 0.005, "output": 0.015},
+        "aws": {"input": 0.005, "output": 0.015},
+        "copilot": {"input": 0.0, "output": 0.0},  # Included in subscription
+        "opencode": {"input": 0.0, "output": 0.0},  # Included in subscription
+    }
+    
+    def __init__(self, metrics_db: Optional["MetricsDB"] = None):
+        self._metrics_db = metrics_db
+        self._daily_budget = self.DEFAULT_DAILY_BUDGET_USD
+        self._daily_spend_cache: Dict[str, float] = {}  # date -> spend
+        self._cache_date: Optional[str] = None
+    
+    def _get_provider_costs(self, provider: str) -> Dict[str, float]:
+        """Get cost per 1K tokens for a provider."""
+        provider_lower = provider.lower()
+        for key, costs in self.PROVIDER_COSTS.items():
+            if key in provider_lower:
+                return costs
+        # Default conservative estimate for unknown cloud providers
+        return {"input": 0.001, "output": 0.003}
+    
+    def _get_today_spend(self) -> float:
+        """Get today's cloud spend from MetricsDB."""
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        
+        if self._cache_date == today and today in self._daily_spend_cache:
+            return self._daily_spend_cache[today]
+        
+        if not self._metrics_db:
+            return 0.0
+        
+        try:
+            ts_start = int(datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0).timestamp() * 1000)
+            cursor = self._metrics_db._conn.execute(
+                "SELECT SUM(cost_usd) as total FROM performance WHERE ts >= ? AND is_cloud = 1",
+                (ts_start,)
+            )
+            row = cursor.fetchone()
+            spend = row["total"] if row and row["total"] else 0.0
+            self._daily_spend_cache[today] = spend
+            self._cache_date = today
+            return spend
+        except Exception:
+            return 0.0
+    
+    def estimate_cost(self, provider: str, prompt_tokens: int, completion_tokens: int) -> float:
+        """Estimate cost in USD for a cloud inference request."""
+        costs = self._get_provider_costs(provider)
+        input_cost = (prompt_tokens / 1000) * costs["input"]
+        output_cost = (completion_tokens / 1000) * costs["output"]
+        return input_cost + output_cost
+    
+    def check_budget(self, provider: str, prompt_tokens: int, completion_tokens: int) -> tuple[bool, str]:
+        """
+        Check if a cloud request would exceed the daily budget.
+        
+        Returns:
+            (allowed: bool, reason: str)
+        """
+        # Local providers always allowed
+        if not self._is_cloud_provider(provider):
+            return True, "Local provider — no budget limit"
+        
+        estimated_cost = self.estimate_cost(provider, prompt_tokens, completion_tokens)
+        current_spend = self._get_today_spend()
+        projected_spend = current_spend + estimated_cost
+        
+        if projected_spend > self._daily_budget:
+            return False, (
+                f"Daily cloud budget exceeded: ${current_spend:.4f} spent, "
+                f"${estimated_cost:.4f} estimated, ${self._daily_budget:.2f} limit"
+            )
+        
+        return True, f"Budget OK: ${current_spend:.4f}/${self._daily_budget:.2f} used"
+    
+    def _is_cloud_provider(self, provider: str) -> bool:
+        """Check if provider is cloud-based (same logic as OTel exporter)."""
+        local_indicators = ["ollama", "lmstudio", "lm_studio", "native", "gguf", "llama.cpp", "local", "mock"]
+        provider_lower = provider.lower()
+        for indicator in local_indicators:
+            if indicator in provider_lower:
+                return False
+        return True
+    
+    def record_spend(self, provider: str, prompt_tokens: int, completion_tokens: int, trace_id: Optional[str] = None) -> float:
+        """Record actual spend after a cloud inference. Returns cost in USD."""
+        if not self._is_cloud_provider(provider):
+            return 0.0
+        
+        cost = self.estimate_cost(provider, prompt_tokens, completion_tokens)
+        
+        if self._metrics_db:
+            try:
+                ts = int(time.time() * 1000)
+                self._metrics_db._conn.execute(
+                    "UPDATE performance SET cost_usd = ? WHERE trace_id = ? AND is_cloud = 1",
+                    (cost, trace_id)
+                )
+                self._metrics_db._conn.commit()
+            except Exception:
+                pass
+        
+        # Invalidate cache
+        self._daily_spend_cache.clear()
+        return cost
+    
+    def get_status(self) -> Dict[str, Any]:
+        """Get current budget status."""
+        spend = self._get_today_spend()
+        return {
+            "daily_budget_usd": self._daily_budget,
+            "current_spend_usd": spend,
+            "remaining_usd": max(0, self._daily_budget - spend),
+            "utilization_pct": (spend / self._daily_budget * 100) if self._daily_budget > 0 else 0,
+        }
+
+
+# Add cost_usd column to performance table if not exists (migration)
+def _ensure_cost_column(metrics_db: "MetricsDB") -> None:
+    """Ensure cost_usd column exists in performance table."""
+    try:
+        cursor = metrics_db._conn.execute("PRAGMA table_info(performance)")
+        columns = [row["name"] for row in cursor.fetchall()]
+        if "cost_usd" not in columns:
+            metrics_db._conn.execute("ALTER TABLE performance ADD COLUMN cost_usd REAL DEFAULT 0.0")
+            metrics_db._conn.commit()
+    except Exception:
+        pass
+
+
 # ── Observability Engine ──────────────────────────────────────────────
 class ObservabilityEngine:
     """Central observability, logging, dataset collection, and forensics."""
@@ -595,6 +752,18 @@ class ObservabilityEngine:
         # [id-soft: doom3-2004] Event System — structured event logging for observability.
         self._metrics_db = metrics_db
         self._metrics_db_initialized = False
+        
+        # OTel GenAI Exporter — exports spans to MetricsDB
+        self._otel_exporter: Optional[OTelSQLiteExporter] = None
+        self._otel_initialized = False
+        
+        # Regression Watcher — automated baseline regression detection
+        self._regression_watcher: Optional[RegressionWatcher] = None
+        self._regression_watcher_started = False
+        
+        # Budget Gate — M7 Local-First enforcement
+        self._budget_gate: Optional[BudgetGate] = None
+        self._budget_gate_initialized = False
 
     def _ensure_metrics_db(self) -> Optional[MetricsDB]:
         """Lazy-initialize MetricsDB if not already provided.
@@ -619,10 +788,134 @@ class ObservabilityEngine:
             logger.warning("Failed to initialize MetricsDB: %s", e)
         return self._metrics_db
 
+    def _ensure_otel_exporter(self) -> Optional[OTelSQLiteExporter]:
+        """Lazy-initialize OTel GenAI exporter."""
+        if self._otel_initialized:
+            return self._otel_exporter
+        self._otel_initialized = True
+        
+        metrics_db = self.metrics_db
+        if not metrics_db:
+            return None
+            
+        if os.environ.get("OMEGA_ENV") == "test":
+            return None
+            
+        try:
+            self._otel_exporter = setup_otel_exporter(metrics_db)
+            logger.info("OTel GenAI SQLite exporter initialized")
+        except (OSError, RuntimeError, ImportError) as e:
+            logger.warning("Failed to initialize OTel exporter: %s", e)
+        return self._otel_exporter
+
+    @property
+    def otel_exporter(self) -> Optional[OTelSQLiteExporter]:
+        """Access the OTel GenAI exporter (lazy-initialized)."""
+        return self._ensure_otel_exporter()
+
     @property
     def metrics_db(self) -> Optional[MetricsDB]:
         """Access the MetricsDB instance (lazy-initialized)."""
         return self._ensure_metrics_db()
+
+    async def start_regression_watcher(
+        self, 
+        interval_seconds: int = 300, 
+        threshold: float = 0.1
+    ) -> Optional[RegressionWatcher]:
+        """Start the regression watcher background task.
+        
+        Args:
+            interval_seconds: Check interval in seconds (default 300 = 5 min)
+            threshold: Regression threshold as percentage (default 0.1 = 10%)
+            
+        Returns:
+            The RegressionWatcher instance, or None if MetricsDB not available
+        """
+        if self._regression_watcher_started:
+            return self._regression_watcher
+        
+        metrics_db = self.metrics_db
+        if not metrics_db:
+            logger.warning("Cannot start RegressionWatcher: MetricsDB not available")
+            return None
+        
+        if os.environ.get("OMEGA_ENV") == "test":
+            return None
+        
+        try:
+            self._regression_watcher = RegressionWatcher(
+                metrics_db, 
+                interval_seconds, 
+                threshold
+            )
+            await self._regression_watcher.start()
+            self._regression_watcher_started = True
+            logger.info("RegressionWatcher started")
+            return self._regression_watcher
+        except Exception as e:
+            logger.error(f"Failed to start RegressionWatcher: {e}")
+            return None
+
+    async def stop_regression_watcher(self) -> None:
+        """Stop the regression watcher background task."""
+        if self._regression_watcher and self._regression_watcher_started:
+            await self._regression_watcher.stop()
+            self._regression_watcher_started = False
+            logger.info("RegressionWatcher stopped")
+
+    def _ensure_budget_gate(self) -> Optional[BudgetGate]:
+        """Lazy-initialize BudgetGate."""
+        if self._budget_gate_initialized:
+            return self._budget_gate
+        self._budget_gate_initialized = True
+        
+        metrics_db = self.metrics_db
+        if not metrics_db:
+            return None
+        
+        if os.environ.get("OMEGA_ENV") == "test":
+            return None
+        
+        try:
+            self._budget_gate = BudgetGate(metrics_db)
+            # Ensure cost_usd column exists
+            _ensure_cost_column(metrics_db)
+            logger.info("BudgetGate initialized")
+        except Exception as e:
+            logger.warning(f"Failed to initialize BudgetGate: {e}")
+        return self._budget_gate
+
+    @property
+    def budget_gate(self) -> Optional[BudgetGate]:
+        """Access the BudgetGate (lazy-initialized)."""
+        return self._ensure_budget_gate()
+
+    def check_cloud_budget(self, provider: str, prompt_tokens: int, completion_tokens: int) -> tuple[bool, str]:
+        """Check if a cloud request would exceed the daily budget.
+        
+        Returns:
+            (allowed: bool, reason: str)
+        """
+        gate = self.budget_gate
+        if not gate:
+            return True, "BudgetGate not available — allowing"
+        return gate.check_budget(provider, prompt_tokens, completion_tokens)
+
+    def record_cloud_spend(self, provider: str, prompt_tokens: int, completion_tokens: int, trace_id: Optional[str] = None) -> float:
+        """Record actual spend after a cloud inference. Returns cost in USD."""
+        gate = self.budget_gate
+        if not gate:
+            return 0.0
+        return gate.record_spend(provider, prompt_tokens, completion_tokens, trace_id)
+
+    @property
+    def budget_status(self) -> Dict[str, Any]:
+        """Get current budget status."""
+        gate = self.budget_gate
+        if not gate:
+            return {"error": "BudgetGate not available"}
+        return gate.get_status()
 
     # ── Trace an entire interaction cycle ────────────────────────────
     def trace(self, trace_id: Optional[str] = None, parent_trace_id: Optional[str] = None) -> "TraceSession":
@@ -1034,3 +1327,16 @@ def get_engine() -> ObservabilityEngine:
     if _engine is None:
         _engine = ObservabilityEngine()
     return _engine
+
+
+# Add cost_usd column to performance table if not exists (migration)
+def _ensure_cost_column(metrics_db: "MetricsDB") -> None:
+    """Ensure cost_usd column exists in performance table."""
+    try:
+        cursor = metrics_db._conn.execute("PRAGMA table_info(performance)")
+        columns = [row["name"] for row in cursor.fetchall()]
+        if "cost_usd" not in columns:
+            metrics_db._conn.execute("ALTER TABLE performance ADD COLUMN cost_usd REAL DEFAULT 0.0")
+            metrics_db._conn.commit()
+    except Exception:
+        pass

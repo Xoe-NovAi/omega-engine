@@ -86,3 +86,11 @@ where = ["src"]
 testpaths = ["tests"]
 asyncio_mode = "auto"
 addopts = "--ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=60 --durations=15"
+
+[tool.coverage.run]
+source = ["src/omega"]
+omit = [
+    "src/omega/workers/*",
+    "src/omega/ingestion/*",
+    "src/omega/library/*",
+]

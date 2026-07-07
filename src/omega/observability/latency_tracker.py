@@ -27,14 +27,14 @@ class LatencyTracker:
     def __init__(self):
         pass
 
-    def record(self, provider: str, model: str, latency_ms: float, status: str = "success", trace_id: Optional[str] = None):
+    def record(self, provider: str, model: str, latency_ms: float, status: str = "success", trace_id: Optional[str] = None, is_cloud: bool = False):
         """Records a single inference latency event via the ObservabilityEngine."""
         try:
             get_engine().record_performance(
                 latency_ms=latency_ms,
                 provider=provider,
                 model_used=model,
-                is_cloud=False, # Default to local, can be refined if provider info is available
+                is_cloud=is_cloud,
                 trace_id=trace_id
             )
         except (OmegaError, RuntimeError, OSError) as e:

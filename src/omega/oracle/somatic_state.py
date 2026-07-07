@@ -7,6 +7,7 @@
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 import anyio
+import os
 from typing import Optional
 from pathlib import Path
 import llama_cpp

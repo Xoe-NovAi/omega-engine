@@ -450,7 +450,8 @@ class Orchestrator:
         task_prompt: str, 
         entity_name: str,
         timeout: int = 300,
-        handoff_state: Optional[HandoffState] = None
+        handoff_state: Optional[HandoffState] = None,
+        trace_id: Optional[str] = None
     ) -> Dict[str, Any]:
         """Dispatch a headless CLI agent with the entity's soul injected.
         
@@ -460,6 +461,7 @@ class Orchestrator:
             entity_name: The awakened entity's name (for soul injection)
             timeout: Maximum execution time in seconds
             handoff_state: Optional state for transferring context from another agent
+            trace_id: Optional trace ID for observability propagation
             
         Returns:
             Dict containing the exit status and stdout of the agent.
@@ -521,6 +523,10 @@ class Orchestrator:
             # Prepare environment with entity model override
             env = os.environ.copy()
             env['OPENCODE_MODEL'] = entity_model  # Pass entity's designated model to OpenCode CLI
+            
+            # Propagate trace_id to subprocess for observability continuity
+            if trace_id:
+                env['OMEGA_TRACE_ID'] = trace_id
             
             # The async context manager from resource_guard.py has no __aenter__ / __aexit__ natively 
             # if it's returning an AsyncContextManager but wait, resource_guard.py defines it as:

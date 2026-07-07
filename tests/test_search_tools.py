@@ -1,6 +1,7 @@
 import pytest
 import subprocess
 import os
+import shutil
 from pathlib import Path
 
 # 🔱 Omega Engine — Search Tool Verification Suite
@@ -12,7 +13,12 @@ def run_command(cmd):
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     return result
 
+def has_firecrawl_cli():
+    """Check if Firecrawl CLI is available."""
+    return shutil.which("firecrawl") is not None
+
 @pytest.mark.skipif(os.getenv("CI") == "true", reason="Network tests skipped in CI")
+@pytest.mark.skipif(not has_firecrawl_cli(), reason="Firecrawl CLI not installed — integration test only")
 def test_firecrawl_connectivity():
     """
     Check Firecrawl connectivity and credit status.

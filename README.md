@@ -7,8 +7,8 @@
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 [![Local-First](https://img.shields.io/badge/Local--First-Primary-8A2BE2)]()
-[![Version](https://img.shields.io/badge/version-1.1.0-blue)]()
-  [![Tests](https://img.shields.io/badge/tests-855%20passing-brightgreen)]()
+[![Version](https://img.shields.io/badge/version-1.0.0-blue)]()
+  [![Tests](https://img.shields.io/badge/tests-911%20passing-brightgreen)]()
 
 
 ---
@@ -62,7 +62,7 @@ omega backends                           # List available inference backends
 omega health                             # Show provider status and latency
 omega talk "hello" --iwad arcana_novai   # Load a specific IWAD stack
 omega version                            # Show version
-make test                                # Run the 855-test suite
+make test                                # Run the 911-test suite
 make temple-grade                        # Verify all 11 Temple-Grade gates
 make menu                                # Full command menu
 ```
@@ -190,7 +190,7 @@ Switch IWADs at runtime: `omega talk --iwad arcana_novai "hello"`
 
 | Gate | Status |
 |------|--------|
-| Test Suite | **855 collected, 855 passing** (41 skipped, 3 xfailed) |
+| Test Suite | **911 collected, 911 passing** (43 skipped, 3 xfailed) |
 | Temple-Grade (T1-T11) | **✅ VERIFIED (v7.5.4)** |
 | Sovereign Mandates (M1-M22) | **All 22 enforced** (see `SOVEREIGN_MANDATES.md`) |
 | Agent Fleet | **11 agents** (10 Pillar + 1 Oversoul), M10 compliant |

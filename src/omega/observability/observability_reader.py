@@ -239,8 +239,11 @@ class SovereignReader:
     # ─── Forensic Trace Tailing (JSONL) ───────────────────────────────────────
 
     def _sync_tail_live_traces(self, max_lines: int) -> List[TraceEvent]:
-        """O(1) reverse-binary scan of the active traces.log file."""
-        trace_file = self.trace_dir / "traces.jsonl"
+        """O(1) reverse-binary scan of the active daily event file."""
+        # Events are written to data/logs/events/YYYY-MM-DD.jsonl
+        today = datetime.utcnow().strftime("%Y-%m-%d")
+        trace_file = self.trace_dir.parent / "logs" / "events" / f"{today}.jsonl"
+        
         if not trace_file.exists():
             return []
 
@@ -273,11 +276,13 @@ class SovereignReader:
                             break
                         try:
                             data = json.loads(line.decode("utf-8"))
+                            # Extract the actual event data from the wrapped format
+                            event_data = data.get("data", data)
                             events.append(TraceEvent(
                                 timestamp=data.get("timestamp", ""),
-                                level=data.get("level", "INFO"),
-                                entity=data.get("entity", "system"),
-                                message=data.get("message", ""),
+                                level=event_data.get("level", "INFO"),
+                                entity=event_data.get("entity", "system"),
+                                message=event_data.get("message", str(event_data)[:200]),
                                 trace_id=data.get("trace_id", "unknown"),
                                 raw=data
                             ))
@@ -288,11 +293,12 @@ class SovereignReader:
                 if buffer.strip() and len(events) < max_lines:
                     try:
                         data = json.loads(buffer.decode("utf-8"))
+                        event_data = data.get("data", data)
                         events.append(TraceEvent(
                             timestamp=data.get("timestamp", ""),
-                            level=data.get("level", "INFO"),
-                            entity=data.get("entity", "system"),
-                            message=data.get("message", ""),
+                            level=event_data.get("level", "INFO"),
+                            entity=event_data.get("entity", "system"),
+                            message=event_data.get("message", str(event_data)[:200]),
                             trace_id=data.get("trace_id", "unknown"),
                             raw=data
                         ))

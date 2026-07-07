@@ -6,10 +6,12 @@ Tests the full ingestion pipeline with real scholarly URLs.
 import asyncio
 import sys
 import os
+import pytest
 
 # Add src to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
+from unittest.mock import MagicMock, AsyncMock
 from omega.ingestion.scraper import SovereignScraper
 from omega.ingestion.verifier import TriangulationVerifier
 from omega.library.enrichment import EnrichmentEngine
@@ -64,6 +66,7 @@ async def test_tier3_deep_scrape():
         print("This is an EXPECTED FAILURE in test environments without browsers installed.")
         return False  # Mark as expected failure
 
+@pytest.mark.anyio
 async def test_triangulation_verifier():
     """Test Triangulation Verifier (Sovereign-Sieve)."""
     print("\n=== Test 3: Triangulation Verifier (Sovereign-Sieve) ===")
@@ -79,7 +82,11 @@ async def test_triangulation_verifier():
         "metadata": {"title": "Test Document", "author": "Test Author"}
     }
     
-    verifier = TriangulationVerifier(EnrichmentEngine())
+    # Mock EnrichmentEngine to avoid external API calls
+    mock_enrichment = MagicMock(spec=EnrichmentEngine)
+    mock_enrichment.get_authoritative_value = AsyncMock(return_value="Test Author")
+    
+    verifier = TriangulationVerifier(mock_enrichment)
     result = await verifier.verify(t1_result, t3_result)
     
     print(f"Verified: {result.is_verified}")

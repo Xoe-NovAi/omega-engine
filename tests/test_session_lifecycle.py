@@ -223,6 +223,8 @@ class TestSessionLifecycleManager:
             mock_path.return_value.exists = AsyncMock(return_value=True)
             mock_path.return_value.parent = MagicMock()
             mock_path.return_value.copy = AsyncMock(side_effect=RuntimeError("IO error"))
+            mock_path.return_value.mkdir = AsyncMock()
+            
             result = await manager.recall_from_external("kali", "ses_001")
             assert result is False
 

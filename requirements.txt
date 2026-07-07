@@ -1,3 +1,8 @@
+# 🔱 Omega Engine — Requirements (CI Reproducibility)
+# AP: AP-REQUIREMENTS-v1.0.0
+# This file is kept for CI reproducibility. pyproject.toml is the source of truth for packaging.
+# Run: pip install -r requirements.txt
+
 aiosqlite==0.22.1
 annotated-doc==0.0.4
 annotated-types==0.7.0
@@ -12,6 +17,7 @@ click==8.3.3
 cryptography==48.0.0
 fastapi==0.136.1
 h11==0.16.0
+headroom-ai[all]==0.1.0
 httpcore==1.0.9
 httpx==0.28.1
 httpx-sse==0.4.3
@@ -22,10 +28,10 @@ jsonschema-specifications==2025.9.1
 markdown-it-py==4.2.0
 mcp==1.27.1
 mdurl==0.1.2
-# Editable install of the local package
--e .
 packaging==26.2
 pluggy==1.6.0
+prompt-toolkit==3.0.52
+psutil==7.2.2
 pycparser==3.0
 pydantic==2.13.4
 pydantic-settings==2.14.1
@@ -37,6 +43,8 @@ python-dotenv==1.2.2
 python-multipart==0.0.28
 pytz==2026.2
 PyYAML==6.0.3
+qdrant-client==1.18.0
+redis==7.4.1
 referencing==0.37.0
 rich==15.0.0
 rpds-py==0.30.0
@@ -44,9 +52,10 @@ shellingham==1.5.4
 six==1.17.0
 sse-starlette==3.4.4
 starlette==1.0.0
-tenacity==9.1.4
+tenacity==9.10.4.2
 typer==0.25.1
 typing-inspection==0.4.2
 typing_extensions==4.15.0
 tzlocal==5.3.1
 uvicorn==0.46.0
+warp-proxy-pool==0.1.0

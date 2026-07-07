@@ -43,6 +43,8 @@ from .compaction_harvester import CompactionHarvester
 from .timeout_manager import TimeoutManager
 from .degradation import DegradationManager
 from .session_lifecycle import SessionLifecycleManager, SessionLifecycleConfig
+from .audience_calibrator import get_audience_calibrator
+from .dpo_logger import get_dpo_recorder, initialize_dpo_recorder, shutdown_dpo_recorder, RewardSource
 from ..iris.matcher import IntentMatcher
 
 from ..observability import new_trace_id, ObservabilityEngine, TraceSession, get_engine, DATA_DIR
@@ -156,6 +158,9 @@ class Oracle:
         self.pii_masker = PIIMasker()
         self.intent_matcher = IntentMatcher()
         
+        # [D16-1] Audience Calibration Pipeline — output register transformation
+        self.audience_calibrator = get_audience_calibrator()
+        
         # [M11] Soul Edit History — immutable audit trail for soul.yaml changes
         self.soul_edit_history = SoulEditHistory()
         
@@ -174,6 +179,10 @@ class Oracle:
         
         # Load valid agents from AGENTS.md for mention validation
         self.valid_agents = self._get_valid_agents_from_md()
+        
+        # [D16-2] DPO recorder for training data collection
+        self.dpo_recorder = None
+        self._last_query = None
         
         self._bootstrapped = False
 
@@ -208,6 +217,14 @@ class Oracle:
         except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"Semantic router bootstrap failed [{classification['mode']}]: {e}")
+        
+        # [D16-2] Initialize DPO recorder for training data collection
+        try:
+            self.dpo_recorder = await initialize_dpo_recorder()
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"DPO recorder initialization failed [{classification['mode']}]: {e}")
+            self.dpo_recorder = None
         
         # Registry is initialized in __init__, no bootstrap needed
         self._bootstrapped = True
@@ -603,6 +620,25 @@ class Oracle:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"Soul evolution tracking failed (non-fatal) [{classification['mode']}]: {e}")
         
+        # [D16-2] Record DPO training pair from interaction (implicit mode)
+        try:
+            if self.dpo_recorder and hasattr(self, '_last_query') and self._last_query:
+                await self.dpo_recorder.infer_from_interaction(
+                    query=self._last_query,
+                    response=resp.text,
+                    trace_id=trace.trace_id,
+                    session_id=session_id,
+                    entity_name=resp.entity,
+                    model_name=resp.model,
+                    follow_up_query=query,  # Current query becomes follow-up to previous
+                )
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"DPO recording failed (non-fatal) [{classification['mode']}]: {e}")
+        
+        # Store current query for next interaction's DPO inference
+        self._last_query = query
+        
         # [Somatic Flush] Track turns for KV cache purge
         session_key = f"{resp.entity}:{session_id}"
         self._turn_counter[session_key] = self._turn_counter.get(session_key, 0) + 1
@@ -789,8 +825,26 @@ class Oracle:
                 trace_id=trace.trace_id,
             )
             
+            # [D16-1] Audience Calibration — transform response to target register
+            calibrated_text = res.text
+            try:
+                calibration_result = await self.audience_calibrator.calibrate(
+                    response_text=res.text,
+                    entity_personality=entity.personality,
+                    query=query,
+                    model_gateway=self.model_gateway,
+                    trace_id=trace.trace_id,
+                )
+                calibrated_text = calibration_result.calibrated_text
+                if calibration_result.token_ratio > 1.1:
+                    logger.warning(f"Audience calibration token ratio {calibration_result.token_ratio:.2f} exceeds 110% budget (profile: {calibration_result.profile_name})")
+                trace.log("audience.calibrated", profile=calibration_result.profile_name, token_ratio=calibration_result.token_ratio)
+            except Exception as e:
+                logger.warning(f"Audience calibration failed (non-fatal): {e}")
+                trace.log("audience.calibration_failed", error=str(e))
+            
             return OracleResponse(
-                text=res.text,
+                text=calibrated_text,
                 entity=entity.name,
                 slots=entity.slots if hasattr(entity, 'slots') else None,
                 domains=entity.domains if hasattr(entity, 'domains') else None,
@@ -905,6 +959,55 @@ class Oracle:
         # [Sovereign] Record the "First Breath" for astrological alignment
         logger.info(f"Recording first breath for routed entity: {entity.name}")
         await record_first_breath(entity.name, res.text, trace.trace_id)
+        
+        # [D16-1] Audience Calibration — transform response to target register
+        calibrated_text = res.text
+        try:
+            calibration_result = await self.audience_calibrator.calibrate(
+                response_text=res.text,
+                entity_personality=entity.personality,
+                query=text,
+                model_gateway=self.model_gateway,
+                trace_id=trace.trace_id,
+            )
+            calibrated_text = calibration_result.calibrated_text
+            if calibration_result.token_ratio > 1.1:
+                logger.warning(f"Audience calibration token ratio {calibration_result.token_ratio:.2f} exceeds 110% budget (profile: {calibration_result.profile_name})")
+            trace.log("audience.calibrated", profile=calibration_result.profile_name, token_ratio=calibration_result.token_ratio)
+        except Exception as e:
+            logger.warning(f"Audience calibration failed (non-fatal): {e}")
+            trace.log("audience.calibration_failed", error=str(e))
+        
+        # Use the ACTUAL provider that served the response, not the preferred one
+        backend = res.provider_name
+        sigil_tag = entity.metadata.get("sigil", "")
+        sigil_str = f" {sigil_tag}" if sigil_tag else ""
+        
+        result = OracleResponse(
+            text=f"{entity.name} says: {calibrated_text}{sigil_str}",
+            entity=entity.name,
+            slots=entity.slots,
+            domains=entity.domains,
+            confidence=confidence,
+            trace_id=trace.trace_id,
+            backend=backend,
+            model=model_name,
+            session_id=session_id,
+            escalated=True,
+            cost_warning="\n\n⚠️ [Sovereignty Alert]: This response was generated by a cloud provider. Local inference was unavailable or bypassed." if res.is_cloud else None,
+        )
+        
+        trace.log("model.completed", entity=entity.name, backend=backend, escalated=True, session_id=session_id)
+        trace.record(
+            query=text,
+            system_prompt=system_prompt,
+            response=res.text,
+            entity=entity.name,
+            model=model_name,
+            backend=backend,
+            confidence=confidence,
+            session_id=session_id,
+        )
         return result
 
     # ── Soul evolution tracking ───────────────────────────────────────

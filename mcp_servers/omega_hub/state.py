@@ -95,6 +95,78 @@ def _require_service() -> None:
         )
 
 
+_service_lock = anyio.Lock()
+
+async def get_service(name: str) -> Any:
+    """Lazy-load and return a Hub service singleton.
+    
+    This prevents OOM during startup by deferring heavy services
+    (Library, Indexer, Discovery, ResearchEngine, SovereignSearchService)
+    until they are actually requested by a tool.
+    """
+    global library, indexer, discovery, research_engine, sovereign_search_service
+    
+    if name == "library":
+        if library is None:
+            async with _service_lock:
+                if library is None:
+                    logger.info("Lazy-loading service: library")
+                    library = await anyio.to_thread.run_sync(Library)
+        return library
+        
+    if name == "indexer":
+        if indexer is None:
+            async with _service_lock:
+                if indexer is None:
+                    logger.info("Lazy-loading service: indexer")
+                    indexer = await anyio.to_thread.run_sync(Indexer)
+        return indexer
+
+    if name == "discovery":
+        if discovery is None:
+            async with _service_lock:
+                if discovery is None:
+                    logger.info("Lazy-loading service: discovery")
+                    discovery = await anyio.to_thread.run_sync(
+                        lambda: DiscoveryOrchestrator(model_gateway=model_gateway)
+                    )
+        return discovery
+
+    if name == "research_engine":
+        if research_engine is None:
+            async with _service_lock:
+                if research_engine is None:
+                    logger.info("Lazy-loading service: research_engine")
+                    lib = await get_service("library")
+                    idx = await get_service("indexer")
+                    research_engine = await anyio.to_thread.run_sync(
+                        lambda: ResearchEngine(library=lib, indexer=idx)
+                    )
+        return research_engine
+
+    if name == "sovereign_search_service":
+        if sovereign_search_service is None:
+            async with _service_lock:
+                if sovereign_search_service is None:
+                    logger.info("Lazy-loading service: sovereign_search_service")
+                    idx = await get_service("indexer")
+                    sovereign_search_service = await anyio.to_thread.run_sync(
+                        lambda: SovereignSearchService(
+                            memory_store=get_memory_store(),
+                            model_gateway=model_gateway,
+                            indexer=idx,
+                            firecrawl_key=_fc_key,
+                            exa_key=_exa_key,
+                        )
+                    )
+        return sovereign_search_service
+
+    # Fallback to direct getattr for already initialized services
+    val = getattr(_state if '_state' in globals() else __import__('mcp_servers.omega_hub.state'), name, None)
+    if val is not None:
+        return val
+    raise RuntimeError(f"Service {name} is not a lazy-loadable service or is not initialized.")
+
 async def _init_services() -> None:
     """Initialize all Hub services as a background task.
 
@@ -110,7 +182,7 @@ async def _init_services() -> None:
 
     try:
         logger.info("Background service initialization starting...")
-
+        
         hm = get_health_monitor()
         registry = await anyio.to_thread.run_sync(EntityRegistry)
         model_gateway = await anyio.to_thread.run_sync(
@@ -120,19 +192,13 @@ async def _init_services() -> None:
             lambda: Oracle(registry=registry, model_gateway=model_gateway)
         )
         hierarchy = await anyio.to_thread.run_sync(SovereignHierarchy)
-
+        
         inbox = await anyio.to_thread.run_sync(InboxManager)
         curator = await anyio.to_thread.run_sync(CurationPipeline)
-        library = await anyio.to_thread.run_sync(Library)
-        indexer = await anyio.to_thread.run_sync(Indexer)
-        discovery = await anyio.to_thread.run_sync(
-            lambda: DiscoveryOrchestrator(model_gateway=model_gateway)
-        )
-
-        research_engine = await anyio.to_thread.run_sync(
-            lambda: ResearchEngine(library=library, indexer=indexer)
-        )
-
+        
+        # Heavy services are now lazy-loaded via get_service() to reduce startup memory
+        # Library, Indexer, Discovery, ResearchEngine, SovereignSearchService
+        
         # Load search keys from Sovereign KeyVault with opencode.json fallback
         try:
             from omega.vault import KeyVault
@@ -165,29 +231,15 @@ async def _init_services() -> None:
                     logger.warning("Failed to load search keys from opencode.json fallback: %s", e)
                     if not _fc_key or not _exa_key:
                         _fc_key = _exa_key = None
-
-        sovereign_search_service = await anyio.to_thread.run_sync(
-            lambda: SovereignSearchService(
-                memory_store=get_memory_store(),
-                model_gateway=model_gateway,
-                indexer=indexer,
-                firecrawl_key=_fc_key,
-                exa_key=_exa_key,
-            )
-        )
+        
+        sovereign_search_service = None # Lazy-loaded
         
         # Phase 1 MCP Client: Connect to SearXNG MCP server
         mcp_client = SovereignMCPClient(server_url="http://127.0.0.1:8018/sse")
-        # Note: We don't 'await' the context manager here because it's a singleton.
-        # Tools will use 'async with state.mcp_client as client:' to ensure session lifecycle.
         
-        # SovereignGateway is imported from gateway.py (P1a-4).
-
-        # At runtime, gateway.py is already available — the forward-ref
-        # in this module (TYPE_CHECKING) is only for static analysis.
         from mcp_servers.omega_hub.gateway import SovereignGateway as _SG
         gateway = _SG()
-
+        
         _init_complete = True
         logger.info("All Hub services initialized (background)")
     except Exception as e:
@@ -196,8 +248,9 @@ async def _init_services() -> None:
     finally:
         _init_in_progress = False
 
-
-# ═══════════════════════════════════════════════════════════════════════════
+    # ═══════════════════════════════════════════════════════════════════════════
+    # CONTEXT TRACKING (P1-A — ContextVar for _current_entity)
+    # ═══════════════════════════════════════════════════════════════════════════
 # CONTEXT TRACKING (P1-A — ContextVar for _current_entity)
 # ═══════════════════════════════════════════════════════════════════════════
 

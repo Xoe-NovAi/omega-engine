@@ -6,18 +6,22 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 from omega.memory_store import MemoryStore, reset_memory_store
 from omega.oracle.context_builder import ContextBuilder
+from omega.state import initialize_usm
+
+logger = logging.getLogger(__name__)
+
 
 logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(autouse=True)
-def _set_test_env(tmp_path, monkeypatch):
+async def _set_test_env(tmp_path, monkeypatch):
     """Ensure OMEGA_ENV=test and isolated temp data dir for all tests.
     
     OMEGA_DATA_DIR is set to an autouse temp directory to prevent entity workspace
     scaffolding (EntityRegistry.add() → EntityWorkspaceManager.scaffold_workspace)
     from leaking test entities into the production data/entities/ directory.
-    Previously, tests like test_wad_loader.py created direntity/, duplicate/, etc.
+    Previously, tests like test_wad_loader.py created direntity/, duplicate, etc.
     in the live data/entities/ tree.
     
     Teardown: reset_memory_store() closes the FTS5 SQLite connection on the
@@ -26,6 +30,9 @@ def _set_test_env(tmp_path, monkeypatch):
     monkeypatch.setenv("OMEGA_ENV", "test")
     monkeypatch.setenv("OMEGA_DATA_DIR", str(tmp_path))
     reset_memory_store()
+    from omega.state import reset_usm
+    await reset_usm()
+    await initialize_usm()
     yield
     reset_memory_store()
 

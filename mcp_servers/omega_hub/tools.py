@@ -15,7 +15,7 @@ Dependency bartprint (M16):
   - mcp_servers.omega_hub.state: All service singletons + hivemind state
   - mcp_servers.omega_hub.background: ``_run_discovery_background``
   - omega.observability: ``new_trace_id``, ``get_engine``
-  - omega.oracle.security: ``tdp_wrap``, ``determine_url_taint``
+  - omega.(await oracle).security: ``tdp_wrap``, ``determine_url_taint``
   - omega.ics: ``render as ics_render_logic``
   - omega.memory_store: ``get_memory_store``
 
@@ -82,29 +82,26 @@ class PathProxy:
 
 PROJECT_ROOT = PathProxy()
 
-class ServiceProxy:
-    """Dynamic proxy for lazy-loaded service singletons from state."""
+class AsyncServiceProxy:
+    """Async proxy for lazy-loaded service singletons from state."""
     def __init__(self, name: str):
         self._name = name
-    def __getattr__(self, item):
-        service = getattr(_state, self._name)
-        if service is None:
-            raise RuntimeError(f"Service {self._name} is not initialized.")
-        return getattr(service, item)
+    def __await__(self):
+        return _state.get_service(self._name).__await__()
     def __bool__(self):
         return getattr(_state, self._name) is not None
 
-registry = ServiceProxy("registry")
-oracle = ServiceProxy("oracle")
-hierarchy = ServiceProxy("hierarchy")
-inbox = ServiceProxy("inbox")
-curator = ServiceProxy("curator")
-library = ServiceProxy("library")
-indexer = ServiceProxy("indexer")
-discovery = ServiceProxy("discovery")
-research_engine = ServiceProxy("research_engine")
-sovereign_search_service = ServiceProxy("sovereign_search_service")
-gateway = ServiceProxy("gateway")
+registry = AsyncServiceProxy("registry")
+oracle = AsyncServiceProxy("oracle")
+hierarchy = AsyncServiceProxy("hierarchy")
+inbox = AsyncServiceProxy("inbox")
+curator = AsyncServiceProxy("curator")
+library = AsyncServiceProxy("library")
+indexer = AsyncServiceProxy("indexer")
+discovery = AsyncServiceProxy("discovery")
+research_engine = AsyncServiceProxy("research_engine")
+sovereign_search_service = AsyncServiceProxy("sovereign_search_service")
+gateway = AsyncServiceProxy("gateway")
 
 # ── M16-compliant path resolution ──────────────────────────────────────────────
 # [M16: Modularization & Portability] Read omega_library paths from env var
@@ -163,7 +160,7 @@ async def headroom_retrieve(ref_id: str) -> str:
     Returns:
         The original uncompressed text or an error message.
     """
-    result = await oracle.retrieve_headroom_content(ref_id)
+    result = await (await oracle).retrieve_headroom_content(ref_id)
     return result
 
 @m9_safe("oracle_talk")
@@ -178,7 +175,7 @@ async def oracle_talk(query: str) -> str:
     Returns:
         JSON string containing the response text, entity, slots, and metadata.
     """
-    response = await oracle.talk(query)
+    response = await (await oracle).talk(query)
     _current_entity.set(response.entity)
     return json.dumps({
         "text": response.text,
@@ -204,7 +201,7 @@ async def oracle_summon(entity_name: str, query: str) -> str:
     Returns:
         JSON string containing the response text and entity metadata.
     """
-    response = await oracle.summon(entity_name, query)
+    response = await (await oracle).summon(entity_name, query)
     _current_entity.set(response.entity)
     return json.dumps({
         "text": response.text,
@@ -232,7 +229,7 @@ async def oracle_summon_local(entity_name: str, query: str, model: str) -> str:
     Returns:
         JSON string containing the local model response or an error hint.
     """
-    response = await oracle.summon(entity_name, query, model_override=model)
+    response = await (await oracle).summon(entity_name, query, model_override=model)
     _current_entity.set(response.entity)
     return json.dumps({
         "text": response.text,
@@ -253,7 +250,7 @@ async def oracle_list_entities() -> str:
     Returns:
         JSON string containing a list of all entities and their primary attributes.
     """
-    entities = await anyio.to_thread.run_sync(registry.list)
+    entities = await anyio.to_thread.run_sync((await registry).list)
     result = [{
         "name": e.name,
         "slots": e.slots,
@@ -277,7 +274,7 @@ async def oracle_list_pillar_keepers() -> str:
     Returns:
         JSON string containing entities with slot assignments.
     """
-    entities = await anyio.to_thread.run_sync(registry.list_pillar_keepers)
+    entities = await anyio.to_thread.run_sync((await registry).list_pillar_keepers)
     result = [{
         "name": e.name,
         "slots": e.slots,
@@ -298,8 +295,8 @@ async def oracle_entity_info(name: str) -> str:
     Returns:
         JSON string containing the full entity profile or an error.
     """
-    def _get():
-        return registry.get(name) or registry.find_by_name_fragment(name)
+    async def _get():
+        return (await registry).get(name) or (await registry).find_by_name_fragment(name)
     entity = await anyio.to_thread.run_sync(_get)
     if not entity:
         return json.dumps({"error": f"Entity '{name}' not found"})
@@ -327,23 +324,23 @@ async def oracle_assess_intent(query: str) -> str:
     Returns:
         JSON string containing the classification result and confidence metrics.
     """
-    def _assess():
+    async def _assess():
         # P0-B: Use module-level singleton (not fresh IntentMatcher per call)
         matcher = _get_intent_matcher()
         classification = matcher.classify(query)
-        domain_entity = registry.find_by_domain(query)
+        domain_entity = (await registry).find_by_domain(query)
         # P0-B: Use public assess_confidence() alias, not private _assess_iris_confidence
-        iris_confidence = oracle.assess_confidence(query)
+        iris_confidence = (await oracle).assess_confidence(query)
         return classification, domain_entity, iris_confidence
-
-    classification, domain_entity, iris_confidence = await anyio.to_thread.run_sync(_assess)
+    
+    classification, domain_entity, iris_confidence = await _assess()
     return json.dumps({
         "query": query,
         "classification": classification,
         "iris_confidence": iris_confidence,
         "would_escalate": iris_confidence <= 0.4,
         "domain_entity": domain_entity.name if domain_entity else None,
-        "detected_summon": oracle._detect_summon(query),
+        "detected_summon": (await oracle)._detect_summon(query),
     }, indent=2)
 
 
@@ -356,7 +353,7 @@ async def oracle_discover_entity(query: str) -> str:
     Args:
         query: A description of the task or a domain keyword.
     """
-    entity = registry.find_by_domain(query)
+    entity = (await registry).find_by_domain(query)
     if not entity:
         return json.dumps({"error": "No matching entity found for this domain."})
     return json.dumps({
@@ -382,7 +379,7 @@ async def sovereign_search(query: str, entity_name: str = "SOPHIA", limit: int =
         limit: Maximum results per tier.
         force_tier: Optional tier to force execution (0-3).
     """
-    result = await sovereign_search_service.search(query, entity_name, limit=limit, force_tier=force_tier)
+    result = await (await sovereign_search_service).search(query, entity_name, limit=limit, force_tier=force_tier)
     return json.dumps(result, indent=2)
 
 @m9_safe("search_extract")
@@ -398,7 +395,7 @@ async def search_extract(query: str, limit: int = 10) -> str:
         query: The query to extract content for.
         limit: Number of sources to scrape.
     """
-    result = await sovereign_search_service.extract(query, limit=limit)
+    result = await (await sovereign_search_service).extract(query, limit=limit)
     return json.dumps({"result": result, "tier": 3, "provider": "firecrawl"}, indent=2)
 
 @m9_safe("search_status")
@@ -412,16 +409,16 @@ async def search_status() -> str:
     """
     # Gather health from the gateway's health monitor
     tier_map = {0: "local", 1: "searxng", 2: "exa", 3: "firecrawl"}
-    health = {name: gateway.health_monitor.is_available(name) for tier, name in tier_map.items()} # Wait, tier_map is {int: str}
+    health = {name: (await gateway).health_monitor.is_available(name) for tier, name in tier_map.items()} # Wait, tier_map is {int: str}
     # Correcting the loop
-    health = {name: gateway.health_monitor.is_available(name) for tier, name in tier_map.items()}
+    health = {name: (await gateway).health_monitor.is_available(name) for tier, name in tier_map.items()}
     
     status = {
         "pipeline_version": "SSP-V2",
         "tier_health": health,
-        "firecrawl_credits": sovereign_search_service.budget.has_quota("firecrawl", 100),
-        "cache_dir": str(sovereign_search_service.cache_dir),
-        "config_version": sovereign_search_service.config.get("version", "unknown")
+        "firecrawl_credits": (await sovereign_search_service).budget.has_quota("firecrawl", 100),
+        "cache_dir": str((await sovereign_search_service).cache_dir),
+        "config_version": (await sovereign_search_service).config.get("version", "unknown")
     }
     return json.dumps(status, indent=2)
 
@@ -442,7 +439,7 @@ async def delegate_task(target_entity: str, query: str, context: str = "") -> st
         context: Optional background context or findings to pass along.
     """
     full_query = f"CONTEXT: {context}\n\nREQUEST: {query}" if context else query
-    response = await oracle.summon(target_entity, full_query)
+    response = await (await oracle).summon(target_entity, full_query)
     return json.dumps({
         "status": "delegated",
         "target": response.entity,
@@ -925,9 +922,7 @@ async def hivemind_get_entity_context(entity_name: str) -> str:
             return active
 
         # Gather all data
-        entity_reg = await anyio.to_thread.run_sync(
-            lambda: registry.get(entity_name) or registry.find_by_name_fragment(entity_name)
-        )
+        entity_reg = _state.registry.get(entity_name) or _state.registry.find_by_name_fragment(entity_name)
 
         soul_raw = await anyio.to_thread.run_sync(_read_soul)
         knowledge = await anyio.to_thread.run_sync(_list_knowledge)
@@ -1547,7 +1542,7 @@ async def library_inbox_add_url(url: str, tags: str = "", priority: int = 0) -> 
         JSON string containing the item_id and source metadata.
     """
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
-    item = await inbox.add_url(url, tags=tag_list, priority=priority)
+    item = await (await inbox).add_url(url, tags=tag_list, priority=priority)
     return json.dumps({"status": "added", "item_id": item.item_id, "source": item.source, "source_type": item.source_type})
 
 
@@ -1556,7 +1551,7 @@ async def library_inbox_add_url(url: str, tags: str = "", priority: int = 0) -> 
 @mcp.tool()
 async def library_inbox_add_note(text: str, tags: str = "") -> str:
     _require_service()
-    """Add a text note to the intake inbox.
+    """Add a text note to the intake (await inbox).
     
     Args:
         text: The content of the note.
@@ -1566,7 +1561,7 @@ async def library_inbox_add_note(text: str, tags: str = "") -> str:
         JSON string containing the item_id and title.
     """
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
-    item = await inbox.add_note(text, tags=tag_list)
+    item = await (await inbox).add_note(text, tags=tag_list)
     return json.dumps({"status": "added", "item_id": item.item_id, "title": item.title})
 
 
@@ -1575,7 +1570,7 @@ async def library_inbox_add_note(text: str, tags: str = "") -> str:
 @mcp.tool()
 async def library_inbox_add_file(path: str, tags: str = "") -> str:
     _require_service()
-    """Add a local file path to the intake inbox.
+    """Add a local file path to the intake (await inbox).
     
     Args:
         path: The absolute path to the file on disk.
@@ -1585,7 +1580,7 @@ async def library_inbox_add_file(path: str, tags: str = "") -> str:
         JSON string containing the item_id and file source.
     """
     tag_list = [t.strip() for t in tags.split(",") if t.strip()]
-    item = await inbox.add_file(path, tags=tag_list)
+    item = await (await inbox).add_file(path, tags=tag_list)
     return json.dumps({"status": "added", "item_id": item.item_id, "source": item.source})
 
 
@@ -1593,7 +1588,7 @@ async def library_inbox_add_file(path: str, tags: str = "") -> str:
 @mcp.tool()
 async def library_inbox_list(limit: int = 20) -> str:
     _require_service()
-    """List pending items in the intake inbox.
+    """List pending items in the intake (await inbox).
     
     Args:
         limit: Maximum number of pending items to retrieve.
@@ -1601,8 +1596,8 @@ async def library_inbox_list(limit: int = 20) -> str:
     Returns:
         JSON string containing the total counts and a list of pending items.
     """
-    items = await inbox.list_pending(limit=limit)
-    counts = await inbox.count()
+    items = await (await inbox).list_pending(limit=limit)
+    counts = await (await inbox).count()
     return json.dumps({
         "counts": counts,
         "items": [{"item_id": i.item_id, "source": i.source[:80], "source_type": i.source_type, "title": i.title, "priority": i.priority, "created_at": i.created_at} for i in items],
@@ -1618,7 +1613,7 @@ async def library_inbox_stats() -> str:
     Returns:
         JSON string with counts for each inbox item status.
     """
-    counts = await inbox.count()
+    counts = await (await inbox).count()
     return json.dumps(counts)
 
 
@@ -1626,7 +1621,7 @@ async def library_inbox_stats() -> str:
 @mcp.tool()
 async def library_ingest_pending(limit: int = 5) -> str:
     _require_service()
-    """Process pending inbox items through curation into the library.
+    """Process pending inbox items through curation into the (await library).
     
     Args:
         limit: Maximum number of items to process in this batch.
@@ -1634,7 +1629,7 @@ async def library_ingest_pending(limit: int = 5) -> str:
     Returns:
         JSON string containing the number of ingested items and their summaries.
     """
-    ingested = await library.ingest_from_inbox(inbox, curator, limit=limit)
+    ingested = await (await library).ingest_from_inbox(inbox, curator, limit=limit)
     return json.dumps({
         "ingested": len(ingested),
         "documents": [{"doc_id": d.doc_id, "title": d.title, "domain": d.domain, "quality_score": d.quality_score} for d in ingested],
@@ -1663,7 +1658,7 @@ async def library_search(query: str, domain: str = "", limit: int = 20) -> str:
         return json.dumps({"error": "Query exceeds 500-char limit", "count": 0, "results": []})
     
     # Use module-level sovereign_search_service (not a fresh instance)
-    report = await sovereign_search_service.search(
+    report = await (await sovereign_search_service).search(
         query, entity_name=domain if domain else "general", limit=limit
     )
     
@@ -1701,7 +1696,7 @@ async def library_fts_search(query: str, domain: str = "", limit: int = 10) -> s
         return json.dumps({"error": "Query exceeds 500-char limit", "count": 0, "results": []})
 
     try:
-        results = await library.search(query, domain=domain if domain else None, limit=limit)
+        results = await (await library).search(query, domain=domain if domain else None, limit=limit)
         formatted = []
         for doc in results:
             formatted.append({
@@ -1736,7 +1731,7 @@ async def library_get_document(doc_id: str) -> str:
     Returns:
         JSON string containing the complete document content and metadata.
     """
-    doc = await library.get(doc_id)
+    doc = await (await library).get(doc_id)
     if not doc:
         return json.dumps({"error": f"Document '{doc_id}' not found"})
     return json.dumps(doc.to_dict(), indent=2, default=str)
@@ -1751,7 +1746,7 @@ async def library_domains() -> str:
     Returns:
         JSON string containing domain names and their document counts.
     """
-    domains = await library.domains()
+    domains = await (await library).domains()
     return json.dumps(domains, indent=2)
 
 
@@ -1764,13 +1759,13 @@ async def library_stats() -> str:
     Returns:
         JSON string containing library and indexer usage metrics.
     """
-    # P1-D: Guard indexer.stats() outside the library's error boundary (M-A6 fix)
-    stats = await library.stats()
+    # P1-D: Guard (await indexer).stats() outside the library's error boundary (M-A6 fix)
+    stats = await (await library).stats()
     try:
-        idx_stats = indexer.stats()
+        idx_stats = (await indexer).stats()
         stats["index"] = idx_stats
     except Exception as e:
-        logger.warning("library_stats: indexer.stats() failed: %s", e)
+        logger.warning("library_stats: (await indexer).stats() failed: %s", e)
         stats["index"] = {"error": str(e)}
     return json.dumps(stats, indent=2)
 
@@ -1787,7 +1782,7 @@ async def library_recent(limit: int = 20) -> str:
     Returns:
         JSON string containing a list of recently ingested document summaries.
     """
-    docs = await library.recent(limit=limit)
+    docs = await (await library).recent(limit=limit)
     return json.dumps([{
         "doc_id": d.doc_id,
         "title": d.title,
@@ -1807,8 +1802,8 @@ async def library_index_flush() -> str:
     Returns:
         JSON string confirming the flush status and providing current index stats.
     """
-    await indexer.flush()
-    stats = indexer.stats()
+    await (await indexer).flush()
+    stats = (await indexer).stats()
     return json.dumps({"status": "flushed", "stats": stats})
 
 
@@ -1830,7 +1825,7 @@ async def library_discovery_research(query: str, depth: int = 2) -> str:
     Returns:
         JSON string containing the consolidated discovery report.
     """
-    report = await discovery.discover(query, depth=depth)
+    report = await (await discovery).discover(query, depth=depth)
     return json.dumps(report.to_dict(), indent=2)
 
 
@@ -1848,7 +1843,7 @@ async def library_discovery_start(query: str) -> str:
     Returns:
         JSON string containing the job_id.
     """
-    job_id = await discovery.start_discovery(query)
+    job_id = await (await discovery).start_discovery(query)
     async with anyio.create_task_group() as tg:
         tg.start_soon(_run_discovery_background, job_id)
     return json.dumps({"status": "started", "job_id": job_id})
@@ -1867,7 +1862,7 @@ async def library_discovery_status(job_id: str) -> str:
         JSON string containing the job status and any results found so far.
     """
     _deprecated("library_discovery_status", "library_discovery(action='status')")
-    result = discovery.get_job_status(job_id)
+    result = (await discovery).get_job_status(job_id)
     return json.dumps(result, indent=2)
 
 
@@ -1989,7 +1984,7 @@ async def omega_memory_list_sessions(entity_name: Optional[str] = None, limit: i
 @mcp.tool()
 async def research(query: str, depth: int = 2, domain: str = "") -> str:
     _require_service()
-    """Execute multi-depth research on a query using the offline library.
+    """Execute multi-depth research on a query using the offline (await library).
 
     Depth levels: 1=Quick (1-2 sources), 2=Standard (3-5 sources),
     3=Deep (6-15 sources), 4=Scholarly (10-50 sources).
@@ -2004,7 +1999,7 @@ async def research(query: str, depth: int = 2, domain: str = "") -> str:
     """
     depth = max(1, min(4, depth))
     domain_filter = domain if domain else None
-    result = await research_engine.research(query, depth=depth, domain=domain_filter)
+    result = await (await research_engine).research(query, depth=depth, domain=domain_filter)
     return json.dumps(result.to_dict(), indent=2, default=str)
 
 
@@ -2020,7 +2015,7 @@ async def research_get(research_id: str) -> str:
     Returns:
         JSON string containing the research result or an error.
     """
-    result = await research_engine.get_result(research_id)
+    result = await (await research_engine).get_result(research_id)
     if not result:
         return json.dumps({"error": f"Research '{research_id}' not found"})
     return json.dumps(result.to_dict(), indent=2, default=str)
@@ -2038,7 +2033,7 @@ async def research_list(limit: int = 20) -> str:
     Returns:
         JSON string containing a list of recent research IDs and queries.
     """
-    results = await research_engine.list_results(limit=limit)
+    results = await (await research_engine).list_results(limit=limit)
     return json.dumps(results, indent=2, default=str)
 
 
@@ -2062,7 +2057,7 @@ async def research_stats() -> str:
     Returns:
         JSON string containing the total count and depth distribution of research tasks.
     """
-    results = await research_engine.list_results(limit=1000)
+    results = await (await research_engine).list_results(limit=1000)
     depths = {}
     for r in results:
         d = str(r.get("depth", 2))
@@ -2330,7 +2325,7 @@ async def check_models_directory() -> str:
 @m9_safe("check_podman_storage")
 @mcp.tool()
 async def check_podman_storage() -> str:
-    """Check Podman storage usage on omega_library.
+    """Check Podman storage usage on omega_(await library).
     
     Returns:
         JSON string containing Podman storage path and size metrics.
@@ -2370,9 +2365,9 @@ async def observability_check_recursion(entity_name: str, current_depth: int) ->
     Returns:
         JSON string containing the recursion check results (allowed/blocked).
     """
-    if not hierarchy._hierarchy:
-        await hierarchy.load()
-    result = hierarchy.check_recursion(entity_name, current_depth)
+    if not (await hierarchy)._hierarchy:
+        await (await hierarchy).load()
+    result = (await hierarchy).check_recursion(entity_name, current_depth)
     return json.dumps(result, indent=2)
 
 
@@ -2852,7 +2847,7 @@ async def library_discovery(
         if action == "research":
             if not query:
                 return json.dumps({"error": "research requires query"})
-            report = await sovereign_search_service.search(
+            report = await (await sovereign_search_service).search(
                 query, entity_name="general", limit=20
             )
             return json.dumps({
@@ -2887,7 +2882,7 @@ async def library_discovery(
             # Fire-and-forget background task
             async def _run_discovery():
                 try:
-                    report = await sovereign_search_service.search(
+                    report = await (await sovereign_search_service).search(
                         query, entity_name="general", limit=20
                     )
                     job["status"] = "completed"
@@ -2972,7 +2967,7 @@ async def oracle_debug(
                 return json.dumps({"error": "discover_entity requires query"})
             entity_name = _route_by_domain(query)
             if entity_name and entity_name != "SOPHIA":
-                entity = registry.get(entity_name)
+                entity = (await registry).get(entity_name)
                 if entity:
                     return json.dumps({
                         "query": query,
@@ -2988,7 +2983,7 @@ async def oracle_debug(
             })
         
         elif action == "list_pillar_keepers":
-            entities = registry.list_all()
+            entities = (await registry).list_all()
             result = []
             for e in entities:
                 if e.slot:
@@ -3120,8 +3115,35 @@ async def github(
         return json.dumps({"error": str(e)})
 
 
-# === RENAMED TOOL ===
-# library_search → library_web_search (with deprecation warning on old name)
+# === OBSERVABILITY STREAM ===
+
+@m9_safe("observability_stream")
+@mcp.tool()
+async def observability_stream() -> str:
+    """Get the SSE endpoint URL for real-time observability streaming.
+    
+    Agents can connect to this endpoint via EventSource to receive live metrics,
+    trace events, and system health updates without polling.
+    
+    Returns:
+        JSON string with the SSE endpoint URL and connection instructions.
+    """
+    _require_service()
+    
+    # The SSE endpoint is served by the Hub's Starlette app
+    # We return the relative path; the agent constructs the full URL
+    return json.dumps({
+        "endpoint": "/obs/stream",
+        "transport": "SSE (Server-Sent Events)",
+        "description": "Real-time observability stream. Connect via EventSource to receive live metrics, traces, and health updates.",
+        "event_types": [
+            "metric_update",      # Per-entity metric changes
+            "trace_event",        # New trace events
+            "health_change",      # Circuit breaker state changes
+            "entity_focus"        # Entity selection changes
+        ],
+        "usage": "const es = new EventSource('http://localhost:8016/obs/stream'); es.onmessage = (e) => console.log(JSON.parse(e.data));"
+    }, indent=2)
 
 @m9_safe("library_web_search")
 @tdp_wrap(source="library_web_search", taint_level=1)
@@ -3149,7 +3171,7 @@ Returns:
     if len(query) > 500:
         return json.dumps({"error": "Query exceeds 500-char limit", "count": 0, "results": []})
     
-    report = await sovereign_search_service.search(
+    report = await (await sovereign_search_service).search(
         query, entity_name=domain if domain else "general", limit=limit
     )
     

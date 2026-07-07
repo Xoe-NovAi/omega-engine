@@ -160,7 +160,7 @@ generate(model_name, system_prompt, user_query, ...)
   │     │     └─ Provider self-health: provider.is_available()
   │     │
   │     ├─ 4b. Budget Gate [if cloud + entity]
-  │     │     └─ BudgetGate.check_budget(entity_name, trace_id)
+  │     │     └─ BudgetGate.check_budget(entity_name, trace_id)  # src/omega/oracle/budget_gate.py
   │     │
   │     ├─ 4c. Rate Limiter
   │     │     └─ RateLimiter.check_limit(provider.name)

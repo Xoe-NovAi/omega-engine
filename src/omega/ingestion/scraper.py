@@ -176,31 +176,69 @@ class SovereignScraper:
     async def _scrape_deep(self, url: str) -> ScrapeResult:
         """
         T3: Deep extraction using Crawl4AI.
-        Isolated in a subprocess to maintain M1 (AnyIO Absolute) compliance.
+        Isolated in a dedicated subprocess to maintain M1 (AnyIO Absolute) compliance.
+        Uses multiprocessing to avoid event-loop collisions in the Core Engine.
         """
         start_time = anyio.current_time()
         if AsyncWebCrawler is None:
             return ScrapeResult(url, "", {}, "deep", False, "crawl4ai not installed", provider_name="crawl4ai", latency_ms=0)
 
-        # Use the C-FFI isolation pattern: run in a dedicated subprocess
-        def run_crawler_subprocess():
-            asyncio = __import__('asyncio')
-            
-            async def _execute():
-                async with AsyncWebCrawler() as crawler:
-                    config = CrawlerRunConfig(
-                        cache_mode=CacheMode.BYPASS,
-                    )
-                    result = await crawler.arun(url=url, config=config)
-                    return {
-                        "content": result.markdown,
-                        "metadata": result.metadata
-                    }
-            
-            return asyncio.run(_execute())
+        # Use multiprocessing for true isolation (C-FFI pattern like NativeGGUFProvider)
+        import multiprocessing
+        from multiprocessing import Queue
+        
+        result_queue: Queue = Queue()
+        
+        def run_crawler_process(q: Queue, target_url: str):
+            """Runs the crawler in a completely isolated process."""
+            try:
+                import anyio
+                from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode
+                
+                async def _execute():
+                    async with AsyncWebCrawler() as crawler:
+                        config = CrawlerRunConfig(
+                            cache_mode=CacheMode.BYPASS,
+                        )
+                        result = await crawler.arun(url=target_url, config=config)
+                        # Extract raw strings to avoid pickling issues with crawl4ai objects
+                        markdown_content = str(result.markdown) if result.markdown else ""
+                        metadata = dict(result.metadata) if result.metadata else {}
+                        return {
+                            "content": markdown_content,
+                            "metadata": metadata,
+                            "error": None
+                        }
+                
+                # Run the async function using anyio (compatible with asyncio backend)
+                res = anyio.run(_execute)
+                
+                q.put(res)
+            except Exception as e:
+                q.put({"content": "", "metadata": {}, "error": str(e)})
 
         try:
-            res = await anyio.to_thread.run_sync(run_crawler_subprocess)
+            # Spawn the isolated process
+            process = multiprocessing.Process(target=run_crawler_process, args=(result_queue, url))
+            process.start()
+            
+            # Wait for result with timeout (30s for deep crawl)
+            process.join(timeout=30)
+            
+            if process.is_alive():
+                process.terminate()
+                process.join(timeout=5)
+                raise TimeoutError("Deep scrape exceeded 30s timeout")
+            
+            # Get result from queue
+            if result_queue.empty():
+                raise RuntimeError("Crawler process returned no result")
+            
+            res = result_queue.get_nowait()
+            
+            if res.get("error"):
+                raise RuntimeError(f"Crawler process error: {res['error']}")
+            
             latency = int((anyio.current_time() - start_time) * 1000)
             # Store in CAS if available
             cid = None
@@ -210,6 +248,6 @@ class SovereignScraper:
             if cid:
                 metadata["cas_cid"] = cid
             return ScrapeResult(url, res["content"], metadata, "deep", True, provider_name="crawl4ai", latency_ms=latency)
-        except (OmegaError, RuntimeError, OSError) as e:
+        except (OmegaError, RuntimeError, OSError, TimeoutError) as e:
             latency = int((anyio.current_time() - start_time) * 1000)
             return ScrapeResult(url, "", {}, "deep", False, str(e), provider_name="crawl4ai", latency_ms=latency)
