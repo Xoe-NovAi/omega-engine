@@ -5,7 +5,8 @@ description: "Cross-references config/providers.yaml against live API connectivi
 
 # Provider Validator Skill
 
-Use this skill to verify that an inference provider's API endpoint is reachable, correctly authenticated, and returns expected responses.
+Use this skill to verify that an inference provider's API endpoint is reachable, correctly authenticated, and
+  returns expected responses.
 
 ## Validation Workflow
 
@@ -56,3 +57,4 @@ Document in the corresponding `R##_*.md` file:
 - **NEVER log API keys** in research documents. Use `$ENV_VAR_NAME` placeholders.
 - **Rate limit awareness**: Space validation requests at least 2 seconds apart to avoid hitting free-tier limits.
 - If a provider requires a key you don't have, document the expected auth flow and mark the test as SKIPPED.
+
