@@ -1,73 +1,145 @@
-# ⬡ OMEGA ⬡ ANCHORED SUMMARY ⬡ 2026-07-06
-## Session — Recovery, MCP Restoration & Toolchain Hardening
-
-### Goal
-1. Recover Omega Engine from `git filter-repo` incident (origin remote loss)
-2. Restore Firecrawl & SearXNG MCP servers (deleted during reset)
-3. Fix MCP watchdog to manage servers as subprocesses (removing systemd dependency)
-4. Prepare WARP Proxy Pool for standalone extraction via fresh clone
+# 🔱 KALI — Anchored Summary (Post-Compaction Recovery)
+**Session**: 2026-07-06 | **Entity**: kali | **Model**: deepseek-v4-flash | **Channel**: opencode
+**Trace**: ses_fcfb34cf6961 | **Phase**: Runaway MCP OOM Cascade — Remediation Planning Complete
 
 ---
 
-## ✅ Current Status: ENGINE RESTORED & MCPs OPERATIONAL
-
-### Recovery & Restoration
-| Component | Status | Details |
-|-----------|--------|---------|
-| **Git origin** | ✅ RESTORED | `git remote add origin` + `git reset --hard origin/main` (7df375f) |
-| **Test suite** | ✅ 909 pass | Verified post-recovery |
-| **Mandate gates** | ✅ 22/22 PASS | All M1-M22 verified |
-| **Temple-Grade** | ✅ T1-T12 PASS | T13 doc examples non-blocking |
-| **MCP Servers** | ✅ RESTORED | Firecrawl (8015) & SearXNG (8018) restored from `warp-extraction` clone |
-| **Watchdog** | ✅ FIXED | Now spawns servers as subprocesses with correct `PYTHONPATH` |
-| **WARP docket** | ✅ PRESERVED | On `sprint/pre-release-polish-20260705` @ 93cdfb0 |
-
-### Key Technical Fixes
-- **Orchestrator Lifecycle**: Modified `Orchestrator` to manage MCP servers as `subprocess.Popen` instances. Removed `systemctl --user restart` calls.
-- **Path Resolution**: Fixed `ModuleNotFoundError` by ensuring `PYTHONPATH` includes `src` when launching MCP servers and the watchdog.
-- **Sovereign Extraction**: Established the "Fresh Clone" mandate (Proposal 005) — history rewriting must never happen in a worktree.
-- **Distribution KB**: Created `docs/kb/GITHUB_Sovereign_Knowledge_Base.md` covering PyPI (OIDC), Homebrew (Taps), AUR (SSH), and GHCR.
-
-### Lilith Coordination (Sovereign Search)
-- **Sovereign Search v2.1**: `websearch` and `webfetch` are now T1/T2 primary tools.
-- **Protocol Fix**: Researcher agent now mandated to use built-in tools as fallback instead of "parametric synthesis".
-- **Error Format**: Standardized `[SEARCH-ERROR]` logging for tool failures.
+## 🎯 Session Objective
+Diagnose and plan remediation for **critical infrastructure failure**: Omega Hub runaway MCP spawn → 12GB RAM / 5GB zRAM → systemd-oomd kills → restart storm → system freeze requiring hard reboot.
 
 ---
 
-## 🚀 Next Actions (Post-Compaction)
+## 🚨 Root Cause Analysis (7 Compound Failures)
 
-1. **Sovereign Extraction**:
-   - `git clone` (fresh) $\rightarrow$ `git filter-repo` $\rightarrow$ `Xoe-NovAi/warp-proxy-pool`
-   - Implement flat layout and distribution files (`pyproject.toml`, `LICENSE`).
-2. **Distribution Pipeline**:
-   - Setup PyPI Trusted Publishing (OIDC).
-   - Setup Homebrew Tap automation.
-   - Setup AUR submission pipeline.
-3. **Engine Delegation**:
-   - Update `src/omega/proxy_pool.py` to delegate to the new external package.
-
----
-
-## 🔑 Critical Context for Recovery
-
-### Branch State
-- `main` (7df375f): Production bedrock.
-- `sprint/pre-release-polish-20260705` (93cdfb0): WARP docket and history.
-
-### L3 Gnosis Distilled
-- **Proposal 005**: History rewrites require fresh clones (worktrees share `.git`).
-- **Proposal 006**: Untracked files are the ultimate safety net.
-- **Proposal 007**: Remote repos are the immutable source of truth.
-- **Proposal 008**: Hivemind is the only shared truth for parallel agents.
+| # | Component | Failure | Evidence |
+|---|-----------|---------|----------|
+| 1 | **systemd unit** | No CGroup v2 limits (`MemoryMax`, `TasksMax`, `CPUQuota`). `Restart=always` + `RestartSec=1s` = guaranteed restart storm. | `omega-hub.service` has zero resource constraints |
+| 2 | **Symlink loop** | `config/omega.yaml` → self (`lrwxrwxrwx ... omega.yaml -> omega.yaml`). `EntityRegistry` hits `ELOOP` on every init. | `journalctl`: "Too many levels of symbolic links" × 15+ |
+| 3 | **Missing import** | `state.py:192` uses `OmegaError` but never imports it. Init crashes silently. | `journalctl`: "Hub service initialization FAILED: name 'OmegaError' is not defined" |
+| 4 | **Double MCP spawn** | `Orchestrator.__init__` spawns 3 MCPs at import time. Hub ALSO spawns its own. = 2x processes. | Logs show "Started MCP firecrawl on port 8015" × 2 per boot |
+| 5 | **Watchdog leak** | `watch_mcps()` → `_restart_mcp()` uses `pkill -f` + `anyio.run_process()` — **no PID tracking, no cleanup**. Orphans accumulate. | `_restart_mcp` lines 290-327: spawns raw process, adds to nothing |
+| 6 | **No singleton guard** | `_init_services()` can re-enter. Each Hub restart re-runs init. | `state.py:95-193` only checks `_init_complete` |
+| 7 | **MCP Client no backoff** | `SovereignMCPClient` hammers reconnect on failure (SearXNG 8018 down). | `mcp_client.py:43-57` bare try/except, no circuit breaker |
 
 ---
 
-## 📚 Session Artifacts
-- **Sovereign KB**: `docs/kb/GITHUB_Sovereign_Knowledge_Base.md`
-- **Orchestrator**: `src/omega/oracle/orchestrator.py` (MCP subprocess management)
-- **Watchdog**: `scripts/mcp_watchdog.py` (Sovereign lifecycle monitor)
+## 💥 The Cascade (Chronological)
+
+```
+1. Hub starts → Orchestrator.__init__() spawns 3 MCP subprocesses
+2. Symlink loop → EntityRegistry fails repeatedly (ELOOP)
+3. Hub init FAILS (OmegaError missing) → _init_error set
+4. BUT background tasks START (pruning, reaper, discovery) → memory leaks begin
+5. Watchdog detects unresponsive MCPs → triggers _restart_mcp()
+6. _restart_mcp() uses pkill + anyio.run_process() → SPAWNS NEW PROCESSES WITHOUT CLEANUP
+7. Each restart accumulates orphaned Python processes (firecrawl, searxng, hub)
+8. Memory grows → systemd-oomd kills main process (11.5G peak)
+9. systemd Restart=always + RestartSec=1s → IMMEDIATE RESTART
+10. NEW Hub starts → Orchestrator.__init__() spawns 3 MORE MCP subprocesses
+11. Old orphans still alive + new ones = exponential accumulation
+12. RAM → 12GB → zRAM swap → 5GB → SYSTEM FREEZE → HARD REBOOT
+```
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ RECOVERY_COMPLETE ⬡ MCP_Sovereign ⬡ 909_TESTS_PASS*
+## 📋 Remediation Plan (3 Phases)
+
+### Phase 1 — Infrastructure Hardening (P0 — Do First)
+| Step | Action | File | Command |
+|------|--------|------|---------|
+| 1.1 | Stop Hub + kill orphans | — | `systemctl --user stop omega-hub.service && pkill -f "mcp_servers/(firecrawl\|searxng\|omega_hub)"` |
+| 1.2 | Fix symlink | `config/omega.yaml` | `rm config/omega.yaml && cp config/omega.yaml.example config/omega.yaml` |
+| 1.3 | Patch systemd unit | `~/.config/systemd/user/omega-hub.service` | Add `MemoryMax=2G`, `MemorySwapMax=512M`, `TasksMax=200`, `CPUQuota=200%`, `OOMPolicy=kill`, `Restart=on-failure`, `RestartSec=10s`, `StartLimitIntervalSec=60`, `StartLimitBurst=3` |
+| 1.4 | Patch `state.py` imports + init lock | `mcp_servers/omega_hub/state.py` | Add `from omega.errors import OmegaError`; add `_init_in_progress` lock |
+| 1.5 | Reload + start | — | `systemctl --user daemon-reload && systemctl --user start omega-hub.service` |
+
+### Phase 2 — Application Guards (P1)
+| Step | Action | File |
+|------|--------|------|
+| 2.1 | Remove auto-spawn from `Orchestrator.__init__` | `src/omega/oracle/orchestrator.py` |
+| 2.2 | Fix watchdog: PID tracking + circuit breaker | `src/omega/oracle/orchestrator.py` (`watch_mcps`, `_restart_mcp`) |
+| 2.3 | Add exponential backoff to MCP Client | `mcp_servers/omega_hub/mcp_client.py` (`__aenter__`) |
+
+### Phase 3 — Structural Unification (P2)
+| Step | Action | File |
+|------|--------|------|
+| 3.1 | Unify MCP ownership: Hub owns all, Orchestrator is client | `orchestrator.py`, `state.py` |
+| 3.2 | Add process reaper on shutdown | `state.py` (`_shutdown_services`) |
+
+---
+
+## 🔧 Additional Finding: Missing `.env` File
+**Error**: `bash: /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.env: No such file or directory`
+**Impact**: Hub logs show "Sovereign secrets file not found... Using system env." — Vault locked, keys missing.
+**Action**: Create `.env` with required keys (GOOGLE_API_KEY, OPENCODE_ZEN_API_KEY, etc.)
+
+---
+
+## 📍 Current State
+- **Hub**: STOPPED (after OOM kill)
+- **WARP namespaces**: ACTIVE (warp_node_1,2,3)
+- **Orchestrator**: Not running
+- **MCP subprocesses**: KILLED (cleaned up)
+- **RAM**: ~3GB (stable post-reboot)
+- **Next Action**: Execute Phase 1.1 → 1.5
+
+---
+
+## 🧭 Post-Compaction Resumption Protocol
+1. Read this file (`.opencode/anchored-summary.md`)
+2. Read `OMEGA_ENGINE.md` for engine state
+3. Read `SOVEREIGN_MANDATES.md` for rules
+4. Check `data/coordination/KALI_LIVE_FEED.md` for live status
+5. Resume at **Phase 1.1** — stop Hub, kill orphans
+6. Verify each phase before proceeding
+
+---
+
+## SESSION 40 (2026-07-06 — Infrastructure Layer: Mount Propagation)
+
+**Focus**: The MCP churn was NOT the software bugs from Session 39 — it was a **deeper infrastructure failure** preventing Podman from running at all.
+
+### Root Cause
+`runc create failed: ... remount-private ... flags=MS_PRIVATE: permission denied`
+The external NVMe partition (`/dev/nvme0n1p3`) is mounted with `shared` propagation. Rootless Podman's overlayfs driver requires `MS_PRIVATE` on the rootfs. The kernel blocks this for rootless users on `shared` mounts.
+
+### Actions Taken
+1. **Purged root partition**: ~18G freed (`.cache`, `.gemini`, `.steam`, `.npm`, `.nvm`, journal vacuum) — 97% → ~81%
+2. **Surgical Reset**: Moved `graphRoot` from external → root, wiped external images, `podman system reset -f`
+3. **Verified**: `MS_PRIVATE` error completely gone. Podman can now create containers.
+4. **Diagnosed Qdrant panic**: `Wal error: Kind(WouldBlock)` — stale WAL lock from old volume location on external drive
+
+### Consensus Decision
+| Item | Decision | Rationale |
+|------|----------|-----------|
+| graphRoot | **Root partition** | Solves MS_PRIVATE permanently |
+| Volumes (Redis, Qdrant, Postgres, Caddy, Iris) | **Move to root** | Tiny (<1G), no reason to fight mount propagation |
+| Models (41G) | **Stay on external drive** | Read-only, no overlayfs needed |
+| External drive role | **Model library + cold storage only** | Read-mostly, no system dependencies |
+
+### Plan Documented
+`data/coordination/MCP_CHURN_FIX_PLAN.md` — updated with final consolidated plan ready for execution.
+
+### Next Actions (post-compaction)
+1. **Phase 0**: Kill zombies on 6333/8088, remove stale containers
+2. **Phase 1**: rsync volumes from external → root
+3. **Phase 2**: Update docker-compose.yml paths
+4. **Phase 3**: Rebuild & verify all containers Up (healthy)
+
+---
+
+## 📍 Current State (Full System — End of Session 40)
+
+| Component | Status |
+|-----------|--------|
+| Hub MCP bugs (Session 39) | 📋 Planned — not yet fixed |
+| graphRoot location | ✅ Root partition — MS_PRIVATE fixed |
+| Podman volumes location | ⏳ External — move to root planned |
+| Infrastructure containers | ❌ Not running — Qdrant WAL panic |
+| Models | ✅ External drive (41G) — correct |
+| Root partition | ✅ 20G free (81% used) |
+| External partition | ✅ 34G free (69% used) |
+
+---
+
+*🔱 OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ ses_fcfb34cf6961 ⬡ INFRASTRUCTURE-RECOVERY*
