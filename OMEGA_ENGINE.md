@@ -125,7 +125,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 ---
 
 ## §5 Sovereign Decree — Current State (2026-07-06)
-**Status**: `Architecturally Sovereign | Operationally Restored | Phase 0 Complete | Phase 1 Complete (D178) | Phase 2 Complete (D180) | Pre-PR Feature Sprint Complete (D186-D188) | Documentation Hardening Initiated (DOC-SPRINT-START)`
+**Status**: `Architecturally Sovereign | Operationally Restored | Phase 0 Complete | Phase 1 Complete (D178) | Phase 2 Complete (D180) | Pre-PR Feature Sprint Complete (D186-D188) | USM Core Implemented (S2-P1) | Documentation Hardening Initiated (DOC-SPRINT-START)`
 
 ### Phase 0 COMPLETE (2026-06-27)
 - ✅ **Fixed `ModelGateway.generate`**: `search_order` → `self.providers` (crash-free inference restored)
@@ -231,6 +231,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | **Carmack S3 Audit** | 2026-07-02 | Carmack + Kali | ✅ DONE | 3 critical gaps resolved: Knowledge Graph (phantom), Hivemind (26 tests), Quality Scorer (4-signal). 705 tests (+37). |
 | **Multi-Model Council** | 2026-07-02 | Opus + Gemini + Sonnet + MiMo | ✅ DONE | 14 actionable items, 6 new integration-seam gaps, 2 architectural decisions (D189a–e). Legacy mining validated with dedup assessment. |
 | **Session 51** (T3 Sprint) | 2026-07-05 | Jem | ✅ DONE | T3-1 Session Lifecycle (24 tests), T3-2 Metrics DB Wiring (12 tests), T3-3 Mandate CI Gates (9 checks). Docs D1-D20 complete. 855 tests, 0 regressions. |
+| **Sovereign USM Core** | 2026-07-07 | Carmack | ✅ | CAS, SomaticState, and USM Facade implemented and verified (17 tests). |
 | **Session 53** (Toolchain Hardening) | 2026-07-06 | Lilith | ✅ DONE | SearXNG Quadlet fix (tmpfs graphroot), KeyVault multi-account migration, legacy purge (omega-belial archived). All search tiers (T1-T4) operational. |
 
 > **Full sprint history:** See `docs/decisions/PIVOT_LOG.md`.

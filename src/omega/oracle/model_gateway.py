@@ -428,20 +428,15 @@ class ModelGateway:
         return self.models.get(model_name)
 
     def get_model_weight(self, model_name: str) -> int:
-        """Return resource weight for a model based on RAM requirements.
+        """Return resource weight for a model based on RAM requirements (in MB).
         
-        Light: 1, Medium: 2, Heavy: 4.
+        Sovereign-Sized: returns actual RAM requirement from models.yaml.
         """
         spec = self.models.get(model_name)
         if not spec:
-            return 1
+            return 1024 # Default to 1GiB if unknown
         
-        ram_mb = spec.get("ram_mb", 0)
-        if ram_mb >= 4000:
-            return 4
-        if ram_mb >= 2000:
-            return 2
-        return 1
+        return spec.get("ram_mb", 1024)
 
     # ── Backend availability detection ─────────────────────────────────
     async def _check_lmster(self) -> bool:

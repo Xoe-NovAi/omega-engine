@@ -62,7 +62,7 @@ Each Strike has documented prerequisites. You cannot skip a strike and succeed.
 
 ```
 Epoch I ──┬── Strike 1: Physical Purge ✅ (Done)
-          ├── Strike 2: Unified State Manager (USM)
+          ├── Strike 2: Unified State Manager (USM) ⏳ (Core Complete)
           │     Depends on: Strike 1
           │     Blocks: Strikes 3, 4, 8
           ├── Strike 3: Staging Gate TUI
@@ -109,12 +109,12 @@ Epoch II ──┬── Strike 4: File-Based A2A
 - **Action**: Execute the `soul.template.yaml` migration for all entities. (Kali + Verity at v6.1 ✅; 21 pending).
 - **Action**: Archive 70+ dead strategy files from `docs/strategy/`. (Done ✅)
 
-#### Strike 2: The Unified State Manager (USM)
+#### Strike 2: The Unified State Manager (USM) ⏳ (Core Complete)
 - **Why**: Currently, state is fragmented across MemoryStore (SQLite), session files (JSON), and KV cache (binary). The USM wraps all three in a single Content Addressable Storage (CAS) interface. This is the prerequisite for the A2A handoff (Strike 4) and the spatial mapping (Strike 8).
 - **Actions**:
-  1. Verify `llama_copy_state_data` ctypes visibility in `llama-cpp-python`.
-  2. Build the CAS manager: hash-addressed blobs for KV caches, YAML sessions, and JSON memory.
-  3. Wire the CAS manager into MemoryStore and Hivemind as the backend.
+  1. Verify `llama_copy_state_data` ctypes visibility in `llama-cpp-python`. ✅
+  2. Build the CAS manager: hash-addressed blobs for KV caches, YAML sessions, and JSON memory. ✅
+  3. Wire the CAS manager into MemoryStore and Hivemind as the backend. ⏳
 - **Fallback if ctypes fails**: If `llama_copy_state_data` is compiled out, implement a SomaticState-lite that captures only YAML/JSON state and skips binary KV cache snapshots. Full fidelity becomes deferred.
 
 #### Strike 3: The Staging Gate TUI

@@ -71,23 +71,23 @@ class AtomicLock:
 
 class ResourceGuard:
     """Ensures model resource usage doesn't exceed system capacity.
-
-    Uses a weighted semaphore pattern to allow multiple light models
+    
+    Uses a RAM-based tracking system to allow multiple light models
     to run concurrently while restricting heavy models.
-
-    v1.1.0 — Re-entrant: a task that already holds capacity may
-    re-enter the lock without deadlocking. Its held weight is
-    tracked in a ContextVar and the capacity check is bypassed.
-
+    
+    v1.2.0 — RAM-Aware: tracks actual memory usage in MB instead of
+    abstract weights.
+    
     [id-soft: doom-1993] ZONEID Pattern — critical sections guarded by
     ZONEID_PROBE marker. Catches use-after-free and double-release bugs.
     """
-    def __init__(self, total_capacity: int = 8):
+    def __init__(self, max_ram_mb: int = 12288):
         # [id-soft: doom-1993] ZONEID Pattern — runtime state marker
         self._magic = ZONEID_PROBE
-        self._capacity = total_capacity
-        self._current_usage = 0
+        self._max_ram_mb = max_ram_mb
+        self._current_ram_mb = 0
         self._condition = anyio.Condition()
+
 
         # Hardware Lock: Zen 2 Optimizer for resource resonance
         from omega.oracle.cpu_optimizer import Zen2Optimizer
@@ -97,37 +97,37 @@ class ResourceGuard:
     async def lock(self, weight: int = 1, model_spec: Optional[dict] = None,
                    timeout: Optional[float] = None):
         """Hardware Lock: manages capacity and enforces hardware resonance.
-
+        
         [hardening-p4] Re-entrancy — uses immutable ContextVar updates to 
         prevent race conditions across concurrent tasks.
         """
         validate_zoneid(self._magic, ZONEID_PROBE, "ResourceGuard.lock")
-
+        
         task_id = _get_current_task_id()
         # Get a local copy of the current held weights
         held = _held_weights.get().copy()
         already_held = held.get(task_id, 0)
-
-        # ── 1. Capacity Lock (Weighted Semaphore) ──
+        
+        # ── 1. Capacity Lock (RAM-based tracking) ──
         if already_held == 0:
             try:
                 if timeout is not None:
                     with anyio.fail_after(timeout):
                         async with self._condition:
-                            while self._current_usage + weight > self._capacity:
+                            while self._current_ram_mb + weight > self._max_ram_mb:
                                 await self._condition.wait()
-                            self._current_usage += weight
+                            self._current_ram_mb += weight
                 else:
                     async with self._condition:
-                        while self._current_usage + weight > self._capacity:
+                        while self._current_ram_mb + weight > self._max_ram_mb:
                             await self._condition.wait()
-                        self._current_usage += weight
+                        self._current_ram_mb += weight
             except TimeoutError:
                 logger.warning(
                     "ResourceGuard acquisition timed out after %.1fs", timeout
                 )
                 raise
-
+        
             # Update immutable state: mark this task as holding capacity
             held[task_id] = weight
             _held_weights.set(held)
@@ -135,6 +135,7 @@ class ResourceGuard:
             # Re-entrant path: just increment the weight in the local copy
             held[task_id] = already_held + weight
             _held_weights.set(held)
+
 
         try:
             if model_spec:
@@ -149,7 +150,7 @@ class ResourceGuard:
             if already_held == 0:
                 # This was the outermost acquisition — release global capacity
                 async with self._condition:
-                    self._current_usage -= weight
+                    self._current_ram_mb -= weight
                     self._condition.notify_all()
                 
                 # Remove task from held weights entirely

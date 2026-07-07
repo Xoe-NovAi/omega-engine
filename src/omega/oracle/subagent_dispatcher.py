@@ -108,17 +108,60 @@ class HandoffPacket:
     def to_json(self, indent: int = 2) -> str:
         return json.dumps(self.to_dict(), indent=indent, default=str)
 
-    def save(self, archive_dir: str = "data/handoff/archive") -> Path:
+    def save(self, archive_dir: str = "data/handoff/archive", use_usm: bool = False) -> str:
+        """Saves the packet. Returns the identifier (path or USM hash)."""
+        if use_usm:
+            from omega.state import get_usm
+            usm = get_usm()
+            # Use packet_id as the state key for USM
+            state_key = f"handoff:{self.packet_id}"
+            # We use a wrapper to store the packet data
+            data = {"packet": self.to_dict()}
+            # Note: save_state is async, but save() is sync. 
+            # We must use anyio.run or similar, but better to make save async.
+            # For now, we'll stick to file-based or provide an async version.
+            # Let's implement save_async.
+            return "USM_ASYNC_REQUIRED"
+        
         path = Path(archive_dir) / f"{self.packet_id}.json"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(self.to_json())
         logger.info("HandoffPacket saved: %s", path)
-        return path
+        return str(path)
+
+    async def save_async(self, archive_dir: str = "data/handoff/archive", use_usm: bool = False) -> str:
+        """Async version of save, supporting USM."""
+        if use_usm:
+            from omega.state import get_usm
+            usm = get_usm()
+            state_key = f"handoff:{self.packet_id}"
+            data = {"packet": self.to_dict()}
+            await usm.save_state(state_key, data)
+            return state_key
+        
+        path = Path(archive_dir) / f"{self.packet_id}.json"
+        await anyio.Path(path.parent).mkdir(parents=True, exist_ok=True)
+        await anyio.Path(path).write_text(self.to_json())
+        logger.info("HandoffPacket saved: %s", path)
+        return str(path)
 
     @classmethod
-    def load(cls, path: str) -> "HandoffPacket":
-        raw = json.loads(Path(path).read_text())
-        return cls(**raw)
+    async def load_async(cls, identifier: str, use_usm: bool = False) -> "HandoffPacket":
+        """Async load from path or USM hash."""
+        if use_usm:
+            from omega.state import get_usm
+            usm = get_usm()
+            # If identifier is a USM key (starts with handoff:)
+            if identifier.startswith("handoff:"):
+                data = await usm.load_state(identifier)
+                if data and "packet" in data:
+                    return cls(**data["packet"])
+            # Fallback to path
+            raw = await anyio.Path(identifier).read_text()
+            return cls(**json.loads(raw))
+        
+        raw = Path(identifier).read_text()
+        return cls(**json.loads(raw))
 
 
 # ── Agent Capability Registry ────────────────────────────────────────────

@@ -148,7 +148,7 @@ class Orchestrator:
     """Spawns and manages headless CLI agents (Cline, OpenCode) and monitors MCP health."""
 
     def __init__(self, resource_guard: Optional[ResourceGuard] = None):
-        self.guard = resource_guard or ResourceGuard(total_capacity=1)
+        self.guard = resource_guard or ResourceGuard(max_ram_mb=1024)
         
         # Sovereign Capability Registry for Agent Discovery
         self.registry = CapabilityRegistry()

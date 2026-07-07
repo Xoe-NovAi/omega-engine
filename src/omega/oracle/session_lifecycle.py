@@ -190,46 +190,43 @@ class SessionLifecycleManager:
         session_id: str,
     ) -> SessionState:
         """Determine current lifecycle state of a session.
-
+        
         Checks locations in order:
         1. Hot cache (ACTIVE)
-        2. Warm storage — entities/{entity}/{session}.json (ACTIVE)
+        2. USM State (ACTIVE)
         3. Cold storage — archive/{entity}/{session}.json.gz (ARCHIVED)
         4. External storage (EXTERNAL)
         5. Not found (DELETED or never existed)
         """
         safe_name = entity_name.lower().replace(" ", "_")
-
+        
         # Check hot cache
         cache_key = f"{entity_name.lower()}:{session_id}"
         if cache_key in self._store._hot:
             return SessionState.ACTIVE
-
-        # Check warm storage
-        entity_dir = self._store._get_entity_dir() if hasattr(self._store, '_get_entity_dir') else None
-        if entity_dir is None:
-            from omega.memory_store import _get_entity_dir
-            entity_dir = _get_entity_dir()
-
-        warm_path = entity_dir / safe_name / f"{session_id}.json"
-        if await anyio.Path(warm_path).exists():
+        
+        # Check USM
+        from omega.state import get_usm
+        usm = get_usm()
+        state_key = f"mem:{entity_name}:{session_id}"
+        if await usm.exists(state_key):
             return SessionState.ACTIVE
-
+        
         # Check cold storage
         archive_dir = self._store._get_archive_dir() if hasattr(self._store, '_get_archive_dir') else None
         if archive_dir is None:
             from omega.memory_store import _get_archive_dir
             archive_dir = _get_archive_dir()
-
+        
         cold_path = archive_dir / safe_name / f"{session_id}.json.gz"
         if await anyio.Path(cold_path).exists():
             return SessionState.ARCHIVED
-
+        
         # Check external storage
         external_path = self._config.external_storage_path / safe_name / f"{session_id}.json.gz"
         if await anyio.Path(external_path).exists():
             return SessionState.EXTERNAL
-
+        
         return SessionState.DELETED
 
     async def get_session_info(
@@ -240,19 +237,40 @@ class SessionLifecycleManager:
         """Get detailed info about a session including age and path."""
         state = await self.get_session_state(entity_name, session_id)
         safe_name = entity_name.lower().replace(" ", "_")
-
+        
         path = None
         compressed = False
         last_modified = None
-
+        
         if state == SessionState.ACTIVE:
-            from omega.memory_store import _get_entity_dir
-            entity_dir = _get_entity_dir()
-            p = entity_dir / safe_name / f"{session_id}.json"
-            if await anyio.Path(p).exists():
-                path = str(p)
-                stat = await anyio.Path(p).stat()
-                last_modified = stat.st_mtime
+            # Check hot cache first
+            cache_key = f"{entity_name.lower()}:{session_id}"
+            if cache_key in self._store._hot:
+                # Hot cache doesn't have a file path, but we can use the USM key as a virtual path
+                path = f"usm://{cache_key}"
+                # Use the timestamp of the last exchange in the hot cache
+                exchanges = self._store._hot[cache_key].values()
+                if exchanges:
+                    last_ex = list(exchanges)[-1]
+                    last_modified = datetime.fromisoformat(last_ex["timestamp"]).timestamp()
+            else:
+                # Check USM
+                from omega.state import get_usm
+                usm = get_usm()
+                state_key = f"mem:{entity_name}:{session_id}"
+                if await usm.exists(state_key):
+                    path = f"usm://{state_key}"
+                    data = await usm.load_state(state_key)
+                    last_modified = datetime.fromisoformat(data.get("last_updated", datetime.now(timezone.utc).isoformat())).timestamp()
+                else:
+                    # Fallback to warm storage (for legacy sessions)
+                    from omega.memory_store import _get_entity_dir
+                    entity_dir = _get_entity_dir()
+                    p = entity_dir / safe_name / f"{session_id}.json"
+                    if await anyio.Path(p).exists():
+                        path = str(p)
+                        stat = await anyio.Path(p).stat()
+                        last_modified = stat.st_mtime
         elif state == SessionState.ARCHIVED:
             from omega.memory_store import _get_archive_dir
             archive_dir = _get_archive_dir()
@@ -269,11 +287,11 @@ class SessionLifecycleManager:
                 compressed = True
                 stat = await anyio.Path(p).stat()
                 last_modified = stat.st_mtime
-
+        
         age_days = 0.0
         if last_modified:
             age_days = (time.time() - last_modified) / 86400
-
+        
         return SessionInfo(
             entity_name=entity_name,
             session_id=session_id,
