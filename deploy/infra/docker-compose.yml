@@ -10,7 +10,7 @@
 #   - Network isolation: db-net internal, app-net bridge
 #   - RAM gating: strict resource limits aligned with 14Gi total
 #   - CPU core steering: compute pinned to physical cores (even)
-#   - Storage: omega_library partition (110G) for all persistent data
+#   - Storage: Root partition (~/.local/share/containers/volumes/) for persistent data
 #   - Models: /media/arcana-novai/omega_library/models/gguf/
 #   - SecComp: default Podman seccomp profile (non-root default)
 #   - No TLS: internal network only (127.0.0.1 bindings)
@@ -42,7 +42,7 @@ services:
       --lazyfree-lazy-eviction yes
       --lazyfree-lazy-expire yes
     volumes:
-      - /media/arcana-novai/omega_library/podman-storage/volumes/redis:/data
+      - /home/arcana-novai/.local/share/containers/volumes/redis:/data
     deploy:
       resources:
         limits:
@@ -71,7 +71,7 @@ services:
     ports:
       - "127.0.0.1:6333:6333"
     volumes:
-      - /media/arcana-novai/omega_library/podman-storage/volumes/qdrant:/qdrant/storage
+      - /home/arcana-novai/.local/share/containers/volumes/qdrant:/qdrant/storage
       - ./qdrant_config.yaml:/qdrant/config/config.yaml:ro
     environment:
       - QDRANT__SERVICE__GRPC_PORT=6334
@@ -83,7 +83,7 @@ services:
           memory: 1024M
           cpus: '1.5'
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
+      test: ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/localhost/6333'"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -106,7 +106,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-omega}
       POSTGRES_DB: omega
     volumes:
-      - /media/arcana-novai/omega_library/podman-storage/volumes/postgres:/var/lib/postgresql/data
+      - /home/arcana-novai/.local/share/containers/volumes/postgres:/var/lib/postgresql/data
     deploy:
       resources:
         limits:
@@ -135,15 +135,15 @@ services:
       - "127.0.0.1:8088:80"
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - /media/arcana-novai/omega_library/podman-storage/volumes/caddy/data:/data
-      - /media/arcana-novai/omega_library/podman-storage/volumes/caddy/config:/config
+      - /home/arcana-novai/.local/share/containers/volumes/caddy/data:/data
+      - /home/arcana-novai/.local/share/containers/volumes/caddy/config:/config
     deploy:
       resources:
         limits:
           memory: 64M
           cpus: '0.1'
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:80/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -172,18 +172,18 @@ services:
       - REDIS_URL=redis://:${REDIS_PASSWORD:-omega}@omega-redis:6379
     volumes:
       - ../../config:/app/config:ro
-      - /media/arcana-novai/omega_library/podman-storage/cache/iris:/cache
+      - /home/arcana-novai/.local/share/containers/volumes/cache-iris:/cache
     deploy:
       resources:
         limits:
           memory: 512M
           cpus: '0.5'
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')"]
+      test: ["CMD-SHELL", "python -c 'import urllib.request; exit(0) if urllib.request.urlopen(\"http://localhost:8080/health\").status == 200 else exit(1)'"]
       interval: 30s
       timeout: 5s
       retries: 3
-      start_period: 5s
+      start_period: 15s
     networks:
       - omega-app-net
     depends_on:

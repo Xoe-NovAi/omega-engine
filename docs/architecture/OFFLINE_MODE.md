@@ -1,3 +1,12 @@
+# 🔱 Offline Mode
+**AP Token**: `AP-OFFLINE_MODE-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Architecture documentation for offline mode.
+
+---
+
 # 🔱 Omega Engine — Offline Mode & Request Queue
 # AP: AP-OFFLINE-MODE-v1.0.0
 # ICS: [NODE: CORE | ARCHETYPE: QUEUE | CONTEXT: SOVEREIGN-CONTINUITY]

@@ -41,6 +41,15 @@ ProtectHome=yes
 PrivateTmp=yes
 RestrictAddressFamilies=AF_INET AF_UNIX AF_NETLINK
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_SYS_ADMIN
+AmbientCapabilities=CAP_NET_ADMIN CAP_SYS_ADMIN
+# 2026 Hardening
+SystemCallFilter=~@privileged @system-service
+MemoryDenyWriteExecute=yes
+LockPersonality=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictRealtime=yes
 
 # Resource Containment for Ryzen 5700U / 12GiB RAM
 MemoryHigh=120M

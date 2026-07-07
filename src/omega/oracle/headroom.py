@@ -20,6 +20,7 @@ import logging
 import hashlib
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
+from omega.errors import OmegaError
 
 logger = logging.getLogger("omega.headroom")
 

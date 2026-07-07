@@ -26,6 +26,7 @@ import anyio
 
 from .curator import CuratedDocument
 from .indexer import Indexer
+from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 

@@ -1,3 +1,12 @@
+# 🔱 Decision Registry
+**AP Token**: `AP-PIVOT_LOG-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_ref ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Decision Registry.
+
+---
+
 # Decision Registry
 
 | D# | Date | Summary |
@@ -118,7 +127,9 @@
 | 189 | 2026-07-05 | Sovereign Ingestion Hardening Sprint — Implementation of stripped S3 pipeline (T1-T9) to resolve IW-4 and Strike 7.6. |
 | 190 | 2026-07-05 | CLTK Adoption — Transition from regex-based Greek normalization to Classical Language Toolkit (CLTK) for academic-grade processing. |
 | 191 | 2026-07-05 | Sovereign Proxy Requirement — Mandate for all external library API calls to route through a header-stripping, IP-rotating proxy to ensure M8 (Zero Telemetry) compliance. |
-| 193 | 2026-07-03 | Headroom Pivot — Deprecated internal zlib-based `headroom.py` (Binary Compression) in favor of `headroom-ai` library (Semantic/Structural Compression). Corrected documentation to distinguish between storage efficiency (bytes) and context efficiency (tokens). |
+| 194 | 2026-07-06 | Sovereign Extraction — WARP Proxy Pool moved to standalone repo `Xoe-NovAi/warp-proxy-pool` with flat layout |
+| 195 | 2026-07-06 | Distribution Pipeline — Implementation of PyPI (OIDC), Homebrew (Taps), AUR (SSH), and GHCR (Distroless) |
+| 196 | 2026-07-06 | Environment Integrity Protocol — Mandated absolute path calls to `.venv/bin/` to prevent base-env pollution |
 | 189 | 2026-07-05 | Sovereign Ingestion Hardening Sprint — Implementation of stripped S3 pipeline (T1-T9) to resolve IW-4 and Strike 7.6. |
 | 190 | 2026-07-05 | CLTK Adoption — Transition from regex-based Greek normalization to Classical Language Toolkit (CLTK) for academic-grade processing. |
 | 191 | 2026-07-05 | Sovereign Proxy Requirement — Mandate for all external library API calls to route through a header-stripping, IP-rotating proxy to ensure M8 (Zero Telemetry) compliance. |
@@ -1604,7 +1615,9 @@ The previous "blind loop" implementation wasted significant tokens on 403/500 er
 Ratify the Sovereign Scholarly Knowledge Base (SSKB) architecture as the core framework for the Omega Engine's knowledge ingestion and curation.
 
 ### The SSKB Framework
-1. **Tiered Extraction**: Fast (Trafilatura) $ightarrow$ Surgical (Domain-specific) $ightarrow$ Deep (Crawl4AI).
+1. **Tiered Extraction**: Fast (Trafilatura) $
+ightarrow$ Surgical (Domain-specific) $
+ightarrow$ Deep (Crawl4AI).
 2. **Triangulation Verification**: Corroboration of metadata across $\ge 2$ independent sources (e.g., Open Library, Crossref).
 3. **Sovereign Archiving**: Content-Addressable Storage (CAS) using SHA-256 hashes and WARC format for immutable provenance.
 4. **Scholarly Enrichment**: Integration of authoritative library APIs (LOC, IA, Gutenberg) for professional-grade metadata.

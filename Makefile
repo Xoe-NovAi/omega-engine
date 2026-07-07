@@ -380,6 +380,9 @@ test-badge: ## 📊 Generate TEST_STATUS.md with current test counts (SSOT for d
 		> docs/TEST_STATUS.md; \
 	echo "✅ docs/TEST_STATUS.md written: $$TOTAL collected, $$PASSED pass, $$SKIPPED skip, $$XFAILED xfail"
 
+doc-freshness: ## 🔍 Check documentation freshness (flag docs >30 days stale)
+	@python3 scripts/doc_freshness.py
+
 verify-all: test lint temple-grade verify-search-tools test-badge ## 🛡️  Run all verification gates (T1-T11 + Search Protocol)
 	@echo "$(COLOR_GREEN)✅ All verification gates passed.$(COLOR_NC)"
 

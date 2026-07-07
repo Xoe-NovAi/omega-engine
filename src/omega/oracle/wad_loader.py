@@ -17,6 +17,8 @@
 #   Q3A's files.c:39-75 defines base + cd + home + current game search order.
 #   Omega's wad_loader follows the same override chain pattern.
 
+
+# DocRef: docs/architecture/TRAINING_PIPELINE.md
 import logging
 import os
 import yaml
@@ -26,6 +28,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import anyio
 from .entity_registry import EntityRegistry, Entity
 from .world_state import world_state, WorldLump
+from omega.errors import OmegaError
 
 
 logger = logging.getLogger(__name__)
@@ -172,7 +175,7 @@ class WADLoader:
 
             return True, hierarchy_path
 
-        except (OmegaError, RuntimeError, OSError) as e:
+        except (OmegaError, RuntimeError, OSError, ValueError, yaml.YAMLError) as e:
             logger.error(f"Failed to load WAD {stack_name}: {e}")
             return False, None
 
@@ -316,7 +319,7 @@ class WADLoader:
                     )
                     await self.registry.add(entity)
                     logger.info(f"Registered entity {entity.name} from WAD {wad_source}")
-            except (OmegaError, RuntimeError, OSError) as e:
+            except (OmegaError, RuntimeError, OSError, yaml.YAMLError) as e:
                 logger.warning(f"Failed to load entity from {path}: {e}")
 
 
@@ -354,7 +357,7 @@ class WADLoader:
                 )
                 await self.registry.add(entity)
                 logger.info(f"Registered voice {voice_name} from WAD")
-            except (OmegaError, RuntimeError, OSError) as e:
+            except (OmegaError, RuntimeError, OSError, yaml.YAMLError) as e:
                 logger.warning(f"Failed to load voice from {path}: {e}")
 
 

@@ -1,3 +1,12 @@
+# 🔱 Ingestion Architecture: The Sovereign-Sieve
+**AP Token**: `AP-INGESTION_ARCHITECTURE-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Ingestion Architecture: The Sovereign-Sieve.
+
+---
+
 # Ingestion Architecture — The Sovereign-Sieve
 
 > How the Omega Engine ingests, verifies, and stores knowledge with zero cloud dependency.

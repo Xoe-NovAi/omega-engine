@@ -1,3 +1,12 @@
+# 🔱 Training Pipeline
+**AP Token**: `AP-TRAINING_PIPELINE-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Architecture documentation for training pipeline.
+
+---
+
 # 🔱 Omega Engine — Training Pipeline & Synthesis Flywheel
 # AP: AP-TRAINING-PIPELINE-v1.0.0
 # ICS: [NODE: CORE | ARCHETYPE: FLYWHEEL | CONTEXT: SOVEREIGN-EVOLUTION]

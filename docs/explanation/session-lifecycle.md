@@ -1,3 +1,12 @@
+# 🔱 Session Lifecycle Architecture
+**AP Token**: `AP-SESSION_LIFECYCLE-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Session Lifecycle Architecture.
+
+---
+
 # Session Lifecycle Architecture
 
 **Module**: `src/omega/oracle/session_lifecycle.py`

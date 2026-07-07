@@ -24,6 +24,7 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING
 import anyio
 
 from omega.constants import ZONEID_MEMORY
+from omega.errors import OmegaError
 
 if TYPE_CHECKING:
     from omega.memory.providers import StorageProvider

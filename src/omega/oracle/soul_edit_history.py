@@ -35,6 +35,8 @@ from typing import Any, Dict, List, Optional
 import anyio
 import yaml
 
+from omega.errors import OmegaError
+
 logger = logging.getLogger(__name__)
 
 # ── Constants ─────────────────────────────────────────────────────────
@@ -224,7 +226,7 @@ class SoulEditHistory:
             filtered.sort(key=lambda e: e.get("timestamp", 0), reverse=True)
             return filtered[:limit]
             
-        except (OmegaError, RuntimeError, OSError) as exc:
+        except (OmegaError, RuntimeError, OSError, yaml.YAMLError) as exc:
             logger.warning(
                 "Failed to read soul edit history for %s: %s", entity_name, exc
             )

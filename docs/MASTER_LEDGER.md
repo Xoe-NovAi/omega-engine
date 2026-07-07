@@ -1,3 +1,12 @@
+# 🔱 Master Ledger
+**AP Token**: `AP-MASTER-LEDGER-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_ref ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Master ledger tracking all strategic decisions and their implementation status.
+
+---
+
 # MASTER LEDGER – Omega Engine Strategic Overview
 
 This document is the **single source of truth** for the high‑level roadmap, milestones, and strategic direction of the Omega Engine project. It supersedes the older `docs/ROADMAP.md` which now simply points here.

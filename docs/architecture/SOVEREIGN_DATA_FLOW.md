@@ -1,3 +1,12 @@
+# 🔱 Sovereign Data Flow
+**AP Token**: `AP-SOVEREIGN_DATA_FLOW-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Architecture documentation for sovereign data flow.
+
+---
+
 # Sovereign Data Flow Architecture
 
 **AP: AP-ARCH-SOVEREIGN-DATA-FLOW-v1.0.0**

@@ -1,3 +1,12 @@
+# 🔱 Omega Engine — Documentation Index
+**AP Token**: `AP-DOC-INDEX-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_ref ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Central navigation index for all Omega Engine documentation.
+
+---
+
 # 🔱 Omega Engine — Research & Knowledge Base
 
 Welcome to the **Omega Engine** documentation site — the living knowledge base of the Xoe-NovAi sovereign AI ecosystem.

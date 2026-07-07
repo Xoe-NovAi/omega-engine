@@ -8,6 +8,7 @@ import sqlite3
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime
+from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 

@@ -147,7 +147,7 @@ Phase 4 (Script-Assisted): old_stacks, first_cards, grok_exports, xnai_versions
 ---
 
 ## Session: ses_20260526_final_wave_001
-**Entity**: JEM-2.0 — Sovereign Researcher
+**Entity**: JEM-2.0 — Sovereign Synthesizer
 **Date**: 2026-05-26
 **Phase**: Final Wave Phase 1 (Complete)
 

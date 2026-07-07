@@ -87,7 +87,7 @@ async def firecrawl_search(
     if tbs:
         kwargs["tbs"] = tbs
     if origin and origin != "web":
-        kwargs["origin"] = origin
+        kwargs["sources"] = [origin]
 
     data = await client.search(query, **kwargs)
     results = []
@@ -125,13 +125,13 @@ async def firecrawl_scrape(
     client = _make_client()
     options: dict = {"formats": formats.split(",") if formats else ["markdown"]}
     if only_main:
-        options["onlyMainContent"] = True
+        options["only_main_content"] = True
     if include_tags:
-        options["includeTags"] = include_tags.split(",")
+        options["include_tags"] = include_tags.split(",")
     if exclude_tags:
-        options["excludeTags"] = exclude_tags.split(",")
+        options["exclude_tags"] = exclude_tags.split(",")
     if wait_for:
-        options["waitFor"] = wait_for
+        options["wait_for"] = wait_for
 
     data = await client.scrape(url, timeout=timeout, scrape_options=options)
     md = (getattr(data, "markdown", None) or "")[:4000]
@@ -211,12 +211,12 @@ async def firecrawl_crawl(
     """
     client = _make_client()
     opts: dict = {
-        "maxDepth": max_depth,
+        "max_discovery_depth": max_depth,
         "limit": max_pages if max_pages else None,
     }
     if scrape_options:
         try:
-            opts["scrapeOptions"] = json.loads(scrape_options)
+            opts["scrape_options"] = json.loads(scrape_options)
         except json.JSONDecodeError:
             return f"Invalid JSON in scrape_options: {scrape_options}"
 

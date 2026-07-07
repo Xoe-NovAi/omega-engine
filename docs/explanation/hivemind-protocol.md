@@ -1,3 +1,12 @@
+# 🔱 Explanation: The Hivemind Coordination Protocol
+**AP Token**: `AP-HIVEMIND_PROTOCOL-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Explanation: The Hivemind Coordination Protocol.
+
+---
+
 # Explanation: The Hivemind Coordination Protocol
 
 The Hivemind is the Omega Engine's shared awareness layer. It transforms a collection of independent agents into a coordinated fleet by providing a real-time, shared state of "who is doing what."

@@ -1,103 +1,62 @@
+# Omega Engine Configuration
+# AP: AP-OMEGA-CONFIG-v1.0.0
+# ⬡ OMEGA ⬡ CONFIG ⬡
+
 omega:
-  identity:
-    name: Omega Engine
-    version: 1.0.0
-    description: Local-first, entity-centric, provider-agnostic AI council runtime
-    maintainer: Xoe-NovAi
-    license: Apache-2.0
-  session_header:
-    mode: compact
-    default_entity: default
   entity:
-    active_iwad: _omega_default
-    default: default
-    user: arch
-    allow_transient: true
-  data:
-    dir: data
-    entities_dir: data/entities
-    session_log: true
-    session_log_dir: data/sessions
-  inference:
-    strategy: local_first
-    vector_quantization:
-      enabled: true
-      type: "scalar"
-      precision: "int8"
-      always_ram: true
-    hardware:
-      cpu: "AMD Ryzen 7 5700U"
-      architecture: "zen2"
-      physical_cores: [0, 2, 4, 6, 8, 10, 12, 14]
-      io_threads: [1, 3, 5, 7, 9, 11, 13, 15]
-      threads: 8
-      ram_total_mb: 14336
-      ram_os_overhead_mb: 2000
-      ram_available_ai_mb: 12336
-      draft_resident_mb: 300
-      draft_entity: iris
-  observability:
-    enable_dataset_collection: true
-    enable_trace_logging: true
-    trace_length: 12
-  location:
-    sovereign_home:
-      latitude: 0.0
-      longitude: 0.0
-      timezone: "UTC"
-      name: "Sovereign Void"
-  hivemind:
-    url: "http://127.0.0.1:8016"
-    cli: "opencode"
-    retention:
-      workspace_days: 30      # P7 Alignment: matches observation log (was 7)
-      observation_days: 30    # Observability log retention
-      grace_ratio: 0.25       # 25% grace period (id Software pattern)
-      warm_ttl_hours: 24      # Warm awareness tier
-      hot_ttl_minutes: 5      # Hot presence tier (in-memory)
+    active_iwad: "_omega_default"
+  
+  # Model updater configuration
   model_updater:
     enabled: true
-    schedule: "0 */6 * * *"
-    model: "gemma-4-31b-it"
-    thread_limit: 2
-    confidence_minimum: 0.85
-    max_changes_per_cycle: 30
-    providers:
-      - name: opencode-zen
-        enabled: true
-      - name: google
-        enabled: true
-      - name: cline
-        enabled: true
-    notifications:
-      on_change: true
-      on_error: true
-      channel: observability
-  sovereignty:
-    mandates:
-      ratified: [M1, M2, M3, M4, M5, M6, M7, M8, M9, M10, M11, M12, M13, M14, M15, M16, M17, M18, M19, M20, M21, M22]
-      count: 22
-      version: 3.5.0
-    fleet:
-      agent_count: 11
-      max_slots: 10
-      cap_with_review: 14
-  gateway:
-    # HTTP client configuration
-    http_client:
-      timeout_total: 120.0
-      timeout_connect: 10.0
-      max_connections: 20
-      max_keepalive_connections: 10
-      keepalive_expiry: 30.0
-      http2: true
-      follow_redirects: true
-    # Rate limiting
-    rate_limiting:
-      tui_cap_requests: 100
-      tui_cap_window_seconds: 300
-      tui_throttle_delay: 1.0
-    # Startup behavior
-    startup:
-      backoff_enabled: true
-      backoff_duration: 65.0
+    schedule: "0 3 * * *"  # Daily at 3 AM
+    max_concurrent_downloads: 2
+    cleanup_old_versions: true
+    keep_versions: 3
+
+  # Provider fabric configuration
+  provider_fabric:
+    strategy: "local_first"
+    health_check_interval: 300
+    circuit_breaker_threshold: 5
+    circuit_breaker_timeout: 60
+
+  # Memory store configuration
+  memory:
+    hot_max_tokens: 500
+    warm_max_tokens: 3000
+    cold_archive_days: 90
+    compaction_enabled: true
+
+  # Observability configuration
+  observability:
+    trace_sampling_rate: 1.0
+    metrics_enabled: true
+    log_level: "INFO"
+
+  # Security configuration
+  security:
+    pii_masking_enabled: true
+    tdp_enabled: true
+    tainted_data_quarantine: true
+
+  # Hivemind configuration
+  hivemind:
+    heartbeat_ttl_seconds: 1200
+    pruning_interval_seconds: 60
+    metrics_interval_seconds: 60
+    reaper_interval_seconds: 300
+
+  # MCP servers
+  mcp:
+    hub_port: 8016
+    firecrawl_port: 8015
+    searxng_port: 8018
+    transport: "sse"
+
+  # Hardware optimization
+  hardware:
+    cpu_threads: 4
+    openblas_coretype: "ZEN"
+    llama_cpp_f16_kv: true
+    malloc_arena_max: 2

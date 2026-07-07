@@ -18,6 +18,7 @@ unique dreams, technologies, and systems.
 - **Local-first sovereignty**: Cloud is a teacher and strategic partner, never a dependency
 - **Open source, free, sovereign**: No shareware, no tiers, no limitations
 - **WAD Architecture**: Engine → IWADs → PWADs (inspired by id Software's WAD system)
+- **Sovereign Asset Ecosystem**: The engine is the core, complemented by standalone sovereign assets like the `warp-proxy-pool` for network distribution.
 - **The Synthesis Flywheel**: Cloud models teach local models. Over time, sovereignty increases.
 - **The 22 Sovereign Mandates**: Constitutional law. Mandates override any tool default.
 - **The 13-agent Fleet**: Grand Oversight, 3 Oversouls, 6 Specialists, 1 Unified Subagent (Verity), 1 Messenger (Iris), 1 Akashic Record (Sophia).
@@ -123,8 +124,8 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 
 ---
 
-## §5 Sovereign Decree — Current State (2026-07-01)
-**Status**: `Architecturally Sovereign | Operationally Restored | Phase 0 Complete | Phase 1 Complete (D178) | Phase 2 Complete (D180 Pillar Decoupling) | Pre-PR Feature Sprint Complete (D186-D188)`
+## §5 Sovereign Decree — Current State (2026-07-06)
+**Status**: `Architecturally Sovereign | Operationally Restored | Phase 0 Complete | Phase 1 Complete (D178) | Phase 2 Complete (D180) | Pre-PR Feature Sprint Complete (D186-D188) | Documentation Hardening Initiated (DOC-SPRINT-START)`
 
 ### Phase 0 COMPLETE (2026-06-27)
 - ✅ **Fixed `ModelGateway.generate`**: `search_order` → `self.providers` (crash-free inference restored)
@@ -186,7 +187,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | PyPI entry point | `omega` CLI via `[project.scripts]` | 2026-06-22 |
 | Source files | **141** .py files | 2026-07-05 |
 | Source lines | **~32,000** | 2026-07-02 |
-| Test functions | **902 collected — 902 passing, 23 skipped, 3 xfailed** | 2026-07-05 |
+| Test functions | **855 collected — 855 passing, 41 skipped, 3 xfailed** | 2026-07-05 |
 | PIVOT decisions | **188 (D50-D188)** | 2026-07-01 |
 | Sovereign Mandates | **22 (M1-M22)** | 2026-06-17 |
 | Agent Fleet | **13 agents** (11 fleet + 1 pillar + 1 messenger) | 2026-06-24 |
@@ -208,6 +209,8 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | **Headroom** | ⚠️ **DEPRECATED** (Binary zlib) $\rightarrow$ `headroom-ai` (Semantic) | `[id-soft: doom-1993] WAD System` |
 | **Mem Palace** | ✅ **implemented** (D186) — 3D Force-Directed Graph spatial mapping | `[id-soft: doom-1993] BSP Culling` |
 | **Omega Hub** | ✅ **Modularized v2.3.0** | (Pillar 2 coordination) |
+| **SearXNG Service** | ✅ **operational** (tmpfs graphroot, root partition) | `[id-soft: doom-1993] WAD System` |
+| **KeyVault** | ✅ **encrypted, multi-account populated** (all keys from API-keys.md migrated) | `[id-soft: quake-1996] Zone Memory` |
 | **Heritage Vetting** | ✅ H1 LIVE: 4-gate, 23 concepts | (Kali d-kal-001) |
 | **Engine Firewall** | ✅ D113 GAP RESOLVED | **S1.5a: WAD Loader Hardening NEXT** |
 
@@ -228,7 +231,7 @@ USE → DATA → TRAIN → BETTER LOCAL → LESS CLOUD → MORE SOVEREIGNTY
 | **Carmack S3 Audit** | 2026-07-02 | Carmack + Kali | ✅ DONE | 3 critical gaps resolved: Knowledge Graph (phantom), Hivemind (26 tests), Quality Scorer (4-signal). 705 tests (+37). |
 | **Multi-Model Council** | 2026-07-02 | Opus + Gemini + Sonnet + MiMo | ✅ DONE | 14 actionable items, 6 new integration-seam gaps, 2 architectural decisions (D189a–e). Legacy mining validated with dedup assessment. |
 | **Session 51** (T3 Sprint) | 2026-07-05 | Jem | ✅ DONE | T3-1 Session Lifecycle (24 tests), T3-2 Metrics DB Wiring (12 tests), T3-3 Mandate CI Gates (9 checks). Docs D1-D20 complete. 855 tests, 0 regressions. |
-| **Session 52** (Team Sprint) | 2026-07-05 | Fleet | ✅ DONE | FTS5 Library Search MCP tool (P4), 252 docs indexed (Roc), WARP systemd units fixed (Kali+Researcher), Carmack review approved. 855 tests, 0 regressions. |
+| **Session 53** (Toolchain Hardening) | 2026-07-06 | Lilith | ✅ DONE | SearXNG Quadlet fix (tmpfs graphroot), KeyVault multi-account migration, legacy purge (omega-belial archived). All search tiers (T1-T4) operational. |
 
 > **Full sprint history:** See `docs/decisions/PIVOT_LOG.md`.
 
@@ -301,5 +304,5 @@ For detailed architectural specifications, roadmaps, and historical analyses, re
 
 ---
 
-*Last Updated: 2026-07-02 | Author: Kali (Bedrock Sprint + Multi-Model Council) | Version: v1.1.0-rc*
-*Major changes this revision: Bedrock Hardening complete. Integrated Semantic Router, Headroom Protocol, Mem Palace, and Stochastic Circuit Breakers. Verified zero new dependencies. Cloud Teachers updated: added Google Antigravity + OpenRouter, removed Copilot. Multi-Model Council (Opus+Gemini+Sonnet+MiMo) resolved 6 integration-seam gaps. Ready for Temple-Grade audit and v1.1.0 PR.*
+*Last Updated: 2026-07-06 | Author: NEMOTRON-3-SUPER (Documentation Sprint) | Version: v1.1.0-rc*
+*Major changes this revision: Documentation Hardening Sprint initiated. Created DOCUMENTATION_SPRINT_PLAN.md, DOC_INVENTORY_20260706.md, and DOC_STYLE_GUIDE.md. Toolchain hardened: SearXNG Quadlet operational (tmpfs graphroot), KeyVault multi-account migration complete (all keys from API-keys.md migrated), omega-belial archived. All search tiers (T1-T4) operational. Ready for Temple-Grade audit and v1.1.0 PR.*

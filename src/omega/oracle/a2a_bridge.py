@@ -12,6 +12,7 @@ Key Design:
 - SPIFFE X.509-SVID for agent identity (draft-klrc-aiagent-auth-02)
 - OAuth 2.0 delegation via Transaction Tokens
 """
+# DocRef: docs/architecture/MESH_NETWORK_SPEC.md
 
 import json
 import logging

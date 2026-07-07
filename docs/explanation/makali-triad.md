@@ -1,3 +1,12 @@
+# 🔱 Explanation: The MaKaLi Triad Architecture
+**AP Token**: `AP-MAKALI_TRIAD-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Explanation: The MaKaLi Triad Architecture.
+
+---
+
 # Explanation: The MaKaLi Triad Architecture
 
 The MaKaLi Triad is the Omega Engine's transcendent governance system. It is designed to prevent "cognitive drift" and "single-point-of-failure" reasoning by splitting oversight into complementary polarities.

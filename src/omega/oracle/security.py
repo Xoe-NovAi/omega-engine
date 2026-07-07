@@ -6,6 +6,7 @@ import logging
 from dataclasses import dataclass, field
 from functools import wraps
 from typing import Any, Dict, Optional, Union
+from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 

@@ -22,6 +22,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from datetime import datetime, timezone
 
 from omega.errors import (
+    OmegaError,
     OmegaError, ProviderError, ProviderRateLimitError,
     ProviderUnavailableError, ProviderAuthError
 )

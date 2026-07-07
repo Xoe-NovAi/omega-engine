@@ -35,6 +35,7 @@ from omega.oracle.sovereign_search_service import SovereignSearchService
 from omega.oracle.model_gateway import ModelGateway
 from omega.oracle.hierarchy import SovereignHierarchy
 from omega.oracle.health_monitor import get_health_monitor
+from omega.errors import OmegaError
 
 from mcp_servers.omega_hub.mcp_client import SovereignMCPClient
 
@@ -54,12 +55,14 @@ if TYPE_CHECKING:
 logger = logging.getLogger("omega.hub")
 
 
-# ═══════════════════════════════════════════════════════════════════════════
+# ══════════════════════════════════════════════════════════════════════════════
 # INITIALIZATION STATE
 # ═══════════════════════════════════════════════════════════════════════════
 
 _init_complete: bool = False
 _init_error: Optional[str] = None
+_init_in_progress: bool = False
+_init_lock: anyio.Lock = anyio.Lock()
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -190,6 +193,8 @@ async def _init_services() -> None:
     except Exception as e:
         _init_error = str(e)
         logger.error("Hub service initialization FAILED: %s", e)
+    finally:
+        _init_in_progress = False
 
 
 # ═══════════════════════════════════════════════════════════════════════════

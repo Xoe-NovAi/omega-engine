@@ -33,6 +33,7 @@ from .world_state import world_state
 from .middleware.headroom import get_headroom_middleware, HeadroomResult
 from .selective_hydration import SelectiveHydration, L3Principle
 from ..errors import OmegaError
+from omega.errors import OmegaError
 # New constant for token-aware sliding window
 DEFAULT_TOKEN_LIMIT = 4000 
 

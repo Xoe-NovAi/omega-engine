@@ -18,6 +18,7 @@ from typing import Optional
 
 from fastapi import FastAPI, HTTPException
 from omega.errors import (
+    OmegaError,
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
     ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
     ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,

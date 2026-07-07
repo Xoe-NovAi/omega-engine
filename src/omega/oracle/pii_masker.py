@@ -19,6 +19,7 @@ from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum, auto
 
 import anyio
+from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 

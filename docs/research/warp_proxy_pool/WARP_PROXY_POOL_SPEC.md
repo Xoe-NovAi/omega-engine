@@ -161,15 +161,41 @@ WantedBy=multi-user.target
 (Refer to `docs/kb/WARP_Sovereign_Knowledge_Base.md` for the complete Error Matrix)
 
 ---
+ 
+## §8 2026 Hardening & Sovereign Resilience
+As of 2026, the "Brittle Pipe" architecture has been evolved into a **Sovereign Pool** to ensure production-grade reliability and security.
 
-## §7 Related Documents
-| Document | Purpose | Location |
-|----------|---------|----------|
-| **VALIDATION_STRATEGY.md** | 8-scenario end-to-end validation plan | `docs/research/warp_proxy_pool/VALIDATION_STRATEGY.md` |
-| **proxy_pool.py** | Python orchestration layer (EphemeralWarpPool) | `src/omega/proxy_pool.py` |
-| **spawn_warp_node.sh** | Shell lifecycle automation | `scripts/spawn_warp_node.sh` |
-| **WARP_Sovereign_Knowledge_Base.md** | Hard-won lessons and debugging | `docs/kb/WARP_Sovereign_Knowledge_Base.md` |
+### §8.1 `socat` Bridge Hardening
+The loopback bridge is optimized for high-frequency proxy connections:
+- **TCP Tuning**: `nodelay` (disable Nagle), `keepalive`, and buffers (`rcvbuf`/`sndbuf`) set to 64KB.
+- **Resource Caps**: `max-children=128` to prevent fork-bombing.
+- **Access Control**: `range=127.0.0.1/32` ensures the listener is only accessible locally.
+
+### §8.2 systemd Sandboxing (Sovereign Standard)
+Service units (`warp-node@.service` and `socat-bridge@.service`) now implement the 2026 security baseline:
+- **Privilege Reduction**: Use of `AmbientCapabilities` to restrict processes to only `CAP_NET_ADMIN` and `CAP_NET_RAW`.
+- **Kernel Isolation**: `SystemCallFilter=~@privileged @system-service`, `MemoryDenyWriteExecute=yes`, and `LockPersonality=yes`.
+- **Resource Guarding**: Strict `MemoryMax` and `CPUQuota` to prevent runaway instances from impacting the host.
+
+### §8.3 Network Namespace Tuning
+To eliminate fragmentation and latency spikes:
+- **MTU Optimization**: Veth pairs are pinned to **1420 bytes** to match the WireGuard standard.
+- **TCP Stack Tuning**: `net.ipv4.tcp_keepalive_time=60` and `net.ipv4.tcp_fin_timeout=15` are enforced inside the namespace.
+- **Buffer Scaling**: `net.core.rmem_max` and `wmem_max` increased to 16MB.
+
+### §8.4 Tiered Canary Probing
+The health check has evolved from a simple `curl` to a tiered validator:
+1. **L4 (Transport)**: TCP SYN check to verify the `socat` listener is alive.
+2. **L7 (Application)**: HTTP request to `1.1.1.1/cdn-cgi/trace` to verify tunnel routing.
+3. **Latency**: TTFB (Time-to-First-Byte) monitoring to mark nodes as `DEGRADED` before total failure.
+
+### §8.5 Zero-Downtime Rotation (Blue-Green Drain)
+IP rotation no longer uses `systemctl restart` (which drops all streams). The **Drain Pattern** is implemented:
+1. Spawn a new namespace node.
+2. Route new requests to the new node.
+3. Monitor `conntrack` for active connections on the old node.
+4. Terminate the old node only after connections are drained or a grace period expires.
 
 ---
 
-*🔱 OMEGA ⬡ SOPHIA ⬡ warp-pool ⬡ netns ⬡ trc_core ⬡ PROXY-POOL-SPEC v1.2.0*
+*🔱 OMEGA ⬡ SOPHIA ⬡ warp-pool ⬡ netns ⬡ trc_core ⬡ PROXY-POOL-SPEC v1.3.0 (Hardened)*

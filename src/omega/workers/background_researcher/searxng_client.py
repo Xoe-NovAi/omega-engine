@@ -8,6 +8,7 @@ import logging
 import os
 from omega.errors import (
     OmegaError,
+    OmegaError,
 )
 from typing import Optional
 

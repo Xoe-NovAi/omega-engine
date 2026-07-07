@@ -1,3 +1,12 @@
+# 🔱 Oversight Hierarchy
+**AP Token**: `AP-OVERSIGHT_HIERARCHY-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Architecture documentation for oversight hierarchy.
+
+---
+
 # 🔱 Omega Engine — Oversight Hierarchy
 # AP: AP-OVERSIGHT-HIERARCHY-v1.0.0
 # ICS: [NODE: CORE | ARCHETYPE: HIERARCHY | CONTEXT: SOVEREIGN-GOVERNANCE]

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # validate_warp_pool.sh — WARP Proxy Pool Validation
-# AP: AP-WARP-VALIDATE-v1.0.0
+# AP: AP-WARP-VALIDATE-v2.0.0
 # Run after deployment to verify the pool is working
+# Updated 2026: Implements L4 -> L7 tiered canary probes.
 
 set -euo pipefail
 
@@ -18,9 +19,11 @@ log_warn() { echo -e "${YELLOW}[WARN]${NC} $*"; }
 log_err() { echo -e "${RED}[FAIL]${NC} $*"; }
 
 # ── Configuration ──────────────────────────────────────────────────────────────
-PORTS=(8081 8082 8083)
+# Dynamic port detection based on active nodes
+NODES=(1 2 3)
 CANARY_URL="https://1.1.1.1/cdn-cgi/trace"
 TIMEOUT=10
+LATENCY_THRESHOLD=0.500 # 500ms
 
 PASS=0
 FAIL=0
@@ -39,32 +42,67 @@ check() {
     fi
 }
 
+# ── Tiered Canary Probe ────────────────────────────────────────────────────────
+probe_node() {
+    local node_id="$1"
+    local port=$((8080 + node_id))
+    
+    echo -n "  Node $node_id (Port $port): "
+    
+    # Tier 1: L4 Transport Check (Is the listener alive?)
+    if ! nc -z -w 2 127.0.0.1 "$port" &>/dev/null; then
+        log_err "L4 FAIL (Listener Down)"
+        return 1
+    fi
+    
+    # Tier 2: L7 Application Check (Is the tunnel routing?)
+    # Capture TTFB (Time to First Byte) for latency check
+    local response
+    local ttfb
+    
+    # Use curl's write-out to get time_starttransfer
+    ttfb=$(curl -x socks5h://127.0.0.1:"$port" -s -o /dev/null -w "%{time_starttransfer}" --max-time 3 "$CANARY_URL")
+    response=$(curl -s -x socks5h://127.0.0.1:"$port" --max-time 3 "$CANARY_URL")
+    
+    if [[ ! "$response" =~ "warp=on" ]]; then
+        log_err "L7 FAIL (Tunnel Down/Not Routing)"
+        return 1
+    fi
+    
+    # Tier 3: Latency Check
+    if (( $(echo "$ttfb > $LATENCY_THRESHOLD" | bc -l) )); then
+        log_warn "L7 PASS (DEGRADED: TTFB ${ttfb}s > ${LATENCY_THRESHOLD}s)"
+    else
+        log_ok "L7 PASS (Healthy: TTFB ${ttfb}s)"
+    fi
+    
+    return 0
+}
+
 # ── Validation Steps ───────────────────────────────────────────────────────────
 echo "╔══════════════════════════════════════════════════════════════╗"
-echo "║  WARP Proxy Pool Validation                                    ║"
+echo "║  WARP Proxy Pool Validation (Sovereign 2026)               ║"
 echo "╚══════════════════════════════════════════════════════════════╝"
 echo
-
+ 
 log_info "Checking systemd units..."
-for i in 1 2 3; do
+for i in "${NODES[@]}"; do
     check "warp-node@${i}.service active" systemctl is-active --quiet "warp-node@${i}.service"
 done
 
-log_info "Checking port listeners..."
-for port in "${PORTS[@]}"; do
-    check "Port ${port} listening" ss -tlnp | grep -q ":${port} "
-done
-
 log_info "Checking socat bridges..."
-for port in "${PORTS[@]}"; do
+for i in "${NODES[@]}"; do
+    port=$((8080 + i))
     check "socat process for port ${port}" pgrep -f "socat.*TCP-LISTEN:${port}" >/dev/null
 done
 
-log_info "Checking WARP tunnel connectivity (canary probe)..."
-for port in "${PORTS[@]}"; do
-    check "Port ${port} WARP tunnel" bash -c "
-        curl -s -x socks5h://127.0.0.1:${port} --max-time ${TIMEOUT} '${CANARY_URL}' | grep -q 'warp=on'
-    "
+log_info "Executing Tiered Canary Probes..."
+for i in "${NODES[@]}"; do
+    if probe_node "$i"; then
+        ((PASS++))
+    else
+        ((FAIL++))
+    fi
 done
 
 log_info "Checking IP rotation capability..."

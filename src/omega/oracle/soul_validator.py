@@ -13,7 +13,7 @@ import uuid
 import logging
 from pathlib import Path
 from typing import Any, Dict, Optional, Tuple
-from omega.errors import SoulCorruptionError, OmegaPersistenceError
+from omega.errors import SoulCorruptionError, OmegaPersistenceError, OmegaError
 
 logger = logging.getLogger(__name__)
 

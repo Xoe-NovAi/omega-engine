@@ -46,6 +46,14 @@ ExecStart=/usr/bin/bash -c '\
   /usr/sbin/ip netns exec "$${NS}" /usr/sbin/ip link set lo up && \
   /usr/sbin/ip netns exec "$${NS}" /usr/sbin/ip route add default via "$${HOST_IP}" && \
   \
+  # 5b. 2026 MTU & TCP Tuning; \
+  /usr/sbin/ip link set "$${VETH_HOST}" mtu 1420 && \
+  /usr/sbin/ip netns exec "$${NS}" /usr/sbin/ip link set "$${VETH_NS}" mtu 1420 && \
+  /usr/sbin/ip netns exec "$${NS}" /usr/sbin/sysctl -w net.ipv4.tcp_keepalive_time=60 && \
+  /usr/sbin/ip netns exec "$${NS}" /usr/sbin/sysctl -w net.ipv4.tcp_fin_timeout=15 && \
+  /usr/sbin/ip netns exec "$${NS}" /usr/sbin/sysctl -w net.core.rmem_max=16777216 && \
+  /usr/sbin/ip netns exec "$${NS}" /usr/sbin/sysctl -w net.core.wmem_max=16777216 && \
+  \
   # 6. Enable IP forwarding (idempotent); \
   /usr/sbin/sysctl -w net.ipv4.ip_forward=1 && \
   \

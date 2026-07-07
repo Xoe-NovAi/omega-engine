@@ -8,6 +8,7 @@ import contextlib
 from typing import Any, Awaitable, Callable, Optional
 
 import anyio
+from omega.errors import OmegaError
 
 logger = logging.getLogger("omega.mcp_runtime")
 

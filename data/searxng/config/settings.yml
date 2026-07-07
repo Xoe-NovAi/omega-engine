@@ -50,3 +50,9 @@ engines:
     engine: semantic_scholar
     shortcut: ss
     disabled: false
+  - name: ahmia
+    engine: ahmia
+    disabled: true
+  - name: torch
+    engine: torch
+    disabled: true

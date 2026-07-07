@@ -266,8 +266,16 @@ class KeyVault:
                 self._data["keys"][provider] = key
         else:
             entry = self._data["keys"][provider]
-            if isinstance(entry, str) and not account:
-                self._data["keys"][provider] = key
+            if isinstance(entry, str):
+                if account:
+                    # Convert simple key to multi-account dict
+                    self._data["keys"][provider] = {
+                        "primary": entry,
+                        "accounts": {account: key},
+                        "active_account": account,
+                    }
+                else:
+                    self._data["keys"][provider] = key
             elif isinstance(entry, dict):
                 if account:
                     if "accounts" not in entry:

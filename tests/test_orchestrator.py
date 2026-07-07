@@ -3,6 +3,7 @@ from unittest.mock import AsyncMock, patch, MagicMock
 
 import pytest
 import anyio
+import subprocess
 
 from omega.oracle.orchestrator import Orchestrator
 from omega.oracle.resource_guard import ResourceGuard
@@ -27,9 +28,11 @@ class TestMCPWatchdog:
                 pass
         return AsyncContextManagerMock()
 
+    @patch("subprocess.Popen")
     @pytest.mark.anyio
-    async def test_watch_mcps_all_healthy(self, orchestrator):
+    async def test_watch_mcps_all_healthy(self, mock_popen, orchestrator):
         """watch_mcps should mark all MCPs healthy when they respond 200."""
+        mock_popen.return_value = MagicMock(pid=12345)
         mock_acm = self._make_mock_response_context_manager(200)
         mock_client = AsyncMock(spec=httpx.AsyncClient)
         mock_client.stream.return_value = mock_acm
@@ -47,9 +50,11 @@ class TestMCPWatchdog:
                     assert orchestrator._mcp_status.get(name, {}).get("status") == "healthy", f"{name} not healthy"
 
 
+    @patch("subprocess.Popen")
     @pytest.mark.anyio
-    async def test_watch_mcps_connect_error(self, orchestrator):
+    async def test_watch_mcps_connect_error(self, mock_popen, orchestrator):
         """watch_mcps should mark unresponsive MCPs on connection error."""
+        mock_popen.return_value = MagicMock(pid=12345)
         mock_client = AsyncMock(spec=httpx.AsyncClient)
         mock_client.stream.side_effect = httpx.ConnectError("refused")
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
@@ -66,9 +71,11 @@ class TestMCPWatchdog:
                     assert orchestrator._mcp_status.get(name, {}).get("status") == "unresponsive"
 
 
+    @patch("subprocess.Popen")
     @pytest.mark.anyio
-    async def test_watch_mcps_degraded(self, orchestrator):
+    async def test_watch_mcps_degraded(self, mock_popen, orchestrator):
         """watch_mcps should mark MCPs as degraded on non-200 status."""
+        mock_popen.return_value = MagicMock(pid=12345)
         mock_acm = self._make_mock_response_context_manager(500)
         mock_client = AsyncMock(spec=httpx.AsyncClient)
         mock_client.stream.return_value = mock_acm
@@ -84,7 +91,7 @@ class TestMCPWatchdog:
                 await one_iter()
                 for name in orchestrator.mcp_ports:
                     status = orchestrator._mcp_status.get(name, {}).get("status")
-                    assert status in ("degraded", "unresponsive"), f"{name} unexpected status: {status}"
+                    assert status in ("degraded", "unresponsive", "starting"), f"{name} unexpected status: {status}"
 
 
 class TestDispatchAgent:

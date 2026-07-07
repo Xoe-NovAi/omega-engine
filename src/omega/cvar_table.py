@@ -21,6 +21,8 @@
 #   - constants.py is a thin re-export layer (backward compatible).
 #   - New code should import from omega.cvar_table directly.
 
+
+# DocRef: docs/standards/DOC_STYLE_GUIDE.md
 import logging
 import os
 from dataclasses import dataclass, field

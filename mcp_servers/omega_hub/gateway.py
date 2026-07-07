@@ -78,7 +78,7 @@ class SovereignGateway:
         import httpx
         
         # Load gateway configuration from omega.yaml
-        config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
+        config_path = Path(__file__).resolve().parent.parent.parent / "config" / "omega.yaml"
         with open(config_path, "r") as f:
             config = yaml.safe_load(f)
         gateway_config = config.get("omega", {}).get("gateway", {})

@@ -14,6 +14,7 @@ import anyio
 import httpx
 
 from omega.cvar_table import ZONEID_EMBEDDING, validate_zoneid
+from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 

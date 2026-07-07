@@ -15000,7 +15000,7 @@ class DiscoveryOrchestrator:
     async def _phase_synthesize(self, report: DiscoveryReport) -> str:
         """Final synthesis of all gathered research."""
         system_prompt = (
-            "You are the Sovereign Researcher. Synthesize the gathered research into a "
+            "You are the Sovereign Synthesizer. Synthesize the gathered research into a "
             "comprehensive report. Include sections for Key Findings, Technical Details, "
             "and Sources. Focus on high-fidelity, actionable insights."
         )

@@ -1,3 +1,12 @@
+# 🔱 Contributing Setup: Developer Environment
+**AP Token**: `AP-SETUP-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_proc ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Contributing Setup: Developer Environment.
+
+---
+
 # Contributing Setup — Developer Environment
 
 > How to set up the Omega Engine for development and contribution.

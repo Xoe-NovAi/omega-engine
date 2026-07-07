@@ -12,9 +12,12 @@
 #   - get_quota_usage(provider) -> float (0.0-1.0)
 #   - get_success_rate(model_name) -> float (0.0-1.0)
 
+
+# DocRef: docs/architecture/PROVIDER_FABRIC_DEEP_DIVE.md
 from __future__ import annotations
 
 import anyio
+from omega.errors import OmegaError
 import inspect
 import time
 import logging

@@ -29,10 +29,36 @@ case "$ACTION" in
         ;;
         
     "recycle")
-        echo "[System Config] Recycling Node $NODE_ID (rotating exit IP)..."
-        # Restarting the node triggers a new tunnel connection
+        echo "[System Config] Recycling Node $NODE_ID (Graceful Drain)..."
+        
+        # 1. Stop the bridge to prevent new connections
+        sudo systemctl stop "socat-bridge@${NODE_ID}.service"
+        
+        # 2. Drain existing connections using conntrack
+        DRAIN_TIMEOUT=30
+        ELAPSED=0
+        echo -n "Draining active connections"
+        while [ $ELAPSED -lt $DRAIN_TIMEOUT ]; do
+            # Check for active TCP connections on the proxy port
+            if ! sudo conntrack -L | grep -q ":$PROXY_PORT "; then
+                echo " [DONE]"
+                break
+            fi
+            echo -n "."
+            sleep 1
+            ELAPSED=$((ELAPSED + 1))
+        done
+        if [ $ELAPSED -eq $DRAIN_TIMEOUT ]; then
+            echo " [TIMEOUT] Forcing rotation"
+        fi
+        echo ""
+
+        # 3. Restart the node to rotate exit IP
         sudo systemctl restart "warp-node@${NODE_ID}.service"
-        echo "[System Config] Tunnel recycled. New exit IP assigned."
+        
+        # 4. Restore the bridge
+        sudo systemctl start "socat-bridge@${NODE_ID}.service"
+        echo "[System Config] Tunnel recycled and bridge restored. New exit IP assigned."
         ;;
         
     "stop")

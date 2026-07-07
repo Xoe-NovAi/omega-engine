@@ -1,3 +1,12 @@
+# 🔱 Why the 22 Sovereign Mandates?
+**AP Token**: `AP-WHY_22_MANDATES-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Why the 22 Sovereign Mandates?.
+
+---
+
 # Why the 22 Sovereign Mandates?
 # ⬡ OMEGA ⬡ JEM ⬡ la-docs ⬡ explanation ⬡ why-22-mandates
 

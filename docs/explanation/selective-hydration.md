@@ -1,3 +1,12 @@
+# 🔱 Selective Hydration Architecture
+**AP Token**: `AP-SELECTIVE_HYDRATION-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Selective Hydration Architecture.
+
+---
+
 # Selective Hydration Architecture
 
 **Module**: `src/omega/oracle/selective_hydration.py`

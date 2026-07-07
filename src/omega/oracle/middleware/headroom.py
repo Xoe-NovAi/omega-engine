@@ -3,6 +3,7 @@ import logging
 from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 import anyio
+from omega.errors import OmegaError
 from omega.oracle.entity_registry import EntityRegistry
 
 # [M1 AnyIO Absolute] headroom-ai is an optional dep; gracefully degrade

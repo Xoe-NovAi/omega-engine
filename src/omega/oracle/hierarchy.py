@@ -13,6 +13,7 @@ ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: HIERARCHY]
 import logging
 import os
 from omega.errors import (
+    OmegaError,
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
     ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
     ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,

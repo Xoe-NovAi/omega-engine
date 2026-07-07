@@ -21,6 +21,7 @@ from enum import Enum
 from typing import Dict, Optional
 
 import anyio
+from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 

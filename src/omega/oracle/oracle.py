@@ -53,6 +53,7 @@ from ..memory_store import get_memory_store
 from ..astrology import record_first_breath
 from ..orchestration.triage_router import TriageRouter, TriageRequest, TaskRequest, EntityContext, Constraints, SessionContext, ModelSelection
 from ..state import get_usm, initialize_usm
+from omega.errors import OmegaError
 
 # WARP Proxy Pool — optional, for OpenCode Zen rate limit bypass
 try:

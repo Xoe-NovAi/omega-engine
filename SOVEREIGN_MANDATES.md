@@ -1,8 +1,8 @@
 # 🔱 Omega Engine — Sovereign Mandates
-**Version**: 3.5.0
+**Version**: 3.6.0
 **Status**: NON-NEGOTIABLE
 **Scope**: All Agents, All CLIs, All IDEs
-**Updated**: 2026-06-17 (Added M20 SomaticState, M21 Gate Integrity, M22 Response Provenance)
+**Updated**: 2026-07-06 (Added M23 Failure Integrity)
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
@@ -160,6 +160,13 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Pattern**: The Truth-Anchor Protocol — `GenerateResult` dataclass carries `provider_name` from the actual inference backend, ensuring forensic accuracy in observability logs.
 - **Reason**: Local-first claims require verifiable evidence. If the log says "local" but the response came from cloud, sovereignty is a lie.
 - **Enforcement**: Any observability entry must include `provider_name` from the actual response, not the configuration.
+
+### 23. Failure Integrity (NEW — 2026-07-06)
+- **Mandate**: No "soft-failures" or simulated rigor.
+- **Constraint**: If a mandatory tool (e.g., `websearch`, `webfetch`) is missing or broken, the agent MUST stop immediately and report a `[TOOL-CHAIN-COLLAPSE]`.
+- **Pattern**: Log the failure to `data/coordination/SYSTEM_FAILURE_LOG.md` and the Hivemind.
+- **Reason**: Parametric synthesis used to mask a tool outage is a Sovereign Boundary Violation. It creates a false sense of rigor and hides systemic degradation.
+- **Enforcement**: Any agent that synthesizes a "best-effort" result while mandatory tools are failing is in violation of M23.
 
 ---
 

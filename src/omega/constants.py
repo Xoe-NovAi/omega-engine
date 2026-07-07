@@ -16,6 +16,7 @@ Heritage:
     [id-soft: doom-1993] ZONEID Pattern — magic constants re-export from cvar_table
     [id-soft: quake3-1999] Cvar System — cvar table unified module entry point
 """
+# DocRef: docs/standards/DOC_STYLE_GUIDE.md
 
 # ── Local constants (NOT in cvar table — session/config values) ─────
 # These are simple Python constants, not tunable engine parameters.

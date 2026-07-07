@@ -1,3 +1,12 @@
+# 🔱 Knowledge Library Architecture
+**AP Token**: `AP-KNOWLEDGE-LIB-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Architecture of the knowledge library and memory management system.
+
+---
+
 # 🔱 Omega Engine — Knowledge Library Architecture
 # AP: AP-LIBRARY-ARCH-v1.0.0
 # ICS: [NODE: CORE | ARCHETYPE: LIBRARY | CONTEXT: SOVEREIGN-KNOWLEDGE]

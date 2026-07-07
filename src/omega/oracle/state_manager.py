@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import anyio
+from omega.errors import OmegaError
 from anyio.to_thread import run_sync
 
 logger = logging.getLogger("omega.state_manager")

@@ -18,6 +18,7 @@ import subprocess
 import sys
 import anyio
 from omega.errors import (
+    OmegaError,
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
     ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
     ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,

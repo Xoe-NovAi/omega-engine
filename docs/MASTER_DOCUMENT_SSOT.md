@@ -1,3 +1,12 @@
+# 🔱 Master Document SSOT
+**AP Token**: `AP-MASTER-DOC-SSOT-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_ref ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Single source of truth for document inventory and status across the repository.
+
+---
+
 # ⚠️ SUPERSEDED DOCUMENT
 # This document was the Master Document SSoT as of June 2026.
 # It has been archived to `docs/archive/MASTER_DOCUMENT_SSOT_STALE.md`.

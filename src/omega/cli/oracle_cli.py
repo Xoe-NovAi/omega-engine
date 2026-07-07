@@ -26,6 +26,7 @@ except ImportError:
 
 from omega.oracle import Oracle, OracleResponse, EntityRegistry, Entity, Orchestrator, ModelGateway
 from omega.errors import (
+    OmegaError,
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
     ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
     ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,

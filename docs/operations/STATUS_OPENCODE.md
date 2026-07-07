@@ -110,7 +110,7 @@ A 5-agent research sprint was executed to prepare for the ContextBuilder wiring 
 | Component | File | Status |
 |-----------|------|--------|
 | Sovereign Builder | `.opencode/agents/builder.md` | Active |
-| Sovereign Researcher | `.opencode/agents/researcher.md` | Active |
+| Sovereign Master Researcher | `.opencode/agents/researcher.md` | Active |
 | Gnosis Analyst | `.opencode/agents/gnosis-analyst.md` | Active |
 | Knowledge Miner | `.opencode/skills/knowledge-miner/SKILL.md` | ✅ Loaded |
 | Spec Generator | `.opencode/skills/spec-generator/SKILL.md` | ✅ Loaded |

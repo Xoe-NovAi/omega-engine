@@ -17,6 +17,7 @@ import anyio
 
 from omega.memory.embeddings import EmbeddingManager, IEmbeddingProvider, SovereignFallbackEmbeddingProvider
 from omega.oracle.entity_registry import EntityRegistry, Entity
+from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 

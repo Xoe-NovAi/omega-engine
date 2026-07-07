@@ -22,8 +22,13 @@ The Three Epochs are ordered by dependency — each Strike builds on the one bef
 - **New**: Mandate audit results (M11 VIOLATED, M22 PARTIAL, M5/M7 at risk) in §IV
 
 **If it's not in this blueprint, it's archived or it's a protocol doc.**
-
+ 
+**Sovereign Asset Registry**:
+- `Xoe-NovAi/omega-engine` (Core Engine & Hub)
+- `Xoe-NovAi/warp-proxy-pool` (Sovereign Network Distribution)
+ 
 ---
+
 
 ## I. The Sovereign Aspect Hierarchy (Sovereign-by-Design)
 Sovereign Aspects are first-class entities (Entity + SlotID) with their own `soul.yaml`, `knowledge/`, and `workspace/`. They are governed by the Oversouls (Ma'at for Light Aspects P1-P5, Lilith for Dark Aspects P6-P10) and unified by Kali.

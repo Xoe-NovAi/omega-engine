@@ -1,3 +1,12 @@
+# 🔱 Metrics Pipeline Architecture
+**AP Token**: `AP-METRICS_PIPELINE-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Metrics Pipeline Architecture.
+
+---
+
 # Metrics Pipeline Architecture
 
 **Module**: `src/omega/observability/metrics_db.py`

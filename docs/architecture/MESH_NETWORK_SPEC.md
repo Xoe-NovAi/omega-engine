@@ -1,3 +1,12 @@
+# 🔱 Mesh Network Specification
+**AP Token**: `AP-MESH-NET-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_ref ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Specification for the agent-to-agent mesh network communication protocol.
+
+---
+
 # 🔱 MESH NETWORK SPECIFICATION (Draft)
 # ⬡ OMEGA ⬡ researcher ⬡ google/gemma-4-31b-it ⬡ L2-Synthesis
 

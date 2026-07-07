@@ -1,3 +1,12 @@
+# 🔱 Agent Fleet Architecture
+**AP Token**: `AP-AGENT-FLEET-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Architecture of the 11-agent sovereign fleet and governance hierarchy.
+
+---
+
 # 🔱 Omega Engine — Agent Fleet Architecture
 # AP: AP-AGENT-FLEET-v1.0.0
 # ICS: [NODE: CORE | ARCHETYPE: FLEET | CONTEXT: AGENT-HIEARCHY]

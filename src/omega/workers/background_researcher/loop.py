@@ -21,6 +21,7 @@ import anyio
 from omega.library.coordinator import COORDINATOR, WorkerState
 from omega.library.rate_limiter import RATE_LIMITER
 from omega.errors import (
+    OmegaError,
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
     ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
     ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,

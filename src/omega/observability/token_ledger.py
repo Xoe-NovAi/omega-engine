@@ -23,6 +23,7 @@ import anyio
 
 from omega.observability import get_engine, EventType
 from omega.cvar_table import cvar_get
+from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 

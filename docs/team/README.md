@@ -10,7 +10,7 @@ This directory tracks per-agent status updates and team coordination.
 | Agent | File | Role |
 |-------|------|------|
 | Opus 4.6 (Antigravity IDE) | `STATUS_OPUS.md` | Strategic Oversight — architecture, documentation, coordination |
-| OpenCode CLI | `STATUS_OPENCODE.md` (in `docs/operations/`) | Sovereign Researcher & Builder |
+| OpenCode CLI | `STATUS_OPENCODE.md` (in `docs/operations/`) | Sovereign Master Researcher & Builder |
 | Cline Extension (VSCodium) | `STATUS_CLINE.md` (in `docs/operations/`) | Code Integration & Implementation |
 | Gemini CLI | `STATUS_GEMINI_CLI.md` (in `docs/operations/`) | Implementation & Discovery |
 

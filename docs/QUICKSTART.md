@@ -1,3 +1,12 @@
+# 🔱 Omega Engine — Quick Start Guide
+**AP Token**: `AP-QUICKSTART-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_user ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: 5-minute getting started guide for new Omega Engine users.
+
+---
+
 # Omega Engine — Quick Start
 
 > Install and run your sovereign AI runtime in 5 minutes.

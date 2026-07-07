@@ -1,3 +1,12 @@
+# 🔱 First Wad
+**AP Token**: `AP-FIRST_WAD-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_user ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Tutorial documentation for first wad.
+
+---
+
 # Tutorial: Your First WAD
 
 > Build a custom WAD stack with entities that use the ingestion pipeline.

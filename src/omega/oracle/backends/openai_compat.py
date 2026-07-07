@@ -82,7 +82,7 @@ class OpenAICompatProvider(RemoteProvider):
         proxy_url = self.config.extra.get("proxy_url")
         client_kwargs = {"timeout": self.config.timeout_seconds}
         if proxy_url:
-            client_kwargs["proxies"] = proxy_url
+            client_kwargs["proxy"] = proxy_url
         
         async with httpx.AsyncClient(**client_kwargs) as client:
             response = await client.post(url, json=payload, headers=headers)

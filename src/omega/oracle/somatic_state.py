@@ -8,6 +8,7 @@ import anyio
 from typing import Optional
 from pathlib import Path
 import llama_cpp
+from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 

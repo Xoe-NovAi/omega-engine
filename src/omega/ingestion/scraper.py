@@ -5,6 +5,7 @@ import anyio
 from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
 from pathlib import Path
+from omega.errors import OmegaError
 
 # We assume crawl4ai is installed. If not, we provide a mock/fallback.
 try:

@@ -12,6 +12,7 @@ from pathlib import Path
 from datetime import datetime, timezone
 from typing import Any, Dict, Optional, Tuple
 from dataclasses import dataclass, asdict
+from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 

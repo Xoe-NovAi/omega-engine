@@ -1,3 +1,12 @@
+# 🔱 Explanation: The Local-First Provider Chain
+**AP Token**: `AP-PROVIDER_CHAIN-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
+
+**Date**: 2026-07-06
+**Purpose**: Explanation: The Local-First Provider Chain.
+
+---
+
 # Explanation: The Local-First Provider Chain
 
 The Omega Engine's Model Gateway implements a **Sovereign Provider Chain**. This is a tiered fallback system that ensures the engine remains functional even if cloud services are unavailable, while prioritizing local inference to maximize data sovereignty.

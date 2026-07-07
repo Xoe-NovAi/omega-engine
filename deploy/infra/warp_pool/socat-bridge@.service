@@ -9,16 +9,19 @@ PartOf=warp-pool.target
 Type=simple
 # Instance %i = node ID (1, 2, 3). Port = 8080 + %i.
 # Runs socat on host, forwards into namespace via ip netns exec
-# NOTE: $$ escapes dollar signs in systemd ExecStart — needed for bash ${port} expansion
-ExecStart=/usr/bin/bash -c 'port=$((8080 + %i)); exec /usr/bin/socat TCP-LISTEN:$${port},fork,reuseaddr,bind=127.0.0.1 EXEC:"/usr/sbin/ip netns exec warp_node_%i /usr/bin/socat - TCP:127.0.0.1:$${port}"'
+# Hardened 2026: Added nodelay, keepalive, buffers, max-children, and strict range.
+ExecStart=/usr/bin/bash -c 'port=$((8080 + %i)); exec /usr/bin/socat TCP-LISTEN:$${port},fork,reuseaddr,bind=127.0.0.1,nodelay,keepalive,rcvbuf=65536,sndbuf=65536,max-children=128,range=127.0.0.1/32 EXEC:"/usr/sbin/ip netns exec warp_node_%i /usr/bin/socat - TCP:127.0.0.1:$${port}"'
 Restart=always
 RestartSec=2s
 PrivateTmp=true
 ProtectHome=yes
 RestrictAddressFamilies=AF_INET AF_UNIX AF_NETLINK
 # CAP_SYS_ADMIN needed for ip netns exec (setns syscall)
-# ProtectSystem=strict would break ip netns exec (mount namespace isolation)
 CapabilityBoundingSet=CAP_NET_ADMIN CAP_SYS_ADMIN
+# 2026 Sandboxing
+SystemCallFilter=~@privileged @system-service
+MemoryMax=64M
+CPUQuota=5%
 
 [Install]
 WantedBy=multi-user.target

@@ -26,6 +26,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Literal
+from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 

@@ -9,7 +9,7 @@ import anyio
 import httpx
 import os
 from typing import Any, Dict, List, Optional
-from omega.errors import ProviderError, ProviderAuthError, ProviderRateLimitError
+from omega.errors import OmegaError, ProviderError, ProviderAuthError, ProviderRateLimitError
 from omega.observability.bleg import BLEGMiddleware
 import json
 
