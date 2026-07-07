@@ -13,6 +13,8 @@
 # Pattern: JSON Object -> json.dumps() -> zlib.compress() -> base64.b64encode()
 # Envelope: [[zlib:base64_string]]
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import zlib
 import base64
 import json

@@ -12,6 +12,8 @@
 # [id-soft: quake-1996] Zone Memory — memory tagging pattern: each ledger
 # entry carries a zoneid for integrity validation on replay.
 
+
+# DocRef: docs/explanation/metrics-pipeline.md
 import json
 import logging
 import os

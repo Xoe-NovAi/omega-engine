@@ -21,6 +21,7 @@ Failure Modes (engine-generic):
     DUAL_IMPL      — Dual implementations → architectural anti-pattern
     DEAD_CODE      — Unused modules → dead code detection
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 from __future__ import annotations
 

@@ -3,6 +3,8 @@
 # 🔱 Timeout Manager — 4-Layer Nested Cancellation Hierarchy
 # Ported from xna-omega-legacy/scripts/ssa/timeout_manager.py
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import anyio
 import logging
 import time

@@ -3,6 +3,8 @@
 # 🔱 Rate Limiter — Token Bucket / Sliding Window per Provider
 # Ported from xna-omega-legacy/src/omega/core/rate_limiter.py
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import time
 import anyio
 import logging

@@ -1,4 +1,6 @@
 # AP: AP-PR-READINESS-v1.0.0
+
+# DocRef: docs/architecture/MESH_NETWORK_SPEC.md
 import logging
 from pathlib import Path
 from typing import Optional, AsyncGenerator, Dict, Any, Union

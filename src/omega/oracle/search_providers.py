@@ -3,6 +3,7 @@
 AP: AP-SEARCH-PROVIDERS-v1.0.0
 ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: SEARCH-HARDENING]
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import logging
 import anyio

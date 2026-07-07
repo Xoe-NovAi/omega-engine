@@ -16,6 +16,7 @@ Quality gates:
   - 0.6-0.8: Library (standard)
   - 0.8-1.0: Library (featured)
 """
+# DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
 
 import json
 import logging

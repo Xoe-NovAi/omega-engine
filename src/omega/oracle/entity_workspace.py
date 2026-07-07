@@ -12,6 +12,7 @@ including the soul.yaml and dedicated knowledge/workspace directories.
   EntityWorkspaceManager auto-scaffolds per-entity workspaces from YAML
   definitions — same data-driven principle.
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import logging
 from omega.errors import (

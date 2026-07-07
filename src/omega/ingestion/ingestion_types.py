@@ -2,6 +2,8 @@
 """
 Sovereign Ingestion Types — Shared schemas for entity deepening.
 """
+
+# DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 from pathlib import Path

@@ -6,6 +6,8 @@ Analyzes 6 signals (has_url, iris_confidence, entity_domain, query_category,
 credit_status, provider_health) to produce a SearchIntent that drives tier
 selection in SovereignSearchService.
 """
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 from __future__ import annotations
 
 import re

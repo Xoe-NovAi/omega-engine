@@ -1,4 +1,6 @@
 # AP: AP-INGESTION-VERIFIER-v1.0.0
+
+# DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 import logging
 from typing import List, Dict, Any, Tuple, Optional
 from dataclasses import dataclass

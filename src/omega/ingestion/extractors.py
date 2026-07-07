@@ -2,6 +2,8 @@
 """
 Sovereign Extractors — Model-specific extraction logic.
 """
+
+# DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 import json
 import time
 import httpx

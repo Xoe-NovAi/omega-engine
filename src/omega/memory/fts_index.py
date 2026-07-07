@@ -4,6 +4,7 @@
 [FTS5 Search Pattern: SQLite public domain]
 Provides BM25-ranked search across conversation history with sovereign isolation.
 """
+# DocRef: docs/architecture/MEMORY_STORE_DEEP_DIVE.md
 
 import sqlite3
 import json

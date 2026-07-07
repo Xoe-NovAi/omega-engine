@@ -21,6 +21,8 @@
 # M9: Error Integrity — typed errors, no bare except
 # M12: Queue Integrity — every compaction event is logged
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 import time
 from dataclasses import dataclass, field

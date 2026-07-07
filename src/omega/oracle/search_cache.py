@@ -2,6 +2,8 @@
 AP: AP-SOVEREIGN-SEARCH-CACHE-v1.0.0
 ICS: [NODE: PERSISTENCE | ARCHETYPE: MNEMOSYNE | CONTEXT: SEARCH-HARDENING]
 """
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 from __future__ import annotations
 
 import logging

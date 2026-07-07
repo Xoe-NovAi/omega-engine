@@ -11,6 +11,7 @@ between agents to eliminate "Agent Amnesia".
   the target agent has a complete snapshot of the previous agent's 
   consciousness before the source agent is decommissioned.
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 from dataclasses import dataclass, field, asdict
 from typing import Dict, Any, List, Optional

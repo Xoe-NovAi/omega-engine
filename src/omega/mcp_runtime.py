@@ -1,6 +1,7 @@
 """Standardized MCP Runtime for Omega Engine.
 AP: AP-MCP-RUNTIME-v1.0.4
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import os
 import logging

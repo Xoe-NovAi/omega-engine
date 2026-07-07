@@ -11,6 +11,7 @@ Provides:
 
 AnyIO compliance: yes (uses aiosqlite, no blocking calls).
 """
+# DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
 
 import json
 import logging

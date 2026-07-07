@@ -9,6 +9,8 @@
 #
 # [Sovereign Mandate 1: AnyIO Absolute] All DB operations wrapped in run_sync.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 import sqlite3
 import os

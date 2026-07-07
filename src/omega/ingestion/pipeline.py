@@ -2,6 +2,8 @@
 """
 Sovereign Ingestion Pipeline — Orchestrating entity deepening.
 """
+
+# DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 import json
 import time
 import uuid

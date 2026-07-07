@@ -5,6 +5,8 @@
 # Every state transition is checkpointed — the researcher resumes
 # from exactly where it left off after any restart.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import logging
 from pathlib import Path

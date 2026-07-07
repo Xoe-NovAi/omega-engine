@@ -1,3 +1,10 @@
+# 🔱 Omega Engine — State Core
+# AP: AP-STATE-CORE-v1.0.0
+# ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: STATE-MANAGEMENT]
+# Status: ACTIVE
+# 
+# Core state management for the Omega Engine, providing the USM singleton.
+# 
 from .usm import USMManager
 from typing import Optional
 

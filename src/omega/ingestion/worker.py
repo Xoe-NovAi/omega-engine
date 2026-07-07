@@ -1,4 +1,6 @@
 # AP: AP-INGESTION-WORKER-v1.0.0
+
+# DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 import logging
 import random
 import anyio
@@ -15,7 +17,6 @@ from src.omega.archive.cas import CASArchiver
 
 # Forward reference for ResilienceContext to avoid circular imports
 from typing import TYPE_CHECKING
-from omega.errors import OmegaError
 if TYPE_CHECKING:
     from src.omega.ingestion.pipeline import ResilienceContext
 
@@ -126,9 +127,9 @@ class SovereignWorker:
                 
             except anyio.CancelledError:
                 self._running = False
-        except (OmegaError, RuntimeError, OSError) as e:
-            logger.error(f"Worker loop error: {str(e)}")
-            await anyio.sleep(1)
+            except (OmegaError, RuntimeError, OSError) as e:
+                logger.error(f"Worker loop error: {str(e)}")
+                await anyio.sleep(1)
 
 
     async def _process_job(self, job: CurationJob):

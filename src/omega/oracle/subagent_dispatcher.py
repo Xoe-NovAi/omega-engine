@@ -9,6 +9,8 @@
 # [id-soft: quake-1996] Thinker chain — used for lifecycle tracking metaphor
 # Protocol docs: docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import logging
 import uuid

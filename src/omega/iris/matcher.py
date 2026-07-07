@@ -3,6 +3,8 @@
 # AP: AP-NOVA-MATCHER-v1.0.0
 # Lightweight intent detection for the always-on Iris container.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import re
 from typing import Optional, Tuple
 

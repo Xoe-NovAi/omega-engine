@@ -25,6 +25,8 @@
 # M9: Error Integrity — typed errors, no bare except
 # M1: AnyIO compliance
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 import os
 import time

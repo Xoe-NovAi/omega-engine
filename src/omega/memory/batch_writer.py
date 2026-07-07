@@ -10,6 +10,7 @@ Adapted for: Omega Engine provider fabric (Redis, File, InMemory)
 
 [ZONEID: 0x1d4a16] BACTH_WRITER — batch persistence subsystem marker
 """
+# DocRef: docs/architecture/MEMORY_STORE_DEEP_DIVE.md
 
 from __future__ import annotations
 

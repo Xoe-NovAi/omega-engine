@@ -2,6 +2,8 @@
 """
 Sovereign Ingestion Guards — Pre-flight probes and budget enforcement.
 """
+
+# DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 import logging
 import httpx
 import anyio

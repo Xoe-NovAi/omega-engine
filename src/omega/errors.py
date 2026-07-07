@@ -7,6 +7,8 @@
 #
 # Mandate #9: No silent swallowing. No bare excepts.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 from typing import Any, Optional, Dict
 

@@ -10,6 +10,7 @@ Implements the research pipeline using sovereign tools:
 
 NOTE: Brave and Tavily dependencies removed per D-kal-164.
 """
+# DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
 
 import json
 import logging

@@ -1,6 +1,7 @@
 """Sovereign Embedding Layer — Provider-agnostic vectorization for Omega Memory.
 AP: AP-EMBEDDINGS-v1.0.0
 """
+# DocRef: docs/architecture/MEMORY_STORE_DEEP_DIVE.md
 
 import hashlib
 import math

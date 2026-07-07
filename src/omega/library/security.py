@@ -11,6 +11,8 @@
 #           [id-soft: quake-1996] Path Traversal Guard — zone boundary enforcement
 #           [id-soft: quake-1996] Download Size Guard — fixed-timestep pre-check
 
+
+# DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
 import ipaddress
 import logging
 import socket

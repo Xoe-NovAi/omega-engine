@@ -11,6 +11,7 @@ raw extracted content into scholarly-grade curated assets.
 Sovereign Mandate M7 (Local-First) is respected by using public, 
 non-telemetry APIs and local caching.
 """
+# DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
 
 import anyio
 import logging
@@ -179,7 +180,7 @@ class OpenLibraryClient(BaseLibraryClient):
 
         try:
             await self._rate_limit()
-            async with httpx.AsyncClient(timeout=self.config.request_timeout) as client:
+            async with httpx.AsyncClient(timeout=self.config.request_timeout, follow_redirects=True) as client:
                 params = {"title": query, "limit": kwargs.get("limit", 5)}
                 headers = {"User-Agent": self.config.user_agent}
                 resp = await client.get(f"{self.config.openlibrary_api_base_url}/search.json", params=params, headers=headers)
@@ -211,7 +212,7 @@ class OpenLibraryClient(BaseLibraryClient):
 
         try:
             await self._rate_limit()
-            async with httpx.AsyncClient(timeout=self.config.request_timeout) as client:
+            async with httpx.AsyncClient(timeout=self.config.request_timeout, follow_redirects=True) as client:
                 params = {"bibkeys": f"ISBN:{identifier}", "jscmd": "details", "format": "json"}
                 headers = {"User-Agent": self.config.user_agent}
                 resp = await client.get(f"{self.config.openlibrary_api_base_url}/api/books", params=params, headers=headers)
@@ -244,7 +245,7 @@ class InternetArchiveClient(BaseLibraryClient):
 
         try:
             await self._rate_limit()
-            async with httpx.AsyncClient(timeout=self.config.request_timeout) as client:
+            async with httpx.AsyncClient(timeout=self.config.request_timeout, follow_redirects=True) as client:
                 params = {
                     "q": f"(title:{query} OR description:{query}) AND mediatype:texts",
                     "output": "json",
@@ -277,7 +278,7 @@ class InternetArchiveClient(BaseLibraryClient):
     async def get_by_identifier(self, identifier: str, id_type: str = "archive_id") -> Optional[LibraryMetadata]:
         try:
             await self._rate_limit()
-            async with httpx.AsyncClient(timeout=self.config.request_timeout) as client:
+            async with httpx.AsyncClient(timeout=self.config.request_timeout, follow_redirects=True) as client:
                 resp = await client.get(f"https://archive.org/metadata/{identifier}")
                 resp.raise_for_status()
                 data = resp.json()
@@ -306,7 +307,7 @@ class LibraryOfCongressClient(BaseLibraryClient):
 
         try:
             await self._rate_limit()
-            async with httpx.AsyncClient(timeout=self.config.request_timeout) as client:
+            async with httpx.AsyncClient(timeout=self.config.request_timeout, follow_redirects=True) as client:
                 params = {"q": query, "fo": "json", "pagesize": kwargs.get("limit", 5)}
                 resp = await client.get(self.config.loc_api_base_url, params=params)
                 resp.raise_for_status()
@@ -344,7 +345,7 @@ class ProjectGutenbergClient(BaseLibraryClient):
 
         try:
             await self._rate_limit()
-            async with httpx.AsyncClient(timeout=self.config.request_timeout) as client:
+            async with httpx.AsyncClient(timeout=self.config.request_timeout, follow_redirects=True) as client:
                 params = {"query": query, "topic": "all"}
                 resp = await client.get(f"{self.config.gutenberg_api_base_url}/books/search", params=params)
                 resp.raise_for_status()
@@ -369,7 +370,7 @@ class ProjectGutenbergClient(BaseLibraryClient):
     async def get_by_identifier(self, identifier: str, id_type: str = "gutenberg_id") -> Optional[LibraryMetadata]:
         try:
             await self._rate_limit()
-            async with httpx.AsyncClient(timeout=self.config.request_timeout) as client:
+            async with httpx.AsyncClient(timeout=self.config.request_timeout, follow_redirects=True) as client:
                 resp = await client.get(f"{self.config.gutenberg_api_base_url}/books/{identifier}")
                 resp.raise_for_status()
                 data = resp.json()

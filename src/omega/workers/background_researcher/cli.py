@@ -12,6 +12,7 @@ Usage:
     omega research run                # Run one cycle now
     omega research history            # Show completed research
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import json
 import logging

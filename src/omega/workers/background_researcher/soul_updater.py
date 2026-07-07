@@ -7,6 +7,8 @@
 # 2. docs/research/ topic files (L1 + L2)
 # 3. Entity knowledge directories
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import logging
 from datetime import datetime, timezone

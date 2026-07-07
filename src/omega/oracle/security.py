@@ -1,6 +1,7 @@
 """Tainted Data Protocol (TDP) — Sovereign Security Layer.
 AP: AP-TDP-v1.0.0
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import logging
 from dataclasses import dataclass, field
@@ -126,7 +127,7 @@ def tdp_wrap(source: str, taint_level: Union[int, callable] = 1):
             if callable(taint_level):
                 try:
                     actual_level = taint_level(*args, **kwargs)
-                except (OmegaError, RuntimeError, OSError) as e:
+                except Exception as e:
                     logger.error(f"TDP taint_level callable failed for {func.__name__}: {e}")
                     actual_level = 2 # Default to high-risk on error
             

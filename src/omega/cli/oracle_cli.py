@@ -3,6 +3,8 @@
 # AP: AP-ORACLE-CLI-v1.0.0
 # ICS: [NODE: CORE | ARCHETYPE: HERMES | CONTEXT: CLI-COMMANDS]
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import anyio
 import logging
 import sys

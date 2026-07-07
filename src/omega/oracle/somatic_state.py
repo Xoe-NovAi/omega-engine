@@ -3,6 +3,8 @@
 # 🔱 Somatic State Manager — Binary LLM State Serialization
 # Mandate M20: Model session state MUST be serializable and resumable via low-level bindings.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 import anyio
 from typing import Optional

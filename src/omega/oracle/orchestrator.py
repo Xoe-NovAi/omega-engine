@@ -12,6 +12,7 @@ Uses AnyIO for subprocess spawning and ResourceGuard to protect RAM.
   through a tick loop. Orchestrator mirrors this: manages subagent
   processes through AnyIO tasks with ResourceGuard protection.
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import logging
 import subprocess
@@ -174,8 +175,10 @@ class Orchestrator:
             api_keys=keys
         )
         
+        # Orchestrator manages EXTERNAL MCP servers only (firecrawl, searxng).
+        # The omega-hub server is managed by systemd — NOT by Orchestrator.
+        # Including it here caused infinite recursive spawn (RCA_RUNAWAY_MCP_SPAWN_20260706).
         self.mcp_ports = {
-            "omega-hub": 8016,
             "firecrawl": 8015,
             "searxng": 8018,
         }
@@ -184,13 +187,12 @@ class Orchestrator:
         self._mcp_scripts = {
             "firecrawl": "mcp_servers/firecrawl/server.py",
             "searxng": "mcp_servers/searxng/server.py",
-            "omega-hub": "mcp_servers/omega_hub/server.py",
         }
 
         # Model Updater is initialized asynchronously during start_workers()
         self.model_updater = None
         
-        # Start MCP servers
+        # Start EXTERNAL MCP servers only (firecrawl, searxng)
         for name in self.mcp_ports:
             proc = self._start_mcp_server(name)
             if proc:
@@ -293,11 +295,12 @@ class Orchestrator:
         script_map = {
             "firecrawl": "mcp_servers/firecrawl/server.py",
             "searxng": "mcp_servers/searxng/server.py",
-            "omega-hub": "mcp_servers/omega_hub/server.py",
+            # "omega-hub" is managed by systemd — NOT by Orchestrator.
+            # Including it caused infinite recursive spawn (RCA_RUNAWAY_MCP_SPAWN_20260706).
         }
         script = script_map.get(name)
         if not script:
-            logger.warning(f"No restart script mapped for MCP {name}")
+            logger.warning(f"No restart script mapped for MCP {name} (omega-hub is managed by systemd)")
             return
         
         project_root = Path(__file__).resolve().parent.parent.parent.parent

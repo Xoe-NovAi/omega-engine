@@ -13,6 +13,7 @@ This module handles the identity primitives using Python's
 standard library. Full X.509 certificate management is deferred
 to the SPIFFE SDK integration (Phase 2).
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import logging
 from dataclasses import dataclass

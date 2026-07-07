@@ -15,6 +15,7 @@ updated pool_state.py default.
 ⬡ OMEGA ⬡ POOLTRACKER ⬡ v1.0.0 ⬡ 2026-06-18
 D-1 NOTICE: 2026-06-29 — anti_thrashing refers to removed algorithm
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 from __future__ import annotations
 

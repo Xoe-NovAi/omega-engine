@@ -1,5 +1,7 @@
 # AP: AP-PR-READINESS-v1.0.0
 # AP: AP-ORACLE-RESTORE-v2.3.0
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import atexit
 import logging
 import httpx

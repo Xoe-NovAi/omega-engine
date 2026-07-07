@@ -7,6 +7,7 @@ AP: AP-OMEGA-HUB-v1.0.0
 [M2/M16: Engine-Stack Firewall] Uses omega.monitoring directly — no
 cross-boundary import from mcp_servers.
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import logging
 from typing import Any, Dict

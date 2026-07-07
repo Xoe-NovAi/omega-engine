@@ -11,6 +11,8 @@
 #   sectors (lumps). Queries are first culled by sector-id before
 #     performing detailed lookups.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass, field

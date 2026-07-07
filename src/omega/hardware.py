@@ -2,6 +2,8 @@
 # 🔱 Omega Engine — Hardware Detection
 # Detects RAM at startup for model tier recommendations.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import os
 import psutil
 from dataclasses import dataclass

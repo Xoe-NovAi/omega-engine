@@ -9,6 +9,8 @@
 #   - Track held weights per task via ContextVar
 #   - ZONEID Pattern preserved for critical section integrity
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import anyio
 import contextvars
 import logging

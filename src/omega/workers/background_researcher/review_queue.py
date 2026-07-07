@@ -2,6 +2,8 @@
 # AP: AP-JEM-REVIEW-v1.0.0
 # ⬡ OMEGA ⬡ MAAT ⬡ review_queue ⬡ PHASE-2
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import os
 import json
 import shutil

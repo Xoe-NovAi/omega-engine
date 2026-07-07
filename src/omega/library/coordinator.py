@@ -12,6 +12,8 @@
 #   - Integrates with ResourceGuard for OOM protection
 #   - Reports status to Hivemind (Phase 4)
 
+
+# DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
 from __future__ import annotations
 
 import logging

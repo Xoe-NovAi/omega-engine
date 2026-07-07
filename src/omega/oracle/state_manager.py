@@ -1,4 +1,6 @@
 # AP: AP-STATE-MANAGER-v1.0.0
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import os
 import hashlib
 import shutil

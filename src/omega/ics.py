@@ -28,6 +28,8 @@ without over-engineering.
 
 [FISR Principle: id Software 1999; evolved to "right approximation"]
 """
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 from __future__ import annotations
 
 import os

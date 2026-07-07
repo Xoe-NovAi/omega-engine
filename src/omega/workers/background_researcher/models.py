@@ -2,6 +2,8 @@
 # AP: AP-BACKGROUND-RESEARCHER-MODELS-v1.0.0
 # ⬡ OMEGA ⬡ SOPHIA ⬡ sovereign ⬡ models ⬡ WORKER
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 from __future__ import annotations
 
 import json

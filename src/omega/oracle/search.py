@@ -1,6 +1,7 @@
 """Sovereign Search Engine — Semantic Retrieval for Omega.
 AP: AP-SOVEREIGN-SEARCH-v1.0.0
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import logging
 from typing import Any, Dict, List, Optional, Tuple, Union

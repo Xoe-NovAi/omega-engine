@@ -10,6 +10,8 @@
 #           Local-First (Mandate 7), Error Integrity (Mandate 9),
 #           Queue Integrity (Mandate 12)
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import logging
 import uuid

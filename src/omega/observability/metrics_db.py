@@ -1,6 +1,7 @@
 """SQLite WAL-Mode Metrics Store for profiling baselines and regression detection.
 AP: AP-METRICS-DB-v1.0.0
 """
+# DocRef: docs/explanation/metrics-pipeline.md
 
 import json
 import logging

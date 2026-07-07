@@ -14,6 +14,8 @@
 # 3. Persist to a local JSONL ledger for long-term auditing.
 # =============================================================================
 
+
+# DocRef: docs/explanation/metrics-pipeline.md
 import logging
 import json
 from pathlib import Path
@@ -69,6 +71,15 @@ class TokenLedger:
                 "provider_name": provider_name,
                 "timestamp": datetime.now(timezone.utc).isoformat()
             }
+        )
+        
+        # 1b. Persist to MetricsDB for performance and cost analytics
+        obs.record_performance(
+            latency_ms=0.0, # Latency is handled by LatencyTracker, but we record tokens here
+            provider=provider_name,
+            prompt_tokens=tokens_in,
+            completion_tokens=tokens_out,
+            trace_id=trace_id
         )
         
         # 2. Persist to the local JSONL ledger for auditing

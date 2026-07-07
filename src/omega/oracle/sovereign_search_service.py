@@ -9,6 +9,8 @@ SSP-V2 Canonical Tier Mapping:
   T2: Exa (Neural/Intent Refinement)
   T3: Firecrawl (Deep Extraction & Structuring)
 """
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 from __future__ import annotations
 
 import logging
@@ -215,7 +217,7 @@ class SovereignSearchService:
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
                 logger.warning(f"[SEARCH-ERROR] trace={trace_id} tier={tier} rate_limited: {e}")
-            except (OmegaError, RuntimeError, OSError) as e:
+            except (OmegaError, RuntimeError, OSError, Exception) as e:
                 report["fallback_log"].append({
                     "tier": tier,
                     "outcome": "error",
@@ -308,7 +310,7 @@ class SovereignSearchService:
         """T1: SearXNG Broad Discovery — zero-cost, privacy-first metasearch."""
         try:
             return await self.searxng.search(query, limit)
-        except (OmegaError, RuntimeError, OSError) as e:
+        except Exception as e:
             logger.error(f"T1 SearXNG failed: {e}")
             return None
 
@@ -319,7 +321,7 @@ class SovereignSearchService:
             return None
         try:
             return await self.exa.search(query, limit)
-        except (OmegaError, RuntimeError, OSError) as e:
+        except Exception as e:
             logger.error(f"T2 Exa failed: {e}")
             return None
 
@@ -337,7 +339,7 @@ class SovereignSearchService:
                 # Persist to SovereignCache for future T0 hits
                 self.cache.set(query, "global", result)
             return result
-        except (OmegaError, RuntimeError, OSError) as e:
+        except Exception as e:
             logger.error(f"T3 Firecrawl failed: {e}")
             return None
 

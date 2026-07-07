@@ -7,6 +7,8 @@
 #
 # NOTE: Tavily and Jina removed per D-kal-164 sovereign dependency purge.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 from omega.errors import (
     OmegaError,

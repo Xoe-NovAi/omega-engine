@@ -18,6 +18,8 @@
 # 4. Return True (Allow) or False (Block).
 # =============================================================================
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 from typing import Optional
 from omega.errors import OmegaError, ProviderValidationError

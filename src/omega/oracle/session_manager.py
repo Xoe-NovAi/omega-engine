@@ -14,6 +14,7 @@ back to trace_id with no persistence.
   Session archival defers cleanup for TOMBSTONE_GRACE_SECONDS to prevent
   in-flight requests from writing to a closed session.
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import json
 from omega.errors import (
@@ -114,6 +115,13 @@ class SessionManager:
                 "created_at": datetime.now(timezone.utc).isoformat(),
             }
             await usm.save_state(state_key, data)
+            
+            # Create .active file for Hub visibility
+            active_file = self.session_dir / f"{entity_slug}.active"
+            def _write_active():
+                with open(active_file, "w") as f:
+                    json.dump(data, f)
+            await anyio.to_thread.run_sync(_write_active)
             
             return session_id
         finally:

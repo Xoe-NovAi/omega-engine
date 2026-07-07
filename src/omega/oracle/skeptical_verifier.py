@@ -4,6 +4,8 @@
 # [id-soft: doom-1993] ZONEID Pattern — verification of claim integrity
 # ⬡ OMEGA ⬡ MAAT ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_skeptical_verifier ⬡ H3-C2
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple, Union

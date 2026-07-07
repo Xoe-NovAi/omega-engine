@@ -13,6 +13,7 @@ Research depth levels:
 Each level uses more library content and deeper analysis.
 Results are cached and stored in data/research/.
 """
+# DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
 
 import json
 import logging

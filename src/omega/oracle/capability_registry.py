@@ -11,6 +11,8 @@
 #   lists. CapabilityRegistry provides dual-index lookup: by skill name and
 #   by agent name.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import anyio
 from pathlib import Path

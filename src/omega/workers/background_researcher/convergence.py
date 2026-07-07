@@ -5,6 +5,8 @@
 # Determines when a research topic is "deep enough" to stop.
 # Flags contradictions for human review.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import logging
 from datetime import datetime, timezone

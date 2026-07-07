@@ -14,6 +14,7 @@ Storage layout:
     sources/{domain}/         — Organized by domain for browsing
     index/                    — Search indices
 """
+# DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
 
 import json
 import logging

@@ -8,6 +8,8 @@
 # [id-soft: quake-1996] Zone Memory — encrypted vault mirrors the tagged
 # allocation approach: every block carries its own authentication tag.
 
+
+# DocRef: docs/architecture/Sovereign_Sieve_Sovereign_Sieve.md
 import os
 import base64
 

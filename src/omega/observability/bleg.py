@@ -15,6 +15,8 @@
 # scan is "good enough" for 99% of cases. Full schema validation is
 # not needed at this layer.
 
+
+# DocRef: docs/explanation/metrics-pipeline.md
 import json
 import logging
 from typing import Any, Dict, Optional

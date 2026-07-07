@@ -2,6 +2,8 @@
 # AP: AP-JEM-SCHEDULER-v1.0.0
 # ⬡ OMEGA ⬡ PROMETHEUS ⬡ scheduler ⬡ PHASE-2
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import yaml
 import os
 import json

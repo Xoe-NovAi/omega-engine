@@ -1,4 +1,6 @@
 # AP: AP-HEADROOM-MIDDLEWARE-v1.0.0
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 from typing import List, Dict, Any, Optional, Tuple
 from dataclasses import dataclass
@@ -73,7 +75,7 @@ class HeadroomMiddleware:
         try:
             # [M1 AnyIO Absolute] Wrap blocking I/O retrieval in run_sync
             return await anyio.to_thread.run_sync(headroom.retrieve, ref_id)
-        except (OmegaError, RuntimeError, OSError) as e:
+        except (OmegaError, RuntimeError, OSError, AttributeError) as e:
             logger.error(f"Headroom retrieval failed for {ref_id}: {e}")
             return f"[[ERROR: Original content for {ref_id} could not be retrieved]]"
 

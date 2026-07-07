@@ -1,6 +1,7 @@
 """Sovereign Storage Providers for Omega Memory.
 AP: AP-MEMORY-PROVIDERS-v1.0.0
 """
+# DocRef: docs/architecture/MEMORY_STORE_DEEP_DIVE.md
 
 import json
 import logging

@@ -8,6 +8,8 @@
 # [id-soft: doom-1993] BSP Culling — O(1) culling of irrelevant entities
 # [id-soft: doom-1993] Precomputed Lookup — entity embeddings precomputed at boot
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 import math
 import os

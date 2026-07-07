@@ -14,6 +14,8 @@
 #   trace_id = get_current_trace_id()  # Returns existing or generates new
 #   set_current_trace_id("trc_abc123")  # Explicitly set for child tasks
 
+
+# DocRef: docs/explanation/metrics-pipeline.md
 import contextvars
 import uuid
 from typing import Optional

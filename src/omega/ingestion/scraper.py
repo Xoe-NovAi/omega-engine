@@ -1,4 +1,6 @@
 # AP: AP-INGESTION-SCRAPER-v1.0.0
+
+# DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 import re
 import logging
 import anyio
@@ -182,7 +184,7 @@ class SovereignScraper:
 
         # Use the C-FFI isolation pattern: run in a dedicated subprocess
         def run_crawler_subprocess():
-            import asyncio
+            asyncio = __import__('asyncio')
             
             async def _execute():
                 async with AsyncWebCrawler() as crawler:

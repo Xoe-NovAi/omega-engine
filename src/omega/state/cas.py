@@ -1,6 +1,7 @@
 """Content Addressable Storage (CAS) — The foundation of the Unified State Manager.
 AP: AP-USM-CAS-v1.0.0
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import hashlib
 import logging

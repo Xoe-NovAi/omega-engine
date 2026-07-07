@@ -16,6 +16,7 @@ Architecture:
             └── wrapped providers
                 └── StorageProvider chain still handles exchange persistence
 """
+# DocRef: docs/architecture/MEMORY_STORE_DEEP_DIVE.md
 
 import logging
 from abc import ABC, abstractmethod

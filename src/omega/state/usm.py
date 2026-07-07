@@ -1,6 +1,7 @@
 """Unified State Manager (USM) — Coordinates CAS and state indexing.
 AP: AP-USM-MANAGER-v1.0.0
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import json
 import logging

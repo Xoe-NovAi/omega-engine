@@ -10,6 +10,7 @@ detokenizes after response. Bypasses entirely for local providers.
 These patterns existed in the ANAi/XNAi legacy but were NEVER ported to Omega-Engine.
 This implementation recovers and extends them with modern PII detection.
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import logging
 import re

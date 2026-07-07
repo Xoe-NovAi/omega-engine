@@ -2,6 +2,8 @@
 """
 Sovereign Persistence — Wiring ingestion results into Engine systems.
 """
+
+# DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 import json
 import os
 from pathlib import Path

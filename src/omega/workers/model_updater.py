@@ -7,6 +7,8 @@
 # and verify free model offerings across all providers.
 # Fully AnyIO-compliant, ResourceGuard-protected, and audit-ready.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import logging
 import os

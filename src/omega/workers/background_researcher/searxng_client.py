@@ -4,6 +4,8 @@
 #
 # Zero-cost, always-on search via the local SearXNG instance (port 8017).
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 import os
 from omega.errors import (

@@ -153,11 +153,11 @@ class MemoryStore:
                     logger.error(f"Failed to initialize RedisStorageProvider: {e}", exc_info=True)
                     raise OmegaPersistenceError(f"Redis init failed: {e}", raw_error=e) from e
                 
-                # 2. File Provider (Warm)
-                try:
-                    self.providers.append(FileStorageProvider(data_dir=_get_memory_dir()))
-                except (OSError, RuntimeError) as e:
-                    logger.warning(f"Failed to initialize FileStorageProvider: {e}")
+            # 2. File Provider (Warm) - Always enabled to support persistence tests and local-first fallback
+            try:
+                self.providers.append(FileStorageProvider(data_dir=_get_memory_dir()))
+            except (OSError, RuntimeError) as e:
+                logger.warning(f"Failed to initialize FileStorageProvider: {e}")
                 
             # 3. InMemory Provider (Cold/Volatile Fallback)
             self.providers.append(InMemoryStorageProvider())
@@ -220,7 +220,7 @@ class MemoryStore:
         # Flush pending provider writes before reading to ensure the read
         # returns data that includes recent writes.
         if self._batch_count > 0:
-            await self._flush_batch()
+            await self.flush()
 
         # 1. Check hot cache
         if cache_key in self._hot:
@@ -559,7 +559,7 @@ class MemoryStore:
             if status.get("status") == "healthy":
                 return self.vector_store
             logger.warning("Vector store unhealthy (%s), falling back to MemoryVectorAdapter", status.get("error"))
-        except (OmegaError, RuntimeError, OSError) as e:
+        except Exception as e:
             logger.error("Vector store health check failed: %s, falling back to MemoryVectorAdapter", e)
             
         self.vector_store = MemoryVectorAdapter()

@@ -7,6 +7,7 @@ closing the "structural invisibility" gap (ag-002).
 
 ⬡ OMEGA ⬡ POOLSTATE ⬡ v1.0.0 ⬡ 2026-06-18
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 from __future__ import annotations
 

@@ -2,6 +2,7 @@
 # [id-soft: quake-1996] Sovereign-Symmetry — iterative cognitive loop
 AP: AP-ITERATIVE-RESEARCH-v1.0.0
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import logging
 from typing import Any, Dict, List, Optional, Tuple, Union

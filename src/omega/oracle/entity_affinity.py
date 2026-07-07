@@ -17,6 +17,8 @@
 # [id-soft: quake-1996] cvar pattern — YAML-backed config, hot-reloadable
 # [id-soft: quake3-1999] Hard-Boundary — affinity is separate routing layer above Entity
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 from dataclasses import dataclass, field, asdict
 from pathlib import Path

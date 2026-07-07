@@ -8,6 +8,8 @@
 # Runs as a systemd timer every 20 minutes. Fully AnyIO-compliant.
 # Every state transition is checkpointed for restart recovery.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import logging
 import os

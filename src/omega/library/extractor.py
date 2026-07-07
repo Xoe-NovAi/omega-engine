@@ -8,6 +8,7 @@ Parses and extracts structured content from multiple source types.
 Graceful degradation: if a source fails, returns partial content.
 All extraction is local-only — no cloud APIs.
 """
+# DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
 
 import json
 import logging

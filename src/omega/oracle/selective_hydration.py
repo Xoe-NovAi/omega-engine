@@ -29,6 +29,8 @@
 # M1: AnyIO compliance — no asyncio, all I/O via anyio.to_thread.run_sync
 # M9: Error Integrity — typed errors, no bare except
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import hashlib
 import logging
 from dataclasses import dataclass, field
@@ -353,11 +355,13 @@ class SelectiveHydration:
 
     async def _get_query_embedding(self, query: str) -> Optional[List[float]]:
         """Embed the query via the EmbeddingManager chain.
-
+        
         Returns None if the embedding fails (empty or None).
         Zero-vector embeddings are accepted — they are valid in test mode
         and will simply result in zero similarity scores.
         """
+        if not self._embedding_manager:
+            return None
         try:
             vector = await self._embedding_manager.get_embedding(query)
             if vector:

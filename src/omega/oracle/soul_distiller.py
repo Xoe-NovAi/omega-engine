@@ -14,6 +14,8 @@
 #
 # Protocol docs: docs/strategy/SOUL_DISTILLATION_PROTOCOL.md
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 from omega.state import get_usm
 import omega.observability as observability
 import fcntl
@@ -342,7 +344,7 @@ class SoulDistillationPipeline:
         )
         
         # Stage 5: Store
-        self.distiller.append_to_soul(entity_name, entries)
+        await self.distiller.append_to_soul(entity_name, entries)
         
         return entries
 

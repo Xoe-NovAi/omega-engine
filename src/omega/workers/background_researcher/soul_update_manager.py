@@ -1,4 +1,6 @@
 # AP: AP-PR-READINESS-v1.0.0
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import os
 import anyio
 import yaml

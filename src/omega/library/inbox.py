@@ -13,6 +13,7 @@ Tiers:
   processing — Items currently being processed (with lock)
   failed/    — Items that failed processing (with error reason)
 """
+# DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
 
 import json
 import logging

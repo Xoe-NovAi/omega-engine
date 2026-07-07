@@ -38,6 +38,7 @@ Speculative decoding (Oracle already implements this):
   - Adjust speculation length (target tokens per draft)
   - Switch draft strategy if acceptance drops below 50%
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import logging
 from omega.errors import (

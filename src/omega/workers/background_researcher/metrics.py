@@ -2,6 +2,8 @@
 # AP: AP-JEM-METRICS-v1.0.0
 # ⬡ OMEGA ⬡ MAAT ⬡ metrics ⬡ PHASE-2
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import os
 import anyio

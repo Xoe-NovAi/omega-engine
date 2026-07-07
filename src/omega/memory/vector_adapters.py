@@ -1,6 +1,7 @@
 """Sovereign Vector Store Adapters for Omega Memory.
 AP: AP-VECTOR-ADAPTERS-v1.0.0
 """
+# DocRef: docs/architecture/MEMORY_STORE_DEEP_DIVE.md
 
 import logging
 import uuid

@@ -10,6 +10,8 @@
 # Each tier has independent circuit breaker. No tier masks another's failure.
 # Every cycle produces a training triple (T1, T2, T3) → synthetic dataset.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import logging
 import os

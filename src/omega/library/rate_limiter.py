@@ -5,6 +5,8 @@
 # [id-soft: quake3-1999] netchan Rate Limiting — legacy of qport pacing,
 # evolved to per-domain token buckets for fair bandwidth allocation.
 
+
+# DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
 from __future__ import annotations
 
 import logging

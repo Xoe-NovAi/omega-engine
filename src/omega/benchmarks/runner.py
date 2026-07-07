@@ -12,6 +12,8 @@
 # Mandate 1 (AnyIO): All I/O is wrapped in anyio.to_thread.run_sync.
 # Mandate 9 (Error Integrity): Typed exceptions via BenchmarkError.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import logging
 import time

@@ -2,6 +2,8 @@
 """
 Sovereign Ingestion CLI — Commands for entity deepening.
 """
+
+# DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 """
 Sovereign Ingestion CLI — Commands for entity deepening.
 """

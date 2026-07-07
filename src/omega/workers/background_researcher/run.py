@@ -16,6 +16,7 @@ Usage:
     python -m omega.workers.background_researcher.run
     python -m omega.workers.background_researcher.run --topic "custom topic"
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import argparse
 import anyio

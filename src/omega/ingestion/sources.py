@@ -2,6 +2,8 @@
 """
 Sovereign Source Loaders — Loading primary material for ingestion.
 """
+
+# DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 from pathlib import Path
 from typing import AsyncGenerator, Tuple
 

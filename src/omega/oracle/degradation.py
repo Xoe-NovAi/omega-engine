@@ -3,6 +3,8 @@
 # 🔱 Graceful Degradation Manager — Fallback Chains for Stressed Systems
 # Ported from xna-omega-legacy/src/omega/core/degradation.py
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 import anyio
 from typing import Any, Dict, List, Optional, Callable

@@ -11,6 +11,8 @@
 #
 # Lightweight: python:3.13-slim + qwen3-1.7b-270m (~500MB image, ~300MB RAM)
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 import sys
 from pathlib import Path

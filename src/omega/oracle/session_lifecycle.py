@@ -13,6 +13,7 @@ Heritage:
 - [id-soft: doom-1993] Lazy Deletion — tombstone before delete, grace period
   before reap. Prevents data loss on in-flight operations.
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 from __future__ import annotations
 

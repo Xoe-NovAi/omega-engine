@@ -10,6 +10,8 @@
 #   QuakeC's progdefs.h generates C struct from script source. GnosisProxy's
 #   DescriptorRef is a flat bag of fields discovered at runtime.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import uuid
 from typing import List, Dict, Any, Optional
 from dataclasses import dataclass

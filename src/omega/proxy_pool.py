@@ -5,6 +5,7 @@ AP: AP-WARP-POOL-v1.1.0
 This module delegates all proxy pool orchestration to the standalone 
 `warp-proxy-pool` package.
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 from __future__ import annotations
 

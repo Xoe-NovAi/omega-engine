@@ -9,6 +9,7 @@ ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | CONTEXT: HIERARCHY]
   a "DO NOT MODIFY" boundary. HierarchyManager enforces rank-based
   boundaries: lower-rank entities cannot modify higher-rank state.
 """
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import logging
 import os

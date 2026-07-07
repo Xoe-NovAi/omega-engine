@@ -8,6 +8,8 @@
 #
 # [id-soft: doom-1993] ZONEID Pattern — knowledge and demand signal validation
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import logging
 from datetime import datetime

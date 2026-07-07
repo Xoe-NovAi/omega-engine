@@ -7,6 +7,8 @@
 # Mandate 9 (Error Integrity): Typed errors throughout.
 # Research Enhancement: Multi-dimensional quality scoring (CRACQ pattern).
 
+
+# DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
 import json
 import logging
 import sqlite3

@@ -13,6 +13,8 @@
 #   - Request/response metrics for observability
 #   - Budget guards (daily token limits)
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 from omega.errors import (
     OmegaError,

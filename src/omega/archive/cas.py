@@ -1,4 +1,6 @@
 # AP: AP-CAS-BLOB-STORE-v1.0.0
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import hashlib
 import anyio
 from pathlib import Path

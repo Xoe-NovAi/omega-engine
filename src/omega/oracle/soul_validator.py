@@ -8,6 +8,8 @@
 #
 # [id-soft: doom-1993] ZONEID Pattern — validated via soul_power and session counts.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import yaml
 import uuid
 import logging

@@ -15,6 +15,8 @@
 #   - Automatic failover on rate limit detection
 #   - Graceful fallback to os.getenv() during transition period
 
+
+# DocRef: docs/architecture/Sovereign_Sieve_Sovereign_Sieve.md
 import json
 import logging
 import os

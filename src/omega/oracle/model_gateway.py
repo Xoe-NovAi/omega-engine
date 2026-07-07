@@ -998,7 +998,7 @@ class ModelGateway:
                 errors.append(f"{provider.name}: {e}")
                 self._record_provider_failure(provider, model_name, trace_id)
                 continue
-            except (OmegaError, RuntimeError, OSError) as e:
+            except Exception as e:
                 last_exception = e
                 logger.error(
                     "ModelGateway.generate: unexpected error from provider=%s trace=%s err=%s",

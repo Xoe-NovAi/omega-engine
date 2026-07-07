@@ -13,6 +13,8 @@
 # per D-kal-164 sovereign dependency purge. Only OpenRouter remains as
 # the cloud fallback. Any other provider must be configured explicitly.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 from typing import Optional, Dict
 

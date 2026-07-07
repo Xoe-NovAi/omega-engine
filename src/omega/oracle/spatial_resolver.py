@@ -15,6 +15,8 @@
 #
 # Pattern: Repulsion (k^2/d) + Attraction (d^2/k) + Cooling Schedule
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import math
 import random
 import logging

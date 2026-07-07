@@ -7,6 +7,8 @@ class OfflineMockBackend:
     Returns deterministic responses to unblock CI/CD and avoid
     unnecessary inference overhead during testing.
     """
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
     async def generate(
         self,
         model_name: str,

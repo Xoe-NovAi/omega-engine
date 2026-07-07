@@ -8,6 +8,8 @@
 # NOTE: Tavily, Jina, and Serper budgets removed per D-kal-164.
 # Only Exa and Firecrawl remain as active cloud search providers.
 
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import json
 import logging
 import os
