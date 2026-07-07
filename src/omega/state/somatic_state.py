@@ -39,7 +39,7 @@ class SomaticStateManager:
         """Check if llama.cpp state APIs are compiled in."""
         return self._load_llama_cpp()
     
-    def capture(self, ctx) -> str:
+    async def capture(self, ctx) -> str:
         """
         Capture KV cache state to CAS. Returns content hash.
         Runs in isolated process via AnyIO to survive C-level segfaults.
@@ -59,16 +59,16 @@ class SomaticStateManager:
             raise RuntimeError(f"llama_state_get_data failed: {result}")
         
         data = bytes(buf)
-        return self.cas.put(data)
+        return await self.cas.put(data)
     
-    def restore(self, ctx, hash_: str) -> bool:
+    async def restore(self, ctx, hash_: str) -> bool:
         """
         Restore KV cache from CAS. Returns True on success.
         """
         if not self._load_llama_cpp():
             raise RuntimeError("SomaticState unavailable: llama.cpp state APIs not compiled in")
         
-        data = self.cas.get(hash_)
+        data = await self.cas.get(hash_)
         buf = (ctypes.c_byte * len(data)).from_buffer_copy(data)
         result = self._llama_cpp.llama_state_set_data(ctx, buf, len(data))
         return result == 0
@@ -76,9 +76,16 @@ class SomaticStateManager:
     async def capture_async(self, ctx) -> str:
         """Capture state in isolated process (survives C segfaults)."""
         import anyio
-        return await anyio.to_process.run_sync(self.capture, ctx, cancellable=True)
+        from concurrent.futures import ProcessPoolExecutor
+        
+        # Use a temporary process pool to ensure isolation
+        with ProcessPoolExecutor(max_workers=1) as executor:
+            return await anyio.to_thread.run_sync(executor.submit, self.capture, ctx)
     
     async def restore_async(self, ctx, hash_: str) -> bool:
         """Restore state in isolated process."""
         import anyio
-        return await anyio.to_process.run_sync(self.restore, ctx, hash_, cancellable=True)
+        from concurrent.futures import ProcessPoolExecutor
+        
+        with ProcessPoolExecutor(max_workers=1) as executor:
+            return await anyio.to_thread.run_sync(executor.submit, self.restore, ctx, hash_)

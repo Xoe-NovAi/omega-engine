@@ -155,3 +155,113 @@ class USMManager:
         """Close resources."""
         # SQLite connections are handled via context managers in this impl.
         pass
+
+    # ===== Convenience methods for common state types =====
+    
+    async def save_session(self, session_id: str, yaml_data: str) -> str:
+        """Save session YAML to CAS. Returns content hash."""
+        if not yaml_data:
+            raise ValueError("Cannot save empty session")
+        hash_ = await self.save_state(f"session:{session_id}", yaml_data)
+        return hash_
+    
+    async def load_session(self, session_id: str) -> str:
+        """Load session YAML from CAS. Returns YAML string."""
+        data = await self.load_state(f"session:{session_id}")
+        if data is None:
+            raise KeyError(f"Session not tracked: {session_id}")
+        return data
+    
+    def has_session(self, session_id: str) -> bool:
+        """Check if session exists in index."""
+        # This is a sync check - we'd need async for full check
+        # For now, just check if key exists in index
+        import sqlite3
+        with sqlite3.connect(self.index_path) as conn:
+            cursor = conn.execute("SELECT 1 FROM state_refs WHERE key = ?", (f"session:{session_id}",))
+            return cursor.fetchone() is not None
+    
+    async def release_session(self, session_id: str) -> bool:
+        """Release session reference. Delete from CAS if unreferenced."""
+        # Note: Full refcounting would require CAS-level refcounts
+        # For now, just remove from index
+        import sqlite3
+        with sqlite3.connect(self.index_path) as conn:
+            cursor = conn.execute("DELETE FROM state_refs WHERE key = ?", (f"session:{session_id}",))
+            conn.commit()
+            return cursor.rowcount > 0
+    
+    async def save_memory(self, entity_id: str, json_data: str) -> str:
+        """Save entity memory JSON to CAS. Returns content hash."""
+        if not json_data:
+            raise ValueError("Cannot save empty memory")
+        hash_ = await self.save_state(f"mem:{entity_id}", json_data)
+        return hash_
+    
+    async def load_memory(self, entity_id: str) -> str:
+        """Load entity memory JSON from CAS. Returns JSON string."""
+        data = await self.load_state(f"mem:{entity_id}")
+        if data is None:
+            raise KeyError(f"Memory not tracked: {entity_id}")
+        return data
+    
+    def has_memory(self, entity_id: str) -> bool:
+        import sqlite3
+        with sqlite3.connect(self.index_path) as conn:
+            cursor = conn.execute("SELECT 1 FROM state_refs WHERE key = ?", (f"mem:{entity_id}",))
+            return cursor.fetchone() is not None
+    
+    async def release_memory(self, entity_id: str) -> bool:
+        import sqlite3
+        with sqlite3.connect(self.index_path) as conn:
+            cursor = conn.execute("DELETE FROM state_refs WHERE key = ?", (f"mem:{entity_id}",))
+            conn.commit()
+            return cursor.rowcount > 0
+    
+    async def save_handoff(self, packet_id: str, payload: bytes) -> str:
+        """Save handoff payload to CAS. Returns content hash."""
+        if not payload:
+            raise ValueError("Cannot save empty handoff")
+        hash_ = await self.save_state(f"handoff:{packet_id}", payload)
+        return hash_
+    
+    async def load_handoff(self, packet_id: str) -> bytes:
+        """Load handoff payload from CAS."""
+        data = await self.load_state(f"handoff:{packet_id}")
+        if data is None:
+            raise KeyError(f"Handoff not tracked: {packet_id}")
+        if isinstance(data, str):
+            return data.encode('utf-8')
+        return data
+    
+    def has_handoff(self, packet_id: str) -> bool:
+        import sqlite3
+        with sqlite3.connect(self.index_path) as conn:
+            cursor = conn.execute("SELECT 1 FROM state_refs WHERE key = ?", (f"handoff:{packet_id}",))
+            return cursor.fetchone() is not None
+    
+    async def release_handoff(self, packet_id: str) -> bool:
+        import sqlite3
+        with sqlite3.connect(self.index_path) as conn:
+            cursor = conn.execute("DELETE FROM state_refs WHERE key = ?", (f"handoff:{packet_id}",))
+            conn.commit()
+            return cursor.rowcount > 0
+    
+    def stats(self) -> dict:
+        """Return combined statistics."""
+        cas_stats = self.cas.stats()
+        
+        # Count entries in index
+        import sqlite3
+        with sqlite3.connect(self.index_path) as conn:
+            sessions = conn.execute("SELECT COUNT(*) FROM state_refs WHERE key LIKE 'session:%'").fetchone()[0]
+            memories = conn.execute("SELECT COUNT(*) FROM state_refs WHERE key LIKE 'mem:%'").fetchone()[0]
+            handoffs = conn.execute("SELECT COUNT(*) FROM state_refs WHERE key LIKE 'handoff:%'").fetchone()[0]
+            
+        return {
+            "cas": cas_stats,
+            "tracked_sessions": sessions,
+            "tracked_memories": memories,
+            "tracked_handoffs": handoffs,
+            "somatic_available": False,  # SomaticStateManager not integrated here
+        }

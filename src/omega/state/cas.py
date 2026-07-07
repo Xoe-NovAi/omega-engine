@@ -33,11 +33,11 @@ class CASManager:
         await anyio.Path(self.base_dir).mkdir(parents=True, exist_ok=True)
 
     def _get_blob_path(self, blob_hash: str) -> Path:
-        """Compute the path for a blob using the first 2 chars as a prefix.
-        Prevents directory bloat by splitting blobs across 256 subdirectories.
+        """Compute the path for a blob using the first 4 chars as a prefix.
+        Prevents directory bloat by splitting blobs across 256x256 subdirectories.
         """
-        prefix = blob_hash[:2]
-        return self.base_dir / prefix / blob_hash
+        # Sharding: blobs/ab/cd/<full-hash>
+        return self.base_dir / blob_hash[:2] / blob_hash[2:4] / blob_hash
 
     async def put(self, data: bytes) -> str:
         """Store data in CAS and return its SHA-256 hash.
@@ -45,6 +45,8 @@ class CASManager:
         [id-soft: doom-1993] ZONEID Pattern — the hash itself acts as the 
         ultimate integrity marker.
         """
+        if not data:
+            raise OmegaPersistenceError("Cannot store empty data")
         blob_hash = hashlib.sha256(data).hexdigest()
         blob_path = self._get_blob_path(blob_hash)
         
@@ -70,12 +72,18 @@ class CASManager:
         
         if not await anyio.Path(blob_path).exists():
             raise OmegaPersistenceError(f"Blob {blob_hash} not found in CAS")
-            
+        
         try:
             async with await anyio.open_file(str(blob_path), "rb") as f:
-                return await f.read()
+                data = await f.read()
+            
+            # Verify integrity
+            if hashlib.sha256(data).hexdigest() != blob_hash:
+                raise OmegaPersistenceError(f"CAS corruption detected for blob {blob_hash}")
+                
+            return data
         except (OSError, RuntimeError) as e:
-            logger.error(f"CAS get failed for hash {blob_hash}: {e}", exc_info=True)
+            logger.error(f"CAS get failed for {blob_hash}: {e}", exc_info=True)
             raise OmegaPersistenceError(f"Failed to retrieve blob {blob_hash}: {e}", raw_error=e) from e
 
     async def exists(self, blob_hash: str) -> bool:
@@ -92,3 +100,26 @@ class CASManager:
                 await anyio.Path(blob_path).unlink()
         except (OSError, RuntimeError) as e:
             logger.warning(f"CAS delete failed for {blob_hash}: {e}")
+
+    async def stats(self) -> dict:
+        """Return CAS statistics."""
+        # Since we don't have a refcount DB in this simple CASManager yet,
+        # we just count the files in the blobs directory.
+        total_blobs = 0
+        total_size = 0
+        try:
+            # Walk the sharded directory structure
+            for shard in self.base_dir.iterdir():
+                if shard.is_dir():
+                    for subshard in shard.iterdir():
+                        if subshard.is_dir():
+                            for blob in subshard.iterdir():
+                                total_blobs += 1
+                                total_size += blob.stat().st_size
+        except (OSError, RuntimeError):
+            pass
+        return {
+            "unique_blobs": total_blobs,
+            "total_bytes": total_size,
+            "total_refs": total_blobs, # Approximation
+        }

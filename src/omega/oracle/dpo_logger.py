@@ -120,7 +120,7 @@ class DPORecorder:
         self.resonance_mode = resonance_mode
         
         # Async write queue
-        self._queue: anyio.Queue = anyio.create_queue(max_size=queue_capacity)
+        self._send_stream, self._receive_stream = anyio.create_memory_object_stream(max_buffer_size=queue_capacity)
         self._writer_task: Optional[anyio.Task] = None
         self._shutdown = False
         
@@ -157,7 +157,10 @@ class DPORecorder:
     async def start(self) -> None:
         """Start the background writer task."""
         if self._writer_task is None:
-            self._writer_task = anyio.create_task(self._writer_loop())
+            # Use asyncio.create_task since we're in an asyncio context
+            # AnyIO doesn't have create_task; use task groups for structured concurrency
+            import asyncio
+            self._writer_task = asyncio.create_task(self._writer_loop())
             logger.info(f"DPORecorder started: {self.output_dir}")
             
     async def stop(self) -> None:
@@ -244,15 +247,11 @@ class DPORecorder:
             
     async def _writer_loop(self) -> None:
         """Background writer loop - processes queue and writes to JSONL."""
-        while not self._shutdown:
-            try:
-                # Wait for entry with timeout to check shutdown
-                entry = await anyio.wait_for(self._queue.get(), timeout=1.0)
+        async with self._receive_stream:
+            async for entry in self._receive_stream:
+                if self._shutdown:
+                    break
                 await self._write_entry(entry)
-            except TimeoutError:
-                continue
-            except Exception as e:
-                logger.error(f"DPO writer loop error: {e}")
                 
     async def _write_entry(self, record: DPORecord) -> None:
         """Write a single DPO record to current JSONL file."""
@@ -336,7 +335,7 @@ class DPORecorder:
             
         # Non-blocking enqueue
         try:
-            self._queue.put_nowait(record)
+            await self._send_stream.send(record)
         except anyio.WouldBlock:
             logger.warning("DPO recorder queue full, dropping record")
             
@@ -508,7 +507,7 @@ class DPORecorder:
             "total_files": len(self._manifest),
             "total_records": total_records,
             "current_file": str(self._current_file_path) if self._current_file_path else None,
-            "queue_size": self._queue.qsize() if hasattr(self._queue, 'qsize') else "unknown",
+            "queue_size": self._send_stream.statistics().current_buffer_used if hasattr(self._send_stream, 'statistics') else "unknown",
             "resonance_mode": self.resonance_mode.value,
             "rotation_interval_hours": self.rotation_interval_sec / 3600,
         }

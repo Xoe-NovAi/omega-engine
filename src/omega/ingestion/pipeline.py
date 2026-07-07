@@ -10,6 +10,7 @@ import uuid
 import anyio
 import logging
 import pybreaker
+from omega.errors import OmegaError
 from typing import List, Optional, AsyncGenerator, Dict, Any
 from pathlib import Path
 from datetime import datetime, timezone
@@ -27,6 +28,7 @@ from .guards import SovereignSentry, BudgetGuard
 from .scraper import SovereignScraper
 from .worker import SovereignWorker
 from .verifier import TriangulationVerifier
+from src.omega.oracle.pii_masker import PIIMasker
 from src.omega.archive.cas import CASArchiver
 from src.omega.library.curator import CurationPipeline
 from src.omega.library.extractor import ExtractedContent
@@ -137,6 +139,7 @@ class IngestionPipeline:
         self.enrichment = EnrichmentEngine()
         self.cas = CASArchiver()
         self.scraper = SovereignScraper(cas_archiver=self.cas)
+        self.pii_masker = PIIMasker()
         
         # Unified Resilience Context
         self.resilience = ResilienceContext(
@@ -148,19 +151,25 @@ class IngestionPipeline:
         )
 
 
+    def _is_cloud_model(self) -> bool:
+        """Checks if the current model is a cloud provider."""
+        model_name = self.config.model_name.lower()
+        cloud_keywords = ["google", "openai", "anthropic", "openrouter", "copilot", "gemini", "gpt", "claude"]
+        return any(kw in model_name for kw in cloud_keywords)
+
     async def run_source(self, source: Any) -> Optional[IngestionResult]:
         """Processes a single source through the resilience ladder."""
         # Use unified resilience context
         if not await self.resilience.pre_flight_check():
             return None
-
+        
         # Handle both FileSource and URL strings
         if hasattr(source, 'read'):
             source_name, text = await source.read()
         else:
             source_name = source
             text = source # Assume it's a URL
-
+        
         trace_id = f"ingest_{uuid.uuid4().hex[:12]}"
         
         print(f"\n🚀 Ingesting: {source_name} ({len(text) if isinstance(text, str) else 'URL'} chars)")
@@ -191,15 +200,11 @@ class IngestionPipeline:
                 
                 if verification and not verification.is_verified:
                     print(f"⚠️  Triangulation failed for {source_name}. Confidence: {verification.confidence_score:.2f}")
-                    # In a full implementation, we would trigger T2 Surgical here.
                     if verification.confidence_score < 0.4:
                         return None
-
-                # Store raw content in CAS (Sovereign Archiving)
-                raw_content = t3_res.content.encode('utf-8')
-                cid = await self.cas.store(raw_content)
-                text = t3_res.content
                 
+                raw_content = t3_res.content.encode('utf-8')
+                text = t3_res.content
             else:
                 # Standard File Path
                 # 1. Pre-Extraction Quality Gate (Right Approximation)
@@ -218,16 +223,40 @@ class IngestionPipeline:
                     return None
                 
                 print(f"💎 Quality Score: {quality_score:.2f} | Domain: {domain}")
+                raw_content = text.encode('utf-8') if isinstance(text, str) else text
+
+            # --- TRI-ANCHOR SYSTEM IMPLEMENTATION ---
+            # Stage 1: Raw Anchor (Immutable Ground Truth)
+            source_id = await self.persistence.persist_raw_anchor(source_name, raw_content)
+            
+            # Stage 2: Sovereign Continuity Anchor (SCA)
+            sca_metadata = {
+                "source_id": source_id,
+                "source_name": source_name,
+                "trace_id": trace_id,
+                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "model": self.config.model_name,
+                "intent": "Entity Deepening",
+                "context": f"Ingesting {source_name} for {self.config.entity_name}"
+            }
+            await self.persistence.persist_sca(source_id, sca_metadata, quarantine=True)
+            # ----------------------------------------
+
+            # --- SOVEREIGN FILTER (PII Masking) ---
+            if self._is_cloud_model():
+                print(f"🛡️  Applying Sovereign Filter (PII Masking) for cloud model {self.config.model_name}...")
+                detections = await self.pii_masker.detect(text)
+                text, _ = self.pii_masker.tokenize(text, detections)
+            # --------------------------------------
 
             # 2. Budget Guard (via resilience context)
             if not self.resilience.check_budget(estimated_tokens=len(text)//4 + 1000):
                 raise BudgetExceededError(f"Hard budget limit of ${self.config.max_budget_usd} reached.")
-
+            
             # 3. Guarded Extraction (via resilience context breaker)
             extraction = await self.resilience.breaker.call(self.extractor.extract, text, self.config)
             
             # 4. Validation Gate (Standard Quality Check)
-            # We still use a basic validation to ensure the LLM didn't hallucinate a failure
             if not extraction.technical_facts and not extraction.personality_patterns:
                 print(f"⚠️  Extraction empty for {source_name}. Marking as corrupt.")
                 self.resilience.breaker.record_failure(SchemaError("Extraction empty"))
@@ -243,6 +272,7 @@ class IngestionPipeline:
             
             # 6. Persistence
             session_id = await self.persistence.persist_extraction(
+                source_id=source_id,
                 source_name=source_name,
                 model_name=self.config.model_name,
                 extraction_data=extraction.to_dict(),
@@ -274,6 +304,7 @@ class IngestionPipeline:
         except (OmegaError, RuntimeError, OSError) as e:
             logger.error(f"Ingestion failed for {source_name}: {e}")
             return None
+
     async def run_batch(self, sources: List[FileSource]) -> List[IngestionResult]:
         """Processes a batch of sources with pre-flight sentry and circuit breaker."""
         # 1. Pre-flight Sentry Probe via resilience context

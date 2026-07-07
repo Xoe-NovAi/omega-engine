@@ -1093,11 +1093,45 @@ class Oracle:
                         "Failed to record compaction stats for %s session %s: %s",
                         entity_name, session_id, comp_exc,
                     )
+            # 3. Capture somatic state (KV cache) if available
+            try:
+                usm = get_usm()
+                somatic_hash = await self._capture_somatic_state(entity_name, session_id)
+                if somatic_hash:
+                    logger.info(f"Captured somatic state for {entity_name} session {session_id}: {somatic_hash[:16]}...")
+            except (OmegaError, RuntimeError, OSError) as somatic_exc:
+                logger.warning(f"Somatic state capture failed for {entity_name} session {session_id}: {somatic_exc}")
+            
             return success
         except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.error(f"Failed to close session {session_id} for {entity_name} [{classification['mode']}]: {e}")
             return False
+
+    async def _capture_somatic_state(self, entity_name: str, session_id: str) -> Optional[str]:
+        """Capture KV cache state from the active provider and store in USM.
+        
+        Returns the CAS hash of the stored state, or None if not available.
+        """
+        try:
+            # Get the provider that was used for this entity
+            provider = self.model_gateway.get_provider_for_entity(entity_name)
+            if not provider or not hasattr(provider, 'save_state'):
+                return None
+            
+            # Capture state from provider (runs in worker process)
+            state_bytes = await provider.save_state()
+            if not state_bytes:
+                return None
+            
+            # Store in USM CAS
+            usm = get_usm()
+            state_key = f"somatic:{entity_name}:{session_id}"
+            hash_ = await usm.save_state(state_key, state_bytes)
+            return hash_
+        except (OmegaError, RuntimeError, OSError, AttributeError) as e:
+            logger.debug(f"Somatic capture not available for {entity_name}: {e}")
+            return None
 
 
     async def _track_soul_evolution(self, entity_name: str, trace_id: str) -> None:

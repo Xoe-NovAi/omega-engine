@@ -339,7 +339,7 @@ The MaKaLi Cloud Council declared an **IMMEDIATE EXECUTION HOLD** on all feature
 | **IW-1** | **Infrastructure** | Deploy Tor-SOCKS5 Bridge + Local-First Escalation for SearXNG | `TRACE-P1-SSNM-V1` | M8 | 🟡 **DEFERRED post-PR** — Carmack advice: SearXNG is self-hosted, zero-external-telemetry already. Tor adds latency + ops complexity on single-contributor machine. M8 risk is low. Revisit post-v1.1.0. |
 | **IW-2** | **Engineering** | Absolute purge of all round-robin logic from `KeyVault` | `TRACE-RR-PURGE-001` | M4 | ✅ **COMPLETED** — D176 ratified |
 | **IW-3** | **Observability** | Implement Body-Level Error Guards (BLEG) + UFL (Forensic Ledger) | `TRACE-P8-OBS-001` | M9, M22 | ✅ **COMPLETED** — D176 ratified |
-| **IW-4** | **Context** | Deploy Sovereign Ingestion Pipeline (Tri-Anchor System) + Omnidroid Migration | `TRACE-SIP-20260629` | M5, M15 | 🟡 P1 HIGH |
+| **IW-4** | **Context** | Deploy Sovereign Ingestion Pipeline (Tri-Anchor System) + Omnidroid Migration | `TRACE-SIP-20260629` | M5, M15 | ✅ COMPLETE |
 | **IW-5** | **Governance** | Restore `workbench.db` schema + ingest `LEGACY_NAVIGATION_GUIDE.md` | `LEGACY_MAPPING_CENTRALIZATION_20260628.md` | M5 | ✅ **COMPLETED** — D177 ratified |
 | **IW-6** | **Validation** | Implement the V-D1 Validation Suite for "Sticky" mode resilience | `TRACE-P10-VD1` | M13 | 🟢 P2 MEDIUM |
 

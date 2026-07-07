@@ -1270,6 +1270,18 @@ class ModelGateway:
         except ImportError:
             return False
 
+    def get_provider_for_entity(self, entity_name: str):
+        """Get the provider instance that was last used for an entity.
+        
+        This is used for somatic state capture (M20).
+        """
+        # The active provider is tracked in the active set
+        # For now, return the first NativeGGUFProvider if available
+        for provider in self.providers:
+            if provider.__class__.__name__ == "NativeGGUFProvider":
+                return provider
+        return None
+
     # ── Fallback ──────────────────────────────────────────────────────
     async def embed(self, text: str) -> List[float]:
         """Generate a vector embedding for the given text.

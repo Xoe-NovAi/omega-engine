@@ -7,16 +7,16 @@
 # 
 from .cas import CASManager
 from .somatic_state import SomaticStateManager
-from .usm import USMManager
+from .usm import USMManager as UnifiedStateManager
 from typing import Optional
 
-_usm: Optional[USMManager] = None
+_usm: Optional[UnifiedStateManager] = None
 
-def get_usm() -> USMManager:
+def get_usm() -> UnifiedStateManager:
     """Get the singleton USM instance."""
     global _usm
     if _usm is None:
-        _usm = USMManager()
+        _usm = UnifiedStateManager()
     return _usm
 
 async def initialize_usm() -> None:
