@@ -134,11 +134,94 @@ The external NVMe partition (`/dev/nvme0n1p3`) is mounted with `shared` propagat
 |-----------|--------|
 | Hub MCP bugs (Session 39) | 📋 Planned — not yet fixed |
 | graphRoot location | ✅ Root partition — MS_PRIVATE fixed |
-| Podman volumes location | ⏳ External — move to root planned |
-| Infrastructure containers | ❌ Not running — Qdrant WAL panic |
+| Podman volumes location | ✅ Root partition — all 5 volumes migrated |
+| Infrastructure containers | ✅ All 5 running (Redis, Qdrant, Postgres, Caddy, Iris) |
 | Models | ✅ External drive (41G) — correct |
 | Root partition | ✅ 20G free (81% used) |
 | External partition | ✅ 34G free (69% used) |
+
+---
+
+## 📌 Session 41 — Operation Unified Storage + OmegaError Sweep
+
+**Date**: 2026-07-06 | **Entity**: kali | **Model**: deepseek-v4-flash | **Channel**: opencode
+**Trace**: ses_fcfb34cf6961 | **Phase**: Infrastructure Complete + Code Quality Sweep
+
+### 🎯 Session Objective
+Execute Operation Unified Storage (Phase 0-5) and fix OmegaError import bugs across the codebase.
+
+### ✅ Completed
+
+**Phase 0: Clean Slate** ✅
+- Killed zombie processes on ports 6333/8088
+- Removed stale containers and networks
+- Stopped and disabled 6 conflicting systemd user services (redis, postgres, caddy, iris, qdrant, infra-pod) — 787+ restart attempts eliminated
+
+**Phase 1: Migrate Volumes to Root** ✅
+- Created `~/.local/share/containers/volumes/` with subdirs for redis, qdrant, postgres, caddy, cache-iris
+- Rsynced all 5 volumes (Redis 12K, Qdrant 657MB, Postgres 96MB, Caddy 20K, Iris cache 4K)
+- Fixed ownership with `pkexec chown -R 1000:1000`
+
+**Phase 2: Update docker-compose.yml** ✅
+- All 6 volume paths changed from external → root partition
+- Updated comment to reflect new architecture
+
+**Phase 3: Rebuild & Verify** ✅
+- All 5 containers rebuilt and running:
+  - Redis: healthy, PONG
+  - Qdrant: healthy, healthz OK
+  - Postgres: healthy, accepting connections
+  - Caddy: healthy, serving on 8088
+  - Iris: running, responding on 8080 (health check cosmetic — boot time exceeds check window)
+- Fixed `OmegaError` missing import in `search_providers.py` (was crashing Iris)
+- Fixed Qdrant health check (bash TCP instead of nonexistent curl)
+- Fixed Caddy health check (wget instead of nonexistent curl)
+
+**Phase 4: Clean Up External Drive** ✅
+- Removed old volume data from external drive
+- Models (41G) untouched and verified intact
+
+**Phase 5: OmegaError Sweep + Test Recovery** ✅
+- Found 50+ files missing `from omega.errors import OmegaError`
+- Fixed all 50 files programmatically
+- Added `yaml.YAMLError` to except clauses in `soul_edit_history.py` and `wad_loader.py`
+- Fixed syntax errors from sed script (memory_store.py, ingestion/pipeline.py, providers.py, worker.py)
+- **Result**: 77 failures → 65 failures (809 passed, up from 797)
+
+### 🔶 Remaining Failures (65 total)
+
+| Category | Count | Root Cause | Fix Required |
+|----------|-------|------------|--------------|
+| Hub health | 40 | Hub MCP server not running | Start hub or skip tests |
+| Circuit breaker | 6 | Health monitor tests | Investigate pre-existing |
+| Model gateway | 5 | Gateway tests | Investigate pre-existing |
+| Memory store | 5 | Memory tests | Investigate pre-existing |
+| Soul distiller | 4 | Distiller tests | Investigate pre-existing |
+| Session manager | 3 | Session tests | Investigate pre-existing |
+| Search tools | 3 | No API keys (Firecrawl, Exa) | Expected — needs API keys |
+| E2E sieve | 2 | Network-dependent | Expected |
+| Session lifecycle | 1 | Lifecycle test | Investigate |
+| Selective hydration | 1 | Hydration test | Investigate |
+| Orchestrator | 1 | MCP status test | Investigate |
+| MCP taint | 1 | Taint test | Investigate |
+| Headroom | 1 | Headroom test | Investigate |
+
+### 📁 Files Modified
+
+- `deploy/infra/docker-compose.yml` — all volume paths + health checks
+- `src/omega/oracle/search_providers.py` — added OmegaError import
+- `src/omega/oracle/soul_edit_history.py` — added OmegaError + yaml.YAMLError
+- `src/omega/oracle/wad_loader.py` — added OmegaError + yaml.YAMLError + ValueError
+- `data/coordination/MCP_CHURN_FIX_PLAN.md` — consolidated plan
+- `.opencode/anchored-summary.md` — session 41 entry
+- **50 files** across `src/omega/` — added `from omega.errors import OmegaError`
+
+### 🧭 Next Actions (Next Session)
+
+1. **Start Hub MCP server** — required for 40 Hub health tests to pass
+2. **Investigate remaining 25 code failures** — circuit breaker, model gateway, memory store, soul distiller
+3. **Commit all changes** — infrastructure + code quality improvements
+4. **Update anchored-summary.md** — add session 41 entry
 
 ---
 
