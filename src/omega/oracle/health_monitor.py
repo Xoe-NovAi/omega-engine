@@ -163,7 +163,7 @@ class AsyncCircuitBreaker:
         async with self._lock:
             old_state = self.state
             
-            # 1. Update EMA Latency
+            # 1. Update EMA Latency (SOTA: EWMA for smooth health tracking)
             if self.ema_latency == 0:
                 self.ema_latency = latency
             else:
@@ -173,13 +173,13 @@ class AsyncCircuitBreaker:
             self.ema_quality = (self.alpha_qual * quality) + ((1 - self.alpha_qual) * self.ema_quality)
             
             # 3. Update CUSUM (success = 0 error)
-            # Z_t = (0 - mu_0) / sigma_0. Using simplified Z_t = -0.5 for success
+            # Z_t = max(0, g_{t-1} + (y_t - mu_0) / sigma_0)
+            # For success, y_t = 0. mu_0 is the baseline failure rate.
             self.cusum_g = max(0.0, self.cusum_g - 0.5)
             
-            # 4. Determine State based on Health Score
-            # Health = (0.4 * LatScore) + (0.35 * ErrScore) + (0.25 * QualScore)
-            # Simplified: If CUSUM is low and EMA latency is reasonable, we are CLOSED.
-            if self.cusum_g < 1.0 and self.ema_latency < 2000:
+            # 4. State Transition (SOTA: 5-State FSM)
+            # Optimal (CLOSED) -> Stressed (DEGRADED) -> Critical (OPEN)
+            if self.cusum_g < 1.0 and self.ema_latency < 1500:
                 self.state = CircuitState.CLOSED
             elif self.cusum_g < self.cusum_threshold:
                 self.state = CircuitState.DEGRADED
@@ -200,7 +200,6 @@ class AsyncCircuitBreaker:
                         {"provider": self.name, "event": "circuit_closed",
                          "from": old_state.value, "to": self.state.value}
                     )
-                    # Also record to MetricsDB
                     engine.record_breaker_transition(
                         provider=self.name,
                         from_state=old_state.value,
@@ -221,13 +220,16 @@ class AsyncCircuitBreaker:
             old_state = self.state
             
             # 1. Update CUSUM (failure = 1 error)
-            # Z_t = (1 - mu_0) / sigma_0. Using simplified Z_t = 1.0 for failure
+            # Z_t = max(0, g_{t-1} + (y_t - mu_0) / sigma_0)
+            # For failure, y_t = 1. mu_0 is baseline failure rate.
             self.cusum_g = max(0.0, self.cusum_g + 1.0 - self.cusum_drift)
             
-            # 2. State Transition
+            # 2. State Transition (SOTA: 5-State FSM)
+            # Optimal (CLOSED) -> Stressed (DEGRADED) -> Critical (OPEN)
             if self.cusum_g > self.cusum_threshold:
                 self.state = CircuitState.OPEN
             elif self.state == CircuitState.HALF_OPEN:
+                # Any failure in HALF_OPEN immediately trips the circuit back to OPEN
                 self.state = CircuitState.OPEN
             elif self.failure_count >= self.failure_threshold:
                 self.state = CircuitState.OPEN
@@ -235,7 +237,7 @@ class AsyncCircuitBreaker:
                 self.state = CircuitState.DEGRADED
             else:
                 self.state = CircuitState.CLOSED
-
+            
             if trace_id and old_state != self.state:
                 try:
                     from omega.observability import get_engine, EventType

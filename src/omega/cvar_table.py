@@ -258,6 +258,12 @@ CVAR_TABLE: Dict[str, CvarDef] = {
         "Root directory for all engine data (entities, sessions, logs)", "EntityRegistry",
     ),
 
+    # ── config.resource_guard.* — Resource Guard knobs ─────────
+    "config.resource_guard.max_ram_mb": CvarDef(
+        "config.resource_guard.max_ram_mb", 12288, "int",
+        "Global max RAM (MB) for concurrent model inference", "ResourceGuard",
+    ),
+
     # ── config.hivemind.* — Hivemind/Hub knobs ─────────────────
     "config.hivemind.enabled": CvarDef(
         "config.hivemind.enabled", True, "bool",

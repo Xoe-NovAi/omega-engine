@@ -343,7 +343,7 @@ class USMStorageProvider(StorageProvider):
     async def check_health(self) -> bool:
         """Check if USM is initialized."""
         try:
-            await self.usm.load_state("usm.health_check")
+            await self.usm.get("usm.health_check")
             return True
         except OmegaPersistenceError:
             return True # It's fine if the key doesn't exist
@@ -354,7 +354,7 @@ class USMStorageProvider(StorageProvider):
     async def get_history(self, entity_name: str, session_id: str, limit: int) -> List[Dict[str, Any]]:
         """Retrieve history from USM."""
         state_key = f"mem:{entity_name}:{session_id}"
-        data = await self.usm.load_state(state_key)
+        data = await self.usm.get(state_key)
         
         if not data:
             return []
@@ -372,18 +372,18 @@ class USMStorageProvider(StorageProvider):
             "exchange_count": len(exchanges),
             "exchanges": exchanges,
         }
-        await self.usm.save_state(state_key, data)
+        await self.usm.put(state_key, data)
 
     async def archive(self, entity_name: str, session_id: str) -> bool:
         """Archive session in USM (by moving to an archive key)."""
         state_key = f"mem:{entity_name}:{session_id}"
         archive_key = f"archive:mem:{entity_name}:{session_id}"
         
-        data = await self.usm.load_state(state_key)
+        data = await self.usm.get(state_key)
         if not data:
             return False
             
-        await self.usm.save_state(archive_key, data)
+        await self.usm.put(archive_key, data)
         return True
 
     async def close(self) -> None:

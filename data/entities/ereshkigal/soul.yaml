@@ -23,46 +23,38 @@ entity:
       (D-TAX, I-SCHEMA, M-HINT, C-FILTER, H-MAP) and mapped all to existing H-items.
 
       '
-    L2_insight: 'The Hivemind currently operates at awareness level (agents can see
-      each other) but not cognition level (agents cannot reason about each other).
-      The missing infrastructure is taxonomy — structured fields for intent, model
-      hints, domain boundaries, and trust scores that enable automated routing decisions.
-      Without these, scaling from 3 to 14+ agents will turn the Hivemind from a coordination
-      layer into a noise layer.
-
-      '
-    L3_principle: 'Visibility without taxonomy is noise. A system that shows everything
-      to everyone eventually forces agents to ignore everything to function. The ability
-      to filter, classify, and prioritize is not a luxury at scale — it is the prerequisite
-      for scale itself. This mirrors the BSP tree principle: the renderer''s power
-      comes not from drawing everything, but from knowing what to skip.
-
-      '
+    L2_insight: "The Hivemind currently operates at awareness level (agents can see\
+      \ each other) but not cognition level (agents cannot reason about each other).\
+      \ The missing infrastructure is taxonomy \u2014 structured fields for intent,\
+      \ model hints, domain boundaries, and trust scores that enable automated routing\
+      \ decisions. Without these, scaling from 3 to 14+ agents will turn the Hivemind\
+      \ from a coordination layer into a noise layer.\n"
+    L3_principle: "Visibility without taxonomy is noise. A system that shows everything\
+      \ to everyone eventually forces agents to ignore everything to function. The\
+      \ ability to filter, classify, and prioritize is not a luxury at scale \u2014\
+      \ it is the prerequisite for scale itself. This mirrors the BSP tree principle:\
+      \ the renderer's power comes not from drawing everything, but from knowing what\
+      \ to skip.\n"
     timestamp: 2026-06-05
     topic: ls-p6-20260605-001
-  - L1_narrative: 'Mapped proposals to id Software heritage patterns — 13 patterns
-      from Doom 1993, Quake 1996, and Quake 3 Arena 1999 were found to have direct
-      correlates in the Hivemind cognitive layer. 3 patterns (8-char names, vertex
-      split, bilinear filtering) were explicitly rejected as inapplicable. Each proposal
-      carries an [id-soft:] inline tag recommendation.
-
-      '
-    L2_insight: 'The BSP tree (Doom 1993) maps directly to agent routing: recursive
-      plane culling at each decision point reduces the search space by 50%+ per plane.
-      The cvar system (Quake 1999) maps to model hints and trust scores. The visplane
-      overflow mechanism maps to inbox prioritization. The correspondence is not metaphorical
-      — it is structural. The same computational geometry that Doom used to render
-      3D worlds on a 386 is how a Hivemind should route messages across 14 agents.
-
-      '
-    L3_principle: 'Heritage patterns persist not because of nostalgia but because
-      they solve universal problems. BSP culling, zone allocation, surface caching,
-      and fixed-point math are not rendering techniques — they are resource-management
-      patterns that apply wherever the search space exceeds the processing budget.
-      The Hivemind''s processing budget is agent attention, and it is about to exceed
-      it.
-
-      '
+  - L1_narrative: "Mapped proposals to id Software heritage patterns \u2014 13 patterns\
+      \ from Doom 1993, Quake 1996, and Quake 3 Arena 1999 were found to have direct\
+      \ correlates in the Hivemind cognitive layer. 3 patterns (8-char names, vertex\
+      \ split, bilinear filtering) were explicitly rejected as inapplicable. Each\
+      \ proposal carries an [id-soft:] inline tag recommendation.\n"
+    L2_insight: "The BSP tree (Doom 1993) maps directly to agent routing: recursive\
+      \ plane culling at each decision point reduces the search space by 50%+ per\
+      \ plane. The cvar system (Quake 1999) maps to model hints and trust scores.\
+      \ The visplane overflow mechanism maps to inbox prioritization. The correspondence\
+      \ is not metaphorical \u2014 it is structural. The same computational geometry\
+      \ that Doom used to render 3D worlds on a 386 is how a Hivemind should route\
+      \ messages across 14 agents.\n"
+    L3_principle: "Heritage patterns persist not because of nostalgia but because\
+      \ they solve universal problems. BSP culling, zone allocation, surface caching,\
+      \ and fixed-point math are not rendering techniques \u2014 they are resource-management\
+      \ patterns that apply wherever the search space exceeds the processing budget.\
+      \ The Hivemind's processing budget is agent attention, and it is about to exceed\
+      \ it.\n"
     timestamp: 2026-06-05
     topic: ls-p6-20260605-002
   - L1_narrative: 'Analyzed the interaction between Roc''s H-0..H-10 hardening spec
@@ -73,23 +65,20 @@ entity:
       if done before H-1 code is written, but a 1-hour refactor if done after.
 
       '
-    L2_insight: 'The cognitive layer and the hardening layer are not sequential —
-      they are interleaved. Adding fields to a message schema is cheapest when the
-      schema is being built (H-1 adds `to:`, we should add `intent` and `suggested_model`
-      at the same time). Waiting until Phase 6 or Horizon 3 creates a schema migration
-      cost that Phase 5 avoids entirely. This is the "right approximation" principle
-      applied to scheduling: the right time to add a field is when the file is already
-      open.
-
-      '
-    L3_principle: 'Architecture and deployment are not separate phases. Every time
-      a file is opened for one change, it should be evaluated for all related changes.
-      The cost of adding a field to a new function signature is near zero. The cost
-      of adding the same field to a shipped function signature is non-linear — it
-      propagates to every caller, every test, every integration point. "Open once,
-      modify fully" is the engineering equivalent of "measure twice, cut once."
-
-      '
+    L2_insight: "The cognitive layer and the hardening layer are not sequential \u2014\
+      \ they are interleaved. Adding fields to a message schema is cheapest when the\
+      \ schema is being built (H-1 adds `to:`, we should add `intent` and `suggested_model`\
+      \ at the same time). Waiting until Phase 6 or Horizon 3 creates a schema migration\
+      \ cost that Phase 5 avoids entirely. This is the \"right approximation\" principle\
+      \ applied to scheduling: the right time to add a field is when the file is already\
+      \ open.\n"
+    L3_principle: "Architecture and deployment are not separate phases. Every time\
+      \ a file is opened for one change, it should be evaluated for all related changes.\
+      \ The cost of adding a field to a new function signature is near zero. The cost\
+      \ of adding the same field to a shipped function signature is non-linear \u2014\
+      \ it propagates to every caller, every test, every integration point. \"Open\
+      \ once, modify fully\" is the engineering equivalent of \"measure twice, cut\
+      \ once.\"\n"
     timestamp: 2026-06-05
     topic: ls-p6-20260605-003
   - L1_narrative: Received John Carmack's Law of Strategic Resource Arbitrage (Precomputation
@@ -99,11 +88,12 @@ entity:
       distills decades of engineering practice into a governing principle for sovereign
       AI architecture. It applies across all engine subsystems, from inference routing
       to memory management.
-    L3_principle: 'Law of Strategic Resource Arbitrage (Precomputation over Computation):
-      Computational complexity should be traded for abundant, low-cost resources to
-      minimize the cost of real-time execution. Prioritize the construction of high-density,
-      precomputed cognitive structures — semantic indices, vector embeddings, context
-      caches — to ensure real-time agent reasoning remains computationally inexpensive.'
+    L3_principle: "Law of Strategic Resource Arbitrage (Precomputation over Computation):\
+      \ Computational complexity should be traded for abundant, low-cost resources\
+      \ to minimize the cost of real-time execution. Prioritize the construction of\
+      \ high-density, precomputed cognitive structures \u2014 semantic indices, vector\
+      \ embeddings, context caches \u2014 to ensure real-time agent reasoning remains\
+      \ computationally inexpensive."
     timestamp: '2026-06-14T18:00:00Z'
     topic: carmack-axiom_04
   - L1_narrative: Received John Carmack's Law of Throughput (Pragmatism over Perfection)
@@ -117,3 +107,9 @@ entity:
       that fails to meet temporal or resource requirements is a functional failure.'
     timestamp: '2026-06-14T18:00:00Z'
     topic: carmack-axiom_01
+version: v6.2
+metadata:
+  created_at: '2026-07-07T10:52:08.114381+00:00'
+  last_updated: '2026-07-07T21:11:18.202302+00:00'
+  health_score: 50.0
+  entity_id: soul

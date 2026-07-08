@@ -200,14 +200,14 @@ def test_route_semantic_match():
 
     # Mock embedding manager
     async def mock_embed(text):
-        if "data" in text.lower() or "storage" in text.lower() or "persistence" in text.lower():
-            return [1.0, 0.0, 0.0]  # DataStore vector
+        if "data" in text or "storage" in text:
+            return ([1.0, 0.0, 0.0], "mock")
         elif "infrastructure" in text.lower() or "system" in text.lower():
-            return [0.0, 1.0, 0.0]  # SysAdmin vector
+            return ([0.0, 1.0, 0.0], "mock")  # SysAdmin vector
         elif "store" in text.lower() or "information" in text.lower():
-            return [0.9, 0.1, 0.0]  # Query close to DataStore
+            return ([0.9, 0.1, 0.0], "mock")  # Query close to DataStore
         else:
-            return [0.0, 0.0, 1.0]  # Unrelated
+            return ([0.0, 0.0, 1.0], "mock")  # Unrelated
 
     embedding_manager.get_embedding = mock_embed
 
@@ -251,9 +251,9 @@ def test_route_semantic_below_threshold():
     # Vectors that are orthogonal (cosine = 0)
     async def mock_embed(text):
         if "data" in text or "storage" in text:
-            return [1.0, 0.0, 0.0]
+            return ([1.0, 0.0, 0.0], "mock")
         else:
-            return [0.0, 1.0, 0.0]
+            return ([0.0, 1.0, 0.0], "mock")
 
     embedding_manager.get_embedding = mock_embed
 
@@ -308,7 +308,7 @@ def test_bootstrap_with_entities():
     registry.active_iter.return_value = [entity1, entity2]
 
     async def mock_embed(text):
-        return [1.0, 0.0, 0.0]
+        return ([1.0, 0.0, 0.0], "mock")
 
     embedding_manager.get_embedding = mock_embed
 
@@ -337,7 +337,7 @@ def test_bootstrap_idempotent():
     async def mock_embed(text):
         nonlocal call_count
         call_count += 1
-        return [1.0, 0.0, 0.0]
+        return ([1.0, 0.0, 0.0], "mock")
 
     embedding_manager.get_embedding = mock_embed
 

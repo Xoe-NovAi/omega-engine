@@ -1,6 +1,6 @@
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 WAD Loader — Universal Runtime Container Loader
-# AP: AP-WAD-LOADER-v1.0.0
+# AP: AP-WAD-LOADER-v1.1.0
 # ICS: [NODE: CORE | ARCHETYPE: SOPHIA | CONTEXT: RUNTIME-LOADING]
 #
 # Implements the WAD (Where's All Data) architecture.
@@ -17,18 +17,51 @@
 #   Q3A's files.c:39-75 defines base + cd + home + current game search order.
 #   Omega's wad_loader follows the same override chain pattern.
 
+# S1.5a Hardening: Schema validation, file size limits, adapter whitelist.
+
 
 # DocRef: docs/architecture/TRAINING_PIPELINE.md
 import logging
 import os
 import yaml
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Set, Tuple
 
 import anyio
 from .entity_registry import EntityRegistry, Entity
 from .world_state import world_state, WorldLump
 from omega.errors import OmegaError
+
+# ── S1.5a Hardening Constants ────────────────────────────────────────
+# [id-soft: doom-1993] ZONEID — size sentinel for file validation
+MAX_YAML_SIZE_BYTES = 1 * 1024 * 1024  # 1 MB — prevents loading huge YAML files
+MAX_ENTITY_NAME_LENGTH = 128  # Entity name length cap
+MAX_DOMAINS_PER_ENTITY = 20  # Max domains per entity
+
+# Adapter module whitelist — only known-safe modules can be imported from WAD manifests.
+# [M2] Engine-Stack Firewall: WADs cannot import arbitrary engine internals.
+ADAPTER_MODULE_WHITELIST: Set[str] = {
+    "omega.memory.adapters",
+    "omega.memory.adapters.mnemosyne_adapter",
+}
+
+# Required manifest field types
+MANIFEST_FIELD_TYPES = {
+    "name": str,
+    "version": str,
+    "entities": (list, dict),
+}
+
+# Required entity field types
+ENTITY_FIELD_TYPES = {
+    "name": str,
+    "domains": list,
+    "model": str,
+    "personality": str,
+    "temperature": (int, float),
+    "context_window": int,
+    "slots": list,
+}
 
 
 logger = logging.getLogger(__name__)
@@ -117,6 +150,18 @@ class WADLoader:
             logger.warning(f"WAD {stack_name} missing manifest.yaml. Skipping.")
             return False, None
             
+        # S1.5a: File size guard — reject manifests over 1 MB
+        try:
+            manifest_stat = await anyio.Path(manifest_path).stat()
+            if manifest_stat.st_size > MAX_YAML_SIZE_BYTES:
+                logger.error(
+                    f"WAD {stack_name} manifest too large: {manifest_stat.st_size} bytes "
+                    f"(max {MAX_YAML_SIZE_BYTES}). Possible DoS attempt."
+                )
+                return False, None
+        except OSError:
+            pass  # stat() failure is non-fatal; yaml.safe_load will catch truncation
+            
         try:
             async with await anyio.open_file(str(manifest_path), "r") as f:
                 manifest = yaml.safe_load(await f.read())
@@ -133,6 +178,20 @@ class WADLoader:
             missing = [f for f in required_fields if f not in manifest]
             if missing:
                 raise ValueError(f"WAD {stack_name} manifest missing required fields: {', '.join(missing)}")
+            
+            # S1.5a: Validate field types
+            for field, expected_type in MANIFEST_FIELD_TYPES.items():
+                if field in manifest and not isinstance(manifest[field], expected_type):
+                    raise TypeError(
+                        f"WAD {stack_name} manifest field '{field}' has wrong type: "
+                        f"expected {expected_type}, got {type(manifest[field]).__name__}"
+                    )
+            
+            # S1.5a: Validate name and version are non-empty strings
+            if not manifest.get("name", "").strip():
+                raise ValueError(f"WAD {stack_name} manifest 'name' is empty")
+            if not manifest.get("version", "").strip():
+                raise ValueError(f"WAD {stack_name} manifest 'version' is empty")
             
             # Capture startup personality if defined
             if manifest.get("startup") and manifest["startup"].get("message"):
@@ -175,7 +234,7 @@ class WADLoader:
 
             return True, hierarchy_path
 
-        except (OmegaError, RuntimeError, OSError, ValueError, yaml.YAMLError) as e:
+        except (OmegaError, RuntimeError, OSError, ValueError, TypeError, yaml.YAMLError) as e:
             logger.error(f"Failed to load WAD {stack_name}: {e}")
             return False, None
 
@@ -203,6 +262,15 @@ class WADLoader:
             return
 
         try:
+            # S1.5a: Adapter module whitelist enforcement
+            # [M2] Engine-Stack Firewall: WADs cannot import arbitrary engine internals.
+            if module_path not in ADAPTER_MODULE_WHITELIST:
+                logger.error(
+                    f"WAD {stack_name} adapter module '{module_path}' not in whitelist. "
+                    f"Allowed: {sorted(ADAPTER_MODULE_WHITELIST)}"
+                )
+                return
+                
             # Dynamic import
             import importlib
             module = importlib.import_module(module_path)
@@ -282,12 +350,59 @@ class WADLoader:
                 logger.info(f"Entity {entity_name} already registered (priority {existing_priority} < {priority}). Overriding from WAD {wad_source}.")
             
             try:
+                # S1.5a: File size guard for entity files
+                try:
+                    file_stat = await anyio.Path(path).stat()
+                    if file_stat.st_size > MAX_YAML_SIZE_BYTES:
+                        logger.warning(
+                            f"Entity file {path.name} too large: {file_stat.st_size} bytes. Skipping."
+                        )
+                        continue
+                except OSError:
+                    pass  # Non-fatal; yaml.safe_load will handle truncation
+                    
                 async with await anyio.open_file(str(path), "r") as f:
                     data = yaml.safe_load(await f.read())
                     
+                    if data is None:
+                        logger.warning(f"Entity file {path.name} is empty. Skipping.")
+                        continue
+                    
                     # Create Entity object
                     ent_data = data.get("entity", {})
+                    
+                    if not ent_data:
+                        logger.warning(f"Entity file {path.name} missing 'entity' key. Skipping.")
+                        continue
 
+                    # S1.5a: Validate entity field types
+                    type_errors = []
+                    for field, expected_type in ENTITY_FIELD_TYPES.items():
+                        if field in ent_data and not isinstance(ent_data[field], expected_type):
+                            type_errors.append(
+                                f"'{field}' expected {expected_type}, got {type(ent_data[field]).__name__}"
+                            )
+                    if type_errors:
+                        logger.warning(
+                            f"Entity {entity_name} has invalid field types: {'; '.join(type_errors)}. Skipping."
+                        )
+                        continue
+                    
+                    # S1.5a: Validate entity name length
+                    entity_name_raw = ent_data.get("name", entity_name)
+                    if len(entity_name_raw) > MAX_ENTITY_NAME_LENGTH:
+                        logger.warning(
+                            f"Entity name too long ({len(entity_name_raw)} chars): {entity_name_raw[:50]}... Skipping."
+                        )
+                        continue
+                    
+                    # S1.5a: Validate domains count
+                    domains = ent_data.get("domains", [])
+                    if len(domains) > MAX_DOMAINS_PER_ENTITY:
+                        logger.warning(
+                            f"Entity {entity_name} has too many domains ({len(domains)}). Skipping."
+                        )
+                        continue
 
                     # Collect WAD-specific metadata (everything not in engine core)
                     # [M2] Engine-Stack Firewall: engine sees slots + opaque metadata.

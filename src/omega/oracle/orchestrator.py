@@ -472,6 +472,22 @@ class Orchestrator:
         # Coordination Hazard Check (C-8)
         await self._check_coordination_hazard(entity_name)
         
+        # Loop Guard Check (T2-5)
+        if handoff_state:
+            if handoff_state.is_loop(entity_name):
+                raise BoundaryViolationError(
+                    f"Handoff Loop Detected: Agent '{entity_name}' has already been visited in this chain. "
+                    f"Chain: {' -> '.join(handoff_state.visited_agents)} -> {entity_name}"
+                )
+            if not handoff_state.increment_hop():
+                raise BoundaryViolationError(
+                    f"Handoff Hop Limit Exceeded: Max hops {handoff_state.max_hops} reached. "
+                    f"Chain: {' -> '.join(handoff_state.visited_agents)}"
+                )
+            # Add current target to visited list for the next hop
+            if entity_name not in handoff_state.visited_agents:
+                handoff_state.visited_agents.append(entity_name)
+        
         dampening_field = self._calculate_sovereign_dampening(task_prompt)
 
         logger.info(f"Preparing to dispatch {cli_type} for entity '{entity_name}'")

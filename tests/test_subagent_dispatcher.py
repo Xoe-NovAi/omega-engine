@@ -144,9 +144,9 @@ class TestHandoffPacket:
         )
         archive_dir = tmp_path / "handoff" / "archive"
         saved_path = packet.save(str(archive_dir))
-        assert saved_path.exists()
+        assert Path(saved_path).exists()
 
-        loaded = HandoffPacket.load(str(saved_path))
+        loaded = HandoffPacket(**json.loads(Path(saved_path).read_text()))
         assert loaded.packet_id == packet.packet_id
         assert loaded.source_agent == packet.source_agent
         assert loaded.target_agent == packet.target_agent

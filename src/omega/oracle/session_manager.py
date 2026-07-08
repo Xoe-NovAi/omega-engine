@@ -94,7 +94,7 @@ class SessionManager:
                 await anyio.sleep(0.01)
             
             counter = 1
-            data = await usm.load_state(state_key)
+            data = await usm.get(state_key)
             if data:
                 try:
                     stored_date = data.get("date", "")
@@ -114,7 +114,7 @@ class SessionManager:
                 "entity": entity_name,
                 "created_at": datetime.now(timezone.utc).isoformat(),
             }
-            await usm.save_state(state_key, data)
+            await usm.put(state_key, data)
             
             # Create .active file for Hub visibility
             active_file = self.session_dir / f"{entity_slug}.active"

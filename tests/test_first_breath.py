@@ -19,6 +19,9 @@ async def oracle_setup(tmp_path):
     import omega.astrology
     omega.astrology.BIRTH_DB_PATH = tmp_path / "entity_births.db"
     
+    # 2b. Pre-create entities dir — archive_old_sessions() iterates it during bootstrap
+    (tmp_path / "memory" / "entities").mkdir(parents=True, exist_ok=True)
+    
     # 3. Setup Registry and other components with FRESH HealthMonitor (not singleton)
     registry = EntityRegistry()
     from omega.oracle.health_monitor import HealthMonitor
@@ -43,7 +46,7 @@ async def oracle_setup(tmp_path):
     
     # 6. Mock embedding manager to avoid Ollama/Qdrant hangs
     oracle.memory_store.embedding_manager = AsyncMock()
-    oracle.memory_store.embedding_manager.get_embedding.return_value = [0.0] * 768
+    oracle.memory_store.embedding_manager.get_embedding.return_value = ([0.0] * 768, "mock")
     oracle.memory_store.embedding_manager.current_dimension = 768
     
     # 7. Setup session

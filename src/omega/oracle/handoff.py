@@ -36,6 +36,20 @@ class HandoffState:
     state_snapshot: Dict[str, Any] = field(default_factory=dict)
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
     trace_id: Optional[str] = None
+    
+    # Loop Guard Fields (T2-5)
+    visited_agents: List[str] = field(default_factory=list)
+    hop_count: int = 0
+    max_hops: int = 10
+
+    def is_loop(self, target: str) -> bool:
+        """Check if delegating to target would create a loop."""
+        return target.lower() in [a.lower() for a in self.visited_agents]
+
+    def increment_hop(self) -> bool:
+        """Increment hop count and check against max_hops. Returns True if budget remains."""
+        self.hop_count += 1
+        return self.hop_count <= self.max_hops
 
     def to_json(self) -> str:
         """Serialize handoff state for prompt injection."""

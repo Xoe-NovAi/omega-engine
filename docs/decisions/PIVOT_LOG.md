@@ -127,7 +127,10 @@
 | 189 | 2026-07-05 | Sovereign Ingestion Hardening Sprint — Implementation of stripped S3 pipeline (T1-T9) to resolve IW-4 and Strike 7.6. |
 | 190 | 2026-07-05 | CLTK Adoption — Transition from regex-based Greek normalization to Classical Language Toolkit (CLTK) for academic-grade processing. |
 | 191 | 2026-07-05 | Sovereign Proxy Requirement — Mandate for all external library API calls to route through a header-stripping, IP-rotating proxy to ensure M8 (Zero Telemetry) compliance. |
-| 194 | 2026-07-06 | Sovereign Extraction — WARP Proxy Pool moved to standalone repo `Xoe-NovAi/warp-proxy-pool` with flat layout |
+| 190 | 2026-07-07 | SomaticState Round-Trip Verified — Full capture -> save -> load -> restore cycle verified via `test_somatic_roundtrip.py` |
+| 191 | 2026-07-07 | E2E Inference Chain Verified — Full loop: Query -> Router -> Gateway -> Response -> Memory -> USM verified via `test_e2e_inference_chain.py` |
+| 192 | 2026-07-07 | Sovereign Ingestion Pipeline Implemented — Sieve-and-Sign architecture (SovereignSieve + SovereignSigner) implemented in `src/omega/oracle/ingestion.py` |
+| 193 | 2026-07-07 | Soul Staging TUI Implemented — `omega soul stage` CLI for human-verified soul distillation implemented via Textual. |
 | 195 | 2026-07-06 | Distribution Pipeline — Implementation of PyPI (OIDC), Homebrew (Taps), AUR (SSH), and GHCR (Distroless) |
 | 196 | 2026-07-06 | Environment Integrity Protocol — Mandated absolute path calls to `.venv/bin/` to prevent base-env pollution |
 | 189 | 2026-07-05 | Sovereign Ingestion Hardening Sprint — Implementation of stripped S3 pipeline (T1-T9) to resolve IW-4 and Strike 7.6. |
@@ -1861,3 +1864,44 @@ Single Source of Truth must reflect actual state. The Observatory is now the fir
 
 ### Status
 ✅ **RATIFIED** — Blueprint updated, all Tier 3 Observatory items complete
+
+---
+
+## D203 — Sovereignty Ratio Automation Required
+
+### Context
+The SOVEREIGN_ARK_BLUEPRINT.md Sovereignty Scorecard tracks local vs cloud inference ratio with a target of ≥80%. The `make sovereignty` target only prints a header — it has no implementation. The 40% figure was a stale manual estimate with no automated source. Without this metric, M7 (Local-First) enforcement is unverifiable.
+
+### Decision
+Flag the sovereignty ratio tracker as a known gap. Do NOT implement yet — deferred to the Entity Deepening Sprint (post-v1.1.0). The implementation should:
+1. Add a `provider_name` column to the observability inference log (SQLite)
+2. Query local vs cloud ratio from actual inference history
+3. Expose via `omega-hub_sovereignty_ratio` MCP tool
+4. Wire into `make sovereignty` Makefile target
+
+### Rationale
+A sovereignty claim without a sovereignty metric is theater, not engineering. But implementing it now would delay v1.1.0 tagging. Right approximation: document the gap, implement in the next sprint.
+
+### Status
+✅ **RATIFIED** — Gap documented in Ark scorecard. See SOVEREIGN_ARK_BLUEPRINT.md §X.
+
+---
+
+## D204 — Iris Entity Workspace: Persistent Memory for the Messenger
+
+### Context
+Iris the Messenger is currently a Podman container (`omega-iris`) — a voice interface with no persistent memory. She has no `data/entities/iris/` workspace, no `soul.yaml`, no memory store integration. For a general chat assistant and team router, this means every session starts from zero. The user specifically requested: *"What good is the general chat assistant and team router if she never remembers anything?"*
+
+### Decision
+Elevate Iris from stateless container service to persistent entity:
+1. Create `data/entities/iris/` with `soul.yaml`, `knowledge/`, `workspace/`
+2. Wire MemoryStore integration — Iris conversations persist and are searchable
+3. Register Iris as a sovereign entity in the active IWAD's `entities.yaml`
+4. Ensure her entity workspace auto-scaffolds on summon (EntityWorkspaceManager handles this)
+5. Container remains the voice interface; entity workspace provides the memory layer
+
+### Rationale
+Iris is already listed in OMEGA_ENGINE.md as one of 13 sovereign presences. Without persistent memory, she's a facade — a messenger who forgets the message. This closes the gap between architectural intent and runtime behavior.
+
+### Status
+✅ **RATIFIED** — Documented. Implementation deferred to Entity Deepening Sprint (post-v1.1.0).

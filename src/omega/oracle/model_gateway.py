@@ -158,7 +158,8 @@ class ModelGateway:
         # Sprint 2 Governance: GnosisProxy for RAG-based tool discovery
 
         # Sovereign State Manager (USM) for SomaticState (M20)
-        self.usm = USMManager()
+        from omega.state import get_usm
+        self.usm = get_usm()
         
         self._entity_registry = EntityRegistry()
         self._gnosis_proxy = GnosisProxy(self._entity_registry)
@@ -181,7 +182,7 @@ class ModelGateway:
         
         # Sovereign Guard: Prevent leak amplification by limiting concurrent gateway entries
         self._limiter = anyio.CapacityLimiter(10)
-        self.provider_selector = ProviderSelector(self)
+        self.provider_selector = ProviderSelector(self, health_monitor=self._health_monitor)
         from .rate_limiter import RateLimiter
         self.rate_limiter = RateLimiter()
         # [M8 Zero Telemetry] WARP Proxy Pool — optional, injected by Oracle

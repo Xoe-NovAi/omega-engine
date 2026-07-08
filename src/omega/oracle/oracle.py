@@ -367,7 +367,18 @@ class Oracle:
             session_id=None,
         )
 
-    # ── PUBLIC API ────────────────────────────────────────────────────
+    async def _update_system_pressure(self) -> None:
+        """Update the degradation manager based on real-time hardware stats."""
+        from omega.hub import get_hardware_stats
+        try:
+            stats = await get_hardware_stats()
+            await self.degradation_manager.evaluate_pressure({
+                "cpu_load": stats.get("cpu_usage", 0.0) / 100.0,
+                "ram_free_mb": stats.get("memory_available_mb", 1024),
+            })
+            logger.debug("System pressure updated. Current level: %s", self.degradation_manager.get_current_level())
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.warning("Failed to update system pressure: %s", e)
 
     async def talk(self, query: Union[str, TaintedData], transient: bool = False) -> OracleResponse:
         """Route a query through the speculative decoder + escalation pipeline.
@@ -376,22 +387,17 @@ class Oracle:
             query: The user query (can be TaintedData for external input)
             transient: If True, do not record the interaction in the soul/memory
         """
-        # 0. Evaluate system pressure for graceful degradation
-        # Use hardware stats to update degradation level
-        from omega.hub import get_hardware_stats
-        stats = await get_hardware_stats()
-        await self.degradation_manager.evaluate_pressure({
-            "cpu_load": stats.get("cpu_usage", 0.0) / 100.0,
-            "ram_free_mb": stats.get("memory_available_mb", 1024),
-        })
-
         # Sanitize and isolate query if it's tainted
+
         processed_query = TDPGate.isolate(query) if isinstance(query, TaintedData) else query
         
         await self.bootstrap()
 
         async def _execute_turn():
             async with self.observability.trace() as trace:
+                # 0. Update system pressure for graceful degradation
+                await self._update_system_pressure()
+                
                 trace.log("query.received", query=processed_query, transient=transient)
                 
                 # Get current session for the default entity
@@ -563,11 +569,18 @@ class Oracle:
         
         # Inject context from MemoryStore
         try:
-            from omega.oracle.context_builder import ContextBuilder
-            ctx_builder = ContextBuilder(selective_hydration=self.selective_hydration)
-            memory_context = await ctx_builder.build_context(entity_name, session_id)
+            # Pass current degradation level to adjust token budget
+            degradation_level = self.degradation_manager.get_current_level()
+            memory_context = await self.context_builder.build_context(
+                entity_name, 
+                session_id, 
+                degradation_level=degradation_level
+            )
             if memory_context:
                 prompt_parts.append(f"\nContext from recent interactions:\n{memory_context}")
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Context injection failed (non-fatal) [{classification['mode']}]: {e}")
         except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"Context injection failed (non-fatal) [{classification['mode']}]: {e}")

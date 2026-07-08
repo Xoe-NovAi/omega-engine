@@ -210,7 +210,7 @@ def test_resourceguard_lock_is_context_manager():
     __aenter__ and __aexit__ (i.e., be usable with 'async with').
     """
     async def t():
-        guard = ResourceGuard(total_capacity=4)
+        guard = ResourceGuard(max_ram_mb=4096)
         cm = guard.lock(weight=1)
         # Verify it's a context manager
         assert hasattr(cm, "__aenter__"), "lock() result must have __aenter__"
@@ -238,8 +238,8 @@ def test_resourceguard_blocks_on_capacity():
     with a short timeout to verify timeout raises TimeoutError.
     """
     async def t():
-        guard = ResourceGuard(total_capacity=1)
-        async with guard.lock(weight=1):
+        guard = ResourceGuard(max_ram_mb=1024)
+        async with guard.lock(weight=1024):
             # Capacity is 1 and we hold 1 — second acquire must time out
             import anyio
             with pytest.raises(TimeoutError):

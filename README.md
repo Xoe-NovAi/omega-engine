@@ -8,7 +8,7 @@
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 [![Local-First](https://img.shields.io/badge/Local--First-Primary-8A2BE2)]()
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)]()
-  [![Tests](https://img.shields.io/badge/tests-911%20passing-brightgreen)]()
+  [![Tests](https://img.shields.io/badge/tests-1002%20passing-brightgreen)]()
 
 
 ---

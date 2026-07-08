@@ -8,6 +8,7 @@ import logging
 import os
 import re
 import time
+import uuid
 from collections import OrderedDict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -298,12 +299,12 @@ class MemoryStore:
             async def _fetch_fts():
                 nonlocal fts_results
                 fts_results = await self.search_fts(query, entity_name, limit * 2)
-                
+
             async def _fetch_vec():
                 nonlocal vec_results
                 vector_adapter = await self._ensure_vector_store()
                 if vector_adapter:
-                    embedding = await self.embedding_manager.get_embedding(query)
+                    embedding, _ = await self.embedding_manager.get_embedding(query)
                     vec_results = await vector_adapter.query(
                         entity_name=entity_name,
                         vector=embedding,
@@ -490,11 +491,15 @@ class MemoryStore:
         if vector_adapter:
             try:
                 combined_text = f"{user_message} {response}"
-                embedding = await self.embedding_manager.get_embedding(combined_text)
+                embedding, provider_name = await self.embedding_manager.get_embedding(combined_text)
                 await vector_adapter.upsert(
                     entity_name=entity_name,
                     vector=embedding,
-                    metadata={"session_id": session_id, "timestamp": exchange["timestamp"]}
+                    metadata={
+                        "session_id": session_id, 
+                        "timestamp": exchange["timestamp"],
+                        "embedding_provider": provider_name
+                    }
                 )
             except (OmegaError, RuntimeError) as e:
                 logger.warning("Vector upsert failed for %s: %s", session_id, e)
@@ -584,12 +589,46 @@ class MemoryStore:
         else:
             self._temp.clear()
 
-    async def _compact(
+    async def sovereign_ingest(
         self,
+        content: str,
         entity_name: str,
-        session_id: str,
-        exchanges: List[Dict[str, Any]],
-    ) -> List[Dict[str, str]]:
+        metadata: Dict[str, Any],
+        provider_name: str = "external",
+    ) -> str:
+        """Sovereign Ingestion Pipeline: Sieve -> Sign -> Index.
+        
+        Ensures all external data is sanitized, PII-masked, and signed
+        before entering the sovereign memory.
+        """
+        from omega.oracle.ingestion import get_ingestion_pipeline
+        pipeline = get_ingestion_pipeline()
+        
+        # 1. Process through the sovereign sieve
+        doc = await pipeline.ingest(content, metadata, provider_name)
+        
+        # 2. Index into MemoryStore (as a synthetic exchange)
+        # We create a synthetic exchange to leverage existing persistence
+        session_id = f"ingest_{int(time.time())}_{uuid.uuid4().hex[:8]}"
+        
+        await self.add_exchange(
+            entity_name=entity_name,
+            session_id=session_id,
+            user_message=f"[Sovereign Ingest] Source: {metadata.get('source', 'unknown')}",
+            response=doc.content,
+            metadata={
+                **metadata,
+                "provenance_hash": doc.provenance_hash,
+                "pii_token_map": doc.pii_token_map.tokens if doc.pii_token_map else None,
+                "ingested_at": doc.timestamp,
+                "is_ingested": True,
+            },
+            trace_id=None
+        )
+        
+        return session_id
+
+    async def _compact(self, entity_name: str, session_id: str, exchanges: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """Compact long conversation: keep first + last N exchanges, summarize middle."""
         logger.info(f"Compacting {entity_name}/{session_id}: {len(exchanges)} exchanges")
         self._stats["archives"] += 1

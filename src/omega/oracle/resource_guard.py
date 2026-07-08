@@ -19,6 +19,7 @@ from contextlib import asynccontextmanager
 from typing import Optional, Dict, Any
 
 from omega.constants import ZONEID_PROBE, ZONEID_TOMBSTONE, ZONEID_ATOMIC, validate_zoneid
+from omega.cvar_table import cvar_get
 
 logger = logging.getLogger(__name__)
 
@@ -81,10 +82,10 @@ class ResourceGuard:
     [id-soft: doom-1993] ZONEID Pattern — critical sections guarded by
     ZONEID_PROBE marker. Catches use-after-free and double-release bugs.
     """
-    def __init__(self, max_ram_mb: int = 12288):
+    def __init__(self, max_ram_mb: Optional[int] = None):
         # [id-soft: doom-1993] ZONEID Pattern — runtime state marker
         self._magic = ZONEID_PROBE
-        self._max_ram_mb = max_ram_mb
+        self._max_ram_mb = max_ram_mb or int(cvar_get("config.resource_guard.max_ram_mb", 12288))
         self._current_ram_mb = 0
         self._condition = anyio.Condition()
 

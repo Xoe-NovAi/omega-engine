@@ -258,13 +258,14 @@ class SelectiveHydration:
 
         # Step 1: Embed the principle content
         # Use the content itself as the text to embed for future similarity search
-        embedding = await self._embedding_manager.get_embedding(principle.content)
+        embedding, _ = await self._embedding_manager.get_embedding(principle.content)
         if not embedding:
             logger.warning(
                 "SelectiveHydration: empty embedding for principle '%.50s' — skipping store",
                 principle.content,
             )
             return principle.principle_id
+
 
         # Step 2: Upsert into vector adapter
         entity_ns = self._collection_prefix + principle.entity_name
@@ -363,7 +364,7 @@ class SelectiveHydration:
         if not self._embedding_manager:
             return None
         try:
-            vector = await self._embedding_manager.get_embedding(query)
+            vector, _ = await self._embedding_manager.get_embedding(query)
             if vector:
                 return vector
             return None

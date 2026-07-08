@@ -114,7 +114,7 @@ class SemanticRouter:
                 continue
 
             try:
-                vector = await self._embedding_manager.get_embedding(signature)
+                vector, _ = await self._embedding_manager.get_embedding(signature)
                 self._entity_vectors[entity.name] = vector
                 logger.debug(
                     "SemanticRouter: embedded entity '%s' (dim=%d)",
@@ -175,7 +175,7 @@ class SemanticRouter:
         # 1. Try semantic routing if bootstrapped
         if self._bootstrapped and self._entity_vectors:
             try:
-                query_vector = await self._embedding_manager.get_embedding(query)
+                query_vector, _ = await self._embedding_manager.get_embedding(query)
                 best_entity, best_score = self._find_closest(query_vector)
 
                 if best_entity is not None and best_score >= self._threshold:

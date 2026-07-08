@@ -121,7 +121,7 @@ class DPORecorder:
         
         # Async write queue
         self._send_stream, self._receive_stream = anyio.create_memory_object_stream(max_buffer_size=queue_capacity)
-        self._writer_task: Optional[anyio.Task] = None
+        self._cancel_scope: Optional[anyio.CancelScope] = None
         self._shutdown = False
         
         # Current file handle
@@ -154,20 +154,39 @@ class DPORecorder:
         except Exception as e:
             logger.error(f"Failed to save DPO manifest: {e}")
             
-    async def start(self) -> None:
-        """Start the background writer task."""
-        if self._writer_task is None:
-            # Use asyncio.create_task since we're in an asyncio context
-            # AnyIO doesn't have create_task; use task groups for structured concurrency
-            import asyncio
-            self._writer_task = asyncio.create_task(self._writer_loop())
-            logger.info(f"DPORecorder started: {self.output_dir}")
+    async def start(self, task_group: Optional[anyio.abc.TaskGroup] = None) -> None:
+        """Start the background writer task.
+        
+        If a task_group is provided, spawns the writer into it (structured concurrency).
+        Otherwise, defers writing until a task_group is available via start_with_group().
+        
+        Args:
+            task_group: Optional AnyIO task group for structured concurrency.
+        """
+        if task_group is not None:
+            self._cancel_scope = task_group.cancel_scope
+            task_group.start_soon(self._writer_loop)
+            logger.info("DPORecorder started: %s", self.output_dir)
+        else:
+            # Defer: writer will be started when start_with_group() is called
+            logger.info("DPORecorder initialized (deferred start): %s", self.output_dir)
+            
+    async def start_with_group(self, task_group: anyio.abc.TaskGroup) -> None:
+        """Start the background writer within a structured task group.
+        
+        Call this when a task_group becomes available after deferred initialization.
+        """
+        if self._cancel_scope is None:
+            self._cancel_scope = task_group.cancel_scope
+            task_group.start_soon(self._writer_loop)
+            logger.info("DPORecorder background writer started: %s", self.output_dir)
             
     async def stop(self) -> None:
         """Stop the background writer and flush queue."""
         self._shutdown = True
-        if self._writer_task:
-            await self._writer_task
+        if self._cancel_scope is not None:
+            self._cancel_scope.cancel()
+            self._cancel_scope = None
         self._close_current_file()
         self._save_manifest()
         logger.info("DPORecorder stopped")

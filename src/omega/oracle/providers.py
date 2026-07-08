@@ -357,8 +357,6 @@ class NativeGGUFProvider(BaseProvider):
         self._last_logprobs = None
         # Isolated pool for synchronous C-calls to prevent anyio global pool exhaustion
         self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="gguf_inference")
-        from .somatic_state import SomaticStateManager
-        self._somatic_manager = SomaticStateManager(Path("data/somatic"))
         atexit.register(self.shutdown)
 
     def __del__(self):

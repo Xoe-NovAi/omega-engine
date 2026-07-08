@@ -1,0 +1,29 @@
+{
+  "source": "https://example.com",
+  "model": "local-model",
+  "extraction": {
+    "technical_facts": [
+      "Fact 1"
+    ],
+    "personality_patterns": [
+      "Pattern 1"
+    ],
+    "gnosis_principles": [],
+    "heritage_patterns": [],
+    "dpo_pairs": []
+  },
+  "metadata": {
+    "source": "https://example.com",
+    "model": "local-model",
+    "latency_s": 0.003043651580810547,
+    "category": "ingestion_extraction",
+    "quality_score": 0.8,
+    "domain": "web",
+    "enrichment": {
+      "status": "enriched"
+    },
+    "timestamp": "2026-07-08T05:15:39.747253+00:00",
+    "trace_id": "ingest_af58cb3c32d7"
+  },
+  "trace_id": "ingest_af58cb3c32d7"
+}

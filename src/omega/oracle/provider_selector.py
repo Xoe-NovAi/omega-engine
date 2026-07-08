@@ -22,8 +22,9 @@ class ProviderSelector:
     - Providers with high recent error rates are deprioritized.
     """
     
-    def __init__(self, model_gateway):
+    def __init__(self, model_gateway, health_monitor=None):
         self.model_gateway = model_gateway
+        self.health_monitor = health_monitor
         self.pii_masker = model_gateway.pii_masker if hasattr(model_gateway, "pii_masker") else None
 
     async def select_best_provider(self, model_name: str, query: str) -> str:
@@ -61,7 +62,7 @@ class ProviderSelector:
     def _calculate_score(self, provider: Any, query: str) -> float:
         """Calculates a suitability score for a provider.
         
-        Score = (BasePriority * 10) - PII_Penalty - Error_Penalty
+        Score = (BasePriority * 10) - PII_Penalty - Latency_Penalty - Stability_Penalty
         """
         # Base priority from config (0 = highest)
         priority = getattr(provider, "priority", 10)
@@ -75,10 +76,18 @@ class ProviderSelector:
             if is_cloud:
                 score -= 100.0  # Strong deterrent for cloud PII
         
-        # Error Penalty: Penalize providers with high recent error rates
-        # This would integrate with the HealthMonitor's EWMA score
-        error_rate = getattr(provider, "recent_error_rate", 0.0)
-        if isinstance(error_rate, (int, float)):
-            score -= float(error_rate * 50.0)
+        # Stability and Latency Penalties from HealthMonitor
+        if self.health_monitor:
+            breaker = self.health_monitor._breakers.get(provider.name)
+            if breaker:
+                # 1. Latency Penalty: Penalize providers with high EMA latency
+                # Baseline: 1000ms. Penalty = (ema_latency - 1000) / 100
+                latency_penalty = max(0.0, (breaker.ema_latency - 1000.0) / 100.0)
+                score -= latency_penalty
+                
+                # 2. Stability Penalty: Penalize based on CUSUM drift (instability)
+                # CUSUM_G > 0 indicates a trend toward failure.
+                stability_penalty = breaker.cusum_g * 5.0
+                score -= stability_penalty
         
         return float(score)

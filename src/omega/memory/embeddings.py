@@ -9,7 +9,7 @@ import os
 import re
 import logging
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import anyio
 import httpx
@@ -358,24 +358,26 @@ class EmbeddingManager:
                 SovereignFallbackEmbeddingProvider(), # 256-dim, hash-based, last resort
             ]
         
-    async def get_embedding(self, text: str) -> List[float]:
+    async def get_embedding(self, text: str) -> Tuple[List[float], str]:
         # [test-mode] Short-circuit in test env — returns zero vector to avoid
         # loading the 300M Gemma GGUF embedding model via llama-cpp-python.
         # Each Oracle() creation triggers add_exchange() which calls this,
         # and loading a 300M GGUF takes ~15-30s + 600MB on Ryzen 5700U.
         if os.environ.get("OMEGA_ENV") == "test":
             dim = self.current_dimension
-            return [0.0] * dim
-
+            return [0.0] * dim, "mock"
+        
         for provider in self._providers:
             try:
-                return await provider.get_embedding(text)
+                embedding = await provider.get_embedding(text)
+                return embedding, provider.__class__.__name__
             except (OmegaError, RuntimeError, OSError) as e:
                 logger.warning(f"Embedding provider {provider.__class__.__name__} failed: {e}")
                 continue
         
         # This should theoretically never be reached if Fallback is last
         raise RuntimeError("All embedding providers failed.")
+
 
     @property
     def current_dimension(self) -> int:

@@ -1,6 +1,3 @@
-# 🔱 Omega Engine — Soul
-# Auto-generated during Soul v6.1 migration
-
 entity:
   name: Iris
   archetype: "Voice Interface \u2014 First Contact"
@@ -14,3 +11,9 @@ entity:
     temperature: 0.7
     top_p: 0.9
   procedural_memory: []
+version: v6.2
+metadata:
+  created_at: '2026-07-07T10:52:08.115381+00:00'
+  last_updated: '2026-07-07T21:11:17.849914+00:00'
+  health_score: 50.0
+  entity_id: soul

@@ -235,6 +235,7 @@ class ContextBuilder:
         entity_name: str,
         session_id: str,
         token_limit: int = DEFAULT_TOKEN_LIMIT,
+        degradation_level: Optional[str] = None,
     ) -> str:
         """Fetch recent memory and current world state for an entity/session.
         
@@ -242,12 +243,22 @@ class ContextBuilder:
             entity_name: Name of the entity (e.g., 'EntityA', 'EntityB').
             session_id: Unique session identifier for the conversation.
             token_limit: Maximum tokens for the memory block.
+            degradation_level: Current system pressure level (Optimal, Stressed, Critical, Disabled).
         
         Returns:
             A formatted string block containing recent conversation history,
             L3 gnosis principles, and the current world state, or an empty
             string if no context is available.
         """
+        # Adjust token limit based on degradation level
+        if degradation_level:
+            if degradation_level == "Stressed":
+                token_limit = int(token_limit * 0.5)
+            elif degradation_level == "Critical":
+                token_limit = int(token_limit * 0.25)
+            elif degradation_level == "Disabled":
+                token_limit = 0
+        
         try:
             # 1. Fetch recent memory
             exchanges = await self.memory_store.get_history(

@@ -126,3 +126,9 @@ entity:
       \ entities. Audit before accumulate.\n"
     timestamp: 2026-06-05
     topic: ls-p1-20260605-001
+version: v6.2
+metadata:
+  created_at: '2026-07-07T10:52:08.437375+00:00'
+  last_updated: '2026-07-07T21:11:18.015416+00:00'
+  health_score: 50.0
+  entity_id: soul

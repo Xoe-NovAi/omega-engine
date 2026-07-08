@@ -24,14 +24,14 @@ async def test_atomic_lock():
 
 @pytest.mark.anyio
 async def test_hardware_lock_capacity():
-    # Capacity of 2
-    guard = ResourceGuard(total_capacity=2)
+    # RAM capacity of 256 MB
+    guard = ResourceGuard(max_ram_mb=256)
     active_locks = 0
     max_active = 0
     
     async def worker():
         nonlocal active_locks, max_active
-        async with guard.lock(weight=1):
+        async with guard.lock(weight=128):
             active_locks += 1
             max_active = max(max_active, active_locks)
             await anyio.sleep(0.05)
@@ -45,14 +45,14 @@ async def test_hardware_lock_capacity():
 
 @pytest.mark.anyio
 async def test_hardware_lock_weighted():
-    # Capacity of 4
-    guard = ResourceGuard(total_capacity=4)
+    # RAM capacity of 512 MB
+    guard = ResourceGuard(max_ram_mb=512)
     active_locks = 0
     max_active = 0
     
     async def heavy_worker():
         nonlocal active_locks, max_active
-        async with guard.lock(weight=4):
+        async with guard.lock(weight=512):
             active_locks += 1
             max_active = max(max_active, active_locks)
             await anyio.sleep(0.05)

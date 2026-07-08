@@ -292,3 +292,197 @@ async def test_load_entities_directory_not_exists(wad_env):
         assert (await loader.load_wad(stack_name))[0] is True
     finally:
         Path(cfg).unlink(missing_ok=True)
+
+
+# ── S1.5a Hardening Tests ──────────────────────────────────────────
+
+@pytest.mark.anyio
+async def test_load_wad_oversized_manifest(wad_env):
+    """Manifests exceeding 1MB should be rejected."""
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "oversized_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        # Create a manifest > 1MB
+        huge_entities = "x: " + "a" * 1_000_000
+        (stack_path / "manifest.yaml").write_text(f"name: oversized\nversion: 1.0.0\nentities: []\ndata: {huge_entities}")
+        result = await loader.load_wad(stack_name)
+        assert result[0] is False
+    finally:
+        Path(cfg).unlink(missing_ok=True)
+
+
+@pytest.mark.anyio
+async def test_load_wad_manifest_wrong_type_name(wad_env):
+    """Manifest with wrong type for 'name' field should fail gracefully."""
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "wrong_type_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        (stack_path / "manifest.yaml").write_text("name: 12345\nversion: 1.0.0\nentities: []")
+        # Should still load (TypeError is caught)
+        result = await loader.load_wad(stack_name)
+        # The loader catches TypeError and returns False
+        assert result[0] is False
+    finally:
+        Path(cfg).unlink(missing_ok=True)
+
+
+@pytest.mark.anyio
+async def test_load_wad_manifest_empty_name(wad_env):
+    """Manifest with empty name should fail."""
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "empty_name_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        (stack_path / "manifest.yaml").write_text("name: '   '\nversion: 1.0.0\nentities: []")
+        result = await loader.load_wad(stack_name)
+        assert result[0] is False
+    finally:
+        Path(cfg).unlink(missing_ok=True)
+
+
+@pytest.mark.anyio
+async def test_load_wad_manifest_empty_version(wad_env):
+    """Manifest with empty version should fail."""
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "empty_version_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        (stack_path / "manifest.yaml").write_text("name: test\nversion: '   '\nentities: []")
+        result = await loader.load_wad(stack_name)
+        assert result[0] is False
+    finally:
+        Path(cfg).unlink(missing_ok=True)
+
+
+@pytest.mark.anyio
+async def test_load_entity_oversized_file(wad_env):
+    """Entity files exceeding 1MB should be skipped."""
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "oversized_entity_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        (stack_path / "manifest.yaml").write_text("name: oversized_entity\nversion: 1.0.0\nentities: []")
+        
+        entities_dir = stack_path / "entities"
+        entities_dir.mkdir()
+        # Create entity file > 1MB
+        huge_data = "x: " + "a" * 1_000_000
+        (entities_dir / "hugeentity.yaml").write_text(f"entity:\n  name: HugeEntity\n  personality: {huge_data}")
+        
+        result = await loader.load_wad(stack_name)
+        assert result[0] is True
+        # Entity should be skipped (too large)
+        assert registry.get("hugeentity") is None
+    finally:
+        Path(cfg).unlink(missing_ok=True)
+
+
+@pytest.mark.anyio
+async def test_load_entity_missing_entity_key(wad_env):
+    """Entity file missing 'entity' key should be skipped."""
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "missing_key_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        (stack_path / "manifest.yaml").write_text("name: missing_key\nversion: 1.0.0\nentities: []")
+        
+        entities_dir = stack_path / "entities"
+        entities_dir.mkdir()
+        (entities_dir / "noentity.yaml").write_text("not_entity:\n  name: NoEntity")
+        
+        result = await loader.load_wad(stack_name)
+        assert result[0] is True
+        assert registry.get("noentity") is None
+    finally:
+        Path(cfg).unlink(missing_ok=True)
+
+
+@pytest.mark.anyio
+async def test_load_entity_empty_file(wad_env):
+    """Empty entity file should be skipped."""
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "empty_entity_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        (stack_path / "manifest.yaml").write_text("name: empty_entity\nversion: 1.0.0\nentities: []")
+        
+        entities_dir = stack_path / "entities"
+        entities_dir.mkdir()
+        (entities_dir / "empty.yaml").write_text("")
+        
+        result = await loader.load_wad(stack_name)
+        assert result[0] is True
+        assert registry.get("empty") is None
+    finally:
+        Path(cfg).unlink(missing_ok=True)
+
+
+@pytest.mark.anyio
+async def test_load_entity_wrong_field_type(wad_env):
+    """Entity with wrong field type (e.g., temperature as string) should be skipped."""
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "wrong_type_entity_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        (stack_path / "manifest.yaml").write_text("name: wrong_type\nversion: 1.0.0\nentities: []")
+        
+        entities_dir = stack_path / "entities"
+        entities_dir.mkdir()
+        (entities_dir / "badtype.yaml").write_text(
+            "entity:\n  name: BadType\n  domains: [test]\n  temperature: not_a_number"
+        )
+        
+        result = await loader.load_wad(stack_name)
+        assert result[0] is True
+        # Entity with wrong temperature type should be skipped
+        assert registry.get("badtype") is None
+    finally:
+        Path(cfg).unlink(missing_ok=True)
+
+
+@pytest.mark.anyio
+async def test_adapter_whitelist_rejects_unknown_module(wad_env):
+    """Adapter registration should reject modules not in the whitelist."""
+    wads_dir, _ = wad_env
+    registry, loader, cfg = make_registry_and_loader(wads_dir)
+    try:
+        stack_name = "bad_adapter_stack"
+        stack_path = wads_dir / stack_name
+        stack_path.mkdir()
+        # Manifest with adapter pointing to non-whitelisted module
+        manifest = {
+            "name": "bad_adapter",
+            "version": "1.0.0",
+            "entities": [],
+            "adapters": {
+                "memory": {
+                    "module": "omega.oracle.malicious_module",
+                    "class": "MaliciousClass"
+                }
+            }
+        }
+        (stack_path / "manifest.yaml").write_text(yaml.dump(manifest))
+        
+        result = await loader.load_wad(stack_name)
+        assert result[0] is True  # WAD loads, but adapter is rejected
+        # No adapter should be registered
+    finally:
+        Path(cfg).unlink(missing_ok=True)

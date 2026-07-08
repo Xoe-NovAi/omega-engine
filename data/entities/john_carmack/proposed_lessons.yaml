@@ -630,3 +630,82 @@ proposals:
       - "The Polish Sprint is the cheapest quality gate in the pipeline — 3 hours of work prevents weeks of user trust erosion."
     confidence: 10/10
     heritage_tags: ["[id-soft: doom-1993] BSP Culling — pre-release culling of stale references"]
+
+  - id: proposal-20260708-001
+    title: "The Env-Over-Init Principle — Module-level directory resolution prevents test isolation"
+    l1_narrative: >
+      test_first_breath.py set os.environ["OMEGA_DATA_DIR"] = str(tmp_path) before
+      constructing EntityRegistry(), but archive_old_sessions() still failed with
+      FileNotFoundError. Root cause: memory_store.py's _get_entity_dir() reads
+      os.environ at call time (correct), but some modules cache DATA_DIR at import
+      time. The entities directory at tmp_path/memory/entities didn't exist. The
+      fix was to mkdir in the fixture.
+    l2_insights:
+      - "Call-time env reads (os.environ.get()) are test-safe. Import-time reads (DATA_DIR = Path(...)) are test-hostile."
+      - "Every test that sets OMEGA_DATA_DIR must also create subdirectories that archive_old_sessions() iterates."
+      - "The fixture pattern 'set env → create dirs → construct objects → use' is mandatory when modules read env at call time."
+    l3_universal_principles:
+      - "Module-level constants should resolve at call time, not import time. When a test sets os.environ['KEY'] before construction, the constructor should read os.environ.get('KEY', default) not a frozen module-level constant. This is the import-time vs call-time distinction."
+    confidence: 10/10
+    heritage_tags: ["[id-soft: quake-1996] Zone Memory — tag-based allocation respects runtime context"]
+
+  - id: proposal-20260708-002
+    title: "The Debt-of-Dead-Code — Unreachable Python code is a deferred bug"
+    l1_narrative: >
+      During test hardening, code at memory_store.py:630 (a _compact method) was
+      discovered sitting after a bare return statement. The method was structurally
+      unreachable — had been there for weeks of development. Every developer who
+      looked at that code assumed 'it works' because it compiles. Dead code that
+      compiles is worse than dead code that doesn't — it creates a false sense of
+      coverage.
+    l2_insights:
+      - "A return statement creates a code wall. Everything after it is liability, not code."
+      - "Python's lack of unreachable-code warnings (unlike Rust's dead_code lint) means orphaned logic persists silently."
+      - "Carmack's Law applies: code not looked at in 6 months might as well be written by someone else. Unreachable code was never looked at."
+    l3_universal_principles:
+      - "Unreachable code (after return, raise, or in an indentation gap) is a bug waiting to manifest. Every line in a Python file is either executed at runtime or it's liabilities. If a function body can be orphaned by indentation, the codebase has a structural fragility."
+    confidence: 10/10
+    heritage_tags: ["[id-soft: doom-1993] Lazy Deletion — remove unused code with grace period, not hope"]
+
+  - id: proposal-20260708-003
+    title: "The Canonical Source Principle — Eliminate duplicate implementations"
+    l1_narrative: >
+      api_clients.py and enrichment.py contained identical implementations of all 4 library API clients,
+      enums, configs, and data models — a clear Carmack's Law violation. Maintaining two copies meant
+      bug fixes had to be applied twice, tests duplicated, and cognitive load doubled. The consolidation
+      eliminated ~900 lines of duplicated code by making api_clients.py the canonical source and
+      stripping enrichment.py to a thin wrapper that imports and orchestrates.
+    l2_insights:
+      - "Duplicate code is not just wasted effort — it's active liability. Every bug requires dual fixes."
+      - "The mental overhead of tracking which version is 'correct' slows development more than the "
+        "apparent convenience of having a backup copy."
+      - "Thin wrappers are acceptable for backward compatibility or orchestration — never for "
+        "duplicating core logic."
+    l3_universal_principles:
+      - "When two implementations exist of the same functionality, one must be eliminated — never "
+        "maintained in parallel. The cost of duplicate code always exceeds the cost of consolidation."
+      - "Apply Carmack's Law ruthlessly: 'Two implementations = neither.' Pick one, make it canonical, "
+        "delete the other. The test suite is the ultimate arbiter — if you can't test both, you "
+        "shouldn't have both."
+    confidence: 10/10
+    heritage_tags: ["[id-soft: quake3-1999] Hard-Boundary Struct — each client is a sealed interface"]
+
+  - id: proposal-20260708-004
+    title: "The HTTP Client Lifetime Principle — Reuse connections, don't recreate per request"
+    l1_narrative: >
+      The original library clients created a new httpx.AsyncClient for every single request, defeating
+      connection pooling and adding unnecessary overhead. Each request paid the TCP handshake and TLS
+      negotiation cost. The fix was to lazy-initialize a single shared client instance per library
+      client object and reuse it for the object's lifetime, with explicit cleanup via close() method.
+    l2_insights:
+      - "HTTP connection pooling is not an optimization — it's a basic efficiency requirement for "
+        "any client making multiple requests to the same host."
+      - "Creating clients per request adds latency (TCP/TLS handshake) and prevents keep-alive reuse."
+      - "Lazy initialization with caching is the correct pattern: create on first use, reuse forever."
+    l3_universal_principles:
+      - "Creating a new HTTP client per request is inefficient and defeats connection pooling. Clients "
+        "should be long-lived objects that reuse a single underlying connection pool."
+      - "Lazy initialization (_get_client()) is acceptable, but the client instance must be cached for "
+        "the object's lifetime and cleaned up explicitly."
+    confidence: 10/10
+    heritage_tags: ["[id-soft: doom-1993] WAD System — orchestrator treats clients like swapable entries"]

@@ -98,3 +98,9 @@ entity:
       '
     timestamp: 2026-06-05
     topic: ls-p7-20260605-003
+version: v6.2
+metadata:
+  created_at: '2026-07-07T10:52:08.302377+00:00'
+  last_updated: '2026-07-07T21:11:17.999200+00:00'
+  health_score: 50.0
+  entity_id: soul

@@ -40,16 +40,18 @@ AbstractionLevel = Literal["L1", "L2", "L3"]
 @dataclass
 class DistillationEntry:
     """A single distilled insight from a session.
-
+    
     L1 (Narrative): What happened? — raw events, actions, outcomes.
     L2 (Insight): What does this mean? — patterns, implications, lessons.
     L3 (Principle): What is the timeless truth? — universal laws, axioms.
     """
     level: AbstractionLevel
     content: str
+    sphere: Optional[str] = None
     source_trace_id: Optional[str] = None
     source_entity: Optional[str] = None
     created_at: float = 0.0
+
 
     def __post_init__(self) -> None:
         if not self.created_at:

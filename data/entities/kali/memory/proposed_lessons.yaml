@@ -13,4 +13,10 @@
 #    b. Rejects → leaves in proposed_lessons.yaml or removes
 # 4. Agent never reads proposed_lessons.yaml as authoritative guidance
 
-proposals: []
+proposals:
+  - narrative: "Upgraded ResourceGuard to track actual RAM (MB) instead of abstract weights and implemented a full E2E inference chain test."
+    insight: "Abstract weights are a 'right approximation' for simple cases, but for high-density local inference (e.g., Ryzen 5700U), precise RAM tracking is required to prevent OOM crashes during concurrent model loads. E2E tests are the only way to verify the 'integration seams' between the router, gateway, and memory store."
+    principle: "Physical Constraint Sovereignty: software guards must mirror physical hardware limits exactly to ensure systemic stability. Integration verification must be holistic; subsystem correctness does not imply chain correctness."
+  - narrative: "Wired ProviderSelector and DegradationManager into the Oracle and ModelGateway loops."
+    insight: "A static provider list is insufficient for sovereign reliability. By integrating real-time EMA latency and CUSUM stability metrics, the engine can proactively route around degrading providers before they fail. Similarly, hardware-aware degradation allows the engine to maintain core functionality (albeit with reduced context) under extreme resource pressure."
+    principle: "Dynamic Adaptation: Sovereignty requires the ability to gracefully degrade and intelligently route based on real-time physical and network telemetry."

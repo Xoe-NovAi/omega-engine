@@ -55,16 +55,24 @@ class USMManager:
             """)
             conn.commit()
 
+    async def put(self, key: str, data: Any) -> str:
+        """Serialize data, store in CAS, and update the index."""
+        return await self.save_state(key, data)
+
+    def _update_index(self, key: str, blob_hash: str, timestamp: str) -> None:
+        with sqlite3.connect(self.index_path) as conn:
+            conn.execute(
+                "INSERT OR REPLACE INTO state_refs (key, hash, timestamp) VALUES (?, ?, ?)",
+                (key, blob_hash, timestamp)
+            )
+            conn.commit()
+
+    async def get(self, key: str) -> Any:
+        """Retrieve and deserialize state for a given key."""
+        return await self.load_state(key)
+
     async def save_state(self, key: str, data: Any) -> str:
-        """Serialize data, store in CAS, and update the index.
-        
-        Args:
-            key: Human-readable identifier (e.g., 'session:test_entity:active').
-            data: Data to store (must be JSON serializable or bytes).
-            
-        Returns:
-            The CAS hash of the stored state.
-        """
+        """Internal implementation of state saving."""
         # 1. Serialize
         if isinstance(data, bytes):
             blob = data
@@ -86,20 +94,8 @@ class USMManager:
             
         return blob_hash
 
-    def _update_index(self, key: str, blob_hash: str, timestamp: str) -> None:
-        with sqlite3.connect(self.index_path) as conn:
-            conn.execute(
-                "INSERT OR REPLACE INTO state_refs (key, hash, timestamp) VALUES (?, ?, ?)",
-                (key, blob_hash, timestamp)
-            )
-            conn.commit()
-
     async def load_state(self, key: str) -> Any:
-        """Retrieve and deserialize state for a given key.
-        
-        Returns:
-            The original data (bytes or JSON-decoded object).
-        """
+        """Internal implementation of state loading."""
         # 1. Look up hash in index
         blob_hash = await anyio.to_thread.run_sync(self._get_hash, key)
         if not blob_hash:
@@ -113,6 +109,11 @@ class USMManager:
             return json.loads(blob.decode("utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError):
             return blob
+
+    async def exists(self, key: str) -> bool:
+        """Check if a key exists in the state index."""
+        blob_hash = await anyio.to_thread.run_sync(self._get_hash, key)
+        return blob_hash is not None
 
     def _get_hash(self, key: str) -> Optional[str]:
         with sqlite3.connect(self.index_path) as conn:

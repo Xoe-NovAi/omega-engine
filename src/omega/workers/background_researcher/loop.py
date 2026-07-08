@@ -109,7 +109,7 @@ class BackgroundResearcherLoop:
         # SovereignWorker Unification: Redis-backed queue + ResourceGuard
         self.redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
         self._redis: Optional[redis.Redis] = None
-        self.resource_guard = ResourceGuard(total_capacity=4)
+        self.resource_guard = ResourceGuard(max_ram_mb=4096)
         
         # Somatic Save-Point: checkpoint path for state serialization
         self.savepoint_path = Path("data/research/savepoints/background_researcher.json")

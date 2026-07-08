@@ -755,20 +755,23 @@ class Zen2Optimizer:
     def build_inference_env(
         self,
         threads: Optional[int] = None,
+        concurrent_agents: int = 1,
         extra_env: Optional[Dict[str, str]] = None,
     ) -> Dict[str, str]:
         """Build environment variables for a pinned inference process.
-
+        
         Args:
             threads: Thread count. Defaults to ZEN2_RECOMMENDED_THREADS.
+            concurrent_agents: Number of agents running in parallel.
             extra_env: Additional environment variables to merge.
-
+        
         Returns:
             Complete environment dict for the subprocess.
         """
         if threads is None:
-            threads = ZEN2_RECOMMENDED_THREADS
-
+            # Scale threads down based on concurrency to avoid SMT thrashing
+            threads = max(1, ZEN2_RECOMMENDED_THREADS // concurrent_agents)
+        
         env = os.environ.copy()
         env.update({
             "OMP_NUM_THREADS": str(threads),
@@ -780,6 +783,7 @@ class Zen2Optimizer:
         if extra_env:
             env.update(extra_env)
         return env
+
 
     # ── System Overview ─────────────────────────────────────────────────
 

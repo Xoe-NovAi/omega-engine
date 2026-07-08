@@ -66,6 +66,7 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo "$(COLOR_BOLD)🗣️  ENTITY COMMANDS$(COLOR_NC)"
 	@echo "  $(COLOR_CYAN)make entities$(COLOR_NC)     📋 List all entities"
 	@echo "  $(COLOR_CYAN)make entity NAME=x$(COLOR_NC) 🔍 Show entity details"
+	@echo "  $(COLOR_CYAN)make soul-review ENTITY=x$(COLOR_NC) 📖 Review proposed soul lessons"
 	@echo "  $(COLOR_CYAN)make model-status$(COLOR_NC) 🤖 Show available models"
 	@echo "  $(COLOR_CYAN)make talk MSG$(COLOR_NC)     🗣️  Talk to Oracle (usage: make talk MSG='hello')"
 	@echo ""
@@ -156,6 +157,9 @@ summon: guard ## 🧞 Quick summon alias: make summon NAME=E MSG='query'
 
 entities: ## 📋 List all entities
 	omega list-entities
+
+soul-review: ## 📖 Review proposed soul lessons: make soul-review ENTITY=Sekhmet
+	$(PYTHON) scripts/soul_review.py $(if $(ENTITY),--entity $(ENTITY),)
 
 entity: ## 🔍 Show entity info: make entity NAME=Sekhmet
 	omega entity "$(NAME)"

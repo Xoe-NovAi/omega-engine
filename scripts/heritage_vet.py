@@ -31,12 +31,9 @@ REPO_DIR = Path(__file__).resolve().parent.parent
 VET_LOG = REPO_DIR / "data" / "entities" / "doom_guy" / "knowledge" / "HERITAGE_VET_LOG.md"
 SRC_DIR = REPO_DIR / "src" / "omega"
 
-# Files to scan (mirrors the bash version's find expression)
+# Files to scan: all Python files in src/omega/
 SCAN_PATTERNS = [
-    "*/oracle/*.py",
-    "*/omega/constants.py",
-    "*/omega/cvar_table.py",
-    "*/omega/observability.py",
+    "**/*.py",
 ]
 
 TAG_REGEX = re.compile(r"\[id-soft:\s*([^\]]+)\]")
@@ -56,10 +53,8 @@ def find_python_files() -> List[Path]:
     """Find all Python files matching the scan patterns."""
     files = set()
     for pattern in SCAN_PATTERNS:
-        # Patterns are relative to SRC_DIR (src/omega).
-        # E.g., "*/oracle/*.py" matches "oracle/*.py" inside src/omega.
-        relative_pattern = pattern.lstrip("*/")
-        for path in (SRC_DIR / "").glob(relative_pattern):
+        # Use the pattern directly with glob for recursive search
+        for path in SRC_DIR.glob(pattern):
             if path.is_file():
                 files.add(path)
     return sorted(files)
@@ -164,35 +159,41 @@ def main() -> int:
             print(f"  {YELLOW}⚠️  Could not read {py_file}: {e}{NC}")
             continue
 
-        for match in TAG_REGEX.finditer(content):
-            pattern = match.group(1).strip()
+        # Only scan comment lines (lines starting with #) to avoid false positives
+        # from string literals and docstrings that mention [id-soft:] in code logic.
+        for line in content.splitlines():
+            stripped = line.strip()
+            if not stripped.startswith("#"):
+                continue
+            for match in TAG_REGEX.finditer(line):
+                pattern = match.group(1).strip()
 
-            if pattern.startswith("vet-"):
-                # Sovereign Link format
-                sovereign_count += 1
-                ok, reason = validate_sovereign_link(pattern, entries)
-                if ok:
-                    print(f"  {GREEN}✅{NC} {py_file.name}: [id-soft: {pattern}] — {reason}")
+                if pattern.startswith("vet-"):
+                    # Sovereign Link format
+                    sovereign_count += 1
+                    ok, reason = validate_sovereign_link(pattern, entries)
+                    if ok:
+                        print(f"  {GREEN}✅{NC} {py_file.name}: [id-soft: {pattern}] — {reason}")
+                    else:
+                        failures.append(f"{py_file.name}: [id-soft: {pattern}] — {reason}")
+                        print(f"  {RED}❌{NC} {py_file.name}: [id-soft: {pattern}] — {reason}")
                 else:
-                    failures.append(f"{py_file.name}: [id-soft: {pattern}] — {reason}")
-                    print(f"  {RED}❌{NC} {py_file.name}: [id-soft: {pattern}] — {reason}")
-            else:
-                # Legacy format
-                legacy_count += 1
-                ok, reason = validate_legacy_tag(pattern, vet_log_content)
-                if ok:
-                    pass  # Silent OK for legacy to reduce noise
-                else:
-                    failures.append(
-                        f"{py_file.name}: [id-soft: {pattern}] — {reason}"
+                    # Legacy format
+                    legacy_count += 1
+                    ok, reason = validate_legacy_tag(pattern, vet_log_content)
+                    if ok:
+                        pass  # Silent OK for legacy to reduce noise
+                    else:
+                        failures.append(
+                            f"{py_file.name}: [id-soft: {pattern}] — {reason}"
+                        )
+                        print(f"  {RED}❌{NC} {py_file.name}: [id-soft: {pattern}] — {reason}")
+
+                    # Warn about legacy format usage
+                    rel = py_file.relative_to(REPO_DIR)
+                    legacy_warnings.append(
+                        f"{rel}: [id-soft: {pattern}]"
                     )
-                    print(f"  {RED}❌{NC} {py_file.name}: [id-soft: {pattern}] — {reason}")
-
-                # Warn about legacy format usage
-                rel = py_file.relative_to(REPO_DIR)
-                legacy_warnings.append(
-                    f"{rel}: [id-soft: {pattern}]"
-                )
 
     # ── Summary ──
     print()
