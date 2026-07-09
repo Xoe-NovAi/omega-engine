@@ -28,11 +28,11 @@ from .guards import SovereignSentry, BudgetGuard
 from .scraper import SovereignScraper
 from .worker import SovereignWorker
 from .verifier import TriangulationVerifier
-from src.omega.oracle.pii_masker import PIIMasker
-from src.omega.archive.cas import CASArchiver
-from src.omega.library.curator import CurationPipeline
-from src.omega.library.extractor import ExtractedContent
-from src.omega.library.enrichment import EnrichmentEngine
+from ..oracle.pii_masker import PIIMasker
+from ..archive.cas import CASArchiver
+from ..library.curator import CurationPipeline
+from ..library.extractor import ExtractedContent
+from ..library.enrichment import EnrichmentEngine
 
 logger = logging.getLogger(__name__)
 

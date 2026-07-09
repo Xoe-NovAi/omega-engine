@@ -116,6 +116,10 @@ class KeyVault:
                     self._master_key = master_key_from_hex(env_key)
                 except VaultCryptoError as e:
                     logger.warning(f"Invalid VAULT_MASTER_KEY: {e}")
+            else:
+                from omega.vault.crypto import get_or_create_master_key
+                self._master_key = get_or_create_master_key()
+
         
         # Try to load existing vault
         if self._vault_path.exists():
@@ -305,8 +309,8 @@ class KeyVault:
                 self._loaded = False
                 return
             
-            encrypted = self._vault_path.read_text()
-            if not encrypted.strip():
+            encrypted = self._vault_path.read_bytes()
+            if not encrypted:
                 logger.warning("Vault file is empty")
                 self._loaded = False
                 return

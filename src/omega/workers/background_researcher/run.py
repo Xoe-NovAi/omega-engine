@@ -96,9 +96,13 @@ async def main():
 
     if args.cycle or args.once:
         logger.info("Starting research cycle...")
-        result = await loop.run_cycle()
-        print(json.dumps(result, indent=2))
-        logger.info("Research cycle complete.")
+        try:
+            result = await loop.run_cycle()
+            print(json.dumps(result, indent=2))
+            logger.info("Research cycle complete.")
+        except Exception as e:
+            logger.error(f"Critical failure in research cycle: {e}", exc_info=True)
+            sys.exit(1)
 
 
 if __name__ == "__main__":

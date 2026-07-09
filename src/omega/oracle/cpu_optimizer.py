@@ -148,8 +148,15 @@ class KVCacheConfig:
 
 @dataclass
 class SpeculativeDecodeConfig:
-    """Configuration for the speculative decoder (Draft → Pillar Keeper)."""
+    """Configuration for the speculative decoder (Draft → Pillar Keeper).
+
+    [S4 Gemma 4 MTP] Supports two draft strategies:
+      - "ngram": lightweight n-gram drafter (default, no extra model load)
+      - "mtp": Gemma 4 native Multi-Token Prediction draft via `--spec-type draft-mtp`
+    """
     draft_model: str = "qwen3-1.7b"
+    draft_type: str = "ngram"  # "ngram" | "mtp"
+    mtp_draft_model: Optional[str] = None  # e.g. "gemma-4-26b-it-assistant"
     target_acceptance_rate: float = TARGET_ACCEPTANCE_RATE
     min_draft_tokens: int = MIN_DRAFT_TOKENS
     max_draft_tokens: int = MAX_DRAFT_TOKENS

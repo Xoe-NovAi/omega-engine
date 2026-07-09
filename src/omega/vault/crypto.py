@@ -12,8 +12,13 @@
 # DocRef: docs/architecture/Sovereign_Sieve_Sovereign_Sieve.md
 import os
 import base64
+import keyring
+import json
+from pathlib import Path
+from typing import Optional
 
 from omega.errors import OmegaError
+
 
 
 class VaultCryptoError(OmegaError):
@@ -28,6 +33,48 @@ def generate_master_key() -> bytes:
         32 random bytes suitable for AES-256-GCM.
     """
     return os.urandom(32)
+
+
+def get_or_create_master_key() -> bytes:
+    """Retrieve master key from OS keyring or generate a new one.
+    
+    Sovereign Pattern: Uses OS-level secure storage with a local fallback.
+    """
+    service_id = "omega-engine"
+    account_id = "vault-master"
+    master_key_file = Path.home() / ".config" / "omega" / "vault_master.key"
+    
+    # 1. Try OS Keyring
+    # Temporarily disabled to debug InvalidTag issues in headless environments
+    # try:
+    #     key_b64 = keyring.get_password(service_id, account_id)
+    #     if key_b64:
+    #         return base64.b64decode(key_b64)
+    # except Exception:
+    #     pass
+
+    # 2. Try fallback file
+    if master_key_file.exists():
+        try:
+            key_b64 = master_key_file.read_text().strip()
+            return base64.b64decode(key_b64)
+        except Exception:
+            pass
+
+    # 3. Generate new key
+    new_key = os.urandom(32)
+    key_b64 = base64.b64encode(new_key).decode('utf-8')
+    
+    try:
+        keyring.set_password(service_id, account_id, key_b64)
+    except Exception:
+        pass
+    
+    master_key_file.parent.mkdir(parents=True, exist_ok=True)
+    master_key_file.write_text(key_b64)
+    master_key_file.chmod(0o600)
+    
+    return new_key
 
 
 def master_key_from_hex(hex_str: str) -> bytes:

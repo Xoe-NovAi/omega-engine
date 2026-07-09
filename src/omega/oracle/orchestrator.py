@@ -41,7 +41,6 @@ from .context_builder import ContextBuilder
 from .capability_registry import CapabilityRegistry
 from .entity_registry import EntityRegistry
 from .handoff import HandoffState, format_handoff_prompt
-from omega.workers.model_updater import ModelUpdaterWorker
 from omega.observability import ObservabilityEngine, get_engine
 from omega.oracle.model_gateway import ModelGateway
 from omega.oracle.health_monitor import get_health_monitor

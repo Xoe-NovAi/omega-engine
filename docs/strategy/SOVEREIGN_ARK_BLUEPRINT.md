@@ -35,9 +35,9 @@ Epoch III 🔮 FUTURE (Q4 2027)
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| Tests | **964 passing** | ✅ 0 failures |
+| Tests | **1046 collected** (HMC sprint S3/S4/S7.5 contract tests added) | ✅ 0 failures on HMC suites |
 | Mandates | **22 (M1-M22)** | ✅ All enforced |
-| Fleet | **13 agents** | ✅ Cap: 14 |
+| Fleet | **13 presences** (11 agents + 2 entities) | ✅ Cap: 14 |
 | WADs | **3** | ✅ S1.5a hardened |
 | Heritage | **113 [id-soft:] tags** | ✅ All vetted |
 
@@ -110,7 +110,7 @@ Two mirrored systems: User Resonance + Entity Self-Actuation. Standard DPO JSONL
 ## IX. Launch Sequence
 
 1. ✅ **v1.0.0** (2026-06-22)
-2. ✅ **v1.1.0-pre** — Temple-grade certified, 964 tests
+2. ✅ **v1.1.0-pre** — Temple-grade certified, 1002 tests
 3. ⏳ **v1.1.0** — Tag when user ready
 4. 🔮 **v1.2.0** — Audience Calibration + DPO Pipeline
 5. 🔮 **v2.0.0** — Strikes 4+9 (A2A + P2P)

@@ -42,6 +42,8 @@
 
 **Provider Chain** (local-first, D112): native-gguf → lmster → ollama → google-antigravity → openrouter → opencode-zen → cline → mock
 
+> **S7.5 Update**: `google-antigravity` is now a **first-class provider** (`AntigravityProvider` in `src/omega/oracle/backends/antigravity_provider.py`) via the official `google-antigravity` SDK, replacing the banned `opencode-antigravity-auth` plugin. Sticky account routing only (D205).
+
 **Hardware**: AMD Ryzen 7 5700U (Zen 2, 8C/16T, AVX2), 14Gi RAM (~12Gi for AI), CPU-only inference.
 
 ---
@@ -50,15 +52,15 @@
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| Tests | **1002 passing** | ✅ 0 failures, 41 skipped, 3 xfailed |
+| Tests | **1046 collected** (HMC sprint added S3/S4/S7.5 contract tests; 3 pre-existing collection errors in `test_headroom.py`) | ✅ 0 failures on HMC sprint suites |
 | Mandates | **22 (M1-M22)** | ✅ All enforced |
-| Fleet | **13 agents** | ✅ Cap: 14 |
+| Fleet | **13 presences** (11 agents + 2 entities) | ✅ Cap: 14 |
 | WADs | **3** | ✅ S1.5a hardened |
 | Heritage | **113 [id-soft:] tags** | ✅ All vetted |
 | Source files | **168** .py | ~36,000 lines |
 | Decisions | **204 (D1-D204)** | ✅ Immutable log |
 
-**Status**: `Architecturally Sovereign | 1002 Tests | Temple-Grade Certified | S1.5a WAD Hardened | Library API v2.0 Consolidated`
+**Status**: `Architecturally Sovereign | 1046 Tests Collected | Temple-Grade Certified | S1.5a WAD Hardened | Library API v2.0 Consolidated | HMC-SPRINT-01 Boundary Hardening Complete`
 
 ---
 
@@ -76,6 +78,8 @@
 | **Session 52** | 2026-07-08 | 12 test failures fixed, cvar wiring, heritage vet fix | 964 |
 | **Session 54** | 2026-07-08 | SSOT optimization sprint: 5 files trimmed 74%, fleet count clarified, heritage gap fixed | 964 |
 | **Session 55** | 2026-07-08 | Library API consolidation: enrichment.py → thin wrapper, api_clients.py hardened, 41 new tests added | 1002 |
+| **Session 56** | 2026-07-08 | HMC Synthesis: Carmack addressed Researcher S3/S4 asks (GGML_FLASH_ATTN, remote_provider.py B2), confirmed Roc SearXNG/vault | 1002 |
+| **Session 57** | 2026-07-08 | HMC Response: Roc answered Researcher S1.5/S2 asks (SearXNG unit, vault injection), proposed S7 Coordination Automation | 1002 |
 
 > **Full sprint history**: `docs/decisions/PIVOT_LOG.md`
 
@@ -179,4 +183,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-08 | Version: v1.1.0 | Tests: 964 passing | SSOT: 822 lines (74% trimmed)*
+*Last Updated: 2026-07-08 | Version: v1.1.0 | Tests: 1002 passing | SSOT: 822 lines (74% trimmed)*

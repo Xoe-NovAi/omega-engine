@@ -70,6 +70,7 @@ from tenacity import (
 
 from .backends.mock import OfflineMockBackend
 from .backends.openai_compat import OpenAICompatProvider
+from .backends.antigravity_provider import AntigravityProvider
 from .backends.remote_provider import ProviderConfig
 from .resource_guard import ResourceGuard
 from .providers import GoogleAIProvider, LocallmsterProvider, OllamaProvider, MockProvider, NativeGGUFProvider
@@ -259,13 +260,38 @@ class ModelGateway:
 
     @staticmethod
     def _create_openrouter(name: str, cfg: dict) -> OpenAICompatProvider:
-        """Factory for OpenRouter from raw YAML config dict."""
-        extra = {k: v for k, v in cfg.items() if k not in ("provider", "priority", "api_key", "base_url")}
+        """Factory for OpenRouter from raw YAML config dict.
+
+        [S3 B5 / D205] Supports both legacy single `api_key` and new
+        `api_keys` list (8-account Active-Passive sharding).
+        """
+        extra = {k: v for k, v in cfg.items() if k not in ("provider", "priority", "api_key", "api_keys", "base_url")}
+        # Resolve key list: prefer api_keys list, fall back to wrapping api_key
+        api_keys = cfg.get("api_keys", [])
+        if not api_keys and cfg.get("api_key"):
+            api_keys = [cfg["api_key"]]
         return OpenAICompatProvider(ProviderConfig(
             name=name,
             priority=cfg.get("priority", 0),
-            api_key=cfg.get("api_key"),
+            api_keys=api_keys,
             base_url=cfg.get("base_url", "https://openrouter.ai/api").rstrip("/v1"),
+            extra=extra,
+        ))
+
+    @staticmethod
+    def _create_antigravity(name: str, cfg: dict) -> AntigravityProvider:
+        """Factory for Antigravity from raw YAML config dict.
+
+        Uses the official google.genai.Client with a custom HttpOptions
+        base_url pointing to the Antigravity API.  Sticky account routing
+        only (D205) — no round-robin.
+        """
+        extra = {k: v for k, v in cfg.items() if k not in ("provider", "priority", "api_key", "base_url")}
+        return AntigravityProvider(ProviderConfig(
+            name=name,
+            priority=cfg.get("priority", 0),
+            api_key=cfg.get("api_key"),
+            base_url=cfg.get("base_url", "https://api.antigravity.ai/v1"),
             extra=extra,
         ))
 
@@ -338,6 +364,7 @@ class ModelGateway:
             "opencode-zen": ModelGateway._create_openrouter,
             "cline": ModelGateway._create_openrouter,
             "github-copilot": ModelGateway._create_openrouter,
+            "antigravity": ModelGateway._create_antigravity,
             "lmster": LocallmsterProvider,
             "ollama": OllamaProvider,
             "native-gguf": NativeGGUFProvider,

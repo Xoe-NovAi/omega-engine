@@ -403,7 +403,16 @@ mcp-check: ## 🔌 Verify all MCP services are healthy
 
 lint: ## 🔍 Lint with flake8
 	flake8 src tests --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
-
+lint-imports: ## 🛡️  Assert no `from src.omega` imports in core engine
+	@echo "$(COLOR_CYAN)🛡️  Checking for namespace import leaks...$(COLOR_NC)"
+	@LEAKS=$$(grep -r "from src.omega" src/omega/ | grep -v ">>>" | grep -v "#" || true); \
+	if [ -n "$$LEAKS" ]; then \
+		echo "$(COLOR_RED)✗ Namespace leak detected:$(COLOR_NC)"; \
+		echo "$$LEAKS"; \
+		exit 1; \
+	else \
+		echo "$(COLOR_GREEN)✓ No namespace leaks found in src/omega/$(COLOR_NC)"; \
+	fi
 typecheck: ## 🔍 Type check with mypy
 	mypy src/omega/
 

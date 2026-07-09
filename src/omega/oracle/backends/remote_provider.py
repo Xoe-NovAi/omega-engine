@@ -16,6 +16,7 @@
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
+import httpx
 from omega.errors import (
     OmegaError,
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
@@ -76,12 +77,12 @@ class ProviderConfig:
     priority: int
     enabled: bool = True
     models: List[str] = field(default_factory=lambda: ["*"])
-    api_key: Optional[str] = None
+    api_keys: List[str] = field(default_factory=list)
     base_url: Optional[str] = None
     description: str = ""
     # Retry & resilience
     max_retries: int = 3
-    timeout_seconds: float = 30.0
+    timeout_seconds: float = 120.0
     backoff_base: float = 0.5
     backoff_max: float = 8.0
     # Budget
@@ -100,7 +101,8 @@ class RemoteProvider(ABC):
     def __init__(self, config: ProviderConfig):
         self.config = config
         self.metrics = ProviderMetrics()
-        self._resolved_api_key: Optional[str] = None
+        self._resolved_api_keys: List[str] = []
+        self._active_key_index = 0
 
     @property
     def name(self) -> str:
@@ -113,53 +115,19 @@ class RemoteProvider(ABC):
             return ProviderHealth.DEGRADED
         return ProviderHealth.HEALTHY
 
-    def resolve_api_key(self) -> Optional[str]:
-        """Resolve API key from config — supports env: prefix.
+    def resolve_current_api_key(self) -> Optional[str]:
+        """Resolve the current active API key from config.
         
         Resolution chain:
-        1. Already resolved (cached) → return
-        2. Config has inline key → return as-is
-        3. Config has env:VAR → try vault, fallback to os.environ
-        4. No config → try vault by provider name
-        5. Nothing → return None
+        1. Config has api_keys list → return key at _active_key_index
+        2. No keys → return None
         """
-        if self._resolved_api_key is not None:
-            return self._resolved_api_key
-
-        key = self.config.api_key
-        if not key:
-            # Try vault by provider name
-            try:
-                from omega.vault import KeyVault
-                vault_key = KeyVault().resolve(self.config.name)
-                if vault_key:
-                    self._resolved_api_key = vault_key
-                    return vault_key
-            except (OmegaError, RuntimeError, OSError) as e:
-                logger.debug(f"Vault resolution failed for {self.config.name}: {e}")
-                pass
+        if not self.config.api_keys:
             return None
-
-        import os
-        if key.startswith("env:"):
-            env_var = key[4:]
-            # Try vault first (it may have a value the env doesn't)
-            import os
-            try:
-                from omega.vault import KeyVault
-                vault_key = KeyVault().resolve(self.config.name)
-                if vault_key:
-                    self._resolved_api_key = vault_key
-                    return vault_key
-            except (OmegaError, RuntimeError, OSError) as e:
-                logger.debug(f"Vault resolution failed for {self.config.name}: {e}")
-                pass
-            # Fallback to environment
-            self._resolved_api_key = os.environ.get(env_var)
-        else:
-            self._resolved_api_key = key
-
-        return self._resolved_api_key
+        
+        # Ensure index is within bounds
+        self._active_key_index %= len(self.config.api_keys)
+        return self.config.api_keys[self._active_key_index]
 
     def supports_model(self, model_name: str) -> bool:
         """Check if this provider supports the given model."""
@@ -207,6 +175,10 @@ class RemoteProvider(ABC):
                 )
                 elapsed_ms = (time.monotonic() * 1000) - start_ms
         
+                # [S3 B4] Repetition Loop Detector — abort degenerate output
+                # Moved to base class so ALL providers inherit this guard
+                self._detect_repetition_loop(result, model_name)
+        
                 # Record success
                 self.metrics.total_requests += 1
                 self.metrics.successful_requests += 1
@@ -225,13 +197,25 @@ class RemoteProvider(ABC):
                 )
                 return result
         
-            except (OmegaError, RuntimeError, OSError) as e:
+            except (OmegaError, RuntimeError, OSError, httpx.HTTPError) as e:
                 last_error = e
                 self.metrics.total_requests += 1
                 self.metrics.failed_requests += 1
                 self.metrics.consecutive_failures += 1
                 self.metrics.last_failure_time = time.monotonic()
         
+                # D205: Sticky Active-Passive Key Sharding
+                # If it's a rate limit (429), rotate to the next key immediately
+                is_rate_limit = False
+                if isinstance(e, httpx.HTTPStatusError) and e.response.status_code == 429:
+                    is_rate_limit = True
+                elif isinstance(e, ProviderRateLimitError):
+                    is_rate_limit = True
+                
+                if is_rate_limit and len(self.config.api_keys) > 1:
+                    self._active_key_index = (self._active_key_index + 1) % len(self.config.api_keys)
+                    logger.info(f"Provider {self.name} rate limited. Rotating to key index {self._active_key_index}")
+                
                 logger.warning(
                     f"Provider {self.name} attempt {attempt + 1}/{self.config.max_retries} "
                     f"failed: {e}"
@@ -266,6 +250,33 @@ class RemoteProvider(ABC):
             "tokens_used": self.metrics.total_tokens_used,
             "consecutive_failures": self.metrics.consecutive_failures,
         }
+
+    # ── S3 B4: Repetition Loop Detector (base class guard) ────────────
+    # [id-soft: doom-1993] Precomputed Lookup — fixed-size window scan
+
+    @staticmethod
+    def _detect_repetition_loop(content: str, model_name: str, threshold: int = 3) -> None:
+        """[S3 B4] Repetition Loop Detector.
+
+        Aborts if the last `threshold` chunks (of >=20 chars) are identical,
+        indicating a degenerate generation loop. Raises RuntimeError to
+        trigger retry via the base class loop.
+
+        Inherited by ALL provider subclasses (OpenAICompat, Antigravity, etc.).
+        """
+        if not content or len(content) < 60:
+            return
+        
+        # Split into ~20-char windows and check last `threshold` are identical
+        window = 20
+        chunks = [
+            content[i:i+window]
+            for i in range(max(0, len(content)-window*threshold), len(content), window)
+        ]
+        if len(chunks) >= threshold and all(c == chunks[0] for c in chunks):
+            raise RuntimeError(
+                f"Provider {model_name} produced repetitive loop (identical tail detected)"
+            )
 
     # ── Subclass interface ────────────────────────────────────────────
 

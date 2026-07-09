@@ -1905,3 +1905,19 @@ Iris is already listed in OMEGA_ENGINE.md as one of 13 sovereign presences. With
 
 ### Status
 ✅ **RATIFIED** — Documented. Implementation deferred to Entity Deepening Sprint (post-v1.1.0).
+
+---
+
+## D205 — Sticky Active-Passive Key Sharding Permitted (Sovereign Exception to IW-2)
+
+### Context
+IW-2 (2026-06-30) eradicated round-robin key rotation to prevent Google/provider ban detection (M4 Sequentiality, M8 Zero Telemetry). The HMC-SPRINT-01 plan S3 B5 requires 8-key Active-Passive Sharding for OpenRouter to multiply effective rate limits 8x across the user's 8 separate billing identities. The existing `KeyVault.handle_rate_limit()` raises `ProviderRateLimitError` and delegates to circuit breaker — it does NOT failover to another key, creating a conflict with B5.
+
+### Decision
+Ratify a Sovereign Exception: **Sticky Active-Passive failover is permitted.** It is NOT round-robin — a single key is used sequentially until a hard 429, then the next key in the pool is selected and used sticky. This maintains account stability (no rapid switching) and emits zero telemetry, satisfying M4/M8 intent. `handle_rate_limit()` MUST be updated to failover to the next available key rather than only raising.
+
+### Rationale
+The user confirmed 8 OpenRouter accounts are separate email/billing identities with separate usage pools — so per-account limits are independent and the 8x multiplier is valid. Round-robin (rapid switching) remains banned; sticky-until-429 failover is a resilience pattern, not rotation.
+
+### Status
+✅ **RATIFIED** — 2026-07-08. Recorded in SOVEREIGN_HARDENING_ROADMAP_2026Q3.md v1.3.0 §5. Unblocks S3 B2 (429 branch) and S3 B5.

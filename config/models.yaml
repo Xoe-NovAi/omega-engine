@@ -128,7 +128,6 @@ zen2_build:
   - -DLLAMA_FMA=ON
   - -DLLAMA_F16C=ON
   - -DLLAMA_NO_AVX512=ON
-  - -DGGML_FLASH_ATTN=ON
   - -DLLAMA_BLAS=OFF
   - -DLLAMA_CUDA=OFF
   - -DLLAMA_METAL=OFF
@@ -139,13 +138,32 @@ zen2_build:
     OMP_PROC_BIND: close
     OMP_PLACES: cores
     OPENBLAS_CORETYPE: ZEN
-loading:
+  loading:
   max_concurrent_models: 1
   nova_always_on: true
   warm_models:
   - qwen3-0.6b-q6_k
   unload_after_idle_minutes: 5
   emergency_swap_threshold_mb: 1024
+# [S4 Gemma 4 MTP] Speculative decoding configuration.
+# Gemma 4 ships native Multi-Token Prediction (MTP) draft models.
+# Usage: pair target + `-assistant` draft, launch with `--spec-type draft-mtp`.
+speculative_decode:
+  default_draft_type: ngram
+  gemma4_mtp:
+    enabled: true
+    draft_type: mtp
+    # Gemma 4 target models and their corresponding MTP draft models
+    pairs:
+      gemma-4-26b-a4b-it: gemma-4-26b-a4b-it-assistant
+      gemma-4-12b-it: gemma-4-12b-it-assistant
+      gemma-4-e4b-it: gemma-4-e4b-it-assistant
+    # llama.cpp / llama-server flag for MTP drafting
+    server_flag: "--spec-type draft-mtp"
+    # Zen 2 CPU: MTP gives ~2-3x speedup on Gemma 4 family
+    min_draft_tokens: 2
+    max_draft_tokens: 8
+
 agent_roles:
   jem_discovery:
     # CONSOLIDATED into jem (Sprint B)
@@ -238,7 +256,7 @@ cloud_models:
     - Multi-perspective reasoning
     best_for: Research synthesis; parallel council; Roc Racoon deep analysis
     tier: primary
-  gemini-4-31b:
+  gemma-4-31b-it:
     provider: google_ai_studio
     context_window: 262144
     strengths:
@@ -247,7 +265,7 @@ cloud_models:
     - Long-form document generation
     best_for: Skeptical verifier; Roc Racoon heritage mining; deep research
     tier: secondary
-  gemma-4-26b-it:
+  gemma-4-26b-a4b-it:
     provider: google_ai_studio
     context_window: 262144
     strengths:
@@ -269,23 +287,19 @@ cloud_models:
     best_for: Codebase archaeology; deep structural audits; oversight reviews
     tier: secondary
   nemotron-3-ultra:
-    provider: UNVERIFIED — requires Researcher discovery
-    context_window: UNVERIFIED
+    provider: openrouter
+    context_window: 1000000
     strengths:
-    - UNVERIFIED
-    best_for: UNVERIFIED
+    - Frontier-level reasoning and orchestration
+    - Long-sequence modeling (hybrid Mamba-Transformer MoE)
+    - High-throughput agentic task execution
+    best_for: Skeptical verifier; DPO teacher model; deep research
     tier: fallback
   claude-sonnet-4:
-    provider: UNVERIFIED — requires Researcher discovery
-    context_window: UNVERIFIED
+    provider: VERIFIED via Google Antigravity free tier (Sonnet 4.6) — do not upgrade to Sonnet 5 (no free API path)
+    context_window: 200000
     strengths:
-    - UNVERIFIED
-    best_for: UNVERIFIED
-    tier: fallback
-  gemma-4-9b:
-    provider: UNVERIFIED — requires Researcher discovery
-    context_window: UNVERIFIED
-    strengths:
-    - UNVERIFIED
-    best_for: UNVERIFIED
+    - Advanced software engineering and tool use
+    - Multi-step agentic task completion
+    best_for: Complex coding and structural audits (cloud fallback)
     tier: fallback

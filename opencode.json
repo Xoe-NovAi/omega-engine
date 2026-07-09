@@ -26,8 +26,8 @@
   ],
   "mcp": {
     "omega-hub": {
-      "type": "remote",
-      "url": "http://127.0.0.1:8016/sse",
+      "type": "streamable-http",
+      "url": "http://127.0.0.1:8016/mcp",
       "enabled": true
     },
     "searxng": {

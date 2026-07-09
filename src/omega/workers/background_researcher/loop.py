@@ -16,6 +16,7 @@ import os
 import re
 import uuid
 import time
+import httpx
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, List, Dict, Any
@@ -90,11 +91,11 @@ class BackgroundResearcherLoop:
         self.verifier = TriangulationVerifier()
         
         # Unified Pipeline
-        from src.omega.ingestion.pipeline import IngestionPipeline, IngestionConfig
+        from omega.ingestion.pipeline import IngestionPipeline, IngestionConfig
         self.pipeline = IngestionPipeline(
             IngestionConfig(
                 entity_name="researcher",
-                model_name="google-gemma-4",
+                model_name="gemma-4-31b-it",
                 api_key=os.environ.get("GOOGLE_API_KEY", "placeholder"),
                 sources=[]
             ),
@@ -103,7 +104,7 @@ class BackgroundResearcherLoop:
             None 
         )
         # Fix the extractor since we passed None
-        from src.omega.ingestion.extractors import GoogleExtractor
+        from omega.ingestion.extractors import GoogleExtractor
         self.pipeline.extractor = GoogleExtractor(os.environ.get("GOOGLE_API_KEY", "placeholder"))
 
         # SovereignWorker Unification: Redis-backed queue + ResourceGuard

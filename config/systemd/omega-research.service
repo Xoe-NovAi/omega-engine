@@ -7,8 +7,9 @@
 [Unit]
 Description=Omega Background Researcher — Sovereign Research Worker
 Documentation=https://github.com/Xoe-NovAi/omega-engine
-After=network-online.target
+After=network-online.target omega-searxng.service
 Wants=network-online.target
+Requires=omega-searxng.service
 
 [Service]
 Type=oneshot
@@ -19,8 +20,8 @@ EnvironmentFile=%h/Documents/Xoe-NovAi/omega-engine/.env
 Environment=OMEGA_ENV=production
 Environment=MALLOC_MMAP_THRESHOLD_=65536
 Environment=MALLOC_ARENA_MAX=2
-StandardOutput=journal
-StandardError=journal
+StandardOutput=append:/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/workspace/HALL_OF_RECORDS/background-researcher/output.log
+StandardError=append:/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/entities/roc_racoon/workspace/HALL_OF_RECORDS/background-researcher/error.log
 
 # Memory protection
 MemoryMax=512M

@@ -47,8 +47,16 @@ inference:
       phi-4-mini: phi-4-mini
       rocracoon-3b-instruct: rocracoon:3b
       phi-4-mini-reasoning-abliterated-q4_k_m: phi-4-mini
-  - provider: google
+  - provider: antigravity
     priority: 3
+    api_key: env:ANTIGRAVITY_API_KEY
+    base_url: https://api.antigravity.ai/v1
+    model_overrides:
+      qwen3-1.7b: antigravity-v1
+    models:
+    - antigravity-v1
+  - provider: google
+    priority: 4
     api_key: env:GOOGLE_API_KEY
     model_overrides:
       phi-4-mini: gemma-4-31b-it

@@ -11,14 +11,14 @@ from dataclasses import dataclass, asdict
 from pathlib import Path
 
 from omega.errors import OmegaError
-from src.omega.oracle.resource_guard import ResourceGuard
-from src.omega.ingestion.scraper import SovereignScraper
-from src.omega.archive.cas import CASArchiver
+from ..oracle.resource_guard import ResourceGuard
+from .scraper import SovereignScraper
+from ..archive.cas import CASArchiver
 
 # Forward reference for ResilienceContext to avoid circular imports
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from src.omega.ingestion.pipeline import ResilienceContext
+    from .pipeline import ResilienceContext
 
 logger = logging.getLogger("omega.ingestion.worker")
 

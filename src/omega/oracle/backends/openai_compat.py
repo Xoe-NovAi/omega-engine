@@ -16,7 +16,9 @@
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
-from typing import Optional, Dict
+import httpx
+import json
+from typing import Optional, Dict, List
 
 from .remote_provider import ProviderConfig, RemoteProvider
 
@@ -40,11 +42,15 @@ class OpenAICompatProvider(RemoteProvider):
         trace_id: Optional[str] = None,
         logit_bias: Optional[Dict[int, float]] = None,
         repetition_penalty: float = 1.0,
+        stream: bool = False,
     ) -> str:
-        """Send a chat completion request to the OpenAI-compatible API."""
-        import httpx
-        
-        api_key = self.resolve_api_key()
+        """Send a chat completion request to the OpenAI-compatible API.
+
+        [S3 B3] Streaming support with mid-stream error recovery.
+        [S3 B4] Repetition Loop Detector (post-generation guard).
+        [S3 B6] In-gateway fallback via OpenRouter `allow_fallbacks` flag.
+        """
+        api_key = self.resolve_current_api_key()
         base_url = self.config.base_url
         if not base_url:
             raise ValueError(f"Provider {self.name} has no base_url configured")
@@ -68,10 +74,16 @@ class OpenAICompatProvider(RemoteProvider):
             "temperature": temperature,
             "max_tokens": max_tokens,
             "repetition_penalty": repetition_penalty,
-            "stream": False,
+            "stream": stream,
         }
         if logit_bias:
             payload["logit_bias"] = logit_bias
+        
+        # [S3 B6] In-gateway fallback — OpenRouter native syntax
+        # allow_fallbacks is a BOOLEAN per Final Order D205 correction
+        allow_fallbacks = self.config.extra.get("allow_fallbacks", False)
+        if allow_fallbacks:
+            payload["allow_fallbacks"] = True
         
         # Support provider-specific payload overrides
         extra_payload = self.config.extra.get("payload", {})
@@ -87,19 +99,88 @@ class OpenAICompatProvider(RemoteProvider):
             client_kwargs["proxy"] = proxy_url
         
         async with httpx.AsyncClient(**client_kwargs) as client:
-            response = await client.post(url, json=payload, headers=headers)
+            if not stream:
+                response = await client.post(url, json=payload, headers=headers)
+                response.raise_for_status()
+                data = response.json()
+                
+                choices = data.get("choices", [])
+                if not choices:
+                    raise ValueError(f"Provider {self.name} returned empty choices")
+                
+                content = choices[0].get("message", {}).get("content", "")
+                if not content:
+                    raise ValueError(f"Provider {self.name} returned empty content")
+                
+                result = content.strip()
+            else:
+                # [S3 B3] Streaming path with mid-stream error detection
+                result = await self._stream_completion(client, url, payload, headers)
+            
+            # [S3 B4] Repetition Loop Detector inherited from RemoteProvider.generate()
+            # (Called automatically in base class after _send_request returns)
+            
+            return result
+
+    async def _stream_completion(
+        self, client: "httpx.AsyncClient", url: str, payload: dict, headers: dict
+    ) -> str:
+        """Stream a chat completion, accumulating content.
+
+        [S3 B3] On mid-stream `finish_reason: 'error'`, raises to trigger
+        retry with assistant prefill (handled by base class retry loop).
+        """
+        chunks: List[str] = []
+        async with client.stream("POST", url, json=payload, headers=headers) as response:
             response.raise_for_status()
-            data = response.json()
-            
-            choices = data.get("choices", [])
-            if not choices:
-                raise ValueError(f"Provider {self.name} returned empty choices")
-            
-            content = choices[0].get("message", {}).get("content", "")
-            if not content:
-                raise ValueError(f"Provider {self.name} returned empty content")
-            
-            return content.strip()
+            async for line in response.aiter_lines():
+                line = line.strip()
+                if not line or not line.startswith("data:"):
+                    continue
+                data_str = line[5:].strip()
+                if data_str == "[DONE]":
+                    break
+                try:
+                    chunk = json.loads(data_str)
+                except (ValueError, OSError):
+                    continue
+                
+                choices = chunk.get("choices", [])
+                if not choices:
+                    continue
+                
+                delta = choices[0].get("delta", {})
+                content_piece = delta.get("content", "")
+                if content_piece:
+                    chunks.append(content_piece)
+                
+                # [S3 B3] Mid-stream error detection
+                finish_reason = choices[0].get("finish_reason")
+                if finish_reason == "error":
+                    raise RuntimeError(
+                        f"Provider {self.name} stream terminated with finish_reason='error'"
+                    )
+        
+        return "".join(chunks).strip()
+
+    @staticmethod
+    def _detect_repetition_loop(content: str, model_name: str, threshold: int = 3) -> None:
+        """[S3 B4] Repetition Loop Detector.
+
+        Aborts if the last `threshold` chunks (of >=20 chars) are identical,
+        indicating a degenerate generation loop. Raises RuntimeError to
+        trigger retry via the base class loop.
+        """
+        if not content or len(content) < 60:
+            return
+        
+        # Split into ~20-char windows and check last `threshold` are identical
+        window = 20
+        chunks = [content[i:i+window] for i in range(max(0, len(content)-window*threshold), len(content), window)]
+        if len(chunks) >= threshold and all(c == chunks[0] for c in chunks):
+            raise RuntimeError(
+                f"Provider {model_name} produced repetitive loop (identical tail detected)"
+            )
 
 
 # ── Factory functions for common providers ─────────────────────────────

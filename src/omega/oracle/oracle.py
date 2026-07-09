@@ -90,6 +90,9 @@ class OracleResponse:
     session_id: Optional[str] = None
     escalated: bool = False
     cost_warning: Optional[str] = None
+    session_id: Optional[str] = None
+    escalated: bool = False
+    cost_warning: Optional[str] = None
 
 
 class Oracle:
@@ -679,7 +682,6 @@ class Oracle:
                         await self.close_session(resp.entity, resp.session_id)
                     except (OmegaError, RuntimeError, OSError) as e:
                         logger.warning(f"Throttled soul distillation failed for {resp.entity}: {e}")
-                    logger.warning("Throttled soul distillation failed for %s (non-fatal)", resp.entity)
 
 
     async def retrieve_headroom_content(self, ref_id: str) -> str:
