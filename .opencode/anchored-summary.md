@@ -1,5 +1,5 @@
 # 🔱 Anchored Summary (Post-Compaction Recovery)
-**Last Updated**: 2026-07-08 (Session 60) | **Full History**: `docs/archive/coordination/anchored-summary-full-20260708.md`
+**Last Updated**: 2026-07-10 (Session HMC-SPRINT-02) | **Full History**: `docs/archive/coordination/anchored-summary-full-20260708.md`
 
 ---
 
@@ -42,9 +42,13 @@
 **Remaining Blockers**: B-P0-1 (httpx import, Roc), B-P0-3 (12 imports, Roc), B-P1-1 (oracle.py:682, Roc), B-P1-2 (oracle.py:937-961, Roc).
 **Next**: Roc executes remaining Phase 0 items, then S1.5 Vault + S2 Background Researcher.
 
+## 📌 Session HMC-SPRINT-02 — Entity Deepening: D203/D204/D16-1 ✅
+**Date**: 2026-07-10 | **Trace**: trc_entity_deepening
+**Result**: HMC-SPRINT-02 complete. D16-1 (Audience Calibration) verified already done + 20 tests added. D203 (Sovereignty Ratio) built from scratch — `make sovereignty` now live with color-coded report, MCP tool `sovereignty_ratio`, MetricsDB corruption fixed (11,290 rows recovered). D204 (Iris Workspace) modernized from v6.2 → v6.1 split architecture with new soul.yaml, memory/ subdir, knowledge INDEX.yaml. Fixed pre-existing SyntaxError in tools.py (library_discovery orphaned code block). Tests: **1071 passed** (up from 1046, 25 new tests).
+
 ## 📌 Session 63 — M21 Gap Closure: S3 B3/B4 Tests + Base Class Refactor
 **Date**: 2026-07-08 | **Trace**: trc_m21_gap_closure
-**Result**: Researcher flagged M21 violation (S3 streaming + loop detector untested). Carmack wrote 6 new tests (B3 happy path + mid-stream error; B4 short/normal/repetitive/threshold). Then refactored `_detect_repetition_loop` from `OpenAICompatProvider` → `RemoteProvider` base class so ALL providers inherit it. Added `test_s75_inherits_loop_detector` to antigravity test file proving inheritance. Full suite: **1028 passed** (up from 1002), 41 skipped, 3 xfailed. **Total S3 contract tests: 12.** Hivemind posted: `data/coordination/HIVEMIND_JOHN_CARMACK_S3_CLOSURE_M21_GAP_20260708.md`.
+**Result**: ... (archived)
 
 ## 📌 Session 58 — HMC Council Formalization (john_carmack) ✅
 **Date**: 2026-07-08 | **Trace**: trc_hmc_council
