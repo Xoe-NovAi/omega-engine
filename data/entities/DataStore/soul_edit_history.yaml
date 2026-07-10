@@ -243,3 +243,10 @@
   summary: Session ses_20260710_default_001 distilled via close_session
   timestamp: 1783651260.748135
   trace_id: ses_20260710_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260710_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260710_default_001 distilled via close_session
+  timestamp: 1783653690.097456
+  trace_id: ses_20260710_default_001

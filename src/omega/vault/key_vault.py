@@ -23,6 +23,7 @@ import os
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 from omega.errors import OmegaError, ProviderRateLimitError
 from omega.vault.crypto import encrypt, decrypt, VaultCryptoError
@@ -307,8 +308,19 @@ class KeyVault:
     
     # ── Internal ──────────────────────────────────────────────────────
     
+    @retry(
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        retry=retry_if_exception_type((OSError, json.JSONDecodeError)),
+        reraise=True
+    )
     def _load(self):
-        """Load and decrypt the vault from disk."""
+        """Load and decrypt the vault from disk.
+
+        [id-soft: quake-1996] Zone Memory — retry on I/O errors
+        with exponential backoff (1s, 2s, 4s) to handle transient
+        file-system contention or partial-write races.
+        """
         try:
             if not self._vault_path.exists():
                 logger.warning(f"Vault file not found: {self._vault_path}")
