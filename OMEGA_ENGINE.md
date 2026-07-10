@@ -183,4 +183,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-08 | Version: v1.1.0 | Tests: 1002 passing | SSOT: 822 lines (74% trimmed)*
+*Last Updated: 2026-07-10 | Version: v1.1.0 | Tests: 1071 passing | SSOT: 822 lines (74% trimmed)*

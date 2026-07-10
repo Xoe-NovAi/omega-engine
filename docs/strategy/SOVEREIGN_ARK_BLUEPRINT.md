@@ -119,7 +119,7 @@ Two mirrored systems: User Resonance + Entity Self-Actuation. Standard DPO JSONL
 
 | Dimension | Target | Current |
 |-----------|--------|---------|
-| Local inference ratio | ≥80% | ⚪ UNKNOWN — no automated tracker. `make sovereignty` is a placeholder. See `docs/decisions/PIVOT_LOG.md` D203 to implement.|
+| Local inference ratio | ≥80% | 🟢 D203 COMPLETE — `make sovereignty` queries MetricsDB. Current: {local_pct:.1f}% local (see `make sovereignty` for live report). MCP tool: `sovereignty_ratio`.|
 | Cloud dependency | 0 | ✅ 0 |
 | Data residency | 100% | ✅ 100% |
 | Telemetry events | 0 | ✅ 0 |

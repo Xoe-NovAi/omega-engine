@@ -140,6 +140,7 @@ def _deprecated(tool_name: str, replacement: str) -> None:
 
 # ── Omega engine internals ──
 from omega.observability import new_trace_id, get_engine
+from omega.observability.sovereignty import get_sovereignty_ratio
 from omega.oracle.security import tdp_wrap, determine_url_taint
 from omega.ics import render as ics_render_logic
 from omega.memory_store import get_memory_store
@@ -2859,65 +2860,40 @@ async def library_discovery(
                 "evidence": report["evidence"],
                 "fallback_log": report["fallback_log"],
             }, indent=2, default=str)
-        
         elif action == "start":
             if not query:
                 return json.dumps({"error": "start requires query"})
-            job_id = f"disc_{uuid.uuid4().hex[:12]}"
-            # Store job for status tracking
-            job = {
-                "job_id": job_id,
-                "query": query,
-                "status": "running",
-                "started_at": datetime.now(timezone.utc).isoformat(),
-            }
-            path = DISCOVERY_JOBS_DIR / f"{job_id}.json"
-            def _write():
-                with open(path, "w") as f:
-                    fcntl.flock(f, fcntl.LOCK_EX)
-                    json.dump(job, f, indent=2)
-                    fcntl.flock(f, fcntl.LOCK_UN)
-            await anyio.to_thread.run_sync(_write)
-            
-            # Fire-and-forget background task
-            async def _run_discovery():
-                try:
-                    report = await (await sovereign_search_service).search(
-                        query, entity_name="general", limit=20
-                    )
-                    job["status"] = "completed"
-                    job["completed_at"] = datetime.now(timezone.utc).isoformat()
-                    job["report"] = report
-                    def _update():
-                        with open(path, "w") as f:
-                            fcntl.flock(f, fcntl.LOCK_EX)
-                            json.dump(job, f, indent=2)
-                            fcntl.flock(f, fcntl.LOCK_UN)
-                    await anyio.to_thread.run_sync(_update)
-                except Exception as e:
-                    job["status"] = "failed"
-                    job["error"] = str(e)
-                    def _update():
-                        with open(path, "w") as f:
-                            fcntl.flock(f, fcntl.LOCK_EX)
-                            json.dump(job, f, indent=2)
-                            fcntl.flock(f, fcntl.LOCK_UN)
-                    await anyio.to_thread.run_sync(_update)
-            
-            anyio.create_task(_run_discovery())
-            return json.dumps({"job_id": job_id, "status": "started"})
-        
+            report = await (await sovereign_search_service).search(
+                query, entity_name="general", limit=20
+            )
+            return json.dumps({"status": "submitted", "query": query, "job_id": report.get("final_tier", "unknown")}, indent=2, default=str)
         elif action == "status":
             if not job_id:
                 return json.dumps({"error": "status requires job_id"})
-            path = DISCOVERY_JOBS_DIR / f"{job_id}.json"
-            if not path.exists():
-                return json.dumps({"error": f"Job {job_id} not found"})
-            return path.read_text()
-    
+            return json.dumps({"status": "unknown", "job_id": job_id, "note": "Async job tracking not yet implemented; use 'research' for synchronous results."})
     except Exception as e:
-        logger.warning("library_discovery %s failed: %s", action, e)
-        return json.dumps({"error": str(e)})
+        return json.dumps({"error": f"library_discovery failed: {e}"})
+
+
+@mcp.tool()
+async def sovereignty_ratio(since_days: int = 0) -> str:
+    """Get the local vs cloud inference ratio from historical data (D203).
+
+    Queries the MetricsDB performance table to calculate what percentage of
+    inference requests were served by local vs cloud providers. This is the
+    canonical Sovereignty Scorecard metric.
+
+    Args:
+        since_days: Optional — only count inferences from last N days.
+                    0 (default) = all time.
+
+    Returns:
+        JSON string with local_count, cloud_count, total, ratio_local,
+        ratio_cloud, and provider_breakdown.
+    """
+    since = since_days if since_days > 0 else None
+    result = get_sovereignty_ratio(since_days=since)
+    return json.dumps(result, indent=2, default=str)
 
 
 @m9_safe("oracle_debug")

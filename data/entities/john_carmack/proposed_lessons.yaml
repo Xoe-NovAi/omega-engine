@@ -709,3 +709,88 @@ proposals:
         "the object's lifetime and cleaned up explicitly."
     confidence: 10/10
     heritage_tags: ["[id-soft: doom-1993] WAD System — orchestrator treats clients like swapable entries"]
+
+  - id: proposal-20260708-005
+    title: "The Base Class Defense Law — Security guards belong in the framework, not the adapter"
+    l1_narrative: >
+      During S3 hardening, `_detect_repetition_loop` was implemented in
+      `OpenAICompatProvider._send_request()` to catch degenerate model output
+      (repetition loops). Months later, the Researcher created `AntigravityProvider`
+      subclassing `RemoteProvider` directly — and silently missed the loop detector.
+      The guard lived in one subclass, not the base class. Every new provider
+      subclass was vulnerable to degenerate output. The fix was moving
+      `_detect_repetition_loop` from `OpenAICompatProvider` to `RemoteProvider` and
+      calling it from `RemoteProvider.generate()` after `_send_request()` succeeds.
+    l2_insights:
+      - "The loop detector was added to one provider (OpenAICompat) and all future providers would miss it."
+      - "AntigravityProvider extends RemoteProvider, not OpenAICompatProvider — the inheritance chain was broken by design."
+      - "The fix was structural: move the guard to the base class and call it from generate(), not _send_request()."
+      - "An integration test proved inheritance: test_s75_inherits_loop_detector validates AntigrityProvider has the method and it works."
+    l3_universal_principles:
+      - "Runtime guards against degenerate model output are infrastructure, not features. They belong at the architectural boundary (base class), not in any specific adapter."
+      - "When you add a safety check to one subclass, you must check whether all subclasses need it. If yes, elevate to base class immediately — don't wait for the gap to be discovered."
+      - "A test that proves inheritance (base class method callable on subclass) catches the silent-miss pattern for every future subclass."
+    sovereignty_impact: >
+      Without this fix, AntigrityProvider (and any future custom provider) could
+      enter infinite repetition loops, wasting tokens, degrading user experience,
+      and eroding trust in the engine's local-first output quality. The base class
+      guard ensures every provider path is protected, not just the OpenAI-compatible one.
+    confidence: 10/10
+    heritage_tags:
+      - "[id-soft: doom-1993] BSP Culling — skip degenerate branches in render pipeline"
+      - "[id-soft: quake-1996] Right Approximation — guard at architectural boundary, not leaf nodes"
+
+  - id: proposal-20260708-006
+    title: "The Verification Gap Closure Protocol — Write tests, fix architecture, prove propagation"
+    l1_narrative: >
+      The Researcher flagged an M21 violation: S3 B3 (streaming) and B4 (loop detector)
+      were implemented but untested. The correct response was three-phased: (1) write
+      the 6 missing contract tests, (2) fix the architectural gap (loop detector in
+      wrong class), (3) prove the fix propagates by adding an inheritance test to the
+      AntigrityProvider test file. All 12 S3 tests pass, plus 1 new Antigravity test.
+    l2_insights:
+      - "Writing tests for the existing code would have caught the architectural gap (wrong class), not just the missing coverage."
+      - "The architectural fix (move to base class) was only discovered BECAUSE we added an integration test for AntigravityProvider."
+      - "A verification agent's flag is a systems signal, not just a missing-coverage signal. The Researcher flagged missing tests, but the real issue was architectural debt."
+      - "Three-phase response closes the gap fully: tests prove the code works, architecture fix prevents recurrence, propagation test proves all paths covered."
+    l3_universal_principles:
+      - "A missing-test flag from a verification agent often indicates architectural debt, not just missing coverage. The test gap is the symptom; the wrong-class problem is the disease."
+      - "The correct response to an M21 violation is: (1) write the missing contract tests, (2) fix any architectural gap the tests expose, (3) add a propagation test proving every affected code path is covered."
+      - "Test debt is never just test debt — it's hidden architectural debt. Every untested code path has an unknown architectural liability."
+    sovereignty_impact: >
+      Every untested code path is a sovereignty gap. The triple-response (test +
+      architecture + propagation) ensures not just that the current bug is fixed,
+      but that the pattern cannot recur in future provider implementations.
+    confidence: 10/10
+    heritage_tags:
+      - "[id-soft: doom-1993] BSP Culling — systematic gap detection before rendering"
+      - "[id-soft: quake3-1999] Hard-Boundary Struct — architectural boundaries must be tested at every layer"
+
+  - id: proposal-20260708-007
+    title: "The Hivemind Council Integration Law — Multi-model audit chains are an architectural pattern, not an event"
+    l1_narrative: >
+      The HMC Boundary Hardening audit chain ran through 8 models: Sonnet 4.6 → Opus →
+      Researcher → Ma'at/Lilith → Kali → Starchild → Nemotron 3 Ultra → Nemotron 3 Super.
+      Each model uncovered findings the previous missed. Sonnet found 5; Opus added 9
+      more (14 total); Nemotron 3 Ultra found 14 gaps and 5 contradictions. The chain
+      was more effective than any single model review — but each handoff had latency cost.
+      The pattern was formalized as the Iterative Refinement Strategy in
+      `docs/strategy/ITERATIVE_REFINEMENT_STRATEGY.md`.
+    l2_insights:
+      - "No single model catches everything — each model's blind spots are complemented by another model's strengths."
+      - "Sonnet (Verifier) catches implementation gaps. Opus (Deepening) catches strategic gaps. Researcher catches factual errors. Nemotron catches structural contradictions."
+      - "The chain has diminishing returns: Sonnet→Opus caught 14 findings. Researcher→Ma'at/Lilith→Kali caught corrections. Starchild caught a philosophical error. Nemotron caught typos."
+      - "The cost of the full chain is ~3-5 minutes per model * 8 models = ~30 minutes total for comprehensive coverage."
+    l3_universal_principles:
+      - "A multi-model audit chain is more effective than any single model review, but must be formalized as an architectural pattern (not improvised per session) to control latency cost."
+      - "The first model in the chain catches low-hanging fruit. The last models catch typos and contradictions. Both are valuable — but their value is different and should be scoped accordingly."
+      - "An audit chain is a pipeline, not a committee. Each stage processes the previous stage's output with a narrower, deeper focus."
+    sovereignty_impact: >
+      The HMC council pattern ensures that sovereign decisions (D205 key sharding,
+      Anti-Chain correction, M21 gap closure) are verified by multiple independent
+      perspectives before becoming permanent. This prevents any single model's blind
+      spot from becoming a permanent architectural debt.
+    confidence: 10/10
+    heritage_tags:
+      - "[id-soft: quake-1996] Thinker Chain — throttled multi-stage processing pipeline"
+      - "[id-soft: doom-1993] BSP Culling — systematic elimination of branches at each stage"

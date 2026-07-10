@@ -708,10 +708,8 @@ mandate-gates: ## 🛡️  Run Sovereign Mandate gate checks (M3, M6, M7, M10, M
 	$(PYTHON) scripts/mandate_gates.py
 
 
-sovereignty: ## 🏛️ Show local vs cloud inference ratio
-	@echo "[1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m"
-	@echo " 🏛️ Sovereignty Report — Local/Cloud Inference Ratio"
-	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━[0m"
+sovereignty: ## 🏛️ Show local vs cloud inference ratio (D203)
+	$(PYTHON) scripts/sovereignty_report.py
 
 verify-model-spelling: ## 🤖 Verify model name consistency (D119)
 	PYTHONPATH=src $(PYTHON) scripts/verify_model_spelling.py
