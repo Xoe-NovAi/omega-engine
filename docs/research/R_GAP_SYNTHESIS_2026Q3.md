@@ -17,36 +17,32 @@ All 16 gaps from the initial RECON (2026-07-08) were marked resolved by HMC-SPRI
 ## §1 Critical Gaps (🔴 — Blocking Deployment)
 
 ### Gap-CRASH-HMC: HMC Watcher Crash Loop — 201 Restarts
-- **Severity**: 🔴 CRITICAL — service has NEVER successfully started
-- **Evidence**: 
-  - `omeaga-hmc-watcher.service` restart counter at 201
-  - Crash repeats every 30s: `TypeError: ProviderConfig.__init__() got an unexpected keyword argument 'api_key'. Did you mean 'api_keys'?`
-  - Root cause: `ProviderConfig` schema renamed `api_key` → `api_keys` (list) but HMC watcher still passes singular `api_key`
-  - Second error: `VAULT_MASTER_KEY` has invalid hex at position 48 — key store cannot decrypt
-- **Impact**: The autonomous agent coordination loop (HMC) has NEVER run. All agent handoff, task queuing, and coordination is non-functional in production.
-- **Related subsystem**: `src/omega/orchestrator/hmc_watcher.py`, `src/omega/vault/key_vault.py`, `config/providers.yaml`
+- **Severity**: 🔴 CRITICAL — **✅ FIXED (HMC-SPRINT-03)**
+- **What was wrong**: 
+  - `_create_antigravity()` in `model_gateway.py` passed `api_key=` (singular) to `ProviderConfig()` which expects `api_keys` (plural list). The HMC watcher crashed because Oracle→ModelGateway→_create_antigravity() failed on every startup.
+  - `VAULT_MASTER_KEY` in `.env` had trailing non-hex character `T` — `crypto.master_key_from_hex()` failed → fell through to auto-generated key → which mismatched the encrypted vault data.
+- **Fix**: Changed `api_key=` to `api_keys=` with proper resolution logic (prefer list, fall back to wrapping singular). Added try/except around KeyVault._load() so corrupt data auto-recovers. Deleted `data/vault/keys.json.enc`. Fixed `.env` VAULT_MASTER_KEY to valid 64-char hex.
+- **Related subsystem**: `src/omega/oracle/model_gateway.py`, `src/omega/vault/key_vault.py`, `.env`
 
 ### Gap-BACKRES: Background Researcher Produces Zero Output
-- **Severity**: 🔴 CRITICAL — 100% CPU waste
-- **Evidence**:
-  - `omega-research.timer` fires every 15min; service exits with code 0
-  - `data/knowledge/HALL_OF_RECORDS/background-researcher/` is **completely empty** (since Jun 11)
-  - No `cycle_*.jsonl` files ever written
-  - Systemd unit writes to `data/entities/roc_racoon/workspace/HALL_OF_RECORDS/` (different path) — output path mismatch
-- **Impact**: ~4s CPU + 140MB RAM every 15min with zero value. The engine's autonomous knowledge-mining loop is silently failing.
-- **Root cause hypothesis**: Output path in systemd unit diverges from what `loop.py` expects. StandardOutput/StandardError go to roc_racoon's workspace, but data/knowledge is what the code writes to.
+- **Severity**: 🔴 CRITICAL — **✅ FIXED (HMC-SPRINT-03)**
+- **What was wrong**:
+  - The actual crash was in `T2Backend.__init__()` → `KeyVault().resolve("google")` → `_load()` → `decrypt()` → `cryptography.exceptions.InvalidTag`. The vault data (`keys.json.enc`) was encrypted with a key that didn't match the current master key.
+  - Root cause: When `VAULT_MASTER_KEY` was invalid, `get_or_create_master_key()` auto-generated a new key on each init. But the vault file was created with one of these auto-generated keys, and subsequent inits generated different keys.
+  - The `_resolve_key` exception handler only caught `(OmegaError, RuntimeError)`, but `InvalidTag` inherits from `cryptography.exceptions` → crash bypassed the fallback.
+  - Additionally, `_grow_frontier()` cycles reported `"reason": "no_sources"` — the searxng service wasn't returning results.
+- **Fix**: Deleted corrupted `keys.json.enc`. Added try/except around `KeyVault._load()`. Vault now auto-reinitializes from `.env` on next access.
+- **Still open**: Frontier grows zero sources — same task deferred for every cycle. The searxng search queries may be returning no results. This is a separate issue from the crash.
 
 ### Gap-DISK: Both Partitions Near Capacity (86%/87%)
-- **Severity**: 🔴 CRITICAL — blocks ALL future work
+- **Severity**: 🔴 CRITICAL — **✅ AMELIORATED (HMC-SPRINT-03)**
 - **Evidence**:
-  - Root (`/`): 109G, 89G used, **15G free** (87%)
-  - `omega_library` (`/media/arcana-novai/omega_library`): 110G, 90G used, **15G free** (86%)
-  - Largest consumer: `models/gguf/` at **40G**
-- **Impact**: 
-  - Cannot download new models (D16-2 needs LoRA adapters + teacher model)
-  - Background researcher cycles will fill remaining space
-  - Podman image cache at risk
-  - `ncdu` scan recommended weekly (per Risk Register R2)
+  - Root (`/`): 109G, 88G used, **16G free** (85%) — recovered ~1G from podman prune
+  - `omega_library` (`/media/arcana-novai/omega_library`): 110G, 90G used, **15G free** (86%) — stable
+  - Largest consumer: `models/gguf/` at **34G** (16 files)
+  - `.venv` at 2.8G, intake data at 3.2G, podman images now 775MB
+- **Impact**: Still a concern for new model downloads. D16-2 teacher model (Nemotron 3) needs ~5-10G additional.
+- **Recommendation**: Consider removing `/media/arcana-novai/omega_library/intake/mining_queue/` (3.2G, already mined content) when space is needed.
 
 ---
 

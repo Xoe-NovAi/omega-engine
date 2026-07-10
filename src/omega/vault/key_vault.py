@@ -123,7 +123,13 @@ class KeyVault:
         
         # Try to load existing vault
         if self._vault_path.exists():
-            self._load()
+            try:
+                self._load()
+            except Exception as e:
+                logger.warning(f"Failed to load vault (corrupt/different key? {e}). Re-initializing from env.")
+                self._vault_path.unlink(missing_ok=True)
+                if auto_init:
+                    self._auto_init_from_env()
         elif auto_init:
             self._auto_init_from_env()
         

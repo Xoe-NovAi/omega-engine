@@ -17,6 +17,7 @@
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 import httpx
+from pathlib import Path
 from omega.errors import (
     OmegaError,
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
@@ -35,6 +36,33 @@ from enum import Enum
 from typing import Any, Dict, List, Optional
 
 logger = logging.getLogger(__name__)
+
+# ── MetricsDB singleton (D203 — sovereignty ratio tracking) ────────
+_metrics_db = None
+
+def _record_perf(provider: str, model: str, latency_ms: float, tokens: int, is_cloud: bool = False) -> None:
+    """Record a performance entry to MetricsDB for sovereignty tracking.
+
+    Lazily initializes the MetricsDB singleton on first call.
+    Swallows all errors to avoid disrupting inference.
+    """
+    global _metrics_db
+    try:
+        if _metrics_db is None:
+            from omega.observability.metrics_db import MetricsDB
+            _metrics_db = MetricsDB(Path("data/observability/metrics.db"))
+            _metrics_db.initialize()
+        _metrics_db.record_performance(
+            latency_ms=latency_ms,
+            provider=provider,
+            model_used=model,
+            prompt_tokens=tokens,
+            completion_tokens=tokens // 2,
+            is_cloud=is_cloud,
+            trace_id=f"trc_{int(time.monotonic() * 1000000):012d}",
+        )
+    except Exception:
+        pass  # MetricsDB recording is best-effort
 
 
 class ProviderHealth(Enum):
@@ -195,6 +223,11 @@ class RemoteProvider(ABC):
                     f"Provider {self.name} responded in {elapsed_ms:.0f}ms "
                     f"(attempt {attempt + 1})"
                 )
+                # Record performance to MetricsDB (D203 — sovereignty tracking)
+                try:
+                    _record_perf(self.name, model_name, elapsed_ms, est_tokens, is_cloud=self._is_cloud_name())
+                except Exception as perf_err:
+                    logger.debug(f"MetricsDB recording skipped: {perf_err}")
                 return result
         
             except (OmegaError, RuntimeError, OSError, httpx.HTTPError) as e:
@@ -277,6 +310,11 @@ class RemoteProvider(ABC):
             raise RuntimeError(
                 f"Provider {model_name} produced repetitive loop (identical tail detected)"
             )
+
+    def _is_cloud_name(self) -> bool:
+        """Determine if this provider is cloud-based by name heuristic."""
+        cloud_prefixes = {"google", "openai", "anthropic", "openrouter", "antigravity", "opencode", "copilot"}
+        return any(self.name.lower().startswith(p) for p in cloud_prefixes)
 
     # ── Subclass interface ────────────────────────────────────────────
 

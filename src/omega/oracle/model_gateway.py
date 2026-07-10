@@ -285,12 +285,19 @@ class ModelGateway:
         Uses the official google.genai.Client with a custom HttpOptions
         base_url pointing to the Antigravity API.  Sticky account routing
         only (D205) — no round-robin.
+
+        [S3 B5 / D205] Supports both legacy single `api_key` and new
+        `api_keys` list (8-account Active-Passive sharding).
         """
-        extra = {k: v for k, v in cfg.items() if k not in ("provider", "priority", "api_key", "base_url")}
+        extra = {k: v for k, v in cfg.items() if k not in ("provider", "priority", "api_key", "api_keys", "base_url")}
+        # Resolve key list: prefer api_keys list, fall back to wrapping api_key
+        api_keys = cfg.get("api_keys", [])
+        if not api_keys and cfg.get("api_key"):
+            api_keys = [cfg["api_key"]]
         return AntigravityProvider(ProviderConfig(
             name=name,
             priority=cfg.get("priority", 0),
-            api_key=cfg.get("api_key"),
+            api_keys=api_keys,
             base_url=cfg.get("base_url", "https://api.antigravity.ai/v1"),
             extra=extra,
         ))
