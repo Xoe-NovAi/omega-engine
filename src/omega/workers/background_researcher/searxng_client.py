@@ -34,6 +34,14 @@ class SearXNGClient:
     def __init__(self, base_url: str = SEARXNG_URL, timeout: float = TIMEOUT):
         self.base_url = base_url
         self.timeout = timeout
+        self._client: Optional[httpx.AsyncClient] = None
+
+    async def _get_client(self) -> httpx.AsyncClient:
+        """Get or create the shared AsyncClient connection pool."""
+        if self._client is None:
+            limits = httpx.Limits(max_keepalive_connections=5, max_connections=10)
+            self._client = httpx.AsyncClient(timeout=self.timeout, limits=limits)
+        return self._client
 
     async def search(
         self,
@@ -54,26 +62,26 @@ class SearXNGClient:
             engines = DEFAULT_ENGINES
 
         try:
-            async with httpx.AsyncClient(timeout=self.timeout) as client:
-                # Build form data — SearXNG expects form-encoded, not JSON
-                form_data = {
-                    "q": query,
-                    "format": "json",
-                    "safesearch": str(safesearch),
-                    "pageno": str(pageno),
-                    "language": "auto",
-                    "categories": "general",
-                }
-                if engines:
-                    form_data["engines"] = ",".join(engines)
-                resp = await client.post(
-                    f"{self.base_url}/search",
-                    data=form_data,  # form-encoded, NOT json!
-                )
-                resp.raise_for_status()
-                data = resp.json()
-                results = data.get("results", [])
-                return results[:max_results]
+            client = await self._get_client()
+            # Build form data — SearXNG expects form-encoded, not JSON
+            form_data = {
+                "q": query,
+                "format": "json",
+                "safesearch": str(safesearch),
+                "pageno": str(pageno),
+                "language": "auto",
+                "categories": "general",
+            }
+            if engines:
+                form_data["engines"] = ",".join(engines)
+            resp = await client.post(
+                f"{self.base_url}/search",
+                data=form_data,  # form-encoded, NOT json!
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            results = data.get("results", [])
+            return results[:max_results]
 
         except httpx.RequestError as e:
             logger.warning(f"SearXNG request failed: {e}")
@@ -98,9 +106,9 @@ class SearXNGClient:
     async def health(self) -> bool:
         """Check if SearXNG is available."""
         try:
-            async with httpx.AsyncClient(timeout=5.0) as client:
-                resp = await client.get(f"{self.base_url}/healthz")
-                return resp.status_code == 200
+            client = await self._get_client()
+            resp = await client.get(f"{self.base_url}/healthz")
+            return resp.status_code == 200
         except Exception as e:
             # M9 carve-out: health probe may catch all to prevent crash loops
             # [id-soft: doom-1993] WAD System — graceful degradation on search failure
