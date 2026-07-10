@@ -678,3 +678,70 @@ def test_audience_calibrator_detect_profile_returns_string():
         f"Expected str, got {type(profile).__name__}: {profile!r}"
     )
     assert len(profile) > 0, "Profile name must not be empty"
+
+
+# ══════════════════════════════════════════════════════════════════════
+# HMC-SPRINT-04: Observability Contract Tests (25-28)
+# ══════════════════════════════════════════════════════════════════════
+
+# ── Test 25: BudgetGate estimate_cost returns float ──
+
+def test_budget_gate_estimate_cost_returns_float():
+    """M21: Contract test — BudgetGate.estimate_cost() returns float."""
+    from omega.observability import BudgetGate
+
+    gate = BudgetGate()
+    cost = gate.estimate_cost("google", 1000, 500)
+    assert isinstance(cost, float), (
+        f"Expected float, got {type(cost).__name__}: {cost!r}"
+    )
+    assert cost >= 0.0, f"Cost must be non-negative, got {cost}"
+
+
+# ── Test 26: BudgetGate check_budget returns tuple[bool, str] ──
+
+def test_budget_gate_check_budget_returns_bool_str_tuple():
+    """M21: Contract test — BudgetGate.check_budget() returns (bool, str)."""
+    from omega.observability import BudgetGate
+
+    gate = BudgetGate()
+    result = gate.check_budget("google", 1000, 500)
+    assert isinstance(result, tuple), (
+        f"Expected tuple, got {type(result).__name__}: {result!r}"
+    )
+    assert len(result) == 2, f"Expected 2-tuple, got {len(result)}-tuple"
+    assert isinstance(result[0], bool), (
+        f"Expected bool as first element, got {type(result[0]).__name__}"
+    )
+    assert isinstance(result[1], str), (
+        f"Expected str as second element, got {type(result[1]).__name__}"
+    )
+
+
+# ── Test 27: BudgetGate get_status returns dict with expected keys ──
+
+def test_budget_gate_get_status_returns_dict():
+    """M21: Contract test — BudgetGate.get_status() returns dict with budget keys."""
+    from omega.observability import BudgetGate
+
+    gate = BudgetGate()
+    status = gate.get_status()
+    assert isinstance(status, dict), (
+        f"Expected dict, got {type(status).__name__}: {status!r}"
+    )
+    required_keys = {"daily_budget_usd", "current_spend_usd", "remaining_usd", "utilization_pct"}
+    missing = required_keys - set(status.keys())
+    assert not missing, f"Missing keys: {missing}"
+
+
+# ── Test 28: RegressionWatcher has start/stop interface ──
+
+def test_regression_watcher_has_start_stop():
+    """M21: Contract test — RegressionWatcher has start/stop async interface."""
+    from omega.observability.regression_watcher import RegressionWatcher
+    import inspect
+
+    assert hasattr(RegressionWatcher, "start"), "RegressionWatcher must have start() method"
+    assert hasattr(RegressionWatcher, "stop"), "RegressionWatcher must have stop() method"
+    assert inspect.iscoroutinefunction(RegressionWatcher.start), "start() must be async"
+    assert inspect.iscoroutinefunction(RegressionWatcher.stop), "stop() must be async"

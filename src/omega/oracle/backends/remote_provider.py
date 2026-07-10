@@ -65,6 +65,53 @@ def _record_perf(provider: str, model: str, latency_ms: float, tokens: int, is_c
         pass  # MetricsDB recording is best-effort
 
 
+# ── BudgetGate integration (SPRINT-04 — cloud cost enforcement) ───
+_budget_gate = None
+
+def _check_cloud_budget(provider: str, est_tokens: int) -> bool:
+    """Check if cloud request would exceed daily budget.
+
+    Returns True if allowed, False if blocked.
+    Best-effort — always allows if BudgetGate unavailable.
+    [id-soft: quake-1996] cvar — lazy singleton pattern for budget gate.
+    """
+    global _budget_gate
+    try:
+        if _budget_gate is None:
+            from omega.observability import get_engine
+            _budget_gate = get_engine().budget_gate
+        if _budget_gate is None:
+            return True
+        # Estimate: split tokens 70/30 prompt/completion
+        est_prompt = int(est_tokens * 0.7)
+        est_completion = int(est_tokens * 0.3)
+        allowed, reason = _budget_gate.check_budget(provider, est_prompt, est_completion)
+        if not allowed:
+            logger.warning(f"BudgetGate BLOCKED {provider}: {reason}")
+        return allowed
+    except Exception:
+        return True
+
+
+def _record_cloud_spend(provider: str, est_tokens: int, trace_id: Optional[str] = None) -> float:
+    """Record cloud spend after successful inference. Returns cost in USD.
+
+    Best-effort — returns 0.0 if BudgetGate unavailable.
+    """
+    global _budget_gate
+    try:
+        if _budget_gate is None:
+            from omega.observability import get_engine
+            _budget_gate = get_engine().budget_gate
+        if _budget_gate is None:
+            return 0.0
+        est_prompt = int(est_tokens * 0.7)
+        est_completion = int(est_tokens * 0.3)
+        return _budget_gate.record_spend(provider, est_prompt, est_completion, trace_id)
+    except Exception:
+        return 0.0
+
+
 class ProviderHealth(Enum):
     """Health states for a remote provider."""
     HEALTHY = "healthy"
@@ -187,12 +234,18 @@ class RemoteProvider(ABC):
             logger.debug(f"Provider {self.name} unavailable (health={self.health.value})")
             return None
         
-        # Budget check
+        # Budget check (per-provider token limit)
         if self.config.daily_token_budget is not None:
             if self.metrics.total_tokens_used >= self.config.daily_token_budget:
                 logger.warning(f"Provider {self.name} daily budget exhausted ({self.metrics.total_tokens_used} tokens)")
                 return None
-        
+
+        # BudgetGate cloud cost check (SPRINT-04)
+        if self._is_cloud_name():
+            est_tokens = (len(system_prompt) + len(user_query)) // 4
+            if not _check_cloud_budget(self.name, est_tokens):
+                return None
+
         # Retry loop with exponential backoff
         last_error = None
         for attempt in range(self.config.max_retries):
@@ -228,6 +281,12 @@ class RemoteProvider(ABC):
                     _record_perf(self.name, model_name, elapsed_ms, est_tokens, is_cloud=self._is_cloud_name())
                 except Exception as perf_err:
                     logger.debug(f"MetricsDB recording skipped: {perf_err}")
+                # Record cloud spend to BudgetGate (SPRINT-04)
+                if self._is_cloud_name():
+                    try:
+                        _record_cloud_spend(self.name, est_tokens, trace_id)
+                    except Exception as spend_err:
+                        logger.debug(f"BudgetGate spend recording skipped: {spend_err}")
                 return result
         
             except (OmegaError, RuntimeError, OSError, httpx.HTTPError) as e:
