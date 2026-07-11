@@ -1,11 +1,12 @@
 [Unit]
-Description=Omega Background Researcher — 20-Minute Research Cycle
+Description=Omega Background Researcher — Boot Trigger
 Documentation=https://github.com/Xoe-NovAi/omega-engine
 
 [Timer]
+# The researcher now runs as a continuous daemon (Type=simple --daemon).
+# The timer only needs to launch it once at boot; the daemon self-sustains
+# via its inner watchdog and systemd Restart=on-failure.
 OnBootSec=5min
-OnUnitActiveSec=20min
-RandomizedDelaySec=3min
 Persistent=true
 AccuracySec=1min
 

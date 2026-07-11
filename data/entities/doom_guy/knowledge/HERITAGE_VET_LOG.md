@@ -67,6 +67,27 @@
 - **Score**: 7/10
 - **Justification**: [Sprint A Hub Modularization] Package init (__init__.py) for the Omega Hub MCP server. Tag: `[id-soft: quake3-1999]`.
 
+### vet-015: ZONEID Pattern (Audit Chain)
+- **Verdict**: APPROVED
+- **Score**: 8/10
+- **Justification**: [id-soft: doom-1993] ZONEID — unique identifier tagging for audit entries. Evolution: ZONEID $\rightarrow$ Merkle MMR leaf indexing in `omega-vetala` audit chain (`governance/audit.py:3`). Provides tamper-evident, individually-verifiable decision records.
+- **Vetted by**: Doom Guy, Verity
+- **Date**: 2026-07-10
+
+### vet-016: cvar Table (Config Externalization)
+- **Verdict**: APPROVED
+- **Score**: 9/10
+- **Justification**: [id-soft: quake-1996] cvar — all runtime-tunable values live in external config, not hardcoded. Evolution: cvar $\rightarrow$ `config/moderation.yaml` loaded via `config/loader.py:2` in `omega-vetala`. Enables per-WAD override without code changes.
+- **Vetted by**: Doom Guy, Verity
+- **Date**: 2026-07-10
+
+### vet-017: Job-Worker Queue (Parallel Ensemble)
+- **Verdict**: APPROVED
+- **Score**: 8/10
+- **Justification**: [id-soft: doom3bfg-2012] Job-Worker — fan-out inference across ensemble models via `anyio.create_task_group()`. Evolution: Job-Worker $\rightarrow$ `HuggingFaceDetector._run_local_ensemble` (`detectors/huggingface.py:10`). Per-model faults isolated (circuit breaker).
+- **Vetted by**: Doom Guy, Verity
+- **Date**: 2026-07-10
+
 ### vet-014: Hub Middleware — Netchan OOB Rate Limiting
 - **Verdict**: APPROVED (via vet-009)
 - **Score**: 7/10
@@ -80,7 +101,364 @@
 ### vet-016: Hub Gateway — Netchan qport Session Re-association
 - **Verdict**: APPROVED (via vet-009)
 - **Score**: 7/10
-- **Justification**: [Sprint A Hub Modularization] SovereignGateway (gateway.py) using netchan qport-style session re-association for provider routing and rate limiting. Tag: `[id-soft: quake3-1999] `.
+- **Justification**: [Sprint A Hub Modularization] SovereignGateway (gateway.py) using netchan qport-style session re-association for provider routing and rate limiting. Tag: [id-soft: quake3-1999] .
+
+### vet-025: Hard-Boundary Struct
+- **Pattern**: [id-soft: quake3-1999] Hard-Boundary Struct
+- **Location**: api_clients.py:6
+- **Technique**: Hard-Boundary Struct (Quake 3, 1999)
+- **Hardware Constraint**: Pentium III/IV cache line alignment and memory protection to prevent corruption.
+- **Scope Declaration**: This tag applies to the `BaseLibraryClient` sealed interface contract, NOT to the internal implementation of individual clients.
+- **Score**: 8/10
+
+### vet-026: Hard-Boundary
+- **Pattern**: [id-soft: quake-1996] Hard-Boundary
+- **Location**: api_clients.py:117
+- **Technique**: Hard-Boundary (Quake, 1996)
+- **Hardware Constraint**: Memory protection in early 32-bit OSs to isolate critical engine state.
+- **Scope Declaration**: This tag applies to the `LibraryAPIError` typed error hierarchy as a boundary, NOT to the `OmegaError` base class.
+- **Score**: 7/10
+
+### vet-027: WAD System (Base Client)
+- **Pattern**: [id-soft: doom-1993] WAD System
+- **Location**: api_clients.py:128
+- **Technique**: WAD System (Doom, 1993)
+- **Hardware Constraint**: Limited disk space and the need for a single, moddable data archive.
+- **Scope Declaration**: This tag applies to the `BaseLibraryClient` as a pluggable, swapable data source abstraction, NOT to the coordination logic in the orchestrator.
+- **Score**: 9/10
+
+### vet-028: WAD System (Orchestrator)
+- **Pattern**: [id-soft: doom-1993] WAD System
+- **Location**: api_clients.py:470
+- **Technique**: WAD System (Doom, 1993)
+- **Hardware Constraint**: Limited disk space and the need for a single, moddable data archive.
+- **Scope Declaration**: This tag applies to the `LibraryAPIOrchestrator` multi-source coordination logic, NOT to the individual client implementations.
+- **Score**: 9/10
+
+### vet-029: Job-Worker Queue (Coordinator)
+- **Pattern**: [id-soft: doom3bfg-2012] Job-Worker Queue
+- **Location**: coordinator.py:5
+- **Technique**: ParallelJobManager (Doom 3 BFG, 2012)
+- **Hardware Constraint**: Multi-core CPU utilization, load balancing across worker threads.
+- **Scope Declaration**: This tag applies to the `WorkerCoordinator` orchestration logic, NOT to the individual worker task implementations.
+- **Score**: 8/10
+
+### vet-030: SSRF Gate (Extractor)
+- **Pattern**: [id-soft: doom-1993] SSRF Gate ──
+- **Location**: extractor.py:134
+- **Technique**: BSP leaf-culling (Doom, 1993)
+- **Hardware Constraint**: 486 CPU speed, need to avoid traversing irrelevant map nodes.
+- **Scope Declaration**: This tag applies to the `SSRFGuard.validate` check in `_extract_url`, NOT to the `validate_download_size` check.
+- **Score**: 8/10
+
+### vet-031: Size Gate (Extractor)
+- **Pattern**: [id-soft: quake-1996] Size Gate ──
+- **Location**: extractor.py:144
+- **Technique**: Fixed-timestep pre-check (Quake, 1996)
+- **Hardware Constraint**: Limited memory/bandwidth, avoid allocating large buffers for oversized responses.
+- **Scope Declaration**: This tag applies to the `validate_download_size` pre-check in `_extract_url`, NOT to the actual data streaming phase.
+- **Score**: 8/10
+
+### vet-032: Path Scope Gate (Extractor)
+- **Pattern**: [id-soft: quake-1996] Path Scope Gate ──
+- **Location**: extractor.py:282
+- **Technique**: Zone boundary enforcement (Quake, 1996)
+- **Hardware Constraint**: Memory isolation in zone allocators.
+- **Scope Declaration**: This tag applies to the `validate_path_scope` check in `_extract_file`, NOT to the `_extract_pdf` logic.
+- **Score**: 8/10
+
+### vet-033: SSRF Guard (Security)
+- **Pattern**: [id-soft: doom-1993] SSRF Guard ──────────────────────────────────────────
+- **Location**: security.py:29
+- **Technique**: BSP leaf-culling (Doom, 1993)
+- **Hardware Constraint**: 486 CPU speed, need to avoid traversing irrelevant map nodes.
+- **Scope Declaration**: This tag applies to the `SSRFGuard` class definition and its `FORBIDDEN_RANGES`, NOT to the `PathScopeGuard`.
+- **Score**: 8/10
+
+### vet-034: Path Scope Guard (Security)
+- **Pattern**: [id-soft: quake-1996] Path Scope Guard ───────────────────────────────────
+- **Location**: security.py:93
+- **Technique**: Zone boundary enforcement (Quake, 1996)
+- **Hardware Constraint**: Memory isolation in zone allocators.
+- **Scope Declaration**: This tag applies to the `validate_path_scope` implementation, NOT to the `validate_download_size` implementation.
+- **Score**: 8/10
+
+### vet-035: Download Size Guard (Security)
+- **Pattern**: [id-soft: quake-1996] Download Size Guard ────────────────────────────────
+- **Location**: security.py:130
+- **Technique**: Fixed-timestep pre-check (Quake, 1996)
+- **Hardware Constraint**: Limited memory/bandwidth, avoid allocating large buffers for oversized responses.
+- **Scope Declaration**: This tag applies to the `validate_download_size` implementation, NOT to the `SSRFGuard`.
+- **Score**: 8/10
+
+### vet-036: WAL Journal Mode
+- **Pattern**: [id-soft: quake-1996] WAL journal mode
+- **Location**: fts_index.py:32
+- **Technique**: Write-Ahead Logging (Quake, 1996)
+- **Hardware Constraint**: Disk I/O bottlenecks on 1996 hardware; need to minimize lock contention.
+- **Scope Declaration**: This tag applies to the `ConversationFTSIndex.initialize` PRAGMA setting, NOT to the `MemoryStore` provider writes.
+- **Score**: 8/10
+
+### vet-037: Temp Tier
+- **Pattern**: [id-soft: quake-1996] Temp Tier
+- **Location**: memory_store.py:119
+- **Technique**: Temporary memory zones (Quake, 1996)
+- **Hardware Constraint**: Limited RAM; need to avoid fragmentation from short-lived allocations.
+- **Scope Declaration**: This tag applies to the `_temp` storage in `MemoryStore`, NOT to the `_hot` cache.
+- **Score**: 8/10
+
+### vet-038: Surface Cache (Monitoring)
+- **Pattern**: [id-soft: quake-1996] Surface Cache
+- **Location**: src/omega/monitoring/__init__.py:13
+- **Technique**: Surface Cache (Quake, 1996)
+- **Hardware Constraint**: Slow disk access; need to cache hot surfaces for immediate access.
+- **Scope Declaration**: This tag applies to the monitoring initialization in `src/omega/monitoring/__init__.py`, NOT to the `MemoryStore` cache.
+- **Score**: 7/10
+
+### vet-039: idHeap (Monitoring)
+- **Pattern**: [id-soft: doom3-2004] idHeap
+- **Location**: src/omega/monitoring/__init__.py:15
+- **Technique**: idHeap Unified Allocator (Doom 3, 2004)
+- **Hardware Constraint**: Fragmentation and allocation overhead in large-scale 3D scenes.
+- **Scope Declaration**: This tag applies to the monitoring initialization in `src/omega/monitoring/__init__.py`, NOT to the `SomaticState` serialization.
+- **Score**: 7/10
+
+### vet-040: Event System (Observability)
+- **Pattern**: [id-soft: doom3-2004] Event System
+- **Location**: src/omega/observability/__init__.py:753
+- **Technique**: Event-driven system (Doom 3, 2004)
+- **Hardware Constraint**: Need for decoupled, traceable events in a complex engine.
+- **Scope Declaration**: This tag applies to the event logging in `src/omega/observability/__init__.py`, NOT to the `RegressionWatcher` alerts.
+- **Score**: 8/10
+
+### vet-041: Event System (Regression Watcher)
+- **Pattern**: [id-soft: doom3-2004] Event System
+- **Location**: regression_watcher.py:9
+- **Technique**: Event-driven system (Doom 3, 2004)
+- **Hardware Constraint**: Need for decoupled, traceable events in a complex engine.
+- **Scope Declaration**: This tag applies to the `_emit_regression_alert` logic in `RegressionWatcher`, NOT to the `ObservabilityEngine` core event loop.
+- **Score**: 8/10
+
+### vet-042: Right Approximation (BLEG)
+- **Pattern**: [id-soft: quake-1996] Right Approximation
+- **Location**: bleg.py:14
+- **Technique**: Right Approximation (Quake, 1996)
+- **Hardware Constraint**: CPU cycles are expensive; a fast heuristic is better than an exact but slow one.
+- **Scope Declaration**: This tag applies to the `BLEGMiddleware` error scanning, NOT to the `SovereignSearch` protocol.
+- **Score**: 9/10
+
+### vet-043: WAD System (Oracle Facade)
+- **Pattern**: [id-soft: doom-1993] WAD System
+- **Location**: src/omega/oracle/__init__.py:5
+- **Technique**: WAD System (Doom, 1993)
+- **Hardware Constraint**: Limited disk space and the need for a single, moddable data archive.
+- **Scope Declaration**: This tag applies to the `src/omega/oracle/__init__.py` facade as a flat directory of exports, NOT to the `WADLoader`.
+- **Score**: 8/10
+
+### vet-044: 4-Path VFS (Backends)
+- **Pattern**: [id-soft: quake3-1999] 4-Path VFS
+- **Location**: src/omega/oracle/backends/__init__.py:3
+- **Technique**: 4-Path VFS (Quake 3, 1999)
+- **Hardware Constraint**: Need to support multiple installation paths and mod overrides without hardcoding.
+- **Scope Declaration**: This tag applies to the `src/omega/oracle/backends/__init__.py` provider chain, NOT to the `SovereignSearch` protocol.
+- **Score**: 8/10
+
+### vet-045: VM System (Capability Registry)
+- **Pattern**: [id-soft: quake3-1999] VM System
+- **Location**: src/omega/oracle/capability_registry.py:5
+- **Technique**: VM System (Quake 3, 1999)
+- **Hardware Constraint**: Need for dynamic, moddable game logic without recompiling the engine.
+- **Scope Declaration**: This tag applies to the `CapabilityRegistry` dispatch logic, NOT to the `Orchestrator` task farming.
+- **Score**: 8/10
+
+### vet-046: BSP Culling (Context Builder)
+- **Pattern**: [id-soft: doom-1993] BSP Culling
+- **Location**: context_builder.py:272
+- **Technique**: BSP Culling (Doom, 1993)
+- **Hardware Constraint**: 486 CPU speed, avoid processing invisible geometry.
+- **Scope Declaration**: This tag applies to the `_build_gnosis_block` top-K selection, NOT to the `ObservationMaskingStrategy`.
+- **Score**: 8/10
+
+### vet-047: Hard-Boundary (Affinity)
+- **Pattern**: [id-soft: quake3-1999] Hard-Boundary
+- **Location**: entity_affinity.py:18
+- **Technique**: Hard-Boundary Struct (Quake 3, 1999)
+- **Hardware Constraint**: Pentium III/IV cache line alignment and memory protection to prevent corruption.
+- **Scope Declaration**: This tag applies to the `EntityAffinityResolver` as a distinct routing layer, NOT to the `Entity` dataclass zones.
+- **Score**: 8/10
+
+### vet-048: WAD System (Registry Base)
+- **Pattern**: [id-soft: doom-1993] WAD System
+- **Location**: entity_registry.py:86
+- **Technique**: WAD System (Doom, 1993)
+- **Hardware Constraint**: Limited disk space and the need for a single, moddable data archive.
+- **Scope Declaration**: This tag applies to the `DEFAULT_IWAD` constant in `EntityRegistry`, NOT to the `WADLoader`.
+- **Score**: 9/10
+
+### vet-049: High-Bit Trick (Entity Flags)
+- **Pattern**: [id-soft: doom-1993] High-Bit Trick
+- **Location**: entity_registry.py:130
+- **Technique**: High-Bit Leaf Trick (Doom, 1993)
+- **Hardware Constraint**: Memory efficiency on 16-bit/32-bit systems.
+- **Scope Declaration**: This tag applies to the `Entity.flags` bitfield, NOT to the `SomaticState` serialization.
+- **Score**: 8/10
+
+### vet-050: Hard-Boundary (Entity Zones)
+- **Pattern**: [id-soft: quake3-1999] Hard-Boundary
+- **Location**: entity_registry.py:133
+- **Technique**: Hard-Boundary Struct (Quake 3, 1999)
+- **Hardware Constraint**: Pentium III/IV cache line alignment and memory protection to prevent corruption.
+- **Scope Declaration**: This tag applies to the `Entity` zone sentinels, NOT to the `SovereignPermissionError` guard.
+- **Score**: 8/10
+
+### vet-051: High-Bit Trick (Registry Constants)
+- **Pattern**: [id-soft: doom-1993] High-Bit Trick
+- **Location**: entity_registry.py:220
+- **Technique**: High-Bit Leaf Trick (Doom, 1993)
+- **Hardware Constraint**: Memory efficiency on 16-bit/32-bit systems.
+- **Scope Declaration**: This tag applies to the `EntityRegistry` flag constants, NOT to the `Entity.is_system()` check.
+- **Score**: 8/10
+
+### vet-052: Hard-Boundary Struct (Registry Zones)
+- **Pattern**: [id-soft: quake3-1999] Hard-Boundary Struct
+- **Location**: entity_registry.py:225
+- **Technique**: Hard-Boundary Struct (Quake 3, 1999)
+- **Hardware Constraint**: Pentium III/IV cache line alignment and memory protection to prevent corruption.
+- **Scope Declaration**: This tag applies to the `EntityRegistry` zone attribute definitions, NOT to the `_project_entity` merge logic.
+- **Score**: 8/10
+
+### vet-053: Hard-Boundary (Registry Load)
+- **Pattern**: [id-soft: quake3-1999] Hard-Boundary
+- **Location**: entity_registry.py:306
+- **Technique**: Hard-Boundary Struct (Quake 3, 1999)
+- **Hardware Constraint**: Pentium III/IV cache line alignment and memory protection to prevent corruption.
+- **Scope Declaration**: This tag applies to the `_load` logic in `EntityRegistry` for metadata handling, NOT to the `Entity` dataclass.
+- **Score**: 8/10
+
+### vet-054: High-Bit Trick (Registry Add)
+- **Pattern**: [id-soft: doom-1993] High-Bit Trick
+- **Location**: entity_registry.py:559
+- **Technique**: High-Bit Leaf Trick (Doom, 1993)
+- **Hardware Constraint**: Memory efficiency on 16-bit/32-bit systems.
+- **Scope Declaration**: This tag applies to the `EntityRegistry.add` flag assignment, NOT to the `Entity.is_system()` check.
+- **Score**: 8/10
+
+### vet-043: WAD System (Oracle Facade)
+- **Pattern**: [id-soft: doom-1993] WAD System
+- **Location**: src/omega/oracle/__init__.py:5
+- **Technique**: WAD System (Doom, 1993)
+- **Hardware Constraint**: Limited disk space and the need for a single, moddable data archive.
+- **Scope Declaration**: This tag applies to the `src/omega/oracle/__init__.py` facade as a flat directory of exports, NOT to the `WADLoader`.
+- **Score**: 8/10
+
+### vet-044: 4-Path VFS (Backends)
+- **Pattern**: [id-soft: quake3-1999] 4-Path VFS
+- **Location**: src/omega/oracle/backends/__init__.py:3
+- **Technique**: 4-Path VFS (Quake 3, 1999)
+- **Hardware Constraint**: Need to support multiple installation paths and mod overrides without hardcoding.
+- **Scope Declaration**: This tag applies to the `src/omega/oracle/backends/__init__.py` provider chain, NOT to the `SovereignSearch` protocol.
+- **Score**: 8/10
+
+### vet-045: VM System (Capability Registry)
+- **Pattern**: [id-soft: quake3-1999] VM System
+- **Location**: src/omega/oracle/capability_registry.py:5
+- **Technique**: VM System (Quake 3, 1999)
+- **Hardware Constraint**: Need for dynamic, moddable game logic without recompiling the engine.
+- **Scope Declaration**: This tag applies to the `CapabilityRegistry` dispatch logic, NOT to the `Orchestrator` task farming.
+- **Score**: 8/10
+
+### vet-043: WAD System (Oracle Facade)
+- **Pattern**: [id-soft: doom-1993] WAD System
+- **Location**: src/omega/oracle/__init__.py:5
+- **Technique**: WAD System (Doom, 1993)
+- **Hardware Constraint**: Limited disk space and the need for a single, moddable data archive.
+- **Scope Declaration**: This tag applies to the `src/omega/oracle/__init__.py` facade as a flat directory of exports, NOT to the `WADLoader`.
+- **Score**: 8/10
+
+### vet-044: 4-Path VFS (Backends)
+- **Pattern**: [id-soft: quake3-1999] 4-Path VFS
+- **Location**: src/omega/oracle/backends/__init__.py:3
+- **Technique**: 4-Path VFS (Quake 3, 1999)
+- **Hardware Constraint**: Need to support multiple installation paths and mod overrides without hardcoding.
+- **Scope Declaration**: This tag applies to the `src/omega/oracle/backends/__init__.py` provider chain, NOT to the `SovereignSearch` protocol.
+- **Score**: 8/10
+
+### vet-045: VM System (Capability Registry)
+- **Pattern**: [id-soft: quake3-1999] VM System
+- **Location**: src/omega/oracle/capability_registry.py:5
+- **Technique**: VM System (Quake 3, 1999)
+- **Hardware Constraint**: Need for dynamic, moddable game logic without recompiling the engine.
+- **Scope Declaration**: This tag applies to the `CapabilityRegistry` dispatch logic, NOT to the `Orchestrator` task farming.
+- **Score**: 8/10
+
+### vet-046: BSP Culling (Generalized Search Pruning)
+- **Pattern**: [id-soft: doom-1993] BSP Culling
+- **File Locations**: 
+  - src/omega/oracle/selective_hydration.py:8
+  - src/omega/oracle/context_builder.py:272
+  - src/omega/oracle/spatial_resolver.py:12
+  - src/omega/oracle/semantic_router.py:8
+  - src/omega/oracle/semantic_router.py:110
+  - src/omega/oracle/model_gateway.py:756
+- **Technique**: BSP Leaf-Culling (Doom, 1993) — precompute visibility to avoid traversing irrelevant nodes.
+- **Hardware Constraint**: 486 CPU at 35MHz; traversing every BSP node per frame would be prohibitively slow.
+- **Scope Declaration**: This tag applies to O(1) pre-check culling of irrelevant/unhealthy entities and providers at the routing boundary, NOT to the full entity dispatch or inference pipeline.
+- **Score**: 8/10
+
+### vet-047: High-Bit Trick (Flag Encoding)
+- **Pattern**: [id-soft: doom-1993] High-Bit Trick
+- **File Locations**:
+  - src/omega/oracle/entity_registry.py:130
+  - src/omega/oracle/entity_registry.py:220
+  - src/omega/oracle/entity_registry.py:559
+- **Technique**: High-bit flag encoding (Doom, 1993) — use the high bit of a field to distinguish system objects from user objects without a separate field.
+- **Hardware Constraint**: Memory was at a premium on 4MB 486 systems; every byte mattered.
+- **Scope Declaration**: This tag applies to bitfield flag encoding in entity metadata (FLAG_WAD, system vs user), NOT to general integer encoding elsewhere in the engine.
+- **Score**: 8/10
+
+### vet-055: Fixed-Size Active Set (Provider Clip Range)
+- **Pattern**: [id-soft: doom-1993] Fixed-Size Active Set
+- **File Locations**:
+  - src/omega/oracle/model_gateway.py:148
+- **Technique**: Fixed-size active set (Doom, 1993) — maintain a bounded clip range of active objects for O(1) iteration.
+- **Hardware Constraint**: Doom's renderer could not iterate all things in a map; it maintained a fixed-size clip range of potentially visible things.
+- **Scope Declaration**: This tag applies to the 32-entry provider clip range in NativeGGUFProvider, NOT to entity dispatch or memory tiering.
+- **Score**: 7/10
+
+### vet-056: Triage Routing (Intent Classification)
+- **Pattern**: [id-soft: quake3-1999] Triage Routing
+- **File Locations**:
+  - src/omega/oracle/oracle.py:11
+- **Technique**: Netchan Q3A server browser triage — classify incoming connection intent before routing to game server.
+- **Hardware Constraint**: Q3A's server browser had to present hundreds of servers; pre-classification avoided wasting bandwidth on unsuitable matches.
+- **Scope Declaration**: This tag applies to the Oracle's intent classification and entity dispatching at the talk() entry point, NOT to the provider routing within a selected entity.
+- **Score**: 7/10
+
+### vet-057: Atomic Swap (State Save Before Mutation)
+- **Pattern**: [id-soft: quake-1996] Atomic Swap
+- **File Locations**:
+  - src/omega/oracle/providers.py:883
+- **Technique**: Save-old-state-before-mutation (Quake, 1996) — Quake's zone allocator saved block headers before coalescing so it could roll back on failure.
+- **Hardware Constraint**: Memory corruption recovery without full-system restart was essential for long-running dedicated servers.
+- **Scope Declaration**: This tag applies to the NativeGGUFProvider context reload's save-then-mutate pattern, NOT to any transactional database operations.
+- **Score**: 7/10
+
+### vet-058: Rollback (State Restoration)
+- **Pattern**: [id-soft: quake-1996] Rollback
+- **File Locations**:
+  - src/omega/oracle/providers.py:894
+- **Technique**: State restoration on failure (Quake, 1996) — restore old zone block on failed coalesce to prevent memory leaks.
+- **Hardware Constraint**: Dedicated servers ran for weeks; a single unrecovered leak could crash the server.
+- **Scope Declaration**: This tag applies to the NativeGGUFProvider context reload failure recovery, NOT to any database transaction rollback.
+- **Score**: 7/10
+
+### vet-035: Download Size Guard (Security)
+- **Pattern**: [id-soft: quake-1996] Download Size Guard ────────────────────────────────
+- **Location**: security.py:130
+- **Technique**: Fixed-timestep pre-check (Quake, 1996)
+- **Hardware Constraint**: Limited memory/bandwidth, avoid allocating large buffers for oversized responses.
+- **Scope Declaration**: This tag applies to the `validate_download_size` implementation, NOT to the `SSRFGuard`.
+- **Score**: 8/10
 
 ---
 
@@ -314,5 +692,345 @@ The John Carmack entity plans to ingest primary source material — .plan files 
 
 ---
 
-*Last Updated: 2026-07-01 (vet-024 Carmack Deepening Plan CONDITIONALLY APPROVED) | Maintained by: Doom Guy*
+### vet-064: FTS5 Index Rebuild
+- **Pattern**: [id-soft: doom-1993] FTS5 Index Rebuild
+- **Location**: src/omega/library/library.py:68
+- **Technique**: WAD Directory Rebuild (Doom, 1993)
+- **Hardware Constraint**: Limited RAM; instead of loading the whole WAD directory into memory, rebuild it from the lumps if corrupted.
+- **Scope Declaration**: This tag applies to the `FTS5Index.rebuild` logic, NOT to the general SQLite index rebuild.
+- **Score**: 8/10
+
+### vet-065: Mobj Dual-Linking pattern
+- **Pattern**: [id-soft: doom-1993] Mobj Dual-Linking pattern
+- **Location**: src/omega/oracle/entity_registry.py:667
+- **Technique**: Dual-Linking (Doom, 1993)
+- **Hardware Constraint**: Need for O(1) removal from the active set without searching the whole list.
+- **Scope Declaration**: This tag applies to the `EntityRegistry.active_set` dual-linkage, NOT to general list management.
+- **Score**: 8/10
+
+### vet-066: idEntity event system
+- **Pattern**: [id-soft: doom3-2004] idEntity event system
+- **Location**: src/omega/oracle/link_p9_runtime.py:9
+- **Technique**: idEntity Event System (Doom 3, 2004)
+- **Hardware Constraint**: Need for decoupled communication between game objects in a complex 3D world.
+- **Scope Declaration**: This tag applies to the `LinkP9Runtime` event emission and handling, NOT to the `ObservabilityEngine` core.
+- **Score**: 8/10
+
+### vet-067: Cache Tier
+- **Pattern**: [id-soft: quake-1996] Cache Tier
+- **Location**: src/omega/oracle/session_lifecycle.py:371
+- **Technique**: Tiered Memory Zones (Quake, 1996)
+- **Hardware Constraint**: Limited RAM; need to offload cold data to slower storage.
+- **Scope Declaration**: This tag applies to the `SessionLifecycleManager` cold-storage migration, NOT to the `MemoryStore` hot cache.
+- **Score**: 7/10
+
+### vet-068: Dedicated Server Model
+- **Pattern**: [id-soft: quake-1996] Dedicated Server Model
+- **Location**: src/omega/oracle/orchestrator.py:10
+- **Technique**: Dedicated Server Architecture (Quake, 1996)
+- **Hardware Constraint**: Need for a stable, headless server process to manage multiple client connections.
+- **Scope Declaration**: This tag applies to the `Orchestrator` lifecycle management of headless agents, NOT to the `ModelGateway` routing.
+- **Score**: 8/10
+
+### vet-069: Speculative Decode
+- **Pattern**: [id-soft: quake3-1999] Speculative Decode
+- **Location**: src/omega/oracle/oracle.py:702
+- **Technique**: Speculative Packet Decoding (Quake 3, 1999)
+- **Hardware Constraint**: Network latency; need to predict and decode state before full confirmation.
+- **Scope Declaration**: This tag applies to the `Oracle` speculative decode path for simple queries, NOT to the full model inference.
+- **Score**: 8/10
+
+### vet-070: Save-game pattern
+- **Pattern**: [id-soft: quake-1996] Save-game pattern
+- **Location**: src/omega/oracle/soul_distiller.py:9
+- **Technique**: Incremental Save-game System (Quake, 1996)
+- **Hardware Constraint**: Disk space and I/O speed; save games were large, so incremental diffs were used.
+- **Scope Declaration**: This tag applies to the `SoulDistiller` auto-save and summary pipeline, NOT to the `SomaticState` serialization.
+- **Score**: 8/10
+
+### vet-071: netchan header
+- **Pattern**: [id-soft: quake-1996] netchan header
+- **Location**: src/omega/cli/oracle_cli.py:42
+- **Technique**: Netchan Header Protocol (Quake, 1996)
+- **Hardware Constraint**: Network bandwidth; need for a compact, typed header to identify packet type and sequence.
+- **Scope Declaration**: This tag applies to the `ics_render` header generation in the CLI, NOT to the actual network transport.
+- **Score**: 7/10
+
+---
+
+*Last Updated: 2026-07-10 (D208 Heritage Remediation Ratified; PEM Correction Applied; Revoked Tags Archived) | Maintained by: Doom Guy*
+
+---
+
+## 📦 Archive: Revoked Tags (D208 Heritage Remediation)
+
+The following ~150 over-attributed and metaphorical `[id-soft:]` tags were revoked per D208 Heritage Remediation (Jem audit: 247 tags audited, 61% over-attributed, 12% metaphorical, 24% legitimate). These entries are preserved for audit trail only — **do not re-add to source code or CREDITS.md**.
+
+### Over-Attributed Entries (User-Original IP, Not id Software Derived)
+| Original CREDITS Entry | Pattern | Why Revoked |
+|------------------------|---------|-------------|
+| §1.6 Worse is Better | Gabriel 1991 | User-adopted philosophy, not id Software |
+| §1.7 Carmack's Law | id Software (general) | Attribution to person, not specific engine pattern |
+| §1.8 Circuit Breaker Consolidation | "id Software 2026" | Fabricated attribution — circuit breaker is user-original (omega-engine Jun 2026) |
+| §1.11 Heritage Inline Tag Protocol | Omega 2026 | Meta-protocol, not id Software heritage |
+| §1.25 Sovereign-Siloing | Doom 1993 | User pattern mapped to WAD System — not derived |
+| §1.26 Lattice-Culling | Doom 1993 | User pattern mapped to BSP Culling — not derived |
+| §1.27 Sovereign-Symmetry | Quake 1996 | User pattern mapped to cvar — not derived |
+| §1.32 Prompt Baking | Quake 1996 | REJECTED (vet-021) — self-modifying code ≠ prompt fusion |
+
+### Metaphorical Tags (Converted to Plain Comments in Source)
+| Pattern | Source | Action |
+|---------|--------|--------|
+| 3-Tier Memory (Hot/Warm/Cold) | ANAi Aug 2025 | User-original → `# Heritage: inspired by Quake zone tiering` |
+| Provider Chain (Redis→File→InMemory) | ANAi Sep 2025 | User-original → `# Heritage: inspired by zone allocator fallback` |
+| Intent Detection | ANAi Aug 2025 | User-original → `# Heritage: inspired by Quake client prediction` |
+| Entity Registry (YAML CRUD) | ANAi Oct 2025 | User-original → `# Heritage: inspired by QuakeC entity defs` |
+| ResourceGuard (OOM protection) | omega-stack May 2026 | User-original → `# Heritage: inspired by Quake zone purge` |
+| MCP Hub (47 tools) | omega-stack May 2026 | User-original → `# Heritage: inspired by Quake netchan dispatch` |
+| Hivemind Protocol | omega-engine Jun 2026 | User-original → `# Heritage: inspired by Quake netchan` |
+| Soul Distiller (L1→L2→L3) | omega-engine Jun 2026 | User-original → `# Heritage: inspired by Quake save-game` |
+| MaKaLi Triad | omega-engine Jun 2026 | User-original → `# Heritage: inspired by id Software triad architecture` |
+| Sovereign Mandates | omega-engine Jun 2026 | User-original → `# Heritage: inspired by id Software design discipline` |
+| Engine-Stack Firewall | omega-engine Jun 2026 | User-original (M2) → `# Heritage: inspired by IWAD/PWAD separation` |
+| PEM (Personality Enhancement Module) | Lilith Deck Mar 2025 | **100% user-original** — predates id Software inspiration. No heritage tag. |
+
+---
+
+## General Heritage Vetting — Non-id-Software Sources (Sprint A-EXT)
+
+**Vetter**: Doom Guy (Heritage Gatekeeper)
+**Date**: 2026-07-11
+**Gate Applied**: D208 Adaptation — "Cannot be justified without mentioning the original source's constraint/context"
+**Reference**: CREDITS.md §2, `docs/research/R_SPDX_HERITAGE_PROFILE.md` §4
+
+### Classification Summary
+
+| Classification | Count | Meaning |
+|----------------|-------|---------|
+| **LEGITIMATE** (score ≥ 7) | 22 | Warrants `[heritage:]` inline tags in source code — code fails D208 gate without source citation |
+| **LEGITIMATE** (score 6) | 1 | Below 7/10 threshold — no inline tag, credited in CREDITS.md only |
+| **OVER-ATTRIBUTED** | 16 | Standard library/framework/dependency — no inline tags, credited in CREDITS.md only |
+| **METAPHORICAL** | 3 | Philosophical inspiration only — no inline tags, credited in CREDITS.md only |
+| **User-Original IP (Tier 5)** | 5 | Legacy engine versions — no external attribution needed |
+
+### Category 4.1: Open-Source Python Libraries (Runtime Dependencies)
+
+#### vet-059: AnyIO — Async Runtime Foundation
+- **Pattern**: [heritage: anyio 2024]
+- **Source**: AnyIO 4.4+ (Python async runtime)
+- **D208 Gate**: PASS — M1 Mandate (AnyIO Absolute) explicitly forbids `asyncio`. The engine's entire async architecture (provider fabric, memory operations, MCP server) uses `anyio.to_thread.run_sync`, `anyio.create_task_group`, `anyio.Semaphore`. Without AnyIO's cross-runtime abstraction (trio/asyncio), the Provider Fabric would be tied to a single event loop. The code **cannot be justified** without citing AnyIO's constraint: "portable async that prevents event-loop collisions."
+- **Scope Declaration**: This tag applies to any function using `anyio.*` primitives (to_thread, TaskGroup, Semaphore, Event, sleep), NOT to general Python async patterns like `__aenter__`/`__aexit__` which are language-level.
+- **Score**: 9/10
+- **Existing Code Tags**: None yet — `[heritage: anyio 2024]` should be added to `mcp_runtime.py`, `providers.py`, and `resource_guard.py` where the AnyIO patterns are visible.
+
+#### vet-060: llama-cpp-python — Native GGUF Inference
+- **Pattern**: [heritage: llama-cpp-python 2023]
+- **Source**: llama-cpp-python 0.2+ (Python bindings for llama.cpp)
+- **D208 Gate**: PASS — M20 (SomaticState Serialization) depends on `llama_copy_state_data` / `llama_set_state_data` ctypes bindings. The NativeGGUFProvider's model loading, inference, and state save/restore are entirely dependent on this library. Without it, local GGUF inference would not exist. "The code's `_ensure_loaded()` + SomaticState round-trip **cannot be justified** without citing the library that provides those bindings."
+- **Scope Declaration**: This tag applies to the NativeGGUFProvider and SomaticState serialization code, NOT to the `ModelGateway` dispatch layer.
+- **Score**: 8/10
+- **Existing Code Tags**: None yet
+
+#### vet-061: MCP Python SDK — Tool Communication Protocol
+- **Pattern**: [heritage: mcp 2024]
+- **Source**: MCP Python SDK 1.0+ (Anthropic's Model Context Protocol)
+- **D208 Gate**: PASS — The Omega Hub's 47+ MCP tools, SSE transport, tool-calling interface, and resource discovery are built on the MCP protocol. The entire agent-to-tool interaction model is MCP-shaped. "The MCP runtime (`mcp_runtime.py`, `omega_hub/server.py`) **cannot be justified** without citing MCP — the dual-transport architecture (SSE + Streamable HTTP), tool registration, and resource URI structure are direct implementations of the protocol specification."
+- **Scope Declaration**: This tag applies to MCP server implementations (`mcp_servers/`), NOT to individual tools or the Oracle's intent-detection layer.
+- **Score**: 9/10
+- **Existing Code Tags**: None yet
+
+#### vet-062: headroom-ai — Semantic Compression Middleware
+- **Pattern**: [heritage: headroom-ai 2025]
+- **Source**: headroom-ai 2025 (Semantic compression library)
+- **D208 Gate**: PASS — headroom-ai provides sovereign semantic compression that reduces prompt token usage without losing semantic content. The compression middleware wraps the context builder pipeline. "The semantic compression of conversation history before model injection **cannot be justified** without citing headroom-ai's compression algorithm."
+- **Scope Declaration**: This tag applies to the headroom compression wrapper in the context builder pipeline, NOT to general truncation or sliding-window context management.
+- **Score**: 7/10
+- **Existing Code Tags**: None yet
+
+#### vet-063: warp-proxy-pool — WARP Proxy Infrastructure
+- **Pattern**: [heritage: cloudflare-warp 2021]
+- **Source**: Cloudflare WARP proxy pool (custom Python orchestration)
+- **D208 Gate**: PASS — The multi-namespace WARP proxy pool provides privacy infrastructure and rate-limit bypass for OpenCode Zen. "The blitz-tunnel SOCKS5 proxy pattern **cannot be justified** without citing WARP's multi-identity architecture."
+- **Scope Declaration**: This tag applies to blitz-tunnel and WARP proxy pool code, NOT to general network connectivity.
+- **Score**: 7/10
+- **Existing Code Tags**: None yet
+
+#### OVER-ATTRIBUTED (No inline tags — standard library dependencies)
+The following are standard Python libraries used as-is. They are architectural dependencies but do not warrant `[heritage:]` inline tags because the code's purpose is self-evident without citing the library:
+- **FastAPI/Starlette** — Standard ASGI web framework. "FastAPI" in an import tells you everything. No inline tag.
+- **httpx** — Standard async HTTP client. No inline tag.
+- **Pydantic** — Standard data validation. No inline tag.
+- **redis-py** — Standard Redis client. No inline tag.
+- **qdrant-client** — Standard Qdrant client. No inline tag.
+- **Typer** — Standard CLI framework. No inline tag.
+- **sse-starlette** — Standard SSE library. No inline tag.
+- **google.genai** — Standard API client. No inline tag.
+
+### Category 4.2: Infrastructure & Deployment Services
+
+#### vet-064: Podman — Sovereign Container Runtime
+- **Pattern**: [heritage: podman 2019]
+- **Source**: Podman (rootless container runtime)
+- **D208 Gate**: PASS — M6 (Podman Sovereignty) mandates `UserNS=keep-id` + `User=1000` for all Quadlets. The Sovereign Permission Protocol is built on Podman's rootless architecture. "The container security model (`keep-id`, no `:U` flag) **cannot be justified** without citing Podman's rootless namespace architecture."
+- **Scope Declaration**: This tag applies to Quadlet files and container deployment configurations, NOT to general service orchestration.
+- **Score**: 8/10
+- **Existing Code Tags**: None yet
+
+#### vet-065: SearXNG — Self-Hosted Metasearch
+- **Pattern**: [heritage: searxng 2023]
+- **Source**: SearXNG (self-hosted metasearch engine)
+- **D208 Gate**: PASS — The Tier 1 search provider in the Sovereign Search Protocol uses SearXNG. The Python healthcheck, capability-hardened deployment, and pinned image are specific to SearXNG's Alpine-based architecture. "The privacy-first metasearch pipeline **cannot be justified** without citing SearXNG — the image pinning fix, Python healthcheck, and capability configuration are SearXNG-specific."
+- **Scope Declaration**: This tag applies to the SearXNG provider and deployment configs, NOT to the sovereign search pipeline as a whole.
+- **Score**: 7/10
+- **Existing Code Tags**: None yet
+
+#### vet-066: Odysseus — SearXNG Deployment Patterns
+- **Pattern**: [heritage: odysseus 2025]
+- **Source**: Odysseus project (SearXNG deployment architecture)
+- **D208 Gate**: PASS — Specific patterns mined from Odysseus: image pinning fix (issue #1414), Python healthcheck for Alpine, entrypoint wrapper, Linux capabilities. "The SearXNG healthcheck implementation **cannot be justified** without citing Odysseus — Alpine has no `curl`, and the Python-based healthcheck was traced directly to Odysseus's architecture."
+- **Scope Declaration**: This tag applies to SearXNG deployment files (`deploy/searxng/`), NOT to the SearXNG provider runtime.
+- **Score**: 7/10
+- **Existing Code Tags**: None yet
+
+#### vet-067: Cloudflare WARP — Privacy Proxy Pool
+- **Pattern**: [heritage: cloudflare-warp 2021]
+- **Source**: Cloudflare WARP (VPN/privacy service)
+- **D208 Gate**: PASS — The multi-namespace WARP proxy pool enables rate-limit bypass for OpenCode Zen. "The SOCKS5 tunnel rotation pattern **cannot be justified** without citing WARP's namespace isolation."
+- **Scope Declaration**: This tag applies to the blitz-tunnel proxy infrastructure, NOT to general HTTP clients.
+- **Score**: 7/10
+- **Existing Code Tags**: None yet
+
+#### OVER-ATTRIBUTED (No inline tags — standard infrastructure)
+- **systemd** — Standard Linux service manager. No inline tag needed.
+- **Redis** — Standard cache/queue service. No inline tag needed.
+- **Qdrant** — Standard vector database. No inline tag needed.
+
+### Category 4.3: Industry Standards & Protocols
+
+#### vet-068: MCP Protocol — AI-Tool Communication
+- **Pattern**: [heritage: mcp-standard 2024]
+- **Source**: Model Context Protocol (Anthropic, 2024)
+- **D208 Gate**: PASS — Same as vet-061 but at the protocol level (library vs standard). "The entire Omega MCP architecture (dual-transport, tool registration, resource URIs) **cannot be justified** without citing the MCP specification."
+- **Scope Declaration**: This tag applies to the architectural decision to use MCP, NOT to specific library imports.
+- **Score**: 9/10
+- **Existing Code Tags**: None yet
+- **Note**: Combined with vet-061 as "MCP Protocol + SDK"
+
+#### vet-069: A2A v1.0 — Agent-to-Agent Protocol
+- **Pattern**: [heritage: a2a-standard 2025]
+- **Source**: Agent-to-Agent Protocol (Google, 2025)
+- **D208 Gate**: PASS — Agent Card schema (`/.well-known/agent-card.json`), task delegation endpoints, and discovery protocol are defined by A2A. "The agent handoff packet structure and capability registry **cannot be justified** without citing A2A's Agent Card and task delegation patterns."
+- **Scope Declaration**: This tag applies to the A2A bridge and Link P9 handoff implementation, NOT to the Hivemind protocol.
+- **Score**: 7/10
+- **Existing Code Tags**: None yet
+
+#### vet-070: OpenTelemetry — GenAI Observability
+- **Pattern**: [heritage: opentelemetry 2021]
+- **Source**: OpenTelemetry (CNCF observability standard)
+- **D208 Gate**: PASS — Observability traces, events, and metrics follow OTel GenAI semantic conventions. "The trace_id propagation and structured event logging **cannot be justified** without citing OTel conventions for GenAI workloads."
+- **Scope Declaration**: This tag applies to the Omega observability layer (`src/omega/observability/`), NOT to ad-hoc logging.
+- **Score**: 7/10
+- **Existing Code Tags**: None yet
+
+#### vet-071: SPDX 3.1 — Heritage SBOM Standard
+- **Pattern**: [heritage: spdx-standard 2021]
+- **Source**: SPDX 3.1 (ISO/IEC 5962:2021)
+- **D208 Gate**: PASS — This document itself is an SPDX Heritage Profile. "The machine-readable heritage tracking format **cannot be justified** without citing SPDX 3.1's extensibility model."
+- **Scope Declaration**: This tag applies to the Heritage Profile document and any generated SBOM, NOT to the heritage vetting pipeline.
+- **Score**: 8/10
+- **Existing Code Tags**: None yet
+
+#### vet-072: SQLite FTS5 — Full-Text Search
+- **Pattern**: [heritage: sqlite-fts5 2015]
+- **Source**: SQLite FTS5 (full-text search extension)
+- **D208 Gate**: PASS — The memory search and library catalog use SQLite FTS5 with BM25 ranking and Porter stemmer. "The FTS5 search pipeline (BM25 + stemmer + ranking) **cannot be justified** without citing SQLite FTS5's specific implementation — the BM25 scoring, tokenizers, and content tables are FTS5-specific."
+- **Scope Declaration**: This tag applies to the FTS5-based search implementations in `memory_store.py` and library search, NOT to hybrid search which also uses vector embeddings.
+- **Score**: 8/10
+- **Existing Code Tags**: None yet
+
+#### vet-073: RRF — Hybrid Search Fusion
+- **Pattern**: [heritage: rrf-algorithm 2009]
+- **Source**: Reciprocal Rank Fusion algorithm (origin: 2009, popularized by 2023 RAG systems)
+- **D208 Gate**: PASS — The hybrid search pipeline (FTS5 BM25 + vector cosine similarity) uses RRF for result fusion. "The reciprocal rank fusion of BM25 and vector score rankings **cannot be justified** without citing RRF's specific formula: `score = 1/(60 + rank_fts) + 1/(60 + rank_vec)`."
+- **Scope Declaration**: This tag applies to the hybrid search rank fusion, NOT to FTS5 or vector search individually.
+- **Score**: 8/10
+- **Existing Code Tags**: None yet
+
+#### OVER-ATTRIBUTED (No inline tags — ubiquitous standards)
+- **SSE (Server-Sent Events)** — Ubiquitous W3C web standard dating to 2009. Using SSE for a transport is like crediting HTTP — it's the plumbing, not the architecture. No inline tag needed.
+
+#### BELOW THRESHOLD (Score 6 — credited in CREDITS.md only)
+- **SPIFFE/WIMSE** (score 6/10) — X.509-SVID identity format. The SPIFFE identity scheme (`spiffe://omega.local/entity/kali`) is defined in documentation but not fully implemented in the engine's runtime identity system. Below the 7/10 threshold for inline tags.
+
+### Category 4.4: Research Systems & Competitor Analysis
+
+#### vet-074: Truth Engine — Gap Analysis
+- **Pattern**: [heritage: truth-engine 2025]
+- **Source**: Truth Engine (jayina.com, 2025)
+- **D208 Gate**: PASS — Identified 2 specific gaps in Omega: blitz-tunnel (dead stub), no explicit air-gap Extractor mode. "The gap analysis documentation **cannot be justified** without citing Truth Engine's feature set — the comparison matrix directly references Truth Engine's 9 axes."
+- **Scope Declaration**: This tag applies to strategic documentation referencing the gap analysis, NOT to any engine implementation.
+- **Score**: 7/10
+- **Existing Code Tags**: None yet — strategic docs only
+
+#### vet-075: SOVEREIGN — In-Path Governance
+- **Pattern**: [heritage: sovereign-kliewer 2026]
+- **Source**: SOVEREIGN (Daniel Kliewer, 2026-03)
+- **D208 Gate**: PASS — The concept "no fast path that skips governance, no trusted caller that bypasses evaluation" directly influenced M17 (Cognitive Integrity) and the Skeptical Verifier. "Mandate 17's 'verify consistency of own memories' principle **cannot be justified** without citing SOVEREIGN's in-path governance."
+- **Scope Declaration**: This tag applies to the Skeptical Verifier architecture and M17, NOT to general error handling.
+- **Score**: 7/10
+- **Existing Code Tags**: None yet — strategic docs only
+
+#### METAPHORICAL (No inline tags — not implemented)
+The following research systems influenced the strategic vision but have NOT been implemented as concrete patterns in the engine. They are credited in CREDITS.md §2.4 as architectural inspiration only:
+- **Logos** (cluricaun28, 2026) — Frame-Stripping and Narrative-Control-Detection are discussed in research docs but NOT implemented in the engine. Score: 2/10. METAPHORICAL.
+- **sovereign-system-spec** (Ken Alger, 2026) — Sieve-and-Sign (Ed25519) cryptographic custody is NOT implemented. Score: 2/10. METAPHORICAL.
+- **SOVERYN Intelligence** (2026-04) — Dream Cycle scheduled synthesis is NOT implemented. Score: 2/10. METAPHORICAL.
+
+### Category 4.5: Legacy Engine Versions
+All 5 entries (ANAI, XNAi, xna-omega, omega-stack, Chainlit) are **User-Original IP (Tier 5)**. They use `AMENDS` relationship type to show evolution. No inline tags needed — credited in `CREDITS.md §2.6` and `§5`. N/A for D208 gate.
+
+### Action Items Summary
+
+| Action | Items |
+|--------|-------|
+| **Add `[heritage:]` inline tags** | 16 LEGITIMATE patterns (vet-059 through vet-075, excluding METAPHORICAL/BELOW-THRESHOLD) |
+| **Update SPDX profile** | Fill TBD → scores, PENDING → vet record references |
+| **CREDITS.md** | Already complete per Roc Racoon expansion |
+| **No action needed** | 16 OVER-ATTRIBUTED + 3 METAPHORICAL + 5 User-Original IP |
+
+### vet-076: SSRF Gate (O(1) Private IP Cull)
+- **Pattern**: [id-soft: doom-1993] SSRF Gate — O(1) cull of private IP ranges
+- **Source**: Doom 1993 — Zone-based memory protection / bounds checking
+- **D208 Gate**: PASS — The O(1) private IP range culling via bitwise check **cannot be justified** without citing Doom's zone memory allocator bounds checking. "The SSRF protection's bitwise range check **cannot be justified** without citing the original hardware-constrained zone boundary enforcement."
+- **Scope Declaration**: This tag applies to the SSRF protection in `extractor.py:135` (private IP range culling), NOT to general input validation.
+- **Score**: 8/10
+- **Existing Code Tags**: `src/omega/library/extractor.py:135`
+
+### vet-077: Size Gate (Fixed-Timestep Download Pre-check)
+- **Pattern**: [id-soft: quake-1996] Size Gate — fixed-timestep pre-check on download size
+- **Source**: Quake 1996 — Zone memory allocator size bounds / frame-time budgeting
+- **D208 Gate**: PASS — The fixed-timestep size pre-check **cannot be justified** without citing Quake's frame-time budgeting and zone size limits. "The download size gate's fixed-timestep check **cannot be justified** without citing the original frame-time budgeting constraint."
+- **Scope Declaration**: This tag applies to the download size pre-check in `extractor.py:145`, NOT to general rate limiting.
+- **Score**: 7/10
+- **Existing Code Tags**: `src/omega/library/extractor.py:145`
+
+### vet-078: Path Scope Gate (Zone Boundary Enforcement)
+- **Pattern**: [id-soft: quake-1996] Path Scope Gate — zone boundary enforcement for file paths
+- **Source**: Quake 1996 — Zone memory allocator / file system sandboxing
+- **D208 Gate**: PASS — The path scope boundary enforcement **cannot be justified** without citing Quake's zone-based file system sandboxing (pak file boundaries). "The path scope gate's zone boundary enforcement **cannot be justified** without citing the original pak file sandboxing constraint."
+- **Scope Declaration**: This tag applies to the path scope validation in `extractor.py:283`, NOT to general path sanitization.
+- **Score**: 8/10
+- **Existing Code Tags**: `src/omega/library/extractor.py:283`
+
+---
+
+### Previously Rejected (Already Archived)
+| Vet ID | Pattern | Game | Score | Reason |
+|--------|---------|------|-------|--------|
+| vet-001 | 8-Character Name Caps | Doom 1993 | 3/10 | Cargo-cult; Python dicts are O(1) |
+| vet-003 | Sqrt H-Index Proxy | — | 6/10 | Too imprecise for sovereign curation |
+| vet-017 | In-Flight Pipeline | Quake 1996 | 2/10 | Hardware-specific (Pentium FPU/CPU overlap) |
+| vet-018 | Branch Collapse | Quake 1996 | 1/10 | Python dict dispatch already O(1) |
+| vet-019 | Symmetric Range Guard | Quake 1996 | 1/10 | Python `a < x < b` chaining native |
+| vet-021 | Prompt Baking | Quake 1996 | 3/10 | Self-modifying code ≠ prompt fusion |
 

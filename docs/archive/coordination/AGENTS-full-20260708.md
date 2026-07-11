@@ -78,7 +78,6 @@
 
 ## 🔍 Search Tool Protocol
 
-Agents MUST use the **Sovereign Search Protocol** for all web searches. The Antigravity `google_search` tool is **CLI-only** — it requires Google Gemini via the Antigravity OAuth endpoint and is hidden when `AGENT_MODE=true` is set.
 
 | Tier | Tool | Scope | When to Use |
 |:-----|:-----|:------|:------------|
@@ -88,10 +87,8 @@ Agents MUST use the **Sovereign Search Protocol** for all web searches. The Anti
 | **T3** | `searxng_searxng_search` | Free, sovereign | Semantic/neural search refinement |
 | **T4** | `omega-hub_sovereign_search` | API key (Exa) | High-precision seeds, academic/technical |
 | **T5** | `firecrawl_firecrawl_scrape/search` | Credits | Full-page scrape, structured crawl |
-| **CLI** | `google_search` (Antigravity) | OAuth only | CLI usage with Gemini — **NOT for agents** |
 
 **Fallback chain**: `websearch` → `webfetch` → `searxng_searxng_search` → `omega-hub_sovereign_search` → `firecrawl_firecrawl_search`
-**Never use `google_search` from an agent** — it only works with Gemini models via Antigravity.
 
 **TEMPORAL MANDATE**: It is **2026**. All search queries MUST include "2026" or "latest" to ensure current best practices. Do NOT search for "2024" or "2025" — those are outdated.
 

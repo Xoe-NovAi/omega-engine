@@ -28,7 +28,7 @@ from omega.errors import (
     ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
     EntityTombstonedError, ModelNotFoundError,
 )
-import httpx
+import httpx2 as httpx
 from typing import Dict, List, Optional
 
 from omega.observability import ObservabilityEngine, EventType

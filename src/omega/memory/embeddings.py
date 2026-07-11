@@ -12,7 +12,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Tuple
 
 import anyio
-import httpx
+import httpx2 as httpx
 
 from omega.cvar_table import ZONEID_EMBEDDING, validate_zoneid
 from omega.errors import OmegaError

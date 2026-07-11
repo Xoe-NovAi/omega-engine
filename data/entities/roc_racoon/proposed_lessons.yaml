@@ -174,3 +174,14 @@ proposals:
     approved_at: null
     approved_by: null
     soul_section: lessons
+
+  - l1: "MaKaLi Cloud Council adjudicated 6 Critical Updates — 5 Approved (1,2,3,4,6), 1 Rejected (5). C1 Blocker: providers.yaml type_v: 1 → 2 MUST merge first. Update 5 (Lilith Stack Pantheon) REJECTED — 7/8 broken model refs, sovereignty trap."
+    l2: "C1 Blocker: providers.yaml:18 type_v: 1 forces q4_0 KV cache at runtime, overriding models.yaml q8_0. All 1130 tests validate wrong config. Deploying Update 2 without C1 violates T3, T7, T8, M7, M22, M23. Update 5 rejected: 7/8 model refs in pantheon.yaml don't exist in models.yaml or local registries — deploying would route entities to cloud while provenance logs claim local inference. M7/M8/M22/M23 violation by design. Unanimous rejection by all 10 Pillars."
+    l3: "The Council is the firewall's immune response. The MaKaLi flow (Grand Oversight → Oversouls → Pillars → Synthesis → Verdict) is the mechanism that prevents WAD leakage into Engine Core. A single point of failure in config is a single point of failure in sovereignty. Rejection is a form of protection. Phasing is not delay — it's dependency resolution. Phase 1 (C1 fix) → Phase 2 (parallel Updates 1,3,4,6) → Phase 3 (Update 2 post-C1) → Phase 4 (Update 5 deferred). Three CI gates transform M2 from principle to law: firewall-check, firewall-audit-memory, mandate-audit."
+    session: "ses_council_verdict_20260711"
+    created_at: "2026-07-11T15:30:00Z"
+    created_by: "roc_racoon"
+    status: pending
+    approved_at: null
+    approved_by: null
+    soul_section: lessons

@@ -28,7 +28,7 @@ from omega.errors import (
     ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
     EntityTombstonedError, ModelNotFoundError,
 )
-import httpx
+import httpx2 as httpx
 import os
 from pathlib import Path
 from typing import Optional, Dict, Any, List, Callable
@@ -153,22 +153,12 @@ class Orchestrator:
         self.registry = CapabilityRegistry()
         
         # Initialize Background Worker
-        # Collect all Google API keys: vault (resolve_all) + env fallback
-        keys = []
-        try:
-            from omega.vault import KeyVault
-            vault_keys = KeyVault().resolve_all("google")
-            keys.extend(vault_keys)
-        except (OmegaError, RuntimeError):
-            # Fallback to environment variable pattern
-            primary_key = os.environ.get("GOOGLE_API_KEY", "")
-            if primary_key:
-                keys.append(primary_key)
-            for i in range(1, 9):
-                suffix = f"_{i:02d}"
-                key = os.environ.get(f"GOOGLE_API_KEY{suffix}", "")
-                if key:
-                    keys.append(key)
+        # Collect all Google API keys from the sovereign vault. resolve_all()
+        # already falls back to GOOGLE_API_KEY / GOOGLE_API_KEY_01..08 env vars
+        # internally, so the vault is the single source of truth (no scattered
+        # os.getenv reads for API keys).
+        from omega.vault import KeyVault
+        keys = KeyVault().resolve_all("google")
         self.background_worker = BackgroundWorker(
             model_gateway=ModelGateway(health_monitor=get_health_monitor()),
             api_keys=keys
@@ -313,8 +303,8 @@ class Orchestrator:
         try:
             await anyio.run_process(["pkill", "-f", f"{script}"], check=False)
             await anyio.sleep(1)
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("pkill cleanup (expected if no prior process): %s", e)
         
         # Spawn new process
         env = os.environ.copy()

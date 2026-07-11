@@ -75,7 +75,7 @@ class SovereignGateway:
     """
 
     def __init__(self):
-        import httpx
+        import httpx2 as httpx
         
         # Load gateway configuration from omega.yaml
         config_path = Path(__file__).resolve().parent.parent.parent / "config" / "omega.yaml"

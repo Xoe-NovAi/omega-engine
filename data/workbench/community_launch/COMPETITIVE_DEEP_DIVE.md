@@ -14,7 +14,7 @@ The "Local AI" space is flooded with stateless wrappers and cloud-first framewor
 | **Performance Optimization** | Generic Python threading | **id Software Patterns (WAD, BSP, Zone Memory)** |
 | **Telemetry** | Opt-out (high risk of leaks) | **Zero Telemetry (Mandate 8 - Absolute)** |
 
-## 3. The id Software Heritage [id-soft:]
+## 3. The id Software Heritage [id-soft: doom-1993]
 - **WAD System [id-soft: doom-1993]**: Immutable core engine, hot-swappable user stacks.
 - **BSP Culling [id-soft: doom-1993]**: O(1) provider culling to bypass broken/timeout backends.
 - **Zone Memory [id-soft: quake-1996]**: ResourceGuard semaphore to prevent Ryzen OOM crashes.

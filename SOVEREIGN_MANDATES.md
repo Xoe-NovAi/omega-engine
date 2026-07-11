@@ -6,7 +6,7 @@
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
-## 🛡️ The Twenty-Two Laws of Sovereign Execution
+## 🛡️ The Twenty-Three Laws of Sovereign Execution
 
 ### 1. AnyIO Absolute
 - **Mandate**: All asynchronous code MUST use AnyIO. 
@@ -97,13 +97,25 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 
 ---
 
-### 14. Heritage Vetting (NEW — 2026-06-04)
+### 14. Heritage Vetting (NEW — 2026-06-04) — CLARIFIED D208
 - **Mandate**: No id Software (or any heritage) concept may be implemented without passing through the Heritage Vetting Pipeline.
 - **Constraint**: Every `[id-soft:]` tag in source code MUST have a corresponding vet record in `data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md`. Minimum score 7/10 for implementation. Qualification Gate: if a concept can't be justified without mentioning the original hardware constraint, it fails.
+- **Strict Scope Enforcement (D208)**: A `[id-soft:]` tag is LEGITIMATE ONLY if the code would FAIL the Qualification Gate:
+  > "Cannot be justified WITHOUT citing the original hardware constraint."
+- **Classification Taxonomy** (mandatory for every tag):
+  - **LEGITIMATE**: Direct port of id Software technique (e.g., ZONEID, cvar, BSP culling, WAD lump structure). MUST have vet record with file:line locations and scope declaration.
+  - **METAPHORICAL**: Rhetorical analogy only (e.g., "Thinker Chain like Quake thinker"). CONVERT to plain comment — NO tag.
+  - **OVER-ATTRIBUTED**: User-original work that merely resembles id Software pattern. STRIP tag — NO tag.
+- **Qualification Gate** (enforced by CI):
+  Every `[id-soft:]` tag MUST have a corresponding vet record in `HERITAGE_VET_LOG.md` with:
+  - Exact file:line location(s)
+  - Specific id Software technique (game + year)
+  - Hardware constraint that necessitated the original technique
+  - Scope declaration: "This tag applies to X, NOT to Y"
 - **Pattern**: 4-gate pipeline: Discovery → Vetting/Debate → Decision → Implementation/Verification. See `docs/strategy/HERITAGE_VETTING_PIPELINE.md`.
 - **Reason**: The 8-char name cap (vet-001 REJECTED) was implemented without debate, broke tests, was removed. Heritage is gravitational pull, not debt — but the remembering must be tested by a gate.
-- **Enforcement**: `make heritage-vet` CI gate enforces that every `[id-soft:]` tag has a vet record. Merged without vet = M14 violation.
-- **Origin**: Kali's d-kal-001 directive. Cline-M3's D113 firewall audit.
+- **Enforcement**: `make heritage-vet` CI gate enforces that every `[id-soft:]` tag has a vet record with scope declaration. Merged without vet = M14 violation. Pre-commit hook blocks commits adding unvetted tags.
+- **Origin**: Kali's d-kal-001 directive. Cline-M3's D113 firewall audit. D208 Jem audit remediation.
 
 ### 15. Sovereign Continuity (NEW — 2026-06-11)
 - **Mandate**: Agents MUST maintain active session anchors to prevent cognitive erasure during toolchain failures.

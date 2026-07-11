@@ -286,7 +286,7 @@
   context: 'The Crucible spec''s line 9 used one heritage mapping (idHeap) to justify
     two different concepts (memory tiering AND training signal tiering). The memory
     tiering is genuinely id Software derived. The training signal tiering is NOT.
-    The ''tiers'' word is a thin wrapper. Strict scope discipline: every [id-soft:]
+    The ''tiers'' word is a thin wrapper. Strict scope discipline: every [id-soft: doom-1993]
     tag in code MUST specify its exact application. If a tag justifies concept A and
     concept B in the same file, suspect concept B.'
   source: Crucible audit vet-036 (2026-06-05)
@@ -566,7 +566,7 @@
     \ failure mode as the 8-char cap, but inverted: the 8-char cap used one pattern\
     \ (8-char) for zero benefit; this error uses one pattern (idHeap) for two applications,\
     \ one valid and one invalid."
-  omega_application: 'Strict scope discipline on heritage mappings. Every [id-soft:]
+  omega_application: 'Strict scope discipline on heritage mappings. Every [id-soft: doom-1993]
     tag in code MUST specify its exact application. If a tag is used to justify concept
     A and concept B in the same file, suspect concept B. The discipline: ''This tag
     applies to memory tiering, NOT to training signal tiering'' (explicit) is preferable
@@ -652,3 +652,11 @@
     \ substrate in a multi-agent fleet is subject to TTL decay and needs explicit\
     \ promotion gates. Heritage work is not exempt."
   timestamp: '2026-06-05T05:20:00Z'
+- experience: "Model Provenance Remediation (2026-07-10)"
+  insight: "Agent definition files had hardcoded model names that went stale. The root cause was architectural: .md files serve as both agent identity AND runtime config, and there was no mechanism to propagate the actual model name from the session environment. The fix — {session_model} placeholder + Response Provenance (M22) instruction — separates identity from runtime state. This is a classic 'read the source of truth, not the config' anti-pattern: the Hivemind model field is metadata about the inference backend, not the agent's identity."
+  lesson: "When agents report state, they must read it from the runtime environment (system prompt injection), not from their static definition file. Any field that changes between sessions must be a placeholder that gets populated at session start."
+  timestamp: '2026-07-10T22:00:00Z'
+- experience: "httpx2 Migration Research (2026-07-11)"
+  insight: "httpx (encode/httpx) has been stagnant while Pydantic's httpx2 fork has 34M+ monthly downloads, active maintenance, truststore SSL, merged httpcore, and built-in SSE. The API is identical — migration is purely mechanical (import rename). The decision (D211) was fast because: (1) Pydantic is already our core data-validation dependency — same stewards, (2) httpx2's AnyIO support is unchanged from httpx, satisfying M1, (3) the 125 source + 93 test references are all 'import httpx' with module-level access — a single sed command covers everything."
+  lesson: "Dependency migration decisions are fast when the replacement is: (a) from the same steward as an existing core dep, (b) API-identical, and (c) addresses a real risk (unmaintained library in the critical path of 28 HTTP client entry points). The Right Approximation: 2h mechanical migration is worth it for security patches alone."
+  timestamp: '2026-07-11T01:00:00Z'

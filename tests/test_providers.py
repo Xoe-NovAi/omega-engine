@@ -2,7 +2,7 @@ import os
 from unittest.mock import AsyncMock, patch
 
 import pytest
-import httpx
+import httpx2 as httpx
 
 from omega.oracle.providers import (
     BaseProvider,
@@ -74,7 +74,7 @@ class TestGoogleAIProvider:
         }
 
         with patch.dict(os.environ, {"GOOGLE_API_KEY": "test-key"}):
-            with patch("httpx.AsyncClient.post", return_value=mock_response):
+            with patch("httpx2.AsyncClient.post", return_value=mock_response):
                 result = await provider.generate(
                     "gemma-4-31b", "be helpful", "hi", 0.7, 256
                 )
@@ -88,7 +88,7 @@ class TestGoogleAIProvider:
         mock_response.json.return_value = {"candidates": []}
 
         with patch.dict(os.environ, {"GOOGLE_API_KEY": "test-key"}):
-            with patch("httpx.AsyncClient.post", return_value=mock_response):
+            with patch("httpx2.AsyncClient.post", return_value=mock_response):
                 result = await provider.generate(
                     "gemma-4-31b", "be helpful", "hi", 0.7, 256
                 )
@@ -102,7 +102,7 @@ class TestGoogleAIProvider:
         mock_response.json.return_value = {"unexpected": "format"}
 
         with patch.dict(os.environ, {"GOOGLE_API_KEY": "test-key"}):
-            with patch("httpx.AsyncClient.post", return_value=mock_response):
+            with patch("httpx2.AsyncClient.post", return_value=mock_response):
                 result = await provider.generate(
                     "gemma-4-31b", "be helpful", "hi", 0.7, 256
                 )
@@ -119,7 +119,7 @@ class TestGoogleAIProvider:
         )
 
         with patch.dict(os.environ, {"GOOGLE_API_KEY": "test-key"}):
-            with patch("httpx.AsyncClient.post", return_value=mock_response):
+            with patch("httpx2.AsyncClient.post", return_value=mock_response):
                 with pytest.raises(ProviderRateLimitError):
                     await provider.generate(
                         "gemma-4-31b", "be helpful", "hi", 0.7, 256
@@ -137,14 +137,14 @@ class TestLocallmsterProvider:
         mock_response = AsyncMock(spec=httpx.Response)
         mock_response.status_code = 200
 
-        with patch("httpx.AsyncClient.get", return_value=mock_response):
+        with patch("httpx2.AsyncClient.get", return_value=mock_response):
             available = await provider.is_available()
             assert available is True
 
     @pytest.mark.anyio
     async def test_is_available_timeout(self, provider):
         """is_available returns False on connection error."""
-        with patch("httpx.AsyncClient.get", side_effect=httpx.ConnectError("refused")):
+        with patch("httpx2.AsyncClient.get", side_effect=httpx.ConnectError("refused")):
             available = await provider.is_available()
             assert available is False
 
@@ -162,7 +162,7 @@ class TestLocallmsterProvider:
             }]
         }
 
-        with patch("httpx.AsyncClient.post", return_value=mock_response):
+        with patch("httpx2.AsyncClient.post", return_value=mock_response):
             result = await provider.generate(
                 "qwen3-1.7b", "system", "query", 0.7, 1024
             )
@@ -184,7 +184,7 @@ class TestLocallmsterProvider:
             }]
         }
 
-        with patch("httpx.AsyncClient.post", return_value=mock_response):
+        with patch("httpx2.AsyncClient.post", return_value=mock_response):
             result = await provider.generate(
                 "qwen3-1.7b", "system", "query", 0.7, 1024
             )
@@ -204,7 +204,7 @@ class TestLocallmsterProvider:
             }]
         }
 
-        with patch("httpx.AsyncClient.post", return_value=mock_response):
+        with patch("httpx2.AsyncClient.post", return_value=mock_response):
             result = await provider.generate(
                 "qwen3-1.7b", "system", "query", 0.7, 1024
             )
@@ -222,14 +222,14 @@ class TestOllamaProvider:
         mock_response = AsyncMock(spec=httpx.Response)
         mock_response.status_code = 200
 
-        with patch("httpx.AsyncClient.get", return_value=mock_response):
+        with patch("httpx2.AsyncClient.get", return_value=mock_response):
             available = await provider.is_available()
             assert available is True
 
     @pytest.mark.anyio
     async def test_is_available_failure(self, provider):
         """is_available returns False on connection error."""
-        with patch("httpx.AsyncClient.get", side_effect=httpx.ConnectError("refused")):
+        with patch("httpx2.AsyncClient.get", side_effect=httpx.ConnectError("refused")):
             available = await provider.is_available()
             assert available is False
 
@@ -246,7 +246,7 @@ class TestOllamaProvider:
             }]
         }
 
-        with patch("httpx.AsyncClient.post", return_value=mock_response):
+        with patch("httpx2.AsyncClient.post", return_value=mock_response):
             result = await provider.generate(
                 "llama3.2", "system", "query", 0.5, 512
             )

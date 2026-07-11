@@ -97,7 +97,7 @@ class AsyncCircuitBreaker:
         half_open_max_requests: int = 1,
     ):
         self.name = name
-        # [id-soft: doom-1993] ZONEID Pattern — circuit breaker state marker
+        # [id-soft: doom-1993] ZONEID Pattern — magic constant for circuit breaker state integrity
         self.magic = ZONEID_BREAKER
         self.state = CircuitState.CLOSED
         
@@ -158,7 +158,7 @@ class AsyncCircuitBreaker:
             raise
 
     async def _on_success(self, latency: float, quality: float = 1.0, trace_id: Optional[str] = None):
-        # [id-soft: doom-1993] ZONEID Pattern — pre-transition integrity check
+        # [id-soft: doom-1993] ZONEID Pattern — magic constant for circuit breaker state integrity
         validate_zoneid(self.magic, ZONEID_BREAKER, f"AsyncCircuitBreaker._on_success({self.name})")
         async with self._lock:
             old_state = self.state
@@ -212,7 +212,7 @@ class AsyncCircuitBreaker:
                     pass
 
     async def _on_failure(self, trace_id: Optional[str] = None):
-        # [id-soft: doom-1993] ZONEID Pattern — pre-transition integrity check
+        # [id-soft: doom-1993] ZONEID Pattern — magic constant for circuit breaker state integrity
         validate_zoneid(self.magic, ZONEID_BREAKER, f"AsyncCircuitBreaker._on_failure({self.name})")
         async with self._lock:
             self.failure_count += 1

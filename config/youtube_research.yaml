@@ -1,0 +1,29 @@
+# 🔱 YouTube Research Module — external configuration (P0)
+# AP: AP-YOUTUBE-RESEARCH-MODULE-v1.0.0
+# Loaded by omega_youtube_research.config.YouTubeResearchConfig.load()
+# Mandate 16: no hardcoded paths — override via OMEGA_CONFIG_DIR env var.
+
+sieve:
+  preserve_hesitations: true
+  remove_timestamps: true
+  remove_speaker_labels: true
+  url_replacement: "[URL]"
+  min_token_len: 3
+
+signer:
+  key_path: "config/keys/youtube_research.key"
+  key_id: "omega-youtube-research-key-2026"
+  algorithm: "HMAC-SHA256"
+  signer: "omega-youtube-research/v1.0"
+
+persistence:
+  atomic_writes: true
+  tmp_suffix: ".tmp"
+  db_path: "data/youtube_research/provenance.db"
+  chunk_size: 2000
+
+embedding:
+  qwen_model: "Qwen3-Embedding-0.6B"
+  mrl_dimension: 768
+  greek_bert_model: "ancient-greek-BERT"
+  greek_bert_dim: 768

@@ -1,5 +1,5 @@
 """Iterative Research Loops — Cognitive retrieval with gap analysis.
-# [id-soft: quake-1996] Sovereign-Symmetry — iterative cognitive loop
+# Heritage: iterative cognitive loop (user-original design; Sovereign-Symmetry REJECTED per vet-019)
 AP: AP-ITERATIVE-RESEARCH-v1.0.0
 """
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md

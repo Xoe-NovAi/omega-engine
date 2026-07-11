@@ -16,7 +16,7 @@
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
-import httpx
+import httpx2 as httpx
 from pathlib import Path
 from omega.errors import (
     OmegaError,
@@ -61,7 +61,8 @@ def _record_perf(provider: str, model: str, latency_ms: float, tokens: int, is_c
             is_cloud=is_cloud,
             trace_id=f"trc_{int(time.monotonic() * 1000000):012d}",
         )
-    except Exception:
+    except Exception as e:
+        logger.debug("MetricsDB recording failed (best-effort): %s", e)
         pass  # MetricsDB recording is best-effort
 
 
@@ -89,7 +90,8 @@ def _check_cloud_budget(provider: str, est_tokens: int) -> bool:
         if not allowed:
             logger.warning(f"BudgetGate BLOCKED {provider}: {reason}")
         return allowed
-    except Exception:
+    except Exception as e:
+        logger.debug("BudgetGate check failed (allowing request): %s", e)
         return True
 
 
@@ -108,7 +110,8 @@ def _record_cloud_spend(provider: str, est_tokens: int, trace_id: Optional[str] 
         est_prompt = int(est_tokens * 0.7)
         est_completion = int(est_tokens * 0.3)
         return _budget_gate.record_spend(provider, est_prompt, est_completion, trace_id)
-    except Exception:
+    except Exception as e:
+        logger.debug("BudgetGate spend recording failed (returning 0.0): %s", e)
         return 0.0
 
 

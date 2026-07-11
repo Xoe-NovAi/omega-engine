@@ -7,7 +7,7 @@
 # avoid real network calls (sovereign-local, no telemetry).
 
 import pytest
-import httpx
+import httpx2 as httpx
 from unittest.mock import AsyncMock, MagicMock, patch
 
 from omega.oracle.backends.remote_provider import (
@@ -230,7 +230,7 @@ async def test_b6_allow_fallbacks_in_payload():
         mock_resp.raise_for_status.return_value = None
         return mock_resp
 
-    with patch("httpx.AsyncClient") as mock_client_cls:
+    with patch("httpx2.AsyncClient") as mock_client_cls:
         mock_client = AsyncMock()
         mock_client.post = _fake_post
         mock_client.__aenter__.return_value = mock_client
@@ -264,7 +264,7 @@ async def test_b6_no_fallback_flag_when_disabled():
         mock_resp.raise_for_status.return_value = None
         return mock_resp
 
-    with patch("httpx.AsyncClient") as mock_client_cls:
+    with patch("httpx2.AsyncClient") as mock_client_cls:
         mock_client = AsyncMock()
         mock_client.post = _fake_post
         mock_client.__aenter__.return_value = mock_client

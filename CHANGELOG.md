@@ -1,5 +1,23 @@
 # 🔱 Omega Engine — Changelog
 
+## [v1.1.0] - 2026-07-11
+### Added
+- **AxiomRegistry (Core)**: `src/omega/oracle/axiom_registry.py` — WAD-agnostic Five-Fold foundation loader (M2/M16 compliant). Mechanism in Core, content in WAD (`config/wads/arcana_novai/axioms.yaml`).
+- **CI Gate `firewall-check`**: Precise M2 Engine-Stack Firewall scanner wired into `make temple-grade`. Comment/docstring-aware, self-excluding, agent-infra-aware (Kali downgraded to warning).
+- **Contract tests**: 6 AxiomRegistry contract tests (M21) + firewall_checker custom-pattern test fixed.
+
+### Fixed
+- **M2 Firewall leaks** (real, hidden by prior "✅" metrics): hardcoded `config/wads/` paths in `audience_calibrator.py`, `mandate_auditor.py`, `ingestion/scraper.py`; hardcoded Pantheon entity names in `distiller.py` (now universal mode semantics). All resolved via cvar/dynamic WAD resolution.
+- **AP tokens**: normalized to `AP:` convention in `axiom_registry.py`, `firewall_checker.py`, `mandate_auditor.py` (T1 compliance).
+- **T5 false-positive**: reworded `import asyncio` comment in `axiom_registry.py`.
+- **omega-vetala rename**: `omega-moderation/` → `omega-vetala/` (SSOT aligned with pyproject).
+
+### Changed
+- **Jem lessons promoted**: 11 lessons (`jem-20260710-001`→`011`) moved `proposed_lessons.yaml` → `soul.yaml` (M11).
+- **Tests**: 1162 passed (was 1156), 42 skipped, 3 xfailed.
+
+> **Version reconciliation**: `pyproject.toml` is the source of truth at `1.1.0`. The `v1.4.0` (2026-07-07) entry above is a known version-drift anomaly from a divergent timeline; this `v1.1.0` tag is the canonical next release from `v1.0.0`.
+
 ## [v1.4.0] - 2026-07-07
 ### Fixed
 - **BudgetGate**: Removed duplicate class from `observability/__init__.py` (lines 580 & 1336); canonical implementation in `src/omega/oracle/budget_gate.py` (fixes 45+ test failures)

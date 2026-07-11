@@ -1,4 +1,5 @@
 # AP: AP-A2A-BRIDGE-v1.0.0
+# [heritage: a2a-standard 2025] A2A Protocol — agent-to-agent communication (Agent Card, task delegation)
 """
 A2A Bridge — Sovereign Agent Identity.
 

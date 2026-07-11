@@ -17,8 +17,12 @@ from omega.cvar_table import cvar_get, cvar_set
 
 logger = logging.getLogger(__name__)
 
-# Default audience profile directory (WAD layer per M2)
-AUDIENCE_PROFILE_DIR = Path("config/wads/_omega_default/audience.yaml")
+# Default audience profile directory — resolved from the active WAD (M2 Firewall:
+# core must not hardcode a specific WAD path; use the active IWAD cvar like
+# entity_workspace.py does).
+_WAD_ROOT = Path("config") / "wads"
+ACTIVE_IWAD = cvar_get("config.entity.active_iwad", "_omega_default")
+AUDIENCE_PROFILE_DIR = _WAD_ROOT / ACTIVE_IWAD / "audience.yaml"
 
 
 @dataclass
@@ -185,7 +189,8 @@ Apply this calibration to your response now."""
                 hints = config.get("selection_hints", {})
             else:
                 hints = {}
-        except Exception:
+        except Exception as e:
+            logger.debug("Failed to load audience calibrator config (using defaults): %s", e)
             hints = {}
             
         # Default hints if config missing

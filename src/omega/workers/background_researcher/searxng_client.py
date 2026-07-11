@@ -14,7 +14,7 @@ from omega.errors import (
 )
 from typing import Optional
 
-import httpx
+import httpx2 as httpx
 
 logger = logging.getLogger(__name__)
 

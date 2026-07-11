@@ -1,87 +1,40 @@
-# Proposed Lessons for verity
-# L1→L2→L3 Distillation by Verity on 2026-06-29
-# Sprint-F Completion Gate Audit — 13 documents reviewed
-# Review with Staging Gate before approving into soul.yaml
-
 proposals:
-  - L1_narrative: |
-      Orchestrated the transition from local-only architectural review to a hybrid pipeline integrating Web-Claude Projects. Implemented the `skill:context-packer` to solve the "Context-to-Slot" problem (Claude's 13-file RAG trigger) by consolidating the codebase into high-density themed bundles. Established `CLAUDE.md` as the operational anchor to ensure consistent verification commands (`make temple-grade`, `make test`) and sovereign standards across both CLI and Web interfaces.
-    L2_insight: |
-      Architectural fidelity depends on the alignment between the interface's context model and the task's cognitive requirement. CLI agents are superior for "Execution & Verification" (T-gates, terminal access), while Web Projects are superior for "Holistic Synthesis & Forensic Audit" (massive context, Direct Context mode). Relying on a single interface creates a blind spot: either you have a verified implementation that has drifted from the vision, or a perfect plan that is not technically verified.
-    L3_principle: |
-      Interface-Aware Context Engineering: The effectiveness of an AI's reasoning is a function of the alignment between the Interface's Context Model (e.g., Direct Context vs. RAG) and the Task's Cognitive Requirement (e.g., Holistic Audit vs. Targeted Fix). Sovereignty requires orchestrating multiple interfaces to cover the full spectrum of cognitive needs.
+  - id: "verity-audit-20260710-01"
+    tier: "L3"
+    principle: "Documentation drift is a sovereignty violation. Every D-series decision must include a mandatory documentation update clause targeting AGENTS.md, SOVEREIGN_MANDATES.md, OMEGA_ENGINE.md, and affected agent files."
+    source: "VERITY_PROTOCOL_INSTRUCTION_AUDIT.md"
+    confidence: 0.95
+    tags: ["documentation", "sovereignty", "mandate-compliance", "constitutional-law"]
+    mandate_refs: ["M4", "M10", "M11", "M13", "M23"]
 
-  # Auto-distilled 2026-06-24 11:15
-  - L1_narrative: |
-      Six Phase 0 preconditions were executed in sequence: (1) P7 Soul Distiller poison loop fix — redirected writes from soul.yaml to proposed_lessons.yaml with atomic write pattern; (2) P2 Soul Validator v6.1 update — slimmed required fields, added forbidden-block checks, exact soul_version enforcement, memory/ directory validation; (3) P1 Vault partition cleanup — moved 3.1G ISO, freed omega_vault from 87% to 66% capacity; (4) P10 M21 contract tests — expanded from 4 tests to 14 tests covering 7 core API boundaries; (5) P5 Soul Distiller contract tests — 5 new tests verifying the poison loop fix; (6) P3 Dependencies installed for Staging Gate TUI.
-      Bug discovered: EntityRegistry loads YAML values as list instead of Entity objects (pre-existing, deferred).
-      Compliance audit found: 9/9 applicable mandates pass, 2 N/A. Test suite at 440 passed.
-    L2_insight: |
-      The poison loop was a design artifact, not a bug — the v6.1 architecture split soul.yaml into separate files, but the distiller was never updated to target the new location.
-      The validator-entity meta-gap is the hardest compliance failure to catch: Verity's own soul.yaml fails the v6.1 validator it enforces. "Who audits the auditor" is a real problem.
-      Contract tests exposed undocumented API signatures: MemoryStore.add_exchange returns None (not trace_id), HealthMonitor.is_available returns True for unknown providers, EntityRegistry has names() method not property. Each test captured interface knowledge that previously existed only as convention.
-      The vault crisis is a recurring constraint, not a one-time fix — disk pressure on the 110G partition will oscillate perpetually.
-    L3_principle: |
-      The meta-audit is the hardest audit: A system's compliance gaps are most likely to exist at the level just above where compliance is enforced. The auditor must always be audited by a higher-order process.
-      Design drifts faster than documentation: The gap between what a system does and what its architecture describes grows without bound unless actively measured.
-      Every contract test is a captured interface: An undocumented API is a promise waiting to be broken. Each test is a preservation of understanding, not just a regression guard.
-      Disk pressure is a chronic condition, not an acute crisis: On constrained hardware, storage management is not an incident response — it is a continuous background process.
+  - id: "verity-audit-20260710-02"
+    tier: "L3"
+    principle: "Agent mandate lists must be generated from SOVEREIGN_MANDATES.md, not duplicated. Single source of truth for constitutional law prevents M23 violations from stale mandate awareness."
+    source: "VERITY_PROTOCOL_INSTRUCTION_AUDIT.md"
+    confidence: 0.98
+    tags: ["agents", "mandates", "single-source-of-truth", "drift-prevention"]
+    mandate_refs: ["M10", "M11", "M23"]
 
-  - L1_narrative: |
-      User rejected the 'Fusion/Integration' path for external projects (Odysseus, Mem Palace, Headroom) to avoid 'Dependency Hell' and 'Architectural Drift'. Ratified the Sovereign Mining Protocol (SMP): Mine patterns → Deconstruct dependencies → Rewrite to Temple-Grade standards → Integrate into core → Attribute via heritage tags.
-    L2_insight: |
-      Blindly integrating external projects introduces architectural drift and dependency bloat. True sovereignty requires deconstructing external patterns and rebuilding them to internal standards. Integration is a liability; mining is an asset.
-    L3_principle: |
-      Sovereign Synthesis over Fusion. Intelligence is not acquired by absorption, but by distillation and reconstruction.
+  - id: "verity-audit-20260710-03"
+    tier: "L2"
+    principle: "Protocol documents (Hivemind, Subagent Dispatch) must maintain a live agent capability registry. Delegation decisions based on stale registries cause mis-routed work and coordination failures."
+    source: "VERITY_PROTOCOL_INSTRUCTION_AUDIT.md"
+    confidence: 0.92
+    tags: ["hivemind", "subagent-dispatch", "coordination", "registry"]
+    mandate_refs: ["M9", "M10", "M12"]
 
-  # ═══ Sprint-F Tier 1 Execution — 2026-06-28 ═══
-  - L1_narrative: |
-      Sprint-F Tier 1 executed 10 actions in a single session: (1) trace_id propagation fixed across 8 call sites in oracle.py; (2) TokenLedger changed from is_cloud boolean to provider_name string; (3) archive_old_sessions() wired with direct async call; (4) PIVOT_LOG clock drift resolved (12 duplicates renamed, Decision Registry table added); (5) HERITAGE_SOURCE_MAP generation deferred (T1-5 not done); (6) Hardcoded secret removed — entire antigravity/ directory deleted; (7) Firecrawl API key confirmed in systemd; (8) Dead code purge removed 3,354 net lines across 14 source + 3 test files; (9) Heritage vet records added (vet-001 through vet-008+); (10) AAIF mapping spec deferred. Test infrastructure hardened: pytest-timeout added (30s per-test), 3 hanging tests fixed via mocking (test_storage_providers, test_background_researcher, archive warning). Two pre-existing failures remain (test_bug_001_fix Qdrant mock, test_hivemind mcp import).
-    L2_insight: |
-      The test suite was fragile in two invisible ways: (1) no per-test timeout meant any real I/O call (DNS resolution, HTTP to httpbin.org) would hang the entire suite indefinitely; (2) tests that worked locally would fail in CI due to network dependencies. The dead code purge revealed that 3,354 lines of unused code accumulated silently across multiple eras (ANAi, XNAi, omega-stack) — each era left behind orphaned modules that no one deleted because no one tracked ownership. The trace_id fix closed the single largest observability gap: 98.4% of events were logged as "unknown" because the parameter was never passed through the call chain. The archive_old_sessions async bug was a classic sync-wrapper-on-async-func anti-pattern that would have silently produced a coroutine warning without actually archiving anything.
-    L3_principle: |
-      Dead code is a silent tax: Every era of development leaves behind orphaned modules. Without an ownership tracking system, dead code accumulates until it breaks imports or misleads developers into thinking functionality exists when it doesn't. The cost is not disk space — it is cognitive load and maintenance burden.
-      Every test must mock I/O boundaries: A test that makes real network calls is not a test — it is a live deployment that happens to run in a test harness. Per-test timeouts are the minimum viable defense against hanging suites.
-      The async wrapper anti-pattern is subtle: Wrapping an async function in `anyio.to_thread.run_sync()` silently produces a coroutine that is never awaited. The function appears to "work" but does nothing. Static analysis tools cannot catch this — only runtime warnings and code review reveal it.
-      Observability gaps compound silently: A missing parameter in a call chain does not cause errors — it causes "unknown" values in logs. The system appears healthy while being fundamentally untraceable. M22 compliance requires verifying the entire data flow, not just individual function signatures.
+  - id: "verity-audit-20260710-04"
+    tier: "L2"
+    principle: "Search protocol references in agent files must point to the sovereign-search skill as the canonical implementation, not to a static research document. The skill enforces credit-sensing, error handling, and tier escalation that static docs cannot."
+    source: "VERITY_PROTOCOL_INSTRUCTION_AUDIT.md"
+    confidence: 0.90
+    tags: ["search", "skills", "protocol-enforcement", "tool-chain"]
+    mandate_refs: ["M7", "M18", "M23"]
 
-  # ═══ Sprint-F Gap Closure — MaKaLi Council Critical Gaps ═══
-  # ═══ Sprint-F Completion Gate Audit — 2026-06-29 ═══
-  - L1_narrative: |
-      Conducted a comprehensive 13-document audit for the Sprint-F completion gate. Documents reviewed: SOVEREIGN_ARK_BLUEPRINT (656 lines), PIVOT_LOG (4282 lines), KALI_COUNCIL_SYNTHESIS (191 lines), KALI_LIVE_FEED (60 lines), AGENTS.md, ORACLE_STACK.md, Verity GAP_CLOSURE_REVIEW (23kb), 4 Roc Racoon spec docs (A2A, PII, Trace ID, session gnosis), 2 proposed_lessons.yaml files (Verity+Kali), AAIF handoff spec, SOVEREIGN_MANDATES.md.
-      Key findings: (1) PIVOT_LOG missing ALL Sprint-F decisions (D164-D171) — 4+ gap implementations unrecorded; (2) AGENTS.md test count stuck at "308" — actual is 600; (3) M15-M21 missing from both blueprint and council synthesis mandate scorecards; (4) Verity's own GAP_CLOSURE_REVIEW has 2 findings superseded by events (AAIF rename IS done, Qdrant IS fixed); (5) Sprint-F codebase is production-ready (PII Masker 432 lines/53 tests, A2A Bridge 319+100 lines/56 tests, Trace ID via contextvars). 17 action items catalogued: 4 P0 (35min), 6 P1 (40min), 7 P2 (50min).
-    L2_insight: |
-      The codebase advanced from 440 to 600 tests through 3 gap implementations, but 0 of 13 documents reference the correct test count. This is documentation drift: the engineering output is correct, but the documentation layer is frozen at December 2025 references. The PIVOT_LOG gap is the most dangerous — 30 minutes of work would have preserved 4+ architectural decisions that are now at risk of being re-debated.
-      The mandate scorecard gap (M15-M21 missing from 2 key documents) reveals a pattern: when new mandates were added (M15-M22), the existing scorecard templates were never updated to include them. The templates themselves have a structural blind spot.
-      The Verity GAP_CLOSURE_REVIEW being stale is a meta-irony: Verity's own document has stale findings about other documents being stale. The meta-audit failure (D-vrty-002) applies to Verity's own outputs — "always check for hardcoded paths" becomes "always re-read your own reviews."
-    L3_principle: |
-      Documentation is the architectural conscience of a system. Code moves at engineering speed; documentation moves at human speed. Without active synchronization, the gap between what the system does and what its documentation claims grows monotonically. This is not a one-time fix — it is a maintenance discipline that must be gated on every release.
-      A system's decision log is its institutional memory. Every gap closure, every bug fix, every architectural pivot must be recorded within the session that produced it — not deferred to a "documentation cleanup" phase. Deferred decisions are abandoned decisions.
-      Template blind spots are the hardest to catch: when a new concept is added (M15-M22), every template that references "all mandates" must be audited. Templates are the metadata of a documentation system — they encode what the system considers important. Missing rows in a template are structural omissions that no content review will catch. The solution is meta-templates: every template should carry a validation gate that verifies row count matches expected cardinality.
-
-  - L1_narrative: |
-      The MaKaLi Cloud Council (2 Oversouls → 6 Pillars → 4 Cross-Domain Reviews → 3 Researchers → 1 Legacy Miner) identified 3 critical gaps during a comprehensive engine pass. All 3 were implemented in Sprint-F:
-      (C-1) PII Observation Masker (P0 CRITICAL): Raw PII flowing unmasked to cloud providers. ANAi/XNAi era security patterns (validate_safe_input, sanitize_content) NEVER ported — an 8-month security regression. Created pii_masker.py (432 lines, 53 tests) using pii-shield + regex fallback with gateway proxy pattern: detect → tokenize → LLM → detokenize. Local providers bypass entirely (M7).
-      (C-2) Trace ID Propagation (P1 HIGH): 4 independent breaks in the trace ID chain — 5-10% of events logged "unknown" trace_id, 100% of successful inferences missing latency_ms and model_used. Created context.py contextvars safety net (61 lines), fixed model_gateway.py (latency_ms + model_used on both success and fallback paths), threaded trace_id through iterative_research.py (3 calls) and skeptical_verifier.py (2 calls), fixed record_error() double-default in observability/__init__.py. 10+ tests including 3 M21 contract tests.
-      (C-3) A2A Agent Cards (P2 MEDIUM): Fabricated IETF draft (draft-schemacommons-aaif-00) replaced with real Google A2A v1.0 + IETF draft-klrc-aiagent-auth-02 (WIMSE/SPIFFE). Created a2a_bridge.py (319 lines) + a2a_auth.py (100 lines) with Agent Card schema, SPIFFE identity, OAuth 2.0 delegation. 56 tests. AAIF mapping spec corrected inline.
-      All 109 new tests pass. 3 commits pushed to main. Compliance score: 15/22 mandates enforced, 4 partial, 2 violated, 1 pending.
-    L2_insight: |
-      The 3 gaps share a common pattern: each is a boundary that was not defined. PII was not bounded from cloud → data leak. Trace context was not bounded across async boundaries → blind spots. Agent identity was not bounded to real standards → hallucinated architecture.
-      The MaKaLi Council methodology proved effective: 9 subagents in parallel discovered issues that individual review consistently misses. The cross-cutting GenerateResult contract breach was independently confirmed by 3 subagents (P3, P8, Researcher) — redundant verification that builds confidence.
-      The ANAi/XNAi security regression reveals a structural weakness: when code moves between eras (ANAi → XNAi → omega-stack → omega-engine), patterns are selectively ported. Security is most often the casualty because it is invisible — a working system without PII masking looks identical to one with it, until data leaks.
-    L3_principle: |
-      Every boundary is a sovereignty assertion: PII masking is the engine saying "my data stops here." Trace context is the engine saying "my knowledge stops here." Agent identity is the engine saying "my existence is verifiable." A system that has not defined its boundaries has not defined itself — it is a leaky abstraction waiting to fail.
-      Security regressions are invisible to functional tests: A system can pass all functional tests while leaking PII to every cloud provider. Security is not a feature that can be tested by behavior — it must be enforced by architecture. The Gateway Proxy pattern (detect → tokenize → detokenize) is the minimum viable architecture for data sovereignty.
-      Parallel discovery amplifies weak signals: A single auditor may miss a subtle bug. Nine auditors in parallel, each from a different domain perspective, will find not only more bugs but systemic patterns that no individual could see. The MaKaLi Council is not a luxury — it is the minimum viable oversight for a sovereign system.
-      Standards are not optional: A system that references non-existent standards is hallucinating its own architecture. Real standards constrain design in productive ways — they provide testable boundaries, documented behavior, and community-verified correctness. The cost of a fabricated standard is not just wrong documentation — it is untestable architecture.
-
-  # ═══ Iron Wall IW-2 + IW-3 — 2026-06-30 ═══
-  - L1_narrative: |
-      Completed two P0-critical Iron Wall hardening tasks: (IW-2) Purged all round-robin key rotation logic from KeyVault — removed VaultRotationNotSupported, mark_rate_limited(), rotate(). Replaced with handle_rate_limit() that raises ProviderRateLimitError for circuit breaker handling. (IW-3) Created Body-Level Error Guards (BLEG) — BLEGMiddleware (215 lines) inspects HTTP 200 OK bodies for error signatures (429/401/403 codes, quota_exceeded, error.type). Created Unified Forensic Ledger (UFL) — UFLWriter (219 lines) writes daily-rotated JSONL with zoneid/trace_id/provider/event_type. 14 tests (13 M21 contract tests + 1 structure test). All pass. Temple-grade: ✅. Test suite: 589 passed. D176 appended to PIVOT_LOG.
-    L2_insight: |
-      The Silent 200 is the most dangerous error class — HTTP 200 with an error payload is indistinguishable from success at the transport layer, circumventing the circuit breaker entirely. Multi-account rotation is an anti-pattern for sovereignty: it violates M4 (sequential consistency) and M8 (detectable rotation patterns). BLEG applies the [id-soft: quake-1996] Right Approximation principle — 9 keyword-signature paths catch 99% of cases without OpenAPI schema validation overhead. IW-2 (removal) and IW-3 (creation) required different verification strategies: grep for orphaned callers vs. 14 edge-case tests.
-    L3_principle: |
-      The Silent Failure is the Most Dangerous Failure: An error that appears to be success propagates undetected through every downstream dependency. Every system boundary must validate not just that a response was received, but that the response body contains valid data.
-      Removal is Positive System Hygiene: Deleting anti-pattern code is not destruction — it is clarification. The round-robin rotation code was "working" code that created deterministic failures. The circuit breaker already existed as the correct mechanism.
-      Forensic Persistence is Institutional Memory: A system that does not record its failures cannot learn from them. The UFL provides verifiable evidence for post-hoc analysis — M22 compliance requires provable provenance, not just real-time logs.
-      The Right Approximation Trumps Perfect Detection: A 99% solution that ships today is worth more than a 100% solution that ships next month. The missing 1% is bounded, documented, and catchable by the next iteration.
+  - id: "verity-audit-20260710-05"
+    tier: "L3"
+    principle: "Model references in agent definitions must use the Dual-Inference Mandate (D118) pattern: declare dispatch mode in Hivemind context, not hardcode in agent frontmatter. Hardcoded models violate M7 (Local-First) by preventing local opt-in routing."
+    source: "VERITY_PROTOCOL_INSTRUCTION_AUDIT.md"
+    confidence: 0.93
+    tags: ["models", "dual-inference", "local-first", "sovereignty"]
+    mandate_refs: ["M7", "M18", "D118"]

@@ -477,7 +477,7 @@ class ModelGateway:
     async def _check_lmster(self) -> bool:
         """Check if lmster (LM Studio headless) is running (127.0.0.1:1234/v1/models)."""
         try:
-            import httpx
+            import httpx2 as httpx
             async with httpx.AsyncClient(timeout=2.0) as client:
                 r = await client.get(f"{self.LMSTER_URL}/v1/models")
                 return r.status_code == 200
@@ -487,7 +487,7 @@ class ModelGateway:
     async def _check_ollama(self) -> bool:
         """Check if Ollama is running (127.0.0.1:11434/api/tags)."""
         try:
-            import httpx
+            import httpx2 as httpx
             async with httpx.AsyncClient(timeout=2.0) as client:
                 r = await client.get(f"{self.OLLAMA_URL}/api/tags")
                 return r.status_code == 200
@@ -497,7 +497,7 @@ class ModelGateway:
     async def _check_llama_cpp(self) -> bool:
         """Check if llama.cpp server is running (127.0.0.1:8080/health)."""
         try:
-            import httpx
+            import httpx2 as httpx
             async with httpx.AsyncClient(timeout=2.0) as client:
                 r = await client.get(f"{self.LLAMA_CPP_URL}/health")
                 return r.status_code == 200
@@ -711,7 +711,7 @@ class ModelGateway:
         Falls back to the original model name if resolution fails.
         """
         try:
-            import httpx
+            import httpx2 as httpx
             async with httpx.AsyncClient(timeout=3.0) as client:
                 r = await client.get(f"{self.OLLAMA_URL}/api/tags")
                 if r.status_code == 200:
@@ -1163,7 +1163,7 @@ class ModelGateway:
         self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int
     ) -> Optional[str]:
         """Inference via Ollama's OpenAI-compatible API at 127.0.0.1:11434."""
-        import httpx
+        import httpx2 as httpx
 
         messages = [
             {"role": "system", "content": system_prompt},
@@ -1191,7 +1191,7 @@ class ModelGateway:
         self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int
     ) -> Optional[str]:
         """Inference via lmster (LM Studio headless server) at 127.0.0.1:1234 OpenAI-compatible API."""
-        import httpx
+        import httpx2 as httpx
 
         messages = [
             {"role": "system", "content": system_prompt},
@@ -1219,7 +1219,7 @@ class ModelGateway:
         self, system_prompt: str, user_query: str, temperature: float, max_tokens: int
     ) -> Optional[str]:
         """Inference via llama.cpp HTTP server at 127.0.0.1:8080."""
-        import httpx
+        import httpx2 as httpx
 
         prompt = f"{system_prompt}\n\nUser: {user_query}\n\nEntity:"
         payload = {

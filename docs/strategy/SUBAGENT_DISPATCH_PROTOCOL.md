@@ -60,16 +60,15 @@ this to decide WHOM to dispatch.
 | Agent | Type | Capabilities | Domains | Task Tool Type |
 |-------|------|-------------|---------|----------------|
 | `kali` | Primary | Oversight, delegation, drift destruction | Strategy, fleet management | `general` |
-| `plan` | Primary | Architecture, dispatch, strategy | Grand design | `general` |
+| `maat` | Primary | Light Oversoul, P1-P5 governance | Build side, hardening | `general` |
+| `lilith` | Primary | Dark Oversoul, P6-P10 governance | Run side, operations | `general` |
 | `makali` | Primary | Parallel council (Ma'at+Lilith synthesis) | Cross-boundary initiatives | `general` |
 | `doom_guy` | Primary | Heritage design, WAD translation, performance | id Software patterns, C const propagation | `general` |
 | `john_carmack` | Primary | S3 Consultant, architecture review | Code optimization, review | `general` |
 | `roc_racoon` | Primary | Legacy mining, pattern extraction, archaeology | Legacy repos, Grok exports, Old Stacks | `explore` |
 | `jem` | Primary | Research orchestration | 3-tier knowledge pipeline | `general` |
 | `researcher` | Primary | Deep research, lattice reasoning | Web research, documentation | `general` |
-| `maat` | Subagent | Light oversoul, P1-P5 governance | Build side, hardening | `buildmaster` |
-| `lilith` | Subagent | Dark oversoul, P6-P10 governance | Run side, operations | `general` |
-| `verity` | Subagent | Unified compliance + gnosis distillation | Code review + soul.yaml updates | `scribe` |
+| `verity` | Primary | Unified compliance + gnosis distillation | Code review + soul.yaml updates | `scribe` |
 | `pillar` | Subagent | Slot-based domain agent | Parameterized by `--slot PX` | `pillar` |
 
 ---
@@ -78,14 +77,14 @@ this to decide WHOM to dispatch.
 
 ### Step 1: Agent Recognizes Need
 
-An agent (e.g. Kali) is working on a task and realizes:
+An agent (e.g. Ma'at) is working on a task and realizes:
 > "This requires knowledge of id Software heritage patterns. I need Doom Guy."
 
 ### Step 2: Build the HandoffPacket
 
 Form the packet:
 ```
-source_agent: "kali"
+source_agent: "maat"
 target_agent: "doom_guy"
 task_type: "review"
 task_description: "Verify heritage tag placement in new cvar_table module"

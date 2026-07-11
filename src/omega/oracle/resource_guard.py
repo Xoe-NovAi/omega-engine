@@ -1,6 +1,7 @@
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Resource Guard — Concurrency Protection
 # AP: AP-RESOURCE-GUARD-v1.1.0
+# [heritage: anyio 2024] M1 AnyIO — Semaphore(1) concurrency guard (zone-purge semantics)
 # ICS: [NODE: MAAT | ARCHETYPE: HERMES | CONTEXT: CONCURRENCY]
 #
 # Updates in v1.1.0 (Sovereign Hardening Sprint — P4):

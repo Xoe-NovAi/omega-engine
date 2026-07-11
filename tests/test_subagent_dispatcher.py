@@ -238,7 +238,7 @@ class TestBuildDispatchPrompt:
         assert "JSON report" in prompt
         assert "Trace ID" in prompt
         assert "PIVOT_LOG.md" in prompt
-        assert "[id-soft:]" in prompt
+        assert "[id-soft:" in prompt
 
     def test_prompt_without_optional_fields(self):
         packet = HandoffPacket(

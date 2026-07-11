@@ -45,7 +45,7 @@ This is not coincidence — it is **convergence through independent debugging**.
 
 ## Cross-References
 
-- [doom_guy] Heritage pattern verification confirms convergence: DOOM/Quake patterns found in all 5 stacks [id-soft:]
+- [doom_guy] Heritage pattern verification confirms convergence: DOOM/Quake patterns found in all 5 stacks [id-soft: doom-1993]
 - [context] Knowledge Lifecycle Pipeline uses convergence as T2→T3 gate criterion
 - [quality] Verification suite should include convergence checks for legacy pattern fidelity
 

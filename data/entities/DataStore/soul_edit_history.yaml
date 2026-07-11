@@ -257,3 +257,381 @@
   summary: Session ses_20260710_default_001 distilled via close_session
   timestamp: 1783655196.331469
   trace_id: ses_20260710_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260710_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260710_default_001 distilled via close_session
+  timestamp: 1783683047.8354871
+  trace_id: ses_20260710_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260710_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260710_default_001 distilled via close_session
+  timestamp: 1783683267.32061
+  trace_id: ses_20260710_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260710_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260710_default_001 distilled via close_session
+  timestamp: 1783704392.471988
+  trace_id: ses_20260710_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260710_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260710_default_001 distilled via close_session
+  timestamp: 1783725949.148469
+  trace_id: ses_20260710_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260710_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260710_default_001 distilled via close_session
+  timestamp: 1783726327.0040329
+  trace_id: ses_20260710_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783729635.6564345
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783732138.4061427
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783733138.4670684
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783733420.676619
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783733548.308452
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783737511.0330195
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783738208.4990127
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783738354.5835967
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783738646.0755627
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783738883.8739638
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783738988.2184741
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783739331.190018
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783774304.4920099
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783774455.5770044
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783775205.509598
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783775535.9748147
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783775658.2864108
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783775794.0775857
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783775809.4490013
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783776012.8548572
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783776125.4732037
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783776714.0688694
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783777043.9068286
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783777139.6621459
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783777402.8506665
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783777528.9876778
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783777658.842406
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783778366.9293098
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783778652.3415549
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783779295.203073
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783779311.616234
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783779444.291613
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783779560.0986803
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783785131.9460351
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783785355.3493786
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783800504.4350781
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783801133.3525274
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783801320.1454344
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783801564.4293785
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783801876.9045177
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783804632.4926324
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783804762.83025
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783805251.1566272
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783805377.7327259
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783806157.157773
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783806268.955625
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783806419.5626166
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783806548.5012164
+  trace_id: ses_20260711_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260711_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260711_default_001 distilled via close_session
+  timestamp: 1783806839.5187616
+  trace_id: ses_20260711_default_001

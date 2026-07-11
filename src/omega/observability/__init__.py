@@ -1,5 +1,6 @@
 # 🔱 Omega Observability — Deep Logging, Tracking & Dataset Collection
 # AP: AP-OBSERVABILITY-v2.0.0
+# [heritage: opentelemetry 2021] OpenTelemetry — GenAI semantic conventions for observability tracing
 # ICS: [NODE: MAAT | ARCHETYPE: SOPHIA | CONTEXT: OBSERVABILITY]
 #
 # Logs every query-response cycle with full provenance for:
@@ -12,6 +13,7 @@
 # the entire Oracle → Entity → ModelGateway → Response pipeline.
 
 import json
+import sqlite3
 from omega.errors import (
     OmegaError,
     OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
@@ -93,7 +95,17 @@ def setup_json_logging(logger_name: str = "omega") -> None:
 # ── Storage paths ─────────────────────────────────────────────────────
 # Resolve DATA_DIR relative to project root if OMEGA_DATA_DIR is not set
 _root = Path(__file__).resolve().parent.parent.parent.parent
-DATA_DIR = Path(os.environ.get("OMEGA_DATA_DIR", str(_root / "data")))
+
+def _get_data_dir() -> Path:
+    """Get the current data directory, respecting OMEGA_DATA_DIR env var."""
+    return Path(os.environ.get("OMEGA_DATA_DIR", str(_root / "data")))
+
+def get_metrics_db_path() -> Path:
+    """Get the MetricsDB path at runtime, respecting current OMEGA_DATA_DIR."""
+    return _get_data_dir() / "observability" / "metrics.db"
+
+# Backward compatibility - compute once at import for non-test usage
+DATA_DIR = _get_data_dir()
 LOG_DIR = DATA_DIR / "logs"
 DATASET_DIR = DATA_DIR / "datasets"
 TRACE_DIR = DATA_DIR / "traces"
@@ -635,7 +647,8 @@ class BudgetGate:
             self._daily_spend_cache[today] = spend
             self._cache_date = today
             return spend
-        except Exception:
+        except Exception as e:
+            logger.debug("BudgetGate daily spend query failed (returning 0.0): %s", e)
             return 0.0
     
     def estimate_cost(self, provider: str, prompt_tokens: int, completion_tokens: int) -> float:
@@ -692,8 +705,8 @@ class BudgetGate:
                     (cost, trace_id)
                 )
                 self._metrics_db._conn.commit()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("BudgetGate cost recording failed: %s", e)
         
         # Invalidate cache
         self._daily_spend_cache.clear()
@@ -719,8 +732,8 @@ def _ensure_cost_column(metrics_db: "MetricsDB") -> None:
         if "cost_usd" not in columns:
             metrics_db._conn.execute("ALTER TABLE performance ADD COLUMN cost_usd REAL DEFAULT 0.0")
             metrics_db._conn.commit()
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("Schema migration (cost_usd column) failed (may already exist): %s", e)
 
 
 # ── Observability Engine ──────────────────────────────────────────────
@@ -781,7 +794,7 @@ class ObservabilityEngine:
         if os.environ.get("OMEGA_ENV") == "test":
             return None
         try:
-            db = MetricsDB(METRICS_DB_PATH)
+            db = MetricsDB(get_metrics_db_path())
             db.initialize()
             self._metrics_db = db
         except (OSError, RuntimeError) as e:
@@ -1329,6 +1342,27 @@ def get_engine() -> ObservabilityEngine:
     return _engine
 
 
+def reset_observability() -> None:
+    """Reset the ObservabilityEngine singleton. Used for testing.
+    
+    Closes the MetricsDB SQLite connection (WAL-mode) before abandoning
+    the engine to prevent ResourceWarning and database corruption when
+    OMEGA_DATA_DIR changes between tests. Without this, a stale MetricsDB
+    connection from a previous test's tmp_path leaks into subsequent tests,
+    causing 'database disk image is malformed' errors.
+    """
+    global _engine
+    if _engine is not None:
+        # Close MetricsDB connection if it was initialized (non-test mode)
+        metrics_db = _engine._metrics_db
+        if metrics_db is not None and hasattr(metrics_db, 'close'):
+            try:
+                metrics_db.close()
+            except (RuntimeError, OSError, sqlite3.Error):
+                pass  # Best-effort — engine is being abandoned anyway
+        _engine = None
+
+
 # Add cost_usd column to performance table if not exists (migration)
 def _ensure_cost_column(metrics_db: "MetricsDB") -> None:
     """Ensure cost_usd column exists in performance table."""
@@ -1338,5 +1372,5 @@ def _ensure_cost_column(metrics_db: "MetricsDB") -> None:
         if "cost_usd" not in columns:
             metrics_db._conn.execute("ALTER TABLE performance ADD COLUMN cost_usd REAL DEFAULT 0.0")
             metrics_db._conn.commit()
-    except Exception:
-        pass
+    except Exception as e:
+        logger.debug("Schema migration (cost_usd column) failed (may already exist): %s", e)

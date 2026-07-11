@@ -1,21 +1,25 @@
-# 🔱 Omega Engine — Background Research Service
+# 🔱 Omega Engine — Background Research Service (Daemon + Watchdog)
 # ⬡ OMEGA ⬡ SOPHIA ⬡ autonomous ⬡ research ⬡ WORKER
 #
-# Runs one autonomous research cycle. Timer-triggered or manual.
-# See omega-research.timer for the 15-minute schedule.
+# Runs the sovereign background researcher as a CONTINUOUS daemon.
+#   - Inner watchdog (crash-loop breaker) restarts cycles on failure.
+#   - systemd Restart=on-failure provides the OUTER watchdog if the process dies.
+# API keys resolve from the sovereign vault at runtime — never from plaintext .env.
 
 [Unit]
-Description=Omega Background Researcher — Sovereign Research Worker
+Description=Omega Background Researcher — Sovereign Research Worker (Daemon)
 Documentation=https://github.com/Xoe-NovAi/omega-engine
 After=network-online.target omega-searxng.service
 Wants=network-online.target
 Requires=omega-searxng.service
 
 [Service]
-Type=oneshot
-ExecStart=%h/Documents/Xoe-NovAi/omega-engine/.venv/bin/python3 -m omega.workers.background_researcher.run
+Type=simple
+ExecStart=%h/Documents/Xoe-NovAi/omega-engine/.venv/bin/python3 -m omega.workers.background_researcher.run --daemon
 WorkingDirectory=%h/Documents/Xoe-NovAi/omega-engine
 Environment=PYTHONPATH=%h/Documents/Xoe-NovAi/omega-engine/src
+# Non-secret config only (SEARXNG_BASE_URL). API keys resolve from the
+# sovereign vault at runtime — never from plaintext .env.
 EnvironmentFile=%h/Documents/Xoe-NovAi/omega-engine/.env
 Environment=OMEGA_ENV=production
 Environment=MALLOC_MMAP_THRESHOLD_=65536
@@ -27,11 +31,11 @@ StandardError=append:/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/en
 MemoryMax=512M
 MemoryHigh=384M
 
-# Auto-restart on failure (catch crashes)
+# Outer watchdog: restart the process if it exits non-zero (e.g. crash-loop abort)
 Restart=on-failure
 RestartSec=30s
 
-# Security hardening — less strict to allow .env loading
+# Security hardening
 ProtectSystem=full
 ReadWritePaths=%h/Documents/Xoe-NovAi/omega-engine/data %h/Documents/Xoe-NovAi/omega-engine/docs
 PrivateTmp=yes

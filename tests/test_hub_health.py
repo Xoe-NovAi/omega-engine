@@ -9,7 +9,7 @@ AP Token: AP-HUB-HEALTH-TESTS-v1.0.0
 import json
 from pathlib import Path
 import pytest
-import httpx
+import httpx2 as httpx
 
 
 HUB_BASE = "http://127.0.0.1:8016"

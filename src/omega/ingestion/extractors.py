@@ -6,7 +6,7 @@ Sovereign Extractors — Model-specific extraction logic.
 # DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 import json
 import time
-import httpx
+import httpx2 as httpx
 import anyio
 from typing import AsyncGenerator, Optional, Dict, Any
 from pathlib import Path
@@ -66,7 +66,7 @@ Sovereign Extractors — Model-specific extraction logic.
 """
 import json
 import time
-import httpx
+import httpx2 as httpx
 import anyio
 from typing import AsyncGenerator, Optional, Dict, Any
 from pathlib import Path

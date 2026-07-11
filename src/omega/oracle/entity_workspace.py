@@ -72,7 +72,7 @@ ENTITIES_DATA_DIR = _get_entities_data_dir()
 def _atomic_write_yaml(file_path: Path, data: Any, audit: 'SovereignAuditLog', action: str, name: str) -> None:
     """Write YAML data atomically using tmp-rename pattern.
     
-    [id-soft: doom-1993] Atomic Rename Pattern (Mandate 12)
+    # Atomic Rename Pattern (Mandate 12)
     """
     fd, temp_path = tempfile.mkstemp(dir=str(file_path.parent), prefix=f".{file_path.stem}_", suffix=".yaml")
     try:

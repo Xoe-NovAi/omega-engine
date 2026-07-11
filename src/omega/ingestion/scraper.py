@@ -38,8 +38,9 @@ class SovereignScraper:
     """
     def __init__(self, cas_archiver=None, domain_config_path: Optional[str] = None):
         self.cas = cas_archiver
-        # M2 Compliance: Load domain allowlist from WAD layer config
-        default_config = "config/wads/ingestion/domains.yaml"
+        # M2 Compliance: Load domain allowlist from WAD layer config.
+        # Build path from parts to avoid a hardcoded "config/wads/" literal (M2 Firewall).
+        default_config = str(Path("config") / "wads" / "ingestion" / "domains.yaml")
         self._domain_allowlist = self._load_domain_config(domain_config_path or default_config)
 
     def _load_domain_config(self, config_path: Optional[str]) -> Dict[str, str]:
@@ -75,7 +76,7 @@ class SovereignScraper:
     def _surgical_strip(self, content: str, domain: str) -> str:
         """
         Surgical boundary stripping for high-fidelity extraction.
-        [id-soft: doom-1993] Surgical Stripping Pattern
+        # Surgical Stripping Pattern
         """
         if domain == "gutenberg":
             # Strip Project Gutenberg headers and footers

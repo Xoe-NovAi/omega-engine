@@ -1,5 +1,5 @@
 import pytest
-import httpx
+import httpx2 as httpx
 from unittest.mock import AsyncMock, MagicMock, patch
 from omega.workers.background_researcher.searxng_client import SearXNGClient
 from mcp_servers.searxng.server import searxng_search
@@ -16,7 +16,7 @@ async def test_client_search_success():
         ]
     }
     
-    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+    with patch("httpx2.AsyncClient.post", new_callable=AsyncMock) as mock_post:
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.json.return_value = mock_response
@@ -33,7 +33,7 @@ async def test_client_search_empty():
     client = SearXNGClient()
     mock_response = {"results": []}
     
-    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+    with patch("httpx2.AsyncClient.post", new_callable=AsyncMock) as mock_post:
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.json.return_value = mock_response
@@ -49,7 +49,7 @@ async def test_client_search_text():
         "results": [{"url": "http://1.com"}, {"url": "http://2.com"}]
     }
     
-    with patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+    with patch("httpx2.AsyncClient.post", new_callable=AsyncMock) as mock_post:
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.json.return_value = mock_response
@@ -61,7 +61,7 @@ async def test_client_search_text():
 @pytest.mark.asyncio
 async def test_client_health():
     client = SearXNGClient()
-    with patch("httpx.AsyncClient.get", new_callable=AsyncMock) as mock_get:
+    with patch("httpx2.AsyncClient.get", new_callable=AsyncMock) as mock_get:
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_get.return_value = mock_resp
@@ -76,7 +76,7 @@ async def test_client_health():
 async def test_mcp_search_success():
     # Mocking the environment and the httpx client
     with patch("mcp_servers.searxng.server.SEARXNG_URL", "http://mock-searxng"), \
-         patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+         patch("httpx2.AsyncClient.post", new_callable=AsyncMock) as mock_post:
     
         mock_resp = MagicMock()
         mock_resp.status_code = 200
@@ -94,9 +94,9 @@ async def test_mcp_search_success():
 @pytest.mark.asyncio
 async def test_mcp_search_error():
     with patch("mcp_servers.searxng.server.SEARXNG_URL", "http://mock-searxng"), \
-         patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+         patch("httpx2.AsyncClient.post", new_callable=AsyncMock) as mock_post:
     
-        from httpx import HTTPStatusError, Response
+        from httpx2 import HTTPStatusError, Response
         mock_resp = MagicMock()
         mock_resp.status_code = 500
         mock_resp.raise_for_status.side_effect = HTTPStatusError("Error", request=AsyncMock(), response=Response(500))

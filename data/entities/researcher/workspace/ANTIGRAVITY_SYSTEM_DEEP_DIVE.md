@@ -687,7 +687,7 @@ antigravity:
 
 | # | Gap | Impact | Recommended Fix |
 |---|-----|--------|----------------|
-| G8 | **No Google Search grounding in Python** | Cannot use `google_search` tool | Port search tool (lower priority) |
+| G8 | **`google_search` is BANNED for agent use** (D206) | `google_search` is a Gemini-specific Antigravity feature — using it from non-Gemini models produces silent failures. Sovereign Search Protocol (T0-T4) is the exclusive search path. | ~~Port search tool~~ — **Do not port. This is by design.** |
 | G9 | **No thought signature caching** | Claude thinking blocks stripped | Port signature cache (lower priority) |
 | G10 | **No image generation support** | `gemini-3-pro-image` not wired | Add image config to Python client |
 

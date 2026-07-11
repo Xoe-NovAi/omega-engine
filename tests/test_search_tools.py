@@ -38,7 +38,7 @@ def test_exa_connectivity():
     """
     api_key = os.environ.get("EXA_API_KEY")
     if not api_key:
-        pytest.fail("EXA_API_KEY environment variable not set")
+        pytest.skip("EXA_API_KEY not set — skipping Exa connectivity check")
     
     # Use a minimal search request to verify the API key
     res = run_command(f"curl -s -o /dev/null -w '%{{http_code}}' -X POST -H 'Content-Type: application/json' -H 'x-api-key: {api_key}' -d '{{\"query\": \"test\", \"useAutocomplete\": false}}' https://api.exa.ai/search")

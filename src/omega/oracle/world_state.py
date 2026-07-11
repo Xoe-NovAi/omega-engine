@@ -6,7 +6,7 @@
 # Implements the 'First Breath' world-state activation.
 # Maintains a sovereign representation of the VR Omegaverse.
 #
-# [id-soft: doom-1993] Lattice-Culling — inspired by BSP
+# Heritage: inspired by BSP culling (id Software 1993) — REJECTED per vet-028
 #   Instead of scanning the entire world-state, we partition data into
 #   sectors (lumps). Queries are first culled by sector-id before
 #     performing detailed lookups.
@@ -40,14 +40,14 @@ class WorldState:
     def __init__(self):
         if self._initialized:
             return
-        # [id-soft: doom-1993] Sector-based partitioning for Lattice-Culling
+        # Heritage: sector-based partitioning inspired by BSP (id Software 1993) — REJECTED per vet-028
         self._sectors: Dict[str, Dict[str, WorldLump]] = {}
         self._global_state: Dict[str, Any] = {}
         self._initialized = True
         logger.info("WorldState Manager initialized. VR Omegaverse Breath: READY.")
 
     async def load_lump(self, sector_id: str, lump: WorldLump):
-        """Load a data lump into a specific sector. [id-soft: doom-1993]"""
+        """Load a data lump into a specific sector. Heritage: Doom 1993 WAD lump system"""
         if sector_id not in self._sectors:
             self._sectors[sector_id] = {}
         self._sectors[sector_id][lump.lump_id] = lump
@@ -63,7 +63,7 @@ class WorldState:
 
     def lattice_query(self, sector_id: Optional[str], lump_id: Optional[str]) -> Optional[Any]:
         """
-        The Lattice-Culling primitive. [id-soft: doom-1993]
+        Sector-culling query primitive. Heritage: inspired by Doom 1993 BSP sector culling (REJECTED per vet-028)
         
         Efficiently queries world-state by culling irrelevant sectors.
         If sector_id is provided, we skip all other sectors (O(1) culling).
@@ -83,7 +83,7 @@ class WorldState:
             return {k: v.data for k, v in sector.items()}
         
         # Fallback: if no sector_id, we would have to scan all sectors (expensive)
-        # In a strict Lattice-Culling system, we might forbid this or return global
+        # In a strict sector-culling system, we might forbid this or return global
         return None
 
     def get_all_sectors(self) -> List[str]:

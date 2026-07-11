@@ -12,12 +12,15 @@
 # DocRef: docs/architecture/Sovereign_Sieve_Sovereign_Sieve.md
 import os
 import base64
+import logging
 import keyring
 import json
 from pathlib import Path
 from typing import Optional
 
 from omega.errors import OmegaError
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -58,7 +61,8 @@ def get_or_create_master_key() -> bytes:
         try:
             key_b64 = master_key_file.read_text().strip()
             return base64.b64decode(key_b64)
-        except Exception:
+        except Exception as e:
+            logger.debug("Failed to read master key from file (will generate new): %s", e)
             pass
 
     # 3. Generate new key
@@ -67,7 +71,8 @@ def get_or_create_master_key() -> bytes:
     
     try:
         keyring.set_password(service_id, account_id, key_b64)
-    except Exception:
+    except Exception as e:
+        logger.debug("Failed to store key in OS keyring (falling back to file): %s", e)
         pass
     
     master_key_file.parent.mkdir(parents=True, exist_ok=True)

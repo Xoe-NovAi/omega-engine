@@ -284,7 +284,7 @@ Be concise and specific."""
     
     async def _call_nemotron(self, prompt: str) -> Optional[str]:
         """Call Nemotron 3 Ultra via OpenRouter."""
-        import httpx
+        import httpx2 as httpx
         
         headers = {
             "Authorization": f"Bearer {self.openrouter_key}",

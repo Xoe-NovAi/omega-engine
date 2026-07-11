@@ -186,7 +186,7 @@ A: M1 (AnyIO), M2 (firewall), M7 (local-first), M9 (errors) — all compliant
 4. **Background researcher is active** — Main loop solid, distillation needs work
 5. **Test coverage is good** — 61% overall, 78% for production files
 6. **Mandates enforced** — 12/14 fully compliant, 2/14 partially (both BETA)
-7. **Heritage documented** — All id-software patterns tagged with [id-soft:]
+7. **Heritage documented** — All id-software patterns tagged with [id-soft: doom-1993]
 
 ---
 

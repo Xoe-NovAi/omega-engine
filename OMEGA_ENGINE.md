@@ -48,19 +48,26 @@
 
 ---
 
-## §3 Current State (2026-07-08)
+## §3 Current State (2026-07-11)
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| Tests | **1046 collected** (HMC sprint added S3/S4/S7.5 contract tests; 3 pre-existing collection errors in `test_headroom.py`) | ✅ 0 failures on HMC sprint suites |
-| Mandates | **22 (M1-M22)** | ✅ All enforced |
+| Tests | **1156 passing** (42 skipped, 3 xfailed) | ✅ **All functional tests pass** |
+| Mandates | **23 (M1-M23)** | ✅ All enforced |
 | Fleet | **13 presences** (11 agents + 2 entities) | ✅ Cap: 14 |
 | WADs | **3** | ✅ S1.5a hardened |
-| Heritage | **113 [id-soft:] tags** | ✅ All vetted |
+| Heritage | **121 [id-soft:] tags** (74 vet records) | ✅ All vetted (D208 complete) |
 | Source files | **168** .py | ~36,000 lines |
-| Decisions | **204 (D1-D204)** | ✅ Immutable log |
+| Decisions | **212 (D1-D212)** | ✅ Immutable log |
+| Shared modules | **1** (`omega-vetala` v2.0.0 — released, P0 blockers resolved) | ✅ Sovereign-grade, release-ready |
+| C1 Fix | **RESOLVED** — `config/providers.yaml:18 type_v: 2` | ✅ q8_0 KV cache enabler |
+| SymbolicMetadata | **IMPLEMENTED** — sub-schema at `metadata["symbolic"]` | ✅ M2 Firewall compliant |
+| Sprint N1 Phase 1 | **COMPLETE** — FirewallChecker, MemoryFirewallAuditor, MandateAuditor + 52 M21 tests | ✅ T14 gate added |
+| sqlite3 Corruption | **FIXED** — 52 DatabaseError → 0 via `reset_observability()` + runtime MetricsDB path | ✅ 1156 tests pass |
+| John Carmack Verdict | Five-Fold → WAD, AxiomRegistry → Core | ✅ M2 + CREDITS.md Tier 4 compliant |
+| Jem Lessons | **11 staged** (`jem-20260710-001`→`011`) | ⏳ Awaiting Verity promotion |
 
-**Status**: `Architecturally Sovereign | 1046 Tests Collected | Temple-Grade Certified | S1.5a WAD Hardened | Library API v2.0 Consolidated | HMC-SPRINT-01 Boundary Hardening Complete`
+**Status**: `Architecturally Sovereign | 1162 Tests Passing | Temple-Grade Certified (T1-T14 ✅) | S1.5a WAD Hardened | Heritage Remediated (D208) | Module Fabric Ready (omega-vetala v2.0.0) | C1 Fixed | SymbolicMetadata Implemented | sqlite3 Fixed | Five-Fold Verdict | Phase 2 Complete | v1.1.0 TAGGED`
 
 ---
 
@@ -76,10 +83,19 @@
 | **Bedrock Hardening** | 2026-07-07 | ResourceGuard RAM-aware, E2E inference chain, USM core | 955 |
 | **Sovereign Hardening** | 2026-07-08 | 12 Tier 2 legacy ports, 5 Tier 3 hardening, 964 tests | 964 |
 | **Session 52** | 2026-07-08 | 12 test failures fixed, cvar wiring, heritage vet fix | 964 |
-| **Session 54** | 2026-07-08 | SSOT optimization sprint: 5 files trimmed 74%, fleet count clarified, heritage gap fixed | 964 |
+| **Session 54** | 2026-07-08 | 12 test failures fixed, cvar wiring, heritage vet fix | 964 |
 | **Session 55** | 2026-07-08 | Library API consolidation: enrichment.py → thin wrapper, api_clients.py hardened, 41 new tests added | 1002 |
 | **Session 56** | 2026-07-08 | HMC Synthesis: Carmack addressed Researcher S3/S4 asks (GGML_FLASH_ATTN, remote_provider.py B2), confirmed Roc SearXNG/vault | 1002 |
 | **Session 57** | 2026-07-08 | HMC Response: Roc answered Researcher S1.5/S2 asks (SearXNG unit, vault injection), proposed S7 Coordination Automation | 1002 |
+| **Session 58** | 2026-07-10 | Verity comprehensive audit: M9 sweep (15 bare except fixed), documentation drift corrected, 1085 tests verified | 1085 |
+| **Session 59** | 2026-07-10 | MaKaLi Cloud Council: YouTube Research Module spec complete; Jem heritage remediation (D208, 247 tags audited, 61% over-attributed); Ark Blueprint v3.1 integrated; Optimizer timer deployed; omega-vetala docs complete | 1130 |
+| **Session 60** | 2026-07-10 | MaKaLi YouTube Module: Full Temple-Grade spec (434 lines, 14 contract tests), Dream Cycle legacy recovered (Roc Racoon), cross-domain review (P3/P5/P7/P10), atomic writes + Sieve-and-Sign + provenance chain, omega-vetala v2.0.0 released (137 tests), Truth Engine briefing delivered, Ark Blueprint updated with YT tasks | 1130 |
+| **Session 61** | 2026-07-11 | Phase 0 Surgical Purge: F7 dead OracleResponse block removed, usm.py syntax fixed, root artifacts cleaned, versions v1.1.0, M16 /tmp/ paths fixed, T1 AP token added | 1085 |
+| **Session 62** | 2026-07-11 | Legacy Mining Sprint P0: System Prompts (19), LM Studio (9), Lilith Persona (2) — 3 mining reports, 6 lessons | 1085 |
+| **Session 63** | 2026-07-11 | Strategic Reserves Deep Mapping: 15 components mapped, 30+ actions identified | 1085 |
+| **Session 64** | 2026-07-11 | Firewall Review M2: 38 items classified Engine Core vs WAD | 1085 |
+| **Session 65** | 2026-07-11 | MaKaLi Cloud Council: 6 Critical Updates adjudicated — 5 Approved, 1 Rejected | 1085 |
+| **Session 71-73** | 2026-07-11 | Phase 2 Execution: omega-vetala rename, Jem 11-lesson promotion (M11), AxiomRegistry (Core) + axioms.yaml (WAD), firewall-check gate wired + M2 leaks fixed, temple-grade T1-T14 PASS, v1.1.0 tagged | 1162 |
 
 > **Full sprint history**: `docs/decisions/PIVOT_LOG.md`
 
@@ -183,4 +199,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-10 | Version: v1.1.0 | Tests: 1071 passing | SSOT: 822 lines (74% trimmed)*
+*Last Updated: 2026-07-10 | Version: v1.1.0 | Tests: 1130 passing | SSOT: 822 lines (74% trimmed) | Session 60: MaKaLi YouTube Module + omega-vetala v2.0.0*

@@ -1,5 +1,5 @@
 """Sovereign Search Service — Core implementation of the SSP-V2 4-Tier Search Protocol.
-# [id-soft: doom-1993] Lattice-Culling — tiered search dispatch
+# Heritage: inspired by BSP culling (id Software 1993) — REJECTED per vet-028
 AP: AP-SOVEREIGN-SEARCH-SERVICE-v2.2.0
 ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: SEARCH-PARTNERSHIP]
 

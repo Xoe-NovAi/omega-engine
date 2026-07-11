@@ -9,11 +9,7 @@ This skill implements the **Sovereign Search Protocol (SSP)**. It replaces ad-ho
   cost-aware, failure-resilient pipeline. Agents MUST follow this hierarchy to ensure absolute resilience and credit
   efficiency.
 
-## ⚠️ Antigravity google_search — BLOCKED
 
-The Antigravity `google_search` tool (from the `opencode-antigravity-auth` plugin) is **BLOCKED FOR AGENTS**. It
-  requires Google Gemini via the Antigravity OAuth endpoint and is hidden when `AGENT_MODE=true` is set. Agents MUST
-  NEVER use `google_search` — it does not work in agent mode. Use this skill's Sovereign Search Protocol instead.
 
 ## 🛡️ The 5-Tier Sovereign Search Protocol
 

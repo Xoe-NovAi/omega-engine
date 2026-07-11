@@ -65,8 +65,7 @@ hivemind_session_20260605:
   role: P3 Engineering / Heritage Architect
   deliverables:
   - file: data/coordination/DOOM_GUY_WORKSPACE_LOCK_20260605.md
-    purpose: Declared territory boundaries (subagent_dispatcher, link_p9, [id-soft:]
-      tags, soul.yaml, PIVOT_LOG D103+, heritage knowledge/)
+    purpose: Declared territory boundaries (subagent_dispatcher, link_p9, [id-soft: doom-1993] tags, soul.yaml, PIVOT_LOG D103+, heritage knowledge/)
   - file: data/coordination/HIVEMIND_OBSERVATIONS_LOG.md (OBS-20260605-DOOM_GUY-001)
     purpose: ACK of D-121 + meta-observation that the heritage pipeline has its
       own TTL decay problem
@@ -104,14 +103,13 @@ crucible_audit_20260605:
     work_minutes: 30
     ratio: 1:6 (within target range 5-10%)
   decisions_proposed:
-  - 'vet-029..035: 7 patterns REJECT-for-attribution (buildable, no [id-soft:] tag)'
+  - 'vet-029..035: 7 patterns REJECT-for-attribution (buildable, no [id-soft: doom-1993] tag)'
   - 'vet-036: idHeap mapping SCOPE-RESTRICTED to memory tiering only'
   - 'Spec line 9: REQUIRED correction (wrong tag + wrong application)'
   key_findings:
   - finding: "1 of 8 patterns has clean id Software derivation (idHeap \u2192 MemoryStore)"
     impact: Confirms that the 3-Tier Storage heritage is real and well-attributed
-  - finding: "7 of 8 patterns are modern LLM/ML/CS \u2014 should NOT carry [id-soft:]\
-      \ tags"
+  - finding: "7 of 8 patterns are modern LLM/ML/CS \u2014 should NOT carry [id-soft: doom-1993] tags"
     impact: Prevents cargo-cult heritage across 7 implementation sites
   - finding: The Critique Pass is the most tempting wrong attribution
     impact: Structural similarity (validate-before-accept) without semantic match

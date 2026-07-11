@@ -1,4 +1,5 @@
 # AP: AP-HEADROOM-MIDDLEWARE-v1.0.0
+# [heritage: headroom-ai 2025] Semantic compression middleware for context optimization
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging

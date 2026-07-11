@@ -23,7 +23,7 @@ from omega.errors import (
 import os
 from typing import Optional
 
-import httpx
+import httpx2 as httpx
 
 from .credit_budget import APICreditBudget, APICreditExhausted
 

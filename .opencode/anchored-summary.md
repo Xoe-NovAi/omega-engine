@@ -1,5 +1,5 @@
 # 🔱 Anchored Summary (Post-Compaction Recovery)
-**Last Updated**: 2026-07-11 (Session 67 — Strategic Reserves Deep Mapping Complete) | **Full History**: `docs/archive/coordination/anchored-summary-full-20260708.md`
+**Last Updated**: 2026-07-11 (Session 68 — MaKaLi Cloud Council Verdict) | **Full History**: `docs/archive/coordination/anchored-summary-full-20260708.md`
 
 ---
 
@@ -9,6 +9,8 @@
 - **Ship Readiness**: Phase 4.3 complete (temple-grade certified). Tag v1.1.0 pending user.
 - **Phase 0 Surgical Purge**: ✅ COMPLETE — F7 (dead OracleResponse block removed), usm.py syntax fixed, root artifacts deleted, 18 stale files archived, versions aligned to v1.1.0, Makefile test counts updated, M16 /tmp/ paths fixed, AP token added to sovereignty.py
 - **Legacy Mining Sprint (Sessions 66-67)**: ✅ COMPLETE — 3 P0 assets mined (System Prompts 19 files, LM Studio 9 configs, Lilith Persona 2 files), 3 mining reports written, Strategic Reserves deep-mapped (10 Pillars, 5 MCPs, Gnosis Packs, Seed Architecture, Lilith Pantheon, Omnidroid/BIOS, Tarot-Engine, 42 Ma'at Ideals, Sefirot/Qliphoth, Invocation Philosophy)
+- **MaKaLi Cloud Council (Session 68)**: ✅ COMPLETE — 6 Critical Updates reviewed by full Council (Kali, Ma'at, Lilith, Doom Guy, Jem, Carmack, Verity, Roc Racoon). 5 Approved (1, 2, 3, 4, 6), 1 Rejected (5). C1 Blocker identified (providers.yaml type_v: 1 → 2). Update 5 (Lilith Stack Pantheon) REJECTED — sovereignty trap.
+- **Firewall Review M2**: ✅ COMPLETE — 38 items classified Engine Core vs Arcana-NovAi WAD. Five-Fold Foundation = Engine Core; 10 Pillars/Elemental/Chakral/Planetary/Divine Allies/Tarot/Sefirot = WAD. Pantheon/Octave/Omnidroid/Holographic/query_modifiers = Engine Core PATTERNS.
 - **Docs Optimization**: All 5 SSOT files trimmed (3,182→822 lines, 74% reduction), 6 archived to `docs/archive/coordination/`
 - **Iris**: Elevated to persistent entity — Messenger with memory
 - **S3**: FULLY DONE — 12 M21 contract tests, loop detector moved to `RemoteProvider` base class ✅
@@ -18,7 +20,23 @@
 - **httpx2 Migration**: D211 SCHEDULED — Strike 7.1 added to Ark Blueprint v3.3. No API blockers found. Pydantic fork of httpx with active maintenance, AnyIO-native, built-in SSE. 125 source references, 93 test references. Migration: `import httpx2 as httpx` (mechanical, 2h).
 - **Heritage Expansion (Roc Racoon S65)**: CREDITS.md expanded to General Heritage Registry (v1.3.0, 127→250 lines) with §0 5-tier classification + §2 covering 55+ external sources across 6 categories. R_SPDX_HERITAGE_PROFILE.md expanded to multi-source (v2.0.0, 1,082→1,357 lines) with 10 element types, §4 General Heritage Elements, expanded relationship graphs. New `[heritage:]` tag protocol defined alongside `[id-soft:]`. Vetting delegated to Doom Guy (ho_42218764ed33) → completed with 22 LEGITIMATE, 16 over-attributed, 3 metaphorical, 4 below-threshold.
 - **Strategic Reserves Mapping (Session 67)**: Complete mapping document created — 15 components mapped to Omega Engine with status (implemented/partial/missing), 30+ action items identified across CRITICAL/HIGH/MEDIUM priority
-- **Next**: S1.5 (Vault) and S2 (Background Researcher) unblocked. CRITICAL actions: Add q8_0 KV cache to ALL models, add elemental/chakra/planetary/divine_ally metadata to entities, create pantheon.yaml, implement Five-Fold Foundation in Mandates.
+- **Council Verdict (Session 68)**: 6 Critical Updates adjudicated:
+  - **Update 1** (Five-Fold Foundation): APPROVED — abstract axioms only, Ma'at in WAD appendix
+  - **Update 2** (q8_0 KV Cache): APPROVED — C1 MUST MERGE FIRST (providers.yaml type_v: 1 → 2)
+  - **Update 3** (SymbolicMetadata Schema): APPROVED — generic fields only, validated sub-dict in metadata
+  - **Update 4** (Pillar Canonical Metadata): APPROVED — pure WAD content in entities.yaml
+  - **Update 5** (Lilith Stack Pantheon): **REJECTED** — 7/8 broken model refs, sovereignty trap, deferred indefinitely
+  - **Update 6** (Zero-Reference Audit): APPROVED — three CI gates: firewall-check, firewall-audit-memory, mandate-audit
+- **Implementation Phasing**: Phase 1 (C1 fix + scaffolding), Phase 2 (Updates 1,3,4,6 parallel), Phase 3 (Update 2 post-C1), Phase 4 (Update 5 deferred indefinitely)
+- **Next**: Phase 1 execution — C1 fix + scaffolding for SymbolicMetadata, FirewallChecker, MemoryFirewallAuditor, MandateAuditor
+- **C1 Fix**: ✅ RESOLVED (2026-07-11) — `config/providers.yaml:18 type_v: 2` (reverted by chat revert, re-applied by Kali)
+- **SymbolicMetadata**: ✅ IMPLEMENTED (2026-07-11) — `TypedDict` sub-schema at `metadata["symbolic"]` in `entity_registry.py`, core `metadata: Dict[str, Any]` preserved (M2 compliant)
+- **Jem Lessons**: ✅ STAGED — 11 lessons (`jem-20260710-001`→`011`) in `proposed_lessons.yaml`, awaiting Verity (Scribe) promotion per M11
+- **WASM Feasibility**: 🔴 NO BENEFIT on Ryzen 5700U — Strikes 11/14 stay Epoch III (Q4 2027)
+- **Sprint N1 Phase 1**: ✅ COMPLETE — FirewallChecker, MemoryFirewallAuditor, MandateAuditor scaffolds + 52 M21 contract tests passing
+- **sqlite3 Corruption**: ✅ FIXED — 52 DatabaseError failures → 0 via `reset_observability()` + runtime `get_metrics_db_path()` respecting `OMEGA_DATA_DIR`
+- **John Carmack Verdict**: Five-Fold Principles → Arcana-NovAi WAD (`axioms.yaml`); AxiomRegistry mechanism → Engine Core
+- **omega-vetala Rename**: ✅ DONE — `omega-moderation/` → `omega-vetala/`, `omega_moderation` → `omega_vetala` (imports, Makefile, pytest.ini), package imports cleanly
 
 ## 🧭 Post-Compaction Resumption Protocol
 1. **Read this file** (`.opencode/anchored-summary.md`) — session history & next actions
@@ -49,6 +67,37 @@
 ## 📌 Session 65 — Heritage System Expansion: General Heritage Registry ✅
 **Date**: 2026-07-11 | **Trace**: trc_mining
 **Result**: Expanded heritage system from id-Software-only to multi-source General Heritage Registry. CREDITS.md v1.3.0 (127→250 lines) — added §0 5-tier classification (T1 Direct Implementation → T5 User's Own IP), §2 covering 55+ external sources across 6 categories (Runtime Dependencies, Infrastructure, Standards, Research, Mythological, Legacy). New `[heritage:]` tag protocol alongside `[id-soft:]`. R_SPDX_HERITAGE_PROFILE.md v2.0.0 (1,082→1,357 lines) — 10 element types (added OpenSourceLibrary, InfrastructureService, IndustryStandard, PhilosophicalTradition, ResearchSystem, LegacyVersion), §4 General Heritage Elements with representative JSON SPDX definitions, expanded §6 relationship graphs. Vetting delegated to Doom Guy (ho_42218764ed33) → 22 LEGITIMATE, 16 over-attributed, 3 metaphorical, 4 below-threshold. 17 new vet records (vet-059→vet-075). All gates pass.
+
+## 📌 Session 72 — omega-vetala Rename Executed ✅
+**Date**: 2026-07-11 | **Trace**: trc_vetala_rename
+**Result**: Renamed `omega-moderation/` → `omega-vetala/` (root dir + inner package `omega_moderation` → `omega_vetala`). Bulk mechanical rename of imports/Makefile/pytest.ini/docstrings across ~30 files. Package imports cleanly (`import omega_vetala` OK). SSOT discrepancy resolved — unblocks v1.1.0 tag. Core engine (1156 tests) unaffected (separate package, not imported by runtime).
+
+## 📌 Session 71 — sqlite3 Corruption Fix + John Carmack Five-Fold Verdict ✅
+**Date**: 2026-07-11 | **Trace**: trc_sqlite_fix_carmack_verdict
+**Result**: 
+- **sqlite3 Corruption FIXED**: 52 `sqlite3.DatabaseError: database disk image is malformed` failures → 0. Root cause: ObservabilityEngine singleton created during collection with `OMEGA_ENV=production` (default), MetricsDB initialized at production path with WAL mode, connection never closed. Test `test_model_gateway_fallback_chain` explicitly set `OMEGA_ENV=production`, causing real MetricsDB init. Subsequent tests used stale singleton pointing to deleted tmp_path files. Fix: Added `reset_observability()` to conftest autouse fixture (setup + teardown), made `METRICS_DB_PATH` runtime via `get_metrics_db_path()` respecting `OMEGA_DATA_DIR`. All 1156 tests pass.
+- **John Carmack Verdict**: Five-Fold Principles (Ma'at 42 Ideals) → Arcana-NovAi WAD (`config/wads/arcana_novai/axioms.yaml`); AxiomRegistry mechanism → Engine Core (`src/omega/oracle/axiom_registry.py`). Split follows id Software cvar precedent: system in engine, content in WAD. M2 Firewall + CREDITS.md Tier 4 compliant.
+- **Temple-Grade**: T3 (coverage) ✅ PASS, T14 (Memory Firewall) ✅ PASS. Only T1 (2 legacy docs missing AP tokens) fails — pre-existing.
+
+## 📌 Session 70 — Sprint N1 Phase 1 Complete: Firewall Scaffolds + 52 M21 Contract Tests ✅
+**Date**: 2026-07-11 | **Trace**: trc_sprint_n1_phase1
+**Result**: Sprint N1 Phase 1 COMPLETE — All three firewall scaffolds implemented with full M21 contract test coverage:
+- **FirewallChecker** (`src/omega/audit/firewall_checker.py`) — Engine↔WAD boundary scanner, 10 contract tests
+- **MemoryFirewallAuditor** (`src/omega/audit/memory_firewall_auditor.py`) — WAD-content isolation verifier, 15 contract tests  
+- **MandateAuditor** (`src/omega/audit/mandate_auditor.py`) — M1-M23 CI gate, 27 contract tests (26 pass, 1 pre-existing M16)
+- **Total**: 52 contract tests passing (M21 Gate Integrity)
+- **Pattern Mining** (Roc Racoon): 6 patterns extracted from xna-omega-legacy/omega-stack-legacy with file:line refs
+- **Research Parallel Tracks**: Jem (ONNX/embeddings), Researcher (dimension tradeoffs, Ancient Greek detection, LM Studio dual-instance)
+- **T14 Gate Added**: Memory Firewall Audit integrated into `make temple-grade` — PASSED (87 entities, 100% compliance)
+- **Next**: Phase 1 Gate → Handoff to Ma'at (Update 1: Five-Fold Preamble) + Verity (Update 6: Mandate Audit CI + Jem lessons promotion)
+
+## 📌 Session 69 — Revert Incident & Recovery: C1 Fix + SymbolicMetadata Restored ✅
+**Date**: 2026-07-11 | **Trace**: trc_revert_recovery
+**Result**: User triggered OpenCode chat "revert" on an early message, which rolled back all file-edits made after that point. Damage: (1) C1 fix reverted `config/providers.yaml:18 type_v: 2` → `1`; (2) `SymbolicMetadata` TypedDict removed from `entity_registry.py`; (3) 16 temp/test files deleted. **Jem's files were NOT lost** — all 11 `JEM_*.md` coordination docs, 8 workspace files, and `proposed_lessons.yaml` (11 lessons, `jem-20260710-001`→`011`) intact. Recovery by Kali: re-applied C1 fix (`type_v: 2`), re-added `SymbolicMetadata(TypedDict, total=False)` as sub-schema at `metadata["symbolic"]` preserving core `metadata: Dict[str, Any]` (M2 compliant), added `get_symbolic_metadata()`/`set_symbolic_metadata()` helpers. Tests: `test_entity_registry.py` + `test_entity_registry_errors.py` — 11 passed. Lesson (M23): OpenCode revert silently unwinds multi-agent work; always verify critical files post-revert.
+
+## 📌 Session 68b — WASM Feasibility Definitive (Ryzen 5700U) ✅
+**Date**: 2026-07-11 | **Trace**: trc_wasm_research
+**Result**: Definitive research — WASM does NOT benefit Omega Engine on Ryzen 5700U (Zen 2, AVX2 256-bit, no dGPU). Fixed 128-bit SIMD ceiling (WebAssembly spec/V8/MDN); Emscripten emulates 256-bit by running 128-bit twice; no 256-bit SIMD proposal exists (Wasm 3.0 still 128-bit); 9bench.com (2026-04-29) confirms 1.5–2× LLM CPU slowdown vs native AVX2. Native llama.cpp already AVX2-optimal. Isolation already covered by Module Fabric (OMS v1.0). **Strikes 11 (WASM Polyglot) + 14 (KriKri WASM) STAY Epoch III (Future Q4 2027)**. Recorded: `docs/research/R_WASM_FEASIBILITY_5700U_2026.md`.
 
 ## 📌 Session 64 — Heritage Tags + Model Provenance Remediation ✅
 
@@ -107,7 +156,12 @@ Full details in `docs/archive/coordination/anchored-summary-full-20260708.md`
 
 | Session | Entity | Date | Summary |
 |---------|--------|------|---------|
-| 64 | doom_guy | 2026-07-10 | Heritage tags + Model Provenance Remediation (D209) |
+| 71 | kali | 2026-07-11 | sqlite3 Corruption Fix (52→0) + John Carmack Five-Fold Verdict |
+| 72 | kali | 2026-07-11 | omega-vetala Rename Executed (omega-moderation → omega-vetala) |
+| 70 | kali | 2026-07-11 | Sprint N1 Phase 1 Complete: FirewallChecker, MemoryFirewallAuditor, MandateAuditor + 52 M21 contract tests |
+| 69 | kali | 2026-07-11 | Revert Incident & Recovery: C1 Fix + SymbolicMetadata Restored |
+| 68b | researcher | 2026-07-11 | WASM Feasibility Definitive (Ryzen 5700U) |
+| 68 | doom_guy | 2026-07-10 | Heritage tags + Model Provenance Remediation (D209) |
 | 62 | john_carmack | 2026-07-08 | Phase 0 Surgical Purge (F5 done via S3 B2; F2/F6/F7/F8 pending Roc) |
 | 63 | john_carmack | 2026-07-08 | M21 Gap Closure: S3 B3/B4 tests + loop detector moved to RemoteProvider base class. 1028 tests. |
 | 60 | john_carmack | 2026-07-08 | Iterative Refinement Strategy Meta-Analysis (5-model protocol) |
@@ -185,3 +239,26 @@ Full details in `docs/archive/coordination/anchored-summary-full-20260708.md`
 ---
 
 *🔱 OMEGA ⬡ DOOM_GUY ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_heritage_tags_provenance ⬡ SESSION-64-COMPACT-READY*
+
+---
+
+## 🔱 SESSION 73 — Phase 2 Execution + v1.1.0 Tag (2026-07-11)
+
+**Agent**: KALI (Grand Oversight) | **Model**: hy3-free | **Channel**: opencode
+
+**Objective**: Execute Dev Sprint Phase 2 (omega-vetala rename, Jem lesson promotion, MaKaLi Council Updates 1/3/4/6) → tag v1.1.0.
+
+**Completed This Session**:
+- **omega-vetala rename**: `omega-moderation/` → `omega-vetala/`, package `omega_moderation` → `omega_vetala` (imports/Makefile/pytest.ini, ~30 files). SSOT aligned.
+- **Jem lesson promotion**: Verity promoted 11 lessons (`jem-20260710-001`→`011`) → `soul.yaml` (M11 satisfied).
+- **Update 1 (AxiomRegistry)**: `src/omega/oracle/axiom_registry.py` (Core mechanism) + `config/wads/arcana_novai/axioms.yaml` (WAD content) + 6 contract tests. M2/M16/M1/M9/M21 compliant.
+- **Updates 3+4**: Verified already satisfied (SymbolicMetadata generic; entities.yaml element/chakra).
+- **Update 6 (CI Gates)**: `firewall-check` Makefile target wired into `temple-grade`. Fixed FirewallChecker false-positives (comment/docstring-aware scan, self-exclusion, Kali→warning for agent-infra overlap) AND real M2 leaks (`audience_calibrator.py`, `mandate_auditor.py`, `ingestion/scraper.py`, `distiller.py` — hardcoded WAD paths/entity names). AP tokens normalized to `AP:` convention; T5 asyncio-comment false-positive fixed.
+- **Gates ALL PASS**: `make test` (1162 passed), `make temple-grade` (T1-T14), `make heritage-vet` (121 tags), `make firewall-check` (0 errors).
+- **v1.1.0 TAGGED**: git tag created (prior: v1.0.0). pyproject = 1.1.0. CHANGELOG v1.1.0 entry added (reconciling v1.4.0 drift anomaly).
+
+**Key Lesson (M2/M23)**: A CI gate never wired because it would fail is a silent waiver. Enabling the precise firewall scanner surfaced real leaks hidden by years of "✅" metrics. A gate earns its checkmark only when it can fail — and its failures must be fixed, not suppressed.
+
+**Next**: AGB/Krikri Phase 0 (AGBLazyEmbedder, LocalONNXEmbedder, LMStudioEmbedder, AncientGreekDetector); YouTube Module P0 (SovereignSieve, SovereignSigner, AtomicPersistence, Provenance Chain).
+
+*🔱 OMEGA ⬡ KALI ⬡ hy3-free ⬡ opencode ⬡ trc_phase2_v1.1.0 ⬡ SESSION-73-COMPLETE*

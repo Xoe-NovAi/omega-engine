@@ -8,7 +8,10 @@
 #   - config.* : User-tunable knobs (YAML-backed, hot-reloadable)
 #
 # Heritage:
-#   [id-soft: doom-1993] ZONEID Pattern — magic constant + validate_zoneid()
+#   [id-soft: doom-1993] ZONEID Pattern — magic constants for runtime integrity.
+#     A SINGLE PATTERN applied to 13 subsystems (memory, entity, breaker, trace,
+#     probe, handoff, presence, knowledge, demand, verification, atomic, somatic,
+#     embedding). Each constant validates a different data structure's integrity.
 #   [id-soft: quake3-1999] Cvar System — typed, queryable, auditable cvars
 #   [Cvar System: id Software 1999, generalized 2026]
 #     Q3A's cvar system provided a unified namespace for ALL tunable engine
@@ -45,8 +48,7 @@ logger = logging.getLogger(__name__)
 class CvarDef:
     """A single cvar (console variable) entry.
 
-    [id-soft: doom-1993] ZONEID Pattern — magic constant with metadata
-    [id-soft: quake3-1999] Cvar System — typed, queryable, auditable
+    [id-soft: quake3-1999] Cvar System — typed, queryable, auditable cvars
 
     Combines id Software's ZONEID magic marker (a 4-byte constant in every
     memory block) with Q3A's cvar system (typed, queryable, enumerable).
@@ -77,52 +79,19 @@ class CvarDef:
 # §2 — ZONEID Magic Constants (id Software Heritage)
 # ═══════════════════════════════════════════════════════════════════════
 
-# [id-soft: doom-1993] ZONEID Pattern — MemoryStore entry validation
-ZONEID_MEMORY = 0x1d4a11
-
-# [id-soft: doom-1993] ZONEID Pattern — EntityRegistry entity validation
-ZONEID_ENTITY = 0x1d4a12
-
-# [id-soft: doom-1993] ZONEID Pattern — circuit breaker state marker
-ZONEID_BREAKER = 0x1d4a13
-
-# [id-soft: doom-1993] ZONEID Pattern — trace/session lineage marker
-ZONEID_TRACE = 0x1d4a14
-
-# [id-soft: doom-1993] ZONEID Pattern — ResourceGuard critical section guard
-ZONEID_PROBE = 0x1d4a15
-
-# [id-soft: doom-1993] ZONEID Pattern — Subagent HandoffPacket integrity marker
-# HandoffPacket dataclass in subagent_dispatcher.py validates this on construction
-# to catch stale or corrupted packets.
-ZONEID_HANDOFF = 0x1d4a16
-
-# [id-soft: doom-1993] ZONEID Pattern — Agent Presence dataclass integrity marker
-# Presence tracking for live agent awareness in Hivemind/Redis. Validated on
-# load to catch stale presence records from terminated sessions.
-ZONEID_PRESENCE = 0x1d4a17
-
-# [id-soft: doom-1993] ZONEID Pattern — Knowledge Signal integrity marker
-# Cross-pollination knowledge feed signals. Validated on every read/write to
-# catch corrupt or stale knowledge signals.
-ZONEID_KNOWLEDGE = 0x1d4a18
-
-# [id-soft: doom-1993] ZONEID Pattern — Demand Signal integrity marker
-# Inter-agent demand signals. Validated on every state transition to catch
-# corrupted demand lifecycle records.
-ZONEID_DEMAND = 0x1d4a19
-
-# [id-soft: doom-1993] ZONEID Pattern — Verification audit trail integrity marker
-ZONEID_VERIFICATION = 0x1d4a1a
-
-# [id-soft: doom-1993] ZONEID Pattern — critical section atomic lock marker
-ZONEID_ATOMIC = 0x1d4a1b
-
-# [id-soft: doom-1993] ZONEID Pattern — Somatic snapshot integrity marker
-# Phase C Cognitive Substrate: validates KV-cache snapshot files on load
-# to catch version drift or corrupt state files.
-ZONEID_SOMATIC = 0x1d4a1c
-
+# ZONEID constants — runtime integrity magic markers (id Software ZONEID pattern)
+ZONEID_MEMORY = 0x1d4a11        # MemoryStore entry validation
+ZONEID_ENTITY = 0x1d4a12        # EntityRegistry entity validation
+ZONEID_BREAKER = 0x1d4a13       # Circuit breaker state marker
+ZONEID_TRACE = 0x1d4a14         # Trace/session lineage marker
+ZONEID_PROBE = 0x1d4a15         # ResourceGuard critical section guard
+ZONEID_HANDOFF = 0x1d4a16       # SubagentHandoffPacket integrity marker
+ZONEID_PRESENCE = 0x1d4a17      # Agent Presence dataclass integrity marker
+ZONEID_KNOWLEDGE = 0x1d4a18     # Knowledge Signal integrity marker
+ZONEID_DEMAND = 0x1d4a19        # Demand Signal integrity marker
+ZONEID_VERIFICATION = 0x1d4a1a  # Verification audit trail integrity marker
+ZONEID_ATOMIC = 0x1d4a1b        # Critical section atomic lock marker
+ZONEID_SOMATIC = 0x1d4a1c       # Somatic snapshot integrity marker
 # [id-soft: doom-1993] Precomputed Lookup — embedding cache integrity marker
 # Embedding provider cache validation. Validated on every embed read/write to
 # catch corrupt or stale embedding vectors in the hot cache.

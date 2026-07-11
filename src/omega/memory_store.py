@@ -1,5 +1,6 @@
 """Entity Memory Store — Hot/Warm/Cold persistent memory for entities.
 AP: AP-MEMORY-STORE-v1.0.0
+# [heritage: rrf-algorithm 2009] Reciprocal Rank Fusion — FTS5 + vector score fusion
 """
 
 import gzip
@@ -73,10 +74,11 @@ MAX_HISTORY = MAX_HISTORY_EXCHANGES
 MAX_CONTEXT_EXCHANGES = DEFAULT_CONTEXT_LIMIT
 ARCHIVE_AFTER_DAYS = 7
 
-# [id-soft: quake-1996] Grace Period — 0.5s delay before fully removing a
-# tombstoned session from the hot cache. Prevents hot-slot reuse during
-# in-flight add_exchange operations. Same value used by id Software's Quake
-# server (15 packets at 30Hz ≈ 0.5s) to prevent client-side entity morphing.
+# [id-soft: quake-1996] Grace Period — wait TOMBSTONE_GRACE_SECONDS before full reclamation
+# 0.5s delay before fully removing a tombstoned session from the hot cache.
+# Prevents hot-slot reuse during in-flight add_exchange operations.
+# Same value used by id Software's Quake server (15 packets at 30Hz ≈ 0.5s)
+# to prevent client-side entity morphing.
 TOMBSTONE_GRACE_SECONDS = 0.5
 
 # External storage for long-term session archival (90-day policy)
@@ -113,7 +115,7 @@ class MemoryStore:
     def __init__(self, providers: Optional[List[StorageProvider]] = None, vector_store: Optional[IVectorStoreAdapter] = None, embedding_manager: Optional[EmbeddingManager] = None, adapter_registry: Optional[MemoryAdapterRegistry] = None):
         self._hot: Dict[str, OrderedDict] = {}
         self._adapter_registry = adapter_registry
-        # [id-soft: doom-1993] Lazy Deletion — tombstone registry
+        # [id-soft: doom-1993] Lazy Deletion — tombstone-based session lifecycle
         # Maps cache_key -> time.time() when tombstoned
         self._tombstoned: Dict[str, float] = {}
         # [id-soft: quake-1996] Temp Tier — transient scratchpad memory
@@ -206,7 +208,7 @@ class MemoryStore:
             return []
         cache_key = f"{entity_name.lower()}:{session_id}"
 
-        # [id-soft: doom-1993] Lazy Deletion — tombstoned sessions raise typed error
+        # [id-soft: doom-1993] Lazy Deletion — tombstone-based session lifecycle
         # Mandate 9 enforcement: silent empty returns hide the fact that the
         # session was archived. Callers must catch EntityTombstonedError and
         # handle it explicitly (typically by loading from cold storage).
@@ -421,7 +423,7 @@ class MemoryStore:
             return
         cache_key = f"{entity_name.lower()}:{session_id}"
 
-        # [id-soft: doom-1993] Lazy Deletion — tombstoned sessions reject new exchanges
+        # [id-soft: doom-1993] Lazy Deletion — tombstone-based session lifecycle
         # Mandate 9 enforcement: prevent data loss on archived sessions
         if self._is_tombstoned(cache_key):
             raise EntityTombstonedError(
@@ -509,7 +511,7 @@ class MemoryStore:
         await self._batch_writer.flush()
 
     def _cache_hot(self, cache_key: str, exchanges: List[Dict]) -> None:
-        # [id-soft: doom-1993] Lazy Deletion — reap tombstoned before slot reuse
+        # [id-soft: doom-1993] Lazy Deletion — tombstone-based session lifecycle
         self._reap_tombstoned()
         if cache_key not in self._hot:
             self._hot[cache_key] = OrderedDict()
@@ -687,8 +689,8 @@ class MemoryStore:
         
         if archived_any:
             cache_key = f"{entity_name.lower()}:{session_id}"
-            # [id-soft: doom-1993] Lazy Deletion — tombstone marker
-            # [id-soft: quake-1996] Grace Period — wait TOMBSTONE_GRACE_SECONDS
+            # [id-soft: doom-1993] Lazy Deletion — tombstone-based session lifecycle
+            # [id-soft: quake-1996] Grace Period — wait TOMBSTONE_GRACE_SECONDS before full reclamation
             self._tombstoned[cache_key] = time.time()
             
             # Sovereign Vector Cleanup (C4 Fix)

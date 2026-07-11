@@ -1,6 +1,8 @@
 """Standardized MCP Runtime for Omega Engine.
 AP: AP-MCP-RUNTIME-v1.0.4
 """
+# [heritage: anyio 2024] M1 AnyIO — async runtime replacing asyncio (TaskGroup lifecycle, Semaphore)
+# [heritage: mcp 2024] MCP Protocol — AI-tool communication (dual-transport SSE + Streamable HTTP)
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import os
@@ -101,7 +103,7 @@ def run_mcp(mcp: Any, modify_app: Optional[Callable[[Any], None]] = None,
         @_ctx.asynccontextmanager
         async def lifespan(app):
             # Wrap server run + background tasks in AnyIO TaskGroup
-            # [id-soft: quake-1996] Zone Memory — TaskGroup auto-cancels
+            # [id-soft: quake-1996] Zone Memory — deterministic cleanup via zone-purge semantics
             # all background tasks on shutdown (circuit breaker pattern)
             async with anyio.create_task_group() as tg:
                 if on_startup:
@@ -112,7 +114,7 @@ def run_mcp(mcp: Any, modify_app: Optional[Callable[[Any], None]] = None,
                     yield
             # TaskGroup exit: all background tasks cancelled
             # Shutdown cleanup — call on_shutdown if provided
-            # [id-soft: quake-1996] Zone Memory — free allocated resources on exit
+            # [id-soft: quake-1996] Zone Memory — deterministic cleanup via zone-purge semantics
             if on_shutdown:
                     try:
                         if hasattr(on_shutdown, '__call__'):

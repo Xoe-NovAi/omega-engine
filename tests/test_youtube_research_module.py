@@ -1,0 +1,360 @@
+# 🔱 Omega Engine — YouTube Research Module (P0) Contract Tests
+# AP: AP-YOUTUBE-RESEARCH-MODULE-v1.0.0
+# ⬡ OMEGA ⬡ JEM ⬡ hy3-free ⬡ opencode ⬡ trc_youtube_research ⬡ P0-TESTS
+#
+# Mandate 21 (Gate Integrity): every public API has a contract test asserting
+# isinstance(result, ExpectedType). Mandate 23 (Failure Integrity): failures are
+# real, never simulated. Tests use a fake transport (no network) and tmp paths.
+
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Dict
+
+import pytest
+
+from omega_youtube_research import (
+    AtomicPersistence,
+    IngestResult,
+    ProvenanceChain,
+    ProvenanceChunk,
+    SieveMetadata,
+    SieveResult,
+    SovereignSigner,
+    SourceChainAttestation,
+    SovereignSieve,
+    YouTubeResearchModule,
+    YouTubeVideo,
+    YouTubeAuthError,
+)
+from omega_youtube_research.persistence import ProvenanceChunkRecord
+
+
+# ── Fixtures ────────────────────────────────────────────────────────────────
+@pytest.fixture
+def signer_key() -> bytes:
+    return b"sovereign-test-key-32-bytes-long!!"
+
+
+@pytest.fixture
+def signer(signer_key: bytes) -> SovereignSigner:
+    return SovereignSigner(key=signer_key, key_id="test-key", signer="test/v1")
+
+
+@pytest.fixture
+def fake_search_payload() -> Dict[str, Any]:
+    return {
+        "items": [
+            {
+                "id": {"videoId": "abc123"},
+                "snippet": {
+                    "title": "Local AI sovereignty explained",
+                    "description": "A deep dive into owning your own tech.",
+                    "channelId": "chan1",
+                    "channelTitle": "Sovereign Labs",
+                    "publishedAt": "2026-01-01T00:00:00Z",
+                },
+            },
+            {
+                "id": {"videoId": "unrelated"},
+                "snippet": {
+                    "title": "Cute cat compilation",
+                    "description": "Nothing to do with the query.",
+                    "channelId": "chan2",
+                    "channelTitle": "FunnyClips",
+                    "publishedAt": "2026-02-01T00:00:00Z",
+                },
+            },
+        ]
+    }
+
+
+@pytest.fixture
+def fake_transport(fake_search_payload: Dict[str, Any]):
+    async def _transport(url: str, params: Dict[str, Any]) -> Dict[str, Any]:
+        # Echo back the API key requirement check is done by caller; just return data.
+        return fake_search_payload
+
+    return _transport
+
+
+# ── TC-3 / TC-4: Sieve cleaning ─────────────────────────────────────────────
+class TestSovereignSieveClean:
+    def test_preserves_hesitations(self):
+        """TC-3: cognitive hesitations (um/uh/hmm) are retained."""
+        sieve = SovereignSieve()
+        raw = "Um, so uh we should, hmm, own our tech."
+        result = sieve.clean_transcript(raw)
+        assert isinstance(result, SieveResult)
+        assert isinstance(result.metadata, SieveMetadata)
+        assert "um" in result.cleaned_text.lower()
+        assert result.metadata.hesitations_preserved >= 3
+
+    def test_removes_timestamps_and_speaker_labels(self):
+        """TC-4: timestamps and speaker labels are stripped."""
+        sieve = SovereignSieve()
+        raw = "[00:12] Speaker Name: hello world [01:23:45] more text"
+        result = sieve.clean_transcript(raw)
+        assert "[00:12]" not in result.cleaned_text
+        assert "[01:23:45]" not in result.cleaned_text
+        assert "Speaker Name:" not in result.cleaned_text
+        assert "hello world" in result.cleaned_text
+        assert result.metadata.patterns_removed["timestamps"] == 2
+        assert result.metadata.patterns_removed["speaker_labels"] == 1
+
+    def test_removes_urls_and_control_chars(self):
+        sieve = SovereignSieve()
+        raw = "visit https://evil.example/x now\u0007and\t\tgo"
+        result = sieve.clean_transcript(raw)
+        assert "https://evil.example" not in result.cleaned_text
+        assert "[URL]" in result.cleaned_text
+        assert "\u0007" not in result.cleaned_text
+        assert "  " not in result.cleaned_text  # whitespace collapsed
+
+
+# ── Search (firehose filtering) ─────────────────────────────────────────────
+class TestSovereignSieveSearch:
+    @pytest.mark.anyio
+    async def test_search_returns_video_list(self, fake_transport):
+        """Contract: search_videos returns List[YouTubeVideo]."""
+        sieve = SovereignSieve()
+        videos = await sieve.search_videos(
+            "local AI sovereignty", api_key="x", transport=fake_transport
+        )
+        assert isinstance(videos, list)
+        assert all(isinstance(v, YouTubeVideo) for v in videos)
+        assert len(videos) >= 1
+
+    @pytest.mark.anyio
+    async def test_relevance_gate_drops_noise(self, fake_transport):
+        """Firehose filter keeps only query-overlapping hits."""
+        sieve = SovereignSieve()
+        videos = await sieve.search_videos(
+            "sovereignty", api_key="x", transport=fake_transport
+        )
+        # "Cute cat compilation" does not overlap "sovereignty" -> dropped.
+        titles = [v.title for v in videos]
+        assert "Cute cat compilation" not in titles
+        assert any("sovereignty" in t.lower() for t in titles)
+
+    @pytest.mark.anyio
+    async def test_requires_api_key_without_transport(self):
+        sieve = SovereignSieve()
+        with pytest.raises(YouTubeAuthError):
+            await sieve.search_videos("anything")
+
+    @pytest.mark.anyio
+    async def test_date_and_language_filters_passthrough(self, fake_transport):
+        sieve = SovereignSieve()
+        videos = await sieve.search_videos(
+            "ai",
+            api_key="x",
+            relevance_language="en",
+            published_after=datetime(2026, 1, 1, tzinfo=timezone.utc),
+            transport=fake_transport,
+        )
+        assert isinstance(videos, list)
+
+
+# ── TC-5 / TC-2: Signer attestation + tamper detection ──────────────────────
+class TestSovereignSigner:
+    def test_sign_returns_attestation(self, signer: SovereignSigner):
+        """Contract: sign returns SourceChainAttestation."""
+        att = signer.sign("clean text", {"k": 1}, "yt_x_1", "youtube_transcript", "https://y")
+        assert isinstance(att, SourceChainAttestation)
+        assert att.provenance_hash.startswith("hmac_sha256:")
+        assert att.cleaned_text_hash.startswith("sha256:")
+
+    def test_sca_has_all_required_fields(self, signer: SovereignSigner):
+        """TC-5: sca.json carries every required field + valid HMAC."""
+        meta = {"orig": 10, "clean": 9}
+        att = signer.sign("clean text", meta, "yt_x_1", "youtube_transcript", "https://y")
+        for field in (
+            "version",
+            "source_id",
+            "source_type",
+            "source_url",
+            "cleaned_text_hash",
+            "provenance_hash",
+            "sieve_metadata",
+            "signed_at",
+            "signer",
+            "key_id",
+        ):
+            assert getattr(att, field) is not None
+        assert signer.verify(att, "clean text") is True
+
+    def test_tampered_transcript_detected(self, signer: SovereignSigner):
+        """TC-2: tampering with the transcript breaks verification."""
+        att = signer.sign("clean text", {}, "yt_x_1", "youtube_transcript", "https://y")
+        assert signer.verify(att, "clean text") is True
+        assert signer.verify(att, "tampered text") is False
+
+    def test_jwt_round_trip(self, signer: SovereignSigner):
+        """Contract: JWT envelope encodes + decodes an attestation."""
+        att = signer.sign("clean text", {}, "yt_x_1", "youtube_transcript", "https://y")
+        token = signer.to_jwt(att)
+        assert isinstance(token, str)
+        decoded = signer.verify_jwt(token)
+        assert isinstance(decoded, SourceChainAttestation)
+        assert decoded.source_id == att.source_id
+        assert decoded.provenance_hash == att.provenance_hash
+
+
+# ── Provenance Chain Fix ────────────────────────────────────────────────────
+class TestProvenanceChain:
+    def test_add_chunk_returns_linked_chunk(self):
+        """Contract: add_chunk returns ProvenanceChunk with parent + chain hash."""
+        chain = ProvenanceChain(source_id="yt_x_1", source_url="https://y")
+        c1 = chain.add_chunk("first")
+        c2 = chain.add_chunk("second")
+        assert isinstance(c1, ProvenanceChunk)
+        assert isinstance(c2, ProvenanceChunk)
+        assert c1.parent_chunk_id is None
+        assert c2.parent_chunk_id == c1.chunk_id
+        assert c1.chain_hash != c2.chain_hash
+
+    def test_verify_chain_valid(self):
+        chain = ProvenanceChain(source_id="yt_x_1")
+        chunks = [chain.add_chunk(t) for t in ("a", "b", "c")]
+        assert chain.verify(chunks) is True
+
+    def test_verify_chain_detects_tamper(self):
+        chain = ProvenanceChain(source_id="yt_x_1")
+        chunks = [chain.add_chunk(t) for t in ("a", "b", "c")]
+        # Tamper with middle chunk content (simulating splice/reorder).
+        tampered = list(chunks)
+        bad = chunks[1]
+        tampered[1] = ProvenanceChunk(
+            chunk_id=bad.chunk_id,
+            parent_chunk_id=bad.parent_chunk_id,
+            source_id=bad.source_id,
+            sequence=bad.sequence,
+            content_hash="sha256:deadbeef",
+            chain_hash=bad.chain_hash,
+            source_url=bad.source_url,
+            created_at=bad.created_at,
+        )
+        assert chain.verify(tampered) is False
+
+
+# ── TC-1: AtomicPersistence ─────────────────────────────────────────────────
+class TestAtomicPersistence:
+    @pytest.mark.anyio
+    async def test_atomic_write_keeps_original_on_failure(self, tmp_path: Path):
+        """TC-1: a crash during write leaves the original file intact."""
+        import omega_youtube_research.persistence as P
+
+        dest = tmp_path / "out.json"
+        dest.write_text('{"old": true}', encoding="utf-8")
+        pers = AtomicPersistence(db_path=tmp_path / "p.db")
+
+        real_replace = P.os.replace
+        try:
+            P.os.replace = lambda *a, **k: (_ for _ in ()).throw(OSError("simulated crash"))
+            with pytest.raises(Exception):
+                await pers.atomic_write_json(dest, {"new": True})
+        finally:
+            P.os.replace = real_replace
+        # Original untouched, no half-written file exposed.
+        assert dest.read_text(encoding="utf-8") == '{"old": true}'
+        assert not dest.with_suffix(dest.suffix + ".tmp").exists()
+
+    @pytest.mark.anyio
+    async def test_atomic_write_json_contract(self, tmp_path: Path):
+        """Contract: atomic_write_json produces a valid JSON file."""
+        dest = tmp_path / "data.json"
+        pers = AtomicPersistence(db_path=tmp_path / "p.db")
+        await pers.atomic_write_json(dest, {"hello": "world"})
+        assert isinstance(dest.read_text(encoding="utf-8"), str)
+        assert json.loads(dest.read_text(encoding="utf-8")) == {"hello": "world"}
+
+    @pytest.mark.anyio
+    async def test_wal_sqlite_store_and_retrieve(self, tmp_path: Path, signer: SovereignSigner):
+        """Contract: WAL SQLite stores + retrieves attestation and chunks."""
+        pers = AtomicPersistence(db_path=tmp_path / "prov.db")
+        await pers.init()
+        try:
+            att = signer.sign("text", {}, "yt_x_1", "youtube_transcript", "https://y")
+            await pers.store_attestation(att)
+            got = await pers.get_attestation("yt_x_1")
+            assert isinstance(got, SourceChainAttestation)
+            assert got.provenance_hash == att.provenance_hash
+
+            rec = ProvenanceChunkRecord(
+                chunk_id="c1", source_id="yt_x_1", parent_chunk_id=None,
+                sequence=1, content_hash="sha256:a", chain_hash="sha256:b",
+                source_url="https://y", created_at="now",
+            )
+            await pers.store_chunk(rec)
+            chunks = await pers.get_chunks("yt_x_1")
+            assert isinstance(chunks, list)
+            assert chunks[0].chunk_id == "c1"
+        finally:
+            await pers.close()
+
+
+# ── TC-6: End-to-end ingest + MemoryStore metadata contract ─────────────────
+class TestYouTubeResearchModule:
+    @pytest.mark.anyio
+    async def test_ingest_transcript_contract(self, tmp_path: Path, signer_key: bytes):
+        """TC-6: full pipeline yields IngestResult + retrievable provenance chain."""
+        import omega_youtube_research.config as cfg
+
+        config = cfg.YouTubeResearchConfig(
+            persistence=cfg.PersistenceConfig(db_path=str(tmp_path / "prov.db"))
+        )
+        signer = SovereignSigner(key=signer_key, key_id="test-key")
+        pers = AtomicPersistence(db_path=tmp_path / "prov.db")
+        mod = YouTubeResearchModule(config=config, signer=signer, persistence=pers)
+        await mod.init()
+        try:
+            raw = (
+                "[00:01] Host: Um, so [00:02] we should own our tech. "
+                "See https://example.com for more. Uh, that is the point."
+            )
+            result = await mod.ingest_transcript(video_id="vid9", raw_transcript=raw)
+            assert isinstance(result, IngestResult)
+            assert isinstance(result.attestation, SourceChainAttestation)
+            assert result.source_id.startswith("yt_vid9_")
+            assert result.provenance_hash.startswith("hmac_sha256:")
+            assert result.chunk_count >= 1
+
+            # Attestation persisted + retrievable
+            stored = await pers.get_attestation(result.source_id)
+            assert isinstance(stored, SourceChainAttestation)
+            assert stored.provenance_hash == result.provenance_hash
+
+            # Provenance chain persisted + verifies
+            chunks = await pers.get_chunks(result.source_id)
+            assert isinstance(chunks, list)
+            assert all(isinstance(c, ProvenanceChunkRecord) for c in chunks)
+            chain = ProvenanceChain(source_id=result.source_id)
+            assert chain.verify([ProvenanceChunk(**c.model_dump()) for c in chunks]) is True
+        finally:
+            await mod.close()
+
+    @pytest.mark.anyio
+    async def test_to_memory_metadata_contract(self, tmp_path: Path, signer_key: bytes):
+        """Provenance Chain Fix: ingest produces MemoryStore-compatible metadata."""
+        import omega_youtube_research.config as cfg
+
+        config = cfg.YouTubeResearchConfig(
+            persistence=cfg.PersistenceConfig(db_path=str(tmp_path / "prov.db"))
+        )
+        signer = SovereignSigner(key=signer_key, key_id="test-key")
+        pers = AtomicPersistence(db_path=tmp_path / "prov.db")
+        mod = YouTubeResearchModule(config=config, signer=signer, persistence=pers)
+        await mod.init()
+        try:
+            result = await mod.ingest_transcript(
+                video_id="vidM", raw_transcript="Um, hello world. Uh, sovereignty."
+            )
+            meta = mod.to_memory_metadata(result)
+            assert isinstance(meta, dict)
+            assert meta["provenance_hash"] == result.provenance_hash
+            assert meta["source_id"] == result.source_id
+            assert meta["source_type"] == "youtube_transcript"
+            assert meta["is_youtube_ingest"] is True
+        finally:
+            await mod.close()

@@ -5,8 +5,8 @@
 #
 # HandoffPacket + Agent Capability Registry + dispatch prompt builder.
 # Core concept (agent dispatch) is the user's original design.
-# [id-soft: doom-1993] ZONEID Pattern — used for packet integrity constant
-# [id-soft: quake-1996] Thinker chain — used for lifecycle tracking metaphor
+# [id-soft: doom-1993] ZONEID Pattern — magic constant for handoff packet integrity
+# Heritage: Thinker chain — used for lifecycle tracking metaphor (inspired by Quake 1996)
 # Protocol docs: docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
 
 
@@ -30,7 +30,7 @@ AgentMode = Literal["primary", "subagent"]
 
 # ── ZONEID for handoff packets ───────────────────────────────────────────
 
-# [id-soft: doom-1993] ZONEID Pattern — handoff packet integrity constant
+# [id-soft: doom-1993] ZONEID Pattern — magic constant for handoff packet integrity
 # Imported from cvar_table (single source of truth per D97)
 from omega.cvar_table import ZONEID_HANDOFF  # noqa: F401
 
@@ -169,7 +169,7 @@ class HandoffPacket:
 AgentDescriptor = Dict[str, Any]
 
 # Agent Capability Registry — user's original design for agent dispatch.
-# Thinker table metaphor [id-soft: quake-1996] used for organization style.
+# Heritage: Thinker table metaphor used for organization style (Quake 1996)
 CAPABILITY_REGISTRY: Dict[str, AgentDescriptor] = {
     "kali": {
         "mode": "primary",
@@ -358,7 +358,7 @@ def build_dispatch_prompt(packet: HandoffPacket) -> str:
     lines.append("## Heritage & Mandates")
     lines.append("- Refer to PIVOT_LOG.md for prior architectural decisions.")
     lines.append("- Sovereign Mandate 13 (Temple-Grade T1-T11) applies to all changes.")
-    lines.append("- Heritage attribution: every id Software-derived pattern MUST carry [id-soft:] inline tags.")
+    lines.append("- Heritage attribution: every id Software-derived pattern MUST carry [id-soft: GAME-YEAR] inline tags with scope.")
     lines.append("- This is an atomic dispatch. Complete it, then return your result.")
     lines.append("")
 

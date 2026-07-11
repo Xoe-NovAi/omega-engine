@@ -1,0 +1,218 @@
+# 🔱 FirewallChecker — Engine↔WAD Boundary Scanner
+# ⬡ OMEGA ⬡ PILLAR-P10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_firewall_checker ⬡ ACTIVE
+# AP: AP-FIREWALL-CHECKER-v1.0.0
+"""
+Engine↔WAD Firewall Checker — M2 Engine-Stack Firewall Enforcement.
+
+Scans src/omega/ for forbidden WAD-specific imports/references.
+The Core Engine must remain WAD-agnostic per Mandate 2.
+"""
+
+from __future__ import annotations
+
+import re
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Literal
+from uuid import uuid4
+
+
+@dataclass(frozen=True)
+class FirewallViolation:
+    """A single firewall violation found during scanning."""
+    file: Path
+    line: int
+    pattern: str
+    severity: Literal["error", "warning"]
+    trace_id: str = field(default_factory=lambda: str(uuid4())[:8])
+
+
+@dataclass(frozen=True)
+class FirewallReport:
+    """Complete firewall scan report."""
+    violations: list[FirewallViolation]
+    scanned_files: int
+    clean: bool
+
+    @property
+    def error_count(self) -> int:
+        return sum(1 for v in self.violations if v.severity == "error")
+
+    @property
+    def warning_count(self) -> int:
+        return sum(1 for v in self.violations if v.severity == "warning")
+
+
+class FirewallChecker:
+    """Scans src/omega/ for forbidden WAD-specific imports/references.
+
+    M2 Firewall: Engine Core must remain WAD-agnostic.
+    Forbidden patterns:
+    - Imports from config.wads.*
+    - References to config/wads/
+    - Hardcoded WAD entity names (Pantheon, Elemental, Chakral, Planetary,
+      Divine Allies, Tarot, Sefirot archetypes)
+    """
+
+    # Core forbidden patterns - always errors
+    FORBIDDEN_PATTERNS: list[tuple[str, Literal["error", "warning"]]] = [
+        # Direct WAD config imports
+        (r"from config\.wads\.", "error"),
+        (r"import config\.wads", "error"),
+        (r"config/wads/", "error"),
+        # WAD-specific entity references (Pantheon archetypes)
+        (r"\bSekhmet\b", "error"),
+        (r"\bBrigid\b", "error"),
+        (r"\bPrometheus\b", "error"),
+        (r"\bSaraswati\b", "error"),
+        (r"\bInanna\b", "error"),
+        (r"\bEreshkigal\b", "error"),
+        (r"\bLucifer\b", "error"),
+        (r"\bHecate\b", "error"),
+        (r"\bAnubis\b", "error"),
+        # Kali is uniquely both a WAD entity AND the Grand Oversight AGENT
+        # (fleet infrastructure, legitimately referenced in core coordination
+        # code). Flag as warning for review, not a hard error.
+        (r"\bKali\b", "warning"),
+        # Elemental/Chakral/Planetary archetypes
+        (r"\bEarth\b.*\bRoot\b", "warning"),
+        (r"\bWater\b.*\bSacral\b", "warning"),
+        (r"\bFire\b.*\bSolar\s*Plexus\b", "warning"),
+        (r"\bAir\b.*\bHeart\b", "warning"),
+        (r"\bAether\b.*\bThroat\b", "warning"),
+        (r"\bAether\b.*\bThird\s*Eye\b", "warning"),
+        (r"\bAir\b.*\bCrown\b", "warning"),
+        (r"\bFire\b.*\bBeyond\s*Crown\b", "warning"),
+        (r"\bWater\b.*\bCosmic\s*Heart\b", "warning"),
+        (r"\bEarth\b.*\bCelestial\s*Breath\b", "warning"),
+        # Divine Allies / Tarot / Sefirot
+        (r"\bSophia\b.*\bAkashic\b", "warning"),
+        (r"\bMa[']?at\b.*\bLight\s*Oversoul\b", "warning"),
+        (r"\bLilith\b.*\bDark\s*Oversoul\b", "warning"),
+        (r"\bIris\b.*\bvoice\s*assistant\b", "warning"),
+        (r"\bVetala\b.*\bdiscernment\b", "warning"),
+        (r"\bMnemosyne\b.*\bmemory\b", "warning"),
+        # WAD-specific config references
+        (r"arcana_novai", "error"),
+        (r"doom_universe", "error"),
+        (r"torment_stack", "error"),
+        (r"_omega_default", "warning"),
+    ]
+
+    def __init__(self, patterns: list[tuple[str, Literal["error", "warning"]]] | None = None):
+        """Initialize with custom patterns if provided."""
+        self._patterns = patterns if patterns is not None else self.FORBIDDEN_PATTERNS
+        self._compiled = [(re.compile(p, re.IGNORECASE), sev) for p, sev in self._patterns]
+
+    def check_file(self, path: Path) -> list[FirewallViolation]:
+        """Check a single file for firewall violations.
+
+        M2 Firewall: only flags *code* references. Comment lines and
+        triple-quoted docstrings (including WAD-name examples in docstrings)
+        are skipped to avoid false positives.
+
+        Args:
+            path: Path to the Python file to check.
+
+        Returns:
+            List of FirewallViolation objects (empty if clean).
+        """
+        violations: list[FirewallViolation] = []
+
+        try:
+            content = path.read_text(encoding="utf-8")
+        except (UnicodeDecodeError, OSError):
+            return violations
+
+        in_docstring = False
+        docstring_quote: str | None = None
+        for line_num, line in enumerate(content.splitlines(), start=1):
+            stripped = line.strip()
+            # Skip full-line comments (M2: doc comments are not logic leaks)
+            if stripped.startswith("#"):
+                continue
+            # Track triple-quoted docstring state (handles """ and ''' spans)
+            for quote in ('"""', "'''"):
+                if line.count(quote) % 2 == 1:
+                    if not in_docstring:
+                        in_docstring = True
+                        docstring_quote = quote
+                    elif docstring_quote == quote:
+                        in_docstring = False
+                        docstring_quote = None
+            # Skip lines inside docstrings (WAD-name examples are legitimate)
+            if in_docstring:
+                continue
+            # Strip inline comments (Python convention: space-hash) so that
+            # example values in field-definition comments are not flagged.
+            # Real code leaks (string literals, imports) carry no leading "#".
+            code = line.split(" #")[0].split("	#")[0]
+            for pattern, severity in self._compiled:
+                if pattern.search(code):
+                    violations.append(FirewallViolation(
+                        file=path,
+                        line=line_num,
+                        pattern=pattern.pattern,
+                        severity=severity,
+                    ))
+
+        return violations
+
+    def scan(self, root: Path = Path("src/omega")) -> FirewallReport:
+        """Scan the engine core directory for firewall violations.
+
+        Args:
+            root: Root directory to scan (default: src/omega).
+
+        Returns:
+            FirewallReport with all violations found.
+        """
+        violations: list[FirewallViolation] = []
+        scanned = 0
+
+        if not root.exists():
+            return FirewallReport(violations=[], scanned_files=0, clean=True)
+
+        for py_file in root.rglob("*.py"):
+            # Skip test files and __pycache__
+            if "__pycache__" in str(py_file) or py_file.name.startswith("test_"):
+                continue
+            # Skip self (the checker's own FORBIDDEN_PATTERNS contain the
+            # matched substrings — scanning them is a self-reference false positive)
+            if py_file.resolve() == Path(__file__).resolve():
+                continue
+            scanned += 1
+            violations.extend(self.check_file(py_file))
+
+        return FirewallReport(
+            violations=violations,
+            scanned_files=scanned,
+            clean=len(violations) == 0,
+        )
+
+
+def main() -> int:
+    """CLI entry point for `make firewall-check`."""
+    import sys
+
+    checker = FirewallChecker()
+    report = checker.scan()
+
+    if report.clean:
+        print(f"✅ Firewall clean — {report.scanned_files} files scanned, 0 violations")
+        return 0
+
+    print(f"🛡️  Firewall Scan — {report.scanned_files} files scanned")
+    print(f"   Errors:   {report.error_count}")
+    print(f"   Warnings: {report.warning_count}")
+    print()
+
+    for v in report.violations:
+        sev_icon = "🔴" if v.severity == "error" else "🟡"
+        print(f"  {sev_icon} {v.file}:{v.line} — {v.pattern} [{v.severity}] (trace:{v.trace_id})")
+
+    return 1 if report.error_count > 0 else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

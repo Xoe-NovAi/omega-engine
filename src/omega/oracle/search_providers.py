@@ -1,5 +1,7 @@
 """Sovereign Search Providers — Direct API implementations for T2 and T4.
-# [id-soft: quake3-1999] Right Approximation — optimized search provider chain
+# [id-soft: quake3-1999] Right Approximation — fast heuristic search provider chain
+# [heritage: searxng 2023] SearXNG — self-hosted metasearch (Tier 1 privacy-first search)
+# [heritage: cloudflare-warp 2021] WARP proxy pool — multi-namespace privacy proxy
 AP: AP-SEARCH-PROVIDERS-v1.0.0
 ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: SEARCH-HARDENING]
 """
@@ -7,7 +9,7 @@ ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: SEARCH-HARDENING]
 
 import logging
 import anyio
-import httpx
+import httpx2 as httpx
 import os
 from typing import Any, Dict, List, Optional
 from omega.errors import OmegaError, ProviderError, ProviderAuthError, ProviderRateLimitError
@@ -207,7 +209,7 @@ class ExaProvider(SearchProvider):
     async def search(self, query: str, limit: int = 10) -> Optional[str]:
         async with httpx.AsyncClient(timeout=30.0) as client:
             try:
-                # [id-soft: quake3-1999] Right Approximation — Neural Zoom pattern
+                # [id-soft: quake3-1999] Right Approximation — fast heuristic search provider chain
                 # We default to 'auto' type and 'highlights' for token efficiency.
                 payload = {
                     "query": query,

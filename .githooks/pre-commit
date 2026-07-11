@@ -1,11 +1,13 @@
 #!/bin/bash
-# 🔱 Omega Engine — Pre-commit Hook
+# 🔱 Omega Engine — Pre-commit Hook (D208 Enhanced)
 # Carmack's Directive: "Don't use AI where a shell script works."
 # Guards code↔docs drift: if src/omega/ changed, docs/ must too.
+# Guards heritage tags: new [id-soft:] tags must have vet records.
 # Escape hatch: git commit --no-verify
 
 set -e
 
+# ── Code↔Docs Drift Guard ──────────────────────────────────────────────
 changed_src=$(git diff --cached --name-only -- 'src/omega/' | wc -l)
 changed_docs=$(git diff --cached --name-only -- 'docs/' | wc -l)
 
@@ -14,3 +16,45 @@ if [ "$changed_src" -gt 0 ] && [ "$changed_docs" -eq 0 ]; then
     echo "   Use --no-verify to bypass this check."
     exit 1
 fi
+
+# ── Heritage Tag Guard (D208) ──────────────────────────────────────────
+# Check for new [id-soft:] tags in staged files
+new_tags=$(git diff --cached -- 'src/omega/**/*.py' | grep -E '^\+\s*#.*\[id-soft:' | sed -E 's/.*\[id-soft:\s*([^\]]+)\].*/\1/' | sort -u)
+
+if [ -n "$new_tags" ]; then
+    echo "🏛️  Heritage Tag Guard: Checking new [id-soft:] tags..."
+    
+    # Check if vet log exists
+    VET_LOG="data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md"
+    if [ ! -f "$VET_LOG" ]; then
+        echo "  ❌ HERITAGE_VET_LOG.md not found at $VET_LOG"
+        echo "  Run 'make heritage-vet-create' first."
+        exit 1
+    fi
+
+    # For each new tag, check if it has a vet record
+    missing_vet=0
+    while IFS= read -r tag; do
+        # Extract game-year and pattern from tag (format: game-year] Pattern Name — justification)
+        game=$(echo "$tag" | sed -E 's/^([^]]+)\].*/\1/')
+        pattern=$(echo "$tag" | sed -E 's/^[^]]+\]\s*//' | sed -E 's/\s*—.*//')
+        
+        # Check if vet log has a matching record with APPROVED decision and score >= 7
+        if ! grep -q "$pattern" "$VET_LOG"; then
+            echo "  ❌ New tag '[id-soft: $tag]' has no vet record in $VET_LOG"
+            missing_vet=1
+        fi
+    done <<< "$new_tags"
+
+    if [ "$missing_vet" -eq 1 ]; then
+        echo ""
+        echo "  🛑 Commit blocked: New heritage tags require vet records."
+        echo "  Run 'make heritage-vet' to see full validation."
+        echo "  Use 'git commit --no-verify' to bypass (NOT RECOMMENDED)."
+        exit 1
+    fi
+
+    echo "  ✅ All new heritage tags have vet records."
+fi
+
+echo "✅ Pre-commit checks passed."

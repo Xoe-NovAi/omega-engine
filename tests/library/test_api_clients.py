@@ -8,7 +8,7 @@ import pytest
 import json
 from unittest.mock import AsyncMock, patch, Mock
 
-import httpx
+import httpx2 as httpx
 import anyio
 
 from omega.library.api_clients import (

@@ -5,7 +5,7 @@ Sovereign Ingestion Guards — Pre-flight probes and budget enforcement.
 
 # DocRef: docs/architecture/SOVEREIGN_DATA_FLOW.md
 import logging
-import httpx
+import httpx2 as httpx
 import anyio
 from typing import Optional
 from .ingestion_types import IngestionConfig, SentryFailure, BudgetExceededError

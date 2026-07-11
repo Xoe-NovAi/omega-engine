@@ -5,7 +5,7 @@
 import json
 import logging
 import yaml
-import httpx
+import httpx2 as httpx
 import anyio
 from pathlib import Path
 from typing import Any, Dict, List, Optional

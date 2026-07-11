@@ -5,8 +5,7 @@
 #
 # [id-soft: quake3-1999] Hard-Boundary Struct — each client is a sealed
 #   interface with search() + get_by_identifier() as the contract.
-# [id-soft: doom-1993] WAD System — orchestrator treats clients like
-#   WAD entries: swapable, discoverable, hot-pluggable.
+# Heritage: WAD System — orchestrator treats clients like WAD entries: swapable, discoverable, hot-pluggable (Doom 1993)
 #
 # Canonical source for all library API client implementations.
 # enrichment.py is the thin orchestration wrapper.
@@ -26,7 +25,7 @@ from typing import Any, Dict, List, Optional, Tuple, TypeVar
 from abc import ABC, abstractmethod
 
 import anyio
-import httpx
+import httpx2 as httpx
 from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
@@ -115,7 +114,7 @@ class LibraryMetadata:
 
 
 # ============================================================================
-# TYPED ERRORS [id-soft: quake-1996] Hard-Boundary
+# TYPED ERRORS [id-soft: quake-1996] Hard-Boundary — typed error hierarchy as boundary layer
 # ============================================================================
 
 class LibraryAPIError(OmegaError):
@@ -126,7 +125,7 @@ class ClientNotFoundError(LibraryAPIError):
 
 
 # ============================================================================
-# BASE CLIENT [id-soft: doom-1993] WAD System — swapable data sources
+# BASE CLIENT [id-soft: doom-1993] WAD System — swapable, hot-pluggable data sources
 # ============================================================================
 
 T = TypeVar("T")
@@ -468,7 +467,7 @@ class ProjectGutenbergClient(BaseLibraryClient):
 
 
 # ============================================================================
-# ORCHESTRATOR [id-soft: doom-1993] WAD System — multi-source coordination
+# ORCHESTRATOR [id-soft: doom-1993] WAD System — swapable, hot-pluggable data sources
 # ============================================================================
 
 class LibraryAPIOrchestrator:
@@ -539,5 +538,5 @@ class LibraryAPIOrchestrator:
         for name, client in self.clients.items():
             try:
                 await client.close()
-            except Exception:
-                logger.debug("Error closing client '%s'", name)
+            except Exception as e:
+                logger.debug("Error closing client '%s': %s", name, e)

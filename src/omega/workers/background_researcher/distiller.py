@@ -34,7 +34,7 @@ from omega.errors import (
     ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
     EntityTombstonedError, ModelNotFoundError,
 )
-import httpx
+import httpx2 as httpx
 
 from .models import GnosisPacket
 from .soul_update_manager import SoulUpdateManager
@@ -1170,12 +1170,17 @@ class CircuitBreakerOpen(Exception):
 # ── Lookup for external use ────────────────────────────────────────────
 
 def list_prompt_modes() -> dict[str, str]:
-    """Return all available system prompt modes with descriptions."""
+    """Return all available system prompt modes with descriptions.
+
+    M2 Firewall: mode *semantics* are universal; the entity→mode mapping
+    is WAD content (lives in the active WAD's entity config), so core must
+    not hardcode specific persona names here.
+    """
     return {
-        "default": "SOPHIA — Balanced, general-purpose research distillation",
-        "technical": "PROMETHEUS — Technical deep-dive, code analysis, architecture",
-        "security": "SEKHMET — Security audit, vulnerability assessment, threat modeling",
-        "research": "SOPHIA (inductive) — Cross-domain synthesis, hypothesis generation",
-        "gnosis": "SOPHIA × ANUBIS — Philosophical, archetypal, meaning extraction",
-        "tooling": "SARASWATI — Tool/ecosystem mapping, integration analysis",
+        "default": "Balanced, general-purpose research distillation",
+        "technical": "Technical deep-dive, code analysis, architecture",
+        "security": "Security audit, vulnerability assessment, threat modeling",
+        "research": "Cross-domain synthesis, hypothesis generation",
+        "gnosis": "Philosophical, archetypal, meaning extraction",
+        "tooling": "Tool/ecosystem mapping, integration analysis",
     }

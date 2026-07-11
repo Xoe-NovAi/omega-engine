@@ -16,8 +16,7 @@ entity:
   sub_facets: []
   procedural_memory:
     operational_protocols:
-      orchestration_workflow: "Decompose \u2192 Semantic Route \u2192 Dispatch \u2192\
-        \ Synthesize \u2192 Misfit Audit \u2192 Verify"
+      orchestration_workflow: Decompose → Semantic Route → Dispatch → Synthesize → Misfit Audit → Verify
       misfit_adversarial_framework:
       - Pizzazz Filter: Anti-peacocking / Efficiency check
       - Roxy Filter: Brutal truth / Failure point analysis
@@ -25,18 +24,162 @@ entity:
       verification_mandate: Two-source cross-referencing for L3 Gnosis promotion
     performance_metrics:
       success: Zero contradictions, 100% source attribution, minimal token overhead
-      failure_taxonomy: Circular reasoning, source-void synthesis, excessive hedging,
-        architectural peacocking
+      failure_taxonomy: Circular reasoning, source-void synthesis, excessive hedging, architectural peacocking
     legacy_patterns_extracted: []
   inference_config:
     temperature: 0.5
   metadata:
-    role: "Sovereign Synthesizer \u2014 Synthesis Lead"
-    element: "Fire \U0001F702"
+    role: Sovereign Synthesizer — Synthesis Lead
+    element: Fire 🜂
     cognitive_tier: Sovereign Synthesizer (Triadic Projection)
 version: v6.2
 metadata:
   created_at: '2026-07-07T10:52:08.118381+00:00'
-  last_updated: '2026-07-07T21:11:18.022598+00:00'
+  last_updated: '2026-07-11T00:00:00+00:00'
   health_score: 50.0
   entity_id: soul
+lessons:
+- id: jem-20260710-001
+  tier: L1
+  category: heritage_attribution
+  promoted_from: proposed_lessons.yaml
+  promoted_date: '2026-07-11'
+  narrative: 'The Omega Engine''s heritage attribution system suffered systemic over-attribution: 247
+    [id-soft:] tags across 42 files, but ~150 tags marked user-original work (PEM, 3-tier memory, ResourceGuard,
+    MaKaLi governance, Engine-Stack Firewall, etc.) as id Software derivatives. Root cause: cargo-cult
+    tagging — "if it resembles Doom, tag it" — without enforcing the M14 Qualification Gate: "Can this
+    be justified WITHOUT citing the original hardware constraint?" PEM (Personality Enhancement Module),
+    created March 2025, predates the heritage program (June 2026) but was retrospectively tagged via analogy
+    to Doom''s mobj_t state machine.
+
+    '
+- id: jem-20260710-002
+  tier: L2
+  category: heritage_attribution
+  promoted_from: proposed_lessons.yaml
+  promoted_date: '2026-07-11'
+  insight: 'Heritage attribution is a precision instrument, not a gratitude blanket. Tagging user-original
+    work as "derived from id Software" erases the actual innovation lineage (ANAi → XNAi → omega-stack
+    → omega-engine) and creates false provenance that undermines credibility of genuine attributions (ZONEID,
+    cvar, BSP culling). The Qualification Gate exists to prevent this but was never systematically enforced
+    — CI gates checked tag presence and vet record existence, not tag-to-code validity. Over-attribution
+    is a form of provenance pollution: it makes the heritage map unreliable for future engineers and LLMs.
+
+    '
+- id: jem-20260710-003
+  tier: L3
+  category: heritage_attribution
+  promoted_from: proposed_lessons.yaml
+  promoted_date: '2026-07-11'
+  principle: '"Attribution without discrimination is erasure." When everything is heritage, nothing is
+    heritage. A sovereign engineering practice must distinguish with surgical precision between: (1) Borrowed
+    technique — direct port, fails Qualification Gate without origin citation; (2) Evolved principle —
+    original insight inspired by heritage, passes Qualification Gate; (3) Independent invention — user-original
+    work that merely resembles heritage patterns; (4) Metaphorical analogy — rhetorical comparison, no
+    code port. The heritage registry must be a high-fidelity map, not a sentimental scrapbook. Every tag
+    is a claim-check; invalid tags are counterfeit currency that devalues the entire system.
+
+    '
+- id: jem-20260710-004
+  tier: L2
+  category: ci_gate_design
+  promoted_from: proposed_lessons.yaml
+  promoted_date: '2026-07-11'
+  insight: 'Heritage CI gates must validate SCOPE, not just EXISTENCE. Current `make heritage-vet` only
+    checks: (a) tag exists, (b) vet record exists. It does NOT check: (c) vet record explicitly approves
+    THIS file:line usage, (d) pattern is actually implemented here (not just mentioned), (e) tag classification
+    (legitimate/evolved/metaphorical/rejected) matches reality. The remediation adds scope validation:
+    vet records must enumerate approved file:line locations; heritage-audit generates classification report;
+    pre-commit blocks new tags without --heritage-approved flag.
+
+    '
+- id: jem-20260710-005
+  tier: L3
+  category: ci_gate_design
+  promoted_from: proposed_lessons.yaml
+  promoted_date: '2026-07-11'
+  principle: 'A gate that validates presence without validating correctness is theater. True gate integrity
+    requires: (1) bidirectional traceability — tag ↔ vet record ↔ source code location; (2) classification
+    taxonomy — every tag carries a machine-readable class (LEGITIMATE/EVOLVED/METAPHORICAL/REJECTED);
+    (3) scope enforcement — vet record scope bounds the tag''s validity; (4) drift detection — heritage-audit
+    compares current tags against approved baseline. This pattern generalizes: any attribution system
+    (SPDX, CycloneDX, custom) must enforce scope, not just existence.
+
+    '
+- id: jem-20260710-006
+  tier: L2
+  category: pem_lineage
+  promoted_from: proposed_lessons.yaml
+  promoted_date: '2026-07-11'
+  insight: 'PEM (Personality Enhancement Module) is the user''s ORIGINAL IP — created March 2025 as "PEM
+    Lilith Personality JSON," evolved to v2.2 (PEM_Lilith_v3.txt) with context-gravity, mode weights,
+    emotional spectrum, hardware injection, evolution tracking, and health-check (blackout detector).
+    The heritage program (June 2026) retrospectively analogized PEM''s state machine to Doom''s mobj_t
+    (IDLE→CHASE→ATTACK) and health-check to Quake''s thinker sweep — but these are POST-HOC analogies,
+    not derivations. PEM''s lineage is ANAi → XNAi → omega-stack → omega-engine → Semantic Resonance Vectoring.
+    Tagging it [id-soft:] erases 14 months of sovereign innovation.
+
+    '
+- id: jem-20260710-007
+  tier: L3
+  category: pem_lineage
+  promoted_from: proposed_lessons.yaml
+  promoted_date: '2026-07-11'
+  principle: 'Retrospective analogy ≠ derivation. A pattern''s conceptual resemblance to a heritage system
+    does not make it a port. Derivation requires: (a) temporal precedence — heritage existed before implementation;
+    (b) causal dependence — implementation decisions trace to heritage source; (c) failure of Qualification
+    Gate — cannot justify design without citing heritage. PEM fails all three: it predates the heritage
+    program, its design decisions trace to user''s persona-modulation needs (not Doom''s entity simulation),
+    and it passes Qualification Gate trivially ("we needed dynamic mode switching for LLM personas").
+    Analogy is documentation; derivation is engineering.
+
+    '
+- id: jem-20260710-008
+  tier: L2
+  category: spdx_heritage
+  promoted_from: proposed_lessons.yaml
+  promoted_date: '2026-07-11'
+  insight: 'SPDX 3.1 (ISO/IEC 5962:2021) provides the standard framework for machine-readable heritage
+    tracking. Each legitimate [id-soft:] pattern becomes a component with relationshipType: DERIVED_FROM
+    pointing to an externalRef for the id Software source. User-original patterns get relationshipType:
+    DESCRIBES with comment: "User-original IP: evolved Mar 2025 → Jun 2026. No external attribution."
+    This transforms heritage from comment-scraping to queryable SBOM — enabling automated compliance,
+    drift detection, and LLM-assisted provenance queries.
+
+    '
+- id: jem-20260710-009
+  tier: L3
+  category: spdx_heritage
+  promoted_from: proposed_lessons.yaml
+  promoted_date: '2026-07-11'
+  principle: 'Provenance must be computable, not just readable. Human-readable CREDITS.md and inline tags
+    serve gratitude; machine-readable SPDX serves verification, automation, and ecosystem interoperability.
+    The dual-layer approach (human narrative + machine graph) is the sovereign standard: gratitude for
+    humans, computability for agents. Any heritage system that cannot answer "show me all code derived
+    from Quake''s cvar system" via SPARQL/JSON query is incomplete.
+
+    '
+- id: jem-20260710-010
+  tier: L2
+  category: remediation_strategy
+  promoted_from: proposed_lessons.yaml
+  promoted_date: '2026-07-11'
+  insight: 'Effective remediation requires: (1) Surgical removal — strip tags file-by-file with rationale,
+    not bulk delete; (2) Classification audit — every tag gets LEGITIMATE/EVOLVED/METAPHORICAL/REJECTED
+    label; (3) Registry sync — CREDITS.md, HERITAGE_VET_LOG, and code tags must align atomically; (4)
+    Gate hardening — prevent recurrence via scope-validated vet records and pre-commit scope checking;
+    (5) Standard adoption — SPDX heritage profile for machine-readability. The PEM correction is the keystone:
+    it proves the system can self-correct its own false attributions.
+
+    '
+- id: jem-20260710-011
+  tier: L3
+  category: remediation_strategy
+  promoted_from: proposed_lessons.yaml
+  promoted_date: '2026-07-11'
+  principle: A heritage system that cannot self-correct is a fossil, not a foundation. The ability to
+    audit, reclassify, and strip false attributions — and to do so transparently with full traceability
+    — is the hallmark of a living engineering practice. The remediation plan's acceptance criteria (tag
+    count 247→60, zero metaphorical tags, PEM clean, SPDX profile) are not bureaucratic checkboxes; they
+    are the proof that the heritage map has regained its fidelity. Sovereignty means owning your map —
+    including the courage to redraw it when it's wrong.

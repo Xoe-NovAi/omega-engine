@@ -7,6 +7,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from omega.memory_store import MemoryStore, reset_memory_store
 from omega.oracle.context_builder import ContextBuilder
 from omega.state import initialize_usm
+from omega.observability import reset_observability
 
 logger = logging.getLogger(__name__)
 
@@ -30,11 +31,13 @@ async def _set_test_env(tmp_path, monkeypatch):
     monkeypatch.setenv("OMEGA_ENV", "test")
     monkeypatch.setenv("OMEGA_DATA_DIR", str(tmp_path))
     reset_memory_store()
+    reset_observability()
     from omega.state import reset_usm
     await reset_usm()
     await initialize_usm()
     yield
     reset_memory_store()
+    reset_observability()
 
 
 @pytest.fixture

@@ -16,7 +16,7 @@
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
-import httpx
+import httpx2 as httpx
 import json
 from typing import Optional, Dict, List
 

@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-import httpx
+import httpx2 as httpx
 import anyio
 from omega.errors import (
     OmegaError,

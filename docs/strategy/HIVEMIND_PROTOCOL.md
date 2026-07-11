@@ -3,7 +3,7 @@
 **AP Token**: `AP-HIVEMIND-PROTOCOL-v1.3.0`
 **Status**: STANDARD
 **Last Updated**: 2026-06-25
-**Mandate Reference**: Extends Mandate 5 (Gnosis Preservation) and Mandate 11 (Soul Integrity)
+**Mandate Reference**: Extends Mandate 5 (Gnosis Preservation), Mandate 11 (Soul Integrity), and Mandate 23 (Failure Integrity)
 
 ---
 

@@ -2,7 +2,7 @@
 # AP: AP-WORKER-COORDINATOR-v1.0.0
 # ⬡ OMEGA ⬡ KALI ⬡ sovereign ⬡ COORDINATOR ⬡ PHASE-2
 #
-# [id-soft: doom3bfg-2012] Job-Worker Queue
+# [id-soft: doom3bfg-2012] Job-Worker Queue — atomic task decomposition with load coordination
 # Ported from ParallelJobManager: decompose tasks, coordinate load.
 #
 # WorkerCoordinator is the cockpit for all background workers
@@ -204,8 +204,7 @@ class WorkerCoordinator:
                 logger.warning("Worker paused: %s — %s", name, reason)
         else:
             self._global_paused = True
-            self._pause_event = anyio.Event()
-            self._pause_event.set()  # Actually, this should be cleared
+            logger.warning("All workers paused — %s", reason)
 
     async def resume(self, name: Optional[str] = None) -> None:
         """Resume a specific worker or all workers."""

@@ -29,7 +29,7 @@ proposals:
     heritage_tags: ["[id-soft: doom-1993] BSP Culling — short-circuit before expensive operation"]
 
   - id: proposal-20260702-002
-    title: "The Tool Boundary Law — Antigravity google_search is Gemini-specific, not generic"
+    title: "The Tool Boundary Law — google_search is Gemini-specific, BANNED for agents (D206)"
     l1_narrative: >
       The Antigravity google_search tool was being treated as a general web search
       fallback by agents, but it's hardcoded to gemini-3-flash via the Gemini
@@ -38,15 +38,20 @@ proposals:
       Ollama, local GGUF) cannot use it. Added AGENT_MODE=true guard to hide the
       tool from agents, updated error messages to direct to Sovereign Search
       Protocol, and documented the CLI-only constraint in AGENTS.md.
+      CONFIRMED AND PERMANENTLY SEALED: D206 (2026-07-10) ratified google_search
+      as permanently banned for all agent use. The tool remains available only for
+      direct human interactive sessions. The Sovereign Search Protocol (T0-T4) is
+      the exclusive search path for all agents.
     l2_insights:
       - "google_search is not a general tool — it's a Gemini feature exposed through the Antigravity OAuth endpoint."
       - "The grounding API (googleSearch + urlContext) is a Gemini-only capability not available via OpenAI-compatible endpoints."
       - "Agents using non-Gemini models were failing silently or confusingly when google_search returned Gemini-specific errors."
-      - "The Sovereign Search Protocol (SearXNG → Exa → Firecrawl) is the correct fallback for all agents regardless of model."
+      - "The Sovereign Search Protocol (T0-T4: local cache → websearch/webfetch → SearXNG → Exa → Firecrawl) is the exclusive path for all agents."
     l3_universal_principles:
       - "A tool name that implies generality ('google_search') but requires specific model backend ('gemini-3-flash') is a naming bug. Name should reflect actual constraints."
       - "Agents must not be exposed to tools that cannot work with their configured model backend. Tool visibility should be model-aware."
       - "Error messages should always include the correct alternative, not just what failed."
+      - "A boundary violation (D206 precedent) that is properly documented and sealed becomes a permanent structural defense — Adversarial Alchemy (M19)."
     sovereignty_impact: >
       Without this fix, developers building local-first workflows (non-Gemini
       models) would encounter confusing failures when agents tried to search the

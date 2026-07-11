@@ -240,7 +240,8 @@ class DPORecorder:
                         data = json.loads(line)
                         if "lineage_id" in data:
                             lineage_ids.append(data["lineage_id"])
-                    except Exception:
+                    except Exception as e:
+                        logger.debug("Malformed DPO JSONL line skipped: %s", e)
                         pass
                         
             entry = DPOManifestEntry(
@@ -259,7 +260,8 @@ class DPORecorder:
                     oldest = self._manifest.pop(0)
                     try:
                         Path(oldest.file_path).unlink(missing_ok=True)
-                    except Exception:
+                    except Exception as e:
+                        logger.debug("Failed to unlink old DPO file: %s", e)
                         pass
                         
             self._save_manifest()

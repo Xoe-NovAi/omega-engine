@@ -1,4 +1,4 @@
-import httpx
+import httpx2 as httpx
 from unittest.mock import AsyncMock, patch, MagicMock
 
 import pytest
@@ -39,7 +39,7 @@ class TestMCPWatchdog:
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock(return_value=None)
 
-        with patch("httpx.AsyncClient", return_value=mock_client):
+        with patch("httpx2.AsyncClient", return_value=mock_client):
             with patch("anyio.run_process", new_callable=AsyncMock) as mock_process:
                 async def one_iter():
                     with anyio.move_on_after(5.0):
@@ -60,7 +60,7 @@ class TestMCPWatchdog:
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock(return_value=None)
 
-        with patch("httpx.AsyncClient", return_value=mock_client):
+        with patch("httpx2.AsyncClient", return_value=mock_client):
             with patch("anyio.run_process", new_callable=AsyncMock) as mock_process:
                 async def one_iter():
                     with anyio.move_on_after(5.0):
@@ -82,7 +82,7 @@ class TestMCPWatchdog:
         mock_client.__aenter__ = AsyncMock(return_value=mock_client)
         mock_client.__aexit__ = AsyncMock(return_value=None)
 
-        with patch("httpx.AsyncClient", return_value=mock_client):
+        with patch("httpx2.AsyncClient", return_value=mock_client):
             with patch("anyio.run_process", new_callable=AsyncMock) as mock_process:
                 async def one_iter():
                     with anyio.move_on_after(0.1):

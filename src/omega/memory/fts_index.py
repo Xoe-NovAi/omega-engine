@@ -1,7 +1,7 @@
 # AP: AP-PR-READINESS-v1.0.0
 """SQLite FTS5 Full-Text Search Index for Omega Memory.
 
-[FTS5 Search Pattern: SQLite public domain]
+# [heritage: sqlite-fts5 2015] SQLite FTS5 — BM25 full-text search with Porter stemmer
 Provides BM25-ranked search across conversation history with sovereign isolation.
 """
 # DocRef: docs/architecture/MEMORY_STORE_DEEP_DIVE.md

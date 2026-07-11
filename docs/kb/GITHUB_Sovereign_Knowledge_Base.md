@@ -331,7 +331,6 @@ When a tool returns an error, log immediately:
 ```
 
 ### 4.3 Blocked Tools
-- **Antigravity `google_search`**: **BLOCKED FOR AGENTS**. Does not work in agent mode. Never use.
 
 **Citations**: *Sovereign Search Skill v2.1, AGENTS.md Search Protocol*
 

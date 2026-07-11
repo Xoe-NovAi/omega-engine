@@ -7,9 +7,9 @@
 #   2. PathScopeGuard — Prevents directory traversal
 #   3. DownloadSizeGuard — Prevents disk exhaustion
 #
-# Heritage: [id-soft: doom-1993] SSRF Guard — BSP leaf-culling pattern
-#           [id-soft: quake-1996] Path Traversal Guard — zone boundary enforcement
-#           [id-soft: quake-1996] Download Size Guard — fixed-timestep pre-check
+# Heritage: SSRF Guard — inspired by BSP leaf-culling pattern (Doom 1993)
+#           Path Traversal Guard — inspired by zone boundary enforcement (Quake 1996)
+#           Download Size Guard — inspired by fixed-timestep pre-check (Quake 1996)
 
 
 # DocRef: docs/architecture/KNOWLEDGE_LIBRARY.md
@@ -26,7 +26,7 @@ from omega.errors import OmegaError
 logger = logging.getLogger(__name__)
 
 
-# ── [id-soft: doom-1993] SSRF Guard ──────────────────────────────────────────
+# ── [id-soft: doom-1993] SSRF Guard — O(1) cull of forbidden IP ranges ──────────────────
 # Ported from BSP leaf-culling: skip invisible subtrees in O(1).
 # Here: skip internal IP ranges in O(1) CIDR check.
 
@@ -90,7 +90,7 @@ class SSRFGuard:
             return False
 
 
-# ── [id-soft: quake-1996] Path Scope Guard ───────────────────────────────────
+# ── [id-soft: quake-1996] Path Scope Guard — zone boundary enforcement for file paths ──
 # Ported from zone.c boundary enforcement: every allocation must stay
 # within the zone's low/high watermarks. Here: every file path must
 # resolve within the library's data directory.
@@ -127,7 +127,7 @@ def validate_path_scope(target_path: Path, base_dir: Path) -> bool:
         return False
 
 
-# ── [id-soft: quake-1996] Download Size Guard ────────────────────────────────
+# ── [id-soft: quake-1996] Download Size Guard — fixed-timestep pre-check on download size ──
 # Ported from Quake's fixed-timestep pre-check: validate before executing.
 
 async def validate_download_size(
@@ -144,7 +144,7 @@ async def validate_download_size(
         True if size is acceptable (or undetermined).
         False if Content-Length exceeds max_bytes.
     """
-    import httpx
+    import httpx2 as httpx
 
     try:
         async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:

@@ -28,7 +28,7 @@ import functools
 import fcntl
 from dataclasses import dataclass, field, asdict
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TypedDict
 
 import yaml
 import anyio
@@ -38,6 +38,36 @@ from omega.constants import ZONEID_ENTITY, ZONEID_TOMBSTONE, validate_zoneid
 from omega.errors import EntityTombstonedError
 
 logger = logging.getLogger(__name__)
+
+class SymbolicMetadata(TypedDict, total=False):
+    """Run Side symbolic coordinate system (Lilith Synthesis 2026-07-11).
+
+    Six generic fields give structure to the ineffable. Engine Core provides
+    schema; WAD provides values. Zero firewall risk (M2) — the engine reads
+    metadata as opaque dict; symbolic_metadata is a typed sub-schema at
+    metadata["symbolic"], never a replacement for the core field.
+
+    [heritage: lilith-2026] SymbolicMetadata framework — Run Side semantic coordinates
+    """
+    element: str            # e.g., "earth", "water", "fire", "air", "aether"
+    energy_center: str      # e.g., "root", "sacral", "solar_plexus", "heart", "throat", "third_eye", "crown"
+    celestial_body: str     # e.g., "gaia", "neptune", "jupiter", "mars", "mercury", "uranus", "pluto", "transpluto", "venus", "saturn"
+    archetypal_ally: str    # e.g., "brigid", "lilith", "maat", "sekhmet", "lucifer", "isis", "hecate", "anubis", "kali", "inanna"
+    glyph: str              # e.g., "🜃", "🜄", "🜂", "🜁", "⛤"
+    invocation: str         # e.g., "By earth and root, I stand"
+
+    @staticmethod
+    def validate(data: Dict[str, Any]) -> "SymbolicMetadata":
+        """Validate a dict against the SymbolicMetadata schema.
+
+        Returns a typed SymbolicMetadata dict. Unknown keys are ignored
+        (engine reads metadata as opaque; only the 6 known fields are typed).
+        This is a pure structural filter — no semantic inspection of values
+        (M2 Firewall: Engine Core never interprets WAD-specific content).
+        """
+        valid_keys = {"element", "energy_center", "celestial_body", "archetypal_ally", "glyph", "invocation"}
+        return {k: v for k, v in data.items() if k in valid_keys}
+
 
 class SovereignPermissionError(Exception):
     """Raised when an unauthorized entity attempts to write to constitutional files."""
@@ -125,12 +155,12 @@ class Entity:
     # The WAD fills it; the engine passes it through.
     metadata: Dict[str, Any] = field(default_factory=dict)
     
-    # [id-soft: doom-1993] ZONEID Pattern — runtime marker, not serialized
+    # [id-soft: doom-1993] ZONEID Pattern — magic constant for entity runtime integrity validation
     magic: int = field(default=ZONEID_ENTITY, compare=False)
-    # [id-soft: doom-1993] High-Bit Trick — flags as bitfield, high bit = system
+    # [id-soft: doom-1993] High-Bit Trick — bitfield flag encoding with high-bit markers
     # 0x80000000 = system entity, 0x40000000 = WAD-loaded entity
     flags: int = field(default=0, compare=False)
-    # [id-soft: quake3-1999] Hard-Boundary — engine zone sentinel
+    # [id-soft: quake3-1999] Hard-Boundary — engine-zone vs game-zone boundary enforcement
     # __engine_zone__ and __game_zone__ are checked by zone-aware getters.
     __engine_zone__: dict = field(default_factory=dict, repr=False, compare=False)
     __game_zone__: dict = field(default_factory=dict, repr=False, compare=False)
@@ -170,6 +200,28 @@ class Entity:
         instead of separate boolean field. 1 AND instruction vs 1 struct field.
         """
         return bool(self.flags & EntityRegistry.FLAG_SYSTEM)
+
+    def get_symbolic_metadata(self) -> SymbolicMetadata:
+        """Extract typed SymbolicMetadata from metadata["symbolic"] sub-dict.
+        
+        [heritage: lilith-2026] SymbolicMetadata — Run Side semantic coordinates.
+        Engine Core provides schema; WAD provides values. Zero firewall risk (M2):
+        the core field `metadata: Dict[str, Any]` is preserved; symbolic_metadata
+        is a typed view over metadata["symbolic"], never a replacement.
+        """
+        raw = self.metadata.get("symbolic", {})
+        if not isinstance(raw, dict):
+            return SymbolicMetadata()
+        return SymbolicMetadata.validate(raw)
+
+    def set_symbolic_metadata(self, data: Dict[str, Any]) -> None:
+        """Store a validated SymbolicMetadata dict at metadata["symbolic"].
+        
+        [heritage: lilith-2026] SymbolicMetadata — Run Side semantic coordinates.
+        Preserves the core `metadata: Dict[str, Any]` field; only populates the
+        "symbolic" sub-key with the 6 typed fields. Unknown keys are filtered.
+        """
+        self.metadata["symbolic"] = SymbolicMetadata.validate(data)
 
     def __getattr__(self, name: str) -> Any:
         """Proxy attribute access to the metadata dictionary for WAD-specific content.
@@ -217,7 +269,7 @@ class EntityRegistry:
     # [id-soft: quake-1996] Grace Period — 0.5s realloc delay
     TOMBSTONE_GRACE_SECONDS = 0.5
     
-    # [id-soft: doom-1993] High-Bit Trick — flag encoding using high bit
+    # [id-soft: doom-1993] High-Bit Trick — bitfield flag encoding with high-bit markers
     FLAG_SYSTEM = 0x80000000  # Bit 31: system-level entity (vs user-created)
     FLAG_WAD = 0x40000000     # Bit 30: loaded from a WAD (vs runtime-created)
     FLAG_ACTIVE = 0x00000000  # Default: active entity (low bits = slot flags)
@@ -261,10 +313,10 @@ class EntityRegistry:
         # [Project 3: Shadow-Stacking] Store entities as a list of layers sorted by priority
         self._entities: Dict[str, List[Entity]] = {}
         self._wad_sources: Dict[str, List[str]] = {}  # lowercase entity name -> list of WAD source names
-        # [id-soft: doom-1993] Multi-Index Entity — dual-index lookup
+        # [id-soft: doom-1993] Multi-Index Entity — dual-index entity lookup (name + capability)
         self._capability_index: Dict[str, List[str]] = {}
         self._lock = None  # Created lazily in async context (C-ARCH-004 pattern)
-        # [id-soft: doom-1993] Lazy Deletion — tombstoned entity tracking
+            # [id-soft: doom-1993] Lazy Deletion — tombstone-based entity lifecycle (set sentinel, keep in dict)
         self._tombstoned: Dict[str, float] = {}  # key -> time.monotonic() of tombstone
         self._load()
 
@@ -303,9 +355,9 @@ class EntityRegistry:
                 continue
             
             # Define core structural fields that belong to the Engine Zone
-            # [id-soft: quake3-1999] Hard-Boundary — metadata is a core field,
-            # NOT a WAD-specific field. Without this, nested metadata dicts from
-            # YAML are absorbed as WAD-specific metadata, causing recursive nesting.
+            # [id-soft: quake3-1999] Hard-Boundary — engine-zone vs game-zone boundary enforcement
+            # metadata is a core field, NOT a WAD-specific field. Without this,
+            # nested metadata dicts from YAML are absorbed as WAD-specific metadata.
             core_fields = {
                 "name", "domains", "capabilities", "model", "personality", 
                 "temperature", "context_window", "slots", "role", 
@@ -352,7 +404,7 @@ class EntityRegistry:
                 wad_source=raw.get("wad_source"),
             )
             key = entity.name.lower()
-            # [id-soft: doom-1993] ZONEID Pattern — set at load, not serialized
+            # [id-soft: doom-1993] ZONEID Pattern — magic constant for entity runtime integrity validation
             entity.magic = ZONEID_ENTITY
             self._entities[key] = [entity]
             
@@ -363,7 +415,7 @@ class EntityRegistry:
                 if entity.wad_source not in self._wad_sources[key]:
                     self._wad_sources[key].append(entity.wad_source)
             
-            # [id-soft: doom-1993] Multi-Index Entity — populate capability index
+            # [id-soft: doom-1993] Multi-Index Entity — dual-index entity lookup (name + capability)
             for cap in entity.domains + entity.capabilities:
                 cap_lower = cap.lower()
                 if cap_lower not in self._capability_index:
@@ -556,7 +608,7 @@ class EntityRegistry:
             name_key = self._validate_name(entity.name)
             entity.name = name_key  # Normalize to lowercase
             
-            # [id-soft: doom-1993] High-Bit Trick — set FLAG_WAD if WAD-loaded
+            # [id-soft: doom-1993] High-Bit Trick — bitfield flag encoding with high-bit markers
             if entity.wad_source:
                 entity.flags |= EntityRegistry.FLAG_WAD
                 entity.__engine_zone__["flags"] = entity.flags
@@ -570,7 +622,7 @@ class EntityRegistry:
                 if entity.wad_source not in self._wad_sources[key]:
                     self._wad_sources[key].append(entity.wad_source)
             
-            # [id-soft: doom-1993] Multi-Index Entity — populate capability index
+            # [id-soft: doom-1993] Multi-Index Entity — dual-index entity lookup (name + capability)
             for cap in entity.domains + entity.capabilities:
                 cap_lower = cap.lower()
                 if cap_lower not in self._capability_index:
@@ -578,7 +630,7 @@ class EntityRegistry:
                 if key not in self._capability_index[cap_lower]:
                     self._capability_index[cap_lower].append(key)
             
-            # [id-soft: doom-1993] ZONEID Pattern — set runtime marker
+            # [id-soft: doom-1993] ZONEID Pattern — magic constant for entity runtime integrity validation
             entity.magic = ZONEID_ENTITY
             
             # [Project 3: Shadow-Stacking] Layered storage
@@ -612,9 +664,9 @@ class EntityRegistry:
         async with self._lock:
             if key in self._entities:
                 entity = self._entities[key]
-                # [id-soft: doom-1993] ZONEID Pattern — pre-tombstone check
+                # [id-soft: doom-1993] ZONEID Pattern — magic constant for entity runtime integrity validation
                 validate_zoneid(entity.magic, ZONEID_ENTITY, f"EntityRegistry.remove({name})")
-                # [id-soft: doom-1993] Lazy Deletion — set sentinel, keep in dict
+                # [id-soft: doom-1993] Lazy Deletion — tombstone-based entity lifecycle (set sentinel, keep in dict)
                 self._tombstoned[key] = time.monotonic()
                 entity.magic = ZONEID_TOMBSTONE
                 await self._save()

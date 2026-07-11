@@ -1,10 +1,12 @@
 # AP: AP-PR-READINESS-v1.0.0
 # AP: AP-ORACLE-RESTORE-v2.3.0
+# [heritage: anyio 2024] M1 AnyIO — async runtime (to_thread.run_sync for blocking inference)
+# [heritage: llama-cpp-python 2023] Native GGUF inference (llama_copy_state_data for SomaticState M20)
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import atexit
 import logging
-import httpx
+import httpx2 as httpx
 import os
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
@@ -30,6 +32,18 @@ def _get_cpu_optimizer():
         _cpu_optimizer = Zen2Optimizer()
     return _cpu_optimizer
 
+def _resolve_google_api_key() -> str:
+    """Resolve the Google API key from the sovereign vault (env fallback).
+
+    Replaces the previous scattered ``os.environ.get("GOOGLE_API_KEY")`` read
+    so the encrypted KeyVault is the single source of truth for API keys.
+    """
+    try:
+        from omega.vault import KeyVault
+        return KeyVault().resolve_safe("google")
+    except Exception:
+        return os.environ.get("GOOGLE_API_KEY", "")
+
 class BaseProvider(ABC):
     """Base class for all inference providers."""
     def __init__(self, name: str, config: Dict[str, Any]):
@@ -54,11 +68,11 @@ class BaseProvider(ABC):
 class GoogleAIProvider(BaseProvider):
     """Google AI Studio provider (handles Gemini and Gemma models)."""
     async def is_available(self) -> bool:
-        return bool(os.environ.get("GOOGLE_API_KEY"))
+        return bool(_resolve_google_api_key())
 
     async def generate(self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int, trace_id: Optional[str] = None, session_id: Optional[str] = None, logit_bias: Optional[Dict[int, float]] = None, repetition_penalty: float = 1.0, api_key: Optional[str] = None) -> Optional[str]:
-        # Use provided api_key or fallback to environment
-        key = api_key or os.environ.get("GOOGLE_API_KEY")
+        # Use provided api_key or fallback to the sovereign vault
+        key = api_key or _resolve_google_api_key()
         if not key:
             raise ProviderAuthError(provider="google", message="No Google API key provided or found in environment", trace_id=trace_id)
         
@@ -137,7 +151,7 @@ class LocallmsterProvider(BaseProvider):
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_query},
         ]
-        # [id-soft: quake3-1999] Cvar System — stop tokens from cvar table
+        # [id-soft: quake3-1999] Cvar System — typed config lookup from cvar_table
         try:
             from omega.cvar_table import cvar_get
             stop_tokens = cvar_get("config.gguf.stop_tokens", ["</s>", "User:", "\n\n"])
@@ -200,7 +214,7 @@ class OllamaProvider(BaseProvider):
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_query},
         ]
-        # [id-soft: quake3-1999] Cvar System — stop tokens from cvar table
+        # [id-soft: quake3-1999] Cvar System — typed config lookup from cvar_table
         # Port 1.3: ChatML stop tokens prevent hallucinated conversation turns
         try:
             from omega.cvar_table import cvar_get
@@ -304,7 +318,7 @@ class NativeGGUFProvider(BaseProvider):
         if self.model_path and self.model_path.startswith("~"):
             self.model_path = os.path.expanduser(self.model_path)
 
-        # [id-soft: quake3-1999] Cvar System — read from cvar_table for hot-reload
+        # [id-soft: quake3-1999] Cvar System — typed config lookup from cvar_table
         try:
             from omega.cvar_table import cvar_get, validate_llama_kwargs
             # Port 1.1: validate llama-cpp kwargs — moved to _ensure_loaded
@@ -342,7 +356,7 @@ class NativeGGUFProvider(BaseProvider):
         # Memory management
         self._use_mmap = config.get("use_mmap", True)
         self._use_mlock = config.get("use_mlock", False)
-        # [id-soft: quake3-1999] Cvar System — n_gpu_layers from cvar table
+        # [id-soft: quake3-1999] Cvar System — typed config lookup from cvar_table
         # Port 1.2: explicit CPU-only default prevents iGPU crash on Vega 7
         self._n_gpu_layers = config.get("n_gpu_layers", n_gpu)
 
@@ -575,7 +589,7 @@ class NativeGGUFProvider(BaseProvider):
                     logit_bias = request.get("logit_bias")
                     repetition_penalty = request.get("repetition_penalty", 1.0)
                     
-                    # [id-soft: quake3-1999] Right Approximation — use create_chat_completion()
+                    # [id-soft: quake3-1999] Right Approximation — fast heuristic over exact (create_chat_completion with template match)
                     # to properly apply the GGUF's embedded Jinja chat template.
                     # This enables thinking mode control via chat_template_kwargs.
                     # Raw llm(prompt=...) does NOT apply the template.
@@ -762,7 +776,7 @@ class NativeGGUFProvider(BaseProvider):
         import anyio
         await self._ensure_loaded(n_ctx)
         
-        # [id-soft: quake3-1999] Right Approximation — send system_prompt and user_query
+        # [id-soft: quake3-1999] Right Approximation — fast heuristic over exact (create_chat_completion with template match)
         # separately. The worker uses create_chat_completion() which applies the GGUF's
         # embedded Jinja chat template, enabling proper thinking mode control via
         # chat_template_kwargs={"enable_thinking": False}.
@@ -804,7 +818,7 @@ class NativeGGUFProvider(BaseProvider):
                 return None
             else:
                 choice = response["choices"][0]
-                # [id-soft: quake3-1999] Response format difference:
+                # Response format difference:
                 # Raw completion: choice["text"]
                 # Chat completion: choice["message"]["content"]
                 text = ""
@@ -817,7 +831,7 @@ class NativeGGUFProvider(BaseProvider):
                 # Use `or {}` because logprobs key may exist with None value
                 # when logprobs were not requested (logprobs=False in worker).
                 self._last_logprobs = (choice.get("logprobs") or {}).get("top_logprobs")
-                # [id-soft: quake3-1999] Cvar System — trace_id propagated
+                # [id-soft: quake3-1999] Cvar System — typed config lookup from cvar_table
                 # Port 1.5: atomic trace_id logging for observability
                 if trace_id:
                     logger.debug(

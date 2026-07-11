@@ -102,6 +102,10 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo "  $(COLOR_CYAN)make verify-status$(COLOR_NC) 🔍 Drill into one verification item"
 	@echo "  $(COLOR_CYAN)make knowledge-index$(COLOR_NC)📚 Rebuild knowledge catalog"
 	@echo "  $(COLOR_CYAN)make knowledge-flow$(COLOR_NC) 🌊 Check unconsumed signals"
+	@echo "  $(COLOR_CYAN)make mandate-audit$(COLOR_NC)  🛡️  Run Sovereign Mandate audit (M3, M6, M7, M10, M11, M12, M15, M16, M20)"
+	@echo "  $(COLOR_CYAN)make temple-grade$(COLOR_NC)   🏛️  Run all Temple-Grade gates (T1-T11 + Mandate Audit)"
+	@echo "  $(COLOR_CYAN)make firewall-check$(COLOR_NC) 🛡️  Assert no WAD-specific strings in core engine (M2 Firewall)"
+	@echo "  $(COLOR_CYAN)make verify-search-tools$(COLOR_NC) 🔌 Verify search tool connectivity & credits"
 	@echo ""
 	@echo "$(COLOR_BOLD)🧹 MAINTENANCE$(COLOR_NC)"
 	@echo "  $(COLOR_CYAN)make clean$(COLOR_NC)        🧹 Clean Python cache"
@@ -236,7 +240,7 @@ wad-reset: ## 🔄 Reset to reference IWAD (_omega_default)
 # 🚀 CORE COMMANDS
 # ============================================================================
 
-.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank wad-status audit-no-rag-v1 setup bootstrap demo test test-cov test-oracle-bootstrap mcp-check lint typecheck guard clean doctor verify-pending verify-stale verify-mining verify-rollup verify-cleanup verify-status knowledge-index knowledge-flow verify-search-tools firecrawl-status model-download model-list model-clean fleet-status
+.PHONY: help menu offline-demo talk summon entities entity queue-status process-queue queue-prune library-status library-search bench-run bench-list bench-rank wad-status audit-no-rag-v1 setup bootstrap demo test test-cov test-oracle-bootstrap mcp-check lint typecheck guard clean doctor verify-pending verify-stale verify-mining verify-rollup verify-cleanup verify-status knowledge-index knowledge-flow verify-search-tools firecrawl-status model-download model-list model-clean fleet-status mandate-audit
 
 help: ## 📚 Show this help
 	@awk 'BEGIN {FS = ":.*## "} /^[a-zA-Z_-]+:.*## / {printf "  $(COLOR_CYAN)%-20s$(COLOR_NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -621,7 +625,11 @@ github-audit: ## 🛡️  Run M8 Telemetry Audit of GitHub MCP Server
 	@# In a real CI environment, this would trigger the podman-based capture sequence
 	@echo "$(COLOR_GREEN)✅ Audit report exists and is signed.$(COLOR_NC)"
 
-temple-grade: heritage-map heritage-vet validate-somatic-links mandate-gates ## 🏛️ Run all 11 Temple-Grade gates (T1-T11)
+mandate-audit: ## 🛡️ Run Sovereign Mandate audit (M3, M6, M7, M10, M11, M12, M15, M16, M20)
+	@echo "$(COLOR_CYAN)🛡️  Running Sovereign Mandate Audit...$(COLOR_NC)"
+	@OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m omega.audit.mandate_auditor
+
+temple-grade: heritage-map heritage-vet validate-somatic-links mandate-gates mandate-audit memory-firewall-audit firewall-check ## 🏛️ Run all Temple-Grade gates (T1-T14)
 	@echo " [1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 	@echo " 🏛️ Temple-Grade Verification (v7.5.4)"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ [0m"
@@ -655,6 +663,8 @@ temple-grade: heritage-map heritage-vet validate-somatic-links mandate-gates ## 
 	if ! $(MAKE) validate-somatic-links >/dev/null 2>&1; then echo "  ❌ Broken DocRefs found"; FAIL=$$((FAIL + 1)); else echo "  ✅ All DocRefs valid"; fi; \
 	echo "T13: Executable Examples check..."; \
 	if ! $(MAKE) validate-doc-examples >/dev/null 2>&1; then echo "  ❌ Invalid examples found"; FAIL=$$((FAIL + 1)); else echo "  ✅ All examples valid"; fi; \
+	echo "T14: Memory Firewall Audit (M2 Engine-Stack Firewall)..."; \
+	if ! $(MAKE) memory-firewall-audit >/dev/null 2>&1; then echo "  ❌ WAD leakage detected in memory tiers"; FAIL=$$((FAIL + 1)); else echo "  ✅ Memory firewall intact — no WAD leakage"; fi; \
 	echo ""; \
 	if [ $$FAIL -gt 0 ]; then \
 		echo " [1;31m❌ Temple-Grade Verification FAILED with $$FAIL violations. [0m"; \
@@ -710,6 +720,12 @@ validate-somatic-links: ## 🏛️  Verify Somatic-Doc binding (code-to-doc link
 mandate-gates: ## 🛡️  Run Sovereign Mandate gate checks (M3, M6, M7, M10, M11, M12, M15, M16, M20)
 	$(PYTHON) scripts/mandate_gates.py
 
+memory-firewall-audit: ## 🛡️  Audit MemoryStore tiers for WAD content leakage (M2 Firewall)
+	@echo "$(COLOR_CYAN)━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	@echo " 🛡️  Memory Firewall Audit — M2 Engine-Stack Firewall"
+	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━$(COLOR_NC)"
+	@OMEGA_ENV=test $(PYTHON) scripts/memory_firewall_audit.py
+
 
 sovereignty: ## 🏛️ Show local vs cloud inference ratio (D203)
 	$(PYTHON) scripts/sovereignty_report.py
@@ -717,18 +733,11 @@ sovereignty: ## 🏛️ Show local vs cloud inference ratio (D203)
 verify-model-spelling: ## 🤖 Verify model name consistency (D119)
 	PYTHONPATH=src $(PYTHON) scripts/verify_model_spelling.py
 
-verify-firewall: ## 🛡️  Assert no WAD-specific strings in core engine
+firewall-check: ## 🛡️  Assert no WAD-specific strings in core engine (M2 Firewall)
 	@echo "$(COLOR_CYAN)🛡️  M2 Firewall Leak Audit$(COLOR_NC)"
-	@FAIL=0; \
-	LEAKS=$$(grep -rE "arcana_novai|doom_universe|torment_stack" src/omega/ | grep -v "docs/\|tests/" || true); \
-	if [ -n "$$LEAKS" ]; then \
-		echo "$(COLOR_RED)✗ Firewall Breach Detected!$(COLOR_NC)"; \
-		echo "$$LEAKS"; \
-		FAIL=1; \
-	else \
-		echo "$(COLOR_GREEN)✓ No WAD-specific leaks found in core.$(COLOR_NC)"; \
-	fi; \
-	exit $$FAIL
+	@OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m omega.audit.firewall_checker
+
+verify-firewall: firewall-check  ## 🛡️  Alias for firewall-check (backward compat)
 
 pivot-watchdog: ## 🛡️  Flag pending PIVOT decisions > 7 days
 	PYTHONPATH=src $(PYTHON) scripts/pivot_watchdog.py

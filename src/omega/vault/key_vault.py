@@ -195,6 +195,25 @@ class KeyVault:
         result = accounts[active]
         return result
     
+    def resolve_safe(self, provider: str, default: str = "") -> str:
+        """Resolve a key, returning ``default`` instead of raising.
+
+        Never raises — used to replace scattered ``os.getenv()`` calls for
+        API keys so the vault is the single source of truth while preserving
+        graceful fallback during transition (vault → env var).
+
+        Args:
+            provider: Provider name (e.g., "exa", "google", "firecrawl").
+            default: Value to return if no key is found anywhere.
+
+        Returns:
+            The resolved key, or ``default``.
+        """
+        try:
+            return self.resolve(provider)
+        except VaultKeyNotFound:
+            return default
+    
     def resolve_all(self, provider: str) -> List[str]:
         """Get all API keys for a provider (for key pool rotation).
         

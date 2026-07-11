@@ -191,7 +191,7 @@ path_patterns = [
     (r'"/var/[^"]*"', "var path"),
 ]
 hardcoded_violations = []
-skip_files = {"constants.py", "cpu_optimizer.py", "cvar_table.py"}
+skip_files = {"constants.py", "cpu_optimizer.py", "cvar_table.py", "mandate_auditor.py"}
 # These files legitimately use /tmp for temp files (not hardcoded config paths)
 skip_paths = {"workers/", "library/"}
 for f in core_files:

@@ -1,5 +1,5 @@
 """SSP-V2 Search Router — Intent-based tier dispatch for sovereign search.
-# [id-soft: doom-1993] Lattice-Culling — signal-driven provider culling
+# Heritage: inspired by BSP culling (id Software 1993) — REJECTED per vet-028
 AP: AP-SSP-V2-SEARCH-ROUTER-v1.0.0
 
 Analyzes 6 signals (has_url, iris_confidence, entity_domain, query_category,

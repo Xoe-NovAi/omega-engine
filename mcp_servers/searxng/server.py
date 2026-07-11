@@ -14,7 +14,7 @@
 import os
 import sys
 import logging
-import httpx
+import httpx2 as httpx
 from mcp.server.fastmcp import FastMCP
 
 # Ensure project root is in path for mcp_servers imports
