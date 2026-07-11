@@ -16,7 +16,8 @@ import os
 import re
 import uuid
 import time
-import httpx
+import httpx2 as httpx
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, List, Dict, Any
@@ -34,6 +35,7 @@ from omega.errors import (
     EntityTombstonedError, ModelNotFoundError,
 )
 from omega.oracle.resource_guard import ResourceGuard
+from omega.vault import KeyVault
 
 from .models import ResearchTask, TriageResult, GnosisPacket, EnhancedPriorityQueue, RotationState
 from .scheduler import TopicScheduler
@@ -96,7 +98,7 @@ class BackgroundResearcherLoop:
             IngestionConfig(
                 entity_name="researcher",
                 model_name="gemma-4-31b-it",
-                api_key=os.environ.get("GOOGLE_API_KEY", "placeholder"),
+                api_key=KeyVault().resolve_safe("google", "placeholder"),
                 sources=[]
             ),
             # We'll use a generic extractor or the one from the pipeline
@@ -105,7 +107,7 @@ class BackgroundResearcherLoop:
         )
         # Fix the extractor since we passed None
         from omega.ingestion.extractors import GoogleExtractor
-        self.pipeline.extractor = GoogleExtractor(os.environ.get("GOOGLE_API_KEY", "placeholder"))
+        self.pipeline.extractor = GoogleExtractor(KeyVault().resolve_safe("google", "placeholder"))
 
         # SovereignWorker Unification: Redis-backed queue + ResourceGuard
         self.redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379/0")
@@ -119,7 +121,7 @@ class BackgroundResearcherLoop:
         # State
         self._running = False
         self._cycle_count = 0
-        self.lock_path = Path("/tmp/omega/research.lock")
+        self.lock_path = Path(tempfile.gettempdir()) / "omega" / "research.lock"
 
     # ── Redis Connection & Somatic Save-Points ────────────────────────────────
 
@@ -189,7 +191,24 @@ class BackgroundResearcherLoop:
         # 0. Register with WorkerCoordinator (idempotent)
         await self.coordinator.register("researcher")
 
-        # 1. Atomic Lock to prevent concurrent execution
+        # 1. Atomic Lock to prevent concurrent execution (with stale-lock recovery)
+        # A cycle that crashes mid-flight can leave the lock dir behind, which
+        # would permanently block all future cycles. Any lock older than the
+        # maximum plausible cycle duration is treated as stale and reclaimed.
+        if self.lock_path.exists():
+            try:
+                lock_age = time.time() - self.lock_path.stat().st_mtime
+                if lock_age > 1500:  # 25 min — longer than any legitimate cycle
+                    logger.warning(
+                        f"Stale research lock ({lock_age:.0f}s old) — reclaiming"
+                    )
+                    self.lock_path.rmdir()
+                else:
+                    logger.warning("Research cycle already locked. Skipping.")
+                    return {"skipped": True, "reason": "locked"}
+            except OSError:
+                logger.warning("Research cycle already locked. Skipping.")
+                return {"skipped": True, "reason": "locked"}
         try:
             self.lock_path.mkdir(parents=True)
         except FileExistsError:
@@ -583,20 +602,30 @@ class BackgroundResearcherLoop:
             pass
 
     async def _is_network_available(self) -> bool:
+        """Check network availability — SearXNG (sovereign) first, external fallback.
+
+        The self-hosted SearXNG instance is the primary liveness signal: if it
+        is healthy the researcher can operate fully sovereign (zero Big-AI cost).
+        Only when SearXNG is unreachable do we probe an external endpoint as a
+        generic connectivity check. This is the corrected "SearXNG wiring" —
+        the previous order probed httpbin.org before the sovereign layer.
+        """
+        searxng_url = (os.environ.get("SEARXNG_BASE_URL") or "http://localhost:8017").rstrip("/")
+        try:
+            async with httpx.AsyncClient(timeout=5.0) as client:
+                resp = await client.get(f"{searxng_url}/healthz")
+                if resp.status_code == 200:
+                    return True
+        except (OmegaError, RuntimeError, OSError, httpx.HTTPError) as e:
+            logger.debug("SearXNG health check failed: %s", e)
+        # Fallback: external liveness probe
         try:
             async with httpx.AsyncClient(timeout=5.0) as client:
                 await client.get("https://httpbin.org/get")
                 return True
-        except (OmegaError, RuntimeError, OSError) as e:
-            logger.debug("Network check (httpbin) failed: %s", e)
-        try:
-            async with httpx.AsyncClient(timeout=5.0) as client:
-                searxng_url = (os.environ.get("SEARXNG_BASE_URL") or "http://localhost:8017").rstrip("/")
-                resp = await client.get(f"{searxng_url}/healthz")
-                return resp.status_code == 200
-        except (OmegaError, RuntimeError, OSError) as e:
-            logger.warning("Network check (SearXNG health) failed: %s", e)
-            return False
+        except (OmegaError, RuntimeError, OSError, httpx.HTTPError) as e:
+            logger.debug("External network probe failed: %s", e)
+        return False
 
     async def get_status(self) -> dict:
         budget_status = self.budget.get_status()

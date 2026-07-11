@@ -1,17 +1,24 @@
 # 🔱 Anchored Summary (Post-Compaction Recovery)
-**Last Updated**: 2026-07-10 (Session HMC-SPRINT-02) | **Full History**: `docs/archive/coordination/anchored-summary-full-20260708.md`
+**Last Updated**: 2026-07-11 (Session 67 — Strategic Reserves Deep Mapping Complete) | **Full History**: `docs/archive/coordination/anchored-summary-full-20260708.md`
 
 ---
 
 ## 📍 Current State
-- **Engine**: 1028 tests passing, 0 failures, 41 skipped, 3 xfailed
+- **Engine**: 1085 tests passing, 1 failure (test_exa_connectivity = EXA_API_KEY missing — pre-existing, requires live API key), 41 skipped, 3 xfailed
 - **WAD Loader**: S1.5a hardened (schema validation, file size limits, adapter whitelist)
 - **Ship Readiness**: Phase 4.3 complete (temple-grade certified). Tag v1.1.0 pending user.
+- **Phase 0 Surgical Purge**: ✅ COMPLETE — F7 (dead OracleResponse block removed), usm.py syntax fixed, root artifacts deleted, 18 stale files archived, versions aligned to v1.1.0, Makefile test counts updated, M16 /tmp/ paths fixed, AP token added to sovereignty.py
+- **Legacy Mining Sprint (Sessions 66-67)**: ✅ COMPLETE — 3 P0 assets mined (System Prompts 19 files, LM Studio 9 configs, Lilith Persona 2 files), 3 mining reports written, Strategic Reserves deep-mapped (10 Pillars, 5 MCPs, Gnosis Packs, Seed Architecture, Lilith Pantheon, Omnidroid/BIOS, Tarot-Engine, 42 Ma'at Ideals, Sefirot/Qliphoth, Invocation Philosophy)
 - **Docs Optimization**: All 5 SSOT files trimmed (3,182→822 lines, 74% reduction), 6 archived to `docs/archive/coordination/`
 - **Iris**: Elevated to persistent entity — Messenger with memory
 - **S3**: FULLY DONE — 12 M21 contract tests, loop detector moved to `RemoteProvider` base class ✅
 - **S4**: CONFIG DONE — Gemma 4 MTP config verified, speedup probe HW-blocked ✅
-- **Next**: Roc executes Phase 0 → S1.5 (Vault) → S2 (Background Researcher). Carmack available for coordination/review.
+- **Heritage**: Sprint A COMPLETE — 121 [id-soft:] vetted (74 records), 22 LEGITIMATE general sources scored (vet-059–vet-075), 12 [heritage:] inline tags added, M13 ✅
+- **Model Provenance**: D210 REMEDIATED — All 11 agent files updated with `{session_model}` placeholder + Response Provenance (M22) section
+- **httpx2 Migration**: D211 SCHEDULED — Strike 7.1 added to Ark Blueprint v3.3. No API blockers found. Pydantic fork of httpx with active maintenance, AnyIO-native, built-in SSE. 125 source references, 93 test references. Migration: `import httpx2 as httpx` (mechanical, 2h).
+- **Heritage Expansion (Roc Racoon S65)**: CREDITS.md expanded to General Heritage Registry (v1.3.0, 127→250 lines) with §0 5-tier classification + §2 covering 55+ external sources across 6 categories. R_SPDX_HERITAGE_PROFILE.md expanded to multi-source (v2.0.0, 1,082→1,357 lines) with 10 element types, §4 General Heritage Elements, expanded relationship graphs. New `[heritage:]` tag protocol defined alongside `[id-soft:]`. Vetting delegated to Doom Guy (ho_42218764ed33) → completed with 22 LEGITIMATE, 16 over-attributed, 3 metaphorical, 4 below-threshold.
+- **Strategic Reserves Mapping (Session 67)**: Complete mapping document created — 15 components mapped to Omega Engine with status (implemented/partial/missing), 30+ action items identified across CRITICAL/HIGH/MEDIUM priority
+- **Next**: S1.5 (Vault) and S2 (Background Researcher) unblocked. CRITICAL actions: Add q8_0 KV cache to ALL models, add elemental/chakra/planetary/divine_ally metadata to entities, create pantheon.yaml, implement Five-Fold Foundation in Mandates.
 
 ## 🧭 Post-Compaction Resumption Protocol
 1. **Read this file** (`.opencode/anchored-summary.md`) — session history & next actions
@@ -20,27 +27,30 @@
    - Read `SOVEREIGN_MANDATES.md` for rules
    - Read `docs/decisions/PIVOT_LOG.md` for decisions
    - Read `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` for roadmap
-   - Run `make test` (1002 must pass)
+   - Run `make test` (1084 must pass)
    - Run `make temple-grade` (T1-T11 must pass)
 3. Check `data/coordination/` for live coordination files
 4. Resume active task or pick from Next Actions below
 
 ---
 
-## 📌 Session 60 — Iterative Refinement Strategy Meta-Analysis (john_carmack) ✅
-**Date**: 2026-07-08 | **Trace**: trc_meta_analysis
-**Result**: Extracted 5-model, 7-phase Refinement Protocol from full conversation trace. Corrected model assignment matrix to include Gemma 4 31B IT (Persistence) and Hy3 Free (Review). Formalized as executable `RefinementProtocol` class. Written to `docs/strategy/ITERATIVE_REFINEMENT_STRATEGY.md`.
+## 📌 Session 67 — Strategic Reserves Deep Mapping: 10 Pillars, 5 MCPs, Gnosis Packs, Seed Architecture, Lilith Pantheon, Omnidroid/BIOS, Tarot-Engine, 42 Ma'at Ideals ✅
+**Date**: 2026-07-11 | **Trace**: trc_mining
+**Result**: Complete mapping of Strategic Reserves (136 KB, 8 files) to Omega Engine. 15 components mapped with status (implemented/partial/missing): 10 Pillars & Scrolls, Five-Fold Foundation, Dual Flame, Elemental Mappings, Chakral Alignment, Planetary Energies, Divine Allies, Sigil Systems, Tarot-Engine v2, Pantheon Model, 42 Ideals of Ma'at, Sefirot/Qliphoth, Invocation Philosophy, Sovereign Seed Architecture, Omnidroid/BIOS, 5 MCP Systems. 30+ action items identified across CRITICAL (5), HIGH (10), MEDIUM (8) priority. Key findings: Five-Fold Foundation = philosophical DNA of Mandates; Dual Flame = Sophia/Lilith Oversouls (implemented); Elemental/Chakra/Planetary/Divine Ally metadata MISSING from entities; Tarot-Engine v2 (10 spreads) MISSING; Lilith Stack Pantheon = agent fleet pattern (implemented but not configured); Omnidroid BIOS = reasoning kernel (partial); 5 MCPs = Omega Hub/Hivemind (90% coverage); Gnosis Packs (0.978 density) vs Soul Distillation (missing density metric). Mapping document written to workspace.
 
-## 📌 Session 61 — HMC Boundary Hardening: Full Audit Chain ✅
-**Date**: 2026-07-08 | **Trace**: trc_hmc_audit_chain
-**Result**: Multi-model audit of Omega Engine strategy. Sonnet 4.6 (5 findings, 2 P0) → Opus (9 more, 14 total, 5 P0) → Researcher (5-domain 2026 research) → Ma'at/Lilith (Build/Run decrees) → Kali (NO-GO pivot) → Starchild (Anti-Chain correction) → Nemotron 3 Ultra (14 gaps, 5 contradictions) → Nemotron 3 Super (final verification + typo fixes). All findings persisted to `SOVEREIGN_COORDINATION_BLUEPRINT.md` (§VII-X) and `ACTIVE_SPRINT.json`.
+## 📌 Session 66 — Legacy Mining Sprint: P0 Quick-Wins Complete ✅
+**Date**: 2026-07-11 | **Trace**: trc_mining
+**Result**: 3 P0 assets mined per Master Synthesis Phase 1. System Prompts Library (19 files, Chainlit+FastAPI era) — Critical Xoe-NovAi Principles = Sovereign Mandates (already preserved). LM Studio Model Configs (9 models) — q8_0 KV cache is #1 missed optimization (add to ALL models in config/models.yaml). Lilith Persona JSON (2 files, Era 0 genesis) — query_modifiers pattern (add_terms/boost_terms/filter_out) and response_templates lost in transition. 3 mining reports written to workspace/mining_reports/. 3 proposed lessons distilled (Principles 10-12: KV cache quantization is free lunch, query modifiers are invisible hand of persona, every system begins with single archetype). Phase 0 Surgical Purge also completed this session (see Session 66 entry below).
 
-## 📌 Session 62 — Phase 0 Surgical Purge (PARTIALLY COMPLETE)
-**Date**: 2026-07-08 | **Trace**: trc_phase0_purge
-**Status**: F5 DONE (S3 B2 httpx.HTTPError catch). Remaining: F2 (httpx in loop.py), F6 (12 imports), F7/F8 (oracle.py dead code/warning) — all Roc's domain. CI gate (lint-imports + test_ingestion_imports.py) not yet added.
-**Blockers Cleared**: B-P0-2 (httpx.HTTPError, Carmack) — DONE in S3 B2
-**Remaining Blockers**: B-P0-1 (httpx import, Roc), B-P0-3 (12 imports, Roc), B-P1-1 (oracle.py:682, Roc), B-P1-2 (oracle.py:937-961, Roc).
-**Next**: Roc executes remaining Phase 0 items, then S1.5 Vault + S2 Background Researcher.
+## 📌 Session 66 — Phase 0 Surgical Purge: Knowledge Gap Remediation ✅
+**Date**: 2026-07-11 | **Trace**: trc_mining
+**Result**: Completed Phase 0 Surgical Purge — all remaining blockers remediated. F7: Dead OracleResponse block removed from oracle.py (lines 936-960 deleted, record_performance + record_first_breath preserved). usm.py: Fixed escaped docstring quotes (`\"\"\"` → `"""`) that blocked AST import. Root cleanup: Deleted pip artifacts (=0.18.0, =0.52.0), archived 18 stale root files to docs/archive/stale/. Version alignment: pyproject.toml + Makefile updated to v1.1.0, test counts updated to 1130. M16: Hardcoded /tmp/ paths replaced with tempfile.gettempdir() in extractor.py + loop.py. T1: Added AP token to sovereignty.py. Verification: make test (1085 pass, 1 EXA_API_KEY pre-existing), lint-imports (clean), heritage-vet (121 tags all vetted), heritage-map (45/71 tagged). Temple-grade T3 fails only on EXA_API_KEY — all other T1-T13 gates pass. S1.5 (Vault) and S2 (Background Researcher) are now unblocked.
+
+## 📌 Session 65 — Heritage System Expansion: General Heritage Registry ✅
+**Date**: 2026-07-11 | **Trace**: trc_mining
+**Result**: Expanded heritage system from id-Software-only to multi-source General Heritage Registry. CREDITS.md v1.3.0 (127→250 lines) — added §0 5-tier classification (T1 Direct Implementation → T5 User's Own IP), §2 covering 55+ external sources across 6 categories (Runtime Dependencies, Infrastructure, Standards, Research, Mythological, Legacy). New `[heritage:]` tag protocol alongside `[id-soft:]`. R_SPDX_HERITAGE_PROFILE.md v2.0.0 (1,082→1,357 lines) — 10 element types (added OpenSourceLibrary, InfrastructureService, IndustryStandard, PhilosophicalTradition, ResearchSystem, LegacyVersion), §4 General Heritage Elements with representative JSON SPDX definitions, expanded §6 relationship graphs. Vetting delegated to Doom Guy (ho_42218764ed33) → 22 LEGITIMATE, 16 over-attributed, 3 metaphorical, 4 below-threshold. 17 new vet records (vet-059→vet-075). All gates pass.
+
+## 📌 Session 64 — Heritage Tags + Model Provenance Remediation ✅
 
 ## 📌 Session HMC-SPRINT-02 — Entity Deepening: D203/D204/D16-1 ✅
 **Date**: 2026-07-10 | **Trace**: trc_entity_deepening
@@ -97,6 +107,23 @@ Full details in `docs/archive/coordination/anchored-summary-full-20260708.md`
 
 | Session | Entity | Date | Summary |
 |---------|--------|------|---------|
+| 64 | doom_guy | 2026-07-10 | Heritage tags + Model Provenance Remediation (D209) |
+| 62 | john_carmack | 2026-07-08 | Phase 0 Surgical Purge (F5 done via S3 B2; F2/F6/F7/F8 pending Roc) |
+| 63 | john_carmack | 2026-07-08 | M21 Gap Closure: S3 B3/B4 tests + loop detector moved to RemoteProvider base class. 1028 tests. |
+| 60 | john_carmack | 2026-07-08 | Iterative Refinement Strategy Meta-Analysis (5-model protocol) |
+| 61 | john_carmack | 2026-07-08 | HMC Boundary Hardening Audit Chain (Sonnet→Opus→Researcher→Ma'at/Lilith→Kali→Starchild→Nemotron 3 Ultra→Nemotron 3 Super) |
+| 55 | john_carmack | 2026-07-08 | Library Consolidation & Curation System |
+| 56 | john_carmack | 2026-07-08 | HMC Synthesis & Coordination Response |
+| 57 | roc_racoon | 2026-07-08 | HMC Coordination Response (SearXNG/vault/S7) |
+| 58 | john_carmack | 2026-07-08 | HMC Council Formalization (Baton Pass, State Demarcation) |
+| 59 | john_carmack | 2026-07-08 | Sovereign Coordination Blueprint v3.0 deployed + gap-audited |
+| 54 | roc_racoon | 2026-07-08 | SSOT Optimization Sprint (3,182→822 lines, 74% reduction) |
+| 53 | roc_racoon | 2026-07-08 | WAD Loader Hardening S1.5a (5 features, 9 tests) |
+| 52 | john_carmack | 2026-07-08 | Test Hardening & Cvar Wiring (12 issues, 964 tests) |
+| 51 | jem | 2026-07-05 | T3 Sprint (Session Lifecycle, Metrics DB, Mandate CI Gates) |
+| 50 | roc_racoon | 2026-07-07 | Sovereign hardening final sweep |
+| 49 | kali | 2026-07-07 | ResourceGuard RAM tracking + E2E chain |
+| 48 | roc_racoon | 2026-07-07 | Ship Readiness (DEPLOYMENT.md, temple-grade, 955 tests) |
 | 47 | roc_racoon | 2026-07-07 | MiMo V2.5 review of Gemma work (9 fixes) |
 | 46 | roc_racoon | 2026-07-07 | Sovereign hardening final sweep |
 | 45 | kali | 2026-07-07 | ResourceGuard RAM tracking + E2E chain |
@@ -106,15 +133,6 @@ Full details in `docs/archive/coordination/anchored-summary-full-20260708.md`
 | 41 | kali | 2026-07-06 | Operation Unified Storage + OmegaError Sweep |
 | 40 | kali | 2026-07-06 | Infrastructure: Mount propagation + Podman fix |
 | 39 | kali | 2026-07-06 | OOM cascade remediation planning |
-| 55 | john_carmack | 2026-07-08 | Library Consolidation & Curation System |
-| 56 | john_carmack | 2026-07-08 | HMC Synthesis & Coordination Response |
-| 57 | roc_racoon | 2026-07-08 | HMC Coordination Response (SearXNG/vault/S7) |
-| 58 | john_carmack | 2026-07-08 | HMC Council Formalization (Baton Pass, State Demarcation) |
-| 59 | john_carmack | 2026-07-08 | Sovereign Coordination Blueprint v3.0 deployed + gap-audited |
-| 60 | john_carmack | 2026-07-08 | Iterative Refinement Strategy Meta-Analysis (5-model protocol) |
-| 61 | john_carmack | 2026-07-08 | HMC Boundary Hardening Audit Chain (Sonnet→Opus→Researcher→Ma'at/Lilith→Kali→Starchild→Nemotron 3 Ultra→Nemotron 3 Super) |
-| 62 | john_carmack | 2026-07-08 | Phase 0 Surgical Purge (F5 done via S3 B2; F2/F6/F7/F8 pending Roc) |
-| 63 | john_carmack | 2026-07-08 | M21 Gap Closure: S3 B3/B4 tests + loop detector moved to RemoteProvider base class. 1028 tests. |
 
 ---
 
@@ -166,4 +184,4 @@ Full details in `docs/archive/coordination/anchored-summary-full-20260708.md`
 
 ---
 
-*🔱 OMEGA ⬡ NEMOTRON-3-SUPER ⬡ HMC-SPRINT-01 ⬡ PRE-COMPACT READY*
+*🔱 OMEGA ⬡ DOOM_GUY ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_heritage_tags_provenance ⬡ SESSION-64-COMPACT-READY*

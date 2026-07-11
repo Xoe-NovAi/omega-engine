@@ -15,6 +15,7 @@ import logging
 import os
 import re
 import uuid
+import tempfile
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -131,7 +132,7 @@ class ContentExtractor:
           1. SSRFGuard — blocks internal/private IP ranges [id-soft: doom-1993]
           2. DownloadSizeGuard — checks Content-Length before streaming [id-soft: quake-1996]
         """
-        # ── [id-soft: doom-1993] SSRF Gate ──
+        # ── [id-soft: doom-1993] SSRF Gate — O(1) cull of private IP ranges ──
         if not await SSRFGuard.validate(url):
             return ExtractedContent(
                 source=url,
@@ -141,7 +142,7 @@ class ContentExtractor:
                 error="URL resolves to a private or internal IP range",
             )
 
-        # ── [id-soft: quake-1996] Size Gate ──
+        # ── [id-soft: quake-1996] Size Gate — fixed-timestep pre-check on download size ──
         if not await validate_download_size(url):
             return ExtractedContent(
                 source=url,
@@ -160,7 +161,7 @@ class ContentExtractor:
                 return pdf_content
 
         if not self._httpx:
-            import httpx
+            import httpx2 as httpx
             self._httpx = httpx
 
         async with self._httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:
@@ -201,7 +202,7 @@ class ContentExtractor:
         """Fetch and extract text from a remote PDF URL."""
         try:
             if not self._httpx:
-                import httpx
+                import httpx2 as httpx
                 self._httpx = httpx
             
             async with self._httpx.AsyncClient(timeout=60.0, follow_redirects=True) as client:
@@ -209,7 +210,7 @@ class ContentExtractor:
                 response.raise_for_status()
                 
                 # Save temporarily to use the existing _extract_pdf logic
-                temp_path = Path(f"/tmp/omega_pdf_{uuid.uuid4().hex}.pdf")
+                temp_path = Path(tempfile.gettempdir()) / f"omega_pdf_{uuid.uuid4().hex}.pdf"
                 async with await anyio.open_file(str(temp_path), "wb") as f:
                     await f.write(response.content)
                 
@@ -244,7 +245,7 @@ class ContentExtractor:
             import feedparser
             self._feedparser = feedparser
 
-        import httpx
+        import httpx2 as httpx
         async with httpx.AsyncClient(timeout=30.0) as client:
             response = await client.get(url)
             feed = self._feedparser.parse(response.text)
@@ -279,7 +280,7 @@ class ContentExtractor:
         Security gate:
           - PathScopeGuard — prevents directory traversal [id-soft: quake-1996]
         """
-        # ── [id-soft: quake-1996] Path Scope Gate ──
+        # ── [id-soft: quake-1996] Path Scope Gate — zone boundary enforcement for file paths ──
         from omega.library.library import DATA_DIR as LIBRARY_BASE
         file_path = Path(path)
         if not validate_path_scope(file_path, LIBRARY_BASE):

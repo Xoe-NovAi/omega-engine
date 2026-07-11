@@ -1,4 +1,5 @@
 # 🔱 Omega Engine — Sovereignty Ratio Query (D203)
+# AP: AP-SOVEREIGNTY-RATIO-v1.0.0
 # ⬡ OMEGA ⬡ RESEARCHER ⬡ hy3-free ⬡ opencode ⬡ trc_research
 #
 # Queries MetricsDB performance table for local vs cloud inference ratio.

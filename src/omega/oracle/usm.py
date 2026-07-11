@@ -15,10 +15,10 @@ import ctypes
 
 @dataclass
 class SomaticState:
-    \"\"\"
+    """
     Represents a serialized snapshot of a model's internal state (KV cache, etc.).
     [SomaticState: M20]
-    \"\"\"
+    """
     blob_id: str
     size: int
     model_id: str
@@ -26,16 +26,16 @@ class SomaticState:
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 class UnifiedStateManager:
-    \"\"\"
+    """
     Unified State Manager (USM) - The single source of truth for all engine state.
     Implements Content Addressable Storage (CAS) for binary blobs, sessions, and memory.
     [Sovereign Bedrock: Strike 2]
-    \"\"\"
+    """
     def __init__(self, data_dir: Path):
         self.data_dir = data_dir
-        self.blob_dir = data_dir / \"blobs\"
-        self.session_dir = data_dir / \"sessions\"
-        self.memory_dir = data_dir / \"memory\"
+        self.blob_dir = data_dir / "blobs"
+        self.session_dir = data_dir / "sessions"
+        self.memory_dir = data_dir / "memory"
         
         # Ensure directories exist
         self.blob_dir.mkdir(parents=True, exist_ok=True)
@@ -43,10 +43,10 @@ class UnifiedStateManager:
         self.memory_dir.mkdir(parents=True, exist_ok=True)
 
     async def store_blob(self, data: bytes) -> str:
-        \"\"\"
+        """
         Stores a binary blob in CAS and returns its SHA-256 hash.
         [CAS: Content Addressable Storage]
-        \"\"\"
+        """
         blob_id = hashlib.sha256(data).hexdigest()
         
         # Sharding: blobs/ab/cd/hash
@@ -57,29 +57,29 @@ class UnifiedStateManager:
         
         if not blob_path.exists():
             # Atomic write: .tmp -> final
-            tmp_path = blob_path.with_suffix(\".tmp\")
+            tmp_path = blob_path.with_suffix(".tmp")
             await anyio.to_thread.run_sync(tmp_path.write_bytes, data)
             await anyio.to_thread.run_sync(tmp_path.rename, blob_path)
             
         return blob_id
 
     async def retrieve_blob(self, blob_id: str) -> bytes:
-        \"\"\"
+        """
         Retrieves a binary blob from CAS by its hash.
-        \"\"\"
+        """
         shard_dir = self.blob_dir / blob_id[:2] / blob_id[2:4]
         blob_path = shard_dir / blob_id
         
         if not blob_path.exists():
-            raise FileNotFoundError(f\"Blob {blob_id} not found in CAS\")
+            raise FileNotFoundError(f"Blob {blob_id} not found in CAS")
             
         return await anyio.to_thread.run_sync(blob_path.read_bytes)
 
     async def capture_somatic_state(self, llama_instance: Any) -> SomaticState:
-        \"\"\"
+        """
         Captures the current internal state of a Llama model.
         [SomaticState: M20]
-        \"\"\"
+        """
         # Use the high-level save_state() from llama-cpp-python
         # This returns a LlamaState object containing the binary buffer
         state = await anyio.to_thread.run_sync(llama_instance.save_state)
@@ -93,19 +93,19 @@ class UnifiedStateManager:
         return SomaticState(
             blob_id=blob_id,
             size=len(binary_data),
-            model_id=getattr(llama_instance, \"model_id\", \"unknown\"),
-            context_size=getattr(llama_instance, \"n_ctx\", 0)
+            model_id=getattr(llama_instance, "model_id", "unknown"),
+            context_size=getattr(llama_instance, "n_ctx", 0)
         )
 
     async def restore_somatic_state(self, llama_instance: Any, somatic_state: SomaticState) -> None:
-        \"\"\"
+        """
         Restores a model's internal state from a SomaticState snapshot.
         [SomaticState: M20]
-        \"\"\"
+        """
         binary_data = await self.retrieve_blob(somatic_state.blob_id)
         
         if len(binary_data) != somatic_state.size:
-            raise ValueError(f\"Blob size mismatch: expected {somatic_state.size}, got {len(binary_data)}\")
+            raise ValueError(f"Blob size mismatch: expected {somatic_state.size}, got {len(binary_data)}")
             
         # Convert bytes back to the expected ctypes array for load_state
         # Llama.load_state expects a LlamaState object or a compatible buffer
@@ -128,4 +128,4 @@ class UnifiedStateManager:
         )
         
         if result != len(binary_data):
-            raise RuntimeError(f\"Failed to restore somatic state: expected {len(binary_data)} bytes, restored {result}\")
+            raise RuntimeError(f"Failed to restore somatic state: expected {len(binary_data)} bytes, restored {result}")

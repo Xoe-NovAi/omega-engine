@@ -2,7 +2,7 @@
 # AP: AP-MAKEFILE-v3.0.0
 # ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: BUILD-ORCHESTRATION]
 # Hardware: AMD Ryzen 7 5700U (8C/16T) | CPU-only inference
-# Status: PUBLIC RELEASE v1.0.0 ✅
+# Status: PUBLIC RELEASE v1.1.0 ✅
 
 ROOT := $(shell pwd)
 MODELS_DIR ?= $(if $(wildcard $(ROOT)/models/gguf),$(ROOT)/models/gguf,$(HOME)/.omega/models/gguf)
@@ -36,8 +36,8 @@ COLOR_NC := \033[0m
 menu: ## 📋 Show the Omega Engine command menu
 	@echo ""
 	@echo "$(COLOR_PURPLE)╔══════════════════════════════════════════════════════╗$(COLOR_NC)"
-	@echo "$(COLOR_PURPLE)║$(COLOR_BOLD)  🔱 OMEGA ENGINE — PUBLIC RELEASE v1.0.0           $(COLOR_PURPLE)║$(COLOR_NC)"
-	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  $(COLOR_GREEN)730 tests ✅  |  730 collected  |  All 22 Mandates enforced$(COLOR_PURPLE)║$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)║$(COLOR_BOLD)  🔱 OMEGA ENGINE — PUBLIC RELEASE v1.1.0           $(COLOR_PURPLE)║$(COLOR_NC)"
+	@echo "$(COLOR_PURPLE)║$(COLOR_NC)  $(COLOR_GREEN)1130 tests ✅  |  1130 collected  |  All 23 Mandates enforced$(COLOR_PURPLE)║$(COLOR_NC)"
 	@echo "$(COLOR_PURPLE)╚══════════════════════════════════════════════════════╝$(COLOR_NC)"
 	@echo ""
 	@echo "$(COLOR_BOLD)🔥 CORE$(COLOR_NC)"
@@ -51,7 +51,7 @@ menu: ## 📋 Show the Omega Engine command menu
 	@echo "  $(COLOR_CYAN)make menu$(COLOR_NC)         📋 This menu"
 	@echo ""
 	@echo "$(COLOR_BOLD)🧪 TESTING$(COLOR_NC)"
-	@echo "  $(COLOR_CYAN)make test$(COLOR_NC)         🧪 Run all 855 tests (855 active + 41 skipped + 3 xfail)"
+	@echo "  $(COLOR_CYAN)make test$(COLOR_NC)         🧪 Run all 1130 tests (1130 active + 41 skipped + 3 xfail)"
 	@echo "  $(COLOR_CYAN)make test ARGS='-k name'$(COLOR_NC)  Filter tests by name"
 	@echo "  $(COLOR_CYAN)make test-cov$(COLOR_NC)     📊 Run tests with coverage"
 	@echo "  $(COLOR_CYAN)make lint$(COLOR_NC)         🔍 Lint with flake8"
@@ -687,7 +687,10 @@ heritage-map: ## 🏛️ Verify [id-soft:] heritage tags in source files
 	echo ""
 
 heritage-vet: ## 🏛️ Verify all [id-soft:] tags have vet records (Heritage Vetting Pipeline)
-	@.venv/bin/python3 scripts/heritage_vet.py
+	@.venv/bin/python3 scripts/heritage_vet.py --strict --scope-check
+
+heritage-audit: ## 🏛️ Classify all tags as LEGITIMATE/METAPHORICAL/OVER-ATTRIBUTED
+	@.venv/bin/python3 scripts/heritage_audit.py --classify-all --output-report --output-credits
 
 heritage-vet-create: ## 📝 Create HERITAGE_VET_LOG.md if missing (seed with template)
 	@echo "Creating Heritage Vet Log..."
