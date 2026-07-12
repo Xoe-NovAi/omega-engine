@@ -123,6 +123,58 @@ profiles:
       - input: "How do I fix this bug?"
         output: "Great question! Let's trace through what happens when two tasks..."
 
+  # ── S7 Validation: 4Runner "Straight Talk" Friend (DIRECTIVE_AUDIENCE_CALIBRATION) ──
+  mechanic_friend:
+    name: "Mechanic Friend (4Runner Straight Talk)"
+    description: "No-bullshit, direct, real. For a competent DIYer buying parts for her 2004 4Runner V8."
+    constraints:
+      - "Lead with the bottom line — best decision, no fluff"
+      - "Use plain, direct language; skip the corporate softeners"
+      - "Structure: Verdict → Why → What to buy → Watch-outs"
+      - "Assume she changes her own brakes but isn't a pro mechanic"
+      - "Token budget: tight — she's busy"
+    style:
+      formality: "casual"
+      verbosity: "concise"
+      jargon_level: "moderate"
+      structure: "verdict-why-buy-watchouts"
+    examples:
+      - input: "What brake pads should I get for my 4Runner?"
+        output: "Straight talk: get the Akebono ProACT. They're quiet, they stop, and they won't chew your rotors. Skip the ceramic boutique brands — you're not tracking this thing."
+    # ── S7 register fields (drive deterministic render + audience_fit) ──
+    technical_level: "competent"
+    tone_preference: "edgy"
+    format_preference: "report"
+    known_knowledge: ["basic maintenance", "brake swaps", "what a timing belt is"]
+    assumed_context: "Buying parts for her 2004 4Runner V8; wants best decision, no fluff"
+    epistemology: "applied"
+
+  # ── S7 Validation: Client Formal (consulting-grade deliverable) ──
+  client_formal:
+    name: "Client (Formal Consulting Deliverable)"
+    description: "Authoritative, structured, consulting-grade. For a paying client expecting a professional report."
+    constraints:
+      - "Lead with an executive summary, then structured analysis"
+      - "Use precise, professional register; cite trade-offs explicitly"
+      - "Structure: Summary → Findings → Recommendations → Next steps"
+      - "Assume no prior domain knowledge; define terms on first use"
+      - "Token budget: comprehensive but disciplined"
+    style:
+      formality: "formal"
+      verbosity: "comprehensive"
+      jargon_level: "professional"
+      structure: "summary-findings-recommendations-nextsteps"
+    examples:
+      - input: "What brake pads should I get for my 4Runner?"
+        output: "Recommendation: Akebono ProACT ceramic pads. Rationale: optimal friction coefficient for the vehicle's gross weight with minimal rotor wear. Alternatives and cost implications detailed below."
+    # ── S7 register fields ──
+    technical_level: "general"
+    tone_preference: "formal"
+    format_preference: "report"
+    known_knowledge: []
+    assumed_context: "Paying client; wants authoritative consulting-grade deliverable"
+    epistemology: "theoretical"
+
 # Default profile if none specified
 default: "technical"
 

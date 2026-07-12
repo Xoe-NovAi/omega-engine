@@ -27,12 +27,26 @@ AUDIENCE_PROFILE_DIR = _WAD_ROOT / ACTIVE_IWAD / "audience.yaml"
 
 @dataclass
 class AudienceProfile:
-    """Audience calibration profile definition."""
+    """Audience calibration profile definition.
+
+    Merged schema (D16-1 + S7 DIRECTIVE_AUDIENCE_CALIBRATION):
+    - D16-1 fields drive the LLM-based ``calibrate()`` prompt path.
+    - S7 fields (technical_level / tone_preference / format_preference /
+      known_knowledge / assumed_context / epistemology) drive the deterministic
+      offline ``render()`` wrapper and the eval ``audience_fit`` metric.
+    """
     name: str
     description: str
     constraints: List[str]
     style: Dict[str, str]
     examples: List[Dict[str, str]] = field(default_factory=list)
+    # ── S7 (DIRECTIVE_AUDIENCE_CALIBRATION) extensions ──
+    technical_level: str = "general"      # general | competent | expert
+    tone_preference: str = "neutral"     # casual | neutral | formal | edgy
+    format_preference: str = "chat"       # chat | report | email | website | forum | spec | executive
+    known_knowledge: List[str] = field(default_factory=list)
+    assumed_context: str = ""
+    epistemology: str = "applied"        # applied | theoretical | visual (V3 groundwork)
 
 
 @dataclass
@@ -83,7 +97,14 @@ class AudienceCalibrator:
                         description=data.get("description", ""),
                         constraints=data.get("constraints", []),
                         style=data.get("style", {}),
-                        examples=data.get("examples", [])
+                        examples=data.get("examples", []),
+                        # ── S7 register fields (DIRECTIVE_AUDIENCE_CALIBRATION) ──
+                        technical_level=data.get("technical_level", "general"),
+                        tone_preference=data.get("tone_preference", "neutral"),
+                        format_preference=data.get("format_preference", "chat"),
+                        known_knowledge=data.get("known_knowledge", []),
+                        assumed_context=data.get("assumed_context", ""),
+                        epistemology=data.get("epistemology", "applied"),
                     )
                     
                 logger.info(f"Loaded {len(self.profiles)} audience profiles from {self.profile_path}")
@@ -115,6 +136,12 @@ class AudienceCalibrator:
     def get_profile(self, profile_name: str) -> Optional[AudienceProfile]:
         """Get profile by name, with fallback to default."""
         return self.profiles.get(profile_name) or self.profiles.get(self.default_profile)
+
+    # S7 alias — `load_profile` is the name used by the eval runner's
+    # `audience_fit` metric (DIRECTIVE_AUDIENCE_CALIBRATION cross-link).
+    def load_profile(self, profile_name: str) -> Optional[AudienceProfile]:
+        """Alias for :meth:`get_profile` (S7 eval cross-link)."""
+        return self.get_profile(profile_name)
         
     def list_profiles(self) -> List[str]:
         """List available profile names."""
@@ -320,6 +347,59 @@ CALIBRATED RESPONSE (matching {profile.name} register):"""
                 tokens_calibrated=len(response_text.split()),
                 token_ratio=1.0
             )
+
+
+    # ── S7 Deterministic Offline Render (DIRECTIVE_AUDIENCE_CALIBRATION) ──
+    # Sovereign offline baseline: a non-destructive structural register wrapper
+    # that adapts tone/format WITHOUT altering any facts, part numbers, or
+    # citations. An LLM-backed rewrite remains a future enhancement (consumes
+    # build_calibration_prompt()). [M7 Local-First] [M18 Token Efficiency]
+    async def render(
+        self,
+        payload: str,
+        profile: AudienceProfile,
+        voice_anchor: str,
+    ) -> str:
+        """Transform final payload into the audience's register (offline).
+
+        [M1: AnyIO] Pure-Python deterministic transform — no blocking I/O.
+        Declared async to match the oracle output pipeline's await contract.
+
+        CRITICAL (CANON §1): preserve ALL facts, part numbers, citations. Only
+        adapt register/tone/structure. The original payload is never mutated.
+        """
+        if not payload:
+            return payload
+
+        original = payload
+        calibrated = payload  # facts preserved by construction
+
+        wrapper_header = self._structural_header(profile, voice_anchor)
+        if wrapper_header:
+            calibrated = f"{wrapper_header}\n\n{calibrated}"
+
+        token_ratio = max(1.0, len(calibrated.split()) / max(1, len(original.split())))
+        # [M18] Calibration must not bloat — warn if wrapper exceeds 130% of original.
+        if token_ratio > 1.3:
+            logger.warning("Audience calibration token ratio %.2f exceeds 130%% budget", token_ratio)
+
+        return calibrated
+
+    def _structural_header(self, profile: AudienceProfile, voice_anchor: str) -> str:
+        """Build a minimal, additive register header (no fact alteration)."""
+        fmt = profile.format_preference
+        tone = profile.tone_preference
+        if fmt == "report":
+            title = f"Brief for {profile.name} ({tone} register)"
+            return f"## {title}"
+        if fmt == "email":
+            return f"Note ({tone}):"
+        if fmt == "executive":
+            return "Bottom line up front:"
+        if tone == "edgy":
+            return "Straight talk:"
+        # chat / website / forum / spec / neutral: no wrapper (keep it clean)
+        return ""
 
 
 # Global instance

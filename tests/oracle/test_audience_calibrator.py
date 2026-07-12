@@ -27,10 +27,13 @@ def calibrator():
 
 class TestProfileLoading:
     def test_loads_all_profiles_from_yaml(self, calibrator):
-        """D16-1: YAML with 6 profiles must load all 6."""
+        """D16-1: YAML with 8 profiles (6 base + 2 S7) must load all 8."""
         profiles = calibrator.list_profiles()
-        assert len(profiles) == 6, f"Expected 6 profiles, got {len(profiles)}"
-        expected = {"technical", "casual", "academic", "executive", "exhausted_sysadmin", "teaching"}
+        assert len(profiles) == 8, f"Expected 8 profiles, got {len(profiles)}"
+        expected = {
+            "technical", "casual", "academic", "executive",
+            "exhausted_sysadmin", "teaching", "mechanic_friend", "client_formal",
+        }
         assert set(profiles) == expected, f"Missing profiles: {expected - set(profiles)}"
 
     def test_default_profile_is_technical(self, calibrator):

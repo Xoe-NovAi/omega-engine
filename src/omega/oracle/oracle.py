@@ -55,6 +55,7 @@ from ..memory_store import get_memory_store
 from ..astrology import record_first_breath
 from ..orchestration.triage_router import TriageRouter, TriageRequest, TaskRequest, EntityContext, Constraints, SessionContext, ModelSelection
 from ..state import get_usm, initialize_usm
+from ..governance.sovereign_vetter import SovereignVetter
 from omega.errors import OmegaError
 
 # WARP Proxy Pool — optional, for OpenCode Zen rate limit bypass
@@ -90,6 +91,10 @@ class OracleResponse:
     session_id: Optional[str] = None
     escalated: bool = False
     cost_warning: Optional[str] = None
+    # [S3] Tiny-Critic RAG Router classification (informational signal)
+    rag_complexity: Optional[str] = None
+    # [S7] Audience profile applied to this response (None = default register)
+    audience: Optional[str] = None
 
 
 class Oracle:
@@ -157,6 +162,8 @@ class Oracle:
         )
         self.pii_masker = PIIMasker()
         self.intent_matcher = IntentMatcher()
+        # ── P0-3: Sovereign Vetter (in-path mandate enforcement, M1-M23) ──
+        self._vetter = SovereignVetter()
         
         # [D16-1] Audience Calibration Pipeline — output register transformation
         self.audience_calibrator = get_audience_calibrator()
@@ -380,18 +387,45 @@ class Oracle:
         except (OmegaError, RuntimeError, OSError) as e:
             logger.warning("Failed to update system pressure: %s", e)
 
-    async def talk(self, query: Union[str, TaintedData], transient: bool = False) -> OracleResponse:
+    async def talk(
+        self,
+        query: Union[str, TaintedData],
+        transient: bool = False,
+        audience: Optional[str] = None,
+    ) -> OracleResponse:
         """Route a query through the speculative decoder + escalation pipeline.
-        
+
         Args:
             query: The user query (can be TaintedData for external input)
             transient: If True, do not record the interaction in the soul/memory
+            audience: Optional audience profile name (S7). When set, the response
+                register is adapted via the cognition AudienceCalibrator before
+                delivery.
         """
         # Sanitize and isolate query if it's tainted
 
         processed_query = TDPGate.isolate(query) if isinstance(query, TaintedData) else query
-        
+
         await self.bootstrap()
+
+        # ── P0-3: Sovereign Vetter pre-flight mandate check ──
+        # Enforce all 23 Sovereign Mandates before inference dispatch.
+        # A vetter *crash* is logged and does NOT block inference (so a
+        # governance-checker bug can't DoS the engine); a vetter *verdict* of
+        # failure raises BoundaryViolationError (M23: hard stop, no soft-failure).
+        try:
+            vet_result = await self._vetter.vet(
+                {"query": processed_query if isinstance(processed_query, str) else "", "channel": "opencode"}
+            )
+        except Exception as e:  # noqa: BLE001 — vetter crash must not DoS engine
+            logger.error("Sovereign Vetter crashed (proceeding): %s", e)
+        else:
+            if not vet_result.passed:
+                from omega.errors import BoundaryViolationError
+                raise BoundaryViolationError(
+                    f"Sovereign Vetter blocked inference: failed mandates "
+                    f"{vet_result.details.get('failed_mandates')}"
+                )
 
         async def _execute_turn():
             async with self.observability.trace() as trace:
@@ -399,7 +433,19 @@ class Oracle:
                 await self._update_system_pressure()
                 
                 trace.log("query.received", query=processed_query, transient=transient)
-                
+
+                # [S3] Tiny-Critic RAG Router — classify query complexity as an
+                # ephemeral routing signal. Advisory only: never blocks the turn.
+                rag_complexity = "simple"
+                try:
+                    from omega.rag.router import RAGRouter
+
+                    router = RAGRouter(mode="tfidf_svm")
+                    rag_complexity = await router.classify(processed_query)
+                except Exception as e:  # noqa: BLE001 — router is advisory
+                    logger.warning("RAGRouter classification skipped (non-fatal): %s", e)
+                trace.log("rag.classify", complexity=rag_complexity, query=processed_query)
+
                 # Get current session for the default entity
                 default_name = self.default_entity.name if self.default_entity else cvar_get("config.entity.default", "default")
                 if transient:
@@ -411,6 +457,7 @@ class Oracle:
                 # Early return for empty queries (still inside trace context)
                 if not processed_query or not processed_query.strip():
                     resp = self._empty_response(trace)
+                    resp.rag_complexity = rag_complexity
                     try:
                         await self._record_interaction(resp, processed_query, trace, transient)
                     except OmegaError as e:
@@ -425,6 +472,7 @@ class Oracle:
                     session_id = await self.session_manager.get_session_id(entity_name)
                     trace.log("summon.detected", entity=entity_name, query=summon_query, session_id=session_id)
                     resp = await self._summon(entity_name, summon_query, trace, session_id, transient=transient)
+                    resp.rag_complexity = rag_complexity
                     try:
                         await self._record_interaction(resp, summon_query, trace, transient)
                     except OmegaError as e:
@@ -439,6 +487,7 @@ class Oracle:
                     session_id = await self.session_manager.get_session_id(entity_name)
                     trace.log("summon.detected", entity=entity_name, query=consult_query, pattern="consult", session_id=session_id)
                     resp = await self._summon(entity_name, consult_query, trace, session_id, transient=transient)
+                    resp.rag_complexity = rag_complexity
                     try:
                         await self._record_interaction(resp, consult_query, trace, transient)
                     except OmegaError as e:
@@ -457,6 +506,7 @@ class Oracle:
                 
                 if iris_confidence > IRIS_CONFIDENCE_THRESHOLD:
                     resp = await self._respond_as_iris(processed_query, trace, iris_confidence, session_id, transient=transient)
+                    resp.rag_complexity = rag_complexity
                     try:
                         await self._record_interaction(resp, processed_query, trace, transient)
                     except OmegaError as e:
@@ -467,6 +517,7 @@ class Oracle:
                 # Step 3: Escalate to domain-matched Pillar Keeper
                 trace.log("escalation", reason=f"iris_confidence={iris_confidence:.2f} <= threshold={IRIS_CONFIDENCE_THRESHOLD}")
                 resp = await self._route_by_domain(processed_query, trace, session_id, transient=transient)
+                resp.rag_complexity = rag_complexity
                 try:
                     await self._record_interaction(resp, processed_query, trace, transient)
                 except OmegaError as e:
@@ -474,7 +525,32 @@ class Oracle:
                     logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
                 return resp
         
-        return await self.timeout_manager.execute("turn", _execute_turn)
+        resp = await self.timeout_manager.execute("turn", _execute_turn)
+        if audience:
+            resp = await self._apply_cognition_audience(resp, audience)
+        return resp
+
+    async def _apply_cognition_audience(self, resp: "OracleResponse", audience: str) -> "OracleResponse":
+        """[S7] Adapt the response register to the named audience via the cognition
+        AudienceCalibrator. Preserves entity soul (voice_anchor) and all facts.
+
+        Opt-in layer keyed on the ``audience`` argument; the existing oracle/
+        audience_calibrator pipeline (D16-1) still runs unconditionally. This is
+        the canonical register-adaptation stage from DIRECTIVE_AUDIENCE_CALIBRATION.
+        """
+        try:
+            cal = self.audience_calibrator
+            prof = cal.get_profile(audience)
+            if prof is None:
+                logger.warning("Audience profile '%s' not found; skipping calibration", audience)
+                return resp
+            voice_anchor = resp.entity or "Oracle"
+            calibrated = await cal.render(resp.text, prof, voice_anchor)
+            resp.text = calibrated
+            resp.audience = audience
+        except Exception as e:  # noqa: BLE001 — audience adaptation is advisory
+            logger.warning("Audience calibration skipped (non-fatal): %s", e)
+        return resp
 
     async def summon(
         self,
@@ -739,6 +815,19 @@ class Oracle:
         transient: bool = False,
         model_override: Optional[str] = None,
     ) -> OracleResponse:
+        # ── P0-3: Sovereign Vetter pre-flight mandate check (direct summon path) ──
+        try:
+            vet_result = await self._vetter.vet({"query": query, "channel": "opencode", "entity": entity_name})
+        except Exception as e:  # noqa: BLE001 — vetter crash must not DoS engine
+            logger.error("Sovereign Vetter crashed in _summon (proceeding): %s", e)
+        else:
+            if not vet_result.passed:
+                from omega.errors import BoundaryViolationError
+                raise BoundaryViolationError(
+                    f"Sovereign Vetter blocked summon: failed mandates "
+                    f"{vet_result.details.get('failed_mandates')}"
+                )
+
         """Internal implementation: directly summon a specific entity by name.
         
         This is called by both the public summon() method and the talk() pattern detector.
