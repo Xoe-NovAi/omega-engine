@@ -36,7 +36,9 @@ CREATE TABLE IF NOT EXISTS errors (
     provider TEXT,
     error_type TEXT NOT NULL,
     error_message TEXT NOT NULL,
-    context TEXT
+    context TEXT,
+    entity_id TEXT,
+    FOREIGN KEY (entity_id) REFERENCES entities(name)
 );
 
 -- Circuit Breaker State Transitions
@@ -62,7 +64,9 @@ CREATE TABLE IF NOT EXISTS performance (
     completion_tokens INTEGER DEFAULT 0,
     total_tokens INTEGER DEFAULT 0,
     is_cloud INTEGER DEFAULT 0,
-    cost_usd REAL DEFAULT 0.0
+    cost_usd REAL DEFAULT 0.0,
+    entity_id TEXT,
+    FOREIGN KEY (entity_id) REFERENCES entities(name)
 );
 
 -- Baseline metrics for regression detection
@@ -178,13 +182,14 @@ class MetricsDB:
         trace_id: Optional[str] = None,
         provider: Optional[str] = None,
         context: Optional[Dict[str, Any]] = None,
+        entity_id: Optional[str] = None,
     ) -> None:
         """Record an error event."""
         ts = int(time.time() * 1000)
         self._conn.execute(
-            "INSERT INTO errors (ts, trace_id, provider, error_type, error_message, context) "
-            "VALUES (?, ?, ?, ?, ?, ?)",
-            (ts, trace_id, provider, error_type, error_message, json.dumps(context) if context else None),
+            "INSERT INTO errors (ts, trace_id, provider, error_type, error_message, context, entity_id) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (ts, trace_id, provider, error_type, error_message, json.dumps(context) if context else None, entity_id),
         )
         self._conn.commit()
 
@@ -215,16 +220,17 @@ class MetricsDB:
         is_cloud: bool = False,
         trace_id: Optional[str] = None,
         cost_usd: float = 0.0,
+        entity_id: Optional[str] = None,
     ) -> None:
         """Record a performance measurement (latency, tokens, cost)."""
         ts = int(time.time() * 1000)
         total_tokens = prompt_tokens + completion_tokens
         self._conn.execute(
             "INSERT INTO performance (ts, trace_id, provider, model_used, latency_ms, "
-            "prompt_tokens, completion_tokens, total_tokens, is_cloud, cost_usd) "
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            "prompt_tokens, completion_tokens, total_tokens, is_cloud, cost_usd, entity_id) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             (ts, trace_id, provider, model_used, latency_ms,
-             prompt_tokens, completion_tokens, total_tokens, int(is_cloud), cost_usd),
+             prompt_tokens, completion_tokens, total_tokens, int(is_cloud), cost_usd, entity_id),
         )
         self._conn.commit()
 

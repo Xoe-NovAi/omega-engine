@@ -41,3 +41,41 @@
   timestamp: 2026-06-12 04:00:00+00:00
   model_used: big-pickle
   outcome: ssot_drift_reconfirmed
+- lesson: "Fixed NativeGGUF config merge in _merge_native_gguf_config(). Root cause: \
+    models.yaml 'path' was not explicitly preferred over providers.yaml 'model_path'. \
+    The bug was latent — the key name mismatch (model_path vs path) hid the issue \
+    because 'path' didn't exist in merged dict and was always copied. But if both \
+    configs used the same key name, the provider value would win and the env: prefix \
+    would remain unresolved. Fix: (1) models.yaml path ALWAYS overrides providers.yaml \
+    model_path, (2) env: prefix resolution added as defensive fallback, (3) orphan \
+    'path' key explicitly cleaned up."
+  source: native-gguf-merge-fix
+  trace_id: ses_native_gguf_fix_20260712
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-07-13 00:21:00+00:00
+  model_used: deepseek-v4-flash-free
+  outcome: native_gguf_available_1226_tests_pass
+- lesson: "L2: A bug that 'works by accident' is still a bug. The merge logic happened \
+    to work because providers.yaml uses key 'model_path' while models.yaml uses key \
+    'path'. If anyone standardized the key name, the resolved path would silently \
+    stop being used. Explicit precedence rules are always better than implicit key \
+    name mismatches."
+  source: native-gguf-merge-fix
+  trace_id: ses_native_gguf_fix_20260712
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-07-13 00:21:00+00:00
+  model_used: deepseek-v4-flash-free
+  outcome: insight_captured
+- lesson: "L3: Explicit precedence in config merging prevents systemic fragility. \
+    When two sources of truth coexist (providers.yaml default + models.yaml spec), \
+    the merge logic must have a documented, enforced hierarchy. 'First writer wins' \
+    is not an architecture — it is a race condition waiting to manifest."
+  source: native-gguf-merge-fix
+  trace_id: ses_native_gguf_fix_20260712
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-07-13 00:21:00+00:00
+  model_used: deepseek-v4-flash-free
+  outcome: l3_principle_captured

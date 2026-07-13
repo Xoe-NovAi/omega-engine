@@ -1,5 +1,5 @@
-# AP Token: AP-MCP-CLIENT-v1.0.0
-# 🔱 Sovereign MCP Client — Hub-as-Client Implementation
+# AP Token: AP-MCP-CLIENT-v1.1.0
+# 🔱 Sovereign MCP Client — Hub-as-Client Implementation (Streamable HTTP)
 # ⬡ OMEGA ⬡ MA'AT ⬡ anyio ⬡ opencode ⬡ trc_mcp_client ⬡ MCP-CLIENT
 
 import logging
@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 import anyio
 from mcp import ClientSession
-from mcp.client.sse import sse_client
+from mcp.client.streamable_http import streamablehttp_client
 
 logger = logging.getLogger("omega.hub.client")
 
@@ -23,14 +23,12 @@ class MCPToolResult:
 class SovereignMCPClient:
     """
     Sovereign MCP Client allowing the Omega Hub to act as a client to other MCP servers.
-    
-    Complies with Mandate 1 (AnyIO Absolute) by wrapping the mcp-python-sdk 
-    (which is asyncio-based) in an AnyIO-compatible wrapper where necessary, 
+
+    Complies with Mandate 1 (AnyIO Absolute) by wrapping the mcp-python-sdk
+    (which is asyncio-based) in an AnyIO-compatible wrapper where necessary,
     or using anyio.to_thread.run_sync for blocking calls.
-    
-    Note: The mcp-python-sdk currently relies on asyncio. This client is designed
-    to be run within an AnyIO event loop, ensuring compatibility with the 
-    Omega Engine's core.
+
+    Migrated from SSE to Streamable HTTP (MCP SDK v1.27+, spec 2025-03-26).
     """
 
     def __init__(self, server_url: str, timeout: float = 120.0):
@@ -41,13 +39,13 @@ class SovereignMCPClient:
         self._write_stream = None
 
     async def __aenter__(self):
-        """Initialize connection and session."""
+        """Initialize connection and session via Streamable HTTP."""
         try:
-            logger.info("Connecting to MCP server at %s...", self.server_url)
-            self._sse_context = sse_client(self.server_url)
-            logger.info("Entering SSE context...")
-            self._read_stream, self._write_stream = await self._sse_context.__aenter__()
-            logger.info("SSE context entered. Initializing session...")
+            logger.info("Connecting to MCP server at %s (Streamable HTTP)...", self.server_url)
+            self._http_context = streamablehttp_client(self.server_url)
+            logger.info("Entering Streamable HTTP context...")
+            self._read_stream, self._write_stream = await self._http_context.__aenter__()
+            logger.info("Streamable HTTP context entered. Initializing session...")
             self._session = ClientSession(self._read_stream, self._write_stream)
             await self._session.initialize()
             logger.info("Sovereign MCP Client connected and initialized at %s", self.server_url)
@@ -60,8 +58,8 @@ class SovereignMCPClient:
         """Cleanly close the session and streams."""
         if self._session:
             await self._session.close()
-        if self._sse_context:
-            await self._sse_context.__aexit__(exc_type, exc_val, exc_tb)
+        if self._http_context:
+            await self._http_context.__aexit__(exc_type, exc_val, exc_tb)
         logger.info("Sovereign MCP Client disconnected from %s", self.server_url)
 
     async def call_tool(self, tool_name: str, arguments: Dict[str, Any], trace_id: Optional[str] = None) -> MCPToolResult:

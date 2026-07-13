@@ -75,3 +75,34 @@ TimeoutStartSec=90s
 
 [Install]
 WantedBy=multi-user.target
+
+# ═══════════════════════════════════════════════════════════════════════════
+# 🔱 GAP 7 — Caddy Reverse Proxy (X-Forwarded-For Injection)
+# [heritage: odysseus-2025] Header injection for sovereign proxying
+#
+# Pasta networking (rootless Podman) does NOT inject X-Forwarded-For, so
+# SearXNG sees all requests originating from the gateway IP → bot detection
+# triggers and search results degrade. Deploy Caddy on the same Podman network
+# as SearXNG to inject the real client IP header before proxying.
+#
+# Caddyfile (omega-searxng-caddy):
+# ─────────────────────────────────────────────────────────────────────────────
+# # Caddyfile for SearXNG reverse proxy
+# # Heritage: [heritage: odysseus-2025]
+# :8080 {
+#     reverse_proxy localhost:8081 {
+#         header_up X-Forwarded-For {remote_host}
+#     }
+# }
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# Deploy:
+#   podman run -d --name omega-caddy --network omega-searxng-net \
+#     -v ./Caddyfile:/etc/caddy/Caddyfile:ro -p 127.0.0.1:8017:80 caddy:alpine
+#
+# Then enable forwarded-for in SearXNG settings.yml:
+#   server:
+#     use_forwarded_for: true
+#
+# NOTE: This is documentation/config only — no engine code change required.
+# ═══════════════════════════════════════════════════════════════════════════

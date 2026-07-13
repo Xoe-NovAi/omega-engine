@@ -1,204 +1,56 @@
-# Project Manifest: sovereign-audit
-Timestamp: 2026-06-29T16:55:54.692446
-Description: Core Engine and Mandates Audit
+# Enhanced Context Pack Manifest: sovereign-audit
+Generated: 2026-07-12T01:50:53.719422
+Description: Core Engine and Mandates Audit — hardened 2026-07-11
+Total Files: 277
+Estimated Total Tokens: 942505
+Max Slots: 12
 
-## Included Files
-- CLAUDE.md -> mandates.md
-- SOVEREIGN_MANDATES.md -> mandates.md
-- OMEGA_ENGINE.md -> mandates.md
-- src/omega/oracle/cpu_optimizer.py -> core_engine.md
-- src/omega/oracle/handoff.py -> core_engine.md
-- src/omega/oracle/context_builder.py -> core_engine.md
-- src/omega/workers/background_researcher/soul_updater.py -> core_engine.md
-- src/omega/oracle/a2a_auth.py -> core_engine.md
-- src/omega/oracle/session_manager.py -> core_engine.md
-- src/omega/library/indexer.py -> core_engine.md
-- src/omega/oracle/a2a_bridge.py -> core_engine.md
-- src/omega/memory/embeddings.py -> core_engine.md
-- src/omega/library/__init__.py -> core_engine.md
-- src/omega/library/catalog.py -> core_engine.md
-- src/omega/oracle/backends/__init__.py -> core_engine.md
-- src/omega/bridge/opencode_bridge.py -> core_engine.md
-- src/omega/oracle/capability_registry.py -> core_engine.md
-- src/omega/oracle/oracle.py -> core_engine.md
-- src/omega/observability/__init__.py -> core_engine.md
-- src/omega/orchestration/__init__.py -> core_engine.md
-- src/omega/workers/background_researcher/scheduler.py -> core_engine.md
-- src/omega/observability/context.py -> core_engine.md
-- src/omega/oracle/search_cache.py -> core_engine.md
-- src/omega/memory/providers.py -> core_engine.md
-- src/omega/memory/adapters.py -> core_engine.md
-- src/omega/oracle/soul_distiller.py -> core_engine.md
-- src/omega/oracle/feed_utils.py -> core_engine.md
-- src/omega/oracle/sovereign_search_service.py -> core_engine.md
-- src/omega/workers/background_researcher/checkpoint.py -> core_engine.md
-- src/omega/oracle/entity_workspace.py -> core_engine.md
-- src/omega/oracle/resource_guard.py -> core_engine.md
-- src/omega/oracle/wad_loader.py -> core_engine.md
-- src/omega/workers/background_researcher/searxng_client.py -> core_engine.md
-- src/omega/memory/vector_adapters.py -> core_engine.md
-- src/omega/oracle/search_router.py -> core_engine.md
-- src/omega/oracle/pool_tracker.py -> core_engine.md
-- src/omega/workers/background_researcher/run.py -> core_engine.md
-- src/omega/workers/__init__.py -> core_engine.md
-- src/omega/oracle/budget_gate.py -> core_engine.md
-- src/omega/library/security.py -> core_engine.md
-- src/omega/oracle/model_gateway.py -> core_engine.md
-- src/omega/oracle/state_manager.py -> core_engine.md
-- src/omega/oracle/pool_state.py -> core_engine.md
-- src/omega/workers/background_researcher/review_queue.py -> core_engine.md
-- src/omega/workers/background_researcher/credit_budget.py -> core_engine.md
-- src/omega/oracle/iterative_research.py -> core_engine.md
-- src/omega/oracle/soul_validator.py -> core_engine.md
-- src/omega/vault/key_vault.py -> core_engine.md
-- src/omega/oracle/gnosis_proxy.py -> core_engine.md
-- src/omega/library/research.py -> core_engine.md
-- src/omega/benchmarks/__init__.py -> core_engine.md
-- src/omega/library/curator.py -> core_engine.md
-- src/omega/library/rate_limiter.py -> core_engine.md
-- src/omega/oracle/entity_affinity.py -> core_engine.md
-- src/omega/oracle/link_p9_runtime.py -> core_engine.md
-- src/omega/library/discovery.py -> core_engine.md
-- src/omega/vault/__init__.py -> core_engine.md
-- src/omega/workers/model_updater.py -> core_engine.md
-- src/omega/library/inbox.py -> core_engine.md
-- src/omega/oracle/health_monitor.py -> core_engine.md
-- src/omega/oracle/skeptical_verifier.py -> core_engine.md
-- src/omega/oracle/providers.py -> core_engine.md
-- src/omega/oracle/orchestrator.py -> core_engine.md
-- src/omega/oracle/subagent_dispatcher.py -> core_engine.md
-- src/omega/oracle/__init__.py -> core_engine.md
-- src/omega/oracle/world_state.py -> core_engine.md
-- src/omega/oracle/entity_registry.py -> core_engine.md
-- src/omega/gateway/__init__.py -> core_engine.md
-- src/omega/memory/__init__.py -> core_engine.md
-- src/omega/iris/matcher.py -> core_engine.md
-- src/omega/library/coordinator.py -> core_engine.md
-- src/omega/orchestration/triage_router.py -> core_engine.md
-- src/omega/oracle/pii_masker.py -> core_engine.md
-- src/omega/workers/background_researcher/cli.py -> core_engine.md
-- src/omega/oracle/search_providers.py -> core_engine.md
-- src/omega/oracle/backends/openai_compat.py -> core_engine.md
-- src/omega/oracle/security.py -> core_engine.md
-- src/omega/oracle/hierarchy.py -> core_engine.md
-- src/omega/workers/background_researcher/__init__.py -> core_engine.md
-- src/omega/workers/background_researcher/distiller.py -> core_engine.md
-- src/omega/workers/background_researcher/models.py -> core_engine.md
-- src/omega/oracle/backends/mock.py -> core_engine.md
-- src/omega/workers/background_researcher/search_fleet.py -> core_engine.md
-- src/omega/workers/background_researcher/convergence.py -> core_engine.md
-- src/omega/observability/token_ledger.py -> core_engine.md
-- src/omega/oracle/search.py -> core_engine.md
-- src/omega/iris/server.py -> core_engine.md
-- src/omega/library/extractor.py -> core_engine.md
-- src/omega/benchmarks/runner.py -> core_engine.md
-- src/omega/library/library.py -> core_engine.md
-- src/omega/vault/crypto.py -> core_engine.md
-- src/omega/workers/background_researcher/loop.py -> core_engine.md
-- src/omega/oracle/backends/remote_provider.py -> core_engine.md
-- src/omega/memory/fts_index.py -> core_engine.md
-- src/omega/cli/oracle_cli.py -> core_engine.md
-- src/omega/workers/background_researcher/metrics.py -> core_engine.md
-- src/omega/workers/background_researcher/soul_update_manager.py -> core_engine.md
-- config/providers.yaml -> config.md
-- config/models.yaml -> config.md
-- docs/strategy/archive/V10_RELEASE_STRATEGY.md -> strategy.md
-- docs/strategy/archive/STATUS_REPORT_2026_05_19.md -> strategy.md
-- docs/strategy/archive/SOVEREIGN_MEMORY_IMPLEMENTATION_SPEC.md -> strategy.md
-- docs/strategy/archive/FLEET_TOPOLOGY_SPEC_V2.md -> strategy.md
-- docs/strategy/archive/WAVE_1.5_PLAN.md -> strategy.md
-- docs/strategy/archive/HARDENING_IMPLEMENTATION_PLAN.md -> strategy.md
-- docs/strategy/archive/HARDENED_MASTER_STRATEGY_V2.md -> strategy.md
-- docs/strategy/archive/PHASE_C_MASTER_SPEC_VERITY.md -> strategy.md
-- docs/strategy/archive/SOVEREIGN_MEMORY_STRATEGY.md -> strategy.md
-- docs/strategy/archive/COMPLETED_MILESTONES.md -> strategy.md
-- docs/strategy/archive/EXECUTION_ROADMAP.md -> strategy.md
-- docs/strategy/archive/PHASE_MCP_HUB.md -> strategy.md
-- docs/strategy/archive/SYSTEMS_HARDENING_PLAN.md -> strategy.md
-- docs/strategy/archive/FINAL_IMPLEMENTATION_PLAN.md -> strategy.md
-- docs/strategy/archive/SOVEREIGN_GUARDRAILS.md -> strategy.md
-- docs/strategy/archive/MANIFEST.md -> strategy.md
-- docs/strategy/archive/NEXT_STEPS_ROADMAP.md -> strategy.md
-- docs/strategy/archive/FINAL_STRATEGY_20260621.md -> strategy.md
-- docs/strategy/archive/SOVEREIGN_TRANSITION_ROADMAP.md -> strategy.md
-- docs/strategy/archive/INFRASTRUCTURE_UPDATES_2026_05_19.md -> strategy.md
-- docs/strategy/archive/SOVEREIGN_SEED_PLAN.md -> strategy.md
-- docs/strategy/archive/SOVEREIGN_INTROSPECTION_SPEC.md -> strategy.md
-- docs/strategy/archive/TEMPLE_GRADE_GAPS.md -> strategy.md
-- docs/strategy/archive/H2S_EXECUTION_PLAN.md -> strategy.md
-- docs/strategy/archive/FLEET_REDESIGN_EXECUTION_PLAN.md -> strategy.md
-- docs/strategy/archive/DEEPENING_WAVE_PROPOSAL.md -> strategy.md
-- docs/strategy/archive/FINAL_GAP_CLOSING.md -> strategy.md
-- docs/strategy/archive/CONSOLIDATED_EPOCH_SPEC.md -> strategy.md
-- docs/strategy/archive/MODE_CONSOLIDATION_PLAN.md -> strategy.md
-- docs/strategy/archive/CLEANUP_LEDGER_PHANTOM_PURGE.md -> strategy.md
-- docs/strategy/archive/COMPREHENSIVE_EXECUTION_PLAN_20260621.md -> strategy.md
-- docs/strategy/archive/PHASE_OPTION_B.md -> strategy.md
-- docs/strategy/archive/STACK_RELEASE_ROADMAP.md -> strategy.md
-- docs/strategy/archive/OMEGA_PR_READINESS_STRATEGY.md -> strategy.md
-- docs/strategy/archive/CANONICAL_MODE_STRATEGY.md -> strategy.md
-- docs/strategy/archive/SOVEREIGN_SIGHT_ILLUMINATION_20260618.md -> strategy.md
-- docs/strategy/archive/PHASE_C_EXECUTION_PLAN.md -> strategy.md
-- docs/strategy/archive/WAVE_3_COGNITIVE_LOOPS.md -> strategy.md
-- docs/strategy/archive/FLEET_DISCOVERY_SYNTHESIS.md -> strategy.md
-- docs/strategy/archive/SOVEREIGN_COMPRESSION_LAYER.md -> strategy.md
-- docs/strategy/archive/MANDATES_SNAPSHOT_20260614.md -> strategy.md
-- docs/strategy/archive/PHASE_HORIZON_2.md -> strategy.md
-- docs/strategy/archive/PHASE_E_BATTLE_PLAN.md -> strategy.md
-- docs/strategy/archive/SOVEREIGN_SCHEDULER_SPEC.md -> strategy.md
-- docs/strategy/archive/SOVEREIGN_SANCTUARY_GENESIS.md -> strategy.md
-- docs/strategy/archive/FLEET_CONSOLIDATION_PLAN.md -> strategy.md
-- docs/strategy/archive/COGNITIVE_SHADOW_AUDIT.md -> strategy.md
-- docs/strategy/archive/STRATEGIC_EXECUTION_ROADMAP_V2.md -> strategy.md
-- docs/strategy/OMEGA_IWAD_ARCHITECTURE.md -> general.md
-- docs/strategy/CURATION_LIBRARY_H2N_STRATEGIC_REVIEW.md -> general.md
-- src/omega/__init__.py -> general.md
-- docs/strategy/ANTIGRAVITY_IDE_CUSTOM_INSTRUCTIONS.md -> general.md
-- src/omega/hardware.py -> general.md
-- docs/strategy/CURATION_LIBRARY_CRAWLING_STRATEGY.md -> general.md
-- docs/strategy/SOVEREIGN_CONTINUITY_STRATEGY.md -> general.md
-- docs/strategy/H2S_RUNTIME_FLOW_SPECIFICATION.md -> general.md
-- docs/strategy/GITHUB_INTEGRATION_PLAN.md -> general.md
-- docs/strategy/HERITAGE_VETTING_PIPELINE.md -> general.md
-- docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md -> general.md
-- src/omega/mcp_runtime.py -> general.md
-- docs/strategy/CONTEXT_PACKER_SPEC.md -> general.md
-- docs/strategy/GITHUB_INTEGRATION_CHECKLIST.md -> general.md
-- src/omega/constants.py -> general.md
-- docs/strategy/S_SOMATIC_STATE_BLUEPRINT.md -> general.md
-- docs/strategy/R_MODEL_INTELLIGENCE_LAYER.md -> general.md
-- docs/strategy/SOVEREIGN_SYNTHESIS_PROTOCOL.md -> general.md
-- docs/strategy/PLATFORM_SYNC_GOLD_STANDARD.md -> general.md
-- docs/strategy/HARDWARE_RECONCILIATION.md -> general.md
-- docs/strategy/HIVEMIND_PROTOCOL.md -> general.md
-- docs/strategy/CLAUDE_PROJECT_PROMPTING_GUIDE.md -> general.md
-- docs/strategy/LOGGING_ERROR_HANDLING_ARCHITECTURE.md -> general.md
-- docs/strategy/COMPLIANCE_HARDENING_PLAN.md -> general.md
-- docs/strategy/ICS_DYNAMIC_HEADER_SPEC.md -> general.md
-- docs/strategy/JEM_GRAND_STRATEGY.md -> general.md
-- docs/strategy/OVERSEER_DATABASE_STRATEGIC_REVIEW.md -> general.md
-- docs/strategy/COGNITIVE_SUBSTRATE_SPEC.md -> general.md
-- docs/strategy/P9_ORCHESTRATION_FINAL_REVIEW_20260623.md -> general.md
-- docs/strategy/ICS_MODEL_DETECTION.md -> general.md
-- docs/strategy/CARMACK_CONSULTATION_PROTOCOL.md -> general.md
-- docs/strategy/XOE_NOVAI_FOUNDATION_STRATEGIC_PLAN.md -> general.md
-- docs/strategy/SOUL_MIGRATION_EXECUTION_BLUEPRINT.md -> general.md
-- docs/strategy/LILITH_AXIOMS.md -> general.md
-- docs/strategy/ANTIGRAVITY_INTEGRATION_PLAYBOOK.md -> general.md
-- src/omega/astrology.py -> general.md
-- src/omega/memory_store.py -> general.md
-- docs/strategy/SOVEREIGN_MINING_PROTOCOL.md -> general.md
-- docs/strategy/VR_OMEGAVERSE_VISION.md -> general.md
-- src/omega/ics.py -> general.md
-- docs/strategy/MIDDLEWARE_PLUGIN_IMPLEMENTATION_GUIDE.md -> general.md
-- docs/strategy/CURATION_LIBRARY_EXECUTION_PLAN.md -> general.md
-- docs/strategy/FASTROUTER_INTEGRATION_BLUEPRINT.md -> general.md
-- docs/strategy/OMEGAVERSE_GRAND_STRATEGY_2026.md -> general.md
-- docs/strategy/H2_S_SOVEREIGN_STRUCTURE_SPEC.md -> general.md
-- src/omega/errors.py -> general.md
-- src/omega/cvar_table.py -> general.md
-- docs/strategy/SOUL_ARCHITECTURE_PROTOCOL.md -> general.md
-- docs/strategy/OMEGAVERSE_GENESIS_PLAN.md -> general.md
-- docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md -> general.md
-- docs/strategy/OMEGAVERSE_IMPLEMENTATION_ROADMAP.md -> general.md
-- src/omega/request_queue.py -> general.md
+## Theme Breakdown
+- mandates: 3 files, ~17127 tokens
+  - AGENTS.md (6221 tokens)
+  - SOVEREIGN_MANDATES.md (5820 tokens)
+  - OMEGA_ENGINE.md (5086 tokens)
+- oracle_core_a: 3 files, ~27815 tokens (sub-split of oracle_core for RAG-mode Pattern-Miners)
+   - src/omega/oracle/model_gateway.py (16968 tokens)
+   - src/omega/oracle/oracle.py (15362 tokens)
+   - src/omega/oracle/entity_registry.py (12096 tokens)
+- oracle_core_b: 3 files, ~27815 tokens (sub-split of oracle_core)
+   - ... 3 core engine files
+- oracle_core_c: 3 files, ~27817 tokens (sub-split of oracle_core)
+   - ... 3 core engine files
+- oracle_core: 9 files, ~83447 tokens (SUPERSEDED by _a/_b/_c — do NOT upload)
+- memory: 8 files, ~31821 tokens
+  - src/omega/memory_store.py (11337 tokens)
+  - src/omega/memory/embeddings.py (4638 tokens)
+  - src/omega/memory/providers.py (4590 tokens)
+  - ... and 5 more
+- providers: 7 files, ~14548 tokens
+  - src/omega/oracle/backends/remote_provider.py (4488 tokens)
+  - config/models.yaml (3948 tokens)
+  - src/omega/oracle/backends/openai_compat.py (2221 tokens)
+  - ... and 4 more
+- observability: 12 files, ~44810 tokens
+  - src/omega/observability/__init__.py (15337 tokens)
+  - src/omega/monitoring/__init__.py (7718 tokens)
+  - src/omega/observability/observability_reader.py (3827 tokens)
+  - ... and 9 more
+- mcp_hub: 3 files, ~2755 tokens
+  - src/omega/mcp_runtime.py (2230 tokens)
+  - src/omega/hub.py (505 tokens)
+  - src/omega/gateway/__init__.py (20 tokens)
+- strategy: 105 files, ~393663 tokens
+  - docs/strategy/REFINED_AGB_KRIKRI_STRATEGY.md (24856 tokens)
+  - docs/strategy/MIDDLEWARE_PLUGIN_IMPLEMENTATION_GUIDE.md (17222 tokens)
+  - docs/strategy/archive/HARDENING_IMPLEMENTATION_PLAN.md (16729 tokens)
+  - ... and 102 more
+- general: 130 files, ~354334 tokens
+  - src/omega/workers/background_researcher/distiller.py (14001 tokens)
+  - src/omega/workers/youtube_worker.py (12597 tokens)
+  - src/omega/cli/oracle_cli.py (12533 tokens)
+  - ... and 127 more
+
+## Usage Notes
+- This pack uses XML format for optimal Claude comprehension
+- Each file is wrapped in <file> tags with metadata attributes
+- The manifest should be reviewed first to understand the pack structure
+- Token counts are estimates using cl100k_base encoder (Claude's tokenizer)

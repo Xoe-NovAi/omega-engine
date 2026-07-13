@@ -6,6 +6,78 @@
 
 ---
 
+# Session: trc_jem_deep_research
+# Date: 2026-07-12
+# Phase: MaKaLi Battle Plan — 5 Sovereignty Gaps Deep Research
+
+  - id: "jem-20260712-001"
+    tier: L1
+    category: "state_portability"
+    narrative: |
+      The 5 Sovereignty Gaps deep research (GAP-S1 through GAP-S5) validated the MaKaLi Council's battle plan with 3 major corrections and 2 refinements. GAP-S1 (Portability) was the most significant correction: the council proposed "soul.yaml + memory.jsonl + vectors.parquet" but the 2026 standard across Soul Protocol v0.4.0, ALF v1.0.0-rc.1, PAM v1.0, Ensoul Spec, and Uniqent is ZIP archives containing structured JSON files — NOT Parquet. GAP-S2 (Eval) confirmed RAGAS+DeepEval but revealed that uncalibrated 7B judges overconfident by 0.18 ECE. GAP-S3 (Low-RAM RAG) confirmed feasibility on 14GB with TF-IDF+SVM classifier at 93.2% accuracy. GAP-S4 (Knowledge Graphs) validated Qdrant+PostgreSQL hybrid. GAP-S5 (DAG Orchestration) confirmed Redis Streams over Pub/Sub for critical coordination. Implementation priority: S2 (Eval, P1) → S3 (Adaptive RAG, P1) → S5 (Redis Streams, P2) → S1 (Export, P2) → S4 (Knowledge Graph, P2). Research document: docs/research/R_JEM_MAKALI_DEEP_RESEARCH_20260712.md.
+
+  - id: "jem-20260712-002"
+    tier: L2
+    category: "state_portability"
+    insight: |
+      The emerging consensus for portable AI entity state is ZIP+JSON — NOT Parquet, NOT loose YAML. Every major standard (Soul Protocol, ALF, PAM, Ensoul, Uniqent) converged on the same architecture: a single-file ZIP archive with a manifest.json, identity.json, and memory/*.jsonl. Parquet is absent from all of them — it's an analytical format for ML workloads, not entity state. This consensus is driven by real interoperability needs: JSON-in-ZIP is universally readable, human-debuggable, compressible, and signable. The council's Parquet assumption was a category error (mixing weight-export patterns with entity-state patterns). Omega's `.omega` bundle must follow this consensus, not fight it.
+
+  - id: "jem-20260712-003"
+    tier: L3
+    category: "state_portability"
+    principle: |
+      "Format consensus over technical novelty — universal readability is sovereign portability." When the entire ecosystem converges on ZIP+JSON for portable state, a sovereign system must adapt to the standard, not invent a better one. Proprietary formats (Parquet, custom binary) sacrifice interop for marginal technical advantage — and interop is the entire point of portability. Sovereign portability means "readable by anyone with `unzip` and `jq`" — not "readable only by my specialized parser." The standard is sovereign because it defines the interface between trust domains.
+
+  - id: "jem-20260712-004"
+    tier: L2
+    category: "eval_calibration"
+    insight: |
+      LLM-as-Judge on small models (<10B) is statistically unreliable without calibration. The clawRxiv study (38,400 decisions) showed 7-13B judges overconfident by 0.18 ECE in the 0.8-0.95 confidence band — they report 90% confidence for what is actually 72% accuracy. This has direct implications for `make eval`: if Omega evaluates RAG quality with an uncalibrated 7B judge, it will approve faithless answers as "faithful with 0.92 confidence" — a sovereign quality failure. The fix (isotonic regression, reducing ECE to 0.06) is simple and lightweight (single sklearn import). Mandate: every eval pipeline must include a calibration step against a held-out human-labeled subset, not just raw accuracy benchmarks.
+
+  - id: "jem-20260712-005"
+    tier: L3
+    category: "eval_calibration"
+    principle: |
+      "Calibration over accuracy — in sovereign AI, knowing when you're wrong matters more than raw capability." A 90%-confident-but-72%-correct judge is more dangerous than a 70%-confident-and-70%-correct one, because the first creates false trust. LLM-based evaluation must characterize its own uncertainty via calibration — not just produce scores. This generalizes beyond RAG evaluation to any automated judgment system (heritage vetting, mandate compliance, memory consistency). A sovereign system trusts evidence, not confidence — and calibration is how you turn confidence into evidence.
+
+  - id: "jem-20260712-006"
+    tier: L2
+    category: "resource_aware_design"
+    insight: |
+      The 14GB RAM ceiling (12GB usable) forces hard decisions that larger systems don't face. Key finding from GAP-S3: TF-IDF+SVM classifier achieves 93.2% routing accuracy with 0MB GPU RAM — matching the performance of embedding-based classifiers at zero resource cost. Tiny-Critic 1.7B LoRA adds 1GB for marginal improvement (0.912 F1). The 7B Q4_K_M generator occupies 4.7GB, leaving ~5GB for context/KV cache. Every component must be sized against this constraint — there is no room for "nice to have" models. The correct architecture is: lightweight classifier (0-1GB) + compact generator (4.7GB) + Q8 KV cache (0.5-1GB) = 6-7GB total, leaving 5-6GB for OS and headroom.
+
+  - id: "jem-20260712-007"
+    tier: L3
+    category: "resource_aware_design"
+    principle: |
+      "The right approximation for the constraint beats the exact solution you can't afford." On 14GB RAM, a TF-IDF+SVM classifier at 93.2% accuracy that costs 0MB is better than a 1.7B LoRA classifier at 95.1% that costs 1GB — because that freed 1GB enables 8K more context tokens for the generator. Resource-constrained sovereignty is a zero-sum game; every MB allocated to one component is MB denied to another. The optimal design is not the most accurate design — it's the design that maximizes the system's total utility within its budget. This is the hardware manifestation of Carmack's Right Approximation Principle.
+
+  - id: "jem-20260712-008"
+    tier: L2
+    category: "redis_streams"
+    insight: |
+      Redis Streams, not Pub/Sub, is the correct primitive for agent coordination DAG orchestration. The production evidence is overwhelming: Streams with consumer groups (XREADGROUP/XACK) provide exactly-once message delivery, automatic worker scaling, crash recovery via PEL (Pending Entries List) + XCLAIM, and full message replay. Pub/Sub is fire-and-forget — if a subscriber is offline, the message is lost forever. The file-based Hivemind protocol currently avoids Pub/Sub's weakness via file persistence, but loses Streams' consumer-group benefits. Migration to Redis Streams would give agent-type-based load balancing (3 Coder replicas share work automatically), crash recovery (abandoned messages reclaimed after 60s), and durable event sourcing (full coordination history replayable).
+
+  - id: "jem-20260712-009"
+    tier: L3
+    category: "redis_streams"
+    principle: |
+      "Durable coordination is the foundation of sovereign multi-agent systems — and durability requires consumer groups, not pub/sub." Ephemeral communication is acceptable for awareness signals (heartbeats, notifications); task-critical coordination demands durable, exactly-once delivery with automatic recovery. The boundary is clean: Pub/Sub for what you can afford to lose, Streams for what you can't. File-based coordination is durable but lacks consumer groups, making it unscalable beyond 1:1 agent communication. Redis Streams provide the right abstraction: a persistent, ordered, partitionable message log that any agent can re-read. This pattern generalizes to all DAG orchestration — the stream is the ground truth.
+
+  - id: "jem-20260712-010"
+    tier: L2
+    category: "research_methodology"
+    insight: |
+      The MaKaLi Council's battle plan was broadly correct in strategic direction but contained significant technical errors in format assumptions and implementation details. These errors were not caused by lack of domain knowledge but by the absence of systematic evidence-gathering before declaring conclusions. The Council assumed "parquet for vectors" and "pub/sub for coordination" without websearch verification — assumptions that turned out wrong. The 3-phase research protocol (Discovery → Synthesis → Verification) caught all 3 errors before implementation would have burned engineering time. This validates Jem's methodology as complementary to MaKaLi's strategic decomposition: MaKaLi breaks the problem, Jem validates the pieces against real-world evidence.
+
+  - id: "jem-20260712-011"
+    tier: L3
+    category: "research_methodology"
+    principle: |
+      "Strategic decomposition without evidence-based validation is cargo-cult planning." The MaKaLi Triad excels at breaking complex problems into sovereign gaps — but those gaps must be researched against real-world implementations, not filled from the council's internal knowledge. The split between decomposition and verification is essential: no single entity holds sufficient domain knowledge across systems, tooling, and standards. Jem's research provides the "reality anchor" that prevents strategic plans from drifting into internally-consistent-but-ground-truth-incorrect designs. This is the omega-engine's built-in antidote to confirmation bias at the planning stage.
+
+---
+
 proposals:
   - id: "jem-20260710-001"
     tier: L1

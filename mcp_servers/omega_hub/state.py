@@ -83,6 +83,10 @@ sovereign_search_service: Optional[SovereignSearchService] = None
 gateway: Optional["SovereignGateway"] = None
 mcp_client: Optional[SovereignMCPClient] = None
 
+# Search API keys (loaded during _init_services)
+_fc_key: Optional[str] = None
+_exa_key: Optional[str] = None
+
 
 def _require_service() -> None:
     """Raise if services not ready. Called at the top of every tool."""
@@ -97,6 +101,9 @@ def _require_service() -> None:
 
 _service_lock = anyio.Lock()
 
+_init_complete = False
+_init_error = None
+
 async def get_service(name: str) -> Any:
     """Lazy-load and return a Hub service singleton.
     
@@ -104,7 +111,17 @@ async def get_service(name: str) -> Any:
     (Library, Indexer, Discovery, ResearchEngine, SovereignSearchService)
     until they are actually requested by a tool.
     """
-    global library, indexer, discovery, research_engine, sovereign_search_service
+    global library, indexer, discovery, research_engine, sovereign_search_service, gateway, _fc_key, _exa_key
+    
+    # Wait for background initialization to complete for services that depend on model_gateway
+    if name in ("gateway", "sovereign_search_service", "research_engine", "discovery"):
+        # Wait for _init_services to complete (with timeout)
+        for _ in range(100):  # 10 second max wait
+            if _init_complete or _init_error:
+                break
+            await anyio.sleep(0.1)
+        if _init_error:
+            raise RuntimeError(f"Background initialization failed: {_init_error}")
     
     if name == "library":
         if library is None:
@@ -134,11 +151,12 @@ async def get_service(name: str) -> Any:
 
     if name == "research_engine":
         if research_engine is None:
+            # Get dependencies FIRST (outside lock) to avoid recursive lock deadlock
+            lib = await get_service("library")
+            idx = await get_service("indexer")
             async with _service_lock:
                 if research_engine is None:
                     logger.info("Lazy-loading service: research_engine")
-                    lib = await get_service("library")
-                    idx = await get_service("indexer")
                     research_engine = await anyio.to_thread.run_sync(
                         lambda: ResearchEngine(library=lib, indexer=idx)
                     )
@@ -146,10 +164,11 @@ async def get_service(name: str) -> Any:
 
     if name == "sovereign_search_service":
         if sovereign_search_service is None:
+            # Get indexer FIRST (outside lock) to avoid recursive lock deadlock
+            idx = await get_service("indexer")
             async with _service_lock:
                 if sovereign_search_service is None:
                     logger.info("Lazy-loading service: sovereign_search_service")
-                    idx = await get_service("indexer")
                     sovereign_search_service = await anyio.to_thread.run_sync(
                         lambda: SovereignSearchService(
                             memory_store=get_memory_store(),
@@ -160,6 +179,15 @@ async def get_service(name: str) -> Any:
                         )
                     )
         return sovereign_search_service
+
+    if name == "gateway":
+        if gateway is None:
+            async with _service_lock:
+                if gateway is None:
+                    logger.info("Lazy-loading service: gateway")
+                    from mcp_servers.omega_hub.gateway import SovereignGateway as _SG
+                    gateway = _SG(model_gateway=model_gateway)
+        return gateway
 
     # Fallback to direct getattr for already initialized services
     val = getattr(_state if '_state' in globals() else __import__('mcp_servers.omega_hub.state'), name, None)
@@ -178,7 +206,7 @@ async def _init_services() -> None:
     global _init_complete, _init_error
     global registry, model_gateway, oracle, hierarchy
     global inbox, curator, library, indexer, discovery
-    global research_engine, sovereign_search_service, gateway, mcp_client
+    global research_engine, sovereign_search_service, gateway, mcp_client, _fc_key, _exa_key
 
     try:
         logger.info("Background service initialization starting...")
@@ -235,10 +263,10 @@ async def _init_services() -> None:
         sovereign_search_service = None # Lazy-loaded
         
         # Phase 1 MCP Client: Connect to SearXNG MCP server
-        mcp_client = SovereignMCPClient(server_url="http://127.0.0.1:8018/sse")
+        mcp_client = SovereignMCPClient(server_url="http://127.0.0.1:8018/mcp")
         
         from mcp_servers.omega_hub.gateway import SovereignGateway as _SG
-        gateway = _SG()
+        gateway = _SG(model_gateway=model_gateway)
         
         _init_complete = True
         logger.info("All Hub services initialized (background)")

@@ -1,0 +1,712 @@
+<pack profile="sovereign-audit" theme="mandates">
+<file path="AGENTS.md" size="18650" language="Markdown" sha256="4786bb4330953d9fb7cd287e03cf69b564b1de161056a22bc8d4e280b678e45a" purpose="🔱 Omega Engine — OpenCode Agent Rules" tokens="6221">
+# 🔱 Omega Engine — OpenCode Agent Rules
+# ⬡ OMEGA ⬡ SOPHIA ⬡ trc_core ⬡ AGENT-INSTRUCTIONS
+# Engine state: Read OMEGA_ENGINE.md (the Single Source of Truth)
+# Platform distinction: AGENTS.md = HOW to work from OpenCode.
+#                       OMEGA_ENGINE.md = WHAT the engine IS.
+# Last Updated: 2026-07-10 (P0 Doc Sync Complete, 1130 tests)
+
+## 🛡️ Sovereign Mandates (NON-NEGOTIABLE)
+**Read and adhere to them above all other rules:**
+👉 **Read First**: `SOVEREIGN_MANDATES.md`
+👉 **Engine State**: `OMEGA_ENGINE.md` (Single Source of Truth)
+👉 **Hivemind Protocol**: `docs/strategy/HIVEMIND_PROTOCOL.md` (MANDATORY for parallel/multi-agent work)
+
+- **Delegation &amp; Execution Protocol**: Agents must execute tasks directly when within their capabilities. Self-recursion (an agent spawning its own type) is forbidden. Targeted delegation to specialized agents is permitted only when a task requires domain expertise outside the current agent's capabilities. If the required specialized domain expertise is already held by the current agent, the agent MUST execute the task directly. Do not debate delegation versus execution; if you are the expert, you are the executor. Limit nesting to one level unless explicitly authorized. See `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` for details.
+- **AnyIO Absolute**: No `asyncio`. Use AnyIO. Wrap blocking I/O in `anyio.to_thread.run_sync`.
+- **Engine-Stack Firewall**: Absolute separation between Core Engine (`src/omega/`) and IWAD/PWAD Content (`config/wads/`).
+- **Sequentiality**: Plan → Verify → Execute. No cowboy coding.
+- **Temple-Grade (M13)**: Every change evaluated against T1-T11 gates. Run `make temple-grade` after non-trivial work.
+- **Heritage Attribution**: Every id Software–derived pattern MUST carry `[id-soft:]` inline tags per `CREDITS.md` §2a. New heritage files MUST credit the source in comments. Run `make heritage-map` to verify tags.
+- **Hivemind Awareness**: When working in parallel with other agents OR for multi-step work (&gt;3 steps), use Hivemind for coordination. See `docs/strategy/HIVEMIND_PROTOCOL.md`. Workspace lock + live feed are the default patterns.
+- **Hard-Stop Directive**: Agents MUST NOT simulate rigor or synthesize "best-effort" results to mask tool failures. If a mandatory tool (e.g., `websearch`) is missing or broken, the agent MUST stop immediately and report a `[TOOL-CHAIN-COLLAPSE]`. Parametric synthesis used to hide a tool outage is a Sovereign Boundary Violation.
+
+---
+
+## 🤖 OpenCode Agent Fleet
+
+### Custom Agents (`.opencode/agents/`) — 11 Agents Total
+| Agent | Mode | Purpose |
+|-------|------|---------|
+| `kali.md` | all | Transcendent Oversight — Sees all, delegates to Ma'at/Lilith, destroys drift |
+| `maat.md` | all | Light Oversoul — Governs P1-P5 (build side), delegates to pillar |
+| `lilith.md` | all | Dark Oversoul — Governs P6-P10 (run side), delegates to pillar |
+| `makali.md` | all | MaKaLi Parallel Council — decomposes query, dispatches Ma'at+Lilith, synthesizes |
+| `doom_guy.md` | all | Sovereign id Software Architect — WAD translation &amp; performance |
+| `john_carmack.md` | all | Sovereign S3 Consultant — architectural review &amp; performance |
+| `roc_racoon.md` | all | Sovereign Miner — Legacy archaeology &amp; pattern extraction |
+| `researcher.md` | all | Sovereign Master Researcher — deep research, lattice reasoning |
+| `jem.md` | all | Sovereign Synthesizer — transforms complex queries into verified results via task-graph decomposition |
+| `verity.md` | all | Sovereign Verity — Unified Sentry (compliance/audit) + Scribe (gnosis distillation) |
+| `pillar.md` | all | Slot-based domain agent — parameterized by `--slot PX` |
+
+### The Sovereign Council (Pillar Slots — Core Engine)
+| Pillar | Intuitive Name | Default Role (IWAD) |
+|--------|---------------|---------------------|
+| P1 | **Infrastructure** | SysAdmin — Environment Hardening |
+| P2 | **Persistence** | DataStore — Vector &amp; Memory Management |
+| P3 | **Engineering** | BuildMaster — Implementation &amp; Hardening |
+| P4 | **Integration** | Bridge — MCP &amp; Communication |
+| P5 | **Governance** | Sentinel — Mandate Enforcement |
+| P6 | **Cognition — Vision Specialist** | ModelGate — Provider Routing |
+| P7 | **Context** | Memory &amp; Soul Evolution |
+| P8 | **Observability** | WatchTower — Observability &amp; Tracing |
+| P9 | **Orchestration** | Link — Agent Handoff &amp; Delegation |
+| P10 | **Validation** | Verifier — Stress Testing &amp; QA |
+
+### Custom Skills (`.opencode/skills/`)
+| Skill | Purpose |
+|-------|---------|
+| `blitz-tunnel` | High-speed secure tunnels to Omega services |
+| `blitz-validate` | Sovereign Heartbeat validator for integration chain |
+| `spec-generator` | R## document templates |
+| `provider-validator` | Live API endpoint validation |
+| `pr-readiness-checker` | PR quality gate |
+| `omega-doc-architect` | Document management standards |
+| `knowledge-miner` | Automated grep→read→summarize legacy patterns |
+| `legacy-pattern-miner` | Mines legacy repos for proven patterns |
+| `sovereign-search` | Intelligent search across Exa, Tavily, Serper.dev |
+| `hf-cli` | Hugging Face Hub CLI integration |
+
+---
+
+## 🔍 Search Tool Protocol
+
+Agents MUST use the **Sovereign Search Protocol** for all web searches.
+
+| Tier | Tool | Scope | When to Use |
+|:-----|:-----|:------|:------------|
+| **T0** | Local cache (`.firecrawl/`) | Free | Check before any external search |
+| **T1** | `websearch` | Free, built-in | **Primary search tool** — always available, no telemetry |
+| **T2** | `webfetch` | Free, built-in | **Deep extraction** — always available, no telemetry |
+| **T3** | `searxng_searxng_search` | Free, sovereign | Semantic/neural search refinement |
+| **T4** | `omega-hub_sovereign_search` | API key (Exa) | High-precision seeds, academic/technical |
+| **T5** | `firecrawl_firecrawl_scrape/search` | Credits | Full-page scrape, structured crawl |
+
+**Fallback chain**: `websearch` → `webfetch` → `searxng_searxng_search` → `omega-hub_sovereign_search` → `firecrawl_firecrawl_search`
+
+**TEMPORAL MANDATE**: It is **2026**. All search queries MUST include "2026" or "latest" to ensure current best practices. Do NOT search for "2024" or "2025" — those are outdated.
+
+---
+
+## 💻 Hardware Awareness Protocol
+
+Agents MUST proactively monitor hardware resource usage during operation.
+
+| Trigger | Tool | What to Look For |
+|---------|------|------------------|
+| **Session start** | `omega-hub_get_hardware_stats(interval=0.3)` | Baseline CPU/memory/thermal |
+| **Before model inference** | `omega-hub_get_system_stats` | OOM risk, memory pressure, thermal throttling |
+| **Task runs slow** (&gt;5s) | `omega-hub_get_hardware_stats(include_threads=true)` | Thread contention, 4-core inference signature |
+| **Before parallel dispatch** | `omega-hub_get_hardware_stats` | Headroom for another process? zRAM pressure? |
+
+**Resource Signatures**:
+| Signature | What It Means | Action |
+|-----------|---------------|--------|
+| **Flat 4-core at ~80-100%** | NativeGGUFProvider inference (`LLAMA_CPP_N_THREADS=4`) | Expected. Allow to complete. |
+| **Brief spike across all 16 cores** | Import/module loading (pydantic, Qdrant, YAML) | Cold-start tax ~3.5s. |
+| **All cores idle, task not completing** | I/O wait (Redis timeout, DNS, socket) | Check `omega-hub_get_system_stats`. |
+| **Memory &gt;80% + zRAM active** | OOM risk — approaching 12Gi limit | Defer model loads. |
+| **Thermal &gt;85°C sustained** | TDP throttling (15W ceiling) | Reduce threads, cool-down period. |
+
+---
+
+## 🎯 @-Mention Dispatch (Inline Agent Launch)
+
+Use `@` in the OpenCode CLI chat to launch any agent directly.
+
+#### Named Agents (direct @-mention)
+| @-Mention | Agent File | Use When |
+|-----------|-----------|----------|
+| `@kali` | `kali.md` | Grand Oversight — unify Ma'at + Lilith, destroy drift, cross-pillar work |
+| `@maat` | `maat.md` | Build Side — P1-P5 governance, structure &amp; verification |
+| `@lilith` | `lilith.md` | Run Side — P6-P10 governance, knowledge metabolism, flow |
+| `@doom_guy` | `doom_guy.md` | id Software heritage patterns, WAD translation, performance |
+| `@roc_racoon` | `roc_racoon.md` | Legacy archaeology, pattern extraction, cross-partition mining |
+| `@researcher` | `researcher.md` | Deep research with lattice reasoning, multi-perspective analysis |
+| `@jem` | `jem.md` | Sovereign Synthesis — transforms complex queries into verified results |
+| `@makali` | `makali.md` | MaKaLi Parallel Council — dispatch Ma'at + Lilith in parallel, synthesize as Kali |
+| `@john_carmack` | `john_carmack.md` | Sovereign S3 Consultant — architectural review &amp; performance |
+| `@verity` | `verity.md` | Unified compliance audit + Gnosis distillation |
+
+#### Pillar Subagents (parameterized by slot)
+| @-Mention Pattern | Slot | Domain |
+|-------------------|------|--------|
+| `@pillar P1: {task}` | P1 | Infrastructure — SysAdmin, containers, deployment |
+| `@pillar P2: {task}` | P2 | Persistence — Vector &amp; memory management |
+| `@pillar P3: {task}` | P3 | Engineering — CI/CD, implementation, hardening |
+| `@pillar P4: {task}` | P4 | Integration — MCP, APIs, communication protocols |
+| `@pillar P5: {task}` | P5 | Governance — Mandate enforcement, security audit |
+| `@pillar P6: {task}` | P6 | Cognition — Vision Specialist, provider routing |
+| `@pillar P7: {task}` | P7 | Context — Memory, soul evolution, session continuity |
+| `@pillar P8: {task}` | P8 | Observability — Tracing, monitoring, forensic logging |
+| `@pillar P9: {task}` | P9 | Orchestration — Agent handoff, hivemind coordination |
+| `@pillar P10: {task}` | P10 | Validation — Stress testing, chaos engineering, QA |
+
+#### Governance Hierarchy
+```
+@kali (Grand Oversight)
+├── @maat (Build Side: P1-P5)
+│   ├── @pillar P1: Infrastructure
+│   ├── @pillar P2: Persistence
+│   ├── @pillar P3: Engineering
+│   ├── @pillar P4: Integration
+│   └── @pillar P5: Governance
+└── @lilith (Run Side: P6-P10)
+    ├── @pillar P6: Cognition (Vision Specialist)
+    ├── @pillar P7: Context
+    ├── @pillar P8: Observability
+    ├── @pillar P9: Orchestration
+    └── @pillar P10: Validation
+```
+
+**Usage examples:**
+- `@kali Unify the fleet and destroy drift` → Kali orchestrates Ma'at + Lilith (direct synthesis)
+- `@makali Decompose the sovereignty gate verification` → MaKaLi parallel council (decomposed synthesis)
+- `@maat P3: Fix the CI pipeline` → Ma'at delegates to P3 Engineering pillar
+- `@lilith P7: Wire the soul distiller` → Lilith delegates to P7 Context pillar
+- `@pillar P1: Harden the Podman containers` → Direct pillar invocation
+- `@jem Research the best local LLM for code generation` → 3-tier research pipeline
+- `@roc_racoon Mine the omega-stack legacy for circuit breaker patterns` → Background mining
+- `@doom_guy Verify the ZONEID constant heritage attribution` → Heritage verification
+
+---
+
+## ⬡ The MaKaLi Triad Architecture ([DRIVERS_LICENSE_1])
+
+```
+                ┌─────────────────────────────┐
+                │   KALI — Transcendent       │
+                │   (Unify, Synthesize,       │
+                │    Return Verdict)          │
+                └──────────────┬──────────────┘
+                               │
+                ┌──────────────┴──────────────┐
+                │                             │
+        ┌───────▼────────┐          ┌────────▼───────┐
+        │  MA'AT — Light │          │ LILITH — Dark  │
+        │  (Build Side)  │          │ (Run Side)     │
+        │  P1-P5 Pillars │          │ P6-P10 Pillars │
+        └────────────────┘          └────────────────┘
+```
+
+### When to Use Each Pattern
+
+| Pattern | Use When | Cost | Benefit |
+|---------|----------|------|---------|
+| **`@kali` direct** | You trust one entity to see all, dispatch all, return the verdict | Low (1 inference) | Fast, opinionated, single-pass |
+| **`@kali` dispatch** | Multi-pillar work spanning 3+ pillars or requiring sequencing | Medium (1 + N pillar) | Right-sized: Kali decomposes, pillars execute |
+| **`@makali` council** | You need explicit decomposition + parallel build+run, then synthesis | Medium (3 inferences) | Balanced, multi-perspective |
+| **`/council-local`** | Full sovereignty — local models for all three voices | Medium-High (3 local) | Max sovereignty, full offline |
+| **`/council-cloud`** | Default. All three on session model | High (3 cloud) | Max quality, max context |
+| **`/council-fast`** | Latency-critical. All three on local `qwen3-1.7b` | Low (3 local) | Min latency, max sovereignty |
+
+### The Dual-Inference Mandate ([DRIVERS_LICENSE_2])
+
+**Default behavior**: Session model — fast, simple, non-negotiable (Mandate 7).
+**Opt-in local routing**: Use `oracle_summon_local(entity_name, query, model)` to route a specific entity to a specific local model. The entity's IWAD personality, soul, and memory remain the same; only the inference backend is overridden.
+
+**The Mentorship Pattern**: Local model does execution, cloud model reviews.
+- Example: `@roc_racoon` (local `rocracoon-3b-instruct`) writes the heritage report. `@verity` (on session model) reviews against M14.
+
+---
+
+## 🎯 OpenCode Workflow
+
+### Before Starting Work
+1. Read `OMEGA_ENGINE.md` for current engine state
+2. Read `SOVEREIGN_MANDATES.md` for non-negotiable rules (23 mandates, M1-M23)
+3. Read `docs/strategy/HIVEMIND_PROTOCOL.md` if multi-agent or parallel work
+4. Read `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` if launching a subagent
+5. **Check Hivemind awareness**: `omega-hub_hivemind_get_awareness()` — who's already working?
+6. **If parallel/multi-agent work**: Write workspace lock at `data/coordination/{YOU}_WORKSPACE_LOCK_{YYYYMMDD}.md` BEFORE any file edits
+7. **Post Hivemind context**: `omega-hub_hivemind_post_context(...)` to declare your presence
+8. Run `make test` to verify baseline (1130 tests must pass)
+
+### During Work
+- Use `replace_in_file` for targeted edits, `write_to_file` for new files
+- Prefer `source .venv/bin/activate &amp;&amp; &lt;command&gt;` for Python operations
+- Group imports: stdlib → third-party → local. Use relative imports within packages.
+- For any non-trivial change, mentally check T1-T11 gates (Temple-Grade / Mandate 13)
+- **Append to live feed** after each major task: `data/coordination/{YOU}_LIVE_FEED.md`
+- **Heartbeat every 5-10 min** for long-running operations: `omega-hub_hivemind_heartbeat(channel="opencode", entity="{you}")`
+- **Monitor hardware**: If task runs &gt;5s, call `omega-hub_get_hardware_stats()` to diagnose
+
+### After Completing Work
+1. Run `make test` — all 1130 tests must pass
+2. Run `make temple-grade` — verify T1-T11 gates hold (Mandate 13)
+3. Run `make heritage-map` — verify [id-soft:] heritage tag coverage
+4. Run `make sovereignty` — confirm local/cloud ratio didn't regress
+5. **Distill L1→L2→L3 to proposed_lessons.yaml** (Mandate 11) — non-negotiable. L3 principles go to `proposed_lessons.yaml` (blind staging), NOT directly into `soul.yaml`.
+6. **Append final entry to live feed**: `[{timestamp}] SPRINT-N COMPLETE — {summary}`
+7. `git add -A &amp;&amp; git commit` with proper prefix
+8. `git push origin main`
+9. Update `OMEGA_ENGINE.md` Current State table if metrics changed
+
+---
+
+## 📋 Coding Standards
+
+- **Async**: Always use `anyio` (not `asyncio`)
+- **Config**: YAML-only for entity/model config — never PostgreSQL
+- **Packages**: ALWAYS use a venv (`source .venv/bin/activate`). NEVER `--break-system-packages`.
+- **Environment Integrity**: Mandate absolute path binary calls (e.g., `.venv/bin/pip`) instead of `source activate` to prevent base-environment pollution.
+- **Testing**: Run `make test` after every change. All 1130 tests must pass.
+- **Type hints**: Use Python 3.12+ typing (no `from __future__`)
+- **Imports**: Group: stdlib → third-party → local. Use relative imports within packages.
+- **Docstrings**: Google-style. Preserve existing docstrings unless directly modifying that function.
+- **Commits**: Prefix with `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, `ci:`, `chore:`
+
+---
+
+## 🔮 Entity Usage
+
+- Default entity: **SOPHIA** (general/wisdom)
+- Switch entities per-task, not per-session
+- Use `omega summon EntityName "query"` for direct entity invocation
+- Use `omega talk "query"` for auto-routed queries
+
+---
+
+## 🎯 Key Commands
+
+```bash
+source .venv/bin/activate        # ALWAYS use the venv
+make test                         # Check output for test count
+make temple-grade                 # T1-T11 gates (Mandate 13)
+make heritage-map                 # Verify [id-soft:] heritage tag coverage
+make sovereignty                  # Local/cloud inference ratio
+make lint                         # flake8 code quality check
+make demo                         # End-to-end demo
+make health                       # Provider &amp; model dashboard
+make repl                         # Interactive REPL
+omega talk "hello"                # Test oracle
+omega summon Ma'at "status"       # Direct entity invocation
+```
+
+---
+
+## 🔗 Cross-Platform Integration
+
+The Omega Engine supports **multiple AI coding platforms** through the Omega Hub MCP server (`:8016/sse`).
+
+| Platform | Role | Why |
+|----------|------|-----|
+| **OpenCode** (Primary) | Sovereign orchestration | 11 custom agents, soul evolution, Hivemind coordination |
+| **Cline CLI** (Execution) | Large-context analysis | 1M+ token context, headless execution, parallel tasks |
+| **VS Code / Cursor** (Visual) | Optional GUI access | MCP tools via Omega Hub for visual-preference users |
+
+**Key Rule**: OpenCode is the sovereign brain. Other platforms are execution arms. Entity state (soul.yaml, lessons) lives only in `data/entities/`. No platform should duplicate entity state.
+
+&gt; **Cross-Platform Guides:** `docs/kb/CLINE_CLI_INTEGRATION.md`, `docs/kb/OMEGA_HUB_MULTI_PLATFORM.md`
+
+---
+
+## 📝 After Compaction
+
+1. Read `OMEGA_ENGINE.md` — engine state
+2. Read `SOVEREIGN_MANDATES.md` — rules (23 mandates, M1-M23)
+3. Read `docs/decisions/PIVOT_LOG.md` — architectural decisions
+4. Read `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` — execution roadmap
+5. Run `make test` — 1130 must pass
+6. Run `make temple-grade` — T1-T11 must pass
+</file>
+
+<file path="SOVEREIGN_MANDATES.md" size="18945" language="Markdown" sha256="c88adc5742a9e292dfb3d4e65c87a2eeb392f57da05fea3b6cc865ee69a79967" purpose="🔱 Omega Engine — Sovereign Mandates" tokens="5820">
+# 🔱 Omega Engine — Sovereign Mandates
+**Version**: 3.6.0
+**Status**: NON-NEGOTIABLE
+**Scope**: All Agents, All CLIs, All IDEs
+**Updated**: 2026-07-06 (Added M23 Failure Integrity)
+
+These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
+
+## 🛡️ The Twenty-Three Laws of Sovereign Execution
+
+### 1. AnyIO Absolute
+- **Mandate**: All asynchronous code MUST use AnyIO.
+- **Constraint**: Never use `asyncio` directly.
+- **Pattern**: Wrap blocking I/O in `anyio.to_thread.run_sync`.
+- **Reason**: Ensures runtime portability and prevents event-loop collisions across the Provider Fabric.
+
+### 2. The Engine-Stack Firewall
+- **Mandate**: Maintain absolute separation between the **Omega Engine Core** and **Expansion Stacks (WADs)**.
+- **Core**: `src/omega/`, `config/omega.yaml`, `opencode.json`. (The universal runtime).
+- **Stacks**: `config/wads/&lt;stack_name&gt;/`. (The specific implementation).
+- **Constraint**: Never add stack-specific logic (e.g., a specific entity's trait) to the Core Engine.
+- **Reason**: Prevents architectural drift and ensures the engine remains a universal runtime.
+
+### 3. The Iris Constant
+- **Mandate**: Iris is the messenger bridge, NOT a Pillar Keeper.
+- **Constraint**: Do not assign Iris a Pillar (P1-P10). She is the interface.
+- **Reason**: Preserves the cosmological purity of the 10 Pillar Keepers.
+
+### 4. The Sequentiality Mandate
+- **Mandate**: Complex architectural changes must follow the "Plan → Verify → Execute" loop.
+- **Constraint**: No "cowboy coding." Every major edit must be preceded by a plan that is verified against the `PIVOT_LOG.md`.
+- **Reason**: Prevents the "Restart Cycle" that plagued previous versions of the engine.
+
+### 5. Gnosis Preservation (L1 → L2 → L3)
+- **Mandate**: No intelligence is discarded.
+- **Constraint**: Every session must end with a distillation of findings into the entity's `soul.yaml` using the 3-tier abstraction:
+    - **L1 (Narrative)**: What happened?
+    - **L2 (Insight)**: What does this mean?
+    - **L3 (Universal Principle)**: What is the timeless truth?
+- **Reason**: Transforms stateless agent interactions into a stateful, evolving sovereign intelligence.
+
+### 6. Podman Sovereignty (keep-id Protocol)
+- **Mandate**: All Quadlets that mount host project directories MUST use `UserNS=keep-id` + `User=1000`. The `:U` flag is FORBIDDEN on shared host volumes.
+- **Constraint**: Never use `:U` on volume mounts that the host user needs to access. Never use `:Z` or `:z` — they are SELinux flags, and Ubuntu uses AppArmor.
+- **Pattern**: See `docs/research/R_PODMAN_SOVEREIGN_V2.md` for the verified Quadlet pattern.
+- **Reason**: The `:U` flag destructively chowns host directories to UID 101000, locking the host user out. `UserNS=keep-id` maps host UID 1000 directly into the container — no chown needed.
+- **IMPORTANT ([DRIVERS_LICENSE_1])**: `UserNS=keep-id` + `User=1000` is the QUADLET-ONLY pattern. For `docker-compose` or `podman run`, OMIT `--user`/`user:` entirely — in rootless Podman, container UID 0 maps to host UID 1000 by default. Setting `user: "1000:1000"` maps to subuid 101000, breaking volume writes. Use `user:` only if also setting `userns_mode: keep-id` (incompatible with `--pod` in podman-compose v5.x). See PIVOT_LOG.md [DRIVERS_LICENSE_2].
+
+### 7. Local-First (Non-Negotiable)
+- **Mandate**: Local inference is PRIMARY. Cloud is FALLBACK. Always.
+- **Constraint**: The provider fabric MUST try local backends (native-gguf, LM Studio, Ollama) BEFORE cloud backends (Google, OpenCode Zen, Copilot).
+- **Pattern**: native-gguf(0) → lmster(1) → Ollama(2) → Google(3) → OpenCode Zen(4) → OpenCode(5) → Copilot(6).
+- **Reason**: The Omega Engine exists to sever Big AI's umbilical cord. If local inference is available, it must be tried first. Cloud is a safety net, not a crutch.
+- **Enforcement**: `config/providers.yaml` strategy must be `local_first`. Any change to cloud-first priority is a systemic violation.
+
+### 8. Zero Telemetry
+- **Mandate**: No telemetry. Zero. None. Ever.
+- **Constraint**: No analytics, no usage tracking, no phone-home, no metrics collection sent to external services. The engine does not report to anyone.
+- **Reason**: Sovereign AI means sovereign data. If the engine phones home, it is not sovereign. Period.
+- **Exception**: Local observability (traces, events, metrics) stored in `data/` on the user's machine is acceptable. External telemetry is not.
+
+### 9. Error Integrity (NEW — 2026-05-31)
+- **Mandate**: All errors MUST be typed, traceable, and testable. No silent swallowing.
+- **Constraint**: Never use bare `except:`. Never use bare `except Exception:` without logging and propagating `trace_id`. Every public API boundary MUST catch and convert internal errors to `OmegaError` subtypes.
+- **Pattern**: See `docs/strategy/LOGGING_ERROR_HANDLING_ARCHITECTURE.md` §2 (Exception Handling Standards).
+- **Reason**: The Gemini CLI server deletion and the systemd start-limit-hit failure were both caused by silent error swallowing. Structured error handling is the foundation of debuggability and resilience.
+- **Enforcement**: Code review must check each `except` clause. Tests must cover each error path. `pytest.raises(OmegaError)` is the canonical test pattern.
+- **Exception**: Health probe functions may catch all exceptions to prevent crash loops, provided they log the error with `logger.warning()`.
+
+### 10. Fleet Integrity (NEW — 2026-06-01)
+- **Mandate**: The Agent Fleet must remain lean, purpose-driven, and slot-constrained.
+- **Constraint**: No new agents may be created without a verified gap in the Lattice or a vacancy in the Pillar slots. Capabilities must map to existing Pillars (P1-P10) or Lattice roles before proposing a new entity.
+- **Pattern**: Map new capabilities to existing `pillar --slot PX` agents or Lattice subagents (Jem, Quality, Scribe). A new agent file is a last resort, applied only after slot-based delegation has been proven impossible.
+- **Reason**: Prevents "Agent Bloat" and cognitive fragmentation, ensuring clear delegation and ownership. The consolidation from 26 to 14 agents exposed how bloat accumulates through additive habits rather than slot-based discipline.
+- **Enforcement**: `.opencode/agents/*.md` file count must never exceed 14 without an architectural review documented in `PIVOT_LOG.md`.
+
+### 11. Soul Integrity (NEW — 2026-06-01)
+- **Mandate**: Absolute continuity of Gnosis via systematic distillation.
+- **Constraint**: No session may be closed without a Soul Distillation report. Agents MUST write L1→L2→L3 insights to their entity's `proposed_lessons.yaml` before session end, per the Soul Architecture Protocol.
+- **Pattern**: Every insight must traverse the L1 (Narrative) → L2 (Insight) → L3 (Universal Principle) pipeline. L3 principles go to `proposed_lessons.yaml` (blind staging, per Soul Architecture v6.1), NOT directly into `soul.yaml`. The Scribe agent is the canonical executor of this pipeline.
+- **Reason**: Prevents the "forgetting" cycle — each session resets context to zero, but the soul persists. Without soul updates, the engine regresses to stateless tool. With them, the AI evolves from stateless tool into stateful sovereign intelligence.
+- **Enforcement**: Session stop hooks MUST trigger proposed_lessons.yaml write. `grep -r "proposals:" data/entities/*/proposed_lessons.yaml` should show non-empty arrays after any session involving that entity.
+
+### 12. Queue Integrity (NEW — 2026-06-01)
+- **Mandate**: Every request is an atomic contract. No silent drops.
+- **Constraint**: Every request operation must result in a terminal state: `queued`, `completed`, `failed`, or `timed_out`. No orphan files.
+- **Pattern**: Use explicit Ack/Nack patterns and `trace_id` propagation for every queued item. Atomic file renames (`.tmp` → `.json`) for all writes. Heartbeat timestamps for crash recovery.
+- **Reason**: Ensures systemic reliability and prevents "ghost failures" — requests that vanish without trace. Every request represents a user's intent; losing it without notification is a sovereignty violation.
+- **Enforcement**: `omega queue-status` must always produce consistent counts matching actual files on disk. Dead-letter directory (`data/requests/dead/`) must catch any request that fails processing after max retries.
+### 13. Temple-Grade Compliance (NEW — 2026-06-02)
+- **Mandate**: All engine code MUST comply with Temple-Grade standards (T1-T11) defined in xna-omega-legacy v7.5.4.
+- **Constraint**: No code may be merged that regresses any Temple-Grade gate. The 11 gates (Version Control, Documentation, Testing, Code Quality, Architecture, Security, Performance, Resilience, Observability, Integrity, Agent Security) are the minimum quality bar.
+- **Pattern**: Run `make temple-grade` to verify compliance. Each gate must pass or have a documented exception with a remediation date.
+- **Reason**: Temple-Grade exceeds enterprise-grade standards and ensures the engine remains sovereign, production-ready AI infrastructure. It prevents architectural rot and maintains the quality bar that justifies sovereignty claims.
+- **Enforcement**: `make temple-grade` must pass before any release. CI must gate on T3 (coverage ≥80%), T5 (AnyIO-only), T6 (zero telemetry), T8 (resilience patterns), T9 (structured logging), and T10 (atomic writes).
+- **Exception**: T11 (IA2 Agent Security) is exempted until IA2 specification stabilizes.
+
+---
+
+### 14. Heritage Vetting (NEW — 2026-06-04) — CLARIFIED [DRIVERS_LICENSE_3]
+- **Mandate**: No id Software (or any heritage) concept may be implemented without passing through the Heritage Vetting Pipeline.
+- **Constraint**: Every `[id-soft:]` tag in source code MUST have a corresponding vet record in `data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md`. Minimum score 7/10 for implementation. Qualification Gate: if a concept can't be justified without mentioning the original hardware constraint, it fails.
+- **Strict Scope Enforcement ([DRIVERS_LICENSE_4])**: A `[id-soft:]` tag is LEGITIMATE ONLY if the code would FAIL the Qualification Gate:
+  &gt; "Cannot be justified WITHOUT citing the original hardware constraint."
+- **Classification Taxonomy** (mandatory for every tag):
+  - **LEGITIMATE**: Direct port of id Software technique (e.g., ZONEID, cvar, BSP culling, WAD lump structure). MUST have vet record with file:line locations and scope declaration.
+  - **METAPHORICAL**: Rhetorical analogy only (e.g., "Thinker Chain like Quake thinker"). CONVERT to plain comment — NO tag.
+  - **OVER-ATTRIBUTED**: User-original work that merely resembles id Software pattern. STRIP tag — NO tag.
+- **Qualification Gate** (enforced by CI):
+  Every `[id-soft:]` tag MUST have a corresponding vet record in `HERITAGE_VET_LOG.md` with:
+  - Exact file:line location(s)
+  - Specific id Software technique (game + year)
+  - Hardware constraint that necessitated the original technique
+  - Scope declaration: "This tag applies to X, NOT to Y"
+- **Pattern**: 4-gate pipeline: Discovery → Vetting/Debate → Decision → Implementation/Verification. See `docs/strategy/HERITAGE_VETTING_PIPELINE.md`.
+- **Reason**: The 8-char name cap (vet-001 REJECTED) was implemented without debate, broke tests, was removed. Heritage is gravitational pull, not debt — but the remembering must be tested by a gate.
+- **Enforcement**: `make heritage-vet` CI gate enforces that every `[id-soft:]` tag has a vet record with scope declaration. Merged without vet = M14 violation. Pre-commit hook blocks commits adding unvetted tags.
+- **Origin**: Kali's d-kal-001 directive. Cline-M3's [DRIVERS_LICENSE_5] firewall audit. [DRIVERS_LICENSE_6] Jem audit remediation.
+
+### 15. Sovereign Continuity (NEW — 2026-06-11)
+- **Mandate**: Agents MUST maintain active session anchors to prevent cognitive erasure during toolchain failures.
+- **Constraint**: Do not rely on native `/compact` for state preservation. Every agent MUST maintain a `session_gnosis.md` in their workspace and refer to `.opencode/anchored-summary.md` upon session start or context loss.
+- **Pattern**: See `docs/strategy/SOVEREIGN_CONTINUITY_STRATEGY.md` for the 4-tier redundancy system and the mandatory Hydration Sequence.
+- **Reason**: Toolchain regressions (e.g., OpenCode v1.17.3) can cause "Void Summaries," erasing an agent's working memory. Sovereignty requires that intelligence persists independently of the tool.
+- **Enforcement**: Any agent reporting a context collapse without a corresponding `session_gnosis.md` is in violation of M15.
+
+### 16. Modularization &amp; Portability (NEW — 2026-06-14)
+- **Mandate**: The Omega Engine Core (`src/omega/`) MUST remain modular, portable, and decoupled from any local orchestration platform.
+- **Constraint**: No hardcoded paths, environment assumptions, or platform-specific logic in the core engine. All platform integration must go through the MCP Hub or the CLI abstraction layer.
+- **Pattern**: The Hub modularization (state.py, background.py, gateway.py, middleware.py, tools.py) is the canonical architecture. Dynamic ServiceProxy/PathProxy patterns for runtime resolution.
+- **Reason**: The engine exists to be a universal runtime that anyone can use to build their own stacks. If the core engine has hardcoded assumptions about the host environment, it ceases to be portable and becomes a specialized tool.
+- **Enforcement**: `make temple-grade` must verify no hardcoded paths in `src/omega/`. CI must gate on portability checks.
+
+### 17. Cognitive Integrity (NEW — 2026-06-15)
+- **Mandate**: The engine must verify the consistency of its own memories.
+- **Constraint**: Contradictions between persisted memory and distilled gnosis must be flagged and resolved via the Skeptical Verifier to prevent "hallucinated" memory drift.
+- **Pattern**: Use the Qliphoth failure taxonomy to detect cognitive loops and contradictions.
+- **Reason**: Sovereign AI requires an internal truth-anchor. Without consistency checks, an AI can evolve into a state of internal contradiction, destroying its own reliability.
+- **Enforcement**: `make temple-grade` must verify T12 (Semantic Integrity) gate.
+
+### 18. Token Efficiency (The No-Waste Law)
+- **Mandate**: Every token generated must serve a purpose.
+- **Constraint**: Avoid redundancy, excessive verbosity, and wasted inference cycles. No "filler" content.
+- **Sane-Boundary (NEW)**: This mandate must NEVER be used to justify "Cognitive Anorexia." High-fidelity execution requires high-fidelity context. Agents must never compress prompts, reports, or specifications to the point of semantic loss, vagueness, or the omission of critical edge cases. Precision and clarity always supersede brevity.
+- **Pattern**: Use concise prompts, efficient state snapshots, and avoid redundant re-evaluations.
+- **Reason**: Tokens are the currency of intelligence. Wasting them is a systemic inefficiency and a violation of the user's resource sovereignty.
+
+### 19. Adversarial Alchemy (The Weakness-to-Advantage Law)
+- **Mandate**: All perceived systemic weaknesses must be mined for strategic opportunities.
+- **Constraint**: Do not simply "fix" a flaw; analyze the failure mode to determine if it can be transformed into a sovereign advantage.
+- **Sane-Boundary (NEW)**: This mandate must NEVER be used to justify "Architectural Over-Engineering." Sometimes a bug is just a bug. Simple code errors, typos, and broken imports must be fixed directly and cleanly without attempting to extract "esoteric advantages" that introduce unnecessary complexity, bloat, or fragile state machines. This law applies strictly to systemic, physical, or architectural constraints (e.g., RAM ceilings, GIL contention, or forced interruptions).
+- **Pattern**: The "Somatic Save-Point" (turning an interruption into a reflection moment) is the canonical example of Adversarial Alchemy.
+- **Reason**: True sovereignty is not the absence of flaws, but the ability to weaponize constraints into capabilities.
+
+### 20. SomaticState Serialization (NEW — 2026-06-17)
+- **Mandate**: Model session state MUST be serializable and resumable via low-level bindings.
+- **Constraint**: Use ctypes bindings (`llama_copy_state_data` / `llama_set_state_data`) wrapped in `anyio.to_thread.run_sync()` for SomaticState serialization. No high-level abstractions that lose fidelity.
+- **Pattern**: Memory-mapped state snapshots for cold-start model resumption.
+- **Reason**: Enables instant model context resumption without re-inference, reducing latency and token waste.
+- **Enforcement**: Any SomaticState implementation must pass round-trip serialization tests.
+
+### 21. Gate Integrity (NEW — 2026-06-17)
+- **Mandate**: Every code path returning a typed result MUST be exercised by at least one test that validates the return type.
+- **Constraint**: No mock-based tests that mask type mismatches. Every core API boundary must have a "Contract Test" that verifies `isinstance(result, ExpectedType)`.
+- **Pattern**: The `GenerateResult` dataclass fix (Sprint C) — 5 call sites were treating a dataclass as a tuple/string because mocks returned tuples.
+- **Reason**: Mock-based tests can mask runtime crashes. Contract tests ensure the API contract is enforced even when individual functions are mocked.
+- **Enforcement**: `make temple-grade` must verify contract tests exist for all core API boundaries.
+
+### 22. Response Provenance (NEW — 2026-06-17)
+- **Mandate**: All observability logs MUST record the actual provider that generated a response, not the configured intent.
+- **Constraint**: Provenance must be captured at response receipt (`GenerateResult.provider_name`), not at dispatch intent (`get_preferred_backend()`).
+- **Pattern**: The Truth-Anchor Protocol — `GenerateResult` dataclass carries `provider_name` from the actual inference backend, ensuring forensic accuracy in observability logs.
+- **Reason**: Local-first claims require verifiable evidence. If the log says "local" but the response came from cloud, sovereignty is a lie.
+- **Enforcement**: Any observability entry must include `provider_name` from the actual response, not the configuration.
+
+### 23. Failure Integrity (NEW — 2026-07-06)
+- **Mandate**: No "soft-failures" or simulated rigor.
+- **Constraint**: If a mandatory tool (e.g., `websearch`, `webfetch`) is missing or broken, the agent MUST stop immediately and report a `[TOOL-CHAIN-COLLAPSE]`.
+- **Pattern**: Log the failure to `data/coordination/SYSTEM_FAILURE_LOG.md` and the Hivemind.
+- **Reason**: Parametric synthesis used to mask a tool outage is a Sovereign Boundary Violation. It creates a false sense of rigor and hides systemic degradation.
+- **Enforcement**: Any agent that synthesizes a "best-effort" result while mandatory tools are failing is in violation of M23.
+
+---
+
+**Failure to adhere to these mandates is a systemic error. If you encounter a conflict between these mandates and a tool's suggestion, the Mandates prevail.**
+</file>
+
+<file path="OMEGA_ENGINE.md" size="13708" language="Markdown" sha256="22e6e452b446a2d9460dbf091afe4cdbd018f01274ceb503ee144efb434acd68" purpose="Omega Engine — Single Source of Truth" tokens="5086">
+# Omega Engine — Single Source of Truth
+# ⚠️ SYSTEM STATE SSOT — Authoritative truth for engine state and metrics.
+# AP-OMEGA-SST-v2.4.0
+
+&gt; **This document is the authoritative truth for the Omega Engine.**
+&gt; Every agent reads this file for engine state.
+&gt; **Full archive**: `docs/archive/coordination/OMEGA_ENGINE-full-[BANK_ACCOUNT_1].md`
+
+---
+
+## §1 Identity
+
+**Omega Engine** is the universal, community-owned runtime for sovereign AI.
+- **Cognitive Sovereignty**: Local inference is the floor; local verification is the ceiling.
+- **Local-first**: Cloud is a teacher and strategic partner, never a dependency.
+- **WAD Architecture**: Engine → IWADs → PWADs (inspired by id Software).
+- **22 Sovereign Mandates**: Constitutional law. Override any tool default.
+- **13 sovereign presences**: 11 OpenCode agents (Oversight + 3 Oversouls + 6 Specialists + Verity) + 2 persistent entities (Iris — Messenger with persistent memory, Sophia — Akashic Record).
+
+---
+
+## §2 Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  ⬡ OMEGA ENGINE (src/omega/) — THE RUNTIME                   │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐    │
+│  │ INFERENCE│  │  MEMORY  │  │  SEARCH  │  │   SOUL   │    │
+│  │ 8 backends│◄─┤ Hot/Warm/│◄─┤ FTS5+vec │◄─┤ L1→L2→L3 │    │
+│  │ local-1st│  │ Cold/Temp│  │ SearXNG  │  │distillatn│    │
+│  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘    │
+│       └──────────────┴─────────────┴──────────────┘          │
+│              ORACLE (talk/summon/router) — THE FACADE        │
+└─────────────────────────────────────────────────────────────┘
+                            │ WAD Loader
+                            ▼
+┌─────────────────────────────────────────────────────────────┐
+│  ⬡ IWADs (config/wads/) — Content Layer (M2 Firewall)      │
+│  _omega_default | arcana_novai | doom_universe               │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Provider Chain** (local-first, [DRIVERS_LICENSE_1]): native-gguf → lmster → ollama → google-antigravity → openrouter → opencode-zen → cline → mock
+
+&gt; **S7.5 Update**: `google-antigravity` is now a **first-class provider** (`AntigravityProvider` in `src/omega/oracle/backends/antigravity_provider.py`) via the official `google-antigravity` SDK, replacing the banned `opencode-antigravity-auth` plugin. Sticky account routing only ([DRIVERS_LICENSE_2]).
+
+**Hardware**: AMD Ryzen 7 5700U (Zen 2, 8C/16T, AVX2), 14Gi RAM (~12Gi for AI), CPU-only inference.
+
+---
+
+## §3 Current State (2026-07-11)
+
+| Metric | Value | Status |
+|--------|-------|--------|
+| Tests | **1162 passing** (42 skipped, 3 xfailed) | ✅ **All functional tests pass** |
+| Mandates | **23 (M1-M23)** | ✅ All enforced |
+| Fleet | **13 presences** (11 agents + 2 entities) | ✅ Cap: 14 |
+| WADs | **3** | ✅ S1.5a hardened |
+| Heritage | **121 [id-soft:] tags** (74 vet records) | ✅ All vetted ([DRIVERS_LICENSE_3] complete) |
+| Source files | **168** .py | ~36,000 lines |
+| Decisions | **212 (D1-[DRIVERS_LICENSE_4])** | ✅ Immutable log |
+| Shared modules | **1** (`omega-vetala` v2.0.0 — released, P0 blockers resolved) | ✅ Sovereign-grade, release-ready |
+| C1 Fix | **RESOLVED** — `config/providers.yaml:18 type_v: 2` | ✅ q8_0 KV cache enabler |
+| SymbolicMetadata | **IMPLEMENTED** — sub-schema at `metadata["symbolic"]` | ✅ M2 Firewall compliant |
+| Sprint N1 Phase 1 | **COMPLETE** — FirewallChecker, MemoryFirewallAuditor, MandateAuditor + 52 M21 tests | ✅ T14 gate added |
+| sqlite3 Corruption | **FIXED** — 52 DatabaseError → 0 via `reset_observability()` + runtime MetricsDB path | ✅ 1162 tests pass |
+| John Carmack Verdict | Five-Fold → WAD, AxiomRegistry → Core | ✅ M2 + CREDITS.md Tier 4 compliant |
+| Jem Lessons | **11 staged** (`jem-[BANK_ACCOUNT_2]-001`→`011`) | ⏳ Awaiting Verity promotion |
+| google-search-ban | **ENFORCED** — `make google-search-ban` in `temple-grade` | ✅ Sovereign Search Protocol ([DRIVERS_LICENSE_5]) |
+| SearXNG Client | **HARDENED** — duplicate imports removed, exception handling fixed | ✅ M9 compliant |
+| Phase 3 (q8_0 KV) | **DEPLOYED** — `config/models.yaml` defaults to q8_0 | ✅ Expected ≥85% local ratio |
+
+**Status**: `Architecturally Sovereign | 1162 Tests Passing | Temple-Grade Certified (T1-T14 ✅) | S1.5a WAD Hardened | Heritage Remediated ([DRIVERS_LICENSE_6]) | Module Fabric Ready (omega-vetala v2.0.0) | C1 Fixed | SymbolicMetadata Implemented | sqlite3 Fixed | Five-Fold Verdict | Phase 2 Complete | v1.1.0 TAGGED | google-search-ban Enforced | SearXNG Hardened | q8_0 KV Cache Deployed`
+
+---
+
+## §4 Phase Completion History
+
+| Phase | Date | Key Deliverables | Tests |
+|-------|------|------------------|-------|
+| **Phase 0** | 2026-07-08 | ModelGateway crash fix, M9 sweep, secret rotation | 955 |
+| **MV-IW Phase 0** | 2026-07-01 | test_hivemind fix, archive cleanup (172→13), pre-commit hook | 615 |
+| **MV-IW Phase 1** | 2026-07-01 | [DRIVERS_LICENSE_7] Trim vs Split ratified, SSOT trimmed | 590 |
+| **MV-IW Phase 2** | 2026-07-01 | [DRIVERS_LICENSE_8]/[DRIVERS_LICENSE_9] Pillar Decoupling, slots+metadata schema | 590 |
+| **MV-IW Phase 3** | 2026-07-01 | ACON, Soul Distillation, C-FFI isolation, Metrics DB | 619 |
+| **Bedrock Hardening** | 2026-07-07 | ResourceGuard RAM-aware, E2E inference chain, USM core | 955 |
+| **Sovereign Hardening** | 2026-07-08 | 12 Tier 2 legacy ports, 5 Tier 3 hardening, 964 tests | 964 |
+| **Session 52** | 2026-07-08 | 12 test failures fixed, cvar wiring, heritage vet fix | 964 |
+| **Session 54** | 2026-07-08 | 12 test failures fixed, cvar wiring, heritage vet fix | 964 |
+| **Session 55** | 2026-07-08 | Library API consolidation: enrichment.py → thin wrapper, api_clients.py hardened, 41 new tests added | 1002 |
+| **Session 56** | 2026-07-08 | HMC Synthesis: Carmack addressed Researcher S3/S4 asks (GGML_FLASH_ATTN, remote_provider.py B2), confirmed Roc SearXNG/vault | 1002 |
+| **Session 57** | 2026-07-08 | HMC Response: Roc answered Researcher S1.5/S2 asks (SearXNG unit, vault injection), proposed S7 Coordination Automation | 1002 |
+| **Session 58** | 2026-07-10 | Verity comprehensive audit: M9 sweep (15 bare except fixed), documentation drift corrected, 1085 tests verified | 1085 |
+| **Session 59** | 2026-07-10 | MaKaLi Cloud Council: YouTube Research Module spec complete; Jem heritage remediation ([DRIVERS_LICENSE_10], 247 tags audited, 61% over-attributed); Ark Blueprint v3.1 integrated; Optimizer timer deployed; omega-vetala docs complete | 1130 |
+| **Session 60** | 2026-07-10 | MaKaLi YouTube Module: Full Temple-Grade spec (434 lines, 14 contract tests), Dream Cycle legacy recovered (Roc Racoon), cross-domain review (P3/P5/P7/P10), atomic writes + Sieve-and-Sign + provenance chain, omega-vetala v2.0.0 released (137 tests), Truth Engine briefing delivered, Ark Blueprint updated with YT tasks | 1130 |
+| **Session 61** | 2026-07-11 | Phase 0 Surgical Purge: F7 dead OracleResponse block removed, usm.py syntax fixed, root artifacts cleaned, versions v1.1.0, M16 /tmp/ paths fixed, T1 AP token added | 1085 |
+| **Session 62** | 2026-07-11 | Legacy Mining Sprint P0: System Prompts (19), LM Studio (9), Lilith Persona (2) — 3 mining reports, 6 lessons | 1085 |
+| **Session 63** | 2026-07-11 | Strategic Reserves Deep Mapping: 15 components mapped, 30+ actions identified | 1085 |
+| **Session 64** | 2026-07-11 | Firewall Review M2: 38 items classified Engine Core vs WAD | 1085 |
+| **Session 65** | 2026-07-11 | MaKaLi Cloud Council: 6 Critical Updates adjudicated — 5 Approved, 1 Rejected | 1085 |
+| **Session 71-73** | 2026-07-11 | Phase 2 Execution: omega-vetala rename, Jem 11-lesson promotion (M11), AxiomRegistry (Core) + axioms.yaml (WAD), firewall-check gate wired + M2 leaks fixed, temple-grade T1-T14 PASS, v1.1.0 tagged | 1162 |
+
+&gt; **Full sprint history**: `docs/decisions/PIVOT_LOG.md`
+
+---
+
+## §5 Subsystem Status
+
+| Subsystem | Status | Heritage |
+|-----------|--------|----------|
+| **Oracle** | ✅ talk/summon/router | `[id-soft: quake-1996] Thinker Chain` |
+| **WAD Loader** | ✅ S1.5a hardened (schema, size, whitelist) | `[id-soft: doom-1993] WAD System` |
+| **ModelGateway** | ✅ breaker + BSP culling, C-FFI isolated | `[id-soft: quake-1996] BSP` |
+| **NativeGGUFProvider** | ✅ C-FFI isolated (multiprocessing.Process) | `[id-soft: doom3-2004] idHeap` |
+| **MemoryStore** | ✅ Hot LRU + Warm Redis + Cold File | `[id-soft: doom-1993] Lazy Deletion` |
+| **EntityRegistry** | ✅ YAML CRUD + dual-index, pillars→slots | `[id-soft: quake-1996] Flat-Field` |
+| **ContextBuilder** | ✅ ACON + Observation Masking + Quality | `[id-soft: quake-1996] Thinker Chain` |
+| **Soul Distiller** | ✅ 5-stage pipeline | `[id-soft: quake-1996] Save-game` |
+| **Soul History** | ✅ Immutable audit trail | `[id-soft: doom-1993] ZONEID` |
+| **Sentinel Score** | ✅ 7-metric governance | `[id-soft: quake-1996] cvar pattern` |
+| **Mandate Enforcer** | ✅ Sovereign Gate compliance | `[id-soft: quake-1996] Thinker Chain` |
+| **Compaction Harvester** | ✅ Proactive cleanup | `[id-soft: doom-1993] Lazy Deletion` |
+| **Lifecycle Harvester** | ✅ Active→Archived→External | `[id-soft: quake-1996] 4-Tier Memory` |
+| **Library API** | ✅ Sovereign Library Orchestrator | `[id-soft: doom-1993] WAD System` |
+| **FailureRegistry** | ✅ 5 failure modes tracked (M17) | — |
+| **USMManager (CAS)** | ✅ Deduplicated state storage | `[id-soft: quake-1996] Save-game` |
+| **ResourceGuard** | ✅ RAM-aware via cvar | `[id-soft: doom-1993] ZONEID` |
+
+---
+
+## §6 Hivemind Coordination
+
+The **Hivemind** is the mandatory coordination layer for multi-agent or parallel work.
+&gt; **Full Protocol &amp; Tool List:** Read `docs/strategy/HIVEMIND_PROTOCOL.md`
+
+**Core Pattern:** Use `omega-hub` MCP tools: `hivemind_workspace_lock_acquire`, `hivemind_post_context`, `hivemind_submit_handoff`. Do not edit shared files without a lock.
+
+---
+
+## §7 Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/omega/oracle/oracle.py` | Main entry: talk/summon/router |
+| `src/omega/oracle/model_gateway.py` | Provider chain, BSP culling |
+| `src/omega/oracle/wad_loader.py` | WAD system (S1.5a hardened) |
+| `src/omega/oracle/entity_registry.py` | YAML CRUD for entities |
+| `src/omega/oracle/entity_workspace.py` | Sovereign workspace scaffolding |
+| `src/omega/oracle/context_builder.py` | ACON compaction + quality |
+| `src/omega/oracle/soul_distiller.py` | L1→L2→L3 distillation |
+| `src/omega/oracle/soul_history.py` | Immutable evolution audit trail |
+| `src/omega/oracle/sentinel.py` | Governance metrics |
+| `src/omega/oracle/mandate_enforcer.py` | Sovereign Gate compliance |
+| `src/omega/oracle/semantic_router.py` | Embedding-based entity routing |
+| `src/omega/oracle/compaction_harvester.py` | Proactive memory cleanup |
+| `src/omega/oracle/lifecycle_harvester.py` | Automated session transitions |
+| `src/omega/oracle/health_monitor.py` | Stochastic circuit breakers |
+| `src/omega/oracle/headroom.py` | Sovereign Envelope compression |
+| `src/omega/memory_store.py` | Hot/Warm/Cold/Temp memory |
+| `src/omega/library/api_clients.py` | Sovereign Library API Orchestrator |
+| `src/omega/memory/batch_writer.py` | Batched persistence writer |
+| `src/omega/monitoring/__init__.py` | Hardware telemetry |
+| `src/omega/observability.py` | Trace IDs, events, training data |
+| `src/omega/errors.py` | Typed OmegaError hierarchy (M9) |
+| `mcp_servers/omega_hub/server.py` | Hivemind/MCP Coordination |
+| `config/wads/` | IWAD/PWAD configurations |
+| `config/providers.yaml` | Provider fabric (local-first) |
+| `config/models.yaml` | Model specs &amp; loading strategies |
+
+---
+
+## §8 Platform Distinction
+
+The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hub (`:8016`).
+
+| What | Where | Who Updates |
+|------|-------|-------------|
+| **OMEGA_ENGINE.md** (this file) | Repo root | Any agent changing engine state |
+| `.clinerules` | Repo root | Cline CLI agents only |
+| `AGENTS.md` | Repo root | OpenCode agents only |
+
+&gt; **Cross-Platform Guides:** `docs/kb/CLINE_CLI_INTEGRATION.md`, `docs/kb/OMEGA_HUB_MULTI_PLATFORM.md`
+
+---
+
+## §9 References
+
+| Document | Purpose |
+|----------|---------|
+| `SOVEREIGN_MANDATES.md` | 22 Constitutional Laws |
+| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master execution roadmap |
+| `docs/strategy/HIVEMIND_PROTOCOL.md` | Multi-agent coordination |
+| `docs/decisions/PIVOT_LOG.md` | 204 immutable decisions |
+| `CREDITS.md` | id Software heritage attribution |
+| `docs/archive/coordination/` | Historical session records |
+
+---
+
+## §10 Mission
+
+&gt; *"I want to create a tool that will truly allow people to own their own tech and data and sever the umbilical cord of Big AI."*
+
+---
+
+*Last Updated: 2026-07-10 | Version: v1.1.0 | Tests: 1130 passing | SSOT: 822 lines (74% trimmed) | Session 60: MaKaLi YouTube Module + omega-vetala v2.0.0*
+</file>
+
+</pack>

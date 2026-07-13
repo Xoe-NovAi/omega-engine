@@ -46,9 +46,9 @@ class Library:
     def __init__(self):
         self._documents: Dict[str, CuratedDocument] = {}
         self._index_ensured: bool = False
-        # Use QdrantAdapter with sovereign fallback to MemoryVectorAdapter
-        from omega.memory.vector_adapters import QdrantAdapter
-        self._indexer = Indexer(vector_adapter=QdrantAdapter())
+        # Use SQLiteVecAdapter (unified fabric) with sovereign fallback to MemoryVectorAdapter
+        from omega.memory.sqlite_vec_adapter import SQLiteVecAdapter
+        self._indexer = Indexer(vector_adapter=SQLiteVecAdapter())
         self._load()
 
     def _load(self) -> None:

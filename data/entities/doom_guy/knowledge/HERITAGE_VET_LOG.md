@@ -437,7 +437,7 @@
 ### vet-057: Atomic Swap (State Save Before Mutation)
 - **Pattern**: [id-soft: quake-1996] Atomic Swap
 - **File Locations**:
-  - src/omega/oracle/providers.py:883
+   - src/omega/oracle/providers.py:897
 - **Technique**: Save-old-state-before-mutation (Quake, 1996) — Quake's zone allocator saved block headers before coalescing so it could roll back on failure.
 - **Hardware Constraint**: Memory corruption recovery without full-system restart was essential for long-running dedicated servers.
 - **Scope Declaration**: This tag applies to the NativeGGUFProvider context reload's save-then-mutate pattern, NOT to any transactional database operations.
@@ -446,7 +446,7 @@
 ### vet-058: Rollback (State Restoration)
 - **Pattern**: [id-soft: quake-1996] Rollback
 - **File Locations**:
-  - src/omega/oracle/providers.py:894
+   - src/omega/oracle/providers.py:908
 - **Technique**: State restoration on failure (Quake, 1996) — restore old zone block on failed coalesce to prevent memory leaks.
 - **Hardware Constraint**: Dedicated servers ran for weeks; a single unrecovered leak could crash the server.
 - **Scope Declaration**: This tag applies to the NativeGGUFProvider context reload failure recovery, NOT to any database transaction rollback.

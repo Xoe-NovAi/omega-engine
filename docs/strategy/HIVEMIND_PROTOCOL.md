@@ -487,10 +487,11 @@ The architecture is already Pub/Sub-ready:
 - **ACK Convention**: `data/coordination/*_ACK_*.md`
 - **Observations Log Convention**: `data/coordination/HIVEMIND_OBSERVATIONS_LOG.md` — **D-121** fleet-wide meta-observation capture
 - **Observations Protocol**: `docs/strategy/HIVEMIND_OBSERVATIONS_PROTOCOL.md` — **D-121** (categories, triggers, lifecycle, anti-patterns)
+- **Strategic Post Template**: `docs/strategy/HIVEMIND_POST_TEMPLATE.md` — **D-124** (7-section quality gate, intent taxonomy, dispatch modes)
 - **ZONEID constants**: `ZONEID_PRESENCE = 0x1d4a17`, `ZONEID_HANDOFF = 0x1d4a16`
 - **Mandate**: Extends Mandate 5 (Gnosis Preservation) and Mandate 11 (Soul Integrity)
 - **Subagent Dispatch**: `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md`
-- **PIVOT_LOG**: D103+ entries for Hivemind standardization; D116 for MCP path canonicalization; D-121 for observations protocol
+- **PIVOT_LOG**: D103+ entries for Hivemind standardization; D116 for MCP path canonicalization; D-121 for observations protocol; D-124 for post template
 - **MaKaLi Triad Coordination**: See `AGENTS.md` §"The MaKaLi Triad Architecture" for Ma'at/Lilith/Kali delegation patterns
 - **Dual-Inference Protocol**: See `AGENTS.md` §"The Dual-Inference Mandate" for session-vs-local model routing
 - **Observations Closed Loop**: §4 of `HIVEMIND_OBSERVATIONS_PROTOCOL.md` — observation → cluster → promote → design change → new observation

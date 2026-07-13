@@ -47,6 +47,13 @@ omega:
     metrics_interval_seconds: 60
     reaper_interval_seconds: 300
 
+  # Sovereignty Gate (P0-2) — Configurable, default OFF
+  sovereignty_gate:
+    enabled: false              # USER CONTROL — default OFF
+    threshold: 0.80             # 80% when enabled
+    track_only: true            # Track ratio, never fail unless enabled
+    ci_fail_on_threshold: false # Explicit opt-in for CI enforcement
+
   # MCP servers
   mcp:
     hub_port: 8016
@@ -60,3 +67,11 @@ omega:
     openblas_coretype: "ZEN"
     llama_cpp_f16_kv: true
     malloc_arena_max: 2
+
+  # Sovereignty Gate (P0-2) — Configurable, default OFF
+  # User directive: start at 0% local usage, build up while developing with cloud models
+  sovereignty_gate:
+    enabled: false              # USER CONTROL — default OFF
+    threshold: 0.80             # 80% when enabled
+    track_only: true            # Track ratio, never fail unless enabled
+    ci_fail_on_threshold: false # Explicit opt-in for CI enforcement

@@ -143,6 +143,7 @@
 | R-SUB-LESSONS | Subagent Fleet Operational Lessons | 🟡 High | ✅ | [SUBAGENT_FLEET_LESSONS.md](SUBAGENT_FLEET_LESSONS.md) | 2026-05-16 |
 | R-CLAUDE-FLEET | 8-Account Claude Fleet + Sonnet 4.6 Thinking Distribution Strategy | 🟡 High | 🔲 | *(not yet researched)* | — |
 | R-SEARXNG | Sovereign SearXNG Search Layer — Complete Research | 🔴 Critical | ✅ | [R_SEARXNG_SOVEREIGN_SEARCH_LAYER.md](R_SEARXNG_SOVEREIGN_SEARCH_LAYER.md) | 2026-05-18 |
+| R-SEARXNG-MCP | SearXNG MCP Streamable HTTP Migration — OpenCode Config Fix | 🔴 Critical | ✅ | [R_SEARXNG_MCP_STREAMABLE_HTTP.md](R_SEARXNG_MCP_STREAMABLE_HTTP.md) | 2026-07-12 |
 | R-CONSULTATION-ARCH | Consultation Prompt Architecture | 🔴 Critical | ✅ | [R_CONSULTATION_PROMPT_ARCHITECTURE.md](R_CONSULTATION_PROMPT_ARCHITECTURE.md) | 2026-05-18 |
 | R-JEM-LEGACY-INV | Jem Legacy Artifact Inventory | 🔴 Critical | ✅ | [R_JEM_LEGACY_ARTIFACT_INVENTORY.md](R_JEM_LEGACY_ARTIFACT_INVENTORY.md) | 2026-05-18 |
 | R-GEMINI-QUOTAS | Gemini 2.0 Pro Free Tier Quotas | 🔴 Critical | 🔄 | [R_GEMINI_FREE_TIER_QUOTAS.md](R_GEMINI_FREE_TIER_QUOTAS.md) | — |
@@ -194,3 +195,5 @@
 | R-FLEET-FINDINGS | Fleet Discovery Master Synthesis — Local + Web findings for mode architecture | 🔴 Critical | ✅ | [FLEET_DISCOVERY_SYNTHESIS.md](../strategy/FLEET_DISCOVERY_SYNTHESIS.md) | 2026-05-26 |
 | R-SVR-GRAPH | Sovereign Knowledge Graph Adapter Spec | 🔴 Critical | ✅ | [R_SOVEREIGN_KNOWLEDGE_GRAPH_ADAPTER.md](R_SOVEREIGN_KNOWLEDGE_GRAPH_ADAPTER.md) | 2026-06-21 |
 | R-DOC-ARCHITECTURE-V2 | Documentation Architecture, Standards & Agent-Readiness | 🔴 Critical | ✅ | [R-DOC-ARCHITECTURE-V2.md](R-DOC-ARCHITECTURE-V2.md) | 2026-07-03 |
+| R_OMEGA_RESEARCH_SPEC_V1 | Ω-Research Fabric (Sandbox, Scorecard, AMFO) | 🔴 Critical | ✅ | [R_OMEGA_RESEARCH_SPEC_V1.md](R_OMEGA_RESEARCH_SPEC_V1.md) | 2026-07-13 |
+| R_YOUTUBE_RESEARCHER_ENHANCED_SPEC_V2 | YouTube Researcher → Temporal Knowledge Observatory (9 layers) | 🔴 Critical | ✅ | [R_YOUTUBE_RESEARCHER_ENHANCED_SPEC_V2.md](R_YOUTUBE_RESEARCHER_ENHANCED_SPEC_V2.md) | 2026-07-13 |

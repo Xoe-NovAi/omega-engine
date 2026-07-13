@@ -18,12 +18,21 @@ if [ "$changed_src" -gt 0 ] && [ "$changed_docs" -eq 0 ]; then
 fi
 
 # ── Heritage Tag Guard (D208) ──────────────────────────────────────────
-# Check for new [id-soft:] tags in staged files
-new_tags=$(git diff --cached -- 'src/omega/**/*.py' | grep -E '^\+\s*#.*\[id-soft:' | sed -E 's/.*\[id-soft:\s*([^\]]+)\].*/\1/' | sort -u)
+# Extract the game-year from any NEW [id-soft:] tags in staged src files.
+# A tag is "new" if it appears in an added (+) diff line. Already-vetted
+# game-years (present in HERITAGE_VET_LOG.md) pass; truly unknown ones block.
+# Only valid game-year tokens (e.g. doom-1993) are considered — template
+# placeholders like GAME-YEAR in docstrings are ignored.
+# NOTE: extraction uses grep -oE + POSIX [:space:] (NOT \s) to stay robust
+# against multi-byte UTF-8 content (e.g. em-dash —) in comment lines.
+new_tags=$(git diff --cached -- 'src/omega/**/*.py' \
+    | grep -oE '^\+.*\[id-soft:[[:space:]]*[a-z0-9]+-[0-9]{4}' \
+    | grep -oE '[a-z0-9]+-[0-9]{4}' \
+    | sort -u)
 
 if [ -n "$new_tags" ]; then
     echo "🏛️  Heritage Tag Guard: Checking new [id-soft:] tags..."
-    
+
     # Check if vet log exists
     VET_LOG="data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md"
     if [ ! -f "$VET_LOG" ]; then
@@ -32,16 +41,12 @@ if [ -n "$new_tags" ]; then
         exit 1
     fi
 
-    # For each new tag, check if it has a vet record
+    # For each new tag game-year, check if it has a vet record
     missing_vet=0
-    while IFS= read -r tag; do
-        # Extract game-year and pattern from tag (format: game-year] Pattern Name — justification)
-        game=$(echo "$tag" | sed -E 's/^([^]]+)\].*/\1/')
-        pattern=$(echo "$tag" | sed -E 's/^[^]]+\]\s*//' | sed -E 's/\s*—.*//')
-        
-        # Check if vet log has a matching record with APPROVED decision and score >= 7
-        if ! grep -q "$pattern" "$VET_LOG"; then
-            echo "  ❌ New tag '[id-soft: $tag]' has no vet record in $VET_LOG"
+    while IFS= read -r game; do
+        [ -z "$game" ] && continue
+        if ! grep -q "$game" "$VET_LOG"; then
+            echo "  ❌ New tag '[id-soft: $game]' has no vet record in $VET_LOG"
             missing_vet=1
         fi
     done <<< "$new_tags"

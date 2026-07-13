@@ -112,13 +112,44 @@ models:
     load_strategy: on_demand_5min
     entity: inanna, isis, lilith
 kv_cache:
+  # SOVEREIGN STANDARD (Locked 2026-07-13): q8_0 KV cache on CPU backend
+  # Research: docs/research/R_KV_CACHE_QUANTIZATION_CPU_20260713.md
+  # Flash Attention NOT required on CPU (AVX2) — native via ggml_flash_attn_cpu
   default_key_type: q8_0
   default_value_type: q8_0
+  flash_attention: false  # EXPLICIT: CPU backend ignores -fa flag
   models:
     qwen3-0.6b-q6_k:
-      key_type: f16
-      value_type: f16
+      key_type: q8_0
+      value_type: q8_0
+    qwen3-1.7b:
+      key_type: q8_0
+      value_type: q8_0
+    qwen3-1.7b-q6_k:
+      key_type: q8_0
+      value_type: q8_0
+    phi-4-mini:
+      key_type: q8_0
+      value_type: q8_0
+    phi-2-omnimatrix-i1-q4_k_m:
+      key_type: q8_0
+      value_type: q8_0
     qwen3-4b-thinking-q4_k_m:
+      key_type: q8_0
+      value_type: q8_0
+    deepseek-r1-qwen3-8b-q3_k_l:
+      key_type: q8_0
+      value_type: q8_0
+    rocracoon-3b-instruct:
+      key_type: q8_0
+      value_type: q8_0
+    phi-4-mini-reasoning-abliterated-q4_k_m:
+      key_type: q8_0
+      value_type: q8_0
+    qwen3-vl:
+      key_type: q8_0
+      value_type: q8_0
+    krikri-8b-q4_k_m:
       key_type: q8_0
       value_type: q8_0
 zen2_build:

@@ -1,9 +1,27 @@
-use_default_settings: true
+# SearXNG — Sovereign Metasearch Configuration
+# Last fixed: 2026-07-12 — removed invalid keys, deduplicated keep_only
+use_default_settings:
+  engines:
+    keep_only:
+      - duckduckgo
+      - google
+      - wikipedia
+      - arxiv
+      - github
+      - semantic scholar
+      - youtube
+      - invidious
+      - stackoverflow
+      - mdn
+      - pypi
+      - docker hub
 
 server:
   secret_key: "***REMOVED***"
   limiter: false
   image_proxy: true
+  bind_address: "0.0.0.0"
+  port: 4017
 
 search:
   safe_search: 0
@@ -13,8 +31,10 @@ search:
     - json
 
 outgoing:
-  request_timeout: 5.0
-  max_request_timeout: 10.0
+  request_timeout: 10.0
+  max_request_timeout: 20.0
+  retries: 2
+  enable_http2: true
 
 ui:
   static_use_hash: true
@@ -22,37 +42,47 @@ ui:
   results_on_new_tab: true
 
 engines:
+  # General search
   - name: duckduckgo
-    engine: duckduckgo
     shortcut: ddg
     disabled: false
   - name: google
-    engine: google
     shortcut: g
     disabled: false
-  - name: brave
-    engine: brave
-    shortcut: bv
-    disabled: false
   - name: wikipedia
-    engine: wikipedia
     shortcut: wp
     disabled: false
+
+  # Academic / Reference
   - name: arxiv
-    engine: arxiv
     shortcut: arx
     disabled: false
-  - name: github
-    engine: github
-    shortcut: gh
-    disabled: false
   - name: semantic scholar
-    engine: semantic_scholar
     shortcut: ss
     disabled: false
-  - name: ahmia
-    engine: ahmia
-    disabled: true
-  - name: torch
-    engine: torch
-    disabled: true
+
+  # Code / Developer
+  - name: github
+    shortcut: gh
+    disabled: false
+  - name: stackoverflow
+    shortcut: so
+    disabled: false
+  - name: mdn
+    shortcut: mdn
+    disabled: false
+  - name: pypi
+    shortcut: pypi
+    disabled: false
+  - name: docker hub
+    shortcut: dh
+    disabled: false
+
+  # Video (YouTube research)
+  - name: youtube
+    shortcut: yt
+    disabled: false
+  - name: invidious
+    shortcut: inv
+    disabled: false
+    base_url: https://yewtu.be

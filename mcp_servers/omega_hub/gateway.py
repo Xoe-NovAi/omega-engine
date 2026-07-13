@@ -74,7 +74,7 @@ class SovereignGateway:
     integration with ``ModelGateway`` provider instances.
     """
 
-    def __init__(self):
+    def __init__(self, model_gateway: Optional["ModelGateway"] = None):
         import httpx2 as httpx
         
         # Load gateway configuration from omega.yaml
@@ -116,7 +116,7 @@ class SovereignGateway:
         self._tui_reset_time = self._boot_time
         
         # Wire to the engine's ModelGateway for actual provider forwarding
-        self.model_gateway = ModelGateway()
+        self.model_gateway = model_gateway or ModelGateway()
 
     async def proxy_request(self, provider_name: str, payload: Dict[str, Any]) -> Dict[str, Any]:
         """Forward a request to an AI provider with rate-limiting and backoff.

@@ -24,6 +24,49 @@ from omega.cvar_table import cvar_get
 
 logger = logging.getLogger(__name__)
 
+
+def _get_available_ram_mb(meminfo_path: Optional[str] = None) -> Optional[int]:
+    """Get available RAM in MB using psutil (primary) or /proc/meminfo (fallback).
+
+    Args:
+        meminfo_path: Optional path to a meminfo file for testing. If provided,
+                      reads from this file instead of psutil or /proc/meminfo.
+
+    Returns None if neither source is available (sensor failure).
+    """
+    # Test override: if meminfo_path is provided, use it exclusively
+    if meminfo_path is not None:
+        try:
+            with open(meminfo_path, "r", encoding="utf-8") as fh:
+                for line in fh:
+                    if line.startswith("MemAvailable:"):
+                        mem_available_kb = int(line.split()[1])
+                        return int(mem_available_kb / 1024)
+        except (OSError, ValueError, IndexError) as e:
+            logger.warning("Cannot read %s: %s", meminfo_path, e)
+            return None
+
+    # Primary: psutil
+    try:
+        import psutil
+        available_bytes = psutil.virtual_memory().available
+        return int(available_bytes / (1024 * 1024))
+    except ImportError:
+        pass  # Fall through to /proc/meminfo
+
+    # Fallback: /proc/meminfo
+    try:
+        with open("/proc/meminfo", "r", encoding="utf-8") as fh:
+            for line in fh:
+                if line.startswith("MemAvailable:"):
+                    mem_available_kb = int(line.split()[1])
+                    return int(mem_available_kb / 1024)
+    except (OSError, ValueError, IndexError) as e:
+        logger.warning("Cannot read /proc/meminfo: %s", e)
+        return None
+
+    return None
+
 # ── Task-Local Storage for Held Weights (Re-entrancy) ─────────────────
 # Maps a task identifier to the weight it currently holds.
 # This allows nested calls within the same task to acquire the lock
@@ -71,6 +114,102 @@ class AtomicLock:
         self._lock.release()
 
 
+class OOMProtector:
+    """Hard-stop if available RAM drops below a safety threshold.
+
+    [heritage: id-soft-2004] Knowledge Leak Detection — the DOOM 3 principle
+    of detecting a resource boundary *before* crossing it, then failing fast
+    instead of corrupting state. Here applied to system RAM: if MemAvailable
+    falls below the estimated model load + KV cache + 1GB margin, refuse to
+    load a model (which would OOM and kill the process).
+
+    [P0-1: RAM Hardening] Uses psutil.virtual_memory().available for accuracy,
+    accepts an optional model spec to estimate per-model RAM requirement.
+    The formula is:
+      - required_mb = model_ram_mb + kv_cache_estimate + RESERVED_MARGIN_MB
+      - If available_ram < required_mb → HARD STOP
+
+    [M23: Failure Integrity] Explicit hard-stop — raises a typed OmegaError
+    rather than silently degrading inference quality or swapping into oblivion.
+    """
+
+    # 1GB safety margin: reserve enough RAM for the OS, systemd services,
+    # Podman containers, and any concurrent processes (Redis, Qdrant, etc.)
+    RESERVED_MARGIN_MB: int = 1024
+
+    def __init__(self, min_ram_mb: int = 2048, meminfo_path: Optional[str] = None):
+        self.min_ram_mb = min_ram_mb
+        self._meminfo_path = meminfo_path
+        self._meminfo_path = meminfo_path
+
+    async def check(
+        self,
+        model_name: Optional[str] = None,
+        model_spec: Optional[Dict[str, Any]] = None,
+    ) -> bool:
+        """Return True if RAM is safe, False if OOM risk is critical.
+
+        Uses psutil.virtual_memory().available if psutil is installed,
+        falls back to /proc/meminfo otherwise.
+
+        Args:
+            model_name: Name of the model being loaded (for logging).
+            model_spec: Dict with at least ``ram_mb`` key (model RAM estimate).
+                        If provided, the check uses model_ram + margin vs available.
+                        If None, falls back to the simple min_ram_mb threshold.
+
+        Returns True (safe) if neither psutil nor meminfo can be read — a
+        sensor failure must not block inference (M23: no soft-failure, but
+        also no sensor-caused DoS).
+        """
+        def _check() -> bool:
+            available_mb = _get_available_ram_mb(self._meminfo_path)
+            if available_mb is None:
+                # Sensor failure — assume safe
+                logger.warning("OOMProtector: cannot determine available RAM (sensor failure)")
+                return True
+
+            # ── Model-aware estimate ──
+            if model_spec is not None:
+                model_ram_mb = model_spec.get("ram_mb", 0)
+                estimated_required_mb = model_ram_mb + self.RESERVED_MARGIN_MB
+
+                if available_mb < estimated_required_mb:
+                    logger.error(
+                        "OOMProtector HARD-STOP: model='%s' needs ~%d MB RAM "
+                        "(%d MB model + %d MB margin), only %d MB available",
+                        model_name or model_spec.get("name", "unknown"),
+                        estimated_required_mb,
+                        model_ram_mb,
+                        self.RESERVED_MARGIN_MB,
+                        available_mb,
+                    )
+                    return False
+
+                logger.debug(
+                    "OOMProtector SAFE: model='%s' needs ~%d MB, %d MB available "
+                    "(headroom %d MB)",
+                    model_name or "unknown",
+                    estimated_required_mb,
+                    available_mb,
+                    available_mb - estimated_required_mb,
+                )
+                return True
+
+            # ── Simple threshold check (no model spec) ──
+            if available_mb < self.min_ram_mb:
+                logger.error(
+                    "OOMProtector HARD-STOP: %d MB available < %d MB threshold",
+                    available_mb, self.min_ram_mb,
+                )
+                return False
+
+            logger.debug("OOMProtector SAFE: %d MB available >= %d MB threshold", available_mb, self.min_ram_mb)
+            return True
+
+        return await anyio.to_thread.run_sync(_check)
+
+
 class ResourceGuard:
     """Ensures model resource usage doesn't exceed system capacity.
     
@@ -83,7 +222,7 @@ class ResourceGuard:
     [id-soft: doom-1993] ZONEID Pattern — critical sections guarded by
     ZONEID_PROBE marker. Catches use-after-free and double-release bugs.
     """
-    def __init__(self, max_ram_mb: Optional[int] = None):
+    def __init__(self, max_ram_mb: Optional[int] = None, meminfo_path: Optional[str] = None):
         # [id-soft: doom-1993] ZONEID Pattern — runtime state marker
         self._magic = ZONEID_PROBE
         self._max_ram_mb = max_ram_mb or int(cvar_get("config.resource_guard.max_ram_mb", 12288))
@@ -95,6 +234,14 @@ class ResourceGuard:
         from omega.oracle.cpu_optimizer import Zen2Optimizer
         self._optimizer = Zen2Optimizer()
 
+        # ── P0-1: OOM Hard-Stop Protector ──
+        # [heritage: id-soft-2004] Knowledge Leak Detection — fail fast before
+        # RAM exhaustion corrupts state. Refuses model loads below the threshold.
+        self._oom_protector = OOMProtector(
+            min_ram_mb=int(cvar_get("config.resource_guard.min_ram_mb", 2048)),
+            meminfo_path=meminfo_path,
+        )
+
     @asynccontextmanager
     async def lock(self, weight: int = 1, model_spec: Optional[dict] = None,
                    timeout: Optional[float] = None):
@@ -104,7 +251,25 @@ class ResourceGuard:
         prevent race conditions across concurrent tasks.
         """
         validate_zoneid(self._magic, ZONEID_PROBE, "ResourceGuard.lock")
-        
+
+        # ── P0-1: OOM Hard-Stop (fail-fast before RAM exhaustion) ──
+        # [M23: Failure Integrity] Refuse the model load if available RAM is
+        # below the safety threshold. This is a hard stop, not a soft-failure.
+        # Uses model_spec to compute an accurate estimate of required RAM.
+        _model_name_for_oom = (model_spec or {}).get("name") or "unknown"
+        if not await self._oom_protector.check(model_name=_model_name_for_oom, model_spec=model_spec):
+            from omega.errors import InferenceOOMError
+            if model_spec:
+                raise InferenceOOMError(
+                    f"Refusing model load '{_model_name_for_oom}': "
+                    f"estimated {model_spec.get('ram_mb', '?')} MB + 1 GB margin "
+                    f"exceeds available RAM"
+                )
+            raise InferenceOOMError(
+                f"Refusing model load: available RAM below "
+                f"{self._oom_protector.min_ram_mb} MB safety threshold"
+            )
+
         task_id = _get_current_task_id()
         # Get a local copy of the current held weights
         held = _held_weights.get().copy()

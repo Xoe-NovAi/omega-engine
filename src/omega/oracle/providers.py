@@ -349,6 +349,20 @@ class NativeGGUFProvider(BaseProvider):
         self._type_k = config.get("type_k", 8)  # 8 = q8_0
         self._type_v = config.get("type_v", 8)  # 8 = q8_0, 1 = f16
 
+        # ── P0-1: Explicit KV cache type (q8_0 quantizes the KV cache) ──
+        # [heritage: quake-1996] Zone Memory — quantize the KV cache to fit
+        # more context in the same RAM budget (the 4-tier memory principle).
+        # When present, kv_cache_type overrides type_k/type_v uniformly.
+        kv_cache_type = config.get("kv_cache_type")
+        if kv_cache_type:
+            _KV_TYPE_MAP = {"q8_0": 8, "q4_0": 4, "q5_0": 5, "q6_0": 6, "f16": 1, "f32": 0}
+            _mapped = _KV_TYPE_MAP.get(str(kv_cache_type).lower())
+            if _mapped is not None:
+                self._type_k = _mapped
+                self._type_v = _mapped
+            else:
+                logger.warning("Unknown kv_cache_type '%s' — keeping type_k/type_v", kv_cache_type)
+
         # Batch configuration (tuned for Zen 2 L2 cache: 512KB/core)
         self._n_batch = config.get("n_batch", 512)
         self._n_ubatch = config.get("n_ubatch", 32)
@@ -627,7 +641,7 @@ class NativeGGUFProvider(BaseProvider):
                         "temperature": temperature,
                         "stop": stop,
                         "logit_bias": logit_bias,
-                        "repetition_penalty": repetition_penalty,
+                        "repeat_penalty": repetition_penalty,
                     }.items() if v is not None}
                     if logprobs:
                         kwargs["logprobs"] = logprobs
@@ -661,7 +675,7 @@ class NativeGGUFProvider(BaseProvider):
         # Wait for the worker to signal ready or load failure (30s timeout)
         try:
             init_signal = await anyio.to_thread.run_sync(
-                lambda: self._res_queue.get(timeout=30)
+                lambda: self._res_queue.get(timeout=120)
             )
             if isinstance(init_signal, dict) and init_signal.get("status") == "load_error":
                 error_msg = init_signal.get("error", "Unknown load error")
@@ -790,6 +804,8 @@ class NativeGGUFProvider(BaseProvider):
         self._last_logprobs = None
         
         # Send request to worker process (system_prompt + user_query, not pre-formatted)
+        # [heritage: llama-cpp-python 2023] logit_bias — forwarded to llama-cpp-python
+        # worker (see worker loop line 603). Supported since v0.2.0 (commit 07e47f5).
         request = {
             "system_prompt": system_prompt,
             "user_query": user_query,
@@ -798,6 +814,8 @@ class NativeGGUFProvider(BaseProvider):
             "stop": ["</s>", "User:", "\n\n"],
             "enable_thinking": False,
         }
+        if logit_bias:
+            request["logit_bias"] = logit_bias
         
         try:
             # Send request to worker (threaded — Queue.put blocks on serialization)

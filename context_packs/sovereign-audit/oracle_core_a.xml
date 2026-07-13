@@ -1,0 +1,3496 @@
+<pack profile="sovereign-audit" theme="oracle_core">
+<file path="src/omega/oracle/model_gateway.py" size="62353" language="Python" sha256="2bf6f0d4bbb739ac14d676ca137bfe5b0316a51ad753e27ef69e64fae6e5ab90" purpose="Standardized result of a model generation call." tokens="16968">
+# AP: AP-ORACLE-RESTORE-v[IP_ADDRESS_2]SS_1]DRESS_3]IP_CODE_1]IP_ADDRESS_4] [IP_ADDRESS_5]_2]ADDRESS_6]DE_3]Fi[IP_ADDRESS_7]ESS_8]DRESS_9]P_CODE_4]bstraction
+# AP: AP-MODEL-GATEWAY-v2.4.0
+# ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: MODEL-ABSTRACTION]
+#
+# LOCAL-FIRST provider fabric with automatic detection and fallback:
+#   0. native-gguf       (llama-cpp-python, Zen 2 optimized) [PRIMARY]
+#   1. lmster            (LM Studio headless server at :1234)
+#   2. Ollama            (OpenAI-compatible API at :11434)
+#   3. Google AI Studio  (cloud, Gemma 4 31B)
+#   4. OpenCode Zen      (cloud, MiniMax/DeepSeek/MiMo)
+#   5. Cline             (cloud via API/headless, 1M context)
+#   6. GitHub Copilot    (cloud, Claude/GPT models)
+#   99. Graceful fallback (setup instructions)
+#
+# Zen 2 optimizations:
+#   - CPU affinity pinned to physical cores [0,2,4,6]
+#   - KV cache quantization (q8_0 key, q8_0 value by default)
+#   - Adaptive thread pool (6 threads, pinned to cores 0,2,4,6)
+#   - Cache-friendly batch sizes (512/32 for small models, 64/16 for 8B+)
+#   - OMP_PROC_BIND=close for NUMA-aware scheduling on single-CCX
+
+import logging
+import os
+import subprocess
+import time
+import inspect
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple, NamedTuple
+from dataclasses import dataclass
+import anyio
+
+@dataclass
+class GenerateResult:
+    """Standardized result of a model generation call.
+
+    [M22: Response Provenance Mandate] Ensures the actual provider
+    that served the response is tracked for sovereignty auditing.
+
+    [Operation Deep-Siphon] ICS-F v1.0 Sprint 0: logprobs field added.
+    Per-token log probabilities from the inference backend. Populated
+    when the provider supports logprobs (e.g., NativeGGUF with logprobs=5).
+    """
+    text: str
+    provider_name: str
+    is_cloud: bool
+    latency_ms: float = 0.0
+    model_used: Optional[str] = None
+    logprobs: Optional[list] = None
+
+from omega.errors import (
+    OmegaError,
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
+import yaml
+from omega.cvar_table import cvar_get, cvar_namespace
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_exponential_jitter,
+    retry_if_exception_type,
+    before_sleep_log
+)
+
+from .backends.mock import OfflineMockBackend
+from .backends.openai_compat import OpenAICompatProvider
+from .backends.antigravity_provider import AntigravityProvider
+from .backends.remote_provider import ProviderConfig
+from .resource_guard import ResourceGuard
+from .providers import GoogleAIProvider, LocallmsterProvider, OllamaProvider, MockProvider, NativeGGUFProvider
+from .health_monitor import CircuitOpenError
+
+from .gnosis_proxy import GnosisProxy
+from .entity_registry import EntityRegistry
+from .entity_affinity import EntityAffinityResolver, AffinityResult
+from .budget_gate import BudgetGate
+from .provider_selector import ProviderSelector
+from omega.observability.token_ledger import TokenLedger
+from omega.observability.latency_tracker import tracker
+from omega.state.usm import USMManager
+
+logger = logging.getLogger(__name__)
+
+class OpenRouterTransientError(Exception):
+    """Exception for errors that should trigger a retry."""
+    pass
+
+class OpenRouterFatalError(Exception):
+    """Exception for errors that should fail immediately."""
+    pass
+
+# Retry configuration:
+# - Start at 1s, max 10s, exponential growth
+# - Max 5 attempts
+# - Jitter to prevent thundering herd
+openrouter_retry_policy = retry(
+    stop=stop_after_attempt(5),
+    wait=wait_exponential_jitter(initial=1, max=10),
+    retry=retry_if_exception_type(OpenRouterTransientError),
+    before_sleep=before_sleep_log(logger, logging.WARNING),
+    reraise=True
+)
+
+class ModelGateway:
+    """Abstracts local model inference. Auto-detects available backends.
+    DocRef: docs/reference/api/model_gateway.md
+
+    Supports Zen 2 optimizations:
+
+      - KV cache quantization per-model
+      - Adaptive thread count
+      - ONNX Runtime fallback for compatible models
+    """
+
+    # Default backend URLs
+    LMSTER_URL = "http://127.0.0.1:1234"
+    OLLAMA_URL = "http://127.0.0.1:11434"
+    LLAMA_CPP_URL = "http://127.0.0.1:8080"
+
+    def __init__(self, config_path: Optional[str] = None, health_monitor: Optional[Any] = None):
+        if config_path is None:
+            config_path = os.environ.get(
+                "OMEGA_MODELS_CONFIG",
+                str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "models.yaml"),
+            )
+        self.config_path = Path(config_path)
+
+        # Load Sovereign Secrets from .env
+        self._load_sovereign_secrets()
+
+        self.models = self._load_models()
+        self._kv_cache_config = self._load_kv_cache_config()
+        self._backend_cache: Dict[str, bool] = {}
+
+        # Initialize Zen2Optimizer for hardware resonance
+        from .cpu_optimizer import Zen2Optimizer
+        self._cpu_optimizer = Zen2Optimizer()
+
+        self.resource_guard = ResourceGuard()
+        self._mock_backend = OfflineMockBackend()
+        self.providers = self._load_provider_fabric()
+        # [id-soft: doom-1993] Fixed-Size Active Set — 32-entry clip range for O(1) culling
+        # Sprint 3 Hardening (P6): Split into Local/Cloud tiers to prevent
+        # sovereignty drift (Mandate 7) — local providers always tried first.
+        self._local_active: List[str] = []
+        self._cloud_active: List[str] = []
+        # Availability TTL cache (seconds) — avoids repeated health checks
+        # for known-healthy or known-dead providers.
+        self._availability_cache: Dict[str, Tuple[float, bool]] = {}
+        self._availability_ttl: float = 30.0
+        # Shared HTTP client (lazy-initialized) for connection pooling.
+        self._http_client: Optional[Any] = None
+        # Sprint 2 Governance: GnosisProxy for RAG-based tool discovery
+
+        # Sovereign State Manager (USM) for SomaticState (M20)
+        from omega.state import get_usm
+        self.usm = get_usm()
+
+        self._entity_registry = EntityRegistry()
+        self._gnosis_proxy = GnosisProxy(self._entity_registry)
+        # B5: HealthMonitor for latency and success/failure recording
+        self._health_monitor = health_monitor
+        # Entity→Model Affinity Resolver (YAML-backed routing DB)
+        # Handoff: ho_8135d6122230 — Lilith Phase 1 port from xna-omega-legacy
+        # R3: Cross-references provider IDs against config/providers.yaml
+        self.affinity_resolver = EntityAffinityResolver(
+            yaml_path=Path(__file__).resolve().parent.parent.parent.parent / "config" / "entity_model_affinity.yaml"
+        )
+        # Seed known providers from loaded fabric for R3 validation
+        provider_names = {p.name for p in self.providers}
+        self.affinity_resolver.set_known_providers(provider_names)
+
+        # A2A Bridge — Sovereign Agent Identity (Google A2A v1.0)
+        # Maps EntityRegistry entities to A2A Agent Cards for cross-agent discovery
+        from .a2a_bridge import A2ABridge
+        self._a2a_bridge = A2ABridge(entity_registry=self._entity_registry)
+
+        # Sovereign Guard: Prevent leak amplification by limiting concurrent gateway entries
+        self._limiter = anyio.CapacityLimiter(10)
+        self.provider_selector = ProviderSelector(self, health_monitor=self._health_monitor)
+        from .rate_limiter import RateLimiter
+        self.rate_limiter = RateLimiter()
+        # [M8 Zero Telemetry] WARP Proxy Pool — optional, injected by Oracle
+        # Only used for opencode-zen provider to bypass rate limits.
+        # Set via oracle.py: ModelGateway.proxy_pool = EphemeralWarpPool()
+        self.proxy_pool: Optional[Any] = None
+
+    def list_providers(self) -&gt; List[Dict[str, Any]]:
+        """Return a list of all registered providers and their current health."""
+        def _get_prio(p):
+            if hasattr(p, 'priority'): return p.priority
+            if hasattr(p, 'config'):
+                if isinstance(p.config, dict): return p.config.get('priority', 999)
+                if hasattr(p.config, 'priority'): return p.config.priority
+            return 999
+
+        return [
+            {
+                "name": p.name,
+                "priority": _get_prio(p),
+                "type": p.__class__.__name__,
+                "healthy": self._backend_cache.get(p.name, False)
+            }
+            for p in self.providers
+        ]
+
+    async def get_available_providers(self, model_name: str) -&gt; List[Any]:
+        """Return providers that are available (healthy or untested) for a model.
+
+        Filters by health cache — providers with known-false status are excluded.
+        Returns all providers if none have been health-checked yet.
+        """
+        available = []
+        for p in self.providers:
+            status = self._backend_cache.get(p.name)
+            if status is None or status is True:  # untested or healthy
+                available.append(p)
+        return available
+
+    def list_models(self) -&gt; List[Dict[str, Any]]:
+        """Return a list of all configured models and their specs."""
+        return [
+            {"name": name, **spec}
+            for name, spec in self.models.items()
+        ]
+
+    def _load_sovereign_secrets(self) -&gt; None:
+        """Load API keys from .env file into environment variables.
+
+        Implements the Sovereign Gateway pattern: secrets are stored in a
+        single .env file and injected into the process environment.
+        """
+        env_path = Path(__file__).resolve().parent.parent.parent.parent / ".env"
+        if not env_path.exists():
+            logger.warning(f"Sovereign secrets file not found at {env_path}. Using system env.")
+            return
+
+        try:
+            with open(env_path, "r") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    if "=" in line:
+                        key, value = line.split("=", 1)
+                        os.environ[key.strip()] = value.strip()
+            logger.info("Sovereign secrets loaded successfully from .env")
+        except OmegaError:
+            raise
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Failed to load sovereign secrets: {e}", exc_info=True)
+            raise ConfigError(f"Sovereign secrets load failed: {e}", raw_error=e) from e
+
+    @staticmethod
+    def _create_openrouter(name: str, cfg: dict) -&gt; OpenAICompatProvider:
+        """Factory for OpenRouter from raw YAML config dict.
+
+        [S3 B5 / D205] Supports both legacy single `api_key` and new
+        `api_keys` list (8-account Active-Passive sharding).
+        """
+        extra = {k: v for k, v in cfg.items() if k not in ("provider", "priority", "api_key", "api_keys", "base_url")}
+        # Resolve key list: prefer api_keys list, fall back to wrapping api_key
+        api_keys = cfg.get("api_keys", [])
+        if not api_keys and cfg.get("api_key"):
+            api_keys = [cfg["api_key"]]
+        return OpenAICompatProvider(ProviderConfig(
+            name=name,
+            priority=cfg.get("priority", 0),
+            api_keys=api_keys,
+            base_url=cfg.get("base_url", "https://openrouter.ai/api").rstrip("/v1"),
+            extra=extra,
+        ))
+
+    @staticmethod
+    def _create_antigravity(name: str, cfg: dict) -&gt; AntigravityProvider:
+        """Factory for Antigravity from raw YAML config dict.
+
+        Uses the official google.genai.Client with a custom HttpOptions
+        base_url pointing to the Antigravity API.  Sticky account routing
+        only (D205) — no round-robin.
+
+        [S3 B5 / D205] Supports both legacy single `api_key` and new
+        `api_keys` list (8-account Active-Passive sharding).
+        """
+        extra = {k: v for k, v in cfg.items() if k not in ("provider", "priority", "api_key", "api_keys", "base_url")}
+        # Resolve key list: prefer api_keys list, fall back to wrapping api_key
+        api_keys = cfg.get("api_keys", [])
+        if not api_keys and cfg.get("api_key"):
+            api_keys = [cfg["api_key"]]
+        return AntigravityProvider(ProviderConfig(
+            name=name,
+            priority=cfg.get("priority", 0),
+            api_keys=api_keys,
+            base_url=cfg.get("base_url", "https://api.antigravity.ai/v1"),
+            extra=extra,
+        ))
+
+    def _merge_native_gguf_config(self, p_cfg: dict, models: dict) -&gt; dict:
+        """Merge models.yaml model spec into native-gguf provider config.
+
+        models.yaml is the single source of truth for model paths, context,
+        threads, and KV cache. This method overlays those values onto the
+        provider defaults from providers.yaml.
+        """
+        # Find first on-demand model as default path
+        default_spec = models.get(self._system_default_model(), {})
+        merged = dict(p_cfg)
+
+        # Keys to pull from models.yaml
+        for key in ("path", "size_gb", "ram_mb", "context_window",
+                     "threads", "load_strategy", "entity",
+                     "kv_cache_key_type", "kv_cache_value_type"):
+            if key in default_spec and key not in merged:
+                merged[key] = default_spec[key]
+
+        # Optimize threads based on model size if not explicitly set
+        if "threads" not in merged:
+            model_size_b = default_spec.get("size_gb", 1.7) # Default to 1.7B if unknown
+            merged["threads"] = self._cpu_optimizer.get_recommended_threads(model_size_b)
+
+        # Map models.yaml names → NativeGGUFProvider config names
+        if "path" in merged and "model_path" not in merged:
+            merged["model_path"] = merged.pop("path")
+        if "context_window" in merged and "n_ctx" not in merged:
+            merged["n_ctx"] = merged.pop("context_window")
+        if "threads" in merged and "n_threads" not in merged:
+            merged["n_threads"] = merged.pop("threads")
+
+        # Map string KV cache types → llama.cpp enum ints
+        kv_map = {"f16": 1, "q8_0": 8, "q4_0": 2}
+        for yaml_key, prov_key in [("kv_cache_key_type", "type_k"),
+                                    ("kv_cache_value_type", "type_v")]:
+            if yaml_key in merged:
+                merged[prov_key] = kv_map.get(merged.pop(yaml_key), 8)
+
+        return merged
+
+    def _load_provider_fabric(self) -&gt; List[Any]:
+        """Load provider chain from providers.yaml.
+
+        [test-mode] When OMEGA_ENV=test, short-circuit to MockProvider only.
+        This prevents real GGUF model loading during tests — each fresh
+        Oracle() creates a fresh ModelGateway, and loading even a 1.7B model
+        takes 15-60s on Ryzen 5700U (no GPU). With 26 oracle tests each
+        creating fresh instances, the cumulative time exceeds any reasonable
+        timeout. MockProvider returns deterministic responses in &lt;1ms.
+        """
+        if os.environ.get("OMEGA_ENV") == "test":
+            return [MockProvider("mock", {"timeout_seconds": 5.0})]
+
+        providers_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "providers.yaml"
+        if not providers_path.exists():
+            logger.warning(f"Provider config not found at {providers_path}. Using defaults.")
+            return [MockProvider("mock", {})]
+
+        with open(providers_path, "r") as f:
+            config = yaml.safe_load(f)
+
+        fabric_config = config.get("inference", {}).get("fallback_chain", [])
+
+        provider_map = {
+            "google": GoogleAIProvider,
+            "openrouter": ModelGateway._create_openrouter,
+            "opencode-zen": ModelGateway._create_openrouter,
+            "cline": ModelGateway._create_openrouter,
+            "github-copilot": ModelGateway._create_openrouter,
+            "antigravity": ModelGateway._create_antigravity,
+            "lmster": LocallmsterProvider,
+            "ollama": OllamaProvider,
+            "native-gguf": NativeGGUFProvider,
+            "mock": MockProvider,
+        }
+
+        instances = []
+        for p_cfg in fabric_config:
+            name = p_cfg.get("provider")
+            if name not in provider_map:
+                logger.warning(f"Unrecognized provider '{name}' in config. Skipping.")
+                continue
+            if name == "native-gguf":
+                merged = self._merge_native_gguf_config(p_cfg, self.models)
+                instances.append(provider_map[name](name, merged))
+            else:
+                instances.append(provider_map[name](name, p_cfg))
+
+        def _get_priority(p):
+            """Extract priority from provider config — handles both dict and dataclass (ProviderConfig)."""
+            cfg = getattr(p, 'config', None)
+            if cfg is None:
+                return 999
+            if isinstance(cfg, dict):
+                return cfg.get('priority', 999)
+            if hasattr(cfg, 'priority'):
+                return cfg.priority
+            return 999
+        instances.sort(key=_get_priority)
+
+        return instances if instances else [MockProvider("mock", {})]
+
+    def _load_models(self) -&gt; dict:
+        """Load model specs from config."""
+        if not self.config_path.exists():
+            logger.warning(f"Models config not found at {self.config_path}")
+            return {}
+        with open(self.config_path, "r") as f:
+            data = yaml.safe_load(f)
+        return data.get("models", {}) if data else {}
+
+    def _load_kv_cache_config(self) -&gt; dict:
+        """Load KV cache quantization config."""
+        if not self.config_path.exists():
+            return {}
+        with open(self.config_path, "r") as f:
+            data = yaml.safe_load(f)
+        return data.get("kv_cache", {}) if data else {}
+
+    def get_kv_cache_flags(self, model_name: str) -&gt; List[str]:
+        """Get llama-server KV cache quantization flags for a model.
+
+        Uses per-model config if available, otherwise default.
+        """
+        default_key = self._kv_cache_config.get("default_key_type", "q8_0")
+        default_value = self._kv_cache_config.get("default_value_type", "q8_0")
+        per_model = self._kv_cache_config.get("models", {}).get(model_name, {})
+
+        key_type = per_model.get("key_type", default_key)
+        value_type = per_model.get("value_type", default_value)
+
+        return ["-ctk", key_type, "-ctv", value_type, "-mli", "1"]
+
+    def get_model_path(self, model_name: str) -&gt; Optional[str]:
+        """Get the GGUF path for a model by name. Resolves 'env:' prefixes."""
+        spec = self.models.get(model_name)
+        if not spec:
+            return None
+
+        def resolve_path(p: str) -&gt; str:
+            if p.startswith("env:"):
+                env_var = p[4:].split("/")[0]
+                relative_path = "/".join(p[4:].split("/")[1:])
+                base = os.environ.get(env_var, "")
+                return os.path.join(base, relative_path)
+            return p
+
+        path = resolve_path(spec.get("path", ""))
+        if path and Path(path).exists():
+            return path
+        for alt in spec.get("alt_paths", []):
+            resolved_alt = resolve_path(alt)
+            if Path(resolved_alt).exists():
+                return resolved_alt
+        return path
+
+    def get_model_spec(self, model_name: str) -&gt; Optional[dict]:
+        """Get full model spec."""
+        return self.models.get(model_name)
+
+    def get_model_weight(self, model_name: str) -&gt; int:
+        """Return resource weight for a model based on RAM requirements (in MB).
+
+        Sovereign-Sized: returns actual RAM requirement from models.yaml.
+        """
+        spec = self.models.get(model_name)
+        if not spec:
+            return 1024 # Default to 1GiB if unknown
+
+        return spec.get("ram_mb", 1024)
+
+    # ── Backend availability detection ─────────────────────────────────
+    async def _check_lmster(self) -&gt; bool:
+        """Check if lmster (LM Studio headless) is running (127.0.0.1:1234/v1/models)."""
+        try:
+            import httpx2 as httpx
+            async with httpx.AsyncClient(timeout=2.0) as client:
+                r = await client.get(f"{self.LMSTER_URL}/v1/models")
+                return r.status_code == 200
+        except (httpx.HTTPError, OSError):
+            return False
+
+    async def _check_ollama(self) -&gt; bool:
+        """Check if Ollama is running (127.0.0.1:11434/api/tags)."""
+        try:
+            import httpx2 as httpx
+            async with httpx.AsyncClient(timeout=2.0) as client:
+                r = await client.get(f"{self.OLLAMA_URL}/api/tags")
+                return r.status_code == 200
+        except (httpx.HTTPError, OSError):
+            return False
+
+    async def _check_llama_cpp(self) -&gt; bool:
+        """Check if llama.cpp server is running (127.0.0.1:8080/health)."""
+        try:
+            import httpx2 as httpx
+            async with httpx.AsyncClient(timeout=2.0) as client:
+                r = await client.get(f"{self.LLAMA_CPP_URL}/health")
+                return r.status_code == 200
+        except (httpx.HTTPError, OSError):
+            return False
+
+    async def _check_llama_cli(self) -&gt; bool:
+        """Check if llama-cli binary is available (async, non-blocking)."""
+        try:
+            result = await anyio.run_process(["llama-cli", "--version"], check=False)
+            return result.returncode == 0
+        except FileNotFoundError:
+            return False
+
+    async def _check_llmster(self) -&gt; bool:
+        """Check if llmster binary is available (async, non-blocking)."""
+        try:
+            result = await anyio.run_process(["llmster", "--version"], check=False)
+            return result.returncode == 0
+        except FileNotFoundError:
+            return False
+
+    async def detect_backends(self) -&gt; Dict[str, bool]:
+        """Detect all available inference backends. Returns dict of name -&gt; available."""
+        backends = {
+            "lmster": await self._check_lmster(),
+            "ollama": await self._check_ollama(),
+            "llama_cpp": await self._check_llama_cpp(),
+            "llama_cli": await self._check_llama_cli(),
+            "llmster": await self._check_llmster(),
+        }
+        self._backend_cache = backends
+        return backends
+
+    async def get_preferred_backend(self) -&gt; str:
+        """Return the name of the best available backend.
+
+        Cloud-first priority: Google → OpenRouter → OpenCode → Copilot → lmster → Ollama.
+        Local inference backends detect available servers.
+        """
+        # Cloud providers are always considered "available" (upstream health is their concern)
+        # For local backends, check actual availability
+        backends = await self.detect_backends()
+        for name in ["lmster", "ollama", "llama_cpp", "llama_cli", "llmster"]:
+            if backends.get(name):
+                return name
+        # If no local backend found, cloud providers will be used via fabric
+        return "cloud"
+
+    # ── Speculative decoding config (from cpu_optimizer) ─────────────
+    # Port 3.5: expose the CPU-level speculative decode config for Oracle/Iris.
+    @property
+    def spec_decode_config(self) -&gt; 'SpeculativeDecodeConfig':
+        """Expose the Zen 2-optimized speculative decode configuration.
+
+        Returns:
+            SpeculativeDecodeConfig with draft_model, min/max_draft_tokens,
+            and target_acceptance_rate tailored for the Ryzen 7 5700U.
+        """
+        return self._cpu_optimizer.spec_decode
+
+    # ── Entity-aware model affinity ───────────────────────────────────
+    # Per-entity model overrides for domain-specific routing.
+    # Fallback chain: entity override → entity registry field → domain default → system default
+    # [legacy: xna-omega-legacy] Port 3.1: Entity Model Affinity
+
+    _entity_model_map: Dict[str, str] = {}  # entity_name.lower() -&gt; model_name
+
+    def set_entity_model(self, entity_name: str, model_name: str) -&gt; None:
+        """Set a per-entity model override.
+
+        DEPRECATED: Use config/entity_model_affinity.yaml for persistent routing.
+        This method still works for temporary runtime overrides.
+        """
+        logger.warning(
+            "set_entity_model() is deprecated. Use config/entity_model_affinity.yaml "
+            "for sovereign routing. Runtime override applied: %s -&gt; %s",
+            entity_name, model_name
+        )
+        self._entity_model_map[entity_name.lower().strip()] = model_name
+        logger.debug("Entity model affinity set: %s -&gt; %s", entity_name.lower(), model_name)
+
+    def remove_entity_model(self, entity_name: str) -&gt; None:
+        """Remove a per-entity model override, reverting to default resolution.
+
+        DEPRECATED: Use config/entity_model_affinity.yaml for persistent routing.
+        """
+        logger.warning(
+            "remove_entity_model() is deprecated. Use config/entity_model_affinity.yaml "
+            "for sovereign routing."
+        )
+        self._entity_model_map.pop(entity_name.lower().strip(), None)
+
+    def get_model_for_entity(
+        self,
+        entity_name: Optional[str] = None,
+        affinity_context: Optional[Dict[str, Any]] = None,
+    ) -&gt; str:
+        """Resolve the best model for an entity using fallback chain.
+
+        Resolution priority:
+        0. YAML Affinity Resolver — Entity→Model Affinity DB (entity_model_affinity.yaml)
+           NEW: Ported from xna-omega-legacy by Lilith (ho_8135d6122230).
+           Provides 3-tier model preferences, routing rules, inference presets.
+        1. Entity override (set_entity_model) — runtime overrides for entity-specific routing
+        2. Entity registry field — the entity's configured ``model`` in its YAML definition
+        3. Domain-based mapping — entity's first domain linked to model config
+        4. System default — "qwen3-1.7b" (Iris tier)
+
+        Args:
+            entity_name: Entity name to resolve. If None, returns system default.
+            affinity_context: Optional context dict for YAML affinity resolver
+                (domain, complexity, online, requires, prompt_length).
+
+        Returns:
+            Model identifier string.
+        """
+        if not entity_name:
+            return self._system_default_model()
+
+        key = entity_name.lower().strip()
+
+        # Tier 0: YAML Affinity Resolver — Entity→Model Affinity DB
+        # [id-soft: quake-1996] cvar pattern — YAML-backed config, hot-reloadable
+        if self.affinity_resolver.is_loaded() or affinity_context is not None:
+            try:
+                result = self.affinity_resolver.resolve(
+                    entity_name=key,
+                    context=affinity_context or {},
+                )
+                if result and result.best_match:
+                    logger.debug(
+                        "Affinity resolver matched '%s' → model=%s tier=%s provider=%s",
+                        key, result.best_match, result.tier, result.provider,
+                    )
+                    return result.best_match
+            except (OmegaError, RuntimeError, OSError) as e:
+                logger.warning("Affinity resolver failed (non-fatal): %s", str(e), exc_info=True)
+
+        # Tier 1: Runtime override via set_entity_model()
+        override = self._entity_model_map.get(key)
+        if override:
+            return override
+
+        # Tier 2: Entity registry field
+        entity = self._entity_registry.get(key)
+        if entity and entity.model:
+            return entity.model
+
+        # Tier 3: Domain-based — use entity's first domain to find model match
+        if entity and entity.domains:
+            domain = entity.domains[0].lower()
+            # Check if models.yaml has domain-&gt;model mappings
+            domain_key = f"domain.{domain}"
+            if domain_key in getattr(self, 'models', {}):
+                domain_model = self.models[domain_key].get("model")
+                if domain_model:
+                    return domain_model
+
+        # Tier 4: System default
+        return self._system_default_model()
+
+    async def resolve_entity_affinity(
+        self,
+        entity_name: str,
+        query: str = "",
+        context: Optional[Dict[str, Any]] = None,
+    ) -&gt; Optional[AffinityResult]:
+        """Resolve full entity→model affinity including inference presets.
+
+        Returns the full AffinityResult dataclass with model, provider, tier,
+        and inference_presets (temperature, system_prompt, preferred_context).
+
+        This is the primary integration point for Oracle._summon() to apply
+        entity-specific inference tuning from the YAML affinity database.
+
+        Args:
+            entity_name: Entity to resolve affinity for.
+            query: The user query (used for prompt_length_lt matching).
+            context: Optional context dict (domain, complexity, online, requires).
+        """
+        # Ensure resolver is loaded (lazy init)
+        if not self.affinity_resolver.is_loaded():
+            try:
+                await self.affinity_resolver.load()
+            except (OmegaError, RuntimeError, OSError) as e:
+                logger.warning("Affinity resolver load failed (non-fatal): %s", str(e), exc_info=True)
+                return None
+
+        try:
+            return await self.affinity_resolver.resolve(
+                entity_name=entity_name,
+                query=query,
+                context=context,
+            )
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.warning("Entity affinity resolution failed (non-fatal): %s", str(e), exc_info=True)
+            return None
+
+    @staticmethod
+    def _system_default_model() -&gt; str:
+        """Return the system default model for unaffiliated queries."""
+        return "qwen3-1.7b"
+
+    # ── Model name resolution ──────────────────────────────────────────
+    async def _resolve_ollama_model(self, model_name: str) -&gt; str:
+        """Resolve config model name to an Ollama tag.
+
+        Checks available Ollama models and finds the best match.
+        Falls back to the original model name if resolution fails.
+        """
+        try:
+            import httpx2 as httpx
+            async with httpx.AsyncClient(timeout=3.0) as client:
+                r = await client.get(f"{self.OLLAMA_URL}/api/tags")
+                if r.status_code == 200:
+                    data = r.json()
+                    available = [m["name"] for m in data.get("models", [])]
+                    if model_name in available:
+                        return model_name
+                    name_lower = model_name.lower().split("-")[0].split("_")[0]
+                    for tag in available:
+                        if tag.lower().startswith(name_lower):
+                            return tag
+                    if available:
+                        return available[0]
+        except OmegaError:
+            raise
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.debug(f"Ollama model resolution failed for {model_name}: {e}", exc_info=True)
+            # Resolve to original as fallback
+        return model_name
+
+    # ── Circuit Breaker Integration ──────────────────────────────────
+
+    def _get_provider_timeout(self, provider) -&gt; float:
+        """Per-provider timeout with MagicMock-safe type check."""
+        try:
+            timeout = provider.config.timeout_seconds
+        except AttributeError:
+            timeout = provider.config.get("timeout_seconds", 130.0)
+        if isinstance(timeout, (int, float)):
+            return float(timeout)
+        return 130.0
+
+    @property
+    def _cloud_providers(self) -&gt; set:
+        """Set of cloud provider names for sovereignty tracking."""
+        return {"google", "openrouter", "opencode-zen", "cline"}
+
+    def _is_cloud_provider(self, provider) -&gt; bool:
+        """Check if a provider is a cloud provider."""
+        return provider.name in self._cloud_providers
+
+    # [id-soft: doom-1993] BSP Culling — O(1) pre-check skips broken providers
+    async def _precheck_provider(self, provider, model_name: str) -&gt; bool:
+        """BSP-style pre-check: is this provider worth trying?
+
+        [id-soft: doom-1993] BSP Culling — single O(1) circuit breaker check
+        skips entire provider subtree, adapted from Doom's static BSP tree
+        to dynamic provider health state.
+
+        Checks (cheapest first):
+        1. Circuit breaker state — if OPEN, skip instantly (O(1) dict lookup)
+        2. Provider availability — does the server respond?
+
+        FIX T2.2: Check breaker by provider.name directly, not via model_name
+        indirection through _model_provider_map. The old code called
+        is_available(model_name) which used _model_provider_map.get(model_name)
+        to find the provider — if the mapping was missing it always returned True.
+        """
+        # Circuit breaker is the cheapest check — single dict lookup by provider name
+        if self._health_monitor:
+            breaker = self._health_monitor._breakers.get(provider.name)
+            if breaker and not breaker.is_available:
+                return False
+
+        # Provider self-health check (sync or async)
+        if hasattr(provider, 'is_available'):
+            try:
+                if inspect.iscoroutinefunction(provider.is_available):
+                    if not await provider.is_available():
+                        return False
+                else:
+                    if not provider.is_available():
+                        return False
+            except (OmegaError, RuntimeError, OSError) as e:
+                logger.warning("Provider %s availability check failed: %s", getattr(provider, 'name', '?'), e)
+                return False
+
+        return True
+
+    def _record_provider_failure(self, provider, model_name: str, trace_id: Optional[str] = None):
+        """Record provider failure with HealthMonitor and observability."""
+        if self._health_monitor:
+            self._health_monitor.record_failure(model_name)
+
+        # Record failure in latency tracker (latency is 0 or estimated)
+        tracker.record(
+            provider=provider.name,
+            model=model_name,
+            latency_ms=0.0,
+            status="failure",
+            trace_id=trace_id
+        )
+
+        if trace_id:
+            try:
+                from omega.observability import get_engine, EventType
+                get_engine().log_event(
+                    EventType.BACKEND_FALLBACK, trace_id,
+                    {"provider": provider.name, "model": model_name,
+                     "event": "provider_failed"}
+                )
+            except (OmegaError, RuntimeError, OSError) as e:
+                logger.warning("Failed to log BACKEND_FALLBACK event for provider %s: %s",
+                                getattr(provider, 'name', '?'), e)
+
+    def _update_active_set(self, provider_name: str) -&gt; None:
+        """Maintain tiered fixed-size active sets of successful providers (LRU).
+
+        [id-soft: doom-1993] Fixed-Size Active Set — 32-entry clip range.
+        [hardening-p6] Sovereignty-Tiered — local and cloud providers are
+        tracked in separate sets to prevent sovereignty drift (Mandate 7).
+        A known-good local provider is always preferred over a known-good
+        cloud provider, regardless of recency.
+        """
+        is_cloud = self._is_cloud_provider_name(provider_name)
+        target = self._cloud_active if is_cloud else self._local_active
+
+        if provider_name in target:
+            target.remove(provider_name)
+        target.insert(0, provider_name)
+        if len(target) &gt; 32:
+            target.pop()
+
+    def _is_cloud_provider_name(self, name: str) -&gt; bool:
+        """Check if a provider name is a cloud provider."""
+        return name in self._cloud_providers
+
+    def _fallback_response(self, model_name: str, system_prompt: str, user_query: str) -&gt; str:
+        """Generate a fallback response when all providers fail.
+
+        Returns a helpful message indicating that no inference backend is available
+        and instructions for enabling local or cloud inference.
+        """
+        return (
+            f"⚠️ no inference backend is running for model '{model_name}'.\n\n"
+            "To use the Omega Engine, please:\n"
+            "1. Start a local inference backend (llama-cpp-python, LM Studio, or Ollama), OR\n"
+            "2. Configure cloud credentials (Google AI Studio, OpenRouter, GitHub Copilot), OR\n"
+            "3. Check logs for provider errors: omega-hub is attempting to fallback through the provider fabric.\n\n"
+            "System prompt: {}\nUser query: {}".format(
+                system_prompt[:100] + "..." if len(system_prompt) &gt; 100 else system_prompt,
+                user_query[:100] + "..." if len(user_query) &gt; 100 else user_query,
+            )
+        )
+
+    async def generate(
+        self, model_name: str, system_prompt: str, user_query: str,
+        temperature: float = 0.7, max_tokens: int = 1024, trace_id: Optional[str] = None,
+        session_id: Optional[str] = None, entity_name: Optional[str] = None,
+        logit_bias: Optional[Dict[int, float]] = None,
+        repetition_penalty: float = 1.0,
+    ) -&gt; 'GenerateResult':
+        """Iterate provider fabric with circuit breaker protection.
+
+        [id-soft: doom-1993] Fixed-Size Active Set — first try the 32 most recently
+        successful providers before falling back to the full fabric.
+        """
+        # ── Sovereign Sampling Layer ──────────────────────────────────────────
+        # [Sovereign Sampling] Intervention for Gemma 4 31B to eliminate repetition loops.
+        # Target: gemma-4-31b-it (or any model identified as Gemma 4 31B)
+        if "gemma-4-31b" in model_name.lower():
+            # Increase temperature and repetition penalty to escape local probability peaks.
+            temperature = max(temperature, 0.85)
+            repetition_penalty = max(repetition_penalty, 1.2)
+
+            # Verified token IDs for ' la' and 'la-' from COGNITIVE_STABILITY_PLAN.md
+            # These are used to mathematically forbid the model from selecting them.
+            GEMMA_LA_TOKENS = {
+                759: -10.0,    # ' la'
+                2149: -10.0,   # 'la-'
+                236772: -10.0, # 'la-' (variant)
+            }
+            if logit_bias is None:
+                logit_bias = GEMMA_LA_TOKENS
+            else:
+                logit_bias.update(GEMMA_LA_TOKENS)
+
+        last_exception = None
+        errors = []
+        success_provider = None
+        _latency_ms = 0.0  # [M22] Initialize before loop for fallback path
+        # ── Provider Selection Layer ──────────────────────────────────────────
+        # Use the ProviderSelector to reorder the fabric based on query content (PII)
+        # and provider health. This ensures we try the most suitable providers first.
+        ordered_providers = await self.provider_selector.get_ordered_providers(model_name, user_query)
+        if not ordered_providers:
+            raise ProviderUnavailableError(message=f"No providers available for model {model_name}")
+
+        # [M8 Zero Telemetry] WARP Proxy Pool injection for opencode-zen
+        # If proxy_pool is configured, inject socks5h:// proxy URL into the
+        # opencode-zen provider's extra config before the provider loop.
+        # This ensures DNS is resolved through the WARP exit node (socks5h://),
+        # preventing local DNS leaks per the Sovereign Security Protocol.
+        proxy_pool = getattr(self, 'proxy_pool', None)
+        if proxy_pool is not None:
+            for provider in ordered_providers:
+                if provider.name == "opencode-zen" and hasattr(provider, 'config'):
+                    try:
+                        proxy_url = await proxy_pool.get_proxy_url()
+                        provider.config.extra["proxy_url"] = proxy_url
+                        logger.debug("WARP proxy injected for opencode-zen: %s", proxy_url)
+                    except Exception as exc:
+                        logger.warning("WARP proxy injection failed for opencode-zen: %s", exc)
+
+        for provider in ordered_providers:
+            # Step 1: BSP-style pre-check — fast fail if circuit is OPEN
+            if not await self._precheck_provider(provider, model_name):
+                errors.append(f"{provider.name}: culled by precheck")
+                continue
+
+            # Step 1.5: Sovereign Budget Gate (Shatter-Glass Phase 3)
+            # Only check budget for cloud providers
+            if self._is_cloud_provider(provider) and entity_name:
+                if not await BudgetGate.check_budget(entity_name, trace_id or "unknown"):
+                    errors.append(f"{provider.name}: cloud budget exhausted for {entity_name}")
+                    continue
+
+            # Rate Limiting: Check if provider has available tokens
+            if not await self.rate_limiter.check_limit(provider.name):
+                errors.append(f"{provider.name}: rate limit exceeded")
+                continue
+
+            # Step 2: Execute with Hardware Lock and breaker protection
+            timeout = self._get_provider_timeout(provider)
+            breaker = None  # Initialize for else-clause scope
+
+            # Use Hardware Lock to prevent resource contention
+            weight = self.get_model_weight(model_name)
+            spec = self.get_model_spec(model_name)
+
+            try:
+                async with self.resource_guard.lock(weight=weight, model_spec=spec):
+                    with anyio.move_on_after(timeout) as cancel_scope:
+                        # [M22 Response Provenance] Start latency measurement
+                        _start_time = time.monotonic()
+
+                        # Use HealthMonitor's breaker if available, otherwise direct call.
+                        if self._health_monitor:
+                            breaker = self._health_monitor._breakers.get(provider.name)
+                            if breaker:
+                                async def _call_with_none_as_failure():
+                                    r = await provider.generate(
+                                        model_name, system_prompt, user_query,
+                                        temperature, max_tokens, trace_id=trace_id,
+                                        session_id=session_id,
+                                        logit_bias=logit_bias,
+                                        repetition_penalty=repetition_penalty,
+                                    )
+                                    if not r:
+                                        raise TimeoutError(f"Provider {provider.name} returned empty response")
+                                    return r
+                                result = await breaker.call(_call_with_none_as_failure, trace_id=trace_id)
+                            else:
+                                result = await provider.generate(
+                                    model_name, system_prompt, user_query,
+                                    temperature, max_tokens, trace_id=trace_id,
+                                    session_id=session_id,
+                                    logit_bias=logit_bias,
+                                    repetition_penalty=repetition_penalty,
+                                )
+                        else:
+                            result = await provider.generate(
+                                model_name, system_prompt, user_query,
+                                temperature, max_tokens, trace_id=trace_id,
+                                session_id=session_id,
+                                logit_bias=logit_bias,
+                                repetition_penalty=repetition_penalty,
+                            )
+
+                        if result:
+                            # [M22 Response Provenance] Record latency immediately after provider returns
+                            _latency_ms = (time.monotonic() - _start_time) * 1000
+                            if self._health_monitor:
+                                self._health_monitor.record_success(model_name)
+                            self._update_active_set(provider.name)
+
+                            # Record latency to time-series tracker
+                            tracker.record(
+                                provider=provider.name,
+                                model=model_name,
+                                latency_ms=_latency_ms,
+                                status="success",
+                                trace_id=trace_id
+                            )
+
+                            success_provider = provider
+
+
+                            # Sovereign Token Ledger Integration
+                            # Capture actual usage from provider or estimate
+                            # Note: In a full implementation, providers would return a structured response
+                            # containing usage metadata. For now, we use the bridge's estimation.
+                            tokens_in = len(system_prompt) // 4
+                            tokens_out = len(result) // 4
+
+                            await TokenLedger().record_transaction(
+                                trace_id=trace_id or "unknown",
+                                entity=entity_name or "system",
+                                tokens_in=tokens_in,
+                                tokens_out=tokens_out,
+                                provider_name=provider.name
+                            )
+
+                            break
+
+                        if cancel_scope.cancelled_caught:
+                            errors.append(f"{provider.name}: timed out ({timeout}s)")
+                            self._record_provider_failure(provider, model_name, trace_id)
+                            continue
+            except CircuitOpenError:
+                errors.append(f"{provider.name}: circuit OPEN")
+                continue
+            except TimeoutError as e:
+                errors.append(f"{provider.name}: {e}")
+                self._record_provider_failure(provider, model_name, trace_id)
+                continue
+            except Exception as e:
+                last_exception = e
+                logger.error(
+                    "ModelGateway.generate: unexpected error from provider=%s trace=%s err=%s",
+                    provider.name, trace_id, str(e), exc_info=True
+                )
+                errors.append(f"{provider.name}: {e}")
+                self._record_provider_failure(provider, model_name, trace_id)
+                continue
+
+
+        if success_provider:
+            # [Operation Deep-Siphon] ICS-F v1.0 Sprint 0: capture logprobs from provider.
+            # Duck-typing: NativeGGUFProvider sets _last_logprobs after each generate().
+            # Other providers don't have this attribute — getattr defaults to None.
+            logprobs = getattr(success_provider, '_last_logprobs', None)
+            return GenerateResult(
+                text=result,
+                provider_name=success_provider.name,
+                is_cloud=self._is_cloud_provider(success_provider),
+                logprobs=logprobs,
+                latency_ms=_latency_ms,      # [M22] Actual latency from measurement
+                model_used=model_name,        # [M22] Actual model that served
+            )
+
+# If all providers failed, propagate the last critical error if it exists
+        if last_exception and isinstance(last_exception, (InferenceError, OmegaError)):
+            logger.critical(f"All providers failed. Propagating last critical error: {last_exception}")
+            raise last_exception
+
+        logger.warning("All providers failed. Trace: %s | Errors: %s", trace_id, '; '.join(errors))
+        return GenerateResult(
+            text=self._fallback_response(model_name, system_prompt, user_query),
+            provider_name="fallback",
+            is_cloud=self._is_cloud_provider_name("fallback"),  # Derived from provider_name per M22
+            latency_ms=_latency_ms,   # [M22] Report measured latency (0.0 if never reached a provider)
+            model_used=model_name,    # [M22] Report the model that was requested
+        )
+
+    # ── Somatic State API (M20) ──────────────────────────────────────────
+
+    def _get_native_gguf_provider(self) -&gt; Optional['NativeGGUFProvider']:
+        """Find the NativeGGUFProvider in the provider fabric."""
+        for provider in self.providers:
+            if isinstance(provider, NativeGGUFProvider):
+                return provider
+        return None
+
+    async def save_state(self, state_id: str) -&gt; bool:
+        """Save the current model's somatic state (KV cache) to the USM.
+
+        Delegates to the NativeGGUFProvider to capture bytes, then
+        persists them via the Unified State Manager.
+
+        Args:
+            state_id: Unique identifier for the state snapshot.
+
+        Returns:
+            True if state was captured and saved successfully, False otherwise.
+        """
+        provider = self._get_native_gguf_provider()
+        if provider is None:
+            logger.warning("No NativeGGUFProvider available for save_state")
+            return False
+
+        try:
+            # Capture raw bytes from the provider
+            state_bytes = await provider.save_state()
+
+            # Persist bytes in the USM
+            # We use a specific namespace for somatic states
+            usm_key = f"somatic:{state_id}"
+            await self.usm.put(usm_key, state_bytes)
+
+            logger.info(f"Somatic state saved to USM for {state_id}")
+            return True
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Failed to save somatic state {state_id} to USM: {e}")
+            return False
+
+    async def load_state(self, state_id: str) -&gt; bool:
+        """Load a somatic state (KV cache) from the USM into the current model.
+
+        Delegates to the USM to retrieve bytes, then pushes them to the provider.
+
+        Args:
+            state_id: Unique identifier for the state snapshot.
+
+        Returns:
+            True if state was loaded successfully, False otherwise.
+        """
+        provider = self._get_native_gguf_provider()
+        if provider is None:
+            logger.warning("No NativeGGUFProvider available for load_state")
+            return False
+
+        try:
+            # Retrieve bytes from the USM
+            usm_key = f"somatic:{state_id}"
+            state_bytes = await self.usm.get(usm_key)
+
+            if state_bytes is None:
+                logger.warning(f"No somatic state found in USM for {state_id}")
+                return False
+
+            # Push bytes to the provider
+            return await provider.load_state(state_bytes)
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Failed to load somatic state {state_id} from USM: {e}")
+            return False
+
+    async def _call_provider_with_resilience(self, provider, model_name, system_prompt, user_query, temperature, max_tokens, trace_id=None):
+        """Wrapper to apply the OpenRouter retry policy."""
+        @openrouter_retry_policy
+        async def _do_call():
+            try:
+                return await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
+            except (OmegaError, RuntimeError, OSError) as e:
+                # Map specific HTTP errors to Transient vs Fatal
+                err_msg = str(e).lower()
+                if "429" in err_msg and "provider returned error" in err_msg:
+                    raise OpenRouterFatalError(f"Upstream limit reached: {e}")
+                if any(code in err_msg for code in ["429", "502", "503", "504"]):
+                    raise OpenRouterTransientError(f"Transient error: {e}")
+                raise e
+
+        return await _do_call()
+
+    # ── Backend: Ollama (OpenAI-compatible API) ──────────────────────
+    async def _try_ollama(
+        self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int
+    ) -&gt; Optional[str]:
+        """Inference via Ollama's OpenAI-compatible API at 127.0.0.1:11434."""
+        import httpx2 as httpx
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_query},
+        ]
+        payload = {
+            "model": model,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "stream": False,
+        }
+
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            response = await client.post(f"{self.OLLAMA_URL}/v1/chat/completions", json=payload)
+            response.raise_for_status()
+            data = response.json()
+            choices = data.get("choices", [])
+            if choices:
+                return choices[0].get("message", {}).get("content", "").strip()
+        return None
+
+    # ── Backend: lmster (LM Studio Headless Server) ───────────────────
+    async def _try_lmster(
+        self, model: str, system_prompt: str, user_query: str, temperature: float, max_tokens: int
+    ) -&gt; Optional[str]:
+        """Inference via lmster (LM Studio headless server) at 127.0.0.1:1234 OpenAI-compatible API."""
+        import httpx2 as httpx
+
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_query},
+        ]
+        payload = {
+            "model": model,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "stream": False,
+        }
+
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            response = await client.post(f"{self.LMSTER_URL}/v1/chat/completions", json=payload)
+            response.raise_for_status()
+            data = response.json()
+            choices = data.get("choices", [])
+            if choices:
+                return choices[0].get("message", {}).get("content", "").strip()
+        return None
+
+    # ── Backend: llama.cpp HTTP server ────────────────────────────────
+    async def _try_llama_server(
+        self, system_prompt: str, user_query: str, temperature: float, max_tokens: int
+    ) -&gt; Optional[str]:
+        """Inference via llama.cpp HTTP server at 127.0.0.1:8080."""
+        import httpx2 as httpx
+
+        prompt = f"{system_prompt}\n\nUser: {user_query}\n\nEntity:"
+        payload = {
+            "prompt": prompt,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "stop": ["User:", "\n\n"],
+        }
+
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            response = await client.post(f"{self.LLAMA_CPP_URL}/completion", json=payload)
+            response.raise_for_status()
+            data = response.json()
+            return data.get("content", "").strip()
+
+    # ── Backend: Direct GGUF CLI (llama-cli or llmster) ───────────────
+    async def _try_direct_gguf(
+        self, cli_name: str, model_path: str, system_prompt: str, user_query: str,
+        temperature: float, max_tokens: int
+    ) -&gt; Optional[str]:
+        """Inference via direct CLI subprocess (llama-cli or llmster)."""
+        prompt = f"&lt;|system|&gt;{system_prompt}&lt;/s&gt;&lt;|user|&gt;{user_query}&lt;/s&gt;&lt;|assistant|&gt;"
+
+        result = await anyio.run_process(
+            [
+                cli_name,
+                "--model", model_path,
+                "--prompt", prompt,
+                "--temp", str(temperature),
+                "--n-predict", str(max_tokens),
+                "--no-display-prompt",
+            ],
+            capture_output=True,
+            check=False,
+        )
+
+        if result.returncode == 0:
+            output = result.stdout.decode().strip()
+            return output if output else None
+        return None
+
+    # ── Backend: ONNX Runtime ─────────────────────────────────────────
+    async def _try_onnx(
+        self, model_path: str, system_prompt: str, user_query: str,
+        temperature: float, max_tokens: int
+    ) -&gt; Optional[str]:
+        """Inference via ONNX Runtime (optimized for Zen 2 CPU)."""
+        try:
+            import onnxruntime as ort
+        except ImportError:
+            logger.debug("ONNX Runtime not installed; skipping ONNX backend")
+            return None
+
+        try:
+            sess = ort.InferenceSession(
+                model_path,
+                providers=["CPUExecutionProvider"],
+                sess_options=ort.SessionOptions(),
+            )
+            input_name = sess.get_inputs()[0].name
+            # Simple text completion via ONNX (for compatible models)
+            input_text = f"{system_prompt}\n\nUser: {user_query}\n\nAssistant:"
+            inputs = {input_name: [input_text]}
+            outputs = sess.run(None, inputs)
+            if outputs and len(outputs[0]) &gt; 0:
+                return str(outputs[0][0])[:max_tokens]
+        except OmegaError:
+            raise
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"ONNX inference failed: {e}", exc_info=True)
+            return None
+
+    def is_onnx_available(self) -&gt; bool:
+        """Check if ONNX Runtime is installed and usable."""
+        try:
+            import onnxruntime as ort
+            return "CPUExecutionProvider" in ort.get_available_providers()
+        except ImportError:
+            return False
+
+    def get_provider_for_entity(self, entity_name: str):
+        """Get the provider instance that was last used for an entity.
+
+        This is used for somatic state capture (M20).
+        """
+        # The active provider is tracked in the active set
+        # For now, return the first NativeGGUFProvider if available
+        for provider in self.providers:
+            if provider.__class__.__name__ == "NativeGGUFProvider":
+                return provider
+        return None
+
+    # ── Fallback ──────────────────────────────────────────────────────
+    async def embed(self, text: str) -&gt; List[float]:
+        """Generate a vector embedding for the given text.
+
+        Currently uses a mock implementation. In a full implementation, this
+        would route to a local embedding model (e.g., SentenceTransformers)
+        or a cloud provider.
+        """
+        # Mock embedding: 384-dim vector (standard for MiniLM)
+        # In production, this would call a real embedding model.
+        import numpy as np
+        return np.random.rand(384).tolist()
+
+    # ── Diagnostics ───────────────────────────────────────────────────
+    async def check_health(self) -&gt; Dict[str, Any]:
+        """Return health status of all inference backends.
+
+        Cloud-first priority: Google → OpenRouter → OpenCode → Copilot → lmster → Ollama
+        Local backends checked via HTTP; cloud providers are always considered available.
+        """
+        backends = await self.detect_backends()
+        # Show provider fabric status
+        fabric_status = {}
+        for p in self.providers:
+            name = p.name
+            is_avail = await p.is_available()
+            fabric_status[name] = {
+                "available": is_avail,
+                "priority": getattr(p.config, 'priority', 999) if hasattr(p, 'config') else 999,
+            }
+        return {
+            "fabric": fabric_status,
+            "local_backends": {
+                "lmster": {
+                    "available": backends.get("lmster", False),
+                    "url": self.LMSTER_URL,
+                    "note": "LM Studio headless. Start: `lms server start`"
+                },
+                "ollama": {
+                    "available": backends.get("ollama", False),
+                    "url": self.OLLAMA_URL,
+                    "note": "Ollama fallback. Run: `ollama run qwen3:1.7b`"
+                },
+                "llama_cpp": {
+                    "available": backends.get("llama_cpp", False),
+                    "url": self.LLAMA_CPP_URL,
+                    "note": "llama.cpp HTTP server"
+                },
+            },
+        }
+
+    async def is_server_alive(self) -&gt; bool:
+        """Check if any inference backend is available."""
+        backends = await self.detect_backends()
+        return any(backends.values())
+</file>
+
+
+<file path="src/omega/oracle/oracle.py" size="59125" language="Python" sha256="6035da843cad42b49a79f799928091d511d1f6984bdc7167de28da45fcffb71a" purpose="Structured response from the Oracle." tokens="15362">
+# AP: AP-PR-READINESS-v1.0.0
+# AP: AP-ORACLE-RESTORE-v2.3.0
+# 🔱 The Oracle — Routing, Summoning, and Entity Intelligence
+# ⬡ OMEGA ⬡ ORACLE ⬡ oracle.py (1100 lines)
+#
+# Single-source-of-truth for query routing, speculative decoding, entity summoning,
+# and soul evolution. Acts as the gateway between user intent and the 10-pillar council.
+#
+# [id-soft: doom-1993] Oracle Summoning Pattern — Direct entity dispatch via _summon()
+# [id-soft: quake-1996] Memory Zone — Long-term learning via soul.yaml
+# [id-soft: quake3-1999] Triage Routing — Intent classification and entity selection
+
+import logging
+import os
+import re
+import errno
+from functools import lru_cache
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
+
+import anyio
+import yaml
+
+from .session_manager import SessionManager
+from .orchestrator import Orchestrator
+from .model_gateway import ModelGateway
+from .health_monitor import HealthMonitor
+from .soul_distiller import get_distiller
+from .wad_loader import WADLoader
+from .search import SovereignSearcher
+from .iterative_research import IterativeResearcher
+from .skeptical_verifier import SkepticalVerifier, VerificationResult
+from .security import TDPGate, TaintedData
+from .pii_masker import PIIMasker
+from .context_builder import ContextBuilder
+from .semantic_router import SemanticRouter
+from .selective_hydration import SelectiveHydration
+from .failure_registry import get_failure_registry
+from .soul_edit_history import SoulEditHistory, SoulEditEntry
+from .compaction_harvester import CompactionHarvester
+from .timeout_manager import TimeoutManager
+from .degradation import DegradationManager
+from .session_lifecycle import SessionLifecycleManager, SessionLifecycleConfig
+from .audience_calibrator import get_audience_calibrator
+from .dpo_logger import get_dpo_recorder, initialize_dpo_recorder, shutdown_dpo_recorder, RewardSource
+from ..iris.matcher import IntentMatcher
+
+from ..observability import new_trace_id, ObservabilityEngine, TraceSession, get_engine, DATA_DIR
+from ..errors import OmegaError, SovereignDiskFullError, SoulCorruptionError, StateIntegrityError
+from ..cvar_table import cvar_get, cvar_set, cvar_namespace
+from .entity_registry import EntityRegistry, Entity
+from ..memory_store import get_memory_store
+from ..astrology import record_first_breath
+from ..orchestration.triage_router import TriageRouter, TriageRequest, TaskRequest, EntityContext, Constraints, SessionContext, ModelSelection
+from ..state import get_usm, initialize_usm
+from omega.errors import OmegaError
+
+# WARP Proxy Pool — optional, for OpenCode Zen rate limit bypass
+try:
+    from ..proxy_pool import EphemeralWarpPool
+    _WARP_AVAILABLE = True
+except ImportError:
+    EphemeralWarpPool = None
+    _WARP_AVAILABLE = False
+
+logger = logging.getLogger(__name__)
+
+# Configuration
+IRIS_CONFIDENCE_THRESHOLD = 0.6
+
+@dataclass
+class OracleResponse:
+    """Structured response from the Oracle.
+
+    Engine fields: text, entity, confidence, trace_id, slots, domains.
+    WAD-specific display fields (sigil, glyph, pantheon, etc.) are in
+    the Entity.metadata dict — accessed via entity.metadata.get("sigil").
+    """
+    text: str
+    entity: str = "Oracle"
+    confidence: float = 0.5
+    trace_id: str = ""
+    slots: Optional[List[str]] = None
+    domains: Optional[List[str]] = None
+    backend: Optional[str] = None
+    model: Optional[str] = None
+    session_id: Optional[str] = None
+    escalated: bool = False
+    cost_warning: Optional[str] = None
+
+class Oracle:
+    """
+    The Oracle — unified routing, summoning, and entity intelligence.
+    DocRef: docs/reference/api/oracle.md
+
+    Responsibilities:
+    1. Intent detection (talk vs @summon vs @consult patterns)
+    2. Speculative decoding (Iris confidence assessment)
+    3. Domain routing (escalation to Pillar Keepers)
+    4. Entity summoning (direct dispatch to named entities)
+    5. Soul evolution tracking (L1→L2→L3 learning)
+    6. Cloud critique integration (TDP quarantine)
+    """
+
+    _valid_agents_cache: Optional[Set[str]] = None
+
+    def __init__(self, registry: Optional[EntityRegistry] = None, model_gateway: Optional[ModelGateway] = None):
+        from omega.oracle.health_monitor import get_health_monitor
+        from .middleware.headroom import get_headroom_middleware
+        self.registry = registry or EntityRegistry()
+        self.default_entity = self.registry.get(cvar_get("config.entity.default", "default"))
+        self.orchestrator = Orchestrator()
+        self.health_monitor = get_health_monitor()
+        self.timeout_manager = TimeoutManager()
+        self.degradation_manager = DegradationManager()
+        # Accept injected model_gateway to prevent double initialization
+        # (hub creates ModelGateway at module level; Oracle was creating a second one)
+        self.model_gateway = model_gateway or ModelGateway(health_monitor=self.health_monitor)
+
+        # [M8 Zero Telemetry] WARP Proxy Pool — inject for OpenCode Zen rate limit bypass
+        # Only activates if WARP pool is deployed and running (systemd units).
+        if _WARP_AVAILABLE and EphemeralWarpPool is not None:
+            try:
+                self.model_gateway.proxy_pool = EphemeralWarpPool()
+                logger.info("WARP Proxy Pool attached to ModelGateway (opencode-zen bypass active)")
+            except (OmegaError, RuntimeError, OSError) as e:
+                logger.warning(f"WARP Proxy Pool initialization failed (will run without bypass): {e}")
+                self.model_gateway.proxy_pool = None
+        else:
+            self.model_gateway.proxy_pool = None
+
+        self.headroom = get_headroom_middleware()
+        self.observability = get_engine()  # Get singleton observability engine
+        self.distiller = get_distiller()
+        self.session_manager = SessionManager()
+        self.memory_store = get_memory_store()
+        self.lifecycle = SessionLifecycleManager(self.memory_store)
+        self.searcher = SovereignSearcher(self.memory_store)
+        self.verifier = SkepticalVerifier(self.model_gateway)
+        # [M11] Throttled soul distillation counter — triggers close_session
+        # every N interactions to avoid per-interrupt soul.yaml I/O.
+        self._interaction_counter: Dict[str, int] = {}
+        # [Somatic Flush] Turn counter for somatic re-hydration
+        self._turn_counter: Dict[str, int] = {}
+        self.researcher = IterativeResearcher(self.model_gateway, self.searcher, verifier=self.verifier)
+        # [Workstream B] Selective Hydration — L3 gnosis retrieval for context injection
+        self.selective_hydration = SelectiveHydration(
+            embedding_manager=self.memory_store.embedding_manager,
+            vector_adapter=self.memory_store.vector_store,
+        )
+        self.context_builder = ContextBuilder(
+            selective_hydration=self.selective_hydration,
+        )
+        self.pii_masker = PIIMasker()
+        self.intent_matcher = IntentMatcher()
+
+        # [D16-1] Audience Calibration Pipeline — output register transformation
+        self.audience_calibrator = get_audience_calibrator()
+
+        # [M11] Soul Edit History — immutable audit trail for soul.yaml changes
+        self.soul_edit_history = SoulEditHistory()
+
+        # [M12] Compaction Harvester — automated compaction monitoring and metrics
+        self.compaction_harvester = CompactionHarvester()
+
+        # [[DRIVERS_LICENSE_1]] Semantic Router — embedding-based entity routing
+        self.semantic_router = SemanticRouter(
+            registry=self.registry,
+            embedding_manager=self.memory_store.embedding_manager,
+        )
+
+        # Load WADs
+        self.wad_loader = WADLoader(self.registry)
+        self.triage_router = TriageRouter()
+
+        # Load valid agents from AGENTS.md for mention validation
+        self.valid_agents = self._get_valid_agents_from_md()
+
+        # [D16-2] DPO recorder for training data collection
+        self.dpo_recorder = None
+        self._last_query = None
+
+        self._bootstrapped = False
+
+    async def bootstrap(self) -&gt; None:
+        """Initialize Oracle systems on first use."""
+        if self._bootstrapped:
+            return
+
+        # Initialize Unified State Manager (USM)
+        try:
+            await initialize_usm()
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.error(f"USM initialization failed [{classification['mode']}]: {e}")
+
+        # Run session lifecycle sweep (M12 Queue Integrity)
+        # Active (0-7d) → Archived (gzip) → External (90d) → Deleted (optional)
+        try:
+            stats = await self.lifecycle.run_lifecycle()
+            if stats.archived or stats.externalized:
+                logger.info(
+                    "Session lifecycle sweep: archived=%d, externalized=%d, %.1fms",
+                    stats.archived, stats.externalized, stats.duration_ms,
+                )
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Session lifecycle sweep failed during bootstrap [{classification['mode']}]: {e}")
+
+        # [[DRIVERS_LICENSE_2]] Bootstrap semantic router — pre-compute entity vectors
+        try:
+            await self.semantic_router.bootstrap()
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Semantic router bootstrap failed [{classification['mode']}]: {e}")
+
+        # [D16-2] Initialize DPO recorder for training data collection
+        try:
+            self.dpo_recorder = await initialize_dpo_recorder()
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"DPO recorder initialization failed [{classification['mode']}]: {e}")
+            self.dpo_recorder = None
+
+        # Registry is initialized in __init__, no bootstrap needed
+        self._bootstrapped = True
+
+    # ── INTENT DETECTION ───────────────────────────────────────────
+
+    def _get_valid_agents_from_md(self) -&gt; Set[str]:
+        """Parse AGENTS.md to get a list of valid @-mention names.
+
+        Returns a set of lowercase agent names found in the "Named Agents" table.
+        """
+        if Oracle._valid_agents_cache is not None:
+            return Oracle._valid_agents_cache
+
+        try:
+            agents_md_path = Path(__file__).resolve().parent.parent.parent.parent / "AGENTS.md"
+            if not agents_md_path.exists():
+                return set()
+
+            content = agents_md_path.read_text(encoding="utf-8")
+
+            # Find the "Named Agents" table
+            # We look for the section starting with "#### Named Agents" and take the table following it
+            section_match = re.search(r'#### Named Agents.*?\n\| @-Mention \|.*?\|.*?\n\|---|---|---|---|', content, re.DOTALL | re.IGNORECASE)
+            if not section_match:
+                return set()
+
+            # Extract the table body
+            table_start = section_match.end()
+            table_lines = content[table_start:].splitlines()
+
+            agents = set()
+            for line in table_lines:
+                if line.strip() == "" or not line.startswith('|'):
+                    break
+                # The first column is the @-Mention: | `@kali` | ...
+                cols = line.split('|')
+                if len(cols) &gt; 1:
+                    mention = cols[1].strip().strip('`').strip()
+                    if mention.startswith('@'):
+                        agents.add(mention[1:].lower())
+
+            Oracle._valid_agents_cache = agents
+            return agents
+        except (OSError, OmegaError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Failed to parse AGENTS.md for valid agents [{classification['mode']}]: {e}")
+            return set()
+
+    def _detect_summon(self, query: str) -&gt; Optional[tuple]:
+        """Detect Entity summon patterns.
+
+        Supports:
+        - @Entity query (at start)
+        - @Entity within text (anywhere)
+        - hey Entity, query
+        - summon Entity, query
+
+        Returns (entity_name, query) or None.
+        """
+        query_stripped = query.strip()
+        if not query_stripped:
+            return None
+
+        # Pattern 1: @Entity query (at start)
+        # Matches '@maat help me' -&gt; ('maat', 'help me')
+        start_match = re.match(r'^@(\w+)\s+(.*)', query_stripped)
+        if start_match:
+            entity_name = start_match.group(1).lower()
+            # Validate against registry AND AGENTS.md list
+            if self.registry.get(entity_name) or entity_name in self.valid_agents:
+                return (entity_name, start_match.group(2))
+
+        # Pattern 2: @Entity within text
+        # Matches 'Hello @maat, help me' -&gt; ('maat', 'Hello @maat, help me')
+        # NOTE: Python 3.13+ rejects alternation inside lookbehinds; using (?:...) non-capturing group instead
+        mentions = re.findall(r'(?:^|\s)@(\w+)', query_stripped)
+        for m in mentions:
+            entity_name = m.lower()
+            if self.registry.get(entity_name) or entity_name in self.valid_agents:
+                return (entity_name, query_stripped)
+
+        # Pattern 3: hey Entity, query
+        # Matches 'hey Maat, help me' -&gt; ('maat', 'help me')
+        hey_match = re.match(r'^(?:hey|hi|summon)\s+(\w+),?\s+(.*)', query_stripped, re.IGNORECASE)
+        if hey_match:
+            entity_name = hey_match.group(1).lower()
+            if self.registry.get(entity_name) or entity_name in self.valid_agents:
+                return (entity_name, hey_match.group(2))
+
+        return None
+
+    def _detect_consult(self, query: str) -&gt; Optional[tuple]:
+        """Detect /consult Entity pattern. Returns (entity_name, query) or None."""
+        match = re.match(r'^/consult\s+(\w+)\s+(.*)', query.strip())
+        if match:
+            return (match.group(1).lower(), match.group(2))
+        return None
+
+    def assess_confidence(self, query: str) -&gt; float:
+        """Public alias for _assess_iris_confidence (P0-B: M-A2b fix).
+
+        [P0-B aligned: zero id-soft heritage, pure Python pattern.]
+        """
+        return self._assess_iris_confidence(query)
+
+    def _assess_iris_confidence(self, query: str) -&gt; float:
+        """Assess whether Iris (speculative decoder) can answer alone.
+
+        [D-kal-053] Refactored to use IntentMatcher for whole-word matching.
+        """
+        if self.intent_matcher.is_iris_capable(query):
+            return 0.9
+
+        # Zero-confidence patterns (escalate immediately)
+        query_lower = query.lower()
+        if any(kw in query_lower for kw in ["explain the meaning", "why is", "how does",
+                                              "meaning of", "purpose of", "philosophy",
+                                              "metaphysical", "abstract", "gravity",
+                                              "justice", "morality", "ethics"]):
+            return 0.0
+
+        # Low-confidence patterns (escalate to pillars)
+        if any(kw in query_lower for kw in ["@", "/", "code", "api", "architecture",
+                                             "design", "plan", "deploy", "deploy",
+                                             "debug", "error", "bug", "implement"]):
+            return 0.2
+
+        # Medium confidence for general queries
+        return 0.5
+
+    def _empty_response(self, trace: TraceSession) -&gt; OracleResponse:
+        """Generate response for empty query."""
+        return OracleResponse(
+            text="The Oracle awaits your question.",
+            entity="Oracle",
+            confidence=0.0,
+            trace_id=trace.trace_id,
+            session_id=None,
+        )
+
+    async def _update_system_pressure(self) -&gt; None:
+        """Update the degradation manager based on real-time hardware stats."""
+        from omega.hub import get_hardware_stats
+        try:
+            stats = await get_hardware_stats()
+            await self.degradation_manager.evaluate_pressure({
+                "cpu_load": stats.get("cpu_usage", 0.0) / 100.0,
+                "ram_free_mb": stats.get("memory_available_mb", 1024),
+            })
+            logger.debug("System pressure updated. Current level: %s", self.degradation_manager.get_current_level())
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.warning("Failed to update system pressure: %s", e)
+
+    async def talk(self, query: Union[str, TaintedData], transient: bool = False) -&gt; OracleResponse:
+        """Route a query through the speculative decoder + escalation pipeline.
+
+        Args:
+            query: The user query (can be TaintedData for external input)
+            transient: If True, do not record the interaction in the soul/memory
+        """
+        # Sanitize and isolate query if it's tainted
+
+        processed_query = TDPGate.isolate(query) if isinstance(query, TaintedData) else query
+
+        await self.bootstrap()
+
+        async def _execute_turn():
+            async with self.observability.trace() as trace:
+                # 0. Update system pressure for graceful degradation
+                await self._update_system_pressure()
+
+                trace.log("query.received", query=processed_query, transient=transient)
+
+                # Get current session for the default entity
+                default_name = self.default_entity.name if self.default_entity else cvar_get("config.entity.default", "default")
+                if transient:
+                    session_id = self.session_manager.get_session_id_transient(trace.trace_id)
+                else:
+                    session_id = await self.session_manager.get_session_id(default_name)
+                trace.log("session.active", session_id=session_id)
+
+                # Early return for empty queries (still inside trace context)
+                if not processed_query or not processed_query.strip():
+                    resp = self._empty_response(trace)
+                    try:
+                        await self._record_interaction(resp, processed_query, trace, transient)
+                    except OmegaError as e:
+                        classification = get_failure_registry().classify_error(e)
+                        logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
+                    return resp
+
+                # Step 1: Try explicit summon (bypasses speculative decoder)
+                summoned = self._detect_summon(processed_query)
+                if summoned:
+                    entity_name, summon_query = summoned
+                    session_id = await self.session_manager.get_session_id(entity_name)
+                    trace.log("summon.detected", entity=entity_name, query=summon_query, session_id=session_id)
+                    resp = await self._summon(entity_name, summon_query, trace, session_id, transient=transient)
+                    try:
+                        await self._record_interaction(resp, summon_query, trace, transient)
+                    except OmegaError as e:
+                        classification = get_failure_registry().classify_error(e)
+                        logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
+                    return resp
+
+                # Step 1.5: Try consult pattern
+                consulted = self._detect_consult(processed_query)
+                if consulted:
+                    entity_name, consult_query = consulted
+                    session_id = await self.session_manager.get_session_id(entity_name)
+                    trace.log("summon.detected", entity=entity_name, query=consult_query, pattern="consult", session_id=session_id)
+                    resp = await self._summon(entity_name, consult_query, trace, session_id, transient=transient)
+                    try:
+                        await self._record_interaction(resp, consult_query, trace, transient)
+                    except OmegaError as e:
+                        classification = get_failure_registry().classify_error(e)
+                        logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
+                    return resp
+
+                # Step 2: Speculative decode — Iris tries first
+                # [D-kal-054] Restrict Iris to local chat channels only per user instruction.
+                # Bypassed for OpenCode, Gemini, Cline, and Antigravity.
+                channel = cvar_get("config.channel", "unknown")
+                skip_iris = channel in ["opencode", "gemini-cli", "cline", "antigravity"]
+
+                iris_confidence = self._assess_iris_confidence(processed_query) if not skip_iris else 0.0
+                trace.log("iris.speculative", confidence=iris_confidence, query=processed_query, channel=channel, skipped=skip_iris)
+
+                if iris_confidence &gt; IRIS_CONFIDENCE_THRESHOLD:
+                    resp = await self._respond_as_iris(processed_query, trace, iris_confidence, session_id, transient=transient)
+                    try:
+                        await self._record_interaction(resp, processed_query, trace, transient)
+                    except OmegaError as e:
+                        classification = get_failure_registry().classify_error(e)
+                        logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
+                    return resp
+
+                # Step 3: Escalate to domain-matched Pillar Keeper
+                trace.log("escalation", reason=f"iris_confidence={iris_confidence:.2f} &lt;= threshold={IRIS_CONFIDENCE_THRESHOLD}")
+                resp = await self._route_by_domain(processed_query, trace, session_id, transient=transient)
+                try:
+                    await self._record_interaction(resp, processed_query, trace, transient)
+                except OmegaError as e:
+                    classification = get_failure_registry().classify_error(e)
+                    logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
+                return resp
+
+        return await self.timeout_manager.execute("turn", _execute_turn)
+
+    async def summon(
+        self,
+        entity_name: str,
+        query: Union[str, TaintedData],
+        transient: bool = False,
+        model_override: Optional[str] = None,
+    ) -&gt; OracleResponse:
+        """Directly summon a specific entity by name.
+
+        [[DRIVERS_LICENSE_3] Dual-Inference Mandate] When model_override is provided, the
+        TriageRouter is bypassed and the specified model is used directly.
+        This enables opt-in local routing for the MaKaLi parallel council.
+
+        Args:
+            entity_name: Name of the entity to summon
+            query: The user query (can be TaintedData for external input)
+            transient: If True, do not record the interaction in the soul/memory
+            model_override: Optional model name to bypass TriageRouter and use
+                            a specific model directly (e.g., 'qwen3-1.7b' for local)
+        """
+        # Sanitize and isolate query if it's tainted
+        processed_query = TDPGate.isolate(query) if isinstance(query, TaintedData) else query
+
+        await self.bootstrap()
+        async with self.observability.trace() as trace:
+            if transient:
+                session_id = self.session_manager.get_session_id_transient(trace.trace_id)
+            else:
+                session_id = await self.session_manager.get_session_id(entity_name)
+            trace.log("summon.detected", entity=entity_name, query=processed_query, transient=transient,
+                      session_id=session_id, model_override=model_override)
+            resp = await self._summon(entity_name, processed_query, trace, session_id,
+                                        transient=transient, model_override=model_override)
+            try:
+                await self._record_interaction(resp, processed_query, trace, transient)
+            except OmegaError as e:
+                classification = get_failure_registry().classify_error(e)
+                logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
+            return resp
+
+    async def verify_claim(self, claim: str, evidence: List[Dict[str, Any]]) -&gt; VerificationResult:
+        """
+        Public API to verify a claim against evidence using the Skeptical Verifier.
+        """
+        return await self.verifier.verify(claim, evidence)
+
+    # ── INTERNAL: Triage Router bridge ─────────────────────────────────
+
+    async def _select_model(self, entity_name: str, query: str, session_id: str, trace_id: str, domain: Optional[str] = None) -&gt; str:
+        """Select the optimal model for an entity+query via TriageRouter.
+
+        Returns the model name string to use for generation.
+        Falls back to the entity's configured model if TriageRouter is unavailable.
+        """
+        entity = self.registry.get(entity_name)
+        if not entity:
+            return "default"
+
+        try:
+            soul_path = DATA_DIR / "entities" / entity_name.lower() / "soul.yaml"
+            entity_ctx = EntityContext(
+                name=entity.name,
+                soul_path=soul_path,
+            )
+
+            req = TriageRequest(
+                task=TaskRequest(description=query, domain=domain or "general"),
+                entity=entity_ctx,
+                constraints=Constraints(),
+                session=SessionContext(id=session_id, trace_id=trace_id)
+            )
+
+            response = await self.triage_router.select_model(req)
+            return response.selected_model.name or entity.model or "default"
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"TriageRouter unavailable (falling back to entity model) [{classification['mode']}]: {e}")
+            return entity.model or "default"
+
+    async def _prepare_system_prompt(self, entity_name: str, session_id: str, personality: str, query: Optional[str] = None) -&gt; str:
+        """Build the system prompt with context injection.
+
+        Combines:
+        1. Entity personality (role/voice)
+        2. Recent memory (MemoryStore hot/warm tiers)
+        3. Soul hints (L3 universal principles from soul.yaml)
+        """
+        # Start with base personality
+        prompt_parts = [f"You are {personality}"]
+
+        # Inject context from MemoryStore
+        try:
+            # Pass current degradation level to adjust token budget
+            degradation_level = self.degradation_manager.get_current_level()
+            memory_context = await self.context_builder.build_context(
+                entity_name,
+                session_id,
+                degradation_level=degradation_level
+            )
+            if memory_context:
+                prompt_parts.append(f"\nContext from recent interactions:\n{memory_context}")
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Context injection failed (non-fatal) [{classification['mode']}]: {e}")
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Context injection failed (non-fatal) [{classification['mode']}]: {e}")
+
+        # Inject soul L3 principles
+        try:
+            soul_path = DATA_DIR / "entities" / entity_name.lower() / "soul.yaml"
+            if soul_path.exists():
+                with open(soul_path) as f:
+                    soul = yaml.safe_load(f) or {}
+                    lessons = soul.get("soul_evolution", {}).get("lessons_learned", [])
+                    if lessons:
+                        l3_principles = [L["L3"] for L in lessons if "L3" in L]
+                        if l3_principles:
+                            prompt_parts.append(f"\nUniversal Principles:\n" + "\n".join(f"- {p}" for p in l3_principles[-3:]))
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Soul injection failed (non-fatal) [{classification['mode']}]: {e}")
+
+        return "\n".join(prompt_parts)
+
+    async def _record_interaction(self, resp: OracleResponse, query: str, trace: TraceSession, transient: bool) -&gt; None:
+        """Record query+response in MemoryStore and soul.yaml."""
+        if transient:
+            return
+
+        try:
+            session_id = resp.session_id or trace.trace_id
+            await self.memory_store.add_exchange(
+                entity_name=resp.entity,
+                session_id=session_id,
+                user_message=query,
+                response=resp.text,
+                metadata={
+                    "trace_id": trace.trace_id,
+                    "confidence": resp.confidence,
+                    "model": resp.model or "unknown",
+                    "backend": resp.backend or "unknown",
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                }
+            )
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"MemoryStore record failed (non-fatal) [{classification['mode']}]: {e}")
+
+        # Track soul evolution
+        try:
+            await self._track_soul_evolution(resp.entity, trace.trace_id)
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Soul evolution tracking failed (non-fatal) [{classification['mode']}]: {e}")
+
+        # [D16-2] Record DPO training pair from interaction (implicit mode)
+        try:
+            if self.dpo_recorder and hasattr(self, '_last_query') and self._last_query:
+                await self.dpo_recorder.infer_from_interaction(
+                    query=self._last_query,
+                    response=resp.text,
+                    trace_id=trace.trace_id,
+                    session_id=session_id,
+                    entity_name=resp.entity,
+                    model_name=resp.model,
+                    follow_up_query=query,  # Current query becomes follow-up to previous
+                )
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"DPO recording failed (non-fatal) [{classification['mode']}]: {e}")
+
+        # Store current query for next interaction's DPO inference
+        self._last_query = query
+
+        # [Somatic Flush] Track turns for KV cache purge
+        session_key = f"{resp.entity}:{session_id}"
+        self._turn_counter[session_key] = self._turn_counter.get(session_key, 0) + 1
+        if self._turn_counter[session_key] &gt;= 20:
+            self._turn_counter[session_key] = 0
+            try:
+                await self._somatic_flush(resp.entity, session_id)
+            except (OmegaError, RuntimeError, OSError) as e:
+                logger.warning(f"Somatic flush failed for {session_key}: {e}")
+
+
+        # Throttled soul distillation — close_session every 5 interactions
+        # [M11: Soul Integrity] Ensures L1→L2→L3 distillation happens continuously
+        # on the hot path, not and not just from orchestrator.py CLI dispatch.
+        # [M11-FIX-2026-07-01] Root cause: anyio.create_task() does NOT exist in
+        # AnyIO (silent AttributeError swallowed by outer try/except). Replaced with
+        # direct await + guarded try/except. close_session was NEVER executing.
+        entity_key = f"{resp.entity}:{resp.session_id or trace.trace_id}"
+        self._interaction_counter[entity_key] = self._interaction_counter.get(entity_key, 0) + 1
+        if self._interaction_counter[entity_key] &gt;= 5:
+            self._interaction_counter[entity_key] = 0
+            if resp.session_id:
+                    try:
+                        await self.close_session(resp.entity, resp.session_id)
+                    except (OmegaError, RuntimeError, OSError) as e:
+                        logger.warning(f"Throttled soul distillation failed for {resp.entity}: {e}")
+
+    async def retrieve_headroom_content(self, ref_id: str) -&gt; str:
+        """
+        Retrieve the original, uncompressed content for a given reference ID.
+
+        This is the 'Retrieve' part of the CCR (Compress-Cache-Retrieve) pattern,
+        allowing agents to recover high-fidelity data when semantic compression
+        is too aggressive.
+        """
+        try:
+            return await self.headroom.retrieve_original(ref_id)
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.error(f"Headroom retrieval failed for {ref_id} [{classification['mode']}]: {e}")
+            return f"[[ERROR: Original content for {ref_id} could not be retrieved]]"
+
+    async def _respond_as_iris(self, query: str, trace: TraceSession, confidence: float, session_id: Optional[str] = None, transient: bool = False) -&gt; OracleResponse:
+        """Iris (speculative decoder) responds directly without invoking a pillar.
+
+        [id-soft: quake3-1999] Speculative Decode — lightweight, fast path for
+        simple queries that don't require domain expertise.
+
+        [D-kal-053] Now attempts model invocation for Iris via _summon.
+        """
+        try:
+            # Attempt to invoke Iris as a real model-backed entity
+            if self.registry.get("iris"):
+                return await self._summon("iris", query, trace, session_id, transient=transient)
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.warning(f"Iris model invocation failed (falling back to hardcoded) [{classification['mode']}]: {e}")
+
+        # Fallback to hardcoded response if Iris entity is missing or fails
+        text = self.intent_matcher.iris_response(query) or "Hello! I'm Iris, the voice of the Oracle. How can I help you today?"
+
+        backend = await self.model_gateway.get_preferred_backend()
+
+        result = OracleResponse(
+            text=text,
+            entity="Iris",
+            confidence=confidence,
+            trace_id=trace.trace_id,
+            session_id=session_id,
+            backend=backend,
+            escalated=False,
+        )
+
+        trace.log("iris.responded", confidence=confidence, backend=backend, fallback=True)
+        return result
+
+    async def _summon(
+        self,
+        entity_name: str,
+        query: str,
+        trace: TraceSession,
+        session_id: str,
+        transient: bool = False,
+        model_override: Optional[str] = None,
+    ) -&gt; OracleResponse:
+        """Internal implementation: directly summon a specific entity by name.
+
+        This is called by both the public summon() method and the talk() pattern detector.
+        It bypasses domain routing and directly communicates with the named entity.
+        """
+        async def _execute_summon():
+            entity = self.registry.get(entity_name)
+
+            if not entity:
+                return OracleResponse(
+                    text=f"Entity '{entity_name}' not found in the registry.",
+                    entity="Oracle",
+                    confidence=0.0,
+                    trace_id=trace.trace_id,
+                    session_id=session_id,
+                )
+
+            trace.log("summon.direct", entity=entity.name, query=query, session_id=session_id,
+                     model_override=model_override)
+
+            # Build context and prepend to personality
+            system_prompt = await self._prepare_system_prompt(entity.name, session_id, entity.personality, query=query)
+
+            # Select model: use override if provided, otherwise use TriageRouter
+            if model_override:
+                model_name = model_override
+            else:
+                # [Sovereign Fix] Use currently selected session model from environment if available
+                session_model = os.environ.get("OPENCODE_MODEL")
+                if session_model:
+                    model_name = session_model
+                else:
+                    model_name = await self._select_model(entity.name, query, session_id, trace.trace_id)
+
+            # Resolve entity affinity for inference presets (temperature, system_prompt, context window)
+            # [id-soft: quake-1996] cvar pattern — YAML-backed affinity DB, hot-reloadable
+            first_domain = entity.domains[0] if entity.domains else None
+            affinity_result = await self.model_gateway.resolve_entity_affinity(
+                entity_name=entity.name,
+                query=query,
+                context={"domain": first_domain},
+            )
+            effective_temperature = entity.temperature
+            effective_system_prompt = system_prompt
+            effective_max_tokens = 1024
+            if affinity_result and affinity_result.inference_presets:
+                # Affinity presets override entity defaults when present
+                if affinity_result.inference_presets.temperature and affinity_result.inference_presets.temperature != 0.7:
+                    effective_temperature = affinity_result.inference_presets.temperature
+                if affinity_result.inference_presets.system_prompt:
+                    effective_system_prompt = (
+                        f"{affinity_result.inference_presets.system_prompt}\n\n"
+                        f"{system_prompt}"
+                    )
+                if affinity_result.inference_presets.preferred_context:
+                    effective_max_tokens = min(affinity_result.inference_presets.preferred_context, 4096)
+
+            # [PII Masking] Check if cloud provider will be used and mask PII if so
+            # Use get_preferred_backend to determine if we're likely sending to cloud
+            preferred_backend = await self.model_gateway.get_preferred_backend()
+            if self.pii_masker.should_mask(preferred_backend):
+                masked_prompt, masked_query, token_map = await self.pii_masker.process_system_prompt(
+                    system_prompt=effective_system_prompt,
+                    user_query=query,
+                    provider_name=preferred_backend,
+                )
+                res = await self.model_gateway.generate(
+                    model_name=model_name,
+                    system_prompt=masked_prompt,
+                    user_query=masked_query,
+                    temperature=effective_temperature,
+                    max_tokens=effective_max_tokens,
+                    trace_id=trace.trace_id,
+                )
+                # Detokenize response to restore original PII values
+                res.text = await self.pii_masker.process_response(res.text, token_map)
+            else:
+                # Local provider — no PII masking needed
+                res = await self.model_gateway.generate(
+                    model_name=model_name,
+                    system_prompt=effective_system_prompt,
+                    user_query=query,
+                    temperature=effective_temperature,
+                    max_tokens=effective_max_tokens,
+                    trace_id=trace.trace_id,
+                )
+
+            # Record performance to MetricsDB
+            self.observability.record_performance(
+                latency_ms=res.latency_ms,
+                provider=res.provider_name,
+                model_used=res.model_used,
+                prompt_tokens=getattr(res, 'prompt_tokens', 0),
+                completion_tokens=getattr(res, 'completion_tokens', 0),
+                is_cloud=getattr(res, 'is_cloud', False),
+                trace_id=trace.trace_id,
+            )
+
+            # [D16-1] Audience Calibration — transform response to target register
+            calibrated_text = res.text
+            try:
+                calibration_result = await self.audience_calibrator.calibrate(
+                    response_text=res.text,
+                    entity_personality=entity.personality,
+                    query=query,
+                    model_gateway=self.model_gateway,
+                    trace_id=trace.trace_id,
+                )
+                calibrated_text = calibration_result.calibrated_text
+                if calibration_result.token_ratio &gt; 1.1:
+                    logger.warning(f"Audience calibration token ratio {calibration_result.token_ratio:.2f} exceeds 110% budget (profile: {calibration_result.profile_name})")
+                trace.log("audience.calibrated", profile=calibration_result.profile_name, token_ratio=calibration_result.token_ratio)
+            except Exception as e:
+                logger.warning(f"Audience calibration failed (non-fatal): {e}")
+                trace.log("audience.calibration_failed", error=str(e))
+
+            return OracleResponse(
+                text=calibrated_text,
+                entity=entity.name,
+                slots=entity.slots if hasattr(entity, 'slots') else None,
+                domains=entity.domains if hasattr(entity, 'domains') else None,
+                confidence=1.0,
+                trace_id=trace.trace_id,
+                session_id=session_id,
+                backend=res.provider_name,
+                model=res.model_used,
+            )
+
+        return await self.timeout_manager.execute("group", _execute_summon)
+
+    async def _route_by_domain(self, text: str, trace: TraceSession, session_id: str, transient: bool = False) -&gt; OracleResponse:
+        """Route query to entity by domain keyword matching.
+
+        [[DRIVERS_LICENSE_4]] Routing chain: semantic → keyword → default.
+        """
+        # [[DRIVERS_LICENSE_5]] Semantic routing — embedding-based entity matching
+        keyword_entity = self.registry.find_by_domain(text)
+        entity, confidence, method = await self.semantic_router.route(
+            query=text,
+            keyword_fallback=keyword_entity,
+            default_entity=self.default_entity,
+        )
+
+        trace.log("domain.routed", entity=entity.name if entity else None, confidence=confidence, method=method, session_id=session_id)
+
+        if not entity:
+            return OracleResponse(
+                text="The Oracle is here. Speak your question.",
+                entity="Oracle",
+                confidence=0.0,
+                trace_id=trace.trace_id,
+                session_id=session_id,
+                escalated=True,
+            )
+
+        # Build context and prepend to personality
+        system_prompt = await self._prepare_system_prompt(entity.name, session_id, entity.personality, query=text)
+
+        # Generate response via model gateway with TriageRouter
+        model_name = await self._select_model(entity.name, text, session_id, trace.trace_id)
+
+        # [PII Masking] Check if cloud provider will be used and mask PII if so
+        preferred_backend = await self.model_gateway.get_preferred_backend()
+        if self.pii_masker.should_mask(preferred_backend):
+            masked_prompt, masked_query, token_map = await self.pii_masker.process_system_prompt(
+                system_prompt=system_prompt,
+                user_query=text,
+                provider_name=preferred_backend,
+            )
+            res = await self.model_gateway.generate(
+                model_name=model_name,
+                system_prompt=masked_prompt,
+                user_query=masked_query,
+                temperature=entity.temperature,
+                max_tokens=1024,
+                trace_id=trace.trace_id,
+            )
+            # Detokenize response
+            res.text = await self.pii_masker.process_response(res.text, token_map)
+        else:
+            res = await self.model_gateway.generate(
+                model_name=model_name,
+                system_prompt=system_prompt,
+                user_query=text,
+                temperature=entity.temperature,
+                max_tokens=1024,
+                trace_id=trace.trace_id,
+            )
+
+        # Use the ACTUAL provider that served the response, not the preferred one
+        backend = res.provider_name
+        sigil_tag = entity.metadata.get("sigil", "")
+        sigil_str = f" {sigil_tag}" if sigil_tag else ""
+
+        # Record performance to MetricsDB
+        self.observability.record_performance(
+            latency_ms=res.latency_ms,
+            provider=res.provider_name,
+            model_used=res.model_used,
+            prompt_tokens=getattr(res, 'prompt_tokens', 0),
+            completion_tokens=getattr(res, 'completion_tokens', 0),
+            is_cloud=getattr(res, 'is_cloud', False),
+            trace_id=trace.trace_id,
+        )
+        # [Sovereign] Record the "First Breath" for astrological alignment
+        logger.info(f"Recording first breath for routed entity: {entity.name}")
+        await record_first_breath(entity.name, res.text, trace.trace_id)
+
+        # [D16-1] Audience Calibration — transform response to target register
+        calibrated_text = res.text
+        try:
+            calibration_result = await self.audience_calibrator.calibrate(
+                response_text=res.text,
+                entity_personality=entity.personality,
+                query=text,
+                model_gateway=self.model_gateway,
+                trace_id=trace.trace_id,
+            )
+            calibrated_text = calibration_result.calibrated_text
+            if calibration_result.token_ratio &gt; 1.1:
+                logger.warning(f"Audience calibration token ratio {calibration_result.token_ratio:.2f} exceeds 110% budget (profile: {calibration_result.profile_name})")
+            trace.log("audience.calibrated", profile=calibration_result.profile_name, token_ratio=calibration_result.token_ratio)
+        except Exception as e:
+            logger.warning(f"Audience calibration failed (non-fatal): {e}")
+            trace.log("audience.calibration_failed", error=str(e))
+
+        # Use the ACTUAL provider that served the response, not the preferred one
+        backend = res.provider_name
+        sigil_tag = entity.metadata.get("sigil", "")
+        sigil_str = f" {sigil_tag}" if sigil_tag else ""
+
+        result = OracleResponse(
+            text=f"{entity.name} says: {calibrated_text}{sigil_str}",
+            entity=entity.name,
+            slots=entity.slots,
+            domains=entity.domains,
+            confidence=confidence,
+            trace_id=trace.trace_id,
+            backend=backend,
+            model=model_name,
+            session_id=session_id,
+            escalated=True,
+            cost_warning="\n\n⚠️ [Sovereignty Alert]: This response was generated by a cloud provider. Local inference was unavailable or bypassed." if res.is_cloud else None,
+        )
+
+        trace.log("model.completed", entity=entity.name, backend=backend, escalated=True, session_id=session_id)
+        trace.record(
+            query=text,
+            system_prompt=system_prompt,
+            response=res.text,
+            entity=entity.name,
+            model=model_name,
+            backend=backend,
+            confidence=confidence,
+            session_id=session_id,
+        )
+        return result
+
+    # ── Soul evolution tracking ───────────────────────────────────────
+    async def close_session(self, entity_name: str, session_id: str) -&gt; bool:
+        """Trigger soul distillation for a session and close it.
+
+        Implements Mandate 11 (Soul Integrity).
+
+        [id-soft: quake-1996] Save-game pattern — auto-save on session end
+        triggers L1→L2→L3 distillation, analogous to Quake's level-transition
+        autosave.
+        """
+        try:
+            # 1. Retrieve the session transcript from MemoryStore
+            exchanges = await self.memory_store.get_history(entity_name, session_id)
+            if not exchanges:
+                logger.warning(f"No exchanges found for session {session_id}, skipping distillation")
+                return False
+
+            # Build a readable transcript from exchanges
+            lines = []
+            for ex in exchanges:
+                user_msg = ex.get("user", "")
+                asst_msg = ex.get("assistant", "")
+                if user_msg:
+                    lines.append(f"[user]: {user_msg}")
+                if asst_msg:
+                    lines.append(f"[assistant]: {asst_msg}")
+            transcript = "\n".join(lines)
+            if not transcript:
+                logger.warning(f"No transcript found for session {session_id}, skipping distillation")
+                return False
+
+            # 2. Distill and save to soul.yaml
+            success = await self.distiller.distill_and_save(
+                session_transcript=transcript,
+                entity_name=entity_name,
+                source_trace_id=session_id
+            )
+
+            if success:
+                logger.info(f"Successfully distilled session {session_id} for {entity_name}")
+                # Record the distillation in the soul edit history
+                try:
+                    await self.soul_edit_history.append(SoulEditEntry(
+                        entity_name=entity_name,
+                        field_path="entity.lessons_learned",
+                        new_value=f"Session {session_id} distilled",
+                        source="soul_distiller",
+                        trace_id=session_id,
+                        summary=f"Session {session_id} distilled via close_session",
+                    ))
+                except (OmegaError, RuntimeError, OSError) as history_exc:
+                    logger.warning(
+                        "Failed to record soul edit history for %s session %s: %s",
+                        entity_name, session_id, history_exc,
+                    )
+
+                # Check session size and flag if near compaction threshold
+                try:
+                    exchange_count = len(exchanges)
+                    report = self.compaction_harvester.assess_session(
+                        entity_name, session_id, exchange_count,
+                    )
+                    if report.needs_compaction or report.near_threshold:
+                        logger.info(
+                            "Session %s for %s: %d exchanges (%s%s)",
+                            session_id, entity_name, exchange_count,
+                            "NEEDS COMPACTION" if report.needs_compaction else "",
+                            "near threshold" if report.near_threshold and not report.needs_compaction else "",
+                        )
+                        # Estimate post-compaction size (keep ~half)
+                        after_count = max(exchange_count // 2, 15)
+                        await self.compaction_harvester.record_compaction(
+                            entity_name=entity_name,
+                            session_id=session_id,
+                            before_count=exchange_count,
+                            after_count=after_count,
+                            triggered_by="close_session",
+                        )
+                except (OmegaError, RuntimeError, OSError) as comp_exc:
+                    logger.warning(
+                        "Failed to record compaction stats for %s session %s: %s",
+                        entity_name, session_id, comp_exc,
+                    )
+            # 3. Capture somatic state (KV cache) if available
+            try:
+                usm = get_usm()
+                somatic_hash = await self._capture_somatic_state(entity_name, session_id)
+                if somatic_hash:
+                    logger.info(f"Captured somatic state for {entity_name} session {session_id}: {somatic_hash[:16]}...")
+            except (OmegaError, RuntimeError, OSError) as somatic_exc:
+                logger.warning(f"Somatic state capture failed for {entity_name} session {session_id}: {somatic_exc}")
+
+            return success
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.error(f"Failed to close session {session_id} for {entity_name} [{classification['mode']}]: {e}")
+            return False
+
+    async def _capture_somatic_state(self, entity_name: str, session_id: str) -&gt; Optional[str]:
+        """Capture KV cache state from the active provider and store in USM.
+
+        Returns the CAS hash of the stored state, or None if not available.
+        """
+        try:
+            # Get the provider that was used for this entity
+            provider = self.model_gateway.get_provider_for_entity(entity_name)
+            if not provider or not hasattr(provider, 'save_state'):
+                return None
+
+            # Capture state from provider (runs in worker process)
+            state_bytes = await provider.save_state()
+            if not state_bytes:
+                return None
+
+            # Store in USM CAS
+            usm = get_usm()
+            state_key = f"somatic:{entity_name}:{session_id}"
+            hash_ = await usm.save_state(state_key, state_bytes)
+            return hash_
+        except (OmegaError, RuntimeError, OSError, AttributeError) as e:
+            logger.debug(f"Somatic capture not available for {entity_name}: {e}")
+            return None
+
+    async def _track_soul_evolution(self, entity_name: str, trace_id: str) -&gt; None:
+        """Update the entity's soul.yaml after each interaction.
+        Implements the L1-&gt;L2-&gt;L3 refractive abstraction model for gnosis preservation.
+
+        This is a lightweight real-time tracker — it logs a trace event.
+        Full soul distillation (L1→L2→L3) is handled by close_session() on session end.
+
+        [id-soft: quake-1996] Save-game pattern — incremental autosave mirrors Quake's
+        periodic state writes, gathering state progressively for the final save on exit.
+        """
+        if os.environ.get("OMEGA_ENV") == "test":
+            return
+
+        try:
+            from omega.observability import EventType
+            get_engine().log_event(
+                EventType.ENTITY_INTERACTION, trace_id,
+                {"entity": entity_name, "event": "interaction_recorded"}
+            )
+        except (OmegaError, RuntimeError, OSError) as exc:
+            logger.warning("Telemetry event failed for %s: %s", entity_name, exc)
+            # Non-fatal — telemetry failure must not block the response
+
+    async def _somatic_flush(self, entity_name: str, session_id: str) -&gt; None:
+        """Perform a somatic flush to clear KV cache and reset model state.
+
+        1. Distill session into a summary.
+        2. Close session (triggering soul distillation).
+        3. Re-hydrate the entity with the summary.
+        """
+        logger.info(f"Triggering Somatic Flush for {entity_name} [session={session_id}]")
+
+        try:
+            # 1. Distill current working memory into a summary
+            exchanges = await self.memory_store.get_history(entity_name, session_id)
+            if not exchanges:
+                return
+
+            lines = []
+            for ex in exchanges:
+                user_msg = ex.get("user", "")
+                asst_msg = ex.get("assistant", "")
+                if user_msg: lines.append(f"[user]: {user_msg}")
+                if asst_msg: lines.append(f"[assistant]: {asst_msg}")
+            transcript = "\n".join(lines)
+
+            summary = self.distiller.summarize_session(transcript, entity_name)
+
+            # 2. Close session (clears KV cache in many providers and distills to soul.yaml)
+            await self.close_session(entity_name, session_id)
+
+            # 3. Re-hydrate: Start new session and inject summary as a special memory entry
+            new_session_id = await self.session_manager.get_session_id(entity_name)
+            await self.memory_store.add_exchange(
+                entity_name=entity_name,
+                session_id=new_session_id,
+                user_message="[Somatic Flush]",
+                response=f"Somatic Flush Summary: {summary}",
+                metadata={"type": "somatic_flush", "prev_session": session_id}
+            )
+            logger.info(f"Somatic Flush complete for {entity_name}. New session: {new_session_id}")
+
+        except (OmegaError, RuntimeError, OSError) as e:
+            classification = get_failure_registry().classify_error(e)
+            logger.error(f"Somatic Flush failed for {entity_name} [{classification['mode']}]: {e}", exc_info=True)
+
+    # ── Somatic State API (M20) ──────────────────────────────────────────
+
+    async def save_state(self, state_id: str) -&gt; bool:
+        """Save the current model's somatic state (KV cache) to disk.
+
+        Delegates to the ModelGateway which finds the NativeGGUFProvider.
+
+        Args:
+            state_id: Unique identifier for the state snapshot.
+
+        Returns:
+            True if state was saved successfully, False otherwise.
+        """
+        return await self.model_gateway.save_state(state_id)
+
+    async def load_state(self, state_id: str) -&gt; bool:
+        """Load a somatic state (KV cache) from disk into the current model.
+
+        Delegates to the ModelGateway which finds the NativeGGUFProvider.
+
+        Args:
+            state_id: Unique identifier for the state snapshot.
+
+        Returns:
+            True if state was loaded successfully, False otherwise.
+        """
+        return await self.model_gateway.load_state(state_id)
+
+</file>
+
+
+<file path="src/omega/oracle/entity_registry.py" size="41513" language="Python" sha256="4b2afcc8883eb34572fb003459ef4c6499ac024cf070b7238d23ede3d786e089" purpose="Run Side symbolic coordinate system (Lilith Synthesis 2026-07-11)." tokens="12096">
+# AP: AP-ORACLE-RESTORE-v2.3.0
+# 🔱 Entity Registry — YAML-backed Entity CRUD
+# AP: AP-ENTITY-REGISTRY-v1.0.0
+# ICS: [NODE: CORE | ARCHETYPE: SOPHIA | CONTEXT: ENTITY-MANAGEMENT]
+#
+# Replaces:
+#   - omega-stack enhanced_handler.py hardcoded ENTITY_ALIASES/ENTITY_DOMAINS dicts
+#   - xna-omega entity_service.py (818 lines, PostgreSQL-dependent)
+#
+# Design: Pure YAML + dataclass. No database dependency. User-editable.
+
+import logging
+from omega.errors import (
+    OmegaError,
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
+import os
+import time
+import struct
+import tempfile
+import functools
+import fcntl
+from dataclasses import dataclass, field, asdict
+from pathlib import Path
+from typing import Any, Dict, List, Optional, TypedDict
+
+import yaml
+import anyio
+
+from omega.oracle.entity_workspace import EntityWorkspaceManager
+from omega.constants import ZONEID_ENTITY, ZONEID_TOMBSTONE, validate_zoneid
+from omega.errors import EntityTombstonedError
+
+logger = logging.getLogger(__name__)
+
+class SymbolicMetadata(TypedDict, total=False):
+    """Run Side symbolic coordinate system (Lilith Synthesis 2026-07-11).
+
+    Six generic fields give structure to the ineffable. Engine Core provides
+    schema; WAD provides values. Zero firewall risk (M2) — the engine reads
+    metadata as opaque dict; symbolic_metadata is a typed sub-schema at
+    metadata["symbolic"], never a replacement for the core field.
+
+    [heritage: lilith-2026] SymbolicMetadata framework — Run Side semantic coordinates
+    """
+    element: str            # e.g., "earth", "water", "fire", "air", "aether"
+    energy_center: str      # e.g., "root", "sacral", "solar_plexus", "heart", "throat", "third_eye", "crown"
+    celestial_body: str     # e.g., "gaia", "neptune", "jupiter", "mars", "mercury", "uranus", "pluto", "transpluto", "venus", "saturn"
+    archetypal_ally: str    # e.g., "brigid", "lilith", "maat", "sekhmet", "lucifer", "isis", "hecate", "anubis", "kali", "inanna"
+    glyph: str              # e.g., "🜃", "🜄", "🜂", "🜁", "⛤"
+    invocation: str         # e.g., "By earth and root, I stand"
+
+    @staticmethod
+    def validate(data: Dict[str, Any]) -&gt; "SymbolicMetadata":
+        """Validate a dict against the SymbolicMetadata schema.
+
+        Returns a typed SymbolicMetadata dict. Unknown keys are ignored
+        (engine reads metadata as opaque; only the 6 known fields are typed).
+        This is a pure structural filter — no semantic inspection of values
+        (M2 Firewall: Engine Core never interprets WAD-specific content).
+        """
+        valid_keys = {"element", "energy_center", "celestial_body", "archetypal_ally", "glyph", "invocation"}
+        return {k: v for k, v in data.items() if k in valid_keys}
+
+class SovereignPermissionError(Exception):
+    """Raised when an unauthorized entity attempts to write to constitutional files."""
+    pass
+
+SOVEREIGN_USER_TOKEN = os.getenv("SOVEREIGN_USER_TOKEN", "SOVEREIGN_DEFAULT_SECURE_TOKEN_2026")
+
+async def write_soul_file(entity_path: str, filename: str, content: str, token: str = None) -&gt; None:
+    """Writes a soul file using the Atomic Rename Pattern under strict permission guard.
+
+    [id-soft: quake3-1999] Hard-Boundary — strictly separates User/Agent write access.
+    """
+    if filename in ["soul.yaml", "approved_lessons.yaml"]:
+        if token != SOVEREIGN_USER_TOKEN:
+            raise SovereignPermissionError(
+                f"Write access to {filename} is restricted. SovereignUserToken required."
+            )
+
+    file_path = Path(entity_path) / filename
+    tmp_path = Path(entity_path) / f"{filename}.tmp"
+
+    await tmp_path.write_text(content)
+    await tmp_path.rename(file_path)
+
+async def with_soul_lock(entity_name: str, action):
+    """Ensure exclusive access to soul files during read-modify-write cycles.
+
+    Prevents 'Lost Updates' during parallel agent operations (MaKaLi).
+    """
+    safe_name = entity_name.lower().replace(" ", "_").replace("'", "")
+    lock_path = Path(f"data/entities/{safe_name}/.soul.lock")
+    lock_path.parent.mkdir(parents=True, exist_ok=True)
+
+    async with await anyio.open_file(lock_path, "a") as f:
+        # Use fcntl for advisory locking on the file descriptor
+        fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        try:
+            return await action()
+        finally:
+            fcntl.flock(f.fileno(), fcntl.LOCK_UN)
+
+# Test-mode YAML cache: parses entities.yaml once per test run (~5.8s → ~0.001s)
+# The 982KB file takes 5.8s to parse; caching it cuts total test suite from 7m to ~2m.
+_entity_yaml_cache: Dict[str, Any] = {}
+
+# [id-soft: doom-1993] WAD System — base IWAD identifier
+DEFAULT_IWAD = "_omega_default"
+
+@dataclass
+class Entity:
+    """A user-definable entity — a Pillar Keeper, custom persona, or free agent.
+
+    Engine knows: name, slots, domains, model, personality, capabilities.
+    Everything else: metadata dict (WAD-defined, engine-agnostic).
+
+    [id-soft: doom-1993] ZONEID Pattern — magic constant validated on get()
+    to catch stale references and tombstoned entities.
+    [id-soft: quake3-1999] Hard-Boundary — engine zone vs game zone separation.
+    """
+
+    # ── Engine Zone (structural, read-only for game logic) ──
+    name: str
+    domains: List[str]
+    model: str
+    personality: str
+    capabilities: List[str] = field(default_factory=list)
+    temperature: Optional[float] = None
+    context_window: Optional[int] = None
+    role: Optional[str] = None
+    container: bool = False
+    port: Optional[int] = None
+    wad_source: Optional[str] = None
+    priority: int = 0  # [Project 3] Layer priority for Shadow-Stacking
+
+    # ── Slot System (replaces hardcoded PILLAR_SLOTS) ──
+    # Engine uses these for get("P1") resolution.
+    # The engine does NOT interpret what "P1" means — that's WAD content.
+    slots: List[str] = field(default_factory=list)
+
+    # ── Generic Metadata (WAD-defined, engine-agnostic) ──
+    # Replaces: traits, pantheon, sigil, first_breath, element, chakra,
+    # planet, invocation, secondary_keeper — all WAD-specific fields.
+    # The engine NEVER reads specific keys from this dict.
+    # The WAD fills it; the engine passes it through.
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    # [id-soft: doom-1993] ZONEID Pattern — magic constant for entity runtime integrity validation
+    magic: int = field(default=ZONEID_ENTITY, compare=False)
+    # [id-soft: doom-1993] High-Bit Trick — bitfield flag encoding with high-bit markers
+    # 0x80000000 = system entity, 0x40000000 = WAD-loaded entity
+    flags: int = field(default=0, compare=False)
+    # [id-soft: quake3-1999] Hard-Boundary — engine-zone vs game-zone boundary enforcement
+    # __engine_zone__ and __game_zone__ are checked by zone-aware getters.
+    __engine_zone__: dict = field(default_factory=dict, repr=False, compare=False)
+    __game_zone__: dict = field(default_factory=dict, repr=False, compare=False)
+
+    def __post_init__(self) -&gt; None:
+        """Post-init: populate zone sentinels from known fields.
+
+        [id-soft: quake3-1999] Hard-Boundary — automatically partition
+        fields into engine zone (read-only) and game zone (writable).
+        """
+        # Engine zone: structural identity fields (DO NOT MODIFY by game logic)
+        self.__engine_zone__ = {
+            "magic": self.magic,
+            "name": self.name,
+            "domains": self.domains,
+            "capabilities": self.capabilities,
+            "model": self.model,
+            "role": self.role,
+            "container": self.container,
+            "port": self.port,
+            "wad_source": self.wad_source,
+            "slots": self.slots,
+            "flags": self.flags,
+        }
+        # Game zone: personality/behavior fields (freely modifiable)
+        self.__game_zone__ = {
+            "personality": self.personality,
+            "temperature": self.temperature,
+            "context_window": self.context_window,
+            **self.metadata,
+        }
+
+    def is_system(self) -&gt; bool:
+        """Check if this is a system-level entity (high-bit flag).
+
+        [id-soft: doom-1993] High-Bit Trick — single bit check
+        instead of separate boolean field. 1 AND instruction vs 1 struct field.
+        """
+        return bool(self.flags &amp; EntityRegistry.FLAG_SYSTEM)
+
+    def get_symbolic_metadata(self) -&gt; SymbolicMetadata:
+        """Extract typed SymbolicMetadata from metadata["symbolic"] sub-dict.
+
+        [heritage: lilith-2026] SymbolicMetadata — Run Side semantic coordinates.
+        Engine Core provides schema; WAD provides values. Zero firewall risk (M2):
+        the core field `metadata: Dict[str, Any]` is preserved; symbolic_metadata
+        is a typed view over metadata["symbolic"], never a replacement.
+        """
+        raw = self.metadata.get("symbolic", {})
+        if not isinstance(raw, dict):
+            return SymbolicMetadata()
+        return SymbolicMetadata.validate(raw)
+
+    def set_symbolic_metadata(self, data: Dict[str, Any]) -&gt; None:
+        """Store a validated SymbolicMetadata dict at metadata["symbolic"].
+
+        [heritage: lilith-2026] SymbolicMetadata — Run Side semantic coordinates.
+        Preserves the core `metadata: Dict[str, Any]` field; only populates the
+        "symbolic" sub-key with the 6 typed fields. Unknown keys are filtered.
+        """
+        self.metadata["symbolic"] = SymbolicMetadata.validate(data)
+
+    def __getattr__(self, name: str) -&gt; Any:
+        """Proxy attribute access to the metadata dictionary for WAD-specific content.
+
+        This ensures backward compatibility with tests and legacy code while
+        maintaining the M2 Firewall by avoiding hardcoded fields in the dataclass.
+        Example: entity.element -&gt; entity.metadata["element"]
+        """
+        if name in self.metadata:
+            return self.metadata[name]
+        raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
+
+    def mark_system(self) -&gt; None:
+        """Mark this entity as system-level (high-bit).
+
+        Once set, this should not be cleared — follows the same
+        convention as id Software's NF_SUBSECTOR bit.
+        """
+        self.flags |= EntityRegistry.FLAG_SYSTEM
+        self.__engine_zone__["flags"] = self.flags
+
+    def to_dict(self) -&gt; Dict[str, Any]:
+        """Serialize entity fields to dict, excluding None/empty/magic."""
+        result = {}
+        for k, v in asdict(self).items():
+            if v is None:
+                continue
+            if isinstance(v, (list, dict)) and not v:
+                continue
+            if k in ("magic", "_engine_zone", "_game_zone", "__engine_zone__", "__game_zone__"):
+                continue  # Runtime-only; not stored in YAML
+            result[k] = v
+        return result
+
+class EntityRegistry:
+    """Loads, saves, and manages entities from YAML config.
+    DocRef: docs/reference/api/entity_registry.md
+
+    [id-soft: doom-1993] Lazy Deletion — entities are tombstoned (magic =
+    ZONEID_TOMBSTONE) on remove() and reaped after a grace period.
+    [id-soft: quake-1996] Grace Period — 0.5s delay for safety.
+    """
+
+    # [id-soft: quake-1996] Grace Period — 0.5s realloc delay
+    TOMBSTONE_GRACE_SECONDS = 0.5
+
+    # [id-soft: doom-1993] High-Bit Trick — bitfield flag encoding with high-bit markers
+    FLAG_SYSTEM = 0x80000000  # Bit 31: system-level entity (vs user-created)
+    FLAG_WAD = 0x40000000     # Bit 30: loaded from a WAD (vs runtime-created)
+    FLAG_ACTIVE = 0x00000000  # Default: active entity (low bits = slot flags)
+
+    # [id-soft: quake3-1999] Hard-Boundary Struct — engine zone vs game zone
+    ENGINE_ZONE_ATTRS = frozenset({
+        "magic", "name", "domains", "model", "role",
+        "container", "port", "wad_source", "slots",
+    })
+    GAME_ZONE_ATTRS = frozenset({
+        "personality", "temperature", "context_window",
+    })
+
+    # Slot system is fully dynamic — no hardcoded PILLAR_SLOTS.
+    # The engine discovers occupied slots from loaded entities.
+    # WADs define slot labels ("P1: Flesh"); the engine sees only "P1".
+    # [id-soft: quake3-1999] vvar pattern — dynamic set, not hardcoded
+    @property
+    def occupied_slots(self) -&gt; frozenset:
+        """All slot IDs currently occupied by loaded entities (engine-agnostic)."""
+        return frozenset(
+            s.lower()
+            for e in self.active_iter()
+            for s in e.slots
+        )
+
+    def __init__(self, config_path: Optional[str] = None):
+        if config_path is None:
+            # Resolve active IWAD from config/omega.yaml to enforce Engine-Stack Firewall
+            try:
+                omega_config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
+                with open(omega_config_path, "r") as f:
+                    omega_cfg = yaml.safe_load(f)
+                active_iwad = omega_cfg.get("omega", {}).get("entity", {}).get("active_iwad", "_omega_default")
+                config_path = str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / active_iwad / "entities.yaml")
+            except (OmegaError, RuntimeError, OSError) as e:
+                logger.error(f"Failed to resolve active IWAD from omega.yaml: {e}. Falling back to default.")
+                config_path = str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / DEFAULT_IWAD / "entities.yaml")
+
+        self.config_path = Path(config_path)
+        # [Project 3: Shadow-Stacking] Store entities as a list of layers sorted by priority
+        self._entities: Dict[str, List[Entity]] = {}
+        self._wad_sources: Dict[str, List[str]] = {}  # lowercase entity name -&gt; list of WAD source names
+        # [id-soft: doom-1993] Multi-Index Entity — dual-index entity lookup (name + capability)
+        self._capability_index: Dict[str, List[str]] = {}
+        self._lock = None  # Created lazily in async context (C-ARCH-004 pattern)
+            # [id-soft: doom-1993] Lazy Deletion — tombstone-based entity lifecycle (set sentinel, keep in dict)
+        self._tombstoned: Dict[str, float] = {}  # key -&gt; time.monotonic() of tombstone
+        self._load()
+
+    def _load(self) -&gt; None:
+        """Load entities from YAML file.
+
+        In test mode (OMEGA_ENV=test), caches parsed YAML to avoid re-parsing
+        the 982KB entities.yaml on every Oracle() initialization.
+        """
+        if not self.config_path.exists():
+            logger.warning(f"Entity config not found at {self.config_path}")
+            self._entities = {}
+            return
+
+        cache_key = str(self.config_path)
+        # Use cached data in test mode to avoid 5.8s YAML parse per Oracle init
+        if os.environ.get("OMEGA_ENV") == "test" and cache_key in _entity_yaml_cache:
+            data = _entity_yaml_cache[cache_key]
+        else:
+            try:
+                with open(self.config_path, "r") as f:
+                    data = yaml.safe_load(f)
+            except yaml.YAMLError as e:
+                raise ValueError(f"entities.yaml is empty or malformed: {e}")
+            if os.environ.get("OMEGA_ENV") == "test":
+                _entity_yaml_cache[cache_key] = data
+
+        if data is None:
+            raise ValueError("entities.yaml is empty or malformed")
+
+        raw_entities = data.get("entities", {}) if data else {}
+        for key, raw in raw_entities.items():
+            if raw is None or not isinstance(raw, dict):
+                logger.warning(f"Entity '{key}' has empty or malformed definition, skipping")
+                continue
+
+            # Define core structural fields that belong to the Engine Zone
+            # [id-soft: quake3-1999] Hard-Boundary — engine-zone vs game-zone boundary enforcement
+            # metadata is a core field, NOT a WAD-specific field. Without this,
+            # nested metadata dicts from YAML are absorbed as WAD-specific metadata.
+            core_fields = {
+                "name", "domains", "capabilities", "model", "personality",
+                "temperature", "context_window", "slots", "role",
+                "container", "port", "wad_source", "priority",
+                "metadata",  # D-kal-180: prevent recursive nesting corruption
+            }
+
+            # Everything else is WAD-specific metadata
+            wad_metadata = {k: v for k, v in raw.items() if k not in core_fields}
+
+            # ── Backward-Compatible Slot Migration ──
+            # Old YAML format used "pillars: ['P1: Flesh']" or "pillars: ['1']".
+            # New format uses "slots: ['P1']". Migrate automatically.
+            raw_slots = raw.get("slots", [])
+            if not raw_slots and "pillars" in raw:
+                raw_pillars = raw.get("pillars", [])
+                # Extract slot ID from "P1: Flesh" → "P1", or use bare value
+                for p in raw_pillars:
+                    p_str = str(p)
+                    # Handle "P1: Flesh" format — extract before colon
+                    if ":" in p_str and not p_str.startswith("pillar"):
+                        slot_id = p_str.split(":")[0].strip()
+                    else:
+                        slot_id = p_str
+                    raw_slots.append(slot_id)
+                logger.info(f"Migrated pillars→slots for '{key}': {raw_pillars} → {raw_slots}")
+            # If "pillars" key exists in raw YAML, remove from wad_metadata
+            # (it's been consumed for migration; don't duplicate in metadata dict)
+            wad_metadata.pop("pillars", None)
+
+            entity = Entity(
+                name=raw.get("name", key),
+                domains=raw.get("domains", []),
+                capabilities=raw.get("capabilities", []),
+                model=raw.get("model", "qwen3-1.7b-q6_k"),
+                personality=raw.get("personality", ""),
+                temperature=raw.get("temperature"),
+                context_window=raw.get("context_window"),
+                slots=raw_slots,
+                metadata=wad_metadata,
+                role=raw.get("role"),
+                container=raw.get("container", False),
+                port=raw.get("port"),
+                wad_source=raw.get("wad_source"),
+            )
+            key = entity.name.lower()
+            # [id-soft: doom-1993] ZONEID Pattern — magic constant for entity runtime integrity validation
+            entity.magic = ZONEID_ENTITY
+            self._entities[key] = [entity]
+
+            # Track wad_source for entities that have it
+            if entity.wad_source:
+                if key not in self._wad_sources:
+                    self._wad_sources[key] = []
+                if entity.wad_source not in self._wad_sources[key]:
+                    self._wad_sources[key].append(entity.wad_source)
+
+            # [id-soft: doom-1993] Multi-Index Entity — dual-index entity lookup (name + capability)
+            for cap in entity.domains + entity.capabilities:
+                cap_lower = cap.lower()
+                if cap_lower not in self._capability_index:
+                    self._capability_index[cap_lower] = []
+                if key not in self._capability_index[cap_lower]:
+                    self._capability_index[cap_lower].append(key)
+
+        logger.info(f"Loaded {len(self._entities)} entities from config")
+
+    def get(self, name: str, raise_on_tombstoned: bool = False) -&gt; Optional[Entity]:
+        """Get entity by name, role, or Slot ID (3-Tier Resolution).
+
+        Tier 1: Direct entity match (e.g., "sekhmet")
+        Tier 2: Slot match (e.g., "p1" or "pillar 1") — dynamic, no hardcoded slots
+        Tier 3: Role match (e.g., "sysadmin")
+
+        [Project 3: Shadow-Stacking] Projects a single Entity by merging layers.
+        [id-soft: doom-1993] ZONEID Pattern — validates magic on matched entities
+        [id-soft: doom-1993] Lazy Deletion — tombstoned entities treated as not found
+        """
+        if not name:
+            return None
+
+        name_lower = name.lower().strip()
+
+        # Tier 1: Direct Entity Match (e.g., "sekhmet")
+        layers = self._entities.get(name_lower)
+        if layers:
+            # Filter out tombstoned layers
+            active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
+            if not active_layers:
+                if raise_on_tombstoned:
+                    raise EntityTombstonedError(
+                        cache_key=name_lower,
+                        message=f"Entity '{name}' was removed (tombstoned) — call active_iter() for current entities",
+                    )
+                return None
+
+            # [Project 3: Shadow-Stacking] Project the layered entity
+            return self._project_entity(active_layers)
+
+        # Tier 2: Slot Match (e.g., "p1" or "pillar 1")
+        # Fully dynamic — no hardcoded PILLAR_SLOTS. The engine discovers
+        # occupied slots from loaded entities. WADs define slot semantics.
+        slot_key = name_lower.replace("pillar ", "p").replace("pillar", "p")
+        for key, layers in self._entities.items():
+            active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
+            if not active_layers:
+                continue
+            projected = self._project_entity(active_layers)
+            if any(s.lower() == slot_key for s in projected.slots):
+                return projected
+
+        # Tier 3: Role Match (e.g., "sysadmin")
+        for key, layers in self._entities.items():
+            active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
+            if not active_layers:
+                continue
+            projected = self._project_entity(active_layers)
+            if projected.role and projected.role.lower() == name_lower:
+                return projected
+
+        return None
+
+    def _project_entity(self, layers: List[Entity]) -&gt; Entity:
+        """Project a single Entity by merging multiple layers.
+
+        Engine Zone: Highest priority layer wins (Standard Override).
+        Game Zone: metadata is merged (Highest priority wins for shared keys).
+        """
+        # Base layer is the lowest priority (last in list)
+        base = layers[-1]
+
+        # Start with a copy of the base
+        projected = Entity(
+            name=base.name,
+            domains=list(base.domains),
+            model=base.model,
+            personality=base.personality,
+            capabilities=list(base.capabilities),
+            temperature=base.temperature,
+            context_window=base.context_window,
+            slots=list(base.slots),
+            metadata=dict(base.metadata),
+            role=base.role,
+            container=base.container,
+            port=base.port,
+            wad_source=base.wad_source,
+            priority=layers[0].priority, # Highest priority of the stack
+        )
+
+        # Merge layers from lowest to highest priority
+        for layer in reversed(layers):
+            # 1. Engine Zone: Override (Highest priority wins)
+            projected.model = layer.model or projected.model
+            projected.role = layer.role or projected.role
+            projected.container = layer.container if layer.container else projected.container
+            projected.port = layer.port or projected.port
+            projected.wad_source = layer.wad_source or projected.wad_source
+
+            # 2. Game Zone: Merge/Union
+            # Domains &amp; Capabilities: Set Union
+            projected.domains = list(set(projected.domains + layer.domains))
+            projected.capabilities = list(set(projected.capabilities + layer.capabilities))
+
+            # Metadata: Merge dictionaries (Highest priority wins for shared keys)
+            projected.metadata.update(layer.metadata)
+
+            # Personality: Concatenation
+            if layer.personality and layer.personality != projected.personality:
+                projected.personality = f"{layer.personality}\n\n{projected.personality}" if projected.personality else layer.personality
+
+            # Other core fields: Highest priority wins
+            projected.temperature = layer.temperature or projected.temperature
+            projected.context_window = layer.context_window or projected.context_window
+
+
+        # Final validation
+        projected.magic = ZONEID_ENTITY
+        return projected
+
+    def get_by_capability(self, capability: str) -&gt; List[Entity]:
+        """Find all active entities that possess a specific capability.
+
+        [id-soft: doom-1993] Multi-Index Entity — O(1) capability lookup
+        """
+        if not capability:
+            return []
+
+        cap_lower = capability.lower()
+        keys = self._capability_index.get(cap_lower, [])
+
+        # Filter out tombstoned entities
+        return [self._entities[k] for k in keys if k in self._entities and self._entities[k].magic != ZONEID_TOMBSTONE]
+
+    def list(self) -&gt; List[Entity]:
+        """List all non-tombstoned entities.
+
+        [id-soft: doom-1993] Lazy Deletion — tombstoned entities filtered out.
+        """
+        return self.active_iter()
+
+    def list_pillar_keepers(self) -&gt; List[Entity]:
+        """List entities with slot assignments (forward-compat alias).
+
+        The term "Pillar Keeper" is Arcana-NovAi WAD content. The engine
+        discovers slot-holding entities dynamically rather than enforcing
+        a hardcoded 10-slot grid. This method queries any entity that has
+        at least one slot assigned.
+        """
+        return [e for e in self.active_iter() if e.slots]
+
+    def names(self) -&gt; List[str]:
+        """Return list of non-tombstoned entity names."""
+        return [e.name for e in self.list()]
+
+    def get_all(self) -&gt; Dict[str, Entity]:
+        """Return all entities as a dict keyed by lowercase name.
+
+        [id-soft: doom-1993] Lazy Deletion — tombstoned entities excluded.
+        """
+        return {k: self._project_entity([l for l in layers if l.magic != ZONEID_TOMBSTONE])
+                for k, layers in self._entities.items()
+                if any(l.magic != ZONEID_TOMBSTONE for l in layers)}
+
+    def get_by_wad(self, wad_name: str) -&gt; List[Entity]:
+        """Return all non-tombstoned entities from a specific WAD."""
+        return [e for e in self.active_iter() if e.wad_source == wad_name]
+
+    def get_wad_sources(self, name: str) -&gt; List[str]:
+        """Return list of WAD sources for a given entity name (lowercase lookup).
+
+        Still returns sources for tombstoned entities — WAD provenance is
+        preserved for debugging even after removal.
+        """
+        return self._wad_sources.get(name.lower(), [])
+
+    async def add(self, entity: Entity) -&gt; None:
+        """Add a new entity layer.
+
+        [Project 3: Shadow-Stacking] Entities are stored as a list of layers.
+        New layers are appended and sorted by priority (highest first).
+        """
+        if self._lock is None:
+            self._lock = anyio.Lock()
+        async with self._lock:
+            name_key = self._validate_name(entity.name)
+            entity.name = name_key  # Normalize to lowercase
+
+            # [id-soft: doom-1993] High-Bit Trick — bitfield flag encoding with high-bit markers
+            if entity.wad_source:
+                entity.flags |= EntityRegistry.FLAG_WAD
+                entity.__engine_zone__["flags"] = entity.flags
+
+            key = name_key
+
+            # Track WAD source if present
+            if entity.wad_source:
+                if key not in self._wad_sources:
+                    self._wad_sources[key] = []
+                if entity.wad_source not in self._wad_sources[key]:
+                    self._wad_sources[key].append(entity.wad_source)
+
+            # [id-soft: doom-1993] Multi-Index Entity — dual-index entity lookup (name + capability)
+            for cap in entity.domains + entity.capabilities:
+                cap_lower = cap.lower()
+                if cap_lower not in self._capability_index:
+                    self._capability_index[cap_lower] = []
+                if key not in self._capability_index[cap_lower]:
+                    self._capability_index[cap_lower].append(key)
+
+            # [id-soft: doom-1993] ZONEID Pattern — magic constant for entity runtime integrity validation
+            entity.magic = ZONEID_ENTITY
+
+            # [Project 3: Shadow-Stacking] Layered storage
+            if key not in self._entities:
+                self._entities[key] = []
+            self._entities[key].append(entity)
+            # Sort layers by priority (descending)
+            self._entities[key].sort(key=lambda e: e.priority, reverse=True)
+
+            await self._save()
+
+            # Automatically scaffold persistent workspace for the awakened entity
+            scaffold_fn = functools.partial(
+                EntityWorkspaceManager.scaffold_workspace,
+                entity.name, entity.role, entity.slots
+            )
+            await anyio.to_thread.run_sync(scaffold_fn)
+
+    async def remove(self, name: str) -&gt; bool:
+        """Remove an entity by name. Returns True if removed.
+
+        [id-soft: doom-1993] Lazy Deletion — marks with ZONEID_TOMBSTONE
+        instead of immediate deletion. Actual cleanup happens in
+        _reap_tombstoned() on the next _save() after the grace period.
+        [id-soft: quake-1996] Grace Period — 0.5s delay for safety.
+        """
+        key = name.lower()
+        if self._lock is None:
+            self._lock = anyio.Lock()
+        async with self._lock:
+            if key in self._entities:
+                entity = self._entities[key]
+                # [id-soft: doom-1993] ZONEID Pattern — magic constant for entity runtime integrity validation
+                validate_zoneid(entity.magic, ZONEID_ENTITY, f"EntityRegistry.remove({name})")
+                # [id-soft: doom-1993] Lazy Deletion — tombstone-based entity lifecycle (set sentinel, keep in dict)
+                self._tombstoned[key] = time.monotonic()
+                entity.magic = ZONEID_TOMBSTONE
+                await self._save()
+                return True
+            return False
+
+    def _reap_tombstoned(self, grace_seconds: Optional[float] = None) -&gt; int:
+        """Remove tombstoned entities past the grace period.
+
+        [id-soft: doom-1993] Lazy Deletion — periodic sweep of sentinel entities
+        [id-soft: quake-1996] Grace Period — 0.5s delay before reaping
+
+        Args:
+            grace_seconds: Override grace period. Defaults to
+                TOMBSTONE_GRACE_SECONDS (0.5s).
+
+        Returns:
+            Number of entities reaped.
+        """
+        if grace_seconds is None:
+            grace_seconds = self.TOMBSTONE_GRACE_SECONDS
+        now = time.monotonic()
+        to_reap = []
+        for key, ts in self._tombstoned.items():
+            if now - ts &gt;= grace_seconds:
+                to_reap.append(key)
+        reaped = 0
+        for key in to_reap:
+            if key in self._entities:
+                del self._entities[key]
+                self._tombstoned.pop(key, None)
+                self._wad_sources.pop(key, None)
+                reaped += 1
+        if reaped:
+            logger.debug("Reaped %d tombstoned entities (grace=%.1fs)", reaped, grace_seconds)
+        return reaped
+
+    def active_iter(self) -&gt; List[Entity]:
+        """Iterate over non-tombstoned entities.
+
+        [id-soft: doom-1993] Lazy Deletion — P_RemoveThinker sweep pattern
+        Derived from DOOM 1993 p_tick.c:62-103: entities with sentinel
+        markers are skipped; actual reaping happens asynchronously.
+
+        self._entities is Dict[str, List[Entity]] (one key can hold stacked
+        layers from multiple WAD sources). Flatten all layers and filter
+        tombstoned entities.
+
+        Currently O(n) — future optimization: maintain a separate
+        active set with [id-soft: doom-1993] Mobj Dual-Linking pattern.
+        """
+        return [
+            e
+            for layers in self._entities.values()
+            for e in layers
+            if e.magic != ZONEID_TOMBSTONE
+        ]
+
+    def count_active(self) -&gt; int:
+        """Count non-tombstoned entities."""
+        return len(self.active_iter())
+
+    # ── Name Utility ───────────────────────────────────────────────────
+    # short_name_hash is preserved as a utility for generating deterministic
+    # 64-bit integer keys from entity names. Originally inspired by id Soft-
+    # ware's 8-byte WAD lump convention (2× int32 compare), the encoding is
+    # still useful for hash-ring lookups and sharding. The 8-char cap has
+    # been lifted — names longer than 8 chars are hashed with a warning.
+
+    @staticmethod
+    def short_name_hash(name: str, default: int = 0) -&gt; int:
+        """Encode a name as a 64-bit deterministic integer key.
+
+        Useful for hash-ring sharding and cross-reference lookups.
+        Names longer than 8 chars are truncated with a warning.
+        """
+        max_len = 8  # Keep the 64-bit encoding; cap at 8 for uint64
+        truncated = name[:max_len]
+        if len(name) &gt; max_len:
+            logger.warning(
+                "short_name_hash: name '%s' truncated to '%s' "
+                "(%d chars, max %d).",
+                name, truncated, len(name), max_len,
+            )
+        padded = truncated.ljust(max_len, '\x00')[:8]
+        return struct.unpack('&gt;Q', padded.encode('ascii', errors='replace'))[0]
+
+    def _validate_name(self, name: str) -&gt; str:
+        """Validate and normalize an entity name.
+
+        Returns the normalized name (lowercase, stripped).
+        Raises ValueError if the name is empty.
+        """
+        if not name or not name.strip():
+            raise ValueError("Entity name must be non-empty")
+        return name.strip().lower()
+
+    def find_by_domain(self, text: str) -&gt; Optional[Entity]:
+        """Find the best entity match for a query text based on domain keywords.
+
+        Matches Pillar Keepers only (Nova handles routing separately).
+        Scores each entity by how many domain keywords appear in the text.
+        Uses word-boundary matching to avoid substring false positives.
+        When scores tie, prefers the entity whose domain keyword appears
+        earliest in the query (the first-mentioned domain is likely the
+        primary intent).
+        Returns the highest-scoring entity, or None if no match.
+        """
+        text_lower = text.lower()
+        best_score = 0
+        best_entity: Optional[Entity] = None
+        best_first_pos: int = len(text_lower) + 1
+        words = set(text_lower.split())
+
+        for key, layers in self._entities.items():
+            active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
+            if not active_layers:
+                continue
+            projected = self._project_entity(active_layers)
+            # All entities are routable by domain — no pillar gate ([DRIVERS_LICENSE_1])
+
+            score = 0
+            first_pos = len(text_lower) + 1
+            for keyword in projected.domains:
+                kw_lower = keyword.lower()
+                if kw_lower in words or f" {kw_lower} " in f" {text_lower} ":
+                    score += 1
+                    pos = text_lower.find(kw_lower)
+                    if pos != -1 and pos &lt; first_pos:
+                        first_pos = pos
+            if score &gt; best_score or (score == best_score and score &gt; 0 and first_pos &lt; best_first_pos):
+                best_score = score
+                best_entity = projected
+                best_first_pos = first_pos
+
+        return best_entity if best_score &gt; 0 else None
+
+    def find_by_name_fragment(self, fragment: str) -&gt; Optional[Entity]:
+        """Find entity by partial name match (for 'summon' detection)."""
+        frag = fragment.lower()
+        for key, layers in self._entities.items():
+            active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
+            if not active_layers:
+                continue
+            projected = self._project_entity(active_layers)
+            if frag in key or frag in projected.name.lower():
+                return projected
+        return None
+
+    async def _save(self) -&gt; None:
+        """Save current entities back to YAML file.
+
+        Uses Sovereign Atomic Write (Flush -&gt; Sync -&gt; Commit -&gt; Anchor) to prevent data loss on crash.
+
+        [id-soft: doom-1993] Lazy Deletion — reap tombstoned entities before save.
+        This prevents tombstoned entities from persisting to disk and coming
+        back alive on the next _load().
+
+        Integrity Guard: Detects recursive/bloated entity data (&gt;1MB) and aborts the
+        save to prevent `entities.yaml` corruption from circular serialization bugs.
+        """
+        self._reap_tombstoned()
+
+        def _sync_save():
+            data = {"entities": {}}
+            for key, layers in self._entities.items():
+                # Project stacked layers into a single Entity for serialization.
+                # Skip keys whose layers are all tombstoned.
+                active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
+                if not active_layers:
+                    continue
+                projected = self._project_entity(active_layers)
+                data["entities"][key] = projected.to_dict()
+
+            # Integrity Guard: Check for bloated data before writing
+            # (prevents recursive/circular serialization bugs from corrupting entities.yaml)
+            serialized = yaml.dump(data, default_flow_style=False, sort_keys=False, allow_unicode=True)
+            if len(serialized) &gt; 1_000_000:  # 1MB threshold
+                logger.error(
+                    f"INTEGRITY GUARD: entities.yaml serialization is {len(serialized)} bytes "
+                    f"(&gt;{1_000_000}). Aborting save to prevent corruption. "
+                    f"Check Entity.to_dict() for circular references in metadata."
+                )
+                # Log the first and last entity key to help debug the cause
+                if data["entities"]:
+                    first_key = next(iter(data["entities"]))
+                    logger.error(f"First entity key: {first_key}, dict size: {len(str(data['entities'][first_key]))}")
+                return
+
+            temp_dir = self.config_path.parent
+            fd, temp_path = tempfile.mkstemp(dir=str(temp_dir), suffix=".tmp")
+            try:
+                # 1. Write and Sync File
+                with os.fdopen(fd, "w") as tf:
+                    tf.write(serialized)
+                    tf.flush()
+                    os.fsync(tf.fileno())
+
+                # 2. Atomic Replace
+                os.replace(temp_path, self.config_path)
+
+                # 3. Anchor: Sync Parent Directory
+                dir_fd = os.open(str(temp_dir), os.O_RDONLY)
+                try:
+                    os.fsync(dir_fd)
+                finally:
+                    os.close(dir_fd)
+
+                logger.info(f"Saved {len(self._entities)} entities to {self.config_path}")
+            except (OmegaError, RuntimeError, OSError) as e:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+                raise e
+
+        await anyio.to_thread.run_sync(_sync_save)
+
+    def get_tools_for_entity(self, entity_name: str) -&gt; List[Dict[str, Any]]:
+        """Return tool descriptors derived from entity domains and personality.
+
+        Each tool maps to a domain keyword the entity can handle,
+        enabling the GnosisProxy to perform RAG-based tool discovery.
+        """
+        entity = self.get(entity_name)
+        if not entity:
+            return []
+
+        tools = []
+        for domain in entity.domains:
+            tools.append({
+                "name": f"domain_{domain.replace(' ', '_')}",
+                "description": f"Handle queries related to {domain} — {entity.name}'s domain of expertise",
+                "entity": entity.name,
+                "domains": [domain],
+            })
+
+        # Add a general-purpose tool for the entity's core personality
+        tools.append({
+            "name": f"summon_{entity.name.lower()}",
+            "description": f"Summon {entity.name} for general guidance: {entity.personality[:120]}",
+            "entity": entity.name,
+            "domains": entity.domains,
+        })
+
+        return tools
+
+    def count(self) -&gt; int:
+        return len(self._entities)
+</file>
+
+
+</pack>

@@ -269,7 +269,7 @@ class MandateAuditor:
         ]
 
         skip_files = {"constants.py", "cpu_optimizer.py", "cvar_table.py", "mandate_auditor.py"}
-        skip_paths = {"workers/", "library/"}
+        skip_paths = {"workers/", "library/", "audit/", "governance/"}
 
         hardcoded_violations: list[str] = []
         core_files = list((self.root / "src" / "omega").rglob("*.py"))

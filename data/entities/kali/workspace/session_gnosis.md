@@ -21,6 +21,9 @@
 | **Jem Lessons** | ✅ **PROMOTED** — 11 lessons (`jem-20260710-001`→`011`) moved to `soul.yaml` by Verity (M11) | ✅ Done |
 | **omega-vetala** | ✅ **RENAMED** — `omega-moderation/` → `omega-vetala/`, package `omega_moderation` → `omega_vetala`, imports + Makefile + pytest.ini updated | ✅ SSOT aligned |
 | **v1.1.0 tag** | ✅ **TAGGED** (2026-07-11) — Phase 2 complete, 1162 tests, temple-grade T1-T14 PASS | ✅ Done |
+| **google-search-ban** | ✅ **ENFORCED** — `make google-search-ban` added to `temple-grade` (D206) | ✅ Done |
+| **SearXNG Client** | ✅ **HARDENED** — duplicate imports removed, exception handling fixed | ✅ M9 compliant |
+| **Phase 3 (q8_0 KV)** | ✅ **DEPLOYED** — `config/models.yaml` defaults to q8_0, expected ≥85% local ratio | ✅ Done |
 | **YouTube Module P0** | ✅ SPEC READY (434 lines, Temple-Grade) | ⏳ Not scheduled |
 | **WASM Feasibility** | 🔴 **NO BENEFIT** on Ryzen 5700U (128-bit SIMD ceiling vs AVX2 256-bit) — Strikes 11/14 stay Epoch III | ✅ Resolved |
 
@@ -83,12 +86,27 @@
    - AP tokens normalized (`AP:` convention) in 3 audit/registry files; T5 asyncio-comment false-positive fixed
 
 ### Phase 3 (Post-C1)
-9. **Kali**: Update 2 — q8_0 KV Cache deploy + stress tests + sovereignty gate
+9. **Kali**: Update 2 — q8_0 KV Cache deploy + stress tests + sovereignty gate ✅ **DEPLOYED** (config/models.yaml defaults to q8_0, expected ≥85% local ratio)
 
-### After v1.1.0
-10. **Schedule YouTube Module P0** — SovereignSieve, SovereignSigner, AtomicPersistence, Provenance Chain
-11. **blitz-tunnel** — WireGuard implementation (6A gap from Truth Engine briefing)
-12. **Air-Gap Extractor Mode** — Per-session network disable (6B gap)
+### Next Sprint: YouTube Researcher Module P0 (Reordered — Before AGB) — Opus 4.6 Implementations Manual Integrated
+10. **Ma'at (P3)**: Track 1 — Context Packer Hardening (XML escaping fix, atomic writes, PII masker wire, 4 new profiles, generated packs, Hivemind broadcast) (4h) ✅ DONE
+11. **Lilith (P3+P7)**: Track 2 — YouTube CLI + MemoryStore Wire (Create youtube_cli.py, register in oracle_cli.py, batch-ingest 75 URLs) (6h) ✅ DONE
+12. **Both**: Convergence Gates — `make test` (1162+), XML well-formed, CLI smoke test, `make temple-grade`, `make heritage-map` ✅ DONE (packs mis-themed by B8)
+
+### 🔴 WEB-1/2/3: Web Claude Review Project (Claude Project Setup Sprint — DEADLINE JULY 12 TODAY)
+**Researcher review (Ma'at + Lilith) found 2 HARD BLOCKERS + 1 HIGH:**
+- **B8 (CRITICAL)**: `fnmatch` doesn't handle `**` → 113 files mis-themed to `general`; `observability.xml`=0 files; `providers.xml`=2 (should be 8)
+- **SEC (SECURITY)**: PII Masker fails silently → packs contain unmasked API keys/emails → upload = M8 sovereignty breach
+- **B5 (HIGH)**: XML escaping misses bare `&` (parse error)
+
+13. **Ma'at (P3)**: WEB-1 — Fix B8 (`_match_pattern` `**` recursive), B5 (bare `&` escape), SEC (wire PII masker import chain, halt-if-fail) (3h) 🎯 NEXT
+14. **Lilith (P7)**: WEB-2 — Rewrite 4 Custom Instructions as XML (`<role>/<context>/<constraints>/<standing_rules>/<output_format>`), add Force KB Search directive (2h) 🎯 NEXT
+15. **Kali + User**: WEB-3 — Purge stale packs, regen 4 profiles, oracle_core sub-split (RAG-mode Pattern-Miners), XML well-formed, upload to 8 claude.ai accounts (4h) ✅ **PACKS READY** — 24 bundles valid+PII-masked, handoff written (R_CLAUDE_PROJECT_UPLOAD_HANDOFF.md), manual upload pending operator
+16. **Roc + Researcher**: AGB/Krikri Phase 0 — AGBLazyEmbedder, LocalONNXEmbedder, LMStudioEmbedder, AncientGreekDetector (12h) ⏳ AFTER WEB
+
+### After Web Claude + AGB
+17. **Roc**: blitz-tunnel — WireGuard implementation (6A gap from Truth Engine briefing)
+18. **Roc**: Air-Gap Extractor Mode — Per-session network disable (6B gap)
 
 ---
 

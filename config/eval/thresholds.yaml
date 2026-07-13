@@ -1,0 +1,9 @@
+# 🔱 Omega Engine — Eval Thresholds (S2)
+# AP: AP-EVAL-THRESHOLDS-v1.0.0
+# ⬡ OMEGA ⬡ LILITH ⬡ eval.thresholds ⬡ S2
+# Metric vocabulary per RAGAS. Local deterministic scorer targets these.
+faithfulness: 0.85
+answer_relevancy: 0.80
+context_precision: 0.75
+context_recall: 0.80
+# audience_fit is advisory (S7 cross-link) and not gated by default.

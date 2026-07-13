@@ -34,6 +34,7 @@ from omega.errors import (
 
 from .curator import CuratedDocument
 from omega.memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
+from omega.memory.sqlite_vec_adapter import SQLiteVecAdapter
 
 logger = logging.getLogger(__name__)
 

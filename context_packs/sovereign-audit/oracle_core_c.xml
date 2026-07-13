@@ -1,0 +1,1142 @@
+<pack profile="sovereign-audit" theme="oracle_core">
+<file path="src/omega/oracle/context_builder.py" size="22429" language="Python" sha256="b404f0a4f450cd86f8fe17f342577999f1ec3720cd1ff3acb35b4b27f29abc06" purpose="Simple message representation for compaction logic." tokens="6185">
+# AP: AP-ORACLE-RESTORE-v2.3.0
+# 🔱 Context Builder — Memory Injection Pipeline
+# AP: AP-CONTEXT-BUILDER-v1.0.0
+# ICS: [NODE: MNEMOSYNE | ARCHETYPE: SOPHIA | CONTEXT: CONTEXT-BUILDING]
+#
+# Fetches recent conversation traces/memory for a given entity and user
+# session, then formats them into a structured memory block that is
+# prepended to the LLM's system prompt during inference.
+#
+# This is the glue between MemoryStore (conversation persistence) and
+# the ModelGateway (LLM inference). Without it, every inference call
+# would be stateless — the entity would have no memory of past exchanges.
+#
+# Integration:
+#   context_block = await ContextBuilder().build_context(entity_name, session_id)
+#   system_prompt = ContextBuilder.prepend_to_prompt(context_block, entity.personality)
+#
+# [id-soft: quake-1996] Zone Memory — Cache (LRU) tier pattern
+#   Quake's zone allocator (zone.h:24-80) has a Cache tier (PU_CACHE=101)
+#   that is purged when memory runs low. ContextBuilder fetches from
+#   MemoryStore's hot tier (most recent) and falls back to warm/cold.
+
+import logging
+import re
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional, Tuple, Protocol
+from dataclasses import dataclass, field
+from enum import Enum
+
+from ..memory_store import get_memory_store, MemoryStore
+from ..constants import DEFAULT_CONTEXT_LIMIT
+from .world_state import world_state
+from .middleware.headroom import get_headroom_middleware, HeadroomResult
+from .selective_hydration import SelectiveHydration, L3Principle
+from ..errors import OmegaError
+from omega.errors import OmegaError
+# New constant for token-aware sliding window
+DEFAULT_TOKEN_LIMIT = 4000
+
+logger = logging.getLogger(__name__)
+
+# ── Compaction Framework (Microsoft Agent Framework Pattern) ────────────────
+
+class Message:
+    """Simple message representation for compaction logic."""
+    def __init__(self, role: str, content: str, metadata: Optional[Dict[str, Any]] = None):
+        self.role = role
+        self.content = content
+        self.metadata = metadata or {}
+
+class CompactionStrategy(Protocol):
+    """Protocol for compaction strategies."""
+    async def __call__(self, messages: List[Message], budget: int) -&gt; bool:
+        """Apply compaction. Return True if budget is met, False otherwise."""
+        ...
+
+class StrategyAggressiveness(Enum):
+    LOW = "low"           # ToolResult — no LLM, zero cost
+    MEDIUM = "medium"     # Summarization — requires LLM
+    HIGH = "high"         # SlidingWindow — drops groups
+    EMERGENCY = "emergency"  # Truncation — backstop
+
+@dataclass
+class PipelineCompactionStrategy:
+    """Composes multiple strategies into a sequential pipeline."""
+    token_budget: int
+    strategies: List[CompactionStrategy] = field(default_factory=list)
+
+    async def __call__(self, messages: List[Message]) -&gt; bool:
+        """Run strategies in order, stopping when budget is met."""
+        for strategy in self.strategies:
+            if await strategy(messages, self.token_budget):
+                return True
+        return False
+
+class ObservationMaskingStrategy:
+    """High-efficiency filter that culls repetitive 'logged' or 'confirmed'
+    lines in tool outputs to save context tokens.
+
+    Source: [id-soft: doom-1993] BSP Culling (O(1) culling of redundant data)
+    """
+    def __init__(self, cull_keywords: List[str] = None, preserve_first_n: int = 2):
+        self.cull_keywords = cull_keywords or ["logged", "confirmed", "processed"]
+        self.preserve_first_n = preserve_first_n
+
+    async def __call__(self, messages: List[Message], budget: int) -&gt; bool:
+        modified = False
+        for msg in messages:
+            if msg.role == "tool" and len(msg.content) &gt; 20:
+                lines = msg.content.splitlines()
+                if len(lines) &lt;= self.preserve_first_n:
+                    continue
+
+                # Preserve headers, cull the rest based on keywords
+                new_lines = lines[:self.preserve_first_n]
+                for line in lines[self.preserve_first_n:]:
+                    if not any(kw in line.lower() for kw in self.cull_keywords):
+                        new_lines.append(line)
+
+                if len(new_lines) &lt; len(lines):
+                    msg.content = "\n".join(new_lines)
+                    modified = True
+
+        return modified or (self._estimate_tokens(messages) &lt;= budget)
+
+    def _estimate_tokens(self, messages: List[Message]) -&gt; int:
+        return sum(len(m.content) // 4 for m in messages)
+
+class TruncationStrategy:
+    """Emergency backstop — hard truncate to budget."""
+    async def __call__(self, messages: List[Message], budget: int) -&gt; bool:
+        current_tokens = sum(len(m.content) // 4 for m in messages)
+        if current_tokens &lt;= budget:
+            return True
+
+        # Hard truncate from oldest to newest
+        while messages and sum(len(m.content) // 4 for m in messages) &gt; budget:
+            messages.pop(0)
+        return True
+
+class ACONOptimizer:
+    """
+    Agent Context Optimization (ACON) — Failure-driven guideline optimization.
+    Source: Microsoft Research, ICML 2026.
+    """
+    def __init__(self, model: str = "qwen3-1.7b"):
+        self.model = model
+        self.guidelines: Dict[str, str] = {}
+
+    async def optimize_guidelines(
+        self,
+        full_context_trajectory: List[Dict],
+        compressed_context_trajectory: List[Dict],
+        full_succeeds: bool,
+        compressed_fails: bool
+    ) -&gt; str:
+        """Analyze failure causes and update compression guidelines."""
+        if full_succeeds and compressed_fails:
+            # In a real implementation, this would call an LLM to analyze the delta
+            # and output a new set of guidelines for the compaction strategies.
+            logger.info("ACON: Analyzing context loss failure... updating guidelines.")
+            self.guidelines["fidelity_threshold"] = "high"
+            self.guidelines["preserve_patterns"] = "decision_nodes, error_traces"
+        return self.guidelines
+
+# ── Default constants ─────────────────────────────────────────────────
+# DEFAULT_CONTEXT_LIMIT is imported from src/omega/oracle/constants.py
+MAX_EXCHANGE_DISPLAY_LENGTH = 500  # truncate individual messages to avoid prompt bloat
+
+class ContextBuilder:
+    """Builds structured memory context blocks for LLM system prompts.
+    DocRef: docs/reference/api/context_builder.md
+
+    Fetches recent conversation history from MemoryStore and formats it
+
+    as a clean, readable string block. Designed to be prepended to an
+    entity's personality/system prompt before inference.
+
+    [id-soft: doom-1993] BSP Culling — L3 principle injection uses O(1)
+    culling: only top-K principles are injected, avoiding context bloat.
+
+    When selective_hydration is provided, L3 gnosis principles relevant to
+    the query are retrieved from Qdrant and injected into the context block
+    after the memory window. This is the Cache tier of quake-1996 4-Tier
+    Memory — reusable pre-distilled wisdom.
+    """
+
+    def __init__(
+        self,
+        memory_store: Optional[MemoryStore] = None,
+        selective_hydration: Optional[SelectiveHydration] = None,
+        l3_top_k: int = 5,
+    ):
+        self.memory_store = memory_store or get_memory_store()
+        self._selective_hydration = selective_hydration
+        self._l3_top_k = l3_top_k
+
+    @staticmethod
+    def _score_exchange_quality(exchange: Dict[str, Any]) -&gt; float:
+        """Score a conversation exchange pair for quality (0.0-1.0).
+
+        Lightweight inline scorer for conversation data. Uses four signals:
+        - Message length (substantive messages score higher)
+        - Technical content indicators (code, references)
+        - Contains a question (Q&amp;A is more valuable than chitchat)
+        - Recency boost (newer exchanges get a small advantage)
+
+        This is the 'Right Approximation' for exchange quality — simple,
+        fast, no external dependencies, and sufficient for sliding window
+        prioritization.
+        """
+        user_msg = exchange.get("user", "")
+        assistant_msg = exchange.get("assistant", "")
+        combined = user_msg + " " + assistant_msg
+        score = 0.0
+
+        # 1. Message length (0.0-0.3): substantive messages score higher
+        word_count = len(combined.split())
+        if word_count &gt; 50:
+            score += 0.3
+        elif word_count &gt; 20:
+            score += 0.2
+        elif word_count &gt; 5:
+            score += 0.1
+
+        # 2. Technical content (0.0-0.2): code blocks, references, specific terms
+        has_code = bool(re.search(r'```|`[^`]+`|import |def |class |function ', combined))
+        has_reference = bool(re.search(r'\[\d+\]|\(.*\d{4}\)|http[s]?://|arXiv|doi:', combined))
+        if has_code:
+            score += 0.15
+        if has_reference:
+            score += 0.05
+
+        # 3. Contains a question (0.0-0.2): Q&amp;A pairs are more valuable
+        has_question = "?" in user_msg or any(
+            kw in user_msg.lower()
+            for kw in ["what", "how", "why", "when", "where", "who", "which", "can you", "could you"]
+        )
+        if has_question:
+            score += 0.2
+
+        # 4. Recency (0.0-0.3): newer exchanges get a small boost
+        # Default 0.15 for all; adjusted if timestamp is available
+        score += 0.15
+
+        return min(1.0, score)
+
+    # ── Primary API ───────────────────────────────────────────────────
+
+    async def build_context(
+        self,
+        entity_name: str,
+        session_id: str,
+        token_limit: int = DEFAULT_TOKEN_LIMIT,
+        degradation_level: Optional[str] = None,
+    ) -&gt; str:
+        """Fetch recent memory and current world state for an entity/session.
+
+        Args:
+            entity_name: Name of the entity (e.g., 'EntityA', 'EntityB').
+            session_id: Unique session identifier for the conversation.
+            token_limit: Maximum tokens for the memory block.
+            degradation_level: Current system pressure level (Optimal, Stressed, Critical, Disabled).
+
+        Returns:
+            A formatted string block containing recent conversation history,
+            L3 gnosis principles, and the current world state, or an empty
+            string if no context is available.
+        """
+        # Adjust token limit based on degradation level
+        if degradation_level:
+            if degradation_level == "Stressed":
+                token_limit = int(token_limit * 0.5)
+            elif degradation_level == "Critical":
+                token_limit = int(token_limit * 0.25)
+            elif degradation_level == "Disabled":
+                token_limit = 0
+
+        try:
+            # 1. Fetch recent memory
+            exchanges = await self.memory_store.get_history(
+                entity_name=entity_name,
+                session_id=session_id,
+                limit=MAX_EXCHANGE_DISPLAY_LENGTH,
+            )
+            memory_block = await self._compact_and_format_exchanges(entity_name, exchanges, token_limit) if exchanges else ""
+
+            # 2. Fetch L3 gnosis principles (Selective Hydration)
+            # [id-soft: doom-1993] BSP Culling — top-K principles only
+            gnosis_block = await self._build_gnosis_block(entity_name)
+
+            # 3. Fetch and format world state
+            world_block = self._format_world_state()
+
+            # Combine blocks: world state + gnosis + memory
+            # Gnosis is injected between world state and memory for context grounding
+            parts = [world_block, gnosis_block, memory_block]
+            full_context = "\n".join(p for p in parts if p and p.strip())
+            return full_context.strip() if full_context else ""
+
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.warning(f"Failed to build context for {entity_name}/{session_id}: {e}")
+            return ""
+
+    async def _build_gnosis_block(self, entity_name: str) -&gt; str:
+        """Build the L3 gnosis principles block via Selective Hydration.
+
+        Retrieves relevant L3 principles for the entity and formats them
+        as a context block. Silently returns empty string if Selective
+        Hydration is not configured or any step fails.
+
+        [id-soft: doom-1993] Precomputed Lookup — embeddings are
+        precomputed at store time; retrieval is O(1) cosine similarity.
+        """
+        if self._selective_hydration is None:
+            return ""
+
+        try:
+            # Use the entity's domain/role as the hydration query
+            # to get generally relevant principles.
+            principles = await self._selective_hydration.hydrate(
+                query=entity_name,
+                entity_name=entity_name,
+            )
+            if not principles:
+                return ""
+
+            return self._selective_hydration.format_principles_block(principles)
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.debug(
+                "SelectiveHydration: gnosis block skipped for %s: %s",
+                entity_name, e,
+            )
+            return ""
+
+    async def build_context_for_user(
+        self,
+        user_id: str,
+        session_id: str,
+        token_limit: int = DEFAULT_TOKEN_LIMIT,
+    ) -&gt; str:
+        """Fetch recent traces for a user across all entities and include world state.
+
+        Implements a token-aware sliding window for user-level context.
+        """
+        try:
+            # 1. Fetch user memory
+            exchanges = await self.memory_store.get_history(
+                entity_name="user",
+                session_id=session_id,
+                limit=MAX_EXCHANGE_DISPLAY_LENGTH,
+            )
+            memory_block = await self._compact_and_format_exchanges("user", exchanges, token_limit) if exchanges else ""
+
+            # 2. Fetch and format world state
+            world_block = self._format_world_state()
+
+            # Combine blocks
+            full_context = f"{world_block}\n{memory_block}"
+            return full_context.strip()
+
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.warning(f"Failed to build user context for {user_id}/{session_id}: {e}")
+            return ""
+
+    # ── Formatting ────────────────────────────────────────────────────
+
+    def _format_world_state(self) -&gt; str:
+        """Format the current active world state into a readable context block.
+
+        Queries the WorldState singleton for global parameters and active sectors.
+        """
+        # Get global state
+        globals_data = {}
+        # Use public API if possible, but world_state._global_state is accessible
+        # Let's just iterate over the keys if it were a public method,
+        # but since we are inside the engine, we can access it or use a loop.
+        # Wait, world_state doesn't have a get_all_globals().
+        # I'll just use the internal dict for now as this is internal core logic.
+        globals_dict = world_state._global_state
+        if globals_dict:
+            globals_data = {k: v for k, v in globals_dict.items()}
+
+        # Get active sectors
+        sectors = world_state.get_all_sectors()
+        sector_data = {}
+        for s_id in sectors:
+            data = world_state.lattice_query(sector_id=s_id, lump_id=None)
+            if data:
+                sector_data[s_id] = data
+
+        if not globals_data and not sector_data:
+            return ""
+
+        lines = ["## Active World State Context\n"]
+
+        if globals_data:
+            lines.append("### Global Parameters")
+            for k, v in globals_data.items():
+                lines.append(f"- {k}: {v}")
+            lines.append("")
+
+        if sector_data:
+            lines.append("### Active Sectors")
+            for s_id, lumps in sector_data.items():
+                lines.append(f"- Sector [{s_id}]:")
+                for l_id, l_data in lumps.items():
+                    lines.append(f"  - Lump {l_id}: {l_data}")
+            lines.append("")
+
+        return "".join(lines) + "---\n\n"
+
+    async def _compact_and_format_exchanges(self, entity_name: str, exchanges: List[Dict[str, Any]], token_limit: int, quality_weighted: bool = False) -&gt; str:
+        """Format exchanges into a context block using the ACON compaction pipeline.
+
+        Implements the PipelineCompactionStrategy: ToolResult -&gt; Summarization -&gt; SlidingWindow -&gt; Truncation.
+
+        When quality_weighted=True, exchanges are scored and sorted by quality
+        before the sliding window, ensuring higher-quality exchanges fill the
+        token budget first. Default behavior (quality_weighted=False) preserves
+        the existing newest-first sliding window for backward compatibility.
+        """
+        if not exchanges:
+            return ""
+
+        # Build Message objects from exchanges for compaction pipeline
+        messages: List[Message] = []
+        for ex in exchanges:
+            messages.append(Message(
+                role="user",
+                content=ex.get("user", ""),
+                metadata={"timestamp": ex.get("timestamp")}
+            ))
+            messages.append(Message(
+                role="assistant",
+                content=ex.get("assistant", ""),
+                metadata={"timestamp": ex.get("timestamp")}
+            ))
+
+        # Run the Observation Masking pass — culls repetitive 'logged' lines (zero cost).
+        # Budget enforcement is done in the formatting loop below.
+        obs_masking = ObservationMaskingStrategy()
+        await obs_masking(messages, token_limit)
+
+        # ── Semantic Compression (Headroom) ──────────────────────────────────
+        # Apply semantic/structural compression to the messages.
+        # This reduces token usage by 60-95% while preserving meaning.
+        headroom_mw = get_headroom_middleware()
+        compressed_messages, _ = await headroom_mw.compress_context(entity_name, [
+            {"role": m.role, "content": m.content} for m in messages
+        ])
+
+        # Update messages with compressed content
+        for i, msg in enumerate(messages):
+            if i &lt; len(compressed_messages):
+                msg.content = compressed_messages[i].get("content", msg.content)
+
+        # Format with sliding window — iterate from newest to oldest,
+
+        # collecting exchanges that fit within token budget.
+        header = "## Recent Memory Context\n\n"
+        lines: List[str] = []
+        current_tokens = self._estimate_tokens(header)
+
+        # Reconstruct pairs from surviving messages
+        pairs: List[Dict[str, Any]] = []
+        i = 0
+        while i &lt; len(messages):
+            if i + 1 &lt; len(messages) and messages[i].role == "user" and messages[i+1].role == "assistant":
+                pairs.append({
+                    "timestamp": messages[i].metadata.get("timestamp", ""),
+                    "user": messages[i].content,
+                    "assistant": messages[i+1].content,
+                })
+                i += 2
+            else:
+                i += 1
+
+        # Quality-weighted selection: score and sort by quality before sliding window
+        if quality_weighted and pairs:
+            for pair in pairs:
+                pair["_quality_score"] = self._score_exchange_quality(pair)
+            # Sort by quality descending — highest quality fills budget first
+            pairs.sort(key=lambda p: p["_quality_score"], reverse=True)
+
+        # Sliding window: newest to oldest (or highest quality first if quality_weighted), fill budget
+        # When quality_weighted, iterate in sorted order (highest quality first).
+        # When not quality_weighted, iterate in reverse chronological (newest first).
+        window = pairs if quality_weighted else reversed(pairs)
+        for pair in window:
+            ts = self._format_timestamp(pair["timestamp"])
+            exchange_block = (
+                f"[{ts}] User: {self._truncate(pair['user'])}\n"
+                f"[{ts}] Assistant: {self._truncate(pair['assistant'])}\n\n"
+            )
+            est = self._estimate_tokens(exchange_block)
+            if current_tokens + est &gt; token_limit:
+                break
+            lines.append(exchange_block)
+            current_tokens += est
+
+        # Reverse to chronological order
+        lines.reverse()
+
+        if not lines:
+            return ""
+
+        full_block = header + "".join(lines) + "---\n\n"
+        return full_block
+
+    def _estimate_tokens(self, text: str) -&gt; int:
+        """Estimate token count.
+
+        Uses a rough approximation (4 chars per token) since tiktoken
+        is not available in the current environment.
+        """
+        return len(text) // 4
+
+    def _format_timestamp(self, ts: Optional[str]) -&gt; str:
+        """Format an ISO timestamp to a compact display form."""
+        if not ts:
+            return "unknown"
+        try:
+            dt = datetime.fromisoformat(ts)
+            return dt.strftime("%Y-%m-%d %H:%M:%S")
+        except (ValueError, TypeError):
+            return str(ts)
+
+    def _truncate(self, text: str, max_len: int = MAX_EXCHANGE_DISPLAY_LENGTH) -&gt; str:
+        """Truncate long messages to avoid prompt bloat."""
+        if len(text) &lt;= max_len:
+            return text
+        return text[:max_len] + "..."
+
+    # ── Utility: Prepend context to system prompt ─────────────────────
+
+    @staticmethod
+    def prepend_to_prompt(context_block: str, system_prompt: str) -&gt; str:
+        """Prepend a context block to a system prompt.
+
+        If context_block is empty, returns the original system prompt unchanged.
+        """
+        if not context_block or not context_block.strip():
+            return system_prompt
+        return f"{context_block}\n{system_prompt}"
+</file>
+
+
+<file path="src/omega/oracle/session_lifecycle.py" size="17501" language="Python" sha256="8142915ac07ab6ef730595054d86a14042bc8cae7b65196de8d8008b54bb9648" purpose="Session Lifecycle Manager — Active → Archived → External → Deleted." tokens="4923">
+"""Session Lifecycle Manager — Active → Archived → External → Deleted.
+AP: AP-SESSION-LIFECYCLE-v1.0.0
+
+Orchestrates the full session lifecycle:
+- Active (0-7 days): hot cache + warm providers (entities/{entity}/{session}.json)
+- Archived (7-30 days): cold storage, gzip compressed (archive/{entity}/{session}.json.gz)
+- External (90+ days): moved to external 8TB storage drive
+- Deleted (optional): beyond retention policy
+
+Heritage:
+- [id-soft: quake-1996] 4-Tier Memory — Active/Archived/External/Deleted maps to
+  Hunk/Zone/Cache/Temp from Quake's zone memory allocator.
+- [id-soft: doom-1993] Lazy Deletion — tombstone before delete, grace period
+  before reap. Prevents data loss on in-flight operations.
+"""
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
+
+from __future__ import annotations
+
+import logging
+import time
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from enum import Enum
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+import anyio
+
+from omega.errors import OmegaError
+
+logger = logging.getLogger(__name__)
+
+class SessionState(Enum):
+    """Lifecycle states for a session.
+
+    [id-soft: quake-1996] 4-Tier Memory — state machine mapping:
+    - ACTIVE → Hunk (fast, in-memory)
+    - ARCHIVED → Zone (compressed, on-disk)
+    - EXTERNAL → Cache (cold, external drive)
+    - DELETED → Purged (beyond retention)
+    """
+    ACTIVE = "active"        # 0-7 days: hot cache + warm providers
+    ARCHIVED = "archived"    # 7-30 days: cold storage (gzip compressed)
+    EXTERNAL = "external"    # 90+ days: external 8TB storage
+    DELETED = "deleted"      # Beyond retention policy
+
+@dataclass
+class SessionLifecycleConfig:
+    """Configuration for session lifecycle policies.
+
+    Defaults match the Omega Engine's current [DATE_OF_BIRTH_1]-day policy:
+    - 7 days: archive to cold storage (local disk)
+    - 30 days: compressed in cold storage (gzip)
+    - 90 days: move to external 8TB storage drive
+    """
+    archive_after_days: int = 7
+    compress_after_days: int = 30  # Already compressed by FileStorageProvider on archive
+    external_after_days: int = 90
+    delete_after_days: int = 365  # Optional: full deletion beyond retention
+    external_storage_path: Path = field(
+        default_factory=lambda: Path("/media/arcana-novai/omega_library/archive/sessions")
+    )
+    enable_external_archive: bool = True
+    enable_deletion: bool = False  # Disabled by default — data preservation
+
+@dataclass
+class SessionInfo:
+    """Metadata about a session's lifecycle state."""
+    entity_name: str
+    session_id: str
+    state: SessionState
+    age_days: float
+    path: Optional[str] = None
+    compressed: bool = False
+    last_modified: Optional[float] = None
+
+@dataclass
+class LifecycleStats:
+    """Aggregate statistics from a lifecycle sweep."""
+    archived: int = 0
+    externalized: int = 0
+    deleted: int = 0
+    recalled: int = 0
+    errors: int = 0
+    duration_ms: float = 0.0
+
+    def to_dict(self) -&gt; Dict[str, Any]:
+        return {
+            "archived": self.archived,
+            "externalized": self.externalized,
+            "deleted": self.deleted,
+            "recalled": self.recalled,
+            "errors": self.errors,
+            "duration_ms": round(self.duration_ms, 2),
+        }
+
+class SessionLifecycleManager:
+    """Orchestrates the full session lifecycle.
+
+    Wraps MemoryStore's existing archive/external methods with a unified
+    state machine and adds recall-from-external capability.
+
+    Usage:
+        manager = SessionLifecycleManager(memory_store)
+        stats = await manager.run_lifecycle()
+        state = await manager.get_session_state("kali", "ses_20260701_kali_001")
+        recalled = await manager.recall_from_external("kali", "ses_20260701_kali_001")
+
+    Heritage:
+    - [id-soft: quake-1996] 4-Tier Memory — state machine for session lifecycle
+    - [id-soft: doom-1993] Lazy Deletion — tombstone before delete
+    """
+
+    def __init__(
+        self,
+        memory_store: Any,  # MemoryStore — avoid circular import
+        config: Optional[SessionLifecycleConfig] = None,
+    ):
+        self._store = memory_store
+        self._config = config or SessionLifecycleConfig()
+        self._stats = LifecycleStats()
+
+    @property
+    def config(self) -&gt; SessionLifecycleConfig:
+        return self._config
+
+    @property
+    def stats(self) -&gt; LifecycleStats:
+        return self._stats
+
+    async def run_lifecycle(self) -&gt; LifecycleStats:
+        """Execute full lifecycle sweep.
+
+        Transitions:
+        1. Active → Archived: sessions older than archive_after_days
+        2. Archived → External: sessions older than external_after_days
+        3. External → Deleted: sessions older than delete_after_days (if enabled)
+
+        Returns:
+            LifecycleStats with counts per transition
+        """
+        start = time.monotonic()
+        self._stats = LifecycleStats()
+
+        # Step 1: Archive old sessions (Active → Archived)
+        try:
+            self._stats.archived = await self._store.archive_old_sessions(
+                older_than_days=self._config.archive_after_days
+            )
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error("Lifecycle archive step failed: %s", e, exc_info=True)
+            self._stats.errors += 1
+
+        # Step 2: Move to external storage (Archived → External)
+        if self._config.enable_external_archive:
+            try:
+                self._stats.externalized = await self._move_to_external()
+            except (OmegaError, RuntimeError, OSError) as e:
+                logger.error("Lifecycle external step failed: %s", e, exc_info=True)
+                self._stats.errors += 1
+
+        # Step 3: Delete beyond retention (External → Deleted)
+        if self._config.enable_deletion:
+            try:
+                self._stats.deleted = await self._delete_beyond_retention()
+            except (OmegaError, RuntimeError, OSError) as e:
+                logger.error("Lifecycle delete step failed: %s", e, exc_info=True)
+                self._stats.errors += 1
+
+        self._stats.duration_ms = (time.monotonic() - start) * 1000
+        logger.info(
+            "Lifecycle sweep complete: archived=%d, externalized=%d, deleted=%d, errors=%d, %.1fms",
+            self._stats.archived,
+            self._stats.externalized,
+            self._stats.deleted,
+            self._stats.errors,
+            self._stats.duration_ms,
+        )
+        return self._stats
+
+    async def get_session_state(
+        self,
+        entity_name: str,
+        session_id: str,
+    ) -&gt; SessionState:
+        """Determine current lifecycle state of a session.
+
+        Checks locations in order:
+        1. Hot cache (ACTIVE)
+        2. USM State (ACTIVE)
+        3. Cold storage — archive/{entity}/{session}.json.gz (ARCHIVED)
+        4. External storage (EXTERNAL)
+        5. Not found (DELETED or never existed)
+        """
+        safe_name = entity_name.lower().replace(" ", "_")
+
+        # Check hot cache
+        cache_key = f"{entity_name.lower()}:{session_id}"
+        if cache_key in self._store._hot:
+            return SessionState.ACTIVE
+
+        # Check USM
+        from omega.state import get_usm
+        usm = get_usm()
+        state_key = f"mem:{entity_name}:{session_id}"
+        if await usm.exists(state_key):
+            return SessionState.ACTIVE
+
+        # Check cold storage
+        archive_dir = self._store._get_archive_dir() if hasattr(self._store, '_get_archive_dir') else None
+        if archive_dir is None:
+            from omega.memory_store import _get_archive_dir
+            archive_dir = _get_archive_dir()
+
+        cold_path = archive_dir / safe_name / f"{session_id}.json.gz"
+        if await anyio.Path(cold_path).exists():
+            return SessionState.ARCHIVED
+
+        # Check external storage
+        external_path = self._config.external_storage_path / safe_name / f"{session_id}.json.gz"
+        if await anyio.Path(external_path).exists():
+            return SessionState.EXTERNAL
+
+        return SessionState.DELETED
+
+    async def get_session_info(
+        self,
+        entity_name: str,
+        session_id: str,
+    ) -&gt; Optional[SessionInfo]:
+        """Get detailed info about a session including age and path."""
+        state = await self.get_session_state(entity_name, session_id)
+        safe_name = entity_name.lower().replace(" ", "_")
+
+        path = None
+        compressed = False
+        last_modified = None
+
+        if state == SessionState.ACTIVE:
+            # Check hot cache first
+            cache_key = f"{entity_name.lower()}:{session_id}"
+            if cache_key in self._store._hot:
+                # Hot cache doesn't have a file path, but we can use the USM key as a virtual path
+                path = f"usm://{cache_key}"
+                # Use the timestamp of the last exchange in the hot cache
+                exchanges = self._store._hot[cache_key].values()
+                if exchanges:
+                    last_ex = list(exchanges)[-1]
+                    last_modified = datetime.fromisoformat(last_ex["timestamp"]).timestamp()
+            else:
+                # Check USM
+                from omega.state import get_usm
+                usm = get_usm()
+                state_key = f"mem:{entity_name}:{session_id}"
+                if await usm.exists(state_key):
+                    path = f"usm://{state_key}"
+                    data = await usm.load_state(state_key)
+                    last_modified = datetime.fromisoformat(data.get("last_updated", datetime.now(timezone.utc).isoformat())).timestamp()
+                else:
+                    # Fallback to warm storage (for legacy sessions)
+                    from omega.memory_store import _get_entity_dir
+                    entity_dir = _get_entity_dir()
+                    p = entity_dir / safe_name / f"{session_id}.json"
+                    if await anyio.Path(p).exists():
+                        path = str(p)
+                        stat = await anyio.Path(p).stat()
+                        last_modified = stat.st_mtime
+        elif state == SessionState.ARCHIVED:
+            from omega.memory_store import _get_archive_dir
+            archive_dir = _get_archive_dir()
+            p = archive_dir / safe_name / f"{session_id}.json.gz"
+            if await anyio.Path(p).exists():
+                path = str(p)
+                compressed = True
+                stat = await anyio.Path(p).stat()
+                last_modified = stat.st_mtime
+        elif state == SessionState.EXTERNAL:
+            p = self._config.external_storage_path / safe_name / f"{session_id}.json.gz"
+            if await anyio.Path(p).exists():
+                path = str(p)
+                compressed = True
+                stat = await anyio.Path(p).stat()
+                last_modified = stat.st_mtime
+
+        age_days = 0.0
+        if last_modified:
+            age_days = (time.time() - last_modified) / [ZIP_CODE_1]
+
+        return SessionInfo(
+            entity_name=entity_name,
+            session_id=session_id,
+            state=state,
+            age_days=age_days,
+            path=path,
+            compressed=compressed,
+            last_modified=last_modified,
+        )
+
+    async def recall_from_external(
+        self,
+        entity_name: str,
+        session_id: str,
+    ) -&gt; bool:
+        """Recall a session from external storage back to cold storage.
+
+        [[DRIVERS_LICENSE_1] Gap Resolution] — 90-day archival was write-only with no
+        retrieval path. This method enables recalling externally archived
+        sessions back to local cold storage for access.
+
+        Args:
+            entity_name: Entity name
+            session_id: Session ID to recall
+
+        Returns:
+            True if recalled successfully, False if not found or error
+        """
+        safe_name = entity_name.lower().replace(" ", "_")
+        external_path = self._config.external_storage_path / safe_name / f"{session_id}.json.gz"
+        local_path = self._config.external_storage_path.parent / "archive" / safe_name / f"{session_id}.json.gz"
+
+        if not await anyio.Path(external_path).exists():
+            logger.warning("Session %s/%s not found in external storage", entity_name, session_id)
+            return False
+
+        try:
+            # Ensure local archive directory exists
+            await anyio.Path(local_path.parent).mkdir(parents=True, exist_ok=True)
+
+            # Copy from external to local (preserves original in external)
+            import shutil
+            await anyio.to_thread.run_sync(shutil.copy2, str(external_path), str(local_path))
+            logger.info("Recalled session %s/%s from external to local", entity_name, session_id)
+            return True
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error("Failed to recall session %s/%s: %s", entity_name, session_id, e)
+            return False
+
+    async def list_sessions_by_state(
+        self,
+        entity_name: Optional[str] = None,
+        state: Optional[SessionState] = None,
+        limit: int = 50,
+    ) -&gt; List[SessionInfo]:
+        """List sessions filtered by entity and/or lifecycle state.
+
+        Useful for observability and debugging lifecycle transitions.
+        """
+        results: List[SessionInfo] = []
+
+        # Get all sessions from the memory store
+        sessions = await self._store.list_sessions(entity_name=entity_name, limit=1000)
+
+        for session in sessions:
+            info = await self.get_session_info(session["entity"], session["session_id"])
+            if info and (state is None or info.state == state):
+                results.append(info)
+                if len(results) &gt;= limit:
+                    break
+
+        return results
+
+    async def _move_to_external(self) -&gt; int:
+        """Move sessions older than external_after_days to external storage.
+
+        [id-soft: quake-1996] Cache Tier — cold data moved to external drive.
+        """
+        count = 0
+        now = time.time()
+
+        from omega.memory_store import _get_archive_dir
+        archive_dir = _get_archive_dir()
+
+        if not await anyio.Path(archive_dir).exists():
+            return 0
+
+        # Ensure external storage directory exists
+        await anyio.Path(self._config.external_storage_path).mkdir(parents=True, exist_ok=True)
+
+        async for ent_dir in anyio.Path(archive_dir).iterdir():
+            if not await anyio.Path(ent_dir).is_dir():
+                continue
+            async for path in anyio.Path(ent_dir).glob("*.json.gz"):
+                    try:
+                        stat = await anyio.Path(path).stat()
+                        age_days = (now - stat.st_mtime) / [ZIP_CODE_2]
+                        if age_days &gt; self._config.external_after_days:
+                            entity_name = ent_dir.name
+                            external_entity_dir = self._config.external_storage_path / entity_name
+                            await anyio.Path(external_entity_dir).mkdir(parents=True, exist_ok=True)
+
+                            dest_path = external_entity_dir / path.name
+                            await anyio.Path(path).rename(dest_path)
+                            count += 1
+                            logger.info("Moved session %s to external storage: %s", path.name, dest_path)
+                    except (OmegaError, RuntimeError, OSError) as e:
+                        logger.warning("Failed to move %s to external: %s", path, e)
+
+        return count
+
+    async def _delete_beyond_retention(self) -&gt; int:
+        """Delete sessions beyond retention policy.
+
+        [id-soft: doom-1993] Lazy Deletion — only deletes after full lifecycle.
+        Disabled by default for data preservation.
+        """
+        count = 0
+        now = time.time()
+
+        # Only check external storage for deletion
+        if not await anyio.Path(self._config.external_storage_path).exists():
+            return 0
+
+        async for ent_dir in anyio.Path(self._config.external_storage_path).iterdir():
+            if not await anyio.Path(ent_dir).is_dir():
+                continue
+            async for path in anyio.Path(ent_dir).glob("*.json.gz"):
+                try:
+                    stat = await anyio.Path(path).stat()
+                    age_days = (now - stat.st_mtime) / [ZIP_CODE_3]
+                    if age_days &gt; self._config.delete_after_days:
+                        await anyio.Path(path).unlink()
+                        count += 1
+                        logger.info("Deleted session beyond retention: %s", path)
+                except (OmegaError, RuntimeError, OSError) as e:
+                    logger.warning("Failed to delete %s: %s", path, e)
+        return count
+
+    def get_config_summary(self) -&gt; Dict[str, Any]:
+        """Return a summary of the lifecycle configuration."""
+        return {
+            "archive_after_days": self._config.archive_after_days,
+            "compress_after_days": self._config.compress_after_days,
+            "external_after_days": self._config.external_after_days,
+            "delete_after_days": self._config.delete_after_days,
+            "enable_external_archive": self._config.enable_external_archive,
+            "enable_deletion": self._config.enable_deletion,
+            "external_storage_path": str(self._config.external_storage_path),
+        }
+</file>
+
+
+<file path="src/omega/oracle/resource_guard.py" size="6679" language="Python" sha256="187ca849ace942389925e5d642f8d5b9e3c3bb91de63248806fa22595767f9b8" purpose="Return a unique, hashable identifier for the current async task." tokens="1931">
+# AP: AP-ORACLE-RESTORE-v2.3.0
+# 🔱 Resource Guard — Concurrency Protection
+# AP: AP-RESOURCE-GUARD-v1.1.0
+# [heritage: anyio 2024] M1 AnyIO — Semaphore(1) concurrency guard (zone-purge semantics)
+# ICS: [NODE: MAAT | ARCHETYPE: HERMES | CONTEXT: CONCURRENCY]
+#
+# Updates in v1.1.0 (Sovereign Hardening Sprint — P4):
+#   - Re-entrant lock logic (prevents deadlock on nested agent calls)
+#   - Acquisition timeout via anyio.fail_after
+#   - Track held weights per task via ContextVar
+#   - ZONEID Pattern preserved for critical section integrity
+
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
+import anyio
+import contextvars
+import logging
+import threading
+from contextlib import asynccontextmanager
+from typing import Optional, Dict, Any
+
+from omega.constants import ZONEID_PROBE, ZONEID_TOMBSTONE, ZONEID_ATOMIC, validate_zoneid
+from omega.cvar_table import cvar_get
+
+logger = logging.getLogger(__name__)
+
+# ── Task-Local Storage for Held Weights (Re-entrancy) ─────────────────
+# Maps a task identifier to the weight it currently holds.
+# This allows nested calls within the same task to acquire the lock
+# without deadlocking, up to the total capacity.
+_held_weights: contextvars.ContextVar[Dict[Any, int]] = contextvars.ContextVar(
+    "_held_weights", default={}
+)
+
+def _get_current_task_id() -&gt; Any:
+    """Return a unique, hashable identifier for the current async task.
+
+    anyio.current_task() is guaranteed to be set whenever the lock is
+    used within an anyio task (the only supported usage pattern).
+    """
+    task = anyio.get_current_task()
+    if task is not None:
+        return id(task)
+    # Fallback for unusual contexts: combine thread id with a monotonic
+    # counter so concurrent callers don't collide. Not used in anyio
+    # task groups, but keeps the function safe everywhere.
+    global _fallback_counter
+    _fallback_counter += 1
+    return (id(threading.current_thread()), _fallback_counter)
+
+_fallback_counter = 0
+
+class AtomicLock:
+    """Sovereign Atomic Lock for critical state transitions.
+
+    [id-soft: doom-1993] ZONEID Pattern — ensures lock integrity.
+    """
+    def __init__(self):
+        self._magic = ZONEID_ATOMIC
+        self._lock = anyio.Lock()
+
+    async def __aenter__(self):
+        validate_zoneid(self._magic, ZONEID_ATOMIC, "AtomicLock.__aenter__")
+        await self._lock.acquire()
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        validate_zoneid(self._magic, ZONEID_ATOMIC, "AtomicLock.__aexit__")
+        self._lock.release()
+
+class ResourceGuard:
+    """Ensures model resource usage doesn't exceed system capacity.
+
+    Uses a RAM-based tracking system to allow multiple light models
+    to run concurrently while restricting heavy models.
+
+    v1.2.0 — RAM-Aware: tracks actual memory usage in MB instead of
+    abstract weights.
+
+    [id-soft: doom-1993] ZONEID Pattern — critical sections guarded by
+    ZONEID_PROBE marker. Catches use-after-free and double-release bugs.
+    """
+    def __init__(self, max_ram_mb: Optional[int] = None):
+        # [id-soft: doom-1993] ZONEID Pattern — runtime state marker
+        self._magic = ZONEID_PROBE
+        self._max_ram_mb = max_ram_mb or int(cvar_get("config.resource_guard.max_ram_mb", [ZIP_CODE_1]))
+        self._current_ram_mb = 0
+        self._condition = anyio.Condition()
+
+        # Hardware Lock: Zen 2 Optimizer for resource resonance
+        from omega.oracle.cpu_optimizer import Zen2Optimizer
+        self._optimizer = Zen2Optimizer()
+
+    @asynccontextmanager
+    async def lock(self, weight: int = 1, model_spec: Optional[dict] = None,
+                   timeout: Optional[float] = None):
+        """Hardware Lock: manages capacity and enforces hardware resonance.
+
+        [hardening-p4] Re-entrancy — uses immutable ContextVar updates to
+        prevent race conditions across concurrent tasks.
+        """
+        validate_zoneid(self._magic, ZONEID_PROBE, "ResourceGuard.lock")
+
+        task_id = _get_current_task_id()
+        # Get a local copy of the current held weights
+        held = _held_weights.get().copy()
+        already_held = held.get(task_id, 0)
+
+        # ── 1. Capacity Lock (RAM-based tracking) ──
+        if already_held == 0:
+            try:
+                if timeout is not None:
+                    with anyio.fail_after(timeout):
+                        async with self._condition:
+                            while self._current_ram_mb + weight &gt; self._max_ram_mb:
+                                await self._condition.wait()
+                            self._current_ram_mb += weight
+                else:
+                    async with self._condition:
+                        while self._current_ram_mb + weight &gt; self._max_ram_mb:
+                            await self._condition.wait()
+                        self._current_ram_mb += weight
+            except TimeoutError:
+                logger.warning(
+                    "ResourceGuard acquisition timed out after %.1fs", timeout
+                )
+                raise
+
+            # Update immutable state: mark this task as holding capacity
+            held[task_id] = weight
+            _held_weights.set(held)
+        else:
+            # Re-entrant path: just increment the weight in the local copy
+            held[task_id] = already_held + weight
+            _held_weights.set(held)
+
+        try:
+            if model_spec:
+                self._optimizer.enforce_affinity()
+            yield
+        finally:
+            # ── Release ──
+            # Re-fetch current state to ensure we are releasing the correct amount
+            current_held = _held_weights.get().copy()
+            current_weight = current_held.get(task_id, 0)
+
+            if already_held == 0:
+                # This was the outermost acquisition — release global capacity
+                async with self._condition:
+                    self._current_ram_mb -= weight
+                    self._condition.notify_all()
+
+                # Remove task from held weights entirely
+                if task_id in current_held:
+                    del current_held[task_id]
+                _held_weights.set(current_held)
+            else:
+                # Inner acquisition — decrement held weight
+                new_weight = current_weight - weight
+                if new_weight &lt;= 0:
+                    if task_id in current_held:
+                        del current_held[task_id]
+                else:
+                    current_held[task_id] = new_weight
+                _held_weights.set(current_held)
+</file>
+
+
+</pack>

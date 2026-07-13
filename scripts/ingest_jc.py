@@ -8,8 +8,11 @@ import json
 import re
 import uuid
 import os
+import logging
 from pathlib import Path
 from datetime import datetime, timezone
+
+logging.basicConfig(level=logging.DEBUG)
 
 # Omega Engine imports
 from omega.oracle.model_gateway import ModelGateway

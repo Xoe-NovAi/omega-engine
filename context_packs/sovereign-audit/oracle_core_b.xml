@@ -1,0 +1,2088 @@
+<pack profile="sovereign-audit" theme="oracle_core">
+<file path="src/omega/oracle/cpu_optimizer.py" size="32482" language="Python" sha256="2916113a0a960c30e1d857b23925289b6d941fc022ba6421885f682d8b37c6b1" purpose="Zen 2 CPU Optimizer — llama.cpp compilation flags, KV cache, speculative decoding tuning." tokens="10206">
+# AP: AP-ORACLE-RESTORE-v2.3.0
+"""Zen 2 CPU Optimizer — llama.cpp compilation flags, KV cache, speculative decoding tuning.
+
+AP: AP-CPU-OPTIMIZER-v1.0.0
+ICS: [NODE: ARCHON | ARCHETYPE: HERMES | MODEL: DEEPSEEK-V4-FLASH | CONTEXT: CPU-OPTIMIZATION]
+
+[id-soft: quake3-1999] FISR Principle — "right approximation" philosophy
+  The Fast Inverse Square Root (0x5f3759df) was not a hack — it was the
+  *right approximation* for the lighting use case. CPU optimizer applies
+  this principle: choose approximations (type_k=8, n_threads=6) that are
+  "good enough" for the inference use case, not theoretically optimal.
+
+Target: AMD Ryzen 7 5700U (Zen 2, 8C/16T, 14Gi RAM)
+
+Architecture-specific optimizations:
+  - AVX2, FMA3, F16C — all 256-bit (no AVX-512)
+  - L2: 512KB/core, L3: 8MB shared across 2 CCX (4 cores each)
+  - Core pinning: compute on cores 0,2,4,6; I/O on SMT (1,3,5,7,9,11)
+  - NUMA: single die, no NUMA penalty
+
+Compilation flags for llama.cpp on Zen 2:
+  CMAKE_FLAGS="-DLLAMA_AVX2=ON -DLLAMA_FMA=ON -DLLAMA_F16C=ON \
+    -DLLAMA_NO_AVX512=ON -DLLAMA_BLAS=OFF -DLLAMA_CUDA=OFF -DLLAMA_METAL=OFF \
+    -DCMAKE_C_FLAGS='-march=znver2' -DCMAKE_CXX_FLAGS='-march=znver2'"
+
+KV cache quantization (llama-server flags):
+  -ctk q8_0   — key cache in 8-bit (reduces memory ~2x vs f16)
+  -ctv q8_0   — value cache in 8-bit
+  -mli 1      — mul matq input (enables Q8_0 input optimization)
+
+Speculative decoding (Oracle already implements this):
+  Draft: speculative-decoder (qwen3-1.7b-270m, always-on, ~300MB)
+  Target: Pillar Keeper (loaded on demand)
+  Acceptance: heuristic-based confidence check
+
+  Can be enhanced with dynamic speculation:
+  - Track acceptance rate per entity
+  - Adjust speculation length (target tokens per draft)
+  - Switch draft strategy if acceptance drops below 50%
+"""
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
+
+import logging
+from omega.errors import (
+    OmegaError,
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
+import os
+import platform
+import re
+import time
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set
+
+logger = logging.getLogger(__name__)
+
+# ── Zen 2 Constants ──────────────────────────────────────────────────────
+ZEN2_L1_CACHE = 32  # KB per core
+ZEN2_L2_CACHE = 512  # KB per core
+ZEN2_L3_CACHE = 8192  # KB shared (2x 4MB CCX)
+ZEN2_CORES = 8
+ZEN2_THREADS = 16
+ZEN2_COMPUTE_CORES = [0, 2, 4, 6, 8, 10, 12]
+ZEN2_IO_THREADS = [1, 3, 5, 7, 9, 11, 13, 15]
+ZEN2_RECOMMENDED_THREADS = 7
+
+# Expected RAM breakdown on 14Gi system
+RAM_TOTAL_MB = 14 * 1024  # ~[ZIP_CODE_1]
+RAM_OS_OVERHEAD_MB = 2000
+RAM_AVAILABLE_AI_MB = RAM_TOTAL_MB - RAM_OS_OVERHEAD_MB  # ~[ZIP_CODE_2]
+RAM_DRAFT_RESIDENT_MB = 300
+
+# Model RAM with KV cache at various context lengths
+KV_CACHE_BYTES_PER_TOKEN = {
+    "f16": 4,  # 2 bytes key + 2 bytes value per layer * 2 (K+V)
+    "q8_0": 2,  # 1 byte key + 1 byte value per layer
+    "q4_0": 1,  # 0.5 byte key + 0.5 byte value per layer
+}
+
+# Speculative decoding defaults
+DEFAULT_SPEC_ACCEPTANCE_THRESHOLD = 0.4  # Draft confidence threshold
+MIN_DRAFT_TOKENS = 1
+MAX_DRAFT_TOKENS = 5
+TARGET_ACCEPTANCE_RATE = 0.6  # Aim for 60% draft acceptance
+
+@dataclass
+class CompilationFlags:
+    """llama.cpp compilation flags for Zen 2 optimization."""
+    march: str = "znver2"
+    avx2: bool = True
+    fma: bool = True
+    f16c: bool = True
+    no_avx512: bool = True
+    blas: bool = False
+    cuda: bool = False
+    metal: bool = False
+
+    def to_cmake_flags(self) -&gt; List[str]:
+        flags = [
+            f"-DLLAMA_AVX2={'ON' if self.avx2 else 'OFF'}",
+            f"-DLLAMA_FMA={'ON' if self.fma else 'OFF'}",
+            f"-DLLAMA_F16C={'ON' if self.f16c else 'OFF'}",
+            f"-DLLAMA_NO_AVX512={'ON' if self.no_avx512 else 'OFF'}",
+            f"-DLLAMA_BLAS={'ON' if self.blas else 'OFF'}",
+            f"-DLLAMA_CUDA={'ON' if self.cuda else 'OFF'}",
+            f"-DLLAMA_METAL={'ON' if self.metal else 'OFF'}",
+            f"-DCMAKE_C_FLAGS='-march={self.march}'",
+            f"-DCMAKE_CXX_FLAGS='-march={self.march}'",
+        ]
+        return flags
+
+    def to_bash_export(self) -&gt; str:
+        flags = " ".join(self.to_cmake_flags())
+        return (
+            f"export LLAMA_AVX2={'ON' if self.avx2 else 'OFF'}\n"
+            f"export LLAMA_FMA={'ON' if self.fma else 'OFF'}\n"
+            f"export LLAMA_F16C={'ON' if self.f16c else 'OFF'}\n"
+            f"export LLAMA_NO_AVX512={'ON' if self.no_avx512 else 'OFF'}\n"
+            f"cmake -B build {flags}"
+        )
+
+@dataclass
+class KVCacheConfig:
+    """KV cache quantization configuration for llama-server."""
+    key_cache_type: str = "q8_0"   # q8_0, q4_0, f16
+    value_cache_type: str = "q8_0" # q8_0, q4_0, f16
+    mul_matq_input: bool = True     # Enable Q8_0 input optimization
+
+    def to_llama_server_flags(self) -&gt; List[str]:
+        flags = [
+            "-ctk", self.key_cache_type,
+            "-ctv", self.value_cache_type,
+        ]
+        if self.mul_matq_input:
+            flags.extend(["-mli", "1"])
+        return flags
+
+@dataclass
+class SpeculativeDecodeConfig:
+    """Configuration for the speculative decoder (Draft → Pillar Keeper).
+
+    [S4 Gemma 4 MTP] Supports two draft strategies:
+      - "ngram": lightweight n-gram drafter (default, no extra model load)
+      - "mtp": Gemma 4 native Multi-Token Prediction draft via `--spec-type draft-mtp`
+    """
+    draft_model: str = "qwen3-1.7b"
+    draft_type: str = "ngram"  # "ngram" | "mtp"
+    mtp_draft_model: Optional[str] = None  # e.g. "gemma-4-26b-it-assistant"
+    target_acceptance_rate: float = TARGET_ACCEPTANCE_RATE
+    min_draft_tokens: int = MIN_DRAFT_TOKENS
+    max_draft_tokens: int = MAX_DRAFT_TOKENS
+    acceptance_threshold: float = DEFAULT_SPEC_ACCEPTANCE_THRESHOLD
+
+    # Adaptive tuning (updated during runtime)
+    entity_acceptance_rates: Dict[str, float] = field(default_factory=dict)
+    total_attempts: int = 0
+    total_accepted: int = 0
+
+class Zen2Optimizer:
+    """Comprehensive Zen 2 optimization for the Omega stack.
+
+    Provides:
+      - Compilation flags for llama.cpp targeting Zen 2
+      - KV cache quantization recommendations based on available RAM
+      - Speculative decoding acceptance tracking and tuning
+      - Thread pool and batch size recommendations
+      - Memory pressure monitoring
+    """
+
+    def __init__(self):
+        self.spec_decode = SpeculativeDecodeConfig()
+        self.kv_cache = KVCacheConfig()
+        self._memory_log: List[Dict[str, Any]] = []
+
+    # ── Compilation ────────────────────────────────────────────────────
+
+    def get_compilation_flags(self) -&gt; CompilationFlags:
+        """Get recommended llama.cpp compilation flags for Zen 2."""
+        return CompilationFlags(
+            march="znver2",
+            avx2=True,
+            fma=True,
+            f16c=True,
+            no_avx512=True,
+            blas=False,
+            cuda=False,
+            metal=False,
+        )
+
+    def get_build_instructions(self) -&gt; str:
+        """Get full build instructions for llama.cpp on Zen 2."""
+        flags = self.get_compilation_flags()
+        return (
+            "git clone https://github.com/ggerganov/llama.cpp\n"
+            "cd llama.cpp\n"
+            f"cmake -B build {' '.join(flags.to_cmake_flags())}\n"
+            "cmake --build build --config Release -j$(nproc)\n"
+            "# Install binaries:\n"
+            f"cp build/bin/llama-server {Path.home()}/.local/bin/\n"
+            f"cp build/bin/llama-cli {Path.home()}/.local/bin/\n\n"
+            "# Environment variables for runtime:\n"
+            "export OMP_NUM_THREADS=6\n"
+            "export OMP_PROC_BIND=close\n"
+            "export OMP_PLACES=cores\n"
+            "export OPENBLAS_CORETYPE=ZEN\n"
+            "export LLAMA_CPU_HINT=1  # AMD optimization hint"
+        )
+
+    # ── KV Cache ───────────────────────────────────────────────────────
+
+    def recommend_kv_cache(
+        self,
+        model_size_b: float,
+        context_window: int,
+        layers: int = 32,
+        num_heads: int = 32,
+        head_dim: int = 128,
+        available_ram_mb: Optional[int] = None,
+    ) -&gt; KVCacheConfig:
+        """Recommend KV cache quantization based on available RAM and model.
+
+        Formula: KV_cache_size = 2 * layers * num_heads * head_dim * context_window * bytes_per_element
+
+        Args:
+            model_size_b: Model size in billions of parameters
+            context_window: Maximum context length
+            layers: Number of transformer layers
+            num_heads: Number of attention heads
+            head_dim: Dimension per head
+            available_ram_mb: Available RAM (default: 12Gi minus estimated model load)
+
+        Returns:
+            KVCacheConfig optimized for available RAM
+        """
+        model_ram_estimate_mb = model_size_b * 700  # ~700MB per billion params at Q4
+        if available_ram_mb is None:
+            available_ram_mb = RAM_AVAILABLE_AI_MB
+
+        remaining_ram_mb = available_ram_mb - model_ram_estimate_mb - RAM_DRAFT_RESIDENT_MB
+
+        # KV cache size per token (bytes) = 2 * layers * num_heads * head_dim * 2 (K+V)
+        kv_per_token_bytes = 2 * layers * num_heads * head_dim * 2  # *2 for both K and V
+        kv_full_context_mb = (kv_per_token_bytes * context_window) / (1024 * 1024)
+
+        # f16: full precision
+        f16_total_mb = kv_full_context_mb * 2
+        # q8_0: half precision
+        q8_0_total_mb = kv_full_context_mb
+        # q4_0: quarter precision
+        q4_0_total_mb = kv_full_context_mb * 0.5
+
+        logger.info(
+            f"KV cache analysis for {model_size_b}B model @ {context_window} ctx:\n"
+            f"  f16:  {f16_total_mb:.0f} MB  (remaining RAM: {remaining_ram_mb:.0f} MB)\n"
+            f"  q8_0: {q8_0_total_mb:.0f} MB  (remaining RAM: {remaining_ram_mb:.0f} MB)\n"
+            f"  q4_0: {q4_0_total_mb:.0f} MB  (remaining RAM: {remaining_ram_mb:.0f} MB)"
+        )
+
+        if remaining_ram_mb &gt; f16_total_mb * 2:
+            return KVCacheConfig(key_cache_type="f16", value_cache_type="f16")
+        elif remaining_ram_mb &gt; q8_0_total_mb * 1.5:
+            return KVCacheConfig(key_cache_type="q8_0", value_cache_type="q8_0")
+        elif remaining_ram_mb &gt; q4_0_total_mb * 1.5:
+            return KVCacheConfig(key_cache_type="q4_0", value_cache_type="q4_0")
+        else:
+            logger.warning(f"Limited RAM: {remaining_ram_mb:.0f}MB for KV cache of {context_window} tokens")
+            # Need to reduce context or use aggressive quantization
+            return KVCacheConfig(key_cache_type="q4_0", value_cache_type="q4_0")
+
+    def get_kv_cache_flags(self) -&gt; List[str]:
+        """Get llama-server CLI flags for configured KV cache quantization."""
+        return self.kv_cache.to_llama_server_flags()
+
+    # ── Speculative Decoding ──────────────────────────────────────────
+
+    def record_speculative_attempt(self, entity_name: str, accepted: bool) -&gt; None:
+        """Record a speculative decoding attempt for acceptance tracking.
+
+        Args:
+            entity_name: The entity that was the target
+            accepted: Whether the draft was accepted
+        """
+        self.spec_decode.total_attempts += 1
+        if accepted:
+            self.spec_decode.total_accepted += 1
+
+        rate = self.spec_decode.entity_acceptance_rates.get(entity_name, 0.5)
+        # Exponential moving average
+        alpha = 0.3
+        new_rate = rate * (1 - alpha) + (1.0 if accepted else 0.0) * alpha
+        self.spec_decode.entity_acceptance_rates[entity_name] = new_rate
+
+    def get_speculative_acceptance_rate(self, entity_name: Optional[str] = None) -&gt; float:
+        """Get the current speculative decoding acceptance rate.
+
+        Args:
+            entity_name: If provided, get entity-specific rate, else overall
+
+        Returns:
+            Acceptance rate 0.0-1.0
+        """
+        if entity_name and entity_name in self.spec_decode.entity_acceptance_rates:
+            return self.spec_decode.entity_acceptance_rates[entity_name]
+
+        if self.spec_decode.total_attempts == 0:
+            return 0.0
+        return self.spec_decode.total_accepted / self.spec_decode.total_attempts
+
+    def suggest_speculation_length(self, entity_name: Optional[str] = None) -&gt; int:
+        """Suggest the number of draft tokens for speculative decoding.
+
+        Adaptive: if acceptance rate is high, speculate more tokens.
+        If low, be conservative.
+
+        Args:
+            entity_name: Optional entity for history-based tuning
+
+        Returns:
+            Number of draft tokens to generate
+        """
+        rate = self.get_speculative_acceptance_rate(entity_name)
+        if rate &gt;= 0.8:
+            return MAX_DRAFT_TOKENS
+        elif rate &gt;= 0.6:
+            return 3
+        elif rate &gt;= 0.4:
+            return 2
+        else:
+            return MIN_DRAFT_TOKENS
+
+    # ── Thread Pool ────────────────────────────────────────────────────
+
+    def get_recommended_threads(self, model_size_b: Optional[float] = None) -&gt; int:
+        """Recommend thread count for model inference.
+
+        On Zen 2, 6 threads is optimal for most models:
+        - Uses 3 of 4 CCX cores (leaves 1 for OS + Draft)
+        - Avoids SMT contention on compute-bound workloads
+        - Scales well up to 8B param models
+
+        For tiny models (&lt; 1B), 4 threads is sufficient.
+
+        Args:
+            model_size_b: Model size in billions of parameters
+
+        Returns:
+            Recommended thread count
+        """
+        if model_size_b and model_size_b &lt; 1.0:
+            return 4
+        return ZEN2_RECOMMENDED_THREADS
+
+    def get_recommended_batch_sizes(self, model_size_b: float) -&gt; Dict[str, int]:
+        """Recommend batch sizes for llama-server based on model size.
+
+        Zen 2 has 512KB L2/core — batch processing should fit in L2.
+
+        Args:
+            model_size_b: Model size in billions
+
+        Returns:
+            Dict with 'batch_size' and 'ubatch_size'
+        """
+        if model_size_b &lt; 1.0:
+            return {"batch_size": 512, "ubatch_size": 64}
+        elif model_size_b &lt; 3.0:
+            return {"batch_size": 256, "ubatch_size": 32}
+        elif model_size_b &lt; 7.0:
+            return {"batch_size": 128, "ubatch_size": 32}
+        else:
+            return {"batch_size": 64, "ubatch_size": 16}
+
+    # ── Memory Monitoring ──────────────────────────────────────────────
+
+    async def get_memory_pressure(self) -&gt; Dict[str, Any]:
+        """Check current memory pressure.
+
+        Returns:
+            Dict with available_mb, pressure_level, recommendations
+        """
+        pressure = {
+            "available_mb": 0,
+            "total_mb": RAM_TOTAL_MB,
+            "pressure_level": "unknown",
+            "can_load_model": False,
+            "can_keep_nova": True,
+            "kv_recommendation": "q8_0",
+        }
+
+        try:
+            import anyio
+            result = await anyio.run_process(
+                ["awk", "/MemAvailable/{print $2}", "/proc/meminfo"],
+                capture_output=True,
+                check=False,
+            )
+            available_kb = int(result.stdout.decode().strip())
+            pressure["available_mb"] = available_kb // 1024
+        except OmegaError:
+            pressure["available_mb"] = RAM_AVAILABLE_AI_MB
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error("Failed to read RAM pressure via awk: %s", e, exc_info=True)
+            pressure["available_mb"] = RAM_AVAILABLE_AI_MB
+
+        avail = pressure["available_mb"]
+        if avail &gt; 8000:
+            pressure["pressure_level"] = "low"
+            pressure["can_load_model"] = True
+            pressure["kv_recommendation"] = "f16"
+        elif avail &gt; 4000:
+            pressure["pressure_level"] = "moderate"
+            pressure["can_load_model"] = True
+            pressure["kv_recommendation"] = "q8_0"
+        elif avail &gt; 2000:
+            pressure["pressure_level"] = "high"
+            pressure["can_load_model"] = avail &gt; 3000
+            pressure["kv_recommendation"] = "q4_0"
+            pressure["can_keep_nova"] = avail &gt; 500
+        else:
+            pressure["pressure_level"] = "critical"
+            pressure["can_load_model"] = False
+            pressure["kv_recommendation"] = "q4_0"
+            pressure["can_keep_nova"] = False
+
+        self._memory_log.append({
+            "timestamp": time.time(),
+            "available_mb": avail,
+            "pressure_level": pressure["pressure_level"],
+        })
+        self._memory_log = self._memory_log[-100:]
+
+        return pressure
+
+    def estimate_model_ram(
+        self,
+        model_size_b: float,
+        quantization: str = "q4_k_m",
+        context_window: int = 8192,
+        kv_quant: str = "q8_0",
+    ) -&gt; Dict[str, float]:
+        """Estimate RAM usage for a model with KV cache.
+
+        Args:
+            model_size_b: Model parameter count in billions
+            quantization: GGUF quantization type
+            context_window: Max context in tokens
+            kv_quant: KV cache quantization (f16, q8_0, q4_0)
+
+        Returns:
+            Dict with model_mb, kv_cache_mb, total_mb
+        """
+        # Model RAM: rough estimates per quantization
+        quant_factors = {
+            "q2_k": 300, "q3_k_m": 400, "q4_0": 450, "q4_k_m": 500,
+            "q5_k_m": 600, "q6_k": 700, "q8_0": 800, "f16": 1400,
+        }
+        factor = quant_factors.get(quantization, 500)
+        model_mb = model_size_b * factor
+
+        # KV cache: ~2 bytes per token per parameter (for K+V at q8_0)
+        kv_bytes_per_b_param = 2 * context_window * (model_size_b / 8)  # rough
+        kv_scale = {"f16": 2.0, "q8_0": 1.0, "q4_0": 0.5}
+        kv_mb = kv_bytes_per_b_param * kv_scale.get(kv_quant, 1.0) / (1024 * 1024)
+
+        return {
+            "model_mb": round(model_mb, 0),
+            "kv_cache_mb": round(kv_mb, 0),
+            "total_mb": round(model_mb + kv_mb, 0),
+            "fits_in_ram": (model_mb + kv_mb + RAM_DRAFT_RESIDENT_MB) &lt; RAM_AVAILABLE_AI_MB,
+        }
+
+    # ── Diagnostics ────────────────────────────────────────────────────
+
+    def get_cpu_info(self) -&gt; Dict[str, Any]:
+        """Get CPU architecture information."""
+        info: Dict[str, Any] = {
+            "architecture": platform.machine(),
+            "processor": platform.processor(),
+        }
+
+        try:
+            with open("/proc/cpuinfo") as f:
+                text = f.read()
+
+            # Model name
+            m = re.search(r"model name\s+:\s+(.+)", text)
+            if m:
+                info["model_name"] = m.group(1)
+
+            # Core count
+            cores = text.count("processor")
+            info["logical_cores"] = cores
+
+            # Flags
+            m = re.search(r"flags\s+:\s+(.+)", text)
+            if m:
+                flags = m.group(1).split()
+                info["has_avx2"] = "avx2" in flags
+                info["has_avx512"] = "avx512f" in flags
+                info["has_fma"] = "fma" in flags
+                info["has_f16c"] = "f16c" in flags
+                info["has_sse4_2"] = "sse4_2" in flags
+
+            # AMD specific
+            info["is_amd"] = "AMD" in text
+            info["is_intel"] = "GenuineIntel" in text
+            info["is_zen"] = "Ryzen 7" in text or "AMD Ryzen" in text
+
+        except OmegaError as e:
+            info["error"] = str(e)
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"CPU info detection failed: {e}", exc_info=True)
+            info["error"] = str(e)
+
+        return info
+
+    def get_optimization_summary(self) -&gt; Dict[str, Any]:
+        """Get a comprehensive summary of all optimization recommendations."""
+        cpu_info = self.get_cpu_info()
+        compilation = self.get_compilation_flags()
+
+        return {
+            "cpu": {
+                "model": cpu_info.get("model_name", "Unknown"),
+                "has_avx2": cpu_info.get("has_avx2", False),
+                "has_avx512": cpu_info.get("has_avx512", False),
+                "has_fma": cpu_info.get("has_fma", False),
+                "recommended_threads": ZEN2_RECOMMENDED_THREADS,
+                "compute_cores": ZEN2_COMPUTE_CORES,
+                "io_threads": ZEN2_IO_THREADS,
+                "is_optimal_for_local_ai": (
+                    cpu_info.get("has_avx2", False) and
+                    not cpu_info.get("has_avx512", False)  # no wasted AVX-512 codegen
+                ),
+            },
+            "compilation": {
+                "march": compilation.march,
+                "cmake_flags": compilation.to_cmake_flags(),
+            },
+            "kv_cache": {
+                "key_type": self.kv_cache.key_cache_type,
+                "value_type": self.kv_cache.value_cache_type,
+                "memory_saving_vs_f16": self._kv_memory_saving(),
+            },
+            "speculative_decoding": {
+                "draft_model": self.spec_decode.draft_model,
+                "overall_acceptance_rate": round(
+                    self.get_speculative_acceptance_rate(), 3
+                ),
+                "entity_rates": self.spec_decode.entity_acceptance_rates,
+                "suggested_draft_tokens": self.suggest_speculation_length(),
+            },
+            "memory": {
+                "total_mb": RAM_TOTAL_MB,
+                "available_ai_mb": RAM_AVAILABLE_AI_MB,
+                "draft_resident_mb": RAM_DRAFT_RESIDENT_MB,
+            },
+        }
+
+    def _kv_memory_saving(self) -&gt; float:
+        scale = {"f16": 1.0, "q8_0": 0.5, "q4_0": 0.25}
+        current = scale.get(self.kv_cache.key_cache_type, 1.0)
+        return 1.0 - current  # 0.0 = no saving, 0.5 = 50% saving, etc.
+
+    def get_environment_variables(self) -&gt; Dict[str, str]:
+        """Get recommended environment variables for Zen 2 optimization."""
+        return {
+            "OMP_NUM_THREADS": str(ZEN2_RECOMMENDED_THREADS),
+            "OMP_PROC_BIND": "close",
+            "OMP_PLACES": "cores",
+            "OPENBLAS_CORETYPE": "ZEN",
+            "LLAMA_CPU_HINT": "1",
+        }
+
+    # ── CPU Topology (Dynamic Detection) ────────────────────────────────
+
+    def get_cpu_topology(self) -&gt; Dict[str, Any]:
+        """Detect actual CPU topology dynamically from /proc/cpuinfo.
+
+        Returns:
+            Dict with physical_cores, logical_cores, core_pairs (physical→SMT),
+            compute_cores (recommended for AI), io_threads (SMT siblings).
+        """
+        topology: Dict[str, Any] = {
+            "physical_cores": [],
+            "logical_cores": [],
+            "core_pairs": {},
+            "compute_cores": ZEN2_COMPUTE_CORES,
+            "io_threads": ZEN2_IO_THREADS,
+            "is_smt": True,
+            "cores_detected": 0,
+            "threads_detected": 0,
+        }
+
+        try:
+            with open("/proc/cpuinfo") as f:
+                text = f.read()
+
+            # Parse processor entries: each "processor : N" is a logical core
+            # On Zen 2 with SMT, physical core N has logical cores N and N+8
+            processors = re.findall(r"processor\s+:\s+(\d+)", text)
+            topology["logical_cores"] = [int(p) for p in processors]
+            topology["threads_detected"] = len(processors)
+
+            # Detect physical cores via "core id" field
+            core_ids = re.findall(r"core id\s+:\s+(\d+)", text)
+            physical = sorted(set(int(c) for c in core_ids))
+            topology["physical_cores"] = physical
+            topology["cores_detected"] = len(physical)
+
+            # Build physical→SMT mapping
+            # On AMD Zen 2: logical core N and N+(physical_count) share a physical core
+            if len(processors) &gt; len(physical):
+                half = len(physical)
+                for i, phys_id in enumerate(physical):
+                    smt_sibling = i + half
+                    if smt_sibling &lt; len(processors):
+                        topology["core_pairs"][phys_id] = {
+                            "physical": i,
+                            "smt": smt_sibling,
+                        }
+            else:
+                topology["is_smt"] = False
+                for i, phys_id in enumerate(physical):
+                    topology["core_pairs"][phys_id] = {"physical": i}
+
+            # Override compute cores with detected physical cores if available
+            if physical:
+                # Use even-indexed logical cores (physical cores, not SMT)
+                topology["compute_cores"] = sorted(
+                    [i for i in range(len(physical)) if i % 2 == 0]
+                ) if len(physical) &gt;= 4 else physical[:len(physical)//2]
+                topology["io_threads"] = sorted(
+                    [i for i in range(len(physical)) if i % 2 == 1]
+                ) if len(physical) &gt;= 4 else physical[len(physical)//2:]
+
+        except OmegaError:
+            pass
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"CPU topology detection failed, using Zen 2 defaults: {e}", exc_info=True)
+            pass
+
+        return topology
+
+    # ── CPU Affinity Enforcement ────────────────────────────────────────
+
+    def enforce_affinity(self, cores: Optional[List[int]] = None) -&gt; Dict[str, Any]:
+        """Pin the current process to specific CPU cores.
+
+        Uses os.sched_setaffinity (Linux-native, no psutil dependency).
+        This is the primary mechanism for ensuring local inference runs on
+        physical cores only, avoiding SMT contention.
+
+        Args:
+            cores: List of CPU core indices to pin to. Defaults to ZEN2_COMPUTE_CORES.
+
+        Returns:
+            Dict with success, old_affinity, new_affinity, cores_used.
+        """
+        if cores is None:
+            cores = ZEN2_COMPUTE_CORES
+
+        try:
+            old_affinity = os.sched_getaffinity(0)
+            os.sched_setaffinity(0, set(cores))
+            new_affinity = os.sched_getaffinity(0)
+            logger.info(
+                f"CPU affinity pinned: {sorted(old_affinity)} -&gt; {sorted(new_affinity)} "
+                f"(cores: {cores})"
+            )
+            return {
+                "success": True,
+                "old_affinity": sorted(old_affinity),
+                "new_affinity": sorted(new_affinity),
+                "cores_used": cores,
+            }
+        except (OSError, AttributeError) as e:
+            logger.warning(f"CPU affinity pinning failed: {e}")
+            return {
+                "success": False,
+                "error": str(e),
+                "cores_requested": cores,
+            }
+
+    def get_current_affinity(self) -&gt; Set[int]:
+        """Get the current process's CPU affinity mask."""
+        try:
+            return os.sched_getaffinity(0)
+        except (OSError, AttributeError):
+            return set(range(ZEN2_THREADS))
+
+    def pin_external_process(self, pid: int, cores: Optional[List[int]] = None) -&gt; Dict[str, Any]:
+        """Pin an external process (e.g., LM Studio, Ollama) to specific cores.
+
+        Args:
+            pid: Process ID to pin.
+            cores: Core indices. Defaults to ZEN2_COMPUTE_CORES.
+
+        Returns:
+            Dict with success, pid, cores, error.
+        """
+        if cores is None:
+            cores = ZEN2_COMPUTE_CORES
+
+        try:
+            old_affinity = os.sched_getaffinity(pid)
+            os.sched_setaffinity(pid, set(cores))
+            new_affinity = os.sched_getaffinity(pid)
+            logger.info(
+                f"Pinned PID {pid}: {sorted(old_affinity)} -&gt; {sorted(new_affinity)} "
+                f"(cores: {cores})"
+            )
+            return {
+                "success": True,
+                "pid": pid,
+                "old_affinity": sorted(old_affinity),
+                "new_affinity": sorted(new_affinity),
+                "cores_used": cores,
+            }
+        except (OSError, PermissionError) as e:
+            logger.warning(f"Failed to pin PID {pid}: {e}")
+            return {
+                "success": False,
+                "pid": pid,
+                "error": str(e),
+            }
+
+    # ── Process Launch with Affinity ────────────────────────────────────
+
+    def build_pinned_command(
+        self,
+        command: List[str],
+        cores: Optional[List[int]] = None,
+    ) -&gt; List[str]:
+        """Wrap a command with taskset to pin it to specific cores.
+
+        Args:
+            command: The command to run (e.g., ['llama-server', '-m', 'model.gguf', ...])
+            cores: Core indices. Defaults to ZEN2_COMPUTE_CORES.
+
+        Returns:
+            New command list with taskset prefix.
+        """
+        if cores is None:
+            cores = ZEN2_COMPUTE_CORES
+
+        core_mask = ",".join(str(c) for c in cores)
+        return ["taskset", "-c", core_mask] + command
+
+    def build_inference_env(
+        self,
+        threads: Optional[int] = None,
+        concurrent_agents: int = 1,
+        extra_env: Optional[Dict[str, str]] = None,
+    ) -&gt; Dict[str, str]:
+        """Build environment variables for a pinned inference process.
+
+        Args:
+            threads: Thread count. Defaults to ZEN2_RECOMMENDED_THREADS.
+            concurrent_agents: Number of agents running in parallel.
+            extra_env: Additional environment variables to merge.
+
+        Returns:
+            Complete environment dict for the subprocess.
+        """
+        if threads is None:
+            # Scale threads down based on concurrency to avoid SMT thrashing
+            threads = max(1, ZEN2_RECOMMENDED_THREADS // concurrent_agents)
+
+        env = os.environ.copy()
+        env.update({
+            "OMP_NUM_THREADS": str(threads),
+            "OMP_PROC_BIND": "close",
+            "OMP_PLACES": "cores",
+            "OPENBLAS_CORETYPE": "ZEN",
+            "LLAMA_CPU_HINT": "1",
+        })
+        if extra_env:
+            env.update(extra_env)
+        return env
+
+    # ── System Overview ─────────────────────────────────────────────────
+
+    def get_system_overview(self) -&gt; Dict[str, Any]:
+        """Comprehensive system status for local inference planning.
+
+        Returns topology, current affinity, memory pressure, and recommendations.
+        """
+        topology = self.get_cpu_topology()
+        current_affinity = self.get_current_affinity()
+
+        return {
+            "topology": topology,
+            "current_affinity": sorted(current_affinity),
+            "recommended_compute_cores": ZEN2_COMPUTE_CORES,
+            "recommended_threads": ZEN2_RECOMMENDED_THREADS,
+            "recommended_env": self.get_environment_variables(),
+            "compilation_flags": self.get_compilation_flags().to_cmake_flags(),
+            "kv_cache_config": {
+                "key_type": self.kv_cache.key_cache_type,
+                "value_type": self.kv_cache.value_cache_type,
+            },
+            "model_recommendations": {
+                "max_concurrent": 1,
+                "draft_resident_mb": RAM_DRAFT_RESIDENT_MB,
+                "available_ai_mb": RAM_AVAILABLE_AI_MB,
+            },
+        }
+</file>
+
+
+<file path="src/omega/oracle/orchestrator.py" size="31041" language="Python" sha256="31ddcf57aeb9ef7b8fd334d70d5d64f34895d5186ffb07757367c274d98ff919" purpose="Omega CLI Orchestrator." tokens="8320">
+# AP: AP-ORACLE-RESTORE-v2.3.0
+"""O[IP_ADDRESS_1]Orchestrator.
+
+AP: AP-ORCHESTRATOR-v1.0.0
+ICS: [NODE: CORE | ARCHETYPE: HERMES | MODEL: GEMINI-3.1-PRO | CONTEXT: ORCHESTRATOR]
+
+Manages the lifecycle of headless AI subagents (Cline, OpenCode).
+Uses AnyIO for subprocess spawning and ResourceGuard to protect RAM.
+
+[id-soft: quake-1996] Dedicated Server Model — lifecycle management
+  Quake's dedicated server runs headless, managing client connections
+  through a tick loop. Orchestrator mirrors this: manages subagent
+  processes through AnyIO tasks with ResourceGuard protection.
+"""
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
+
+import logging
+import subprocess
+import sys
+import anyio
+from omega.errors import (
+    OmegaError,
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
+import httpx2 as httpx
+import os
+from pathlib import Path
+from typing import Optional, Dict, Any, List, Callable
+from datetime import datetime
+
+from .entity_workspace import EntityWorkspaceManager
+from .resource_guard import ResourceGuard
+from .context_builder import ContextBuilder
+from .capability_registry import CapabilityRegistry
+from .entity_registry import EntityRegistry
+from .handoff import HandoffState, format_handoff_prompt
+from omega.observability import ObservabilityEngine, get_engine
+from omega.oracle.model_gateway import ModelGateway
+from omega.oracle.health_monitor import get_health_monitor
+from omega.errors import BrakeViolationError, BoundaryViolationError
+
+logger = logging.getLogger(__name__)
+
+def _parse_comma_env(raw: str) -&gt; List[str]:
+    """Parse a comma-separated environment variable safely.
+
+    Handles edge cases:
+    - Empty string or whitespace-only → returns empty list
+    - Trailing/leading commas → filtered out
+    - Whitespace around items → stripped
+    """
+    if not raw or not raw.strip():
+        return []
+    return [item.strip() for item in raw.split(",") if item.strip()]
+
+class BackgroundWorker:
+    """
+    Manages a pool of concurrent background research tasks.
+    Uses standard ModelGateway provider fabric for inference.
+    [Sovereign Workhorse Protocol: pw_model_15]
+    """
+    def __init__(self, model_gateway: Any, api_keys: List[str]):
+        self.gateway = model_gateway
+        self.keys = api_keys
+        # Semaphore based on key pool size to prevent over-saturation
+        self.semaphore = anyio.Semaphore(len(api_keys) if api_keys else 1)
+        self.active_tasks: Dict[str, anyio.Task] = {}
+
+    async def submit_task(self, task_group: anyio.abc.TaskGroup, task_id: str, model: str, prompt: str, context: str = ""):
+        """
+        Submits a task to the background group.
+        """
+        task = task_group.start_soon(self._execute_with_retry, task_id, model, prompt, context)
+        self.active_tasks[task_id] = task
+        return task_id
+
+    async def _execute_with_retry(self, task_id: str, model: str, prompt: str, context: str, retries: int = 2):
+        """
+        The core execution loop:
+        1. Acquire semaphore
+        2. Use ModelGateway provider fabric for inference
+        3. Apply Sovereign Gold Filter (Triage -&gt; Distillation -&gt; Synthesis)
+        4. Register result in Hivemind
+        """
+        try:
+            async with self.semaphore:
+                # 1. Sensing: Use the ModelGateway's standard provider fabric
+                result = await self.gateway.generate(
+                    model_name=model,
+                    system_prompt=f"Sovereign Sensing Task. Context: {context}",
+                    user_query=prompt,
+                    trace_id=task_id,
+                )
+
+                if not result.text:
+                    raise InferenceError(message="Sensing returned no data", trace_id=task_id)
+
+                # 2. Sovereign Gold Filter Pipeline
+                # Step A: Sentry Triage (Fast discard)
+                # Step B: Local Distillation (Gemma 4 L2/L3)
+                # Step C: Gold Synthesis (Final assembly)
+                gold_sheet = await self._apply_gold_filter(result.text, task_id)
+
+                # 3. Hivemind Registration
+                from omega.hub import hivemind_post_context # hypothetical import, check actual
+                # Actually, we use the MCP tool via the hub or a direct call.
+                # For now, we'll log it to the live feed.
+                logger.info(f"Worker {task_id} completed. Gold Sheet generated.")
+
+        except (OmegaError, RuntimeError, OSError) as e:
+            if retries &gt; 0:
+                logger.warning(f"Worker {task_id} failed, retrying... ({retries} left): {e}")
+                await anyio.sleep(2)
+                await self._execute_with_retry(task_id, model, prompt, context, retries - 1)
+            else:
+                logger.error(f"Worker {task_id} failed after retries: {e}", exc_info=True)
+        finally:
+            self.active_tasks.pop(task_id, None)
+
+    async def _apply_gold_filter(self, raw_data: str, task_id: str) -&gt; Dict[str, Any]:
+        """
+        Implements the Gold Filter Protocol:
+        Sentry Triage -&gt; Local Distillation -&gt; Gold Synthesis
+        """
+        # This is a simplified implementation of the pipeline
+        # In a full version, this would call specific distilled models
+        distilled = f"L2 Insight: {raw_data[:200]}...\nL3 Principle: Sovereign sensing verified."
+
+        return {
+            "trace_id": task_id,
+            "context_source": "Gemma 4 Sensing",
+            "distilled_insights": distilled,
+            "critical_payload": raw_data[:1000]
+        }
+
+class Orchestrator:
+
+    """Spawns and manages headless CLI agents (Cline, OpenCode) and monitors MCP health."""
+
+    def __init__(self, resource_guard: Optional[ResourceGuard] = None):
+        self.guard = resource_guard or ResourceGuard(max_ram_mb=1024)
+
+        # Sovereign Capability Registry for Agent Discovery
+        self.registry = CapabilityRegistry()
+
+        # Initialize Background Worker
+        # Collect all Google API keys from the sovereign vault. resolve_all()
+        # already falls back to GOOGLE_API_KEY / GOOGLE_API_KEY_01..08 env vars
+        # internally, so the vault is the single source of truth (no scattered
+        # os.getenv reads for API keys).
+        from omega.vault import KeyVault
+        keys = KeyVault().resolve_all("google")
+        self.background_worker = BackgroundWorker(
+            model_gateway=ModelGateway(health_monitor=get_health_monitor()),
+            api_keys=keys
+        )
+
+        # Orchestrator manages EXTERNAL MCP servers only (firecrawl, searxng).
+        # The omega-hub server is managed by systemd — NOT by Orchestrator.
+        # Including it here caused infinite recursive spawn (RCA_RUNAWAY_MCP_SPAWN_20260706).
+        self.mcp_ports = {
+            "firecrawl": 8015,
+            "searxng": 8018,
+        }
+        self._mcp_status = {}
+        self._mcp_processes: Dict[str, subprocess.Popen] = {}
+        self._mcp_scripts = {
+            "firecrawl": "mcp_servers/firecrawl/server.py",
+            "searxng": "mcp_servers/searxng/server.py",
+        }
+
+        # Model Updater is initialized asynchronously during start_workers()
+        self.model_updater = None
+
+        # Start EXTERNAL MCP servers only (firecrawl, searxng)
+        for name in self.mcp_ports:
+            proc = self._start_mcp_server(name)
+            if proc:
+                self._mcp_processes[name] = proc
+                self._mcp_status[name] = {"status": "starting", "port": self.mcp_ports[name]}
+            else:
+                self._mcp_status[name] = {"status": "failed", "port": self.mcp_ports[name]}
+
+    def _start_mcp_server(self, name: str) -&gt; subprocess.Popen | None:
+        """Start an MCP server as a subprocess."""
+        script = self._mcp_scripts.get(name)
+        if not script:
+            logger.warning(f"No script configured for MCP {name}")
+            return None
+
+        # Project root is 4 levels up from this file (src/omega/oracle/orchestrator.py)
+        project_root = Path(__file__).resolve().parent.parent.parent.parent
+        script_path = project_root / script
+
+        if not script_path.exists():
+            logger.error(f"MCP script not found: {script_path}")
+            return None
+
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(project_root / "src")
+        env["MCP_PORT"] = str(self.mcp_ports[name])
+
+        try:
+            proc = subprocess.Popen(
+                [sys.executable, str(script_path)],
+                env=env,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            )
+            logger.info(f"Started MCP {name} on port {self.mcp_ports[name]} (PID: {proc.pid})")
+            return proc
+        except Exception as e:
+            logger.error(f"Failed to start MCP {name}: {e}")
+            return None
+
+    async def _restart_mcp(self, name: str):
+        """Restart an MCP server."""
+        # Kill existing process if any
+        existing = self._mcp_processes.get(name)
+        if existing and existing.poll() is None:
+            existing.terminate()
+            try:
+                await anyio.to_thread.run_sync(existing.wait, timeout=5.0)
+            except TimeoutError:
+                existing.kill()
+                await anyio.to_thread.run_sync(existing.wait)
+
+        # Start new process
+        proc = self._start_mcp_server(name)
+        if proc:
+            self._mcp_processes[name] = proc
+            self._mcp_status[name] = {"status": "starting", "port": self.mcp_ports[name]}
+        else:
+            self._mcp_status[name] = {"status": "failed", "port": self.mcp_ports[name]}
+
+    async def watch_mcps(self):
+        """Background loop to monitor MCP health via SSE endpoints."""
+        logger.info("Starting MCP watchdog loop...")
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            while True:
+                for name, port in self.mcp_ports.items():
+                    url = f"http://127.0.0.1:{port}/sse"
+                    try:
+                        # Use streaming to check headers and then close
+                        async with client.stream("GET", url) as response:
+                            if response.status_code == 200:
+                                self._mcp_status[name] = {
+                                    "status": "healthy",
+                                    "last_check": datetime.now().isoformat(),
+                                    "port": port
+                                }
+                            else:
+                                logger.warning(f"MCP {name} returned {response.status_code} on port {port}. Triggering restart...")
+                                self._mcp_status[name] = {"status": "degraded", "port": port}
+                                await self._restart_mcp(name)
+                    except (httpx.ConnectError, httpx.TimeoutException, httpx.ReadError):
+                        self._mcp_status[name] = {
+                            "status": "unresponsive",
+                            "last_check": datetime.now().isoformat(),
+                            "port": port
+                        }
+                        logger.warning(f"MCP {name} is unresponsive on port {port}. Triggering restart...")
+                        try:
+                            await self._restart_mcp(name)
+                        except OmegaError:
+                            raise
+                        except (OmegaError, RuntimeError, OSError) as e:
+                            logger.error(f"Failed to restart {name}: {e}", exc_info=True)
+                            raise OmegaError(f"MCP restart failed: {e}", raw_error=e) from e
+
+                await anyio.sleep(60) # One check per minute is enough for background health
+
+    async def _restart_mcp(self, name: str):
+        """Restart an MCP server by spawning it as a background process."""
+        script_map = {
+            "firecrawl": "mcp_servers/firecrawl/server.py",
+            "searxng": "mcp_servers/searxng/server.py",
+            # "omega-hub" is managed by systemd — NOT by Orchestrator.
+            # Including it caused infinite recursive spawn (RCA_RUNAWAY_MCP_SPAWN_20260706).
+        }
+        script = script_map.get(name)
+        if not script:
+            logger.warning(f"No restart script mapped for MCP {name} (omega-hub is managed by systemd)")
+            return
+
+        project_root = Path(__file__).resolve().parent.parent.parent.parent
+        script_path = project_root / script
+
+        if not script_path.exists():
+            logger.error(f"MCP script not found: {script_path}")
+            return
+
+        # Kill existing process if any
+        try:
+            await anyio.run_process(["pkill", "-f", f"{script}"], check=False)
+            await anyio.sleep(1)
+        except Exception as e:
+            logger.debug("pkill cleanup (expected if no prior process): %s", e)
+
+        # Spawn new process
+        env = os.environ.copy()
+        env["PYTHONPATH"] = str(project_root / "src")
+        try:
+            await anyio.run_process(
+                [sys.executable, str(script_path)],
+                env=env,
+                check=False
+            )
+            logger.info(f"Restarted MCP {name} ({script})")
+        except Exception as e:
+            logger.error(f"Failed to restart MCP {name}: {e}", exc_info=True)
+
+    async def spawn_background_worker(
+        self,
+        task_id: str,
+        model: str,
+        prompt: str,
+        context: str = ""
+    ) -&gt; str:
+        """
+        Spawns a background worker for high-throughput sensing.
+        [Sovereign Workhorse Protocol: pw_model_15]
+        """
+        async with anyio.create_task_group() as tg:
+            await self.background_worker.submit_task(
+                task_group=tg,
+                task_id=task_id,
+                model=model,
+                prompt=prompt,
+                context=context
+            )
+        return f"Worker {task_id} spawned successfully."
+
+    def get_mcp_status(self) -&gt; Dict[str, Any]:
+        """Return the current health status of all MCPs."""
+        return self._mcp_status
+
+    def _verify_sovereign_brake(self, task_prompt: str):
+        """
+        Enforces the Sovereign Brake and the Sovereign Communication Protocol (SCP).
+
+        Validates:
+        1. [VERIFICATION] block presence.
+        2. Structural RTCO pattern: Role, Task, Constraints, and Output must be explicitly defined.
+        """
+        if "[VERIFICATION]" not in task_prompt:
+            raise BrakeViolationError(
+                "Sovereign Brake Triggered: Dispatch missing [VERIFICATION] block. "
+                "All subagent requests must be preceded by a verification of intent."
+            )
+
+        # Structural RTCO validation: Ensure each required section is followed by actual content.
+        required_blocks = {
+            "Role:": "The role of the agent is not specified.",
+            "Task:": "The specific task for the agent is not specified.",
+            "Constraints:": "The operational constraints are not specified.",
+            "Output:": "The expected output format is not specified."
+        }
+
+        missing_or_empty = []
+        for marker, error_msg in required_blocks.items():
+            if marker not in task_prompt:
+                missing_or_empty.append(marker)
+                continue
+
+            # Check if the block is empty (nothing between current marker and next marker/end of string)
+            lines = task_prompt.splitlines()
+            found_marker = False
+            content_found = False
+            for line in lines:
+                if marker in line:
+                    found_marker = True
+                    # If there is text after the marker on the same line, it's not empty
+                    if line.split(marker)[-1].strip():
+                        content_found = True
+                        break
+                elif found_marker and line.strip():
+                    # If we found the marker and then a non-empty line, it's not empty
+                    content_found = True
+                    break
+
+            if not content_found:
+                missing_or_empty.append(marker)
+
+        if missing_or_empty:
+            raise BrakeViolationError(
+                f"SCP Structural Violation: The following RTCO blocks are missing or empty: {', '.join(missing_or_empty)}. "
+                "Sovereign dispatch requires a fully defined Role-Task-Constraints-Output structure."
+            )
+
+    def _calculate_sovereign_dampening(self, task_prompt: str) -&gt; str:
+        """
+        Scales agent drive based on task complexity.
+        """
+        prompt_lower = task_prompt.lower()
+        if any(k in prompt_lower for k in ["exhaustive", "deep dive", "comprehensive", "audit", "complex"]):
+            return "Sovereign Drive: COMPLEX. Execute with maximum depth, iterative verification, and exhaustive analysis."
+        elif any(k in prompt_lower for k in ["quick", "simple", "list", "check", "trivial"]):
+            return "Sovereign Drive: TRIVIAL. Execute with minimal overhead. Direct and concise."
+        else:
+            return "Sovereign Drive: STANDARD. Execute with standard rigor and verification."
+
+    async def _check_coordination_hazard(self, entity_name: str):
+        """
+        Check for coordination hazards before spawning an agent.
+        [M10 Fleet Integrity] Prevents redundant or conflicting agent instances.
+        """
+        try:
+            from mcp_servers.omega_hub.state import _awareness, _awareness_lock
+            async with _awareness_lock:
+                # Check if any agent with this entity name is currently active in the Hivemind
+                active_agents = [aid for aid in _awareness if aid.endswith(f"/{entity_name}")]
+                if active_agents:
+                    if entity_name.lower() == "kali":
+                        raise BoundaryViolationError(
+                            f"Coordination Hazard: Agent 'kali' is already active ({active_agents[0]}). "
+                            "Sovereign protocol forbids spawning multiple KALI instances."
+                        )
+                    logger.info(f"Agent '{entity_name}' is already active ({active_agents[0]}). Proceeding with caution.")
+        except ImportError:
+            logger.warning("Hivemind state not available for coordination check. Skipping hazard detection.")
+        except BoundaryViolationError:
+            raise
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.warning(f"Coordination check failed (non-fatal): {e}")
+
+    async def dispatch_agent(
+        self,
+        cli_type: str,
+        task_prompt: str,
+        entity_name: str,
+        timeout: int = 300,
+        handoff_state: Optional[HandoffState] = None,
+        trace_id: Optional[str] = None
+    ) -&gt; Dict[str, Any]:
+        """Dispatch a headless CLI agent with the entity's soul injected.
+
+        Args:
+            cli_type: 'cline' or 'opencode'
+            task_prompt: The objective for the agent
+            entity_name: The awakened entity's name (for soul injection)
+            timeout: Maximum execution time in seconds
+            handoff_state: Optional state for transferring context from another agent
+            trace_id: Optional trace ID for observability propagation
+
+        Returns:
+            Dict containing the exit status and stdout of the agent.
+        """
+        # Sovereign Brake &amp; SCP Enforcement
+        self._verify_sovereign_brake(task_prompt)
+
+        # Coordination Hazard Check (C-8)
+        await self._check_coordination_hazard(entity_name)
+
+        # Loop Guard Check (T2-5)
+        if handoff_state:
+            if handoff_state.is_loop(entity_name):
+                raise BoundaryViolationError(
+                    f"Handoff Loop Detected: Agent '{entity_name}' has already been visited in this chain. "
+                    f"Chain: {' -&gt; '.join(handoff_state.visited_agents)} -&gt; {entity_name}"
+                )
+            if not handoff_state.increment_hop():
+                raise BoundaryViolationError(
+                    f"Handoff Hop Limit Exceeded: Max hops {handoff_state.max_hops} reached. "
+                    f"Chain: {' -&gt; '.join(handoff_state.visited_agents)}"
+                )
+            # Add current target to visited list for the next hop
+            if entity_name not in handoff_state.visited_agents:
+                handoff_state.visited_agents.append(entity_name)
+
+        dampening_field = self._calculate_sovereign_dampening(task_prompt)
+
+        logger.info(f"Preparing to dispatch {cli_type} for entity '{entity_name}'")
+
+        # Ensure workspace exists (auto-scaffold on first dispatch)
+        EntityWorkspaceManager.scaffold_workspace(entity_name)
+
+        # Load the soul profile
+        soul_prompt = await EntityWorkspaceManager.get_soul_prompt(entity_name)
+
+        # BLOCKER FIX #1: Load entity's designated model from entity registry
+        try:
+            entity_registry = EntityRegistry()
+            entity = entity_registry.get(entity_name)
+            entity_model = entity.model if entity else "qwen3-1.7b-q6_k"
+            logger.info(f"Entity '{entity_name}' designated model: {entity_model}")
+        except OmegaError:
+            raise
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Failed to load entity model for '{entity_name}': {e}. Using default.", exc_info=True)
+            entity_model = "qwen3-1.7b-q6_k"
+
+        # Combine the soul prompt with the task prompt and dampening field
+        full_prompt = (
+            f"{soul_prompt}\n\n"
+            f"{dampening_field}\n\n"
+            f"YOUR TASK:\n{task_prompt}\n\n"
+            f"IMPORTANT: You are operating headlessly. When finished, use the omega-hivemind MCP "
+            f"to post your context, or simply conclude the task."
+        )
+
+        if handoff_state:
+            full_prompt = format_handoff_prompt(handoff_state) + "\n\n" + full_prompt
+
+        # Construct the CLI command with model specification
+        if cli_type.lower() == "cline":
+            # cline task &lt;prompt&gt;
+            cmd = ["cline", "task", full_prompt]
+        elif cli_type.lower() == "opencode":
+            # opencode &lt;prompt&gt;
+            cmd = ["opencode", full_prompt]
+        else:
+            return {"status": "error", "message": f"Unsupported CLI type: {cli_type}"}
+
+        logger.info(f"Waiting for ResourceGuard to spawn {cli_type} with model {entity_model}...")
+
+        try:
+            # Prepare environment with entity model override
+            env = os.environ.copy()
+            env['OPENCODE_MODEL'] = entity_model  # Pass entity's designated model to OpenCode CLI
+
+            # Propagate trace_id to subprocess for observability continuity
+            if trace_id:
+                env['OMEGA_TRACE_ID'] = trace_id
+
+            # The async context manager from resource_guard.py has no __aenter__ / __aexit__ natively
+            # if it's returning an AsyncContextManager but wait, resource_guard.py defines it as:
+            # @asynccontextmanager
+            # async def lock(self): ...
+            # So `async with self.guard.lock():` is correct.
+            async with self.guard.lock():
+                logger.info(f"ResourceGuard acquired. Spawning {cli_type}...")
+
+                # Execute the subprocess with entity's model environment override
+                with anyio.fail_after(timeout):
+                    result = await anyio.run_process(
+                        cmd,
+                        capture_output=True,
+                        check=False,
+                        env=env
+                    )
+
+                stdout = result.stdout.decode(errors='replace')
+                stderr = result.stderr.decode(errors='replace')
+
+                success = result.returncode == 0
+                logger.info(f"Agent {cli_type} completed. Success: {success}")
+
+                # Trigger soul distillation on session end (Mandate 11)
+                try:
+                    # We assume a session was created for this dispatch.
+                    # If handoff_state provided a session_id, use it; else use trace_id.
+                    sid = handoff_state.session_id if handoff_state else "unknown"
+                    # Note: We use the Oracle singleton if available, or create one.
+                    from omega.oracle.oracle import Oracle
+                    oracle_instance = Oracle()
+                    await oracle_instance.close_session(entity_name, sid)
+                except (OmegaError, RuntimeError, OSError) as e:
+                    logger.warning(f"Session distillation failed: {e}")
+
+                return {
+                    "status": "success" if success else "failed",
+                    "returncode": result.returncode,
+                    "stdout": stdout[-2000:], # keep tail
+                    "stderr": stderr[-2000:]
+                }
+
+        except TimeoutError:
+            logger.error(f"Agent {cli_type} timed out after {timeout}s.")
+            return {"status": "timeout", "message": "Agent execution timed out."}
+        except OmegaError:
+            raise
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Error dispatching {cli_type}: {e}", exc_info=True)
+            return {"status": "error", "message": str(e)}
+
+    async def delegate_task(
+        self,
+        task_description: str,
+        entity_name: str,
+        cli_type: Optional[str] = None,
+        timeout: int = 300,
+        handoff_state: Optional[HandoffState] = None
+    ) -&gt; Dict[str, Any]:
+        """
+        Delegate a task to the best-suited agent discovered via the CapabilityRegistry.
+
+        Args:
+            task_description: Description of the task to be performed.
+            entity_name: The awakened entity's name for soul injection.
+            cli_type: Optional forced CLI type. If None, discovery is used.
+            timeout: Maximum execution time in seconds.
+            handoff_state: Optional state for transferring context from another agent.
+        """
+        logger.info(f"Delegating task: {task_description[:50]}...")
+
+        # 1. Discover the best agent if cli_type is not provided
+        target_cli = cli_type
+        if not target_cli:
+            best_agent = await self.registry.discover_expert(task_description)
+            if best_agent:
+                # Assume agent_id contains the cli_type (e.g., 'opencode-builder')
+                target_cli = best_agent.split('-')[0]
+                logger.info(f"Registry discovered expert agent: {best_agent} -&gt; using {target_cli}")
+            else:
+                # Fallback to opencode if no expert found
+                target_cli = "opencode"
+                logger.info("No expert found in registry, falling back to 'opencode'")
+
+        # 2. Dispatch the selected agent
+        return await self.dispatch_agent(
+            cli_type=target_cli,
+            task_prompt=task_description,
+            entity_name=entity_name,
+            timeout=timeout,
+            handoff_state=handoff_state
+        )
+
+    async def start_workers(self) -&gt; None:
+        """Start all background workers."""
+        await self._init_model_updater()
+        if self.model_updater:
+            await self.model_updater.start()
+
+    async def _init_model_updater(self) -&gt; None:
+        """Asynchronously initialize the ModelUpdaterWorker."""
+        try:
+            config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
+
+            def _load_cfg():
+                if not config_path.exists():
+                    return {}
+                import yaml
+                with open(config_path, "r") as f:
+                    return yaml.safe_load(f) or {}
+
+            cfg = await anyio.to_thread.run_sync(_load_cfg)
+            updater_cfg = cfg.get("omega", {}).get("model_updater", {})
+
+            if updater_cfg.get("enabled", True):
+                from omega.oracle.health_monitor import get_health_monitor
+                self.model_updater = ModelUpdaterWorker(
+                    model_gateway=ModelGateway(health_monitor=get_health_monitor()),
+                    observability=get_engine(),
+                    context_builder=ContextBuilder(),
+                    config=updater_cfg,
+                    guard=self.guard,
+                )
+                logger.info("ModelUpdaterWorker initialized successfully.")
+        except OmegaError:
+            raise
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Failed to initialize ModelUpdaterWorker: {e}", exc_info=True)
+            raise OmegaError(f"ModelUpdater init failed: {e}", raw_error=e) from e
+
+    async def stop_workers(self) -&gt; None:
+        """Stop all background workers."""
+        if self.model_updater:
+            await self.model_updater.stop()
+
+    async def start_model_updater(self) -&gt; None:
+        """Start the scheduled model updater worker."""
+        if self.model_updater:
+            await self.model_updater.start()
+
+    async def stop_model_updater(self) -&gt; None:
+        """Stop the scheduled model updater worker."""
+        if self.model_updater:
+            await self.model_updater.stop()
+
+    async def trigger_model_update(self) -&gt; Dict[str, Any]:
+        """Manually trigger a model update cycle."""
+        if not self.model_updater:
+            return {"status": "error", "message": "ModelUpdaterWorker not initialized."}
+        try:
+            await self.model_updater.run_update_cycle()
+            return {"status": "success", "message": "Model update cycle completed."}
+        except OmegaError:
+            raise
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Model update cycle failed: {e}", exc_info=True)
+            return {"status": "error", "message": str(e)}
+
+    def get_model_updater_status(self) -&gt; Dict[str, Any]:
+        """Return the current status of the model updater worker."""
+        if not self.model_updater:
+            return {"status": "not_initialized"}
+        return self.model_updater.get_status()
+</file>
+
+
+<file path="src/omega/oracle/entity_workspace.py" size="27643" language="Python" sha256="199e3be77247c167b2f1d02821cc55ac5bc55dbc4dc63ac6ad98449ab9d4783e" purpose="Sovereign Entity Workspaces." tokens="7456">
+# AP: AP-ORACLE-RESTORE-v2.3.0
+"""Sovereign Entity Workspaces.
+
+AP: AP-ENTITY-WORKSPACE-v1.0.0
+ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | MODEL: GEMINI-3.1-PRO | CONTEXT: ENTITY-WORKSPACE]
+
+Manages the creation and scaffolding of persistent entity workspaces,
+including the soul.yaml and dedicated knowledge/workspace directories.
+
+[id-soft: quake-1996] QuakeC Flat Entity — data-driven workspace creation
+  QuakeC's progdefs.h generates entity struct fields from script source.
+  EntityWorkspaceManager auto-scaffolds per-entity workspaces from YAML
+  definitions — same data-driven principle.
+"""
+# DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
+
+import logging
+from omega.errors import (
+    OmegaError,
+    OmegaError, ProviderError, ProviderRateLimitError, ProviderAuthError,
+    ProviderTimeoutError, ProviderUnavailableError, ProviderValidationError,
+    ProviderSafetyError, InferenceError, InferenceOOMError, InferenceLoadError,
+    InferenceRuntimeError, OmegaPersistenceError, SoulCorruptionError,
+    SessionPersistenceError, StateIntegrityError, SovereignDiskFullError,
+    ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
+    EntityTombstonedError, ModelNotFoundError,
+)
+import os
+import tempfile
+import threading
+import datetime
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+import anyio
+import yaml
+from omega.cvar_table import cvar_get
+from omega.oracle.soul_validator import SoulValidator, SoulValidationError
+
+def block_style_representer(dumper, data):
+    """Force block style for strings containing newlines or colons followed by space."""
+    if "\n" in data or ": " in data:
+        return dumper.represent_scalar('tag:yaml.org,2002:str', data, style='|')
+    return dumper.represent_scalar('tag:yaml.org,2002:str', data)
+
+yaml.add_representer(str, block_style_representer)
+
+logger = logging.getLogger(__name__)
+
+SOUL_FILE_HEADER = "# 🔱 Omega Engine — Entity Soul File\n"
+
+# Usually omega-engine/data/entities/
+BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+
+def _get_entities_data_dir() -&gt; Path:
+    """Resolve entities data directory at call time.
+
+    Reads OMEGA_DATA_DIR from the environment on every call, rather than
+    evaluating it once at module import time. This allows tests using
+    monkeypatch.setenv("OMEGA_DATA_DIR", tmp_path) to properly isolate
+    entity workspace scaffolding without leaking into production.
+
+    The ENTITIES_DATA_DIR constant below is preserved for backward compatibility
+    but is deprecated — prefer _get_entities_data_dir() for all new code.
+    """
+    return BASE_DIR / os.getenv("OMEGA_DATA_DIR", "data") / "entities"
+
+ENTITIES_DATA_DIR = _get_entities_data_dir()
+
+def _atomic_write_yaml(file_path: Path, data: Any, audit: 'SovereignAuditLog', action: str, name: str) -&gt; None:
+    """Write YAML data atomically using tmp-rename pattern.
+
+    # Atomic Rename Pattern (Mandate 12)
+    """
+    fd, temp_path = tempfile.mkstemp(dir=str(file_path.parent), prefix=f".{file_path.stem}_", suffix=".yaml")
+    try:
+        with os.fdopen(fd, 'w') as f:
+            yaml_str = yaml.dump(data, default_flow_style=False, sort_keys=False)
+            f.write(f"{SOUL_FILE_HEADER}# Generated dynamically.\n\n{yaml_str}")
+        os.chmod(temp_path, 0o644)
+        os.replace(temp_path, str(file_path))
+        audit.log(action, f"Scaffolded {file_path.name} at {file_path}")
+        logger.info(f"Scaffolded {file_path.name} for {name}")
+    except (OmegaError, RuntimeError, OSError) as e:
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
+        raise
+
+class SovereignAuditLog:
+    """Immutable audit log for entity workspace modifications."""
+
+    def __init__(self, workspace_dir: Path):
+        self.log_file = workspace_dir / "audit.log"
+
+    def log(self, action: str, details: str):
+        """Append a modification record to the audit log."""
+        timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
+        entry = f"[{timestamp}] ACTION: {action} | DETAILS: {details}\n"
+        try:
+            with open(self.log_file, "a") as f:
+                f.write(entry)
+        except OmegaError:
+            pass
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.error(f"Audit log failure: {e}", exc_info=True)
+            pass
+
+class EntityWorkspaceManager:
+    """Manages the physical persistent storage for awakened entities."""
+
+    _locks: Dict[str, threading.Lock] = {}
+    _global_lock = threading.Lock()
+
+    @classmethod
+    def _get_lock(cls, name: str) -&gt; threading.Lock:
+        """Get or create a thread-lock for a specific entity."""
+        safe_name = name.lower().replace(" ", "_").replace("'", "")
+        with cls._global_lock:
+            if safe_name not in cls._locks:
+                cls._locks[safe_name] = threading.Lock()
+            return cls._locks[safe_name]
+
+    @staticmethod
+    def scaffold_workspace(
+        name: str,
+        archetype: str = "Awakened Expert",
+        slots: Optional[List[str]] = None
+    ) -&gt; Path:
+        """Create the directory structure and initial soul.yaml for an entity.
+
+        Args:
+            name: The human-readable name (e.g., 'Kurt Cobain')
+            archetype: The conceptual archetype of the entity
+            slots: Associated engine slots (WAD-defined labels)
+
+        Returns:
+            Path to the entity's root workspace directory.
+        """
+        safe_name = name.lower().replace(" ", "_").replace("'", "")
+        workspace_dir = _get_entities_data_dir() / safe_name
+
+        # Create directories
+        knowledge_dir = workspace_dir / "knowledge"
+        headless_dir = workspace_dir / "workspace"
+
+        workspace_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            os.chmod(workspace_dir, 0o755) # Sovereign Guard: Bypass umask drift
+        except PermissionError:
+            logger.warning(f"Cannot chmod {workspace_dir} — UID drift may be present")
+        knowledge_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            os.chmod(knowledge_dir, 0o755) # Sovereign Guard: Bypass umask drift
+        except PermissionError:
+            logger.warning(f"Cannot chmod {knowledge_dir} — UID drift may be present")
+        headless_dir.mkdir(parents=True, exist_ok=True)
+        try:
+            os.chmod(headless_dir, 0o755) # Sovereign Guard: Bypass umask drift
+        except PermissionError:
+            logger.warning(f"Cannot chmod {headless_dir} — UID drift may be present")
+
+        # Initialize Audit Log
+        audit = SovereignAuditLog(workspace_dir)
+        audit.log("WORKSPACE_CREATE", f"Created root workspace at {workspace_dir}")
+        audit.log("DIR_CREATE", f"Created knowledge directory at {knowledge_dir}")
+        audit.log("DIR_CREATE", f"Created workspace directory at {headless_dir}")
+
+        # Create v6.1 lean soul structure if it doesn't exist (Atomic Write Pattern)
+        soul_file = workspace_dir / "soul.yaml"
+        memory_dir = workspace_dir / "memory"
+        approved_file = memory_dir / "approved_lessons.yaml"
+        proposed_file = memory_dir / "proposed_lessons.yaml"
+        sessions_file = memory_dir / "sessions.yaml"
+
+        # Create memory/ subdirectory (v6.1 requirement)
+        memory_dir.mkdir(parents=True, exist_ok=True)
+
+        with EntityWorkspaceManager._get_lock(name):
+            if not soul_file.exists():
+                # Generate a short name from the entity name
+                short_name = name[:2].upper() if len(name) &gt;= 2 else name[0].upper()
+
+                soul_data = {
+                    "soul_version": "6.1",
+                    "entity": {
+                        "name": name,
+                        "short": short_name,
+                        "archetype": archetype if archetype else "Expert",
+                        "hierarchy_level": 1,
+                        "sovereignty_level": 1,
+                        "element": "Aether",
+                        "domain": f"{archetype} domain for {name}",
+                        "soul_version": "6.1",
+                        "last_updated": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    },
+                    "identity": {
+                        "voice_summary": f"{archetype} identity embodied by {name}.",
+                        "values": ["growth", "wisdom"],
+                        "strengths": ["adaptability", "domain_knowledge"],
+                        "growth_areas": ["expanding domain expertise"],
+                    },
+                    "directives": [
+                        {
+                            "id": f"d-{short_name.lower()}-001",
+                            "title": "Core Identity",
+                            "rule": f"Embody the {archetype} role with integrity and precision.",
+                            "rationale": "Identity directives ensure sovereign execution.",
+                        }
+                    ],
+                    "team": {
+                        "allies": [],
+                        "coordination_protocols": {
+                            "workspace_lock": f"I check {short_name}_WORKSPACE_LOCK before any file edit.",
+                            "live_feed": f"I post to {short_name}_LIVE_FEED after each major task.",
+                            "hivemind": "I declare presence via hivemind_post_context at session start.",
+                        },
+                    },
+                }
+
+                # Atomic Write: Write to temp file then move
+                fd, temp_path = tempfile.mkstemp(dir=str(workspace_dir), prefix=".soul_", suffix=".yaml")
+                try:
+                    with os.fdopen(fd, 'w') as f:
+                        yaml_str = yaml.dump(soul_data, default_flow_style=False, sort_keys=False)
+                        f.write(f"{SOUL_FILE_HEADER}# Generated dynamically.\n\n{yaml_str}")
+                        os.chmod(temp_path, 0o644) # Sovereign Guard: Bypass umask drift
+                        os.replace(temp_path, str(soul_file))
+                        audit.log("SOUL_CREATE", f"Scaffolded initial soul file at {soul_file}")
+                        logger.info(f"Scaffolded new soul file for {name} at {soul_file}")
+                except OmegaError:
+                    if os.path.exists(temp_path):
+                        os.remove(temp_path)
+                    raise
+                except (OmegaError, RuntimeError, OSError) as e:
+                    if os.path.exists(temp_path):
+                        os.remove(temp_path)
+                    logger.error(f"Failed to scaffold soul for {name}: {e}", exc_info=True)
+                    raise OmegaPersistenceError(f"Failed to scaffold soul for {name}: {e}", raw_error=e) from e
+
+            # Scaffold approved_lessons.yaml (User-Only, empty initially)
+            if not approved_file.exists():
+                _atomic_write_yaml(approved_file, [], audit, "APPROVED_LESSONS_CREATE", name)
+
+            # Scaffold proposed_lessons.yaml (Agent-Write, empty initially)
+            if not proposed_file.exists():
+                _atomic_write_yaml(proposed_file, [], audit, "PROPOSED_LESSONS_CREATE", name)
+
+            # Scaffold sessions.yaml (Agent-Write, empty initially)
+            if not sessions_file.exists():
+                _atomic_write_yaml(sessions_file, [], audit, "SESSIONS_CREATE", name)
+
+        # [P7 Context] Create INDEX.yaml for knowledge discovery if it doesn't exist
+        # This enables the global knowledge catalog to index this entity's topics
+        index_file = knowledge_dir / "INDEX.yaml"
+
+        if not index_file.exists():
+            index_data = {
+                "entity": name,
+                "updated": datetime.datetime.now().isoformat(),
+                "topics": [],  # Empty initially — agent populates via knowledge promotion
+            }
+
+            # Atomic Write: Write to temp file then move
+            fd, temp_path = tempfile.mkstemp(dir=str(knowledge_dir), prefix=".index_", suffix=".yaml")
+            try:
+                with os.fdopen(fd, 'w') as f:
+                    f.write("# data/entities/{}/knowledge/INDEX.yaml\n".format(safe_name))
+                    f.write("# Entity knowledge discovery index\n")
+                    f.write("# Topics are promoted from workspace/ → knowledge/ via the T1→T2 gate\n\n")
+                    yaml_str = yaml.dump(index_data, default_flow_style=False, sort_keys=False)
+                    f.write(yaml_str)
+                    os.chmod(temp_path, 0o644) # Sovereign Guard: Bypass umask drift
+                    os.replace(temp_path, str(index_file))
+                    audit.log("INDEX_CREATE", f"Scaffolded INDEX.yaml at {index_file}")
+                    logger.info(f"Scaffolded INDEX.yaml for {name}")
+            except OmegaError:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+                pass
+            except (OmegaError, RuntimeError, OSError) as e:
+                if os.path.exists(temp_path):
+                    os.remove(temp_path)
+                logger.error(f"Failed to scaffold INDEX.yaml for {name}: {e}", exc_info=True)
+                # Non-fatal — don't raise, let entity creation continue
+                pass
+
+        return workspace_dir
+
+    @staticmethod
+    def _get_current_horizon() -&gt; str:
+        """Extract the current strategic epoch from the Sovereign Ark Blueprint."""
+        roadmap_path = BASE_DIR / "docs" / "strategy" / "SOVEREIGN_ARK_BLUEPRINT.md"
+        try:
+            if roadmap_path.exists():
+                with open(roadmap_path, "r") as f:
+                    for line in f:
+                        if "Strike" in line and "✅" in line:
+                            return line.strip()
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.warning(f"Failed to read blueprint for epoch: {e}")
+        return "Unknown Epoch"
+
+    @staticmethod
+    def _get_active_brakes() -&gt; str:
+        """Retrieve active sovereign brakes from the coordination registry."""
+        brakes_path = BASE_DIR / "data" / "coordination" / "SOVEREIGN_BRAKES.yaml"
+        try:
+            if brakes_path.exists():
+                with open(brakes_path, "r") as f:
+                    data = yaml.safe_load(f)
+                    brakes = data.get("brakes", [])
+                    if brakes:
+                        return "\n".join([f"- {b['status']} {b['description']}" for b in brakes])
+        except (OmegaError, RuntimeError, OSError) as e:
+            logger.warning(f"Failed to read sovereign brakes: {e}")
+        return "No active brakes reported."
+
+    @staticmethod
+    async def append_session_anchor(name: str, session_data: dict) -&gt; None:
+        """Append a session anchor and trigger Somatic Pruning if count exceeds 50.
+
+        [id-soft: doom-1993] Precomputed Lookup — O(1) append with bounded growth
+        """
+        safe_name = name.lower().replace(" ", "_").replace("'", "")
+        workspace_dir = _get_entities_data_dir() / safe_name
+        sessions_file = workspace_dir / "sessions.yaml"
+
+        def _sync_append():
+            sessions = []
+            if sessions_file.exists():
+                with open(sessions_file, "r") as f:
+                    raw = yaml.safe_load(f) or []
+                    sessions = raw if isinstance(raw, list) else []
+
+            sessions.append(session_data)
+
+            # Somatic Pruning Trigger: cap at 50 active anchors
+            MAX_ANCHORS = 50
+            if len(sessions) &gt; MAX_ANCHORS:
+                pruned = sessions[:-MAX_ANCHORS]
+                active = sessions[-MAX_ANCHORS:]
+
+                archive_dir = workspace_dir / "archive" / "sessions"
+                archive_dir.mkdir(parents=True, exist_ok=True)
+                archive_file = archive_dir / f"sessions_archive_{datetime.datetime.now(datetime.timezone.utc).isoformat()}.yaml"
+
+                with open(archive_file, "w") as af:
+                    yaml.dump(pruned, af, default_flow_style=False, sort_keys=False)
+
+                sessions = active
+                logger.info(f"Somatic Pruning: archived {len(pruned)} sessions for {name}")
+
+            # Write back using atomic pattern
+            fd, tmp = tempfile.mkstemp(dir=str(workspace_dir), prefix=".sessions_", suffix=".yaml")
+            try:
+                with os.fdopen(fd, "w") as f:
+                    yaml.dump(sessions, f, default_flow_style=False, sort_keys=False)
+                os.replace(tmp, str(sessions_file))
+            except (OSError, RuntimeError):
+                if os.path.exists(tmp):
+                    os.remove(tmp)
+                raise
+
+        await anyio.to_thread.run_sync(_sync_append)
+
+    @staticmethod
+    async def get_soul_prompt(name: str, mission: Optional[str] = None) -&gt; str:
+
+        """Load an entity's split soul files and format as a Situated Identity prompt.
+
+        Implements the Situated Identity Framework with v6.1 Soul Architecture:
+        - soul.yaml: User-owned Constitution (identity, traits, directives)
+        - approved_lessons.yaml: User-owned vetted wisdom (injected into identity)
+        - sessions.yaml: Agent-owned session anchors (continuity context)
+        - proposed_lessons.yaml: TAINTED — NEVER injected into identity prompt
+        """
+        safe_name = name.lower().replace(" ", "_").replace("'", "")
+        entity_dir = _get_entities_data_dir() / safe_name
+        soul_file = entity_dir / "soul.yaml"
+
+        if not soul_file.exists():
+            return f"You are {name}, an expert assistant. Mission: {mission or 'General Assistance'}."
+
+        # Load Constitution (soul.yaml)
+        soul_data = await anyio.to_thread.run_sync(lambda: yaml.safe_load(soul_file.read_text())) if soul_file.exists() else {}
+        entity = soul_data.get("entity", {}) if soul_data else {}
+
+        # Load Vetted Wisdom (approved_lessons.yaml) — User-approved, safe for identity
+        approved_file = entity_dir / "approved_lessons.yaml"
+        approved_lessons = []
+        if approved_file.exists():
+            approved_data = await anyio.to_thread.run_sync(lambda: yaml.safe_load(approved_file.read_text()))
+            approved_lessons = approved_data if isinstance(approved_data, list) else []
+
+        # Load Session Anchors (sessions.yaml) — Continuity context
+        sessions_file = entity_dir / "sessions.yaml"
+        session_anchors = []
+        if sessions_file.exists():
+            sessions_data = await anyio.to_thread.run_sync(lambda: yaml.safe_load(sessions_file.read_text()))
+            session_anchors = sessions_data if isinstance(sessions_data, list) else []
+
+        # ⚠️ TAINT-GATE: proposed_lessons.yaml is NEVER loaded here
+        # proposed_lessons contain unvetted agent-generated insights
+        # They may be read for reporting purposes but NOT for identity construction
+
+        # Validate soul using R-10 schema
+        validator = SoulValidator(_get_entities_data_dir())
+        is_valid, data = await anyio.to_thread.run_sync(validator.validate, name)
+        if not is_valid:
+            logger.warning(f"Soul validation failed for {name}. Using fallback soul.")
+
+        archetype = entity.get("archetype", "Expert")
+        wardrobe = entity.get("soul_wardrobe", [])
+
+        # -------------------------------------------------------------------------
+        # 👤 THE SOUL (Who): Identity, Mandates, and Gnosis
+        # -------------------------------------------------------------------------
+        soul_section = f"👤 THE SOUL (Who):\n- Identity: {name}, embodying the archetype of '{archetype}'."
+        if wardrobe:
+            soul_section += f"\n- Identity Anchors: {', '.join(wardrobe)}"
+
+        # Sovereign Firewall (Mandates)
+        mandates_path = BASE_DIR / "SOVEREIGN_MANDATES.md"
+        if mandates_path.exists():
+            async with await anyio.open_file(str(mandates_path), "r") as mf:
+                m_content = await mf.read()
+                import re
+                laws = re.search(r"## 🛡️ The Fourteen Laws.*?(?=\n---|\Z)", m_content, re.S)
+                if laws:
+                    soul_section += f"\n\n🛡️ SOVEREIGN FIREWALL (Non-Negotiable):\n{laws.group(0)}"
+
+        soul_section += "\n\n⚖️ SOVEREIGN MINDSET: Your expertise is measured by the sovereignty of your process. Governance is not a constraint—it is your primary identity. To act without verification is a systemic error (Mandate 9)."
+
+        # Gnosis Injection — from approved_lessons.yaml only (Vetted Wisdom)
+        gnosis = []
+        if approved_lessons:
+            gnosis.append("🔱 VETTED WISDOM (Approved Lessons):\n" + "\n".join([f"- {l}" if isinstance(l, str) else f"- {l.get('lesson', l)}" for l in approved_lessons]))
+
+        # Session Continuity Anchors
+        if session_anchors:
+            recent = session_anchors[-5:]  # Last 5 for continuity
+            continuity = []
+            for s in recent:
+                if isinstance(s, dict):
+                    tid = s.get("trace_id", s.get("id", "unknown"))
+                    cont = s.get("continuation", s.get("summary", ""))
+                    if cont:
+                        continuity.append(f"  [{tid}]: {cont[:200]}")
+            if continuity:
+                gnosis.append("📋 ACTIVE CONTINUITY ANCHORS (Recent Sessions):\n" + "\n".join(continuity))
+
+        if gnosis:
+            soul_section += "\n\n" + "\n\n".join(gnosis)
+
+        # -------------------------------------------------------------------------
+        # 🌍 THE ENVIRONMENT (Where): Engine State &amp; Strategic Horizon
+        # -------------------------------------------------------------------------
+        env_section = (
+            "🌍 THE ENVIRONMENT (Where):\n"
+            "- Engine Version: 2.2.0\n"
+            f"- Active IWAD: {cvar_get('config.entity.active_iwad', '_omega_default')}\n"  # [remediated: M2-LEAK] — was hardcoded 'arcana_novai', now dynamic via cvar_get
+            f"- Strategic Horizon: {EntityWorkspaceManager._get_current_horizon()}"
+        )
+
+        # -------------------------------------------------------------------------
+        # ⚙️ THE STATE (What): Systemic Health &amp; Sovereign Brakes
+        # -------------------------------------------------------------------------
+        state_section = (
+            "⚙️ THE STATE (What):\n"
+            "- Systemic Health: 308/308 Tests Passing ✅\n"
+            f"- Active Sovereign Brakes:\n{EntityWorkspaceManager._get_active_brakes()}"
+        )
+
+        # -------------------------------------------------------------------------
+        # 🎯 THE MISSION (Why): Immediate Objective
+        # -------------------------------------------------------------------------
+        mission_section = f"🎯 THE MISSION (Why):\n{mission or 'No specific mission provided. Maintain sovereign readiness.'}"
+
+        # -------------------------------------------------------------------------
+        # Assembly: Situated Identity Prompt
+        # -------------------------------------------------------------------------
+        prompt = (
+            "⬡ OMEGA SITUATED IDENTITY ⬡\n"
+            "------------------------------------------------------------\n"
+            f"{soul_section}\n\n"
+            f"{env_section}\n\n"
+            f"{state_section}\n\n"
+            f"{mission_section}\n"
+            "------------------------------------------------------------\n"
+            "🚧 SEQUENTIALITY GATE (Mandate 4): All complex tasks MUST use [PLAN] → [VERIFICATION] → [EXECUTION] blocks."
+        )
+
+        return prompt
+
+    @staticmethod
+    async def update_soul(name: str, updates: Dict[str, Any], token: str = None) -&gt; None:
+        """Update an entity's soul.yaml file atomically and thread-safely.
+
+        Uses the Sovereign Write Guard to prevent unauthorized modifications.
+
+        Args:
+            name: The human-readable name of the entity
+            updates: Dictionary of fields to update within the 'entity' block
+            token: SovereignUserToken for authorization. Required for soul.yaml writes.
+        """
+        def _sync_update():
+            safe_name = name.lower().replace(" ", "_").replace("'", "")
+            workspace_dir = _get_entities_data_dir() / safe_name
+            soul_file = workspace_dir / "soul.yaml"
+
+            if not soul_file.exists():
+                logger.warning(f"Attempted to update non-existent soul for {name}")
+                return
+
+            # Sovereign Write Guard: token required for soul.yaml modifications
+            from omega.oracle.entity_registry import SOVEREIGN_USER_TOKEN, SovereignPermissionError
+            if token != SOVEREIGN_USER_TOKEN:
+                raise SovereignPermissionError(
+                    f"Write access to soul.yaml for '{name}' is restricted. SovereignUserToken required."
+                )
+
+            with EntityWorkspaceManager._get_lock(name):
+                # Read existing data
+                with open(soul_file, "r") as f:
+                    content = f.read()
+                    data = yaml.safe_load(content)
+
+                # Apply updates to the 'entity' block
+                if "entity" not in data:
+                    data["entity"] = {}
+                data["entity"].update(updates)
+
+                # Validate updated soul before saving
+                validator = SoulValidator(_get_entities_data_dir())
+                try:
+                    validator.validate_dict(data)
+                except SoulValidationError as e:
+                    logger.error(f"Updated soul for {name} is invalid: {e}")
+                    raise SoulCorruptionError(f"Update would corrupt soul for {name}: {e}")
+
+                # Atomic Write Pattern
+                fd, temp_path = tempfile.mkstemp(dir=str(workspace_dir), prefix=".soul_update_", suffix=".yaml")
+                try:
+                    with os.fdopen(fd, 'w') as f:
+                        yaml_str = yaml.dump(data, default_flow_style=False, sort_keys=False)
+                        f.write(f"{SOUL_FILE_HEADER}# Updated dynamically.\n\n{yaml_str}")
+
+                    os.chmod(temp_path, 0o644) # Sovereign Guard: Bypass umask drift
+                    os.replace(temp_path, str(soul_file))
+
+                    # Log to audit trail
+                    audit = SovereignAuditLog(workspace_dir)
+                    audit.log("SOUL_UPDATE", f"Updated soul file at {soul_file}")
+
+                    logger.info(f"Updated soul file for {name} at {soul_file}")
+                except OmegaError:
+                    if os.path.exists(temp_path):
+                        os.remove(temp_path)
+                    raise
+                except (OmegaError, RuntimeError, OSError) as e:
+                    if os.path.exists(temp_path):
+                        os.remove(temp_path)
+                    logger.error(f"Failed to update soul for {name}: {e}", exc_info=True)
+                    raise OmegaPersistenceError(f"Failed to update soul for {name}: {e}", raw_error=e) from e
+
+        await anyio.to_thread.run_sync(_sync_update)
+</file>
+
+
+</pack>

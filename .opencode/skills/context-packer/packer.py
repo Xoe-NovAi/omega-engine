@@ -98,7 +98,7 @@ class ContextPacker:
             tmp_path = path_str + ".tmp"
             with open(tmp_path, "w") as f:
                 f.write(content)
-            os.rename(tmp_path, path_str)
+            os.replace(tmp_path, path_str)
         await anyio.to_thread.run_sync(_write)
 
     async def pack(self, profile_name: str):
@@ -203,8 +203,55 @@ class ContextPacker:
         return glob.glob(pattern, recursive=True)
 
     def _match_pattern(self, path: str, pattern: str) -> bool:
-        import fnmatch
-        return fnmatch.fnmatch(path, pattern)
+        """Match path against glob pattern, supporting ** recursive globs.
+
+        [heritage: id-soft 1993] BSP-style path culling — O(1) pattern gate.
+        fnmatch treats `*` as non-recursive (stops at `/`); `**` maps to zero or
+        more directory segments so theme patterns like `src/omega/**/*.py` match
+        correctly instead of falling through to `general`.
+
+        NOTE: The originally-specified snippet (`(.+/)?` substitution) is broken —
+        it requires a trailing `/` inside the recursive group, so `a/**/b` can
+        never match `a/b` (zero directories). This implementation uses the correct
+        glob `**` semantics: `**/` → `(?:[^/]+/)*` (zero-or-more dir segments),
+        bare `**` → `.*` (rest of path), single `*` → `[^/]*` (one segment).
+        """
+        import fnmatch, re
+        if '**' not in pattern:
+            return fnmatch.fnmatch(path, pattern)
+
+        out = ['^']
+        i, n = 0, len(pattern)
+        while i < n:
+            c = pattern[i]
+            if c == '*':
+                if i + 1 < n and pattern[i + 1] == '*':
+                    i += 2
+                    if i < n and pattern[i] == '/':
+                        out.append('(?:[^/]+/)*')  # **/ → zero-or-more directory segments
+                        i += 1
+                    else:
+                        out.append('.*')  # trailing ** → rest of path (any depth)
+                    continue
+                out.append('[^/]*')  # single * → one path segment (no slash)
+                i += 1
+                continue
+            if c == '?':
+                out.append('[^/]')
+                i += 1
+                continue
+            if c == '.':
+                out.append(r'\.')
+                i += 1
+                continue
+            if c in '()[]{}|+^$\\':
+                out.append('\\' + c)
+                i += 1
+                continue
+            out.append(c)
+            i += 1
+        out.append('$')
+        return bool(re.match(''.join(out), path))
 
 async def main():
     import sys

@@ -89,6 +89,7 @@ class AntigravityProvider(RemoteProvider):
         temperature: float,
         max_tokens: int,
         trace_id: Optional[str] = None,
+        session_id: Optional[str] = None,
     ) -> str:
         """Send a text generation request via google.genai.aio.
 

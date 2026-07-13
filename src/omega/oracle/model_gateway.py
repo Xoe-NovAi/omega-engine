@@ -308,26 +308,69 @@ class ModelGateway:
         models.yaml is the single source of truth for model paths, context,
         threads, and KV cache. This method overlays those values onto the
         provider defaults from providers.yaml.
+
+        [HANG-FIX] models.yaml ``path`` ALWAYS overrides providers.yaml
+        ``model_path``. If providers.yaml has an unresolved ``env:`` prefix
+        in ``model_path``, it is resolved here as fallback only when
+        models.yaml has no matching entry.  Previously the merge only copied
+        keys that didn't already exist in the provider config — but since
+        providers.yaml uses ``model_path`` and models.yaml uses ``path``,
+        the mismatch happened to avoid the bug for the default config.
+        This fix makes the preference **explicit** and handles the edge case
+        where ``path`` is also set in providers.yaml.
         """
+        # Resolve env: prefixes in provider config values (e.g. model_path)
+        def _resolve_env_prefix(val: str) -> str:
+            if isinstance(val, str) and val.startswith("env:"):
+                rest = val[4:]
+                parts = rest.split("/", 1)
+                env_var = parts[0]
+                suffix = f"/{parts[1]}" if len(parts) > 1 else ""
+                base = os.environ.get(env_var, "")
+                if not base:
+                    logger.warning("Environment variable %s not set for path %s", env_var, val)
+                return base + suffix
+            return val
+
         # Find first on-demand model as default path
         default_spec = models.get(self._system_default_model(), {})
         merged = dict(p_cfg)
 
-        # Keys to pull from models.yaml
-        for key in ("path", "size_gb", "ram_mb", "context_window",
+        # Resolve env: prefix on any existing model_path first
+        if "model_path" in merged:
+            resolved = _resolve_env_prefix(merged["model_path"])
+            if resolved != merged["model_path"]:
+                merged["model_path"] = resolved
+
+        # Keys to pull from models.yaml — ALWAYS prefer models.yaml path
+        for key in ("size_gb", "ram_mb", "context_window",
                      "threads", "load_strategy", "entity",
                      "kv_cache_key_type", "kv_cache_value_type"):
             if key in default_spec and key not in merged:
                 merged[key] = default_spec[key]
         
+        # Path override: models.yaml ``path`` ALWAYS wins over providers.yaml ``model_path``
+        if "path" in default_spec:
+            models_path = _resolve_env_prefix(default_spec["path"])
+            merged["model_path"] = models_path
+            logger.debug(
+                "native-gguf model_path overridden from models.yaml: %s",
+                models_path,
+            )
+        elif "path" in default_spec and "model_path" not in merged:
+            # Fallback: resolve env: prefix on models.yaml path
+            merged["model_path"] = _resolve_env_prefix(default_spec["path"])
+        
+        # Clean up any orphan ``path`` key from provider config
+        if "path" in merged:
+            del merged["path"]
+
         # Optimize threads based on model size if not explicitly set
         if "threads" not in merged:
             model_size_b = default_spec.get("size_gb", 1.7) # Default to 1.7B if unknown
             merged["threads"] = self._cpu_optimizer.get_recommended_threads(model_size_b)
 
         # Map models.yaml names → NativeGGUFProvider config names
-        if "path" in merged and "model_path" not in merged:
-            merged["model_path"] = merged.pop("path")
         if "context_window" in merged and "n_ctx" not in merged:
             merged["n_ctx"] = merged.pop("context_window")
         if "threads" in merged and "n_threads" not in merged:
@@ -558,6 +601,11 @@ class ModelGateway:
             and target_acceptance_rate tailored for the Ryzen 7 5700U.
         """
         return self._cpu_optimizer.spec_decode
+
+    @property
+    def health_monitor(self):
+        """Expose the health monitor for provider availability checks."""
+        return self._health_monitor
 
     # ── Entity-aware model affinity ───────────────────────────────────
     # Per-entity model overrides for domain-specific routing.
@@ -917,6 +965,7 @@ class ModelGateway:
                         logger.warning("WARP proxy injection failed for opencode-zen: %s", exc)
 
         for provider in ordered_providers:
+            logger.debug(f"Trying provider: {provider.name}")
             # Step 1: BSP-style pre-check — fast fail if circuit is OPEN
             if not await self._precheck_provider(provider, model_name):
                 errors.append(f"{provider.name}: culled by precheck")
@@ -989,12 +1038,16 @@ class ModelGateway:
                             self._update_active_set(provider.name)
                             
                             # Record latency to time-series tracker
+                            # [M22 Response Provenance] is_cloud passed for
+                            # Sovereignty Gate tracking (P0-2). This ensures
+                            # the MetricsDB receives accurate local/cloud ratio.
                             tracker.record(
                                 provider=provider.name,
                                 model=model_name,
                                 latency_ms=_latency_ms,
                                 status="success",
-                                trace_id=trace_id
+                                trace_id=trace_id,
+                                is_cloud=self._is_cloud_provider(provider),
                             )
                             
                             success_provider = provider

@@ -1,8 +1,31 @@
 # 🔱 Omega Engine — Subagent Dispatch Protocol
 # ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash ⬡ opencode ⬡ SUBAGENT-DISPATCH
-**AP Token**: `AP-SUBAGENT-DISPATCH-v1.0.0`
+**AP Token**: `AP-SUBAGENT-DISPATCH-v2.0.0`
 **Status**: DEFINED
-**Last Updated**: 2026-06-03
+**Last Updated**: 2026-07-12
+
+---
+
+## §0 Critical Lesson: Inline Context Is the Difference Between Empty Results and Temple-Grade Work
+
+**Observation from 2026-07-12 Jenm Deep Research Dispatch**
+
+Three identical dispatch attempts to the same subagent (`jem`) for the same task:
+
+| Attempt | Context Delivery Method | Task Result | Output Quality |
+|---------|------------------------|-------------|----------------|
+| 1 (failed) | All files referenced by path — "see `docs/research/R_*.md`" | **Empty result** (task completed with no output) | ❌ Failure |
+| 2 (failed) | Same as attempt 1 | **Empty result** (task cancelled) | ❌ Failure |
+| 3 (successful) | All 6 source documents read and **embedded inline** in the prompt text | **544-line report**, 12 tool calls, Exa/Firecrawl Tier 3/4, 11 L3 proposals | ✅ Temple-Grade |
+
+**The pattern is clear**: Subagents cannot reliably read files by path during their first tool calls. The `relevant_files` field in the HandoffPacket is frequently ignored or fails silently. The ONLY reliable way to deliver context to a subagent is to **embed the actual content inline in the prompt text**.
+
+**This is now a mandatory practice**: Before dispatching any subagent, the parent MUST read all critical source files and embed their relevant content directly in the prompt. File paths are supplementary — they provide reference for locating the document later, but the content itself must be in the prompt.
+
+**Exceptions**:
+- Very large files (>500 lines) — summarize the key findings inline, provide the path for reference
+- Binary files (images, models) — cannot be inlined, use paths
+- Files the subagent MUST modify — provide both inline understanding and the path for edits
 
 ---
 
@@ -27,21 +50,39 @@ To maintain execution efficiency and prevent infinite recursion or redundant pro
 
 Every subagent dispatch uses this typed schema:
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `packet_id` | `str` | ✅ | UUID v4. Pattern: `hdp_{YYYYMMDD}_{source}_{target}_{short-uuid}` |
-| `source_agent` | `str` | ✅ | Entity name launching the subagent (e.g. "kali", "maat") |
-| `target_agent` | `str` | ✅ | Entity name being dispatched (e.g. "doom_guy", "roc_racoon") |
-| `parent_trace_id` | `str` | ✅ | Trace ID from the parent session |
-| `trace_id` | `str` | ✅ | Fresh UUID for this sub-dispatch |
-| `task_type` | `str` | ✅ | One of: `design`, `review`, `research`, `mine`, `verify`, `implement` |
-| `task_description` | `str` | ✅ | One-sentence description of what to do |
-| `relevant_files` | `list[str]` | ✅ | Files the subagent MUST read before starting |
-| `context` | `str` | ✅ | Background, prior decisions, constraints |
-| `expected_output` | `str` | ✅ | What the subagent must return |
-| `ttl_seconds` | `int` | ✅ | Max runtime before timeout (default: 600) |
-| `status` | `str` | ✅ | `pending` → `accepted` → `completed` / `failed` |
-| `result` | `str\|None` | ❌ | Filled when completed |
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `packet_id` | `str` | ✅ | — | UUID v4. Pattern: `hdp_{YYYYMMDD}_{source}_{target}_{short-uuid}` |
+| `source_agent` | `str` | ✅ | — | Entity name launching the subagent (e.g. "kali", "maat") |
+| `target_agent` | `str` | ✅ | — | Entity name being dispatched (e.g. "doom_guy", "roc_racoon") |
+| `parent_trace_id` | `str` | ✅ | — | Trace ID from the parent session |
+| `trace_id` | `str` | ✅ | — | Fresh UUID for this sub-dispatch |
+| `task_type` | `str` | ✅ | — | One of: `design`, `review`, `research`, `mine`, `verify`, `implement` |
+| `task_description` | `str` | ✅ | — | One-sentence description of what to do |
+| `context_delivery` | `str` | ✅ | `inline` | **`inline`** (context embedded in prompt) or **`reference`** (context via file paths). Default is `inline`. See §0 for critical lesson. |
+| `relevant_files` | `list[str]` | ✅ | — | Files for supplementary reference. Content MUST also be summarized inline. |
+| `context` | `str` | ✅ | — | **Inline context**: Actual file excerpts, key findings, prior decisions, code patterns. DO NOT write "see file X" — embed the content. |
+| `expected_output` | `str` | ✅ | — | What the subagent must produce and write to disk |
+| `ttl_seconds` | `int` | ✅ | 600 | Max runtime before timeout |
+| `status` | `str` | ✅ | `pending` | `pending` → `accepted` → `completed` / `failed` |
+| `result` | `str\|None` | ❌ | — | Filled when completed |
+
+### Mandatory Context Inlining Rule (NEW — 2026-07-12)
+
+**Any context that is essential for the subagent's task MUST be embedded directly in the prompt text.** File paths in `relevant_files` are supplementary references, NOT the primary delivery mechanism.
+
+**The pattern that works**:
+1. Read all critical files yourself first
+2. Extract the key findings, decisions, code patterns, and config schemas
+3. Embed them directly in the prompt under a clear section like `## Inline Context`
+4. Include file paths as references so the subagent can find the source if needed
+
+**The pattern that fails**:
+```
+❌ WRONG: "See docs/research/R_FOO.md for context"
+✅ RIGHT: Below is the full context from docs/research/R_FOO.md (644 lines):
+           [inline excerpts of key findings]
+```
 
 ### ZONEID_MEMORY Constant
 
@@ -101,30 +142,80 @@ expected_output: "Heritage audit report:
 
 ### Step 3: Format the Task Prompt
 
-Use this template for the Task tool:
+Use this template for the Task tool. **CRITICAL: All essential context must be inlined, not referenced by path.**
 
 ```
-You are {target_agent}. Your role: {capabilities}.
-Act with the full authority and domain knowledge of {target_agent}.
+# 🔱 {target_agent} — Dispatch from {source_agent}
+**AP Token**: `AP-{source_agent}-DISPATCH-{packet_id}`
+⬡ OMEGA ⬡ {target_agent} ⬡ {model_hint} ⬡ opencode ⬡ trc_{task_type} ⬡ ACTIVE
 
-## Context
-{context}
+---
 
-## Task
+## 📥 Context Delivery: INLINE
+
+All essential context is embedded below. File paths in `## Reference Files` are
+supplementary — you do NOT need to read them unless the inline excerpts are
+insufficient.
+
+---
+
+## 📚 INLINE CONTEXT
+
+{context — containing ACTUAL FILE EXCERPTS, not file paths}
+
+Example good format:
+```
+### Source: docs/research/R_FOO.md (lines 45-120)
+
+Key finding: [verbatim quote or concise summary]
+
+Decision D-142: Chose X over Y because [reason].
+
+Config schema for implementation:
+```yaml
+field: value
+```
+```
+
+---
+
+## 🎯 Task
+
 {task_description}
 
-## Files to Read First
-{relevant_files}
+---
 
-## Expected Output
+## 📄 Reference Files (Supplementary — not required to read)
+
+{relevant_files — paths only, context already inlined above}
+
+---
+
+## 📝 Expected Output
+
 {expected_output}
 
-## Heritage
+**Mandate**: Write output to disk at `{output_path}` before returning control.
+
+---
+
+## ⚖️ Heritage & Constraints
+
 - This dispatch was created by {source_agent}.
 - Trace ID: {trace_id}
 - Refer to PIVOT_LOG.md for prior decisions.
 - Mandate 13 (Temple-Grade) applies.
+- Mandate 11 (Soul Integrity): End with L1→L2→L3 distillation.
+- Mandate 18 (Token Efficiency): Every search/tool call must have a purpose.
 ```
+
+**Inline Context Quality Checklist** (run before dispatch):
+- [ ] Every critical file was read and its key findings extracted
+- [ ] No prompt says "see file" without summarizing the content
+- [ ] Decision IDs (D-NNN) are stated explicitly, not referenced
+- [ ] Code/config patterns are shown as inline examples, not file paths
+- [ ] If research: the specific gaps/hypotheses to validate are listed
+- [ ] If implementation: the exact files to modify and patterns to follow
 
 ### Step 4: Launch via Task Tool
 
@@ -252,7 +343,61 @@ These must be implemented in Sprint 2:
 
 ---
 
-## §8 Heritage
+## §8 Refinement Protocol: Subagent Failure Recovery (NEW — 2026-07-12)
+
+### Pattern: "Empty Task Result"
+
+When a subagent task returns `state: "completed"` but the result is empty:
+
+1. **Do NOT immediately relaunch** — first diagnose the root cause
+2. **Check the most likely root causes**:
+   - ❌ **Primary cause (80%)**: Context delivered as file references, not inline content
+   - ❌ **Secondary cause (15%)**: Prompt too vague, no specific hypotheses to test
+   - ❌ **Tertiary cause (5%)**: Tool failure (Exa, Firecrawl, websearch unavailable)
+3. **Fix the context delivery** — read the files yourself and inline the content
+4. **Retry with the inlined context** — do NOT change the subagent type or task scope
+
+### Pattern: "Partial or Low-Quality Result"
+
+When a subagent returns output but misses key requirements:
+
+1. **Identify what was missed** — specific field, search, or constraint
+2. **Rel launch with explicit gap closure**: "You did X correctly. You did NOT do Y. Complete Y."
+3. **Use the same task_id** to continue the session (preserves prior context)
+
+### Pattern: "Tool-Chain Collapse" (M23)
+
+When a subagent reports `[TOOL-CHAIN-COLLAPSE]`:
+
+1. **Accept the hard stop**. Do NOT ask them to retry with fallback tools.
+2. **Log the failure** to `data/coordination/SYSTEM_FAILURE_LOG.md`
+3. **Try the task yourself** using available tools
+4. **If also blocked**: re-queue the task for a session with functional toolchain
+
+---
+
+## §8a Experience Table: Context Delivery Patterns
+
+The following table documents real dispatches and their outcomes. Use it to predict which context delivery method will succeed for your next dispatch.
+
+| Date | Source | Target | Context Delivery | Task Type | Result | Lines Output | Root Cause |
+|------|--------|--------|-----------------|-----------|--------|-------------|------------|
+| 2026-07-12 | Kali | Jem | **Reference only**: "see docs/research/R_*.md" | Deep research (5 gaps) | ❌ Empty task result | 0 | Subagent couldn't read files by path |
+| 2026-07-12 | Kali | Jem | **Reference only**: "see files at paths" | Deep research (5 gaps) | ❌ Task cancelled | 0 | Same — repeated the same pattern |
+| 2026-07-12 | Kali | Jem | **Inline**: All 6 source docs embedded in prompt text | Deep research (5 gaps) | ✅ Temple-Grade | 544 + 11 L3 proposals | Inline content enabled proper tool use |
+
+### How This Translates to Your Next Dispatch
+
+| Your Context Size | Recommended Delivery | Why |
+|-------------------|---------------------|-----|
+| < 1000 lines | **Full inline** — embed everything | Subagent has full context immediately |
+| 1000-3000 lines | **Inline excerpts + file paths** — summarize key findings, provide paths for nuance | Balance: critical context inline, depth available on request |
+| > 3000 lines | **Inline executive summary + strategic excerpts** — subagent reads specific sections if needed | Full inline would exceed prompt limits |
+| Binary/non-text | **File reference only** — subagent uses tool to read | Cannot be inlined |
+
+---
+
+## §9 Heritage
 
 **Original design**: The Subagent Dispatch Protocol is the **user's original architectural innovation**. The concept of agents spawning specialized subagents for domain-specific tasks is a core Omega Engine pattern.
 
@@ -262,10 +407,9 @@ These must be implemented in Sprint 2:
 - `[id-soft: doom-1993]` ZONEID Pattern — packet integrity via `ZONEID_HANDOFF = 0x1d4a16` constant.
 - `[id-soft: quake-1996]` Thinker chain — lifecycle metaphor for the spawn → execute → reap flow.
 
-
 ---
 
-## §9 Related Protocols
+## §10 Related Protocols
 
 This protocol is one half of a two-part coordination system. See also:
 
@@ -285,7 +429,7 @@ This protocol is one half of a two-part coordination system. See also:
 
 ---
 
-## §10 Dispatch Decision Tree (D-kal-103 — Standardized)
+## §11 Dispatch Decision Tree (D-kal-103 — Standardized)
 
 The dispatch protocol has 4 patterns. Choose based on the task scope:
 
@@ -325,4 +469,4 @@ Task received
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ SUBAGENT-DISPATCH ⬡ v1.1.0*
+*⬡ OMEGA ⬡ KALI ⬡ SUBAGENT-DISPATCH ⬡ v2.0.0*

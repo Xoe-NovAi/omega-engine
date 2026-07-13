@@ -15,7 +15,8 @@ inference:
     n_threads: 4
     n_threads_batch: 4
     type_k: 8
-    type_v: 2
+    type_v: 1
+    kv_cache_type: f16
     n_batch: 512
     n_ubatch: 32
     use_mmap: true
@@ -35,6 +36,7 @@ inference:
       phi-4-mini-reasoning-abliterated-q4_k_m: phi-4-mini-abliterated
   - provider: ollama
     priority: 2
+    enabled: false
     endpoint: http://127.0.0.1:11434
     model_overrides:
       qwen3-1.7b-q6_k: qwen3:1.7b

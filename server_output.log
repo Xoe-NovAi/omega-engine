@@ -1,0 +1,63 @@
+[07/12/26 19:55:40] INFO     Starting MCP server 'Omega Core  mcp_runtime.py:178
+                             Hub' on sse://127.0.0.1:8016                       
+INFO:     Started server process [2152805]
+INFO:     Waiting for application startup.
+                    INFO     Background service initialization      state.py:212
+                             starting...                                        
+                    INFO     Loaded 29 entities from      entity_registry.py:427
+                             config                                             
+                    INFO     Sovereign secrets loaded       model_gateway.py:253
+                             successfully from .env                             
+                    INFO     Loaded 29 entities from      entity_registry.py:427
+                             config                                             
+                    INFO     Vault loaded: 1 providers, 1 keys  key_vault.py:374
+                             total                                              
+                    INFO     Sovereign secrets loaded       model_gateway.py:253
+                             successfully from .env                             
+                    INFO     Loaded 29 entities from      entity_registry.py:427
+                             config                                             
+                    INFO     Started MCP firecrawl on port   orchestrator.py:219
+                             8015 (PID: 2152893)                                
+                    INFO     Started MCP searxng on port     orchestrator.py:219
+                             8018 (PID: 2152894)                                
+                    INFO     WARP Proxy Pool attached to           oracle.py:134
+                             ModelGateway (opencode-zen bypass                  
+                             active)                                            
+                    INFO     FTS5 index initialized at           fts_index.py:54
+                             /home/arcana-novai/Documents/Xoe-No                
+                             vAi/omega-engine/data/memory/fts_me                
+                             mory.db                                            
+                    INFO     Sovereign secrets loaded       model_gateway.py:253
+                             successfully from .env                             
+                    INFO     Loaded 29 entities from      entity_registry.py:427
+                             config                                             
+                    INFO     MemoryVectorAdapter           vector_adapters.py:74
+                             initialized as sovereign                           
+                             fallback.                                          
+                    INFO     pii-shield loaded: 18 PII types,  pii_masker.py:134
+                             context-aware detection                            
+                    INFO     Loaded 8 audience        audience_calibrator.py:110
+                             profiles from                                      
+                             config/wads/_omega_defau                           
+                             lt/audience.yaml                                   
+                    WARNING  Failed to resolve search keys from     state.py:238
+                             KeyVault, checking environment                     
+                             variables: [VaultKeyNotFound] No key               
+                             for provider 'firecrawl' in vault                  
+                    INFO     All Hub services initialized           state.py:272
+                             (background)                                       
+                    INFO     Handoff index rebuilt: 42 packets     server.py:371
+                    INFO     Background tasks started: pruning,    server.py:386
+                             reaper                                             
+                    INFO     BatchPersistenceWriter online — batch_writer.py:109
+                             batch_size=50                                      
+                             flush_interval=2.0s                                
+                    INFO     StreamableHTTP       streamable_http_manager.py:128
+                             session manager                                    
+                             started                                            
+INFO:     Application startup complete.
+ERROR:    [Errno 98] error while attempting to bind on address ('127.0.0.1', 8016): [errno 98] address already in use
+INFO:     Waiting for application shutdown.
+                    INFO     StreamableHTTP       streamable_http_manager.py:132
+                             session manager                                    
+                             shutting down                                      

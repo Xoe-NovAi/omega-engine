@@ -75,10 +75,12 @@ mock_mcp_types.TextContent = MockTextContent
 mock_mcp_client = types.ModuleType("mcp.client")
 mock_mcp_client_sse = types.ModuleType("mcp.client.sse")
 mock_mcp_client_sse.sse_client = AsyncMock()
+mock_mcp_client_streamable = types.ModuleType("mcp.client.streamable_http")
+mock_mcp_client_streamable.streamablehttp_client = AsyncMock()
 
 # Save originals before mocking (Carmack fix: restore after load to prevent
 # polluting subsequent test modules that need the real mcp library)
-_saved_keys = ["mcp", "mcp.server", "mcp.server.fastmcp", "mcp.types", "mcp.client", "mcp.client.sse"]
+_saved_keys = ["mcp", "mcp.server", "mcp.server.fastmcp", "mcp.types", "mcp.client", "mcp.client.sse", "mcp.client.streamable_http"]
 _originals = {k: sys.modules.get(k) for k in _saved_keys}
 
 sys.modules["mcp"] = mock_mcp_pkg
@@ -87,6 +89,7 @@ sys.modules["mcp.server.fastmcp"] = mock_mcp_fastmcp
 sys.modules["mcp.types"] = mock_mcp_types
 sys.modules["mcp.client"] = mock_mcp_client
 sys.modules["mcp.client.sse"] = mock_mcp_client_sse
+sys.modules["mcp.client.streamable_http"] = mock_mcp_client_streamable
 
 server = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(server)

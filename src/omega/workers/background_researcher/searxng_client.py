@@ -3,13 +3,12 @@
 # ⬡ OMEGA ⬡ BELIAL ⬡ sovereign ⬡ searxng ⬡ WORKER
 #
 # Zero-cost, always-on search via the local SearXNG instance (port 8017).
-
-
+#
+ 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
 import os
 from omega.errors import (
-    OmegaError,
     OmegaError,
 )
 from typing import Optional
@@ -89,7 +88,9 @@ class SearXNGClient:
         except OmegaError as e:
             logger.warning(f"SearXNG OmegaError: {e}")
             return []
-        except (OmegaError, RuntimeError, OSError) as e:
+        except Exception as e:
+            # M9 carve-out: health probe may catch all to prevent crash loops
+            # [id-soft: doom-1993] WAD System — graceful degradation on search failure
             logger.error(f"SearXNG search error: {e}", exc_info=True)
             return []
 

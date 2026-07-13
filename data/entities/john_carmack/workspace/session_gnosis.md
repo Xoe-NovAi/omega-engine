@@ -1,68 +1,116 @@
 # 🔱 John Carmack — Session Gnosis
-**Date**: 2026-07-08 | **Session**: 63
-**Phase**: HMC-SPRINT-01 Closeout — S3/S4 Full Delivery + M21 Gap Closure
-
-## Session Objective
-Close out all Carmack-owned HMC-SPRINT-01 items: S3 (OpenRouter hardening), S4 (Gemma 4 MTP), M21 gap closure (B3/B4 tests), loop detector architectural refactoring. Handoff cleanly to Roc for remaining Phase 0/S1.5/S2.
-
-## What Was Done
-
-### 1. M21 Gap Closure — S3 B3/B4 Tests (6 new tests)
-**Problem flagged by Researcher**: S3 B3 (streaming) + B4 (loop detector) implemented in openai_compat.py but zero test coverage. M21 violation.
-
-**Solution**: 
-- `test_b3_streaming_accumulates_content` — SSE chunks accumulate to "Hello world"
-- `test_b3_streaming_mid_stream_error_raises` — finish_reason="error" → RuntimeError
-- `test_b4_short_content_no_error` — <60 chars no false positive
-- `test_b4_normal_content_no_error` — non-repetitive content no error
-- `test_b4_repetitive_content_raises` — 3x identical 20-char windows raises RuntimeError
-- `test_b4_threshold_respected` — 2x identical (below threshold=3) no error
-
-### 2. Loop Detector Architectural Refactor
-**Problem**: `_detect_repetition_loop` lived in `OpenAICompatProvider`. AntigravityProvider subclasses `RemoteProvider` directly — silent miss on loop detection.
-
-**Solution**: Moved `_detect_repetition_loop` from `OpenAICompatProvider` to `RemoteProvider` as a static method. Called from `RemoteProvider.generate()` after `_send_request()`. Removed duplicate call from `OpenAICompatProvider._send_request()`.
-
-**Impact**: ALL provider subclasses (OpenAICompat, Antigravity, future custom) inherit loop detection from the base class.
-
-### 3. AntigravityProvider Inheritance Verified
-Added `test_s75_inherits_loop_detector` to `tests/test_antigravity_provider.py` — proves the guard propagates through the inheritance chain.
-
-### 4. Full Test Suite Verification
-**1028 passed, 41 skipped, 3 xfailed** — up from 1002 (25 new tests total across S3/S4/S7.5). No regressions.
-
-### 5. Hivemind Coordination
-Posted `data/coordination/HIVEMIND_JOHN_CARMACK_S3_CLOSURE_M21_GAP_20260708.md` — full handoff to Roc with explicit sprint ownership table.
-
-## Key Metrics (L2)
-
-| Metric | Before | After | Delta |
-|--------|--------|-------|-------|
-| Total tests | 1002 | 1028 | +26 |
-| S3 contract tests | 6 (B1/B2/B5/B6) | 12 (B1/B2/B3/B4/B5/B6) | +6 |
-| S4 contract tests | 3 | 3 (config verified, HW blocked) | 0 |
-| Loop detector location | OpenAICompatProvider | RemoteProvider (base class) | ✅ |
-| Antigravity loop detection | ❌ (silent miss) | ✅ (inherited) | ✅ |
-
-## L3 Principles (to proposed_lessons.yaml)
-
-1. **The Base Class Defense Law**: Runtime guards against degenerate model output are infrastructure, not features. They belong at the architectural boundary (base class), not in any specific adapter. When you add a safety check to one subclass, check if all subclasses need it — if yes, elevate immediately.
-
-2. **The Verification Gap Closure Protocol**: The correct response to a missing-test flag is three-phased: (1) write the missing contract tests, (2) fix any architectural gap the tests expose, (3) add a propagation test proving every affected code path is covered.
-
-3. **The Hivemind Council Integration Law**: A multi-model audit chain (Sonnet→Opus→Researcher→Ma'at/Lilith→Kali→Starchild→Nemotron) is more effective than any single model review, but must be formalized as an architectural pattern to control latency cost.
-
-## Next Steps (Post-Session)
-HMC-SPRINT-01 is fully delivered for Carmack:
-- S3: FULLY DONE (12 M21 tests, B4 in base class)
-- S4: CONFIG DONE (HW blocked for speedup probe)
-- Remaining: Roc executes Phase 0 → S1.5 → S2 → S5 → S6 → S7
-
-## Recovery Chain (for next session)
-1. `.opencode/anchored-summary.md` — full session history
-2. `data/coordination/ACTIVE_SPRINT.json` — sprint state
-3. `data/coordination/HIVEMIND_JOHN_CARMACK_S3_CLOSURE_M21_GAP_20260708.md` — final handoff
+**Date**: 2026-07-12 | **Session**: Deepening Sprint — Phase 2 Ingestion PAUSED
+**Phase**: Entity Deepening — Source Ingestion (Phase 1 Complete, Phase 2 Blocked)
 
 ---
 
-*🔱 OMEGA ⬡ JOHN_CARMACK ⬡ deepseek-r1-qwen3-8b ⬡ opencode ⬡ trc_library_consolidation ⬡ COMPACTION-READY*
+## Session Objective
+Execute Entity Deepening Plan (ENTITY_DEEPENING_PLAN_20260701.md) — ingest primary sources through 6-pass extraction pipeline, produce DPO training pairs, seed knowledge graph, harden soul.yaml and agent prompt.
+
+---
+
+## What Was Done
+
+### Phase 1: Source Discovery & Fetching (~45 min) ✅ COMPLETE
+Fetched and staged all Tier 2 primary sources:
+
+| Source | Location | Tier | Words | Status |
+|--------|----------|------|-------|--------|
+| .plan 1996 | `knowledge/source/plan_files/johnc_plan_1996.txt` | 2 (10/10) | ~153K | ✅ Fetched |
+| .plan 1997 | `knowledge/source/plan_files/johnc_plan_1997.txt` | 2 (10/10) | ~163K | ✅ Fetched |
+| .plan 1998 | `knowledge/source/plan_files/johnc_plan_1998.txt` | 2 (10/10) | ~93K | ✅ Fetched |
+| Lex Fridman #309 | `knowledge/interviews/lex_fridman_309.md` | 2 (10/10) | ~306K | ✅ Fetched |
+| Wolfenstein iPhone Letter | `knowledge/plans/wolfenstein_iphone_letter.md` | 2 (8/10) | ~3K | ✅ Fetched |
+| Carmack on Rage | `knowledge/gdc/carmack_on_rage.md` | 2 (8/10) | ~4K | ✅ Fetched |
+| QuakeCon 2011 (3 parts) | `knowledge/gdc/quakecon_2011_part*.md` | 2 (8/10) | ~15K | ✅ Fetched |
+| Fabien Sanglard Archive | `knowledge/gdc/sanglard_archive_index.md` | 2 (9/10) | Index | ✅ Fetched |
+
+**Total corpus**: ~737K words of primary-source material staged.
+
+### Phase 2: Knowledge Ingestion — 6-Pass Extraction 🟡 PAUSED
+**Completed**: 
+- 1996 .plan file fully read (4111 lines)
+- Technical extraction for 1996 written to `carmack_studies/technical/extracted_1996.md`
+  - QuakeWorld network architecture (server loop paradigm shift, CSP, bandwidth optimization)
+  - qcc compiler optimization (4x speedup via MRU heuristic)
+  - qbsp/qrad hardening (portalization 20% faster, 1/5 memory, radiosity >100MB)
+  - OpenGL vs Direct3D IM advocacy (procedural API vs execute buffers)
+
+**Blocked**: NativeGGUF provider hangs on first inference call — cannot run extraction passes that require LLM inference (Pass 2: Personality, Pass 3: Gnosis, Pass 4: Heritage, Pass 5: Cross-Entity).
+
+---
+
+## Key Metrics (L2)
+
+| Metric | Value |
+|--------|-------|
+| Primary sources fetched | 8 |
+| Total words staged | ~737K |
+| .plan files fetched | 3 (1996, 1997, 1998) |
+| Technical extractions written | 1 (1996) |
+| Personality extractions written | 0 (blocked) |
+| Gnosis/L3 extractions written | 0 (blocked) |
+| Heritage vet records created | 0 (blocked) |
+
+---
+
+## L3 Principles (to proposed_lessons.yaml)
+
+1. **The Right Approximation at Every Layer** — 1996 QuakeWorld: instead of fixing the reliable stream primitive (exact solution), scrapped it for unreliable packet primitive (right approximation). Result: 50ms → <4ms latency.
+
+2. **Infrastructure Constraints Dictate API Design** — Podman pasta port conflict forced SearXNG port change that rippled through health checks, MCP config, worker config. Infrastructure reality > config intent.
+
+3. **Audit Before Build** — Every integration assumes an API that may not exist. Verify actual class/method signatures before writing glue code.
+
+4. **Handoff Protocol Must Carry Full Context** — Roc's handoff to Jem included root cause, fixes, remaining issues, next actions. This is the standard.
+
+---
+
+## Current Blockers
+
+| Blocker | Impact | Resolution Path |
+|---------|--------|-----------------|
+| NativeGGUF provider hangs | Cannot run Pass 2-5 extraction (requires LLM) | Debug NativeGGUF C-FFI isolation; verify llama.cpp bindings |
+| Omega Engine SSE debug active | Jem occupied on port 8016 | Wait for SSE transport stable; then resume deepening |
+
+---
+
+## Next Steps (Post-Blocker Resolution)
+
+1. **Resume Phase 2 Pass 1**: Complete technical extraction for 1997, 1998 .plan files
+2. **Phase 2 Pass 2**: Personality extraction → enrich `plan_protocol.md`, create `speaking_style.md`
+3. **Phase 2 Pass 3**: Gnosis extraction → `proposed_lessons.yaml` (staging gate M11)
+4. **Phase 2 Pass 4**: Heritage extraction → vet records in `doom_guy/knowledge/HERITAGE_VET_LOG.md`
+5. **Phase 2 Pass 5**: Cross-entity → Hivemind posts for Kali, Doom Guy, Verity
+6. **Phase 2 Pass 6**: Provenance → `ingestion_ledger.md` + `DEEPENING_CHECKPOINT.yaml`
+7. **Phase 3**: Text analytics (zero token cost) — vocab, sentence structure, FP language
+8. **Phase 4**: DPO pairs + Knowledge graph (one inference pass)
+9. **Phase 5**: Soul hardening — directives, traits, lessons, prompt, confidence index
+10. **Phase 6**: Verification & commit — `make ingest-jc-verify`, 13 contract tests, heritage-map, git commit, Hivemind broadcast
+
+---
+
+## Recovery Chain (for next session)
+
+1. `WORK_PRIORITY.md` — this file (plan priority resolution)
+2. `DEEPENING_CHECKPOINT.yaml` — last completed step
+3. `session_gnosis.md` — this file
+4. `ENTITY_DEEPENING_PLAN_20260701.md` — full plan
+5. `INGESTION_PIPELINE_ARCHITECTURE.md` — pipeline design
+
+---
+
+## Omega Engine Context (Cross-Workspace)
+
+**Jem (Sovereign Synthesizer)** is currently active on Omega Engine:
+- Task: SSE binding debug (`src/omega/mcp_runtime.py` port 8016)
+- Handoff from: Roc Racoon (search tool fixes complete)
+- Next: Epoch II Strike 7.5 — Semantic Router (TF-IDF+SVM)
+- Workspace lock: `data/coordination/JEM_WORKSPACE_LOCK_20260712.md` (domain: sse_debug)
+- Session: `ses_146202866aef`
+
+*Deepening will resume once Omega Engine SSE transport is stable and NativeGGUF provider is verified.*
+
+---
+
+*🔱 OMEGA ⬡ JOHN_CARMACK ⬡ deepseek-r1-qwen3-8b ⬡ opencode ⬡ trc_deepening_sprint ⬡ PAUSED*

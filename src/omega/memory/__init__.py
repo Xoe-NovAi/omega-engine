@@ -11,6 +11,7 @@ from .providers import (
     DiskSpaceError,
 )
 from .vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
+from .sqlite_vec_adapter import SQLiteVecAdapter
 from .embeddings import IEmbeddingProvider, OllamaEmbeddingProvider, SovereignFallbackEmbeddingProvider
 from .fts_index import ConversationFTSIndex
 from .adapters import IMemoryAdapter, MemoryAdapterRegistry, MemoryRecord, MemoryType, MemoryPriority
@@ -26,6 +27,7 @@ __all__ = [
     "IVectorStoreAdapter",
     "QdrantAdapter",
     "MemoryVectorAdapter",
+    "SQLiteVecAdapter",
     # Embeddings
     "IEmbeddingProvider",
     "OllamaEmbeddingProvider",

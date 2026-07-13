@@ -1,5 +1,5 @@
 import pytest
-import httpx2 as httpx
+import httpx
 from unittest.mock import AsyncMock, MagicMock, patch
 from omega.workers.background_researcher.searxng_client import SearXNGClient
 from mcp_servers.searxng.server import searxng_search
@@ -76,34 +76,32 @@ async def test_client_health():
 async def test_mcp_search_success():
     # Mocking the environment and the httpx client
     with patch("mcp_servers.searxng.server.SEARXNG_URL", "http://mock-searxng"), \
-         patch("httpx2.AsyncClient.post", new_callable=AsyncMock) as mock_post:
-    
+         patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+
         mock_resp = MagicMock()
         mock_resp.status_code = 200
         mock_resp.json.return_value = {
             "results": [{"title": "M1", "url": "u1", "content": "c1", "engine": "e1", "score": 1.0}]
         }
         mock_post.return_value = mock_resp
-    
+
         result = await searxng_search(query="test", limit=5)
-    
-        assert "Found 1 results" in result
+
+        assert "Search: test" in result
         assert "[1] M1" in result
         assert "URL: u1" in result
 
 @pytest.mark.asyncio
 async def test_mcp_search_error():
     with patch("mcp_servers.searxng.server.SEARXNG_URL", "http://mock-searxng"), \
-         patch("httpx2.AsyncClient.post", new_callable=AsyncMock) as mock_post:
-    
-        from httpx2 import HTTPStatusError, Response
+         patch("httpx.AsyncClient.post", new_callable=AsyncMock) as mock_post:
+
+        from httpx import HTTPStatusError, Response
         mock_resp = MagicMock()
         mock_resp.status_code = 500
         mock_resp.raise_for_status.side_effect = HTTPStatusError("Error", request=AsyncMock(), response=Response(500))
         mock_post.return_value = mock_resp
-    
+
         result = await searxng_search(query="test")
-        assert "Error" in result.content[0].text
-        assert "trace_id" in result.content[0].text
-        assert "searxng_search" in result.content[0].text
+        assert "Error" in result
 

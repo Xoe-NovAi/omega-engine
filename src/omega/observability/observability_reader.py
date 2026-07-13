@@ -95,14 +95,14 @@ class SovereignReader:
     def _sync_get_metric_series(self, metric_name: str, entity_id: Optional[str], window_mins: int) -> MetricSeries:
         cutoff = (datetime.utcnow() - timedelta(minutes=window_mins)).timestamp()
         
-        query = "SELECT timestamp, value FROM metrics WHERE metric_name = ? AND timestamp >= ?"
+        query = "SELECT ts as timestamp, value FROM metrics WHERE metric_name = ? AND ts >= ?"
         params = [metric_name, cutoff]
         
         if entity_id:
             query += " AND entity_id = ?"
             params.append(entity_id)
             
-        query += " ORDER BY timestamp ASC"
+        query += " ORDER BY ts ASC"
         
         try:
             with self._get_connection() as conn:
@@ -140,11 +140,11 @@ class SovereignReader:
                     cur.execute("SELECT provider, state FROM circuit_breakers")
                     breaker_states = {r["provider"]: r["state"] for r in cur.fetchall()}
                 
-                # Scaffold: calculate error rate over last 5 mins
+                # Scaffold: calculate error rate over last 5 mins using performance table
                 cutoff = (datetime.utcnow() - timedelta(minutes=5)).timestamp()
-                cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='metrics'")
+                cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='performance'")
                 if cur.fetchone():
-                    cur.execute("SELECT COUNT(*) as total, SUM(CASE WHEN metric_name = 'error' THEN 1 ELSE 0 END) as errors FROM metrics WHERE timestamp >= ?", (cutoff,))
+                    cur.execute("SELECT COUNT(*) as total, SUM(CASE WHEN is_cloud = 0 THEN 1 ELSE 0 END) as errors FROM performance WHERE ts >= ?", (cutoff,))
                     row = cur.fetchone()
                     if row and row["total"] > 0:
                         error_rate = row["errors"] / row["total"]
@@ -161,19 +161,19 @@ class SovereignReader:
     # ─── Token & Cost Attribution ─────────────────────────────────────────────
 
     def _sync_get_entity_cost(self, entity_id: str, session_id: Optional[str]) -> TokenBurn:
-        query = "SELECT SUM(prompt_tokens) as p, SUM(completion_tokens) as c, SUM(cost_usd) as cost, provider_name FROM token_ledger WHERE entity_id = ?"
+        query = "SELECT SUM(prompt_tokens) as p, SUM(completion_tokens) as c, SUM(cost_usd) as cost, provider FROM performance WHERE entity_id = ?"
         params = [entity_id]
         
         if session_id:
-            query += " AND session_id = ?"
+            query += " AND trace_id = ?"
             params.append(session_id)
             
-        query += " GROUP BY provider_name"
+        query += " GROUP BY provider"
         
         try:
             with self._get_connection() as conn:
                 cur = conn.cursor()
-                cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='token_ledger'")
+                cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='performance'")
                 if not cur.fetchone():
                     return TokenBurn(0, 0, 0.0, "unknown")
                     
@@ -188,14 +188,86 @@ class SovereignReader:
                 c_tokens = sum(r["c"] for r in rows if r["c"])
                 total_cost = sum(r["cost"] for r in rows if r["cost"])
                 # Just take the most recent/dominant provider for the summary
-                provider = rows[0]["provider_name"] 
+                provider = rows[0]["provider"] 
                 
                 return TokenBurn(p_tokens, c_tokens, total_cost, provider)
         except sqlite3.Error as e:
-            raise ObservabilityError(f"Token ledger query failed: {e}")
+            raise ObservabilityError(f"Performance query failed: {e}")
 
     async def get_entity_cost(self, entity_id: str, session_id: Optional[str] = None) -> TokenBurn:
         return await anyio.to_thread.run_sync(self._sync_get_entity_cost, entity_id, session_id)
+
+    def _sync_get_sovereignty_ratio(self, entity_id: str, window_secs: int = 300) -> float:
+        """Calculate local vs cloud inference ratio for an entity."""
+        now = datetime.utcnow().timestamp()
+        cutoff = now - window_secs
+        
+        query = """
+            SELECT 
+                SUM(CASE WHEN is_cloud = 0 THEN 1 ELSE 0 END) as local_count,
+                SUM(CASE WHEN is_cloud = 1 THEN 1 ELSE 0 END) as cloud_count
+            FROM performance 
+            WHERE entity_id = ? AND ts >= ?
+        """
+        
+        try:
+            with self._get_connection() as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='performance'")
+                if not cur.fetchone():
+                    return 1.0
+                    
+                cur.execute(query, (entity_id, cutoff))
+                row = cur.fetchone()
+                
+                local_count = row["local_count"] or 0
+                cloud_count = row["cloud_count"] or 0
+                total = local_count + cloud_count
+                
+                if total == 0:
+                    return 1.0
+                    
+                return local_count / total
+        except sqlite3.Error as e:
+            raise ObservabilityError(f"Sovereignty ratio calculation failed: {e}")
+
+    async def get_sovereignty_ratio(self, entity_id: str, window_secs: int = 300) -> float:
+        return await anyio.to_thread.run_sync(self._sync_get_sovereignty_ratio, entity_id, window_secs)
+
+    def _sync_get_somatic_pressure(self, entity_id: str, window_secs: int = 60) -> Dict[str, Any]:
+        """Get hardware pressure metrics for an entity."""
+        now = datetime.utcnow().timestamp()
+        cutoff = now - window_secs
+        
+        query = """
+            SELECT 
+                AVG(latency_ms) as avg_latency,
+                MAX(latency_ms) as max_latency,
+                COUNT(*) as request_count
+            FROM performance 
+            WHERE entity_id = ? AND ts >= ?
+        """
+        
+        try:
+            with self._get_connection() as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='performance'")
+                if not cur.fetchone():
+                    return {"avg_latency_ms": 0.0, "max_latency_ms": 0.0, "request_count": 0}
+                    
+                cur.execute(query, (entity_id, cutoff))
+                row = cur.fetchone()
+                
+                return {
+                    "avg_latency_ms": row["avg_latency"] or 0.0,
+                    "max_latency_ms": row["max_latency"] or 0.0,
+                    "request_count": row["request_count"] or 0
+                }
+        except sqlite3.Error as e:
+            raise ObservabilityError(f"Somatic pressure calculation failed: {e}")
+
+    async def get_somatic_pressure(self, entity_id: str, window_secs: int = 60) -> Dict[str, Any]:
+        return await anyio.to_thread.run_sync(self._sync_get_somatic_pressure, entity_id, window_secs)
 
     def _sync_get_cognitive_velocity(self, entity_id: str, window_secs: int = 30) -> CognitiveVelocity:
         """Calculates tokens/sec and acceleration (change in tokens/sec) to detect loops."""
@@ -205,16 +277,16 @@ class SovereignReader:
         
         query = """
             SELECT 
-                SUM(CASE WHEN timestamp >= ? THEN prompt_tokens + completion_tokens ELSE 0 END) as window1_tokens,
-                SUM(CASE WHEN timestamp >= ? AND timestamp < ? THEN prompt_tokens + completion_tokens ELSE 0 END) as window2_tokens
-            FROM token_ledger 
-            WHERE entity_id = ? AND timestamp >= ?
+                SUM(CASE WHEN ts >= ? THEN prompt_tokens + completion_tokens ELSE 0 END) as window1_tokens,
+                SUM(CASE WHEN ts >= ? AND ts < ? THEN prompt_tokens + completion_tokens ELSE 0 END) as window2_tokens
+            FROM performance 
+            WHERE entity_id = ? AND ts >= ?
         """
         
         try:
             with self._get_connection() as conn:
                 cur = conn.cursor()
-                cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='token_ledger'")
+                cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='performance'")
                 if not cur.fetchone():
                     return CognitiveVelocity(0.0, 0.0)
                     

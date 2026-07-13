@@ -38,6 +38,7 @@ from .memory.providers import (
     DiskSpaceError,
 )
 from .memory.vector_adapters import IVectorStoreAdapter, QdrantAdapter, MemoryVectorAdapter
+from .memory.sqlite_vec_adapter import SQLiteVecAdapter
 from .memory.fts_index import ConversationFTSIndex
 from .memory.embeddings import (
     EmbeddingManager, 
@@ -168,19 +169,21 @@ class MemoryStore:
         if vector_store is not None:
             self.vector_store = vector_store
         else:
-            # Default to QdrantAdapter with sovereign fallback to MemoryVectorAdapter
+            # Default to SQLiteVecAdapter (unified fabric) with sovereign fallback to MemoryVectorAdapter
+            # Correction C2: ADD a tier, never redefine the class
             # Health check is performed lazily during first use
-            self.vector_store = QdrantAdapter()
+            self.vector_store = SQLiteVecAdapter()
 
         if embedding_manager is not None:
             self.embedding_manager = embedding_manager
         else:
-            # Corrected: Local-first 768-dim chain (Gemma -> Potion -> Hash)
+            # Local-first 1024-dim chain (Gemma -> Potion -> Hash)
+            # mxbai-embed-large-v1 is primary (1024-dim, BQ-trained)
             # Eliminates Ollama dependency and enforces dimensional consistency.
             self.embedding_manager = EmbeddingManager([
                 GemmaGGUFEmbeddingProvider(), 
                 StaticEmbeddingProvider(model_name="blobbybob/potion-mxbai-micro"), 
-                SovereignFallbackEmbeddingProvider(dimension=768)
+                SovereignFallbackEmbeddingProvider(dimension=1024)
             ])
         # [Horizon 2: MiMo] FTS5 Search Index
         self.fts = ConversationFTSIndex(_get_memory_dir() / "fts_memory.db")
@@ -840,7 +843,13 @@ class MemoryStore:
         """
         count = 0
         now = time.time()
-        async for ent_dir in anyio.Path(_get_entity_dir()).iterdir():
+        entity_dir = anyio.Path(_get_entity_dir())
+        # [M9: Error Integrity] Guard against a missing entity dir (e.g. fresh
+        # test environment or first boot). A missing dir is not an error — there
+        # is simply nothing to archive.
+        if not await entity_dir.exists():
+            return 0
+        async for ent_dir in entity_dir.iterdir():
             if not await anyio.Path(ent_dir).is_dir():
                 continue
             async for path in anyio.Path(ent_dir).glob("*.json"):

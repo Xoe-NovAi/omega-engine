@@ -40,6 +40,7 @@ class OpenAICompatProvider(RemoteProvider):
         temperature: float,
         max_tokens: int,
         trace_id: Optional[str] = None,
+        session_id: Optional[str] = None,
         logit_bias: Optional[Dict[int, float]] = None,
         repetition_penalty: float = 1.0,
         stream: bool = False,

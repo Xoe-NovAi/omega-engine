@@ -223,7 +223,7 @@ def render(
         The formatted ICS-S header string.
     
     Example:
-        >>> from src.omega.ics import render
+        >>> from omega.ics import render
         >>> render("KALI", model="minimax-m3-free", trace_id="trc_abc123")
         '⬡ OMEGA ⬡ KALI ⬡ minimax-m3-free ⬡ opencode ⬡ trc_abc123 ⬡ H2-F'
     """

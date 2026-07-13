@@ -228,6 +228,7 @@ class RemoteProvider(ABC):
         temperature: float = 0.7,
         max_tokens: int = 1024,
         trace_id: Optional[str] = None,
+        session_id: Optional[str] = None,
     ) -> Optional[str]:
         """Generate a response with retry, circuit breaking, and metrics.
         
@@ -255,7 +256,7 @@ class RemoteProvider(ABC):
             try:
                 start_ms = time.monotonic() * 1000
                 result = await self._send_request(
-                    model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id
+                    model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id, session_id=session_id
                 )
                 elapsed_ms = (time.monotonic() * 1000) - start_ms
         
@@ -389,6 +390,7 @@ class RemoteProvider(ABC):
         temperature: float,
         max_tokens: int,
         trace_id: Optional[str] = None,
+        session_id: Optional[str] = None,
     ) -> str:
         """Send the actual API request. Subclasses implement this.
         

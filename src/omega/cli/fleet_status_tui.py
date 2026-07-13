@@ -127,7 +127,7 @@ class FleetStatusApp(App):
                 yield DataTable(id="trace-feed")
         yield Footer()
 
-    def on_mount(self) -> None:
+    async def on_mount(self) -> None:
         """Setup the UI components on startup."""
         # 1. Setup Tree
         tree = self.query_one("#fleet-tree", Tree)
@@ -163,18 +163,19 @@ class FleetStatusApp(App):
         # ── Core Infrastructure ─────────────────────────────────────────────
         tree.root.add("Iris (Voice Bridge)", data="iris")
         tree.root.add("Sophia (Akashic Record)", data="sophia")
-
+        
         # 2. Setup DataTable
         table = self.query_one("#trace-feed", DataTable)
         table.add_columns("Time", "Level", "Entity", "Message", "Trace ID")
         table.cursor_type = "row"
         table.zebra_stripes = True
-
+        
         # 3. Start the refresh loop (every 2 seconds)
         self.set_interval(2.0, self.refresh_observability_data)
         
         # Initial fetch
-        self.refresh_observability_data()
+        await self.refresh_observability_data()
+
 
     def on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
         """Handle entity selection in the tree."""
@@ -185,18 +186,42 @@ class FleetStatusApp(App):
     async def refresh_observability_data(self) -> None:
         """Background worker to fetch data and update the UI."""
         try:
-            # Fetch data using the SovereignReader (which offloads to threads internally)
+            # Diagnostic logging to find the hang
+            with open("data/coordination/TUI_DEBUG.log", "a") as f:
+                f.write(f"[{datetime.utcnow()}] Starting refresh...\n")
+            
             health = await self.reader.get_fleet_health()
+            with open("data/coordination/TUI_DEBUG.log", "a") as f:
+                f.write(f"[{datetime.utcnow()}] Health fetched\n")
+                
             traces = await self.reader.tail_live_traces(max_lines=30)
+            with open("data/coordination/TUI_DEBUG.log", "a") as f:
+                f.write(f"[{datetime.utcnow()}] Traces fetched\n")
+                
             velocity = await self.reader.get_cognitive_velocity(self.selected_entity)
+            with open("data/coordination/TUI_DEBUG.log", "a") as f:
+                f.write(f"[{datetime.utcnow()}] Velocity fetched\n")
+                
             cost = await self.reader.get_entity_cost(self.selected_entity)
+            with open("data/coordination/TUI_DEBUG.log", "a") as f:
+                f.write(f"[{datetime.utcnow()}] Cost fetched\n")
+                
+            sovereignty = await self.reader.get_sovereignty_ratio(self.selected_entity)
+            with open("data/coordination/TUI_DEBUG.log", "a") as f:
+                f.write(f"[{datetime.utcnow()}] Sovereignty fetched\n")
+                
+            somatic = await self.reader.get_somatic_pressure(self.selected_entity)
+            with open("data/coordination/TUI_DEBUG.log", "a") as f:
+                f.write(f"[{datetime.utcnow()}] Somatic fetched\n")
             
             # Update UI directly (we're on the event loop thread)
-            self._update_ui(health, traces, velocity, cost)
+            self._update_ui(health, traces, velocity, cost, sovereignty, somatic)
         except Exception as e:
+            with open("data/coordination/TUI_DEBUG.log", "a") as f:
+                f.write(f"[{datetime.utcnow()}] ERROR: {str(e)}\n")
             self._show_error(str(e))
 
-    def _update_ui(self, health, traces: List[TraceEvent], velocity, cost) -> None:
+    def _update_ui(self, health, traces: List[TraceEvent], velocity, cost, sovereignty, somatic) -> None:
         """Updates the widgets with the fetched data."""
         # Update Global Vitals
         vitals_widget = self.query_one("#global-vitals", Static)
@@ -217,7 +242,9 @@ class FleetStatusApp(App):
         focus_text += f"Cognitive Velocity: {velocity.tokens_per_second:.1f} tok/s\n"
         focus_text += f"Token Acceleration: [{accel_color}]{velocity.acceleration:+.2f} tok/s²[/{accel_color}]\n"
         focus_text += f"Session Cost: ${cost.cost_usd:.4f} ({cost.provider_name})\n"
-        focus_text += f"Tokens (P/C): {cost.prompt_tokens} / {cost.completion_tokens}"
+        focus_text += f"Tokens (P/C): {cost.prompt_tokens} / {cost.completion_tokens}\n"
+        focus_text += f"Sovereignty Ratio: {sovereignty:.2f} (local/cloud)\n"
+        focus_text += f"Avg Latency: {somatic['avg_latency_ms']:.1f}ms | Max Latency: {somatic['max_latency_ms']:.1f}ms | Requests: {somatic['request_count']}"
         
         focus_widget.update(focus_text)
 

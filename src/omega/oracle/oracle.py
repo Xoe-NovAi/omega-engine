@@ -924,6 +924,7 @@ class Oracle:
                 completion_tokens=getattr(res, 'completion_tokens', 0),
                 is_cloud=getattr(res, 'is_cloud', False),
                 trace_id=trace.trace_id,
+                entity_id=entity.name,
             )
             
             # [D16-1] Audience Calibration — transform response to target register
@@ -1031,6 +1032,7 @@ class Oracle:
             completion_tokens=getattr(res, 'completion_tokens', 0),
             is_cloud=getattr(res, 'is_cloud', False),
             trace_id=trace.trace_id,
+            entity_id=entity.name,
         )
         # [Sovereign] Record the "First Breath" for astrological alignment
         logger.info(f"Recording first breath for routed entity: {entity.name}")

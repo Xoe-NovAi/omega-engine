@@ -32,7 +32,7 @@
     },
     "searxng": {
       "type": "remote",
-      "url": "http://127.0.0.1:8018/sse",
+      "url": "http://127.0.0.1:8018/mcp",
       "enabled": true
     },
     "firecrawl": {

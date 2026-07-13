@@ -4,6 +4,14 @@
 
 ---
 
+## Overview
+
+The Omega Engine's ingestion pipeline is built on the **omega-sieve** standalone package (`pip install omega-sieve`), which provides the T1→T2→T3 tiered extraction and verification core. The engine wraps this with entity scoping, CAS persistence, MemoryStore integration, and Hivemind coordination.
+
+**Standalone Package**: `omega-sieve` v0.1.0 — `docs/reference/api/omega_sieve.md`
+
+---
+
 ## IngestionPipeline
 
 **File**: `src/omega/ingestion/pipeline.py`
@@ -43,25 +51,28 @@ result = await pipeline.run_source(FileSource("path/to/doc.md"))
 | Component | Access | Description |
 |-----------|--------|-------------|
 | `pipeline.cas` | `CASArchiver` | Content-Addressable Storage |
-| `pipeline.scraper` | `SovereignScraper` | Tiered web scraper |
-| `pipeline.verifier` | `TriangulationVerifier` | Sovereign-Sieve verification |
-| `pipeline.persistence` | `IngestionPersistence` | MemoryStore + Qdrant writer |
+| `pipeline.scraper` | `SovereignScraper` | Tiered web scraper (wraps `omega_sieve.SovereignScraper`) |
+| `pipeline.verifier` | `TriangulationVerifier` | Sovereign-Sieve verification (wraps `omega_sieve.TriangulationVerifier`) |
+| `pipeline.persistence` | `IngestionPersistence` | MemoryStore + sqlite-vec writer |
 | `pipeline.breaker` | `IngestionCircuitBreaker` | Circuit breaker (5 failures → open) |
 | `pipeline.sentry` | `SovereignSentry` | Pre-flight canary probes |
 | `pipeline.budget` | `BudgetGuard` | Token/USD budget enforcement |
 
 ---
 
-## SovereignScraper
+## SovereignScraper (Omega Wrapper)
 
 **File**: `src/omega/ingestion/scraper.py`
 
-Hardened web scraper with tiered modes, powered by `crawl4ai` `AsyncWebCrawler`.
+Omega-specific wrapper around `omega_sieve.SovereignScraper` adding:
+- Domain allowlist from WAD config (M2 Firewall compliance)
+- CAS integration for automatic deduplication
+- Entity-scoped metadata
 
 ### Constructor
 
 ```python
-SovereignScraper(cas_archiver: Optional[CASArchiver] = None)
+SovereignScraper(cas_archiver: Optional[CASArchiver] = None, domain_config_path: Optional[str] = None)
 ```
 
 ### Methods
@@ -89,13 +100,19 @@ class ScrapeResult:
     error: Optional[str] = None
 ```
 
+#### `scrape_auto(url: str, min_chars: int = 200) -> ScrapeResult`
+
+Auto-tier: starts at T1, escalates to T2/T3 if content is insufficient.
+
 ---
 
-## TriangulationVerifier
+## TriangulationVerifier (Omega Wrapper)
 
 **File**: `src/omega/ingestion/verifier.py`
 
-The Sovereign-Sieve. Verifies knowledge by triangulating T1 and T3 extraction results.
+Omega-specific wrapper around `omega_sieve.TriangulationVerifier` adding:
+- Entity-scoped verification context
+- Integration with `EnrichmentEngine` for metadata triangulation
 
 ### Constructor
 
@@ -179,3 +196,12 @@ IngestionError (base)
 ├── BudgetExceededError — token/USD budget exhausted
 └── SentryFailure       — pre-flight probe failed
 ```
+
+---
+
+## Further Reading
+
+- **Standalone Package**: `docs/reference/api/omega_sieve.md` — Full omega-sieve API
+- **Architecture**: `docs/explanation/ingestion-architecture.md` — Pipeline flow diagram
+- **CAS Reference**: `docs/reference/api/cas.md` — Content-Addressable Storage
+- **Selective Hydration**: `docs/reference/selective-hydration.md` — L3 principle retrieval

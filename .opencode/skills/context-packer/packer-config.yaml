@@ -1,11 +1,19 @@
+# 🔱 Omega Engine — Context Packer Profile Configuration
+# AP: AP-CONTEXT-PACKER-CONFIG-v2.0.0
+# Updated: 2026-07-11 (Sonnet 4.6 hardening — core_engine split, 3 new profiles)
+# Max slots: 12 per profile (safe zone below Claude Projects RAG threshold of 13)
+# Token target: keep each theme bundle under ~80K tokens for effective Claude usage
+
 profiles:
+
+  # ── Sovereign Audit (hardened — core_engine split into 5 sub-themes) ──────
   sovereign-audit:
-    description: "Core Engine and Mandates Audit"
+    description: "Core Engine and Mandates Audit — hardened 2026-07-11"
     max_slots: 12
     include:
-      - "CLAUDE.md"
       - "SOVEREIGN_MANDATES.md"
       - "OMEGA_ENGINE.md"
+      - "AGENTS.md"
       - "src/omega/**/*.py"
       - "config/providers.yaml"
       - "config/models.yaml"
@@ -14,12 +22,46 @@ profiles:
       - "**/__pycache__/**"
       - "**/*.pyc"
       - "**/*.log"
+      - "**/*.tmp"
+      - "context_packs/**"
     themes:
-      mandates: ["CLAUDE.md", "SOVEREIGN_MANDATES.md", "OMEGA_ENGINE.md"]
-      core_engine: ["src/omega/**/*.py"]
-      config: ["config/providers.yaml", "config/models.yaml"]
-      strategy: ["docs/strategy/**/*.md"]
+      mandates:
+        - "SOVEREIGN_MANDATES.md"
+        - "OMEGA_ENGINE.md"
+        - "AGENTS.md"
+      oracle_core:
+        - "src/omega/oracle/oracle.py"
+        - "src/omega/oracle/model_gateway.py"
+        - "src/omega/oracle/entity_registry.py"
+        - "src/omega/oracle/entity_workspace.py"
+        - "src/omega/oracle/orchestrator.py"
+        - "src/omega/oracle/resource_guard.py"
+        - "src/omega/oracle/cpu_optimizer.py"
+        - "src/omega/oracle/context_builder.py"
+        - "src/omega/oracle/session_lifecycle.py"
+        - "src/omega/oracle/iris.py"
+      memory:
+        - "src/omega/memory_store.py"
+        - "src/omega/memory/**/*.py"
+        # NOTE: context_builder.py belongs to oracle_core only — removed from here
+        # to prevent the file appearing in two XML bundles (token waste).
+      providers:
+        - "src/omega/oracle/backends/**/*.py"
+        - "config/providers.yaml"
+        - "config/models.yaml"
+      observability:
+        - "src/omega/observability/**/*.py"
+        - "src/omega/monitoring/**/*.py"
+      mcp_hub:
+        - "src/omega/mcp_runtime.py"
+        - "src/omega/hub.py"
+        - "src/omega/gateway/**/*.py"
+      # NOTE: `config` theme removed — its files are already covered by `providers`.
+      # Duplicate themes produce duplicate XML bundles and waste Claude quota.
+      strategy:
+        - "docs/strategy/**/*.md"
 
+  # ── Engineering P3 (unchanged, working) ───────────────────────────────────
   engineering-p3:
     description: "Full context for P3 Engineering Pillar"
     max_slots: 12
@@ -30,6 +72,101 @@ profiles:
     exclude:
       - "**/__pycache__/**"
     themes:
-      core_logic: ["src/omega/oracle/orchestrator.py", "src/omega/oracle/model_gateway.py"]
-      validation: ["tests/**"]
-      docs: ["docs/strategy/**"]
+      core_logic:
+        - "src/omega/oracle/orchestrator.py"
+        - "src/omega/oracle/model_gateway.py"
+      validation:
+        - "tests/**"
+      docs:
+        - "docs/strategy/**"
+
+  # ── Kali Oversight Pack ────────────────────────────────────────────────────
+  kali-oversight:
+    description: "Grand Oversight context — mandates, fleet topology, decisions, agents"
+    max_slots: 12
+    include:
+      - "SOVEREIGN_MANDATES.md"
+      - "OMEGA_ENGINE.md"
+      - "AGENTS.md"
+      - "CREDITS.md"
+      - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+      - "docs/decisions/PIVOT_LOG.md"
+      - ".opencode/agents/**/*.md"
+      - "docs/strategy/HIVEMIND_PROTOCOL.md"
+      - "docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md"
+    exclude:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+    themes:
+      mandates:
+        - "SOVEREIGN_MANDATES.md"
+        - "OMEGA_ENGINE.md"
+      fleet:
+        - "AGENTS.md"
+        - ".opencode/agents/**/*.md"
+      roadmap:
+        - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+        - "docs/decisions/PIVOT_LOG.md"
+      coordination:
+        - "docs/strategy/HIVEMIND_PROTOCOL.md"
+        - "docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md"
+      heritage:
+        - "CREDITS.md"
+
+  # ── YouTube Research Primer ────────────────────────────────────────────────
+  youtube-research-primer:
+    description: "YouTube Research Module context — spec, implementation, and integration points"
+    max_slots: 12
+    include:
+      - "docs/research/R_YOUTUBE_RESEARCH_MODULE_SPEC.md"
+      - "src/omega_youtube_research/**/*.py"
+      - "config/youtube_research.yaml"
+      - "tests/test_youtube_research_module.py"
+      - "youtube-links-for-ingestion.txt"
+      - "src/omega/memory_store.py"
+      - "src/omega/memory/**/*.py"
+    exclude:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+    themes:
+      spec:
+        - "docs/research/R_YOUTUBE_RESEARCH_MODULE_SPEC.md"
+      implementation:
+        - "src/omega_youtube_research/**/*.py"
+        - "config/youtube_research.yaml"
+      tests:
+        - "tests/test_youtube_research_module.py"
+      ingestion_queue:
+        - "youtube-links-for-ingestion.txt"
+      memory_integration:
+        - "src/omega/memory_store.py"
+        - "src/omega/memory/**/*.py"
+
+  # ── Sprint Context Pack ────────────────────────────────────────────────────
+  sprint-context:
+    description: "Current sprint research, analysis, and implementation plan"
+    max_slots: 12
+    include:
+      - "docs/research/R_CONTEXT_ENGINEERING_INTEGRATION.md"
+      - "docs/research/R_CONTEXT_ENGINEERING_INTEGRATION_ADDENDUM.md"
+      - "docs/research/R_SONNET46_FINAL_ANALYSIS.md"
+      - "docs/research/R_IMPLEMENTATIONS_MANUAL.md"
+      - "docs/research/R_YOUTUBE_RESEARCH_MODULE_SPEC.md"
+      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer-config.yaml"
+      - "SOVEREIGN_MANDATES.md"
+    exclude:
+      - "**/__pycache__/**"
+    themes:
+      analysis:
+        - "docs/research/R_CONTEXT_ENGINEERING_INTEGRATION.md"
+        - "docs/research/R_CONTEXT_ENGINEERING_INTEGRATION_ADDENDUM.md"
+        - "docs/research/R_SONNET46_FINAL_ANALYSIS.md"
+        - "docs/research/R_IMPLEMENTATIONS_MANUAL.md"
+      spec:
+        - "docs/research/R_YOUTUBE_RESEARCH_MODULE_SPEC.md"
+      implementation:
+        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer-config.yaml"
+      mandates:
+        - "SOVEREIGN_MANDATES.md"

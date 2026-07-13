@@ -410,15 +410,16 @@ async def search_status() -> str:
     """
     # Gather health from the gateway's health monitor
     tier_map = {0: "local", 1: "searxng", 2: "exa", 3: "firecrawl"}
-    health = {name: (await gateway).health_monitor.is_available(name) for tier, name in tier_map.items()} # Wait, tier_map is {int: str}
-    # Correcting the loop
-    health = {name: (await gateway).health_monitor.is_available(name) for tier, name in tier_map.items()}
+    gw = await gateway
+    health_monitor = gw.model_gateway._health_monitor
+    health = {name: health_monitor.is_available(name) for name in tier_map.values()}
     
+    service = await sovereign_search_service
     status = {
         "pipeline_version": "SSP-V2",
         "tier_health": health,
         "firecrawl_credits": (await sovereign_search_service).budget.has_quota("firecrawl", 100),
-        "cache_dir": str((await sovereign_search_service).cache_dir),
+        "cache_dir": str((await sovereign_search_service).cache.cache_dir),
         "config_version": (await sovereign_search_service).config.get("version", "unknown")
     }
     return json.dumps(status, indent=2)
@@ -3162,3 +3163,55 @@ Returns:
         "note": "This is WEB search. For LOCAL library FTS5 search, use 'library_fts_search'."
     }, indent=2, default=str)
 
+
+
+# ── Hivemind Redis Event Bus (P1-3) ───────────────────────────────────
+# [heritage: redis-py 2010] Ephemeral Pub/Sub awareness layer. Durable
+# coordination stays file-based (data/coordination/); Redis is ephemeral-only.
+@m9_safe("hivemind_redis_publish")
+@mcp.tool()
+async def hivemind_redis_publish(channel: str, message: str, ttl: int = 20) -> str:
+    """Publish an ephemeral Hivemind awareness message over Redis Pub/Sub.
+
+    Used for heartbeats and live-feed deltas — high-frequency, low-stakes
+    signals. Task-critical coordination remains file-based (Hivemind locks,
+    handoffs). Degrades gracefully to a status="unavailable" JSON when Redis
+    is not running; the file-based Hivemind is the fallback (M23).
+
+    Args:
+        channel: Channel name (e.g. "heartbeat", "live_feed").
+        message: JSON or text payload to broadcast.
+        ttl: Advisory TTL (seconds) echoed to subscribers for local expiry.
+
+    Returns:
+        JSON string with status, delivered count, and channel.
+    """
+    from mcp_servers.omega_hub.hivemind_redis import get_hivemind_redis
+
+    bus = get_hivemind_redis()
+    result = await bus.publish(channel, message, ttl=ttl)
+    return json.dumps(result, indent=2)
+
+
+@m9_safe("hivemind_redis_subscribe")
+@mcp.tool()
+async def hivemind_redis_subscribe(channel: str, timeout: float = 2.0, max_messages: int = 50) -> str:
+    """Subscribe to an ephemeral Hivemind Redis Pub/Sub channel (bounded listen).
+
+    Collects messages for up to ``timeout`` seconds (never blocks indefinitely,
+    M23 Failure Integrity). Use for ephemeral awareness only; for task-critical
+    work use the file-based Hivemind handoff/lock tools.
+
+    Args:
+        channel: Channel name to listen on.
+        timeout: Max seconds to listen (default 2.0).
+        max_messages: Max messages to collect before returning.
+
+    Returns:
+        JSON string with status, channel, and collected messages.
+    """
+    from mcp_servers.omega_hub.hivemind_redis import get_hivemind_redis
+
+    bus = get_hivemind_redis()
+    result = await bus.subscribe(channel, timeout=timeout, max_messages=max_messages)
+    return json.dumps(result, indent=2)

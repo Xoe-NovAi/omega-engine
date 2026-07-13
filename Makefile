@@ -366,7 +366,7 @@ rag-reindex: ## 🔄 Reindex all documents in Qdrant
 # 🧪 TESTING & QUALITY
 # ============================================================================
 
-.PHONY: test test-cov test-oracle-bootstrap mcp-check lint typecheck guard verify-all
+.PHONY: test test-cov test-oracle-bootstrap mcp-check lint typecheck guard verify-all sovereignty-gate eval eval-calibrate
 
 guard: ## 🛡️ Run the Sovereign UID Guard to fix permission drift
 	@echo "$(COLOR_CYAN)🛡️  Running Sovereign UID Guard...$(COLOR_NC)"
@@ -392,8 +392,28 @@ test-badge: ## 📊 Generate TEST_STATUS.md with current test counts (SSOT for d
 doc-freshness: ## 🔍 Check documentation freshness (flag docs >30 days stale)
 	@python3 scripts/doc_freshness.py
 
-verify-all: test lint temple-grade verify-search-tools test-badge ## 🛡️  Run all verification gates (T1-T11 + Search Protocol)
+verify-all: test lint temple-grade verify-search-tools test-badge sovereignty-gate ## 🛡️  Run all verification gates (T1-T11 + Search Protocol)
 	@echo "$(COLOR_GREEN)✅ All verification gates passed.$(COLOR_NC)"
+
+sovereignty-gate: ## 🛡️  Enforce local-first inference ratio (M7) — fail build if local < 80%
+	@echo "$(COLOR_CYAN)🛡️  Running Sovereignty Gate (M7 Local-First)...$(COLOR_NC)"
+	OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m omega.governance.sovereignty_gate --min-ratio 0.80
+	@echo "$(COLOR_GREEN)✅ Sovereignty Gate passed.$(COLOR_NC)"
+
+# ── S2: Sovereign Eval Pipeline ───────────────────────────────────────
+eval: guard ## 🧪 Run the Sovereign Eval Pipeline (S2) on the golden dataset
+	@echo "$(COLOR_CYAN)🔱 Running Sovereign Eval Pipeline (S2)...$(COLOR_NC)"
+	OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m omega.eval.runner \
+		--dataset data/eval/golden_v1.jsonl \
+		--thresholds config/eval/thresholds.yaml
+	@echo "$(COLOR_GREEN)✅ Eval pipeline complete.$(COLOR_NC)"
+
+eval-calibrate: guard ## 🎯 Calibrate the LLM-as-Judge via isotonic regression (S2)
+	@echo "$(COLOR_CYAN)🎯 Calibrating judge (isotonic regression)...$(COLOR_NC)"
+	OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m omega.eval.calibrate \
+		--dataset data/eval/golden_v1.jsonl \
+		--output config/eval/calibrated_model.pkl
+	@echo "$(COLOR_GREEN)✅ Judge calibration complete.$(COLOR_NC)"
 
 test-cov: ## 📊 Run tests with coverage (uses OMEGA_ENV=test to mock backends)
 	OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m pytest --cov=omega --cov-report=term-missing $(ARGS)
@@ -422,6 +442,16 @@ typecheck: ## 🔍 Type check with mypy
 
 verify-search-tools: ## 🔌 Verify search tool connectivity & credits
 	PYTHONPATH=src $(PYTHON) -m pytest tests/test_search_tools.py
+
+google-search-ban: ## 🚫 Ban google_search - Sovereign Search Protocol enforcement
+	@echo "$(COLOR_CYAN)🚫 Checking for banned google_search usage...$(COLOR_NC)"
+	@if grep -rn "google_search" src/omega/ .opencode/agents/ .opencode/skills/ config/ 2>/dev/null | grep -v "\.md:.*Tool: google_search" | grep -v "SYSTEM_FAILURE_LOG.md" | grep -v "data/entities/jem/proposed_lessons.yaml" | grep -v "data/entities/john_carmack/proposed_lessons.yaml"; then \
+		echo "$(COLOR_RED)✗ FOUND prohibited google_search references!$(COLOR_NC)"; \
+		grep -rn "google_search" src/omega/ .opencode/agents/ .opencode/skills/ config/ 2>/dev/null | grep -v "\.md:.*Tool: google_search" | grep -v "SYSTEM_FAILURE_LOG.md" | grep -v "data/entities/jem/proposed_lessons.yaml" | grep -v "data/entities/john_carmack/proposed_lessons.yaml" || true; \
+		exit 1; \
+	else \
+		echo "$(COLOR_GREEN)✓ No prohibited google_search references found.$(COLOR_NC)"; \
+	fi
 
 # ============================================================================
 # 🤖 LOCAL INFERENCE (LM Studio / lmster)
@@ -629,7 +659,7 @@ mandate-audit: ## 🛡️ Run Sovereign Mandate audit (M3, M6, M7, M10, M11, M12
 	@echo "$(COLOR_CYAN)🛡️  Running Sovereign Mandate Audit...$(COLOR_NC)"
 	@OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m omega.audit.mandate_auditor
 
-temple-grade: heritage-map heritage-vet validate-somatic-links mandate-gates mandate-audit memory-firewall-audit firewall-check ## 🏛️ Run all Temple-Grade gates (T1-T14)
+temple-grade: heritage-map heritage-vet validate-somatic-links mandate-gates mandate-audit google-search-ban memory-firewall-audit firewall-check ## 🏛️ Run all Temple-Grade gates (T1-T14)
 	@echo " [1;36m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 	@echo " 🏛️ Temple-Grade Verification (v7.5.4)"
 	@echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ [0m"

@@ -72,6 +72,11 @@ jobs:
           fi
           echo "✅ Error integrity check complete"
 
+      - name: Sovereignty Gate (Mandate 7 — Local-First)
+        run: |
+          pip install -e ".[cli,dev]"
+          python3 -m omega.governance.sovereignty_gate --min-ratio 0.80
+
       - name: Heritage Vetting (Mandate 14)
         run: |
           make heritage-vet

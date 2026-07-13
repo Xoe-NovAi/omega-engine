@@ -39,14 +39,14 @@ Oracle._record_interaction()
 │  │ CAS blobs    │  │ Streams+Hash │  │ JSON+gzip    │         │
 │  └──────────────┘  └──────────────┘  └──────────────┘         │
 │                                                                 │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐         │
-│  │ Batch Writer │  │ FTS5 Index   │  │ Vector Store │         │
-│  │ (buffered)   │  │ (SQLite BM25)│  │ (Qdrant)     │         │
-│  └──────────────┘  └──────────────┘  └──────────────┘         │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────┐  │
+│  │ Batch Writer │  │ FTS5 Index   │  │ Vector Store         │  │
+│  │ (buffered)   │  │ (SQLite BM25)│  │ (sqlite-vec unified) │  │
+│  └──────────────┘  └──────────────┘  └──────────────────────┘  │
 └────────────────────────────────────────────────────────────────┘
 ```
 
-**Source files**: `memory_store.py` (894 lines), `memory/providers.py` (391 lines), `memory/fts_index.py`, `memory/embeddings.py`, `memory/vector_adapters.py`
+**Source files**: `memory_store.py` (894 lines), `memory/providers.py` (391 lines), `memory/fts_index.py`, `memory/embeddings.py`, `memory/vector_adapters.py`, `memory/sqlite_vec_adapter.py` (644 lines)
 
 ---
 
@@ -460,19 +460,32 @@ The batch writer flushes on three conditions:
 
 If the engine crashes with unflushed batch writes, the data is lost. The `reset_memory_store()` function logs the count of abandoned writes for debugging.
 
-### 6.5 Vector Store Fallback
+### 6.5 Vector Store — sqlite-vec Unified Fabric (Strike 10)
 
-If Qdrant is unhealthy, the vector store falls back to `MemoryVectorAdapter` (in-memory):
+**Status**: 🔄 Building — `SQLiteVecAdapter` is the default `IVectorStoreAdapter` implementation.
 
-```python
-async def _ensure_vector_store(self) -> IVectorStoreAdapter:
-    status = await self.vector_store.get_status()
-    if status.get("status") != "healthy":
-        self.vector_store = MemoryVectorAdapter()
-    return self.vector_store
-```
+The vector store has been unified into a single `omega_memory.db` SQLite database with the `vec0` extension:
 
-This is a **silent** fallback — no exception, no alert. Check logs for "Vector store unhealthy" warnings to detect degraded search quality.
+| Component | Implementation | Status |
+|-----------|---------------|--------|
+| **FTS5** | `exchanges_fts` virtual table | ✅ Active |
+| **vec0** | `exchanges_vec` virtual table (float[1024]) | 🔄 Building |
+| **SQL edges** | `gnosis_edges` table | 🔄 Building |
+| **Partition key** | `entity_name` on all tables | ✅ Enforced |
+
+**Adapter**: `src/omega/memory/sqlite_vec_adapter.py` (644 lines) implements `IVectorStoreAdapter`.
+
+**Deprecated**: `QdrantAdapter` in `memory/vector_adapters.py` — marked deprecated, to be removed post-Strike 10.
+
+**Performance trade**: 313µs (Qdrant) → ~120ms at 200K vectors = 0.4-6% of 5-30s inference pipeline = non-issue.
+
+**Primary embedder**: `mxbai-embed-large-v1` (BQ-trained, 96.45% binary retention, 32× compression).
+
+**Fallback embedder**: `nomic-embed-text-v1.5` (MRL/8192-dim, NOT BQ-trained).
+
+**Self-supervised flywheel**: `vstash` (v0.38.1, MIT) — 74.5% hybrid disagreement → MNRL fine-tune (BGE-small 33M, LoRA r=16, 35-65 min/cycle on Zen 2) → eval gate → atomic reindex.
+
+**Heritage**: `[id-soft: doom-1993] 4-Tier Memory` → `[heritage: sqlite-vec 2024] partition key` → `[heritage: vstash 2026] eval gate`
 
 ### 6.6 Session Lifecycle Policy
 

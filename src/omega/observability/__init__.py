@@ -1086,6 +1086,7 @@ class ObservabilityEngine:
         completion_tokens: int = 0,
         is_cloud: bool = False,
         trace_id: Optional[str] = None,
+        entity_id: Optional[str] = None,
     ) -> None:
         """Record a performance measurement to MetricsDB.
 
@@ -1104,6 +1105,7 @@ class ObservabilityEngine:
                 completion_tokens=completion_tokens,
                 is_cloud=is_cloud,
                 trace_id=trace_id,
+                entity_id=entity_id,
             )
         except (OSError, RuntimeError) as e:
             logger.debug("MetricsDB performance recording failed: %s", e)
@@ -1116,6 +1118,7 @@ class ObservabilityEngine:
         trace_id: Optional[str] = None,
         provider: Optional[str] = None,
         context: Optional[Dict[str, Any]] = None,
+        entity_id: Optional[str] = None,
     ) -> None:
         """Record an error to MetricsDB (separate from forensics recording).
 
@@ -1131,6 +1134,7 @@ class ObservabilityEngine:
                 trace_id=trace_id,
                 provider=provider,
                 context=context,
+                entity_id=entity_id,
             )
         except (OSError, RuntimeError) as e:
             logger.debug("MetricsDB error recording failed: %s", e)
