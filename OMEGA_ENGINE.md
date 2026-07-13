@@ -47,6 +47,7 @@
 | **Model Gateway** | `src/omega/oracle/model_gateway.py` | ✅ Operational | 8-backend provider fabric (native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode → Copilot → Mock) |
 | **Memory Store** | `src/omega/memory_store.py` | ✅ Operational | Hot/Warm/Cold/Temp tiers, hybrid FTS5+vector search |
 | **Vector Store** | `src/omega/memory/sqlite_vec_adapter.py` | 🟡 Strike 10 | `IVectorStoreAdapter` impl: sqlite-vec (FTS5 + vec0 + SQL edges) |
+| **WAD Loader** | `src/omega/oracle/wad_loader.py` | 🟡 Strike 11 | Evolving to Sovereign WAD Protocol (SWP) — Lump-based DAG loader |
 | **Ingestion Pipeline** | `src/omega/ingestion/` | ✅ Operational | T1→T2→T3 tiered extraction, TriangulationVerifier, CAS |
 | **Sovereign Sieve (Standalone)** | `packages/omega-sieve/` | ✅ v0.1.0 | `pip install omega-sieve` — T1(Trafilatura)→T2(Surgical)→T3(Crawl4AI) |
 | **Document Reader (Standalone)** | `scripts/universal_doc_reader.py` | ✅ v1.0.0 | Reads .docx, .pdf, .odt, .rtf, .html, .md, .txt, .json, .yaml |

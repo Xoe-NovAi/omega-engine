@@ -40,6 +40,7 @@ Epoch II ⏳ IN PROGRESS
   Strike 9: Sovereign Export Bundle 🆕 (Jem S1 — `.omega` ZIP+JSON format)
   Strike 9.5: Relational Gnosis Graph 🆕 (Jem S4 — Qdrant+SQLite hybrid)
   Strike 10: Module Fabric (OMS v1.0 + omega-vetala) ⏳ (depends: Strike 7.5)
+  Strike 11: Sovereign WAD Protocol (SWP) 🆕 (The "Doom-ification" of the Engine)
   Strike 12: Semantic Resonance Vectoring ⏳ (depends: Strike 7.5, 10)
   Strike 13: qwen-embedding + AGB-0 ONNX Integration ⏳ (depends: Strike 12)
 
@@ -182,6 +183,44 @@ The following 4 gaps were identified post-ONNX/Needle session and resolved via t
 | **P1 (Voice ONNX)** | **Worker pool + Piper model pooling + 4-8 ONNX threads** | Fixes concurrency crashes, integrates with ResourceGuard |
 
 **Net acceleration**: ~20h saved on Needle (optional), ~8h saved on DLQ (adopt vs invent), ~4h saved on voice concurrency (known fix).
+
+---
+
+## IV-D. Sovereign WAD Protocol (SWP) — Strike 11 (NEW)
+
+Synthesized from the MaKaLi Council (Nemotron 3 Ultra + Gemini 3.1 Pro) and the Heritage Council (John Carmack + Doom Guy).
+
+### Strike 11: Sovereign WAD Protocol (SWP)
+**Goal**: Transition from monolithic stacks to a modular, Lump-based capability architecture (The "Doom-ification" of the Engine).
+**Dependencies**: Strike 7.5 (Semantic Router)
+**Unblocks**: Strike 8.5 (Redis Streams), Strike 10 (Module Fabric)
+
+**Architecture Definition:**
+- **Lump**: A deterministic, versioned capability implementing `ILump` (e.g., `L1_HYBRID_EXTRACTOR`).
+- **PWAD**: A deployable package of Lumps (e.g., `youtube_input.wad`).
+- **MWAD**: A deployment descriptor (like docker-compose) wiring PWADs together.
+- **SovereignBus**: An AnyIO-based pub/sub message bus passing `LumpEnvelope` objects between Lumps.
+
+| Phase | Task | Deliverable | Owner |
+|-------|------|-------------|--------|
+| **11a** | **SWP Core SDK** | `src/omega/wad/protocol.py` (`ILump`, `LumpEnvelope`, `LumpRegistry`). | Ma'at/P3 |
+| **11b** | **DAG Loader & Bus** | `SovereignBus` (AnyIO channels) + Topological WAD Loader. | Lilith/P9 |
+| **11c** | **In-Place Wrapping** | Wrap existing YouTube V2 modules in `ILump` adapters. Verify 1256 tests pass. | Verity |
+| **11d** | **The Great Split** | Physically partition `omega_youtube_research` into 6 PWADs (input, process, store, know, qa, state). | Kali |
+| **11e** | **MCP Tool Binding** | Auto-register Lump capabilities as Omega Hub MCP tools for Agent use. | Ma'at/P4 |
+
+**Lump Interface Contract (M21):**
+```python
+class ILump(Protocol):
+    lump_id: str
+    category: str # INPUT | PROCESS | STORE | KNOW | QA | STATE
+    version: str  # SemVer
+    
+    async def initialize(self, config: Dict[str, Any], bus: SovereignBus) -> None: ...
+    async def health_check(self) -> LumpHealth: ...
+    async def shutdown(self) -> None: ...
+    # Runtime execution is handled via bus.subscribe() callbacks
+```
 
 ---
 
