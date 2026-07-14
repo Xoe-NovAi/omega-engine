@@ -19,7 +19,7 @@ import anyio
 import time
 from contextlib import asynccontextmanager
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 
 try:
@@ -236,13 +236,13 @@ class BudgetGuard:
                 "time_budget": str(time_budget),
                 "ram_budget": str(ram_budget),
                 "model": model,
-                "allocated_at": datetime.utcnow().isoformat(),
+                "allocated_at": datetime.now(timezone.utc).isoformat(),
             })
             pipe.expire(exp_key, time_budget + 60)
             
             await pipe.execute()
         
-        expires_at = datetime.utcnow() + timedelta(seconds=time_budget)
+        expires_at = datetime.now(timezone.utc) + timedelta(seconds=time_budget)
         
         return BudgetToken(
             experiment_id=experiment_id,
@@ -279,10 +279,10 @@ class BudgetGuard:
             "time_budget": time_budget,
             "ram_budget": ram_budget,
             "model": model,
-            "allocated_at": datetime.utcnow().isoformat(),
+            "allocated_at": datetime.now(timezone.utc).isoformat(),
         }
         
-        expires_at = datetime.utcnow() + timedelta(seconds=time_budget)
+        expires_at = datetime.now(timezone.utc) + timedelta(seconds=time_budget)
         
         return BudgetToken(
             experiment_id=experiment_id,

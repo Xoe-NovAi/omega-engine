@@ -22,7 +22,7 @@
 
 | Metric | Value | Status | LAST_VERIFIED |
 |--------|-------|--------|---------------|
-| Tests | **1271 passed** (42 skipped, 3 xfailed) | ✅ All functional tests pass | 2026-07-13 |
+| Tests | **1315 passed** (43 skipped, 3 xfailed) | ✅ All functional tests pass | 2026-07-13 |
 | Mandates | **23 (M1-M23)** | ✅ All enforced | 2026-07-13 |
 | Fleet | **13 presences** (11 agents + 2 entities) | ✅ Cap: 14 | 2026-07-13 |
 | WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 |
@@ -35,6 +35,7 @@
 | sqlite-vec unified fabric | **Strike 10 IN PROGRESS** — `SQLiteVecAdapter` default, Qdrant deprecated | 🟡 35/36 adapter tests pass | 2026-07-13 |
 | **KV Cache Quantization** | **LOCKED: q8_0 on CPU (Zen 2)** — No Flash Attention/GPU required | ✅ Research complete | 2026-07-13 |
 | **YouTube Researcher V2** | **9-Layer Temporal Knowledge Observatory** — L1-L9 complete, 15 contract tests pass | ✅ Operational | 2026-07-13 |
+| **Pre-PR Quick Wins** | **7 items** — Firewall clean, datetime deprecations, runtime warnings, test cache, docs sync | 🟡 In progress | 2026-07-13 |
 
 ---
 
@@ -108,4 +109,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-13 | Version: v1.2.0-pre | Tests: 1271 passing | SSOT: ~230 lines | Sessions: Omega-Sieve Package Complete + sqlite-vec Strike 10 In Progress | 4 Researcher Gaps Closed (TF-IDF routing, judge calibration, Redis DLQ, voice concurrency) | Net acceleration ~32h*
+*Last Updated: 2026-07-13 | Version: v1.2.0 | Tests: 1315 passing | SSOT: ~230 lines | Sessions: v1.2.0 Release — SWP, Doc Reader, Sieve, Heritage Pipeline | 4 Researcher Gaps Closed (TF-IDF routing, judge calibration, Redis DLQ, voice concurrency) | Net acceleration ~32h*

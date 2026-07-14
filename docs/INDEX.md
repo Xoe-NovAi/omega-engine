@@ -11,14 +11,14 @@ This index provides a structured map of the Omega Engine's knowledge base.
 ## ⚡ Sovereign Mandates & Protocols
 - [SOVEREIGN_MANDATES.md](../../SOVEREIGN_MANDATES.md) — Non-negotiable constitutional laws.
 - [AGENTS.md](../../AGENTS.md) — Agent roles, responsibilities, and operational modes.
-- [GNOSIS_BUFFER_PROTOCOL.md](../../GNOSIS_BUFFER_PROTOCOL.md) — Gnosis preservation and compaction protocol.
+- [docs/standards/DOC_UPDATE_PROCEDURE.md](../../docs/standards/DOC_UPDATE_PROCEDURE.md) — Documentation update protocol.
 - [docs/research/A2A_PROTOCOL.md](../../docs/research/A2A_PROTOCOL.md) — Agent-to-Agent handoff protocol.
 
 ## 🗺️ Strategy & Roadmap
-- [docs/MASTER_LEDGER.md](../../docs/MASTER_LEDGER.md) — The ultimate source of truth for roadmap and milestones.
-- [docs/strategy/XOE_NOVAI_FOUNDATION_STRATEGIC_PLAN.md](../../docs/strategy/XOE_NOVAI_FOUNDATION_STRATEGIC_PLAN.md) — Foundation vision.
+- [docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md](../../docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md) — Master execution roadmap (v3.9).
+- [docs/strategy/archive/XOE_NOVAI_FOUNDATION_STRATEGIC_PLAN.md](../../docs/strategy/archive/XOE_NOVAI_FOUNDATION_STRATEGIC_PLAN.md) — Foundation vision (archived).
 - [docs/strategy/SYSTEMS_HARDENING_PLAN.md](../../docs/strategy/SYSTEMS_HARDENING_PLAN.md) — Hardening backlog.
-- [docs/strategy/STACK_RELEASE_ROADMAP.md](../../docs/strategy/STACK_RELEASE_ROADMAP.md) — WAD release schedule.
+- [docs/strategy/archive/STACK_RELEASE_ROADMAP.md](../../docs/strategy/archive/STACK_RELEASE_ROADMAP.md) — WAD release schedule (archived).
 
 ## 📚 Research & Gnosis
 - [docs/research/INDEX.md](../../docs/research/INDEX.md) — Master index of all research deliverables.
@@ -26,9 +26,12 @@ This index provides a structured map of the Omega Engine's knowledge base.
 - [config/glossary.md](../../config/glossary.md) — Canonical term definitions.
 
 ## 🔧 Operations & Infrastructure
-- [docs/operations/RESEARCH_QUEUE.md](../../docs/operations/RESEARCH_QUEUE.md) — Active research queue and guidance.
+- [docs/archive/stale/operations/RESEARCH_QUEUE.md](../../docs/archive/stale/operations/RESEARCH_QUEUE.md) — Active research queue and guidance (archived).
 - [docs/research/R_PODMAN_SOVEREIGN_V2.md](../../docs/research/R_PODMAN_SOVEREIGN_V2.md) — Verified Podman keep-id protocol.
 - [scripts/setup.sh](../../scripts/setup.sh) — Environment bootstrap script.
+
+## 🔌 MCP & Client Integration
+- [docs/MCP_CLIENT_SETUP.md](../../docs/MCP_CLIENT_SETUP.md) — Connect Cline, Gemini CLI, VS Code to Omega Hub (5 servers).
 
 ## 🔱 Fleet Review System (Web Claude Parallel Review)
 - [docs/strategy/WEB_CLAUDE_FLEET_PROTOCOL.md](../docs/strategy/WEB_CLAUDE_FLEET_PROTOCOL.md) — Reusable protocol for 8-account Web Claude fleet review (v1.1.0: added deep dive protocol + lessons learned).
@@ -46,13 +49,5 @@ This index provides a structured map of the Omega Engine's knowledge base.
 - [docs/review/project_instructions_06_mcp_infrastructure.md](../docs/review/project_instructions_06_mcp_infrastructure.md) — Account 6 Project Instructions.
 - [docs/review/project_instructions_07_cli_dx.md](../docs/review/project_instructions_07_cli_dx.md) — Account 7 Project Instructions.
 - [docs/review/project_instructions_08_strategy_docs.md](../docs/review/project_instructions_08_strategy_docs.md) — Account 8 Project Instructions.
-- [docs/review/review_01_core_architecture.md](../docs/review/review_01_core_architecture.md) — Account 1: Core Architecture & Engine Integrity (handoff prompt).
-- [docs/review/review_02_provider_fabric.md](../docs/review/review_02_provider_fabric.md) — Account 2: Provider Fabric & Inference Pipeline.
-- [docs/review/review_03_memory_knowledge.md](../docs/review/review_03_memory_knowledge.md) — Account 3: Memory, Context & Knowledge Engine.
-- [docs/review/review_04_jem_pipeline.md](../docs/review/review_04_jem_pipeline.md) — Account 4: Jem 2.0 & Background Research Pipeline.
-- [docs/review/review_05_security_hardening.md](../docs/review/review_05_security_hardening.md) — Account 5: Observability, Security & Hardening.
-- [docs/review/review_06_mcp_infrastructure.md](../docs/review/review_06_mcp_infrastructure.md) — Account 6: MCP Hub & Integration Infrastructure.
-- [docs/review/review_07_cli_dx.md](../docs/review/review_07_cli_dx.md) — Account 7: CLI, REPL, Agents & Developer Experience.
-- [docs/review/review_08_strategy_docs.md](../docs/review/review_08_strategy_docs.md) — Account 8: Strategy, Documentation & Community Readiness.
 - [docs/review/claude-reports/01-claude-report-core-arch.md](../docs/review/claude-reports/01-claude-report-core-arch.md) — Account 1 initial report (17 findings).
 - [docs/review/claude-reports/01-deep-dive-1_core-arch.md](../docs/review/claude-reports/01-deep-dive-1_core-arch.md) — Account 1 Deep Dive 1 (12 findings).

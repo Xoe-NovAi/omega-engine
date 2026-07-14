@@ -20,7 +20,7 @@ import sqlite3
 import os
 from pathlib import Path
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import List, Dict, Optional, Any
 
 import anyio
@@ -93,7 +93,7 @@ class SovereignReader:
     # ─── Metrics & TSDB Queries ───────────────────────────────────────────────
 
     def _sync_get_metric_series(self, metric_name: str, entity_id: Optional[str], window_mins: int) -> MetricSeries:
-        cutoff = (datetime.utcnow() - timedelta(minutes=window_mins)).timestamp()
+        cutoff = (datetime.now(timezone.utc) - timedelta(minutes=window_mins)).timestamp()
         
         query = "SELECT ts as timestamp, value FROM metrics WHERE metric_name = ? AND ts >= ?"
         params = [metric_name, cutoff]
@@ -141,7 +141,7 @@ class SovereignReader:
                     breaker_states = {r["provider"]: r["state"] for r in cur.fetchall()}
                 
                 # Scaffold: calculate error rate over last 5 mins using performance table
-                cutoff = (datetime.utcnow() - timedelta(minutes=5)).timestamp()
+                cutoff = (datetime.now(timezone.utc) - timedelta(minutes=5)).timestamp()
                 cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='performance'")
                 if cur.fetchone():
                     cur.execute("SELECT COUNT(*) as total, SUM(CASE WHEN is_cloud = 0 THEN 1 ELSE 0 END) as errors FROM performance WHERE ts >= ?", (cutoff,))
@@ -199,7 +199,7 @@ class SovereignReader:
 
     def _sync_get_sovereignty_ratio(self, entity_id: str, window_secs: int = 300) -> float:
         """Calculate local vs cloud inference ratio for an entity."""
-        now = datetime.utcnow().timestamp()
+        now = datetime.now(timezone.utc).timestamp()
         cutoff = now - window_secs
         
         query = """
@@ -236,7 +236,7 @@ class SovereignReader:
 
     def _sync_get_somatic_pressure(self, entity_id: str, window_secs: int = 60) -> Dict[str, Any]:
         """Get hardware pressure metrics for an entity."""
-        now = datetime.utcnow().timestamp()
+        now = datetime.now(timezone.utc).timestamp()
         cutoff = now - window_secs
         
         query = """
@@ -271,7 +271,7 @@ class SovereignReader:
 
     def _sync_get_cognitive_velocity(self, entity_id: str, window_secs: int = 30) -> CognitiveVelocity:
         """Calculates tokens/sec and acceleration (change in tokens/sec) to detect loops."""
-        now = datetime.utcnow().timestamp()
+        now = datetime.now(timezone.utc).timestamp()
         t1 = now - window_secs
         t2 = now - (window_secs * 2)
         
@@ -313,7 +313,7 @@ class SovereignReader:
     def _sync_tail_live_traces(self, max_lines: int) -> List[TraceEvent]:
         """O(1) reverse-binary scan of the active daily event file."""
         # Events are written to data/logs/events/YYYY-MM-DD.jsonl
-        today = datetime.utcnow().strftime("%Y-%m-%d")
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
         trace_file = self.trace_dir.parent / "logs" / "events" / f"{today}.jsonl"
         
         if not trace_file.exists():

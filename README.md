@@ -7,8 +7,8 @@
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-blue)](https://www.python.org/)
 [![License: Apache 2.0](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 [![Local-First](https://img.shields.io/badge/Local--First-Primary-8A2BE2)]()
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)]()
-  [![Tests](https://img.shields.io/badge/tests-1002%20passing-brightgreen)]()
+[![Version](https://img.shields.io/badge/version-1.2.0-blue)]()
+  [![Tests](https://img.shields.io/badge/tests-1315%20passing-brightgreen)]()
 
 
 ---
@@ -62,7 +62,7 @@ omega backends                           # List available inference backends
 omega health                             # Show provider status and latency
 omega talk "hello" --iwad arcana_novai   # Load a specific IWAD stack
 omega version                            # Show version
-make test                                # Run the 911-test suite
+make test                                # Run the 1315-test suite
 make temple-grade                        # Verify all 11 Temple-Grade gates
 make menu                                # Full command menu
 ```
@@ -95,6 +95,7 @@ Cloud providers are **optional** and **never called unless local inference fails
 | **6** | **OpenRouter** | Set `OPENROUTER_API_KEY` in `.env` | ☁️ Cloud, 300+ models | ❌ Cloud |
 | **7** | **OpenCode Zen** | Auto via OpenCode CLI | ☁️ Cloud | ❌ Cloud |
 | **8** | **Copilot** | Auto via GitHub CLI | ☁️ Cloud | ❌ Cloud |
+| **9** | **Antigravity** | Auto via Cline CLI | ☁️ Cloud | ❌ Cloud |
 
 > **⚠️ Terms of Service**: Cloud providers may use your data for model training. Review each provider's ToS before enabling. The Omega Engine is not affiliated with any cloud provider.
 

@@ -34,7 +34,6 @@ class TestSomaticStateManager:
                 # First call: llama_copy_state_data
                 # Second call: open file (we need to mock the async context manager)
                 mock_file = AsyncMock()
-                mock_file = AsyncMock()
                 mock_file.__aenter__ = AsyncMock(return_value=mock_file)
                 mock_file.__aexit__ = AsyncMock(return_value=None)
                 mock_file.write = AsyncMock()

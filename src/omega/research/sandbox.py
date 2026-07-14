@@ -23,7 +23,7 @@ import shutil
 import psutil
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Any, Optional
@@ -134,7 +134,7 @@ class SandboxResult:
     peak_ram_mb: float = 0.0
     error: str | None = None
     provider_name: str = "sandbox"  # M22: Actual execution backend
-    started_at: datetime = field(default_factory=datetime.utcnow)
+    started_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: datetime | None = None
     
     def __post_init__(self):
@@ -147,7 +147,7 @@ class SandboxResult:
             SandboxState.TIMEOUT, SandboxState.FIREWALL_VIOLATION,
             SandboxState.BUDGET_EXCEEDED
         ):
-            self.completed_at = datetime.utcnow()
+            self.completed_at = datetime.now(timezone.utc)
     
     def is_terminal(self) -> bool:
         """M12: Terminal states have no outgoing transitions."""

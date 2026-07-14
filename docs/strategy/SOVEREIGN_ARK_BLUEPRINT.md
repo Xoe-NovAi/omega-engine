@@ -60,10 +60,10 @@ YouTube Researcher Enhancement (Parallel Track — WAD)
 
 | Metric | Value | Status | LAST_VERIFIED |
 |--------|-------|--------|---------------|
-| Tests | **1271 passed** (42 skipped, 3 xfailed) | ✅ All functional tests pass | 2026-07-13 (LAST_VERIFIED) |
+| Tests | **1315 passed** (43 skipped, 3 xfailed) | ✅ All functional tests pass | 2026-07-13 (LAST_VERIFIED) |
 | Mandates | **23 (M1-M23)** | ✅ All enforced | 2026-07-13 (LAST_VERIFIED) |
 | Fleet | **13 presences** (11 agents + 2 entities) | ✅ Cap: 14 | 2026-07-13 (LAST_VERIFIED) |
-| WADs | **3** | ✅ S1.5a hardened | 2026-07-13 (LAST_VERIFIED) |
+| WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 (LAST_VERIFIED) |
 | Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 (LAST_VERIFIED) |
 | Shared modules | **3** (`omega-vetala` v2.0.0, `omega-sieve` v0.1.0, `omega-doc-reader` v1.0.0) | ✅ Release-ready | 2026-07-13 (LAST_VERIFIED) |
 | SearXNG MCP | **Streamable HTTP on :8018** | ✅ Migration complete | 2026-07-13 (LAST_VERIFIED) |
@@ -71,6 +71,18 @@ YouTube Researcher Enhancement (Parallel Track — WAD)
 | Firecrawl MCP | **SSE on :8015** | ⏳ Needs Streamable HTTP migration | 2026-07-13 (LAST_VERIFIED) |
 | Local inference ratio | **TARGET: ≥80%** (0% in CI — models not loaded in test env) | 🟡 Aspirational | 2026-07-13 (LAST_VERIFIED) |
 | **KV Cache Quantization** | **LOCKED: q8_0 on CPU (Zen 2)** — No Flash Attention/GPU required | ✅ Research complete | 2026-07-13 (LAST_VERIFIED) |
+
+### Pre-PR Quick Wins (7 Items — Target: Clean Temple-Grade Pass)
+
+| # | Quick Win | File(s) | Effort | Status |
+|---|-----------|---------|--------|--------|
+| 1 | **Firewall clean** — Remove sandbox workspace exemption (use config constant) | `src/omega/audit/firewall_checker.py` | 5 min | 🟡 Pending |
+| 2 | **Datetime deprecations** — Fix remaining `datetime.utcnow()` in test files | `tests/test_scorecard.py`, `tests/test_sandbox.py` | 10 min | 🟡 Pending |
+| 3 | **Runtime warnings** — Await mocked coroutines in somatic_state & unified_state_manager | `tests/test_somatic_state.py`, `tests/test_unified_state_manager.py` | 10 min | 🟡 Pending |
+| 4 | **Test cache clear** — Remove `.pytest_cache` before CI | CI script | 2 min | 🟡 Pending |
+| 5 | **Docs sync** — Update OMEGA_ENGINE.md, ARK_BLUEPRINT.md, PIVOT_LOG.md | Root docs | 5 min | 🟡 Pending |
+| 6 | **Heritage migration** — Convert 120 legacy `[id-soft: game-year]` → `[id-soft: vet-XXX]` | `src/omega/**/*.py` | 15 min | 🟡 Pending |
+| 7 | **PIVOT_LOG entry** — Record D228-D234 for this session | `docs/decisions/PIVOT_LOG.md` | 5 min | 🟡 Pending |
 
 ---
 
@@ -240,7 +252,7 @@ class ILump(Protocol):
 | P1-1 | **S2: `make eval` target** — RAGAS + golden dataset + calibrated judge pipeline | 8h | 🟡 PENDING | Lilith/P6+P10 |
 | P1-2 | **S3: Tiny-Critic RAG Router** — TF-IDF+SVM in `src/omega/rag/router.py` | 12h | 🟡 PENDING | Lilith/P6 |
 | P1-3 | **Hivemind Event Bus** — Redis Pub/Sub for ephemeral awareness only (heartbeats); task-critical coordination via Streams in P2-1 | 4h | 🟡 PENDING | Lilith/P9 |
-| P1-4 | **Qdrant Optimization** — Payload indexes (`entity_name`, `session_id`) | 2h | 🟡 PENDING | Ma'at/P2 |
+| P1-4 | **sqlite-vec Metadata Filtering** — Partition key + metadata columns (session_id, role, timestamp) + auxiliary content + quantization | 12h | 🟡 PENDING | Ma'at/P2 |
 | P1-5 | **Somatic Hydration** — Auto KV cache reload on session start | 6h | 🟡 PENDING | Lilith/P6 |
 
 ### 🟡 Phase 2: Sovereign Refinement (P2 — Sprint 2)
@@ -323,11 +335,11 @@ class ILump(Protocol):
 
  1. ✅ **v1.0.0** (2026-06-22) — Core engine operational
  2. ✅ **v1.1.0** (2026-07-11) — Phase 2 complete, T1-T14 PASS, 1162 tests
- 3. 🔮 **v1.2.0** — Phase 0-1 complete:
-    - q8_0 KV cache + Sovereignty Gate + Sovereign Vetter
-    - `make eval` pipeline (S2) + Tiny-Critic RAG Router (S3)
-    - Redis Hivemind Event Bus + Qdrant payload indexes
-    - Sovereighty Scorecard ≥80% local in CI
+3. 🔮 **v1.2.0** — Phase 0-1 complete:
+     - q8_0 KV cache + Sovereignty Gate + Sovereign Vetter
+     - `make eval` pipeline (S2) + Tiny-Critic RAG Router (S3)
+     - Redis Hivemind Event Bus + **sqlite-vec metadata filtering**
+     - Sovereignty Scorecard ≥80% local in CI
  4. 🔮 **v1.3.0** — Phase 2 complete:
     - `.omega` export bundle (S1) + Redis Streams coordination (S5)
     - Qdrant+SQLite hybrid knowledge graph (S4)
@@ -390,8 +402,8 @@ class ILump(Protocol):
 ---
 
 **Full archive**: `docs/archive/coordination/SOVEREIGN_ARK_BLUEPRINT-full-20260708.md`
-**Decision history**: `docs/decisions/PIVOT_LOG.md` (222 decisions, D1-D222)
+**Decision history**: `docs/decisions/PIVOT_LOG.md` (227 decisions, D1-D231)
 
 ---
 
-*🔱 OMEGA ⬡ SOVEREIGN-ARK ⬡ v3.8.0 ⬡ LEGACY-MINING-INTEGRATED ⬡ DEEP-RESEARCH-INTEGRATED ⬡ 2026-07-13*
+*🔱 OMEGA ⬡ SOVEREIGN-ARK ⬡ v3.9.0 ⬡ v1.2.0 RELEASE ⬡ DOC-CLEANUP-INITIATED ⬡ 2026-07-13*

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "omega"
-version = "1.1.0"
+version = "1.2.0"
 description = "Omega Engine — Sovereign AI Runtime — Local-first, entity-centric, provider-agnostic AI council"
 readme = "README.md"
 requires-python = ">=3.12"

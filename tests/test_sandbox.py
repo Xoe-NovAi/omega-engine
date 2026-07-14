@@ -5,7 +5,7 @@ AP Token: AP-MAAT-SANDBOX-TEST-v1.0.0
 
 Tests verify:
 - isinstance(result, SandboxResult) for all public APIs
-- SandboxSpec.from_yaml() returns correct type
+- SandboxSpec.from_yaml() returns SandboxSpec with correct fields
 - SandboxRuntime.execute() returns SandboxResult
 - BudgetGuard.check() returns BudgetToken
 - Error hierarchy is typed and traceable
@@ -14,6 +14,7 @@ Tests verify:
 import anyio
 import pytest
 import tempfile
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 from uuid import UUID, uuid4
@@ -330,7 +331,7 @@ async def test_budget_guard_enforce_timeout():
     guard = BudgetGuard(enable_redis=False)
     # Create token with very short expiry
     from src.omega.research.types import BudgetToken
-    from datetime import datetime, timedelta
+    from datetime import datetime, timedelta, timezone
     
     token = BudgetToken(
         experiment_id="exp_timeout",
@@ -338,7 +339,7 @@ async def test_budget_guard_enforce_timeout():
         time_budget_sec=0,  # Immediate expiry
         ram_budget_mb=2048,
         model="qwen3-0.6b-q6_k",
-        expires_at=datetime.utcnow() - timedelta(seconds=1),
+        expires_at=datetime.now(timezone.utc) - timedelta(seconds=1),
     )
     
     with pytest.raises(BudgetTokenExpiredError):
@@ -389,7 +390,7 @@ def test_budget_token_is_expired():
         time_budget_sec=60,
         ram_budget_mb=2048,
         model="qwen3-0.6b-q6_k",
-        expires_at=datetime.utcnow() + timedelta(seconds=30),
+        expires_at=datetime.now(timezone.utc) + timedelta(seconds=30),
     )
     assert token.is_expired() is False
     assert token.remaining_sec > 0
@@ -401,7 +402,7 @@ def test_budget_token_is_expired():
         time_budget_sec=60,
         ram_budget_mb=2048,
         model="qwen3-0.6b-q6_k",
-        expires_at=datetime.utcnow() - timedelta(seconds=10),
+        expires_at=datetime.now(timezone.utc) - timedelta(seconds=10),
     )
     assert token_expired.is_expired() is True
     assert token_expired.remaining_sec < 0
@@ -527,7 +528,7 @@ def test_assert_budget_guard_type():
 
 def test_assert_budget_token_type():
     """M21: assert_budget_token_type validates BudgetToken contract."""
-    from src.omega.research.types import BudgetToken
+    from omega.research.types import BudgetToken
     from datetime import datetime, timedelta
     
     token = BudgetToken(
@@ -536,7 +537,7 @@ def test_assert_budget_token_type():
         time_budget_sec=60,
         ram_budget_mb=2048,
         model="qwen3-0.6b-q6_k",
-        expires_at=datetime.utcnow() + timedelta(seconds=30),
+        expires_at=datetime.now(timezone.utc) + timedelta(seconds=30),
     )
     
     # Should not raise
@@ -553,6 +554,7 @@ def test_assert_budget_token_type():
 async def test_ml_training_sandbox_creation():
     """MLTrainingSandbox can be instantiated."""
     from src.omega.research.sandboxes.ml_training import MLTrainingSandbox
+    from omega.research.sandbox import SandboxRuntime
     
     spec = SandboxSpec(name="ml_training", pillar="P6")
     guard = BudgetGuard(enable_redis=False)

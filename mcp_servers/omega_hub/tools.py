@@ -119,7 +119,10 @@ _OMEGA_PODMAN_STORAGE = Path(os.environ.get(
     str(_OMEGA_LIBRARY_PATH / "podman-storage")
 ))
 
-
+# ── Library inbox directory constants ──
+INBOX_DIR = PROJECT_ROOT / "data" / "library" / "inbox"
+PROCESSING_DIR = PROJECT_ROOT / "data" / "library" / "processing"
+FAILED_DIR = PROJECT_ROOT / "data" / "library" / "dead"
 
 
 # ── Background tasks ──

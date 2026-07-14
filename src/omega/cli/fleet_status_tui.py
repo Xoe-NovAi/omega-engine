@@ -17,7 +17,7 @@ Mandate 8: Zero Telemetry
 
 import os
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List
 
 from textual.app import App, ComposeResult
@@ -188,37 +188,37 @@ class FleetStatusApp(App):
         try:
             # Diagnostic logging to find the hang
             with open("data/coordination/TUI_DEBUG.log", "a") as f:
-                f.write(f"[{datetime.utcnow()}] Starting refresh...\n")
+                f.write(f"[{datetime.now(timezone.utc)}] Starting refresh...\n")
             
             health = await self.reader.get_fleet_health()
             with open("data/coordination/TUI_DEBUG.log", "a") as f:
-                f.write(f"[{datetime.utcnow()}] Health fetched\n")
+                f.write(f"[{datetime.now(timezone.utc)}] Health fetched\n")
                 
             traces = await self.reader.tail_live_traces(max_lines=30)
             with open("data/coordination/TUI_DEBUG.log", "a") as f:
-                f.write(f"[{datetime.utcnow()}] Traces fetched\n")
+                f.write(f"[{datetime.now(timezone.utc)}] Traces fetched\n")
                 
             velocity = await self.reader.get_cognitive_velocity(self.selected_entity)
             with open("data/coordination/TUI_DEBUG.log", "a") as f:
-                f.write(f"[{datetime.utcnow()}] Velocity fetched\n")
+                f.write(f"[{datetime.now(timezone.utc)}] Velocity fetched\n")
                 
             cost = await self.reader.get_entity_cost(self.selected_entity)
             with open("data/coordination/TUI_DEBUG.log", "a") as f:
-                f.write(f"[{datetime.utcnow()}] Cost fetched\n")
+                f.write(f"[{datetime.now(timezone.utc)}] Cost fetched\n")
                 
             sovereignty = await self.reader.get_sovereignty_ratio(self.selected_entity)
             with open("data/coordination/TUI_DEBUG.log", "a") as f:
-                f.write(f"[{datetime.utcnow()}] Sovereignty fetched\n")
+                f.write(f"[{datetime.now(timezone.utc)}] Sovereignty fetched\n")
                 
             somatic = await self.reader.get_somatic_pressure(self.selected_entity)
             with open("data/coordination/TUI_DEBUG.log", "a") as f:
-                f.write(f"[{datetime.utcnow()}] Somatic fetched\n")
+                f.write(f"[{datetime.now(timezone.utc)}] Somatic fetched\n")
             
             # Update UI directly (we're on the event loop thread)
             self._update_ui(health, traces, velocity, cost, sovereignty, somatic)
         except Exception as e:
             with open("data/coordination/TUI_DEBUG.log", "a") as f:
-                f.write(f"[{datetime.utcnow()}] ERROR: {str(e)}\n")
+                f.write(f"[{datetime.now(timezone.utc)}] ERROR: {str(e)}\n")
             self._show_error(str(e))
 
     def _update_ui(self, health, traces: List[TraceEvent], velocity, cost, sovereignty, somatic) -> None:

@@ -75,12 +75,15 @@ class TestDocumentReader:
         rtf_content = r"{\rtf1\ansi\deff0 Test RTF Document\par Second line\par}"
         with tempfile.NamedTemporaryFile(suffix=".rtf", delete=False, mode='w') as f:
             f.write(rtf_content)
-            try:
-                text = read_document(f.name)
-                assert "Test RTF Document" in text
-                assert "Second line" in text
-            finally:
-                os.unlink(f.name)
+            f.flush()
+            os.fsync(f.fileno())
+            fname = f.name
+        try:
+            text = read_document(fname)
+            assert "Test RTF Document" in text
+            assert "Second line" in text
+        finally:
+            os.unlink(fname)
 
     def test_read_html(self):
         """Test reading .html file."""
@@ -91,13 +94,16 @@ class TestDocumentReader:
 </body></html>"""
         with tempfile.NamedTemporaryFile(suffix=".html", delete=False, mode='w') as f:
             f.write(html_content)
-            try:
-                text = read_document(f.name)
-                assert "Test HTML" in text
-                assert "test" in text
-                assert "Item 1" in text
-            finally:
-                os.unlink(f.name)
+            f.flush()
+            os.fsync(f.fileno())
+            fname = f.name
+        try:
+            text = read_document(fname)
+            assert "Test HTML" in text
+            assert "test" in text
+            assert "Item 1" in text
+        finally:
+            os.unlink(fname)
 
     def test_read_markdown(self):
         """Test reading .md file."""
@@ -110,48 +116,60 @@ This is **bold** and *italic* text.
 """
         with tempfile.NamedTemporaryFile(suffix=".md", delete=False, mode='w') as f:
             f.write(md_content)
-            try:
-                text = read_document(f.name)
-                assert "Test Markdown" in text
-                assert "bold" in text
-                assert "List item 1" in text
-            finally:
-                os.unlink(f.name)
+            f.flush()
+            os.fsync(f.fileno())
+            fname = f.name
+        try:
+            text = read_document(fname)
+            assert "Test Markdown" in text
+            assert "bold" in text
+            assert "List item 1" in text
+        finally:
+            os.unlink(fname)
 
     def test_read_text(self):
         """Test reading .txt file."""
         txt_content = "Plain text file\nWith multiple lines\nAnd some content."
         with tempfile.NamedTemporaryFile(suffix=".txt", delete=False, mode='w') as f:
             f.write(txt_content)
-            try:
-                text = read_document(f.name)
-                assert text == txt_content
-            finally:
-                os.unlink(f.name)
+            f.flush()
+            os.fsync(f.fileno())
+            fname = f.name
+        try:
+            text = read_document(fname)
+            assert text == txt_content
+        finally:
+            os.unlink(fname)
 
     def test_read_json(self):
         """Test reading .json file."""
         json_content = '{"key": "value", "number": 42}'
         with tempfile.NamedTemporaryFile(suffix=".json", delete=False, mode='w') as f:
             f.write(json_content)
-            try:
-                text = read_document(f.name)
-                assert "key" in text
-                assert "value" in text
-            finally:
-                os.unlink(f.name)
+            f.flush()
+            os.fsync(f.fileno())
+            fname = f.name
+        try:
+            text = read_document(fname)
+            assert "key" in text
+            assert "value" in text
+        finally:
+            os.unlink(fname)
 
     def test_read_yaml(self):
         """Test reading .yaml file."""
         yaml_content = "key: value\nnumber: 42\nlist:\n  - item1\n  - item2"
         with tempfile.NamedTemporaryFile(suffix=".yaml", delete=False, mode='w') as f:
             f.write(yaml_content)
-            try:
-                text = read_document(f.name)
-                assert "key" in text
-                assert "value" in text
-            finally:
-                os.unlink(f.name)
+            f.flush()
+            os.fsync(f.fileno())
+            fname = f.name
+        try:
+            text = read_document(fname)
+            assert "key" in text
+            assert "value" in text
+        finally:
+            os.unlink(fname)
 
     def test_read_with_metadata(self):
         """Test reading with metadata extraction."""

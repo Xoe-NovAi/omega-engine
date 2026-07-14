@@ -80,7 +80,7 @@ def distill_principles(events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
                 principles.append({
                     "principle": template,
                     "source_lesson": lesson,
-                    "first_seen": event.get("time", datetime.utcnow().isoformat()),
+                    "first_seen": event.get("time", datetime.now(timezone.utc).isoformat()),
                     "confidence": 0.9
                 })
     
@@ -89,7 +89,7 @@ def distill_principles(events: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
 def update_soul(soul: Dict[str, Any], principles: List[Dict[str, Any]]):
     """Atomically update soul with new principles."""
     for principle in principles:
-        principle["injected_at"] = datetime.utcnow().isoformat()
+        principle["injected_at"] = datetime.now(timezone.utc).isoformat()
         soul["entity"]["lessons_learned"].append(principle)
     
     # Ensure directory exists

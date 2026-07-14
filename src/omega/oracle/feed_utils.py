@@ -131,7 +131,7 @@ def consume_signal(signal: Dict[str, Any], agent: str) -> Dict[str, Any]:
     """Mark a signal as consumed by agent. Returns updated signal dict."""
     if agent not in signal.setdefault("consumed_by", []):
         signal["consumed_by"].append(agent)
-    signal.setdefault("consumed_at", {})[agent] = datetime.utcnow().isoformat() + "Z"
+    signal.setdefault("consumed_at", {})[agent] = datetime.now(timezone.utc).isoformat() + "Z"
     return signal
 
 
@@ -160,7 +160,7 @@ def write_cross_reference(consumer: str, signal: Dict[str, Any]) -> Path:
         "consumer": consumer,
         "producer": producer,
         "signal_id": signal_id,
-        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "timestamp": datetime.now(timezone.utc).isoformat() + "Z",
         "zoneid": ZONEID_KNOWLEDGE,
         "domain": signal.get("domain", ""),
         "l2_insight": signal.get("l2_insight", ""),
@@ -185,7 +185,7 @@ def _update_cross_ref_index(ref_dir: Path, consumer: str, cross_ref_id: str, pro
     else:
         index = {"agent": consumer, "updated_at": "", "cross_references": [], "total_consumed": 0, "unique_producers": []}
 
-    index["updated_at"] = datetime.utcnow().isoformat() + "Z"
+    index["updated_at"] = datetime.now(timezone.utc).isoformat() + "Z"
     if cross_ref_id not in index["cross_references"]:
         index["cross_references"].append(cross_ref_id)
         index["total_consumed"] = len(index["cross_references"])
@@ -224,7 +224,7 @@ def transition_demand(
         data["status"] = "FULFILLED"
         data["fulfilled_by"] = data.get("assigned_to", "unknown")
         data["fulfilled_signal_id"] = fulfilled_signal_id
-        data["fulfilled_at"] = datetime.utcnow().isoformat() + "Z"
+        data["fulfilled_at"] = datetime.now(timezone.utc).isoformat() + "Z"
     elif new_status == "FAILED":
         data["status"] = "FAILED"
     elif new_status == "EXPIRED":

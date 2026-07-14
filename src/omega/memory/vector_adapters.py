@@ -10,10 +10,17 @@ import anyio
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from qdrant_client import QdrantClient
-from qdrant_client.http import models as qmodels
-from qdrant_client.models import PayloadSchemaType
 from omega.errors import OmegaError, ProviderError, ProviderUnavailableError
+
+def _lazy_qdrant():
+    """Lazy-import Qdrant client — only triggered when QdrantAdapter is instantiated.
+    
+    This allows the engine to start without Qdrant installed, supporting
+    the M2 Engine-Stack Firewall and enabling clean Qdrant decommission (Strike 10)."""
+    from qdrant_client import QdrantClient
+    from qdrant_client.http import models as qmodels
+    from qdrant_client.models import PayloadSchemaType
+    return QdrantClient, qmodels, PayloadSchemaType
 
 logger = logging.getLogger(__name__)
 
@@ -169,6 +176,10 @@ class QdrantAdapter(IVectorStoreAdapter):
     """Qdrant implementation of the vector store adapter."""
 
     def __init__(self, host: str = "localhost", port: int = 6333, collection_name: str = "omega_memory"):
+        QdrantClient, qmodels, PayloadSchemaType = _lazy_qdrant()
+        self._QdrantClient = QdrantClient
+        self._qmodels = qmodels
+        self._PayloadSchemaType = PayloadSchemaType
         self.client = QdrantClient(host=host, port=port, check_compatibility=False)
         self.collection_name = collection_name
         self._initialized = False
@@ -198,14 +209,14 @@ class QdrantAdapter(IVectorStoreAdapter):
                 logger.info(f"Creating Qdrant collection: {self.collection_name} (size={vector_size})")
                 self.client.create_collection(
                     collection_name=self.collection_name,
-                    vectors_config=qmodels.VectorParams(
+                    vectors_config=self._qmodels.VectorParams(
                         size=vector_size, 
-                        distance=qmodels.Distance.COSINE
+                        distance=self._qmodels.Distance.COSINE
                     ),
                     # Enable scalar quantization for H2-S4 performance tuning
-                    quantization_config=qmodels.ScalarQuantization(
-                        scalar=qmodels.ScalarQuantizationConfig(
-                            type=qmodels.ScalarType.INT8,
+                    quantization_config=self._qmodels.ScalarQuantization(
+                        scalar=self._qmodels.ScalarQuantizationConfig(
+                            type=self._qmodels.ScalarType.INT8,
                             always_ram=True
                         )
                     )
@@ -233,8 +244,8 @@ class QdrantAdapter(IVectorStoreAdapter):
         raises a recoverable error which we log and ignore (idempotent-safe).
         """
         indexes = [
-            ("entity_name", PayloadSchemaType.KEYWORD),
-            ("session_id", PayloadSchemaType.KEYWORD),
+            ("entity_name", self._PayloadSchemaType.KEYWORD),
+            ("session_id", self._PayloadSchemaType.KEYWORD),
         ]
         for field_name, field_schema in indexes:
             try:
@@ -276,7 +287,7 @@ class QdrantAdapter(IVectorStoreAdapter):
                 self.client.upsert(
                     collection_name=self.collection_name,
                     points=[
-                        qmodels.PointStruct(
+                        self._qmodels.PointStruct(
                             id=point_id,
                             vector=vector,
                             payload=payload
@@ -300,11 +311,11 @@ class QdrantAdapter(IVectorStoreAdapter):
         await self._ensure_collection(len(vector))
         
         # Always filter by entity_name to ensure sovereign isolation
-        q_filter = qmodels.Filter(
+        q_filter = self._qmodels.Filter(
             must=[
-                qmodels.FieldCondition(
+                self._qmodels.FieldCondition(
                     key="entity_name", 
-                    match=qmodels.MatchValue(value=entity_name)
+                    match=self._qmodels.MatchValue(value=entity_name)
                 )
             ]
         )
@@ -314,7 +325,7 @@ class QdrantAdapter(IVectorStoreAdapter):
             # Simple implementation: add all filter keys as MatchValue conditions
             for k, v in filter.items():
                 q_filter.must.append(
-                    qmodels.FieldCondition(key=k, match=qmodels.MatchValue(value=v))
+                    self._qmodels.FieldCondition(key=k, match=self._qmodels.MatchValue(value=v))
                 )
 
         try:
@@ -341,10 +352,10 @@ class QdrantAdapter(IVectorStoreAdapter):
             def _sync_delete():
                 self.client.delete(
                     collection_name=self.collection_name,
-                    points_selector=qmodels.FilterSelector(
-                        filter=qmodels.Filter(
+                    points_selector=self._qmodels.FilterSelector(
+                        filter=self._qmodels.Filter(
                             must=[
-                                qmodels.FieldCondition(key="entity_name", match=qmodels.MatchValue(value=entity_name)),
+                                self._qmodels.FieldCondition(key="entity_name", match=self._qmodels.MatchValue(value=entity_name)),
                             ]
                         )
                     ),
@@ -355,7 +366,7 @@ class QdrantAdapter(IVectorStoreAdapter):
             def _sync_delete_ids():
                 self.client.delete(
                     collection_name=self.collection_name,
-                    points_selector=qmodels.PointIdsList(points=ids),
+                    points_selector=self._qmodels.PointIdsList(points=ids),
                     wait=True,
                 )
             await anyio.to_thread.run_sync(_sync_delete_ids)
@@ -369,11 +380,11 @@ class QdrantAdapter(IVectorStoreAdapter):
             def _sync_delete_session():
                 self.client.delete(
                     collection_name=self.collection_name,
-                    points_selector=qmodels.FilterSelector(
-                        filter=qmodels.Filter(
+                    points_selector=self._qmodels.FilterSelector(
+                        filter=self._qmodels.Filter(
                             must=[
-                                qmodels.FieldCondition(key="entity_name", match=qmodels.MatchValue(value=entity_name)),
-                                qmodels.FieldCondition(key="session_id", match=qmodels.MatchValue(value=session_id))
+                                self._qmodels.FieldCondition(key="entity_name", match=self._qmodels.MatchValue(value=entity_name)),
+                                self._qmodels.FieldCondition(key="session_id", match=self._qmodels.MatchValue(value=session_id))
                             ]
                         )
                     )

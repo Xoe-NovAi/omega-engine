@@ -52,7 +52,7 @@ class TestUnifiedStateManager:
         await usm.save_session("s1", "a")
         await usm.save_memory("e1", "b")
         await usm.save_handoff("p1", b"c")
-        stats = usm.stats()
+        stats = await usm.stats()
         assert stats["tracked_sessions"] == 1
         assert stats["tracked_memories"] == 1
         assert stats["tracked_handoffs"] == 1

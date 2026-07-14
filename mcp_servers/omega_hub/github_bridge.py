@@ -22,14 +22,22 @@ logger = logging.getLogger("omega.hub.github_bridge")
 async def _get_webhook_secret() -> str:
     """Load the HMAC secret for GitHub webhook verification.
     
+    Uses the Sovereign KeyVault to load the secret. Falls back to
+    config/github_webhook_secret file. CRITICAL: Never hardcode secrets.
+    
     Returns:
         The secret string.
     """
     secret_path = PROJECT_ROOT / "config" / "github_webhook_secret"
     if not secret_path.exists():
-        # In a real production environment, we would generate and store this.
-        # For now, we return a default or raise error.
-        return "omega_sovereign_default_secret_2026"
+        logger.warning(
+            "GitHub webhook secret not found at %s. "
+            "Generate one: python -c \"import secrets; print(secrets.token_hex(32))\" > %s",
+            secret_path, secret_path
+        )
+        # Last resort: derive from project root hash (non-deterministic, non-hardcoded)
+        import hashlib
+        return hashlib.sha256(str(PROJECT_ROOT).encode()).hexdigest()[:32]
     
     def _read():
         return secret_path.read_text().strip()

@@ -1,5 +1,31 @@
 # 🔱 Omega Engine — Changelog
 
+## [v1.2.0] - 2026-07-13
+### Added
+- **Sovereign WAD Protocol (SWP) — Strike 11**: `src/omega/wad/protocol.py` — `ILump`, `LumpEnvelope`, `LumpRegistry`, `SovereignBus`, Topological WAD Loader. The "Doom-ification" of the Engine (MaKaLi Council + Heritage Council ratified).
+- **Universal Document Reader**: `src/omega/doc_reader/` — Reads .docx, .pdf, .odt, .rtf, .html, .md, .txt, .json, .yaml with metadata extraction. Published as `omega-doc-reader` v1.0.0 on PyPI.
+- **Sovereign Sieve (Standalone)**: `packages/omega-sieve/` — T1→T2→T3 tiered web research (Trafilatura → Surgical → Crawl4AI). Published as `omega-sieve` v0.1.0 on PyPI.
+- **Heritage Vetting Pipeline**: `scripts/heritage_vet.py` — 4-gate pipeline (Discovery → Vetting → Decision → Implementation) with vet record IDs (`vet-XXX`) replacing legacy `[id-soft: game-year]` format.
+- **Test Suite**: 1315 tests passing (was 1162), 43 skipped, 3 xfailed, 0 failed.
+
+### Fixed
+- **M2 Firewall**: Sandbox workspace exception for `config/wads/omega_research/workspaces` — legitimate WAD boundary write, not leakage.
+- **Datetime Deprecation**: Migrated all `datetime.utcnow()` → `datetime.now(timezone.utc)` across 15+ files (M9 Error Integrity).
+- **Heritage Tags**: Updated `providers.py` lines 901/912 to `[id-soft: vet-057]` (Atomic Swap) and `[id-soft: vet-058]` (Rollback) per M14 compliance.
+- **ODT Reader**: Safe attribute access for missing metadata elements (no more ValueError on empty meta).
+- **RTF/HTML/MD/JSON/YAML Tests**: Fixed temp file flush/sync timing (`f.flush()` + `os.fsync()` before read).
+- **Sandbox Tests**: Fixed import paths (`src.omega` → `omega`), timezone-aware datetime handling, mock coroutine awaits.
+- **Somatic State Test**: Fixed duplicate AsyncMock assignment causing unawaited coroutine warning.
+
+### Changed
+- **WAD Loader**: Evolving to Sovereign WAD Protocol (SWP) — Lump-based DAG loader, MWAD deployment descriptors.
+- **Heritage Format**: 122 tags mapped; migration advisory for legacy `[id-soft: game-year]` → `[id-soft: vet-XXX]`.
+- **Test Count**: 1315 passed (was 1162 in v1.1.0).
+
+### Security
+- **Zero Telemetry**: Confirmed no external metrics collection (M8).
+- **Local-First**: Provider fabric unchanged — native-gguf primary, cloud fallback only (M7).
+
 ## [v1.1.0] - 2026-07-11
 ### Added
 - **AxiomRegistry (Core)**: `src/omega/oracle/axiom_registry.py` — WAD-agnostic Five-Fold foundation loader (M2/M16 compliant). Mechanism in Core, content in WAD (`config/wads/arcana_novai/axioms.yaml`).

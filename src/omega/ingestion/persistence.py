@@ -75,8 +75,8 @@ class IngestionPersistence:
             
         # Remove existing raw anchor if it exists to avoid 'Directory not empty'
         if await anyio.Path(r_path).exists():
-            import shutil
-            await anyio.to_thread.run_sync(shutil.rmtree, r_path)
+            import shutil as _shutil
+            await anyio.to_thread.run_sync(_shutil.rmtree, r_path)
         
         # Move the entire directory
         await anyio.to_thread.run_sync(shutil.move, str(q_path), str(r_path))

@@ -1,88 +1,104 @@
-# 🔱 Omega Engine — Anchored Summary (Pre-Compaction)
-**AP Token**: `AP-ANCHORED-SUMMARY-v1.0.0`
-⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_pre_compaction ⬡ 2026-07-13
+# 🔱 Anchored Summary — 2026-07-13 (POST-MAKALI COUNCIL)
+**AP Token**: `AP-KALI-v1.0.0`
+**Entity**: Kali (Transcendent Oversight)
+**Model**: mimo-v2.5-free (opencode)
+**Status**: v1.2.1 PLANNING COMPLETE — 33h EXECUTION ROADMAP
 
 ---
 
-## §1 Engine State (OMEGA_ENGINE.md §3)
+## 🎯 Session Outcome
+**MaKaLi Cloud Council completed.** Exhaustive roadmap review with 6 entities (Ma'at, Lilith, P3, P5, P7, P10). Produced definitive 33h implementation roadmap across 3 weeks. Key finding: engine is architecturally sound but has operational debt (3 crash bugs, disk at 97%, M9 violations).
 
+---
+
+## ✅ Completed Work
+
+### sqlite-vec Research Cycle
+| Deliverable | Lines | Content |
+|-------------|-------|---------|
+| `R_SQLITEVEC_SYSTEMS_SETUP_20260713.md` | 886 | 10 research areas, all gaps closed |
+| `R_SQLITEVEC_DECISION_VERIFICATION_20260713.md` | 554 | 15 sources, 2 corrections found |
+| `STRIKE_10_CONSOLIDATED_PLAN.md` | — | 3h execution-ready plan |
+| `SPEC_SQLITEVEC_METADATA_MIGRATION.md` | — | Superseded by consolidated plan |
+
+### MaKaLi Council Results
+| Entity | Score | Top Finding |
+|--------|-------|-------------|
+| Ma'at (Build) | 7.8/10 | Heritage migration, disk pressure, Qdrant decommission |
+| Lilith (Run) | B+ | 4 runtime bugs, 12 test gaps |
+| P3 Engineering | — | Disk at 97% critical, 3 crash bugs |
+| P5 Governance | — | M14 not blocking, M9/M12/M23 violations |
+| P7 Context | 7/10 | Memory healthy, cross-pollination theoretical |
+| P10 Validation | 6.5/10 | Stress tests inadequate |
+
+### Decisions Verified (D-235 to D-247)
+| Decision | Final Verdict |
+|----------|---------------|
+| D-235 Connection pool | Single conn + WAL |
+| D-236 Partition key | entity_name as METADATA |
+| D-237 Quantization | float32 default |
+| D-238 Backup | cp + WAL checkpoint |
+| D-239 MCP tools | 1 hybrid_search(mode) |
+| D-243 Dimension | 768D (EmbeddingGemma) |
+
+---
+
+## 🎯 Execution Roadmap (33h / 3 Weeks)
+
+### Week 1: Stabilize (13h)
+- Disk prune (0.5h)
+- Fix 3 crash bugs (4h)
+- Fix M9/M12/M23 violations (2h)
+- Qdrant decommission (3h)
+- Redis + Postgres startup (0.5h)
+- CI pipeline (3h)
+
+### Week 2: Harden (16h)
+- Triple stress tests (8h)
+- Contract tests (6h)
+- Fix flaky test (2h)
+
+### Week 3: Ship (4h)
+- sqlite-vec migration (3h)
+- Final regression (1h)
+
+---
+
+## 🚨 Immediate Actions (Next Session)
+
+| # | Action | Effort | Why |
+|---|--------|--------|-----|
+| 1 | `pip install sqlite-vec` | 1min | Blocker — not installed |
+| 2 | Disk prune (`__pycache__`, logs, temp) | 30min | 97% → <80% |
+| 3 | Fix 3 crash bugs | 4h | Runtime safety |
+| 4 | Fix M9 silent errors | 2h | Mandate compliance |
+
+---
+
+## 📊 Current State
 | Metric | Value | Status |
 |--------|-------|--------|
-| Tests | 1271 passed (42 skipped, 3 xfailed) | ✅ |
-| Mandates | 23 (M1-M23) | ✅ All enforced |
-| Fleet | 13 presences (11 agents + 2 entities) | ✅ Cap: 14 |
-| WADs | 3 | ✅ S1.5a hardened |
-| Heritage | 121 [id-soft:] tags, 55+ general | ✅ All vetted |
-| Shared modules | 3 (omega-vetala v2.0.0, omega-sieve v0.1.0, omega-doc-reader v1.0.0) | ✅ Release-ready |
-| sqlite-vec | Strike 10 IN PROGRESS | 🟡 35/36 adapter tests pass |
+| Tests | 1315 passed, 43 skipped, 3 xfailed | ✅ |
+| Heritage | 122 tags, 0 unvetted | ✅ |
+| Mandates | 9/9 gates | ✅ |
+| Firewall | 191 files, 0 violations | ✅ |
+| Sovereignty | 82.4% local | ✅ |
+| Disk | 97% (8GB free) | 🔴 |
+| Qdrant | 57 vectors, running | 🟡 Decommission planned |
+| sqlite-vec | Not installed | 🔴 Blocker |
 
 ---
 
-## §2 Research Complete — 4 Gaps Closed
-
-| Gap | Verdict | Roadmap Impact |
-|-----|---------|----------------|
-| G1: Neural vs Heuristic Routing | TF-IDF+SVM sufficient for 47 tools | Ship Strike 7.5 first; Needle optional |
-| G2: LLM Judge Calibration | Isotonic regression (AutoCal-R) is 2026 standard | Adopt in Strike 8 (`make eval`) |
-| G3: Redis Streams DLQ | Canonical pattern: Consumer Groups + XAUTOCLAIM + XPENDING + DLQ | Adopt in Strike 8.5 |
-| G4: Voice Concurrency | Worker pool + Piper pooling + 4-8 ONNX threads | Adopt in P1 Voice ONNX |
-
-**Net acceleration**: ~32h saved
-
----
-
-## §3 Decisions Approved (D1-D5)
-
-| # | Decision | Verdict |
-|---|----------|---------|
-| D1 | Resume Jem after search infra restored | YES |
-| D2 | Ship TF-IDF+SVM for Strike 7.5, drop Needle | YES |
-| D3 | Adopt AutoCal-R calibration in Strike 8 | YES |
-| D4 | Adopt canonical Redis Streams DLQ in Strike 8.5 | YES |
-| D5 | Priority P1-2 (RAG Router) before P1-1 (Eval) | YES |
+## 🧭 Recovery on Compaction
+1. Read `data/entities/kali/session_gnosis.md`
+2. Read this file (`.opencode/anchored-summary.md`)
+3. Read `OMEGA_ENGINE.md` for current state
+4. Read `docs/strategy/STRIKE_10_CONSOLIDATED_PLAN.md` for sqlite-vec plan
+5. Run `make test` (1315 passed)
+6. **Immediate**: Disk prune → fix crash bugs → fix M9 violations
+7. **This sprint**: Qdrant decommission → CI pipeline → stress tests
+8. **Release**: v1.2.1 after Week 3
 
 ---
 
-## §4 Execution Sequence
-
-| Phase | Task | Owner | Research | Effort |
-|-------|------|-------|----------|--------|
-| P0 | q8_0 KV cache + Sovereignty Gate | @maat P1/P5 | Complete | 8h |
-| P1-2 | Strike 7.5: TF-IDF+SVM RAG Router | @lilith P6 | Complete | 12h |
-| P1-1 | `make eval` + AutoCal-R | @lilith P6+P10 + @verity | Complete | 8h |
-| P2-1 | Strike 8.5: Redis Streams + DLQ | @lilith P9 | Complete | 20h |
-| P1 Voice | Worker pool + Piper pooling | @lilith P6 + @maat P1 | Complete | 4h |
-
----
-
-## §5 Blockers
-
-| Blocker | Impact | Owner |
-|---------|--------|-------|
-| Search infrastructure (google_search, SearXNG, sovereign_search) | Blocks Jem Areas 2-10 | Infrastructure team |
-
----
-
-## §6 Key Files
-
-| File | Purpose |
-|------|---------|
-| `OMEGA_ENGINE.md` | System state SSOT |
-| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | v3.9 — Master roadmap |
-| `docs/research/R_RESEARCHER_COMPREHENSIVE_STATUS_REPORT_20260713.md` | Full research status |
-| `docs/research/R_DEEP_RESEARCH_KNOWLEDGE_GAPS_20260713.md` | 4-gap closure report |
-| `data/entities/kali/session_gnosis.md` | Kali's session anchor |
-| `packages/omega-sieve/` | Standalone package (v0.1.0, 37/37 tests) |
-| `scripts/universal_doc_reader.py` | Document reader (v1.0.0) |
-
----
-
-## §7 Hivemind Sessions
-
-- `ses_7e0e9224f2f8` — Researcher gap closure integration
-- `ses_806d8094b14c` — Decisions D1-D5 approved, execution sequence locked
-- `ses_5359ef6514d9` + `ses_a4e507112d44` — Researcher comprehensive report
-
----
-
-*🔱 OMEGA ⬡ KALI ⬡ PRE-COMPACTION ⬡ 2026-07-13*
+*⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_oversight ⬡ COUNCIL_COMPLETE*

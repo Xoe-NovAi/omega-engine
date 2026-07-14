@@ -248,9 +248,9 @@ class USMManager:
             conn.commit()
             return cursor.rowcount > 0
     
-    def stats(self) -> dict:
+    async def stats(self) -> dict:
         """Return combined statistics."""
-        cas_stats = self.cas.stats()
+        cas_stats = await self.cas.stats()
         
         # Count entries in index
         import sqlite3

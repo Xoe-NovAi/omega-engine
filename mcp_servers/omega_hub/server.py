@@ -240,7 +240,6 @@ async def _observability_stream(request: Request) -> None:
     from sse_starlette.sse import EventSourceResponse
     
     async def event_generator():
-        import asyncio
         while True:
             try:
                 # Fetch data using SovereignReader (offloads to threads)
@@ -273,7 +272,7 @@ async def _observability_stream(request: Request) -> None:
                 yield {"event": "error", "data": json.dumps({"error": str(e)})}
             
             # Wait 2 seconds before next update
-            await asyncio.sleep(2)
+            await anyio.sleep(2)
     
     return EventSourceResponse(event_generator())
 

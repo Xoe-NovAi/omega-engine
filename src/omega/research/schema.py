@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 import time
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any
 from uuid import UUID, uuid4
@@ -55,7 +55,7 @@ class CLEARScore:
         self.epistemic_rigor = max(0.0, min(1.0, epistemic_rigor))
         self.adversarial_robustness = max(0.0, min(1.0, adversarial_robustness))
         self.reproducibility = max(0.0, min(1.0, reproducibility))
-        self.timestamp = timestamp or datetime.utcnow()
+        self.timestamp = timestamp or datetime.now(timezone.utc)
     
     def to_vector(self) -> tuple[float, float, float, float, float]:
         """Return as normalized vector for Pareto comparison.
@@ -124,8 +124,8 @@ class ResearchProposal:
     budget_usd: float = 0.0
     assigned_agents: list[str] = field(default_factory=list)  # e.g., ["roc_racoon", "jem"]
     status: ProposalStatus = ProposalStatus.DRAFT
-    created_at: datetime = field(default_factory=datetime.utcnow)
-    updated_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: datetime | None = None
     result_summary: str = ""
     final_clear: CLEARScore | None = None
@@ -156,9 +156,9 @@ class ResearchProposal:
         if new_status not in valid_transitions.get(self.status, set()):
             raise ValueError(f"Invalid transition: {self.status} -> {new_status}")
         self.status = new_status
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
         if new_status in (ProposalStatus.ARCHIVED, ProposalStatus.REJECTED):
-            self.completed_at = datetime.utcnow()
+            self.completed_at = datetime.now(timezone.utc)
     
     def is_terminal(self) -> bool:
         """M12 Queue Integrity: Terminal states have no outgoing transitions."""
@@ -194,8 +194,8 @@ class ResearchProposal:
             budget_usd=data.get("budget_usd", 0.0),
             assigned_agents=data.get("assigned_agents", []),
             status=ProposalStatus(data.get("status", "DRAFT")),
-            created_at=datetime.fromisoformat(data["created_at"]) if data.get("created_at") else datetime.utcnow(),
-            updated_at=datetime.fromisoformat(data["updated_at"]) if data.get("updated_at") else datetime.utcnow(),
+            created_at=datetime.fromisoformat(data["created_at"]) if data.get("created_at") else datetime.now(timezone.utc),
+            updated_at=datetime.fromisoformat(data["updated_at"]) if data.get("updated_at") else datetime.now(timezone.utc),
             completed_at=datetime.fromisoformat(data["completed_at"]) if data.get("completed_at") else None,
             result_summary=data.get("result_summary", ""),
             consensus_signals=data.get("consensus_signals", []),
@@ -220,7 +220,7 @@ class AgentSignal:
     content: str
     confidence: float  # 0.0-1.0
     domain_expertise: float  # 0.0-1.0, agent's historical accuracy in this domain
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     trace_id: str = field(default_factory=lambda: str(uuid4()))
     
     def to_dict(self) -> dict[str, Any]:
@@ -246,7 +246,7 @@ class AgentSignal:
             content=data["content"],
             confidence=data["confidence"],
             domain_expertise=data["domain_expertise"],
-            timestamp=datetime.fromisoformat(data["timestamp"]) if data.get("timestamp") else datetime.utcnow(),
+            timestamp=datetime.fromisoformat(data["timestamp"]) if data.get("timestamp") else datetime.now(timezone.utc),
             trace_id=data.get("trace_id", str(uuid4())),
         )
 
@@ -261,7 +261,7 @@ class ConsensusResult:
     dissenting_signals: list[AgentSignal]
     synthesized_insight: str
     l3_principle_candidate: str | None = None  # M11: L3 distillation candidate
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # ── AMFO Tier Configuration ──────────────────────────────────────────────

@@ -7,10 +7,16 @@ import json
 from mcp_servers.omega_hub.github_bridge import process_github_event, verify_signature
 
 @pytest.mark.anyio
-async def test_verify_signature_valid():
+async def test_verify_signature_valid(monkeypatch):
     # Mock secret and payload
-    secret = "omega_sovereign_default_secret_2026"
+    secret = "test_webhook_secret_for_verification"
     payload = b'{"action": "opened", "issue": {"number": 1}}'
+    
+    # Mock _get_webhook_secret to return our test secret
+    import mcp_servers.omega_hub.github_bridge as bridge
+    async def mock_get_secret():
+        return secret
+    monkeypatch.setattr(bridge, "_get_webhook_secret", mock_get_secret)
     
     import hmac
     import hashlib

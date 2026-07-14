@@ -14,7 +14,7 @@ import anyio
 import json
 import time
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Callable
 from uuid import UUID, uuid4
 
@@ -44,7 +44,7 @@ class DyTopoNode:
     domains: list[str]  # e.g., ["P6", "P7"]
     expertise_scores: dict[str, float]  # domain -> 0.0-1.0
     historical_accuracy: float = 0.5
-    last_seen: datetime = field(default_factory=datetime.utcnow)
+    last_seen: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     is_active: bool = True
     
     def relevance_for_proposal(self, proposal: ResearchProposal) -> float:
@@ -97,7 +97,7 @@ class ResearchHivemindBridge:
             "type": "research_proposal",
             "proposal": proposal.to_dict(),
             "target_agents": relevant_agents,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "trace_id": str(uuid4()),
         }
         
@@ -327,7 +327,7 @@ class ResearchHivemindBridge:
                 "synthesized_insight": consensus.synthesized_insight,
                 "l3_principle_candidate": consensus.l3_principle_candidate,
             },
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
         await self.redis_publish(channel, json.dumps(payload), ttl=60)
 

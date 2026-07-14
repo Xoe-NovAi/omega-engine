@@ -46,8 +46,12 @@ class SomaticStateManager:
                 return False
             
             file_path = self.state_dir / f"{state_id}.somatic"
-            async with await anyio.to_thread.run_sync(open, file_path, "wb") as f:
-                f.write(state_bytes)
+            
+            def _write_state(path: Path, data: bytes):
+                with open(path, "wb") as f:
+                    f.write(data)
+            
+            await anyio.to_thread.run_sync(_write_state, file_path, state_bytes)
                 
             logger.info(f"Somatic state captured: {state_id} ({len(state_bytes)} bytes)")
             return True

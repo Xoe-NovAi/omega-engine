@@ -898,7 +898,7 @@ class NativeGGUFProvider(BaseProvider):
         Returns:
             True if reload succeeded.
         """
-        # [id-soft: quake-1996] Atomic Swap — save old state before mutation
+        # [id-soft: vet-057] Atomic Swap — save old state before mutation
         old_worker = self._worker_process
         old_ctx = self._loaded_ctx
         self._worker_process = None  # Signal unloading
@@ -909,7 +909,7 @@ class NativeGGUFProvider(BaseProvider):
         except OmegaError:
             raise
         except (OmegaError, RuntimeError, OSError) as e:
-            # [id-soft: quake-1996] Rollback — restore old state on failure
+            # [id-soft: vet-058] Rollback — restore old state on failure
             self._worker_process = old_worker
             self._loaded_ctx = old_ctx if old_worker else 0
             logger.error(f"Context reload failed, rolled back to {self._loaded_ctx}: {e}", exc_info=True)

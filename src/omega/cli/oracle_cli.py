@@ -1011,17 +1011,18 @@ def hardware_stats(
         _show()
 
 
-    @app.command()
-    def soul_stage(entity: str):
-        """Sovereign Soul Staging Gate TUI.
-        
-        Review and approve proposed L3 principles for an entity.
-        """
-        from omega.cli.soul_stage import SoulStageApp
-        app_tui = SoulStageApp(entity_name=entity)
-        app_tui.run()
+@app.command()
+def soul_stage(entity: str):
+    """Sovereign Soul Staging Gate TUI.
+    
+    Review and approve proposed L3 principles for an entity.
+    """
+    from omega.cli.soul_stage import SoulStageApp
+    app_tui = SoulStageApp(entity_name=entity)
+    app_tui.run()
 
-    # ── Entry point ─────────────────────────────────────────────────────────
+
+# ── Entry point ─────────────────────────────────────────────────────────
 
 
 def main():

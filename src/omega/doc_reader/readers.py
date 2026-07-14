@@ -107,14 +107,19 @@ class OdtReader(BaseReader):
             text = '\n'.join(paragraphs)
 
             meta_elem = doc.meta
+            def safe_get(attr):
+                try:
+                    return meta_elem.getAttribute(attr) if meta_elem else None
+                except (ValueError, KeyError):
+                    return None
             metadata = DocumentMetadata(
                 path=path,
                 format=".odt",
                 size_bytes=os.path.getsize(path),
-                author=meta_elem.getAttribute("meta:author") if meta_elem else None,
-                created=meta_elem.getAttribute("meta:creation-date") if meta_elem else None,
-                modified=meta_elem.getAttribute("meta:editing-duration") if meta_elem else None,
-                title=meta_elem.getAttribute("dc:title") if meta_elem else None,
+                author=safe_get("meta:author"),
+                created=safe_get("meta:creation-date"),
+                modified=safe_get("meta:editing-duration"),
+                title=safe_get("dc:title"),
                 extra={
                     "paragraphs": len(paragraphs),
                 }

@@ -18,7 +18,7 @@ def scribe_event(trace_id: str, event_type: str, data: Dict[str, Any]):
     # Ensure data directory exists
     SESSION_GNOSIS_FILE.parent.mkdir(parents=True, exist_ok=True)
     
-    timestamp = datetime.utcnow().isoformat()
+    timestamp = datetime.now(timezone.utc).isoformat()
     
     event_entry = f"### [{event_type}] {trace_id}\n"
     event_entry += f"**Time**: {timestamp}\n"

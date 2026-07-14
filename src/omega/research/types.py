@@ -6,7 +6,7 @@ AP Token: AP-MAAT-TYPES-v1.0.0
 
 from __future__ import annotations
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Optional
 from uuid import UUID
 
@@ -28,12 +28,12 @@ class BudgetToken:
     ram_budget_mb: int
     model: str
     expires_at: datetime
-    allocated_at: datetime = field(default_factory=datetime.utcnow)
+    allocated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     
     @property
     def remaining_sec(self) -> float:
         """Seconds remaining until budget expires."""
-        return (self.expires_at - datetime.utcnow()).total_seconds()
+        return (self.expires_at - datetime.now(timezone.utc)).total_seconds()
     
     def is_expired(self) -> bool:
         """Check if budget token has expired."""
@@ -101,7 +101,7 @@ class SandboxResult:
     peak_ram_mb: float = 0.0
     error: str | None = None
     provider_name: str = "sandbox"  # M22: Actual execution backend
-    started_at: datetime = field(default_factory=datetime.utcnow)
+    started_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: datetime | None = None
     
     def __post_init__(self):
@@ -110,7 +110,7 @@ class SandboxResult:
         if isinstance(self.proposal_id, str):
             self.proposal_id = UUID(self.proposal_id)
         if self.completed_at is None and self.state.is_terminal():
-            self.completed_at = datetime.utcnow()
+            self.completed_at = datetime.now(timezone.utc)
     
     def is_terminal(self) -> bool:
         """M12: Terminal states have no outgoing transitions."""

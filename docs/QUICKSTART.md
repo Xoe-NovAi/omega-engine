@@ -1,8 +1,8 @@
 # 🔱 Omega Engine — Quick Start Guide
 **AP Token**: `AP-QUICKSTART-v1.0.0`
-⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_user ⬡ STANDARD
+⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_doc_user ⬡ STANDARD
 
-**Date**: 2026-07-06
+**Date**: 2026-07-13
 **Purpose**: 5-minute getting started guide for new Omega Engine users.
 
 ---
@@ -33,7 +33,7 @@ make setup
 ollama pull qwen3:1.7b     # ~1.1 GB, best quality/speed balance
 
 # 4. Verify installation
-make test                   # Should show 705/705 passing
+make test                   # Should show 1315/1315 passing
 ```
 
 ## First Interaction
@@ -57,10 +57,10 @@ make repl
 | Component | Description |
 |-----------|-------------|
 | **Oracle** | Intent detection, entity routing, speculative decoding |
-| **8 Providers** | native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode → Copilot → Mock |
-| **13 Agents** | Kali (oversight), Ma'at/Lilith (oversouls), 6 specialists, Verity, Iris, Sophia |
-| **22 Mandates** | Constitutional law governing all agent behavior |
-| **705+ Tests** | Comprehensive test suite via `make test` |
+| **9 Providers** | native-gguf → lmster → Ollama → Antigravity → Google → OpenRouter → OpenCode → Cline → Mock |
+| **13 Presences** | Kali (oversight), Ma'at/Lilith (oversouls), 6 specialists, Verity, Iris, Sophia |
+| **23 Mandates** | Constitutional law governing all agent behavior |
+| **1315 Tests** | Comprehensive test suite via `make test` |
 | **Local-first** | Cloud is fallback, never dependency |
 
 ## Next Steps
