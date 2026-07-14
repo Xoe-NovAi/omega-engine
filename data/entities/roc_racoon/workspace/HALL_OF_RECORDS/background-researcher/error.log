@@ -178,3 +178,75 @@
 2026-07-14 02:15:56 [WARNING] omega.workers.background_researcher.loop: Sovereign Pipeline failed to ingest http://arxiv.org/abs/2605.27825v1
 2026-07-14 02:15:56 [INFO] omega.library.coordinator: Worker stopped: researcher
 2026-07-14 02:15:56 [INFO] omega.researcher.run: Research cycle complete.
+2026-07-14 02:35:51 [INFO] omega.vault.key_vault: Vault loaded: 1 providers, 1 keys total
+2026-07-14 02:35:51 [INFO] omega.memory.fts: FTS5 index initialized at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/memory/fts_memory.db
+2026-07-14 02:35:51 [INFO] omega.oracle.pii_masker: pii-shield loaded: 18 PII types, context-aware detection
+2026-07-14 02:35:51 [INFO] omega.researcher.run: Starting research cycle...
+2026-07-14 02:35:51 [INFO] omega.library.coordinator: Worker registered: researcher
+2026-07-14 02:35:51 [INFO] omega.library.coordinator: Worker started: researcher
+2026-07-14 02:35:51 [INFO] omega.workers.background_researcher.loop: Starting research cycle cycle_20260714_053551_1
+2026-07-14 02:35:51 [INFO] httpx2: HTTP Request: GET http://127.0.0.1:8017/healthz "HTTP/1.1 200 OK"
+2026-07-14 02:35:51 [INFO] omega.workers.background_researcher.loop: Frontier gap found: 'Phase 1 — Engine Hardening — Memory wiring, handoff protocol, soul atomicity, agent hardening, MCP consolidation research' (p=0.6) from master_ledger
+2026-07-14 02:35:51 [INFO] omega.workers.background_researcher.loop: Frontier gap found: 'Phase 2 — Legacy Mining — Extract 12 quick-win assets, port legacy patterns, compile community content research' (p=0.6) from master_ledger
+2026-07-14 02:35:51 [INFO] omega.workers.background_researcher.loop: Frontier gap found: 'Phase 3 — Community Tools — Entity Studio CLI → Visual Builder, Stack Builder Wizard, one-click Omega Desktop research' (p=0.6) from master_ledger
+2026-07-14 02:35:51 [INFO] omega.workers.background_researcher.loop: Frontier gap found: 'Phase 4 — The Omegaverse — P2P network protocol, WAD registry, cross-instance entity communication, **Godot/id Tech VR bridge**, soul-to-visual mapping (R-24), **shared VR realms (P2P Metropolis)** research' (p=0.6) from master_ledger
+2026-07-14 02:35:51 [INFO] omega.workers.background_researcher.loop: Frontier gap found: 'Knowledge base scaffolding for entity cli_cline' (p=0.5) from entity_gap
+2026-07-14 02:35:51 [INFO] omega.workers.background_researcher.loop: Frontier growth complete — enqueued 5 topics from 27 candidates
+2026-07-14 02:35:51 [INFO] omega.workers.background_researcher.loop: Researching: 'Phase 1 — Engine Hardening — Memory wiring, handoff protocol, soul atomicity, agent hardening, MCP consolidation research' (priority=0.60)
+2026-07-14 02:35:53 [INFO] httpx2: HTTP Request: POST http://127.0.0.1:8017/search "HTTP/1.1 200 OK"
+2026-07-14 02:35:55 [INFO] httpx2: HTTP Request: POST http://127.0.0.1:8017/search "HTTP/1.1 200 OK"
+2026-07-14 02:35:55 [WARNING] omega.workers.background_researcher.search_fleet: EXA_API_KEY not set
+2026-07-14 02:35:55 [WARNING] omega.workers.background_researcher.search_fleet: EXA_API_KEY not set
+2026-07-14 02:35:55 [INFO] httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent "HTTP/1.1 400 Bad Request"
+2026-07-14 02:35:55 [ERROR] omega.ingestion.pipeline: Sentry probe failed: Sentry Probe FAILED: HTTP 400
+2026-07-14 02:35:55 [WARNING] omega.workers.background_researcher.loop: Sovereign Pipeline failed to ingest http://arxiv.org/abs/2505.16286v2
+2026-07-14 02:35:56 [INFO] httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent "HTTP/1.1 400 Bad Request"
+2026-07-14 02:35:56 [ERROR] omega.ingestion.pipeline: Sentry probe failed: Sentry Probe FAILED: HTTP 400
+2026-07-14 02:35:56 [WARNING] omega.workers.background_researcher.loop: Sovereign Pipeline failed to ingest http://arxiv.org/abs/2508.14704v1
+2026-07-14 02:35:57 [INFO] httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent "HTTP/1.1 400 Bad Request"
+2026-07-14 02:35:57 [ERROR] omega.ingestion.pipeline: Sentry probe failed: Sentry Probe FAILED: HTTP 400
+2026-07-14 02:35:57 [WARNING] omega.workers.background_researcher.loop: Sovereign Pipeline failed to ingest http://arxiv.org/abs/2604.04820v1
+2026-07-14 02:35:57 [INFO] httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent "HTTP/1.1 400 Bad Request"
+2026-07-14 02:35:57 [ERROR] omega.ingestion.pipeline: Sentry probe failed: Sentry Probe FAILED: HTTP 400
+2026-07-14 02:35:57 [WARNING] omega.workers.background_researcher.loop: Sovereign Pipeline failed to ingest http://arxiv.org/abs/2005.02719v5
+2026-07-14 02:35:58 [INFO] httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent "HTTP/1.1 400 Bad Request"
+2026-07-14 02:35:58 [ERROR] omega.ingestion.pipeline: Sentry probe failed: Sentry Probe FAILED: HTTP 400
+2026-07-14 02:35:58 [WARNING] omega.workers.background_researcher.loop: Sovereign Pipeline failed to ingest http://arxiv.org/abs/2605.27825v1
+2026-07-14 02:35:58 [INFO] omega.library.coordinator: Worker stopped: researcher
+2026-07-14 02:35:58 [INFO] omega.researcher.run: Research cycle complete.
+2026-07-14 02:55:51 [INFO] omega.vault.key_vault: Vault loaded: 1 providers, 1 keys total
+2026-07-14 02:55:51 [INFO] omega.memory.fts: FTS5 index initialized at /home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/memory/fts_memory.db
+2026-07-14 02:55:51 [INFO] omega.oracle.pii_masker: pii-shield loaded: 18 PII types, context-aware detection
+2026-07-14 02:55:51 [INFO] omega.researcher.run: Starting research cycle...
+2026-07-14 02:55:51 [INFO] omega.library.coordinator: Worker registered: researcher
+2026-07-14 02:55:51 [INFO] omega.library.coordinator: Worker started: researcher
+2026-07-14 02:55:51 [INFO] omega.workers.background_researcher.loop: Starting research cycle cycle_20260714_055551_1
+2026-07-14 02:55:51 [INFO] httpx2: HTTP Request: GET http://127.0.0.1:8017/healthz "HTTP/1.1 200 OK"
+2026-07-14 02:55:51 [INFO] omega.workers.background_researcher.loop: Frontier gap found: 'Phase 1 — Engine Hardening — Memory wiring, handoff protocol, soul atomicity, agent hardening, MCP consolidation research' (p=0.6) from master_ledger
+2026-07-14 02:55:51 [INFO] omega.workers.background_researcher.loop: Frontier gap found: 'Phase 2 — Legacy Mining — Extract 12 quick-win assets, port legacy patterns, compile community content research' (p=0.6) from master_ledger
+2026-07-14 02:55:51 [INFO] omega.workers.background_researcher.loop: Frontier gap found: 'Phase 3 — Community Tools — Entity Studio CLI → Visual Builder, Stack Builder Wizard, one-click Omega Desktop research' (p=0.6) from master_ledger
+2026-07-14 02:55:51 [INFO] omega.workers.background_researcher.loop: Frontier gap found: 'Phase 4 — The Omegaverse — P2P network protocol, WAD registry, cross-instance entity communication, **Godot/id Tech VR bridge**, soul-to-visual mapping (R-24), **shared VR realms (P2P Metropolis)** research' (p=0.6) from master_ledger
+2026-07-14 02:55:51 [INFO] omega.workers.background_researcher.loop: Frontier gap found: 'Knowledge base scaffolding for entity cli_cline' (p=0.5) from entity_gap
+2026-07-14 02:55:51 [INFO] omega.workers.background_researcher.loop: Frontier growth complete — enqueued 5 topics from 27 candidates
+2026-07-14 02:55:51 [INFO] omega.workers.background_researcher.loop: Researching: 'Phase 1 — Engine Hardening — Memory wiring, handoff protocol, soul atomicity, agent hardening, MCP consolidation research' (priority=0.60)
+2026-07-14 02:55:55 [INFO] httpx2: HTTP Request: POST http://127.0.0.1:8017/search "HTTP/1.1 200 OK"
+2026-07-14 02:55:57 [INFO] httpx2: HTTP Request: POST http://127.0.0.1:8017/search "HTTP/1.1 200 OK"
+2026-07-14 02:55:57 [WARNING] omega.workers.background_researcher.search_fleet: EXA_API_KEY not set
+2026-07-14 02:55:57 [WARNING] omega.workers.background_researcher.search_fleet: EXA_API_KEY not set
+2026-07-14 02:55:58 [INFO] httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent "HTTP/1.1 400 Bad Request"
+2026-07-14 02:55:58 [ERROR] omega.ingestion.pipeline: Sentry probe failed: Sentry Probe FAILED: HTTP 400
+2026-07-14 02:55:58 [WARNING] omega.workers.background_researcher.loop: Sovereign Pipeline failed to ingest http://arxiv.org/abs/2505.16286v2
+2026-07-14 02:55:58 [INFO] httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent "HTTP/1.1 400 Bad Request"
+2026-07-14 02:55:58 [ERROR] omega.ingestion.pipeline: Sentry probe failed: Sentry Probe FAILED: HTTP 400
+2026-07-14 02:55:58 [WARNING] omega.workers.background_researcher.loop: Sovereign Pipeline failed to ingest http://arxiv.org/abs/2508.14704v1
+2026-07-14 02:55:59 [INFO] httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent "HTTP/1.1 400 Bad Request"
+2026-07-14 02:55:59 [ERROR] omega.ingestion.pipeline: Sentry probe failed: Sentry Probe FAILED: HTTP 400
+2026-07-14 02:55:59 [WARNING] omega.workers.background_researcher.loop: Sovereign Pipeline failed to ingest http://arxiv.org/abs/2604.04820v1
+2026-07-14 02:55:59 [INFO] httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent "HTTP/1.1 400 Bad Request"
+2026-07-14 02:55:59 [ERROR] omega.ingestion.pipeline: Sentry probe failed: Sentry Probe FAILED: HTTP 400
+2026-07-14 02:55:59 [WARNING] omega.workers.background_researcher.loop: Sovereign Pipeline failed to ingest http://arxiv.org/abs/2005.02719v5
+2026-07-14 02:56:00 [INFO] httpx2: HTTP Request: POST https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent "HTTP/1.1 400 Bad Request"
+2026-07-14 02:56:00 [ERROR] omega.ingestion.pipeline: Sentry probe failed: Sentry Probe FAILED: HTTP 400
+2026-07-14 02:56:00 [WARNING] omega.workers.background_researcher.loop: Sovereign Pipeline failed to ingest http://arxiv.org/abs/2605.27825v1
+2026-07-14 02:56:00 [INFO] omega.library.coordinator: Worker stopped: researcher
+2026-07-14 02:56:00 [INFO] omega.researcher.run: Research cycle complete.

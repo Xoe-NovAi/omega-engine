@@ -78,7 +78,7 @@ SOVEREIGN_USER_TOKEN = os.getenv("SOVEREIGN_USER_TOKEN", "SOVEREIGN_DEFAULT_SECU
 async def write_soul_file(entity_path: str, filename: str, content: str, token: str = None) -> None:
     """Writes a soul file using the Atomic Rename Pattern under strict permission guard.
     
-    [id-soft: quake3-1999] Hard-Boundary — strictly separates User/Agent write access.
+    [id-soft: vet-053] Hard-Boundary — strictly separates User/Agent write access.
     """
     if filename in ["soul.yaml", "approved_lessons.yaml"]:
         if token != SOVEREIGN_USER_TOKEN:
@@ -113,7 +113,7 @@ async def with_soul_lock(entity_name: str, action):
 # The 982KB file takes 5.8s to parse; caching it cuts total test suite from 7m to ~2m.
 _entity_yaml_cache: Dict[str, Any] = {}
 
-# [id-soft: doom-1993] WAD System — base IWAD identifier
+# [id-soft: vet-048] WAD System — base IWAD identifier
 DEFAULT_IWAD = "_omega_default"
 
 
@@ -126,7 +126,7 @@ class Entity:
     
     [id-soft: doom-1993] ZONEID Pattern — magic constant validated on get()
     to catch stale references and tombstoned entities.
-    [id-soft: quake3-1999] Hard-Boundary — engine zone vs game zone separation.
+    [id-soft: vet-053] Hard-Boundary — engine zone vs game zone separation.
     """
     
     # ── Engine Zone (structural, read-only for game logic) ──
@@ -157,10 +157,10 @@ class Entity:
     
     # [id-soft: doom-1993] ZONEID Pattern — magic constant for entity runtime integrity validation
     magic: int = field(default=ZONEID_ENTITY, compare=False)
-    # [id-soft: doom-1993] High-Bit Trick — bitfield flag encoding with high-bit markers
+    # [id-soft: vet-054] High-Bit Trick — bitfield flag encoding with high-bit markers
     # 0x80000000 = system entity, 0x40000000 = WAD-loaded entity
     flags: int = field(default=0, compare=False)
-    # [id-soft: quake3-1999] Hard-Boundary — engine-zone vs game-zone boundary enforcement
+    # [id-soft: vet-053] Hard-Boundary — engine-zone vs game-zone boundary enforcement
     # __engine_zone__ and __game_zone__ are checked by zone-aware getters.
     __engine_zone__: dict = field(default_factory=dict, repr=False, compare=False)
     __game_zone__: dict = field(default_factory=dict, repr=False, compare=False)
@@ -168,7 +168,7 @@ class Entity:
     def __post_init__(self) -> None:
         """Post-init: populate zone sentinels from known fields.
 
-        [id-soft: quake3-1999] Hard-Boundary — automatically partition
+        [id-soft: vet-053] Hard-Boundary — automatically partition
         fields into engine zone (read-only) and game zone (writable).
         """
         # Engine zone: structural identity fields (DO NOT MODIFY by game logic)
@@ -196,7 +196,7 @@ class Entity:
     def is_system(self) -> bool:
         """Check if this is a system-level entity (high-bit flag).
         
-        [id-soft: doom-1993] High-Bit Trick — single bit check
+        [id-soft: vet-054] High-Bit Trick — single bit check
         instead of separate boolean field. 1 AND instruction vs 1 struct field.
         """
         return bool(self.flags & EntityRegistry.FLAG_SYSTEM)
@@ -269,12 +269,12 @@ class EntityRegistry:
     # [id-soft: quake-1996] Grace Period — 0.5s realloc delay
     TOMBSTONE_GRACE_SECONDS = 0.5
     
-    # [id-soft: doom-1993] High-Bit Trick — bitfield flag encoding with high-bit markers
+    # [id-soft: vet-054] High-Bit Trick — bitfield flag encoding with high-bit markers
     FLAG_SYSTEM = 0x80000000  # Bit 31: system-level entity (vs user-created)
     FLAG_WAD = 0x40000000     # Bit 30: loaded from a WAD (vs runtime-created)
     FLAG_ACTIVE = 0x00000000  # Default: active entity (low bits = slot flags)
     
-    # [id-soft: quake3-1999] Hard-Boundary Struct — engine zone vs game zone
+    # [id-soft: vet-052] Hard-Boundary Struct — engine zone vs game zone
     ENGINE_ZONE_ATTRS = frozenset({
         "magic", "name", "domains", "model", "role",
         "container", "port", "wad_source", "slots",
@@ -355,7 +355,7 @@ class EntityRegistry:
                 continue
             
             # Define core structural fields that belong to the Engine Zone
-            # [id-soft: quake3-1999] Hard-Boundary — engine-zone vs game-zone boundary enforcement
+            # [id-soft: vet-053] Hard-Boundary — engine-zone vs game-zone boundary enforcement
             # metadata is a core field, NOT a WAD-specific field. Without this,
             # nested metadata dicts from YAML are absorbed as WAD-specific metadata.
             core_fields = {
@@ -556,7 +556,7 @@ class EntityRegistry:
     def list(self) -> List[Entity]:
         """List all non-tombstoned entities.
         
-        [id-soft: doom-1993] Lazy Deletion — tombstoned entities filtered out.
+        [id-soft: vet-054] Lazy Deletion — tombstoned entities filtered out.
         """
         return self.active_iter()
     
@@ -608,7 +608,7 @@ class EntityRegistry:
             name_key = self._validate_name(entity.name)
             entity.name = name_key  # Normalize to lowercase
             
-            # [id-soft: doom-1993] High-Bit Trick — bitfield flag encoding with high-bit markers
+            # [id-soft: vet-054] High-Bit Trick — bitfield flag encoding with high-bit markers
             if entity.wad_source:
                 entity.flags |= EntityRegistry.FLAG_WAD
                 entity.__engine_zone__["flags"] = entity.flags
@@ -664,7 +664,7 @@ class EntityRegistry:
         async with self._lock:
             if key in self._entities:
                 entity = self._entities[key]
-                # [id-soft: doom-1993] ZONEID Pattern — magic constant for entity runtime integrity validation
+                # [id-soft: vet-065] ZONEID Pattern — magic constant for entity runtime integrity validation
                 validate_zoneid(entity.magic, ZONEID_ENTITY, f"EntityRegistry.remove({name})")
                 # [id-soft: doom-1993] Lazy Deletion — tombstone-based entity lifecycle (set sentinel, keep in dict)
                 self._tombstoned[key] = time.monotonic()
@@ -716,7 +716,7 @@ class EntityRegistry:
         tombstoned entities.
 
         Currently O(n) — future optimization: maintain a separate
-        active set with [id-soft: doom-1993] Mobj Dual-Linking pattern.
+        active set with [id-soft: vet-065] Mobj Dual-Linking pattern.
         """
         return [
             e

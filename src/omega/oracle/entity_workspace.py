@@ -7,7 +7,7 @@ ICS: [NODE: ARCHON | ARCHETYPE: SOPHIA | MODEL: GEMINI-3.1-PRO | CONTEXT: ENTITY
 Manages the creation and scaffolding of persistent entity workspaces,
 including the soul.yaml and dedicated knowledge/workspace directories.
 
-[id-soft: quake-1996] QuakeC Flat Entity — data-driven workspace creation
+[id-soft: vet-011] QuakeC Flat Entity — data-driven workspace creation
   QuakeC's progdefs.h generates entity struct fields from script source.
   EntityWorkspaceManager auto-scaffolds per-entity workspaces from YAML
   definitions — same data-driven principle.
@@ -322,7 +322,7 @@ class EntityWorkspaceManager:
     async def append_session_anchor(name: str, session_data: dict) -> None:
         """Append a session anchor and trigger Somatic Pruning if count exceeds 50.
         
-        [id-soft: doom-1993] Precomputed Lookup — O(1) append with bounded growth
+        [id-soft: vet-023] Precomputed Lookup — O(1) append with bounded growth
         """
         safe_name = name.lower().replace(" ", "_").replace("'", "")
         workspace_dir = _get_entities_data_dir() / safe_name

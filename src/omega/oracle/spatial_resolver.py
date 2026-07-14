@@ -9,7 +9,7 @@
 # This allows the engine to navigate memory not just by cosine 
 # similarity, but by spatial proximity and topological structure.
 #
-# [id-soft: doom-1993] BSP Culling — Spatial partitioning for efficiency
+# [id-soft: vet-046] BSP Culling — Spatial partitioning for efficiency
 #   The spatial resolver provides the coordinates that allow the engine
 #   to cull large regions of the semantic space during navigation.
 #

@@ -9,7 +9,7 @@
 # [M9 Error Integrity] — Every error is typed, traceable, and persisted.
 # [M22 Response Provenance] — Every event records the actual provider.
 #
-# [id-soft: quake-1996] Zone Memory — memory tagging pattern: each ledger
+# [id-soft: vet-008] Zone Memory — memory tagging pattern: each ledger
 # entry carries a zoneid for integrity validation on replay.
 
 

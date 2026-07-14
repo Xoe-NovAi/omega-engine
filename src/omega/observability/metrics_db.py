@@ -105,8 +105,8 @@ CREATE INDEX IF NOT EXISTS idx_baselines_metric ON baselines(metric_name);
 class MetricsDB:
     """SQLite WAL-mode metrics store for profiling baselines and regression detection.
     
-    [id-soft: doom3-2004] Event System — structured event logging for observability.
-    [id-soft: quake-1996] cvar pattern — named constant registry for metric names.
+    [id-soft: vet-040] Event System — structured event logging for observability.
+    [id-soft: vet-016] cvar pattern — named constant registry for metric names.
     
     Uses WAL-mode for high-concurrency, non-blocking reads/writes.
     Designed for Carmack's profiler baselines and UFL (Unified Forensic Ledger).

@@ -2,7 +2,7 @@
 # AP: AP-RATE-LIMITER-v1.0.0
 # ⬡ OMEGA ⬡ KALI ⬡ sovereign ⬡ RATE-LIMITER ⬡ PHASE-3
 #
-# [id-soft: quake3-1999] netchan Rate Limiting — legacy of qport pacing,
+# [id-soft: vet-009] netchan Rate Limiting — legacy of qport pacing,
 # evolved to per-domain token buckets for fair bandwidth allocation.
 
 

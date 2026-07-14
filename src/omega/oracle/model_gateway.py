@@ -145,7 +145,7 @@ class ModelGateway:
         self.resource_guard = ResourceGuard()
         self._mock_backend = OfflineMockBackend()
         self.providers = self._load_provider_fabric()
-        # [id-soft: doom-1993] Fixed-Size Active Set — 32-entry clip range for O(1) culling
+        # [id-soft: vet-055] Fixed-Size Active Set — 32-entry clip range for O(1) culling
         # Sprint 3 Hardening (P6): Split into Local/Cloud tiers to prevent
         # sovereignty drift (Mandate 7) — local providers always tried first.
         self._local_active: List[str] = []
@@ -670,7 +670,7 @@ class ModelGateway:
         key = entity_name.lower().strip()
 
         # Tier 0: YAML Affinity Resolver — Entity→Model Affinity DB
-        # [id-soft: quake-1996] cvar pattern — YAML-backed config, hot-reloadable
+        # [id-soft: vet-016] cvar pattern — YAML-backed config, hot-reloadable
         if self.affinity_resolver.is_loaded() or affinity_context is not None:
             try:
                 result = self.affinity_resolver.resolve(
@@ -801,11 +801,11 @@ class ModelGateway:
         """Check if a provider is a cloud provider."""
         return provider.name in self._cloud_providers
 
-    # [id-soft: doom-1993] BSP Culling — O(1) pre-check skips broken providers
+    # [id-soft: vet-046] BSP Culling — O(1) pre-check skips broken providers
     async def _precheck_provider(self, provider, model_name: str) -> bool:
         """BSP-style pre-check: is this provider worth trying?
         
-        [id-soft: doom-1993] BSP Culling — single O(1) circuit breaker check
+        [id-soft: vet-046] BSP Culling — single O(1) circuit breaker check
         skips entire provider subtree, adapted from Doom's static BSP tree
         to dynamic provider health state.
 
@@ -868,7 +868,7 @@ class ModelGateway:
     def _update_active_set(self, provider_name: str) -> None:
         """Maintain tiered fixed-size active sets of successful providers (LRU).
 
-        [id-soft: doom-1993] Fixed-Size Active Set — 32-entry clip range.
+        [id-soft: vet-055] Fixed-Size Active Set — 32-entry clip range.
         [hardening-p6] Sovereignty-Tiered — local and cloud providers are
         tracked in separate sets to prevent sovereignty drift (Mandate 7).
         A known-good local provider is always preferred over a known-good
@@ -914,7 +914,7 @@ class ModelGateway:
     ) -> 'GenerateResult':
         """Iterate provider fabric with circuit breaker protection.
         
-        [id-soft: doom-1993] Fixed-Size Active Set — first try the 32 most recently
+        [id-soft: vet-055] Fixed-Size Active Set — first try the 32 most recently
         successful providers before falling back to the full fabric.
         """
         # ── Sovereign Sampling Layer ──────────────────────────────────────────

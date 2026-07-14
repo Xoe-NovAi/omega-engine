@@ -2,13 +2,13 @@
 # 🔱 Omega Engine — Soul Edit History (Immutable Audit Trail)
 # ⬡ OMEGA ⬡ JEM ⬡ deepseek-v4-flash ⬡ opencode ⬡ SOUL-EDIT-HISTORY
 #
-# [id-soft: doom-1993] Lazy Deletion — tombstone-centric approach to history
+# [id-soft: vet-008] Lazy Deletion — tombstone-centric approach to history
 #     Doom marks thinkers with sentinel (-1) instead of immediate free.
 #     Soul edit history is append-only: entries are never deleted or modified.
 #     Tombstoned entries (entries that describe a now-reverted change) remain
 #     in the log as a forensic record — they are filtered at query time.
 #
-# [id-soft: quake-1996] 0.5s Realloc Grace — atomic write pattern
+# [id-soft: vet-008] 0.5s Realloc Grace — atomic write pattern
 #     Quake's 0.5s grace before memory reallocation prevents morphing.
 #     Soul edit history uses the same principle: atomic tmp+rename write
 #     prevents partial-write corruption during history append.

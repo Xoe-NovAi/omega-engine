@@ -5,7 +5,7 @@
 #
 # HandoffPacket + Agent Capability Registry + dispatch prompt builder.
 # Core concept (agent dispatch) is the user's original design.
-# [id-soft: doom-1993] ZONEID Pattern — magic constant for handoff packet integrity
+# [id-soft: vet-015] ZONEID Pattern — magic constant for handoff packet integrity
 # Heritage: Thinker chain — used for lifecycle tracking metaphor (inspired by Quake 1996)
 # Protocol docs: docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
 
@@ -30,7 +30,7 @@ AgentMode = Literal["primary", "subagent"]
 
 # ── ZONEID for handoff packets ───────────────────────────────────────────
 
-# [id-soft: doom-1993] ZONEID Pattern — magic constant for handoff packet integrity
+# [id-soft: vet-015] ZONEID Pattern — magic constant for handoff packet integrity
 # Imported from cvar_table (single source of truth per D97)
 from omega.cvar_table import ZONEID_HANDOFF  # noqa: F401
 
@@ -45,7 +45,7 @@ class HandoffPacket:
     pending -> accepted -> completed/failed, with traceable IDs at every step.
     
     Core concept (agent dispatch) is the user's original design.
-    Uses [id-soft: doom-1993] ZONEID Pattern for packet integrity.
+    Uses [id-soft: vet-015] ZONEID Pattern for packet integrity.
     """
 
     source_agent: str

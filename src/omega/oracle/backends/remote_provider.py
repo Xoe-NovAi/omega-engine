@@ -74,7 +74,7 @@ def _check_cloud_budget(provider: str, est_tokens: int) -> bool:
 
     Returns True if allowed, False if blocked.
     Best-effort — always allows if BudgetGate unavailable.
-    [id-soft: quake-1996] cvar — lazy singleton pattern for budget gate.
+    [id-soft: vet-016] cvar — lazy singleton pattern for budget gate.
     """
     global _budget_gate
     try:
@@ -348,7 +348,7 @@ class RemoteProvider(ABC):
         }
 
     # ── S3 B4: Repetition Loop Detector (base class guard) ────────────
-    # [id-soft: doom-1993] Precomputed Lookup — fixed-size window scan
+    # [id-soft: vet-023] Precomputed Lookup — fixed-size window scan
 
     @staticmethod
     def _detect_repetition_loop(content: str, model_name: str, threshold: int = 3) -> None:

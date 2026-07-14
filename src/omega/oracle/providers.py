@@ -151,7 +151,7 @@ class LocallmsterProvider(BaseProvider):
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_query},
         ]
-        # [id-soft: quake3-1999] Cvar System — typed config lookup from cvar_table
+        # [id-soft: vet-016] Cvar System — typed config lookup from cvar_table
         try:
             from omega.cvar_table import cvar_get
             stop_tokens = cvar_get("config.gguf.stop_tokens", ["</s>", "User:", "\n\n"])
@@ -214,7 +214,7 @@ class OllamaProvider(BaseProvider):
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_query},
         ]
-        # [id-soft: quake3-1999] Cvar System — typed config lookup from cvar_table
+        # [id-soft: vet-016] Cvar System — typed config lookup from cvar_table
         # Port 1.3: ChatML stop tokens prevent hallucinated conversation turns
         try:
             from omega.cvar_table import cvar_get
@@ -306,7 +306,7 @@ class NativeGGUFProvider(BaseProvider):
       - Memory pressure monitoring before model load
 
     Heritage:
-      [id-soft: quake3-1999] Cvar System — config values read from cvar_table
+      [id-soft: vet-016] Cvar System — config values read from cvar_table
       Port 1.1 (filter_llama_kwargs): validate_llama_kwargs() called at init
       Port 1.2 (n_gpu_layers=0): explicit CPU-only default via cvar
       Port 1.5 (atomic trace_id): trace_id propagated to observability events
@@ -318,7 +318,7 @@ class NativeGGUFProvider(BaseProvider):
         if self.model_path and self.model_path.startswith("~"):
             self.model_path = os.path.expanduser(self.model_path)
 
-        # [id-soft: quake3-1999] Cvar System — typed config lookup from cvar_table
+        # [id-soft: vet-016] Cvar System — typed config lookup from cvar_table
         try:
             from omega.cvar_table import cvar_get, validate_llama_kwargs
             # Port 1.1: validate llama-cpp kwargs — moved to _ensure_loaded
@@ -370,7 +370,7 @@ class NativeGGUFProvider(BaseProvider):
         # Memory management
         self._use_mmap = config.get("use_mmap", True)
         self._use_mlock = config.get("use_mlock", False)
-        # [id-soft: quake3-1999] Cvar System — typed config lookup from cvar_table
+        # [id-soft: vet-016] Cvar System — typed config lookup from cvar_table
         # Port 1.2: explicit CPU-only default prevents iGPU crash on Vega 7
         self._n_gpu_layers = config.get("n_gpu_layers", n_gpu)
 
@@ -603,7 +603,7 @@ class NativeGGUFProvider(BaseProvider):
                     logit_bias = request.get("logit_bias")
                     repetition_penalty = request.get("repetition_penalty", 1.0)
                     
-                    # [id-soft: quake3-1999] Right Approximation — fast heuristic over exact (create_chat_completion with template match)
+                    # [id-soft: vet-002] Right Approximation — fast heuristic over exact (create_chat_completion with template match)
                     # to properly apply the GGUF's embedded Jinja chat template.
                     # This enables thinking mode control via chat_template_kwargs.
                     # Raw llm(prompt=...) does NOT apply the template.
@@ -790,7 +790,7 @@ class NativeGGUFProvider(BaseProvider):
         import anyio
         await self._ensure_loaded(n_ctx)
         
-        # [id-soft: quake3-1999] Right Approximation — fast heuristic over exact (create_chat_completion with template match)
+        # [id-soft: vet-002] Right Approximation — fast heuristic over exact (create_chat_completion with template match)
         # separately. The worker uses create_chat_completion() which applies the GGUF's
         # embedded Jinja chat template, enabling proper thinking mode control via
         # chat_template_kwargs={"enable_thinking": False}.
@@ -849,7 +849,7 @@ class NativeGGUFProvider(BaseProvider):
                 # Use `or {}` because logprobs key may exist with None value
                 # when logprobs were not requested (logprobs=False in worker).
                 self._last_logprobs = (choice.get("logprobs") or {}).get("top_logprobs")
-                # [id-soft: quake3-1999] Cvar System — typed config lookup from cvar_table
+                # [id-soft: vet-016] Cvar System — typed config lookup from cvar_table
                 # Port 1.5: atomic trace_id logging for observability
                 if trace_id:
                     logger.debug(

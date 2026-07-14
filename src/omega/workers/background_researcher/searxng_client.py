@@ -90,7 +90,7 @@ class SearXNGClient:
             return []
         except Exception as e:
             # M9 carve-out: health probe may catch all to prevent crash loops
-            # [id-soft: doom-1993] WAD System — graceful degradation on search failure
+            # [id-soft: vet-027] WAD System — graceful degradation on search failure
             logger.error(f"SearXNG search error: {e}", exc_info=True)
             return []
 
@@ -112,6 +112,6 @@ class SearXNGClient:
             return resp.status_code == 200
         except Exception as e:
             # M9 carve-out: health probe may catch all to prevent crash loops
-            # [id-soft: doom-1993] WAD System — graceful degradation on search failure
+            # [id-soft: vet-027] WAD System — graceful degradation on search failure
             logger.warning("SearXNG health check failed: %s", e)
             return False

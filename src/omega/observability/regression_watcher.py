@@ -5,8 +5,8 @@
 # Background task that polls MetricsDB baselines and detects regressions.
 # Emits alerts via Hivemind and ObservabilityEngine events.
 #
-# [id-soft: quake-1996] Thinker Chain — periodic background task for health monitoring.
-# [id-soft: doom3-2004] Event System — structured event logging for observability.
+# [id-soft: vet-011] Thinker Chain — periodic background task for health monitoring.
+# [id-soft: vet-041] Event System — structured event logging for observability.
 
 import anyio
 import logging

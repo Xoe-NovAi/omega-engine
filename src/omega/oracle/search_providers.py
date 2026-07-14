@@ -1,5 +1,5 @@
 """Sovereign Search Providers — Direct API implementations for T2 and T4.
-# [id-soft: quake3-1999] Right Approximation — fast heuristic search provider chain
+# [id-soft: vet-002] Right Approximation — fast heuristic search provider chain
 # [heritage: searxng 2023] SearXNG — self-hosted metasearch (Tier 1 privacy-first search)
 # [heritage: cloudflare-warp 2021] WARP proxy pool — multi-namespace privacy proxy
 AP: AP-SEARCH-PROVIDERS-v1.0.0
@@ -209,7 +209,7 @@ class ExaProvider(SearchProvider):
     async def search(self, query: str, limit: int = 10) -> Optional[str]:
         async with httpx.AsyncClient(timeout=30.0) as client:
             try:
-                # [id-soft: quake3-1999] Right Approximation — fast heuristic search provider chain
+                # [id-soft: vet-002] Right Approximation — fast heuristic search provider chain
                 # We default to 'auto' type and 'highlights' for token efficiency.
                 payload = {
                     "query": query,

@@ -1622,3 +1622,31 @@
   summary: Session ses_20260714_default_001 distilled via close_session
   timestamp: 1784006559.3055432
   trace_id: ses_20260714_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260714_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260714_default_001 distilled via close_session
+  timestamp: 1784007168.9382205
+  trace_id: ses_20260714_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260714_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260714_default_001 distilled via close_session
+  timestamp: 1784008794.123616
+  trace_id: ses_20260714_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260714_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260714_default_001 distilled via close_session
+  timestamp: 1784009191.1407833
+  trace_id: ses_20260714_default_001
+- entity_name: DataStore
+  field_path: entity.lessons_learned
+  new_value: Session ses_20260714_default_001 distilled
+  source: soul_distiller
+  summary: Session ses_20260714_default_001 distilled via close_session
+  timestamp: 1784009516.997574
+  trace_id: ses_20260714_default_001

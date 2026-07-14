@@ -6,7 +6,7 @@
 # Shared utilities for knowledge feed and demand signal operations.
 # Used by oracle_cli.py (integrated). link_p9_cli.py has been consolidated.
 #
-# [id-soft: doom-1993] ZONEID Pattern — knowledge and demand signal validation
+# [id-soft: vet-015] ZONEID Pattern — knowledge and demand signal validation
 
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md

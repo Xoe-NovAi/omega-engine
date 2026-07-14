@@ -11,7 +11,7 @@
 # [M9 Error Integrity] — No error goes undetected, even in a 200 OK.
 # [M22 Response Provenance] — Every detected error records the provider.
 #
-# [id-soft: quake-1996] Right Approximation — a simple JSON-keyword
+# [id-soft: vet-042] Right Approximation — a simple JSON-keyword
 # scan is "good enough" for 99% of cases. Full schema validation is
 # not needed at this layer.
 

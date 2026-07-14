@@ -6,7 +6,7 @@
 # The `is_cloud` field is set per-response by the ModelGateway (M22 provenance).
 # Local=0, Cloud=1.
 #
-# [id-soft: quake3-1999] cvar — sovereignty ratio as a cvar-table metric
+# [id-soft: vet-016] cvar — sovereignty ratio as a cvar-table metric
 
 import logging
 import sqlite3

@@ -34,7 +34,7 @@ class AntigravityProvider(RemoteProvider):
     Routing: sticky per-account — one account used sequentially until a hard
     429, then failover to next (D205). Never round-robin.
 
-    Heritage: [id-soft: quake3-1999] Hard-Boundary — SDK calls are gated by
+    Heritage: [id-soft: vet-025] Hard-Boundary — SDK calls are gated by
     a single guarded import, preventing cascading failures from a missing
     dependency.
     """

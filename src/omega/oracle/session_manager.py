@@ -6,11 +6,11 @@ Implements the R50 session architecture. Each entity has one active session
 per day, persisted to data/sessions/{entity}.active. Transient mode falls
 back to trace_id with no persistence.
 
-[id-soft: quake-1996] 4-Tier Memory — session persistence mirrors Cache tier
+[id-soft: vet-009] 4-Tier Memory — session persistence mirrors Cache tier
   Quake's Cache (PU_CACHE=101) is the transient-but-reusable memory tier.
   Sessions are the Cache tier: transient (lost on engine restart in transient
   mode) but persistent when actively maintained (saved to disk).
-[id-soft: quake-1996] Grace Period — session archive follows 0.5s rule
+[id-soft: vet-008] Grace Period — session archive follows 0.5s rule
   Session archival defers cleanup for TOMBSTONE_GRACE_SECONDS to prevent
   in-flight requests from writing to a closed session.
 """

@@ -14,8 +14,8 @@
 # See: data/entities/roc_racoon/workspace/mining_reports/ENTITY_AFFINITY_PORT_SPEC.md
 # See: docs/strategy/ROADMAP.md §H2-S5
 #
-# [id-soft: quake-1996] cvar pattern — YAML-backed config, hot-reloadable
-# [id-soft: quake3-1999] Hard-Boundary — affinity is separate routing layer above Entity
+# [id-soft: vet-016] cvar pattern — YAML-backed config, hot-reloadable
+# [id-soft: vet-047] Hard-Boundary — affinity is separate routing layer above Entity
 
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md

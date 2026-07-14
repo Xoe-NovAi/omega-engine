@@ -6,7 +6,7 @@
 # The Omega Engine has pivoted to the `headroom-ai` library for semantic/structural compression.
 # See docs/research/R_HEADROOM_Sovereign_Analysis.md for the detailed audit.
 #
-# [id-soft: doom-1993] WAD System — Data-driven separation of engine and content
+# [id-soft: vet-043] WAD System — Data-driven separation of engine and content
 #   The Headroom store acts as a "prompt WAD", where compressed content is
 #   stored externally and injected only when needed.
 #

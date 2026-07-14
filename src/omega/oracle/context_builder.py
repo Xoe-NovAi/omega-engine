@@ -15,7 +15,7 @@
 #   context_block = await ContextBuilder().build_context(entity_name, session_id)
 #   system_prompt = ContextBuilder.prepend_to_prompt(context_block, entity.personality)
 #
-# [id-soft: quake-1996] Zone Memory — Cache (LRU) tier pattern
+# [id-soft: vet-008] Zone Memory — Cache (LRU) tier pattern
 #   Quake's zone allocator (zone.h:24-80) has a Cache tier (PU_CACHE=101)
 #   that is purged when memory runs low. ContextBuilder fetches from
 #   MemoryStore's hot tier (most recent) and falls back to warm/cold.
@@ -77,7 +77,7 @@ class ObservationMaskingStrategy:
     """High-efficiency filter that culls repetitive 'logged' or 'confirmed' 
     lines in tool outputs to save context tokens.
     
-    Source: [id-soft: doom-1993] BSP Culling (O(1) culling of redundant data)
+    Source: [id-soft: vet-046] BSP Culling (O(1) culling of redundant data)
     """
     def __init__(self, cull_keywords: List[str] = None, preserve_first_n: int = 2):
         self.cull_keywords = cull_keywords or ["logged", "confirmed", "processed"]
@@ -159,7 +159,7 @@ class ContextBuilder:
     as a clean, readable string block. Designed to be prepended to an
     entity's personality/system prompt before inference.
 
-    [id-soft: doom-1993] BSP Culling — L3 principle injection uses O(1)
+    [id-soft: vet-046] BSP Culling — L3 principle injection uses O(1)
     culling: only top-K principles are injected, avoiding context bloat.
 
     When selective_hydration is provided, L3 gnosis principles relevant to
@@ -269,7 +269,7 @@ class ContextBuilder:
             memory_block = await self._compact_and_format_exchanges(entity_name, exchanges, token_limit) if exchanges else ""
             
             # 2. Fetch L3 gnosis principles (Selective Hydration)
-            # [id-soft: doom-1993] BSP Culling — top-K principles only
+            # [id-soft: vet-046] BSP Culling — top-K principles only
             gnosis_block = await self._build_gnosis_block(entity_name)
             
             # 3. Fetch and format world state
@@ -292,7 +292,7 @@ class ContextBuilder:
         as a context block. Silently returns empty string if Selective
         Hydration is not configured or any step fails.
 
-        [id-soft: doom-1993] Precomputed Lookup — embeddings are
+        [id-soft: vet-023] Precomputed Lookup — embeddings are
         precomputed at store time; retrieval is O(1) cosine similarity.
         """
         if self._selective_hydration is None:

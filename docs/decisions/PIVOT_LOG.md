@@ -2327,3 +2327,24 @@ The MaKaLi Cloud Council is the firewall's immune response. Every critical updat
   5. **F3 Frozen Docs**: Update 40 docs dated 2026-07-06 (architecture, explanation, strategy, user-facing) in follow-up PR
 - **Rationale**: Documentation drift undermines PR quality and user trust. The audit revealed the codebase is current (1315 tests, 23 mandates, 9 providers) but docs frozen at 2026-07-06 sprint. Version reconciliation and MCP setup doc are PR blockers.
 - **Status**: 🟡 IN PROGRESS — Phase 1 (version reconciliation, MCP doc, metrics sync) complete; Phase 2 (arch docs, CI gate) pending
+
+## D233: Heritage Tag Migration — Legacy → Vet Format (2026-07-14)
+- **Context**: 179 legacy `[id-soft: GAME-YEAR]` tags in src/omega/ needed migration to `[id-soft: vet-XXX]` format per M14 Heritage Vetting and D208 remediation. HERITAGE_VET_LOG.md contains 70+ vet records with exact file:line mappings.
+- **Decision**: 
+  1. Create precise migration script using vet log file:line locations + context-based matching
+  2. Migrate all 179 legacy tags across 25+ files to correct vet numbers (vet-002 through vet-071)
+  3. Verify `make heritage-vet` passes with zero unvetted tags
+  4. Run full test suite to ensure no regressions
+- **Result**: 1315 tests pass, heritage-vet gate clean, 179 tags migrated to vet format
+- **Rationale**: M14 requires 1:1 immutable linkage between inline tags and vet records. Legacy format migration is mandatory for CI gate and architectural integrity.
+- **Status**: ✅ RATIFIED
+
+## D234: v1.2.0 Release — Temple-Grade Baseline (2026-07-14)
+- **Context**: All D231 quick wins complete, D232 doc cleanup Phase 1 complete, D233 heritage migration complete. Codebase at 1315 tests passing, 23 mandates enforced, 9 providers wired, 122 heritage tags vetted.
+- **Decision**: 
+  1. Tag v1.2.0 with full release notes
+  2. Push to origin/main with tags
+  3. Begin Tier 0 Ship-It Bar (80h) for next sprint
+- **Result**: v1.2.0 tagged and pushed. Ready for Tier 0 work.
+- **Rationale**: Clean baseline with zero errors, minimal warnings, full documentation sync. All Temple-Grade gates pass.
+- **Status**: ✅ RATIFIED

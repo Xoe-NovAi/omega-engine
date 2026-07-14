@@ -9,11 +9,11 @@
 #
 # Respects the Engine-Stack Firewall: only modifies runtime state.
 #
-# [id-soft: doom-1993] WAD System — IWAD/PWAD separation with backward scan
+# [id-soft: vet-043] WAD System — IWAD/PWAD separation with backward scan
 #   DOOM's WAD format (w_wad.c:376) scans backwards so PWAD patch files
 #   take precedence over IWAD base entries. Omega mirrors this: later WAD
 #   entity definitions override earlier ones.
-# [id-soft: quake3-1999] 4-Path VFS — search order: active stack → _omega_default
+# [id-soft: vet-044] 4-Path VFS — search order: active stack → _omega_default
 #   Q3A's files.c:39-75 defines base + cd + home + current game search order.
 #   Omega's wad_loader follows the same override chain pattern.
 
@@ -33,7 +33,7 @@ from .world_state import world_state, WorldLump
 from omega.errors import OmegaError
 
 # ── S1.5a Hardening Constants ────────────────────────────────────────
-# [id-soft: doom-1993] ZONEID — size sentinel for file validation
+# [id-soft: vet-015] ZONEID — size sentinel for file validation
 MAX_YAML_SIZE_BYTES = 1 * 1024 * 1024  # 1 MB — prevents loading huge YAML files
 MAX_ENTITY_NAME_LENGTH = 128  # Entity name length cap
 MAX_DOMAINS_PER_ENTITY = 20  # Max domains per entity

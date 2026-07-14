@@ -10,9 +10,9 @@
 # Zero external deps beyond psutil (stdlib for procfs fallback).
 # 
 # Hardware floor: AMD Ryzen 7 5700U (Zen 2, 8C/16T, 14Gi RAM)
-# [id-soft: quake-1996] Surface Cache — understand the physical fetch path
+# [id-soft: vet-038] Surface Cache — understand the physical fetch path
 #   before optimizing the logical algorithm.
-# [id-soft: doom3-2004] idHeap — know your memory topology before allocating.
+# [id-soft: vet-039] idHeap — know your memory topology before allocating.
 
 from __future__ import annotations
 

@@ -39,7 +39,7 @@ from omega.errors import (
 )
 from omega.request_queue import RequestQueue
 from omega.oracle.feed_utils import load_demand_signals, transition_demand, summarize_feed
-from omega.ics import render as ics_render  # [id-soft: quake-1996] netchan header
+from omega.ics import render as ics_render  # [id-soft: vet-071] netchan header
 
 logger = logging.getLogger(__name__)
 console = Console()
@@ -506,7 +506,7 @@ def _display_response(result: OracleResponse):
     header_mode = cvar_get("config.session_header.mode", "compact")
 
     if header_mode != "off":
-        # [id-soft: quake-1996] netchan — ICS-S header via ics.py (single source of truth)
+        # [id-soft: vet-071] netchan — ICS-S header via ics.py (single source of truth)
         header = ics_render(
             entity=result.entity,
             model=result.model,

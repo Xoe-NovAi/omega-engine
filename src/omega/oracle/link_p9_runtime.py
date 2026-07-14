@@ -6,10 +6,10 @@
 # Agent presence tracking, HandoffPacket lifecycle management,
 # task queue for inter-agent delegation.
 #
-# [id-soft: doom3-2004] idEntity event system — agents emit typed events,
+# [id-soft: vet-066] idEntity event system — agents emit typed events,
 #     other agents consume them. Link P9 is the engine's event bus for agents.
-# [id-soft: doom-1993] ZONEID Pattern — magic constant for agent presence integrity
-# [id-soft: quake-1996] Thinker chain — spawn → execute → reap lifecycle.
+# [id-soft: vet-015] ZONEID Pattern — magic constant for agent presence integrity
+# [id-soft: vet-011] Thinker chain — spawn → execute → reap lifecycle.
 #
 # Protocol docs: docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md
 
@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 PresenceStatus = Literal["active", "idle", "stale", "dead"]
 
-# [id-soft: doom-1993] ZONEID Pattern — magic constant for agent presence integrity
+# [id-soft: vet-015] ZONEID Pattern — magic constant for agent presence integrity
 # Imported from cvar_table (single source of truth per D97)
 
 
@@ -53,7 +53,7 @@ PresenceStatus = Literal["active", "idle", "stale", "dead"]
 class AgentPresence:
     """Tracks whether an agent is alive and available.
 
-    [id-soft: doom-1993] ZONEID Pattern — magic constant for agent presence integrity
+    [id-soft: vet-015] ZONEID Pattern — magic constant for agent presence integrity
     """
     agent_name: str
     last_heartbeat: float
@@ -111,7 +111,7 @@ class LinkP9Runtime:
     - Task queue for inter-agent messages
     - Archive management (completed packets → JSON)
 
-    [id-soft: doom3-2004] idEntity event system — agents emit typed events,
+    [id-soft: vet-066] idEntity event system — agents emit typed events,
     other agents consume them.
     """
 

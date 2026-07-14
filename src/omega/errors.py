@@ -122,8 +122,8 @@ class EntityTombstonedError(OmegaError):
     """Raised when an operation attempts to access a lazily-deleted entity or
     session that has been tombstoned but not yet reaped.
 
-    [id-soft: doom-1993] Lazy Deletion — typed error for tombstone access.
-    [id-soft: quake-1996] Grace Period — caller should retry after grace period.
+    [id-soft: vet-008] Lazy Deletion — typed error for tombstone access.
+    [id-soft: vet-008] Grace Period — caller should retry after grace period.
 
     This is a Mandate 9 enforcement: rather than silently returning empty data,
     we raise a typed error so callers can distinguish "no data exists" from

@@ -32,15 +32,10 @@ class TestSomaticStateManager:
 
             with patch("omega.oracle.somatic_state.anyio.to_thread.run_sync") as mock_run_sync:
                 # First call: llama_copy_state_data
-                # Second call: open file (we need to mock the async context manager)
-                mock_file = AsyncMock()
-                mock_file.__aenter__ = AsyncMock(return_value=mock_file)
-                mock_file.__aexit__ = AsyncMock(return_value=None)
-                mock_file.write = AsyncMock()
-                
+                # Second call: _write_state (sync function)
                 mock_run_sync.side_effect = [
                     mock_state_bytes,  # llama_copy_state_data result
-                    mock_file,         # open file context manager
+                    None,              # _write_state returns None
                 ]
 
                 result = await manager.capture_state(mock_context_ptr, state_id)

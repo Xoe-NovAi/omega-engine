@@ -75,7 +75,7 @@ MAX_HISTORY = MAX_HISTORY_EXCHANGES
 MAX_CONTEXT_EXCHANGES = DEFAULT_CONTEXT_LIMIT
 ARCHIVE_AFTER_DAYS = 7
 
-# [id-soft: quake-1996] Grace Period — wait TOMBSTONE_GRACE_SECONDS before full reclamation
+# [id-soft: vet-008] Grace Period — wait TOMBSTONE_GRACE_SECONDS before full reclamation
 # 0.5s delay before fully removing a tombstoned session from the hot cache.
 # Prevents hot-slot reuse during in-flight add_exchange operations.
 # Same value used by id Software's Quake server (15 packets at 30Hz ≈ 0.5s)
@@ -92,14 +92,14 @@ class MemoryStore:
     """Hot/Warm/Cold entity memory with LRU caching and 3-tier provider fallback.
     DocRef: docs/reference/api/memory_store.md
     
-    [id-soft: doom-1993] ZONEID Pattern — integrity marker embedded in every
+    [id-soft: vet-015] ZONEID Pattern — integrity marker embedded in every
 
     persisted exchange entry, verified on load to catch data corruption.
-    [id-soft: doom-1993] Lazy Deletion — archive_session() tombstones a
+    [id-soft: vet-008] Lazy Deletion — archive_session() tombstones a
     cache_key for TOMBSTONE_GRACE_SECONDS before fully removing the hot
     cache entry. In-flight add_exchange operations complete safely because
     they hold their own reference to the OrderedDict.
-    [id-soft: quake-1996] Grace Period — 0.5s delay (TOMBSTONE_GRACE_SECONDS)
+    [id-soft: vet-008] Grace Period — 0.5s delay (TOMBSTONE_GRACE_SECONDS)
     before reap matches the original Quake server realloc grace.
 
     Batch Persistence (MnemosyneWriter pattern, ported from xna-omega-legacy):
@@ -116,10 +116,10 @@ class MemoryStore:
     def __init__(self, providers: Optional[List[StorageProvider]] = None, vector_store: Optional[IVectorStoreAdapter] = None, embedding_manager: Optional[EmbeddingManager] = None, adapter_registry: Optional[MemoryAdapterRegistry] = None):
         self._hot: Dict[str, OrderedDict] = {}
         self._adapter_registry = adapter_registry
-        # [id-soft: doom-1993] Lazy Deletion — tombstone-based session lifecycle
+        # [id-soft: vet-008] Lazy Deletion — tombstone-based session lifecycle
         # Maps cache_key -> time.time() when tombstoned
         self._tombstoned: Dict[str, float] = {}
-        # [id-soft: quake-1996] Temp Tier — transient scratchpad memory
+        # [id-soft: vet-037] Temp Tier — transient scratchpad memory
         # Used for in-flight inference results that should not be persisted.
         self._temp: Dict[str, Any] = {}
         self._stats: Dict[str, int] = {"loads": 0, "saves": 0, "archives": 0, "fallbacks": 0, "batch_flushes": 0}
@@ -211,7 +211,7 @@ class MemoryStore:
             return []
         cache_key = f"{entity_name.lower()}:{session_id}"
 
-        # [id-soft: doom-1993] Lazy Deletion — tombstone-based session lifecycle
+        # [id-soft: vet-008] Lazy Deletion — tombstone-based session lifecycle
         # Mandate 9 enforcement: silent empty returns hide the fact that the
         # session was archived. Callers must catch EntityTombstonedError and
         # handle it explicitly (typically by loading from cold storage).
@@ -426,7 +426,7 @@ class MemoryStore:
             return
         cache_key = f"{entity_name.lower()}:{session_id}"
 
-        # [id-soft: doom-1993] Lazy Deletion — tombstone-based session lifecycle
+        # [id-soft: vet-008] Lazy Deletion — tombstone-based session lifecycle
         # Mandate 9 enforcement: prevent data loss on archived sessions
         if self._is_tombstoned(cache_key):
             raise EntityTombstonedError(
@@ -435,7 +435,7 @@ class MemoryStore:
                 trace_id=trace_id,
             )
         exchange = {
-            # [id-soft: doom-1993] ZONEID Pattern — integrity marker
+            # [id-soft: vet-015] ZONEID Pattern — integrity marker
             "_zoneid": ZONEID_MEMORY,
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "user": user_message,
@@ -514,7 +514,7 @@ class MemoryStore:
         await self._batch_writer.flush()
 
     def _cache_hot(self, cache_key: str, exchanges: List[Dict]) -> None:
-        # [id-soft: doom-1993] Lazy Deletion — tombstone-based session lifecycle
+        # [id-soft: vet-008] Lazy Deletion — tombstone-based session lifecycle
         self._reap_tombstoned()
         if cache_key not in self._hot:
             self._hot[cache_key] = OrderedDict()
@@ -536,8 +536,8 @@ class MemoryStore:
     def _reap_tombstoned(self) -> None:
         """Reap tombstoned hot cache entries past the grace period.
 
-        [id-soft: doom-1993] Lazy Deletion — sweep tombstoned entries
-        [id-soft: quake-1996] Grace Period — only reap after TOMBSTONE_GRACE_SECONDS
+        [id-soft: vet-008] Lazy Deletion — sweep tombstoned entries
+        [id-soft: vet-008] Grace Period — only reap after TOMBSTONE_GRACE_SECONDS
         In-flight add_exchange operations hold their own references to the
         OrderedDict, so they complete safely even after the slot is reaped
         from the registry. The actual data is in providers, so the reaped
@@ -578,7 +578,7 @@ class MemoryStore:
     def store_transient(self, key: str, value: Any) -> None:
         """Store data in the Temp tier (transient scratchpad).
 
-        [id-soft: quake-1996] Temp Tier — transient memory that is not
+        [id-soft: vet-037] Temp Tier — transient memory that is not
         persisted to any provider. Used for intermediate inference steps.
         """
         self._temp[key] = value
@@ -674,7 +674,7 @@ class MemoryStore:
     ) -> bool:
         """Move a session to cold storage / archive across all providers.
         
-        [id-soft: doom-1993] Lazy Deletion — instead of popping the hot cache
+        [id-soft: vet-008] Lazy Deletion — instead of popping the hot cache
         entry immediately, tombstone it for TOMBSTONE_GRACE_SECONDS so any
         in-flight add_exchange operations complete safely. The slot is
         reaped by _reap_tombstoned() on the next access.
@@ -692,8 +692,8 @@ class MemoryStore:
         
         if archived_any:
             cache_key = f"{entity_name.lower()}:{session_id}"
-            # [id-soft: doom-1993] Lazy Deletion — tombstone-based session lifecycle
-            # [id-soft: quake-1996] Grace Period — wait TOMBSTONE_GRACE_SECONDS before full reclamation
+            # [id-soft: vet-008] Lazy Deletion — tombstone-based session lifecycle
+            # [id-soft: vet-008] Grace Period — wait TOMBSTONE_GRACE_SECONDS before full reclamation
             self._tombstoned[cache_key] = time.time()
             
             # Sovereign Vector Cleanup (C4 Fix)
@@ -747,7 +747,7 @@ class MemoryStore:
     ) -> List[Dict[str, Any]]:
         """List recent sessions, optionally filtered by entity.
 
-        [id-soft: doom-1993] Lazy Deletion — skips sessions whose hot-cache
+        [id-soft: vet-008] Lazy Deletion — skips sessions whose hot-cache
         entry is tombstoned (within grace period). After grace expires, the
         tombstone is reaped and the file itself remains the source of truth.
         """
@@ -797,7 +797,7 @@ class MemoryStore:
     async def close(self) -> None:
         """Flush hot cache to providers and close them.
 
-        [id-soft: doom-1993] Lazy Deletion — skip tombstoned keys when flushing
+        [id-soft: vet-008] Lazy Deletion — skip tombstoned keys when flushing
         because their data has already been archived to providers.
         """
         # Flush batch buffer first (pending writes from add_exchange)

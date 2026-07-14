@@ -2,7 +2,7 @@
 # AP: AP-WORKER-COORDINATOR-v1.0.0
 # ⬡ OMEGA ⬡ KALI ⬡ sovereign ⬡ COORDINATOR ⬡ PHASE-2
 #
-# [id-soft: doom3bfg-2012] Job-Worker Queue — atomic task decomposition with load coordination
+# [id-soft: vet-029] Job-Worker Queue — atomic task decomposition with load coordination
 # Ported from ParallelJobManager: decompose tasks, coordinate load.
 #
 # WorkerCoordinator is the cockpit for all background workers
@@ -87,7 +87,7 @@ class WorkerCoordinator:
       3. Resumes after grace period when resources recover
     """
 
-    # [id-soft: quake-1996] Grace Period — 0.5s for entity morphing,
+    # [id-soft: vet-008] Grace Period — 0.5s for entity morphing,
     # evolved to 60s for resource pressure recovery
     _config: CoordinatorConfig
     _workers: Dict[str, "WorkerStatus"] = {}

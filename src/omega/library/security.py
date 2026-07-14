@@ -26,7 +26,7 @@ from omega.errors import OmegaError
 logger = logging.getLogger(__name__)
 
 
-# ── [id-soft: doom-1993] SSRF Guard — O(1) cull of forbidden IP ranges ──────────────────
+# ── [id-soft: vet-033] SSRF Guard — O(1) cull of forbidden IP ranges ──────────────────
 # Ported from BSP leaf-culling: skip invisible subtrees in O(1).
 # Here: skip internal IP ranges in O(1) CIDR check.
 
@@ -90,7 +90,7 @@ class SSRFGuard:
             return False
 
 
-# ── [id-soft: quake-1996] Path Scope Guard — zone boundary enforcement for file paths ──
+# ── [id-soft: vet-034] Path Scope Guard — zone boundary enforcement for file paths ──
 # Ported from zone.c boundary enforcement: every allocation must stay
 # within the zone's low/high watermarks. Here: every file path must
 # resolve within the library's data directory.
@@ -127,7 +127,7 @@ def validate_path_scope(target_path: Path, base_dir: Path) -> bool:
         return False
 
 
-# ── [id-soft: quake-1996] Download Size Guard — fixed-timestep pre-check on download size ──
+# ── [id-soft: vet-035] Download Size Guard — fixed-timestep pre-check on download size ──
 # Ported from Quake's fixed-timestep pre-check: validate before executing.
 
 async def validate_download_size(

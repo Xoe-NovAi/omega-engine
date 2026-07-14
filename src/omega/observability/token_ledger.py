@@ -6,7 +6,7 @@
 # Every inference transaction is recorded to ensure budget compliance and 
 # provider efficiency analysis.
 #
-# [id-soft: quake3-1999] Cvar System — ledger persistence settings from cvar_table
+# [id-soft: vet-016] Cvar System — ledger persistence settings from cvar_table
 #
 # ── Logic Flow ──────────────────────────────────────────────────────────────
 # 1. Receive transaction data (trace_id, entity, tokens_in, tokens_out, is_cloud).

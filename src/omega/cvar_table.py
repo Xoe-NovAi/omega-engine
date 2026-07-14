@@ -8,11 +8,11 @@
 #   - config.* : User-tunable knobs (YAML-backed, hot-reloadable)
 #
 # Heritage:
-#   [id-soft: doom-1993] ZONEID Pattern — magic constants for runtime integrity.
+#   [id-soft: vet-015] ZONEID Pattern — magic constants for runtime integrity.
 #     A SINGLE PATTERN applied to 13 subsystems (memory, entity, breaker, trace,
 #     probe, handoff, presence, knowledge, demand, verification, atomic, somatic,
 #     embedding). Each constant validates a different data structure's integrity.
-#   [id-soft: quake3-1999] Cvar System — typed, queryable, auditable cvars
+#   [id-soft: vet-016] Cvar System — typed, queryable, auditable cvars
 #   [Cvar System: id Software 1999, generalized 2026]
 #     Q3A's cvar system provided a unified namespace for ALL tunable engine
 #     parameters with get/set, modification tracking, and enumeration.
@@ -48,7 +48,7 @@ logger = logging.getLogger(__name__)
 class CvarDef:
     """A single cvar (console variable) entry.
 
-    [id-soft: quake3-1999] Cvar System — typed, queryable, auditable cvars
+    [id-soft: vet-016] Cvar System — typed, queryable, auditable cvars
 
     Combines id Software's ZONEID magic marker (a 4-byte constant in every
     memory block) with Q3A's cvar system (typed, queryable, enumerable).
@@ -92,13 +92,13 @@ ZONEID_DEMAND = 0x1d4a19        # Demand Signal integrity marker
 ZONEID_VERIFICATION = 0x1d4a1a  # Verification audit trail integrity marker
 ZONEID_ATOMIC = 0x1d4a1b        # Critical section atomic lock marker
 ZONEID_SOMATIC = 0x1d4a1c       # Somatic snapshot integrity marker
-# [id-soft: doom-1993] Precomputed Lookup — embedding cache integrity marker
+# [id-soft: vet-023] Precomputed Lookup — embedding cache integrity marker
 # Embedding provider cache validation. Validated on every embed read/write to
 # catch corrupt or stale embedding vectors in the hot cache.
 ZONEID_EMBEDDING = 0x1d4a1d
 
 
-# [id-soft: doom-1993] Lazy Deletion — sentinel value for tombstoned entities
+# [id-soft: vet-008] Lazy Deletion — sentinel value for tombstoned entities
 # 0xDEADBEEF is the canonical sentinel hex pattern used since the 1980s
 # on IBM RS/6000, Motorola 68000, and id Software's DOOM engine.
 ZONEID_TOMBSTONE = 0xDEADBEEF
@@ -109,7 +109,7 @@ ZONEID_TOMBSTONE = 0xDEADBEEF
 def validate_zoneid(value: int, expected: int, context: str = "") -> None:
     """Validate a ZONEID magic constant.
 
-    [id-soft: doom-1993] ZONEID Pattern — runtime integrity check
+    [id-soft: vet-015] ZONEID Pattern — runtime integrity check
     Direct translation of id Software's z_magic/ZONEID check.
     In C, this was ``if (block->z_magic != ZONEID)`` — a 4-byte comparison
     that caught 90% of memory corruptions.
@@ -557,7 +557,7 @@ LLAMA_CPP_VALID_KWARGS: set = {
 def validate_llama_kwargs(kwargs: dict, context: str = "") -> list:
     """Validate kwargs dict against known llama-cpp keys.
 
-    [id-soft: quake3-1999] Cvar System — config validation is a cvar boundary
+    [id-soft: vet-016] Cvar System — config validation is a cvar boundary
     This is priority port 1.1 from Roc Racoon mining: add kwarg validation
     before passing to llama_cpp.Llama().
 

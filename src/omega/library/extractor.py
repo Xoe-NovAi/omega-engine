@@ -129,10 +129,10 @@ class ContentExtractor:
         """Extract content from a web URL.
         
         Security gates (Phase 1 H2-N):
-          1. SSRFGuard — blocks internal/private IP ranges [id-soft: doom-1993]
-          2. DownloadSizeGuard — checks Content-Length before streaming [id-soft: quake-1996]
+          1. SSRFGuard — blocks internal/private IP ranges [id-soft: vet-033]
+          2. DownloadSizeGuard — checks Content-Length before streaming [id-soft: vet-035]
         """
-        # ── [id-soft: doom-1993] SSRF Gate — O(1) cull of private IP ranges ──
+        # ── [id-soft: vet-030] SSRF Gate — O(1) cull of private IP ranges ──
         if not await SSRFGuard.validate(url):
             return ExtractedContent(
                 source=url,
@@ -142,7 +142,7 @@ class ContentExtractor:
                 error="URL resolves to a private or internal IP range",
             )
 
-        # ── [id-soft: quake-1996] Size Gate — fixed-timestep pre-check on download size ──
+        # ── [id-soft: vet-031] Size Gate — fixed-timestep pre-check on download size ──
         if not await validate_download_size(url):
             return ExtractedContent(
                 source=url,
@@ -278,9 +278,9 @@ class ContentExtractor:
         """Extract content from a local file.
 
         Security gate:
-          - PathScopeGuard — prevents directory traversal [id-soft: quake-1996]
+          - PathScopeGuard — prevents directory traversal [id-soft: vet-034]
         """
-        # ── [id-soft: quake-1996] Path Scope Gate — zone boundary enforcement for file paths ──
+        # ── [id-soft: vet-032] Path Scope Gate — zone boundary enforcement for file paths ──
         from omega.library.library import DATA_DIR as LIBRARY_BASE
         file_path = Path(path)
         if not validate_path_scope(file_path, LIBRARY_BASE):

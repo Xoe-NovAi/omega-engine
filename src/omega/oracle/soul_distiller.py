@@ -6,10 +6,10 @@
 # Auto-distills session insights into entity soul.yaml files.
 # Triggered on session end or manually by the Scribe agent.
 #
-# [id-soft: quake-1996] Save-game pattern — auto-save → summary → lesson.
+# [id-soft: vet-070] Save-game pattern — auto-save → summary → lesson.
 #     Quake auto-saved on level transitions. This engine auto-distills on
 #     session end, extracting L1 (narrative) → L2 (insight) → L3 (principle).
-# [id-soft: doom-1993] WAD System — soul.yaml is data-driven, not hardcoded.
+# [id-soft: vet-043] WAD System — soul.yaml is data-driven, not hardcoded.
 #     The engine reads/writes soul.yaml like a WAD reads lumps.
 #
 # Protocol docs: docs/strategy/SOUL_DISTILLATION_PROTOCOL.md
@@ -363,7 +363,7 @@ class SoulDistiller:
     The three-tier abstraction pipeline:
     L1 (Narrative) → L2 (Insight) → L3 (Universal Principle)
 
-    [id-soft: quake-1996] Save-game pattern — auto-save → summary → lesson
+    [id-soft: vet-070] Save-game pattern — auto-save → summary → lesson
     """
 
     def __init__(self, entities_dir: str = "data/entities") -> None:

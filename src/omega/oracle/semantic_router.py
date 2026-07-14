@@ -5,8 +5,8 @@
 # Replaces keyword-based entity routing with embedding-based semantic routing.
 # Fallback chain: semantic (cosine > 0.4) → keyword (find_by_domain) → default entity.
 #
-# [id-soft: doom-1993] BSP Culling — O(1) culling of irrelevant entities via precomputed routing structure
-# [id-soft: doom-1993] Precomputed Lookup — entity embeddings precomputed at boot for O(1) routing
+# [id-soft: vet-046] BSP Culling — O(1) culling of irrelevant entities via precomputed routing structure
+# [id-soft: vet-023] Precomputed Lookup — entity embeddings precomputed at boot for O(1) routing
 
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
@@ -60,8 +60,8 @@ class SemanticRouter:
         3. Default entity
 
     Heritage:
-        [id-soft: doom-1993] BSP Culling — O(1) culling of irrelevant entities
-        [id-soft: doom-1993] Precomputed Lookup — entity embeddings precomputed at boot
+        [id-soft: vet-046] BSP Culling — O(1) culling of irrelevant entities
+        [id-soft: vet-023] Precomputed Lookup — entity embeddings precomputed at boot
     """
 
     def __init__(
@@ -73,7 +73,7 @@ class SemanticRouter:
         self._registry = registry
         self._embedding_manager = embedding_manager
         self._threshold = threshold
-        # [id-soft: doom-1993] Precomputed Lookup — entity embeddings precomputed at boot for O(1) routing
+        # [id-soft: vet-023] Precomputed Lookup — entity embeddings precomputed at boot for O(1) routing
         self._entity_vectors: Dict[str, List[float]] = {}
         self._bootstrapped = False
 
@@ -107,7 +107,7 @@ class SemanticRouter:
             logger.info("SemanticRouter: only fallback provider available — semantic routing disabled")
             return
 
-        # [id-soft: doom-1993] BSP Culling — O(1) culling of irrelevant entities via precomputed routing structure
+        # [id-soft: vet-046] BSP Culling — O(1) culling of irrelevant entities via precomputed routing structure
         for entity in self._registry.active_iter():
             signature = self._make_signature(entity)
             if not signature:
@@ -201,7 +201,7 @@ class SemanticRouter:
     def _find_closest(self, query_vector: List[float]) -> Tuple[Optional[Entity], float]:
         """Find the entity with highest cosine similarity to the query vector.
 
-        [id-soft: doom-1993] BSP Culling — linear scan with early culling.
+        [id-soft: vet-046] BSP Culling — linear scan with early culling.
         For 22 entities this is ~3ms; no need for ANN index.
         """
         best_entity: Optional[Entity] = None

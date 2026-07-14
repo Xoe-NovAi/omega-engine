@@ -8,9 +8,9 @@ Orchestrates the full session lifecycle:
 - Deleted (optional): beyond retention policy
 
 Heritage:
-- [id-soft: quake-1996] 4-Tier Memory — Active/Archived/External/Deleted maps to
+- [id-soft: vet-009] 4-Tier Memory — Active/Archived/External/Deleted maps to
   Hunk/Zone/Cache/Temp from Quake's zone memory allocator.
-- [id-soft: doom-1993] Lazy Deletion — tombstone before delete, grace period
+- [id-soft: vet-008] Lazy Deletion — tombstone before delete, grace period
   before reap. Prevents data loss on in-flight operations.
 """
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
@@ -35,7 +35,7 @@ logger = logging.getLogger(__name__)
 class SessionState(Enum):
     """Lifecycle states for a session.
 
-    [id-soft: quake-1996] 4-Tier Memory — state machine mapping:
+    [id-soft: vet-009] 4-Tier Memory — state machine mapping:
     - ACTIVE → Hunk (fast, in-memory)
     - ARCHIVED → Zone (compressed, on-disk)
     - EXTERNAL → Cache (cold, external drive)
@@ -113,8 +113,8 @@ class SessionLifecycleManager:
         recalled = await manager.recall_from_external("kali", "ses_20260701_kali_001")
 
     Heritage:
-    - [id-soft: quake-1996] 4-Tier Memory — state machine for session lifecycle
-    - [id-soft: doom-1993] Lazy Deletion — tombstone before delete
+    - [id-soft: vet-009] 4-Tier Memory — state machine for session lifecycle
+    - [id-soft: vet-008] Lazy Deletion — tombstone before delete
     """
 
     def __init__(
@@ -368,7 +368,7 @@ class SessionLifecycleManager:
     async def _move_to_external(self) -> int:
         """Move sessions older than external_after_days to external storage.
 
-        [id-soft: quake-1996] Cache Tier — cold data moved to external drive.
+        [id-soft: vet-067] Cache Tier — cold data moved to external drive.
         """
         count = 0
         now = time.time()
@@ -408,7 +408,7 @@ class SessionLifecycleManager:
     async def _delete_beyond_retention(self) -> int:
         """Delete sessions beyond retention policy.
 
-        [id-soft: doom-1993] Lazy Deletion — only deletes after full lifecycle.
+        [id-soft: vet-008] Lazy Deletion — only deletes after full lifecycle.
         Disabled by default for data preservation.
         """
         count = 0

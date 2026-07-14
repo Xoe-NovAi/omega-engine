@@ -65,7 +65,7 @@ class Library:
     async def _ensure_index(self) -> None:
         """Auto-rebuild the FTS5 index if it's empty but documents exist.
 
-        [id-soft: doom-1993] FTS5 Index Rebuild — WAD directory rebuild pattern.
+        [id-soft: vet-064] FTS5 Index Rebuild — WAD directory rebuild pattern.
         Called once at startup to ensure search is functional immediately.
         """
         stats = await self._indexer.stats()

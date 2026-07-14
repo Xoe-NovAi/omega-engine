@@ -6,9 +6,9 @@
 # Single-source-of-truth for query routing, speculative decoding, entity summoning,
 # and soul evolution. Acts as the gateway between user intent and the 10-pillar council.
 #
-# [id-soft: doom-1993] Oracle Summoning Pattern — Direct entity dispatch via _summon()
-# [id-soft: quake-1996] Memory Zone — Long-term learning via soul.yaml
-# [id-soft: quake3-1999] Triage Routing — Intent classification and entity selection
+# [id-soft: vet-056] Oracle Summoning Pattern — Direct entity dispatch via _summon()
+# [id-soft: vet-009] Memory Zone — Long-term learning via soul.yaml
+# [id-soft: vet-056] Triage Routing — Intent classification and entity selection
 
 import logging
 import os
@@ -775,7 +775,7 @@ class Oracle:
     async def _respond_as_iris(self, query: str, trace: TraceSession, confidence: float, session_id: Optional[str] = None, transient: bool = False) -> OracleResponse:
         """Iris (speculative decoder) responds directly without invoking a pillar.
         
-        [id-soft: quake3-1999] Speculative Decode — lightweight, fast path for
+        [id-soft: vet-069] Speculative Decode — lightweight, fast path for
         simple queries that don't require domain expertise.
         
         [D-kal-053] Now attempts model invocation for Iris via _summon.
@@ -863,7 +863,7 @@ class Oracle:
                     model_name = await self._select_model(entity.name, query, session_id, trace.trace_id)
             
             # Resolve entity affinity for inference presets (temperature, system_prompt, context window)
-            # [id-soft: quake-1996] cvar pattern — YAML-backed affinity DB, hot-reloadable
+            # [id-soft: vet-016] cvar pattern — YAML-backed affinity DB, hot-reloadable
             first_domain = entity.domains[0] if entity.domains else None
             affinity_result = await self.model_gateway.resolve_entity_affinity(
                 entity_name=entity.name,
@@ -1094,7 +1094,7 @@ class Oracle:
         
         Implements Mandate 11 (Soul Integrity).
         
-        [id-soft: quake-1996] Save-game pattern — auto-save on session end
+        [id-soft: vet-070] Save-game pattern — auto-save on session end
         triggers L1→L2→L3 distillation, analogous to Quake's level-transition
         autosave.
         """
@@ -1219,7 +1219,7 @@ class Oracle:
         This is a lightweight real-time tracker — it logs a trace event.
         Full soul distillation (L1→L2→L3) is handled by close_session() on session end.
         
-        [id-soft: quake-1996] Save-game pattern — incremental autosave mirrors Quake's
+        [id-soft: vet-070] Save-game pattern — incremental autosave mirrors Quake's
         periodic state writes, gathering state progressively for the final save on exit.
         """
         if os.environ.get("OMEGA_ENV") == "test":

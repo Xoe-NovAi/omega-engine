@@ -4,7 +4,7 @@
 #
 # Sovereign encrypted storage for all API keys used by the Omega Engine.
 #
-# [id-soft: quake-1996] Zone Memory — memory tagging pattern applied to key
+# [id-soft: vet-008] Zone Memory — memory tagging pattern applied to key
 # management: every vault access carries provenance metadata (which account,
 # when resolved) for audit trails.
 #
@@ -336,7 +336,7 @@ class KeyVault:
     def _load(self):
         """Load and decrypt the vault from disk.
 
-        [id-soft: quake-1996] Zone Memory — retry on I/O errors
+        [id-soft: vet-008] Zone Memory — retry on I/O errors
         with exponential backoff (1s, 2s, 4s) to handle transient
         file-system contention or partial-write races.
         """

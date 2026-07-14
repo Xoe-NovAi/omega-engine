@@ -42,7 +42,7 @@ class CASManager:
     async def put(self, data: bytes) -> str:
         """Store data in CAS and return its SHA-256 hash.
         
-        [id-soft: doom-1993] ZONEID Pattern — the hash itself acts as the 
+        [id-soft: vet-015] ZONEID Pattern — the hash itself acts as the 
         ultimate integrity marker.
         """
         if not data:

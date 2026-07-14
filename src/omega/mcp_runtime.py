@@ -103,7 +103,7 @@ def run_mcp(mcp: Any, modify_app: Optional[Callable[[Any], None]] = None,
         @_ctx.asynccontextmanager
         async def lifespan(app):
             # Wrap server run + background tasks in AnyIO TaskGroup
-            # [id-soft: quake-1996] Zone Memory — deterministic cleanup via zone-purge semantics
+            # [id-soft: vet-008] Zone Memory — deterministic cleanup via zone-purge semantics
             # all background tasks on shutdown (circuit breaker pattern)
             async with anyio.create_task_group() as tg:
                 if on_startup:
@@ -114,7 +114,7 @@ def run_mcp(mcp: Any, modify_app: Optional[Callable[[Any], None]] = None,
                     yield
             # TaskGroup exit: all background tasks cancelled
             # Shutdown cleanup — call on_shutdown if provided
-            # [id-soft: quake-1996] Zone Memory — deterministic cleanup via zone-purge semantics
+            # [id-soft: vet-008] Zone Memory — deterministic cleanup via zone-purge semantics
             if on_shutdown:
                     try:
                         if hasattr(on_shutdown, '__call__'):

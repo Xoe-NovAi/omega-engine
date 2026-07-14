@@ -586,7 +586,7 @@ class ForensicsManager:
 
 
 # ── Budget Gate (M7 Local-First Enforcement) ────────────────────────────
-# [id-soft: quake-1996] Zone Memory — resource guard with budget enforcement.
+# [id-soft: vet-008] Zone Memory — resource guard with budget enforcement.
 
 class BudgetGate:
     """
@@ -762,7 +762,7 @@ class ObservabilityEngine:
         self._ufl = get_ufl_writer()
 
         # MetricsDB — WAL-mode SQLite for profiling baselines & regression detection
-        # [id-soft: doom3-2004] Event System — structured event logging for observability.
+        # [id-soft: vet-040] Event System — structured event logging for observability.
         self._metrics_db = metrics_db
         self._metrics_db_initialized = False
         
@@ -1006,7 +1006,7 @@ class ObservabilityEngine:
     ) -> None:
         """Log a single observability event.
 
-        [id-soft: doom-1993] ZONEID Pattern — integrity marker on every event
+        [id-soft: vet-015] ZONEID Pattern — integrity marker on every event
         """
         event = {
             "_zoneid": ZONEID_TRACE,  # Heritage marker for event lineage validation
@@ -1091,7 +1091,7 @@ class ObservabilityEngine:
         """Record a performance measurement to MetricsDB.
 
         Called after each inference to track latency, token usage, and cost.
-        [id-soft: doom3-2004] Event System — structured performance logging.
+        [id-soft: vet-040] Event System — structured performance logging.
         """
         metrics_db = self.metrics_db
         if not metrics_db:
@@ -1122,7 +1122,7 @@ class ObservabilityEngine:
     ) -> None:
         """Record an error to MetricsDB (separate from forensics recording).
 
-        [id-soft: doom3-2004] Event System — structured error logging.
+        [id-soft: vet-040] Event System — structured error logging.
         """
         metrics_db = self.metrics_db
         if not metrics_db:
@@ -1150,7 +1150,7 @@ class ObservabilityEngine:
     ) -> None:
         """Record a circuit breaker state transition to MetricsDB.
 
-        [id-soft: doom3-2004] Event System — breaker transition logging.
+        [id-soft: vet-040] Event System — breaker transition logging.
         """
         metrics_db = self.metrics_db
         if not metrics_db:

@@ -3,7 +3,7 @@
 #
 # ⬡ OMEGA ⬡ KALI ⬡ api_clients ⬡ trc_canonical
 #
-# [id-soft: quake3-1999] Hard-Boundary Struct — each client is a sealed
+# [id-soft: vet-025] Hard-Boundary Struct — each client is a sealed
 #   interface with search() + get_by_identifier() as the contract.
 # Heritage: WAD System — orchestrator treats clients like WAD entries: swapable, discoverable, hot-pluggable (Doom 1993)
 #
@@ -114,7 +114,7 @@ class LibraryMetadata:
 
 
 # ============================================================================
-# TYPED ERRORS [id-soft: quake-1996] Hard-Boundary — typed error hierarchy as boundary layer
+# TYPED ERRORS [id-soft: vet-026] Hard-Boundary — typed error hierarchy as boundary layer
 # ============================================================================
 
 class LibraryAPIError(OmegaError):
@@ -125,7 +125,7 @@ class ClientNotFoundError(LibraryAPIError):
 
 
 # ============================================================================
-# BASE CLIENT [id-soft: doom-1993] WAD System — swapable, hot-pluggable data sources
+# BASE CLIENT [id-soft: vet-027] WAD System — swapable, hot-pluggable data sources
 # ============================================================================
 
 T = TypeVar("T")
@@ -467,7 +467,7 @@ class ProjectGutenbergClient(BaseLibraryClient):
 
 
 # ============================================================================
-# ORCHESTRATOR [id-soft: doom-1993] WAD System — swapable, hot-pluggable data sources
+# ORCHESTRATOR [id-soft: vet-028] WAD System — swapable, hot-pluggable data sources
 # ============================================================================
 
 class LibraryAPIOrchestrator:

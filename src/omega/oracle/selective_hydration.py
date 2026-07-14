@@ -5,7 +5,7 @@
 # Retrieves L3 (Universal) principles from Qdrant by cosine similarity
 # and injects them into the ContextBuilder's context window.
 #
-# [id-soft: doom-1993] BSP Culling — O(1) culling of irrelevant principles
+# [id-soft: vet-046] BSP Culling — O(1) culling of irrelevant principles
 #   Doom's BSP tree culls half the geometry with a single plane equation.
 #   SelectiveHydration culls all L3 principles with a single vector
 #   similarity threshold, returning only the top-K relevant ones.
@@ -135,7 +135,7 @@ class SelectiveHydration:
     Injects top-K principles into the ContextBuilder's context window,
     providing relevant distilled wisdom for the current query.
 
-    [id-soft: doom-1993] BSP Culling — O(1) similarity threshold culling
+    [id-soft: vet-046] BSP Culling — O(1) similarity threshold culling
     [id-soft: doom-1993] Precomputed Lookup — embeddings at store time
 
     Design decisions:

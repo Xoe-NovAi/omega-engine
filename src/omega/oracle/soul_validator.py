@@ -6,7 +6,7 @@
 # Implements the canonical soul schema defined in docs/research/R10_soul_schema_validation.md.
 # Ensures that entity souls are syntactically valid and structurally complete.
 #
-# [id-soft: doom-1993] ZONEID Pattern — validated via soul_power and session counts.
+# [id-soft: vet-015] ZONEID Pattern — validated via soul_power and session counts.
 
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
@@ -183,7 +183,7 @@ class SoulValidator:
         
         v6.1 lean schema — only entity block with identity.
         
-        [id-soft: doom-1993] Lazy Deletion — provides a safe baseline to prevent
+        [id-soft: vet-008] Lazy Deletion — provides a safe baseline to prevent
         engine crash when soul is corrupted.
         """
         return {

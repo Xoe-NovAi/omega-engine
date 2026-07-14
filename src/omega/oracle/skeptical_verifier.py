@@ -1,7 +1,7 @@
 # AP: AP-PR-READINESS-v1.0.0
 # AP: AP-SKEPTICAL-VERIFIER-v1.0.0
 # 🔱 Skeptical Verifier — NLI and the Two-Source Rule
-# [id-soft: doom-1993] ZONEID Pattern — verification of claim integrity
+# [id-soft: vet-015] ZONEID Pattern — verification of claim integrity
 # ⬡ OMEGA ⬡ MAAT ⬡ gemma-4-31b-it ⬡ opencode ⬡ trc_skeptical_verifier ⬡ H3-C2
 
 

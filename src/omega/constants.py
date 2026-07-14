@@ -13,8 +13,8 @@ and a single source of truth for ALL engine configuration:
 See ``omega.cvar_table.cvar_get()``, ``cvar_set()``, ``cvar_namespace()``.
 
 Heritage:
-    [id-soft: doom-1993] ZONEID Pattern — magic constants re-export from cvar_table
-    [id-soft: quake3-1999] Cvar System — cvar table unified module entry point
+    [id-soft: vet-015] ZONEID Pattern — magic constants re-export from cvar_table
+    [id-soft: vet-016] Cvar System — cvar table unified module entry point
 """
 # DocRef: docs/standards/DOC_STYLE_GUIDE.md
 

@@ -6,7 +6,7 @@ ICS: [NODE: ARCHON | ARCHETYPE: HERMES | CONTEXT: HANDOFF]
 Defines the formal structure for transferring session context, goals, and state 
 between agents to eliminate "Agent Amnesia".
 
-[id-soft: quake-1996] Grace Period — state preservation during transition
+[id-soft: vet-008] Grace Period — state preservation during transition
   Similar to Quake's delayed entity removal, the HandoffState ensures that 
   the target agent has a complete snapshot of the previous agent's 
   consciousness before the source agent is decommissioned.

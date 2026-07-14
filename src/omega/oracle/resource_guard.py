@@ -98,7 +98,7 @@ _fallback_counter = 0
 class AtomicLock:
     """Sovereign Atomic Lock for critical state transitions.
 
-    [id-soft: doom-1993] ZONEID Pattern — ensures lock integrity.
+    [id-soft: vet-015] ZONEID Pattern — ensures lock integrity.
     """
     def __init__(self):
         self._magic = ZONEID_ATOMIC
@@ -219,11 +219,11 @@ class ResourceGuard:
     v1.2.0 — RAM-Aware: tracks actual memory usage in MB instead of
     abstract weights.
     
-    [id-soft: doom-1993] ZONEID Pattern — critical sections guarded by
+    [id-soft: vet-015] ZONEID Pattern — critical sections guarded by
     ZONEID_PROBE marker. Catches use-after-free and double-release bugs.
     """
     def __init__(self, max_ram_mb: Optional[int] = None, meminfo_path: Optional[str] = None):
-        # [id-soft: doom-1993] ZONEID Pattern — runtime state marker
+        # [id-soft: vet-015] ZONEID Pattern — runtime state marker
         self._magic = ZONEID_PROBE
         self._max_ram_mb = max_ram_mb or int(cvar_get("config.resource_guard.max_ram_mb", 12288))
         self._current_ram_mb = 0
