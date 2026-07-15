@@ -46,74 +46,42 @@
 
 ---
 
-### 2B — Tier 0: Ship-It Bar (80h) — **From PR_PREP_WORKSPACE §2**
+### 2B — Tier 0: Ship-It Bar (80h) — **From PR_PREP_WORKSPACE §2 + Carmack S3 Consult**
 
-#### 2B.1 — 30 Undefined-Name Bugs (F821) — 15 min
-| Item | File:Line | Symbol | Fix |
-|------|-----------|--------|-----|
-| B01 | `src/omega/oracle/subagent_dispatcher.py:160` | `anyio` | Add `import anyio` |
-| B02-04 | `src/omega/research/sandbox.py:399,502,556` | `ResearchProposal` | Add import |
-| B05-06 | `src/omega/research/scorecard.py:320,345` | `tier_start` | Define or import |
-| B07-30 | Remaining F821 | various | Run `ruff check --select F821 src/omega/` |
+**Carmack's Prioritization**: Phase 1 (Foundation) → Phase 2 (Core Infra) → Phase 3 (Data Layer) → Phase 4 (CI & Stress). Defer Pydantic v2 migration, structured logging overhaul, coverage >80%.
 
-**Gate**: `ruff check --select F821 src/omega/ --exit-non-zero-on-fix` → zero errors
+#### 2B.1 — Phase 1: Foundation (2h) — DO FIRST
+| # | Task | Carmack Directive | Effort |
+|---|------|-------------------|--------|
+| T0-1 | **F821 undefined-name fixes** | `ruff check --select=F821 src/` → fix all. Trivial, unblocks everything. | 15 min |
+| T0-2 | **Bare `except Exception:` elimination** | M9/M23 compliance. Replace with typed `except (SpecificError,):` + `trace_id` logging. Fail fast, fail loud. | 90 min |
 
-#### 2B.2 — 19 Bare `except Exception:` — 90 min
-| Item | File:Line | Fix |
-|------|-----------|-----|
-| E01-02 | `src/omega/research/hivemind_bridge.py:164,198` | Type-specific catch |
-| E03-04 | `src/omega/research/sandbox.py:520,551` | Type-specific catch |
-| E05-08 | `src/omega/audit/mandate_auditor.py:95,130,225,285` | Type-specific catch |
-| E09 | `src/omega/rag/iterative_rag.py:63` | Type-specific catch |
-| E10 | `src/omega/rag/simple_rag.py:39` | Type-specific catch |
-| E11 | `src/omega/workers/youtube_worker.py:1016` | Type-specific catch |
-| E12-14 | `src/omega/governance/budget_guard.py:196,309,365` | Type-specific catch |
-| E15 | `src/omega/workers/background_researcher/run.py:74` | Type-specific catch |
-| E16 | `src/omega/oracle/providers.py:44` | Type-specific catch |
-| E17 | `src/omega/research/scorecard.py:133` | Type-specific catch |
+**Gate**: `ruff check --select=F821,E722 src/omega/ --exit-non-zero-on-fix` → zero errors
 
-**Gate**: `grep -rn "except Exception:" src/omega/ --include="*.py" | grep -v "# noqa"` → zero
+#### 2B.2 — Phase 2: Core Infrastructure (4h)
+| # | Task | Carmack Pattern | Effort |
+|---|------|-----------------|--------|
+| T0-3 | **Centralized logging** | Single `src/omega/logging.py` with `structlog` + AnyIO async sinks. One `get_logger(__name__)` pattern everywhere. No `basicConfig` scattered. | 4h |
+| T0-4 | **Config validation (Pydantic OmegaConfig)** | `model_config = ConfigDict(extra='forbid', frozen=True)`. Validate at startup, fail fast. No runtime config surprises. | 7h |
 
-#### 2B.3 — Centralize Logging — 4h
-| Item | What | Effort |
-|------|------|--------|
-| L01 | Create `src/omega/logging.py` with `setup_logging(level, json_format, trace_id)` | 2h |
-| L02 | Replace 3 scattered `logging.basicConfig()` calls | 1h |
-| L03 | Wire `setup_logging()` into CLI entry point (`oracle_cli.py:main`) | 30m |
-| L04 | Add log-level override via `--log-level` / `OMEGA_LOG_LEVEL` env var | 30m |
+#### 2B.3 — Phase 3: Data Layer (5h)
+| # | Task | Risk Mitigation | Effort |
+|---|------|-----------------|--------|
+| T0-5 | **Qdrant → sqlite-vec decommission** | Dual-write for 1 sprint. Verify vector parity (cosine ±0.001). Keep Qdrant image cached for rollback. | 3h |
+| T0-6 | **sqlite-vec Phase 1-2** | Metadata filtering + quantization. Benchmark 10K vectors on Zen 2 — must stay <50ms p99. | 2h |
 
-**Gate**: One function configures all logging. Zero `basicConfig` calls outside `src/omega/logging.py`.
+#### 2B.4 — Phase 4: CI & Stress (3h)
+| # | Task | Standard | Effort |
+|---|------|----------|--------|
+| T0-7 | **Single CI workflow** | One `.github/workflows/ci.yml`: lint → test → temple-grade → heritage-vet → sovereignty. No matrix. | 2h |
+| T0-8 | **Stress tests (5 scenarios)** | (1) 100 concurrent `talk()`, (2) 10K vector inserts, (3) 1hr soak, (4) OOM injection, (5) network partition. | 5h |
 
-#### 2B.4 — Config Validation — 7h
-| Item | What | Effort |
-|------|------|--------|
-| C01 | Create `src/omega/config.py` with Pydantic `OmegaConfig(BaseSettings)` | 4h |
-| C02 | Fix duplicated `sovereignty_gate` block in `config/omega.yaml` (lines 51-55, 73-77) | 5m |
-| C03 | Route all `yaml.safe_load()` calls through single cached loader | 2h |
-| C04 | Add schema validation at boot — reject unknown keys | 1h |
-
-**Gate**: `omega talk "hello"` validates entire config tree at startup. Unknown YAML keys raise `ConfigError`.
-
-#### 2B.5 — CI Surgery — 2h
-| Item | What | Effort |
-|------|------|--------|
-| CI01 | Merge `ci.yml` + `test.yml` into single `.github/workflows/omega-ci.yml` | 1h |
-| CI02 | Add coverage gate: `pytest-cov` → ≥80% or fail | 30m |
-| CI03 | Add `make temple-grade` to CI pipeline | 10m |
-| CI04 | Add M2 Firewall check: `make firewall-check` in CI | 10m |
-| CI05 | Add `pre-commit` config (`.pre-commit-config.yaml`): ruff, mypy, trailing-whitespace, end-of-file-fixer | 30m |
-
-**Gate**: Single CI workflow. Coverage gate blocks <80%. Temple-grade runs every push.
-
-#### 2B.6 — Infrastructure Quick Fixes — 1h 25m
-| Item | What | Effort |
-|------|------|--------|
-| I01 | Create `CODE_OF_CONDUCT.md` (referenced in CONTRIBUTING.md but missing) | 5m |
-| I02 | Create `scripts/uninstall.sh` | 1h |
-| I03 | Fix `mkdocs.yml` repo URL (`arcana-novai` → `Xoe-NovAi`) | 1m |
-| I04 | Add `SECURITY.md` with vulnerability reporting policy | 15m |
-
-**Gate**: All community-standard files present. Uninstall works. MkDocs links resolve.
+#### 2B.5 — Deferred (Explicitly NOT Tier 0)
+| Task | Reason |
+|------|--------|
+| Full Pydantic v2 migration | v1 works, v2 is churn |
+| Structured logging overhaul | `structlog` is fine, don't rewrite |
+| Coverage gate >80% | Current ~75% acceptable for v1.2.0 |
 
 ---
 

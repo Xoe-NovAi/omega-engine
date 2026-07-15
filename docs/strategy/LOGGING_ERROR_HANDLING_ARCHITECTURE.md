@@ -430,6 +430,127 @@ def broken_provider():
 
 ---
 
+## 9. Carmack Tier 0 — Centralized Logging Architecture (NEW — 2026-07-14)
+
+**Source**: John Carmack S3 Consultation — Architectural review of v1.2.0 baseline
+
+### 9.1 Problem Statement
+Current codebase has scattered `logging.basicConfig()` calls, inconsistent logger patterns, and no unified async sink for AnyIO compatibility. This violates M1 (AnyIO Absolute) and creates observability gaps.
+
+### 9.2 Carmack's Directive
+> **Single `src/omega/logging.py` with `structlog` + AnyIO async sinks. One `get_logger(__name__)` pattern everywhere. No `basicConfig` scattered.**
+
+### 9.3 Architecture
+
+```python
+# src/omega/logging.py
+"""Centralized logging for Omega Engine — AnyIO compatible, structlog-based."""
+
+import logging
+import sys
+from typing import Optional
+import structlog
+import anyio
+from anyio import create_task_group
+
+# Configure structlog once at module load
+structlog.configure(
+    processors=[
+        structlog.stdlib.filter_by_level,
+        structlog.stdlib.add_logger_name,
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.PositionalArgumentsFormatter(),
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.processors.StackInfoRenderer(),
+        structlog.processors.format_exc_info,
+        structlog.processors.UnicodeDecoder(),
+        structlog.processors.JSONRenderer(),  # Machine-parseable for observability
+    ],
+    context_class=dict,
+    logger_factory=structlog.stdlib.LoggerFactory(),
+    wrapper_class=structlog.stdlib.BoundLogger,
+    cache_logger_on_first_use=True,
+)
+
+# AnyIO-compatible async sink
+class AsyncSink:
+    """AnyIO-compatible log sink for structured output."""
+    
+    def __init__(self, stream=None):
+        self._stream = stream or sys.stderr
+        self._lock = anyio.Lock()
+    
+    async def write(self, message: str):
+        async with self._lock:
+            self._stream.write(message + "\n")
+            await anyio.to_thread.run_sync(self._stream.flush)
+
+# Global sink instance
+_async_sink: Optional[AsyncSink] = None
+
+def get_logger(name: str) -> structlog.stdlib.BoundLogger:
+    """Get a structured logger — single pattern for entire codebase."""
+    return structlog.get_logger(name)
+
+def init_logging(level: str = "INFO", json_output: bool = True):
+    """Initialize logging — call once at application startup."""
+    global _async_sink
+    
+    # Configure stdlib logging to route through structlog
+    logging.basicConfig(
+        format="%(message)s",
+        stream=sys.stderr,
+        level=getattr(logging, level.upper()),
+    )
+    
+    # Set up async sink for high-throughput paths
+    _async_sink = AsyncSink()
+    
+    # Configure root logger
+    root_logger = logging.getLogger()
+    root_logger.handlers = [logging.StreamHandler(sys.stderr)]
+    root_logger.setLevel(getattr(logging, level.upper()))
+
+# Convenience for AnyIO task groups
+async def log_async(logger: structlog.stdlib.BoundLogger, level: str, event: str, **kwargs):
+    """Log from async context without blocking."""
+    getattr(logger, level)(event, **kwargs)
+```
+
+### 9.4 Usage Pattern (Enforced Everywhere)
+
+```python
+# In every module — ONE pattern
+from omega.logging import get_logger
+
+logger = get_logger(__name__)
+
+async def some_function():
+    logger.info("operation.started", trace_id="trc_123", context={"key": "value"})
+    try:
+        await do_work()
+    except SpecificError as e:
+        logger.error("operation.failed", trace_id="trc_123", error=str(e), exc_info=True)
+        raise
+```
+
+### 9.5 Migration Checklist (Tier 0)
+
+- [ ] Create `src/omega/logging.py` with above architecture
+- [ ] Replace all `logging.getLogger(__name__)` → `from omega.logging import get_logger`
+- [ ] Replace all `logging.basicConfig()` calls with single `init_logging()` at startup
+- [ ] Verify AnyIO compatibility — no blocking I/O in log paths
+- [ ] Add JSON output for observability pipeline consumption
+- [ ] Test under load: 1000 concurrent log calls must not block event loop
+
+### 9.6 Carmack's Laws Applied
+1. **Fail fast, fail loud** — Every `except` logs `trace_id` and re-raises or returns typed error
+2. **Data over code** — Config validation at load time, not access time
+3. **Measure before optimize** — Stress tests first, then tune
+4. **Rollback ready** — Keep old logging until new is verified under load
+
+---
+
 ## References
 
 | Document | Relevance |

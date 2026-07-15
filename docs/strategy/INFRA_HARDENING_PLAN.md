@@ -5,6 +5,7 @@
 **Date**: 2026-07-12
 **Status**: PLANNING — Ready for execution
 **Deprioritized**: Web Claude Upload (moved to bottom of queue)
+**Carmack Tier 0 Applied**: 2026-07-14 — Foundation fixes prioritized before infra hardening
 
 ---
 
@@ -19,6 +20,14 @@
 - YouTube worker exists but needs hardening (adaptive rate limiting, RAG synthesis, circuit breaker)
 - Embedding chain: Gemma 300M (primary) → Ollama → MiniLM → Static → Fallback
 - Omega Hub MCP on SSE :8016 (needs Streamable HTTP migration)
+
+**Carmack Tier 0 Prerequisite**: Before infra hardening, complete Tier 0 Ship-It Bar (80h):
+1. F821 undefined-name fixes (15 min)
+2. Bare `except Exception:` elimination (90 min)
+3. Centralized logging with structlog + AnyIO (4h)
+4. Config validation with Pydantic OmegaConfig (7h)
+5. Qdrant → sqlite-vec dual-write verification (3h)
+6. Single CI workflow + stress tests (3h)
 
 ---
 
@@ -438,6 +447,61 @@ ONGOING: Web Claude Upload (Manual — when operator available)
 ---
 
 ## §10 Immediate Next Steps (Today)
+
+---
+
+## §11 Carmack Tier 0 — Code Quality Baseline (BLOCKING)
+
+**Source**: John Carmack S3 Consultation — Architectural review of v1.2.0 baseline
+
+### Executive Summary
+v1.2.0 baseline achieved (1315 tests, 23 mandates, 9 providers). Tier 0 addresses code quality debt before Epoch II features.
+
+### Phase 1: Foundation (2h) — DO FIRST
+| # | Task | Carmack Directive | Effort |
+|---|------|-------------------|--------|
+| T0-1 | **F821 undefined-name fixes** | `ruff check --select=F821 src/` → fix all. Trivial, unblocks everything. | 15 min |
+| T0-2 | **Bare `except Exception:` elimination** | M9/M23 compliance. Replace with typed `except (SpecificError,):` + `trace_id` logging. Fail fast, fail loud. | 90 min |
+
+### Phase 2: Core Infrastructure (4h)
+| # | Task | Carmack Pattern | Effort |
+|---|------|-----------------|--------|
+| T0-3 | **Centralized logging** | Single `src/omega/logging.py` with `structlog` + AnyIO async sinks. One `get_logger(__name__)` pattern everywhere. No `basicConfig` scattered. | 4h |
+| T0-4 | **Config validation (Pydantic OmegaConfig)** | `model_config = ConfigDict(extra='forbid', frozen=True)`. Validate at startup, fail fast. No runtime config surprises. | 7h |
+
+### Phase 3: Data Layer (5h)
+| # | Task | Risk Mitigation | Effort |
+|---|------|-----------------|--------|
+| T0-5 | **Qdrant → sqlite-vec decommission** | Dual-write for 1 sprint. Verify vector parity (cosine ±0.001). Keep Qdrant image cached for rollback. | 3h |
+| T0-6 | **sqlite-vec Phase 1-2** | Metadata filtering + quantization. Benchmark 10K vectors on Zen 2 — must stay <50ms p99. | 2h |
+
+### Phase 4: CI & Stress (3h)
+| # | Task | Standard | Effort |
+|---|------|----------|--------|
+| T0-7 | **Single CI workflow** | One `.github/workflows/ci.yml`: lint → test → temple-grade → heritage-vet → sovereignty. No matrix. | 2h |
+| T0-8 | **Stress tests (5 scenarios)** | (1) 100 concurrent `talk()`, (2) 10K vector inserts, (3) 1hr soak, (4) OOM injection, (5) network partition. | 5h |
+
+### Deferred (Explicitly NOT Tier 0)
+| Task | Reason |
+|------|--------|
+| Full Pydantic v2 migration | v1 works, v2 is churn |
+| Structured logging overhaul | `structlog` is fine, don't rewrite |
+| Coverage gate >80% | Current ~75% acceptable for v1.2.0 |
+
+### Carmack's Laws Applied
+1. **Fail fast, fail loud** — Every `except` logs `trace_id` and re-raises or returns typed error
+2. **Data over code** — Config validation at load time, not access time
+3. **Measure before optimize** — Stress tests first, then tune sqlite-vec HNSW params
+4. **Rollback ready** — Qdrant decommission only after 7-day dual-write verification
+
+### Execution Order
+```
+Week 0 (Before Infra Hardening): T0-1 → T0-2 → T0-3 → T0-4
+Week 1: T0-5 → T0-6 → T0-7 → T0-8  
+Week 2+: YouTube Worker Hardening (§1) → Ingestion Pipeline (§2) → AGB-0 (§3) → MCP Migration (§4)
+```
+
+**Gate**: All Tier 0 tasks complete + 1315 tests passing + Temple-Grade clean before proceeding to §1 YouTube Worker Hardening.
 
 1. **Start YouTube Worker Phase 1A** — TranscriptFetcher hardening
 2. **Verify SearXNG video engines** — Test `categories=videos` with multiple engines
