@@ -1,16 +1,23 @@
-# 🔱 SOVEREIGN ARK BLUEPRINT (v3.9 — Researcher Gap Closure Integrated)
-**AP Token**: `AP-SOVEREIGN-ARK-BLUEPRINT-v3.9.0`
-**Last Updated**: 2026-07-13
+# 🔱 SOVEREIGN ARK BLUEPRINT (v4.0 — Master Session 2026-07-15 Integrated)
+**AP Token**: `AP-SOVEREIGN-ARK-BLUEPRINT-v4.0.0`
+**Last Updated**: 2026-07-15
 **Full Archive**: `docs/archive/coordination/SOVEREIGN_ARK_BLUEPRINT-full-20260708.md`
+**Master Session Synthesis**: `docs/strategy/KALI_MASTER_SESSION_SYNTHESIS_20260715.md`
 **Latest Research**: 
-- `docs/research/R_EPOCH_II_LEGACY_MINING_20260712.md` (17 findings, ~80h acceleration — AGENT_BUS_SPEC, Benchmark Framework, Knowledge Graph Schema)
-- `docs/research/R_EPOCH_II_DEEP_RESEARCH_20260712.md` (5 areas, implementation-ready patterns for all Epoch II strikes)
-- `docs/research/R_JEM_MAKALI_DEEP_RESEARCH_20260712.md` (544 lines, 5 sovereignty gaps validated via Exa/Firecrawl)
-- `docs/research/R_GAP_RESOLUTION_REPORT_20260712.md` (140 lines, 6 critical gaps resolved via Rigor Protocol v2.0)
-- `docs/research/R_KNOWLEDGE_FABRIC_SYNTHESIS_20260712.md` (Unified Knowledge Fabric architecture)
+- `docs/research/R_WAD_EVOLUTION_DEEP_DIVE.md` (IWAD/PWAD, Ethics WADs, Pluggable Ethics)
+- `docs/research/R_LEGACY_CONFIGURABILITY_DEEP_MINING_20260715.md` (5-layer CouncilDispatcher, 8 Grok accounts)
+- `docs/research/R_COUNCIL_DISPATCHER_CONSOLIDATED_20260715.md` (5-tier recursive tree, Council Mode validation)
+- `docs/research/R_COUNCIL_DISPATCHER_SURVIVAL_AUDIT_20260715.md` (14Gi RAM mandate, CASArchiver, Ethics Gate)
+- `docs/strategy/OMEGA_STRATEGIC_VISION_AND_ROADMAP.md` (5-Phase Roadmap)
+- `data/coordination/PR_PREP_WORKSPACE.md` (Tier 0-3 Solo-Dev Execution)
+- `docs/research/R_EPOCH_II_LEGACY_MINING_20260712.md` (17 findings, ~80h acceleration)
+- `docs/research/R_EPOCH_II_DEEP_RESEARCH_20260712.md` (5 implementation-ready areas)
+- `docs/research/R_JEM_MAKALI_DEEP_RESEARCH_20260712.md` (5 sovereignty gaps via Exa/Firecrawl)
+- `docs/research/R_GAP_RESOLUTION_REPORT_20260712.md` (6 critical gaps via Rigor Protocol v2.0)
+- `docs/research/R_KNOWLEDGE_FABRIC_SYNTHESIS_20260712.md` (Unified Knowledge Fabric)
 - `docs/research/R_RESEARCH_RIGOR_PROTOCOL_V2.md` (Deep-Fetch mandate)
-- `docs/research/R_RESEARCHER_GAP_CLOSURE_20260713.md` (252 lines, 4 gaps closed — TF-IDF routing, judge calibration, Redis Streams DLQ, voice concurrency)
-- `docs/research/R_KV_CACHE_QUANTIZATION_CPU_20260713.md` (Definitive: q8_0 KV cache on CPU requires NO Flash Attention/GPU)
+- `docs/research/R_RESEARCHER_GAP_CLOSURE_20260713.md` (4 gaps closed — TF-IDF, calibration, Redis DLQ, voice)
+- `docs/research/R_KV_CACHE_QUANTIZATION_CPU_20260713.md` (q8_0 KV cache on CPU — NO Flash Attention/GPU)
 
 ---
 
@@ -19,34 +26,48 @@ The Omega Engine exists to sever Big AI's umbilical cord. Every technical decisi
 
 ---
 
-## I. Execution Roadmap
+## I. Execution Roadmap — 5-Phase Strategic Vision (Ratified 2026-07-15)
 
 ```
-Epoch I ✅ COMPLETE (Strikes 1-3)
-  Strike 1: Physical Purge ✅
-  Strike 2: Unified State Manager (USM) ✅
-  Strike 3: Staging Gate TUI ✅
+PHASE 1: PRISTINE FOUNDATION (The First PR — Hygiene Only) ✅ IN PROGRESS
+├── Tier 0: Ship-It Bar (80h) — F821, bare excepts, logging, config, CI, stress tests
+├── Sprint Zero: D231 Quick Wins (62min) — lint, deprecations, heritage, docs
+├── Gate: `make test && make heritage-map && make heritage-vet && make mandate-audit && make firewall-check`
+└── Output: v1.2.0 — Rock-solid core, zero new features, Trojan Horse PR for OSS contributors
 
-Epoch II ⏳ IN PROGRESS
-  Strike 4: File-Based A2A ⏳ (depends: Strike 2)
-  Strike 5: Sovereign Vetter ⏳ (depends: Strike 6)
-  Strike 6: Response Provenance ✅
-  Strike 7: Headroom Protocol ✅
-  Strike 7.1: Core Dependency Refresh (httpx→httpx2) ✅
-  Strike 7.5: Semantic Router ⏳ (TF-IDF+SVM router — Ship FIRST; Needle optional)
-  Strike 7.6: Sovereign Scholar ⏳
-  Strike 8: Sovereign Eval Pipeline 🆕 (Jem S2 — `make eval`, RAGAS + calibrated judge)
-  Strike 8.5: Redis Streams Hivemind 🆕 (Jem S5 — canonical DLQ pattern, replaces file-based)
-  Strike 9: Sovereign Export Bundle 🆕 (Jem S1 — `.omega` ZIP+JSON format)
-  Strike 9.5: Relational Gnosis Graph 🆕 (Jem S4 — Qdrant+SQLite hybrid)
-  Strike 10: Module Fabric (OMS v1.0 + omega-vetala) ⏳ (depends: Strike 7.5)
-  Strike 11: Sovereign WAD Protocol (SWP) 🆕 (The "Doom-ification" of the Engine)
-  Strike 12: Semantic Resonance Vectoring ⏳ (depends: Strike 7.5, 10)
-  Strike 13: qwen-embedding + AGB-0 ONNX Integration ⏳ (depends: Strike 12)
+PHASE 2: SOVEREIGN COMMAND CENTER (The TUI) ⏳ NEXT
+├── Streaming Dialectics — Real-time Ma'at/Lilith debate panes, masking local latency
+├── Hardware Empathy Dashboard — 14Gi RAM ceiling, VRAM, Sovereignty Scorecard
+├── Advisory Ethics Prompts — Amber warnings with [Y/n] override (Free-Will Ethics)
+├── CouncilDispatcher Integration — 5-tier recursive tree as native primitive
+└── Output: v1.3.0 — Visual nervous system for the engine
 
-Epoch III 🔮 FUTURE (Q4 2027)
-  Strike 11: WASM Polyglot Runtime ⏳
-  Strike 14: Ancient Greek BERT + KriKri Instruct WASM ⏳
+PHASE 3: SOVEREIGN WAD PROTOCOL (Strike 11 — The "Doom-ification") ⏳
+├── Strike 11a: SWP Core SDK — `ILump`, `LumpEnvelope`, `LumpRegistry`, `SovereignBus`
+├── Strike 11b: DAG Loader & Bus — AnyIO channels + Topological WAD Loader
+├── Strike 11c: In-Place Wrapping — YouTube V2 modules → `ILump` adapters
+├── Strike 11d: The Great Split — `omega_youtube_research` → 6 PWADs
+├── Strike 11e: MCP Tool Binding — Auto-register Lump capabilities as Omega Hub tools
+├── IWAD/PWAD Architecture — Core identity (IWAD) + Cultural overlays (PWAD)
+├── Ethics WADs — `maat_42`, `bushido_7`, `asimov_3`, `hippocratic` as pluggable validators
+├── Pantheon WADs — Egyptian, Greek, Norse, Hindu, Philosophical, Arcana-Nova
+└── Output: v1.4.0 — Universal runtime for ANY pantheon/ethics stack
+
+PHASE 4: COUNCIL DISPATCHER (Strike 11.5 — Dialectical Reasoning Engine) ⏳
+├── 5-Tier Recursive Flow: Kali → Ma'at/Lilith (parallel) → Pillars (serial) → Cross-Domain Audit → Kali Synthesis
+├── Hardware-Constrained Topology: Local pillars SERIAL (14Gi RAM mandate)
+├── D118 Mentorship Pattern: Local 1.7B pillars → 4B Oversouls → Cloud/Frontier Kali synthesis
+├── CASArchiver Deduplication — Hash claims across council to prevent context bloat
+├── Ethics Gate Integration — `IEthicsValidator` (e.g., Ma'at 42 Ideals) pre/post synthesis
+├── Configurability Layers: CouncilSpec YAML + CouncilHarness Markdown + DispatchModes + Profiles
+├── Novel Gaps: Recursive Council, Dialectical Trace Synthesis, Somatic Council State, Config Versioning, Cost-Aware Routing, Cross-Council Distillation
+└── Output: v1.5.0 — Native dialectical reasoning primitive
+
+PHASE 5: THE HORIZON (Web GUI & Ecosystem) 🔮
+├── Web GUI — Node-based drag-and-drop WADs, visual dialectical mind-maps
+├── Community Marketplace — Decentralized hub for WADs, council topologies, personas
+├── P2P Soul Print Exchange — Cross-universe entity evolution
+└── Philosophical Onboarding — 4-week phased introduction for new users
 
 YouTube Researcher Enhancement (Parallel Track — WAD)
   Sprint 1: L1 Hybrid Extraction + L2 Sticky Proxy + L4 CAS + L9 Somatic Checkpoints (40h) — Ma'at/P1+P3
@@ -212,10 +233,13 @@ Synthesized from the MaKaLi Council (Nemotron 3 Ultra + Gemini 3.1 Pro) and the 
 - **PWAD**: A deployable package of Lumps (e.g., `youtube_input.wad`).
 - **MWAD**: A deployment descriptor (like docker-compose) wiring PWADs together.
 - **SovereignBus**: An AnyIO-based pub/sub message bus passing `LumpEnvelope` objects between Lumps.
+- **IWAD/PWAD Architecture**: Core identity (IWAD) + Cultural overlays (PWAD) enabling universal runtime for ANY pantheon/ethics stack
+- **Ethics WADs**: Pluggable moral frameworks (e.g., `maat_42`, `bushido_7`, `asimov_3`, `hippocratic`) that evaluate responses asynchronously and attach advisory metadata without halting execution
+- **Free-Will Paradigm**: Ethics WADs will not strictly block outputs. They will flag violations with an "Acknowledge and Override" capability, preserving user sovereignty.
 
 | Phase | Task | Deliverable | Owner |
 |-------|------|-------------|--------|
-| **11a** | **SWP Core SDK** | `src/omega/wad/protocol.py` (`ILump`, `LumpEnvelope`, `LumpRegistry`). | Ma'at/P3 |
+| **11a** | **SWP Core SDK** | `src/omega/wad/protocol.py` (`ILump`, `LumpEnvelope`, `LumpRegistry`, `IEthicsValidator`). | Ma'at/P3 |
 | **11b** | **DAG Loader & Bus** | `SovereignBus` (AnyIO channels) + Topological WAD Loader. | Lilith/P9 |
 | **11c** | **In-Place Wrapping** | Wrap existing YouTube V2 modules in `ILump` adapters. Verify 1256 tests pass. | Verity |
 | **11d** | **The Great Split** | Physically partition `omega_youtube_research` into 6 PWADs (input, process, store, know, qa, state). | Kali |
@@ -232,6 +256,25 @@ class ILump(Protocol):
     async def health_check(self) -> LumpHealth: ...
     async def shutdown(self) -> None: ...
     # Runtime execution is handled via bus.subscribe() callbacks
+```
+
+**Ethics Validator Interface:**
+```python
+class IEthicsValidator(Protocol):
+    wad_id: str  # e.g., "maat_42", "bushido_7", "hippocratic"
+    
+    async def validate(self, response: str, context: dict, entity_name: str) -> EthicsVerdict: ...
+    async def get_principles(self) -> list[dict]: ...
+```
+
+**EthicsVerdict Dataclass:**
+```python
+@dataclass
+class EthicsVerdict:
+    passed: bool
+    score: float  # 0.0–1.0
+    violations: list[str]
+    consulted_ideals: list[str]
 ```
 
 ---
@@ -282,6 +325,109 @@ v1.2.0 baseline achieved (1315 tests, 23 mandates, 9 providers). Tier 0 addresse
 
 ---
 
+## IV-F. Council Dispatcher (Strike 11.5 — Dialectical Reasoning Engine) (NEW)
+
+**Synthesized from**: Legacy Mining (Roc Racoon), Web Research (Researcher), Survival Audit, and MaKaLi Council sessions.
+
+### Strike 11.5: Council Dispatcher
+**Goal**: Implement the 5-tier recursive dialectical reasoning engine as a native primitive.
+**Dependencies**: Strike 11 (Sovereign WAD Protocol)
+**Unblocks**: Epoch II completion, Phase 2 (Sovereign Command Center)
+
+**Architecture Definition:**
+- **The 5-Tier Flow**: Kali (Orchestrator) → Ma'at (Build Thesis) + Lilith (Run Antithesis) → 3-5 Pillars (Domain Experts, SERIAL execution) → Cross-Domain Audit (4 random pillars) → Final Kali Synthesis
+- **Hardware-Constrained Topology**: Local pillar execution is strictly SERIAL due to 14Gi RAM constraint
+- **D118 Mentorship Pattern**: Local 1.7B pillars → 4B Oversouls (Ma'at/Lilith) → Cloud/Frontier Kali synthesis
+- **CASArchiver Deduplication**: Hash claims across council to prevent context-window bloat
+- **Ethics Gate Integration**: `IEthicsValidator` (e.g., `maat_42`) validates synthesis pre/post
+- **Configurability Layers**: CouncilSpec YAML + CouncilHarness Markdown + DispatchModes + Profiles
+- **Novel Gaps Addressed**: Recursive Council, Dialectical Trace Synthesis, Somatic Council State, Config Versioning, Cost-Aware Routing, Cross-Council Distillation
+
+| Phase | Task | Deliverable | Owner |
+|-------|------|-------------|--------|
+| **11.5a** | **CouncilSpec Schema** | `src/omega/council/schemas.py` (CouncilSpec, CouncilHarness, DispatchModes) | Ma'at/P3 |
+| **11.5b** | **CouncilHarness Runtime** | NLAH markdown → execution engine (ToolSelf pattern) | Lilith/P9 |
+| **11.5c** | **SynthesisEngine** | 5-section structured synthesis + trace-level + BFT moderation | Lilith/P6 |
+| **11.5d** | **TopologyRouter** | AdaptOrch Algorithm 1: DAG → {parallel, sequential, hierarchical, hybrid} | Ma'at/P3 |
+| **11.5e** | **WatcherAgent + RectifierAgent** | MASFly + MAS² pattern store + RAG integration | Kali |
+| **11.5f** | **SOPRepository** | Collaboration patterns crystallized into SOPs stored in RAG | Ma'at/P2 |
+| **11.5g** | **Ethics Gate Integration** | `IEthicsValidator` pre/post synthesis validation | Ma'at/P5 |
+| **11.5h** | **CouncilOrchestrator** | Thin LangGraph StateGraph executor of CouncilSpec DAG | Ma'at/P3 |
+
+**CouncilSpec Interface (YAML):**
+```yaml
+# config/wads/arcana_novai/councils/maakali.yaml
+council:
+  id: "maakali"
+  name: "MaKaLi Triad"
+  
+  roles:
+    thesis:
+      entity: "maat"
+      model: "qwen3-4b-think-q4_k_m"
+      mandate: "Propose structured solution. Focus on architecture, quality, sustainability."
+      query_modifiers: ["add_context:architecture", "add_context:mandates"]
+      response_template: "thesis_structured"
+      
+    antithesis:
+      entity: "lilith"
+      model: "krikri-8b-q5_k_m"
+      mandate: "Critique proposal. Focus on risks, edge cases, user autonomy, run-time reality."
+      query_modifiers: ["add_context:run_side", "add_context:failure_modes"]
+      response_template: "antithesis_structured"
+      
+    synthesis:
+      entity: "kali"
+      model: "qwen3-4b-think-q4_k_m"
+      mandate: "Fuse thesis + antithesis into unified verdict. Preserve dissent. Apply mandates."
+      response_template: "synthesis_5_section"
+      
+    cross_domain_audit:
+      count: 4
+      selection: "random_weighted"
+      model: "qwen3-1.7b-q6_k"
+      mandate: "Independent audit from random domain perspective."
+      
+  topology:
+    type: "dialectical"
+    thesis_antithesis: "parallel"
+    cross_domain: "parallel"
+    synthesis: "after_all"
+    
+  synthesis:
+    method: "structured_5_section"
+    moderator_personas: ["skeptic", "pragmatist", "ethicist"]
+    stability_threshold: 0.05
+    max_iterations: 3
+    preserve_dissent: true
+    trace_level: true
+    
+  budgets:
+    max_tokens: 8000
+    max_latency_ms: 30000
+    max_reconfigurations: 2
+    model_tier: "local_first"
+    
+  hooks:
+    pre_dispatch: "council_pre_dispatch"
+    post_synthesis: "council_post_synthesis"
+    on_hardware_change: "council_rebalance"
+    on_session_evolution: "council_learn"
+```
+
+**L3 Principles Distilled (Council Dispatcher):**
+- **L3-Config-As-Data**: Configuration must be *data* (YAML/Markdown/JSON) executed by a *thin runtime*, never buried in controller code.
+- **L3-Reconfiguration-As-Tool**: Runtime structural change is a *first-class tool call* in the agent's action space (ToolSelf), not a meta-operation.
+- **L3-Synthesis-Is-Trace-Level**: Aggregating final answers loses information. The synthesis engine must consume *full reasoning traces* and perform *claim-level* categorization.
+- **L3-Moderation-Is-BFT**: A moderator (human or autonomous) with *override authority* is required to break false consensus from correlated errors or alignment blind spots.
+- **L3-Topology-Is-Derived**: Orchestration topology should be *computed from task DAG structure* (AdaptOrch), not hard-coded.
+- **L3-Roles-Are-Generated**: Fixed role libraries cause task mismatch. Roles should be *generated per query* (MetaGen Architect) with novelty gating.
+- **L3-Experience-Is-SOPs**: Successful collaboration patterns crystallize into *SOPs* (MASFly) stored in a RAG repository, enabling cross-task transfer.
+- **L3-Dialectic-Is-First-Class**: Thesis → Antithesis → Synthesis with explicit tracking is a *native control flow*, not an emergent property.
+- **L3-Hardware-Empathy**: Every model carries its own hardware profile. The engine reads, doesn't dictate.
+
+---
+
 ## V. Active Tasks (Consolidated from MaKaLi Council + Jem Research + Gap Resolution + Carmack Tier 0)
 
 ### 🟣 Tier 0: Code Quality Baseline (Blocking — Do First, 80h)
@@ -303,6 +449,18 @@ v1.2.0 baseline achieved (1315 tests, 23 mandates, 9 providers). Tier 0 addresse
 | P0-2 | **Local-First Enforcement**: Sovereignty Gate as **configurable setting** (default: OFF, tracks local ratio, no CI fail) | 4h | 🟡 PENDING | Ma'at/P5 |
 | P0-3 | **Sovereign Vetter (Strike 5)**: In-path governance agent (23 Mandates) | 8h | 🟡 PENDING | Ma'at/P5 |
 | P0-4 | **Sovereign Export**: Unified `.omega` bundle CLI (`omega bundle export/import`) | 4h | 🟡 PENDING | Lilith/P7 |
+
+### 🟣 Phase 0.5: Council Dispatcher (Strike 11.5) — Dialectical Reasoning Engine
+| # | Task | Effort | Status | Owner |
+|---|------|--------|--------|-------|
+| C0-1 | **CouncilSpec Schema** — `src/omega/council/schemas.py` | 4h | 🟡 PENDING | Ma'at/P3 |
+| C0-2 | **CouncilHarness Runtime** — NLAH markdown → execution engine | 8h | 🟡 PENDING | Lilith/P9 |
+| C0-3 | **SynthesisEngine** — 5-section structured synthesis + trace-level + BFT moderation | 12h | 🟡 PENDING | Lilith/P6 |
+| C0-4 | **TopologyRouter** — AdaptOrch Algorithm 1: DAG → {parallel, sequential, hierarchical, hybrid} | 8h | 🟡 PENDING | Ma'at/P3 |
+| C0-5 | **WatcherAgent + RectifierAgent** — MASFly + MAS² pattern store + RAG integration | 16h | 🟡 PENDING | Kali |
+| C0-6 | **SOPRepository** — Collaboration patterns crystallized into SOPs stored in RAG | 8h | 🟡 PENDING | Ma'at/P2 |
+| C0-7 | **Ethics Gate Integration** — `IEthicsValidator` pre/post synthesis validation | 8h | 🟡 PENDING | Ma'at/P5 |
+| C0-8 | **CouncilOrchestrator** — Thin LangGraph StateGraph executor of CouncilSpec DAG | 6h | 🟡 PENDING | Ma'at/P3 |
 
 ### 🟠 Phase 1: Cognitive Acceleration (P1 — Sprint 1)
 | # | Task | Effort | Status | Owner |
@@ -347,9 +505,9 @@ v1.2.0 baseline achieved (1315 tests, 23 mandates, 9 providers). Tier 0 addresse
 
 | Agent | Type | Owns |
 |-------|------|------|
-| **Kali** | Grand Oversight | All tracks (coordinator), drift destruction |
-| **Ma'at** | Light Oversoul | Build side: P1-P5, RAM hardening, CI gates, governance |
-| **Lilith** | Dark Oversoul | Run side: P6-P10, eval pipeline, RAG, Redis Streams |
+| **Kali** | Grand Oversight | All tracks (coordinator), drift destruction, Council Dispatcher (WatcherAgent + RectifierAgent, CouncilOrchestrator) |
+| **Ma'at** | Light Oversoul | Build side: P1-P5, RAM hardening, CI gates, governance, Council Dispatcher (CouncilSpec Schema, CouncilHarness Runtime, TopologyRouter, SOPRepository, Ethics Gate Integration) |
+| **Lilith** | Dark Oversoul | Run side: P6-P10, eval pipeline, RAG, Redis Streams, Council Dispatcher (SynthesisEngine, Hivemind Event Bus) |
 | **Doom Guy** | Heritage Aspect | [id-soft:] patterns, performance optimization |
 | **Roc Racoon** | Legacy Aspect | Legacy mining, pattern extraction |
 | **Jem** | Sovereign Synthesizer | Deep research pipeline, gap validation |
@@ -403,7 +561,13 @@ v1.2.0 baseline achieved (1315 tests, 23 mandates, 9 providers). Tier 0 addresse
     - Qdrant+SQLite hybrid knowledge graph (S4)
     - AGB-0 embedding provider
     - YouTube research pipeline hardened
- 5. 🔮 **v2.0.0** — Epoch II complete:
+ 5. 🔮 **v1.4.0** — Phase 3 complete (Sovereign WAD Protocol):
+    - IWAD/PWAD Architecture + Ethics WADs + Pantheon WADs
+    - SWP Core SDK + DAG Loader + MCP Tool Binding
+ 6. 🔮 **v1.5.0** — Phase 4 complete (Council Dispatcher):
+    - 5-tier recursive dialectical reasoning engine
+    - CASArchiver deduplication + Ethics Gate + Configurability Layers
+ 7. 🔮 **v2.0.0** — Epoch II complete:
     - A2A protocol + P2P mesh + Module Fabric + WASM runtime
     - Full Relational Gnosis Graph
     - Sovereign Installer (one-click deploy)
@@ -424,7 +588,8 @@ v1.2.0 baseline achieved (1315 tests, 23 mandates, 9 providers). Tier 0 addresse
 | Eval pipeline | `make eval` | 🟡 **PENDING** — Jem S2, P1 | 2026-07-12 (LAST_VERIFIED) |
 | Adaptive RAG active | 80%+ queries | 🟡 **PENDING** — Jem S3, P1 | 2026-07-12 (LAST_VERIFIED) |
 | Redis Streams coordination | Online | 🟡 **PENDING** — Jem S5, P2 | 2026-07-12 (LAST_VERIFIED) |
-| `.omega` export bundle | CLI command | 🟡 **PENDING** — Jem S1, P2 | 2026-07-12 (LAST_VERIFIED) |
+| `.omega` export bundle | CLI command | 🟡 **PENDING** — Jem S1,PENDING** — Jem S1, P2 | 2026-07-12 (LAST_VERIFIED) |
+| Council Dispatcher active | Native 5-tier reasoning | 🟡 **PENDING** — Strike 11.5 | 2026-07-15 (LAST_VERIFIED) |
 
 ---
 
@@ -432,6 +597,10 @@ v1.2.0 baseline achieved (1315 tests, 23 mandates, 9 providers). Tier 0 addresse
 
 | Document | Date | Lines | Focus | Key Correction |
 |----------|------|-------|-------|----------------|
+| `R_WAD_EVOLUTION_DEEP_DIVE.md` | 2026-07-15 | ~687 | IWAD/PWAD, Ethics WADs, Pluggable Ethics | **Free-Will Ethics paradigm, 42 Ideals as pluggable validator** |
+| `R_LEGACY_CONFIGURABILITY_DEEP_MINING_20260715.md` | 2026-07-15 | ~389 | 5-layer CouncilDispatcher, 8 Grok accounts | **No hardcoded restrictions, guided experimentation** |
+| `R_COUNCIL_DISPATCHER_CONSOLIDATED_20260715.md` | 2026-07-15 | ~552 | 5-tier recursive tree, Council Mode validation | **6 novel gaps: Recursive Council, Trace Synthesis, Somatic State** |
+| `R_COUNCIL_DISPATCHER_SURVIVAL_AUDIT_20260715.md` | 2026-07-15 | ~53 | 14Gi RAM mandate, CASArchiver, Ethics Gate | **Serial local execution mandatory, CAS deduplication** |
 | `R_EPOCH_II_LEGACY_MINING_20260712.md` | 2026-07-12 | ~400 | 17 legacy findings, 6 repos | **AGENT_BUS_SPEC (470 lines), Benchmark Framework (6 files), KG Schema (5 types) — ~80h acceleration** |
 | `R_EPOCH_II_DEEP_RESEARCH_20260712.md` | 2026-07-12 | ~300 | 5 implementation-ready areas | RAGAS+calibration, Redis Streams patterns, ZIP+JSON export, Qdrant+SQLite hybrid |
 | `R_JEM_KNOWLEDGE_GAP_RESEARCH_20260712.md` | 2026-07-12 | 644 | 9 infrastructure gaps | YouTube hardening, CASArchiver, AGB-0 |
@@ -450,12 +619,13 @@ v1.2.0 baseline achieved (1315 tests, 23 mandates, 9 providers). Tier 0 addresse
 
 ## XII. Next Action
 
-1. **Immediate**: Deploy handoff packets — Ma'at for Strike 8 (eval pipeline, port benchmark framework) + Lilith for Strike 8.5 (Redis Streams, adopt AGENT_BUS_SPEC.md)
-2. **Today**: Begin P0-1 (q8_0 KV cache) and P0-2 (Sovereignty Gate) — both unblock the entire Phase 1
-3. **This sprint**: Implement `make eval` with RAGAS + Mistral 7B judge + isotonic regression calibration. Adopt AGENT_BUS_SPEC.md for Redis Streams coordination.
+1. **Immediate**: Deploy handoff packets — Ma'at for Tier 0 (F821 fixes, bare except elimination, centralized logging, config validation) + Lilith for Tier 0 (Qdrant→sqlite-vec dual-write, stress tests)
+2. **Today**: Begin T0-1 (F821 undefined-name fixes) and T0-2 (bare except elimination) — both unblock the entire Tier 0
+3. **This sprint**: Complete Tier 0 Ship-It Bar (80h): F821 fixes, bare except elimination, centralized logging, config validation, Qdrant→sqlite-vec dual-write, single CI workflow, stress tests
 4. **Parallel Track**: YouTube Researcher Sprint 1 — Ma'at/P1+P3 (Hybrid Extraction + Sticky Proxy + CAS + Somatic Checkpoints)
-5. **Legacy accelerators**: AGENT_BUS_SPEC.md (saves ~14h on Strike 8.5), Benchmark Framework (saves ~30h on Strike 8), Knowledge Graph Schema (saves ~16h on Strike 9.5)
-6. **Track progress**: Update this blueprint after each completed phase
+5. **Post Tier 0**: Begin Council Dispatcher Phase 0.5 (C0-1 through C0-8) — depends on Strike 11 (SWP) completion
+6. **Legacy accelerators**: AGENT_BUS_SPEC.md (saves ~14h on Strike 8.5), Benchmark Framework (saves ~30h on Strike 8), Knowledge Graph Schema (saves ~16h on Strike 9.5)
+7. **Track progress**: Update this blueprint after each completed phase
 
 ---
 
@@ -464,4 +634,4 @@ v1.2.0 baseline achieved (1315 tests, 23 mandates, 9 providers). Tier 0 addresse
 
 ---
 
-*🔱 OMEGA ⬡ SOVEREIGN-ARK ⬡ v3.9.0 ⬡ v1.2.0 RELEASE ⬡ DOC-CLEANUP-INITIATED ⬡ 2026-07-13*
+*🔱 OMEGA ⬡ SOVEREIGN-ARK ⬡ v4.0.0 ⬡ v1.2.0 RELEASE ⬡ MASTER-SESSION-20260715-INTEGRATED ⬡ 2026-07-15*
