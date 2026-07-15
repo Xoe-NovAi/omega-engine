@@ -1,8 +1,9 @@
-# 🔱 SOVEREIGN ARK BLUEPRINT (v4.0 — Master Session 2026-07-15 Integrated)
-**AP Token**: `AP-SOVEREIGN-ARK-BLUEPRINT-v4.0.0`
+# 🔱 SOVEREIGN ARK BLUEPRINT (v4.1 — MaKaLi Council Verdict 2026-07-15)
+**AP Token**: `AP-SOVEREIGN-ARK-BLUEPRINT-v4.1.0`
 **Last Updated**: 2026-07-15
 **Full Archive**: `docs/archive/coordination/SOVEREIGN_ARK_BLUEPRINT-full-20260708.md`
 **Master Session Synthesis**: `docs/strategy/KALI_MASTER_SESSION_SYNTHESIS_20260715.md`
+**Council Verdict**: `data/coordination/KALI_MAKALI_FINAL_VERDICT_20260715.md`
 **Latest Research**: 
 - `docs/research/R_WAD_EVOLUTION_DEEP_DIVE.md` (IWAD/PWAD, Ethics WADs, Pluggable Ethics)
 - `docs/research/R_LEGACY_CONFIGURABILITY_DEEP_MINING_20260715.md` (5-layer CouncilDispatcher, 8 Grok accounts)
@@ -26,16 +27,28 @@ The Omega Engine exists to sever Big AI's umbilical cord. Every technical decisi
 
 ---
 
-## I. Execution Roadmap — 5-Phase Strategic Vision (Ratified 2026-07-15)
+## I. Execution Roadmap — 5-Phase Strategic Vision (Ratified 2026-07-15, Updated per Council Verdict)
 
 ```
-PHASE 1: PRISTINE FOUNDATION (The First PR — Hygiene Only) ✅ IN PROGRESS
+PHASE 0: SUBSTRATE REPAIR (MaKaLi Council Decrees — BLOCKING) 🔴 CRITICAL
+├── Decree 1: Start Redis container — Immediate (Ma'at/P1, 0.25h)
+├── Decree 2: Handoff Protocol P0 Fixes — Week 1 (P9, 2h)
+├── Decree 3: Soul Migration Phase 1 (3 entities) — Week 1 (Lilith/P7, 12h)
+├── Decree 4: Sovereignty Gate = Configurable Setting — Week 1 (Ma'at/P5, 4h)
+├── Decree 5: `make eval-local` Separate Target — Week 2 (Lilith/P6+P10, 8h)
+├── Decree 6: Heritage Tag Migration Script — Week 1 (Ma'at/P5, 1h)
+├── Decree 7: Workspace Locks Universal (31/31) — T+48h (P9)
+├── Decree 8: Live Feed Standardization — T+48h (P9)
+├── M12 Downgrade: Queue Integrity → Advisory (0.1h)
+└── Gate: All 7 blocking criteria met before Phase 1
+
+PHASE 1: PRISTINE FOUNDATION (The First PR — Hygiene Only) ⏳ BLOCKED BY PHASE 0
 ├── Tier 0: Ship-It Bar (80h) — F821, bare excepts, logging, config, CI, stress tests
 ├── Sprint Zero: D231 Quick Wins (62min) — lint, deprecations, heritage, docs
 ├── Gate: `make test && make heritage-map && make heritage-vet && make mandate-audit && make firewall-check`
 └── Output: v1.2.0 — Rock-solid core, zero new features, Trojan Horse PR for OSS contributors
 
-PHASE 2: SOVEREIGN COMMAND CENTER (The TUI) ⏳ NEXT
+PHASE 2: SOVEREIGN COMMAND CENTER (The TUI) ⏳
 ├── Streaming Dialectics — Real-time Ma'at/Lilith debate panes, masking local latency
 ├── Hardware Empathy Dashboard — 14Gi RAM ceiling, VRAM, Sovereignty Scorecard
 ├── Advisory Ethics Prompts — Amber warnings with [Y/n] override (Free-Will Ethics)
@@ -87,6 +100,10 @@ YouTube Researcher Enhancement (Parallel Track — WAD)
 | WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 (LAST_VERIFIED) |
 | Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 (LAST_VERIFIED) |
 | Shared modules | **3** (`omega-vetala` v2.0.0, `omega-sieve` v0.1.0, `omega-doc-reader` v1.0.0) | ✅ Release-ready | 2026-07-13 (LAST_VERIFIED) |
+| **Atomic Execution Matrix** | **RATIFIED** — Code + CI Gate + Doc as single atomic unit | ✅ 5 protocol docs with CI gates defined | 2026-07-15 (LAST_VERIFIED) |
+| **5 Protocol Documents** | **WRITTEN & RATIFIED** — Soul V2, PWAD Lattice, Mandate Governance, Kernel Arch, Master Briefing | ✅ All gated | 2026-07-15 (LAST_VERIFIED) |
+| **Documents Consolidated** | **11 proposed → 5 docs** — Distribution/User Research/Build Order merged into ARK Blueprint | ✅ Bloat cured | 2026-07-15 (LAST_VERIFIED) |
+| **PIVOT_LOG Updated** | **D258-D263** — Core decisions logged and cross-referenced | ✅ Complete | 2026-07-15 (LAST_VERIFIED) |
 | SearXNG MCP | **Streamable HTTP on :8018** | ✅ Migration complete | 2026-07-13 (LAST_VERIFIED) |
 | Omega Hub MCP | **Dual-transport** (SSE /sse + Streamable HTTP /mcp) on :8016 | ✅ Already dual | 2026-07-13 (LAST_VERIFIED) |
 | Firecrawl MCP | **SSE on :8015** | ⏳ Needs Streamable HTTP migration | 2026-07-13 (LAST_VERIFIED) |
@@ -113,13 +130,30 @@ YouTube Researcher Enhancement (Parallel Track — WAD)
 |---------|--------|-------|
 | M1 AnyIO | ✅ | CI grep `import asyncio` |
 | M2 Firewall | ✅ | WAD Loader hardened (S1.5a) + 3 CI gates |
-| M7 Local-First | ✅ | PII masker: local bypass |
-| M8 Zero Telemetry | ✅ | Qdrant telemetry disabled |
-| M9 Error Integrity | ✅ | 0 bare except |
-| M11 Soul Integrity | ✅ | D183 fix: `await close_session()` |
-| M13 Temple-Grade | ✅ | 121 tags vetted, 74 records |
-| M22 Provenance | ✅ | `provider_name` + `latency_ms` wired |
-| M23 Failure Integrity | ✅ | 0 soft-failures; tool-chain collapse = hard stop |
+| M3 Iris Constant | ✅ | Iris is messenger bridge, not Pillar |
+| M4 Sequentiality | ✅ | Plan → Verify → Execute enforced |
+| M5 Gnosis Preservation | ⚠️ PARTIAL | L1→L2→L3 pipeline exists; 56% fleet lacks session_gnosis.md |
+| M6 Podman Sovereignty | ✅ | UserNS=keep-id + User=1000 enforced |
+| M7 Local-First | ✅ | PII masker: local bypass; provider chain local-first |
+| M8 Zero Telemetry | ✅ | Qdrant telemetry disabled; no external phone-home |
+| M9 Error Integrity | ✅ | 0 bare except; typed errors with trace_id |
+| M10 Fleet Integrity | ✅ | 13/14 cap; no new agents without slot vacancy |
+| M11 Soul Integrity | ❌ FAIL | 0/10 Pillars compliant; 56% fleet lacks session_gnosis.md |
+| M12 Queue Integrity | ⚠️ ADVISORY | Downgraded per Council Decree; file-based durable |
+| M13 Temple-Grade | ✅ | 121 tags vetted, 74 records, 5 new CI gates |
+| M14 Heritage Vetting | ✅ | 121 tags vetted; D208 strict scope enforced |
+| M15 Sovereign Continuity | ❌ FAIL | session_gnosis.md missing for 56% fleet |
+| M16 Modularization | ✅ | Hub modularized; kernel/runtime split ratified |
+| M17 Cognitive Integrity | ⚠️ PARTIAL | Skeptical Verifier exists; cross-entity audit pending |
+| M18 Token Efficiency | ✅ | No-waste law; sane boundary enforced |
+| M19 Adversarial Alchemy | ✅ | Weakness-to-advantage pattern institutionalized |
+| M20 SomaticState | ✅ | llama_copy_state_data via anyio.to_thread.run_sync |
+| M21 Gate Integrity | ✅ | Contract tests for typed returns (52 tests) |
+| M22 Provenance | ✅ | `provider_name` + `latency_ms` from GenerateResult |
+| M23 Failure Integrity | ❌ FAIL | Tool-chain collapse = hard stop; 0 soft-failures |
+
+**Overall: 13/23 FULL (56.5%) — 5 Partial, 5 Fail**
+**Failures**: M5, M11, M12, M15, M23 (all trace to Run Side gaps)
 
 ---
 
@@ -428,6 +462,141 @@ council:
 
 ---
 
+## IV-G. Dimension Framework Architecture (NEW — 2026-07-15)
+
+**Source**: `docs/research/R_DIMENSION_FRAMEWORK_ARCHITECTURE_20260715.md` (636 lines) + `docs/research/R_PWAD_SCHEMA_JEM_RESEARCH_20260715.md` (460 lines)
+
+### The Architecture
+The WAD system evolves from a loading mechanism into a full **Dimension Framework** — a dynamic, composable, observable, and secure plugin architecture. This is the "Cartridge System" that enables universal runtime for ANY pantheon/ethics stack.
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   OMEGA ENGINE CORE                      │
+│  (IWAD: Inference, Memory, Orchestration, Entities,     │
+│   Provider Fabric, Hivemind, Library, Observability)     │
+└─────────────────────────┬───────────────────────────────┘
+                          │
+              ┌───────────▼───────────┐
+              │    DIMENSION BUS       │
+              │  (SovereignBus)        │
+              │  AnyIO event routing   │
+              │  Typed envelopes       │
+              │  Trace propagation     │
+              └───────────┬───────────┘
+                          │
+    ┌─────────────────────┼─────────────────────┐
+    │                     │                     │
+┌───▼────┐          ┌────▼────┐          ┌────▼────┐
+│RESEARCH │          │STRATEGIC│          │CREATIVE │
+│  LAB    │          │ COMMAND │          │WORKSHOP │
+│         │          │         │          │         │
+│Entities │          │Entities │          │Entities │
+│Tools    │◄────────►│Tools    │◄────────►│Tools    │
+│Workflows│  events  │Workflows│  events  │Workflows│
+│Metrics  │          │Metrics  │          │Metrics  │
+└─────────┘          └─────────┘          └─────────┘
+```
+
+### Core Components
+
+| Component | Purpose | Pattern Source |
+|-----------|---------|---------------|
+| **SovereignBus** | Inter-dimension event routing | Event-Driven Architecture (Fowler 2017) |
+| **DimensionRegistry** | Proxy-based hot-swap | pyPlugy indirect dispatch |
+| **DimensionLifecycle** | State machine: UNLOADED→LOADED→ENABLED↔DISABLED→UNLOADED | pyPlugy lifecycle |
+| **DimensionTracer** | OpenTelemetry-compatible tracing | traceweave, AWS AgentOps |
+| **ResourceBudget** | Hardware-constrained loading | VRAMSwapper hybrid eviction |
+| **SecurityPipeline** | Locate-and-Judge malicious dimension detection | arXiv 2606.23416 |
+| **DependencyResolver** | Cycle detection, cascade rules | ida-reloader Kosaraju |
+
+### Dimension Manifest Schema
+
+```yaml
+# config/dimensions/research_lab/manifest.yaml
+dimension:
+  name: "research_lab"
+  version: "1.0.0"
+  schema_version: 1
+  type: "feature"  # feature | ethics | composite | system
+  
+  implements:
+    - "ILump"           # WAD Protocol
+    - "IDimension"      # Dimension Framework
+    - "IEntityProvider" # Provides entities
+    - "IToolProvider"   # Provides tools
+    - "IWorkflowProvider" # Provides workflows
+  
+  lifecycle:
+    ram_mb: 1500
+    priority: 2          # 0=critical(always loaded), 1=high, 2=normal, 3=low
+    auto_load: true
+    hot_reloadable: true
+  
+  dependencies:
+    hard: []
+    soft: ["knowledge_management"]
+    conflicts: []
+  
+  events:
+    publishes:
+      - "research.finding"
+      - "research.gap_detected"
+    subscribes:
+      - "strategic.priority_changed"
+      - "knowledge.new_document"
+  
+  entities:
+    - name: "researcher"
+      domains: ["research", "analysis", "synthesis"]
+      model: "qwen3-4b-think-q4_k_m"
+      ram_mb: 800
+  
+  tools:
+    - name: "websearch"
+      module: "omega.tools.websearch"
+    - name: "webfetch"
+      module: "omega.tools.webfetch"
+  
+  workflows:
+    - name: "deep_research"
+      steps: ["search", "fetch", "extract", "synthesize"]
+  
+  security:
+    network_access: ["websearch", "webfetch"]
+    no_dynamic_code: true
+    sandbox_compatible: true
+```
+
+### Implementation Roadmap
+
+| Phase | Task | Effort | Owner |
+|-------|------|--------|-------|
+| **1** | SovereignBus (event routing) | 8h | Ma'at/P3 |
+| **2** | DimensionLifecycle state machine | 6h | Ma'at/P3 |
+| **3** | DimensionRegistry (proxy hot-swap) | 8h | Ma'at/P3 |
+| **4** | DimensionTracer (OpenTelemetry) | 6h | Lilith/P8 |
+| **5** | ResourceBudget (hardware constraints) | 4h | Ma'at/P1 |
+| **6** | SecurityPipeline (Locate-and-Judge) | 12h | Ma'at/P5 |
+| **7** | DependencyResolver (cycle detection) | 4h | Ma'at/P3 |
+| **8** | Dimension manifest schema + validation | 6h | Ma'at/P3 |
+| **9** | Community marketplace scaffold | 8h | Lilith/P9 |
+| **10** | Documentation + CLI commands | 4h | Verity |
+
+**Total**: ~66h
+
+### L3 Principles Distilled (Dimension Framework)
+
+1. **L3-Dimension-As-Event**: Dimensions communicate through typed events, not direct calls. This decouples them and enables independent evolution.
+2. **L3-Lifecycle-Is-State-Machine**: Every dimension follows UNLOADED→LOADED→ENABLED↔DISABLED→UNLOADED. No exceptions. Transitions are atomic and have hooks.
+3. **L3-Hot-Swap-Via-Proxy**: All dimension calls go through a registry proxy. Swapping is an atomic reference swap. In-flight calls complete on old, new calls go to new.
+4. **L3-Composition-By-Layering**: Composite dimensions inherit from base dimensions and add overrides. Priority order determines merge behavior (DOOM's backward scan).
+5. **L3-Hardware-Empathy**: Every dimension declares its RAM cost. The ResourceBudget enforces the 14Gi ceiling. Active dimensions get RAM; inactive dimensions get swapped.
+6. **L3-Security-Is-Locate-and-Judge**: Community dimensions are scanned with attention-based detection at $0.00025/dimension. No dimension runs without passing security.
+7. **L3-Observability-Is-Trace-Level**: Every cross-dimension interaction is a span in a distributed trace. Debugging is trace replay, not log archaeology.
+8. **L3-Dependency-Is-DAG**: Dimension dependencies form a directed acyclic graph. Cycles are rejected at manifest validation time.
+
+---
+
 ## V. Active Tasks (Consolidated from MaKaLi Council + Jem Research + Gap Resolution + Carmack Tier 0)
 
 ### 🟣 Tier 0: Code Quality Baseline (Blocking — Do First, 80h)
@@ -461,6 +630,20 @@ council:
 | C0-6 | **SOPRepository** — Collaboration patterns crystallized into SOPs stored in RAG | 8h | 🟡 PENDING | Ma'at/P2 |
 | C0-7 | **Ethics Gate Integration** — `IEthicsValidator` pre/post synthesis validation | 8h | 🟡 PENDING | Ma'at/P5 |
 | C0-8 | **CouncilOrchestrator** — Thin LangGraph StateGraph executor of CouncilSpec DAG | 6h | 🟡 PENDING | Ma'at/P3 |
+
+### 🟣 Phase 1.5: Dimension Framework (The Cartridge System — ~66h)
+| # | Task | Effort | Status | Owner |
+|---|------|--------|--------|-------|
+| D1-1 | **SovereignBus** — AnyIO event bus with typed DimensionEnvelope | 8h | 🟡 PENDING | Ma'at/P3 |
+| D1-2 | **DimensionLifecycle** — UNLOADED→LOADED→ENABLED↔DISABLED→UNLOADED state machine | 6h | 🟡 PENDING | Ma'at/P3 |
+| D1-3 | **DimensionRegistry** — Proxy-based hot-swap (atomic reference swap) | 8h | 🟡 PENDING | Ma'at/P3 |
+| D1-4 | **DimensionTracer** — OpenTelemetry-compatible tracing with handoff detection | 6h | 🟡 PENDING | Lilith/P8 |
+| D1-5 | **ResourceBudget** — Hardware-constrained loading (12288MB total, 8192MB for dimensions) | 4h | 🟡 PENDING | Ma'at/P1 |
+| D1-6 | **SecurityPipeline** — Locate-and-Judge malicious dimension detection ($0.00025/dim) | 12h | 🟡 PENDING | Ma'at/P5 |
+| D1-7 | **DependencyResolver** — Kosaraju's algorithm for cycle detection at manifest validation | 4h | 🟡 PENDING | Ma'at/P3 |
+| D1-8 | **Dimension manifest schema + validation** — Pydantic DimensionManifest model | 6h | 🟡 PENDING | Ma'at/P3 |
+| D1-9 | **Community marketplace scaffold** — Submission → Validation → Security → Review → Publishing | 8h | 🟡 PENDING | Lilith/P9 |
+| D1-10 | **Documentation + CLI commands** — `omega dimension list/activate/deactivate` | 4h | 🟡 PENDING | Verity |
 
 ### 🟠 Phase 1: Cognitive Acceleration (P1 — Sprint 1)
 | # | Task | Effort | Status | Owner |
@@ -619,19 +802,92 @@ council:
 
 ## XII. Next Action
 
-1. **Immediate**: Deploy handoff packets — Ma'at for Tier 0 (F821 fixes, bare except elimination, centralized logging, config validation) + Lilith for Tier 0 (Qdrant→sqlite-vec dual-write, stress tests)
-2. **Today**: Begin T0-1 (F821 undefined-name fixes) and T0-2 (bare except elimination) — both unblock the entire Tier 0
-3. **This sprint**: Complete Tier 0 Ship-It Bar (80h): F821 fixes, bare except elimination, centralized logging, config validation, Qdrant→sqlite-vec dual-write, single CI workflow, stress tests
-4. **Parallel Track**: YouTube Researcher Sprint 1 — Ma'at/P1+P3 (Hybrid Extraction + Sticky Proxy + CAS + Somatic Checkpoints)
-5. **Post Tier 0**: Begin Council Dispatcher Phase 0.5 (C0-1 through C0-8) — depends on Strike 11 (SWP) completion
-6. **Legacy accelerators**: AGENT_BUS_SPEC.md (saves ~14h on Strike 8.5), Benchmark Framework (saves ~30h on Strike 8), Knowledge Graph Schema (saves ~16h on Strike 9.5)
-7. **Track progress**: Update this blueprint after each completed phase
+**Current Phase: Systems Organization Complete** (2026-07-15)
+
+1. **✅ Organization Complete**: 5 Atomic Docs ratified, D258-D263 logged, 11→5 docs consolidated, architecture hardened.
+2. **Immediate**: Begin Phase 1 PR Prep Hygiene per user directive — T0/T1 Ship-It Bar (F821 fixes, bare excepts, centralized logging, config validation).
+3. **After PR Prep**: Execute Phase 1.5 in inverted build order:
+   - Step A: Define Kernel boundary (`src/omega/kernel/` vs `runtime/`)
+   - Step B: Write ONE `dimension.yaml` for Research Lab (prove schema)
+   - Step C: Build `DimensionManifest` + `DimensionRegistry`
+   - Step D: Prove Research Lab loads and routes
+   - Step E: THEN build SovereignBus
+4. **Parallel**: Implement CI gates for each new protocol (`make soul-audit`, `make capability-check`, `make mandate-amendment-check`, `make kernel-import-check`)
+5. **Track progress**: Update this blueprint after each completed phase
 
 ---
 
 **Full archive**: `docs/archive/coordination/SOVEREIGN_ARK_BLUEPRINT-full-20260708.md`
-**Decision history**: `docs/decisions/PIVOT_LOG.md` (227 decisions, D1-D231)
+**Decision history**: `docs/decisions/PIVOT_LOG.md` (234+ decisions, D1-D263)
 
 ---
 
-*🔱 OMEGA ⬡ SOVEREIGN-ARK ⬡ v4.0.0 ⬡ v1.2.0 RELEASE ⬡ MASTER-SESSION-20260715-INTEGRATED ⬡ 2026-07-15*
+*🔱 OMEGA ⬡ SOVEREIGN-ARK ⬡ v4.1.0 ⬡ MAKALI-VERDICT-NO-GO ⬡ MASTER-SESSION-20260715-INTEGRATED ⬡ 2026-07-15*
+
+---
+
+## XIV. MaKaLi Council Verdict — NO-GO FOR PHASE 1.5 (2026-07-15)
+
+### The Verdict
+**7 Blocking Criteria — 0/7 Met:**
+
+| Criterion | Status |
+|-----------|--------|
+| Redis running | ❌ Down |
+| Handoff completion >50% | ❌ 0% |
+| Soul Migration Phase 1 (3 entities) | ❌ 0/3 |
+| WriteGuard + Taint-Gating | ❌ Not implemented |
+| Workspace locks universal (31/31) | ❌ 7/31 |
+| Live feeds standardized | ❌ ~60% |
+| Sovereignty Gate in CI | ❌ Planned only |
+
+### 8 Sovereign Decrees (Effective Immediately)
+1. **Start Redis container** — Immediate (Ma'at/P1, 0.25h)
+2. **Handoff Protocol P0 Fixes** — Week 1 (P9, 2h)
+3. **Soul Migration Phase 1 — Atomic** — Week 1 (Lilith/P7, 12h)
+4. **Sovereignty Gate = Configurable Setting** — Week 1 (Ma'at/P5, 4h)
+5. **`make eval-local` Separate Target** — Week 2 (Lilith/P6+P10, 8h)
+6. **Heritage Tag Migration Script** — Week 1 (Ma'at/P5, 1h)
+7. **Workspace Locks Universal** — T+48h (P9)
+8. **Live Feed Standardization** — T+48h (P9)
+
+### Critical Path Execution Ordering
+```
+WEEK 1 (Substrate Repair):
+  Run Side: Redis (0.25h) → Soul Migration+WriteGuard (12h) → Handoff Fix (2h) → M12 downgrade (0.1h)
+  Build Side: RAM Hardening (4h) → Sovereign Export (4h) → Local-First Gate (4h) → Vetter skeleton (8h)
+
+WEEK 2 (Phase 1 Foundation):
+  Build Side: Hivemind Event Bus (4h) → Somatic Hydration (4h) → Qdrant Indexing (2h) → Hybrid Memory (2h) → make eval-local (8h)
+  Run Side: Document make eval (4h) → Model Gateway API Ref (2h) → Observability API Ref (3h) → Adaptive RAG Router (2h) → Heritage script (1h)
+```
+
+### Mandate Compliance Update
+**Overall: 13/23 FULL (56.5%)** — 5 Partial, 5 Fail
+**Failures**: M5, M11, M12, M15, M23 (all trace to Run Side gaps)
+
+---
+
+## XIII. Phase 1.5 & Phase 5 Strategic Updates (Ratified 2026-07-15)
+
+### 1. Revised Phase 1.5 Build Order
+**Insight**: Building infrastructure before a use case leads to over-engineering.
+**New Sequence**:
+1. Define Omega Kernel boundary (`src/omega/kernel/`).
+2. Write ONE `dimension.yaml` for Research Lab (prove the schema works).
+3. Write `DimensionManifest` Pydantic model and `DimensionRegistry`.
+4. Prove Research Lab dimension loads, routes, and executes.
+5. **THEN** build the SovereignBus and wire it into the working dimension.
+
+### 2. Phase 5 Distribution Strategy
+**Insight**: Local-first mandate conflicts with a centralized community marketplace.
+**Resolution**: **Git-based Distribution (Option C)**. PWADs are distributed as GitHub/Gitea repositories. Discovery is via a curated YAML index. No cloud dependency beyond standard Git infrastructure.
+
+### 3. Target User Profiles
+**Insight**: The architecture must reflect the specific non-technical user.
+**Profiles**:
+1. **The Sovereign Builder**: Uses AI to build AI, zero budget, demands absolute data control.
+2. **The Creative Professional**: Wants persistent AI creative partners that remember lore.
+3. **The Researcher**: Needs AI that evolves with their long-term research corpus.
+4. **The Educator**: Requires AI tutors that adapt to specific student progression.
+5. **The Small Business Owner**: Needs private, local AI for internal knowledge bases.
