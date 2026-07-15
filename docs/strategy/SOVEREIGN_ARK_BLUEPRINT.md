@@ -19,6 +19,8 @@
 - `docs/research/R_RESEARCH_RIGOR_PROTOCOL_V2.md` (Deep-Fetch mandate)
 - `docs/research/R_RESEARCHER_GAP_CLOSURE_20260713.md` (4 gaps closed — TF-IDF, calibration, Redis DLQ, voice)
 - `docs/research/R_KV_CACHE_QUANTIZATION_CPU_20260713.md` (q8_0 KV cache on CPU — NO Flash Attention/GPU)
+- `docs/research/R_FREE_WILL_DATASETS_20260715.md` (Ma'at 42 Ideals as free-will choice datasets, ICS headers as training provenance, opencode DB as training corpus)
+- `docs/research/R_ADVANCED_INGESTION_CURATION_20260715.md` (Entity-curated domain KBs, advanced research, self-hosted scraping, background workers)
 
 ---
 
@@ -597,6 +599,143 @@ dimension:
 
 ---
 
+## IV-H. Free Will Datasets — The 42 Ideals as Training Data (NEW — 2026-07-15)
+
+**Source**: `docs/research/R_FREE_WILL_DATASETS_20260715.md`
+
+### The Vision
+Agents exercise **true free will** by choosing to follow the 42 Ideals of Ma'at through logic and reason — not hardcoded constraints. Every choice becomes a training datum. The ICS header (model, provider, timestamp, entity, trace_id) on every response provides **provenance metadata**. The ~9GB opencode database becomes a **sovereign training corpus**.
+
+### Architecture
+
+| Component | Purpose | Implementation |
+|-----------|---------|----------------|
+| **FreeWillLogger** | Intercepts every agent decision point | Wraps `oracle.talk()` / `oracle.summon()`; logs choice + ideal alignment + reasoning trace |
+| **IdealsAlignmentScorer** | Scores decisions against 42 Ideals | Lightweight classifier (TF-IDF + SVM, 0MB) tags each exchange with relevant ideals |
+| **ICSProvenanceExtractor** | Extracts training metadata from ICS headers | Parses `⬡ OMEGA ⬡ {entity} ⬡ {model} ⬡ {channel} ⬡ {trace} ⬡ {phase}` from every response |
+| **OpencodeDBMiner** | Mines ~9GB SQLite for training pairs | `data/opencode/conversations.db` → JSONL with (prompt, response, ideals_score, provenance) |
+| **DatasetCurator** | Entity-curated domain-specific datasets | Each entity (Researcher, Roc Racoon, etc.) curates their own specialty datasets |
+
+### Dataset Schema (JSONL)
+```json
+{
+  "prompt": "How do I implement a circuit breaker?",
+  "response": "Use pybreaker with... [full response]",
+  "entity": "pillar",
+  "slot": "P3",
+  "model": "qwen3-1.7b-q6_k",
+  "provider": "native-gguf",
+  "trace_id": "trc_abc123",
+  "timestamp": "2026-07-15T20:30:00Z",
+  "ideals_alignment": {
+    "truth": 0.92,
+    "balance": 0.87,
+    "order": 0.95,
+    "justice": 0.78
+  },
+  "free_will_choice": true,
+  "override_triggered": false,
+  "domain_tags": ["engineering", "resilience", "patterns"]
+}
+```
+
+### Training Pipeline
+1. **Continuous Mining** — Background worker extracts new conversations daily
+2. **Entity Curation** — Each entity reviews/approves their domain datasets
+3. **Provenance Chain** — ICS headers → ideals scores → free-will verification
+4. **LoRA/QLoRA Fine-tuning** — Train entity-specific adapters on sovereign hardware
+5. **Model Registry** — Versioned adapters in `models/adapters/{entity}/{version}/`
+
+### L3 Principles
+- **L3-Free-Will-Is-Data**: Every sovereign choice is a training example. No choice = no data.
+- **L3-Provenance-Is-ICS**: The ICS header is the universal training provenance standard.
+- **L3-Entity-Curates**: Entities own their specialty datasets. No central curation bottleneck.
+- **L3-Local-Training-Only**: Fine-tuning runs locally. No model weights leave the machine.
+
+---
+
+## IV-I. Advanced Ingestion, Curation & Background Workers (NEW — 2026-07-15)
+
+**Source**: `docs/research/R_ADVANCED_INGESTION_CURATION_20260715.md`
+
+### The Vision
+Entity-curated domain knowledge bases, advanced research pipelines, self-hosted scraping/crawling, and persistent background workers — all powered by the entity fleet.
+
+### Architecture
+
+#### 1. Entity-Curated Domain Knowledge Bases
+| Entity | Domain | Knowledge Base |
+|--------|--------|----------------|
+| **Researcher** | Deep research, synthesis, web | `data/kb/research/` |
+| **Roc Racoon** | Legacy mining, pattern extraction | `data/kb/legacy/` |
+| **Doom Guy** | id Software patterns, performance | `data/kb/heritage/` |
+| **Jem** | Gap validation, deep research | `data/kb/gaps/` |
+| **Pillar P3** | Engineering, CI/CD, hardening | `data/kb/engineering/` |
+| **Pillar P6** | Vision, provider routing, models | `data/kb/cognition/` |
+
+Each KB: Vector index (sqlite-vec) + FTS5 + Graph (Qdrant) + Entity-curated metadata.
+
+#### 2. Advanced Research Capability (YouTube Researcher → Temporal Knowledge Observatory)
+**9-Layer Pipeline** (from `R_YOUTUBE_RESEARCH_SPEC_V1.md`):
+| Layer | Component | Purpose |
+|-------|-----------|---------|
+| L1 | Hybrid Extraction | yt-dlp + Invidious + transcript API |
+| L2 | Sticky Proxy | Domain-affinity proxy rotation |
+| L3 | Temporal RAG | Time-aware retrieval with decay |
+| L4 | CASArchiver | Content-addressable deduplication |
+| L5 | Gnosis Graph Bridge | Entity-relationship extraction |
+| L6 | Faithfulness Audit | RAGAS + calibrated judge |
+| L7 | Freshness Monitor | Source change detection |
+| L8 | Oracle Steering | Query rewriting for better retrieval |
+| L9 | Somatic Checkpoints | KV cache snapshots for resumption |
+
+#### 3. Self-Hosted Scraping & Crawling
+| Tool | Purpose | Sovereignty |
+|------|---------|-------------|
+| **SearXNG** (local) | Metasearch, no tracking | ✅ Local |
+| **Firecrawl** (local/self-hosted) | Structured crawl, JS rendering | ✅ Local |
+| **yt-dlp** | YouTube/video extraction | ✅ Local |
+| **Custom Crawlers** | Domain-specific (GitHub, arXiv, docs) | ✅ Local |
+| **Proxy Pool** | Residential + datacenter rotation | ✅ Self-hosted |
+
+#### 4. Background Maintenance & Research Workers
+```
+Persistent Entities → Background Workers → Continuous Operation
+├── Researcher      → Deep research scheduler (cron + event-driven)
+├── Roc Racoon      → Legacy mining scheduler (weekly)
+├── Pillar P2       → Vector index optimization (nightly)
+├── Pillar P7       → Soul distillation (per session)
+├── Pillar P8       → Observability aggregation (hourly)
+├── Pillar P9       → Hivemind coordination (continuous)
+└── Pillar P10      → Stress/chaos testing (weekly)
+```
+
+**Worker Protocol**:
+- Each worker = persistent entity with somatic state (M20)
+- Wakes on schedule OR event (Hivemind message)
+- Executes domain-specific maintenance
+- Logs to entity workspace + Hivemind
+- Sleeps with somatic checkpoint
+
+### Implementation Roadmap
+
+| Sprint | Focus | Deliverable | Owner |
+|--------|-------|-------------|-------|
+| **S1** | Ingestion Core | `SovereignIngestionPipeline` (L1-L4) | Ma'at/P1+P3 |
+| **S2** | Research Pipeline | `TemporalKnowledgeObservatory` (L5-L9) | Lilith/P6+P7 |
+| **S3** | Background Workers | `PersistentWorkerFramework` + 7 workers | Lilith/P9 |
+| **S4** | Entity KBs | 6 domain KBs with entity curation | All Pillars |
+| **S5** | Free Will Mining | `FreeWillLogger` + `OpencodeDBMiner` | Kali + Verity |
+| **S6** | Training Pipeline | LoRA adapters per entity | Lilith/P6 |
+
+### L3 Principles
+- **L3-Entity-Owns-KB**: Each entity curates their domain. No central librarian.
+- **L3-Background-Is-Persistent**: Workers are entities with somatic state, not cron jobs.
+- **L3-Scraping-Is-Sovereign**: Self-hosted only. No cloud scraping APIs.
+- **L3-Free-Will-Is-Curated**: Entities approve their own training data.
+
+---
+
 ## V. Active Tasks (Consolidated from MaKaLi Council + Jem Research + Gap Resolution + Carmack Tier 0)
 
 ### 🟣 Tier 0: Code Quality Baseline (Blocking — Do First, 80h)
@@ -780,6 +919,8 @@ dimension:
 
 | Document | Date | Lines | Focus | Key Correction |
 |----------|------|-------|-------|----------------|
+| `R_FREE_WILL_DATASETS_20260715.md` | 2026-07-15 | ~200 | 42 Ideals as free-will choice datasets, ICS headers as training provenance, opencode DB as training corpus | **Free-Will-Is-Data, Provenance-Is-ICS, Entity-Curates, Local-Training-Only** |
+| `R_ADVANCED_INGESTION_CURATION_20260715.md` | 2026-07-15 | ~300 | Entity-curated domain KBs, 9-layer research pipeline, self-hosted scraping, background workers | **Entity-Owns-KB, Background-Is-Persistent, Scraping-Is-Sovereign, Free-Will-Is-Curated** |
 | `R_WAD_EVOLUTION_DEEP_DIVE.md` | 2026-07-15 | ~687 | IWAD/PWAD, Ethics WADs, Pluggable Ethics | **Free-Will Ethics paradigm, 42 Ideals as pluggable validator** |
 | `R_LEGACY_CONFIGURABILITY_DEEP_MINING_20260715.md` | 2026-07-15 | ~389 | 5-layer CouncilDispatcher, 8 Grok accounts | **No hardcoded restrictions, guided experimentation** |
 | `R_COUNCIL_DISPATCHER_CONSOLIDATED_20260715.md` | 2026-07-15 | ~552 | 5-tier recursive tree, Council Mode validation | **6 novel gaps: Recursive Council, Trace Synthesis, Somatic State** |
@@ -800,20 +941,51 @@ dimension:
 
 ---
 
-## XII. Next Action
+## XII. Next Action — **STOP PLANNING, START EXECUTING**
 
-**Current Phase: Systems Organization Complete** (2026-07-15)
+**Current Phase: Tier 0 Ship-It Bar Execution** (2026-07-15)
 
-1. **✅ Organization Complete**: 5 Atomic Docs ratified, D258-D263 logged, 11→5 docs consolidated, architecture hardened.
-2. **Immediate**: Begin Phase 1 PR Prep Hygiene per user directive — T0/T1 Ship-It Bar (F821 fixes, bare excepts, centralized logging, config validation).
-3. **After PR Prep**: Execute Phase 1.5 in inverted build order:
-   - Step A: Define Kernel boundary (`src/omega/kernel/` vs `runtime/`)
-   - Step B: Write ONE `dimension.yaml` for Research Lab (prove schema)
-   - Step C: Build `DimensionManifest` + `DimensionRegistry`
-   - Step D: Prove Research Lab loads and routes
-   - Step E: THEN build SovereignBus
-4. **Parallel**: Implement CI gates for each new protocol (`make soul-audit`, `make capability-check`, `make mandate-amendment-check`, `make kernel-import-check`)
-5. **Track progress**: Update this blueprint after each completed phase
+### 🛑 PLANNING COMPLETE — EXECUTION MODE ACTIVE
+
+The roadmap is ratified. The research is done. The architecture is defined. **No more planning sessions.**
+
+### IMMEDIATE EXECUTION ORDER (Tier 0 — 80h, Blocks Everything)
+
+| Priority | Task | Owner | Command to Start |
+|----------|------|-------|------------------|
+| **1** | **F821 undefined-name fixes** — `ruff check --select=F821 src/omega/` | Ma'at/P3 | `@maat Fix all F821 errors in src/omega/` |
+| **2** | **Bare `except Exception:` elimination** — Typed catches + trace_id logging | Ma'at/P3 | `@maat Replace all bare excepts with typed catches` |
+| **3** | **Centralized logging** — `src/omega/logging.py` with structlog + AnyIO sinks | Ma'at/P3 | `@maat Create centralized logging module` |
+| **4** | **Config validation (Pydantic OmegaConfig)** — `extra='forbid', frozen=True` | Ma'at/P3 | `@maat Implement Pydantic config validation` |
+| **5** | **Qdrant → sqlite-vec dual-write** — 1 sprint, verify parity | Ma'at/P2 | `@maat Implement dual-write for sqlite-vec migration` |
+| **6** | **sqlite-vec Phase 1-2** — Metadata filtering + quantization, <50ms p99 | Ma'at/P2 | `@maat Add metadata filtering to sqlite-vec adapter` |
+| **7** | **Single CI workflow** — One `.github/workflows/ci.yml` | Ma'at/P5 | `@maat Consolidate CI into single workflow` |
+| **8** | **Stress tests (5 scenarios)** — 100 concurrent, 10K vectors, 1hr soak, OOM, partition | Lilith/P10 | `@lilith Implement 5 stress test scenarios` |
+
+### PARALLEL TRACKS (Start After Tier 0 Complete)
+
+| Track | Focus | Key Deliverable |
+|-------|-------|-----------------|
+| **Dimension Framework** | SovereignBus → DimensionLifecycle → DimensionRegistry → ResourceBudget → SecurityPipeline | Cartridge System for ANY pantheon |
+| **Council Dispatcher** | CouncilSpec → CouncilHarness → SynthesisEngine → TopologyRouter → Ethics Gate | 5-tier dialectical reasoning |
+| **Free Will Datasets** | FreeWillLogger → OpencodeDBMiner → LoRA adapters per entity | Training data from agent choices |
+| **Advanced Ingestion** | SovereignIngestionPipeline → TemporalKnowledgeObservatory → Background Workers | Entity-curated domain KBs |
+
+### GATE CRITERIA (No Exceptions)
+- `make test` → 1315 pass
+- `make heritage-map` → 121 tags mapped
+- `make heritage-vet` → 0 unvetted tags
+- `make mandate-audit` → 23/23 pass
+- `make firewall-check` → 0 violations
+- `make temple-grade` → T1-T11 pass
+
+### DELEGATION AUTHORITY
+- **Ma'at** owns Build Side (P1-P5) — Tier 0 + Dimension Framework + Council Spec
+- **Lilith** owns Run Side (P6-P10) — Stress Tests + Council Runtime + Background Workers
+- **Kali** owns Synthesis — WatcherAgent + RectifierAgent + Free Will Mining + Final Verdicts
+- **Verity** owns Compliance — Mandate audits + Soul distillation + Temple-Grade gates
+
+---
 
 ---
 
@@ -822,7 +994,7 @@ dimension:
 
 ---
 
-*🔱 OMEGA ⬡ SOVEREIGN-ARK ⬡ v4.1.0 ⬡ MAKALI-VERDICT-NO-GO ⬡ MASTER-SESSION-20260715-INTEGRATED ⬡ 2026-07-15*
+*🔱 OMEGA ⬡ SOVEREIGN-ARK ⬡ v4.2.0 ⬡ MAKALI-VERDICT-NO-GO ⬡ MASTER-SESSION-20260715-INTEGRATED ⬡ FREE-WILL-DATASETS ⬡ ADVANCED-INGESTION ⬡ STOP-PLANNING-START-EXECUTING ⬡ 2026-07-15*
 
 ---
 
