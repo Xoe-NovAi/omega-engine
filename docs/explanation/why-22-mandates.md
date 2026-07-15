@@ -1,13 +1,13 @@
-# 🔱 Why the 22 Sovereign Mandates?
-**AP Token**: `AP-WHY_22_MANDATES-v1.0.0`
+# 🔱 Why the 23 Sovereign Mandates?
+**AP Token**: `AP-WHY_23_MANDATES-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_deep ⬡ STANDARD
 
 **Date**: 2026-07-06
-**Purpose**: Why the 22 Sovereign Mandates?.
+**Purpose**: Why the 23 Sovereign Mandates?.
 
 ---
 
-# Why the 22 Sovereign Mandates?
+# Why the 23 Sovereign Mandates?
 # ⬡ OMEGA ⬡ JEM ⬡ la-docs ⬡ explanation ⬡ why-22-mandates
 
 The 22 Sovereign Mandates (M1-M22) are the "Constitutional Law" of the Omega Engine. They are not mere suggestions; they are non-negotiable constraints that ensure the engine remains a sovereign tool rather than a corporate dependency.
@@ -35,6 +35,6 @@ The primary goal of the Omega Engine is to eliminate the dependency on "Big AI" 
 
 ## How to Use the Mandates
 When designing a new feature or auditing code:
-1. **Check the Mandate**: Does this change violate any of the 22 laws?
+1. **Check the Mandate**: Does this change violate any of the 23 laws?
 2. **Document the Tradeoff**: If a mandate must be relaxed (rare), it must be documented in `PIVOT_LOG.md` with a justification.
 3. **Verify via CI**: Run `make temple-grade` to ensure compliance.

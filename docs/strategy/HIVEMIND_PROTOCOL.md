@@ -201,6 +201,8 @@ Example: `data/coordination/MAAT_WORKSPACE_LOCK_20260604.md`
 3. **Conflict discovery**: Write `data/coordination/{YOU}_CONFLICT_{DATE}.md` immediately
 4. **Session end**: Mark workspace lock as completed in live feed
 
+> **⚠️ COUNCIL DECREE 7 (2026-07-15)**: **Workspace locks are MANDATORY for all 31 agents + 10 pillars**. 48-hour deadline from verdict. Protocol §3: "MANDATORY for parallel same-files." Missing: Researcher, Verity, Makali, all 10 pillars (entity-specific). Owner: P9 Orchestration. Deadline: T+48h.
+
 ---
 
 ## §4 Live Feed Pattern
@@ -224,6 +226,8 @@ Examples:
 - `[2026-06-03 02:20] SPRINT-2-EXEC BEGIN — Sovereignty Gate first`
 - `[2026-06-03 02:25] PHASE-1.1 COMPLETE — Fixed omega entity CLI`
 - `[2026-06-03 02:30] PHASE-1.3 PARTIAL — MemoryStore lazy deletion ported`
+
+> **⚠️ COUNCIL DECREE 8 (2026-07-15)**: **Live feed format standardized to `[YYYY-MM-DD HH:MM] TASK-ID STATUS — description`**. All agents must comply within 48 hours. Enables cross-agent observability. Owner: P9 Orchestration. Deadline: T+48h.
 
 ### §4.3 Why It Works
 
@@ -317,7 +321,7 @@ handoff packet:
 
 9. CLOSE SESSION
    → Final live feed entry: "SPRINT-N COMPLETE"
-   → Distill L1→L2→L3 to proposed_lessons.yaml (blind staging per Soul Architecture v6.1)
+   → Distill L1→L2→L3 to proposed_lessons.yaml (blind staging per Soul Architecture v2.0)
    → Post Hivemind continuation: "Session complete, handoff to ..."
 ```
 
@@ -471,6 +475,13 @@ The Hivemind is transitioning from an in-memory MCP server state to a production
 *   **A2A Message Bus**: High-speed, persistent, and multi-consumer Redis Streams replace the old in-memory handoff queue.
 *   **Embedding Router**: Integrates with `EmbeddingGemma (D=128)` for zero-latency traffic routing, allowing agents to route tasks mathematically and converse in real-time.
 *   **Platform Agnosticism**: Standardized MCP tools exposed by the Omega Hub allow any custom platform (TUI, Web UI, CLI) to query awareness, manage locks, and coordinate without depending on OpenCode-specific scaffolding.
+
+**⚠️ MaKaLi Council Decree 2 (2026-07-15)**: Handoff Protocol P0 Fixes required before Strike 7 completion:
+- Remove QUEUED state (align to 6-state model matching directories)
+- Persist HandoffGuard in packet JSON (guard field with visited, visit_counts, handoff_chain, iteration)
+- Add ResolverStrategy enum (TERMINATE/ESCALATE/FALLBACK/RETRY, default ESCALATE to Kali)
+- Fix TTLs: pending→stale 4h, active→stale 48h, completed→archived 7d, rejected→archived 24h
+- Add startup delegation graph validation (DFS cycle detection on import)
 
 The architecture is already Pub/Sub-ready:
 - `hivemind_post_context()` = PUBLISH to `omega:hivemind:context` channel

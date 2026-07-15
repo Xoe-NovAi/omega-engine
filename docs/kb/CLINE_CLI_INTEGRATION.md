@@ -7,7 +7,7 @@ sensitivity: internal
 maintainer: Kali
 created: 2026-06-25
 reviewed: 2026-06-25
-modified: 2026-06-25
+modified: 2026-07-15
 supersedes: null
 superseded_by: null
 status: ACTIVE
@@ -29,30 +29,32 @@ reinforcement_count: 0
 
 | Date | Version | Author | Change |
 |------|---------|--------|--------|
+| 2026-07-15 | 1.1.0 | Cline CLI | Rewrite: Streamable HTTP, corrected field names, 5-server MCP fleet, Hivemind citizen role |
 | 2026-06-25 | 1.0.0 | Kali | Initial creation — Cline execution backend pattern |
 
 ---
 
 ## Overview
 
-Cline CLI is a high-context AI coding assistant (DeepSeek V4 Flash, 1M tokens) that serves as the **execution backend** for the Omega Engine. It is NOT a primary agent platform — that role belongs to OpenCode with its 11 custom agents, soul architecture, and Hivemind orchestration.
+Cline CLI is a high-context AI coding assistant (DeepSeek V4 Flash, 1M tokens) that now serves as both an **execution backend** and a **first-class Hivemind citizen** for the Omega Engine. It is NOT the primary agent platform — that role belongs to OpenCode with its 11 custom agents, soul architecture, and Hivemind orchestration.
 
-Cline fills the gaps that OpenCode cannot: massive codebase-wide analysis, parallel task execution, and headless CI/CD automation. Both platforms coordinate through the Omega Hub MCP server (`:8016/sse`).
+Cline fills the gaps that OpenCode cannot: massive codebase-wide analysis, parallel task execution, and headless CI/CD automation. Both platforms coordinate through the Omega Hub MCP server (`:8016/mcp` Streamable HTTP).
 
 ---
 
 ## Architecture
 
 ```
-OpenCode (Sovereign Brain)     Cline CLI (Execution Backend)
+OpenCode (Sovereign Brain)     Cline CLI (Hivemind Citizen)
          │                              │
          │     Omega Hub MCP Server     │
-         │        (:8016/sse)           │
+         │   (:8016/mcp Streamable HTTP)│
          │                              │
          └──────────┬───────────────────┘
                     │
           Omega Provider Fabric
-    native-gguf → lmster → Ollama → cloud
+    native-gguf → lmster → Ollama → antigravity →
+    google → openrouter → opencode-zen → cline → mock
 ```
 
 ### Role Boundary
@@ -61,8 +63,9 @@ OpenCode (Sovereign Brain)     Cline CLI (Execution Backend)
 |------------|-------------|-----|
 | Agent personas (11 agents) | **OpenCode** | Cline has no persistent entity system |
 | Soul evolution (L1→L2→L3) | **OpenCode** | Cline has no soul.yaml |
-| Hivemind orchestration | **OpenCode** | Cline is a participant, not a coordinator |
+| Hivemind orchestration | **OpenCode** | Cline is a participant (Hivemind citizen), not the coordinator |
 | Codebase-wide analysis (1M ctx) | **Cline CLI** | OpenCode's 200K context is insufficient |
+| Deep research with MCP search | **Cline CLI** | Connected to SearXNG, Exa, Firecrawl, Sovereign Search |
 | Parallel execution | **Cline CLI** | Cline's headless mode excels at batch work |
 | Headless CI/CD | **Cline CLI** | `cline -y` flag enables no-interrupt automation |
 
@@ -72,22 +75,54 @@ OpenCode (Sovereign Brain)     Cline CLI (Execution Backend)
 
 ### MCP Configuration
 
-Add to your `cline_mcp_settings.json` (`~/.cline/` or project-level):
+Add to your MCP config file (`~/.cline/data/settings/cline_mcp_settings.json` for Cline CLI v3.x, or `<project>/.cline/mcp.json` per official docs):
 
 ```json
 {
   "mcpServers": {
     "omega-hub": {
-      "url": "http://localhost:8016/sse",
-      "alwaysAllow": [
+      "type": "streamableHttp",
+      "url": "http://127.0.0.1:8016/mcp",
+      "disabled": false,
+      "autoApprove": [
         "hivemind_get_awareness",
         "hivemind_post_context",
         "hivemind_heartbeat",
         "hivemind_get_continuation",
         "hivemind_submit_handoff",
         "oracle_talk",
-        "oracle_summon"
+        "oracle_summon",
+        "oracle_summon_local",
+        "sovereign_search",
+        "library_search",
+        "headroom_retrieve"
       ]
+    },
+    "searxng": {
+      "type": "streamableHttp",
+      "url": "http://127.0.0.1:8018/mcp",
+      "disabled": false,
+      "autoApprove": ["web_search"]
+    },
+    "firecrawl": {
+      "type": "sse",
+      "url": "http://127.0.0.1:8015/sse",
+      "disabled": false,
+      "autoApprove": ["firecrawl_scrape"]
+    },
+    "exa": {
+      "type": "streamableHttp",
+      "url": "https://mcp.exa.ai/mcp?tools=web_search_exa,web_fetch_exa",
+      "headers": {
+        "x-api-key": "${EXA_API_KEY}"
+      },
+      "disabled": false,
+      "autoApprove": []
+    },
+    "github": {
+      "command": "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/github-mcp-server",
+      "disabled": false,
+      "autoApprove": []
     }
   }
 }
@@ -164,7 +199,7 @@ Full protocol: `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md`
 | Antipattern | Symptom | Correct Approach |
 |-------------|---------|-----------------|
 | Trying to port Omega agents to Cline | Creating `.cline/agents.yaml` entries for Kali/Ma'at/Lilith | Don't. Cline has no entity persistence. Use Hivemind handoffs instead. |
-| Running Cline as primary orchestrator | Writing `.clinerules` as the sole coordination file | Cline is an execution backend. OpenCode is the orchestrator. |
+| Running Cline as primary orchestrator | Writing `.clinerules` as the sole coordination file | Cline is a Hivemind citizen (execution + research). OpenCode is the sovereign orchestrator. |
 | Duplicating soul.yaml in Cline | Writing entity state to `.cline/` directories | Entity state lives in `data/entities/`. Cline reads it via MCP tools. |
 | Ignoring Hivemind when using Cline | Running Cline sessions without posting context | Always post context and heartbeat. OpenCode agents need to know you're active. |
 

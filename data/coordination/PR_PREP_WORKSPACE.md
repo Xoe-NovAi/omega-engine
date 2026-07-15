@@ -2,8 +2,38 @@
 # ⬡ OMEGA ⬡ PREP ⬡ opencode ⬡ trc_pr_prep ⬡ EVOLVING
 **AP Token**: `AP-PR-PREP-v1.0.0`
 **Created**: 2026-07-13
+**Last Revised**: 2026-07-14
 **Status**: 🟡 EVOLVING (checklist, not a plan — items can be reordered, split, or dropped)
 **Anchor**: D231 (7 Pre-PR Quick Wins — base layer)
+
+---
+
+## Operating Model: Solo Dev, Zero Cash, Free & Open Source
+
+**This workspace tracks PR hardening for a solo developer using only free tools and open-source dependencies.**
+
+The $6.1M agency-build figure and the $139K design-studio-hardening figure in the parent conversation are **reference valuations** — they establish the replacement cost and quality ceiling. The execution path is:
+
+| Dimension | Approach |
+|-----------|----------|
+| **Budget** | $0 cash outlay. 8,000 hours already invested. Time is the only currency. |
+| **Tools** | ruff (free), mypy (free), pre-commit (free), pytest (free), mkdocs (free), GitHub Actions (free), pyright (free) |
+| **Design** | Free icon sets (Font Awesome, Material Icons), open-source MkDocs themes, ASCII/Unicode art. No designer. |
+| **Security** | pip-audit (free), bandit (free), OpenSSF Scorecard (free), Dependabot (free) |
+| **CI** | GitHub Actions free tier. Self-hosted runner on the Ryzen 5700U for heavier tests. |
+| **Release** | PyPI (free), GitHub Releases (free), Homebrew (free for open source) |
+| **Community** | GitHub Discussions (free), Discord free tier, OpenSSF Best Practices badge (free) |
+| **Rate** | Time valued at opportunity cost, not billable rate. The 8,000-hour investment is sunk — this is iterative improvement. |
+
+**What this changes from the cost-analysis framing:**
+- Tiers 2 and 3 shift from "hire a designer/security firm" to "use free templates, automate what you can, accept the quality ceiling."
+- The ~700h estimate is real solo-dev time, not billable hours. There's no acceleration through parallel team members.
+- Prioritization tilts toward items only you can do (architecture, patterns) over items a team would parallelize (lint fixes, doc cleanup).
+
+**What this doesn't change:**
+- T0 bugs (F821, bare excepts) must still be fixed — they're real crashes.
+- CI must still gate on quality. Free tools are the enforcers.
+- Documentation must still be clear. MkDocs + your typing is the tool.
 
 ---
 
@@ -193,112 +223,125 @@
 
 ---
 
-## §4 Tier 2 — Visual & Interaction
+## §4 Tier 2 — Visual & Interaction (Solo Dev, Free Tools)
 
-**Vibe**: A product designer spends 2 weeks making it feel intentional.
+**Vibe**: Make it feel intentional using free design assets and AI tooling. No designer = no custom illustration, but clean typography, consistent iconography, and a well-organized MkDocs theme are fully achievable.
 
-### 4.1 — Design System
+### 4.1 — Design System (Free Tier)
 
-| Item | What | Effort | Status |
-|------|------|--------|--------|
-| DS01 | Create visual style guide: palette, typography, spacing, icon conventions | 40h | 🔵 |
-| DS02 | Design consistent CLI output patterns: success, error, warning, info, progress | 20h | 🔵 |
-| DS03 | Design terminal "dashboard" mockup for `omega status` | 10h | 🔵 |
-| DS04 | Create empty-state designs for every CLI command | 10h | 🔵 |
+| Item | What | Effort | Status | Tool |
+|------|------|--------|--------|------|
+| DS01 | Document existing palette (deep purple/amber from mkdocs.yml) as style guide | 2h | 🔵 | MkDocs + markdown |
+| DS02 | Standardize CLI output templates in Rich: `OmegaConsole` wrapper class | 6h | 🔵 | Rich library (free, open source) |
+| DS03 | Create `omega status` terminal dashboard using Rich Layout | 10h | 🔵 | Rich Layout + Panel |
+| DS04 | Standardize error display: `OmegaError` → Rich `Panel` with trace_id, suggestion | 4h | 🔵 | Rich Panel |
 
-### 4.2 — Voice & Tone
+### 4.2 — Voice & Tone (Solo-Dev Scope)
 
-| Item | What | Effort | Status |
-|------|------|--------|--------|
-| VT01 | Write tone guidelines per entity (Sekhmet: blunt, Prometheus: prophetic, Iris: warm) | 15h | 🔵 |
-| VT02 | Design error message templates with personality (not bare tracebacks) | 10h | 🔵 |
-| VT03 | Script "first 5 minutes" interaction flow: clone → setup → init → talk | 15h | 🔵 |
+| Item | What | Effort | Status | Method |
+|------|------|--------|--------|--------|
+| VT01 | Draft tone notes per entity — 2-3 sentences each, distilled from existing system prompts | 6h | 🔵 | Extract from entity YAML prompt fields |
+| VT02 | Standardize error message format: `[Emoji] [Entity]: [Message] — [Suggestion]` | 3h | 🔵 | Template in `OmegaError.__str__` |
+| VT03 | Script "first 5 minutes" walkthrough in README — exact commands, expected output | 4h | 🔵 | Markdown with embedded terminal blocks |
 
-### 4.3 — Visual Identity
+### 4.3 — Visual Identity (Free Assets)
 
-| Item | What | Effort | Status |
-|------|------|--------|--------|
-| VI01 | Logo design (vector: SVG + PNG variants, favicon, social card) | 30h | 🔵 |
-| VI02 | Refine MkDocs theme beyond deep-purple default | 15h | 🔵 |
-| VI03 | Create GitHub social preview image (1280×640) | 5h | 🔵 |
-| VI04 | Presentation / deck template for Xoe-NovAi Foundation | 10h | 🔵 |
+| Item | What | Effort | Status | Method |
+|------|------|--------|--------|--------|
+| VI01 | Logo: `⬡` symbol + "OMEGA" in monospace ASCII. Clean, recognizable, zero cost. | 2h | 🔵 | Unicode + monospace font |
+| VI02 | GitHub social preview: generate via `pillow` script in repo | 3h | 🔵 | Python + PIL (free) |
+| VI03 | Refine MkDocs theme: Material deep-purple is already configured. Tweak nav structure, add logo. | 4h | 🔵 | MkDocs Material config |
+| VI04 | Favicon: Unicode ⬡ (U+2B21) or generate SVG via script | 1h | 🔵 | Inline SVG |
 
 ---
 
-## §5 Tier 3 — Production Studio Gloss
+## §5 Tier 3 — Production Gloss (Solo Dev, Free Infrastructure)
 
-**Vibe**: Commercial product polish. 300h+ of release engineering, security, and community infra.
+**Vibe**: Free-tier CI/CD, open-source security tooling, community platforms with no cost. Accept that some items (pen test, dedicated designer) are deferred indefinitely.
 
-### 5.1 — Release Engineering
+### 5.1 — Release Engineering (Free Tier)
 
-| Item | What | Effort | Status |
-|------|------|--------|--------|
-| R01 | Set up `python-semantic-release` for automated version bumps | 8h | 🔵 |
-| R02 | Create PyPI publishing workflow (GitHub Action) | 4h | 🔵 |
-| R03 | Create Homebrew tap formula for macOS | 8h | 🔵 |
-| R04 | Build + publish Docker images to GHCR | 8h | 🔵 |
-| R05 | Create `curl https://omega.xoe-nov.ai/install \| bash` one-liner | 12h | 🔵 |
-| R06 | Add SBOM generation (CycloneDX) per release | 4h | 🔵 |
+| Item | What | Effort | Status | Tool |
+|------|------|--------|--------|------|
+| R01 | Set up `python-semantic-release` for automated version bumps | 8h | 🔵 | python-semantic-release (free) |
+| R02 | Create PyPI publishing workflow (GitHub Action) | 4h | 🔵 | GitHub Actions free tier + PyPI trusted publishing |
+| R03 | Create `curl -fsSL https://raw.githubusercontent.com/Xoe-NovAi/omega-engine/main/scripts/install.sh \| bash` one-liner | 6h | 🔵 | Raw GitHub URL + bash |
+| R04 | Build + publish Docker images to GHCR (GitHub Container Registry) | 8h | 🔵 | GHCR free for public images |
+| R05 | Add SBOM generation (CycloneDX) per release | 4h | 🔵 | `pip-licenses` + `cyclonedx-bom` (free) |
 
-### 5.2 — Testing Maturity
+### 5.2 — Testing Maturity (Free Tools)
 
-| Item | What | Effort | Status |
-|------|------|--------|--------|
-| T01 | Add property-based tests with Hypothesis | 20h | 🔵 |
-| T02 | Add fuzz testing for YAML config parser | 8h | 🔵 |
-| T03 | Add performance regression benchmarks (`pytest-benchmark`) | 12h | 🔵 |
-| T04 | Add load test: 50 concurrent `omega talk` calls | 16h | 🔵 |
-| T05 | Add mutation testing (`mutmut`) to validate test quality | 12h | 🔵 |
+| Item | What | Effort | Status | Tool |
+|------|------|--------|--------|------|
+| T01 | Add property-based tests with Hypothesis | 20h | 🔵 | Hypothesis (free) |
+| T02 | Add fuzz testing for YAML config parser | 8h | 🔵 | python-afl / atheris (free) |
+| T03 | Add performance regression benchmarks (`pytest-benchmark`) | 12h | 🔵 | pytest-benchmark (free) |
+| T04 | Add load test: 50 concurrent `omega talk` calls via locust | 16h | 🔵 | locust (free) |
+| T05 | Add mutation testing (`mutmut`) for test quality validation | 12h | 🔵 | mutmut (free) |
 
-### 5.3 — Security Posture
+### 5.3 — Security Posture (Free Tools Only)
 
-| Item | What | Effort | Status |
-|------|------|--------|--------|
-| S01 | Third-party penetration test | $15-25K | 🔵 |
-| S02 | Supply chain security: `pip-audit`, Dependabot, OpenSSF Scorecard | 8h | 🔵 |
-| S03 | GPG-signed commits as CI requirement | 2h | 🔵 |
-| S04 | Add `pip audit` + `bandit` to CI | 4h | 🔵 |
-| S05 | Generate SPDX SBOM for each release | 4h | 🔵 |
+| Item | What | Effort | Status | Tool |
+|------|------|--------|--------|------|
+| S01 | Add `pip-audit` + `bandit` to CI pipeline | 4h | 🔵 | pip-audit, bandit (free) |
+| S02 | Enable Dependabot for automated dependency updates | 1h | 🔵 | GitHub native (free) |
+| S03 | Apply for OpenSSF Best Practices badge | 4h | 🔵 | OpenSSF (free) |
+| S04 | Supply chain: OpenSSF Scorecard action in CI | 2h | 🔵 | scorecard-action (free) |
+| S05 | Add `grype` or `trivy` for container image scanning | 3h | 🔵 | grype/trivy (free, open source) |
+| ~~ | ~~Third-party penetration test~~ | ~~$15-25K~~ | 🔴 DEFERRED | Not in scope for zero-cash project |
+| ~~ | ~~GPG-signed commits as CI requirement~~ | ~~2h~~ | 🔴 DEFERRED | Overhead exceeds threat model for solo dev |
 
-### 5.4 — Community Infrastructure
+### 5.4 — Community Infrastructure (Free Platforms)
 
-| Item | What | Effort | Status |
-|------|------|--------|--------|
-| C01 | Set up Discord / Discourse for community support | 8h | 🔵 |
-| C02 | Apply for OpenSSF Best Practices badge | 4h | 🔵 |
-| C03 | Create public roadmap (GitHub Projects) | 4h | 🔵 |
-| C04 | Write contributor ladder: first-timer → regular → maintainer | 4h | 🔵 |
-| C05 | Set up monthly release cadence with release notes template | 4h | 🔵 |
+| Item | What | Effort | Status | Platform |
+|------|------|--------|--------|----------|
+| C01 | Set up GitHub Discussions for community Q&A | 1h | 🔵 | GitHub native (free) |
+| C02 | Create public roadmap (GitHub Projects) | 3h | 🔵 | GitHub Projects (free) |
+| C03 | Write contributor ladder: first-timer → regular → maintainer | 2h | 🔵 | CONTRIBUTING.md update |
+| C04 | Set up monthly release cadence with release notes template | 2h | 🔵 | GitHub Releases (free) |
+| ~~ | ~~Discord/Discourse server~~ | ~~8h~~ | 🔴 DEFERRED | Until there's a community to serve |
 
-### 5.5 — Hardware Certification
+### 5.5 — Hardware Certification (Solo Scope)
 
-| Item | What | Effort | Status |
-|------|------|--------|--------|
-| H01 | Test + document on vanilla Ubuntu 24.04 | 8h | 🔵 |
-| H02 | Test + document on macOS (Apple Silicon + Intel) | 8h | 🔵 |
-| H03 | Test + document on Fedora 40 | 4h | 🔵 |
-| H04 | Test + document on Raspberry Pi 5 (8GB) | 8h | 🔵 |
-| H05 | Publish RAM/CPU benchmarks per model size | 8h | 🔵 |
+| Item | What | Effort | Status | Method |
+|------|------|--------|--------|--------|
+| H01 | Test + document on your Ryzen 7 5700U (the primary target) | 2h | 🔵 | Already running — document existing benchmarks |
+| H02 | Test + document on a clean Ubuntu 24.04 VM | 6h | 🔵 | Free VM via VirtualBox or cloud free tier |
+| H03 | Publish RAM/CPU benchmarks per model size (Qwen 1.7B, Qwen 4B, DeepSeek-R1-8B) | 6h | 🔵 | `hyperfine` + markdown tables |
+| ~~ | ~~macOS testing~~ | ~~8h~~ | 🔴 DEFERRED | No Mac hardware available |
+| ~~ | ~~Raspberry Pi testing~~ | ~~8h~~ | 🔴 DEFERRED | Not in scope for solo dev |
 
 ---
 
 ## §6 Progress Dashboard
 
 ```
-Overall: 0/82 tasks complete • ⏱ 0h / 700h estimated
+Overall: 0/76 tasks complete • ⏱ 0h / ~550h estimated
 Breakdown:
   §1 D231 Quick Wins:    0/7 • ⏱ 0h / 52min
   §2 Tier 0 (Ship-It):   0/40 • ⏱ 0h / 80h
   §3 Tier 1 (DX):        0/23 • ⏱ 0h / 120h
-  §4 Tier 2 (Design):    0/10 • ⏱ 0h / 200h
-  §5 Tier 3 (Production): 0/19 • ⏱ 0h / 300h
+  §4 Tier 2 (Design):    0/11 • ⏱ 0h / 41h (solo scope)
+  §5 Tier 3 (Production): 0/18 • ⏱ 0h / ~126h (free-tools scope)
+  Deferred (cash items):   —-  • ~145h (deferred indefinitely)
 ```
+
+### Deferred Indefinitely (Cash Items)
+
+| Item | Original Est. | Reason |
+|------|--------------|--------|
+| Third-party penetration test | $15-25K | Free tools (pip-audit, bandit, scorecard) cover 80% |
+| Professional designer (logo, theme) | ~$10K | Unicode logo + MkDocs Material default. Good enough. |
+| macOS testing | 8h | No Mac hardware. Accept the gap. |
+| Raspberry Pi testing | 8h | Out of scope for solo dev. |
+| GPU support | N/A | CPU-only architecture. Validated choice. |
+| Discourse community server | 8h set-up | GitHub Discussions until needed. |
 
 ### Current Blockers
 
 | Blocker | Tied To | Notes |
 |---------|---------|-------|
-| None yet | — | First: execute D231 Quick Wins (62min) |
+| None yet | — | First: execute D231 Quick Wins (52min) |
 
 ### Current Velocity
 

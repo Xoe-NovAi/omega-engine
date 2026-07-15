@@ -18,16 +18,23 @@
 
 ---
 
-## §2 Current State (2026-07-13)
+## §2 Current State (2026-07-15)
 
 | Metric | Value | Status | LAST_VERIFIED |
 |--------|-------|--------|---------------|
 | Tests | **1315 passed** (43 skipped, 3 xfailed) | ✅ All functional tests pass | 2026-07-13 |
 | Mandates | **23 (M1-M23)** | ✅ All enforced | 2026-07-13 |
+| **Mandate Compliance** | **13/23 FULL (56.5%)** — 5 Partial, 5 Fail | ❌ Systemic Run Side gaps | 2026-07-15 |
+| **Failed Mandates** | M5, M11, M12, M15, M23 | ❌ Soul distillation, handoff, continuity, failure integrity | 2026-07-15 |
 | Fleet | **13 presences** (11 agents + 2 entities) | ✅ Cap: 14 | 2026-07-13 |
 | WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 |
 | Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 |
 | Shared modules | **3** (`omega-vetala` v2.0.0, `omega-sieve` v0.1.0, `omega-doc-reader` v1.0.0) | ✅ Release-ready | 2026-07-13 |
+| **Atomic Execution Matrix** | **RATIFIED** — Code + CI Gate + Doc as single atomic unit | ✅ 5 new protocol docs + CI gates defined | 2026-07-15 |
+| **Soul Architecture v2.0** | **RATIFIED** — Intelligence Pipeline, Scorecard, Scribe separation | ✅ `make soul-audit` gated | 2026-07-15 |
+| **PWAD Capability Lattice** | **RATIFIED** — Security boundary for active code in PWADs | ✅ `make capability-check` gated | 2026-07-15 |
+| **Mandate Governance Protocol** | **RATIFIED** — Amendment, exemption, conflict resolution | ✅ `make mandate-amendment-check` gated | 2026-07-15 |
+| **Omega Kernel Architecture** | **RATIFIED** — `kernel/` vs `runtime/` boundary | ✅ `make kernel-import-check` gated | 2026-07-15 |
 | SearXNG MCP | **Streamable HTTP on :8018** | ✅ Migration complete | 2026-07-13 |
 | Omega Hub MCP | **Dual-transport** (SSE /sse + Streamable HTTP /mcp) on :8016 | ✅ Already dual | 2026-07-13 |
 | Firecrawl MCP | **SSE on :8015** | ⏳ Needs Streamable HTTP migration | 2026-07-13 |
@@ -35,7 +42,6 @@
 | sqlite-vec unified fabric | **Strike 10 IN PROGRESS** — `SQLiteVecAdapter` default, Qdrant deprecated | 🟡 35/36 adapter tests pass | 2026-07-13 |
 | **KV Cache Quantization** | **LOCKED: q8_0 on CPU (Zen 2)** — No Flash Attention/GPU required | ✅ Research complete | 2026-07-13 |
 | **YouTube Researcher V2** | **9-Layer Temporal Knowledge Observatory** — L1-L9 complete, 15 contract tests pass | ✅ Operational | 2026-07-13 |
-| **Pre-PR Quick Wins** | **7 items** — Firewall clean, datetime deprecations, runtime warnings, test cache, docs sync | 🟡 In progress | 2026-07-13 |
 
 ---
 
@@ -68,11 +74,18 @@
 | `SOVEREIGN_MANDATES.md` | 23 Constitutional Laws (M1-M23) |
 | `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master execution roadmap |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | Multi-agent coordination |
-| `docs/decisions/PIVOT_LOG.md` | 227 immutable decisions (D1-D227) |
+| `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions (D1-D263) |
 | `CREDITS.md` | id Software heritage attribution |
 | `docs/archive/coordination/` | Historical session records |
 | `data/entities/kali/session_gnosis.md` | Kali's session anchor (M15) |
 | `.opencode/anchored-summary.md` | Post-compaction recovery state |
+| `docs/strategy/SOUL_ARCHITECTURE_V2.md` | Soul Architecture v2.0 (supersedes v1.0) |
+| `docs/strategy/PWAD_CAPABILITY_LATTICE.md` | PWAD security capability model |
+| `docs/strategy/MANDATE_GOVERNANCE_PROTOCOL.md` | Mandate amendment & exemption process |
+| `docs/strategy/OMEGA_KERNEL_ARCHITECTURE.md` | Kernel/Runtime boundary spec |
+| `docs/strategy/NEMOTRON3_ULTRA_BRIEFING.md` | Master strategy synthesis (D258-D263) |
+| `docs/architecture/SOVEREIGN_BUS_SPEC.md` | Reconstructed event bus spec |
+| `docs/research/R_PWAD_SCHEMA_JEM_RESEARCH_20260715.md` | Jem's 2026 PWAD SOTA research |
 
 ---
 
@@ -97,7 +110,7 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 | `SOVEREIGN_MANDATES.md` | 23 Constitutional Laws |
 | `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master execution roadmap |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | Multi-agent coordination |
-| `docs/decisions/PIVOT_LOG.md` | 227 immutable decisions |
+| `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions |
 | `CREDITS.md` | id Software heritage attribution |
 | `docs/archive/coordination/` | Historical session records |
 
@@ -109,4 +122,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-13 | Version: v1.2.0 | Tests: 1315 passing | SSOT: ~230 lines | Sessions: v1.2.0 Release — SWP, Doc Reader, Sieve, Heritage Pipeline | 4 Researcher Gaps Closed (TF-IDF routing, judge calibration, Redis DLQ, voice concurrency) | Net acceleration ~32h*
+*Last Updated: 2026-07-15 | Version: v1.2.0 | Tests: 1315 passing | SSOT: ~300 lines | Sessions: Phase 1.5 Organization — 5 Atomic Docs RATIFIED (Soul V2, PWAD Lattice, Mandate Governance, Kernel Arch, Master Briefing) | D258-D263 logged | Decisions: 234+ | Net acceleration: ~80h by inverting build order*

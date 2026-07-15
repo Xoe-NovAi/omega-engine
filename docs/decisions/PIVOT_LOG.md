@@ -2348,3 +2348,39 @@ The MaKaLi Cloud Council is the firewall's immune response. Every critical updat
 - **Result**: v1.2.0 tagged and pushed. Ready for Tier 0 work.
 - **Rationale**: Clean baseline with zero errors, minimal warnings, full documentation sync. All Temple-Grade gates pass.
 - **Status**: ✅ RATIFIED
+
+## D258: Adopt Atomic Execution Matrix (2026-07-15)
+- **Context**: 11 proposed strategy documents threatened documentation bloat. No CI gates existed to enforce architectural boundaries, rendering strategy documents advisory rather than constitutional.
+- **Decision**: Adopt the Atomic Execution Matrix standard. Every capability is a single atomic unit containing: (1) The Code (mechanism), (2) The CI Gate (enforcement), (3) The Document (constitution). No new strategy document will be written without a corresponding CI gate.
+- **Rationale**: Prevents unenforced documentation bloat. Enforces "Documentation without enforcement is decoration" principle.
+- **Status**: ✅ RATIFIED
+
+## D259: Split src/omega/ into kernel/ and runtime/ (2026-07-15)
+- **Context**: The `src/omega/oracle/` directory mixed the irreducible core (provider_fabric, entity_registry, memory_store, oracle) with extensible runtime features (hivemind, library, a2a_bridge). This created an implicit dependency graph with no enforcement.
+- **Decision**: Define explicit `src/omega/kernel/` and `src/omega/runtime/` boundary. Kernel may never import from Runtime. Enforced by `make kernel-import-check`.
+- **Rationale**: Protects core from PWAD/Runtime architectural rot. Enables independent evolution of kernel and runtime.
+- **Status**: ✅ RATIFIED
+
+## D260: Implement Soul Architecture v2.0 (2026-07-15)
+- **Context**: Soul Architecture v1.0 (2026-06-22) addressed the self-referential poisoning loop but lacked evaluation framework (how to measure entity improvement), Scribe separation (distillation absorbed into Verity), and migration plan (entity soul cleanup).
+- **Decision**: Ratify Soul Architecture v2.0 with: (1) Intelligence Pipeline, (2) Entity Intelligence Scorecard (5 dimensions), (3) Restored Scribe agent, (4) Migration plan for 10 non-Kali entities. Enforced by `make soul-audit`.
+- **Rationale**: The Soul Architecture is the engine's frontier intellectual contribution. Evaluation framework is non-negotiable for proving entity intelligence evolves.
+- **Status**: ✅ RATIFIED
+
+## D261: Implement PWAD Capability Lattice (2026-07-15)
+- **Context**: DOOM WADs were passive content (textures, maps). Omega PWADs contain active code (workflows, tools, entities). No security boundary existed to prevent community PWADs from compromising core engine or other dimensions.
+- **Decision**: Implement PWAD Capability Lattice — a formal capability model declared in `dimension.yaml` and enforced at runtime by `SovereignDimensionValidator`. Enforced by `make capability-check`.
+- **Rationale**: PWADs are active code. Without a security lattice, community marketplace would be a virus vector.
+- **Status**: ✅ RATIFIED
+
+## D262: Establish Mandate Governance Protocol (2026-07-15)
+- **Context**: 23 Sovereign Mandates are described as Constitutional Law but had no amendment process, exemption process, or conflict resolution mechanism. A constitution without amendment pathways is brittle.
+- **Decision**: Establish Mandate Governance Protocol with: (1) 4-gate amendment process mirroring Heritage Vetting, (2) Exemption process for community PWADs, (3) Conflict resolution hierarchy (Sovereignty > Integrity > Performance). Enforced by `make mandate-amendment-check`.
+- **Rationale**: Mandates must evolve as hardware and community requirements change. Constitutional governance prevents both drift and brittleness.
+- **Status**: ✅ RATIFIED
+
+## D263: Invert Phase 1.5 Build Order (2026-07-15)
+- **Context**: Original Phase 1.5 plan built SovereignBus (infrastructure) before any working dimension existed. Infrastructure without a consumer results in over-engineering and untested design decisions.
+- **Decision**: Invert build order: (1) Define Kernel boundary, (2) Write ONE `dimension.yaml` for Research Lab, (3) Implement DimensionRegistry, (4) Prove Research Lab loads and routes, (5) THEN build SovereignBus.
+- **Rationale**: Build vertically, not horizontally. One working dimension proves the architecture before infrastructure investment.
+- **Status**: ✅ RATIFIED
