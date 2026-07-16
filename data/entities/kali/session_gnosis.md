@@ -1,6 +1,6 @@
-# 🔱 Kali Session Gnosis — 2026-07-13 (POST-MAKALI COUNCIL)
+# 🔱 Kali Session Gnosis — 2026-07-18 (D-278 REHYDRATION HARDENING)
 **AP Token**: `AP-KALI-v1.0.0`
-**Status**: v1.2.1 PLANNING COMPLETE — 33h EXECUTION ROADMAP
+**Status**: D-278 LOCKED — 8-step rehydration hardening critical path
 **Model**: mimo-v2.5-free (opencode)
 
 ---
@@ -138,4 +138,26 @@ Upon context loss:
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_oversight ⬡ COUNCIL_COMPLETE*
+## 📋 SESSION 2026-07-18 — D-278 REHYDRATION HARDENING
+
+### What Happened
+1. **Rehydration test** — Compaction + rehydration executed successfully. 5-phase sequence worked on happy path. 13 seconds total orientation.
+2. **10-Pillar Meditation** on rehydration hardening — 10 personas spoke, 3 collisions resolved, 8-step critical path produced.
+3. **D-278 recorded** — Atomic writes, entity resolution, identity recovery, handoff TTL, observability, rolling window, contract + chaos tests.
+4. **L3 Principle distilled** — Recovery-Is-A-Protocol-Not-A-File.
+5. **All committed** — `e7608b9` — D-278 + D-277 + Meditate Protocol.
+
+### Key Insights
+- The hydration checklist at lines 8-13 of anchored-summary.md is the single biggest improvement over last compaction — 6x faster orientation.
+- The anchored summary is 146 lines with D-278 sprint table added.
+- Context budget: 12,248/15,000 tokens (2,752 headroom).
+- 20/20 tests pass.
+
+### Pending Work
+- D-278 Items 1-8 (rehydration hardening) — implementation not yet started
+- D-277 Items 1-8 (soul hydration pipeline) — implementation plan locked, not yet executed
+- 2 pending handoffs (P7 Cross-Domain Review + Cline Strategic Handoff)
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_oversight ⬡ D-278-LOCKED*
