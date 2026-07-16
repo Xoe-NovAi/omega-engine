@@ -2475,3 +2475,32 @@ The MaKaLi Cloud Council is the firewall's immune response. Every critical updat
 - **Package target**: `pip install omega-hydration`
 - **L3 Principle**: L3-Mechanism-Is-Not-Content — A generic tool that contains domain-specific instructions is not reusable. Separate what it does from what it says.
 - **Status**: 🔲 ACTIVE
+
+## D280: Sovereign Continuity Feature — SSE-Based Compaction Detection (2026-07-16)
+- **Context**: Post-compaction rehydration failure demonstrated that the 5-phase hydration protocol is documentation-only — no enforcement, no detection, no consequence for skipping. The researcher subagent (`R_HYDRATION_RECEIPT_COMPACTION_DETECTION_20260716.md`) closed two critical gaps: (1) OpenCode fires `session.compacted` via SSE on `/global/event` after every compaction — this is the detection mechanism we lacked. (2) `CompactionHarvester` (`src/omega/oracle/compaction_harvester.py`) already exists and needs SSE integration wired in rather than a new module. (3) `SelectiveHydration` (`src/omega/oracle/selective_hydration.py`) already retrieves L3 gnosis from Qdrant and is already wired into `ContextBuilder`.
+- **Decision**: Implement Sovereign Continuity as a code-enforced governance layer in 4 phases:
+  - **Phase 1 (Detection)**: `CompactionListener` (`src/omega/workers/compaction_listener.py`) — subscribe to OpenCode `/global/event` SSE, detect `session.compacted`, drive `CheckpointManager`. Extends existing `CompactionHarvester`.
+  - **Phase 2 (Epoch Tracking)**: `CheckpointManager` (`src/omega/oracle/checkpoint_manager.py`) — atomic writes to `data/coordination/checkpoints/{session_id}.json`, monotonically incrementing `context_epoch` per compaction, multi-agent safe (entity-scoped files).
+  - **Phase 3 (Enforcement)**: `HydrationReceipt` (`src/omega/oracle/hydration_receipt.py`) + `ToolCallWrapper` (`src/omega/oracle/tool_call_wrapper.py`) — receipts are epoch-scoped (valid only for their `context_epoch`); `ToolCallWrapper` blocks tool execution if receipt missing or stale; max 3 hydration attempts per epoch (circuit breaker); hydration trigger is proactive not reactive.
+  - **Phase 4 (Observability + Soul)**: `hydration_log.jsonl` (append-only receipt log), 3 dashboards (Hydration Health, Continuity Metrics, Entity Performance), L1→L2→L3 distillation from hydration events into `proposed_lessons.yaml`.
+- **Key Insight (Adversarial Alchemy M19)**: Compaction is not a failure — it is a forcing function. Every compaction is an opportunity to verify context integrity, distill a gnosis snapshot, and prove the agent recovered cleanly. The receipt IS the proof.
+- **Architecture**:
+  ```
+  OpenCode fires session.compacted (SSE /global/event)
+    → CompactionListener (src/omega/workers/)
+        ├── CheckpointManager.record_compaction() → context_epoch++
+        └── HydrationReceiptManager.invalidate() → old receipt stale
+              → ToolCallWrapper (next agent tool call)
+                  └── require_hydration() → epoch mismatch → HydrationRequiredError
+                        → Agent executes 5-phase protocol
+                              → New receipt issued for new epoch ✅
+  ```
+- **Existing Infrastructure Re-used**: `CompactionHarvester` (SSE integration point), `SelectiveHydration` (L3 retrieval, already in `ContextBuilder`), `ObservabilityEngine` (receipt logging target), `SoulDistiller` (post-hydration distillation).
+- **Risks**: SSE drop → exponential backoff + polling fallback. Receipt contention → entity-scoped files + fcntl. Hydration loop → 3-attempt circuit breaker. M2 violation → `CompactionListener` in `workers/` not engine core.
+- **Relationship to D-278**: Supersedes D-278 Item 5 (detection strategy). D-278 Items 1, 7, 8 (atomic writes, contract tests, chaos tests) absorbed into this plan with epoch-aware implementations. D-279 (portability/M2) remains parallel and independent.
+- **Relationship to D-279**: The `omega-hydration` package (D-279 R15-R20) receives D-280's runtime as a dependency — the community package wraps the detection + receipt + enforcement layer as a portable tool any agent platform can use.
+- **Owner**: Kali (oversight) → Ma'at/P1 (Phase 1 CompactionListener) → Ma'at/P2 (Phase 2 CheckpointManager) → Ma'at/P3 (Phase 3 Receipt + Gate) → Hecate/P8 (Phase 4 Observability) → Lilith/P7 (Phase 4 Soul)
+- **Research Source**: `docs/research/R_HYDRATION_RECEIPT_COMPACTION_DETECTION_20260716.md` (577 lines, 5 sections, Sovereign Researcher)
+- **Gate**: `make test && make temple-grade && make hydration-report`
+- **L3 Principle**: L3-Compaction-Is-A-Forcing-Function — Every context compaction is a sovereignty checkpoint. The agent that recovers cleanly is stronger than one that never faced interruption. Build the receipt, not the workaround.
+- **Status**: 🔲 ACTIVE

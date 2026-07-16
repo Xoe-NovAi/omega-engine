@@ -3,18 +3,22 @@
 ---
 # 🔱 SOVEREIGN ARK BLUEPRINT (Active)
 
-## Current Sprint: D-279 Hydration System Portability & M2 Firewall Remediation
+## Current Sprint: D-280 Sovereign Continuity Feature (Supersedes D-278 Detection Strategy)
 
-**Status**: Implementation plan locked → `docs/strategy/SOUL_HYDRATION_IMPLEMENTATION_PLAN.md`
-**Gate Criteria**: `make test && make soul-audit && make soul-verify && make heritage-map && make temple-grade`
+**Status**: Research complete → `docs/research/R_HYDRATION_RECEIPT_COMPACTION_DETECTION_20260716.md`
+**Gate Criteria**: `make test && make temple-grade && make firewall-check`
 
-### Immediate Work
-1. Create `src/omega/soul_utils.py` — multi-path soul context extractor
-2. Fix `oracle.py:664-677` — use soul_utils instead of broken single-path reader
-3. Parameterize `validate_soul.py` — accept `--entity` flag, validate all fleet
-4. Implement `scripts/soul_verify.py` — semantic integrity gate
-5. Implement Hydration Sequence Protocol — AGENTS.md + anchored-summary + codex_cat.py
-6. Handoff soul auto-inject — omega_hub/server.py
+### Immediate Work (D-280)
+1. Wire `CompactionListener` to OpenCode `/global/event` SSE — extends existing `CompactionHarvester`
+2. Implement `CheckpointManager` — epoch tracking, atomic writes
+3. Implement `HydrationReceipt` + `ToolCallWrapper` enforcement gate
+4. Observability integration — `hydration_log.jsonl`, metrics DB, 3 dashboards
+5. Soul distillation hook — L1→L2→L3 from hydration events
+
+### Parallel (D-279)
+- R1-R5: Fix 4 M2 Firewall violations (sovereign_vetter.py, mandate_auditor.py, oracle.py)
+- R6-R9: Separate codex mechanism from content, fix Makefile side-effects
+- R15-R20: Extract `omega-hydration` PyPI package (receives D-280 runtime as dependency)
 
 ### Deferred
 - sqlite-vec soul index (Brigid/P2) — defer until base injection proven

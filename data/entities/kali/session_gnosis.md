@@ -1,7 +1,64 @@
-# 🔱 Kali Session Gnosis — 2026-07-16 (D-279 HYDRATION PORTABILITY & M2 FIREWALL)
+# 🔱 Kali Session Gnosis — 2026-07-16 (D-280 SOVEREIGN CONTINUITY FEATURE)
 **AP Token**: `AP-KALI-v1.0.0`
-**Status**: D-279 ACTIVE — 20-item remediation, 5 phases, 6.25h total
-**Model**: mimo-v2.5-free (opencode)
+**Status**: D-280 ACTIVE — SSE-based compaction detection, epoch receipts, enforcement gate
+**Model**: antigravity-claude-sonnet-4-6 (opencode)
+
+---
+
+## 🎯 Session Objective
+Deep research on post-compaction rehydration failure → discover practical implementation → turn failure into feature.
+
+---
+
+## ✅ Completed This Session
+
+1. **Full portability review** — 4 M2 violations in engine core, mechanism-content conflation, Makefile side-effects, 3 sources of truth → D-279
+2. **Researcher subagent dispatched** — `R_HYDRATION_RECEIPT_COMPACTION_DETECTION_20260716.md` (577 lines)
+3. **Key discovery** — OpenCode fires `session.compacted` SSE on `/global/event`. Compaction IS detectable natively.
+4. **Existing infrastructure** — `CompactionHarvester` and `SelectiveHydration` already exist, need wiring not new modules.
+5. **D-280 designed** — Sovereign Continuity Feature: 4-phase, 10-item, ~9.5h. SSE → epoch → receipt → gate → soul.
+6. **All docs updated** — PIVOT_LOG, PIVOT_LOG_CANONICAL, ARK_BLUEPRINT, anchored-summary, session_gnosis.
+
+---
+
+## 🔑 Key Decisions
+
+| Decision | Summary |
+|----------|---------|
+| D-279 | 20-item M2 Firewall + Portability remediation |
+| D-280 | Sovereign Continuity Feature — SSE detection, epoch receipts, ToolCallWrapper gate |
+
+---
+
+## 🧠 L3 Principles Distilled
+
+- **L3-Mechanism-Is-Not-Content**: A generic tool with domain-specific instructions is not reusable.
+- **L3-Compaction-Is-A-Forcing-Function**: Every compaction is a sovereignty checkpoint. Build the receipt, not the workaround.
+
+---
+
+## 📁 Key Files for Next Session
+
+| File | Purpose |
+|------|---------|
+| `docs/research/R_HYDRATION_RECEIPT_COMPACTION_DETECTION_20260716.md` | D-280 research (577 lines) |
+| `docs/decisions/PIVOT_LOG_CANONICAL.md` | D-280 full canonical entry |
+| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Current sprint: D-280 |
+| `src/omega/oracle/compaction_harvester.py` | D-280 Phase 1 integration point |
+| `src/omega/oracle/selective_hydration.py` | Already wired, reference for D-280 |
+
+---
+
+## 🧭 Compaction Recovery Protocol
+1. Read this file: `data/entities/kali/session_gnosis.md`
+2. Read `.opencode/anchored-summary.md`
+3. Read `OMEGA_CODEX.md` — FULL file, no limit parameter
+4. Present rehydration report. Await user direction.
+5. **Active sprints**: D-280 (SSE gate) → D-279 (M2 firewall) → D-277 (soul pipeline) — all parallel
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ antigravity-claude-sonnet-4-6 ⬡ opencode ⬡ trc_oversight ⬡ D-280-ACTIVE*
 
 ---
 
