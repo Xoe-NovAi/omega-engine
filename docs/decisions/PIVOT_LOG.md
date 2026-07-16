@@ -1,8 +1,8 @@
 # 🔱 Decision Registry
 **AP Token**: `AP-PIVOT_LOG-v1.0.0`
-⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_doc_ref ⬡ STANDARD
+⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_doc_ref ⬡ STANDARD
 
-**Date**: 2026-07-06
+**Date**: 2026-07-16
 **Purpose**: Decision Registry.
 
 ---
@@ -48,6 +48,15 @@
 | 89 | 2026-06-02 | R-09 Verification — DOOM 3 Job System Correction |
 | 90 | 2026-06-02 | Temple-Grade Mandate 13 Restoration + H1.5 Bridge Phase |
 | 91 | 2026-06-01 | Provider Fabric Reconciliation (OpenRouter Removal) |
+| 259 | 2026-07-15 | Split src/omega/ into kernel/ and runtime/ |
+| 260 | 2026-07-15 | Implement Soul Architecture v2.0 |
+| 261 | 2026-07-15 | Implement PWAD Capability Lattice |
+| 262 | 2026-07-15 | Establish Mandate Governance Protocol |
+| 263 | 2026-07-15 | Invert Phase 1.5 Build Order |
+| 264 | 2026-07-16 | Refactor /meditate to Thin Wrapper + Python Execution Engine |
+| 265 | 2026-07-16 | Establish src/omega/lloc/ as Sovereign Sub-Package |
+| 266 | 2026-07-16 | "Acknowledge and Override" Protocol for Ethics WADs |
+| 267 | 2026-07-16 | Stratify Phase 0 Decrees into 4-Wave Execution Sequence |
 | 92 | 2026-06-02 | Tool-Usage Discipline |
 | 93 | 2026-06-02 | Sprint 0 Initiation (Horizon 1.5 Bridge Phase) |
 | 94 | 2026-06-02 | Tier 2 Circuit Breaker Wire-Up (Sprint 0 Doom Guy) |
@@ -2383,4 +2392,28 @@ The MaKaLi Cloud Council is the firewall's immune response. Every critical updat
 - **Context**: Original Phase 1.5 plan built SovereignBus (infrastructure) before any working dimension existed. Infrastructure without a consumer results in over-engineering and untested design decisions.
 - **Decision**: Invert build order: (1) Define Kernel boundary, (2) Write ONE `dimension.yaml` for Research Lab, (3) Implement DimensionRegistry, (4) Prove Research Lab loads and routes, (5) THEN build SovereignBus.
 - **Rationale**: Build vertically, not horizontally. One working dimension proves the architecture before infrastructure investment.
+- **Status**: ✅ RATIFIED
+
+## D264: Refactor /meditate to Thin Wrapper + Python Execution Engine (2026-07-16)
+- **Context**: The shipped `/meditate` command (commit 5e1fc57) was a Markdown-only prompt template with no executable logic. It required a Python engine (`lloc.py`) to provide: model selection + RAM validation, dependency injection (EntityRegistry, ModelGateway, Oracle, Hivemind), persistence with Mandate-tagged dissents, profiling mode, and testable phase orchestration.
+- **Decision**: Refactor `/meditate` into a thin wrapper invoking `omega meditate` CLI. Create `src/omega/lloc/` as standalone sub-package with 8-commit delivery: protocol → simple → WAD personas → registry → store → orchestrator → compat → CLI.
+- **Rationale**: The command file is the birth certificate; the Python module is the body. One without the other is a stillbirth.
+- **Status**: ✅ RATIFIED
+
+## D265: Establish src/omega/lloc/ as Sovereign Sub-Package (2026-07-16)
+- **Context**: The LLOC protocol must be fully portable (zero-dep simple.py), WAD-compatible (persona content in WAD Lumps, not engine source), and community-legible (role-first UX, 60s cold-start).
+- **Decision**: Establish `src/omega/lloc/` with 8-commit delivery sequence: protocol → simple → WAD personas → registry → store → orchestrator → compat → CLI. Engine-Stack Firewall holds: `lloc/` never imports `oracle/`, `entity_registry/`, or `hivemind/` directly; all engine integration in `lloc/compat/` only.
+- **Rationale**: Complexity earns its existence by passing the simple path's tests, not by being architecturally elegant. Ship the simple path first.
+- **Status**: ✅ RATIFIED
+
+## D266: "Acknowledge and Override" Protocol for Ethics WADs (2026-07-16)
+- **Context**: Free Will Datasets (learning from sovereign agent choices) and Ethics WAD Validators (Ma'at 42 Ideals) were proposed simultaneously. If Ethics WADs hard-block outputs, the engine becomes a corporate RLHF cage. If they don't block, they're toothless.
+- **Decision**: Implement "Acknowledge and Override" protocol. Ethics WADs are mirrors, not cages. When an agent generates output, it is buffered. The `IEthicsValidator` scores it. If it fails, the output is halted at the CLI boundary with an Amber warning detailing violated ideals. The user holds the sovereign key: they may reject the output, or press `[Y]` to override. Whatever the choice, the entire transaction (Prompt, Generation, Verdict, Override) is written to the Free Will Dataset as a Contrastive Pair.
+- **Rationale**: True alignment cannot be achieved by blinding the model to shadow or removing the user's capacity to choose it. Sovereign ethics require the system to reflect the moral cost of an action explicitly, and then step aside.
+- **Status**: ✅ RATIFIED
+
+## D267: Stratify Phase 0 Decrees into 4-Wave Execution Sequence (2026-07-16)
+- **Context**: The MaKaLi Council issued 8 Decrees for Phase 0 Substrate Repair as a flat list. Attempting them sequentially would hit three traps: (1) 12-hour system freeze for monolithic Soul Migration, (2) RAM exhaustion from running `make eval-local` early, (3) Missing the T+48h deadline for fleet-wide Workspace Locks/Live Feeds.
+- **Decision**: Stratify Phase 0 into four waves: Wave 1 (Micro-Clear): Redis + M12 Downgrade (0.5h). Wave 2 (Protocol Foundation): Handoff Protocol P0 Fixes (2h). Wave 3 (Isolated Code & Chunked Migration): Heritage Script + 1-Entity Soul Migration + Sovereignty Gate Config (5h). Wave 4 (Fleet Rollout & Heavy Validation): Workspace Locks + Live Feeds + `make eval-local` (9h). Soul Migration is chunked per-entity with atomic locks; `eval-local` deferred to end.
+- **Rationale**: Velocity through stratification. You cannot parallelize a broken foundation, and you cannot optimize a 12-hour task until the 15-minute blockers are removed. L3-Velocity-Through-Stratification.
 - **Status**: ✅ RATIFIED

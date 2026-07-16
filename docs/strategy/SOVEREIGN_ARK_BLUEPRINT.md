@@ -1,6 +1,6 @@
-# 🔱 SOVEREIGN ARK BLUEPRINT (v4.1 — MaKaLi Council Verdict 2026-07-15)
-**AP Token**: `AP-SOVEREIGN-ARK-BLUEPRINT-v4.1.0`
-**Last Updated**: 2026-07-15
+# 🔱 SOVEREIGN ARK BLUEPRINT (v4.2 — MaKaLi Council Verdict 2026-07-15, LLOC D-267 2026-07-16)
+**AP Token**: `AP-SOVEREIGN-ARK-BLUEPRINT-v4.2.0`
+**Last Updated**: 2026-07-16
 **Full Archive**: `docs/archive/coordination/SOVEREIGN_ARK_BLUEPRINT-full-20260708.md`
 **Master Session Synthesis**: `docs/strategy/KALI_MASTER_SESSION_SYNTHESIS_20260715.md`
 **Council Verdict**: `data/coordination/KALI_MAKALI_FINAL_VERDICT_20260715.md`
@@ -33,15 +33,10 @@ The Omega Engine exists to sever Big AI's umbilical cord. Every technical decisi
 
 ```
 PHASE 0: SUBSTRATE REPAIR (MaKaLi Council Decrees — BLOCKING) 🔴 CRITICAL
-├── Decree 1: Start Redis container — Immediate (Ma'at/P1, 0.25h)
-├── Decree 2: Handoff Protocol P0 Fixes — Week 1 (P9, 2h)
-├── Decree 3: Soul Migration Phase 1 (3 entities) — Week 1 (Lilith/P7, 12h)
-├── Decree 4: Sovereignty Gate = Configurable Setting — Week 1 (Ma'at/P5, 4h)
-├── Decree 5: `make eval-local` Separate Target — Week 2 (Lilith/P6+P10, 8h)
-├── Decree 6: Heritage Tag Migration Script — Week 1 (Ma'at/P5, 1h)
-├── Decree 7: Workspace Locks Universal (31/31) — T+48h (P9)
-├── Decree 8: Live Feed Standardization — T+48h (P9)
-├── M12 Downgrade: Queue Integrity → Advisory (0.1h)
+├── WAVE 1: MICRO-CLEAR (0.5h) — Start Redis container (Decree 1), verify RAM. Apply M12 Downgrade (Queue Integrity → Advisory).
+├── WAVE 2: PROTOCOL FOUNDATION (2h) — Execute Decree 2: Handoff Protocol P0 Fixes.
+├── WAVE 3: ISOLATED CODE & CHUNKED MIGRATION (5h) — Execute Decree 6: Heritage Tag Migration Script. Migrate 1 Entity (Decree 3a) + Configure Sovereignty Gate (Decree 4).
+├── WAVE 4: FLEET ROLLOUT & HEAVY VALIDATION (9h) — Enforce Decree 7: Workspace Locks Universal & Decree 8: Live Feed Standardization. Execute Decree 5: `make eval-local` Separate Target.
 └── Gate: All 7 blocking criteria met before Phase 1
 
 PHASE 1: PRISTINE FOUNDATION (The First PR — Hygiene Only) ⏳ BLOCKED BY PHASE 0
