@@ -25,8 +25,14 @@ logger = logging.getLogger(__name__)
 
 PacketType = Literal["request", "response", "delegation", "notification", "broadcast"]
 TaskType = Literal["design", "review", "research", "mine", "verify", "implement"]
-PacketStatus = Literal["pending", "accepted", "rejected", "completed", "failed", "timed_out"]
+PacketStatus = Literal["pending", "active", "completed", "stale", "archived"]
 AgentMode = Literal["primary", "subagent"]
+ResolverStrategy = Literal["terminate", "escalate", "fallback", "retry"]
+
+# ── TTL constants (aligned with MCP background reaper) ──────────────────────
+PENDING_TTL: int = 14400     # 4h — pending → stale
+ACTIVE_TTL: int = 172800     # 48h — active → stale
+COMPLETED_TTL: int = 604800  # 7d — completed → archive
 
 # ── ZONEID for handoff packets ───────────────────────────────────────────
 
@@ -54,6 +60,7 @@ class HandoffPacket:
     task_description: str
     relevant_files: List[str] = field(default_factory=list)
     context: str = ""
+    context_delivery: str = "inline"  # D216: "inline" | "file_ref" | "usm_key"
 
     packet_id: str = ""
     parent_trace_id: str = ""
@@ -62,7 +69,9 @@ class HandoffPacket:
     packet_type: PacketType = "request"
     status: PacketStatus = "pending"
     expected_output: str = ""
-    ttl_seconds: int = 600
+    ttl_seconds: int = 14400  # 4h — aligned with PENDING_TTL
+    resolver_strategy: ResolverStrategy = "escalate"  # Decree 2: default escalate to Kali
+    resolved_by: Optional[str] = None
     error: Optional[str] = None
     result: Optional[str] = None
     created_at: float = 0.0

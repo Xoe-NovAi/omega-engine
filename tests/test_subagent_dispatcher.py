@@ -14,7 +14,11 @@ from omega.oracle.subagent_dispatcher import (
     TaskType,
     PacketStatus,
     AgentMode,
+    ResolverStrategy,
     ZONEID_HANDOFF,
+    PENDING_TTL,
+    ACTIVE_TTL,
+    COMPLETED_TTL,
 )
 
 
@@ -37,6 +41,25 @@ class TestHandoffPacket:
         assert packet.status == "pending"
         assert packet.visited_agents == ["kali"]
 
+    def test_default_fields(self):
+        """Verify new Decree 2 / D216 fields have correct defaults."""
+        packet = HandoffPacket(
+            source_agent="kali",
+            target_agent="doom_guy",
+            task_type="review",
+            task_description="Test",
+        )
+        assert packet.context_delivery == "inline"
+        assert packet.resolver_strategy == "escalate"
+        assert packet.resolved_by is None
+        assert packet.ttl_seconds == 14400  # 4h — aligned with PENDING_TTL
+
+    def test_ttl_constants(self):
+        """Verify TTL constants match background reaper."""
+        assert PENDING_TTL == 14400     # 4h
+        assert ACTIVE_TTL == 172800     # 48h
+        assert COMPLETED_TTL == 604800  # 7d
+
     def test_full_creation(self):
         packet = HandoffPacket(
             source_agent="kali",
@@ -47,7 +70,7 @@ class TestHandoffPacket:
             context="Some context",
             expected_output="JSON report",
             packet_type="delegation",
-            status="accepted",
+            status="active",
             ttl_seconds=300,
             max_hops=5,
         )
@@ -55,7 +78,7 @@ class TestHandoffPacket:
         assert packet.context == "Some context"
         assert packet.expected_output == "JSON report"
         assert packet.packet_type == "delegation"
-        assert packet.status == "accepted"
+        assert packet.status == "active"
         assert packet.ttl_seconds == 300
         assert packet.max_hops == 5
 

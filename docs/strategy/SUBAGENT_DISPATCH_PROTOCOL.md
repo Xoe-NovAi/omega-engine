@@ -63,8 +63,10 @@ Every subagent dispatch uses this typed schema:
 | `relevant_files` | `list[str]` | ✅ | — | Files for supplementary reference. Content MUST also be summarized inline. |
 | `context` | `str` | ✅ | — | **Inline context**: Actual file excerpts, key findings, prior decisions, code patterns. DO NOT write "see file X" — embed the content. |
 | `expected_output` | `str` | ✅ | — | What the subagent must produce and write to disk |
-| `ttl_seconds` | `int` | ✅ | 600 | Max runtime before timeout |
-| `status` | `str` | ✅ | `pending` | `pending` → `accepted` → `completed` / `failed` |
+| `ttl_seconds` | `int` | ✅ | 14400 | Max runtime before timeout. 4h default (PENDING_TTL). |
+| `resolver_strategy` | `str` | ❌ | `"escalate"` | One of: `terminate`, `escalate`, `fallback`, `retry`. Default `escalate` — on failure, escalate to Kali. |
+| `resolved_by` | `str\|None` | ❌ | — | Entity name that resolved the packet (e.g. "kali" on escalation). |
+| `status` | `str` | ✅ | `pending` | Lifecycle: `pending` → `active` → `completed` / `stale`. Aligned with MCP handoff directory model. |
 | `result` | `str\|None` | ❌ | — | Filled when completed |
 
 ### Mandatory Context Inlining Rule (NEW — 2026-07-12)
@@ -256,7 +258,7 @@ packet = {
     "relevant_files": ["src/omega/cvar_table.py", "CREDITS.md"],
     "context": "Sprint 1: cvar_table.py committed at 3048e91 with 12 [id-soft:] tags.",
     "expected_output": "JSON list of tag audit results: pattern, location, verdict (pass/fail), recommendation",
-    "ttl_seconds": 600,
+    "ttl_seconds": 14400,
 }
 ```
 

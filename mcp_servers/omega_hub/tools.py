@@ -1233,6 +1233,8 @@ async def hivemind_submit_handoff(
         "task": task,
         "context": context,
         "priority": priority,
+        "context_delivery": "inline",
+        "resolver_strategy": "escalate",
         "status": "pending",
         "submitted_at": datetime.now(timezone.utc).isoformat(),
     }
@@ -2545,6 +2547,8 @@ async def hivemind_handoff(
                 "task": task,
                 "context": context or "",
                 "priority": priority,
+                "context_delivery": "inline",  # D216 default
+                "resolver_strategy": "escalate",  # Decree 2 default
                 "status": "pending",
                 "submitted_at": datetime.now(timezone.utc).isoformat(),
             }

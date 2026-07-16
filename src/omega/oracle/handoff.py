@@ -14,9 +14,13 @@ between agents to eliminate "Agent Amnesia".
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 from dataclasses import dataclass, field, asdict
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Literal
 from datetime import datetime
 import json
+
+# Aligned with subagent_dispatcher.py PacketStatus
+HandoffStatus = Literal["pending", "active", "completed", "stale", "archived"]
+
 
 @dataclass
 class HandoffState:
@@ -26,6 +30,9 @@ class HandoffState:
     L1 (Narrative): What was the source agent doing?
     L2 (Insight): What has been discovered so far?
     L3 (Universal Principle): What is the overarching goal?
+    
+    Status lifecycle: pending → active → completed / stale
+    Aligned with subagent_dispatcher.HandoffPacket (D-270 Decree 2).
     """
     session_id: str
     source_entity: str
@@ -36,6 +43,7 @@ class HandoffState:
     state_snapshot: Dict[str, Any] = field(default_factory=dict)
     timestamp: str = field(default_factory=lambda: datetime.now().isoformat())
     trace_id: Optional[str] = None
+    status: HandoffStatus = "pending"
     
     # Loop Guard Fields (T2-5)
     visited_agents: List[str] = field(default_factory=list)
