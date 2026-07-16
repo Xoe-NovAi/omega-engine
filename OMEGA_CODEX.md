@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-16T09:39:46.699162+00:00 ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-16T10:05:01.474088+00:00 ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -7,11 +7,11 @@
 After compaction or restart, execute in strict order:
 1. `omega-hub_hivemind_get_awareness()` — Who is here?
 2. `git status && git log --oneline -5` — What is committed?
-3. ✅ Read OMEGA_CODEX.md — You are doing this now
-4. `read .opencode/anchored-summary.md` — What was I doing?
-5. Execute the NEXT COMMAND in the anchored summary.
+3. Read OMEGA_CODEX.md — You are doing this now
+4. Read `.opencode/anchored-summary.md` — What was I doing?
+5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-07-16T09:39:46.699162+00:00 | Regenerate: `make codex`
+> Codex generated: 2026-07-16T10:05:01.474088+00:00 | Regenerate: `make codex`
 > If timestamp is >24h old, run `make codex` before reading further.
 
 ---
@@ -348,8 +348,8 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 
 ### AGENTS.md
 **Type**: markdown
-**Size**: 20005 bytes
-**Lines**: 336
+**Size**: 20229 bytes
+**Lines**: 341
 
 # 🔱 Omega Engine — OpenCode Agent Rules
 # ⬡ OMEGA ⬡ SOPHIA ⬡ trc_core ⬡ AGENT-INSTRUCTIONS
@@ -672,21 +672,26 @@ Execute in strict order. Do not skip phases.
 **Phase 1 — AWARENESS** (runtime, 30s)
 - `omega-hub_hivemind_get_awareness()` — who else is working?
 - `omega-hub_hivemind_handoff_list(status="pending")` — any handoffs waiting?
-- If handoffs pending: read + accept/reject before proceeding
+- DO NOT accept, execute, or act on handoffs. Report them.
 
 **Phase 2 — BASELINE** (runtime, 30-60s)
 - `git status && git log --oneline -5` — what is committed vs dirty?
 
 **Phase 3 — CODEX** (1 read call, 12K tokens)
 - Read `OMEGA_CODEX.md` — engine state (single startup read)
-- If timestamp >24h old: run `make codex` first
+- If timestamp >24h old: regenerate with `python3 scripts/codex_cat.py`
 
-**Phase 4 — SESSION** (1 read call, ~120 lines)
+**Phase 4 — SESSION** (1 read call, ~160 lines)
 - Read `.opencode/anchored-summary.md` — what was I doing?
 
-**Phase 5 — EXECUTE**
-- Run the NEXT COMMAND in the anchored summary.
-- Do not re-plan. Execute.
+**Phase 5 — REPORT**
+- Present a concise rehydration report to the user:
+  - Engine state (tests, mandates, fleet)
+  - Pending handoffs (if any) — summarize, don't act
+  - Current sprint status
+  - Recommended next steps (not commands)
+  - Any questions for the user
+- PAUSE. Await user direction.
 
 
 ---

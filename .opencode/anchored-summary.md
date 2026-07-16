@@ -6,11 +6,11 @@
 ---
 
 ## 🔄 HYDRATION CHECKLIST
-[ ] Phase 1: Awareness — `omega-hub_hivemind_get_awareness()`, `hivemind_handoff_list()`
+[ ] Phase 1: Awareness — `omega-hub_hivemind_get_awareness()`, `hivemind_handoff_list()` (report only)
 [ ] Phase 2: Baseline — `git status && git log --oneline -5`
-[ ] Phase 3: Codex — read `OMEGA_CODEX.md` (check timestamp >24h → `make codex`)
+[ ] Phase 3: Codex — read `OMEGA_CODEX.md` (regenerate if >24h old)
 [ ] Phase 4: Session — read this file ✅ (you are here)
-[ ] Phase 5: Execute — run NEXT COMMAND below
+[ ] Phase 5: Report — present rehydration report, await user direction
 
 > ⚠️ This summary is from 2026-07-18. Run Phase 1+2 to verify current state.
 
@@ -135,15 +135,12 @@
 
 ---
 
-## 🚀 NEXT COMMAND
+## 🚀 NEXT STEPS
 
-**Immediate**: Start D-278 Item 1 — Atomic writes for codex_cat.py:
-```
-Fix scripts/codex_cat.py to use atomic write (write to .tmp, os.replace() to final path).
-See D-278 in PIVOT_LOG_CANONICAL.md for full context.
-```
-
-Then delegate Item 2 (same agent, same plan file Item 2).
+1. D-278 Item 1: Atomic writes for codex_cat.py and anchored-summary.md
+   (see PIVOT_LOG_CANONICAL.md D-278 for full context)
+2. Process 2 pending handoffs (P7 Cross-Domain Review + Cline Strategic Handoff)
+3. Await user approval before executing any work
 
 ---
 
