@@ -87,6 +87,7 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Pattern**: Use explicit Ack/Nack patterns and `trace_id` propagation for every queued item. Atomic file renames (`.tmp` → `.json`) for all writes. Heartbeat timestamps for crash recovery.
 - **Reason**: Ensures systemic reliability and prevents "ghost failures" — requests that vanish without trace. Every request represents a user's intent; losing it without notification is a sovereignty violation.
 - **Enforcement**: `omega queue-status` must always produce consistent counts matching actual files on disk. Dead-letter directory (`data/requests/dead/`) must catch any request that fails processing after max retries.
+- **Status**: ⚠️ ADVISORY — Downgraded per MaKaLi Council Decree (D-267). File-based durable queue is acceptable for Phase 0. Full Redis Streams DLQ deferred to Strike 8.5.
 ### 13. Temple-Grade Compliance (NEW — 2026-06-02)
 - **Mandate**: All engine code MUST comply with Temple-Grade standards (T1-T11) defined in xna-omega-legacy v7.5.4.
 - **Constraint**: No code may be merged that regresses any Temple-Grade gate. The 11 gates (Version Control, Documentation, Testing, Code Quality, Architecture, Security, Performance, Resilience, Observability, Integrity, Agent Security) are the minimum quality bar.
