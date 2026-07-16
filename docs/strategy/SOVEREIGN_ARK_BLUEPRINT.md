@@ -3,7 +3,7 @@
 ---
 # 🔱 SOVEREIGN ARK BLUEPRINT (Active)
 
-## Current Sprint: D-277 Soul Hydration Pipeline
+## Current Sprint: D-279 Hydration System Portability & M2 Firewall Remediation
 
 **Status**: Implementation plan locked → `docs/strategy/SOUL_HYDRATION_IMPLEMENTATION_PLAN.md`
 **Gate Criteria**: `make test && make soul-audit && make soul-verify && make heritage-map && make temple-grade`

@@ -10,5 +10,6 @@
 | D-276 | Implement ContextProtocol pipeline (15K budget) | Active |
 | D-277 | Soul Hydration Pipeline — fix schema mismatch, add soul_utils.py, hydration sequence, soul-verify gate | Active |
 | D-278 | Rehydration System Hardening — atomic writes, entity resolution, identity recovery, handoff TTL, non-blocking observability, rolling window anchor, contract + chaos tests | Active |
+| D-279 | Hydration System Portability & M2 Firewall Remediation — 4 M2 violations, mechanism-content separation, config-driven protocol, handoff-based pruning, omega-hydration package | Active |
 
 *(For full history D1-D274, see Canonical Source)*

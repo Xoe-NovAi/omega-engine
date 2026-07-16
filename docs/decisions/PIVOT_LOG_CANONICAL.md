@@ -2459,3 +2459,19 @@ The MaKaLi Cloud Council is the firewall's immune response. Every critical updat
 - **Gate**: `make test && make temple-grade && make hydration-report`
 - **L3 Principle**: L3-Recovery-Is-A-Protocol-Not-A-File — A recovery mechanism that exists as a static file without a protocol is an archive. A protocol without observability is a guess. A guess without testing is a hope.
 - **Status**: 🔲 ACTIVE
+
+## D279: Hydration System Portability & M2 Firewall Remediation (2026-07-16)
+- **Context**: Deep review of the rehydration system (D-277/D-278) revealed 4 M2 Engine-Stack Firewall violations in engine core (`src/omega/`), mechanism-content conflation in `codex_cat.py`, destructive Makefile side-effects, no size enforcement on `anchored-summary.md`, and the hydration protocol duplicated across 3 sources of truth. The system works but cannot be offered as a standalone community package without extracting Omega-specific content from the generic mechanism.
+- **Decision**: 20-item remediation in 5 phases:
+  - **Phase 1 (Firewall Fix, 45 min)**: R1-R5 — Abstract `.opencode/` and `AGENTS.md` paths behind a `PlatformPaths` config resolver in `config/omega.yaml`. Fix `sovereign_vetter.py:270,306`, `mandate_auditor.py:163`, `oracle.py:251`. Extend M2 firewall checker.
+  - **Phase 2 (Codex Separation, 1.5h)**: R6-R9 — Extract Omega-specific hydration header from `codex_cat.py` into `scripts/hydration_header.md` template. Parameterize generator with `--header-template` and `--manifest` CLI args. Fix Makefile destructive side-effects (backup `groups.json` before overwrite). Add `--stale-if-older-than` freshness check.
+  - **Phase 3 (Protocol Config, 1h)**: R10-R12 — Define hydration protocol in `config/hydration_protocol.yaml` (versioned, phased, tool-agnostic). AGENTS.md and anchored-summary reference the config instead of duplicating.
+  - **Phase 4 (Size Cap + Handoff, 30 min)**: R13-R14 — Add 200-line size cap comment to `anchored-summary.md`. When exceeded, create a Hivemind handoff packet for the next available agent to intelligently review and prune/optimize the file. No automated truncation — intelligent human-in-the-loop via agent delegation.
+  - **Phase 5 (Package Extraction, 3h)**: R15-R20 — Extract generic Stack-Cat logic into `packages/omega-hydration/` PyPI package. Zero Omega-specific content. Engine uses package as dependency. Add hydration resilience tests (D-278 Items 7-8).
+- **Rationale**: The rehydration system is the highest-value community contribution the engine can offer — every AI coding agent needs session recovery. But it cannot be packaged while it contains Omega-specific MCP tool names, platform paths, and hardcoded branding. The M2 violations are constitutional breaches that must be fixed before any portability claim.
+- **R14 Design**: When `anchored-summary.md` exceeds 200 lines, the system creates a Hivemind handoff packet (`target_entity="verity"`, `task="Review and intelligently prune anchored-summary.md — archive old insights to session_gnosis.md, compress narrative sections, preserve critical state"`) instead of automatically truncating. This preserves agent judgment while preventing unbounded growth.
+- **Owner**: Kali (oversight) → Ma'at/P1 (R1-R5 firewall) → Ma'at/P3 (R6-R9 codex) → Inanna/P5 (R10-R12 protocol) → Hecate/P8 (R13-R14 size cap) → Ma'at/P3 (R15-R20 package)
+- **Gate**: `make test && make temple-grade && make firewall-check`
+- **Package target**: `pip install omega-hydration`
+- **L3 Principle**: L3-Mechanism-Is-Not-Content — A generic tool that contains domain-specific instructions is not reusable. Separate what it does from what it says.
+- **Status**: 🔲 ACTIVE

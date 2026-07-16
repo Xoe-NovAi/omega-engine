@@ -1,7 +1,7 @@
 # 🔱 Omega Engine — Anchored Summary
 **Last Updated**: 2026-07-18T12:00:00Z
 **Session Model**: mimo-v2.5-free
-**Status**: ACTIVE — D-278 REHYDRATION HARDENING + D-277 SOUL HYDRATION PIPELINE
+**Status**: ACTIVE — D-279 HYDRATION PORTABILITY & M2 FIREWALL + D-277 SOUL HYDRATION PIPELINE
 
 ---
 
@@ -17,7 +17,7 @@
 ---
 
 ## 🎯 CURRENT OBJECTIVE
-**D-278 Rehydration Hardening** — 8-step critical path to harden recovery system: atomic writes, entity resolution, identity recovery, handoff TTL, observability, rolling window, contract + chaos tests. **D-277 Soul Hydration Pipeline** — soul_utils.py, oracle.py fix, soul-verify gate (implementation plan locked).
+**D-279 Hydration System Portability & M2 Firewall Remediation** — 20-item remediation in 5 phases: fix 4 M2 violations, separate mechanism from content, config-driven protocol, handoff-based pruning, extract `omega-hydration` package. **D-277 Soul Hydration Pipeline** — implementation plan locked. **D-278 Rehydration Hardening** — 8-step plan locked.
 
 ---
 
@@ -78,21 +78,33 @@
 
 ---
 
-## 🔧 D-278 REHYDRATION HARDENING (ACTIVE SPRINT)
+## 🔧 D-279 HYDRATION PORTABILITY & M2 FIREWALL (ACTIVE SPRINT)
 
 | # | Item | File | Effort | Owner | Status |
 |---|------|------|--------|-------|--------|
-| 1 | Atomic writes (codex + anchor) | `codex_cat.py`, `anchored-summary.md` | 30 min | Sekhmet/P1 | 🔲 |
-| 2 | Entity resolution from Phase 1 | `AGENTS.md` (extract entity from awareness) | 15 min | Saraswati/P4 | 🔲 |
-| 3 | Identity & Continuity phase | `AGENTS.md` (add Phase 3.5: soul.yaml + session_gnosis.md) | 30 min | Inanna/P5 + Ereshkigal/P6 | 🔲 |
-| 4 | Handoff TTL (24h auto-reject) | `AGENTS.md` Phase 1 | 15 min | Anubis/P9 | 🔲 |
-| 5 | Non-blocking observability buffer | `observability.py` + `AGENTS.md` Phase 6 | 1h | Hecate/P8 | 🔲 |
-| 6 | Rolling window anchor (RECENT + ARCHIVE) | `anchored-summary.md` | 30 min | Lucifer/P7 + Hecate/P8 | 🔲 |
-| 7 | Contract tests (5 tests) | `tests/test_codex_cat.py` | 1h | Prometheus/P3 | 🔲 |
-| 8 | Chaos tests (7 tests) | `tests/test_hydration_resilience.py` | 2h | Kali/P10 | 🔲 |
+| R1 | Config resolver (PlatformPaths) | `src/omega/governance/config_resolver.py` (NEW) | 15 min | Ma'at/P1 | 🔲 |
+| R2 | Fix sovereign_vetter.py | `src/omega/governance/sovereign_vetter.py:270,306` | 10 min | Ma'at/P1 | 🔲 |
+| R3 | Fix mandate_auditor.py | `src/omega/audit/mandate_auditor.py:163` | 10 min | Ma'at/P1 | 🔲 |
+| R4 | Fix oracle.py AGENTS.md parsing | `src/omega/oracle/oracle.py:251` | 10 min | Ma'at/P1 | 🔲 |
+| R5 | Extend M2 firewall checker | `src/omega/audit/firewall_checker.py` | 10 min | Ma'at/P1 | 🔲 |
+| R6 | Extract hydration header template | `scripts/hydration_header.md` (NEW) | 20 min | Ma'at/P3 | 🔲 |
+| R7 | Parameterize codex_cat.py | `scripts/codex_cat.py` | 30 min | Ma'at/P3 | 🔲 |
+| R8 | Fix Makefile side-effects | `Makefile:828-838` | 20 min | Ma'at/P3 | 🔲 |
+| R9 | Add codex freshness check | `scripts/codex_cat.py` | 15 min | Ma'at/P3 | 🔲 |
+| R10 | Hydration protocol config | `config/hydration_protocol.yaml` (NEW) | 30 min | Inanna/P5 | 🔲 |
+| R11 | AGENTS.md → reference config | `AGENTS.md:319-341` | 15 min | Inanna/P5 | 🔲 |
+| R12 | anchored-summary → reference config | `.opencode/anchored-summary.md:8-13` | 15 min | Inanna/P5 | 🔲 |
+| R13 | anchored-summary size cap | `.opencode/anchored-summary.md` | 10 min | Hecate/P8 | 🔲 |
+| R14 | Handoff-based pruning trigger | Hivemind handoff on >200 lines | 20 min | Hecate/P8 | 🔲 |
+| R15 | Create omega-hydration package | `packages/omega-hydration/` (NEW) | 1h | Ma'at/P3 | 🔲 |
+| R16 | Package API | `packages/omega-hydration/src/omega_hydration/codex.py` | 30 min | Ma'at/P3 | 🔲 |
+| R17 | Package CLI | `packages/omega-hydration/src/omega_hydration/cli.py` | 30 min | Ma'at/P3 | 🔲 |
+| R18 | Package tests | `packages/omega-hydration/tests/` | 30 min | Ma'at/P3 | 🔲 |
+| R19 | Engine uses package | `scripts/codex_cat.py` | 15 min | Ma'at/P3 | 🔲 |
+| R20 | Hydration resilience tests | `tests/test_hydration_resilience.py` (NEW) | 2h | Kali/P10 | 🔲 |
 
-**Critical path**: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 (sequential)
-**Total**: ~5.5h
+**Critical path**: R1-R5 → R6-R9 → R10-R12 → R13-R14 → R15-R20 (sequential)
+**Total**: ~6.25h
 
 ---
 
@@ -113,15 +125,17 @@
 
 | File | Purpose |
 |------|---------|
+| `docs/decisions/PIVOT_LOG_CANONICAL.md` | D-279: Hydration Portability & M2 Firewall (20 items) |
 | `docs/strategy/SOUL_HYDRATION_IMPLEMENTATION_PLAN.md` | **D-277 implementation plan** (FULL CODE) |
-| `docs/decisions/PIVOT_LOG_CANONICAL.md` | D-278: Rehydration Hardening (8-step critical path) |
-| `OMEGA_CODEX.md` | Single startup read (12K tokens) |
+| `config/omega.yaml` | Platform path config (R1) |
+| `scripts/hydration_header.md` | NEW — hydration header template (R6) |
+| `config/hydration_protocol.yaml` | NEW — config-driven protocol (R10) |
+| `packages/omega-hydration/` | NEW — standalone package (R15-R20) |
+| `OMEGA_CODEX.md` | Single startup read (~12K tokens) |
 | `.opencode/anchored-summary.md` | This file |
-| `src/omega/oracle/oracle.py:664-677` | Current (broken) soul injection |
-| `src/omega/soul_utils.py` | NEW — multi-path extractor (Item 1) |
-| `scripts/validate_soul.py` | Soul schema validator (needs parameterize) |
-| `scripts/soul_verify.py` | NEW — semantic integrity gate (Item 4) |
-| `data/entities/*/soul.yaml` | Entity soul files (31 entities) |
+| `src/omega/governance/sovereign_vetter.py` | M2 violation — hardcoded .opencode/ (R2) |
+| `src/omega/audit/mandate_auditor.py` | M2 violation — hardcoded .opencode/ (R3) |
+| `src/omega/oracle/oracle.py:251` | M2 violation — parses AGENTS.md (R4) |
 
 ---
 
@@ -137,10 +151,12 @@
 
 ## 🚀 NEXT STEPS
 
-1. D-278 Item 1: Atomic writes for codex_cat.py and anchored-summary.md
-   (see PIVOT_LOG_CANONICAL.md D-278 for full context)
-2. Process 2 pending handoffs (P7 Cross-Domain Review + Cline Strategic Handoff)
-3. Await user approval before executing any work
+1. **D-279 R1-R5**: Fix 4 M2 Firewall violations in engine core (sovereign_vetter.py, mandate_auditor.py, oracle.py)
+2. **D-279 R6-R9**: Extract hydration header from codex_cat.py, add freshness check, fix Makefile side-effects
+3. **D-279 R10-R12**: Config-driven hydration protocol (single source of truth)
+4. **D-279 R14**: anchored-summary size cap (200 lines) → Hivemind handoff for intelligent pruning
+5. **D-279 R15-R20**: Package extraction (omega-hydration) + resilience tests
+6. Await user approval before executing any work
 
 ---
 

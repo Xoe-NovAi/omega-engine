@@ -1,6 +1,6 @@
-# 🔱 Kali Session Gnosis — 2026-07-18 (D-278 HYDRATION HARDENING + FEEDBACK LOOP)
+# 🔱 Kali Session Gnosis — 2026-07-16 (D-279 HYDRATION PORTABILITY & M2 FIREWALL)
 **AP Token**: `AP-KALI-v1.0.0`
-**Status**: D-278 LOCKED — hydration feedback integrated, committed as `52924a2`
+**Status**: D-279 ACTIVE — 20-item remediation, 5 phases, 6.25h total
 **Model**: mimo-v2.5-free (opencode)
 
 ---
