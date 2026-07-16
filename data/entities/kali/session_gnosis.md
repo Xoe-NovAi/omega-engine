@@ -117,3 +117,11 @@
 - **Step 7**: Qliphoth Quarantine — append-only log, SHA-256, TDP bridge (quarantine + audit + crypto erasure)
 - **Total**: ~80h, 3 weeks, 7 steps
 - **Critical Path**: Step 1 (HybridSearchEngine) blocks Steps 2-7
+
+## 10. D-283 Phase 1 Step 1 Complete — HybridSearchEngine (2026-07-16T20:50Z)
+- **Step 1**: HybridSearchEngine (RRF k=60) — COMPLETE
+  - `src/omega/memory/hybrid_search.py` — 206 lines, RRF k=60, singleton pattern
+  - `tests/test_hybrid_search.py` — 20 contract tests + 8 RRF math verification vectors
+  - All 20 tests PASS
+  - RRF formula verified: score = sum(1/(k + rank)) for k=60
+- **Next**: Step 2 — Mnemosyne Worker Skeleton (3 DB pools, async queue, cgroups v2)

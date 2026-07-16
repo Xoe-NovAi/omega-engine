@@ -35,7 +35,7 @@
 | **D-281** | **Substrate Repair** (Path Infra, M2 Firewall, Codex) | Kali | 🔲 NEXT |
 | **D-282-SUB** | **BEGIN IMMEDIATE fix + PRAGMA stack + checkpoint task** | Roc | 🟢 **IN PROGRESS** |
 | **D-282** | **Omega Search Core** (sqlite-vec + Legacy RAG + WAD Loader) | Roc + Researcher + Kali | 🔲 PLANNED |
-| **D-283-P1** | **HybridSearchEngine (RRF k=60) + Tests** | Roc | 🟢 **AUTHORIZED - IN PROGRESS** |
+| **D-283-P1-S1** | **HybridSearchEngine (RRF k=60) + Tests** | Roc | ✅ **COMPLETE** |
 | **D-283-P2** | **Mnemosyne Worker Skeleton (3 DB pools)** | Roc | 🔲 PLANNED |
 | **D-283-P3** | **MCP Tools (7 tools, Engine-Stack Firewall)** | Roc | 🔲 PLANNED |
 | **D-283-P4** | **verity Tiered Routing (local→cloud)** | Researcher + Roc | 🔲 PLANNED |
