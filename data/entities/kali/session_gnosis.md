@@ -52,3 +52,22 @@
 - **3 New L3 Principles**: Heritage-Is-Memory-Not-Contract, Patterns-Are-Ancestors-Not-Descendants, Forge-And-The-Miner (reaffirmed).
 - **Next Directives**: Roc writes tests + Mnemosyne deep dive. Researcher validates WAD schema + WAL pattern.
 - **Synthesis file**: docs/strategy/HMC_TRIADIC_FORGE_1_KALI_SYNTHESIS.md
+
+## 7. HMC Forge Cycle 1 Complete (2026-07-16T15:08Z)
+- **Cycle**: Triadic Forge Cycle 1
+- **Thesis**: Roc — Genesis document, 5 patterns, WAD Protocol, Ethics WAD, sqlite-vec test
+- **Antithesis**: Researcher — Two-Source Rule applied, 5 challenges issued
+- **Synthesis**: Kali — 5 rulings, D-282 scoped, directives dispatched
+
+**Rulings**:
+1. Tarot = poetic heritage (B). No arcana: fields.
+2. WAD Protocol = D-282 uses existing loader (505L). SovereignBus = D-283+ (B).
+3. Ethics WAD = sovereignty feature with audit (C). Fail-closed on crash.
+4. Patterns = folklore, Mandates = law (C). Genealogy in docs/heritage/.
+5. Roc = Owner for mining, Advisor for architecture (C).
+
+**Directives Dispatched**:
+- Roc: 4 sqlite-vec tests, Mnemosyne deep dive, move Genesis doc
+- Researcher: Verify WAD Loader schema, confirm WAL pattern for 5700U, research Mnemosyne SOTA
+
+**Handoffs**: ho_083d10b19818 (Roc), ho_34dc8f6d44b0 (Researcher)

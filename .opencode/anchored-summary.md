@@ -15,7 +15,7 @@
 ---
 
 ## 🎯 CURRENT OBJECTIVE
-**HMC INITIALIZED — 3 Omega-Minds Online**. Transitioning from D-281 Substrate Repair to HMC-driven implementation of Recovered Legacy Systems and 2026 SOTA patterns. D-280 (Compaction Detection) is deferred.
+**HMC FORGE CYCLE 1 COMPLETE — VERDICT DISPATCHED**. Triadic Forge Cycle 1: 5 challenges, 2 conceded, 3 corrected. 5 synthesis questions ruled. D-282 Search Core scoped. Directives dispatched to Roc and Researcher via Hivemind handoffs.
 
 ---
 
@@ -24,7 +24,7 @@
 - **Mandates**: 23 (M1-M23) — M12 ADVISORY per D-267
 - **Fleet**: 13 presences, cap: 14
 - **Soul Injection**: ✅ FIXED — `soul_utils.py` multi-path extractor live (9d891e0)
-- **HMC**: 🟢 ONLINE — Forge Cycle 1 COMPLETE. Council Verdict rendered.
+- **HMC**: 🟢 ONLINE — Kali, Roc, Researcher (Forge Cycle 1 complete)
 
 ---
 
@@ -33,9 +33,10 @@
 | Sprint | Component | Owner | Status |
 |---|---|---|---|
 | **D-281** | **Substrate Repair** (Path Infra, M2 Firewall, Codex) | Kali | 🔲 NEXT |
-| **D-282** | **Omega Search Core** (sqlite-vec Strike 10 + Legacy RAG) | Roc + Researcher | 🔲 PLANNED |
-| **D-283** | **CPU Acceleration** (Speculative Decoding + Iris wiring) | Researcher + Kali | 🔲 PLANNED |
-| **D-284** | **Sovereign Hub** (OAuth 2.1 + IA2 Security) | Kali + Roc | 🔲 PLANNED |
+| **D-281-SUB** | **sqlite-vec 4 test cases** (writer starvation, checkpoint, multi-process, BEGIN IMMEDIATE) | Roc | 🔲 DISPATCHED |
+| **D-282** | **Omega Search Core** (sqlite-vec + Legacy RAG + WAD Loader) | Roc + Researcher + Kali | 🔲 PLANNED |
+| **D-283** | **Cognitive Acceleration** (Speculative Decoding + cpu_optimizer + Mnemosyne) | Researcher + Roc + Kali | 🔲 PLANNED |
+| **D-284** | **Sovereign Hub** (OAuth 2.1 + IA2 Security + Ethics WAD) | Kali + Roc | 🔲 PLANNED |
 
 *Rule: Commit after each phase. Each commit must pass `make test`.*
 
