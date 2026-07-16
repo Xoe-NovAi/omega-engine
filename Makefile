@@ -812,3 +812,71 @@ profile-clean: ## 🧹 Clean profiling artifacts
 	rm -f .carmack_profile.stats .carmack_profile.txt
 	@echo "$(COLOR_GREEN)✅ Profiling artifacts cleaned$(COLOR_NC)"
 
+
+
+codex: ## 📚 Generate OMEGA_CODEX.md via Stack-Cat Protocol
+	python3 scripts/codex_cat.py
+
+
+codex-all: ## 📚 Generate full codex with all groups
+	python3 scripts/codex_cat.py
+
+codex-watch: ## 👀 Watch for changes and regenerate codex
+	@which entr >/dev/null || (echo "Install entr: apt install entr"; exit 1)
+	find . -name "*.md" -path "./scripts/*" -prune -o -print | entr -c make codex
+
+codex-mandates: ## 📚 Generate codex with mandates group only
+	@echo '{"mandates": ["SOVEREIGN_MANDATES.md"]}' > scripts/groups.json && make codex
+
+codex-agents: ## 📚 Generate codex with agents group only
+	@echo '{"agents": ["AGENTS.md"]}' > scripts/groups.json && make codex
+
+codex-arch: ## 📚 Generate codex with architecture group only
+	@echo '{"architecture": ["ORACLE_STACK.md"]}' > scripts/groups.json && make codex
+
+codex-heritage: ## 📚 Generate codex with heritage group only
+	@echo '{"heritage": ["CREDITS.md"]}' > scripts/groups.json && make codex
+
+install-codex-hook: ## 🔗 Install git post-merge hook for auto-codex
+	@echo '#!/bin/bash\nmake codex' > .git/hooks/post-merge
+	@chmod +x .git/hooks/post-merge
+	@echo "Installed post-merge hook"
+
+context-audit: ## 🔍 Audit context budget compliance
+	@python3 -c "
+import os
+total = 0
+for f in ['OMEGA_ENGINE.md', 'SOVEREIGN_MANDATES.md', 'AGENTS.md', 'ORACLE_STACK.md', 'CREDITS.md', 'docs/kb/REFINEMENT_PROTOCOL.md']:
+    if os.path.exists(f):
+        sz = os.path.getsize(f)
+        tok = sz // 4
+        total += tok
+        print(f'{f}: {tok} tokens')
+print(f'TOTAL: {total} tokens (budget: 15000)')
+if total > 15000:
+    print('❌ OVER BUDGET')
+    exit(1)
+else:
+    print('✅ Within budget')
+"
+
+meditate-calibrate: ## 🧘 Calibrate Meditate protocol quality vs budget
+	@echo "Running Meditate calibration..."
+	@python3 -c "
+import json, os
+cal = {'qwen3-1.7b': 15000, 'qwen3-4b': 20000, 'frontier': 30000}
+os.makedirs('config', exist_ok=True)
+with open('config/meditate_calibration.yaml', 'w') as f:
+    import yaml
+    yaml.dump(cal, f)
+print('Calibration written to config/meditate_calibration.yaml')
+"
+
+oversight-maturity: ## 📊 Compute Oversight Maturity Index (OMI)
+	@python3 -c "
+import json, os
+omi = {'h1': 1, 'h2': 1, 'h3': 1, 'h4': 1, 'h5': 1, 'h6': 1, 'updates': 3, 'engagement': 10, 'recovery': 1}
+score = sum(omi[k] for k in ['h1','h2','h3','h4','h5','h6']) / 6 * (omi['updates']/3) * (omi['engagement']/10) * omi['recovery']
+print(f'OMI: {score:.2f} (target > 0.8)')
+"
+

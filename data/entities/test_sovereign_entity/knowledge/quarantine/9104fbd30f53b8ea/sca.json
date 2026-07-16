@@ -1,8 +1,8 @@
 {
   "source_id": "9104fbd30f53b8ea",
   "source_name": "https://example.com/secret",
-  "trace_id": "ingest_e072c241760e",
-  "timestamp": "2026-07-15T19:55:26.121833+00:00",
+  "trace_id": "ingest_f10db98534d6",
+  "timestamp": "2026-07-16T03:11:12.639758+00:00",
   "model": "google-gemma-4",
   "intent": "Entity Deepening",
   "context": "Ingesting https://example.com/secret for test_sovereign_entity"

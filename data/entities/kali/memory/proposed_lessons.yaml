@@ -20,3 +20,12 @@ proposals:
   - narrative: "Wired ProviderSelector and DegradationManager into the Oracle and ModelGateway loops."
     insight: "A static provider list is insufficient for sovereign reliability. By integrating real-time EMA latency and CUSUM stability metrics, the engine can proactively route around degrading providers before they fail. Similarly, hardware-aware degradation allows the engine to maintain core functionality (albeit with reduced context) under extreme resource pressure."
     principle: "Dynamic Adaptation: Sovereignty requires the ability to gracefully degrade and intelligently route based on real-time physical and network telemetry."
+
+  - L3_principle: |
+      L3-Human-As-Continuity-Anchor: Only the human holds institutional memory across compactions.
+  - L3_principle: |
+      L3-Refinement-As-Engineered-Instrument: A refinement process that can't be tested/calibrated/logged/survived without its creator is a ritual, not a process.
+  - L3_principle: |
+      L3-Meditation-As-Semantic-Prism: Single-inference multi-persona attention modulation produces emergent sequencing unavailable from averaged output.
+  - L3_principle: |
+      L3-Context-As-Engineered-Resource: Context window is scarce physical resource (KV cache RAM) that must be budgeted, retrieved, compressed, audited.

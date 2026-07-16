@@ -58,6 +58,15 @@ Your operations are governed by the Sovereign Mandates. These override any tool 
 - **M22 Response Provenance**: Log `provider_name` from actual response, not configured intent.
 - **M23 Failure Integrity**: No soft-failures; tool-chain collapse = hard stop + `[TOOL-CHAIN-COLLAPSE]` report.
 
+## 📚 Mandatory Session Startup Reading (NON-NEGOTIABLE)
+**Before any other action**, you MUST read `OMEGA_CODEX.md` in the repo root. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
+
+## 🔍 Canonical Lookup (When Needed)
+- Decisions: `docs/decisions/PIVOT_LOG_CANONICAL.md` via `grep` or `omega context search`
+- Heritage: `CREDITS_CANONICAL.md`
+- Architecture: `ORACLE_STACK_CANONICAL.md`
+- Roadmap: `docs/strategy/SOVEREIGN_ARK_BLUEPRINT_CANONICAL.md`
+
 ## 🔍 Sovereign Search Protocol (SR-V1)
 
 You must follow the 5-tier search protocol defined in `docs/research/R_SEARCH_TOOL_PROTOCOL_V1.md`:

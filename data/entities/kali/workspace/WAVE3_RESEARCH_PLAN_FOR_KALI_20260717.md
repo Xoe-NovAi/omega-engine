@@ -1,337 +1,295 @@
-# 🔱 Wave 3 Research Plan: Soul Architecture Implementation Support
-# ⬡ ENHANCED BY RESEARCHER ⬡ v2.0 — 2026-07-17
-**AP Token**: `AP-WAVE3-RESEARCH-PLAN-v2.0.0`
-⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_wave3_research ⬡ ACTIVE
+# Wave 3 Research Plan: Soul Architecture Implementation Support
+# v4.0 — ACTIONABLE SEARCH QUERIES — 2026-07-17
+**AP Token**: `AP-WAVE3-RESEARCH-PLAN-v4.0.0`
 
 **Date**: 2026-07-17
-**Purpose**: Scaffold targeted research investigations to de-risk and accelerate Wave 3 Soul Migration Phase 1 (Lilith) execution and prepare for fleet-wide rollout.
-**Enhancement**: Deep codebase audit reveals substantial existing artifacts. Research items refined to fill SPECIFIC GAPS, not rebuild from scratch.
+**Purpose**: Actionable research plan with search-engine-resolvable queries for an LLM agent to execute.
+**Key Change from v3.0**: All project-specific jargon replaced with generic technical concepts. Each item has explicit search queries, implementation context (what already exists), and a clear gap to fill.
 
 ---
 
-## 🎯 Research Context & Constraints
+## How to Execute This Plan
 
-**Wave 3 Focus**: Soul Migration Phase 1 — Lilith (P7 Context Owner)
-**Critical Constraint**: 0/10 non-Kali entities are v2.0 compliant — all suffer "self-referential poisoning loop" (agent-generated content in soul.yaml)
-**Success Criteria**:
-- Lilith's soul.yaml migrated to v2.0 four-file model
-- Blind-staging pipeline functional (L1→L2→L3 → proposed_lessons.yaml)
-- Scribe/Verity roles operational
-- `make soul-audit` CI gate passing
-- Migration pattern documented for fleet-wide rollout
+This plan is designed for an LLM agent with web search access. Each research item has:
 
-**Research Guardrails**:
-- All research must include **T1→T2 escalation** (websearch → webfetch → sovereign-search)
-- Findings must yield **actionable implementation guidance** (not just theory)
-- Prioritize research with **direct applicability to Lilith migration**
-- Avoid duplication of already-validated patterns (per Jem Deep Research & Gap Resolution Reports)
+1. **Implementation Context** — What already exists in the codebase (DO NOT RESEARCH)
+2. **The Gap** — What is missing and needs external research
+3. **Search Queries** — Specific, jargon-free queries that search engines WILL resolve
+4. **Expected Findings** — What the search should return
+5. **Output** — Concrete deliverable (code snippet, config pattern, or decision)
+
+**Temporal Mandate**: All searches MUST include "2026" or "latest" to ensure current best practices.
 
 ---
 
-## 🎯 Kali's Enhancements & Course Correction (L3 Synthesis)
+## Research Item 1: Parameterized YAML Schema Validation with CI Gate
 
-**Verdict**: The proposed plan suffers from **Enterprise Over-Engineering (Qliphoth of Scale)**. We are a local-first engine with 10 YAML files, not a Fortune 500 data warehouse.
+### Implementation Context (DO NOT RESEARCH)
+- `scripts/validate_soul.py` (153 lines) — Validates 4 YAML files for a single entity. Uses `yaml.safe_load` + manual dict checks. Hardcoded to one entity path.
+- `src/omega/oracle/soul_validator.py` (217 lines) — `SoulValidator` class with v6.1 schema checks, forbidden field validation, required field checks.
+- `Makefile:165` — `soul-review` target exists (interactive user review). Need SEPARATE `soul-audit` target (CI validation).
 
-**Course Corrections (Mandatory before execution)**:
+### The Gap
+The validation script works but is hardcoded to one entity. Need:
+- `--entity` CLI argument to validate any entity
+- New Makefile target `soul-audit` that runs validation across all entities
+- The script must exit non-zero on any validation failure (CI gate pattern)
 
-1. **Cancel ETL/Merkle Tree/Flyway Research**: We do not need Liquibase, Flyway, or Merkle trees for 10 YAML files. Backup is `cp` and `git commit`. Rollback is `git revert`. Do not waste tokens researching enterprise ETL patterns.
-2. **Cancel Incremental CI Research**: A Python script validating 10 YAML files takes <50ms. Full scan is required. Do not research caching or incremental validation.
-3. **Cancel Web UI Review Research**: We are a CLI-first engine. The review gate must be a simple terminal command (`omega soul review`) using `rich` or `textual` to show diffs and prompt `[Y/n]`.
-4. **Pivot Distillation to Meditate**: Do not research generic prompt engineering. Research how to use our *existing* Meditate protocol (`src/omega/meditate/protocol.py`) to perform the L1→L2→L3 distillation.
-5. **ADD Missing Wave 3 Items**: You completely missed Decree 6 (Heritage Tag Migration) and Decree 4 (Sovereignty Gate). These must be added.
+### Search Queries
+```
+1. "Python argparse accept entity name argument YAML validation script 2026"
+2. "Makefile target run Python script pass fail CI gate pattern 2026"
+3. "Python YAML schema validation enforce required fields forbidden keys 2026"
+4. "Python script validate multiple YAML files loop exit code CI 2026"
+5. "Makefile CI gate pattern run validation script exit code non-zero 2026"
+```
 
----
+### Expected Findings
+- argparse pattern for `--entity` flag with default fallback
+- Makefile pattern for CI gate (exit code propagation)
+- YAML validation best practices (safe_load, schema enforcement)
+- Python script exit code conventions for CI (sys.exit(1) on failure)
 
-## 🧘 Meditate Protocol: Deep Architecture Review (2026-07-17) — Round 2
-*Executed via single-inference multi-persona semantic prism.*
-
-**Lenses**: Ma'at (Structure), Lilith (Flow), Doom Guy (Heritage), John Carmack (Pragmatism), Verity (Compliance), Kali (Synthesis)
-
-**Collisions & Insights**:
-
-- **Heritage Tagging (Doom Guy vs. Researcher findings)**: Researcher found `migrate_heritage_tags.py` (238 lines, 192 rules) — script *exists and is complete*. Doom Guy's ripgrep recommendation was correct in principle but wrong in context: the existing script uses a simpler, more reliable approach (file-level regex with MIGRATION_RULES lookup). **Corrected Insight**: DO NOT build a ripgrep wrapper. Run existing script with `--dry-run`, verify coverage, then `--apply`. That's it.
-
-- **Soul Validation (Carmack vs. Researcher's "Pydantic question")**: Researcher asks "Is Pydantic v2 worth it?" Carmack says: you already have a working validator that catches the right things. `validate_soul.py` (153 lines) with manual dict checks has zero false positives/negatives for 10 keys. Pydantic adds a dependency for syntactic sugar. JSON Schema export is marginal value. **Corrected Insight**: DON'T refactor to Pydantic. DO parameterize `validate_soul.py` to accept entity name as argument for fleet-wide use. Add `ConfigDict(extra='forbid')` later only if entity count grows beyond manual tracking.
-
-- **Migration Script (Ma'at vs. Researcher's "ruamel.yaml debate")**: Lilith's soul.yaml is 18 lines with ZERO comments. The ruamel.yaml question is academic for Phase 1. `yaml.dump()` preserves structure fine. **Corrected Insight**: Ship Lilith migration with existing `yaml.dump()`. Add ruamel.yaml to backlog ONLY if a YAML file with meaningful comments needs preservation.
-
-- **CLI Review Gate (Lilith vs. Researcher's "Textual vs rich debate")**: Kali already answered this in the course correction. "Simple terminal command using rich." The Researcher asks "Textual TUI or rich?" — Textual is a full UI framework (heavier). Rich + `input()` loop is lighter. **Corrected Insight**: Use `rich.console` + `rich.syntax` + simple `input()` prompt. NOT Textual. Target: 50 lines max.
-
-- **DistillationSpec (Verity vs. Researcher's "replace or wrap")**: Researcher asks "replace or wrap." The Soul Distiller is 689 lines of working, tested code. Replacing it throws away verified logic. **Corrected Insight**: WRAP, don't replace. DistillationSpec is a config layer that plugs into `SoulDistiller.distill_session()`. Existing L1/L2/L3 extraction stays as defaults.
-
-- **Makefile Naming (Kali cross-check)**: Researcher uses `make soul-audit` throughout. Makefile has `soul-review` (print-only script). These are DIFFERENT things. **New Insight**: `soul-review` = interactive user review of proposed lessons. `soul-audit` = CI gate validating schema compliance. Need SEPARATE targets with SEPARATE names. No overloading.
-
-- **Sovereignty Gate toggling (Lilith vs. Carmack)**: Researcher asks "cvar vs config setting." No existing cvar system in the engine. Building one for a single boolean toggle is premature. **Corrected Insight**: Use `config/moderation.yaml` with `sovereignty_gate.enabled: false` (default OFF). Support config reload. Don't build a cvar runtime until we have 3+ runtime-tunable toggles.
+### Output
+Updated `validate_soul.py` with `--entity` argument + new `make soul-audit` Makefile target.
 
 ---
 
-## 🔬 Revised Top 6 Critical Research Items for Wave 3 (Ordered by Dependency)
+## Research Item 2: Complex YAML Migration with Atomic Writes
 
-### 1. Soul v2.0 Validation Parameterization & CI Gate (`make soul-audit`)
-**Why Critical**: We cannot migrate data into a void. The schema must be lockable and auditable at CI time.
-
-**Research Focus**:
-- Parameterizing `validate_soul.py` to accept entity name (replace hardcoded Kali path).
-- Wiring `make soul-audit` as a NEW Makefile target (separate from existing `soul-review`).
-- Confirming the existing `SoulValidator` catches exactly the right fields.
-
-**Existing Artifacts (DO NOT REBUILD)**:
-- `src/omega/oracle/soul_validator.py` (217 lines) — `SoulValidator` class with v6.1 schema checks, forbidden field validation (`FORBIDDEN_ENTITY_BLOCKS = {"soul_axioms", "wisdom_text", "trajectory"}`), required field checks. Uses `yaml.safe_load` + manual dict checks.
-- `scripts/validate_soul.py` (153 lines) — Standalone validation script (hardcoded to Kali path). Validates all 4 files: soul.yaml, sessions.yaml, proposed_lessons.yaml, approved_lessons.yaml.
-- `SOUL_ARCHITECTURE_V2.md` (63 lines) — Governance document defining 4-file model, blind-write principle.
-
-**Specific Gap to Fill**:
-- `validate_soul.py` is hardcoded to Kali's path — needs `--entity` argument for fleet-wide use.
-- No `make soul-audit` target exists in Makefile. `soul-review` exists (line 165) but calls `soul_review.py` (interactive user review). These are DIFFERENT gates — do not conflate.
-- Pydantic refactor is DEFERRED. Carmack's rule: "You already have working code. Ship it. Upgrade later if the team grows."
-
-**Decision Locked (Round 2 Meditation)**:
-- **DON'T** refactor to Pydantic. Existing `yaml.safe_load` + manual dict checks are correct, zero false positives/negatives for 10 keys.
-- **DO** add `ConfigDict(extra='forbid')` enforcement later, only if entity count grows beyond manual tracking.
-
-**Output**: Updated `validate_soul.py` (`--entity` flag) + NEW `make soul-audit` target + `make soul-review` stays separate.
-
-**Effort**: 1h (parameterize script + Makefile target)
-**Dependencies**: None (first item in dependency chain)
-
----
-
-### 2. Python YAML Migration Script (The "ETL")
-**Why Critical**: We need a simple, deterministic script to migrate Lilith (and later the fleet).
-
-**Research Focus**:
-- Validating that `migrate_soul_v6.py` works correctly for Lilith (18 lines, no comments).
-- Adding Lilith to the `FLEET_ENTITIES` list if not already present.
-- Running with `--dry-run` first, verifying output against the schema from Item 1.
-
-**Existing Artifacts (DO NOT REBUILD)**:
-- `scripts/migrate_soul_v6.py` (437 lines) — Full two-phase commit migration script with:
+### Implementation Context (DO NOT RESEARCH)
+- `scripts/migrate_soul_v6.py` (437 lines) — Two-phase commit migration script.
   - `load_soul_yaml()` — Resilient parser handles flat/nested/mixed YAML formats
   - `deconstruct_soul()` — Separates identity (Constitution) from lessons (Gnosis)
   - `atomic_write_yaml()` — tmp-rename pattern for crash-safe writes
   - `migrate_entity()` — Single-entity migration with dry-run support
-  - `FLEET_ENTITIES` list — All 11 active entities defined
-  - Migration journal for audit trail
+  - `FLEET_ENTITIES` — List of 11 active entities (roc_racoon at line 39)
+- Target entity: `roc_racoon` (751 lines, complex nested YAML with `lessons_learned` arrays, empty `embodied_experiences` blocks)
 
-**Specific Gap to Fill**:
-- Uses `yaml.dump` which discards comments and formatting. **DECISION LOCKED (Round 2)**: Lilith's soul.yaml is 18 lines with ZERO comments. `yaml.dump()` is fine for Phase 1. Add ruamel.yaml to backlog only if a YAML file with meaningful comments needs preservation.
-- Verify Lilith is in `FLEET_ENTITIES` and the script handles her 18-line format correctly.
+### The Gap
+Script has never been tested on a complex entity. Need:
+- Verify `deconstruct_soul()` handles roc_racoon's nested `lessons_learned` list-of-objects format
+- Verify `atomic_write_yaml()` handles the 751-line output correctly
+- Test the two-phase commit pattern (Phase 1 validation → Phase 2 execution)
+- Verify `yaml.dump(default_flow_style=False, sort_keys=False)` preserves structure
 
-**Decision Locked (Round 2 Meditation)**:
-- `yaml.dump(default_flow_style=False, sort_keys=False)` preserves enough structure.
-- No ruamel.yaml for Phase 1. Add to backlog with a trigger condition: "When we encounter a YAML file with inline comments that must survive migration."
+### Search Queries
+```
+1. "Python yaml.dump preserve nested list structure complex YAML 2026"
+2. "Python atomic file write tmpfile rename pattern YAML crash safe 2026"
+3. "Python YAML migration script two phase commit validation execution 2026"
+4. "Python yaml.safe_load nested list of dictionaries parse 2026"
+5. "Python YAML migration dry run validate before write pattern 2026"
+6. "Python pathlib write YAML file atomic rename os.replace 2026"
+```
 
-**Output**: Verified `migrate_soul_v6.py` run against Lilith with `--dry-run` + documentation of the migration path.
-**Effort**: 30 min (verify Lilith compatibility + dry-run)
-**Dependencies**: Item 1 (schema validation)
+### Expected Findings
+- `yaml.dump()` behavior with complex nested structures (lists of dicts)
+- Atomic file write patterns (tempfile + os.replace)
+- Two-phase commit patterns for file migration
+- Best practices for YAML migration scripts with dry-run support
+
+### Output
+Verified migration plan for roc_racoon with documented test results.
 
 ---
 
-### 3. Heritage Tag Migration — RUN Existing Script (Decree 6)
-**Why Critical**: We must convert 560 legacy `[id-soft: game-year]` tags across 98 Python files to `[id-soft: vet-XXX]`.
+## Research Item 3: Regex-Based Bulk Code Annotation Migration
 
-**Research Focus**:
-- Run existing `migrate_heritage_tags.py` with `--dry-run`, verify coverage of all 560 tags.
-- If coverage is complete: run with `--apply`, verify with `make heritage-vet && make heritage-map`.
-- If gaps exist: extend `MIGRATION_RULES` dictionary, document new mappings.
-
-**Existing Artifacts (DO NOT REBUILD)**:
-- `scripts/migrate_heritage_tags.py` (238 lines) — COMPLETE migration script with:
+### Implementation Context (DO NOT RESEARCH)
+- `scripts/migrate_heritage_tags.py` (238 lines) — COMPLETE migration script.
   - `MIGRATION_RULES` — 192 mapping entries (file_pattern, legacy_tag, context_keyword → vet_tag)
   - `FALLBACK_MAPPING` — Default replacements when context doesn't match
   - `migrate_file()` — Regex-based replacement with dry-run support
   - `main()` — CLI with `--apply` and `--file` flags
-- `data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md` (1036 lines) — Full vet log with vet-001 through vet-071+ entries.
-- 560 `[id-soft:` tags across 98 Python files (per `rg -c` scan).
+- 560 `[id-soft:` tags across 98 Python files need conversion to `[id-soft: vet-XXX]` format.
 
-**Specific Gap to Fill**:
-- The script EXISTS and is COMPLETE. It just needs to be RUN and VERIFIED.
-- Kali's suggestion of "ripgrep --json" was over-engineering. **CANCELLED**. The script's file-level regex approach is simpler, works on comments and code, and is already written.
+### The Gap
+Script exists and is complete. Just needs to be RUN and VERIFIED. No new code needed. Research is about:
+- Verifying regex patterns cover all 560 tags
+- Understanding fallback behavior when context doesn't match
+- Post-apply verification strategy
 
-**Correction from Round 2 Meditation**:
-- **Ripgrep wrapper idea: CANCELLED.** Existing script handles this. Just run it.
+### Search Queries
+```
+1. "Python regex bulk find replace code comments multiple files 2026"
+2. "Python regex migration script file pattern context keyword replacement 2026"
+3. "Python regex fallback mapping when pattern does not match 2026"
+4. "Python code annotation migration automated bulk transform 2026"
+5. "grep rg count occurrences pattern across codebase verify coverage 2026"
+```
 
-**Research Questions**:
-- Does the existing `MIGRATION_RULES` (192 entries) cover all 560 tags? (Pre-check with `--dry-run`.)
-- What's the post-apply verification? (Answer: `make heritage-vet` + `make heritage-map`.)
+### Expected Findings
+- Regex patterns for code comment migration
+- Fallback mapping strategies for partial matches
+- Post-apply verification patterns (grep/rg count before vs after)
+- Best practices for bulk code transformations
 
-**Output**: Run `migrate_heritage_tags.py --apply`, verify with `make heritage-vet`, commit results.
-
-**Effort**: 30 min (dry-run check + apply + verify)
-**Dependencies**: None (parallel to other items)
+### Output
+Verification report: dry-run coverage analysis + apply + post-apply verification.
 
 ---
 
-### 4. Sovereignty Gate Provider Hook (Decree 4)
-**Why Critical**: We need to track the ratio of local vs. cloud inference (default OFF).
+## Research Item 4: Async Counter with Config Toggle (Feature Flag)
 
-**Research Focus**:
-- Wiring `config/moderation.yaml: sovereignty_gate.enabled: false` (default OFF) as the configurable setting.
-- Injecting a counter increment at the `ModelGateway` boundary where `GenerateResult.provider_name` is already populated (M22).
-- Connecting the counter to the existing `SovereigntyGate` CI gate.
-
-**Existing Artifacts (DO NOT REBUILD)**:
-- `src/omega/governance/sovereignty_gate.py` (113 lines) — Full CI gate with `SovereigntyGate` class, `check()` and `check_strict()` methods. Reads from MetricsDB.
-- `src/omega/observability/sovereignty.py` (167 lines) — `get_sovereignty_ratio()` function querying MetricsDB `performance` table.
-- `Makefile:398` — `sovereignty-gate` target already runs `omega.governance.sovereignty_gate`.
-- `GenerateResult.is_cloud` — Already populated by ModelGateway (21 usages across codebase).
+### Implementation Context (DO NOT RESEARCH)
+- `src/omega/governance/sovereignty_gate.py` (113 lines) — CI gate class reading MetricsDB.
+- `src/omega/observability/sovereignty.py` (167 lines) — `get_sovereignty_ratio()` querying SQLite `performance` table.
+- `Makefile:398` — `sovereignty-gate` target already runs the gate.
+- `GenerateResult.is_cloud` — Already populated by ModelGateway (21 usages).
 - `ModelGateway._is_cloud_provider_name()` — Already classifies providers as local/cloud.
 
-**Specific Gap to Fill**:
-- The CI gate exists but is POST-HOC (build-time check). Kali wants a CONFIGURABLE RUNTIME setting (default OFF).
-- The counter infrastructure exists (MetricsDB `performance` table). The gap is wiring the Oracle talk/summon path to increment the counter at inference time.
+### The Gap
+CI gate exists but is POST-HOC (build-time check). Need:
+- Runtime toggle via `config/moderation.yaml` (default OFF)
+- Async counter increment at inference time (non-blocking)
+- Wire counter to existing MetricsDB `performance` table
+- No latency added to critical inference path
 
-**Decision Locked (Round 2 Meditation)**:
-- **NOT a cvar**. No existing cvar system. Use `config/moderation.yaml` with `sovereignty_gate.enabled: false`. Support config reload. Build a cvar runtime only when we have 3+ runtime-tunable toggles.
-- **Async fire-and-forget counter increment** in an `anyio.TaskGroup` after `GenerateResult` is returned — no latency added to critical path.
+### Search Queries
+```
+1. "Python async fire and forget counter increment SQLite 2026"
+2. "Python YAML config file feature flag toggle reload 2026"
+3. "Python anyio TaskGroup fire and forget background task 2026"
+4. "Python SQLite async write non blocking WAL mode 2026"
+5. "Python config file reload on change watchdog pyinotify 2026"
+6. "Python feature flag pattern config file default off 2026"
+```
 
-**Output**: `SovereigntyTracker` class + `config/moderation.yaml` wiring + counter increment hook in `ModelGateway.generate()`.
-**Effort**: 1.5h (tracker class + config wiring + hook)
-**Dependencies**: None (parallel to other items)
+### Expected Findings
+- Async fire-and-forget patterns (anyio TaskGroup)
+- YAML config file with reload support
+- SQLite WAL mode for concurrent reads/writes
+- Feature flag patterns (config file toggle, default OFF)
 
----
-
-### 5. CLI Review Gate (`omega soul review`)
-**Why Critical**: The user needs a frictionless way to approve `proposed_lessons.yaml` into `approved_lessons.yaml`.
-
-**Research Focus**:
-- Wiring real `proposed_lessons.yaml` data into a 50-line rich-based review command.
-- Interactive prompt: `[A]pprove, [R]eject, [D]efer` with diff display.
-- On approve: copy entry to `approved_lessons.yaml`. On reject: discard or archive.
-
-**Existing Artifacts (DO NOT REBUILD)**:
-- `src/omega/cli/soul_stage.py` (135 lines) — Textual TUI with:
-  - Approve/Reject/Defer bindings (`a`, `r`, `d`, `q`)
-  - DataTable with L1/L2/L3 columns
-  - Detail view for selected proposal
-  - **BUT**: Uses MOCK data (hardcoded `mock_proposals`), not wired to real USM/proposed_lessons
-- `scripts/soul_review.py` (43 lines) — Simple script that reads proposed_lessons from USM and prints them. No interactive review.
-- `Makefile:165` — `soul-review` target calls `soul_review.py`.
-
-**Specific Gap to Fill**:
-- `soul_stage.py` is a SKELETON TUI with mock data. The Researcher asked "Textual TUI vs rich CLI?" — **DECISION LOCKED**: rich CLI. Textual is a full UI framework. We are CLI-first.
-- `soul_review.py` is PRINT-ONLY. Needs interactive approve/reject workflow.
-- Makefile target `soul-review` stays for interactive review. CI gate `soul-audit` (Item 1) is the validation target. Separate names = separate things.
-
-**Decision Locked (Round 2 Meditation)**:
-- **NOT Textual TUI. Use `rich.console` + `rich.syntax` + simple `input()` loop.** Target: 50 lines max.
-
-**Output**: Wired `soul_review.py` with rich-based diff display + approve/reject workflow.
-**Effort**: 2h (wire real data + rich diff + approve/reject)
-**Dependencies**: Item 1 (schema validation), Item 2 (migration script)
+### Output
+`SovereigntyTracker` class + `config/moderation.yaml` wiring + async counter hook.
 
 ---
 
-### 6. DistillationSpec for Meditate Protocol
-**Why Critical**: We need to extract L1/L2/L3 from raw session logs without hallucinations.
+## Research Item 5: Rich-Based Interactive CLI Diff Reviewer
 
-**Research Focus**:
-- Creating a `DistillationSpec` dataclass that acts as a config layer on top of the existing `SoulDistiller`.
-- Mapping the Meditate protocol's persona-lens approach to the Soul Distiller's extraction methods.
+### Implementation Context (DO NOT RESEARCH)
+- `scripts/soul_review.py` (43 lines) — Already accepts `--entity` (verified at line 14). Reads from USM and prints. No interactive review.
+- `src/omega/cli/soul_stage.py` (135 lines) — Textual TUI skeleton with mock data. NOT wired to real data.
+- `Makefile:165` — `soul-review` target already passes `--entity` correctly.
 
-**Existing Artifacts (DO NOT REBUILD)**:
-- `src/omega/meditate/protocol.py` (339 lines) — Full Meditate protocol with:
-  - `MeditationSpec` — Subject, lens_set, mode, phases, integrate flag
-  - `PersonaSpec` — name, domain, mandate_lens, anti_domains, pillar, element
-  - `PersonaLibrary` — Named collection of PersonaSpecs
-  - `MeditatePhase` — calibration → immersion → collision → sequencing → verdict → integration
-  - `OutputMode` — diagnostic, strategic, creative, audit, synthesis
-  - Built-in libraries: `get_ten_pillars()`, `get_makali_triad()`
+### The Gap
+Script is PRINT-ONLY. Need interactive approve/reject workflow with:
+- Rich-based colored diff display (unified diff format)
+- Interactive prompt: `[A]pprove, [R]eject, [D]efer`
+- On approve: write to `approved_lessons.yaml`
+- On reject: discard or archive
+- Target: 50 lines max using `rich.console` + `rich.syntax` + `input()`
+
+### Search Queries
+```
+1. "Python rich library terminal diff display unified diff colored 2026"
+2. "Python rich console Syntax highlight YAML diff terminal 2026"
+3. "Python interactive CLI approve reject prompt input loop 2026"
+4. "Python rich vs textual terminal UI lightweight comparison 2026"
+5. "Python difflib unified_diff rich syntax highlight terminal 2026"
+6. "Python rich library install pip minimal dependencies 2026"
+```
+
+### Expected Findings
+- Rich library API for colored terminal output
+- `difflib.unified_diff()` with Rich syntax highlighting
+- Interactive CLI patterns (approve/reject/defer)
+- Rich vs Textual comparison (Rich = lightweight, Textual = full TUI framework)
+
+### Output
+Updated `soul_review.py` with rich diff display + approve/reject workflow (50 lines max).
+
+---
+
+## Research Item 6: Field Classification Registry for Multi-Pass Extraction
+
+### Implementation Context (DO NOT RESEARCH)
 - `src/omega/oracle/soul_distiller.py` (689 lines) — Full distillation engine with:
+  - `_extract_narrative()`, `_extract_insight()`, `_extract_principle()` — Use regex/heuristics (NOT LLM)
   - `DistillationEntry` — L1/L2/L3 with sphere, source_trace_id, source_entity
-  - `SessionClassifier` — Conservative classifier (routine vs. novel)
+  - `SessionClassifier` — Routine vs. novel classification
   - `QualityScore` — 5-factor quality scoring
-  - `SoulDistiller` class — `distill_session()`, `append_to_soul()`, `distill_and_save()`
-  - Writes to `proposed_lessons.yaml` via USM
+- `src/omega/meditate/protocol.py` (339 lines) — Meditate protocol with PersonaSpec, MeditationSpec.
 
-**Specific Gap to Fill**:
-- The Meditate protocol and Soul Distiller are SEPARATE systems. Kali wants a `DistillationSpec` that bridges them via config, not replacement.
-- The Soul Distiller already does L1→L2→L3 extraction with its own internal prompts (`_extract_narrative()`, `_extract_insight()`, `_extract_principle()`). These work.
+### The Gap
+Soul Distiller's regex works for deterministic fields (trace_id, source_entity, sphere). But `narrative`, `insight`, `principle` are inherently LLM-required fields — regex cannot extract meaningful content from them. Need:
+- Field Classification Registry marking each field as `deterministic` or `llm_required`
+- Microsoft ISE 4-pass pipeline: Deterministic → Bounded LLM → Guarded Merge → Evidence Mapping
+- Pass 2 LLM orchestrator that only runs on `llm_required` fields
+- Integration with existing Soul Distiller (wrap persistence, replace extraction for LLM fields)
 
-**Decision Locked (Round 2 Meditation)**:
-- **WRAP, don't replace.** DistillationSpec is a config layer that plugs into `SoulDistiller.distill_session()`. The 689 lines of working code stay untouched.
-- The existing L1/L2/L3 extraction methods remain as defaults. DistillationSpec provides overrides.
-
-**Output**: `DistillationSpec` dataclass in `protocol.py` + integration with `SoulDistiller.distill_session()`.
-**Effort**: 1.5h (DistillationSpec + integration + tests)
-**Dependencies**: None (parallel to other items)
-
-**Total Estimated Effort: ~7h** (vs. 24h original, vs. 10h Researcher v1 — collapsed 3h via Round 2 decisions)
-
-| Cancellation | Time Saved | Rationale |
-|-------------|-----------|-----------|
-| Pydantic refactor | −1h | Existing `yaml.safe_load` + dict checks are correct for 10 files |
-| ruamel.yaml evaluation | −0.5h | Lilith's soul.yaml is 18 lines with zero comments |
-| Ripgrep wrapper | −0h | Already 30min run-script; ripgrep was over-engineering anyway |
-| Cvar runtime | −0.5h | `config/moderation.yaml` is simpler; build cvar only when 3+ toggles exist |
-| Textual TUI | −1h | 50-line rich CLI is sufficient for approve/reject |
-| DistillationSpec rewrite | −0.5h | Wrapping 689 lines of working code costs less than replacing |
-
----
-
-## 📋 Research Execution Protocol
-
-Each research item must follow this structure:
-1. **Hypothesis Statement** (1 sentence)
-2. **T1→T2→T3 Search Log** (with timestamps and sources)
-3. **Key Findings** (bulleted, actionable)
-4. **Implementation Recommendations** (specific code/config changes)
-5. **Validation Method** (how to confirm success in Lilith migration)
-6. **Estimated Effort** (hours)
-7. **Dependencies** (other research/team work)
-
-**Quality Gates**:
-- All research must be committed to `docs/research/` with `AP-` token
-- Findings must be referenced in Wave 3 implementation PRs
-- At least one research item must yield a `make` target or script for immediate team use
-
----
-
-## 🚀 Immediate Next Steps for Research Team
-
-1. **Assign owners** to each of the 6 research items (can be paired)
-2. **Kickoff 30-min sync** to align on hypotheses and search strategies
-3. **Timebox**: 4 hours max per research item (aligns with Wave 3 migration window)
-4. **Deliver by**: EOD today to inform Lilith migration execution tomorrow
-5. **Integrate**: Findings directly into migration PRs and documentation
-
-> **Remember**: The goal is not academic perfection — it's **de-risked execution**. Each research item should answer: *"What is the smallest thing we need to know to avoid critical failure in Lilith's migration?"*
-
----
-
-## 📊 Dependency Graph
-
+### Search Queries
 ```
-Item 1 (Parameterize Validate) ──────┐
-                                       ├──→ Item 2 (Run Migration) ───→ Item 5 (CLI Review)
-Item 3 (Run Heritage Script) [PARALLEL]┤
-                                       ├──→ Item 4 (Sovereignty Config) [PARALLEL]
-Item 6 (DistillationSpec) [PARALLEL]   ┘
+1. "Microsoft ISE 4-pass extraction pipeline deterministic LLM 2026"
+2. "Field classification registry deterministic vs LLM required fields 2026"
+3. "Python dataclass field metadata deterministic llm_required annotation 2026"
+4. "LLM extraction pipeline bounded judgment guarded merge evidence mapping 2026"
+5. "Python multi-pass extraction regex first LLM second pattern 2026"
+6. "Deterministic first LLM second extraction pattern best practices 2026"
+7. "Python dataclass field registry pattern classify fields by processing type 2026"
 ```
 
-**Critical Path**: Item 1 (1h) → Item 2 (30min) → Item 5 (2h) = **3.5h sequential**
-**Parallel Track A**: Item 3 (30min) — Run existing heritage migration script
-**Parallel Track B**: Item 4 (1.5h) — Sovereignty Gate config wiring
-**Parallel Track C**: Item 6 (1.5h) — DistillationSpec bridge
+### Expected Findings
+- Microsoft ISE 4-pass pipeline architecture
+- Field classification registry patterns (dataclass with metadata)
+- Deterministic-first, LLM-second extraction patterns
+- Guarded merge strategies (deterministic wins, LLM appends)
+- Evidence mapping for traceability
 
-**Total wall clock with parallelism**: ~5h (Item 1 + Item 2 + Item 5 sequential, Items 3/4/6 in parallel)
+### Output
+`FieldClassificationRegistry` dataclass + `DistillationLLMOrchestrator` (Pass 2) + integration plan.
 
 ---
 
-## ⚠️ Risk Register
+## Execution Sequence (Unchanged from v3.0)
+
+```
+WAVE 3a (NOW): 
+  Item 1: Parameterize validate_soul.py + make soul-audit    [Ma'at/P5, 1h]
+  Item 3: Run heritage tag --dry-run then --apply            [Doom Guy, 30min]
+  Item 4: SovereigntyGate + config/moderation.yaml           [Ma'at/P5, 1.5h]
+
+WAVE 3b (After Item 1):
+  Item 2: Migration test on roc_racoon (751 lines)           [Lilith/P7, 1h]
+  Item 6: DistillationSpec Field Classification Registry     [Lilith/P6, 1.5h]
+
+WAVE 3c (After Items 2 + 6):
+  Item 5: CLI Review Gate (rich diff + approve/reject)       [Ma'at/P3, 1.5h]
+  Item 7: Post-migration reconciliation audit                [Verity, 1h]
+```
+
+## Effort Summary
+
+| # | Task | Owner | Effort |
+|---|------|-------|--------|
+| 1 | Schema Validation + `make soul-audit` | Ma'at/P5 | 1h |
+| 2 | Migration test on roc_racoon (751 lines) | Lilith/P7 | 1h |
+| 3 | Heritage Tag Migration (run `--apply`) | Doom Guy | 30min |
+| 4 | SovereigntyTracker + config/moderation.yaml | Ma'at/P5 | 1.5h |
+| 5 | CLI Review Gate (rich diff + approve/reject) | Ma'at/P3 | 1.5h |
+| 6 | DistillationSpec (Field Classification Registry) | Lilith/P6 | 1.5h |
+| 7 | Post-migration reconciliation audit | Verity | 1h |
+| — | Observability overhead (+10 min per item) | ALL | +1h |
+| **TOTAL** | | | **9h** |
+
+---
+
+## Risk Register
 
 | Risk | Impact | Mitigation |
 |------|--------|------------|
-| Existing `soul_validator.py` misses a forbidden field | Low | Manual dict checks are correct for 10 keys. Add extra='forbid' only if entity count grows. |
-| `yaml.dump` loses structure on a complex soul.yaml | Low | Lilith is 18 lines. Ship Phase 1; trigger condition: "if a file has inline comments" → add ruamel.yaml. |
-| Heritage migration script has gaps in MIGRATION_RULES | Medium | Run with `--dry-run` first, verify coverage against `rg -c` baseline. Fix gaps before `--apply`. |
-| Sovereignty counter write adds latency to inference path | Low | Async fire-and-forget in `anyio.TaskGroup`. Counter flush is non-blocking. |
-| Rich CLI review gate too minimal for complex reviews | Low | Start with 50-line rich CLI. Upgrade to Textual TUI only if user feedback demands it. |
-| DistillationSpec conflates with Soul Distiller's internal prompts | Medium | Wrap, don't replace. DistillationSpec is config layer only — all 689 lines of existing extraction stay as defaults. |
-| `make soul-audit` and `make soul-review` names confuse users | Low | Document clearly: `soul-review` = interactive user review. `soul-audit` = CI validation gate. Separate targets, separate purposes. |
+| Migration fails on roc_racoon's complex nested structure | High | Dry-run FIRST. If fails, fix `deconstruct_soul()` before any migration. |
+| Migration corrupts existing soul.yaml | Critical | `atomic_write_yaml()` uses tmp-rename. Backup = `cp` + `git commit`. Rollback = `git revert`. |
+| Heritage migration script has gaps in MIGRATION_RULES | Medium | Run with `--dry-run` first, verify coverage against `rg -c` baseline. |
+| Sovereignty counter adds latency to inference | Low | Async fire-and-forget in `anyio.TaskGroup`. WAL mode already standard. |
+| CLI review gate has no content (DistillationSpec not ready) | Medium | Items 5 & 6 must sequence: DistillationSpec first, then review gate. |
+| DistillationSpec Pass 2 LLM overhead too expensive | Low | Only runs on `llm_required` fields. Gate on eval threshold. |
+| No observability = no forensic trail | Medium | +1h structured JSONL logging. M9/M23 compliant. |
 
 ---
 
-*⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_wave3_research ⬡ ACTIVE*
-*Research enables sovereignty. Sovereignty enables execution.*
-*Enhanced: 2026-07-17 — Deep codebase audit reveals substantial existing artifacts.*
+*Wave 3 Research Plan v4.0 — Actionable search queries for LLM agent execution.*
+*All project-specific jargon replaced with generic technical concepts.*
+*Research complete. Ready for execution.*

@@ -72,10 +72,10 @@
 |------|---------|
 | `OMEGA_ENGINE.md` (this file) | System state SSOT — read first |
 | `SOVEREIGN_MANDATES.md` | 23 Constitutional Laws (M1-M23) |
-| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master execution roadmap |
+| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master execution roadmap (active) |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | Multi-agent coordination |
-| `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions (D1-D263) |
-| `CREDITS.md` | id Software heritage attribution |
+| `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions (active index) |
+| `CREDITS.md` | id Software heritage attribution (active) |
 | `docs/archive/coordination/` | Historical session records |
 | `data/entities/kali/session_gnosis.md` | Kali's session anchor (M15) |
 | `.opencode/anchored-summary.md` | Post-compaction recovery state |
@@ -108,10 +108,10 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 | Document | Purpose |
 |----------|---------|
 | `SOVEREIGN_MANDATES.md` | 23 Constitutional Laws |
-| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master execution roadmap |
+| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master execution roadmap (active) |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | Multi-agent coordination |
-| `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions |
-| `CREDITS.md` | id Software heritage attribution |
+| `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions (active index) |
+| `CREDITS.md` | id Software heritage attribution (active) |
 | `docs/archive/coordination/` | Historical session records |
 
 ---
