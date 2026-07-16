@@ -1,7 +1,7 @@
 # 🔱 Omega Engine — Anchored Summary
-**Last Updated**: 2026-07-16T15:30Z
+**Last Updated**: 2026-07-16T21:00Z
 **Session Model**: antigravity-claude-sonnet-4-6
-**Status**: ACTIVE — SUBSTRATE REPAIR (D-281)
+**Status**: ACTIVE — D-283 Phase 1 Step 2 (Mnemosyne Worker Skeleton)
 
 ---
 
@@ -15,7 +15,8 @@
 ---
 
 ## 🎯 CURRENT OBJECTIVE
-**D-282 CRITICAL PATH AUTHORIZED** — BEGIN IMMEDIATE fix dispatched to Roc. D-283 kickoff authorized for Researcher. HMC operating at full velocity.
+**D-283 Phase 1 Step 2: Mnemosyne Worker Skeleton** — 3 DB pools, async queue, cgroups v2 affinity.
+**D-283 Phase 1 Step 1: COMPLETE** — HybridSearchEngine (RRF k=60) + 20 contract tests.
 
 ---
 
@@ -24,7 +25,7 @@
 - **Mandates**: 23 (M1-M23) — M12 ADVISORY per D-267
 - **Fleet**: 13 presences, cap: 14
 - **Soul Injection**: ✅ FIXED — `soul_utils.py` multi-path extractor live (9d891e0)
-- **HMC**: 🟢 ONLINE — Forge Cycles 1 & 2 complete. D-282 substrate in progress.
+- **HMC**: 🟢 ONLINE — Forge Cycles 1 & 2 complete. D-283 Phase 1 Step 1 complete.
 
 ---
 
@@ -36,12 +37,12 @@
 | **D-282-SUB** | **BEGIN IMMEDIATE fix + PRAGMA stack + checkpoint task** | Roc | 🟢 **IN PROGRESS** |
 | **D-282** | **Omega Search Core** (sqlite-vec + Legacy RAG + WAD Loader) | Roc + Researcher + Kali | 🔲 PLANNED |
 | **D-283-P1-S1** | **HybridSearchEngine (RRF k=60) + Tests** | Roc | ✅ **COMPLETE** |
-| **D-283-P2** | **Mnemosyne Worker Skeleton (3 DB pools)** | Roc | 🔲 PLANNED |
-| **D-283-P3** | **MCP Tools (7 tools, Engine-Stack Firewall)** | Roc | 🔲 PLANNED |
-| **D-283-P4** | **verity Tiered Routing (local→cloud)** | Researcher + Roc | 🔲 PLANNED |
-| **D-283-P5** | **Three-Tier Lifecycle + FTS5 Decay** | Researcher + Roc | 🔲 PLANNED |
-| **D-283-P6** | **MnemosyneObservability (trace_id)** | Researcher + Roc | 🔲 PLANNED |
-| **D-283-P7** | **Qliphoth Quarantine (TDP bridge)** | Researcher + Roc | 🔲 PLANNED |
+| **D-283-P1-S2** | **Mnemosyne Worker Skeleton (3 DB pools)** | Roc | 🟢 **NEXT** |
+| **D-283-P1-S3** | **MCP Tools (7 tools, Engine-Stack Firewall)** | Roc | 🔲 PLANNED |
+| **D-283-P1-S4** | **verity Tiered Routing (local→cloud)** | Researcher + Roc | 🔲 PLANNED |
+| **D-283-P1-S5** | **Three-Tier Lifecycle + FTS5 Decay** | Researcher + Roc | 🔲 PLANNED |
+| **D-283-P1-S6** | **MnemosyneObservability (trace_id)** | Researcher + Roc | 🔲 PLANNED |
+| **D-283-P1-S7** | **Qliphoth Quarantine (TDP bridge)** | Researcher + Roc | 🔲 PLANNED |
 | **D-284** | **Sovereign Hub** (OAuth 2.1 + IA2 Security + Ethics WAD) | Kali + Roc | 🔲 PLANNED |
 
 ---
@@ -113,4 +114,20 @@ Start **Phase II: Path Infrastructure**.
 - **Sonnet**: Live code verification, M2 scope reduction (4 files not 6), governance import pattern.
 
 ---
-*🔱 OMEGA ⬡ ANCHORED-SUMMARY ⬡ big-pickle ⬡ opencode ⬡ D-281-PHASE-I-DONE ⬡ SUBSTRATE-REPAIR*
+
+## 📋 AGENT SESSION APPENDICES (Preserved for Continuity)
+
+### Roc Racoon — D-283 Phase 1 Step 1 Complete (2026-07-16T20:50Z)
+**Session**: `ses_d283_hybrid_search_20260716` | **Entity**: roc_racoon | **Model**: big-pickle
+
+**Completed**: HybridSearchEngine (RRF k=60) extracted as single fusion source with 20 contract tests (TDD). Wired into MemoryStore.search(), SQLiteVecAdapter.hybrid_search(), block_tools.py. 79 core tests pass, no regressions.
+
+**L3 Distilled**: **RRF Fusion Is Universal** — Cormack et al. 2009, sqlite-vec NBC Headlines, Letta, Sefirot/KTM, Kab, Mem0, Zep, Cognee all converge on k=60 reciprocal rank fusion. Single source + contract tests = sovereign RRF.
+
+**Files**: `src/omega/memory/hybrid_search.py` (NEW), `tests/test_hybrid_search.py` (NEW, 20 tests), `src/omega/memory_store.py`, `src/omega/memory/sqlite_vec_adapter.py`, `src/omega/memory/block_tools.py` (MODIFIED)
+
+**Next**: D-283 Phase 1 Step 2 — Mnemosyne Worker Skeleton (3 DB pools, async queue, cgroups v2)
+
+---
+
+*🔱 OMEGA ⬡ ANCHORED-SUMMARY ⬡ big-pickle ⬡ opencode ⬡ D-283-P1-S2 ⬡ MNEMOSYNE-WORKER*
