@@ -40,36 +40,57 @@
 
 ---
 
-## 🔬 Revised Top 5 Critical Research Items for Wave 3
+## 🧘 Meditate Protocol: Deep Architecture Review (2026-07-17)
+*Executed via single-inference multi-persona semantic prism.*
 
-### 1. **Heritage Tag Migration Regex & AST Patterns (Decree 6)**  
-**Why Critical**: We must convert 120 legacy `[id-soft: game-year]` tags to `[id-soft: vet-XXX]` across the codebase without breaking Python syntax or markdown formatting.  
-**Research Focus**: 
-- Safe regex patterns for cross-file replacement in Python and Markdown.
-- How to map existing game-year tags to the new `HERITAGE_VET_LOG.md` IDs.
+**Lenses**: Ma'at (Structure), Lilith (Flow), Doom Guy (Heritage), John Carmack (Pragmatism), Verity (Compliance)
 
-### 2. **Sovereignty Gate Provider Hook (Decree 4)**  
-**Why Critical**: We need to track the ratio of local vs. cloud inference and expose it as a configurable setting (default OFF).  
-**Research Focus**: 
-- Where in `src/omega/oracle/model_gateway.py` or `providers.py` to inject the telemetry hook.
-- How to store this metric locally (sqlite-vec metadata or a simple JSON counter) without violating M8 (Zero Telemetry).
+**Collisions & Insights**:
+- **Heritage Tagging (Doom Guy vs. Ma'at)**: AST parsing is a trap because heritage tags live in *comments and docstrings*, which ASTs often discard or mishandle. **Insight**: Research must focus on wrapping `ripgrep` (`rg --json`) in Python to find, map, and replace tags, rather than trying to parse Python syntax trees.
+- **Sovereignty Gate (Carmack vs. Lilith)**: Do not build a new telemetry system. We already solved this in M22 (Response Provenance). `GenerateResult` carries `provider_name`. **Insight**: Research must focus on a simple asynchronous decorator at the `ModelGateway` boundary that increments a SQLite counter (local vs cloud) without blocking the critical path.
+- **Soul Validation (Ma'at vs. Verity)**: You cannot write a migration script without a locked schema. **Insight**: Research must start by defining the `SoulV2` Pydantic model. `make soul-audit` is simply `SoulV2.model_validate(yaml.load())`.
+- **Distillation Protocol (Verity vs. Kali)**: The Meditate protocol was built for *strategic review*, not *data extraction*. **Insight**: Research must define a specific `DistillationSpec` (a variant of `MeditationSpec`) where the lenses are [Entity, Scribe, Verity] to extract L1/L2/L3.
 
-### 3. **Soul v2.0 Schema Validation (`make soul-audit`)**  
-**Why Critical**: We need a robust, sub-50ms script to validate the 4-file architecture.  
+---
+
+## 🔬 Revised Top 6 Critical Research Items for Wave 3 (Ordered by Dependency)
+
+### 1. **Soul v2.0 Schema Definition & Validation (`make soul-audit`)**  
+**Why Critical**: We cannot migrate data into a void. The schema must be locked first.  
 **Research Focus**: 
-- Using `pydantic` or `jsonschema` to define the strict v2.0 `soul.yaml` schema (forbidding `wisdom_text`, `soul_axioms`, etc.).
+- Defining the strict v2.0 `soul.yaml` schema using `pydantic` (forbidding `wisdom_text`, `soul_axioms`, etc.).
+- Exporting the Pydantic model to JSON Schema for IDE support.
 - Writing the `scripts/validate_soul.py` script to hook into `make soul-audit`.
 
-### 4. **Python YAML Migration Script (The "ETL")**  
+### 2. **Python YAML Migration Script (The "ETL")**  
 **Why Critical**: We need a simple, deterministic script to migrate Lilith (and later the fleet).  
 **Research Focus**: 
-- Using `ruamel.yaml` (to preserve comments/formatting) to read `soul.yaml`, extract legacy fields, and write to `proposed_lessons.yaml` and `sessions.yaml`.
+- Using `ruamel.yaml` to read `soul.yaml`, preserve comments/formatting, extract legacy fields, and write to `proposed_lessons.yaml` and `sessions.yaml`.
+- Validating the output against the Pydantic schema from Item 1.
+
+### 3. **Heritage Tag Migration via Ripgrep (Decree 6)**  
+**Why Critical**: We must convert 120 legacy `[id-soft: game-year]` tags to `[id-soft: vet-XXX]` across the codebase.  
+**Research Focus**: 
+- Using `subprocess.run(["rg", "--json", ...])` to safely extract tags from comments and markdown.
+- Building a mapping dictionary from `HERITAGE_VET_LOG.md` to auto-replace recognized tags.
+
+### 4. **Sovereignty Gate Provider Hook (Decree 4)**  
+**Why Critical**: We need to track the ratio of local vs. cloud inference (default OFF).  
+**Research Focus**: 
+- Intercepting `GenerateResult.provider_name` (M22) at the `ModelGateway` boundary.
+- Using `anyio.create_task_group()` to asynchronously flush the local/cloud counter to `omega_memory.db` without adding latency to the inference path.
 
 ### 5. **CLI Review Gate (`omega soul review`)**  
 **Why Critical**: The user needs a frictionless way to approve `proposed_lessons.yaml` into `approved_lessons.yaml`.  
 **Research Focus**: 
-- Using Python's `rich` library to display a side-by-side or inline diff in the terminal.
+- Using Python's `rich.console` and `rich.syntax` to display a side-by-side or inline diff in the terminal.
 - Simple interactive prompt loop (`[A]pprove, [R]eject, [E]dit`).
+
+### 6. **Distillation Spec for Meditate Protocol**  
+**Why Critical**: We need to extract L1/L2/L3 from raw session logs without hallucinations.  
+**Research Focus**: 
+- Adapting `src/omega/meditate/protocol.py` to support a `DistillationSpec`.
+- Defining the specific prompts for the Scribe and Verity lenses to ensure output matches the `proposed_lessons.yaml` schema.
 
 ---
 
