@@ -31,8 +31,8 @@
 
 | Phase | Component | Effort | Status |
 |---|---|---|---|
-| **I** | **Soul Injection Rescue** (`soul_utils.py`, `oracle.py`) | 45m | 🔲 |
-| **II** | **Path Infrastructure** (`config_resolver.py`, `wad_loader.py`) | 30m | 🔲 |
+| **I** | **Soul Injection Rescue** (`soul_utils.py`, `oracle.py`) | 45m | ✅ DONE (9d891e0) |
+| **II** | **Path Infrastructure** (`config_resolver.py`, `wad_loader.py`) | 30m | 🔲 NEXT |
 | **III** | **M2 Firewall Fixes** (`hierarchy.py`, `entity_registry.py`, etc.) | 45m | 🔲 |
 | **IV** | **Codex Separation** (`hydration_header.md`, `codex_cat.py`, Makefile) | 30m | 🔲 |
 
@@ -41,11 +41,11 @@
 ---
 
 ## 🚀 NEXT COMMAND (Post-Compaction)
-Start **Phase I: Soul Injection Rescue**. 
-1. Create `src/omega/soul_utils.py` (multi-path extractor + read `proposed_lessons.yaml`).
-2. Fix `src/omega/oracle/oracle.py:640-679` (remove duplicate except, wire in `soul_utils.py`).
+Start **Phase II: Path Infrastructure**. 
+1. Create `src/omega/governance/config_resolver.py` (PROJECT_ROOT, CONFIG_DIR, WADS_DIR, DATA_DIR constants + helpers).
+2. Wire `src/omega/oracle/wad_loader.py` to use `config_resolver.WADS_DIR` internally.
 3. Run `make test`.
-4. Commit Phase I.
+4. Commit Phase II.
 
 ---
 *🔱 OMEGA ⬡ ANCHORED-SUMMARY ⬡ antigravity-claude-sonnet-4-6 ⬡ opencode ⬡ D-281-ACTIVE*
