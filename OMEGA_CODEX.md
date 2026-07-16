@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-16T10:05:01.474088+00:00 ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-16T10:22:23.005331+00:00 ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -7,11 +7,11 @@
 After compaction or restart, execute in strict order:
 1. `omega-hub_hivemind_get_awareness()` — Who is here?
 2. `git status && git log --oneline -5` — What is committed?
-3. Read OMEGA_CODEX.md — You are doing this now
+3. Read OMEGA_CODEX.md — FULL file, no limit parameter. You are doing this now
 4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-07-16T10:05:01.474088+00:00 | Regenerate: `make codex`
+> Codex generated: 2026-07-16T10:22:23.005331+00:00 | Regenerate: `make codex`
 > If timestamp is >24h old, run `make codex` before reading further.
 
 ---
@@ -348,7 +348,7 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 
 ### AGENTS.md
 **Type**: markdown
-**Size**: 20229 bytes
+**Size**: 20210 bytes
 **Lines**: 341
 
 # 🔱 Omega Engine — OpenCode Agent Rules
@@ -677,8 +677,8 @@ Execute in strict order. Do not skip phases.
 **Phase 2 — BASELINE** (runtime, 30-60s)
 - `git status && git log --oneline -5` — what is committed vs dirty?
 
-**Phase 3 — CODEX** (1 read call, 12K tokens)
-- Read `OMEGA_CODEX.md` — engine state (single startup read)
+**Phase 3 — CODEX** (1 read call, ~12K tokens)
+- Read `OMEGA_CODEX.md` — FULL file, no limit parameter
 - If timestamp >24h old: regenerate with `python3 scripts/codex_cat.py`
 
 **Phase 4 — SESSION** (1 read call, ~160 lines)
@@ -689,7 +689,7 @@ Execute in strict order. Do not skip phases.
   - Engine state (tests, mandates, fleet)
   - Pending handoffs (if any) — summarize, don't act
   - Current sprint status
-  - Recommended next steps (not commands)
+  - Recommended next steps
   - Any questions for the user
 - PAUSE. Await user direction.
 

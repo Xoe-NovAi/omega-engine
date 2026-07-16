@@ -65,7 +65,7 @@ def generate_codex(root: Path = None, out_file: Path = None) -> None:
     codex_content.append("After compaction or restart, execute in strict order:\n")
     codex_content.append("1. `omega-hub_hivemind_get_awareness()` — Who is here?\n")
     codex_content.append("2. `git status && git log --oneline -5` — What is committed?\n")
-    codex_content.append("3. Read OMEGA_CODEX.md — You are doing this now\n")
+    codex_content.append("3. Read OMEGA_CODEX.md — FULL file, no limit parameter. You are doing this now\n")
     codex_content.append("4. Read `.opencode/anchored-summary.md` — What was I doing?\n")
     codex_content.append("5. Present a rehydration report. Pause. Await user direction.\n\n")
     codex_content.append(f"> Codex generated: {ts} | Regenerate: `make codex`\n")
