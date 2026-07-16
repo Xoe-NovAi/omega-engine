@@ -1,6 +1,6 @@
-# 🔱 Kali Session Gnosis — 2026-07-18 (D-278 REHYDRATION HARDENING)
+# 🔱 Kali Session Gnosis — 2026-07-18 (D-278 HYDRATION HARDENING + FEEDBACK LOOP)
 **AP Token**: `AP-KALI-v1.0.0`
-**Status**: D-278 LOCKED — 8-step rehydration hardening critical path
+**Status**: D-278 LOCKED — hydration feedback integrated, committed as `52924a2`
 **Model**: mimo-v2.5-free (opencode)
 
 ---
