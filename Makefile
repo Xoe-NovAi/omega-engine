@@ -843,40 +843,12 @@ install-codex-hook: ## 🔗 Install git post-merge hook for auto-codex
 	@echo "Installed post-merge hook"
 
 context-audit: ## 🔍 Audit context budget compliance
-	@python3 -c "
-import os
-total = 0
-for f in ['OMEGA_ENGINE.md', 'SOVEREIGN_MANDATES.md', 'AGENTS.md', 'ORACLE_STACK.md', 'CREDITS.md', 'docs/kb/REFINEMENT_PROTOCOL.md']:
-    if os.path.exists(f):
-        sz = os.path.getsize(f)
-        tok = sz // 4
-        total += tok
-        print(f'{f}: {tok} tokens')
-print(f'TOTAL: {total} tokens (budget: 15000)')
-if total > 15000:
-    print('❌ OVER BUDGET')
-    exit(1)
-else:
-    print('✅ Within budget')
-"
+	@python3 -c "import os; files=['OMEGA_ENGINE.md','SOVEREIGN_MANDATES.md','AGENTS.md','ORACLE_STACK.md','CREDITS.md','docs/kb/REFINEMENT_PROTOCOL.md']; total=sum(os.path.getsize(f)//4 for f in files if os.path.exists(f)); [print(f'{f}: {os.path.getsize(f)//4} tokens') for f in files if os.path.exists(f)]; print(f'TOTAL: {total} tokens (budget: 15000)'); exit(1 if total>15000 else 0)"
 
 meditate-calibrate: ## 🧘 Calibrate Meditate protocol quality vs budget
 	@echo "Running Meditate calibration..."
-	@python3 -c "
-import json, os
-cal = {'qwen3-1.7b': 15000, 'qwen3-4b': 20000, 'frontier': 30000}
-os.makedirs('config', exist_ok=True)
-with open('config/meditate_calibration.yaml', 'w') as f:
-    import yaml
-    yaml.dump(cal, f)
-print('Calibration written to config/meditate_calibration.yaml')
-"
+	@python3 -c "import json, os, yaml; cal={'qwen3-1.7b':15000,'qwen3-4b':20000,'frontier':30000}; os.makedirs('config',exist_ok=True); yaml.dump(cal,open('config/meditate_calibration.yaml','w')); print('Calibration written to config/meditate_calibration.yaml')"
 
 oversight-maturity: ## 📊 Compute Oversight Maturity Index (OMI)
-	@python3 -c "
-import json, os
-omi = {'h1': 1, 'h2': 1, 'h3': 1, 'h4': 1, 'h5': 1, 'h6': 1, 'updates': 3, 'engagement': 10, 'recovery': 1}
-score = sum(omi[k] for k in ['h1','h2','h3','h4','h5','h6']) / 6 * (omi['updates']/3) * (omi['engagement']/10) * omi['recovery']
-print(f'OMI: {score:.2f} (target > 0.8)')
-"
+	@python3 -c "import json, os; omi={'h1':1,'h2':1,'h3':1,'h4':1,'h5':1,'h6':1,'updates':3,'engagement':10,'recovery':1}; score=sum(omi[k] for k in ['h1','h2','h3','h4','h5','h6'])/6*(omi['updates']/3)*(omi['engagement']/10)*omi['recovery']; print(f'OMI: {score:.2f} (target > 0.8)')"
 

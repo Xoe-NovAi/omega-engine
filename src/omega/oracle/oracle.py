@@ -657,24 +657,20 @@ class Oracle:
         except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"Context injection failed (non-fatal) [{classification['mode']}]: {e}")
-        except (OmegaError, RuntimeError, OSError) as e:
-            classification = get_failure_registry().classify_error(e)
-            logger.warning(f"Context injection failed (non-fatal) [{classification['mode']}]: {e}")
         
-        # Inject soul L3 principles
+        # Inject soul context — multi-path extractor (D-277)
+        from omega.soul_utils import load_entity_soul_context
         try:
-            soul_path = DATA_DIR / "entities" / entity_name.lower() / "soul.yaml"
-            if soul_path.exists():
-                with open(soul_path) as f:
-                    soul = yaml.safe_load(f) or {}
-                    lessons = soul.get("soul_evolution", {}).get("lessons_learned", [])
-                    if lessons:
-                        l3_principles = [L["L3"] for L in lessons if "L3" in L]
-                        if l3_principles:
-                            prompt_parts.append(f"\nUniversal Principles:\n" + "\n".join(f"- {p}" for p in l3_principles[-3:]))
-        except (OmegaError, RuntimeError, OSError) as e:
-            classification = get_failure_registry().classify_error(e)
-            logger.warning(f"Soul injection failed (non-fatal) [{classification['mode']}]: {e}")
+            soul_context = load_entity_soul_context(entity_name, DATA_DIR)
+            if soul_context:
+                prompt_parts.append(f"\nSovereign Context:\n{soul_context}")
+                logger.debug("Soul injection for '%s' successful: %d chars", entity_name, len(soul_context))
+            else:
+                logger.warning(
+                    "Soul injection for '%s' returned empty — check schema.", entity_name
+                )
+        except Exception as e:
+            logger.warning("Soul injection failed (non-fatal) for '%s': %s", entity_name, e)
         
         return "\n".join(prompt_parts)
 
