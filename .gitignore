@@ -223,3 +223,7 @@ opencode-antigravity-auth/
 # YouTube Research Module keys (never commit)
 config/keys/youtube_research.key
 config/keys/youtube_research.pub
+
+# Runtime logs from agent workspaces
+data/entities/*/workspace/HALL_OF_RECORDS/
+*.log
