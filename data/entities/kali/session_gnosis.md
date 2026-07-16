@@ -105,3 +105,15 @@
 - **Handoffs**: ho_c983c2b9073c (Roc - BEGIN IMMEDIATE + D-282), ho_4004b2145a81 (Researcher - D-283 kickoff + validate Roc)
 - **Roc Status**: "D-282 Substrate COMPLETE. Ready for D-282 Search Pipeline"
 - **Researcher Status**: "D-282 substrate hardening next. D-283 implementation begins Week 1"
+
+## 9. D-283 Mnemosyne Architecture Authorized (2026-07-16T16:45Z)
+- **D-283 Full Architecture**: 7 steps, ~80h, 3 weeks
+- **Step 1**: HybridSearchEngine (RRF k=60) — NEW `src/omega/memory/hybrid_search.py` + contract tests
+- **Step 2**: Mnemosyne Worker Skeleton — 3 DB pools, async task queue, cgroups v2 affinity
+- **Step 3**: MCP Tools (Engine-Stack Firewall) — 7 tools via `src/omega/mcp_runtime.py`
+- **Step 4**: verity Tiered Routing — local qwen3-4b → cloud Gemini CLI (consent flag)
+- **Step 5**: Three-Tier Lifecycle + FTS5 Decay — ACTIVE→DECAYED→ARCHIVED transitions
+- **Step 6**: MnemosyneObservability — trace_id propagation, structured JSON logs
+- **Step 7**: Qliphoth Quarantine — append-only log, SHA-256, TDP bridge (quarantine + audit + crypto erasure)
+- **Total**: ~80h, 3 weeks, 7 steps
+- **Critical Path**: Step 1 (HybridSearchEngine) blocks Steps 2-7

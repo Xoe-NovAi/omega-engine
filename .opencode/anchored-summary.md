@@ -33,10 +33,15 @@
 | Sprint | Component | Owner | Status |
 |---|---|---|---|
 | **D-281** | **Substrate Repair** (Path Infra, M2 Firewall, Codex) | Kali | 🔲 NEXT |
-| **D-281-SUB** | **sqlite-vec 4 test cases** (writer starvation, checkpoint, multi-process, BEGIN IMMEDIATE) | Roc | 🔲 MERGED INTO D-282 |
-| **D-282-SUB** | **BEGIN IMMEDIATE fix + PRAGMA stack + checkpoint task** | Roc | 🟢 **AUTHORIZED - IN PROGRESS** |
+| **D-282-SUB** | **BEGIN IMMEDIATE fix + PRAGMA stack + checkpoint task** | Roc | 🟢 **IN PROGRESS** |
 | **D-282** | **Omega Search Core** (sqlite-vec + Legacy RAG + WAD Loader) | Roc + Researcher + Kali | 🔲 PLANNED |
-| **D-283** | **Cognitive Acceleration** (Speculative Decoding + cpu_optimizer + Mnemosyne 3-tier) | Researcher + Roc + Kali | 🟢 **KICKOFF AUTHORIZED** |
+| **D-283-P1** | **HybridSearchEngine (RRF k=60) + Tests** | Roc | 🟢 **AUTHORIZED - IN PROGRESS** |
+| **D-283-P2** | **Mnemosyne Worker Skeleton (3 DB pools)** | Roc | 🔲 PLANNED |
+| **D-283-P3** | **MCP Tools (7 tools, Engine-Stack Firewall)** | Roc | 🔲 PLANNED |
+| **D-283-P4** | **verity Tiered Routing (local→cloud)** | Researcher + Roc | 🔲 PLANNED |
+| **D-283-P5** | **Three-Tier Lifecycle + FTS5 Decay** | Researcher + Roc | 🔲 PLANNED |
+| **D-283-P6** | **MnemosyneObservability (trace_id)** | Researcher + Roc | 🔲 PLANNED |
+| **D-283-P7** | **Qliphoth Quarantine (TDP bridge)** | Researcher + Roc | 🔲 PLANNED |
 | **D-284** | **Sovereign Hub** (OAuth 2.1 + IA2 Security + Ethics WAD) | Kali + Roc | 🔲 PLANNED |
 
 ---
