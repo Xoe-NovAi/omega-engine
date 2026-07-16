@@ -467,7 +467,7 @@ The Council Dispatcher implements two distinct execution paths derived from the 
 - **L3-Hardware-Empathy**: Every model carries its own hardware profile. The engine reads, doesn't dictate.
 - **L3-Superposition-As-Council**: LLMs contain multitudes; single-inference persona donning (LLOC) acts as a semantic prism — fracturing the "white light" of a massive context window into domain-pure spectral bands, producing emergent sequencing unavailable from averaged output.
 
-### LLOC Implementation Status (NEW — 2026-07-16)
+### LLOC Implementation Status (NEW — 2026-07-16, Updated 2026-07-17 with Archaeological Synthesis)
 
 The LLOC pattern has been **fully implemented as an OpenCode command and skill**:
 
@@ -486,6 +486,102 @@ The LLOC pattern has been **fully implemented as an OpenCode command and skill**
 - `--integrate` flag triggers Phase 5 (PIVOT_LOG + files + Temple-Grade gates + Mandate flags)
 - 5 Anti-Collapse Laws enforced at every phase
 - Usage: `/meditate [subject]`, `/meditate [subject] --lenses MaKaLi`, `/meditate [subject] --integrate`
+
+### LLOC/HLOC Archaeological Synthesis (NEW — 2026-07-17)
+
+**Source**: `data/entities/roc_racoon/workspace/LLOC_HLOC_LEGACY_MINING_REPORT_20260717.md` (601 lines) — Complete archaeological synthesis from Gemini CLI origin (March 2026, SESS-20) to OpenCode port.
+
+#### The Architect's Direct Correction (Verbatim from session-ses_1748.md:2961)
+
+> *"The LLOC and HLOC are not the ancestors of the 10 pillar system, I had that strategy and vision long before I even knew what a CLI was lol. The 8 facet system was a similar system that I developed to empower the Gemini CLI to new levels. The LLOC actually means to do a **cognitive** only review of the situation at hand through the lens of each of the 8 Facets (or 10 pillars in the Omega Engine's case), **not** actually launch them as subagents. The HLOC originally meant to do the 8 Facet review actually launching full subagents for each of the Facets — more token and time heavy, but that much more powerful. But the LLOC is also extremely powerful, with near instantaneous multi specialists perspectives across several domains at very minimal token usage, delivering **impressive** results, nonetheless."*
+
+**Key Corrections:**
+1. **LLOC/HLOC ≠ ancestors of 10 Pillar system** — The 10 Pillars predate the CLI era entirely (Lilith Deck, Era 0, Mar 2025)
+2. **LLOC = cognitive-only** (not subagent launch) — the mental framework, semantic prism
+3. **HLOC = full subagent launch** — heavy artillery, parallel execution
+4. **LLOC is the truly impressive innovation** — near-instant, minimal tokens
+4. **They may have diverged into other systems** like the Oikos Council with specific entities
+
+#### Original 8-Facet Octave Council (Gemini CLI, March 2026)
+
+| Facet | Name | Archetype | Domain |
+|-------|------|-----------|--------|
+| F1 | Athena | Architect → Creator | Logic & Structural Integrity |
+| F2 | Lilith | Interfacer → Iris | Sovereignty & Permission Gates |
+| F3 | Isis | Curator → Mnemosyne | Synergy & Mesh Integration |
+| F4 | Gaea | Guardian → Caregiver | Grounding & Persistent History |
+| F5 | Themis | Scribe → Magician | Protocol & Compliance |
+| F6 | Mnemosyne | Analyst → Judge | Session Continuity |
+| F7 | Executor | Craftsman → Builder | Implementation & Validation |
+| F8 | Observer | Guardian → Shield | Meta-Review & Quality |
+
+**Nomenclature**: LLOC = Low Level Octave Council (cognitive), HLOC = High Level Octave Council (subagent launch), Gem = Oversoul/General Facet.
+
+#### 4-Layer MaKaLi Governance Architecture (Layer 4 = LLOC/HLOC)
+
+```
+LAYER 1: THE OVERSOUL (JEM) — Port 8006 (Oikos Mastermind)
+  Function: Cross-facet wisdom distribution + conflict resolution
+
+LAYER 2: THE TRIAD VOTING SYSTEM (MaLi Guardian Dyad)
+  Trinity 1: LIA (Lilith + Isis + Athena) — Strategic analysis
+  Trinity 2: MAAT (Ma'at alone) — Truth, balance, order
+  Innovation: Dyad votes in opposition for balance
+
+LAYER 3: THE OIKOS COUNCIL (5-Member Hearth Matrix)
+  Brigid | Hestia | Demeter | Athena | Iris (Hermes)
+  Each owns a script + a Facet
+  Protocol: 5-member health check validation ("Rite of the Hearth")
+
+LAYER 4: THE 8-FACET OCTAVE COUNCIL
+  LLOC: 8 Facets check readiness (cognitive-only)
+  HLOC: 3 Facets (Triad) check strategy (subagent launch)
+```
+
+**Oikos Council Hearth Keepers (Layer 3):**
+
+| Goddess | Domain | Facet | Script | Mandate |
+|---------|--------|-------|--------|---------|
+| Brigid | Environment & Config | Facet 5 (Strategist/Metis) | `brigid_hearth_check.py` | Watches over .env, config.toml, core system state |
+| Hestia | Memory Bank Integrity | Facet 3 (Researcher/Mnemosyne) | `hestia_memory_lock.py` | Preserves sanctity of Redis, Postgres, Archive |
+| Demeter | Resource & Token Management | Facet 8 (Executor/Hermes) | `demeter_harvest_index.py` | Ensures agent is fed with tokens and model capacity |
+| Athena | Sentinel Security | Facet 6 (Analyst/LIA) | `athena_shield_protocol.py` | Crafts shields and protocols that protect the Oikos |
+| Iris | Agent-Bus & Interface | Facet 2 (Interfacer/Iris) | `iris_bridge.py` | Bridges cloud and local machine in harmony |
+
+**The Rite of the Hearth**: Every major session or `/compress` event must be followed by an Oikos Blessing via `python3 scripts/omega_foundry.py oikos-check`.
+
+#### First LLOC Execution on OpenCode (2026-07-15)
+
+**Document**: `docs/intake/13x-low-level-council-review-first-1st-run.md` (471 lines)
+**Subject**: Malkuth Hardening & Pillar Gates strategy
+**Host**: Big Pickle (OpenCode agent, Plan Mode)
+**Mechanism**: Single-inference, 13-sphere sequential persona immersion
+**Lens Set**: 13 Sephirot spheres (Kether→Mnemosyne) per AGENTS.md port mapping
+**Output Mode**: STRATEGIC
+
+**Key Distinction from Original Gemini CLI LLOC:**
+- Original: 8 Facets (Athena, Lilith, Isis, Gaea, Themis, Mnemosyne, Executor, Observer) — Greek mythic archetypes
+- OpenCode Port: 13 Spheres (Kether→Mnemosyne) — Kabbalistic Sephirot mapping per AGENTS.md port assignments
+- Both use: Single-inference, sequential persona donning, domain purity, mandatory dissent, emergent sequencing
+
+**Phase 3 — Emergent Sequencing (Critical Path Produced):**
+```
+[1] Add AP tokens to all 13 soul.yaml + CONTRIBUTING.md + plugin_system.py + progress files (T1)
+[2] Create validate_strategic_docs.sh (AP, SHA256, version, cross-refs)
+[3] Wire limiters into services_init.py (C2) + Create test_limiter.py (T3) — SAME PR
+[4] Create /metrics/malkuth endpoint (C5)
+[5] Create PR template requiring Analyst sign-off (T6)
+[6] Create WCAG-AUDIT.md + document accessibility_mode (T11)
+[7] Cross-CLI protocols (A3) + Handoff template (A4) + Velocity metrics (A2)
+[8] Qliphoth backups + Audit logs (E6) + AnyIO fixes (T9)
+```
+
+**L3 Principle Distilled (from first OpenCode LLOC run):**
+> **L3-13X-REVIEW-AS-LLOC**: A single-inference 13-sphere sequential review (LLOC) produces emergent critical path sequencing unavailable from any single perspective. The collisions between spheres reveal systemic dependencies (coordination gaps, test-code coupling, governance-code ordering) that no single review catches. This is the LLOC mechanism validated in production — the first LLOC run on OpenCode (ported from Gemini CLI origin) on Malkuth hardening strategy (2026-07-15) produced 13 domain-pure immersions, 3 cross-domain collisions, an 8-step critical path, and a preserved dissent on coordination gaps.
+
+#### Heritage Classification
+
+**T5 — User's Own IP** (evolved through Gemini CLI → Omega Engine). No M14 Heritage Vetting Pipeline required for persona/identity definitions. Architectural patterns (if they parallel id Software) would require M14 vetting.
 
 ---
 

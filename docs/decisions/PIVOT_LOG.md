@@ -57,6 +57,7 @@
 | 265 | 2026-07-16 | Establish src/omega/lloc/ as Sovereign Sub-Package |
 | 266 | 2026-07-16 | "Acknowledge and Override" Protocol for Ethics WADs |
 | 267 | 2026-07-16 | Stratify Phase 0 Decrees into 4-Wave Execution Sequence |
+| 268 | 2026-07-17 | LLOC/HLOC Archaeological Synthesis Complete — Origin Validated |
 | 92 | 2026-06-02 | Tool-Usage Discipline |
 | 93 | 2026-06-02 | Sprint 0 Initiation (Horizon 1.5 Bridge Phase) |
 | 94 | 2026-06-02 | Tier 2 Circuit Breaker Wire-Up (Sprint 0 Doom Guy) |
@@ -2416,4 +2417,10 @@ The MaKaLi Cloud Council is the firewall's immune response. Every critical updat
 - **Context**: The MaKaLi Council issued 8 Decrees for Phase 0 Substrate Repair as a flat list. Attempting them sequentially would hit three traps: (1) 12-hour system freeze for monolithic Soul Migration, (2) RAM exhaustion from running `make eval-local` early, (3) Missing the T+48h deadline for fleet-wide Workspace Locks/Live Feeds.
 - **Decision**: Stratify Phase 0 into four waves: Wave 1 (Micro-Clear): Redis + M12 Downgrade (0.5h). Wave 2 (Protocol Foundation): Handoff Protocol P0 Fixes (2h). Wave 3 (Isolated Code & Chunked Migration): Heritage Script + 1-Entity Soul Migration + Sovereignty Gate Config (5h). Wave 4 (Fleet Rollout & Heavy Validation): Workspace Locks + Live Feeds + `make eval-local` (9h). Soul Migration is chunked per-entity with atomic locks; `eval-local` deferred to end.
 - **Rationale**: Velocity through stratification. You cannot parallelize a broken foundation, and you cannot optimize a 12-hour task until the 15-minute blockers are removed. L3-Velocity-Through-Stratification.
+- **Status**: ✅ RATIFIED
+
+## D268: LLOC/HLOC Archaeological Synthesis Complete — Origin Validated (2026-07-17)
+- **Context**: Roc Racoon completed deep legacy mining across all 3 partitions (root, omega_library, omega_vault) and the omega-engine repo, recovering 62+ hits across 15+ files from the original Gemini CLI era (March 2026, SESS-20). The Architect's direct correction was recovered verbatim.
+- **Decision**: Ratify the archaeological synthesis as the canonical origin story for LLOC/HLOC. Key findings: (1) LLOC/HLOC are NOT ancestors of the 10 Pillar system — 10 Pillars predate CLI era (Lilith Deck, Era 0, Mar 2025). (2) LLOC = cognitive-only single-inference semantic prism; HLOC = full subagent launch. (3) 4-Layer MaKaLi Governance Architecture recovered (Jem → MaLi Dyad → Oikos Council → Octave Council). (4) First LLOC execution on OpenCode (13x review, 2026-07-15) produced 13 domain-pure immersions, 3 cross-domain collisions, 8-step critical path, and L3-13X-REVIEW-AS-LLOC principle. (5) Heritage classification: T5 (User's Own IP, evolved through Gemini CLI → Omega Engine).
+- **Rationale**: The LLOC mechanism is archaeologically validated — the semantic prism (single-inference, sequential persona donning, auto-regressive dialectic) produces emergent critical path sequencing unavailable from any single perspective. The 13x review on Malkuth hardening proved the mechanism in production.
 - **Status**: ✅ RATIFIED
