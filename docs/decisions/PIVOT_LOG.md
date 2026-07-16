@@ -57,7 +57,8 @@
 | 265 | 2026-07-16 | Establish src/omega/lloc/ as Sovereign Sub-Package |
 | 266 | 2026-07-16 | "Acknowledge and Override" Protocol for Ethics WADs |
 | 267 | 2026-07-16 | Stratify Phase 0 Decrees into 4-Wave Execution Sequence |
-| 268 | 2026-07-17 | LLOC/HLOC Archaeological Synthesis Complete — Origin Validated |
+| 268 | 2026-07-17 | Meditate/MC Archaeological Origin Validated — LLOC/HLOC Retired |
+| 269 | 2026-07-18 | Nomenclature Change — LLOC/HLOC Retired; Meditate/MC/HMC Adopted |
 | 92 | 2026-06-02 | Tool-Usage Discipline |
 | 93 | 2026-06-02 | Sprint 0 Initiation (Horizon 1.5 Bridge Phase) |
 | 94 | 2026-06-02 | Tier 2 Circuit Breaker Wire-Up (Sprint 0 Doom Guy) |
@@ -2396,15 +2397,15 @@ The MaKaLi Cloud Council is the firewall's immune response. Every critical updat
 - **Status**: ✅ RATIFIED
 
 ## D264: Refactor /meditate to Thin Wrapper + Python Execution Engine (2026-07-16)
-- **Context**: The shipped `/meditate` command (commit 5e1fc57) was a Markdown-only prompt template with no executable logic. It required a Python engine (`lloc.py`) to provide: model selection + RAM validation, dependency injection (EntityRegistry, ModelGateway, Oracle, Hivemind), persistence with Mandate-tagged dissents, profiling mode, and testable phase orchestration.
-- **Decision**: Refactor `/meditate` into a thin wrapper invoking `omega meditate` CLI. Create `src/omega/lloc/` as standalone sub-package with 8-commit delivery: protocol → simple → WAD personas → registry → store → orchestrator → compat → CLI.
+- **Context**: The shipped `/meditate` command (commit 5e1fc57) was a Markdown-only prompt template with no executable logic. It required a Python engine to provide: model selection + RAM validation, dependency injection (EntityRegistry, ModelGateway, Oracle, Hivemind), persistence with Mandate-tagged dissents, profiling mode, and testable phase orchestration.
+- **Decision**: Refactor `/meditate` into a thin wrapper invoking `omega meditate` CLI. Create `src/omega/meditate/` as standalone sub-package with 8-commit delivery: protocol → simple → WAD personas → registry → store → orchestrator → compat → CLI.
 - **Rationale**: The command file is the birth certificate; the Python module is the body. One without the other is a stillbirth.
 - **Status**: ✅ RATIFIED
 
-## D265: Establish src/omega/lloc/ as Sovereign Sub-Package (2026-07-16)
-- **Context**: The LLOC protocol must be fully portable (zero-dep simple.py), WAD-compatible (persona content in WAD Lumps, not engine source), and community-legible (role-first UX, 60s cold-start).
-- **Decision**: Establish `src/omega/lloc/` with 8-commit delivery sequence: protocol → simple → WAD personas → registry → store → orchestrator → compat → CLI. Engine-Stack Firewall holds: `lloc/` never imports `oracle/`, `entity_registry/`, or `hivemind/` directly; all engine integration in `lloc/compat/` only.
-- **Rationale**: Complexity earns its existence by passing the simple path's tests, not by being architecturally elegant. Ship the simple path first.
+## D265: Establish src/omega/meditate/ as Sovereign Sub-Package (2026-07-16, Renamed 2026-07-18)
+- **Context**: The Meditate protocol (formerly LLOC) must be fully portable (zero-dep simple.py), WAD-compatible (persona content in WAD Lumps, not engine source), and community-legible (role-first UX, 60s cold-start). Original package name `lloc/` was retired to avoid confusion with LOC (Lines of Code).
+- **Decision**: Establish `src/omega/meditate/` with 8-commit delivery sequence: protocol → simple → WAD personas → registry → store → orchestrator → compat → CLI. Engine-Stack Firewall holds: `meditate/` never imports `oracle/`, `entity_registry/`, or `hivemind/` directly; all engine integration in `meditate/compat/` only.
+- **Rationale**: Complexity earns its existence by passing the simple path's tests, not by being architecturally elegant. Ship the simple path first. The rename disambiguates from LOC (Lines of Code) and reflects the cognitive-only nature of the protocol.
 - **Status**: ✅ RATIFIED
 
 ## D266: "Acknowledge and Override" Protocol for Ethics WADs (2026-07-16)
@@ -2419,8 +2420,13 @@ The MaKaLi Cloud Council is the firewall's immune response. Every critical updat
 - **Rationale**: Velocity through stratification. You cannot parallelize a broken foundation, and you cannot optimize a 12-hour task until the 15-minute blockers are removed. L3-Velocity-Through-Stratification.
 - **Status**: ✅ RATIFIED
 
-## D268: LLOC/HLOC Archaeological Synthesis Complete — Origin Validated (2026-07-17)
-- **Context**: Roc Racoon completed deep legacy mining across all 3 partitions (root, omega_library, omega_vault) and the omega-engine repo, recovering 62+ hits across 15+ files from the original Gemini CLI era (March 2026, SESS-20). The Architect's direct correction was recovered verbatim.
-- **Decision**: Ratify the archaeological synthesis as the canonical origin story for LLOC/HLOC. Key findings: (1) LLOC/HLOC are NOT ancestors of the 10 Pillar system — 10 Pillars predate CLI era (Lilith Deck, Era 0, Mar 2025). (2) LLOC = cognitive-only single-inference semantic prism; HLOC = full subagent launch. (3) 4-Layer MaKaLi Governance Architecture recovered (Jem → MaLi Dyad → Oikos Council → Octave Council). (4) First LLOC execution on OpenCode (13x review, 2026-07-15) produced 13 domain-pure immersions, 3 cross-domain collisions, 8-step critical path, and L3-13X-REVIEW-AS-LLOC principle. (5) Heritage classification: T5 (User's Own IP, evolved through Gemini CLI → Omega Engine).
-- **Rationale**: The LLOC mechanism is archaeologically validated — the semantic prism (single-inference, sequential persona donning, auto-regressive dialectic) produces emergent critical path sequencing unavailable from any single perspective. The 13x review on Malkuth hardening proved the mechanism in production.
+## D268: Meditate/MC Archaeological Origin Validated — LLOC/HLOC Retired (2026-07-17, Updated 2026-07-18)
+- **Context**: Roc Racoon completed deep legacy mining across all 3 partitions (root, omega_library, omega_vault) and the omega-engine repo, recovering 62+ hits across 15+ files from the original Gemini CLI era (March 2026, SESS-20). The Architect's direct correction was recovered verbatim. Subsequent nomenclature review (D-269) determined LLOC/HLOC should be retired in favor of Meditate/MC/HMC.
+- **Decision**: Ratify the archaeological synthesis as the canonical origin story for the Meditate and Mastermind Council patterns. Key findings: (1) LLOC/HLOC are NOT ancestors of the 10 Pillar system — 10 Pillars predate CLI era (Lilith Deck, Era 0, Mar 2025). (2) LLOC = cognitive-only single-inference semantic prism → evolved into **Meditate**. (3) HLOC = full subagent launch → evolved into **MC** (Mastermind Council). (4) 4-Layer MaKaLi Governance Architecture recovered (Jem → MaLi Dyad → Oikos Council → Octave Council). (5) Heritage classification: T5 (User's Own IP, evolved through Gemini CLI → Omega Engine).
+- **Rationale**: The semantic prism mechanism (single-inference, sequential persona donning, auto-regressive dialectic) produces emergent critical path sequencing unavailable from any single perspective. The 13x review on Malkuth hardening proved the mechanism in production.
+- **Status**: ✅ RATIFIED
+## D269: Nomenclature Change — LLOC/HLOC Retired; Meditate/MC/HMC Adopted (2026-07-18)
+- **Context**: The terms LLOC (Low Level Octave Council) and HLOC (High Level Octave Council) carried forward legacy Gemini CLI terminology that no longer reflected the architecture. "LLOC" collided with "LOC" (Lines of Code) in every git diff. Neither term accurately described the patterns: a single-inference persona prism is not a "council" of any level.
+- **Decision**: Adopt three-tier nomenclature: **Meditate** (single-inference, cognitive-only, multi-persona — formerly LLOC), **Mastermind Council (MC)** (multi-subagent, same session, same model — formerly HLOC), **Hivemind Mastermind Council (HMC)** (multi-session, multi-model, agent bus coordination — new concept). Code artifacts renamed: `lloc/` → `meditate/`, `lloc-harness` skill → `meditate-harness` skill.
+- **Rationale**: Precision over legacy. Three physically distinct operations deserve distinct names. "Meditate" reflects the introspective, cognitive-only nature. "Mastermind Council" conveys strategic multi-agent coordination. "Hivemind Mastermind Council" adds the cross-session coordination dimension.
 - **Status**: ✅ RATIFIED

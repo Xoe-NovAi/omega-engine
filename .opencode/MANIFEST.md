@@ -135,18 +135,18 @@ Every id Software (or any heritage) concept must pass through the 4-gate pipelin
 
 | Command | File | Agent | Purpose |
 |---------|------|-------|---------|
-| `/council-cloud` | `commands/council-cloud.md` | kali | HLOC — MaKaLi full subagent dispatch on session model |
-| `/council-local` | `commands/council-local.md` | kali | HLOC — MaKaLi with Ma'at/Lilith on local models |
-| `/council-fast` | `commands/council-fast.md` | kali | HLOC — MaKaLi all on qwen3-1.7b, max speed |
+| `/council-cloud` | `commands/council-cloud.md` | kali | MC — MaKaLi full subagent dispatch on session model |
+| `/council-local` | `commands/council-local.md` | kali | MC — MaKaLi with Ma'at/Lilith on local models |
+| `/council-fast` | `commands/council-fast.md` | kali | MC — MaKaLi all on qwen3-1.7b, max speed |
 | `/kali-dispatch` | `commands/kali-dispatch.md` | kali | Multi-member Hivemind session orchestration |
-| `/meditate` | `commands/meditate.md` | kali | **LLOC** — single-inference 10-Pillar (or custom) persona-donning semantic prism |
+| `/meditate` | `commands/meditate.md` | kali | **Meditate** — single-inference 10-Pillar (or custom) persona-donning semantic prism |
 | `/researcher-discover` | `commands/researcher-discover.md` | researcher | Tier 1 discovery pass |
 | `/researcher-verify` | `commands/researcher-verify.md` | researcher | Verification and gap-closing |
 | `/researcher-synthesize` | `commands/researcher-synthesize.md` | researcher | Final synthesis and R-doc generation |
 
-**HLOC vs LLOC distinction**:
-- `/council-*` commands = **HLOC** — real subagents, RAM cost, parallel/serial model execution
-- `/meditate` = **LLOC** — single inference, attention modulation, zero additional RAM
+**MC vs Meditate distinction**:
+- `/council-*` commands = **MC** (Mastermind Council) — real subagents, RAM cost, parallel/serial model execution
+- `/meditate` = **Meditate** — single inference, attention modulation, zero additional RAM
 
 ---
 
@@ -191,7 +191,7 @@ Archived to `.opencode/archives/` (inactive agents):
 | `hf-cli` | `skills/hf-cli/SKILL.md` | Hugging Face Hub CLI integration |
 | `knowledge-miner` | `skills/knowledge-miner/SKILL.md` | grep→read→summarize legacy pattern extraction |
 | `legacy-pattern-miner` | `skills/legacy-pattern-miner/SKILL.md` | Legacy repo archaeology |
-| **`lloc-harness`** | **`skills/lloc-harness/SKILL.md`** | **LLOC Harness — persona schema engine for /meditate and embedded oracle.meditate()** |
+| **`meditate-harness`** | **`skills/meditate-harness/SKILL.md`** | **Meditate Harness — persona schema engine for /meditate and embedded oracle.meditate()** |
 | `m23-violation-logger` | `skills/m23-violation-logger/SKILL.md` | Log Failure Integrity violations |
 | `omega-doc-architect` | `skills/omega-doc-architect/SKILL.md` | Document management system enforcer |
 | `pr-readiness-checker` | `skills/pr-readiness-checker/SKILL.md` | Pre-commit quality gate |

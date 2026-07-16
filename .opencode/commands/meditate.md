@@ -1,13 +1,13 @@
 ---
-description: Low Level Oikos Council (LLOC) — single-inference, iterative persona-donning for mastermind-grade insight on any situation
+description: Meditate — single-inference, iterative persona-donning for mastermind-grade insight on any situation
 agent: kali
 subtask: false
 ---
 
-# ⬡ MEDITATE — Low Level Oikos Council (LLOC)
-**Protocol**: `LLOC-v1.0` | **Heritage**: Architect's Gemini CLI Oikos experiments
+# ⬡ MEDITATE — Single-Inference Persona Prism
+**Protocol**: `Meditate-v1.0` | **Heritage**: Architect's Gemini CLI meditation experiments (formerly called LLOC)
 **Mechanism**: Single-inference, multi-persona semantic prism
-**RAM cost**: ONE model load — no serial swap, no HLOC overhead
+**RAM cost**: ONE model load — no serial swap, no MC/HMC overhead
 
 ---
 
@@ -37,7 +37,7 @@ cognition: the semantic prism applied to $ARGUMENTS.
 
 ---
 
-## ⬡ THE LLOC FRAMEWORK — STEP BY STEP
+## ⬡ THE MEDITATE FRAMEWORK — STEP BY STEP
 
 You are the **Meditation Host** (Kali, Grand Oversoul). Your task is to
 conduct a Low Level Oikos Council on the subject: **$ARGUMENTS**
@@ -304,7 +304,7 @@ MANDATE FLAGS:
 /meditate Why is the Hivemind protocol failing? --lenses P1,P4,P9
 
 # Full meditation + integration (produces PIVOT_LOG entry)
-/meditate Should we implement LLOC as oracle.meditate() now? --integrate
+/meditate Should we implement oracle.meditate() now? --integrate
 
 # Diagnostic mode — what is broken?
 /meditate Our test coverage strategy --lenses P3,P5,P10 --mode DIAGNOSTIC
@@ -315,15 +315,15 @@ MANDATE FLAGS:
 
 ---
 
-## ⬡ RELATIONSHIP TO THE OIKOS ARCHITECTURE
+## ⬡ RELATIONSHIP TO THE COUNCIL ARCHITECTURE
 
 ```
-HLOC (High Level Oikos Council)          LLOC (Low Level Oikos Council)
+MC (Mastermind Council)                  Meditate
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 /council-cloud   → subagents launched    /meditate      → single inference
 /council-local   → local models swapped  (this command) → attention modulation
 /council-fast    → qwen3-1.7b x N        No RAM penalty. No model swap.
-                                          No agent coordination overhead.
+                                           No agent coordination overhead.
 
 Cost: N × (model_load + inference)       Cost: 1 × inference
 RAM: up to 14Gi ceiling                  RAM: one model, held in place
@@ -331,12 +331,15 @@ Latency: serial model swaps              Latency: single forward pass
 Use when: distinct tool calls needed     Use when: pure cognition needed
           file writes per agent                    emergent sequencing needed
           maximum parallelism                      RAM is constrained
+
+HMC (Hivemind Mastermind Council): MC + Hivemind coordination across
+multiple sessions, models, and agent buses. See Strike 11.5.
 ```
 
-**Heritage**: Architect's Low Level Oikos Council (LLOC), Gemini CLI era.
+**Heritage**: Architect's meditation experiments (originally called "LLOC" in the Gemini CLI era).
 Integrated into Strike 11.5 (Council Dispatcher) as `oracle.meditate()`.
-Ratified 2026-07-16. L3 Principle: `L3-Superposition-As-Council`.
+Ratified 2026-07-16, renamed 2026-07-18. L3 Principle: `L3-Meditation-As-Semantic-Prism`.
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ LLOC-v1.0 ⬡ oracle.meditate() ⬡ trc_lloc_protocol*
+*⬡ OMEGA ⬡ KALI ⬡ Meditate-v1.0 ⬡ oracle.meditate() ⬡ trc_meditate_protocol*

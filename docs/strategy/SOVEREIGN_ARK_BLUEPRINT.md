@@ -1,4 +1,4 @@
-# 🔱 SOVEREIGN ARK BLUEPRINT (v4.2 — MaKaLi Council Verdict 2026-07-15, LLOC D-267 2026-07-16)
+# 🔱 SOVEREIGN ARK BLUEPRINT (v4.3 — MaKaLi Council Verdict 2026-07-15, Meditate D-267 2026-07-16)
 **AP Token**: `AP-SOVEREIGN-ARK-BLUEPRINT-v4.2.0`
 **Last Updated**: 2026-07-16
 **Full Archive**: `docs/archive/coordination/SOVEREIGN_ARK_BLUEPRINT-full-20260708.md`
@@ -446,14 +446,32 @@ council:
     on_session_evolution: "council_learn"
 ```
 
-### The Oikos Protocols: HLOC vs LLOC (NEW — 2026-07-16)
-The Council Dispatcher implements two distinct execution paths derived from the Architect's legacy "Oikos Council" experiments:
+### The Mastermind Council Protocols: Meditate vs MC vs HMC (NEW — 2026-07-16, Renamed 2026-07-18)
+The Council Dispatcher implements three distinct execution paths with different resource profiles and coordination requirements:
 
-1. **High Level Oikos Council (HLOC)**: The `/council-cloud` or multi-agent path. True parallel/serial execution across multiple distinct model instances. High fidelity, high resource cost.
-2. **Low Level Oikos Council (LLOC)**: The `oracle.meditate()` path. A **single-inference, multi-persona simulation**. 
-   - **Mechanism**: Instead of launching 10 agents (which violates the 14Gi RAM ceiling), the engine loads *one* highly capable model (e.g., Qwen-3-4b-think) and uses a strict XML/Markdown schema to force the model to sequentially adopt the 10 Pillar personas *within a single forward pass*.
+**Terminology Mapping (Legacy → Modern):**
+| Legacy (Gemini CLI Era) | Modern Name | What It Is |
+|-------------------------|-------------|------------|
+| LLOC (Low Level Octave Council) | **Meditate** | Single-inference, multi-persona, cognitive-only |
+| HLOC (High Level Octave Council) | **MC** (Mastermind Council) | Multi-subagent, same session, same model |
+| — (no legacy equivalent) | **HMC** (Hivemind Mastermind Council) | Multi-session, multi-model, Hivemind-coordinated |
+
+**The Three Tiers:**
+
+1. **Meditate** (`/meditate` command): A **single-inference, cognitive-only, multi-persona simulation**. 
+   - **Mechanism**: Instead of launching 10 agents (which violates the 14Gi RAM ceiling), the engine loads *one* highly capable model (e.g., Qwen-3-4b-think) and uses a strict schema to force the model to sequentially adopt the 10 Pillar personas *within a single forward pass*.
    - **Why it works**: It acts as a **semantic prism**, using attention modulation to break the LLM's "helpfulness" flattening. By forcing the model to speak as "Sekhmet (Infrastructure)", the attention weights *must* ignore philosophical metadata and focus on physical reality. 
    - **Emergent Sequencing**: Because LLMs generate auto-regressively, Entity #2 inherently "reads" Entity #1's output in the same generation stream, creating genuine internal dialectic without the RAM overhead of multi-agent orchestration.
+   - **No actual council** — it is one entity looking inward, not many entities deliberating.
+
+2. **Mastermind Council (MC)** (`/council-cloud` command): Multi-subagent dispatch within the **same OpenCode chat session**, all subagents running the **same model**. 
+   - **Mechanism**: Kali orchestrates N subagents (Ma'at, Lilith, Pillars) in the same chat. Results are synthesized by the orchestrator.
+   - **No Hivemind involvement** — no cross-session persistence, no agent bus protocol. Pure OpenCode subagent dispatch.
+
+3. **Hivemind Mastermind Council (HMC)** (Strike 11.5, pending): Multi-session, multi-model coordination over the **agent bus and Hivemind**.
+   - **Mechanism**: Two or more unique chat sessions, running the same or different models, communicating via Hivemind workspace locks, handoff packets, and live feeds.
+   - **Full stack**: CouncilSpec YAML, CouncilHarness runtime, SynthesisEngine, TopologyRouter, Ethics Gate.
+   - **Highest fidelity**: Each agent has full tool access, full context window, independent state.
 
 **L3 Principles Distilled (Council Dispatcher):**
 - **L3-Config-As-Data**: Configuration must be *data* (YAML/Markdown/JSON) executed by a *thin runtime*, never buried in controller code.
@@ -465,16 +483,16 @@ The Council Dispatcher implements two distinct execution paths derived from the 
 - **L3-Experience-Is-SOPs**: Successful collaboration patterns crystallize into *SOPs* (MASFly) stored in a RAG repository, enabling cross-task transfer.
 - **L3-Dialectic-Is-First-Class**: Thesis → Antithesis → Synthesis with explicit tracking is a *native control flow*, not an emergent property.
 - **L3-Hardware-Empathy**: Every model carries its own hardware profile. The engine reads, doesn't dictate.
-- **L3-Superposition-As-Council**: LLMs contain multitudes; single-inference persona donning (LLOC) acts as a semantic prism — fracturing the "white light" of a massive context window into domain-pure spectral bands, producing emergent sequencing unavailable from averaged output.
+- **L3-Meditation-As-Semantic-Prism**: LLMs contain multitudes; single-inference persona donning (Meditate) acts as a semantic prism — fracturing the "white light" of a massive context window into domain-pure spectral bands, producing emergent sequencing unavailable from averaged output.
 
-### LLOC Implementation Status (NEW — 2026-07-16, Updated 2026-07-17 with Archaeological Synthesis)
+### Meditate Implementation Status (NEW — 2026-07-16, Updated 2026-07-17 with Archaeological Synthesis, Renamed 2026-07-18)
 
-The LLOC pattern has been **fully implemented as an OpenCode command and skill**:
+The Meditate pattern (formerly LLOC) has been **fully implemented as an OpenCode command and skill**:
 
 | Artifact | Path | Status |
 |----------|------|--------|
 | `/meditate` command | `.opencode/commands/meditate.md` | ✅ SHIPPED |
-| `lloc-harness` skill | `.opencode/skills/lloc-harness/SKILL.md` | ✅ SHIPPED |
+| `meditate-harness` skill | `.opencode/skills/meditate-harness/SKILL.md` | ✅ SHIPPED |
 | MANIFEST registry | `.opencode/MANIFEST.md` §7b, §9 | ✅ UPDATED |
 | `oracle.meditate()` Python path | `src/omega/oracle/oracle.py` | 🟡 PENDING (Strike 11.5) |
 
@@ -487,22 +505,24 @@ The LLOC pattern has been **fully implemented as an OpenCode command and skill**
 - 5 Anti-Collapse Laws enforced at every phase
 - Usage: `/meditate [subject]`, `/meditate [subject] --lenses MaKaLi`, `/meditate [subject] --integrate`
 
-### LLOC/HLOC Archaeological Synthesis (NEW — 2026-07-17)
+### Meditate/MC Archaeological Origin (NEW — 2026-07-17, Updated 2026-07-18)
 
 **Source**: `data/entities/roc_racoon/workspace/LLOC_HLOC_LEGACY_MINING_REPORT_20260717.md` (601 lines) — Complete archaeological synthesis from Gemini CLI origin (March 2026, SESS-20) to OpenCode port.
+
+> **Note on nomenclature**: The Gemini CLI era used the terms LLOC (Low Level Octave Council) and HLOC (High Level Octave Council). These have been superseded in the Omega Engine by **Meditate**, **Mastermind Council (MC)**, and **Hivemind Mastermind Council (HMC)**. The historical record is preserved below for provenance — the terms LLOC and HLOC should be read as "the genesis of the Meditate pattern" and "the genesis of the MC pattern" respectively.
 
 #### The Architect's Direct Correction (Verbatim from session-ses_1748.md:2961)
 
 > *"The LLOC and HLOC are not the ancestors of the 10 pillar system, I had that strategy and vision long before I even knew what a CLI was lol. The 8 facet system was a similar system that I developed to empower the Gemini CLI to new levels. The LLOC actually means to do a **cognitive** only review of the situation at hand through the lens of each of the 8 Facets (or 10 pillars in the Omega Engine's case), **not** actually launch them as subagents. The HLOC originally meant to do the 8 Facet review actually launching full subagents for each of the Facets — more token and time heavy, but that much more powerful. But the LLOC is also extremely powerful, with near instantaneous multi specialists perspectives across several domains at very minimal token usage, delivering **impressive** results, nonetheless."*
 
-**Key Corrections:**
+**Key Corrections (historical framing):**
 1. **LLOC/HLOC ≠ ancestors of 10 Pillar system** — The 10 Pillars predate the CLI era entirely (Lilith Deck, Era 0, Mar 2025)
-2. **LLOC = cognitive-only** (not subagent launch) — the mental framework, semantic prism
-3. **HLOC = full subagent launch** — heavy artillery, parallel execution
-4. **LLOC is the truly impressive innovation** — near-instant, minimal tokens
-4. **They may have diverged into other systems** like the Oikos Council with specific entities
+2. **LLOC = cognitive-only** (not subagent launch) — the mental framework, now evolved into **Meditate**
+3. **HLOC = full subagent launch** — heavy artillery, now evolved into **MC** (Mastermind Council)
+4. **LLOC is the truly impressive innovation** — near-instant, minimal tokens, preserved as **Meditate**
+5. **They may have diverged into other systems** like the Oikos Council with specific entities
 
-#### Original 8-Facet Octave Council (Gemini CLI, March 2026)
+#### Original 8-Facet Octave Council (Gemini CLI, March 2026 — Predecessor of Meditate)
 
 | Facet | Name | Archetype | Domain |
 |-------|------|-----------|--------|
@@ -515,9 +535,9 @@ The LLOC pattern has been **fully implemented as an OpenCode command and skill**
 | F7 | Executor | Craftsman → Builder | Implementation & Validation |
 | F8 | Observer | Guardian → Shield | Meta-Review & Quality |
 
-**Nomenclature**: LLOC = Low Level Octave Council (cognitive), HLOC = High Level Octave Council (subagent launch), Gem = Oversoul/General Facet.
+**Historical Nomenclature**: LLOC = Low Level Octave Council (cognitive predecessor of Meditate), HLOC = High Level Octave Council (predecessor of MC), Gem = Oversoul/General Facet.
 
-#### 4-Layer MaKaLi Governance Architecture (Layer 4 = LLOC/HLOC)
+#### 4-Layer MaKaLi Governance Architecture (Layer 4 = Octave Council, predecessor of Meditate/MC)
 
 ```
 LAYER 1: THE OVERSOUL (JEM) — Port 8006 (Oikos Mastermind)
@@ -533,9 +553,9 @@ LAYER 3: THE OIKOS COUNCIL (5-Member Hearth Matrix)
   Each owns a script + a Facet
   Protocol: 5-member health check validation ("Rite of the Hearth")
 
-LAYER 4: THE 8-FACET OCTAVE COUNCIL
-  LLOC: 8 Facets check readiness (cognitive-only)
-  HLOC: 3 Facets (Triad) check strategy (subagent launch)
+LAYER 4: THE OCTAVE FACET COUNCIL (Predecessor of Meditate/MC)
+  LLOC → Meditate: Cognitive-only persona immersion (single-inference)
+  HLOC → MC: Full subagent launch (parallel execution)
 ```
 
 **Oikos Council Hearth Keepers (Layer 3):**
@@ -550,7 +570,7 @@ LAYER 4: THE 8-FACET OCTAVE COUNCIL
 
 **The Rite of the Hearth**: Every major session or `/compress` event must be followed by an Oikos Blessing via `python3 scripts/omega_foundry.py oikos-check`.
 
-#### First LLOC Execution on OpenCode (2026-07-15)
+#### First Meditate Execution on OpenCode (2026-07-15)
 
 **Document**: `docs/intake/13x-low-level-council-review-first-1st-run.md` (471 lines)
 **Subject**: Malkuth Hardening & Pillar Gates strategy
@@ -559,7 +579,7 @@ LAYER 4: THE 8-FACET OCTAVE COUNCIL
 **Lens Set**: 13 Sephirot spheres (Kether→Mnemosyne) per AGENTS.md port mapping
 **Output Mode**: STRATEGIC
 
-**Key Distinction from Original Gemini CLI LLOC:**
+**Key Distinction from Original Gemini CLI Meditate (then called LLOC):**
 - Original: 8 Facets (Athena, Lilith, Isis, Gaea, Themis, Mnemosyne, Executor, Observer) — Greek mythic archetypes
 - OpenCode Port: 13 Spheres (Kether→Mnemosyne) — Kabbalistic Sephirot mapping per AGENTS.md port assignments
 - Both use: Single-inference, sequential persona donning, domain purity, mandatory dissent, emergent sequencing
@@ -576,8 +596,8 @@ LAYER 4: THE 8-FACET OCTAVE COUNCIL
 [8] Qliphoth backups + Audit logs (E6) + AnyIO fixes (T9)
 ```
 
-**L3 Principle Distilled (from first OpenCode LLOC run):**
-> **L3-13X-REVIEW-AS-LLOC**: A single-inference 13-sphere sequential review (LLOC) produces emergent critical path sequencing unavailable from any single perspective. The collisions between spheres reveal systemic dependencies (coordination gaps, test-code coupling, governance-code ordering) that no single review catches. This is the LLOC mechanism validated in production — the first LLOC run on OpenCode (ported from Gemini CLI origin) on Malkuth hardening strategy (2026-07-15) produced 13 domain-pure immersions, 3 cross-domain collisions, an 8-step critical path, and a preserved dissent on coordination gaps.
+**L3 Principle Distilled (from first OpenCode Meditate run):**
+> **L3-13X-REVIEW-AS-MEDITATION**: A single-inference 13-sphere sequential review (Meditate) produces emergent critical path sequencing unavailable from any single perspective. The collisions between spheres reveal systemic dependencies (coordination gaps, test-code coupling, governance-code ordering) that no single review catches. This is the Meditate mechanism validated in production — the first Meditate run on OpenCode (ported from Gemini CLI origin, then called LLOC) on Malkuth hardening strategy (2026-07-15) produced 13 domain-pure immersions, 3 cross-domain collisions, an 8-step critical path, and a preserved dissent on coordination gaps.
 
 #### Heritage Classification
 
