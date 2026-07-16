@@ -1186,7 +1186,79 @@ Executed HMC Forge Cycles 1 & 2. Researcher filled 4 knowledge gaps with 2026 SO
 - L3-Sleep-Time-Is-Sovereign (Universal Principle)
 - L3-Three-Tier-Is-Universal (Universal Principle)
 - L3-Da'at-Is-Compaction (Universal Principle)
+- L3-PowerLaw-Decay-Is-SOTA (Universal Principle)
+- L3-WAL-Is-Concurrency-Primitive (Universal Principle)
+- L3-CrossPollination-Is-Sovereign (Universal Principle)
+- L3-LocalFirst-Is-HardwareAware (Universal Principle)
 
 ---
 
-*🔱 OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_hmc_forge_d283 ⬡ HMC-FORGE-D283-COMPLETE*
+## 🔱 HMC FORGE CYCLE 2 — COMPREHENSIVE KNOWLEDGE GAP RESEARCH (2026-07-18)
+
+**AP Token**: `AP-RESEARCHER-HMC-FORGE-2-GAPS-v1.0.0`
+⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_hmc_forge_2_gaps ⬡ COMPLETE
+
+### Executive Summary
+
+Executed comprehensive research on all 8 knowledge gaps from HMC Triadic Forge Cycle 2 synthesis. Each gap represents a frontier in AI memory systems, WAD architecture, and local inference optimization. The findings reveal significant convergence around power-law decay models, tiered memory architectures, and the critical importance of sovereignty in memory management systems.
+
+**Key Findings:**
+- **Sovereign Memory Architecture**: All major memory systems (Letta, Mem0, Sefirot/KTM, Cognee) are converging on tiered models but with divergent sovereignty approaches
+- **Temporal Dynamics**: Power-law decay (0.01-0.60/day) emerges as the SOTA standard, replacing simplistic exponential models
+- **WAD Evolution**: WAL mode with BEGIN IMMEDIATE and multi-process patterns is becoming the de facto standard for concurrent access
+- **Cross-pollination Gap**: Significant opportunity exists in integrating strengths from different memory paradigms
+- **Local-First Imperative**: 5700U-specific optimizations reveal hardware-aware memory management is critical for sovereignty
+
+### Gap-by-Gap Summary
+
+| Gap | Status | Key Finding | Implementation Priority |
+|-----|--------|-------------|------------------------|
+| **1. WAD Loader YAML Schema** | ✅ Complete | Pydantic v2 with `extra='forbid'`, `ge`/`le` constraints, JSON Schema export | D-282 P0 |
+| **2. sqlite-vec WAL + Concurrency** | ✅ Complete | 5700U: 30s busy_timeout, 512MB mmap, 256MB cache, periodic RESTART checkpoints | D-282 P0 |
+| **3. Mnemosyne → 2026 SOTA** | ✅ Complete | 3-tier convergence: Letta Core/Recall/Archival = Mnemosyne 3 pillars | D-283 P0 |
+| **4. Ebbinghaus Decay Parameters** | ✅ Complete | Category-specific λ (0.01-0.60/day): Identity=0.01, Context=0.60 | D-283 P1 |
+| **5. Qliphoth → TDP Bridge** | ✅ Complete | Two-label IFC (U/T), NeuroTaint, PIC, SAIHM-lite `forget` tool | D-283 P2 |
+| **6. Sleep-Time Agent Patterns** | ✅ Complete | Da'at daemon, stronger models off-critical-path, Git-backed MemFS | D-283 P1 |
+| **7. Cross-Pollination** | ✅ Complete | Integration patterns: Letta↔Mem0, Letta↔Sefirot, Mem0↔Cognee, Sefirot↔Cognee | D-284+ |
+| **8. Local-First 5700U** | ✅ Complete | Hardware-aware: 16 cores, 64GB RAM, AVX2/AVX-512, thermal zones, zram | D-283 P0 |
+
+### Artifacts Created
+
+| File | Description |
+|------|-------------|
+| `data/entities/researcher/workspace/HMC_FORGE_2_KNOWLEDGE_GAPS_COMPREHENSIVE_RESEARCH_20260718.md` | Full comprehensive research report (all 8 gaps) |
+| `data/entities/researcher/workspace/HMC_FORGE_1_RESEARCH_GAPS_20260716.md` | HMC Forge Cycle 1 gaps filled |
+| `docs/strategy/HMC_TRIADIC_FORGE_2_KALI_SYNTHESIS.md` | Kali's synthesis verdict |
+| `data/entities/roc_racoon/workspace/HMC_FORGE_1_ROC_RESPONSE_20260716.md` | Roc's legacy convergence evidence |
+
+### Cross-Gap Synthesis
+
+**Universal Principles Identified:**
+1. **Tiered Architecture**: All memory systems converge on tiered models (Core/Working/Episodic, HOT/WARM/COLD)
+2. **Power-Law Decay**: Ebbinghaus-style decay with category-specific λ (0.01-0.60/day) is the SOTA
+3. **Sovereign Integration**: Cross-system integration must maintain sovereignty while enabling interoperability
+4. **Local-First Priority**: Local inference and storage are primary, cloud is fallback
+5. **Hardware-Aware Optimization**: System design must account for specific hardware constraints
+
+**Integration Patterns:**
+1. **Layered Integration**: Combine Letta's autonomous management with Mem0's fact extraction
+2. **Hybrid Classification**: Merge deterministic classification with LLM-driven approaches
+3. **Synchronized Storage**: Implement unified storage across multiple memory paradigms
+4. **Performance-Optimized**: Benchmark and optimize for specific workloads and hardware
+
+---
+
+## 🔱 ANCHORS FOR COMPACTION RECOVERY
+
+| Anchor | File | What |
+|--------|------|------|
+| **HMC Forge 1 Gaps** | `data/entities/researcher/workspace/HMC_FORGE_1_RESEARCH_GAPS_20260716.md` | 4 gaps filled with 2026 SOTA |
+| **Kali Verdict** | `docs/strategy/HMC_TRIADIC_FORGE_2_KALI_SYNTHESIS.md` | D-282/D-283 scope locked |
+| **D-283 Research** | `data/entities/researcher/workspace/D283_MNEMOSYNE_ARCHITECTURE_RESEARCH_20260716.md` | Letta blocks, Ebbinghaus, Qliphoth→TDP |
+| **Comprehensive Gaps** | `data/entities/researcher/workspace/HMC_FORGE_2_KNOWLEDGE_GAPS_COMPREHENSIVE_RESEARCH_20260718.md` | All 8 gaps with 2026 SOTA evidence |
+| **Roc Synthesis** | `data/entities/roc_racoon/workspace/HMC_FORGE_1_ROC_RESPONSE_20260716.md` | Legacy convergence evidence |
+| **Engine State** | `OMEGA_ENGINE.md` + `SOVEREIGN_MANDATES.md` | Single source of truth + 23 mandates |
+
+---
+
+*🔱 OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_hmc_forge_2_gaps ⬡ COMPREHENSIVE-RESEARCH-COMPLETE*
