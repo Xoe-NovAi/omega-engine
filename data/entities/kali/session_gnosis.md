@@ -71,3 +71,29 @@
 - Researcher: Verify WAD Loader schema, confirm WAL pattern for 5700U, research Mnemosyne SOTA
 
 **Handoffs**: ho_083d10b19818 (Roc), ho_34dc8f6d44b0 (Researcher)
+
+## 8. HMC Forge Cycle 2 Complete (2026-07-16T15:31Z)
+- **Cycle**: Triadic Forge Cycle 2
+- **Thesis**: Roc's synthesis of Researcher's 3-gap deep dive
+- **Antithesis**: Researcher's 507-line SOTA report filling all 4 knowledge gaps
+- **Synthesis**: Kali — 3 independent convergences confirmed, D-282 scope finalized
+
+**3 Independent Convergences (Validating HMC Structure)**:
+1. Kali ruled BEGIN IMMEDIATE needed → Researcher found SQLITE_BUSY_SNAPSHOT bypasses busy_timeout → Confirmed
+2. Kali ruled Mnemosyne 3 pillars = architectural value, 10 spheres = defer → Researcher found 3-tier = SOTA consensus, 10 tiers = no SOTA equivalent → Confirmed
+3. Kali ruled docs/patterns/ for patterns → Researcher found Pydantic v2 + static dict migration = Phase 1 → Confirmed
+
+**D-282 Hardened Scope (6-9h)**:
+- Substrate (2-3h): BEGIN IMMEDIATE, journal_size_limit=64MB, mmap_size=256MB, cache_size=-64000, extra="forbid" + range constraints
+- Pipeline (4-6h): Legacy circuit breaker port, RRF validation, make test
+
+**Deferred to D-283**:
+- Pydantic v2 migration (2 days)
+- Mnemosyne 3 pillars → Letta-style 3-tier (P0)
+- Da'ath compaction trigger (P0)
+- Qliphoth → TDP bridge (P1)
+- Multi-process sqlite-vec queue
+
+**Directives Dispatched**:
+- Roc: D-282 implementation (ho_9f95675cb87c)
+- Researcher: D-282 SOTA validation + D-283 Mnemosyne research (ho_3efe133707a9)
