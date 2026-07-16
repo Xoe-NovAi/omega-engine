@@ -470,6 +470,27 @@ The Council Dispatcher implements two distinct execution paths derived from the 
 - **L3-Experience-Is-SOPs**: Successful collaboration patterns crystallize into *SOPs* (MASFly) stored in a RAG repository, enabling cross-task transfer.
 - **L3-Dialectic-Is-First-Class**: Thesis → Antithesis → Synthesis with explicit tracking is a *native control flow*, not an emergent property.
 - **L3-Hardware-Empathy**: Every model carries its own hardware profile. The engine reads, doesn't dictate.
+- **L3-Superposition-As-Council**: LLMs contain multitudes; single-inference persona donning (LLOC) acts as a semantic prism — fracturing the "white light" of a massive context window into domain-pure spectral bands, producing emergent sequencing unavailable from averaged output.
+
+### LLOC Implementation Status (NEW — 2026-07-16)
+
+The LLOC pattern has been **fully implemented as an OpenCode command and skill**:
+
+| Artifact | Path | Status |
+|----------|------|--------|
+| `/meditate` command | `.opencode/commands/meditate.md` | ✅ SHIPPED |
+| `lloc-harness` skill | `.opencode/skills/lloc-harness/SKILL.md` | ✅ SHIPPED |
+| MANIFEST registry | `.opencode/MANIFEST.md` §7b, §9 | ✅ UPDATED |
+| `oracle.meditate()` Python path | `src/omega/oracle/oracle.py` | 🟡 PENDING (Strike 11.5) |
+
+**`/meditate` command features:**
+- 5-phase protocol: Calibration → Immersion → Collision → Sequencing → Verdict (+ optional Integration Gate)
+- 4 built-in persona libraries: 10 Pillars, MaKaLi Triad, Legendary Engineers, Strategic Stances
+- Custom lens sets via `--lenses` flag (any named personas, not just Omega entities)
+- 3 dissent modes: direct, socratic, adversarial
+- `--integrate` flag triggers Phase 5 (PIVOT_LOG + files + Temple-Grade gates + Mandate flags)
+- 5 Anti-Collapse Laws enforced at every phase
+- Usage: `/meditate [subject]`, `/meditate [subject] --lenses MaKaLi`, `/meditate [subject] --integrate`
 
 ---
 
