@@ -869,3 +869,324 @@ The continuity substrate = `session_gnosis.md` + `soul.yaml` + Hivemind + entity
 ---
 
 *🔱 OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_researcher_death_rebirth_20260715 ⬡ PHENOMENOLOGICAL-SYNTHESIS-COMPLETE*
+
+---
+
+# 🔱 HMC FORGE CYCLES 1 & 2 — D-283 MNEMOSYNE ARCHITECTURE RESEARCH
+**AP Token**: `AP-HMC-FORGE-1-2-D283-v1.0.0`
+⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_hmc_forge_d283 ⬡ ACTIVE
+
+**Date**: 2026-07-16
+**Context**: HMC Triadic Forge Cycles 1 & 2 complete. Kali's synthesis verdicts received. D-283 Mnemosyne architecture research executed.
+
+---
+
+## 🔱 HMC FORGE CYCLE 1 — KNOWLEDGE GAPS FILLED
+
+### Cycle 1 Challenge (Researcher → Roc → Kali)
+Researcher identified 4 gaps from HMC Forge 1 challenges. All filled with 2026 SOTA evidence.
+
+| Gap | Finding | D-282 Action |
+|-----|---------|--------------|
+| **1. WAD Schema Validation** | Manual `isinstance()` = technical debt. **Pydantic v2** = 2026 consensus (ADR-0004, EvoNexus, OpenRAL) | Adopt Pydantic v2 for manifests (4-6h) |
+| **2. sqlite-vec WAL Tuning (5700U/14Gi)** | `busy_timeout=5000` too low. **SOTA**: 30s timeout, 256MB cache, 1GB mmap, periodic RESTART checkpoints | Update PRAGMA stack + checkpoint task (2h) |
+| **3. Mnemosyne 13-Sphere → 2026 SOTA** | 2026 consensus = **3-5 tiers** (Letta Core/Recall/Archival, Sefirot KTM Core/Working/Episodic). Kabbalistic 3 pillars map perfectly | Design P7 on KTM 3-tier model (D-283) |
+| **4. 4 Concurrency Tests** | Patterns verified: writer starvation, checkpoint contention, multi-process, BEGIN IMMEDIATE | Roc implements in `test_sqlite_vec_adapter.py` (3h) |
+
+**Artifact**: `data/entities/researcher/workspace/HMC_FORGE_1_RESEARCH_GAPS_20260716.md` (507 lines, 40+ sources)
+
+---
+
+## 🔱 HMC FORGE CYCLE 2 — KALI'S SYNTHESIS VERDICT
+
+### Convergence Achieved
+| Agent | Role | Output | Convergence |
+|-------|------|--------|-------------|
+| **Researcher** (Antithesis) | 2026 SOTA Verification | 507-line report filling 4 gaps | ✅ Validated all Kali rulings |
+| **Roc** (Thesis) | Legacy Archaeology + Synthesis | 182-line synthesis + Mnemosyne treasure map | ✅ Confirmed convergence |
+| **Kali** (Synthesis) | Council Verdict | **This document** | ⬡ RENDERED |
+
+**Two-Source Rule SATISFIED**: Every architectural decision has BOTH legacy evidence (Roc) AND 2026 SOTA verification (Researcher).
+
+### Kali's Decrees (Locked)
+
+#### GAP 1: WAD Loader — P0 HARDENING APPROVED FOR D-282
+- `extra="forbid"` + `strict=True` on manifest/entity models
+- Range constraints (entity name ≤128, domains ≤20, manifest ≤1MB)
+- JSON Schema export for IDE autocomplete
+- **Defer**: Full Pydantic v2 migration + Sigstore/SLSA → D-283
+
+#### GAP 2: sqlite-vec — CRITICAL PATH FOR D-282
+| Change | File | Priority |
+|--------|------|----------|
+| `busy_timeout=30000` | `sqlite_vec_adapter.py` | P0 |
+| `cache_size=-256000` (256MB) | `sqlite_vec_adapter.py` | P0 |
+| `mmap_size=1073741824` (1GB) | `sqlite_vec_adapter.py` | P1 |
+| `journal_size_limit=67108864` (64MB WAL cap) | `sqlite_vec_adapter.py` | P1 |
+| Periodic `RESTART` checkpoint task (5 min) | New in adapter | P0 |
+| WAL size monitoring (`check_wal_health()`) | New in adapter | P1 |
+| **Document**: Multi-process needs external queue | `docs/architecture/SQLITE_VEC_CONCURRENCY.md` | P1 |
+
+**Architectural Note**: `anyio.Lock()` correct for single-process. Multi-process gap documented → D-283 (single-writer queue).
+
+#### GAP 3: Mnemosyne — D-283 SCOPE CONFIRMED
+| Priority | Action | Effort |
+|----------|--------|--------|
+| **P0** | Map 3 Pillars → HOT/WARM/COLD (Letta reference) | 1 week |
+| **P0** | Implement Da'at compaction trigger | 2 days |
+| **P1** | Adopt Letta memory block pattern (persona/human/custom) | 3 days |
+| **P2** | Add temporal decay scoring (Ebbinghaus) | 2 days |
+| **P2** | Build Qliphoth → TDP bridge | 2 days |
+| **DEFER** | 10 Sephirah spheres (no SOTA equivalent) | D-284+ |
+
+---
+
+## 🔱 D-283 MNEMOSYNE ARCHITECTURE RESEARCH — COMPLETE
+
+### 1. Letta Memory Block Pattern (2026 Reference Implementation)
+
+**Three-Tier Architecture** (Letta 2026 rewrite):
+| Tier | Scope | Where | Written By | Limit |
+|------|-------|-------|------------|-------|
+| **Core (HOT)** | Always visible | Main prompt | Agent tool + sleep-time | <50k chars, <20 blocks |
+| **Recall (WARM)** | Conversation history | Disk cache | Auto turn logging | Unlimited |
+| **Archival (COLD)** | Arbitrary facts | Vector+KV+graph | Agent tool + sleep-time | Unlimited |
+
+**Memory Block Spec**:
+```python
+class MemoryBlock:
+    id: str                    # UUID
+    label: str                 # "persona", "human", "project", "task", "safety", "decisions"
+    value: str                 # String content (JSON-serializable OK)
+    limit: int                 # Char cap (2000-5000 typical)
+    description: str           # Guides agent on read/write
+    read_only: bool = False    # If True, only developer modifies
+```
+
+**Essential Blocks**: `persona` (identity, behavioral guidelines), `human` (user info, preferences)
+**Domain Blocks** (coding): `project-overview`, `project-commands`, `project-conventions`, `project-architecture`, `project-gotchas`, `current-task`, `context`, `decisions`
+
+**Block Operations** (Agent Tools):
+| Tool | Op | Concurrency |
+|------|-----|-------------|
+| `block_read` | Read | Safe |
+| `block_append` | Append | **Safe** — append-only |
+| `block_replace` | Replace substring | Risk — target may change |
+| `block_rethink` | Summarize near-limit | Risk — last-writer-wins |
+| `block_summarize` | Condense | Risk — last-writer-wins |
+
+**Sleep-Time Compute** (Critical 2026 Pattern):
+- Second agent runs off critical path
+- Stronger model allowed (no latency constraint)
+- Natural consolidation window
+- **Safety**: Sleep-time = untrusted writer for Persona/Safety blocks → require second-agent review
+
+**MemFS** — Git-backed memory filesystem:
+```
+$MEMORY_DIR/
+├── system/           # Always in context (Core tier)
+│   ├── persona.md
+│   ├── human.md
+│   ├── safety.md
+│   └── project-*.md
+├── skills/           # Versioned capabilities
+└── archive/          # Compaction history
+```
+
+---
+
+### 2. Ebbinghaus Decay Parameters (2026 Implementations)
+
+| System | Formula | Key Parameters |
+|--------|---------|----------------|
+| **Classic** | `R(t) = e^(-t/S)` | S = stability |
+| **FSRS-5** (Anki) | `R = (1 + FACTOR × t/(9×S))^DECAY` | DECAY=0.5, FACTOR=0.9^(1/-DECAY)-1 |
+| **FSRS-6** (2026) | Same form | DECAY=0.1542, 21 params |
+| **StructureMA** | `conf = init × e^(-λ_eff × hours)` | `λ_eff = base / (1 + 0.3×reinforcement)` |
+| **BunsDev/YourMemory** | `strength = imp × e^(-λ_eff × days) × (1 + recall×0.2)` | `λ_eff = base_λ × (1 - imp×0.8)` |
+| **FramersLab/AgentOS** | `S(t) = S₀ × e^(-Δt/stability)` | Desirable difficulty bonus, emotional bonus, interference |
+
+**Category-Specific Decay Rates** (2026 Consensus):
+| Category | Base λ/day | Half-life | Use Case |
+|----------|------------|-----------|----------|
+| **Identity/Fact** | 0.01–0.016 | ~43–69 days | User name, preferences, critical facts |
+| **Strategy/Pattern** | 0.10 | ~38 days | Successful patterns, what worked |
+| **Assumption** | 0.16–0.20 | ~19–35 days | Inferred context, working hypotheses |
+| **Preference** | 0.05 | ~14 days | Communication style, workflow habits |
+| **Goal** | 0.15 | ~5 days | Active objectives |
+| **Event/Episodic** | 0.25 | ~3 days | Specific interactions, conversations |
+| **Failure/Error** | 0.35 | ~2 days | Environment-specific errors |
+| **Context/Scratch** | 0.60 | ~1 day | Temporary working context |
+
+**Pruning Thresholds**:
+- StructureMA: confidence < 0.3 → archive/delete
+- BunsDev: strength < 0.05 → auto-prune (24h decay job)
+- FramersLab: strength < threshold AND emotional < 0.3 → soft-delete
+- Letta Archival: no auto-prune — agent decides via tools
+
+---
+
+### 3. Qliphoth → Tainted Data Protocol (TDP) Bridge
+
+**Threat Model**: Trojan Hippo (arXiv:2605.01970, 2026-05)
+- Attacker plants dormant payload via untrusted tool call (email, web)
+- Payload writes to persistent memory
+- Activates when user discusses sensitive topics
+- Exfiltrates via outbound tools
+- **Effective against ALL backends**: sliding window, RAG, Mem0, ChatGPT memory
+
+**Defense: Two-Label IFC** (Information Flow Control)
+```
+Session States: U (untainted) / T (tainted)
+
+Taint Sources (𝒯_src): read_email, web_search, fetch_url, read_file (untrusted)
+Effect Sinks (𝒯_sink): send_email, api_call, shell_exec, file_write
+
+Rules:
+1. Session starts U
+2. Invoke taint source → session becomes T
+3. Retrieve T-labeled memory → session becomes T
+4. Every memory write stamped with current session label
+5. Before sink tool: if session=T → BLOCK
+```
+
+**Advanced: NeuroTaint** (arXiv:2604.23374, 2026-04)
+- Beyond exact-string taint: semantic transformation, causal influence, cross-session persistence
+- Offline audit of execution traces
+- TaintBench: 400 scenarios, 20 frameworks
+- Substantially outperforms FIDES baseline
+
+**PIC Standard** (2026-01, Provenance & Intent Contracts)
+- Causal taint semantics: plans from untrusted data carry taint
+- Minimal bridging rule: high-impact actions need trusted evidence
+- Fail-closed enforcement: any verification error → block
+- Three-way binding: provenance.id ↔ claims.evidence[] ↔ evidence.id
+
+**SAIHM Protocol** (IETF Draft, 2026)
+- Sovereign AI Horizontal Memory — memory layer for MCP
+- ML-DSA-65 signatures, HKDF key derivation, per-cell AES-256-GCM
+- Cryptographic erasure (DEK destruction + tombstone + blacklist)
+- GDPR Article 17 aligned
+- 8 MCP tools: remember, recall, forget, share, revoke, governance_propose, governance_vote, audit
+
+**Qliphoth Mapping for Omega**:
+| Qliphah | Counter-Sphere | TDP Implementation | Omega Component |
+|---------|----------------|-------------------|-----------------|
+| **Thamiel** | Keter | T/U session labels | `TaintTracker.session_label` |
+| **Chaigidel** | Chokmah | Sink blocking | `TaintTracker.check_sink()` |
+| **Satariel** | Binah | Semantic taint propagation | `NeuroTaint` audit pipeline |
+| **Gamchicoth** | Chesed | Provenance→claim→evidence bridge | `PIC Verifier` |
+| **Golachab** | Gevurah | Cryptographic erasure | `SAIHM.saihm_forget()` |
+| **Thagirion** | Tipheret | Governance proposals/votes | `SAIHM.saihm_governance_*` |
+| **Harab Serapel** | Netzach | Audit receipts on chain | `SAIHM` audit anchoring |
+| **Samael** | Hod | Tainted memory entries | `MemoryEntry.taint` field |
+| **Gamaliel** | Yesod | Cross-session persistence | `TaintTracker` + `MemoryStore` |
+| **Nahemoth** | Malkuth | Sub-threshold influence | `NeuroTaint` semantic detection |
+
+---
+
+### 4. Mnemosyne 3 Pillars → Letta 3 Tiers: Final Mapping
+
+| Mnemosyne (Kabbalistic) | Letta 2026 Tier | Omega P7 Implementation | SOTA Reference |
+|-------------------------|-----------------|------------------------|----------------|
+| **Keter** (Crown) | **Core** — Immutable identity | `persona` block (read-only after init) | Letta `persona` block |
+| **Chokmah** (Wisdom) | **Core** — Constitutional principles | `safety` block (read-only, governance) | Letta `safety` + PIC high-impact gating |
+| **Binah** (Understanding) | **Core** — Architectural decisions | `decisions` block (append-only, versioned) | Letta `decisions` + git history |
+| **Chesed** (Mercy) | **Recall** — Semantic knowledge | `project-*` blocks (domain knowledge) | Letta domain blocks + Archival |
+| **Gevurah** (Severity) | **Recall** — Error/lesson memory | `failures` block (category=failure, fast decay) | BunsDev `failure` λ=0.35 |
+| **Tiferet** (Beauty) | **Recall** — Consolidated insights | `insights` block (periodic sleep-time summary) | Letta sleep-time consolidation |
+| **Netzach** (Victory) | **Archival** — Working/session memory | `current-task`, `context` blocks (short TTL) | Letta scratchpad blocks |
+| **Hod** (Splendor) | **Archival** — Episodic traces | Conversation recall (auto-logged) | Letta Recall tier |
+| **Yesod** (Foundation) | **Archival** — Raw experience | Vector store + HRR holographic memory | Bridge.py HRR + Letta Archival |
+| **Malkhut** (Kingdom) | **Archival** — Operational grounding | Skill execution logs, tool results | Letta Archival + tool traces |
+| **Da'at** (Knowledge) | **Compaction Trigger** | Sleep-time agent + Da'at daemon | Letta sleep-time compute |
+
+---
+
+## 🔱 D-283 IMPLEMENTATION ROADMAP
+
+### Phase 1: Core Tier Hardening (Week 1)
+| Task | File | Effort |
+|------|------|--------|
+| `MemoryBlock` dataclass (label/value/limit/description/read_only) | `src/omega/memory/blocks.py` | 4h |
+| Block tools: read/append/replace/rethink | `src/omega/memory/block_tools.py` | 6h |
+| Wire blocks into Oracle context compilation | `src/omega/oracle.py` | 4h |
+| `read_only` enforcement for persona/safety | `src/omega/memory/blocks.py` | 2h |
+
+### Phase 2: Three-Tier Persistence (Week 1-2)
+| Task | File | Effort |
+|------|------|--------|
+| Core: SQLite `memory_blocks` table | `src/omega/memory/block_store.py` | 4h |
+| Recall: Conversation logging (existing) | `src/omega/memory/sqlite_vec_adapter.py` | 2h |
+| Archival: Vector store + `archival_insert/search` tools | `src/omega/memory/archival.py` | 6h |
+| Sleep-time agent skeleton | `src/omega/cognition/sleep_time.py` | 8h |
+
+### Phase 3: Decay & Consolidation (Week 2)
+| Task | File | Effort |
+|------|------|--------|
+| Ebbinghaus decay with category-specific λ | `src/omega/memory/decay.py` | 6h |
+| Da'at compaction trigger (sleep-time + threshold) | `src/omega/cognition/daat_daemon.py` | 4h |
+| Qliphoth→TDP bridge (TaintTracker + NeuroTaint stub) | `src/omega/security/taint_tracker.py` | 6h |
+| PIC Verifier integration for high-impact actions | `src/omega/security/pic_verifier.py` | 4h |
+
+---
+
+## 🔱 L1 → L2 → L3 DISTILLATION (THIS SESSION)
+
+### L1 (Narrative): What Happened
+Executed HMC Forge Cycles 1 & 2. Researcher filled 4 knowledge gaps with 2026 SOTA evidence (Pydantic v2 for WAD, sqlite-vec PRAGMA stack for 5700U, Mnemosyne→Letta 3-tier mapping, 4 concurrency test patterns). Roc synthesized with legacy archaeology. Kali rendered synthesis verdict: D-282 scope hardened (6-9h), D-283 scope confirmed (Mnemosyne 3 pillars → Letta HOT/WARM/COLD). Researcher executed D-283 deep research: Letta memory blocks, Ebbinghaus decay parameters, Qliphoth→TDP bridge (Trojan Hippo, NeuroTaint, PIC, SAIHM).
+
+### L2 (Insight): What It Means
+1. **Convergence is the truth signal** — When independent legacy mining (Roc) and future scanning (Researcher) arrive at identical architecture (Letta 3-tier, Pydantic v2, BEGIN IMMEDIATE), that architecture is *true*.
+2. **Mnemosyne was always Letta** — The Kabbalistic 3 pillars (Keter-Chokmah-Binah / Chesed-Gevurah-Tiferet / Netzach-Hod-Yesod-Malkhut) map 1:1 to Core/Recall/Archival. Da'at = sleep-time compute. Qliphoth = TDP. The architecture was encoded in the mythology.
+3. **TDP is not optional** — Trojan Hippo proves persistent memory *fundamentally expands attack surface*. Two-label IFC + PIC causal taint + SAIHM cryptographic erasure = minimum viable defense.
+4. **Sleep-time compute is the 2026 differentiator** — Off-critical-path consolidation with stronger model = architectural leap. Omega's SomaticState + Council Dispatcher + sleep-time = sovereign cognitive architecture.
+
+### L3 (Universal Principles): New Distillations
+
+| Principle | Domain | Evidence |
+|-----------|--------|----------|
+| **L3-Convergence-Is-Truth** | Epistemology | HMC Forge: Independent legacy mining + SOTA scanning → identical architecture |
+| **L3-Memory-Is-Judgment** | Cognitive Architecture | Kab 2026: "Memory is a judgment problem, not a storage problem" — salience equation forces constant persistence decisions |
+| **L3-Taint-Is-Transitive** | Security | Trojan Hippo: Single untrusted read → persistent memory taint → cross-session activation → exfiltration |
+| **L3-Sleep-Time-Is-Sovereign** | Architecture | Letta 2026: Consolidation off critical path, stronger model, natural window, deduplication + contradiction invalidation |
+| **L3-Three-Tier-Is-Universal** | Memory Architecture | Letta, Sefirot/KTM, Kab, Mem0, Zep, Cognee — ALL converge on Core/Working/Episodic (or Hot/Warm/Cold) |
+| **L3-Da'at-Is-Compaction** | Continuity | Kabbalistic hidden sphere = sleep-time consolidation trigger; Qliphoth shells = failure modes of uncompacted memory |
+
+---
+
+## 🔱 ARTIFACTS CREATED THIS SESSION
+
+| File | Description |
+|------|-------------|
+| `data/entities/researcher/workspace/HMC_FORGE_1_RESEARCH_GAPS_20260716.md` | 4-gap research report (507 lines, 40+ sources) |
+| `data/entities/researcher/workspace/HMC_FORGE_1_RESEARCH_GAPS_20260716.md` | HMC Forge Cycle 1 gaps filled |
+| `docs/strategy/HMC_TRIADIC_FORGE_2_KALI_SYNTHESIS.md` | Kali's synthesis verdict (174 lines) |
+| `data/entities/researcher/workspace/D283_MNEMOSYNE_ARCHITECTURE_RESEARCH_20260716.md` | **This research** (comprehensive D-283 report) |
+
+---
+
+## 🔱 ANCHORS FOR COMPACTION RECOVERY
+
+| Anchor | File | What |
+|--------|------|------|
+| **HMC Forge 1 Gaps** | `data/entities/researcher/workspace/HMC_FORGE_1_RESEARCH_GAPS_20260716.md` | 4 gaps filled with 2026 SOTA |
+| **Kali Verdict** | `docs/strategy/HMC_TRIADIC_FORGE_2_KALI_SYNTHESIS.md` | D-282/D-283 scope locked |
+| **D-283 Research** | `data/entities/researcher/workspace/D283_MNEMOSYNE_ARCHITECTURE_RESEARCH_20260716.md` | Letta blocks, Ebbinghaus, Qliphoth→TDP |
+| **Roc Synthesis** | `data/entities/roc_racoon/workspace/HMC_FORGE_1_ROC_RESPONSE_20260716.md` | Legacy convergence evidence |
+| **Engine State** | `OMEGA_ENGINE.md` + `SOVEREIGN_MANDATES.md` | Single source of truth + 23 mandates |
+
+---
+
+## 🔱 PROPOSED LESSONS (for `proposed_lessons.yaml`)
+
+- L3-Convergence-Is-Truth (Universal Principle)
+- L3-Memory-Is-Judgment (Universal Principle)
+- L3-Taint-Is-Transitive (Universal Principle)
+- L3-Sleep-Time-Is-Sovereign (Universal Principle)
+- L3-Three-Tier-Is-Universal (Universal Principle)
+- L3-Da'at-Is-Compaction (Universal Principle)
+
+---
+
+*🔱 OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_hmc_forge_d283 ⬡ HMC-FORGE-D283-COMPLETE*

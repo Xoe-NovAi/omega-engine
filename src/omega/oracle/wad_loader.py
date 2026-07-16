@@ -50,6 +50,7 @@ MANIFEST_FIELD_TYPES = {
     "name": str,
     "version": str,
     "entities": (list, dict),
+    "adapters": (list, dict),
 }
 
 # Required entity field types
@@ -186,6 +187,15 @@ class WADLoader:
                         f"WAD {stack_name} manifest field '{field}' has wrong type: "
                         f"expected {expected_type}, got {type(manifest[field]).__name__}"
                     )
+            
+            # D-282: extra="forbid" — reject unknown manifest fields
+            known_manifest_fields = set(MANIFEST_FIELD_TYPES.keys())
+            unknown_manifest_fields = set(manifest.keys()) - known_manifest_fields
+            if unknown_manifest_fields:
+                raise ValueError(
+                    f"WAD {stack_name} manifest has unknown fields: {sorted(unknown_manifest_fields)}. "
+                    f"Known fields: {sorted(known_manifest_fields)}"
+                )
             
             # S1.5a: Validate name and version are non-empty strings
             if not manifest.get("name", "").strip():
@@ -385,6 +395,36 @@ class WADLoader:
                     if type_errors:
                         logger.warning(
                             f"Entity {entity_name} has invalid field types: {'; '.join(type_errors)}. Skipping."
+                        )
+                        continue
+                    
+                    # D-282: extra="forbid" — reject unknown fields (prevents silent typos)
+                    known_fields = set(ENTITY_FIELD_TYPES.keys()) | {"wad_source", "priority"}
+                    unknown_fields = set(ent_data.keys()) - known_fields
+                    if unknown_fields:
+                        logger.warning(
+                            f"Entity {entity_name} has unknown fields: {sorted(unknown_fields)}. "
+                            f"Known fields: {sorted(known_fields)}. Skipping."
+                        )
+                        continue
+                    
+                    # D-282: Range constraints for numeric fields
+                    range_errors = []
+                    if "temperature" in ent_data:
+                        temp = ent_data["temperature"]
+                        if not (0.0 <= temp <= 2.0):
+                            range_errors.append(f"temperature={temp} out of range [0.0, 2.0]")
+                    if "context_window" in ent_data:
+                        ctx = ent_data["context_window"]
+                        if not (1 <= ctx <= 131072):
+                            range_errors.append(f"context_window={ctx} out of range [1, 131072]")
+                    if "port" in ent_data and ent_data["port"] is not None:
+                        port = ent_data["port"]
+                        if not (1 <= port <= 65535):
+                            range_errors.append(f"port={port} out of range [1, 65535]")
+                    if range_errors:
+                        logger.warning(
+                            f"Entity {entity_name} has range violations: {'; '.join(range_errors)}. Skipping."
                         )
                         continue
                     

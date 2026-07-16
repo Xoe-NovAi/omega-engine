@@ -34,6 +34,8 @@ from .middleware.headroom import get_headroom_middleware, HeadroomResult
 from .selective_hydration import SelectiveHydration, L3Principle
 from ..errors import OmegaError
 from omega.errors import OmegaError
+from ..memory.blocks import MemoryBlock
+from ..memory.block_tools import BlockTools, get_block_store
 # New constant for token-aware sliding window
 DEFAULT_TOKEN_LIMIT = 4000 
 
@@ -177,6 +179,9 @@ class ContextBuilder:
         self.memory_store = memory_store or get_memory_store()
         self._selective_hydration = selective_hydration
         self._l3_top_k = l3_top_k
+        # Memory blocks (D-283 Mnemosyne)
+        self._block_store = get_block_store()
+        self._block_tools = BlockTools(self._block_store)
 
     @staticmethod
     def _score_exchange_quality(exchange: Dict[str, Any]) -> float:
@@ -260,7 +265,11 @@ class ContextBuilder:
                 token_limit = 0
         
         try:
-            # 1. Fetch recent memory
+            # 1. Fetch memory blocks (D-283 Mnemosyne Core tier)
+            core_blocks = await self._block_tools.get_core_blocks(entity_name)
+            blocks_text = self._format_memory_blocks(core_blocks)
+            
+            # 2. Fetch recent memory
             exchanges = await self.memory_store.get_history(
                 entity_name=entity_name,
                 session_id=session_id,
@@ -268,16 +277,16 @@ class ContextBuilder:
             )
             memory_block = await self._compact_and_format_exchanges(entity_name, exchanges, token_limit) if exchanges else ""
             
-            # 2. Fetch L3 gnosis principles (Selective Hydration)
+            # 3. Fetch L3 gnosis principles (Selective Hydration)
             # [id-soft: vet-046] BSP Culling — top-K principles only
             gnosis_block = await self._build_gnosis_block(entity_name)
             
-            # 3. Fetch and format world state
+            # 4. Fetch and format world state
             world_block = self._format_world_state()
             
-            # Combine blocks: world state + gnosis + memory
-            # Gnosis is injected between world state and memory for context grounding
-            parts = [world_block, gnosis_block, memory_block]
+            # Combine blocks: world state + gnosis + memory blocks + memory
+            # Order: world state (global) → gnosis (principles) → blocks (entity identity) → memory (conversation)
+            parts = [world_block, gnosis_block, blocks_text, memory_block]
             full_context = "\n".join(p for p in parts if p and p.strip())
             return full_context.strip() if full_context else ""
             
@@ -315,6 +324,29 @@ class ContextBuilder:
                 entity_name, e,
             )
             return ""
+
+    def _format_memory_blocks(self, blocks: List[MemoryBlock]) -> str:
+        """Format memory blocks for context injection.
+        
+        Core blocks (persona, human, safety, decisions) are always included
+        in the system prompt. They represent the entity's identity and
+        constitutional principles.
+        """
+        if not blocks:
+            return ""
+        
+        lines = ["## Entity Memory Blocks (Core Tier)\n"]
+        for block in blocks:
+            if block.value and block.value.strip():
+                lines.append(f"### {block.label.upper()}")
+                lines.append(f"{block.description}")
+                lines.append(f"{block.value}")
+                lines.append("")  # blank line between blocks
+        
+        if len(lines) == 1:  # Only header
+            return ""
+        
+        return "\n".join(lines) + "---\n\n"
 
     async def build_context_for_user(
         self,

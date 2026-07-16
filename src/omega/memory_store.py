@@ -48,6 +48,7 @@ from .memory.embeddings import (
     StaticEmbeddingProvider
 )
 from .memory.adapters import MemoryAdapterRegistry, IMemoryAdapter
+from .memory.hybrid_search import HybridSearchEngine, FTSResult, VecResult
 
 logger = logging.getLogger(__name__)
 
@@ -319,52 +320,40 @@ class MemoryStore:
             tg.start_soon(_fetch_fts)
             tg.start_soon(_fetch_vec)
 
-        # 2. Apply Reciprocal Rank Fusion (RRF)
-        # RRF formula: score = sum( 1 / (k + rank) )
-        k = 60
+        # 2. Apply Reciprocal Rank Fusion (RRF) via HybridSearchEngine
+        engine = HybridSearchEngine(k=60)
         
-        def get_doc_id(res):
-            return f"{res.get('session_id')}:{res.get('timestamp')}"
-            
-        fts_ranks = {get_doc_id(r): i + 1 for i, r in enumerate(fts_results)}
+        # Convert FTS results to FTSResult objects
+        fts_objects = [
+            FTSResult(
+                doc_id=f"{r.get('session_id', '')}:{r.get('timestamp', '')}",
+                rank=i + 1,
+                metadata=r,
+            )
+            for i, r in enumerate(fts_results)
+        ]
         
-        vec_ranks = {}
-        for i, (score, payload) in enumerate(vec_results):
-            doc_id = f"{payload.get('session_id')}:{payload.get('timestamp')}"
-            vec_ranks[doc_id] = i + 1
-            
-        all_doc_ids = set(fts_ranks.keys()) | set(vec_ranks.keys())
+        # Convert vector results to VecResult objects
+        vec_objects = [
+            VecResult(
+                doc_id=f"{payload.get('session_id', '')}:{payload.get('timestamp', '')}",
+                rank=i + 1,
+                score=score,
+                metadata=payload,
+            )
+            for i, (score, payload) in enumerate(vec_results)
+        ]
         
-        scored_docs = []
-        for doc_id in all_doc_ids:
-            score = 0.0
-            if doc_id in fts_ranks:
-                score += 1.0 / (k + fts_ranks[doc_id])
-            if doc_id in vec_ranks:
-                score += 1.0 / (k + vec_ranks[doc_id])
-            scored_docs.append((doc_id, score))
-            
-        scored_docs.sort(key=lambda x: x[1], reverse=True)
+        # Fuse using HybridSearchEngine
+        fused_results = engine.fuse(fts_objects, vec_objects, fts_weight=1.0, vec_weight=1.0, limit=limit)
         
         # 3. Final results construction
         final_results = []
-        for doc_id, rrf_score in scored_docs[:limit]:
-            # Prefer FTS metadata (it has content, role, etc.)
-            doc = next((r for r in fts_results if get_doc_id(r) == doc_id), None)
-            if not doc:
-                # Fallback to vector payload
-                _, payload = next(
-                    ((s, p) for s, p in vec_results if f"{p.get('session_id')}:{p.get('timestamp')}" == doc_id), 
-                    (None, None)
-                )
-                if payload:
-                    doc = payload
+        for result in fused_results:
+            doc_copy = result.metadata.copy()
+            doc_copy["_rrf_score"] = result.fused_score
+            final_results.append(doc_copy)
             
-            if doc:
-                doc_copy = doc.copy()
-                doc_copy["_rrf_score"] = round(rrf_score, 6)
-                final_results.append(doc_copy)
-                
         return final_results
 
     def _compute_simple_embedding(self, text: str) -> List[float]:
