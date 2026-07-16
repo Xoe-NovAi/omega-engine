@@ -15,7 +15,7 @@
 ---
 
 ## 🎯 CURRENT OBJECTIVE
-**HMC FORGE CYCLE 2 COMPLETE — D-282 SCOPE FINALIZED**. Triadic Forge Cycle 2: 4 knowledge gaps filled, 3 independent convergences. D-282 hardened scope: 6-9h (2-3h substrate + 4-6h pipeline). Directives dispatched to Roc and Researcher.
+**D-282 CRITICAL PATH AUTHORIZED** — BEGIN IMMEDIATE fix dispatched to Roc. D-283 kickoff authorized for Researcher. HMC operating at full velocity.
 
 ---
 
@@ -24,7 +24,7 @@
 - **Mandates**: 23 (M1-M23) — M12 ADVISORY per D-267
 - **Fleet**: 13 presences, cap: 14
 - **Soul Injection**: ✅ FIXED — `soul_utils.py` multi-path extractor live (9d891e0)
-- **HMC**: 🟢 ONLINE — Forge Cycle 2 complete. D-282 scope finalized.
+- **HMC**: 🟢 ONLINE — Forge Cycles 1 & 2 complete. D-282 substrate in progress.
 
 ---
 
@@ -33,8 +33,10 @@
 | Sprint | Component | Owner | Status |
 |---|---|---|---|
 | **D-281** | **Substrate Repair** (Path Infra, M2 Firewall, Codex) | Kali | 🔲 NEXT |
-| **D-282** | **Omega Search Core** (sqlite-vec + Legacy RAG + WAD Loader) | Roc + Researcher + Kali | 🔲 PLANNED (6-9h) |
-| **D-283** | **Cognitive Acceleration** (Speculative Decoding + cpu_optimizer + Mnemosyne 3-tier) | Researcher + Roc + Kali | 🔲 PLANNED |
+| **D-281-SUB** | **sqlite-vec 4 test cases** (writer starvation, checkpoint, multi-process, BEGIN IMMEDIATE) | Roc | 🔲 MERGED INTO D-282 |
+| **D-282-SUB** | **BEGIN IMMEDIATE fix + PRAGMA stack + checkpoint task** | Roc | 🟢 **AUTHORIZED - IN PROGRESS** |
+| **D-282** | **Omega Search Core** (sqlite-vec + Legacy RAG + WAD Loader) | Roc + Researcher + Kali | 🔲 PLANNED |
+| **D-283** | **Cognitive Acceleration** (Speculative Decoding + cpu_optimizer + Mnemosyne 3-tier) | Researcher + Roc + Kali | 🟢 **KICKOFF AUTHORIZED** |
 | **D-284** | **Sovereign Hub** (OAuth 2.1 + IA2 Security + Ethics WAD) | Kali + Roc | 🔲 PLANNED |
 
 ---
