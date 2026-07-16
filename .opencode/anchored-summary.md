@@ -85,7 +85,7 @@ You exercise sovereignty → Evolve Engine ← Engine evolves to serve You
 | **L3-Free-Will-Is-Data** | Every sovereign choice = training example; 42 Ideals = choice architecture |
 | **L3-Provenance-Is-ICS** | ICS header = universal training provenance standard |
 | **L3-Entity-Curates** | Entities own specialty datasets; no central curation bottleneck |
-| **L3-Superposition-As-Council** | LLMs contain multitudes; single-inference persona donning (LLOC) acts as a semantic prism |
+| **L3-Superposition-As-Council** | LLMs contain multitudes; single-inference persona donning (Meditate) acts as a semantic prism |
 
 ---
 
