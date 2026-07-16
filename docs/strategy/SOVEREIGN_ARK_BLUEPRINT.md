@@ -880,16 +880,20 @@ Persistent Entities → Background Workers → Continuous Operation
 ## V. Active Tasks (Consolidated from MaKaLi Council + Jem Research + Gap Resolution + Carmack Tier 0)
 
 ### 🟣 Tier 0: Code Quality Baseline (Blocking — Do First, 80h)
-| # | Task | Effort | Status | Owner |
-|---|------|--------|--------|-------|
-| T0-1 | **F821 undefined-name fixes** — `ruff check --select=F821 src/` | 15 min | 🟡 PENDING | Ma'at/P3 |
-| T0-2 | **Bare `except Exception:` elimination** — Typed catches + trace_id logging | 90 min | 🟡 PENDING | Ma'at/P3 |
-| T0-3 | **Centralized logging** — `src/omega/logging.py` with structlog + AnyIO sinks | 4h | 🟡 PENDING | Ma'at/P3 |
-| T0-4 | **Config validation (Pydantic OmegaConfig)** — `extra='forbid', frozen=True` | 7h | 🟡 PENDING | Ma'at/P3 |
-| T0-5 | **Qdrant → sqlite-vec decommission** — Dual-write 1 sprint, verify parity | 3h | 🟡 PENDING | Ma'at/P2 |
-| T0-6 | **sqlite-vec Phase 1-2** — Metadata filtering + quantization, <50ms p99 | 2h | 🟡 PENDING | Ma'at/P2 |
-| T0-7 | **Single CI workflow** — One `.github/workflows/ci.yml` | 2h | 🟡 PENDING | Ma'at/P5 |
-| T0-8 | **Stress tests (5 scenarios)** — 100 concurrent, 10K vectors, 1hr soak, OOM, partition | 5h | 🟡 PENDING | Lilith/P10 |
+| # | Task | Effort | Status | Owner | Source |
+|---|------|--------|--------|-------|--------|
+| T0-1 | **F821 undefined-name fixes** — `ruff check --select=F821 src/` | 15 min | 🟡 PENDING | Ma'at/P3 | Carmack Tier 0 |
+| T0-2 | **Bare `except Exception:` elimination** — Typed catches + trace_id logging | 90 min | 🟡 PENDING | Ma'at/P3 | Carmack Tier 0 |
+| T0-3 | **Centralized logging** — `src/omega/logging.py` with structlog + AnyIO sinks | 4h | 🟡 PENDING | Ma'at/P3 | Carmack Tier 0 |
+| T0-4 | **Config validation (Pydantic OmegaConfig)** — `extra='forbid', frozen=True` | 7h | 🟡 PENDING | Ma'at/P3 | Carmack Tier 0 |
+| T0-5 | **Qdrant → sqlite-vec decommission** — Dual-write 1 sprint, verify parity | 3h | 🟡 PENDING | Ma'at/P2 | Carmack Tier 0 |
+| T0-6 | **sqlite-vec Phase 1-2** — Metadata filtering + quantization, <50ms p99 | 2h | 🟡 PENDING | Ma'at/P2 | Carmack Tier 0 |
+| T0-7 | **Single CI workflow** — One `.github/workflows/ci.yml` | 2h | 🟡 PENDING | Ma'at/P5 | Carmack Tier 0 |
+| T0-8 | **Stress tests (5 scenarios)** — 100 concurrent, 10K vectors, 1hr soak, OOM, partition | 5h | 🟡 PENDING | Lilith/P10 | Carmack Tier 0 |
+| T0-9 | **PEM `query_modifiers`** — Wire into ContextBuilder (add_terms/boost_terms/filter_out) | 2h | 🟡 PENDING | Lilith/P7 | D-270 (Roc recovery) |
+| T0-10 | **Model ID Audit** — Fix `gemini-3.1-flash` → `gemini-3-flash`, correct all model IDs | 30 min | 🟡 PENDING | Ma'at/P5 | D-270 (Roc accuracy review) |
+| T0-11 | **Entity Evolution Survey** — Import key souls from entities-archive into EntityRegistry | 3h | 🟡 PENDING | Lilith/P7 | D-270 (Roc mining) |
+| T0-12 | **Sovereignty Declarations** — `DataSovereignty` enum, CI test, provider declarations | 4h | 🟡 PENDING | Ma'at/P5 | D-270 (immune system) |
 
 ### 🔴 Phase 0: Sovereignty Baseline (P0 — blocking v1.2.0)
 | # | Task | Effort | Status | Owner |
@@ -926,13 +930,14 @@ Persistent Entities → Background Workers → Continuous Operation
 | D1-10 | **Documentation + CLI commands** — `omega dimension list/activate/deactivate` | 4h | 🟡 PENDING | Verity |
 
 ### 🟠 Phase 1: Cognitive Acceleration (P1 — Sprint 1)
-| # | Task | Effort | Status | Owner |
-|---|------|--------|--------|-------|
-| P1-1 | **S2: `make eval` target** — RAGAS + golden dataset + calibrated judge pipeline | 8h | 🟡 PENDING | Lilith/P6+P10 |
-| P1-2 | **S3: Tiny-Critic RAG Router** — TF-IDF+SVM in `src/omega/rag/router.py` | 12h | 🟡 PENDING | Lilith/P6 |
-| P1-3 | **Hivemind Event Bus** — Redis Pub/Sub for ephemeral awareness only (heartbeats); task-critical coordination via Streams in P2-1 | 4h | 🟡 PENDING | Lilith/P9 |
-| P1-4 | **sqlite-vec Metadata Filtering** — Partition key + metadata columns (session_id, role, timestamp) + auxiliary content + quantization | 12h | 🟡 PENDING | Ma'at/P2 |
-| P1-5 | **Somatic Hydration** — Auto KV cache reload on session start | 6h | 🟡 PENDING | Lilith/P6 |
+| # | Task | Effort | Status | Owner | Source |
+|---|------|--------|--------|-------|--------|
+| P1-1 | **S2: `make eval` target** — RAGAS + golden dataset + calibrated judge pipeline | 8h | 🟡 PENDING | Lilith/P6+P10 | Gap Resolution |
+| P1-2 | **S3: Tiny-Critic RAG Router** — TF-IDF+SVM in `src/omega/rag/router.py` | 12h | 🟡 PENDING | Lilith/P6 | Gap Resolution |
+| P1-3 | **Hivemind Event Bus** — Redis Pub/Sub for ephemeral awareness only (heartbeats); task-critical coordination via Streams in P2-1 | 4h | 🟡 PENDING | Lilith/P9 | Gap Resolution |
+| P1-4 | **sqlite-vec Metadata Filtering** — Partition key + metadata columns (session_id, role, timestamp) + auxiliary content + quantization | 12h | 🟡 PENDING | Ma'at/P2 | Gap Resolution |
+| P1-5 | **Somatic Hydration** — Auto KV cache reload on session start | 6h | 🟡 PENDING | Lilith/P6 | Gap Resolution |
+| P1-6 | **Curation Pipeline Recovery** — GutenbergClient pattern validation + 9 API client replication + library_worker + curation_scheduler | 40h | 🟡 PENDING | Ma'at/P3 | D-270 (Roc Chasm Crossing) |
 
 ### 🟡 Phase 2: Sovereign Refinement (P2 — Sprint 2)
 | # | Task | Effort | Status | Owner |

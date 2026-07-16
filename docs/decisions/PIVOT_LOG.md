@@ -59,6 +59,7 @@
 | 267 | 2026-07-16 | Stratify Phase 0 Decrees into 4-Wave Execution Sequence |
 | 268 | 2026-07-17 | Meditate/MC Archaeological Origin Validated — LLOC/HLOC Retired |
 | 269 | 2026-07-18 | Nomenclature Change — LLOC/HLOC Retired; Meditate/MC/HMC Adopted |
+| 270 | 2026-07-18 | Chasm Crossing Immunity Framework — 5-Layer Immune System |
 | 92 | 2026-06-02 | Tool-Usage Discipline |
 | 93 | 2026-06-02 | Sprint 0 Initiation (Horizon 1.5 Bridge Phase) |
 | 94 | 2026-06-02 | Tier 2 Circuit Breaker Wire-Up (Sprint 0 Doom Guy) |
@@ -2430,3 +2431,13 @@ The MaKaLi Cloud Council is the firewall's immune response. Every critical updat
 - **Decision**: Adopt three-tier nomenclature: **Meditate** (single-inference, cognitive-only, multi-persona — formerly LLOC), **Mastermind Council (MC)** (multi-subagent, same session, same model — formerly HLOC), **Hivemind Mastermind Council (HMC)** (multi-session, multi-model, agent bus coordination — new concept). Code artifacts renamed: `lloc/` → `meditate/`, `lloc-harness` skill → `meditate-harness` skill.
 - **Rationale**: Precision over legacy. Three physically distinct operations deserve distinct names. "Meditate" reflects the introspective, cognitive-only nature. "Mastermind Council" conveys strategic multi-agent coordination. "Hivemind Mastermind Council" adds the cross-session coordination dimension.
 - **Status**: ✅ RATIFIED
+
+## D270: Chasm Crossing Immunity Framework (2026-07-18)
+- **Context**: Roc Racoon's meditation on 404K tokens of legacy mining revealed that the Curation Pipeline (3,284 lines, 10 free API clients) was abandoned at the chasm crossing — not because it was broken, but because the new vision lacked an immune system. The 4 Critical Corrections (Accuracy Review v3) reveal systemic blindnesses: wrong model IDs, conflated tool identities, overlooked data policy breaches, tech recommendations against locked decisions.
+- **Decision**: Adopt the five-layer immune system framework: (1) Sovereignty Declarations (machine-readable privacy contracts), (2) Model ID Audit (correct routing), (3) Entity Evolution Activation (soul continuity), (4) Memory Budget Manifest (14Gi reality check), (5) Temple-Grade Pattern Validation (forge verification). Execute as integration into Tier 0, not a replacement for existing plans.
+- **Rationale**: The chasm crossing already happened once. The Curation Pipeline was production infrastructure abandoned because the new vision lacked an immune system to protect proven plumbing. The 5-layer immune system prevents recurrence.
+- **Owner**: Kali (framework) → Ma'at (P5) Sovereignty Declarations, Lilith (P7) Entity Activation, Ma'at/P1 Memory Budget, Ma'at/P5 Model ID Audit, Prometheus/P3 Pattern Validation
+- **Key Recoveries from Sonnet Codex**: PEM `query_modifiers` pattern (add_terms/boost_terms/filter_out) — saves weeks of RAG work. Free APIs as sovereign infrastructure (10 clients, zero keys). Cross-Find Gnosis Map (4 engineering connections → PIVOT_LOG, 3 philosophical → soul.yaml).
+- **Deferred Items**: 12-Pillar framework review (requires D-271 debate — diverges from current 10-Pillar system). VR Universe (aspirational → soul.yaml only). Zodiacal cycling (needs performance profile on 14Gi). 22 Tunnels (extend existing qliphoth.py, not new module).
+- **Redis Dependency**: Curation Pipeline recovery (Steps 6-7) requires Redis for queue, dedup, and state. Redis stabilized in Wave 1 (2026-07-16). Steps 6-7 hard-blocked on multi-session Redis stability proof.
+- **Status**: ✅ RATIFIED (merged into Tier 0)
