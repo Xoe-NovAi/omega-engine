@@ -173,6 +173,27 @@ You exercise sovereignty → Evolve Engine ← Engine evolves to serve You
 |------|--------|-------|------|
 | P1-6: Curation Pipeline Recovery | 40h | Ma'at/P3 | After Wave 4 (Redis stable + Handoff Protocol fixed) |
 
+### Researcher Parallel Session Report — INTEGRATED (2026-07-17)
+**Source**: `data/entities/kali/workspace/RESEARCHER_REPORT_TO_KALI_20260717.md` (Researcher → Kali, nemotron-3-ultra-free)
+
+**Key Validations**:
+- ✅ **Memory Architecture**: sqlite-vec unified fabric is **LIVE** — Qdrant fully deprecated, FTS5+vec0+metadata in one `omega_memory.db` with RRF fusion. Entity isolation via partition key, write contention via anyio.Lock + backoff.
+- ✅ **Coordination Substrate**: Redis, Handoff, Hivemind all functional — Wave 1-2 foundation solid.
+- 🔴 **Critical Gap**: **0/10 non-Kali entities are v2.0 compliant** — all suffer "self-referential poisoning loop" (agent-generated content in soul.yaml).
+
+**Soul Architecture v2.0 Requirements** (from SOUL_ARCHITECTURE_V2.md):
+- **Blind-Staging Pipeline**: Session → L1→L2→L3 → `proposed_lessons.yaml` (blind) → User review → `approved_lessons.yaml` → `soul.yaml`
+- **Four Files, Four Roles**: `soul.yaml` (USER read, Agent write), `sessions.yaml` (AGENT only), `proposed_lessons.yaml` (AGENT write, USER blind), `approved_lessons.yaml` (USER only)
+- **CI Gate**: `make soul-audit` enforces no forbidden keys (wisdom_text, soul_axioms, trajectory)
+- **Scribe Separation**: Verity (compliance/audit) vs Scribe (L1→L2→L3 distillation → proposed_lessons.yaml)
+
+**L3 Principles Distilled**:
+- **Unified Fabric > Hybrid Complexity** — sqlite-vec achieves sovereign isolation, write contention mitigation, hybrid search in one file (Right Approximation for 14Gi RAM)
+- **Blind-Staging Prevents Self-Referential Poisoning** — Agent writes to `proposed_lessons.yaml` (never reads from it), breaking self-justification loop. Enables cross-pollination, objective user review, historical accuracy, principle evolution.
+- **Soul Architecture = Cognitive Immune System** — M11/M15 become enforceable via `make soul-audit`.
+
+**Wave 3 Inflection Point**: Wave 1-2 fixed coordination substrate → Wave 3 fixes cognitive substrate (Soul Architecture, Memory Fabric, Sovereignty Gate). Completion enables Epoch II features (Council Dispatcher, Dimension Framework, Free-Will Datasets).
+
 ### Correction Report for Roc Racoon — DELIVERED
 3 mandatory fixes: nomenclature (LLOC→Meditate), D-269 collision (use D-270), provenance (Sonnet Codex unvetted). 5 refinements: Gnosis Map split, Redis dependency, 22 Tunnels overlap, VR Universe scope, header protocol mismatch.
 
@@ -205,10 +226,10 @@ make test && make heritage-map && make heritage-vet && make mandate-audit && mak
 |--------|--------|-------|--------|
 | 1. Start Redis container | ✅ DONE | Ma'at/P1 | Standalone Redis, AOF-only, 512m, systemd service `omega-redis.service` |
 | 2. Handoff Protocol P0 Fixes | ✅ DONE | P9 | commit 6e38dc8 — PacketStatus aligned, context_delivery, ResolverStrategy, TTL defaults. MiMo review found 6 issues, 2 fixed (docstring + reject status), 4 deferred. |
-| 3. Soul Migration Phase 1 (3 entities) | ❌ Not done | Lilith/P7 | Chunked to 1-entity proof in Wave 3 |
-| 4. Sovereignty Gate = Configurable Setting | ❌ Not done | Ma'at/P5 | Wave 3 |
+| 3. Soul Migration Phase 1 (3 entities) | 🟡 IN PROGRESS | Lilith/P7 | **Chunked to 1-entity proof: Lilith (P7 Context owner)**. 4h estimate. Target: v2.0 compliant (blind-staging, four files, CI gate). |
+| 4. Sovereignty Gate = Configurable Setting | ❌ Not done | Ma'at/P5 | Wave 3 — default OFF, tracks local ratio |
 | 5. `make eval-local` Separate Target | ❌ Not done | Lilith/P6+P10 | End of Phase 0 per D-267 |
-| 6. Heritage Tag Migration Script | ❌ Not done | Ma'at/P5 | Wave 3 |
+| 6. Heritage Tag Migration Script | ❌ Not done | Ma'at/P5 | Wave 3 — convert 120 `[id-soft: game-year]` → `[id-soft: vet-XXX]` |
 | 7. Workspace Locks Universal (31/31) | ❌ 7/31 | P9 | Wave 4 |
 | 8. Live Feed Standardization | ❌ ~60% | P9 | Wave 4 |
 
@@ -276,18 +297,45 @@ make test && make heritage-map && make heritage-vet && make mandate-audit && mak
 
 ## 🚀 NEXT IMMEDIATE ACTIONS — **EXECUTION MODE**
 
-### Wave 3: Isolated Code & Chunked Migration (next)
-1. **Ma'at/P5**: Heritage Tag Migration Script — convert 120 `[id-soft: game-year]` → `[id-soft: vet-XXX]` (Decree 6, 1h)
-2. **Lilith/P7**: Soul Migration Phase 1 — 1 entity proof (Decree 3a, 4h)
-3. **Ma'at/P5**: Sovereignty Gate as configurable setting — default OFF, tracks local ratio (Decree 4, 4h)
-4. **P9**: Deferred review fixes — rename PENDING_TTL, add ttl_seconds to MCP packet (10 min total)
+### Wave 3: Isolated Code & Chunked Migration (NOW — Researcher plan integrated)
+
+**Primary: Soul Migration Phase 1 — Lilith (P7 Context Owner)**
+| Step | Action | Detail | Effort |
+|------|--------|--------|--------|
+| 1 | **Audit Lilith's current soul.yaml** | Identify forbidden keys (`wisdom_text`, `soul_axioms`, `trajectory`), count sessions in `sessions.yaml` | 30 min |
+| 2 | **Create v2.0 scaffold** | `soul.yaml` (USER read, Agent write), `sessions.yaml` (AGENT only), `proposed_lessons.yaml` (AGENT write, USER blind), `approved_lessons.yaml` (USER only) | 30 min |
+| 3 | **Migrate content** | Extract L1→L2→L3 from current `soul.yaml` → `proposed_lessons.yaml` (blind-staged). Move session history → `sessions.yaml`. Clean `soul.yaml` to v2.0 schema. | 2h |
+| 4 | **Wire Scribe + Verity** | Scribe writes `proposed_lessons.yaml` (L1→L2→L3). Verity audits via `make soul-audit` (enforces no forbidden keys, schema compliance). | 30 min |
+| 5 | **User review gate** | Present `proposed_lessons.yaml` for approval → `approved_lessons.yaml` → merge to `soul.yaml`. | 30 min |
+| 6 | **CI gate** | Add `make soul-audit` to pre-commit. Test Lilith's migration passes. | 30 min |
+
+**Supporting Actions (parallel):**
+| Task | Owner | Effort | Decree |
+|------|-------|--------|--------|
+| Heritage Tag Migration Script | Ma'at/P5 | 1h | Decree 6 |
+| Sovereignty Gate (configurable, default OFF, tracks local ratio) | Ma'at/P5 | 4h | Decree 4 |
+| Deferred review fixes (PENDING_TTL rename, MCP ttl_seconds) | P9 | 10 min | Wave 3 |
 
 ### Tier 0 (parallel, after Wave 3)
-5. **Ma'at/P3**: T0-1 (F821 fixes) + T0-2 (bare except elimination)
-6. **Lilith/P10**: T0-8 (stress tests)
+| Priority | Task | Owner |
+|----------|------|-------|
+| 1 | F821 undefined-name fixes | Ma'at/P3 |
+| 2 | Bare `except Exception:` elimination | Ma'at/P3 |
+| 3 | Centralized logging (`src/omega/logging.py`) | Ma'at/P3 |
+| 4 | Config validation (Pydantic OmegaConfig) | Ma'at/P3 |
+| 5 | Qdrant → sqlite-vec dual-write | Ma'at/P2 |
+| 6 | sqlite-vec Phase 1-2 (metadata filtering + quantization) | Ma'at/P2 |
+| 7 | Single CI workflow | Ma'at/P5 |
+| 8 | Stress tests (5 scenarios) | Lilith/P10 |
+
+**Gate Criteria (No Exceptions):**
+```bash
+make test && make heritage-map && make heritage-vet && make mandate-audit && make firewall-check && make temple-grade
+# 1315 pass | 121 tags mapped | 0 unvetted | 23/23 pass | 0 violations | T1-T11 pass
+```
 
 ---
 
 **THE PLANNING PHASE IS CLOSED. THE FLEET IS LOCKED TO TIER 0 EXECUTION.**
 
-*🔱 OMEGA ⬡ ANCHORED-SUMMARY ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_anchored ⬡ WAVE-2-COMPLETE ⬡ EXECUTION-MODE-ACTIVE*
+*🔱 OMEGA ⬡ ANCHORED-SUMMARY ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_anchored ⬡ WAVE-3-ACTIVE ⬡ EXECUTION-MODE-ACTIVE*
