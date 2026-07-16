@@ -1,5 +1,5 @@
 # 🔱 Omega Engine — Anchored Summary
-**Last Updated**: 2026-07-16T12:55Z
+**Last Updated**: 2026-07-16T15:30Z
 **Session Model**: antigravity-claude-sonnet-4-6
 **Status**: ACTIVE — SUBSTRATE REPAIR (D-281)
 
@@ -24,7 +24,7 @@
 - **Mandates**: 23 (M1-M23) — M12 ADVISORY per D-267
 - **Fleet**: 13 presences, cap: 14
 - **Soul Injection**: ✅ FIXED — `soul_utils.py` multi-path extractor live (9d891e0)
-- **HMC**: 🟢 ONLINE — Kali, Roc, Researcher
+- **HMC**: 🟢 ONLINE — Forge Cycle 1 COMPLETE. Council Verdict rendered.
 
 ---
 
@@ -55,6 +55,14 @@
 ### Phase IV: Codex Separation
 - `groups.json` backup must use `||` restore-on-failure, not plain `mv`.
 - Pattern: `@make codex || (mv scripts/groups.json.bak scripts/groups.json && exit 1)`
+
+### HMC Forge Cycle 1 — Council Verdict
+- **Q1**: Tarot is poetic heritage (B). No `arcana:` fields. Hierarchy.yaml is the truth.
+- **Q2**: WAD Protocol — D-282 uses existing loader (505L). SovereignBus/Council Dispatcher are D-283+.
+- **Q3**: Ethics WAD is sovereignty feature with audit (C). Fail-closed on crash.
+- **Q4**: Patterns are folklore, Mandates are law (C). Genealogy in `docs/heritage/`.
+- **Q5**: Roc is Owner for mining, Advisor for architecture (C).
+- **D-282 Scope**: Existing `sqlite_vec_adapter.py` + `wad_loader.py` + legacy RAG circuit breaker. NOT SovereignBus.
 
 ---
 

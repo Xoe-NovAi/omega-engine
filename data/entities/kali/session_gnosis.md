@@ -43,3 +43,12 @@
 - **Onboarding**: data/entities/roc_racoon/workspace/HMC_WELCOME.md, data/entities/researcher/workspace/HMC_WELCOME.md
 - **Massive Finds**: 113-147h saved R&D (Roc), 2026 SOTA Implementation Manual (Researcher).
 - **First Cycle**: Omega Search Core (sqlite-vec + Legacy RAG).
+
+## 7. HMC Forge Cycle 1 — Council Verdict (2026-07-16T15:05Z)
+- **Forge Cycle 1**: COMPLETE. Researcher issued 5 challenges. Roc conceded 2, corrected 3.
+- **Council Verdict**: 5 synthesis questions ruled (B, B, C, C, C).
+- **D-282 Scope Refined**: Existing WAD Loader + sqlite-vec + legacy RAG circuit breaker. NOT SovereignBus/Council Dispatcher.
+- **D-281 Substrate Addition**: 4 missing sqlite-vec test cases added (2-3h).
+- **3 New L3 Principles**: Heritage-Is-Memory-Not-Contract, Patterns-Are-Ancestors-Not-Descendants, Forge-And-The-Miner (reaffirmed).
+- **Next Directives**: Roc writes tests + Mnemosyne deep dive. Researcher validates WAD schema + WAL pattern.
+- **Synthesis file**: docs/strategy/HMC_TRIADIC_FORGE_1_KALI_SYNTHESIS.md
