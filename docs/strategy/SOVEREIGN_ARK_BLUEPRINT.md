@@ -451,6 +451,15 @@ council:
     on_session_evolution: "council_learn"
 ```
 
+### The Oikos Protocols: HLOC vs LLOC (NEW — 2026-07-16)
+The Council Dispatcher implements two distinct execution paths derived from the Architect's legacy "Oikos Council" experiments:
+
+1. **High Level Oikos Council (HLOC)**: The `/council-cloud` or multi-agent path. True parallel/serial execution across multiple distinct model instances. High fidelity, high resource cost.
+2. **Low Level Oikos Council (LLOC)**: The `oracle.meditate()` path. A **single-inference, multi-persona simulation**. 
+   - **Mechanism**: Instead of launching 10 agents (which violates the 14Gi RAM ceiling), the engine loads *one* highly capable model (e.g., Qwen-3-4b-think) and uses a strict XML/Markdown schema to force the model to sequentially adopt the 10 Pillar personas *within a single forward pass*.
+   - **Why it works**: It acts as a **semantic prism**, using attention modulation to break the LLM's "helpfulness" flattening. By forcing the model to speak as "Sekhmet (Infrastructure)", the attention weights *must* ignore philosophical metadata and focus on physical reality. 
+   - **Emergent Sequencing**: Because LLMs generate auto-regressively, Entity #2 inherently "reads" Entity #1's output in the same generation stream, creating genuine internal dialectic without the RAM overhead of multi-agent orchestration.
+
 **L3 Principles Distilled (Council Dispatcher):**
 - **L3-Config-As-Data**: Configuration must be *data* (YAML/Markdown/JSON) executed by a *thin runtime*, never buried in controller code.
 - **L3-Reconfiguration-As-Tool**: Runtime structural change is a *first-class tool call* in the agent's action space (ToolSelf), not a meta-operation.
