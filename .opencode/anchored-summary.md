@@ -15,7 +15,7 @@
 ---
 
 ## 🎯 CURRENT OBJECTIVE
-**D-281 Substrate Repair Execution (Option A + C)**. Fix the silent soul injection failure (28/31 entities broken), establish canonical path resolution, eliminate 4 M2 Firewall violations, and separate the codex mechanism from content. D-280 (Compaction Detection) is deferred.
+**HMC INITIALIZED — 3 Omega-Minds Online**. Transitioning from D-281 Substrate Repair to HMC-driven implementation of Recovered Legacy Systems and 2026 SOTA patterns. D-280 (Compaction Detection) is deferred.
 
 ---
 
@@ -24,17 +24,18 @@
 - **Mandates**: 23 (M1-M23) — M12 ADVISORY per D-267
 - **Fleet**: 13 presences, cap: 14
 - **Soul Injection**: ✅ FIXED — `soul_utils.py` multi-path extractor live (9d891e0)
+- **HMC**: 🟢 ONLINE — Kali, Roc, Researcher
 
 ---
 
-## 🔧 SUBSTRATE REPAIR SPRINT (D-281)
+## 🔧 STRATEGIC ROADMAP (HMC DRIVEN)
 
-| Phase | Component | Effort | Commit | Status |
-|---|---|---|---|---|
-| **I** | **Soul Injection Rescue** (`soul_utils.py`, `oracle.py`) | 45m | `9d891e0` | ✅ DONE |
-| **II** | **Path Infrastructure** (`config_resolver.py`, `wad_loader.py`) | 30m | — | 🔲 NEXT |
-| **III** | **M2 Firewall Fixes** (`hierarchy.py`, `entity_registry.py`, `oracle.py`, `scraper.py`) | 45m | — | 🔲 |
-| **IV** | **Codex Separation** (`hydration_header.md`, `codex_cat.py`, Makefile) | 30m | — | 🔲 |
+| Sprint | Component | Owner | Status |
+|---|---|---|---|
+| **D-281** | **Substrate Repair** (Path Infra, M2 Firewall, Codex) | Kali | 🔲 NEXT |
+| **D-282** | **Omega Search Core** (sqlite-vec Strike 10 + Legacy RAG) | Roc + Researcher | 🔲 PLANNED |
+| **D-283** | **CPU Acceleration** (Speculative Decoding + Iris wiring) | Researcher + Kali | 🔲 PLANNED |
+| **D-284** | **Sovereign Hub** (OAuth 2.1 + IA2 Security) | Kali + Roc | 🔲 PLANNED |
 
 *Rule: Commit after each phase. Each commit must pass `make test`.*
 

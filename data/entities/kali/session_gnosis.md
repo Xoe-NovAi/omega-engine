@@ -33,3 +33,13 @@
 - `.opencode/anchored-summary.md` — post-compaction recovery state
 - `src/omega/governance/config_resolver.py` — TO BE CREATED in Phase II
 - `src/omega/soul_utils.py` — Phase I deliverable (live)
+
+## 6. HMC Initialization (2026-07-16T14:00Z)
+- **HMC Status**: 3-Mind Council ONLINE (Kali, Roc, Researcher).
+- **Communication**: Hivemind + Shared Files.
+- **Orchestration**: Human Architect (Manual loop).
+- **Strategic Plan**: docs/strategy/HMC_STRATEGIC_PLAN.md
+- **Synthesis Report**: docs/strategy/HMC_SYNTHESIS_REPORT.md
+- **Onboarding**: data/entities/roc_racoon/workspace/HMC_WELCOME.md, data/entities/researcher/workspace/HMC_WELCOME.md
+- **Massive Finds**: 113-147h saved R&D (Roc), 2026 SOTA Implementation Manual (Researcher).
+- **First Cycle**: Omega Search Core (sqlite-vec + Legacy RAG).
