@@ -48,7 +48,7 @@ class HandoffPacket:
     """Typed handoff between agents. Mandate 9 (Error Integrity) compliant.
     
     Every dispatch creates one of these. It tracks the full lifecycle:
-    pending -> accepted -> completed/failed, with traceable IDs at every step.
+    pending -> active -> completed/stale, with traceable IDs at every step.
     
     Core concept (agent dispatch) is the user's original design.
     Uses [id-soft: vet-015] ZONEID Pattern for packet integrity.

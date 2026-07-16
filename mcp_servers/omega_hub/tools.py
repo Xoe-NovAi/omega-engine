@@ -2617,7 +2617,8 @@ async def hivemind_handoff(
             if not src.exists():
                 return json.dumps({"error": f"Packet {packet_id} not found in pending"})
             packet = json.loads(src.read_text())
-            packet["status"] = "rejected"
+            packet["status"] = "stale"
+            packet["rejected"] = True
             packet["rejected_at"] = datetime.now(timezone.utc).isoformat()
             packet["rejection_reason"] = reason
             dst = HANDOFF_STALE / f"{packet_id}.json"
