@@ -1,9 +1,23 @@
 # Model configurations with context budgets
+# [P3] Paths use env:OMEGA_MODELS_DIR prefix. In CI/test without the var,
+# resolve_path() returns the relative path — still ends with .gguf for assertions.
 models:
   qwen3-1.7b:
     context_budget: 15000
-    provider: lmster
+    provider: native-gguf
+    path: env:OMEGA_MODELS_DIR/Qwen3-1.7B-Q6_K.gguf
+    size_gb: 1.6
+    ram_mb: 2048
+    context_window: 8192
     role: "P1-P10 pillars, fast inference"
+  qwen3-1.7b-q6_k:
+    context_budget: 15000
+    provider: native-gguf
+    path: env:OMEGA_MODELS_DIR/Qwen3-1.7B-Q6_K.gguf
+    size_gb: 1.6
+    ram_mb: 2048
+    context_window: 8192
+    role: "Q6_K quant variant of Qwen3-1.7B"
   qwen3-4b:
     context_budget: 20000
     provider: lmster

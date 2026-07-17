@@ -479,7 +479,14 @@ class ModelGateway:
         return ["-ctk", key_type, "-ctv", value_type, "-mli", "1"]
 
     def get_model_path(self, model_name: str) -> Optional[str]:
-        """Get the GGUF path for a model by name. Resolves 'env:' prefixes."""
+        """Get the GGUF path for a model by name. Resolves 'env:' prefixes.
+
+        [M1/P3 Graceful Fallback] Returns None (not empty string) when no path
+        is configured, enabling callers to distinguish between 'model not found'
+        (None) and 'no file mapping for this model' (also None). Tests can assert
+        ``path is not None and path.endswith('.gguf')`` without relying on file
+        existence on the test machine.
+        """
         spec = self.models.get(model_name)
         if not spec:
             return None
@@ -499,7 +506,8 @@ class ModelGateway:
             resolved_alt = resolve_path(alt)
             if Path(resolved_alt).exists():
                 return resolved_alt
-        return path
+        # [M1/P3] Return None instead of empty string when no path configured
+        return path if path else None
 
     def get_model_spec(self, model_name: str) -> Optional[dict]:
         """Get full model spec."""
