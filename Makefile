@@ -817,6 +817,7 @@ profile-clean: ## 🧹 Clean profiling artifacts
 codex: ## 📚 Generate OMEGA_CODEX.md via Stack-Cat Protocol
 	python3 scripts/codex_cat.py
 
+codex-gen: codex ## 📚 Alias (D-281 Phase IV gate name)
 
 codex-all: ## 📚 Generate full codex with all groups
 	python3 scripts/codex_cat.py
@@ -825,17 +826,30 @@ codex-watch: ## 👀 Watch for changes and regenerate codex
 	@which entr >/dev/null || (echo "Install entr: apt install entr"; exit 1)
 	find . -name "*.md" -path "./scripts/*" -prune -o -print | entr -c make codex
 
+# D-281 Phase IV: subset targets mutate groups.json — backup + restore-on-failure
 codex-mandates: ## 📚 Generate codex with mandates group only
-	@echo '{"mandates": ["SOVEREIGN_MANDATES.md"]}' > scripts/groups.json && make codex
+	cp scripts/groups.json scripts/groups.json.bak
+	@echo '{"mandates": ["SOVEREIGN_MANDATES.md"]}' > scripts/groups.json
+	python3 scripts/codex_cat.py || (mv scripts/groups.json.bak scripts/groups.json && exit 1)
+	mv scripts/groups.json.bak scripts/groups.json
 
 codex-agents: ## 📚 Generate codex with agents group only
-	@echo '{"agents": ["AGENTS.md"]}' > scripts/groups.json && make codex
+	cp scripts/groups.json scripts/groups.json.bak
+	@echo '{"agents": ["AGENTS.md"]}' > scripts/groups.json
+	python3 scripts/codex_cat.py || (mv scripts/groups.json.bak scripts/groups.json && exit 1)
+	mv scripts/groups.json.bak scripts/groups.json
 
 codex-arch: ## 📚 Generate codex with architecture group only
-	@echo '{"architecture": ["ORACLE_STACK.md"]}' > scripts/groups.json && make codex
+	cp scripts/groups.json scripts/groups.json.bak
+	@echo '{"architecture": ["ORACLE_STACK.md"]}' > scripts/groups.json
+	python3 scripts/codex_cat.py || (mv scripts/groups.json.bak scripts/groups.json && exit 1)
+	mv scripts/groups.json.bak scripts/groups.json
 
 codex-heritage: ## 📚 Generate codex with heritage group only
-	@echo '{"heritage": ["CREDITS.md"]}' > scripts/groups.json && make codex
+	cp scripts/groups.json scripts/groups.json.bak
+	@echo '{"heritage": ["CREDITS.md"]}' > scripts/groups.json
+	python3 scripts/codex_cat.py || (mv scripts/groups.json.bak scripts/groups.json && exit 1)
+	mv scripts/groups.json.bak scripts/groups.json
 
 install-codex-hook: ## 🔗 Install git post-merge hook for auto-codex
 	@echo '#!/bin/bash\nmake codex' > .git/hooks/post-merge

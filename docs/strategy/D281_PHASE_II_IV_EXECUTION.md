@@ -1,6 +1,6 @@
 # 🔱 D-281 Substrate Repair: Phase II-IV Execution Plan
 **Date**: 2026-07-16
-**Status**: Phase II COMPLETE · Phase III COMPLETE (2026-07-17, Grok CLI) — Phase IV QUEUED
+**Status**: Phase II–IV COMPLETE (2026-07-17, Grok CLI) — D-281 substrate path closed
 **Pre-requisite**: Phase I (Soul Injection Rescue) is COMPLETE.
 
 ### Phase II delivery (closed)
@@ -10,6 +10,13 @@
 | `src/omega/oracle/wad_loader.py` | Wired to `WADS_DIR`; `OMEGA_WADS_DIR` env override preserved |
 | Gate | Targeted wad_loader/m21: **50 passed**. Full suite: **1367 passed**, **4 failed** (pre-existing: models.yaml speculative_decode, model_gateway paths, WAD manifest unknown fields) — not Phase II regressions |
 | Hivemind | Completes `ho_9a9ed3fc63e8` / duplicate `ho_ac32a5642098` |
+
+### Phase IV delivery (closed — `ho_577db0e0e43a`)
+| Artifact | Status |
+|----------|--------|
+| `scripts/hydration_header.md` | Extracted D-277 sequence + `{{TIMESTAMP}}` |
+| `scripts/codex_cat.py` | Dynamic header read (fail-closed if missing) |
+| `Makefile` | `codex-gen` alias; subset targets backup/restore groups.json |
 
 ### Phase III delivery (closed — `ho_cf6c4925ea7d`)
 | File | Change |

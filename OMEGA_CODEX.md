@@ -1,21 +1,21 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-16T10:22:23.005331+00:00 ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-17T02:37:53.591711+00:00 ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
 ## 🔄 HYDRATION SEQUENCE (D-277)
 
 After compaction or restart, execute in strict order:
+
 1. `omega-hub_hivemind_get_awareness()` — Who is here?
 2. `git status && git log --oneline -5` — What is committed?
 3. Read OMEGA_CODEX.md — FULL file, no limit parameter. You are doing this now
 4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-07-16T10:22:23.005331+00:00 | Regenerate: `make codex`
+> Codex generated: 2026-07-17T02:37:53.591711+00:00 | Regenerate: `make codex`
 > If timestamp is >24h old, run `make codex` before reading further.
 
 ---
-
 ## 📁 GROUP: CODEX
 
 ### OMEGA_ENGINE.md

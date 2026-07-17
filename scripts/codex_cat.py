@@ -60,16 +60,16 @@ def generate_codex(root: Path = None, out_file: Path = None) -> None:
     codex_content = [f"# ⬡ OMEGA ⬡ CODEX ⬡ {ts} ⬡\n\n"]
     codex_content.append("> **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.\n\n")
     
-    # D-277: Hydration Sequence — every agent sees this after compaction
-    codex_content.append("## 🔄 HYDRATION SEQUENCE (D-277)\n\n")
-    codex_content.append("After compaction or restart, execute in strict order:\n")
-    codex_content.append("1. `omega-hub_hivemind_get_awareness()` — Who is here?\n")
-    codex_content.append("2. `git status && git log --oneline -5` — What is committed?\n")
-    codex_content.append("3. Read OMEGA_CODEX.md — FULL file, no limit parameter. You are doing this now\n")
-    codex_content.append("4. Read `.opencode/anchored-summary.md` — What was I doing?\n")
-    codex_content.append("5. Present a rehydration report. Pause. Await user direction.\n\n")
-    codex_content.append(f"> Codex generated: {ts} | Regenerate: `make codex`\n")
-    codex_content.append("> If timestamp is >24h old, run `make codex` before reading further.\n\n---\n\n")
+    # D-277 / D-281 Phase IV: hydration sequence lives in scripts/hydration_header.md
+    header_path = Path(__file__).resolve().parent / "hydration_header.md"
+    try:
+        header = header_path.read_text(encoding="utf-8")
+    except FileNotFoundError as e:
+        logger.error(f"Hydration header not found: {header_path}")
+        raise FileReadError(f"Hydration header not found: {header_path}") from e
+    codex_content.append(header.replace("{{TIMESTAMP}}", ts))
+    if not codex_content[-1].endswith("\n"):
+        codex_content.append("\n")
     
     for group, files in groups.items():
         codex_content.append(f"## 📁 GROUP: {group.upper()}\n\n")
