@@ -36,6 +36,7 @@ from ..errors import OmegaError
 from omega.errors import OmegaError
 from ..memory.blocks import MemoryBlock
 from ..memory.block_tools import BlockTools, get_block_store
+from ..memory.recall import RecallStore, get_recall_store
 # New constant for token-aware sliding window
 DEFAULT_TOKEN_LIMIT = 4000 
 

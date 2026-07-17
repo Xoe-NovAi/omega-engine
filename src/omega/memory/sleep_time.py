@@ -22,6 +22,7 @@ from typing import Any, Dict, List, Optional, Callable, Awaitable
 from .blocks import MemoryBlock, BlockCategory
 from .block_tools import BlockTools, BlockOperationResult
 from .archival import ArchivalMemory, get_archival_memory
+from .recall import RecallStore, get_recall_store
 
 logger = logging.getLogger(__name__)
 
@@ -58,12 +59,14 @@ class SleepTimeAgent:
         self,
         block_tools: BlockTools,
         archival: Optional[ArchivalMemory] = None,
+        recall_store: Optional[RecallStore] = None,
         stronger_model: str = "gemma-4-31b",  # Or any stronger model
         review_agent: Optional["SleepTimeAgent"] = None,
         entity_name: str = "sleep_time_agent",
     ):
         self.tools = block_tools
         self.archival = archival or get_archival_memory()
+        self.recall = recall_store
         self.stronger_model = stronger_model
         self.review_agent = review_agent
         self.entity_name = entity_name
@@ -119,6 +122,22 @@ class SleepTimeAgent:
             # 5. Detect contradictions (placeholder - would use LLM in production)
             contradictions = await self._detect_contradictions(transcript, requester_entity)
             result.contradictions_found = len(contradictions)
+            
+            # 6. Run recall decay pass (power-law recalibration)
+            if self.recall is not None:
+                try:
+                    decay_stats = await self.recall.decay_pass()
+                    logger.info(
+                        "Recall decay pass: %d turns across %d entities",
+                        decay_stats.turns_updated,
+                        decay_stats.entities_processed,
+                    )
+                    if decay_stats.errors:
+                        for err in decay_stats.errors:
+                            result.errors.append(f"decay_pass: {err}")
+                except Exception as e:
+                    logger.error(f"Recall decay pass failed: {e}")
+                    result.errors.append(f"decay_pass: {str(e)}")
             
         except Exception as e:
             logger.error(f"Sleep-time consolidation failed: {e}", exc_info=True)
@@ -278,6 +297,7 @@ class DaatDaemon:
         self,
         block_tools: BlockTools,
         sleep_agent: SleepTimeAgent,
+        recall_store: Optional[RecallStore] = None,
         check_interval_seconds: int = 60,
         core_block_threshold: float = 0.85,
         archival_size_threshold_mb: int = 500,
@@ -285,6 +305,7 @@ class DaatDaemon:
     ):
         self.tools = block_tools
         self.sleep_agent = sleep_agent
+        self.recall = recall_store
         self.check_interval = check_interval_seconds
         self.core_threshold = core_block_threshold
         self.archival_threshold_mb = archival_size_threshold_mb
@@ -313,7 +334,19 @@ class DaatDaemon:
     async def trigger_consolidation(self, transcript: List[Dict[str, str]], entity: str) -> ConsolidationResult:
         """Explicit consolidation trigger (e.g., from Oracle on session end)."""
         self._last_consolidation = datetime.now(timezone.utc)
-        return await self.sleep_agent.consolidate(transcript, entity)
+        result = await self.sleep_agent.consolidate(transcript, entity)
+        # Also run recall decay pass if recall store is available
+        if self.recall is not None:
+            try:
+                decay_stats = await self.recall.decay_pass()
+                logger.info(
+                    "Da'at recall decay pass: %d turns across %d entities",
+                    decay_stats.turns_updated,
+                    decay_stats.entities_processed,
+                )
+            except Exception as e:
+                logger.error(f"Da'at recall decay pass failed: {e}")
+        return result
     
     async def _monitor_loop(self) -> None:
         """Monitor memory pressure and trigger consolidation."""
@@ -357,17 +390,24 @@ async def create_sleep_time_system(
     """
     Create the complete sleep-time consolidation system for an entity.
     
+    Creates a RecallStore and wires it into both SleepTimeAgent and DaatDaemon
+    for automatic decay pass on every consolidation cycle.
+    
     Returns:
         (SleepTimeAgent, DaatDaemon) tuple
     """
+    from .recall import get_recall_store
     tools = BlockTools()
+    recall = await get_recall_store()
     sleep_agent = SleepTimeAgent(
         block_tools=tools,
+        recall_store=recall,
         stronger_model=stronger_model,
         entity_name=entity_name,
     )
     daat = DaatDaemon(
         block_tools=tools,
         sleep_agent=sleep_agent,
+        recall_store=recall,
     )
     return sleep_agent, daat

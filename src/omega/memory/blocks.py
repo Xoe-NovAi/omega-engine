@@ -293,6 +293,86 @@ def create_essential_blocks(owner_entity: str, created_by: str) -> List[MemoryBl
     return blocks
 
 
+def create_domain_block(
+    label: str,
+    owner_entity: str,
+    created_by: str,
+    value: str = "",
+) -> MemoryBlock:
+    """Create a single domain-specific block from template.
+
+    Singular version used by BlockTools.create_domain_block().
+    Plural version (create_domain_blocks) creates all at once.
+
+    Args:
+        label: Block label (must be in DOMAIN_BLOCKS).
+        owner_entity: Entity that owns this block.
+        created_by: Agent/entity creating the block.
+        value: Initial block content.
+
+    Returns:
+        A single MemoryBlock.
+
+    Raises:
+        ValueError: If label is not in DOMAIN_BLOCKS.
+    """
+    if label not in DOMAIN_BLOCKS:
+        raise ValueError(
+            f"Unknown domain block label: {label}. "
+            f"Valid: {list(DOMAIN_BLOCKS.keys())}"
+        )
+
+    template = DOMAIN_BLOCKS[label]
+    return MemoryBlock(
+        label=label,
+        value=value,
+        limit=template["limit"],
+        description=template["description"],
+        read_only=False,
+        category=template["category"],
+        governance_level=GovernanceLevel.PRIVATE,
+        owner_entity=owner_entity,
+        created_by_id=created_by,
+        last_updated_by_id=created_by,
+    )
+
+
+def create_essential_block(label: str, owner_entity: str, created_by: str, value: str = "") -> MemoryBlock:
+    """Create a single essential block (persona, human, safety) from template.
+
+    This is the singular version used by BlockTools.create_essential_block().
+    The plural version (create_essential_blocks) creates all three at once.
+
+    Args:
+        label: Block label (must be in ESSENTIAL_BLOCKS).
+        owner_entity: Entity that owns this block.
+        created_by: Agent/entity creating the block.
+        value: Initial block content.
+
+    Returns:
+        A single MemoryBlock.
+
+    Raises:
+        ValueError: If label is not in ESSENTIAL_BLOCKS.
+    """
+    if label not in ESSENTIAL_BLOCKS:
+        raise ValueError(f"Unknown essential block label: {label}. Valid: {list(ESSENTIAL_BLOCKS.keys())}")
+
+    template = ESSENTIAL_BLOCKS[label]
+    return MemoryBlock(
+        label=template["label"],
+        value=value,
+        limit=template["limit"],
+        description=template["description"],
+        read_only=template["read_only"],
+        category=template["category"],
+        governance_level=template["governance_level"],
+        owner_entity=owner_entity,
+        created_by_id=created_by,
+        last_updated_by_id=created_by,
+    )
+
+
 def create_domain_blocks(owner_entity: str, created_by: str, domain: str = "general") -> List[MemoryBlock]:
     """Create domain-specific blocks for an entity."""
     blocks = []

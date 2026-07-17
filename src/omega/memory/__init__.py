@@ -23,6 +23,7 @@ from .blocks import (
     CATEGORY_DECAY_RATES,
     ESSENTIAL_BLOCKS,
     DOMAIN_BLOCKS,
+    create_essential_block,
     create_essential_blocks,
     create_domain_blocks,
 )
