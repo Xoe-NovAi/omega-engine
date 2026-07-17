@@ -77,9 +77,9 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         - busy_timeout=30000: 30s for background researcher + agent contention
         - synchronous=NORMAL: Safe for committed transactions, fsync at checkpoint
         - journal_size_limit=67108864: 64MB WAL cap — prevents unbounded growth
-        - cache_size=-524288: 512MB page cache — adaptive for 14Gi RAM (Music Assistant pattern)
+        - cache_size=-32768: 32MB page cache — D-282 convergence (512MB was OOM risk on 14Gi + inference + zRAM)
         - mmap_size=268435456: 256MB memory-mapped I/O — capped default, scales with DB (2× DB, max 256MB)
-        - wal_autocheckpoint=1000: Passive checkpoint every 1000 pages
+        - wal_autocheckpoint=500: Passive checkpoint every 500 pages — D-282 convergence (more frequent under writer load)
         - foreign_keys=ON: Good practice for schema integrity
         - temp_store=MEMORY: Faster temp tables for agent operations
         - optimize=0x10002: Auto-analyze + auto-index for long-lived connections
@@ -93,14 +93,14 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
             )
             self._conn.row_factory = sqlite3.Row
             
-            # Hardened PRAGMA stack (D-282 Critical Path)
+            # Hardened PRAGMA stack (D-282 Critical Path — SSOT convergence)
             self._conn.execute("PRAGMA journal_mode=WAL")
             self._conn.execute("PRAGMA busy_timeout=30000")
             self._conn.execute("PRAGMA synchronous=NORMAL")
             self._conn.execute("PRAGMA journal_size_limit=67108864")
-            self._conn.execute("PRAGMA cache_size=-524288")
+            self._conn.execute("PRAGMA cache_size=-32768")  # D-282: 32MB (was 512MB — OOM risk on 14Gi + inference)
             self._conn.execute("PRAGMA mmap_size=268435456")
-            self._conn.execute("PRAGMA wal_autocheckpoint=1000")
+            self._conn.execute("PRAGMA wal_autocheckpoint=500")  # D-282: 500 pages (was 1000 — more frequent under writer load)
             self._conn.execute("PRAGMA foreign_keys=ON")
             self._conn.execute("PRAGMA temp_store=MEMORY")
             self._conn.execute("PRAGMA optimize=0x10002")
