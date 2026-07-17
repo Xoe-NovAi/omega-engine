@@ -1,0 +1,86 @@
+{
+  "sprint_id": "HMC-SPRINT-04",
+  "title": "D-281 Substrate Repair — Phase III (M2 Firewall) + S0 Clean Runway",
+  "created": "2026-07-17",
+  "last_updated": "2026-07-17T01:55:00Z",
+  "status": "ACTIVE",
+  "coordinator": "kali",
+  "participants": [
+    "kali",
+    "grok",
+    "roc_racoon",
+    "researcher",
+    "maat",
+    "lilith"
+  ],
+  "sprints": [
+    {
+      "id": "S0-CLEAN-RUNWAY",
+      "title": "Repo Hygiene — Clean Tree + Accurate Metadata",
+      "status": "DONE",
+      "owner": "kali",
+      "verification": "Noise files removed. MIAP merged (03192d8). Grok CLI docs committed. ACTIVE_SPRINT refreshed. Stale handoffs archived.",
+      "key_files": ["data/coordination/ACTIVE_SPRINT.json"]
+    },
+    {
+      "id": "D-281-PHASE-II",
+      "title": "Path Infrastructure — config_resolver.py + wad_loader wire",
+      "status": "DONE",
+      "owner": "grok",
+      "verification": "Commit b661c49. config_resolver.py created with pure Path constants + lazy get_active_iwad(). wad_loader.py:74-77 wired to WADS_DIR. 1367 tests pass / 4 pre-existing fail.",
+      "key_files": ["src/omega/governance/config_resolver.py", "src/omega/oracle/wad_loader.py"]
+    },
+    {
+      "id": "D-281-PHASE-III",
+      "title": "M2 Firewall Remediation — 4 Files, 13 Violations",
+      "status": "IN_PROGRESS",
+      "owner": "grok (Tier A) or Triad",
+      "verification": "hierarchy.py (5 sites), entity_registry.py (3 sites), oracle.py:251, scraper.py:43. Fix patterns in PHASE_III_M2_ADVISORY.md. Gate: make test.",
+      "key_files": [
+        "src/omega/oracle/hierarchy.py",
+        "src/omega/oracle/entity_registry.py",
+        "src/omega/oracle/oracle.py",
+        "src/omega/ingestion/scraper.py",
+        "data/coordination/grok_cli/PHASE_III_M2_ADVISORY.md"
+      ]
+    },
+    {
+      "id": "D-281-PHASE-IV",
+      "title": "Codex Mechanism Separation — hydration_header.md + Makefile hardening",
+      "status": "QUEUED",
+      "owner": "grok (Tier A) or Triad",
+      "verification": "Extract codex_cat.py:63-72 → scripts/hydration_header.md. Makefile codex-* restore-on-fail. PHASE_IV_CODEX_ADVISORY.md has full spec.",
+      "key_files": [
+        "scripts/codex_cat.py",
+        "scripts/hydration_header.md",
+        "data/coordination/grok_cli/PHASE_IV_CODEX_ADVISORY.md"
+      ]
+    },
+    {
+      "id": "D-282-STRIKE-10",
+      "title": "sqlite-vec Concurrency Hardening — PRAGMA SSOT + 4 Tests",
+      "status": "QUEUED",
+      "owner": "roc_racoon",
+      "verification": "PRAGMA converge (cache_size 512MB→32MB). 4 concurrency tests. ArchivalMemory IMMEDIATE check. D282_SQLITE_VEC_STRIKE10_ADVISORY.md has full spec.",
+      "key_files": [
+        "src/omega/memory/sqlite_vec_adapter.py",
+        "tests/test_sqlite_vec_concurrency.py",
+        "data/coordination/grok_cli/D282_SQLITE_VEC_STRIKE10_ADVISORY.md"
+      ]
+    }
+  ],
+  "achievements": [
+    "D-281 Phase II COMPLETE — config_resolver.py + wad_loader path consolidation",
+    "6 advisory packets delivered by Grok CLI (Phase III, IV, D-282, S0, D-283 Ph2, D-284)",
+    "MIAP merged into main (13 tests, context collision solution)",
+    "Grok CLI onboarded as Consulting Cloud Mind (agent def, orientation, gap matrix)",
+    "Test suite at 1421 collected / ~1367 pass / 4 pre-existing fail"
+  ],
+  "open_questions": [
+    "Phase III: Tier A handoff to Grok CLI for code shipping, or Triad executes from advisory specs?",
+    "cache_size SSOT: 512MB shipped vs 32MB target — measure before converging?",
+    "MIAP on clean main now — next iteration or freeze?",
+    "D-283 Phase 2 (Recall tier) — start in parallel with D-281 Phase III/IV?"
+  ],
+  "next_sprint": "HMC-SPRINT-05 — D-283 Mnemosyne Phase 2 (Recall tier, SleepTime wiring, Cross-pollination)"
+}
