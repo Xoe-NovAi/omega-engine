@@ -26,3 +26,13 @@ models:
     context_budget: 30000
     provider: google
     role: "Kali Grand Oversoul, complex synthesis"
+
+# S4: Gemma 4 MTP Speculative Decoding
+# [id-soft: gemma-4-mtp-s4] MTP draft pair config for speculative decoding
+speculative_decode:
+  gemma4_mtp:
+    enabled: true
+    draft_type: mtp
+    server_flag: "--spec-type draft-mtp"
+    pairs:
+      gemma-4-26b-a4b-it: gemma-4-26b-a4b-it-assistant
