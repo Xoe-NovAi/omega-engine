@@ -46,12 +46,29 @@ ADAPTER_MODULE_WHITELIST: Set[str] = {
     "omega.memory.adapters.mnemosyne_adapter",
 }
 
-# Required manifest field types
+# Required/core manifest field types (WadManifest V1)
 MANIFEST_FIELD_TYPES = {
     "name": str,
     "version": str,
     "entities": (list, dict),
     "adapters": (list, dict),
+}
+
+# WadManifest V2 — optional heritage / IWAD metadata fields (explicit allow-list).
+# Still extra=forbid: unknown keys reject. V2 fields are typed when present.
+# [D-281 sidecar / ho_881bae336522] arcana_novai + _omega_default use these.
+MANIFEST_V2_OPTIONAL_FIELD_TYPES = {
+    "author": str,
+    "description": str,
+    "license": str,
+    "type": str,  # iwad | pwad
+    "mode": str,
+    "requires_engine": str,
+    "startup": dict,
+    "voices": (list, dict),
+    "vr_scenes": (list, dict),
+    "dependencies": (list, dict),
+    "hierarchy": str,  # relative path override for hierarchy.yaml
 }
 
 # Required entity field types
@@ -179,16 +196,18 @@ class WADLoader:
             if missing:
                 raise ValueError(f"WAD {stack_name} manifest missing required fields: {', '.join(missing)}")
             
-            # S1.5a: Validate field types
-            for field, expected_type in MANIFEST_FIELD_TYPES.items():
+            # S1.5a: Validate field types (V1 core + V2 heritage optional)
+            field_types = {**MANIFEST_FIELD_TYPES, **MANIFEST_V2_OPTIONAL_FIELD_TYPES}
+            for field, expected_type in field_types.items():
                 if field in manifest and not isinstance(manifest[field], expected_type):
                     raise TypeError(
                         f"WAD {stack_name} manifest field '{field}' has wrong type: "
                         f"expected {expected_type}, got {type(manifest[field]).__name__}"
                     )
             
-            # D-282: extra="forbid" — reject unknown manifest fields
-            known_manifest_fields = set(MANIFEST_FIELD_TYPES.keys())
+            # extra="forbid" — reject unknown manifest fields (V1 core ∪ V2 heritage)
+            # Do NOT loosen to extra=allow; only versioned explicit fields pass.
+            known_manifest_fields = set(field_types.keys())
             unknown_manifest_fields = set(manifest.keys()) - known_manifest_fields
             if unknown_manifest_fields:
                 raise ValueError(
