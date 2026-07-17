@@ -48,6 +48,7 @@ from .dpo_logger import get_dpo_recorder, initialize_dpo_recorder, shutdown_dpo_
 from ..iris.matcher import IntentMatcher
 
 from ..observability import new_trace_id, ObservabilityEngine, TraceSession, get_engine, DATA_DIR
+from omega.governance.config_resolver import AGENTS_MD
 from ..errors import OmegaError, SovereignDiskFullError, SoulCorruptionError, StateIntegrityError
 from ..cvar_table import cvar_get, cvar_set, cvar_namespace
 from .entity_registry import EntityRegistry, Entity
@@ -248,7 +249,7 @@ class Oracle:
             return Oracle._valid_agents_cache
 
         try:
-            agents_md_path = Path(__file__).resolve().parent.parent.parent.parent / "AGENTS.md"
+            agents_md_path = AGENTS_MD  # D-281 Phase III: config_resolver (M2)
             if not agents_md_path.exists():
                 return set()
             

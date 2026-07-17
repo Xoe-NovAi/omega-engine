@@ -36,6 +36,7 @@ import anyio
 from omega.oracle.entity_workspace import EntityWorkspaceManager
 from omega.constants import ZONEID_ENTITY, ZONEID_TOMBSTONE, validate_zoneid
 from omega.errors import EntityTombstonedError
+from omega.governance.config_resolver import get_active_iwad, get_wad_path
 
 logger = logging.getLogger(__name__)
 
@@ -298,16 +299,13 @@ class EntityRegistry:
     
     def __init__(self, config_path: Optional[str] = None):
         if config_path is None:
-            # Resolve active IWAD from config/omega.yaml to enforce Engine-Stack Firewall
+            # D-281 Phase III: resolve entities.yaml via config_resolver (M2)
             try:
-                omega_config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
-                with open(omega_config_path, "r") as f:
-                    omega_cfg = yaml.safe_load(f)
-                active_iwad = omega_cfg.get("omega", {}).get("entity", {}).get("active_iwad", "_omega_default")
-                config_path = str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / active_iwad / "entities.yaml")
+                active = get_active_iwad()
+                config_path = str(get_wad_path(active) / "entities.yaml")
             except (OmegaError, RuntimeError, OSError) as e:
                 logger.error(f"Failed to resolve active IWAD from omega.yaml: {e}. Falling back to default.")
-                config_path = str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads" / DEFAULT_IWAD / "entities.yaml")
+                config_path = str(get_wad_path(DEFAULT_IWAD) / "entities.yaml")
         
         self.config_path = Path(config_path)
         # [Project 3: Shadow-Stacking] Store entities as a list of layers sorted by priority

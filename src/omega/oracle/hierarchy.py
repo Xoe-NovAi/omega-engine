@@ -28,6 +28,8 @@ from pathlib import Path
 from typing import Dict, Optional
 import anyio
 
+from omega.governance.config_resolver import WADS_DIR, get_active_iwad
+
 logger = logging.getLogger(__name__)
 
 class SovereignHierarchy:
@@ -35,20 +37,14 @@ class SovereignHierarchy:
 
     def __init__(self, hierarchy_config: Optional[Path] = None):
         if hierarchy_config is None:
+            # D-281 Phase III: single path via config_resolver (M2). OMEGA_WADS_DIR override preserved.
             try:
-                omega_config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
-                with open(omega_config_path, "r") as f:
-                    omega_cfg = yaml.safe_load(f)
-                active_iwad = omega_cfg.get("omega", {}).get("entity", {}).get("active_iwad", "_omega_default")  # [remediated: M2-LEAK] — bypasses WadLoader; should use wad_loader.wads_dir
-                
-                # Use OMEGA_WADS_DIR env var if present, otherwise default to config/wads
-                wads_base = Path(os.environ.get("OMEGA_WADS_DIR", str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads")))  # [remediated: M2-LEAK] — Path traversal bypasses WadLoader; inject WadLoader
-                self.config_path = wads_base / active_iwad / "hierarchy.yaml"  # [remediated: M2-LEAK] — direct path construction, not wad_loader.resolve_wad_path()
-            except OmegaError:
-                logger.warning("OmegaError resolving active IWAD for hierarchy. Falling back to default.")
-                wads_base = Path(os.environ.get("OMEGA_WADS_DIR", str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads")))  # [remediated: M2-LEAK] — fallback path also bypasses WadLoader
-                self.config_path = wads_base / cvar_get("config.entity.active_iwad", "_omega_default") / "hierarchy.yaml"  # [remediated: M2-LEAK] — duplicate path construction bypass
-
+                active = get_active_iwad()
+            except (OmegaError, OSError, RuntimeError) as e:
+                logger.warning("Failed to resolve active IWAD for hierarchy (%s). Falling back to default.", e)
+                active = "_omega_default"
+            wads_base = Path(os.environ.get("OMEGA_WADS_DIR", str(WADS_DIR)))
+            self.config_path = wads_base / active / "hierarchy.yaml"
         else:
             self.config_path = hierarchy_config
         self._hierarchy = {}

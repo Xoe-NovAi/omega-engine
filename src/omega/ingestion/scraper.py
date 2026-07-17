@@ -8,6 +8,7 @@ from typing import Optional, Dict, Any, List
 from dataclasses import dataclass
 from pathlib import Path
 from omega.errors import OmegaError
+from omega.governance.config_resolver import WADS_DIR
 
 # We assume crawl4ai is installed. If not, we provide a mock/fallback.
 try:
@@ -38,9 +39,8 @@ class SovereignScraper:
     """
     def __init__(self, cas_archiver=None, domain_config_path: Optional[str] = None):
         self.cas = cas_archiver
-        # M2 Compliance: Load domain allowlist from WAD layer config.
-        # Build path from parts to avoid a hardcoded "config/wads/" literal (M2 Firewall).
-        default_config = str(Path("config") / "wads" / "ingestion" / "domains.yaml")
+        # M2 Compliance: domain allowlist from WAD layer via config_resolver (D-281 Phase III).
+        default_config = str(WADS_DIR / "ingestion" / "domains.yaml")
         self._domain_allowlist = self._load_domain_config(domain_config_path or default_config)
 
     def _load_domain_config(self, config_path: Optional[str]) -> Dict[str, str]:

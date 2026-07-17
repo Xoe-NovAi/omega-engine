@@ -1,6 +1,6 @@
 # 🔱 D-281 Substrate Repair: Phase II-IV Execution Plan
 **Date**: 2026-07-16
-**Status**: Phase II COMPLETE (2026-07-16, Grok CLI / agent_id=grok) — Phases III–IV ACTIVE
+**Status**: Phase II COMPLETE · Phase III COMPLETE (2026-07-17, Grok CLI) — Phase IV QUEUED
 **Pre-requisite**: Phase I (Soul Injection Rescue) is COMPLETE.
 
 ### Phase II delivery (closed)
@@ -10,6 +10,14 @@
 | `src/omega/oracle/wad_loader.py` | Wired to `WADS_DIR`; `OMEGA_WADS_DIR` env override preserved |
 | Gate | Targeted wad_loader/m21: **50 passed**. Full suite: **1367 passed**, **4 failed** (pre-existing: models.yaml speculative_decode, model_gateway paths, WAD manifest unknown fields) — not Phase II regressions |
 | Hivemind | Completes `ho_9a9ed3fc63e8` / duplicate `ho_ac32a5642098` |
+
+### Phase III delivery (closed — `ho_cf6c4925ea7d`)
+| File | Change |
+|------|--------|
+| `hierarchy.py` | `WADS_DIR` + `get_active_iwad`; `OMEGA_WADS_DIR` override kept |
+| `entity_registry.py` | `get_wad_path` + `get_active_iwad` |
+| `oracle.py` | `AGENTS_MD` from config_resolver |
+| `scraper.py` | `WADS_DIR / "ingestion" / "domains.yaml"` |
 
 ## 1. Strategic Guardrails & Insights
 Before executing Phases II-IV, the following architectural guardrails must be observed based on live codebase analysis:
