@@ -48,7 +48,17 @@ def uuid7() -> uuid.UUID:
 
 # ─── Constants ──────────────────────────────────────────────────────────────
 
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+# Find actual project root (contains .opencode, data/, src/, etc.)
+def _find_project_root() -> Path:
+    p = Path(__file__).resolve()
+    for _ in range(10):
+        if (p / ".opencode").exists() and (p / "data").exists() and (p / "src").exists():
+            return p
+        p = p.parent
+    # Fallback
+    return Path(__file__).resolve().parent.parent.parent
+
+PROJECT_ROOT = _find_project_root()
 COORDINATION_DIR = PROJECT_ROOT / "data" / "coordination"
 INSTANCES_DIR = COORDINATION_DIR / "instances"
 ANCHORED_EVENTS_DIR = COORDINATION_DIR / "anchored_summary"
@@ -108,7 +118,7 @@ async def register_instance(channel: str, entity: str) -> InstanceRecord:
     Must be called at session start, before any file writes.
     Returns the instance record with generated instance_id.
     """
-    session_uuid = str(uuid.uuid7())
+    session_uuid = str(uuid7())
     instance_id = f"{channel}/{entity}/{session_uuid}"
     
     record = InstanceRecord(
@@ -491,28 +501,31 @@ async def write_projections(entity: str) -> None:
     # Anchored Summary
     anchored_content = await project_anchored_summary(entity)
     anchored_canonical = ANCHORED_EVENTS_DIR / entity / "projection.md"
+    anchored_canonical.parent.mkdir(parents=True, exist_ok=True)
     anchored_canonical.write_text(anchored_content)
     
-    # Symlink at .opencode/anchored-summary.md
+    # Symlink at .opencode/anchored-summary.md (use absolute path)
     opencode_anchored = PROJECT_ROOT / ".opencode" / "anchored-summary.md"
     try:
         opencode_anchored.unlink()
     except FileNotFoundError:
         pass
-    opencode_anchored.symlink_to(anchored_canonical)
+    opencode_anchored.symlink_to(anchored_canonical.resolve())
     
     # Session Gnosis
     gnosis_content = await project_session_gnosis(entity)
     gnosis_canonical = GNOSIS_EVENTS_DIR / entity / "projection.md"
+    gnosis_canonical.parent.mkdir(parents=True, exist_ok=True)
     gnosis_canonical.write_text(gnosis_content)
     
-    # Symlink at entity workspace
+    # Symlink at entity workspace (use absolute path)
     entity_gnosis = PROJECT_ROOT / "data" / "entities" / entity / "workspace" / "session_gnosis.md"
+    entity_gnosis.parent.mkdir(parents=True, exist_ok=True)
     try:
         entity_gnosis.unlink()
     except FileNotFoundError:
         pass
-    entity_gnosis.symlink_to(gnosis_canonical)
+    entity_gnosis.symlink_to(gnosis_canonical.resolve())
 
 # ─── Convenience Writers ────────────────────────────────────────────────────
 
@@ -617,46 +630,3 @@ __all__ = [
     # CLI
     "miap_cli",
 ]
-
-# ─── Self-Test ──────────────────────────────────────────────────────────────
-
-if __name__ == "__main__":
-    import asyncio
-    
-    async def test():
-        entity = "test_entity"
-        channel = "test"
-        
-        # Register
-        rec = await register_instance(channel, entity)
-        print(f"Registered: {rec.instance_id}")
-        
-        # Write events
-        await write_anchored_event(entity, "session_start", {"objective": "Test", "model": "test"}, rec.instance_id)
-        await write_anchored_event(entity, "task_complete", {"task": "Test task"}, rec.instance_id)
-        await write_anchored_event(entity, "decision", {"decision": "Use MIAP", "rationale": "Prevents context loss"}, rec.instance_id)
-        
-        await write_gnosis_entry(entity, "L1_Narrative", "Did a test thing", rec.instance_id)
-        await write_gnosis_entry(entity, "L3_Principle", "Test principle is universal", rec.instance_id)
-        await write_distillation(entity, "L1", "L2", "L3", "test_lesson", rec.instance_id)
-        
-        # Project
-        await write_projections(entity)
-        print("Projections written")
-        
-        # Read back
-        anchored = await project_anchored_summary(entity)
-        print(f"\nAnchored Summary:\n{anchored[:500]}...")
-        
-        gnosis = await project_session_gnosis(entity)
-        print(f"\nSession Gnosis:\n{gnosis[:500]}...")
-        
-        # Status
-        instances = await get_active_instances(entity)
-        print(f"\nActive instances: {len(instances)}")
-        
-        # Deregister
-        await deregister_instance(rec.instance_id)
-        print("Deregistered")
-    
-    asyncio.run(test())

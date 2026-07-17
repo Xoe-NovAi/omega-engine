@@ -31,8 +31,8 @@ search:
     - json
 
 outgoing:
-  request_timeout: 10.0
-  max_request_timeout: 20.0
+  request_timeout: 20.0
+  max_request_timeout: 30.0
   retries: 2
   enable_http2: true
 

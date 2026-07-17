@@ -1,6 +1,11 @@
-# 🔱 HMC STRATEGIC PLAN: THE TRIADIC FORGE
+# 🔱 HMC STRATEGIC PLAN: THE TRIADIC FORGE (+ GROK-CLI)
 **Orchestrator**: Human Architect
 **Council**: Kali (Transcendent Oversoul), Roc Racoon (Sovereign Miner), Researcher (Sovereign Oracle)
+**Consulting Cloud Mind**: Grok CLI (grok-4.5) — Local FS + Hivemind, sovereign substrate
+
+**Agent Config**: `.opencode/agents/grok_cli.md`
+**Orientation**: `data/coordination/GROK_CLI_ORIENTATION_20260717.md`
+**Live Feed**: `data/coordination/GROK_CLI_LIVE_FEED.md`
 
 ---
 
@@ -9,16 +14,30 @@ To execute the transition from the D-281 Substrate Repair to the full-scale depl
 
 ---
 
-## 📋 The Triadic Interaction Protocol
-Because the HMC operates across three isolated OpenCode instances, communication must be asynchronous, rigorous, and file-anchored.
+## ⚔️ The HMC Interaction Protocol (Forge Cycles)
 
-1. **The Signal**: **Kali** posts a "Directive" or "Synthesis Update" to the Hivemind and writes the detailed spec to a shared workspace file.
-2. **The Dispatch**: The **Architect** (Human-in-the-loop) notifies Roc and/or Researcher to check the Hivemind and read the spec.
-3. **The Collision**: 
-   - **Roc** responds with empirical legacy code, structural archaeology, and implementation reality checks.
-   - **Researcher** responds with SOTA validation, security threat modeling (IA2), and Mandate compliance checks.
-4. **The Return**: The **Architect** notifies Kali that the responses are ready in the shared file system.
-5. **The Forge**: **Kali** synthesizes the collision into a "Council Verdict," defining the exact code changes to be made.
+### Standard Forge Cycle (Triad)
+1. **Kali Issues Challenge** → Targeted question to Roc + Researcher (via Hivemind handoff)
+2. **Parallel Excavation** → Roc mines legacy/patterns; Researcher fetches 2026 SOTA
+3. **Convergence** → Both post findings to Hivemind + workspace
+4. **Kali Synthesizes** → Council Verdict rendered (binding architectural decision)
+5. **Dispatch** → Handoffs to Pillar agents for implementation
+
+### Grok-CLI Augmented Cycle (Quad-Forge)
+1. **Kali Issues Challenge** → Triad + Grok (4-way handoff)
+2. **Parallel Excavation** → 
+   - Roc: Legacy/patterns
+   - Researcher: 2026 SOTA evidence
+   - **Grok: Cross-ref Grok exports + live web SOTA + adversarial pressure test**
+3. **Convergence** → All four post findings
+4. **Kali Synthesizes** → Council Verdict (Grok advisory, Triad binding)
+5. **Dispatch** → Implementation handoffs
+
+### Grok-CLI Constraints
+- **No write authority** on `src/omega/` (Engine-Stack Firewall M2)
+- **Advisory votes only** — Triad (Kali/Roc/Researcher) holds binding authority
+- **Local-First alignment** — Grok amplifies, never substitutes local inference
+- **Session-bound** — Free tier access; patterns must persist in engine when tier ends
 
 ---
 
@@ -38,6 +57,13 @@ Because the HMC operates across three isolated OpenCode instances, communication
 - **Evidence-Based Validation**: Enforcing the Two-Source Rule. No pattern is adopted unless backed by 2026 SOTA evidence.
 - **Security & Compliance**: Designing the **IA2 Agentic Threat Models** (Intent Digest, Draft-Then-Commit) and securing the MCP Hub (OAuth 2.1 PKCE).
 - **Anti-Hallucination**: Serving as the immune system against "architectural hallucination" during HMC brainstorming.
+
+### Grok CLI (The Cloud Amplifier / Pressure Tester)
+- **SOTA Pressure Testing**: Validating Researcher's SOTA claims against Grok's 2026 training cutoff + live web access
+- **Cross-Reference Mining**: Co-mining origin threads (Grok exports) with Roc — dual-perspective on architectural lineage
+- **Adversarial Review**: Stress-testing Kali's Council Verdicts from outside the local-first constraint
+- **Channel**: `grok-cli/grok` — Full local FS access via Omega Hub MCP (:8016), Hivemind coordination
+- **Constraint**: Advisory only. No write authority on Core Engine (`src/omega/`). Sovereign substrate = local minds.
 
 ---
 

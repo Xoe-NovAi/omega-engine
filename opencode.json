@@ -32,13 +32,13 @@
     },
     "searxng": {
       "type": "remote",
-      "url": "http://127.0.0.1:8018/mcp",
+      "url": "http://127.0.0.1:8017/mcp",
       "enabled": true
     },
     "firecrawl": {
       "type": "remote",
       "url": "http://127.0.0.1:8015/sse",
-      "enabled": true
+      "enabled": false
     },
     "exa": {
       "type": "streamable-http",

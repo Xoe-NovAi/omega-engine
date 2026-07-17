@@ -30,6 +30,11 @@
     reverse_proxy omega-qdrant:6333
   }
 
+  # Firecrawl (internal only)
+  handle /firecrawl/* {
+    reverse_proxy omega-firecrawl:3002
+  }
+
   # Static file server for docs
   handle /docs/* {
     root * /usr/share/caddy/docs
