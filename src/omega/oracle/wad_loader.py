@@ -31,6 +31,7 @@ import anyio
 from .entity_registry import EntityRegistry, Entity
 from .world_state import world_state, WorldLump
 from omega.errors import OmegaError
+from omega.governance.config_resolver import WADS_DIR
 
 # ── S1.5a Hardening Constants ────────────────────────────────────────
 # [id-soft: vet-015] ZONEID — size sentinel for file validation
@@ -72,10 +73,8 @@ class WADLoader:
 
     def __init__(self, registry: EntityRegistry, wads_dir: Optional[Path] = None, adapter_registry: Optional[Any] = None):
         self.registry = registry
-        self.wads_dir = wads_dir or Path(os.environ.get(
-            "OMEGA_WADS_DIR",
-            str(Path(__file__).resolve().parent.parent.parent.parent / "config" / "wads")
-        ))
+        # OMEGA_WADS_DIR env override preserved; default from config_resolver (D-281 Phase II)
+        self.wads_dir = wads_dir or Path(os.environ.get("OMEGA_WADS_DIR", str(WADS_DIR)))
         self._startup_messages: Dict[str, str] = {}  # stack_name -> startup message
         self.active_hierarchy_path: Optional[Path] = None
         self._adapter_registry = adapter_registry  # MemoryAdapterRegistry (optional)

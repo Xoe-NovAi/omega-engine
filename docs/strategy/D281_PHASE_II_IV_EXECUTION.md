@@ -1,7 +1,15 @@
 # 🔱 D-281 Substrate Repair: Phase II-IV Execution Plan
 **Date**: 2026-07-16
-**Status**: ACTIVE
+**Status**: Phase II COMPLETE (2026-07-16, Grok CLI / agent_id=grok) — Phases III–IV ACTIVE
 **Pre-requisite**: Phase I (Soul Injection Rescue) is COMPLETE.
+
+### Phase II delivery (closed)
+| Artifact | Status |
+|----------|--------|
+| `src/omega/governance/config_resolver.py` | Landed — pure Path constants + lazy `get_active_iwad` |
+| `src/omega/oracle/wad_loader.py` | Wired to `WADS_DIR`; `OMEGA_WADS_DIR` env override preserved |
+| Gate | Targeted wad_loader/m21: **50 passed**. Full suite: **1367 passed**, **4 failed** (pre-existing: models.yaml speculative_decode, model_gateway paths, WAD manifest unknown fields) — not Phase II regressions |
+| Hivemind | Completes `ho_9a9ed3fc63e8` / duplicate `ho_ac32a5642098` |
 
 ## 1. Strategic Guardrails & Insights
 Before executing Phases II-IV, the following architectural guardrails must be observed based on live codebase analysis:
