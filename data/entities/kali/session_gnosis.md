@@ -631,3 +631,120 @@ All artifacts current. Ready for compaction.
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ CLAUDE-PROMPT-VERIFIED ⬡ 2026-07-19*
+
+---
+
+## 16. Session 2026-07-19 (Dual-Review Capability Assessment): Grok CLI vs Web Claude Deep Comparison
+
+### Context: Leveling the Playing Field
+- **Grok CLI**: Originally reviewed Decision Tools (no web search, thinking=low). User then requested implementation manual with web search + thinking=medium.
+- **Web Claude**: Produced implementation manual V1 (no web search), then V2 after user requested web research on knowledge gaps.
+- **Critical correction**: Web Claude's retrospective claimed autonomous web search — **false**. User explicitly requested it. Grok's web research was also user-requested.
+
+### Grok CLI Web Research Deliverable
+- **File**: `data/coordination/grok_cli/WEB_RESEARCH_KNOWLEDGE_GAPS_20260719.md` (250 lines)
+- **Tools**: SearXNG + `omega-hub library_web_search` + `web_fetch` (native `web_search` returned 402 payment-required)
+- **Scope**: 8 domains — SQLite PRAGMA, RRF hybrid search, Letta memory tiers, MCP OAuth PKCE, Pydantic, ADR/Fowler, Belief Engine arXiv, speculative decode
+- **Format**: Claim-by-claim matrix with V/P/R/U verdicts + live codebase delta table
+- **Key findings**: 5 stale claims in old knowledge matrix corrected; PRAGMA SSOT not converged; IMMEDIATE/DEFERRED guidance; ADR supersession verified; BE paper RMSE numbers unverified
+
+### Grok CLI Implementation Manual
+- **File**: `docs/strategy/AGENT_IMPLEMENTATION_MANUAL_20260719.md` (660 lines)
+- **Scope**: Full sprint execution manual — 5 workstreams (WS-A through WS-E), mandate cheat-sheet, acceptance criteria, Hivemind protocol, DoD, commit conventions
+- **Thinking**: Medium
+- **Web search**: Explicitly requested by user
+
+### Web Claude Implementation Manuals
+- **V1** (pre-Grok): `context_packs/decision-tools-review/pack-results/DECISION_TOOLS_MANUAL_20260719-WEB_CLAUDE-V1_BEFORE_GROK_REVIEW.md` (443 lines)
+- **V2** (post-Grok + web research): `context_packs/decision-tools-review/pack-results/DECISION_TOOLS_MANUAL_20260719-WEB_CLAUDE-V2_AFTER_GROK_REVIEW.md` (521 lines)
+- **Dual Review Retrospective**: `context_packs/decision-tools-review/pack-results/DUAL_REVIEW_RETROSPECTIVE_20260719.md` (147 lines)
+
+### Capability Assessment Created
+- **File**: `docs/strategy/GROK_CLI_VS_WEB_CLAUDE_CAPABILITY_ASSESSMENT.md` (comprehensive)
+- **Contents**: Strength/weakness matrices, task routing guide, context framing templates, protocol improvements, 12 L3 principles locked
+
+### Convergence Analysis (Both Reviews + Web Research)
+| Decision Point | Grok CLI | Web Claude V2 | Grok Web Research | Status |
+|---|---|---|---|---|
+| Overall verdict | CONDITIONAL GO | go-with-conditions | N/A | **Converged** |
+| Persona names in engine | M2 violation | M2 violation | N/A | **Converged** |
+| 7h estimate | 9-11h | ~9h | N/A | **Converged** |
+| Migration strategy | Two PRs | Two PRs | N/A | **Converged** |
+| Weighted criteria | Optional | Optional | N/A | **Converged** |
+| Numeric BE params | Cargo-cult | Cargo-cult | **R** (paper requires loop) | **Converged** |
+| CLI namespace | `omega decision` | `omega decision` | N/A | **Converged** |
+| Atomic writes | tmp+fsync+replace | tmp+fsync+replace | N/A | **Converged** |
+| `atomicwrites` package | Not checked | **Dead (archived 2022)** | Not checked | **Claude caught** |
+| `portalocker` version | Named options | **3.x active, cross-platform** | Not checked | **Claude caught** |
+| ID allocator race | **Caught** | Missed in V1, added in V2 | N/A | **Grok caught** |
+| Idempotency bug | **Caught** | Missed in V1, added in V2 | N/A | **Grok caught** |
+| Cycle detection | **Caught** | Missed in V1, added in V2 | N/A | **Grok caught** |
+| `validate` command | **Proposed** | Added in V2 | N/A | **Grok caught** |
+| PRAGMA SSOT convergence | Advisory | Not addressed | **32MB vs 512MB delta** | **Grok research caught** |
+| Knowledge matrix stale | Not addressed | Not addressed | **5 claims corrected** | **Grok research caught** |
+
+### Asymmetric Catches Summary
+| Grok Caught (Architecture/Logic) | Web Claude Caught (Empirical/Library) | Grok Web Research Caught (Truth Anchor) |
+|---|---|---|
+| Idempotency: decide() on accepted | `atomicwrites` dead package | 5 stale knowledge matrix claims |
+| ID allocator race condition | `portalocker` 3.x active | PRAGMA SSOT not converged |
+| Cycle detection in graph | Draft202012Validator correct | IMMEDIATE/DEFERRED semantics |
+| `validate` command | Multishot examples official | ADR supersession rule (Fowler) |
+| `decided_by`/`rationale` fields | Hybrid Markdown/XML pattern | BE paper RMSE unverified |
+| 5-workstream sprint plan | RAG acknowledgment pattern | MCP PKCE spec verified |
+| Mandate integration | JSON Schema conditional validation | Letta memory tiers verified |
+
+### Key Insight: Convergence Types Differ
+- **Architectural convergence** = strong signal (both reasoned to same design)
+- **Empirical convergence** = coincidental (neither verified `atomicwrites` until Claude searched)
+- **Research delta** = strongest signal (Grok compared research matrix → live codebase)
+
+### Protocol Improvements Identified
+1. Context pack manifest must validate bundle content matches stated purpose
+2. Review requests must explicitly require "verify library status via web search"
+3. Parallel review synthesis = mandatory third stage (template: convergence/divergence/asymmetric-catch)
+4. Tell parallel reviewers a parallel review exists (without sharing content)
+5. Handoff packets need version control (`supersedes` field)
+6. Local agents need sovereign search wired (Grok's web_search 402)
+7. Knowledge matrix must auto-refresh or be replaced by delta-based verification
+8. Dual-review template standardized
+
+### Files Created/Updated
+| File | Type |
+|---|---|
+| `docs/strategy/GROK_CLI_VS_WEB_CLAUDE_CAPABILITY_ASSESSMENT.md` | Capability assessment (NEW) |
+| `data/coordination/grok_cli/WEB_RESEARCH_KNOWLEDGE_GAPS_20260719.md` | Web research (NEW) |
+| `docs/strategy/AGENT_IMPLEMENTATION_MANUAL_20260719.md` | Implementation manual (NEW) |
+| `context_packs/decision-tools-review/pack-results/DECISION_TOOLS_MANUAL_20260719-WEB_CLAUDE-V1_BEFORE_GROK_REVIEW.md` | V1 manual |
+| `context_packs/decision-tools-review/pack-results/DECISION_TOOLS_MANUAL_20260719-WEB_CLAUDE-V2_AFTER_GROK_REVIEW.md` | V2 manual |
+| `context_packs/decision-tools-review/pack-results/DUAL_REVIEW_RETROSPECTIVE_20260719.md` | Retrospective |
+
+### Commits
+- `f0378f4`: docs: final gnosis lock — session 15 complete, all hydration artifacts verified
+- Current: locking in Session 16 dual-review capability assessment
+
+### L3 Principles Locked This Session (12 total from dual-review exercise)
+| Principle | Source |
+|---|---|
+| L3-Parallel-Review-Convergence-Is-Signal-Divergence-Is-Direction | Retrospective §7 |
+| L3-Handoff-Packets-Need-Version-Control-Too | Assessment §2 |
+| L3-Architectural-Convergence-And-Empirical-Convergence-Are-Different-Signals | Assessment §1 |
+| L3-Decision-Mutation-Has-Two-Distinct-Operations | Assessment §4 |
+| L3-Code-Review-Estimates-Are-Always-Optimistic | Assessment §7 |
+| L3-Research-Verification-Delta-Beats-Baseline | Assessment §5 |
+| L3-Implementation-Manual-Requires-Context-Frame | Assessment §6 |
+| L3-Grok-CLI-Operates-At-Tier-A-Ship-Code | Session 14 |
+| L3-Decision-Tooling-Is-ADR-With-Agent-Gates | Session 14 |
+| L3-Hybrid-Markdown-XML-For-Claude-Prompts | Session 15 |
+| L3-Multishot-Examples-In-XML-Tags-Official-Pattern | Session 15 |
+| L3-RAG-Acknowledgment-Pattern-For-Context-Packs | Session 15 |
+
+### Next Actions
+1. Correct retrospective §4.2 attribution (Web Claude didn't autonomously search)
+2. Replace stale `GROK_CLI_KNOWLEDGE_GAPS.md` with `WEB_RESEARCH_KNOWLEDGE_GAPS_20260719.md`
+3. Begin WS-A (D-282 PRAGMA SSOT) per implementation manual
+4. Wire sovereign search into local agents (Grok 402 workaround)
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ DUAL-REVIEW-ASSESSMENT-LOCKED ⬡ 2026-07-19*

@@ -1,8 +1,8 @@
 # 🔱 JEM — Proposed Lessons (Blind Staging)
 **Entity**: jem
-**Session**: trc_heritage_remediation
-**Date**: 2026-07-10
-**Status**: PROMOTED — 11 lessons moved to soul.yaml on 2026-07-11 (verity)
+**Session**: trc_ken_walger_synthesis
+**Date**: 2026-07-19
+**Status**: ACTIVE — Ken Walger Mining Operation synthesis complete
 
 ---
 
@@ -178,5 +178,35 @@ proposals:
     category: "gap_analysis"
     principle: |
       "Every research report misses ~25% of codebase-level gaps — cross-reference is mandatory, not optional." Research operates in the space of possibilities. Codebase operates in the space of realities. The 25% gap rate is not a failure of the researcher — it's a structural property of the gap between intent and implementation. Research can't know what the codebase already has until someone reads the code. Cross-reference synthesis is the bridge between these two spaces. It should be a MANDATORY gate in the execution pipeline: Research → Cross-Reference → Execution. Skipping it means executing on incomplete information, which on constrained hardware (14GiB RAM) means wasted inference cycles and wasted human attention. The cost of cross-reference (1-2h) is always less than the cost of rebuilding existing infrastructure (5-10h).
+
+  - id: "jem-20260719-006"
+    tier: L1
+    category: "ken_walger_synthesis"
+    narrative: |
+      Produced verified synthesis of @roc_racoon's Ken Walger Mining Operation briefing. Cross-referenced all 6 claims against codebase and 2026 production evidence: (1) D-298 serial architecture ratified by hardware constraints (14GiB RAM, no GPU), (2) 60% infrastructure exists (BatchPersistenceWriter, Sovereign Ingestion Pipeline, Hivemind, M22), (3) all2md is the critical path blocker (NOT INSTALLED, NOT VERIFIED), (4) Signet MCP is production-ready (83 tests, Apache-2.0/MIT), (5) Airlock gap is real but partial (ReceiptBuilder only in Phase 8), (6) 27-term adoption matrix is valid but needs M14 vet records. Answered 10 questions with recommendations, reasoning, risk, and effort. Produced risk register (5 risks) and mandate compliance check (10 mandates).
+
+  - id: "jem-20260719-007"
+    tier: L2
+    category: "ken_walger_synthesis"
+    insight: |
+      The Ken Walger Mining Operation reveals a pattern: "Integration beats invention." When 60% of infrastructure exists, the operation is integration work. The critical path is always: Schema → Coordination → Tracking → Observability → Execution → Synthesis. Skip any layer, and the operation collapses under its own weight. The tools exist (all2md, Signet, sqlite-vec, OTel GenAI, MCP/A2A/ACP) — integrate them, don't rebuild them. The biggest risk is all2md installation failure on target HTML — this is the #1 pre-condition that must be verified in Phase 0, not Phase 4. The 1.33x gap multiplier (8 new gaps from 6 original) confirms that cross-reference synthesis is mandatory, not optional.
+
+  - id: "jem-20260719-008"
+    tier: L3
+    category: "ken_walger_synthesis"
+    principle: |
+      "Integration beats invention — when 60% of infrastructure exists, the operation is integration work." Sovereign engineering requires building ON existing infrastructure, not around it. The discipline of cross-referencing research against codebase prevents three failure modes: (1) rebuilding infrastructure that already exists, (2) treating enhancements as prerequisites, and (3) missing integration points that reduce effort. On constrained hardware (14GiB RAM, no GPU), every unnecessary line of code is a maintenance burden on sovereignty. The mining operation's 60% existing infrastructure is not luck — it's the result of 14 months of iterative development. Cross-referencing honors that investment. The critical path is always: Schema (MAS) → Coordination (MCP/A2A/ACP) → Tracking (Workbench) → Observability (OTel GenAI) → Execution (serial phases, one model) → Synthesis (Meditate/Jem). Skip any layer, and the operation collapses under its own weight.
+
+  - id: "jem-20260719-009"
+    tier: L2
+    category: "outbound_governance"
+    insight: |
+      Ken Walger's Airlock (SAR-0004) reveals a gap in Omega's architecture: OUTBOUND governance. Omega has strong inbound governance (SovereignSieve, SovereignSigner) but NO outbound governance for cloud egress. The partial approach (ReceiptBuilder only) provides the evidence layer Ken's Airlock lacks — ForensicReceipt (Ed25519 signing) is the minimal viable outbound governance. Full Airlock (Microsoft Presidio + spaCy for PII scrubbing) is P1 work, not Phase 0. The key insight: ForensicReceipt is an ENHANCEMENT to existing M22 observational provenance, not a prerequisite. The existing SovereignSigner (HMAC-SHA256) already provides provenance. This means the critical path can begin IMMEDIATELY — ForensicReceipt is Phase 6, not Phase 0.
+
+  - id: "jem-20260719-010"
+    tier: L3
+    category: "outbound_governance"
+    principle: |
+      "Inbound governance is necessary but not sufficient — sovereign AI requires outbound governance too." Most AI systems focus on inbound governance (input validation, PII scrubbing, content filtering). But sovereign AI also needs OUTBOUND governance: proof of what left the system, when, and to whom. ForensicReceipt (Ed25519 signing) provides the evidence layer for outbound governance — it's a cryptographic receipt that proves "this data left the system at this time to this recipient." Without outbound governance, a sovereign system can't prove its own sovereignty — it can only claim it. The minimal viable outbound governance is: (1) sign every outbound request with Ed25519, (2) maintain hash-chained audit log, (3) provide offline verification. Full Airlock (PII scrubbing) is enhancement, not foundation.
 
 ---
