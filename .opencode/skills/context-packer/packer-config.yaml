@@ -142,6 +142,55 @@ profiles:
         - "src/omega/memory_store.py"
         - "src/omega/memory/**/*.py"
 
+  # ── Decision Workspace Review (for Web Claude parallel review) ────────────
+  decision-workspace-review:
+    description: "Decision Workspace full review pack — grounded meditation, 23 open decisions, D-297 decree, implementation plan"
+    max_slots: 12
+    include:
+      - "docs/strategy/GROUNDED_MEDITATE_DECISION_WORKSPACE_20260718.md"
+      - "docs/strategy/OPEN_DECISIONS_CATALOG_20260718.md"
+      - "docs/strategy/MEDITATE_ARCHITECTURE_INVERSION_20260718.md"
+      - "docs/strategy/SOVEREIGN_EXIT_PROTOCOL.md"
+      - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+      - "docs/research/R_MEDITATE_ARCHITECTURE_INVERSION_VERIFICATION_20260718.md"
+      - "docs/research/R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md"
+      - "docs/strategy/HMC_QUAD_FORGE_IMPLEMENTATION_MANUAL_20260718.md"
+      - "SOVEREIGN_MANDATES.md"
+      - "OMEGA_ENGINE.md"
+      - "data/coordination/KALI_LIVE_FEED.md"
+      - "data/handoff/KALI_TO_GROK_CLI_DECISION_WORKSPACE_HANDOFF_20260719.md"
+      - "docs/decisions/PIVOT_LOG.md"
+    exclude:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+      - "**/*.log"
+      - "**/*.tmp"
+    themes:
+      grounding:
+        - "docs/strategy/GROUNDED_MEDITATE_DECISION_WORKSPACE_20260718.md"
+        - "docs/research/R_MEDITATE_ARCHITECTURE_INVERSION_VERIFICATION_20260718.md"
+      decisions:
+        - "docs/strategy/OPEN_DECISIONS_CATALOG_20260718.md"
+      decree:
+        - "docs/strategy/MEDITATE_ARCHITECTURE_INVERSION_20260718.md"
+      exit_protocol:
+        - "docs/strategy/SOVEREIGN_EXIT_PROTOCOL.md"
+      implementation:
+        - "docs/strategy/HMC_QUAD_FORGE_IMPLEMENTATION_MANUAL_20260718.md"
+        - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+      engine_state:
+        - "OMEGA_ENGINE.md"
+      mandates:
+        - "SOVEREIGN_MANDATES.md"
+      session_log:
+        - "data/coordination/KALI_LIVE_FEED.md"
+      research:
+        - "docs/research/R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md"
+      handoff:
+        - "data/handoff/KALI_TO_GROK_CLI_DECISION_WORKSPACE_HANDOFF_20260719.md"
+      pivot_log:
+        - "docs/decisions/PIVOT_LOG.md"
+
   # ── Sprint Context Pack ────────────────────────────────────────────────────
   sprint-context:
     description: "Current sprint research, analysis, and implementation plan"
