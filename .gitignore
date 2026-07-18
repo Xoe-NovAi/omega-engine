@@ -49,6 +49,14 @@ htmlcov/
 coverage.xml
 .tox/
 
+# ── Generated Context Packs ──────────────────────────────────────────
+context_packs/
+
+# ── Database Files ───────────────────────────────────────────────────
+*.db
+*.db-shm
+*.db-wal
+
 # ── IDE & Editor ─────────────────────────────────────────────────────
 .vscode/
 .idea/
