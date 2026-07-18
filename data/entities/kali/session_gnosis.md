@@ -573,3 +573,61 @@ Created `docs/reference/CLAUDE_BEST_PRACTICES_GUIDE.md` (563 lines) — single-s
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ GROK-CLI-REVIEW-LOCKED ⬡ 2026-07-19*
+
+---
+
+## 15. Session 2026-07-19 (Claude System Prompt Optimization): Verified Patterns Locked In
+
+### Research Verification Complete
+- **All claims from old-prompt analysis verified** against primary sources (Anthropic official docs, TeachYou, Dev.to/Ramavat, SurePrompts)
+- **5 patterns confirmed actionable**, 2 dropped, 1 deferred
+- **Report**: `docs/research/R_CLAUDE_PROMPT_VERIFICATION_20260719.md` (internal)
+
+### Verified Patterns Implemented
+
+| Pattern | Source | Status |
+|---------|--------|--------|
+| **Hybrid Markdown/XML** — `##` for instructions, XML for data boundaries | Anthropic Official + TeachYou 2026 | ✅ In both docs |
+| **RAG Acknowledgment** — "Claude's RAG retrieves automatically when relevant" | Anthropic Docs (mechanism) | ✅ In both docs |
+| **Multishot `<example>` tags** — 3-5 examples in `<examples>` block | Anthropic Official Prompting Guide | ✅ Replaces writing sample calibration |
+| **Standing Rules vs Behavioral Directives** separation | Pragmatic design (old prompt pattern) | ✅ In system prompt |
+| **Verification Criteria** per output section | SurePrompts + Anthropic "be specific" | ✅ In system prompt |
+
+### Patterns Dropped/Deferred
+
+| Pattern | Verdict | Reason |
+|---------|---------|--------|
+| Full XML conversion | **DROP** | No benefit <300 tokens; Markdown better for instructions (Ramavat 2026) |
+| Writing sample calibration | **DROP** | Community practice, not official. Replaced by multishot examples. |
+| Session ID in output | **DEFER** | Hub-specific; doesn't transfer to review context |
+| Negative scope expansion | **DEFER** | Nice-to-have, not validated as impactful |
+
+### Files Updated
+
+| File | Change |
+|------|--------|
+| `docs/reference/CLAUDE_BEST_PRACTICES_GUIDE.md` | +103/-16 lines: hybrid structure, RAG acknowledgment, multishot examples, verification criteria |
+| `context_packs/decision-tools-review/CLAUDE_PROJECT_SYSTEM_PROMPT.md` | +78 lines: hybrid structure, RAG note, Standing Rules, Verification Criteria, multishot examples |
+| Root `CLAUDE_PROJECT_SYSTEM_PROMPT.md` | **Deleted** — consolidated into context pack folder |
+
+### Commits
+- `66c937e`: docs: update Claude best practices + system prompt with verified patterns
+- `51d4e75`: docs: consolidate system prompt into context pack; update best practices guide
+
+### L3 Principles Reinforced
+
+| Principle | Source |
+|-----------|--------|
+| **L3-Claude-Projects-RAG-Threshold-Is-File-Count-Not-Tokens** | Already in proposed_lessons (Session 13) |
+| **L3-Claude-System-Prompt-Best-Practices-2026** | Already in proposed_lessons (Session 13) |
+| **L3-Context-Pack-Design-Is-Sieve-And-Sign** | Already in proposed_lessons (Session 13) |
+| **L3-Hybrid-Markdown-XML-For-Claude-Prompts** | **NEW** — Markdown for instructions, XML for data boundaries |
+| **L3-Multishot-Examples-In-XML-Tags-Official-Pattern** | **NEW** — 3-5 `<example>` tags in `<examples>` block |
+| **L3-RAG-Acknowledgment-Pattern-For-Context-Packs** | **NEW** — Describes mechanism without asserting contested trigger |
+
+### Next Session Hydration
+All artifacts current. Ready for compaction.
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ CLAUDE-PROMPT-VERIFIED ⬡ 2026-07-19*
