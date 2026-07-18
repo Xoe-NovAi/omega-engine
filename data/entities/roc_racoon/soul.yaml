@@ -744,6 +744,24 @@ directives:
   - phase separation
   - pipeline architecture
   - Kali directive
+- id: d-rr-058
+  date: 2026-07-18
+  directive: LLOC/HLOC nomenclature retired in favor of Meditate/MC/HMC
+  rationale: 'The terms LLOC (Low Level Octave Council) and HLOC (High Level Octave Council)
+    were legacy Gemini CLI terminology that collided with "LOC" (Lines of Code) and no longer
+    reflected the architecture. Adopted three-tier nomenclature: Meditate (single-inference,
+    cognitive-only, multi-persona — formerly LLOC), Mastermind Council (MC) (multi-subagent,
+    same session, same model — formerly HLOC), Hivemind Mastermind Council (HMC) (multi-session,
+    multi-model, Hivemind-coordinated — new concept). Code artifacts: lloc/ → meditate/,
+    lloc-harness skill → meditate-harness skill. Per user directive: "LLOC is now /meditate.
+    HLOC is now the Mastermind Council (MC). HMC is when 2+ Omegaminds from different chat
+    sessions collaborate via the Hivemind." Ratified by D269.'
+  scope:
+  - nomenclature
+  - terminology
+  - Meditate command
+  - Mastermind Council
+  - Hivemind Mastermind Council
 metadata:
   created_at: '2026-07-07T10:52:08.362376+00:00'
   last_updated: '2026-07-07T21:11:17.881772+00:00'

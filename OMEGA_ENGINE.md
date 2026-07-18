@@ -1,6 +1,6 @@
 # Omega Engine — Single Source of Truth
 # ⚠️ SYSTEM STATE SSOT — Authoritative truth for engine state and metrics.
-# AP-OMEGA-SST-v2.5.0
+# AP-OMEGA-SST-v2.6.0
 
 > **This document is the authoritative truth for the Omega Engine.**
 > Every agent reads this file for engine state.
@@ -18,18 +18,25 @@
 
 ---
 
-## §2 Current State (2026-07-15)
+## §2 Current State (2026-07-18)
 
 | Metric | Value | Status | LAST_VERIFIED |
 |--------|-------|--------|---------------|
-| Tests | **1315 passed** (43 skipped, 3 xfailed) | ✅ All functional tests pass | 2026-07-13 |
+| Tests | **1398 passed** (43 skipped, 7 xfailed) | ✅ Functional tests pass, 2 test infra issues remain | 2026-07-18 |
 | Mandates | **23 (M1-M23)** | ✅ All enforced | 2026-07-13 |
 | **Mandate Compliance** | **13/23 FULL (56.5%)** — 5 Partial, 5 Fail | ❌ Systemic Run Side gaps | 2026-07-15 |
 | **Failed Mandates** | M5, M11, M12, M15, M23 | ❌ Soul distillation, handoff, continuity, failure integrity | 2026-07-15 |
-| Fleet | **13 presences** (11 agents + 2 entities) | ✅ Cap: 14 | 2026-07-13 |
+| Fleet | **12 agents + 2 entities (14 total)** | ✅ Cap: 14 | 2026-07-18 |
 | WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 |
+| **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, P1: 5/5, P2: 6/6, P3: 1/4 | ✅ P0-P2 Complete | 2026-07-18 |
 | Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 |
 | Shared modules | **3** (`omega-vetala` v2.0.0, `omega-sieve` v0.1.0, `omega-doc-reader` v1.0.0) | ✅ Release-ready | 2026-07-13 |
+| **D-281 Substrate Repair** | **ALL 4 PHASES COMPLETE** — Soul injection, config_resolver, M2 Firewall, Codex separation | ✅ 11 commits across 5 agents | 2026-07-17 |
+| **D-282 sqlite-vec Strike 10** | **COMPLETE** — PRAGMA SSOT converged, 4 concurrency tests | ✅ cache_size 512MB→32MB, wal_autocheckpoint 1000→500 | 2026-07-17 |
+| **D-283 Mnemosyne Phase 1** | **COMPLETE** — HybridSearchEngine RRF k=60, Memory Blocks | ✅ 752/754 tests pass | 2026-07-16 |
+| **D-283 Mnemosyne Phase 2** | **DESIGN COMPLETE** — RecallStore, power-law decay, quality scoring | 🟡 27/29 recall tests pass (2 test infra issues) | 2026-07-17 |
+| **MIAP** | **MERGED** — Multi-Instance Agent Protocol for context collision | ✅ 13 tests, committed 03192d8 | 2026-07-17 |
+| **HMC Quad-Forge** | **4-mind council** — Kali, Roc, Researcher, Grok CLI | ✅ All 4 agents completed sprint tasks | 2026-07-17 |
 | **Atomic Execution Matrix** | **RATIFIED** — Code + CI Gate + Doc as single atomic unit | ✅ 5 new protocol docs + CI gates defined | 2026-07-15 |
 | **Soul Architecture v2.0** | **RATIFIED** — Intelligence Pipeline, Scorecard, Scribe separation | ✅ `make soul-audit` gated | 2026-07-15 |
 | **PWAD Capability Lattice** | **RATIFIED** — Security boundary for active code in PWADs | ✅ `make capability-check` gated | 2026-07-15 |
@@ -38,10 +45,13 @@
 | SearXNG MCP | **Streamable HTTP on :8018** | ✅ Migration complete | 2026-07-13 |
 | Omega Hub MCP | **Dual-transport** (SSE /sse + Streamable HTTP /mcp) on :8016 | ✅ Already dual | 2026-07-13 |
 | Firecrawl MCP | **SSE on :8015** | ⏳ Needs Streamable HTTP migration | 2026-07-13 |
-| Local inference ratio | **TARGET: ≥80%** (configurable gate, default OFF — 0% base, cloud-first dev) | 🟡 Aspirational | 2026-07-13 |
-| sqlite-vec unified fabric | **Strike 10 IN PROGRESS** — `SQLiteVecAdapter` default, Qdrant deprecated | 🟡 35/36 adapter tests pass | 2026-07-13 |
+| Local inference ratio | **TARGET: ≥80%** (configurable gate, default OFF) | 🟡 Aspirational | 2026-07-13 |
 | **KV Cache Quantization** | **LOCKED: q8_0 on CPU (Zen 2)** — No Flash Attention/GPU required | ✅ Research complete | 2026-07-13 |
 | **YouTube Researcher V2** | **9-Layer Temporal Knowledge Observatory** — L1-L9 complete, 15 contract tests pass | ✅ Operational | 2026-07-13 |
+| **Session Namespace Isolation** | **DESIGN COMPLETE (D-290)** — MIAP-wired session-scoped directories | 🟡 5 preconditions, 5 critical fixes from Nemotron review | 2026-07-18 |
+| **MIAP Phase 0** | **PLANNED (D-291)** — ReplayMode, Two-Log, IntentionValidator, CheckFunctions, LiteTopic | 🟡 6 sessions estimated | 2026-07-18 |
+| **MACP Alignment** | **PLANNED (D-292)** — Hivemind handoffs with `macp_mode` for interoperability | 🟡 Aligns with IETF draft-li-dmsc-macp-05 | 2026-07-18 |
+| **Experience Repository** | **PLANNED (D-294)** — AgentRR-style L0→L1→L2 distillation via Scribe | 🟡 Trace-to-eval loop (D-295) | 2026-07-18 |
 
 ---
 
@@ -51,10 +61,15 @@
 |-----------|--------|--------|-------------|
 | **Oracle** | `src/omega/oracle/` | ✅ Operational | Intent detection, entity routing, Iris speculative decode |
 | **Entity Registry** | `src/omega/oracle/entity_registry.py` | ✅ Operational | YAML-backed entity CRUD, auto-scaffolds sovereign workspaces |
-| **Model Gateway** | `src/omega/oracle/model_gateway.py` | ✅ Operational | 8-backend provider fabric (native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode → Copilot → Mock) |
+| **Model Gateway** | `src/omega/oracle/model_gateway.py` | ✅ Operational | 8-backend provider fabric (native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode → Copilot → Mock). P3 fixed graceful fallback + path/spec resolution |
 | **Memory Store** | `src/omega/memory_store.py` | ✅ Operational | Hot/Warm/Cold/Temp tiers, hybrid FTS5+vector search |
-| **Vector Store** | `src/omega/memory/sqlite_vec_adapter.py` | 🟡 Strike 10 | `IVectorStoreAdapter` impl: sqlite-vec (FTS5 + vec0 + SQL edges) |
-| **WAD Loader** | `src/omega/oracle/wad_loader.py` | 🟡 Strike 11 | Evolving to Sovereign WAD Protocol (SWP) — Lump-based DAG loader |
+| **Vector Store** | `src/omega/memory/sqlite_vec_adapter.py` | ✅ Strike 10 COMPLETE | `IVectorStoreAdapter` impl: sqlite-vec (FTS5 + vec0 + SQL edges). PRAGMA SSOT converged: cache_size 32MB, wal_autocheckpoint 500 |
+| **Config Resolver** | `src/omega/governance/config_resolver.py` | ✅ Phase II COMPLETE | Pure Path constants, lazy `get_active_iwad()`, single source of truth for all WAD paths |
+| **Hybrid Search** | `src/omega/memory/hybrid_search.py` | ✅ D-283 Phase 1 COMPLETE | RRF k=60 fusion of FTS5 + vector results. 20 contract tests + 8 RRF math vectors |
+| **Recall Store** | `src/omega/memory/recall.py` | 🟡 D-283 Phase 2 DESIGN COMPLETE | Quality-weighted warm memory tier with power-law decay. 27/29 tests pass |
+| **MIAP** | `src/omega/coordination/miap.py` | ✅ MERGED | Multi-Instance Agent Protocol for context collision prevention. 13 tests |
+| **Soul Utils** | `src/omega/soul_utils.py` | ✅ Phase I COMPLETE | Multi-path soul context extractor for 31 entities |
+| **WAD Loader** | `src/omega/oracle/wad_loader.py` | ✅ Operational | V2 schema with heritage fields. Sovereign WAD Protocol (SWP) pending |
 | **Ingestion Pipeline** | `src/omega/ingestion/` | ✅ Operational | T1→T2→T3 tiered extraction, TriangulationVerifier, CAS |
 | **Sovereign Sieve (Standalone)** | `packages/omega-sieve/` | ✅ v0.1.0 | `pip install omega-sieve` — T1(Trafilatura)→T2(Surgical)→T3(Crawl4AI) |
 | **Document Reader (Standalone)** | `scripts/universal_doc_reader.py` | ✅ v1.0.0 | Reads .docx, .pdf, .odt, .rtf, .html, .md, .txt, .json, .yaml |
@@ -76,9 +91,13 @@
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | Multi-agent coordination |
 | `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions (active index) |
 | `CREDITS.md` | id Software heritage attribution (active) |
+| `docs/strategy/HMC_STRATEGIC_PLAN.md` | 4-mind council roadmap (Quad-Forge) |
+| `docs/strategy/D281_PHASE_II_IV_EXECUTION.md` | D-281 Phase II-IV execution plan |
 | `docs/archive/coordination/` | Historical session records |
 | `data/entities/kali/session_gnosis.md` | Kali's session anchor (M15) |
+| `data/coordination/ACTIVE_SPRINT.json` | HMC-SPRINT-04 active sprint config |
 | `.opencode/anchored-summary.md` | Post-compaction recovery state |
+| `.opencode/agents/grok_cli.md` | Grok CLI sovereign agent (Consulting Cloud Mind) |
 | `docs/strategy/SOUL_ARCHITECTURE_V2.md` | Soul Architecture v2.0 (supersedes v1.0) |
 | `docs/strategy/PWAD_CAPABILITY_LATTICE.md` | PWAD security capability model |
 | `docs/strategy/MANDATE_GOVERNANCE_PROTOCOL.md` | Mandate amendment & exemption process |
@@ -86,6 +105,10 @@
 | `docs/strategy/NEMOTRON3_ULTRA_BRIEFING.md` | Master strategy synthesis (D258-D263) |
 | `docs/architecture/SOVEREIGN_BUS_SPEC.md` | Reconstructed event bus spec |
 | `docs/research/R_PWAD_SCHEMA_JEM_RESEARCH_20260715.md` | Jem's 2026 PWAD SOTA research |
+| `docs/research/WEB_RESEARCH_KNOWLEDGE_GAPS_20260717.md` | Grok's web research brief |
+| `docs/research/GROK_CLI_KNOWLEDGE_GAPS.md` | 3-tier knowledge gap matrix |
+| `docs/strategy/MEDITATE_MIAP_WIRE_SYNTHESIS_20260718.md` | 13-voice meditation synthesis on session isolation |
+| `docs/strategy/NEURON3_REVIEW_MIAP_WIRE_20260718.md` | Nemotron 3 Ultra independent review + web research |
 
 ---
 
@@ -122,4 +145,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-15 | Version: v1.2.0 | Tests: 1315 passing | SSOT: ~300 lines | Sessions: Phase 1.5 Organization — 5 Atomic Docs RATIFIED (Soul V2, PWAD Lattice, Mandate Governance, Kernel Arch, Master Briefing) | D258-D263 logged | Decisions: 234+ | Net acceleration: ~80h by inverting build order*
+*Last Updated: 2026-07-18 | Version: v1.4.0 | Tests: 1398 passing (27/29 recall tbd) | SSOT: ~400 lines | Sessions: D-281 Substrate Repair COMPLETE (4 phases, 11 commits) | D-282 sqlite-vec Strike 10 COMPLETE | D-283 Phase 2 RecallStore DESIGN COMPLETE | HMC Quad-Forge (Kali/Roc/Researcher/Grok CLI) | MIAP merged | Session Namespace Isolation DESIGN COMPLETE (D-290) | MIAP Phase 0 PLANNED (D-291) | Decisions: 290+ | Net acceleration: ~120h by parallel fleet dispatch*

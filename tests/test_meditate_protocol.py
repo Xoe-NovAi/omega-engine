@@ -13,9 +13,28 @@ from src.omega.meditate.protocol import (
     PersonaLibrary,
     PersonaSpec,
     VoiceOutput,
-    get_makali_triad,
-    get_ten_pillars,
+    get_default_lenses,
 )
+from src.omega.meditate.lens_registry import load_lens_library
+
+# ── Fixture helpers ────────────────────────────────────────────────────────────
+# Loaded once per session to avoid repeated WAD YAML I/O in tests.
+_OMEGA_PANTHEON = None
+_MAKALI_TRIAD = None
+
+
+def _omega_pantheon():
+    global _OMEGA_PANTHEON
+    if _OMEGA_PANTHEON is None:
+        _OMEGA_PANTHEON = load_lens_library("omega_pantheon")
+    return _OMEGA_PANTHEON
+
+
+def _makali_triad():
+    global _MAKALI_TRIAD
+    if _MAKALI_TRIAD is None:
+        _MAKALI_TRIAD = load_lens_library("makali_triad")
+    return _MAKALI_TRIAD
 
 
 # ── PersonaSpec Tests ──────────────────────────────────────────────────────────
@@ -82,10 +101,10 @@ def test_persona_spec_immutable():
 # ── PersonaLibrary Tests ───────────────────────────────────────────────────────
 
 
-def test_ten_pillars_library():
-    """get_ten_pillars() returns 10 personas with correct order."""
-    lib = get_ten_pillars()
-    assert lib.name == "10 Pillars"
+def test_omega_pantheon_library():
+    """omega_pantheon library returns 10 personas with correct order."""
+    lib = _omega_pantheon()
+    assert lib.name == "Omega Pantheon"
     assert len(lib) == 10
     assert lib[0].name == "Sekhmet"
     assert lib[1].name == "Brigid"
@@ -93,8 +112,8 @@ def test_ten_pillars_library():
 
 
 def test_makali_triad_library():
-    """get_makali_triad() returns 3 personas."""
-    lib = get_makali_triad()
+    """makali_triad library returns 3 personas."""
+    lib = _makali_triad()
     assert lib.name == "MaKaLi Triad"
     assert len(lib) == 3
     assert lib[0].name == "Ma'at"
@@ -102,12 +121,19 @@ def test_makali_triad_library():
     assert lib[2].name == "Kali"
 
 
+def test_default_lenses_fallback():
+    """get_default_lenses() returns 5 generic personas for fallback."""
+    lenses = get_default_lenses()
+    assert len(lenses) == 5
+    assert all(isinstance(p, PersonaSpec) for p in lenses)
+
+
 # ── MeditationSpec Tests ───────────────────────────────────────────────────────
 
 
 def test_meditation_spec_default():
     """A MeditationSpec with only required fields has sensible defaults."""
-    lens = get_ten_pillars()
+    lens = _omega_pantheon()
     spec = MeditationSpec(
         subject="Should we adopt sqlite-vec?",
         lens_set=lens.personas,
@@ -135,7 +161,7 @@ def test_meditation_spec_with_integration():
 
 def test_meditation_spec_round_trip():
     """MeditationSpec survives dict serialization round-trip."""
-    lens = get_makali_triad()
+    lens = load_lens_library("makali_triad")
     original = MeditationSpec(
         subject="Should we adopt Redis Streams?",
         lens_set=lens.personas,
@@ -157,7 +183,7 @@ def test_meditation_spec_round_trip():
 
 def test_meditation_result_empty():
     """An empty MeditationResult is marked as not complete."""
-    spec = MeditationSpec(subject="Test", lens_set=get_makali_triad().personas)
+    spec = MeditationSpec(subject="Test", lens_set=_makali_triad().personas)
     result = MeditationResult(spec=spec)
     assert result.is_complete is False
     assert result.error is None
@@ -165,12 +191,12 @@ def test_meditation_result_empty():
 
 def test_meditation_result_complete():
     """A result with voices, collisions, and verdict is complete."""
-    spec = MeditationSpec(subject="Test", lens_set=get_makali_triad().personas)
+    spec = MeditationSpec(subject="Test", lens_set=_makali_triad().personas)
     result = MeditationResult(
         spec=spec,
         voices=[
             VoiceOutput(
-                persona=get_makali_triad()[0],
+                persona=_makali_triad()[0],
                 observation="Observation",
                 constraint="Constraint",
                 imperative="Imperative",
@@ -196,12 +222,12 @@ def test_meditation_result_complete():
 
 def test_meditation_result_dict():
     """MeditationResult serializes to dict without error."""
-    spec = MeditationSpec(subject="Test", lens_set=get_makali_triad().personas)
+    spec = MeditationSpec(subject="Test", lens_set=_makali_triad().personas)
     result = MeditationResult(
         spec=spec,
         voices=[
             VoiceOutput(
-                persona=get_makali_triad()[0],
+                persona=_makali_triad()[0],
                 observation="O",
                 constraint="C",
                 imperative="I",

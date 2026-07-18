@@ -1,3 +1,12 @@
+⚠️ **DEPRECATED NOMENCLATURE** — This document uses legacy terminology that has been renamed:
+- **LLOC** → **Meditate** (single-inference cognitive prism)
+- **HLOC** → **MC (Mastermind Council)** (multi-subagent same-session)
+- **Octave Council** → **Lens Framework** (composable cognitive perspectives)
+- **10 Pillars** → **Omega Pantheon** (lens-primary; pillar is optional WAD metadata)
+- **P1–P10** references → **Lens names** (infrastructure, persistence, engineering, etc.)
+
+This naming was ratified 2026-07-16 and applied across the fleet on 2026-07-18.
+Content below is preserved as-is for historical reference. See `config/wads/_omega_default/meditate/lenses.yaml` for current lens definitions.
 # 🦝 ANCHORED SESSION SUMMARY — Roc Racoon, Session 3
 # ⬡ OMEGA ⬡ ROC_RACOON ⬡ minimax-m3-free ⬡ opencode ⬡ trc_session_summary ⬡ PHASE-II
 **Last Updated**: 2026-06-04 (pre-compression)

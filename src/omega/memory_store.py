@@ -71,6 +71,10 @@ def _get_entity_dir() -> Path:
 def _get_archive_dir() -> Path:
     return _get_memory_dir() / "archive"
 
+def _get_sessions_dir() -> Path:
+    """Get the sessions directory for JSONL persistence (ACP event stream)."""
+    return _get_data_dir() / "coordination" / "sessions"
+
 MAX_HOT_SESSIONS = 50
 MAX_HISTORY = MAX_HISTORY_EXCHANGES
 MAX_CONTEXT_EXCHANGES = DEFAULT_CONTEXT_LIMIT
@@ -434,6 +438,11 @@ class MemoryStore:
         if trace_id:
             exchange["metadata"]["trace_id"] = trace_id
 
+        # ── JSONL Session Persistence (ACP Event Stream) ──
+        # Append-only event log for crash resilience and rewind capability.
+        # Mirrors Grok CLI's updates.jsonl pattern.
+        await self._log_acp_event(entity_name, session_id, exchange)
+
         if cache_key not in self._hot:
             existing = await self.get_history(entity_name, session_id, limit=MAX_HISTORY)
             self._cache_hot(cache_key, existing)
@@ -728,6 +737,167 @@ class MemoryStore:
         await anyio.Path(trace_path.parent).mkdir(parents=True, exist_ok=True)
         async with await anyio.open_file(str(trace_path), "w") as f:
             await f.write(json.dumps(trace_data, indent=2, default=str))
+
+    # ── JSONL Session Persistence (ACP Event Stream) ─────────────────────────
+    # Mirrors Grok CLI's updates.jsonl + rewind_points.jsonl pattern for
+    # crash-resilient sessions (Mandate 11: Soul Integrity, Mandate 15: Sovereign Continuity)
+
+    def _get_session_jsonl_path(self, entity_name: str, session_id: str, filename: str) -> Path:
+        """Get the path for a session's JSONL file (updates.jsonl or rewind_points.jsonl)."""
+        safe_entity = entity_name.lower().replace(" ", "_")
+        session_dir = _get_sessions_dir() / safe_entity / session_id
+        return session_dir / filename
+
+    async def _ensure_session_dir(self, entity_name: str, session_id: str) -> Path:
+        """Ensure the session directory exists for JSONL persistence."""
+        safe_entity = entity_name.lower().replace(" ", "_")
+        session_dir = _get_sessions_dir() / safe_entity / session_id
+        await anyio.Path(session_dir).mkdir(parents=True, exist_ok=True)
+        return session_dir
+
+    async def log_acp_event(
+        self,
+        entity_name: str,
+        session_id: str,
+        event_type: str,
+        payload: Dict[str, Any],
+        trace_id: Optional[str] = None,
+    ) -> None:
+        """Append an ACP event to the session's updates.jsonl (source of truth).
+        
+        This is the append-only event stream that survives OOM/kill.
+        Pattern from Grok CLI: xai-sqlite-journal/src/lib.rs
+        """
+        if not session_id:
+            return
+            
+        await self._ensure_session_dir(entity_name, session_id)
+        jsonl_path = self._get_session_jsonl_path(entity_name, session_id, "updates.jsonl")
+        
+        event = {
+            "event_type": event_type,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "entity": entity_name,
+            "session_id": session_id,
+            "payload": payload,
+        }
+        if trace_id:
+            event["trace_id"] = trace_id
+            
+        # Append to JSONL (atomic write via anyio)
+        async with await anyio.open_file(str(jsonl_path), "a") as f:
+            await f.write(json.dumps(event, default=str) + "\n")
+
+    async def _log_acp_event(
+        self,
+        entity_name: str,
+        session_id: str,
+        exchange: Dict[str, Any],
+    ) -> None:
+        """Internal: log an exchange as an ACP event to updates.jsonl.
+        
+        Called from add_exchange to maintain the append-only event stream.
+        """
+        await self.log_acp_event(
+            entity_name=entity_name,
+            session_id=session_id,
+            event_type="exchange",
+            payload=exchange,
+            trace_id=exchange.get("metadata", {}).get("trace_id"),
+        )
+
+    async def create_rewind_point(
+        self,
+        entity_name: str,
+        session_id: str,
+        snapshot: Dict[str, Any],
+        trace_id: Optional[str] = None,
+    ) -> None:
+        """Create a periodic filesystem snapshot in rewind_points.jsonl.
+        
+        Pattern from Grok CLI: /rewind command replays journal to restore state.
+        """
+        if not session_id:
+            return
+            
+        await self._ensure_session_dir(entity_name, session_id)
+        jsonl_path = self._get_session_jsonl_path(entity_name, session_id, "rewind_points.jsonl")
+        
+        rewind_point = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "entity": entity_name,
+            "session_id": session_id,
+            "snapshot": snapshot,
+        }
+        if trace_id:
+            rewind_point["trace_id"] = trace_id
+            
+        async with await anyio.open_file(str(jsonl_path), "a") as f:
+            await f.write(json.dumps(rewind_point, default=str) + "\n")
+
+    async def rewind_session(
+        self,
+        entity_name: str,
+        session_id: str,
+        target_timestamp: Optional[str] = None,
+    ) -> Optional[Dict[str, Any]]:
+        """Restore session state from rewind_points.jsonl.
+        
+        If target_timestamp is provided, restores to the latest rewind point
+        at or before that timestamp. Otherwise, restores the latest rewind point.
+        """
+        jsonl_path = self._get_session_jsonl_path(entity_name, session_id, "rewind_points.jsonl")
+        if not await anyio.Path(jsonl_path).exists():
+            return None
+            
+        rewind_points = []
+        async with await anyio.open_file(str(jsonl_path), "r") as f:
+            async for line in f:
+                line = line.strip()
+                if line:
+                    try:
+                        rewind_points.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        continue
+                        
+        if not rewind_points:
+            return None
+            
+        if target_timestamp:
+            # Find latest rewind point at or before target
+            target_dt = datetime.fromisoformat(target_timestamp.replace('Z', '+00:00'))
+            candidates = [
+                rp for rp in rewind_points
+                if datetime.fromisoformat(rp["timestamp"].replace('Z', '+00:00')) <= target_dt
+            ]
+            if not candidates:
+                return None
+            return max(candidates, key=lambda rp: rp["timestamp"])["snapshot"]
+        else:
+            # Return latest
+            return rewind_points[-1]["snapshot"]
+
+    async def list_session_events(
+        self,
+        entity_name: str,
+        session_id: str,
+        limit: int = 100,
+    ) -> List[Dict[str, Any]]:
+        """Read recent events from updates.jsonl for debugging/inspection."""
+        jsonl_path = self._get_session_jsonl_path(entity_name, session_id, "updates.jsonl")
+        if not await anyio.Path(jsonl_path).exists():
+            return []
+            
+        events = []
+        async with await anyio.open_file(str(jsonl_path), "r") as f:
+            async for line in f:
+                line = line.strip()
+                if line:
+                    try:
+                        events.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        continue
+        return events[-limit:]
 
     async def list_sessions(
         self,

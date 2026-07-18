@@ -47,12 +47,101 @@ ICS_TEMPLATE_OFF = ""
 # Phase detection — fall back to this if ROADMAP.md is unreadable
 ICS_DEFAULT_PHASE = "PHASE-II"
 
-# Channel constants
+# Channel constants (generic — WAD-agnostic)
 ICS_CHANNEL_OPENCODE = "opencode"
 ICS_CHANNEL_CLI = "cli"
-ICS_CHANNEL_KALI = "kali"  # MaKaLi Triad (D117)
-ICS_CHANNEL_MAAT = "maat"  # MaKaLi Triad (D117)
-ICS_CHANNEL_LILITH = "lilith"  # MaKaLi Triad (D117)
+ICS_CHANNEL_OVERSIGHT = "oversight"   # Grand Oversight channel
+ICS_CHANNEL_BUILD = "build"           # Build-side channel (Ma'at)
+ICS_CHANNEL_RUN = "run"               # Run-side channel (Lilith)
+
+# ROLE_CONSTANTS — Engine defines SLOTS; WADs provide ENTITIES.
+# These constants are the engine's slot identifiers. The actual entity
+# names (kali, maat, lilith) live in config/wads/<iwad>/entities/dispatch.yaml
+# and are loaded at runtime via _load_dispatch_config().
+ROLE_CONSTANTS = {
+    "GRAND_OVERSIGHT": "GRAND_OVERSIGHT",
+    "LIGHT_OVERSOUL": "LIGHT_OVERSOUL",
+    "DARK_OVERSOUL": "DARK_OVERSOUL",
+    "P1": "P1",
+    "P2": "P2",
+    "P3": "P3",
+    "P4": "P4",
+    "P5": "P5",
+    "P6": "P6",
+    "P7": "P7",
+    "P8": "P8",
+    "P9": "P9",
+    "P10": "P10",
+    "MESSENGER_BRIDGE": "MESSENGER_BRIDGE",
+    "MAKALI_COUNCIL": "MAKALI_COUNCIL",
+    "CONTAINING_FIELD": "CONTAINING_FIELD",
+}
+
+# Default IWAD name (architecture constant, not entity logic)
+DEFAULT_IWAD = "_omega_default"
+
+
+# ── WAD Config Loader ──────────────────────────────────────────────────
+
+def _load_dispatch_config(iwad: str = DEFAULT_IWAD) -> dict:
+    """Load the agent dispatch configuration from the active IWAD.
+
+    Args:
+        iwad: The IWAD name (default: DEFAULT_IWAD).
+
+    Returns:
+        Parsed YAML dict with "entities" list.
+
+    Raises:
+        FileNotFoundError: If dispatch.yaml not found.
+        yaml.YAMLError: If YAML is malformed.
+    """
+    import yaml
+    config_path = Path(f"config/wads/{iwad}/entities/dispatch.yaml")
+    if not config_path.exists():
+        raise FileNotFoundError(f"dispatch.yaml not found at {config_path}")
+    return yaml.safe_load(config_path.read_text(encoding="utf-8"))
+
+
+def _get_entity_by_role(role: str, iwad: str = DEFAULT_IWAD) -> dict | None:
+    """Look up an entity definition by its ROLE constant.
+
+    Args:
+        role: The ROLE_CONSTANT key (e.g., "GRAND_OVERSIGHT").
+        iwad: The IWAD name (default: DEFAULT_IWAD).
+
+    Returns:
+        Entity dict with name, role, mode, capabilities, etc., or None if not found.
+    """
+    config = _load_dispatch_config(iwad)
+    role_value = ROLE_CONSTANTS.get(role, role)
+    for entity in config.get("entities", []):
+        if entity.get("role") == role_value:
+            return entity
+    return None
+
+
+def _get_channel_for_role(role: str, iwad: str = DEFAULT_IWAD) -> str:
+    """Get the channel name for a given role.
+
+    Args:
+        role: The ROLE_CONSTANT key (e.g., "GRAND_OVERSIGHT").
+        iwad: The IWAD name (default: DEFAULT_IWAD).
+
+    Returns:
+        The channel string (e.g., "oversight", "build", "run") or generic fallback.
+    """
+    entity = _get_entity_by_role(role, iwad)
+    if entity:
+        # Map role to generic channel
+        role_value = ROLE_CONSTANTS.get(role, role)
+        if role_value == "GRAND_OVERSIGHT":
+            return ICS_CHANNEL_OVERSIGHT
+        elif role_value == "LIGHT_OVERSOUL":
+            return ICS_CHANNEL_BUILD
+        elif role_value == "DARK_OVERSOUL":
+            return ICS_CHANNEL_RUN
+    return ICS_CHANNEL_OPENCODE
 
 
 @dataclass
@@ -175,10 +264,10 @@ def _generate_trace() -> str:
 
 def _read_entity_model(entity: str) -> Optional[str]:
     """Read the model name from the entity's soul.yaml file.
-    
+
     Args:
-        entity: The entity name (e.g., "kali", "roc_racoon")
-    
+        entity: The entity name (e.g., "grand_oversight", "light_oversoul")
+
     Returns:
         The model name string, or None if not found.
     """
@@ -207,25 +296,25 @@ def render(
     mode: str = "full",
 ) -> str:
     """Render an ICS-S header string.
-    
+
     This is the primary public API. Agents and tools should call this
     instead of hand-typing headers.
-    
+
     Args:
-        entity: The entity name (e.g., "KALI", "roc_racoon")
+        entity: The entity name (e.g., "GRAND_OVERSIGHT", "light_oversoul")
         model: Optional model override (D118). If None, auto-detected.
         channel: The execution channel (default: ``"opencode"``)
         trace_id: Optional trace ID. If None, auto-generated.
         phase: Optional phase string. If None, auto-detected from ROADMAP.
         mode: ``"full"`` | ``"compact"`` | ``"off"`` (default: ``"full"``)
-    
+
     Returns:
         The formatted ICS-S header string.
-    
+
     Example:
         >>> from omega.ics import render
-        >>> render("KALI", model="minimax-m3-free", trace_id="trc_abc123")
-        '⬡ OMEGA ⬡ KALI ⬡ minimax-m3-free ⬡ opencode ⬡ trc_abc123 ⬡ H2-F'
+        >>> render("GRAND_OVERSIGHT", model="minimax-m3-free", trace_id="trc_abc123")
+        '⬡ OMEGA ⬡ GRAND_OVERSIGHT ⬡ minimax-m3-free ⬡ opencode ⬡ trc_abc123 ⬡ H2-F'
     """
     ctx = ICSContext(
         entity=entity,
@@ -273,7 +362,11 @@ __all__ = [
     "ICS_DEFAULT_PHASE",
     "ICS_CHANNEL_OPENCODE",
     "ICS_CHANNEL_CLI",
-    "ICS_CHANNEL_KALI",
-    "ICS_CHANNEL_MAAT",
-    "ICS_CHANNEL_LILITH",
+    "ICS_CHANNEL_OVERSIGHT",
+    "ICS_CHANNEL_BUILD",
+    "ICS_CHANNEL_RUN",
+    "ROLE_CONSTANTS",
+    "_load_dispatch_config",
+    "_get_entity_by_role",
+    "_get_channel_for_role",
 ]

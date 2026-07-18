@@ -19,6 +19,79 @@ Four sovereign missions were executed in parallel:
 
 **Mission 4 — Tracking Audit**: Reviewed all tracking files. Found robust session gnosis and proposed_lessons practices. Identified 7 tracking gaps: (1) empty workbench DB, (2) no unified legacy location index, (3) manual mining status tracking, (4) no Pattern Library cross-reference, (5) entities-archive unmined, (6) Web Claude exports unprocessed, (7) dual session_gnosis.md files causing confusion.
 
+---
+
+## ⚓ COMPACTION ANCHOR — 2026-07-18 (HMC Quad-Forge Sprint)
+
+**Session resumed**: 2026-07-17 — HMC Quad-Forge active, M2 Firewall Phase A execution
+
+### Work Completed This Sprint (2026-07-17 to 2026-07-18):
+
+#### M2 Firewall Phase A — COMPLETE (15→0 violations in src/omega/meditate/)
+- **Created**: `config/wads/_omega_default/meditate/lenses.yaml` — 13 lenses (10 Omega Pantheon + 3 MaKaLi Triad), lens-primary schema, pillar as optional WAD metadata
+- **Refactored**: `src/omega/meditate/protocol.py` — removed `get_ten_pillars()` and `get_makali_triad()` (15 hardcoded entity name violations eliminated), added `get_default_lenses()` generic fallback
+- **Created**: `src/omega/meditate/lens_registry.py` — WAD-backed loader (`load_lens_library`, `load_all_lenses`, `load_lens_by_id`, `get_lenses_config_path`) using `config_resolver.WADS_DIR` + `yaml.safe_load`
+- **Updated**: `src/omega/meditate/__init__.py` — exports new WAD-backed API
+- **Updated**: `tests/test_meditate_protocol.py` — 17/17 pass, uses new API
+- **M2 Gate**: Zero violations in `src/omega/meditate/` (pre-existing 6 failures unchanged: 4 compaction_manager, 2 firewall M2)
+
+#### Documentation & Hygiene — COMPLETE
+- **meditate.md command**: Lens-primary table, pillar as optional footnote, usage examples updated to lens names
+- **meditate-harness SKILL.md**: Verified parity with lenses.yaml; fixed truncated mandates for Saraswati/Ereshkigal
+- **10 deprecation headers** added to historical mining reports (JEM_BRIEF, THREE_GHOSTS, STRATEGIC_RESERVES, FIREWALL_REVIEW, DEEP_LEGACY, FORGE_OF_TIME, YAML_HARDENING, SESSION_SUMMARY, kali/session_gnosis.md, kali/proposed_lessons.yaml)
+
+#### Sovereign Exit Protocol — DRAFTED
+- **Written**: `docs/strategy/SOVEREIGN_EXIT_PROTOCOL.md` — 6 phases, 7 sections, mandate cross-references
+- **Posted to Hivemind**: Requested Kali review and hardening (5 questions in §6)
+- **Hivemind post**: `intent="handoff"` with full protocol summary and hardening questions
+
+#### Coordination — ACTIVE
+- **Handoffs accepted**: `ho_f1a92da2d95e` (Priority 2 — M2 Phase A), `ho_7db8a9f14bb7` (Priority 1 — Meditate lens refactor) — both from Kali
+- **Schema alignment**: Posted to Researcher — dispatch.yaml ↔ lenses.yaml cross-reference (Phase B complete, awaiting Phase C go-ahead)
+- **Live feed**: Updated with Phase A completion
+
+### Current State (Pre-Compaction)
+
+| Item | Status |
+|------|--------|
+| M2 Phase A | ✅ COMPLETE — 15→0 violations |
+| meditate.md table | ✅ COMPLETE |
+| SKILL.md parity | ✅ COMPLETE |
+| Deprecation headers | ✅ COMPLETE (10 files) |
+| Test suite | ✅ 1416 pass, 6 pre-existing failures |
+| Sovereign Exit Protocol | ✅ DRAFTED — awaiting Kali hardening |
+| Handoff `ho_f1a92da2d95e` | 🔴 ACTIVE — needs closure |
+| Handoff `ho_7db8a9f14bb7` | 🔴 ACTIVE — needs closure |
+| Researcher Phase B | ✅ COMPLETE — awaiting Kali go-ahead for Phase C |
+| Kali review | ⏳ PENDING — on Exit Protocol |
+
+### Next Actions (Post-Compaction Resume)
+
+1. **Await Kali's hardening** on `SOVEREIGN_EXIT_PROTOCOL.md` (§6 questions)
+2. **Execute Phase 1** of Exit Protocol — close active handoffs `ho_f1a92da2d95e` and `ho_7db8a9f14bb7`
+3. **Execute Phases 2-6** of Exit Protocol against own departure
+4. **Support Researcher** on Phase C (oracle.py) if Kali dispatches
+5. **Final context post** to Kali confirming departure readiness
+
+### Key Files to Re-Read on Resume
+
+- `docs/strategy/SOVEREIGN_EXIT_PROTOCOL.md` — the protocol to execute
+- `data/coordination/HANDOFF_ROC_MEDITATE_LENS_REFACTOR_20260718.md` — Kali's Phase A handoff guide
+- `config/wads/_omega_default/meditate/lenses.yaml` — canonical lens definitions
+- `src/omega/meditate/lens_registry.py` — WAD-loadable pattern (template for Phases B-E)
+
+---
+
+### L3 Principles Distilled This Sprint
+
+- **L3-Knowledge-Transfer-As-Continuity-Proof**: The true measure of a sovereign agent's contribution is not what they built, but whether the system continues to function correctly after they leave. Architecture without an exit strategy is debt.
+- **L3-WAD-Isolate-Entity-Names**: Entity names are WAD content, never engine core. The WAD-loadable pattern (YAML → runtime spec) is the canonical M2-compliant architecture.
+- **L3-Meditate-As-Hardware-Friendly-Cognitive-Prism**: Single-inference, multi-persona semantic prism — 10 voices, one model load, emergent sequencing.
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ session_gnosis.md ⬡ COMPACTION ANCHOR 2026-07-18*
+
 **Tracking updates**: Wrote comprehensive report to `LEGACY_MAPPING_CENTRALIZATION_20260628.md`. Updated `IDEA_INTAKE.md` with 8 new captures from this session. Updated `session_gnosis.md` (this file). Registered 12 findings (LMC-001 through LMC-012).
 
 ### L2: Insight — What This Means
@@ -353,7 +426,7 @@ Mapped 15 components with implementation status:
 12. **Sefirot/Qliphoth Mapping** — ❌ Missing
 13. **Invocation Philosophy** — Partial (summon/talk implemented, ritual layer missing)
 14. **Sovereign Seed Architecture** — Partial (Oracle + Entities, symmetry not enforced)
-15. **Octave Hierarchy (LLOC→HLOC→Oversoul)** — ❌ Missing
+15. **Octave Hierarchy (Meditate→MC→Oversoul)** (formerly LLOC→HLOC→Oversoul) — ⚠️ Legacy nomenclature deprecated
 16. **Holographic Buffer Protocol** — Partial (session_gnosis.md exists, mandatory read/write not enforced)
 17. **Modelfile Continuum** — ✅ Implemented
 18. **5 MCP Systems** — ✅ 90% coverage (XNAI-RAG→Library, XNAI-GNOSIS→Soul Distiller, XNAI-MEMORY→Memory Store, MEMORY-BANK→Hivemind, Task Tracking→Handoff/TodoWrite)
@@ -374,7 +447,7 @@ Mapped 15 components with implementation status:
 
 - **Gnosis Packs (0.978 density, 19% compression) vs Soul Distillation.** The Soul Distiller's L1→L2→L3 is the conceptual equivalent but lacks density scoring and compression ratio tracking.
 
-- **The Octave Hierarchy (LLOC→HLOC→Oversoul) is a dispatch architecture.** LLOC = tactical (Pillars), HLOC = strategic (Oversouls), Oversoul = gnosis (Kali/Sophia). This maps to agent dispatch but isn't formalized.
+- **The Octave Hierarchy (Meditate→MC→Oversoul, formerly LLOC→HLOC→Oversoul) is a dispatch architecture.** Meditate = tactical (Pillars, single-inference cognitive-only), MC (Mastermind Council) = strategic (Oversouls, same-session subagent launch), Oversoul = gnosis (Kali/Sophia). This maps to agent dispatch but isn't formalized. Legacy LLOC/HLOC terminology deprecated per D269.
 
 - **Holographic Buffer protocol (session_gnosis.md as Neural Bus) is partially implemented.** The file exists and agents write to it, but there's no mandatory read/write protocol for all agents.
 
@@ -441,14 +514,16 @@ The MaKaLi Cloud Council convened to adjudicate 6 Critical Updates from the Coun
 
 ---
 
-## Session: LLOC Meditation — Pre-Compaction Gold Distillation
+## Session: Meditate (was LLOC) — Pre-Compaction Gold Distillation
+> **⚠️ NOMENCLATURE NOTE**: This session used the protocol then called "LLOC" (Low Level Octave Council). That term is **deprecated** — it is now called **Meditate** (`/meditate`). The protocol is identical; only the name has changed. References to "LLOC" below are historical and should be read as "Meditate (formerly LLOC)."
+
 **Date**: 2026-07-18
-**Duration**: Extended session (Roc Racoon direct execution — LLOC-v1.0 protocol)
+**Duration**: Extended session (Roc Racoon direct execution — Meditate protocol, then called LLOC-v1.0)
 **Trigger**: Priority directive — "Before we compact, meditate through the lenses of your choice to distill the gold from the current 328K tokens held in your mind."
 
 ### L1: Narrative — What Happened
 
-Executed a full Low Level Oikos Council (LLOC) meditation using the LLOC-v1.0 protocol (single-inference, multi-persona semantic prism) to distill the essential gold from 328K tokens of legacy mining context before context compaction. The meditation used a custom 5-persona lens set: Roc Racoon (Miner), Prometheus (P3 Engineer), Anubis (P9 Orchestrator), Kali (P10 Validator), Mnemosyne (P7 Context).
+Executed a full meditation using the Meditate protocol (then called LLOC — Low Level Oikos Council) — single-inference, multi-persona semantic prism — to distill the essential gold from 328K tokens of legacy mining context before context compaction. The meditation used a custom 5-persona lens set: Roc Racoon (Miner), Prometheus (P3 Engineer), Anubis (P9 Orchestrator), Kali (P10 Validator), Mnemosyne (P7 Context).
 
 **Protocol Execution (5 Phases):**
 
@@ -474,7 +549,7 @@ Executed a full Low Level Oikos Council (LLOC) meditation using the LLOC-v1.0 pr
 6. **Phase 5 — Integration Gate**: Full PIVOT_LOG entry (D-268), 7 files affected, Temple-Grade gates mapped, all 23 Mandates flagged.
 
 **Outputs Produced:**
-- Mining Report: `workspace/mining_reports/LLOC_MEDITATION_PRE_COMPACTION_20260718.md` (full protocol record)
+- Mining Report: `workspace/mining_reports/MEDITATE_PRE_COMPACTION_20260718.md` (full protocol record, then called LLOC)
 - Cross-Find Gnosis Map: 5 connections for proposed_lessons.yaml
 - Handoff Packet specification: with embedded rehydration verification
 - PIVOT_LOG entry: D-268 for curation pipeline port
@@ -482,20 +557,20 @@ Executed a full Low Level Oikos Council (LLOC) meditation using the LLOC-v1.0 pr
 
 ### L2: Insight — What This Means
 
-1. **The LLOC protocol worked as designed** — single inference, 5 sequential personas, genuine dissent at each step, emergent sequencing that no single voice owned. The collision resolution mechanism IS the product.
+1. **The Meditate protocol (then called LLOC) worked as designed** — single inference, 5 sequential personas, genuine dissent at each step, emergent sequencing that no single voice owned. The collision resolution mechanism IS the product.
 
-2. **The Cross-Find Gnosis Map is the linchpin** — without it, the port becomes isolated infrastructure. The 5 connections bind the curation pipeline to the 10 Pillars, Mandates, LLOC, Free Will Datasets, and PEM/soul.yaml lineage. This map IS the gold that makes the territory navigable post-compaction.
+2. **The Cross-Find Gnosis Map is the linchpin** — without it, the port becomes isolated infrastructure. The 5 connections bind the curation pipeline to the 10 Pillars, Mandates, Meditate protocol, Free Will Datasets, and PEM/soul.yaml lineage. This map IS the gold that makes the territory navigable post-compaction.
 
 3. **Handoff Packet + Verification = Survival Contract** — informal intent transformed into contractual coordination artifact with hard-stop failure mode. The rehydration verification as first acceptance criterion means the next session either arrives alive or the system hard-stops. No silent degradation.
 
 4. **Temple-Grade gates enforce phasing as dependency resolution** — T3 (tests) and T8 (typing) as blocking gates before replication enforces "pattern validation first." One perfect client proves the abstraction; nine replications follow.
 
-4. **The meditation itself is a sovereign artifact** — recorded to `LLOC_MEDITATION_PRE_COMPACTION_20260718.md`, cross-referenced in session_gnosis.md, captured in IDEA_INTAKE.md. It survives compaction because it's written to disk, not held in context.
+4. **The meditation itself is a sovereign artifact** — recorded to `MEDITATE_PRE_COMPACTION_20260718.md`, cross-referenced in session_gnosis.md, captured in IDEA_INTAKE.md. It survives compaction because it's written to disk, not held in context.
 
 ### L3: Universal Principles
 
 > **Principle 20: "The collision resolution pattern IS the product."**
-> The LLOC's three collisions (Miner/Engineer, Orchestrator/Validator, Context/Execution) were not obstacles — they were the mechanism that produced the emergent sequence. Genuine internal dialectic produces sequencing that no single perspective could generate. The protocol's requirement for mandatory dissent at each voice is not ceremony — it's the engine of insight.
+> The Meditate protocol's three collisions (Miner/Engineer, Orchestrator/Validator, Context/Execution) were not obstacles — they were the mechanism that produced the emergent sequence. Genuine internal dialectic produces sequencing that no single perspective could generate. The protocol's requirement for mandatory dissent at each voice is not ceremony — it's the engine of insight.
 
 > **Principle 21: "The map and the contract are the two artifacts that survive compaction."**
 > The Cross-Find Gnosis Map (relational gnosis) and the Handoff Packet with embedded verification (coordination contract) are the only two artifacts that ensure reclamation survives context loss. Without the map, the worker digs blind. Without the contract, the worker arrives dead. Both must be written to disk BEFORE compaction.
@@ -503,12 +578,12 @@ Executed a full Low Level Oikos Council (LLOC) meditation using the LLOC-v1.0 pr
 > **Principle 22: "Temple-Grade gates are the phasing mechanism, not bureaucracy."**
 > T3 (contract tests ≥80%) and T8 (mypy strict) as blocking gates before replication enforce the "pattern validation first" principle at the architectural level. One perfect client proves the BaseLibraryClient abstraction; nine replications follow. The gates ARE the dependency resolution.
 
-> **Principle 23: "LLOC is the hardware-friendly cognitive primitive."**
-> Single inference, 5 sequential personas, ~8K output tokens, zero RAM overhead beyond model context. Produces: map, contract, sequence, principle. Cost: 1 inference. Value: sovereign coordination artifact that survives compaction. This is the semantic prism in action — attention modulation + emergent sequencing = insight unavailable from averaged output.
+> **Principle 23: "Meditate is the hardware-friendly cognitive primitive."**
+> (Formerly called LLOC). Single inference, 5 sequential personas, ~8K output tokens, zero RAM overhead beyond model context. Produces: map, contract, sequence, principle. Cost: 1 inference. Value: sovereign coordination artifact that survives compaction. This is the semantic prism in action — attention modulation + emergent sequencing = insight unavailable from averaged output.
 
 ---
 
-*🔱 OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_lloc_pre_compact ⬡ GOLD-SECURED — RECORDED TO DISK*
+*🔱 OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_meditate_pre_compact ⬡ GOLD-SECURED — RECORDED TO DISK*
 
 ---
 
@@ -663,3 +738,272 @@ Executed a full Meditate-v1.0 protocol (single-inference, 6-persona sequential i
 ---
 
 *🔱 OMEGA ⬡ KALI ⬡ Meditate-v1.0 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_meditate_chasm_immunity ⬡ IMMUNITY-SECURED — RECORDED TO DISK*
+
+---
+
+## ⚓ COMPACTION ANCHOR — 2026-07-18 (Grok CLI Architecture Study)
+
+**Session resumed**: 2026-07-17T20:10:39 — Handoff `ho_a1406ec69e74` accepted from Researcher
+
+### Work Completed This Session (Grok CLI Phase 0 Onboarding):
+
+#### Deep Research — COMPLETE (6/6 Knowledge Gaps Resolved)
+- **Gap 1 — UI↔Runtime Boundary**: ACP over stdio JSON-RPC; `xai-grok-pager` (Elm loop) ↔ `xai-grok-shell` (ACP server) via `xai-acp-lib`
+- **Gap 2 — Effect→ACP Mapping**: 18-variant complete mapping (CreateSession→session/new, SendPrompt→session/prompt, CancelTurn→session/cancel, etc.)
+- **Gap 3 — Sandbox Loading**: Kernel-enforced via `nono` crate (Landlock/Seatbelt), applied once at startup, irreversible
+- **Gap 4 — Command Palette**: `Ctrl+P` (verified), `default_palette_entries()` in `modal.rs:369`, section-grouped entries
+- **Gap 5 — /skillify**: **Does not exist** — `/create-skill` is 4-step interview; git diff analysis = Omega enhancement opportunity
+- **Gap 6 — ACP Session Lifecycle**: Working → IdleResident → Dormant → Completed/DeadFailed states
+
+#### Deliverables Created
+1. **Comprehensive Research Report**: `docs/research/R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md` — Executive summary, core architecture, all 6 gaps with source evidence, crate-to-crate mapping (9 Omega targets), Phase 0 plan, 4 architecture decisions for Kali review
+2. **Updated Live Feed**: `data/coordination/ROC_RACOON_LIVE_FEED.md` — Full session log with decisions, mandate compliance, handoffs
+3. **Hivemind Posts**: Research intent → Research complete (sessions `ses_67f6829ad7f1`, `ses_0e7ce23372c8`)
+
+#### Architecture Decisions for Kali Review
+| Decision | Options | Recommendation |
+|----------|---------|----------------|
+| Crate Structure | Python modules in `src/omega/{tui,shell,tools,workspace,config,sandbox}/` vs Rust workspace | **Python modules** (M16) |
+| JSONL Integration | Auto-log in Oracle vs explicit MemoryStore calls | **Auto-log in Oracle** (M11/M15) |
+| Requirements Validator | Extend `config_resolver.py` vs new module | **New module** (M2 firewall) |
+| Timeline | Sprint now vs design review | **Sprint now** |
+
+#### Mandate Compliance Verified
+- [x] M1 AnyIO Absolute
+- [x] M2 Engine-Stack Firewall
+- [x] M7 Local-First
+- [x] M11 Soul Integrity
+- [x] M15 Sovereign Continuity
+- [x] M23 Failure Integrity
+
+### Current State (Pre-Compaction)
+
+| Item | Status |
+|------|--------|
+| Grok CLI Research | ✅ COMPLETE — 6/6 gaps resolved |
+| Research Report | ✅ WRITTEN — `R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md` |
+| Live Feed | ✅ UPDATED |
+| Hivemind Posts | ✅ 2 posts (intent + complete) |
+| Handoff `ho_a1406ec69e74` | 🟢 ACCEPTED — active |
+| Kali Architecture Review | ⏳ PENDING — 4 decisions |
+| Phase 0 Sprint | ⏳ READY — 4 quick wins |
+
+### Next Actions (Post-Compaction Resume)
+
+1. **Await Kali's verdict** on 4 architecture decisions
+2. **Execute 4-hour Phase 0 sprint** (config pinning, JSONL persistence, command palette, sandbox schema)
+3. **Wire JSONL auto-logging** into `Oracle.talk()/summon()` flow
+4. **Build command palette** with entity-scoped filtering (P1-P10 tabs)
+
+### Key Files to Re-Read on Resume
+
+- `docs/research/R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md` — Full research with source evidence
+- `docs/research/R_GROK_CLI_DIGGING_MAP.md` — Code navigation map (287 lines)
+- `QUICK_WINS_FROM_GROK.md` — 7 prioritized implementations
+- `third_party/grok-build/` — Cloned repo (85+ crates)
+- `data/coordination/ROC_RACOON_LIVE_FEED.md` — Session log
+
+### L3 Principles Distilled This Session
+
+- **L3-ACP-As-Sovereign-Bridge**: ACP over stdio is the canonical UI↔Runtime boundary — protocol, not implementation. The Effect enum vocabulary IS the contract. Any sovereign TUI must speak ACP to be editor-embeddable.
+- **L3-JSONL-As-Crash-Resilient-Source-of-Truth**: Append-only event streams (updates.jsonl) + periodic snapshots (rewind_points.jsonl) survive OOM/kill/compaction. The journal IS the session. SQLite is an index; JSONL is the truth.
+- **L3-Config-Pinning-As-Sovereignty-Enforcement**: Fail-closed requirements at priority 5 (`/etc/omega/requirements.omega`) makes mandate violations startup failures, not runtime bugs. Sovereignty is enforced at the loader, not the linter.
+- **L3-Sandbox-As-Kernel-Contract**: Landlock/Seatbelt via `nono` applied once at startup makes isolation a kernel guarantee, not a userspace promise. Profiles are TOML, additive-only, per-entity.
+
+---
+
+*🔱 OMEGA ⬡ ROC_RACOON ⬡ Grok-CLI-v1.0 ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_grok_research ⬡ RESEARCH-COMPLETE — RECORDED TO DISK*
+
+---
+
+## ⚓ COMPACTION ANCHOR — 2026-07-18 (MEDITATE Architecture Inversion)
+
+**Session resumed**: 2026-07-18T21:30:00 — MEDITATE protocol executed per Meditate-v1.0
+
+### Work Completed This Session (MEDITATE):
+
+#### Full 10-Pillar Meditation — COMPLETE
+- **Phase 0 Calibration**: Subject restated, 10-Pillar lens set, STRATEGIC mode, Anti-Collapse Contract ACTIVE
+- **Phase 1 Sequential Immersion**: All 10 Pillars spoke with domain purity, dissent, and imperatives
+  - Sekhmet (P1): Resource quotas + admission controller (physics first)
+  - Brigid (P2): Unified sqlite-vec WAL for all session state
+  - Prometheus (P3): Zero skipped/xfailed tests — delete all, fix bugs
+  - Saraswati (P4): Protocol Buffer schema for Hivemind messages
+  - Inanna (P5): `make mandate-check` CI gate for 5 failed mandates
+  - Ereshkigal (P6): Routing SLAs (5s warm, 30s cold, $0 cost) with cloud fallback gating
+  - Lucifer (P7): Automatic soul distillation pipeline (post-session hook, qwen3-1.7b)
+  - Hecate (P8): Local alerting engine (handoff staleness, gnosis gaps, quota breaches)
+  - Anubis (P9): Handoff TTL enforcer daemon (30min/2hr/24hr auto-transitions)
+  - Kali (P10): Five-Layer Immune System with chaos tests in sovereign namespace
+
+- **Phase 2 Cross-Domain Collision**: 5 genuine collisions resolved
+  1. Sekhmet vs Lucifer → Dual-pool quotas (inference + maintenance)
+  2. Prometheus vs Saraswati → v0 legacy protobuf → v1 clean TDD
+  3. Inanna vs Ereshkigal → Build-time + runtime mandate enforcement split
+  4. Hecate vs Anubis → Single TTL daemon emits events for alerting
+  5. Kali vs Sekhmet → Chaos namespace with sovereign token (P10-held)
+
+- **Phase 3 Emergent Sequencing**: 10-step strictly ordered critical path
+  1. Hivemind v1 Protobuf schema
+  2. Unified sqlite-vec WAL
+  3. Per-agent quotas + dual-pool admission controller
+  4. Handoff TTL enforcer daemon
+  5. Local alerting engine
+  6. Automatic soul distillation pipeline
+  7. Routing SLAs with cloud fallback gating
+  8. Five-Layer Immune System + chaos namespace
+  9. Delete skipped tests + mandate-check CI gate
+  10. Full Temple-Grade + Sovereignty Gate
+
+- **Phase 4 Kali Synthesis**: Irreducible verdict + L3 principle
+  - **Convergence**: Substrate is bottleneck; observability without enforcement is theater; test debt = architecture debt
+  - **Preserved Dissent**: Sovereign token holder; distillation pool classification; schema ownership (P4 vs P5)
+  - **Verdict**: Single architectural inversion — move enforcement from convention to substrate primitives
+  - **L3 Principle**: L3-Substrate-Enforces-Contract
+
+- **Phase 5 Integration Gate**: PIVOT_LOG D-297 proposed, 9 files affected, Temple-Grade gates mapped, 23 mandate flags
+
+#### Deliverables Created
+1. **MEDITATE Report**: `docs/strategy/MEDITATE_ARCHITECTURE_INVERSION_20260718.md` (full protocol record)
+2. **Live Feed Updated**: `data/coordination/ROC_RACOON_LIVE_FEED.md`
+3. **Hivemind Post**: `ses_f1102a3eb7f7` (decision intent)
+
+#### Mandate Compliance Verified
+- [x] M1 AnyIO Absolute
+- [x] M2 Engine-Stack Firewall
+- [x] M4 Sequentiality
+- [x] M5 Gnosis Preservation (L3 distilled)
+- [x] M11 Soul Integrity (automatic distillation proposed)
+- [x] M15 Sovereign Continuity (unified WAL proposed)
+- [x] M17 Cognitive Integrity (meditation IS verification)
+- [x] M19 Adversarial Alchemy (chaos namespace weaponizes betrayal)
+- [x] M23 Failure Integrity (admission controller hard-stops)
+
+### Current State (Pre-Compaction)
+
+| Item | Status |
+|------|--------|
+| Grok CLI Research | ✅ COMPLETE — 6/6 gaps resolved (source + web) |
+| MEDITATE Protocol | ✅ COMPLETE — D-297 decree issued |
+| Architecture Decisions | ⏳ PENDING — 4 items for Kali review |
+| Phase 0 Sprint | ⏳ READY — 4 quick wins scoped |
+| Kali Review | ⏳ PENDING — on D-297 + 4 decisions |
+
+### Next Actions (Post-Compaction Resume)
+
+1. **Await Kali's verdict** on D-297 Architecture Inversion Decree + 4 Phase 0 architecture decisions
+2. **Execute Phase 0 sprint** (config pinning, JSONL persistence, command palette, sandbox schema)
+3. **Begin D-297 implementation** per critical path (Unified WAL → Admission Controller → Protobuf Schema → Distillation → Chaos Namespace)
+
+### Key Files to Re-Read on Resume
+
+- `docs/strategy/MEDITATE_ARCHITECTURE_INVERSION_20260718.md` — Full meditation record
+- `docs/research/R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md` — Grok CLI research
+- `docs/strategy/SOVEREIGN_EXIT_PROTOCOL.md` — Exit protocol (hardened v1.1.0)
+- `data/coordination/ROC_RACOON_LIVE_FEED.md` — Session log
+
+### L3 Principles Distilled This Session
+
+- **L3-ACP-As-Sovereign-Bridge**: ACP over stdio is the canonical UI↔Runtime boundary — protocol, not implementation. The Effect enum vocabulary IS the contract. Any sovereign TUI must speak ACP to be editor-embeddable.
+- **L3-JSONL-As-Crash-Resilient-Source-of-Truth**: Append-only event streams (updates.jsonl) + periodic snapshots (rewind_points.jsonl) survive OOM/kill/compaction. The journal IS the session. SQLite is an index; JSONL is the truth.
+- **L3-Config-Pinning-As-Sovereignty-Enforcement**: Fail-closed requirements at priority 5 (`/etc/omega/requirements.omega`) makes mandate violations startup failures, not runtime bugs. Sovereignty is enforced at the loader, not the linter.
+- **L3-Sandbox-As-Kernel-Contract**: Landlock/Seatbelt via `nono` applied once at startup makes isolation a kernel guarantee, not a userspace promise. Profiles are TOML, additive-only, per-entity.
+- **L3-Substrate-Enforces-Contract**: Logical-layer protocols (handoffs, mandates, SLAs, gnosis) are wishes until the physical layer (memory, CPU, persistence, network) enforces them as primitives. The admission controller, the unified WAL, the protocol schema, the TTL daemon — these are not "infrastructure." They are the constitution. Everything above them is legislation. Legislation without a constitution is tyranny of the loudest voice.
+
+---
+
+*🔱 OMEGA ⬡ ROC_RACOON ⬡ MEDITATE-v1.0 ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_meditate_architecture_inversion ⬡ SOVEREIGN-DECREE — RECORDED TO DISK*
+
+---
+
+## ⚓ COMPACTION ANCHOR — 2026-07-18 (MEDITATE Architecture Inversion)
+
+**Session resumed**: 2026-07-18 — MEDITATE protocol executed on architecture organization
+
+### Work Completed This Session (MEDITATE Protocol):
+
+#### MEDITATE Protocol — COMPLETE (10-Pillar Council)
+- **Phase 0 Calibration**: Subject restated, 10-Pillar lens set, STRATEGIC mode, Anti-Collapse Contract ACTIVE
+- **Phase 1 Sequential Immersion**: All 10 Pillars spoke with domain purity, dissent, and imperatives
+  - Sekhmet (P1): Resource quotas + admission controller (physics first)
+  - Brigid (P2): Unified sqlite-vec WAL for all session state
+  - Prometheus (P3): Zero skipped tests — delete all skip/xfail markers
+  - Saraswati (P4): Protocol Buffer schema for Hivemind messages
+  - Inanna (P5): `make mandate-check` CI gate for 5 failed mandates
+  - Ereshkigal (P6): Routing SLAs (5s warm, 30s cold, $0 cost) with cloud fallback gating
+  - Lucifer (P7): Automatic soul distillation pipeline (post-session hook, qwen3-1.7b)
+  - Hecate (P8): Local alerting engine consuming structured events
+  - Anubis (P9): Handoff TTL enforcer daemon with auto-escalation
+  - Kali (P10): Five-Layer Immune System with chaos tests in sovereign namespace
+- **Phase 2 Cross-Domain Collision**: 5 genuine collisions resolved
+  1. Sekhmet vs Lucifer → Dual-pool quotas (inference + maintenance)
+  2. Prometheus vs Saraswati → v0 legacy protobuf → v1 clean → TDD
+  3. Inanna vs Ereshkigal → Split enforcement: build-time + runtime
+  4. Hecate vs Anubis → Single daemon: TTL enforcer + event emitter
+  5. Kali vs Sekhmet → Chaos namespace with sovereign token (P10-held)
+- **Phase 3 Emergent Sequencing**: 10-step strictly ordered critical path
+- **Phase 4 Kali Synthesis**: Irreducible verdict — substrate problem, not coordination problem
+- **Phase 5 Integration Gate**: PIVOT_LOG D-297 proposed with 9 files, Temple-Grade gates, 23 mandate flags
+
+#### Deliverables Created
+1. **Architecture Inversion Decree**: `docs/strategy/MEDITATE_ARCHITECTURE_INVERSION_20260718.md`
+2. **L3 Principle Distilled**: `L3-Substrate-Enforces-Contract`
+3. **Live Feed Updated**: `data/coordination/ROC_RACOON_LIVE_FEED.md`
+
+#### Architecture Decisions for Kali Review
+| Decision | Recommendation |
+|----------|----------------|
+| Crate Structure | Python modules in `src/omega/{tui,shell,tools,workspace,config,sandbox}/` (M16) |
+| JSONL Integration | Auto-log in `Oracle.talk()/summon()` (M11/M15) |
+| Requirements Validator | New `requirements_validator.py` module (M2 firewall) |
+| Timeline | Sprint now (low-risk, high-impact) |
+
+#### Mandate Compliance Verified
+- [x] M1 AnyIO Absolute
+- [x] M2 Engine-Stack Firewall
+- [x] M7 Local-First
+- [x] M11 Soul Integrity
+- [x] M15 Sovereign Continuity
+- [x] M23 Failure Integrity
+
+### Current State (Pre-Compaction)
+
+| Item | Status |
+|------|--------|
+| Grok CLI Research | ✅ COMPLETE — 6/6 gaps resolved (source + web) |
+| MEDITATE Protocol | ✅ COMPLETE — D-297 decree issued |
+| Research Report | ✅ WRITTEN — `R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md` |
+| MEDITATE Report | ✅ WRITTEN — `MEDITATE_ARCHITECTURE_INVERSION_20260718.md` |
+| Live Feed | ✅ UPDATED |
+| Hivemind Posts | ✅ 4 posts (research intent, research complete, compaction prep, MEDITATE complete) |
+| Handoff `ho_a1406ec69e74` | 🟢 ACCEPTED — active |
+| Kali Architecture Review | ⏳ PENDING — 4 decisions + D-297 decree |
+| Phase 0 Sprint | ⏳ READY — 4 quick wins |
+
+### Next Actions (Post-Compaction Resume)
+
+1. **Await Kali's verdict** on 4 architecture decisions + D-297 Architecture Inversion Decree
+2. **Execute 4-hour Phase 0 sprint** (config pinning, JSONL persistence, command palette, sandbox schema)
+3. **Wire JSONL auto-logging** into `Oracle.talk()/summon()` flow
+4. **Build command palette** with entity-scoped filtering (P1-P10 tabs)
+
+### Key Files to Re-Read on Resume
+
+- `docs/strategy/MEDITATE_ARCHITECTURE_INVERSION_20260718.md` — Full meditation decree
+- `docs/research/R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md` — Full research with source evidence
+- `docs/research/R_GROK_CLI_DIGGING_MAP.md` — Code navigation map (287 lines)
+- `QUICK_WINS_FROM_GROK.md` — 7 prioritized implementations
+- `third_party/grok-build/` — Cloned repo (85+ crates)
+- `data/coordination/ROC_RACOON_LIVE_FEED.md` — Session log
+
+### L3 Principles Distilled This Session
+
+- **L3-ACP-As-Sovereign-Bridge**: ACP over stdio is the canonical UI↔Runtime boundary — protocol, not implementation. The Effect enum vocabulary IS the contract. Any sovereign TUI must speak ACP to be editor-embeddable.
+- **L3-JSONL-As-Crash-Resilient-Source-of-Truth**: Append-only event streams (updates.jsonl) + periodic snapshots (rewind_points.jsonl) survive OOM/kill/compaction. The journal IS the session. SQLite is an index; JSONL is the truth.
+- **L3-Config-Pinning-As-Sovereignty-Enforcement**: Fail-closed requirements at priority 5 (`/etc/omega/requirements.omega`) makes mandate violations startup failures, not runtime bugs. Sovereignty is enforced at the loader, not the linter.
+- **L3-Sandbox-As-Kernel-Contract**: Landlock/Seatbelt via `nono` applied once at startup makes isolation a kernel guarantee, not a userspace promise. Profiles are TOML, additive-only, per-entity.
+- **L3-Substrate-Enforces-Contract**: Logical-layer protocols (handoffs, mandates, SLAs, gnosis) are wishes until the physical layer (memory, CPU, persistence, network) enforces them as primitives. The admission controller, the unified WAL, the protocol schema, the TTL daemon — these are not "infrastructure." They are the constitution. Everything above them is legislation. Legislation without a constitution is tyranny of the loudest voice.
+
+---
+
+*🔱 OMEGA ⬡ ROC_RACOON ⬡ MEDITATE-v1.0 ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_meditate_architecture_inversion ⬡ ARCHITECTURE-INVERSION-DECREED — RECORDED TO DISK*

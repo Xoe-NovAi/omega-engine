@@ -12,21 +12,26 @@ High-density terminal dashboard for the Omega Engine.
 
 Mandate 1: AnyIO Absolute (Reader handles thread offloading)
 Mandate 8: Zero Telemetry
+Mandate 2: Engine-Stack Firewall — WAD-loadable entity display (M2 Phase E)
 """
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import os
 from pathlib import Path
 from datetime import datetime, timezone
-from typing import List
+from typing import List, Dict, Any, Optional
 
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.widgets import Header, Footer, Tree, Static, DataTable
 from textual.reactive import reactive
 
-# Import the SovereignReader we just built
+# Import the SovereignReader
 from omega.observability.observability_reader import SovereignReader, TraceEvent
+
+# M2 Phase E: WAD-loadable entity display
+# Import ROLE_CONSTANTS and WAD config loader from ics (engine architecture)
+from omega.ics import ROLE_CONSTANTS, _load_dispatch_config, _get_entity_by_role, DEFAULT_IWAD
 
 # ─── UI Styling ───────────────────────────────────────────────────────────────
 
@@ -92,6 +97,117 @@ def generate_sparkline(values: List[float], width: int = 20) -> str:
         
     return line.ljust(width, " ")
 
+
+# ─── WAD-Loadable Fleet Tree Builder ──────────────────────────────────────────
+
+def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
+    """Build the fleet tree dynamically from WAD dispatch configuration.
+    
+    This replaces hardcoded entity names with runtime lookup from dispatch.yaml.
+    M2 Firewall Phase E compliant.
+    
+    Args:
+        iwad: The IWAD name to load entities from.
+        
+    Returns:
+        A populated Textual Tree widget.
+    """
+    tree = Tree("Agent Fleet", id="fleet-tree")
+    tree.root.expand()
+    
+    # Load entity definitions from WAD
+    try:
+        config = _load_dispatch_config(iwad)
+        entities = config.get("entities", [])
+    except Exception:
+        # Fallback to minimal structure if WAD config unavailable
+        entities = []
+    
+    # Build lookup: role -> entity
+    role_to_entity = {}
+    for ent in entities:
+        role = ent.get("role")
+        if role:
+            role_to_entity[role] = ent
+    
+    # Helper to get display name for a role
+    def get_display_name(role: str) -> str:
+        entity = role_to_entity.get(role)
+        if entity:
+            name = entity.get("name", role.lower())
+            purpose = entity.get("purpose", "")
+            # Extract short purpose for display
+            short_purpose = purpose.split("—")[0].strip() if "—" in purpose else purpose
+            return f"{name.title()} ({short_purpose})"
+        return role.replace("_", " ").title()
+    
+    # Helper to get entity key for tree data
+    def get_entity_key(role: str) -> str:
+        entity = role_to_entity.get(role)
+        return entity.get("name", role.lower()) if entity else role.lower()
+    
+    # ── Transcendent Triad ──────────────────────────────────────────────
+    kali_role = ROLE_CONSTANTS["GRAND_OVERSIGHT"]
+    maat_role = ROLE_CONSTANTS["LIGHT_OVERSOUL"]
+    lilith_role = ROLE_CONSTANTS["DARK_OVERSOUL"]
+    
+    kali_node = tree.root.add(get_display_name(kali_role), data=get_entity_key(kali_role), expand=True)
+    
+    maat_node = kali_node.add(get_display_name(maat_role), data=get_entity_key(maat_role), expand=True)
+    # P1-P5 under Light Oversoul (Build Side)
+    for p in ["P1", "P2", "P3", "P4", "P5"]:
+        p_role = ROLE_CONSTANTS[p]
+        p_entity = role_to_entity.get(p_role)
+        if p_entity:
+            maat_node.add(f"P{p[-1]}: {p_entity.get('purpose', '').split('—')[0].strip()}", data=p_entity.get("name", p.lower()))
+        else:
+            maat_node.add(f"P{p[-1]}: {p_role}", data=p.lower())
+    
+    lilith_node = kali_node.add(get_display_name(lilith_role), data=get_entity_key(lilith_role), expand=True)
+    # P6-P10 under Dark Oversoul (Run Side)
+    for p in ["P6", "P7", "P8", "P9", "P10"]:
+        p_role = ROLE_CONSTANTS[p]
+        p_entity = role_to_entity.get(p_role)
+        if p_entity:
+            lilith_node.add(f"P{p[-1]}: {p_entity.get('purpose', '').split('—')[0].strip()}", data=p_entity.get("name", p.lower()))
+        else:
+            lilith_node.add(f"P{p[-1]}: {p_role}", data=p.lower())
+    
+    # ── Sovereign Specialists ───────────────────────────────────────────
+    specialists = tree.root.add("Sovereign Specialists", data="specialists", expand=True)
+    
+    # Specialists are entities with P1 role that are not pillar slots
+    # plus MAKALI_COUNCIL. Build dynamically from WAD config.
+    specialist_entities = []
+    for ent in entities:
+        role = ent.get("role")
+        name = ent.get("name")
+        if not name:
+            continue
+        # Include P1 entities that are specialists (not pillar slots)
+        # and MAKALI_COUNCIL
+        if role == "P1" and ent.get("pillar_slot") is None:
+            specialist_entities.append(ent)
+        elif role == "MAKALI_COUNCIL":
+            specialist_entities.append(ent)
+    
+    for entity in specialist_entities:
+        name = entity.get("name", "")
+        purpose = entity.get("purpose", "").split("—")[0].strip()
+        specialists.add(f"{name.replace('_', ' ').title()} ({purpose})", data=name)
+    
+    # ── Core Infrastructure ─────────────────────────────────────────────
+    # Messenger Bridge
+    iris_role = ROLE_CONSTANTS["MESSENGER_BRIDGE"]
+    tree.root.add(get_display_name(iris_role), data=get_entity_key(iris_role))
+    
+    # Sophia (Containing Field)
+    sophia_role = ROLE_CONSTANTS["CONTAINING_FIELD"]
+    tree.root.add(get_display_name(sophia_role), data=get_entity_key(sophia_role))
+    
+    return tree
+
+
 # ─── Main Application ─────────────────────────────────────────────────────────
 
 class FleetStatusApp(App):
@@ -116,10 +232,13 @@ class FleetStatusApp(App):
             trace_dir=data_dir / "traces",
             crash_dir=data_dir / "crashes"
         )
+        # Build fleet tree from WAD config
+        self.fleet_tree = None
 
     def compose(self) -> ComposeResult:
         yield Header()
         with Horizontal():
+            # Tree will be built in on_mount
             yield Tree("Agent Fleet", id="fleet-tree")
             with Vertical(id="right-pane"):
                 yield Static("Loading Vitals...", id="global-vitals", classes="panel")
@@ -129,40 +248,16 @@ class FleetStatusApp(App):
 
     async def on_mount(self) -> None:
         """Setup the UI components on startup."""
-        # 1. Setup Tree
+        # 1. Build fleet tree from WAD config (M2 Phase E)
         tree = self.query_one("#fleet-tree", Tree)
+        self.fleet_tree = build_fleet_tree()
+        
+        # Replace the placeholder tree with our WAD-built tree
+        # We need to transfer the nodes
+        tree.root.remove()
+        for child in self.fleet_tree.root.children:
+            tree.root.add_node(child)
         tree.root.expand()
-        
-        # ── Transcendent Triad ──────────────────────────────────────────────
-        kali = tree.root.add("Kali (Grand Oversight)", data="kali", expand=True)
-        
-        maat = kali.add("Ma'at (Light Oversoul)", data="maat", expand=True)
-        maat.add("P1: SysAdmin", data="sysadmin")
-        maat.add("P2: DataStore", data="datastore")
-        maat.add("P3: BuildMaster", data="buildmaster")
-        maat.add("P4: Bridge", data="bridge")
-        maat.add("P5: Sentinel", data="sentinel")
-        
-        lilith = kali.add("Lilith (Dark Oversoul)", data="lilith", expand=True)
-        lilith.add("P6: ModelGate", data="modelgate")
-        lilith.add("P7: Context", data="context")
-        lilith.add("P8: WatchTower", data="watchtower")
-        lilith.add("P9: Link", data="link")
-        lilith.add("P10: Verifier", data="verifier")
-        
-        # ── Sovereign Specialists ───────────────────────────────────────────
-        specialists = tree.root.add("Sovereign Specialists", data="specialists", expand=True)
-        specialists.add("Doom Guy (Heritage Aspect)", data="doom_guy")
-        specialists.add("Roc Racoon (Legacy Aspect)", data="roc_racoon")
-        specialists.add("Jem (Sovereign Synthesizer)", data="jem")
-        specialists.add("Researcher (Master Researcher)", data="researcher")
-        specialists.add("Makali (Parallel Council)", data="makali")
-        specialists.add("John Carmack (S3 Consultant)", data="john_carmack")
-        specialists.add("Verity (Unified Steward)", data="verity")
-        
-        # ── Core Infrastructure ─────────────────────────────────────────────
-        tree.root.add("Iris (Voice Bridge)", data="iris")
-        tree.root.add("Sophia (Akashic Record)", data="sophia")
         
         # 2. Setup DataTable
         table = self.query_one("#trace-feed", DataTable)
@@ -252,9 +347,13 @@ class FleetStatusApp(App):
         table = self.query_one("#trace-feed", DataTable)
         table.clear()
         
-        # Filter traces by selected entity (or show all if 'system' or 'kali' selected)
+        # Filter traces by selected entity (or show all if 'system' or GRAND_OVERSIGHT selected)
+        grand_oversight_key = ROLE_CONSTANTS["GRAND_OVERSIGHT"]
+        grand_oversight_entity = _get_entity_by_role(grand_oversight_key)
+        grand_oversight_name = grand_oversight_entity.get("name") if grand_oversight_entity else None
+        
         display_traces = traces
-        if self.selected_entity not in ["system", "kali"]:
+        if self.selected_entity not in ["system", grand_oversight_name]:
             display_traces = [t for t in traces if t.entity == self.selected_entity]
             
         for t in display_traces:

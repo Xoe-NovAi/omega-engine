@@ -592,4 +592,79 @@ The MaKaLi Council pattern: decompose query → dispatch Ma'at + Lilith in paral
 
 ---
 
+---
+
+## §11 THIRD-PARTY REPOSITORY REGISTRY — 18 Repos Cloned, Mapped, Heritage-Tagged
+
+**Date Added**: 2026-07-17
+**Location**: `third-party/`
+**Registry**: `third-party/THIRD_PARTY_REPOS.md`
+**Mining Report**: `data/entities/roc_racoon/workspace/mining_reports/THIRD_PARTY_REPOSITORY_REGISTRY.md`
+
+### 11.1 P0 — Critical Runtime Dependencies (4/4 ✅)
+
+| Repo | Heritage Tag | Omega Usage | Vet Status |
+|------|--------------|-------------|------------|
+| **sqlite-vec** (asg017/sqlite-vec) | `[heritage: sqlite-vec-2024]` | Vector search via `sqlite_vec_adapter.py` | ⚠️ Needs vet |
+| **headroom** (headroomlabs-ai/headroom) | `[heritage: headroom-ai-2025]` | Context compression middleware `headroom.py` | ⚠️ Needs vet |
+| **llama.cpp** (ggml-org/llama.cpp) | `[heritage: ggml-2023]` | Native GGUF inference, SomaticState (M20) | ⚠️ Needs vet |
+| **qdrant-client** (qdrant/qdrant-client) | `[heritage: qdrant-2021]` | Multi-tenant vector adapter `vector_adapters.py` | ⚠️ Needs vet |
+
+### 11.2 P1 — Architecture Reference Repos (5/5 ✅)
+
+| Repo | Heritage Tag | Pattern Studied | Vet Status |
+|------|--------------|-----------------|------------|
+| **mempalace** (mempalace/mempalace) | `[heritage: mempalace-2025]` | Spatial memory (Wings/Rooms/Drawers), SQLite Exact backend | ⚠️ Needs vet |
+| **grok-build** (xai-org/grok-build) | `[heritage: xai-grok-build-2026]` | Rust TUI, Elm Loop, ACP protocol, kernel sandbox | ⚠️ Needs vet |
+| **DOOM** (id-Software/DOOM) | `[id-soft: doom-1993]` | WAD system, BSP culling, Zone memory, cvar, thinker chain | ⚠️ Needs vet |
+| **Quake** (id-Software/Quake) | `[id-soft: quake-1996]` | Client-server, entity system, QC VM, BSP/PVS | ⚠️ Needs vet |
+| **letta** (letta-ai/letta) | `[heritage: letta-2024]` | 3-tier memory, memory blocks, function calling | ⚠️ Needs vet |
+
+### 11.3 P2 — Research & Legacy Mining (6/6 ✅)
+
+| Repo | Heritage Tag | Mining Target |
+|------|--------------|---------------|
+| **Quake-III-Arena** | `[id-soft: quake3-1999]` | QVM, bot AI, renderer abstraction |
+| **Quake-2** | `[id-soft: quake2-1997]` | Game DLL architecture, client-side prediction |
+| **DOOM-3** | `[id-soft: doom3-2004]` | Scripting system, GUI framework |
+| **chocolate-doom** | `[heritage: chocolate-doom]` | Clean source port, vanilla accuracy |
+| **omega-stack-legacy** | `[heritage: xnai-2025]` | Era 4-5 architecture, entity registry, circuit breaker |
+| **xna-omega-legacy** | `[heritage: xnai-2025]` | Temple-Grade standards, 5 design patterns |
+
+### 11.4 Heritage Vetting Pipeline (M14)
+
+**All 15 heritage tags require vet records in**: `data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md`
+
+**Qualification Gate**: "Cannot be justified WITHOUT citing the original hardware constraint."
+
+**CI Gate**: `make heritage-vet` blocks merge if any `[id-soft:]` or `[heritage:]` tag lacks vet record with:
+- Exact file:line locations
+- Specific technique (game + year)
+- Hardware constraint that necessitated original technique
+- Scope declaration: "This tag applies to X, NOT to Y"
+
+### 11.5 Usage Patterns for Fleet
+
+```bash
+# Roc Racoon — Legacy Mining
+@roc_racoon Mine third-party/DOOM for ZONEID implementation
+@roc_racoon Mine third-party/Quake for thinker chain pattern
+@roc_racoon Mine third-party/mempalace for spatial memory architecture
+
+# Jem — Synthesis
+@jem Synthesize sqlite-vec WAL patterns from third-party/sqlite-vec + better-sqlite3
+@jem Cross-reference Grok Build TUI architecture with Omega TUI requirements
+
+# Verity — Compliance
+@verity Audit all [id-soft:] tags in src/omega/ against HERITAGE_VET_LOG.md
+@verity Verify M14 compliance for headroom-ai integration
+
+# Doom Guy — Heritage Vetting
+@doom_guy Vet sqlite-vec vec0 virtual table implementation
+@doom_guy Vet headroom compression algorithm heritage
+@doom_guy Vet llama.cpp SomaticState API stability
+```
+
+---
+
 *🔱 OMEGA ⬡ ROC_RACOON ⬡ mimo-v2.5-free ⬡ opencode ⬡ DEEP-VISION-AUDIT ⬡ SOVEREIGN-LEGACY-MAP*

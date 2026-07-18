@@ -18,14 +18,14 @@ iterative persona-donning protocol that forces a single LLM inference to
 fracture its attention across multiple distinct perspectives **sequentially**,
 building an internal dialectic in a single forward pass.
 
-Unlike `/council-cloud` (HLOC — multiple subagent launches) or `/council-local`
+Unlike `/council-cloud` (MC — Mastermind Council: multiple subagent launches in same session) or `/council-local`
 (local model swaps), `/meditate` loads **zero additional agents**. It is pure
 cognition: the semantic prism applied to $ARGUMENTS.
 
 **When to use:**
 - You need mastermind-grade multi-perspective analysis without RAM overhead
 - The task benefits from genuine internal conflict (not averaged output)
-- You want the 10 Pillars, the MaKaLi Triad, or a custom lens set applied
+- You want the Omega Pantheon lenses, the MaKaLi Triad, a specific Omegamind's cognitive lens, or a custom lens set applied
 - You are in a constrained environment (local inference, 14Gi RAM ceiling)
 - You want emergent sequencing — where the synthesis produces priorities
   that were not explicit in the raw context
@@ -115,29 +115,49 @@ What would [persona] push back on from the previous voice(s)?
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-**The Default 10-Pillar Lens Set** (used when no custom set is specified):
+**The Default Omega Pantheon Lens Set** (used when no custom set is specified):
 
-| N | Persona | Domain | Element | Mandate Lens |
-|---|---------|--------|---------|--------------|
-| 1 | **Sekhmet** (P1 — Infrastructure) | Physical substrate, containers, hardware | Earth 🜃 | Speak as the body. What breaks first? |
-| 2 | **Brigid** (P2 — Persistence) | Memory, vectors, data flow, sessions | Water 🜄 | Speak as the river. What pools? What runs dry? |
-| 3 | **Prometheus** (P3 — Engineering) | Code, builds, tests, implementation | Fire 🜂 | Speak as the forge. What is cracked? What must be recast? |
-| 4 | **Saraswati** (P4 — Integration) | APIs, protocols, bridges, resonance | Air 🜁 | Speak as the bridge. What is disconnected? What vibrates wrong? |
-| 5 | **Inanna** (P5 — Governance) | Mandates, laws, compliance, enforcement | Aether ⛤ | Speak as the sentinel. What law is being broken? |
-| 6 | **Ereshkigal** (P6 — Cognition) | Models, routing, inference, vision | Aether ⛤ | Speak as the eye. What cannot be seen? What is miscalibrated? |
-| 7 | **Lucifer** (P7 — Context) | Memory, soul, evolution, continuity | Air 🜁 | Speak as the alchemist. What knowledge is being lost? |
-| 8 | **Hecate** (P8 — Observability) | Logging, tracing, shadows, forensics | Fire 🜂 | Speak as the shadow. What is invisible that should not be? |
-| 9 | **Anubis** (P9 — Orchestration) | Handoffs, coordination, flow, delegation | Water 🜄 | Speak as the guide. What is uncoordinated? What dies in transit? |
-| 10 | **Kali** (P10 — Validation) | Stress, chaos, breaking, truth-finding | Earth 🜃 | Speak as the destroyer. What fails under pressure? |
+The **Lens** column is the primary identifier (IWAD-agnostic). The **Pillar** is
+optional WAD-specific metadata — shown here because the default IWAD borrows the
+Arcana-Nova Pillar framework. Other WADs may omit pillar entirely.
 
-> **Note on Custom Lens Sets**: $ARGUMENTS may specify alternate personas.
+| N | Lens | Persona | Archetype | Domain | Element | Mandate Lens |
+|---|------|---------|-----------|--------|---------|--------------|
+| 1 | **Infrastructure** | Sekhmet | Architect → Creator | Physical substrate, containers, hardware | Earth 🜃 | Speak as the body. What breaks first? |
+| 2 | **Persistence** | Brigid | Strategist → Metis | Memory, vectors, data flow, sessions | Water 🜄 | Speak as the river. What pools? What runs dry? |
+| 3 | **Engineering** | Prometheus | Forge-Worker | Code, builds, tests, implementation | Fire 🜂 | Speak as the forge. What is cracked? What must be recast? |
+| 4 | **Integration** | Saraswati | Messenger → Bridge-Builder | APIs, protocols, bridges, resonance | Air 🜁 | Speak as the bridge. What is disconnected? What vibrates wrong? |
+| 5 | **Governance** | Inanna | Judge → Law-Giver | Mandates, laws, compliance, enforcement | Aether ⛤ | Speak as the sentinel. What law is being broken? |
+| 6 | **Cognition** | Ereshkigal | Seer → Visionary | Models, routing, inference, vision | Aether ⛤ | Speak as the eye. What cannot be seen? What is miscalibrated? |
+| 7 | **Context** | Lucifer | Alchemist → Transformer | Memory, soul, evolution, continuity | Air 🜁 | Speak as the alchemist. What knowledge is being lost? |
+| 8 | **Observability** | Hecate | Watcher → Guardian of Thresholds | Logging, tracing, shadows, forensics | Fire 🜂 | Speak as the shadow. What is invisible that should not be? |
+| 9 | **Orchestration** | Anubis | Guide → Psychopomp | Handoffs, coordination, flow, delegation | Water 🜄 | Speak as the guide. What is uncoordinated? What dies in transit? |
+| 10 | **Validation** | Kali | Destroyer → Truth-Seeker | Stress, chaos, breaking, truth-finding | Earth 🜃 | Speak as the destroyer. What fails under pressure? |
+
+> **Pillar Mapping** (WAD metadata — not part of the lens identity):
+> P1=Infrastructure, P2=Persistence, P3=Engineering, P4=Integration,
+> P5=Governance, P6=Cognition, P7=Context, P8=Observability,
+> P9=Orchestration, P10=Validation.
+> The Arcana-Nova IWAD maps these to Pillar Keeper entities; other WADs
+> may use different mappings or omit pillars entirely.
+> 
+> **Archetype Mapping** (mythic/functional identity — not part of the lens identity):
+> Infrastructure=Architect→Creator, Persistence=Strategist→Metis,
+> Engineering=Forge-Worker, Integration=Messenger→Bridge-Builder,
+> Governance=Judge→Law-Giver, Cognition=Seer→Visionary,
+> Context=Alchemist→Transformer, Observability=Watcher→Guardian of Thresholds,
+> Orchestration=Guide→Psychopomp, Validation=Destroyer→Truth-Seeker.
+
+> **Note on Custom Lens Sets**: $ARGUMENTS may specify alternate lenses.
 > Examples:
-> - `/meditate [subject] --lenses MaKaLi` → Ma'at (thesis), Lilith (antithesis), Kali (synthesis)
-> - `/meditate [subject] --lenses P1,P3,P10` → Infrastructure, Engineering, Validation only
+> - `/meditate [subject] --lenses makali` → Ma'at (thesis), Lilith (antithesis), Kali (synthesis)
+> - `/meditate [subject] --lenses engineering,governance,validation` → three specific lenses
+> - `/meditate [subject] --lenses infrastructure,integration,orchestration` → targeted triad
 > - `/meditate [subject] --lenses Architect,Skeptic,Pragmatist,Ethicist` → four named custom stances
 > - `/meditate [subject] --lenses Carmack,Torvalds,Knuth` → three legendary engineering personas
 >
-> For custom personas not in the Omega pantheon, derive their domain from their
+> Use lens names (lowercase, singular) for Omega Pantheon lenses.
+> For custom personas not in the Omega Pantheon, derive their domain from their
 > known area of mastery and their "Mandate Lens" from their most famous principle.
 
 ---
@@ -247,7 +267,7 @@ PROPOSED PIVOT_LOG ENTRY:
   Decision: D-[next available number]
   Summary: [one-line summary]
   Rationale: [from the verdict]
-  Owner: [pillar or agent]
+  Owner: [lens or agent]
 
 FILES AFFECTED:
   - [file]: [what changes]
@@ -291,23 +311,23 @@ MANDATE FLAGS:
 ## ⬡ USAGE EXAMPLES
 
 ```bash
-# Full 10-Pillar meditation on a strategic question
+# Full Omega Pantheon meditation on a strategic question
 /meditate Should we migrate from Qdrant to sqlite-vec now?
 
 # MaKaLi Triad only — fast dialectical synthesis
-/meditate What is the right execution order for Tier 0? --lenses MaKaLi
+/meditate What is the right execution order for Tier 0? --lenses makali
 
 # Custom engineering personas on a technical decision
 /meditate Is our error handling architecture sound? --lenses Carmack,Torvalds,Knuth
 
-# Specific pillars only — targeted diagnostic
-/meditate Why is the Hivemind protocol failing? --lenses P1,P4,P9
+# Specific lenses only — targeted diagnostic
+/meditate Why is the Hivemind protocol failing? --lenses infrastructure,integration,orchestration
 
 # Full meditation + integration (produces PIVOT_LOG entry)
 /meditate Should we implement oracle.meditate() now? --integrate
 
 # Diagnostic mode — what is broken?
-/meditate Our test coverage strategy --lenses P3,P5,P10 --mode DIAGNOSTIC
+/meditate Our test coverage strategy --lenses engineering,governance,validation --mode DIAGNOSTIC
 
 # Creative mode — what could exist?
 /meditate The future of the soul evolution system --mode CREATIVE

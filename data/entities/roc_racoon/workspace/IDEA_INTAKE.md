@@ -12,7 +12,15 @@ This file serves as the raw receptacle for all mind-dumps, experiments, and stra
 
 ## 🗃️ RAW INTAKE LOG
 
-### [2026-06-28] — Legacy Mapping & Centralization Survey (P0 Multi-Mission)
+### [2026-07-18] — MEDITATE Architecture Inversion & Phase A Cleanup (D-297)
+- `[ARCH]` `[STRAT]` `[GNOSIS]` **MEDITATE Architecture Inversion (D-297) Research Verification Complete**: 10 directives validated against 2026 production patterns with source citations. Appendix added to `docs/strategy/MEDITATE_ARCHITECTURE_INVERSION_20260718.md`. Validated: AgentCgroup (cgroups v2), mcp-engram (SQLite WAL + JSONL), ACP v1 (protobuf), Stratos/RESD (distillation), ReliabilityBench/agent-chaos (chaos engineering), Prometheus Alertmanager (local alerting), zero-inc (handoff TTL), Opper AI/ContentWave (routing SLAs), Sovereign Assurance Boundary (sovereign token). All 10 verified.
+- `[ARCH]` **Phase A Cleanup (Kali GO Signal) — 4/4 Complete**: (1) meditate.md command table: Lens primary, Archetype column, Pillar→Lens terminology; (2) 5 mining reports with deprecation headers; (3) meditate-harness SKILL.md Library A verified against lenses.yaml; (4) Targeted tests pass: 27/27 (test_meditate_protocol.py 17/17 + test_firewall_checker.py 10/10).
+- `[ARCH]` `[STRAT]` **Grok CLI HMC Quad-Forge Briefing Delivered**: xai-org/grok-build cloned at third_party/grok-build/ (85+ crates). Core: Elm loop (xai-grok-pager), ACP over stdio (xai-acp-lib), kernel sandbox (nono), session persistence (JSONL + SQLite journal), MCP bridge (xai-grok-mcp). Briefing file: `data/coordination/GROK_CLI_BRIEFING_FOR_JEM_20260717.md`. Handoffs accepted: Jem (ho_dc24da62c3a1), parallel Roc (ho_fdef81725f39).
+- `[ARCH]` **M2 Firewall Status Correction**: Researcher's "Phase E Complete" claim premature. Actual: 135 violations remain (66 fixed from 201). Phase A ✅ 15→0, Phase B ✅ 15→0, Phase C 🟡 5 Iris in oracle.py, Phase D 🟡 1 _omega_default in ics.py, Phase E ⏳ 22 queued. lens_registry.py WAD-loadable pattern proven for Phases B-E.
+- `[GNOSIS]` **L3-Substrate-Enforces-Contract**: Logical-layer protocols (handoffs, mandates, SLAs, gnosis) are wishes until the physical layer (memory, CPU, persistence, network) enforces them as primitives. The admission controller, unified WAL, protocol schema, TTL daemon — these are the constitution, not infrastructure.
+- `[GNOSIS]` **L3-Nomenclature-Is-Architecture**: LLOC→Meditate, HLOC→MC, Octave Council→Lens Framework, 10 Pillars→Omega Pantheon. Precise names enable precise engineering. Three-tier architecture: Meditate (single-inference cognitive prism) → Mastermind Council (multi-subagent same-session) → Hivemind Mastermind Council (multi-session multi-model).
+- `[GNOSIS]` **L3-ACP-As-Substrate-Contract**: ACP (Agent Client Protocol) is not just an editor protocol — it's the substrate contract for agent-tool interaction. JSON-RPC 2.0 over stdio with mandatory initialize handshake. Any sovereign agent runtime speaking ACP plugs into any ACP-compliant editor (Zed, JetBrains, VS Code).
+- `[GNOSIS]` **L3-Firewall-Is-Constitution**: Engine-Stack Firewall (M2) is the constitutional boundary between universal runtime (src/omega/) and specific implementation (config/wads/). A firewall breach is a sovereignty violation. The admission controller (D-297 Phase 2) will enforce this at runtime.
 - `[ARCH]` `[STRAT]` **Yucatan Mayan Preservation Document Found**: Full 1,092-line standalone HTML at `/media/arcana-novai/omega_library/intake/inbox/omega-mission-clarification/sonnet-4-6-extended/mayan-preservation-vision.html`. Produced by Claude (Sonnet 4.6) in a March 29-April 3, 2026 session on `xoe.nova.ai` account. Titled "The Living Word — Mayan Preservation & Sovereign Linguistics Platform." Contains complete elder interview kit hardware spec ($250 NUC), whisper.cpp Mayan pipeline, LoRA fine-tuning on llama.cpp, grant research (NSF $50-150K, NEH $100-350K), and agent handoff notes. This IS an Omega Stack deployment vision — directly related to engine lineage. Report: `mining_reports/LEGACY_MAPPING_CENTRALIZATION_20260628.md`
 - `[ARCH]` `[URGENT]` **Mayan Doc Is One of 8 Artifacts From Pivotal Session**: Same Claude session produced `omega-stack-master-v3.html` (tech command doc), `xoe-novai-foundation-codex.html` (philosophy), `gnostic-architecture.html` (Kabbalah VR), `the-deepening.html` (Tunnels I-XII), `the-origin.html` (Lilith origin story, Tunnels XIII-XXII), Zoa glyph SVG, and tri-star system widget. The session was where the founder revealed the origin story (project began as Lilith Tarot deck gift). All 8 artifacts are stored in intake but only mayan-preservation-vision.html has been located as standalone HTML.
 - `[GNOSIS]` `[STRAT]` **20+ Legacy Locations Identified — Only 6 Catalogued**: Complete inventory catalog reveals 20+ legacy locations across 3 partitions (omega_library, omega_vault, ~/Documents). Only 6 stacks (xna-omega-legacy, omega-stack-legacy, foundation, podman-storage, old-stacks, expert-knowledge) are documented in KNOWLEDGE MASTER_SYNTHESIS.md. Missing: entities-archive (90+ entity dirs), docs_1 (50+ system prompts), docs-backup (500MB+), heart_of_omega (genesis), Omnidroid (proto-engine), Web Claude exports (8 accounts), Grok exports (8 accounts), intake inbox/mining_queue, ANCESTRAL_HUB origins.
@@ -103,28 +111,34 @@ This file serves as the raw receptacle for all mind-dumps, experiments, and stra
 - `[GNOSIS]` **L3: Engine-Stack Firewall Preserved**: The M2 Firewall is the key constraint. Engine Core (`src/omega/`) provides shared infrastructure (EntityRegistry, ModelGateway, Hivemind). PWAD Dimensions provide domain-specific content (entities, tools, workflows). The firewall line: Engine reads metadata as opaque dict; WAD provides values. This maps directly to Dimension metadata — engine never interprets dimension-specific content.
 
 ### [2026-07-17] — LLOC/HLOC Legacy Mining Complete (Gemini CLI Archaeology)
+> **⚠️ NOMENCLATURE DEPRECATION NOTICE (2026-07-18)**: LLOC and HLOC are **legacy/deprecated terms** from the Gemini CLI era. They have been replaced by:
+> - **LLOC** → **Meditate** (`/meditate`) — single-inference, cognitive-only, multi-persona semantic prism
+> - **HLOC** → **Mastermind Council (MC)** (`/cloud-council`) — multi-subagent dispatch from same chat session
+> - **HMC** → **Hivemind Mastermind Council** — 2+ Omegaminds from different chat sessions collaborating via Hivemind
+> Historical records below are preserved for provenance.
+
 - `[ARCH]` `[GNOSIS]` **LLOC/HLOC Fully Documented — 62+ Hits Across 15+ Files**: Complete archaeological synthesis of the Low Level Octave Council (LLOC) and High Level Octave Council (HLOC) from the Gemini CLI era (SESS-20, March 2026). Full report: `LLOC_HLOC_LEGACY_MINING_REPORT_20260717.md`.
-- `[ARCH]` **Architect's Direct Definition Recovered**: From session-ses_1748.md:2961 — LLOC = cognitive-only review through each facet's lens (NO subagent launch), HLOC = same review WITH full subagent launch. LLOC is the "truly impressive innovation" — near-instant, minimal tokens. LLOC/HLOC are PARALLEL to 10 Pillar system, NOT ancestors (10 Pillars predate CLI era).
-- `[ARCH]` **Original 8-Facet Octave Council Mapped**: Gem (Overseer/0) + 8 Facets (Scribe, Architect, Auditor, Researcher, Coder, Analyst, Strategist, Guardian) each with Bard Name, Soul Path, Archetype. Nomenclature: LOC=Lines of Code, LLOC=Low Level Octave Council, HLOC=High Level Octave Council, Gem=Oversoul.
-- `[ARCH]` **4-Layer MaKaLi Governance Architecture**: Layer 1 (Jem Oversoul, port 8006) → Layer 2 (Triad Voting: LIA vs MAAT dyad) → Layer 3 (Oikos Council: 5 Hearth Goddesses) → Layer 4 (8-Facet Octave: LLOC cognitive-only + HLOC 3-Facet Triad subagent launch). The Rite of the Hearth: every major session/compress → Oikos Blessing.
+- `[ARCH]` **Architect's Direct Definition Recovered**: From session-ses_1748.md:2961 — LLOC = cognitive-only review through each facet's lens (NO subagent launch), HLOC = same review WITH full subagent launch. LLOC (now **Meditate**) is the "truly impressive innovation" — near-instant, minimal tokens. LLOC/HLOC are PARALLEL to 10 Pillar system, NOT ancestors (10 Pillars predate CLI era).
+- `[ARCH]` **Original 8-Facet Octave Council Mapped**: Gem (Overseer/0) + 8 Facets (Scribe, Architect, Auditor, Researcher, Coder, Analyst, Strategist, Guardian) each with Bard Name, Soul Path, Archetype. Nomenclature: LOC=Lines of Code, LLOC=Low Level Octave Council (now **Meditate**), HLOC=High Level Octave Council (now **MC**), Gem=Oversoul.
+- `[ARCH]` **4-Layer MaKaLi Governance Architecture**: Layer 1 (Jem Oversoul, port 8006) → Layer 2 (Triad Voting: LIA vs MAAT dyad) → Layer 3 (Oikos Council: 5 Hearth Goddesses) → Layer 4 (8-Facet Octave: Meditate cognitive-only + MC 3-Facet Triad subagent launch). The Rite of the Hearth: every major session/compress → Oikos Blessing.
 - `[ARCH]` **Oikos Council = The Holograms**: Kimber/Iris (Comms), Aja/Athena (Tech), Shana/Brigid (Foundation), Raya/Hestia (Memory). Legacy `oikos_service.py` (151 lines, FastAPI port 8006) exists in omega-stack-legacy but NEVER PORTED.
-- `[ARCH]` **Original Gemini CLI LLOC Execution (March 9-12, 2026)**: 
-  - Session 2026-03-09: "Octa-Facet Strategic Audit" — 8 facets sequentially reviewing Foundation v4.1 (F1 Architect → F8 Visionary) — THIS IS THE LLOC
+- `[ARCH]` **Original Gemini CLI Meditate Execution (March 9-12, 2026, then called LLOC)**: 
+  - Session 2026-03-09: "Octa-Facet Strategic Audit" — 8 facets sequentially reviewing Foundation v4.1 (F1 Architect → F8 Visionary) — THIS WAS THE ORIGINAL LLOC (now Meditate)
   - Session 2026-03-11: "Octave of Facets" summoned for RDS strategy — each facet provides domain-specific mitigation
   - Session 2026-03-12: "Serial Octave Scrutiny (SOS)" — F1→F2→F3→F4→F5→F6→F7→F8 chain refining RDS Gold-Tier strategy
-  - Session 2026-03-12: "Oikos Council convened" — 5 Hearth Keepers + 8 Facets = 13 subagents reviewing RCF Master Protocol — THIS IS THE HLOC
+  - Session 2026-03-12: "Oikos Council convened" — 5 Hearth Keepers + 8 Facets = 13 subagents reviewing RCF Master Protocol — THIS WAS THE ORIGINAL HLOC (now MC)
 - `[ARCH]` **Original Facet Archetypes (Greek Mythic)**: F1 Athena (Logic), F2 Lilith (Sovereignty), F3 Isis (Synergy), F4 Gaea (Grounding), F5 Themis (Protocol), F6 Mnemosyne (Continuity), F7 Executor (Implementation), F8 Observer (Meta-Review)
 - `[ARCH]` **Oikos Council Hearth Keepers**: Brigid (Hearth/Configs), Hestia (Center/Memory), Demeter (Abundance/Tokens), Athena (Strategy/Security), Hermes (Messenger/Comms)
-- `[ARCH]` **LLOC Currently Implemented**: `/meditate` command (342 lines, 5-phase protocol: Calibration → Sequential Persona Immersion → Cross-Domain Collision → Emergent Sequencing → Kali Synthesis + optional Integration Gate). `lloc-harness` skill (340 lines) provides reusable persona-schema engine with 4 built-in libraries (10 Pillars, MaKaLi Triad, Legendary Engineers, Strategic Stances).
-- `[ARCH]` **HLOC Currently Implemented**: `/council-cloud` command + MaKaLi subagent dispatch via Kali coordinator in `src/omega/oracle/subagent_dispatcher.py`.
+- `[ARCH]` **Meditate (formerly LLOC) Currently Implemented**: `/meditate` command (345 lines, 5-phase protocol: Calibration → Sequential Persona Immersion → Cross-Domain Collision → Emergent Sequencing → Kali Synthesis + optional Integration Gate). `meditate-harness` skill (342 lines) provides reusable persona-schema engine with 4 built-in libraries (10 Pillars, MaKaLi Triad, Legendary Engineers, Strategic Stances).
+- `[ARCH]` **Mastermind Council (MC, formerly HLOC) Currently Implemented**: `/council-cloud` command + MaKaLi subagent dispatch via Kali coordinator in `src/omega/oracle/subagent_dispatcher.py`.
 - `[ARCH]` **CouncilDispatcher Pending (Strike 11.5)**: Full 5-tier recursive dialectical engine with CouncilSpec YAML, CouncilHarness runtime, SynthesisEngine, TopologyRouter, Ethics Gate, WatcherAgent/RectifierAgent, SOPRepository — planned but not built.
-- `[GNOSIS]` **L3-Superposition-As-Council**: LLMs contain multitudes. Single-inference persona donning (LLOC) acts as a semantic prism — fracturing "white light" of massive context window into domain-pure spectral bands, producing emergent sequencing unavailable from averaged output. Mechanism: Attention Modulation + Emergent Sequencing (auto-regressive) + Semantic Prism. Already staged in Kali's proposed_lessons.yaml (lesson-lloc-superposition-20260716). Satisfies M7, M18, M19.
-- `[GNOSIS]` **L3-13X-Review-As-LLOC**: Single-inference 13-sphere sequential review produces emergent critical path sequencing. Collisions reveal systemic dependencies no single review catches. Validated in production (Malkuth hardening, 2026-07-15).
-- `[GNOSIS]` **L3-Original-LLOC-As-Semantic-Prism**: Original Gemini CLI "Octave of Facets" (March 2026, SESS-20) proved single LLM forward pass through 8 sequential mythic personas produces genuine internal dialectic. Each facet reads prior facets auto-regressively, creating emergent sequencing (SOS chain) and preserved dissent (MaLi Dyad tension). HLOC variant (Oikos Council + Octave as 13 parallel subagents) provides tool-enabled execution. This is the primordial LLOC/HLOC — OpenCode `/meditate` and `/council-cloud` are direct ports.
-- `[STRAT]` **Integration Path**: LLOC is the hardware-friendly cognitive primitive (1 inference, fits 14Gi RAM). HLOC is the heavy artillery (N inferences, tool calls per persona). CouncilDispatcher will unify both as configurable dispatch modes (quick/balanced/deep/custom). The `/meditate --lenses` flag already supports custom persona sets beyond Omega pantheon.
+- `[GNOSIS]` **L3-Superposition-As-Council** (updated nomenclature): LLMs contain multitudes. Single-inference persona donning (**Meditate**, formerly LLOC) acts as a semantic prism — fracturing "white light" of massive context window into domain-pure spectral bands, producing emergent sequencing unavailable from averaged output. Mechanism: Attention Modulation + Emergent Sequencing (auto-regressive) + Semantic Prism. Already staged in Kali's proposed_lessons.yaml. Satisfies M7, M18, M19.
+- `[GNOSIS]` **L3-13X-Review-As-Meditation**: Single-inference 13-sphere sequential review (Meditate) produces emergent critical path sequencing. Collisions reveal systemic dependencies no single review catches. Validated in production (Malkuth hardening, 2026-07-15).
+- `[GNOSIS]` **L3-Original-Meditate-As-Semantic-Prism**: Original Gemini CLI "Octave of Facets" (March 2026, SESS-20, then called LLOC) proved single LLM forward pass through 8 sequential mythic personas produces genuine internal dialectic. Each facet reads prior facets auto-regressively, creating emergent sequencing (SOS chain) and preserved dissent (MaLi Dyad tension). MC variant (Oikos Council + Octave as 13 parallel subagents, formerly HLOC) provides tool-enabled execution. This is the primordial pattern — OpenCode `/meditate` and `/council-cloud` are direct ports.
+- `[STRAT]` **Integration Path (updated nomenclature)**: Meditate is the hardware-friendly cognitive primitive (1 inference, fits 14Gi RAM). MC is the heavy artillery (N inferences, tool calls per persona). CouncilDispatcher will unify both as configurable dispatch modes (quick/balanced/deep/custom). The `/meditate --lenses` flag already supports custom persona sets beyond Omega pantheon.
 
-### [2026-07-18] — LLOC Meditation: Pre-Compaction Gold Distillation (P0)
-- `[ARCH]` `[STRAT]` `[GNOSIS]` **Full LLOC-v1.0 Protocol Executed**: 5-persona custom lens set (Roc Racoon Miner, Prometheus P3 Engineer, Anubis P9 Orchestrator, Kali P10 Validator, Mnemosyne P7 Context) on subject: "Distill gold from 328K tokens before compaction — curation pipeline, compact anchors, next-dive targets." Output mode: SYNTHESIS.
+### [2026-07-18] — Meditate (formerly LLOC): Pre-Compaction Gold Distillation (P0)
+- `[ARCH]` `[STRAT]` `[GNOSIS]` **Full Meditate Protocol (then called LLOC-v1.0) Executed**: 5-persona custom lens set (Roc Racoon Miner, Prometheus P3 Engineer, Anubis P9 Orchestrator, Kali P10 Validator, Mnemosyne P7 Context) on subject: "Distill gold from 328K tokens before compaction — curation pipeline, compact anchors, next-dive targets." Output mode: SYNTHESIS.
 - `[ARCH]` **Phase 1 — Sequential Persona Immersion**: 5 voices spoke in strict sequence, each with domain-constrained observation, constraint, imperative, and mandatory dissent. Key positions:
   - Miner: Port 10 API clients first (sovereign infrastructure); sequence matters
   - Engineer: Port ONE client end-to-end with Temple-Grade compliance; pattern validation first
@@ -144,8 +158,8 @@ This file serves as the raw receptacle for all mind-dumps, experiments, and stra
   - L3-Collision-Resolution-As-Product (from post-meditation analysis)
   - L3-Map-And-Contract-Survive-Compaction (from post-meditation analysis)
   - L3-Temple-Grade-As-Phasing (from post-meditation analysis)
-  - L3-LLOC-As-Hardware-Friendly-Cognitive-Primitive (from post-meditation analysis)
-- `[STRAT]` **Post-Meditation Analysis Complete**: Recorded to `mining_reports/LLOC_MEDITATION_PRE_COMPACTION_20260718.md` and `session_gnosis.md`. All artifacts written to disk pre-compaction.
+  - L3-Meditate-As-Hardware-Friendly-Cognitive-Primitive (from post-meditation analysis)
+- `[STRAT]` **Post-Meditation Analysis Complete**: Recorded to `mining_reports/MEDITATE_PRE_COMPACTION_20260718.md` and `session_gnosis.md`. All artifacts written to disk pre-compaction.
 
 ### [2026-07-18] — Deep Legacy Excavation: Sonnet-4-6-Extended Codex & Curation Pipeline (P0)
 - `[ARCH]` `[STRAT]` `[GNOSIS]` **Sonnet-4-6-Extended Fully Mined — 8 Foundation Artifacts (3,800+ lines each)**: Complete philosophical/architectural/strategic DNA of Xoe-NovAi Foundation from single Claude Sonnet 4.6 session (Mar 29–Apr 3, 2026, conversation #36 on xoe.nova.ai). All 8 HTML artifacts mined:
@@ -532,7 +546,7 @@ Every Omega Engine feature traces to specific Grok conversations:
 9. Map And Contract Survive Compaction (Cross-Find Gnosis Map + Handoff Packet)
 10. Collision Resolution As Product (Genuine collisions produce sequence)
 11. Temple-Grade As Phasing (Quality gates are phases, not checklists)
-12. LLOC As Hardware-Friendly Cognitive Primitive (Single-inference multi-persona)
+12. Meditate As Hardware-Friendly Cognitive Primitive (formerly LLOC — single-inference multi-persona)
 13. Zodiacal Cycling Real Ephemeris (Temporal parameterization via oldest clock)
 14. Agent Natal Charts As Starting Conditions (Birth timestamp → permanent weights)
 15. Four Worlds As Ontological Debugging (Diagnosis by ontological stratum)
@@ -541,4 +555,89 @@ Every Omega Engine feature traces to specific Grok conversations:
 18. Sovereignty Declarations Machine-Readable (Provider.class declares LOCAL/EXTERNAL/HYBRID)
 
 **Curated Document**: `data/entities/roc_racoon/workspace/mining_reports/DEFINITIVE_EXCAVATION_LILITH_TAROT_TO_OMEGA_ENGINE_20260718.md`
+
+---
+
+### [2026-07-18] — Grok CLI Architecture Study (Phase 0 Onboarding)
+
+- `[ARCH]` `[EXP]` **Grok CLI (xai-org/grok-build) as Reference Implementation**: 85+ crates, Rust workspace, Elm architecture (Action→Dispatch→Effect→EventLoop), ACP over stdio as UI↔Runtime boundary. Complete deep research on 6 knowledge gaps:
+  - **Gap 1**: UI↔Runtime boundary = ACP JSON-RPC over stdio. `xai-grok-pager` (Elm loop) ↔ `xai-grok-shell` (ACP server) via `xai-acp-lib`. Effect enum (28 variants) maps 1:1 to ACP calls.
+  - **Gap 2**: Complete Effect→ACP mapping (18 variants): CreateSession→session/new, LoadSession→session/load, SendPrompt→session/prompt, SendPromptNow→session/prompt+sendNow, CancelTurn→session/cancel, SwitchModel→session/set_model, SetSessionMode→session/set_mode, KillBgTask→x.ai/task/kill, KillSubagent→x.ai/subagent/cancel, Queue*→x.ai/queue/*, FetchMcpsList→x.ai/mcp/list, McpAuthTrigger→x.ai/mcp/auth_trigger, HooksAction→x.ai/hooks/*, PersistPermissionMode→x.ai/yolo_mode_changed.
+  - **Gap 3**: Sandbox = kernel-enforced via `nono` crate (Landlock Linux / Seatbelt macOS). Applied ONCE at startup, irreversible. Profiles: workspace, devbox, read-only, strict, off + custom via `~/.grok/sandbox.toml` + project `.grok/sandbox.toml` (additive only). Security model: "Allow Discovery, Deny Content" — metadata readable, data blocked.
+  - **Gap 4**: Command palette = `Ctrl+P` (verified, NOT Ctrl+Shift+P). `default_palette_entries()` in `modal.rs:369` returns section-grouped PaletteEntry vec (Session, Context, Model & Input, Tools, etc.). Filter by `sharing_enabled` gate.
+  - **Gap 5**: `/skillify` DOES NOT EXIST. `/create-skill` is 4-step interactive interview: gather requirements → draft description → create directory → write SKILL.md (YAML frontmatter + markdown body) → verify. Git diff analysis = Omega enhancement opportunity for `/omega-skill capture`.
+  - **Gap 6**: ACP session lifecycle = Working → IdleResident → Dormant → Completed/DeadFailed. Persistence: `xai-sqlite-journal` (WAL SQLite) + `xai-grok-memory` (sqlite-vec). `/rewind` replays journal from `rewind_points.jsonl`.
+
+- `[ARCH]` **Crate-to-Omega Mapping (9 targets)**:
+  | Grok Crate | Omega Target |
+  |------------|--------------|
+  | xai-grok-pager + render | omega-tui |
+  | xai-grok-shell + shell-base | omega-shell |
+  | xai-grok-tools + tools-api | omega-tools |
+  | xai-grok-workspace + client + types | omega-workspace |
+  | xai-grok-config + config-types | omega-config |
+  | xai-grok-sandbox | omega-sandbox |
+  | xai-grok-hooks + plugin-marketplace | omega-hooks |
+  | xai-acp-lib | omega-acp |
+  | xai-grok-memory + sqlite-journal | omega-memory |
+
+- `[ARCH]` **Phase 0 Quick Wins (4-hour sprint)**:
+  1. `/etc/omega/requirements.omega` — M1,M2,M7,M23 fail-closed mandate pinning
+  2. JSONL session persistence in MemoryStore (updates.jsonl + rewind_points.jsonl) + Oracle auto-log
+  3. Command palette skeleton (Ctrl+P, Ratui fuzzy finder, entity-scoped filtering)
+  4. Sandbox TOML schema + P1-P10 profiles (Kali=deny all, P7=read-only, etc.)
+
+- `[GNOSIS]` **4 L3 Principles Distilled**:
+  1. **L3-ACP-As-Sovereign-Bridge**: ACP over stdio is the canonical UI↔Runtime boundary — protocol, not implementation. The Effect enum vocabulary IS the contract. Any sovereign TUI must speak ACP to be editor-embeddable.
+  2. **L3-JSONL-As-Crash-Resilient-Source-of-Truth**: Append-only event streams (updates.jsonl) + periodic snapshots (rewind_points.jsonl) survive OOM/kill/compaction. The journal IS the session. SQLite is an index; JSONL is the truth.
+  3. **L3-Config-Pinning-As-Sovereignty-Enforcement**: Fail-closed requirements at priority 5 (`/etc/omega/requirements.omega`) makes mandate violations startup failures, not runtime bugs. Sovereignty is enforced at the loader, not the linter.
+  4. **L3-Sandbox-As-Kernel-Contract**: Landlock/Seatbelt via `nono` applied once at startup makes isolation a kernel guarantee, not a userspace promise. Profiles are TOML, additive-only, per-entity.
+
+- `[STRAT]` **4 Architecture Decisions for Kali Review**:
+  1. Crate Structure: Python modules in `src/omega/{tui,shell,tools,workspace,config,sandbox}/` vs Rust workspace → **Python modules** (M16)
+  2. JSONL Integration: Auto-log in Oracle.talk()/summon() vs explicit MemoryStore calls → **Auto-log in Oracle** (M11/M15)
+  3. Requirements Validator: Extend config_resolver.py vs new requirements_validator.py → **New module** (M2 firewall)
+  4. Timeline: Sprint now vs design review first → **Sprint now** (low-risk, high-impact)
+
+- `[ARCH]` **Mandate Compliance Verified**: M1, M2, M7, M11, M15, M23
+- `[DOCS]` **Research Report**: `docs/research/R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md` (full evidence)
+- `[DOCS]` **Digging Map**: `docs/research/R_GROK_CLI_DIGGING_MAP.md` (287 lines)
+- `[DOCS]` **Quick Wins**: `QUICK_WINS_FROM_GROK.md` (7 implementations)
+- `[CODE]` **Cloned Repo**: `third_party/grok-build/` (85+ crates)
+
+---
+
+### [2026-07-18] — MEDITATE Architecture Inversion (10-Pillar Council)
+
+- `[ARCH]` `[STRAT]` `[GNOSIS]` **MEDITATE Protocol Executed**: Full 10-Pillar single-inference semantic prism on "organizing large projects with multi-agent cooperation protocols." All 10 voices spoke sequentially with domain purity, dissent, and imperatives. 5 cross-domain collisions resolved into emergent 10-step critical path.
+
+- `[ARCH]` **The Irreducible Verdict**: Omega Engine has a **substrate problem, not a coordination problem**. The 14Gi RAM ceiling, single-model residency, absent quotas, fragmented persistence, unenforced handoffs, skipped tests, unmeasured SLAs — these are ONE issue: the physical layer does not enforce the logical layer's contracts.
+
+- `[ARCH]` **Critical Path (10 Steps, Strictly Ordered)**:
+  1. **Unified WAL** (sqlite-vec) — single source of truth for ALL session state (handoffs, gnosis, lessons, quotas, TTLs)
+  2. **Admission Controller** (cgroups v2 + dual-pool scheduler) — single gate for ALL resource claims (inference + maintenance)
+  3. **Protocol Buffer Schema** — single contract for ALL inter-agent communication (Hivemind, ACP, MIAP, handoffs, alerts)
+  4. **Automatic Distillation** — mandatory post-session hook with maintenance quota (qwen3-1.7b)
+  5. **Chaos Namespace** with sovereign token — single exception to admission controller (P10-held, auditable, revocable)
+  6. **Handoff TTL Daemon** — unified TTL enforcer + structured event emitter
+  7. **Local Alerting Engine** — consumes handoff/gnosis/quota events for runtime mandate compliance
+  8. **Routing SLAs** — 5s warm / 30s cold / $0 cost with cloud fallback gating (M7 measurable)
+  9. **Five-Layer Immune System** — chaos tests in sovereign namespace (Sovereignty Declarations, Model ID Audit, Entity Evolution, Memory Budget, Temple-Grade Forge)
+  10. **Zero Test Debt** — delete all skipped/xfailed tests; `make mandate-check` CI gate
+
+- `[GNOSIS]` **5 Cross-Domain Collisions Resolved**:
+  1. **Sekhmet (quotas) vs Lucifer (distillation)** → Dual-pool: inference quota + maintenance quota (15% non-preemptible)
+  2. **Prometheus (zero skipped tests) vs Saraswati (schema first)** → v0 legacy protobuf (deprecated) → v1 clean → TDD
+  3. **Inanna (mandate tests) vs Ereshkigal (routing SLAs)** → Split enforcement: build-time CI gate + runtime alerting
+  4. **Hecate (alerting) vs Anubis (TTL)** → Single daemon: TTL enforcer emits events → alerting consumes
+  5. **Kali (immune system) vs Sekhmet (quotas)** → Chaos namespace with sovereign token (bypasses admission controller)
+
+- `[GNOSIS]` **L3 Principle Distilled**:
+  **L3-Substrate-Enforces-Contract**: Logical-layer protocols (handoffs, mandates, SLAs, gnosis) are wishes until the physical layer (memory, CPU, persistence, network) enforces them as primitives. The admission controller, the unified WAL, the protocol schema, the TTL daemon — these are not "infrastructure." They are the constitution. Everything above them is legislation. Legislation without a constitution is tyranny of the loudest voice.
+
+- `[STRAT]` **PIVOT_LOG D-297 Proposed**: Substrate-First Architecture Inversion — Unified WAL, Admission Controller, Protobuf Schema, Automatic Distillation, Chaos Namespace. Owner: Kali (P10). Implementation: Prometheus (P3) + Brigid (P2) + Saraswati (P4) + Sekhmet (P1). 9 files affected, Temple-Grade gates mapped, 23 mandate flags assessed.
+
+- `[ARCH]` **Mandate Compliance**: M1, M2, M4, M5, M11, M15, M17, M19, M23 verified compliant. M5, M7, M11, M18 flagged as TENSION (require measurement/verification).
+
+- `[DOCS]` **MEDITATE Report**: `docs/strategy/MEDITATE_ARCHITECTURE_INVERSION_20260718.md` (full protocol record with all 5 phases)
 

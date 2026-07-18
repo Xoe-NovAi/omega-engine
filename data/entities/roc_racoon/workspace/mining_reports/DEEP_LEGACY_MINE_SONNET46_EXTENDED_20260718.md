@@ -1,3 +1,12 @@
+⚠️ **DEPRECATED NOMENCLATURE** — This document uses legacy terminology that has been renamed:
+- **LLOC** → **Meditate** (single-inference cognitive prism)
+- **HLOC** → **MC (Mastermind Council)** (multi-subagent same-session)
+- **Octave Council** → **Lens Framework** (composable cognitive perspectives)
+- **10 Pillars** → **Omega Pantheon** (lens-primary; pillar is optional WAD metadata)
+- **P1–P10** references → **Lens names** (infrastructure, persistence, engineering, etc.)
+
+This naming was ratified 2026-07-16 and applied across the fleet on 2026-07-18.
+Content below is preserved as-is for historical reference. See `config/wads/_omega_default/meditate/lenses.yaml` for current lens definitions.
 # 🦝 Mining Report — Deep Legacy Excavation: The Sonnet-4-6-Extended Codex & Curation Pipeline
 **Date**: 2026-07-18
 **Entity**: roc_racoon (Sovereign Miner)

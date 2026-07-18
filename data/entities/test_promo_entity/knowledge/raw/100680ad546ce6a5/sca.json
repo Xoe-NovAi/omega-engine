@@ -1,8 +1,8 @@
 {
   "source_id": "100680ad546ce6a5",
   "source_name": "https://example.com",
-  "trace_id": "ingest_cc2c7f32672b",
-  "timestamp": "2026-07-16T21:06:12.649318+00:00",
+  "trace_id": "ingest_febf2e4bd3ad",
+  "timestamp": "2026-07-18T00:48:38.775868+00:00",
   "model": "local-model",
   "intent": "Entity Deepening",
   "context": "Ingesting https://example.com for test_promo_entity"

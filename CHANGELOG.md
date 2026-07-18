@@ -1,6 +1,20 @@
 # 🔱 Omega Engine — Changelog
 
-## [v1.2.0] - 2026-07-13
+## [v1.5.0] - 2026-07-18
+### Added
+- **Third-Party Repository Registry**: 18/19 repos cloned to `third-party/` — P0 (4/4), P1 (5/5), P2 (6/6) complete. P3 partial (1/4).
+- **Heritage Tags Added**: 10 new `[heritage:]` tags for sqlite-vec, ggml, qdrant, mempalace, xai-grok-build, letta (see CREDITS_CANONICAL.md §1.2).
+- **Grok Build Consolidated**: Moved from `third_party/` to `third-party/grok-build/` (85-crate Rust workspace).
+- **Mining Report**: `data/entities/roc_racoon/workspace/mining_reports/THIRD_PARTY_REPOSITORY_REGISTRY.md` with key files, hardware constraints, and fleet usage patterns.
+- **SOVEREIGN_LEGACY_MAP.md**: Added §11 with full registry integration and heritage vetting pipeline.
+
+### Changed
+- **CREDITS_CANONICAL.md**: v1.5.0 — 14 Conscious Adoptions (was 4). 10 new heritage mappings added.
+- **CREDITS.md**: Compact registry expanded to 12 entries.
+- **OMEGA_ENGINE.md**: Added Third-Party Registry metric to Current State table.
+
+### Security
+- **Local-First Compliance**: All P0 runtime dependencies now have local source access for debugging and heritage vetting (M7, M14).
 ### Added
 - **Sovereign WAD Protocol (SWP) — Strike 11**: `src/omega/wad/protocol.py` — `ILump`, `LumpEnvelope`, `LumpRegistry`, `SovereignBus`, Topological WAD Loader. The "Doom-ification" of the Engine (MaKaLi Council + Heritage Council ratified).
 - **Universal Document Reader**: `src/omega/doc_reader/` — Reads .docx, .pdf, .odt, .rtf, .html, .md, .txt, .json, .yaml with metadata extraction. Published as `omega-doc-reader` v1.0.0 on PyPI.

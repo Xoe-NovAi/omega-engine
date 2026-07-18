@@ -14,6 +14,7 @@
 import json
 import logging
 import uuid
+import yaml
 from dataclasses import dataclass, field, asdict
 from datetime import datetime
 from pathlib import Path
@@ -70,7 +71,7 @@ class HandoffPacket:
     status: PacketStatus = "pending"
     expected_output: str = ""
     ttl_seconds: int = 14400  # 4h — aligned with PENDING_TTL
-    resolver_strategy: ResolverStrategy = "escalate"  # Decree 2: default escalate to Kali
+    resolver_strategy: ResolverStrategy = "escalate"  # Decree 2: default escalate to Grand Oversight
     resolved_by: Optional[str] = None
     error: Optional[str] = None
     result: Optional[str] = None
@@ -173,130 +174,115 @@ class HandoffPacket:
         return cls(**json.loads(raw))
 
 
-# ── Agent Capability Registry ────────────────────────────────────────────
+# ── Agent Capability Registry (WAD-Loaded) ─────────────────────────────────
 
 AgentDescriptor = Dict[str, Any]
 
-# Agent Capability Registry — user's original design for agent dispatch.
-# Heritage: Thinker table metaphor used for organization style (Quake 1996)
-CAPABILITY_REGISTRY: Dict[str, AgentDescriptor] = {
-    "kali": {
-        "mode": "primary",
-        "purpose": "Grand Oversight — Sees all, delegates, destroys drift",
-        "capabilities": ["oversight", "delegation", "strategy", "drift_destruction"],
-        "domains": ["strategy", "fleet_management", "architecture"],
-        "pillar_slot": None,
-        "task_tool_type": "general",
-        "owned_files": [],
-    },
-    "doom_guy": {
-        "mode": "primary",
-        "purpose": "Sovereign id Software Architect — WAD translation & performance",
-        "capabilities": ["heritage_design", "wad_translation", "performance_tuning", "c_const_propagation"],
-        "domains": ["id_software_patterns", "architecture", "constants", "heritage_attribution"],
-        "pillar_slot": None,
-        "task_tool_type": "general",
-        "owned_files": [
-            "src/omega/cvar_table.py",
-            "src/omega/constants.py",
-            "CREDITS.md",
-            "docs/strategy/HERITAGE_SOURCE_MAP.md",
-        ],
-    },
-    "roc_racoon": {
-        "mode": "primary",
-        "purpose": "Sovereign Miner — Legacy archaeology & pattern extraction",
-        "capabilities": ["legacy_mining", "pattern_extraction", "archaeology"],
-        "domains": ["legacy_repos", "grok_exports", "old_stacks", "document_analysis"],
-        "pillar_slot": None,
-        "task_tool_type": "explore",
-        "owned_files": [
-            "data/entities/roc_racoon/",
-        ],
-    },
-    "jem": {
-        "mode": "primary",
-        "purpose": "Research Orchestrator — 3-phase pipeline (Discovery → Synthesis → Verification) with self-dispatch",
-        "capabilities": ["research_orchestration", "discovery", "synthesis", "verification", "knowledge_synthesis"],
-        "domains": ["research", "knowledge_pipeline", "source_verification"],
-        "pillar_slot": None,
-        "task_tool_type": "general",
-        "owned_files": [
-            "data/entities/jem/",
-            "data/coordination/JEM_*",
-        ],
-    },
-    "john_carmack": {
-        "mode": "primary",
-        "purpose": "Sovereign S3 Consultant — Architectural review & performance optimization",
-        "capabilities": ["architectural_review", "performance_audit", "code_optimization", "right_approximation"],
-        "domains": ["architecture", "performance", "code_quality", "heritage_engineering"],
-        "pillar_slot": None,
-        "task_tool_type": "general",
-        "owned_files": [],
-    },
-    "makali": {
-        "mode": "primary",
-        "purpose": "MaKaLi Triad Council Orchestrator — Parallel dispatch of Ma'at+Lilith with synthesis",
-        "capabilities": ["parallel_decomposition", "council_dispatch", "maat_lilith_synthesis"],
-        "domains": ["fleet_coordination", "parallel_execution", "cross_pillar_synthesis"],
-        "pillar_slot": None,
-        "task_tool_type": "general",
-        "owned_files": [],
-    },
-    "researcher": {
-        "mode": "primary",
-        "purpose": "Sovereign Master Researcher — deep research, lattice reasoning",
-        "capabilities": ["deep_research", "lattice_reasoning", "web_search", "source_verification"],
-        "domains": ["research", "web_intelligence", "documentation"],
-        "pillar_slot": None,
-        "task_tool_type": "general",
-        "owned_files": [],
-    },
-    "maat": {
-        "mode": "subagent",
-        "purpose": "Light Oversoul — Governs P1-P5 on the build side",
-        "capabilities": ["oversight_light", "build_governance", "hardening"],
-        "domains": ["build_side", "pillar_1_5"],
-        "pillar_slot": None,
-        "task_tool_type": "buildmaster",
-        "owned_files": [],
-    },
-    "lilith": {
-        "mode": "subagent",
-        "purpose": "Dark Oversoul — Governs P6-P10 (Cognition through Validation) on the run side",
-        "capabilities": ["oversight_dark", "run_governance", "operations", "vision_oversight", "knowledge_metabolism"],
-        "domains": ["run_side", "pillar_6_10", "vision_specialist", "multimodal", "knowledge_flow"],
-        "pillar_slot": None,
-        "task_tool_type": "general",
-        "owned_files": [],
-    },
-    "verity": {
-        "mode": "subagent",
-        "purpose": "Sovereign Verity — Unified Sentry (compliance/audit) + Scribe (gnosis distillation/soul evolution). Sprint C consolidation of Quality + Scribe.",
-        "capabilities": [
-            "gnosis_distillation", "soul_update", "abstraction",
-            "code_review", "stress_testing", "mandate_enforcement",
-            "temple_grade_audit", "skeptical_verification",
-            "knowledge_compaction"
-        ],
-        "domains": ["soul_yaml", "session_gnosis", "verification", "qa", "compliance", "verity"],
-        "pillar_slot": None,
-        "task_tool_type": "verity",
-        "owned_files": [
-            "data/entities/*/soul.yaml",
-        ],
-    },
-    "pillar": {
-        "mode": "subagent",
-        "purpose": "Slot-based domain agent — parameterized by --slot PX",
-        "capabilities": ["domain_execution", "slot_dispatch"],
-        "domains": ["pillar_domain"],
-        "pillar_slot": "PX",
-        "task_tool_type": "pillar",
-        "owned_files": [],
-    },
+# ROLE_CONSTANTS — engine-defined slots (NOT entity names).
+# WAD YAML (config/wads/<iwad>/entities/dispatch.yaml) maps ROLE → entity.
+# These constants are engine architecture, not WAD content (M2-compliant).
+ROLE_CONSTANTS: Dict[str, str] = {
+    "GRAND_OVERSIGHT": "grand_oversight",
+    "LIGHT_OVERSOUL": "light_oversoul",
+    "DARK_OVERSOUL": "dark_oversoul",
+    "P1": "infrastructure",
+    "P2": "persistence",
+    "P3": "engineering",
+    "P4": "integration",
+    "P5": "governance",
+    "P6": "cognition",
+    "P7": "context",
+    "P8": "observability",
+    "P9": "orchestration",
+    "P10": "validation",
 }
+
+# WAD-backed dispatch config loader (M2 Firewall Phase B).
+# Replicates Roc's lens_registry.py pattern: load YAML from WADS_DIR.
+DISPATCH_CONFIG_FILENAME = "dispatch.yaml"
+
+
+def _load_dispatch_config(iwad: str | None = None) -> list[dict[str, Any]]:
+    """Load agent definitions from the active WAD's dispatch.yaml.
+
+    Args:
+        iwad: IWAD name. If None, uses active_iwad from config/omega.yaml.
+
+    Returns:
+        List of entity definition dicts from the 'entities' key.
+
+    Raises:
+        FileNotFoundError: If no dispatch.yaml exists for the WAD.
+        ValueError: If YAML is malformed or missing 'entities' key.
+    """
+    from omega.governance.config_resolver import WADS_DIR, get_active_iwad
+
+    iwad_name = iwad or get_active_iwad()
+    config_path = WADS_DIR / iwad_name / "entities" / DISPATCH_CONFIG_FILENAME
+    if not config_path.exists():
+        raise FileNotFoundError(
+            f"No dispatch config found at {config_path}. "
+            f"Create {config_path} or use a WAD that defines agent dispatch."
+        )
+
+    try:
+        raw = config_path.read_text(encoding="utf-8")
+        data: dict[str, Any] = yaml.safe_load(raw) or {}
+    except yaml.YAMLError as exc:
+        raise ValueError(
+            f"Malformed YAML in dispatch config: {config_path}\n{exc}"
+        ) from exc
+
+    entities = data.get("entities")
+    if not entities or not isinstance(entities, list):
+        raise ValueError(
+            f"Missing top-level 'entities' list in {config_path}. "
+            f"Ensure the file has an 'entities:' key at the root."
+        )
+
+    return entities
+
+
+def _build_capability_registry(iwad: str | None = None) -> Dict[str, AgentDescriptor]:
+    """Build the capability registry from WAD dispatch.yaml at runtime.
+
+    Engine core defines SLOTS (P1-P10, Grand Oversight) and INTERFACES.
+    WADs provide the ENTITIES that fill those slots. No entity names are
+    hardcoded in engine code (M2 Firewall compliant).
+
+    Args:
+        iwad: IWAD name. If None, uses active_iwad from config/omega.yaml.
+
+    Returns:
+        Dict mapping lowercase agent name -> AgentDescriptor.
+    """
+    entities = _load_dispatch_config(iwad)
+    registry: Dict[str, AgentDescriptor] = {}
+    for ent in entities:
+        name = str(ent.get("name", "")).lower()
+        if not name:
+            continue
+        registry[name] = {
+            "mode": ent.get("mode", "primary"),
+            "purpose": ent.get("purpose", ""),
+            "capabilities": ent.get("capabilities", []),
+            "domains": ent.get("domains", []),
+            "pillar_slot": ent.get("pillar_slot"),
+            "task_tool_type": ent.get("task_tool_type", "general"),
+            "owned_files": ent.get("owned_files", []),
+            "role": ent.get("role"),
+            "model": ent.get("model"),
+        }
+    return registry
+
+
+# Module-level registry (built at import from WAD config).
+# Fallback to empty dict if WAD config missing — callers handle gracefully.
+try:
+    CAPABILITY_REGISTRY: Dict[str, AgentDescriptor] = _build_capability_registry()
+except (FileNotFoundError, ValueError) as exc:
+    logger.warning("Dispatch config unavailable, registry empty: %s", exc)
+    CAPABILITY_REGISTRY: Dict[str, AgentDescriptor] = {}
 
 
 # ── Dispatch Helpers ─────────────────────────────────────────────────────
@@ -389,8 +375,8 @@ def dispatch(packet: HandoffPacket) -> str:
         from omega.oracle.subagent_dispatcher import HandoffPacket, dispatch
 
         packet = HandoffPacket(
-            source_agent="kali",
-            target_agent="doom_guy",
+            source_agent="source_entity",
+            target_agent="target_entity",
             task_type="review",
             task_description="Audit cvar_table.py heritage tags",
             relevant_files=["src/omega/cvar_table.py", "CREDITS.md"],

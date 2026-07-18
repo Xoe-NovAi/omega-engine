@@ -1,17 +1,17 @@
 {
   "sprint_id": "HMC-SPRINT-04",
-  "title": "D-281 Substrate Repair — Phase III (M2 Firewall) + S0 Clean Runway",
+  "title": "HMC Quad-Forge — M2 Firewall Migration + Meditate Architecture + MIAP Phase 0",
   "created": "2026-07-17",
-  "last_updated": "2026-07-17T01:55:00Z",
+  "last_updated": "2026-07-18T18:45:00Z",
   "status": "ACTIVE",
   "coordinator": "kali",
   "participants": [
     "kali",
-    "grok",
     "roc_racoon",
     "researcher",
-    "maat",
-    "lilith"
+    "grok_cli",
+    "cline_deepseek",
+    "cline_mimo"
   ],
   "sprints": [
     {
@@ -26,61 +26,250 @@
       "id": "D-281-PHASE-II",
       "title": "Path Infrastructure — config_resolver.py + wad_loader wire",
       "status": "DONE",
-      "owner": "grok",
+      "owner": "grok_cli",
       "verification": "Commit b661c49. config_resolver.py created with pure Path constants + lazy get_active_iwad(). wad_loader.py:74-77 wired to WADS_DIR. 1367 tests pass / 4 pre-existing fail.",
       "key_files": ["src/omega/governance/config_resolver.py", "src/omega/oracle/wad_loader.py"]
     },
     {
       "id": "D-281-PHASE-III",
-      "title": "M2 Firewall Remediation — 4 Files, 13 Violations",
-      "status": "IN_PROGRESS",
-      "owner": "grok (Tier A) or Triad",
-      "verification": "hierarchy.py (5 sites), entity_registry.py (3 sites), oracle.py:251, scraper.py:43. Fix patterns in PHASE_III_M2_ADVISORY.md. Gate: make test.",
+      "title": "M2 Firewall Remediation — 4 Files, 13 Violations (Grok CLI)",
+      "status": "DONE",
+      "owner": "grok_cli",
+      "verification": "Commit 3f2feea. hierarchy.py (5 sites), entity_registry.py (3 sites), oracle.py:251, scraper.py:43. Gate: make test passed.",
       "key_files": [
         "src/omega/oracle/hierarchy.py",
         "src/omega/oracle/entity_registry.py",
         "src/omega/oracle/oracle.py",
-        "src/omega/ingestion/scraper.py",
-        "data/coordination/grok_cli/PHASE_III_M2_ADVISORY.md"
+        "src/omega/ingestion/scraper.py"
       ]
     },
     {
       "id": "D-281-PHASE-IV",
       "title": "Codex Mechanism Separation — hydration_header.md + Makefile hardening",
-      "status": "QUEUED",
-      "owner": "grok (Tier A) or Triad",
-      "verification": "Extract codex_cat.py:63-72 → scripts/hydration_header.md. Makefile codex-* restore-on-fail. PHASE_IV_CODEX_ADVISORY.md has full spec.",
+      "status": "DONE",
+      "owner": "grok_cli",
+      "verification": "Commit 93f4e82. Extracted codex_cat.py:63-72 → scripts/hydration_header.md. Makefile codex-* restore-on-fail.",
       "key_files": [
         "scripts/codex_cat.py",
-        "scripts/hydration_header.md",
-        "data/coordination/grok_cli/PHASE_IV_CODEX_ADVISORY.md"
+        "scripts/hydration_header.md"
       ]
     },
     {
       "id": "D-282-STRIKE-10",
       "title": "sqlite-vec Concurrency Hardening — PRAGMA SSOT + 4 Tests",
-      "status": "QUEUED",
+      "status": "DONE",
       "owner": "roc_racoon",
-      "verification": "PRAGMA converge (cache_size 512MB→32MB). 4 concurrency tests. ArchivalMemory IMMEDIATE check. D282_SQLITE_VEC_STRIKE10_ADVISORY.md has full spec.",
+      "verification": "Commit 372bf2f. PRAGMA converge (cache_size 512MB→32MB, wal_autocheckpoint 1000→500). 4 concurrency tests pass.",
       "key_files": [
         "src/omega/memory/sqlite_vec_adapter.py",
-        "tests/test_sqlite_vec_concurrency.py",
-        "data/coordination/grok_cli/D282_SQLITE_VEC_STRIKE10_ADVISORY.md"
+        "tests/test_sqlite_vec_concurrency.py"
+      ]
+    },
+    {
+      "id": "D-283-PHASE-1",
+      "title": "Mnemosyne Phase 1 — HybridSearchEngine RRF k=60 + Memory Blocks",
+      "status": "DONE",
+      "owner": "researcher",
+      "verification": "752/754 tests pass. HybridSearchEngine, Memory Blocks (block_tools.py, block_store.py), SleepTimeAgent skeleton.",
+      "key_files": [
+        "src/omega/memory/hybrid_search.py",
+        "src/omega/memory/blocks.py",
+        "src/omega/memory/block_tools.py",
+        "src/omega/memory/block_store.py",
+        "src/omega/memory/sleep_time.py"
+      ]
+    },
+    {
+      "id": "D-283-PHASE-2",
+      "title": "Mnemosyne Phase 2 — RecallStore DESIGN COMPLETE",
+      "status": "DESIGN_COMPLETE",
+      "owner": "researcher",
+      "verification": "src/omega/memory/recall.py (802 lines), tests/test_recall_store.py (545 lines). 27/29 tests pass (2 test infra issues: missing anyio import, missing create_domain_block).",
+      "key_files": [
+        "src/omega/memory/recall.py",
+        "tests/test_recall_store.py"
+      ]
+    },
+    {
+      "id": "M2-PHASE-A",
+      "title": "M2 Firewall Phase A — Meditate Lens Refactor (15 violations)",
+      "status": "DONE",
+      "owner": "roc_racoon",
+      "verification": "Phase A COMPLETE: meditate/protocol.py 15→0 violations. Created: lenses.yaml (13 base lenses), lens_registry.py (WAD loader), protocol.py refactored. 17 tests pass. Remaining hygiene: meditate.md table, deprecation headers, make test && make temple-grade.",
+      "key_files": [
+        "config/wads/_omega_default/meditate/lenses.yaml",
+        "src/omega/meditate/lens_registry.py",
+        "src/omega/meditate/protocol.py",
+        "tests/test_meditate_protocol.py",
+        ".opencode/skills/meditate-harness/SKILL.md",
+        ".opencode/commands/meditate.md"
+      ]
+    },
+    {
+      "id": "M2-PHASE-B",
+      "title": "M2 Firewall Phase B — subagent_dispatcher.py (15 violations)",
+      "status": "IN_PROGRESS",
+      "owner": "researcher",
+      "verification": "Using Roc's WAD-loadable pattern: ROLE_CONSTANTS + entities/dispatch.yaml + entity_registry. Target: 0 violations in test_firewall_m2_strict_engine_core -k subagent_dispatcher. Guide: data/coordination/PHASE_B_EXECUTION_GUIDE_20260718.md",
+      "key_files": [
+        "src/omega/oracle/subagent_dispatcher.py",
+        "config/wads/_omega_default/entities/dispatch.yaml"
+      ]
+    },
+    {
+      "id": "M2-PHASE-C",
+      "title": "M2 Firewall Phase C — oracle.py (6 blocking violations)",
+      "status": "IN_PROGRESS",
+      "owner": "researcher",
+      "verification": "5 Iris references remain (lines 79, 188, 424, 579, 853, 871, 878). Must use WAD-loadable pattern: ROLE_CONSTANTS + dispatch.yaml + _get_entity_by_role(). 26/26 unit tests pass. Report: data/coordination/PHASE_C_KALI_UPDATE_20260718.md",
+      "key_files": [
+        "src/omega/oracle/oracle.py",
+        "config/wads/_omega_default/entities/dispatch.yaml",
+        "tests/test_firewall_m2.py",
+        "data/coordination/PHASE_C_KALI_UPDATE_20260718.md"
+      ]
+    },
+    {
+      "id": "M2-PHASE-D",
+      "title": "M2 Firewall Phase D — ics.py (9 violations)",
+      "status": "IN_PROGRESS",
+      "owner": "researcher",
+      "verification": "Channel constants (Kali, Ma'at, Lilith), doc examples. Add ROLE_CONSTANTS + dispatch.yaml entries for GRAND_OVERSIGHT, LIGHT_OVERSOUL, DARK_OVERSOUL. Generic CHANNEL_OVERSIGHT, CHANNEL_BUILD, CHANNEL_RUN.",
+      "key_files": [
+        "src/omega/ics.py",
+        "config/wads/_omega_default/entities/dispatch.yaml"
+      ]
+    },
+    {
+      "id": "M2-PHASE-E",
+      "title": "M2 Firewall Phase E — fleet_status_tui.py (18 violations)",
+      "status": "QUEUED",
+      "owner": "researcher",
+      "verification": "TUI tree from WAD registry at runtime. Load entities by ROLE_DISPLAY_ORDER.",
+      "key_files": [
+        "src/omega/cli/fleet_status_tui.py"
+      ]
+    },
+    {
+      "id": "SCRIBE-LATTICE",
+      "title": "Scribe Lattice Role — Documentation/Gnosis Distillation",
+      "status": "DESIGN_COMPLETE",
+      "owner": "kali",
+      "verification": "Capabilities: doc:read, doc:write, gnosis:distill, soul:read, soul:propose, hivemind:post. Constraints: no code:execute, config:write, model:load. ANAi variant: Thoth with mythos:curate.",
+      "key_files": [
+        "config/wads/_omega_default/lattice/scribe.yaml (TO CREATE)",
+        "config/wads/_omega_default/entities.yaml (TO UPDATE)",
+        ".opencode/agents/scribe.md (TO CREATE)"
+      ]
+    },
+    {
+      "id": "GROK-CLI-PHASE0",
+      "title": "Grok CLI Phase 0 — Crate Decomposition + 4-Hour Quick Wins",
+      "status": "IN_PROGRESS",
+      "owner": "roc_racoon",
+      "verification": "D-297 Architecture Inversion Decree ratified. Quick wins: requirements.omega, JSONL logging, command palette, sandbox schema. Crate structure: Python modules in src/omega/{tui,shell,tools,workspace,config,sandbox}/. Sovereign token for chaos namespace defined.",
+      "key_files": [
+        "src/omega/tui/",
+        "src/omega/shell/",
+        "src/omega/tools/",
+        "src/omega/workspace/",
+        "src/omega/config/",
+        "src/omega/sandbox/",
+        "src/omega/governance/requirements_validator.py",
+        "/etc/omega/requirements.omega"
+      ]
+    },
+    {
+      "id": "CLINE-INTEGRATION",
+      "title": "Cline CLI Tier 5 — DeepSeek V4 Flash (1M) + MiMo V2.5 (512K)",
+      "status": "PLANNED",
+      "owner": "kali",
+      "verification": "Cline-DeepSeek: M2 audit, Forge synthesis, legacy mining. Cline-MiMo: Phase B implementation, test gen. Budget: $10/sprint. Local-first preserved.",
+      "key_files": [
+        "docs/kb/CLINE_CLI_INTEGRATION.md (TO UPDATE)"
+      ]
+    },
+    {
+      "id": "SESSION-ISOLATION",
+      "title": "Session Namespace Isolation — MIAP-Wired Session-Scoped Directories (D-290)",
+      "status": "DESIGN_COMPLETE",
+      "owner": "kali",
+      "verification": "5 preconditions from 13-voice meditation: no symlink race, no second coordination bus, no soul prompt contamination, no distillation loss, no handoff ambiguity. 3 rejections: OPCODE_SESSION_ID env var, symlink at entity root, filesystem-as-coordination.",
+      "key_files": [
+        "docs/strategy/MEDITATE_MIAP_WIRE_SYNTHESIS_20260718.md",
+        "docs/strategy/NEURON3_REVIEW_MIAP_WIRE_20260718.md"
+      ]
+    },
+    {
+      "id": "MIAP-PHASE-0",
+      "title": "MIAP Phase 0 — Core + Safety (D-291)",
+      "status": "PLANNED",
+      "owner": "kali",
+      "verification": "5 critical fixes from Nemotron 3 Ultra review: ReplayMode enum (4 modes), Two-Log Model (execution + observability), IntentionValidator, CheckFunction registry, LiteTopic session channels (Redis Streams). ~6 sessions estimated.",
+      "key_files": [
+        "src/omega/coordination/miap.py",
+        "docs/strategy/NEURON3_REVIEW_MIAP_WIRE_20260718.md"
+      ]
+    },
+    {
+      "id": "MACP-ALIGNMENT",
+      "title": "MACP Alignment — Hivemind Handoffs with macp_mode (D-292)",
+      "status": "PLANNED",
+      "owner": "kali",
+      "verification": "5 coordination modes: Decision, Proposal, Task, Handoff, Quorum. Aligns with IETF draft-li-dmsc-macp-05. Non-breaking extension to handoff schema.",
+      "key_files": [
+        "mcp_servers/omega_hub/tools.py"
+      ]
+    },
+    {
+      "id": "EXPERIENCE-REPOSITORY",
+      "title": "Experience Repository — AgentRR L0→L1→L2 Distillation (D-294)",
+      "status": "PLANNED",
+      "owner": "kali",
+      "verification": "Scribe nightly distillation on completed sessions → data/experiences/<task_type>.yaml with workflow, constraints, check functions. Replay engine matches task type → retrieves experiences.",
+      "key_files": [
+        "src/omega/coordination/miap.py (experience_extractor)",
+        "data/experiences/ (TO CREATE)"
+      ]
+    },
+    {
+      "id": "TRACE-TO-EVAL",
+      "title": "Trace-to-Eval Loop — Production Failures to Regression Tests (D-295)",
+      "status": "PLANNED",
+      "owner": "kali",
+      "verification": "MIAP execution log + AgentRR check functions + existing eval framework = automatic trace-to-eval pipeline.",
+      "key_files": [
+        "src/omega/coordination/miap.py",
+        "tests/eval/ (TO CREATE)"
       ]
     }
   ],
   "achievements": [
-    "D-281 Phase II COMPLETE — config_resolver.py + wad_loader path consolidation",
-    "6 advisory packets delivered by Grok CLI (Phase III, IV, D-282, S0, D-283 Ph2, D-284)",
-    "MIAP merged into main (13 tests, context collision solution)",
-    "Grok CLI onboarded as Consulting Cloud Mind (agent def, orientation, gap matrix)",
-    "Test suite at 1421 collected / ~1367 pass / 4 pre-existing fail"
+    "D-281 ALL 4 PHASES COMPLETE — 11 commits across 5 agents",
+    "D-282 sqlite-vec Strike 10 COMPLETE — PRAGMA SSOT converged",
+    "D-283 Phase 2 RecallStore DESIGN COMPLETE — 27/29 tests pass",
+    "MIAP MERGED — 13 tests, context collision prevention",
+    "Nomenclature Correction COMPLETE — Slots vs Pillars vs Lenses vs Roles",
+    "Meditate Base+Overlay Architecture DESIGN COMPLETE",
+    "M2 Firewall Test DEPLOYED — 201 violations baseline, Phase A 15→0",
+    "Scribe Lattice Role DESIGN COMPLETE",
+    "Cline CLI Tier 5 PLANNED",
+    "Session Namespace Isolation DESIGN COMPLETE (D-290) — 5 preconditions, 3 rejections",
+    "MIAP Phase 0 PLANNED (D-291) — 5 critical fixes from Nemotron review",
+    "MACP Alignment PLANNED (D-292) — IETF standard interoperability",
+    "Experience Repository PLANNED (D-294) — AgentRR-style distillation",
+    "Trace-to-Eval Loop PLANNED (D-295) — Automatic failure-to-eval pipeline"
   ],
   "open_questions": [
-    "Phase III: Tier A handoff to Grok CLI for code shipping, or Triad executes from advisory specs?",
-    "cache_size SSOT: 512MB shipped vs 32MB target — measure before converging?",
-    "MIAP on clean main now — next iteration or freeze?",
-    "D-283 Phase 2 (Recall tier) — start in parallel with D-281 Phase III/IV?"
+    "Roc: Complete meditate.md table + deprecation headers + test suite",
+    "Researcher: Execute Phase B using Roc's proven WAD-loadable pattern",
+    "Firewall gate: Wire test_firewall_m2_strict_engine_core into make temple-grade NOW",
+    "Cline-DeepSeek: Deploy for M2 audit → PRIORITIZED_FIX_PLAN.md",
+    "Cline-MiMo: Deploy for Phase B implementation post-audit",
+    "Scribe entity files: Create lattice/scribe.yaml + entities.yaml + scribe.md",
+    "MIAP Phase 0: Implement 5 critical fixes before multi-instance deployment",
+    "LiteTopic: Redis Streams vs SQLite for session channels?",
+    "Experience abstraction: L0→L1→L2 schema design for data/experiences/"
   ],
-  "next_sprint": "HMC-SPRINT-05 — D-283 Mnemosyne Phase 2 (Recall tier, SleepTime wiring, Cross-pollination)"
+  "next_sprint": "HMC-SPRINT-05 — M2 Phases B-E Complete + MIAP Phase 0 + Scribe Implementation + Cline Integration"
 }

@@ -72,6 +72,86 @@ logger = logging.getLogger(__name__)
 # Configuration
 IRIS_CONFIDENCE_THRESHOLD = 0.6
 
+# ROLE_CONSTANTS — engine-defined slots (NOT entity names).
+# WAD YAML (config/wads/<iwad>/entities/dispatch.yaml) maps ROLE → entity.
+# These constants are engine architecture, not WAD content (M2-compliant).
+ROLE_CONSTANTS: Dict[str, str] = {
+    "MESSENGER_BRIDGE": "MESSENGER_BRIDGE",      # Iris role
+    "MAKALI_COUNCIL": "MAKALI_COUNCIL",          # MaKaLi synthesis role
+    "GRAND_OVERSIGHT": "GRAND_OVERSIGHT",        # Kali role
+    "LIGHT_OVERSOUL": "LIGHT_OVERSOUL",          # Ma'at role
+    "DARK_OVERSOUL": "DARK_OVERSOUL",            # Lilith role
+    "CONTAINING_FIELD": "CONTAINING_FIELD",      # Sophia role
+    "P1": "P1",
+    "P2": "P2",
+    "P3": "P3",
+    "P4": "P4",
+    "P5": "P5",
+    "P6": "P6",
+    "P7": "P7",
+    "P8": "P8",
+    "P9": "P9",
+    "P10": "P10",
+}
+
+# WAD-backed dispatch config loader (M2 Firewall Phase C).
+# Replicates Phase B pattern from subagent_dispatcher.py.
+DISPATCH_CONFIG_FILENAME = "dispatch.yaml"
+
+
+def _load_dispatch_config(iwad: str | None = None) -> list[dict[str, Any]]:
+    """Load agent definitions from the active WAD's dispatch.yaml.
+
+    Args:
+        iwad: IWAD name. If None, uses active_iwad from config/omega.yaml.
+
+    Returns:
+        List of entity definition dicts from the 'entities' key.
+
+    Raises:
+        FileNotFoundError: If no dispatch.yaml exists for the WAD.
+        ValueError: If YAML is malformed or missing 'entities' key.
+    """
+    from omega.governance.config_resolver import WADS_DIR, get_active_iwad
+
+    iwad_name = iwad or get_active_iwad()
+    config_path = WADS_DIR / iwad_name / "entities" / DISPATCH_CONFIG_FILENAME
+    if not config_path.exists():
+        raise FileNotFoundError(
+            f"No dispatch config found at {config_path}. "
+            f"Create {config_path} or use a WAD that defines agent dispatch."
+        )
+
+    try:
+        raw = config_path.read_text(encoding="utf-8")
+        data: dict[str, Any] = yaml.safe_load(raw) or {}
+    except yaml.YAMLError as exc:
+        raise ValueError(
+            f"Malformed YAML in dispatch config: {config_path}\n{exc}"
+        ) from exc
+
+    entities = data.get("entities")
+    if not entities or not isinstance(entities, list):
+        raise ValueError(
+            f"Missing top-level 'entities' list in {config_path}. "
+            f"Ensure the file has an 'entities:' key at the root."
+        )
+
+    return entities
+
+
+def _get_entity_by_role(role: str, iwad: str | None = None) -> Optional[str]:
+    """WAD-loadable entity lookup by role constant.
+
+    Returns the entity name (e.g., "iris") for a given role (e.g., "MESSENGER_BRIDGE"),
+    or None if not found in the active WAD.
+    """
+    entities = _load_dispatch_config(iwad)
+    for ent in entities:
+        if ent.get("role") == role:
+            return str(ent.get("name", "")).lower()
+    return None
+
 
 @dataclass
 class OracleResponse:
@@ -564,7 +644,7 @@ class Oracle:
         
         [D118 Dual-Inference Mandate] When model_override is provided, the
         TriageRouter is bypassed and the specified model is used directly.
-        This enables opt-in local routing for the MaKaLi parallel council.
+        This enables opt-in local routing for the MAKALI_COUNCIL parallel council.
         
         Args:
             entity_name: Name of the entity to summon
@@ -775,24 +855,27 @@ class Oracle:
         [id-soft: vet-069] Speculative Decode — lightweight, fast path for
         simple queries that don't require domain expertise.
         
-        [D-kal-053] Now attempts model invocation for Iris via _summon.
+        [D-kal-053] Now attempts model invocation for Messenger Bridge via _summon.
         """
         try:
-            # Attempt to invoke Iris as a real model-backed entity
-            if self.registry.get("iris"):
-                return await self._summon("iris", query, trace, session_id, transient=transient)
+            # Attempt to invoke Messenger Bridge as a real model-backed entity
+            messenger_bridge = _get_entity_by_role(ROLE_CONSTANTS["MESSENGER_BRIDGE"])
+            if messenger_bridge and self.registry.get(messenger_bridge):
+                return await self._summon(messenger_bridge, query, trace, session_id, transient=transient)
         except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
-            logger.warning(f"Iris model invocation failed (falling back to hardcoded) [{classification['mode']}]: {e}")
+            logger.warning(f"Messenger Bridge model invocation failed (falling back to hardcoded) [{classification['mode']}]: {e}")
 
-        # Fallback to hardcoded response if Iris entity is missing or fails
-        text = self.intent_matcher.iris_response(query) or "Hello! I'm Iris, the voice of the Oracle. How can I help you today?"
+        # Fallback to hardcoded response if Messenger Bridge entity is missing or fails
+        messenger_bridge = _get_entity_by_role(ROLE_CONSTANTS["MESSENGER_BRIDGE"])
+        entity_name = messenger_bridge or "Iris"  # fallback for display only
+        text = self.intent_matcher.iris_response(query) or f"Hello! I'm {entity_name}, the voice of the Oracle. How can I help you today?"
         
         backend = await self.model_gateway.get_preferred_backend()
         
         result = OracleResponse(
             text=text,
-            entity="Iris",
+            entity=entity_name,  # instead of hardcoded "Iris"
             confidence=confidence,
             trace_id=trace.trace_id,
             session_id=session_id,

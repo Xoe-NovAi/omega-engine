@@ -1,0 +1,55 @@
+# Omega Engine — System-Wide Requirements (Priority 5 = Highest)
+# This file enforces all 23 Sovereign Mandates as HARD CONSTRAINTS.
+# Any violation prevents startup (fail-closed).
+# Deploy to: /etc/omega/requirements.omega
+#
+# Priority layers (lowest → highest):
+# 1. /etc/omega/managed_config.toml
+# 2. $OMEGA_HOME/managed_config.toml
+# 3. $OMEGA_HOME/config.toml
+# 4. $OMEGA_HOME/requirements.toml (cloud cache, Ed25519-signed)
+# 5. /etc/omega/requirements.omega ← THIS FILE (SYSTEM-WIDE, HIGHEST PRIORITY)
+
+[mandates]
+# M1: AnyIO Absolute — No asyncio, wrap blocking I/O in anyio.to_thread.run_sync
+M1 = "anyio_only"
+
+# M2: Engine-Stack Firewall — Core (src/omega/) vs WADs (config/wads/) absolute separation
+M2 = "engine_stack_firewall"
+
+# M7: Local-First — Local inference PRIMARY, cloud FALLBACK only
+M7 = "local_first"
+
+# M23: Failure Integrity — No soft failures, mandatory tool failures = hard stop
+M23 = "no_soft_failures"
+
+# Additional mandates for comprehensive enforcement
+M3 = "iris_constant"           # Iris is messenger, not Pillar
+M4 = "sequentiality"           # Plan → Verify → Execute
+M5 = "gnosis_preservation"     # L1→L2→L3 distillation required
+M6 = "podman_sovereignty"      # UserNS=keep-id + User=1000, no :U flag
+M8 = "zero_telemetry"          # No external telemetry
+M9 = "error_integrity"         # Typed, traceable, testable errors
+M10 = "fleet_integrity"        # 14 agent cap, slot-constrained
+M11 = "soul_integrity"         # Session distillation mandatory
+M12 = "queue_integrity"        # Atomic request contracts
+M13 = "temple_grade"           # T1-T11 gates enforced
+M14 = "heritage_vetting"       # [id-soft:] tags require vet records
+M15 = "sovereign_continuity"   # session_gnosis.md anchors
+M16 = "modularization"         # No hardcoded paths in src/omega/
+M17 = "cognitive_integrity"    # Skeptical Verifier for memory consistency
+M18 = "token_efficiency"       # No cognitive anorexia, precision over brevity
+M19 = "adversarial_alchemy"    # Mine weaknesses for advantages
+M20 = "somatic_serialization"  # llama_copy_state_data / llama_set_state_data
+M21 = "gate_integrity"         # Contract tests for typed returns
+M22 = "response_provenance"    # provider_name from actual response
+
+[enforcement]
+# Fail-closed: any mandate violation = startup failure
+fail_closed = true
+
+# Validation mode: strict (default) or warn_only (for migration)
+mode = "strict"
+
+# Trace ID for audit trail
+trace_id = "omega-requirements-2026-07-18"

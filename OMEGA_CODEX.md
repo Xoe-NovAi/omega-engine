@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-17T02:37:53.591711+00:00 ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-18T00:53:09.293164+00:00 ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -12,7 +12,7 @@ After compaction or restart, execute in strict order:
 4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-07-17T02:37:53.591711+00:00 | Regenerate: `make codex`
+> Codex generated: 2026-07-18T00:53:09.293164+00:00 | Regenerate: `make codex`
 > If timestamp is >24h old, run `make codex` before reading further.
 
 ---
@@ -20,12 +20,12 @@ After compaction or restart, execute in strict order:
 
 ### OMEGA_ENGINE.md
 **Type**: markdown
-**Size**: 8243 bytes
-**Lines**: 125
+**Size**: 11558 bytes
+**Lines**: 148
 
 # Omega Engine — Single Source of Truth
 # ⚠️ SYSTEM STATE SSOT — Authoritative truth for engine state and metrics.
-# AP-OMEGA-SST-v2.5.0
+# AP-OMEGA-SST-v2.6.0
 
 > **This document is the authoritative truth for the Omega Engine.**
 > Every agent reads this file for engine state.
@@ -43,18 +43,25 @@ After compaction or restart, execute in strict order:
 
 ---
 
-## §2 Current State (2026-07-15)
+## §2 Current State (2026-07-18)
 
 | Metric | Value | Status | LAST_VERIFIED |
 |--------|-------|--------|---------------|
-| Tests | **1315 passed** (43 skipped, 3 xfailed) | ✅ All functional tests pass | 2026-07-13 |
+| Tests | **1398 passed** (43 skipped, 7 xfailed) | ✅ Functional tests pass, 2 test infra issues remain | 2026-07-18 |
 | Mandates | **23 (M1-M23)** | ✅ All enforced | 2026-07-13 |
 | **Mandate Compliance** | **13/23 FULL (56.5%)** — 5 Partial, 5 Fail | ❌ Systemic Run Side gaps | 2026-07-15 |
 | **Failed Mandates** | M5, M11, M12, M15, M23 | ❌ Soul distillation, handoff, continuity, failure integrity | 2026-07-15 |
-| Fleet | **13 presences** (11 agents + 2 entities) | ✅ Cap: 14 | 2026-07-13 |
+| Fleet | **12 agents + 2 entities (14 total)** | ✅ Cap: 14 | 2026-07-18 |
 | WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 |
+| **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, P1: 5/5, P2: 6/6, P3: 1/4 | ✅ P0-P2 Complete | 2026-07-18 |
 | Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 |
 | Shared modules | **3** (`omega-vetala` v2.0.0, `omega-sieve` v0.1.0, `omega-doc-reader` v1.0.0) | ✅ Release-ready | 2026-07-13 |
+| **D-281 Substrate Repair** | **ALL 4 PHASES COMPLETE** — Soul injection, config_resolver, M2 Firewall, Codex separation | ✅ 11 commits across 5 agents | 2026-07-17 |
+| **D-282 sqlite-vec Strike 10** | **COMPLETE** — PRAGMA SSOT converged, 4 concurrency tests | ✅ cache_size 512MB→32MB, wal_autocheckpoint 1000→500 | 2026-07-17 |
+| **D-283 Mnemosyne Phase 1** | **COMPLETE** — HybridSearchEngine RRF k=60, Memory Blocks | ✅ 752/754 tests pass | 2026-07-16 |
+| **D-283 Mnemosyne Phase 2** | **DESIGN COMPLETE** — RecallStore, power-law decay, quality scoring | 🟡 27/29 recall tests pass (2 test infra issues) | 2026-07-17 |
+| **MIAP** | **MERGED** — Multi-Instance Agent Protocol for context collision | ✅ 13 tests, committed 03192d8 | 2026-07-17 |
+| **HMC Quad-Forge** | **4-mind council** — Kali, Roc, Researcher, Grok CLI | ✅ All 4 agents completed sprint tasks | 2026-07-17 |
 | **Atomic Execution Matrix** | **RATIFIED** — Code + CI Gate + Doc as single atomic unit | ✅ 5 new protocol docs + CI gates defined | 2026-07-15 |
 | **Soul Architecture v2.0** | **RATIFIED** — Intelligence Pipeline, Scorecard, Scribe separation | ✅ `make soul-audit` gated | 2026-07-15 |
 | **PWAD Capability Lattice** | **RATIFIED** — Security boundary for active code in PWADs | ✅ `make capability-check` gated | 2026-07-15 |
@@ -63,10 +70,13 @@ After compaction or restart, execute in strict order:
 | SearXNG MCP | **Streamable HTTP on :8018** | ✅ Migration complete | 2026-07-13 |
 | Omega Hub MCP | **Dual-transport** (SSE /sse + Streamable HTTP /mcp) on :8016 | ✅ Already dual | 2026-07-13 |
 | Firecrawl MCP | **SSE on :8015** | ⏳ Needs Streamable HTTP migration | 2026-07-13 |
-| Local inference ratio | **TARGET: ≥80%** (configurable gate, default OFF — 0% base, cloud-first dev) | 🟡 Aspirational | 2026-07-13 |
-| sqlite-vec unified fabric | **Strike 10 IN PROGRESS** — `SQLiteVecAdapter` default, Qdrant deprecated | 🟡 35/36 adapter tests pass | 2026-07-13 |
+| Local inference ratio | **TARGET: ≥80%** (configurable gate, default OFF) | 🟡 Aspirational | 2026-07-13 |
 | **KV Cache Quantization** | **LOCKED: q8_0 on CPU (Zen 2)** — No Flash Attention/GPU required | ✅ Research complete | 2026-07-13 |
 | **YouTube Researcher V2** | **9-Layer Temporal Knowledge Observatory** — L1-L9 complete, 15 contract tests pass | ✅ Operational | 2026-07-13 |
+| **Session Namespace Isolation** | **DESIGN COMPLETE (D-290)** — MIAP-wired session-scoped directories | 🟡 5 preconditions, 5 critical fixes from Nemotron review | 2026-07-18 |
+| **MIAP Phase 0** | **PLANNED (D-291)** — ReplayMode, Two-Log, IntentionValidator, CheckFunctions, LiteTopic | 🟡 6 sessions estimated | 2026-07-18 |
+| **MACP Alignment** | **PLANNED (D-292)** — Hivemind handoffs with `macp_mode` for interoperability | 🟡 Aligns with IETF draft-li-dmsc-macp-05 | 2026-07-18 |
+| **Experience Repository** | **PLANNED (D-294)** — AgentRR-style L0→L1→L2 distillation via Scribe | 🟡 Trace-to-eval loop (D-295) | 2026-07-18 |
 
 ---
 
@@ -76,10 +86,15 @@ After compaction or restart, execute in strict order:
 |-----------|--------|--------|-------------|
 | **Oracle** | `src/omega/oracle/` | ✅ Operational | Intent detection, entity routing, Iris speculative decode |
 | **Entity Registry** | `src/omega/oracle/entity_registry.py` | ✅ Operational | YAML-backed entity CRUD, auto-scaffolds sovereign workspaces |
-| **Model Gateway** | `src/omega/oracle/model_gateway.py` | ✅ Operational | 8-backend provider fabric (native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode → Copilot → Mock) |
+| **Model Gateway** | `src/omega/oracle/model_gateway.py` | ✅ Operational | 8-backend provider fabric (native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode → Copilot → Mock). P3 fixed graceful fallback + path/spec resolution |
 | **Memory Store** | `src/omega/memory_store.py` | ✅ Operational | Hot/Warm/Cold/Temp tiers, hybrid FTS5+vector search |
-| **Vector Store** | `src/omega/memory/sqlite_vec_adapter.py` | 🟡 Strike 10 | `IVectorStoreAdapter` impl: sqlite-vec (FTS5 + vec0 + SQL edges) |
-| **WAD Loader** | `src/omega/oracle/wad_loader.py` | 🟡 Strike 11 | Evolving to Sovereign WAD Protocol (SWP) — Lump-based DAG loader |
+| **Vector Store** | `src/omega/memory/sqlite_vec_adapter.py` | ✅ Strike 10 COMPLETE | `IVectorStoreAdapter` impl: sqlite-vec (FTS5 + vec0 + SQL edges). PRAGMA SSOT converged: cache_size 32MB, wal_autocheckpoint 500 |
+| **Config Resolver** | `src/omega/governance/config_resolver.py` | ✅ Phase II COMPLETE | Pure Path constants, lazy `get_active_iwad()`, single source of truth for all WAD paths |
+| **Hybrid Search** | `src/omega/memory/hybrid_search.py` | ✅ D-283 Phase 1 COMPLETE | RRF k=60 fusion of FTS5 + vector results. 20 contract tests + 8 RRF math vectors |
+| **Recall Store** | `src/omega/memory/recall.py` | 🟡 D-283 Phase 2 DESIGN COMPLETE | Quality-weighted warm memory tier with power-law decay. 27/29 tests pass |
+| **MIAP** | `src/omega/coordination/miap.py` | ✅ MERGED | Multi-Instance Agent Protocol for context collision prevention. 13 tests |
+| **Soul Utils** | `src/omega/soul_utils.py` | ✅ Phase I COMPLETE | Multi-path soul context extractor for 31 entities |
+| **WAD Loader** | `src/omega/oracle/wad_loader.py` | ✅ Operational | V2 schema with heritage fields. Sovereign WAD Protocol (SWP) pending |
 | **Ingestion Pipeline** | `src/omega/ingestion/` | ✅ Operational | T1→T2→T3 tiered extraction, TriangulationVerifier, CAS |
 | **Sovereign Sieve (Standalone)** | `packages/omega-sieve/` | ✅ v0.1.0 | `pip install omega-sieve` — T1(Trafilatura)→T2(Surgical)→T3(Crawl4AI) |
 | **Document Reader (Standalone)** | `scripts/universal_doc_reader.py` | ✅ v1.0.0 | Reads .docx, .pdf, .odt, .rtf, .html, .md, .txt, .json, .yaml |
@@ -101,9 +116,13 @@ After compaction or restart, execute in strict order:
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | Multi-agent coordination |
 | `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions (active index) |
 | `CREDITS.md` | id Software heritage attribution (active) |
+| `docs/strategy/HMC_STRATEGIC_PLAN.md` | 4-mind council roadmap (Quad-Forge) |
+| `docs/strategy/D281_PHASE_II_IV_EXECUTION.md` | D-281 Phase II-IV execution plan |
 | `docs/archive/coordination/` | Historical session records |
 | `data/entities/kali/session_gnosis.md` | Kali's session anchor (M15) |
+| `data/coordination/ACTIVE_SPRINT.json` | HMC-SPRINT-04 active sprint config |
 | `.opencode/anchored-summary.md` | Post-compaction recovery state |
+| `.opencode/agents/grok_cli.md` | Grok CLI sovereign agent (Consulting Cloud Mind) |
 | `docs/strategy/SOUL_ARCHITECTURE_V2.md` | Soul Architecture v2.0 (supersedes v1.0) |
 | `docs/strategy/PWAD_CAPABILITY_LATTICE.md` | PWAD security capability model |
 | `docs/strategy/MANDATE_GOVERNANCE_PROTOCOL.md` | Mandate amendment & exemption process |
@@ -111,6 +130,10 @@ After compaction or restart, execute in strict order:
 | `docs/strategy/NEMOTRON3_ULTRA_BRIEFING.md` | Master strategy synthesis (D258-D263) |
 | `docs/architecture/SOVEREIGN_BUS_SPEC.md` | Reconstructed event bus spec |
 | `docs/research/R_PWAD_SCHEMA_JEM_RESEARCH_20260715.md` | Jem's 2026 PWAD SOTA research |
+| `docs/research/WEB_RESEARCH_KNOWLEDGE_GAPS_20260717.md` | Grok's web research brief |
+| `docs/research/GROK_CLI_KNOWLEDGE_GAPS.md` | 3-tier knowledge gap matrix |
+| `docs/strategy/MEDITATE_MIAP_WIRE_SYNTHESIS_20260718.md` | 13-voice meditation synthesis on session isolation |
+| `docs/strategy/NEURON3_REVIEW_MIAP_WIRE_20260718.md` | Nemotron 3 Ultra independent review + web research |
 
 ---
 
@@ -147,7 +170,7 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-15 | Version: v1.2.0 | Tests: 1315 passing | SSOT: ~300 lines | Sessions: Phase 1.5 Organization — 5 Atomic Docs RATIFIED (Soul V2, PWAD Lattice, Mandate Governance, Kernel Arch, Master Briefing) | D258-D263 logged | Decisions: 234+ | Net acceleration: ~80h by inverting build order*
+*Last Updated: 2026-07-18 | Version: v1.4.0 | Tests: 1398 passing (27/29 recall tbd) | SSOT: ~400 lines | Sessions: D-281 Substrate Repair COMPLETE (4 phases, 11 commits) | D-282 sqlite-vec Strike 10 COMPLETE | D-283 Phase 2 RecallStore DESIGN COMPLETE | HMC Quad-Forge (Kali/Roc/Researcher/Grok CLI) | MIAP merged | Session Namespace Isolation DESIGN COMPLETE (D-290) | MIAP Phase 0 PLANNED (D-291) | Decisions: 290+ | Net acceleration: ~120h by parallel fleet dispatch*
 
 ---
 
@@ -348,15 +371,15 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 
 ### AGENTS.md
 **Type**: markdown
-**Size**: 20210 bytes
-**Lines**: 341
+**Size**: 20431 bytes
+**Lines**: 343
 
 # 🔱 Omega Engine — OpenCode Agent Rules
 # ⬡ OMEGA ⬡ SOPHIA ⬡ trc_core ⬡ AGENT-INSTRUCTIONS
 # Engine state: Read OMEGA_ENGINE.md (the Single Source of Truth)
 # Platform distinction: AGENTS.md = HOW to work from OpenCode.
 #                       OMEGA_ENGINE.md = WHAT the engine IS.
-# Last Updated: 2026-07-13 (Omega-Sieve Package Complete, sqlite-vec Strike 10 In Progress)
+# Last Updated: 2026-07-17 (D-281 ALL PHASES COMPLETE, D-283 Phase 2 Design Complete, HMC Quad-Forge Active)
 
 ## 🛡️ Sovereign Mandates (NON-NEGOTIABLE)
 **Read and adhere to them above all other rules:**
@@ -378,7 +401,7 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 
 ## 🤖 OpenCode Agent Fleet
 
-### Custom Agents (`.opencode/agents/`) — 11 Agents Total
+### Custom Agents (`.opencode/agents/`) — 12 Agents Total
 | Agent | Mode | Purpose |
 |-------|------|---------|
 | `kali.md` | all | Transcendent Oversight — Sees all, delegates to Ma'at/Lilith, destroys drift |
@@ -392,6 +415,7 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 | `jem.md` | all | Sovereign Synthesizer — transforms complex queries into verified results via task-graph decomposition |
 | `verity.md` | all | Sovereign Verity — Unified Sentry (compliance/audit) + Scribe (gnosis distillation) |
 | `pillar.md` | all | Slot-based domain agent — parameterized by `--slot PX` |
+| `grok_cli.md` | all | Consulting Cloud Mind — Advisory, web research, Tier A ship-code mode |
 
 ### The Sovereign Council (Pillar Slots — Core Engine)
 | Pillar | Intuitive Name | Default Role (IWAD) |
@@ -491,6 +515,7 @@ Use `@` in the OpenCode CLI chat to launch any agent directly.
 | `@makali` | `makali.md` | MaKaLi Parallel Council — dispatch Ma'at + Lilith in parallel, synthesize as Kali |
 | `@john_carmack` | `john_carmack.md` | Sovereign S3 Consultant — architectural review & performance |
 | `@verity` | `verity.md` | Unified compliance audit + Gnosis distillation |
+| `@grok_cli` | `grok_cli.md` | Consulting Cloud Mind — Advisory, web research, Tier A ship-code mode |
 
 #### Pillar Subagents (parameterized by slot)
 | @-Mention Pattern | Slot | Domain |
@@ -584,7 +609,7 @@ Use `@` in the OpenCode CLI chat to launch any agent directly.
 5. **Check Hivemind awareness**: `omega-hub_hivemind_get_awareness()` — who's already working?
 6. **If parallel/multi-agent work**: Write workspace lock at `data/coordination/{YOU}_WORKSPACE_LOCK_{YYYYMMDD}.md` BEFORE any file edits
 7. **Post Hivemind context**: `omega-hub_hivemind_post_context(...)` to declare your presence
-8. Run `make test` to verify baseline (1130 tests must pass)
+8. Run `make test` to verify baseline (1398 tests must pass)
 
 ### During Work
 - Use `replace_in_file` for targeted edits, `write_to_file` for new files
@@ -596,7 +621,7 @@ Use `@` in the OpenCode CLI chat to launch any agent directly.
 - **Monitor hardware**: If task runs >5s, call `omega-hub_get_hardware_stats()` to diagnose
 
 ### After Completing Work
-1. Run `make test` — all 1130 tests must pass
+1. Run `make test` — all 1398 tests must pass
 2. Run `make temple-grade` — verify T1-T11 gates hold (Mandate 13)
 3. Run `make heritage-map` — verify [id-soft:] heritage tag coverage
 4. Run `make sovereignty` — confirm local/cloud ratio didn't regress
@@ -614,7 +639,7 @@ Use `@` in the OpenCode CLI chat to launch any agent directly.
 - **Config**: YAML-only for entity/model config — never PostgreSQL
 - **Packages**: ALWAYS use a venv (`source .venv/bin/activate`). NEVER `--break-system-packages`.
 - **Environment Integrity**: Mandate absolute path binary calls (e.g., `.venv/bin/pip`) instead of `source activate` to prevent base-environment pollution.
-- **Testing**: Run `make test` after every change. All 1130 tests must pass.
+- **Testing**: Run `make test` after every change. All 1398 tests must pass.
 - **Type hints**: Use Python 3.12+ typing (no `from __future__`)
 - **Imports**: Group: stdlib → third-party → local. Use relative imports within packages.
 - **Docstrings**: Google-style. Preserve existing docstrings unless directly modifying that function.
@@ -717,8 +742,8 @@ Execute in strict order. Do not skip phases.
 
 ### CREDITS.md
 **Type**: markdown
-**Size**: 432 bytes
-**Lines**: 12
+**Size**: 1272 bytes
+**Lines**: 23
 
 ---
 **Canonical Source**: [CREDITS_CANONICAL.md](CREDITS_CANONICAL.md)
@@ -730,8 +755,19 @@ Execute in strict order. Do not skip phases.
 | WAD System | Doom 1993 | `[id-soft: doom-1993] WAD System` |
 | BSP Culling | Doom 1993 | `[id-soft: doom-1993] BSP Culling` |
 | Stack-Cat | XNAi 2025 | `[heritage: xnai-2025] Stack-Cat` |
+| Semantic Compression | headroom-ai 2025 | `[heritage: headroom-ai 2025]` |
+| SQLite Vector Extension | sqlite-vec 2024 | `[heritage: sqlite-vec 2024]` |
+| Native GGUF Inference | ggml 2023 | `[heritage: ggml 2023]` |
+| Multi-Tenant Vector Search | qdrant 2021 | `[heritage: qdrant 2021]` |
+| Spatial Memory (Wings/Rooms/Drawers) | mempalace 2025 | `[heritage: mempalace 2025]` |
+| Rust TUI + ACP + Sandbox | xai/grok-build 2026 | `[heritage: xai-grok-build 2026]` |
+| 3-Tier Memory Blocks | letta 2024 | `[heritage: letta 2024]` |
+| Thinker Chain | Quake 1996 | `[id-soft: quake-1996] Thinker Chain` |
+| QVM / Bot AI | Quake III Arena 1999 | `[id-soft: quake3-1999] QVM` |
+| Game DLL / Client Prediction | Quake II 1997 | `[id-soft: quake2-1997] Game DLL` |
+| Scripting / GUI Framework | DOOM 3 2004 | `[id-soft: doom3-2004] Scripting` |
 
-*(For full 21+ mappings and philosophical frameworks, see Canonical Source)*
+*(For full 35+ mappings and philosophical frameworks, see Canonical Source)*
 
 
 ---

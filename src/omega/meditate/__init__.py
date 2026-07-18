@@ -2,6 +2,7 @@
 # ⬡ OMEGA ⬡ MEDITATE ⬡ trc_meditate_protocol
 # Single-inference, multi-persona semantic prism
 # D-265: Portability-first, zero-dep core
+# M2 COMPLIANT: Entity names loaded from WAD YAML, not hardcoded
 
 from src.omega.meditate.protocol import (
     PersonaSpec,
@@ -12,6 +13,13 @@ from src.omega.meditate.protocol import (
     PersonaLibrary,
     DissentStyle,
     OutputMode,
+    get_default_lenses,
+)
+from src.omega.meditate.lens_registry import (
+    load_lens_library,
+    load_all_lenses,
+    load_lens_by_id,
+    get_lenses_config_path,
 )
 
 __all__ = [
@@ -23,4 +31,9 @@ __all__ = [
     "PersonaLibrary",
     "DissentStyle",
     "OutputMode",
+    "get_default_lenses",
+    "load_lens_library",
+    "load_all_lenses",
+    "load_lens_by_id",
+    "get_lenses_config_path",
 ]

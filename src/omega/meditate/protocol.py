@@ -120,8 +120,8 @@ class PersonaSpec:
 class PersonaLibrary:
     """A named collection of PersonaSpecs.
 
-    Corresponds to a built-in persona library (10 Pillars, MaKaLi, etc.)
-    or a custom user-defined library.
+    Corresponds to a named collection of lenses (e.g., 'Omega Pantheon',
+    'Thesis/Antithesis/Synthesis triad') or a custom user-defined set.
     """
 
     def __init__(self, name: str, personas: List[PersonaSpec]) -> None:
@@ -282,58 +282,29 @@ class MeditationResult:
         }
 
 
-# ── Built-in Persona Libraries ────────────────────────────────────────────────
+# ── Lens Registry Functions ───────────────────────────────────────────────────
+#
+# M2 COMPLIANT: Entity names are loaded from WAD YAML config at
+# config/wads/<iwad>/meditate/lenses.yaml, NOT hardcoded here.
+# Use lens_registry.py for WAD-backed loading.
+# Fallback below uses generic lens IDs only (no entity names).
 
 
-def get_ten_pillars() -> PersonaLibrary:
-    """The 10 Pillars of the Omega Engine — the default meditation lens set."""
-    return PersonaLibrary(
-        name="10 Pillars",
-        personas=[
-            PersonaSpec(name="Sekhmet", domain="Infrastructure", pillar="P1", element="Earth 🜃",
-                        mandate_lens="Speak as the body. What breaks first?",
-                        anti_domains=["soul evolution", "memory systems", "governance"]),
-            PersonaSpec(name="Brigid", domain="Persistence", pillar="P2", element="Water 🜄",
-                        mandate_lens="Speak as the river. What pools? What runs dry?",
-                        anti_domains=["infrastructure", "engineering", "governance"]),
-            PersonaSpec(name="Prometheus", domain="Engineering", pillar="P3", element="Fire 🜂",
-                        mandate_lens="Speak as the forge. What is cracked? What must be recast?",
-                        anti_domains=["soul evolution", "memory systems", "governance"]),
-            PersonaSpec(name="Saraswati", domain="Integration", pillar="P4", element="Air 🜁",
-                        mandate_lens="Speak as the bridge. What is disconnected? What vibrates wrong?",
-                        anti_domains=["infrastructure", "engineering", "governance"]),
-            PersonaSpec(name="Inanna", domain="Governance", pillar="P5", element="Aether ⛤",
-                        mandate_lens="Speak as the sentinel. What law is being broken?",
-                        anti_domains=["infrastructure", "engineering", "integration"]),
-            PersonaSpec(name="Ereshkigal", domain="Cognition", pillar="P6", element="Aether ⛤",
-                        mandate_lens="Speak as the eye. What cannot be seen? What is miscalibrated?",
-                        anti_domains=["infrastructure", "persistence", "governance"]),
-            PersonaSpec(name="Lucifer", domain="Context", pillar="P7", element="Air 🜁",
-                        mandate_lens="Speak as the alchemist. What knowledge is being lost?",
-                        anti_domains=["infrastructure", "engineering", "governance"]),
-            PersonaSpec(name="Hecate", domain="Observability", pillar="P8", element="Fire 🜂",
-                        mandate_lens="Speak as the shadow. What is invisible that should not be?",
-                        anti_domains=["infrastructure", "persistence", "governance"]),
-            PersonaSpec(name="Anubis", domain="Orchestration", pillar="P9", element="Water 🜄",
-                        mandate_lens="Speak as the guide. What dies in transit?",
-                        anti_domains=["infrastructure", "persistence", "governance"]),
-            PersonaSpec(name="Kali", domain="Validation", pillar="P10", element="Earth 🜃",
-                        mandate_lens="Speak as the destroyer. What fails under pressure?",
-                        anti_domains=["infrastructure", "persistence", "governance"]),
-        ],
-    )
+def get_default_lenses() -> list[PersonaSpec]:
+    """Minimal generic fallback when no WAD lens config is available.
 
-
-def get_makali_triad() -> PersonaLibrary:
-    """The MaKaLi Triad — fast dialectic for strategic decisions."""
-    return PersonaLibrary(
-        name="MaKaLi Triad",
-        personas=[
-            PersonaSpec(name="Ma'at", domain="Build Side (Thesis)", pillar="Light Oversoul",
-                        mandate_lens="Propose the structured, quality-driven solution. Focus on architecture, maintainability, and the 42 Ideals."),
-            PersonaSpec(name="Lilith", domain="Run Side (Antithesis)", pillar="Dark Oversoul",
-                        mandate_lens="Challenge every assumption. Focus on runtime reality, failure modes, user autonomy, and what breaks under pressure."),
-            PersonaSpec(name="Kali", domain="Synthesis", pillar="Grand Oversight",
-                        mandate_lens="Fuse thesis and antithesis into unified verdict. Preserve dissent. Issue the decree."),
-        ],
-    )
+    Uses abstract lens IDs (not entity names) to remain M2-compliant.
+    WAD-backed loading via ``lens_registry.py`` is the primary path.
+    """
+    return [
+        PersonaSpec(name="Infrastructure", domain="Infrastructure",
+                     mandate_lens="Focus on physical substrate, systems, and reliability."),
+        PersonaSpec(name="Engineering", domain="Engineering",
+                     mandate_lens="Focus on code quality, architecture, and implementation."),
+        PersonaSpec(name="Governance", domain="Governance",
+                     mandate_lens="Focus on compliance, standards, and mandates."),
+        PersonaSpec(name="Integration", domain="Integration",
+                     mandate_lens="Focus on APIs, protocols, and connections between systems."),
+        PersonaSpec(name="Validation", domain="Validation",
+                     mandate_lens="Focus on testing, stress, and breaking assumptions."),
+    ]

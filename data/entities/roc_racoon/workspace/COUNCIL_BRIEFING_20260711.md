@@ -85,7 +85,7 @@ This briefing package presents **four major workstreams** completed in Sessions 
 | 12 | Sefirot/Qliphoth Mapping | ❌ Missing | 🟡 HIGH |
 | 13 | Invocation Philosophy | Partial (summon/talk) | 🟡 HIGH |
 | 14 | Sovereign Seed Architecture | Partial (Oracle + Entities) | 🟡 HIGH |
-| 15 | Octave Hierarchy (LLOC→HLOC→Oversoul) | ❌ Missing | 🟡 HIGH |
+| 15 | Octave Hierarchy (Meditate→MC→Oversoul, formerly LLOC→HLOC→Oversoul) | ❌ Missing | 🟡 HIGH |
 | 16 | Holographic Buffer Protocol | Partial (session_gnosis.md) | 🟡 HIGH |
 | 17 | Modelfile Continuum | ✅ Implemented | ✅ DONE |
 | 18 | 5 MCP Systems | ✅ 90% coverage | ✅ DONE |
@@ -100,7 +100,7 @@ This briefing package presents **four major workstreams** completed in Sessions 
 - **Missing symbolic layer**: Elemental/Chakral/Planetary/Divine Ally metadata absent from entities
 - **Tarot-Engine v2 = Decision support** (not divination) — 10 planetary spreads for architectural decisions
 - **Gnosis Packs (0.978 density, 19% compression)** vs Soul Distiller (missing density metric)
-- **Octave Hierarchy = Dispatch architecture** (LLOC→HLOC→Oversoul) not formalized
+- **Octave Hierarchy = Dispatch architecture** (Meditate→MC→Oversoul, formerly LLOC→HLOC→Oversoul) not formalized
 - **Holographic Buffer protocol** = Mandatory session_gnosis.md read/write not enforced
 
 ### Document Created
@@ -119,7 +119,7 @@ This briefing package presents **four major workstreams** completed in Sessions 
 
 | Category | Engine Core (Universal Runtime) | Arcana-NovAi WAD (Specific Stack) |
 |----------|--------------------------------|-----------------------------------|
-| **Patterns** | Pantheon Model, Octave Hierarchy, Omnidroid BIOS, Holographic Buffer, query_modifiers Framework, Gnosis Pack Density | Lilith Stack Pantheon, MaKaLi Oversoul, Omnidroid BIOS *impl*, session_gnosis protocol |
+| **Patterns** | Pantheon Model, Octave Hierarchy (Meditate→MC→Oversoul), Omnidroid BIOS, Holographic Buffer, query_modifiers Framework, Gnosis Pack Density | Lilith Stack Pantheon, MaKaLi Oversoul, Omnidroid BIOS *impl*, session_gnosis protocol |
 | **Mythology** | — | 10 Pillars, 5 Elements, 10 Chakras, 10 Planets, 10 Divine Allies, Tarot-Engine v2, 42 Ideals, Sefirot/Qliphoth, Sigils |
 | **Entities** | EntityRegistry, soul.yaml *schema* | All 15 entities, canonical mappings, pantheon.yaml |
 | **Ethics** | — | 42 Ideals of Ma'at |

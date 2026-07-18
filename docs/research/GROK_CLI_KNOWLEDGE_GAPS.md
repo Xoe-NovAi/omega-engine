@@ -6,6 +6,11 @@
 
 ---
 
+> **SUPERSEDED STATUS (2026-07-17)**: Tier A/B execution status in this file is **stale**.  
+> D-281 Phases II–IV are **COMPLETE** (`b661c49`, `3f2feea`, `93f4e82`).  
+> Use the live master matrix: **`docs/research/KNOWLEDGE_GAP_MATRIX_20260717.md`**.
+
+
 ## 📊 GAP CLASSIFICATION
 
 | Tier | Definition | Count | Action |

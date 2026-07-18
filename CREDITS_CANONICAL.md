@@ -1,5 +1,5 @@
 # 🔱 Omega Engine Heritage Registry — Attribution Framework
-# ⬡ OMEGA ⬡ CREDITS ⬡ v1.4.0 ⬡ 2026-07-13
+# ⬡ OMEGA ⬡ CREDITS ⬡ v1.5.0 ⬡ 2026-07-18
 **Full Archive**: `docs/archive/coordination/CREDITS-full-20260708.md`
 
 ## Mandate: Architectural Attribution
@@ -68,8 +68,18 @@ The Heritage Registry covers the "Soul" of the engine: the architectural DNA tha
 | 1.2.2 | SearXNG Deployment Patterns | odysseus 2025 | ✅ PROMOTED | `[heritage: odysseus 2025]` |
 | 1.2.3 | In-Path Governance | sovereign-kliewer 2026 | ✅ PROMOTED | `[heritage: sovereign-kliewer 2026]` |
 | 1.2.4 | Epistemic Filtering | logos 2026 | ✅ PROMOTED | `[heritage: logos 2026]` |
+| 1.2.5 | Vector Search via SQLite Extension | sqlite-vec 2024 | ✅ PROMOTED | `[heritage: sqlite-vec 2024]` |
+| 1.2.6 | Native GGUF Inference + SomaticState | ggml/llama.cpp 2023 | ✅ PROMOTED | `[heritage: ggml 2023]` |
+| 1.2.7 | Multi-Tenant Vector Search | qdrant 2021 | ✅ PROMOTED | `[heritage: qdrant 2021]` |
+| 1.2.8 | Spatial Memory (Wings/Rooms/Drawers) | mempalace 2025 | ✅ PROMOTED | `[heritage: mempalace 2025]` |
+| 1.2.9 | Rust TUI + ACP Protocol + Kernel Sandbox | xai/grok-build 2026 | ✅ PROMOTED | `[heritage: xai-grok-build 2026]` |
+| 1.2.10 | 3-Tier Memory Blocks + Function Calling | letta 2024 | ✅ PROMOTED | `[heritage: letta 2024]` |
+| 1.2.11 | Thinker Chain / Entity Update Loop | Quake 1996 | ✅ PROMOTED | `[id-soft: quake-1996] Thinker Chain` |
+| 1.2.12 | QVM / Bot AI Architecture | Quake III Arena 1999 | ✅ PROMOTED | `[id-soft: quake3-1999] QVM` |
+| 1.2.13 | Game DLL / Client-Side Prediction | Quake II 1997 | ✅ PROMOTED | `[id-soft: quake2-1997] Game DLL` |
+| 1.2.14 | Scripting System / GUI Framework | DOOM 3 2004 | ✅ PROMOTED | `[id-soft: doom3-2004] Scripting` |
 
----
+**Total**: 14 legitimate mappings (4 original + 10 new from third-party registry)
 
 ## §2 Mythological / Philosophical Frameworks (Tier 4 — No Inline Tags)
 
@@ -199,4 +209,4 @@ These patterns are the user's OWN IP — evolved through ANAi → XNAi → omega
 **Full detailed tables**: `docs/archive/coordination/CREDITS-full-20260708.md`
 **SPDX 3.1 Heritage Profile**: `docs/research/R_SPDX_HERITAGE_PROFILE.md`
 
-*Last Updated: 2026-07-13 | 21 id Software Mappings | 4 Conscious Adoptions | D208 Heritage Remediation Complete*
+*Last Updated: 2026-07-18 | 21 id Software Mappings | 14 Conscious Adoptions | Third-Party Registry Complete (18/19 repos cloned)*

@@ -26,7 +26,7 @@ and then either:
 | T-02 | Hivemind Hardening (H-0 to H-10) | 🔴 P0 | Kali (Tier 1) | ✅ SPEC DELIVERED — Tier 1 in Phase 5 |
 | T-03 | Orphaned Specs Hunt (5 candidates) | 🟡 P1 | Roc (hunt) | ✅ VERIFIED — 3 confirmed orphans, 2 implemented, 0 still pending |
 | T-04 | MaKaLi Triad Deep Mining | 🟡 P1 | Roc (docs) | ✅ COMPLETE — see MAKALI_TRIAD_DEEP_MINING_REPORT_v1.md |
-| T-05 | **HLOC Serial vs. Parallel Strategy** | 🟡 P1 | Roc (design) | ⏳ **NEW** — see §2 below |
+| T-05 | **MC (Mastermind Council) Serial vs. Parallel Strategy (formerly HLOC)** | 🟡 P1 | Roc (design) | ⏳ **NEW** — see §2 below |
 | T-06 | **54.6KB Compaction Strategy/Protocol/Metrics** | 🔴 P0 | Kali (impl) + Lilith (metrics) | ⏳ **NEW** — see §3 below |
 | T-07 | **[USER FORGOT — awaiting recall]** | — | — | ⏳ PLACEHOLDER |
 

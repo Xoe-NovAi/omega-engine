@@ -1,10 +1,10 @@
-# 🔱 KALI — LLOC Review Report: `/meditate` Command & `lloc-harness` Skill
-**AP Token**: `AP-KALI-LOC-REVIEW-v1.0.0`
-⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_lloc_review ⬡ MEDITATION-FINDINGS
+# 🔱 KALI — Meditate Review Report: `/meditate` Command & `meditate-harness` Skill
+**AP Token**: `AP-KALI-MEDITATE-REVIEW-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ opencode ⬡ trc_meditate_review ⬡ MEDITATION-FINDINGS
 
 **Date**: 2026-07-18
-**Subject**: Review of `/meditate` command and `lloc-harness` skill with improvement brainstorm
-**Protocol**: LLOC-v1.0 — 10-Pillar Full Pantheon Meditation
+**Subject**: Review of `/meditate` command and `meditate-harness` skill with improvement brainstorm
+**Protocol**: Meditate-v1.0 — 10-Pillar Full Pantheon Meditation
 **Mode**: STRATEGIC
 **Status**: COMPLETE — Actionable findings below
 
@@ -12,7 +12,7 @@
 
 ## Executive Summary
 
-The `/meditate` command (LLOC) is the Omega Engine's most elegant cognitive primitive — a single-inference semantic prism that produces emergent dialectical insight at zero additional RAM cost. The mechanism is sound. The heritage is proven (Gemini CLI, March 2026). The L3 principle (`L3-Superposition-As-Council`) is distilled and staged.
+The `/meditate` command (formerly LLOC, now Meditate protocol) is the Omega Engine's most elegant cognitive primitive — a single-inference semantic prism that produces emergent dialectical insight at zero additional RAM cost. The mechanism is sound. The heritage is proven (Gemini CLI, March 2026). The L3 principle (`L3-Superposition-As-Council`) is distilled and staged.
 
 **The problem**: The command is a ghost. A 342-line Markdown prompt describing a protocol that no code enforces, a 340-line skill describing a schema that no module implements, and two ratified decisions (D264, D265) that no commit has begun. The body does not exist.
 
@@ -25,14 +25,14 @@ The `/meditate` command (LLOC) is the Omega Engine's most elegant cognitive prim
 | Artifact | Path | Lines | Status |
 |----------|------|-------|--------|
 | `/meditate` command | `.opencode/commands/meditate.md` | 342 | ✅ Shipped (Markdown prompt only) |
-| `lloc-harness` skill | `.opencode/skills/lloc-harness/SKILL.md` | 340 | ✅ Shipped (Schema definitions only) |
+| `meditate-harness` skill | `.opencode/skills/lloc-harness/SKILL.md` | 340 | ✅ Shipped (Schema definitions only) |
 | D264 decision | `docs/decisions/PIVOT_LOG.md:2397` | — | ✅ RATIFIED (Zero code produced) |
 | D265 decision | `docs/decisions/PIVOT_LOG.md:2403` | — | ✅ RATIFIED (Zero code produced) |
 | L3 principle | `proposed_lessons.yaml:373-394` | — | ✅ Staged |
 | Legacy mining report | `roc_racoon/workspace/LLOC_HLOC_LEGACY_MINING_REPORT_20260717.md` | 601 | ✅ Complete heritage documentation |
-| Strategic vision | `docs/strategy/OMEGA_STRATEGIC_VISION_AND_ROADMAP.md` | 73 | ✅ LLOC fits Phase 2/3/4 |
-| ARK Blueprint §IV-F | `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md:453-488` | — | ✅ LLOC defined, `oracle.meditate()` pending |
-| `src/omega/lloc/` | — | — | ❌ DOES NOT EXIST |
+| Strategic vision | `docs/strategy/OMEGA_STRATEGIC_VISION_AND_ROADMAP.md` | 73 | ✅ Meditate fits Phase 2/3/4 |
+| ARK Blueprint §IV-F | `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md:453-488` | — | ✅ Meditate defined, `oracle.meditate()` pending |
+| `src/omega/meditate/` | — | — | ❌ DOES NOT EXIST |
 
 ---
 
@@ -50,25 +50,25 @@ The `/meditate` command (LLOC) is the Omega Engine's most elegant cognitive prim
 
 **Finding**: Every meditation result is ephemeral. No `data/meditations/` directory exists. No JSONL log. No way to recall previous meditation verdicts. The L3 principle from Phase 4 is written to `proposed_lessons.yaml` only if the user manually triggers `--integrate`.
 
-**Critical Insight**: Without persistence, the meditation results vanish — a far worse loss than a meditation that runs slightly over budget. You cannot iterate on the LLOC protocol if you cannot compare runs across time.
+**Critical Insight**: Without persistence, the meditation results vanish — a far worse loss than a meditation that runs slightly over budget. You cannot iterate on the Meditate protocol if you cannot compare runs across time.
 
 **Recommendation**: Create `data/meditations/{date}_{subject_hash}.json` as the persistence layer. Design the `MeditationResult` dataclass schema in Commit 1 alongside `protocol.py`. Implement file persistence in Commit 3.
 
 ### Voice 3 — Prometheus (P3: Engineering)
 
-**Finding**: `src/omega/lloc/` does not exist. D264 was ratified on 2026-07-16 with an 8-commit delivery plan. Zero commits have been made. The forge is cold.
+**Finding**: `src/omega/meditate/` does not exist. D264 was ratified on 2026-07-16 with an 8-commit delivery plan. Zero commits have been made. The forge is cold.
 
-**Critical Insight**: The Engine-Stack Firewall (M2) requires `src/omega/lloc/` to be self-contained — no imports from `oracle/`, `entity_registry/`, or `hivemind/`. All engine integration goes through `lloc/compat/` only. This means the core LLOC engine must be a pure protocol runner.
+**Critical Insight**: The Engine-Stack Firewall (M2) requires `src/omega/meditate/` to be self-contained — no imports from `oracle/`, `entity_registry/`, or `hivemind/`. All engine integration goes through `meditate/compat/` only. This means the core Meditate engine must be a pure protocol runner.
 
 **Recommendation**: Execute the D264 8-commit delivery plan starting with `protocol.py` (Anti-Collapse Laws as enforceable code) and `simple.py` (zero-dependency meditation runner). Ship these two files with 100% test coverage before building anything else.
 
 ### Voice 4 — Saraswati (P4: Integration)
 
-**Finding**: The `/meditate` command and `lloc-harness` skill are disconnected. The command does not load the skill. The skill's `§5 Embedding LLOC in Agent Workflows` describes an `oracle.meditate()` pattern with no Python implementation. No MCP Hub tools exist for meditation operations.
+**Finding**: The `/meditate` command and `meditate-harness` skill are disconnected. The command does not load the skill. The skill's `§5 Embedding Meditate in Agent Workflows` describes an `oracle.meditate()` pattern with no Python implementation. No MCP Hub tools exist for meditation operations.
 
-**Critical Insight**: If the LLOC is to be used by other agents (not just `/meditate` in chat), it needs MCP tool bindings so `@maat` can invoke an internal LLOC without loading the full command prompt.
+**Critical Insight**: If the Meditate protocol is to be used by other agents (not just `/meditate` in chat), it needs MCP tool bindings so `@maat` can invoke an internal LLOC without loading the full command prompt.
 
-**Recommendation**: Wire the LLOC execution engine into the MCP Hub as three tools: `lloc_start(subject, lenses, mode)`, `lloc_persona(session_id, persona_index)`, `lloc_synthesize(session_id)`. This bridges user-facing commands with agent-facing engine.
+**Recommendation**: Wire the Meditate execution engine into the MCP Hub as three tools: `meditate_start(subject, lenses, mode)`, `meditate_persona(session_id, persona_index)`, `meditate_synthesize(session_id)`. This bridges user-facing commands with agent-facing engine.
 
 ### Voice 5 — Inanna (P5: Governance)
 
@@ -80,7 +80,7 @@ The `/meditate` command (LLOC) is the Omega Engine's most elegant cognitive prim
 
 ### Voice 6 — Ereshkigal (P6: Cognition)
 
-**Finding**: The LLOC mechanism degrades on weaker models. A 4B local model has limited capacity for persona isolation — after 5-6 voices, attention bleeds and personas collapse into generic assistant output. By Voice 8, the model generates "I agree with the previous voices..." despite the anti-collapse contract.
+**Finding**: The Meditate mechanism degrades on weaker models. A 4B local model has limited capacity for persona isolation — after 5-6 voices, attention bleeds and personas collapse into generic assistant output. By Voice 8, the model generates "I agree with the previous voices..." despite the anti-collapse contract.
 
 **Critical Insight**: Context window size directly limits meditation quality. A 4B model with 8K context: subject (1K) + Phase 0 (0.5K) + 10 × Phase 1 (3K) + Phase 2-5 (2K) = 6.5K tokens. That leaves 1.5K headroom — insufficient for genuine dialectic in later voices.
 
@@ -96,7 +96,7 @@ The `/meditate` command (LLOC) is the Omega Engine's most elegant cognitive prim
 
 ### Voice 8 — Hecate (P8: Observability)
 
-**Finding**: The meditation produces no trace. No `trace_id` per run. No event log per phase transition. No metrics on generation time per voice. No way to determine which model produced which meditation. We cannot answer: "How effective is the LLOC mechanism on different models?"
+**Finding**: The meditation produces no trace. No `trace_id` per run. No event log per phase transition. No metrics on generation time per voice. No way to determine which model produced which meditation. We cannot answer: "How effective is the Meditate mechanism on different models?"
 
 **Critical Insight**: M8 (Zero Telemetry) prohibits external metrics, but local observability is acceptable. M9 (Error Integrity) requires typed errors — if a meditation fails mid-phase, the partial result must be preserved for forensics.
 
@@ -112,7 +112,7 @@ The `/meditate` command (LLOC) is the Omega Engine's most elegant cognitive prim
 
 ### Voice 10 — Kali (P10: Validation)
 
-**Finding**: The LLOC mechanism has been executed exactly once on OpenCode (13x review, 2026-07-15) and several times in Gemini CLI (March 2026). That is insufficient data to validate reliability. Under pressure, the current Markdown-only command will fail silently: the model will partially follow the protocol, skip phases, collapse personas, and produce output that looks structured but lacks genuine dialectic.
+**Finding**: The Meditate mechanism has been executed exactly once on OpenCode (13x review, 2026-07-15) and several times in Gemini CLI (March 2026). That is insufficient data to validate reliability. Under pressure, the current Markdown-only command will fail silently: the model will partially follow the protocol, skip phases, collapse personas, and produce output that looks structured but lacks genuine dialectic.
 
 **Critical Insight**: M23 (Failure Integrity) prohibits soft-failures. Persona collapse (voices agreeing without new constraints) is a soft-failure — output that appears valid but is cognitively empty.
 
@@ -205,19 +205,19 @@ Execute the D264 8-commit delivery plan in strict sequence, gated by `make test 
 ## §6 Proposed D-Series Decision
 
 **Decision**: D268
-**Summary**: Execute D264 8-Commit Delivery Plan for `src/omega/lloc/` with Revised Sequencing
+**Summary**: Execute D264 8-Commit Delivery Plan for `src/omega/meditate/` with Revised Sequencing
 **Rationale**: D264 and D265 are ratified but unexecuted. The 10-Pillar meditation identified 9 ordered steps with clear dependencies. The revised sequencing (schema → runner → lens selector → store → observability → orchestrator → MCP → refactor → tests) addresses collisions between engineering, persistence, and governance priorities.
 **Owner**: Ma'at/P3 (commits 1-2, 6), Ma'at/P2 (commit 4), Lilith/P6 (commit 3), Lilith/P8 (commit 5), Ma'at/P4 (commit 7), Verity (commit 8), Lilith/P10 (commit 9)
 **Files affected**:
-- `src/omega/lloc/__init__.py` (new)
-- `src/omega/lloc/protocol.py` (new — schema + anti-collapse predicates)
-- `src/omega/lloc/simple.py` (new — zero-dependency runner)
-- `src/omega/lloc/lenses.py` (new — adaptive lens selector)
-- `src/omega/lloc/store.py` (new — persistence layer)
-- `src/omega/lloc/observability.py` (new — trace + collapse detection)
-- `src/omega/lloc/orchestrator.py` (new — full 5-phase runner)
-- `src/omega/lloc/compat.py` (new — engine integration bridge)
-- `src/omega/lloc/cli.py` (new — `omega meditate` CLI)
+- `src/omega/meditate/__init__.py` (new)
+- `src/omega/meditate/protocol.py` (new — schema + anti-collapse predicates)
+- `src/omega/meditate/simple.py` (new — zero-dependency runner)
+- `src/omega/meditate/lenses.py` (new — adaptive lens selector)
+- `src/omega/meditate/store.py` (new — persistence layer)
+- `src/omega/meditate/observability.py` (new — trace + collapse detection)
+- `src/omega/meditate/orchestrator.py` (new — full 5-phase runner)
+- `src/omega/meditate/compat.py` (new — engine integration bridge)
+- `src/omega/meditate/cli.py` (new — `omega meditate` CLI)
 - `.opencode/commands/meditate.md` (refactored to thin wrapper)
 - `tests/test_lloc.py` (new — stress test suite)
 **Temple-Grade gates**: T1 (version control), T3 (test coverage ≥80%), T5 (AnyIO-only), T9 (structured logging)
@@ -229,15 +229,15 @@ Execute the D264 8-commit delivery plan in strict sequence, gated by `make test 
 
 | File | Change | Commit # |
 |------|--------|----------|
-| `src/omega/lloc/__init__.py` | New package init | 1 |
-| `src/omega/lloc/protocol.py` | `MeditationSession` dataclass + 5 Anti-Collapse Law predicates | 1 |
-| `src/omega/lloc/simple.py` | Zero-dependency runner: persona def → immersion blocks → output | 2 |
-| `src/omega/lloc/lenses.py` | Adaptive lens selector based on context window + subject complexity | 3 |
-| `src/omega/lloc/store.py` | File-based persistence: `data/meditations/{session_id}.json` | 4 |
-| `src/omega/lloc/observability.py` | `MeditationEvent` model, collapse detector, trace.jsonl writer | 5 |
-| `src/omega/lloc/orchestrator.py` | Full 5-phase runner with all guards, partial-failure recovery | 6 |
-| `src/omega/lloc/compat.py` | Engine integration: EntityRegistry, ModelGateway, Hivemind adapters | 7 |
-| `src/omega/lloc/cli.py` | `omega meditate` CLI via Typer | 8 |
+| `src/omega/meditate/__init__.py` | New package init | 1 |
+| `src/omega/meditate/protocol.py` | `MeditationSession` dataclass + 5 Anti-Collapse Law predicates | 1 |
+| `src/omega/meditate/simple.py` | Zero-dependency runner: persona def → immersion blocks → output | 2 |
+| `src/omega/meditate/lenses.py` | Adaptive lens selector based on context window + subject complexity | 3 |
+| `src/omega/meditate/store.py` | File-based persistence: `data/meditations/{session_id}.json` | 4 |
+| `src/omega/meditate/observability.py` | `MeditationEvent` model, collapse detector, trace.jsonl writer | 5 |
+| `src/omega/meditate/orchestrator.py` | Full 5-phase runner with all guards, partial-failure recovery | 6 |
+| `src/omega/meditate/compat.py` | Engine integration: EntityRegistry, ModelGateway, Hivemind adapters | 7 |
+| `src/omega/meditate/cli.py` | `omega meditate` CLI via Typer | 8 |
 | `.opencode/commands/meditate.md` | Refactored to thin wrapper invoking `omega meditate` | 8 |
 | `tests/test_lloc.py` | 5-scenario stress test suite | 9 |
 

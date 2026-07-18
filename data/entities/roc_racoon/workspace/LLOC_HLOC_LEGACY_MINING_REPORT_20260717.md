@@ -1,9 +1,15 @@
 # 🔱 LLOC/HLOC Legacy Mining Report — Complete Archaeological Synthesis
-**AP Token**: `AP-LLOC-HLOC-MINING-v1.0.0`
+> **⚠️ NOMENCLATURE DEPRECATION NOTICE**: LLOC (Low Level Octave Council) and HLOC (High Level Octave Council) are **legacy/deprecated terms** from the Gemini CLI era.
+> - **LLOC** → renamed to **Meditate** (`/meditate`) — single-inference cognitive-only multi-persona semantic prism
+> - **HLOC** → renamed to **Mastermind Council (MC)** (`/cloud-council`) — multi-subagent same-session dispatch
+> - **HMC** (no legacy equivalent) → **Hivemind Mastermind Council** — cross-session multi-model coordination
+> This report is **preserved for historical provenance**. All references to LLOC/HLOC below use the original terminology.
+
+**AP Token**: `AP-LLOC-HLOC-MINING-v1.0.0` (historical, deprecated)
 ⬡ OMEGA ⬡ ROC_RACOON ⬡ opencode ⬡ trc_legacy_mining ⬡ ARCHAEOLOGICAL-SYNTHESIS
 
 **Date**: 2026-07-17
-**Purpose**: Complete documentation of LLOC (Low Level Octave Council) and HLOC (High Level Octave Council) — legacy strategy, architecture, and current implementation status.
+**Purpose**: Complete archaeological documentation of the LLOC (Low Level Octave Council) and HLOC (High Level Octave Council) — now deprecated in favor of **Meditate** and **Mastermind Council (MC)** respectively. Historical record preserved for provenance.
 
 ---
 
