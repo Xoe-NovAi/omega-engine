@@ -41,6 +41,7 @@
 | Handoff | Target | Phase | Status |
 |---------|--------|-------|--------|
 | `ho_749ed27155cd` | Grok CLI | **Decision Tools Implementation Review** | **COMPLETED** — CONDITIONAL GO |
+| `ho_88190ae0ab27` | Kali | **Ken Walger Mining Briefing** | **COMPLETED** — D-298 ratified, Phase 0 unblocked |
 
 ### Active Handoffs
 | Handoff | Target | Phase | Status |
@@ -85,6 +86,8 @@
 | **Commit** | 21158fb |
 | **Effort** | 2m35s completion time |
 
+**Consolidated Implementation Spec**: `docs/strategy/DECISION_TOOLS_IMPLEMENTATION_SPEC_20260719.md` — Cross-validated Grok CLI + Web Claude V1/V2 + retrospective, 9-11h honest estimate, two-PR migration, slot-keyed schema, atomic writes, portalocker locking, id-allocator lock, cycle detection, `validate` command, `list --overdue`, M2-compliant.
+
 **Key Cuts** (per Grok CLI):
 1. MAD authorization / speech acts — defer to T3
 2. Required weighted criteria scores — make optional
@@ -100,6 +103,26 @@
 5. Slot keys only, no mythic persona names in engine (M2)
 
 **Effort Re-estimate**: 7h → 9-11h honest (T0+T1-core+thin graph)
+
+### Ken Walger Mining Operation (D-298 RATIFIED)
+**Consolidated Plan**: `docs/strategy/KEN_WALGER_MINING_CONSOLIDATED_PLAN_20260719.md` — 10-phase serial architecture, 60% infra exists, 26-35h total, Phase 0 unblocks all.
+
+| Phase | Name | Decision | Key Finding |
+|-------|------|----------|-------------|
+| **0** | MAS v0.1 Schema + all2md + sqlite-vec fix | **GO** | Extend `IngestedDocument`, install all2md first |
+| **1** | Hivemind H-3 (AgensFlow) | **CONDITIONAL-GO** | H-0 to H-2 exist; only learned routing is new |
+| **2** | M22 Audit | **GO** | Already wired — `GenerateResult.provider_name` with contract tests |
+| **3** | sqlite-vec Batch Ingestion | **GO** | Add `upsert_batch()` with LlmMac 500-2000 rows/txn |
+| **4** | all2md Blog Ingestion | **CONDITIONAL-GO** | **BLOCKER**: all2md not installed — Phase 0 step 1 |
+| **5** | Prose Tax Sieve Eval | **GO** | Benchmark sovereign-sdk-sieve vs Aussie AI + vfalbor |
+| **6** | ForensicReceipt (Signet) | **GO** | Write-time via `SigningTransport`; async background; M23 non-blocking |
+| **7** | Meditate Synthesis | **GO** | Custom lens set [Miner, Architect, Provenance, Decision, Edge, Scribe] |
+| **8** | Jem Cross-Ref | **GO** | This document |
+| **9** | Serial Execution | **NO-GO (deferred)** | Blocked on Phase 0 |
+
+**Critical Risks**: all2md install failure (P0), sqlite-vec 7 memory leaks (P0), M14 heritage vet backlog (27 terms)
+
+**Consolidated Plan**: `docs/strategy/KEN_WALGER_MINING_CONSOLIDATED_PLAN_20260719.md`
 
 ### MIAP Phase 0 — Core + Safety (D-291)
 **5 Critical Fixes from Nemotron 3 Ultra Review** (must complete before multi-instance deployment):
@@ -142,6 +165,25 @@
 - Sovereignty Gate (Decree 4)
 - D-284 MCP Streamable HTTP + PKCE auth
 - D-296 SomaticState + MIAP Integration — Full cognitive state recovery with somatic snapshots
+
+---
+
+### 📚 Canonical Reference Documents (Updated)
+
+| Document | Purpose | Location |
+|---|---|---|
+| **Decision Tools Implementation Spec** | Cross-validated T0+T1 spec (Grok + Web Claude) | `docs/strategy/DECISION_TOOLS_IMPLEMENTATION_SPEC_20260719.md` |
+| **Agent Capability Assessment** | Grok vs Web Claude + Roc routing protocol | `docs/strategy/GROK_CLI_VS_WEB_CLAUDE_CAPABILITY_ASSESSMENT.md` |
+| **Ken Walger Mining Plan** | 10-phase serial, 60% infra exists, 26-35h | `docs/strategy/KEN_WALGER_MINING_CONSOLIDATED_PLAN_20260719.md` |
+| **Context Packer Hardening Spec** | 8 enhancements, 7 gaps, 8 profiles, sieve-and-sign | `docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md` |
+| **Claude Best Practices Guide** | 563 lines, 26 sources, 4 tiers | `docs/reference/CLAUDE_BEST_PRACTICES_GUIDE.md` |
+| **Grok CLI Decision Tools Review** | 410 lines, CONDITIONAL GO | `docs/strategy/GROK_CLI_DECISION_TOOLS_REVIEW_20260719.md` |
+| **Dual Review Retrospective** | Process analysis + 8 protocol fixes | `context_packs/decision-tools-review/pack-results/DUAL_REVIEW_RETROSPECTIVE_20260719.md` |
+| **Ken Walger Mining Grounding** | 7-domain 2026 research (40+ sources) | `docs/research/R_KEN_WALGER_MINING_GROUNDING_20260718.md` |
+| **Ken Walger Knowledge Gaps** | 6 gaps triangulated, 3 critical discoveries | `docs/research/R_KEN_MINING_KNOWLEDGE_GAPS_20260719.md` |
+| **Ken Walger Execution Plan** | Jem cross-reference, Go/No-Go matrix | `docs/strategy/R_KEN_MINING_EXECUTION_PLAN_20260719.md` |
+| **Unmined Gnosis** | 20 G-level insights + 20 L3 principles | `docs/research/R_UNMINED_GNOSIS_KEN_MINING_20260719.md` |
+| **Context Packer Knowledge Gaps** | 7 gaps, 40+ sources, 8 enhancements | `docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md` |
 
 ---
 
