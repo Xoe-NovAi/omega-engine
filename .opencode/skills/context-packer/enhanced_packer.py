@@ -854,7 +854,8 @@ async def main():
     if len(sys.argv) < 2:
         print("Usage: python enhanced_packer.py <profile_name>")
         print("Available profiles: sovereign-audit, engineering-p3, kali-oversight,")
-        print("                    youtube-research-primer, sprint-context")
+        print("                    youtube-research-primer, sprint-context,")
+        print("                    decision-tools-review")
         return
 
     profile_name = sys.argv[1]

@@ -409,13 +409,58 @@ END:    heritage
 - `3dce748`: chore: gitignore context_packs/ and database files
 - `02c5041` → `3dce748`: session artifacts updated
 
-### Next Actions
-1. Upload `context_packs/decision-workspace-review/` to claude.ai Projects for Web Claude parallel review
-2. Await Grok CLI acceptance of ho_749ed27155cd
-3. Await both review reports (Grok CLI + Web Claude)
-4. Synthesize reviews → ratify decisions → begin T0 implementation
-5. Address remaining M2 violations (Phases C/D/G — 126 remaining)
+### Next Actions (Corrected 2026-07-19)
+1. ✅ CORRECTED: Old handoff ho_749ed27155cd asked Grok CLI to review 23 content decisions (WRONG)
+2. ✅ CORRECTED: New handoff asks Grok CLI to review Decision Tools IMPLEMENTATION (DecisionEngine, ADR schema, CLI, MEDITATE)
+3. ✅ CORRECTED: New context pack at `context_packs/decision-tools-review/` (7 bundles, implementation-focused)
+4. Upload `context_packs/decision-tools-review/` to claude.ai Projects for Web Claude parallel review
+5. Await Grok CLI acceptance of updated ho_749ed27155cd
+6. Await both review reports (Grok CLI + Web Claude)
+7. Synthesize reviews → incorporate feedback → begin T0 implementation
+8. Address remaining M2 violations (Phases C/D/G — 126 remaining)
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ CONTEXT-PACKER-ENHANCED ⬡ 2026-07-19*
+## 12. Session 2026-07-19 (Scope Correction): Decision Tools Review — NOT Content Decisions
+
+### The Mistake
+The Grok CLI handoff `ho_749ed27155cd` and `decision-workspace-review` context pack were scoped around reviewing the **23 content decisions** (D1-D23: D-297 Ratification, Tests vs WAL, Firewall gate, etc.). These are **internal engine questions** — they don't need external review.
+
+### The Correction
+Both handoff and context pack now focus on the **proposed implementation** of the Decision Workspace tools:
+
+| Old Scope (WRONG) | New Scope (CORRECT) |
+|--------------------|----------------------|
+| Ratify/amend/reject 23 decisions | Review DecisionEngine schema & architecture |
+| Validate D-297 decree | Review CLI command design (`list`, `show`, `decide`, `graph`) |
+| Evaluate Sovereign Exit Protocol | Review MEDITATE integration with BE parameters |
+| Validate Jem's verification gaps | Review scope & effort estimates (7h realistic?) |
+| Recommend trigger conditions for T2-T5 | Identify risks & design gaps |
+
+### Corrected Artifacts
+| Artifact | Old (Wrong) | New (Correct) |
+|----------|-------------|---------------|
+| **Handoff** | `data/handoff/KALI_TO_GROK_CLI_DECISION_WORKSPACE_HANDOFF_20260719.md` | `data/handoff/KALI_TO_GROK_CLI_DECISION_TOOLS_REVIEW_20260719.md` |
+| **Context pack** | `context_packs/decision-workspace-review/` (12 files, decision-focused) | `context_packs/decision-tools-review/` (8 files, implementation-focused) |
+| **Hivemind packet** | ho_749ed27155cd (decision ratification scope) | ho_749ed27155cd (updated: implementation review scope) |
+| **Packer profile** | `decision-workspace-review` | `decision-tools-review` |
+
+### Corrected Context Pack Contents
+```
+context_packs/decision-tools-review/  (8 files = 7 bundles + manifest)
+├── 00_PROJECT_MANIFEST.md        (Ed25519 signed)
+├── grounding_part1.xml           — Grounded Meditation (implementation proposal)
+├── grounding_part2.xml           — Grounded Meditation (continued)
+├── implementation.xml            — HMC Manual + SOVEREIGN_ARK_BLUEPRINT
+├── research.xml                  — Grok CLI Research (prior art)
+├── mandates.xml                  — SOVEREIGN_MANDATES.md
+├── engine_state.xml              — OMEGA_ENGINE.md
+└── handoff.xml                   — Corrected handoff document
+```
+
+### L3 Principle (Refined)
+The scope correction itself validates **L3-Decision-Infrastructure-Grows-From-Pain**: When user corrects a handoff scope, it means the tooling for external review (the context packer) is working as intended — it surfaces the right questions. The correction is not a failure; it's the system self-correcting toward the right boundary.
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ SCOPE-CORRECTED ⬡ 2026-07-19*
