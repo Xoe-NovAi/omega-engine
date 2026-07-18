@@ -272,4 +272,92 @@ Current: 126 remaining
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ GROUNDED-MEDITATE-COMPLETE ⬡ D-298 ⬡ 2026-07-18*
+## 9. Session 2026-07-19: Decision Workspace Handoff Prep
+
+### State After Compaction
+- Compacted at 2026-07-18 after HMC Quad-Forge Sprint
+- Hydration verified: Codex fresh, anchored-summary intact, all lesson proposals present
+- Test baseline: 1374 passing (excluding 24 known failures: M2 firewall test + 4 pre-existing)
+
+### Grounded Meditation Review
+- Verified Grounded MEDITATE report (439 lines, 8 prior art sources)
+- Verified Open Decisions Catalog (405 lines, 23 decisions across 7 tiers)
+- Verified D-297 Architecture Inversion Decree + Jem's 78% verification
+- All documents comprehensive and review-ready
+
+### Quality Checks
+- Temple-grade: All mandate gates PASSED (3 M2 firewall violations remain — known, 126 remaining)
+- Heritage-map: 45/74 files with tags, clean
+- Targeted tests: 37/37 passed (meditate protocol, sovereign loop)
+- Full test baseline verified at 1374 passed pre-compaction
+
+### Commit & Push (3542188)
+- **102 files committed**: 16052 insertions, 1515 deletions
+- Covers: Decision workspace docs, M2 firewall fixes, entity state, research, coordination, infrastructure
+- Third-party submodules excluded from staging + added to .gitignore
+- Pushed to origin/main
+
+### Handoff to Grok CLI (ho_749ed27155cd)
+- **Target**: Grok CLI
+- **Priority**: HIGH (blocking T0 implementation)
+- **Scope**: Full review of Decision Workspace package:
+  1. Grounded Meditation verdict (T0+T1-core only, 7h)
+  2. Open Decisions Catalog (23 decisions, 7 tiers)
+  3. D-297 Architecture Inversion Decree
+  4. Sovereign Exit Protocol
+  5. Implementation plan critique
+- **Deliverables**: Ratification recommendations for all 23 decisions, implementation gap analysis, trigger condition validation
+
+### Next Actions
+1. Await Grok CLI acceptance of ho_749ed27155cd
+2. Await Grok CLI review report
+3. After review: Ratify decisions, begin T0 implementation (3h: DecisionEngine + ADR schema)
+4. Address remaining M2 violations (Phases C/D/G — 126 remaining)
+
+---
+
+## 10. Session 2026-07-19: Context Packer — Decision Workspace Pack for Web Claude
+
+### Context Packer Verification
+- **enhanced_packer.py**: Compiles cleanly, all imports resolve
+- **PIIMasker**: Importable and instantiable from `src/omega/oracle/pii_masker.py`
+- **XML escaping**: `_escape_bare_xml_chars()` working correctly
+- **Atomic writes**: Using `os.replace()` (not `os.rename()`)
+- **Test run**: `kali-oversight` profile generated successfully (5 themes, ~75K tokens)
+
+### New Profile: decision-workspace-review
+Added to `packer-config.yaml` with 11 themes covering all decision workspace review documents:
+
+| Theme | Files | Purpose |
+|-------|-------|---------|
+| grounding | 2 | Grounded Meditation + Jem Verification |
+| decisions | 1 | Open Decisions Catalog (23 decisions) |
+| decree | 1 | D-297 Architecture Inversion (10-step) |
+| exit_protocol | 1 | Sovereign Exit Protocol (7 phases) |
+| implementation | 2 | HMC Manual + SOVEREIGN_ARK_BLUEPRINT |
+| engine_state | 1 | OMEGA_ENGINE.md |
+| mandates | 1 | SOVEREIGN_MANDATES.md |
+| session_log | 1 | KALI_LIVE_FEED.md |
+| research | 1 | Grok CLI Comprehensive Research |
+| handoff | 1 | Kali→Grok CLI handoff document |
+| pivot_log | 1 | PIVOT_LOG.md |
+
+### Generated Pack: context_packs/decision-workspace-review/
+- **11 XML bundles** + **1 manifest** = 12 files (within 12-slot limit)
+- **~87K estimated tokens** (well within Claude Projects limits)
+- **All XML valid** — verified with ElementTree parsing
+- **PII masked** — TOKENIZE mode with reversible placeholders
+
+### Commit & Push (0168992)
+- **2 files**: `packer-config.yaml` + `context_packs/decision-workspace-review/` (auto-generated)
+- **Pushed to origin/main**
+
+### Next Actions
+1. Upload `context_packs/decision-workspace-review/` to claude.ai Projects for Web Claude parallel review
+2. Await Grok CLI acceptance of ho_749ed27155cd
+3. Await both review reports (Grok CLI + Web Claude)
+4. Synthesize reviews → ratify decisions → begin T0 implementation
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ CONTEXT-PACKER-READY ⬡ 0168992 ⬡ 2026-07-19*

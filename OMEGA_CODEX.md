@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-18T00:53:09.293164+00:00 ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-18T01:20:13.678266+00:00 ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -12,7 +12,7 @@ After compaction or restart, execute in strict order:
 4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-07-18T00:53:09.293164+00:00 | Regenerate: `make codex`
+> Codex generated: 2026-07-18T01:20:13.678266+00:00 | Regenerate: `make codex`
 > If timestamp is >24h old, run `make codex` before reading further.
 
 ---
@@ -20,8 +20,8 @@ After compaction or restart, execute in strict order:
 
 ### OMEGA_ENGINE.md
 **Type**: markdown
-**Size**: 11558 bytes
-**Lines**: 148
+**Size**: 11816 bytes
+**Lines**: 149
 
 # Omega Engine — Single Source of Truth
 # ⚠️ SYSTEM STATE SSOT — Authoritative truth for engine state and metrics.
@@ -43,7 +43,7 @@ After compaction or restart, execute in strict order:
 
 ---
 
-## §2 Current State (2026-07-18)
+## §2 Current State (2026-07-19)
 
 | Metric | Value | Status | LAST_VERIFIED |
 |--------|-------|--------|---------------|
@@ -77,6 +77,7 @@ After compaction or restart, execute in strict order:
 | **MIAP Phase 0** | **PLANNED (D-291)** — ReplayMode, Two-Log, IntentionValidator, CheckFunctions, LiteTopic | 🟡 6 sessions estimated | 2026-07-18 |
 | **MACP Alignment** | **PLANNED (D-292)** — Hivemind handoffs with `macp_mode` for interoperability | 🟡 Aligns with IETF draft-li-dmsc-macp-05 | 2026-07-18 |
 | **Experience Repository** | **PLANNED (D-294)** — AgentRR-style L0→L1→L2 distillation via Scribe | 🟡 Trace-to-eval loop (D-295) | 2026-07-18 |
+| **D-298 Decision Workspace** | **GROUNDED MEDITATION COMPLETE** — T0+T1-core verdict (7h), 23 decisions cataloged, Grok CLI handoff submitted | ✅ 102 files committed at 3542188, ho_749ed27155cd | 2026-07-19 |
 
 ---
 
@@ -170,7 +171,7 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-18 | Version: v1.4.0 | Tests: 1398 passing (27/29 recall tbd) | SSOT: ~400 lines | Sessions: D-281 Substrate Repair COMPLETE (4 phases, 11 commits) | D-282 sqlite-vec Strike 10 COMPLETE | D-283 Phase 2 RecallStore DESIGN COMPLETE | HMC Quad-Forge (Kali/Roc/Researcher/Grok CLI) | MIAP merged | Session Namespace Isolation DESIGN COMPLETE (D-290) | MIAP Phase 0 PLANNED (D-291) | Decisions: 290+ | Net acceleration: ~120h by parallel fleet dispatch*
+*Last Updated: 2026-07-19 | Version: v1.4.1 | Tests: 1398 passing (27/29 recall tbd) | SSOT: ~400 lines | Sessions: D-281 Substrate Repair COMPLETE | D-282 sqlite-vec Strike 10 COMPLETE | D-283 Phase 2 RecallStore DESIGN COMPLETE | D-298 Decision Workspace GROUNDED MEDITATION COMPLETE (T0+T1-core verdict, 23 decisions) | HMC Quad-Forge COMPLETE (Kali/Roc/Researcher/Grok CLI) | MIAP merged | Commit 3542188 (102 files) | ho_749ed27155cd submitted to Grok CLI | Net acceleration: ~120h by parallel fleet dispatch*
 
 ---
 
