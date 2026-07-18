@@ -101,12 +101,28 @@
 #### Prose Over Bullets
 > "Prefer readable, flowing text that guides naturally through ideas rather than fragmenting into isolated points. Use bullets only for truly discrete items or when explicitly requested."
 
-#### Include Writing Sample Calibration (Unique Advantage)
-> "Of all the major AI models, Claude responds most accurately to writing sample calibration. Include 200-400 words of your own writing directly in the system prompt. Claude reads your vocabulary, sentence rhythm, paragraph structure, and tone — then mirrors it in every response."
+#### Use Multishot Examples in XML Tags (Official Best Practice)
+> **Anthropic's official recommendation**: "Examples are one of the most reliable ways to steer Claude's output format, tone, and structure. Include 3–5 examples wrapped in `<example>` tags (multiple in `<examples>` tags) so Claude can distinguish them from instructions."
+>
+> **Correction**: The "writing sample calibration" technique (200-400 words of your writing) is a community practice. The **verified official pattern** is explicit multishot examples in XML tags. Writing samples work implicitly; examples work explicitly and are the recommended approach.
 
-**Template**:
-```
-Here is a sample of my writing for tone and style reference: [paste 200-400 words]. Mirror this voice in all responses unless I ask you to rewrite.
+**Official Template**:
+```xml
+<examples>
+  <example>
+    <input>User: How do I sort a list of dicts by key?</input>
+    <output>
+      Use `sorted(list_of_dicts, key=lambda x: x['key'])`.
+      For descending: `sorted(list_of_dicts, key=lambda x: x['key'], reverse=True)`.
+    </output>
+  </example>
+  <example>
+    <input>User: What's the difference between list.sort() and sorted()?</input>
+    <output>
+      `list.sort()` mutates in-place and returns None. `sorted()` returns a new list.
+    </output>
+  </example>
+</examples>
 ```
 
 #### Proactive Flagging Directive
@@ -133,6 +149,22 @@ Here is a sample of my writing for tone and style reference: [paste 200-400 word
 #### Confirm Scope
 > "Confirm scope before executing changes."
 
+#### Standing Rules vs Behavioral Directives Separation
+> **Structural pattern**: Separate immutable process rules (Standing Rules) from behavioral guidance (Directives). This mirrors XML section separation and improves adherence.
+>
+> **Standing Rules** (process, non-negotiable):
+> - Confirm scope before changes
+> - Never skip error handling
+> - No framework switching unless asked
+> - Cite specific sources when referencing docs
+>
+> **Behavioral Directives** (tone, approach):
+> - Proactively flag problems
+> - Teach unknowns
+> - Honest uncertainty
+> - Prose over bullets
+> - No AI-isms
+
 ---
 
 ## 4. CONTEXT PACK DESIGN FOR EXTERNAL REVIEW
@@ -141,9 +173,9 @@ Here is a sample of my writing for tone and style reference: [paste 200-400 word
 
 | Format | Token Efficiency | Claude Comprehension | Best For |
 |--------|------------------|---------------------|----------|
-| **XML** | Baseline (1.0x) | ⭐⭐⭐⭐⭐ Native | **Claude Projects** — Anthropic explicitly recommends |
+| **XML** | Baseline (1.0x) | ⭐⭐⭐⭐⭐ Native | **Claude Projects** — Anthropic explicitly recommends for data/content boundaries |
 | **YAML** | ~0.85x (15% fewer) | ⭐⭐⭐⭐ Good | Token-constrained contexts |
-| **Markdown** | ~0.85x (15% fewer) | ⭐⭐⭐⭐ Good | Human-readable + LLM-readable |
+| **Markdown** | ~0.85x (15% fewer) | ⭐⭐⭐⭐ Good | Human-readable + LLM-readable; **best for instructions** |
 | **TOON** | ~0.60x (40% fewer) | ⭐⭐⭐ Emerging | High-volume tabular data |
 | **JSON** | 1.0x (baseline) | ⭐⭐⭐ Good | Structured output, tool calls |
 
@@ -151,7 +183,10 @@ Here is a sample of my writing for tone and style reference: [paste 200-400 word
 - "Claude 4.x follows XML tags literally — XML tags are genuinely the best structuring method for Claude" (Thomas Wiegold 2026, Anthropic docs)
 - "Forcing LLM to output JSON degrades reasoning by 10-15%" (Michael Hannecke 2025)
 - "YAML emerged as strongest format for 2/3 models tested" (ImprovingAgents 2025)
+- **Hybrid approach recommended** (Anthropic + TeachYou 2026): **Markdown `##` for instructions, XML tags for data/content boundaries**. This leverages Markdown's strong instruction-following signal and XML's unambiguous data delimiting.
 - Two-step approach: Free reasoning → structured formatting (preserves accuracy)
+
+**Decision Rule** (TeachYou 2026): "Is this piece of the prompt data, or is it instructions? If it's data (variable, untrusted, multiple similar blocks), wrap in XML tags. If it's instructions (authored by you), use Markdown headings."
 
 ### Sovereign Export Pipeline: Sieve-and-Sign Pattern
 ```
@@ -245,18 +280,26 @@ Opus 4.8 (1M, $5/$25) → Complex reasoning, architecture
 
 ### RAG Quality Issues
 > "Hallucinates details that contradict actual file contents (wrong character names, invented locations, incorrect family relationships, fabricated data)"
-
 ### Official vs Reality
-| Anthropic Docs | Reality |
-|----------------|---------|
-| "RAG activates when approaching context limit" | Activates at 2% displayed capacity based on file count |
+
+| Anthropic Docs | Reality (Empirical) |
+|----------------|---------------------|
+| "RAG activates when approaching context limit" | Activates at 13 files regardless of token count |
 | "10x capacity expansion" | True, but quality degrades |
 
 ### Mitigation
+
 1. **Stay ≤12 files** — aggregate content
 2. **Descriptive filenames** — "Claude searches by filename"
 3. **If RAG unavoidable** — structure bundles with clear section IDs for retrieval
 
+### RAG Acknowledgment Pattern (For Context Packs)
+
+When providing context packs to Claude Projects, include this note:
+
+> **How to use this pack**: Claude's RAG retrieves these files automatically when relevant. Reference them by bundle name (e.g., `grounding_part1.xml`, `mandates.xml`). The manifest is signed — verify integrity if suspicious.
+
+This pattern works because it describes the mechanism accurately without asserting the contested trigger condition.
 ---
 
 ## 7. PROMPT ENGINEERING PATTERNS
@@ -357,16 +400,44 @@ anthropic-beta: token-efficient-tools-2025-02-19
 - Use smaller model as "context filter" (LLM-as-Judge)
 - Recursive refinement ensures lean, relevant final prompt
 
-### Writing Sample Calibration
-- 200-400 words of your writing in system prompt
-- Claude mirrors vocabulary, rhythm, paragraph structure, tone
-- Most impactful single technique for voice consistency
+### Multishot Examples in XML Tags (Official Best Practice)
+> **Anthropic's official recommendation**: "Examples are one of the most reliable ways to steer Claude's output format, tone, and structure. Include 3–5 examples wrapped in `<example>` tags (multiple in `<examples>` tags) so Claude can distinguish them from instructions."
+
+**Template**:
+```xml
+<examples>
+  <example>
+    <input>User: How do I sort a list of dicts by key?</input>
+    <output>
+      Use `sorted(list_of_dicts, key=lambda x: x['key'])`.
+      For descending: `sorted(list_of_dicts, key=lambda x: x['key'], reverse=True)`.
+    </output>
+  </example>
+  <example>
+    <input>User: What's the difference between list.sort() and sorted()?</input>
+    <output>
+      `list.sort()` mutates in-place and returns None. `sorted()` returns a new list.
+    </output>
+  </example>
+</examples>
+```
+
+**Note**: The "writing sample calibration" technique (200-400 words of your writing) is a community practice. The **verified official pattern** is explicit multishot examples in XML tags. Writing samples work implicitly; examples work explicitly and are the recommended approach.
 
 ### Master Prompt Pattern (Production-Grade)
 ```xml
 <system>
   <role>You are a [specific role] with [experience].</role>
-  <writing_sample>[200-400 words of your writing]</writing_sample>
+  <examples>
+    <example>
+      <input>[representative input]</input>
+      <output>[ideal output demonstrating format, tone, depth]</output>
+    </example>
+    <example>
+      <input>[edge case input]</input>
+      <output>[ideal output showing edge handling]</output>
+    </example>
+  </examples>
   <behavioral_rules>
     <rule>Proactively flag problems, risks, better approaches.</rule>
     <rule>Teach me unknown best practices.</rule>
