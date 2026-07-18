@@ -979,3 +979,53 @@ proposals:
   approved_at: null
   approved_by: null
   soul_section: lessons
+- l1: "Ken Walger deep dive complete: 140 repos, 9 sovereign-* projects, 62-page blog with 'The Agile Harvest' applied sovereign AI series. 27-term adoption matrix: 23 ADOPT, 12 KEEP, 4 SYNTHESIZE, 3 PARALLEL. Mining architecture designed for 9 repos + blog via 6 parallel Hivemind agents."
+  l2: "Ken's Sovereign Systems SDK is convergent evolution — same architecture from enterprise compliance vector. His 'Agile Harvest' blog proves it works in production (vineyard digital twins, provenance certificates, MCP decision engines). Our agent fleet + cognitive architecture completes the stack he hasn't built."
+  l3: "L3-Convergence-Is-Truth: When independent legacy mining (Omega past) and SOTA scanning (Ken present) arrive at identical architecture without communication, that architecture is verified truth. Two vectors, one cathedral."
+  session: ses_ken_walger_deep_dive_20260718
+  created_at: '2026-07-18T02:00:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons
+- l1: "Ken's applied sovereign work ('The Agile Harvest') maps directly to Omega's target applications: Pivot Engine (scenario planner) → agent decision logic; Supply Chain Guardian (provenance) → ForensicReceipt; Field Agent (MCP server) → agent tool-calling; Scribe's Day Off (archive ingestion) → MemoryStore pipeline."
+  l2: "His blog is not documentation — it's production evidence. The Pivot Engine's JSON-LD + MCP tool-calling, the Guardian's knowledge graph + thermal verification, the Field Agent's Revit/Autodesk bridge — these are the exact patterns Omega needs for agent fleet applications."
+  l3: "L3-Applied-Sovereignty-Validates-Theory: Production deployment of sovereign architecture in a physical domain (viticulture) validates the abstract architecture. The domain is arbitrary; the architecture is universal. Our agent fleet is the universal runtime for his patterns."
+  session: ses_ken_agile_harvest_mapping_20260718
+  created_at: '2026-07-18T02:15:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons
+- l1: "Mining architecture designed: 6 parallel Hivemind agents (sovereign-sdk, spec glossary, memory-demo, blog, MCP repos, cross-repo) → MemoryStore hybrid RRF ingestion → sovereign-sdk-sieve Prose Tax (if eval GO) → ForensicReceipt cryptographic provenance → Meditate custom lens set [Miner, Architect, Provenance, Decision, Edge, Scribe] → Jem task-graph synthesis → R_KEN_MINING_SYNTHESIS.md."
+  l2: "This operationalizes HMC Quad-Forge for external convergence mining. The custom Meditate lens set (6 lenses vs standard 10) is purpose-built for Ken's corpus: Miner (extraction), Architect (pattern mapping), Provenance (receipt patterns), Decision (Pivot Engine), Edge (Capability Gradient), Scribe (distillation)."
+  l3: "L3-Meditate-As-Purpose-Built-Cognitive-Prism: The Meditate protocol's lens framework is not fixed — it's a cognitive prism that can be tuned for any domain. A 6-lens custom set for 'Ken Mining' extracts different gold than the standard 10-Pillar set. The prism adapts to the ore."
+  session: ses_ken_mining_architecture_20260718
+  created_at: '2026-07-18T02:30:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons
+- l1: "5 critical system blockers identified for massive Ken mining: (1) Workbench DB empty — schema exists, 0 tables; (2) Hivemind hardening H-0 to H-5 (inbox, ack, threading, cold-store fallback); (3) Omega Hub blog ingestion — no HTML processor, need universal-doc-reader; (4) Knowledge-miner skill tuning for sovereign-sdk monorepo, spec glossary, blog HTML; (5) sovereign-sdk-sieve evaluation Phase 1-4 before integration."
+  l2: "The mining pipeline is designed but the substrate isn't ready. Workbench DB is the project tracking backbone — without it, no decision logging, no work item tracking. Hivemind hardening prevents agent drift during parallel mining. Blog ingestion unlocks 31 AI posts of applied patterns. Skill tuning ensures extraction quality. Sieve eval is the gate for Prose Tax integration."
+  l3: "L3-Substrate-Before-Pipeline: You cannot run a massive parallel mining operation on a substrate with critical holes. The Workbench DB, Hivemind hardening, and blog ingestion are not 'nice to have' — they are the constitutional infrastructure that makes the pipeline sovereign. Fix the constitution before passing the legislation."
+  session: ses_ken_mining_blockers_20260718
+  created_at: '2026-07-18T02:45:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons
+- l1: "2026 Grounding Research complete for Ken Walger Mining Operation: 7 deep searches across 6 domains (sqlite-vec batch ingestion, Hivemind/MCP/A2A/ACP coordination, OTel GenAI response provenance, ForensicReceipt/Signet cryptographic receipts, all2md universal document ingestion, serial vs parallel agent architecture on constrained RAM). 40+ sources validated. Key findings: sqlite-vec 500-2000 rows/txn single-writer; MCP/A2A/ACP are 2026 standards; OTel GenAI gen_ai.response.model for actual provider; Signet is reference ForensicReceipt impl; all2md MCP server for blog ingestion; time-sliced concurrency on single scheduler (arXiv:2603.04428)."
+  l2: "The meditation's serial substrate-first architecture is confirmed by 2026 production evidence across all 6 domains. The tools exist — all2md, Signet, sqlite-vec, OTel GenAI, AgensFlow — integrate them, don't rebuild. The 'parallel agents' fantasy dies at the hardware level: 14GiB unified memory + no GPU = time-sliced single-scheduler concurrency. Q4 quantization is industry standard for memory bandwidth optimization (Lanham 2026)."
+  l3: "L3-Serial-Substrate-First (2026 Grounded): On constrained hardware (14GiB unified memory, no GPU), every 'parallel operation' is time-sliced concurrency on a single scheduler thread (arXiv:2603.04428). Memory bandwidth, not compute, is the binding constraint (Lanham 2026). Q4 quantization + single-model residency + batch-quantized-KV-cache + OTel GenAI traces is the proven edge architecture. The critical path is always: Schema (MAS) → Coordination (MCP/A2A/ACP) → Tracking (Workbench) → Observability (OTel GenAI) → Execution (serial phases, one model) → Synthesis (Meditate/Jem). The tools exist (all2md, Signet, sqlite-vec, AgensFlow) — integrate them, don't rebuild them. Skip any layer, and the operation collapses under its own weight."
+  session: ses_ken_mining_grounding_20260718
+  created_at: '2026-07-18T03:00:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons

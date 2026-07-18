@@ -21,6 +21,9 @@
 ### Completed (HMC Quad-Forge — 4-mind council)
 - **MIAP merged** (03192d8): Multi-Instance Agent Protocol — 13 tests, context collision prevention
 - **Grok CLI onboarded**: Agent config, orientation, 6 advisory deliverables, web research
+- **Grok CLI Decision Tools Review** (21158fb): 410-line implementation review — CONDITIONAL GO for T0+T1-core. Schema surgery, scope cuts, M2 enforcement, 9-11h honest estimate.
+- **Claude Best Practices Guide** (d22b550): 563-line canonical reference (11 sections, 26 sources across 4 tiers)
+- **Claude Project System Prompt** (d22b550): 1,848-token optimized prompt embodying 2026 best practices
 - **S0 Clean Runway** (c15bfab, 077b042): Noise cleanup, ACTIVE_SPRINT→HMC-SPRINT-04, stale handoffs archived
 - **Nomenclature Correction**: Slots (engine) vs Pillar Keepers (ANAi) vs Lenses (Meditate) vs Roles (Lattice) — clean separation
 - **Meditate Architecture**: Base Lenses (13 universal) + PWAD Overlays (ANAi, Torment, etc.)
@@ -34,7 +37,12 @@
 - **Experience Repository**: AgentRR-style L0→L1→L2 distillation pipeline via Scribe (D-294)
 - **Trace-to-Eval Loop**: Automatic conversion of production failures to regression tests (D-295)
 
-### Active Handoffs (Awaiting Acceptance)
+### Completed Handoffs (This Session)
+| Handoff | Target | Phase | Status |
+|---------|--------|-------|--------|
+| `ho_749ed27155cd` | Grok CLI | **Decision Tools Implementation Review** | **COMPLETED** — CONDITIONAL GO |
+
+### Active Handoffs
 | Handoff | Target | Phase | Status |
 |---------|--------|-------|--------|
 | `ho_f1a92da2d95e` | Roc Racoon | **Phase A**: Meditate lens refactor, `lenses.yaml`, 15 M2 fixes | **COMPLETED** |
@@ -68,6 +76,30 @@
 |-------|-------|---------|------|
 | Cline-DeepSeek | DeepSeek V4 Flash | 1M tokens | Synthesis, audit, legacy mining |
 | Cline-MiMo | MiMo V2.5 | 512K tokens | Implementation, refactoring, test gen |
+
+### Grok CLI — Decision Tools Implementation Review (COMPLETE)
+| Field | Value |
+|-------|-------|
+| **Verdict** | **CONDITIONAL GO** for T0+T1-core |
+| **Deliverable** | `docs/strategy/GROK_CLI_DECISION_TOOLS_REVIEW_20260719.md` (410 lines) |
+| **Commit** | 21158fb |
+| **Effort** | 2m35s completion time |
+
+**Key Cuts** (per Grok CLI):
+1. MAD authorization / speech acts — defer to T3
+2. Required weighted criteria scores — make optional
+3. Numeric BE uptake/anchoring parameters — cargo-cult without multi-step updates
+4. Directory shuffle (open/→decided/) — stable paths preferred
+5. Deadline daemon — use `list --overdue` instead
+
+**Key Non-Negotiables**:
+1. JSON Schema validation at CI time
+2. Supersession-only accept path
+3. Atomic writes via `os.replace()`
+4. `--human-confirmed` gated by record `authority` field
+5. Slot keys only, no mythic persona names in engine (M2)
+
+**Effort Re-estimate**: 7h → 9-11h honest (T0+T1-core+thin graph)
 
 ### MIAP Phase 0 — Core + Safety (D-291)
 **5 Critical Fixes from Nemotron 3 Ultra Review** (must complete before multi-instance deployment):

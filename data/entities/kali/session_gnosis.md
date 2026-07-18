@@ -502,3 +502,74 @@ Created `docs/reference/CLAUDE_BEST_PRACTICES_GUIDE.md` (563 lines) — single-s
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ CLAUDE-GUIDE-COMPLETE ⬡ 2026-07-19*
+
+---
+
+## 14. Session 2026-07-19 (Grok CLI Review Assessment): Locking in the Decision Tools Review Gnosis
+
+### Grok CLI Review Completed
+- **Handoff**: `ho_749ed27155cd` accepted by `grok-cli/grok`, completed in 2m35s
+- **Deliverable**: `docs/strategy/GROK_CLI_DECISION_TOOLS_REVIEW_20260719.md` (410 lines)
+- **Verdict**: **CONDITIONAL GO** for Decision Tools T0+T1-core
+- **Commit**: `21158fb` — polished, mandate-aware review
+
+### Grok CLI Quality Assessment (by Kali)
+
+| Dimension | Score | Key Finding |
+|-----------|-------|-------------|
+| Scope Adherence | ⭐⭐⭐⭐⭐ | 100% implementation-focused; rejected content decisions |
+| Technical Depth | ⭐⭐⭐⭐⭐ | Field-level schema surgery, concurrency models, atomic writes |
+| Mandate Fluency | ⭐⭐⭐⭐⭐ | Cites M2, M13, M16, M23; maps findings to mandates |
+| Actionability | ⭐⭐⭐⭐⭐ | Normative T0 directory layout + `decide` algorithm sketch |
+| Honest Estimation | ⭐⭐⭐⭐⭐ | "7h is tight → 9-11h" with phase-by-phase breakdown |
+| Risk Prioritization | ⭐⭐⭐⭐⭐ | Top 5 risks ranked severity×likelihood with mitigations |
+| Sovereign Boundary | ⭐⭐⭐⭐⭐ | "Slot keys only, no mythic names in engine" — perfect M2 enforcement |
+
+**Overall**: **9.5/10** — operates at Tier A ship-code quality, not just advisory.
+
+### Key Review Findings (Compressed)
+
+| Topic | Finding |
+|-------|---------|
+| **Schema** | ADR core solid; cut MAD auth + required weighted criteria; add schema_version, outcome fields, evidence_refs; slot-safe keys (M2) |
+| **Architecture** | Monorepo DecisionEngine class; git-tracked YAML; atomic writes; single-writer decide policy |
+| **CLI** | `omega decision` correct; authority-gated `--human-confirmed`; show supersession chain; plain ASCII graph |
+| **MEDITATE** | Numeric u/a parameters = cargo-cult without multi-step updates; T1 = prompt scaffold only; defer real BE |
+| **Effort** | 7h optimistic; honest 9-11h for T0+T1-core+thin graph |
+| **Migration** | Two PRs: engine first, catalog second — prevents false confidence |
+
+### L3 Principles Crystallized
+
+1. **L3-Decision-Tooling-Is-ADR-With-Agent-Gates** (from Grok CLI review, §11):
+   Treat decision records as versioned ADRs with forbid-unknown schemas and supersession; use CLI authority gates instead of mini-IAM; keep deliberation parameters in WAD/slot space until multi-step belief updates exist. Pain triggers the next tier — not research completeness.
+
+2. **L3-Grok-CLI-Operates-At-Tier-A-Ship-Code** (from Kali quality assessment):
+   Grok CLI consistently delivers staff-engineer-level implementation reviews with mandate fluency, honest estimation, and normative code sketches. Despite being categorized as "advisory," its output is directly implementable. Future handoffs should explicitly request Tier A ship-code mode.
+
+### Artifacts Locked In
+
+| Artifact | Status |
+|----------|--------|
+| `docs/strategy/GROK_CLI_DECISION_TOOLS_REVIEW_20260719.md` | ✅ Review deliverable (410 lines, committed 21158fb) |
+| `docs/reference/CLAUDE_BEST_PRACTICES_GUIDE.md` | ✅ Best practices guide (563 lines, 26 sources) |
+| `CLAUDE_PROJECT_SYSTEM_PROMPT.md` | ✅ Optimized system prompt (1,848 tokens) |
+| `context_packs/decision-tools-review/` | ✅ Corrected implementation pack (8 files, ~44K tokens) |
+| `data/handoff/KALI_TO_GROK_CLI_DECISION_TOOLS_REVIEW_20260719.md` | ✅ Corrected scope handoff |
+| `data/entities/kali/proposed_lessons.yaml` | ✅ 26 L3/L2 principles (4 new this session) |
+| `data/entities/kali/session_gnosis.md` | ✅ 14 sessions documented |
+
+### Commits This Session
+- `89fed59`: fix: correct Grok CLI handoff scope — review implementation, not content decisions
+- `21158fb`: docs: Grok CLI Decision Tools implementation review (ho_749ed27155cd)
+- `d22b550`: feat: add Claude Best Practices Guide + optimized system prompt
+- Current: locking in final gnosis
+
+### Next Actions
+1. Synthesize Grok CLI review + Web Claude review → incorporate feedback
+2. Begin T0 implementation (DecisionEngine + ADR schema)
+3. Researcher continues M2 Phases C/D/G (126 remaining)
+4. Web Claude parallel review pending claude.ai Project creation
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ GROK-CLI-REVIEW-LOCKED ⬡ 2026-07-19*
