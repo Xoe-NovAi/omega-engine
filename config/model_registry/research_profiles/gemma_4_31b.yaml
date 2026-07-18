@@ -1,0 +1,13 @@
+# Gemma 4 31B Research Profile
+# ⬡ OMEGA ⬡ KALI ⬡ MODEL-REGISTRY ⬡ 2026-07-18
+
+profile: "gemma_4_31b"
+context_window: 262144
+reasoning_depth: "iterative"
+tool_fidelity: "medium"
+guardrails:
+  - "Force 3+ tool rounds before ANY synthesis"
+  - "Require explicit 'deepen' pass after first draft"
+  - "Write intermediate evidence to disk every 3 tool calls"
+failure_signature: "shallow"
+shadow_focus: "force_deepening"

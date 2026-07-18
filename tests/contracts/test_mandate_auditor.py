@@ -94,7 +94,7 @@ class TestMandateAuditorContract:
         result = auditor.results[0]
         assert isinstance(result, MandateResult)
         assert result.mandate_id == "M3"
-        assert "Iris" in result.name
+        assert "MESSENGER_BRIDGE" in result.name
 
     def test_mandate_auditor_check_m6_podman_sovereignty(self):
         """check_m6_podman_sovereignty() must record a MandateResult."""
@@ -269,19 +269,20 @@ class TestMandateAuditorWithTempFixture:
             assert "15 agents" in result.detail
 
     def test_m3_detects_iris_in_pillar(self):
-        """M3 check detects Iris assigned to a Pillar slot on same line."""
+        """M3 check detects MESSENGER_BRIDGE assigned to a Pillar slot on same line."""
         with tempfile.TemporaryDirectory() as tmpdir:
             wad_dir = Path(tmpdir) / "config" / "wads" / "test"
             wad_dir.mkdir(parents=True)
             entities = wad_dir / "entities.yaml"
-            # Violation: iris and pillar on same line
-            entities.write_text("entities:\n  - name: Iris\n    pillar: P6\n  iris: P6\n")
+            # Violation: messenger_bridge and pillar on same line
+            entities.write_text("entities:\n  - name: MESSENGER_BRIDGE\n    pillar: P6\n  messenger_bridge: P6\n")
 
             auditor = MandateAuditor(tmpdir)
             auditor.check_m3_iris_constant()
             result = auditor.results[0]
             assert result.mandate_id == "M3"
-            assert result.passed is False
+            # M3 should FAIL when MESSENGER_BRIDGE is in a Pillar slot
+            assert result.passed is False, f"Expected M3 to fail when MESSENGER_BRIDGE in Pillar, but passed={result.passed}"
             assert "violations" in result.detail
 
     def test_m3_passes_when_iris_not_in_pillar(self):

@@ -1,0 +1,47 @@
+# OpenRouter Provider Configuration
+# ⬡ OMEGA ⬡ KALI ⬡ MODEL-REGISTRY ⬡ 2026-07-18
+
+provider: "openrouter"
+priority: 5
+enabled: true
+description: "OpenRouter free tier and paid models"
+
+api_key: "env:OPENROUTER_API_KEY"
+base_url: "https://openrouter.ai/api"
+
+# Model name mappings (local name -> OpenRouter model ID)
+model_overrides:
+  "qwen3-1.7b-q6_k": "qwen/qwen3-1.7b"
+  "qwen3-4b-thinking-q4_k_m": "qwen/qwen3-4b"
+  "deepseek-r1-qwen3-8b-q3_k_l": "deepseek/deepseek-r1"
+  "phi-4-mini": "microsoft/phi-4-mini"
+  "krikri-8b-q4_k_m": "nvidia/krikri-8b"
+  "phi-2-omnimatrix-i1-q4_k_m": "microsoft/phi-2"
+
+# Supported models (from model registry - cloud models)
+supported_models:
+  - "google/gemma-4-31b-it:free"
+  - "google/gemma-4-26b-a4b-it:free"
+  - "deepseek/deepseek-v4-flash:free"
+  - "minimax/minimax-m2.5:free"
+  - "nvidia/nemotron-3-super-120b-a12b:free"
+  - "qwen/qwen3-next-80b-a3b-instruct:free"
+  - "qwen/qwen3-coder:free"
+  - "meta-llama/llama-3.3-70b-instruct:free"
+  - "meta-llama/llama-3.2-3b-instruct:free"
+  - "nousresearch/hermes-3-llama-3.1-405b:free"
+  - "openai/gpt-oss-120b:free"
+  - "openai/gpt-oss-20b:free"
+  - "arcee-ai/trinity-large-thinking:free"
+  - "poolside/laguna-m.1:free"
+  - "poolside/laguna-xs.2:free"
+  - "cognitivecomputations/dolphin-mistral-24b-venice-edition:free"
+  - "liquid/lfm-2.5-1.2b-instruct:free"
+  - "nvidia/nemotron-3-nano-30b-a3b:free"
+  - "nvidia/nemotron-nano-9b-v2:free"
+  - "nvidia/nemotron-nano-12b-v2-vl:free"
+  - "nvidia/nemotron-3-nano-omni-30b-a3b:free"
+  - "z-ai/glm-4.5-air:free"
+  - "openrouter/free"
+  - "openrouter/owl-alpha"
+  - "baidu/cobuddy:free"

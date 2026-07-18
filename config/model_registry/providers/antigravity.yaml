@@ -1,0 +1,24 @@
+# Antigravity Provider Configuration
+# ⬡ OMEGA ⬡ KALI ⬡ MODEL-REGISTRY ⬡ 2026-07-18
+
+provider: "antigravity"
+priority: 3
+enabled: true
+description: "Antigravity OAuth-based frontier models (Google DeepMind, Anthropic, OpenAI)"
+
+api_key: "env:ANTIGRAVITY_API_KEY"
+base_url: "https://api.antigravity.ai/v1"
+
+# Antigravity provides access to frontier models via OAuth
+# Uses google.genai.Client with custom base_url
+# Free tier: Gemini 3.5 Flash
+# Pro/Ultra tiers: Gemini 3.1 Pro, Claude Sonnet/Opus 4.6, GPT-OSS 120B
+
+supported_models:
+  # Free tier (default)
+  - "gemini-3.5-flash"
+  # Pro/Ultra tiers (quota-limited)
+  - "gemini-3.1-pro"
+  - "claude-sonnet-4.6"
+  - "claude-opus-4.6"
+  - "gpt-oss-120b"

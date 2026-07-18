@@ -1,0 +1,19 @@
+# Google AI Studio / Vertex Provider Configuration
+# ⬡ OMEGA ⬡ KALI ⬡ MODEL-REGISTRY ⬡ 2026-07-18
+
+provider: "google"
+priority: 4
+enabled: true
+description: "Google AI Studio / Vertex AI - Google's own models only"
+
+api_key: "env:GOOGLE_API_KEY"
+
+# Google provides ONLY Google models (Gemini, Gemma)
+# NO local model mappings - this is a cloud provider
+# NotebookLM is a web service (notebooklm.google.com) running on Gemini - NOT a model
+
+supported_models:
+  - "gemma-4-31b-it-free"
+  - "gemma-4-26b-a4b-it-free"
+  - "gemini-2.5-pro"
+  - "gemini-2.5-flash"
