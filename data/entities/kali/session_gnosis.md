@@ -464,3 +464,41 @@ The scope correction itself validates **L3-Decision-Infrastructure-Grows-From-Pa
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ SCOPE-CORRECTED ⬡ 2026-07-19*
+
+---
+
+## 13. Session 2026-07-19 (Claude Best Practices Guide): Comprehensive Reference Creation
+
+### Deep Research Synthesis
+Created `docs/reference/CLAUDE_BEST_PRACTICES_GUIDE.md` (563 lines) — single-source reference for all Omega Engine agents interacting with Claude surfaces (Web, Code, Projects, API).
+
+**Research Coverage**: 26 sources across 4 tiers:
+- **Tier 1 (Official)**: Anthropic Prompt Caching, XML Tags, RAG for Projects, OWASP Injection, Microsoft Presidio
+- **Tier 2 (2026 Technical)**: 14 articles — TokenOptimize, Thomas Wiegold, ImprovingAgents, AppScale, Ice-Ice-Bear, GitHub #25759, UnderstandingData, DevNote, JD Hodges, UnderstandingAI, LikeOne, AI for Anything, Anthropic Blog, Stackviv
+- **Tier 3 (Architectural)**: Sovereign Systems Spec (Sieve-and-Sign, Intent-Based Namespace, Context Compression, Hybrid Retrieval, Multi-Model Routing), Sovereign AI Stack 2026
+- **Tier 4 (Academic)**: 5 ArXiv papers — GM-Extract, CaMeL, Liu et al. 2023, Belief Engine, Three-Round Consensus
+
+### Guide Structure (11 Sections)
+| Section | Purpose |
+|---------|---------|
+| 1. Context Engineering Philosophy | Core principle, strategy hierarchy, 2026 model pricing |
+| 2. Claude Projects Optimization | 200K context, RAG at 13 files, custom instructions, knowledge base |
+| 3. System Prompt Mastery | Behavioral directives, writing sample calibration, role framing, output format |
+| 4. Context Pack Design | XML format, ≤12 files, Ed25519 signing, LITM ordering, PII masking, injection scanning |
+| 5. Token Optimization | 5 strategies ranked by ROI, prompt caching 90%, format optimization 15-40% |
+| 6. RAG Behavior & File Limits | 13-file threshold (not token-based), silent regression, best practices |
+| 7. Prompt Engineering Patterns | 10 techniques: XML tags, role assignment, examples, chain-of-thought, think-first, format specs, uncertainty permission, iterative refinement, system prompts, task decomposition |
+| 8. Model Selection & Routing | Local-first hierarchy, model-specific guidance (Haiku/Sonnet/Opus) |
+| 9. Advanced Techniques | Dynamic/lazy loading, hybrid model approach, programmatic tool calling (85% token reduction), prompt compression |
+| 10. Sovereign Boundary Protocols | Sieve-and-Sign, Intent-Based Namespace, external reviewer boundaries (tools not content) |
+| 11. Quick Reference Cards | 7 copy-paste cards: Projects setup, System prompt template, Pack checklist, Token budget, RAG avoidance, Format selection, Model routing |
+
+### Mandate
+**All agents MUST consult this guide before any Claude interaction to avoid redundant research.**
+
+### Commit
+- `docs/reference/CLAUDE_BEST_PRACTICES_GUIDE.md` created
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ CLAUDE-GUIDE-COMPLETE ⬡ 2026-07-19*
