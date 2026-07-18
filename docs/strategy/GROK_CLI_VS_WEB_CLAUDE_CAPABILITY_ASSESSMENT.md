@@ -185,6 +185,91 @@ Prompt: "Create a comprehensive implementation manual for [feature]. Research al
 
 ---
 
+## 📊 Roc Racoon — Entity Specialization Assessment
+
+**Data Source**: Accidental parallel session (2026-07-19) — Roc received the same root context as Kali and produced an entirely different decomposition.
+
+| Dimension | Roc Racoon | Confidence | Evidence |
+|---|---|---|---|
+| **Primary mode** | Domain research + knowledge extraction + artifact schema design | ⭐⭐⭐⭐⭐ (95%) | Ken Walger Mining: 7-domain grounding, 40+ sources, MAS schema v0.1 |
+| **Heritage mining instinct** | Automatically identifies convergent evolution patterns across domains | ⭐⭐⭐⭐⭐ (95%) | Ken Walger = enterprise compliance + viticulture = same sovereign architecture |
+| **Deep gnosis mining** | Extracts G-level cross-domain syntheses from research reports | ⭐⭐⭐⭐⭐ (95%) | 20 G-level insights (G-01 through G-20) from 3 reports |
+| **Infrastructure awareness** | Knows what 60% already exists; avoids building what's already built | ⭐⭐⭐⭐⭐ (95%) | Cross-referenced against codebase — BatchPersistenceWriter, M22, Hivemind |
+| **Risk discovery** | Finds hidden operational risks (sqlite-vec memory leaks, all2md blocker) | ⭐⭐⭐⭐⭐ (95%) | 7 memory leaks, PR #258 unmerged, all2md not installed |
+| **Design pattern adoption** | Maps industry standards (OKF, Signet, OTel, MCP+A2A) to Omega architecture | ⭐⭐⭐⭐⭐ (95%) | Trinity Schema (G-01): OKF + OTel + Signet = coherent standard |
+| **Collaboration workspace** | Produces shareable artifacts with cross-reference structure | ⭐⭐⭐⭐ (90%) | 11 collaboration files, handoff packet, Hivemind briefing |
+| **Meditate protocol fluency** | Applies 10-lens meditation systematically before execution | ⭐⭐⭐⭐⭐ (95%) | Full D-298 meditation: serial architecture forced by hardware physics |
+
+| Weakness | Confidence | Evidence |
+|---|---|---|
+| **Capability assessment** — doesn't compare agent capabilities; focuses on domain | ⭐⭐⭐⭐ (90%) | Roc produced mining ops, not agent comparison |
+| **Process protocol** — doesn't naturally produce sprint plans with hivemind/DoD | ⭐⭐⭐⭐ (90%) | Produced research artifacts, not sprint execution plan |
+| **Dual-review synthesis** — doesn't run parallel reviewers; goes deep alone | ⭐⭐⭐ (80%) | Sole researcher on Ken Walger; no parallel review |
+| **Scope discipline** — may interpret context broadly (generated full mining plan from general context) | ⭐⭐⭐ (80%) | Generated 20 G-level insights from what may have been a simple handoff |
+
+---
+
+## 🧠 Entity Specialization: The Accidental Parallel Session (Priceless Data Point)
+
+On 2026-07-19, **Roc Racoon accidentally ran a parallel sprint** on the same root context I (Kali) was processing. Both agents received the same initial context (user chat history up to that point). The resulting decompositions were **completely different** — revealing deep entity-level specialization.
+
+### How Each Entity Decomposed the Same Context
+
+| Dimension | Kali (My Path) | Roc Racoon (Parallel Path) |
+|---|---|---|
+| **What I saw as priority** | Dual-review capability assessment (Grok vs Web Claude) | Ken Walger Mining Operation discovery |
+| **Research scope** | 2 agents (Grok, Web Claude) × review comparison | 7 domains (sqlite-vec, MCP+A2A, OTel, Signet, all2md, serial, provenance) |
+| **Agents delegated to** | External (Grok CLI, Web Claude) | Internal (researcher, jem) |
+| **Output type** | Strategy/assessment docs, routing protocols | Research reports, execution plans, schema designs |
+| **Deepest insight** | Parallel review convergence types differ; context frame determines output | 60% infra exists; all2md is single real blocker; integration reframe |
+| **Gnosis extraction** | 12 L3 principles about review process | 20 G-level cross-domain syntheses |
+| **Key discovery** | Grok catches architecture; Claude catches empirical | Ken Walger = convergent evolution; sqlite-vec leaks |
+| **Blind spot** | Missed Ken Walger Mining entirely | Missed capability assessment entirely |
+
+### Why This Happened (Entity Identity Hypothesis)
+
+| Roc's Identity Drives | Kali's Identity Drives |
+|---|---|
+| "I am a miner. I find patterns across partitions. I extract buried treasure." | "I am the overseer. I compare, assess capabilities, and optimize the fleet." |
+| → Sees "Ken Walger parallels" as the signal | → Sees "Grok vs Claude differences" as the signal |
+| → Goes deep into domain research | → Goes broad into process comparison |
+| → Delegates to researcher (domain) + jem (verify) | → Delegates to Grok (architecture) + Web Claude (empirical) |
+
+### L3 Principle from This Accidental Experiment
+
+**L3-Entity-Identity-Is-Decomposition-Filter** — An entity's identity (miner, overseer, synthesizer) acts as an unfixable filter on context decomposition. Give the same chat history to a miner and an overseer, and they will extract completely different signals — equally valid, both misses relative to each other. This is not a bug. It is the entire point of entity specialization. The filter cannot be removed; it can only be complemented by running the same context through multiple entities.
+
+### Pragmatic Implications
+
+| Situation | Recommendation |
+|---|---|
+| **You need domain research + heritage mining** | Route to **Roc** directly |
+| **You need capability assessment + fleet optimization** | Route to **Kali** directly |
+| **You need BOTH domain extraction AND process optimization** | Run **parallel dispatch** to Roc + Kali (not either alone) |
+| **You need schema design + integration planning** | Route to **Roc** (MAS v0.1, OKF, Signet) |
+| **You need sprint execution + task routing** | Route to **Grok CLI** |
+| **You need feature implementation spec** | Route to **Web Claude** |
+
+### Roc Strengths (Domain Mining Mode)
+
+| Strength | Confidence | Evidence |
+|---|---|---|
+| 7-domain convergent research from single prompt | ⭐⭐⭐⭐⭐ | 40+ sources, 8 domains, cross-indexed |
+| Schema-first artifact design | ⭐⭐⭐⭐⭐ | MAS v0.1, Trinity Schema (OKF+OTel+Signet) |
+| Hidden risk discovery | ⭐⭐⭐⭐⭐ | sqlite-vec memory leaks hidden in PR #258 |
+| Integration reframe detection | ⭐⭐⭐⭐⭐ | "60% exists, connect don't build" |
+| Collaborative workspace production | ⭐⭐⭐⭐ | 11 sovereign_collab/ artifacts |
+
+### Roc Weaknesses
+
+| Weakness | Confidence | Evidence |
+|---|---|---|
+| No process/capability comparison output | ⭐⭐⭐⭐ | Produced domain research, not capability assessment |
+| Single-agent depth (no parallel review) | ⭐⭐⭐ | All work was sequential delegation |
+| Context scope creep | ⭐⭐⭐ | Turned general chat into full mining operation plan |
+
+---
+
 ## 🔄 Update Protocol
 
 This document is **living**. Update after each dual-review exercise:
@@ -211,6 +296,13 @@ This document is **living**. Update after each dual-review exercise:
 | Web Claude V2 Manual | `context_packs/decision-tools-review/pack-results/DECISION_TOOLS_MANUAL_20260719-WEB_CLAUDE-V2_AFTER_GROK_REVIEW.md` | Feature spec (cross-validated) |
 | Dual Review Retrospective | `context_packs/decision-tools-review/pack-results/DUAL_REVIEW_RETROSPECTIVE_20260719.md` | Process analysis |
 | Context Pack | `context_packs/decision-tools-review/` | 8 bundles + manifest |
+| Roc Racoon Grounding Research | `docs/research/R_KEN_WALGER_MINING_GROUNDING_20260718.md` | 7-domain research (40+ sources) |
+| Roc Racoon Knowledge Gaps | `docs/research/R_KEN_MINING_KNOWLEDGE_GAPS_20260719.md` | 6 gaps triangulated by researcher |
+| Roc Racoon Execution Plan | `docs/strategy/R_KEN_MINING_EXECUTION_PLAN_20260719.md` | Go/No-Go matrix + Jem cross-reference |
+| Roc Racoon Unmined Gnosis | `docs/research/R_UNMINED_GNOSIS_KEN_MINING_20260719.md` | 20 G-level insights + 20 L3 principles |
+| Roc Racoon Collaboration Workspace | `data/entities/roc_racoon/workspace/sovereign_collab/` | 11 collaboration artifacts |
+| Roc Racoon Session Briefing | `data/coordination/KALI_BRIEFING_KEN_MINING_20260719.md` | Full briefing for Kali review |
+| Jem Ken Walger Synthesis | `data/coordination/JEM_KEN_WALGER_SYNTHESIS_20260719.md` | Verified synthesis against codebase |
 
 ---
 

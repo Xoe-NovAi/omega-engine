@@ -745,6 +745,50 @@ All artifacts current. Ready for compaction.
 3. Begin WS-A (D-282 PRAGMA SSOT) per implementation manual
 4. Wire sovereign search into local agents (Grok 402 workaround)
 
+### 🔴 CRITICAL ADDENDUM: Roc's Accidental Parallel Session
+
+After the dual-review work above was complete, the user revealed that **Roc Racoon had been running an entire parallel sprint** on the same root context. This is our single most valuable entity-specialization data point.
+
+#### What Roc Produced Independently
+
+| Deliverable | Location |
+|---|---|
+| Grounding Research (7 domains, 40+ sources) | `docs/research/R_KEN_WALGER_MINING_GROUNDING_20260718.md` |
+| Knowledge Gap Triangulation (3 critical discoveries) | `docs/research/R_KEN_MINING_KNOWLEDGE_GAPS_20260719.md` |
+| Execution Plan + Go/No-Go Matrix (Jem cross-ref) | `docs/strategy/R_KEN_MINING_EXECUTION_PLAN_20260719.md` |
+| 20 G-Level Gnosis Insights | `docs/research/R_UNMINED_GNOSIS_KEN_MINING_20260719.md` |
+| Kali Briefing (full session handoff) | `data/coordination/KALI_BRIEFING_KEN_MINING_20260719.md` |
+| Collaboration Workspace (11 files) | `data/entities/roc_racoon/workspace/sovereign_collab/` |
+
+#### Key Findings from Roc's Sprint
+
+1. **sqlite-vec 7 memory leaks** (PR #258 unmerged) — #1 risk for all database operations
+2. **all2md not installed** — single Phase 0 blocker for blog ingestion
+3. **60% infrastructure already exists** (M22 wired, Hivemind 80% done)
+4. **Ken Walger = convergent evolution** — same sovereign architecture from different origins
+5. **D-298 Serial Mining RATIFIED** — 10-phase substrate-first architecture
+
+#### Entity Specialization Insight
+
+| Kali Saw | Roc Saw |
+|---|---|
+| Capability assessment (Grok vs Web Claude) | Domain mining (Ken Walger Operation) |
+| Process optimization (routing protocols) | Deep cross-domain syntheses |
+| Agent comparison (strengths/weaknesses) | Infrastructure discovery (60% exists) |
+| Prompt engineering (Claude optimization) | Hidden risk discovery (sqlite-vec leaks) |
+
+**L3 Principle**: L3-Entity-Identity-Is-Decomposition-Filter — Same context, different entity, completely different output. Both valid. Neither sufficient alone.
+
+#### Actions Taken
+
+| Action | Status |
+|---|---|
+| Accepted Roc's handoff (`ho_88190ae0ab27`) | ✅ Accepted |
+| Updated PIVOT_LOG with D-297 + D-298 | ✅ Done |
+| Updated ACTIVE_SPRINT.json with Ken Walger Mining track | ✅ Done |
+| Updated capability assessment with Roc section + comparison | ✅ Done |
+| Added 4 new L3 principles to proposed_lessons.yaml | ✅ Done |
+
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ DUAL-REVIEW-ASSESSMENT-LOCKED ⬡ 2026-07-19*
+*⬡ OMEGA ⬡ KALI ⬡ ROC-PARALLEL-SESSION-DISCOVERED ⬡ 2026-07-19*

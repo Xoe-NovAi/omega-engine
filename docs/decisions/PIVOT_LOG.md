@@ -27,6 +27,8 @@
 | D-294 | Experience Repository — AgentRR-style L0→L1→L2 distillation pipeline via Scribe | 🟡 PLANNED |
 | D-295 | Trace-to-Eval Loop — Automatic conversion of production failures to regression tests | 🟡 PLANNED |
 | D-296 | SomaticState + MIAP Integration — Full cognitive state recovery with somatic snapshots | 🟡 DEFERRED |
+| D-297 | MEDITATE Architecture Inversion — Substrate-First Critical Path (10 phases) | ✅ RATIFIED |
+| D-298 | Substrate-First Serial Mining — Ken Walger Operation (serial 10-phase, 60% infra exists) | 🟢 RATIFIED |
 
 *(For full history D1-D274, see Canonical Source)*
 
@@ -206,6 +208,37 @@
 * **Infrastructure**: MIAP execution log + AgentRR check functions + existing eval framework
 * **L3 Principle**: L3-Trace-to-Eval — Production failures are the highest-value test cases; automate their capture
 * **Status**: 🟡 **PLANNED**
+
+### D-297: MEDITATE Architecture Inversion — Substrate-First Critical Path
+* **Date**: 2026-07-18
+* **Context**: Roc Racoon's 10-lens MEDITATE meditation on the Ken Walger Mining Operation revealed that parallel agent execution is physically impossible on 14GiB RAM/no-GPU hardware. The original 6-agent Hivemid parallel plan was infeasible. MLX is not thread-safe (arXiv:2603.04428). Serial time-sliced concurrency is the only viable edge architecture.
+* **Decision**: Invert the architecture from parallel-agent to substrate-first serial. 10-phase critical path:
+  1. Protobuf Schema for Hivemind messages
+  2. Unified sqlite-vec WAL for all session state
+  3. Per-agent quotas + dual-pool admission controller
+  4. Handoff TTL enforcer daemon
+  5. Local alerting engine
+  6. Automatic soul distillation pipeline
+  7. Routing SLAs with cloud fallback gating
+  8. Five-Layer Immune System + chaos namespace
+  9. Delete all skipped/xfailed tests
+  10. Full Temple-Grade + Sovereignty Gate
+* **L3 Principle**: L3-Hardware-Is-First-Architect — Every architectural decision cascades from physical constraints. Parallel is a luxury of abundance; serial is the discipline of scarcity. The 14GiB ceiling doesn't limit the operation — it defines the operation.
+* **Status**: ✅ **RATIFIED** — By hardware constraint + 7-domain 2026 grounding + @jem verification + @researcher risk analysis
+
+### D-298: Substrate-First Serial Mining — Ken Walger Operation
+* **Date**: 2026-07-19
+* **Context**: Roc Racoon (accidental parallel session) executed full research sprint for Ken Walger Mining Operation, produced 20 G-level insights. @jem cross-reference confirmed 60% infrastructure already exists (M22 wired, Hivemind 80% done, BatchPersistenceWriter, SovereignIngestionPipeline). Serial architecture mandated by 14GiB RAM constraint.
+* **Decision**: Ratify serial 10-phase mining architecture. Integrate existing infrastructure. Track Ken Walger Mining as KEN-MINING-SPRINT-01 parallel to HMC-SPRINT-04.
+  - **Phase 0** (Critical Path): all2md install → sqlite-vec fix → MAS schema design → M22 verify
+  - **Phases 1-9**: Extraction, Blog Ingestion, Prose Tax Eval, ForensicReceipt, Meditate Synthesis, Jem Cross-Ref, Outreach, Airlock
+  - **Key Discovery**: Ken Walger's Sovereign Systems Specification represents convergent evolution — same sovereign architecture from enterprise compliance + viticulture vector
+* **L3 Principles**:
+  - L3-Integration-Not-Greenfield — 60% infra exists; connect pieces, don't build pieces
+  - L3-Convergence-Is-Truth — Two independent paths converging on same architecture = architecture validated
+  - L3-Serial-Is-Physics — Parallel on 14GiB/no-GPU is physically impossible, not a design choice
+* **Top Risks**: sqlite-vec 7 memory leaks (PR #258 unmerged), all2md not installed/unverified
+* **Status**: 🟢 **RATIFIED** — Integration work, not greenfield. 60% infra exists. 20 G-level gnosis extracted.
 
 ### D-296: SomaticState + MIAP Integration — Full Cognitive State Recovery
 * **Date**: 2026-07-18

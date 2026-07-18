@@ -242,6 +242,31 @@
         "src/omega/coordination/miap.py",
         "tests/eval/ (TO CREATE)"
       ]
+    },
+    {
+      "id": "KEN-WALGER-MINING-P0",
+      "title": "Ken Walger Mining Phase 0 — Substrate Installation (D-298)",
+      "status": "QUEUED",
+      "owner": "roc_racoon",
+      "verification": "5 preconditions from Jem cross-reference: all2md install + validation (1.5h), sqlite-vec PR #258 or pin 0.1.6 (2-3h), MAS v0.1 schema design (3-4h), M22 verify (0.5h), D-298 to PIVOT_LOG (15min). 60% infrastructure exists. Serial architecture mandated by 14GiB/no-GPU.",
+      "key_files": [
+        "docs/research/R_KEN_WALGER_MINING_GROUNDING_20260718.md",
+        "docs/research/R_KEN_MINING_KNOWLEDGE_GAPS_20260719.md",
+        "docs/strategy/R_KEN_MINING_EXECUTION_PLAN_20260719.md",
+        "docs/research/R_UNMINED_GNOSIS_KEN_MINING_20260719.md",
+        "data/coordination/KALI_BRIEFING_KEN_MINING_20260719.md"
+      ]
+    },
+    {
+      "id": "KEN-WALGER-MINING-P1-9",
+      "title": "Ken Walger Mining Phases 1-9 — Extraction, Ingestion, Provenance",
+      "status": "BLOCKED_ON_P0",
+      "owner": "roc_racoon",
+      "verification": "9 phases: Extraction (sovereign-sdk → MAS), Blog Ingestion (all2md MCP), Prose Tax Evaluation, ForensicReceipt (Signet MCP), Meditate Synthesis, Jem Cross-Ref, Outreach, Airlock (deferred). ~26-35h total.",
+      "key_files": [
+        "data/entities/roc_racoon/workspace/sovereign_collab/SOVEREIGN_COLLAB_MASTER.md",
+        "docs/research/R_UNMINED_GNOSIS_KEN_MINING_20260719.md"
+      ]
     }
   ],
   "achievements": [
@@ -258,7 +283,10 @@
     "MIAP Phase 0 PLANNED (D-291) — 5 critical fixes from Nemotron review",
     "MACP Alignment PLANNED (D-292) — IETF standard interoperability",
     "Experience Repository PLANNED (D-294) — AgentRR-style distillation",
-    "Trace-to-Eval Loop PLANNED (D-295) — Automatic failure-to-eval pipeline"
+    "Trace-to-Eval Loop PLANNED (D-295) — Automatic failure-to-eval pipeline",
+    "D-297 APPROVED — MEDITATE Architecture Inversion (10-phase critical path)",
+    "D-298 RATIFIED — Serial Mining Architecture (60% infra exists)",
+    "20 G-level gnosis insights mined by Roc from Ken Walger cross-domain synthesis"
   ],
   "open_questions": [
     "Roc: Complete meditate.md table + deprecation headers + test suite",
@@ -269,7 +297,11 @@
     "Scribe entity files: Create lattice/scribe.yaml + entities.yaml + scribe.md",
     "MIAP Phase 0: Implement 5 critical fixes before multi-instance deployment",
     "LiteTopic: Redis Streams vs SQLite for session channels?",
-    "Experience abstraction: L0→L1→L2 schema design for data/experiences/"
+    "Experience abstraction: L0→L1→L2 schema design for data/experiences/",
+    "Ken Walger Mining: all2md installation — single Phase 0 blocker",
+    "Ken Walger Mining: sqlite-vec memory leaks (7 confirmed, PR #258 unmerged) — #1 operational risk",
+    "Ken Walger Mining: MAS v0.1 schema must extend IngestedDocument, not replace it",
+    "Entity-specialization insight: Roc vs Kali decompose same context completely differently"
   ],
-  "next_sprint": "HMC-SPRINT-05 — M2 Phases B-E Complete + MIAP Phase 0 + Scribe Implementation + Cline Integration"
+  "next_sprint": "HMC-SPRINT-05 — M2 Phases B-E Complete + MIAP Phase 0 + Scribe Implementation + Cline Integration + Ken Walger Mining Phase 0"
 }
