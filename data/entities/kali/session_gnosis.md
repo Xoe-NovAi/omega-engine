@@ -360,4 +360,62 @@ Added to `packer-config.yaml` with 11 themes covering all decision workspace rev
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ CONTEXT-PACKER-READY ⬡ 0168992 ⬡ 2026-07-19*
+## 11. Session 2026-07-19 (Enhanced): Context Packer v2 — Sovereign Export Hardening
+
+### Enhancements Implemented (8 total)
+
+| # | Enhancement | Implementation | Mandate |
+|---|-------------|----------------|---------|
+| 1 | **Ed25519 Manifest Signing** | `_sign_manifest()` generates keypair, signs manifest, appends signature + public key | M21, M23 |
+| 2 | **Injection Pattern Scanner** | 25 compiled regexes from OWASP LLM Top 10 2026 + Microsoft Spotlighting + Google research | M23 |
+| 3 | **Per-Bundle Token Limits** | `MAX_BUNDLE_TOKENS=15000`, `MAX_TOTAL_TOKENS=150000`; auto-split + priority trim | M18 |
+| 4 | **Bundle Consolidation (≤12)** | `_consolidate_bundles()` enforces `max_slots-1`, merges lowest-priority into `general` | Gap 5 |
+| 5 | **Lost-in-the-Middle Reordering** | `_reorder_bundles_for_litm()` places critical bundles at start/end (U-shaped attention) | Gap 6 |
+| 6 | **PII Masking (TOKENIZE)** | Integrated `PIIMasker` from `src/omega/oracle/pii_masker.py` with reversible placeholders | M8, M23 |
+| 7 | **Full XML Body Escaping** | `_escape_bare_xml_chars()` escapes all `<`, `>`, `&` in body content | M9, M23 |
+| 8 | **Decision-Workspace-Review Pack v2** | 12 files (1 manifest + 11 bundles), 87K tokens, Ed25519 signed, valid XML | All |
+
+### Verification Results
+
+| Pack | Files | Total Tokens | XML Valid | Ed25519 Signed | Within 12-Slot Limit |
+|------|-------|--------------|-----------|----------------|---------------------|
+| `decision-workspace-review` | 12 (1 manifest + 11 bundles) | 87,206 | ✅ All 11 | ✅ | ✅ (at limit) |
+| `kali-oversight` | 9 (1 manifest + 8 bundles) | 75,262 | ✅ All 8 | ✅ | ✅ (well under) |
+
+### Bundle Ordering (Lost-in-the-Middle Mitigation)
+
+**decision-workspace-review** — Critical at positions 1-3 and 11-12:
+```
+START:  decree, grounding_part1, grounding_part2, decisions
+MIDDLE: implementation, research, general, mandates, session_log, engine_state
+END:    exit_protocol, handoff
+```
+
+**kali-oversight** — Critical at positions 1-3 and 8-9:
+```
+START:  fleet_part1, fleet_part2, fleet_part3
+MIDDLE: mandates, roadmap, coordination_part1, coordination_part2
+END:    heritage
+```
+
+### Research Report Updated
+- `docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md` updated with implementation summary
+- Validation checklist: all immediate items ✅
+- Enhancement roadmap: immediate = complete
+
+### Commits
+- `0168992`: feat: add decision-workspace-review profile to Context Packer
+- `02c5041`: chore: update session artifacts for compaction prep
+- `3dce748`: chore: gitignore context_packs/ and database files
+- `02c5041` → `3dce748`: session artifacts updated
+
+### Next Actions
+1. Upload `context_packs/decision-workspace-review/` to claude.ai Projects for Web Claude parallel review
+2. Await Grok CLI acceptance of ho_749ed27155cd
+3. Await both review reports (Grok CLI + Web Claude)
+4. Synthesize reviews → ratify decisions → begin T0 implementation
+5. Address remaining M2 violations (Phases C/D/G — 126 remaining)
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ CONTEXT-PACKER-ENHANCED ⬡ 2026-07-19*

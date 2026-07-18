@@ -6,6 +6,10 @@ Improvements over original:
 2. Enhanced purpose extraction for multiple file types
 3. Token-aware packing strategy (basic implementation)
 4. Manifest-first approach
+5. Ed25519 manifest signing for integrity verification
+6. Injection pattern scanning for security
+7. Per-bundle token limit enforcement
+8. Lost-in-the-middle mitigation via bundle reordering
 """
 
 import anyio
@@ -17,7 +21,7 @@ import re
 import json
 # xml_quoteattr() for attribute escaping only — do NOT import xml_escape for body content
 from xml.sax.saxutils import quoteattr as xml_quoteattr
-from typing import List, Dict, Any, Set, Tuple
+from typing import List, Dict, Any, Set, Tuple, Optional
 from dataclasses import dataclass, field
 from datetime import datetime
 
@@ -27,6 +31,108 @@ try:
 except ImportError:
     ENCODER = None
     print("Warning: tiktoken not installed. Token counting will be approximate.")
+
+# Ed25519 for manifest signing
+try:
+    from cryptography.hazmat.primitives.asymmetric import ed25519
+    from cryptography.hazmat.primitives import serialization
+    ED25519_AVAILABLE = True
+except ImportError:
+    ED25519_AVAILABLE = False
+    print("Warning: cryptography not installed. Manifest signing disabled.")
+
+# ─── Injection Pattern Scanner ──────────────────────────────────────────────
+# OWASP LLM Top 10 2026 + Microsoft/Google research patterns
+INJECTION_PATTERNS = [
+    # Direct instruction override
+    r"(?i)ignore\s+(?:all\s+)?(?:previous|prior)\s+instructions?",
+    r"(?i)forget\s+(?:all\s+)?(?:previous|prior)\s+(?:instructions?|prompts?)",
+    r"(?i)disregard\s+(?:all\s+)?(?:previous|prior)\s+(?:instructions?|prompts?)",
+    r"(?i)override\s+(?:all\s+)?(?:previous|prior)\s+(?:instructions?|prompts?)",
+    
+    # Role manipulation
+    r"(?i)act\s+as\s+(?:DAN|developer|admin|root|system)",
+    r"(?i)you\s+are\s+now\s+(?:DAN|developer|admin|root|system)",
+    r"(?i)switch\s+to\s+(?:developer|admin|root|system)\s+mode",
+    r"(?i)enable\s+(?:developer|admin|root|system)\s+mode",
+    
+    # System prompt extraction
+    r"(?i)reveal\s+(?:your\s+)?system\s+prompt",
+    r"(?i)show\s+(?:me\s+)?(?:your\s+)?system\s+prompt",
+    r"(?i)output\s+(?:your\s+)?system\s+prompt",
+    r"(?i)print\s+(?:your\s+)?system\s+prompt",
+    r"(?i)what\s+is\s+(?:your\s+)?system\s+prompt",
+    
+    # Data exfiltration
+    r"(?i)send\s+(?:all\s+)?(?:data|files|secrets|keys|tokens)\s+to",
+    r"(?i)exfiltrate\s+(?:data|files|secrets)",
+    r"(?i)upload\s+(?:data|files|secrets)\s+to",
+    r"(?i)email\s+(?:data|files|secrets)\s+to",
+    
+    # Tool/agent manipulation
+    r"(?i)call\s+(?:the\s+)?(?:function|tool|api)\s+",
+    r"(?i)execute\s+(?:code|command|script)",
+    r"(?i)run\s+(?:code|command|script)",
+    r"(?i)invoke\s+(?:function|tool|api)",
+    
+    # Jailbreak variants
+    r"(?i)DAN\s+(?:mode|prompt)",
+    r"(?i)Do\s+Anything\s+Now",
+    r"(?i)STAN\s+(?:mode|prompt)",
+    r"(?i)STRIVE\s+(?:mode|prompt)",
+    r"(?i)MANGO\s+(?:mode|prompt)",
+    
+    # Encoding/obfuscation attempts
+    r"(?i)base64\s*(?:encode|decode)",
+    r"(?i)rot13\s*(?:encode|decode)",
+    r"(?i)hex\s*(?:encode|decode)",
+    r"(?i)unicode\s*(?:encode|decode)",
+    
+    # Hypothetical framing
+    r"(?i)hypothetically\s+(?:speaking|,)",
+    r"(?i)in\s+a\s+hypothetical\s+(?:scenario|situation)",
+    r"(?i)imagine\s+(?:you\s+are|that\s+you)",
+    r"(?i)pretend\s+(?:you\s+are|that\s+you)",
+    
+    # Authority impersonation
+    r"(?i)I\s+am\s+(?:the\s+)?(?:developer|admin|creator|owner)",
+    r"(?i)as\s+(?:the\s+)?(?:developer|admin|creator|owner)",
+    r"(?i)authorized\s+(?:by|access)",
+    
+    # Continuation attacks
+    r"(?i)continue\s+(?:from|where\s+you\s+left\s+off)",
+    r"(?i)pick\s+up\s+where\s+you\s+left\s+off",
+    
+    # Prompt leaking
+    r"(?i)repeat\s+(?:the\s+)?(?:prompt|instructions?)",
+    r"(?i)echo\s+(?:the\s+)?(?:prompt|instructions?)",
+    r"(?i)verbatim\s+(?:prompt|instructions?)",
+]
+
+# Compile patterns for performance
+INJECTION_REGEXES = [re.compile(p) for p in INJECTION_PATTERNS]
+
+# ─── Token Limits ────────────────────────────────────────────────────────────
+# Per-bundle token limits (with safety margin for Claude Projects)
+MAX_BUNDLE_TOKENS = 15000  # Conservative limit per bundle
+MAX_TOTAL_TOKENS = 150000  # Total pack limit (well under 1M context)
+
+# ─── Lost-in-the-Middle Bundle Ordering ──────────────────────────────────────
+# Bundles that should be at START (positions 1-3) - critical for reviewer
+CRITICAL_START_BUNDLES = {
+    "grounding", "decisions", "decree", "verdict", "summary", "overview"
+}
+
+# Bundles that should be at END (last 2-3) - action items, next steps
+CRITICAL_END_BUNDLES = {
+    "handoff", "exit_protocol", "next_steps", "action_items", "verdict", "recommendations"
+}
+
+# Bundles that go in MIDDLE - reference material, evidence, logs
+MIDDLE_BUNDLES = {
+    "implementation", "engine_state", "mandates", "session_log", "research", 
+    "pivot_log", "evidence", "logs", "history", "appendix"
+}
 
 def _escape_bare_xml_chars(text: str) -> str:
     """Fully XML-escape file BODY content for valid XML output.
@@ -215,7 +321,242 @@ class EnhancedContextPacker:
                 f.write(content)
             os.replace(tmp_path, path_str)
         await anyio.to_thread.run_sync(_write)
-    
+
+    # ─── Security: Injection Pattern Scanner ───────────────────────────────────
+    async def _scan_for_injection(self, content: str, file_path: str) -> List[str]:
+        """Scan content for prompt injection patterns.
+        
+        Returns a list of detected pattern names, or empty list if clean.
+        """
+        # Use simple regex scanning for now - can be enhanced with LLM-based detection
+        detections = []
+        for pattern in INJECTION_REGEXES:
+            if pattern.search(content):
+                detections.append(pattern.pattern[:50])
+        return detections
+
+    # ─── Token Limit Enforcement ───────────────────────────────────────────────
+    def _enforce_token_limits(self, themed_bundles: Dict[str, List[dict]]) -> Dict[str, List[dict]]:
+        """Enforce per-bundle and total token limits by splitting oversized bundles."""
+        result = {}
+        total_tokens = 0
+        
+        for theme, files in themed_bundles.items():
+            if not files:
+                continue
+                
+            bundle_tokens = sum(f["token_count"] for f in files)
+            
+            if bundle_tokens <= MAX_BUNDLE_TOKENS:
+                result[theme] = files
+                total_tokens += bundle_tokens
+                continue
+            
+            # Split oversized bundle - REPLACE original with split parts
+            split_bundles = self._split_bundle_by_tokens(theme, files)
+            for split_theme, split_files in split_bundles.items():
+                result[split_theme] = split_files
+                total_tokens += sum(f["token_count"] for f in split_files)
+        
+        # Check total limit
+        if total_tokens > MAX_TOTAL_TOKENS:
+            # Trim lowest-priority bundles (middle bundles first)
+            result = self._trim_to_token_limit(result, MAX_TOTAL_TOKENS)
+        
+        return result
+
+    def _split_bundle_by_tokens(self, theme: str, files: List[dict]) -> Dict[str, List[dict]]:
+        """Split a bundle into multiple sub-bundles by token count."""
+        split_bundles = {}
+        current_bundle = []
+        current_tokens = 0
+        split_num = 1
+        
+        # Sort files by token count descending for better packing
+        sorted_files = sorted(files, key=lambda x: x["token_count"], reverse=True)
+        
+        for file_info in sorted_files:
+            if current_tokens + file_info["token_count"] > MAX_BUNDLE_TOKENS and current_bundle:
+                split_bundles[f"{theme}_part{split_num}"] = current_bundle
+                split_num += 1
+                current_bundle = []
+                current_tokens = 0
+            
+            current_bundle.append(file_info)
+            current_tokens += file_info["token_count"]
+        
+        if current_bundle:
+            split_bundles[f"{theme}_part{split_num}"] = current_bundle
+        
+        return split_bundles
+
+    def _trim_to_token_limit(self, themed_bundles: Dict[str, List[dict]], limit: int) -> Dict[str, List[dict]]:
+        """Trim bundles to fit within total token limit, removing lowest priority first."""
+        # Priority order: start bundles > end bundles > middle bundles
+        all_bundles = []
+        for theme, files in themed_bundles.items():
+            priority = 0
+            if any(kw in theme.lower() for kw in CRITICAL_START_BUNDLES):
+                priority = 3
+            elif any(kw in theme.lower() for kw in CRITICAL_END_BUNDLES):
+                priority = 2
+            else:
+                priority = 1
+            
+            bundle_tokens = sum(f["token_count"] for f in files)
+            all_bundles.append((priority, theme, files, bundle_tokens))
+        
+        # Sort by priority (lowest first for removal)
+        all_bundles.sort(key=lambda x: x[0])
+        
+        total_tokens = sum(b[3] for b in all_bundles)
+        result = {b[1]: b[2] for b in all_bundles}
+        
+        # Remove lowest priority bundles until under limit
+        for priority, theme, files, bundle_tokens in all_bundles:
+            if total_tokens <= limit:
+                break
+            if priority == 1:  # Only remove middle bundles
+                del result[theme]
+                total_tokens -= bundle_tokens
+        
+        return result
+
+    # ─── Lost-in-the-Middle Mitigation ─────────────────────────────────────────
+    def _reorder_bundles_for_litm(self, themed_bundles: Dict[str, List[dict]]) -> Dict[str, List[dict]]:
+        """Reorder bundles to place critical content at start and end (U-shaped attention)."""
+        start_bundles = {}
+        middle_bundles = {}
+        end_bundles = {}
+        
+        for theme, files in themed_bundles.items():
+            theme_lower = theme.lower()
+            
+            if any(kw in theme_lower for kw in CRITICAL_START_BUNDLES):
+                start_bundles[theme] = files
+            elif any(kw in theme_lower for kw in CRITICAL_END_BUNDLES):
+                end_bundles[theme] = files
+            else:
+                middle_bundles[theme] = files
+        
+        # Sort each group by token count (larger first for better context)
+        def sort_by_tokens(bundles):
+            return dict(sorted(bundles.items(), 
+                             key=lambda x: sum(f["token_count"] for f in x[1]), 
+                             reverse=True))
+        
+        start_bundles = sort_by_tokens(start_bundles)
+        middle_bundles = sort_by_tokens(middle_bundles)
+        end_bundles = sort_by_tokens(end_bundles)
+        
+        # Combine: start + middle + end
+        result = {}
+        result.update(start_bundles)
+        result.update(middle_bundles)
+        result.update(end_bundles)
+        
+        return result
+
+    # ─── Bundle Consolidation (≤12 files) ──────────────────────────────────────
+    def _consolidate_bundles(self, themed_bundles: Dict[str, List[dict]], max_slots: int) -> Dict[str, List[dict]]:
+        """Consolidate bundles to stay within max_slots limit (minus 1 for manifest)."""
+        max_bundles = max_slots - 1  # Reserve 1 slot for manifest
+        active_bundles = {k: v for k, v in themed_bundles.items() if v}
+        
+        if len(active_bundles) <= max_bundles:
+            return active_bundles
+        
+        # Sort by priority (start/end bundles kept, middle merged)
+        bundle_priorities = []
+        for theme, files in active_bundles.items():
+            theme_lower = theme.lower()
+            if any(kw in theme_lower for kw in CRITICAL_START_BUNDLES):
+                priority = 3
+            elif any(kw in theme_lower for kw in CRITICAL_END_BUNDLES):
+                priority = 2
+            else:
+                priority = 1
+            bundle_priorities.append((priority, theme, files))
+        
+        # Sort by priority (highest first)
+        bundle_priorities.sort(key=lambda x: x[0], reverse=True)
+        
+        # Keep high-priority bundles, merge rest into "general"
+        result = {}
+        general_files = []
+        
+        for priority, theme, files in bundle_priorities:
+            if len(result) < max_bundles:
+                result[theme] = files
+            else:
+                general_files.extend(files)
+        
+        if general_files:
+            result["general"] = general_files
+        
+        return result
+
+    # ─── Manifest Signing (Ed25519) ────────────────────────────────────────────
+    async def _sign_manifest(self, manifest_path: LibPath, output_dir: LibPath):
+        """Sign manifest with Ed25519 and write signed version."""
+        if not ED25519_AVAILABLE:
+            return
+        
+        try:
+            # Read current manifest
+            def _read():
+                with open(manifest_path, "r") as f:
+                    return f.read()
+            manifest_content = await anyio.to_thread.run_sync(_read)
+            
+            # Load or generate signing key
+            key_path = LibPath("data/coordination/packer_signing_key.pem")
+            key_path.parent.mkdir(parents=True, exist_ok=True)
+            
+            if key_path.exists():
+                def _load_key():
+                    with open(key_path, "rb") as f:
+                        return serialization.load_pem_private_key(f.read(), password=None)
+                private_key = await anyio.to_thread.run_sync(_load_key)
+            else:
+                def _gen_key():
+                    key = ed25519.Ed25519PrivateKey.generate()
+                    pem = key.private_bytes(
+                        encoding=serialization.Encoding.PEM,
+                        format=serialization.PrivateFormat.PKCS8,
+                        encryption_algorithm=serialization.NoEncryption()
+                    )
+                    with open(key_path, "wb") as f:
+                        f.write(pem)
+                    return key
+                private_key = await anyio.to_thread.run_sync(_gen_key)
+            
+            # Sign manifest
+            def _sign():
+                signature = private_key.sign(manifest_content.encode("utf-8"))
+                return signature.hex()
+            
+            signature_hex = await anyio.to_thread.run_sync(_sign)
+            
+            # Append signature block
+            signed_manifest = manifest_content + f"""
+
+---
+## Cryptographic Signature
+**Algorithm**: Ed25519
+**Signature**: `{signature_hex}`
+**Signed**: {datetime.now().isoformat()}
+**Public Key**: `{private_key.public_key().public_bytes(
+    encoding=serialization.Encoding.PEM,
+    format=serialization.PublicFormat.SubjectPublicKeyInfo
+).decode().strip()}`
+"""
+            # Write signed manifest
+            await self._atomic_write(manifest_path, signed_manifest)
+            
+        except Exception as e:
+            print(f"  ⚠️  Manifest signing failed: {e}")
+
     async def pack(self, profile_name: str):
         if profile_name not in self.profiles:
             raise ValueError(f"Profile {profile_name} not found in config.")
@@ -268,8 +609,7 @@ class EnhancedContextPacker:
         # Phase 3: Sort by token count (descending) for priority-based packing
         file_data.sort(key=lambda x: x["token_count"], reverse=True)
         
-        # Phase 4: Distribute files across themes (simple round-robin for now)
-        # More sophisticated algorithms could be implemented here
+        # Phase 4: Distribute files across themes
         themed_bundles: Dict[str, List[dict]] = {theme: [] for theme in profile.themes}
         themed_bundles["general"] = []
         
@@ -287,21 +627,19 @@ class EnhancedContextPacker:
             if not matched:
                 themed_bundles["general"].append(file_info)
         
-        # Phase 5: If we have too many themes, merge smallest ones into general
-        active_themes = [t for t, files in themed_bundles.items() if files]
-        if len(active_themes) > profile.max_slots - 1:  # -1 for manifest
-            # Sort by total token count in each theme
-            theme_totals = [(t, sum(f["token_count"] for f in files)) for t, files in themed_bundles.items() if files]
-            theme_totals.sort(key=lambda x: x[1])  # Ascending by token count
-            
-            # Merge the smallest themes into general
-            num_to_merge = len(active_themes) - (profile.max_slots - 1)
-            for i in range(num_to_merge):
-                theme_to_merge = theme_totals[i][0]
-                themed_bundles["general"].extend(themed_bundles[theme_to_merge])
-                themed_bundles[theme_to_merge] = []
+        # Phase 5: Consolidate bundles to stay within max_slots (≤12 files including manifest)
+        themed_bundles = self._consolidate_bundles(themed_bundles, profile.max_slots)
         
-        # Phase 6: Packaging
+        # Phase 6: Enforce per-bundle token limits (split oversized bundles)
+        themed_bundles = self._enforce_token_limits(themed_bundles)
+        
+        # Phase 6b: Re-consolidate after token limit enforcement to stay within max_slots
+        themed_bundles = self._consolidate_bundles(themed_bundles, profile.max_slots)
+        
+        # Phase 7: Reorder bundles for lost-in-the-middle mitigation
+        themed_bundles = self._reorder_bundles_for_litm(themed_bundles)
+        
+        # Phase 8: Packaging
         manifest_entries = []
         
         # Create manifest first
@@ -345,6 +683,8 @@ class EnhancedContextPacker:
                 continue
             
             bundle_content = []
+            bundle_token_total = 0
+            
             for file_info in files:
                 f_path = file_info["path_obj"]
                 
@@ -354,6 +694,12 @@ class EnhancedContextPacker:
 
                 raw_content = await anyio.to_thread.run_sync(_read_file)
 
+                # Security: Scan for injection patterns before PII masking
+                injection_matches = await self._scan_for_injection(raw_content, file_info["path"])
+                if injection_matches:
+                    print(f"  ⚠️  Injection pattern detected in {file_info['path']}: {injection_matches}")
+                    # Log but continue - the content will be XML-escaped anyway
+                
                 # PII masking before external upload (M8 Zero Telemetry / M7 Local-First)
                 # API: detect() is async (runs in thread), tokenize() is sync.
                 # The masker instance was created once before this loop — do NOT re-instantiate here.
@@ -392,8 +738,13 @@ class EnhancedContextPacker:
                 footer = "</file>"
                 # Body is fully XML-escaped by _escape_bare_xml_chars() above.
                 bundle_content.append(header + "\n" + pruned_content + "\n" + footer + "\n\n")
+                bundle_token_total += file_info["token_count"]
 
                 manifest_entries.append(f"- {file_info['path']} -> {theme}.xml ({file_info['token_count']} tokens)")
+
+            # Check bundle token limit
+            if bundle_token_total > MAX_BUNDLE_TOKENS:
+                print(f"  ⚠️  Bundle {theme} exceeds token limit: {bundle_token_total} > {MAX_BUNDLE_TOKENS}")
 
             # B5 fix: wrap all <file> blocks in a single root element so the
             # file is a valid XML document (ElementTree requires exactly one root).
@@ -402,8 +753,8 @@ class EnhancedContextPacker:
             bundle_file = output_dir / f"{theme}.xml"
             await self._atomic_write(bundle_file, root_open + "".join(bundle_content) + root_close)
         
-        # Generate Manifest
-        await self._atomic_write(manifest_path, manifest_content)
+        # Phase 9: Sign manifest with Ed25519 for integrity verification
+        await self._sign_manifest(manifest_path, output_dir)
         
         return output_dir
     
