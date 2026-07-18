@@ -241,3 +241,9 @@ data/entities/*/workspace/HALL_OF_RECORDS/
 
 # ── Grok CLI Config ─────────────────────────────────────────────
 .grok/
+auth.json
+credentials.json
+.env
+.env.*
+*.key
+*.pem
