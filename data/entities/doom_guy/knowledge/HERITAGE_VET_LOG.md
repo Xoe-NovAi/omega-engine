@@ -758,7 +758,25 @@ The John Carmack entity plans to ingest primary source material — .plan files 
 
 ---
 
-*Last Updated: 2026-07-10 (D208 Heritage Remediation Ratified; PEM Correction Applied; Revoked Tags Archived) | Maintained by: Doom Guy*
+### vet-072: Pi Project PR #2903 — Gemma 4 Thinking Config Pattern
+- **Pattern**: [heritage: pi-2026] Gemma 4 Thinking Config
+- **Source**: Pi Project PR #2903 (merged 2026-04-09 by @aadishv)
+- **File Locations**:
+  - `packages/ai/src/providers/google.ts` — `isGemma4Model()` regex detection at line ~247
+  - `packages/ai/src/providers/google.ts` — `reasoningEffortMap` binary mapping at lines ~250-260
+  - `packages/coding-agent/docs/models.md` — Documentation of Gemma 4 thinking levels
+- **Technique**: Regex-based model family detection (`/gemma-?4/i`) + binary thinking level mapping (`minimal|low → MINIMAL`, `medium|high|xhigh → HIGH`, `none → omit`)
+- **Hardware Constraint**: Pi's limited compute budget required minimal config overhead — binary toggle (MINIMAL/HIGH) avoids the complexity of graduated thinking budgets while still providing reasoning capability on constrained hardware
+- **Scope Declaration**: This tag applies to the `detection_regex` pattern (`/gemma-?4/i`) and the binary `MINIMAL`/`HIGH` thinking level mapping ONLY — NOT to Pi's full provider architecture, `reasoningEffortMap` abstraction, or `ThinkingLevel` type system
+- **Score**: 8/10
+- **Justification**: [Right Approximation] The binary thinking toggle is a proven production pattern that solves the exact problem Omega faces: Gemma 4 only supports two thinking levels. The regex detection is minimal, performant, and hardware-agnostic. The Qualification Gate passes — this pattern is justified without citing Pi's compute constraints because binary enum mapping for models with limited thinking levels is a general software engineering principle.
+- **Vetted by**: Doom Guy, Verity
+- **Date**: 2026-07-19
+- **Qualification Gate**: PASSED — Cannot be justified without hardware constraint? NO — binary enum mapping for limited-value enums is a general pattern
+
+---
+
+*Last Updated: 2026-07-19 (vet-072 Pi PR #2903 Gemma 4 Thinking Config Pattern Added) | Maintained by: Doom Guy*
 
 ---
 

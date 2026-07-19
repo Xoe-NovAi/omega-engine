@@ -19,5 +19,6 @@
 | QVM / Bot AI | Quake III Arena 1999 | `[id-soft: quake3-1999] QVM` |
 | Game DLL / Client Prediction | Quake II 1997 | `[id-soft: quake2-1997] Game DLL` |
 | Scripting / GUI Framework | DOOM 3 2004 | `[id-soft: doom3-2004] Scripting` |
+| Gemma 4 Thinking Config (binary MINIMAL/HIGH + regex detection) | Pi Project PR #2903 2026 | `[heritage: pi-2026] Gemma 4 Thinking Config` |
 
 *(For full 35+ mappings and philosophical frameworks, see Canonical Source)*
