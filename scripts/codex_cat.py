@@ -2,6 +2,9 @@
 """
 Stack-Cat Protocol Implementation for OMEGA_CODEX.md
 Generates the single startup read target for all agents.
+
+D-277: Hydration header lives in scripts/hydration_header.md
+D-281: Codex uses condensed reference cards, not full verbatim dumps.
 """
 import json
 import logging
@@ -9,6 +12,11 @@ from pathlib import Path
 from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
+
+# Safety net: warn if any single file exceeds this line count
+MAX_LINES_PER_FILE = 150
+# Safety net: warn if total codex exceeds this line count
+MAX_LINES_TOTAL = 400
 
 class CodexGenerationError(Exception):
     """Base exception for codex generation."""
@@ -71,6 +79,9 @@ def generate_codex(root: Path = None, out_file: Path = None) -> None:
     if not codex_content[-1].endswith("\n"):
         codex_content.append("\n")
     
+    total_lines = 0
+    warnings = []
+    
     for group, files in groups.items():
         codex_content.append(f"## 📁 GROUP: {group.upper()}\n\n")
         for rel_path in files:
@@ -84,15 +95,32 @@ def generate_codex(root: Path = None, out_file: Path = None) -> None:
                     
                 size = len(content.encode('utf-8'))
                 lines = len(content.splitlines())
-                header = f"### {rel_path}\n**Type**: markdown\n**Size**: {size} bytes\n**Lines**: {lines}\n\n"
-                codex_content.append(header + content + "\n\n---\n\n")
+                
+                # Safety net: warn if file exceeds max lines
+                if lines > MAX_LINES_PER_FILE:
+                    warnings.append(f"⚠️ {rel_path}: {lines} lines (max {MAX_LINES_PER_FILE}) — consider condensing")
+                
+                file_header = f"### {rel_path}\n**Type**: markdown\n**Size**: {size} bytes\n**Lines**: {lines}\n\n"
+                codex_content.append(file_header + content + "\n\n---\n\n")
+                total_lines += lines
             else:
                 logger.warning(f"File not found: {filepath}")
                 codex_content.append(f"### {rel_path}\n**Status**: NOT FOUND\n\n---\n\n")
-                
+    
+    # Safety net: warn if total exceeds max lines
+    if total_lines > MAX_LINES_TOTAL:
+        warnings.append(f"⚠️ Total codex: {total_lines} lines (max {MAX_LINES_TOTAL}) — bloat detected")
+    
     try:
-        out_file.write_text("".join(codex_content), encoding="utf-8")
-        logger.info(f"Generated {out_file} successfully. Size: {len(''.join(codex_content))} chars.")
+        output = "".join(codex_content)
+        out_file.write_text(output, encoding="utf-8")
+        final_lines = len(output.splitlines())
+        logger.info(f"Generated {out_file} successfully.")
+        logger.info(f"  Lines: {final_lines} | Size: {len(output)} bytes")
+        for w in warnings:
+            logger.warning(w)
+        if not warnings:
+            logger.info(f"  ✅ All size checks passed")
     except Exception as e:
         logger.error(f"Failed to write output file {out_file}: {e}")
         raise OutputWriteError(f"Failed to write output file: {e}") from e
