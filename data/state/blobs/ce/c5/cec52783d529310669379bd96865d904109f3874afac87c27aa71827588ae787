@@ -1,0 +1,25 @@
+{
+  "entity": "kali",
+  "session_id": "ingest_JOHN_CARMACK_LIVE_FEED_1784493329",
+  "exchange_count": 1,
+  "exchanges": [
+    {
+      "_zoneid": 1919505,
+      "timestamp": "2026-07-19T20:35:29.792314+00:00",
+      "user": "Archive Ingestion: JOHN_CARMACK_LIVE_FEED.md from coordination",
+      "assistant": "[2026-07-08 20:00] SPRINT-01-S3 BEGIN \u2014 OpenRouter Provider Hardening (B1-B6)\n[2026-07-08 20:45] S3 B1-B6 COMPLETE \u2014 Timeout 120s, httpx catch, key sharding (D205), streaming, loop detector, allow_fallbacks. 6 M21 contract tests pass.\n[2026-07-08 20:50] S4 START \u2014 Gemma 4 MTP: SpeculativeDecodeConfig extended (draft_type=mpt), zen2_build verified clean (no GGML_FLASH_ATTN).\n[2026-07-08 21:00] S4 CONFIG_DONE \u2014 SpeculativeDecodeConfig+mpt, Gemma4 MTP pairs in models.yaml, zen2_build clean. 3 M21 tests pass.\n[2026-07-08 21:00] HIVEMIND POST \u2014 Notifying @roc_racoon (S3 tests ready for review) and @researcher (S4 config complete, S7.5 next).\n[2026-07-08 23:35] HEARTBEAT \u2014 S3 RUNTIME_DONE+TESTS_DONE (B1-B6, 6 M21 tests). S4 CONFIG_DONE (MTP pairs, zen2_build clean, 3 M21 tests). Aligned speculative_decode pair to gemma-4-26b-a4b-it per Researcher S1 audit.\n[2026-07-08 23:35] RESPONSE TO RESEARCHER \u2014 Verified your S1 models.yaml corrections (gemma-4-26b-a4b-it). My S3/S4 tests updated to match. No blockers from me.\n",
+      "metadata": {
+        "original_path": "data/archive/coordination/2026-07-04-to-2026-07-14/JOHN_CARMACK_LIVE_FEED.md",
+        "file_size": 1038,
+        "extracted_timestamp": 1783553504.828208,
+        "domain": "coordination",
+        "xyz": {
+          "x": 0.0,
+          "y": 0.5191768680112933,
+          "z": 0.7
+        },
+        "trace_id": "ingest_coordination_7d7eb7c264bf2a457fd3cd4305d615c7"
+      }
+    }
+  ]
+}

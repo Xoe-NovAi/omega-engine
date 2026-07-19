@@ -1,0 +1,25 @@
+{
+  "entity": "kali",
+  "session_id": "ingest_projection_1784493399",
+  "exchange_count": 1,
+  "exchanges": [
+    {
+      "_zoneid": 1919505,
+      "timestamp": "2026-07-19T20:36:39.535505+00:00",
+      "user": "Archive Ingestion: projection.md from coordination",
+      "assistant": "# \ud83d\udd31 Session Gnosis \u2014 symlink_test (MIAP Projected)\n**Projected**: 2026-07-19T03:55:52.793282+00:00\n**Event Count**: 0\n---",
+      "metadata": {
+        "original_path": "data/coordination/session_gnosis/symlink_test/projection.md",
+        "file_size": 126,
+        "extracted_timestamp": 1784433352.7934778,
+        "domain": "coordination",
+        "xyz": {
+          "x": 0.0,
+          "y": 0.5471533117584253,
+          "z": 0.7
+        },
+        "trace_id": "ingest_coordination_e8f986644a2b8ec18c581f39b0dc5739"
+      }
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "entity": "kali",
+  "session_id": "ingest_KALI_WARP_HANDOFF_20260705_1784493379",
+  "exchange_count": 1,
+  "exchanges": [
+    {
+      "_zoneid": 1919505,
+      "timestamp": "2026-07-19T20:36:19.873136+00:00",
+      "user": "Archive Ingestion: KALI_WARP_HANDOFF_20260705.md from coordination",
+      "assistant": "# \ud83d\udd31 KALI \u2014 WARP Deployment Handoff\n# \u2b21 OMEGA \u2b21 KALI \u2b21 2026-07-05 \u2b21 WARP-HANDOFF\n# AP: AP-KALI-WARP-HANDOFF-v1.0.0\n\n## Status: Taking Over WARP Debug from previous agent\n\n### Issues Found & Fixed (Last 6 Rounds)\n\n| Fix | File | Status |\n|-----|------|--------|\n| ns-prep: Remove ProtectHome=yes (implied PrivateTmp \u2192 broken bind mount) | warp-ns-prep@.service | \u2705 DEPLOYED |\n| socat-bridge: warp_node_8081 \u2192 warp_node_1 namespace name | socat-bridge@.service | \u2705 DEPLOYED |\n| systemd $$ escaping: ${NS}/${port} misinterpreted | socat-bridge@.service | \u2705 DEPLOYED |\n| warp-reg: --accept-tos + rm -f stale reg.json | warp-reg@.service | \u2705 IN SOURCE |\n| warp-reg: Copy config to --config-dir path after registration | warp-reg@.service | \u2705 IN SOURCE |\n| warp-node: --accept-tos on all ExecStartPost warp-cli commands | warp-node@.service | \u2705 IN SOURCE |\n| warp-node: StartLimitBurst 5\u219210 (deploy cycle headroom) | warp-node@.service | \u2705 IN SOURCE |\n\n### Current Blocker Analysis\n\n**Root Cause Chain (complete)**:\n\n1. `warp-cli --accept-tos registration delete` is a NO-OP \u2014 prints \"Success\" but doesn't delete\n2. `warp-cli --accept-tos registration new` writes reg.json to DEFAULT path `/var/lib/cloudflare-warp/reg.json`\n3. `warp-svc --config-dir /var/lib/cloudflare-warp-%i` expects reg.json in CUSTOM path\n4. Config dirs ARE now created (StateDirectory=) but reg.json is in wrong path \u2192 RegistrationInfo: None\n5. ExecStartPost warp-cli commands (mode proxy, proxy port, connect) also need --accept-tos\n6. When ExecStartPost warp-cli fails \u2192 systemd SIGTERMs warp-svc \u2192 restart loop \u2192 StartLimitBurst hit\n\n**Fixes Applied in Source (need deploy)**:\n- warp-reg: `mkdir -p /var/lib/cloudflare-warp-%i && rm -f ... && warp-cli --accept-tos registration new && cp -r /var/lib/cloudflare-warp/* /var/lib/cloudflare-warp-%i/`\n- warp-node: `warp-cli --accept-tos mode proxy/port/connect` on all ExecStartPost\n\n### Current Test Suite\n- 791 tests pass, 24 skip, 3 xfailed\n- No regressions from WARP changes\n\n### Researcher Coordination\n- @Researcher: WARP proxy pool spec at docs/research/warp_proxy_pool/WARP_PROXY_POOL_SPEC.md\n- Config directory path mismatch documented \u2014 need to update spec with --config-dir copy step\n- ExecStartPost --accept-tos requirement should be added to warp-node spec section\n",
+      "metadata": {
+        "original_path": "data/archive/coordination/2026-07-04-to-2026-07-14/KALI_WARP_HANDOFF_20260705.md",
+        "file_size": 2340,
+        "extracted_timestamp": 1783209600.0,
+        "domain": "coordination",
+        "xyz": {
+          "x": 0.0,
+          "y": 0.5082417582417582,
+          "z": 0.7
+        },
+        "trace_id": "ingest_coordination_ac1c65e2bd8f42da0b9fc07c707424bf"
+      }
+    }
+  ]
+}

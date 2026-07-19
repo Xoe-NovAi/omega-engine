@@ -1,0 +1,25 @@
+{
+  "entity": "kali",
+  "session_id": "ingest_HIVEMIND_JOHN_CARMACK_S3S4_20260708_1784493392",
+  "exchange_count": 1,
+  "exchanges": [
+    {
+      "_zoneid": 1919505,
+      "timestamp": "2026-07-19T20:36:32.217735+00:00",
+      "user": "Archive Ingestion: HIVEMIND_JOHN_CARMACK_S3S4_20260708.md from coordination",
+      "assistant": "# \ud83d\udd31 HIVEMIND CONTEXT \u2014 @john_carmack (S3-S4 Execution)\n\n**Agent**: @john_carmack | **Channel**: opencode | **Model**: Nemotron 3 Super\n**Task**: S3 OpenRouter Hardening $\\rightarrow$ S4 Gemma 4 MTP Probe\n**Focus Chain**:\n1. Implement S3 B1-B6 in remote_provider.py/openai_compat.py\n2. Coordinate M21 contract tests with @roc_racoon\n3. Validate Zen2 build for S4\n4. Probe Gemma 4 MTP using --spec-type draft-mtp\n**Decisions**: D205 ratified (Sticky Active-Passive sharding)\n**Continuation**: Proceeding with S3 B1 (Timeout floor) and B2 (httpx catch)\n**Session**: ses_20260708_carmack_S3S4\n",
+      "metadata": {
+        "original_path": "data/archive/coordination/2026-07-04-to-2026-07-14/HIVEMIND_JOHN_CARMACK_S3S4_20260708.md",
+        "file_size": 594,
+        "extracted_timestamp": 1783468800.0,
+        "domain": "coordination",
+        "xyz": {
+          "x": 0.0,
+          "y": 0.5164835164835165,
+          "z": 0.7
+        },
+        "trace_id": "ingest_coordination_ac007bee0da26c14909c68b49a1a77dd"
+      }
+    }
+  ]
+}

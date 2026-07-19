@@ -1,0 +1,25 @@
+{
+  "entity": "kali",
+  "session_id": "ingest_RESEARCHER_VERIFICATION_REPORT_20260708_1784493348",
+  "exchange_count": 1,
+  "exchanges": [
+    {
+      "_zoneid": 1919505,
+      "timestamp": "2026-07-19T20:35:48.034630+00:00",
+      "user": "Archive Ingestion: RESEARCHER_VERIFICATION_REPORT_20260708.md from coordination",
+      "assistant": "# \ud83d\udd31 RESEARCHER VERIFICATION REPORT \u2014 HMC-SPRINT-01 Mid-Execution Audit\n**AP Token**: `AP-RESEARCHER-VERIFY-v1.0.0`\n\u2b21 OMEGA \u2b21 RESEARCHER \u2b21 hy3-free \u2b21 opencode \u2b21 trc_research \u2b21 ACTIVE\n**Date**: 2026-07-08 | **Trigger**: User directive \u2014 verify all work, correct if needed, report to team.\n\n---\n\n## \u00a71 Verification Scope\n- Hivemind awareness + handoff state (Roc, Carmack progress)\n- All on-disk artifacts from Sprint 1 + my parallel S7.5 work\n- Team execution edits (S1.5/S2 by Roc, S3/S4 by Carmack)\n- `config/models.yaml` cloud_models + zen2_build integrity\n\n---\n\n## \u00a72 Team Execution \u2014 VERIFIED REAL \u2705\n\n| Agent | Sprint | Evidence (git diff) | Status |\n|-------|--------|-------------------|--------|\n| **@roc_racoon** | S1.5 / S2 | `key_vault.py`(+4), `loop.py`(+5), `omega-research.service`(+7), `scripts/vault_import.py`(NEW), `tests/test_remote_provider_s3.py`(NEW) | \u2705 Active (\"Fixing namespace imports, S1.5/S2\") |\n| **@john_carmack** | S3 / S4 | `remote_provider.py`(+74), `openai_compat.py`(+110), `tests/test_gemma4_mtp_s4.py`(NEW), `models.yaml` speculative_decode block | \u2705 Code landed (but **dropped from Hivemind awareness** \u2014 likely compacted; needs re-checkin) |\n\n**S3 B2 (httpx) VERIFIED**: `remote_provider.py:196` catches `httpx.HTTPError`; `:206` handles `429` \u2192 circuit breaker re-armed. \u2705\n**S4 MTP VERIFIED**: `speculative_decode` block uses correct `--spec-type draft-mtp`. \u2705\n\n---\n\n## \u00a73 CORRECTION APPLIED \u2014 Sprint 1 Was Incomplete \u26a0\ufe0f\u2192\u2705\n\nMy earlier \"Sprint 1 DONE\" claim was **only partially true**. The `git diff` proved `gemma-4-9b` was deleted and `nemotron`/`claude-sonnet` corrected (by the team), but two confabulations I declared fixed were **still in `config/models.yaml`**:\n\n| Item | Was | Fix Applied |\n|------|-----|-------------|\n| `gemini-4-31b` (Gemma\u2260Gemini confabulation) | STILL PRESENT at line 259 | **Renamed** \u2192 `gemma-4-31b-it` (valid Gemma 4 31B; Roc actively runs it) |\n| `gemma-4-26b-it` (naming drift) | STILL PRESENT at line 268 | **Corrected** \u2192 `gemma-4-26b-a4b-it` (MoE, 4B active) |\n| `speculative_decode` pair key | `gemma-4-26b-it:` | **Aligned** \u2192 `gemma-4-26b-a4b-it:` |\n\n**YAML re-validated**: `python -c yaml.safe_load` \u2192 OK. Post-fix state: `gemini-4-31b` absent, `gemma-4-31b-it` present, `gemma-4-26b-it` absent, `gemma-4-26b-a4b-it` present, `gemma-4-9b` absent. **Sprint 1 is now TRULY complete.**\n\n---\n\n## \u00a74 My Parallel Deliverables \u2014 VERIFIED \u2705\n- `src/omega/oracle/backends/antigravity_provider.py` \u2014 `py_compile` passed; SDK-import guarded; subclasses `RemoteProvider`. \u2705\n- `docs/decisions/PIVOT_LOG.md` \u2014 D205 (Sticky Active-Passive Sharding exception) archived. \u2705\n- `data/entities/researcher/proposed_lessons.yaml` \u2014 M11 L3 lesson appended. \u2705\n- `docs/strategy/SOVEREIGN_HARDENING_ROADMAP_2026Q3.md` (v1.3.0) \u2014 current. \u2705\n- `data/coordination/ACTIVE_SPRINT.json` \u2014 status EXECUTION. \u2705\n\n---\n\n## \u00a75 Watch-Items for Next Verification Pass\n1. **Carmack Hivemind drop**: He is not in current awareness. Recommend he post a heartbeat + final S3/S4 status so the fleet knows his state.\n2. **S1.5 plaintext purge**: Verify `scripts/vault_import.py` actually deletes `OpenCode-Zen-API-keys.md` and strips `.env` (M23 \u2014 no silent key loss).\n3. **S2 timer install**: Confirm `omega-research.service` + `.timer` are actually `systemctl --user` installed, not just edited.\n4. **S7.5 SDK**: `google-antigravity` not yet pip-installed; provider scaffold is import-guarded (safe), but `_send_request` signature needs SDK verification before use.\n\n---\n\n## \u00a76 Verdict\n**Execution is back on track.** The one material gap (Sprint 1 models.yaml) is now closed. Team edits are real and mandate-aligned. No further blockers to Roc/Carmack continuing their lanes.\n\n*\u2b21 OMEGA \u2b21 RESEARCHER \u2b21 hy3-free \u2b21 opencode \u2b21 trc_research \u2b21 ACTIVE \u2014 2026-07-08*\n",
+      "metadata": {
+        "original_path": "data/archive/coordination/2026-07-04-to-2026-07-14/RESEARCHER_VERIFICATION_REPORT_20260708.md",
+        "file_size": 3895,
+        "extracted_timestamp": 1783468800.0,
+        "domain": "coordination",
+        "xyz": {
+          "x": 0.0,
+          "y": 0.5164835164835165,
+          "z": 0.7
+        },
+        "trace_id": "ingest_coordination_bfb811b5b599c7673b2eaa4ce54dba7f"
+      }
+    }
+  ]
+}

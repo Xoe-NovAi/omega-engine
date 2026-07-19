@@ -25,6 +25,11 @@ inference:
     priority: 4
     enabled: true
     description: Google AI Studio / Vertex AI - Google's own models only
+  - provider: google-compat
+    priority: 4
+    enabled: true
+    description: Google AI Studio / Vertex AI compatible provider with Gemma 4 thinking
+      support
   - provider: openrouter
     priority: 5
     enabled: true
@@ -120,6 +125,11 @@ inference:
       api_key: env:ANTIGRAVITY_API_KEY
       base_url: https://api.antigravity.ai/v1
       n_threads: 4
+      streaming:
+        chunk_timeout_ms: 45000
+        total_timeout_ms: 600000
+        fallback_on_timeout: true
+        fallback_provider: native-gguf
       supported_models:
       - gemini-3.5-flash
       - gemini-3.1-pro
@@ -132,9 +142,32 @@ inference:
       description: Google AI Studio / Vertex AI - Google's own models only
       api_key: env:GOOGLE_API_KEY
       n_threads: 4
+      streaming:
+        chunk_timeout_ms: 30000
+        total_timeout_ms: 300000
+        fallback_on_timeout: true
+        fallback_provider: native-gguf
       supported_models:
       - gemma-4-31b-it-free
       - gemma-4-26b-a4b-it-free
+      - gemini-2.5-pro
+      - gemini-2.5-flash
+    google-compat:
+      priority: 4
+      enabled: true
+      description: Google AI Studio / Vertex AI compatible provider with Gemma 4 thinking
+        support
+      api_key: env:GOOGLE_API_KEY
+      n_threads: 4
+      streaming:
+        chunk_timeout_ms: 30000
+        total_timeout_ms: 300000
+        fallback_on_timeout: true
+        fallback_provider: native-gguf
+      supported_models:
+      - gemma-4-31b-it
+      - gemma-4-26b-it
+      - gemma-4-12b-unified
       - gemini-2.5-pro
       - gemini-2.5-flash
     openrouter:
@@ -145,10 +178,10 @@ inference:
       base_url: https://openrouter.ai/api
       n_threads: 4
       streaming:
-        chunk_timeout_ms: 30000      # 30s per chunk
-        total_timeout_ms: 300000     # 5 min total
+        chunk_timeout_ms: 30000
+        total_timeout_ms: 300000
         fallback_on_timeout: true
-        fallback_provider: "native-gguf"
+        fallback_provider: native-gguf
       supported_models:
       - google/gemma-4-31b-it:free
       - google/gemma-4-26b-a4b-it:free
@@ -181,10 +214,10 @@ inference:
       description: OpenCode Zen - CLI-exclusive cloud models
       n_threads: 4
       streaming:
-        chunk_timeout_ms: 30000      # 30s per chunk (Nemotron needs this)
-        total_timeout_ms: 300000     # 5 min total
+        chunk_timeout_ms: 30000
+        total_timeout_ms: 300000
         fallback_on_timeout: true
-        fallback_provider: "native-gguf"
+        fallback_provider: native-gguf
       supported_models:
       - claude-sonnet-5-high-thinking
       - claude-haiku-4.5-extended
@@ -211,6 +244,11 @@ inference:
       enabled: true
       description: Cline - CLI agent with DeepSeek V4 Flash / MiMo V2.5
       n_threads: 4
+      streaming:
+        chunk_timeout_ms: 60000
+        total_timeout_ms: 600000
+        fallback_on_timeout: true
+        fallback_provider: native-gguf
       supported_models:
       - deepseek-v4-flash
       - mimo-v2.5
@@ -221,6 +259,11 @@ inference:
       api_key: env:ANTHROPIC_API_KEY
       base_url: https://api.anthropic.com/v1
       n_threads: 4
+      streaming:
+        chunk_timeout_ms: 30000
+        total_timeout_ms: 300000
+        fallback_on_timeout: true
+        fallback_provider: native-gguf
       supported_models:
       - claude-sonnet-5-high-thinking
       - claude-haiku-4.5-extended
@@ -232,6 +275,11 @@ inference:
       api_key: env:XAI_API_KEY
       base_url: https://api.x.ai/v1
       n_threads: 4
+      streaming:
+        chunk_timeout_ms: 30000
+        total_timeout_ms: 300000
+        fallback_on_timeout: true
+        fallback_provider: native-gguf
       supported_models:
       - grok-4.3-web
       - grok-4.1-fast-web

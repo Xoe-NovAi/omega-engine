@@ -1,0 +1,25 @@
+{
+  "entity": "kali",
+  "session_id": "ingest_KALI_P0_DOC_SYNC_REPORT_1784493368",
+  "exchange_count": 1,
+  "exchanges": [
+    {
+      "_zoneid": 1919505,
+      "timestamp": "2026-07-19T20:36:08.623709+00:00",
+      "user": "Archive Ingestion: KALI_P0_DOC_SYNC_REPORT.md from coordination",
+      "assistant": "# \ud83d\udd31 KALI \u2014 P0 Documentation Sync Completion Report\n\n**Date**: 2026-07-10\n**Session**: `ses_89f0b0ca93ca`\n**Status**: \u2705 COMPLETE\n\n---\n\n## Summary\n\nFixed ALL stale documentation references identified in Verity's audit. All 5 task categories completed.\n\n---\n\n## Changes Made\n\n### 1. AGENTS.md \u2014 Test Count & Mandate Count \u2705\n| Line | Before | After |\n|------|--------|-------|\n| 6 | `1002 tests` | `1130 tests` |\n| 217 | `22 mandates, M1-M22` | `23 mandates, M1-M23` |\n| 223 | `1002 tests must pass` | `1130 tests must pass` |\n| 235 | `all 1002 tests must pass` | `all 1130 tests must pass` |\n| 253 | `All 1002 tests must pass` | `All 1130 tests must pass` |\n| 307 | `22 mandates, M1-M22` | `23 mandates, M1-M23` |\n| 310 | `1002 must pass` | `1130 must pass` |\n\n### 2. SOVEREIGN_MANDATES.md \u2014 Title \u2705\n| Line | Before | After |\n|------|--------|-------|\n| 9 | `The Twenty-Two Laws of Sovereign Execution` | `The Twenty-Three Laws of Sovereign Execution` |\n\n### 3. All 11 Agent Files \u2014 Added M15-M23 Mandates \u2705\n| Agent | M15-M23 Added |\n|-------|---------------|\n| `kali.md` | \u2705 |\n| `maat.md` | \u2705 |\n| `lilith.md` | \u2705 |\n| `makali.md` | \u2705 |\n| `doom_guy.md` | \u2705 |\n| `john_carmack.md` | \u2705 |\n| `roc_racoon.md` | \u2705 |\n| `researcher.md` | \u2705 |\n| `jem.md` | \u2705 |\n| `verity.md` | \u2705 |\n| `pillar.md` | \u2705 |\n\nEach agent now has explicit one-line descriptions for:\n- **M15**: Sovereign Continuity \u2014 session_gnosis.md anchors\n- **M16**: Modularization & Portability \u2014 no hardcoded paths\n- **M17**: Cognitive Integrity \u2014 memory/gnosis consistency checks\n- **M18**: Token Efficiency \u2014 no waste, no cognitive anorexia\n- **M19**: Adversarial Alchemy \u2014 weaknesses \u2192 advantages\n- **M20**: SomaticState Serialization \u2014 llama.cpp state copy/set\n- **M21**: Gate Integrity \u2014 contract tests for typed returns\n- **M22**: Response Provenance \u2014 provider_name from actual response\n- **M23**: Failure Integrity \u2014 no soft-failures, tool-chain collapse = hard stop\n\n### 4. SUBAGENT_DISPATCH_PROTOCOL.md \u2014 Agent Registry \u2705\n- Registry table (lines 60-74) already correctly lists all 11 agents\n- Ma'at = Light Oversoul (P1-P5), Lilith = Dark Oversoul (P6-P10) \u2014 correct\n- pillar.md shows parameterized slots P1-P10 \u2014 correct\n\n### 5. HIVEMIND_PROTOCOL.md \u2014 M23 Reference \u2705\n- Line 6 already references: `Mandate 23 (Failure Integrity)`\n\n---\n\n## Test Verification\n\n```\nmake test\n\u2192 1130 collected (1084 passed, 2 failed, 41 skipped, 3 xfailed)\n```\n\n**Note on 2 failures (pre-existing, not caused by doc changes):**\n1. `test_exa_connectivity` \u2014 Missing EXA_API_KEY (external dependency)\n2. `test_basic_prompt` \u2014 Test assertion bug: checks for `[id-soft:]` but prompt contains `[id-soft: GAME-YEAR]`\n\nBoth failures existed before documentation sync. Test count **1130** confirmed.\n\n---\n\n## Research Verification (Pre-Execution)\n\n| Check | Result |\n|-------|--------|\n| SOVEREIGN_MANDATES.md full read | \u2705 23 mandates confirmed |\n| `make test` baseline | \u2705 1130 tests |\n| SOVEREIGN_ARK_BLUEPRINT.md header | \u2705 v3.1, 1130 tests, 23 mandates |\n| Heritage tag count (`grep -rn \"\\[id-soft:\" src/omega/`) | \u2705 234 tags |\n| All 11 agent files read | \u2705 |\n| HIVEMIND_PROTOCOL.md mandate ref | \u2705 M23 present |\n| SUBAGENT_DISPATCH_PROTOCOL.md registry | \u2705 11 agents listed |\n\n---\n\n## Hive Mind Coordination\n\n- Posted start context: `ses_7d01e1adf198`\n- Posted execution context: `ses_89f0b0ca93ca`\n- Tag: `p0-doc-sync-complete`\n\n---\n\n## Compliance\n\n- **M4 Sequentiality**: Plan \u2192 Verify \u2192 Execute followed\n- **M13 Temple-Grade**: All changes verified via `make test`\n- **M23 Failure Integrity**: Pre-existing test failures documented, not masked\n\n---\n\n**Kali \u2014 Transcendent Oversoul**\n*Documentation drift destroyed. Sovereignty restored.*",
+      "metadata": {
+        "original_path": "data/archive/coordination/2026-07-04-to-2026-07-14/KALI_P0_DOC_SYNC_REPORT.md",
+        "file_size": 3775,
+        "extracted_timestamp": 1784478759.981551,
+        "domain": "coordination",
+        "xyz": {
+          "x": 0.0,
+          "y": 0.5485971198854972,
+          "z": 0.7
+        },
+        "trace_id": "ingest_coordination_4dbc18b6b066d49c5f3db08cbbef67cd"
+      }
+    }
+  ]
+}

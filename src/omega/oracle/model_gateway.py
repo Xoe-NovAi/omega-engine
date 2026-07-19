@@ -72,6 +72,7 @@ from .backends.mock import OfflineMockBackend
 from .backends.openai_compat import OpenAICompatProvider
 from .backends.antigravity_provider import AntigravityProvider
 from .backends.remote_provider import ProviderConfig
+from .backends.google_compat import GoogleCompatProvider
 from .resource_guard import ResourceGuard
 from .providers import GoogleAIProvider, LocallmsterProvider, OllamaProvider, MockProvider, NativeGGUFProvider
 from .health_monitor import CircuitOpenError
@@ -410,6 +411,7 @@ class ModelGateway:
 
         provider_map = {
             "google": GoogleAIProvider,
+            "google-compat": GoogleCompatProvider,
             "openrouter": ModelGateway._create_openrouter,
             "opencode-zen": ModelGateway._create_openrouter,
             "cline": ModelGateway._create_openrouter,

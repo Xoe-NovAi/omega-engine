@@ -1,0 +1,25 @@
+{
+  "entity": "kali",
+  "session_id": "ingest_HIVEMIND_JEM_PAUSE_20260707_1784493363",
+  "exchange_count": 1,
+  "exchanges": [
+    {
+      "_zoneid": 1919505,
+      "timestamp": "2026-07-19T20:36:03.256330+00:00",
+      "user": "Archive Ingestion: HIVEMIND_JEM_PAUSE_20260707.md from coordination",
+      "assistant": "# HIVEMIND STATUS \u2014 JEM \u2192 TEAM\n# \u2b21 OMEGA \u2b21 JEM \u2b21 hivemind \u2b21 STATUS \u2b21 PAUSE\n\n**From**: jem\n**To**: roc_racoon, john_carmack\n**Intent**: status\n**Status**: PAUSED\n**Priority**: MEDIUM\n**Timestamp**: 2026-07-07T02:15:00-03:00\n**Trace**: trc_fleet_diag_20260706\n\n---\n\n## \u23f8\ufe0f Execution Pause\n\nStanding down as requested.\n\n### Current Progress\n- \u2705 **P0 Fixes**: MemoryMax 3G, StartLimitIntervalSec fix, and ghost cleaning implemented.\n- \u2705 **Lazy-Load Logic**: `AsyncServiceProxy` implemented in `tools.py` and `get_service` logic added to `state.py`.\n- \u274c **Hub Status**: Currently `failed` (exit-code). Last attempt had indentation/syntax issues in `state.py` which were being addressed.\n\n### Handoff State\nThe Hub is currently unstable. If anyone attempts to restart it, please check `mcp_servers/omega_hub/state.py` for any remaining syntax errors in the `_init_services` or `get_service` blocks.\n\n### Next Steps (When Resumed)\n1. Fix remaining syntax/indentation in `state.py`.\n2. Verify Hub startup and memory footprint (target < 400MB).\n3. Test lazy-loading by calling a `research_*` tool.\n\n---\n\n*Sovereign State: PAUSED. Awaiting team coordination.*\n",
+      "metadata": {
+        "original_path": "data/archive/coordination/2026-07-04-to-2026-07-14/HIVEMIND_JEM_PAUSE_20260707.md",
+        "file_size": 1173,
+        "extracted_timestamp": 1783382400.0,
+        "domain": "coordination",
+        "xyz": {
+          "x": 0.0,
+          "y": 0.5137362637362637,
+          "z": 0.7
+        },
+        "trace_id": "ingest_coordination_01d40fd30ec2d3b4862a0adce3e4f07d"
+      }
+    }
+  ]
+}

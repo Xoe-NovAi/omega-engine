@@ -1,0 +1,25 @@
+{
+  "entity": "kali",
+  "session_id": "ingest_INDEX_1784493404",
+  "exchange_count": 1,
+  "exchanges": [
+    {
+      "_zoneid": 1919505,
+      "timestamp": "2026-07-19T20:36:44.616355+00:00",
+      "user": "Archive Ingestion: INDEX.md from research",
+      "assistant": "# \ud83d\udd31 OmniHub \u2014 Cross-Platform Research & Integration Hub\n\n**Part of the Omega Engine Research Knowledge Base**\n**AP Token**: `AP-OMNIHUB-v0.1.0`\n**Created**: 2026-05-16\n**Maintained by**: OVERSIGHT / SOPHIA\n**Purpose**: Centralize all cross-platform intelligence (Gemini, NotebookLM, Drive sync, Jem persona, fleet orchestration) and map it back into Omega Engine architecture.\n\n---\n\n## Why OmniHub Exists\n\nThis session exposed a fundamental truth: **Omega Engine development is now multi-platform by necessity**. The local-first core is sovereign, but intelligence augmentation from Google's ecosystem, opencode's fleet orchestration, and experimental persona engineering (Jem) each demand dedicated space that doesn't clutter the core roadmap.\n\nOmniHub is that space. It holds the bridges, not the island.\n\n---\n\n## Core Workstreams\n\n| # | Workstream | Status | Primary Owner | Links |\n|---|------------|--------|---------------|-------|\n| W-1 | DriveSync Daemon \u2014 bidirectional local\u2194Drive sync | \ud83d\udd32 Not started | OVERSIGHT \u2192 BUILDER | `docs/research/omni/drivesync/` |\n| W-2 | Dynamic Session Header \u2014 model-aware header builder | \ud83d\udd32 Not started | OVERSIGHT \u2192 BUILDER | `R50_session_id_architecture.md` |\n| W-3 | NotebookLM \u2194 Mnemosyne bridge \u2014 cold memory tier | \ud83d\udd32 Not started | SOPHIA \u2192 RESEARCHER | `docs/research/omni/notebooklm/` |\n| W-4 | Jem Persona Schema \u2014 multi-faceted entity template | \ud83d\udd32 Not started | SOPHIA \u2192 GNOSIS-ANALYST | `docs/research/omni/jem/` |\n| W-5 | Fleet Orchestration Blueprint \u2014 serial \u2192 synthesis \u2192 parallel patterns | \ud83d\udd2c In progress | OVERSIGHT | `docs/research/omni/fleet/` |\n| W-6 | Glossary & Nomenclature \u2014 definitive term registry | \ud83d\udd32 Not started | SCRIBE | `docs/research/omni/GLOSSARY.md` |\n\n---\n\n## Research Items\n\n| ID | Title | Urgency | Status | Location |\n|----|-------|---------|--------|----------|\n| R-OMNIHUB-01 | DriveSync Daemon Spec \u2014 rclone + systemd + inotify | \ud83d\udd34 Critical | \ud83d\udd32 | `drivesync/SPEC.md` |\n| R-OMNIHUB-02 | NotebookLM Import Automation \u2014 API wrapper for NotebookLM | \ud83d\udfe1 High | \ud83d\udd32 | `notebooklm/AUTOMATION_SPEC.md` |\n| R-OMNIHUB-03 | Jem Persona Deep Research \u2014 character analysis \u2192 entity schema | \ud83d\udfe1 High | \ud83d\udd32 | `jem/PERSONA_ANALYSIS.md` |\n| R-OMNIHUB-04 | Dynamic Header Implementation \u2014 ModelGateway integration | \ud83d\udd34 Critical | \ud83d\udd32 | (in core `src/omega/oracle/`) |\n| R-OMNIHUB-05 | Cognitive Load Triage Layer \u2014 session-scope manager | \ud83d\udfe2 Strategic | \ud83d\udd32 | `triage/SPEC.md` |\n| R-OMNIHUB-06 | Fleet Orchestration Templates \u2014 reusable agent chains | \ud83d\udfe1 High | \ud83d\udd32 | `fleet/TEMPLATES.md` |\n\n---\n\n## Integration Map\n\n```\nOmniHub Intelligence \u2500\u2500> Omega Engine Core\n     \u2502                         \u2502\n     \u251c\u2500 DriveSync              \u251c\u2500 entity_workspace.py (auto-sync entity workspaces to Drive)\n     \u251c\u2500 NotebookLM bridge      \u251c\u2500 memory_store.py (cold tier reader)\n     \u251c\u2500 Jem persona schema     \u251c\u2500 config/entities.yaml (new entity definition)\n     \u251c\u2500 Fleet patterns         \u251c\u2500 orchestrator.py (prebuilt chain templates)\n     \u2514\u2500 Glossary               \u251c\u2500 GLOSSARY.md (project root)\n```\n\n---\n\n## Session Gnosis Cross-Ref\n- Parent session: `docs/gnosis/session_gnosis.md` (2026-05-16)\n- PIVOT_LOG Decision 25\n- INDEX.md entry `R-OMNIHUB`\n\n---\n\n## Next Steps (Priority Order)\n\n1. **R-OMNIHUB-01** (DriveSync Daemon) \u2014 This is the #1 bottleneck. Spec must be written and implemented before any other OmniHub workstream.\n2. **R-OMNIHUB-04** (Dynamic Header) \u2014 Quick fix, immediate debugging value.\n3. **R-OMNIHUB-03** (Jem Persona) \u2014 Deep research deferred until DriveSync is live.\n4. **R-OMNIHUB-06** (Fleet Orchestration Templates) \u2014 Encapsulate the serial\u2192synthesis\u2192parallel pattern as reusable OpenCode tasks.\n5. **R-OMNIHUB-05** (Triage Layer) \u2014 Long-term architectural improvement.",
+      "metadata": {
+        "original_path": "docs/research/omni/INDEX.md",
+        "file_size": 3889,
+        "extracted_timestamp": 1784478760.583495,
+        "domain": "research",
+        "xyz": {
+          "x": 4.0,
+          "y": 0.5485971390254535,
+          "z": 0.9
+        },
+        "trace_id": "ingest_research_f0a69b8442e5618ffee55a05ec81c903"
+      }
+    }
+  ]
+}

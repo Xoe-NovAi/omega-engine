@@ -1,0 +1,25 @@
+{
+  "entity": "kali",
+  "session_id": "ingest_ARK_OPTIMIZATION_REPORT_1784493367",
+  "exchange_count": 1,
+  "exchanges": [
+    {
+      "_zoneid": 1919505,
+      "timestamp": "2026-07-19T20:36:07.407014+00:00",
+      "user": "Archive Ingestion: ARK_OPTIMIZATION_REPORT.md from coordination",
+      "assistant": "# \ud83d\udd31 ARK OPTIMIZATION REPORT\n**Generated**: 2026-07-10 21:51:01 UTC | **Mode**: LIVE\n**AP Token**: `AP-ARK-OPTIMIZER-v1.0.0`\n\n## \u00a71 Drift Metrics (Ark Blueprint vs Reality)\n\n| Dimension | Ark Blueprint | OMEGA_ENGINE.md | Actual | Verdict |\n|-----------|---------------|-----------------|--------|---------|\n| Tests | 1046 | 1085 (footer 1071) | 1085 | \u26a0\ufe0f DRIFT |\n| Mandates (max) | M1-M22 | M1-M22 | M1-M23 | \u26a0\ufe0f DRIFT |\n| Decisions (max) | D1-D204 | D1-D207 | \u2014 | \u26a0\ufe0f DRIFT |\n\n## \u00a72 New-Plan Integration Gap\n\n- \u274c `omega-vetala` shared module (D207) \u2014 absent from Ark Blueprint Current State\n- \u274c Omega Module Standard (OMS v1.0/v2.0) \u2014 absent\n- \u274c Semantic Resonance Vectoring \u2014 absent\n- \u274c WASM integration \u2014 absent\n- \u274c qwen-embedding wiring \u2014 absent\n\n## \u00a73 Stale / Pending Active Tasks\n\n- `4.4` \u2014 Tag & Ship v1.1.0 \u2014 *30m | \u23f3 PENDING* \ud83d\udd36 POSSIBLY-COMPLETE\n- `IW-6` \u2014 V-D1 Validation Suite \u2014 *4h | \ud83d\udfe1 P2 MEDIUM*\n- `IW-1` \u2014 Tor Bridge \u2014 *4h | \ud83d\udfe1 Deferred post-PR*\n- `D16-1` \u2014 Audience Calibration Pipeline \u2014 *3-5d | \ud83d\udd2e Post-ship*\n- `D16-2` \u2014 Parametric Gnosis / DPO Logging \u2014 *1-2w | \ud83d\udd2e Post-ship*\n- `D203` \u2014 Sovereignty Ratio Automation \u2014 *4h | \ud83d\udd2e Entity Deepening Sprint*\n- `D204` \u2014 Iris Entity Workspace (Persistent Memory) \u2014 *2h | \ud83d\udd2e Entity Deepening Sprint*\n\n## \u00a74 Orphaned Coordination Files\n\n- \u2705 No unreferenced files older than 30d\n\n## \u00a75 Broken Cross-Links\n\n- \u2705 No broken relative links in Ark Blueprint / OMEGA_ENGINE.md\n\n## \u00a76 Undocumented `[id-soft:]` Tags (M14)\n\n- \u26a0\ufe0f (EMPTY \u2014 malformed [id-soft:] tag, no game code) (M14 violation)\n\n## \u00a77 Workbench Cross-Check\n\n- vetala project: `{'name': 'omega-vetala (Language Integrity Module)', 'status': 'active'}`\n- vetala work items: 18\n- OMEGA_ENGINE shared-modules count: 1\n\n## \u00a78 Health Verdict\n**\ud83d\udd34 ACTION-REQUIRED** \u2014 5 drift/integrity issues detected.\n\n---\n*\u2b21 OMEGA \u2b21 VERITY \u2b21 ark_optimizer v1.0.0 \u2b21 read-only verification*",
+      "metadata": {
+        "original_path": "data/archive/coordination/2026-07-04-to-2026-07-14/ARK_OPTIMIZATION_REPORT.md",
+        "file_size": 1992,
+        "extracted_timestamp": 1784478759.9735515,
+        "domain": "coordination",
+        "xyz": {
+          "x": 0.0,
+          "y": 0.5485971196311403,
+          "z": 0.7
+        },
+        "trace_id": "ingest_coordination_690d1afeb0946a5cf5c9bf8fa4bb2819"
+      }
+    }
+  ]
+}

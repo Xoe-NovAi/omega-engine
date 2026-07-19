@@ -1,0 +1,25 @@
+{
+  "entity": "kali",
+  "session_id": "ingest_INDEX_1784493406",
+  "exchange_count": 1,
+  "exchanges": [
+    {
+      "_zoneid": 1919505,
+      "timestamp": "2026-07-19T20:36:46.242446+00:00",
+      "user": "Archive Ingestion: INDEX.md from research",
+      "assistant": "# \ud83d\udd31 Knowledge Graph Maps Index\n\nThis directory stores relationship maps and diagrams that visualize the connections between research documents, discoveries, and tools.\n\n## Available Maps\n\n| Map | Type | Description | Location |\n|-----|------|-------------|----------|\n| \u2014 | (No maps yet) | \u2014 | \u2014 |\n\n## How to Create a Map\n\n### Option 1: Mermaid Diagram (in Markdown)\nEmbed directly in any research document:\n```mermaid\ngraph LR\n    A[stack-cat] --> B[prepare_handoff]\n    B --> C[Omnidroid \u03a9]\n    C --> D[Holographic Lattice]\n```\n\n### Option 2: Graphviz DOT (for complex maps)\nSave as `.gv` in this directory and render with `dot -Tpng map.gv -o map.png`.\n\n### Option 3: Obsidian Graph Export\n1. Open the `docs/` vault in Obsidian\n2. Open Graph View\n3. Filter by tag or path\n4. Screenshot or use the `Copy Graph` plugin\n",
+      "metadata": {
+        "original_path": "docs/research/internal-discovery/MAPS/INDEX.md",
+        "file_size": 830,
+        "extracted_timestamp": 1784478760.581495,
+        "domain": "research",
+        "xyz": {
+          "x": 4.0,
+          "y": 0.5485971389618642,
+          "z": 0.9
+        },
+        "trace_id": "ingest_research_6b03a7c162adf97c9783f946e530fea7"
+      }
+    }
+  ]
+}

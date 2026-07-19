@@ -1,0 +1,25 @@
+{
+  "entity": "kali",
+  "session_id": "ingest_projection_1784493402",
+  "exchange_count": 1,
+  "exchanges": [
+    {
+      "_zoneid": 1919505,
+      "timestamp": "2026-07-19T20:36:42.229399+00:00",
+      "user": "Archive Ingestion: projection.md from coordination",
+      "assistant": "# \ud83d\udd31 Omega Engine \u2014 Anchored Summary (MIAP Projected)\n**Entity**: test_entity_miap\n**Projected**: 2026-07-16T22:50:22.749629+00:00\n**Event Count**: 0\n**Active Instances**: 1\n---\n## \ud83d\udc65 Active Instances\n- `opencode/test_entity_miap/019f6d1f-b697-7ee9-b17c-25118441dd41` (PID: 561884, since 2026-07-16T22:50:22)\n---",
+      "metadata": {
+        "original_path": "data/coordination/anchored_summary/test_entity_miap/projection.md",
+        "file_size": 318,
+        "extracted_timestamp": 1784242222.749795,
+        "domain": "coordination",
+        "xyz": {
+          "x": 0.0,
+          "y": 0.5410759675733542,
+          "z": 0.7
+        },
+        "trace_id": "ingest_coordination_d4954939ed78f0b53a235acfed2b0580"
+      }
+    }
+  ]
+}

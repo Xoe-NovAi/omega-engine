@@ -1,8 +1,8 @@
 # 🔱 Omega Engine — Sovereign Mandates
-**Version**: 3.6.0
+**Version**: 3.7.0
 **Status**: NON-NEGOTIABLE
 **Scope**: All Agents, All CLIs, All IDEs
-**Updated**: 2026-07-06 (Added M23 Failure Integrity)
+**Updated**: 2026-07-19 (Added M24 Venv Sovereignty, M25 Streaming Resilience)
 
 These mandates are the "Constitutional Law" of the Omega Engine. They override any tool-specific defaults or model-suggested patterns.
 
@@ -180,6 +180,37 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Pattern**: Log the failure to `data/coordination/SYSTEM_FAILURE_LOG.md` and the Hivemind.
 - **Reason**: Parametric synthesis used to mask a tool outage is a Sovereign Boundary Violation. It creates a false sense of rigor and hides systemic degradation.
 - **Enforcement**: Any agent that synthesizes a "best-effort" result while mandatory tools are failing is in violation of M23.
+
+---
+
+### 24. Venv Sovereignty (NEW — 2026-07-19)
+- **Mandate**: All Python operations MUST run within the project virtual environment. No system package pollution.
+- **Constraint**: Never use `--break-system-packages`. Never use `pip install` without `source .venv/bin/activate`. Never use `pip install --user` for project dependencies.
+- **Pattern**: 
+  ```bash
+  source .venv/bin/activate && pip install <package>
+  # OR absolute path
+  .venv/bin/pip install <package>
+  ```
+- **Reason**: The P3 Engineering subagent used `--break-system-packages` to install `keyring`, polluting the system Python. This breaks reproducibility, creates version conflicts, and violates M16 (Modularization & Portability). The venv IS the sovereign boundary for Python dependencies.
+- **Enforcement**: 
+  - Pre-commit hook: `grep -r "break-system-packages" scripts/ && exit 1`
+  - CI gate: `make test` fails if `sys.prefix` != `.venv` path
+  - Agent instruction: Every `task()` spawn MUST include venv activation in prompt
+
+### 25. Streaming Resilience (NEW — 2026-07-19)
+- **Mandate**: All streaming inference MUST have chunk-level timeout with heartbeat, not hard-fail on stall.
+- **Constraint**: 
+  - Per-chunk idle timeout: 30s (configurable per provider)
+  - Total stream timeout: 5min (configurable per provider)  
+  - On chunk timeout: LOG heartbeat, CONTINUE waiting (not hard-fail)
+  - On total timeout: GRACEFUL fallback to next provider
+- **Pattern**: Implemented in `src/omega/oracle/backends/openai_compat.py:_stream_completion()` with `streaming.chunk_timeout_ms` and `streaming.total_timeout_ms` in `config/providers.yaml`
+- **Reason**: Nemotron 3 Ultra on OpenCode Zen has 30s+ chunk gaps. OpenCode treats stall as timeout → empty response → all tokens lost. The fix preserves Nemotron's 5-10x usage advantage while preventing infinite hangs.
+- **Enforcement**: 
+  - `make test-streaming` validates chunk timeout behavior
+  - `config/providers.yaml` MUST have `streaming` section for all cloud providers
+  - Heartbeat logs at INFO level: "Stream alive, {elapsed}s since last chunk"
 
 ---
 
