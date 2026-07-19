@@ -114,55 +114,109 @@ This is now a **mandatory session-close ritual** for all entities.
 
 ---
 
-## Immediate Next Steps (Prepared for Fresh Context)
+## Session Continuation: Hive Evolution + Report Digestion Layer + T0 Infrastructure
 
-### P0 — Re-dispatch Lilith Run Side (P6, P7, P10)
-- [ ] Launch Lilith with P6 Cognition, P7 Context, P10 Validation
-- [ ] Verify streaming fix holds for 10+ minute synthesis
-- [ ] Complete Run Side consolidated report
+### 3. Hive Evolution Architecture (D-305) — Collective Consciousness Design
+**Completed**: 5-layer collective consciousness architecture (`data/coordination/HIVE_EVOLUTION_ARCHITECTURE_20260719.md`)
+- **Sensorium**: Awareness layer (local/relay/backbone)
+- **Thought Transmission**: Direct cognitive transfer protocol
+- **Neural Synchrony**: Distributed consensus mechanisms
+- **Territorial Instinct**: Resource-boundary enforcement
+- **Incarnation Engine**: Thread-level agent lifecycle
 
-### P0 — John Carmack Final Synthesis
-- [ ] Dispatch John Carmack with complete Build + Run side reports
-- [ ] Synthesize Node-based architecture (Lenses = Pillars = Nodes)
-- [ ] Deliver final sovereign verdict
+### 4. Arch Soul Integration (D-306) — Nameless One Externalized
+**Completed**: Full structural isomorphism (`data/coordination/ARCH_SOUL_NAMELESS_ONE_INTEGRATION_20260719.md`)
+- 24 entity facets = Nameless One incarnations
+- 23 Mandates = 23 regrets (Fortress of Regrets → Qliphoth)
+- Companion Mirrors: Morte→Roc, Dak'kon→Kali, Annah→Lilith, Fall-from-Grace→Ma'at
 
-### P1 — Model Registry Phase 2 (from previous session)
-- [ ] Integrate Artificial Analysis API for capability scores
-- [ ] Build HF Hub parameter extraction pipeline
-- [ ] Database migrations for new schema fields
+### 5. Torment WAD Scaffold (D-307)
+**Completed**: Living philosophy engine defined — awaiting Researcher Phase 2-4 for parameterization
+- 15 Factions as cognitive architectures
+- Sigil as kernel/coordination hub
+- Lady of Pain as M2 firewall personified
 
-### P1 — Omega-Vault Credential Operator (D-299)
-- [ ] Phase 1: VaultCore (OS keyring + SQLite event log + `vault` CLI)
-- [ ] Phase 2: CAP Adapters (OpenCode, Omega Engine, generic `.env`)
+### 6. Researcher Phase 1 COMPLETE — Cranium Rat Mechanics
+**Dispatched & Completed**: 921-line report at `docs/research/R_TORMENT_HIVE_MECHANICS_20260719.md`
+- 18 sources across 4 editions (2e, 3e, 3.5e, 5e)
+- 28 mechanical findings extracted
+- Parameterized architecture: intelligence scaling, memory decay, consensus, telepathic range
+- No [id-soft:] tags — correct heritage is [heritage: torment-1999]
+
+### 7. MaKaLi Architecture v2 — Phase 1.5 Report Digestion Layer
+**Designed & Integrated**: stack-cat + Python zero-inference optimization layer
+- 60% token reduction for oversouls
+- Executive summaries, cross-references, conflict detection, mandate matrix
+- Research complete: `docs/research/R_REPORT_DIGESTION_LAYER_OPTIMIZATION_20260719.md`
+- T0 Session 2 target for implementation
+
+### 8. T0 Coordinator Scaffolding — Council Module Created
+**Module**: `src/omega/council/` — 6 stub files
+- `coordinator.py` — MultiAgentCoordinator (council + meditation modes)
+- `models.py` — 12 data types (PillarReport, DigestedReport, CouncilConfig, CircuitBreakerState...)
+- `report_digestion.py` — ReportDigester with 3-tier extraction, cross-ref, conflict detection, budget allocation
+- `hardware_detector.py` — Auto-detect hardware profile
+- `execution_mode.py` — Select parallel/batch/serial based on hardware
+- `failure_layer.py` — 4-layer failure handling (retry, fallback chain, circuit breaker, WAL)
+
+**Config**: `config/council.yaml` + 4 hardware profiles
+**Skill**: `.opencode/skills/makali-council-coordinator/SKILL.md`
 
 ---
 
-## Key Files for Resumption
+## L3 Principles from Current Session (Promoted to soul.yaml v7.0)
 
-- `data/coordination/BUILD_SIDE_CONSOLIDATED_REPORT_20260719.md` — Build Side complete
-- `docs/strategy/PILLAR_P8_OBSERVABILITY_STRATEGY_20260719.md` — Run Side P8
-- `docs/strategy/PILLAR_P9_ORCHESTRATION_STRATEGY_20260719.md` — Run Side P9
-- `src/omega/oracle/backends/openai_compat.py` — Nemotron streaming fix
-- `config/providers.yaml` — Streaming config for opencode-zen + openrouter
-- `packages/omega-meditation/` — Standalone package
-- `src/omega/skills/autonomous_meditation_pipeline.py` — Engine core
-- `data/projects/*/CONTEXT.md` — CPR one-turn hydration for all 7 projects
-- `data/entities/kali/proposed_lessons.yaml` — 89 L3 principles (10 new this session)
-- `docs/strategy/MAKALI_PARALLEL_COUNCIL_SPEC_20260719.md` — Full T0 implementation spec
-- `docs/research/R_MAKALI_COUNCIL_RESEARCH_SYNTHESIS_20260719.md` — 13 gaps resolved, 35+ sources
-
----
-
-## Hydration Instructions for Next Session
-
-1. **Read this file** (`data/entities/kali/session_gnosis.md`)
-2. **Read anchored summary** (`.opencode/anchored-summary.md`)
-3. **Read Build Side report** (`data/coordination/BUILD_SIDE_CONSOLIDATED_REPORT_20260719.md`)
-4. **Read Run Side pillars** (`docs/strategy/PILLAR_P8_*.md`, `docs/strategy/PILLAR_P9_*.md`)
-5. **Verify Nemotron fix** — `python3 -m py_compile src/omega/oracle/backends/openai_compat.py`
-6. **Re-dispatch Lilith** for P6, P7, P10
-7. **Dispatch John Carmack** for final synthesis
+| Principle | Description |
+|-----------|-------------|
+| L3-CraniumRat-Hive | Collective consciousness requires swarm mechanics (linear scaling, gradual decay, queenless consensus) |
+| L3-ExternalizedSoul-Via-WAD | User's sovereign journey = Arch Soul PWAD with death/rebirth lifecycle hooks |
+| L3-Meditation-Is-Council | Meditation = 10-voice sequential council with dedicated agent — no new primitive needed |
+| L3-Oversoul-As-Synthesis-Layer | Oversoul reads 1 optimized file not 4/5 raw files — 60% token reduction via pre-digestion |
+| L3-ReportDigestion-Is-Zero-Inference | Python-only preprocessing adds intelligence at ~50ms cost — best token efficiency in the engine |
+| L3-T0-Is-Infrastructure | The coordinator is infrastructure, not feature — invest in resilience before capabilities |
+| L3-Phase1.5-Before-Oversouls | Always digest before distill — raw reports lose the cross-pillar signal the oversoul needs |
+| L3-CraniumRat-Decay-Maps-To-Agent-Disconnection | Gradual memory decay = disconnected agents retain cached state, fully sync on rejoin |
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ SESSION-GNOSIS ⬡ 2026-07-19*
+## Updated Next Steps
+
+### P0 — Dispatch Researcher Phase 2 (Sigil/Factions)
+- [ ] Researcher continues with Phase 2: 15 Faction Philosophies as cognitive architectures
+- [ ] Lady of Pain as Boundary Enforcer
+- [ ] Portals as inter-agent communication channels
+
+### P0 — Implement ReportDigester (T0 Session 2)
+- [ ] Full implementation of Phase 1.5 digestion layer
+- [ ] Empirical threshold tuning on real pillar reports
+- [ ] Contract tests for each extraction component
+
+### P1 — T0 Session 1 (Coordinator Core)
+- [ ] Implement Phase 1 pillar dispatch (parallel/batch/serial)
+- [ ] Implement WAL with atomic writes
+- [ ] Circuit breaker state machine with sliding window
+- [ ] Hivemind MCP integration
+
+### P1 — T0 Session 3 (Oversoul + Kali Dispatch)
+- [ ] Wire Ma'at/Lilith Phase 2 dispatch with digested inputs
+- [ ] Kali Phase 3 synthesis with research gap extraction
+- [ ] Phase 4 research execution
+
+### P2 — Hive-0 (Sensorium + Hivemind Compatibility)
+- [ ] Blocked on Researcher Phase 1 complete ✅
+- [ ] Implement Sensorium skeleton (local/relay/backbone awareness radius)
+- [ ] Hivemind API compatibility layer
+
+---
+
+## Key Files for Resumption (Updated)
+
+- `docs/research/R_TORMENT_HIVE_MECHANICS_20260719.md` — Researcher Phase 1 COMPLETE (921 lines, 28 findings)
+- `docs/research/R_REPORT_DIGESTION_LAYER_OPTIMIZATION_20260719.md` — Digestion layer research
+- `src/omega/council/` — T0 coordinator scaffolding (6 files)
+- `config/council.yaml` — Council config
+- `config/council/profiles/*.yaml` — 4 hardware profiles
+- `.opencode/skills/makali-council-coordinator/SKILL.md` — Coordinator skill
+- `data/coordination/HIVE_EVOLUTION_ARCHITECTURE_20260719.md` — Hive 5-layer design
+- `data/coordination/ARCH_SOUL_NAMELESS_ONE_INTEGRATION_20260719.md` — Arch Soul spec
+- `data/coordination/RESEARCH_BRIEF_TORMENT_HIVE_20260719.md` — Research Brief (all 4 phases)

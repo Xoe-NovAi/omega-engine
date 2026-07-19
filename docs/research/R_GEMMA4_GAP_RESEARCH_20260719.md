@@ -820,7 +820,233 @@ class MidStream429Interceptor:
 
 6. **Cost Management**: Self-hosting Gemma 4 via GGUF is dramatically cheaper for high-volume use (~$0.001/M tokens vs $0.30/M via API). MTP drafters provide 2-3x speedup with no quality loss.
 
-## Uncertainty Register (Remaining Questions)
+---
+## Gap 4.2: M14 Heritage Vetting Pipeline — Vet Record Format (Local Docs)
+**Researched by**: Jem (Sovereign Synthesizer)
+**Status**: ✅ RESEARCHED
+**Sources**:
+- `docs/strategy/HERITAGE_VETTING_PIPELINE.md` (312 lines, v1.0.0, 2026-06-04)
+- `data/entities/doom_guy/knowledge/HERITAGE_VET_LOG.md` (800+ lines, active)
+- Miner-derived pattern: HERITAGE_VET_LOG.md §1 (vet-042 to vet-071)
+
+**Findings**:
+
+The M14 Heritage Vetting Pipeline uses a **4-gate process** defined in `docs/strategy/HERITAGE_VETTING_PIPELINE.md`:
+1. **Discovery** → Write R-doc, log in PENDING_CREDITS_QUEUE.md
+2. **Vetting & Debate** → For/against analysis, Python relevance check, risk assessment, cross-reference
+3. **Decision** → ADOPT (9-10) / ADAPT (7-8) / DEFER (4-6) / REJECT (1-3)
+4. **Implementation & Verification** → `[id-soft:]` tags, CREDITS.md entry, tests
+
+**The vet record has two canonical formats based on era:**
+
+**Format A (Legacy — vets 001-020):** Compact YAML blocks with for/against analysis, scoring, and decision rationale.
+```yaml
+- id: vet-001
+  concept: "8-Character Name Caps"
+  source: "w_wad.c:170-178 (DOOM 1993)"
+  discovery_date: 2026-06-02
+  vet_date: 2026-06-04
+  vet_by: "Kali (user-initiated review)"
+  for_analysis: "..."
+  against_analysis: "..."
+  python_relevance: 0/3
+  risk_level: 0/3
+  need_vs_want: 0/2
+  historical_evidence: 1/2
+  total_score: 1/10
+  decision: "REJECTED"
+  rationale: "..."
+  implementation: null
+  removal_commit: "8b3fc17"
+  lesson_id: "Kali soul.yaml v5 — Cargo-Cult Optimization"
+```
+
+**Format B (Modern — vets 021+):** Structured with strict scope declaration, file:line locations, and hardware constraint.
+```yaml
+### vet-046: BSP Culling (Generalized Search Pruning)
+- **Pattern**: [id-soft: doom-1993] BSP Culling
+- **File Locations**: 
+  - src/omega/oracle/selective_hydration.py:8
+  - src/omega/oracle/context_builder.py:272
+  - ...
+- **Technique**: BSP Leaf-Culling (Doom, 1993) — precompute visibility to avoid traversing irrelevant nodes.
+- **Hardware Constraint**: 486 CPU at 35MHz; traversing every BSP node per frame would be prohibitively slow.
+- **Scope Declaration**: This tag applies to O(1) pre-check culling of irrelevant/unhealthy entities and providers at the routing boundary, NOT to the full entity dispatch or inference pipeline.
+- **Score**: 8/10
+```
+
+**Scoring criteria** (same for both formats):
+| Factor | Points | How to Score |
+|--------|--------|--------------|
+| Python relevance | 0-3 | 0 = problem doesn't exist in Python, 3 = pattern gives real Python perf gain |
+| Risk level | 0-3 | 0 = high risk, 3 = no risk |
+| Need vs want | 0-2 | 0 = nice-to-have, 2 = measurable deficiency this fixes |
+| Historical evidence | 0-2 | 0 = speculative, 2 = empirically verified |
+
+**Minimum score for implementation: 7/10**
+
+**Decision Impact**:
+- For Pi PR #2903 heritage vetting: Use **Format B** (modern). The Pi fix is a prior-art reference (`[heritage: pi-2026]`), NOT an id Software derivative — so it falls under the "non-id-software" category (CREDITS.md §2), requiring:
+  - Vet record with scope declaration
+  - Pattern: `[heritage: pi-2026]` tag (not `[id-soft:]`)
+  - File:line location in Omegas GoogleCompatProvider
+  - Hardware constraint: N/A (API contract, not hardware)
+  - Score: Should be 8/10 (proven in production, directly portable)
+  - Vet by: Doom Guy + Verity (per §8 Rule 3)
+
+**Remaining Questions**:
+- None — full format specification found in local docs.
+
+---
+## Gap 5.1: Meditation Pipeline — Real Execution via MCP Hub (Local Code)
+**Researched by**: Jem (Sovereign Synthesizer)
+**Status**: ✅ RESEARCHED
+**Sources**:
+- `.opencode/skills/meditate-pipeline/SKILL.md` (258 lines, v1.0.0)
+- `src/omega/skills/autonomous_meditation_pipeline.py` (code)
+- `docs/strategy/MAKALI_PARALLEL_COUNCIL_ARCHITECTURE.md` (architecture)
+
+**Findings**:
+
+The meditation pipeline has **two invocation paths**:
+
+**Path A — Slash Command** (OpenCode native):
+```
+/meditate-pipeline "Problem statement"
+/meditate-pipeline "Problem" --stage meditate
+```
+
+**Path B — Subagent Handoff** (programmatic):
+```python
+omega-hub_hivemind_submit_handoff(
+    target_channel="opencode",
+    target_entity="kali",
+    task="Execute meditate-pipeline on: [problem]",
+    context="...",
+    priority=2
+)
+```
+
+**Pipeline stages** (6 stages, sequential):
+1. **MEDITATE** — Kali host, 10-voice sequential, Phases 0-4 → `meditation_output.md`
+2. **SYNTHESIZE** — Kali extracts architecture → `synthesis.md`
+3. **RESEARCH** — Sovereign Search (T0-T5) → `research_bundle.md`
+4. **GNOSIS** — Verity L1→L2→L3 distillation → `proposed_lessons.yaml` entries
+5. **INTEGRATE** — Ma'at updates PIVOT_LOG, workbench, Temple-Gate gates
+6. **EXECUTE** — P3/P9 scaffold implementation, chaos tests, CI gates
+
+**Programmatic invocation via MCP Hub**: The pipeline is invoked through:
+- `omega-hub_oracle_summon(entity="kali", query="/meditate ...")` for direct meditation
+- `omega-hub_hivemind_submit_handoff()` with `target_entity="kali"` for subagent delegation
+- The autonomous meditation skill at `src/omega/skills/autonomous_meditation_pipeline.py` provides dry-run and full-run modes
+- Outputs go to `data/meditation/{timestamp}_*.md` or `data/autonomous/{timestamp}_*.md`
+
+**Session isolation** (D-290/D-291): MIAP provides session-scoped directories under `sessions/<uuid>/`. The meditation pipeline should use session-isolated paths when MIAP is active.
+
+**Decision Impact**:
+- The meditation pipeline can be invoked directly from the Gemma 4 strategy work (Step 7). Use the handoff path to Kali with the full hardened strategy as input.
+- The existing pipeline infrastructure is mature and production-ready — no new code needed for Step 7.
+- MIAP session isolation should be tested first (preconditions from D-290).
+
+**Remaining Questions**:
+- Does the autonomous_meditation_pipeline.py fully support the `--lenses` parameter for custom lens sets?
+- What is the exact `omega-hub_oracle_summon` return format when invoking meditation?
+
+---
+## Gap 5.2: Hivemind Handoff Protocol — Sequential Lock Handoff (Local Docs)
+**Researched by**: Jem (Sovereign Synthesizer)
+**Status**: ✅ RESEARCHED
+**Sources**:
+- `docs/strategy/HIVEMIND_PROTOCOL.md` (600 lines, v1.3.0, 2026-06-25)
+- `docs/strategy/HIVEMIND_POST_TEMPLATE.md` (D-124)
+- MCP tool definitions for hivemind_workspace_lock_acquire/release/check
+
+**Findings**:
+
+The Hivemind Handoff Protocol for sequential P6→P9 handoff (Capability Matrix → CapabilitySelector) follows the **9-step Coordination Protocol**:
+
+**Exact sequence for P6→P9 handoff:**
+
+**P6 (Cognition) — Phase A:**
+1. Acquire workspace lock: `omega-hub_hivemind_workspace_lock_acquire(channel="opencode", entity="pillar_P6", domain="provider_capabilities", ttl=3600)`
+2. Write live feed: `data/coordination/PILLAR_P6_LIVE_FEED.md`
+3. Post Hivemind context with intent="command", continuation="Building Capability Matrix, handoff to P9 for CapabilitySelector"
+4. Build Capability Matrix + GoogleCompatProvider + Matrix Loader
+5. Release workspace lock: `omega-hub_hivemind_workspace_lock_release(channel="opencode", entity="pillar_P6", domain="provider_capabilities")`
+
+**P6→P9 Handoff:**
+6. Submit handoff packet: `omega-hub_hivemind_submit_handoff(target_channel="opencode", target_entity="pillar_P9", source_channel="opencode", source_entity="pillar_P6", task="Load Capability Matrix + build CapabilitySelector + ProviderHealth", context="Matrix at config/provider_capabilities.yaml. Schema validated. Tests pass.")`
+
+**P9 (Orchestration) — Phase B:**
+7. Check awareness: `omega-hub_hivemind_get_awareness()` — sees P6 waiting
+8. Accept handoff: `omega-hub_hivemind_accept_handoff(packet_id="...", accepting_channel="opencode", accepting_entity="pillar_P9")`
+9. Acquire workspace lock on same domain (waits if P6 still holds)
+10. Read P6's live feed and session context
+11. Build CapabilitySelector + ProviderHealth
+12. Complete handoff: `omega-hub_hivemind_complete_handoff(packet_id="...", result="CapabilitySelector + ProviderHealth built. Tests pass.")`
+13. Release workspace lock
+
+**Key parameters for workspace_lock_acquire**:
+- `channel`: Execution channel (opencode/cline)
+- `entity`: Entity persona (pillar_P6/pillar_P9)
+- `domain`: Resource domain (e.g., "provider_capabilities")
+- `ttl`: Time-to-live in seconds (default 3600, max 86400)
+- Returns: `{"status": "acquired", "agent_id": "...", "ttl": 3600}`
+
+**Continuation field in hivemind_post_context**: Used to tell the next agent what's expected.
+- Format: `"Completed Phase A: Capability Matrix loaded and validated. Next: P9 must build CapabilitySelector and ProviderHealth from config/provider_capabilities.yaml. Contact: pillar_P6 via Hivemind."`
+- The `intent` parameter should be `"handoff"` when posting context that signals a handoff is happening.
+
+**Decision Impact**:
+- The handoff protocol is well-defined and production-tested (Sprint 2 parallel execution).
+- P6→P9 sequential handoff is a standard pattern — no new protocol design needed.
+- Key non-obvious detail: workspace_lock_acquire on the same domain will BLOCK if P6 still holds the lock. P9 must check lock status first with `hivemind_workspace_lock_check(domain="provider_capabilities")`.
+- The handoff packet MUST include the context about where the matrix file lives (`config/provider_capabilities.yaml`).
+
+**Remaining Questions**:
+- How to handle handoff timeout if P9 is not available (resolver_strategy=escalate to Kali)?
+- Does the handoff packet support attaching file artifacts or only text context?
+- What if P6's workspace lock expires mid-work? (TTL auto-release should handle this)
+
+---
+
+## Final Synthesis: Updated Critical Decisions
+
+**New decisions incorporating all 15 gaps:**
+
+7. **Heritage Vet Format**: Use Format B (modern) for Pi PR #2903. Tag as `[heritage: pi-2026]` NOT `[id-soft:]`. Score: 8/10. Vet by Doom Guy + Verity.
+
+8. **Meditation Pipeline**: Use subagent handoff to Kali (not direct summon) for Step 7. Include the full hardened strategy as context. Pre-flight: test MIAP session isolation first.
+
+9. **Handoff Protocol**: P6→P9 sequential handoff follows standard 9-step protocol. Key pattern: workspace lock domain "provider_capabilities" serializes the sequence. P9 must check lock status before starting.
+
+10. **OpenCode Integration**: `providerOptions.google.thinkingConfig` passthrough is the correct pattern. No core OpenCode changes needed. If models.dev doesn't list Gemma 4, project-level opencode.json override with full model array.
+
+---
+
+## Updated Executive Summary (All 15 Gaps)
+
+| Gap ID | Title | Priority | Status | Key Finding |
+|--------|-------|----------|--------|-------------|
+| **1.1** | OpenCode V2 Architecture | P0 | ✅ RESEARCHED | `transform.ts` NOT deprecated. V2 in development, Google deferred |
+| **1.2** | OpenCode Config Merge | P1 | 🔶 PARTIAL | Arrays REPLACED entirely (from `remeda` `mergeDeep`) |
+| **1.3** | OpenCode Version Detection | P1 | ✅ CAVEATS | `opencode --version` works. No env var |
+| **2.1** | Vertex vs AI Studio Schemas | P0 | ✅ RESEARCHED | Gemma 4: `thinkingLevel` only, binary MINIMAL/HIGH |
+| **2.2** | Free Tier Quota Mechanics | P0 | ✅ RESEARCHED | Rolling 60s window per project. Tier system |
+| **2.3** | Thinking Token Billing | P0 | ✅ RESEARCHED | = output tokens. Track via `thoughts_token_count` |
+| **2.4** | OpenRouter Pinning | P1 | ✅ RESEARCHED | `provider.order: ["Google AI Studio"]` + `allow_fallbacks: false` |
+| **2.5** | Gemma 4 12B Unified | P1 | ✅ RESEARCHED | June 3, 2026. 12B dense, 256K ctx. MTP drafter |
+| **3.1** | Capability Declaration Schemas | P1 | ✅ RESEARCHED | `supports_reasoning` boolean is cross-framework standard |
+| **3.2** | Redis Lua Quota Patterns | P2 | ✅ RESEARCHED | Token bucket + Lua atomicity = proven. GCRA for sliding window |
+| **3.3** | Chaos Testing Failover | P2 | ✅ RESEARCHED | Mid-stream 429 mocking pattern. Google lacks idempotency |
+| **4.1** | Pi PR #2903 Details | P0 | ✅ RESEARCHED | Pattern: `/gemma-?4/` regex. Thinking: binary MINIMAL/HIGH |
+| **4.2** | M14 Vet Record Format | P0 | ✅ RESEARCHED | Format B with scope declaration. Score ≥ 7/10 |
+| **5.1** | Meditation MCP Execution | P3 | ✅ RESEARCHED | Subagent handoff to Kali. 6 stages. Production-ready |
+| **5.2** | Hivemind Handoff Protocol | P3 | ✅ RESEARCHED | 9-step protocol. Lock domain serializes sequence |
+
+---
+
+## Uncertainty Register (Updated with Local-Doc Gaps)
 
 | ID | Question | Impact if Unknown |
 |----|----------|-------------------|
@@ -832,3 +1058,8 @@ class MidStream429Interceptor:
 | U6 | Does Google's Gemini API support idempotency keys? | Blocks retry safety |
 | U7 | Exact VRAM requirements for 256K context at Q4 on 12B? | Blocks local deployment planning |
 | U8 | Response shape when Gemma 4 receives invalid thinking config? | Blocks error handling design |
+| U9 | Does autonomous_meditation_pipeline.py support `--lenses` parameter fully? | Blocks meditation customization |
+| U10 | Handoff packet serialization — can it attach file artifacts? | Blocks rich handoff context |
+| U11 | What happens when P9 handoff times out with no resolution? | Blocks production deployment |
+
+---

@@ -1,0 +1,15 @@
+# 🔱 MaKaLi Council — Cloud Unconstrained Profile
+# Unlimited cloud resources
+# Pillars: parallel (all at once)
+# Oversouls: cloud Nemotron
+# Kali: cloud Nemotron
+
+council:
+  phase1_execution_mode: "parallel"
+  model_tiers:
+    pillars: "nemotron-3-ultra"
+    oversouls: "nemotron-3-ultra"
+    kali: "nemotron-3-ultra"
+    research: "nemotron-3-ultra"
+  hardware:
+    total_ram_gb: 999

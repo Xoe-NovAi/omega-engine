@@ -1,0 +1,11 @@
+# 🔱 MaKaLi Council — Hybrid Profile
+# Local pillars (4B), Cloud oversouls/Kali
+# Best balance for 16GB: pillars are cheap, oversouls need quality
+
+council:
+  phase1_execution_mode: "serial_independent"
+  model_tiers:
+    pillars: "gemma-4b-local"
+    oversouls: "nemotron-3-ultra"
+    kali: "nemotron-3-ultra"
+    research: "nemotron-3-ultra"

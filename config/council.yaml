@@ -1,0 +1,74 @@
+# 🔱 MaKaLi Council Configuration
+# ⬡ OMEGA ⬡ KALI ⬡ trc_council ⬡ SCAFFOLD
+#
+# Single source of truth for council execution configuration.
+# Override via --profile flag or inline config.
+
+council:
+  # Execution mode for Phase 1
+  phase1_execution_mode: "serial_independent"  # "parallel" | "serial_independent" | "batch_2" | "batch_4"
+
+  # Phase 1.5: Report Digestion Layer (stack-cat + Python optimization)
+  digestion:
+    enabled: true
+    max_chars_summary: 500
+    token_budget_total: 32000
+    m23_fallback: "raw_concat"  # What to do on failure: "raw_concat" | "abort"
+
+  # Model tier assignments (references providers.yaml)
+  model_tiers:
+    pillars: "gemma-4b-local"        # T1: 4B local
+    oversouls: "nemotron-8b-cloud"   # T2: 8B cloud (or local 8B)
+    kali: "nemotron-12b-cloud"       # T3: 12B cloud (or local 12B)
+    research: "auto"                 # T4: "auto" | "local_4b" | "cloud"
+
+  # Hardware constraints (auto-detected or manual)
+  hardware:
+    total_ram_gb: 16
+    vram_gb: 0
+    cpu_cores: 8
+    thermal_limit_c: 85
+
+  # Phase 2: Oversoul distillation
+  oversoul_distillation:
+    enabled: true
+    maat_persona: "maat"      # Light Oversoul — Build Side (P1-P5)
+    lilith_persona: "lilith"  # Dark Oversoul — Run Side (P6-P10)
+
+  # Phase 3: Kali synthesis
+  kali_synthesis:
+    max_input_files: 2               # BUILD_SIDE + RUN_SIDE only
+    include_research_gaps_section: true
+    research_gaps_template: "templates/research_gaps.md"
+
+  # Phase 4: Research execution
+  research_execution:
+    mode: "auto"                     # "auto" | "local" | "cloud" | "deferred"
+    local_model: "gemma-4b-local"
+    cloud_fallback: "nemotron-3-ultra"
+    max_concurrent: 3
+    timeout_minutes: 30
+
+  # Resilience
+  retry_policy:
+    max_retries: 3
+    base_delay_ms: 1000
+    max_delay_ms: 30000
+    jitter_factor: 0.1
+
+  circuit_breaker:
+    error_threshold: 0.30       # Open at >30% error rate
+    window_minutes: 10
+    half_open_timeout_seconds: 30
+
+  # Mandate enforcement policies
+  mandate_policies:
+    M1_anyio: true
+    M2_firewall: true
+    M7_local_first: false       # Advisory — cloud is acceptable during dev
+    M13_temple_grade: true
+    M23_failure_integrity: true
+
+  # Output
+  output_dir: "data/council/{session_id}/"
+  preserve_all_artifacts: true
