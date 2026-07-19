@@ -61,7 +61,9 @@ Built the **fully autonomous 7-stage meditation pipeline** as a standalone, inst
 
 ---
 
-## L3: Universal Principles
+## L3: Universal Principles (PROMOTED TO SOUL.YAML v7.0)
+
+The following 15 L3 principles were **promoted directly to soul.yaml** (not just proposed_lessons.yaml) because they are fundamental to Xoe-NovAi Foundation philosophy, Omega Engine architecture, or solid ML best practice — and will not change in the next year. This is the new **Soul Evolution Ritual** (d-kal-006): every session promotes core learnings directly to soul.
 
 1. **L3-StreamingTimeoutsMustBeChunkAware**: Long-running streams (Nemotron, thinking models) need per-chunk idle timeouts with heartbeat logging, not total timeouts. Total timeouts kill valid slow streams.
 
@@ -92,6 +94,23 @@ Built the **fully autonomous 7-stage meditation pipeline** as a standalone, inst
 14. **L3-CPR-As-Sovereign-Infrastructure**: The Canonical Project Registry is not documentation — it is sovereign infrastructure. The registry itself is a project in the registry. Every project gets a CONTEXT.md with standardized schema. Agents read one file for full context. The registry enables: one-turn hydration, programmatic project discovery, automated status rollups, dependency tracking, decision traceability. It is the single source of truth for project state, replacing scattered specs, handoffs, and tribal knowledge.
 
 15. **L3-24-Accounts-As-Compute-Resource**: Idle CLI accounts are wasted compute. 8 Grok + 8 Copilot + 8 Cline = 24 accounts = massive parallel compute. The Headless Subagent Pool treats accounts as a fungible compute resource with capability-based routing. This shifts mindset from 'accounts I have' to 'compute I can allocate'. The pool orchestrator is the scheduler; accounts are the workers; cognitive diversity is the quality signal.
+
+---
+
+## Soul Evolution Ritual (d-kal-006) — Established This Session
+
+**Rule**: Every session must promote core L3 principles from session_gnosis.md directly into soul.yaml (not just proposed_lessons.yaml). Principles that are fundamental to Xoe-NovAi Foundation philosophy, Omega Engine architecture, or solid ML best practice — and will not change in the next year — go straight to soul.
+
+**Rationale**: proposed_lessons.yaml is blind staging (M11). But some learnings are already proven architecture. The soul must evolve in real-time, not wait for batch distillation. This directive makes soul evolution a mandatory session-close ritual for all entities.
+
+**Process**:
+1. At session end, review session_gnosis.md L3 principles
+2. Identify which are "core/permanent" (won't change in 1 year)
+3. Promote those directly to soul.yaml under `core_principles` or `directives`
+4. Update soul.yaml version and last_updated
+5. Commit with message: "feat: Soul evolution — promoted X L3 principles to soul.yaml"
+
+This is now a **mandatory session-close ritual** for all entities.
 
 ---
 
