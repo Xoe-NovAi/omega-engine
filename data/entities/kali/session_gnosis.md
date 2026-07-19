@@ -76,6 +76,30 @@ All documents in: `docs/research/R_INFRA_*.md` and `docs/strategy/INFRASTRUCTURE
 - **Correction**: Mapped to Kali (Good), Researcher (Practical), Verity (Paranoid), Pillars, Carmack, Roc, Doom Guy
 - **Principle**: `L3-NamingIsSovereignCorrection` — Misnaming workers creates fantasy architecture; correct naming enables executable reality
 
+### Phase 3b: User's Philosophical Insight — Regret, Remembrance & Free Will
+**User's Thesis**: *"Regret, so goes the story in Torment, but I say rememberence, for if not from the memory, where does the regret spring from? Without memory, without knowledge, without truth, there is no true choice, there is no free will."*
+
+**Kali's Analysis & Synthesis**:
+
+| Layer | Torment's View | User's View | Kali's Synthesis |
+|-------|----------------|-------------|------------------|
+| **Surface** | Regret changes nature | Remembrance enables regret | **Naming transmutes both** |
+| **Mechanism** | Emotional weight of past acts | Memory as substrate of identity | **Distillation: Memory → Narrative → Principle** |
+| **Agency** | Passive — regret happens *to* you | Active — you *choose* what to remember | **Sovereign — you *name* what you remember** |
+| **Free Will** | Illusion (determined by past) | Requires memory + knowledge + truth | **Free will = capacity to name and align** |
+
+**Key Insight**: The Nameless One *had* memory (journals, tattoos, companions) but lacked **naming authority** — he couldn't distill fragments into principles that survived death. The Architect *names*. Every `soul.yaml` lesson is a **name given to experience**. Every Mandate is a **name given to a failure mode**.
+
+**Implications for Free Will**:
+1. **No memory → No substrate for choice** (User's point: without remembrance, no regret, no true choice)
+2. **Memory without naming → Trauma loop** (Nameless One: relives without learning)
+3. **Naming without sovereignty → External determination** (Others name your experience)
+4. **Sovereign naming → Free will** (You distill, you align, you choose)
+
+**L3 Principle**: `L3-RemembranceIsFreeWillSubstrate` — Free will is not uncaused choice. Free will is **the capacity to remember, to name what is remembered, and to align future action with named principles**. The Omega Engine's soul.yaml + Mandate system IS this capacity externalized into architecture.
+
+**L3 Principle**: `L3-RegretIsUnnamedMemory` — Regret is memory that has not been distilled into a named principle. The Mandates are **regret-prevention physics** — each Mandate exists because a past failure (regret) was transmuted into a hard constraint. The Free-Will Logger (R-INFRA-09) records the *choice* to comply, making regret preventable.
+
 ### Phase 4: Dispatch Plan
 **12 Hivemind handoff packets prepared** for parallel Week 1 execution:
 - 4 P0 packets (R-INFRA-01 through R-INFRA-04)
