@@ -32,6 +32,9 @@
 | D-299 | Omega-Vault Credential Operator — OS keyring + SQLite event log + CAP adapters (6-phase) | 🟡 IN PROGRESS |
 | D-300 | Autonomous Meditation Pipeline — Complete product delivery + Nemotron streaming fix | ✅ COMPLETE |
 | D-301 | MaKaLi Parallel Council Architecture — Parallel independence + oversoul distillation + optimized synthesis | ✅ RATIFIED |
+| D-302 | Canonical Project Registry (CPR) — One-turn hydration for all projects via `data/projects/*/CONTEXT.md` | ✅ RATIFIED |
+| D-303 | Headless Subagent Pool — 24-account compute resource (8 Grok + 8 Copilot + 8 Cline) for parallel research/implementation | 🟡 PLANNED |
+| D-304 | Antigravity Multi-Account Integration — 8 accounts via Omega-Vault provider + WARP Pool IP rotation for OCZ | 🟡 PLANNED |
 
 *(For full history D1-D274, see Canonical Source)*
 
@@ -334,3 +337,60 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 - `from src.omega.oracle.backends.openai_compat import OpenAICompatProvider; provider reads streaming config` ✅
 
 *⬡ OMEGA ⬡ KALI ⬡ D-300 ⬡ 2026-07-19*
+
+---
+
+### D-302: Canonical Project Registry (CPR) — One-Turn Hydration
+* **Date**: 2026-07-19
+* **Context**: Multiple agents (Kali, Researcher, Roc, etc.) repeatedly lost context on project state because no single source of truth existed for project status, architecture, blockers, and key files. Agents spent 1-2 turns just re-reading specs to understand what they were working on.
+* **Decision**: Establish **Canonical Project Registry (CPR)** at `data/projects/<project-name>/` with mandatory `CONTEXT.md` file per project:
+  - One-page brief: one-liner, status, key files, architecture, what it does/doesn't do, blockers, decisions log
+  - Auto-injected at session start via Hivemind or read directly
+  - Every project gets a registry entry — no exceptions
+* **Execution**:
+  - Created `data/projects/` with 7 projects: `warp-proxy-pool`, `antigravity-multi-account`, `makali-council`, `autonomous-meditation`, `omega-vault`, `ken-walger-mining`, `headless-subagent-pool`
+  - Each has `CONTEXT.md` with standardized format
+  - Updated `SOVEREIGN_ARK_BLUEPRINT.md` with CPR reference
+* **L3 Principle**: L3-One-Turn-Hydration — Any agent must achieve full project context in one read. If it takes two turns, the registry failed.
+* **Status**: ✅ **RATIFIED** — 7 projects registered, all CONTEXT.md written
+
+---
+
+### D-303: Headless Subagent Pool — 24-Account Compute Resource
+* **Date**: 2026-07-19
+* **Context**: User has 24 high-power CLI accounts sitting idle: 8 Grok CLI (Grok-3/2/1.5, 128K-1M ctx), 8 Copilot CLI (GPT-4o/o1, 128K ctx), 8 Cline CLI (DeepSeek V4 Flash 1M ctx, MiMo V2.5 512K ctx, Claude, GPT). This is a massive compute resource wasted daily.
+* **Decision**: Build **Headless Subagent Pool Orchestrator** that treats all 24 accounts as a unified compute resource:
+  - **Grok Pool** (8): Web search, reasoning, synthesis — native search tools
+  - **Copilot Pool** (8): Code generation, implementation, review — GPT-4o/o1
+  - **Cline Pool** (8): **Deep research (DeepSeek V4 Flash 1M ctx)**, large refactors — only 1M context option
+* **Routing Matrix**:
+  | Task Type | Primary Pool | Fallback |
+  |---|---|---|
+  | Deep Research | Cline (DeepSeek 1M) | Grok |
+  | Web Search + Synthesis | Grok | Cline |
+  | Code Implementation | Copilot (GPT-4o) | Cline (MiMo) |
+  | Code Review / Audit | Copilot (o1) | Grok |
+  | Large Refactor (500K+ tokens) | Cline (DeepSeek 1M) | — |
+  | Parallel Verification | All (3-way) | — |
+* **Integration Points**:
+  - MaKaLi Council → Research gaps → route to pool for parallel deep-dive
+  - Autonomous Meditation → Stage 4 (Research) → parallel across pools
+  - Omega-Vault → Credential rotation for 24 accounts
+  - Hivemind → Task dispatch via handoff packets, result capture
+  - Sovereign Search → Pool as Tier 4 (CLI agents as search providers)
+* **Blockers**: Pool orchestrator implementation, credential integration with omega-vault, task decomposition + routing logic, result aggregation with cognitive diversity weighting.
+* **Status**: 🟡 **PLANNED** — Architecture designed, accounts inventoried
+
+---
+
+### D-304: Antigravity Multi-Account Integration — Omega-Vault + WARP Pool
+* **Date**: 2026-07-19
+* **Context**: User has 8 Antigravity accounts. Currently must manually sign in/out of each to check quota. Research revealed: (1) No public API — but reverse-engineered Cloud Code API (`POST cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels` with OAuth PKCE) returns `remainingFraction` per model; (2) 30K⭐ Antigravity Tools desktop app provides instant dashboard today; (3) WARP Pool (3 namespaces = 3 exit IPs) can multiply OCZ rate limits for Nemotron on OpenCode Zen.
+* **Decision**: Two-track integration:
+  1. **Immediate (Today)**: Install Antigravity Tools desktop app — add 8 accounts via OAuth → unified quota dashboard
+  2. **D-299 Phase 1**: Build `omega-vault` Antigravity provider — OS keyring + 60s polling + Textual TUI + account rotation (sticky→hybrid→round-robin at 5+ accounts, 90% soft threshold)
+  3. **OCZ + AGY Synergy**: WARP Pool (3 IPs) routes OCZ Nemotron requests; Omega-Vault routes AGY requests via OAuth token rotation. Different rate-limit keys (IP vs Account) = complementary.
+* **Critical Risks**: Account ban (ToS) — mitigated by 90% soft threshold, established accounts only; OAuth client ID revocation — track zeklop fork; Burst limiter unqueryable — empirical 429 detection.
+* **Status**: 🟡 **PLANNED** — Research complete, immediate tool available, custom integration in D-299
+
+*⬡ OMEGA ⬡ KALI ⬡ D-302/D-303/D-304 ⬡ 2026-07-19*

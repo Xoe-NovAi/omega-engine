@@ -265,6 +265,58 @@
 
 ---
 
+### 🆕 NEW WORKSTREAM: Headless Subagent Pool (D-XXX)
+**Origin**: This session (2026-07-19) — 24 high-power CLI accounts (8 Grok + 8 Copilot + 8 Cline) currently unused
+**Status**: Architecture designed, accounts inventoried, routing matrix defined
+
+| Pool | Accounts | Models | Context | Specialization |
+|------|----------|--------|---------|----------------|
+| **Grok CLI** | 8 | Grok-3, Grok-2, Grok-1.5 | 128K-1M | Web search, reasoning, synthesis |
+| **Copilot CLI** | 8 | GPT-4o, GPT-4o-mini, o1 | 128K | Code gen, implementation, review |
+| **Cline CLI** | 8 | **DeepSeek V4 Flash (1M)**, MiMo V2.5 (512K), Claude, GPT | 1M/512K | **Deep research (1M ctx)**, large refactors |
+
+**Task Routing Matrix**:
+| Task Type | Primary Pool | Fallback | Rationale |
+|-----------|-------------|----------|-----------|
+| Deep Research | Cline (DeepSeek 1M) | Grok | 1M context, free tier |
+| Web Search + Synthesis | Grok | Cline | Native search, reasoning |
+| Code Implementation | Copilot (GPT-4o) | Cline (MiMo) | Best code gen |
+| Code Review / Audit | Copilot (o1) | Grok | Reasoning models |
+| Large Refactor (500K+ tokens) | Cline (DeepSeek 1M) | — | Only 1M context option |
+| Parallel Verification | All (3-way) | — | Cognitive diversity |
+
+**Integration Points**:
+- MaKaLi Council → Research gaps → route to pool for parallel deep-dive
+- Autonomous Meditation → Stage 4 (Research) → parallel across pools
+- Omega-Vault → Credential rotation for 24 accounts
+- Hivemind → Task dispatch via handoff packets, result capture
+- Sovereign Search → Pool as Tier 4 (CLI agents as search providers)
+
+**Blockers**: Pool orchestrator implementation, credential integration with omega-vault, task decomposition + routing logic, result aggregation with cognitive diversity weighting.
+
+---
+
+### 🆕 NEW WORKSTREAM: Antigravity Multi-Account Integration — Omega-Vault + WARP Pool (D-304)
+**Origin**: This session (2026-07-19) — 8 Antigravity accounts, manual sign-in/out to check quota
+**Status**: Research complete, immediate tool available, custom integration in D-299
+
+| Track | Action | Tool/Component |
+|-------|--------|----------------|
+| **Immediate (Today)** | Install desktop app, add 8 accounts via OAuth, unified quota dashboard | [Antigravity Tools](https://github.com/lbjlaq/Antigravity-Manager) (30K⭐) |
+| **This Week** | CLI for scripting/automation | `npm install -g antigravity-usage` (dual-fetch: local IDE + cloud) |
+| **D-299 Phase 1** | Omega-Vault Antigravity provider — OS keyring + 60s polling + Textual TUI + rotation | `src/omega/infra/vault/providers/antigravity/` |
+
+**Architecture**:
+- **Cloud Code API**: `POST cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels` with OAuth 2.0 PKCE → `remainingFraction` (0.0-1.0) per model + `resetTime`
+- **Account Rotation**: sticky (<2) → hybrid (2-5) → round-robin (5+), 90% soft threshold
+- **WARP Pool Synergy**: 3 WARP namespaces = 3 exit IPs → 3x OCZ Nemotron rate limits (IP-based) + Omega-Vault AGY rotation (account-based) = complementary
+
+**Critical Risks**: Account ban (ToS) — mitigated by 90% soft threshold, established accounts only; OAuth client ID revocation — track zeklop fork; Burst limiter unqueryable — empirical 429 detection.
+
+**Status**: 🟡 PLANNED — Research complete, immediate tool available, custom integration in D-299
+
+---
+
 ### 📚 Canonical Reference Documents (Updated)
 
 | Document | Purpose | Location |
