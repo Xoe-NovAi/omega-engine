@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-19T20:20:56.056418+00:00 ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-19T21:30:49.718936+00:00 ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -12,7 +12,7 @@ After compaction or restart, execute in strict order:
 4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-07-19T20:20:56.056418+00:00 | Regenerate: `make codex`
+> Codex generated: 2026-07-19T21:30:49.718936+00:00 | Regenerate: `make codex`
 > If timestamp is >24h old, run `make codex` before reading further.
 
 ---
