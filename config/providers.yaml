@@ -1,7 +1,51 @@
-version: 1.1.0
+version: 1.2.0
 generated_at: '2026-07-19'
 source: config/model_registry
 strategy: local_first
+
+# Dynamic Fallback Resolver Configuration
+# Replaces hardcoded fallback_provider with model-aware resolution
+fallback_resolver:
+  enabled: true
+  strategy: "model_aware"  # "model_aware" | "priority_chain" | "static"
+  cvars:
+    # Per-provider fallback chains (ordered by preference)
+    # Resolution: 1) same_model providers → 2) configured chain → 3) same_family → 4) native-gguff
+    opencode-zen:
+      - openrouter          # Same models often available (Nemotron, DeepSeek, etc.)
+      - anthropic           # Claude models
+      - google-compat       # Gemini models
+      - native-gguf         # Last resort
+    openrouter:
+      - opencode-zen
+      - cline               # DeepSeek V4 Flash, MiMo
+      - anthropic
+      - google-compat
+      - native-gguf
+    google:
+      - google-compat       # Same models, different endpoint
+      - openrouter
+      - native-gguf
+    google-compat:
+      - google
+      - openrouter
+      - native-gguf
+    anthropic:
+      - openrouter
+      - opencode-zen
+      - native-gguf
+    xai:
+      - openrouter
+      - native-gguf
+    cline:
+      - openrouter          # DeepSeek V4 Flash, MiMo
+      - opencode-zen
+      - native-gguf
+    antigravity:
+      - openrouter
+      - opencode-zen
+      - native-gguf
+
 inference:
   fallback_chain:
   - provider: native-gguf
@@ -146,7 +190,6 @@ inference:
         chunk_timeout_ms: 30000
         total_timeout_ms: 300000
         fallback_on_timeout: true
-        fallback_provider: native-gguf
       supported_models:
       - gemma-4-31b-it-free
       - gemma-4-26b-a4b-it-free
@@ -163,7 +206,6 @@ inference:
         chunk_timeout_ms: 30000
         total_timeout_ms: 300000
         fallback_on_timeout: true
-        fallback_provider: native-gguf
       supported_models:
       - gemma-4-31b-it
       - gemma-4-26b-it
@@ -181,7 +223,6 @@ inference:
         chunk_timeout_ms: 30000
         total_timeout_ms: 300000
         fallback_on_timeout: true
-        fallback_provider: native-gguf
       supported_models:
       - google/gemma-4-31b-it:free
       - google/gemma-4-26b-a4b-it:free
@@ -217,7 +258,6 @@ inference:
         chunk_timeout_ms: 30000
         total_timeout_ms: 300000
         fallback_on_timeout: true
-        fallback_provider: native-gguf
       supported_models:
       - claude-sonnet-5-high-thinking
       - claude-haiku-4.5-extended
@@ -248,7 +288,6 @@ inference:
         chunk_timeout_ms: 60000
         total_timeout_ms: 600000
         fallback_on_timeout: true
-        fallback_provider: native-gguf
       supported_models:
       - deepseek-v4-flash
       - mimo-v2.5
@@ -263,7 +302,6 @@ inference:
         chunk_timeout_ms: 30000
         total_timeout_ms: 300000
         fallback_on_timeout: true
-        fallback_provider: native-gguf
       supported_models:
       - claude-sonnet-5-high-thinking
       - claude-haiku-4.5-extended
@@ -279,7 +317,6 @@ inference:
         chunk_timeout_ms: 30000
         total_timeout_ms: 300000
         fallback_on_timeout: true
-        fallback_provider: native-gguf
       supported_models:
       - grok-4.3-web
       - grok-4.1-fast-web
