@@ -1,0 +1,104 @@
+{
+  "generated": "2026-07-18T11:31:11.554815+00:00",
+  "corrections": [
+    {
+      "model_id": "gemini-2.5-pro",
+      "file": "config/model_registry/models/cloud/gemini-2.5-pro.yaml.md",
+      "fields": {
+        "context_window": 1048576,
+        "max_output_tokens": 1048576,
+        "pricing": {
+          "input_per_mtok": 0.00125,
+          "output_per_mtok": 0.01,
+          "cached_input_per_mtok": 0.000125,
+          "cost_per_1k_tokens_usd": 1.25e-06
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_tokens",
+          "reasoning",
+          "response_format",
+          "seed",
+          "stop",
+          "structured_outputs",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_p"
+        ],
+        "updated_at": "2026-07-18",
+        "live_api_state": {
+          "source": "openrouter-api-2026-07-19",
+          "last_verified": "2026-07-18",
+          "canonical_id": "google/gemini-2.5-pro"
+        }
+      }
+    },
+    {
+      "model_id": "gemini-2.5-flash",
+      "file": "config/model_registry/models/cloud/gemini-2.5-flash.yaml.md",
+      "fields": {
+        "context_window": 1048576,
+        "max_output_tokens": 1048576,
+        "pricing": {
+          "input_per_mtok": 9.999999999999999e-05,
+          "output_per_mtok": 0.00039999999999999996,
+          "cached_input_per_mtok": 1e-05,
+          "cost_per_1k_tokens_usd": 1e-07
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_tokens",
+          "reasoning",
+          "response_format",
+          "seed",
+          "stop",
+          "structured_outputs",
+          "temperature",
+          "tool_choice",
+          "tools",
+          "top_p"
+        ],
+        "updated_at": "2026-07-18",
+        "live_api_state": {
+          "source": "openrouter-api-2026-07-19",
+          "last_verified": "2026-07-18",
+          "canonical_id": "google/gemini-2.5-flash-lite"
+        }
+      }
+    },
+    {
+      "model_id": "claude-haiku-4.5-extended",
+      "file": "config/model_registry/models/cloud/claude-haiku-4.5-extended.yaml.md",
+      "fields": {
+        "context_window": 1000000,
+        "max_output_tokens": 1000000,
+        "pricing": {
+          "input_per_mtok": 0.002,
+          "output_per_mtok": 0.01,
+          "cached_input_per_mtok": 0.00019999999999999998,
+          "cost_per_1k_tokens_usd": 2e-06
+        },
+        "supported_parameters": [
+          "include_reasoning",
+          "max_completion_tokens",
+          "max_tokens",
+          "reasoning",
+          "reasoning_effort",
+          "response_format",
+          "stop",
+          "structured_outputs",
+          "tool_choice",
+          "tools",
+          "verbosity"
+        ],
+        "updated_at": "2026-07-18",
+        "live_api_state": {
+          "source": "openrouter-api-2026-07-19",
+          "last_verified": "2026-07-18",
+          "canonical_id": "anthropic/claude-sonnet-5"
+        }
+      }
+    }
+  ]
+}

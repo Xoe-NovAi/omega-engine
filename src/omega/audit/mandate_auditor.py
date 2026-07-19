@@ -90,7 +90,7 @@ class MandateAuditor:
 
         # M2 Firewall: Load entity definitions from WAD config (no hardcoded entity names)
         try:
-            config = _load_dispatch_config()
+            config = _load_dispatch_config(root=self.root)
             entities = config.get("entities", [])
         except Exception:
             # Fallback to original scan if WAD config unavailable
@@ -128,7 +128,7 @@ class MandateAuditor:
             if role == ROLE_CONSTANTS["MESSENGER_BRIDGE"]:
                 # This is the Iris entity - check if it has a Pillar slot
                 pillar_slot = ent.get("pillar_slot")
-                if pillar_slot is not None and pillar_slot.startswith("P"):
+                if pillar_slot is not None and str(pillar_slot).startswith("P"):
                     iris_in_pillar = True
                     violations.append(f"WAD entity '{ent.get('name')}' has Pillar slot: {pillar_slot}")
 

@@ -83,11 +83,12 @@ DEFAULT_IWAD = "_omega_default"
 
 # ── WAD Config Loader ──────────────────────────────────────────────────
 
-def _load_dispatch_config(iwad: str = DEFAULT_IWAD) -> dict:
+def _load_dispatch_config(iwad: str = DEFAULT_IWAD, root: Path | str | None = None) -> dict:
     """Load the agent dispatch configuration from the active IWAD.
 
     Args:
         iwad: The IWAD name (default: DEFAULT_IWAD).
+        root: Optional root directory (default: current working directory).
 
     Returns:
         Parsed YAML dict with "entities" list.
@@ -97,7 +98,8 @@ def _load_dispatch_config(iwad: str = DEFAULT_IWAD) -> dict:
         yaml.YAMLError: If YAML is malformed.
     """
     import yaml
-    config_path = Path(f"config/wads/{iwad}/entities/dispatch.yaml")
+    base = Path(root).resolve() if root else Path.cwd()
+    config_path = base / "config" / "wads" / iwad / "entities" / "dispatch.yaml"
     if not config_path.exists():
         raise FileNotFoundError(f"dispatch.yaml not found at {config_path}")
     return yaml.safe_load(config_path.read_text(encoding="utf-8"))

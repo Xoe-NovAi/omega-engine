@@ -79,18 +79,19 @@ END:    heritage
 |---|---|---|---|
 | **Prompt Caching** (Anthropic `cache_control`) | 90% on cached prefix | Low | Cache manifest + static docs (mandates, engine state) as prefix |
 | **Format Optimization** | 15-40% | Low | XML for Claude comprehension; YAML for token-critical bundles |
-| **Model Routing** | 60-95% | Medium | Profile config: `target_model: claude-sonnet-4.6` |
+| **Model Routing** | 60-95% | Medium | Profile config: `target_model: claude-sonnet-5` |
 | **Batch API** | 50% | Medium | Queue non-urgent packs |
 | **Prompt Compression** (LLMLingua) | 5-20x | High | Horizon 1 for retrieval-heavy packs |
+**2026 Model Pricing Context (Updated for Web Claude + Antigravity SDK Availability)**:
 
-**2026 Model Pricing Context**:
-| Model | Context | Input/Output | Cached Input | Notes |
-|---|---|---|---|---|
-| **Claude Opus 4.8** | 1M | $5/$25/MTok | $0.50/MTok | New tokenizer: +35% tokens for code |
-| **Claude Sonnet 4.6** | 1M | $3/$15/MTok | $0.30/MTok | Best quality/cost for most tasks |
-| **Claude Haiku 4.5** | 200K | $0.25/$1.25/MTok | $0.025/MTok | 12x cheaper than Sonnet |
+| Model | Context | Input/Output | Cached Input | Notes | Access |
+|---|---|---|---|---|---|
+| **Claude Opus 4.6** | 1M | $5/$25/MTok | $0.50/MTok | New tokenizer: +35% tokens for code | Antigravity SDK |
+| **Claude Sonnet 5** | 1M | $3/$15/MTok | $0.30/MTok | Best quality/cost for most tasks | Web Claude (free) |
+| **Claude Haiku 4.5** | 200K | $0.25/$1.25/MTok | $0.025/MTok | 12x cheaper than Sonnet | Web Claude (free) |
+| **GPT-OSS-120B** | 128K | Local | N/A | Open weights, local only | Antigravity SDK |
 
-**Packer Implications**: Target 87K tokens well within Sonnet 4.6 1M window. Cache manifest + static docs as prefix. Dynamic content (session logs, decisions) at suffix.
+**Packer Implications**: Target 87K tokens well within Sonnet 5 1M window. Cache manifest + static docs as prefix. Dynamic content (session logs, decisions) at suffix.
 
 ---
 
@@ -105,7 +106,7 @@ END:    heritage
 | **JSON** | 1.0x (baseline) | ⭐⭐⭐ Good | Structured output, tool calls |
 
 **Critical Findings**:
-1. **Claude 4.x follows XML tags literally** — "XML tags are genuinely the best structuring method for Claude" (Thomas Wiegold 2026, Anthropic docs)
+1. **Claude 5.x follows XML tags literally** — "XML tags are genuinely the best structuring method for Claude" (Thomas Wiegold 2026, Anthropic docs)
 2. **JSON degrades reasoning by 10-15%** — "Forcing LLM to output JSON degrades reasoning" (Michael Hannecke 2025)
 3. **YAML is strong default** — "YAML emerged as strongest format for 2/3 models tested" (ImprovingAgents 2025)
 4. **Two-step approach** — Free reasoning → structured formatting (preserves accuracy)
@@ -352,7 +353,7 @@ RAG Retrieval → Compression Layer → Condensed Prompt → Inference
 **Packer Application**: Profile could specify target model tier:
 ```yaml
 decision-tools-review:
-  target_model: "claude-sonnet-4.6"  # Quality tier
+  target_model: "claude-sonnet-5"  # Quality tier
   fallback: "claude-haiku-4.5"       # Cost tier
   reasoning: "Complex synthesis requires Sonnet+"
 ```

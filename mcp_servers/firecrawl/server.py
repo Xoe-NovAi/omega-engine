@@ -109,7 +109,8 @@ async def firecrawl_scrape(
     include_tags: str = "",
     exclude_tags: str = "",
     wait_for: int = 0,
-    timeout: int = 30,
+    timeout: int = 60,
+    max_chars: int = 0,
 ) -> str:
     """Scrape a single URL using Firecrawl.
 
@@ -121,6 +122,7 @@ async def firecrawl_scrape(
         exclude_tags: Comma-separated CSS selectors to exclude.
         wait_for: Milliseconds to wait for page load before extraction.
         timeout: Request timeout in seconds.
+        max_chars: Maximum characters to return (0 = no limit).
     """
     client = _make_client()
     options: dict = {"formats": formats.split(",") if formats else ["markdown"]}
@@ -134,7 +136,9 @@ async def firecrawl_scrape(
         options["wait_for"] = wait_for
 
     data = await client.scrape(url, timeout=timeout, scrape_options=options)
-    md = (getattr(data, "markdown", None) or "")[:4000]
+    md = (getattr(data, "markdown", None) or "")
+    if max_chars and max_chars > 0:
+        md = md[:max_chars]
     links = getattr(data, "links", None) or []
     meta = getattr(data, "metadata", None)
     meta_str = ""

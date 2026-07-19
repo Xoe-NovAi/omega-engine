@@ -69,7 +69,7 @@ class PersonaSpec:
     """
 
     name: str
-    """Display name (e.g., 'Prometheus', 'Sekhmet')."""
+    """Display name (e.g., 'Infrastructure', 'Engineering')."""
 
     domain: str
     """The ONE domain this voice speaks from (e.g., 'Infrastructure')."""

@@ -207,3 +207,357 @@ profiles:
         - ".opencode/skills/context-packer/packer-config.yaml"
       mandates:
         - "SOVEREIGN_MANDATES.md"
+
+  # ── Context Packer Hardening Review ────────────────────────────────────────
+  # For Web Claude to review the Context Packer v2 implementation against the
+  # authoritative hardening spec (CONTEXT_PACKER_HARDENING_SPEC_20260719.md)
+  context-packer-hardening-review:
+    description: "Context Packer v2 hardening review — spec, implementation, gaps, mandates, platform tuning"
+    max_slots: 12
+    include:
+      - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
+      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer-config.yaml"
+      - ".opencode/skills/context-packer/packer.py"
+      - "src/omega/oracle/pii_masker.py"
+      - "SOVEREIGN_MANDATES.md"
+      - "OMEGA_ENGINE.md"
+      - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+    exclude:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+      - "**/*.log"
+      - "**/*.tmp"
+      - "context_packs/**"
+    themes:
+      spec:
+        - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      gaps:
+        - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      platform_tuning:
+        - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
+      implementation:
+        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
+        - "src/omega/oracle/pii_masker.py"
+      config:
+        - ".opencode/skills/context-packer/packer-config.yaml"
+      mandates:
+        - "SOVEREIGN_MANDATES.md"
+      engine_state:
+        - "OMEGA_ENGINE.md"
+      roadmap:
+        - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+
+  # ── Web Claude (Sonnet 5) ───────────────────────────────────────────────────
+  web-claude-sonnet5:
+    description: "Optimized for Claude Sonnet 5 / Opus 4.8 via Web Claude Projects"
+    target_platform: "web-claude"
+    target_model: "claude-sonnet-5"
+    max_slots: 12
+    format: "xml"
+    bundle_ordering: "litm-u-shaped"
+    prompt_caching:
+      enabled: true
+      cache_prefix: ["manifest", "mandates", "engine_state"]
+    token_budget:
+      total: 150000
+      per_bundle: 15000
+      reserved_output: 50000
+    multishot_examples: true
+    xml_delimiters: "spotlighting"
+    include:
+      - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer-config.yaml"
+      - ".opencode/skills/context-packer/packer.py"
+      - "src/omega/oracle/pii_masker.py"
+      - "SOVEREIGN_MANDATES.md"
+      - "OMEGA_ENGINE.md"
+      - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+    exclude:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+      - "**/*.log"
+      - "**/*.tmp"
+      - "context_packs/**"
+    themes:
+      spec:
+        - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      gaps:
+        - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      implementation:
+        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
+        - "src/omega/oracle/pii_masker.py"
+      config:
+        - ".opencode/skills/context-packer/packer-config.yaml"
+      mandates:
+        - "SOVEREIGN_MANDATES.md"
+      engine_state:
+        - "OMEGA_ENGINE.md"
+      roadmap:
+        - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+
+  # ── Web Grok (Grok 4.3) ─────────────────────────────────────────────────────
+  web-grok-4.3:
+    description: "Optimized for Grok 4.3 via Web Grok / SuperGrok"
+    target_platform: "web-grok"
+    target_model: "grok-4.3"
+    max_slots: 20
+    format: "xml-markdown-hybrid"
+    bundle_ordering: "priority-weighted"
+    real_time_injection:
+      enabled: true
+      x_search_topics: ["context engineering", "prompt injection", "PII tokenization"]
+    grok_skills_export: true
+    connector_metadata: true
+    token_budget:
+      total: 200000
+      per_bundle: 15000
+      reserved_output: 50000
+    cost_tier: "standard"
+    include:
+      - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
+      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer-config.yaml"
+      - ".opencode/skills/context-packer/packer.py"
+      - "src/omega/oracle/pii_masker.py"
+      - "SOVEREIGN_MANDATES.md"
+      - "OMEGA_ENGINE.md"
+      - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+    exclude:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+      - "**/*.log"
+      - "**/*.tmp"
+      - "context_packs/**"
+    themes:
+      spec:
+        - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      gaps:
+        - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      platform_tuning:
+        - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
+      implementation:
+        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
+        - "src/omega/oracle/pii_masker.py"
+      config:
+        - ".opencode/skills/context-packer/packer-config.yaml"
+      mandates:
+        - "SOVEREIGN_MANDATES.md"
+      engine_state:
+        - "OMEGA_ENGINE.md"
+      roadmap:
+        - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+
+  # ── Web Grok (Grok 4.1 Fast - Cost Optimized) ───────────────────────────────
+  web-grok-4.1-fast:
+    description: "Cost-optimized for high-volume review via Grok 4.1 Fast"
+    target_platform: "web-grok"
+    target_model: "grok-4.1-fast"
+    max_slots: 20
+    format: "xml-markdown-hybrid"
+    bundle_ordering: "priority-weighted"
+    token_budget:
+      total: 500000
+      per_bundle: 25000
+      reserved_output: 100000
+    cost_tier: "economy"
+    include:
+      - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer-config.yaml"
+      - "SOVEREIGN_MANDATES.md"
+      - "OMEGA_ENGINE.md"
+    exclude:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+      - "**/*.log"
+      - "**/*.tmp"
+      - "context_packs/**"
+    themes:
+      spec:
+        - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      gaps:
+        - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      implementation:
+        - ".opencode/skills/context-packer/enhanced_packer.py"
+      config:
+        - ".opencode/skills/context-packer/packer-config.yaml"
+      mandates:
+        - "SOVEREIGN_MANDATES.md"
+      engine_state:
+        - "OMEGA_ENGINE.md"
+
+  # ── Web Gemini (Gemini 3 Pro) ───────────────────────────────────────────────
+  web-gemini-3-pro:
+    description: "Optimized for Gemini 3 Pro via Google AI Studio"
+    target_platform: "web-gemini"
+    target_model: "gemini-3-pro"
+    max_slots: 30
+    format: "markdown-structured"
+    bundle_ordering: "relevance-descending"
+    source_grounding: true
+    parallel_search_hints: true
+    code_execution_ready: true
+    workspace_export: true
+    token_budget:
+      total: 500000
+      per_bundle: 20000
+      reserved_output: 100000
+    include:
+      - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
+      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer-config.yaml"
+      - ".opencode/skills/context-packer/packer.py"
+      - "src/omega/oracle/pii_masker.py"
+      - "SOVEREIGN_MANDATES.md"
+      - "OMEGA_ENGINE.md"
+      - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+    exclude:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+      - "**/*.log"
+      - "**/*.tmp"
+      - "context_packs/**"
+    themes:
+      spec:
+        - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      gaps:
+        - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      platform_tuning:
+        - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
+      implementation:
+        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
+        - "src/omega/oracle/pii_masker.py"
+      config:
+        - ".opencode/skills/context-packer/packer-config.yaml"
+      mandates:
+        - "SOVEREIGN_MANDATES.md"
+      engine_state:
+        - "OMEGA_ENGINE.md"
+      roadmap:
+        - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+
+  # ── Web Gemini (Gemini 3.1 Pro - Ultra Long Context) ────────────────────────
+  web-gemini-3.1-pro:
+    description: "Ultra-long context for massive codebase analysis"
+    target_platform: "web-gemini"
+    target_model: "gemini-3.1-pro"
+    max_slots: 100
+    format: "markdown-structured"
+    bundle_ordering: "hierarchical"
+    source_grounding: true
+    token_budget:
+      total: 2000000
+      per_bundle: 50000
+      reserved_output: 200000
+    include:
+      - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
+      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer-config.yaml"
+      - ".opencode/skills/context-packer/packer.py"
+      - "src/omega/oracle/pii_masker.py"
+      - "SOVEREIGN_MANDATES.md"
+      - "OMEGA_ENGINE.md"
+      - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+      - "src/omega/**/*.py"
+      - "config/**/*.yaml"
+      - "docs/**/*.md"
+    exclude:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+      - "**/*.log"
+      - "**/*.tmp"
+      - "context_packs/**"
+    themes:
+      spec:
+        - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      gaps:
+        - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      platform_tuning:
+        - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
+      implementation:
+        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
+        - "src/omega/oracle/pii_masker.py"
+      config:
+        - ".opencode/skills/context-packer/packer-config.yaml"
+      mandates:
+        - "SOVEREIGN_MANDATES.md"
+      engine_state:
+        - "OMEGA_ENGINE.md"
+      roadmap:
+        - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+      full_codebase:
+        - "src/omega/**/*.py"
+      full_config:
+        - "config/**/*.yaml"
+      full_docs:
+        - "docs/**/*.md"
+
+  # ── NotebookLM ──────────────────────────────────────────────────────────────
+  notebooklm-research:
+    description: "Source-grounded export for NotebookLM research workflows"
+    target_platform: "notebooklm"
+    target_model: "gemini-backend"
+    max_slots: 50
+    format: "markdown-sources"
+    bundle_ordering: "thematic"
+    source_export: true
+    audio_overview_ready: true
+    guided_prompts: true
+    citation_format: "notebooklm"
+    token_budget:
+      total: 200000
+      per_bundle: 10000
+      reserved_output: 50000
+    include:
+      - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
+      - ".opencode/skills/context-packer/enhanced_packer.py"
+      - ".opencode/skills/context-packer/packer-config.yaml"
+      - ".opencode/skills/context-packer/packer.py"
+      - "src/omega/oracle/pii_masker.py"
+      - "SOVEREIGN_MANDATES.md"
+      - "OMEGA_ENGINE.md"
+      - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+    exclude:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+      - "**/*.log"
+      - "**/*.tmp"
+      - "context_packs/**"
+    themes:
+      spec:
+        - "docs/strategy/CONTEXT_PACKER_HARDENING_SPEC_20260719.md"
+      gaps:
+        - "docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md"
+      platform_tuning:
+        - "docs/research/R_CONTEXT_PACKER_PLATFORM_TUNING_20260718.md"
+      implementation:
+        - ".opencode/skills/context-packer/enhanced_packer.py"
+        - ".opencode/skills/context-packer/packer.py"
+        - "src/omega/oracle/pii_masker.py"
+      config:
+        - ".opencode/skills/context-packer/packer-config.yaml"
+      mandates:
+        - "SOVEREIGN_MANDATES.md"
+      engine_state:
+        - "OMEGA_ENGINE.md"
+      roadmap:
+        - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"

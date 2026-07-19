@@ -358,6 +358,10 @@ class HealthMonitor:
         # Model-to-provider mapping (set externally)
         self._model_provider_map: Dict[str, str] = {}
 
+        # Search provider specific tracking (SSP-V2)
+        self._search_providers: Dict[str, Dict[str, Any]] = {}
+        self._search_ping_funcs: Dict[str, Callable] = {}
+
     # ── TriageRouter Interface ─────────────────────────────────────────
 
     def is_available(self, model_name: str) -> bool:
@@ -418,17 +422,56 @@ class HealthMonitor:
         return successes / total
 
     def get_provider_status(self, provider: str) -> ProviderStatus:
-        """Get current status of a provider."""
+        """Get current status of a provider (LLM or Search)."""
+        # Check LLM providers
         breaker = self._breakers.get(provider)
-        if not breaker:
-            return ProviderStatus.OFFLINE
-        if breaker.state == CircuitState.OPEN:
-            return ProviderStatus.OFFLINE
-        if breaker.state == CircuitState.HALF_OPEN:
-            return ProviderStatus.DEGRADED
-        if self.get_quota_usage(provider) >= 1.0:
-            return ProviderStatus.DEGRADED
-        return ProviderStatus.HEALTHY
+        if breaker:
+            if breaker.state == CircuitState.OPEN:
+                return ProviderStatus.OFFLINE
+            if breaker.state == CircuitState.HALF_OPEN:
+                return ProviderStatus.DEGRADED
+            if self.get_quota_usage(provider) >= 1.0:
+                return ProviderStatus.DEGRADED
+            return ProviderStatus.HEALTHY
+        
+        # Check search providers
+        if provider in self._search_providers:
+            search_info = self._search_providers[provider]
+            return search_info.get("status", ProviderStatus.OFFLINE)
+        
+        return ProviderStatus.OFFLINE
+
+    # ── Search Provider Interface (SSP-V2) ──────────────────────────────
+
+    def register_search_provider(
+        self,
+        name: str,
+        ping_func: Callable,
+        failure_threshold: int = 3,
+        recovery_timeout: float = 60.0,
+    ) -> None:
+        """Register a search provider for health monitoring."""
+        self._search_ping_funcs[name] = ping_func
+        self._search_providers[name] = {
+            "status": ProviderStatus.HEALTHY,
+            "failure_count": 0,
+            "last_check": 0.0,
+            "failure_threshold": failure_threshold,
+            "recovery_timeout": recovery_timeout,
+        }
+        # Also create a circuit breaker for it
+        if name not in self._breakers:
+            self._breakers[name] = AsyncCircuitBreaker(
+                name=name,
+                failure_threshold=failure_threshold,
+                recovery_timeout=recovery_timeout,
+            )
+        self._status[name] = ProviderStatus.HEALTHY
+        logger.info(f"Registered search provider for health monitoring: {name}")
+
+    def get_search_provider_status(self, name: str) -> ProviderStatus:
+        """Get health status of a search provider."""
+        return self.get_provider_status(name)
 
     # ── Recording Methods ──────────────────────────────────────────────
 
@@ -503,6 +546,41 @@ class HealthMonitor:
                     await self._breakers[provider_name]._on_failure()
             return False
 
+    async def probe_search_providers(self) -> Dict[str, bool]:
+        """Probe all registered search providers."""
+        results = {}
+        for name, ping_func in self._search_ping_funcs.items():
+            try:
+                start = time.monotonic()
+                if inspect.iscoroutinefunction(ping_func):
+                    await ping_func()
+                else:
+                    ping_func()
+                latency_ms = (time.monotonic() - start) * 1000
+
+                async with self._lock:
+                    self._search_providers[name]["status"] = ProviderStatus.HEALTHY
+                    self._search_providers[name]["failure_count"] = 0
+                    self._search_providers[name]["last_check"] = time.time()
+                    if name in self._breakers:
+                        self._breakers[name].failure_count = 0
+                    self._status[name] = ProviderStatus.HEALTHY
+
+                logger.debug("Search provider %s healthy: %.0fms", name, latency_ms)
+                results[name] = True
+
+            except Exception as e:
+                logger.warning("Search provider %s probe failed: %s", name, e)
+                async with self._lock:
+                    self._search_providers[name]["status"] = ProviderStatus.OFFLINE
+                    self._search_providers[name]["failure_count"] += 1
+                    self._search_providers[name]["last_check"] = time.time()
+                    if name in self._breakers:
+                        await self._breakers[name]._on_failure()
+                    self._status[name] = ProviderStatus.OFFLINE
+                results[name] = False
+        return results
+
     # ── Status Report ──────────────────────────────────────────────────
 
     def get_status_report(self) -> Dict[str, Any]:
@@ -510,6 +588,7 @@ class HealthMonitor:
         report: Dict[str, Any] = {
             "providers": {},
             "models": {},
+            "search_providers": {},
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
@@ -519,6 +598,14 @@ class HealthMonitor:
                 "circuit_state": breaker.state.value,
                 "failure_count": breaker.failure_count,
                 "quota_usage": self.get_quota_usage(name),
+            }
+
+        for name, info in self._search_providers.items():
+            report["search_providers"][name] = {
+                "status": info.get("status", ProviderStatus.OFFLINE).value,
+                "failure_count": info.get("failure_count", 0),
+                "last_check": info.get("last_check", 0),
+                "circuit_state": self._breakers.get(name, {}).state.value if name in self._breakers else "none",
             }
 
         for model_name in set(

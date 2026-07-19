@@ -26,6 +26,14 @@ models:
     context_budget: 30000
     provider: google
     role: "Kali Grand Oversoul, complex synthesis"
+  mimo-7b-rl-q4_k_m:
+    context_budget: 25000
+    provider: native-gguf
+    path: env:OMEGA_MODELS_DIR/MiMo-7B-RL-Q4_K_M.gguf
+    size_gb: 4.7
+    ram_mb: 6144
+    context_window: 32768
+    role: "MiMo 7B RL - strong reasoning/coding, 32K context"
 
 # S4: Gemma 4 MTP Speculative Decoding
 # [id-soft: gemma-4-mtp-s4] MTP draft pair config for speculative decoding

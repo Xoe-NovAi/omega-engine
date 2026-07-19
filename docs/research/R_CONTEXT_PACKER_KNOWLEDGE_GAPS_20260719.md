@@ -39,18 +39,19 @@ The Context Packer transforms internal engine state into sovereign, PII-masked, 
 | **Batch API** | 50% | Medium | Queue non-urgent work |
 | **Prompt Compression** (LLMLingua) | 5-20x | High | For retrieval-heavy workloads |
 
-### 2026 Model Pricing Context (Critical for Packer Sizing)
+### 2026 Model Pricing Context (Critical for Packer Sizing — Updated for Web Claude + Antigravity SDK)
 
-| Model | Context | Input/Output | Cached Input | Notes |
-|-------|---------|--------------|--------------|-------|
-| **Claude Opus 4.8** | 1M | $5/$25/MTok | $0.50/MTok | New tokenizer: +35% tokens for code |
-| **Claude Sonnet 4.6** | 1M | $3/$15/MTok | $0.30/MTok | Best quality/cost for most tasks |
-| **Claude Haiku 4.5** | 200K | $0.25/$1.25/MTok | $0.025/MTok | 12x cheaper than Sonnet |
-| **GPT-5.5** | 90% cached discount | $5/$30/MTok | $0.50/MTok | No discount on Pro tier |
-| **Llama 4 Scout** | 10M | Self-hosted | N/A | Open weights, local only |
+| Model | Context | Input/Output | Cached Input | Notes | Access |
+|---|---|---|---|---|---|
+| **Claude Opus 4.6** | 1M | $5/$25/MTok | $0.50/MTok | New tokenizer: +35% tokens for code | Antigravity SDK |
+| **Claude Sonnet 5** | 1M | $3/$15/MTok | $0.30/MTok | Best quality/cost for most tasks | Web Claude (free) |
+| **Claude Haiku 4.5** | 200K | $0.25/$1.25/MTok | $0.025/MTok | 12x cheaper than Sonnet | Web Claude (free) |
+| **GPT-OSS-120B** | 128K | Local | N/A | Open weights, local only | Antigravity SDK |
+| **GPT-5.5** | 90% cached discount | $5/$30/MTok | $0.50/MTok | No discount on Pro tier | N/A |
+| **Llama 4 Scout** | 10M | Self-hosted | N/A | Open weights, local only | Local |
 
 ### Packer Implications
-- **Target 87K tokens** (current pack) well within Sonnet 4.6 1M window
+- **Target 87K tokens** (current pack) well within Sonnet 5 1M window
 - **Cache the manifest + static docs** (mandates, engine state) as prefix
 - **Dynamic content** (session logs, decisions) at suffix
 - **Format choice**: XML for Claude (best comprehension), YAML for token efficiency
@@ -325,7 +326,7 @@ RAG Retrieval → Compression Layer → Condensed Prompt → Inference
 **Packer Application**: Profile could specify target model tier:
 ```yaml
 decision-workspace-review:
-  target_model: "claude-sonnet-4.6"  # Quality tier
+  target_model: "claude-sonnet-5"  # Quality tier
   fallback: "claude-haiku-4.5"       # Cost tier
   reasoning: "Complex synthesis requires Sonnet+"
 ```

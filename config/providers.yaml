@@ -1,111 +1,234 @@
+version: 1.1.0
+generated_at: '2026-07-19'
+source: config/model_registry
+strategy: local_first
 inference:
-  strategy: local_first
   fallback_chain:
   - provider: native-gguf
-    # Default model path: models/gguf/ (created by make model-download)
-    model_path: env:OMEGA_MODELS_DIR/Qwen3-1.7B-Q6_K.gguf
     priority: 0
-    n_ctx: 8192
-    n_ctx_max: 32768
-    cores:
-    - 0
-    - 2
-    - 4
-    - 6
-    n_threads: 4
-    n_threads_batch: 4
-    type_k: 8
-    type_v: 1
-    kv_cache_type: f16
-    n_batch: 512
-    n_ubatch: 32
-    use_mmap: true
-    use_mlock: false
-    n_gpu_layers: 0
+    enabled: true
+    description: Local GGUF inference via llama.cpp (highest priority - local-first)
   - provider: lmster
     priority: 1
-    endpoint: http://127.0.0.1:1234
-    model_overrides:
-      qwen3-4b-thinking-q4_k_m: qwen3-4b-thinking
-      qwen3-1.7b-q6_k: qwen3-1.7b
-      qwen3-1.7b: qwen3-1.7b
-      phi-4-mini: phi-4-mini
-      deepseek-r1-qwen3-8b-q3_k_l: deepseek-r1-qwen3-8b
-      krikri-8b-q4_k_m: krikri-8b
-      rocracoon-3b-instruct: RocRacoon-3b
-      phi-4-mini-reasoning-abliterated-q4_k_m: phi-4-mini-abliterated
+    enabled: true
+    description: LM Studio local server (OpenAI-compatible API)
   - provider: ollama
     priority: 2
     enabled: false
-    endpoint: http://127.0.0.1:11434
-    model_overrides:
-      qwen3-1.7b-q6_k: qwen3:1.7b
-      qwen3-1.7b: qwen3:1.7b
-      qwen3-0.6b-q6_k: qwen3:0.6b
-      qwen3-4b-thinking-q4_k_m: qwen3:4b
-      deepseek-r1-qwen3-8b-q3_k_l: deepseek-r1:8b
-      krikri-8b-q4_k_m: krikri:8b
-      phi-2-omnimatrix-i1-q4_k_m: ministral:3b
-      phi-4-mini: phi-4-mini
-      rocracoon-3b-instruct: rocracoon:3b
-      phi-4-mini-reasoning-abliterated-q4_k_m: phi-4-mini
+    description: Ollama local server (OpenAI-compatible API)
   - provider: antigravity
     priority: 3
-    api_key: env:ANTIGRAVITY_API_KEY
-    base_url: https://api.antigravity.ai/v1
-    model_overrides:
-      qwen3-1.7b: antigravity-v1
-    models:
-    - antigravity-v1
+    enabled: true
+    description: Antigravity OAuth-based frontier models (Google DeepMind, Anthropic,
+      OpenAI)
   - provider: google
     priority: 4
-    api_key: env:GOOGLE_API_KEY
-    model_overrides:
-      phi-4-mini: gemma-4-31b-it
-      deepseek-r1-qwen3-8b-q3_k_l: gemma-4-31b-it
-      krikri-8b-q4_k_m: gemma-4-31b-it
-      qwen3-4b-thinking-q4_k_m: gemma-4-31b-it
-      phi-2-omnimatrix-i1-q4_k_m: gemma-4-31b-it
-    models:
-    - gemma-4-31b-it
-    - gemma-4-26b-it
-  - provider: openrouter
-    priority: 4
-    api_key: env:OPENROUTER_API_KEY
-    base_url: https://openrouter.ai/api
-    model_overrides:
-      qwen3-1.7b-q6_k: qwen/qwen3-1.7b
-      qwen3-4b-thinking-q4_k_m: qwen/qwen3-4b
-      deepseek-r1-qwen3-8b-q3_k_l: deepseek/deepseek-r1
-      phi-4-mini: microsoft/phi-4-mini
-      krikri-8b-q4_k_m: nvidia/krikri-8b
-      phi-2-omnimatrix-i1-q4_k_m: microsoft/phi-2
-    models:
-    - qwen/qwen3-1.7b
-    - qwen/qwen3-4b
-    - deepseek/deepseek-r1
-    - microsoft/phi-4-mini
-    - nvidia/krikri-8b
-    - microsoft/phi-2
-  - provider: opencode-zen
-    priority: 5
-    api_key: env:OPENCODE_ZEN_API_KEY
-    base_url: https://api.opencode.ai/zen/v1
-    model_overrides:
-      qwen3-1.7b-q6_k: minimax/minimax-m3
-      qwen3-1.7b: minimax/minimax-m3
-      qwen3-4b-thinking-q4_k_m: minimax/minimax-m3
-      qwen3-0.6b-q6_k: minimax/minimax-m3
-      deepseek-r1-qwen3-8b-q3_k_l: deepseek/deepseek-v4-flash
-      krikri-8b-q4_k_m: minimax/minimax-m2.5
-      phi-2-omnimatrix-i1-q4_k_m: minimax/minimax-m3
-      phi-4-mini: minimax/minimax-m3
-    models:
-    - minimax/minimax-m3
-    - deepseek/deepseek-v4-flash
-    - minimax/minimax-m2.5
-  - provider: cline
-    priority: 6
-  - provider: mock
-    priority: 99
     enabled: true
+    description: Google AI Studio / Vertex AI - Google's own models only
+  - provider: openrouter
+    priority: 5
+    enabled: true
+    description: OpenRouter free tier and paid models
+  - provider: opencode-zen
+    priority: 6
+    enabled: true
+    description: OpenCode Zen - CLI-exclusive cloud models
+  - provider: cline
+    priority: 7
+    enabled: true
+    description: Cline - CLI agent with DeepSeek V4 Flash / MiMo V2.5
+  - provider: anthropic
+    priority: 8
+    enabled: true
+    description: Anthropic - Claude models (Sonnet, Haiku, Opus)
+  - provider: xai
+    priority: 9
+    enabled: true
+    description: xAI - Grok models
+  - provider: mock
+    priority: 10
+    enabled: false
+    description: Test mock provider for unit tests
+  providers:
+    native-gguf:
+      priority: 0
+      enabled: true
+      description: Local GGUF inference via llama.cpp (highest priority - local-first)
+      model_path: env:OMEGA_MODELS_DIR/Qwen3-1.7B-Q6_K.gguf
+      n_threads: 4
+      supported_models:
+      - llama-4-scout-local
+      - gpt-oss-120b-local
+      - qwen-3.5-72b-local
+      - nemotron-3-ultra-local
+      - qwen3-1.7b-local
+      - qwen3-4b-thinking-local
+      - krikri-8b-local
+      - deepseek-r1-qwen3-8b-local
+      - ministral-3b-local
+      - qwen3-0.6b-local
+      - qwen2.5-0.5b-local
+      - functiongemma-270m-local
+      - embeddinggemma-300m-local
+    lmster:
+      priority: 1
+      enabled: true
+      description: LM Studio local server (OpenAI-compatible API)
+      api_key: lm-studio
+      base_url: http://localhost:1234/v1
+      n_threads: 4
+      supported_models:
+      - llama-4-scout-local
+      - gpt-oss-120b-local
+      - qwen-3.5-72b-local
+      - nemotron-3-ultra-local
+      - qwen3-1.7b-local
+      - qwen3-4b-thinking-local
+      - krikri-8b-local
+      - deepseek-r1-qwen3-8b-local
+      - ministral-3b-local
+      - qwen3-0.6b-local
+      - qwen2.5-0.5b-local
+      - functiongemma-270m-local
+      - embeddinggemma-300m-local
+    ollama:
+      priority: 2
+      enabled: false
+      description: Ollama local server (OpenAI-compatible API)
+      api_key: ollama
+      base_url: http://localhost:11434/v1
+      n_threads: 4
+      supported_models:
+      - llama-4-scout-local
+      - gpt-oss-120b-local
+      - qwen-3.5-72b-local
+      - nemotron-3-ultra-local
+      - qwen3-1.7b-local
+      - qwen3-4b-thinking-local
+      - krikri-8b-local
+      - deepseek-r1-qwen3-8b-local
+      - ministral-3b-local
+      - qwen3-0.6b-local
+      - qwen2.5-0.5b-local
+      - functiongemma-270m-local
+      - embeddinggemma-300m-local
+    antigravity:
+      priority: 3
+      enabled: true
+      description: Antigravity OAuth-based frontier models (Google DeepMind, Anthropic,
+        OpenAI)
+      api_key: env:ANTIGRAVITY_API_KEY
+      base_url: https://api.antigravity.ai/v1
+      n_threads: 4
+      supported_models:
+      - gemini-3.5-flash
+      - gemini-3.1-pro
+      - claude-sonnet-4.6
+      - claude-opus-4.6
+      - gpt-oss-120b
+    google:
+      priority: 4
+      enabled: true
+      description: Google AI Studio / Vertex AI - Google's own models only
+      api_key: env:GOOGLE_API_KEY
+      n_threads: 4
+      supported_models:
+      - gemma-4-31b-it-free
+      - gemma-4-26b-a4b-it-free
+      - gemini-2.5-pro
+      - gemini-2.5-flash
+    openrouter:
+      priority: 5
+      enabled: true
+      description: OpenRouter free tier and paid models
+      api_key: env:OPENROUTER_API_KEY
+      base_url: https://openrouter.ai/api
+      n_threads: 4
+      supported_models:
+      - google/gemma-4-31b-it:free
+      - google/gemma-4-26b-a4b-it:free
+      - deepseek/deepseek-v4-flash:free
+      - minimax/minimax-m2.5:free
+      - nvidia/nemotron-3-super-120b-a12b:free
+      - qwen/qwen3-next-80b-a3b-instruct:free
+      - qwen/qwen3-coder:free
+      - meta-llama/llama-3.3-70b-instruct:free
+      - meta-llama/llama-3.2-3b-instruct:free
+      - nousresearch/hermes-3-llama-3.1-405b:free
+      - openai/gpt-oss-120b:free
+      - openai/gpt-oss-20b:free
+      - arcee-ai/trinity-large-thinking:free
+      - poolside/laguna-m.1:free
+      - poolside/laguna-xs.2:free
+      - cognitivecomputations/dolphin-mistral-24b-venice-edition:free
+      - liquid/lfm-2.5-1.2b-instruct:free
+      - nvidia/nemotron-3-nano-30b-a3b:free
+      - nvidia/nemotron-nano-9b-v2:free
+      - nvidia/nemotron-nano-12b-v2-vl:free
+      - nvidia/nemotron-3-nano-omni-30b-a3b:free
+      - z-ai/glm-4.5-air:free
+      - openrouter/free
+      - openrouter/owl-alpha
+      - baidu/cobuddy:free
+    opencode-zen:
+      priority: 6
+      enabled: true
+      description: OpenCode Zen - CLI-exclusive cloud models
+      n_threads: 4
+      supported_models:
+      - claude-sonnet-5-high-thinking
+      - claude-haiku-4.5-extended
+      - claude-opus-4.8
+      - gemini-2.5-pro
+      - gemini-2.5-flash
+      - grok-4.3-web
+      - grok-4.1-fast-web
+      - deepseek-v4-flash-free
+      - qwen3.6-plus-free
+      - minimax-m2.5-free
+      - ring-2.6-1t-free
+      - trinity-large-preview-free
+      - nemotron-3-super-free
+      - big-pickle
+      - gpt-5-nano
+      - gpt-5-codex
+      - claude-sonnet-4-6
+      - claude-opus-4-6
+      - glm-5.1
+      - kimi-k2.6
+    cline:
+      priority: 7
+      enabled: true
+      description: Cline - CLI agent with DeepSeek V4 Flash / MiMo V2.5
+      n_threads: 4
+      supported_models:
+      - deepseek-v4-flash
+      - mimo-v2.5
+    anthropic:
+      priority: 8
+      enabled: true
+      description: Anthropic - Claude models (Sonnet, Haiku, Opus)
+      api_key: env:ANTHROPIC_API_KEY
+      base_url: https://api.anthropic.com/v1
+      n_threads: 4
+      supported_models:
+      - claude-sonnet-5-high-thinking
+      - claude-haiku-4.5-extended
+      - claude-opus-4.8
+    xai:
+      priority: 9
+      enabled: true
+      description: xAI - Grok models
+      api_key: env:XAI_API_KEY
+      base_url: https://api.x.ai/v1
+      n_threads: 4
+      supported_models:
+      - grok-4.3-web
+      - grok-4.1-fast-web
+    mock:
+      priority: 10
+      enabled: false
+      description: Test mock provider for unit tests
+      n_threads: 4
+      supported_models:
+      - mock-model

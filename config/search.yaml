@@ -2,7 +2,7 @@
 # AP: AP-SSP-V2-CONFIG-v1.0.0
 # Tier mapping per SSP-V2 spec: T0=Local, T1=SearXNG, T2=Exa, T3=Firecrawl
 
-version: "2.1.0"
+version: "2.2.0"
 
 tiers:
   T0:
@@ -14,7 +14,7 @@ tiers:
   T1:
     name: searxng
     provider: searxng_mcp
-    url: "http://127.0.0.1:8017"
+    url: "http://127.0.0.1:8018/mcp"
     timeout_seconds: 15
     retries: 2
     retry_delay_seconds: [5, 10]
@@ -38,7 +38,7 @@ tiers:
     name: firecrawl
     provider: firecrawl_mcp
     url: "http://127.0.0.1:8015"
-    timeout_seconds: 30
+    timeout_seconds: 60
     retries: 1
     retry_delay_seconds: [10]
     enabled: true
@@ -63,6 +63,10 @@ routing:
     1: 2    # SearXNG fails → try Exa
     2: 1    # Exa fails → try SearXNG (broader keywords)
     3: 2    # Firecrawl fails → try Exa for URL
+  # New: parallel execution mode
+  parallel_execution: true
+  # New: race mode - first successful tier wins
+  race_mode: true
 
 cache:
   enabled: true
@@ -76,3 +80,19 @@ observability:
   log_provider_errors: true
   log_credits_used: true
   hivemind_notify_on: [auth_failure, credit_exhaustion, persistent_rate_limit]
+
+circuit_breaker:
+  enabled: true
+  # Per-tier configuration
+  T0:
+    failure_threshold: 5
+    recovery_timeout_seconds: 30
+  T1:
+    failure_threshold: 3
+    recovery_timeout_seconds: 60
+  T2:
+    failure_threshold: 3
+    recovery_timeout_seconds: 60
+  T3:
+    failure_threshold: 2
+    recovery_timeout_seconds: 120

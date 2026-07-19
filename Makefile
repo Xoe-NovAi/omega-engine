@@ -514,6 +514,22 @@ model-status: ## 🤖 Show available models across all providers
 
 offline-mode: ## 📡 Switch to offline-only providers
 	@echo "$(COLOR_CYAN)📡 Switching to offline-only mode...$(COLOR_NC)"
+
+# ============================================================================
+# MODEL REGISTRY
+# ============================================================================
+
+model-index: ## Build SQLite index from model registry files
+	@echo "$(COLOR_CYAN)Building Model Registry Index...$(COLOR_NC)"
+	@PYTHONPATH=src $(PYTHON) scripts/model_index.py
+
+model-validate: ## Validate all model cards against schema
+	@echo "$(COLOR_CYAN)Validating Model Registry...$(COLOR_NC)"
+	@PYTHONPATH=src $(PYTHON) scripts/model_registry_validate.py
+
+model-query: ## Query model registry (usage: make model-query ARGS="models --tier T3")
+	@PYTHONPATH=src $(PYTHON) -m omega.model_registry.query $(ARGS)
+
 	@export OMEGA_OFFLINE=true
 	omega talk "system status"
 	@echo "$(COLOR_GREEN)✅ Offline mode active (lmster only)$(COLOR_NC)"
@@ -760,9 +776,32 @@ memory-firewall-audit: ## 🛡️  Audit MemoryStore tiers for WAD content leaka
 sovereignty: ## 🏛️ Show local vs cloud inference ratio (D203)
 	$(PYTHON) scripts/sovereignty_report.py
 
-verify-model-spelling: ## 🤖 Verify model name consistency (D119)
+model-sync: ## 🔄 Generate config/providers.yaml from registry
+	@echo "$(COLOR_CYAN)Generating providers.yaml from registry...$(COLOR_NC)"
+	@PYTHONPATH=src $(PYTHON) scripts/generate_providers_yaml.py
 	PYTHONPATH=src $(PYTHON) scripts/verify_model_spelling.py
 
+model-reality-check: ## 🔄 Query all APIs and generate corrections
+	@echo "$(COLOR_CYAN)Running Reality Engine...$(COLOR_NC)"
+	@PYTHONPATH=src $(PYTHON) scripts/reality_engine.py
+
+model-reality-apply: ## ✍️ Apply verified corrections to model cards
+	@echo "$(COLOR_CYAN)Applying corrections...$(COLOR_NC)"
+	@PYTHONPATH=src $(PYTHON) scripts/apply_corrections.py --apply
+	@echo "$(COLOR_GREEN)✅ Corrections applied$(COLOR_NC)"
+	@echo "$(COLOR_CYAN)Rebuilding index...$(COLOR_NC)"
+	@$(MAKE) model-index
+
+model-freshness: ## ⏰ Check for stale model cards (>30 days)
+	@echo "$(COLOR_CYAN)Running freshness check...$(COLOR_NC)"
+	@PYTHONPATH=src $(PYTHON) scripts/freshness_check.py
+
+model-fixed: ## 🔧 Apply corrections then validate + index
+	@$(MAKE) model-reality-apply
+	@$(MAKE) model-validate
+
+verify-model-spelling: ## 🤖 Verify model name consistency (D119)
+verify-model-spelling: ## 🤖 Verify model name consistency (D119)
 firewall-check: ## 🛡️  Assert no WAD-specific strings in core engine (M2 Firewall)
 	@echo "$(COLOR_CYAN)🛡️  M2 Firewall Leak Audit$(COLOR_NC)"
 	@OMEGA_ENV=test PYTHONPATH=src $(PYTHON) -m omega.audit.firewall_checker

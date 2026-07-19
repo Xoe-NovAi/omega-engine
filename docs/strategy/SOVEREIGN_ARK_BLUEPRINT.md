@@ -49,6 +49,66 @@
 | `ho_f1a92da2d95e` | Roc Racoon | **Phase A**: Meditate lens refactor, `lenses.yaml`, 15 M2 fixes | **COMPLETED** |
 | `ho_2a9b2e84debd` | Researcher | **Phases B-E**: 186 M2 fixes + P3 Lens 3 launch | **IN PROGRESS** |
 
+### 🆕 NEW WORKSTREAM: Autonomous Meditation Pipeline (D-300)
+**Origin**: This session (2026-07-19) — Complete product delivery of 7-stage autonomous meditation
+**Status**: Engine core complete, standalone package published, OpenCode integration documented
+
+| Phase | Deliverable | Status | Evidence |
+|-------|-------------|--------|----------|
+| **Core** | 7-stage pipeline engine (`src/omega/skills/autonomous_meditation_pipeline.py`) | ✅ DONE | Platform abstraction (M16), dry-run verified |
+| **Package** | `omega-meditation` PyPI package (`pip install omega-meditation`) | ✅ DONE | `packages/omega-meditation/`, CLI entry point |
+| **OpenCode** | Slash command `/omega-meditation`, global skill, agent frontmatter | ✅ DONE | 9 docs, 3 skills, agent registration |
+| **Docs** | Protocol spec, user guide, quick-ref, troubleshooting, ADR | ✅ DONE | `docs/protocol/`, `docs/guides/`, `docs/adr/` |
+| **Gnosis** | 15 L3 principles staged to `proposed_lessons.yaml` | ✅ DONE | Blind staging per M11 |
+
+### 🆕 P0-5 Nemotron 3 Ultra Streaming Fix
+**Origin**: MaKaLi Council streaming timeout killed Lilith's Run Side synthesis
+**Status**: Implemented and verified in `openai_compat.py` + `providers.yaml`
+
+| Fix | Description | Impact |
+|-----|-------------|--------|
+| **Chunk-level timeout** | 30s per-chunk idle timeout with heartbeat logging (not hard-fail) | Nemotron slow streams continue instead of dying |
+| **Total timeout** | 5 min max stream duration with graceful fallback | Prevents infinite hangs |
+| **Config-driven** | Per-provider `streaming.chunk_timeout_ms`, `total_timeout_ms` in `providers.yaml` | OpenCode Zen + OpenRouter tuned for Nemotron |
+| **Preserves OCZ advantage** | Logs stalls but continues — keeps 5-10x usage limits | Council work no longer lost to timeouts |
+
+**Files Modified**:
+- `src/omega/oracle/backends/openai_compat.py` — `_stream_completion()` with timeout tracking
+- `config/providers.yaml` — `streaming` config for `opencode-zen` and `openrouter`
+
+**Verification**: `python3 -m py_compile src/omega/oracle/backends/openai_compat.py` ✅
+
+### 🆕 Gemma 4 + Cline CLI Working
+**Discovery**: Gemma 4 31B/26B works via direct Google API (Cline CLI), bypassing OpenCode's broken `transform.ts`
+- OpenCode sends `google/gemma-4-31b-it` prefix + wrong thinking levels → 400 error
+- Cline CLI direct API: `gemma-4-31b-it` + `thinkingLevel: "HIGH"` + `includeThoughts: true` → works
+- **Action**: Use Cline + Gemma 4 for research; OpenCode + Nemotron for councils
+
+### 🆕 MaKaLi Council — Build Side Complete, Run Side Partial
+| Side | Status | Pillars | Artifacts |
+|------|--------|---------|-----------|
+| **Build (Maat)** | ✅ COMPLETE | P1, P3, P4, P5 | Consolidated report + 4 pillar plans (97h total) |
+| **Run (Lilith)** | ⚠️ PARTIAL | P8, P9 | P8 Observability, P9 Orchestration (P6, P7, P10 lost to streaming timeout) |
+
+**Next**: Re-dispatch Lilith Run Side after Nemotron fix verified
+
+### 🆕 D-301: MaKaLi Parallel Council Architecture (RATIFIED)
+**New council pattern replacing serial pillar execution with hardware-aware parallel independence + oversoul distillation + optimized synthesis.**
+
+| Phase | Pattern | Key Innovation |
+|-------|---------|----------------|
+| **1** | Parallel Independence | Pillars write unique reports, NO inter-pillar reads |
+| **2** | Oversoul Distillation | Ma'at + Lilith apply unique personas/KBs/models to consolidate |
+| **3** | Kali Optimized Synthesis | Reads 2 files (not 8), writes synthesis + research gaps |
+| **4** | Decoupled Research | Smaller/cloud model executes Kali's research gaps |
+
+**Hardware Profiles**: Local 16GB (4B/8B/12B tiers), Local 8GB (2B/4B/8B), Cloud (Nemotron 1M ctx), Hybrid
+**Config**: `config/council.yaml` + `config/council/profiles/*.yaml`
+**T0 Implementation**: Coordinator skill using existing `task()` tool, file-based handoffs
+**Document**: `docs/strategy/MAKALI_PARALLEL_COUNCIL_ARCHITECTURE.md`
+
+---
+
 ### M2 Firewall Migration — Phases A-E
 | Phase | Target | Violations | Owner | Pattern |
 |-------|--------|------------|-------|---------|
@@ -165,6 +225,43 @@
 - Sovereignty Gate (Decree 4)
 - D-284 MCP Streamable HTTP + PKCE auth
 - D-296 SomaticState + MIAP Integration — Full cognitive state recovery with somatic snapshots
+
+---
+
+### 🆕 NEW WORKSTREAM: Omega-Vault Credential Operator (D-299)
+**Origin**: Meditation pipeline execution (2026-07-18) — solved 1.5-year credential management hell
+**Status**: Architecture ratified, research grounded, gnosis staged, implementation scaffolded
+
+| Phase | Deliverable | Status | Evidence |
+|-------|-------------|--------|----------|
+| **0** | Immediate gitignore fix (auth.json, credentials.json, .env, .env.*, *.key, *.pem) | ✅ DONE | Commit de7406f |
+| **1** | VaultCore: OS keyring + SQLite event log + `vault` CLI (`init`, `add`, `sync`, `audit`) | 🔄 IN PROGRESS | `src/omega/infra/vault/` scaffolded |
+| **2** | CAP Adapters: OpenCode, Omega Engine, generic `.env` | ⏳ PENDING | Adapter protocol defined |
+| **3** | Policy Engine + Rotation Orchestrator + Provider Registry (Google, Anthropic, OpenRouter, OpenAI, xAI, Firecrawl) | ⏳ PENDING | Provider schemas researched |
+| **4** | Passive watcher (inotify/fanotify) + MCP server (`omega-vault serve`) | ⏳ PENDING | fanotify research complete |
+| **5** | Context bundle backup/restore + Chaos testing CLI | ⏳ PENDING | Chaos scenarios defined |
+| **6** | `omega-vault` PyPI + Homebrew release | ⏳ PENDING | Product pattern from omega-sieve |
+
+**Gnosis Staged** (12 L3 principles in `proposed_lessons.yaml`):
+- L3-LocalFirstCredentialOperator
+- L3-MeditationAsCognitiveCompiler
+- L3-StratifiedTruthWithExplicitSync
+- L3-PushBasedAdapterProtocol
+- L3-ChaosAsDesignConstraint
+- L3-MiddlewareForCrossCuttingConcerns
+- L3-ContextBundleAsCognitiveContinuity
+- L3-ProviderRegistryAsSemanticLayer
+- L3-LocalObservabilityNotTelemetry
+- L3-RotationAsDistributedTransaction
+- L3-GradientAdoptionViaPassiveFirst
+- L3-ThreeTierCredentialArchitecture
+- L3-StandaloneProductAsForcingFunction
+- L3-MCPAsNativeCredentialProtocol
+- L3-GitignoreFirst
+
+**Skills Created**:
+- `.opencode/skills/meditate-pipeline/SKILL.md` — Full meditation protocol
+- `.opencode/skills/meditate-research-pipeline/SKILL.md` — End-to-end pipeline automation
 
 ---
 
