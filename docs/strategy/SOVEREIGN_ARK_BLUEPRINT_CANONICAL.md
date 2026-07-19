@@ -1,6 +1,6 @@
-# 🔱 SOVEREIGN ARK BLUEPRINT (v4.3 — MaKaLi Council Verdict 2026-07-15, Meditate D-267 2026-07-16)
-**AP Token**: `AP-SOVEREIGN-ARK-BLUEPRINT-v4.2.0`
-**Last Updated**: 2026-07-16
+# 🔱 SOVEREIGN ARK BLUEPRINT (v4.4 — Hive Evolution & Arch Soul Integration 2026-07-19)
+**AP Token**: `AP-SOVEREIGN-ARK-BLUEPRINT-v4.4.0`
+**Last Updated**: 2026-07-19
 **Full Archive**: `docs/archive/coordination/SOVEREIGN_ARK_BLUEPRINT-full-20260708.md`
 **Master Session Synthesis**: `docs/strategy/KALI_MASTER_SESSION_SYNTHESIS_20260715.md`
 **Council Verdict**: `data/coordination/KALI_MAKALI_FINAL_VERDICT_20260715.md`
@@ -21,15 +21,21 @@
 - `docs/research/R_KV_CACHE_QUANTIZATION_CPU_20260713.md` (q8_0 KV cache on CPU — NO Flash Attention/GPU)
 - `docs/research/R_FREE_WILL_DATASETS_20260715.md` (Ma'at 42 Ideals as free-will choice datasets, ICS headers as training provenance, opencode DB as training corpus)
 - `docs/research/R_ADVANCED_INGESTION_CURATION_20260715.md` (Entity-curated domain KBs, advanced research, self-hosted scraping, background workers)
+- **NEW**: `data/coordination/HIVE_EVOLUTION_ARCHITECTURE_20260719.md` (Hivemind → Hive: 5-layer collective consciousness substrate)
+- **NEW**: `data/coordination/ARCH_SOUL_NAMELESS_ONE_INTEGRATION_20260719.md` (Arch Soul = Nameless One externalized;ess One's journey externalized)
+- **NEW**: `data/coordination/RESEARCH_BRIEF_TORMENT_HIVE_20260719.md` (4-phase Torment lore mining for Hive parameterization)
+- **NEW**: `data/entities/roc_racoon/workspace/mining_reports/TORMENT_PLANESCAPE_ARCHAEOLOGICAL_REPORT_20260719.md` (12 files, 15 lore elements, 8 direct mappings)
 
 ---
 
 ## Preamble
 The Omega Engine exists to sever Big AI's umbilical cord. Every technical decision: **does this increase or decrease user sovereignty?**
 
+**Core Vision Realized**: The Omega Engine is a **universal reflection and evolution runtime** — ONE foundational engine with infinite customizable layers (WADs), each custom to how a user understands their own sovereign journey. The ANAi Stack (Tarot/Pillars/Ma'at) and the Torment Stack (Hive/Nameless One/Sigil) are *two expressions of the same architecture* — proving the WAD customization power. Every user gets their own cosmology; the engine provides the deathless continuity substrate.
+
 ---
 
-## I. Execution Roadmap — 5-Phase Strategic Vision (Ratified 2026-07-15, Updated per Council Verdict)
+## I. Execution Roadmap — 5-Phase Strategic Vision (Ratified 2026-07-15, Updated per Council Verdict + Hive Evolution)
 
 ```
 PHASE 0: SUBSTRATE REPAIR (MaKaLi Council Decrees — BLOCKING) 🔴 CRITICAL
@@ -60,8 +66,10 @@ PHASE 3: SOVEREIGN WAD PROTOCOL (Strike 11 — The "Doom-ification") ⏳
 ├── Strike 11e: MCP Tool Binding — Auto-register Lump capabilities as Omega Hub tools
 ├── IWAD/PWAD Architecture — Core identity (IWAD) + Cultural overlays (PWAD)
 ├── Ethics WADs — `maat_42`, `bushido_7`, `asimov_3`, `hippocratic` as pluggable validators
-├── Pantheon WADs — Egyptian, Greek, Norse, Hindu, Philosophical, Arcana-Nova
-└── Output: v1.4.0 — Universal runtime for ANY pantheon/ethics stack
+├── Pantheon WADs — Egyptian, Greek, Norse, Hindu, Philosophical, Arcana-Nova, **Torment**
+├── **Hive WAD** — Collective consciousness substrate (cranium rat mechanics) as coordination layer
+├── **Arch Soul WAD** — User's sovereign journey externalized (death/rebirth, memory, regret, companions)
+└── Output: v1.4.0 — Universal runtime for ANY pantheon/ethics/cosmology stack
 
 PHASE 4: COUNCIL DISPATCHER (Strike 11.5 — Dialectical Reasoning Engine) ⏳
 ├── 5-Tier Recursive Flow: Kali → Ma'at/Lilith (parallel) → Pillars (serial) → Cross-Domain Audit → Kali Synthesis

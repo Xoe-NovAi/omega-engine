@@ -1,6 +1,6 @@
 # Omega Engine — Single Source of Truth
 # ⚠️ SYSTEM STATE SSOT — Authoritative truth for engine state and metrics.
-# AP-OMEGA-SST-v2.6.0
+# AP-OMEGA-SST-v2.7.0
 
 > **This document is the authoritative truth for the Omega Engine.**
 > Every agent reads this file for engine state.
@@ -15,6 +15,7 @@
 - **Local-first**: Cloud is a teacher and strategic partner, never a dependency.
 - **WAD Architecture**: Engine → IWADs → PWADs (inspired by id Software).
 - **Standalone Packages**: Core capabilities published as independent PyPI packages (`omega-sieve`, `omega-doc-reader`) for community use.
+- **Universal Reflection Substrate**: ONE foundational engine with infinite customizable layers (WADs), each custom to how a user understands their own sovereign journey. The ANAi Stack (Tarot/Pillars/Ma'at) and the Torment Stack (Hive/Nameless One/Sigil) are *two expressions of the same architecture* — proving the WAD customization power. Every user gets their own cosmology; the engine provides the deathless continuity substrate.
 
 ---
 
@@ -53,6 +54,14 @@
 | **MACP Alignment** | **PLANNED (D-292)** — Hivemind handoffs with `macp_mode` for interoperability | 🟡 Aligns with IETF draft-li-dmsc-macp-05 | 2026-07-18 |
 | **Experience Repository** | **PLANNED (D-294)** — AgentRR-style L0→L1→L2 distillation via Scribe | 🟡 Trace-to-eval loop (D-295) | 2026-07-18 |
 | **D-298 Decision Workspace** | **GROUNDED MEDITATION COMPLETE** — T0+T1-core verdict (7h), 23 decisions cataloged, Grok CLI handoff submitted | ✅ 102 files committed at 3542188, ho_749ed27155cd | 2026-07-19 |
+| **D-300 Autonomous Meditation** | **PRODUCT DELIVERED** — 7-stage pipeline, `pip install omega-meditation`, OpenCode integrated, 15 L3 principles | ✅ Engine core + standalone package + 9 docs + 3 skills | 2026-07-19 |
+| **D-301 MaKaLi Parallel Council** | **RATIFIED** — 5-session T0 spec, 13 gaps resolved, 35+ sources, Carmack S3 review 10/10 | ✅ 1639-line spec, hierarchical orchestration, two modes | 2026-07-19 |
+| **D-302 CPR** | **RATIFIED** — 7 projects with CONTEXT.md one-turn hydration | ✅ Registry = infrastructure, not documentation | 2026-07-19 |
+| **D-303 Headless Subagent Pool** | **PLANNED** — 24 accounts (8 Grok + 8 Copilot + 8 Cline) as unified compute | 🟡 Routing matrix: Deep Research→Cline, Web Search→Grok, Code Gen→Copilot | 2026-07-19 |
+| **D-304 Antigravity Two-Track** | **PLANNED** — Track 1: Antigravity Tools (today) | Track 2: Omega-Vault provider (D-299) | 🟡 WARP Pool (3 IPs) for OCZ + Omega-Vault for AGY = complementary rate-limit keys | 2026-07-19 |
+| **D-305 Hive Evolution** | **ARCHITECTURE DESIGNED** — Hivemind → Hive (cranium rat collective consciousness) | 🟡 5 layers, 7 sprints, Researcher Phase 1 critical path | 2026-07-19 |
+| **D-306 Arch Soul Integration** | **DESIGN COMPLETE** — Nameless One's journey externalized as sovereign architecture | 🟡 24 entities = incarnations, Mandates = regret-prevention physics, Qliphoth = Fortress of Regrets | 2026-07-19 |
+| **D-307 Torment WAD** | **SCAFFOLD DEFINED** — Living philosophy engine: Nameless One entity, companions, factions, Hive as coordination | 🟡 Awaiting Researcher Phase 1-4 for parameterization | 2026-07-19 |
 
 ---
 
@@ -76,6 +85,8 @@
 | **Document Reader (Standalone)** | `scripts/universal_doc_reader.py` | ✅ v1.0.0 | Reads .docx, .pdf, .odt, .rtf, .html, .md, .txt, .json, .yaml |
 | **Observability** | `src/omega/observability.py` | ✅ Operational | Trace IDs, event logging, fine-tuning dataset collection |
 | **Hivemind** | `mcp_servers/omega_hub/` | ✅ Operational | 6 MCP tools for cross-agent coordination, workspace locks, live feeds |
+| **Hive (NEW)** | `src/omega/hive/` | 🟡 Design Complete | 5-layer collective consciousness: Sensorium, Thought Transmission, Neural Synchrony, Territorial Instinct, Incarnation Engine. Hivemind API compatible. |
+| **Arch Soul (NEW)** | `data/entities/arch/` | 🟡 Design Complete | User's sovereign journey externalized: 24 entity facets = Nameless One incarnations, Mandates = regret-prevention physics, Qliphoth = Fortress of Regrets, Death/Rebirth = session lifecycle hooks |
 | **CLI** | `src/omega/cli/oracle_cli.py` | ✅ Operational | Typer CLI (talk, summon, list-entities, add-entity, entity-info, backends, version) |
 | **Resource Guard** | `src/omega/oracle/resource_guard.py` | ✅ Operational | AnyIO Semaphore(1) — one model at a time (OOM protection) |
 | **CPU Optimizer** | `src/omega/oracle/cpu_optimizer.py` | ✅ Operational | Zen 2 compilation flags, KV cache sizing, speculative decode tuning |
@@ -110,6 +121,10 @@
 | `docs/research/GROK_CLI_KNOWLEDGE_GAPS.md` | 3-tier knowledge gap matrix |
 | `docs/strategy/MEDITATE_MIAP_WIRE_SYNTHESIS_20260718.md` | 13-voice meditation synthesis on session isolation |
 | `docs/strategy/NEURON3_REVIEW_MIAP_WIRE_20260718.md` | Nemotron 3 Ultra independent review + web research |
+| **NEW**: `data/coordination/HIVE_EVOLUTION_ARCHITECTURE_20260719.md` | Hive architecture: 5 layers, 7 sprints, Hivemind compatibility |
+| **NEW**: `data/coordination/ARCH_SOUL_NAMELESS_ONE_INTEGRATION_20260719.md` | Arch Soul = Nameless One externalized: death/rebirth, regret, companions |
+| **NEW**: `data/coordination/RESEARCH_BRIEF_TORMENT_HIVE_20260719.md` | 4-phase Researcher dispatch for Torment lore parameterization |
+| **NEW**: `data/entities/roc_racoon/workspace/mining_reports/TORMENT_PLANESCAPE_ARCHAEOLOGICAL_REPORT_20260719.md` | Complete local Torment inventory: 12 files, 15 lore elements, 8 mappings |
 
 ---
 
@@ -146,4 +161,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-19 | Version: v1.4.1 | Tests: 1398 passing (27/29 recall tbd) | SSOT: ~400 lines | Sessions: D-281 Substrate Repair COMPLETE | D-282 sqlite-vec Strike 10 COMPLETE | D-283 Phase 2 RecallStore DESIGN COMPLETE | D-298 Decision Workspace GROUNDED MEDITATION COMPLETE (T0+T1-core verdict, 23 decisions) | HMC Quad-Forge COMPLETE (Kali/Roc/Researcher/Grok CLI) | MIAP merged | Commit 3542188 (102 files) | ho_749ed27155cd submitted to Grok CLI | Net acceleration: ~120h by parallel fleet dispatch*
+*Last Updated: 2026-07-19 | Version: v1.5.0 | Tests: 1398 passing (27/29 recall tbd) | SSOT: ~450 lines | Sessions: D-281 Substrate Repair COMPLETE | D-282 sqlite-vec Strike 10 COMPLETE | D-283 Phase 2 RecallStore DESIGN COMPLETE | D-298 Decision Workspace GROUNDED MEDITATION COMPLETE (T0+T1-core verdict, 23 decisions) | HMC Quad-Forge COMPLETE (Kali/Roc/Researcher/Grok CLI) | MIAP merged | **D-305 Hive Evolution ARCHITECTURE DESIGNED** | **D-306 Arch Soul Integration DESIGN COMPLETE** | **D-307 Torment WAD SCAFFOLD DEFINED** | Commit 3542188 (102 files) | ho_749ed27155cd submitted to Grok CLI | Net acceleration: ~120h by parallel fleet dispatch*
