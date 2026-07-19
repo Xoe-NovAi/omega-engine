@@ -78,6 +78,12 @@ PHASE 4: COUNCIL DISPATCHER (Strike 11.5 — Dialectical Reasoning Engine) ⏳
 ├── CASArchiver Deduplication — Hash claims across council to prevent context bloat
 ├── Ethics Gate Integration — `IEthicsValidator` (e.g., Ma'at 42 Ideals) pre/post synthesis
 ├── Configurability Layers: CouncilSpec YAML + CouncilHarness Markdown + DispatchModes + Profiles
+├── **NEW: Report Digestion Layer (Phase 1.5)** — stack-cat concatenation + Python LLM-optimization layer
+│   ├── Post-Phase 1: Auto-concatenate all pillar reports into single digested file per side
+│   ├── Zero inference cost — pure Python: executive summaries, cross-ref index, conflict map, mandate matrix
+│   ├── 60% token reduction for oversouls + pre-synthesized intelligence
+│   ├── Research needed: optimal summary extraction, conflict detection heuristics, token budget allocation
+│   └── Full integration into MaKaLi Coordinator T0 Session 1
 ├── Novel Gaps: Recursive Council, Dialectical Trace Synthesis, Somatic Council State, Config Versioning, Cost-Aware Routing, Cross-Council Distillation
 └── Output: v1.5.0 — Native dialectical reasoning primitive
 
