@@ -16,6 +16,7 @@
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import logging
+import time
 import httpx2 as httpx
 import json
 from typing import Optional, Dict, List
@@ -124,45 +125,83 @@ class OpenAICompatProvider(RemoteProvider):
             return result
 
     async def _stream_completion(
-        self, client: "httpx.AsyncClient", url: str, payload: dict, headers: dict
-    ) -> str:
-        """Stream a chat completion, accumulating content.
+            self, client: "httpx.AsyncClient", url: str, payload: dict, headers: dict
+        ) -> str:
+            """Stream a chat completion, accumulating content.
 
-        [S3 B3] On mid-stream `finish_reason: 'error'`, raises to trigger
-        retry with assistant prefill (handled by base class retry loop).
-        """
-        chunks: List[str] = []
-        async with client.stream("POST", url, json=payload, headers=headers) as response:
-            response.raise_for_status()
-            async for line in response.aiter_lines():
-                line = line.strip()
-                if not line or not line.startswith("data:"):
-                    continue
-                data_str = line[5:].strip()
-                if data_str == "[DONE]":
-                    break
-                try:
-                    chunk = json.loads(data_str)
-                except (ValueError, OSError):
-                    continue
-                
-                choices = chunk.get("choices", [])
-                if not choices:
-                    continue
-                
-                delta = choices[0].get("delta", {})
-                content_piece = delta.get("content", "")
-                if content_piece:
-                    chunks.append(content_piece)
-                
-                # [S3 B3] Mid-stream error detection
-                finish_reason = choices[0].get("finish_reason")
-                if finish_reason == "error":
-                    raise RuntimeError(
-                        f"Provider {self.name} stream terminated with finish_reason='error'"
-                    )
-        
-        return "".join(chunks).strip()
+            [S3 B3] On mid-stream `finish_reason: 'error'`, raises to trigger
+            retry with assistant prefill (handled by base class retry loop).
+
+            [P0-5 Nemotron Fix] Chunk-level timeout tracking:
+            - Per-chunk timeout: 30s (configurable via provider config `streaming.chunk_timeout_ms`)
+            - Total timeout: 300s (configurable via provider config `streaming.total_timeout_ms`)
+            - Heartbeat logging for slow streams
+            """
+            # Streaming timeout configuration (provider-specific, defaults for Nemotron)
+            chunk_timeout_ms = self.config.extra.get("streaming", {}).get("chunk_timeout_ms", 30000)
+            total_timeout_ms = self.config.extra.get("streaming", {}).get("total_timeout_ms", 300000)
+            chunk_timeout = chunk_timeout_ms / 1000.0
+            total_timeout = total_timeout_ms / 1000.0
+
+            chunks: List[str] = []
+            chunk_count = 0
+            total_start = time.monotonic()
+            last_chunk_time = total_start
+
+            async with client.stream("POST", url, json=payload, headers=headers) as response:
+                response.raise_for_status()
+                async for line in response.aiter_lines():
+                    # Check total timeout
+                    if time.monotonic() - total_start > total_timeout:
+                        logger.error(
+                            f"Provider {self.name} streaming total timeout ({total_timeout}s) exceeded"
+                        )
+                        raise RuntimeError(f"Streaming total timeout exceeded ({total_timeout}s)")
+
+                    # Check per-chunk timeout
+                    idle_ms = (time.monotonic() - last_chunk_time) * 1000
+                    if idle_ms > chunk_timeout_ms:
+                        logger.warning(
+                            f"Provider {self.name} stream stalled: {idle_ms:.0f}ms since last chunk "
+                            f"(threshold: {chunk_timeout_ms}ms). Continuing..."
+                        )
+                        # Don't raise — Nemotron is slow but works. Just log and continue.
+
+                    line = line.strip()
+                    if not line or not line.startswith("data:"):
+                        continue
+                    data_str = line[5:].strip()
+                    if data_str == "[DONE]":
+                        break
+                    try:
+                        chunk = json.loads(data_str)
+                    except (ValueError, OSError):
+                        continue
+
+                    choices = chunk.get("choices", [])
+                    if not choices:
+                        continue
+
+                    delta = choices[0].get("delta", {})
+                    content_piece = delta.get("content", "")
+                    if content_piece:
+                        chunks.append(content_piece)
+                        chunk_count += 1
+                        last_chunk_time = time.monotonic()
+
+                    # [S3 B3] Mid-stream error detection
+                    finish_reason = choices[0].get("finish_reason")
+                    if finish_reason == "error":
+                        raise RuntimeError(
+                            f"Provider {self.name} stream terminated with finish_reason='error'"
+                        )
+
+            elapsed = time.monotonic() - total_start
+            logger.info(
+                f"Provider {self.name} stream completed: {chunk_count} chunks, "
+                f"{len(''.join(chunks))} chars, {elapsed:.1f}s total"
+            )
+            return "".join(chunks).strip()
 
     @staticmethod
     def _detect_repetition_loop(content: str, model_name: str, threshold: int = 3) -> None:
@@ -174,7 +213,7 @@ class OpenAICompatProvider(RemoteProvider):
         """
         if not content or len(content) < 60:
             return
-        
+
         # Split into ~20-char windows and check last `threshold` are identical
         window = 20
         chunks = [content[i:i+window] for i in range(max(0, len(content)-window*threshold), len(content), window)]
@@ -183,8 +222,6 @@ class OpenAICompatProvider(RemoteProvider):
                 f"Provider {model_name} produced repetitive loop (identical tail detected)"
             )
 
-
-# ── Factory functions for common providers ─────────────────────────────
 
 def create_openrouter_provider(config: ProviderConfig) -> OpenAICompatProvider:
     """Create an OpenRouter provider with correct base URL."""

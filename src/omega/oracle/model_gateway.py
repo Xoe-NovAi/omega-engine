@@ -26,7 +26,7 @@ import subprocess
 import time
 import inspect
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, NamedTuple
+from typing import Any, Dict, List, Optional, Tuple, NamedTuple, AsyncIterator
 from dataclasses import dataclass
 import anyio
 

@@ -7,7 +7,6 @@ This is the ENGINE CORE (src/omega/) — zero platform dependencies.
 Platform integration goes through the MCP Hub or CLI abstraction layer (M16).
 """
 
-import asyncio
 import json
 import sys
 from datetime import datetime
@@ -47,29 +46,37 @@ class PlatformClients:
         self.search = search
     
     @classmethod
-    def from_opencode(cls) -> "PlatformClients":
-        """Factory for OpenCode environment (uses MCP Hub tools)."""
+    def from_opencode(cls, mcp_endpoint: str = "http://127.0.0.1:8016/mcp") -> "PlatformClients":
+        """Factory for OpenCode environment (uses local MCP Hub via SovereignMCPClient)."""
         try:
-            from mcp_servers.omega_hub.tools import (
-                omega_hub_oracle_talk,
-                omega_hub_library_web_search,
-                omega_hub_webfetch,
-                omega_hub_searxng_search,
-            )
+            from src.omega.skills.opencode_client import OpenCodePlatformClients
+            
+            opencode_clients = OpenCodePlatformClients(mcp_endpoint)
             
             class OpenCodeOracle:
+                def __init__(self, oracle_client):
+                    self._oracle = oracle_client
+                
                 async def talk(self, prompt: str) -> str:
-                    return await omega_hub_oracle_talk(query=prompt)
+                    return await self._oracle.talk(prompt)
             
             class OpenCodeSearch:
+                def __init__(self, search_client):
+                    self._search = search_client
+                
                 async def search(self, query: str, limit: int = 5) -> str:
-                    return await omega_hub_library_web_search(query=query, limit=limit)
+                    return await self._search.search(query, limit)
+                
                 async def fetch(self, url: str) -> str:
-                    return await omega_hub_webfetch(url=url)
+                    return await self._search.fetch(url)
+                
                 async def searxng(self, query: str, limit: int = 5) -> str:
-                    return await omega_hub_searxng_search(query=query, limit=limit)
+                    return await self._search.searxng(query, limit)
             
-            return cls(oracle=OpenCodeOracle(), search=OpenCodeSearch())
+            return cls(
+                oracle=OpenCodeOracle(opencode_clients.get_oracle()),
+                search=OpenCodeSearch(opencode_clients.get_search()),
+            )
         except ImportError:
             return cls()  # No clients available
     
@@ -405,10 +412,11 @@ def create_pipeline_cli(problem: str, **kwargs) -> AutonomousMeditationPipeline:
 
 def create_pipeline_standalone(problem: str, **kwargs) -> AutonomousMeditationPipeline:
     """Factory for standalone/testing (no platform clients)."""
+    # dry_run defaults to True for standalone; allow override via kwargs
+    kwargs.setdefault('dry_run', True)
     return AutonomousMeditationPipeline(
         problem_statement=problem,
         clients=PlatformClients.null(),
-        dry_run=True,
         **kwargs
     )
 
@@ -439,4 +447,5 @@ async def main():
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    import anyio
+    anyio.run(main)

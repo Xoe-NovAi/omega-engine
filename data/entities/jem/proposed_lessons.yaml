@@ -210,3 +210,99 @@ proposals:
       "Inbound governance is necessary but not sufficient — sovereign AI requires outbound governance too." Most AI systems focus on inbound governance (input validation, PII scrubbing, content filtering). But sovereign AI also needs OUTBOUND governance: proof of what left the system, when, and to whom. ForensicReceipt (Ed25519 signing) provides the evidence layer for outbound governance — it's a cryptographic receipt that proves "this data left the system at this time to this recipient." Without outbound governance, a sovereign system can't prove its own sovereignty — it can only claim it. The minimal viable outbound governance is: (1) sign every outbound request with Ed25519, (2) maintain hash-chained audit log, (3) provide offline verification. Full Airlock (PII scrubbing) is enhancement, not foundation.
 
 ---
+
+# Session: trc_gemma4_hardening
+# Date: 2026-07-19
+# Phase: Gemma 4 31B Strategy Hardening — Meditation Synthesis
+
+  - id: "jem-20260719-011"
+    tier: L1
+    category: "capability_negotiation"
+    narrative: |
+      The Gemma 4 31B bug (OpenCode transform.ts sends wrong model ID, wrong thinking levels, missing thinkingLevel) is not a bug — it's a pathogen revealing a missing immune system. Seven independent systems (OpenCode, Google API, OpenRouter, Cline, LiteLLM, LangChain, Vercel AI SDK) converged on the same architecture: Provider Capability Negotiation Layer (Matrix + Normalizer + Selector + Health). The bug exists because capabilities are detected (hardcoded in transform.ts) not declared (YAML matrix). The fix is not patching transform.ts — it's building the immune system.
+
+  - id: "jem-20260719-012"
+    tier: L2
+    category: "capability_negotiation"
+    insight: |
+      Capability declaration > capability detection. Every model family has different thinking schemas (Google: 3 variants, Anthropic: budget tokens, OpenAI: reasoning_effort, Qwen3: toggle tags). Hardcoding detection logic per model family is a losing battle — new models appear weekly. A YAML capability matrix (provider_capabilities.yaml) declares what each model supports. The normalizer translates canonical effort levels to provider schemas. The selector routes by capability match + quota headroom + reasoning depth. The health monitor tracks thinking token provenance. This immune system adapts via YAML, not code changes.
+
+  - id: "jem-20260719-013"
+    tier: L3
+    category: "capability_negotiation"
+    principle: |
+      "L3-Capability-Negotiation-As-Immune-System": Provider capabilities must be declared, not detected. The negotiation layer (matrix + normalizer + selector + health) is the immune system that prevents configuration pathogens from reaching the inference fabric. Every model family is a new pathogen; the immune system adapts via YAML, not code changes. This principle generalizes: any system that assumes provider behavior instead of declaring it will be compromised by the next model release. Sovereign inference requires sovereign capability declaration.
+
+  - id: "jem-20260719-014"
+    tier: L2
+    category: "quota_as_routing_signal"
+    insight: |
+      Free tier quota exhaustion (429) is not a failure — it's a routing signal. Google AI Studio free tier: 16k rolling TPM, 15 RPM, 1,500 RPD. Omega's 21.6k token instruction stack exceeds TPM on EVERY request. The correct architecture: pre-flight estimation rejects >80% TPM requests; quota headroom is a routing weight in CapabilitySelector; quota exhaustion triggers fallback (not circuit breaker trip); thinking tokens tracked separately with 2-5x budget multiplier. Free tier is a chaos engineering lab — real constraints = free resilience testing.
+
+  - id: "jem-20260719-015"
+    tier: L3
+    category: "quota_as_routing_signal"
+    principle: |
+      "Quota is a routing signal, not a failure." In multi-provider fabrics, quota exhaustion is expected behavior — not an exception. The system that treats 429 as "route to next provider" is more resilient than the system that treats 429 as "circuit breaker trip." This inverts the traditional error-handling model: quota state is a first-class routing input, not an error condition. Free tiers provide natural chaos engineering — their constraints force the routing logic to be correct.
+
+  - id: "jem-20260719-016"
+    tier: L2
+    category: "thinking_tokens_billable"
+    insight: |
+      Thinking tokens ARE billable output — 85-95% of Gemma 4 HIGH response tokens can be thoughts. Google bills thoughts as output tokens but standard usage metrics don't expose them. The budget gate must apply 2-5x multiplier for thinking models. TokenLedger must track thoughts_token_count separately. ProviderDashboard must show thinking_cost_ratio. GenerateResult must include thinking_provenance (requested/sent/accepted/clamped). Without this, cost monitoring is blind to the largest token consumer.
+
+  - id: "jem-20260719-017"
+    tier: L3
+    category: "thinking_tokens_billable"
+    principle: |
+      "Thinking tokens are the hidden billable output — track them or go bankrupt." Any model with structured thinking (Gemma 4, Gemini 2.5, Anthropic, OpenAI o1, Qwen3, DeepSeek R1) generates internal reasoning that counts toward output quota. A sovereign system must: (1) extract thoughts from provider-specific response formats, (2) count them separately from user-visible output, (3) apply budget multipliers, (4) surface thinking provenance in observability. The thinking trace is also L0_evidence for gnosis distillation — the model's reasoning IS the reflection.
+
+  - id: "jem-20260719-018"
+    tier: L2
+    category: "model_identity_provider_relative"
+    insight: |
+      Same model = 3+ IDs across providers. Gemma 4 31B: Models.dev `google/gemma-4-31b-it`, Google API `gemma-4-31b-it`, OpenRouter `google/gemma-4-31b-it:free`, OpenRouter paid `google/gemma-4-31b-it`. The capability matrix declares aliases per model. normalizeModelId(provider, modelId) canonicalizes at gateway. Adapter pattern (GoogleCompatProvider) isolates provider-specific ID formats. This is not a bug fix — it's an architectural invariant: model identity is provider-relative, canonicalized at the gateway.
+
+  - id: "jem-20260719-019"
+    tier: L3
+    category: "model_identity_provider_relative"
+    principle: |
+      "Model identity is provider-relative — canonicalize at the gateway." The same model has different IDs, different thinking schemas, different quota limits, different capabilities depending on which provider serves it. The capability matrix is the single source of truth; the adapter normalizes; the gateway canonicalizes. Any system that assumes a universal model ID will break on the next provider integration. Sovereign inference requires provider-relative identity with gateway canonicalization.
+
+  - id: "jem-20260719-020"
+    tier: L2
+    category: "heritage_requires_vetting"
+    insight: |
+      The Pi project fix (PR #2903) is prior art but M14 requires vetting pipeline: Discovery → Vetting/Debate → Decision → Implementation. Adding `[heritage: pi-2026]` to CREDITS.md without vet record is a M14 violation. The vet record must specify: exact file:line locations, specific technique (regex /gemma-?4/i + thinking level mapping), hardware constraint that necessitated original (none — this is API contract, not hardware), scope declaration ("applies to Gemma 4 thinking level mapping ONLY, not OpenCode provider architecture"). Heritage is gravitational pull, not debt — but the remembering must be tested by a gate.
+
+  - id: "jem-20260719-021"
+    tier: L3
+    category: "heritage_requires_vetting"
+    principle: |
+      "Heritage requires vetting, not just attribution." A heritage tag without a vet record is counterfeit currency. The M14 pipeline (Discovery → Vetting → Decision → Implementation) is the gate that prevents gravitational pull from becoming technical debt. Every [id-soft:] or [heritage:] tag must carry: (1) vet record with scope declaration, (2) classification (LEGITIMATE/EVOLVED/METAPHORICAL/REJECTED), (3) hardware constraint justification for LEGITIMATE tags. Sovereignty means owning your map — including the courage to vet every claim.
+
+  - id: "jem-20260719-022"
+    tier: L2
+    category: "cross_reference_mandatory"
+    insight: |
+      The Ken Walger mining operation revealed: research reports miss ~25% of codebase-level gaps (1.33x gap multiplier). Cross-referencing research against codebase is MANDATORY before execution. The Gemma 4 hardening revealed the same pattern: 7 systems researched, but the actual implementation gaps (Vertex vs AI Studio schemas, OpenRouter :free suffix, thinking token billing) were only found by cross-referencing research against provider docs AND codebase. Research describes what SHOULD be built; codebase reveals what ALREADY EXISTS. The gap between them is the actual work.
+
+  - id: "jem-20260719-023"
+    tier: L3
+    category: "cross_reference_mandatory"
+    principle: |
+      "Cross-reference before execution — the codebase is the ground truth, not the research plan." Research operates in the space of possibilities. Codebase operates in the space of realities. The 25% gap rate is a structural property of the gap between intent and implementation. Cross-reference synthesis is the bridge. It should be a MANDATORY gate: Research → Cross-Reference → Execution. Skipping it means executing on incomplete information — on constrained hardware (14GiB RAM), every unnecessary line of code is a maintenance burden on sovereignty.
+
+  - id: "jem-20260719-024"
+    tier: L2
+    category: "integration_beats_invention"
+    insight: |
+      When 60% of infrastructure exists, the operation is integration work. The Gemma 4 fix needs: Capability Matrix (NEW), GoogleCompatProvider adapter (NEW), Matrix Loader (NEW), CapabilitySelector (NEW), ProviderHealth (EXTENDS HealthMonitor), ThinkingProvenance (EXTENDS GenerateResult). The base classes exist. The patterns exist. The integration points exist. The work is wiring, not inventing. This mirrors the Ken Walger finding: 60% infrastructure exists, critical path is Schema → Coordination → Tracking → Observability → Execution → Synthesis. Integration beats invention.
+
+  - id: "jem-20260719-025"
+    tier: L3
+    category: "integration_beats_invention"
+    principle: |
+      "Integration beats invention — when 60% of infrastructure exists, the operation is integration work." Sovereign engineering builds ON existing infrastructure, not around it. The discipline of cross-referencing prevents: (1) rebuilding infrastructure that already exists, (2) treating enhancements as prerequisites, (3) missing integration points that reduce effort. On constrained hardware (14GiB RAM, no GPU), every unnecessary line of code is a maintenance burden on sovereignty. The critical path is always: Schema → Coordination → Tracking → Observability → Execution → Synthesis. Skip any layer, and the operation collapses under its own weight.
+
+---

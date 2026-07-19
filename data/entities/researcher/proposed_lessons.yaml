@@ -61,4 +61,30 @@
 - "Application: Audit all string comparisons, dictionary keys, and conditional logic for hardcoded entity names. Replace with role-constant resolution."
 
 - "Five-Phase Pattern Validation Confirms Mechanical Applicability — When a remediation pattern works identically across 5+ independent phases (A: lens_registry, B: subagent_dispatcher, C: oracle, D: ics, E: fleet_status_tui), the pattern is mechanically applicable to all remaining violations. No design review needed — only implementation."
-- "Application: Remaining files (mandate_auditor.py, oracle_cli.py, cvar_table.py, budget_guard.py, config_resolver.py, sovereign_vetter.py, background_researcher/*.py) can be fixed by applying the same template. Estimated 1-2 hours per file."
+    - "Application: Remaining files (mandate_auditor.py, oracle_cli.py, cvar_table.py, budget_guard.py, config_resolver.py, sovereign_vetter.py, background_researcher/*.py) can be fixed by applying the same template. Estimated 1-2 hours per file."
+
+- "The Binary Thinking Principle — Some models (Gemma 4) only support binary thinking (on/off, high/minimal). A graduated-levels abstraction that maps 6+ levels onto a binary model must collapse at the adapter boundary, not pretend the levels exist. The adapter is the honesty layer: it must only expose what the model actually supports, not what the framework wishes it supported. Application: Gemma 4 adapter exposes thinkingLevel: \"high\"|\"minimal\" only. Higher-level frameworks map down to these two values before sending."
+
+- "The Adapter Boundary as Model Honesty Contract — The adapter is not a translation layer — it is an honesty contract between the framework's model and the provider's capabilities. It must validate at config time that requested capabilities match what the model actually supports. A config-time validation fail-fast is superior to a silent runtime 400 error. Application: Validate thinking_config_schema against model capabilities at config load, not at request time."
+
+- "The Rolling Window Non-Negotiable — Google's rate limits use a rolling 60-second window, not a fixed minute. A token-bucket with fixed-window refill will systematically over-count or under-count usage at the boundaries. Application: Use Redis Lua token bucket with continuous per-second refill for RPM, sliding window sorted-set for RPD."
+
+- "Unbounded Thinking Is a Cost Trap — Gemma 4 supports only binary thinking on/off with no thinkingBudget parameter. Thinking tokens are unbounded — a single trivial prompt could produce 60K+ thought tokens with no cap short of max_tokens. Application: Track thoughts_token_count per response. For cost-sensitive paths, prefer models with thinkingBudget or self-host via GGUF."
+
+- "The Lua Atomicity Mandate — Quota check-and-consume must be a single Redis Lua script (EVALSHA). Any GET-then-INCR pattern creates a race window under concurrent requests. Application: ALL rate limit operations use EVALSHA. Raw EVAL only as fallback on SCRIPT FLUSH."
+
+- "The Provider Capability Schema Pattern — A model's capabilities must be declared as boolean flags (supports_reasoning) PLUS a config_schema field documenting HOW each capability is configured. The boolean tells you IF; the schema tells you HOW. Application: Matrix schema must include both supports_reasoning AND thinking_config_schema for every model entry."
+
+- "The OpenRouter Pinning Pattern — To force Gemma 4 through Google AI Studio on OpenRouter, use both `order: [\"Google AI Studio\"]` AND `allow_fallbacks: false`. Missing either allows auto-routing to a different upstream that may not support the model correctly. Application: All Gemma 4 OpenRouter entries must pin to Google AI Studio with fallbacks disabled."
+
+- "The Chaos Test as Provider Contract — A chaos test verifies both provider error response shape AND adapter error handling simultaneously. A mismatch between expected and actual error shape is a provider-side breaking change discovered before production. Application: Every provider must have chaos tests verifying exact error response shapes for all known failure modes."
+
+- "The transform.ts Is Not Deprecated Doctrine — Despite V2 specs existing, transform.ts (1,581 lines) is actively maintained and is the current OpenCode integration point. V2 has Google deferred as a 'future provider slice.' Application: Integrate with current @ai-sdk/google + providerOptions passthrough. Monitor V2 but don't block on it."
+
+- "The Config Merge Array Trap — OpenCode's remeda mergeDeep replaces arrays entirely rather than merging by key. Adding one model to provider.google.models requires reproducing the entire array as an atomic unit. Application: Prefer models.dev registration over config-based model addition."
+
+- "The No-Idempotency Gap — Google's Gemini API does NOT support idempotency keys (unlike OpenAI and Anthropic). Retries on network failures risk double-charging. Application: Track request_id per attempt. Check for duplicate success before retry."
+
+- "The Self-Host Economic Threshold — For Gemma 4 at >10K requests/month, self-hosting via GGUF Q4_K_M becomes cheaper than API access (~$0.001/M vs $0.30/M tokens). Application: Include self-host cost projection in the model. Flag at 5K requests/month as the self-host trigger."
+
+- "The Research-Centric Integrity Mandate — When research is the primary deliverable, completeness of evidence supersedes speed. Every gap card must include: exact source URL, specific finding, decision impact, and remaining questions. A gap card without remaining questions is an incomplete analysis. Application: All 12 gap cards in R_GEMMA4_GAP_RESEARCH_20260719.md follow this template."
