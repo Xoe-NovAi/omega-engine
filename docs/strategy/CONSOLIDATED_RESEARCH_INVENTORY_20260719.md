@@ -13,7 +13,7 @@
 | **P0-1** | **Gemma 4 Week 1: Heritage Vet** | 🔄 DISPATCHED | doom_guy + verity vet Pi PR #2903 | doom_guy / verity |
 | **P0-2** | **Gemma 4 Week 1: Capability Matrix + GoogleCompatProvider** | ⏳ BLOCKED | Awaits heritage vet approval | P3 Engineering |
 | **P0-3** | **Torment/Hive Phase 2: Sigil/Factions** | ✅ READY | Dispatch Researcher | Researcher |
-| **P0-4** | **Report Digestion Layer: Empirical Validation** | ✅ READY | Run on real pillar reports | Jem / Researcher |
+| **P0-5** | **OpenCode 1.18.3 V2 Recon** | ✅ READY | Dispatch Researcher | Researcher |
 | **P1-1** | **Gemma 4 Week 1: Matrix Loader + Validator** | ⏳ BLOCKED | After P0-2 | P3 Engineering |
 | **P1-2** | **Torment/Hive Phase 3: Nameless One Journey** | ⏳ BLOCKED | After Phase 2 | Researcher |
 | **P1-3** | **MaKaLi Open Questions (SomaticState, Streaming, etc.)** | ✅ READY | Dispatch John Carmack | John Carmack |
@@ -191,6 +191,137 @@ def normalize_model_id(provider: str, model_id: str) -> str:
 - Community config package: `npm create @omega/gemma4-config`
 - Auto-detects OpenCode version, applies correct config
 - Validates API key, tests connection
+
+---
+
+### TASK OPENCODE-01: OpenCode 1.18.3 V2 Architecture Recon
+**Status**: ✅ READY TO DISPATCH
+**Owner**: Researcher
+**Priority**: P0-5 (Critical for Gemma 4 PR + config package)
+**Deliverable**: `docs/research/R_OPENCODE_V2_RECON_20260719.md`
+
+#### Scope
+Full recon on OpenCode 1.17.20 → 1.18.3 changes with focus on:
+1. **Provider transformation layer** (`packages/opencode/src/provider/transform.ts`) — 1764 lines, NOT generated, NOT deprecated
+2. **V2 session format** — Event-sourced, message parts (`ReasoningPart`, `ToolPart`, `StepStartPart`, etc.)
+3. **AI SDK usage** — Still used via `streamText` in `ProviderTransform.options()`
+4. **Models.dev integration** — Unchanged, still canonical model registry
+5. **Per-prompt model selection** — New in 1.18.0 composer
+6. **Subagent depth limit** — New in 1.18.2 (`subagent_depth` config)
+7. **Desktop v2 migration** — Completed in 1.18.0
+
+#### Key Findings (Preliminary)
+- **transform.ts is VALID PR target** for 1.17.x and 1.18.x
+- V2 changes session persistence, NOT provider protocol
+- Gemma 4 thinking config must handle V2 `ReasoningPart` extraction
+- Pi PR #2903 pattern directly applicable to `transform.ts`
+
+#### Required Outputs
+1. Version compatibility matrix (1.17.x vs 1.18.x provider behavior)
+2. V2 message part → thinking token extraction logic
+3. Config merge behavior verification (arrays still replaced entirely?)
+4. Version detection method for config package (ModelGateway startup vs install script)
+5. Breaking changes list for community config package version-gating
+
+---
+
+### TASK OPENCODE-01: OpenCode 1.18.3 V2 Architecture Recon
+**Status**: ✅ READY TO DISPATCH
+**Owner**: Researcher
+**Priority**: P0-5 (Critical for Gemma 4 PR + config package)
+**Deliverable**: `docs/research/R_OPENCODE_V2_RECON_20260719.md`
+
+#### Scope
+Full recon on OpenCode 1.17.20 → 1.18.3 changes with focus on:
+1. **Provider transformation layer** (`packages/opencode/src/provider/transform.ts`) — 1764 lines, NOT generated, NOT deprecated
+2. **V2 session format** — Event-sourced, message parts (`ReasoningPart`, `ToolPart`, `StepStartPart`, etc.)
+3. **AI SDK usage** — Still used via `streamText` in `ProviderTransform.options()`
+4. **Models.dev integration** — Unchanged, still canonical model registry
+5. **Per-prompt model selection** — New in 1.18.0 composer
+6. **Subagent depth limit** — New in 1.18.2 (`subagent_depth` config)
+7. **Desktop v2 migration** — Completed in 1.18.0
+
+#### Key Findings (Preliminary)
+- **transform.ts is VALID PR target** for 1.17.x and 1.18.x
+- V2 changes session persistence, NOT provider protocol
+- Gemma 4 thinking config must handle V2 `ReasoningPart` extraction
+- Pi PR #2903 pattern directly applicable to `transform.ts`
+
+#### Required Outputs
+1. Version compatibility matrix (1.17.x vs 1.18.x provider behavior)
+2. V2 message part → thinking token extraction logic
+3. Config merge behavior verification (arrays still replaced entirely?)
+4. Version detection method for config package (ModelGateway startup vs install script)
+5. Breaking changes list for community config package version-gating
+
+---
+
+### TASK INFRA-01: Version Change Watchdog System
+**Status**: 📋 DESIGNED — NEW SYSTEMIC INFRASTRUCTURE
+**Owner**: Researcher + Pillar P1 (Infrastructure)
+**Priority**: P1 — Prevents future manual recon gaps
+**Deliverable**: `docs/strategy/VERSION_CHANGE_WATCHDOG_SPEC_20260719.md` + implementation plan
+
+#### Problem Statement
+We upgraded OpenCode 1.17.20 → 1.18.3 this morning with **zero automated detection**. The Gemma 4 strategy had an entire oversight (Oversight 1) based on stale V2 assumptions. We need a system that:
+
+1. **Monitors** local tool versions (OpenCode, Bun, Node, Python packages, Docker images)
+2. **Detects** version changes on startup or scheduled interval
+3. **Triggers** background research task automatically
+4. **Collects** changelogs, breaking changes, migration guides, known issues
+5. **Writes** structured briefing to disk (`data/briefings/version_change_<tool>_<version>.md`)
+6. **Queues** for human review/oversight via Hivemind handoff
+
+#### Architecture
+```
+┌─────────────────────────────────────────────────────────────┐
+│ VERSION CHANGE WATCHDOG                                      │
+├─────────────────────────────────────────────────────────────┤
+│ 1. VERSION MONITOR (daemon/cron)                            │
+│    - Checks: opencode --version, bun --version, pip list,   │
+│      docker images, npm/yarn lockfiles                      │
+│    - Stores: data/state/version_registry.json               │
+│    - Triggers: on diff from last known state                │
+│                                                              │
+│ 2. RESEARCH TRIGGER (background task)                       │
+│    - Spawns Researcher subagent with:                       │
+│      * Tool name, old version, new version                  │
+│      * Priority: P0 (breaking) / P1 (feature) / P2 (patch)  │
+│    - Researcher uses Sovereign Search (T1-T4)               │
+│                                                              │
+│ 3. BRIEFING GENERATOR                                        │
+│    - Template: data/templates/version_change_briefing.md    │
+│    - Sections: Changelog, Breaking Changes, Migration,      │
+│      Known Issues, Impact Assessment, Action Items          │
+│    - Writes: data/briefings/version_change_<tool>_<ver>.md  │
+│                                                              │
+│ 4. OVERSIGHT QUEUE                                           │
+│    - Hivemind handoff to Kali (or designated overseer)      │
+│    - Packet: "VERSION CHANGE BRIEFING: <tool> <old>→<new>"  │
+│    - Priority: 2 (high) for breaking, 1 for feature         │
+│    - Human reviews, approves/defers/escalates               │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### Integration Points
+- **M1 AnyIO**: Background task via `anyio.create_task_group()`
+- **M9 Error Integrity**: Typed errors, no silent failures
+- **M11 Soul Integrity**: Briefings become session gnosis
+- **M15 Sovereign Continuity**: Version registry persists across sessions
+- **M23 Failure Integrity**: If research fails → queue with `[TOOL-CHAIN-COLLAPSE]` flag
+
+#### MVP Scope (Week 1)
+1. Version registry JSON + monitor script (cron @reboot + daily)
+2. Researcher handoff template for version changes
+3. Briefing template + disk writer
+4. Hivemind handoff integration
+5. Test with OpenCode 1.18.3 as first case
+
+#### Future Extensions
+- GitHub Release webhook subscription (real-time)
+- Automated PR generation for config updates
+- Dependency graph impact analysis (what Omega modules use this tool?)
+- Cross-platform (Cline, Cursor, VS Code extension versions)
 
 ---
 

@@ -17,20 +17,34 @@ This document performs a **systematic hardening pass** across all Gemma 4 strate
 
 ## Part I: Critical Oversights (Must Fix Before Implementation)
 
-### Oversight 1: OpenCode Upstream PR — Wrong Target
+### Oversight 1: OpenCode Upstream PR — Wrong Target (CORRECTED 2026-07-19)
 
 **Current Plan**: Submit PR to `anomalyco/opencode` fixing `transform.ts`
 
-**Problem**: OpenCode's `transform.ts` is **generated code** from the V2 architecture (hand-rolled LLM layer). The actual source is in `packages/opencode/src/provider/transform.ts` but the V2 rewrite splits protocol into 4 axes. The Pi project fix (PR #2903) was for their fork, not upstream.
+**Problem (ORIGINAL ASSESSMENT)**: OpenCode's `transform.ts` is **generated code** from the V2 architecture. V2 rewrite splits protocol into 4 axes. Pi project fix (PR #2903) was for their fork, not upstream.
 
-**Evidence**: MartianLee analysis (2026-06-29) shows V2 removes AI SDK dependency entirely. OpenCode 1.18+ may not use `transform.ts` at all.
+**CORRECTION (2026-07-19 Recon)**: **transform.ts is NOT generated/deprecated.** It is the **core 1764-line provider transformation layer** in `packages/opencode/src/provider/transform.ts` (verified in dev branch). V2 architecture changes session format (event-sourced) but provider transformation pipeline remains. AI SDK is still used. Models.dev integration unchanged.
 
-**Fix**: 
-1. Verify current OpenCode version's architecture (1.17.x uses transform.ts, 1.18+ may not)
-2. If V2: PR must target the new provider protocol axes, not transform.ts
-3. If transform.ts still used: PR is valid but must handle both legacy + V2 paths
+**Evidence**: 
+- DeepWiki provider transformations page shows `ProviderTransform` using AI SDK's `streamText`
+- V2 architecture teardown (Zhao-Jan, 2026-07-10) shows provider layer in `packages/opencode/src/provider/` with `transform.ts` as core
+- 1.18.3 changelog shows no provider protocol breaking changes
 
-**Risk**: PR rejected as "not_planned" (like Issue #22853) if targeting deprecated code.
+**Corrected Fix**: 
+1. PR targeting `transform.ts` IS VALID for 1.17.x and 1.18.x
+2. Must handle both legacy + V2 session paths (V2 uses event-sourced messages)
+3. Pi PR #2903 pattern (regex `/gemma-?4/i` + binary MINIMAL/HIGH) is directly applicable
+
+**Risk**: **LOW** — PR is valid target. Only risk is V2 session format differences in message parts.
+
+---
+
+### Oversight 1b: OpenCode V2 Session Format — New Edge Case
+**New Finding**: V2 uses event-sourced session format with message parts (`TextPart`, `ReasoningPart`, `ToolPart`, `StepStartPart`, `StepFinishPart`, `AgentPart`, `SubtaskPart`). Provider transforms receive `MessagePart[]` not legacy `Message[]`.
+
+**Impact**: Gemma 4 thinking config must work with V2 `ReasoningPart` extraction. Our `thoughts_token_count` tracking must handle V2 part-based streaming.
+
+**Fix**: Add V2 message part handling to `GoogleAIProvider` thinking extraction logic.
 
 ---
 
