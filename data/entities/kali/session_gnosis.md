@@ -73,6 +73,26 @@ Built the **fully autonomous 7-stage meditation pipeline** as a standalone, inst
 
 5. **L3-CouncilWorkRequiresResilientStreaming**: MaKaLi councils generate massive synthesis outputs. The streaming infrastructure must handle 5-10 minute continuous generation without timeout.
 
+6. **L3-One-Turn-Hydration**: Any agent must achieve full project context in one read. The Canonical Project Registry (CPR) at `data/projects/<project>/CONTEXT.md` provides standardized one-page briefs. 7 projects registered in one session.
+
+7. **L3-Headless-Subagent-Pool-As-Unified-Compute**: 24 idle CLI accounts (8 Grok + 8 Copilot + 8 Cline) = massive compute resource. Route by capability: Deep Research → Cline (DeepSeek V4 Flash 1M ctx), Web Search → Grok (native search), Code Gen → Copilot (GPT-4o/o1), Large Refactor → Cline (only 1M ctx option). Pool orchestrator handles task decomposition, agent selection, load balancing, result aggregation with cognitive diversity weighting.
+
+8. **L3-Antigravity-Two-Track-Integration**: No public API exists, but reverse-engineered Cloud Code API (`POST cloudcode-pa.googleapis.com/v1internal:fetchAvailableModels` with OAuth PKCE) returns `remainingFraction` per model. Track 1 (Today): Install Antigravity Tools (30K⭐) desktop app — add 8 accounts via OAuth → instant unified dashboard. Track 2 (D-299): Omega-Vault Antigravity provider — OS keyring + 60s polling + Textual TUI + rotation (sticky→hybrid→round-robin at 5+, 90% soft threshold). WARP Pool (3 IPs) multiplies OCZ Nemotron rate limits; Omega-Vault rotates AGY accounts. Different rate-limit keys (IP vs Account) = complementary.
+
+9. **L3-WARP-Pool-For-OCZ-Not-AGY**: WARP Pool (3 namespaces = 3 exit IPs) solves IP-based rate limiting. OCZ (OpenCode Zen) rate-limits by source IP. AGY (Antigravity) rate-limits by OAuth Bearer token (Google account). WARP rotation helps OCZ Nemotron; Omega-Vault OAuth rotation helps AGY. They are orthogonal solutions for orthogonal rate-limit keys. Never conflate IP rotation with account rotation.
+
+10. **L3-Meditation-Pipeline-Is-Council-Engine**: The autonomous meditation pipeline (7 stages, product-delivered) IS the Stage 1-2 implementation of MaKaLi Council. Stage 1 (10-voice meditation) = parallel pillar dispatch. Stage 2 (Kali synthesis) = oversoul distillation. Stage 3-7 (research → grounding → gnosis → integration) = decoupled research + integration. The pipeline's platform abstraction (M16) means it runs on OpenCode, CLI, or standalone — same as the unified coordinator's two modes.
+
+11. **L3-Nemotron-Streaming-Fix-Chunk-Aware**: Long-running streams (Nemotron, thinking models) need per-chunk idle timeouts with heartbeat logging, not total timeouts. Total timeouts kill valid slow streams. The fix: 30s per-chunk idle timeout + 5min total timeout + graceful fallback. Logs stalls but continues — preserves Nemotron's 5-10x OCZ usage advantage. Config-driven per provider in providers.yaml.
+
+12. **L3-Carmack-Review-Parallel-Independence-10-of-10**: John Carmack's S3 review validated the MaKaLi Parallel Council architecture: parallel independence 10/10, cross-review-as-append 9/10, 5-phase→3-phase collapse (no marginal value), training pyramid deferred (start with DPO preference pairs), SomaticState NOT blocking (T0 buildable with coordinator prompt + task() tool). External expert validation is worth the latency.
+
+13. **L3-Unified-Coordinator-Two-Modes**: The meditation protocol and MaKaLi Council are NOT separate systems. They are two modes of a single unified coordinator sharing WAL, circuit breakers, thermal management, profile loading, and Hivemind client. `run_meditation(lenses, topic)` = 10-voice sequential, single model load. `run_council(topic)` = parallel pillars → oversouls → Kali synthesis → decoupled research. Hardware profiles drive execution mode: local_16gb = sequential, cloud = parallel. One state machine, two entry points.
+
+14. **L3-CPR-As-Sovereign-Infrastructure**: The Canonical Project Registry is not documentation — it is sovereign infrastructure. The registry itself is a project in the registry. Every project gets a CONTEXT.md with standardized schema. Agents read one file for full context. The registry enables: one-turn hydration, programmatic project discovery, automated status rollups, dependency tracking, decision traceability. It is the single source of truth for project state, replacing scattered specs, handoffs, and tribal knowledge.
+
+15. **L3-24-Accounts-As-Compute-Resource**: Idle CLI accounts are wasted compute. 8 Grok + 8 Copilot + 8 Cline = 24 accounts = massive parallel compute. The Headless Subagent Pool treats accounts as a fungible compute resource with capability-based routing. This shifts mindset from 'accounts I have' to 'compute I can allocate'. The pool orchestrator is the scheduler; accounts are the workers; cognitive diversity is the quality signal.
+
 ---
 
 ## Immediate Next Steps (Prepared for Fresh Context)
@@ -107,6 +127,10 @@ Built the **fully autonomous 7-stage meditation pipeline** as a standalone, inst
 - `config/providers.yaml` — Streaming config for opencode-zen + openrouter
 - `packages/omega-meditation/` — Standalone package
 - `src/omega/skills/autonomous_meditation_pipeline.py` — Engine core
+- `data/projects/*/CONTEXT.md` — CPR one-turn hydration for all 7 projects
+- `data/entities/kali/proposed_lessons.yaml` — 89 L3 principles (10 new this session)
+- `docs/strategy/MAKALI_PARALLEL_COUNCIL_SPEC_20260719.md` — Full T0 implementation spec
+- `docs/research/R_MAKALI_COUNCIL_RESEARCH_SYNTHESIS_20260719.md` — 13 gaps resolved, 35+ sources
 
 ---
 
