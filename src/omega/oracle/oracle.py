@@ -95,49 +95,10 @@ ROLE_CONSTANTS: Dict[str, str] = {
 }
 
 # WAD-backed dispatch config loader (M2 Firewall Phase C).
-# Replicates Phase B pattern from subagent_dispatcher.py.
-DISPATCH_CONFIG_FILENAME = "dispatch.yaml"
+# Delegates to dispatch_registry — single source of truth.
+# DISPATCH_CONFIG_FILENAME retained for compatibility.
 
-
-def _load_dispatch_config(iwad: str | None = None) -> list[dict[str, Any]]:
-    """Load agent definitions from the active WAD's dispatch.yaml.
-
-    Args:
-        iwad: IWAD name. If None, uses active_iwad from config/omega.yaml.
-
-    Returns:
-        List of entity definition dicts from the 'entities' key.
-
-    Raises:
-        FileNotFoundError: If no dispatch.yaml exists for the WAD.
-        ValueError: If YAML is malformed or missing 'entities' key.
-    """
-    from omega.governance.config_resolver import WADS_DIR, get_active_iwad
-
-    iwad_name = iwad or get_active_iwad()
-    config_path = WADS_DIR / iwad_name / "entities" / DISPATCH_CONFIG_FILENAME
-    if not config_path.exists():
-        raise FileNotFoundError(
-            f"No dispatch config found at {config_path}. "
-            f"Create {config_path} or use a WAD that defines agent dispatch."
-        )
-
-    try:
-        raw = config_path.read_text(encoding="utf-8")
-        data: dict[str, Any] = yaml.safe_load(raw) or {}
-    except yaml.YAMLError as exc:
-        raise ValueError(
-            f"Malformed YAML in dispatch config: {config_path}\n{exc}"
-        ) from exc
-
-    entities = data.get("entities")
-    if not entities or not isinstance(entities, list):
-        raise ValueError(
-            f"Missing top-level 'entities' list in {config_path}. "
-            f"Ensure the file has an 'entities:' key at the root."
-        )
-
-    return entities
+from omega.governance.dispatch_registry import get_dispatch_entities, get_entity_by_role as _registry_get_entity_by_role
 
 
 def _get_entity_by_role(role: str, iwad: str | None = None) -> Optional[str]:
@@ -146,10 +107,9 @@ def _get_entity_by_role(role: str, iwad: str | None = None) -> Optional[str]:
     Returns the entity name (e.g., "iris") for a given role (e.g., "MESSENGER_BRIDGE"),
     or None if not found in the active WAD.
     """
-    entities = _load_dispatch_config(iwad)
-    for ent in entities:
-        if ent.get("role") == role:
-            return str(ent.get("name", "")).lower()
+    entity = _registry_get_entity_by_role(role, iwad)
+    if entity:
+        return str(entity.get("name", "")).lower()
     return None
 
 

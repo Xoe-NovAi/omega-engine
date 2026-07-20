@@ -132,7 +132,6 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         self._vec_tables_created: Dict[str, bool] = {}
         
         # Connection & locks
-        self._conn: Optional[sqlite3.Connection] = None
         self._write_lock = anyio.Lock()
         self._initialized = False
         self.timeout = timeout
@@ -142,41 +141,28 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         self._legacy_vec_created = False
 
     def _get_conn(self) -> sqlite3.Connection:
-        """Get or create the SQLite connection with hardened PRAGMA stack.
+        """Get a new SQLite connection with hardened PRAGMA stack and vec0 extension.
         
-        PRAGMA stack per Researcher's hardware validation (Ryzen 7 5700U, 14Gi RAM, NVMe):
-        - journal_mode=WAL: Concurrent reads during writes
-        - busy_timeout=30000: 30s for background researcher + agent contention
-        - synchronous=NORMAL: Safe for committed transactions, fsync at checkpoint
-        - journal_size_limit=67108864: 64MB WAL cap — prevents unbounded growth
-        - cache_size=-32768: 32MB page cache — D-282 convergence (512MB was OOM risk on 14Gi + inference + zRAM)
-        - mmap_size=268435456: 256MB memory-mapped I/O — capped default, scales with DB (2× DB, max 256MB)
-        - wal_autocheckpoint=500: Passive checkpoint every 500 pages — D-282 convergence (more frequent under writer load)
-        - foreign_keys=ON: Good practice for schema integrity
-        - temp_store=MEMORY: Faster temp tables for agent operations
-        - optimize=0x10002: Auto-analyze + auto-index for long-lived connections
+        Creates a new connection each call to ensure thread safety.
+        Uses sqlite_policy memory profile (D-282 PRAGMA stack is law per A10).
         """
-        if self._conn is None:
-            self.db_path.parent.mkdir(parents=True, exist_ok=True)
-            self._conn = sqlite3.connect(
-                str(self.db_path),
-                timeout=self.timeout,
-                check_same_thread=False,
-            )
-            self._conn.row_factory = sqlite3.Row
-            
-            # Hardened PRAGMA stack (D-282 Critical Path — SSOT convergence)
-            self._conn.execute("PRAGMA journal_mode=WAL")
-            self._conn.execute("PRAGMA busy_timeout=30000")
-            self._conn.execute("PRAGMA synchronous=NORMAL")
-            self._conn.execute("PRAGMA journal_size_limit=67108864")
-            self._conn.execute("PRAGMA cache_size=-32768")  # D-282: 32MB (was 512MB — OOM risk on 14Gi + inference)
-            self._conn.execute("PRAGMA mmap_size=268435456")
-            self._conn.execute("PRAGMA wal_autocheckpoint=500")  # D-282: 500 pages (was 1000 — more frequent under writer load)
-            self._conn.execute("PRAGMA foreign_keys=ON")
-            self._conn.execute("PRAGMA temp_store=MEMORY")
-            self._conn.execute("PRAGMA optimize=0x10002")
-        return self._conn
+        # FS-Β4: Use sqlite_policy for profiled connection (memory profile)
+        conn = get_sqlite_connection(self.db_path, profile="memory")
+        
+        # Load sqlite-vec extension for this connection
+        try:
+            import sqlite_vec
+            conn.enable_load_extension(True)
+            sqlite_vec.load(conn)
+            conn.enable_load_extension(False)
+        except ImportError:
+            logger.error("sqlite-vec module not installed")
+            raise
+        except sqlite3.Error as e:
+            logger.error("Failed to load sqlite-vec extension: %s", e)
+            raise
+        
+        return conn
 
     def _load_extension(self, conn: sqlite3.Connection) -> None:
         """Load the sqlite-vec extension into a connection."""

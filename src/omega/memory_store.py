@@ -171,6 +171,10 @@ class MemoryStore:
             # 3. InMemory Provider (Cold/Volatile Fallback)
             self.providers.append(InMemoryStorageProvider())
         
+        # FS-Β1: Embedding Strategy SSOT — canonical_dimension=768
+        # The 1024-dim fallback (SovereignFallbackEmbeddingProvider) is REMOVED.
+        # All providers MUST output 768-dim via MRL truncation.
+        
         if vector_store is not None:
             self.vector_store = vector_store
         else:
@@ -182,13 +186,16 @@ class MemoryStore:
         if embedding_manager is not None:
             self.embedding_manager = embedding_manager
         else:
-            # Local-first 1024-dim chain (Gemma -> Potion -> Hash)
-            # mxbai-embed-large-v1 is primary (1024-dim, BQ-trained)
-            # Eliminates Ollama dependency and enforces dimensional consistency.
+            # FS-Β1: Embedding Strategy SSOT — write-path default = 768 only
+            # Gemma + Nomic primary/fallback with MRL truncation to 768
+            # MiniLM/static demoted to non-default collections (Option A)
+            from .memory.embedding_strategy import get_embedding_strategy
+            strategy = get_embedding_strategy()
+            target_dim = strategy.canonical_dimension  # 768
+            
             self.embedding_manager = EmbeddingManager([
-                GemmaGGUFEmbeddingProvider(), 
-                StaticEmbeddingProvider(model_name="blobbybob/potion-mxbai-micro"), 
-                SovereignFallbackEmbeddingProvider(dimension=1024)
+                GemmaGGUFEmbeddingProvider(target_dim=target_dim), 
+                StaticEmbeddingProvider(model_name="blobbybob/potion-mxbai-micro", target_dim=target_dim), 
             ])
         # [Horizon 2: MiMo] FTS5 Search Index
         self.fts = ConversationFTSIndex(_get_memory_dir() / "fts_memory.db")

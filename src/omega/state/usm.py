@@ -6,7 +6,6 @@ AP: AP-USM-MANAGER-v1.0.0
 import json
 import logging
 import os
-import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -14,6 +13,7 @@ from typing import Any, Dict, List, Optional, Union
 import anyio
 from omega.errors import OmegaPersistenceError, StateIntegrityError
 from .cas import CASManager
+from omega.infra.sqlite_policy import sqlite_transaction, Profile
 
 logger = logging.getLogger(__name__)
 
@@ -39,12 +39,12 @@ class USMManager:
         await self.cas.initialize()
         await anyio.Path(self.base_dir).mkdir(parents=True, exist_ok=True)
         
-        # Initialize SQLite index
+        # Initialize SQLite index using sqlite_policy (metrics profile)
         await anyio.to_thread.run_sync(self._init_db)
 
     def _init_db(self) -> None:
         """Create the state index table if it doesn't exist."""
-        with sqlite3.connect(self.index_path) as conn:
+        with sqlite_transaction(self.index_path, profile="metrics") as conn:
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS state_refs (
                     key TEXT PRIMARY KEY,
@@ -53,7 +53,6 @@ class USMManager:
                     metadata TEXT
                 )
             """)
-            conn.commit()
 
     async def put(self, key: str, data: Any) -> str:
         """Serialize data, store in CAS, and update the index."""

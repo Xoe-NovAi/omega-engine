@@ -1,1 +1,1 @@
-../data/coordination/SESSION_ANCHOR.md
+data/coordination/SESSION_ANCHOR.md

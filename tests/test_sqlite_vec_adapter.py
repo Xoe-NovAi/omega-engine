@@ -54,7 +54,8 @@ def tmp_db():
 @pytest.fixture
 async def adapter(tmp_db):
     """Create a SQLiteVecAdapter instance for testing."""
-    adapter = SQLiteVecAdapter(db_path=tmp_db, embedding_dim=128)
+    # FS-Β1: Use canonical 768-dim from embedding strategy
+    adapter = SQLiteVecAdapter(db_path=tmp_db)
     await adapter._ensure_initialized()
     yield adapter
     await adapter.close()
@@ -68,16 +69,16 @@ class TestSQLiteVecInitialization:
     @pytest.mark.anyio
     async def test_creates_tables(self, tmp_db):
         """Should create FTS5 and metadata tables on init; vec0 is created lazily on first upsert."""
-        adapter = SQLiteVecAdapter(db_path=tmp_db, embedding_dim=128)
+        adapter = SQLiteVecAdapter(db_path=tmp_db, )
         await adapter._ensure_initialized()
         
         # Verify connection is established
-        assert adapter._conn is not None
-        assert isinstance(adapter._conn, sqlite3.Connection)
+        assert adapter._get_test_conn() is not None
+        assert isinstance(adapter._get_test_conn(), sqlite3.Connection)
         
         # Verify tables exist
         def check_tables():
-            conn = adapter._conn
+            conn = adapter._get_test_conn()
             # Check FTS5 table
             cursor = conn.execute("""
                 SELECT name FROM sqlite_master 
@@ -105,27 +106,25 @@ class TestSQLiteVecInitialization:
     @pytest.mark.anyio
     async def test_vec0_created_lazily_on_upsert(self, tmp_db):
         """vec0 table should be created on first upsert with correct dimension."""
-        adapter = SQLiteVecAdapter(db_path=tmp_db, embedding_dim=128)
+        adapter = SQLiteVecAdapter(db_path=tmp_db)
         await adapter._ensure_initialized()
         
         # Before upsert: vec0 should NOT exist
         def check_no_vec0():
-            cursor = adapter._conn.execute("""
+            cursor = adapter._get_test_conn().execute("""
                 SELECT name FROM sqlite_master 
-                WHERE type='table' AND name='omega_memory_vec'
+                WHERE type='table' AND name='omega_vec_static_64'
             """)
             assert cursor.fetchone() is None
         await anyio.to_thread.run_sync(check_no_vec0)
         
-        # First upsert with 64-dim vector — should use legacy table (canonical 768-dim)
-        # But test uses 64-dim, so we need to use a collection that supports 64-dim
-        # Use the static_64 collection for this test
+        # First upsert with 64-dim vector — use static collection
         await adapter.upsert("test_entity", [0.1]*64, {"content": "hello", "session_id": "s1", "role": "user"}, collection="omega_vec_static_64")
         
         def check_vec0():
-            cursor = adapter._conn.execute("""
+            cursor = adapter._get_test_conn().execute("""
                 SELECT name FROM sqlite_master 
-                WHERE type='table' AND name='omega_vec_omega_vec_static_64'
+                WHERE type='table' AND name='omega_vec_static_64'
             """)
             assert cursor.fetchone() is not None
         await anyio.to_thread.run_sync(check_vec0)
@@ -162,7 +161,7 @@ class TestSQLiteVecUpsert:
         
         # Verify row count increased in all tables
         def check_counts():
-            conn = adapter._conn
+            conn = adapter._get_test_conn()
             
             # Metadata count
             cursor = conn.execute("SELECT COUNT(*) FROM omega_memory_data")
@@ -191,7 +190,7 @@ class TestSQLiteVecIsolation:
     async def test_entity_isolation(self, adapter):
         """Query for entity A should not return results from entity B."""
         # Insert data for entity A
-        vector_a = [0.1] * 128
+        vector_a = [0.1] * 768
         await adapter.upsert(
             entity_name="entity_a",
             vector=vector_a,
@@ -204,7 +203,7 @@ class TestSQLiteVecIsolation:
         )
         
         # Insert data for entity B
-        vector_b = [0.2] * 128
+        vector_b = [0.2] * 768
         await adapter.upsert(
             entity_name="entity_b",
             vector=vector_b,
@@ -252,10 +251,10 @@ class TestSQLiteVecQuery:
     async def test_query_returns_ranked_list(self, adapter):
         """Should return results sorted by similarity score descending."""
         # Insert multiple vectors with varying similarity
-        base_vector = [0.1] * 128
+        base_vector = [0.1] * 768
         
         # Very similar vector
-        similar_vector = [0.101] * 128
+        similar_vector = [0.101] * 768
         await adapter.upsert(
             entity_name="test_entity",
             vector=similar_vector,
@@ -268,7 +267,7 @@ class TestSQLiteVecQuery:
         )
         
         # Less similar vector
-        dissimilar_vector = [0.5] * 128
+        dissimilar_vector = [0.5] * 768
         await adapter.upsert(
             entity_name="test_entity",
             vector=dissimilar_vector,
@@ -309,7 +308,7 @@ class TestSQLiteVecHybridSearch:
     async def test_hybrid_search_fuses_results(self, adapter):
         """Should combine FTS and vector results with RRF scoring."""
         # Insert data with both text and vector
-        vector = [0.1] * 128
+        vector = [0.1] * 768
         content = "Omega engine is sovereign"
         
         await adapter.upsert(
@@ -351,7 +350,7 @@ class TestSQLiteVecDelete:
     async def test_delete_removes_from_both(self, adapter):
         """Should delete from metadata, FTS5, and vec0 tables."""
         # Insert data
-        vector = [0.1] * 128
+        vector = [0.1] * 768
         point_id = await adapter.upsert(
             entity_name="test_entity",
             vector=vector,
@@ -365,7 +364,7 @@ class TestSQLiteVecDelete:
         
         # Verify data exists
         def check_exists():
-            conn = adapter._conn
+            conn = adapter._get_test_conn()
             cursor = conn.execute("SELECT COUNT(*) FROM omega_memory_data")
             assert cursor.fetchone()[0] >= 1
         
@@ -377,14 +376,14 @@ class TestSQLiteVecDelete:
         
         # Verify data removed
         def check_removed():
-            conn = adapter._conn
+            conn = adapter._get_test_conn()
             cursor = conn.execute("SELECT COUNT(*) FROM omega_memory_data")
             assert cursor.fetchone()[0] == 0
             
             cursor = conn.execute("SELECT COUNT(*) FROM omega_memory_fts")
             assert cursor.fetchone()[0] == 0
             
-            cursor = conn.execute("SELECT COUNT(*) FROM omega_memory_vec")
+            cursor = conn.execute("SELECT COUNT(*) FROM omega_vec_gemma_768")
             assert cursor.fetchone()[0] == 0
         
         await anyio.to_thread.run_sync(check_removed)
@@ -399,7 +398,7 @@ class TestSQLiteVecDeleteSession:
     async def test_delete_session_scoped(self, adapter):
         """Should only remove data for the specified session."""
         # Insert data for two sessions
-        vector = [0.1] * 128
+        vector = [0.1] * 768
         
         await adapter.upsert(
             entity_name="test_entity",
@@ -433,7 +432,7 @@ class TestSQLiteVecDeleteSession:
         
         # Verify session-keep still exists
         def check_session_keep():
-            conn = adapter._conn
+            conn = adapter._get_test_conn()
             cursor = conn.execute("""
                 SELECT COUNT(*) FROM omega_memory_data 
                 WHERE session_id = 'session-keep'
@@ -444,7 +443,7 @@ class TestSQLiteVecDeleteSession:
         
         # Verify session-delete is gone
         def check_session_delete():
-            conn = adapter._conn
+            conn = adapter._get_test_conn()
             cursor = conn.execute("""
                 SELECT COUNT(*) FROM omega_memory_data 
                 WHERE session_id = 'session-delete'
@@ -466,7 +465,7 @@ class TestSQLiteVecConcurrency:
         
         async def write_task(i: int):
             try:
-                vector = [float(i)] * 128
+                vector = [float(i)] * 768
                 await adapter.upsert(
                     entity_name=f"entity_{i}",
                     vector=vector,
@@ -492,7 +491,7 @@ class TestSQLiteVecConcurrency:
         
         # Verify all writes succeeded
         def check_count():
-            conn = adapter._conn
+            conn = adapter._get_test_conn()
             cursor = conn.execute("SELECT COUNT(*) FROM omega_memory_data")
             count = cursor.fetchone()[0]
             assert count == 14
@@ -511,7 +510,7 @@ class TestSQLiteVecWriterStarvation:
         """Launch readers + writer concurrently; writer must make progress."""
         # Seed 5 entries for readers (same entity, same dimension)
         for i in range(5):
-            vector = [float(i)] * 128
+            vector = [float(i)] * 768
             await adapter.upsert(
                 entity_name="seed_entity",
                 vector=vector,
@@ -530,7 +529,7 @@ class TestSQLiteVecWriterStarvation:
             """Query the vector store repeatedly."""
             for _ in range(2):
                 try:
-                    vector = [0.5] * 128  # Same vector for all readers
+                    vector = [0.5] * 768  # Same vector for all readers
                     await adapter.query(
                         entity_name="seed_entity",
                         vector=vector,
@@ -543,7 +542,7 @@ class TestSQLiteVecWriterStarvation:
         async def writer_task():
             nonlocal writer_success
             try:
-                vector = [0.99] * 128
+                vector = [0.99] * 768
                 await adapter.upsert(
                     entity_name="writer_probe",
                     vector=vector,
@@ -569,7 +568,7 @@ class TestSQLiteVecWriterStarvation:
 
         # Verify writer's data was persisted
         def check_writer_data():
-            conn = adapter._conn
+            conn = adapter._get_test_conn()
             cursor = conn.execute(
                 "SELECT COUNT(*) FROM omega_memory_data WHERE session_id = 'writer-probe'"
             )
@@ -591,7 +590,7 @@ class TestSQLiteVecCheckpointContention:
 
         async def write_task(i: int):
             try:
-                vector = [float(i)] * 128
+                vector = [float(i)] * 768
                 await adapter.upsert(
                     entity_name=f"ckpt_entity_{i}",
                     vector=vector,
@@ -624,7 +623,7 @@ class TestSQLiteVecCheckpointContention:
 
         # Verify all data survived checkpoints
         def check_data_integrity():
-            conn = adapter._conn
+            conn = adapter._get_test_conn()
             cursor = conn.execute(
                 "SELECT COUNT(*) FROM omega_memory_data WHERE session_id = 'checkpoint-test'"
             )
@@ -658,9 +657,9 @@ import anyio
 import time
 
 async def child_write():
-    adapter = SQLiteVecAdapter(db_path=r"{tmp_db}", embedding_dim=128)
+    adapter = SQLiteVecAdapter(db_path=r"{tmp_db}", )
     await adapter._ensure_initialized()
-    vector = [0.5] * 128
+    vector = [0.5] * 768
     for i in range(5):
         await adapter.upsert(
             entity_name=f"child_entity_{{i}}",
@@ -676,7 +675,7 @@ print("CHILD DONE")
 
         # Seed some data from parent
         for i in range(3):
-            vector = [float(i)] * 128
+            vector = [float(i)] * 768
             await adapter.upsert(
                 entity_name=f"parent_entity_{i}",
                 vector=vector,
@@ -701,7 +700,7 @@ print("CHILD DONE")
 
         # Parent writes more data
         for i in range(3, 6):
-            vector = [float(i)] * 128
+            vector = [float(i)] * 768
             await adapter.upsert(
                 entity_name=f"parent_entity_{i}",
                 vector=vector,
@@ -715,7 +714,7 @@ print("CHILD DONE")
 
         # Verify all data persisted
         def check_all_data():
-            conn = adapter._conn
+            conn = adapter._get_test_conn()
             cursor = conn.execute("SELECT COUNT(*) FROM omega_memory_data")
             count = cursor.fetchone()[0]
             assert count == 11, f"Expected 11 total writes (5 child + 6 parent), got {count}"
@@ -747,7 +746,7 @@ class TestSQLiteVecBeginImmediate:
         import sqlite3
 
         # Create adapter to initialize schema + WAL mode
-        adapter = SQLiteVecAdapter(db_path=tmp_db, embedding_dim=128)
+        adapter = SQLiteVecAdapter(db_path=tmp_db, )
         await adapter._ensure_initialized()
         await adapter.close()
 
@@ -787,7 +786,7 @@ class TestSQLiteVecBeginImmediate:
         import sqlite3
 
         # Initialize schema + WAL mode
-        adapter = SQLiteVecAdapter(db_path=tmp_db, embedding_dim=128)
+        adapter = SQLiteVecAdapter(db_path=tmp_db, )
         await adapter._ensure_initialized()
         await adapter.close()
 

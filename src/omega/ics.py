@@ -82,45 +82,41 @@ DEFAULT_IWAD = "_omega_default"
 
 
 # ── WAD Config Loader ──────────────────────────────────────────────────
+# Delegates to dispatch_registry — single source of truth (FS-Β2 / A6-A7).
+# Fixes cwd-relative path bug in original _load_dispatch_config.
+
+from omega.governance.dispatch_registry import load_dispatch_yaml, get_entity_by_role
+
 
 def _load_dispatch_config(iwad: str = DEFAULT_IWAD, root: Path | str | None = None) -> dict:
     """Load the agent dispatch configuration from the active IWAD.
-
+    
     Args:
         iwad: The IWAD name (default: DEFAULT_IWAD).
-        root: Optional root directory (default: current working directory).
-
+        root: DEPRECATED — kept for signature compatibility. Ignored.
+              Path resolution now uses WADS_DIR from config_resolver (M2 Firewall).
+    
     Returns:
         Parsed YAML dict with "entities" list.
-
+    
     Raises:
         FileNotFoundError: If dispatch.yaml not found.
         yaml.YAMLError: If YAML is malformed.
     """
-    import yaml
-    base = Path(root).resolve() if root else Path.cwd()
-    config_path = base / "config" / "wads" / iwad / "entities" / "dispatch.yaml"
-    if not config_path.exists():
-        raise FileNotFoundError(f"dispatch.yaml not found at {config_path}")
-    return yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    return load_dispatch_yaml(iwad)
 
 
 def _get_entity_by_role(role: str, iwad: str = DEFAULT_IWAD) -> dict | None:
     """Look up an entity definition by its ROLE constant.
-
+    
     Args:
         role: The ROLE_CONSTANT key (e.g., "GRAND_OVERSIGHT").
         iwad: The IWAD name (default: DEFAULT_IWAD).
-
+    
     Returns:
         Entity dict with name, role, mode, capabilities, etc., or None if not found.
     """
-    config = _load_dispatch_config(iwad)
-    role_value = ROLE_CONSTANTS.get(role, role)
-    for entity in config.get("entities", []):
-        if entity.get("role") == role_value:
-            return entity
-    return None
+    return get_entity_by_role(role, iwad)
 
 
 def _get_channel_for_role(role: str, iwad: str = DEFAULT_IWAD) -> str:

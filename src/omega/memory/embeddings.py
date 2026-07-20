@@ -97,15 +97,16 @@ class OllamaEmbeddingProvider(IEmbeddingProvider):
     Endpoint: http://127.0.0.1:11434/api/embed
     """
     
-    def __init__(self, model: str = "nomic-embed-text:v1.5", base_url: str = "http://127.0.0.1:11434", dimension: int = 768):
+    def __init__(self, model: str = "nomic-embed-text:v1.5", base_url: str = "http://127.0.0.1:11434", dimension: int = 768, target_dim: Optional[int] = None):
         self._model = model
         self._base_url = base_url.rstrip("/")
-        self._dimension = dimension
+        self._native_dimension = dimension
+        self._target_dim = target_dim  # FS-Β1: MRL truncation target
         self._client: Optional[httpx.AsyncClient] = None
     
     @property
     def dimension(self) -> int:
-        return self._dimension
+        return self._target_dim if self._target_dim is not None else self._native_dimension
     
     async def _get_client(self) -> httpx.AsyncClient:
         if self._client is None:
@@ -114,7 +115,7 @@ class OllamaEmbeddingProvider(IEmbeddingProvider):
     
     async def get_embedding(self, text: str) -> List[float]:
         if not text:
-            return [0.0] * self._dimension
+            return [0.0] * self.dimension
         
         client = await self._get_client()
         try:
@@ -126,10 +127,14 @@ class OllamaEmbeddingProvider(IEmbeddingProvider):
             data = response.json()
             embeddings = data.get("embeddings", [])
             if embeddings and len(embeddings) > 0:
-                return embeddings[0]
+                vec = embeddings[0]
+                # FS-Β1: MRL truncation to target_dim
+                if self._target_dim is not None and len(vec) > self._target_dim:
+                    return vec[:self._target_dim]
+                return vec
             
             logger.warning("Ollama returned empty embeddings for: %.50s", text)
-            return [0.0] * self._dimension
+            return [0.0] * self.dimension
         except httpx.HTTPStatusError as e:
             logger.warning("Ollama HTTP error: %s — status=%d", e, e.response.status_code)
             raise
@@ -167,10 +172,12 @@ class LocalGGUFEmbeddingProvider(IEmbeddingProvider):
         n_ctx: int = 512,
         n_threads: int = 6,
         zoneid: int = ZONEID_EMBEDDING,
+        target_dim: Optional[int] = None,  # FS-Β1: MRL truncation target
     ):
         self._model_path = os.path.abspath(model_path)
         self._zoneid = zoneid
-        self._dimension = dimension
+        self._native_dimension = dimension
+        self._target_dim = target_dim  # FS-Β1: MRL truncation target
         self._llama: any = None
         self._n_ctx = n_ctx
         self._n_threads = n_threads
@@ -186,7 +193,8 @@ class LocalGGUFEmbeddingProvider(IEmbeddingProvider):
 
     @property
     def dimension(self) -> int:
-        return self._dimension
+        # FS-Β1: Return target_dim if set (MRL truncation), else native
+        return self._target_dim if self._target_dim is not None else self._native_dimension
 
     async def _ensure_loaded(self) -> None:
         """Lazy-load the model on first use (prevents OOM at import time)."""
@@ -213,16 +221,17 @@ class LocalGGUFEmbeddingProvider(IEmbeddingProvider):
         self._llama = await anyio.to_thread.run_sync(_load)
         self._loaded = True
         logger.info(
-            "LocalGGUFEmbeddingProvider: loaded %s (dim=%d, n_ctx=%d, threads=%d)",
+            "LocalGGUFEmbeddingProvider: loaded %s (native_dim=%d, target_dim=%s, n_ctx=%d, threads=%d)",
             os.path.basename(self._model_path),
-            self._dimension,
+            self._native_dimension,
+            self._target_dim,
             self._n_ctx,
             self._n_threads,
         )
 
     async def get_embedding(self, text: str) -> List[float]:
         if not text:
-            return [0.0] * self._dimension
+            return [0.0] * self.dimension
 
         await self._ensure_loaded()
 
@@ -237,19 +246,28 @@ class LocalGGUFEmbeddingProvider(IEmbeddingProvider):
                     return list(result)
                 # Old GGUF: nested list [[f1, f2, ...]] — unwrap first
                 return result[0]
-            return [0.0] * self._dimension
+            return [0.0] * self._native_dimension
 
         vec = await anyio.to_thread.run_sync(_embed)
-        if len(vec) != self._dimension:
+        
+        # FS-Β1: MRL truncation to target_dim
+        if self._target_dim is not None and len(vec) > self._target_dim:
+            vec = vec[:self._target_dim]
+        elif len(vec) != self._native_dimension:
             logger.warning(
-                "LocalGGUFEmbeddingProvider: expected dim=%d, got %d — padding",
-                self._dimension,
+                "LocalGGUFEmbeddingProvider: expected dim=%d, got %d — padding/truncating",
+                self._native_dimension,
                 len(vec),
             )
-            if len(vec) < self._dimension:
-                vec = vec + [0.0] * (self._dimension - len(vec))
+            if len(vec) < self._native_dimension:
+                vec = vec + [0.0] * (self._native_dimension - len(vec))
             else:
-                vec = vec[: self._dimension]
+                vec = vec[: self._native_dimension]
+        
+        # FS-Β1: Final MRL truncation to target_dim
+        if self._target_dim is not None and len(vec) > self._target_dim:
+            vec = vec[:self._target_dim]
+            
         return vec
 
     async def close(self):
@@ -270,15 +288,16 @@ class StaticEmbeddingProvider(IEmbeddingProvider):
     Fallback: blobbybob/potion-mxbai-micro (768-dim, ~14MB) for higher quality
     """
     
-    def __init__(self, model_name: str = "minishlab/potion-base-2M"):
+    def __init__(self, model_name: str = "minishlab/potion-base-2M", target_dim: Optional[int] = None):
         self._model_name = model_name
         self._model: any = None
-        self._dimension = 0
+        self._native_dimension = 0
+        self._target_dim = target_dim
         self._loaded = False
     
     @property
     def dimension(self) -> int:
-        return self._dimension
+        return self._target_dim if self._target_dim is not None else self._native_dimension
     
     async def _ensure_loaded(self):
         if self._loaded and self._model is not None:
@@ -291,24 +310,45 @@ class StaticEmbeddingProvider(IEmbeddingProvider):
         self._model = await anyio.to_thread.run_sync(_load)
         # Attempt to discover dimension via encode
         test_emb = await anyio.to_thread.run_sync(self._model.encode, "test")
-        self._dimension = test_emb.shape[0] if hasattr(test_emb, 'shape') else len(test_emb)
+        self._native_dimension = test_emb.shape[0] if hasattr(test_emb, 'shape') else len(test_emb)
         self._loaded = True
         logger.info(
-            "StaticEmbeddingProvider: loaded %s (dim=%d)",
+            "StaticEmbeddingProvider: loaded %s (native_dim=%d, target_dim=%s)",
             self._model_name,
-            self._dimension,
+            self._native_dimension,
+            self._target_dim,
         )
     
     async def get_embedding(self, text: str) -> List[float]:
         if not text:
-            return [0.0] * self._dimension
+            return [0.0] * self.dimension
         await self._ensure_loaded()
         
         def _encode():
             vec = self._model.encode(text)
             return vec.tolist() if hasattr(vec, 'tolist') else list(vec)
         
-        return await anyio.to_thread.run_sync(_encode)
+        vec = await anyio.to_thread.run_sync(_encode)
+        
+        # FS-Β1: MRL truncation to target_dim
+        if self._target_dim is not None and len(vec) > self._target_dim:
+            vec = vec[:self._target_dim]
+        elif len(vec) != self._native_dimension:
+            logger.warning(
+                "StaticEmbeddingProvider: expected dim=%d, got %d — padding/truncating",
+                self._native_dimension,
+                len(vec),
+            )
+            if len(vec) < self._native_dimension:
+                vec = vec + [0.0] * (self._native_dimension - len(vec))
+            else:
+                vec = vec[: self._native_dimension]
+        
+        # FS-Β1: Final MRL truncation to target_dim
+        if self._target_dim is not None and len(vec) > self._target_dim:
+            vec = vec[:self._target_dim]
+            
+        return vec
     
     async def close(self):
         self._model = None
@@ -325,10 +365,11 @@ class GemmaGGUFEmbeddingProvider(LocalGGUFEmbeddingProvider):
     [id-soft: doom-1993] Precomputed Lookup — embedding cache integrity
     """
 
-    def __init__(self):
+    def __init__(self, target_dim: Optional[int] = None):
         super().__init__(
             model_path="/media/arcana-novai/omega_library/models/embeddings/embeddinggemma-300m-Q6_K.gguf",
             dimension=768,
+            target_dim=target_dim,
         )
 
 
@@ -350,12 +391,16 @@ class EmbeddingManager:
         if providers is not None:
             self._providers = providers
         else:
+            # FS-Β1: Use EmbeddingStrategy SSOT for target dimension
+            from .embedding_strategy import get_embedding_strategy
+            strategy = get_embedding_strategy()
+            target_dim = strategy.canonical_dimension  # 768
+            
             self._providers = [
-                GemmaGGUFEmbeddingProvider(),        # 768-dim, 300M, primary (quality-first)
-                OllamaEmbeddingProvider(),            # 768-dim, nomic-embed-text, local fallback
-                LocalGGUFEmbeddingProvider(),         # 384-dim, all-MiniLM, fast fallback
-                StaticEmbeddingProvider(),            # 64-dim, model2vec, zero-cost fallback
-                SovereignFallbackEmbeddingProvider(), # 256-dim, hash-based, last resort
+                GemmaGGUFEmbeddingProvider(target_dim=target_dim),        # 768-dim, 300M, primary (quality-first)
+                OllamaEmbeddingProvider(dimension=target_dim),            # 768-dim, nomic-embed-text, local fallback
+                LocalGGUFEmbeddingProvider(target_dim=target_dim),         # 384-dim native, truncated to 768 via MRL
+                StaticEmbeddingProvider(target_dim=target_dim),            # 64-dim native, truncated to 768 via MRL
             ]
         
     async def get_embedding(self, text: str) -> Tuple[List[float], str]:
@@ -377,8 +422,7 @@ class EmbeddingManager:
         
         # This should theoretically never be reached if Fallback is last
         raise RuntimeError("All embedding providers failed.")
-
-
+    
     @property
     def current_dimension(self) -> int:
         if not self._providers:

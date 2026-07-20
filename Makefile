@@ -443,6 +443,10 @@ typecheck: ## 🔍 Type check with mypy
 verify-search-tools: ## 🔌 Verify search tool connectivity & credits
 	PYTHONPATH=src $(PYTHON) -m pytest tests/test_search_tools.py
 
+path-resolver-check: ## 🛡️  Semantic Path Resolver CI Gate (A8) — ban Path(__file__) for data/config outside config_resolver.py
+	@echo "$(COLOR_CYAN)🛡️  Running Path Resolver Check (Gate Β.3)...$(COLOR_NC)"
+	@$(PYTHON) scripts/path_resolver_check.py
+
 google-search-ban: ## 🚫 Ban google_search - Sovereign Search Protocol enforcement
 	@echo "$(COLOR_CYAN)🚫 Checking for banned google_search usage...$(COLOR_NC)"
 	@if grep -rn "google_search" src/omega/ .opencode/agents/ .opencode/skills/ config/ 2>/dev/null | grep -v "\.md:.*Tool: google_search" | grep -v "SYSTEM_FAILURE_LOG.md" | grep -v "data/entities/jem/proposed_lessons.yaml" | grep -v "data/entities/john_carmack/proposed_lessons.yaml"; then \

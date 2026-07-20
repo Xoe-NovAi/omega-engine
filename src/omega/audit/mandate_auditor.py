@@ -83,20 +83,33 @@ class MandateAuditor:
 
     def check_m3_iris_constant(self) -> None:
         """M3: MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not assigned a Pillar slot (P1-P10)."""
-        from omega.ics import ROLE_CONSTANTS, _load_dispatch_config
+        from omega.governance.config_resolver import WADS_DIR
+        from omega.ics import ROLE_CONSTANTS
+        import yaml
         
         iris_in_pillar = False
         violations: list[str] = []
 
         # M2 Firewall: Load entity definitions from WAD config (no hardcoded entity names)
+        # Use auditor's root to find WAD config (supports test temp dirs)
         try:
-            config = _load_dispatch_config(root=self.root)
-            entities = config.get("entities", [])
+            # Try to find dispatch.yaml in the auditor's root
+            wad_dir = self.root / "config" / "wads"
+            if wad_dir.exists():
+                # Look for any IWAD with entities/dispatch.yaml
+                for iwad_dir in wad_dir.iterdir():
+                    if iwad_dir.is_dir():
+                        dispatch_path = iwad_dir / "entities" / "dispatch.yaml"
+                        if dispatch_path.exists():
+                            config = yaml.safe_load(dispatch_path.read_text(encoding="utf-8")) or {}
+                            entities = config.get("entities", [])
+                            break
+                else:
+                    entities = []
+            else:
+                entities = []
         except Exception:
             # Fallback to original scan if WAD config unavailable
-            # Use role constant instead of hardcoded entity name
-            from omega.ics import ROLE_CONSTANTS
-            
             wad_glob = str(Path("config") / "wads" / "**" / "*.yaml")
             wad_files = list(self.root.glob(wad_glob))
             for f in wad_files:

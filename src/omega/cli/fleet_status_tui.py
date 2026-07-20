@@ -29,9 +29,9 @@ from textual.reactive import reactive
 # Import the SovereignReader
 from omega.observability.observability_reader import SovereignReader, TraceEvent
 
-# M2 Phase E: WAD-loadable entity display
-# Import ROLE_CONSTANTS and WAD config loader from ics (engine architecture)
-from omega.ics import ROLE_CONSTANTS, _load_dispatch_config, _get_entity_by_role, DEFAULT_IWAD
+# M2 Phase E: WAD-loadable entity display — use dispatch_registry (FS-Β2 / A6-A7)
+from omega.governance.dispatch_registry import load_dispatch_yaml, get_dispatch_entities, get_entity_by_role
+from omega.ics import ROLE_CONSTANTS
 
 # ─── UI Styling ───────────────────────────────────────────────────────────────
 
@@ -117,8 +117,7 @@ def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
     
     # Load entity definitions from WAD
     try:
-        config = _load_dispatch_config(iwad)
-        entities = config.get("entities", [])
+        entities = get_dispatch_entities(iwad)
     except Exception:
         # Fallback to minimal structure if WAD config unavailable
         entities = []
@@ -349,7 +348,7 @@ class FleetStatusApp(App):
         
         # Filter traces by selected entity (or show all if 'system' or GRAND_OVERSIGHT selected)
         grand_oversight_key = ROLE_CONSTANTS["GRAND_OVERSIGHT"]
-        grand_oversight_entity = _get_entity_by_role(grand_oversight_key)
+        grand_oversight_entity = get_entity_by_role(grand_oversight_key)
         grand_oversight_name = grand_oversight_entity.get("name") if grand_oversight_entity else None
         
         display_traces = traces

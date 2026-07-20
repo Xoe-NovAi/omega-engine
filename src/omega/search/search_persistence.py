@@ -10,10 +10,10 @@ Mandates addressed:
 - M9 Error Integrity: Typed, traceable errors with full context
 - M23 Failure Integrity: No soft-failures — tool failures logged with full context
 - M22 Response Provenance: Actual provider recorded from response, not intent
+- FS-Β4: Uses sqlite_policy for profiled connections (search profile)
 """
 
 import json
-import sqlite3
 import uuid
 import time
 from datetime import datetime, timezone
@@ -21,9 +21,9 @@ from pathlib import Path
 from typing import Any, Optional, Dict, List
 from dataclasses import dataclass, asdict
 from contextlib import contextmanager
-import threading
 
 from omega.observability import new_trace_id, get_engine
+from omega.infra.sqlite_policy import sqlite_transaction, Profile
 
 
 # ─── Database Path ───
@@ -98,30 +98,42 @@ class SearchRecord:
     trace_id: Optional[str] = None
 
 
-# ─── Connection Pool (Thread-Safe) ───
+# ─── Connection Manager (Thread-Safe, Profiled) ───
 class SearchDB:
+    """Thread-safe database access using sqlite_policy search profile."""
+    
     _local = threading.local()
     
     @classmethod
     def get_conn(cls) -> sqlite3.Connection:
+        """Get a thread-local connection with search profile PRAGMAs."""
         if not hasattr(cls._local, 'conn'):
+            # FS-Β4: Use sqlite_policy search profile
             cls._local.conn = sqlite3.connect(
                 str(SEARCH_DB_PATH),
                 check_same_thread=False,
                 timeout=30.0
             )
             cls._local.conn.row_factory = sqlite3.Row
-            # Enable WAL mode for better concurrency
-            cls._local.conn.execute("PRAGMA journal_mode=WAL")
-            cls._local.conn.execute("PRAGMA synchronous=NORMAL")
-            cls._local.conn.execute("PRAGMA cache_size=-32768")  # 32MB cache
+            # Apply search profile PRAGMAs
+            for pragma, value in [
+                ("journal_mode", "WAL"),
+                ("synchronous", "NORMAL"),
+                ("cache_size", "-65536"),
+                ("mmap_size", "268435456"),
+                ("temp_store", "MEMORY"),
+                ("busy_timeout", "30000"),
+                ("foreign_keys", "ON"),
+                ("page_size", "4096"),
+            ]:
+                cls._local.conn.execute(f"PRAGMA {pragma} = {value}")
         return cls._local.conn
     
     @classmethod
     def init(cls):
-        conn = cls.get_conn()
-        conn.executescript(SCHEMA)
-        conn.commit()
+        """Initialize database schema."""
+        with sqlite_transaction(SEARCH_DB_PATH, profile="search") as conn:
+            conn.executescript(SCHEMA)
     
     @classmethod
     def insert(cls, record: SearchRecord) -> None:

@@ -198,49 +198,10 @@ ROLE_CONSTANTS: Dict[str, str] = {
 }
 
 # WAD-backed dispatch config loader (M2 Firewall Phase B).
-# Replicates Roc's lens_registry.py pattern: load YAML from WADS_DIR.
-DISPATCH_CONFIG_FILENAME = "dispatch.yaml"
+# Delegates to dispatch_registry — single source of truth.
+# DISPATCH_CONFIG_FILENAME retained for compatibility.
 
-
-def _load_dispatch_config(iwad: str | None = None) -> list[dict[str, Any]]:
-    """Load agent definitions from the active WAD's dispatch.yaml.
-
-    Args:
-        iwad: IWAD name. If None, uses active_iwad from config/omega.yaml.
-
-    Returns:
-        List of entity definition dicts from the 'entities' key.
-
-    Raises:
-        FileNotFoundError: If no dispatch.yaml exists for the WAD.
-        ValueError: If YAML is malformed or missing 'entities' key.
-    """
-    from omega.governance.config_resolver import WADS_DIR, get_active_iwad
-
-    iwad_name = iwad or get_active_iwad()
-    config_path = WADS_DIR / iwad_name / "entities" / DISPATCH_CONFIG_FILENAME
-    if not config_path.exists():
-        raise FileNotFoundError(
-            f"No dispatch config found at {config_path}. "
-            f"Create {config_path} or use a WAD that defines agent dispatch."
-        )
-
-    try:
-        raw = config_path.read_text(encoding="utf-8")
-        data: dict[str, Any] = yaml.safe_load(raw) or {}
-    except yaml.YAMLError as exc:
-        raise ValueError(
-            f"Malformed YAML in dispatch config: {config_path}\n{exc}"
-        ) from exc
-
-    entities = data.get("entities")
-    if not entities or not isinstance(entities, list):
-        raise ValueError(
-            f"Missing top-level 'entities' list in {config_path}. "
-            f"Ensure the file has an 'entities:' key at the root."
-        )
-
-    return entities
+from omega.governance.dispatch_registry import get_dispatch_entities
 
 
 def _build_capability_registry(iwad: str | None = None) -> Dict[str, AgentDescriptor]:
@@ -256,7 +217,7 @@ def _build_capability_registry(iwad: str | None = None) -> Dict[str, AgentDescri
     Returns:
         Dict mapping lowercase agent name -> AgentDescriptor.
     """
-    entities = _load_dispatch_config(iwad)
+    entities = get_dispatch_entities(iwad)
     registry: Dict[str, AgentDescriptor] = {}
     for ent in entities:
         name = str(ent.get("name", "")).lower()
