@@ -19,21 +19,24 @@
 
 ---
 
-## §2 Current State (2026-07-19)
+## §2 Current State (2026-07-20)
 
 | Metric | Value | Status | LAST_VERIFIED |
 |--------|-------|--------|---------------|
-| Tests | **1398 passed** (43 skipped, 7 xfailed) | ✅ Functional tests pass, 2 test infra issues remain | 2026-07-18 |
+| Tests | **77/77 contract tests** (broader suite pending full run) | ✅ Phase Β contract gate green | 2026-07-20 |
 | Mandates | **23 (M1-M23)** | ✅ All enforced | 2026-07-13 |
 | **Mandate Compliance** | **13/23 FULL (56.5%)** — 5 Partial, 5 Fail | ❌ Systemic Run Side gaps | 2026-07-15 |
 | **Failed Mandates** | M5, M11, M12, M15, M23 | ❌ Soul distillation, handoff, continuity, failure integrity | 2026-07-15 |
-| Fleet | **12 agents + 2 entities (14 total)** | ✅ Cap: 14 | 2026-07-18 |
+| Fleet | **12 agents (cap 14 per M10)** | ✅ Clean | 2026-07-20 |
 | WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 |
 | **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, P1: 5/5, P2: 6/6, P3: 1/4 | ✅ P0-P2 Complete | 2026-07-18 |
 | Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 |
 | Shared modules | **3** (`omega-vetala` v2.0.0, `omega-sieve` v0.1.0, `omega-doc-reader` v1.0.0) | ✅ Release-ready | 2026-07-13 |
 | **D-281 Substrate Repair** | **ALL 4 PHASES COMPLETE** — Soul injection, config_resolver, M2 Firewall, Codex separation | ✅ 11 commits across 5 agents | 2026-07-17 |
 | **D-282 sqlite-vec Strike 10** | **COMPLETE** — PRAGMA SSOT converged, 4 concurrency tests | ✅ cache_size 512MB→32MB, wal_autocheckpoint 1000→500 | 2026-07-17 |
+| **FS-B4 SQLite Policy Migration** | **COMPLETE** — Hardened profiles (reader/writer separation), wal_autocheckpoint=10000/0, journal_size_limit=64MB, cache_size=32MB | ✅ 102 insertions, 55 deletions across 4 files, 77/77 tests | 2026-07-20 |
+| **Foundation Stabilization Campaign** | **RATIFIED** — Gate Α passed, Phase Β complete (B1-B5), Gate Β passing | ✅ 0 active/pending handoffs, campaign frozen until Gate Γ | 2026-07-20 |
+| **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles, BEGIN IMMEDIATE, connection factory | ✅ `docs/adr/ADR-001-memory-layer-architecture.md` (Gate Γ criterion) | 2026-07-20 |
 | **D-283 Mnemosyne Phase 1** | **COMPLETE** — HybridSearchEngine RRF k=60, Memory Blocks | ✅ 752/754 tests pass | 2026-07-16 |
 | **D-283 Mnemosyne Phase 2** | **DESIGN COMPLETE** — RecallStore, power-law decay, quality scoring | 🟡 27/29 recall tests pass (2 test infra issues) | 2026-07-17 |
 | **MIAP** | **MERGED** — Multi-Instance Agent Protocol for context collision | ✅ 13 tests, committed 03192d8 | 2026-07-17 |
