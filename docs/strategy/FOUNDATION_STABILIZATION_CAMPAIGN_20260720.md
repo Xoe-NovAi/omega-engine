@@ -4,7 +4,8 @@
 **AP Token**: `AP-FOUNDATION-STAB-v1.0.0`  
 ⬡ OMEGA ⬡ GROK-CLI ⬡ grok-4.5 ⬡ trc_foundation_stabilization ⬡ 2026-07-20  
 
-**Status**: **PROPOSED — Architect ratification required**  
+**Status**: **RATIFIED** — Architect approved 2026-07-20  
+**Ratification**: Gate Α passed, Phase Β complete (FS-B1–B5), Gate Β passing (77/77 tests, firewall-check clean)  
 **Authority stack**:
 1. `SOVEREIGN_MANDATES.md` (M1–M23)
 2. This campaign (structure-first freeze + sequenced rebuild)
