@@ -262,29 +262,51 @@ class TestProjections:
         entity = "symlink_test"
         rec = await register_instance("opencode", entity)
         
-        await write_anchored_event(entity, "session_start", 
-                                  {"objective": "Test", "model": "test"},
-                                  rec.instance_id)
-        
-        await write_projections(entity)
-        
-        # Check canonical files exist
         from omega.coordination.miap import ANCHORED_EVENTS_DIR, GNOSIS_EVENTS_DIR, PROJECT_ROOT
         
-        anchored_canonical = ANCHORED_EVENTS_DIR / entity / "projection.md"
-        gnosis_canonical = GNOSIS_EVENTS_DIR / entity / "projection.md"
-        
-        assert anchored_canonical.exists()
-        assert gnosis_canonical.exists()
-        
-        # Check symlinks
+        # Save old symlink targets to restore after test (D270: prevent symlink pollution)
         opencode_anchored = PROJECT_ROOT / ".opencode" / "anchored-summary.md"
         entity_gnosis = PROJECT_ROOT / "data" / "entities" / entity / "workspace" / "session_gnosis.md"
         
-        assert opencode_anchored.is_symlink()
-        assert entity_gnosis.is_symlink()
-        assert opencode_anchored.resolve() == anchored_canonical.resolve()
-        assert entity_gnosis.resolve() == gnosis_canonical.resolve()
+        old_opencode_anchored_target = None
+        old_entity_gnosis_target = None
+        if opencode_anchored.is_symlink():
+            old_opencode_anchored_target = opencode_anchored.resolve()
+        if entity_gnosis.is_symlink():
+            old_entity_gnosis_target = entity_gnosis.resolve()
+        
+        try:
+            await write_anchored_event(entity, "session_start", 
+                                      {"objective": "Test", "model": "test"},
+                                      rec.instance_id)
+            
+            await write_projections(entity)
+            
+            # Check canonical files exist
+            anchored_canonical = ANCHORED_EVENTS_DIR / entity / "projection.md"
+            gnosis_canonical = GNOSIS_EVENTS_DIR / entity / "projection.md"
+            
+            assert anchored_canonical.exists()
+            assert gnosis_canonical.exists()
+            
+            # Check symlinks
+            assert opencode_anchored.is_symlink()
+            assert entity_gnosis.is_symlink()
+            assert opencode_anchored.resolve() == anchored_canonical.resolve()
+            assert entity_gnosis.resolve() == gnosis_canonical.resolve()
+        finally:
+            # D270: Restore old symlink targets to prevent test pollution
+            if old_opencode_anchored_target:
+                opencode_anchored.unlink()
+                opencode_anchored.symlink_to(old_opencode_anchored_target)
+            elif opencode_anchored.is_symlink():
+                opencode_anchored.unlink()
+            
+            if old_entity_gnosis_target:
+                entity_gnosis.unlink()
+                entity_gnosis.symlink_to(old_entity_gnosis_target)
+            elif entity_gnosis.is_symlink():
+                entity_gnosis.unlink()
         
         await deregister_instance(rec.instance_id)
 
