@@ -1,6 +1,6 @@
 # 🔱 Omega Engine — Single Source of Truth (Condensed)
-**Source**: `OMEGA_ENGINE.md` (163 lines) — this is the ~55-line state card.
-**Last Updated**: 2026-07-19 | **Version**: v1.5.0
+**Source**: `OMEGA_ENGINE.md` (176 lines) — this is the ~85-line state card.
+**Last Updated**: 2026-07-20 | **Version**: v1.6.0
 
 ---
 
@@ -10,22 +10,23 @@
 - **Cognitive Sovereignty**: Local inference floor; local verification ceiling.
 - **Local-first**: Cloud = teacher, never dependency.
 - **WAD Architecture**: Engine → IWADs → PWADs (id Software heritage).
-- **Standalone Packages**: `omega-sieve`, `omega-doc-reader` on PyPI.
+- **Standalone Packages**: `omega-sieve`, `omega-doc-reader`, `omega-meditation` on PyPI.
 
 ---
 
-## §2 Current State
+## §2 Current State (2026-07-20)
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| Tests | **1398 passed** (43 skipped, 7 xfailed) | ✅ |
-| Mandates | **23 enforced** (M1-M23) | ✅ |
-| Compliance | **13/23 FULL** (56.5%) — 5 Partial, 5 Fail | ❌ |
-| Fleet | **14 agents** (cap: 14) | ✅ |
+| Tests | **77/77 contract tests** (broader suite pending) | ✅ Phase B gate green |
+| Mandates | **25 enforced** (M1-M25) | ✅ All enforced |
+| Compliance | **13/25 FULL** (52%) — 5 Partial, 5 Fail | ❌ Run Side gaps |
+| Fleet | **12 agents** (cap: 14 per M10) | ✅ |
 | WADs | **4** (arcana_novai, torment, youtube_research, youtube_worker) | ✅ |
 | Heritage | **121 [id-soft:] tags** — all vetted | ✅ |
 | Shared Modules | **3** (omega-vetala, omega-sieve, omega-doc-reader) | ✅ |
 | Third-Party Registry | **18/19 repos** — P0: 4/4, P1: 5/5, P2: 6/6, P3: 1/4 | ✅ |
+| Handoffs | **0 active, 0 pending** | ✅ Clean |
 
 ---
 
@@ -41,38 +42,55 @@
 | Config Resolver | `src/omega/governance/config_resolver.py` | ✅ Phase II COMPLETE |
 | Hybrid Search | `src/omega/memory/hybrid_search.py` | ✅ RRF k=60 |
 | MIAP | `src/omega/coordination/miap.py` | ✅ MERGED |
-| Soul Utils | `src/omega/soul_utils.py` | ✅ Phase I COMPLETE |
-| WAD Loader | `src/omega/oracle/wad_loader.py` | ✅ V2 schema |
+| sqlite_policy | `src/omega/persistence/sqlite_policy.py` | ✅ FS-B4 COMPLETE |
 | Hivemind | `mcp_servers/omega_hub/` | ✅ 6 MCP tools |
 | CLI | `src/omega/cli/oracle_cli.py` | ✅ Typer CLI |
 
 ---
 
-## §4 Recent Milestones
+## §4 Foundation Stabilization Campaign
 
-| Milestone | Status |
-|-----------|--------|
-| D-281 Substrate Repair (4 phases) | ✅ COMPLETE |
-| D-282 sqlite-vec Strike 10 | ✅ COMPLETE |
-| D-283 Phase 2 RecallStore | 🟡 27/29 tests |
-| MIAP (context collision) | ✅ MERGED |
-| HMC Quad-Forge (4-mind council) | ✅ COMPLETE |
-| D-298 Decision Workspace | ✅ GROUNDED MEDITATION |
-| Soul Evolution v7.0 | ✅ 15 L3 principles promoted |
-| Heritage vet Pi PR #2903 | ✅ vet-072 APPROVED |
+**Status**: RATIFIED ✅ | **Gate A**: PASSED | **Phase B**: COMPLETE | **Gate B**: PASSING
+
+| Workstream | Summary | Status |
+|-----------|---------|--------|
+| FS-B1 | Embedding SSOT (768 write-path, config_resolver fix, 8 tests) | ✅ |
+| FS-B2 | Dispatch Registry (ics.py loader, correct API shape, 11 tests) | ✅ |
+| FS-B3 | Path Resolver CI (77-entry allowlist, semantic CI) | ✅ |
+| FS-B4 | SQLite Policy Migration (4 profiles, reader/writer, BEGIN IMMEDIATE) | ✅ 77/77 |
+| FS-B5 | search_persistence (DATA_DIR path, missing imports) | ✅ |
+
+**Next Phase Γ**: Hub split, policy extraction, Oracle DI
+
+**Memory ADR**: `docs/adr/ADR-001-memory-layer-architecture.md` — RATIFIED ✅
 
 ---
 
-## §5 Key Files
+## §5 Recent Milestones
+
+| Milestone | Status |
+|-----------|--------|
+| FS-B4 SQLite Policy Migration | ✅ COMPLETE |
+| Foundation Stabilization Campaign | ✅ RATIFIED |
+| Memory ADR (ADR-001) | ✅ RATIFIED |
+| D-282 sqlite-vec Strike 10 | ✅ COMPLETE |
+| D-300 Autonomous Meditation (`omega-meditation`) | ✅ PRODUCT DELIVERED |
+| D-301 MaKaLi Parallel Council | ✅ RATIFIED |
+| D-308 Ubuntu 25.10 Toolchain Verification | 🚨 P0 GATE |
+| Soul Evolution v7.0 | ✅ 15 L3 principles promoted |
+
+---
+
+## §6 Key Files
 
 | File | Purpose |
 |------|---------|
-| `SOVEREIGN_MANDATES.md` | 23 Constitutional Laws |
+| `SOVEREIGN_MANDATES.md` | 25 Constitutional Laws (v3.7.0) |
 | `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master roadmap |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | Multi-agent coordination |
 | `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions |
-| `CREDITS.md` | Heritage attribution |
-| `data/entities/kali/session_gnosis.md` | Session anchor (M15) |
+| `CREDITS.md` | Heritage attribution (121 tags) |
+| `data/coordination/SESSION_ANCHOR.md` | Session anchor (M15) |
 | `.opencode/anchored-summary.md` | Post-compaction recovery |
 
 ---

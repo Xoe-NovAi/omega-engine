@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-19T21:30:49.718936+00:00 ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-20T20:06:21.739025+00:00 ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -9,10 +9,10 @@ After compaction or restart, execute in strict order:
 1. `omega-hub_hivemind_get_awareness()` — Who is here?
 2. `git status && git log --oneline -5` — What is committed?
 3. Read OMEGA_CODEX.md — FULL file, no limit parameter. You are doing this now
-4. Read `data/coordination/SESSION_ANCHOR.md` — What was I doing?
+4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-07-19T21:30:49.718936+00:00 | Regenerate: `make codex`
+> Codex generated: 2026-07-20T20:06:21.739025+00:00 | Regenerate: `make codex`
 > If timestamp is >24h old, run `make codex` before reading further.
 
 ---
@@ -20,12 +20,12 @@ After compaction or restart, execute in strict order:
 
 ### scripts/codex/ENGINE_CONDENSED.md
 **Type**: markdown
-**Size**: 3319 bytes
-**Lines**: 86
+**Size**: 4203 bytes
+**Lines**: 104
 
 # 🔱 Omega Engine — Single Source of Truth (Condensed)
-**Source**: `OMEGA_ENGINE.md` (163 lines) — this is the ~55-line state card.
-**Last Updated**: 2026-07-19 | **Version**: v1.5.0
+**Source**: `OMEGA_ENGINE.md` (176 lines) — this is the ~85-line state card.
+**Last Updated**: 2026-07-20 | **Version**: v1.6.0
 
 ---
 
@@ -35,22 +35,23 @@ After compaction or restart, execute in strict order:
 - **Cognitive Sovereignty**: Local inference floor; local verification ceiling.
 - **Local-first**: Cloud = teacher, never dependency.
 - **WAD Architecture**: Engine → IWADs → PWADs (id Software heritage).
-- **Standalone Packages**: `omega-sieve`, `omega-doc-reader` on PyPI.
+- **Standalone Packages**: `omega-sieve`, `omega-doc-reader`, `omega-meditation` on PyPI.
 
 ---
 
-## §2 Current State
+## §2 Current State (2026-07-20)
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| Tests | **1398 passed** (43 skipped, 7 xfailed) | ✅ |
-| Mandates | **23 enforced** (M1-M23) | ✅ |
-| Compliance | **13/23 FULL** (56.5%) — 5 Partial, 5 Fail | ❌ |
-| Fleet | **14 agents** (cap: 14) | ✅ |
+| Tests | **77/77 contract tests** (broader suite pending) | ✅ Phase B gate green |
+| Mandates | **25 enforced** (M1-M25) | ✅ All enforced |
+| Compliance | **13/25 FULL** (52%) — 5 Partial, 5 Fail | ❌ Run Side gaps |
+| Fleet | **12 agents** (cap: 14 per M10) | ✅ |
 | WADs | **4** (arcana_novai, torment, youtube_research, youtube_worker) | ✅ |
 | Heritage | **121 [id-soft:] tags** — all vetted | ✅ |
 | Shared Modules | **3** (omega-vetala, omega-sieve, omega-doc-reader) | ✅ |
 | Third-Party Registry | **18/19 repos** — P0: 4/4, P1: 5/5, P2: 6/6, P3: 1/4 | ✅ |
+| Handoffs | **0 active, 0 pending** | ✅ Clean |
 
 ---
 
@@ -66,39 +67,56 @@ After compaction or restart, execute in strict order:
 | Config Resolver | `src/omega/governance/config_resolver.py` | ✅ Phase II COMPLETE |
 | Hybrid Search | `src/omega/memory/hybrid_search.py` | ✅ RRF k=60 |
 | MIAP | `src/omega/coordination/miap.py` | ✅ MERGED |
-| Soul Utils | `src/omega/soul_utils.py` | ✅ Phase I COMPLETE |
-| WAD Loader | `src/omega/oracle/wad_loader.py` | ✅ V2 schema |
+| sqlite_policy | `src/omega/persistence/sqlite_policy.py` | ✅ FS-B4 COMPLETE |
 | Hivemind | `mcp_servers/omega_hub/` | ✅ 6 MCP tools |
 | CLI | `src/omega/cli/oracle_cli.py` | ✅ Typer CLI |
 
 ---
 
-## §4 Recent Milestones
+## §4 Foundation Stabilization Campaign
 
-| Milestone | Status |
-|-----------|--------|
-| D-281 Substrate Repair (4 phases) | ✅ COMPLETE |
-| D-282 sqlite-vec Strike 10 | ✅ COMPLETE |
-| D-283 Phase 2 RecallStore | 🟡 27/29 tests |
-| MIAP (context collision) | ✅ MERGED |
-| HMC Quad-Forge (4-mind council) | ✅ COMPLETE |
-| D-298 Decision Workspace | ✅ GROUNDED MEDITATION |
-| Soul Evolution v7.0 | ✅ 15 L3 principles promoted |
-| Heritage vet Pi PR #2903 | ✅ vet-072 APPROVED |
+**Status**: RATIFIED ✅ | **Gate A**: PASSED | **Phase B**: COMPLETE | **Gate B**: PASSING
+
+| Workstream | Summary | Status |
+|-----------|---------|--------|
+| FS-B1 | Embedding SSOT (768 write-path, config_resolver fix, 8 tests) | ✅ |
+| FS-B2 | Dispatch Registry (ics.py loader, correct API shape, 11 tests) | ✅ |
+| FS-B3 | Path Resolver CI (77-entry allowlist, semantic CI) | ✅ |
+| FS-B4 | SQLite Policy Migration (4 profiles, reader/writer, BEGIN IMMEDIATE) | ✅ 77/77 |
+| FS-B5 | search_persistence (DATA_DIR path, missing imports) | ✅ |
+
+**Next Phase Γ**: Hub split, policy extraction, Oracle DI
+
+**Memory ADR**: `docs/adr/ADR-001-memory-layer-architecture.md` — RATIFIED ✅
 
 ---
 
-## §5 Key Files
+## §5 Recent Milestones
+
+| Milestone | Status |
+|-----------|--------|
+| FS-B4 SQLite Policy Migration | ✅ COMPLETE |
+| Foundation Stabilization Campaign | ✅ RATIFIED |
+| Memory ADR (ADR-001) | ✅ RATIFIED |
+| D-282 sqlite-vec Strike 10 | ✅ COMPLETE |
+| D-300 Autonomous Meditation (`omega-meditation`) | ✅ PRODUCT DELIVERED |
+| D-301 MaKaLi Parallel Council | ✅ RATIFIED |
+| D-308 Ubuntu 25.10 Toolchain Verification | 🚨 P0 GATE |
+| Soul Evolution v7.0 | ✅ 15 L3 principles promoted |
+
+---
+
+## §6 Key Files
 
 | File | Purpose |
 |------|---------|
-| `SOVEREIGN_MANDATES.md` | 23 Constitutional Laws |
+| `SOVEREIGN_MANDATES.md` | 25 Constitutional Laws (v3.7.0) |
 | `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master roadmap |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | Multi-agent coordination |
 | `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions |
-| `CREDITS.md` | Heritage attribution |
-| `data/entities/kali/session_gnosis.md` | Session anchor (M15) |
-| `data/coordination/SESSION_ANCHOR.md` | Post-compaction recovery |
+| `CREDITS.md` | Heritage attribution (121 tags) |
+| `data/coordination/SESSION_ANCHOR.md` | Session anchor (M15) |
+| `.opencode/anchored-summary.md` | Post-compaction recovery |
 
 ---
 
@@ -115,21 +133,21 @@ After compaction or restart, execute in strict order:
 
 ### scripts/codex/MANDATES_CONDENSED.md
 **Type**: markdown
-**Size**: 3628 bytes
-**Lines**: 55
+**Size**: 3746 bytes
+**Lines**: 57
 
 # 🔱 Omega Engine — Sovereign Mandates (Condensed)
-**Source**: `SOVEREIGN_MANDATES.md` (186 lines) — this is the ~35-line status card.
-**Version**: 3.6.0 | **Status**: NON-NEGOTIABLE
+**Source**: `SOVEREIGN_MANDATES.md` (217 lines) — this is the ~35-line status card.
+**Version**: 3.7.0 | **Status**: NON-NEGOTIABLE
 
 ---
 
-## 🛡️ The 23 Laws — Quick Reference
+## 🛡️ The 25 Laws — Quick Reference
 
 | # | Name | One-Liner | Status |
 |---|------|-----------|--------|
 | **M1** | AnyIO Absolute | No `asyncio`. Wrap blocking I/O in `anyio.to_thread.run_sync()`. | ✅ |
-| **M2** | Engine-Stack Firewall | `src/omega/` (core) ≠ `config/wads/` (stacks). No stack logic in core. | ✅ Phase A done |
+| **M2** | Engine-Stack Firewall | `src/omega/` (core) ≠ `config/wads/` (stacks). No stack logic in core. | ✅ |
 | **M3** | Iris Constant | Iris = messenger bridge, NOT a Pillar Keeper (P1-P10). | ✅ |
 | **M4** | Sequentiality | Plan → Verify → Execute. No cowboy coding. | ✅ |
 | **M5** | Gnosis Preservation | L1→L2→L3 → `proposed_lessons.yaml`. No session closes without distillation. | ❌ 0/10 pillars |
@@ -137,7 +155,7 @@ After compaction or restart, execute in strict order:
 | **M7** | Local-First | Local inference PRIMARY. Cloud FALLBACK. Strategy must be `local_first`. | ✅ |
 | **M8** | Zero Telemetry | No analytics, no phone-home, no external metrics. Ever. | ✅ |
 | **M9** | Error Integrity | Typed, traceable, testable errors. No bare `except:`. `OmegaError` subtypes. | ✅ |
-| **M10** | Fleet Integrity | Cap at 14 agents. New entity = gap + slot review first. | ✅ 13/14 |
+| **M10** | Fleet Integrity | Cap at 14 agents. New entity = gap + slot review first. | ✅ 12/14 |
 | **M11** | Soul Integrity | L1→L2→L3 → `proposed_lessons.yaml` (blind staging). Scribe executes pipeline. | ❌ Systemic gap |
 | **M12** | Queue Integrity | Every request → terminal state. Atomic writes. Heartbeat timestamps. | ⚠️ Advisory |
 | **M13** | Temple-Grade | T1-T11 gates. `make temple-grade` must pass before release. | ✅ |
@@ -151,6 +169,8 @@ After compaction or restart, execute in strict order:
 | **M21** | Gate Integrity | Every typed return → contract test (`isinstance(result, ExpectedType)`). | ✅ |
 | **M22** | Response Provenance | Log `provider_name` from actual response, not configured intent. | ✅ |
 | **M23** | Failure Integrity | Mandatory tool missing → `[TOOL-CHAIN-COLLAPSE]`. No soft-failures. | ✅ |
+| **M24** | Venv Sovereignty | All Python ops in `.venv`. No `--break-system-packages`. Pre-commit hook enforced. | ✅ |
+| **M25** | Streaming Resilience | Chunk-level timeout (30s) with heartbeat, not hard-fail. Graceful fallback. | ✅ |
 
 ---
 
@@ -158,16 +178,16 @@ After compaction or restart, execute in strict order:
 
 | Category | Count | Status |
 |----------|-------|--------|
-| **FULL** | 13/23 (56.5%) | M1, M2, M3, M4, M6, M7, M8, M9, M10, M13, M14, M15, M16, M18, M19, M21, M22, M23 |
-| **PARTIAL** | 5 | M12 (advisory), M17 (T12), M20 (design), + others |
-| **FAIL** | 3 | M5 (soul distillation), M11 (soul integrity), M15 (fleet lacks session_gnosis) |
+| **FULL** | 18/25 | M1-M4, M6-M10, M13-M14, M16, M18-M19, M21-M25 |
+| **PARTIAL** | 3 | M12 (advisory), M17 (T12), M20 (design) |
+| **FAIL** | 2 | M5 (soul distillation), M11 (soul integrity) |
 
 ---
 
 ## 🚨 Top Priority Fixes
 
 1. **M5 + M11**: Soul distillation pipeline — 0/10 pillars write `proposed_lessons.yaml`
-2. **M15**: Fleet session_gnosis.md — 56% fleet lacks session anchors
+2. **M15**: Session_gnosis adoption across fleet
 3. **M12**: Queue integrity — advisory, acceptable for Phase 0
 
 ---
@@ -179,8 +199,8 @@ After compaction or restart, execute in strict order:
 
 ### scripts/codex/AGENTS_CONDENSED.md
 **Type**: markdown
-**Size**: 4182 bytes
-**Lines**: 112
+**Size**: 4366 bytes
+**Lines**: 114
 
 # 🔱 Omega Engine — Agent Rules (Condensed)
 **Source**: `AGENTS.md` (343 lines) — this is the ~80-line reference card.
@@ -200,8 +220,10 @@ After compaction or restart, execute in strict order:
 - **M14 Heritage Vetting**: `[id-soft:]` tags need vet record in `HERITAGE_VET_LOG.md`.
 - **M15 Sovereign Continuity**: Maintain `session_gnosis.md`. Read `.opencode/anchored-summary.md` on restart.
 - **M23 Failure Integrity**: Mandatory tool missing → `[TOOL-CHAIN-COLLAPSE]`. No soft-failures.
+- **M24 Venv Sovereignty**: All Python in `.venv`. No `--break-system-packages`.
+- **M25 Streaming Resilience**: 30s chunk timeout with heartbeat. Graceful fallback.
 
-👉 **Full mandates**: `SOVEREIGN_MANDATES.md`
+👉 **Full mandates**: `SOVEREIGN_MANDATES.md` (25 laws, v3.7.0)
 
 ---
 

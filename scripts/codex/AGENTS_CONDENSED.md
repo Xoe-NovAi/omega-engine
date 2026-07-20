@@ -16,8 +16,10 @@
 - **M14 Heritage Vetting**: `[id-soft:]` tags need vet record in `HERITAGE_VET_LOG.md`.
 - **M15 Sovereign Continuity**: Maintain `session_gnosis.md`. Read `.opencode/anchored-summary.md` on restart.
 - **M23 Failure Integrity**: Mandatory tool missing → `[TOOL-CHAIN-COLLAPSE]`. No soft-failures.
+- **M24 Venv Sovereignty**: All Python in `.venv`. No `--break-system-packages`.
+- **M25 Streaming Resilience**: 30s chunk timeout with heartbeat. Graceful fallback.
 
-👉 **Full mandates**: `SOVEREIGN_MANDATES.md`
+👉 **Full mandates**: `SOVEREIGN_MANDATES.md` (25 laws, v3.7.0)
 
 ---
 
