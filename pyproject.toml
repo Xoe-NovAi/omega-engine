@@ -94,7 +94,7 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-asyncio_mode = "auto"
+anyio_mode = "auto"
 addopts = "--ignore=data/entities/roc_racoon/workspace/odysseus-dev --timeout=60 --durations=15"
 
 [tool.coverage.run]

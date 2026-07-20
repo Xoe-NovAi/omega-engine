@@ -130,7 +130,7 @@ class CapabilityMatrix:
             if thinking_data.get("supports_thinking"):
                 thinking_config = ThinkingConfig(
                     supported_levels=thinking_data.get("thinking_levels", []),
-                    detection_regex=model_data.get("detection_regex", ""),
+                    detection_regex=thinking_data.get("detection_regex", ""),
                     default=thinking_data.get("thinking_mapping", {}).get("minimal", "MINIMAL"),
                     thinking_mapping=thinking_data.get("thinking_mapping", {}),
                     thinking_schema=thinking_data.get("thinking_schema", "thinking_level")
@@ -154,9 +154,9 @@ class CapabilityMatrix:
                 thinking_config=thinking_config,
                 quota=quota,
                 cost_per_m_tokens=model_data.get("cost_per_m_tokens", {}),
-                max_context=model_data.get("max_context", 8192),
-                max_output=model_data.get("max_output", 8192),
-                detection_regex=model_data.get("detection_regex", ""),
+                max_context=thinking_data.get("max_context", model_data.get("max_context", 8192)),
+                max_output=thinking_data.get("max_output", model_data.get("max_output", 8192)),
+                detection_regex=thinking_data.get("detection_regex", ""),
                 mtp_drafter=model_data.get("mtp_drafter")
             )
             

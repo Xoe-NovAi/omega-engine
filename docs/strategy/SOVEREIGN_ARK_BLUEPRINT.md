@@ -3,9 +3,9 @@
 ---
 # 🔱 SOVEREIGN ARK BLUEPRINT (Active)
 
-## Current Sprint: HMC Quad-Forge — M2 Firewall Migration + Meditate Architecture + MIAP Phase 0
+## Current Sprint: HMC Quad-Forge — M2 Firewall Migration + Meditate Architecture + MIAP Phase 0 + **Ubuntu 25.10 Toolchain Verification (D-308)**
 
-**Status**: D-281 ALL 4 PHASES COMPLETE. D-282 COMPLETE. D-283 Phase 2 DESIGN COMPLETE. **Nomenclature correction complete. M2 Migration Phases A-E defined. Meditate Base+Overlay architecture defined. Scribe Lattice Role designed. Cline CLI integration planned. Session Namespace Isolation + MIAP Phase 0 DESIGN COMPLETE (5 preconditions + 5 critical fixes from Nemotron review).**
+**Status**: D-281 ALL 4 PHASES COMPLETE. D-282 COMPLETE. D-283 Phase 2 DESIGN COMPLETE. **Nomenclature correction complete. M2 Migration Phases A-E defined. Meditate Base+Overlay architecture defined. Scribe Lattice Role designed. Cline CLI integration planned. Session Namespace Isolation + MIAP Phase 0 DESIGN COMPLETE (5 preconditions + 5 critical fixes from Nemotron review). D-308 Phase 0+1 COMPLETE — P0 GATE TRIGGERED (13 actionable changes).**
 **Gate Criteria**: `make test && make temple-grade && make firewall-check`
 
 ### Completed (D-281 Substrate Repair — 4 phases, 11 commits)
@@ -317,6 +317,37 @@
 
 ---
 
+### 🆕 NEW WORKSTREAM: Ubuntu 25.10 Toolchain Verification (D-308)
+**Origin**: Kali meditation on Ubuntu 25.10 native Python tools for Omega Engine (2026-07-19)
+**Status**: Phase 0+1 COMPLETE — 30 claims verified, **P0 GATE TRIGGERED** (13 actionable changes)
+**Gate**: Critical path update required before Phase 2 (upstream capabilities)
+
+| Phase | Claims | ✅ Confirmed | ⚠️ Corrected | ❌ Refuted | Status |
+|-------|--------|-------------|-------------|-----------|--------|
+| **0A** (Kernel/Release) | 3 | 1 | 1 | 1 | DONE |
+| **0B** (Python Runtime) | 4 | 0 | 1 | 3 | DONE |
+| **0C** (Container/Systemd) | 6 | 3 | 3 | 0 | DONE |
+| **0D** (Local Inference) | 5 | 1 | 1 | 3 | DONE |
+| **1A** (Toolchain) | 6 | 2 | 1 | 3 | DONE |
+| **1B** (Data/Storage) | 2 | 1 | 0 | 1 | DONE |
+| **1C** (System Utils) | 4 | 2 | 2 | 0 | DONE |
+| **TOTAL** | **30** | **10** | **9** | **11** | **P0 GATE** |
+
+**Key Critical Path Updates Required**:
+1. **Kernel 6.17** (not 6.11) — BPF/AppArmor hardening specs must target 6.17 APIs
+2. **No free-threaded Python 3.13** in Ubuntu repos — compile from source for M20 SomaticState
+3. **SQLite 3.46.1** (not 3.47+) — sqlite-vec works but no 3.47 features (JSONB)
+4. **No `sqlite3-vec` package** — must `pip install sqlite-vec` (8192-dim limit confirmed)
+5. **No distro packages for**: `llama-cpp-python`, `ollama` server, `uv`, `ruff`, `pyright`, `Qdrant` — all upstream installers
+6. **Podman AppArmor profile breaks rootless** — quadlet templates need workaround
+7. **systemd-creds rootless = `--with-key=null`** — no user-scoped encryption until systemd 258+
+8. **dbus-broker not default until 26.10** — don't assume
+
+**Verification Report**: `docs/research/R_UBUNTU_2510_TOOLCHAIN_VERIFICATION_20260719.md`
+**Hivemind Block**: `ses_a5812561a3a1` — Awaiting Kali review
+
+---
+
 ### 📚 Canonical Reference Documents (Updated)
 
 | Document | Purpose | Location |
@@ -333,6 +364,7 @@
 | **Ken Walger Execution Plan** | Jem cross-reference, Go/No-Go matrix | `docs/strategy/R_KEN_MINING_EXECUTION_PLAN_20260719.md` |
 | **Unmined Gnosis** | 20 G-level insights + 20 L3 principles | `docs/research/R_UNMINED_GNOSIS_KEN_MINING_20260719.md` |
 | **Context Packer Knowledge Gaps** | 7 gaps, 40+ sources, 8 enhancements | `docs/research/R_CONTEXT_PACKER_KNOWLEDGE_GAPS_20260719.md` |
+| **Ubuntu 25.10 Toolchain Verification** | 30 claims verified, P0 gate triggered | `docs/research/R_UBUNTU_2510_TOOLCHAIN_VERIFICATION_20260719.md` |
 
 ---
 

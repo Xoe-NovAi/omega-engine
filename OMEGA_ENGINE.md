@@ -62,6 +62,7 @@
 | **D-305 Hive Evolution** | **ARCHITECTURE DESIGNED** — Hivemind → Hive (cranium rat collective consciousness) | 🟡 5 layers, 7 sprints, Researcher Phase 1 critical path | 2026-07-19 |
 | **D-306 Arch Soul Integration** | **DESIGN COMPLETE** — Nameless One's journey externalized as sovereign architecture | 🟡 24 entities = incarnations, Mandates = regret-prevention physics, Qliphoth = Fortress of Regrets | 2026-07-19 |
 | **D-307 Torment WAD** | **SCAFFOLD DEFINED** — Living philosophy engine: Nameless One entity, companions, factions, Hive as coordination | 🟡 Awaiting Researcher Phase 1-4 for parameterization | 2026-07-19 |
+| **D-308 Ubuntu 25.10 Toolchain Verification** | **P0 GATE TRIGGERED** — 30 claims verified, 13 actionable changes (7 refuted, 6 corrected). Critical path update required before Phase 2. | 🚨 **BLOCKING** — Kernel 6.17, no free-threaded Python, no distro packages for uv/ruff/pyright/llama-cpp-python/ollama/sqlite-vec, AppArmor breaks rootless podman, dbus-broker not default until 26.10 | 2026-07-19 |
 
 ---
 

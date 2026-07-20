@@ -102,7 +102,7 @@ models:
       supports_thinking_streaming: true  # Verified: Gemma 4 streams thinking
       max_context: 32768
       max_output: 8192
-      detection_regex: "/gemma-?4/i"  # Pi PR #2903 pattern (Gap 4.1)
+      detection_regex: "gemma-?4"  # Pi PR #2903 pattern (Gap 4.1)
       mtp_drafter: null  # No speculative decode for 31B
     quota:
       free_tier:

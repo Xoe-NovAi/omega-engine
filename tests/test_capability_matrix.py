@@ -57,7 +57,7 @@ class TestCapabilityMatrix:
         capability = matrix.get("gemma-4-31b-it")
         assert capability.thinking_config is not None
         assert capability.thinking_config.supported_levels == ["MINIMAL", "HIGH"]
-        assert capability.thinking_config.detection_regex == "/gemma-?4/i"
+        assert capability.thinking_config.detection_regex == "gemma-?4"
         assert capability.thinking_config.default == "MINIMAL"
         
         # Check thinking mapping

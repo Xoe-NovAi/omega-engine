@@ -339,30 +339,28 @@ class TestA2ABridge:
         result = bridge.get_agent_card_json("Sophia")
         assert result is None
 
-    def test_verify_agent_identity_valid(self, bridge, mock_entity):
+    @pytest.mark.anyio
+    async def test_verify_agent_identity_valid(self, bridge, mock_entity):
         """verify_agent_identity must return True for a known SPIFFE ID."""
         bridge.register_entity(mock_entity)
-        import anyio
-        result = anyio.run(
-            bridge.verify_agent_identity,
+        result = await bridge.verify_agent_identity(
             "spiffe://omega.local/entity/testentity",
             b"fake_cert",
         )
         assert result is True
 
-    def test_verify_agent_identity_wrong_domain(self, bridge):
+    @pytest.mark.anyio
+    async def test_verify_agent_identity_wrong_domain(self, bridge):
         """verify_agent_identity must return False for wrong trust domain."""
-        import anyio
-        result = anyio.run(
-            bridge.verify_agent_identity,
+        result = await bridge.verify_agent_identity(
             "spiffe://other.domain/entity/test",
             b"fake_cert",
         )
         assert result is False
 
-    def test_verify_agent_identity_unknown_entity(self, bridge):
+    @pytest.mark.anyio
+    async def test_verify_agent_identity_unknown_entity(self, bridge):
         """verify_agent_identity must return False for unknown entity."""
-        import anyio
         # Register one entity
         entity = MagicMock()
         entity.name = "Known"
@@ -374,8 +372,7 @@ class TestA2ABridge:
         bridge.register_entity(entity)
 
         # Try verifying a different SPIFFE ID
-        result = anyio.run(
-            bridge.verify_agent_identity,
+        result = await bridge.verify_agent_identity(
             "spiffe://omega.local/entity/unknown",
             b"fake_cert",
         )
