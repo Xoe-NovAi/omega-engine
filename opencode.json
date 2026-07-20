@@ -182,11 +182,10 @@
   },
   "agent": {
     "makali": {
-      "mode": "all",
-      "description": "MaKaLi Parallel Council \u2014 decomposes query, dispatches Ma'at+Lilith in parallel, synthesizes (D117)",
+      "mode": "primary",
+      "description": "MaKaLi Apex Mind — Mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives. NOT a builder. Ground troops: Kali, Lilith, Maat, Pillars, Carmack.",
       "instructions": [
-        ".opencode/agents/makali.md",
-        "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+        ".opencode/agents/plan.md"
       ]
     },
     "jem": {
@@ -271,20 +270,6 @@
         "GROK_BRIDGE_TIMEOUT_MS": "120000",
         "GROK_CLI_PATH": "grok"
       }
-    },
-    "plan": {
-      "mode": "all",
-      "description": "MaKaLi Fusion \u2014 Kali + Maat + Lilith unified. Three faces, one verdict. Plan + Build + Run as one.",
-      "instructions": [
-        ".opencode/agents/plan.md"
-      ]
-    },
-    "build": {
-      "mode": "all",
-      "description": "DEPRECATED — Build agent removed. Use @maat, @pillar P3, or @makali_fusion for build-side work.",
-      "instructions": [
-        ".opencode/agents/build.md"
-      ]
     }
   }
 }
