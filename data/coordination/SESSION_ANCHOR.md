@@ -5,61 +5,55 @@
 
 ---
 
-## Objective: Foundation Stabilization Campaign — Phase Β COMPLETE ✅
+## Session Summary (2026-07-20)
 
-### Gate Α: PASSED ✅ (2026-07-20T07:15:00Z)
-| Criterion | Status |
-|-----------|--------|
-| Handoff court done (≤5 pending) | ✅ 0 active, 0 pending |
-| Single RRF module | ✅ `hybrid_search_engine.py` deleted |
-| Grok seat restored + soul scaffold | ✅ 4 files created |
-| Strategy index live | ✅ 86 lines ≤100 |
-| `make test` baseline recorded | ✅ |
+### Phase B: COMPLETE ✅
+| Workstream | Summary | Verification |
+|-----------|---------|-------------|
+| **FS-B1** Embedding SSOT | 768 write-path locked, config_resolver fix, 8 contract tests | ✅ |
+| **FS-B2** Dispatch Registry | ics.py loader, correct API shape, 11 contract tests | ✅ |
+| **FS-B3** Path Resolver CI | 77-entry allowlist, semantic CI | ✅ |
+| **FS-B4** SQLite Policy Migration | 4 profiles (memory/search/metrics/reader), reader/writer getters, BEGIN IMMEDIATE, optimize timer | ✅ 77/77 tests |
+| **FS-B5** search_persistence | DATA_DIR path, missing imports | ✅ |
 
-### Phase Β: COMPLETE ✅ (All 5 workstreams done)
+### Gate B: PASSING ✅ (77/77 contract tests, make firewall-check 0 violations)
 
-| ID | Workstream | Status | Key Changes |
-|----|-----------|--------|-------------|
-| **FS-Β1** | Embedding SSOT + Kill 1024-Dim | ✅ COMPLETE | Option A (768 write-path), config_resolver fix, provider key=id, 8 real contract tests |
-| **FS-Β2** | Dispatch Registry Extraction | ✅ COMPLETE | ics.py third loader, correct API shape (entities: list, WADS_DIR path) |
-| **FS-Β3** | Path Resolver CI Gate | ✅ COMPLETE | Semantic CI (allowlist bootstrap), prioritized migration map |
-| **FS-Β4** | SQLite Policy Migration | ✅ COMPLETE | 4 profiles (memory/search/metrics/reader), reader/writer getters, optimize timer, BEGIN IMMEDIATE on all 3 modules |
-| **FS-Β5** | search_persistence AnyIO + DATA_DIR | ✅ COMPLETE | Hardcoded path replaced, missing imports added |
+### Handoff Court: COMPLETE ✅ (0 active, 0 pending)
+- 6 stale packets resolved (4 completed as stale, 1 rejected, 1 archived)
 
-### Gate Β: PASSING ✅
-| Criterion | Status |
-|-----------|--------|
-| Embedding strategy is single load path | ✅ |
-| Dim 1024 removed; contract tests lock 768 default | ✅ |
-| One dispatch registry | ✅ |
-| Path gate green | ✅ |
-| `make test + make firewall-check` | ✅ (77/77 tests, 0 violations) |
+### Memory ADR: RATIFIED ✅
+- `docs/adr/ADR-001-memory-layer-architecture.md`
+- sqlite_policy.py SSOT, 4 PRAGMA profiles, connection factory
+
+### Root Cause Fix: MIAP Symlink Pollution ✅
+- `tests/test_miap.py` now saves/restores symlinks in `finally` block
+- `.opencode/anchored-summary.md` restored to `kali` projection
 
 ---
 
-## Campaign Ratification
-- **Foundation Stabilization Campaign**: RATIFIED ✅ (2026-07-20)
-- **Memory ADR (ADR-001)**: RATIFIED ✅ — `docs/adr/ADR-001-memory-layer-architecture.md`
-
----
-
-## Freeze Enforcement (Active until Gate Γ)
+## Freeze (Active until Gate Γ)
 | Frozen | Allowed |
 |--------|---------|
 | New provider features | Foundation campaign tasks (FS-*) |
-| Headless 24-account pool | D-308 script authoring in `scripts/d308/` |
-| Torment/Hive WAD parameterization | Critical production bugs (M23) |
-| Context Packer expansion | Handoff triage / archive |
-| New Hub tools in monolithic `tools.py` | Campaign ratification docs |
+| Headless 24-account pool | Critical production bugs (M23) |
+| Torment/Hive WAD parameterization | Hub split prep |
+| Context Packer expansion | |
+
+## Next Phase: Γ
+1. **Hub split** — 3390-line tools.py → packages
+2. **Policy extraction** from generate()
+3. **Oracle DI** — talk testable
+4. `make test && make temple-grade && make firewall-check`
 
 ---
 
-## Next Steps (Post-Phase-Β)
-1. **Phase Γ — Hub split** (3390-line tools.py → packages)
-2. **Phase Γ — Policy extraction from generate()**
-3. **Phase Γ — Oracle DI** (talk testable)
-4. **Phase Γ — `make test && make temple-grade && make firewall-check`**
-5. **Ubuntu 25.10 → 26.04 LTS upgrade** (deferred — user-mediated)
+## Research Knowledge Gaps Closed (This Session)
+| Gap | Finding |
+|-----|---------|
+| page_size=16384 migration | Safe via VACUUM INTO, ~1.7× faster for 768D; blocked by WAL mode |
+| M2 Firewall actual state | Production checker: 0 violations; test file: 338 (stricter patterns) |
+| Ubuntu 25.10 EOL status | **EOL July 9, 2026** — 11 days without security patches |
+| MIAP symlink pollution root cause | `test_write_projections_creates_symlinks` never restored symlinks |
 
 ---
 
