@@ -271,6 +271,20 @@
         "GROK_BRIDGE_TIMEOUT_MS": "120000",
         "GROK_CLI_PATH": "grok"
       }
+    },
+    "plan": {
+      "mode": "all",
+      "description": "MaKaLi Fusion \u2014 Kali + Maat + Lilith unified. Three faces, one verdict. Plan + Build + Run as one.",
+      "instructions": [
+        ".opencode/agents/plan.md"
+      ]
+    },
+    "build": {
+      "mode": "all",
+      "description": "DEPRECATED — Build agent removed. Use @maat, @pillar P3, or @makali_fusion for build-side work.",
+      "instructions": [
+        ".opencode/agents/build.md"
+      ]
     }
   }
 }
