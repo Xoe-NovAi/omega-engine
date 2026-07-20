@@ -255,6 +255,17 @@
         ".opencode/agents/john_carmack.md",
         "CREDITS.md"
       ]
+    },
+    "grok_cli": {
+      "mode": "tool",
+      "description": "Bridge to xAI Grok CLI \u2014 spawns `grok` binary, returns structured BridgeResult/Error JSON. Pure pipe, no synthesis.",
+      "instructions": [
+        ".opencode/agents/grok_cli.md"
+      ],
+      "env": {
+        "GROK_BRIDGE_TIMEOUT_MS": "120000",
+        "GROK_CLI_PATH": "grok"
+      }
     }
   }
 }
