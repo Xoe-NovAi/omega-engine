@@ -24,10 +24,11 @@ from contextlib import contextmanager
 
 from omega.observability import new_trace_id, get_engine
 from omega.infra.sqlite_policy import sqlite_transaction, Profile
+from omega.governance.config_resolver import DATA_DIR
 
 
 # ─── Database Path ───
-SEARCH_DB_PATH = Path("/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/search/search_history.db")
+SEARCH_DB_PATH = DATA_DIR / "search" / "search_history.db"
 SEARCH_DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 

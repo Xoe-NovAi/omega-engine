@@ -269,13 +269,19 @@ class TestMandateAuditorWithTempFixture:
             assert "15 agents" in result.detail
 
     def test_m3_detects_iris_in_pillar(self):
-        """M3 check detects MESSENGER_BRIDGE assigned to a Pillar slot on same line."""
+        """M3 check detects MESSENGER_BRIDGE assigned to a Pillar slot (dispatch.yaml format)."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            wad_dir = Path(tmpdir) / "config" / "wads" / "test"
-            wad_dir.mkdir(parents=True)
-            entities = wad_dir / "entities.yaml"
-            # Violation: messenger_bridge and pillar on same line
-            entities.write_text("entities:\n  - name: MESSENGER_BRIDGE\n    pillar: P6\n  messenger_bridge: P6\n")
+            entities_dir = Path(tmpdir) / "config" / "wads" / "test" / "entities"
+            entities_dir.mkdir(parents=True)
+            dispatch = entities_dir / "dispatch.yaml"
+            # Violation: MESSENGER_BRIDGE role with a pillar_slot
+            dispatch.write_text(
+                "entities:\n"
+                "  - name: iris\n"
+                "    role: MESSENGER_BRIDGE\n"
+                "    pillar_slot: P6\n"
+                "    purpose: Test messenger in pillar\n"
+            )
 
             auditor = MandateAuditor(tmpdir)
             auditor.check_m3_iris_constant()
@@ -288,11 +294,17 @@ class TestMandateAuditorWithTempFixture:
     def test_m3_passes_when_iris_not_in_pillar(self):
         """M3 check passes when Iris is not assigned to a Pillar slot."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            wad_dir = Path(tmpdir) / "config" / "wads" / "test"
-            wad_dir.mkdir(parents=True)
-            entities = wad_dir / "entities.yaml"
+            entities_dir = Path(tmpdir) / "config" / "wads" / "test" / "entities"
+            entities_dir.mkdir(parents=True)
+            dispatch = entities_dir / "dispatch.yaml"
             # Non-violation: iris is a messenger, not a pillar keeper
-            entities.write_text("entities:\n  iris:\n    role: messenger\n    domains: [wake-word, greeting]\n")
+            dispatch.write_text(
+                "entities:\n"
+                "  - name: iris\n"
+                "    role: MESSENGER_BRIDGE\n"
+                "    pillar_slot: null\n"
+                "    purpose: Test messenger\n"
+            )
 
             auditor = MandateAuditor(tmpdir)
             auditor.check_m3_iris_constant()

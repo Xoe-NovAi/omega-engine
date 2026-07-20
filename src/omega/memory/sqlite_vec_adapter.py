@@ -34,6 +34,7 @@ import anyio
 from .vector_adapters import IVectorStoreAdapter
 from .hybrid_search import HybridSearchEngine, FTSResult, VecResult
 from omega.errors import OmegaError, ProviderError, ProviderUnavailableError
+from omega.infra.sqlite_policy import get_sqlite_connection
 
 logger = logging.getLogger(__name__)
 
@@ -695,6 +696,9 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                     "type": "sqlite-vec-unified-fabric",
                     "db_path": str(self.db_path),
                     "embedding_dim": self._embedding_dim,
+                    "canonical_dimension": self._canonical_dim,
+                    "strategy_dimension": self._embedding_dim,
+                    "dimension_match": self._canonical_dim == self._embedding_dim,
                     "vector_count": vec_count,
                     "fts_count": fts_count,
                     "metadata_count": data_count,
@@ -919,15 +923,14 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
             logger.info("Stopped periodic WAL checkpoint task")
 
     async def close(self) -> None:
-        """Close the database connection."""
-        if self._conn:
-            try:
-                self._conn.close()
-            except (sqlite3.Error, OSError):
-                pass
-            self._conn = None
-            self._initialized = False
-            logger.info("SQLiteVecAdapter closed")
+        """Close the database connection.
+        
+        Note: Connections are created per-call via _get_conn() (thread-safe).
+        No persistent connection to close; just reset initialization state.
+        """
+        self._initialized = False
+        self._vec_tables_created.clear()
+        logger.info("SQLiteVecAdapter closed")
 
 
 def sqlite_vec_serialize_float32(vector: List[float]) -> bytes:
