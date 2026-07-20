@@ -47,6 +47,11 @@
         "x-api-key": "${EXA_API_KEY}"
       },
       "enabled": true
+    },
+    "parallel-search": {
+      "type": "streamable-http",
+      "url": "https://search.parallel.ai/mcp",
+      "enabled": true
     }
   },
   "compaction": {
@@ -257,7 +262,7 @@
       ]
     },
     "grok_cli": {
-      "mode": "tool",
+      "mode": "all",
       "description": "Bridge to xAI Grok CLI \u2014 spawns `grok` binary, returns structured BridgeResult/Error JSON. Pure pipe, no synthesis.",
       "instructions": [
         ".opencode/agents/grok_cli.md"

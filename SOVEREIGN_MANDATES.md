@@ -120,7 +120,7 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 
 ### 15. Sovereign Continuity (NEW — 2026-06-11)
 - **Mandate**: Agents MUST maintain active session anchors to prevent cognitive erasure during toolchain failures.
-- **Constraint**: Do not rely on native `/compact` for state preservation. Every agent MUST maintain a `session_gnosis.md` in their workspace and refer to `.opencode/anchored-summary.md` upon session start or context loss.
+- **Constraint**: Do not rely on native `/compact` for state preservation. Every agent MUST maintain a `session_gnosis.md` in their workspace and refer to `data/coordination/SESSION_ANCHOR.md` upon session start or context loss.
 - **Pattern**: See `docs/strategy/SOVEREIGN_CONTINUITY_STRATEGY.md` for the 4-tier redundancy system and the mandatory Hydration Sequence.
 - **Reason**: Toolchain regressions (e.g., OpenCode v1.17.3) can cause "Void Summaries," erasing an agent's working memory. Sovereignty requires that intelligence persists independently of the tool.
 - **Enforcement**: Any agent reporting a context collapse without a corresponding `session_gnosis.md` is in violation of M15.

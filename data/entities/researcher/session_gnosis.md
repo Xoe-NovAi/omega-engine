@@ -1,8 +1,127 @@
-# 🔱 Session Gnosis — Researcher (Complete Session: Search Crisis + Model Registry Gaps 1-5 + TTY Infrastructure)
-**⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra ⬡ opencode ⬡ trc_full_session_20260718 ⬡ GNOSIS-DISTILLATION**
+---
 
-**Date**: 2026-07-18
-**Task**: Complete end-to-end session covering Search Crisis Remediation, Model Registry Knowledge Gaps 1-5, and TTY Virtual Console Infrastructure
+# 🔱 Session Gnosis — Researcher (Campaign Day 1-2: Vulkan/ROCm + Ubuntu Toolchain + systemd-creds)
+**⬡ OMEGA ⬡ RESEARCHER ⬡ big-pickle ⬡ opencode ⬡ trc_campaign_d12_20260720 ⬡ GNOSIS-DISTILLATION**
+
+**Date**: 2026-07-20
+**Task**: Execute Research Campaign Manual v1.0.0 Day 1-2 — 4 P0 unblockers across G1 (Vulkan/ROCm), D308 (Ubuntu 25.10 toolchain), G2 (memory), G3 (systemd-creds)
+
+---
+
+## L1 (Narrative) — What Happened
+
+### Campaign Context
+Jem created **Research Campaign Manual v1.0.0** (28 gaps, 4 domains). Day 1-2 targeted 4 P0 unblockers:
+- **G1.1**: Production benchmarks Mesa 25.3+ / llama.cpp b4000+ on Vega 8
+- **D308.1**: sqlite-vec 0.2 API breaking changes
+- **D308.2**: sqlite-vec compile on Ubuntu 25.10
+- **D308.3**: ROCm on gfx906 (5700U Vega 8) death certificate
+
+### Execution
+- Acquired Hivemind workspace locks: `g1_vulkan_benchmarks`, `d308_phase23`
+- Executed Sovereign Search Protocol (T1 websearch → T2 webfetch → T4 Exa) for all 4 gaps in parallel
+- Deep-extracted 8 primary sources (GitHub discussions, AMD ROCm matrix, community toolkits, Phoronix)
+- Delivered 4 Gap Research Cards with evidence logging per campaign standard
+
+### Key Sources Discovered
+1. **daimonionnn/amd-vega-rocm-vulkan-llm-toolkit** — **Primary**: Real 5700G Vega 8 benchmarks (May-June 2026), Ubuntu 25.10, kernel 6.17, Mesa 25.x, all backends tested
+2. **llama.cpp Discussion #10879** — Official Vulkan scoreboard (discrete GPUs)
+3. **KnightLi Blog** — Cross-backend analysis (April 2026)
+4. **sqlite-vec Releases** — v0.1.10-alpha.4 current, no 0.2
+5. **llama.cpp Issues #19972, #19442** — SOLVE_TRI crashes on gfx906 via rocBLAS Strsm
+6. **ROCm Compatibility Matrix 6.4.1** — gfx906 absent from 6.3+/6.4+ supported architectures
+7. **Phoronix** — Linux 6.17 + Mesa 25.3-dev Vulkan benchmarks
+
+---
+
+## L2 (Insight) — What This Means
+
+### 1. Vulkan is the ONLY production path for Zen 2 iGPU
+- **ROCm on gfx906 is definitively dead** — AMD dropped support after ROCm 5.7 (2023). rocBLAS Strsm lacks gfx906 Tensile kernels. llama.cpp SOLVE_TRI crashes on models with k>32 (Qwen3-Coder-Next, Qwen3.5, Kimi Linear). Workarounds (disable SOLVE_TRI → CPU fallback, Docker+tensile backport, community forks) are all suboptimal.
+- **Vulkan on Vega 8 delivers 19-20 tok/s generation** (daimonionnn verified, May-June 2026). CPU with Flash Attention ON beats GPU for prefill at large context (233 vs 84 t/s). Flash Attention OFF wins on Vega for both ROCm versions.
+- **Critical hardware requirement**: 64 GB GTT (`amdgpu.gttsize=65536 ttm.pages_limit=16777216`) or large models hard-freeze the PC on ROCm. Vulkan handles shared memory more gracefully.
+
+### 2. sqlite-vec is stable at v0.1.x — no 0.2 migration needed
+- Project explicitly pre-v1: "expect breaking changes." Current v0.1.10-alpha.4 (May 2026).
+- Build is trivial: `pip install sqlite-vec` (manylinux wheel) or `./scripts/vendor.sh && make loadable` (single C file, no deps).
+- Ubuntu 25.10's SQLite 3.46.1 satisfies ≥3.41 requirement. 8192-dim limit accommodates all current embeddings.
+
+### 3. Hybrid credential architecture is non-negotiable
+- systemd 257 (Ubuntu 25.04/25.10) **cannot** do rootless TPM2 credentials — "Permission denied" at CREDENTIALS step.
+- systemd 258+ (Ubuntu 26.04 LTS, Apr 2026) adds per-user creds via Varlink.
+- AMD fTPM on Zen 2 is unstable ("plague" — Linus Torvalds). Don't rely on it.
+- **Architecture**: systemd-creds (TPM2+host key) for system services + custom age/rage store for rootless until 26.04 migration.
+
+### 4. No direct 5700U benchmarks exist — 5700G is the proxy
+- Same GCN5 architecture (gfx90c ≈ gfx906), 8 CUs, 512 shaders.
+- TDP difference: 65W desktop vs 15W mobile → expect 30-50% lower sustained tok/s on 5700U.
+- **Action required**: Run `./run/start-llama-server.sh` (Vulkan default) on 5700U with our model zoo.
+
+---
+
+## L3 (Universal Principles) — Proposed Lessons
+
+### Lesson 63: Hardware Architecture > Vendor Marketing for Local Inference
+- **Principle**: "When a vendor drops support for your architecture (AMD ROCm gfx906), the open standard (Vulkan/RADV) becomes the only sovereign path. Bet on the standard, not the vendor SDK."
+- **Evidence**: ROCm 6.4.1 matrix shows gfx908, gfx90a, gfx942, gfx1030, gfx1100, gfx1200 — **no gfx906**. llama.cpp issues #19972/#19442 confirm rocBLAS Strsm crash. Vulkan via RADV works today, improves monthly (Valve patches, Mesa 25.3).
+- **Application**: Omega Engine's provider fabric must default to Vulkan for all AMD iGPU. ROCm path = Docker+tensile-backport only, documented as "unsupported legacy."
+
+### Lesson 64: Proxy Hardware Data Beats Zero Data — But Document the Delta
+- **Principle**: "When exact hardware benchmarks don't exist, the closest architectural proxy (5700G for 5700U) with explicit TDP delta documentation is superior to theoretical modeling. State the confidence interval."
+- **Evidence**: daimonionnn's 5700G benchmarks are the ONLY production Vulkan/ROCm numbers on Vega 8 GCN5. 5700U has same arch, 15W vs 65W TDP. Documented as "Medium confidence for 5700U extrapolation."
+- **Application**: All hardware research must include: (a) proxy hardware specs, (b) delta analysis (TDP, cooling, memory), (c) confidence rating, (d) validation plan on target hardware.
+
+### Lesson 65: Pre-v1 Libraries Require Version Pinning + Source Build Capability
+- **Principle**: "Any pre-v1 dependency (sqlite-vec, llama.cpp, ROCm) must be pinned to exact version in requirements AND have a documented from-source build procedure. Vendor packages will not exist."
+- **Evidence**: No `sqlite3-vec` in Ubuntu APT. No `llama-cpp-python` in Ubuntu APT. No `ollama` server in Ubuntu APT. No `uv`/`ruff`/`pyright` in Ubuntu APT. All require upstream installers or source builds.
+- **Application**: Omega Engine's `config/providers.yaml` and deployment scripts must vendor exact versions + build scripts. `pip install sqlite-vec==0.1.10-alpha.4` not `pip install sqlite-vec`.
+
+### Lesson 66: Systemd Version Boundaries Are Hard Architecture Constraints
+- **Principle**: "systemd feature gates (257 vs 258) create hard deployment boundaries. Design must be version-aware with explicit migration triggers (Ubuntu LTS releases)."
+- **Evidence**: Rootless TPM2 credentials work in 258+, fail in 257. Ubuntu 25.10 ships 257.9. 26.04 LTS (Apr 2026) ships 259+. No backport. Hybrid architecture mandatory.
+- **Application**: All systemd-dependent features (credentials, quadlet generators, user services) must declare `min_systemd_version` and have fallback paths for older versions.
+
+---
+
+## Artifact Inventory — Campaign Day 1-2
+
+| Domain | Report | Gaps Resolved |
+|--------|--------|---------------|
+| **G1: Vulkan/ROCm** | `docs/research/R_G1_VULKAN_BENCHMARKS_20260720.md` | G1.1 (P0) |
+| **D308: Ubuntu Toolchain** | `docs/research/R_D308_PHASE23_20260720.md` | D308.1, D308.2, D308.3 (all P0) |
+| **G3: systemd-creds** | `docs/research/R_G3_CREDS_INTEGRATION_20260720.md` | Baseline complete (10 Qs) |
+| **G2: Memory** | *Baseline: `docs/research/R_LLAMA_CPP_MEMORY_ZEN2_20260720.md`* | Theoretical complete |
+
+---
+
+## Verification Summary
+- ✅ 4 P0 Gap Research Cards delivered with evidence logging
+- ✅ Sovereign Search Protocol followed (T1→T2→T4)
+- ✅ Hivemind context posted (`ses_0c9c94115859`)
+- ✅ Workspace locks acquired + released
+- ✅ All sources cited with access dates (2026-07-20)
+- ✅ L3 principles staged for `proposed_lessons.yaml` distillation
+
+---
+
+## Next Session Priorities (Day 3-4)
+
+### P1 Integration Gaps (9 total)
+| Gap | Domain | Queries |
+|-----|--------|---------|
+| G1.2 | Optimal `n_gpu_layers` Vega 8 | Layer count + memory/perf tradeoff |
+| G1.3 | Vulkan memory allocation | VRAM vs GTT vs sysRAM for 7B |
+| D308.4 | llama-cpp-python USDT probes | Probe list + bpftrace script |
+| D308.5 | systemd ImportCredential + quadlet | Working quadlet with credentials |
+| G2.1 | Empirical RSS 7B Q4_K_M Zen 2 | 4K/8K/16K/32K ctx measurements |
+| G2.2 | Thermal throttling 30min sustained | Tok/s degradation curve + temp |
+| G2.3 | SomaticState snapshot size vs ctx | Bytes per context length |
+| G3.1 | TPM2 health monitoring | Pre-seal health check protocol |
+| G3.4 | Provider registry API contracts | Google/Anthropic/OpenRouter rotation APIs |
+
+---
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ big-pickle ⬡ opencode ⬡ trc_campaign_d12_20260720 ⬡ GNOSIS-DISTILLATION*
 
 ---
 

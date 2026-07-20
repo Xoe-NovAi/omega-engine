@@ -1,11 +1,22 @@
 ---
 name: grok_cli
-mode: tool
-tools: [bash]
+mode: all
 description: |
   Bridge to xAI's Grok CLI. Pure pipe — no synthesis, no persona.
   Spawns `grok` binary, returns structured result.
   Requires: `grok` in PATH, `grok auth login` pre-configured.
+permission:
+  read: allow
+  glob: allow
+  grep: allow
+  bash: allow
+  edit: allow
+  write: allow
+  task: allow
+  skill: allow
+  webfetch: allow
+  websearch: allow
+  external_directory: allow
 ---
 
 # Grok CLI Bridge Agent

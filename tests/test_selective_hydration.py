@@ -31,11 +31,6 @@ from omega.memory.vector_adapters import MemoryVectorAdapter
 
 # ── Helpers ──────────────────────────────────────────────────────────
 
-def _run_async(coro_fn):
-    """Run an async test function via anyio."""
-    import anyio
-    return anyio.run(coro_fn)
-
 
 def _make_embedding_manager(dim: int = 256) -> EmbeddingManager:
     """Create an EmbeddingManager with only the SovereignFallback provider."""
@@ -201,324 +196,250 @@ class TestSelectiveHydrationCycle:
         self.entity = "test_entity"
         self.principles = _make_sample_principles(self.entity)
 
-    def test_store_and_hydrate_cycle(self):
+    @pytest.mark.anyio
+    async def test_store_and_hydrate_cycle(self):
         """Store principles then hydrate should return matching principles."""
-        import anyio
+        for p in self.principles:
+            returned_id = await self.sh.store(p)
+            assert returned_id == p.principle_id
 
-        async def _test():
-            for p in self.principles:
-                returned_id = await self.sh.store(p)
-                assert returned_id == p.principle_id
+        results = await self.sh.hydrate(
+            query="right approximation engineering constraints",
+            entity_name=self.entity,
+        )
+        assert len(results) > 0
+        assert results[0].entity_name == self.entity
+        assert results[0].similarity >= 0.0
 
-            results = await self.sh.hydrate(
-                query="right approximation engineering constraints",
-                entity_name=self.entity,
-            )
-            assert len(results) > 0
-            assert results[0].entity_name == self.entity
-            # Similarity is >= 0.0 in test mode (zero vectors = zero similarity)
-            # Protocol-level test: verify principles are returned and ordered
-            assert results[0].similarity >= 0.0
-
-        anyio.run(_test)
-
-    def test_hydrate_empty_query(self):
+    @pytest.mark.anyio
+    async def test_hydrate_empty_query(self):
         """Empty query should return empty list."""
-        import anyio
+        await self.sh.store(self.principles[0])
+        results = await self.sh.hydrate(query="", entity_name=self.entity)
+        assert results == []
 
-        async def _test():
-            await self.sh.store(self.principles[0])
-            results = await self.sh.hydrate(query="", entity_name=self.entity)
-            assert results == []
-
-        anyio.run(_test)
-
-    def test_hydrate_unknown_entity(self):
+    @pytest.mark.anyio
+    async def test_hydrate_unknown_entity(self):
         """Unknown entity should return empty list (no principles stored)."""
-        import anyio
+        await self.sh.store(self.principles[0])
+        results = await self.sh.hydrate(
+            query="test query",
+            entity_name="nonexistent_entity",
+        )
+        assert results == []
 
-        async def _test():
-            await self.sh.store(self.principles[0])
-            results = await self.sh.hydrate(
-                query="test query",
-                entity_name="nonexistent_entity",
-            )
-            assert results == []
-
-        anyio.run(_test)
-
-    def test_hydrate_confidence_filtering(self):
+    @pytest.mark.anyio
+    async def test_hydrate_confidence_filtering(self):
         """Principles below min_confidence should be filtered out."""
-        import anyio
+        low_conf = L3Principle(
+            entity_name=self.entity,
+            content="A low confidence principle that should be filtered.",
+            confidence=0.1,
+        )
+        await self.sh.store(low_conf)
 
-        async def _test():
-            low_conf = L3Principle(
-                entity_name=self.entity,
-                content="A low confidence principle that should be filtered.",
-                confidence=0.1,
-            )
-            await self.sh.store(low_conf)
+        high_conf = L3Principle(
+            entity_name=self.entity,
+            content="A high confidence principle that should appear.",
+            confidence=0.95,
+        )
+        await self.sh.store(high_conf)
 
-            high_conf = L3Principle(
-                entity_name=self.entity,
-                content="A high confidence principle that should appear.",
-                confidence=0.95,
-            )
-            await self.sh.store(high_conf)
+        results = await self.sh.hydrate(
+            query="high confidence principle",
+            entity_name=self.entity,
+        )
+        if len(results) > 0:
+            for r in results:
+                assert r.confidence >= self.sh._min_confidence
 
-            results = await self.sh.hydrate(
-                query="high confidence principle",
-                entity_name=self.entity,
-            )
-            if len(results) > 0:
-                for r in results:
-                    assert r.confidence >= self.sh._min_confidence
-
-        anyio.run(_test)
-
-    def test_store_empty_content_raises(self):
+    @pytest.mark.anyio
+    async def test_store_empty_content_raises(self):
         """Storing a principle with empty content should raise ValueError."""
-        import anyio
+        empty = L3Principle(entity_name=self.entity, content="")
+        with pytest.raises(ValueError, match="Cannot store"):
+            await self.sh.store(empty)
 
-        async def _test():
-            empty = L3Principle(entity_name=self.entity, content="")
-            with pytest.raises(ValueError, match="Cannot store"):
-                await self.sh.store(empty)
-
-        anyio.run(_test)
-
-    def test_get_all_empty(self):
+    @pytest.mark.anyio
+    async def test_get_all_empty(self):
         """get_all for an entity with no principles should return empty list."""
-        import anyio
+        results = await self.sh.get_all(self.entity)
+        assert results == []
 
-        async def _test():
-            results = await self.sh.get_all(self.entity)
-            assert results == []
-
-        anyio.run(_test)
-
-    def test_get_all_after_store(self):
+    @pytest.mark.anyio
+    async def test_get_all_after_store(self):
         """get_all should return stored principles."""
-        import anyio
+        for p in self.principles:
+            await self.sh.store(p)
+        results = await self.sh.get_all(self.entity)
+        assert len(results) == len(self.principles)
 
-        async def _test():
-            for p in self.principles:
-                await self.sh.store(p)
-            results = await self.sh.get_all(self.entity)
-            assert len(results) == len(self.principles)
-
-        anyio.run(_test)
-
-    def test_remove_principle(self):
+    @pytest.mark.anyio
+    async def test_remove_principle(self):
         """Remove should delete a specific principle."""
-        import anyio
+        await self.sh.store(self.principles[0])
+        result = await self.sh.remove(self.principles[0].principle_id, self.entity)
+        assert result is True
 
-        async def _test():
-            await self.sh.store(self.principles[0])
-            result = await self.sh.remove(self.principles[0].principle_id, self.entity)
-            assert result is True
+        hydrated = await self.sh.hydrate(
+            query=self.principles[0].content,
+            entity_name=self.entity,
+        )
+        for h in hydrated:
+            assert h.principle_id != self.principles[0].principle_id
 
-            hydrated = await self.sh.hydrate(
-                query=self.principles[0].content,
-                entity_name=self.entity,
-            )
-            for h in hydrated:
-                assert h.principle_id != self.principles[0].principle_id
-
-        anyio.run(_test)
-
-    def test_remove_nonexistent(self):
+    @pytest.mark.anyio
+    async def test_remove_nonexistent(self):
         """Removing a nonexistent principle should return False."""
-        import anyio
-
-        async def _test():
-            result = await self.sh.remove("nonexistent_id", self.entity)
-            assert result is False
-
-        anyio.run(_test)
+        result = await self.sh.remove("nonexistent_id", self.entity)
+        assert result is False
 
 
 # -- Format Principles Block Tests ------------------------------------
 
-def test_format_principles_block():
+@pytest.mark.anyio
+async def test_format_principles_block():
     """Principles block should format correctly."""
-    import anyio
+    emb_mgr = _make_embedding_manager()
+    vec_store = MemoryVectorAdapter()
+    sh = SelectiveHydration(embedding_manager=emb_mgr, vector_adapter=vec_store)
 
-    async def _test():
-        emb_mgr = _make_embedding_manager()
-        vec_store = MemoryVectorAdapter()
-        sh = SelectiveHydration(embedding_manager=emb_mgr, vector_adapter=vec_store)
-
-        principles = _make_sample_principles("test")
-        block = sh.format_principles_block(principles)
-        assert "Relevant Gnosis Principles" in block
-        assert "The Right Approximation" in block
-        assert "Engine-Stack Separation" in block
-        assert "Precomputation over Computation" in block
-
-    anyio.run(_test)
+    principles = _make_sample_principles("test")
+    block = sh.format_principles_block(principles)
+    assert "Relevant Gnosis Principles" in block
+    assert "The Right Approximation" in block
+    assert "Engine-Stack Separation" in block
+    assert "Precomputation over Computation" in block
 
 
-def test_format_principles_block_empty():
+@pytest.mark.anyio
+async def test_format_principles_block_empty():
     """Empty principles list should return empty string."""
-    import anyio
-
-    async def _test():
-        emb_mgr = _make_embedding_manager()
-        vec_store = MemoryVectorAdapter()
-        sh = SelectiveHydration(embedding_manager=emb_mgr, vector_adapter=vec_store)
-        assert sh.format_principles_block([]) == ""
-
-    anyio.run(_test)
+    emb_mgr = _make_embedding_manager()
+    vec_store = MemoryVectorAdapter()
+    sh = SelectiveHydration(embedding_manager=emb_mgr, vector_adapter=vec_store)
+    assert sh.format_principles_block([]) == ""
 
 
 # -- ContextBuilder Integration Tests ---------------------------------
 
-def test_context_builder_with_selective_hydration():
+@pytest.mark.anyio
+async def test_context_builder_with_selective_hydration():
     """ContextBuilder should inject L3 principles when hydration is configured."""
-    import anyio
+    from omega.oracle.context_builder import ContextBuilder
 
-    async def _test():
-        from omega.oracle.context_builder import ContextBuilder
+    emb_mgr = _make_embedding_manager()
+    vec_store = MemoryVectorAdapter()
+    sh = SelectiveHydration(embedding_manager=emb_mgr, vector_adapter=vec_store)
 
-        emb_mgr = _make_embedding_manager()
-        vec_store = MemoryVectorAdapter()
-        sh = SelectiveHydration(embedding_manager=emb_mgr, vector_adapter=vec_store)
+    principle = L3Principle(
+        entity_name="test",
+        content="The Right Approximation: choose constraints over perfection.",
+        domain="engineering",
+    )
+    await sh.store(principle)
 
-        principle = L3Principle(
-            entity_name="test",
-            content="The Right Approximation: choose constraints over perfection.",
-            domain="engineering",
-        )
-        await sh.store(principle)
-
-        ctx_builder = ContextBuilder(selective_hydration=sh)
-        gnosis_block = await ctx_builder._build_gnosis_block("test")
-        if gnosis_block:
-            assert "Relevant Gnosis Principles" in gnosis_block
-
-    anyio.run(_test)
+    ctx_builder = ContextBuilder(selective_hydration=sh)
+    gnosis_block = await ctx_builder._build_gnosis_block("test")
+    if gnosis_block:
+        assert "Relevant Gnosis Principles" in gnosis_block
 
 
-def test_context_builder_without_selective_hydration():
+@pytest.mark.anyio
+async def test_context_builder_without_selective_hydration():
     """ContextBuilder should work without SelectiveHydration (backward compat)."""
-    import anyio
+    from omega.oracle.context_builder import ContextBuilder
 
-    async def _test():
-        from omega.oracle.context_builder import ContextBuilder
-
-        ctx_builder = ContextBuilder()
-        gnosis_block = await ctx_builder._build_gnosis_block("test")
-        assert gnosis_block == ""
-
-    anyio.run(_test)
+    ctx_builder = ContextBuilder()
+    gnosis_block = await ctx_builder._build_gnosis_block("test")
+    assert gnosis_block == ""
 
 
-def test_context_builder_build_context_with_hydration():
+@pytest.mark.anyio
+async def test_context_builder_build_context_with_hydration():
     """Full build_context should not crash when hydration is configured."""
-    import anyio
+    from omega.oracle.context_builder import ContextBuilder
 
-    async def _test():
-        from omega.oracle.context_builder import ContextBuilder
+    emb_mgr = _make_embedding_manager()
+    vec_store = MemoryVectorAdapter()
+    sh = SelectiveHydration(embedding_manager=emb_mgr, vector_adapter=vec_store)
 
-        emb_mgr = _make_embedding_manager()
-        vec_store = MemoryVectorAdapter()
-        sh = SelectiveHydration(embedding_manager=emb_mgr, vector_adapter=vec_store)
+    principle = L3Principle(
+        entity_name="test_entity",
+        content="A test L3 principle for context builder integration.",
+        domain="testing",
+    )
+    await sh.store(principle)
 
-        principle = L3Principle(
-            entity_name="test_entity",
-            content="A test L3 principle for context builder integration.",
-            domain="testing",
-        )
-        await sh.store(principle)
-
-        ctx_builder = ContextBuilder(selective_hydration=sh)
-        context = await ctx_builder.build_context(
-            entity_name="test_entity",
-            session_id="test_session_123",
-        )
-        assert context is not None or context == ""
-
-    anyio.run(_test)
+    ctx_builder = ContextBuilder(selective_hydration=sh)
+    context = await ctx_builder.build_context(
+        entity_name="test_entity",
+        session_id="test_session_123",
+    )
+    assert context is not None or context == ""
 
 
-def test_context_builder_gnosis_block_silent_fallback():
+@pytest.mark.anyio
+async def test_context_builder_gnosis_block_silent_fallback():
     """ContextBuilder should silently skip gnosis on errors (no crash)."""
-    import anyio
+    from omega.oracle.context_builder import ContextBuilder
 
-    async def _test():
-        from omega.oracle.context_builder import ContextBuilder
+    sh = SelectiveHydration(
+        embedding_manager=None,  # type: ignore
+        vector_adapter=MemoryVectorAdapter(),
+    )
 
-        sh = SelectiveHydration(
-            embedding_manager=None,  # type: ignore
-            vector_adapter=MemoryVectorAdapter(),
-        )
-
-        ctx_builder = ContextBuilder(selective_hydration=sh)
-        block = await ctx_builder._build_gnosis_block("test")
-        assert block == ""
-
-    anyio.run(_test)
+    ctx_builder = ContextBuilder(selective_hydration=sh)
+    block = await ctx_builder._build_gnosis_block("test")
+    assert block == ""
 
 
 # -- Edge Cases -------------------------------------------------------
 
-def test_same_content_different_entities():
+@pytest.mark.anyio
+async def test_same_content_different_entities():
     """Same content for different entities should produce different IDs."""
-    import anyio
-
-    async def _test():
-        p1 = L3Principle(entity_name="entity_a", content="Same content.")
-        p2 = L3Principle(entity_name="entity_b", content="Same content.")
-        assert p1.principle_id != p2.principle_id
-
-    anyio.run(_test)
+    p1 = L3Principle(entity_name="entity_a", content="Same content.")
+    p2 = L3Principle(entity_name="entity_b", content="Same content.")
+    assert p1.principle_id != p2.principle_id
 
 
-def test_store_hydrate_different_entities():
+@pytest.mark.anyio
+async def test_store_hydrate_different_entities():
     """Principles for one entity should not leak to another entity."""
-    import anyio
+    emb_mgr = _make_embedding_manager()
+    vec_store = MemoryVectorAdapter()
+    sh = SelectiveHydration(embedding_manager=emb_mgr, vector_adapter=vec_store)
 
-    async def _test():
-        emb_mgr = _make_embedding_manager()
-        vec_store = MemoryVectorAdapter()
-        sh = SelectiveHydration(embedding_manager=emb_mgr, vector_adapter=vec_store)
+    await sh.store(L3Principle(entity_name="alice", content="Alice's principle."))
+    await sh.store(L3Principle(entity_name="bob", content="Bob's principle."))
 
-        await sh.store(L3Principle(entity_name="alice", content="Alice's principle."))
-        await sh.store(L3Principle(entity_name="bob", content="Bob's principle."))
+    alice_results = await sh.hydrate("principle", "alice")
+    bob_results = await sh.hydrate("principle", "bob")
 
-        alice_results = await sh.hydrate("principle", "alice")
-        bob_results = await sh.hydrate("principle", "bob")
+    alice_contents = [p.content for p in alice_results]
+    bob_contents = [p.content for p in bob_results]
 
-        alice_contents = [p.content for p in alice_results]
-        bob_contents = [p.content for p in bob_results]
-
-        assert all("Alice" in c for c in alice_contents)
-        assert all("Bob" in c for c in bob_contents)
-
-    anyio.run(_test)
+    assert all("Alice" in c for c in alice_contents)
+    assert all("Bob" in c for c in bob_contents)
 
 
-def test_many_principles_limited_by_top_k():
+@pytest.mark.anyio
+async def test_many_principles_limited_by_top_k():
     """Storing more than top_k principles should still return only top_k."""
-    import anyio
+    emb_mgr = _make_embedding_manager()
+    vec_store = MemoryVectorAdapter()
+    sh = SelectiveHydration(
+        embedding_manager=emb_mgr,
+        vector_adapter=vec_store,
+        top_k=2,
+    )
 
-    async def _test():
-        emb_mgr = _make_embedding_manager()
-        vec_store = MemoryVectorAdapter()
-        sh = SelectiveHydration(
-            embedding_manager=emb_mgr,
-            vector_adapter=vec_store,
-            top_k=2,
-        )
+    for i in range(5):
+        await sh.store(L3Principle(
+            entity_name="test",
+            content=f"Principle number {i} with some unique content tokens.",
+        ))
 
-        for i in range(5):
-            await sh.store(L3Principle(
-                entity_name="test",
-                content=f"Principle number {i} with some unique content tokens.",
-            ))
-
-        results = await sh.hydrate("principle unique content tokens", "test")
-        assert len(results) <= 2
-
-    anyio.run(_test)
+    results = await sh.hydrate("principle unique content tokens", "test")
+    assert len(results) <= 2

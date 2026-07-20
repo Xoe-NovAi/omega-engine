@@ -117,19 +117,19 @@ class TestSQLiteVecInitialization:
             assert cursor.fetchone() is None
         await anyio.to_thread.run_sync(check_no_vec0)
         
-        # First upsert with 64-dim vector — vec0 should be created with dim=64
-        await adapter.upsert("test_entity", [0.1]*64, {"content": "hello", "session_id": "s1", "role": "user"})
+        # First upsert with 64-dim vector — should use legacy table (canonical 768-dim)
+        # But test uses 64-dim, so we need to use a collection that supports 64-dim
+        # Use the static_64 collection for this test
+        await adapter.upsert("test_entity", [0.1]*64, {"content": "hello", "session_id": "s1", "role": "user"}, collection="omega_vec_static_64")
         
         def check_vec0():
             cursor = adapter._conn.execute("""
                 SELECT name FROM sqlite_master 
-                WHERE type='table' AND name='omega_memory_vec'
+                WHERE type='table' AND name='omega_vec_omega_vec_static_64'
             """)
             assert cursor.fetchone() is not None
         await anyio.to_thread.run_sync(check_vec0)
         
-        # Verify dimension was auto-detected as 64
-        assert adapter._embedding_dim == 64
         await adapter.close()
 
 
@@ -141,8 +141,8 @@ class TestSQLiteVecUpsert:
     @pytest.mark.anyio
     async def test_upsert_writes_to_both(self, adapter):
         """Should write to FTS5, vec0, and metadata tables."""
-        # Create a test vector
-        vector = [0.1] * 128
+        # Create a test vector (64-dim for static collection)
+        vector = [0.1] * 64
         metadata = {
             "session_id": "test-session-1",
             "role": "user",
@@ -150,11 +150,12 @@ class TestSQLiteVecUpsert:
             "timestamp": time.time(),
         }
         
-        # Upsert
+        # Upsert to static collection (64-dim)
         point_id = await adapter.upsert(
             entity_name="test_entity",
             vector=vector,
             metadata=metadata,
+            collection="omega_vec_static_64",
         )
         
         assert point_id is not None
@@ -173,8 +174,8 @@ class TestSQLiteVecUpsert:
             fts_count = cursor.fetchone()[0]
             assert fts_count >= 1
             
-            # Vec count
-            cursor = conn.execute("SELECT COUNT(*) FROM omega_memory_vec")
+            # Vec count (collection-specific table)
+            cursor = conn.execute("SELECT COUNT(*) FROM omega_vec_omega_vec_static_64")
             vec_count = cursor.fetchone()[0]
             assert vec_count >= 1
         

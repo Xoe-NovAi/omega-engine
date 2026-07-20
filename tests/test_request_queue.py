@@ -1,6 +1,7 @@
 import json
 import time
 import anyio
+import pytest
 from pathlib import Path
 
 DATA_DIR = Path(__file__).resolve().parent.parent / "data"
@@ -15,67 +16,52 @@ def _clean():
                     f.unlink()
 
 class TestRequestQueue:
-    def test_create_queued(self):
+    @pytest.mark.anyio
+    async def test_create_queued(self):
         from omega.request_queue import RequestQueue
+        _clean()
+        q = RequestQueue()
+        req = await q.create_queued_request("test query", priority="P0")
+        assert req["id"].startswith("req_")
+        assert req["status"] == "queued"
 
-        async def _run():
-            _clean()
-            q = RequestQueue()
-            req = await q.create_queued_request("test query", priority="P0")
-            assert req["id"].startswith("req_")
-            assert req["status"] == "queued"
-
-        anyio.run(_run)
-
-    def test_create_review(self):
+    @pytest.mark.anyio
+    async def test_create_review(self):
         from omega.request_queue import RequestQueue
+        _clean()
+        q = RequestQueue()
+        req = await q.create_review_request("/tmp/test.md")
+        assert req["id"].startswith("review_")
+        assert req["status"] == "pending_review"
 
-        async def _run():
-            _clean()
-            q = RequestQueue()
-            req = await q.create_review_request("/tmp/test.md")
-            assert req["id"].startswith("review_")
-            assert req["status"] == "pending_review"
-
-        anyio.run(_run)
-
-    def test_complete_queued_request(self):
+    @pytest.mark.anyio
+    async def test_complete_queued_request(self):
         from omega.request_queue import RequestQueue
+        _clean()
+        q = RequestQueue()
+        req = await q.create_queued_request("test")
+        completed = await q.complete_request(req["id"], {"result": "ok"})
+        assert completed is True
+        stats = await q.stats()
+        assert stats["queued"] == 0
+        assert stats["completed"] >= 1
 
-        async def _run():
-            _clean()
-            q = RequestQueue()
-            req = await q.create_queued_request("test")
-            completed = await q.complete_request(req["id"], {"result": "ok"})
-            assert completed is True
-            stats = await q.stats()
-            assert stats["queued"] == 0
-            assert stats["completed"] >= 1
-
-        anyio.run(_run)
-
-    def test_stats(self):
+    @pytest.mark.anyio
+    async def test_stats(self):
         from omega.request_queue import RequestQueue
+        _clean()
+        q = RequestQueue()
+        stats = await q.stats()
+        assert "queued" in stats
+        assert "completed" in stats
+        assert "pending_review" in stats
 
-        async def _run():
-            _clean()
-            q = RequestQueue()
-            stats = await q.stats()
-            assert "queued" in stats
-            assert "completed" in stats
-            assert "pending_review" in stats
-
-        anyio.run(_run)
-
-    def test_prune_stale(self):
+    @pytest.mark.anyio
+    async def test_prune_stale(self):
         from omega.request_queue import RequestQueue
-
-        async def _run():
-            _clean()
-            q = RequestQueue()
-            await q.create_queued_request("old request")
-            await anyio.sleep(0.1)
-            pruned = await q.prune_stale(days=0)
-            assert pruned >= 1
-
-        anyio.run(_run)
+        _clean()
+        q = RequestQueue()
+        await q.create_queued_request("old request")
+        await anyio.sleep(0.1)
+        pruned = await q.prune_stale(days=0)
+        assert pruned >= 1

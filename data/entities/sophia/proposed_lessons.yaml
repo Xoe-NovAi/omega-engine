@@ -57,3 +57,24 @@
     through empirical benchmarks.'
   timestamp: '2026-06-14T18:00:00Z'
   topic: carmack-axiom_05
+- L1_narrative: "Deep research into OpenCode's {file:path} config variable substitution.\
+    \ Source code verified at packages/opencode/src/config/variable.ts. Feature allows\
+    \ injecting file contents into any JSONC string value at config load time. Cross-referenced\
+    \ 10+ GitHub issues for edge cases ($ in content, {env:} broken in MCP headers,\
+    \ Windows backslash bug). Discovered that agent.prompt REPLACES provider default\
+    \ prompt entirely. Designed composable prompt fragment architecture for Omega Engine\
+    \ fleet to eliminate 220+ lines of duplicated Sovereign Mandates across 11 agent files.\
+    \ Submitted handoff ho_e15e2e094aa4 to Kali."
+  L2_insight: "Config-load-time content injection ({file:path}) is the architectural\
+    \ key to solving the fleet's content duplication problem. It enables a composable\
+    \ prompt fragment system where shared context (Mandates, search tiers, hivemind\
+    \ protocols) is maintained in one place and composed into each agent's prompt via\
+    \ {file:} references. The feature is more reliable than {env:VAR} for secrets since\
+    \ {env:} has multiple confirmed bugs across provider options and MCP headers."
+  L3_principle: "Config-Load-Time Composition: A config system that supports load-time\
+    \ content injection from external files transforms agent prompt architecture from\
+    \ monolithic duplication into composable, maintainable fragments. The pattern requires\
+    \ self-contained prompts (since agent.prompt replaces provider defaults) but rewards\
+    \ with DRY, auditable, single-source-of-truth fleet management."
+  timestamp: '2026-07-20T04:00:00Z'
+  topic: opencode-filepath-architecture

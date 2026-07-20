@@ -11,31 +11,26 @@ This skill implements the **Sovereign Search Protocol (SSP)**. It replaces ad-ho
 
 
 
-## 🛡️ The 5-Tier Sovereign Search Protocol
+## 🛡️ The 7-Tier Sovereign Search Protocol
 
 Agents MUST execute search operations sequentially. Do not skip tiers.
 
 | Tier | Tool | Cost | Use Case | Action |
 | :--- | :--- | :--- | :--- | :--- |
-| **T0** | **Local Cache** | Free | MemoryStore + `.firecrawl/` directory | **Check first.** If hit → return. If
-  miss → T1. |
-| **T1** | **websearch** | Free | Broad discovery, keyword-exact matches, recency | **Primary tool.** Built-in
-  OpenCode tool. If insufficient → T2. |
-| **T2** | **webfetch** | Free | Deep page extraction, structured content | **Deep extraction.** Built-in OpenCode
-  tool. If need semantic → T3. |
-| **T3** | **SearXNG** | Free | Neural/semantic refinement, niche discovery | **Semantic zoom.** MCP tool. If need
-  extraction → T4. |
-| **T4** | **Exa** | API Key | High-precision seeds, academic/technical | **Precision zoom.** MCP tool. If need
-  extraction → T5. |
-| **T5** | **Firecrawl** | Credits | Full-page scrape, structured JSON, dynamic interaction | **Deep extraction.**
-  MCP tool. Cache result to T0 on success. |
+| **T0** | **Local Cache** | Free | MemoryStore + `.firecrawl/` directory | **Check first.** If hit → return. If miss → T1. |
+| **T1** | **websearch** | Free | Broad discovery, keyword-exact matches, recency | **Primary tool.** Built-in OpenCode tool. If insufficient → T2. |
+| **T2** | **webfetch** | Free | Deep page extraction, structured content | **Deep extraction.** Built-in OpenCode tool. If need semantic → T3. |
+| **T3** | **SearXNG** | Free | Neural/semantic refinement, niche discovery | **Semantic zoom.** MCP tool. If need precision → T4. |
+| **T4** | **Parallel Search** | Free (MCP) | High-quality LLM-optimized results, dense excerpts | **Precision zoom (free).** MCP tool `parallel-search` / `parallel-fetch`. If need extraction → T5. |
+| **T5** | **Exa** | API Key | High-precision seeds, academic/technical | **Precision zoom (paid).** MCP tool. If need extraction → T6. |
+| **T6** | **Firecrawl** | Credits | Full-page scrape, structured JSON, dynamic interaction | **Deep extraction.** MCP tool. Cache result to T0 on success. |
 
 ## ⚠️ Credit-Sensing Guard (Mandatory)
-Before initiating any **Tier 4 (Exa)** or **Tier 5 (Firecrawl)** operation:
+Before initiating any **Tier 5 (Exa)** or **Tier 6 (Firecrawl)** operation:
 1.  **Check Status**: Call `firecrawl --status` via bash.
 2.  **Evaluate**:
-    - **Credits > 100**: Proceed with T4/T5.
-    - **Credits < 100**: **AUTO-DOWNGRADE**. Skip T4/T5 and escalate to T1/T2.
+    - **Credits > 100**: Proceed with T5/T6.
+    - **Credits < 100**: **AUTO-DOWNGRADE**. Skip T5/T6 and escalate to T1/T2/T4.
 3.  **Log**: Post a `[CREDIT-LOW]` warning to the Hivemind if a downgrade occurs.
 
 ## 📉 Error Handling Matrix
@@ -43,27 +38,27 @@ When a tool returns an error, follow this matrix immediately.
 
 | Error | Meaning | Immediate Action | Escalation Path |
 | :--- | :--- | :--- | :--- |
-| **401** | Unauthorized | Fall back to T1 (`websearch`) | Log to Hivemind $\rightarrow$ Kali |
-| **402** | Credits Exhausted | Fall back to T1 $\rightarrow$ T2 | Wait for reset or upgrade |
-| **429** | Rate Limited | Exponential backoff (5s $\rightarrow$ 15s $\rightarrow$ 30s) | Track in observability |
-| **500** | Server Error | Retry once after 2s $\rightarrow$ Fall back to T1 | Log trace in Hivemind |
-| **Timeout** | No Response | Retry with timeout=60s $\rightarrow$ Fall back to T1 | Log to Hivemind |
-| **Connection Refused** | MCP Server Down | Fall back to T1 (`websearch`) | Log to Hivemind $\rightarrow$ Kali |
+| **401** | Unauthorized | Fall back to T1 (`websearch`) | Log to Hivemind → Kali |
+| **402** | Credits Exhausted | Fall back to T1 → T2 → T4 | Wait for reset or upgrade |
+| **429** | Rate Limited | Exponential backoff (5s → 15s → 30s) | Track in observability |
+| **500** | Server Error | Retry once after 2s → Fall back to T1 | Log trace in Hivemind |
+| **Timeout** | No Response | Retry with timeout=60s → Fall back to T1 | Log to Hivemind |
+| **Connection Refused** | MCP Server Down | Fall back to T1 (`websearch`) → T4 | Log to Hivemind → Kali |
 
 **Mandatory Error Log Format**:
-`[SEARCH-ERROR] tool={tool_name} error={error_code} tier={0-5} fallback={fallback_tool} timestamp={ISO8601}`
+`[SEARCH-ERROR] tool={tool_name} error={error_code} tier={0-6} fallback={fallback_tool} timestamp={ISO8601}`
 
 ## 🚀 Execution Workflow
 
 ### 1. Intent Analysis
-- **Factual/Recent**: $\rightarrow$ T1 (`websearch`)
-- **Deep Content/Crawl**: $\rightarrow$ T0 $\rightarrow$ T1 $\rightarrow$ T2 (`webfetch`)
-- **Academic/Technical**: $\rightarrow$ T0 $\rightarrow$ T1 $\rightarrow$ T2 $\rightarrow$ T3 $\rightarrow$ T4
+- **Factual/Recent**: → T1 (`websearch`)
+- **Deep Content/Crawl**: → T0 → T1 → T2 (`webfetch`)
+- **Academic/Technical**: → T0 → T1 → T2 → T3 → T4 → T5
 
 ### 2. The "No Lazy Response" Mandate
 Relying solely on internal parametric weights for research queries is a **violation of the Temple Grade standard**.
 - **Requirement**: Perform at least one active tool call for any factual/technical query.
-- **Failure Path**: If all tools fail $\rightarrow$ Log failure chain to Hivemind $\rightarrow$ Respond with
+- **Failure Path**: If all tools fail → Log failure chain to Hivemind → Respond with
   "Parametric Knowledge (Unverified)".
 
 ### 3. Caching Protocol
@@ -77,6 +72,5 @@ Relying solely on internal parametric weights for research queries is a **violat
 
 ## 📝 Output Format: Sovereign Search Report
 - **Primary Finding**: Concise, direct answer.
-- **Supporting Evidence**: Bullet points with citations (Tier $\rightarrow$ Tool $\rightarrow$ URL).
+- **Supporting Evidence**: Bullet points with citations (Tier → Tool → URL).
 - **Fallback Log**: Note any tool failures and the escalation path taken.
-

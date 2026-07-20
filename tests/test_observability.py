@@ -2,12 +2,10 @@
 
 from omega.observability import ObservabilityEngine, new_trace_id
 
-
 def test_new_trace_id():
     tid = new_trace_id()
     assert tid.startswith("trc_")
     assert len(tid) == 16
-
 
 def test_log_event():
     engine = ObservabilityEngine(enable_dataset_collection=False)
@@ -18,7 +16,6 @@ def test_log_event():
     assert engine._event_log[0]["event"] == "test.event"
     assert engine._event_log[0]["data"]["key"] == "value"
 
-
 def test_trace_session():
     engine = ObservabilityEngine(enable_dataset_collection=False)
     engine.clear_log()
@@ -27,11 +24,10 @@ def test_trace_session():
     trace.log("test.event", detail="hello")
     assert len(engine._event_log) == 1
 
-
 def test_trace_session_context_manager():
     engine = ObservabilityEngine(enable_dataset_collection=False)
     engine.clear_log()
-    
+
     async def run():
         async with engine.trace() as trace:
             trace.log("query.received", query="hello")
@@ -39,8 +35,6 @@ def test_trace_session_context_manager():
         assert engine._event_log[0]["event"] == "query.received"
 
     import anyio
-    anyio.run(run)
-
 
 def test_record_training_example():
     engine = ObservabilityEngine(enable_dataset_collection=True)
@@ -62,20 +56,18 @@ def test_record_training_example():
     assert example["messages"][-1]["content"] == "Justice is balance."
     assert example["metadata"]["entity"] == "Ma'at"
 
-
 def test_stats():
     engine = ObservabilityEngine(enable_dataset_collection=False)
     engine.clear_log()
     tid = new_trace_id()
     engine.log_event("query.received", tid, {})
     engine.log_event("response.delivered", tid, {})
-    
+
     stats = engine.stats()
     assert stats["total_events"] == 2
     assert stats["event_counts"]["query.received"] == 1
     assert stats["event_counts"]["response.delivered"] == 1
     assert stats["dataset_size"] == 0
-
 
 def test_flush_dataset(tmp_path):
     import anyio
@@ -91,15 +83,11 @@ def test_flush_dataset(tmp_path):
         content = path.read_text()
         assert tid in content
 
-    anyio.run(run)
-
-
 def test_dataset_collection_disabled():
     engine = ObservabilityEngine(enable_dataset_collection=False)
     tid = new_trace_id()
     engine.record_training_example(tid, "q?", "sys", "resp", "E", "m", "b", 0.5, 100)
     assert engine._dataset == []
-
 
 def test_eventtype_enum_completeness():
     from omega.observability import EventType
@@ -107,9 +95,7 @@ def test_eventtype_enum_completeness():
     values = [getattr(EventType, attr) for attr in dir(EventType) if not attr.startswith("__")]
     assert len(values) == len(set(values)), f"Duplicate EventType values found: {values}"
 
-
 # ── Contextvars Safety Net Tests ─────────────────────────────────────
-
 
 def test_contextvars_generates_new_trace_id():
     """get_current_trace_id() generates a new trace_id when none is set."""
@@ -120,7 +106,6 @@ def test_contextvars_generates_new_trace_id():
     assert tid.startswith("trc_"), f"Expected trc_ prefix, got {tid}"
     assert len(tid) == 16, f"Expected 16 chars, got {len(tid)}: {tid}"
 
-
 def test_contextvars_returns_same_id_when_set():
     """get_current_trace_id() returns the same ID after set_current_trace_id()."""
     from omega.observability.context import get_current_trace_id, set_current_trace_id, reset_current_trace_id
@@ -128,7 +113,6 @@ def test_contextvars_returns_same_id_when_set():
     reset_current_trace_id()  # Ensure clean state
     set_current_trace_id("explicit-trace-123")
     assert get_current_trace_id() == "explicit-trace-123"
-
 
 def test_contextvars_persists_across_calls():
     """get_current_trace_id() returns the same ID when called multiple times."""
@@ -138,7 +122,6 @@ def test_contextvars_persists_across_calls():
     first = get_current_trace_id()
     second = get_current_trace_id()
     assert first == second, "Multiple calls should return the same trace_id"
-
 
 def test_reset_trace_id_generates_new():
     """After reset_current_trace_id(), get_current_trace_id() generates a new ID."""
@@ -152,9 +135,7 @@ def test_reset_trace_id_generates_new():
     assert new_tid != "first-trace", "After reset, should get a new trace ID"
     assert new_tid.startswith("trc_")
 
-
 # ── record_error trace_id Tests ────────────────────────────────────────
-
 
 def test_record_error_with_trace_id():
     """record_error() uses the provided trace_id."""
@@ -176,7 +157,6 @@ def test_record_error_with_trace_id():
         for e in engine._event_log
     )
     assert found, "Error event must carry the explicit trace_id"
-
 
 def test_record_error_without_trace_id():
     """record_error() uses contextvars safety net when trace_id is None."""
@@ -204,7 +184,6 @@ def test_record_error_without_trace_id():
         for e in engine._event_log
     )
     assert found, "Error event must carry contextvar trace_id"
-
 
 def test_record_error_generates_new_trace_id_when_no_context():
     """record_error() generates a new trace_id when no contextvar is set."""

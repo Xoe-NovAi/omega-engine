@@ -14,7 +14,6 @@ Verifies:
 
 import json
 import re
-import anyio
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 from dataclasses import dataclass, field
@@ -77,36 +76,33 @@ def _restore_library(original):
 class TestLibraryFtsSearch:
     """Unit tests for library_fts_search tool function."""
 
-    def test_empty_query_returns_error(self):
+    @pytest.mark.anyio
+    async def test_empty_query_returns_error(self):
         """Empty query string should return JSON error, not call Library.search."""
         from mcp_servers.omega_hub import tools as tools_mod
 
-        async def _run():
-            with patch.object(tools_mod, "_require_service"):
-                result = await tools_mod.library_fts_search(query="   ", domain="", limit=10)
-                parsed = _extract_json_from_tdp(result)
-                assert parsed["error"] == "Search query cannot be empty"
-                assert parsed["count"] == 0
-                assert parsed["results"] == []
+        with patch.object(tools_mod, "_require_service"):
+            result = await tools_mod.library_fts_search(query="   ", domain="", limit=10)
+            parsed = _extract_json_from_tdp(result)
+            assert parsed["error"] == "Search query cannot be empty"
+            assert parsed["count"] == 0
+            assert parsed["results"] == []
 
-        anyio.run(_run)
-
-    def test_query_exceeding_500_chars_returns_error(self):
+    @pytest.mark.anyio
+    async def test_query_exceeding_500_chars_returns_error(self):
         """Query over 500 chars should return JSON error."""
         from mcp_servers.omega_hub import tools as tools_mod
 
-        async def _run():
-            with patch.object(tools_mod, "_require_service"):
-                long_query = "a" * 501
-                result = await tools_mod.library_fts_search(query=long_query, domain="", limit=10)
-                parsed = _extract_json_from_tdp(result)
-                assert parsed["error"] == "Query exceeds 500-char limit"
-                assert parsed["count"] == 0
-                assert parsed["results"] == []
+        with patch.object(tools_mod, "_require_service"):
+            long_query = "a" * 501
+            result = await tools_mod.library_fts_search(query=long_query, domain="", limit=10)
+            parsed = _extract_json_from_tdp(result)
+            assert parsed["error"] == "Query exceeds 500-char limit"
+            assert parsed["count"] == 0
+            assert parsed["results"] == []
 
-        anyio.run(_run)
-
-    def test_search_returns_formatted_results(self):
+    @pytest.mark.anyio
+    async def test_search_returns_formatted_results(self):
         """Valid query should call Library.search() and format results."""
         from mcp_servers.omega_hub import tools as tools_mod
 
@@ -122,114 +118,105 @@ class TestLibraryFtsSearch:
             ),
         ]
 
-        async def _run():
-            mock_library = MagicMock()
-            mock_library.search = AsyncMock(return_value=stub_docs)
-            orig = _patch_library(mock_library)
+        mock_library = MagicMock()
+        mock_library.search = AsyncMock(return_value=stub_docs)
+        orig = _patch_library(mock_library)
 
-            try:
-                with patch.object(tools_mod, "_require_service"):
-                    result = await tools_mod.library_fts_search(
-                        query="warp proxy pool", domain="networking", limit=10
-                    )
-                    parsed = _extract_json_from_tdp(result)
+        try:
+            with patch.object(tools_mod, "_require_service"):
+                result = await tools_mod.library_fts_search(
+                    query="warp proxy pool", domain="networking", limit=10
+                )
+                parsed = _extract_json_from_tdp(result)
 
-                    assert parsed["query"] == "warp proxy pool"
-                    assert parsed["count"] == 1
-                    assert parsed["source"] == "library_fts5"
-                    assert len(parsed["results"]) == 1
+                assert parsed["query"] == "warp proxy pool"
+                assert parsed["count"] == 1
+                assert parsed["source"] == "library_fts5"
+                assert len(parsed["results"]) == 1
 
-                    doc_result = parsed["results"][0]
-                    assert doc_result["doc_id"] == "warp-001"
-                    assert doc_result["title"] == "Warp Proxy Pool Architecture"
-                    assert doc_result["domain"] == "networking"
-                    assert doc_result["quality_score"] == 0.92
-                    assert "warp" in doc_result["tags"]
+                doc_result = parsed["results"][0]
+                assert doc_result["doc_id"] == "warp-001"
+                assert doc_result["title"] == "Warp Proxy Pool Architecture"
+                assert doc_result["domain"] == "networking"
+                assert doc_result["quality_score"] == 0.92
+                assert "warp" in doc_result["tags"]
 
-                    # Verify Library.search was called with correct args
-                    mock_library.search.assert_awaited_once_with(
-                        "warp proxy pool", domain="networking", limit=10
-                    )
-            finally:
-                _restore_library(orig)
+                # Verify Library.search was called with correct args
+                mock_library.search.assert_awaited_once_with(
+                    "warp proxy pool", domain="networking", limit=10
+                )
+        finally:
+            _restore_library(orig)
 
-        anyio.run(_run)
-
-    def test_search_with_empty_domain_passes_none(self):
+    @pytest.mark.anyio
+    async def test_search_with_empty_domain_passes_none(self):
         """Empty domain string should be converted to None for Library.search()."""
         from mcp_servers.omega_hub import tools as tools_mod
 
-        async def _run():
-            mock_library = MagicMock()
-            mock_library.search = AsyncMock(return_value=[])
-            orig = _patch_library(mock_library)
+        mock_library = MagicMock()
+        mock_library.search = AsyncMock(return_value=[])
+        orig = _patch_library(mock_library)
 
-            try:
-                with patch.object(tools_mod, "_require_service"):
-                    result = await tools_mod.library_fts_search(
-                        query="test query", domain="", limit=5
-                    )
-                    parsed = _extract_json_from_tdp(result)
+        try:
+            with patch.object(tools_mod, "_require_service"):
+                result = await tools_mod.library_fts_search(
+                    query="test query", domain="", limit=5
+                )
+                parsed = _extract_json_from_tdp(result)
 
-                    assert parsed["count"] == 0
-                    assert parsed["results"] == []
-                    mock_library.search.assert_awaited_once_with(
-                        "test query", domain=None, limit=5
-                    )
-            finally:
-                _restore_library(orig)
+                assert parsed["count"] == 0
+                assert parsed["results"] == []
+                mock_library.search.assert_awaited_once_with(
+                    "test query", domain=None, limit=5
+                )
+        finally:
+            _restore_library(orig)
 
-        anyio.run(_run)
-
-    def test_library_exception_returns_error_json(self):
+    @pytest.mark.anyio
+    async def test_library_exception_returns_error_json(self):
         """Library.search() exception should be caught and returned as JSON error."""
         from mcp_servers.omega_hub import tools as tools_mod
 
-        async def _run():
-            mock_library = MagicMock()
-            mock_library.search = AsyncMock(side_effect=RuntimeError("FTS5 index not initialized"))
-            orig = _patch_library(mock_library)
+        mock_library = MagicMock()
+        mock_library.search = AsyncMock(side_effect=RuntimeError("FTS5 index not initialized"))
+        orig = _patch_library(mock_library)
 
-            try:
-                with patch.object(tools_mod, "_require_service"):
-                    result = await tools_mod.library_fts_search(
-                        query="anything", domain="", limit=10
-                    )
-                    parsed = _extract_json_from_tdp(result)
+        try:
+            with patch.object(tools_mod, "_require_service"):
+                result = await tools_mod.library_fts_search(
+                    query="anything", domain="", limit=10
+                )
+                parsed = _extract_json_from_tdp(result)
 
-                    assert "error" in parsed
-                    assert "FTS5 index not initialized" in parsed["error"]
-                    assert parsed["count"] == 0
-                    assert parsed["results"] == []
-            finally:
-                _restore_library(orig)
+                assert "error" in parsed
+                assert "FTS5 index not initialized" in parsed["error"]
+                assert parsed["count"] == 0
+                assert parsed["results"] == []
+        finally:
+            _restore_library(orig)
 
-        anyio.run(_run)
-
-    def test_summary_truncated_to_300_chars(self):
+    @pytest.mark.anyio
+    async def test_summary_truncated_to_300_chars(self):
         """Document summaries longer than 300 chars should be truncated."""
         from mcp_servers.omega_hub import tools as tools_mod
 
         long_summary = "x" * 500
         stub_doc = _StubDocument(summary=long_summary)
 
-        async def _run():
-            mock_library = MagicMock()
-            mock_library.search = AsyncMock(return_value=[stub_doc])
-            orig = _patch_library(mock_library)
+        mock_library = MagicMock()
+        mock_library.search = AsyncMock(return_value=[stub_doc])
+        orig = _patch_library(mock_library)
 
-            try:
-                with patch.object(tools_mod, "_require_service"):
-                    result = await tools_mod.library_fts_search(
-                        query="test", domain="", limit=10
-                    )
-                    parsed = _extract_json_from_tdp(result)
+        try:
+            with patch.object(tools_mod, "_require_service"):
+                result = await tools_mod.library_fts_search(
+                    query="test", domain="", limit=10
+                )
+                parsed = _extract_json_from_tdp(result)
 
-                    assert len(parsed["results"][0]["summary"]) == 300
-            finally:
-                _restore_library(orig)
-
-        anyio.run(_run)
+                assert len(parsed["results"][0]["summary"]) == 300
+        finally:
+            _restore_library(orig)
 
 
 class TestLibraryFtsSearchIntegration:
@@ -253,23 +240,21 @@ class TestLibraryFtsSearchIntegration:
         assert "domain" in params
         assert "limit" in params
 
-    def test_results_include_source_fts5_marker(self):
+    @pytest.mark.anyio
+    async def test_results_include_source_fts5_marker(self):
         """Results JSON should include source=library_fts5 to distinguish from web search."""
         from mcp_servers.omega_hub import tools as tools_mod
 
-        async def _run():
-            mock_library = MagicMock()
-            mock_library.search = AsyncMock(return_value=[])
-            orig = _patch_library(mock_library)
+        mock_library = MagicMock()
+        mock_library.search = AsyncMock(return_value=[])
+        orig = _patch_library(mock_library)
 
-            try:
-                with patch.object(tools_mod, "_require_service"):
-                    result = await tools_mod.library_fts_search(
-                        query="anything", domain="", limit=10
-                    )
-                    parsed = _extract_json_from_tdp(result)
-                    assert parsed["source"] == "library_fts5"
-            finally:
-                _restore_library(orig)
-
-        anyio.run(_run)
+        try:
+            with patch.object(tools_mod, "_require_service"):
+                result = await tools_mod.library_fts_search(
+                    query="anything", domain="", limit=10
+                )
+                parsed = _extract_json_from_tdp(result)
+                assert parsed["source"] == "library_fts5"
+        finally:
+            _restore_library(orig)

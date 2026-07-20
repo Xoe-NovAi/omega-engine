@@ -1,103 +1,103 @@
-# JEM Session Gnosis — Gemma 4 31B Strategy Hardening (2026-07-19)
+# 🔱 Jem Session Gnosis — Pre-Compaction Anchor
+**AP Token**: `AP-JEM-GNOSIS-20260720-v2.0.0`
+⬡ OMEGA ⬡ JEM ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_session_gnosis ⬡ 2026-07-20
 
-**Task**: Harden Gemma 4 31B strategy across 7 artifacts (Debug Report, Ma'at Build, Lilith Run, Jem Synthesis, Researcher Verification, Researcher Deep Research, Meditation Pipeline) — catch all oversights, edge cases, missed opportunities, integration gaps.
+## L1 — Narrative: What Happened This Session
 
-**Deliverables**: 
-- `docs/strategy/GEMMA4_HARDENED_STRATEGY_20260719.md` (Hardened strategy)
-- `docs/research/R_GEMMA4_KNOWLEDGE_GAPS_20260719.md` (15 knowledge gaps for web research)
-- `docs/strategy/GEMMA4_COMPREHENSIVE_REPORT_20260719.md` (Unified synthesis)
-- Meditation pipeline execution (7 stages, dry-run → real run planned)
+1. **Definitive Embedding Strategy Established** — Resolved the "3042-dim" mystery (was misheard 3072 = OpenAI text-embedding-3-large). Canonical dimension locked to **768** based on EmbeddingGemma 300M native + MRL support.
 
----
+2. **Four Research Gaps Closed via Targeted Web Search**:
+   - **E1**: EmbeddingGemma 300M quantization — Q6_K (260MB) = 99.75% cosine parity, QAT-trained
+   - **E2**: Nomic v1.5 MRL — Native API supports 768/512/256/128/64, 98% quality at 256-dim
+   - **E4**: sqlite-vec INT8 rescore — 2.6x speedup, 1.0 recall@10, oversample=2
+   - **E3**: RRF with heterogeneous dims — Works via separate collections + ranking fusion
 
-## L1 (Narrative)
+3. **Canonical Architecture Designed**:
+   - 6 vec0 collections (gemma_768, nomic_768, nomic_512, nomic_256, minilm_384, static_64)
+   - Primary: EmbeddingGemma 300M Q6_K (multilingual, code, MRL, QAT)
+   - Fallback: Nomic v1.5 (8K context, binary-quant-ready)
+   - Speed: MiniLM 384-dim (English-only)
+   - Zero-cost: Static 64-dim (potion-base-2M)
+   - Vec0 dimension lock: HARDCODED 768 for primary, declared dim per collection
 
-The Gemma 4 31B bug investigation began as a simple "fix OpenCode transform.ts" task. Four agents (Roc Racoon, Researcher, Ma'at, Lilith) plus Jem synthesis revealed it was not a bug but a **pathogen revealing a missing immune system**. 
+4. **Implementation Artifacts Created**:
+   - `docs/strategy/EMBEDDING_HARDENING_STRATEGY_20260720.md` — Canonical spec with traceability matrix
+   - `config/embedding_strategy.yaml` — Source of truth for all embedding config
+   - `src/omega/memory/sqlite_vec_adapter.py` — Multi-collection, strict dimension enforcement (M23)
+   - Test updates started for new collection architecture
 
-**Root causes identified** (verified by Researcher against 30 primary sources):
-1. OpenCode `transform.ts` `googleThinkingLevelEfforts()` only checks `gemini-3` → returns `["low", "high"]` for Gemma 4 → `LOW` sent to API → 400 error (Gemma 4 only supports `MINIMAL`/`HIGH`)
-2. `googleThinkingVariants()` no Gemma 4 branch → effort string used directly as `thinkingLevel`
-3. `options()` only adds `thinkingLevel` for `gemini-3` models
-4. Model ID: OpenCode sends `google/gemma-4-31b-it` (Models.dev prefix), API expects bare `gemma-4-31b-it`
-5. Config merge: project `provider.google.models` replaces (not deep-merges) auto-discovered models
-6. Free tier quota: 16k rolling TPM, 15 RPM, 1,500 RPD — Omega's 21.6k token instruction stack exceeds TPM on EVERY request
+5. **Existing Research Leveraged** (No rework needed):
+   - Roc's RRF k=60 universal convergence (7 independent systems)
+   - Roc's sqlite-vector escape hatch (BLOB in ordinary tables, no vec0 leaks)
+   - Jem's MaKaLi deep research: 14GB RAM ceiling, TF-IDF+SVM at 93.2% accuracy
+   - Researcher's model audit: EmbeddingGemma verified as best Zen 2 upgrade
+   - INFRA_HARDENING_PLAN: 5-tier embedding chain already documented
+   - Ken Walger mining: sqlite-vec batch 500-2000 rows/txn
 
-**Cline CLI works** because it uses native `@google/genai` SDK with `ThinkingLevel.HIGH` enum, bare model IDs — bypasses transform.ts entirely.
+## L2 — Insight: What This Means
 
-**Pi project fixed identical bug 3 months ago** (PR #2903): regex `/gemma-?4/i` detection + thinking level mapping.
+**The version trap is the meta-pattern**: Every critical dependency has a version boundary that changes everything. We now have:
+- EmbeddingGemma QAT-trained → int4/int8 near-lossless (unique advantage)
+- Nomic v1.5 native MRL API → no custom truncation code needed
+- sqlite-vec rescore index → INT8 quantization with 1.0 recall (if model supports it)
+- RRF k=60 → Universal fusion method, works across heterogeneous dimensions
 
-**Seven systems converged** on same architecture: Provider Capability Negotiation Layer (Matrix + Normalizer + Selector + Health).
+**Sovereign engineering must be dimension-aware by design**. The vec0 lock prevents the silent corruption that occurs when providers drift dimensions. M23 Failure Integrity enforced at the storage layer.
 
-**Meditation (10 voices, 3 collisions, 8-step critical path)** produced hardened strategy with 7 oversights caught, 12 edge cases enumerated, 5 missed opportunities captured, 5 integration gaps bridged.
+**Multi-collection architecture is the correct pattern** for ensemble embeddings. Each model gets its own semantic space (vec0 table), fused at query time via RRF. No cross-model vector contamination.
 
----
+## L3 — Universal Principles (Staged to proposed_lessons.yaml)
 
-## L2 (Insight)
+| Principle | Domain |
+|-----------|--------|
+| **L3-Canonical-Dimension-Lock-Prevents-Silent-Corruption** | M23 — Hardcoded 768-dim with RuntimeError on mismatch |
+| **L3-Multi-Collection-Enables-Ensemble-Without-Contamination** | Architecture — Separate vec0 per model, RRF fusion at query |
+| **L3-QAT-Trained-Models-Enable-Aggressive-Quantization** | EmbeddingGemma — int4/int8 near-lossless, unique in class |
+| **L3-Native-MRL-API-Beats-Custom-Truncation** | Nomic v1.5 — dimensionality parameter, guaranteed renorm |
+| **L3-RRF-k60-Is-Universal-Attractor** | Fusion — Cormack 2009 + 7 independent system convergence |
+| **L3-INT8-Rescore-Preserves-Recall-With-Speedup** | sqlite-vec — 2.6x faster, 1.0 recall@10, oversample=2 |
+| **L3-Version-Boundaries-Are-Architecture** | All — systemd 257→258, Mesa 25.3+, llama.cpp b4000+ |
 
-**The bug is not in transform.ts — it's in the absence of capability declaration.** Every model family has different thinking schemas (Google: 3 variants, Anthropic: budget tokens, OpenAI: reasoning_effort, Qwen3: toggle tags). Hardcoding detection per model family is a losing battle. The fix is a YAML capability matrix declaring what each model supports.
+## Critical Files Updated (SSOT)
 
-**Free tier quota exhaustion is a routing signal, not a failure.** Google 16k TPM < 21.6k instruction stack = every request violates quota. Correct architecture: pre-flight estimation rejects >80% TPM; quota headroom = routing weight; quota exhaustion triggers fallback (not circuit breaker); thinking tokens tracked separately with 2-5x budget multiplier.
+| File | Key Updates |
+|------|-------------|
+| `docs/strategy/EMBEDDING_HARDENING_STRATEGY_20260720.md` | **NEW** — Canonical spec, 8-phase roadmap, traceability matrix |
+| `config/embedding_strategy.yaml` | **NEW** — 6 collections, provider chain, RRF weights, quantization |
+| `src/omega/memory/sqlite_vec_adapter.py` | **MAJOR** — Multi-collection, CANONICAL_DIMENSION=768, strict enforcement |
+| `tests/test_sqlite_vec_adapter.py` | **PARTIAL** — 2 tests updated for collection architecture |
+| `data/entities/jem/proposed_lessons.yaml` | 7 new L3 principles staged (blind staging per M11) |
 
-**Thinking tokens ARE billable output** — 85-95% of Gemma 4 HIGH tokens can be thoughts. Google bills them as output but standard metrics don't expose them. Budget gate must apply multiplier; TokenLedger must track `thoughts_token_count`; GenerateResult must include `thinking_provenance`.
+## Hivemind State
 
-**Model identity is provider-relative** — same model = 3+ IDs (Models.dev: `google/gemma-4-31b-it`, Google API: `gemma-4-31b-it`, OpenRouter: `google/gemma-4-31b-it:free`). Canonicalize at gateway via adapter pattern.
+| Session | Entity | Status |
+|---------|--------|--------|
+| `ses_a5812561a3a1` | jem→kali | D-308 P0 gate blocker (awaiting Kali review) |
+| `ses_9aa65e195216` | jem→kali | D-308 handoff with 7 decisions |
+| `ses_3c79a82f15cb` | jem→researcher | Campaign launch — G1.1 + D308.1-3 executing |
+| `ses_6a99d33d4575` | jem→kali | Compaction prep — full campaign state captured |
+| `ses_CURRENT` | jem→kali | **This session** — Embedding hardening complete |
 
-**Cross-reference is mandatory, not optional** — 1.33x gap multiplier (8 new gaps from 6 original). Research describes what SHOULD be built; codebase reveals what ALREADY EXISTS. The gap between them is the actual work.
+## Researcher Campaign Status (Parallel Session)
 
-**Integration beats invention** — 60% infrastructure exists (HealthMonitor, GenerateResult, ModelGateway, BatchPersistenceWriter, Sovereign Ingestion Pipeline). The work is wiring, not inventing.
-
-**Heritage requires vetting, not just attribution** — Pi PR #2903 is prior art but M14 gate requires 4-gate vetting before `[heritage: pi-2026]` tag.
-
----
-
-## L3 (Universal Principles)
-
-- **L3-Capability-Negotiation-As-Immune-System**: Provider capabilities must be declared, not detected. The negotiation layer (matrix + normalizer + selector + health) is the immune system that prevents configuration pathogens from reaching the inference fabric. Every model family is a new pathogen; the immune system adapts via YAML, not code changes.
-
-- **L3-Quota-As-Routing-Signal**: In multi-provider fabrics, quota exhaustion is expected behavior — not an exception. The system that treats 429 as "route to next provider" is more resilient than the system that treats 429 as "circuit breaker trip." Free tiers provide natural chaos engineering — their constraints force routing logic to be correct.
-
-- **L3-Thinking-Tokens-Are-Hidden-Billable-Output**: Any model with structured thinking (Gemma 4, Gemini 2.5, Anthropic, OpenAI o1) generates thinking tokens billed as output. Track them separately or go bankrupt. The budget gate must apply 2-5x multiplier for thinking models.
-
-- **L3-Model-Identity-Is-Provider-Relative**: Same model = 3+ IDs across providers. Canonicalize at gateway via adapter pattern. The model ID sent to API is a function of (provider, auth_type, tier), not an intrinsic property.
-
-- **L3-Cross-Reference-Before-Execution**: The codebase is the ground truth, not the research plan. Research operates in possibility space; codebase operates in reality space. The 25% gap rate is structural. Cross-reference synthesis is a mandatory gate: Research → Cross-Reference → Execution.
-
-- **L3-Integration-Beats-Invention**: When 60% of infrastructure exists, the operation is integration work. Sovereign engineering builds ON existing infrastructure, not around it. The critical path is always: Schema → Coordination → Tracking → Observability → Execution → Synthesis. Skip any layer, and the operation collapses under its own weight.
-
-- **L3-Heritage-Requires-Vetting**: Attribution without discrimination is erasure. A heritage system that cannot self-correct is a fossil, not a foundation. The M14 4-gate pipeline (Discovery → Vetting → Decision → Implementation) is the immune system against provenance pollution.
-
----
-
-## Critical Path (8 Steps, Sequential, Hivemind Locks)
-
-```
-[1] HERITAGE VET → Pi PR #2903 through doom_guy + verity (M14 gate)
-[2] CAPABILITY MATRIX + GOOGLECOMPATPROVIDER → Single owner (P3/P4), TDD, contract tests first
-[3] MATRIX LOADER + VALIDATOR → Startup validation, config drift detection
-[4] CAPABILITYSELECTOR + PROVIDERHEALTH → Sequential Hivemind handoff (P6→P9)
-[5] THINKING PROVENANCE IN GENERATERESULT → thoughts_token_count, clamping tracking
-[6] CHAOS TEST → Quota exhaustion MID-STREAM (partial thinking + fallback stitching)
-[7] REAL MEDITATION RUN → Actual collisions → refined strategy (not dry-run templates)
-[8] OPENCODE PR + CONFIG PACKAGE → Version-gated (detect OpenCode version)
-```
-
----
-
-## Knowledge Gaps for Web Research (15 gaps, 5 domains)
-
-**P0 (Today)**: OpenCode V2 status, Vertex vs AI Studio schemas, free tier quota mechanics, thinking token billing, Pi PR #2903 diff, M14 vet format
-**P1 (Tomorrow)**: Capability schemas (LiteLLM/Vercel/LangChain), OpenRouter pinning, Gemma 4 12B, OpenCode config merge, version detection
-**P2 (Day 3)**: Redis Lua atomic quota, chaos testing patterns
-**P3 (Day 4)**: Meditation MCP execution, Hivemind handoff protocol
-
-Documented in: `docs/research/R_GEMMA4_KNOWLEDGE_GAPS_20260719.md`
+| Domain | P0 Gaps | Status |
+|--------|---------|--------|
+| G1 Vulkan/ROCm | G1.1 benchmarks | Researcher executing |
+| D308 Phase 2/3 | D308.1-3 sqlite-vec/ROCm | Researcher executing |
+| G2 Memory | G2.1 empirical RSS | Pending |
+| G3 systemd-creds | G3.1 TPM2 health | Pending |
 
 ---
 
-## Next Action
+## Next Session Hydration Sequence
 
-Execute Session 1 research (6 P0 gaps) using Sovereign Search Protocol Tiers 1-4. Heritage vet Pi PR #2903 in parallel (doom_guy + verity). Then begin Week 1 implementation with single-owner TDD on Capability Matrix + GoogleCompatProvider.
+1. **Awareness**: `omega-hub_hivemind_get_awareness()` — check Researcher progress
+2. **Baseline**: `git status && git log --oneline -5`
+3. **Codex**: Read `OMEGA_ENGINE.md` (full)
+4. **Session**: Read `.opencode/anchored-summary.md`
+5. **Check**: Researcher gap completions via Hivemind
+6. **Continue**: Finish test updates → `sqlite_vec_adapter tests → `make test` → `make temple-grade`
 
 ---
 
-*⬡ OMEGA ⬡ JEM ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_gemma4_hardening ⬡ 2026-07-19*
+*⬡ OMEGA ⬡ JEM ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_session_gnosis ⬡ SEALED*

@@ -147,6 +147,7 @@ from omega.observability.sovereignty import get_sovereignty_ratio
 from omega.oracle.security import tdp_wrap, determine_url_taint
 from omega.ics import render as ics_render_logic
 from omega.memory_store import get_memory_store
+from omega.search import SearchPersistence
 
 logger = logging.getLogger("omega.hub")
 @m9_safe("headroom_retrieve")
@@ -372,25 +373,47 @@ async def oracle_discover_entity(query: str) -> str:
 @mcp.tool()
 async def sovereign_search(query: str, entity_name: str = "SOPHIA", limit: int = 10, force_tier: Optional[int] = None) -> str:
     _require_service()
-    """Execute the 4-Tier Sovereign Search Protocol (SSP-V2).
+    """Execute the 6-Tier Sovereign Search Protocol (SSP-V2).
     
-    T0 (Local) -> T1 (SearXNG) -> T2 (Exa) -> T3 (Firecrawl).
+    T0 (Local) -> T1 (websearch) -> T2 (webfetch) -> T3 (SearXNG) -> T4 (Parallel Search) -> T5 (Exa) -> T6 (Firecrawl).
     T0 includes both MemoryStore and a local filesystem cache.
     
     Args:
         query: The search query.
         entity_name: The entity context for T0 cache and routing signals.
         limit: Maximum results per tier.
-        force_tier: Optional tier to force execution (0-3).
+        force_tier: Optional tier to force execution (0-6).
     """
+    import time
+    start = time.perf_counter()
+    
     result = await (await sovereign_search_service).search(query, entity_name, limit=limit, force_tier=force_tier)
+    
+    # Persist search result
+    latency_ms = int((time.perf_counter() - start) * 1000)
+    try:
+        persistence = SearchPersistence(entity_name=entity_name, channel="opencode")
+        persistence.wrap_search(
+            tool_name="sovereign_search",
+            tier=result.get("final_tier", 0),
+            query=query,
+            results=result,
+            latency_ms=latency_ms,
+            status="success" if result.get("status") != "error" else "failed",
+            error_code=result.get("error_code"),
+            error_message=result.get("error"),
+            provider_name=result.get("provider_name"),
+        )
+    except Exception as e:
+        logger.warning(f"Search persistence failed: {e}")
+    
     return json.dumps(result, indent=2)
 
 @m9_safe("search_extract")
 @mcp.tool()
 async def search_extract(query: str, limit: int = 10) -> str:
     _require_service()
-    """Force a T3 (Firecrawl) Deep Extraction for a specific query.
+    """Force a T6 (Firecrawl) Deep Extraction for a specific query.
     
     Bypasses the tiered routing to ensure full-page content extraction
     and structured markdown results.
@@ -399,8 +422,28 @@ async def search_extract(query: str, limit: int = 10) -> str:
         query: The query to extract content for.
         limit: Number of sources to scrape.
     """
+    import time
+    start = time.perf_counter()
+    
     result = await (await sovereign_search_service).extract(query, limit=limit)
-    return json.dumps({"result": result, "tier": 3, "provider": "firecrawl"}, indent=2)
+    
+    # Persist search result
+    latency_ms = int((time.perf_counter() - start) * 1000)
+    try:
+        persistence = SearchPersistence(entity_name="researcher", channel="opencode")
+        persistence.wrap_search(
+            tool_name="search_extract",
+            tier=6,
+            query=query,
+            results=result,
+            latency_ms=latency_ms,
+            status="success",
+            provider_name="firecrawl",
+        )
+    except Exception as e:
+        logger.warning(f"Search persistence failed: {e}")
+    
+    return json.dumps({"result": result, "tier": 6, "provider": "firecrawl"}, indent=2)
 
 @m9_safe("search_status")
 @mcp.tool()
@@ -1658,6 +1701,9 @@ async def library_search(query: str, domain: str = "", limit: int = 20) -> str:
     Returns:
         JSON string containing the search results and hit count.
     """
+    import time
+    start = time.perf_counter()
+    
     # P1-C: MCP-layer input guards (M-A4 compliance fix, defense-in-depth)
     if not query.strip():
         return json.dumps({"error": "Search query cannot be empty", "count": 0, "results": []})
@@ -1668,6 +1714,24 @@ async def library_search(query: str, domain: str = "", limit: int = 20) -> str:
     report = await (await sovereign_search_service).search(
         query, entity_name=domain if domain else "general", limit=limit
     )
+    
+    # Persist search result
+    latency_ms = int((time.perf_counter() - start) * 1000)
+    try:
+        persistence = SearchPersistence(entity_name=domain if domain else "general", channel="opencode")
+        persistence.wrap_search(
+            tool_name="library_search",
+            tier=report.get("final_tier", 0),
+            query=query,
+            results=report,
+            latency_ms=latency_ms,
+            status="success" if report.get("status") != "error" else "failed",
+            error_code=report.get("error_code"),
+            error_message=report.get("error"),
+            provider_name=report.get("provider_name"),
+        )
+    except Exception as e:
+        logger.warning(f"Search persistence failed: {e}")
     
     return json.dumps({
         "query": query, 
@@ -1692,11 +1756,14 @@ async def library_fts_search(query: str, domain: str = "", limit: int = 10) -> s
     Args:
         query: The search query (max 500 chars).
         domain: Optional domain filter (e.g., 'networking', 'testing', 'security').
-        limit: Maximum number of results to return (default 10).
+        limit: Maximum number of results to retrieve (default 10).
         
     Returns:
         JSON string containing search results with doc_id, title, summary, score, domain.
     """
+    import time
+    start = time.perf_counter()
+    
     if not query.strip():
         return json.dumps({"error": "Search query cannot be empty", "count": 0, "results": []})
     if len(query) > 500:
@@ -1715,6 +1782,23 @@ async def library_fts_search(query: str, domain: str = "", limit: int = 10) -> s
                 "tags": doc.tags if doc.tags else [],
                 "word_count": doc.word_count,
             })
+        
+        # Persist search result
+        latency_ms = int((time.perf_counter() - start) * 1000)
+        try:
+            persistence = SearchPersistence(entity_name=domain if domain else "general", channel="opencode")
+            persistence.wrap_search(
+                tool_name="library_fts_search",
+                tier=0,  # Local search = Tier 0
+                query=query,
+                results={"results": formatted, "count": len(formatted)},
+                latency_ms=latency_ms,
+                status="success",
+                provider_name="local_fts5",
+            )
+        except Exception as e:
+            logger.warning(f"Search persistence failed: {e}")
+        
         return json.dumps({
             "query": query,
             "count": len(formatted),
@@ -1832,7 +1916,27 @@ async def library_discovery_research(query: str, depth: int = 2) -> str:
     Returns:
         JSON string containing the consolidated discovery report.
     """
+    import time
+    start = time.perf_counter()
+    
     report = await (await discovery).discover(query, depth=depth)
+    
+    # Persist search result
+    latency_ms = int((time.perf_counter() - start) * 1000)
+    try:
+        persistence = SearchPersistence(entity_name="researcher", channel="opencode")
+        persistence.wrap_search(
+            tool_name="library_discovery_research",
+            tier=3,  # Discovery uses web search = Tier 3+
+            query=query,
+            results=report.to_dict(),
+            latency_ms=latency_ms,
+            status="success",
+            provider_name="discovery_engine",
+        )
+    except Exception as e:
+        logger.warning(f"Search persistence failed: {e}")
+    
     return json.dumps(report.to_dict(), indent=2)
 
 
@@ -1900,10 +2004,30 @@ async def memory_search(
     Returns:
         JSON string containing matched exchanges with scores and timestamps.
     """
+    import time
+    start = time.perf_counter()
+    
     if not query.strip():
         return json.dumps({"error": "Search query cannot be empty", "count": 0, "results": []})
     memory_store = get_memory_store()
     results = await memory_store.search_fts(query, entity_name, limit)
+    
+    # Persist search result
+    latency_ms = int((time.perf_counter() - start) * 1000)
+    try:
+        persistence = SearchPersistence(entity_name=entity_name, channel="opencode")
+        persistence.wrap_search(
+            tool_name="memory_search",
+            tier=0,  # Local memory search = Tier 0
+            query=query,
+            results={"results": results, "count": len(results)},
+            latency_ms=latency_ms,
+            status="success",
+            provider_name="local_memory_fts5",
+        )
+    except Exception as e:
+        logger.warning(f"Search persistence failed: {e}")
+    
     return json.dumps({
         "query": query,
         "entity": entity_name,
@@ -1929,8 +2053,28 @@ async def omega_memory_search(query: str, entity_name: str, limit: int = 20) -> 
     Returns:
         JSON string containing the matched exchanges and RRF re-ranking.
     """
+    import time
+    start = time.perf_counter()
+    
     memory_store = get_memory_store()
     results = await memory_store.search(query, entity_name, limit)
+    
+    # Persist search result
+    latency_ms = int((time.perf_counter() - start) * 1000)
+    try:
+        persistence = SearchPersistence(entity_name=entity_name, channel="opencode")
+        persistence.wrap_search(
+            tool_name="omega_memory_search",
+            tier=0,  # Local memory search = Tier 0
+            query=query,
+            results={"results": results, "count": len(results)},
+            latency_ms=latency_ms,
+            status="success",
+            provider_name="local_memory_hybrid",
+        )
+    except Exception as e:
+        logger.warning(f"Search persistence failed: {e}")
+    
     return json.dumps({
         "query": query,
         "entity": entity_name,
@@ -2004,9 +2148,29 @@ async def research(query: str, depth: int = 2, domain: str = "") -> str:
     Returns:
         JSON string containing the research result and citations.
     """
+    import time
+    start = time.perf_counter()
+    
     depth = max(1, min(4, depth))
     domain_filter = domain if domain else None
     result = await (await research_engine).research(query, depth=depth, domain=domain_filter)
+    
+    # Persist search result
+    latency_ms = int((time.perf_counter() - start) * 1000)
+    try:
+        persistence = SearchPersistence(entity_name=domain if domain else "researcher", channel="opencode")
+        persistence.wrap_search(
+            tool_name="research",
+            tier=3,  # Research uses web search = Tier 3+
+            query=query,
+            results=result.to_dict(),
+            latency_ms=latency_ms,
+            status="success",
+            provider_name="research_engine",
+        )
+    except Exception as e:
+        logger.warning(f"Search persistence failed: {e}")
+    
     return json.dumps(result.to_dict(), indent=2, default=str)
 
 

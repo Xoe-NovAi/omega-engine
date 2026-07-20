@@ -9,7 +9,7 @@ After compaction or restart, execute in strict order:
 1. `omega-hub_hivemind_get_awareness()` — Who is here?
 2. `git status && git log --oneline -5` — What is committed?
 3. Read OMEGA_CODEX.md — FULL file, no limit parameter. You are doing this now
-4. Read `.opencode/anchored-summary.md` — What was I doing?
+4. Read `data/coordination/SESSION_ANCHOR.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
 > Codex generated: 2026-07-19T21:30:49.718936+00:00 | Regenerate: `make codex`
@@ -98,7 +98,7 @@ After compaction or restart, execute in strict order:
 | `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions |
 | `CREDITS.md` | Heritage attribution |
 | `data/entities/kali/session_gnosis.md` | Session anchor (M15) |
-| `.opencode/anchored-summary.md` | Post-compaction recovery |
+| `data/coordination/SESSION_ANCHOR.md` | Post-compaction recovery |
 
 ---
 

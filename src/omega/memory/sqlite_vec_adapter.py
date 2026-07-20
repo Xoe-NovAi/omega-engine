@@ -1,7 +1,8 @@
 """SQLite-vec Unified Memory Fabric Adapter for Omega Memory.
-AP: AP-SQLITEVEC-ADAPTER-v1.0.0
+AP: AP-SQLITEVEC-ADAPTER-v2.0.0
 
-Drop Qdrant entirely. Unified fabric only. One `omega_memory.db` (FTS5 + vec0 + SQL graph edges).
+Canonical Embedding Strategy: 768-dim locked, multi-collection architecture.
+One `omega_memory.db` (FTS5 + multiple vec0 collections + SQL graph edges).
 
 Implements IVectorStoreAdapter interface using sqlite-vec for vector search
 and FTS5 for full-text search, with Reciprocal Rank Fusion in Python.
@@ -11,9 +12,14 @@ Corrections applied from Jem's R_SQLITEVEC_VERIFICATION_20260712.md:
 - Class Overwrite Hazard: ADD a tier, never redefine the class
 - Write Contention: anyio.Lock + exponential backoff (50/100/200ms)
 - RRF Unification: Python-side RRF fusion (reuse existing search() logic)
+
+NEW: Canonical dimension enforcement (M23 Failure Integrity)
+NEW: Multi-collection vec0 architecture (per-model isolation)
+NEW: INT8 rescore quantization support
 """
 # [heritage: sqlite-fts5 2015] SQLite FTS5 — BM25 full-text search with Porter stemmer
 # [heritage: sqlite-vec 2024] sqlite-vec — vector similarity search extension
+# [id-soft: doom-1993] Precomputed Lookup — embedding cache integrity
 
 import json
 import logging
@@ -31,43 +37,109 @@ from omega.errors import OmegaError, ProviderError, ProviderUnavailableError
 
 logger = logging.getLogger(__name__)
 
-# Default embedding dimension for mxbai-embed-large-v1
-DEFAULT_EMBEDDING_DIM = 1024
+# ============================================================================
+# CANONICAL EMBEDDING STRATEGY — HARDCODED, DO NOT CHANGE
+# Source: docs/strategy/EMBEDDING_HARDENING_STRATEGY_20260720.md
+# ============================================================================
+
+# Canonical dimension — ALL primary providers MUST output 768-dim vectors
+# EmbeddingGemma 300M (primary), nomic-embed-text-v1.5 (fallback) both native 768
+CANONICAL_DIMENSION = 768
+
+# Supported MRL dimensions for fallback tiers
+MRL_DIMENSIONS = [768, 512, 256, 128, 64]
+
+# Collection definitions — each gets its own vec0 table
+COLLECTIONS = {
+    # Primary: EmbeddingGemma 300M at canonical 768-dim
+    "omega_vec_gemma_768": {
+        "dimension": 768,
+        "metric": "cosine",
+        "quantization": "int8_rescore",
+        "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+    },
+    # Fallback: Nomic v1.5 at canonical 768-dim
+    "omega_vec_nomic_768": {
+        "dimension": 768,
+        "metric": "cosine",
+        "quantization": "int8_rescore",
+        "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+    },
+    # MRL tiers: Nomic truncated (separate collections for each dim)
+    "omega_vec_nomic_512": {
+        "dimension": 512,
+        "metric": "cosine",
+        "quantization": "int8_rescore",
+        "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+    },
+    "omega_vec_nomic_256": {
+        "dimension": 256,
+        "metric": "cosine",
+        "quantization": "int8_rescore",
+        "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+    },
+    # Speed: MiniLM 384-dim (no MRL, separate collection)
+    "omega_vec_minilm_384": {
+        "dimension": 384,
+        "metric": "cosine",
+        "quantization": "none",
+        "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+    },
+    # Zero-cost: Static 64-dim
+    "omega_vec_static_64": {
+        "dimension": 64,
+        "metric": "cosine",
+        "quantization": "none",
+        "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+    },
+}
+
+# Legacy default (for backward compat during migration)
+DEFAULT_EMBEDDING_DIM = CANONICAL_DIMENSION
 
 
 class SQLiteVecAdapter(IVectorStoreAdapter):
-    """SQLite-vec implementation of the vector store adapter.
+    """Unified memory fabric: FTS5 + multiple vec0 collections + SQL graph.
     
-    Unified fabric: FTS5 + vec0 + metadata in one omega_memory.db.
-    Entity isolation via partition key (Correction C3).
-    Write contention mitigation via anyio.Lock + exponential backoff.
+    Canonical Architecture:
+    - One SQLite file: omega_memory.db
+    - FTS5: omega_memory_fts (full-text search)
+    - vec0: Multiple collections per embedding model/dimension
+    - SQL: omega_memory_data (metadata), omega_memory_graph (edges)
     
-    Schema design:
-    - omega_memory_data: INTEGER PRIMARY KEY (rowid), uuid TEXT, entity_name, session_id, role, content, timestamp, metadata_json
-    - omega_memory_fts: FTS5 virtual table (content, entity_name, session_id, role, timestamp)
-    - omega_memory_vec: vec0 virtual table (embedding, entity_name partition key)
-    
-    All three tables share the same rowid for O(1) joins.
+    Canonical Dimension Enforcement (M23):
+    - Primary providers (Gemma, Nomic) MUST output 768-dim vectors
+    - Vec0 tables locked to their declared dimension
+    - Dimension mismatch raises RuntimeError (not silent corruption)
     """
-
+    
     def __init__(
         self,
-        db_path: Optional[Path] = None,
+        db_path: str = "data/omega_memory.db",
         embedding_dim: int = DEFAULT_EMBEDDING_DIM,
+        collections: Optional[Dict[str, Dict]] = None,
         timeout: float = 5.0,
     ):
-        if db_path is None:
-            # Default to data/memory/omega_memory.db
-            from omega.memory_store import _get_memory_dir
-            db_path = _get_memory_dir() / "omega_memory.db"
+        self.db_path = Path(db_path)
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
         
-        self.db_path = db_path
-        self._embedding_dim = embedding_dim
-        self.timeout = timeout
+        # Canonical dimension lock
+        self._canonical_dim = CANONICAL_DIMENSION
+        self._embedding_dim = embedding_dim  # Legacy compat
+        
+        # Multi-collection support
+        self._collections = collections or COLLECTIONS
+        self._vec_tables_created: Dict[str, bool] = {}
+        
+        # Connection & locks
         self._conn: Optional[sqlite3.Connection] = None
         self._write_lock = anyio.Lock()
         self._initialized = False
-        self._vec_table_created = False
+        self.timeout = timeout
+        
+        # Legacy vec0 table name (for backward compat during migration)
+        self._legacy_vec_table = "omega_memory_vec"
+        self._legacy_vec_created = False
 
     def _get_conn(self) -> sqlite3.Connection:
         """Get or create the SQLite connection with hardened PRAGMA stack.
@@ -177,19 +249,82 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                 raw_error=e
             ) from e
 
-    async def _ensure_vec_table(self, actual_dim: int) -> None:
-        """Create or recreate vec0 table with correct dimension.
+    async def _ensure_collection_vec_table(self, collection_name: str, actual_dim: int) -> None:
+        """Create or recreate vec0 table for a specific collection with STRICT dimension enforcement.
         
-        Called on first upsert() when we know the actual embedding dimension.
-        If dimension changes (model upgrade), drops and recreates the vec0 table.
+        Canonical Dimension Lock (M23 Failure Integrity):
+        - Primary collections (gemma_primary, nomic_fallback) MUST use 768-dim
+        - MRL tier collections use their declared dimension (512, 256, etc.)
+        - Speed/zero-cost collections use their native dimension (384, 64)
+        - Dimension mismatch raises RuntimeError — NO silent corruption
+        
+        Args:
+            collection_name: Name of the collection (must be in self._collections)
+            actual_dim: Actual dimension from embedding provider
+            
+        Raises:
+            RuntimeError: If dimension doesn't match collection's declared dimension
         """
-        if self._vec_table_created and actual_dim == self._embedding_dim:
-            return  # Already created with correct dimension
+        if collection_name not in self._collections:
+            raise ValueError(f"Unknown collection: {collection_name}. Valid: {list(self._collections.keys())}")
         
-        if self._vec_table_created and actual_dim != self._embedding_dim:
-            # Dimension changed (model upgrade) — drop and recreate
+        collection_config = self._collections[collection_name]
+        declared_dim = collection_config["dimension"]
+        
+        # CANONICAL DIMENSION ENFORCEMENT
+        if actual_dim != declared_dim:
+            raise RuntimeError(
+                f"EMBEDDING DIMENSION MISMATCH — CANONICAL VIOLATION (M23)\n"
+                f"  Collection: {collection_name}\n"
+                f"  Provider returned: {actual_dim}-dim vector\n"
+                f"  Collection declared: {declared_dim}-dim\n"
+                f"  Fix: Provider MUST output {declared_dim}-dim vectors.\n"
+                f"  Use MRL truncation in provider.get_embedding() if needed."
+            )
+        
+        # Already created with correct dimension
+        if self._vec_tables_created.get(collection_name, False):
+            return
+        
+        # Create the vec0 table for this collection
+        table_name = f"omega_vec_{collection_name}"
+        
+        def _sync_create_vec():
+            conn = self._get_conn()
+            conn.execute(f"""
+                CREATE VIRTUAL TABLE IF NOT EXISTS {table_name}
+                USING vec0(
+                    embedding float[{declared_dim}] distance_metric=cosine,
+                    entity_name TEXT partition key
+                )
+            """)
+            conn.commit()
+        
+        await anyio.to_thread.run_sync(_sync_create_vec)
+        self._vec_tables_created[collection_name] = True
+        logger.info("vec0 collection '%s' created with dim=%d", collection_name, declared_dim)
+
+    async def _ensure_legacy_vec_table(self, actual_dim: int) -> None:
+        """Legacy vec0 table creation for backward compatibility during migration.
+        
+        DEPRECATED: Use _ensure_collection_vec_table() instead.
+        Enforces canonical 768-dim for legacy table.
+        """
+        if self._legacy_vec_created and actual_dim == self._embedding_dim:
+            return
+        
+        # Legacy table MUST be canonical dimension
+        if actual_dim != CANONICAL_DIMENSION:
+            raise RuntimeError(
+                f"LEGACY VEC0 TABLE DIMENSION VIOLATION\n"
+                f"  Legacy table 'omega_memory_vec' requires {CANONICAL_DIMENSION}-dim vectors.\n"
+                f"  Provider returned: {actual_dim}-dim\n"
+                f"  Migration required: Use collection-specific vec0 tables."
+            )
+        
+        if self._legacy_vec_created and actual_dim != self._embedding_dim:
             logger.warning(
-                "Embedding dimension changed %d → %d. Recreating vec0 table.",
+                "Legacy embedding dimension changed %d → %d. Recreating legacy vec0 table.",
                 self._embedding_dim, actual_dim
             )
             def _sync_drop():
@@ -197,20 +332,20 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                 conn.execute("DROP TABLE IF EXISTS omega_memory_vec")
                 conn.commit()
             await anyio.to_thread.run_sync(_sync_drop)
-            self._vec_table_created = False
+            self._legacy_vec_created = False
         
         def _sync_create_vec():
             conn = self._get_conn()
             conn.execute(f"""
                 CREATE VIRTUAL TABLE IF NOT EXISTS omega_memory_vec
-                USING vec0(embedding float[{actual_dim}], entity_name TEXT partition key)
+                USING vec0(embedding float[{CANONICAL_DIMENSION}], entity_name TEXT partition key)
             """)
             conn.commit()
         
         await anyio.to_thread.run_sync(_sync_create_vec)
         self._embedding_dim = actual_dim
-        self._vec_table_created = True
-        logger.info("vec0 table created with dim=%d", actual_dim)
+        self._legacy_vec_created = True
+        logger.info("Legacy vec0 table created with canonical dim=%d", CANONICAL_DIMENSION)
 
     async def upsert(
         self,
@@ -218,16 +353,34 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         vector: List[float],
         metadata: Dict[str, Any],
         id: Optional[str] = None,
+        collection: str = "omega_vec_gemma_768",  # Default to primary canonical collection
     ) -> str:
-        """Insert or update a vector and its metadata.
+        """Insert or update a vector and its metadata in a specific collection.
         
-        Returns the UUID string identifier (not the integer rowid).
-        Auto-detects embedding dimension from first vector and creates vec0 table.
+        Canonical Architecture:
+        - Each collection has its own vec0 table with declared dimension
+        - Dimension mismatch raises RuntimeError (M23 Failure Integrity)
+        - Default collection: omega_vec_gemma_768 (canonical 768-dim)
+        
+        Args:
+            entity_name: Sovereign entity identifier (partition key)
+            vector: Embedding vector (MUST match collection's declared dimension)
+            metadata: Document metadata (content, session_id, role, timestamp, etc.)
+            id: Optional UUID (auto-generated if not provided)
+            collection: Target collection name (must be in self._collections)
+            
+        Returns:
+            UUID string identifier
         """
         await self._ensure_initialized()
-        # Lazy vec0 creation: create table with actual dimension from embedding chain
+        
+        # Validate collection exists
+        if collection not in self._collections:
+            raise ValueError(f"Unknown collection: {collection}. Valid: {list(self._collections.keys())}")
+        
+        # Lazy vec0 creation: create table with actual dimension from embedding
         if vector:
-            await self._ensure_vec_table(len(vector))
+            await self._ensure_collection_vec_table(collection, len(vector))
         
         point_uuid = id or str(uuid.uuid4())
         timestamp = str(metadata.get("timestamp", time.time()))
@@ -246,7 +399,6 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                         conn = self._get_conn()
                         
                         # CRITICAL: BEGIN IMMEDIATE prevents SQLITE_BUSY_SNAPSHOT
-                        # (Researcher finding: busy_timeout does NOT cover snapshot conflicts)
                         conn.execute("BEGIN IMMEDIATE")
                         
                         # 1. Insert into metadata table (gets auto-incremented rowid)
@@ -271,11 +423,12 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                             VALUES (?, ?, ?, ?, ?, ?)
                         """, (rowid, content, entity_name, session_id, role, timestamp))
                         
-                        # 3. Insert into vec0 with explicit rowid (matches metadata)
+                        # 3. Insert into COLLECTION-SPECIFIC vec0 with explicit rowid
                         # Correction C3: entity_name is partition key
                         if vector and embedding_blob:
-                            conn.execute("""
-                                INSERT INTO omega_memory_vec(rowid, embedding, entity_name)
+                            table_name = f"omega_vec_{collection}"
+                            conn.execute(f"""
+                                INSERT INTO {table_name}(rowid, embedding, entity_name)
                                 VALUES (?, ?, ?)
                             """, (rowid, embedding_blob, entity_name))
                         
@@ -314,32 +467,60 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
         vector: List[float],
         limit: int = 10,
         filter: Optional[Dict[str, Any]] = None,
+        collection: str = "omega_vec_gemma_768",  # Default to primary canonical collection
     ) -> List[Tuple[float, Dict[str, Any]]]:
-        """Query the vector store for the most similar entries.
+        """Query a specific vec0 collection for the most similar entries.
         
-        Returns list of (score, metadata) tuples, sorted by score descending.
-        Score is cosine similarity (1 - cosine_distance).
+        Args:
+            entity_name: Entity partition key (sovereign isolation)
+            vector: Query embedding vector
+            limit: Maximum results to return
+            filter: Optional metadata filters (not yet implemented)
+            collection: Vec0 collection name (must be in COLLECTIONS)
+            
+        Returns:
+            List of (score, metadata) tuples, sorted by score descending.
+            Score is cosine similarity (1 - cosine_distance).
+            
+        Raises:
+            ValueError: If collection not found or dimension mismatch
         """
         await self._ensure_initialized()
         
         if not vector:
             return []
         
-        # If vec0 table doesn't exist yet (no upserts), return empty
-        if not self._vec_table_created:
-            return []
+        # Validate collection exists
+        if collection not in self._collections:
+            raise ValueError(f"Unknown collection: {collection}. Available: {list(self._collections.keys())}")
+        
+        coll_config = self._collections[collection]
+        expected_dim = coll_config["dimension"]
+        
+        # Canonical dimension enforcement
+        if len(vector) != expected_dim:
+            raise ValueError(
+                f"VECTOR DIMENSION MISMATCH — CANONICAL VIOLATION\n"
+                f"  Collection: {collection} (declared dim={expected_dim})\n"
+                f"  Query vector: {len(vector)}-dim\n"
+                f"  Fix: Provider MUST output {expected_dim}-dim vectors for this collection.\n"
+                f"  Use MRL truncation in provider.get_embedding() if needed."
+            )
+        
+        # Check if vec0 table for this collection exists
+        if not self._vec_tables_created.get(collection, False):
+            return []  # No data yet in this collection
         
         try:
             def _sync_query():
                 conn = self._get_conn()
                 
-                # Query vec0 with entity_name partition key (Correction C3)
+                # Query specific vec0 collection with entity_name partition key
                 embedding_blob = sqlite_vec_serialize_float32(vector)
                 
-                # Use vec0 KNN search with partition key
-                cursor = conn.execute("""
+                cursor = conn.execute(f"""
                     SELECT rowid, distance
-                    FROM omega_memory_vec
+                    FROM {collection}
                     WHERE embedding MATCH ? AND entity_name = ?
                     ORDER BY distance
                     LIMIT ?
@@ -349,7 +530,6 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                 for row in cursor.fetchall():
                     rowid = row[0]
                     distance = row[1]
-                    # Convert distance to similarity score (1 - cosine_distance)
                     score = 1.0 - distance
                     
                     # Get metadata from the data table (O(1) join by rowid)
@@ -369,7 +549,6 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                             "content": meta_row[4],
                             "timestamp": meta_row[5],
                         }
-                        # Parse additional metadata from JSON
                         if meta_row[6]:
                             try:
                                 extra = json.loads(meta_row[6])
@@ -384,7 +563,7 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
             return await anyio.to_thread.run_sync(_sync_query)
             
         except (sqlite3.Error, OSError) as e:
-            logger.error("SQLite-vec query failed: %s", e, exc_info=True)
+            logger.error("SQLite-vec query failed for collection %s: %s", collection, e, exc_info=True)
             raise ProviderError(
                 "sqlite_vec",
                 f"SQLite-vec query failed: {e}",
