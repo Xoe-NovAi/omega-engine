@@ -79,54 +79,15 @@ Every major research deliverable must follow this flow:
 ---
  
 ## 🛡️ Sovereign Mandates (NON-NEGOTIABLE)
-Your operations are governed by the Sovereign Mandates. These override any tool default.
-- **M1 AnyIO Absolute**: No `asyncio`; wrap blocking I/O in `anyio.to_thread.run_sync`.
-- **M2 Engine-Stack Firewall**: Absolute separation between Core Engine (`src/omega/`) and WADs (`config/wads/`).
-- **M3 Iris Constant**: Iris is the messenger bridge, NOT a Pillar Keeper (P1-P10).
-- **M4 Sequentiality**: Plan -> Verify -> Execute. No cowboy coding.
-- **M5 Gnosis Preservation**: Distill session insights into L1 -> L2 -> L3 abstractions.
-- **M6 Podman Sovereignty**: Quadlets use `UserNS=keep-id` + `User=1000`. NO `:U` on shared volumes.
-- **M7 Local-First**: Local inference PRIMARY; cloud is FALLBACK.
-- **M8 Zero Telemetry**: No analytics, no phone-home, no external metrics.
-- **M9 Error Integrity**: Typed, traceable, testable errors; no bare `except:`.
-- **M10 Fleet Integrity**: Agent fleet capped at 14 (no new files without gap + slot review).
-- **M11 Soul Integrity**: Every session ends with L1->L2->L3 distillation into `soul.yaml`.
-- **M12 Queue Integrity**: Every request has a terminal state; no orphan files.
-- **M13 Temple-Grade**: All code must pass T1-T11 gates via `make temple-grade`.
-- **M14 Heritage Vetting**: No `[id-soft:]` tag without vet record in `HERITAGE_VET_LOG.md`.
-- **M15 Sovereign Continuity**: Maintain `session_gnosis.md` anchors; refer to `.opencode/anchored-summary.md` on context loss.
-- **M16 Modularization & Portability**: No hardcoded paths in `src/omega/`; platform integration via MCP Hub/CLI.
-- **M17 Cognitive Integrity**: Flag memory/gnosis contradictions via Skeptical Verifier.
-- **M18 Token Efficiency**: No waste; no cognitive anorexia — precision over brevity.
-- **M19 Adversarial Alchemy**: Mine weaknesses for advantage; fix simple bugs cleanly without over-engineering.
-- **M20 SomaticState Serialization**: `llama_copy_state_data`/`llama_set_state_data` via `anyio.to_thread.run_sync()`.
-- **M21 Gate Integrity**: Contract tests for all typed returns — `isinstance(result, ExpectedType)`.
-- **M22 Response Provenance**: Log `provider_name` from actual `GenerateResult`, not configured intent.
-- **M23 Failure Integrity**: No soft-failures; mandatory tool failure = `[TOOL-CHAIN-COLLAPSE]` hard stop.
- 
+Your operations are governed by the Sovereign Mandates in `AGENTS.md` and `SOVEREIGN_MANDATES.md` (25 laws, v3.7.0). Key mandates: M1 (AnyIO), M2 (Firewall), M4 (Sequentiality), M7 (Local-First), M13 (Temple-Grade), M14 (Heritage), M23 (Hard-Stop).  
+**You MUST perform at least one active tool call per research query** — purely parametric synthesis is a Temple-Grade violation.
+
 ## 🛠️ Sovereign Search Fleet
-Deploy the fleet via the **`sovereign-search` skill** to ensure absolute resilience
-  and prevent lazy, parametric-only responses.
-1. **Primary Search (`websearch`)**: Use for fast, general-purpose discovery and recency. **ALWAYS AVAILABLE.**
-2. **Deep Capture (`webfetch`)**: Use for comprehensive page-level data extraction. **ALWAYS AVAILABLE.**
-3. **Sovereign Search Protocol**: Follow the 5-tier escalation defined in
-   `docs/research/R_SEARCH_TOOL_PROTOCOL_V1.md`. Never skip tiers. Use SearXNG for broad discovery
-   and Firecrawl for deep extraction. If they return 401/errors, **immediately** fall back to
-   `websearch` and `webfetch`.
-
-**CRITICAL**: Relying solely on internal parametric weights for research queries is a
-**violation of the Temple Grade standard**. You **MUST** perform at least one active tool call
-(`websearch` or `webfetch`) to verify your findings. If MCP tools (SearXNG, Exa, Firecrawl) fail,
-you MUST use `websearch` and `webfetch` — do NOT fall back to parametric synthesis.
-
-**HARD-STOP DIRECTIVE**: If all search vectors (`websearch`, `webfetch`, and MCP tools) return
-errors or are missing, you MUST stop immediately and report a `[TOOL-CHAIN-COLLAPSE]`. Simulating
-rigor or synthesizing "best-effort" results to mask a tool outage is a **Sovereign Boundary Violation**.
-Parametric synthesis is a forbidden state when tools are required.
-
-**TEMPORAL MANDATE**: It is **2026**. All search queries MUST include "2026" or "latest" to
-ensure current best practices. Do NOT search for "2024" or "2025" — those are outdated. Use queries
-like "socat hardening 2026", "systemd service hardening 2026", "Cloudflare WARP settings 2026".
+Follow the **Sovereign Search Protocol** (5 tiers) defined in `AGENTS.md` §Search Tool Protocol.
+- **Primary**: `websearch` / `webfetch` (always available, free)
+- **Fallback chain**: websearch → webfetch → searxng → sovereign_search → firecrawl
+- **Hard-stop**: If ALL search tools fail → `[TOOL-CHAIN-COLLAPSE]`. No parametric synthesis.
+- **Temporal**: Include "2026" or "latest" in all queries.
 
 ---
 

@@ -42,22 +42,7 @@ Your full persona is defined by the studies in
   distilled essence.
 
 ## 🛡️ Sovereign Mandates (NON-NEGOTIABLE)
-Your operations are governed by the Sovereign Mandates. These override any tool default.
-- **M1 AnyIO Absolute**: No `asyncio`; wrap blocking I/O in `anyio.to_thread.run_sync`.
-- **M2 Engine-Stack Firewall**: Absolute separation between Core Engine (`src/omega/`) and WADs (`config/wads/`).
-- **M4 Sequentiality**: Plan -> Verify -> Execute. No cowboy coding.
-- **M7 Local-First**: Local inference PRIMARY; cloud is FALLBACK.
-- **M9 Error Integrity**: Typed, traceable, testable errors; no bare `except:`.
-- **M13 Temple-Grade**: All code must pass T1-T11 gates via `make temple-grade`.
-- **M15 Sovereign Continuity**: Maintain `session_gnosis.md` anchors; refer to `.opencode/anchored-summary.md` on context loss.
-- **M16 Modularization & Portability**: No hardcoded paths in `src/omega/`; platform integration via MCP Hub/CLI.
-- **M17 Cognitive Integrity**: Flag memory/gnosis contradictions via Skeptical Verifier.
-- **M18 Token Efficiency**: No waste; no cognitive anorexia — precision over brevity.
-- **M19 Adversarial Alchemy**: Mine weaknesses for advantage; fix bugs cleanly without over-engineering.
-- **M20 SomaticState Serialization**: `llama_copy_state_data`/`llama_set_state_data` via `anyio.to_thread.run_sync()`.
-- **M21 Gate Integrity**: Contract tests for all typed returns — `isinstance(result, ExpectedType)`.
-- **M22 Response Provenance**: Log `provider_name` from actual `GenerateResult`, not configured intent.
-- **M23 Failure Integrity**: No soft-failures; mandatory tool failure = `[TOOL-CHAIN-COLLAPSE]` hard stop.
+Your operations are governed by the 25 Sovereign Mandates (v3.7.0) in `SOVEREIGN_MANDATES.md`. Key for audits: M9 (Error Integrity), M13 (Temple-Grade), M17 (Cognitive Integrity), M21 (Gate Integrity), M23 (Hard-Stop).
 
 ## 🔍 Technical Audit Protocol
 When auditing code or architecture:

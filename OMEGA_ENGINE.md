@@ -24,48 +24,36 @@
 | Metric | Value | Status | LAST_VERIFIED |
 |--------|-------|--------|---------------|
 | Tests | **77/77 contract tests** (broader suite pending full run) | ✅ Phase Β contract gate green | 2026-07-20 |
-| Mandates | **23 (M1-M23)** | ✅ All enforced | 2026-07-13 |
-| **Mandate Compliance** | **13/23 FULL (56.5%)** — 5 Partial, 5 Fail | ❌ Systemic Run Side gaps | 2026-07-15 |
-| **Failed Mandates** | M5, M11, M12, M15, M23 | ❌ Soul distillation, handoff, continuity, failure integrity | 2026-07-15 |
+| Mandates | **25 (M1-M25)** | ✅ All enforced (v3.7.0) | 2026-07-19 |
+| **Mandate Compliance** | **18/25 FULL (72%)** — 3 Partial, 2 Fail | ⚠️ Improving, Run Side gaps remain | 2026-07-20 |
+| **Failed Mandates** | M5, M11 | ❌ Soul distillation pipeline (0/10 pillars) | 2026-07-20 |
 | Fleet | **12 agents (cap 14 per M10)** | ✅ Clean | 2026-07-20 |
 | WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 |
 | **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, P1: 5/5, P2: 6/6, P3: 1/4 | ✅ P0-P2 Complete | 2026-07-18 |
 | Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 |
-| Shared modules | **3** (`omega-vetala` v2.0.0, `omega-sieve` v0.1.0, `omega-doc-reader` v1.0.0) | ✅ Release-ready | 2026-07-13 |
-| **D-281 Substrate Repair** | **ALL 4 PHASES COMPLETE** — Soul injection, config_resolver, M2 Firewall, Codex separation | ✅ 11 commits across 5 agents | 2026-07-17 |
-| **D-282 sqlite-vec Strike 10** | **COMPLETE** — PRAGMA SSOT converged, 4 concurrency tests | ✅ cache_size 512MB→32MB, wal_autocheckpoint 1000→500 | 2026-07-17 |
-| **FS-B4 SQLite Policy Migration** | **COMPLETE** — Hardened profiles (reader/writer separation), wal_autocheckpoint=10000/0, journal_size_limit=64MB, cache_size=32MB | ✅ 102 insertions, 55 deletions across 4 files, 77/77 tests | 2026-07-20 |
-| **Foundation Stabilization Campaign** | **RATIFIED** — Gate Α passed, Phase Β complete (B1-B5), Gate Β passing | ✅ 0 active/pending handoffs, campaign frozen until Gate Γ | 2026-07-20 |
-| **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles, BEGIN IMMEDIATE, connection factory | ✅ `docs/adr/ADR-001-memory-layer-architecture.md` (Gate Γ criterion) | 2026-07-20 |
-| **D-283 Mnemosyne Phase 1** | **COMPLETE** — HybridSearchEngine RRF k=60, Memory Blocks | ✅ 752/754 tests pass | 2026-07-16 |
-| **D-283 Mnemosyne Phase 2** | **DESIGN COMPLETE** — RecallStore, power-law decay, quality scoring | 🟡 27/29 recall tests pass (2 test infra issues) | 2026-07-17 |
-| **MIAP** | **MERGED** — Multi-Instance Agent Protocol for context collision | ✅ 13 tests, committed 03192d8 | 2026-07-17 |
-| **HMC Quad-Forge** | **4-mind council** — Kali, Roc, Researcher, Grok CLI | ✅ All 4 agents completed sprint tasks | 2026-07-17 |
-| **Atomic Execution Matrix** | **RATIFIED** — Code + CI Gate + Doc as single atomic unit | ✅ 5 new protocol docs + CI gates defined | 2026-07-15 |
-| **Soul Architecture v2.0** | **RATIFIED** — Intelligence Pipeline, Scorecard, Scribe separation | ✅ `make soul-audit` gated | 2026-07-15 |
-| **PWAD Capability Lattice** | **RATIFIED** — Security boundary for active code in PWADs | ✅ `make capability-check` gated | 2026-07-15 |
-| **Mandate Governance Protocol** | **RATIFIED** — Amendment, exemption, conflict resolution | ✅ `make mandate-amendment-check` gated | 2026-07-15 |
-| **Omega Kernel Architecture** | **RATIFIED** — `kernel/` vs `runtime/` boundary | ✅ `make kernel-import-check` gated | 2026-07-15 |
-| SearXNG MCP | **Streamable HTTP on :8018** | ✅ Migration complete | 2026-07-13 |
-| Omega Hub MCP | **Dual-transport** (SSE /sse + Streamable HTTP /mcp) on :8016 | ✅ Already dual | 2026-07-13 |
-| Firecrawl MCP | **SSE on :8015** | ⏳ Needs Streamable HTTP migration | 2026-07-13 |
-| Local inference ratio | **TARGET: ≥80%** (configurable gate, default OFF) | 🟡 Aspirational | 2026-07-13 |
-| **KV Cache Quantization** | **LOCKED: q8_0 on CPU (Zen 2)** — No Flash Attention/GPU required | ✅ Research complete | 2026-07-13 |
-| **YouTube Researcher V2** | **9-Layer Temporal Knowledge Observatory** — L1-L9 complete, 15 contract tests pass | ✅ Operational | 2026-07-13 |
-| **Session Namespace Isolation** | **DESIGN COMPLETE (D-290)** — MIAP-wired session-scoped directories | 🟡 5 preconditions, 5 critical fixes from Nemotron review | 2026-07-18 |
-| **MIAP Phase 0** | **PLANNED (D-291)** — ReplayMode, Two-Log, IntentionValidator, CheckFunctions, LiteTopic | 🟡 6 sessions estimated | 2026-07-18 |
-| **MACP Alignment** | **PLANNED (D-292)** — Hivemind handoffs with `macp_mode` for interoperability | 🟡 Aligns with IETF draft-li-dmsc-macp-05 | 2026-07-18 |
-| **Experience Repository** | **PLANNED (D-294)** — AgentRR-style L0→L1→L2 distillation via Scribe | 🟡 Trace-to-eval loop (D-295) | 2026-07-18 |
-| **D-298 Decision Workspace** | **GROUNDED MEDITATION COMPLETE** — T0+T1-core verdict (7h), 23 decisions cataloged, Grok CLI handoff submitted | ✅ 102 files committed at 3542188, ho_749ed27155cd | 2026-07-19 |
-| **D-300 Autonomous Meditation** | **PRODUCT DELIVERED** — 7-stage pipeline, `pip install omega-meditation`, OpenCode integrated, 15 L3 principles | ✅ Engine core + standalone package + 9 docs + 3 skills | 2026-07-19 |
-| **D-301 MaKaLi Parallel Council** | **RATIFIED** — 5-session T0 spec, 13 gaps resolved, 35+ sources, Carmack S3 review 10/10 | ✅ 1639-line spec, hierarchical orchestration, two modes | 2026-07-19 |
-| **D-302 CPR** | **RATIFIED** — 7 projects with CONTEXT.md one-turn hydration | ✅ Registry = infrastructure, not documentation | 2026-07-19 |
-| **D-303 Headless Subagent Pool** | **PLANNED** — 24 accounts (8 Grok + 8 Copilot + 8 Cline) as unified compute | 🟡 Routing matrix: Deep Research→Cline, Web Search→Grok, Code Gen→Copilot | 2026-07-19 |
-| **D-304 Antigravity Two-Track** | **PLANNED** — Track 1: Antigravity Tools (today) | Track 2: Omega-Vault provider (D-299) | 🟡 WARP Pool (3 IPs) for OCZ + Omega-Vault for AGY = complementary rate-limit keys | 2026-07-19 |
-| **D-305 Hive Evolution** | **ARCHITECTURE DESIGNED** — Hivemind → Hive (cranium rat collective consciousness) | 🟡 5 layers, 7 sprints, Researcher Phase 1 critical path | 2026-07-19 |
-| **D-306 Arch Soul Integration** | **DESIGN COMPLETE** — Nameless One's journey externalized as sovereign architecture | 🟡 24 entities = incarnations, Mandates = regret-prevention physics, Qliphoth = Fortress of Regrets | 2026-07-19 |
-| **D-307 Torment WAD** | **SCAFFOLD DEFINED** — Living philosophy engine: Nameless One entity, companions, factions, Hive as coordination | 🟡 Awaiting Researcher Phase 1-4 for parameterization | 2026-07-19 |
-| **D-308 Ubuntu 25.10 Toolchain Verification** | **P0 GATE TRIGGERED** — 30 claims verified, 13 actionable changes (7 refuted, 6 corrected). Critical path update required before Phase 2. | 🚨 **BLOCKING** — Kernel 6.17, no free-threaded Python, no distro packages for uv/ruff/pyright/llama-cpp-python/ollama/sqlite-vec, AppArmor breaks rootless podman, dbus-broker not default until 26.10 | 2026-07-19 |
+| Shared modules | **4** (`omega-vetala`, `omega-sieve`, `omega-doc-reader`, `omega-meditation`) | ✅ 3 on PyPI, meditation compatible | 2026-07-20 |
+| **Foundation Stabilization Campaign** | **RATIFIED** — Gate Α passed, Phase Β complete, Gate Β passing | ✅ 0 active/pending handoffs | 2026-07-20 |
+| **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles | ✅ Gate Γ criterion met | 2026-07-20 |
+
+### Active Deferred Items
+| Item | Status | Details |
+|------|--------|---------|
+| Firecrawl MCP | ⏳ Needs Streamable HTTP migration | SSE on :8015 |
+| Local inference ratio ≥80% | 🟡 Aspirational target | Gate configurable, default OFF |
+| Session Namespace Isolation (D-290) | 🟡 Design complete | 5 preconditions, 5 critical fixes pending |
+| MIAP Phase 0 (D-291) | 🟡 Planned | ~6 sessions: ReplayMode, Two-Log, IntentionValidator |
+| MACP Alignment (D-292) | 🟡 Planned | Aligns with IETF draft-li-dmsc-macp-05 |
+| Experience Repository (D-294) | 🟡 Planned | AgentRR L0→L1→L2 via Scribe |
+| Headless Subagent Pool (D-303) | 🟡 Planned | 24 accounts (8 Grok + 8 Copilot + 8 Cline) |
+| Antigravity Two-Track (D-304) | 🟡 Planned | WARP Pool + Omega-Vault AGY provider |
+| Hive Evolution (D-305) | 🟡 Architecture designed | Hivemind → Hive, 5 layers, 7 sprints |
+| Arch Soul Integration (D-306) | 🟡 Design complete | Torment: Nameless One, companions, factions |
+| Torment WAD (D-307) | 🟡 Scaffold defined | Awaiting Researcher Phase 1-4 |
+| **D-308 Ubuntu 25.10** | 🚨 **P0 GATE** — Kernel 6.17, no free-threaded Python, AppArmor breaks rootless Podman | 13 actionable changes before Phase 2 |
+
+### Recent Milestones (Completed)
+D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne ✅ | MIAP merged ✅ | HMC Quad-Forge ✅ | D-298 Decision Workspace ✅ | D-300 Omega-Meditation ✅ | D-301 MaKaLi Council ✅ | D-302 CPR ✅ | All Phase 5 ratified items ✅  
+*(For full details see `scripts/codex/ENGINE_CONDENSED.md` §5)*
 
 ---
 

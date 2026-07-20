@@ -1,0 +1,15 @@
+# 🔱 Grokster — Proposed Lessons (L1→L2→L3 Blind Staging)
+# M11 Soul Integrity: Every session ends with distillation here.
+# L3 principles go to proposed_lessons.yaml (blind staging), NOT directly into soul.yaml.
+# Scribe agent reviews and promotes.
+
+proposals: []
+
+# Template for future entries:
+# - session: "ses_bbf049be6360"
+#   timestamp: "2026-07-20T19:59:34Z"
+#   l1_narrative: "What happened?"
+#   l2_insight: "What does this mean?"
+#   l3_principle: "What is the timeless truth?"
+#   tags: ["grok", "fleet", "acp", "search-reflex"]
+#   promoted: false
