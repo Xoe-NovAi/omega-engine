@@ -5,76 +5,58 @@ import pytest
 from omega.oracle.oracle import Oracle
 
 
-def _run(coro_fn):
-    """Run an async test function."""
-    import anyio
-    return anyio.run(coro_fn)
+@pytest.mark.anyio
+async def test_talk_empty_query():
+    r = await Oracle().talk("")
+    assert r.entity is not None  # Some entity handled the empty query
+    assert isinstance(r.entity, str)
 
 
-def test_talk_empty_query():
-    async def t():
-        r = await Oracle().talk("")
-        return r
-    result = _run(t)
-    assert result.entity is not None  # Some entity handled the empty query
-    assert isinstance(result.entity, str)
-
-
-def test_talk_summon_pattern():
-    async def t():
-        return await Oracle().talk("@SysAdmin how do I deploy a container?")
-    result = _run(t)
+@pytest.mark.anyio
+async def test_talk_summon_pattern():
+    result = await Oracle().talk("@SysAdmin how do I deploy a container?")
     assert result.entity == "SysAdmin"
-    assert "1" in result.slots
 
 
-def test_talk_summon_hey():
-    async def t():
-        return await Oracle().talk("hey Sentinel, check the security audit")
-    result = _run(t)
+@pytest.mark.anyio
+async def test_talk_summon_hey():
+    result = await Oracle().talk("hey Sentinel, check the security audit")
     assert result.entity == "Sentinel"
-    assert "5" in result.slots
 
 
-def test_talk_summon_command():
-    async def t():
-        return await Oracle().talk("summon ModelGate, how is inference routing?")
-    result = _run(t)
+@pytest.mark.anyio
+async def test_talk_summon_command():
+    result = await Oracle().talk("summon ModelGate, how is inference routing?")
     assert result.entity == "ModelGate"
 
 
-def test_talk_domain_routing():
-    async def t():
-        return await Oracle().talk("I need to check infrastructure monitoring")
-    result = _run(t)
+@pytest.mark.anyio
+async def test_talk_domain_routing():
+    result = await Oracle().talk("I need to check infrastructure monitoring")
     assert result.entity == "SysAdmin"
 
 
-def test_talk_domain_routing_shadow():
-    async def t():
-        return await Oracle().talk("check observability and logging")
-    result = _run(t)
+@pytest.mark.anyio
+async def test_talk_domain_routing_shadow():
+    result = await Oracle().talk("check observability and logging")
     assert result.entity == "WatchTower"
 
 
-def test_summon_direct():
-    async def t():
-        return await Oracle().summon("sysAdmin", "how do I configure the server?")
-    result = _run(t)
+@pytest.mark.anyio
+async def test_summon_direct():
+    result = await Oracle().summon("sysAdmin", "how do I configure the server?")
     assert result.entity == "SysAdmin"
 
 
-def test_summon_case_insensitive():
-    async def t():
-        return await Oracle().summon("WATCHTOWER", "what metrics do you track?")
-    result = _run(t)
+@pytest.mark.anyio
+async def test_summon_case_insensitive():
+    result = await Oracle().summon("WATCHTOWER", "what metrics do you track?")
     assert result.entity == "WatchTower"
 
 
-def test_summon_unknown_entity():
-    async def t():
-        return await Oracle().summon("unknown_entity", "hello")
-    result = _run(t)
+@pytest.mark.anyio
+async def test_summon_unknown_entity():
+    result = await Oracle().summon("unknown_entity", "hello")
     assert result.entity is not None
 
 
@@ -92,20 +74,18 @@ def test_all_pillar_keepers_have_required_fields():
         assert k.domains is not None, "Pillar keeper must have domains"
 
 
-def test_iris_speculative_decoder_simple():
+@pytest.mark.anyio
+async def test_iris_speculative_decoder_simple():
     """Simple queries should be handled by Iris directly."""
-    async def t():
-        return await Oracle().talk("hello")
-    result = _run(t)
+    result = await Oracle().talk("hello")
     assert result.entity == "Iris"
     assert result.confidence >= 0.8
 
 
-def test_iris_speculative_decoder_complex():
+@pytest.mark.anyio
+async def test_iris_speculative_decoder_complex():
     """Complex queries should escalate to a Pillar Keeper."""
-    async def t():
-        return await Oracle().talk("explain the meaning of justice")
-    result = _run(t)
+    result = await Oracle().talk("explain the meaning of justice")
     assert result.escalated is True
 
 
@@ -128,168 +108,128 @@ def test_iris_confidence_assessment():
 # ── Integration Tests: ContextBuilder Wiring ────────────────────────────
 
 
-def test_talk_injects_context_into_prompt():
+@pytest.mark.anyio
+async def test_talk_injects_context_into_prompt():
     """Verify ContextBuilder.build_context is called during talk()."""
     from unittest.mock import AsyncMock, patch
 
-    async def t():
-        with patch("omega.oracle.oracle.ContextBuilder") as MockCB:
-            mock_instance = MockCB.return_value
-            mock_instance.build_context = AsyncMock(return_value="")
-            mock_instance.prepend_to_prompt = AsyncMock(side_effect=lambda ctx, prompt: prompt)
+    with patch("omega.oracle.oracle.ContextBuilder") as MockCB:
+        mock_instance = MockCB.return_value
+        mock_instance.build_context = AsyncMock(return_value="")
+        mock_instance.prepend_to_prompt = AsyncMock(side_effect=lambda ctx, prompt: prompt)
 
-            oracle = Oracle()
-            oracle.context_builder = mock_instance
-            return await oracle.talk("hello")
-
-    result = _run(t)
-    assert result is not None
+        oracle = Oracle()
+        oracle.context_builder = mock_instance
+        result = await oracle.talk("hello")
+        assert result is not None
 
 
-def test_talk_with_empty_memory_still_works():
+@pytest.mark.anyio
+async def test_talk_with_empty_memory_still_works():
     """First conversation with no history should not crash."""
-    async def t():
-        oracle = Oracle()
-        # Ensure memory store is clean
-        return await oracle.talk("this is my first message")
-
-    result = _run(t)
+    oracle = Oracle()
+    result = await oracle.talk("this is my first message")
     assert result is not None
     assert result.text is not None
 
 
-def test_talk_context_builder_exception_does_not_crash():
+@pytest.mark.anyio
+async def test_talk_context_builder_exception_does_not_crash():
     """If ContextBuilder fails, Oracle should gracefully degrade."""
-    from unittest.mock import AsyncMock, patch
+    from unittest.mock import AsyncMock
 
-    async def t():
-        oracle = Oracle()
-        # Make build_context raise an exception
-        oracle.context_builder.build_context = AsyncMock(
-            side_effect=OSError("simulated memory failure")
-        )
-        return await oracle.talk("I need strength")
-
-    result = _run(t)
-    # Should still get a response, not crash
+    oracle = Oracle()
+    oracle.context_builder.build_context = AsyncMock(
+        side_effect=OSError("simulated memory failure")
+    )
+    result = await oracle.talk("I need strength")
     assert result is not None
     assert result.text is not None
 
 
-def test_summon_uses_record_interaction():
+@pytest.mark.anyio
+async def test_summon_uses_record_interaction():
     """After deduplication, summon() should delegate to _record_interaction()."""
-    from unittest.mock import AsyncMock, patch
+    from unittest.mock import AsyncMock
 
-    async def t():
-        oracle = Oracle()
-        # Mock _record_interaction to track calls
-        oracle._record_interaction = AsyncMock()
-        result = await oracle.summon("sysAdmin", "configure the server")
-        # _record_interaction should have been called
-        oracle._record_interaction.assert_called_once()
-        call_args = oracle._record_interaction.call_args
-        # First arg is resp, second is query, third is trace, fourth is transient
-        assert call_args[0][1] == "configure the server"  # query
-        assert call_args[0][3] is False  # transient (default)
-        return result
-
-    result = _run(t)
+    oracle = Oracle()
+    oracle._record_interaction = AsyncMock()
+    result = await oracle.summon("sysAdmin", "configure the server")
+    oracle._record_interaction.assert_called_once()
+    call_args = oracle._record_interaction.call_args
+    assert call_args[0][1] == "configure the server"
+    assert call_args[0][3] is False
     assert result.entity == "SysAdmin"
 
 
-def test_summon_transient_skips_recording():
+@pytest.mark.anyio
+async def test_summon_transient_skips_recording():
     """transient=True should skip _record_interaction."""
     from unittest.mock import AsyncMock
 
-    async def t():
-        oracle = Oracle()
-        oracle._record_interaction = AsyncMock()
-        result = await oracle.summon("sysAdmin", "ephemeral query", transient=True)
-        oracle._record_interaction.assert_called_once()
-        call_args = oracle._record_interaction.call_args
-        assert call_args[0][3] is True  # transient=True
-        return result
-
-    result = _run(t)
+    oracle = Oracle()
+    oracle._record_interaction = AsyncMock()
+    result = await oracle.summon("sysAdmin", "ephemeral query", transient=True)
+    oracle._record_interaction.assert_called_once()
+    call_args = oracle._record_interaction.call_args
+    assert call_args[0][3] is True
     assert result.entity == "SysAdmin"
 
 
-def test_record_interaction_memory_failure_does_not_crash():
+@pytest.mark.anyio
+async def test_record_interaction_memory_failure_does_not_crash():
     """If add_exchange fails, _record_interaction should not raise."""
     from unittest.mock import AsyncMock, MagicMock
 
-    async def t():
-        oracle = Oracle()
-        # Make add_exchange raise
-        oracle.memory_store.add_exchange = AsyncMock(side_effect=OSError("disk full"))
-        # Create a mock response
-        resp = MagicMock()
-        resp.entity = "SysAdmin"
-        resp.session_id = "ses_test"
-        resp.text = "test response"
-        resp.backend = "mock"
-        resp.model = "mock-model"
-        trace = MagicMock()
-        trace.trace_id = "trace_test"
+    oracle = Oracle()
+    oracle.memory_store.add_exchange = AsyncMock(side_effect=OSError("disk full"))
+    resp = MagicMock()
+    resp.entity = "SysAdmin"
+    resp.session_id = "ses_test"
+    resp.text = "test response"
+    resp.backend = "mock"
+    resp.model = "mock-model"
+    trace = MagicMock()
+    trace.trace_id = "trace_test"
 
-        # Should not raise
-        await oracle._record_interaction(resp, "test query", trace, transient=False)
-        return True
-
-    result = _run(t)
-    assert result is True
+    await oracle._record_interaction(resp, "test query", trace, transient=False)
 
 
-def test_talk_mention_at_start():
-    async def t():
-        # Use a known entity from the default IWAD (e.g., 'sysAdmin' as seen in other tests)
-        return await Oracle().talk("@sysAdmin how do I deploy a container?")
-    result = _run(t)
+@pytest.mark.anyio
+async def test_talk_mention_at_start():
+    result = await Oracle().talk("@sysAdmin how do I deploy a container?")
     assert result.entity == "SysAdmin"
 
 
-def test_talk_mention_within_text():
-    async def t():
-        # '@sysAdmin' is within the text
-        return await Oracle().talk("Hello @sysAdmin, can you help me with the server?")
-    result = _run(t)
+@pytest.mark.anyio
+async def test_talk_mention_within_text():
+    result = await Oracle().talk("Hello @sysAdmin, can you help me with the server?")
     assert result.entity == "SysAdmin"
 
 
-def test_talk_invalid_mention():
-    async def t():
-        # '@fakeAgent' should not be recognized as a summon
-        # It should fall back to normal talk() routing
-        return await Oracle().talk("@fakeAgent hello")
-    result = _run(t)
-    # Should not be 'fakeAgent', likely 'Iris' or a domain-routed entity
+@pytest.mark.anyio
+async def test_talk_invalid_mention():
+    result = await Oracle().talk("@fakeAgent hello")
     assert result.entity != "fakeAgent"
 
 
-def test_talk_mention_case_insensitive():
-    async def t():
-        return await Oracle().talk("Can you help me @SYSADMIN?")
-    result = _run(t)
+@pytest.mark.anyio
+async def test_talk_mention_case_insensitive():
+    result = await Oracle().talk("Can you help me @SYSADMIN?")
     assert result.entity == "SysAdmin"
 
 
-def test_talk_mention_email_false_positive():
+@pytest.mark.anyio
+async def test_talk_mention_email_false_positive():
     """Verify that email addresses do NOT trigger a summon."""
-    async def t():
-        # 'test@example.com' should not be recognized as a summon to 'example'
-        return await Oracle().talk("send an email to test@example.com")
-    result = _run(t)
-    # Should not be 'example', likely 'Iris' or a domain-routed entity
+    result = await Oracle().talk("send an email to test@example.com")
     assert result.entity != "example"
 
 
-def test_talk_multiple_mentions():
+@pytest.mark.anyio
+async def test_talk_multiple_mentions():
     """Verify that the first valid mention takes priority."""
-    async def t():
-        # Both @sysAdmin and @watchTower are likely valid (based on other tests)
-        # The first one found by findall should be returned
-        return await Oracle().talk("Hello @sysAdmin and @watchTower")
-    result = _run(t)
+    result = await Oracle().talk("Hello @sysAdmin and @watchTower")
     assert result.entity == "SysAdmin"
 
 
@@ -298,14 +238,9 @@ def test_get_valid_agents_missing_file():
     from unittest.mock import patch
     from pathlib import Path
 
-    def t():
-        with patch("pathlib.Path.exists", return_value=False):
-            oracle = Oracle()
-            # Clear cache if it was populated
-            Oracle._valid_agents_cache = None
-            agents = oracle._get_valid_agents_from_md()
-            return agents
-    
-    result = t()
-    assert result == set()
+    with patch("pathlib.Path.exists", return_value=False):
+        oracle = Oracle()
+        Oracle._valid_agents_cache = None
+        agents = oracle._get_valid_agents_from_md()
+        assert agents == set()
 

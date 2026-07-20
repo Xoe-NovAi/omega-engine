@@ -3,7 +3,6 @@
 Subagent Watchdog — Failure Observability for Agent Orchestration.
 Provides full visibility into subagent thinking, errors, and failures.
 """
-import asyncio
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone

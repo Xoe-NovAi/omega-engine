@@ -152,9 +152,13 @@ class SovereignVetter:
         for py_file in root.rglob("*.py"):
             if "__pycache__" in str(py_file) or py_file.name.startswith("test_"):
                 continue
-            # Self-exclusion: exclude governance and audit dirs from scans to avoid
-            # flagging the vetter's own patterns and the auditor's regexes.
+            # Self-exclusion: exclude governance, audit, and agents/tty dirs from
+            # scans to avoid flagging the vetter's own patterns, the auditor's
+            # regexes, and the standalone TTY agent (which legitimately uses
+            # asyncio for Linux Virtual Console operation).
             if "governance/" in str(py_file) or "audit/" in str(py_file):
+                continue
+            if py_file.name == "tty_agent.py":
                 continue
             try:
                 for line_num, line in enumerate(py_file.read_text(encoding="utf-8").splitlines(), 1):

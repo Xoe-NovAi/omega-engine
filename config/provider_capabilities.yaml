@@ -23,10 +23,15 @@ last_updated: "2026-07-19"
 # The Normalizer translates these to provider-specific schemas.
 # Cross-provider standard from deep research (Gap 3.1):
 #   LiteLLM, Vercel AI SDK, LangChain all use 3-tier effort levels
+# Extended with aliases for fine-grained control.
 thinking_efforts:
   - minimal    # No thinking / fastest response
+  - low        # Light reasoning (maps to minimal for binary schemas)
   - standard   # Default reasoning quality
+  - medium     # Enhanced reasoning (maps to high for binary schemas)
+  - high       # Deep reasoning
   - deep       # Maximum reasoning (Gemma 4 HIGH, OpenAI o1 max, etc.)
+  - xhigh      # Extreme reasoning (maps to high for binary schemas)
 
 # ── Provider Thinking Schema Registry ─────────────────────────
 # Maps provider design patterns to their canonical schema type.
@@ -96,8 +101,12 @@ models:
         - HIGH      # Gemini API enum for deep reasoning
       thinking_mapping:   # canonical effort → provider enum
         minimal: "MINIMAL"
+        low: "MINIMAL"
         standard: "MINIMAL"
+        medium: "HIGH"
+        high: "HIGH"
         deep: "HIGH"
+        xhigh: "HIGH"
       supports_streaming: true
       supports_thinking_streaming: true  # Verified: Gemma 4 streams thinking
       max_context: 32768

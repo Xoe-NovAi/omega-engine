@@ -157,7 +157,7 @@ class CapabilityMatrix:
                 max_context=thinking_data.get("max_context", model_data.get("max_context", 8192)),
                 max_output=thinking_data.get("max_output", model_data.get("max_output", 8192)),
                 detection_regex=thinking_data.get("detection_regex", ""),
-                mtp_drafter=model_data.get("mtp_drafter")
+                mtp_drafter=thinking_data.get("mtp_drafter")
             )
             
             self._models[model_id] = capability

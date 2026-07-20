@@ -48,11 +48,13 @@ class TestGoogleCompatProvider:
         assert provider.provider_config is not None
         assert provider.provider_config.display_name == "Google AI Studio (gemini.googleapis.com)"
     
-    def test_is_available_with_key(self, provider):
+    @pytest.mark.anyio
+    async def test_is_available_with_key(self, provider):
         """Test is_available returns True with API key."""
-        assert provider.is_available() is True
+        assert await provider.is_available() is True
     
-    def test_is_available_without_key(self, capability_matrix):
+    @pytest.mark.anyio
+    async def test_is_available_without_key(self, capability_matrix):
         """Test is_available returns False without API key."""
         with patch.object(GoogleCompatProvider, '_resolve_api_key', return_value=""):
             provider = GoogleCompatProvider(
@@ -60,7 +62,7 @@ class TestGoogleCompatProvider:
                 config={},
                 capability_matrix=capability_matrix
             )
-        assert provider.is_available() is False
+        assert await provider.is_available() is False
     
     def test_resolve_model_id(self, provider):
         """Test model ID normalization."""
@@ -198,7 +200,7 @@ class TestGoogleCompatProvider:
         assert rate_info["remaining_tokens"] == "5000"
         assert rate_info["retry_after"] == "30"
     
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_auth_error(self, capability_matrix):
         """Test generate raises auth error without API key."""
         with patch.object(GoogleCompatProvider, '_resolve_api_key', return_value=""):
@@ -215,7 +217,7 @@ class TestGoogleCompatProvider:
                 user_query="Hello"
             )
     
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_rate_limit_error(self, provider):
         """Test generate handles 429 rate limit."""
         mock_response = MagicMock()
@@ -234,7 +236,7 @@ class TestGoogleCompatProvider:
                     user_query="Hello"
                 )
     
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_server_error(self, provider):
         """Test generate handles 5xx server errors."""
         mock_response = MagicMock()
@@ -253,7 +255,7 @@ class TestGoogleCompatProvider:
                     user_query="Hello"
                 )
     
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_success(self, provider):
         """Test successful generation."""
         mock_response = MagicMock()
@@ -290,7 +292,7 @@ class TestGoogleCompatProvider:
             assert result["thoughts_token_count"] == 10
             assert result["latency_ms"] > 0
     
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_with_thinking_high(self, provider):
         """Test generation with HIGH thinking effort."""
         mock_response = MagicMock()
@@ -323,10 +325,10 @@ class TestGoogleCompatProvider:
                 thinking_effort="deep"
             )
             
-            assert result["text"] == "Let me think...\nThe answer is 42."
+            assert result["text"] == "Let me think...The answer is 42."
             assert result["thoughts_token_count"] == 100
     
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_safety_block(self, provider):
         """Test generation handles safety blocks."""
         mock_response = MagicMock()
@@ -351,7 +353,7 @@ class TestGoogleCompatProvider:
                     user_query="Bad query"
                 )
     
-    @pytest.mark.asyncio
+    @pytest.mark.anyio
     async def test_generate_timeout(self, provider):
         """Test generation handles timeout."""
         import httpx

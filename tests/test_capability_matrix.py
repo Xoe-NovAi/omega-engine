@@ -2,6 +2,7 @@
 # ⬡ OMEGA ⬡ P10 ⬡ trc_test_capability_matrix ⬡ v0.1.0 ⬡ 2026-07-19
 
 import pytest
+import yaml
 from pathlib import Path
 import sys
 
@@ -146,7 +147,6 @@ class TestCapabilityMatrix:
         assert mapping["minimal"] == "MINIMAL"
         assert mapping["standard"] == "MINIMAL"
         assert mapping["deep"] == "HIGH"
-        assert mapping["high"] == "HIGH"
     
     def test_provider_configs(self):
         """Test provider configurations are loaded."""

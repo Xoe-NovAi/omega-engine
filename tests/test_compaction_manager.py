@@ -141,7 +141,7 @@ class TestCompactionManagerCheckAndCompact:
 
     async def test_get_usage_ratio_small(self, manager, block_tools):
         """Usage ratio is small for minimal blocks."""
-        await block_tools.create_essential_block("persona", "test_entity", "test")
+        await block_tools.create_essential_block("persona", "test_entity", "test", value="I am a test entity.")
         ratio = await manager.get_usage_ratio("test_entity")
         assert ratio < 0.80  # Well below threshold
         assert ratio > 0.0
@@ -163,8 +163,7 @@ class TestCompactionManagerCheckAndCompact:
         # Create a very large block
         large_content = "test " * 5000  # ~20000 chars = ~5000 tokens
         await block_tools.create_essential_block(
-            "persona", "big_entity", "test", custom_value=large_content,
-            block_limit=50000,
+            "persona", "big_entity", "test", value=large_content,
         )
         status = await manager.get_status("big_entity")
         # 20000 chars / 4 = 5000 tokens > 3200 (80% of 4000)
@@ -176,10 +175,16 @@ class TestCompactionManagerCheckAndCompact:
             "persona", "concurrent_entity", "test",
         )
 
+        results = []
         async def check():
-            return await manager.check_and_compact("concurrent_entity")
+            r = await manager.check_and_compact("concurrent_entity")
+            results.append(r)
 
-        results = await anyio.gather(check(), check(), check())
+        async with anyio.create_task_group() as tg:
+            tg.start_soon(check)
+            tg.start_soon(check)
+            tg.start_soon(check)
+
         assert all(r.triggered is False for r in results)
 
 
@@ -199,8 +204,7 @@ class TestCompactionManagerPromoteExcess:
         large_content = "Important decision: " + "We decided to use " * 1000
         await block_tools.create_essential_block(
             "decisions", "promote_entity", "test",
-            custom_value=large_content,
-            block_limit=10000,
+            value=large_content,
         )
 
         # Add some turns to recall so we can promote
