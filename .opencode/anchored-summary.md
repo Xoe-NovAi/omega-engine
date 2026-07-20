@@ -1,1 +1,1 @@
-data/coordination/SESSION_ANCHOR.md
+/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/anchored_summary/symlink_test/projection.md

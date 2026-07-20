@@ -10,6 +10,7 @@ import json
 import logging
 import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import anyio
@@ -18,6 +19,7 @@ from .blocks import MemoryBlock, BlockCategory
 from .sqlite_vec_adapter import SQLiteVecAdapter
 from .vector_adapters import IVectorStoreAdapter
 from omega.errors import OmegaError
+from omega.infra.sqlite_policy import get_sqlite_connection
 
 logger = logging.getLogger(__name__)
 
@@ -48,31 +50,17 @@ class ArchivalMemory:
         self._initialized = False
     
     def _get_conn(self):
-        """Get SQLite connection for KV/graph storage."""
+        """Get SQLite connection for KV/graph storage (FS-B4: profiled)."""
         if self._conn is None:
-            import sqlite3
             from omega.memory_store import _get_memory_dir
             
             if self.db_path is None:
                 self.db_path = str(_get_memory_dir() / "omega_memory.db")
             
-            self._conn = sqlite3.connect(
-                self.db_path,
-                timeout=30.0,
-                check_same_thread=False,
-            )
-            self._conn.row_factory = sqlite3.Row
+            # FS-B4: Use sqlite_policy memory profile (32MB cache, D-282)
+            self._conn = get_sqlite_connection(Path(self.db_path), profile="memory")
             
-            # Same PRAGMA stack
-            self._conn.execute("PRAGMA journal_mode=WAL")
-            self._conn.execute("PRAGMA busy_timeout=30000")
-            self._conn.execute("PRAGMA synchronous=NORMAL")
-            self._conn.execute("PRAGMA journal_size_limit=67108864")
-            self._conn.execute("PRAGMA cache_size=-524288")
-            self._conn.execute("PRAGMA mmap_size=268435456")
-            self._conn.execute("PRAGMA wal_autocheckpoint=1000")
-            self._conn.execute("PRAGMA foreign_keys=ON")
-            self._conn.execute("PRAGMA temp_store=MEMORY")
+            # Operational PRAGMA (per A13 — not connection setup)
             self._conn.execute("PRAGMA optimize=0x10002")
         return self._conn
     

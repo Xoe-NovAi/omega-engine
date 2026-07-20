@@ -26,6 +26,7 @@ from typing import Any, Dict, List, Optional, Tuple, Literal
 import anyio
 
 from omega.errors import OmegaError
+from omega.infra.sqlite_policy import get_sqlite_connection
 
 logger = logging.getLogger(__name__)
 
@@ -158,25 +159,13 @@ class RecallStore:
         self._block_store = block_store
 
     def _get_conn(self) -> sqlite3.Connection:
-        """Get or create SQLite connection with hardened PRAGMA stack."""
+        """Get or create SQLite connection with profiled PRAGMA stack (FS-B4)."""
         if self._conn is None:
             self.db_path.parent.mkdir(parents=True, exist_ok=True)
-            self._conn = sqlite3.connect(
-                str(self.db_path),
-                timeout=30.0,
-                check_same_thread=False,
-            )
-            self._conn.row_factory = sqlite3.Row
-            # Hardened PRAGMA stack (same as SQLiteBlockStore and SQLiteVecAdapter)
-            self._conn.execute("PRAGMA journal_mode=WAL")
-            self._conn.execute("PRAGMA busy_timeout=30000")
-            self._conn.execute("PRAGMA synchronous=NORMAL")
-            self._conn.execute("PRAGMA journal_size_limit=67108864")
-            self._conn.execute("PRAGMA cache_size=-524288")
-            self._conn.execute("PRAGMA mmap_size=268435456")
-            self._conn.execute("PRAGMA wal_autocheckpoint=1000")
-            self._conn.execute("PRAGMA foreign_keys=ON")
-            self._conn.execute("PRAGMA temp_store=MEMORY")
+            # FS-B4: Use sqlite_policy memory profile (32MB cache, D-282)
+            self._conn = get_sqlite_connection(self.db_path, profile="memory")
+            
+            # Operational PRAGMA (per A13 — not connection setup)
             self._conn.execute("PRAGMA optimize=0x10002")
         return self._conn
 
@@ -318,6 +307,7 @@ class RecallStore:
 
         def _sync_insert():
             conn = self._get_conn()
+            conn.execute("BEGIN IMMEDIATE")
             cursor = conn.execute(
                 """INSERT OR REPLACE INTO recall_turns
                 (entity_name, session_id, turn_index, role, content, timestamp,
@@ -334,6 +324,7 @@ class RecallStore:
                     message="RecallStore append: failed to get rowid",
                     detail={"entity": entity_name, "session": session_id},
                 )
+            conn.commit()
             return row_id
 
         async with self._write_lock:
@@ -549,6 +540,7 @@ class RecallStore:
 
         def _sync_decay():
             conn = self._get_conn()
+            conn.execute("BEGIN IMMEDIATE")
 
             # Get all distinct entity names that have configured alphas
             configs = conn.execute(
@@ -579,6 +571,7 @@ class RecallStore:
                     stats.errors.append(f"{entity_name}: {e}")
 
             stats.turns_updated = total_updated
+            conn.commit()
             return stats
 
         return await anyio.to_thread.run_sync(_sync_decay)

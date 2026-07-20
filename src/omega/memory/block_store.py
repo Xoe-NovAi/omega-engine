@@ -17,6 +17,7 @@ import anyio
 
 from .blocks import MemoryBlock, BlockCategory, GovernanceLevel
 from omega.errors import OmegaError
+from omega.infra.sqlite_policy import get_sqlite_connection
 
 logger = logging.getLogger(__name__)
 
@@ -41,26 +42,13 @@ class SQLiteBlockStore:
         self._initialized = False
     
     def _get_conn(self) -> sqlite3.Connection:
-        """Get or create SQLite connection with hardened PRAGMA stack."""
+        """Get or create SQLite connection with profiled PRAGMA stack (FS-B4)."""
         if self._conn is None:
             self.db_path.parent.mkdir(parents=True, exist_ok=True)
-            self._conn = sqlite3.connect(
-                str(self.db_path),
-                timeout=30.0,
-                check_same_thread=False,
-            )
-            self._conn.row_factory = sqlite3.Row
+            # FS-B4: Use sqlite_policy memory profile (32MB cache, D-282)
+            self._conn = get_sqlite_connection(self.db_path, profile="memory")
             
-            # Hardened PRAGMA stack (same as SQLiteVecAdapter)
-            self._conn.execute("PRAGMA journal_mode=WAL")
-            self._conn.execute("PRAGMA busy_timeout=30000")
-            self._conn.execute("PRAGMA synchronous=NORMAL")
-            self._conn.execute("PRAGMA journal_size_limit=67108864")
-            self._conn.execute("PRAGMA cache_size=-524288")
-            self._conn.execute("PRAGMA mmap_size=268435456")
-            self._conn.execute("PRAGMA wal_autocheckpoint=1000")
-            self._conn.execute("PRAGMA foreign_keys=ON")
-            self._conn.execute("PRAGMA temp_store=MEMORY")
+            # Operational PRAGMA (per A13 — not connection setup)
             self._conn.execute("PRAGMA optimize=0x10002")
         return self._conn
     
