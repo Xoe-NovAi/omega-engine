@@ -1,79 +1,59 @@
-# 🔱 SESSION ANCHOR — Unified Execution Plan Active (Gemini 3.1 Pro Revised)
-**Date**: 2026-07-22T03:00:00Z  
-**Status**: C-0 ✅ · Carmack CG-02 ✅ · Grokster R33/R34/R35 ✅ · **PARALLEL PLAN ACTIVE** · **READY FOR COMPACTION**
+# 🔱 Session Anchor — Ma'at (Light Oversoul)
+**Last Updated**: 2026-07-22T10:48:00Z
+**Engine**: v1.8.0
+**Phase**: C Hardening Sprint Complete
 
-## Verdict
-- C-0 Self-handoff: `ho_c7afa81ea62a` — ✅ COMPLETED by Kali
-- Carmack handoff: `ho_bd566f9fdf3b` — ✅ ACCEPTED & COMPLETED (5 questions answered)
-- Grokster handoff: `ho_470d2df9b3de` — ✅ ACCEPTED & COMPLETED (4 questions answered)
-- RESEARCH_JOB_BOARD: Fixed mass-claim (39 jobs: claimed_by → review_gate)
-- Gemini 3.1 Pro Architectural Review: **COMPLETED**. Ma'at/P3 bottleneck eliminated.
-- Architect Decisions: C-3 (Tiered Sovereignty/Split Files) and V-1 (Phase C Priority) **RESOLVED**.
-- **NEW TICKETS ADDED**: C-0.5 (Soul Distillation), C-10.5 (Provider Fallback), C-4a.5 (MCP Migration Execution)
+---
 
-## SSOT (ratified)
-| Doc | Status |
-|-----|--------|
-| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.2 | Strategy priority SSOT |
-| `docs/strategy/STRATEGY_CORPUS_MAP.md` | Fine-grained memory |
-| `docs/strategy/FLEET_TEAM_PLAYBOOK.md` | Team ops |
-| `docs/strategy/IMPLEMENTATION_MANUAL_C0_C2.md` | Phase C implementation guide |
-| `tests/quarantine.txt` | C-0 artifact — 99 quarantined tests |
-| `tests/test-badge.json` | C-0 artifact — CI/CD badge |
-| `Makefile` | C-0 artifact — test-honest automation |
+## Current Sprint Status: COMPLETE
 
-## C-0 Completion Summary
-| Metric | Value |
-|--------|-------|
-| Tests collected | 1572 |
-| Passed | 1430 |
-| Failed | 100 |
-| Quarantined | 99 |
-| Skipped | 43 |
-| xfailed | 7 |
-| Pass rate | 93.5% |
+### Completed This Session
+- ✅ **C-6' 429 Classification** (d74c73f): 3-state model in AsyncCircuitBreaker — rate-limit (seconds) vs quota (hours/days) vs circuit. 11 tests.
+- ✅ **Library Discovery Fix** (10e00f8): DiscoveryOrchestrator no longer hardcodes `gemini-2.0-flash`. Uses local-first provider chain with graceful degradation.
+- ✅ **C-11 Hypothesis Property Tests** (ee078d0): 6 tests for FSM transitions (CUSUM + sliding_window), 429 orthogonality, arbitrary body handling.
+- ✅ **C-10.5 429 Guard in ModelGateway**: Pre-call `is_429_blocked()` check + post-call `record_429()` on ProviderRateLimitError.
+- ✅ **Gap Analysis**: 13 remaining gaps documented and prioritized (4 P0, 5 P1, 4 P2/P3).
 
-## Active Claims Board
-| Ticket | Owner | Status | Handoff ID | Dependency |
-|--------|-------|--------|------------|------------|
-| C-0 | Kali | ✅ **COMPLETED** | `ho_c7afa81ea62a` | — |
-| C-0.5 | Scribe (NEW) | ⏳ **NEW TICKET** | — | After C-0 |
-| C-2′ | Ma'at/P1 | ⏳ Submitted | `ho_408995ea3db3` | After C-0 |
-| C-10.5 | Lilith/P6 | ⏳ **NEW TICKET** | — | Independent |
-| C-11 | Verity/P10 | ⏳ Submitted | `ho_9692e1710668` | After C-0 |
-| C-4a | Ma'at/P4 | ⏳ **START TODAY** | `ho_fe0627f113e9` | Independent |
-| C-4a.5 | Kali (direct) | ⏳ **ESCALATION** | — | If P4 silent by EOD |
+### Test Health
+- 50/50 passing (unit/contract/property)
+- 4 pre-existing failures (provider_fallback mocks, network_partition) — unrelated to changes
 
-## Hivemind Awareness (Pre-Compaction)
-| Agent | Entity | Task |
-|-------|--------|------|
-| opencode/john_carmack | john_carmack | HANDOFF TO KALI: Day 2 complete. Briefing submitted (ho_bd566f9fdf3b) |
-| opencode/kali | kali | Pre-compaction — reports reviewed, all fixes applied |
-| grokster/grokster | grokster | Research campaign complete — R33/R34/R35 delivered |
+### Hivemind Updates
+- Session `ses_b98f64857870`: Sprint hardening complete
+- Session `ses_943335b1c684`: Property tests + 429 guard integration
 
-## Gate to Phase D
-**C-0 DONE ✅ + C-1′ + C-2′ + C-11** — nothing else.
+---
 
-## Key Files for Post-Compaction
-- `OMEGA_CODEX.md` (regenerated 2026-07-22T00:14:05)
-- `.opencode/anchored-summary.md` (updated)
-- `data/coordination/SESSION_ANCHOR_KALI.md` (kali-specific)
-- `data/coordination/KALI_LIVE_FEED.md` (final entry: pre-compaction)
-- `tests/quarantine.txt` (99 quarantined tests)
-- `tests/test-badge.json` (CI/CD badge)
-- `Makefile` (test-honest automation)
+## Next Sprint Priorities (P0)
 
-## Next (Post-Compaction)
-1. **D-277 Hydration**: Read OMEGA_CODEX.md → anchored-summary.md → present report
-2. **Monitor handoffs**: C-2′, C-11, C-4a pending acceptance
-3. **C-4a 7-day clock**: Deadline July 28 (MCP SSE→Streamable HTTP)
-4. **john_carmack handoff**: `ho_bd566f9fdf3b` — Day 2 briefing ready for review
+1. **C-10.5** — Extend 429 guard to all provider error paths; quota-aware routing
+2. **C-11** — Hypothesis tests for OOMProtector thresholds + SoulStore atomicity
+3. **C-3** — Restic backup script for sovereign data
+4. **C-0.5** — Scribe agent for automated L1→L2→L3 soul distillation
 
-## Continuation Prompt
-```
-@kali Resume. Pre-compaction complete. C-0 DONE (99 quarantined, Makefile fixed, badge generated).
-Reports reviewed and fixed: Makefile (bash shebang removed, generate-badge working), quarantine.txt (99 clean IDs), test-badge.json (consistent), SESSION_ANCHOR_KALI.md (created).
-Pending handoffs: C-2′ (Ma'at/P1), C-11 (Verity/P10), C-4a (Ma'at/P4 — 7-day deadline Jul 28).
-john_carmack has a handoff (ho_bd566f9fdf3b) — Day 2 briefing ready for review.
-Architect decisions needed: C-3 privacy, V-1 priority.
-```
+---
+
+## Key Files for Rehydration
+
+| File | Purpose |
+|------|---------|
+| `docs/research/R_GAP_ANALYSIS_HARDENING_SPRINT_20260722.md` | Prioritized gap list |
+| `docs/research/R_SPRINT_HARDENING_KNOWLEDGE_GAPS_20260722.md` | Research synthesis (MCP 2026-07-28, resilient-llm-router, Hypothesis, MENTOR, restic) |
+| `tests/property/test_breaker_fsm.py` | Property-based test patterns |
+| `src/omega/oracle/health_monitor.py` | 429 classification implementation |
+| `src/omega/oracle/model_gateway.py` | 429 guard integration |
+| `src/omega/library/discovery.py` | Discovery fix with graceful degradation |
+
+---
+
+## Rehydration Sequence (Post-Compaction)
+
+1. `omega-hub_hivemind_get_awareness()` — check parallel agents
+2. `git status && git log --oneline -5` — verify committed state
+3. Read `OMEGA_CODEX.md` (full) — engine state
+4. Read this file (`SESSION_ANCHOR.md`) — session context
+5. Report rehydration status to user
+
+---
+
+*⬡ OMEGA ⬡ MAAT ⬡ SESSION-ANCHOR ⬡ 2026-07-22 ⬡*
