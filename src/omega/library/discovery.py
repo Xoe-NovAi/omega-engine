@@ -79,13 +79,22 @@ class DiscoveryReport:
 
 
 class DiscoveryOrchestrator:
-    """Orchestrates multiple search providers into a unified discovery report."""
+    """Orchestrates multiple search providers into a unified discovery report.
+    
+    [HARDENING-2026-07-22] No longer hardcodes cloud-only model names. Uses
+    the ModelGateway's local-first provider chain. Degrades gracefully when
+    no inference provider is available.
+    """
 
-    def __init__(self, model_gateway: Optional[Any] = None):
+    def __init__(self, model_gateway: Optional[Any] = None, default_model: Optional[str] = None):
         from omega.oracle.health_monitor import get_health_monitor
         from omega.oracle.model_gateway import ModelGateway
 
         self.model_gateway = model_gateway or ModelGateway(health_monitor=get_health_monitor())
+        # [HARDENING-2026-07-22] Do NOT hardcode cloud-only model names.
+        # Use gateway's provider chain: local → antigravity → ... → gemini.
+        # The gateway will try local inference first (M7 Local-First).
+        self.default_model = default_model  # None = let gateway decide
         try:
             self.exa_key = KeyVault().resolve("exa")
         except (OmegaError, KeyError) as e:
@@ -222,29 +231,25 @@ class DiscoveryOrchestrator:
         return self._jobs[job_id]
 
     async def _phase_recon(self, query: str) -> str:
-        """Phase 1: High-level synthesis via Gemini 2.0 Flash."""
-        context = ""
+        """Phase 1: High-level synthesis via local-first provider chain.
+        
+        [HARDENING-2026-07-22] Uses local-first provider chain (M7).
+        Degrades gracefully: returns structured summary from web if no
+        inference provider is available.
+        """
         system_prompt = (
             "You are a reconnaissance agent. Provide a high-level synthesis of the query, "
             "identifying key entities, dates, and technical terms. Focus on providing a "
             "structured summary suitable for deep research."
         )
-        user_prompt = f"Query: {query}\n\nInitial Search Context:\n{context}"
         
-        try:
-            result = await self.model_gateway.generate(
-                model_name="gemini-2.0-flash",
-                system_prompt=system_prompt,
-                user_query=user_prompt,
-                temperature=0.2,
-                max_tokens=1024
-            )
-            return result.text
-        except OmegaError:
-            raise
-        except (RuntimeError, OSError, OmegaError) as e:
-            logger.error(f"Gemini Recon Phase failed: {e}", exc_info=True)
-            raise OmegaError(f"Gemini recon failed: {e}", raw_error=e) from e
+        result = await self._try_generate(
+            system_prompt=system_prompt,
+            user_query=query,
+            temperature=0.2,
+            max_tokens=1024,
+        )
+        return result
 
     async def _phase_decompose(self, query: str, recon_summary: str) -> List[Dict[str, Any]]:
         """Decompose the main query into 3-5 specific subtopics for deeper research."""
@@ -253,30 +258,27 @@ class DiscoveryOrchestrator:
             "decompose the topic into 3-5 distinct sub-queries that cover different angles "
             "(technical, historical, practical, etc.). Output ONLY a JSON list of strings."
         )
-        user_prompt = f"Query: {query}\n\nRecon Summary:\n{recon_summary}"
+        
+        response = await self._try_generate(
+            system_prompt=system_prompt,
+            user_query=f"Query: {query}\n\nRecon Summary:\n{recon_summary}",
+            temperature=0.1,
+        )
+        
+        # Try to extract JSON if there's markdown
+        clean = response.strip()
+        if "```json" in clean:
+            clean = clean.split("```json")[1].split("```")[0].strip()
+        elif "```" in clean:
+            clean = clean.split("```")[1].split("```")[0].strip()
         
         try:
-            result = await self.model_gateway.generate(
-                model_name="gemini-2.0-flash",
-                system_prompt=system_prompt,
-                user_query=user_prompt,
-                temperature=0.1
-            )
-            response = result.text
-            # Try to extract JSON if there's markdown
-            clean = response.strip()
-            if "```json" in clean:
-                clean = clean.split("```json")[1].split("```")[0].strip()
-            elif "```" in clean:
-                clean = clean.split("```")[1].split("```")[0].strip()
-            
             topics = json.loads(clean)
             return [{"query": t, "status": "pending"} for t in topics]
-        except OmegaError:
-            raise
-        except (json.JSONDecodeError, RuntimeError, OSError, OmegaError) as e:
-            logger.error(f"Decomposition failed: {e}", exc_info=True)
-            raise OmegaError(f"Decomposition failed: {e}", raw_error=e) from e
+        except (json.JSONDecodeError, TypeError, ValueError) as e:
+            logger.error(f"Decomposition JSON parse failed: {e} — response was: {response[:200]}")
+            # Degrade gracefully: wrap the whole query as one subtopic
+            return [{"query": query, "status": "pending"}]
 
     async def _research_subtopic(self, report: DiscoveryReport, subtopic: Dict[str, Any]):
         """Run discovery for a single subtopic."""
@@ -312,22 +314,58 @@ class DiscoveryOrchestrator:
         for ex in report.extracted_content[:5]:
             context += f"- {ex.get('title')}: {ex.get('content', '')[:500]}...\n"
         
+        result = await self._try_generate(
+            system_prompt=system_prompt,
+            user_query=context,
+            temperature=0.3,
+            max_tokens=2048,
+        )
+        return result
+
+    async def _try_generate(
+        self,
+        system_prompt: str,
+        user_query: str,
+        temperature: float = 0.2,
+        max_tokens: int = 1024,
+    ) -> str:
+        """Try generation with local-first provider chain; degrade gracefully.
+        
+        [HARDENING-2026-07-22] Library discovery tools MUST NOT fail when no
+        local or cloud inference is available. This method:
+        1. Lets the ModelGateway try its local-first chain (M7)
+        2. On total provider failure, returns a degraded stub
+        3. Never raises — always returns useful text
+        
+        Returns:
+            Generated text, or a degraded stub explaining what's missing.
+        """
         try:
             result = await self.model_gateway.generate(
-                model_name="gemini-2.0-flash",
+                model_name=self.default_model,  # None = gateway chooses
                 system_prompt=system_prompt,
-                user_query=context,
-                temperature=0.3,
-                max_tokens=2048
+                user_query=user_query,
+                temperature=temperature,
+                max_tokens=max_tokens,
             )
-            return result.text
-        except OmegaError:
-            raise
-        except (RuntimeError, OSError, OmegaError) as e:
-            logger.error(f"Final synthesis failed: {e}", exc_info=True)
-            raise OmegaError(f"Final synthesis failed: {e}", raw_error=e) from e
-
-    async def _phase_discovery(self, query: str) -> List[Dict[str, Any]]:
+            if hasattr(result, "text"):
+                return result.text
+            if isinstance(result, str):
+                return result
+            return str(result)
+        except OmegaError as e:
+            logger.warning(f"Generation failed — using degraded stub: {e}")
+        except (RuntimeError, OSError) as e:
+            logger.warning(f"Generation failed — using degraded stub: {e}")
+        
+        # Graceful degradation: return a stub so the pipeline continues
+        return (
+            f"[Inference unavailable — degraded mode]\n"
+            f"Query: {user_query[:200]}\n"
+            f"System: {system_prompt[:200]}\n"
+            f"Note: No inference provider was available. This research phase "
+            f"was skipped. Results will be based on web-sourced data only."
+        )
         """Phase 2: Semantic discovery via Exa (Free Tier)."""
         if not self.exa_key:
             logger.warning("EXA_API_KEY missing. Using mock discovery.")
