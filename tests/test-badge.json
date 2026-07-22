@@ -1,0 +1,15 @@
+{
+  "passed": 1430,
+  "failed": 100,
+  "quarantined": 99,
+  "xpassed": 0,
+  "skipped": 43,
+  "xfailed": 7,
+  "total": 1573,
+  "pass_rate": "93.5%",
+  "timestamp": "2026-07-21T20:30:59.710867",
+  "version": "1.0.0",
+  "quarantine_file": "tests/quarantine.txt",
+  "expiry_date": "2026-08-01",
+  "quarantine_note": "C-0 Test Suite Honesty: flaky tests quarantined with expiry enforcement"
+}

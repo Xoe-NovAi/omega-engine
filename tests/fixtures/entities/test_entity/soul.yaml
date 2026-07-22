@@ -1,0 +1,12 @@
+entity:
+  name: test_entity
+  archetype: test
+  voice:
+    tone: neutral
+    style: concise
+  lessons_learned:
+    - "L3 test principle: always verify"
+  approved_lessons: []
+  config:
+    model: test-model
+    temperature: 0.7

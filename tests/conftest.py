@@ -3,6 +3,8 @@ import logging
 import pytest
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
+import tempfile
+import yaml
 
 from omega.memory_store import MemoryStore, reset_memory_store
 from omega.oracle.context_builder import ContextBuilder
@@ -93,3 +95,80 @@ def sample_exchanges():
             "metadata": {},
         },
     ]
+
+# ============================================================================
+# C-11 Test Infrastructure Fixtures
+# ============================================================================
+
+@pytest.fixture
+def temp_entity_dir(tmp_path):
+    """Create a temporary entity directory with minimal soul.yaml."""
+    entities = tmp_path / "entities"
+    entities.mkdir()
+    entity = entities / "test_entity"
+    entity.mkdir()
+    soul = {"entity": {"name": "test_entity", "lessons_learned": []}}
+    (entity / "soul.yaml").write_text(yaml.dump(soul))
+    return entities
+
+
+@pytest.fixture
+def mock_soul_store(temp_entity_dir):
+    """SoulStore with temp entities dir."""
+    from omega.oracle.soul_store import SoulStore
+    return SoulStore(temp_entity_dir)
+
+
+@pytest.fixture
+def mock_provider():
+    """Mock provider config."""
+    return {
+        "name": "mock_provider",
+        "type": "openai",
+        "api_key": "test-key",
+        "model": "test-model",
+        "priority": 0,
+        "enabled": True,
+    }
+
+
+@pytest.fixture
+def mock_oom_protector():
+    """OOMProtector with mocked RAM."""
+    from omega.oracle.resource_guard import OOMProtector
+    return OOMProtector
+
+
+@pytest.fixture
+def mock_admission_controller():
+    """Fresh AdmissionController per test."""
+    from omega.oracle.admission_controller import LocalInferenceAdmission
+    return LocalInferenceAdmission()
+
+
+@pytest.fixture
+def soul_store(tmp_path):
+    """SoulStore with temp entities dir."""
+    from omega.oracle.soul_store import SoulStore
+    entities = tmp_path / "entities"
+    entities.mkdir()
+    (entities / "test_entity").mkdir()
+    import yaml
+    (entities / "test_entity" / "soul.yaml").write_text(
+        yaml.dump({"entity": {"name": "test_entity", "lessons_learned": []}})
+    )
+    return SoulStore(entities)
+
+
+@pytest.fixture
+def oom_protector():
+    """OOMProtector with mocked RAM."""
+    from omega.oracle.resource_guard import OOMProtector
+    return OOMProtector
+
+
+@pytest.fixture
+def admission_controller():
+    """Fresh AdmissionController per test."""
+    from omega.oracle.admission_controller import LocalInferenceAdmission
+    return LocalInferenceAdmission()

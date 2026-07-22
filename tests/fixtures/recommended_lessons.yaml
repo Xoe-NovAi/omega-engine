@@ -1,0 +1,9 @@
+proposals:
+  - level: L3
+    principle: "Always verify before trust"
+    source: "test session"
+    confidence: 0.9
+  - level: L2
+    insight: "Verification reduces risk"
+    source: "test analysis"
+    confidence: 0.8

@@ -1,0 +1,24 @@
+providers:
+  - name: mock_provider
+    type: openai
+    api_key: test-key
+    model: test-model
+    priority: 0
+    enabled: true
+  - name: mock_cloud
+    type: openai
+    api_key: cloud-key
+    model: cloud-model
+    priority: 1
+    enabled: true
+
+maakali_routing:
+  kali:
+    prefer: native-gguf
+    fallback: antigravity
+  maat:
+    prefer: antigravity
+    fallback: google
+  lilith:
+    prefer: antigravity
+    fallback: google

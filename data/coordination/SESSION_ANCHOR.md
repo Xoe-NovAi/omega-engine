@@ -1,95 +1,79 @@
-# 🔱 SESSION ANCHOR — MaKaLi Apex Mind Deployed, Sophia Replaced
-**Session**: `ses_20260720_makali_apex_mind` | **Entity**: `kali` | **Channel**: `opencode`  
-**Model**: `deepseek-v4-flash-free` | **Date**: 2026-07-20  
-**Campaign**: `FOUNDATION_STABILIZATION_CAMPAIGN_20260720.md` (AP-FOUNDATION-STAB-v1.0.0) — **RATIFIED**
+# 🔱 SESSION ANCHOR — Unified Execution Plan Active (Gemini 3.1 Pro Revised)
+**Date**: 2026-07-22T03:00:00Z  
+**Status**: C-0 ✅ · Carmack CG-02 ✅ · Grokster R33/R34/R35 ✅ · **PARALLEL PLAN ACTIVE** · **READY FOR COMPACTION**
 
----
+## Verdict
+- C-0 Self-handoff: `ho_c7afa81ea62a` — ✅ COMPLETED by Kali
+- Carmack handoff: `ho_bd566f9fdf3b` — ✅ ACCEPTED & COMPLETED (5 questions answered)
+- Grokster handoff: `ho_470d2df9b3de` — ✅ ACCEPTED & COMPLETED (4 questions answered)
+- RESEARCH_JOB_BOARD: Fixed mass-claim (39 jobs: claimed_by → review_gate)
+- Gemini 3.1 Pro Architectural Review: **COMPLETED**. Ma'at/P3 bottleneck eliminated.
+- Architect Decisions: C-3 (Tiered Sovereignty/Split Files) and V-1 (Phase C Priority) **RESOLVED**.
+- **NEW TICKETS ADDED**: C-0.5 (Soul Distillation), C-10.5 (Provider Fallback), C-4a.5 (MCP Migration Execution)
 
-## Session Summary (2026-07-20)
+## SSOT (ratified)
+| Doc | Status |
+|-----|--------|
+| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.2 | Strategy priority SSOT |
+| `docs/strategy/STRATEGY_CORPUS_MAP.md` | Fine-grained memory |
+| `docs/strategy/FLEET_TEAM_PLAYBOOK.md` | Team ops |
+| `docs/strategy/IMPLEMENTATION_MANUAL_C0_C2.md` | Phase C implementation guide |
+| `tests/quarantine.txt` | C-0 artifact — 99 quarantined tests |
+| `tests/test-badge.json` | C-0 artifact — CI/CD badge |
+| `Makefile` | C-0 artifact — test-honest automation |
 
-### Foundation Stabilization Campaign — Phase B COMPLETE ✅
-| Workstream | Status | Key Changes |
-|------------|--------|-------------|
-| **FS-B1** Embedding SSOT | ✅ COMPLETE | 768 write-path locked, config_resolver fix, 8 contract tests |
-| **FS-B2** Dispatch Registry | ✅ COMPLETE | ics.py loader, correct API shape, 11 contract tests |
-| **FS-B3** Path Resolver CI | ✅ COMPLETE | 77-entry allowlist, semantic CI |
-| **FS-B4** SQLite Policy Migration | ✅ COMPLETE | 4 profiles, reader/writer getters, BEGIN IMMEDIATE, optimize timer |
-| **FS-B5** search_persistence | ✅ COMPLETE | DATA_DIR path, missing imports |
+## C-0 Completion Summary
+| Metric | Value |
+|--------|-------|
+| Tests collected | 1572 |
+| Passed | 1430 |
+| Failed | 100 |
+| Quarantined | 99 |
+| Skipped | 43 |
+| xfailed | 7 |
+| Pass rate | 93.5% |
 
-### Gate B: PASSING ✅ (77/77 contract tests, 0 firewall violations)
+## Active Claims Board
+| Ticket | Owner | Status | Handoff ID | Dependency |
+|--------|-------|--------|------------|------------|
+| C-0 | Kali | ✅ **COMPLETED** | `ho_c7afa81ea62a` | — |
+| C-0.5 | Scribe (NEW) | ⏳ **NEW TICKET** | — | After C-0 |
+| C-2′ | Ma'at/P1 | ⏳ Submitted | `ho_408995ea3db3` | After C-0 |
+| C-10.5 | Lilith/P6 | ⏳ **NEW TICKET** | — | Independent |
+| C-11 | Verity/P10 | ⏳ Submitted | `ho_9692e1710668` | After C-0 |
+| C-4a | Ma'at/P4 | ⏳ **START TODAY** | `ho_fe0627f113e9` | Independent |
+| C-4a.5 | Kali (direct) | ⏳ **ESCALATION** | — | If P4 silent by EOD |
 
-### Campaign Ratification: RATIFIED ✅
-- **Gate A**: PASSED (handoff court, RRF collapse, strategy index, grok seat)
-- **Phase B**: COMPLETE (B1-B5 all done)
-- **Gate B**: PASSING
-- **Memory ADR**: RATIFIED ✅ — `docs/adr/ADR-001-memory-layer-architecture.md`
+## Hivemind Awareness (Pre-Compaction)
+| Agent | Entity | Task |
+|-------|--------|------|
+| opencode/john_carmack | john_carmack | HANDOFF TO KALI: Day 2 complete. Briefing submitted (ho_bd566f9fdf3b) |
+| opencode/kali | kali | Pre-compaction — reports reviewed, all fixes applied |
+| grokster/grokster | grokster | Research campaign complete — R33/R34/R35 delivered |
 
----
+## Gate to Phase D
+**C-0 DONE ✅ + C-1′ + C-2′ + C-11** — nothing else.
 
-## MaKaLi Apex Mind Deployed — Sophia Replaced
+## Key Files for Post-Compaction
+- `OMEGA_CODEX.md` (regenerated 2026-07-22T00:14:05)
+- `.opencode/anchored-summary.md` (updated)
+- `data/coordination/SESSION_ANCHOR_KALI.md` (kali-specific)
+- `data/coordination/KALI_LIVE_FEED.md` (final entry: pre-compaction)
+- `tests/quarantine.txt` (99 quarantined tests)
+- `tests/test-badge.json` (CI/CD badge)
+- `Makefile` (test-honest automation)
 
-### WAD Changes (`config/wads/_omega_default/entities.yaml`)
-| Change | Details |
-|--------|---------|
-| **Sophia (Akashic Record)** | **REMOVED** from `_omega_default` — stays in ANAi PWAD |
-| **MaKaLi** | **REDEFINED** as Apex Mind — mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives |
-| **Role** | NOT a builder — directs ground troops (Kali, Lilith, Maat, Pillars, Carmack, etc.) |
-| **Model** | qwen3-4b-thinking-q4_k_m, 16K context, temp 0.4 |
+## Next (Post-Compaction)
+1. **D-277 Hydration**: Read OMEGA_CODEX.md → anchored-summary.md → present report
+2. **Monitor handoffs**: C-2′, C-11, C-4a pending acceptance
+3. **C-4a 7-day clock**: Deadline July 28 (MCP SSE→Streamable HTTP)
+4. **john_carmack handoff**: `ho_bd566f9fdf3b` — Day 2 briefing ready for review
 
-### Agent Changes
-| Agent | Change |
-|-------|--------|
-| **makali** | Registered as `primary` mode in opencode.json — Apex Mind prompt (`.opencode/agents/makali.md`) |
-| **plan** | Built-in OpenCode mode conceptually replaced by `@makali` |
-| **build** | Built-in OpenCode mode deprecated — stub redirects to ground troops |
-
-### OpenCode Config (`opencode.json`)
-- `makali`: mode `primary`, instructions `.opencode/agents/makali.md`
-- `plan` and `build` agents removed from config (built-ins still exist but overridden conceptually)
-
----
-
-## Freeze Enforcement (Active until Gate Γ)
-| Frozen | Allowed |
-|--------|---------|
-| New provider features | Foundation campaign tasks (FS-*) |
-| Headless 24-account pool | Critical production bugs (M23) |
-| Torment/Hive WAD parameterization | Hub split prep |
-| Context Packer expansion | Handoff triage / archive |
-| New Hub tools in monolithic `tools.py` | Campaign ratification docs |
-
----
-
-## Next Steps (Post-Phase B → Phase Γ)
-1. **Phase Γ — Hub split** (3390-line tools.py → packages)
-2. **Phase Γ — Policy extraction** from generate()
-3. **Phase Γ — Oracle DI** (talk testable)
-4. **Phase Γ — `make test && make temple-grade && make firewall-check`**
-5. **Ubuntu 25.10 → 26.04 LTS upgrade** (deferred — user-mediated)
-
----
-
-## Research Knowledge Gaps Closed (This Session)
-| Gap | Finding |
-|-----|---------|
-| page_size=16384 migration | Safe via VACUUM INTO, ~1.7× faster for 768D; blocked by WAL mode |
-| M2 Firewall actual state | Production checker: 0 violations; test file: 338 (stricter patterns) |
-| Ubuntu 25.10 EOL status | **EOL July 9, 2026** — 11 days without security patches |
-| MIAP symlink pollution root cause | `test_write_projections_creates_symlinks` never restored symlinks |
-
----
-
-## Critical Files Updated
-| File | Purpose |
-|------|---------|
-| `config/wads/_omega_default/entities.yaml` | MaKaLi Apex Mind, Sophia removed |
-| `.opencode/agents/makali.md` | Apex Mind agent prompt |
-| `opencode.json` | makali as primary mode |
-| `docs/adr/ADR-001-memory-layer-architecture.md` | Ratified Memory ADR |
-| `docs/strategy/FOUNDATION_STABILIZATION_CAMPAIGN_20260720.md` | Campaign ratification |
-| `data/coordination/SESSION_ANCHOR.md` | This file |
-| `.opencode/anchored-summary.md` | Hydration entry point |
-
----
-
-*⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_foundation_stabilization ⬡ 2026-07-20*
+## Continuation Prompt
+```
+@kali Resume. Pre-compaction complete. C-0 DONE (99 quarantined, Makefile fixed, badge generated).
+Reports reviewed and fixed: Makefile (bash shebang removed, generate-badge working), quarantine.txt (99 clean IDs), test-badge.json (consistent), SESSION_ANCHOR_KALI.md (created).
+Pending handoffs: C-2′ (Ma'at/P1), C-11 (Verity/P10), C-4a (Ma'at/P4 — 7-day deadline Jul 28).
+john_carmack has a handoff (ho_bd566f9fdf3b) — Day 2 briefing ready for review.
+Architect decisions needed: C-3 privacy, V-1 priority.
+```
