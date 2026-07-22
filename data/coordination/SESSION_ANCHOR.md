@@ -1,11 +1,11 @@
 # 🔱 Session Anchor — Ma'at (Light Oversoul)
-**Last Updated**: 2026-07-22T15:45:00Z
+**Last Updated**: 2026-07-22T16:50:00Z
 **Engine**: v1.8.0
-**Phase**: C Hardening Complete → Guard & Distill Sprint Ready → Research Complete
+**Phase**: C Hardening Complete → Guard & Distill Sprint → V-1 Complete → C-3 Complete → C-10.5 Next
 
 ---
 
-## Current Sprint Status: RESEARCH COMPLETE — READY FOR IMPLEMENTATION
+## Current Sprint Status: C-3 COMPLETE — C-10.5 NEXT
 
 ### Completed This Session
 - ✅ **Phase C Hardening Complete**: 31 new tests passing, 2,308 lines added
@@ -22,10 +22,28 @@
   - Domain 3 (Quota Routing): Provider headers, 402 vs 429, tiktoken +15% margin
   - Domain 4 (Property Tests): anyio.run() wrapper, CancelScope shield, CI settings
   - Domain 5 (Scribe): llama.cpp grammar, 4k/500 overlap, Refine vs Map-Reduce
+- ✅ **V-1 VaultCore MVP Implemented & Tested**:
+  - `src/omega/vault/vault_core.py` — VaultCore class with age encryption + Argon2id
+  - `src/omega/cli/vault.py` — CLI commands (set/get/list/rotate/delete/audit/verify/init)
+  - `tests/unit/test_vault_core.py` — 22 tests, all passing
+  - Uses `age` library (pyage) with X25519 keys derived from Argon2id
+  - Argon2id params: memory_cost=19456 (19 MiB), time_cost=2, parallelism=1
+  - zeroize for memory wiping, base64 encoding for ciphertext storage
+  - Append-only JSON Lines audit log
+- ✅ **C-3 Restic 3-2-1 Backup Implemented**:
+  - `scripts/backup_restic.sh` — Daily backup with VaultCore credential retrieval
+  - `scripts/restore_test.sh` — Monthly restore test (5% sample) with integrity verification
+  - `config/omega/restic_exclude.txt` — Exclude patterns for caches, logs, locks, vault
+  - `config/omega/omega-restic-backup.service` + `.timer` — Daily 3am ± 15min randomized
+  - Uses append-only B2 keys, Object Lock (Compliance Mode)
+  - Retention: 7 daily / 4 weekly / 6 monthly / 1 yearly (max 18 snapshots)
+  - Healthchecks.io dead-man's switch support
 
 ### Hivemind Updates
-- Session `ses_d9201bb7e611`: Research synthesis complete
-- Workspace lock `guard-and-distill-sprint` acquired
+- Session `ses_978f350ee03a`: V-1 implementation complete
+- Session `ses_xxx`: C-3 implementation complete
+- Workspace lock `v1-vaultcore-implementation` released
+- Workspace lock `c3-restic-backup` acquired
 
 ---
 
@@ -33,9 +51,9 @@
 
 | Priority | Ticket | Description | Depends On |
 |----------|--------|-------------|------------|
-| **1** | **V-1** | VaultCore MVP — secure credential storage (age + Argon2id) | C-0, C-1' ✅ |
-| **2** | **C-3** | Restic 3-2-1 Backup for Sovereign Data | V-1 (partial) |
-| **3** | **C-10.5** | Quota-Aware Provider Routing | C-6' ✅ |
+| **1** | **V-1** | ✅ **COMPLETE** — VaultCore MVP | C-0, C-1' ✅ |
+| **2** | **C-3** | ✅ **COMPLETE** — Restic 3-2-1 Backup | V-1 (partial) |
+| **3** | **C-10.5** | **NEXT** — Quota-Aware Provider Routing | C-6' ✅ |
 | **4** | **C-11** | Property Tests: OOMProtector + SoulStore | C-2' ✅, C-1' ✅ |
 | **5** | **C-0.5** | Scribe Agent L1→L2→L3 Distillation Pipeline | M5, M11, C-10.5 |
 
@@ -47,9 +65,17 @@
 |------|---------|
 | `docs/sprints/guard-and-distill/index.md` | Sprint Plan Index — Read this first |
 | `docs/sprints/guard-and-distill/02-p0-tickets/V-1-vaultcore-mvp.md` | V-1 ticket with implementation sketch |
+| `docs/sprints/guard-and-distill/02-p0-tickets/C-3-restic-backup.md` | C-3 ticket with implementation sketch |
 | `docs/research/R_GUARD_DISTILL_RESEARCH_GUIDE_20260722.md` | **Research manual with verified findings (all ✅)** |
 | `docs/standards/LLM_FRIENDLY_DOCS_BP.md` | Doc standards with M8/M18 mandates |
 | `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Strategy SSOT (v5.2.0) |
+| `src/omega/vault/vault_core.py` | VaultCore implementation |
+| `src/omega/cli/vault.py` | Vault CLI commands |
+| `tests/unit/test_vault_core.py` | 22 passing tests |
+| `scripts/backup_restic.sh` | Daily backup script |
+| `scripts/restore_test.sh` | Monthly restore test script |
+| `config/omega/omega-restic-backup.service` | Systemd service |
+| `config/omega/omega-restic-backup.timer` | Systemd timer |
 
 ---
 
@@ -64,10 +90,13 @@
 
 ---
 
-## Git State (Pre-Compaction)
+## Git State (Post C-3 Implementation)
 
 ```bash
 # Last commits
+e7d2def feat(backup): implement C-3 Restic 3-2-1 backup with VaultCore integration
+d53a897 feat(vault): implement VaultCore MVP (V-1)
+2796bb3 docs(research): complete Guard & Distill research campaign
 a6ed39d docs(research): complete Guard & Distill research campaign
 9803726 docs: update session anchor for compaction rehydration
 ee078d0 feat(property): Hypothesis property-based tests for circuit breaker FSM (C-11)
