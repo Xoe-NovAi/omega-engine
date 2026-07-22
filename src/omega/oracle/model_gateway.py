@@ -988,6 +988,21 @@ class ModelGateway:
                     errors.append(f"{provider.name}: cloud budget exhausted for {entity_name}")
                     continue
             
+            # Step 1.6: [C-10.5] 429 Guard — pre-call check BEFORE rate limiter
+            # Checks provider-side rate-limit and quota blocks via circuit breaker.
+            # This prevents dispatch to a provider that's cooldown-blocked from a
+            # recent 429. Complements the client-side rate limiter (Step 1.7).
+            if self._health_monitor:
+                breaker_check = self._health_monitor._breakers.get(provider.name)
+                if breaker_check and breaker_check.is_429_blocked():
+                    status = breaker_check.get_429_status()
+                    errors.append(
+                        f"{provider.name}: 429 blocked "
+                        f"(rate_limit_remaining={status['rate_limit_remaining']:.0f}s, "
+                        f"quota_remaining={status['quota_remaining']:.0f}s)"
+                    )
+                    continue
+            
             # Rate Limiting: Check if provider has available tokens
             if not await self.rate_limiter.check_limit(provider.name):
                 errors.append(f"{provider.name}: rate limit exceeded")
@@ -1103,6 +1118,19 @@ class ModelGateway:
                             continue
             except CircuitOpenError:
                 errors.append(f"{provider.name}: circuit OPEN")
+                continue
+            except ProviderRateLimitError as e:
+                # [C-10.5] Record 429 on the breaker for guard() pre-checks
+                if self._health_monitor:
+                    breaker_rl = self._health_monitor._breakers.get(provider.name)
+                    if breaker_rl:
+                        retry_after = getattr(e, 'retry_after', None)
+                        breaker_rl.record_429(
+                            retry_after=retry_after,
+                            response_body=str(e),
+                            trace_id=trace_id,
+                        )
+                errors.append(f"{provider.name}: 429 rate-limited — {e}")
                 continue
             except TimeoutError as e:
                 errors.append(f"{provider.name}: {e}")
