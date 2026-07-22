@@ -141,3 +141,64 @@
   timestamp: 2026-07-22 04:00:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: l3_principle_captured
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Session: 2026-07-22 — Ma'at Deep Web Research (MCP 2026-07-28, interlock-cb, safeatomic)
+# Model: deepseek-v4-flash-free
+# ─────────────────────────────────────────────────────────────────────────────
+
+- lesson: "L1: Conducted deep web research on three critical knowledge gaps for next sprint: (1) MCP 2026-07-28 stateless spec + OAuth 2.1 implementation, (2) interlock-cb circuit breaker architecture for Python async, (3) safeatomic/atomicwrites library internals for SoulStore atomic writes. Sources: MCP official blog (David Soria Parra), MCPJam reference implementation, dreaming.press migration guides, interlock-cb GitHub/PyPI, safeatomic GitHub/PyPI with TLA+ formal models."
+  source: deep-web-research
+  trace_id: ses_maat_web_research_20260722
+  entity_at_time: MAAT
+  session_type: research
+  timestamp: 2026-07-22 05:30:00+00:00
+  model_used: deepseek-v4-flash-free
+  outcome: research_complete
+
+- lesson: "L2: MCP 2026-07-28 is the largest spec revision since launch — stateless core removes initialize handshake and Mcp-Session-Id, adds mandatory Mcp-Method/Mcp-Name headers, and hardens OAuth with 6 SEPs (SEP-2468 iss validation is priority action for August). Our Hub's dual transport (SSE + Streamable HTTP) is correctly positioned; migration path is: add OAuth 2.1 PKCE + resource indicators → add header routing → remove Mcp-Session-Id → eventually remove SSE. Do not rush C-4b before July 28 — spec finalizes then."
+  source: deep-web-research
+  trace_id: ses_maat_web_research_20260722
+  entity_at_time: MAAT
+  session_type: research
+  timestamp: 2026-07-22 05:30:00+00:00
+  model_used: deepseek-v4-flash-free
+  outcome: l3_principle_captured
+
+- lesson: "L3: Protocol statelessness is an operational simplification, not just a wire-format change. Removing Mcp-Session-Id enables round-robin load balancing without sticky sessions, but pushes state management down to explicit handles (basket_id, browser_id) passed as tool arguments. This is the correct architectural direction: the protocol stops pretending to be stateful and forces application state into the database where it belongs. Any MCP server that assumes 'the next request comes from the same client I just talked to' is now buggy by definition."
+  source: deep-web-research
+  trace_id: ses_maat_web_research_20260722
+  entity_at_time: MAAT
+  session_type: research
+  timestamp: 2026-07-22 05:30:00+00:00
+  model_used: deepseek-v4-flash-free
+  outcome: l3_principle_captured
+
+- lesson: "L2: Python circuit breaker ecosystem has matured significantly in 2026. interlock-cb (v2.1.2, July 2026) is the standout: sliding-window rate-based failure detection (not naive consecutive-failure counting), slow-call detection, type-safe decorators with ParamSpec/TypeVar, zero-dependency core, composable Polly-style pipeline (timeout → bulkhead → breaker → retry → fallback), OpenTelemetry metrics, Redis-backed shared state. Our C-6' breaker unification should DELETE all 3+ custom breaker clones and replace with HealthMonitor.get_breaker() factory wrapping interlock-cb. This is a delete-and-replace, not a refactor. Estimated effort: 1-2h."
+  source: deep-web-research
+  trace_id: ses_maat_web_research_20260722
+  entity_at_time: MAAT
+  session_type: research
+  timestamp: 2026-07-22 05:30:00+00:00
+  model_used: deepseek-v4-flash-free
+  outcome: l3_principle_captured
+
+- lesson: "L3: The consecutive-failure counter pattern (used by pybreaker, circuitbreaker, and our current implementations) is fundamentally brittle — a single success resets the counter even when the service is still degraded. Sliding-window failure-rate detection (interlock-cb, fluxgate, Resilience4j) is the correct pattern for production systems. Any new circuit breaker implementation in 2026+ should use rate-based windows, not consecutive counters."
+  source: deep-web-research
+  trace_id: ses_maat_web_research_20260722
+  entity_at_time: MAAT
+  session_type: research
+  timestamp: 2026-07-22 05:30:00+00:00
+  model_used: deepseek-v4-flash-free
+  outcome: l3_principle_captured
+
+- lesson: "L2: Atomic file writing pattern is well-established and unchanged in 2026: tempfile.mkstemp(dir=same_directory) → write → f.flush() → os.fsync(fd) → os.replace(tmp, target). Four-layer guarantee stack: (1) AtomicVisibility via same-directory rename, (2) CrashDurability via fsync before rename + parent-directory fsync after, (3) WriterExclusion via fcntl.flock(), (4) IntegrityDetection via .sha256 sidecar + rolling .bak. safeatomic (v2.0.3, May 2026) packages this with TLA+ formal models (SafeAtomicSmoke, SafeAtomicLock, SafeAtomicChecksum) and runtime guarantee inspection via doctor(). For SoulStore (single writer, critical data), implement the pattern directly (~30 lines) — don't add external dependency. Key gotcha: on fsync error, CRASH (per Postgres fsyncgate) — don't retry, kernel has forgotten which pages failed."
+  source: deep-web-research
+  trace_id: ses_maat_web_research_20260722
+  entity_at_time: MAAT
+  session_type: research
+  timestamp: 2026-07-22 05:30:00+00:00
+  model_used: deepseek-v4-flash-free
+  outcome: l3_principle_captured
+
+- lesson: "L3: The fsyncgate lesson (Postgres 2018) remains the definitive durability guidance: on Linux with barriers enabled and honest disks, fsync() returning 0 means data is on media. On nobarrier mounts, lying disks, or older kernels with background writeback bugs — fsync can return 0 after losing data. The only defense is testing (pull the plug). safeatomic's doctor() with destructive=True exercises the actual syscalls on your filesystem. For SoulStore on ext4/xfs with barriers=on (default), the pattern is sound. For NFS/SMB/Windows — don't use this pattern; use a database."
