@@ -1,11 +1,11 @@
 # 🔱 Session Anchor — Ma'at (Light Oversoul)
-**Last Updated**: 2026-07-22T15:30:00Z
+**Last Updated**: 2026-07-22T15:45:00Z
 **Engine**: v1.8.0
-**Phase**: C Hardening Complete → Guard & Distill Sprint Ready
+**Phase**: C Hardening Complete → Guard & Distill Sprint Ready → Research Complete
 
 ---
 
-## Current Sprint Status: READY TO EXECUTE
+## Current Sprint Status: RESEARCH COMPLETE — READY FOR IMPLEMENTATION
 
 ### Completed This Session
 - ✅ **Phase C Hardening Complete**: 31 new tests passing, 2,308 lines added
@@ -16,9 +16,15 @@
   - 5 domains, 25+ search vectors with advanced dorks
   - Fallback queries and extraction targets defined
   - Mandate-aligned (M1, M11, M16, M22, M24)
+- ✅ **All 5 Research Domains Executed & Synthesized**:
+  - Domain 1 (VaultCore): Argon2id params, pyrage library, systemd credentials, zeroize
+  - Domain 2 (Restic): SQLite .backup, Qdrant snapshots, B2 Object Lock workaround
+  - Domain 3 (Quota Routing): Provider headers, 402 vs 429, tiktoken +15% margin
+  - Domain 4 (Property Tests): anyio.run() wrapper, CancelScope shield, CI settings
+  - Domain 5 (Scribe): llama.cpp grammar, 4k/500 overlap, Refine vs Map-Reduce
 
 ### Hivemind Updates
-- Session `ses_fea31ff95051`: Sprint initialization
+- Session `ses_d9201bb7e611`: Research synthesis complete
 - Workspace lock `guard-and-distill-sprint` acquired
 
 ---
@@ -41,7 +47,7 @@
 |------|---------|
 | `docs/sprints/guard-and-distill/index.md` | Sprint Plan Index — Read this first |
 | `docs/sprints/guard-and-distill/02-p0-tickets/V-1-vaultcore-mvp.md` | V-1 ticket with implementation sketch |
-| `docs/research/R_GUARD_DISTILL_RESEARCH_GUIDE_20260722.md` | Research manual with advanced dorks |
+| `docs/research/R_GUARD_DISTILL_RESEARCH_GUIDE_20260722.md` | **Research manual with verified findings (all ✅)** |
 | `docs/standards/LLM_FRIENDLY_DOCS_BP.md` | Doc standards with M8/M18 mandates |
 | `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Strategy SSOT (v5.2.0) |
 
@@ -62,17 +68,13 @@
 
 ```bash
 # Last commits
-e9ac60f docs: update session anchor for compaction rehydration
+a6ed39d docs(research): complete Guard & Distill research campaign
+9803726 docs: update session anchor for compaction rehydration
 ee078d0 feat(property): Hypothesis property-based tests for circuit breaker FSM (C-11)
 10e00f8 fix(discovery): library discovery tools no longer hardcode cloud-only model names
 d74c73f feat(health-monitor): add 429 classification (rate-limit vs quota-exhausted)
 
-# Uncommitted (working tree)
-- docs/sprints/guard-and-distill/ (new directory)
-- docs/research/R_GUARD_DISTILL_RESEARCH_GUIDE_20260722.md
-- docs/standards/LLM_FRIENDLY_DOCS_BP.md
-- docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md (updated)
-- AGENTS.md, Makefile, config/wads/_omega_default/entities.yaml (updated)
+# Working tree clean (all committed)
 ```
 
 ---
