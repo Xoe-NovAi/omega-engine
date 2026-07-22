@@ -201,3 +201,9 @@ tmp_*
 venv/
 verify_headroom.py
 virtualenv/
+
+# Transient session & temp files (never committed)
+session-*.md
+HYDRATION_REPORT.md
+RESEARCH_EXECUTION_UPDATE.md
+test.txt
