@@ -59,6 +59,13 @@ try:
 except ImportError:
     pass  # bundle module not available
 
+# ── Vault sub-commands (V-1 VaultCore MVP) ───────────────────────────────
+try:
+    from omega.cli.vault import vault as vault_app
+    app.add_typer(vault_app, name="vault", help="Sovereign credential vault (age + Argon2id)")
+except ImportError:
+    pass  # vault module not available
+
 # ── Vetter sub-commands (P0-3 Sovereign Vetter) ──────────────────────────
 try:
     from omega.governance.sovereign_vetter import SovereignVetter
