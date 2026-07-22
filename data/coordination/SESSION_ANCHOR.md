@@ -1,35 +1,37 @@
 # 🔱 Session Anchor — Ma'at (Light Oversoul)
-**Last Updated**: 2026-07-22T10:48:00Z
+**Last Updated**: 2026-07-22T15:30:00Z
 **Engine**: v1.8.0
-**Phase**: C Hardening Sprint Complete
+**Phase**: C Hardening Complete → Guard & Distill Sprint Ready
 
 ---
 
-## Current Sprint Status: COMPLETE
+## Current Sprint Status: READY TO EXECUTE
 
 ### Completed This Session
-- ✅ **C-6' 429 Classification** (d74c73f): 3-state model in AsyncCircuitBreaker — rate-limit (seconds) vs quota (hours/days) vs circuit. 11 tests.
-- ✅ **Library Discovery Fix** (10e00f8): DiscoveryOrchestrator no longer hardcodes `gemini-2.0-flash`. Uses local-first provider chain with graceful degradation.
-- ✅ **C-11 Hypothesis Property Tests** (ee078d0): 6 tests for FSM transitions (CUSUM + sliding_window), 429 orthogonality, arbitrary body handling.
-- ✅ **C-10.5 429 Guard in ModelGateway**: Pre-call `is_429_blocked()` check + post-call `record_429()` on ProviderRateLimitError.
-- ✅ **Gap Analysis**: 13 remaining gaps documented and prioritized (4 P0, 5 P1, 4 P2/P3).
-
-### Test Health
-- 50/50 passing (unit/contract/property)
-- 4 pre-existing failures (provider_fallback mocks, network_partition) — unrelated to changes
+- ✅ **Phase C Hardening Complete**: 31 new tests passing, 2,308 lines added
+- ✅ **Kali Briefing Received**: 5 P0 tickets defined, V-1 elevated to P0-1 blocker
+- ✅ **LLM-Friendly Documentation Transformation Complete**: Standards, tooling, validation
+- ✅ **V-1 VaultCore MVP Ticket Created**: `docs/sprints/guard-and-distill/02-p0-tickets/V-1-vaultcore-mvp.md`
+- ✅ **Research Campaign Manual Finalized**: `docs/research/R_GUARD_DISTILL_RESEARCH_GUIDE_20260722.md`
+  - 5 domains, 25+ search vectors with advanced dorks
+  - Fallback queries and extraction targets defined
+  - Mandate-aligned (M1, M11, M16, M22, M24)
 
 ### Hivemind Updates
-- Session `ses_b98f64857870`: Sprint hardening complete
-- Session `ses_943335b1c684`: Property tests + 429 guard integration
+- Session `ses_fea31ff95051`: Sprint initialization
+- Workspace lock `guard-and-distill-sprint` acquired
 
 ---
 
 ## Next Sprint Priorities (P0)
 
-1. **C-10.5** — Extend 429 guard to all provider error paths; quota-aware routing
-2. **C-11** — Hypothesis tests for OOMProtector thresholds + SoulStore atomicity
-3. **C-3** — Restic backup script for sovereign data
-4. **C-0.5** — Scribe agent for automated L1→L2→L3 soul distillation
+| Priority | Ticket | Description | Depends On |
+|----------|--------|-------------|------------|
+| **1** | **V-1** | VaultCore MVP — secure credential storage (age + Argon2id) | C-0, C-1' ✅ |
+| **2** | **C-3** | Restic 3-2-1 Backup for Sovereign Data | V-1 (partial) |
+| **3** | **C-10.5** | Quota-Aware Provider Routing | C-6' ✅ |
+| **4** | **C-11** | Property Tests: OOMProtector + SoulStore | C-2' ✅, C-1' ✅ |
+| **5** | **C-0.5** | Scribe Agent L1→L2→L3 Distillation Pipeline | M5, M11, C-10.5 |
 
 ---
 
@@ -37,22 +39,41 @@
 
 | File | Purpose |
 |------|---------|
-| `docs/research/R_GAP_ANALYSIS_HARDENING_SPRINT_20260722.md` | Prioritized gap list |
-| `docs/research/R_SPRINT_HARDENING_KNOWLEDGE_GAPS_20260722.md` | Research synthesis (MCP 2026-07-28, resilient-llm-router, Hypothesis, MENTOR, restic) |
-| `tests/property/test_breaker_fsm.py` | Property-based test patterns |
-| `src/omega/oracle/health_monitor.py` | 429 classification implementation |
-| `src/omega/oracle/model_gateway.py` | 429 guard integration |
-| `src/omega/library/discovery.py` | Discovery fix with graceful degradation |
+| `docs/sprints/guard-and-distill/index.md` | Sprint Plan Index — Read this first |
+| `docs/sprints/guard-and-distill/02-p0-tickets/V-1-vaultcore-mvp.md` | V-1 ticket with implementation sketch |
+| `docs/research/R_GUARD_DISTILL_RESEARCH_GUIDE_20260722.md` | Research manual with advanced dorks |
+| `docs/standards/LLM_FRIENDLY_DOCS_BP.md` | Doc standards with M8/M18 mandates |
+| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Strategy SSOT (v5.2.0) |
 
 ---
 
 ## Rehydration Sequence (Post-Compaction)
 
-1. `omega-hub_hivemind_get_awareness()` — check parallel agents
+1. `omega-hub_hivemind_get_awareness()` — check for parallel agents
 2. `git status && git log --oneline -5` — verify committed state
 3. Read `OMEGA_CODEX.md` (full) — engine state
 4. Read this file (`SESSION_ANCHOR.md`) — session context
-5. Report rehydration status to user
+5. Read `docs/research/R_GUARD_DISTILL_RESEARCH_GUIDE_20260722.md` — research manual
+6. Report rehydration status to user
+
+---
+
+## Git State (Pre-Compaction)
+
+```bash
+# Last commits
+e9ac60f docs: update session anchor for compaction rehydration
+ee078d0 feat(property): Hypothesis property-based tests for circuit breaker FSM (C-11)
+10e00f8 fix(discovery): library discovery tools no longer hardcode cloud-only model names
+d74c73f feat(health-monitor): add 429 classification (rate-limit vs quota-exhausted)
+
+# Uncommitted (working tree)
+- docs/sprints/guard-and-distill/ (new directory)
+- docs/research/R_GUARD_DISTILL_RESEARCH_GUIDE_20260722.md
+- docs/standards/LLM_FRIENDLY_DOCS_BP.md
+- docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md (updated)
+- AGENTS.md, Makefile, config/wads/_omega_default/entities.yaml (updated)
+```
 
 ---
 
