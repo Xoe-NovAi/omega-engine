@@ -132,7 +132,7 @@ _sovereign_reader = SovereignReader(
 
 # [P1b] All MCP tool definitions moved to mcp_servers.omega_hub.tools
 # They register with the mcp instance via side-effect import.
-from mcp_servers.omega_hub import tools  # noqa: F401
+from mcp_servers.omega_hub import hub_tools as tools  # noqa: F401
 
 
 def __getattr__(name: str):
@@ -149,7 +149,7 @@ def __getattr__(name: str):
         "hivemind_complete_handoff", "hivemind_reject_handoff", "hivemind_handoff_list",
         "hivemind_get_handoff", "hivemind_handoff_archive"
     ]:
-        import mcp_servers.omega_hub.tools as _tools
+        import mcp_servers.omega_hub.hub_tools.tools as _tools
         return getattr(_tools, name)
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 

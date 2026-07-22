@@ -1,4 +1,9 @@
 # 🔱 SOVEREIGN ARK BLUEPRINT (v4.4 — Hive Evolution & Arch Soul Integration 2026-07-19)
+
+> ⚠️ **ARCHIVED HISTORICAL SSOT (v4.4)** — Living strategy SSOT is now:  
+> **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` (v5.0 Unified, 2026-07-21)**  
+> Keep this file for research appendices (Strikes, Dimension Framework, Free-Will datasets, etc.).
+
 **AP Token**: `AP-SOVEREIGN-ARK-BLUEPRINT-v4.4.0`
 **Last Updated**: 2026-07-19
 **Full Archive**: `docs/archive/coordination/SOVEREIGN_ARK_BLUEPRINT-full-20260708.md`

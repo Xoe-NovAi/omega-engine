@@ -23,6 +23,7 @@ NEW: INT8 rescore quantization support
 
 import json
 import logging
+import os
 import sqlite3
 import time
 import uuid
@@ -93,6 +94,13 @@ COLLECTIONS = {
         "quantization": "none",
         "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
     },
+    # Library feature-hashing: 256-dim (simple bag-of-words, not ML embeddings)
+    "omega_vec_library_256": {
+        "dimension": 256,
+        "metric": "cosine",
+        "quantization": "none",
+        "hnsw": {"m": 16, "ef_construction": 200, "ef_search": 64},
+    },
 }
 
 # Legacy default (for backward compat during migration)
@@ -116,11 +124,16 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
     
     def __init__(
         self,
-        db_path: str = "data/omega_memory.db",
+        db_path: Optional[str] = None,
         embedding_dim: int = DEFAULT_EMBEDDING_DIM,
         collections: Optional[Dict[str, Dict]] = None,
         timeout: float = 5.0,
     ):
+        # Use OMEGA_DATA_DIR if db_path not explicitly provided
+        if db_path is None:
+            data_dir = Path(os.environ.get("OMEGA_DATA_DIR", str(Path.home() / "omega" / "data")))
+            db_path = str(data_dir / "omega_memory.db")
+        
         self.db_path = Path(db_path)
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         
@@ -274,7 +287,8 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
             return
         
         # Create the vec0 table for this collection
-        table_name = f"omega_vec_{collection_name}"
+        # Collection names already include the prefix (e.g., "omega_vec_gemma_768")
+        table_name = collection_name
         
         def _sync_create_vec():
             conn = self._get_conn()
@@ -412,8 +426,9 @@ class SQLiteVecAdapter(IVectorStoreAdapter):
                         
                         # 3. Insert into COLLECTION-SPECIFIC vec0 with explicit rowid
                         # Correction C3: entity_name is partition key
+                        # Collection names already include the prefix (e.g., "omega_vec_gemma_768")
                         if vector and embedding_blob:
-                            table_name = f"omega_vec_{collection}"
+                            table_name = collection
                             conn.execute(f"""
                                 INSERT INTO {table_name}(rowid, embedding, entity_name)
                                 VALUES (?, ?, ?)

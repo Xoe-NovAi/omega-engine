@@ -4,6 +4,9 @@ import asyncio
 from pathlib import Path
 import tempfile
 import os
+from unittest.mock import patch, AsyncMock
+
+from omega.oracle.oom_protector import AdmissionResult
 
 @pytest.mark.chaos
 @pytest.mark.anyio
@@ -32,16 +35,32 @@ async def test_oom_protector_handles_sigkill(admission_controller):
 @pytest.mark.chaos
 @pytest.mark.anyio
 async def test_oom_protector_RAM_check_under_pressure(oom_protector):
-    """Verify OOMProtector correctly detects low RAM conditions."""
-    # Mock the available RAM to simulate low memory
-    with patch("omega.oracle.resource_guard._get_available_ram_mb", return_value=500):
-        # Should return False when RAM is low
-        result = oom_protector.check(model_ram_mb=1000, kv_cache_mb=512)
+    """Verify OOMProtector correctly detects low RAM conditions (C-2' API)."""
+    # [C-2'] OOMProtector uses check_available(required_gb) for memory checks.
+    # Mock MemAvailableReader to simulate low/high RAM.
+    with patch.object(
+        oom_protector.memavailable, "get_memavailable_gb",
+        new_callable=AsyncMock,
+    ) as mock_mem:
+        mock_mem.return_value = 0.5  # 0.5 GB — very low
+        
+        # check_available should return False when RAM is low
+        result = await oom_protector.check_available(required_gb=1.0)
         assert result is False
+        
+        # check() should return DENY_OOM_RISK
+        decision = await oom_protector.check()
+        assert decision == AdmissionResult.DENY_OOM_RISK
     
-    # Mock normal RAM
-    with patch("omega.oracle.resource_guard._get_available_ram_mb", return_value=8000):
-        result = oom_protector.check(model_ram_mb=1000, kv_cache_mb=512)
+    # Mock normal RAM (8 GB available, reserve is 2 GB, so 6 GB usable)
+    with patch.object(
+        oom_protector.memavailable, "get_memavailable_gb",
+        new_callable=AsyncMock,
+    ) as mock_mem:
+        mock_mem.return_value = 8.0
+        
+        result = await oom_protector.check_available(required_gb=1.0)
         assert result is True
-
-from unittest.mock import patch
+        
+        decision = await oom_protector.check()
+        assert decision == AdmissionResult.ALLOW

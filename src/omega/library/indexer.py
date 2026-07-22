@@ -70,9 +70,10 @@ class Indexer:
     Uses aiosqlite for AnyIO-compatible async SQLite access.
     """
     
-    def __init__(self, vector_adapter: Optional[IVectorStoreAdapter] = None):
+    def __init__(self, vector_adapter: Optional[IVectorStoreAdapter] = None, vector_collection: str = "omega_vec_gemma_768"):
         self._fts: Optional[Any] = None
         self._vector_adapter = vector_adapter or MemoryVectorAdapter()
+        self._vector_collection = vector_collection
         self._write_lock = anyio.Lock()
 
     async def _get_fts(self) -> Any:
@@ -134,7 +135,8 @@ class Indexer:
             await self._vector_adapter.upsert(
                 entity_name=doc.domain or "general",
                 vector=embedding,
-                metadata={"title": doc.title, "doc_id": doc.doc_id}
+                metadata={"title": doc.title, "doc_id": doc.doc_id},
+                collection=self._vector_collection
             )
 
         logger.debug(f"Indexed: {doc.doc_id} [{doc.domain}] {doc.title}")
@@ -220,10 +222,12 @@ class Indexer:
         
         # Use the adapter for the actual search
         # We use "general" as the entity_name for library-wide search
+        # Use the same collection as upsert (omega_vec_library_256 for feature-hashing embeddings)
         results = await self._vector_adapter.query(
             entity_name="general",
             vector=query_embedding,
-            limit=limit
+            limit=limit,
+            collection=self._vector_collection
         )
         
         conn = await self._get_fts()
@@ -350,18 +354,21 @@ class Indexer:
         """Compute a simple bag-of-words embedding.
 
         Uses stable MD5-based Feature Hashing (hashing trick) to map
-        tokens deterministically to a fixed 256-dimensional space.
+        tokens deterministically to the canonical 768-dimensional space.
         """
         import hashlib
         
-        vec = [0.0] * 256
+        # Canonical dimension per EMBEDDING_HARDENING_STRATEGY_20260720.md
+        CANONICAL_DIM = 768
+        
+        vec = [0.0] * CANONICAL_DIM
         tokens = self._tokenize(text)
         if not tokens:
             return None
             
         for token in tokens:
             h = int(hashlib.md5(token.encode("utf-8")).hexdigest(), 16)
-            dim = h % 256
+            dim = h % CANONICAL_DIM
             vec[dim] += 1.0
             
         # L2 normalize

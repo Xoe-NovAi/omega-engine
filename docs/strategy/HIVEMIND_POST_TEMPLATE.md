@@ -32,7 +32,9 @@ omega-hub_hivemind_post_context(
     continuation="Next: {specific action} — waiting on {dependency} — @{owner}",
     session_id="ses_{YYYYMMDD}_{entity}_{counter}",  # Auto-gen if omitted
     intent="status",                       # status|decision|observation|handoff|blocker|question|command|meta
-    suggested_model="optional_hint_for_subagent"  # e.g., "lmstudio/qwen3-4b-thinking"
+    suggested_model="optional_hint_for_subagent",  # e.g., "lmstudio/qwen3-4b-thinking"
+    task_ids=[],                           # Task IDs for active subagent tasks
+    resumption_status="none"               # none|verified|failed|pending
 )
 ```
 
@@ -52,6 +54,8 @@ omega-hub_hivemind_post_context(
 | `session_id` | ❌ | Your session tracker | `"ses_20260712_maat_003"` |
 | `intent` | ✅ | Semantic category (see §3) | `"observation"` |
 | `suggested_model` | ❌ | Hint for dispatched subagent | `"lmstudio/qwen3-4b-thinking"` |
+| `task_ids` | ✅ | Active subagent task IDs | `["v1-vault-legacy-mining-20260721", "search-catalogue-deep-research-20260721"]` |
+| `resumption_status` | ✅ | Subagent resumption state | `"verified" | "failed" | "pending" | "none"` |
 
 ---
 
@@ -93,7 +97,9 @@ omega-hub_hivemind_post_context(
     continuation="Next: Phase 1.4 HealthMonitor integration — @pillar P8 owns observability hooks",
     session_id="ses_20260712_maat_003",
     intent="status",
-    suggested_model=None
+    suggested_model=None,
+    task_ids=["memorystore-lazy-deletion-20260712", "healthmonitor-integration-20260712"],
+    resumption_status="none"
 )
 ```
 
@@ -115,7 +121,9 @@ omega-hub_hivemind_post_context(
     continuation="FRICTION: hivemind_get_continuation returned 'no awareness data' for kali (active 13 min ago). TTL=300s too short for human-paced coordination. Proposing H-4 two-tier TTL. — @lilith to promote to PIVOT_LOG",
     session_id="ses_20260712_roc_racoon_001",
     intent="observation",
-    suggested_model=None
+    suggested_model=None,
+    task_ids=["omega-stack-circuit-breaker-mining-20260712"],
+    resumption_status="none"
 )
 ```
 
@@ -139,7 +147,9 @@ omega-hub_hivemind_post_context(
     continuation="BLOCKER: wasm-ld fails with __wasm_call_ctors undefined. omega-vetala exports it but Zig 0.13.0 doesn't auto-link. Need @john_carmack review of build.zig — @kali to dispatch",
     session_id="ses_20260712_doom_guy_002",
     intent="blocker",
-    suggested_model="lmstudio/deepseek-r1-qwen3-8b"
+    suggested_model="lmstudio/deepseek-r1-qwen3-8b",
+    task_ids=["wasm-polyglot-linkage-20260712"],
+    resumption_status="none"
 )
 ```
 
@@ -163,11 +173,13 @@ omega-hub_hivemind_post_context(
     continuation="HANDOFF → @doom_guy: packet hdp_20260712_kali_doom_guy_a1b2c3. Expected: JSON audit report. TTL: 600s. — @doom_guy acknowledge via hivemind_accept_handoff",
     session_id="ses_20260712_kali_005",
     intent="handoff",
-    suggested_model="lmstudio/deepseek-r1-qwen3-8b"
+    suggested_model="lmstudio/deepseek-r1-qwen3-8b",
+    task_ids=["heritage-audit-cvar-table-20260712"],
+    resumption_status="none"
 )
 ```
 
-### Example D: Decision — Architectural Choice
+### Example E: Decision — Architectural Choice
 
 ```python
 omega-hub_hivemind_post_context(
@@ -188,7 +200,9 @@ omega-hub_hivemind_post_context(
     continuation="Next: implement in mcp_servers/omega_hub/state.py — @pillar P9 owns orchestration layer",
     session_id="ses_20260712_lilith_002",
     intent="decision",
-    suggested_model=None
+    suggested_model=None,
+    task_ids=["hivemind-two-tier-ttl-20260712"],
+    resumption_status="none"
 )
 ```
 
@@ -212,7 +226,9 @@ omega-hub_hivemind_post_context(
     continuation="SUCCESS: Template reduces post variance from 47% to 3% field coverage. — @kali to enforce in next fleet sync",
     session_id="ses_20260712_jem_004",
     intent="meta",
-    suggested_model=None
+    suggested_model=None,
+    task_ids=["hivemind-template-design-20260712"],
+    resumption_status="none"
 )
 ```
 
@@ -257,6 +273,8 @@ Before posting, verify **NONE** of these:
 - [ ] No `suggested_model` when dispatching to subagent
 - [ ] `model` = configured model, not **actual** injected model
 - [ ] Missing `session_id` for multi-step work
+- [ ] Missing `task_ids` for active subagent tasks
+- [ ] Missing `resumption_status` for subagent coordination
 
 ---
 
@@ -270,6 +288,8 @@ focus_chain: [3-7 specific steps]
 decisions: [D-NNN: choice + why]
 continuation: "Next: {action} — {blocker} — @{owner}"
 intent: {status|decision|observation|handoff|blocker|question|command|meta}
+task_ids: ["domain-action-date-seq", ...]
+resumption_status: {none|verified|failed|pending}
 ```
 
 ---

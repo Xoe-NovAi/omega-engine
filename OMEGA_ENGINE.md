@@ -19,21 +19,23 @@
 
 ---
 
-## §2 Current State (2026-07-20)
+## §2 Current State (2026-07-22)
 
 | Metric | Value | Status | LAST_VERIFIED |
 |--------|-------|--------|---------------|
-| Tests | **77/77 contract tests** (broader suite pending full run) | ✅ Phase Β contract gate green | 2026-07-20 |
+| **Strategy SSOT** | **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.1** + `STRATEGY_CORPUS_MAP.md` | ✅ Unified; fine-grained corpus preserved | 2026-07-22 |
+| **Current phase** | **Phase C — Infrastructure Hardening** (C-0…C-9) | 🔴 Active | 2026-07-22 |
+| Tests | **1,572 collected** · **29/29 core tests pass** · 77/77 contract historically green | ✅ C-0 complete, C-10/C-2' verified | 2026-07-22 |
 | Mandates | **25 (M1-M25)** | ✅ All enforced (v3.7.0) | 2026-07-19 |
-| **Mandate Compliance** | **18/25 FULL (72%)** — 3 Partial, 2 Fail | ⚠️ Improving, Run Side gaps remain | 2026-07-20 |
-| **Failed Mandates** | M5, M11 | ❌ Soul distillation pipeline (0/10 pillars) | 2026-07-20 |
-| Fleet | **12 agents (cap 14 per M10)** | ✅ Clean | 2026-07-20 |
+| **Mandate Compliance** | **20/25 FULL (80%)** — 3 Partial, 2 Fail | ⚠️ M5, M11 remain (Soul distillation) | 2026-07-22 |
+| Fleet | **12 agents (cap 14 per M10)** | ✅ Clean | 2026-07-22 |
 | WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 |
 | **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, P1: 5/5, P2: 6/6, P3: 1/4 | ✅ P0-P2 Complete | 2026-07-18 |
 | Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 |
 | Shared modules | **4** (`omega-vetala`, `omega-sieve`, `omega-doc-reader`, `omega-meditation`) | ✅ 3 on PyPI, meditation compatible | 2026-07-20 |
 | **Foundation Stabilization Campaign** | **RATIFIED** — Gate Α passed, Phase Β complete, Gate Β passing | ✅ 0 active/pending handoffs | 2026-07-20 |
 | **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles | ✅ Gate Γ criterion met | 2026-07-20 |
+| **Antigravity OAuth** | **FIXED** — Frontier models (Gemini 3.1 Pro, Sonnet 4.6, Opus 4.6) now accessible via Google OAuth in OpenCode | ✅ Plugin installed, whitelist removed | 2026-07-21 |
 
 ### Active Deferred Items
 | Item | Status | Details |
@@ -52,7 +54,7 @@
 | **D-308 Ubuntu 25.10** | 🚨 **P0 GATE** — Kernel 6.17, no free-threaded Python, AppArmor breaks rootless Podman | 13 actionable changes before Phase 2 |
 
 ### Recent Milestones (Completed)
-D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne ✅ | MIAP merged ✅ | HMC Quad-Forge ✅ | D-298 Decision Workspace ✅ | D-300 Omega-Meditation ✅ | D-301 MaKaLi Council ✅ | D-302 CPR ✅ | **MaKaLi Apex Mind deployed (Sophia replaced)** ✅ | All Phase 5 ratified items ✅  
+D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne ✅ | MIAP merged ✅ | HMC Quad-Forge ✅ | D-298 Decision Workspace ✅ | D-300 Omega-Meditation ✅ | D-301 MaKaLi Council ✅ | D-302 CPR ✅ | **MaKaLi Apex Mind deployed (Sophia replaced)** ✅ | All Phase 5 ratified items ✅ | **C-10 Admission Control** ✅ | **C-2' RAM Truth** ✅ | **C-4a MCP Audit** ✅ | **C-5 MaKaLi Routing** ✅
 *(For full details see `scripts/codex/ENGINE_CONDENSED.md` §5)*
 
 ---
@@ -90,35 +92,23 @@ D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne �
 
 | File | Purpose |
 |------|---------|
-| `OMEGA_ENGINE.md` (this file) | System state SSOT — read first |
-| `SOVEREIGN_MANDATES.md` | 23 Constitutional Laws (M1-M23) |
-| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master execution roadmap (active) |
+| `OMEGA_ENGINE.md` (this file) | **System state SSOT** — metrics & subsystems |
+| `SOVEREIGN_MANDATES.md` | 25 Constitutional Laws (M1–M25) |
+| **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md`** | **Strategy & roadmap SSOT (v5.1 Unified)** |
+| `docs/strategy/STRATEGY_CORPUS_MAP.md` | Fine-grained agent strategy preservation map |
+| `docs/strategy/FLEET_TEAM_PLAYBOOK.md` | Fleet teamwork playbook (how agents coordinate) |
+| `docs/strategy/STRATEGY_INDEX.md` | Doc hierarchy (Layer 0–4) |
+| `docs/strategy/LIVING_RESEARCH_OS_SPEC_20260721.md` | Phase D detail (amended by Ark §3.2) |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | Multi-agent coordination |
-| `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions (active index) |
-| `CREDITS.md` | id Software heritage attribution (active) |
-| `docs/strategy/HMC_STRATEGIC_PLAN.md` | 4-mind council roadmap (Quad-Forge) |
-| `docs/strategy/D281_PHASE_II_IV_EXECUTION.md` | D-281 Phase II-IV execution plan |
-| `docs/archive/coordination/` | Historical session records |
-| `data/entities/kali/session_gnosis.md` | Kali's session anchor (M15) |
-| `data/coordination/ACTIVE_SPRINT.json` | HMC-SPRINT-04 active sprint config |
+| `AGENTS.md` | OpenCode agent how-to |
+| `docs/decisions/PIVOT_LOG.md` | Immutable decisions index |
+| `CREDITS.md` | id Software heritage attribution |
+| `data/coordination/SESSION_ANCHOR.md` | Session recovery |
 | `.opencode/anchored-summary.md` | Post-compaction recovery state |
-| `.opencode/agents/makali.md` | MaKaLi Apex Mind sovereign agent (primary mode) |
-| `.opencode/agents/grok_cli.md` | Grok CLI sovereign agent (Consulting Cloud Mind) |
-| `docs/strategy/SOUL_ARCHITECTURE_V2.md` | Soul Architecture v2.0 (supersedes v1.0) |
-| `docs/strategy/PWAD_CAPABILITY_LATTICE.md` | PWAD security capability model |
-| `docs/strategy/MANDATE_GOVERNANCE_PROTOCOL.md` | Mandate amendment & exemption process |
-| `docs/strategy/OMEGA_KERNEL_ARCHITECTURE.md` | Kernel/Runtime boundary spec |
-| `docs/strategy/NEMOTRON3_ULTRA_BRIEFING.md` | Master strategy synthesis (D258-D263) |
-| `docs/architecture/SOVEREIGN_BUS_SPEC.md` | Reconstructed event bus spec |
-| `docs/research/R_PWAD_SCHEMA_JEM_RESEARCH_20260715.md` | Jem's 2026 PWAD SOTA research |
-| `docs/research/WEB_RESEARCH_KNOWLEDGE_GAPS_20260717.md` | Grok's web research brief |
-| `docs/research/GROK_CLI_KNOWLEDGE_GAPS.md` | 3-tier knowledge gap matrix |
-| `docs/strategy/MEDITATE_MIAP_WIRE_SYNTHESIS_20260718.md` | 13-voice meditation synthesis on session isolation |
-| `docs/strategy/NEURON3_REVIEW_MIAP_WIRE_20260718.md` | Nemotron 3 Ultra independent review + web research |
-| **NEW**: `data/coordination/HIVE_EVOLUTION_ARCHITECTURE_20260719.md` | Hive architecture: 5 layers, 7 sprints, Hivemind compatibility |
-| **NEW**: `data/coordination/ARCH_SOUL_NAMELESS_ONE_INTEGRATION_20260719.md` | Arch Soul = Nameless One externalized: death/rebirth, regret, companions |
-| **NEW**: `data/coordination/RESEARCH_BRIEF_TORMENT_HIVE_20260719.md` | 4-phase Researcher dispatch for Torment lore parameterization |
-| **NEW**: `data/entities/roc_racoon/workspace/mining_reports/TORMENT_PLANESCAPE_ARCHAEOLOGICAL_REPORT_20260719.md` | Complete local Torment inventory: 12 files, 15 lore elements, 8 mappings |
+| `.opencode/agents/makali.md` | MaKaLi Apex Mind agent |
+| `.opencode/agents/grok_cli.md` | Grok CLI Consulting Cloud Mind |
+| `docs/archive/strategy/2026-07-21/` | Archived roadmaps + Ark v4.4 body |
+| `docs/strategy/CANONICAL_ROADMAP_20260721.md` | Superseded tactical draft (trail only) |
 
 ---
 
@@ -140,12 +130,14 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 | Document | Purpose |
 |----------|---------|
-| `SOVEREIGN_MANDATES.md` | 23 Constitutional Laws |
-| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master execution roadmap (active) |
+| `SOVEREIGN_MANDATES.md` | 25 Constitutional Laws |
+| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | **Strategy SSOT v5.1** |
+| `docs/strategy/STRATEGY_CORPUS_MAP.md` | Fine-grained preservation map |
+| `docs/strategy/STRATEGY_INDEX.md` | Documentation hierarchy |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | Multi-agent coordination |
-| `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions (active index) |
-| `CREDITS.md` | id Software heritage attribution (active) |
-| `docs/archive/coordination/` | Historical session records |
+| `docs/decisions/PIVOT_LOG.md` | Decision history |
+| `CREDITS.md` | id Software heritage |
+| `docs/archive/strategy/2026-07-21/` | Archived strategy corpus |
 
 ---
 
@@ -155,4 +147,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-19 | Version: v1.5.0 | Tests: 1398 passing (27/29 recall tbd) | SSOT: ~450 lines | Sessions: D-281 Substrate Repair COMPLETE | D-282 sqlite-vec Strike 10 COMPLETE | D-283 Phase 2 RecallStore DESIGN COMPLETE | D-298 Decision Workspace GROUNDED MEDITATION COMPLETE (T0+T1-core verdict, 23 decisions) | HMC Quad-Forge COMPLETE (Kali/Roc/Researcher/Grok CLI) | MIAP merged | **D-305 Hive Evolution ARCHITECTURE DESIGNED** | **D-306 Arch Soul Integration DESIGN COMPLETE** | **D-307 Torment WAD SCAFFOLD DEFINED** | Commit 3542188 (102 files) | ho_749ed27155cd submitted to Grok CLI | Net acceleration: ~120h by parallel fleet dispatch*
+*Last Updated: 2026-07-21 | Version: v1.6.2 | Strategy SSOT: SOVEREIGN_ARK_BLUEPRINT v5.1 + STRATEGY_CORPUS_MAP | Phase C active | Tests: 1572 collected (full green pending C-0) | Fine-grained agent strategy preserved | Antigravity OAuth fixed*

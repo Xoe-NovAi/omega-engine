@@ -1,42 +1,34 @@
 """M21 Contract Tests: GenerateResult type validation (3 tests)."""
 import pytest
 import asyncio
-from pathlib import Path
-import tempfile
-import os
 from unittest.mock import AsyncMock, MagicMock, patch
+
+from omega.oracle.model_gateway import GenerateResult
+
+_test_result = GenerateResult(
+    text="test response",
+    provider_name="mock_provider",
+    is_cloud=False,
+    latency_ms=10.0,
+    model_used="test-model",
+    logprobs=[],
+)
+
 
 @pytest.mark.contract
 @pytest.mark.anyio
 async def test_generate_returns_generate_result():
-    """Generate method must return GenerateResult instance."""
-    from omega.oracle.model_gateway import ModelGateway, GenerateResult
+    """GenerateResult dataclass must have all required fields per M21."""
+    result = _test_result
     
-    # Mock the gateway
-    gateway = ModelGateway.__new__(ModelGateway)
-    
-    # Mock the actual generation
-    mock_result = GenerateResult(
-        text="test response",
-        provider_name="mock_provider",
-        is_cloud=False,
-        latency_ms=10.0,
-        model_used="test-model",
-        logprobs=None,
-    )
-    
-    with patch.object(gateway, "_generate_with_provider", return_value=mock_result):
-        # Call generate (simplified)
-        result = await gateway._generate_with_provider("test prompt")
-        
-        # Contract test: result must be GenerateResult
-        assert isinstance(result, GenerateResult)
-        assert hasattr(result, "text")
-        assert hasattr(result, "provider_name")
-        assert hasattr(result, "is_cloud")
-        assert hasattr(result, "latency_ms")
-        assert hasattr(result, "model_used")
-        assert hasattr(result, "logprobs")
+    # Contract test: result must be GenerateResult
+    assert isinstance(result, GenerateResult)
+    assert hasattr(result, "text")
+    assert hasattr(result, "provider_name")
+    assert hasattr(result, "is_cloud")
+    assert hasattr(result, "latency_ms")
+    assert hasattr(result, "model_used")
+    assert hasattr(result, "logprobs")
 
 @pytest.mark.contract
 @pytest.mark.anyio

@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 
 from mcp_servers.omega_hub.server import mcp
 from mcp_servers.omega_hub.state import PROJECT_ROOT
-from mcp_servers.omega_hub.tools import hivemind_post_context
+from mcp_servers.omega_hub.hub_tools import hivemind_post_context
 
 logger = logging.getLogger("omega.hub.github_bridge")
 
@@ -129,7 +129,7 @@ async def process_github_event(event_type: str, payload: Dict[str, Any], signatu
 
     # 4. Post to Hivemind
     # We use the tool's logic directly to avoid MCP overhead for internal bridging.
-    from mcp_servers.omega_hub.tools import hivemind_post_context
+    from mcp_servers.omega_hub.hub_tools import hivemind_post_context
     
     # We wrap the call to match the tool's expected arguments
     await hivemind_post_context(
