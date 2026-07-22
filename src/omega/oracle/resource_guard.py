@@ -1,15 +1,17 @@
 # AP: AP-ORACLE-RESTORE-v2.3.0
 # 🔱 Resource Guard — Concurrency Protection
-# AP: AP-RESOURCE-GUARD-v1.1.0
+# AP: AP-RESOURCE-GUARD-v1.2.0
 # [heritage: anyio 2024] M1 AnyIO — Semaphore(1) concurrency guard (zone-purge semantics)
+# [id-soft: vet-015] ZONEID Pattern — critical sections guarded by ZONEID_PROBE marker
+# [id-soft: doom-1993] BSP Culling — precompute hard parts, trade memory for compute
 # ICS: [NODE: MAAT | ARCHETYPE: HERMES | CONTEXT: CONCURRENCY]
 #
-# Updates in v1.1.0 (Sovereign Hardening Sprint — P4):
-#   - Re-entrant lock logic (prevents deadlock on nested agent calls)
-#   - Acquisition timeout via anyio.fail_after
-#   - Track held weights per task via ContextVar
+# Updates in v1.2.0 (C-2′ OOMProtector Integration):
+#   - Replaced inline OOMProtector with three-signal fusion OOMProtector (PSI + MemAvailable + cgroup v2)
+#   - AdmissionResult enum: ALLOW | THROTTLE | DENY_OOM_RISK | DENY_THRASHING
+#   - Hardware-aware thresholds calibrated for Ryzen 7 5700U (15W TDP, 8MB L3 victim cache)
+#   - Removed dual-counter _current_ram_mb in favor of kernel-authoritative signals
 #   - ZONEID Pattern preserved for critical section integrity
-
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 import anyio
@@ -21,6 +23,7 @@ from typing import Optional, Dict, Any
 
 from omega.constants import ZONEID_PROBE, ZONEID_TOMBSTONE, ZONEID_ATOMIC, validate_zoneid
 from omega.cvar_table import cvar_get
+from omega.oracle.oom_protector import OOMProtector, AdmissionResult, OOMProtectorConfig
 
 logger = logging.getLogger(__name__)
 
@@ -114,100 +117,78 @@ class AtomicLock:
         self._lock.release()
 
 
-class OOMProtector:
-    """Hard-stop if available RAM drops below a safety threshold.
+# ── OOMProtector replaced by three-signal fusion in src/omega/oracle/oom_protector.py ──
+# [C-2′] The old OOMProtector used psutil/MemAvailable only (dual-counter).
+# The new OOMProtector fuses three kernel-authoritative signals:
+#   1. PSI (Pressure Stall Information) — /proc/pressure/memory
+#   2. MemAvailable — /proc/meminfo (kernel's si_mem_available())
+#   3. cgroup v2 memory.pressure — per-cgroup PSI
+#
+# This wrapper maintains backward compatibility for legacy callers
+# while delegating to the new three-signal fusion engine.
 
-    [heritage: id-soft-2004] Knowledge Leak Detection — the DOOM 3 principle
-    of detecting a resource boundary *before* crossing it, then failing fast
-    instead of corrupting state. Here applied to system RAM: if MemAvailable
-    falls below the estimated model load + KV cache + 1GB margin, refuse to
-    load a model (which would OOM and kill the process).
+class LegacyOOMWrapper:
+    """Legacy-compatible wrapper around the new three-signal OOMProtector.
 
-    [P0-1: RAM Hardening] Uses psutil.virtual_memory().available for accuracy,
-    accepts an optional model spec to estimate per-model RAM requirement.
-    The formula is:
-      - required_mb = model_ram_mb + kv_cache_estimate + RESERVED_MARGIN_MB
-      - If available_ram < required_mb → HARD STOP
-
-    [M23: Failure Integrity] Explicit hard-stop — raises a typed OmegaError
-    rather than silently degrading inference quality or swapping into oblivion.
+    Keeps the old `check(model_name, model_spec) -> bool` interface while
+    internally using PSI + MemAvailable + cgroup v2 fusion.
     """
-
-    # 1GB safety margin: reserve enough RAM for the OS, systemd services,
-    # Podman containers, and any concurrent processes (Redis, Qdrant, etc.)
     RESERVED_MARGIN_MB: int = 1024
 
     def __init__(self, min_ram_mb: int = 2048, meminfo_path: Optional[str] = None):
+        config = OOMProtectorConfig(
+            min_reserve_gb=min_ram_mb / 1024,
+            throttle_gb=4.0,
+        )
+        self._protector = OOMProtector(config=config)
+        self._meminfo_path = meminfo_path
         self.min_ram_mb = min_ram_mb
-        self._meminfo_path = meminfo_path
-        self._meminfo_path = meminfo_path
 
     async def check(
         self,
         model_name: Optional[str] = None,
         model_spec: Optional[Dict[str, Any]] = None,
     ) -> bool:
-        """Return True if RAM is safe, False if OOM risk is critical.
+        """Three-signal fusion check with legacy interface.
 
-        Uses psutil.virtual_memory().available if psutil is installed,
-        falls back to /proc/meminfo otherwise.
+        Returns True if safe, False if OOM risk detected.
 
-        Args:
-            model_name: Name of the model being loaded (for logging).
-            model_spec: Dict with at least ``ram_mb`` key (model RAM estimate).
-                        If provided, the check uses model_ram + margin vs available.
-                        If None, falls back to the simple min_ram_mb threshold.
-
-        Returns True (safe) if neither psutil nor meminfo can be read — a
-        sensor failure must not block inference (M23: no soft-failure, but
-        also no sensor-caused DoS).
+        Decision logic (kernel-authoritative):
+        1. MemAvailable < reserve → DENY (hard floor)
+        2. PSI full.avg10 > 5% → DENY (system thrashing)
+        3. PSI some.avg60 > 10% → THROTTLE → DENY (sustained pressure)
+        4. MemAvailable 2-4GB → THROTTLE → DENY (low headroom)
         """
-        def _check() -> bool:
-            available_mb = _get_available_ram_mb(self._meminfo_path)
-            if available_mb is None:
-                # Sensor failure — assume safe
-                logger.warning("OOMProtector: cannot determine available RAM (sensor failure)")
-                return True
+        result = await self._protector.check()
 
-            # ── Model-aware estimate ──
-            if model_spec is not None:
-                model_ram_mb = model_spec.get("ram_mb", 0)
-                estimated_required_mb = model_ram_mb + self.RESERVED_MARGIN_MB
-
-                if available_mb < estimated_required_mb:
-                    logger.error(
-                        "OOMProtector HARD-STOP: model='%s' needs ~%d MB RAM "
-                        "(%d MB model + %d MB margin), only %d MB available",
-                        model_name or model_spec.get("name", "unknown"),
-                        estimated_required_mb,
-                        model_ram_mb,
-                        self.RESERVED_MARGIN_MB,
-                        available_mb,
-                    )
-                    return False
-
-                logger.debug(
-                    "OOMProtector SAFE: model='%s' needs ~%d MB, %d MB available "
-                    "(headroom %d MB)",
-                    model_name or "unknown",
-                    estimated_required_mb,
-                    available_mb,
-                    available_mb - estimated_required_mb,
-                )
-                return True
-
-            # ── Simple threshold check (no model spec) ──
-            if available_mb < self.min_ram_mb:
-                logger.error(
-                    "OOMProtector HARD-STOP: %d MB available < %d MB threshold",
-                    available_mb, self.min_ram_mb,
-                )
-                return False
-
-            logger.debug("OOMProtector SAFE: %d MB available >= %d MB threshold", available_mb, self.min_ram_mb)
+        if result == AdmissionResult.ALLOW:
+            logger.debug(
+                "OOMProtector SAFE: model='%s' — all three signals healthy",
+                model_name or "unknown",
+            )
             return True
 
-        return await anyio.to_thread.run_sync(_check)
+        if model_spec:
+            model_ram_mb = model_spec.get("ram_mb", 0)
+            logger.warning(
+                "OOMProtector %s: model='%s' needs ~%d MB, refusing: %s",
+                result.value,
+                model_name or model_spec.get("name", "unknown"),
+                model_ram_mb,
+                result.value,
+            )
+        else:
+            logger.warning(
+                "OOMProtector %s: model='%s' — %s",
+                result.value,
+                model_name or "unknown",
+                result.value,
+            )
+        return False
+
+    async def get_pressure_snapshot(self):
+        """Get detailed pressure snapshot for diagnostics"""
+        return await self._protector.get_snapshot()
 
 
 class ResourceGuard:
@@ -225,19 +206,25 @@ class ResourceGuard:
     def __init__(self, max_ram_mb: Optional[int] = None, meminfo_path: Optional[str] = None):
         # [id-soft: vet-015] ZONEID Pattern — runtime state marker
         self._magic = ZONEID_PROBE
-        self._max_ram_mb = max_ram_mb or int(cvar_get("config.resource_guard.max_ram_mb", 12288))
-        self._current_ram_mb = 0
-        self._condition = anyio.Condition()
+        # [C-2′] Software RAM counter removed — OOMProtector is sole RAM arbiter.
+        # _max_ram_mb and _current_ram_mb eliminated. RAM decisions delegated
+        # to kernel-authoritative PSI + MemAvailable + cgroup v2 fusion.
 
+        # Re-entrant lock state (ContextVar-based)
+        # Keeps the re-entrancy pattern: same task can acquire multiple times
+        # without deadlocking. Weight is used as an abstract nesting counter.
+        self._semaphore = anyio.Semaphore(1)
 
         # Hardware Lock: Zen 2 Optimizer for resource resonance
         from omega.oracle.cpu_optimizer import Zen2Optimizer
         self._optimizer = Zen2Optimizer()
 
-        # ── P0-1: OOM Hard-Stop Protector ──
-        # [heritage: id-soft-2004] Knowledge Leak Detection — fail fast before
-        # RAM exhaustion corrupts state. Refuses model loads below the threshold.
-        self._oom_protector = OOMProtector(
+        # ── P0-1: OOM Hard-Stop Protector (Three-Signal Fusion) ──
+        # [C-2′] Replaced inline OOMProtector with three-signal fusion:
+        #   PSI (/proc/pressure/memory) + MemAvailable + cgroup v2 memory.pressure
+        # [M23: Failure Integrity] Explicit hard-stop — raises a typed OmegaError
+        # rather than silently degrading inference quality or swapping into oblivion.
+        self._oom_protector = LegacyOOMWrapper(
             min_ram_mb=int(cvar_get("config.resource_guard.min_ram_mb", 2048)),
             meminfo_path=meminfo_path,
         )
@@ -245,7 +232,14 @@ class ResourceGuard:
     @asynccontextmanager
     async def lock(self, weight: int = 1, model_spec: Optional[dict] = None,
                    timeout: Optional[float] = None):
-        """Hardware Lock: manages capacity and enforces hardware resonance.
+        """Hardware Lock: concurrency gate + OOM pre-check + CPU affinity.
+        
+        [C-2′] RAM tracking removed — OOMProtector (three-signal fusion) is 
+        the sole RAM arbiter. This lock provides:
+          1. OOM hard-stop (fail-fast before RAM exhaustion)
+          2. Semaphore(1) concurrency gate (one inference at a time)
+          3. Zen 2 CPU affinity enforcement
+          4. ContextVar re-entrancy (same task can nest without deadlock)
         
         [hardening-p4] Re-entrancy — uses immutable ContextVar updates to 
         prevent race conditions across concurrent tasks.
@@ -275,20 +269,16 @@ class ResourceGuard:
         held = _held_weights.get().copy()
         already_held = held.get(task_id, 0)
         
-        # ── 1. Capacity Lock (RAM-based tracking) ──
+        # ── 1. Concurrency Gate (Semaphore) ──
+        # [C-2′] Software RAM counter removed. Semaphore(1) provides
+        # mutual exclusion for inference — only one load at a time.
         if already_held == 0:
             try:
                 if timeout is not None:
                     with anyio.fail_after(timeout):
-                        async with self._condition:
-                            while self._current_ram_mb + weight > self._max_ram_mb:
-                                await self._condition.wait()
-                            self._current_ram_mb += weight
+                        await self._semaphore.acquire()
                 else:
-                    async with self._condition:
-                        while self._current_ram_mb + weight > self._max_ram_mb:
-                            await self._condition.wait()
-                        self._current_ram_mb += weight
+                    await self._semaphore.acquire()
             except TimeoutError:
                 logger.warning(
                     "ResourceGuard acquisition timed out after %.1fs", timeout
@@ -315,10 +305,8 @@ class ResourceGuard:
             current_weight = current_held.get(task_id, 0)
 
             if already_held == 0:
-                # This was the outermost acquisition — release global capacity
-                async with self._condition:
-                    self._current_ram_mb -= weight
-                    self._condition.notify_all()
+                # This was the outermost acquisition — release semaphore
+                self._semaphore.release()
                 
                 # Remove task from held weights entirely
                 if task_id in current_held:

@@ -993,7 +993,24 @@ class ModelGateway:
                 errors.append(f"{provider.name}: rate limit exceeded")
                 continue
             
-            # Step 2: Execute with Hardware Lock and breaker protection
+            # Step 2: [C-10] Admission control for local inference
+            # Max 1 concurrent local inference, fail-fast to cloud on contention or OOM risk
+            admission_token = None
+            if not self._is_cloud_provider(provider):
+                from omega.oracle.admission_controller import get_admission_controller
+                admission_ctrl = get_admission_controller()
+                spec = self.get_model_spec(model_name)
+                model_ram_mb = spec.get("ram_mb", 1700) if spec else 1700
+                if await admission_ctrl.acquire(model_name, model_ram_mb=model_ram_mb):
+                    admission_token = admission_ctrl
+                else:
+                    errors.append(
+                        f"{provider.name}: local inference slot busy or OOM risk "
+                        f"({model_name} needs ~{model_ram_mb}MB) — fail-fast to cloud"
+                    )
+                    continue
+
+            # Step 3: Execute with Hardware Lock and breaker protection
             timeout = self._get_provider_timeout(provider)
             breaker = None  # Initialize for else-clause scope
             
@@ -1100,6 +1117,10 @@ class ModelGateway:
                 errors.append(f"{provider.name}: {e}")
                 self._record_provider_failure(provider, model_name, trace_id)
                 continue
+            finally:
+                # [C-10] Release admission token after local inference completes
+                if admission_token is not None:
+                    admission_token.release()
 
         
         if success_provider:

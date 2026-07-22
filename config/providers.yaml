@@ -1,7 +1,20 @@
-version: 1.2.0
-generated_at: '2026-07-19'
+version: 1.3.0
+generated_at: '2026-07-22'
 source: config/model_registry
 strategy: local_first
+
+# [C-5] MaKaLi Routing — Kali local, Ma'at+Lilith cloud
+# Spec: docs/strategy/IMPLEMENTATION_MANUAL_C0_C2.md §C-5
+maakali_routing:
+  kali:
+    prefer: native-gguf    # Local first for Kali (synthesis voice)
+    fallback: antigravity
+  maat:
+    prefer: antigravity    # Cloud for Ma'at (build side)
+    fallback: google
+  lilith:
+    prefer: antigravity    # Cloud for Lilith (run side)
+    fallback: google
 
 # Dynamic Fallback Resolver Configuration
 # Replaces hardcoded fallback_provider with model-aware resolution
@@ -105,6 +118,9 @@ inference:
       description: Local GGUF inference via llama.cpp (highest priority - local-first)
       model_path: env:OMEGA_MODELS_DIR/Qwen3-1.7B-Q6_K.gguf
       n_threads: 4
+      max_concurrent: 1          # [C-10] Enforced by AdmissionController
+      numa: "disable"            # [C-10] Prevent cross-CCX migration
+      # thread_pin: "0-3"       # [C-10] Optional: explicit CCX pinning via taskset
       supported_models:
       - llama-4-scout-local
       - gpt-oss-120b-local

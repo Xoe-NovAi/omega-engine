@@ -68,14 +68,76 @@
   timestamp: 2026-07-13 00:21:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: insight_captured
-- lesson: "L3: Explicit precedence in config merging prevents systemic fragility. \
-    When two sources of truth coexist (providers.yaml default + models.yaml spec), \
-    the merge logic must have a documented, enforced hierarchy. 'First writer wins' \
+- lesson: "L3: Explicit precedence in config merging prevents systemic fragility. 
+    When two sources of truth coexist (providers.yaml default + models.yaml spec), 
+    the merge logic must have a documented, enforced hierarchy. 'First writer wins' 
     is not an architecture — it is a race condition waiting to manifest."
   source: native-gguf-merge-fix
   trace_id: ses_native_gguf_fix_20260712
   entity_at_time: MAAT
   session_type: hardening
   timestamp: 2026-07-13 00:21:00+00:00
+  model_used: deepseek-v4-flash-free
+  outcome: l3_principle_captured
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Session: 2026-07-22 — Ma'at Track A+B Execution (C-10, C-2', C-4a, C-5)
+# Model: deepseek-v4-flash-free
+# ─────────────────────────────────────────────────────────────────────────────
+
+- lesson: "L1: Executed Track A (C-10 Admission Control + C-2' RAM Truth) and Track B (C-4a MCP Audit) in parallel. Created src/omega/oracle/admission_controller.py with Semaphore(1) + OOMProtector.check_available() for local inference admission. Integrated with ModelGateway.generate() — local providers now hit admission gate before resource_guard.lock(). Removed _current_ram_mb/_max_ram_mb software counters from ResourceGuard — OOMProtector (three-signal fusion: PSI + MemAvailable + cgroup v2) is now sole RAM arbiter. Updated providers.yaml with MaKaLi routing (Kali→native-gguf, Ma'at+Lilith→antigravity) and native-gguf CCX pinning (max_concurrent: 1, numa: disable)."
+  source: track-a-execution
+  trace_id: ses_maat_20260722
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-07-22 04:00:00+00:00
+  model_used: deepseek-v4-flash-free
+  coordination_partner: kali, roc_racoon
+  coordination_protocol: hivemind-awareness + handoff-accept + workspace-lock + roc-dispatch
+  outcome: track-a-complete-33-tests-pass
+
+- lesson: "L1: Track B — C-4a MCP Audit completed. Discovered Hub already has Dual Transport (SSE + Streamable HTTP) via mcp_runtime.py. Streamable HTTP at POST /mcp, SSE at GET /sse. Both use stateless=True. No Mcp-Session-Id usage. File-based Hivemind contingency verified operational (data/handoff/ + data/coordination/locks/). OAuth 2.1 + PKCE missing — documented in R_CG01_MCP_STREAMABLE_HTTP_OAUTH.md. Migration scope: remove SSE routes (~30 lines), add OAuth — ~6-8h total. Kali escalation path C-4a.5 documented."
+  source: track-b-execution
+  trace_id: ses_maat_20260722
+  entity_at_time: MAAT
+  session_type: governance
+  timestamp: 2026-07-22 04:00:00+00:00
+  model_used: deepseek-v4-flash-free
+  outcome: audit-document-delivered
+
+- lesson: "L1: Fixed pre-existing FrozenInstanceError in oom_protector.py:_take_snapshot() — PressureSnapshot frozen dataclass was being mutated after construction. Fixed by passing cgroup fields via constructor instead of post-creation assignment. This bug was latent but exposed by Track A's increased OOMProtector invocation. All 16 model_gateway tests + 17 resource_guard tests now pass."
+  source: bug-fix-pressure-snapshot
+  trace_id: ses_maat_20260722
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-07-22 04:00:00+00:00
+  model_used: deepseek-v4-flash-free
+  outcome: pre-existing-bug-fixed
+
+- lesson: "L2: Parallel track execution with Hivemind coordination works when tracks have clear domain separation. Track A (P1/P3 — infra/engineering) and Track B (P4 — integration) had zero file conflicts. Workspace locks (maat-p1-v1-vault, maat-p3-admission, maat-p4-mcp-audit, maat-p5-makali) prevented cross-agent interference. Roc Racoon dispatched for V-1 pattern mining (ho_dc8b77f6049e) — independent background work."
+  source: parallel-track-coordination
+  trace_id: ses_maat_20260722
+  entity_at_time: MAAT
+  session_type: governance
+  timestamp: 2026-07-22 04:00:00+00:00
+  model_used: deepseek-v4-flash-free
+  coordination_partner: kali, roc_racoon
+  outcome: coordination-success
+
+- lesson: "L3: Semaphore-based admission control + kernel-authoritative OOM protection is the correct pattern for local inference on constrained hardware (Ryzen 5700U, ~8GB available). Software RAM counters drift; kernel signals (PSI, MemAvailable, cgroup v2) are authoritative. The three-signal fusion OOMProtector provides graded decisions (ALLOW/THROTTLE/DENY) rather than binary pass/fail. Semaphore(1) enforces single-instance concurrency without RAM tracking complexity. This pattern should be the template for all resource-constrained local inference."
+  source: track-a-execution
+  trace_id: ses_maat_20260722
+  entity_at_time: MAAT
+  session_type: hardening
+  timestamp: 2026-07-22 04:00:00+00:00
+  model_used: deepseek-v4-flash-free
+  outcome: l3_principle_captured
+
+- lesson: "L3: Dual-transport MCP servers are the migration path — not rewrites. The Hub already had Streamable HTTP alongside SSE. The 2025-03-26 spec deprecation means removing the legacy transport, not building new. File-based coordination (data/handoff/, data/coordination/) is a proven contingency that works without MCP. Architecture principle: build the fallback first, then the primary; the fallback becomes your migration safety net."
+  source: track-b-execution
+  trace_id: ses_maat_20260722
+  entity_at_time: MAAT
+  session_type: governance
+  timestamp: 2026-07-22 04:00:00+00:00
   model_used: deepseek-v4-flash-free
   outcome: l3_principle_captured
