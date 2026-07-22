@@ -102,13 +102,23 @@ Agents executing this guide MUST follow the T0-T6 search tier protocol:
 | **Stream Errors** | `LLM API streaming HTTP 429 rate limit mid-stream chunk error handling` | `OpenAI python SDK stream interruption rate limit catch` |
 | **Quota Router Patterns** | `site:github.com "QuotaRouter" OR "quota-aware" LLM routing 2026` | `cascade router cheapest model first fallback pattern` |
 | **DigitalOcean Headers** | `DigitalOcean GenAI platform "x-ratelimit-remaining-tokens-per-day" 2026` | `DigitalOcean API rate limit headers documentation` |
+| **SambaNova Headers** | `SambaNova Cloud API "x-ratelimit-remaining-requests" "x-ratelimit-reset-requests" 2026` | `SambaNova rate limit headers documentation` |
+| **Cerebras Headers** | `Cerebras Inference API "x-ratelimit-remaining-tokens-minute" "x-ratelimit-reset-tokens-minute" 2026` | `Cerebras rate limit headers documentation` |
+| **Mid-Stream SSE Errors** | `SSE "event: error" "rate_limit_error" mid-stream 429 handling 2026` | `litellm mid-stream 429 error chunk detection` |
 
 **Extraction Targets:**
-- [x] Map of exact quota header keys for OpenRouter, Google, and Anthropic: **`x-ratelimit-remaining` (Anthropic), `x-ratelimit-remaining-requests` (OpenRouter)**.
-- [x] HTTP status code mapping: Does OpenRouter return 402 or 429 when daily spend is exhausted? **Returns 402 Payment Required for exhausted credits, 429 for rate limits**.
-- [x] Selection of an offline tokenizer (e.g., `tiktoken`) and a calculated safety margin (+X%) for pre-flight routing: **`tiktoken` with `o200k_base` + 15% safety margin for Llama3 variance**.
-- [x] Pattern for "Cascade Router": try cheapest competent model first, escalate on failure: **Cost-weighted fallback array in ModelGateway**.
-- [x] Strategy for catching quota exhaustion errors that occur *after* a stream has already been opened: **Catch SSE `error` events mid-stream and yield `OmegaError`**.
+- [x] **IETF Standard**: `draft-ietf-httpapi-ratelimit-headers-11` (May 2026) — Active Internet-Draft, expires Nov 2026. Defines `RateLimit` and `RateLimit-Policy` headers replacing legacy `X-RateLimit-*` trio.
+- [x] **OpenRouter Headers**: `x-ratelimit-limit-requests`, `x-ratelimit-remaining-requests`, `x-ratelimit-reset-requests` on **error responses only** (not successful). Quota check via `GET /api/v1/key` → `limit_remaining`.
+- [x] **OpenRouter Status Codes**: **402 Payment Required** = exhausted credits/quota. **429 Too Many Requests** = rate limit (RPM/RPD). Distinct handling required.
+- [x] **Anthropic Headers**: Full suite on **every response**: `anthropic-ratelimit-requests-limit/remaining/reset`, `anthropic-ratelimit-tokens-limit/remaining/reset`, `anthropic-ratelimit-input-tokens-*`, `anthropic-ratelimit-output-tokens-*`. Reset = RFC3339 timestamp.
+- [x] **Google/Gemini Headers**: `x-ratelimit-limit-requests`, `x-ratelimit-remaining-requests`, `x-ratelimit-limit-tokens`, `x-ratelimit-remaining-tokens`, `x-ratelimit-reset-requests`, `x-ratelimit-reset-tokens`. 429 includes `Retry-After` and `x-ratelimit-reset-after`.
+- [x] **SambaNova Headers**: `x-ratelimit-limit-requests`, `x-ratelimit-remaining-requests`, `x-ratelimit-reset-requests` (epoch seconds), plus daily variants `-requests-day`.
+- [x] **Cerebras Headers**: `x-ratelimit-limit-requests-day`, `x-ratelimit-limit-tokens-minute`, `x-ratelimit-remaining-requests-day`, `x-ratelimit-remaining-tokens-minute`, `x-ratelimit-reset-requests-day` (seconds), `x-ratelimit-reset-tokens-minute` (seconds).
+- [x] **DigitalOcean Headers**: `x-ratelimit-limit-requests`, `x-ratelimit-remaining-requests`, `x-ratelimit-reset-requests` (Unix epoch), plus `x-ratelimit-limit-tokens-per-day`, `x-ratelimit-remaining-tokens-per-day`, `x-ratelimit-limit-tokens-per-minute`, `x-ratelimit-remaining-tokens-per-minute`.
+- [x] **Token Estimation**: `tiktoken` with `o200k_base` encoding. **+15% safety margin** for Llama3 variance (Llama 3 uses tiktoken-based BPE with 128k vocab; diverges on code/CJK). Never use `tiktoken` for non-OpenAI models without calibration.
+- [x] **Cascade Router Pattern**: Cost-weighted fallback array in ModelGateway. Try cheapest competent model first, escalate on quality gate failure (not just errors). FrugalGPT/AutoMix pattern.
+- [x] **Mid-Stream Quota Errors**: Catch SSE `event: error` frames with `"type": "rate_limit_error"` or `"error": {"code": 429}` embedded in HTTP 200 stream. Yield `OmegaError` for Router fallback.
+- [x] **Provider Header Mapping Table**: Complete mapping for all 6 providers (OpenRouter, Anthropic, Google, SambaNova, Cerebras, DigitalOcean) with header keys, reset formats, and quota-exhausted status codes.
 
 ---
 

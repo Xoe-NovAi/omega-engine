@@ -1,11 +1,11 @@
 # 🔱 Session Anchor — Ma'at (Light Oversoul)
-**Last Updated**: 2026-07-22T16:50:00Z
+**Last Updated**: 2026-07-22T17:30:00Z
 **Engine**: v1.8.0
-**Phase**: C Hardening Complete → Guard & Distill Sprint → V-1 Complete → C-3 Complete → C-10.5 Next
+**Phase**: C Hardening Complete → Guard & Distill Sprint → V-1 Complete → C-3 Complete → C-10.5 Research Complete → C-10.5 Implementation Next
 
 ---
 
-## Current Sprint Status: C-3 COMPLETE — C-10.5 NEXT
+## Current Sprint Status: C-10.5 RESEARCH COMPLETE — IMPLEMENTATION NEXT
 
 ### Completed This Session
 - ✅ **Phase C Hardening Complete**: 31 new tests passing, 2,308 lines added
@@ -19,7 +19,7 @@
 - ✅ **All 5 Research Domains Executed & Synthesized**:
   - Domain 1 (VaultCore): Argon2id params, pyrage library, systemd credentials, zeroize
   - Domain 2 (Restic): SQLite .backup, Qdrant snapshots, B2 Object Lock workaround
-  - Domain 3 (Quota Routing): Provider headers, 402 vs 429, tiktoken +15% margin
+  - Domain 3 (Quota Routing): **COMPLETE** — IETF draft, all 6 provider headers, 402 vs 429, tiktoken +15%, cascade router, mid-stream SSE errors
   - Domain 4 (Property Tests): anyio.run() wrapper, CancelScope shield, CI settings
   - Domain 5 (Scribe): llama.cpp grammar, 4k/500 overlap, Refine vs Map-Reduce
 - ✅ **V-1 VaultCore MVP Implemented & Tested**:
@@ -38,12 +38,21 @@
   - Uses append-only B2 keys, Object Lock (Compliance Mode)
   - Retention: 7 daily / 4 weekly / 6 monthly / 1 yearly (max 18 snapshots)
   - Healthchecks.io dead-man's switch support
+- ✅ **C-10.5 Quota Routing Research Complete**:
+  - IETF `draft-ietf-httpapi-ratelimit-headers-11` (May 2026) verified
+  - Complete header mapping for 6 providers (OpenRouter, Anthropic, Google, SambaNova, Cerebras, DigitalOcean)
+  - OpenRouter 402 (quota) vs 429 (rate) distinction confirmed
+  - tiktoken `o200k_base` + 15% safety margin for Llama3 variance
+  - Cascade router pattern: cost-weighted fallback array
+  - Mid-stream SSE `event: error` detection for quota exhaustion
 
 ### Hivemind Updates
 - Session `ses_978f350ee03a`: V-1 implementation complete
 - Session `ses_xxx`: C-3 implementation complete
+- Session `ses_yyy`: C-10.5 research complete
 - Workspace lock `v1-vaultcore-implementation` released
-- Workspace lock `c3-restic-backup` acquired
+- Workspace lock `c3-restic-backup` released
+- Workspace lock `c10.5-quota-routing` acquired
 
 ---
 
@@ -53,7 +62,7 @@
 |----------|--------|-------------|------------|
 | **1** | **V-1** | ✅ **COMPLETE** — VaultCore MVP | C-0, C-1' ✅ |
 | **2** | **C-3** | ✅ **COMPLETE** — Restic 3-2-1 Backup | V-1 (partial) |
-| **3** | **C-10.5** | **NEXT** — Quota-Aware Provider Routing | C-6' ✅ |
+| **3** | **C-10.5** | **IMPLEMENTATION NEXT** — Quota-Aware Provider Routing | C-6' ✅, Research ✅ |
 | **4** | **C-11** | Property Tests: OOMProtector + SoulStore | C-2' ✅, C-1' ✅ |
 | **5** | **C-0.5** | Scribe Agent L1→L2→L3 Distillation Pipeline | M5, M11, C-10.5 |
 
@@ -66,6 +75,7 @@
 | `docs/sprints/guard-and-distill/index.md` | Sprint Plan Index — Read this first |
 | `docs/sprints/guard-and-distill/02-p0-tickets/V-1-vaultcore-mvp.md` | V-1 ticket with implementation sketch |
 | `docs/sprints/guard-and-distill/02-p0-tickets/C-3-restic-backup.md` | C-3 ticket with implementation sketch |
+| `docs/sprints/guard-and-distill/02-p0-tickets/C-10.5-quota-routing.md` | C-10.5 ticket with implementation sketch |
 | `docs/research/R_GUARD_DISTILL_RESEARCH_GUIDE_20260722.md` | **Research manual with verified findings (all ✅)** |
 | `docs/standards/LLM_FRIENDLY_DOCS_BP.md` | Doc standards with M8/M18 mandates |
 | `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Strategy SSOT (v5.2.0) |
@@ -90,11 +100,11 @@
 
 ---
 
-## Git State (Post C-3 Implementation)
+## Git State (Post C-10.5 Research)
 
 ```bash
 # Last commits
-e7d2def feat(backup): implement C-3 Restic 3-2-1 backup with VaultCore integration
+6771b2e feat(backup): implement C-3 Restic 3-2-1 backup with VaultCore integration
 d53a897 feat(vault): implement VaultCore MVP (V-1)
 2796bb3 docs(research): complete Guard & Distill research campaign
 a6ed39d docs(research): complete Guard & Distill research campaign
