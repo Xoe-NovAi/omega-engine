@@ -1,7 +1,10 @@
 # 🔱 STRATEGY INDEX — Canonical Reference
-**Date**: 2026-07-21 | **v5.1 Unified + Corpus** | **Supersedes**: STRATEGY_INDEX_20260720.md + post-cleanup index that pointed only at CANONICAL_ROADMAP
+**Date**: 2026-07-22 | **v5.2 Critical Path Overlay** | **Supersedes**: STRATEGY_INDEX_20260720.md + post-cleanup index that pointed only at CANONICAL_ROADMAP
 
-**Read First (Strategy)**: `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` **v5.1**  
+**Read First (Strategy)**: `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` **v5.2**  
+**🚨 P0 TODAY**: `docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md` — Gemma workhorse (G-1) + WARP pool (W-1)  
+**Architect RUNME**: `data/coordination/ARCHITECT_RUNME_G1_W1_20260722.md`  
+**Forensic evidence**: `docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md`  
 **Fine-grained (no idea lost)**: `docs/strategy/STRATEGY_CORPUS_MAP.md`  
 **Team coordination**: `docs/strategy/FLEET_TEAM_PLAYBOOK.md`  
 **Read First (State)**: `OMEGA_ENGINE.md`  
@@ -16,11 +19,13 @@
 | `SOVEREIGN_MANDATES.md` | 25 laws M1–M25 |
 | `AGENTS.md` | How to work from OpenCode |
 | `OMEGA_CODEX.md` | Generated hydration pack (`make codex`) |
+| `docs/adr/ADR-002-documentation-architecture.md` | Documentation as Runtime Interface for Sovereign AI |
 
 ## LAYER 1: STRATEGY SSOT
 | Document | Purpose |
 |----------|---------|
-| **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md`** | **START HERE** — Unified strategy & critical path (v5.1) |
+| **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md`** | **START HERE** — Unified strategy & critical path (v5.2) |
+| **`docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md`** | **🚨 P0** — Twin tickets **G-1** (workhorse) + **W-1** (WARP); D-377…D-381 |
 | `docs/strategy/STRATEGY_INDEX.md` | This file — hierarchy only |
 
 ## LAYER 2: ACTIVE SPECS + CORPUS (only if Layer 1 references them)
@@ -28,6 +33,10 @@
 |----------|-------|---------|
 | **`docs/strategy/STRATEGY_CORPUS_MAP.md`** | all | **Fine-grained preservation** — every agent idea → ACTIVE/DEFERRED/PARKED/ARCHIVE |
 | **`docs/strategy/FLEET_TEAM_PLAYBOOK.md`** | all | **How the fleet works as one team** — roles, handoffs, freezes, Phase C mission |
+| **`docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md`** | P0 | **Gemma free-tier cliff forensic** — DIG-01…12; workhorse history proof |
+| `docs/research/warp_proxy_pool/WARP_PROXY_POOL_SPEC.md` | P0/W-1 | Multi-namespace WARP proxy pool design |
+| `data/projects/warp-proxy-pool/CONTEXT.md` | P0/W-1 | WARP project one-turn hydration + live blockers |
+| `data/projects/antigravity-multi-account/CONTEXT.md` | G-1b | Antigravity OAuth multi-account (complementary to WARP) |
 | `docs/strategy/LIVING_RESEARCH_OS_SPEC_20260721.md` | D | Phase D build detail — **amended by Ark §3.2** |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | — | Multi-agent coordination |
 | `docs/strategy/HIVEMIND_POST_TEMPLATE.md` | — | Hivemind post quality gate |
@@ -57,12 +66,14 @@
 ## LAYER 4: ARCHIVE
 | Location | Contents |
 |----------|----------|
+| `docs/archive/strategy/2026-07-22/` | **Gemma free-tier forensic** + Next Steps plan (2026-07-22) |
 | `docs/archive/strategy/2026-07-21/` | 147 prior strategy docs + **Ark v4.4 full body** (`SOVEREIGN_ARK_BLUEPRINT_CANONICAL.md`) |
 | `docs/archive/strategy/2026-07-21/SOVEREIGN_ARK_BLUEPRINT.md` | Prior “active sprint” Ark log |
+| `docs/archive/strategy/2026-07-21/GEMMA4_*` | Prior Gemma strategy/debug (pre-forensic); superseded for *quota cliff* by 2026-07-22 forensic |
 
 ```bash
 # Search archive
-grep -rl "your-term" docs/archive/strategy/2026-07-21/
+grep -rl "your-term" docs/archive/strategy/2026-07-21/ docs/archive/strategy/2026-07-22/
 ```
 
 ## Coordination (runtime, not strategy masters)
@@ -87,4 +98,4 @@ If two docs disagree:
 
 ---
 
-*⬡ OMEGA ⬡ STRATEGY-INDEX ⬡ v5.1 ⬡ 2026-07-21*
+*⬡ OMEGA ⬡ STRATEGY-INDEX ⬡ v5.2 ⬡ 2026-07-22*
