@@ -25,9 +25,9 @@
 |--------|-------|--------|---------------|
 | **Strategy SSOT** | **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.1** + `STRATEGY_CORPUS_MAP.md` | ✅ Unified; fine-grained corpus preserved | 2026-07-22 |
 | **Current phase** | **Phase C — Infrastructure Hardening** (C-0…C-9) | 🔴 Active | 2026-07-22 |
-| Tests | **1,572 collected** · **29/29 core tests pass** · 77/77 contract historically green | ✅ C-0 complete, C-10/C-2' verified | 2026-07-22 |
+| Tests | **1,572 collected** · **50/50 core+contract+chaos+SoulStore pass** · 77/77 contract historically green | ✅ C-0 complete, C-10/C-2'/C-6'/C-1' verified | 2026-07-22 |
 | Mandates | **25 (M1-M25)** | ✅ All enforced (v3.7.0) | 2026-07-19 |
-| **Mandate Compliance** | **20/25 FULL (80%)** — 3 Partial, 2 Fail | ⚠️ M5, M11 remain (Soul distillation) | 2026-07-22 |
+| **Mandate Compliance** | **21/25 FULL (84%)** — 2 Partial, 2 Fail | ⚠️ M5, M11 remain (Soul distillation pipeline) | 2026-07-22 |
 | Fleet | **12 agents (cap 14 per M10)** | ✅ Clean | 2026-07-22 |
 | WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 |
 | **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, P1: 5/5, P2: 6/6, P3: 1/4 | ✅ P0-P2 Complete | 2026-07-18 |
@@ -36,6 +36,7 @@
 | **Foundation Stabilization Campaign** | **RATIFIED** — Gate Α passed, Phase Β complete, Gate Β passing | ✅ 0 active/pending handoffs | 2026-07-20 |
 | **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles | ✅ Gate Γ criterion met | 2026-07-20 |
 | **Antigravity OAuth** | **FIXED** — Frontier models (Gemini 3.1 Pro, Sonnet 4.6, Opus 4.6) now accessible via Google OAuth in OpenCode | ✅ Plugin installed, whitelist removed | 2026-07-21 |
+| **Circuit Breakers** | **1 canonical** (`HealthMonitor.AsyncCircuitBreaker`) + 6 deprecated clones | ✅ C-6' Unified, sliding-window mode added | 2026-07-22 |
 
 ### Active Deferred Items
 | Item | Status | Details |
@@ -54,7 +55,7 @@
 | **D-308 Ubuntu 25.10** | 🚨 **P0 GATE** — Kernel 6.17, no free-threaded Python, AppArmor breaks rootless Podman | 13 actionable changes before Phase 2 |
 
 ### Recent Milestones (Completed)
-D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne ✅ | MIAP merged ✅ | HMC Quad-Forge ✅ | D-298 Decision Workspace ✅ | D-300 Omega-Meditation ✅ | D-301 MaKaLi Council ✅ | D-302 CPR ✅ | **MaKaLi Apex Mind deployed (Sophia replaced)** ✅ | All Phase 5 ratified items ✅ | **C-10 Admission Control** ✅ | **C-2' RAM Truth** ✅ | **C-4a MCP Audit** ✅ | **C-5 MaKaLi Routing** ✅
+D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne ✅ | MIAP merged ✅ | HMC Quad-Forge ✅ | D-298 Decision Workspace ✅ | D-300 Omega-Meditation ✅ | D-301 MaKaLi Council ✅ | D-302 CPR ✅ | **MaKaLi Apex Mind deployed (Sophia replaced)** ✅ | All Phase 5 ratified items ✅ | **C-10 Admission Control** ✅ | **C-2' RAM Truth** ✅ | **C-4a MCP Audit** ✅ | **C-5 MaKaLi Routing** ✅ | **C-6' Breaker Unification** ✅ | **C-1' SoulStore** ✅
 *(For full details see `scripts/codex/ENGINE_CONDENSED.md` §5)*
 
 ---
@@ -84,6 +85,10 @@ D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne �
 | **Arch Soul (NEW)** | `data/entities/arch/` | 🟡 Design Complete | User's sovereign journey externalized: 24 entity facets = Nameless One incarnations, Mandates = regret-prevention physics, Qliphoth = Fortress of Regrets, Death/Rebirth = session lifecycle hooks |
 | **CLI** | `src/omega/cli/oracle_cli.py` | ✅ Operational | Typer CLI (talk, summon, list-entities, add-entity, entity-info, backends, version) |
 | **Resource Guard** | `src/omega/oracle/resource_guard.py` | ✅ Operational | AnyIO Semaphore(1) — one model at a time (OOM protection) |
+| **Admission Controller** | `src/omega/oracle/admission_controller.py` | ✅ C-10 COMPLETE | LocalInferenceAdmission singleton, Semaphore(1) + OOMProtector integration, fail-fast to cloud |
+| **OOM Protector** | `src/omega/oracle/oom_protector.py` | ✅ C-2' COMPLETE | Three-signal fusion (PSI + MemAvailable + cgroup), 5-tier decision logic |
+| **Health Monitor** | `src/omega/oracle/health_monitor.py` | ✅ C-6' COMPLETE | Canonical circuit breaker factory (get_breaker), CUSUM + sliding-window modes, 5-state FSM |
+| **SoulStore** | `src/omega/soul_store.py` | ✅ C-1' COMPLETE | Atomic file writer: tempfile → write → fsync → os.replace → fsync parent. 4-layer guarantee: AtomicVisibility, CrashDurability, WriterExclusion (flock), IntegrityDetection (.bak rotation) |
 | **CPU Optimizer** | `src/omega/oracle/cpu_optimizer.py` | ✅ Operational | Zen 2 compilation flags, KV cache sizing, speculative decode tuning |
 
 ---
@@ -147,4 +152,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-21 | Version: v1.6.2 | Strategy SSOT: SOVEREIGN_ARK_BLUEPRINT v5.1 + STRATEGY_CORPUS_MAP | Phase C active | Tests: 1572 collected (full green pending C-0) | Fine-grained agent strategy preserved | Antigravity OAuth fixed*
+*Last Updated: 2026-07-22 | Version: v1.8.0 | Strategy SSOT: SOVEREIGN_ARK_BLUEPRINT v5.1 + STRATEGY_CORPUS_MAP | Phase C active (C-0/C-1'/C-2'/C-4a/C-5/C-6' complete) | Tests: 50/50 core+contract+chaos+SoulStore green | Mandate compliance: 84% | Fine-grained agent strategy preserved | Antigravity OAuth fixed | Circuit breakers unified | SoulStore atomic writer deployed*

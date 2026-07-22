@@ -27,6 +27,7 @@ from omega.errors import (
     EntityTombstonedError, ModelNotFoundError,
 )
 from omega.oracle.soul_edit_history import SoulEditHistory, SoulEditEntry
+from omega.soul_store import get_soul_store
 
 from .models import GnosisPacket, ResearchTask
 
@@ -87,7 +88,9 @@ class SoulUpdater:
         if not await anyio.Path(soul_path).exists():
             soul_path = self.entities_dir / entity / "soul.yaml"
             soul_path.parent.mkdir(parents=True, exist_ok=True)
-            await anyio.Path(soul_path).write_text(
+            store = get_soul_store()
+            await store.write_atomic(
+                soul_path,
                 f"entity:\n  name: {entity}\n  lessons_learned: []\n"
             )
 
@@ -117,7 +120,9 @@ class SoulUpdater:
         # Avoid duplicates
         if not any(existing.get("lesson") == l3 for existing in lessons):
             lessons.append(lesson)
-            await anyio.Path(soul_path).write_text(
+            store = get_soul_store()
+            await store.write_atomic(
+                soul_path,
                 yaml.dump(soul_data, default_flow_style=False, sort_keys=False)
             )
             logger.info(f"Wrote L3 to {soul_path}")

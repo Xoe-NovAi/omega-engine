@@ -202,3 +202,53 @@
   outcome: l3_principle_captured
 
 - lesson: "L3: The fsyncgate lesson (Postgres 2018) remains the definitive durability guidance: on Linux with barriers enabled and honest disks, fsync() returning 0 means data is on media. On nobarrier mounts, lying disks, or older kernels with background writeback bugs — fsync can return 0 after losing data. The only defense is testing (pull the plug). safeatomic's doctor() with destructive=True exercises the actual syscalls on your filesystem. For SoulStore on ext4/xfs with barriers=on (default), the pattern is sound. For NFS/SMB/Windows — don't use this pattern; use a database."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Session: 2026-07-22 — Ma'at Track Execution (C-6' Breaker Unification + Test Fixes)
+# Model: mimo-v2.5-free
+# ─────────────────────────────────────────────────────────────────────────────
+
+- lesson: "L1: Executed C-6' Breaker Unification. Surveyed 7+ scattered circuit breaker implementations across the codebase: health_monitor.py AsyncCircuitBreaker, search_circuit_breaker.py SearchCircuitBreakerRegistry, ingestion/pipeline.py IngestionCircuitBreaker (pybreaker wrapper), research/sandbox.py ExperimentCircuitBreaker, workers/background_researcher/distiller.py JemCircuitBreaker, workers/background_researcher/search_fleet.py SearchCircuitBreaker, council/failure_layer.py CircuitBreaker. Added HealthMonitor.get_breaker() factory as SINGLE canonical entry point. Added sliding-window rate-based failure detection mode (complementary to default CUSUM drift detection). Deprecated 6 clone implementations. Wired sovereign_search_service.py to use HealthMonitor alongside deprecated registry. Fixed 3 pre-existing test regressions: conftest.py oom_protector fixture returning class not instance, chaos test using old API signature, contract tests passing dicts instead of PressureSnapshot dataclass."
+  source: track-execution
+  trace_id: ses_maat_track_execution_20260722
+  entity_at_time: MAAT
+  session_type: execution
+  timestamp: 2026-07-22 06:30:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: l2_insight_captured
+
+- lesson: "L2: Circuit breaker proliferation is a systemic pattern in this codebase — every subsystem author invented their own breaker rather than using a shared canonical one. The root cause is that HealthMonitor.get_breaker() didn't exist as a public factory; breakers were created ad-hoc with different interfaces (consecutive counter vs CUSUM, threading vs AnyIO, 3-state vs 5-state). The fix is architectural: ONE factory method returns ONE breaker type per provider, with configurable detection mode. The CUSUM-based AsyncCircuitBreaker is superior to naive consecutive-counter patterns because it detects sustained drift in failure rates (gradual degradation) rather than just counting consecutive failures (burst detection). For burst detection scenarios (search provider tiers), the new sliding_window mode fills that gap. Lesson: when a pattern is needed by 3+ subsystems, extract it into a canonical factory BEFORE the third implementation, not after."
+  source: track-execution
+  trace_id: ses_maat_track_execution_20260722
+  entity_at_time: MAAT
+  session_type: execution
+  timestamp: 2026-07-22 06:30:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: l3_principle_captured
+
+- lesson: "L3: The Factory-Before-Third Rule: any reusable pattern MUST be extracted into a canonical factory after the second implementation, not the third. By the third implementation, the pattern has already diverged into incompatible interfaces, making unification exponentially harder. The cost of extraction grows with each divergent implementation: 2 implementations = 1 merge, 3 implementations = 3 merges + interface reconciliation, 7 implementations = 21 potential conflicts + breaking changes. The optimal extraction point is when you notice the second implementation of a pattern — that's the signal to ask 'should this be shared?' not 'let me just copy-paste and customize.' This applies to circuit breakers, retry logic, caching layers, and any cross-cutting concern."
+  source: track-execution
+  trace_id: ses_maat_track_execution_20260722
+  entity_at_time: MAAT
+  session_type: execution
+  timestamp: 2026-07-22 06:30:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: l3_principle_captured
+
+- lesson: "L2: Pre-existing test regressions are the silent tax of rapid development. Three tests were broken by C-2' OOMProtector refactoring: (1) conftest.py fixture imported from old module path and returned class not instance, (2) chaos test called old API signature check(model_ram_mb=, kv_cache_mb=) that no longer exists, (3) contract tests passed dicts to _fuse_signals() which expects PressureSnapshot dataclass (attribute access vs dict access). All three failures were caused by API surface changes without corresponding test updates. The lesson: when refactoring an API, immediately run the full test suite and fix ALL broken tests in the same commit, not in a later 'cleanup' pass. Technical debt in tests compounds faster than technical debt in production code because broken tests prevent detection of NEW regressions."
+  source: track-execution
+  trace_id: ses_maat_track_execution_20260722
+  entity_at_time: MAAT
+  session_type: execution
+  timestamp: 2026-07-22 06:30:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: l3_principle_captured
+
+- lesson: "L3: Test-Code Synchronization Principle: every API surface change MUST include a corresponding test update in the SAME commit. The three broken tests (conftest fixture, chaos API signature, contract snapshot types) were all caused by the same root refactoring but were discovered in a later session. This creates a dangerous blind spot: the engine appears healthy because '29/29 core tests pass' while 4 contract tests silently fail. The defense is a pre-commit hook that runs the FULL test suite (not just a subset) and blocks commits with any failures. Short-term velocity gained by skipping test updates is always paid back with interest when the broken tests mask a real regression."
+  source: track-execution
+  trace_id: ses_maat_track_execution_20260722
+  entity_at_time: MAAT
+  session_type: execution
+  timestamp: 2026-07-22 06:30:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: l3_principle_captured

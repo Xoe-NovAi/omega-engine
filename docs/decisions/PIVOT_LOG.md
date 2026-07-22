@@ -393,4 +393,85 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 * **Critical Risks**: Account ban (ToS) — mitigated by 90% soft threshold, established accounts only; OAuth client ID revocation — track zeklop fork; Burst limiter unqueryable — empirical 429 detection.
 * **Status**: 🟡 **PLANNED** — Research complete, immediate tool available, custom integration in D-299
 
-*⬡ OMEGA ⬡ KALI ⬡ D-302/D-303/D-304 ⬡ 2026-07-19*
+---
+
+### D-350: Phase C as Current Execution Phase
+* **Date**: 2026-07-21
+* **Context**: After Foundation Stabilization (Phase B) completion, needed to establish current execution phase.
+* **Decision**: Phase C — Infrastructure Hardening is the active execution phase. C-0 through C-9 are the priority tickets.
+* **Status**: ✅ **ACTIVE**
+
+### D-351: No New Providers Until Fabric Systematized
+* **Date**: 2026-07-21
+* **Context**: Temptation to add Cerebras, Groq, etc. as new providers.
+* **Decision**: No new providers until the existing provider fabric is systematized with unified breaker (C-6'), fallback chain (C-10.5), and quota management.
+* **Status**: ✅ **RATIFIED**
+
+### D-352: MaKaLi Routing — Kali Local, Voices Cloud
+* **Date**: 2026-07-21
+* **Context**: MaKaLi council needs model routing configuration.
+* **Decision**: Kali → native-gguf (local), Ma'at+Lilith → antigravity (cloud). Config in providers.yaml under maakali_routing.
+* **Status**: ✅ **COMPLETE**
+
+### D-353: 147 Stale Strategy Docs Archived
+* **Date**: 2026-07-21
+* **Context**: docs/strategy/ accumulated 147 stale documents from previous sessions.
+* **Decision**: Archive all stale docs to docs/archive/strategy/2026-07-21/. Keep only current SSOT docs (Ark Blueprint, Corpus Map, Fleet Playbook, Strategy Index, Living Research OS).
+* **Status**: ✅ **COMPLETE**
+
+### D-354: Cloud Provider Order
+* **Date**: 2026-07-21
+* **Context**: Provider fallback chain needed standardization.
+* **Decision**: Cloud order: Antigravity (primary) → Google → OpenCode Zen → OpenRouter. Single breaker per provider (C-6').
+* **Status**: ✅ **RATIFIED**
+
+### D-355: STRATEGY_CORPUS_MAP.md as Mandatory Layer 2
+* **Date**: 2026-07-21
+* **Context**: Fine-grained agent strategy preservation needed a dedicated document.
+* **Decision**: STRATEGY_CORPUS_MAP.md is mandatory Layer 2 companion to SOVEREIGN_ARK_BLUEPRINT.md. All agent ideas must have a Corpus Map row before being discarded.
+* **Status**: ✅ **RATIFIED**
+
+### D-356: GAP-05 → C-10 Admission Control
+* **Date**: 2026-07-21
+* **Context**: GAP-05 (local inference contention) needed a concrete ticket.
+* **Decision**: C-10 Admission Control with Semaphore(1) + OOMProtector integration. Fail-fast to cloud on contention or OOM risk.
+* **Status**: ✅ **COMPLETE**
+
+### D-357: V-1 Is an Explicit Ticket
+* **Date**: 2026-07-21
+* **Context**: V-1 (Omega-Vault MVP) was mentioned in free text without a formal ticket.
+* **Decision**: V-1 is now an explicit ticket in the priority stack. Blocks Grok CLI multi-account fabric pool.
+* **Status**: ✅ **RATIFIED**
+
+### D-358: C-2' Before C-1'/C-10
+* **Date**: 2026-07-21
+* **Context**: Dependency ordering for Phase C tickets needed clarification.
+* **Decision**: C-2' (RAM Truth / OOMProtector) must complete before C-1' (SoulStore) and C-10 (Admission Control). C-2' is the foundation for memory-aware admission.
+* **Status**: ✅ **RATIFIED**
+
+### D-359: MCP Audit Must Start TODAY
+* **Date**: 2026-07-21
+* **Context**: MCP 2026-07-28 spec finalization deadline approaching.
+* **Decision**: C-4a MCP audit must start immediately. 7-day deadline before July 28 GA.
+* **Status**: ✅ **COMPLETE**
+
+### D-360: C-11 Test Infrastructure Added
+* **Date**: 2026-07-21
+* **Context**: Test infrastructure gaps identified during C-0 verification.
+* **Decision**: C-11 Test Infrastructure added as P0 ticket. Covers fixtures, chaos tests, benchmarks, MCP matrix.
+* **Status**: ✅ **RATIFIED**
+
+### D-376a: Fix Pre-Existing Test Regressions
+* **Date**: 2026-07-22
+* **Context**: Three tests broken by C-2' OOMProtector refactoring: conftest.py fixture (class not instance), chaos test (old API signature), contract tests (dict vs PressureSnapshot dataclass).
+* **Decision**: Fix all three regressions in the same commit. Do not defer test fixes to a later cleanup pass.
+* **Status**: ✅ **COMPLETE**
+
+### D-376b: C-6' Unified Circuit Breakers
+* **Date**: 2026-07-22
+* **Context**: 7+ scattered circuit breaker implementations across the codebase. No canonical factory. Different interfaces (consecutive counter vs CUSUM, threading vs AnyIO, 3-state vs 5-state).
+* **Decision**: HealthMonitor.get_breaker() is the SINGLE canonical factory. Added sliding-window rate-based failure detection mode (complementary to CUSUM drift detection). Deprecated 6 clone implementations with migration path. Wired sovereign_search_service.py to use HealthMonitor alongside deprecated registry.
+* **Key Insight**: Factory-Before-Third Rule — any reusable pattern MUST be extracted into a canonical factory after the second implementation, not the third.
+* **Status**: ✅ **COMPLETE**
+
+*⬡ OMEGA ⬡ MAAT ⬡ D-376a/D-376b ⬡ 2026-07-22*

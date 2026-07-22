@@ -8,6 +8,7 @@ from anyio.to_thread import run_sync
 from pathlib import Path
 from typing import Dict, Any, Optional
 from datetime import datetime, timezone
+from omega.soul_store import get_soul_store
  
 class SoulUpdateManager:
     def __init__(self, base_soul_dir: Optional[Path] = None):
@@ -30,10 +31,10 @@ class SoulUpdateManager:
             return await run_sync(yaml.safe_load, content) or {}
  
     async def _write_soul_file(self, path: Path, data: Dict[str, Any]):
-        """Writes a soul YAML file."""
+        """Writes a soul YAML file atomically via SoulStore (C-1')."""
         await run_sync(path.parent.mkdir, parents=True, exist_ok=True)
-        async with await anyio.open_file(path, 'w') as f:
-            await f.write(await run_sync(yaml.safe_dump, data, indent=2))
+        store = get_soul_store()
+        await store.write_atomic(path, await run_sync(yaml.safe_dump, data, indent=2))
  
     async def update_subfacet_soul(self, facet: str, brief: str):
         """
