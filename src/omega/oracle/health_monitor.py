@@ -19,13 +19,14 @@ from __future__ import annotations
 import anyio
 from omega.errors import OmegaError
 import inspect
+import re
 import time
 import logging
 from collections import deque
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable, Deque, Dict, Optional
+from typing import Any, Callable, Deque, Dict, Optional, Tuple
 # Module-level singleton
 _health_monitor: Optional[HealthMonitor] = None
 
@@ -119,6 +120,8 @@ class AsyncCircuitBreaker:
     - AnyIO-native async lock
     - Observability integration (breaker transitions logged)
     - ZONEID pattern for state integrity
+    - [HARDENING-2026-07-22] 429 classification: separates rate-limit
+      (transient, seconds) from quota-exhausted (period-based, hours/days)
     """
 
     def __init__(
@@ -161,6 +164,17 @@ class AsyncCircuitBreaker:
         self.window_seconds = window_seconds
         self.max_failures_per_window = max_failures_per_window
         self._window_failures: list = []  # [(timestamp, ...), ...]
+        
+        # 429 Classification (hardening P0 — from sprint research 2026-07-22)
+        # Prevents the bug class: circuit breakers conflating rate-limit 429s
+        # with quota-exhausted 429s (resilient-llm-router pattern)
+        self.rate_limit_until: Optional[float] = None   # timestamp when rate limit expires
+        self.quota_until: Optional[float] = None        # timestamp when quota resets
+        self.quota_keywords = re.compile(
+            r"monthly.quota|daily.limit|out.of.credits|quota.exceeded|"
+            r"insufficient.credit|billing|payment|plan.limit",
+            re.IGNORECASE,
+        )
 
     async def call(self, func, *args, trace_id: Optional[str] = None, **kwargs):
         """Execute function through circuit breaker."""
@@ -339,6 +353,113 @@ class AsyncCircuitBreaker:
                 except (OmegaError, RuntimeError, OSError) as e:
                     logger.warning(f"Circuit opened event failed — observability unavailable: {e}")
                     pass
+
+    def record_429(
+        self,
+        retry_after: Optional[float] = None,
+        response_body: str = "",
+        is_quota: Optional[bool] = None,
+        trace_id: Optional[str] = None,
+    ) -> None:
+        """Classify a 429 response as rate-limit or quota-exhausted.
+        
+        [HARDENING-2026-07-22] Prevents the bug class where circuit breakers
+        conflate transient rate limits with quota exhaustion (resilient-llm-router
+        pattern). Rate limits use Retry-After (seconds); quotas use period-based
+        cooldown (hours/days).
+        
+        Args:
+            retry_after: Retry-After header value in seconds, if present.
+            response_body: Response body text for quota keyword detection.
+            is_quota: Explicit classification override. If None, auto-detect.
+            trace_id: Optional trace ID for observability.
+        """
+        now = time.monotonic()
+        
+        if is_quota is None:
+            # Auto-detect: check body for quota keywords, then headers
+            has_quota_keywords = bool(self.quota_keywords.search(response_body))
+            has_rate_limit_headers = retry_after is not None and retry_after < 3600
+            # If retry_after is > 1 hour, treat as quota (not a per-minute rate limit)
+            is_long_cooldown = retry_after is not None and retry_after >= 3600
+            
+            is_quota = has_quota_keywords or is_long_cooldown
+        
+        if is_quota:
+            # Quota exhausted — cooldown until period rolls over
+            cooldown = retry_after or 86400.0  # default 24h if no Retry-After
+            self.quota_until = now + cooldown
+            logger.info(
+                f"[{self.name}] 429 QUOTA — cooldown {cooldown:.0f}s "
+                f"(until {datetime.now(timezone.utc).isoformat()})"
+            )
+        else:
+            # Rate limit — short cooldown
+            cooldown = retry_after or 60.0  # default 60s if no Retry-After
+            self.rate_limit_until = now + cooldown
+            logger.info(
+                f"[{self.name}] 429 RATE-LIMIT — cooldown {cooldown:.0f}s "
+                f"(until {datetime.now(timezone.utc).isoformat()})"
+            )
+        
+        if trace_id:
+            try:
+                from omega.observability import get_engine, EventType
+                engine = get_engine()
+                engine.log_event(
+                    EventType.BACKEND_FALLBACK,
+                    trace_id,
+                    {
+                        "provider": self.name,
+                        "event": "429_classified",
+                        "classification": "quota" if is_quota else "rate_limit",
+                        "cooldown_seconds": cooldown,
+                    },
+                )
+            except (OmegaError, RuntimeError, OSError):
+                pass
+    
+    def is_429_blocked(self) -> bool:
+        """Check if this breaker is blocked by a 429 (rate-limit or quota).
+        
+        [HARDENING-2026-07-22] Check BEFORE calling provider. The guard()
+        method handles circuit state; this handles 429 cooldowns.
+        
+        Returns:
+            True if blocked by rate-limit or quota, False otherwise.
+        """
+        now = time.monotonic()
+        
+        if self.quota_until and now < self.quota_until:
+            remaining = self.quota_until - now
+            logger.debug(
+                f"[{self.name}] BLOCKED by quota — {remaining:.0f}s remaining"
+            )
+            return True
+        
+        if self.rate_limit_until and now < self.rate_limit_until:
+            remaining = self.rate_limit_until - now
+            logger.debug(
+                f"[{self.name}] BLOCKED by rate-limit — {remaining:.0f}s remaining"
+            )
+            return True
+        
+        return False
+    
+    def get_429_status(self) -> Dict[str, Any]:
+        """Get current 429 classification status for observability.
+        
+        Returns:
+            Dict with rate_limit_until, quota_until, and remaining times.
+        """
+        now = time.monotonic()
+        return {
+            "rate_limit_until": self.rate_limit_until,
+            "quota_until": self.quota_until,
+            "rate_limit_remaining": max(0, (self.rate_limit_until or 0) - now),
+            "quota_remaining": max(0, (self.quota_until or 0) - now),
+            "is_blocked": self.is_429_blocked(),
+        }
 
 
     def _should_transition_to_half_open(self) -> bool:
