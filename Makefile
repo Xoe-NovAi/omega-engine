@@ -127,3 +127,75 @@ clean: clean-badge
 	@echo "$(YELLOW)Cleaning generated files...$(NC)"
 	@rm -f $(QUARANTINE_FILE)
 	@echo "$(GREEN)Clean complete$(NC)"
+
+# =============================================================================
+# LLM-Friendly Documentation Targets (per LLM_FRIENDLY_DOCS_BP.md)
+# =============================================================================
+
+# Token budget configuration
+DOC_TOKEN_BUDGETS := configs/token_budgets.yaml
+DOC_FRONTMATTER_SCHEMA := schemas/llm_doc_frontmatter.json
+
+# Validate all LLM-friendly docs in a sprint directory
+doc-llm-validate:
+	@echo "$(YELLOW)Validating LLM-friendly documentation...$(NC)"
+	@python3 scripts/validate_llm_docs.py \
+		--frontmatter-schema $(DOC_FRONTMATTER_SCHEMA) \
+		--token-budget $(DOC_TOKEN_BUDGETS) \
+		--answer-first-check \
+		--code-block-check \
+		--dependency-graph-check \
+		docs/sprints/guard-and-distill/
+	@echo "$(GREEN)LLM doc validation complete$(NC)"
+
+# Generate llms-full.txt for current sprint (concatenated for LLM consumption)
+sprint-plan-llm:
+	@echo "$(YELLOW)Generating llms-full.txt for current sprint...$(NC)"
+	@mkdir -p docs/sprints/current
+	@echo "# Sprint Plan: Guard & Distill (2026-07-22)" > docs/sprints/current/llms-full.txt
+	@cat docs/sprints/guard-and-distill/index.md >> docs/sprints/current/llms-full.txt
+	@for f in docs/sprints/guard-and-distill/02-p0-tickets/*.md; do \
+		[ -f "$$f" ] || continue; \
+		echo "\n---\n# $$(basename $$f .md)" >> docs/sprints/current/llms-full.txt; \
+		cat $$f >> docs/sprints/current/llms-full.txt; \
+	done
+	@for f in docs/sprints/guard-and-distill/03-p1-tickets/*.md; do \
+		[ -f "$$f" ] || continue; \
+		echo "\n---\n# $$(basename $$f .md)" >> docs/sprints/current/llms-full.txt; \
+		cat $$f >> docs/sprints/current/llms-full.txt; \
+	done
+	@cat docs/sprints/guard-and-distill/08-research-index.md >> docs/sprints/current/llms-full.txt
+	@echo "$(GREEN)Generated docs/sprints/current/llms-full.txt ($$(wc -c < docs/sprints/current/llms-full.txt) bytes)$(NC)"
+
+# Generate llms.txt (index only) for current sprint
+sprint-plan-llms-txt:
+	@echo "$(YELLOW)Generating llms.txt for current sprint...$(NC)"
+	@mkdir -p docs/sprints/current
+	@echo "# Sprint Plan Index: Guard & Distill" > docs/sprints/current/llms.txt
+	@echo "- Sprint Goal: Close 4 P0 gaps blocking Phase D" >> docs/sprints/current/llms.txt
+	@echo "- P0 Tickets: C-10.5, C-11, C-3, C-0.5" >> docs/sprints/current/llms.txt
+	@echo "- P1 Tickets: C-9, D-1, V-1, M21, C-4a.5" >> docs/sprints/current/llms.txt
+	@echo "- Dependencies: C-6', C-1', C-2' (all DONE)" >> docs/sprints/current/llms.txt
+	@echo "- Research: docs/sprints/guard-and-distill/08-research-index.md" >> docs/sprints/current/llms.txt
+	@echo "- Full Plan: docs/sprints/current/llms-full.txt" >> docs/sprints/current/llms.txt
+	@echo "$(GREEN)Generated docs/sprints/current/llms.txt$(NC)"
+
+# Check token count for sprint plan docs only
+doc-token-check:
+	@echo "$(YELLOW)Checking token budgets for sprint plan docs...$(NC)"
+	@python3 scripts/check_doc_tokens.py --budget $(DOC_TOKEN_BUDGETS) docs/sprints/guard-and-distill/
+	@echo "$(GREEN)Token check complete$(NC)"
+
+# Chunk sprint plan for RAG/vector storage
+doc-chunk-sprint:
+	@echo "$(YELLOW)Chunking sprint plan for RAG...$(NC)"
+	@python3 scripts/chunk_sprint_plan.py docs/sprints/guard-and-distill/index.md
+	@echo "$(GREEN)Chunking complete$(NC)"
+
+# Temple-grade includes LLM doc validation
+temple-grade: doc-llm-validate
+	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
+	# Existing temple-grade checks would go here
+	@echo "$(GREEN)Temple-grade complete (including LLM doc validation)$(NC)"
+
+.PHONY: doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint

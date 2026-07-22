@@ -86,6 +86,11 @@ from omega.observability.token_ledger import TokenLedger
 from omega.observability.latency_tracker import tracker
 from omega.state.usm import USMManager
 
+from .quota_tracker import QuotaTracker, get_quota_tracker
+from .token_estimator import TokenEstimator, get_token_estimator
+from .cascade_router import CascadeRouter, get_cascade_router
+from .stream_handler import StreamHandler, get_stream_handler
+
 logger = logging.getLogger(__name__)
 
 class OpenRouterTransientError(Exception):
@@ -191,6 +196,17 @@ class ModelGateway:
         # Only used for opencode-zen provider to bypass rate limits.
         # Set via oracle.py: ModelGateway.proxy_pool = EphemeralWarpPool()
         self.proxy_pool: Optional[Any] = None
+        
+        # C-10.5: Quota-Aware Provider Routing components
+        self.quota_tracker = get_quota_tracker()
+        self.token_estimator = get_token_estimator()
+        self.cascade_router = get_cascade_router(
+            self, 
+            health_monitor=self._health_monitor,
+            quota_tracker=self.quota_tracker,
+            token_estimator=self.token_estimator
+        )
+        self.stream_handler = get_stream_handler()
 
     def list_providers(self) -> List[Dict[str, Any]]:
         """Return a list of all registered providers and their current health."""
@@ -951,12 +967,30 @@ class ModelGateway:
         errors = []
         success_provider = None
         _latency_ms = 0.0  # [M22] Initialize before loop for fallback path
+        
         # ── Provider Selection Layer ──────────────────────────────────────────
-        # Use the ProviderSelector to reorder the fabric based on query content (PII)
-        # and provider health. This ensures we try the most suitable providers first.
-        ordered_providers = await self.provider_selector.get_ordered_providers(model_name, user_query)
-        if not ordered_providers:
-            raise ProviderUnavailableError(message=f"No providers available for model {model_name}")
+        # [C-10.5] Use CascadeRouter for quota-aware routing with cost-weighted fallback
+        try:
+            routing_decision = await self.cascade_router.route_request(
+                model_name=model_name,
+                system_prompt=system_prompt,
+                user_prompt=user_query,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                exclude_providers=None,
+            )
+            ordered_providers = [routing_decision.selected_provider] + routing_decision.fallback_chain
+            logger.info(
+                f"CascadeRouter selected {routing_decision.selected_provider} "
+                f"(score: {routing_decision.scores[0].total_score:.1f}) "
+                f"with fallback chain: {' -> '.join(routing_decision.fallback_chain[:3])}"
+            )
+        except Exception as e:
+            logger.warning(f"CascadeRouter failed, falling back to ProviderSelector: {e}")
+            # Fallback to existing ProviderSelector
+            ordered_providers = await self.provider_selector.get_ordered_providers(model_name, user_query)
+            if not ordered_providers:
+                raise ProviderUnavailableError(message=f"No providers available for model {model_name}")
 
         # [M8 Zero Telemetry] WARP Proxy Pool injection for opencode-zen
         # If proxy_pool is configured, inject socks5h:// proxy URL into the
@@ -965,16 +999,30 @@ class ModelGateway:
         # preventing local DNS leaks per the Sovereign Security Protocol.
         proxy_pool = getattr(self, 'proxy_pool', None)
         if proxy_pool is not None:
-            for provider in ordered_providers:
-                if provider.name == "opencode-zen" and hasattr(provider, 'config'):
-                    try:
-                        proxy_url = await proxy_pool.get_proxy_url()
-                        provider.config.extra["proxy_url"] = proxy_url
-                        logger.debug("WARP proxy injected for opencode-zen: %s", proxy_url)
-                    except Exception as exc:
-                        logger.warning("WARP proxy injection failed for opencode-zen: %s", exc)
+            for provider_name in ordered_providers:
+                if provider_name == "opencode-zen":
+                    # Find the provider instance
+                    for p in self.providers:
+                        if p.name == provider_name and hasattr(p, 'config'):
+                            try:
+                                proxy_url = await proxy_pool.get_proxy_url()
+                                p.config.extra["proxy_url"] = proxy_url
+                                logger.debug("WARP proxy injected for opencode-zen: %s", proxy_url)
+                            except Exception as exc:
+                                logger.warning("WARP proxy injection failed for opencode-zen: %s", exc)
+                            break
 
-        for provider in ordered_providers:
+        for provider_name in ordered_providers:
+            # Find the provider instance
+            provider = None
+            for p in self.providers:
+                if p.name == provider_name:
+                    provider = p
+                    break
+            
+            if provider is None:
+                errors.append(f"{provider_name}: not found in provider fabric")
+                continue
             logger.debug(f"Trying provider: {provider.name}")
             # Step 1: BSP-style pre-check — fast fail if circuit is OPEN
             if not await self._precheck_provider(provider, model_name):

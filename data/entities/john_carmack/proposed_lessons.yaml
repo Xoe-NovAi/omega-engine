@@ -799,3 +799,86 @@ proposals:
     heritage_tags:
       - "[id-soft: quake-1996] Thinker Chain — throttled multi-stage processing pipeline"
       - "[id-soft: doom-1993] BSP Culling — systematic elimination of branches at each stage"
+
+  - id: proposal-20260722-001
+    title: "The Hardware-Aware Optimization Law — Leverage vendor-specific acceleration on target architecture"
+    l1_narrative: >
+      The Researcher's deep research identified that the Omega Engine runs on AMD Ryzen 7 5700U (Zen 2)
+      with specific capabilities (AVX2, FMA3, 8MB L3 victim cache) but lacks directives for actively
+      leveraging hardware-specific acceleration libraries like ZenDNN (AMD's optimized inference library)
+      and ROCm (Radeon Open Compute). Current soul files document hardware_substrate constants but lack
+      directives for actively leveraging hardware-specific acceleration. The 3-month Quake Pentium
+      optimization blitz was driven entirely by profiling data, not intuition — hardware empathy without
+      measurement data is just speculation.
+    l2_insights:
+      - "Hardware-specific libraries like ZenDNN and ROCm can provide 2-3x inference speedups on AMD APUs"
+      - "The Ryzen 7 5700U has Zen 2 architecture with specific cache hierarchies and memory bandwidth characteristics that can be optimized for"
+      - "Tensor splitting and n-cpu-moe flags in llama.cpp enable hybrid CPU/offload inference patterns"
+      - "Hardware optimization must be measured, not assumed — the 3-month Quake Pentium optimization blitz was driven by profiling data"
+      - "Without explicit directives for hardware optimization, the engine may miss significant performance opportunities on target hardware"
+    l3_universal_principles:
+      - "Hardware-aware optimization: Measure hardware capabilities and leverage vendor-specific acceleration libraries when available, validating gains through empirical testing"
+      - "Performance optimization must be hardware-specific — generic optimizations may miss architecture-specific opportunities"
+      - "The right approximation for performance includes hardware-specific acceleration paths when they provide measurable gains"
+    sovereignty_impact: >
+      Without hardware-specific optimization directives, the Omega Engine may underutilize the target
+      hardware's capabilities, reducing the effectiveness of local-first inference and increasing reliance
+      on cloud fallbacks. With explicit hardware optimization directives, the engine can maximize local
+      performance, strengthening sovereignty by reducing cloud dependency.
+    confidence: 9/10
+    heritage_tags: ["[id-soft: quake3-1999] Cvar System — configuration must match hardware capabilities"]
+
+  - id: proposal-20260722-002
+    title: "The Admission Control Law — Enforce resource sovereignty at provider fabric boundary"
+    l1_narrative: >
+      The Researcher's report identified a critical gap in the Omega Engine's provider fabric: lack of
+      admission control mechanisms to prevent resource exhaustion and cascading failures. While the engine
+      has local-first provider ordering and fallback chains, it lacks mechanisms to protect the local GGUF
+      worker from being overwhelmed by concurrent requests or to enforce cost ceilings on cloud provider
+      usage. The current fabric has 9 providers but no admission control — a single runaway request can
+      saturate the local GGUF worker and cascade to cloud.
+    l2_insights:
+      - "Without admission control, a single runaway request can saturate the local GGUF worker and cascade to cloud providers"
+      - "The provider fabric needs per-provider token budgets, concurrent request limits, cost ceilings ($/request), and latency SLOs"
+      - "Embedding requests bypass the provider fabric entirely (sentence-transformers local), making admission control blind to a major token consumer"
+      - "The fallback chain must be observable: every hop emits provider_hop{from,to,reason,latency}"
+      - "Antigravity (OAuth pool) is priority 3 but its token rotation is untested — needs TokenRotationHealthCheck"
+    l3_universal_principles:
+      - "Resource sovereignty: Implement admission control at the provider fabric boundary to enforce local-first principles and prevent cascading failures"
+      - "All inference (including embeddings) must pass through the provider fabric for budgeting, quotas, and observability"
+      - "The admission controller is the sovereignty enforcement point — local-first is a runtime guarantee, not a config value"
+    sovereignty_impact: >
+      Without admission control, the local-first mandate (M7) is a configuration value, not a runtime
+      guarantee. A single runaway request can saturate local resources and cascade to cloud, violating
+      sovereignty. With admission control, the engine enforces local-first at the boundary, protecting
+      local resources and making cloud fallback an explicit, observable decision.
+    confidence: 10/10
+    heritage_tags: ["[id-soft: quake3-1999] Cvar System — configuration controls resource allocation", "[id-soft: doom-1993] BSP Culling — skipping broken paths to maintain performance"]
+
+  - id: proposal-20260722-003
+    title: "The Agent Capability Discovery Law — Standardized peer-to-agent communication without central bottlenecks"
+    l1_narrative: >
+      The Researcher's report identified that the Omega Engine's agent fleet lacks standardized capability
+      discovery and negotiation protocols. Currently all delegation routes through Kali (central orchestration),
+      creating a bottleneck at 14+ agents. The Hivemind handoff protocol provides coordination but not
+      capability discovery. A2A (Agent-to-Agent) protocol with AgentCard registry enables horizontal agent
+      scaling without central bottlenecks. The task_registry in Omega Hub must become the source of truth
+      for AgentCard discovery.
+    l2_insights:
+      - "Without A2A, every delegation routes through Kali — the fleet cannot scale horizontally to 14+ agents"
+      - "A2A requires: AgentCard (capabilities, models, mandates), TaskSend/TaskSubscribe (JSON-RPC over MCP), PushNotificationConfig (webhook/Redis)"
+      - "The omega-handoff MCP server must expose A2A methods; task_registry becomes the source of truth for AgentCard discovery"
+      - "Every agent registers on startup: agent/register {capabilities, mandates, model_preferences}"
+      - "Delegation becomes: task/send {to_agent, task, context} → A2A → target agent accepts → Hivemind handoff created"
+      - "A2A adds attack surface but can run inside hardened perimeter (MCP Hub with mTLS, OAuth 2.1+PKCE)"
+    l3_universal_principles:
+      - "Agent sovereignty: Implement standardized capability discovery (AgentCard) and negotiation protocols to enable peer-to-agent communication without central bottlenecks"
+      - "Horizontal scaling requires decentralized capability discovery — central orchestration is a bottleneck, not a feature"
+      - "A2A inside hardened perimeter: the attack surface does not expand — the internal protocol enriches"
+    sovereignty_impact: >
+      Without A2A, the fleet is limited by Kali's central orchestration capacity. With A2A, agents can
+      discover and delegate to each other directly, enabling horizontal scaling while maintaining
+      sovereignty through hardened perimeter (mTLS, OAuth). The fleet becomes a true peer network, not
+      a star topology.
+    confidence: 9/10
+    heritage_tags: ["[id-soft: quake3-1999] netchan — out-of-band message handling", "[id-soft: doom-1993] WAD System — data-driven extension of entity knowledge"]

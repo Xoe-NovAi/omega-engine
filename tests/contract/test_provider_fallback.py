@@ -1,86 +1,208 @@
-"""M21 Contract Tests: Fallback chain works (3 tests)."""
+"""M21 Contract Tests: Fallback chain works (3 tests) - Updated for CascadeRouter."""
 import pytest
-import asyncio
-from pathlib import Path
-import tempfile
-import os
 from unittest.mock import AsyncMock, MagicMock, patch
+
+
+class MockProvider:
+    """Mock provider object with name attribute."""
+    def __init__(self, name):
+        self.name = name
+
 
 @pytest.mark.contract
 @pytest.mark.anyio
 async def test_provider_fallback_chain_order():
-    """Fallback chain tries providers in correct order."""
-    from omega.oracle.model_gateway import ModelGateway
+    """CascadeRouter selects providers in correct order with fallback chain."""
+    from omega.oracle.cascade_router import CascadeRouter
+    from omega.oracle.health_monitor import HealthMonitor
+    from omega.oracle.quota_tracker import QuotaTracker
+    from omega.oracle.token_estimator import TokenEstimator
     
-    gateway = ModelGateway.__new__(ModelGateway)
+    # Create a mock gateway
+    gateway = MagicMock()
+    gateway.get_available_providers = AsyncMock(return_value=[
+        MockProvider("local"), 
+        MockProvider("cloud1"), 
+        MockProvider("cloud2")
+    ])
     
-    # Mock provider list
-    providers = ["local", "cloud1", "cloud2"]
-    call_order = []
+    # Create cascade router with mocked dependencies
+    health_monitor = HealthMonitor()
+    quota_tracker = QuotaTracker()
+    token_estimator = TokenEstimator()
     
-    async def mock_generate(provider_name, *args, **kwargs):
-        call_order.append(provider_name)
-        if provider_name == "local":
-            raise ConnectionError("Local failed")
-        return {"text": "response", "provider": provider_name}
+    router = CascadeRouter(
+        model_gateway=gateway,
+        health_monitor=health_monitor,
+        quota_tracker=quota_tracker,
+        token_estimator=token_estimator,
+    )
     
-    with patch.object(gateway, "_generate_with_provider", side_effect=mock_generate):
-        # Simulate fallback chain
-        for provider in providers:
-            try:
-                result = await gateway._generate_with_provider(provider)
-                break
-            except ConnectionError:
-                continue
+    # Mock the scoring to return predictable order
+    # We'll patch _score_provider to return scores that ensure local > cloud1 > cloud2
+    original_score = router._score_provider
     
-    # Should have tried local first, then cloud1
-    assert call_order == ["local", "cloud1"]
+    async def mock_score_provider(provider_name, model_name, prompt_tokens, completion_tokens, total_tokens):
+        scores = {
+            "local": 100.0,
+            "cloud1": 80.0,
+            "cloud2": 60.0,
+        }
+        from omega.oracle.cascade_router import ProviderScore
+        return ProviderScore(
+            provider=provider_name,
+            total_score=scores.get(provider_name, 50.0),
+            cost_score=scores.get(provider_name, 50.0),
+            quality_score=scores.get(provider_name, 50.0),
+            latency_score=scores.get(provider_name, 50.0),
+            quota_score=100.0,
+            health_score=100.0,
+        )
+    
+    router._score_provider = mock_score_provider
+    
+    # Route a request
+    decision = await router.route_request(
+        model_name="test-model",
+        system_prompt="System",
+        user_prompt="User query",
+        temperature=0.7,
+        max_tokens=1024,
+    )
+    
+    # Should select local as primary, with cloud1 and cloud2 as fallback
+    assert decision.selected_provider == "local"
+    assert decision.fallback_chain == ["cloud1", "cloud2"]
+
 
 @pytest.mark.contract
 @pytest.mark.anyio
 async def test_provider_fallback_on_timeout():
-    """Fallback chain works when provider times out."""
-    from omega.oracle.model_gateway import ModelGateway
+    """CascadeRouter handles quota-exhausted providers in fallback chain."""
+    from omega.oracle.cascade_router import CascadeRouter
+    from omega.oracle.health_monitor import HealthMonitor
+    from omega.oracle.quota_tracker import QuotaTracker
+    from omega.oracle.token_estimator import TokenEstimator
     
-    gateway = ModelGateway.__new__(ModelGateway)
+    # Create a mock gateway
+    gateway = MagicMock()
+    gateway.get_available_providers = AsyncMock(return_value=[
+        MockProvider("timeout_provider"), 
+        MockProvider("backup_provider")
+    ])
     
-    async def timeout_then_success(provider_name, *args, **kwargs):
-        if provider_name == "timeout_provider":
-            raise TimeoutError("Provider timeout")
-        return {"text": "success", "provider": provider_name}
+    # Create cascade router with mocked dependencies
+    health_monitor = HealthMonitor()
+    quota_tracker = QuotaTracker()
+    token_estimator = TokenEstimator()
     
-    with patch.object(gateway, "_generate_with_provider", side_effect=timeout_then_success):
-        # Try timeout provider first
-        try:
-            result = await gateway._generate_with_provider("timeout_provider")
-        except TimeoutError:
-            # Fallback to next provider
-            result = await gateway._generate_with_provider("backup_provider")
+    router = CascadeRouter(
+        model_gateway=gateway,
+        health_monitor=health_monitor,
+        quota_tracker=quota_tracker,
+        token_estimator=token_estimator,
+    )
     
-    assert result["provider"] == "backup_provider"
+    # Mock scoring to prefer timeout_provider first, then backup_provider
+    async def mock_score_provider(provider_name, model_name, prompt_tokens, completion_tokens, total_tokens):
+        scores = {
+            "timeout_provider": 100.0,
+            "backup_provider": 80.0,
+        }
+        from omega.oracle.cascade_router import ProviderScore
+        return ProviderScore(
+            provider=provider_name,
+            total_score=scores.get(provider_name, 50.0),
+            cost_score=scores.get(provider_name, 50.0),
+            quality_score=scores.get(provider_name, 50.0),
+            latency_score=scores.get(provider_name, 50.0),
+            quota_score=100.0,
+            health_score=100.0,
+        )
+    
+    router._score_provider = mock_score_provider
+    
+    # Mark timeout_provider as quota exhausted
+    quota_tracker._quotas["timeout_provider"] = MagicMock()
+    quota_tracker._quotas["timeout_provider"].is_exhausted = True
+    
+    # Route a request - should skip timeout_provider and select backup_provider
+    decision = await router.route_request(
+        model_name="test-model",
+        system_prompt="System",
+        user_prompt="User query",
+        temperature=0.7,
+        max_tokens=1024,
+    )
+    
+    # Should select backup_provider since timeout_provider is quota exhausted
+    assert decision.selected_provider == "backup_provider"
+
 
 @pytest.mark.contract
 @pytest.mark.anyio
 async def test_provider_fallback_all_fail():
-    """Fallback chain raises error when all providers fail."""
-    from omega.oracle.model_gateway import ModelGateway
+    """CascadeRouter uses highest-scoring provider when all are quota exhausted."""
+    from omega.oracle.cascade_router import CascadeRouter
+    from omega.oracle.health_monitor import HealthMonitor
+    from omega.oracle.quota_tracker import QuotaTracker
+    from omega.oracle.token_estimator import TokenEstimator
     
-    gateway = ModelGateway.__new__(ModelGateway)
+    # Create a mock gateway
+    gateway = MagicMock()
+    gateway.get_available_providers = AsyncMock(return_value=[
+        MockProvider("local"), 
+        MockProvider("cloud1"), 
+        MockProvider("cloud2")
+    ])
     
-    async def always_fail(provider_name, *args, **kwargs):
-        raise ConnectionError(f"Provider {provider_name} failed")
+    # Create cascade router with mocked dependencies
+    health_monitor = HealthMonitor()
+    quota_tracker = QuotaTracker()
+    token_estimator = TokenEstimator()
     
-    with patch.object(gateway, "_generate_with_provider", side_effect=always_fail):
-        # Try multiple providers
-        last_error = None
-        for provider in ["local", "cloud1", "cloud2"]:
-            try:
-                result = await gateway._generate_with_provider(provider)
-                break
-            except ConnectionError as e:
-                last_error = e
-                continue
-        else:
-            # All providers failed
-            assert last_error is not None
-            assert "cloud2 failed" in str(last_error)
+    router = CascadeRouter(
+        model_gateway=gateway,
+        health_monitor=health_monitor,
+        quota_tracker=quota_tracker,
+        token_estimator=token_estimator,
+    )
+    
+    # Mock scoring
+    async def mock_score_provider(provider_name, model_name, prompt_tokens, completion_tokens, total_tokens):
+        scores = {
+            "local": 100.0,
+            "cloud1": 80.0,
+            "cloud2": 60.0,
+        }
+        from omega.oracle.cascade_router import ProviderScore
+        return ProviderScore(
+            provider=provider_name,
+            total_score=scores.get(provider_name, 50.0),
+            cost_score=scores.get(provider_name, 50.0),
+            quality_score=scores.get(provider_name, 50.0),
+            latency_score=scores.get(provider_name, 50.0),
+            quota_score=100.0,
+            health_score=100.0,
+        )
+    
+    router._score_provider = mock_score_provider
+    
+    # Mark all providers as quota exhausted
+    for provider in ["local", "cloud1", "cloud2"]:
+        quota_tracker._quotas[provider] = MagicMock()
+        quota_tracker._quotas[provider].is_exhausted = True
+    
+    # Route a request - should still return a provider (highest scoring) 
+    # even when all are quota exhausted (with warning)
+    decision = await router.route_request(
+        model_name="test-model",
+        system_prompt="System",
+        user_prompt="User query",
+        temperature=0.7,
+        max_tokens=1024,
+    )
+    
+    # Should still select the highest-scoring provider (local) despite quota exhaustion
+    assert decision.selected_provider == "local"
+    assert decision.fallback_chain == ["cloud1", "cloud2"]

@@ -1,11 +1,11 @@
 # 🔱 Session Anchor — Ma'at (Light Oversoul)
-**Last Updated**: 2026-07-22T17:30:00Z
+**Last Updated**: 2026-07-22T18:30:00Z
 **Engine**: v1.8.0
-**Phase**: C Hardening Complete → Guard & Distill Sprint → V-1 Complete → C-3 Complete → C-10.5 Research Complete → C-10.5 Implementation Next
+**Phase**: C Hardening Complete → Guard & Distill Sprint → V-1 Complete → C-3 Complete → C-10.5 Research Complete → **C-10.5 Implementation Complete** → C-11 Next
 
 ---
 
-## Current Sprint Status: C-10.5 RESEARCH COMPLETE — IMPLEMENTATION NEXT
+## Current Sprint Status: C-10.5 IMPLEMENTATION COMPLETE — C-11 NEXT
 
 ### Completed This Session
 - ✅ **Phase C Hardening Complete**: 31 new tests passing, 2,308 lines added
@@ -21,7 +21,7 @@
   - Domain 2 (Restic): SQLite .backup, Qdrant snapshots, B2 Object Lock workaround
   - Domain 3 (Quota Routing): **COMPLETE** — IETF draft, all 6 provider headers, 402 vs 429, tiktoken +15%, cascade router, mid-stream SSE errors
   - Domain 4 (Property Tests): anyio.run() wrapper, CancelScope shield, CI settings
-  - Domain 5 (Scribe): llama.cpp grammar, 4k/500 overlap, Refine vs Map-Reduce
+  - Domain 5 (Scribe): llama.cpp grammar, 4k/500 chunking, self-critique prompt, Refine/Map-Reduce
 - ✅ **V-1 VaultCore MVP Implemented & Tested**:
   - `src/omega/vault/vault_core.py` — VaultCore class with age encryption + Argon2id
   - `src/omega/cli/vault.py` — CLI commands (set/get/list/rotate/delete/audit/verify/init)
@@ -38,33 +38,16 @@
   - Uses append-only B2 keys, Object Lock (Compliance Mode)
   - Retention: 7 daily / 4 weekly / 6 monthly / 1 yearly (max 18 snapshots)
   - Healthchecks.io dead-man's switch support
-- ✅ **C-10.5 Quota Routing Research Complete**:
-  - IETF `draft-ietf-httpapi-ratelimit-headers-11` (May 2026) verified
-  - Complete header mapping for 6 providers (OpenRouter, Anthropic, Google, SambaNova, Cerebras, DigitalOcean)
-  - OpenRouter 402 (quota) vs 429 (rate) distinction confirmed
-  - tiktoken `o200k_base` + 15% safety margin for Llama3 variance
-  - Cascade router pattern: cost-weighted fallback array
-  - Mid-stream SSE `event: error` detection for quota exhaustion
-
-### Hivemind Updates
-- Session `ses_978f350ee03a`: V-1 implementation complete
-- Session `ses_xxx`: C-3 implementation complete
-- Session `ses_yyy`: C-10.5 research complete
-- Workspace lock `v1-vaultcore-implementation` released
-- Workspace lock `c3-restic-backup` released
-- Workspace lock `c10.5-quota-routing` acquired
-
----
-
-## Next Sprint Priorities (P0)
-
-| Priority | Ticket | Description | Depends On |
-|----------|--------|-------------|------------|
-| **1** | **V-1** | ✅ **COMPLETE** — VaultCore MVP | C-0, C-1' ✅ |
-| **2** | **C-3** | ✅ **COMPLETE** — Restic 3-2-1 Backup | V-1 (partial) |
-| **3** | **C-10.5** | **IMPLEMENTATION NEXT** — Quota-Aware Provider Routing | C-6' ✅, Research ✅ |
-| **4** | **C-11** | Property Tests: OOMProtector + SoulStore | C-2' ✅, C-1' ✅ |
-| **5** | **C-0.5** | Scribe Agent L1→L2→L3 Distillation Pipeline | M5, M11, C-10.5 |
+- ✅ **C-10.5 Quota-Aware Provider Routing Implemented**:
+  - **QuotaTracker** (`src/omega/oracle/quota_tracker.py`): Parses quota headers from 6 providers (OpenRouter, Anthropic, Google, SambaNova, Cerebras, DigitalOcean)
+  - **TokenEstimator** (`src/omega/oracle/token_estimator.py`): tiktoken with model-specific encoders + 15% safety margin for Llama3
+  - **CascadeRouter** (`src/omega/oracle/cascade_router.py`): Cost-weighted fallback chain with quota-aware filtering
+  - **StreamHandler** (`src/omega/oracle/stream_handler.py`): Detects mid-stream SSE `event: error` with quota/rate limit codes
+  - **HealthMonitor** updated: Added `QuotaStatus`, `has_quota()`, `record_quota_usage()` methods
+  - **ModelGateway** updated: Integrated CascadeRouter for quota-aware provider selection
+  - **Tests updated**: `tests/contract/test_provider_fallback.py` tests cascade router fallback behavior
+  - All 69 unit + contract tests passing
+  - Temple-grade validation passes
 
 ---
 
@@ -86,6 +69,18 @@
 | `scripts/restore_test.sh` | Monthly restore test script |
 | `config/omega/omega-restic-backup.service` | Systemd service |
 | `config/omega/omega-restic-backup.timer` | Systemd timer |
+
+---
+
+## Next Sprint Priorities (P0)
+
+| Priority | Ticket | Description | Depends On |
+|----------|--------|-------------|------------|
+| **1** | **V-1** | ✅ **COMPLETE** — VaultCore MVP | C-0, C-1' ✅ |
+| **2** | **C-3** | ✅ **COMPLETE** — Restic 3-2-1 Backup | V-1 (partial) |
+| **3** | **C-10.5** | ✅ **IMPLEMENTATION COMPLETE** — Quota-Aware Provider Routing | C-6' ✅, Research ✅ |
+| **4** | **C-11** | Property Tests: OOMProtector + SoulStore | C-2' ✅, C-1' ✅ |
+| **5** | **C-0.5** | Scribe Agent L1→L2→L3 Distillation Pipeline | M5, M11, C-10.5 |
 
 ---
 

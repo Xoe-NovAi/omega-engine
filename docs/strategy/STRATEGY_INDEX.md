@@ -45,6 +45,8 @@
 | `data/coordination/GROKSTER_RESEARCH_QUEUE_ANALYSIS_20260721.md` | D | Fleet-aware research notes |
 | `data/coordination/RESEARCH_JOB_BOARD.yaml` | D | 18 jobs (D-2 input) |
 | `data/coordination/D308_CRITICAL_PATH_TRACKER.yaml` | C | Ubuntu 25.10 env gate |
+| **`docs/sprints/guard-and-distill/index.md`** | C | **Current sprint plan** — LLM-native format (llms-full.txt available) |
+| **`docs/sprints/guard-and-distill/08-research-index.md`** | C | Structured research metadata for sprint |
 
 ## LAYER 3: SUPERSEDED BUT KEPT IN TREE (trail only — do not treat as master)
 | Document | Note |

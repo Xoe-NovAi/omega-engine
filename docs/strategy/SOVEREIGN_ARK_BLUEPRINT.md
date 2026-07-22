@@ -50,19 +50,33 @@ EXPLICITLY NOT DOING NOW (preserved in Corpus Map — not cancelled)
 
 ## §5 Immediate Next Steps
 
+**Current Sprint**: `docs/sprints/guard-and-distill/index.md` (LLM-native format)
+- Full plan: `docs/sprints/current/llms-full.txt` (16K tokens for agent consumption)
+- Research index: `docs/sprints/guard-and-distill/08-research-index.md`
+
 ```
-STEP 1: C-0  make test → report pass/fail/skip; fix or quarantine
-STEP 2: C-2′ One RAM truth (foundation for C-1′/C-10)
-STEP 3: C-1′ implement SoulStore; migrate all writers
-STEP 4: C-10 Admission control (parallel with C-1′)
-STEP 5: C-3 privacy decision → restic
-STEP 6: C-4a MCP audit → C-4b before July 26 — START TODAY
-STEP 7: C-11 Test infrastructure (fixtures, chaos, benchmarks)
-STEP 8: E-0 (parallel) + D-1 only after C gate
-STEP 9: C-0.5 Soul Distillation Pipeline — Scribe agent (unblocks M5/M11)
-STEP 10: C-10.5 Provider Fallback Chain — Lilith/P6 (M7 compliance)
-STEP 11: C-4a.5 MCP Migration Execution — Kali direct if P4 silent
+SPRINT: Guard & Distill (5 days, 4 P0 tickets)
+├── C-10.5 Quota-Aware Provider Routing (maat/P3) — 8h
+├── C-11 Property Tests: OOMProtector + SoulStore (maat/P3) — 12h
+├── V-1 VaultCore MVP (maat/P1) — 8h (MOVED TO P0 - Blocks C-3)
+├── C-3 Restic 3-2-1 Backup for Sovereign Data (lilith/P6) — 8h (Depends on V-1)
+├── C-0.5 Scribe Agent L1→L2→L3 Distillation + Crash Recovery Sweeper (scribe/new) — 16h
+└── P1 Gates: C-9, D-1, M21, C-4a.5 (escalation)
+
+COMPLETED (Phase C Hardening):
+├── C-0 Test Honesty ✅ (99 quarantined, honest badge)
+├── C-2′ OOMProtector 3-signal fusion ✅
+├── C-1′ SoulStore atomic writer ✅
+├── C-6′ Breaker unification (7→1) ✅
+├── C-5 MaKaLi routing config ✅
+├── C-10 Admission control ✅
+├── C-4a MCP audit doc ✅
+└── 429 classification + Discovery fix ✅
 ```
+
+**Escalation Trigger**: If Ma'at/P4 silent on C-4b by 2026-07-22 23:59 UTC → Kali executes C-4a.5 MCP Streamable HTTP migration directly.
+
+**Gate to Phase D**: All 4 P0 tickets DONE + `make test` 100% pass + `make temple-grade` T1-T11 green + Soul distillation ≥1 L3 axiom/entity/week + Backup `restic check --read-data-subset 5%` weekly.
 
 ---
 

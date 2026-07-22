@@ -1,0 +1,7 @@
+# Sprint Plan Index: Guard & Distill
+- Sprint Goal: Close 4 P0 gaps blocking Phase D
+- P0 Tickets: C-10.5, C-11, C-3, C-0.5
+- P1 Tickets: C-9, D-1, V-1, M21, C-4a.5
+- Dependencies: C-6', C-1', C-2' (all DONE)
+- Research: docs/sprints/guard-and-distill/08-research-index.md
+- Full Plan: docs/sprints/current/llms-full.txt

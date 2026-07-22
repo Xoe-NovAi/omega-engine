@@ -46,6 +46,15 @@ Frozen documents. Never modify archived files.
 Root-level engine documents. Already have Omega headers.
 - `OMEGA_ENGINE.md`, `SOVEREIGN_MANDATES.md`, `ORACLE_STACK.md`, `CREDITS.md`, `AGENTS.md`
 
+### Category 8: Sprint Plans (LLM-Friendly Format)
+Sprint plans and ticket pages use the LLM-native format for agent consumption.
+- Sprint plan index (`docs/sprints/*/index.md`)
+- P0/P1 ticket pages (`docs/sprints/*/02-p0-tickets/*.md`, `docs/sprints/*/03-p1-tickets/*.md`)
+- Research indexes (`docs/sprints/*/08-research-index.md`)
+- **Required**: `LLM_FRIENDLY_DOCS_BP.md` compliance + YAML frontmatter with `llm_metadata`
+- **Validation**: `make doc-llm-validate` must pass
+- **Output**: `llms.txt` + `llms-full.txt` generated via `make sprint-plan-llm`
+
 ## 📄 File Structure & Headers
 
 ### Required File Header
@@ -407,7 +416,39 @@ def initialize_providers(config_path: str) -> List[BaseProvider]:
     
     return providers
 ```
-
+ 
+## ✅ Validation Checklist
+ 
+Before submitting any documentation PR, verify:
+ 
+### All Categories
+- [ ] File has correct header format for its category
+- [ ] AP Token follows format `AP-[PROJECT]-v[MAJOR].[MINOR].[PATCH]`
+- [ ] Date is ISO 8601 (YYYY-MM-DD)
+- [ ] Purpose is one clear sentence
+- [ ] Tags are lowercase, comma-separated
+- [ ] Cross-references use relative paths from repo root
+- [ ] No broken internal links
+- [ ] Code blocks have language tags
+- [ ] Tables have header rows
+ 
+### Category 1 (Reference Docs) + Category 8 (Sprint Plans)
+- [ ] **LLM-Friendly Standards** (`LLM_FRIENDLY_DOCS_BP.md`):
+  - [ ] YAML frontmatter with `schema_version: "1.0"` and `llm_metadata`
+  - [ ] Answer-first sections (`## What` / `## Why` / `## Acceptance Criteria`)
+  - [ ] Self-contained code blocks (imports, types, file path comments)
+  - [ ] Structured YAML for dependencies, research, acceptance criteria
+  - [ ] Token budget within limits (run `make doc-token-check`)
+  - [ ] `make doc-llm-validate` passes
+- [ ] Sprint Plans (Category 8 only):
+  - [ ] Modular structure: `index.md` + `02-p0-tickets/` + `08-research-index.md`
+  - [ ] `llms.txt` + `llms-full.txt` generated via `make sprint-plan-llm`
+ 
+### Category 2 (Agent Files)
+- [ ] OpenCode YAML frontmatter present
+- [ ] Omega header present (below YAML)
+- [ ] Agent capabilities match fleet needs
+ 
 ## 🔄 Maintenance & Updates
 
 ### Review Schedule

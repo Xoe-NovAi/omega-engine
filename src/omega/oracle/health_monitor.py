@@ -61,6 +61,29 @@ class ProviderStatus(Enum):
     OFFLINE = "offline"
 
 
+# Quota tracking for C-10.5
+@dataclass
+class QuotaStatus:
+    """Tracks quota usage for a provider."""
+    requests_remaining: int = 0
+    tokens_remaining: int = 0
+    requests_limit: int = 0
+    tokens_limit: int = 0
+    requests_reset: float = 0.0  # Unix timestamp
+    tokens_reset: float = 0.0    # Unix timestamp
+    exhausted: bool = False
+    
+    @property
+    def requests_reset_in(self) -> float:
+        """Seconds until request quota resets."""
+        return max(0, self.requests_reset - time.time())
+    
+    @property
+    def tokens_reset_in(self) -> float:
+        """Seconds until token quota resets."""
+        return max(0, self.tokens_reset - time.time())
+
+
 # ── Data Classes ───────────────────────────────────────────────────────
 
 @dataclass
@@ -611,6 +634,41 @@ class HealthMonitor:
         if not quota or quota.daily_limit == 0:
             return 0.0
         return min(quota.used_today / quota.daily_limit, 1.0)
+
+    def has_quota(self, provider_name: str) -> bool:
+        """
+        Check if provider has remaining quota for today.
+        
+        Returns True if either requests or tokens have remaining quota.
+        """
+        quota = self._quotas.get(provider_name)
+        if not quota:
+            # No quota tracking = assume available
+            return True
+        
+        # Check if either resource has remaining quota
+        return (quota.requests_remaining > 0 or quota.requests_limit == 0) and \
+               (quota.tokens_remaining > 0 or quota.tokens_limit == 0)
+
+    def record_quota_usage(self, provider_name: str, tokens_used: int, requests_used: int = 1):
+        """
+        Record quota consumption from response headers.
+        
+        Updates the quota tracking based on response headers from providers.
+        """
+        if provider_name not in self._quotas:
+            self._quotas[provider_name] = QuotaStatus()
+        
+        quota = self._quotas[provider_name]
+        
+        # Update used amounts
+        quota.used_today += tokens_used
+        # Note: We don't track request count separately in HealthMonitor yet
+        # This would need to be added if we want to track request quotas
+        
+        # Update reset times if provided (would come from headers in practice)
+        # For now, we assume daily reset at midnight UTC
+        # In a full implementation, these would be parsed from response headers
 
     def get_success_rate(self, model_name: str) -> float:
         """Get success rate as 0.0-1.0. Returns 1.0 if no data."""
