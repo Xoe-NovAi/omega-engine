@@ -45,7 +45,10 @@ from omega.oracle.search_router import SearchRouter, SearchIntent, TIER_LOCAL, T
 from omega.oracle.search_cache import SovereignCache
 from omega.oracle.skeptical_verifier import SkepticalVerifier
 from omega.workers.background_researcher.credit_budget import APICreditBudget
-from omega.oracle.search_circuit_breaker import get_circuit_breaker_registry, initialize_circuit_breakers
+from omega.oracle.search_circuit_breaker import (
+    get_circuit_breaker_registry, initialize_circuit_breakers, TIER_CONFIGS,
+)
+from omega.oracle.health_monitor import get_health_monitor
 from omega.oracle.search_observability import (
     get_search_observability, SearchOutcome, SearchPipelineTrace, TierExecutionRecord,
     get_tier_name, log_search_event, log_search_error
@@ -151,7 +154,26 @@ class SovereignSearchService:
         self.verifier = verifier or SkepticalVerifier(self.model_gateway)
         self.router = router or SearchRouter(config=routing_cfg)
 
-        # Initialize circuit breakers
+        # [C-6'] Initialize HealthMonitor-backed breakers (canonical)
+        self._health_monitor = get_health_monitor()
+        self._tier_to_provider = {
+            0: "local",    # T0: Local providers
+            1: "searxng",  # T1: SearXNG
+            2: "exa",      # T2: Exa
+            3: "firecrawl",# T3: Firecrawl
+        }
+        for tier, name in self._tier_to_provider.items():
+            config = TIER_CONFIGS.get(tier)
+            self._health_monitor.get_breaker(
+                name=name,
+                failure_threshold=config.failure_threshold if config else 3,
+                recovery_timeout=config.recovery_timeout if config else 60.0,
+                mode="sliding_window",  # Burst detection for search tiers
+                window_seconds=60.0,
+                max_failures_per_window=config.failure_threshold * 2 if config else 6,
+            )
+        
+        # Initialize circuit breakers (DEPRECATED — will be removed in C-6' final pass)
         if self.enable_circuit_breaker:
             self.circuit_breakers = initialize_circuit_breakers()
         else:

@@ -576,6 +576,8 @@ class SandboxRuntime(ABC):
 
 
 # ── Circuit Breaker for Experiment Failures ────────────────────────────────
+# ⚠️ DEPRECATED — C-6' Unification (2026-07-22)
+# This is a clone breaker. Use HealthMonitor.get_breaker() instead.
 
 class ExperimentCircuitBreaker:
     """

@@ -2,6 +2,17 @@
 AP: AP-SEARCH-CIRCUIT-BREAKER-v1.0.0
 ⬡ OMEGA ⬡ RESEARCHER ⬡ nemotron-3-ultra ⬡ opencode ⬡ trc_circuit_breaker ⬡ ACTIVE
 
+⚠️ DEPRECATED — C-6' Unification (2026-07-22)
+══════════════════════════════════════════════════════
+This file is DEPRECATED. Use HealthMonitor.get_breaker() instead:
+    
+    from omega.oracle.health_monitor import get_health_monitor
+    breaker = get_health_monitor().get_breaker("provider_name")
+    
+The SearchCircuitBreakerRegistry is kept for backward compatibility
+during Phase C-6' migration. All new code MUST use HealthMonitor.
+══════════════════════════════════════════════════════
+
 Implements circuit breaker pattern per tier (T0-T3) to prevent cascade failures
 and enable fast failover when search providers are degraded.
 """

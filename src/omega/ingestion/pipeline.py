@@ -36,6 +36,10 @@ from ..library.enrichment import EnrichmentEngine
 
 logger = logging.getLogger(__name__)
 
+# ⚠️ DEPRECATED — C-6' Unification (2026-07-22)
+# This IngestionCircuitBreaker is a clone. Use HealthMonitor.get_breaker() instead.
+#   from omega.oracle.health_monitor import get_health_monitor
+#   breaker = get_health_monitor().get_breaker("ingestion")
 class IngestionCircuitBreaker:
     """Sovereign Circuit Breaker for the Ingestion Pipeline."""
     def __init__(self, fail_max: int = 5, reset_timeout: int = 300):

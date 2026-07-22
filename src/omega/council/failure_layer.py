@@ -48,6 +48,9 @@ class CoordinatedRecovery:
 class CircuitBreaker:
     """Quality-aware circuit breaker for council operations.
     
+    ⚠️ C-6' NOTE: This breaker is domain-specific (schema quality).
+    For provider-level circuit breaking, use HealthMonitor.get_breaker().
+    
     Opens when >30% error rate over 10 minutes, or
     >15% schema validation failure over 60 seconds.
     """
