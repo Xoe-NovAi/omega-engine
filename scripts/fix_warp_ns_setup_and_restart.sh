@@ -103,7 +103,13 @@ if [[ -f "$SOCAT_BRIDGE_UNIT" ]] && grep -q 'SystemCallFilter=~@privileged' "$SO
   sudo sed -i '/^SystemCallFilter=~@privileged/d' "$SOCAT_BRIDGE_UNIT"
 fi
 
-if [[ -f "$WARP_BRIDGE_UNIT" ]] || [[ -f "$SOCAT_BRIDGE_UNIT" ]]; then
+WARP_NODE_UNIT="/etc/systemd/system/warp-node@.service"
+if [[ -f "$WARP_NODE_UNIT" ]] && grep -q 'SystemCallFilter=~@privileged' "$WARP_NODE_UNIT"; then
+  echo "      patching warp-node@.service SystemCallFilter (was blocking setns/ip netns exec)"
+  sudo sed -i '/^SystemCallFilter=~@privileged/d' "$WARP_NODE_UNIT"
+fi
+
+if [[ -f "$WARP_BRIDGE_UNIT" ]] || [[ -f "$SOCAT_BRIDGE_UNIT" ]] || [[ -f "$WARP_NODE_UNIT" ]]; then
   sudo systemctl daemon-reload
 fi
 
