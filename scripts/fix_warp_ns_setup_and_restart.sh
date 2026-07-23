@@ -40,6 +40,7 @@ DEPLOY_SRC="${WARP_DEPLOY_SRC:-$(dirname "$SOURCE")/../deploy/infra/warp_pool}"
 if [[ -d "$DEPLOY_SRC" ]]; then
   echo "      syncing systemd units from $DEPLOY_SRC"
   sudo cp "$DEPLOY_SRC"/*.service "$DEPLOY_SRC"/*.target /etc/systemd/system/ 2>/dev/null || true
+  sudo systemctl daemon-reload
 fi
 
 echo "[2/6] Reset failed units"
