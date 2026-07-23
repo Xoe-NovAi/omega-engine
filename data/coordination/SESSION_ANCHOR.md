@@ -1,5 +1,5 @@
 # 🔱 Session Anchor — Fleet / Grok CLI
-**Last Updated**: 2026-07-22T23:45:00Z (updated: 2026-07-22TXX:XX:00Z)
+**Last Updated**: 2026-07-23T10:30Z
 **Engine**: v1.8.0
 **Phase**: 🟡 **G-1 PENDING** (workhorse) · ✅ **W-1 FIXED** (WARP) · Phase C hardening complete
 
@@ -69,6 +69,22 @@ opencode auth login                                # G-1b Antigravity OAuth
   - **Tests updated**: `tests/contract/test_provider_fallback.py` tests cascade router fallback behavior
   - All 69 unit + contract tests passing
   - Temple-grade validation passes
+- ✅ **Research Verification Complete (6→16 domains, web-verified, v1.1.0)**:
+  - **Original 6 domains** (Hypothesis async, Restic append-only/encryption/NIST/multi-repo, atomic write patterns) — all corrected
+  - **10 additional domains researched and documented**:
+    - AnyIO 4.13.0 version analysis — task group fixes confirmed
+    - Hypothesis 6.159.0 capability — all features supported
+    - `os.fsync()` on tmpfs is no-op — acceptable for API contract testing
+    - `st.floats()` NaN/Inf by default — C-11 correctly uses `allow_nan=False`
+    - SoulStore 3 additional M1 violations found — documented for future refactor
+    - OOMProtector `quick_check_sync()` M1 violation — uses `asyncio.run()`
+    - `asyncio_mode`/`anyio_mode` config — no conflict confirmed
+    - `os.write()` atomicity — confirmed for regular files on Linux
+    - SoulStore backup rotation quirk — `.1.bak` same as current, not previous
+    - Hypothesis CI profile — `suppress_health_check` + `deadline=None` pattern
+  - Full report: `docs/sprints/guard-and-distill/08-verified-findings.md` (v1.1.0)
+  - C-11 ticket updated to v1.1.0 with corrected code and 16 implementation notes
+  - pyproject.toml: hypothesis dependency added to dev deps
 
 ---
 
@@ -86,6 +102,7 @@ opencode auth login                                # G-1b Antigravity OAuth
 | `src/omega/vault/vault_core.py` | VaultCore implementation |
 | `src/omega/cli/vault.py` | Vault CLI commands |
 | `tests/unit/test_vault_core.py` | 22 passing tests |
+| `docs/sprints/guard-and-distill/08-verified-findings.md` | **Web-verified corrections to C-11 & C-3 claims** |
 | `scripts/backup_restic.sh` | Daily backup script |
 | `scripts/restore_test.sh` | Monthly restore test script |
 | `config/omega/omega-restic-backup.service` | Systemd service |
@@ -100,7 +117,7 @@ opencode auth login                                # G-1b Antigravity OAuth
 | **1** | **V-1** | ✅ **COMPLETE** — VaultCore MVP | C-0, C-1' ✅ |
 | **2** | **C-3** | ✅ **COMPLETE** — Restic 3-2-1 Backup | V-1 (partial) |
 | **3** | **C-10.5** | ✅ **IMPLEMENTATION COMPLETE** — Quota-Aware Provider Routing | C-6' ✅, Research ✅ |
-| **4** | **C-11** | Property Tests: OOMProtector + SoulStore (scope trimmed per Carmack) | C-2' ✅, C-1' ✅ |
+| **4** | **C-11** | Property Tests: OOMProtector + SoulStore (scope trimmed per Carmack, **approach corrected: @given async NOT RuleBasedStateMachine**) | C-2' ✅, C-1' ✅ |
 | **5** | **C-0.5** | Scribe Agent L1→L2 Distillation Pipeline (phased per Carmack) | M5, M11, C-10.5 |
 
 ---
@@ -110,7 +127,9 @@ opencode auth login                                # G-1b Antigravity OAuth
 1. **C-3 Privacy Model Decision Needed**: Architect (User) must decide between:
    - **Option A: Tiered Sovereignty** - Separate restic repositories for `config/` (low sensitivity) vs `data/entities/` (high sensitivity/soul data)
    - **Option B: Unified ACLs** - One restic repository for all sovereign data
-   *Decision required before Lilith proceeds with C-3 enhancements*
+   - **⚠️ RESEARCH CORRECTION**: Kali's C-3 Privacy Model report contains factual inaccuracies: `restic-server --append-only` doesn't exist, AES-128/192/256 tiers are impossible with restic (only AES-256-CTR), and NIST SP 1800-39 doesn't prescribe a 4-tier scheme. See `08-verified-findings.md` for full corrections.
+   - **Practical recommendation for single-user Omega**: **Option B (single repo)** is the community-standard best practice. Tiered repos add complexity without security benefit for single-tenant.
+   - *Decision still required, but with corrected facts*
 
 2. **Hardware Constraint Enforcement**: Per Carmack audit and hardware stats (Ryzen 5700U, 8.7GB available, 8MB victim L3 cache):
    - **Enforce ONE local inference at a time**

@@ -191,6 +191,7 @@ escalation_triggers:
 | Scribe L3 axiom extraction quality | Medium | High | Start with L1→L2 only; L3 in Phase D; JSON Schema + LLM-as-Judge |
 | Restic off-site target unavailable | Low | High | Local-first + B2 fallback; test restore weekly |
 | Property test flakiness | Low | Medium | `suppress_health_check=[too_slow]`; quarantine; `derandomize=True` |
+| Hypothesis not in pyproject.toml | **RESOLVED** | Low | **Added `"hypothesis>=6.100.0"` to dev deps** — pyproject.toml now declares the dependency (C-11 verified-findings §3.3) |
 | C-4a.5 escalation needed | Medium | High | Kali executes if Ma'at/P4 silent by EOD |
 | Async Hypothesis FSM not native | **RESOLVED** | Medium | **Use non-stateful `@given` async pattern** (RuleBasedStateMachine doesn't support async; see `08-verified-findings.md` §2.1) |
 | Quota headers not standardized | Medium | Medium | Provider-specific parsers; fallback to error-based detection |
