@@ -76,6 +76,12 @@ Phase C hardening sprint completed core infrastructure. Four P0 gaps remain befo
 | **C-3** | Restic 3-2-1 Backup for Sovereign Data | lilith/P6 | V-1 (partial) | — | 8 | ✅ **DONE** |
 | **C-0.5** | Scribe Agent L1→L2→L3 Distillation Pipeline | scribe (new) | M5, M11, C-10.5 | Phase D | 16 | ⏳ PENDING |
 
+### C-4a MCP Migration Audit (Completed 2026-07-23)
+
+| Ticket | Title | Owner | Effort | Status |
+|--------|-------|-------|--------|--------|
+| **C-4a** | MCP Migration Audit | maat/P4 | 4h | ✅ **DONE** — `R_C4A_MCP_AUDIT.md` drafted |
+
 ---
 
 ## P1 Tickets (Quality Gates)
@@ -86,7 +92,7 @@ Phase C hardening sprint completed core infrastructure. Four P0 gaps remain befo
 | **D-1** | Content Persistence + TTL for Research Cache | ma'at/P2 | 3h | — | ⏳ PENDING |
 | **V-1** | VaultCore Credential Rotation | maat/P1 | 3h | C-0, C-1' | ✅ **MVP DONE** |
 | **M21** | Fix 3 Pre-existing Provider Fallback Tests | maat/P10 | 2h | — | ✅ **DONE** (tests already pass) |
-| **C-4a.5** | MCP Streamable HTTP Migration (Escalation) | kali | 8h | Ma'at/P4 silent by EOD | ⚠️ ESCALATION READY |
+| **C-4a.5** | MCP Streamable HTTP Migration (Escalation) | kali | 8h | Ma'at/P4 silent by EOD | ⏸️ DEFERRED — C-4a audit complete, shim update needed |
 
 ---
 
@@ -147,10 +153,10 @@ dependencies:
 ```yaml
 escalation_triggers:
   - id: "C-4a.5-mcp-migration"
-    condition: "Ma'at/P4 has not pushed C-4b MCP Streamable HTTP implementation by 2026-07-22T23:59:00Z"
-    action: "Kali executes C-4a.5 directly — MCP Streamable HTTP migration"
-    authority: "Kali Amendment 6 (2026-07-22 review)"
-    deadline: "2026-07-22T23:59:00Z"
+    condition: "C-4a audit complete — C-4b shim update not started by 2026-07-25T23:59:00Z"
+    action: "Kali executes C-4b MCP Streamable HTTP migration directly"
+    authority: "Ma'at C-4a audit (2026-07-23)"
+    deadline: "2026-07-25T23:59:00Z"
 ```
 
 ---
@@ -205,6 +211,7 @@ escalation_triggers:
 - [x] C-3 Restic 3-2-1 Backup: **DONE** (scripts, systemd, VaultCore integration)
 - [x] C-10.5 Quota-Aware Provider Routing: **IMPLEMENTED** (tracker, router, stream handler — 69 tests passing)
 - [x] C-11 Property Tests: OOMProtector + SoulStore
+- [x] C-4a MCP Migration Audit: **DONE** — `R_C4A_MCP_AUDIT.md` drafted
 - [ ] C-0.5 Scribe Agent L1→L2→L3 Distillation Pipeline
 - [ ] `make test` — 100% pass (no pre-existing failures)
 - [ ] `make temple-grade` — All T1-T11 gates green

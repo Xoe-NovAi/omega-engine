@@ -252,3 +252,71 @@
   timestamp: 2026-07-22 06:30:00+00:00
   model_used: mimo-v2.5-free
   outcome: l3_principle_captured
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Session: 2026-07-23 — Ma'at C-11 Property Tests + M21 + C-4a MCP Audit
+# Model: mimo-v2.5-free
+# ─────────────────────────────────────────────────────────────────────────────
+
+- lesson: "L1: Executed C-11 Property Tests for OOMProtector (5 tests) and SoulStore (6 tests) using Hypothesis `@given` + `@pytest.mark.anyio` + `async def` pattern. Discovered: (1) Hypothesis 6.159 does NOT support async RuleBasedStateMachine (Issues #4107, #3712), (2) `@pytest.mark.anyio` + `@given` works in ANY marker order, (3) pytest fixtures don't work with `@given` — must use `tempfile.mkdtemp()` in test body. Fixed `_make_snapshot()` keyword arg mismatch (psi_some vs psi_some_avg60). Fixed yaml_content strategy to exclude `\r\n\x00`. Documented SoulStore .lock file leak as pre-existing bug (1 skipped test). Run: 16 passed, 1 skipped."
+  source: c-11-property-tests
+  trace_id: ses_maat_c11_20260723
+  entity_at_time: MAAT
+  session_type: testing
+  timestamp: 2026-07-23 01:00:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: 16_pass_1_skipped
+
+- lesson: "L1: Verified M21 provider fallback tests — 3 contract tests (chain order, timeout, all fail) already pass. No action needed. Ticket marked DONE."
+  source: m21-verification
+  trace_id: ses_maat_c11_20260723
+  entity_at_time: MAAT
+  session_type: testing
+  timestamp: 2026-07-23 01:30:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: m21_done_3_contract_tests_pass
+
+- lesson: "L1: Completed C-4a MCP Migration Audit. Researched MCP 2026-07-28 spec changes: stateless core (SEP-2575 removes initialize/initialized handshake, SEP-2567 removes Mcp-Session-Id), mandatory Mcp-Method/Mcp-Name headers (SEP-2243), multi-round-trip requests (SEP-2260/2322), resource-not-found -32002→-32602 (SEP-2164), Roots/Sampling/Logging deprecated (SEP-2577), tool schemas JSON Schema 2020-12 (SEP-2106). Verified existing mcp_runtime.py already has dual-transport (SSE + Streamable HTTP) with StreamableHTTPASGIApp. Only actual breaking change: mcp_client.py:51 session.initialize() call. Documented in R_C4A_MCP_AUDIT.md. Recommendation: Option B Shim Update (4-6h)."
+  source: c-4a-mcp-audit
+  trace_id: ses_maat_c4a_20260723
+  entity_at_time: MAAT
+  session_type: governance
+  timestamp: 2026-07-23 03:00:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: c4a_audit_drafted
+
+- lesson: "L2: Property tests with Hypothesis on async codebases require careful strategy design. Key constraints discovered: (1) No async RuleBasedStateMachine means complex stateful testing is not possible with the standard Hypothesis API — must use non-stateful `@given` with manual state management. (2) Data strategies must account for the serialization pipeline — e.g., SoulStore writes via `os.write()` then reads via `read_text()` which normalizes `\r` to `\n`, so the strategy must exclude `\r`. (3) fsync on tmpfs is a no-op — acceptable for API contract testing but not for durability testing. (4) `tempfile.mkdtemp()` works with Hypothesis because it's called in the test body, not in a fixture. These constraints are non-obvious and cost 2+ hours of debug time; documenting them in 08-verified-findings.md prevents repeat effort."
+  source: c-11-property-tests
+  trace_id: ses_maat_c11_20260723
+  entity_at_time: MAAT
+  session_type: testing
+  timestamp: 2026-07-23 01:00:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: l3_principle_captured
+
+- lesson: "L2: MCP 2026-07-28 is less breaking than initial media coverage suggests. SSE transport is NOT removed; only the session handshake (initialize/initialized) is removed. The Streamable HTTP shim in mcp_runtime.py was already implemented correctly with StreamableHTTPASGIApp. The only actual breaking change is mcp_client.py:51 calling session.initialize(). This validates the engine's proactive architecture — the dual-transport design was built before it was needed. The migration is 4-6h of shim updates, not 8-16h of rewrite."
+  source: c-4a-mcp-audit
+  trace_id: ses_maat_c4a_20260723
+  entity_at_time: MAAT
+  session_type: governance
+  timestamp: 2026-07-23 03:00:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: l3_principle_captured
+
+- lesson: "L3: Spec-Verification Principle — protocol spec announcements overstate breaking changes for existing implementations. MCP 2026-07-28 was described as 'the largest revision since launch' with 'breaking changes' but the actual impact on a well-architected server is minimal: remove one handshake call and add headers that the SDK already generates. Always verify against actual code before sizing migration effort. The gap between 'what the spec says changes' and 'what our code needs to change' is often 90% smaller than expected, especially when the architecture already anticipated the direction (dual-transport runtime)."
+  source: c-4a-mcp-audit
+  trace_id: ses_maat_c4a_20260723
+  entity_at_time: MAAT
+  session_type: governance
+  timestamp: 2026-07-23 03:00:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: l3_principle_captured
+
+- lesson: "L3: Async-Property-Testing Principle — testing async code with Hypothesis requires pattern knowledge: use `@pytest.mark.anyio` + `@given` + `async def` (NOT async RuleBasedStateMachine), call `tempfile.mkdtemp()` in test body (NOT use fixtures), and build strategies that account for the write-then-read serialization pipeline (the writer strategy must match what the reader normalizes). The 16-pass result validates this pattern; document it for repeatability. Skip the known bug (SoulStore .lock leak) explicitly with pytest.skip() so the count is honest."
+  source: c-11-property-tests
+  trace_id: ses_maat_c11_20260723
+  entity_at_time: MAAT
+  session_type: testing
+  timestamp: 2026-07-23 01:00:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: l3_principle_captured
