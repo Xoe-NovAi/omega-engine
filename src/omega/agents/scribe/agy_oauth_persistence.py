@@ -1,9 +1,10 @@
 """
-AGY OAuth Persistence Fix — Atomic Write-Back with File Locking
+AGY OAuth Persistence Fix — Atomic Write-Back with File Locking (AnyIO Compliant)
 Fixes the 8x re-auth on restart by persisting refreshed tokens to antigravity-accounts.json
 
 Uses filelock.FileLock for cross-platform, OS-enforced locking to prevent
 race conditions when multiple accounts refresh simultaneously.
+All blocking I/O runs in thread pools via anyio.to_thread.run_sync.
 """
 import json
 import os
@@ -12,9 +13,11 @@ from pathlib import Path
 from typing import Dict, Any, Optional
 from datetime import datetime, timezone
 
+import anyio
+from anyio import to_thread
 from filelock import FileLock
 
-from src.omega.agents.scribe.lock import atomic_write
+from src.omega.agents.scribe.lock import atomic_write, atomic_write_sync
 
 
 class AGYAuthPersistence:
@@ -30,6 +33,8 @@ class AGYAuthPersistence:
     
     Concurrency: Uses FileLock (fcntl on POSIX, msvcrt on Windows) to prevent
     lost updates when multiple accounts refresh simultaneously.
+    
+    AnyIO Compliance: All blocking I/O runs in thread pools via anyio.to_thread.run_sync.
     """
     
     def __init__(self, config_path: Optional[str] = None):
@@ -67,40 +72,68 @@ class AGYAuthPersistence:
         2. After EVERY token refresh (critical!)
         3. Before engine shutdown (graceful)
         """
-        with self.lock:
-            accounts = self._read_accounts()
-            
-            accounts[account_id] = {
-                "access_token": access_token,
-                "refresh_token": refresh_token,
-                "expires_at": expires_at,
-                "auth_method": auth_method,
-                "updated_at": datetime.now(timezone.utc).isoformat()
-            }
-            
-            # Atomic write (temp + fsync + replace)
-            atomic_write(str(self.config_path), json.dumps(accounts, indent=2))
+        def _write():
+            with self.lock:
+                accounts = self._read_accounts()
+                
+                accounts[account_id] = {
+                    "access_token": access_token,
+                    "refresh_token": refresh_token,
+                    "expires_at": expires_at,
+                    "auth_method": auth_method,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }
+                
+                # Atomic write (temp + fsync + replace)
+                atomic_write_sync(str(self.config_path), json.dumps(accounts, indent=2))
+        
+        # Run blocking I/O in thread pool if in AnyIO context, else directly
+        try:
+            anyio.from_thread.run_sync(_write)
+        except anyio.NoEventLoopError:
+            # Not in AnyIO context - run directly
+            _write()
     
     def get_account(self, account_id: str) -> Optional[Dict[str, Any]]:
         """Get account tokens for use in authentication (with lock)."""
-        with self.lock:
-            accounts = self._read_accounts()
-            return accounts.get(account_id)
+        def _read():
+            with self.lock:
+                accounts = self._read_accounts()
+                return accounts.get(account_id)
+        
+        try:
+            return anyio.from_thread.run_sync(_read)
+        except anyio.NoEventLoopError:
+            return _read()
     
     def load_all_accounts(self) -> Dict[str, Any]:
         """Load all accounts (with lock)."""
-        with self.lock:
-            return self._read_accounts()
+        def _read():
+            with self.lock:
+                return self._read_accounts()
+        
+        try:
+            return anyio.from_thread.run_sync(_read)
+        except anyio.NoEventLoopError:
+            return _read()
     
-    def remove_account(self, account_id: str) -> bool:
+def remove_account(self, account_id: str) -> bool:
         """Remove an account (e.g., on explicit logout)."""
-        with self.lock:
-            accounts = self._read_accounts()
-            if account_id in accounts:
-                del accounts[account_id]
-                atomic_write(str(self.config_path), json.dumps(accounts, indent=2))
-                return True
-            return False
+        def _write():
+            with self.lock:
+                accounts = self._read_accounts()
+                if account_id in accounts:
+                    del accounts[account_id]
+                    atomic_write_sync(str(self.config_path), json.dumps(accounts, indent=2))
+                    return True
+                return False
+        
+        try:
+            return anyio.from_thread.run_sync(_write)
+        except anyio.NoEventLoopError:
+            return _write()
+        except anyio.NoEventLoopError:
+            return _write()
 
 
 async def persist_oauth_tokens_async(
@@ -124,13 +157,10 @@ async def persist_oauth_tokens_async(
     
     lock = FileLock(str(config_path.with_suffix(".json.lock")), timeout=10)
     
-    # Run blocking lock operations in thread pool
-    import anyio
-    
     async def _locked_write():
-        with lock:
+        async with lock:
             # Read existing
-            if await anyio.Path(config_path).exists():
+            if config_path.exists():
                 content = await anyio.Path(config_path).read_text()
                 accounts = json.loads(content)
             else:
@@ -155,7 +185,7 @@ async def persist_oauth_tokens_async(
                 with os.fdopen(fd, 'w') as f:
                     json.dump(accounts, f, indent=2)
                     f.flush()
-                    os.fsync(f.fileno())
+                    os.fsync(fd)
                 os.replace(temp_path, config_path)
             except Exception:
                 try:
@@ -164,7 +194,7 @@ async def persist_oauth_tokens_async(
                     pass
                 raise
     
-    await anyio.to_thread.run_sync(_locked_write)
+    await _locked_write()
 
 
 def create_refresh_hook(persistence: AGYAuthPersistence, account_id: str):

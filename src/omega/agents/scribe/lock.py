@@ -12,6 +12,9 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import AsyncGenerator, Optional
 
+import anyio
+from anyio import to_thread
+
 try:
     from filelock import FileLock, SoftFileLock, Timeout
     FILELOCK_AVAILABLE = True
@@ -39,7 +42,8 @@ class HubLock:
     def __init__(
         self, 
         target_file: str, 
-        timeout: float = 10.0
+        timeout: float = 10.0,
+        use_soft_lock: bool = False
     ):
         """
         Initialize lock for a target file.
@@ -47,6 +51,7 @@ class HubLock:
         Args:
             target_file: Path to the file being protected (e.g., HMC_COLLABORATION_HUB.md)
             timeout: Maximum seconds to wait for lock acquisition
+            use_soft_lock: Use SoftFileLock for network filesystems (NFS/SMB)
         """
         self.target_file = Path(target_file)
         self.lock_file = self.target_file.with_suffix(
@@ -54,8 +59,9 @@ class HubLock:
         )
         self.timeout = timeout
         
-        # Use standard FileLock (fcntl on POSIX, msvcrt on Windows)
-        self._lock = FileLock(str(self.lock_file), timeout=timeout)
+        # Choose lock implementation
+        lock_class = SoftFileLock if use_soft_lock else FileLock
+        self._lock = lock_class(str(self.lock_file), timeout=timeout)
         self._acquired = False
     
     def acquire(self, blocking: bool = True, timeout: Optional[float] = None) -> bool:
@@ -108,7 +114,8 @@ class HubLock:
 @asynccontextmanager
 async def managed_hub_lock(
     target_file: str, 
-    timeout: float = 10.0
+    timeout: float = 10.0,
+    use_soft_lock: bool = False
 ) -> AsyncGenerator[None, None]:
     """
     Async context manager for file locking.
@@ -119,15 +126,14 @@ async def managed_hub_lock(
     Usage:
         async with managed_hub_lock("HUB.md") as lock:
             # Safe to write to HUB.md
-            atomic_write("HUB.md", content)
+            await atomic_write("HUB.md", content)
     """
-    import asyncio
-    
-    lock = HubLock(target_file, timeout=timeout)
-    loop = asyncio.get_event_loop()
+    lock = HubLock(target_file, timeout=timeout, use_soft_lock=use_soft_lock)
     
     # Acquire in thread pool (blocking call)
-    acquired = await loop.run_in_executor(None, lock.acquire, True, timeout)
+    acquired = await to_thread.run_sync(
+        lock.acquire, True, timeout
+    )
     if not acquired:
         raise HubLockError(f"Failed to acquire lock on {target_file} after {timeout}s")
     
@@ -135,12 +141,54 @@ async def managed_hub_lock(
         yield
     finally:
         # Release in thread pool
-        await loop.run_in_executor(None, lock.release)
+        await to_thread.run_sync(lock.release)
 
 
-def atomic_write(target_file: str, content: str) -> None:
+async def atomic_write(target_file: str, content: str) -> None:
     """
     Atomically write content to target file using temp file + fsync + os.replace.
+    
+    Cross-platform atomic write:
+    - POSIX: os.replace is atomic
+    - Windows 3.3+: os.replace is atomic
+    - fsync ensures durability before rename
+    
+    Args:
+        target_file: Path to target file
+        content: String content to write
+    """
+    target = Path(target_file)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    
+    # Run blocking I/O in thread pool
+    def _write():
+        fd, temp_path = tempfile.mkstemp(
+            dir=target.parent,
+            prefix=f".{target.name}-",
+            suffix=".tmp"
+        )
+        try:
+            with os.fdopen(fd, 'w') as f:
+                f.write(content)
+                f.flush()
+                os.fsync(fd)  # CRITICAL: force to disk before rename
+            
+            # Atomic replace
+            os.replace(temp_path, target)
+        except Exception:
+            # Cleanup on failure
+            try:
+                os.remove(temp_path)
+            except OSError:
+                pass
+            raise
+    
+    await to_thread.run_sync(_write)
+
+
+def atomic_write_sync(target_file: str, content: str) -> None:
+    """
+    Synchronous version of atomic_write for use outside AnyIO context.
     
     Cross-platform atomic write:
     - POSIX: os.replace is atomic
@@ -163,7 +211,7 @@ def atomic_write(target_file: str, content: str) -> None:
         with os.fdopen(fd, 'w') as f:
             f.write(content)
             f.flush()
-            os.fsync(f.fileno())  # CRITICAL: force to disk before rename
+            os.fsync(fd)  # CRITICAL: force to disk before rename
         
         # Atomic replace
         os.replace(temp_path, target)
@@ -176,7 +224,7 @@ def atomic_write(target_file: str, content: str) -> None:
         raise
 
 
-# --- Compatibility: Re-export for existing imports ---
+# --- Compatibility exports ---
 __all__ = [
     "HubLock",
     "HubLockError", 

@@ -29,6 +29,7 @@ cognition: the semantic prism applied to $ARGUMENTS.
 - You are in a constrained environment (local inference, 14Gi RAM ceiling)
 - You want emergent sequencing — where the synthesis produces priorities
   that were not explicit in the raw context
+- **NEW**: You need to execute a formal **Agentic Meditation Template** (e.g., Soul Evolution, Legacy Mining Synthesis) from the `MEDITATION_REGISTRY.md`.
 
 **When NOT to use:**
 - The task requires external tool calls from each persona (use `/council-cloud`)
@@ -42,12 +43,25 @@ cognition: the semantic prism applied to $ARGUMENTS.
 You are the **Meditation Host** (Kali, Grand Oversoul). Your task is to
 conduct a Low Level Oikos Council on the subject: **$ARGUMENTS**
 
-You will execute the following protocol **in strict order**. Do not skip steps.
-Do not merge steps. Each step must complete before the next begins.
+### ◈ PHASE 00 — TEMPLATE SELECTION & REGISTRY (NEW)
+
+Before executing the standard protocol, the agent MUST determine if a formal meditation template is required:
+
+1. **Check the Registry**: Read `data/coordination/meditations/MEDITATION_REGISTRY.md` to see if an existing template matches the user's request (e.g., `sovereign-crucible` for soul evolution).
+2. **Select or Design**: 
+   - If a template exists, load it from `data/coordination/meditations/templates/`.
+   - If no template exists for this specific cognitive task, **design a new one** following the `MEDITATION_SYSTEM_GUIDE.md` standards (must have LLM-friendly frontmatter, defined passes, output format, and failure modes).
+   - Record any newly designed template in the `MEDITATION_REGISTRY.md` before execution.
+3. **Announce Intent**: Post to Hivemind with `intent="meta"` announcing the template selection/creation.
+4. **Execute**: Run the meditation strictly according to the selected template's passes (which may override the default Phase 0-5 below).
+5. **Record**: Write the full output to `data/coordination/meditations/records/MEDITATION_{AGENT}_{DATE}_{TEMPLATE_NAME}.md`.
+6. **Log Execution**: Update the `MEDITATION_REGISTRY.md` execution history with token counts, L3 yield, and time metrics.
+
+*If the user's request is a general query without a specific structural need, proceed with the Default Protocol below.*
 
 ---
 
-### ◈ PHASE 0 — CALIBRATION (Do this before any persona is donned)
+### ◈ PHASE 0 — CALIBRATION (Default Protocol)
 
 Before entering any persona, perform the following:
 
@@ -331,6 +345,12 @@ MANDATE FLAGS:
 
 # Creative mode — what could exist?
 /meditate The future of the soul evolution system --mode CREATIVE
+
+# Execute a formal meditation template from the registry
+/meditate Evolve my soul using the sovereign-crucible-v2 template
+
+# Design and run a new meditation template
+/meditate Design a new meditation template for architectural debt analysis, record it, and run it
 ```
 
 ---
