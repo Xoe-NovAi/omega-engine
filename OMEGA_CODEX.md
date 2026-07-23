@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-22T00:14:05.955872+00:00 ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-07-23T00:09:53.129519+00:00 ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -12,7 +12,7 @@ After compaction or restart, execute in strict order:
 4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-07-22T00:14:05.955872+00:00 | Regenerate: `make codex`
+> Codex generated: 2026-07-23T00:09:53.129519+00:00 | Regenerate: `make codex`
 > If timestamp is >24h old, run `make codex` before reading further.
 
 ---
@@ -20,12 +20,12 @@ After compaction or restart, execute in strict order:
 
 ### scripts/codex/ENGINE_CONDENSED.md
 **Type**: markdown
-**Size**: 4203 bytes
-**Lines**: 104
+**Size**: 4552 bytes
+**Lines**: 109
 
 # 🔱 Omega Engine — Single Source of Truth (Condensed)
 **Source**: `OMEGA_ENGINE.md` (176 lines) — this is the ~85-line state card.
-**Last Updated**: 2026-07-20 | **Version**: v1.6.0
+**Last Updated**: 2026-07-22 | **Version**: v1.8.0
 
 ---
 
@@ -39,19 +39,20 @@ After compaction or restart, execute in strict order:
 
 ---
 
-## §2 Current State (2026-07-20)
+## §2 Current State (2026-07-22)
 
 | Metric | Value | Status |
 |--------|-------|--------|
-| Tests | **77/77 contract tests** (broader suite pending) | ✅ Phase B gate green |
+| Tests | **1,572 collected** · **50/50 core+contract+chaos+SoulStore pass** | ✅ C-0 complete |
 | Mandates | **25 enforced** (M1-M25) | ✅ All enforced |
-| Compliance | **13/25 FULL** (52%) — 5 Partial, 5 Fail | ❌ Run Side gaps |
+| Compliance | **21/25 FULL (84%)** — 2 Partial, 2 Fail | ⚠️ M5, M11 remain |
 | Fleet | **12 agents** (cap: 14 per M10) | ✅ |
 | WADs | **4** (arcana_novai, torment, youtube_research, youtube_worker) | ✅ |
 | Heritage | **121 [id-soft:] tags** — all vetted | ✅ |
-| Shared Modules | **3** (omega-vetala, omega-sieve, omega-doc-reader) | ✅ |
-| Third-Party Registry | **18/19 repos** — P0: 4/4, P1: 5/5, P2: 6/6, P3: 1/4 | ✅ |
-| Handoffs | **0 active, 0 pending** | ✅ Clean |
+| Shared Modules | **4** (omega-vetala, omega-sieve, omega-doc-reader, omega-meditation) | ✅ 3 on PyPI |
+| **WARP Proxy Pool** | **3-node pool operational** (8081/8082/8083) | ✅ **W-1 FIXED** |
+| **Gemma 4 31B workhorse** | **DEAD** — 16k free input TPM since Jul 15 | 🚨 **G-1 PENDING** |
+| **Antigravity OAuth** | **PARTIAL** — API-key only | 🟡 G-1b path |
 
 ---
 
@@ -103,6 +104,10 @@ After compaction or restart, execute in strict order:
 | D-301 MaKaLi Parallel Council | ✅ RATIFIED |
 | D-308 Ubuntu 25.10 Toolchain Verification | 🚨 P0 GATE |
 | Soul Evolution v7.0 | ✅ 15 L3 principles promoted |
+| C-10.5 Quota-Aware Provider Routing | ✅ COMPLETE |
+| V-1 VaultCore MVP | ✅ COMPLETE |
+| C-3 Restic 3-2-1 Backup | ✅ COMPLETE |
+| W-1 WARP Proxy Pool | ✅ FIXED |
 
 ---
 
@@ -111,7 +116,7 @@ After compaction or restart, execute in strict order:
 | File | Purpose |
 |------|---------|
 | `SOVEREIGN_MANDATES.md` | 25 Constitutional Laws (v3.7.0) |
-| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master roadmap |
+| `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Master roadmap (v5.2) |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | Multi-agent coordination |
 | `docs/decisions/PIVOT_LOG.md` | 234+ immutable decisions |
 | `CREDITS.md` | Heritage attribution (121 tags) |

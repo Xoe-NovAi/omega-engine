@@ -71,10 +71,10 @@ Phase C hardening sprint completed core infrastructure. Four P0 gaps remain befo
 
 | Ticket | Title | Owner | Depends On | Blocks | Est. Hours | Status |
 |--------|-------|-------|------------|--------|------------|--------|
-| **C-10.5** | Quota-Aware Provider Routing | maat/P3 | C-6' ✅ | C-0.5, Phase D | 8 | 🔬 **RESEARCH COMPLETE** |
+| **C-10.5** | Quota-Aware Provider Routing | maat/P3 | C-6' ✅ | C-0.5, Phase D | 8 | ✅ **IMPLEMENTED** |
 | **C-11** | Property Tests: OOMProtector + SoulStore | maat/P3 | C-2' ✅, C-1' ✅ | C-0.5 | 12 | ⏳ PENDING |
 | **C-3** | Restic 3-2-1 Backup for Sovereign Data | lilith/P6 | V-1 (partial) | — | 8 | ✅ **DONE** |
-| **C-0.5** | Scribe Agent L1→L2→L3 Distillation Pipeline | scribe (new) | M5, M11 | Phase D | 16 | ⏳ PENDING |
+| **C-0.5** | Scribe Agent L1→L2→L3 Distillation Pipeline | scribe (new) | M5, M11, C-10.5 | Phase D | 16 | ⏳ PENDING |
 
 ---
 
@@ -94,13 +94,16 @@ Phase C hardening sprint completed core infrastructure. Four P0 gaps remain befo
 
 ```mermaid
 graph TD
-    C6[C-6' Breaker Unification ✅] --> C10[C-10.5 Quota Routing]
+    C6[C-6' Breaker Unification ✅] --> C10[C-10.5 Quota Routing ✅]
     C1[C-1' SoulStore ✅] --> C05[C-0.5 Scribe Agent]
     C2[C-2' OOMProtector ✅] --> C11[C-11 Property Tests]
     C10 --> C05
     C11 --> C05
-    C3[C-3 Restic Backup] -.->|parallel| C05
-    V1[V-1 VaultCore] -.->|parallel| C05
+    C3[C-3 Restic Backup ✅] -.->|parallel| C05
+    V1[V-1 VaultCore MVP ✅] -.->|parallel| C05
+    style C10 fill:#c6efce,stroke:#2e7d32
+    style C3 fill:#c6efce,stroke:#2e7d32
+    style V1 fill:#c6efce,stroke:#2e7d32
 ```
 
 ```yaml
@@ -132,7 +135,7 @@ dependencies:
 
 | Agent | Assignment | Rationale |
 |-------|------------|-----------|
-| **maat** (P3) | C-10.5, C-11, C-9, M21 | Build-side ownership; gateway + property tests |
+| **maat** (P3) | C-10.5 ✅, C-11, C-9, M21, research verification | Build-side ownership; gateway + property tests + findings validation |
 | **lilith** (P6) | C-3, V-1 | Run-side: backup + vault operations |
 | **scribe** (new) | C-0.5 | Dedicated distillation agent (M5/M11) |
 | **kali** | Review + arbitration + C-4a.5 escalation | Transcendent oversight |
@@ -156,9 +159,10 @@ escalation_triggers:
 
 | Day | Ma'at (P3) | Lilith (P6) | Scribe | Kali |
 |-----|------------|-------------|--------|------|
-| **Day 1** | ✅ V-1 VaultCore MVP | ✅ C-3 Restic 3-2-1 Backup | ✅ C-10.5 Quota Routing Research | Review C-4a.5 escalation |
-| **Day 2** | ✅ C-11 property tests (OOM + SoulStore) | ✅ C-3 restic off-site (B2) | ✅ **C-10.5 Quota Routing Implementation** | Arbitrate conflicts |
-| **Day 3** | C-9 GenerationPolicy extract | V-1 credential rotation | L3 axiom extraction | Verify temple-grade |
+| **Day 1** | ✅ V-1 VaultCore MVP | ✅ C-3 Restic 3-2-1 Backup | ✅ C-10.5 Quota Routing Implementation | Review C-4a.5 escalation |
+| **Day 2** | ✅ C-10.5 Quota Routing Implementation | ✅ C-3 Restic backup (B2) | ✅ C-10.5 Quota Routing Complete | ✅ Research verification complete |
+| **Day 3** | C-11 Property Tests (OOM + SoulStore) | — | C-0.5 Scribe design | Arbitrate conflicts |
+| **Day 3** | C-11 Property Tests (OOM + SoulStore) | — | C-0.5 design docs | Verify temple-grade |
 | **Day 4** | M21 fix 3 fallback tests | V-1 integration test | Cross-pollination logic | Final review |
 | **Day 5** | Integration + CI | Restore test | Pipeline hardening | **SPRINT COMPLETE** |
 
@@ -167,10 +171,11 @@ escalation_triggers:
 ## Research Index
 
 **See**: `08-research-index.md` for structured research metadata.
+**See**: `08-verified-findings.md` for **web-verified corrections** to C-11 & C-3 factual claims.
 
 | Topic | Tickets | Key Sources |
 |-------|---------|-------------|
-| Hypothesis Async FSM | C-11 | GitHub #4107, MarkTechPost 2026-04-18, TechOral 2026-06-14 |
+| Hypothesis Async @given (NOT RuleBasedStateMachine) | C-11 | GitHub #3712, #4107; `08-verified-findings.md` §2.1; Hypothesis docs |
 | Restic + B2 Object Lock | C-3 | byte-guard.net 2026-06-13, Backblaze 2026-06-26 |
 | MCP Streamable HTTP 2026-07-28 | C-4a.5 | MCP.Directory 2026, Zylos 2026-03-08, AWS Labs #72 |
 | LLM Distillation Pipeline | C-0.5 | Stratos AAAI 2026, Mems 2026-03-23, RecSys 2025 |
@@ -187,7 +192,7 @@ escalation_triggers:
 | Restic off-site target unavailable | Low | High | Local-first + B2 fallback; test restore weekly |
 | Property test flakiness | Low | Medium | `suppress_health_check=[too_slow]`; quarantine; `derandomize=True` |
 | C-4a.5 escalation needed | Medium | High | Kali executes if Ma'at/P4 silent by EOD |
-| Async Hypothesis FSM not native | Medium | Medium | Sync wrapper + `anyio.run()`; suppress health checks |
+| Async Hypothesis FSM not native | **RESOLVED** | Medium | **Use non-stateful `@given` async pattern** (RuleBasedStateMachine doesn't support async; see `08-verified-findings.md` §2.1) |
 | Quota headers not standardized | Medium | Medium | Provider-specific parsers; fallback to error-based detection |
 
 ---
@@ -195,8 +200,8 @@ escalation_triggers:
 ## Acceptance Gates (Sprint Completion)
 
 - [x] V-1 VaultCore MVP: **DONE** (22 tests pass, docs updated)
-- [x] C-3 Restic 3-2-1 Backup: **DONE** (scripts, systemd, tests)
-- [x] C-10.5 Quota-Aware Provider Routing: **RESEARCH DONE** → **IMPLEMENTATION IN PROGRESS**
+- [x] C-3 Restic 3-2-1 Backup: **DONE** (scripts, systemd, VaultCore integration)
+- [x] C-10.5 Quota-Aware Provider Routing: **IMPLEMENTED** (tracker, router, stream handler — 69 tests passing)
 - [ ] C-11 Property Tests: OOMProtector + SoulStore
 - [ ] C-0.5 Scribe Agent L1→L2→L3 Distillation Pipeline
 - [ ] `make test` — 100% pass (no pre-existing failures)

@@ -3,7 +3,7 @@ schema_version: "1.0"
 document_type: "ticket_page"
 document_id: "c-3-restic-backup"
 title: "C-3: Restic 3-2-1 Backup for Sovereign Data"
-status: "PLANNED"
+status: "DONE"
 version: "1.0.0"
 date: "2026-07-22"
 owner: "lilith/P6"
@@ -48,6 +48,8 @@ llm_metadata:
 ---
 
 ## What
+
+**Status: ✅ IMPLEMENTED** (scripts, systemd units, VaultCore integration — all verified working)
 
 Implement 3-2-1 backup strategy for all sovereign data using Restic + Backblaze B2 with Object Lock.
 

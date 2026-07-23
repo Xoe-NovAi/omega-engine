@@ -49,10 +49,10 @@ llm_metadata:
 ## What
 
 > ⚠️ **CARMACK AUDIT (2026-07-22)**: Scope trimmed. Start strictly with OOMProtector and SoulStore invariants. Do NOT build a massive chaos testing suite or benchmarks until core invariants are proven.
+>
+> ⚠️ **VERIFIED FINDINGS (2026-07-22)**: Hypothesis 6.159.0 does NOT support async `RuleBasedStateMachine` (confirmed via GitHub issues #3712, #4107). `hypothesis-trio` is stale (v0.6.0 from 2021). **Use non-stateful `@given` async property tests** with pytest-asyncio + `anyio_mode=auto`. See `08-verified-findings.md` §2.1 for details.
 
-Implement Hypothesis `RuleBasedStateMachine` property tests for:
-
-Implement Hypothesis `RuleBasedStateMachine` property tests for:
+Implement Hypothesis non-stateful `@given` async property tests for:
 1. **OOMProtector**: 3-signal fusion thresholds (PSI + MemAvailable + cgroups) under load
 2. **SoulStore**: Atomic write invariants under concurrent access + crash recovery
 
@@ -78,135 +78,214 @@ Current tests are example-based. Property-based testing finds edge cases humans 
 ## Implementation Sketch (Self-Contained)
 
 ```python
-# File: tests/property/test_oom_protector_fsm.py
-# Purpose: Property-based state machine for OOMProtector 3-signal fusion
-# Dependencies: hypothesis, pytest, anyio, src.omega.oracle.psi_monitor, memavailable, cgroup_pressure
+# File: tests/property/test_oom_protector_given.py
+# Purpose: Non-stateful @given property tests for OOMProtector 3-signal fusion
+# Dependencies: hypothesis, pytest-asyncio, anyio, src.omega.oracle.oom_protector
+#
+# NOTE: Hypothesis 6.159.0 does NOT support async RuleBasedStateMachine.
+# Using @given with async functions + pytest-asyncio anyio_mode=auto instead.
+# See docs/sprints/guard-and-distill/08-verified-findings.md §2.1
 
-import anyio
-from hypothesis import given, settings, HealthCheck, strategies as st
-from hypothesis.stateful import RuleBasedStateMachine, rule, invariant, Bundle
-from src.omega.oracle.psi_monitor import PSIMonitor
-from src.omega.oracle.memavailable import MemAvailableMonitor
-from src.omega.oracle.cgroup_pressure import CGroupPressureMonitor
+import pytest
+from hypothesis import given, settings, strategies as st
 from src.omega.oracle.oom_protector import OOMProtector
 
-class OOMProtectorStateMachine(RuleBasedStateMachine):
-    """Model 3-signal fusion: PSI + MemAvailable + cgroups"""
+# ─── OOMProtector Property Tests ────────────────────────────────────────
+
+@given(
+    psi_pressure=st.floats(0.0, 100.0),
+    mem_available_mb=st.integers(100, 8000),
+    cgroup_usage_mb=st.integers(100, 8000),
+    sys_load=st.floats(0.0, 100.0),
+)
+@settings(max_examples=500, derandomize=True)
+async def test_oom_fusion_risk_bounds(
+    psi_pressure, mem_available_mb, cgroup_usage_mb, sys_load
+):
+    """3-signal fusion risk must always be in [0.0, 1.0]"""
+    oom = OOMProtector()
+    oom.psi._last_pressure = psi_pressure
+    oom.mem._last_available_mb = mem_available_mb
+    oom.cgroup._current_usage_mb = cgroup_usage_mb
     
-    psi_pressure = Bundle("psi_pressure")
-    mem_available = Bundle("mem_available")
-    cgroup_current = Bundle("cgroup_current")
+    risk = await oom.check_available()
+    assert 0.0 <= risk <= 1.0, f"Risk out of bounds: {risk}"
+
+
+@given(
+    low_psi=st.floats(0.0, 30.0),
+    high_psi=st.floats(60.0, 100.0),
+    mem=st.integers(1500, 8000),
+    cgroup=st.integers(100, 2000),
+)
+@settings(max_examples=200, derandomize=True)
+async def test_oom_fusion_monotonicity(
+    low_psi, high_psi, mem, cgroup
+):
+    """More PSI pressure → higher or equal risk (monotonicity)"""
+    oom = OOMProtector()
+    oom.mem._last_available_mb = mem
+    oom.cgroup._current_usage_mb = cgroup
     
-    def __init__(self):
-        super().__init__()
-        self.psi = PSIMonitor()
-        self.mem = MemAvailableMonitor()
-        self.cgroup = CGroupPressureMonitor()
-        self.oom = OOMProtector(self.psi, self.mem, self.cgroup)
+    oom.psi._last_pressure = low_psi
+    risk_low = await oom.check_available()
     
-    @rule(target=psi_pressure, pressure=st.floats(0.0, 100.0))
-    def set_psi(self, pressure):
-        self.psi._last_pressure = pressure
-        return pressure
+    oom.psi._last_pressure = high_psi
+    risk_high = await oom.check_available()
     
-    @rule(target=mem_available, mb=st.integers(100, 8000))
-    def set_mem(self, mb):
-        self.mem._last_available_mb = mb
-        return mb
+    assert risk_high >= risk_low, (
+        f"Monotonicity violated: risk({low_psi})={risk_low} > risk({high_psi})={risk_high}"
+    )
+
+
+@given(
+    psi_pressure=st.floats(0.0, 100.0),
+    mem_reduction=st.integers(100, 4000),
+)
+@settings(max_examples=200, derandomize=True)
+async def test_oom_state_transitions(psi_pressure, mem_reduction):
+    """State transitions follow: Healthy → Degraded → Critical → Recovering → Healthy"""
+    oom = OOMProtector()
+    oom.psi._last_pressure = psi_pressure
     
-    @rule(target=cgroup_current, mb=st.integers(100, 8000))
-    def set_cgroup(self, mb):
-        self.cgroup._current_usage_mb = mb
-        return mb
+    # Start with plenty of memory → Healthy
+    oom.mem._last_available_mb = 8000
+    oom.cgroup._current_usage_mb = 100
+    assert oom.state == "Healthy", f"Expected Healthy, got {oom.state}"
     
-    @invariant()
-    def fusion_consistency(self):
-        """3-signal fusion must be monotonic: more pressure → higher risk"""
-        risk = self.oom._compute_fusion_risk()
-        assert 0.0 <= risk <= 1.0, f"Risk out of bounds: {risk}"
-        
-        # Monotonicity: if all signals increase pressure, risk should not decrease
-        # (This is a simplified check; real monotonicity needs pairwise comparison)
+    # Reduce memory → may transition to Degraded or Critical
+    oom.mem._last_available_mb = max(100, 8000 - mem_reduction)
+    await oom.check_available()
+    assert oom.state in ("Healthy", "Degraded", "Critical"), (
+        f"Invalid state after mem pressure: {oom.state}"
+    )
+
+# ─── SoulStore Property Tests ───────────────────────────────────────────
+
+@given(
+    data=st.dictionaries(
+        st.text(min_size=1, max_size=20),
+        st.text(max_size=100),
+        max_size=10,
+    ),
+)
+@settings(max_examples=500, derandomize=True)
+async def test_soul_store_round_trip(data):
+    """Write then read must return identical data"""
+    import tempfile
+    from pathlib import Path
+    from src.omega.soul_store import SoulStore
     
-    @invariant()
-    def state_machine_valid(self):
-        """State transitions must follow: Healthy → Degraded → Critical → Recovering → Healthy"""
-        valid_transitions = {
-            "Healthy": ["Degraded", "Healthy"],
-            "Degraded": ["Critical", "Healthy", "Degraded"],
-            "Critical": ["Recovering", "Critical"],
-            "Recovering": ["Healthy", "Recovering"],
-        }
-        current = self.oom.state
-        # Next state (if changed) must be valid
-        # This is checked implicitly by the state machine logic
+    temp_dir = tempfile.mkdtemp()
+    store = SoulStore(temp_dir)
+    
+    await store.write(data)
+    result = await store.read()
+    
+    assert result == data, f"Round-trip failed: wrote {data}, read {result}"
+
+
+@given(
+    data_a=st.dictionaries(
+        st.text(min_size=1, max_size=20),
+        st.text(max_size=100),
+        max_size=5,
+    ),
+    data_b=st.dictionaries(
+        st.text(min_size=1, max_size=20),
+        st.text(max_size=100),
+        max_size=5,
+    ),
+)
+@settings(max_examples=200, derandomize=True)
+async def test_soul_store_atomic_visibility(data_a, data_b):
+    """Read must return either old data OR new data, never partial/corrupt"""
+    import tempfile
+    from pathlib import Path
+    from src.omega.soul_store import SoulStore
+    
+    temp_dir = tempfile.mkdtemp()
+    store = SoulStore(temp_dir)
+    
+    await store.write(data_a)
+    
+    # Concurrent read during write
+    async def read_racer():
+        return await store.read()
+    
+    async with anyio.create_task_group() as tg:
+        tg.start_soon(store.write, data_b)
+        read_result = await read_racer()
+    
+    # Must be either data_a (old) or data_b (new), never partial
+    assert read_result == data_a or read_result == data_b, (
+        f"Atomic visibility violated: got {read_result}"
+    )
+
+
+@given(
+    data=st.dictionaries(
+        st.text(min_size=1, max_size=20),
+        st.text(max_size=100),
+        max_size=5,
+    ),
+)
+@settings(max_examples=200, derandomize=True)
+async def test_soul_store_no_temp_files_leaked(data):
+    """No temp files should exist after write completes"""
+    import tempfile
+    from pathlib import Path
+    from src.omega.soul_store import SoulStore
+    
+    temp_dir = tempfile.mkdtemp()
+    store = SoulStore(temp_dir)
+    
+    await store.write(data)
+    
+    # Check no .tmp files remain
+    tmp_files = list(Path(temp_dir).glob("*.tmp"))
+    assert len(tmp_files) == 0, f"Leaked temp files: {tmp_files}"
+
+
+@given(
+    data=st.dictionaries(
+        st.text(min_size=1, max_size=20),
+        st.text(max_size=100),
+        max_size=5,
+    ),
+    crash_point=st.sampled_from(["before_fsync", "after_fsync", "before_replace"]),
+)
+@settings(max_examples=100, derandomize=True)
+async def test_soul_store_crash_recovery(data, crash_point):
+    """Simulated crash mid-write must not corrupt previously written data"""
+    import tempfile
+    from pathlib import Path
+    from src.omega.soul_store import SoulStore
+    
+    temp_dir = tempfile.mkdtemp()
+    store = SoulStore(temp_dir)
+    
+    # Write initial data
+    await store.write(data)
+    
+    # Simulate crash mid-write by creating a .tmp file manually
+    import json
+    tmp_path = Path(temp_dir) / f".tmp.{os.getpid()}.tmp"
+    tmp_path.write_text(json.dumps({"corrupt": "data"))
+    
+    # New instance should recover (ignore corrupt tmp files)
+    new_store = SoulStore(temp_dir)
+    result = await new_store.read()
+    
+    # Should return original data, not the corrupt tmp data
+    assert result == data or result is None, (
+        f"Crash recovery returned unexpected data: {result}"
+    )
+    if result is not None:
+        assert result == data, f"Crash recovery lost data: expected {data}, got {result}"
 
 # CI Profile: 500 examples, no deadline, suppress too_slow
-# Run: HYPOTHESIS_PROFILE=ci pytest tests/property/test_oom_protector_fsm.py -v
-```
-
-```python
-# File: tests/property/test_soul_store_fsm.py
-# Purpose: Property-based state machine for SoulStore atomic write invariants
-# Dependencies: hypothesis, pytest, anyio, src.omega.soul_store
-
-import anyio
-from hypothesis import given, settings, HealthCheck, strategies as st
-from hypothesis.stateful import RuleBasedStateMachine, rule, invariant, Bundle
-from src.omega.soul_store import SoulStore
-import tempfile
-import os
-from pathlib import Path
-
-class SoulStoreStateMachine(RuleBasedStateMachine):
-    """Atomic write invariants under concurrent access"""
-    
-    def __init__(self):
-        super().__init__()
-        self.temp_dir = tempfile.mkdtemp()
-        self.store = SoulStore(self.temp_dir)
-        self.write_count = 0
-    
-    @rule(data=st.dictionaries(st.text(min_size=1, max_size=20), st.text(max_size=100), max_size=10))
-    def write_concurrent(self, data):
-        """Spawn multiple writers, verify no corruption"""
-        async def write_task(d):
-            await self.store.write(d)
-        
-        async def run_concurrent():
-            async with anyio.create_task_group() as tg:
-                for _ in range(3):
-                    tg.start_soon(write_task, data)
-        
-        anyio.run(run_concurrent)
-        self.write_count += 1
-    
-    @invariant()
-    def no_temp_files_leaked(self):
-        """No *.tmp files should exist after any operation"""
-        tmp_files = list(Path(self.temp_dir).glob("*.tmp"))
-        assert len(tmp_files) == 0, f"Leaked temp files: {tmp_files}"
-    
-    @invariant()
-    def read_returns_valid_data(self):
-        """Read must return either old data or new data, never partial/corrupt"""
-        result = anyio.run(self.store.read)
-        assert result is None or isinstance(result, dict), f"Invalid read result: {result}"
-        # Verify JSON-serializable (no partial writes)
-        import json
-        json.dumps(result)  # Raises if not serializable
-    
-    @invariant()
-    def crash_recovery(self):
-        """Simulate crash: kill process mid-write, verify recovery on restart"""
-        # This is tested via separate crash simulation test
-        # Here we verify the store can be re-instantiated and read
-        new_store = SoulStore(self.temp_dir)
-        result = anyio.run(new_store.read)
-        assert result is None or isinstance(result, dict)
-
-# Settings for CI
-# @settings(suppress_health_check=[HealthCheck.too_slow], derandomize=True, max_examples=500)
+# Run: pytest tests/property/test_oom_protector_given.py -v
 ```
 
 ## Research-Backed Patterns (Structured)
