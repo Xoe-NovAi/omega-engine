@@ -2,9 +2,10 @@
 **AP Token**: `AP-STRATEGY-CORPUS-MAP-v1.0.0`
 ⬡ OMEGA ⬡ GROK_CLI ⬡ opencode ⬡ trc_corpus_map ⬡ LAYER-2
 
-**Date**: 2026-07-21  
+**Date**: 2026-07-22 (G-1/W-1 elevation)  
 **Status**: LAYER 2 — companion to strategy SSOT  
 **Master**: [`SOVEREIGN_ARK_BLUEPRINT.md`](SOVEREIGN_ARK_BLUEPRINT.md) v5.1+  
+**P0 ops**: [`CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md`](CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md)  
 **Purpose**: Ensure **no agent strategy is orphaned**. The Ark ranks *what to do now*; this map records *where every fine-grained idea lives* and whether it is active, deferred, absorbed, or archive-only.
 
 ### Rules
@@ -19,6 +20,7 @@
 
 | Agent | Deliverable | Key fine-grained ideas | Disposition in unified strategy |
 |-------|-------------|------------------------|----------------------------------|
+| **Grok CLI** | `GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md` + `CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md` | Free-tier metric cliff Jul 15; workhorse history proof; WARP ns-setup truncation; G-1/W-1 twin path | **ACTIVE P0** → Ark §4 G-1/W-1 + D-377…D-381 |
 | **Kali** | `CANONICAL_ROADMAP_20260721.md` (superseded) | Phase C–F ranking; provider inventory; M7 honest framing; doc archive | **Absorbed** → Ark §0, §3, §7 |
 | **Researcher** | `UNKNOWN_UNKNOWNS_AUDIT_20260721.md` | GAP-01…12 (soul race, MCP, RAM, backup, L3 thrash, durability, heritage, vault, tests, YAML, user tax, council) | **Active gaps** → Ark §3.1 crosswalk; full text kept as Layer 2 |
 | **Researcher** | `RESEARCHER_QUEUE_DESIGN_20260721.md` | SQLite job store; claim TTL; P0/P1 auto-queue; verification gates; content TTL tiers T1/T2/T3; 7-stage workflow | **Partially absorbed**: YAML+flock now (D-2); SQLite/gates **DEFERRED** with note in Ark §3.2; full design preserved |
@@ -164,7 +166,7 @@ These are **not cancelled**. They are out of Phase C critical path. Full text in
 | D-294 Experience Repository / Scribe | OMEGA_ENGINE | After soul pipeline stable |
 | D-295 Trace-to-Eval | prior | After C-0 |
 | D-298 Decision Workspace | COMPLETE | Reference only |
-| D-299 / D-304 Omega-Vault + Antigravity + WARP | OMEGA_ENGINE / vault scaffold | **V-1** with GAP-08 |
+| D-299 / D-304 Omega-Vault + Antigravity + WARP | OMEGA_ENGINE / vault scaffold | **ACTIVE split**: **W-1** WARP bring-up (P0) + **V-1** vault + AGY multi-account research |
 | D-300 Omega-Meditation | COMPLETE (package) | Maintain |
 | D-301 MaKaLi Council | Deployed; tune via C-5 | Active config only |
 | D-303 Headless Subagent Pool 24 accounts | OMEGA_ENGINE | After V-1 + ACP smoke |
@@ -174,7 +176,10 @@ These are **not cancelled**. They are out of Phase C critical path. Full text in
 | D-308 Ubuntu 25.10 toolchain | `D308_CRITICAL_PATH_TRACKER.yaml` + research | Env risk during C |
 | Phase Γ Hub split (tools.py packages) | Grokster briefing | After C / MCP stable |
 | Context Packer hardening | archive CONTEXT_PACKER_* | When packer work resumes |
-| Gemma 4 strategies | archive GEMMA4_* | C-9 GenerationPolicy is the active slice |
+| Gemma 4 strategies (pre-cliff) | archive `2026-07-21/GEMMA4_*` | Thinking/config strategy; **quota cliff superseded by forensic** |
+| **Gemma free-tier workhorse cliff** | `docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md` | **ACTIVE P0** — ticket **G-1**; DIG-01…12 |
+| **OpenCode workhorse + WARP critical path** | `docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md` | **ACTIVE P0** — tickets **G-1** + **W-1**; D-377…D-381 |
+| WARP proxy pool | `docs/research/warp_proxy_pool/WARP_PROXY_POOL_SPEC.md` + `data/projects/warp-proxy-pool/CONTEXT.md` | **ACTIVE P0 (W-1)** — not deployed; ns-setup broken on host |
 | HMC / Quad-Forge manuals | archive HMC_* | Historical; MaKaLi is live pattern |
 | Embedding hardening | archive EMBEDDING_* | Memory track post C |
 | Headless Grok Build integration research (R19) | Grokster queue analysis | With fleet track |

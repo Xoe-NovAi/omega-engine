@@ -1,11 +1,32 @@
-# 🔱 Session Anchor — Ma'at (Light Oversoul)
-**Last Updated**: 2026-07-22T18:30:00Z
+# 🔱 Session Anchor — Fleet / Grok CLI
+**Last Updated**: 2026-07-22T23:45:00Z
 **Engine**: v1.8.0
-**Phase**: C Hardening Complete → Guard & Distill Sprint → V-1 Complete → C-3 Complete → C-10.5 Research Complete → **C-10.5 Implementation Complete** → C-11 Next
+**Phase**: 🟡 **G-1 PENDING** (workhorse) · ✅ **W-1 FIXED** (WARP) · Phase C hardening complete
 
 ---
 
-## Current Sprint Status: C-10.5 IMPLEMENTATION COMPLETE — C-11 NEXT
+## 🟡 Current Priority: G-1 Workhorse (W-1 resolved)
+
+| Ticket | Status | Doc |
+|--------|--------|-----|
+| **G-1** Free Gemma workhorse dead (16k free input TPM since Jul 15) | 🚨 **PENDING USER** — needs billing/OAuth | `docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md` |
+| **W-1** WARP pool bring-up | ✅ **FIXED** — bugs committed, re-run fix script to apply | `docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md` |
+| Python `warp_proxy_pool` | ✅ installed in `.venv` | package path sibling repo |
+| WARP bridge units | ✅ **FIXED** — SystemCallFilter + port-template bugs patched | `scripts/fix_warp_ns_setup_and_restart.sh` auto-patches on re-run |
+
+**Architect next commands** (full page: `data/coordination/ARCHITECT_RUNME_G1_W1_20260722.md`):
+```bash
+# W-1 is already fixed — re-run to apply patches to live host:
+bash scripts/fix_warp_ns_setup_and_restart.sh
+
+# G-1 still needs your action:
+opencode auth login                                # G-1b Antigravity OAuth
+# and/or AI Studio billing Tier 1 for Gemma (G-1a)
+```
+
+---
+
+## Parallel Sprint Status: C-10.5 COMPLETE — C-11 / Guard & Distill
 
 ### Completed This Session
 - ✅ **Phase C Hardening Complete**: 31 new tests passing, 2,308 lines added
@@ -79,8 +100,21 @@
 | **1** | **V-1** | ✅ **COMPLETE** — VaultCore MVP | C-0, C-1' ✅ |
 | **2** | **C-3** | ✅ **COMPLETE** — Restic 3-2-1 Backup | V-1 (partial) |
 | **3** | **C-10.5** | ✅ **IMPLEMENTATION COMPLETE** — Quota-Aware Provider Routing | C-6' ✅, Research ✅ |
-| **4** | **C-11** | Property Tests: OOMProtector + SoulStore | C-2' ✅, C-1' ✅ |
-| **5** | **C-0.5** | Scribe Agent L1→L2→L3 Distillation Pipeline | M5, M11, C-10.5 |
+| **4** | **C-11** | Property Tests: OOMProtector + SoulStore (scope trimmed per Carmack) | C-2' ✅, C-1' ✅ |
+| **5** | **C-0.5** | Scribe Agent L1→L2 Distillation Pipeline (phased per Carmack) | M5, M11, C-10.5 |
+
+---
+
+## Critical Decisions Pending
+
+1. **C-3 Privacy Model Decision Needed**: Architect (User) must decide between:
+   - **Option A: Tiered Sovereignty** - Separate restic repositories for `config/` (low sensitivity) vs `data/entities/` (high sensitivity/soul data)
+   - **Option B: Unified ACLs** - One restic repository for all sovereign data
+   *Decision required before Lilith proceeds with C-3 enhancements*
+
+2. **Hardware Constraint Enforcement**: Per Carmack audit and hardware stats (Ryzen 5700U, 8.7GB available, 8MB victim L3 cache):
+   - **Enforce ONE local inference at a time**
+   - **MaKaLi MUST use cloud voices for Ma'at/Lilith** to avoid L3 cache thrashing
 
 ---
 
@@ -95,21 +129,22 @@
 
 ---
 
-## Git State (Post C-10.5 Research)
+## Git State (Post WARP Fix + Compaction Prep)
 
 ```bash
-# Last commits
+# Last commits (omega-engine)
+796d9aa fix(warp): auto-patch warp-node@.service SystemCallFilter too
+bd4e6fc fix(warp): auto-patch bridge units in bring-up script
+188c6cb feat(oracle): implement C-10.5 Quota-Aware Provider Routing
+e5cc6ce docs: complete C-10.5 quota-aware provider routing research and update sprint materials
 6771b2e feat(backup): implement C-3 Restic 3-2-1 backup with VaultCore integration
-d53a897 feat(vault): implement VaultCore MVP (V-1)
-2796bb3 docs(research): complete Guard & Distill research campaign
-a6ed39d docs(research): complete Guard & Distill research campaign
-9803726 docs: update session anchor for compaction rehydration
-ee078d0 feat(property): Hypothesis property-based tests for circuit breaker FSM (C-11)
-10e00f8 fix(discovery): library discovery tools no longer hardcode cloud-only model names
-d74c73f feat(health-monitor): add 429 classification (rate-limit vs quota-exhausted)
 
-# Working tree clean (all committed)
+# Last commits (warp-proxy-pool)
+dd34d20 fix(warp): remove SystemCallFilter from warp-node@.service
+7a29e23 fix(warp): bridge unit port templating + SystemCallFilter for socat
 ```
+
+**Working tree: files staged for compaction commit**
 
 ---
 

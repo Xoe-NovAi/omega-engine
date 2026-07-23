@@ -1,8 +1,7 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
-    "opencode-antigravity-auth",
-    "list"
+    "opencode-antigravity-auth@latest"
   ],
   "provider": {
     "google": {
@@ -79,6 +78,44 @@
           "name": "Gemini 3.1 Pro Preview Custom Tools (Gemini CLI)",
           "limit": { "context": 1048576, "output": 65535 },
           "modalities": { "input": ["text", "image", "pdf"], "output": ["text"] }
+        },
+        "gemma-4-31b-it": {
+          "name": "Gemma 4 31B IT (Google API)",
+          "limit": { "context": 262144, "output": 32768 },
+          "modalities": { "input": ["text", "image"], "output": ["text"] },
+          "variants": {
+            "low": {
+              "thinkingConfig": {
+                "thinkingLevel": "minimal",
+                "includeThoughts": false
+              }
+            },
+            "high": {
+              "thinkingConfig": {
+                "thinkingLevel": "high",
+                "includeThoughts": true
+              }
+            }
+          }
+        },
+        "gemma-4-26b-a4b-it": {
+          "name": "Gemma 4 26B A4B IT (Google API)",
+          "limit": { "context": 262144, "output": 32768 },
+          "modalities": { "input": ["text", "image", "video"], "output": ["text"] },
+          "variants": {
+            "low": {
+              "thinkingConfig": {
+                "thinkingLevel": "minimal",
+                "includeThoughts": false
+              }
+            },
+            "high": {
+              "thinkingConfig": {
+                "thinkingLevel": "high",
+                "includeThoughts": true
+              }
+            }
+          }
         }
       }
     }

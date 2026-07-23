@@ -292,6 +292,7 @@ sprint-plan-llm:
 | **User Guides** | ✅ RECOMMENDED | ✅ MANDATORY | ✅ MANDATORY | 🟡 OPTIONAL | 🟡 OPTIONAL |
 | **R-Docs (Research)** | ✅ MANDATORY | ✅ MANDATORY | 🟡 OPTIONAL | ✅ MANDATORY | ✅ MANDATORY |
 | **Agent/Skill Defs** | ✅ (YAML) | ✅ MANDATORY | ✅ MANDATORY | ✅ MANDATORY | ✅ MANDATORY |
+| **Knowledge Base** | ✅ MANDATORY | ✅ MANDATORY | ✅ MANDATORY | ✅ MANDATORY | ✅ MANDATORY |
 | **Working/Intake** | 🟡 OPTIONAL | 🟡 OPTIONAL | 🟡 OPTIONAL | 🟡 OPTIONAL | ❌ NO |
 
 ---

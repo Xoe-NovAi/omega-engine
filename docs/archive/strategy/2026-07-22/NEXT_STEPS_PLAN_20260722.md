@@ -12,6 +12,14 @@
 
 Phase C hardening sprint **complete**. All committed deliverables pass (50/50 new tests). Four P0 gaps remain blocking Phase D progression. This plan proposes the next sprint scope with explicit dependencies, acceptance criteria, Kali's amendments, and **deep web research findings** for each critical area.
 
+**🚨 SUPERSEDES FOR SAME-DAY OPS (2026-07-22 evening)**: Architect elevated twin P0s that **outrank** Guard & Distill for *OpenCode usability*:
+- **G-1** Free Gemma workhorse cliff → `docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md`
+- **W-1** WARP proxy pool bring-up → `data/projects/warp-proxy-pool/CONTEXT.md`
+- **Ops SSOT**: `docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md`
+- **Ark**: D-377…D-381 + §4 G-1/W-1 tables
+
+Guard & Distill tickets remain valid for Phase D gate; they run **in parallel under** G-1/W-1 when cloud workhorse is dead.
+
 **Engine State**: v1.8.0 | 50/50 new tests passing | 84% mandate compliance | 3 pre-existing failures (unrelated, documented)
 
 ---

@@ -32,21 +32,30 @@ Skills are OpenCode system configurations. Omega headers are noise here.
 Research artifacts use their own established format (`# R-XX` headers). Omega headers are not used.
 - Research docs (`docs/research/R*.md`)
 
-### Category 5: Working Docs (EXEMPT)
+### Category 6: Knowledge Base (LLM-Friendly Required)
+Living best-practice guides that evolve with the system.
+- Location: `docs/knowledge/` (primary) or `docs/research/KB_*`
+- Format: Full LLM-Friendly (Frontmatter + Answer-First + Self-Contained Code + Structured Data + Dependency Graphs + llms.txt)
+- Versioning: Semantic (MAJOR.MINOR.PATCH) with Change Log
+- Maintenance: Quarterly review + incident-driven updates
+- Ownership: Assigned entity per guide
+- Examples: Research best practices, architecture patterns, operational runbooks
+
+### Category 7: Working Docs (EXEMPT)
 Ephemeral session artifacts consumed by path, not by header. No Omega header required.
 - Team handoffs (`docs/team/*.md`)
 - Intake notes (`docs/intake/*.md`)
 - Coordination files (`data/coordination/*.md`)
 
-### Category 6: Archives (EXEMPT)
+### Category 8: Archives (EXEMPT)
 Frozen documents. Never modify archived files.
 - Archive directories (`docs/archive/`, `docs/strategy/archive/`)
 
-### Category 7: Root Docs (Already Standardized)
+### Category 9: Root Docs (Already Standardized)
 Root-level engine documents. Already have Omega headers.
 - `OMEGA_ENGINE.md`, `SOVEREIGN_MANDATES.md`, `ORACLE_STACK.md`, `CREDITS.md`, `AGENTS.md`
 
-### Category 8: Sprint Plans (LLM-Friendly Format)
+### Category 10: Sprint Plans (LLM-Friendly Format)
 Sprint plans and ticket pages use the LLM-native format for agent consumption.
 - Sprint plan index (`docs/sprints/*/index.md`)
 - P0/P1 ticket pages (`docs/sprints/*/02-p0-tickets/*.md`, `docs/sprints/*/03-p1-tickets/*.md`)
@@ -300,9 +309,11 @@ When referencing id Software patterns, include appropriate heritage tags:
 Before submitting documentation changes, verify:
 
 ### [ ] File Category
-- [ ] Correct category identified (Reference, Agent, Skill, R-Doc, Working, Archive)
+- [ ] Correct category identified (Reference, Agent, Skill, R-Doc, Working, Knowledge Base, Archive, Root, Sprint Plan)
 - [ ] Header format matches category requirements
 - [ ] Working docs and archives marked as EXEMPT from Omega headers
+- [ ] Knowledge Base docs (Category 6) have full LLM-Friendly format
+- [ ] Sprint Plan docs (Category 9) have LLM-Friendly format + llms.txt generation
 
 ### [ ] Header Compliance (Categories 1-2 only)
 - [ ] Correct AP Token format

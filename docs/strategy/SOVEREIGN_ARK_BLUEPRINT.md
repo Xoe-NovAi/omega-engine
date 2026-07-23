@@ -1,6 +1,13 @@
 ## §4 Priority Stack (Do This Order)
 
 ```
+🚨 SUPER-URGENT (Architect-elevated 2026-07-22) — PARALLEL TO PHASE C
+├── **G-1** Gemma/OpenCode workhorse continuity after free-tier cliff
+│     Forensic: docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md
+│     Ops path: docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md
+└── **W-1** WARP proxy pool bring-up (OCZ multi-IP unlock; D-304 Track 1)
+      Blocker: truncated /usr/local/bin/warp-ns-setup — fix from warp-proxy-pool/scripts/
+
 URGENT + IMPORTANT (This week)
 ├── C-0  Test honesty (real pass/fail/skip; fix Makefile lies)
 ├── C-0.5 Soul Distillation Pipeline (Scribe agent) — NEW P0, unblocks M5/M11
@@ -23,6 +30,32 @@ IMPORTANT (Next)
 ├── D-2 Job board YAML bridge (P0/P1 only)
 └── **V-1** Omega-Vault MVP — explicit ticket (GAP-08; unblocks fleet later)
 ```
+
+### G-1 ticket (Architect elevation 2026-07-22 — workhorse)
+
+| Field | Value |
+|-------|--------|
+| **ID** | **G-1** |
+| **Name** | OpenCode workhorse continuity after free Gemma 4 31B cliff |
+| **Why** | Free-tier `input_token_count` limit **16000** for `gemma-4-31b` since **2026-07-15**; prior workhorse (May–Jul) dead for fat Omega sessions |
+| **Evidence** | `docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md` |
+| **Ops** | `docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md` |
+| **Owner** | Architect (billing/OAuth) + Kali verify + Researcher DIG-01/03 |
+| **Paths** | G-1a billing Tier 1 · G-1b Antigravity OAuth · G-1c OCZ+WARP · G-1d paid alt |
+| **Not** | Context caps to fit free 16k · WARP as Gemma free-tier fix |
+
+### W-1 ticket (Architect elevation 2026-07-22 — WARP)
+
+| Field | Value |
+|-------|--------|
+| **ID** | **W-1** |
+| **Name** | WARP multi-namespace proxy pool operational |
+| **Why** | Unlock IP-rotated OpenCode Zen / IP-keyed cloud; D-304 Track 1 |
+| **Blocker** | `/usr/local/bin/warp-ns-setup` truncated (syntax error line 49); prep units failed since ≥Jul 18 |
+| **Fix source** | `/home/arcana-novai/Documents/Xoe-NovAi/warp-proxy-pool/scripts/warp-ns-setup.sh` |
+| **Owner** | Architect (sudo) + P1/sysadmin |
+| **Accept** | prep@1–3 active · node@1–3 active · SOCKS 8081–8083 · 3 distinct exit IPs · `import warp_proxy_pool` |
+| **Not** | Google free-tier project quota rotation |
 
 ### V-1 ticket (Kali amendment 2 — explicit home)
 
@@ -50,11 +83,19 @@ EXPLICITLY NOT DOING NOW (preserved in Corpus Map — not cancelled)
 
 ## §5 Immediate Next Steps
 
+**🚨 Super-urgent (same day, parallel)**: `docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md`
+- **G-1** workhorse continuity · **W-1** WARP pool · forensic DIG tickets
+- Evidence: `docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md`
+
 **Current Sprint**: `docs/sprints/guard-and-distill/index.md` (LLM-native format)
 - Full plan: `docs/sprints/current/llms-full.txt` (16K tokens for agent consumption)
 - Research index: `docs/sprints/guard-and-distill/08-research-index.md`
 
 ```
+SUPER-URGENT (parallel, Architect):
+├── G-1 Workhorse continuity (billing / Antigravity / OCZ)
+└── W-1 WARP pool bring-up (sudo fix ns-setup → reg → bridges)
+
 SPRINT: Guard & Distill (5 days, 4 P0 tickets)
 ├── C-10.5 Quota-Aware Provider Routing (maat/P3) — 8h
 ├── C-11 Property Tests: OOMProtector + SoulStore (maat/P3) — 12h
@@ -148,6 +189,11 @@ Routing when local saturated: Antigravity → Google → OCZ → OpenRouter · s
 | **D-374** | **C-11 Test Infrastructure** added as P0 ticket (Nemotron synthesis) |
 | **D-375** | **MCP audit must start TODAY** — 7-day deadline (Nemotron synthesis) |
 | **D-376** | **E-0 Identity Fluidity** added to manual after C-1′ (Nemotron synthesis) |
+| **D-377** | Free Gemma 4 31B workhorse collapse is **P0** — forensic report is evidence SSOT |
+| **D-378** | Twin tickets **G-1** (workhorse) + **W-1** (WARP) elevated parallel to Guard & Distill |
+| **D-379** | WARP is for **IP-keyed** OCZ (etc.), **not** Google free-tier input TPM fix |
+| **D-380** | No silent context caps to force free Gemma under 16k |
+| **D-381** | Broken `/usr/local/bin/warp-ns-setup` is primary WARP blocker; source = `warp-proxy-pool/scripts/warp-ns-setup.sh` |
 
 ---
 

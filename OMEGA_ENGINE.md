@@ -23,7 +23,7 @@
 
 | Metric | Value | Status | LAST_VERIFIED |
 |--------|-------|--------|---------------|
-| **Strategy SSOT** | **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.1** + `STRATEGY_CORPUS_MAP.md` | ✅ Unified; fine-grained corpus preserved | 2026-07-22 |
+| **Strategy SSOT** | **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.2** + `STRATEGY_CORPUS_MAP.md` | ✅ Unified; fine-grained corpus preserved | 2026-07-22 |
 | **Current phase** | **Phase C — Infrastructure Hardening** (C-0…C-9) | 🔴 Active | 2026-07-22 |
 | Tests | **1,572 collected** · **50/50 core+contract+chaos+SoulStore pass** · 77/77 contract historically green | ✅ C-0 complete, C-10/C-2'/C-6'/C-1' verified | 2026-07-22 |
 | Mandates | **25 (M1-M25)** | ✅ All enforced (v3.7.0) | 2026-07-19 |
@@ -35,7 +35,9 @@
 | Shared modules | **4** (`omega-vetala`, `omega-sieve`, `omega-doc-reader`, `omega-meditation`) | ✅ 3 on PyPI, meditation compatible | 2026-07-20 |
 | **Foundation Stabilization Campaign** | **RATIFIED** — Gate Α passed, Phase Β complete, Gate Β passing | ✅ 0 active/pending handoffs | 2026-07-20 |
 | **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles | ✅ Gate Γ criterion met | 2026-07-20 |
-| **Antigravity OAuth** | **FIXED** — Frontier models (Gemini 3.1 Pro, Sonnet 4.6, Opus 4.6) now accessible via Google OAuth in OpenCode | ✅ Plugin installed, whitelist removed | 2026-07-21 |
+| **Antigravity OAuth** | **PARTIAL** — Plugin present; auth often **API-key only**; re-login may be required for Path B | 🟡 G-1b path | 2026-07-22 |
+| **Gemma 4 31B free workhorse** | **DEAD for fat OpenCode** — free-tier input TPM **16k** since **2026-07-15** (was workhorse May–Jul) | 🚨 **G-1 P0** — needs billing/OAuth | 2026-07-22 |
+| **WARP Proxy Pool** | **OPERATIONAL** — 3-node pool active (8081/8082/8083); SystemCallFilter + port-template bugs fixed & committed | ✅ **W-1 FIXED** | 2026-07-22 |
 | **Circuit Breakers** | **1 canonical** (`HealthMonitor.AsyncCircuitBreaker`) + 6 deprecated clones | ✅ C-6' Unified, sliding-window mode added | 2026-07-22 |
 
 ### Active Deferred Items
@@ -48,7 +50,9 @@
 | MACP Alignment (D-292) | 🟡 Planned | Aligns with IETF draft-li-dmsc-macp-05 |
 | Experience Repository (D-294) | 🟡 Planned | AgentRR L0→L1→L2 via Scribe |
 | Headless Subagent Pool (D-303) | 🟡 Planned | 24 accounts (8 Grok + 8 Copilot + 8 Cline) |
-| Antigravity Two-Track (D-304) | 🟡 Planned | WARP Pool + Omega-Vault AGY provider |
+| Antigravity Two-Track (D-304) | ✅ **W-1 FIXED**; V-1 complete | WARP pool operational; AGY multi-account after vault |
+| **G-1 Workhorse continuity** | 🚨 **P0 ACTIVE** — needs billing/OAuth | Forensic + critical path docs 2026-07-22 |
+| **W-1 WARP pool bring-up** | ✅ **FIXED** — bugs committed, re-run fix script to apply | SystemCallFilter + port-template fixes |
 | Hive Evolution (D-305) | 🟡 Architecture designed | Hivemind → Hive, 5 layers, 7 sprints |
 | Arch Soul Integration (D-306) | 🟡 Design complete | Torment: Nameless One, companions, factions |
 | Torment WAD (D-307) | 🟡 Scaffold defined | Awaiting Researcher Phase 1-4 |
