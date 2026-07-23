@@ -85,7 +85,7 @@ Phase C hardening sprint completed core infrastructure. Four P0 gaps remain befo
 | **C-9** | Extract GenerationPolicy from ModelGateway | maat/P3 | 1h | — | ⏳ PENDING |
 | **D-1** | Content Persistence + TTL for Research Cache | ma'at/P2 | 3h | — | ⏳ PENDING |
 | **V-1** | VaultCore Credential Rotation | maat/P1 | 3h | C-0, C-1' | ✅ **MVP DONE** |
-| **M21** | Fix 3 Pre-existing Provider Fallback Tests | maat/P10 | 2h | — | ⏳ PENDING |
+| **M21** | Fix 3 Pre-existing Provider Fallback Tests | maat/P10 | 2h | — | ✅ **DONE** (tests already pass) |
 | **C-4a.5** | MCP Streamable HTTP Migration (Escalation) | kali | 8h | Ma'at/P4 silent by EOD | ⚠️ ESCALATION READY |
 
 ---
@@ -163,7 +163,7 @@ escalation_triggers:
 | **Day 2** | ✅ C-10.5 Quota Routing Implementation | ✅ C-3 Restic backup (B2) | ✅ C-10.5 Quota Routing Complete | ✅ Research verification complete |
 | **Day 3** | C-11 Property Tests (OOM + SoulStore) | — | C-0.5 Scribe design | Arbitrate conflicts |
 | **Day 3** | C-11 Property Tests (OOM + SoulStore) | — | C-0.5 design docs | Verify temple-grade |
-| **Day 4** | M21 fix 3 fallback tests | V-1 integration test | Cross-pollination logic | Final review |
+| **Day 4** | M21 fix 3 fallback tests ✅ | V-1 integration test | Cross-pollination logic | Final review |
 | **Day 5** | Integration + CI | Restore test | Pipeline hardening | **SPRINT COMPLETE** |
 
 ---
@@ -195,6 +195,7 @@ escalation_triggers:
 | C-4a.5 escalation needed | Medium | High | Kali executes if Ma'at/P4 silent by EOD |
 | Async Hypothesis FSM not native | **RESOLVED** | Medium | **Use non-stateful `@given` async pattern** (RuleBasedStateMachine doesn't support async; see `08-verified-findings.md` §2.1) |
 | Quota headers not standardized | Medium | Medium | Provider-specific parsers; fallback to error-based detection |
+| M21 provider fallback tests | **RESOLVED** | Low | **Tests already pass** — 3/3 contract tests green; ticket marked DONE |
 
 ---
 

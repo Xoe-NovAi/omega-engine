@@ -1,7 +1,7 @@
-# 🔱 Session Anchor — Fleet / Grok CLI
-**Last Updated**: 2026-07-23T10:30Z
+# 🔱 Session Anchor — Fleet / Grok CLI / Roc Mining
+**Last Updated**: 2026-07-23T01:45Z
 **Engine**: v1.8.0
-**Phase**: 🟡 **G-1 PENDING** (workhorse) · ✅ **W-1 FIXED** (WARP) · Phase C hardening complete
+**Phase**: 🟡 **G-1 PENDING** (workhorse) · ✅ **W-1 FIXED** (WARP) · ✅ **V-1 MINING COMPLETE** · Phase C hardening complete
 
 ---
 
@@ -13,6 +13,7 @@
 | **W-1** WARP pool bring-up | ✅ **FIXED** — bugs committed, re-run fix script to apply | `docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md` |
 | Python `warp_proxy_pool` | ✅ installed in `.venv` | package path sibling repo |
 | WARP bridge units | ✅ **FIXED** — SystemCallFilter + port-template bugs patched | `scripts/fix_warp_ns_setup_and_restart.sh` auto-patches on re-run |
+| **V-1** Legacy Pattern Mining | ✅ **COMPLETE** — 7 patterns, 3 partitions, 4 repos | `docs/research/R_V1_LEGACY_PATTERNS.md` |
 
 **Architect next commands** (full page: `data/coordination/ARCHITECT_RUNME_G1_W1_20260722.md`):
 ```bash
@@ -23,6 +24,32 @@ bash scripts/fix_warp_ns_setup_and_restart.sh
 opencode auth login                                # G-1b Antigravity OAuth
 # and/or AI Studio billing Tier 1 for Gemma (G-1a)
 ```
+
+---
+
+## ✅ Roc Raccoon Session Summary (This Session)
+
+### V-1 Legacy Pattern Mining — COMPLETE
+- **Mined**: 3 partitions, 4 repos (xna-omega-legacy, omega-stack-legacy, Old-Stacks, omega-engine)
+- **Patterns**: 7 proven implementations covering all V-1 success criteria
+- **Delivered**: `docs/research/R_V1_LEGACY_PATTERNS.md` (400+ lines)
+- **Lessons**: 5 new L3 principles added to `proposed_lessons.yaml`
+
+### Pattern Catalog
+| Pattern | Source | V-1 Mapping |
+|---------|--------|-------------|
+| A: SQLite + AES-GCM + Argon2id | xna-omega-legacy `vault.py` | Primary KeyVault backend |
+| B: age + Argon2id + zeroize | omega-engine `vault_core.py` | Alternative file-based backend |
+| C: 90-day key rotation | xna-omega-legacy `rotate_api_keys.py` | CLI API key rotation |
+| D: Multi-account OAuth + auto-refresh | omega-stack-legacy `oauth_manager.py` | Web Grok cookie rotation |
+| E: Multi-provider token validation | omega-stack-legacy `token_validation.py` | Fleet health checks |
+| F: Redis Streams ACP + IA2 signing | xna-omega-legacy `agent_bus.py` | MCP bridge |
+| G: AnyIO AgentBusClient + consumer groups | omega-stack-legacy `agent_bus.py` | Fleet orchestrator client |
+
+### Handoffs Executed
+1. **V-1 Mining → Ma'at/P3** (`ho_dc8b77f6049e`) — **COMPLETED**
+2. **W-1 WARP + G-1 Gemma → john_carmack** (`ho_e3996d6c30ae`) — **SUBMITTED** (user parallel chat)
+3. **Kali Briefing** — Hivemind context posted (`ses_49c72ecc54bf`)
 
 ---
 
@@ -107,6 +134,7 @@ opencode auth login                                # G-1b Antigravity OAuth
 | `scripts/restore_test.sh` | Monthly restore test script |
 | `config/omega/omega-restic-backup.service` | Systemd service |
 | `config/omega/omega-restic-backup.timer` | Systemd timer |
+| `docs/research/R_V1_LEGACY_PATTERNS.md` | **V-1 Legacy Mining Report (this session)** |
 
 ---
 
@@ -114,7 +142,7 @@ opencode auth login                                # G-1b Antigravity OAuth
 
 | Priority | Ticket | Description | Depends On |
 |----------|--------|-------------|------------|
-| **1** | **V-1** | ✅ **COMPLETE** — VaultCore MVP | C-0, C-1' ✅ |
+| **1** | **V-1** | ✅ **MINING COMPLETE** — Legacy patterns delivered | C-0, C-1' ✅ |
 | **2** | **C-3** | ✅ **COMPLETE** — Restic 3-2-1 Backup | V-1 (partial) |
 | **3** | **C-10.5** | ✅ **IMPLEMENTATION COMPLETE** — Quota-Aware Provider Routing | C-6' ✅, Research ✅ |
 | **4** | **C-11** | Property Tests: OOMProtector + SoulStore (scope trimmed per Carmack, **approach corrected: @given async NOT RuleBasedStateMachine**) | C-2' ✅, C-1' ✅ |
@@ -144,7 +172,8 @@ opencode auth login                                # G-1b Antigravity OAuth
 3. Read `OMEGA_CODEX.md` (full) — engine state
 4. Read this file (`SESSION_ANCHOR.md`) — session context
 5. Read `docs/research/R_GUARD_DISTILL_RESEARCH_GUIDE_20260722.md` — research manual
-6. Report rehydration status to user
+6. Read `docs/research/R_V1_LEGACY_PATTERNS.md` — V-1 mining report
+7. Report rehydration status to user
 
 ---
 
@@ -167,4 +196,4 @@ dd34d20 fix(warp): remove SystemCallFilter from warp-node@.service
 
 ---
 
-*⬡ OMEGA ⬡ MAAT ⬡ SESSION-ANCHOR ⬡ 2026-07-22 ⬡*
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ SESSION-ANCHOR ⬡ 2026-07-22 ⬡*
