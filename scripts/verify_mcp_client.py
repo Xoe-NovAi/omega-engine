@@ -8,8 +8,8 @@ from mcp_servers.omega_hub.mcp_client import SovereignMCPClient
 logging.basicConfig(level=logging.INFO, stream=sys.stdout, format='%(levelname)s: %(message)s')
 
 async def test_searxng_mcp():
-    print("Testing Sovereign MCP Client connection to SearXNG...")
-    url = "http://127.0.0.1:8018/sse"
+    print("Testing Sovereign MCP Client connection to SearXNG (Streamable HTTP)...")
+    url = "http://127.0.0.1:8018/mcp"
     
     try:
         async with SovereignMCPClient(url) as client:

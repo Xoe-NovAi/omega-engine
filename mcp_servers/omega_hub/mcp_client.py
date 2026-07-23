@@ -1,6 +1,8 @@
-# AP Token: AP-MCP-CLIENT-v1.1.0
-# 🔱 Sovereign MCP Client — Hub-as-Client Implementation (Streamable HTTP)
+# AP Token: AP-MCP-CLIENT-v2.0.0
+# 🔱 Sovereign MCP Client — Hub-as-Client (SEP-2575 Compliant, No Handshake)
 # ⬡ OMEGA ⬡ MA'AT ⬡ anyio ⬡ opencode ⬡ trc_mcp_client ⬡ MCP-CLIENT
+# ⬡ MCP 2026-07-28: initialize/initialized handshake removed (SEP-2575)
+# ⬡ Transport: Streamable HTTP (SSE deprecated) — dual supported via mcp_runtime.py
 
 import logging
 import json
@@ -28,7 +30,11 @@ class SovereignMCPClient:
     (which is asyncio-based) in an AnyIO-compatible wrapper where necessary,
     or using anyio.to_thread.run_sync for blocking calls.
 
-    Migrated from SSE to Streamable HTTP (MCP SDK v1.27+, spec 2025-03-26).
+    Migrated from SSE to Streamable HTTP (MCP SDK v1.27+).
+    
+    NOTE (2026-07-28 spec): The initialize/initialized handshake is removed
+    per SEP-2575. The ClientSession is ready immediately after construction.
+    Explicit session.initialize() calls must NOT be made.
     """
 
     def __init__(self, server_url: str, timeout: float = 120.0):
@@ -46,10 +52,11 @@ class SovereignMCPClient:
             logger.info("Entering Streamable HTTP context...")
             # streamablehttp_client returns (read_stream, write_stream, get_session_id)
             self._read_stream, self._write_stream, _ = await self._http_context.__aenter__()
-            logger.info("Streamable HTTP context entered. Initializing session...")
+            logger.info("Streamable HTTP context entered. Creating session...")
             self._session = ClientSession(self._read_stream, self._write_stream)
-            await self._session.initialize()
-            logger.info("Sovereign MCP Client connected and initialized at %s", self.server_url)
+            # SEP-2575 (MCP 2026-07-28): initialize/initialized handshake removed.
+            # Session is ready immediately after construction. No explicit initialize() call.
+            logger.info("Sovereign MCP Client connected at %s (no handshake per SEP-2575)", self.server_url)
             return self
         except Exception as e:
             logger.error("Failed to connect to MCP server at %s: %s", self.server_url, e)

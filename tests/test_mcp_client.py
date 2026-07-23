@@ -7,17 +7,18 @@ from mcp_servers.omega_hub.mcp_client import SovereignMCPClient, MCPToolResult
 async def test_sovereign_mcp_client_call_tool_contract():
     """
     M21 Contract Test: Verify that call_tool returns an instance of MCPToolResult.
+    Uses Streamable HTTP transport (SSE deprecated as of MCP 2026-07-28).
     """
     server_url = "http://localhost:8080"
     client = SovereignMCPClient(server_url)
     
-    # Mock the SSE context and session
-    mock_sse_context = AsyncMock()
+    # Mock the Streamable HTTP context
+    mock_http_context = AsyncMock()
     mock_read_stream = MagicMock()
     mock_write_stream = MagicMock()
-    mock_sse_context.__aenter__.return_value = (mock_read_stream, mock_write_stream)
+    mock_http_context.__aenter__.return_value = (mock_read_stream, mock_write_stream, lambda: "mock-session-id")
     
-    with patch("mcp_servers.omega_hub.mcp_client.sse_client", return_value=mock_sse_context):
+    with patch("mcp_servers.omega_hub.mcp_client.streamablehttp_client", return_value=mock_http_context):
         async with client:
             # Mock the session.call_tool result
             mock_result = MagicMock()
@@ -42,10 +43,10 @@ async def test_sovereign_mcp_client_trace_id_propagation():
     server_url = "http://localhost:8080"
     client = SovereignMCPClient(server_url)
     
-    mock_sse_context = AsyncMock()
-    mock_sse_context.__aenter__.return_value = (MagicMock(), MagicMock())
+    mock_http_context = AsyncMock()
+    mock_http_context.__aenter__.return_value = (MagicMock(), MagicMock(), lambda: "mock-session-id")
     
-    with patch("mcp_servers.omega_hub.mcp_client.sse_client", return_value=mock_sse_context):
+    with patch("mcp_servers.omega_hub.mcp_client.streamablehttp_client", return_value=mock_http_context):
         async with client:
             mock_result = MagicMock()
             mock_result.content = [MagicMock(text="OK")]
@@ -71,10 +72,10 @@ async def test_sovereign_mcp_client_timeout_contract():
     server_url = "http://localhost:8080"
     client = SovereignMCPClient(server_url, timeout=0.001)
     
-    mock_sse_context = AsyncMock()
-    mock_sse_context.__aenter__.return_value = (MagicMock(), MagicMock())
+    mock_http_context = AsyncMock()
+    mock_http_context.__aenter__.return_value = (MagicMock(), MagicMock(), lambda: "mock-session-id")
     
-    with patch("mcp_servers.omega_hub.mcp_client.sse_client", return_value=mock_sse_context):
+    with patch("mcp_servers.omega_hub.mcp_client.streamablehttp_client", return_value=mock_http_context):
         async with client:
             # Force a timeout by making the mock sleep
             async def slow_call(*args, **kwargs):
