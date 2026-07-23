@@ -53,7 +53,16 @@ opencode auth login                                # G-1b Antigravity OAuth
 
 ---
 
-## Parallel Sprint Status: C-10.5 COMPLETE — C-11 / Guard & Distill
+## Parallel Sprint Status: Guard & Distill — C-11 COMPLETE
+
+### Completed This Session
+- ✅ **C-11 Property Tests**: 16/16 tests pass (5 OOMProtector + 6 SoulStore + 5 existing breaker)
+  - `tests/property/test_oom_protector_fuse.py` — 5 tests, 800+ examples
+  - `tests/property/test_soul_store_atomic.py` — 6 tests (1 skipped: known .lock leak)
+  - Fixes applied: _make_snapshot() kwargs, yaml_content excludes \r, .lock leak documented
+- ✅ **M21 Provider Fallback Tests**: 3/3 tests already pass, ticket marked DONE
+- ✅ **Sprint index updated**: C-11 DONE, M21 DONE
+- ✅ **Commit 54b3ce4 pushed**: "feat: C-11 Property Tests — OOMProtector + SoulStore"
 
 ### Completed This Session
 - ✅ **Phase C Hardening Complete**: 31 new tests passing, 2,308 lines added
@@ -145,8 +154,9 @@ opencode auth login                                # G-1b Antigravity OAuth
 | **1** | **V-1** | ✅ **MINING COMPLETE** — Legacy patterns delivered | C-0, C-1' ✅ |
 | **2** | **C-3** | ✅ **COMPLETE** — Restic 3-2-1 Backup | V-1 (partial) |
 | **3** | **C-10.5** | ✅ **IMPLEMENTATION COMPLETE** — Quota-Aware Provider Routing | C-6' ✅, Research ✅ |
-| **4** | **C-11** | Property Tests: OOMProtector + SoulStore (scope trimmed per Carmack, **approach corrected: @given async NOT RuleBasedStateMachine**) | C-2' ✅, C-1' ✅ |
+| **4** | **C-11** | ✅ **DONE** — Property Tests: OOMProtector + SoulStore (16/16 pass) | C-2' ✅, C-1' ✅ |
 | **5** | **C-0.5** | Scribe Agent L1→L2 Distillation Pipeline (phased per Carmack) | M5, M11, C-10.5 |
+| **6** | **C-9** | GenerationPolicy Extract (cheap structural win) | — |
 
 ---
 
