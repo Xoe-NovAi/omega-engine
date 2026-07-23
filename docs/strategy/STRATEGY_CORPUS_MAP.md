@@ -16,7 +16,7 @@
 
 ---
 
-## §1 Agent Contribution Matrix (2026-07-21 Recalibration)
+## §1 Agent Contribution Matrix (2026-07-21 Recalibration + 2026-07-23 NotebookLM/Omnidroid Mining)
 
 | Agent | Deliverable | Key fine-grained ideas | Disposition in unified strategy |
 |-------|-------------|------------------------|----------------------------------|
@@ -25,6 +25,7 @@
 | **Researcher** | `UNKNOWN_UNKNOWNS_AUDIT_20260721.md` | GAP-01…12 (soul race, MCP, RAM, backup, L3 thrash, durability, heritage, vault, tests, YAML, user tax, council) | **Active gaps** → Ark §3.1 crosswalk; full text kept as Layer 2 |
 | **Researcher** | `RESEARCHER_QUEUE_DESIGN_20260721.md` | SQLite job store; claim TTL; P0/P1 auto-queue; verification gates; content TTL tiers T1/T2/T3; 7-stage workflow | **Partially absorbed**: YAML+flock now (D-2); SQLite/gates **DEFERRED** with note in Ark §3.2; full design preserved |
 | **Roc Racoon** | `ROC_LEGACY_MINING_REPORT_20260721.md` | Atomic soul write+fsync; Memory Guardian; pybreaker; tenacity retry; provider priority chain; Cerebras/Groq matrix; 500ms latency budget; cost tracking | **Patterns** → C-1′/C-2′/C-6′; Cerebras/Groq **rejected for now** (D-351) but matrix preserved; tenacity/latency/cost → PARKED P2 |
+| **Roc Racoon** | **NotebookLM/Omnidroid Mining (2026-07-23)** | NotebookLM 5-notebook ingestion strategy; Omnidroid 6-module cognitive architecture (Quantum Cognition, Holographic Memory, Neuro-Symbolic, Meta-Learning, Flow Regulation, Emergence); Lilith Tarot genesis (5 cards, full pantheon); Mnemosyne 13-sphere Kabbalistic memory; Grok 8-account exports indexed | **New patterns** → NotebookLM pipeline → D-1 Content Cache; Omnidroid patterns **verified evolved** (Jem Session 43); Lilith Tarot → philosophy lineage; Mnemosyne → soul.yaml precursor |
 | **Grokster** | `GROKSTER_ADVERSARIAL_REVIEW_20260721.md` | GAP-S-01…05; MCP 16h; Identity dep fix; novelty engine; SQLite/gap-service overengineering; sovereignty free-tier risk table | **Absorbed** into Ark decisions + §3; full review Layer 2 |
 | **Grokster** | `IDENTITY_FLUIDITY_ARCHITECTURE_20260721.md` + `SPEC_IDENTITY_FLUIDITY_v1.md` + `prototypes/` | Soul Kernel, Auto-Hydration MCP, Temporal Trace, Voice Calibration, Session Bridge; Phase 0–5 build order | **Phase E** in Ark §3.3; specs stay at entity workspace paths |
 | **Grokster** | `GROKSTER_RESEARCH_QUEUE_ANALYSIS_20260721.md` | Compress board; Grok JSONL as persistence; R19 Grok Build patterns; R20 MCP migration research; fleet as force multiplier | **Selective**: MCP deadline active; fleet/JSONL bridge **DEFERRED** (vault first); board compression informs D-2 |
@@ -81,6 +82,16 @@
 | F-10 | Cerebras/Groq vs D-351 | **D-351 hold**; Roc matrix preserved in Roc report |
 | F-11 | Actor model for soul writes | **C-1′** actor ∈ {user, system_agent} |
 
+### 2.4 NotebookLM/Omnidroid Era Gaps (NEW — 2026-07-23 Mining)
+
+| Gap | Name | Priority | Disposition |
+|-----|------|----------|-------------|
+| GAP-NL-01 | No NotebookLM ingestion pipeline for current docs | P1 | **D-1 extension** — implement `prepare_notebooklm.py` per R52c spec |
+| GAP-NL-02 | Omnidroid cognitive patterns not formally documented in current architecture | P2 | **Documented** — Jem confirmed all 6 patterns evolved into current architecture (Session 43) |
+| GAP-NL-03 | Lilith Tarot / 7-entity pantheon not in current philosophy docs | P2 | **Philosophy lineage** — add to `philosophy-dual-flame` as Era 0 origin |
+| GAP-NL-04 | Mnemosyne 13-sphere memory not mapped to current soul.yaml | P2 | **Migration script** — map spheres to soul.yaml sections |
+| GAP-NL-05 | Grok 8-account exports indexed but not searchable via current RAG | P1 | **XNAI-RAG extension** — add Grok DB as searchable source |
+
 ---
 
 ## §3 Living Research OS — Fine Detail Preservation
@@ -105,6 +116,22 @@
 | Grok session JSONL as persistence bridge | Grokster queue analysis | **DEFERRED** with fleet/vault |
 | Carmack: search persistence = R00 | Carmack audit | **D-1 first** |
 | Compress 18-sprint board | Carmack + Grokster | Process guidance for job board owners |
+
+### 3.1 NotebookLM/Omnidroid Research Additions (NEW — 2026-07-23 Mining)
+
+| Idea | Source | Status |
+|------|--------|--------|
+| NotebookLM 5-notebook segmented ingestion (NB-01…NB-05) | `R52c_notebooklm_ingestion_strategy.md` | **D-1 extension** — implement `prepare_notebooklm.py` per spec |
+| Weekly routine sync + strategic pivot + implementation spike triggers | R52c spec | **D-1 process** — add to research loop cron |
+| Omnidroid 6 cognitive modules as architecture validation | `Ω Omnidroid Ω.py` + Jem Session 43 | **Documented** — all patterns evolved into current architecture |
+| AetherPen 6 writing enhancement systems | `Ω AetherPen (AP).py` | **PARKED P2** — content generation not core |
+| PRO 4 reasoning systems (Aristotelian, Socratic, Hegelian, Cognitive) | `Ω Philosophical Reasoning Oracle (PRO).py` | **Distiller T1/T2/T3** — already implemented |
+| PLO 5 linguistic systems (Etymology, Rhetoric, Stylometry, Phonesthetic, Genre) | `Ω Pythonic Linguistic Observatory (PLO).py` | **SovereignScraper + domain allowlist** — M2 compliant |
+| PS 6 product content systems | `Ω Product Sage (PS).py` | **Not core** — PARKED |
+| TCA 6 code enhancement systems | `Ω The Code Alchemist (TCA).py` | **Background researcher + distiller patterns** — partially implemented |
+| Lilith Tarot 22-card pantheon mapping | `First 5 cards Grok Chat 05-25-2025.txt` | **Philosophy lineage** — add to `philosophy-dual-flame` as Era 0 origin |
+| Mnemosyne 13-sphere Kabbalistic memory | `data_archive/mnemosyne/` | **Migration script** — map spheres to soul.yaml sections |
+| Grok 8-account exports (274 convos, 6565 responses) | `grok-accounts-exports/` | **XNAI-RAG source** — add to search fleet |
 
 **Canonical Phase D shape**: Ark §3.2  
 **Full architecture prose**: `docs/strategy/LIVING_RESEARCH_OS_SPEC_20260721.md` (amended header)  
@@ -142,6 +169,22 @@
 | Cerebras/Groq free tiers | Roc matrix | **Rejected now** (D-351); re-open only after systematize |
 | 500ms local latency budget before cloud | Roc | **PARKED** with gateway routing polish |
 | Cloud cost tracking | Roc | **PARKED P2** observability |
+
+### 5.1 NotebookLM/Omnidroid Era Patterns (NEW — 2026-07-23 Mining)
+
+| Pattern | Source | Current Evolution |
+|---------|--------|-------------------|
+| **Holographic Memory Matrix** | Omnidroid Ω (`Ω Omnidroid Ω.py`) | → MemoryStore compaction (first 10 + last 10 + summary) |
+| **Neuro-Symbolic Reasoning Bridges** | Omnidroid Ω | → TriangulationVerifier (T1/T3 delta detection) |
+| **Quantum Cognition Simulator** | Omnidroid Ω | → T1/T3 tiered extraction with verification |
+| **Meta-Learning Core** | Omnidroid Ω | → ConvergenceDetector + SoulUpdater |
+| **Conscious Flow Regulation** | Omnidroid Ω | → BudgetGuard + SovereignSentry |
+| **Emergent Intelligence Protocols** | Omnidroid Ω | → Novelty Engine (D-4) + INDEX noise policy |
+| **SEO/Engagement/Structure/Style/Research/Viral** | AetherPen (AP) | → ContentArchitect + StyleModulator + ResearchIntegrator (PARKED P2) |
+| **Aristotelian/Hegelian/Socratic + Dual Process + Bayesian** | Philosophical Reasoning Oracle (PRO) | → Distiller T1/T2/T3 cognitive pipeline |
+| **Etymology/Rhetoric/Stylometry/Phonesthetic/Genre** | Pythonic Linguistic Observatory (PLO) | → SovereignScraper surgical stripping + domain allowlist |
+| **Review/Comparison/Tutorial/Feature-Benefit/Bias/Funnel** | Product Sage (PS) | → Not directly mapped (product content not core) |
+| **Polyglot Mastery/Architect/Optimizer/Reviewer/Refactorer/ML** | The Code Alchemist (TCA) | → CodeAlchemist patterns in background researcher + distiller |
 
 ---
 

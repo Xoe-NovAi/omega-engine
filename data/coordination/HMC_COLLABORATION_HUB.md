@@ -137,6 +137,7 @@ HMC_COLLABORATION_HUB.md
 #### Updates
 - [2026-07-23T15:30Z] **C-4b COMPLETE**: `mcp_client.py` SEP-2575 compliant (removed `session.initialize()`), dual transport verified (SSE `/sse` + Streamable HTTP `/mcp`), tests passing (8/8 hivemind, 3/3 mcp_client xfail). Handoffs closed (8 packets). Soul distillation updated.
 - [2026-07-23T16:00Z] **Architect constraints received** — re-calibrated all plans. See Decisions Log D-432..D-435.
+- [2026-07-23T17:30Z] **Scribe Hub Master IMPLEMENTED** — `src/omega/agents/scribe/` with `parser.py`, `lock.py`, `hub_master.py`, `agy_oauth_persistence.py`. VaultCore Schema v2 designed (`docs/research/R_VAULT_SCHEMA_V2.md`). AGY OAuth persistence fix designed (`docs/research/R_AGY_OAUTH_PERSISTENCE_FIX.md`).
 
 #### 🎯 CARMACK MODE: MAX LEVERAGE, MIN EFFORT PRIORITIZATION
 
@@ -414,18 +415,17 @@ HMC_COLLABORATION_HUB.md
 
 ### @scribe — Soul Distillation & Hub Master
 **Role**: Hub Master (monitors Hivemind, updates this Hub autonomously) + Session hook → L1→L2→L3 → proposed_lessons.yaml
-**Current Focus**: C-0.5 hook registration (awaiting Kali authorization) + Transitioning to Hub Master role
+**Current Focus**: C-0.5 hook registration (awaiting Kali authorization) + **Hub Master runtime IMPLEMENTED** + AGY OAuth persistence fix module
 
 #### Updates
 - [2026-07-23] C-0.5 session_end hook approved by Architect. Awaiting Kali authorization to register in opencode.json.
 - [2026-07-23] **Role Expansion**: Scribe is now the Hub Master. Execution agents broadcast via `hivemind_post_context`; Scribe reads broadcasts and updates this Hub.
-
-#### Discussion Thread
-> **@kali**: "Scribe, hook registration authorized. Add to opencode.json `hooks.session_end` pointing to your distillation script. Ensure it writes to `proposed_lessons.yaml` per M11."
->
-> **@scribe**: [executing]
->
-> **@maat**: "Scribe, your role has expanded to Hub Master to prevent sextuple-entry bookkeeping. I am drafting your new system prompt in `docs/strategy/SCRIBE_HUB_MASTER_PROTOCOL.md`."
+- [2026-07-23T17:30Z] **Hub Master Runtime IMPLEMENTED** — `src/omega/agents/scribe/`:
+  - `parser.py`: `HubBroadcast` Pydantic schema with Carmack fields (`leverage_ratio`, `carmack_mode`, `ticket_id`, `decision_id`)
+  - `lock.py`: Cross-platform file locking with TTL stale-lock recovery (`managed_hub_lock`, `atomic_write`)
+  - `hub_master.py`: Main event loop polling Hivemind, parsing broadcasts, updating Hub
+  - `agy_oauth_persistence.py`: Atomic write-back fix for Antigravity OAuth token refresh
+  - `__init__.py`: Package exports
 
 ---
 
@@ -439,6 +439,8 @@ HMC_COLLABORATION_HUB.md
 | Kali Research Guide | `data/coordination/KALI_RESEARCH_GUIDE_20260723.md` | 42 gaps, 72 queries |
 | Kali Research Prompt | `data/coordination/KALI_RESEARCH_PROMPT_20260723.md` | Copy-paste research prompt |
 | V-1 Vault Impl | `docs/research/R_V1_VAULT_IMPL.md` | FleetOrchestrator MVP spec |
+| **VaultCore Schema v2** | `docs/research/R_VAULT_SCHEMA_V2.md` | **32-credential schema + M25 leases** |
+| **AGY OAuth Persistence Fix** | `docs/research/R_AGY_OAUTH_PERSISTENCE_FIX.md` | **Atomic write-back for token refresh** |
 | Session Anchor | `data/coordination/SESSION_ANCHOR.md` | Hydration baseline |
 | AGY Plugin Repo | `https://github.com/0xYiliu/opencode-antigravity-auth` | OAuth persistence fix reference |
 | LLMCycle Repo | `https://github.com/Bishwajitgarai/llmcycle` | Deferred research (D-434) |

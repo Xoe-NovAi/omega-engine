@@ -292,6 +292,61 @@ def search_cache(cls, keyword: str) -> List[Dict]:
 
 ---
 
+### Phase 1.5: NotebookLM Ingestion Pipeline (NEW — 2026-07-23 Mining)
+
+**Goal**: Implement the 5-notebook segmented ingestion strategy from R52c spec to feed current Omega docs into NotebookLM for LLM-assisted research.
+
+**Source Spec**: `docs/research/archive/R52c_notebooklm_ingestion_strategy.md`
+
+**Notebook Mapping** (per R52c):
+
+| Notebook ID | Notebook Name | Included Paths / Files | Purpose |
+| :--- | :--- | :--- | :--- |
+| **NB-01** | **Core Engine Architecture** | `src/omega/**/*`, `config/**/*`, `Makefile`, `README.md` | Technical implementation, config, and build logic. |
+| **NB-02** | **Strategic Gnosis** | `docs/strategy/**/*`, `docs/ROADMAP.md`, `docs/decisions/PIVOT_LOG.md`, `AGENTS.md`, `ORACLE_STACK.md` | High-level vision, architectural decisions, and agent rules. |
+| **NB-03** | **Research Archive** | `docs/research/**/*` | Detailed technical research, API specs, and audit reports. |
+| **NB-04** | **Ops & Integration** | `docs/operations/**/*`, `docs/integration/**/*`, `docs/intake/**/*`, `docs/index.md` | Deployment, operational guides, and external integrations. |
+| **NB-05** | **Validation Suite** | `tests/**/*`, `scripts/**/*` | Test cases, validation scripts, and utility tools. |
+
+**Script to implement**: `scripts/prepare_notebooklm.py`
+
+**Script Logic & Design** (per R52c):
+
+**A. File Discovery & Filtering**
+- **Allowed Extensions**: `.py`, `.md`, `.yaml`, `.json`, `.sh`, `.sql`
+- **Exclusions**: `**/__pycache__/**`, `**/.pytest_cache/**`, `**/.git/**`, `**/.venv/**`
+
+**B. Content Cleaning (Signal Enhancement)**
+- **Path Injection**: Every file's content prepended with standardized header:
+  `--- FILE: {relative_path} ---`
+- **Whitespace Normalization**: Remove trailing spaces and collapse triple+ newlines into double newlines.
+- **Header Preservation**: Ensure Markdown headers (`#`, `##`) are maintained to help NotebookLM recognize document structure.
+- **Code-to-Text Optimization**: For Python files, remove excessively long comment blocks that are redundant with documentation.
+
+**C. Chunking Strategy**
+- **Default**: One file = One source.
+- **Large File Handling**: If a file exceeds 1MB (rare in this repo), split by top-level function or class definition to keep context window focused.
+- **Consolidation**: Very small files (<1KB) in the same directory concatenated into a single `{directory}_bundle.txt` to save source slots.
+
+**D. Export Structure**
+The script will output to `notebooklm_export/{NB-ID}/{filename}`, allowing for simple drag-and-drop upload to the respective notebook.
+
+**Refresh Schedule** (per R52c):
+
+| Trigger | Frequency | Action |
+| :--- | :--- | :--- |
+| **Routine Sync** | Weekly (Monday 09:00) | Full rebuild of all 5 notebooks. |
+| **Strategic Pivot** | Per Major PR / Phase | Re-sync **NB-02** and **NB-03** immediately after design changes. |
+| **Implementation Spike** | Per Feature Completion | Sync **NB-01** and **NB-05** after new modules are hardened. |
+
+**Naming Convention**: `OMEGA_NL_{YYYYMMDD}_{VERSION}` (e.g., `OMEGA_NL_20260723_v1`)
+
+**Effort**: ~4 hours (script + 5 notebook creation + validation)
+**Impact**: Enables LLM-assisted research on current Omega docs via NotebookLM's grounded reasoning.
+**Verification**: After implementation, run script, verify 5 export directories created, manually upload to NotebookLM, test query retrieval.
+
+---
+
 ### Phase 2: Job Board Bridge
 
 **Goal**: Background researcher reads open jobs from the job board and prioritizes them.

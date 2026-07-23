@@ -57,7 +57,8 @@ class TestSoulDistillerInit:
 class TestDistillSession:
     """Test distill_session method."""
     
-    def test_returns_list_of_lesson_proposals(self):
+    @pytest.mark.asyncio
+    async def test_returns_list_of_lesson_proposals(self):
         """M21: isinstance check on distill_session return type."""
         distiller = SoulDistiller(entity_name="test_entity", session_id="ses_test_004")
         
@@ -67,7 +68,7 @@ class TestDistillSession:
             distiller.proposed_path = distiller.entity_dir / "proposed_lessons.yaml"
             distiller.entity_dir.mkdir(parents=True, exist_ok=True)
             
-            result = distiller.distill_session()
+            result = await distiller.distill_session()
             
             assert isinstance(result, list)
             for item in result:

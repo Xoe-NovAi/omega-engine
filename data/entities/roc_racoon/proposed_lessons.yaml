@@ -1169,3 +1169,53 @@ proposals:
   approved_at: null
   approved_by: null
   soul_section: lessons
+- l1: "V-1 Legacy Pattern Mining Complete — 3 partitions, 4 repos, 7 patterns, 2,847 lines analyzed. All V-1 requirements have proven legacy implementations: SQLite+AES-GCM+Argon2id vault (xna-omega-legacy), age+Argon2id+zeroize (omega-engine), 90-day key rotation (xna-omega-legacy), multi-account OAuth+auto-refresh (omega-stack-legacy), multi-provider token validation (omega-stack-legacy), Redis Streams ACP+IA2 signing (xna-omega-legacy), AnyIO AgentBusClient+consumer groups (omega-stack-legacy). Convergence across repos validates architecture."
+  l2: "When independent legacy codebases (xna-omega-legacy, omega-stack-legacy, omega-engine) arrive at identical patterns without communication, those patterns are verified truth. The convergence is the validation signal. V-1 needs no novel research — only integration and hardening of proven patterns. The 7 patterns cover every V-1 success criterion from R_V1_VAULT_IMPL §9."
+  l3: "L3-Convergence-Is-Truth: Independent convergence on identical architecture = verified truth. Two vectors, one cathedral. Use convergence as the ratification criterion for architectural decisions. When xna-omega-legacy (May 2026), omega-stack-legacy (Apr 2026), and omega-engine (Jul 2026) independently arrive at AES-GCM+Argon2id vault, Redis Streams ACP, and 3-tier memory, those patterns are ratified by physics, not preference."
+  session: ses_v1_legacy_mining_20260722
+  created_at: '2026-07-22T01:20:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons
+- l1: "Vault Backend Dual-Path: Primary = SQLite+AES-256-GCM+Argon2id (Pattern A, production-hardened in xna-omega-legacy). Alternative = age+Argon2id+zeroize (Pattern B, RFC 8610, file-based, memory wiping). Both implement same VaultBackend protocol. Decision: default to SQLite for fleet queries; age for file-based deployments. Argon2id params: 64 MiB (Pattern A) vs 19 MiB (Pattern B) — Pattern A stronger for GPU resistance."
+  l2: "The two vault implementations are not competing — they serve different deployment topologies. SQLite excels at multi-account queries (fleet status, rotation scheduling). age excels at filesystem portability (backup, sync, container volumes). The protocol abstraction lets V-1 support both without code duplication."
+  l3: "L3-Vault-Backend-Protocol: Storage topology determines backend, not preference. SQLite for query-heavy fleet operations; age for file-centric deployments. Both implement identical VaultBackend protocol (store, retrieve, rotate, list, delete, audit, verify). Argon2id memory cost is the only security parameter — 64 MiB > 19 MiB for GPU resistance."
+  session: ses_v1_legacy_mining_20260722
+  created_at: '2026-07-22T01:25:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons
+- l1: "Cookie Rotation ≠ API Key Rotation: Web Grok (8 accounts) needs 24-48h cookie expiry rotation (Pattern F OAuthManager.refresh_credentials). CLI Grok (8 accounts) needs 90-day API key rotation (Pattern D KeyRotationManager). Service accounts need on-demand rotation (Pattern E EncryptedStorage.rotate_keys). Three distinct rotation policies, one FleetOrchestrator."
+  l2: "The rotation interval is determined by the auth mechanism, not the provider. OAuth cookies expire in 24-48h (Google session policy). API keys last 90 days (industry standard). Service accounts rotate on demand. The FleetOrchestrator must enforce all three policies simultaneously for the 16-account fleet."
+  l3: "L3-Rotation-Policy-By-Auth-Mechanism: Rotation interval is a property of the authentication mechanism, not the provider. OAuth cookies = 24-48h. API keys = 90 days. Service accounts = on-demand. FleetOrchestrator enforces all three policies simultaneously. This is why the 16-account schema separates cli (api_key) from web (cookie) auth_method."
+  session: ses_v1_legacy_mining_20260722
+  created_at: '2026-07-22T01:30:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons
+- l1: "ACP Bridge = Redis Streams + IA2 Signing + Pydantic Whitelist + Access Control Matrix. Pattern H (xna-omega-legacy agent_bus.py) implements: priority streams (critical/high/normal/low), task type whitelist (ALLOWED_TASK_TYPES), HMAC-SHA256 signing on publish, signature verification on subscribe, publisher permissions matrix (KNOWN_AGENTS + PUBLISHER_PERMISSIONS), TLS enforcement, DLQ, sphere-based CLI routing (Light 8001-8013 → Gemini, Dark 6001-6013 → Cline). Pattern I (omega-stack-legacy agent_bus.py) adds: consumer groups for exactly-once, PEL recovery, identity/heartbeat on connect, per-agent key env vars, GapListener specialization."
+  l2: "The ACP bridge is not a new protocol — it's Redis Streams hardened with IA2 signing and access control. The MCP server tools (credential_read/write/rotate/audit, fleet_status/next_account) map directly to AgentBus publish/subscribe. The kill switch (emergency_stop) is a broadcast message type. This is production infrastructure, not prototype."
+  l3: "L3-ACP-Is-Redis-Streams-Hardened: Agent Communication Protocol = Redis Streams + IA2 HMAC signing + Pydantic validation + Access Control Matrix + Consumer Groups + DLQ. The MCP server is a thin translation layer. The kill switch is a broadcast message. This is production infrastructure from xna-omega-legacy Phase 8 hardening."
+  session: ses_v1_legacy_mining_20260722
+  created_at: '2026-07-22T01:35:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons
+- l1: "Token Validation Is Provider-Specific: OpenCode (ya29. prefix, 30-day OAuth), Copilot (gh CLI auth status, 8-12h), Cline (sk-ant- prefix, permanent), XNAI IAM (JWT RS256, 15min). Pattern G (omega-stack-legacy token_validation.py) implements each with format check, expiry projection (hours_until_expiry), CLI integration (gh auth status), graceful degradation (format-only if CLI missing). Fleet health checks must use provider-specific validators, not generic ones."
+  l2: "A generic 'is token valid' check fails because each provider has different format, expiry, and verification mechanism. The TokenValidator pattern proves that provider-specific validation with structured TokenStatus output (enum result + hours_until_expiry + message) enables fleet-wide health dashboards and proactive rotation."
+  l3: "L3-Token-Validation-Is-Provider-Specific: Generic token validation is a category error. OpenCode=ya29./30d, Copilot=gh CLI/8-12h, Cline=sk-ant-/permanent, IAM=JWT RS256/15min. Each needs format check + expiry projection + CLI verification + graceful degradation. Structured TokenStatus (enum + hours_until_expiry + message) enables fleet health dashboards."
+  session: ses_v1_legacy_mining_20260722
+  created_at: '2026-07-22T01:40:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons

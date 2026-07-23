@@ -28,6 +28,7 @@ IMPORTANT (Next)
 ├── E-0 Identity Phase 0 (after C-1′)
 ├── D-1 Content persistence + TTL (+ D-T tests)
 ├── D-2 Job board YAML bridge (P0/P1 only)
+├── **NL-1** NotebookLM Ingestion Pipeline — implement `prepare_notebooklm.py` per R52c spec
 └── **V-1** Omega-Vault MVP — explicit ticket (GAP-08; unblocks fleet later)
 ```
 
@@ -68,6 +69,19 @@ IMPORTANT (Next)
 | **Depends** | Prefer after C-0; may design in parallel with C-1′…C-10 |
 | **Blocks** | Grok CLI multi-account fabric pool (D-360′) |
 | **Not** | Full 8-account pool — vault MVP first, then single ACP smoke |
+
+### NL-1 ticket (NotebookLM Ingestion Pipeline — 2026-07-23 Mining)
+
+| Field | Value |
+|-------|--------|
+| **ID** | **NL-1** |
+| **Name** | NotebookLM Ingestion Pipeline — `prepare_notebooklm.py` |
+| **Why** | R52c spec exists (5-notebook architecture, weekly sync, strategic pivot triggers); current docs not ingested into NotebookLM for LLM-assisted research |
+| **Evidence** | `docs/research/archive/R52c_notebooklm_ingestion_strategy.md` |
+| **Owner** | Researcher (impl) + Roc (validation) |
+| **Depends** | D-1 Content Cache (provides `.firecrawl/` content source) |
+| **Effort** | ~4h (script + 5 notebook creation + validation) |
+| **Not** | Full NotebookLM automation — manual upload still required |
 
 EXPLICITLY NOT DOING NOW (preserved in Corpus Map — not cancelled)
 ├── New free-tier providers (Cerebras/Groq/…)
@@ -119,6 +133,8 @@ COMPLETED (Phase C Hardening):
 
 **Gate to Phase D**: All 4 P0 tickets DONE + `make test` 100% pass + `make temple-grade` T1-T11 green + Soul distillation ≥1 L3 axiom/entity/week + Backup `restic check --read-data-subset 5%` weekly.
 
+**NotebookLM Pipeline (Post Phase D Gate)**: NL-1 ticket ready — implement `prepare_notebooklm.py` per R52c spec once D-1 content cache provides `.firecrawl/` source.
+
 ---
 
 ## §6 Mandate Hotspots (Execution View)
@@ -159,7 +175,7 @@ Routing when local saturated: Antigravity → Google → OCZ → OpenRouter · s
 
 ---
 
-## §8 Decision Log (Unified 2026-07-21)
+## §8 Decision Log (Unified 2026-07-21 + 2026-07-23 Mining)
 
 | ID | Decision |
 |----|----------|
@@ -194,6 +210,11 @@ Routing when local saturated: Antigravity → Google → OCZ → OpenRouter · s
 | **D-379** | WARP is for **IP-keyed** OCZ (etc.), **not** Google free-tier input TPM fix |
 | **D-380** | No silent context caps to force free Gemma under 16k |
 | **D-381** | Broken `/usr/local/bin/warp-ns-setup` is primary WARP blocker; source = `warp-proxy-pool/scripts/warp-ns-setup.sh` |
+| **D-382** | **Omnidroid 6 cognitive modules fully evolved into current architecture** — Jem Session 43 confirmed; no porting needed |
+| **D-383** | **NotebookLM 5-notebook ingestion strategy (R52c) exists** — implement `prepare_notebooklm.py` as NL-1 ticket post Phase D |
+| **D-384** | **Lilith Tarot genesis (Era 0)** recovered — 5 cards, full pantheon, rituals; add to philosophy lineage |
+| **D-385** | **Mnemosyne 13-sphere Kabbalistic memory** recovered — precursor to soul.yaml; migration script needed |
+| **D-386** | **Grok 8-account exports indexed** (274 convos, 6565 responses) — add to XNAI-RAG search fleet |
 
 ---
 

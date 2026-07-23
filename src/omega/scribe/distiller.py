@@ -11,13 +11,14 @@ Output: data/entities/{entity}/proposed_lessons.yaml (NOT soul.yaml)
 """
 
 import logging
-import time
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Optional, Literal
 from dataclasses import dataclass, field
 
 import yaml
+import anyio
 
 logger = logging.getLogger(__name__)
 
@@ -64,12 +65,12 @@ class SoulDistiller:
         # Ensure entity dir exists
         self.entity_dir.mkdir(parents=True, exist_ok=True)
     
-    def distill_session(self) -> List[LessonProposal]:
+    async def distill_session(self) -> List[LessonProposal]:
         """Run full L1→L2→L3 pipeline for current session."""
         logger.info(f"[Scribe] Starting distillation for {self.entity_name} session {self.session_id}")
         
         # 1. Load session exchanges from MemoryStore
-        exchanges = self._load_session_exchanges()
+        exchanges = await self._load_session_exchanges()
         
         # 2. L1: Narrative distillation
         l1_proposals = self._distill_l1_narrative(exchanges)
@@ -90,13 +91,32 @@ class SoulDistiller:
         
         return all_proposals
     
-    def _load_session_exchanges(self) -> List[dict]:
-        """Load exchanges from MemoryStore."""
-        # In production, this would call omega-hub_omega_memory_get_history
-        # For now, return empty list — the distiller is designed to work with
-        # whatever session data is available
+    async def _load_session_exchanges(self) -> List[dict]:
+        """Load exchanges from MemoryStore via Omega Hub."""
         logger.info(f"[Scribe] Loading exchanges for session {self.session_id}")
-        return []
+        
+        try:
+            # Import MemoryStore
+            from omega.memory_store import get_memory_store
+            
+            memory_store = get_memory_store()
+            if memory_store is None:
+                logger.warning("[Scribe] MemoryStore not initialized, returning empty exchanges")
+                return []
+            
+            # Get history for this entity and session
+            exchanges = await memory_store.get_history(
+                entity_name=self.entity_name,
+                session_id=self.session_id,
+                limit=100  # Limit to recent exchanges
+            )
+            
+            logger.info(f"[Scribe] Loaded {len(exchanges)} exchanges from MemoryStore")
+            return exchanges
+            
+        except Exception as e:
+            logger.error(f"[Scribe] Failed to load session exchanges: {e}")
+            return []
     
     def _distill_l1_narrative(self, exchanges: List[dict]) -> List[LessonProposal]:
         """L1: What happened? Structured narrative from raw exchanges."""
