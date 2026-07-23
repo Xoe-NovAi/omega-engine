@@ -68,7 +68,7 @@ HMC_COLLABORATION_HUB.md
 
 ## 📌 SHARED SECTIONS
 
-### 🏁 Sprint Status (Guard & Distill → ARF Transition)
+### 🏁 Sprint Status (Guard & Distill → ARF Transition → Phase 2 Hardening → Phase 3 Ready)
 | Sprint | Phase | Status | Gate | Owner |
 |--------|-------|--------|------|-------|
 | Guard & Distill | Complete | ✅ Done | All P0 passed | @maat |
@@ -76,6 +76,8 @@ HMC_COLLABORATION_HUB.md
 | ARF | Phase 1 | 🔄 **ACTIVE** | Provider-specific (25 queries) | @researcher |
 | ARF | Phase 2 | ⏳ Waiting | Grokster G1-15 ✅ | @grokster |
 | ARF | Phase 3 | ⏳ Waiting | Synthesis | @jem |
+| **Phase 2 Hardening** | **Complete** | ✅ **DONE** | **All 60 tests pass** | **@maat** |
+| **Phase 3** | **Ready** | 🟢 **READY** | P0-1 + P0-2 | @maat |
 | Vault FleetOrchestrator | Design | 🟡 **CARMACK MODE** | Depends on Phase 1 + AGY fix | @maat |
 
 ### ⚖️ Decisions Log (Architect-Ratified)
