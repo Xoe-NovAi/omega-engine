@@ -36,6 +36,7 @@
 | **`docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md`** | P0 | **Gemma free-tier cliff forensic** — DIG-01…12; workhorse history proof |
 | `docs/research/warp_proxy_pool/WARP_PROXY_POOL_SPEC.md` | P0/W-1 | Multi-namespace WARP proxy pool design |
 | `data/projects/warp-proxy-pool/CONTEXT.md` | P0/W-1 | WARP project one-turn hydration + live blockers |
+| **`docs/strategy/archive/2026-07-22/WARP_PROXY_POOL_HANDOFF_ROC_20260722.md`** | P0/W-1 | **Handoff briefing** — bugs fixed, current state, runbook for Roc |
 | `data/projects/antigravity-multi-account/CONTEXT.md` | G-1b | Antigravity OAuth multi-account (complementary to WARP) |
 | `docs/strategy/LIVING_RESEARCH_OS_SPEC_20260721.md` | D | Phase D build detail — **amended by Ark §3.2** |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | — | Multi-agent coordination |

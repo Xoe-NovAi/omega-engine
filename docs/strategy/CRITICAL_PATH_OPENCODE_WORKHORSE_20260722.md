@@ -6,6 +6,7 @@
 **Status**: 🚨 **P0 ACTIVE** — Architect-elevated · **blocked on Architect sudo/OAuth**  
 **Master strategy**: [`SOVEREIGN_ARK_BLUEPRINT.md`](SOVEREIGN_ARK_BLUEPRINT.md)  
 **Forensic SSOT**: [`../archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md`](../archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md)  
+**W-1 Handoff**: [`../archive/strategy/2026-07-22/WARP_PROXY_POOL_HANDOFF_ROC_20260722.md`](../archive/strategy/2026-07-22/WARP_PROXY_POOL_HANDOFF_ROC_20260722.md)  
 **One-page RUNME**: [`../../data/coordination/ARCHITECT_RUNME_G1_W1_20260722.md`](../../data/coordination/ARCHITECT_RUNME_G1_W1_20260722.md)
 
 **Purpose**: Single operational critical path to (1) replace the dead free-tier Gemma 4 31B workhorse and (2) bring WARP proxy pool online so OpenCode Zen / multi-IP cloud usage is unlocked.
