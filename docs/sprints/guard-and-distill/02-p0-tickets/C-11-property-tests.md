@@ -5,7 +5,7 @@ document_id: "c-11-property-tests"
 title: "C-11: Property Tests for OOMProtector + SoulStore"
 status: "PLANNED"
 version: "1.1.0"
-date: "2026-07-22"
+date: "2026-07-23"
 owner: "maat/P3"
 tags: ["sprint-plan", "phase-c", "p0-tickets", "llm-friendly", "guard-and-distill", "property-testing", "hypothesis", "oom-protector", "soul-store"]
 priority: "P0"
@@ -43,7 +43,7 @@ llm_metadata:
 **Sprint**: `guard-and-distill-2026-07-22`
 **Priority**: P0
 **Owner**: maat/P3
-**Status**: PLANNED
+**Status**: DONE
 **Depends On**: ["C-2'", "C-1'"]
 **Blocks**: ["C-0.5", "Phase D"]
 **Estimated Hours**: 12

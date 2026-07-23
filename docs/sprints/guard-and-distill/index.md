@@ -72,7 +72,7 @@ Phase C hardening sprint completed core infrastructure. Four P0 gaps remain befo
 | Ticket | Title | Owner | Depends On | Blocks | Est. Hours | Status |
 |--------|-------|-------|------------|--------|------------|--------|
 | **C-10.5** | Quota-Aware Provider Routing | maat/P3 | C-6' ✅ | C-0.5, Phase D | 8 | ✅ **IMPLEMENTED** |
-| **C-11** | Property Tests: OOMProtector + SoulStore | maat/P3 | C-2' ✅, C-1' ✅ | C-0.5 | 12 | ⏳ PENDING |
+| **C-11** | Property Tests: OOMProtector + SoulStore | maat/P3 | C-2' ✅, C-1' ✅ | C-0.5 | 12 | ✅ **DONE** (16/16 pass, 1 skipped known bug) |
 | **C-3** | Restic 3-2-1 Backup for Sovereign Data | lilith/P6 | V-1 (partial) | — | 8 | ✅ **DONE** |
 | **C-0.5** | Scribe Agent L1→L2→L3 Distillation Pipeline | scribe (new) | M5, M11, C-10.5 | Phase D | 16 | ⏳ PENDING |
 
@@ -135,7 +135,7 @@ dependencies:
 
 | Agent | Assignment | Rationale |
 |-------|------------|-----------|
-| **maat** (P3) | C-10.5 ✅, C-11, C-9, M21, research verification | Build-side ownership; gateway + property tests + findings validation |
+| **maat** (P3) | C-10.5 ✅, C-11 ✅, C-9, M21 ✅, research verification | Build-side ownership; gateway + property tests + findings validation |
 | **lilith** (P6) | C-3, V-1 | Run-side: backup + vault operations |
 | **scribe** (new) | C-0.5 | Dedicated distillation agent (M5/M11) |
 | **kali** | Review + arbitration + C-4a.5 escalation | Transcendent oversight |
@@ -204,7 +204,7 @@ escalation_triggers:
 - [x] V-1 VaultCore MVP: **DONE** (22 tests pass, docs updated)
 - [x] C-3 Restic 3-2-1 Backup: **DONE** (scripts, systemd, VaultCore integration)
 - [x] C-10.5 Quota-Aware Provider Routing: **IMPLEMENTED** (tracker, router, stream handler — 69 tests passing)
-- [ ] C-11 Property Tests: OOMProtector + SoulStore
+- [x] C-11 Property Tests: OOMProtector + SoulStore
 - [ ] C-0.5 Scribe Agent L1→L2→L3 Distillation Pipeline
 - [ ] `make test` — 100% pass (no pre-existing failures)
 - [ ] `make temple-grade` — All T1-T11 gates green
