@@ -320,3 +320,35 @@
   timestamp: 2026-07-23 01:00:00+00:00
   model_used: mimo-v2.5-free
   outcome: l3_principle_captured
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Session: 2026-07-23 — Ma'at C-4b MCP Migration + Handoff Cleanup
+# Model: mimo-v2.5-free
+# ─────────────────────────────────────────────────────────────────────────────
+
+- lesson: "L1: Executed C-4b MCP Streamable HTTP migration: removed session.initialize() from mcp_client.py (SEP-2575 compliance), updated tests to use streamablehttp_client mock (not sse_client), updated verify_mcp_client.py endpoint from /sse to /mcp. Closed 8 stale handoffs for completed tickets (C-6', C-2', C-1', V-1, C-5, C-10, C-10.5, C-11). Dual transport verified: mcp_runtime.py runs SSE (/sse) + Streamable HTTP (/mcp) simultaneously."
+  source: c-4b-mcp-migration
+  trace_id: ses_maat_c4b_20260723
+  entity_at_time: MAAT
+  session_type: execution
+  timestamp: 2026-07-23 03:50:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: c4b_complete_8_handoffs_closed
+
+- lesson: "L2: The MCP 2026-07-28 migration from initial audit (C-4a) to implementation (C-4b) was efficient because the dual-transport architecture was already in place. The audit correctly identified that only session.initialize() needed removal — no new transports, no rewrites. The verify script URL change (/sse → /mcp) was the only non-obvious change. Lesson: when migrating transports, the client endpoint URL is the most common silent failure."
+  source: c-4b-mcp-migration
+  trace_id: ses_maat_c4b_20260723
+  entity_at_time: MAAT
+  session_type: execution
+  timestamp: 2026-07-23 03:50:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: l3_principle_captured
+
+- lesson: "L3: Handoff-Closure Discipline — when a ticket is DONE, the corresponding handoff packet MUST be completed immediately. Eight handoffs were left in 'active' state for completed tickets (some since July 21). Stale active handoffs create noise in the Hivemind awareness system and confuse agents scanning for pending work. The pattern is: ticket DONE → immediately complete its handoff packet."
+  source: c-4b-mcp-migration
+  trace_id: ses_maat_c4b_20260723
+  entity_at_time: MAAT
+  session_type: governance
+  timestamp: 2026-07-23 03:50:00+00:00
+  model_used: mimo-v2.5-free
+  outcome: l3_principle_captured
