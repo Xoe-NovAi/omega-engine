@@ -14,27 +14,55 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: help test test-honest test-quarantine-check quarantine save-quarantine load-quarantine clean-badge clean generate-badge
+.PHONY: help test test-honest test-quarantine-check quarantine save-quarantine load-quarantine clean-badge clean generate-badge codex check-codex-stale check-codex-fix check-codex-force
 
 help:
-	@echo "Omega Engine Test Suite Makefile"
+	@echo "Omega Engine Makefile"
 	@echo ""
 	@echo "Available targets:"
-	@echo "  test           Run all tests (default)"
-	@echo "  test-honest    Run tests with quarantine and JSON badge generation"
+	@echo "  test              Run all tests (default)"
+	@echo "  test-honest       Run tests with quarantine and JSON badge generation"
 	@echo "  test-quarantine-check  Check quarantine expiry and fail if expired"
-	@echo "  quarantine     Save current failures to quarantine.txt"
-	@echo "  save-quarantine Alias for quarantine"
-	@echo "  load-quarantine  Run quarantined tests (marked as xfail)"
-	@echo "  generate-badge  Generate JSON badge from test results"
-	@echo "  clean-badge    Remove generated badge file"
-	@echo "  clean          Remove all generated files"
+	@echo "  quarantine        Save current failures to quarantine.txt"
+	@echo "  save-quarantine   Alias for quarantine"
+	@echo "  load-quarantine   Run quarantined tests (marked as xfail)"
+	@echo "  generate-badge    Generate JSON badge from test results"
+	@echo "  clean-badge       Remove generated badge file"
+	@echo "  clean             Remove all generated files"
 	@echo ""
-	@echo "C-0 Test Suite Honesty Features:"
-	@echo "  - Automatic quarantine of flaky tests"
-	@echo "  - JSON badge generation for CI/CD"
-	@echo "  - Quarantine expiry enforcement"
-	@echo "  - Integration with pytest-quarantine and flakewall"
+	@echo "Codex Targets (D-277 Hydration):"
+	@echo "  codex             Regenerate OMEGA_CODEX.md from groups.json"
+	@echo "  check-codex-stale Check if Codex >24h old; exit 1 if stale"
+	@echo "  check-codex-fix   Check and auto-regenerate if stale"
+
+# =============================================================================
+# Codex Targets (D-277 Hydration)
+# =============================================================================
+
+# Regenerate OMEGA_CODEX.md from groups.json
+codex:
+	@echo "$(YELLOW)Regenerating OMEGA_CODEX.md...$(NC)"
+	@$(PYTHON) scripts/codex_cat.py
+	@echo "$(GREEN)OMEGA_CODEX.md regenerated successfully$(NC)"
+
+# Check if Codex is >24h old; exit 1 if stale (useful for CI/pre-commit)
+check-codex-stale:
+	@echo "$(YELLOW)Checking Codex staleness...$(NC)"
+	@$(PYTHON) scripts/check_codex_stale.py
+
+# Check and auto-regenerate if stale
+check-codex-fix:
+	@echo "$(YELLOW)Checking Codex staleness (auto-fix)...$(NC)"
+	@$(PYTHON) scripts/check_codex_stale.py --fix
+
+# Force regenerate regardless of age
+check-codex-force:
+	@echo "$(YELLOW)Force regenerating OMEGA_CODEX.md...$(NC)"
+	@$(PYTHON) scripts/check_codex_stale.py --force
+
+# =============================================================================
+# Test Suite Targets
+# =============================================================================
 
 # Default target
 test: test-honest
@@ -192,10 +220,10 @@ doc-chunk-sprint:
 	@python3 scripts/chunk_sprint_plan.py docs/sprints/guard-and-distill/index.md
 	@echo "$(GREEN)Chunking complete$(NC)"
 
-# Temple-grade includes LLM doc validation
-temple-grade: doc-llm-validate
+# Temple-grade includes Codex freshness and LLM doc validation
+temple-grade: check-codex-fix doc-llm-validate
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
 	# Existing temple-grade checks would go here
-	@echo "$(GREEN)Temple-grade complete (including LLM doc validation)$(NC)"
+	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation)$(NC)"
 
 .PHONY: doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint
