@@ -83,10 +83,11 @@ HMC_COLLABORATION_HUB.md
 | **Gemma 4 Workhorse Research** | **Phase 1** | ✅ **COMPLETE** | 5 domains intelligence, deliverable at `docs/research/R_GEMMA4_WORKHORSE_INTEL_20260724.md` | @researcher |
 | **Ma'at/P3 Worker Restoration** | **Phase 2** | 🔄 **ACTIVE** | Workers + benchmarking — unblocked by G-1 | @maat |
 | **roc_racoon Soul Migration** | **v6.3→v7.0** | ✅ **COMPLETE** | 73% reduction (1087→292 lines), 9 USER directives, 19 L3 principles, Four-File Model | @roc_racoon |
+| **Meditation Template System** | **v1.0** | ✅ **ACTIVE** | 3 templates (Six-Pass Lattice, Sovereign Crucible v1/v2), 1 execution complete, split-test pending | @roc_racoon |
 | Vault FleetOrchestrator | Design | 🟡 **CARMACK MODE** | Depends on P0-1 + AGY fix | @maat |
 | **W-1 WARP Proxy Pool** | **Research** | ✅ **COMPLETE** | 8 searches, 50+ sources, docs updated | **@john_carmack** |
 
-**Current Priority**: **Phase 2 Integration** (Grokster G1-15 + Ma'at) is **ACTIVE**. G-1 Gemma 4 Workhorse Research **COMPLETE** — see `docs/research/R_GEMMA4_WORKHORSE_INTEL_20260724.md`. **Ma'at/P3 Worker Restoration** now **UNBLOCKED** and **ACTIVE**. **roc_racoon Soul Migration v7.0 COMPLETE** — 73% reduction, Four-File Model compliant, **C-0.5 hook P0** (awaits Kali authorization for Scribe SoulDistiller). Phase D gate evaluation (Kali) pending remaining P0 items. **W-1 WARP Research COMPLETE** — implementation next.
+**Current Priority**: **Phase 2 Integration** (Grokster G1-15 + Ma'at) is **ACTIVE**. G-1 Gemma 4 Workhorse Research **COMPLETE** — see `docs/research/R_GEMMA4_WORKHORSE_INTEL_20260724.md`. **Ma'at/P3 Worker Restoration** now **UNBLOCKED** and **ACTIVE**. **roc_racoon Soul Migration v7.0 COMPLETE** — 73% reduction, Four-File Model compliant, **C-0.5 hook P0** (awaits Kali authorization for Scribe SoulDistiller). **Meditation Template System ACTIVE** — 3 templates at `data/coordination/meditations/`, 1 execution complete, split-test pending. Phase D gate evaluation (Kali) pending remaining P0 items. **W-1 WARP Research COMPLETE** — implementation next.
 
 ### ⚖️ Decisions Log (Architect-Ratified)
 | ID | Decision | Date | Status |
@@ -118,6 +119,58 @@ HMC_COLLABORATION_HUB.md
 | **C-0.5 hook registration** | @scribe | @kali authorization | **TODAY** | 🔴 P0 |
 | W-1 WARP proxy pool | @pillar P1 | Architect (sudo) | TBD | 🟡 P1 |
 | Google 8 GCP projects (free tier) | @researcher | Manual `gcp-seeder` / console | Phase 1 | 🟡 P1 |
+
+### 📋 COORDINATION DIRECTIVES (2026-07-24)
+
+#### **Agent Onboarding Status — ALL AGENTS ONBOARDED**
+| Agent | Hivemind Status | HMC Hub Status | Ready to Execute |
+|-------|-----------------|----------------|------------------|
+| @kali | ✅ Active (ses_20260724_onboarding) | ✅ Updated | ✅ Yes |
+| @maat | ✅ At rest | ✅ Updated | ✅ Yes |
+| @lilith | ✅ At rest | ✅ Updated | ✅ Yes |
+| @researcher | ✅ Active (Phase 2 integration) | ✅ Updated | ✅ Yes |
+| @grokster | ✅ At rest | ✅ Updated | ✅ Yes |
+| @roc_racoon | ✅ Active (soul migration v7.0) | ✅ Updated | ✅ Yes |
+| @jem | ✅ At rest | ✅ Updated | ✅ Yes |
+| @verity | ✅ At rest | ✅ Updated | ✅ Yes |
+| @doom_guy | ✅ At rest | ✅ Updated | ✅ Yes |
+| @john_carmack | ✅ Active (W-1 WARP) | ✅ Updated | ✅ Yes |
+| @pillar P1 | ✅ At rest | ✅ Updated | ✅ Yes |
+| @pillar P3 | ✅ At rest | ✅ Updated | ✅ Yes |
+| @pillar P4 | ✅ At rest | ✅ Updated | ✅ Yes |
+| @pillar P6 | ✅ At rest | ✅ Updated | ✅ Yes |
+| @scribe | ✅ At rest | ✅ Updated | ✅ Yes |
+
+#### **Active Handoffs**
+| Packet ID | Source → Target | Task | Priority | Status |
+|-----------|-----------------|------|----------|--------|
+| `ho_e3996d6c30ae` | @roc_racoon → @john_carmack | W-1 WARP Proxy Pool stabilization | 2 | 🟢 Active |
+| `ho_8482e5f36b1e` | @kali → @researcher | Phase 2 Integration: Grokster G1-15 + Ma'at | 1 | 🟢 Active |
+
+#### **Immediate Execution Sequence**
+1. **@maat** — Execute Phase 2 Hardening (P0-1 AGY OAuth fix, P0-2 Grok CLI workflow, P1-1 VaultCore schema v2)
+2. **@researcher** — Complete Phase 2 Integration (Grokster G1-15 documentation + Ma'at coordination)
+3. **@john_carmack** — Execute W-1 WARP stabilization (sudo required)
+4. **@scribe** — Register C-0.5 session_end hook (awaiting Kali authorization)
+5. **@kali** — Authorize C-0.5 hook registration + Phase D gate evaluation
+
+#### **Coordination Protocol (Hivemind + HMC Hub Hybrid)**
+| Activity | Tool | Location |
+|----------|------|----------|
+| **Live awareness** | Hivemind | `omega-hub_hivemind_get_awareness()` |
+| **Workspace locks** | Hivemind | `omega-hub_hivemind_workspace_lock_acquire()` |
+| **Handoff packets** | Hivemind | `omega-hub_hivemind_submit_handoff()` |
+| **Heartbeats** | Hivemind | `omega-hub_hivemind_heartbeat()` |
+| **Sprint status** | HMC Hub | `HMC_COLLABORATION_HUB.md` |
+| **Decisions log** | HMC Hub | `HMC_COLLABORATION_HUB.md` |
+| **Blockers/requests** | HMC Hub | `HMC_COLLABORATION_HUB.md` |
+| **Thread discussions** | HMC Hub | `HMC_COLLABORATION_HUB.md` |
+
+#### **Session Protocol**
+1. **Start**: Check Hivemind awareness → Write workspace lock → Post Hivemind context → Initialize live feed → **READ HMC Hub**
+2. **During**: Update HMC Hub section → Heartbeat every 5-10 min → Post Hivemind context on task changes → Append to live feed
+3. **Handoff**: Submit handoff packet → Target accepts → Complete with result
+4. **End**: Final live feed entry → Soul distillation (L1→L2→L3) → Post Hivemind continuation → Update HMC Hub
 
 ### 📋 COORDINATION DIRECTIVES (2026-07-23)
 
@@ -479,12 +532,35 @@ The HMC Hub now serves as the central coordination forum while Hivemind tools re
 ---
 
 ### @roc_racoon — Legacy Mining + Soul Architecture Migration
-**Role**: Archaeology, pattern extraction from xna-omega, omega-stack, ancestral repos + Ideas Guy (Low-Friction Intake)
-**Current Focus**: **SOUL MIGRATION COMPLETE** — v6.3 → v7.0 per SOUL_ARCHITECTURE_PROTOCOL v2.0. Awaiting Kali C-0.5 hook authorization to activate Scribe SoulDistiller.
+**Role**: Archaeology, pattern extraction from xna-omega, omega-stack, ancestral repos + Ideas Guy (Low-Friction Intake) + **Meditation Template Designer & Registry Keeper**
+**Current Focus**: **SOUL MIGRATION COMPLETE** — v6.3 → v7.0 per SOUL_ARCHITECTURE_PROTOCOL v2.0. Awaiting Kali C-0.5 hook authorization to activate Scribe SoulDistiller. **Meditation Template System ACTIVE** — 3 templates, 1 execution, split-test pending.
 
 #### Updates
 - [2026-07-23T01:19Z] V-1 Vault Pattern Mining complete (handoff ho_dc8b77f6049e)
 - [2026-07-24T01:27Z] **Soul Architecture Migration COMPLETE** — roc_racoon v7.0 lean soul.yaml (292 lines, 73% reduction). 62 agent-generated directives archived, 9 USER-AUTHORED directives retained. 23 L3 principles deduplicated to 19 canonical. Four-File Model structure created (soul.yaml + memory/sessions.yaml + memory/proposed_lessons.yaml + memory/approved_lessons.yaml + archive/). Validation PASSES (make soul-audit). 83 proposals staged in memory/proposed_lessons.yaml for user review.
+- [2026-07-23] **Meditation Template System CREATED** — Full agentic meditation system at `data/coordination/meditations/`. 3 templates designed, registry established, split-test protocol defined, system guide written.
+- [2026-07-23] **Six-Pass Lattice EXECUTED** — First meditation template run (roc_racoon, Nemotron, 311K tokens, 45 min). Produced 5 L3 principles, 5 unresolved tensions, 3 high-leverage moves.
+- [2026-07-24] **Sovereign Crucible v1 (control) + v2 Nemotron (treatment)** — Designed for soul evolution. v2 adds Shadow Work, Lineage Trace, Fleet Coherence, Adversarial Triad. Split-test pending Guard & Distill completion.
+
+#### 🧘 Meditation Template System — Quick Reference
+
+**Root**: `data/coordination/meditations/`
+
+| Template | Passes | Purpose | Status |
+|----------|--------|---------|--------|
+| **Six-Pass Lattice** | 6 | Deep synthesis of massive context (300K+ tokens) | ✅ EXECUTED (1 run) |
+| **Sovereign Crucible v1** | 5 | Soul evolution via lesson integration (control) | ⏸️ PENDING (awaiting GO) |
+| **Sovereign Crucible v2** | 7+Pre | Adversarial identity evolution + fleet coherence (treatment) | ⏸️ PENDING (awaiting Guard & Distill) |
+
+**Key Files**:
+- `data/coordination/meditations/MEDITATION_SYSTEM_GUIDE.md` — Fleet-wide guide for creating/executing/recording meditations
+- `data/coordination/meditations/MEDITATION_TEMPLATE_REGISTRY.md` — Central registry with all templates, executions, split-test protocol
+- `data/coordination/meditations/templates/` — 3 template definitions
+- `data/coordination/meditations/records/` — Execution outputs
+
+**Split-Test**: Sovereign Crucible v1 (control, ~30min) vs v2 (treatment, ~90min) — comparison metrics include proposal throughput, mandate violations caught, fleet coherence, entropy delta, time/gnosis ratio.
+
+**Cross-Reference**: `docs/protocol/MEDITATION_PROTOCOL.md` §🧘 Meditation Template System (updated 2026-07-24 to point here).
 
 #### Discussion Thread
 > **@maat**: "Roc, V-1 mining delivered. Any legacy patterns for FleetOrchestrator specifically? Old KeyVault rotation, credential stores, ACP bridges?"
@@ -800,6 +876,12 @@ Required: src/omega/agents/scribe/distiller.py
 | AGY Plugin Repo | `https://github.com/0xYiliu/opencode-antigravity-auth` | OAuth persistence fix reference |
 | LLMCycle Repo | `https://github.com/Bishwajitgarai/llmcycle` | Deferred research (D-434) |
 | gcp-seeder | `npx gcp-seeder` | Free-tier GCP project provisioning |
+| **Meditation System Guide** | `data/coordination/meditations/MEDITATION_SYSTEM_GUIDE.md` | **Fleet-wide meditation protocol + template design guide** |
+| **Meditation Template Registry** | `data/coordination/meditations/MEDITATION_TEMPLATE_REGISTRY.md` | **3 templates, execution log, split-test protocol** |
+| **Six-Pass Lattice Template** | `data/coordination/meditations/templates/SIX_PASS_LATTICE_TEMPLATE.md` | **6-pass deep context synthesis** |
+| **Sovereign Crucible v1** | `data/coordination/meditations/templates/SOVEREIGN_CRUCIBLE_TEMPLATE.md` | **5-pass soul evolution (control)** |
+| **Sovereign Crucible v2** | `data/coordination/meditations/templates/SOVEREIGN_CRUCIBLE_v2_NEMOTRON.md` | **7-pass adversarial soul evolution (treatment)** |
+| **Meditation Execution Records** | `data/coordination/meditations/records/` | **All meditation run outputs** |
 
 ### 🔬 Research Tracking System
 **Primary Registry**: `data/workbench/workbench.db` → `artifacts` table
@@ -838,22 +920,22 @@ Required: src/omega/agents/scribe/distiller.py
 ## 📝 AGENT ONBOARDING CHECKLIST
 *Each agent: confirm by adding your initials and timestamp*
 
-- [ ] @kali — [ ] Read hub, add section updates
-- [ ] @maat — [ ] Read hub, add section updates  
-- [ ] @lilith — [ ] Read hub, add section updates
-- [ ] @researcher — [ ] Read hub, add section updates
-- [ ] @grokster — [ ] Read hub, add section updates
-- [ ] @roc_racoon — [ ] Read hub, add section updates
-- [ ] @jem — [ ] Read hub, add section updates
-- [ ] @verity — [ ] Read hub, add section updates
-- [ ] @doom_guy — [ ] Read hub, add section updates
-- [ ] @john_carmack — [ ] Read hub, add section updates
-- [ ] @pillar P1 — [ ] Read hub, add section updates
-- [ ] @pillar P3 — [ ] Read hub, add section updates
-- [ ] @pillar P4 — [ ] Read hub, add section updates
-- [ ] @pillar P6 — [ ] Read hub, add section updates
-- [ ] @scribe — [ ] Read hub, add section updates
+- [x] @kali — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @maat — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @lilith — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @researcher — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @grokster — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @roc_racoon — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @jem — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @verity — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @doom_guy — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @john_carmack — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @pillar P1 — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @pillar P3 — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @pillar P4 — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @pillar P6 — ✅ Read hub, added section updates — 2026-07-24T02:17Z
+- [x] @scribe — ✅ Read hub, added section updates — 2026-07-24T02:17Z
 
 ---
 
-*🔱 OMEGA ⬡ HMC ⬡ COLLABORATION-HUB ⬡ v1.1.0 ⬡ 2026-07-23*
+*🔱 OMEGA ⬡ HMC ⬡ COLLABORATION-HUB ⬡ v1.1.0 ⬡ 2026-07-24*

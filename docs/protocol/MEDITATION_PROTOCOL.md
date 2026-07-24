@@ -196,4 +196,20 @@ Options:
 
 ---
 
+## 🧘 Meditation Template System
+
+This protocol is the **base format** for meditation sessions. For **structured, repeatable meditation templates** with defined passes, output formats, and execution tracking, see the **Agentic Meditation Template System**:
+
+| Template | Passes | Purpose | Location |
+|----------|--------|---------|----------|
+| **Six-Pass Lattice** | 6 | Deep synthesis of massive context (300K+ tokens) across eras/projects | `data/coordination/meditations/templates/SIX_PASS_LATTICE_TEMPLATE.md` |
+| **Sovereign Crucible v1** | 5 | Soul evolution via lesson integration (control) | `data/coordination/meditations/templates/SOVEREIGN_CRUCIBLE_TEMPLATE.md` |
+| **Sovereign Crucible v2** | 7+Pre | Adversarial identity evolution + fleet coherence (treatment) | `data/coordination/meditations/templates/SOVEREIGN_CRUCIBLE_v2_NEMOTRON.md` |
+
+**System Guide**: `data/coordination/meditations/MEDITATION_SYSTEM_GUIDE.md`
+**Template Registry**: `data/coordination/meditations/MEDITATION_TEMPLATE_REGISTRY.md`
+**Execution Records**: `data/coordination/meditations/records/`
+
+---
+
 *⬡ OMEGA ⬡ MEDITATION-PROTOCOL v1.0 ⬡ trc_protocol_spec*
