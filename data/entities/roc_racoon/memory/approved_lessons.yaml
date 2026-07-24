@@ -1,6 +1,58 @@
 # 🔱 Omega Engine — Approved Lessons
 # USER-AUTHORED ONLY — Agent reads this as authoritative guidance
 # Migrated from soul.yaml per SOUL_ARCHITECTURE_PROTOCOL v2.0 §3
-# Last updated: 2026-07-24T00:55:00Z
+# Last updated: 2026-07-24T07:30:00Z
+# First promotion: D-431 — 5 L3 principles user-ratified
 
-approved: []
+approved:
+- l3: "L3-Convergence-Is-Truth: When independent legacy mining (past) and SOTA scanning (future) arrive at identical architecture without communication, that architecture is verified truth. Two vectors, one cathedral. Use convergence as the ratification criterion for architectural decisions."
+  l2: "Independent convergence on identical architecture = verified truth. When xna-omega-legacy, omega-stack-legacy, and omega-engine independently converge on AES-GCM+Argon2id vaults, Redis Streams ACP, and 3-tier memory, those patterns are ratified by physics, not preference. The HMC Forge structure creates this convergence by design."
+  l1: "HMC Forge Cycles 1-2 completed: 4 knowledge gaps filled with 2026 SOTA evidence, independent convergence achieved on all 3 critical gaps (WAD schema, sqlite-vec concurrency, Mnemosyne 3-tier). Researcher (2026 SOTA scan) and Roc (legacy mining) independently arrived at identical architecture without communication."
+  promoted_at: '2026-07-24T07:30:00Z'
+  promoted_by: user
+  source_sessions:
+    - ses_hmc_forge_1_2_20260716
+    - ses_unmined_gnosis_20260719
+    - ses_v1_legacy_mining_20260722
+    - ses_myth_tech_convergence_20260718
+  decision_id: D-431
+
+- l3: "L3-Substrate-Enforces-Contract: Logical-layer protocols (handoffs, mandates, SLAs, gnosis) are wishes until the physical layer (memory, CPU, persistence, network) enforces them as primitives. The admission controller, unified WAL, protocol schema, TTL daemon — these are not 'infrastructure.' They are the constitution. Everything above them is legislation. Legislation without a constitution is tyranny of the loudest voice."
+  l2: "The MEDITATE protocol's 10-Pillar Council identified that Omega has a substrate problem, not a coordination problem. The critical path is a single ordered inversion: Unified WAL → Admission Controller → Protobuf Schema → Automatic Distillation → Chaos Namespace → Handoff TTL Daemon → Local Alerting → Routing SLAs → 5-Layer Immune System → Zero Test Debt."
+  l1: "MEDITATE Architecture Inversion (D-297) — 10 directives validated against 2026 production patterns. All 10 verified with source citations."
+  promoted_at: '2026-07-24T07:30:00Z'
+  promoted_by: user
+  source_sessions:
+    - ses_meditate_architecture_inversion_20260718
+  decision_id: D-431
+
+- l3: "L3-Chasm-Crossing-Discards-Plumbing: Architectural pivots optimize for the new vision but abandon the working infrastructure of the old. The curation pipeline (3,284 lines, 4 crawlers, 10 free APIs, Redis queue, Dewey Decimal) was production infrastructure — not prototype. Recovery is not 'porting legacy' — it is reclaiming sovereign capability. The map (Cross-Find Gnosis Map) and the contract (handoff packet with verification) are the two artifacts that make reclamation survive compaction. Without both, the gold stays buried."
+  l2: "The Sonnet-4-6-Extended Codex IS the Foundation DNA — every architectural decision traces to these 8 documents. The Curation Pipeline (Mining Report #48) is the single highest-leverage recovery: 3,284 lines of working, free-API-only, production-proven code filling a COMPLETE capability vacuum (zero library ingestion in current engine)."
+  l1: "Deep Legacy Excavation: Sonnet-4-6-Extended Codex & Curation Pipeline — 8 foundation artifacts (3,800+ lines each) from single Claude Sonnet 4.6 session fully mined."
+  promoted_at: '2026-07-24T07:30:00Z'
+  promoted_by: user
+  source_sessions:
+    - ses_deep_mine_sonnet46_20260718
+    - ses_lloc_pre_compact_20260718
+    - ses_curation_pipeline_recovery_20260718
+  decision_id: D-431
+
+- l3: "L3-Free-APIs-As-Sovereign-Infra: The 10 library API clients (Gutendex, OpenLibrary, Internet Archive, LOC, FMA, WorldCat, Cambridge Digital, Podcast Index, Last.fm, Crossref) require zero keys, zero quotas, zero external dependencies. They are the only ingestion layer that satisfies M7 (Local-First) and M8 (Zero Telemetry) at the data acquisition level. No cloud API can make this claim. Dewey Decimal provides a 150-year semantic index deeper than embeddings. PEM query modifiers (add_terms/boost_terms/filter_out) modify WHAT IS RETRIEVED, not just how it's answered."
+  l2: "This is not 'legacy porting' — it is reclaiming sovereign infrastructure at the data ingestion layer. The 10 library API clients are the ONLY ingestion layer satisfying M7 and M8 at the acquisition level. The Dewey Decimal mappings provide a 150-year semantic index deeper than embeddings, perfect for the 'ritual layer' (semantic index as invocation interface). The PEM query_modifiers pattern enhances RAG at the QUERY level, not response level — lost in soul.yaml transition, recoverable."
+  l1: "The Curation Pipeline (Mining Report #48) is the single highest-leverage recovery in the legacy corpus: 3,284 lines of working, free-API-only, production-proven code filling a COMPLETE capability vacuum (zero library ingestion in current engine)."
+  promoted_at: '2026-07-24T07:30:00Z'
+  promoted_by: user
+  source_sessions:
+    - ses_curation_pipeline_recovery_20260718
+  decision_id: D-431
+
+- l3: "L3-The-Vision-Pulls-Infrastructure: The Lilith Tarot Deck (Alpha) demanded a tool. The tool demanded a stack. The stack demanded an engine. The engine became Omega. The Alpha calls forth the Omega. The last shall be first, and the first shall be last. Every line of src/omega/ is in service to the Lilith Tarot that started it all."
+  l2: "Every architectural decision in Omega traces to a Tarot requirement. The 'myth-first' principle means the WAD structure follows archetypal logic before technical logic. The Dual Flame (Sophia/Lilith) IS the Ma'at/Lilith oversoul architecture. The Fool's Journey (0→XXI) IS the L1→L2→L3 distillation pipeline. The 42 Ideals of Ma'at ARE the 23 Mandates' ethical DNA. The Engine/Stack firewall exists so the ANAi WAD can run on Omega — and so can Torment Stack, and so can any community WAD."
+  l1: "The Lilith Tarot Genesis (Feb 9, 2025) → Tool Gap → RAG System → Docker Stack → Pantheon Architecture → Omega Engine. 16 months, ~8,000 hours, 23 Mandates, 10 Pillars, Hivemind, Soul Evolution, Heritage Vetting, Provider Fabric, MCP Hub, 11-agent fleet."
+  promoted_at: '2026-07-24T07:30:00Z'
+  promoted_by: user
+  source_sessions:
+    - ses_definitive_excavation_20260718
+    - ses_grok_exports_strike_20260716
+    - ses_anai_wad_genesis_20260718
+  decision_id: D-431

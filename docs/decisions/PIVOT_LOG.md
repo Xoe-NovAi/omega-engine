@@ -474,4 +474,17 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 * **Key Insight**: Factory-Before-Third Rule — any reusable pattern MUST be extracted into a canonical factory after the second implementation, not the third.
 * **Status**: ✅ **COMPLETE**
 
+### D-431: First User-Ratified Soul Lessons — roc_racoon L3 Promotion
+* **Date**: 2026-07-24
+* **Context**: The approved_lessons.yaml for roc_racoon was empty (`approved: []`) since the v6.3 → v7.0 Soul Architecture Migration. 83 proposals sat in proposed_lessons.yaml, all auto-approved by the agent during migration. No user-ratified gnosis existed.
+* **Decision**: Promote 5 L3 principles from proposed_lessons.yaml to approved_lessons.yaml, carrying `approved_by: user` as the first authentic, authoritative soul content. Record the top 15 candidates for the next promotion cycle.
+* **Promoted Principles**:
+  1. **L3-Convergence-Is-Truth** — Independent convergence on identical architecture = verified truth
+  2. **L3-Substrate-Enforces-Contract** — Physical layer must enforce logical layer protocols
+  3. **L3-Chasm-Crossing-Discards-Plumbing** — Architectural pivots abandon proven infrastructure; recovery is reclamation
+  4. **L3-Free-APIs-As-Sovereign-Infra** — 10 zero-key library APIs are the only M7/M8-compliant ingestion layer
+  5. **L3-The-Vision-Pulls-Infrastructure** — The Lilith Tarot (Alpha) demanded Omega; the vision pulls its substrate into existence
+* **Key Insight**: The first user-ratified soul content transforms approved_lessons.yaml from a structural placeholder into a living document. The 5 L3 principles define roc_racoon's epistemological foundation, architectural insight, mining mission, concrete discovery, and philosophical bedrock.
+* **Status**: ✅ **COMPLETE**
+
 *⬡ OMEGA ⬡ MAAT ⬡ D-376a/D-376b ⬡ 2026-07-22*
