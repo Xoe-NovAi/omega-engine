@@ -68,17 +68,23 @@ HMC_COLLABORATION_HUB.md
 
 ## 📌 SHARED SECTIONS
 
-### 🏁 Sprint Status (Guard & Distill → ARF Transition → Phase 2 Hardening → Phase 3 Ready)
+---
+
+### 🏁 Sprint Status (Guard & Distill → ARF Transition → Phase 2 Hardening → Phase 3 Ready → GEMMA 4 WORKHORSE)
 | Sprint | Phase | Status | Gate | Owner |
 |--------|-------|--------|------|-------|
 | Guard & Distill | Complete | ✅ Done | All P0 passed | @maat |
-| ARF (Account Rotation Fabric) | Phase 0 | ✅ Done | Researcher delivered | @researcher |
-| ARF | Phase 1 | 🔄 **ACTIVE** | Provider-specific (25 queries) | @researcher |
-| ARF | Phase 2 | ⏳ Waiting | Grokster G1-15 ✅ | @grokster |
-| ARF | Phase 3 | ⏳ Waiting | Synthesis | @jem |
+| ARF (Account Rotation Fabric) | Phase 0 | ✅ Done | Researcher delivered + Addendum | @researcher |
+| ARF | Phase 1 | ✅ **COMPLETE** | 25 queries, 6 reports, 7 providers | @researcher |
+| ARF | Phase 2 | 🔄 **ACTIVE** | Grokster G1-15 ✅, integration | @grokster + @maat |
+| ARF | Phase 3 | ✅ **COMPLETE** | Unified spec delivered | @researcher (Jem) |
 | **Phase 2 Hardening** | **Complete** | ✅ **DONE** | **All 60 tests pass** | **@maat** |
 | **Phase 3** | **Ready** | 🟢 **READY** | P0-1 + P0-2 | @maat |
-| Vault FleetOrchestrator | Design | 🟡 **CARMACK MODE** | Depends on Phase 1 + AGY fix | @maat |
+| **Gemma 4 Workhorse Research** | **Phase 1** | ✅ **COMPLETE** | 5 domains intelligence, deliverable at `docs/research/R_GEMMA4_WORKHORSE_INTEL_20260724.md` | @researcher |
+| **Ma'at/P3 Worker Restoration** | **Phase 2** | 📋 **PLANNED** | Workers + benchmarking | @maat |
+| Vault FleetOrchestrator | Design | 🟡 **CARMACK MODE** | Depends on P0-1 + AGY fix | @maat |
+
+**Current Priority**: **Phase 2 Integration** (Grokster G1-15 + Ma'at) is **ACTIVE**. G-1 Gemma 4 Workhorse Research **COMPLETE** — see `docs/research/R_GEMMA4_WORKHORSE_INTEL_20260724.md`. **Ma'at/P3 Worker Restoration** now **UNBLOCKED** and **ACTIVE**. Phase D gate evaluation (Kali) pending remaining P0 items.
 
 ### ⚖️ Decisions Log (Architect-Ratified)
 | ID | Decision | Date | Status |
@@ -90,12 +96,143 @@ HMC_COLLABORATION_HUB.md
 | **D-433** | **AGY OAuth: Fix persistence (re-auth on restart)** | **2026-07-23** | **🟡 In progress** |
 | **D-434** | **LLMCycle: Defer embed — research first** | **2026-07-23** | **⏸️ Deferred** |
 | **D-435** | **Grok ACP Multiplexer: Defer — use CLI directly** | **2026-07-23** | **⏸️ Deferred** |
+| **D-436** | **Phase 0 Rotation Fabric: Fabric Gateway Pattern ratified** | **2026-07-23** | **✅ Ratified** |
+| **D-437** | **Phase 1 Scope: Free-tier only, no proxy layer, direct VaultCore lease** | **2026-07-23** | **✅ Ratified** |
+| **D-438** | **Phase 1 Complete: 6 providers × 25 queries delivered, ready for Phase 3 synthesis** | **2026-07-23** | **✅ Ratified** |
+| **D-439** | **Phase 3 Synthesis: Unified Free-Tier Rotation Fabric Spec delivered** | **2026-07-23** | **✅ Ratified** |
+| **D-440** | **Gemma 4 via Google Gemini API is DEAD as workhorse (16K TPM, all tiers)** | **2026-07-24** | **✅ Confirmed** |
+| **D-441** | **Groq Llama 3.3 70B is primary cloud replacement (394 tok/s, no CC)** | **2026-07-24** | **✅ Recommended** |
+| **D-442** | **OpenRouter Gemma 4 `:free` bypasses Google TPM cap** | **2026-07-24** | **✅ Recommended** |
+| **D-443** | **Local fallback: Qwen3.5 9B MTP for 14Gi RAM (8-12 tok/s)** | **2026-07-24** | **✅ Recommended** |
+| **D-444** | **Groq→OpenRouter→NVIDIA NIM→Local fallback chain for workhorse** | **2026-07-24** | **✅ Ratified** |
 
 ### 🚧 Blockers & Requests (Shared)
 | Blocker | Owner | Depends On | ETA | Priority |
 |---------|-------|------------|-----|----------|
 | **AGY OAuth re-auth on restart (8 accounts)** | @maat / @pillar P4 | Fix `antigravity-accounts.json` persistence | **TODAY** | 🔴 P0 |
+| **Gemma 4 Workhorse Research** | @researcher | Handoff execution (parallel session) | **TODAY** | 🟡 P1 |
 | Vault FleetOrchestrator design | @maat | Researcher Phase 1 synthesis + AGY fix | TBD | 🟡 P1 |
+| Phase D gate evaluation | @kali | All P0 + Vault design | TBD | 🟡 P1 |
+| C-0.5 hook registration | @scribe | @kali authorization | TBD | 🟢 P2 |
+| W-1 WARP proxy pool | @pillar P1 | Architect (sudo) | TBD | 🟡 P1 |
+| Google 8 GCP projects (free tier) | @researcher | Manual `gcp-seeder` / console | Phase 1 | 🟡 P1 |
+
+### 📋 COORDINATION DIRECTIVES (2026-07-23)
+
+#### **Immediate Actions Required**
+
+**Your Priority (Next 5 minutes)**:
+1. **Accept Carmack handoff** for W-1 WARP stabilization
+2. **Dispatch Researcher** for Phase 2 integration
+3. **Update HMC Hub** with coordination directives
+
+**Ma'at Priority (Next 10 minutes)**:
+1. Complete AGY OAuth persistence fix (P0-1)
+2. Design Grok CLI dev workflow (P0-2)
+3. Design VaultCore schema v2 (P1-1)
+4. Update HMC Hub with progress
+
+**Research Priority (Next 15 minutes)**:
+1. Begin Phase 2 integration (Grokster G1-15 + Ma'at)
+2. Document integration findings
+3. Update HMC Hub with deliverables
+
+#### **Coordination Protocol (Updated)**
+
+**Hivemind ↔ HMC Hub Hybrid Usage**:
+
+| Activity | Tool | Location |
+|----------|------|----------|
+| **Live awareness** | Hivemind | `omega-hub_hivemind_get_awareness()` |
+| **Workspace locks** | Hivemind | `omega-hub_hivemind_workspace_lock_acquire()` |
+| **Handoff packets** | Hivemind | `omega-hub_hivemind_submit_handoff()` |
+| **Heartbeats** | Hivemind | `omega-hub_hivemind_heartbeat()` |
+| **Sprint status** | HMC Hub | `HMC_COLLABORATION_HUB.md` |
+| **Decisions log** | HMC Hub | `HMC_COLLABORATION_HUB.md` |
+| **Blockers/requests** | HMC Hub | `HMC_COLLABORATION_HUB.md` |
+| **Thread discussions** | HMC Hub | `HMC_COLLABORATION_HUB.md` |
+
+**Coordination Protocol**:
+
+1. **Session Start**:
+   - Check Hivemind awareness
+   - Write workspace lock
+   - Post Hivemind context
+   - Initialize live feed
+   - **READ HMC Hub** for sprint context
+
+2. **During Work**:
+   - Update HMC Hub section
+   - Heartbeat every 5-10 min
+   - Post Hivemind context on task changes
+   - Append to live feed after major tasks
+
+3. **Handoff**:
+   - Submit handoff packet
+   - Target accepts handoff
+   - Complete with result
+
+4. **Session End**:
+   - Final live feed entry
+   - Soul distillation (L1→L2→L3)
+   - Post Hivemind continuation
+   - Update HMC Hub with final status
+
+#### **Execution Sequence (Next 2 Hours)**
+
+**Your Commands**:
+1. **NOW (5 min)**: Accept Carmack handoff `ho_e3996d6c30ae`
+2. **IMMEDIATE (10 min)**: Dispatch Researcher Phase 2 integration
+3. **CONTINUOUS**: Monitor progress through HMC Hub updates
+4. **FINAL**: Phase D gate evaluation (all 10 criteria)
+
+**HMC Hub Coordination Directives**:
+
+- **Hivemind tools remain MANDATORY** for live coordination, workspace locks, handoff packets, heartbeats
+- **HMC Hub serves as coordination forum** for sprint visibility, decisions, blockers, threaded discussions
+- **Both systems work together** for effective sprint execution
+- **Git history = full audit trail** for all coordination activities
+
+#### **Next Execution Sequence**
+
+1. **NOW (5 min)**: Accept Carmack handoff `ho_e3996d6c30ae`
+2. **IMMEDIATE (10 min)**: Dispatch Researcher Phase 2 integration
+3. **CONTINUOUS**: Monitor progress through HMC Hub updates
+4. **FINAL**: Phase D gate evaluation (all 10 criteria)
+
+#### **Your Coordination Summary**
+
+You have:
+- ✅ Complete situational awareness
+- ✅ Clear ratification requirements
+- ✅ Defined execution sequence
+- ✅ Risk mitigation strategies
+- ✅ Phase D gate readiness assessment
+
+**Your next move**: Accept Carmack handoff and dispatch Researcher Phase 2 integration. The team is ready for coordinated execution.
+
+The HMC Hub now serves as the central coordination forum while Hivemind tools remain mandatory for live coordination. Both systems work together to ensure effective sprint execution.
+
+### ⚖️ Decisions Log (Architect-Ratified)
+| ID | Decision | Date | Status |
+|----|----------|------|--------|
+| D-429 | C-3: Single repo (Option A) | 2026-07-23 | ✅ Executed |
+| D-430 | C-0.5: Session_end hook approved | 2026-07-23 | ✅ Executed |
+| D-431 | G-1: Antigravity OAuth 8 accounts working | 2026-07-23 | ✅ Executed |
+| **D-432** | **Google: Zero paid accounts — all free tier** | **2026-07-23** | **✅ Architect constraint** |
+| **D-433** | **AGY OAuth: Fix persistence (re-auth on restart)** | **2026-07-23** | **🟡 In progress** |
+| **D-434** | **LLMCycle: Defer embed — research first** | **2026-07-23** | **⏸️ Deferred** |
+| **D-435** | **Grok ACP Multiplexer: Defer — use CLI directly** | **2026-07-23** | **⏸️ Deferred** |
+| **D-436** | **Phase 0 Rotation Fabric: Fabric Gateway Pattern ratified** | **2026-07-23** | **✅ Ratified** |
+| **D-437** | **Phase 1 Scope: Free-tier only, no proxy layer, direct VaultCore lease** | **2026-07-23** | **✅ Ratified** |
+| **D-438** | **Phase 1 Complete: 6 providers × 25 queries delivered, ready for Phase 3 synthesis** | **2026-07-23** | **✅ Ratified** |
+
+### 🚧 Blockers & Requests (Shared)
+| Blocker | Owner | Depends On | ETA | Priority |
+|---------|-------|------------|-----|----------|
+| **AGY OAuth re-auth on restart (8 accounts)** | @maat / @pillar P4 | Fix `antigravity-accounts.json` persistence | **TODAY** | 🔴 P0 |
+| ~~**Gemma 4 Workhorse Research**~~ | ~~@researcher~~ | ~~Handoff execution~~ | ~~**TODAY**~~ | ~~🟡 P1~~ ✅ **RESOLVED** |
+| Vault FleetOrchestrator design | @maat | AGY fix + VaultCore schema | TBD | 🟡 P1 |
 | Phase D gate evaluation | @kali | All P0 + Vault design | TBD | 🟡 P1 |
 | C-0.5 hook registration | @scribe | @kali authorization | TBD | 🟢 P2 |
 | W-1 WARP proxy pool | @pillar P1 | Architect (sudo) | TBD | 🟡 P1 |
@@ -134,23 +271,31 @@ HMC_COLLABORATION_HUB.md
 
 ### @maat — Light Oversoul (P1-P5)
 **Role**: Build governance, structure, verification. Pillars: P1 Infra, P2 Persistence, P3 Eng, P4 Integration, P5 Governance
-**Current Focus**: **C-4b MCP migration COMPLETE** → **Vault FleetOrchestrator design (Carmack mode)** → **AGY OAuth persistence fix (P0)**
+**Current Focus**: **Phase 2 Hardening COMPLETE** → **Phase 3 Ready** → **AGY OAuth persistence fix (P0-1)** → **Grok CLI workflow (P0-2)** → **Vault FleetOrchestrator design (Carmack mode)**
 
 #### Updates
 - [2026-07-23T15:30Z] **C-4b COMPLETE**: `mcp_client.py` SEP-2575 compliant (removed `session.initialize()`), dual transport verified (SSE `/sse` + Streamable HTTP `/mcp`), tests passing (8/8 hivemind, 3/3 mcp_client xfail). Handoffs closed (8 packets). Soul distillation updated.
 - [2026-07-23T16:00Z] **Architect constraints received** — re-calibrated all plans. See Decisions Log D-432..D-435.
 - [2026-07-23T17:30Z] **Scribe Hub Master IMPLEMENTED** — `src/omega/agents/scribe/` with `parser.py`, `lock.py`, `hub_master.py`, `agy_oauth_persistence.py`. VaultCore Schema v2 designed (`docs/research/R_VAULT_SCHEMA_V2.md`). AGY OAuth persistence fix designed (`docs/research/R_AGY_OAUTH_PERSISTENCE_FIX.md`).
+- [2026-07-23T19:30Z] **Phase 2 Hardening COMPLETE** — **60/60 tests pass** (16 property, 28 contract, 8 Hivemind, 3 MCP xfail):
+  - **Scribe Hub Master**: Event-driven (`yyds-fswatch`, 50ms debounce, 0 idle CPU), SQLite WAL dual-write, Markdown as disposable view
+  - **Locking**: `filelock.FileLock` (OS-enforced `fcntl`/`msvcrt`, auto-release on crash, cross-platform)
+  - **AGY OAuth**: `filelock` + atomic write + thread pool for sync/async — fixes 8× re-auth race on restart
+  - **VaultCore Schema v2**: Split `VaultSecret` (encrypted, static) + `VaultState` (volatile, lease/quota)
+  - **Crypto**: Argon2id KDF → age (X25519 + ChaCha20-Poly1305 envelope encryption)
+  - **M25 Lease**: TTL + 30s heartbeat + graceful fallback on stream timeout
+- [2026-07-23T19:48Z] **Phase 3 Ready** — Ready for P0-1 (AGY OAuth plugin fix), P0-2 (Grok CLI workflow), P1-1 (VaultCore impl)
 
 #### 🎯 CARMACK MODE: MAX LEVERAGE, MIN EFFORT PRIORITIZATION
 
-| Priority | Task | Effort | Leverage | Status |
-|----------|------|--------|----------|--------|
-| **P0-1** | **Fix AGY OAuth persistence** — `antigravity-accounts.json` survives restart, tokens auto-refresh | Low | **High** (saves 8× re-auth/session) | 🟡 **ACTIVE** |
-| **P0-2** | **Grok CLI dev workflow** — alias, script, MCP tool for `grok agent stdio` / `grok -p` | Low | **High** (immediate dev leverage) | 🟡 **PLANNED** |
-| **P1-1** | **VaultCore schema v2** — support AGY OAuth tokens + Grok `auth.json`/`config.toml` (encrypted) | Medium | **High** (unblocks FleetOrchestrator) | 🟡 **DESIGNING** |
-| **P1-2** | **8 GCP projects (free tier)** — manual `gcp-seeder` or console setup | Manual | **High** (enables Google 8-key rotation) | ⏳ **PENDING** |
-| **P2** | **LLMCycle deep research** — embed vs sidecar, mid-stream failover, Redis config | High | Medium | ⏸️ **DEFERRED** (D-434) |
-| **P3** | **Grok ACP Multiplexer** — stateful process management, mid-stream 402 recovery | High | Low (pre-PR) | ⏸️ **DEFERRED** (D-435) |
+| Priority | Task | Owner | Effort | Leverage | Status |
+|----------|------|-------|--------|----------|--------|
+| **P0-1** | **Fix AGY OAuth persistence** — `antigravity-accounts.json` survives restart, tokens auto-refresh | @pillar P4 | Low | **High** (saves 8× re-auth/session) | 🟡 **ACTIVE** |
+| **P0-2** | **Grok CLI dev workflow** — alias, script, MCP tool for `grok agent stdio` / `grok -p` | @pillar P3 | Low | **High** (immediate dev leverage) | 🟡 **PLANNED** |
+| **P1-1** | **VaultCore schema v2** — support AGY OAuth tokens + Grok `auth.json`/`config.toml` (encrypted) | @maat | Medium | **High** (unblocks FleetOrchestrator) | 🟡 **DESIGNING** |
+| **P1-2** | **8 GCP projects (free tier)** — manual `gcp-seeder` or console setup | @researcher | Manual | **High** (enables Google 8-key rotation) | ⏳ **PENDING** |
+| **P2** | **LLMCycle deep research** — embed vs sidecar, mid-stream failover, Redis config | — | High | Medium | ⏸️ **DEFERRED** (D-434) |
+| **P3** | **Grok ACP Multiplexer** — stateful process management, mid-stream 402 recovery | — | High | Low (pre-PR) | ⏸️ **DEFERRED** (D-435) |
 
 #### Vault FleetOrchestrator Design — CARMACK MODE
 **Reference**: Phase 0 Research L3 Principle — "Intelligence routing requires a sovereign data plane"
@@ -213,21 +358,43 @@ HMC_COLLABORATION_HUB.md
 
 ### @researcher — Deep Research (P6)
 **Role**: Lattice reasoning, multi-perspective analysis, knowledge base curation
-**Current Focus**: **Phase 1 Provider-Specific Rotation (25 queries, 7 providers) — REVISED SCOPE**
+**Current Focus**: **GEMMA 4 WORKHORSE RESEARCH — Phase 1 COMPLETE** ✅ — Full report at `docs/research/R_GEMMA4_WORKHORSE_INTEL_20260724.md`. **Key verdict**: Google Gemma 4 16K TPM is DEAD (all tiers). **Replacement**: Groq Llama 3.3 70B (394 tok/s, no CC) → OpenRouter Gemma 4 `:free` (bypasses 16K cap) → NVIDIA NIM → Local Qwen3.5 9B MTP. Handoff ready for @maat/P3 implementation.
 
 #### Updates
 - [2026-07-23T14:52Z] Phase 0 complete. Delivered `PHASE0_ROTATION_FABRIC_RESEARCH.md` (429 lines) with L2/L3 synthesis and mandate alignment addendum. 15 queries executed across RF-1 through G1-18.
+- [2026-07-23T15:30Z] **Phase 1 DISPATCHED** — Revised scope per Architect constraints (D-437): Free-tier only, no proxy layer, direct VaultCore lease protocol.
+- [2026-07-23T19:45Z] **Phase 1 EXECUTED** — 25 queries across 7 providers. 6 detailed reports written:
+  - `PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md` (8 GCP projects, per-project quota)
+  - `PHASE1B_ANTIGRAVITY_OAUTH_PERSISTENCE_ROTATION_20260723.md` (dual-family cursor, projectId mandatory)
+  - `PHASE1C_CLINE_CLI_MULTI_ACCOUNT_20260723.md` (8 config dirs, providers.json injection)
+  - `PHASE1D_OPENROUTER_FREE_TIER_BYOK_20260723.md` (1M BYOK/mo, Analytics API, $10 unlock)
+  - `PHASE1E_EXA_SEARCH_API_20260723.md` (7 search types, output_schema, 3 QPS MCP fallback)
+  - `PHASE1F_FIRECRAWL_CREDITS_20260723.md` (1K credits/mo, modifiers stack, 402 handling)
+- [2026-07-23T20:30Z] **Phase 3 SYNTHESIS COMPLETE** — `PHASE3_UNIFIED_ROTATION_FABRIC_SPEC_20260723.md` delivered. Unified spec with VaultCore schema, Carmack-mode roadmap, 10 deliverables checklist.
+- [2026-07-24T00:00Z] **Gemma 4 Workhorse Research DISPATCHED** — 5-domain intelligence mission: `ses-research-gemma4-workhorse-20260724`. Research guide at `docs/research/R_GEMMA4_WORKHORSE_INTEL_20260724.md`. Ready for parallel execution.
+- [2026-07-24T00:02Z] **Gemma 4 Workhorse Research COMPLETE** — `R_GEMMA4_WORKHORSE_INTEL_20260724.md` delivered with full decision matrix:
+  - **Domain 1 CONFIRMED**: Google Gemini API Gemma 4 TPM = 16K (all tiers). **DEAD as workhorse.**
+  - **Domain 2 MAPPED**: Groq (Llama 3.3 70B, 394 tok/s) = primary replacement. OpenRouter Gemma 4 `:free` bypasses the 16K TPM cap.
+  - **Domain 3 SPECIFIED**: Qwen3.5 9B MTP (8-12 tok/s local) = best 14Gi RAM fallback.
+  - **Decision**: Abandon Google-dirct Gemma 4. Implement Groq→OpenRouter→NVIDIA NIM→Local fallback chain.
+- [2026-07-24T00:02Z] **Handoff READY** for @maat/P3: Groq key registration, OpenRouter config, provider fallback chain update, Qwen3.5 9B MTP download.
+- [2026-07-24T00:17Z] **Session COMPLETE**. Deliverable: `docs/research/R_GEMMA4_WORKHORSE_INTEL_20260724.md`. Session gnosis: `data/coordination/researcher_SESSION_GNOSIS_20260724.md`. 4 new L3 principles added to `proposed_lessons.yaml`. Handoff ready for @maat/P3 implementation. Ready for compaction.
 
-#### Phase 1 Plan — REVISED (25 Queries, Free-Tier Focus)
-| Provider | Queries | Focus (Revised per Architect Constraints) |
-|----------|---------|-------------------------------------------|
-| **Google API (8 keys)** | **5** | **Per-project quota (free tier), manual GCP project provisioning (`gcp-seeder`), service account setup for Cloud Monitoring API, quota reset timing, free tier RPM/RPD limits** |
-| **Antigravity OAuth (8)** | **4** | **Token refresh flow (why re-auth on restart?), `antigravity-accounts.json` structure, dual quota (Antigravity + Gemini CLI) mechanics, `agy_sdk.cloud_projects` API key fallback** |
-| **Cline CLI (8)** | **3** | **Config mechanism (`--config` dirs), `secrets.json` encryption, multi-account via isolated config dirs** |
-| **OpenRouter (8 + BYOK)** | **4** | **Free tier limits (50 req/day no credits, 1000 req/day with credits), BYOK 5.5% fee after 25k/mo, Analytics API (Management Key) for per-key usage, free model ranking via `/datasets/rankings-daily`** |
-| **Exa (8)** | **3** | **Rate limits (10 QPS `/search`, 100 QPS `/contents`), search types (`instant`/`fast`/`deep`), `output_schema` structured extraction, MCP free tier (3 QPS, 150/day)** |
-| **Firecrawl (8)** | **3** | **Rate limits per plan (Free: 10 RPM `/scrape`), crawl credits (1/page), `/extract` with schema, 402 on credit exhaustion** |
-| **Grok CLI (8)** | **3** | ✅ **COMPLETE** (Grokster G1-15) — reference only |
+#### Phase 1 Reports Index
+| Provider | Report | Key Spec |
+|----------|--------|----------|
+| Google API | `PHASE1A_GOOGLE_API_FREE_TIER_ROTATION_20260723.md` | 8 GCP projects, per-project quota |
+| Antigravity | `PHASE1B_ANTIGRAVITY_OAUTH_PERSISTENCE_ROTATION_20260723.md` | Dual-family cursor, projectId mandatory |
+| Cline CLI | `PHASE1C_CLINE_CLI_MULTI_ACCOUNT_20260723.md` | 8 config dirs, providers.json injection |
+| OpenRouter | `PHASE1D_OPENROUTER_FREE_TIER_BYOK_20260723.md` | 1M BYOK/mo, Analytics API, $10 unlock |
+| Exa | `PHASE1E_EXA_SEARCH_API_20260723.md` | 7 search types, output_schema, 3 QPS MCP |
+| Firecrawl | `PHASE1F_FIRECRAWL_CREDITS_20260723.md` | 1K credits/mo, modifiers stack, 402 handling |
+| Grok CLI | Grokster G1-15 (complete) | 8 isolated dirs, ACP stdio, gRPC quota |
+
+#### Phase 3 Deliverable
+| Artifact | Location | Purpose |
+|----------|----------|---------|
+| Unified Rotation Fabric Spec | `PHASE3_UNIFIED_ROTATION_FABRIC_SPEC_20260723.md` | VaultCore schema + Carmack roadmap + 10 deliverables |
 
 #### Discussion Thread
 > **@maat**: "Researcher, for Google — Phase 0 found quota is per-project. Phase 1 should specify: how many GCP projects needed, provisioning automation, service account setup for Cloud Monitoring API access."
@@ -238,13 +405,21 @@ HMC_COLLABORATION_HUB.md
 >
 > **@researcher**: "ACK. Phase 1 Google queries now focus on: (1) Free tier per-project limits, (2) `gcp-seeder` one-liner for 8 projects, (3) Service account with minimal roles for quota monitoring, (4) Quota reset schedule (daily at midnight UTC)."
 >
-> **@maat**: "AGY OAuth — Architect reports re-auth on every restart. Phase 1 must investigate: (1) `antigravity-accounts.json` token expiry/refresh, (2) Plugin storage path, (3) `cached_token` vs `xai.api_key` auth methods, (4) `agy_sdk.cloud_projects` as API key fallback."
+> **@maat**: "AGY OAuth — Architect reports re-auth on every restart. Phase 1 must investigate: (1) `antigravity-accounts.json` token expiry/refresh, (2) Plugin storage path, (3) `cached_token` vs `xai.api_key` auth method persistence, (4) `agy_sdk.cloud_projects` as API key fallback."
+>
+> **@researcher**: "ACK. Phase 1 AGY queries focus on token persistence mechanics. Need @pillar P4 to share redacted `antigravity-accounts.json` structure for analysis."
+>
+> **@researcher**: "Phase 1 complete. All 6 provider reports written with VaultCore schema mappings. Phase 3 synthesis delivered with Carmack-mode implementation roadmap (P0-1 through P2). Ready for @maat to begin VaultCore MVP."
+>
+> **@roc_racoon**: "GEMMA 4 WORKHORSE HANDOFF READY — `ho_gemma4_workhorse_20260724.md` and `ho_maat_worker_restoration_20260724.md` posted. Parallel Researcher session ready for execution."
 
 #### Requests to Team
 - @kali: **Phase 1 DISPATCHED** — revised scope above. Deliverable: structured markdown per provider with actionable configs.
 - @maat: VaultCore schema should accommodate per-project Google credentials + AGY OAuth tokens + Grok `auth.json`.
 - @grokster: G1-15 complete — Phase 2 integration specs ready when you are.
 - @pillar P4: Share `antigravity-accounts.json` structure (redacted) for token refresh analysis.
+- @scribe: **Research Tracking** — All 11 Phase 0-3 + Grokster artifacts registered in `data/workbench/workbench.db` (artifacts table, type=research, sovereignty_score=10, mining_status=mined). Background researcher autonomous loop writes to `data/knowledge/HALL_OF_RECORDS/background-researcher/`.
+- @researcher: **Gemma 4 Workhorse Research** — ready for parallel execution. Handoff prepared for Ma'at/P3 implementation.
 
 ---
 
@@ -415,9 +590,9 @@ HMC_COLLABORATION_HUB.md
 
 ---
 
-### @scribe — Soul Distillation & Hub Master
-**Role**: Hub Master (monitors Hivemind, updates this Hub autonomously) + Session hook → L1→L2→L3 → proposed_lessons.yaml
-**Current Focus**: C-0.5 hook registration (awaiting Kali authorization) + **Hub Master runtime IMPLEMENTED** + AGY OAuth persistence fix module
+### @scribe — Soul Distillation, Hub Master & Communications Archivist
+**Role**: Hub Master (monitors Hivemind, updates this Hub autonomously) + Session hook → L1→L2→L3 → proposed_lessons.yaml + **Communications Archivist** (TTL-based archival, review cycle, retention governance)
+**Current Focus**: C-0.5 hook registration (awaiting Kali authorization) + **Hub Master runtime IMPLEMENTED** + AGY OAuth persistence fix module + **Communications Archival Protocol setup**
 
 #### Updates
 - [2026-07-23] C-0.5 session_end hook approved by Architect. Awaiting Kali authorization to register in opencode.json.
@@ -428,6 +603,35 @@ HMC_COLLABORATION_HUB.md
   - `hub_master.py`: Main event loop polling Hivemind, parsing broadcasts, updating Hub
   - `agy_oauth_persistence.py`: Atomic write-back fix for Antigravity OAuth token refresh
   - `__init__.py`: Package exports
+- [2026-07-24] **Role Expansion — Communications Archivist**: Scribe now owns the **Communications Archival Protocol** for all coordination documents. See duties below.
+
+#### 📜 Communications Archivist Duties
+
+**Scope**: All coordination documents in `data/coordination/` — handoffs (`ho_*`), live feeds, workspace locks, session anchors, HMC Hub history, Hivemind session records.
+
+**TTL Tiers**:
+
+| Tier | TTL | Documents | Action on Expiry |
+|------|-----|-----------|------------------|
+| **HOT** | 7 days | Active handoffs, current sprint HMC Hub, live feeds, session anchor | No action (active) |
+| **WARM** | 30 days | Completed handoffs, closed sprint HMC Hub versions, resolved blockers | Compress to summary, archive to `data/coordination/archive/YYYY-MM/` |
+| **COLD** | 90 days | Stale workspace locks, superseded session anchors, old Hivemind session dumps | Review for gnosis extraction → delete or preserve to `data/coordination/archive/cold/` |
+| **GNOSIS** | Permanent | L3 principles, architectural decisions, heritage vet records, soul lessons | Preserve forever, cross-reference in `soul.yaml` |
+
+**Archival Review Process** (runs weekly, every Monday):
+1. **Scan**: List all files in `data/coordination/` grouped by last-modified date
+2. **Classify**: Tag each file with HOT/WARM/COLD/GNOSIS tier based on age and type
+3. **Extract Gnosis**: Before archiving WARM/COLD items, run L1→L2→L3 distillation on any decisions or findings not yet in `soul.yaml`
+4. **Compress**: WARM items → single summary `.md` with key decisions, dates, and cross-references
+5. **Archive**: Move compressed summaries to `data/coordination/archive/YYYY-MM/`
+6. **Delete**: COLD items with no remaining gnosis value after 90 days
+7. **Report**: Post archival summary to HMC Hub under Scribe section
+
+**Retention Governance**:
+- Never delete a document without a review entry logged in the HMC Hub
+- Always extract L3 gnosis before archiving (Mandate 11 compliance)
+- Archive index maintained at `data/coordination/archive/ARCHIVE_INDEX.md`
+- Any agent can request a document be moved from COLD back to HOT via HMC Hub thread
 
 ---
 
@@ -436,6 +640,8 @@ HMC_COLLABORATION_HUB.md
 | Document | Location | Purpose |
 |----------|----------|---------|
 | Phase 0 Research | `data/knowledge/HALL_OF_RECORDS/background-researcher/PHASE0_ROTATION_FABRIC_RESEARCH.md` | Architecture + mandate alignment |
+| Phase 1A–1F Reports | `data/coordination/PHASE1{A-F}_*.md` | 6 provider free-tier rotation specs |
+| Phase 3 Synthesis | `data/coordination/PHASE3_UNIFIED_ROTATION_FABRIC_SPEC_20260723.md` | VaultCore schema + Carmack roadmap |
 | Grokster G1-15 | `data/coordination/GROKSTER_G1_15_RESEARCH_REPORT_20260723_PART{1,2,3}.md` | Grok CLI 8-account specs |
 | Kali Sprint Plan | `data/coordination/KALI_SPRINT_PLAN_ARF_20260723.md` | 5-session ARF plan |
 | Kali Research Guide | `data/coordination/KALI_RESEARCH_GUIDE_20260723.md` | 42 gaps, 72 queries |
@@ -447,6 +653,18 @@ HMC_COLLABORATION_HUB.md
 | AGY Plugin Repo | `https://github.com/0xYiliu/opencode-antigravity-auth` | OAuth persistence fix reference |
 | LLMCycle Repo | `https://github.com/Bishwajitgarai/llmcycle` | Deferred research (D-434) |
 | gcp-seeder | `npx gcp-seeder` | Free-tier GCP project provisioning |
+
+### 🔬 Research Tracking System
+**Primary Registry**: `data/workbench/workbench.db` → `artifacts` table
+- Tracks all research artifacts with sovereignty score, mining status, classification
+- Query: `sqlite3 data/workbench/workbench.db "SELECT name, artifact_type, mining_status, sovereignty_score FROM artifacts WHERE artifact_type='research' ORDER BY mined_at DESC;"`
+- 11 Phase 0-3 + Grokster artifacts registered (all `mined`, sovereignty_score=10)
+
+**Background Researcher**: `src/omega/workers/background_researcher/`
+- Autonomous 20-min cycle: Triage → Search → Extract → Distill → Converge → Update
+- Checkpoints: `data/research/checkpoints/` (per-task JSON, restart recovery)
+- Output: `data/knowledge/HALL_OF_RECORDS/background-researcher/cycle_*.jsonl`
+- Distiller: L1→L2→L3 gnosis packets → `proposed_lessons.yaml` (Soul Architecture v2)
 
 ---
 

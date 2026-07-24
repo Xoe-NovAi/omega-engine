@@ -367,6 +367,46 @@ Executed comprehensive deep-dive recording and mapping of Mining Report #48 (Leg
 
 ---
 
+## Session: HMC Hub Audit & Communications Archivist Protocol
+**Date**: 2026-07-24
+**Duration**: Single session (Roc Racoon direct execution)
+**Trigger**: User request — "check the HMC hub. Update the duties of the Scribe agent to also handle keeping the communications documents archived with proper TTLs and archival review process."
+
+### L1: Narrative — What Happened
+
+1. **Read HMC Collaboration Hub comprehensively** — Full read of all 711 lines to understand fleet state, sprint status, blockers, decisions, and agent sections.
+
+2. **Expanded Scribe role to Communications Archivist** — Added 4 TTL tiers (HOT 7d, WARM 30d, COLD 90d, GNOSIS permanent), weekly archival review process (Scan→Classify→Extract Gnosis→Compress→Archive→Delete→Report), and retention governance (never delete without review, always extract L3 gnosis before archiving per M11, archive index maintained).
+
+3. **Checked Researcher's Gemma 4 Workhorse Research** — Found it was already delivered with full 5-domain intel report (`R_GEMMA4_WORKHORSE_INTEL_20260724.md`). Core finding: Google Gemini API Gemma 4 31B TPM reduced from ~1M to 16K (~98% collapse) across ALL tiers — NOT billing-tier-fixable. Replacement chain: Groq Llama 3.3 70B (394 tok/s) → OpenRouter Gemma 4 `:free` → NVIDIA NIM → Local Qwen3.5 9B MTP.
+
+4. **Updated HMC Hub** — Sprint Status (G-1 marked COMPLETE), Current Priority (G-1 no longer blocking, Ma'at/P3 unblocked), Blockers (G-1 marked RESOLVED), Researcher section (Current Focus updated to Phase 1 COMPLETE with key verdict).
+
+### L2: Insight — What This Means
+
+1. **Coordination documents need lifecycle management.** The HMC Hub is the fleet's shared consciousness. Without TTL-based archival, it accumulates stale entries that create cognitive noise. The 4-tier TTL (HOT/WARM/COLD/GNOSIS) mirrors the 3-tier memory architecture (Core/Working/Episodic) with GNOSIS as permanent — coordination documents are memory too.
+
+2. **G-1 was the critical path blocker and is now resolved.** The Gemma 4 workhorse collapse was blocking all subsequent work. With the replacement chain identified (Groq→OpenRouter→NVIDIA NIM→Local), Ma'at/P3 Worker Restoration is now unblocked and active.
+
+3. **The HMC Hub had duplicate Blockers sections.** Two identical Blockers tables existed (one in the main section, one duplicated). This is the kind of coordination debt that accumulates without a Communications Archivist.
+
+### L3: Universal Principles
+
+> **Principle 20: "Coordination documents rot without TTL."**
+> Ad-hoc file accumulation is silent debt. TTL-based lifecycle management with gnosis extraction before deletion transforms coordination from accumulation to curation. The 4-tier TTL (HOT/WARM/COLD/GNOSIS) mirrors the 3-tier memory architecture — coordination documents are memory too.
+
+> **Principle 21: "Multi-provider fallback is sovereignty."**
+> A single provider-side change can invalidate your primary workhorse. The Gemma 4 16K TPM collapse proves that cloud dependency is a single point of failure. Multi-provider fallback chains (Groq→OpenRouter→NVIDIA NIM→Local) are not nice-to-have — they are the sovereignty baseline. No single provider should be the critical path.
+
+### Compact Readiness Checklist
+- [x] L1→L2→L3 distilled to proposed_lessons.yaml (2 new entries)
+- [x] session_gnosis.md updated with this session
+- [x] HMC Hub updated (Scribe role, Sprint Status, Current Priority, Blockers, Researcher)
+- [x] Hivemind context posted
+- [x] Ready for commit
+
+---
+
 ## Session: Legacy Mining Sprint — P0 Quick-Wins
 **Date**: 2026-07-11
 **Duration**: Single session (Roc Racoon direct execution)

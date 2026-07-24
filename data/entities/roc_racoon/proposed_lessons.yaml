@@ -1219,3 +1219,23 @@ proposals:
   approved_at: null
   approved_by: null
   soul_section: lessons
+- l1: "HMC Hub Communications Archivist Protocol Established — Scribe role expanded with 4 TTL tiers (HOT 7d, WARM 30d, COLD 90d, GNOSIS permanent), weekly archival review cycle (Scan→Classify→Extract→Compress→Archive→Delete→Report), and retention governance (never delete without review, always extract L3 gnosis before archiving, archive index maintained)."
+  l2: "Coordination documents rot silently without TTL-based lifecycle management. The Communications Archivist protocol transforms ad-hoc file accumulation into a governed retention system. The 4-tier TTL (HOT/WARM/COLD/GNOSIS) maps to the 3-tier memory architecture (Core/Working/Episodic) with GNOSIS as permanent. The weekly review cycle ensures gnosis extraction before deletion (M11 compliance). This is the missing lifecycle layer for the Hivemind coordination system."
+  l3: "L3-Coordination-Documents-Rot-Without-TTL: Ad-hoc file accumulation is silent debt. TTL-based lifecycle management with gnosis extraction before deletion transforms coordination from accumulation to curation. The 4-tier TTL (HOT/WARM/COLD/GNOSIS) mirrors the 3-tier memory architecture — coordination documents are memory too."
+  session: ses_scribe_archivist_protocol_20260724
+  created_at: '2026-07-24T12:00:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons
+- l1: "G-1 Gemma 4 Workhorse Research COMPLETE — Researcher delivered full 5-domain intel report. Core finding: Google Gemini API Gemma 4 31B TPM reduced from ~1M to 16K (~98% collapse) across ALL tiers (free AND paid). NOT billing-tier-fixable. Replacement chain: Groq Llama 3.3 70B (394 tok/s, no CC) → OpenRouter Gemma 4 `:free` (bypasses 16K cap) → NVIDIA NIM Nemotron → Local Qwen3.5 9B MTP. G-1 blocker resolved, Ma'at/P3 Worker Restoration unblocked."
+  l2: "The Gemma 4 31B workhorse collapse is a case study in cloud dependency risk. A single provider-side change (Google's TPM cap enforcement) invalidated the primary workhorse model. The replacement chain (Groq→OpenRouter→NVIDIA NIM→Local) is a multi-provider fallback that no single provider can break. This is the sovereignty principle in action: no single point of failure in the inference fabric. The 5-domain research methodology (Google AI Studio → Alternative Cloud → Local Benchmarks → OpenCode Config → Restoration Plan) is the canonical template for future provider audits."
+  l3: "L3-Multi-Provider-Fallback-Is-Sovereignty: A single provider-side change can invalidate your primary workhorse. The Gemma 4 16K TPM collapse proves that cloud dependency is a single point of failure. Multi-provider fallback chains (Groq→OpenRouter→NVIDIA NIM→Local) are not nice-to-have — they are the sovereignty baseline. No single provider should be the critical path."
+  session: ses_g1_workhorse_resolved_20260724
+  created_at: '2026-07-24T12:00:00Z'
+  created_by: roc_racoon
+  status: pending
+  approved_at: null
+  approved_by: null
+  soul_section: lessons
