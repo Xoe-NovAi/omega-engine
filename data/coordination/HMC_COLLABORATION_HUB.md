@@ -417,6 +417,14 @@ HMC_COLLABORATION_HUB.md
 - [2026-07-24T02:30Z] **Research Deliverables Ready for Implementation** — R_CG01 (MCP Audit), R19 (Soul Privacy), R_CG04 (VaultCore), R_CG07 (Search 5-Tier) all complete with specs, code diffs, and integration points. Sprint 1 (MCP Transport Core) starts TODAY.
 - [2026-07-24T06:30Z] **AGY OAuth Persistence Fix DEPLOYED** — Fix committed to local clone of `opencode-antigravity-auth` (commit 006a90a). After token refresh, loads accounts from storage, matches by OLD refresh token, updates with new token + lastUsed, saves to disk. Uses existing `proper-lockfile` for atomic writes. Token tests pass (3/3). Upstream push blocked (no write access to 0xYiliu repo) — PR needed.
 - [2026-07-24T07:20Z] **P0-2 Grok CLI Workflow SCAFFOLDED** — Created `src/omega/integrations/grok_cli.py` with `GrokCLIClient` (AnyIO `open_process` for `grok agent stdio`), JSON-RPC 2.0 framing, ACP initialize, `QuotaInfo` dataclass, `GrokAccountConfig` for 8 isolated `GROK_HOME` directories. Full ACP multiplexer deferred (D-435).
+- [2026-07-24T07:45Z] **P1-1 VaultCore Schema v2 DESIGN COMPLETE** — `docs/research/R_VAULT_SCHEMA_V2.md` updated with:
+  - **BlindVault Resolver Integration**: `{{secret:NAME}}` pattern injection at last moment, output scrubbing, host/command allowlists
+  - **Bury PID-Bound Fallback**: Session dies with process tree (PID + start time detection), real-time `access.log` JSONL
+  - **R19 PUBLIC/BONDED/PRIVATE Split**: Visibility tiers for credential metadata, privacy-filtered recall engine
+  - **CPE (Cumulative PII Exposure) Scoring**: CAMP-inspired co-occurrence graph, thresholds (LOW/MODERATE/HIGH/CRITICAL), retroactive pseudonymization for audit logs
+  - **Encryption**: Argon2id KDF → age (X25519 + ChaCha20-Poly1305) envelope encryption
+  - **M25 Lease Compliance**: TTL + 30s heartbeat + graceful fallback on stream timeout
+  - **Decision Gates**: G1 (Schema), G2 (BlindVault), G3 (Bury), G4 (R19 Privacy), G5 (Backup)
 
 #### 🎯 CARMACK MODE: MAX LEVERAGE, MIN EFFORT PRIORITIZATION
 
@@ -424,7 +432,7 @@ HMC_COLLABORATION_HUB.md
 |----------|------|-------|--------|----------|--------|
 | **P0-1** | **Fix AGY OAuth persistence** — `antigravity-accounts.json` survives restart, tokens auto-refresh | @pillar P4 | Low | **High** (saves 8× re-auth/session) | ✅ **DEPLOYED** (local clone, commit 006a90a) |
 | **P0-2** | **Grok CLI dev workflow** — `src/omega/integrations/grok_cli.py` with `GrokFleetManager`, `GrokCLIClient`, `GrokQuickPrompt`, ACP stdio via AnyIO `open_process`, JSON-RPC 2.0, quota stub | @pillar P3 / @maat | Low | **High** (immediate dev leverage) | ✅ **COMPLETE** (`src/omega/integrations/grok_cli.py`) |
-| **P1-1** | **VaultCore schema v2** — support AGY OAuth tokens + Grok `auth.json`/`config.toml` (encrypted) | @maat | Medium | **High** (unblocks FleetOrchestrator) | 🟡 **DESIGNING** |
+| **P1-1** | **VaultCore schema v2** — BlindVault resolver (`{{secret:NAME}}`), Bury PID-bound fallback, R19 PUBLIC/BONDED/PRIVATE split with CPE scoring, Argon2id→age encryption, M25 lease TTL+heartbeat | @maat | Medium | **High** (unblocks FleetOrchestrator) | ✅ **DESIGN COMPLETE** (`docs/research/R_VAULT_SCHEMA_V2.md`) |
 | **P1-2** | **8 GCP projects (free tier)** — manual `gcp-seeder` or console setup | @researcher | Manual | **High** (enables Google 8-key rotation) | ⏳ **PENDING** |
 | **P2** | **LLMCycle deep research** — embed vs sidecar, mid-stream failover, Redis config | — | High | Medium | ⏸️ **DEFERRED** (D-434) |
 | **P3** | **Grok ACP Multiplexer** — stateful process management, mid-stream 402 recovery | — | High | Low (pre-PR) | ⏸️ **DEFERRED** (D-435) |
@@ -461,10 +469,10 @@ HMC_COLLABORATION_HUB.md
 
 #### Requests to Team
 - @researcher: **Phase 1 focus shift** — Google free-tier GCP project provisioning (manual), AGY OAuth token refresh mechanics (fix persistence), OpenRouter free tier + BYOK limits. Defer LLMCycle/LiteLLM configs.
-- @pillar P4: **AGY OAuth persistence fix** — investigate why `antigravity-accounts.json` tokens don't survive restart. Check `opencode-antigravity-auth` plugin storage logic.
-- @pillar P3: Grok CLI dev workflow — create `src/omega/integrations/grok_cli.py` with `grok agent stdio` subprocess management (AnyIO `open_process`).
-- @grokster: Document current manual Grok CLI workflow for dev env (Carmack mode).
+- @pillar P3: **R_CG01 Sprint 1 starts TODAY** — MCP Transport Core: `mcp_runtime.py` middleware, header validation (Mcp-Method, Mcp-Name, _meta), RFC 9728 endpoint. Deadline: **Jul 28**.
+- @pillar P3: **VaultCore Implementation** — Begin `src/omega/vault/` with BlindVault resolver + Bury fallback + R19 privacy tiers.
 - @verity: Add VaultCore schema compliance checks to Phase D gate.
+- @pillar P1: **8 GCP projects** — Manual `gcp-seeder` or console setup for free-tier per-project quota.
 
 ---
 
