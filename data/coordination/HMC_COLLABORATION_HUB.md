@@ -86,7 +86,7 @@ HMC_COLLABORATION_HUB.md
 | **Meditation Template System** | **v1.0** | ✅ **ACTIVE** | 3 templates (Six-Pass Lattice, Sovereign Crucible v1/v2), 1 execution complete, split-test pending | @roc_racoon |
 | Vault FleetOrchestrator | Design | 🟡 **CARMACK MODE** | Depends on P0-1 + AGY fix | @maat |
 | **W-1 WARP Proxy Pool** | **Research** | ✅ **COMPLETE** | 8 searches, 50+ sources, docs updated | **@john_carmack** |
-| **W-1 WARP Proxy Pool** | **Implementation** | ⏸️ **BLOCKED** | PolicyKit rule for pkexec (Pre-T+0 Gap #2) | **@john_carmack / Architect** |
+| **W-1 WARP Proxy Pool** | **Implementation** | 🔄 **ACTIVE** | PolicyKit rule ✅, 3 namespaces active, registration pending | **@john_carmack / @pillar P1** |
 | **R_CG01: MCP 2026-07-28 Audit** | **Research** | ✅ **COMPLETE** | 16-hour/4-sprint plan, 8 breaking changes, 7 new features, 6 OAuth SEPs | **@researcher** |
 | **R19: Soul Privacy Model** | **Research** | ✅ **COMPLETE** | PUBLIC/BONDED/PRIVATE split, CPE scoring, local kernel, capability tokens | **@researcher** |
 | **R_CG04: Agent-Safe Credential Vault** | **Research** | ✅ **COMPLETE** | BlindVault selected for V-1, Bury fallback, {{secret:NAME}} injection | **@researcher** |
@@ -143,7 +143,7 @@ HMC_COLLABORATION_HUB.md
 | **Vault FleetOrchestrator design** | @maat | AGY fix + VaultCore schema | TBD | 🟡 P1 |
 | Phase D gate evaluation | @kali | All P0 + Vault design | TBD | 🟡 P1 |
 | **C-0.5 hook registration** | @kali | Write hook config in `.opencode/opencode.json` | **TODAY** | 🔴 P0 |
-| W-1 WARP proxy pool | @pillar P1 | Architect (pkexec) | TBD | 🟡 P1 |
+| **W-1 WARP proxy pool registration** | @john_carmack / @pillar P1 | `warp-reg@` daemon pattern test | **TODAY** | 🔴 P0 |
 | Google 8 GCP projects (free tier) | @researcher | Manual `gcp-seeder` / console | Phase 1 | 🟡 P1 |
 
 ### 📋 COORDINATION DIRECTIVES (2026-07-24)
@@ -422,6 +422,7 @@ HMC_COLLABORATION_HUB.md
 - [2026-07-24T06:30Z] **AGY OAuth Persistence Fix DEPLOYED** — Fix committed to local clone of `opencode-antigravity-auth` (commit 006a90a). After token refresh, loads accounts from storage, matches by OLD refresh token, updates with new token + lastUsed, saves to disk. Uses existing `proper-lockfile` for atomic writes. Token tests pass (3/3). Upstream push blocked (no write access to 0xYiliu repo) — PR needed.
 - [2026-07-24T13:30Z] **AGY OAuth Fix PR CREATED** — PR #1 opened at `0xYiliu/opencode-antigravity-auth` from fork `taylorbare27:fix/agy-oauth-persistence`. Fix: persist refreshed OAuth tokens to `antigravity-accounts.json` via proper-lockfile atomic writes. Awaiting upstream review/merge.
 - [2026-07-24T14:15Z] **AGY OAuth Fix PR #2 CREATED (Xoe-NovAi account)** — PR #2 opened at `0xYiliu/opencode-antigravity-auth` from fork `Xoe-NovAi:fix/agy-oauth-persistence`. This is the canonical PR from the organization account. Awaiting upstream review/merge.
+- [2026-07-24T14:30Z] **AGY OAuth Fix DOCUMENTATION UPDATED** — README.md updated with Xoe-NovAi Foundation branding, token persistence fix details, sovereign mandates compliance table, and updated links. Pushed to fork branch `fix/agy-oauth-persistence`.
 - [2026-07-24T07:20Z] **P0-2 Grok CLI Workflow SCAFFOLDED** — Created `src/omega/integrations/grok_cli.py` with `GrokCLIClient` (AnyIO `open_process` for `grok agent stdio`), JSON-RPC 2.0 framing, ACP initialize, `QuotaInfo` dataclass, `GrokAccountConfig` for 8 isolated `GROK_HOME` directories. Full ACP multiplexer deferred (D-435).
 - [2026-07-24T07:45Z] **P1-1 VaultCore Schema v2 DESIGN COMPLETE** — `docs/research/R_VAULT_SCHEMA_V2.md` updated with:
   - **BlindVault Resolver Integration**: `{{secret:NAME}}` pattern injection at last moment, output scrubbing, host/command allowlists
