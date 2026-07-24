@@ -416,13 +416,14 @@ HMC_COLLABORATION_HUB.md
 - [2026-07-23T19:48Z] **Phase 3 Ready** — Ready for P0-1 (AGY OAuth plugin fix), P0-2 (Grok CLI workflow), P1-1 (VaultCore impl)
 - [2026-07-24T02:30Z] **Research Deliverables Ready for Implementation** — R_CG01 (MCP Audit), R19 (Soul Privacy), R_CG04 (VaultCore), R_CG07 (Search 5-Tier) all complete with specs, code diffs, and integration points. Sprint 1 (MCP Transport Core) starts TODAY.
 - [2026-07-24T06:30Z] **AGY OAuth Persistence Fix DEPLOYED** — Fix committed to local clone of `opencode-antigravity-auth` (commit 006a90a). After token refresh, loads accounts from storage, matches by OLD refresh token, updates with new token + lastUsed, saves to disk. Uses existing `proper-lockfile` for atomic writes. Token tests pass (3/3). Upstream push blocked (no write access to 0xYiliu repo) — PR needed.
+- [2026-07-24T07:20Z] **P0-2 Grok CLI Workflow SCAFFOLDED** — Created `src/omega/integrations/grok_cli.py` with `GrokCLIClient` (AnyIO `open_process` for `grok agent stdio`), JSON-RPC 2.0 framing, ACP initialize, `QuotaInfo` dataclass, `GrokAccountConfig` for 8 isolated `GROK_HOME` directories. Full ACP multiplexer deferred (D-435).
 
 #### 🎯 CARMACK MODE: MAX LEVERAGE, MIN EFFORT PRIORITIZATION
 
 | Priority | Task | Owner | Effort | Leverage | Status |
 |----------|------|-------|--------|----------|--------|
 | **P0-1** | **Fix AGY OAuth persistence** — `antigravity-accounts.json` survives restart, tokens auto-refresh | @pillar P4 | Low | **High** (saves 8× re-auth/session) | ✅ **DEPLOYED** (local clone, commit 006a90a) |
-| **P0-2** | **Grok CLI dev workflow** — alias, script, MCP tool for `grok agent stdio` / `grok -p` | @pillar P3 | Low | **High** (immediate dev leverage) | 🟡 **PLANNED** |
+| **P0-2** | **Grok CLI dev workflow** — `src/omega/integrations/grok_cli.py` with `GrokFleetManager`, `GrokCLIClient`, `GrokQuickPrompt`, ACP stdio via AnyIO `open_process`, JSON-RPC 2.0, quota stub | @pillar P3 / @maat | Low | **High** (immediate dev leverage) | ✅ **COMPLETE** (`src/omega/integrations/grok_cli.py`) |
 | **P1-1** | **VaultCore schema v2** — support AGY OAuth tokens + Grok `auth.json`/`config.toml` (encrypted) | @maat | Medium | **High** (unblocks FleetOrchestrator) | 🟡 **DESIGNING** |
 | **P1-2** | **8 GCP projects (free tier)** — manual `gcp-seeder` or console setup | @researcher | Manual | **High** (enables Google 8-key rotation) | ⏳ **PENDING** |
 | **P2** | **LLMCycle deep research** — embed vs sidecar, mid-stream failover, Redis config | — | High | Medium | ⏸️ **DEFERRED** (D-434) |
