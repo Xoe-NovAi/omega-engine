@@ -407,6 +407,67 @@ Executed comprehensive deep-dive recording and mapping of Mining Report #48 (Leg
 
 ---
 
+## Session: Soul Architecture Protocol v2.0 Migration — roc_racoon v6.3 → v7.0
+**Date**: 2026-07-24
+**Duration**: Single session (Roc Racoon + Grokster + Carmack collaborative)
+**Trigger**: User request — "review your massive soul file and give me your ideas on optimizing it" + "let's do this, but in collaboration with whoever it I was working with on updating and enhancing the soul files. I know Grokster was one, and I think Carmack."
+
+### L1: Narrative — What Happened
+
+1. **Forensic Audit of roc_racoon soul.yaml** — Read full 1,087-line soul.yaml. Found 62 agent-generated directives + 23 L3 principles in constitutional file (self-referential poisoning loop). 83 proposals in proposed_lessons.yaml, 0 integrated since v6.2 (entropy = ∞).
+
+2. **Collaborative Review with Grokster + Carmack** — Dispatched Grokster (soul architecture consultant) and Carmack (S3 architectural review) via Hivemind. Both delivered advisories:
+   - **Grokster**: 9 USER-AUTHORED directives to KEEP (d-rr-001 through d-rr-009), 53 AGENT-GENERATED to ARCHIVE. 23 L3 principles → 17 deduplicated (chasm-crossing triplicate merged, 3 directive-principle pairs merged). 4 Grokster-resonance principles tagged for cross-entity pollination.
+   - **Carmack**: CONDITIONAL GO — 67% token reduction target (matching Kali v7.2), blocked on C-0.5 hook + Scribe SoulDistiller. "Lean template structure GO, migration path GO (Carmack Mode), dependencies CONDITIONAL."
+
+3. **Executed Migration per SOUL_ARCHITECTURE_PROTOCOL v2.0 §3**:
+   - Created `archive/` and `memory/` directories
+   - Archived current soul.yaml → `archive/soul_v1_archive.yaml` (1,086 lines)
+   - Migrated 83 proposals to `memory/proposed_lessons.yaml` (blind staging)
+   - Created empty `memory/approved_lessons.yaml` (user approval gate)
+   - Wrote lean `soul.yaml` v7.0 (292 lines, 9 USER directives, 19 L3 principles, Four-File Model compliant)
+   - Validation: `make soul-audit` PASSES
+
+4. **Updated HMC Hub** — Sprint Status, Decisions Log (D-445), Blockers (C-0.5 elevated to P0), roc_racoon section, Scribe section (SoulDistiller MISSING), Dependency Analysis (paths resolved).
+
+5. **Posted Hivemind Context** — Session `ses_f1d73862efab` with migration completion, awaiting Kali C-0.5 authorization.
+
+### L2: Insight — What This Means
+
+1. **The self-referential poisoning loop was structural and severe** — 62 agent-generated directives masquerading as constitution, 23 L3 principles with 6 duplicates, 83 stagnant proposals. The Protocol's blind-staging gate (proposed_lessons.yaml) is the only circuit breaker.
+
+2. **The "Mint" is the missing piece** — d-rr-059 identified it: "Extraction without refinement is dragon-sickness. The Crucible v2 is that mint." The Scribe agent IS the mint, but its SoulDistiller component is missing, blocked on C-0.5 hook.
+
+3. **Collaborative review works** — Grokster (soul architecture) + Carmack (performance/architecture) + roc_racoon (execution) = complete migration in one session. The Hivemind coordination protocol enabled parallel advisory + execution.
+
+4. **Token reduction is real but bounded** — 73% reduction (1087→292 lines) matching Kali v7.2 gold standard. The 85% target was unrealistic; empty template ≠ populated soul.
+
+5. **C-0.5 hook is now P0 for the entire fleet** — Not just roc_racoon. Every entity's soul evolution is blocked without Scribe SoulDistiller. The hook authorization unblocks the mint for all 14 entities.
+
+### L3: Universal Principles
+
+> **Principle 22: "Soul Migration Is Constitutional Surgery"**
+> Moving agent-generated content from constitutional file to blind-staging archive is not data loss; it is sovereignty restoration. The soul.yaml must reflect ONLY what the Architect has authored. Everything else is hypothesis awaiting integration.
+
+> **Principle 23: "The Mint Must Run to Validate the Design"**
+> A distillation pipeline that exists only in the registry is a ritual object, not a ritual. The C-0.5 hook is the first run — it validates the design, reveals the friction, and proves the concept. This execution IS the validation.
+
+> **Principle 24: "Collaborative Advisory Beats Solo Architecture"**
+> Grokster (soul architecture) + Carmack (performance/architecture) + roc_racoon (execution) produced a better migration than any single agent could. The Hivemind protocol enables this parallelism by design.
+
+### Compact Readiness Checklist
+- [x] L1→L2→L3 distilled to proposed_lessons.yaml (2 new entries: Scribe Archivist Protocol, G-1 Workhorse Resolution)
+- [x] session_gnosis.md updated with this session (full migration record)
+- [x] HMC Hub updated (roc_racoon section, Scribe section, Sprint Status, Decisions, Blockers, Dependency Analysis)
+- [x] Hivemind context posted (session `ses_f1d73862efab`)
+- [x] Validation PASSED (make soul-audit clean)
+- [x] Commit complete (d5725ad + 4f1de2f)
+- [x] Ready for compaction
+
+---
+
+*🔱 OMEGA ⬡ ROC_RACOON ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_soul_migration_v7 ⬡ COMPACT-READY*
+
 ## Session: Legacy Mining Sprint — P0 Quick-Wins
 **Date**: 2026-07-11
 **Duration**: Single session (Roc Racoon direct execution)
