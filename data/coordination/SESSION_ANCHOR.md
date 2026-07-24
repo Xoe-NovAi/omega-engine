@@ -1,24 +1,34 @@
-# 🔱 Session Anchor — Upstream Contribution Complete + Knowledge Gaps Research
-**Last Updated**: 2026-07-24T15:00Z
+# 🔱 Session Anchor — Upstream Contribution Complete + Codex Fix
+**Last Updated**: 2026-07-24T15:30Z
 **Engine**: v1.8.0
-**Phase**: ⬡ UPSTREAM CONTRIBUTION MODE — AGY OAuth Fix Deployed, Research Guides Created
-**AP Token**: `AP-UPSTREAM-CONTRIBUTION-COMPLETE-v1.0.0`
+**Phase**: ⬡ CODEX FIX APPLIED — Three-layer Codex regeneration system deployed
+**AP Token**: `AP-CODEX-FIX-v1.0.0`
 
 ---
 
 ## 📋 Sprint Completion Status
 
-### ✅ AGY OAuth Persistence Fix (P0-1) — DEPLOYED TO UPSTREAM
+### ✅ Codex Regeneration System — FIXED (This Session)
+| Component | Status | Details |
+|-----------|--------|---------|
+| **`make codex` target** | ✅ **ADDED** | Regenerates OMEGA_CODEX.md from groups.json |
+| **`check-codex-stale` script** | ✅ **CREATED** | Detects >24h stale Codex, exit-code gate |
+| **`check-codex-fix` target** | ✅ **ADDED** | Auto-regenerates if stale (temple-grade dependency) |
+| **session_end.py hook** | ✅ **UPDATED** | Auto-refreshes Codex after every session |
+| **hydration_header.md** | ✅ **UPDATED** | References `make check-codex-fix` |
+| **AGENTS.md** | ✅ **UPDATED** | Phase 3 hydration uses `make check-codex-fix` |
+| **Tests** | ✅ **VERIFIED** | 77/77 contract pass, 16/16 property pass, 22 vault pre-existing failures |
+
+### ✅ AGY OAuth Persistence Fix (P0-1) — DEPLOYED TO UPSTREAM (Previous Session)
 | Component | Status | Details |
 |-----------|--------|---------|
 | **PR #2** | ✅ **SUBMITTED** | `0xYiliu/opencode-antigravity-auth` from `Xoe-NovAi:fix/agy-oauth-persistence` |
 | **Fork** | ✅ **CREATED** | `Xoe-NovAi/opencode-antigravity-auth` with governance docs |
 | **Governance** | ✅ **COMPLETE** | CONTRIBUTING.md, SECURITY.md, CODE_OF_CONDUCT.md |
-| **Documentation** | ✅ **POLISHED** | Xoe-NovAi Foundation branding, email/domain updates |
 | **Research** | ✅ **COMPLETE** | `docs/research/R_FIX_CONTRIBUTION_BEST_PRACTICES.md` |
 | **Knowledge Gaps** | ✅ **IDENTIFIED** | 6 prioritized research jobs (23-31h effort) |
 
-### ✅ Research Guides Created — COMPLETE
+### ✅ Research Guides Created — COMPLETE (Previous Session)
 | Guide | Status | Details |
 |-------|--------|---------|
 | **Upstream Fix Best Practices** | ✅ **COMPLETE** | 6 domains, 30+ extraction targets, search vectors |
@@ -34,18 +44,20 @@
 
 ---
 
-## 🎯 What We've Done (This Session)
+## 🎯 What We've Done (This Session - Codex Fix)
 
-1. ✅ **Deployed AGY OAuth persistence fix** to upstream (PR #2)
-2. ✅ **Created fork with governance docs** (CONTRIBUTING.md, SECURITY.md, CODE_OF_CONDUCT.md)
-3. ✅ **Polished documentation** (branding, email/domain updates)
-4. ✅ **Created research guide** for upstream fix contribution best practices
-5. ✅ **Identified 6 knowledge gaps** requiring systematic research
-6. ✅ **Created knowledge gaps research guide** with prioritized execution plan
-7. ✅ **Updated HMC Hub** with comprehensive status and next steps
-8. ✅ **Committed and pushed** all changes to `main` branch
-
----
+1. ✅ **Added `make codex` target** to Makefile -- runs `scripts/codex_cat.py`
+2. ✅ **Added `make check-codex-stale`** -- exit 0 if fresh, exit 1 if stale
+3. ✅ **Added `make check-codex-fix`** -- auto-regenerates if stale (idempotent)
+4. ✅ **Added `make check-codex-force`** -- regenerate regardless of age
+5. ✅ **Created `scripts/check_codex_stale.py`** -- parses ⬡ header, >24h threshold, --fix/--force flags
+6. ✅ **Wired Codex into `make temple-grade`** -- temple-grade now depends on check-codex-fix
+7. ✅ **Updated `session_end.py` hook** -- auto-refreshes Codex after every session (soul distillation + codex refresh)
+8. ✅ **Updated `hydration_header.md`** -- references make check-codex-fix, notes auto-refresh of Codex
+9. ✅ **Updated `AGENTS.md`** -- Phase 3 hydration uses make check-codex-fix
+10. ✅ **Regenerated `OMEGA_CODEX.md`** -- fresh timestamp for next session
+11. ✅ **Committed and pushed** commit e021508 to main
+12. ✅ **Tests verified** -- contract 77/77 pass, property 16/16 pass (22 pre-existing vault failures unrelated)
 
 ## 🚀 Next Steps (Priority Order)
 
@@ -153,6 +165,14 @@
 | **Fallback Queries** | Primary + fallback search strategies for each topic |
 | **Temporal Mandate** | All queries include "2026" or "latest" for current best practices |
 
+### Codex Fix Insights (This Session)
+| Principle | Essence |
+|-----------|---------|
+| **Fresh-Context-by-Default** | The Codex must be fresh when any agent reads it — regeneration is an automated background task, not a manual check |
+| **Exit-Code Gates** | Scripts that gate on freshness (exit 0 = fine, exit 1 = stale) enable CI, Makefile dependencies, and pre-commit hooks to enforce quality without human judgment |
+| **Session-End as Integrity Point** | The session_end hook is the natural boundary for housekeeping (soul distillation + Codex refresh) — it ensures the next start is clean |
+| **Three-Layer Robustness** | Makefile (manual) + staleness script (automated) + session hook (implicit) = three independent paths to freshness; no single point of failure |
+
 ---
 
 ## ⚠️ Risks & Decisions Needed
@@ -173,11 +193,12 @@
 1. **Read this file** (`data/coordination/SESSION_ANCHOR.md`) — full context
 2. **Read HMC Hub** (`data/coordination/HMC_COLLABORATION_HUB.md`) — sprint state, decisions, blockers
 3. **Check Hivemind awareness** (`omega-hub_hivemind_get_awareness()`) — active agents
-4. **Verify upstream PR status** — check `https://github.com/0xYiliu/opencode-antigravity-auth/pull/2`
-5. **Review knowledge gaps research guide** — `docs/research/R_KNOWLEDGE_GAPS_RESEARCH_GUIDE_20260724.md`
-6. **Begin KG-1 and KG-2 research** — Critical priority (Days 1-2)
-7. **Update HMC Hub** with progress on knowledge gap research
-8. **Commit and push** research deliverables to `main` branch
+4. **Check Codex freshness** — run `make check-codex-fix` (auto-regenerates if stale; should be fresh from session_end hook)
+5. **Verify upstream PR status** — check `https://github.com/0xYiliu/opencode-antigravity-auth/pull/2`
+6. **Review knowledge gaps research guide** — `docs/research/R_KNOWLEDGE_GAPS_RESEARCH_GUIDE_20260724.md`
+7. **Begin KG-1 and KG-2 research** — Critical priority (Days 1-2)
+8. **Update HMC Hub** with progress on knowledge gap research
+9. **Commit and push** research deliverables to `main` branch
 
 ---
 
@@ -185,16 +206,20 @@
 
 | Category | Metric | Value |
 |----------|--------|-------|
+| **Codex** | Makefile targets | 4 (codex, check-codex-stale, check-codex-fix, check-codex-force) |
+| **Codex** | Staleness script | 1 (`scripts/check_codex_stale.py`) |
+| **Codex** | Session hook | Updated to auto-refresh Codex after every session |
+| **Codex** | temple-grade | Now depends on check-codex-fix |
 | **Upstream** | PR submitted | 1 (AGY OAuth persistence fix) |
 | **Fork** | Created | 1 (`Xoe-NovAi/opencode-antigravity-auth`) |
 | **Governance** | Docs created | 3 (CONTRIBUTING.md, SECURITY.md, CODE_OF_CONDUCT.md) |
 | **Research** | Guides created | 2 (Best Practices + Knowledge Gaps) |
 | **Knowledge Gaps** | Identified | 6 (KG-1 through KG-6) |
-| **Research Effort** | Estimated | 23-31 hours (5-7 days parallel) |
-| **Tests** | Passing | 60/60 (Phase 2 hardening) |
-| **Documentation** | Updated | 5 files (llms.txt, pyproject.toml, source files, docs) |
-| **HMC Hub** | Updated | v1.3.0 with upstream contribution status |
-| **Git Commits** | Created | 3 (research guides + HMC Hub update) |
+| **Tests** | Contract tests | 77/77 pass |
+| **Tests** | Property tests | 16/16 pass |
+| **Tests** | Vault failures (pre-existing) | 22 (unrelated to our changes) |
+| **Git Commits** | This session | 1 (e021508 — Codex fix) |
+| **Git Commits** | Previous session | 3 (research guides + HMC Hub update) |
 
 ---
 
