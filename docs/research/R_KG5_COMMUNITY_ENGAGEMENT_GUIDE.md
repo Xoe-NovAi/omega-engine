@@ -2,6 +2,9 @@
 **AP Token**: `AP-KG5-COMMUNITY-ENGAGEMENT-v1.0.0`
 ⬡ OMEGA ⬡ MAAT ⬡ RESEARCH ⬡ 2026-07-25
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright (c) 2026 Xoe-NovAi Foundation -->
+
 ## Executive Summary
 
 Building trust with maintainers leads to faster reviews, more collaboration, and long-term contribution relationships. The maintainer is the interface — every interaction shapes the project's culture more powerfully than any governance document.

@@ -2,6 +2,9 @@
 **AP Token**: `AP-KG-RESEARCH-SUMMARY-v3.0.0`
 ⬡ OMEGA ⬡ MAAT ⬡ RESEARCH ⬡ ALL-6-KGS ⬡ 2026-07-25
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright (c) 2026 Xoe-NovAi Foundation -->
+
 ## Executive Summary
 
 All six Knowledge Gaps (KG-1 through KG-6) have been systematically researched with formal deliverables created. This summary synthesizes cross-cutting findings and provides actionable next steps for the Omega Engine team.

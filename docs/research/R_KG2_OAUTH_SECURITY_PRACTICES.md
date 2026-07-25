@@ -2,6 +2,9 @@
 **AP Token**: `AP-KG2-OAUTH-SECURITY-PRACTICES-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_knowledge_gaps ⬡ 2026-07-25
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright (c) 2026 Xoe-NovAi Foundation -->
+
 ## Executive Summary
 
 This document synthesizes OAuth 2.0 and OpenID Connect security best practices from authoritative sources (RFC 9700, RFC 6819, OpenID Connect Core 1.0) to create a comprehensive security checklist for OAuth plugin development in the Omega Engine ecosystem.

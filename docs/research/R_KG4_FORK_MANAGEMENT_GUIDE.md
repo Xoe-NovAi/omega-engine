@@ -2,6 +2,9 @@
 **AP Token**: `AP-KG4-FORK-MANAGEMENT-v1.0.0`
 ⬡ OMEGA ⬡ MAAT ⬡ RESEARCH ⬡ 2026-07-25
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright (c) 2026 Xoe-NovAi Foundation -->
+
 ## Executive Summary
 
 Forks that diverge from upstream become maintenance burdens. A disciplined sync strategy — rebase for small custom commits on fast-moving upstream, merge for long-lived forks — prevents the "stale fork" problem where PRs accumulate 1000+ merge conflicts.

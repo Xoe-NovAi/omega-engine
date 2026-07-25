@@ -2,6 +2,9 @@
 **AP Token**: `AP-KG6-LEGAL-LICENSING-v1.0.0`
 ⬡ OMEGA ⬡ MAAT ⬡ RESEARCH ⬡ 2026-07-25
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright (c) 2026 Xoe-NovAi Foundation -->
+
 ## Executive Summary
 
 Incorrect licensing can lead to legal issues, takedowns, or inability to distribute contributions. Every open source component carries obligations that vary by license type. Forking a project does not remove the original license — it inherits all its terms and adds attribution requirements.

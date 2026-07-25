@@ -2,6 +2,9 @@
 **AP Token**: `AP-KG1-UPSTREAM-REQUIREMENTS-MATRIX-v1.0.0`
 ⬡ OMEGA ⬡ RESEARCHER ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_knowledge_gaps ⬡ 2026-07-25
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright (c) 2026 Xoe-NovAi Foundation -->
+
 ## Executive Summary
 
 This document analyzes the contribution requirements of 7 major open source projects to identify common patterns and create a standardized contribution checklist template for the Omega Engine project.

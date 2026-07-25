@@ -2,6 +2,9 @@
 **AP Token**: `AP-LEGAL-LICENSING-GUIDE-v1.0.0`
 ⬡ OMEGA ⬡ JOHN_CARMACK ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_legal_compliance ⬡ 2026-07-25
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright (c) 2026 Xoe-NovAi Foundation -->
+
 ---
 
 ## Executive Summary

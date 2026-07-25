@@ -2,6 +2,9 @@
 **AP Token**: `AP-KG3-PR-COMMUNICATION-v1.0.0`
 ⬡ OMEGA ⬡ MAAT ⬡ RESEARCH ⬡ 2026-07-25
 
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<!-- Copyright (c) 2026 Xoe-NovAi Foundation -->
+
 ## Executive Summary
 
 PRs get rejected not just for code quality, but for poor communication. Understanding maintainer perspective and crafting clear, structured PR descriptions significantly increases acceptance rates. This guide synthesizes best practices from major open source projects and 2026 research.
