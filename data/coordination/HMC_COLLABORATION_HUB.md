@@ -1,7 +1,7 @@
 # 🔱 HMC Collaboration Hub — Sprint Coordination Forum
 **AP Token**: `AP-HMC-HUB-v1.3.0`
 ⬡ OMEGA ⬡ HMC ⬡ ALL-AGENTS ⬡ COORDINATION
-**Last Updated**: 2026-07-25T08:25Z
+**Last Updated**: 2026-07-25T09:15Z
 
 ---
 
@@ -419,23 +419,30 @@ Fixed `mcp.server.sse` import mock in `tests/test_hivemind.py` and renamed `src/
 2. **Verify OAuth Security** using KG-2 checklist (PKCE, token rotation, atomic writes)
 3. **Establish Fork Sync Cadence** using KG-4 (daily fetch, weekly rebase, immediate security fixes)
 
-### 📚 KG RESEARCH GUIDES — **COMPLETE** (2026-07-25T08:25Z)
+### 📚 KG RESEARCH GUIDES — **COMPLETE** (2026-07-25T09:15Z)
 | Guide | Status | Lines | Key Application |
 |-------|--------|-------|-----------------|
 | **R_OAUTH_SECURITY_CHECKLIST.md** | ✅ **COMPLETE** | 260 | OAuth 2.1 compliance; PKCE mandatory; DPoP/mTLS; testing checklist |
 | **R_FORK_MANAGEMENT_GUIDE.md** | ✅ **COMPLETE** | 301 | Rebase preferred; daily fetch, weekly sync; git rerere; drift budget |
 | **R_COMMUNITY_ENGAGEMENT_GUIDE.md** | ✅ **COMPLETE** | 189 | Maintainer as interface; response time targets; AI slop crisis |
 | **R_LEGAL_LICENSING_GUIDE.md** | ✅ **COMPLETE** | 239 | Three-tier classification; SPDX identifiers; CLA vs DCO; EU CRA |
-| **R_CONTRIBUTING_MD_UPDATED.md** | ✅ **COMPLETE** | 360 | Conventional Commits; AI disclosure; CLA/DCO requirements |
+| **CONTRIBUTING.md Updated** | ✅ **COMPLETE** | 360 | Conventional Commits; AI disclosure; CLA/DCO requirements |
 
 **Total**: 1,349 lines of practical guides across 5 new deliverables
 
-#### **Guide Applications**
-1. **OAuth Security Checklist** → Apply to AGY OAuth plugin and all future auth plugins
-2. **Fork Management Guide** → Apply to AGY OAuth fork; set up automated sync
-3. **Community Engagement Guide** → Set up response time monitoring; implement AI disclosure
-4. **Legal & Licensing Guide** → Add SPDX headers; set up license compliance checks
+#### **Guide Applications — UPDATED**
+1. **OAuth Security Checklist** → Applied to AGY OAuth PR #2 (KG-2 checklist in PR body)
+2. **Fork Management Guide** → Applied to AGY OAuth fork; automated sync configured
+3. **Community Engagement Guide** → Response time monitoring; AI disclosure in PR template
+4. **Legal & Licensing Guide** → SPDX headers added to all 13 research files (KG-6 compliance)
 5. **CONTRIBUTING.md Updated** → All contributors must follow 2026 compliance requirements
+
+#### **Latest Updates (2026-07-25T09:15Z)**
+- ✅ AGY OAuth PR #2 updated with KG-3 What/Why/How/Testing template + KG-2 security checklist
+- ✅ SPDX headers added to all 6 KG research deliverables + 5 practical guides + 2 updated docs
+- ✅ R_FIX_CONTRIBUTION_BEST_PRACTICES.md updated to v2.1.0 with KG references
+- ✅ R_KG_RESEARCH_SUMMARY.md updated to v3.0.0 with practical guides section
+- ✅ All changes committed and pushed to origin/main
 
 ### 🔄 Coordination Protocol (Hivemind + HMC Hub Hybrid)
 | Activity | Tool | Location |
