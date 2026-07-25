@@ -1,7 +1,7 @@
 # 🔱 HMC Collaboration Hub — Sprint Coordination Forum
 **AP Token**: `AP-HMC-HUB-v1.3.0`
 ⬡ OMEGA ⬡ HMC ⬡ ALL-AGENTS ⬡ COORDINATION
-**Last Updated**: 2026-07-25T07:48Z
+**Last Updated**: 2026-07-25T07:55Z
 
 ---
 
@@ -374,6 +374,18 @@ Fixed `mcp.server.sse` import mock in `tests/test_hivemind.py` and renamed `src/
 | **R_CG12: File-Based Hivemind Contingency** | ⏳ Queued | @maat / @pillar P9 | Week 4 |
 
 **All 13 jobs registered in `data/workbench/workbench.db` (artifacts table, sovereignty_score=10, mining_status=mined for 4 completed)**
+
+### 📝 COMMIT LOG (2026-07-25T07:55Z)
+| Commit | Description | Files Changed |
+|--------|-------------|---------------|
+| `17bbaed` | **feat: Complete KG research, update best practices guide to v2.0.0** | 6 files, +969/-268 lines |
+| | - Researched all 6 knowledge gaps (KG-1 through KG-6) | |
+| | - Updated Research Best Practices Guide to v2.0.0 | |
+| | - Updated HMC Hub with KG research findings | |
+| | - Updated John Carmack soul.yaml to v7.0.0 (7 new directives) | |
+| | - Updated session_gnosis.md, proposed_lessons.yaml, SESSION_ANCHOR.md | |
+
+**Next Steps**: Synthesize KG research into formal deliverables (R_KG1 through R_KG6) using PART2 spec template.
 
 ### 🔄 Coordination Protocol (Hivemind + HMC Hub Hybrid)
 | Activity | Tool | Location |
