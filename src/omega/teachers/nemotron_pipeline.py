@@ -119,12 +119,15 @@ Be concise and specific."""
     def _resolve_openrouter_key(self) -> str:
         """Resolve OpenRouter API key from vault or environment."""
         try:
-            from omega.vault.key_vault import KeyVault
-            vault = KeyVault()
-            return vault.resolve("openrouter")
+            from omega.vault import VaultCore
+            vault = VaultCore()
+            vault._load_sync()
+            cred = vault._credentials.get("openrouter:api_key")
+            if cred:
+                return cred.encrypted_blob
         except Exception as e:
-            logger.warning(f"Vault resolution failed, falling back to env: {e}")
-            return os.environ.get("OPENROUTER_API_KEY", "placeholder")
+            logger.warning(f"VaultCore resolution failed: {e}")
+        return ""
     
     async def generate_dpo_pair(
         self,

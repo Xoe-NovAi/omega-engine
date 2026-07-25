@@ -60,9 +60,18 @@ class OpenAIModerationProvider(ModelProvider):
         """Initialise provider.
 
         Args:
-            api_key: OpenAI API key.  Falls back to ``OPENAI_API_KEY`` env var.
+            api_key: OpenAI API key.  Falls back to VaultCore.
         """
-        self._api_key = api_key or os.environ.get("OPENAI_API_KEY", "")
+        if api_key is None:
+            try:
+                from omega.vault import VaultCore
+                vault = VaultCore()
+                vault._load_sync()
+                cred = vault._credentials.get("openai:api_key")
+                api_key = cred.encrypted_blob if cred else ""
+            except Exception:
+                api_key = ""
+        self._api_key = api_key
         self._last_request: float = 0.0
         self._client: httpx.Client | None = None
 

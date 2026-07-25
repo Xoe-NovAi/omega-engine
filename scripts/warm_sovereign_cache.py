@@ -293,9 +293,18 @@ class Tier2Fetcher:
     """Fetch via Firecrawl Direct (Tier 2)."""
     
     def __init__(self):
-        self.api_key = os.getenv("FIRECRAWL_API_KEY")
+        self.api_key = None
+        try:
+            from omega.vault import VaultCore
+            vault = VaultCore()
+            vault._load_sync()
+            cred = vault._credentials.get("firecrawl:api_key")
+            self.api_key = cred.encrypted_blob if cred else None
+        except Exception:
+            self.api_key = None
+        
         if not self.api_key:
-            print("  ⚠️  FIRECRAWL_API_KEY not set - Tier 2 fetches will fail")
+            print("  ⚠️  FIRECRAWL_API_KEY not in VaultCore - Tier 2 fetches will fail")
         self.client = httpx.Client(timeout=FIRECRAWL_TIMEOUT)
     
     def fetch(self, entry: RegistryEntry) -> Optional[CacheEntry]:

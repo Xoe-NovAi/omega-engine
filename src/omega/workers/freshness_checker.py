@@ -187,7 +187,18 @@ class ArtificialAnalysisClient:
     """Artificial Analysis API client for capability score freshness."""
     
     def __init__(self, api_key: Optional[str] = None, timeout: float = 30.0):
-        self.api_key = api_key or os.getenv("AA_API_KEY")
+        # Resolve API key from VaultCore
+        if api_key is None:
+            try:
+                from omega.vault import VaultCore
+                vault = VaultCore()
+                vault._load_sync()
+                cred = vault._credentials.get("artificial_analysis:api_key")
+                api_key = cred.encrypted_blob if cred else None
+            except Exception:
+                api_key = None
+        
+        self.api_key = api_key
         self.client = httpx.Client(
             base_url=AA_API_BASE,
             timeout=timeout,
@@ -641,10 +652,22 @@ def main() -> int:
                         help="Output JSON report")
     parser.add_argument("--db", default=str(DB_PATH), 
                         help=f"Database path (default: {DB_PATH})")
-    parser.add_argument("--aa-api-key", default=os.getenv("AA_API_KEY"),
-                        help="Artificial Analysis API key (or set AA_API_KEY env)")
+    parser.add_argument("--aa-api-key", 
+                        help="Artificial Analysis API key (or set AA_API_KEY env, or use VaultCore)")
     
     args = parser.parse_args()
+    
+    # Resolve AA_API_KEY from VaultCore if not provided
+    aa_api_key = args.aa_api_key
+    if aa_api_key is None:
+        try:
+            from omega.vault import VaultCore
+            vault = VaultCore()
+            vault._load_sync()
+            cred = vault._credentials.get("artificial_analysis:api_key")
+            aa_api_key = cred.encrypted_blob if cred else None
+        except Exception:
+            aa_api_key = None
     
     if not Path(args.db).exists():
         print(f"❌ Database not found: {args.db}")

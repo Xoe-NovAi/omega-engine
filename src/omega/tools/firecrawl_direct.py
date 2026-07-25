@@ -18,30 +18,27 @@ BASE_URL = "https://api.firecrawl.dev/v1"
 
 
 def _resolve_api_key() -> str:
-    """Resolve Firecrawl API key from vault or environment."""
+    """Resolve Firecrawl API key from vault."""
     global FIRECRAWL_API_KEY
     if FIRECRAWL_API_KEY:
         return FIRECRAWL_API_KEY
     
-    # Try KeyVault first
+    # Try VaultCore first
     try:
-        from omega.vault import KeyVault
-        vault = KeyVault()
-        FIRECRAWL_API_KEY = vault.resolve("firecrawl")
+        from omega.vault import VaultCore
+        vault = VaultCore()
+        vault._load_sync()
+        cred = vault._credentials.get("firecrawl:api_key")
+        FIRECRAWL_API_KEY = cred.encrypted_blob if cred else ""
         if FIRECRAWL_API_KEY:
-            logger.info("Firecrawl API key resolved from Sovereign Key Vault")
+            logger.info("Firecrawl API key resolved from Sovereign VaultCore")
             return FIRECRAWL_API_KEY
     except Exception as e:
-        logger.debug(f"KeyVault resolution failed: {e}")
+        logger.debug(f"VaultCore resolution failed: {e}")
     
-    # Fallback to environment
-    FIRECRAWL_API_KEY = os.environ.get("FIRECRAWL_API_KEY", "")
-    if FIRECRAWL_API_KEY:
-        logger.info("Firecrawl API key resolved from environment")
-    else:
-        logger.error("No FIRECRAWL_API_KEY found — direct tools will fail")
-    
-    return FIRECRAWL_API_KEY
+    # No fallback to environment - VaultCore is the single source of truth
+    logger.error("No FIRECRAWL_API_KEY found in VaultCore — direct tools will fail")
+    return ""
 
 
 async def firecrawl_search_direct(

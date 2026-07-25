@@ -319,12 +319,17 @@ class SearchFleet:
     # ── Exa ─────────────────────────────────────────────────────────────────
 
     def _resolve_key(self, provider: str, env_var: str) -> str:
-        """Resolve API key from vault, falling back to env var."""
+        """Resolve API key from vault."""
         try:
-            from omega.vault import KeyVault
-            return KeyVault().resolve(provider)
+            from omega.vault import VaultCore
+            vault = VaultCore()
+            vault._load_sync()
+            cred = vault._credentials.get(f"{provider}:api_key")
+            if cred:
+                return cred.encrypted_blob
         except (OmegaError, RuntimeError):
-            return os.environ.get(env_var, "")
+            pass
+        return ""
 
     async def search_exa(self, query: str, num_results: int = 10) -> list[str]:
         """Semantic search via Exa. ~1 credit per call."""

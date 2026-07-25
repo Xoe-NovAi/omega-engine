@@ -1,8 +1,9 @@
-# 🔱 STRATEGY INDEX — Canonical Reference
-**Date**: 2026-07-22 | **v5.2 Critical Path Overlay** | **Supersedes**: STRATEGY_INDEX_20260720.md + post-cleanup index that pointed only at CANONICAL_ROADMAP
+# 🔱 STRATEGY INDEX — Canonical Reference (Updated 2026-07-25)
+**Date**: 2026-07-25 | **v6.0 Process-Corrected** | **Supersedes**: v5.2 (2026-07-22)
 
 **Read First (Strategy)**: `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` **v5.2**  
 **🚨 P0 TODAY**: `docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md` — Gemma workhorse (G-1) + WARP pool (W-1)  
+**Process Improvement Plan**: `docs/strategy/PROCESS_IMPROVEMENT_PLAN_20260725.md` **NEW** — fixes 10 systemic issues from 2026-07-25 audit  
 **Architect RUNME**: `data/coordination/ARCHITECT_RUNME_G1_W1_20260722.md`  
 **Forensic evidence**: `docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md`  
 **Fine-grained (no idea lost)**: `docs/strategy/STRATEGY_CORPUS_MAP.md`  
@@ -31,14 +32,13 @@
 ## LAYER 2: ACTIVE SPECS + CORPUS (only if Layer 1 references them)
 | Document | Phase | Purpose |
 |----------|-------|---------|
-| **`docs/strategy/STRATEGY_CORPUS_MAP.md`** | all | **Fine-grained preservation** — every agent idea → ACTIVE/DEFERRED/PARKED/ARCHIVE |
-| **`docs/strategy/FLEET_TEAM_PLAYBOOK.md`** | all | **How the fleet works as one team** — roles, handoffs, freezes, Phase C mission |
-| **`docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md`** | P0 | **Gemma free-tier cliff forensic** — DIG-01…12; workhorse history proof |
+| **`docs/strategy/STRATEGY_CORPUS_MAP.md`** | all | **Fine-grained preservation** |
+| **`docs/strategy/FLEET_TEAM_PLAYBOOK.md`** | all | **How the fleet works as one team** |
+| **`docs/archive/strategy/2026-07-22/GEMMA4_FREE_TIER_FORENSIC_REPORT_20260722.md`** | P0 | **Gemma free-tier cliff forensic** |
 | `docs/research/warp_proxy_pool/WARP_PROXY_POOL_SPEC.md` | P0/W-1 | Multi-namespace WARP proxy pool design |
 | `data/projects/warp-proxy-pool/CONTEXT.md` | P0/W-1 | WARP project one-turn hydration + live blockers |
-| **`docs/strategy/archive/2026-07-22/WARP_PROXY_POOL_HANDOFF_ROC_20260722.md`** | P0/W-1 | **Handoff briefing** — bugs fixed, current state, runbook for Roc |
-| `data/projects/antigravity-multi-account/CONTEXT.md` | G-1b | Antigravity OAuth multi-account (complementary to WARP) |
-| `docs/strategy/LIVING_RESEARCH_OS_SPEC_20260721.md` | D | Phase D build detail — **amended by Ark §3.2** |
+| `data/projects/antigravity-multi-account/CONTEXT.md` | G-1b | Antigravity OAuth multi-account |
+| `docs/strategy/LIVING_RESEARCH_OS_SPEC_20260721.md` | D | Phase D build detail |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | — | Multi-agent coordination |
 | `docs/strategy/HIVEMIND_POST_TEMPLATE.md` | — | Hivemind post quality gate |
 | `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` | — | Subagent delegation |
@@ -50,23 +50,27 @@
 | `data/coordination/ROC_LEGACY_MINING_REPORT_20260721.md` | C | Legacy patterns to port |
 | `data/coordination/GROKSTER_ADVERSARIAL_REVIEW_20260721.md` | C | Strategy adversarial review |
 | `data/coordination/GROK_CLI_CODEBASE_STRATEGY_REVIEW_20260721.md` | C | Structural code+strategy review |
-| `data/coordination/RESEARCHER_QUEUE_DESIGN_20260721.md` | D | Queue/SQLite/gates deep design (deferred parts preserved) |
+| `data/coordination/RESEARCHER_QUEUE_DESIGN_20260721.md` | D | Queue/SQLite/gates deep design |
 | `data/coordination/CARMACK_RESEARCH_AUDIT_20260721.md` | D | Research board compression |
 | `data/coordination/GROKSTER_RESEARCH_QUEUE_ANALYSIS_20260721.md` | D | Fleet-aware research notes |
 | `data/coordination/RESEARCH_JOB_BOARD.yaml` | D | 18 jobs (D-2 input) |
 | `data/coordination/D308_CRITICAL_PATH_TRACKER.yaml` | C | Ubuntu 25.10 env gate |
-| **`docs/sprints/guard-and-distill/index.md`** | C | **Current sprint plan** — LLM-native format (llms-full.txt available) |
-| **`docs/sprints/guard-and-distill/08-research-index.md`** | C | Structured research metadata for sprint |
+| **`docs/sprints/current/AGENT_SPRINT_CARD.md`** | **D Gate** | **ACTIVE SPRINT** — one-page agent card |
+| **`docs/sprints/current/EXECUTION_PLAN_20260725.md`** | **D Gate** | **ACTIVE EXECUTION PLAN v1.1** |
 
 ## LAYER 3: SUPERSEDED BUT KEPT IN TREE (trail only — do not treat as master)
 | Document | Note |
 |----------|------|
 | `docs/strategy/CANONICAL_ROADMAP_20260721.md` | Tactical draft **absorbed into Ark v5.0** |
 | `docs/ROADMAP.md` | Pointer stub → Ark |
+| `docs/strategy/RESEARCH_EXECUTION_UPDATE.md` | Jul 21 plan — absorbed into Game Plan archive |
+| `docs/strategy/HARDENING_PLAN_COMPLETE.md` | Carmack 5-phase plan — historical reference only |
+| `docs/sprints/guard-and-distill/index.md` | **SUPERSEDED** — use `docs/sprints/current/` |
 
 ## LAYER 4: ARCHIVE
 | Location | Contents |
 |----------|----------|
+| `docs/archive/strategy/2026-07-25/` | Game Plan PART1–4B (Jul 21) + GAME_PLAN_COMPLETE — archived 2026-07-25 |
 | `docs/archive/strategy/2026-07-22/` | **Gemma free-tier forensic** + Next Steps plan (2026-07-22) |
 | `docs/archive/strategy/2026-07-21/` | 147 prior strategy docs + **Ark v4.4 full body** (`SOVEREIGN_ARK_BLUEPRINT_CANONICAL.md`) |
 | `docs/archive/strategy/2026-07-21/SOVEREIGN_ARK_BLUEPRINT.md` | Prior “active sprint” Ark log |
@@ -86,17 +90,18 @@ grep -rl "your-term" docs/archive/strategy/2026-07-21/ docs/archive/strategy/202
 
 ---
 
-## Conflict Resolution Rule
+## Conflict Resolution Rule (Updated 2026-07-25)
 
 If two docs disagree:
 
 1. **Law** → `SOVEREIGN_MANDATES.md`
 2. **Strategy / priority** → `SOVEREIGN_ARK_BLUEPRINT.md`
-3. **Live metrics** → `OMEGA_ENGINE.md`
+3. **Sprint execution / process** → `docs/sprints/current/EXECUTION_PLAN_20260725.md` (probe-backed). AGENT_SPRINT_CARD has truth hierarchy.
 4. **Where did idea X go?** → `STRATEGY_CORPUS_MAP.md`
-5. **Phase D implementation detail** → Living Research OS spec **only where it does not contradict Ark §3.2**
-6. Archive / CANONICAL_ROADMAP / old Ark → historical only
+5. **Live metrics** → `OMEGA_ENGINE.md` (but cross-check with machine probes)
+6. **Phase D implementation detail** → Living Research OS spec only where it does not contradict Ark
+7. Archive / CANONICAL_ROADMAP / old Game Plan / superseded docs → historical only
 
 ---
 
-*⬡ OMEGA ⬡ STRATEGY-INDEX ⬡ v5.2 ⬡ 2026-07-22*
+*⬡ OMEGA ⬡ STRATEGY-INDEX ⬡ v6.0 ⬡ 2026-07-25*

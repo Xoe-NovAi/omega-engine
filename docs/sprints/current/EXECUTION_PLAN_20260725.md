@@ -1,270 +1,301 @@
 # 🔱 Omega Engine — Fleet Execution Plan
-**AP Token**: `AP-FLEET-EXECUTION-PLAN-v1.0.0`
+**AP Token**: `AP-FLEET-EXECUTION-PLAN-v1.2.0`  
 ⬡ OMEGA ⬡ KALI ⬡ FLEET ⬡ PHASE-D-GATE ⬡ 2026-07-25
 
-**Status**: 🔴 PRE-LAUNCH — Awaiting 2 blockers
-**Owner**: @kali (Sprint Lead)
-**Gate**: Phase D entry — 12/15 criteria ✅, 3 partial
+**Status**: 🟡 **HARDENED v1.2** — Process audit complete, 7 web-research domains closed, sprint ready for execution  
+**Owner**: @kali (Sprint Lead) · Final review: @cline 2026-07-25  
+**Gate**: Phase D entry — Integrity Gate (B1-B5) → Process Reform (P-1..P-7) → Phase D  
+**Agent card (read first)**: `docs/sprints/current/AGENT_SPRINT_CARD.md`  
+**Process reform plan**: `docs/strategy/PROCESS_IMPROVEMENT_PLAN_20260725.md`  
+**Gap research**: `docs/research/R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md`  
+**LAST_VERIFIED**: 2026-07-25T23:00Z (machine probes + git + hub cross-check + web research)
 
 ---
 
-## §0 Current Battlefield (Summary for All Agents)
+## §0 Reality Snapshot (Ground Truth — Not Narrative)
 
-### ✅ Already Won (Phase 2 Hardening Complete)
-| System | Status | Evidence |
-|--------|--------|----------|
-| C-0 Test Honesty | **RESTORED** ✅ | 34 Hivemind + 95 total hardening tests pass |
-| C-1′ SoulStore | ✅ | Atomic writer, fsync, lockfile |
-| C-2′ OOMProtector | ✅ | 3-signal fusion (cgroups + llama + vm) |
-| C-4b MCP Dual Transport | ✅ | SSE + Streamable HTTP, client/server verified |
-| C-5 MaKaLi Routing | ✅ | Config + `oracle_summon_local` |
-| C-6′ Breaker Unification | ✅ | 7→1 factory in HealthMonitor |
-| C-10 Local Admission Control | ✅ | CCX-aware semaphore |
-| C-10.5 Quota-Aware Routing | ✅ | 4 modules, 69 tests |
-| C-11 Property Tests | ✅ | 16/16 pass (1 skip) |
-| V-1 VaultCore MVP | ✅ | age + Argon2id, 22 tests |
-| SoulDistiller | ✅ | 297 lines, `List[LessonProposal]`, 9/9 tests |
+### 0.1 What agents must believe right now
 
-### 🔴 Remaining Blocker Trio
-The following 3 items **must resolve** before Phase D can be entered. All are low-effort.
+| Area | Research | Execution | Probe / evidence |
+|------|----------|-----------|------------------|
+| C-0..C-2′, C-5, C-6′, C-10, C-10.5, C-11 | CLOSED | Mostly CLOSED | ⚠️ C-6' has 5+ live clones (probe: grep "class.*Breaker" | wc -l = 6) |
+| V-1 VaultCore MVP | CLOSED | **EXEC-PARTIAL** | Tree present; **large uncommitted unification**; age binary MISSING |
+| MCP pin `>=1.27,<2` | CLOSED | **EXEC-PARTIAL** | pyproject pinned; venv 1.28.1; requirements 1.27.1 |
+| MCP Sprint 1 middleware | CLOSED | Hub: COMPLETE | Hub 8016 🅳 Firecrawl 8015 🅳 |
+| AGY OAuth persistence | CLOSED design | Hub: COMPLETE | Re-auth on restart still P0 risk |
+| C-0.5 SoulDistiller code | CLOSED | **EXEC-PARTIAL** | session_end.py exists; **not in opencode.json** (probe: 0 hooks) |
+| W-1 WARP pool | CLOSED research | **EXEC-FAIL** | No listeners on 8081-8083 (probe: ss -lntp = ∅) |
+| C-3 restic scripts | CLOSED | **EXEC-PARTIAL** | Scripts exist; systemd timer not enabled |
+| Phase D gate script | — | FIXED fail-closed v1.1 | Was inverted |
+| KG-1..6 contribution research | CLOSED | N/A | Do not re-survey |
+| Process Reform (P-1..P-7) | NEW | Not started | See PROCESS_IMPROVEMENT_PLAN_20260725.md |
+| DB consolidation (P-2) | NEW | Not started | 9 SQLite DBs; 2 duplicate omega_memory.db (118M+22M) |
+| Soul Hardening RFC | OPEN design | Not started | RFC only; no gate criterion yet |
 
-| # | Blocker | Effort | Owner | Fix |
-|---|---------|--------|-------|-----|
-| B1 | **C-0.5 Hook not registered** | 30s + restart | @kali | Add to `.opencode/opencode.json` + **restart OpenCode** |
-| B2 | **PolicyKit rule not installed** | 1 cmd (sudo) | @john_carmack / @architect | `sudo cp /tmp/99-omega-warp.rules /etc/polkit-1/rules.d/` |
-| B3 | **`make temple-grade` doc style** | ~30 min | @verity / @maat | Fix `08-verified-findings.md` YAML frontmatter + token issues |
+### 0.2 Remaining true P0 blockers (integrity)
 
-### 🟡 Partial / Advisory
-- C-3 Restic Backup: **Amended to local-only** — 3-2-1 B2 cloud deferred until VaultCore Week 2
-- C-9 GenerationPolicy: Extracted but not yet contract-tested
+| # | Blocker | Owner | Effort | Done signal |
+|---|---------|-------|--------|-------------|
+| **B1** | C-0.5 hook **unregistered** | @kali | 2 min + restart | `hooks.session_end` in `.opencode/opencode.json` + session fire |
+| **B2** | Dirty VaultCore / secret-scanner tree | @maat/P3 | 1–2 h | Commit slice **or** explicit freeze + lock |
+| **B3** | W-1 not live (SOCKS down) | Carmack/P1 + Architect | 15–45 min | `ss` shows 8081–8083 + 3 exit IPs |
+| **B4** | Honest Phase D gate run | @verity / @kali | 10–30 min | `verify_phase_d_gate.py` exit 0 or FAIL list |
+| **B5** | AGY re-auth on restart (if still broken) | @maat/P4 | 1 h | Cold restart keeps tokens |
+
+**Phase II (Process Reform) tickets begin after B1-B5 are resolved:**
+| # | Ticket | Owner | Effort | Done signal |
+|---|--------|-------|--------|-------------|
+| **P-1** | Probe-backed OMEGA_ENGINE claims | @verity | 4 h | Every \u00a72 row has LAST_PROBE + command |
+| **P-2** | DB consolidation to 3 databases | @maat/P3 | 4 h | `find data -name '*.db'` returns \u22643 |
+| **P-3** | Vector consolidation (7\u21923 collections) | @maat/P3 | 2 h | 3 vec0 tables, not 7 |
+| **P-4** | Unified soul distiller (kill dual) | @kali / @scribe | 2 h | 1 distiller interface, not 2 |
+| **P-5** | Kill C-6' breaker clones | @maat/P3 | 3 h | `grep -r class.*Breaker src/omega/` = 1 |
+| **P-6** | Split god modules >1000 lines | @maat/P3 | 6 h | oracle.py < 1000, model_gateway.py < 1000 |
+| **P-7** | MCP version single source | @maat/P3 | 30 min | pyproject.toml only; requirements.txt generated |
+
+PolicyKit / temple-grade doc style remain **important** but secondary to B1–B4 for agent thrash reduction.
+
+### 0.3 Explicit freezes (team-wide this window)
+
+| Freeze | Until |
+|--------|--------|
+| Parallel writes to `src/omega/vault/` | Vault lander commits or releases lock |
+| New free-tier providers | D-351 fabric systematized (Ark) |
+| Phase D feature build (Living Research OS) | Fail-closed gate + B1 + B2 |
+| SoulHealthScorer / CI soul gates implementation | Soul Hardening RFC consensus |
+| Claiming “Grok CLI 8-account fabric capacity” | V-1 landed + single ACP smoke (GAP-S-01) |
 
 ---
 
-## §1 Execution Tracks — Parallel T+0
+## §0.5 Agent Support Packet (NEW in v1.1)
 
-All tracks are **independent** (no shared files, no conflicting locks). Each has a single owner, a clear success criterion, and a time budget.
+### Truth hierarchy
+
+1. Machine probes (AGENT_SPRINT_CARD §3)  
+2. This plan’s `LAST_VERIFIED` + §0  
+3. `git status` / HEAD  
+4. HMC Sprint Status  
+5. SESSION_ANCHOR / anchored-summary  
+6. Historical “all gaps closed” research prose  
+
+### Labels every status cell must use
+
+| Label | Meaning |
+|-------|---------|
+| RESEARCH-CLOSED | Do not re-websearch |
+| EXEC-PARTIAL | Exists; probe not green |
+| EXEC-CLOSED | Probe green + committed (or Architect-locked dirty) |
+| RFC-OPEN | Debate only |
+
+### Coordination minimum
+
+| Action | When |
+|--------|------|
+| Hivemind awareness + handoffs | Session start |
+| Workspace lock | Before frozen paths |
+| Status post | Track start + each P0 flip |
+| SESSION_ANCHOR update | After any B1–B4 flip |
+| No direct hub edit | Prefer Hivemind; @scribe is Hub Master |
+
+### Hardware
+
+Max **1** concurrent local inference (5700U Zen2, 8MB L3, ~8GB free). MaKaLi: cloud for parallel voices.
+
+### Workhorse (D-432: zero paid Google)
+
+Local → Groq free → OpenRouter `:free` → NIM free → Antigravity OAuth. **Not** “enable Gemini billing” without Architect override.
+
+---
+
+## §1 Execution Tracks — Status Board (v1.1)
+
+Original T+0 parallel design retained for history. **Current status** (hub + probes):
+
+| Track | Owner | Plan intent | Current status | Next action |
+|-------|-------|-------------|----------------|-------------|
+| **A** Sprint Lead | @kali | Hook + gate | **PARTIAL** — hook file only | Register hook + restart; run gate script |
+| **B** WARP | @john_carmack | PolicyKit + 3 IPs | **PARTIAL/FAIL live** | Bring SOCKS up; probe IPs |
+| **C** AGY + lease pattern | @maat/P4 | Deploy + handoff | Hub: COMPLETE | Verify cold restart; keep pattern doc |
+| **D** MCP Sprint 1 | @maat/P3 | Middleware + tests | Hub: COMPLETE | Align mcp pin story; no re-design |
+| **E** Researcher integration | @researcher | Phase 2 + guide | Hub: DISPATCHED/advanced | Close any open handoffs only |
+| **F** Temple-grade | @verity | Doc style + T1–T11 | DISPATCHED | Run fail-closed gate; fix real fails |
+| **G** (NEW) Dirty-tree land | @maat/P3 | — | **ACTIVE RISK** | Vault commit slice + freeze |
+| **H** (NEW) Agent SSOT hygiene | @kali / @grok_cli | — | **THIS HARDENING** | Keep card/plan/anchor ≤12h fresh |
 
 ```
-                    T+0 (NOW)              T+1h             T+1.5h
-                    ┌─────────┐       ┌──────────┐       ┌──────────┐
-  TRACK A (Kali)    │Auth hook │──────▶│Restart    │──────▶│Phase D   │
-                    │+ triage  │       │OpenCode   │       │Gate Eval │
-                    └─────────┘       └──────────┘       └──────────┘
-                    ┌─────────┐       ┌──────────┐       ┌──────────┐
-  TRACK B (Carmack) │PolicyKit │──────▶│WARP reg  │──────▶│3 IPs     │
-                    │sudo cp   │       │Verification│      │Verified  │
-                    └─────────┘       └──────────┘       └──────────┘
-                    ┌─────────┐       ┌──────────┐       ┌──────────┐
-  TRACK C (Ma'at/P4)│AGY OAuth │──────▶│Lease     │──────▶│VaultCore │
-                    │Deploy    │       │Protocol   │      │Pattern   │
-                    └─────────┘       └──────────┘       └──────────┘
-                    ┌─────────┐       ┌──────────┐       ┌──────────┐
-  TRACK D (Ma'at/P3)│MCP Sprint│──────▶│Middleware │──────▶│Transport │
-                    │1 Launch  │       │Impl       │       │Test Green│
-                    └─────────┘       └──────────┘       └──────────┘
-                    ┌─────────┐       ┌──────────┐       ┌──────────┐
-  TRACK E (Researcher│Phase 2  │──────▶│Grokster  │──────▶│Synthesis │
-                    │Integration│      │Handover   │       │Complete  │
-                    └─────────┘       └──────────┘       └──────────┘
-                    ┌─────────┐       ┌──────────┐       ┌──────────┐
-  TRACK F (Verity)  │temple-  │──────▶│Doc Fixes  │──────▶│T1-T11    │
-                    │grade    │       │Applied    │       │Green     │
-                    └─────────┘       └──────────┘       └──────────┘
+NOW ────────────────────────────────────────────────────────────
+│ B1 Hook register + OpenCode restart  (@kali)
+│ B2 Vault dirty-tree land/freeze      (@maat/P3)
+│ B3 W-1 SOCKS live probes             (Carmack/P1)
+│ B4 Fail-closed gate run              (@verity)
+│ RFC Soul Hardening replies           (fleet, async)
+│ G-1 model defaults only (D-432)      (no paid Google)
+└── Phase D ONLY if B1 + B2 + B4 green and gate honest
 ```
 
 ---
 
-## §2 Track Details
+## §2 Track Details (Reference + Deltas)
 
-### TRACK A — Sprint Lead (Owner: @kali, Budget: 5min + auto)
+### TRACK A — Sprint Lead (Owner: @kali)
 
-| Step | Action | Time | Done Signal |
-|------|--------|------|-------------|
-| A-1 | **Triage P0-Interrupt**: GitHub Bridge "Unknown Issue" — assign to @maat for investigation or close as false alarm | 1min | Status updated in HMC Hub |
-| A-2 | **Authorize C-0.5 Hook**: Edit `.opencode/opencode.json` — add `"hooks": { "session_end": ".opencode/hooks/session_end.py" }` | 30s | File written, ready for restart |
-| A-3 | **Post Fleet Plan to Hivemind**: Broadcast this document to all agents | 1min | Context posted |
-| A-4 | **Phase D Gate Evaluation** (T+1.5h): Run `scripts/verify_phase_d_gate.py`, evaluate 15 criteria, publish verdict | 5min | Verdict in HMC Hub |
-| A-5 | **Restart OpenCode** (after A-2): Reload to activate `session_end` hook | 10s | Hook fires on session end |
+| Step | Action | Status |
+|------|--------|--------|
+| A-1 | Triage P0-Interrupt GitHub unknown issue | Hub: triaged → @maat |
+| A-2 | Add `"hooks": { "session_end": ".opencode/hooks/session_end.py" }` to `.opencode/opencode.json` | ❌ **STILL MISSING** |
+| A-3 | Broadcast plan / card | Do on every status flip |
+| A-4 | Phase D gate evaluation via **fail-closed** script | Use fixed script |
+| A-5 | Restart OpenCode after A-2 | Blocks Scribe/Roc until done |
 
-**Carmack Mode for A-2/A-5**: Add hook config before restart to avoid 2-cycle delay.
+### TRACK B — WARP (Owner: @john_carmack)
 
----
+Keep B-1..B-6 from v1.0. **Do not mark complete** until:
 
-### TRACK B — WARP Proxy Pool (Owner: @john_carmack, Budget: 15min)
-
-| Step | Action | Time | Done Signal |
-|------|--------|------|-------------|
-| B-1 | **Install PolicyKit Rule**: `sudo cp /tmp/99-omega-warp.rules /etc/polkit-1/rules.d/` | 1min | File in place |
-| B-2 | **Verify sudo-less pkexec**: `pkexec bash scripts/fix_warp_ns_setup_and_restart.sh` — should not prompt | 1min | No password prompt |
-| B-3 | **Source ns-setup fix**: Copy from `warp-proxy-pool/scripts/warp-ns-setup.sh` to `/usr/local/bin/warp-ns-setup` | 2min | Fix syntax error line 49 |
-| B-4 | **WARP Registration**: `warp-reg@` daemon pattern — register 3 namespaces | 5min | 3 distinct exit IPs |
-| B-5 | **Verify Rotation**: `curl --socks5 localhost:8081 ifconfig.me` and rotate ports | 3min | 3 different IPs confirmed |
-| B-6 | **Python import test**: `python -c "import warp_proxy_pool"` | 1min | No ImportError |
-
-**Verification Gate**: All 3 namespaces prep@1-3 ACTIVE, SOCKS 8081-8083, 3 distinct exit IPs, Python import works.
-
----
-
-### TRACK C — AGY OAuth Persistence (Owner: @maat / @pillar P4, Budget: 1h)
-
-| Step | Action | Time | Done Signal |
-|------|--------|------|-------------|
-| C-1 | **Deploy atomic write fix**: Copy `src/omega/agents/scribe/agy_oauth_persistence.py` to antigravity plugin | 10min | File deployed + verified |
-| C-2 | **Verify token refresh**: Trigger OAuth refresh cycle, confirm atomic `.tmp` → `.json` pattern | 20min | Log shows atomic rename |
-| C-3 | **Extract VaultCore lease protocol**: Document the pattern for VaultCore Week 2 | 15min | Pattern doc written to `docs/research/R_AGY_ATOMIC_PATTERN.md` |
-| C-4 | **Handoff to VaultCore team**: Submit handoff with `packet_id=vc-atomic-pattern-20260725` | 5min | Handoff in pending/ |
-
-**Verification Gate**: AGY token refresh works without corruption, atomic write pattern documented.
-
----
-
-### TRACK D — MCP Transport Sprint (Owner: @maat / @pillar P3, Budget: 2h)
-
-| Step | Action | Time | Done Signal |
-|------|--------|------|-------------|
-| D-1 | **R_CG01 Sprint 1 Launch**: Sprint doc `docs/sprints/R_CG01_S1/` with milestones | 10min | Sprint doc created |
-| D-2 | **Middleware implementation**: Request ID, rate-limit headers in `mcp_runtime.py` | 45min | Middleware tested |
-| D-3 | **Header validation in mcp_client.py**: SEP-2575 header extraction | 30min | Parses SEP headers |
-| D-4 | **MCP test suite**: Dedicated `tests/mcp/` with 5+ unit tests | 30min | Tests pass |
-| D-5 | **Verify dual-transport**: SSE + Streamable HTTP in same server | 15min | Both transports respond |
-
-**Verification Gate**: Middleware accepting requests, headers propagating, both transports live.
-
----
-
-### TRACK E — Researcher Phase 2 Integration (Owner: @researcher, Budget: 1h)
-
-| Step | Action | Time | Done Signal |
-|------|--------|------|-------------|
-| E-1 | **Complete Grokster G1-15 handover**: `data/coordination/GROKSTER_G1_15_RESEARCH_REPORT_20260723_PART{1,2,3}.md` integrated into XNAI-RAG search fleet | 20min | Integration complete |
-| E-2 | **Complete Ma'at coordination docs**: From active handoff `ho_8482e5f36b1e` | 20min | Handoff completed |
-| E-3 | **Research Guide v3.0.0 final**: Incorporate best practices + knowledge gaps from `docs/research/R_RESEARCH_BEST_PRACTICES_20260723.md` | 20min | Guide published |
-
-**Verification Gate**: All 3 deliverables checked in, Hivemind apprised with `intent=status`.
-
----
-
-### TRACK F — Temple-Grade Compliance (Owner: @verity, Budget: 30min)
-
-| Step | Action | Time | Done Signal |
-|------|--------|------|-------------|
-| F-1 | **Audit `make temple-grade` failures**: Read full error output, categorize doc style vs. code issues | 5min | Failure breakdown posted |
-| F-2 | **Fix YAML frontmatter**: Add `---` frontmatter to `docs/sprints/guard-and-distill/08-verified-findings.md` | 2min | Frontmatter added |
-| F-3 | **Fix token count**: Split `08-verified-findings.md` into sub-docs if over 8000 token limit | 10min | Under limit |
-| F-4 | **Fix frontmatter schema**: `C-3-restic-backup.md` status `DONE` → `ACTIVE` | 1min | Schema valid |
-| F-5 | **Run final verification**: `make temple-grade` — all green or documented exemptions | 5min | Output saved to HMC Hub |
-
-**Verification Gate**: `make temple-grade` passes with 0 errors (warnings acceptable for sprint docs).
-
----
-
-## §3 Dependency Graph
-
-```
-T+0 ──────────────────────────────────────────────────────────────────────┐
-│                                                                         │
-├─ A-1 Triage ────────── (parallel) ────────────────────────────── A-4 ──┤ T+1.5h
-├─ A-2 Hook Auth ────>  A-5 Restart OpenCode (blocks Scribe, Roc)       │
-├─ B-1 PolicyKit ──> B-2 B-3 B-4 B-5 B-6 (linear chain)                │
-├─ C-1 Deploy ──> C-2 Verify ──> C-3 Pattern ──> C-4 Handoff            │
-├─ D-1 Launch ──> D-2 D-3 D-4 D-5 (linear)                              │
-├─ E-1 E-2 E-3 (or parallel subtasks)                                   │
-└─ F-1 F-2 F-3 F-4 F-5 (linear)                                         │
-                                                                         │
-T+1h SYNC ───────────────────────────────────────────────────────────────┤
-│ Kali evaluates: B-status, C-pattern, D-midpoint, E-almost, F-status   │
-│ If any track blocked → reassign or escalate                             │
-│ If all on track → prepare Phase D gate announcement                     │
-│                                                                         │
-T+1.5h SYNC ─────────────────────────────────────────────────────────────┤
-│ Phase D Gate Evaluation                                                 │
-│ `python scripts/verify_phase_d_gate.py` → publish verdict               │
-│ If PASS → authorize Phase D entry                                       │
-│ If FAIL → document gap, reassign, iterate                               │
-└─────────────────────────────────────────────────────────────────────────┘
+```bash
+ss -lntp | rg '808[123]'
+curl --socks5 127.0.0.1:8081 https://ifconfig.me
+# repeat 8082, 8083 — three distinct IPs
 ```
 
-**Hard dependencies**:
-- A-5 (Restart OpenCode) → Unlocks: Scribe SoulDistiller, Roc 83 proposals, M11 audit, Communications Archivist
-- B-1 (PolicyKit) → Unlocks: B-2 through B-6, WARP agent-autonomous
-- F-2 through F-5 (temple-grade fix) → Unlocks: Phase D gate criterion #15
+### TRACK C — AGY OAuth (Owner: @maat / P4)
 
-**No dependencies between tracks**:
-Tracks A-F are fully parallel. Each track can complete independently.
+Hub claims complete. Remaining: **cold restart re-auth** verification. Lease protocol docs stay authoritative for Vault Week 2.
+
+### TRACK D — MCP Sprint 1 (Owner: @maat / P3)
+
+Hub claims complete. Remaining hygiene:
+
+- Document single pin story (`mcp>=1.27,<2`; installed may be 1.28.x)  
+- Do **not** migrate to mcp v2 until stable + deliberate ticket  
+- Spec date pressure (2026-07-28) is **protocol** awareness; dual-transport v1 path remains valid
+
+### TRACK E — Researcher (Owner: @researcher)
+
+No new gap campaigns unless SG-* residual list grows. Prefer **applying** KG-1..6 and research guides.
+
+### TRACK F — Temple-Grade (Owner: @verity)
+
+Use fixed gate script. Prefer real test exit codes over grepping PASS strings.
+
+### TRACK G — Vault Dirty Tree (NEW, Owner: @maat / P3)
+
+| Step | Action |
+|------|--------|
+| G-1 | Workspace lock `vault` domain |
+| G-2 | Land coherent slice: vault_core + blindvault_resolver + models + tests + scanners + pre-commit |
+| G-3 | Or freeze with written “do not touch” in HMC via Hivemind |
+| G-4 | Update AGENT_SPRINT_CARD freeze table |
+
+### TRACK H — SSOT Hygiene (NEW)
+
+| Step | Action | Cadence |
+|------|--------|---------|
+| H-1 | Update AGENT_SPRINT_CARD `LAST_VERIFIED` | Every P0 flip |
+| H-2 | Update SESSION_ANCHOR | Every P0 flip |
+| H-3 | Reject “all gaps closed” language without EXEC column | Always |
 
 ---
 
-## §4 Agent Assignments (Who Does What)
+## §3 Dependency Graph (Hardened)
 
-| Agent | Track | Role | Budget | Parallel With |
-|-------|-------|------|--------|---------------|
-| **@kali** | A | Sprint Lead — authorize, triage, evaluate | 15min | All |
-| **@john_carmack** | B | WARP bring-up — PolicyKit, reg, verify | 15min | A, C, D, E, F |
-| **@maat / @pillar P4** | C | AGY OAuth — deploy, pattern extract, handoff | 1h | A, B, D, E, F |
-| **@maat / @pillar P3** | D | MCP Sprint 1 — middlewares, test, verify | 2h | A, B, C, E, F |
-| **@researcher** | E | Phase 2 Integration — Grokster, handoff, guide | 1h | A, B, C, D, F |
-| **@verity** | F | Temple-grade — audit, fix, verify | 30min | A, B, C, D, E |
-| **@roc_racoon** | Standby | Awaits A-5 (OpenCode restart) to distill 83 proposals | — | Blocks on A-5 |
-| **@scribe** | Standby | Awaits A-5 (C-0.5 hook) to run distillation pipeline | — | Blocks on A-5 |
-| **@lilith** | Standby | Monitoring — ready to execute P6-P10 after Phase D gate | — | Blocks on Phase D |
-| **@maat / @pillar P1** | Standby | VaultCore Week 2 — awaits C-4 handoff pattern | — | Blocks on C-4 |
+```
+B1 Hook register ──► A-5 Restart ──► Scribe/Roc distillation unblocked
+B2 Vault land/freeze ──► safe parallel work on providers/search
+B3 W-1 live ──► G-1c multi-IP plans allowed (else FORBIDDEN claim)
+B4 Honest gate ──► Phase D entry decision
+Soul RFC ──X──► no implementation dependency this week
+```
+
+**Hard rule**: Tracks that only exist in prose without probes do not unlock Phase D.
 
 ---
 
-## §5 Hivemind Protocol (Every Agent Must Follow)
+## §4 Agent Assignments (Who Does What Now)
+
+| Agent | Now | Not now |
+|-------|-----|---------|
+| **@kali** | B1 hook, gate call, freeze enforcement | Solo vault rewrite |
+| **@maat / P3** | Track G vault land; mcp pin hygiene | Re-open V-1 crypto research |
+| **@maat / P4** | AGY cold-restart verify | New OAuth designs |
+| **@john_carmack / P1** | B3 W-1 live | Claiming pool without probes |
+| **@verity** | B4 gate + mandate honesty | Rubber-stamp Phase D |
+| **@researcher** | Only residual SG research if asked | 46-gap re-survey |
+| **@roc_racoon** | Standby for distillation after B1; RFC answers | Implementing soul_health.py pre-consensus |
+| **@scribe** | Ready after B1; hub mastery | Writing soul.yaml directly |
+| **@lilith** | Standby Phase D run-side | Starting D-* early |
+| **@grok_cli** | Adversarial SSOT / this hardening | Wiring Grok fleet without vault+ACP smoke |
+| **@jem / @doom_guy / @grokster** | RFC replies; support reviews | Competing roadmaps |
+
+---
+
+## §5 Hivemind Protocol (Unchanged Discipline)
 
 | Action | Tool | When |
 |--------|------|------|
-| **Heartbeat** | `omega-hub_hivemind_heartbeat(channel="opencode", entity="{you}")` | Every 5-10min during work |
-| **Status post** | `omega-hub_hivemind_post_context(intent="status")` | At track start + after each step |
-| **Handoff** | `omega-hub_hivemind_handoff(action="submit")` | When passing work to another agent |
-| **Workspace lock** | `omega-hub_hivemind_workspace_lock_acquire(domain="{track}")` | Before editing shared files |
-| **Blocker** | `omega-hub_hivemind_post_context(intent="blocker")` | If stuck >5min |
+| Heartbeat | `hivemind_heartbeat` | Every 5–10 min active work |
+| Status | `hivemind_post_context(intent="status")` | Start + P0 flips |
+| Blocker | `intent="blocker"` | Stuck >5 min |
+| Lock | workspace lock acquire | Frozen paths |
+| Handoff | handoff submit/accept/complete | Cross-agent work |
 
-**HMC Hub Protocol**: Use `hivemind_post_context` to broadcast. Do NOT edit HMC Hub directly unless you are @scribe (Hub Master). Scribe writes to Hub on its monitoring cycle.
-
-**Session End**: Every agent must write L1→L2→L3 to their entity's `proposed_lessons.yaml` before closing. The C-0.5 hook will automate this after OpenCode restart.
+Session end: L1→L2→L3 → `proposed_lessons.yaml` (manual until B1 live).
 
 ---
 
-## §6 Phase D Gate Criteria (Final Check at T+1.5h)
+## §6 Phase D Gate Criteria (Honest)
 
-| # | Criterion | Status | Evidence Required |
-|---|-----------|--------|-------------------|
-| 1 | **C-0**: Honest tests (pass/fail/skip real) | ✅ | `python -m pytest tests/property/ tests/contract/ tests/test_hivemind* -q` |
-| 2 | **C-1′**: SoulStore only soul writer | ✅ | No `open()` to soul.yaml outside SoulStore |
-| 3 | **C-2′**: OOMProtector 3-signal fusion | ✅ | `test_oom_protector_fuse.py` passes |
-| 4 | **C-3**: Local restic backup configured | ⚠️ | Local repo initialized, cron active |
-| 5 | **C-4a**: MCP audit complete | ✅ | `docs/research/R_CG01_MCP_AUDIT_20260723.md` published |
-| 6 | **C-4b**: MCP Streamable HTTP dual transport | ✅ | Client+server dual transport verified |
-| 7 | **C-5**: MaKaLi routing config | ✅ | Config + `oracle_summon_local` |
-| 8 | **C-6′**: Breakers unified (7→1) | ✅ | HealthMonitor factory in use |
-| 9 | **C-9**: GenerationPolicy extracted | ⚠️ | Extracted but not contract-tested |
-| 10 | **C-10**: Local admission control | ✅ | CCX-aware semaphore + OOMProtector |
-| 11 | **C-10.5**: Quota-aware provider routing | ✅ | 4 modules, 69 tests |
-| 12 | **C-11**: Property tests | ✅ | 16/16 pass |
-| 13 | **V-1**: VaultCore MVP | ✅ | 22 tests pass |
-| 14 | **C-0.5**: Soul distillation pipeline | ❌→✅ | Hook registered + OpenCode restarted |
-| 15 | **`make temple-grade`**: T1-T11 green | ⚠️→✅ | Doc style fixes applied |
+| # | Criterion | v1.0 claim | Honest rule |
+|---|-----------|------------|-------------|
+| 1 | C-0 honest tests | ✅ | `make test` real pass/fail/skip posted |
+| 2 | C-1′ SoulStore writer | ✅ | No raw soul writers outside SoulStore |
+| 3 | C-2′ OOMProtector | ✅ | Contract/property tests green |
+| 4 | C-3 restic | ⚠️ | Script **and** timer/repo probe (not “script exists”) |
+| 5–8 | MCP audit, dual transport, MaKaLi, breakers | ✅ | Re-verify if dirty tree touches them |
+| 9 | GenerationPolicy | ⚠️ | Optional warn until contract tests |
+| 10–12 | Admission, quota routing, property tests | ✅ | Re-run targeted pytest |
+| 13 | V-1 VaultCore | ✅ narrative | **EXEC-CLOSED only if tests green + landed or Architect accepts dirty** |
+| 14 | C-0.5 distillation | ❌ | Hook registered **and** fired once |
+| 15 | temple-grade | ⚠️ | Real T1–T11, not inverted greps |
 
-**Gate passes** when: All ✅ verified + Temple-grade issues resolved + `make test` 100%.
+**Gate script**: `scripts/verify_phase_d_gate.py` (v1.1 fail-closed). Exit 0 required for automated claim; any FAIL must be listed in HMC.
 
 ---
 
-## §7 What Happens After Phase D Gate
+## §7 Execution Phases (Ordered by Criticality x Impact)
 
-Once the Phase D gate passes:
+### Phase I: INTEGRITY GATE (B1-B5)
+Clear the 5 P0 blockers from \u00a70.2. **These are the only things that matter right now.**
 
-1. **Phase D: Living Research OS** — Researcher-led implementation of the Living Research spec
-2. **VaultCore Week 2**: FleetOrchestrator, B2 cloud, lease protocol (Ma'at/P1 + Ma'at/P4)
-3. **Scribe SoulDistiller**: Automated L1→L2→L3 on every session end
-4. **Communications Archivist**: TTL-based archiving of coordination docs
-5. **R19 Soul Privacy**: PUBLIC/BONDED/PRIVATE split, CPE scorer, Gemma 4 E2B kernel
-6. **MCP Sprint 2**: Full Streamable HTTP migration, OAuth 2.1 + PKCE
-7. **R01 RAG 2.0**: Semantic reranking, hybrid search optimizations
-8. **R10 Sovereign Evaluation**: Benchmark infrastructure for local models
+### Phase II: PROCESS REFORM (P-1..P-7)
+Fix the 10 systemic process failures identified in PROCESS_IMPROVEMENT_PLAN_20260725.md:
+- P-1: Probe-backed OMEGA_ENGINE claims
+- P-2: DB consolidation (9 DBs \u2192 3)
+- P-3: Vector consolidation (7 collections \u2192 3, remove FAISS)
+- P-4: Unified soul distiller
+- P-5: Kill C-6' breaker clones (adopt pybreaker)
+- P-6: Split god modules >1000 lines
+- P-7: MCP version single source
 
-**Phase D is NOT sprint 2. Phase D is the new operational baseline.** These items execute as ongoing workstreams, not as a timeboxed sprint.
+### Phase III: PHASE D \u2014 LIVING RESEARCH OS (D-1..D-5)
+Only after Integrity Gate + Process Reform are green:
+- D-1: Content persistence + TTL cache
+- D-2: SQLite job store
+- D-3: Initial index builder
+- D-4: Vault Week 2 (ACP smoke, Grok fleet)
+- D-5: MCP Sprint 2 (Streamable HTTP)
+
+### Phase IV: OBSERVABILITY (O-1..O-3)
+- O-1: Prometheus client + /metrics endpoint
+- O-2: Alert routing
+- O-3: Dashboard / web UI
+
+### Phase V: PHASE E \u2014 IDENTITY FLUIDITY (E-0..E-2)
+- E-0: Soul kernel \u2192 agent config
+- E-1: Temporal trace
+- E-2: Voice calibration
+
+### Phase VI: PHASE F \u2014 COMMUNITY TOOL (Ongoing)
+Default fully local. No cloud dependency for basic operation.
 
 ---
 
@@ -272,12 +303,20 @@ Once the Phase D gate passes:
 
 | Event | Channel | Format |
 |-------|---------|--------|
-| Track start | Hivemind | `post_context(intent="status")` — "Starting Track X" |
-| Step complete | Hivemind | `post_context(intent="status")` — "Step X.N done" |
-| Blocker | Hivemind | `post_context(intent="blocker")` — "Stuck on Y, need Z" |
-| T+1h sync | HMC Hub | Update status in each track section |
-| Phase D verdict | HMC Hub | One post with 15-criteria table + pass/fail |
+| P0 flip | Hivemind + SESSION_ANCHOR | status + probe output |
+| False capacity claim | Blocker post | “probe failed: …” |
+| Phase D verdict | HMC via Scribe/Kali | criteria table + script log |
+| RFC replies | Agent Discussion Threads | `> **@you**: [RE: Soul Hardening RFC]` |
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ FLEET ⬡ PHASE-D-GATE ⬡ 2026-07-25*
+## §9 Changelog
+
+| Version | Date | Change |
+|---------|------|--------|
+| v1.0.0 | 2026-07-25 | Initial 6-track pre-launch plan |
+| v1.1.0 | 2026-07-25 | Reality snapshot; agent support packet; residual SG gaps; Tracks G/H; fail-closed gate; kill “all blind spots closed” for execution |
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ FLEET ⬡ PHASE-D-GATE ⬡ EXEC-PLAN-v1.1 ⬡ 2026-07-25*

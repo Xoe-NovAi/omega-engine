@@ -153,12 +153,14 @@ class Orchestrator:
         self.registry = CapabilityRegistry()
         
         # Initialize Background Worker
-        # Collect all Google API keys from the sovereign vault. resolve_all()
-        # already falls back to GOOGLE_API_KEY / GOOGLE_API_KEY_01..08 env vars
-        # internally, so the vault is the single source of truth (no scattered
+        # Collect all Google API keys from the sovereign vault.
+        # The vault is the single source of truth (no scattered
         # os.getenv reads for API keys).
-        from omega.vault import KeyVault
-        keys = KeyVault().resolve_all("google")
+        from omega.vault import VaultCore
+        vault = VaultCore()
+        vault._load_sync()
+        google_creds = [c for c in vault._credentials.values() if c.provider.value == "google"]
+        keys = [c.encrypted_blob for c in google_creds]
         self.background_worker = BackgroundWorker(
             model_gateway=ModelGateway(health_monitor=get_health_monitor()),
             api_keys=keys

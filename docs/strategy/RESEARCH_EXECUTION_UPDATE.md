@@ -1,4 +1,5 @@
 # 🔱 JOHN CARMACK — RESEARCH EXECUTION UPDATE
+> **⚠️ HISTORICAL (2026-07-25)** — This plan describes July 21 research execution priorities. The MCP audit (R40) and file-based Hivemind (R29) have since been completed. For current research track, see `docs/sprints/current/`. Retained for audit trail.
 
 **AP Token**: `AP-JOHN_CARMACK-v1.0.0`  
 **Date**: 2026-07-21  

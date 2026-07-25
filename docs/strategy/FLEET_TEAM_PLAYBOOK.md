@@ -90,17 +90,26 @@ Use the role that matches the **ticket**, not your favorite persona.
 
 ---
 
-## §3 Current Mission (Phase C — Integrity First)
+## §3 Current Mission (Phase C → Phase D Gate)
 
 **We are not in “build Living Research OS” mode until the gate is green.**
+
+> **LIVE mission board (2026-07-25+)** — do **not** use the historical queue below as “what’s next” without checking:
+>
+> 1. `docs/sprints/current/AGENT_SPRINT_CARD.md` (1-page probes + freezes)  
+> 2. `docs/sprints/current/EXECUTION_PLAN_20260725.md` v1.1 (§0 Reality Snapshot)  
+> 3. `docs/research/R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md` (SG-01..10 residual)  
+>
+> Many Phase C tickets are **research-closed / exec-partial**. Prefer probe-backed status over this section’s original checklist.
 
 ### Gate to Phase D (hard)
 
 - [ ] **C-0** Honest tests (pass/fail/skip real; Makefile not lying)  
 - [ ] **C-1′** SoulStore only soul writer (flock + fsync + actors)  
 - Prefer also: C-2′, C-5/C-10 before heavy local inference work  
+- **Plus (sprint v1.1)**: C-0.5 hook **registered + fired**; Vault dirty-tree landed or frozen; fail-closed `scripts/verify_phase_d_gate.py`; no phantom W-1 claims without SOCKS probes  
 
-### This week’s ordered queue (do not reorder without Kali + Architect)
+### Historical Phase C ordered queue (archive — superseded by EXECUTION_PLAN for sequencing)
 
 ```
 C-0  → C-1′ → C-2′ → C-3 → C-4a → C-4b
@@ -326,14 +335,22 @@ We are thrashing when:
 PRIORITY   docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
 MEMORY     docs/strategy/STRATEGY_CORPUS_MAP.md
 TEAM       docs/strategy/FLEET_TEAM_PLAYBOOK.md   ← you are here
+PROCESS    docs/strategy/PROCESS_IMPROVEMENT_PLAN_20260725.md  ← NEW — 10 process fixes
 STATE      OMEGA_ENGINE.md
 LAW        SOVEREIGN_MANDATES.md
 OPS        AGENTS.md · HIVEMIND_PROTOCOL.md
 RECOVERY   data/coordination/SESSION_ANCHOR.md
+SPRINT     docs/sprints/current/EXECUTION_PLAN_20260725.md (NOT guard-and-distill)
+CARD       docs/sprints/current/AGENT_SPRINT_CARD.md
 
-NEXT       C-0 → C-1′ → C-2′ → … (Ark §5)
-GATE→D     C-0 + C-1′
-FREEZE     new providers · D before gate · fleet before vault · new CANONICAL docs
+RULES      Every gap table needs RESEARCH + EXECUTION columns
+           Every P0 needs a probe command, not prose
+           Archive old plans on supersession (→ archive/YYYY-MM-DD/)
+           Gate script before phase transition (scripts/verify_phase_d_gate.py)
+           Single source for deps: pyproject.toml only
+
+GATE→D     Integrity Gate (B1-B5) → Process Reform → Phase D
+FREEZE     new providers · D before Process Reform · fleet before vault · new CANONICAL docs
 ```
 
 ---
@@ -343,6 +360,7 @@ FREEZE     new providers · D before gate · fleet before vault · new CANONICAL
 | Doc | Role |
 |-----|------|
 | `SOVEREIGN_ARK_BLUEPRINT.md` | Strategy SSOT / critical path |
+| `PROCESS_IMPROVEMENT_PLAN_20260725.md` | Process & architecture reform — 10 systemic failures fixed |
 | `STRATEGY_CORPUS_MAP.md` | Fine-grained preservation |
 | `STRATEGY_INDEX.md` | Hierarchy |
 | `HIVEMIND_PROTOCOL.md` | Coordination mechanics |

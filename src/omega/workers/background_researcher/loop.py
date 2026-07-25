@@ -35,7 +35,7 @@ from omega.errors import (
     EntityTombstonedError, ModelNotFoundError,
 )
 from omega.oracle.resource_guard import ResourceGuard
-from omega.vault import KeyVault
+from omega.vault import VaultCore
 
 from .models import ResearchTask, TriageResult, GnosisPacket, EnhancedPriorityQueue, RotationState
 from .scheduler import TopicScheduler
@@ -94,11 +94,17 @@ class BackgroundResearcherLoop:
         
         # Unified Pipeline
         from omega.ingestion.pipeline import IngestionPipeline, IngestionConfig
+        from omega.vault import VaultCore
+        vault = VaultCore()
+        vault._load_sync()
+        google_cred = vault._credentials.get("google:api_key")
+        google_key = google_cred.encrypted_blob if google_cred else "placeholder"
+        
         self.pipeline = IngestionPipeline(
             IngestionConfig(
                 entity_name="researcher",
                 model_name="gemma-4-31b-it",
-                api_key=KeyVault().resolve_safe("google", "placeholder"),
+                api_key=google_key,
                 sources=[]
             ),
             # We'll use a generic extractor or the one from the pipeline
@@ -107,7 +113,7 @@ class BackgroundResearcherLoop:
         )
         # Fix the extractor since we passed None
         from omega.ingestion.extractors import GoogleExtractor
-        self.pipeline.extractor = GoogleExtractor(KeyVault().resolve_safe("google", "placeholder"))
+        self.pipeline.extractor = GoogleExtractor(google_key)
 
         # SovereignWorker Unification: Redis-backed queue + ResourceGuard
         self.redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379/0")

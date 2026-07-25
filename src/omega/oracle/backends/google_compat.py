@@ -73,8 +73,11 @@ class GoogleCompatProvider:
     def _resolve_api_key(self) -> str:
         """Resolve Google API key from vault or environment."""
         try:
-            from omega.vault import KeyVault
-            return KeyVault().resolve_safe("google")
+            from omega.vault import VaultCore
+            vault = VaultCore()
+            vault._load_sync()
+            cred = vault._credentials.get("google:api_key")
+            return cred.encrypted_blob if cred else ""
         except Exception:
             return self.config.get("api_key", "") or ""
     

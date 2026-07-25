@@ -1,26 +1,69 @@
-# 🔱 Sovereign Key Vault — Encrypted API Key Management
-# AP: AP-KEY-VAULT-v1.0.0
-# ⬡ OMEGA ⬡ P3 ⬡ vault ⬡ ENGINEERING ⬡ KEY-VAULT
-#
-# Sovereign encrypted storage for all API keys used by the Omega Engine.
-# Replaces plaintext .env as the single source of truth for credentials.
-# AES-256-GCM at rest, signed with Ed25519 for tamper detection.
-#
-# Usage:
-#   from omega.vault import KeyVault
-#   vault = KeyVault()
-#   exa_key = vault.resolve("exa")
-#   all_google_keys = vault.resolve_all("google")
+"""
+Vault Module — Credential Management, Encryption, and Privacy
+AP: AP-VAULT-PKG-v2.0.0
+⬡ OMEGA ⬡ P3 ⬡ vault ⬡ CREDENTIAL-MANAGEMENT
 
-from omega.vault.key_vault import KeyVault, VaultKeyNotFound, VaultLockedError
-from omega.vault.crypto import encrypt, decrypt, generate_master_key, master_key_from_hex
+Implements R_VAULT_SCHEMA_V2.md:
+- VaultCredential, VaultLease, VaultAuditEntry models
+- VaultCore CRUD + lease management
+- BlindVault resolver integration
+- Bury fallback backend
+- CPE scoring for PII exposure
+"""
+
+from .models import (
+    CredentialType,
+    CredentialTier,
+    CredentialStatus,
+    VisibilityTier,
+    VaultCredential,
+    VaultLeaseRequest,
+    VaultLease,
+    VaultAuditEntry,
+    CPEAction,
+    CredentialPIIEntity,
+    CredentialCPESession,
+)
+
+from .crypto import (
+    VaultCrypto,
+    VaultCryptoManager,
+    create_vault_crypto,
+    create_vault_crypto_manager,
+)
+
+from .vault_core import (
+    VaultCore,
+    VaultError,
+    CredentialNotFoundError,
+    LeaseError,
+    QuotaExceededError,
+    create_vault_core,
+)
 
 __all__ = [
-    "KeyVault",
-    "VaultKeyNotFound",
-    "VaultLockedError",
-    "encrypt",
-    "decrypt",
-    "generate_master_key",
-    "master_key_from_hex",
+    # Models
+    "CredentialType",
+    "CredentialTier",
+    "CredentialStatus",
+    "VisibilityTier",
+    "VaultCredential",
+    "VaultLeaseRequest",
+    "VaultLease",
+    "VaultAuditEntry",
+    "CPEAction",
+    "CredentialPIIEntity",
+    "CredentialCPESession",
+    # Crypto
+    "VaultCrypto",
+    "VaultCryptoManager",
+    "create_vault_crypto",
+    "create_vault_crypto_manager",
+    # Core
+    "VaultCore",
+    "VaultError",
+    "CredentialNotFoundError",
+    "LeaseError",
+    "QuotaExceededError",
+    "create_vault_core",
 ]

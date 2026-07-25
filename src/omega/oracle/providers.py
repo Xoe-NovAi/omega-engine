@@ -33,16 +33,19 @@ def _get_cpu_optimizer():
     return _cpu_optimizer
 
 def _resolve_google_api_key() -> str:
-    """Resolve the Google API key from the sovereign vault (env fallback).
+    """Resolve the Google API key from the sovereign vault.
 
     Replaces the previous scattered ``os.environ.get("GOOGLE_API_KEY")`` read
-    so the encrypted KeyVault is the single source of truth for API keys.
+    so the encrypted VaultCore is the single source of truth for API keys.
     """
     try:
-        from omega.vault import KeyVault
-        return KeyVault().resolve_safe("google")
+        from omega.vault import VaultCore
+        vault = VaultCore()
+        vault._load_sync()
+        cred = vault._credentials.get("google:api_key")
+        return cred.encrypted_blob if cred else ""
     except Exception:
-        return os.environ.get("GOOGLE_API_KEY", "")
+        return ""
 
 class BaseProvider(ABC):
     """Base class for all inference providers."""

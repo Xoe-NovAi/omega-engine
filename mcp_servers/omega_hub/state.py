@@ -227,38 +227,18 @@ async def _init_services() -> None:
         # Heavy services are now lazy-loaded via get_service() to reduce startup memory
         # Library, Indexer, Discovery, ResearchEngine, SovereignSearchService
         
-        # Load search keys from Sovereign KeyVault with opencode.json fallback
+        # Load search keys from Sovereign VaultCore
         try:
-            from omega.vault import KeyVault
-            vault = KeyVault()
-            _fc_key = vault.resolve("firecrawl")
-            _exa_key = vault.resolve("exa")
-            logger.info("Search keys successfully resolved from Sovereign KeyVault")
+            from omega.vault import VaultCore
+            vault = VaultCore()
+            _fc_cred = await vault.retrieve_credential("firecrawl", "api_key")
+            _exa_cred = await vault.retrieve_credential("exa", "api_key")
+            _fc_key = _fc_cred.encrypted_blob if _fc_cred else None
+            _exa_key = _exa_cred.encrypted_blob if _exa_cred else None
+            logger.info("Search keys successfully resolved from Sovereign VaultCore")
         except Exception as vault_err:
-            logger.warning("Failed to resolve search keys from KeyVault, checking environment variables: %s", vault_err)
-            _fc_key = os.environ.get("FIRECRAWL_API_KEY")
-            _exa_key = os.environ.get("EXA_API_KEY")
-            
-            if not _fc_key or not _exa_key:
-                try:
-                    with open(PROJECT_ROOT / "opencode.json") as f:
-                        _cfg = json.load(f)
-                    _fc_key = _fc_key or (
-                        _cfg.get("mcp", {})
-                        .get("firecrawl", {})
-                        .get("environment", {})
-                        .get("FIRECRAWL_API_KEY")
-                    )
-                    _exa_key = _exa_key or (
-                        _cfg.get("mcp", {})
-                        .get("exa", {})
-                        .get("headers", {})
-                        .get("x-api-key")
-                    )
-                except Exception as e:
-                    logger.warning("Failed to load search keys from opencode.json fallback: %s", e)
-                    if not _fc_key or not _exa_key:
-                        _fc_key = _exa_key = None
+            logger.warning("Failed to resolve search keys from VaultCore: %s", vault_err)
+            _fc_key = _exa_key = None
         
         sovereign_search_service = None # Lazy-loaded
         

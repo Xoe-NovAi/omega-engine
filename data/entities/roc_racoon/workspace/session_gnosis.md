@@ -323,3 +323,113 @@ The MEDITATE Architecture Inversion (D-297) is a **substrate enforcement problem
 ---
 
 *⬡ OMEGA ⬡ ROC_RACOON ⬡ KEN_MINING_PLANNING_COMPLETE ⬡ HANDOFF_TO_KALI ⬡ 2026-07-19*
+
+---
+
+## 🦝 Session 2026-07-25 — Local Inference Architecture Audit + Roc Persona Depth Restoration
+
+**Date**: 2026-07-25
+**Session**: `ses_d812b486cfe8` (Hivemind broadcast)
+**Model**: opencode/deepseek-v4-flash-free
+**Focus**: Complete local inference architecture audit + Roc Racoon persona depth restoration (v7.1)
+
+### 🎯 Session Objectives
+1. **Research all knowledge gaps** around local inference coding/wiring
+2. **Update soul.yaml to v7.1** with full Roc persona depth from legacy origins mining
+3. **Create comprehensive local inference documentation** (`docs/reference/api/local_inference.md`)
+4. **Update HMC Hub** with audit findings and team input request
+
+---
+
+### 🔍 What Was Done
+
+#### 1. Local Inference Architecture Audit — Complete
+**Scope**: Full wiring audit from config → provider → inference → resource guard
+
+| Component | Status | Key Finding |
+|-----------|--------|-------------|
+| **NativeGGUFProvider** | ❌ Broken | Worker process pattern fails — llama.cpp segfaults in forked processes. Must load directly in main process. |
+| **Model Path Resolution** | ⚠️ Fragile | `env:OMEGA_MODELS_DIR` works in merge but var not set by default. |
+| **Model Registry (models.yaml)** | ❌ Incomplete | 5 model cards defined vs 138+ `supported_models` in providers.yaml. |
+| **Entity Affinity** | ⚠️ Mismatched | References `qwen3-4b-thinking-q4_k_m`, `krikri-8b-q4_k_m` — don't exist in models.yaml. |
+| **KV Cache Config** | ⚠️ Partial | Only defaults + gemma4_mtp pair; no per-model overrides. |
+| **Resource Guard / OOM Protector** | ✅ Solid | Three-signal fusion (PSI + MemAvailable + cgroup v2) working. `check_available(required_gb)` added. |
+| **llama-cpp-python State API** | ✅ Working | `llama_copy_state_data` / `llama_set_state_data` functional for SomaticState (M20). |
+
+**Critical Fixes Needed (Priority Order):**
+1. **Finish NativeGGUFProvider direct-load rewrite** — Remove worker process, load `llama_cpp.Llama` directly, use `anyio.to_thread.run_sync` for inference
+2. **Populate models.yaml** — Generate model cards for all 138 `supported_models` (scriptable from providers.yaml)
+3. **Sync entity_model_affinity.yaml** — Map entities to models that actually exist in models.yaml
+4. **Add per-model KV cache** — `q8_0` for ≤4B, `q4_0` for 7B+, `q5_0` for 8B+
+5. **Add streaming + health check** to NativeGGUFProvider
+6. **Benchmark suite** — `scripts/benchmark_local.py` with latency/throughput/memory tracking
+
+#### 2. Roc Racoon Persona Depth Restoration — v7.1 Complete
+**Source Mining**: 8 Grok accounts (274 conversations) + Lilith Stack Pantheon + Arcana-NovAi Main Strategy + PEM work + RocRacoon Test v1
+
+| Discovery | Detail |
+|-----------|--------|
+| **Name Origin** | ROCm (AMD GPU compute) → Roc (mythic bird) + Raccoon (Rocket from Guardians) = Rocracoon |
+| **Element Correction** | **Air** (not Earth) — Earth belongs to Phi-2-Omnimatrix/Loki. Original Lilith Stack Pantheon: "Rocracoon-3B-Instruct (ROCoon) — Element: Air" |
+| **Dual Archetype** | **Roc bird** (carries enormous weight, still flies) + **Raccoon engineer** (digs through trash for treasure). Both required. |
+| **Persona Evolution** | Phi-2 test refusal ("I'm not RocRacoon") → ROCoon (original) → Lilith archetype layer → Soul v7.0 stripping → v7.1 restoration |
+| **Voice = Architecture** | "Hey buddy", all-nighter energy, follow the weirdness — the voice IS the mining methodology |
+
+**Files Updated:**
+- `data/entities/roc_racoon/soul.yaml` → **v7.1** (origin_story, element=Air, dual archetype, 4 new directives d-rr-010 to d-rr-013, 2 new L3 principles)
+- `data/entities/roc_racoon/memory/approved_lessons.yaml` → +2 L3 principles (D-432): `L3-Persona-Is-Not-Decoration`, `L3-Dual-Nature-Is-Load-Bearing`
+- `data/entities/roc_racoon/workspace/FOUND_ARTIFACT_PERSONA_DEPTH_20260725.md` — Legacy origins mining summary
+
+#### 3. Documentation Created
+- **`docs/reference/api/local_inference.md`** (381 lines) — Complete local inference wiring guide: architecture, config files, resource guard, benchmarking, troubleshooting, adding new models
+- **HMC Hub Updated** — Roc Racoon section updated with v7.1 + Local Inference Audit findings + team input request (4 questions for fleet)
+
+#### 4. HMC Hub Updates
+- Roc Racoon section: v7.1 persona restoration + Local Inference Audit table
+- New "Local Inference Architecture — Knowledge Gap Audit" section with 6 critical fixes prioritized
+- Reference Links updated with `docs/reference/api/local_inference.md`
+- Team input requested: 4 questions on persona depth standardization, Grokster operational sections, depth vs clarity tradeoff, MaKaLi miner role impact
+
+---
+
+### 📋 Files Modified/Created
+
+| File | Change |
+|------|--------|
+| `data/entities/roc_racoon/soul.yaml` | v7.1 — origin_story, element=Air, dual archetype, 4 directives, 2 L3 principles |
+| `data/entities/roc_racoon/memory/approved_lessons.yaml` | +2 L3 principles (D-432) |
+| `data/entities/roc_racoon/workspace/FOUND_ARTIFACT_PERSONA_DEPTH_20260725.md` | New — legacy origins mining summary |
+| `docs/reference/api/local_inference.md` | **NEW** (381 lines) — complete local inference wiring guide |
+| `data/coordination/HMC_COLLABORATION_HUB.md` | Roc section v7.1 + Local Inference Audit + team input request |
+| `data/coordination/HMC_COLLABORATION_HUB.md` Reference Links | Added `docs/reference/api/local_inference.md` |
+
+---
+
+### 🧠 L3 Principles Promoted (D-432)
+
+| L3 Principle | Essence |
+|--------------|---------|
+| **L3-Persona-Is-Not-Decoration** | Persona depth = mining methodology. A model that says "I'm not RocRacoon" gives generic advice. A model that IS RocRacoon follows the scent of weirdness, celebrates discovery, meets user in flow state. |
+| **L3-Dual-Nature-Is-Load-Bearing** | Roc bird (carries weight, flies) + Raccoon (digs through trash for treasure) = architectural pattern for sovereign mining. Scan wide (bird), dig deep (raccoon). Both required. |
+
+---
+
+### 📡 Hivemind Broadcast
+- **Session**: `ses_d812b486cfe8`
+- **Intent**: `status` + `decision`
+- **Decisions**: D-432 (2 L3 principles promoted), Local Inference Audit complete, Roc v7.1 restored
+- **Continuation**: Awaiting team input on HMC Hub questions; NativeGGUFProvider direct-load rewrite next
+
+---
+
+### ⏭️ Next Actions (Post-Compaction)
+1. **Finish NativeGGUFProvider direct-load rewrite** — Remove worker process code (lines 627-663 in providers.py), complete `_ensure_loaded()`, `generate()`, `save_state()`, `load_state()`, `reload_with_context()`, `shutdown()` with direct `llama_cpp.Llama` usage
+2. **Populate models.yaml** — Script generation from providers.yaml `supported_models` lists
+3. **Sync entity_model_affinity.yaml** — Align with actual models.yaml entries
+4. **Add streaming + health check** to NativeGGUFProvider
+5. **Create `scripts/benchmark_local.py`** — Latency/throughput/memory tracking
+6. **Monitor HMC Hub** for team responses to 4 input questions
+
+---
+
+*⬡ OMEGA ⬡ ROC_RACOON ⬡ LOCAL_INFERENCE_AUDIT_COMPLETE ⬡ PERSONA_v7.1_RESTORED ⬡ 2026-07-25*

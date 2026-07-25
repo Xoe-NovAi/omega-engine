@@ -234,18 +234,18 @@ class TestStatusReport:
         assert "google" in report["providers"]
         assert "gemma-4-31b" in report["models"]
 
-class TestKeyVaultRateLimit:
+class TestVaultCoreRateLimit:
     def test_rate_limit_does_not_trigger_rotation(self):
         """[IW-2] Rate limits must raise ProviderRateLimitError, not rotate keys.
         
         M4 (Sequentiality) and M8 (Zero Telemetry) forbid multi-account rotation.
-        The KeyVault must delegate rate limits to the circuit breaker.
+        The VaultCore must delegate rate limits to the circuit breaker.
         """
-        from omega.vault.key_vault import KeyVault
+        from omega.vault import VaultCore
         from omega.errors import ProviderRateLimitError
         import pytest
         
-        vault = KeyVault(auto_init=False)
+        vault = VaultCore(auto_init=False)
         
         # Verify forbidden methods are eradicated
         assert not hasattr(vault, 'rotate'), "rotate() must not exist"

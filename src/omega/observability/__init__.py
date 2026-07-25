@@ -149,6 +149,8 @@ class EventType:
     RESEARCH_COMPLETE = "research.complete"
     TOKEN_CONSUMPTION = "token.consumption"
     ENTITY_INTERACTION = "entity.interaction"
+    # Vault audit events
+    VAULT_AUDIT = "vault.audit"
 
 
 # ── Forensics Manager (Last Gasp Protocol) ────────────────────────────
@@ -1111,36 +1113,135 @@ class ObservabilityEngine:
             logger.debug("MetricsDB performance recording failed: %s", e)
 
     # ── Record error to MetricsDB ────────────────────────────────────
-    def record_metrics_error(
+    def record_vault_audit(
         self,
-        error_type: str,
-        error_message: str,
+        action: str,
+        credential_ref: str,
+        success: bool,
+        details: str = "",
         trace_id: Optional[str] = None,
-        provider: Optional[str] = None,
-        context: Optional[Dict[str, Any]] = None,
-        entity_id: Optional[str] = None,
     ) -> None:
-        """Record an error to MetricsDB (separate from forensics recording).
-
-        [id-soft: vet-040] Event System — structured error logging.
+        """Record a VaultCore audit event to the observability system.
+        
+        This integrates the VaultCore JSONL audit log with the observability
+        engine's event stream, UFL writer, and MetricsDB.
+        
+        Args:
+            action: The action performed (store, get, decrypt, lease_grant, lease_release, etc.)
+            credential_ref: The credential reference (provider:key_id)
+            success: Whether the operation succeeded
+            details: Additional details about the operation
+            trace_id: Optional trace ID for correlation
         """
-        metrics_db = self.metrics_db
-        if not metrics_db:
-            return
-        try:
-            metrics_db.record_error(
-                error_type=error_type,
-                error_message=error_message,
-                trace_id=trace_id,
-                provider=provider,
-                context=context,
-                entity_id=entity_id,
-            )
-        except (OSError, RuntimeError) as e:
-            logger.debug("MetricsDB error recording failed: %s", e)
+        # Generate trace_id if not provided
+        if trace_id is None:
+            trace_id = new_trace_id()
+        
+        # Create event data
+        event_data = {
+            "action": action,
+            "credential_ref": credential_ref,
+            "success": success,
+            "details": details,
+        }
+        
+        # Log to event stream
+        self.log_event(
+            EventType.VAULT_AUDIT if hasattr(EventType, 'VAULT_AUDIT') else "vault.audit",
+            trace_id,
+            event_data,
+        )
+        
+        # Record to MetricsDB if available
+        if self._metrics_db:
+            try:
+                ts = int(time.time() * 1000)
+                self._metrics_db._conn.execute(
+                    """INSERT INTO vault_audit (ts, trace_id, action, credential_ref, success, details)
+                       VALUES (?, ?, ?, ?, ?, ?)""",
+                    (ts, trace_id, action, credential_ref, int(success), details)
+                )
+                self._metrics_db._conn.commit()
+            except Exception as e:
+                logger.debug("MetricsDB vault audit recording failed: %s", e)
+        
+        # Also write to UFL (Unified Forensic Ledger)
+        if self._ufl:
+            try:
+                self._ufl.append({
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "trace_id": trace_id,
+                    "event_type": "vault.audit",
+                    "data": event_data,
+                })
+            except Exception as e:
+                logger.debug("UFL vault audit write failed: %s", e)
 
-    # ── Record breaker transition to MetricsDB ────────────────────────
-    def record_breaker_transition(
+    def record_vault_audit(
+        self,
+        action: str,
+        credential_ref: str,
+        success: bool,
+        details: str = "",
+        trace_id: Optional[str] = None,
+    ) -> None:
+        """Record a VaultCore audit event to the observability system.
+        
+        This integrates the VaultCore JSONL audit log with the observability
+        engine's event stream, UFL writer, and MetricsDB.
+        
+        Args:
+            action: The action performed (store, get, decrypt, lease_grant, lease_release, etc.)
+            credential_ref: The credential reference (provider:key_id)
+            success: Whether the operation succeeded
+            details: Additional details about the operation
+            trace_id: Optional trace ID for correlation
+        """
+        # Generate trace_id if not provided
+        if trace_id is None:
+            trace_id = new_trace_id()
+        
+        # Create event data
+        event_data = {
+            "action": action,
+            "credential_ref": credential_ref,
+            "success": success,
+            "details": details,
+        }
+        
+        # Log to event stream
+        self.log_event(
+            EventType.VAULT_AUDIT,
+            trace_id,
+            event_data,
+        )
+        
+        # Record to MetricsDB if available
+        if self._metrics_db:
+            try:
+                ts = int(time.time() * 1000)
+                self._metrics_db._conn.execute(
+                    """INSERT INTO vault_audit (ts, trace_id, action, credential_ref, success, details)
+                       VALUES (?, ?, ?, ?, ?, ?)""",
+                    (ts, trace_id, action, credential_ref, int(success), details)
+                )
+                self._metrics_db._conn.commit()
+            except Exception as e:
+                logger.debug("MetricsDB vault audit recording failed: %s", e)
+        
+        # Also write to UFL (Unified Forensic Ledger)
+        if self._ufl:
+            try:
+                self._ufl.append({
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "trace_id": trace_id,
+                    "event_type": "vault.audit",
+                    "data": event_data,
+                })
+            except Exception as e:
+                logger.debug("UFL vault audit write failed: %s", e)
+
+    def record_metrics_error(
         self,
         provider: str,
         from_state: str,

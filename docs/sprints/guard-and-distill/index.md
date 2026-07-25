@@ -3,7 +3,7 @@ schema_version: "1.0"
 document_type: "sprint_plan"
 document_id: "guard-and-distill-2026-07-22"
 title: "Sprint Plan: Guard & Distill"
-status: "ACTIVE"
+status: "SUPERSEDED"
 version: "1.0.0"
 date: "2026-07-22"
 owner: "kali"
@@ -31,6 +31,10 @@ llm_metadata:
   modular_pages: true
   llms_txt_generated: true
 ---
+
+> **⚠️ SUPERSEDED 2026-07-25** — This sprint plan is superseded by `docs/sprints/current/EXECUTION_PLAN_20260725.md` v1.1 (hardened agent-support plan with ground-truth probes).  
+> Several items marked **DONE** below are **not** execution-closed per probe-backed status.  
+> **Do not use this plan for sprint execution.** Retained for historical ticket specs only.
 
 # 🔱 Sprint Plan: Guard & Distill
 **AP Token**: `AP-SPRINT-GUARD-DISTILL-v1.0.0`

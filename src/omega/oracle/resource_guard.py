@@ -186,6 +186,13 @@ class LegacyOOMWrapper:
             )
         return False
 
+    async def check_available(self, required_gb: float) -> bool:
+        """Check if required memory is available with safety margin.
+        
+        Delegates to the underlying OOMProtector's check_available method.
+        """
+        return await self._protector.check_available(required_gb)
+
     async def get_pressure_snapshot(self):
         """Get detailed pressure snapshot for diagnostics"""
         return await self._protector.get_snapshot()
@@ -251,17 +258,30 @@ class ResourceGuard:
         # below the safety threshold. This is a hard stop, not a soft-failure.
         # Uses model_spec to compute an accurate estimate of required RAM.
         _model_name_for_oom = (model_spec or {}).get("name") or "unknown"
-        if not await self._oom_protector.check(model_name=_model_name_for_oom, model_spec=model_spec):
+        
+        # Calculate required memory from model_spec
+        required_gb = 0.0
+        if model_spec:
+            ram_mb = model_spec.get("ram_mb", 0)
+            context_window = model_spec.get("context_window", 8192)
+            # Model RAM + KV cache (0.5 GB per 8K context) + reserve (1 GB)
+            required_gb = (ram_mb / 1024.0) + (context_window / 8192.0) * 0.5 + 1.0
+        else:
+            # Fallback: default model + reserve
+            required_gb = 1.7 + 0.5 + 1.0  # 3.2 GB
+        
+        if not await self._oom_protector.check_available(required_gb):
             from omega.errors import InferenceOOMError
             if model_spec:
                 raise InferenceOOMError(
                     f"Refusing model load '{_model_name_for_oom}': "
-                    f"estimated {model_spec.get('ram_mb', '?')} MB + 1 GB margin "
+                    f"estimated {required_gb:.1f} GB required "
+                    f"(model {ram_mb} MB + KV cache + 1 GB reserve) "
                     f"exceeds available RAM"
                 )
             raise InferenceOOMError(
                 f"Refusing model load: available RAM below "
-                f"{self._oom_protector.min_ram_mb} MB safety threshold"
+                f"{self._oom_protector.config.reserve_gb} GB safety threshold"
             )
 
         task_id = _get_current_task_id()

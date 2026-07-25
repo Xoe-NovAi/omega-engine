@@ -1,0 +1,96 @@
+# Pre-commit hooks for Omega Engine
+# Install: pre-commit install
+# Run: pre-commit run --all-files
+
+repos:
+  # Standard Python hooks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-toml
+      - id: check-merge-conflict
+      - id: debug-logger
+      - id: detect-private-key
+      - id: detect-aws-credentials
+        args: ['--allow-missing-credentials']
+
+  # Python formatting
+  - repo: https://github.com/psf/black
+    rev: 24.4.2
+    hooks:
+      - id: black
+        language_version: python3.12
+        args: ["--line-length=100"]
+
+  # Import sorting
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        args: ["--profile=black", "--line-length=100"]
+
+  # Type checking
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.10.0
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-requests, types-PyYAML, types-cryptography]
+        args: ["--ignore-missing-imports", "--no-strict-optional"]
+
+  # Security - detect secrets
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: ['--baseline', '.secrets.baseline']
+        exclude: 'tests/|docs/|data/'
+
+  # Custom Omega Engine hooks
+  - repo: local
+    hooks:
+      # Detect API keys in source code (os.environ.get, os.getenv patterns)
+      - id: omega-detect-api-keys
+        name: Detect API keys in source code
+        entry: python -m src.omega.tools.detect_api_keys
+        language: python
+        types: [python]
+        args: ['--strict']
+        pass_filenames: true
+
+      # Ensure VaultCore is used instead of os.environ.get for API keys
+      - id: omega-enforce-vaultcore
+        name: Enforce VaultCore usage for API keys
+        entry: python -m src.omega.tools.enforce_vaultcore
+        language: python
+        types: [python]
+        args: ['--strict']
+        pass_filenames: true
+
+      # Verify no KeyVault imports (deprecated)
+      - id: omega-no-keyvault
+        name: No KeyVault imports
+        entry: python -c "import sys, ast; [sys.exit(1) for n in ast.walk(ast.parse(open(f).read())) if isinstance(n, ast.ImportFrom) and n.module and 'key_vault' in n.module.lower() for f in sys.argv[1:]]"
+        language: python
+        types: [python]
+        pass_filenames: true
+
+      # Check for hardcoded secrets patterns
+      - id: omega-no-hardcoded-secrets
+        name: No hardcoded secrets
+        entry: python -m src.omega.tools.check_hardcoded_secrets
+        language: python
+        types: [python, yaml, toml, json]
+        pass_filenames: true
+
+      # Verify Temple-Grade compliance
+      - id: omega-temple-grade
+        name: Temple-Grade compliance check
+        entry: make temple-grade
+        language: system
+        pass_filenames: false
+        stages: [commit, push]
+        always_run: true

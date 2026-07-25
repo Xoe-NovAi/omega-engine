@@ -7,6 +7,10 @@
 
 ---
 
+> **⚠️ RESEARCH-VS-EXECUTION CORRECTION (2026-07-25):** This document correctly reports **research** closure for 5 critical domains. It does **not** assert execution closure.  
+> Always cross-reference `docs/sprints/current/EXECUTION_PLAN_20260725.md` §0 (probe-backed status) before acting on any claim.  
+> See `R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md` §1 for residual execution gaps (SG-01..10).
+
 ## §1 Summary — What We Researched
 
 | Domain | Gap ID | Source Docs | Status | Confidence |
@@ -195,4 +199,36 @@ Previous docs assumed "Zen 3-like performance." This is a correction — but it 
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ RESEARCH ⬡ GAP-CLOSURE ⬡ 2026-07-25*
+---
+
+## §9 Residual Meta-Gaps (Agent Support — 2026-07-25T21:35Z)
+
+> **Correction**: §§1–8 closed **research** questions. They did **not** prove execution closure.
+> Full audit: `docs/research/R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md`
+> Live ops card: `docs/sprints/current/AGENT_SPRINT_CARD.md`
+> Plan: `docs/sprints/current/EXECUTION_PLAN_20260725.md` v1.1
+
+| Gap | Name | Research | Execution | Owner |
+|-----|------|----------|-----------|-------|
+| **SG-01** | SSOT plan/hub/anchor drift | CLOSED (this audit) | OPEN — keep LAST_VERIFIED ≤12h | @kali |
+| **SG-02** | Phase D gate vanity/inverted checks | CLOSED | FIXED in `scripts/verify_phase_d_gate.py` v1.1 | @verity |
+| **SG-03** | C-0.5 hook unregistered | CLOSED | OPEN — register + restart | @kali |
+| **SG-04** | Dirty VaultCore tree hazard | CLOSED | OPEN — land or freeze | @maat/P3 |
+| **SG-05** | W-1 phantom (no SOCKS) | CLOSED | OPEN — live bring-up | Carmack/P1 |
+| **SG-06** | Workhorse under D-432 | CLOSED chain | PARTIAL — enforce model card | Architect+Kali |
+| **SG-07** | Soul Hardening pre-consensus | RFC open | No impl until replies | fleet |
+| **SG-08** | Playbook stale mission queue | Noted | Point to sprint card | @kali |
+| **SG-09** | mcp pin vs installed 1.28.x | CLOSED | Align docs | @maat/P3 |
+| **SG-10** | “No blind spots” overclaim | CLOSED | Ban without EXEC column | all |
+
+**Immediate actions** (replace §7 “pin mcp TODAY” if already pinned):
+
+| # | Action | Owner | Status |
+|---|--------|-------|--------|
+| 1 | Pin mcp `>=1.27,<2` | @maat/P3 | ✅ pyproject done; align requirements story |
+| 2 | Register C-0.5 + restart OpenCode | @kali | ❌ OPEN |
+| 3 | Vault dirty-tree commit/freeze | @maat/P3 | ❌ OPEN |
+| 4 | W-1 SOCKS probe green | Carmack/P1 | ❌ OPEN (no 8081–8083) |
+| 5 | Run fail-closed gate script | @verity | 🔄 script fixed; run + post |
+
+*⬡ OMEGA ⬡ KALI ⬡ RESEARCH ⬡ GAP-CLOSURE ⬡ 2026-07-25 · residual SG-* v1.1*

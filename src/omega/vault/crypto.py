@@ -1,179 +1,200 @@
-# 🔱 Sovereign Key Vault — AES-256-GCM Encryption Layer
-# AP: AP-KEY-VAULT-CRYPTO-v1.0.0
-# ⬡ OMEGA ⬡ P3 ⬡ vault ⬡ crypto ⬡ KEY-VAULT
-#
-# Authenticated encryption for the vault file at rest.
-# Uses AES-256-GCM via Python's cryptography library.
-#
-# [id-soft: vet-008] Zone Memory — encrypted vault mirrors the tagged
-# allocation approach: every block carries its own authentication tag.
+"""
+VaultCore Crypto — Argon2id Key Derivation + age Encryption
+AP: AP-VAULT-CRYPTO-v2.0.0
+⬡ OMEGA ⬡ P3 ⬡ vault_crypto ⬡ ARGON2ID-AGE
 
+Implements R_VAULT_SCHEMA_V2.md encryption architecture:
+- Argon2id(memory=64MB, iterations=3, parallelism=4, salt=16 bytes)
+- age.Encrypt(key) → age-armored ciphertext
+"""
 
-# DocRef: docs/architecture/Sovereign_Sieve_Sovereign_Sieve.md
 import os
-import base64
 import logging
-import keyring
-import json
-from pathlib import Path
 from typing import Optional
-
-from omega.errors import OmegaError
 
 logger = logging.getLogger(__name__)
 
+# Optional dependencies - gracefully handle missing
+try:
+    import age
+    from argon2 import PasswordHasher
+    _HAS_CRYPTO = True
+except ImportError:
+    _HAS_CRYPTO = False
+    logger.warning("age or argon2 not installed — crypto operations will fail")
 
 
-class VaultCryptoError(OmegaError):
-    """Raised on encryption/decryption failures."""
-    pass
-
-
-def generate_master_key() -> bytes:
-    """Generate a new 256-bit master key.
-    
-    Returns:
-        32 random bytes suitable for AES-256-GCM.
+class VaultCrypto:
     """
-    return os.urandom(32)
-
-
-def get_or_create_master_key() -> bytes:
-    """Retrieve master key from OS keyring or generate a new one.
+    Vault encryption using Argon2id + age.
     
-    Sovereign Pattern: Uses OS-level secure storage with a local fallback.
+    Key Derivation:
+    Master Password → Argon2id(memory=64MB, iterations=3, parallelism=4, salt=16 bytes) → 32-byte key
+    → age.X25519Recipient(key) → age-armored ciphertext
     """
-    service_id = "omega-engine"
-    account_id = "vault-master"
-    master_key_file = Path.home() / ".config" / "omega" / "vault_master.key"
     
-    # 1. Try OS Keyring
-    # Temporarily disabled to debug InvalidTag issues in headless environments
-    # try:
-    #     key_b64 = keyring.get_password(service_id, account_id)
-    #     if key_b64:
-    #         return base64.b64decode(key_b64)
-    # except Exception:
-    #     pass
-
-    # 2. Try fallback file
-    if master_key_file.exists():
-        try:
-            key_b64 = master_key_file.read_text().strip()
-            return base64.b64decode(key_b64)
-        except Exception as e:
-            logger.debug("Failed to read master key from file (will generate new): %s", e)
-            pass
-
-    # 3. Generate new key
-    new_key = os.urandom(32)
-    key_b64 = base64.b64encode(new_key).decode('utf-8')
-    
-    try:
-        keyring.set_password(service_id, account_id, key_b64)
-    except Exception as e:
-        logger.debug("Failed to store key in OS keyring (falling back to file): %s", e)
-        pass
-    
-    master_key_file.parent.mkdir(parents=True, exist_ok=True)
-    master_key_file.write_text(key_b64)
-    master_key_file.chmod(0o600)
-    
-    return new_key
-
-
-def master_key_from_hex(hex_str: str) -> bytes:
-    """Convert a hex-encoded master key to bytes.
-    
-    Args:
-        hex_str: 64-character hex string (32 bytes encoded).
+    def __init__(self, master_key: str):
+        """
+        Initialize vault crypto.
         
-    Returns:
-        32 bytes suitable for AES-256-GCM.
+        Args:
+            master_key: Master password/key for encryption
+        """
+        if not _HAS_CRYPTO:
+            raise RuntimeError("Crypto dependencies not installed. Run: pip install age argon2-cffi")
         
-    Raises:
-        VaultCryptoError: If the hex string is not exactly 64 characters.
-    """
-    try:
-        key = bytes.fromhex(hex_str)
-        if len(key) != 32:
-            raise VaultCryptoError(
-                f"Master key must be 32 bytes (64 hex chars), got {len(key)} bytes"
-            )
-        return key
-    except ValueError as e:
-        raise VaultCryptoError(f"Invalid master key hex: {e}")
-
-
-def encrypt(plaintext: str, master_key: bytes) -> str:
-    """Encrypt a string with AES-256-GCM.
-    
-    Uses a random 12-byte nonce per encryption. Returns a base64-encoded
-    string containing nonce + ciphertext + GCM tag.
-    
-    Args:
-        plaintext: The string to encrypt.
-        master_key: 32-byte AES-256 key.
-        
-    Returns:
-        Base64-encoded string: base64(nonce + ciphertext + tag).
-        
-    Raises:
-        VaultCryptoError: If encryption fails.
-    """
-    try:
-        from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-        
-        plain_bytes = plaintext.encode("utf-8")
-        nonce = os.urandom(12)
-        aesgcm = AESGCM(master_key)
-        ciphertext = aesgcm.encrypt(nonce, plain_bytes, None)
-        del plain_bytes  # Memory hygiene: clear plaintext bytes (P5 F-3)
-        # ciphertext already contains the GCM tag (appended by AESGCM)
-        payload = nonce + ciphertext
-        return base64.b64encode(payload).decode("ascii")
-    except ImportError:
-        raise VaultCryptoError(
-            "cryptography package not installed. "
-            "Install with: pip install cryptography"
+        self._ph = PasswordHasher(
+            time_cost=3,
+            memory_cost=65536,  # 64 MB
+            parallelism=4,
+            hash_len=32,
+            salt_len=16
         )
-    except (RuntimeError, OSError) as e:
-        raise VaultCryptoError(f"Encryption failed: {e}")
-
-
-def decrypt(ciphertext_b64: str, master_key: bytes) -> str:
-    """Decrypt a base64-encoded AES-256-GCM ciphertext.
+        self._master_key = master_key
+        self._derived_key: Optional[bytes] = None
+        self._salt: Optional[bytes] = None
     
-    Args:
-        ciphertext_b64: Base64 string from encrypt().
-        master_key: 32-byte AES-256 key (must match encryption key).
+    def _derive_key(self, salt: bytes) -> bytes:
+        """
+        Derive encryption key from master password + salt.
         
-    Returns:
-        Original plaintext string.
+        Uses Argon2id hash which includes salt. We extract the raw key
+        from the hash for use with age.
+        """
+        # Argon2id hash includes salt; we use the hash as key material
+        hash_str = self._ph.hash(self._master_key + salt.decode())
+        # Use first 32 bytes of hash as key
+        return hash_str.encode()[:32]
+    
+    def encrypt(self, plaintext: str) -> str:
+        """
+        Encrypt plaintext JSON to age-armored ciphertext.
         
-    Raises:
-        VaultCryptoError: If decryption fails (wrong key, tampered data, etc.).
-    """
-    try:
-        from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+        Returns:
+            salt_hex:age_ciphertext (salt prepended for key derivation on decrypt)
+        """
+        salt = os.urandom(16)
+        key = self._derive_key(salt)
+        recipient = age.X25519Recipient(key)
+        ciphertext = age.encrypt(recipient, plaintext.encode())
+        # Prepend salt for key derivation on decrypt
+        return salt.hex() + ":" + ciphertext
+    
+    def decrypt(self, armored: str) -> str:
+        """
+        Decrypt age-armored ciphertext to plaintext JSON.
         
-        payload = base64.b64decode(ciphertext_b64)
-        if len(payload) < 12:
-            raise VaultCryptoError("Ciphertext too short — missing nonce or data")
+        Args:
+            armored: salt_hex:age_ciphertext format
+            
+        Returns:
+            Decrypted plaintext
+        """
+        salt_hex, ciphertext = armored.split(":", 1)
+        salt = bytes.fromhex(salt_hex)
+        key = self._derive_key(salt)
+        identity = age.X25519Identity(key)
+        return age.decrypt(identity, ciphertext).decode()
+    
+    def rotate_key(self, old_armored: str, new_master_key: str) -> str:
+        """
+        Re-encrypt ciphertext with new master key.
         
-        nonce = payload[:12]
-        ciphertext = payload[12:]
-        del payload  # Memory hygiene: clear raw payload (P5 F-3)
+        Args:
+            old_armored: Existing age-armored ciphertext
+            new_master_key: New master password
+            
+        Returns:
+            New age-armored ciphertext
+        """
+        # Decrypt with current key
+        plaintext = self.decrypt(old_armored)
+        
+        # Create new crypto instance with new key
+        new_crypto = VaultCrypto(new_master_key)
+        
+        # Re-encrypt
+        return new_crypto.encrypt(plaintext)
 
-        aesgcm = AESGCM(master_key)
-        plaintext = aesgcm.decrypt(nonce, ciphertext, None)
-        result = plaintext.decode("utf-8")
-        del plaintext  # Memory hygiene: clear decrypted bytes (P5 F-3)
-        return result
-    except ImportError:
-        raise VaultCryptoError(
-            "cryptography package not installed. "
-            "Install with: pip install cryptography"
-        )
-    except (RuntimeError, OSError) as e:
-        raise VaultCryptoError(f"Decryption failed: {e}")
+
+class VaultCryptoManager:
+    """
+    Manages multiple vault crypto instances for different key versions.
+    
+    Supports key rotation by maintaining multiple key versions.
+    """
+    
+    def __init__(self):
+        self._ciphers: Dict[str, VaultCrypto] = {}
+        self._default_version: Optional[str] = None
+    
+    def add_key(self, version: str, master_key: str, default: bool = False) -> None:
+        """Add a key version."""
+        self._ciphers[version] = VaultCrypto(master_key)
+        if default or self._default_version is None:
+            self._default_version = version
+    
+    def get_cipher(self, version: Optional[str] = None) -> VaultCrypto:
+        """Get cipher for version (or default)."""
+        version = version or self._default_version
+        if version not in self._ciphers:
+            raise ValueError(f"No cipher for version: {version}")
+        return self._ciphers[version]
+    
+    def encrypt(self, plaintext: str, version: Optional[str] = None) -> str:
+        """Encrypt with specified or default version."""
+        cipher = self.get_cipher(version)
+        return cipher.encrypt(plaintext)
+    
+    def decrypt(self, armored: str) -> str:
+        """
+        Decrypt trying all key versions.
+        
+        Tries each version until one succeeds.
+        """
+        last_error = None
+        for version, cipher in self._ciphers.items():
+            try:
+                return cipher.decrypt(armored)
+            except Exception as e:
+                last_error = e
+                continue
+        raise ValueError(f"Failed to decrypt with any key version: {last_error}")
+    
+    def rotate(self, old_version: str, new_version: str, new_master_key: str) -> None:
+        """Rotate from old version to new version."""
+        if old_version not in self._ciphers:
+            raise ValueError(f"Old version not found: {old_version}")
+        
+        old_cipher = self._ciphers[old_version]
+        new_cipher = VaultCrypto(new_master_key)
+        
+        # Re-encrypt all data (in practice, this would be done by a migration script)
+        self._ciphers[new_version] = new_cipher
+        self._default_version = new_version
+
+
+# =============================================================================
+# FACTORY
+# =============================================================================
+
+def create_vault_crypto(master_key: str) -> VaultCrypto:
+    """Factory: create VaultCrypto with master key."""
+    return VaultCrypto(master_key)
+
+
+def create_vault_crypto_manager() -> VaultCryptoManager:
+    """Factory: create VaultCryptoManager."""
+    return VaultCryptoManager()
+
+
+# =============================================================================
+# EXPORTS
+# =============================================================================
+
+__all__ = [
+    "VaultCrypto",
+    "VaultCryptoManager",
+    "create_vault_crypto",
+    "create_vault_crypto_manager",
+]

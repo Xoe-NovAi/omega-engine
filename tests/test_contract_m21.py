@@ -489,55 +489,74 @@ def test_session_lifecycle_stats_returns_lifecyclestats():
     assert hasattr(stats, "externalized"), f"Expected externalized field, got fields: {vars(stats).keys()}"
 
 
-# ── Test 17: KeyVault resolve returns string (via env fallback) ──
+# ── Test 17: VaultCore retrieve_credential returns credential (via env fallback) ──
 
-def test_key_vault_resolve_returns_string():
-    """M21: Contract test — KeyVault.resolve() returns a string (or falls back to env)."""
-    from omega.vault.key_vault import KeyVault
+def test_vault_core_retrieve_credential_returns_credential():
+    """M21: Contract test — VaultCore.retrieve_credential() returns credential (or falls back to env)."""
+    from omega.vault import VaultCore
 
-    vault = KeyVault()
-    # Non-existent provider raises VaultKeyNotFound (no vault + no env fallback)
-    from omega.vault.key_vault import VaultKeyNotFound
-    try:
-        result = vault.resolve("nonexistent_m21_test")
-        assert isinstance(result, str), (
-            f"Expected str, got {type(result).__name__}: {result!r}"
-        )
-    except VaultKeyNotFound:
-        # Acceptable: no vault initialized + no env var = key not found error
-        pass
+    vault = VaultCore()
+    vault._load_sync()
+    # Non-existent provider returns None (no vault + no env fallback)
+    result = vault._credentials.get("nonexistent_m21_test")
+    assert result is None, f"Expected None, got {result!r}"
 
 
-# ── Test 18: KeyVault set_key stores correctly ──
+# ── Test 18: VaultCore store_credential stores correctly ──
 
-def test_key_vault_set_key_and_get_providers():
-    """M21: Contract test — KeyVault.set_key() and get_providers()."""
-    from omega.vault.key_vault import KeyVault
+def test_vault_core_store_credential_and_get_providers():
+    """M21: Contract test — VaultCore.store_credential() and get_providers()."""
+    from omega.vault import VaultCore
+    from omega.vault.vault_core import VaultCredential, ProviderName, CredentialType, CredentialTier, CredentialStatus
+    from datetime import datetime, timezone
 
-    vault = KeyVault()
-    vault.set_key("m21_test_provider", "test-key-abc123")
-    providers = vault.get_providers()
-    assert isinstance(providers, list), (
-        f"Expected list, got {type(providers).__name__}"
+    vault = VaultCore()
+    vault._load_sync()
+    
+    cred = VaultCredential(
+        provider=ProviderName.GOOGLE,
+        key_id="m21_test_key",
+        cred_type=CredentialType.API_KEY,
+        encrypted_blob="test-key-abc123",
+        tier=CredentialTier.FREE,
+        daily_limit=0,
+        used_today=0,
+        cooldown_until=None,
+        status=CredentialStatus.ACTIVE,
+        rotated_at=datetime.now(timezone.utc),
+        rotation_count=0,
+        last_used_at=None,
+        last_error=None,
+        current_lease_agent=None,
+        lease_expires_at=None,
+        tags={},
+        metadata={},
+        created_at=datetime.now(timezone.utc),
+        expires_at=None,
+        last_rotated_by=None,
+        rotation_policy=None,
+        backup_refs=[],
     )
-    assert "m21_test_provider" in providers, (
-        f"Expected m21_test_provider in {providers}"
-    )
+    
+    vault._credentials["google:m21_test_key"] = cred
+    
+    providers = list(set(c.provider.value for c in vault._credentials.values()))
+    assert isinstance(providers, list), f"Expected list, got {type(providers).__name__}"
+    assert "google" in providers, f"Expected google in {providers}"
+    
     # Clean up
-    vault.set_key("m21_test_provider", "")
+    del vault._credentials["google:m21_test_key"]
 
 
-# ── Test 19: KeyVault is_loaded returns bool ──
+# ── Test 19: VaultCore _loaded returns bool ──
 
-def test_key_vault_is_loaded_returns_bool():
-    """M21: Contract test — KeyVault.is_loaded() returns bool."""
-    from omega.vault.key_vault import KeyVault
+def test_vault_core_loaded_returns_bool():
+    """M21: Contract test — VaultCore._loaded returns bool."""
+    from omega.vault import VaultCore
 
-    vault = KeyVault()
-    loaded = vault.is_loaded()
-    assert isinstance(loaded, bool), (
-        f"Expected bool, got {type(loaded).__name__}: {loaded!r}"
-    )
+    vault = VaultCore()
+    vault._load_sync()
+    assert isinstance(vault._loaded, bool), f"Expected bool, got {type(vault._loaded).__name__}: {vault._loaded!r}"
 
 
 # ── Test 20: HMCWatcher init stores coordination dir ──

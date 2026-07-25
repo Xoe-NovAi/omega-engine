@@ -24,7 +24,7 @@
 | Metric | Value | Status | LAST_VERIFIED |
 |--------|-------|--------|---------------|
 | **Strategy SSOT** | **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.2** + `STRATEGY_CORPUS_MAP.md` | ✅ Unified; fine-grained corpus preserved | 2026-07-22 |
-| **Current phase** | **Phase C — Infrastructure Hardening** (C-0…C-9) | 🔴 Active | 2026-07-22 |
+| **Current phase** | **Phase D Gate — Infrastructure Hardening complete pending P0 integrity checks** | 🟡 Active | 2026-07-25 |
 | Tests | **1,572 collected** · **50/50 core+contract+chaos+SoulStore pass** · 77/77 contract historically green | ✅ C-0 complete, C-10/C-2'/C-6'/C-1' verified | 2026-07-22 |
 | Mandates | **25 (M1-M25)** | ✅ All enforced (v3.7.0) | 2026-07-19 |
 | **Mandate Compliance** | **21/25 FULL (84%)** — 2 Partial, 2 Fail | ⚠️ M5, M11 remain (Soul distillation pipeline) | 2026-07-22 |
@@ -37,11 +37,14 @@
 | **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles | ✅ Gate Γ criterion met | 2026-07-20 |
 | **Antigravity OAuth** | **PARTIAL** — Plugin present; auth often **API-key only**; re-login may be required for Path B | 🟡 G-1b path | 2026-07-22 |
 | **Gemma 4 31B free workhorse** | **DEAD for fat OpenCode** — free-tier input TPM **16k** since **2026-07-15** (was workhorse May–Jul) | 🚨 **G-1 P0** — needs billing/OAuth | 2026-07-22 |
-| **WARP Proxy Pool** | **OPERATIONAL** — 3-node pool active (8081/8082/8083); SystemCallFilter + port-template bugs fixed & committed | ✅ **W-1 FIXED** | 2026-07-22 |
+| **WARP Proxy Pool** | **NOT LIVE** — No SOCKS listeners on 8081-8083 per `ss -lntp` probe at 2026-07-25 | 🚨 **W-1 P0** — ns-setup truncated; SystemCallFilter bugs fixed but not deployed | 2026-07-25 |
 | **Circuit Breakers** | **1 canonical** (`HealthMonitor.AsyncCircuitBreaker`) + 6 deprecated clones | ✅ C-6' Unified, sliding-window mode added | 2026-07-22 |
 
 ### Active Deferred Items
 | Item | Status | Details |
+| **VaultCore (src/omega/vault/)** | **EXEC-PARTIAL** — Dirty tree uncommitted; large unification in progress; freeze zone in effect | 🟡 V-1 P0 — needs land or freeze | 2026-07-25 |
+| MCP pin version: pyproject `>=1.27,<2`; venv 1.28.1; requirements 1.27.1 | 🟡 3 files disagree — needs alignment | 2026-07-25 |
+| C-3 Backup (restic) | **EXEC-PARTIAL** — Scripts exist; systemd timer not enabled | 🟡 Needs timer enablement | 2026-07-25 |
 |------|--------|---------|
 | Firecrawl MCP | ⏳ Needs Streamable HTTP migration | SSE on :8015 |
 | Local inference ratio ≥80% | 🟡 Aspirational target | Gate configurable, default OFF |
@@ -52,7 +55,7 @@
 | Headless Subagent Pool (D-303) | 🟡 Planned | 24 accounts (8 Grok + 8 Copilot + 8 Cline) |
 | Antigravity Two-Track (D-304) | ✅ **W-1 FIXED**; V-1 complete | WARP pool operational; AGY multi-account after vault |
 | **G-1 Workhorse continuity** | 🚨 **P0 ACTIVE** — needs billing/OAuth | Forensic + critical path docs 2026-07-22 |
-| **W-1 WARP pool bring-up** | ✅ **FIXED** — bugs committed, re-run fix script to apply | SystemCallFilter + port-template fixes |
+| **W-1 WARP pool bring-up** | 🟡 **FIXES APPLIED BUT NOT DEPLOYED** — SOCKS not listening (8081-8083) — SystemCallFilter + port-template bugs committed |
 | Hive Evolution (D-305) | 🟡 Architecture designed | Hivemind → Hive, 5 layers, 7 sprints |
 | Arch Soul Integration (D-306) | 🟡 Design complete | Torment: Nameless One, companions, factions |
 | Torment WAD (D-307) | 🟡 Scaffold defined | Awaiting Researcher Phase 1-4 |
@@ -156,4 +159,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-22 | Version: v1.8.0 | Strategy SSOT: SOVEREIGN_ARK_BLUEPRINT v5.1 + STRATEGY_CORPUS_MAP | Phase C active (C-0/C-1'/C-2'/C-4a/C-5/C-6' complete) | Tests: 50/50 core+contract+chaos+SoulStore green | Mandate compliance: 84% | Fine-grained agent strategy preserved | Antigravity OAuth fixed | Circuit breakers unified | SoulStore atomic writer deployed*
+*Last Updated: 2026-07-25 | Version: v1.8.1 | Strategy SSOT: SOVEREIGN_ARK_BLUEPRINT v5.2 + STRATEGY_CORPUS_MAP | Phase D Gate active (P0 B1-B5 remain) | Tests: 50/50 core+contract+chaos+SoulStore green | Mandate compliance: 84% | W-1 NOT LIVE (corrected 2026-07-25) | V-1 EXEC-PARTIAL (dirty tree) | C-3 EXEC-PARTIAL (timer not enabled) | MCP pin version inconsistent*

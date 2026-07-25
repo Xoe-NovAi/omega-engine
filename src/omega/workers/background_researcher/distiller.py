@@ -338,12 +338,17 @@ class T2Backend:
     
     @staticmethod
     def _resolve_key(provider: str, env_var: str) -> str:
-        """Resolve API key from vault, falling back to env var."""
+        """Resolve API key from vault."""
         try:
-            from omega.vault import KeyVault
-            return KeyVault().resolve(provider)
+            from omega.vault import VaultCore
+            vault = VaultCore()
+            vault._load_sync()
+            cred = vault._credentials.get(f"{provider}:api_key")
+            if cred:
+                return cred.encrypted_blob
         except (OmegaError, RuntimeError):
-            return os.environ.get(env_var, "")
+            pass
+        return ""
     
     def __init__(self):
         self.circuit = JemCircuitBreaker()
@@ -496,12 +501,17 @@ class T3Backend:
     
     @staticmethod
     def _resolve_key(provider: str, env_var: str) -> str:
-        """Resolve API key from vault, falling back to env var."""
+        """Resolve API key from vault."""
         try:
-            from omega.vault import KeyVault
-            return KeyVault().resolve(provider)
+            from omega.vault import VaultCore
+            vault = VaultCore()
+            vault._load_sync()
+            cred = vault._credentials.get(f"{provider}:api_key")
+            if cred:
+                return cred.encrypted_blob
         except (OmegaError, RuntimeError):
-            return os.environ.get(env_var, "")
+            pass
+        return ""
     
     def __init__(self):
         self.circuit = JemCircuitBreaker()

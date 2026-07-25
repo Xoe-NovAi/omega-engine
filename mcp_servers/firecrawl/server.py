@@ -22,23 +22,21 @@ from mcp_servers.omega_hub.middleware import m9_safe
 
 FIRECRAWL_PORT = int(os.environ.get("MCP_PORT", "8015"))
 
-# Resolve API key — vault first, then env fallback
+# Resolve API key — vault only (no env fallback)
 FIRECRAWL_API_KEY: str | None = None
 try:
-    from omega.vault.key_vault import KeyVault
-    vault = KeyVault()
-    FIRECRAWL_API_KEY = vault.resolve("firecrawl")
+    from omega.vault import VaultCore
+    vault = VaultCore()
+    # Use synchronous load for module-level initialization
+    vault._load_sync()
+    cred = vault._credentials.get("firecrawl:api_key")
+    FIRECRAWL_API_KEY = cred.encrypted_blob if cred else None
     if FIRECRAWL_API_KEY:
-        logging.info("Firecrawl API key resolved from Sovereign Key Vault")
-except Exception:
-    pass
-
-if not FIRECRAWL_API_KEY:
-    FIRECRAWL_API_KEY = os.environ.get("FIRECRAWL_API_KEY")
-    if FIRECRAWL_API_KEY:
-        logging.info("Firecrawl API key resolved from environment fallback")
-    else:
-        logging.error("No FIRECRAWL_API_KEY found — Firecrawl MCP will fail on calls")
+        logging.info("Firecrawl API key resolved from Sovereign VaultCore")
+except Exception as e:
+    logging.warning(f"VaultCore resolution failed: {e}")
+    FIRECRAWL_API_KEY = None
+    logging.error("No FIRECRAWL_API_KEY found in VaultCore — Firecrawl MCP will fail on calls")
 
 mcp = FastMCP("Sovereign Firecrawl", port=FIRECRAWL_PORT, host="127.0.0.1", log_level="WARNING")
 

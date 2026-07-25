@@ -1,985 +1,814 @@
 """
-VaultCore — Unified Credential Store with Lease Protocol
+VaultCore — Core CRUD + Lease Manager + Quota Logic
 AP: AP-VAULT-CORE-v2.0.0
-M1: AnyIO — async runtime
-M7: Local-First — encrypted at rest, no cloud
-M11: Soul Integrity — audit trail for all access
-M25: Streaming Resilience — lease TTL + heartbeat
+⬡ OMEGA ⬡ P3 ⬡ vault_core ⬡ CREDENTIAL-MANAGEMENT
 
-Extends existing KeyVault with:
-- 32 heterogeneous credentials (8 AGY OAuth, 8 Grok auth.json, 8 Google GCP SA, 8 OpenRouter/Exa/Firecrawl)
-- Argon2id key derivation → python-age (X25519 + ChaCha20-Poly1305) encryption
-- Lease protocol with TTL, heartbeat, graceful fallback
-- Quota awareness: daily limits, cooldown tracking, tier awareness
-- Audit trail: rotation timestamps, lease history, access logging
+Implements R_VAULT_SCHEMA_V2.md:
+- VaultCredential CRUD
+- M25 lease management
+- Quota awareness
+- BlindVault integration
+- Bury fallback
 """
-# [heritage: anyio 2024] M1 AnyIO — async runtime
-# [heritage: age 2021] Actually Good Encryption — X25519 + ChaCha20-Poly1305 (python-age package)
-# [heritage: argon2 2015] Argon2id — memory-hard KDF
+
+import json
+import logging
+from datetime import datetime, timedelta
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
 import anyio
-import json
-import os
-import tempfile
-import logging
-from pathlib import Path
-from datetime import datetime, timezone, timedelta
-from typing import Dict, List, Optional, Any, Literal
-from dataclasses import dataclass, field, asdict
-from enum import Enum
-from abc import ABC, abstractmethod
 
-from omega.errors import OmegaError, ProviderRateLimitError, ProviderAuthError
-from omega.vault.crypto import encrypt, decrypt, VaultCryptoError, get_or_create_master_key
+from omega.soul_store import get_soul_store
 
-logger = logging.getLogger("omega.vault.core")
+from .models import (
+    CredentialType,
+    CredentialStatus,
+    CredentialTier,
+    VisibilityTier,
+    VaultCredential,
+    VaultLease,
+    VaultLeaseRequest,
+    VaultAuditEntry,
+    CPEAction,
+    CredentialCPESession,
+)
 
-
-# =============================================================================
-# ENUMS & DATA MODELS (from R_VAULT_SCHEMA_V2.md)
-# =============================================================================
-
-class CredentialType(str, Enum):
-    OAUTH = "oauth"           # AGY: access_token + refresh_token
-    API_KEY = "api_key"       # OpenRouter, Exa, Firecrawl
-    GCP_SA = "gcp_sa"         # Google Service Account JSON
-    GROK_AUTH = "grok_auth"   # Grok CLI auth.json blob
-    GROK_CONFIG = "grok_config"  # Grok CLI config.toml blob
+logger = logging.getLogger(__name__)
 
 
-class CredentialTier(str, Enum):
-    FREE = "free"
-    PAID = "paid"
-    BYOK = "byok"             # Bring Your Own Key (OpenRouter BYOK)
-
-
-class CredentialStatus(str, Enum):
-    ACTIVE = "active"
-    EXHAUSTED = "exhausted"
-    COOLING = "cooling"
-    LOCKED = "locked"
-    EXPIRED = "expired"
-
-
-class ProviderName(str, Enum):
-    ANTIGRAVITY = "antigravity"
-    GROK = "grok"
-    GOOGLE = "google"
-    OPENROUTER = "openrouter"
-    EXA = "exa"
-    FIRECRAWL = "firecrawl"
-
-
-@dataclass
-class VaultCredential:
-    """Unified credential record for FleetOrchestrator."""
-    
-    # Identity
-    provider: ProviderName
-    key_id: str
-    cred_type: CredentialType
-    
-    # Encrypted Payload
-    # Encryption: python-age ScryptRecipient(password) -> age encrypt(plaintext_json)
-    encrypted_blob: str
-    
-    # Quota & Tier Management
-    tier: CredentialTier = CredentialTier.FREE
-    daily_limit: int = 0
-    used_today: int = 0
-    cooldown_until: Optional[datetime] = None
-    status: CredentialStatus = CredentialStatus.ACTIVE
-    
-    # Rotation & Audit
-    rotated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    rotation_count: int = 0
-    last_used_at: Optional[datetime] = None
-    last_error: Optional[str] = None
-    
-    # M25 Lease Management
-    current_lease_agent: Optional[str] = None
-    lease_expires_at: Optional[datetime] = None
-    
-    # Metadata
-    tags: Dict[str, str] = field(default_factory=dict)
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    
-    def __post_init__(self):
-        if isinstance(self.provider, str):
-            self.provider = ProviderName(self.provider)
-        if isinstance(self.cred_type, str):
-            self.cred_type = CredentialType(self.cred_type)
-        if isinstance(self.tier, str):
-            self.tier = CredentialTier(self.tier)
-        if isinstance(self.status, str):
-            self.status = CredentialStatus(self.status)
-        if isinstance(self.cooldown_until, str):
-            self.cooldown_until = datetime.fromisoformat(self.cooldown_until)
-        if isinstance(self.rotated_at, str):
-            self.rotated_at = datetime.fromisoformat(self.rotated_at)
-        if isinstance(self.last_used_at, str) and self.last_used_at:
-            self.last_used_at = datetime.fromisoformat(self.last_used_at)
-        if isinstance(self.lease_expires_at, str) and self.lease_expires_at:
-            self.lease_expires_at = datetime.fromisoformat(self.lease_expires_at)
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Serialize for JSON storage."""
-        d = asdict(self)
-        # Convert enums to strings
-        d["provider"] = self.provider.value
-        d["cred_type"] = self.cred_type.value
-        d["tier"] = self.tier.value
-        d["status"] = self.status.value
-        # Convert datetimes to ISO strings
-        for key in ["cooldown_until", "rotated_at", "last_used_at", "lease_expires_at"]:
-            if d[key] and isinstance(d[key], datetime):
-                d[key] = d[key].isoformat()
-        return d
-    
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "VaultCredential":
-        return cls(**data)
-    
-    @property
-    def ref(self) -> str:
-        """Unique reference string: provider:key_id"""
-        return f"{self.provider.value}:{self.key_id}"
-    
-    def is_available(self) -> bool:
-        """Check if credential is available for leasing."""
-        now = datetime.now(timezone.utc)
-        
-        if self.status != CredentialStatus.ACTIVE:
-            return False
-        
-        if self.cooldown_until and now < self.cooldown_until:
-            return False
-        
-        if self.daily_limit > 0 and self.used_today >= self.daily_limit:
-            return False
-        
-        if self.lease_expires_at and now < self.lease_expires_at:
-            return False  # Currently leased
-        
-        return True
-    
-    def is_expired(self) -> bool:
-        """Check if OAuth token or lease is expired."""
-        now = datetime.now(timezone.utc)
-        if self.lease_expires_at and now >= self.lease_expires_at:
-            return True
-        return False
-
-
-@dataclass
-class VaultLeaseRequest:
-    """Request to lease a credential for a time-bounded operation."""
-    agent_id: str
-    provider: ProviderName
-    key_id: Optional[str] = None
-    ttl_seconds: int = 300
-    purpose: str = "inference"
-
-
-@dataclass
-class VaultLease:
-    """Granted lease for a credential."""
-    lease_id: str
-    credential_ref: str
-    agent_id: str
-    purpose: str
-    granted_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    expires_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc) + timedelta(seconds=300))
-    heartbeat_count: int = 0
-    last_heartbeat: Optional[datetime] = None
-    
-    def is_valid(self) -> bool:
-        return datetime.now(timezone.utc) < self.expires_at
-    
-    def heartbeat(self):
-        self.heartbeat_count += 1
-        self.last_heartbeat = datetime.now(timezone.utc)
-    
-    def to_dict(self) -> Dict[str, Any]:
-        d = asdict(self)
-        d["provider"] = self.credential_ref.split(":")[0] if ":" in self.credential_ref else ""
-        for key in ["granted_at", "expires_at", "last_heartbeat"]:
-            if d[key] and isinstance(d[key], datetime):
-                d[key] = d[key].isoformat()
-        return d
-
-
-# =============================================================================
-# AGE ENCRYPTION WRAPPER (python-age — ScryptRecipient for password-based encryption)
-# =============================================================================
-
-class AgeEncryption:
-    """
-    Password-based age encryption using python-age's ScryptRecipient.
-    
-    Per R_VAULT_SCHEMA_V2.md:
-    - Master password -> ScryptRecipient (age's built-in password KDF)
-    - Encrypts plaintext with X25519 + ChaCha20-Poly1305
-    - Output: age-armored ciphertext (starts with "age-encryption.org/v1")
-    
-    C-2: Package is `python-age` (NOT `age`).
-    C-3: Uses parse_recipient/parse_identity/encrypt_bytes/decrypt_bytes API.
-    """
-    
-    def __init__(self, master_password: str):
-        self.master_password = master_password
-    
-    def encrypt(self, plaintext: str) -> str:
-        """
-        Encrypt plaintext using age with password-based encryption.
-        
-        Returns age-armored ciphertext string.
-        
-        C-2: Uses `python-age` package (NOT `age`).
-        C-3: Uses encrypt_bytes() API.
-        """
-        try:
-            from age import ScryptRecipient, encrypt_bytes
-        except ImportError:
-            raise VaultCryptoError(
-                "python-age package not installed. "
-                "Install with: pip install python-age"
-            )
-        
-        # Create recipient from password (ScryptRecipient handles KDF internally)
-        recipient = ScryptRecipient(self.master_password)
-        
-        # Encrypt
-        plaintext_bytes = plaintext.encode('utf-8')
-        encrypted = encrypt_bytes(plaintext_bytes, [recipient])
-        
-        return encrypted.decode('ascii') if isinstance(encrypted, bytes) else encrypted
-    
-    def decrypt(self, ciphertext: str) -> str:
-        """
-        Decrypt age-armored ciphertext using password.
-        
-        C-2: Uses `python-age` package (NOT `age`).
-        C-3: Uses decrypt_bytes() API.
-        """
-        try:
-            from age import ScryptIdentity, decrypt_bytes
-        except ImportError:
-            raise VaultCryptoError(
-                "python-age package not installed. "
-                "Install with: pip install python-age"
-            )
-        
-        # Create identity from password (ScryptIdentity handles KDF internally)
-        identity = ScryptIdentity(self.master_password)
-        
-        # Decrypt
-        ciphertext_bytes = ciphertext.encode('ascii') if isinstance(ciphertext, str) else ciphertext
-        decrypted = decrypt_bytes(ciphertext_bytes, [identity])
-        
-        return decrypted.decode('utf-8')
-
-
-# =============================================================================
-# VAULT CORE — MAIN IMPLEMENTATION
-# =============================================================================
-
-class VaultCoreError(OmegaError):
-    """VaultCore specific errors."""
+class VaultError(Exception):
+    """Base exception for vault operations."""
     pass
 
 
-class CredentialNotFound(VaultCoreError):
+class CredentialNotFoundError(VaultError):
+    """Raised when credential is not found."""
     pass
 
 
-class LeaseExpired(VaultCoreError):
+class LeaseError(VaultError):
+    """Raised when lease operation fails."""
     pass
 
 
-class LeaseConflict(VaultCoreError):
+class QuotaExceededError(VaultError):
+    """Raised when credential quota is exceeded."""
     pass
-
-
-# Backward compatibility alias
-VaultError = VaultCoreError
 
 
 class VaultCore:
     """
-    Unified credential store with lease protocol for FleetOrchestrator.
+    Core vault operations for FleetOrchestrator.
     
-    Features:
-    - 32 heterogeneous credentials (8 per provider category)
-    - Argon2id + age encryption at rest
-    - Lease protocol with TTL, heartbeat, M25 compliance
-    - Quota awareness: daily limits, cooldown, tier
-    - Audit trail: rotation, lease history, access logging
-    - Atomic writes (tmp -> fsync -> rename)
+    Manages credentials, leases, quotas, and privacy tiers.
+    Integrates with BlindVault resolver and Bury fallback.
     """
     
     def __init__(
         self,
-        vault_dir: Optional[Path] = None,
-        master_password: Optional[str] = None,
-        auto_init: bool = True,
+        vault_path: Path = Path("data/vault"),
+        master_key: Optional[str] = None,
+        crypto_manager=None,
+        blindvault_resolver=None,
+        bury_backend=None,
     ):
-        # Vault directory
-        if vault_dir is None:
-            vault_dir = Path.home() / ".config" / "omega" / "vault"
-        self.vault_dir = Path(vault_dir)
-        self.vault_dir.mkdir(parents=True, exist_ok=True)
+        """
+        Initialize vault core.
         
-        # Credentials database (SQLite for queries, JSON for portability)
-        self.creds_db = self.vault_dir / "credentials.json"
-        self.leases_db = self.vault_dir / "leases.json"
-        self.audit_log = self.vault_dir / "audit.log"
+        Args:
+            vault_path: Path to vault data directory
+            master_key: Master key for encryption (if using crypto)
+            crypto_manager: Crypto manager instance
+            blindvault_resolver: BlindVault resolver instance
+            bury_backend: Bury backend instance
+        """
+        self.vault_path = vault_path
+        self.vault_path.mkdir(parents=True, exist_ok=True)
         
-        # Master password for Argon2id + age
-        self.master_password = master_password or os.environ.get("VAULT_MASTER_PASSWORD")
-        if not self.master_password:
-            # Generate and store in keyring
-            self.master_password = self._get_or_create_master_password()
+        self.master_key = master_key
+        self.crypto_manager = crypto_manager
+        self.blindvault_resolver = blindvault_resolver
+        self.bury_backend = bury_backend
         
-        self.age = AgeEncryption(self.master_password)
+        # Load CPE scorer for privacy compliance
+        self.cpe_scorer = CredentialCPESession()
         
-        # In-memory state
-        self._credentials: Dict[str, VaultCredential] = {}  # ref -> credential
-        self._leases: Dict[str, VaultLease] = {}  # lease_id -> lease
-        self._loaded = False
+        # File paths
+        self.credentials_file = self.vault_path / "credentials.json"
+        self.leases_file = self.vault_path / "leases.json"
+        self.audit_file = self.vault_path / "audit.json"
         
-        if auto_init:
-            # Load synchronously in constructor for backward compatibility
-            self._load_sync()
+        # Load existing data
+        self._load_data()
     
-    def _load_sync(self):
-        """Synchronously load credentials and leases from disk."""
-        import json
+    def _load_data(self) -> None:
+        """Load vault data from files."""
+        self.credentials: Dict[str, VaultCredential] = {}
+        self.leases: Dict[str, VaultLease] = {}
+        self.audit: List[VaultAuditEntry] = []
+        
         # Load credentials
-        if self.creds_db.exists():
+        if self.credentials_file.exists():
             try:
-                content = self.creds_db.read_text()
-                data = json.loads(content)
-                for ref, cred_data in data.items():
-                    self._credentials[ref] = VaultCredential.from_dict(cred_data)
+                content = self.credentials_file.read_text(encoding="utf-8")
+                creds_data = json.loads(content)
+                self.credentials = {
+                    cred["provider"]: VaultCredential(**cred)
+                    for cred in creds_data.values()
+                }
             except Exception as e:
                 logger.error(f"Failed to load credentials: {e}")
+                self.credentials = {}
         
-        # Load active leases
-        if self.leases_db.exists():
+        # Load leases
+        if self.leases_file.exists():
             try:
-                content = self.leases_db.read_text()
-                data = json.loads(content)
-                now = datetime.now(timezone.utc)
-                for lease_id, lease_data in data.items():
-                    lease = VaultLease(**lease_data)
-                    if lease.is_valid():
-                        self._leases[lease_id] = lease
-                    else:
-                        # Expired lease - clean up credential lease state
-                        cred_ref = lease.credential_ref
-                        if cred_ref in self._credentials:
-                            self._credentials[cred_ref].current_lease_agent = None
-                            self._credentials[cred_ref].lease_expires_at = None
+                content = self.leases_file.read_text(encoding="utf-8")
+                leases_data = json.loads(content)
+                self.leases = {
+                    lease["lease_id"]: VaultLease(**lease)
+                    for lease in leases_data.values()
+                }
             except Exception as e:
                 logger.error(f"Failed to load leases: {e}")
+                self.leases = {}
         
-        self._loaded = True
-        logger.info(f"VaultCore loaded: {len(self._credentials)} credentials, {len(self._leases)} active leases")
+        # Load audit
+        if self.audit_file.exists():
+            try:
+                content = self.audit_file.read_text(encoding="utf-8")
+                audit_data = json.loads(content)
+                self.audit = [VaultAuditEntry(**entry) for entry in audit_data]
+            except Exception as e:
+                logger.error(f"Failed to load audit: {e}")
+                self.audit = []
     
-    def _get_or_create_master_password(self) -> str:
-        """Get master password from keyring or generate new."""
-        try:
-            import keyring
-            password = keyring.get_password("omega-engine", "vault-master-password")
-            if password:
-                return password
-        except Exception:
+    def _save_data(self) -> None:
+        """Save vault data to files atomically."""
+        # Save credentials
+        creds_data = {cred.key_id: cred.model_dump() for cred in self.credentials.values()}
+        self._atomic_write(self.credentials_file, json.dumps(creds_data, indent=2, default=str))
+        
+        # Save leases
+        leases_data = {lease.lease_id: lease.model_dump() for lease in self.leases.values()}
+        self._atomic_write(self.leases_file, json.dumps(leases_data, indent=2, default=str))
+        
+        # Save audit (only last 1000 entries to prevent unbounded growth)
+        audit_data = self.audit[-1000:]
+        self._atomic_write(self.audit_file, json.dumps(
+            [entry.model_dump() for entry in audit_data], 
+            indent=2, 
+            default=str
+        ))
+    
+    def _atomic_write(self, path: Path, content: str) -> None:
+        """Atomic write using SoulStore."""
+        store = get_soul_store()
+        anyio.run(store.write_atomic(path, content))
+    
+    # =============================================================================
+    # Credential Operations
+    # =============================================================================
+    
+    async def create_credential(
+        self,
+        provider: str,
+        key_id: str,
+        encrypted_blob: str,
+        cred_type: CredentialType,
+        tier: CredentialTier = CredentialTier.FREE,
+        visibility: VisibilityTier = VisibilityTier.PRIVATE,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> VaultCredential:
+        """
+        Create a new credential.
+        
+        Args:
+            provider: Provider name (antigravity, grok, google, openrouter, exa, firecrawl)
+            key_id: Unique key within provider
+            encrypted_blob: age-armored ciphertext
+            cred_type: Type of credential
+            tier: Tier for quota management
+            visibility: Privacy visibility tier
+            metadata: Additional metadata
+            
+        Returns:
+            Created credential
+            
+        Raises:
+            VaultError: If credential already exists
+        """
+        if provider not in ("antigravity", "grok", "google", "openrouter", "exa", "firecrawl"):
+            raise VaultError(f"Invalid provider: {provider}")
+        
+        if key_id in self.credentials:
+            raise VaultError(f"Credential already exists: {provider}:{key_id}")
+        
+        credential = VaultCredential(
+            provider=provider,
+            key_id=key_id,
+            cred_type=cred_type,
+            encrypted_blob=encrypted_blob,
+            tier=tier,
+            visibility=visibility,
+            metadata=metadata or {},
+        )
+        
+        self.credentials[credential.key_id] = credential
+        await self._log_audit(
+            action="credential_created",
+            credential_ref=credential.credential_ref,
+            details={
+                "provider": provider,
+                "key_id": key_id,
+                "cred_type": cred_type.value,
+                "tier": tier.value,
+                "visibility": visibility.value,
+            }
+        )
+        
+        self._save_data()
+        return credential
+    
+    async def get_credential(self, provider: str, key_id: str) -> VaultCredential:
+        """
+        Get credential by provider and key_id.
+        
+        Args:
+            provider: Provider name
+            key_id: Key ID
+            
+        Returns:
+            Credential
+            
+        Raises:
+            CredentialNotFoundError: If credential not found
+        """
+        credential_key = f"{provider}:{key_id}"
+        if credential_key not in self.credentials:
+            raise CredentialNotFoundError(f"Credential not found: {provider}:{key_id}")
+        
+        return self.credentials[credential_key]
+    
+    async def update_credential(
+        self,
+        provider: str,
+        key_id: str,
+        **kwargs,
+    ) -> VaultCredential:
+        """
+        Update credential fields.
+        
+        Args:
+            provider: Provider name
+            key_id: Key ID
+            **kwargs: Fields to update
+            
+        Returns:
+            Updated credential
+        """
+        credential = await self.get_credential(provider, key_id)
+        
+        # Update fields
+        update_data = kwargs.copy()
+        
+        # Special handling for encrypted_blob
+        if "encrypted_blob" in update_data:
+            # Re-encrypt with new key if needed
             pass
         
-        # Generate new
-        import secrets
-        password = secrets.token_urlsafe(32)
-        try:
-            import keyring
-            keyring.set_password("omega-engine", "vault-master-password", password)
-        except Exception:
-            # Fallback to file
-            pw_file = self.vault_dir / "master.password"
-            pw_file.write_text(password)
-            pw_file.chmod(0o600)
+        # Update credential with new data
+        updated_data = credential.model_dump()
+        updated_data.update(update_data)
+        updated_credential = VaultCredential(**updated_data)
         
-        return password
-    
-    async def _load(self):
-        """Load credentials and leases from disk."""
-        # Load credentials
-        if self.creds_db.exists():
-            try:
-                content = await anyio.Path(self.creds_db).read_text()
-                data = json.loads(content)
-                for ref, cred_data in data.items():
-                    self._credentials[ref] = VaultCredential.from_dict(cred_data)
-            except Exception as e:
-                logger.error(f"Failed to load credentials: {e}")
+        self.credentials[credential.key_id] = updated_credential
+        await self._log_audit(
+            action="credential_updated",
+            credential_ref=credential.credential_ref,
+            details={"fields_updated": list(update_data.keys())}
+        )
         
-        # Load active leases
-        if self.leases_db.exists():
-            try:
-                content = await anyio.Path(self.leases_db).read_text()
-                data = json.loads(content)
-                now = datetime.now(timezone.utc)
-                for lease_id, lease_data in data.items():
-                    lease = VaultLease(**lease_data)
-                    if lease.is_valid():
-                        self._leases[lease_id] = lease
-                    else:
-                        # Expired lease - clean up credential lease state
-                        cred_ref = lease.credential_ref
-                        if cred_ref in self._credentials:
-                            self._credentials[cred_ref].current_lease_agent = None
-                            self._credentials[cred_ref].lease_expires_at = None
-            except Exception as e:
-                logger.error(f"Failed to load leases: {e}")
+        self._save_data()
+        return updated_credential
+    
+    async def delete_credential(self, provider: str, key_id: str) -> bool:
+        """
+        Delete credential.
         
-        self._loaded = True
-        logger.info(f"VaultCore loaded: {len(self._credentials)} credentials, {len(self._leases)} active leases")
-    
-    async def _save_credentials(self):
-        """Atomically save credentials to disk."""
-        data = {ref: cred.to_dict() for ref, cred in self._credentials.items()}
-        await self._atomic_write(self.creds_db, json.dumps(data, indent=2))
-    
-    async def _save_leases(self):
-        """Atomically save leases to disk."""
-        data = {lease_id: lease.to_dict() for lease_id, lease in self._leases.items()}
-        await self._atomic_write(self.leases_db, json.dumps(data, indent=2))
-    
-    async def _atomic_write(self, path: Path, content: str):
-        """Atomic write: temp file + fsync + rename."""
-        fd, temp_path = tempfile.mkstemp(dir=path.parent, suffix=".tmp")
-        try:
-            os.write(fd, content.encode())
-            os.fsync(fd)
-            os.close(fd)
-            os.rename(temp_path, path)
-        except Exception:
-            try:
-                os.unlink(temp_path)
-            except OSError:
-                pass
-            raise
-    
-    async def _audit(self, action: str, credential_ref: str, success: bool, details: str = ""):
-        """Append audit log entry."""
-        entry = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "action": action,
-            "credential_ref": credential_ref,
-            "success": success,
-            "details": details,
-        }
-        line = json.dumps(entry) + "\n"
-        await anyio.Path(self.audit_log).write(line, append=True)
-    
-    # ── Credential Management ──────────────────────────────────────────────
-    
-    async def store_credential(self, credential: VaultCredential) -> None:
-        """Store a new credential (encrypts and saves)."""
-        # Encrypt the payload
-        plaintext = json.dumps({
-            "provider": credential.provider.value,
-            "key_id": credential.key_id,
-            "cred_type": credential.cred_type.value,
-            # Actual credential data would be in metadata or separate field
-            # For now, we store the credential structure; actual secrets
-            # are expected to be in the encrypted_blob already
-        })
+        Args:
+            provider: Provider name
+            key_id: Key ID
+            
+        Returns:
+            True if credential was deleted, False if it didn't exist
+        """
+        credential_key = f"{provider}:{key_id}"
+        if credential_key not in self.credentials:
+            return False
         
-        # The encrypted_blob should already be age-encrypted by caller
-        # If not, encrypt it now
-        if not credential.encrypted_blob.startswith("age-encryption.org/v1"):
-            credential.encrypted_blob = self.age.encrypt(credential.encrypted_blob)
+        credential = self.credentials.pop(credential_key)
+        await self._log_audit(
+            action="credential_deleted",
+            credential_ref=credential.credential_ref,
+            details={}
+        )
         
-        self._credentials[credential.ref] = credential
-        await self._save_credentials()
-        await self._audit("store", credential.ref, True)
-        logger.info(f"Stored credential: {credential.ref}")
+        self._save_data()
+        return True
     
-    async def get_credential(self, provider: ProviderName, key_id: str) -> VaultCredential:
-        """Get credential by provider and key_id."""
-        ref = f"{provider.value}:{key_id}"
-        if ref not in self._credentials:
-            await self._audit("get", ref, False, "Not found")
-            raise CredentialNotFound(f"Credential not found: {ref}")
+    async def list_credentials(
+        self,
+        provider: Optional[str] = None,
+        tier: Optional[CredentialTier] = None,
+        visibility: Optional[VisibilityTier] = None,
+    ) -> List[VaultCredential]:
+        """
+        List credentials with optional filtering.
         
-        cred = self._credentials[ref]
-        await self._audit("get", ref, True)
-        return cred
-    
-    async def decrypt_credential(self, provider: ProviderName, key_id: str) -> Dict[str, Any]:
-        """Get and decrypt a credential payload."""
-        cred = await self.get_credential(provider, key_id)
-        try:
-            plaintext = self.age.decrypt(cred.encrypted_blob)
-            return json.loads(plaintext)
-        except Exception as e:
-            await self._audit("decrypt", cred.ref, False, str(e))
-            raise VaultCoreError(f"Failed to decrypt credential: {e}")
-    
-    async def list_credentials(self, provider: Optional[ProviderName] = None) -> List[VaultCredential]:
-        """List all credentials, optionally filtered by provider."""
-        creds = list(self._credentials.values())
+        Args:
+            provider: Filter by provider
+            tier: Filter by tier
+            visibility: Filter by visibility
+            
+        Returns:
+            List of credentials
+        """
+        credentials = list(self.credentials.values())
+        
         if provider:
-            creds = [c for c in creds if c.provider == provider]
-        return creds
+            credentials = [c for c in credentials if c.provider == provider]
+        
+        if tier:
+            credentials = [c for c in credentials if c.tier == tier]
+        
+        if visibility:
+            credentials = [c for c in credentials if c.visibility == visibility]
+        
+        return credentials
     
-    async def update_credential_status(self, provider: ProviderName, key_id: str, status: CredentialStatus):
-        """Update credential status (e.g., EXHAUSTED, COOLING)."""
-        ref = f"{provider.value}:{key_id}"
-        if ref in self._credentials:
-            self._credentials[ref].status = status
-            if status == CredentialStatus.COOLING:
-                self._credentials[ref].cooldown_until = datetime.now(timezone.utc) + timedelta(seconds=300)
-            elif status == CredentialStatus.EXHAUSTED:
-                self._credentials[ref].cooldown_until = datetime.now(timezone.utc) + timedelta(seconds=300)
-            await self._save_credentials()
-            await self._audit("status_change", ref, True, f"New status: {status.value}")
+    # =============================================================================
+    # Lease Operations
+    # =============================================================================
     
-    async def increment_usage(self, provider: ProviderName, key_id: str):
-        """Increment daily usage counter."""
-        ref = f"{provider.value}:{key_id}"
-        if ref in self._credentials:
-            cred = self._credentials[ref]
-            cred.used_today += 1
-            cred.last_used_at = datetime.now(timezone.utc)
-            
-            # Check if exhausted
-            if cred.daily_limit > 0 and cred.used_today >= cred.daily_limit:
-                cred.status = CredentialStatus.EXHAUSTED
-                cred.cooldown_until = datetime.now(timezone.utc) + timedelta(seconds=300)
-            
-            await self._save_credentials()
-    
-    async def reset_daily_counters(self):
-        """Reset daily usage counters (call at midnight UTC)."""
-        for cred in self._credentials.values():
-            if cred.used_today > 0:
-                cred.used_today = 0
-                if cred.status == CredentialStatus.EXHAUSTED:
-                    cred.status = CredentialStatus.ACTIVE
-                    cred.cooldown_until = None
-        await self._save_credentials()
-        await self._audit("daily_reset", "all", True)
-    
-    # ── Lease Protocol (M25 Compliant) ─────────────────────────────────────
-    
-    async def lease_credential(self, request: VaultLeaseRequest) -> VaultLease:
+    async def lease_credential(
+        self,
+        request: VaultLeaseRequest,
+    ) -> VaultLease:
         """
-        Lease a credential for time-bounded operation.
+        Lease a credential to an agent.
         
-        M25 Compliance:
-        - TTL enforced (max 1 hour)
-        - Heartbeat mechanism (caller must call lease_heartbeat)
-        - Graceful fallback on expiry (credential auto-released)
+        Args:
+            request: Lease request
+            
+        Returns:
+            Created lease
+            
+        Raises:
+            LeaseError: If lease cannot be granted
         """
-        # Find available credential
-        candidates = [
-            c for c in self._credentials.values()
-            if c.provider == request.provider and c.is_available()
-        ]
+        # Check if credential exists
+        try:
+            credential = await self.get_credential(request.provider, request.key_id or "")
+        except CredentialNotFoundError:
+            raise LeaseError(f"Credential not found: {request.provider}:{request.key_id}")
         
-        if request.key_id:
-            candidates = [c for c in candidates if c.key_id == request.key_id]
+        # Check if credential is available
+        if not credential.is_available():
+            raise LeaseError(f"Credential not available: {request.provider}:{request.key_id}")
         
-        if not candidates:
-            await self._audit("lease", f"{request.provider.value}:{request.key_id or 'any'}", False, "No available credentials")
-            raise CredentialNotFound(f"No available credentials for {request.provider.value}")
-        
-        # Select best candidate (quota-aware: most remaining)
-        candidates.sort(key=lambda c: c.used_today / max(c.daily_limit, 1) if c.daily_limit > 0 else 0)
-        credential = candidates[0]
+        # Check if credential is already leased
+        existing_lease = next(
+            (l for l in self.leases.values() if l.credential_ref == f"{request.provider}:{request.key_id}"),
+            None
+        )
+        if existing_lease and existing_lease.is_valid():
+            raise LeaseError(f"Credential already leased to {existing_lease.agent_id}")
         
         # Create lease
-        import uuid
-        lease_id = f"lease-{uuid.uuid4().hex[:12]}"
-        expires_at = datetime.now(timezone.utc) + timedelta(seconds=request.ttl_seconds)
-        
+        lease_id = f"lease_{request.provider}_{request.key_id}_{datetime.utcnow().timestamp()}"
         lease = VaultLease(
             lease_id=lease_id,
-            credential_ref=credential.ref,
+            credential_ref=f"{request.provider}:{request.key_id}",
             agent_id=request.agent_id,
-            expires_at=expires_at,
+            expires_at=datetime.utcnow() + timedelta(seconds=request.ttl_seconds),
             purpose=request.purpose,
         )
         
-        # Update credential lease state
+        self.leases[lease.lease_id] = lease
+        
+        # Update credential lease info
         credential.current_lease_agent = request.agent_id
-        credential.lease_expires_at = expires_at
-        credential.last_used_at = datetime.now(timezone.utc)
+        credential.lease_expires_at = lease.expires_at
+        credential.used_today += 1  # Simple usage tracking
         
-        self._leases[lease_id] = lease
+        await self._log_audit(
+            action="lease_granted",
+            credential_ref=lease.credential_ref,
+            details={
+                "lease_id": lease_id,
+                "agent_id": request.agent_id,
+                "ttl_seconds": request.ttl_seconds,
+                "purpose": request.purpose,
+            }
+        )
         
-        await self._save_credentials()
-        await self._save_leases()
-        await self._audit("lease_grant", credential.ref, True, f"Lease {lease_id} to {request.agent_id}")
-        
-        logger.info(f"Granted lease {lease_id} for {credential.ref} to {request.agent_id} (TTL: {request.ttl_seconds}s)")
+        self._save_data()
         return lease
     
-    async def release_lease(self, lease_id: str, agent_id: str) -> bool:
-        """Release a lease early (on operation completion)."""
-        if lease_id not in self._leases:
+    async def release_lease(self, lease_id: str) -> bool:
+        """
+        Release a lease.
+        
+        Args:
+            lease_id: Lease ID
+            
+        Returns:
+            True if lease was released, False if it didn't exist
+        """
+        if lease_id not in self.leases:
             return False
         
-        lease = self._leases[lease_id]
-        if lease.agent_id != agent_id:
-            await self._audit("lease_release", lease.credential_ref, False, f"Agent mismatch: {agent_id} != {lease.agent_id}")
-            raise LeaseConflict(f"Lease {lease_id} owned by {lease.agent_id}, not {agent_id}")
+        lease = self.leases.pop(lease_id)
         
-        # Clear credential lease state
-        if lease.credential_ref in self._credentials:
-            cred = self._credentials[lease.credential_ref]
-            cred.current_lease_agent = None
-            cred.lease_expires_at = None
+        # Update credential lease info
+        credential_ref = lease.credential_ref
+        if ":" in credential_ref:
+            provider, key_id = credential_ref.split(":", 1)
+            if provider in self.credentials:
+                cred = self.credentials[provider]
+                if cred.current_lease_agent == lease.agent_id:
+                    cred.current_lease_agent = None
+                    cred.lease_expires_at = None
         
-        del self._leases[lease_id]
+        await self._log_audit(
+            action="lease_released",
+            credential_ref=lease.credential_ref,
+            details={"lease_id": lease_id, "agent_id": lease.agent_id}
+        )
         
-        await self._save_credentials()
-        await self._save_leases()
-        await self._audit("lease_release", lease.credential_ref, True, f"Released by {agent_id}")
-        
-        logger.info(f"Released lease {lease_id} for {lease.credential_ref}")
+        self._save_data()
         return True
     
-    async def lease_heartbeat(self, lease_id: str, agent_id: str) -> bool:
+    async def heartbeat_lease(self, lease_id: str) -> bool:
         """
-        Heartbeat for M25 streaming resilience.
-        Caller must call this periodically during long operations.
+        Send heartbeat for a lease (M25 compliance).
+        
+        Args:
+            lease_id: Lease ID
+            
+        Returns:
+            True if heartbeat was sent, False if lease not found
         """
-        if lease_id not in self._leases:
+        if lease_id not in self.leases:
             return False
         
-        lease = self._leases[lease_id]
-        if lease.agent_id != agent_id:
-            return False
+        lease = self.leases[lease_id]
+        lease.last_heartbeat = datetime.utcnow()
         
-        if not lease.is_valid():
-            # Lease expired - auto-release
-            await self.release_lease(lease_id, agent_id)
-            return False
-        
-        lease.heartbeat()
-        
-        # Extend credential lease expiry
-        if lease.credential_ref in self._credentials:
-            self._credentials[lease.credential_ref].lease_expires_at = lease.expires_at
-        
-        await self._save_leases()
+        self._save_data()
         return True
     
-    async def cleanup_expired_leases(self):
-        """Clean up expired leases (call periodically)."""
-        now = datetime.now(timezone.utc)
-        expired = [
-            lease_id for lease_id, lease in self._leases.items()
-            if not lease.is_valid()
+    async def cleanup_expired_leases(self) -> List[str]:
+        """
+        Clean up expired leases.
+        
+        Returns:
+            List of lease IDs that were cleaned up
+        """
+        now = datetime.utcnow()
+        expired_leases = [
+            lease_id for lease_id, lease in self.leases.items()
+            if lease.expires_at < now
         ]
         
-        for lease_id in expired:
-            lease = self._leases[lease_id]
-            if lease.credential_ref in self._credentials:
-                cred = self._credentials[lease.credential_ref]
-                cred.current_lease_agent = None
-                cred.lease_expires_at = None
-            del self._leases[lease_id]
-            await self._audit("lease_expired", lease.credential_ref, True, f"Auto-expired lease {lease_id}")
+        for lease_id in expired_leases:
+            lease = self.leases.pop(lease_id)
+            
+            # Update credential lease info
+            credential_ref = lease.credential_ref
+            if ":" in credential_ref:
+                provider, key_id = credential_ref.split(":", 1)
+                if provider in self.credentials:
+                    cred = self.credentials[provider]
+                    if cred.current_lease_agent == lease.agent_id:
+                        cred.current_lease_agent = None
+                        cred.lease_expires_at = None
+            
+            await self._log_audit(
+                action="lease_expired",
+                credential_ref=lease.credential_ref,
+                details={"lease_id": lease_id, "agent_id": lease.agent_id}
+            )
         
-        if expired:
-            await self._save_credentials()
-            await self._save_leases()
-            logger.info(f"Cleaned up {len(expired)} expired leases")
-    
-    # ── Quota Reconciliation (Background) ──────────────────────────────────
-    
-    async def reconcile_quotas(self):
-        """
-        Background quota reconciliation via provider APIs.
-        Called periodically to update used_today from actual provider state.
-        """
-        for cred in self._credentials.values():
-            try:
-                if cred.provider == ProviderName.OPENROUTER:
-                    # OpenRouter Analytics API
-                    await self._reconcile_openrouter(cred)
-                elif cred.provider == ProviderName.EXA:
-                    # Exa rate-limit headers
-                    await self._reconcile_exa(cred)
-                elif cred.provider == ProviderName.FIRECRAWL:
-                    # Firecrawl credits API
-                    await self._reconcile_firecrawl(cred)
-                elif cred.provider == ProviderName.GROK:
-                    # Grok gRPC-web GetGrokCreditsConfig
-                    await self._reconcile_grok(cred)
-                elif cred.provider == ProviderName.ANTIGRAVITY:
-                    # AGY OAuth token introspection
-                    await self._reconcile_agy(cred)
-                elif cred.provider == ProviderName.GOOGLE:
-                    # Google Cloud Monitoring API
-                    await self._reconcile_google(cred)
-            except Exception as e:
-                logger.warning(f"Quota reconciliation failed for {cred.ref}: {e}")
-                cred.last_error = str(e)
+        if expired_leases:
+            self._save_data()
         
-        await self._save_credentials()
-        await self._audit("quota_reconcile", "all", True)
+        return expired_leases
     
-    async def _reconcile_openrouter(self, cred: VaultCredential):
-        """Reconcile via OpenRouter Analytics API."""
-        # TODO: Implement OpenRouter Analytics API call
-        pass
+    # =============================================================================
+    # Quota & Usage Operations
+    # =============================================================================
     
-    async def _reconcile_exa(self, cred: VaultCredential):
-        """Reconcile via Exa rate-limit headers."""
-        # TODO: Implement Exa API call with header parsing
-        pass
+    async def increment_usage(self, provider: str, key_id: str) -> bool:
+        """
+        Increment usage counter for credential.
+        
+        Args:
+            provider: Provider name
+            key_id: Key ID
+            
+        Returns:
+            True if usage was incremented, False if credential not found or quota exceeded
+        """
+        try:
+            credential = await self.get_credential(provider, key_id)
+        except CredentialNotFoundError:
+            return False
+        
+        if not credential.is_available():
+            return False
+        
+        credential.used_today += 1
+        self._save_data()
+        return True
     
-    async def _reconcile_firecrawl(self, cred: VaultCredential):
-        """Reconcile via Firecrawl credits API."""
-        # TODO: Implement Firecrawl API call
-        pass
+    async def reset_daily_quota(self) -> None:
+        """Reset daily usage counters for all credentials."""
+        for credential in self.credentials.values():
+            credential.used_today = 0
+        self._save_data()
     
-    async def _reconcile_grok(self, cred: VaultCredential):
-        """Reconcile via Grok gRPC-web GetGrokCreditsConfig."""
-        # TODO: Implement gRPC-web call
-        pass
+    async def cleanup_cooldown(self) -> None:
+        """Remove expired cooldowns."""
+        now = datetime.utcnow()
+        for credential in self.credentials.values():
+            if credential.cooldown_until and now >= credential.cooldown_until:
+                credential.cooldown_until = None
+        self._save_data()
     
-    async def _reconcile_agy(self, cred: VaultCredential):
-        """Reconcile via AGY OAuth token introspection."""
-        # TODO: Implement AGY token introspection
-        pass
+    # =============================================================================
+    # Privacy Operations
+    # =============================================================================
     
-    async def _reconcile_google(self, cred: VaultCredential):
-        """Reconcile via Google Cloud Monitoring API."""
-        # TODO: Implement GCP Monitoring API call
-        pass
+    async def filter_credentials_by_privacy(
+        self,
+        requester: str,
+        bond_strength: int = 0,
+        provider: Optional[str] = None,
+    ) -> List[VaultCredential]:
+        """
+        Filter credentials based on privacy tiers (R19 compliance).
+        
+        Args:
+            requester: Entity requesting credentials
+            bond_strength: Bond strength with requester (for bonded tier)
+            provider: Optional provider filter
+            
+        Returns:
+            List of credentials accessible to requester
+        """
+        credentials = list(self.credentials.values())
+        
+        # Apply privacy filtering
+        filtered = []
+        for credential in credentials:
+            if credential.visibility == VisibilityTier.PUBLIC:
+                filtered.append(credential)
+            elif credential.visibility == VisibilityTier.BONDED and bond_strength >= 50:
+                filtered.append(credential)
+            elif credential.visibility == VisibilityTier.PRIVATE and requester == credential.provider:
+                filtered.append(credential)
+        
+        # Apply provider filter
+        if provider:
+            filtered = [c for c in filtered if c.provider == provider]
+        
+        return filtered
     
-    # ── Utility ────────────────────────────────────────────────────────────
+    # =============================================================================
+    # BlindVault Integration
+    # =============================================================================
     
-    async def verify_integrity(self) -> Dict[str, Any]:
-        """Verify all credentials decrypt successfully."""
-        results = {"total": 0, "valid": 0, "corrupted": []}
-        for ref, cred in self._credentials.items():
-            results["total"] += 1
-            try:
-                self.age.decrypt(cred.encrypted_blob)
-                results["valid"] += 1
-            except Exception:
-                results["corrupted"].append(ref)
-        return results
+    async def get_decrypted_credential(
+        self,
+        provider: str,
+        key_id: str,
+        agent_id: str,
+    ) -> str:
+        """
+        Get decrypted credential using BlindVault resolver.
+        
+        Args:
+            provider: Provider name
+            key_id: Key ID
+            agent_id: Agent requesting credential
+            
+        Returns:
+            Decrypted credential payload
+            
+        Raises:
+            VaultError: If credential cannot be decrypted
+        """
+        if not self.blindvault_resolver:
+            raise VaultError("BlindVault resolver not configured")
+        
+        # Check if credential exists
+        credential = await self.get_credential(provider, key_id)
+        
+        # Check if agent has lease
+        lease = next(
+            (l for l in self.leases.values() 
+             if l.credential_ref == f"{provider}:{key_id}" and l.agent_id == agent_id),
+            None
+        )
+        
+        if not lease or not lease.is_valid():
+            raise VaultError(f"Agent {agent_id} does not have valid lease for {provider}:{key_id}")
+        
+        # Use BlindVault resolver to get decrypted credential
+        secret_ref = f"{{secret:{provider}_{key_id}}}"
+        try:
+            decrypted = await self.blindvault_resolver.resolve(secret_ref)
+            
+            # Log access with CPE scoring
+            await self._log_credential_access(credential, decrypted, agent_id)
+            
+            return decrypted
+        except Exception as e:
+            raise VaultError(f"Failed to decrypt credential: {e}")
     
-    def get_fleet_status(self) -> Dict[str, Any]:
-        """Get status for FleetOrchestrator monitoring."""
-        return {
-            "credentials": {
-                ref: {
-                    "provider": cred.provider.value,
-                    "key_id": cred.key_id,
-                    "status": cred.status.value,
-                    "tier": cred.tier.value,
-                    "used_today": cred.used_today,
-                    "daily_limit": cred.daily_limit,
-                    "cooldown_until": cred.cooldown_until.isoformat() if cred.cooldown_until else None,
-                    "has_lease": cred.current_lease_agent is not None,
-                    "lease_agent": cred.current_lease_agent,
-                    "lease_expires": cred.lease_expires_at.isoformat() if cred.lease_expires_at else None,
-                }
-                for ref, cred in self._credentials.items()
+    # =============================================================================
+    # Bury Integration
+    # =============================================================================
+    
+    async def bury_credential(
+        self,
+        provider: str,
+        key_id: str,
+        agent_id: str,
+        bury_backend=None,
+    ) -> str:
+        """
+        Bury credential using Bury backend (PID-bound session).
+        
+        Args:
+            provider: Provider name
+            key_id: Key ID
+            agent_id: Agent requesting credential
+            bury_backend: Bury backend instance
+            
+        Returns:
+            Session token for buried credential
+        """
+        if not bury_backend:
+            raise VaultError("Bury backend not configured")
+        
+        # Get credential
+        credential = await self.get_credential(provider, key_id)
+        
+        # Start PID-bound session
+        session_token = bury_backend.start_session(agent_id)
+        
+        # Bury credential
+        bury_backend.bury_credential(session_token, credential)
+        
+        # Log access
+        await self._log_audit(
+            action="credential_buried",
+            credential_ref=credential.credential_ref,
+            details={
+                "agent_id": agent_id,
+                "session_token": session_token,
+            }
+        )
+        
+        return session_token
+    
+    # =============================================================================
+    # Audit Logging
+    # =============================================================================
+    
+    async def _log_audit(
+        self,
+        action: str,
+        credential_ref: str,
+        details: Dict[str, Any],
+        success: bool = True,
+        error: Optional[str] = None,
+    ) -> None:
+        """Log audit entry."""
+        entry = VaultAuditEntry(
+            action=action,
+            credential_ref=credential_ref,
+            details=details,
+            success=success,
+            error=error,
+        )
+        
+        self.audit.append(entry)
+        
+        # Apply CPE scoring for sensitive operations
+        if action in ["credential_created", "credential_updated", "credential_deleted"]:
+            await self._process_credential_pii_cpe(entry)
+        
+        self._save_data()
+    
+    async def _log_credential_access(
+        self,
+        credential: VaultCredential,
+        decrypted: str,
+        agent_id: str,
+    ) -> None:
+        """Log credential access with CPE scoring."""
+        await self._log_audit(
+            action="credential_used",
+            credential_ref=credential.credential_ref,
+            details={
+                "agent_id": agent_id,
+                "decrypted_length": len(decrypted),
             },
-            "active_leases": len(self._leases),
-            "total_credentials": len(self._credentials),
+            success=True,
+        )
+        
+        # Process CPE for this access
+        await self._process_credential_pii_cpe(self.audit[-1])
+    
+    async def _process_credential_pii_cpe(self, entry: VaultAuditEntry) -> None:
+        """Process CPE for credential-related PII exposure."""
+        # Extract PII from credential and operation details
+        # This is a simplified implementation
+        cpe_action = self.cpe_scorer.process_credential_access(
+            VaultCredential(
+                provider="temp",
+                key_id="temp",
+                cred_type=CredentialType.API_KEY,
+                encrypted_blob="",
+            ),
+            entry.action,
+        )
+        
+        entry.cpe_score = self.cpe_scorer._compute_cpe()
+        entry.cpe_action = cpe_action.value
+        
+        # Apply pseudonymization if needed
+        if cpe_action == CPEAction.PSEUDONYMIZE:
+            entry = self.cpe_scorer.pseudonymize_audit_entry(entry)
+        
+        # Update audit entry
+        index = len(self.audit) - 1
+        self.audit[index] = entry
+        
+        self._save_data()
+    
+    # =============================================================================
+    # Utility Methods
+    # =============================================================================
+    
+    def get_stats(self) -> Dict[str, Any]:
+        """Get vault statistics."""
+        now = datetime.utcnow()
+        
+        return {
+            "total_credentials": len(self.credentials),
+            "total_leases": len(self.leases),
+            "active_leases": len([l for l in self.leases.values() if l.is_valid()]),
+            "expired_leases": len([l for l in self.leases.values() if not l.is_valid()]),
+            "credentials_by_tier": {
+                tier.value: len([c for c in self.credentials.values() if c.tier == tier])
+                for tier in CredentialTier
+            },
+            "credentials_by_visibility": {
+                vis.value: len([c for c in self.credentials.values() if c.visibility == vis])
+                for vis in VisibilityTier
+            },
+            "quota_usage": {
+                cred.credential_ref: cred.used_today
+                for cred in self.credentials.values()
+                if cred.daily_limit > 0
+            },
+            "cpe_session_summary": self.cpe_scorer.get_session_summary(),
         }
 
 
 # =============================================================================
-# FACTORY FUNCTIONS FOR COMMON CREDENTIAL TYPES
+# FACTORY
 # =============================================================================
 
-def create_agy_oauth_credential(
-    account_id: str,
-    access_token: str,
-    refresh_token: str,
-    expires_at: datetime,
-    scopes: List[str],
-    tier: CredentialTier = CredentialTier.FREE,
-    daily_limit: int = 0,
-) -> VaultCredential:
-    """Create AGY OAuth credential."""
-    payload = {
-        "type": "oauth",
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "expires_at": expires_at.isoformat(),
-        "scopes": scopes,
-    }
-    
-    # Encrypt with age (will be encrypted by VaultCore.store_credential)
-    # For now, return with plaintext payload - VaultCore will encrypt
-    return VaultCredential(
-        provider=ProviderName.ANTIGRAVITY,
-        key_id=f"agy-{account_id}",
-        cred_type=CredentialType.OAUTH,
-        encrypted_blob=json.dumps(payload),  # Will be encrypted on store
-        tier=tier,
-        daily_limit=daily_limit,
-        tags={"account_id": account_id},
+def create_vault_core(
+    vault_path: Path = Path("data/vault"),
+    master_key: Optional[str] = None,
+    blindvault_resolver=None,
+    bury_backend=None,
+) -> VaultCore:
+    """Factory: create VaultCore with default or custom dependencies."""
+    return VaultCore(
+        vault_path=vault_path,
+        master_key=master_key,
+        blindvault_resolver=blindvault_resolver,
+        bury_backend=bury_backend,
     )
-
-
-def create_grok_auth_credential(
-    account_id: int,
-    auth_json: Dict[str, Any],
-    config_toml: str,
-    tier: CredentialTier = CredentialTier.FREE,
-    daily_limit: int = 0,
-) -> VaultCredential:
-    """Create Grok CLI credential (auth.json + config.toml)."""
-    payload = {
-        "type": "grok_auth",
-        "account_id": account_id,
-        "auth_json": auth_json,
-        "config_toml": config_toml,
-    }
-    
-    return VaultCredential(
-        provider=ProviderName.GROK,
-        key_id=f"grok-{account_id}",
-        cred_type=CredentialType.GROK_AUTH,
-        encrypted_blob=json.dumps(payload),  # Will be encrypted on store
-        tier=tier,
-        daily_limit=daily_limit,
-        tags={"account_id": str(account_id)},
-    )
-
-
-def create_gcp_sa_credential(
-    project_id: str,
-    sa_json: Dict[str, Any],
-    tier: CredentialTier = CredentialTier.FREE,
-    daily_limit: int = 0,
-) -> VaultCredential:
-    """Create Google Cloud Service Account credential."""
-    payload = {
-        "type": "gcp_sa",
-        "project_id": project_id,
-        "service_account": sa_json,
-    }
-    
-    return VaultCredential(
-        provider=ProviderName.GOOGLE,
-        key_id=f"gcp-{project_id}",
-        cred_type=CredentialType.GCP_SA,
-        encrypted_blob=json.dumps(payload),
-        tier=tier,
-        daily_limit=daily_limit,
-        tags={"project_id": project_id},
-    )
-
-
-def create_api_key_credential(
-    provider: ProviderName,
-    key_id: str,
-    api_key: str,
-    tier: CredentialTier = CredentialTier.FREE,
-    daily_limit: int = 0,
-) -> VaultCredential:
-    """Create generic API key credential."""
-    payload = {
-        "type": "api_key",
-        "api_key": api_key,
-    }
-    
-    return VaultCredential(
-        provider=provider,
-        key_id=key_id,
-        cred_type=CredentialType.API_KEY,
-        encrypted_blob=json.dumps(payload),
-        tier=tier,
-        daily_limit=daily_limit,
-    )
-
-
-# =============================================================================
-# CONVENIENCE: Initialize default 32-credential fleet
-# =============================================================================
-
-async def initialize_fleet_vault(vault: VaultCore) -> None:
-    """
-    Initialize the default 32-credential fleet structure.
-    Caller must populate actual credentials via store_credential().
-    """
-    # 8 AGY OAuth accounts
-    for i in range(8):
-        cred = create_agy_oauth_credential(
-            account_id=str(i),
-            access_token="",  # Placeholder
-            refresh_token="",  # Placeholder
-            expires_at=datetime.now(timezone.utc) + timedelta(days=30),
-            scopes=["grok.build", "grok.api"],
-            tier=CredentialTier.FREE,
-            daily_limit=0,
-        )
-        await vault.store_credential(cred)
-    
-    # 8 Grok CLI accounts
-    for i in range(8):
-        cred = create_grok_auth_credential(
-            account_id=i,
-            auth_json={"access_token": "", "refresh_token": ""},
-            config_toml="[cli]\nauto_update = false\ntelemetry = false\n\n[models]\ndefault = \"grok-build\"\n\n[model.grok-build]\nsandbox = \"strict\"\n\n[features]\nweb_fetch = false\nwrite_file = false\n",
-            tier=CredentialTier.FREE,
-            daily_limit=0,
-        )
-        await vault.store_credential(cred)
-    
-    # 8 Google GCP Service Accounts
-    for i in range(8):
-        cred = create_gcp_sa_credential(
-            project_id=f"omega-gcp-{i}",
-            sa_json={"type": "service_account", "project_id": f"omega-gcp-{i}"},
-            tier=CredentialTier.FREE,
-            daily_limit=0,
-        )
-        await vault.store_credential(cred)
-    
-    # 8 OpenRouter/Exa/Firecrawl API keys (2 each)
-    for provider, key_prefix in [
-        (ProviderName.OPENROUTER, "or"),
-        (ProviderName.EXA, "exa"),
-        (ProviderName.FIRECRAWL, "fc"),
-    ]:
-        for i in range(2):  # 2 per provider = 6 total, need 2 more
-            cred = create_api_key_credential(
-                provider=provider,
-                key_id=f"{key_prefix}-{i}",
-                api_key="",  # Placeholder
-                tier=CredentialTier.FREE,
-                daily_limit=0,
-            )
-            await vault.store_credential(cred)
-    
-    # Add 2 more to reach 8 (OpenRouter BYOK)
-    for i in range(2):
-        cred = create_api_key_credential(
-            provider=ProviderName.OPENROUTER,
-            key_id=f"or-byok-{i}",
-            api_key="",
-            tier=CredentialTier.BYOK,
-            daily_limit=0,
-        )
-        await vault.store_credential(cred)
-    
-    logger.info("Fleet vault initialized with 32 credential slots")
 
 
 # =============================================================================
@@ -987,27 +816,10 @@ async def initialize_fleet_vault(vault: VaultCore) -> None:
 # =============================================================================
 
 __all__ = [
-    # Enums
-    "CredentialType",
-    "CredentialTier", 
-    "CredentialStatus",
-    "ProviderName",
-    # Data models
-    "VaultCredential",
-    "VaultLeaseRequest",
-    "VaultLease",
-    # Core
     "VaultCore",
-    "AgeEncryption",
-    # Factory functions
-    "create_agy_oauth_credential",
-    "create_grok_auth_credential",
-    "create_gcp_sa_credential",
-    "create_api_key_credential",
-    "initialize_fleet_vault",
-    # Errors
-    "VaultCoreError",
-    "CredentialNotFound",
-    "LeaseExpired",
-    "LeaseConflict",
+    "VaultError",
+    "CredentialNotFoundError",
+    "LeaseError",
+    "QuotaExceededError",
+    "create_vault_core",
 ]

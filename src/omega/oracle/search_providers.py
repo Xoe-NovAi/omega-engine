@@ -33,11 +33,14 @@ class FirecrawlProvider(SearchProvider):
     def _resolve_from_vault() -> str:
         """Fallback to vault if no key passed explicitly."""
         try:
-            from omega.vault import KeyVault
-            return KeyVault().resolve("firecrawl")
+            from omega.vault import VaultCore
+            vault = VaultCore()
+            vault._load_sync()
+            cred = vault._credentials.get("firecrawl:api_key")
+            return cred.encrypted_blob if cred else ""
         except (OmegaError, RuntimeError, OSError) as e:
             logger.debug(f"Firecrawl key fallback failed: {e}")
-            return os.environ.get("FIRECRAWL_API_KEY", "")
+            return ""
 
     async def search(self, query: str, limit: int = 10) -> Optional[str]:
         async with httpx.AsyncClient(timeout=30.0) as client:
@@ -200,11 +203,14 @@ class ExaProvider(SearchProvider):
     def _resolve_from_vault() -> str:
         """Fallback to vault if no key passed explicitly."""
         try:
-            from omega.vault import KeyVault
-            return KeyVault().resolve("exa")
+            from omega.vault import VaultCore
+            vault = VaultCore()
+            vault._load_sync()
+            cred = vault._credentials.get("exa:api_key")
+            return cred.encrypted_blob if cred else ""
         except (OmegaError, RuntimeError, OSError) as e:
             logger.debug(f"Exa key fallback failed: {e}")
-            return os.environ.get("EXA_API_KEY", "")
+            return ""
 
     async def search(self, query: str, limit: int = 10) -> Optional[str]:
         async with httpx.AsyncClient(timeout=30.0) as client:

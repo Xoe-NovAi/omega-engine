@@ -1,1 +1,26 @@
-NNEb7gGrZ9lyF8+kRGGm1ScvGcmNwDIvSlZjlIG3W3x28Cqt6cQBJhAQsfDVde3L3WfWtA+gJv+XqRFl/BmwUocdcNtRiPc6d8HVUjmOVDcy5h+99hpAx6NfFdwsGvmc/biVWM9bR39ZCEeKBNHA1K6JO9UhImBb416uMQLX4eJVymB1C30vg4lrQ6QmLQFrmv3DjP1+saVX
+{
+  "google:api_key": {
+    "provider": "google",
+    "key_id": "api_key",
+    "cred_type": "api_key",
+    "encrypted_blob": "test-key-123",
+    "tier": "free",
+    "daily_limit": 0,
+    "used_today": 0,
+    "cooldown_until": null,
+    "status": "active",
+    "created_at": "2026-07-25T14:09:31.898719+00:00",
+    "expires_at": null,
+    "rotated_at": "2026-07-25T14:09:31.898712+00:00",
+    "rotation_count": 0,
+    "last_used_at": null,
+    "last_error": null,
+    "last_rotated_by": null,
+    "rotation_policy": null,
+    "current_lease_agent": null,
+    "lease_expires_at": null,
+    "backup_refs": [],
+    "tags": {},
+    "metadata": {}
+  }
+}

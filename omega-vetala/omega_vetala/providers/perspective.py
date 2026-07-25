@@ -63,10 +63,18 @@ class PerspectiveProvider(ModelProvider):
         """Initialise provider.
 
         Args:
-            api_key: Perspective API key.  Falls back to
-                ``PERSPECTIVE_API_KEY`` environment variable.
+            api_key: Perspective API key.  Falls back to VaultCore.
         """
-        self._api_key = api_key or os.environ.get("PERSPECTIVE_API_KEY", "")
+        if api_key is None:
+            try:
+                from omega.vault import VaultCore
+                vault = VaultCore()
+                vault._load_sync()
+                cred = vault._credentials.get("perspective:api_key")
+                api_key = cred.encrypted_blob if cred else ""
+            except Exception:
+                api_key = ""
+        self._api_key = api_key
         self._last_request: float = 0.0
         self._client: httpx.Client | None = None
 

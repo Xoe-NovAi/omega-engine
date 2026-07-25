@@ -6,6 +6,9 @@
 
 ---
 
+> **⚠️ RESEARCH-VS-EXECUTION CORRECTION (2026-07-25):** This document reports **research** closure for 12 domains. It does **not** assert execution closure.  
+> Always check `docs/sprints/current/EXECUTION_PLAN_20260725.md` §0 for probe-backed execution status before acting.
+
 ## §1 Executive Summary
 
 | Source Document | Gaps Identified | Researched | Status |

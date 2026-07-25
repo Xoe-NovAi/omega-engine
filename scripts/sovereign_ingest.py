@@ -59,10 +59,21 @@ async def main():
     
     logger.info(f"Initializing Sovereign Ingestion for entity: {args.entity}")
     
+    # Resolve Google API key from VaultCore
+    google_key = None
+    try:
+        from omega.vault import VaultCore
+        vault = VaultCore()
+        vault._load_sync()
+        cred = vault._credentials.get("google:api_key")
+        google_key = cred.encrypted_blob if cred else None
+    except Exception:
+        google_key = None
+    
     config = IngestionConfig(
         entity_name=args.entity,
         model_name=args.model,
-        api_key=os.environ.get("GOOGLE_API_KEY_3"), # Should be moved to a key-resolver
+        api_key=google_key,
         sources=[Path(s) for s in args.sources],
         max_budget_usd=args.budget
     )

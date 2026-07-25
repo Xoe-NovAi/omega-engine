@@ -98,7 +98,22 @@ CREATE INDEX IF NOT EXISTS idx_breaker_provider ON breaker_transitions(provider)
 CREATE INDEX IF NOT EXISTS idx_perf_ts ON performance(ts);
 CREATE INDEX IF NOT EXISTS idx_perf_provider ON performance(provider);
 CREATE INDEX IF NOT EXISTS idx_perf_latency ON performance(latency_ms);
-CREATE INDEX IF NOT EXISTS idx_baselines_metric ON baselines(metric_name);
+
+-- Vault Audit Ledger (M11 Soul Integrity + M25 Streaming Resilience)
+CREATE TABLE IF NOT EXISTS vault_audit (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ts INTEGER NOT NULL,
+    trace_id TEXT,
+    action TEXT NOT NULL,
+    credential_ref TEXT NOT NULL,
+    success INTEGER NOT NULL,
+    details TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_vault_audit_ts ON vault_audit(ts);
+CREATE INDEX IF NOT EXISTS idx_vault_audit_trace ON vault_audit(trace_id);
+CREATE INDEX IF NOT EXISTS idx_vault_audit_cred ON vault_audit(credential_ref);
+CREATE INDEX IF NOT EXISTS idx_vault_audit_action ON vault_audit(action);
 """
 
 

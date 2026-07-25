@@ -183,7 +183,7 @@ class SovereignGateway:
         return urls.get(provider_name, "http://127.0.0.1:8000")
 
     def _build_provider_headers(self, provider_name: str) -> Dict[str, str]:
-        """Inject API keys from KeyVault/env. Stub for now."""
+        """Inject API keys from VaultCore/env. Stub for now."""
         return {"Content-Type": "application/json", "User-Agent": "Omega-SovereignGateway/1.0"}
 
 

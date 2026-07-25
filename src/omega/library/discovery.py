@@ -33,7 +33,7 @@ from omega.errors import (
     ConfigError, WADError, BoundaryViolationError, InvariantViolationError,
     EntityTombstonedError, ModelNotFoundError,
 )
-from omega.vault import KeyVault
+from omega.vault import VaultCore
 
 logger = logging.getLogger(__name__)
 
@@ -96,15 +96,25 @@ class DiscoveryOrchestrator:
         # The gateway will try local inference first (M7 Local-First).
         self.default_model = default_model  # None = let gateway decide
         try:
-            self.exa_key = KeyVault().resolve("exa")
+            vault = VaultCore()
+            vault._load_sync()
+            exa_cred = vault._credentials.get("exa:api_key")
+            self.exa_key = exa_cred.encrypted_blob if exa_cred else None
+            if not self.exa_key:
+                logger.warning("VaultCore exa resolution failed - no key in vault")
         except (OmegaError, KeyError) as e:
-            logger.warning(f"KeyVault exa resolution failed: {e}. Falling back to env.")
-            self.exa_key = os.getenv("EXA_API_KEY")
+            logger.warning(f"VaultCore exa resolution failed: {e}")
+            self.exa_key = None
         try:
-            self.firecrawl_key = KeyVault().resolve("firecrawl")
+            vault = VaultCore()
+            vault._load_sync()
+            fc_cred = vault._credentials.get("firecrawl:api_key")
+            self.firecrawl_key = fc_cred.encrypted_blob if fc_cred else None
+            if not self.firecrawl_key:
+                logger.warning("VaultCore firecrawl resolution failed - no key in vault")
         except (OmegaError, KeyError) as e:
-            logger.warning(f"KeyVault firecrawl resolution failed: {e}. Falling back to env.")
-            self.firecrawl_key = os.getenv("FIRECRAWL_API_KEY")
+            logger.warning(f"VaultCore firecrawl resolution failed: {e}")
+            self.firecrawl_key = None
         self._jobs: Dict[str, DiscoveryReport] = {}
         self._load_jobs()
 

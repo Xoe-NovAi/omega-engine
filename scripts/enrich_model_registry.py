@@ -289,8 +289,17 @@ async def fetch_aa_snapshot(
 async def main_async(args: argparse.Namespace) -> int:
     """Main async entry point."""
     import os
-
-    api_key = os.environ.get("AA_API_KEY")
+    
+    # Resolve AA_API_KEY from VaultCore
+    api_key = None
+    try:
+        from omega.vault import VaultCore
+        vault = VaultCore()
+        vault._load_sync()
+        cred = vault._credentials.get("artificial_analysis:api_key")
+        api_key = cred.encrypted_blob if cred else None
+    except Exception:
+        api_key = None
 
     if args.snapshot:
         output = Path(args.output) if args.output else Path("data/aa_snapshot.json")
