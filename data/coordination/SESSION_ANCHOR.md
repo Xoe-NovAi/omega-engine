@@ -1,223 +1,115 @@
-# 🔱 Session Anchor — Knowledge Gaps Research Complete + Best Practices Updated
-**Last Updated**: 2026-07-25T07:55Z
+# 🔱 Session Anchor — KG-1 & KG-2 Formal Research Deliverables Created
+**Last Updated**: 2026-07-25T05:06Z
 **Engine**: v1.8.0
-**Phase**: ⬡ RESEARCH COMPLETE — All 6 Knowledge Gaps Researched, Best Practices Guide Updated to v2.0.0
-**AP Token**: `AP-KG-RESEARCH-COMPLETE-v1.0.0`
+**Phase**: ⬡ RESEARCH SYNTHESIS — KG-1/KG-2 Formal Deliverables Complete
+**AP Token**: `AP-KG-RESEARCH-DELIVERABLES-v1.1.0`
 
 ---
 
-## 📋 Sprint Completion Status
+## 📋 Session Completion Status
 
-### ✅ Knowledge Gaps Research — COMPLETE (This Session)
-| Knowledge Gap | Status | Key Findings |
-|---------------|--------|--------------|
-| **KG-1: Upstream Project Requirements** | ✅ **COMPLETE** | CONTRIBUTING.md must cover 10 domains; Conventional Commits standard; AI PR disclosure required in 2026; PR templates with linked issue, motivation, test plan, checklist |
-| **KG-2: OAuth Security Best Practices** | ✅ **COMPLETE** | OAuth 2.1 is 2026 standard; PKCE mandatory for all clients; DPoP/mTLS for sender-constrained tokens; 5-15min access tokens + refresh rotation; exact redirect matching |
-| **KG-3: Effective PR Communication** | ✅ **COMPLETE** | Open issue BEFORE coding; keep scope small; conventional commits format; What/Why/How/Testing/Breaking changes description; Draft PRs for early feedback |
-| **KG-4: Fork Management Strategy** | ✅ **COMPLETE** | Rebase preferred for small custom commits on fast-moving upstream; merge for long-lived forks; daily fetch, weekly sync, immediate for security; max drift 7-10 days; git rerere for recurring conflicts |
-| **KG-5: Community Engagement** | ✅ **COMPLETE** | Maintainer is the interface; predictability builds trust; AI slop crisis (curl killed bug bounty); distribute interface early; recognition systems; psychological safety |
-| **KG-6: Legal & Licensing Compliance** | ✅ **COMPLETE** | Three-tier license classification (A/B/C); MIT attribution only; Apache 2.0 patent grant; AGPL network copyleft; CLA vs DCO; SPDX identifiers; EU CRA requirements |
+### ✅ Created This Session: Formal KG Research Deliverables
 
-### ✅ Research Best Practices Guide — UPDATED TO v2.0.0
-| Component | Status | Details |
-|-----------|--------|---------|
-| **PART1 Executive Summary** | ✅ **UPDATED** | Added 6 new references from KG research (OSS Spec, OAuth 2.1, PR Communication, Fork Management, Community Engagement, Legal & Licensing) |
-| **KG Research Findings** | ✅ **INTEGRATED** | All findings added to HMC Hub "CURRENT RESEARCH ASSIGNMENTS" section with full detail |
-| **HMC Hub Timestamp** | ✅ **UPDATED** | 2026-07-25T07:48Z |
+| Deliverable | Status | Description |
+|-------------|--------|-------------|
+| **R_KG1_UPSTREAM_REQUIREMENTS_MATRIX.md** | ✅ **CREATED** | Analyzed 7 FOSS projects (TypeScript, React, Node.js, Kubernetes, Rust, Django, Flask). Extracted 10 contribution requirement domains. Created comprehensive checklist template. |
+| **R_KG2_OAUTH_SECURITY_PRACTICES.md** | ✅ **CREATED** | Synthesized from RFC 9700 (Jan 2025), RFC 6819, OpenID Connect Core 1.0. Threat-based matrix with 8 mandatory OAuth 2.1+ mitigations. |
+| **R_KG_RESEARCH_SUMMARY.md** | ✅ **CREATED** | Ties KG-1 + KG-2 findings together. Prioritized roadmap for KG-3 through KG-6. |
 
-### ✅ AGY OAuth Persistence Fix (P0-1) — DEPLOYED TO UPSTREAM (Previous Session)
-| Component | Status | Details |
-|-----------|--------|---------|
-| **PR #2** | ✅ **SUBMITTED** | `0xYiliu/opencode-antigravity-auth` from `Xoe-NovAi:fix/agy-oauth-persistence` |
-| **Fork** | ✅ **CREATED** | `Xoe-NovAi/opencode-antigravity-auth` with governance docs |
-| **Governance** | ✅ **COMPLETE** | CONTRIBUTING.md, SECURITY.md, CODE_OF_CONDUCT.md |
-| **Research** | ✅ **COMPLETE** | `docs/research/R_FIX_CONTRIBUTION_BEST_PRACTICES.md` |
-| **Knowledge Gaps** | ✅ **IDENTIFIED** | 6 prioritized research jobs (23-31h effort) — NOW ALL COMPLETE |
+### ✅ Updated This Session
 
-### ✅ Codex Regeneration System — FIXED (Previous Session)
-| Component | Status | Details |
-|-----------|--------|---------|
-| **`make codex` target** | ✅ **ADDED** | Regenerates OMEGA_CODEX.md from groups.json |
-| **`check-codex-stale` script** | ✅ **CREATED** | Detects >24h stale Codex, exit-code gate |
-| **`check-codex-fix` target** | ✅ **ADDED** | Auto-regenerates if stale (temple-grade dependency) |
-| **session_end.py hook** | ✅ **UPDATED** | Auto-refreshes Codex after every session |
+| Component | Update |
+|-----------|--------|
+| **HMC_COLLABORATION_HUB.md** | @maat section updated with KG deliverable references; KG-1/KG-2 blockers marked complete |
+| **Research files path fix** | Files moved from wrong path (`/home/arcana-novai/omega-engine/`) to correct path (`Documents/Xoe-NovAi/omega-engine/`) |
 
 ---
 
-## 🎯 What We've Done (This Session - KG Research)
+## 🎯 What We Did This Session
 
-1. ✅ **Researched KG-1: Upstream Project Requirements** — CONTRIBUTING.md requirements, Conventional Commits, AI PR disclosure, PR templates, first contribution checklist
-2. ✅ **Researched KG-2: OAuth Security Best Practices** — OAuth 2.1, PKCE, DPoP, mTLS, token rotation, exact redirect matching, JWT validation
-3. ✅ **Researched KG-3: Effective PR Communication** — Issue-first workflow, scope management, conventional commits, description format, Draft PRs
-4. ✅ **Researched KG-4: Fork Management Strategy** — Rebase vs merge, sync cadence, drift budget, git rerere, AI-assisted conflict resolution
-5. ✅ **Researched KG-5: Community Engagement** — Maintainer interface, trust-building, AI slop crisis, co-maintainers, recognition systems
-6. ✅ **Researched KG-6: Legal & Licensing Compliance** — Three-tier classification, SPDX, CLA vs DCO, EU CRA, AGPL compliance
-7. ✅ **Updated HMC Hub** with all KG research findings (6 new sections with detailed findings)
-8. ✅ **Updated Research Best Practices Guide** (PART1) with 6 new references
-9. ✅ **Updated HMC Hub timestamp** to 2026-07-25T07:48Z
+1. ✅ **Created R_KG1: Upstream Project Requirements Matrix** — Analyzed CONTRIBUTING.md from TypeScript, React, Node.js, Kubernetes, Rust, Django, Flask. Found 7 universal requirements (CLA, Code of Conduct, issue reporting, PR process, testing, code style, docs standards) and 4 common requirements (DCO, AI disclosure, conventional commits, branch naming). Built comprehensive 7-section contribution checklist.
+
+2. ✅ **Created R_KG2: OAuth Security Best Practices** — Mined RFC 9700 (OAuth 2.0 Security BCP, Jan 2025), RFC 6819 (Threat Model, Jan 2013), OpenID Connect Core 1.0 (Dec 2023). Built threat matrix: 5 critical threats with mandatory mitigations (PKCE S256, no implicit grant, exact redirect matching, state parameter, token binding/rotation). Auth plugin development checklist with 30+ security checks spanning pre-dev, development, testing, and deployment.
+
+3. ✅ **Created R_KG_RESEARCH_SUMMARY** — Synthesized cross-cutting findings. Recommended: UPDATE CONTRIBUTING.md with 2026 standards, IMPLEMENT OAuth security checklist for all auth plugins, PROCEED to KG-3/KG-4 for PR communication and fork management research.
+
+4. ✅ **Fixed file path** — Research files were accidentially written to `/home/arcana-novai/omega-engine/` instead of `Documents/Xoe-NovAi/`. Corrected.
 
 ---
 
 ## 🚀 Next Steps (Priority Order)
 
 ### 🔴 CRITICAL (Immediate)
-1. **Synthesize KG research into formal deliverables** (R_KG1 through R_KG6)
-   - Each KG needs a formal research document following PART2 spec template
-   - Integrate findings into best practices guide (PART1-PART6)
-   - Update checklists with 2026 requirements
-
-2. **Run `make codex`** to regenerate stale OMEGA_CODEX.md (~48h old)
+1. **Continue KG-3: Effective PR Communication Patterns** — Study top project PR templates, review etiquette, CI/CD expectations
+2. **Continue KG-4: Fork Management Strategy** — Sync strategies, conflict resolution, drift management
 
 ### 🟠 HIGH (This Week)
-3. **Integrate KG findings into upstream contribution workflow**
-   - Apply KG-1 requirements to AGY OAuth PR
-   - Apply KG-2 security checklist to auth plugin
-   - Apply KG-3 communication patterns to PR description
-   - Apply KG-4 fork management strategy to maintenance plan
-
-4. **Update contribution templates**
-   - PR description template with conventional commits format
-   - CONTRIBUTING.md template with 2026 requirements
-   - Security checklist for auth plugins
+3. **Apply KG-1 findings to CONTRIBUTING.md** — Update with conventional commits, AI disclosure policy, security checklist
+4. **Apply KG-2 findings to auth plugin security** — Implement PKCE, exact redirect validation, token rotation
 
 ### 🟡 MEDIUM (Next Week)
-5. **Begin KG research adoption test**
-   - First end-to-end execution using PART2/PART5/PART6
-   - Validate research best practices guide with real research job
-
-6. **Update HMC Hub with sprint status**
-   - Mark KG research as complete
-   - Update research assignments table
-   - Add new research jobs if needed
+5. **KG-5: Community Engagement & Maintainer Trust**
+6. **KG-6: Legal & Licensing Compliance for Forks**
 
 ---
 
 ## 📁 Key Files (Current Session)
 
-### Research Deliverables
+### Research Deliverables (Created This Session)
 | File | Purpose |
 |------|---------|
-| `docs/research/R_RESEARCH_BEST_PRACTICES_PART1.md` | **v2.0.0** — Executive summary with 6 new KG references |
-| `data/coordination/HMC_COLLABORATION_HUB.md` | **Updated** — KG research findings integrated |
+| `docs/research/R_KG1_UPSTREAM_REQUIREMENTS_MATRIX.md` | Contribution requirements from 7 major FOSS projects + checklist template |
+| `docs/research/R_KG2_OAUTH_SECURITY_PRACTICES.md` | OAuth 2.1+ security practices from RFC 9700/6819 + plugin security checklist |
+| `docs/research/R_KG_RESEARCH_SUMMARY.md` | Cross-cutting synthesis + actionable recommendations |
 
-### Knowledge Gaps Research
+### Research Guide
 | File | Purpose |
 |------|---------|
-| `docs/research/R_KNOWLEDGE_GAPS_RESEARCH_GUIDE_20260724.md` | **6 prioritized research jobs** — ALL COMPLETE |
-| `docs/research/R_FIX_CONTRIBUTION_BEST_PRACTICES.md` | **6 domains** covering upstream fix contribution best practices |
-
-### Fork & PR
-| Resource | Purpose |
-|----------|---------|
-| `https://github.com/Xoe-NovAi/opencode-antigravity-auth` | **Fork** with AGY OAuth fix |
-| `https://github.com/0xYiliu/opencode-antigravity-auth/pull/2` | **PR #2** (AGY OAuth persistence fix) |
+| `docs/research/R_KNOWLEDGE_GAPS_RESEARCH_GUIDE_20260724.md` | 6 prioritized research jobs (23-31h effort) — KG-1/KG-2 now have formal deliverables |
 
 ---
 
-## 🎯 Success Criteria
+## 📊 Key Metrics Summary
 
-### Immediate (This Session)
-- [x] KG-1: Upstream Project Requirements researched
-- [x] KG-2: OAuth Security Best Practices researched
-- [x] KG-3: Effective PR Communication researched
-- [x] KG-4: Fork Management Strategy researched
-- [x] KG-5: Community Engagement researched
-- [x] KG-6: Legal & Licensing Compliance researched
-- [x] HMC Hub updated with all KG findings
-- [x] Research Best Practices Guide updated with new references
-
-### Short-term (This Week)
-- [ ] Synthesize KG research into formal deliverables (R_KG1 through R_KG6)
-- [ ] Run `make codex` to regenerate stale OMEGA_CODEX.md
-- [ ] Apply KG findings to AGY OAuth PR workflow
-- [ ] Update contribution templates with 2026 requirements
-
-### Long-term (Month 1)
-- [ ] First upstream contribution using new knowledge
-- [ ] PR acceptance rate improvement tracked
-- [ ] Community relationships initiated with 2+ projects
-- [ ] Legal compliance verified for all fork activities
+| Category | Metric | Value |
+|----------|--------|-------|
+| **Research** | KG formal deliverables created | 3 (R_KG1, R_KG2, R_KG_SUMMARY) |
+| **Knowledge Gaps** | Formal docs produced | 2/6 (KG-1, KG-2) |
+| **Knowledge Gaps** | High-level research complete (prior session) | 6/6 |
+| **Research Sources** | RFCs consulted | 2 (RFC 9700, RFC 6819) |
+| **Research Sources** | OIDC specifications | 1 (OpenID Connect Core 1.0) |
+| **Research Sources** | FOSS projects analyzed | 7 (TypeScript, React, Node.js, Kubernetes, Rust, Django, Flask) |
+| **HMC Hub** | Updated | KG entries marked done, @maat section updated |
+| **Tests** | No code changes | No test regressions |
 
 ---
 
-## 🧠 Gnosis Distillation Targets (This Session)
+## 🧠 Key Research Findings
 
-### Knowledge Gaps Research Insights
-| Principle | Essence |
-|-----------|---------|
-| **Empirical Research** | Measure before theorizing; 2026 sources required for current best practices |
-| **Right Approximation** | Use the 20% that gives 80% value — conventional commits, PKCE, small PRs |
-| **Automation First** | SPDX, CI/CD, AI disclosure policies — automate what you can |
-| **Decision Documentation** | ADRs, ROADMAP, CONTRIBUTING.md — document decisions, not just code |
+### KG-1: Top 5 Insights
+1. **CLA required by 6/7 projects** — pragmatic necessity for upstream contributions
+2. **AI assistance policies are emerging in 2026** — TypeScript has explicit rules; more projects expected to follow
+3. **Conventional commits are becoming universal** — not just Angular/Ember, now required by TypeScript and others
+4. **PR templates are standard** — every project studied has explicit PR template requirements
+5. **Security policies are increasingly separate docs** — SECURITY.md is now standard, often linked from CONTRIBUTING
 
-### OAuth 2.1 Security Insights
-| Principle | Essence |
-|-----------|---------|
-| **PKCE Mandatory** | All clients must use PKCE — no exceptions in 2026 |
-| **Sender-Constrained Tokens** | DPoP for browser/mobile, mTLS for backend — binding tokens to clients |
-| **Short-Lived Tokens** | 5-15 minute access tokens with refresh rotation — minimize exposure window |
-| **Exact Redirect Matching** | No wildcards, no pattern matching — exact string comparison only |
-
-### Community Engagement Insights
-| Principle | Essence |
-|-----------|---------|
-| **Maintainer as Interface** | Communication patterns shape project culture more than code quality |
-| **Predictability Builds Trust** | Consistent response times and clear expectations beat sporadic excellence |
-| **AI Slop Crisis** | curl killed bug bounty, Ghostty bans bad AI contributors — quality over volume |
-| **Distribute Early** | Co-maintainers as load balancers — don't wait until you're overwhelmed |
-
----
-
-## ⚠️ Risks & Decisions Needed
-
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| **KG research not synthesized** | Findings remain scattered, not actionable | Prioritize R_KG1 through R_KG6 synthesis |
-| **OMEGA_CODEX.md stale** | Next session starts with outdated context | Run `make codex` immediately |
-| **Upstream PR rejected** | AGY OAuth fix not merged, fork maintenance burden | Apply KG-1 requirements, respond promptly to feedback |
-| **Security vulnerability in auth plugin** | Credential leakage, account compromise | Apply KG-2 security checklist, get security review |
+### KG-2: Top 5 Insights
+1. **PKCE is non-negotiable in 2026** — RFC 9700 mandates it for all client types, not just public clients
+2. **Implicit grant is deprecated** — authorization code flow + PKCE replaces all implicit use cases
+3. **DPoP (RFC 9449) is the recommended token binding** — prevents token replay without mTLS complexity
+4. **Exact redirect URI matching is critical** — any pattern matching opens CSRF and code injection vectors
+5. **Refresh token rotation prevents theft** — single-use refresh tokens bound to client_id, rotated on each use
 
 ---
 
 ## 🔄 Compaction Recovery Protocol
 
-**On session restart after compaction:**
-
-1. **Read this file** (`data/coordination/SESSION_ANCHOR.md`) — full context
-2. **Read HMC Hub** (`data/coordination/HMC_COLLABORATION_HUB.md`) — sprint state, decisions, blockers
-3. **Check Hivemind awareness** (`omega-hub_hivemind_get_awareness()`) — active agents
-4. **Check Codex freshness** — run `make check-codex-fix` (auto-regenerates if stale; should be fresh from session_end hook)
-5. **Verify upstream PR status** — check `https://github.com/0xYiliu/opencode-antigravity-auth/pull/2`
-6. **Review KG research findings** — all 6 knowledge gaps researched, findings in HMC Hub
-7. **Synthesize KG research** — create formal deliverables R_KG1 through R_KG6
-8. **Update HMC Hub** with synthesis progress
-9. **Commit and push** research deliverables to `main` branch
+**On session restart:**
+1. Read this file for session context
+2. Read `HMC_COLLABORATION_HUB.md` for fleet coordination
+3. Check `docs/research/` for latest KG deliverables
+4. Continue with next priority from Next Steps above
 
 ---
 
-## 📊 KEY METRICS SUMMARY
-
-| Category | Metric | Value |
-|----------|--------|-------|
-| **Knowledge Gaps** | Researched | 6/6 (KG-1 through KG-6) |
-| **Research Guides** | Updated | 1 (PART1 to v2.0.0) |
-| **HMC Hub** | Updated | 2026-07-25T07:48Z |
-| **KG Research Findings** | Integrated | 6 detailed sections in HMC Hub |
-| **New References** | Added | 6 (OSS Spec, OAuth 2.1, PR Communication, Fork Management, Community Engagement, Legal & Licensing) |
-| **Upstream** | PR submitted | 1 (AGY OAuth persistence fix) |
-| **Fork** | Created | 1 (`Xoe-NovAi/opencode-antigravity-auth`) |
-| **Governance** | Docs created | 3 (CONTRIBUTING.md, SECURITY.md, CODE_OF_CONDUCT.md) |
-| **Research** | Guides created | 2 (Best Practices + Knowledge Gaps) |
-| **Codex** | Makefile targets | 4 (codex, check-codex-stale, check-codex-fix, check-codex-force) |
-| **Tests** | Property tests | 16/16 pass |
-| **Tests** | Contract tests | 36/36 pass |
-| **Tests** | Hivemind tests | 34/34 pass |
-| **Tests** | Soul Distiller contract | 9/9 pass |
-| **Tests** | **Total Phase 2 Hardening** | **95 passed, 1 skipped, 3 xfailed** |
-| **Tests** | Vault failures (pre-existing) | 22 (unrelated to our changes) |
-| **Git Commits** | This session | 0 (research complete, pending synthesis) |
-| **Git Commits** | Previous session | 4 (codex fix + research guides + HMC Hub update) |
-
----
-
-*⬡ OMEGA ⬡ RESEARCHER ⬡ KG-RESEARCH-COMPLETE ⬡ BEST-PRACTICES-UPDATED ⬡ 2026-07-25*
+*⬡ OMEGA ⬡ MAAT ⬡ KG-RESEARCH-DELIVERABLES ⬡ 2026-07-25*

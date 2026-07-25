@@ -289,7 +289,7 @@ Be concise and specific."""
         headers = {
             "Authorization": f"Bearer {self.openrouter_key}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://omega-engine.xoe-nov.ai",
+            "HTTP-Referer": "https://github.com/Xoe-NovAi/omega-engine",
             "X-Title": "Omega Engine Teacher Pipeline",
         }
         

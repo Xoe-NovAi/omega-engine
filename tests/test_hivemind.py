@@ -17,7 +17,7 @@ import os
 import sys
 import tempfile
 from pathlib import Path
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import yaml
 import pytest
@@ -78,14 +78,26 @@ mock_mcp_client_sse.sse_client = AsyncMock()
 mock_mcp_client_streamable = types.ModuleType("mcp.client.streamable_http")
 mock_mcp_client_streamable.streamablehttp_client = AsyncMock()
 
+mock_mcp_server_sse = types.ModuleType("mcp.server.sse")
+mock_mcp_server_sse.SseServerTransport = MagicMock()
+
+mock_mcp_server_streamable = types.ModuleType("mcp.server.streamable_http_manager")
+mock_mcp_server_streamable.StreamableHTTPSessionManager = MagicMock()
+
+mock_mcp_server_fastmcp_server = types.ModuleType("mcp.server.fastmcp.server")
+mock_mcp_server_fastmcp_server.StreamableHTTPASGIApp = MagicMock()
+
 # Save originals before mocking (Carmack fix: restore after load to prevent
 # polluting subsequent test modules that need the real mcp library)
-_saved_keys = ["mcp", "mcp.server", "mcp.server.fastmcp", "mcp.types", "mcp.client", "mcp.client.sse", "mcp.client.streamable_http"]
+_saved_keys = ["mcp", "mcp.server", "mcp.server.fastmcp", "mcp.server.sse", "mcp.server.streamable_http_manager", "mcp.server.fastmcp.server", "mcp.types", "mcp.client", "mcp.client.sse", "mcp.client.streamable_http"]
 _originals = {k: sys.modules.get(k) for k in _saved_keys}
 
 sys.modules["mcp"] = mock_mcp_pkg
 sys.modules["mcp.server"] = mock_mcp_server
 sys.modules["mcp.server.fastmcp"] = mock_mcp_fastmcp
+sys.modules["mcp.server.sse"] = mock_mcp_server_sse
+sys.modules["mcp.server.streamable_http_manager"] = mock_mcp_server_streamable
+sys.modules["mcp.server.fastmcp.server"] = mock_mcp_server_fastmcp_server
 sys.modules["mcp.types"] = mock_mcp_types
 sys.modules["mcp.client"] = mock_mcp_client
 sys.modules["mcp.client.sse"] = mock_mcp_client_sse

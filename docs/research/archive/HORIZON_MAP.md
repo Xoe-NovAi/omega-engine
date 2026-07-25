@@ -84,7 +84,7 @@ HORIZON 3: COMMUNITY TOOL ── 0% ──── FUTURE
 |-------|---------|----------|
 | Omega Desktop | Electron/Chainlit-based desktop app | H2+1 week |
 | Entity Studio | CLI tool for creating/styling entities | H2+2 weeks |
-| One-Click Installer | `curl https://xoe-nov.ai/install | bash` | H2+3 weeks |
+| One-Click Installer | `curl https://xoe.nova.ai/install | bash` | H2+3 weeks |
 | Foundation Website | Public docs, tutorials, stack templates | H2+4 weeks |
 
 ### NOT started yet. All horizons prior must be complete.

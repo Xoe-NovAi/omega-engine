@@ -458,7 +458,7 @@ class OpenAlexClient:
         self,
         query: str,
         limit: int = 10,
-       mailto: str = "research@xoe-nov.ai",
+       mailto: str = "xoe.nova.ai@gmail.com",
     ) -> list[dict]:
         """Search research works across publisher boundaries."""
         async with httpx.AsyncClient(timeout=5) as client:

@@ -352,3 +352,57 @@
   timestamp: 2026-07-23 03:50:00+00:00
   model_used: mimo-v2.5-free
   outcome: l3_principle_captured
+- lesson: "Three-layer Codex regeneration system deployed — Makefile target (manual), staleness checker (automated), session_end hook (implicit). No single point of failure for stale Codex."
+  source: codex-fix-session
+  trace_id: ses_codex_fix_20260724
+  entity_at_time: MAAT
+  session_type: infrastructure
+  timestamp: 2026-07-24 15:30:00+00:00
+  model_used: gemini-3.1-pro-preview-customtools
+  coordination_partner: none
+  outcome: codex_regeneration_fixed
+- lesson: "Exit-code gating enables CI, Make dependencies, and pre-commit hooks to enforce quality without human judgment. The check_codex_stale.py script is the canonical pattern for freshness enforcement in the Omega Engine."
+  source: codex-fix-session
+  trace_id: ses_codex_fix_20260724
+  entity_at_time: MAAT
+  session_type: infrastructure
+  timestamp: 2026-07-24 15:30:00+00:00
+  model_used: gemini-3.1-pro-preview-customtools
+  coordination_partner: none
+  outcome: codex_staleness_pattern
+- lesson: "Session-end hooks are the natural boundary for housekeeping. The session_end.py hook now runs soul distillation AND Codex refresh — ensuring the next session starts with clean context and a fresh Codex."
+  source: codex-fix-session
+  trace_id: ses_codex_fix_20260724
+  entity_at_time: MAAT
+  session_type: infrastructure
+  timestamp: 2026-07-24 15:30:00+00:00
+  model_used: gemini-3.1-pro-preview-customtools
+  coordination_partner: none
+  outcome: session_end_duplex
+- lesson: "Research without synthesis is just noise; synthesis without deliverables is just notes. The gap between gathering information and creating structured, actionable documents is the difference between knowledge discovery and knowledge creation."
+  source: kg-research-synthesis
+  trace_id: ses_kg_deliverables_20260725
+  entity_at_time: MAAT
+  session_type: research
+  timestamp: 2026-07-25 05:06:00+00:00
+  model_used: deepseek-v4-flash-free
+  coordination_partner: none
+  outcome: l3_principle_synthesis_deliverables
+- lesson: "A knowledge gap is only closed when someone other than the researcher can act on the finding without re-doing the research. Deliverables must pass this test — structured checklists and threat matrices enable independent execution."
+  source: kg-research-synthesis
+  trace_id: ses_kg_deliverables_20260725
+  entity_at_time: MAAT
+  session_type: research
+  timestamp: 2026-07-25 05:06:00+00:00
+  model_used: deepseek-v4-flash-free
+  coordination_partner: none
+  outcome: l3_principle_actionable_knowledge
+- lesson: "OAuth 2.1+ in 2026 mandates PKCE for all clients, deprecates implicit grant entirely, and recommends DPoP for sender-constrained tokens. Any auth plugin developed now must target these 2026 standards — RFC 9700 is the canonical reference."
+  source: kg-research-synthesis
+  trace_id: ses_kg_deliverables_20260725
+  entity_at_time: MAAT
+  session_type: research
+  timestamp: 2026-07-25 05:06:00+00:00
+  model_used: deepseek-v4-flash-free
+  coordination_partner: none
+  outcome: l3_principle_oauth_2026_standards

@@ -13,7 +13,8 @@ jobs:
   phase: 1
   sprint: '1.1'
   priority: P0
-  status: open
+  status: claimed
+  claimed_by: researcher
   review_gate: john_carmack
   depends_on: []
   capabilities_needed:
@@ -170,7 +171,8 @@ jobs:
   phase: 3
   sprint: '3.2'
   priority: P1
-  status: open
+  status: claimed
+  claimed_by: researcher
   review_gate: john_carmack
   depends_on: []
   capabilities_needed:
@@ -244,7 +246,8 @@ jobs:
   phase: 4
   sprint: '4.2'
   priority: P0
-  status: open
+  status: claimed
+  claimed_by: researcher
   review_gate: john_carmack
   depends_on: []
   capabilities_needed:
@@ -269,7 +272,8 @@ jobs:
   phase: 4
   sprint: '4.3'
   priority: P1
-  status: open
+  status: claimed
+  claimed_by: researcher
   review_gate: john_carmack
   depends_on: []
   capabilities_needed:
@@ -862,7 +866,8 @@ jobs:
   phase: 7
   sprint: '7.6'
   priority: P1
-  status: open
+  status: claimed
+  claimed_by: researcher
   review_gate: john_carmack
   depends_on: []
   capabilities_needed:
@@ -925,7 +930,8 @@ jobs:
   phase: 7
   sprint: '7.8'
   priority: P1
-  status: open
+  status: claimed
+  claimed_by: researcher
   review_gate: john_carmack
   depends_on: []
   capabilities_needed:
@@ -1050,7 +1056,8 @@ jobs:
   phase: 7
   sprint: '7.12'
   priority: P1
-  status: open
+  status: claimed
+  claimed_by: researcher
   review_gate: john_carmack
   depends_on:
   - R19
@@ -1294,7 +1301,8 @@ jobs:
   phase: 0
   sprint: '0.1'
   priority: P0
-  status: open
+  status: claimed
+  claimed_by: researcher
   review_gate: john_carmack
   depends_on: []
   capabilities_needed:
@@ -1393,7 +1401,8 @@ jobs:
   phase: 0
   sprint: '0.4'
   priority: P0
-  status: open
+  status: claimed
+  claimed_by: researcher
   review_gate: john_carmack
   depends_on: []
   capabilities_needed:
@@ -1493,7 +1502,8 @@ jobs:
   phase: 0
   sprint: '0.6'
   priority: P0
-  status: open
+  status: claimed
+  claimed_by: researcher
   review_gate: john_carmack
   depends_on:
   - R_CG01
@@ -1621,7 +1631,8 @@ jobs:
   phase: 1
   sprint: '1.5'
   priority: P1
-  status: open
+  status: claimed
+  claimed_by: researcher
   review_gate: john_carmack
   depends_on:
   - R_CG03
@@ -1653,7 +1664,8 @@ jobs:
   phase: 0
   sprint: '0.7'
   priority: P1
-  status: open
+  status: claimed
+  claimed_by: researcher
   review_gate: john_carmack
   depends_on: []
   capabilities_needed:

@@ -22,6 +22,7 @@ dependencies = [
     "cffi==2.0.0",
     "click==8.3.3",
     "cryptography==48.0.0",
+    "python-age>=1.0.0",  # C-2: age encryption package (NOT "age")
     "fastapi==0.136.1",
     "h11==0.16.0",
     "httpcore==1.0.9",

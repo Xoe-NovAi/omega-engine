@@ -96,3 +96,35 @@
 - "Systemd Version Boundaries Are Hard Architecture Constraints — systemd feature gates (257 vs 258) create hard deployment boundaries. Design must be version-aware with explicit migration triggers (Ubuntu LTS releases). Application: Rootless TPM2 credentials work in 258+, fail in 257. Ubuntu 25.10 ships 257.9. 26.04 LTS (Apr 2026) ships 259+. No backport. Hybrid architecture (systemd-creds system + custom rootless) mandatory until 26.04."
 
 - "Vulkan Is the Sovereign Path for Consumer AMD iGPU — ROCm on gfx906/gfx90c is dead (dropped after 5.7, rocBLAS Strsm lacks kernels). Vulkan via Mesa RADV is production-ready (19-20 tok/s gen on Vega 8). CPU with Flash Attention ON beats GPU for prefill at large context (233 vs 84 tok/s). Application: Omega Engine NativeGGUFProvider defaults to Vulkan (n_gpu_layers: 35) on Zen 2. ROCm path only via Docker + tensile backport for specific models requiring SOLVE_TRI workaround."
+
+- "Provider-Level Constraints Are Not Billable-Fixable — When a provider enforces a model-specific constraint (16K TPM for Gemma 4), paying for higher tiers does not bypass it. The constraint is at the model routing layer, not the account tier layer. The fix is either changing providers (OpenRouter) or changing upstream infrastructure (NVIDIA NIM). Application: Provider fabric must treat 'same model, different provider' as distinct routing targets with independent rate limit tracking."
+
+- "The Best Bypass Is Another Provider's Infrastructure — OpenRouter routing Gemma 4 through its own GPU infrastructure (without Google's TPM cap) proves that model-level capabilities don't change — only the API gateway's per-model policies change. Application: Model adapter layer must treat 'same model, different provider' as distinct routing targets with independent rate limit tracking."
+
+- "Hardware Ceilings Trump Software Optimizations — 14Gi RAM is a hard ceiling for local inference. No quantization scheme, KV cache optimization, or offload strategy pushes beyond the ~14B-parameter comfort zone. A used GPU is the only meaningful upgrade path. Application: Qwen3.5 9B MTP (Q4_K_M, ~6GB) is the practical local maximum for 14Gi systems. 27B+ models require GPU purchase."
+
+- "Free-Tier Provider Diversity Is Sovereignty Infrastructure — Relying on a single free provider (Google Gemini) creates a single point of failure. Groq + OpenRouter + NVIDIA NIM + local = four independent paths to workhorse capability. Provider diversity is sovereignty infrastructure, not convenience. Application: Minimum viable workhorse chain requires ≥3 independent provider paths before counting local."
+
+- "Claimed ≠ Started — Track the Delta — 13 jobs claimed, 0 started (except Gemma 4). The gap between claim and execution is where work stalls. Every claim must have a `started_at` timestamp within 24h or it's stale. Application: Research Job Board must enforce claim TTL; stale claims auto-release to pool."
+
+- "Gap Docs Rot — Cross-Reference or They Lie — The three gap documents (Unknown-Unknowns, Kali Gaps, Deep Research) had 40% overlap but different statuses. Without cross-referencing, we'd re-research GAP-01/03/05/09 which are already solved. Application: Every gap audit must produce a unified gap register with single source of truth status."
+
+- "External Deadlines Trump Internal Priority — MCP Jul 28 deadline forces R_CG01 to front of queue regardless of R19's P0 status. Deadline-driven scheduling beats priority-driven when deadlines are real. Application: Scheduler must weight external deadlines > internal priority for work ordering."
+
+- "Hook Verification ≠ Hook Research — C05-2 through C05-7 are not knowledge gaps; they're integration test cases. The research is done (Carmack's implementation). The work is verification. Application: Distinguish 'what do we need to learn?' from 'what do we need to test?' in gap analysis."
+
+- "Duplicate Jobs Signal Architecture Uncertainty — R24 and R_CG11 both target 'Novelty Engine for Living Research OS' but in different phases. This means the architecture isn't settled. The duplication is a signal, not noise. Application: When same topic appears in multiple phases, treat as architecture decision pending, not parallel work."
+
+- "Stateless Protocols Require Explicit State Handles — MCP 2026-07-28 removes initialize handshake and Mcp-Session-Id. Servers must mint explicit handles (basket_id, browser_id) returned by tools and passed as ordinary arguments. Application: Every stateful MCP tool needs a create_* tool + handle parameter; no session-scoped state in transport."
+
+- "Header-Body Validation Is a Security Boundary — MCP 2026-07-28 requires Mcp-Method/Mcp-Name headers matching JSON-RPC body. Mismatch = 400 -32600. Gateway/WAF must pass these headers untouched. Application: Middleware validates headers before handler; infrastructure must not strip Mcp-* headers."
+
+- "OAuth 2.1 PKCE Is Mandatory for All Clients — RFC 7636 S256 required even for confidential clients. Plain PKCE only when S256 technically impossible. Application: All MCP auth flows enforce PKCE; no fallback to implicit or ROPC."
+
+- "Reference-Based Secret Injection Prevents Prompt Injection Exfiltration — BlindVault's {{secret:NAME}} pattern means agent never holds plaintext. Resolver injects at last moment; output scrubbed. Application: All provider configs use {{secret:KEY}}; runtime resolver in provider fabric."
+
+- "PID-Bound Sessions > Time-Bounded Sessions for Agent Credentials — Bury's session dies with process tree (PID reuse detected via start time). No lingering credentials after agent crash. Application: VaultCore agent sessions bound to PID tree, not TTL alone."
+
+- "Tiered Search with Domain Capability Learning Beats Static Routing — SearXNG-MCP tracks per-domain tier success rates; skips tiers with <30% success over 10+ attempts. Cold-start domains use default cascade. Application: Sovereign router learns which providers work for which domains; avoids wasting budget on known-bad paths."
+
+- "Reciprocal Rank Fusion with Provenance Enables Auditability — RRF (k=60) merges multi-provider results preserving per-provider rank + canonical URL. Every fused result carries full provenance chain. Application: Search responses include Sources trailer with provider, rank, original URL for each result."

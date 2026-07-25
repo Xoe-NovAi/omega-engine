@@ -11,7 +11,7 @@ license = {text = "Apache-2.0"}
 requires-python = ">=3.10"
 keywords = ["web-scraping", "research", "sovereign", "local-first", "tiered-extraction"]
 authors = [
-    {name = "Xoe-NovAi Foundation", email = "foundation@xoe-nov.ai"},
+    {name = "Xoe-NovAi Foundation", email = "xoe.nova.ai@gmail.com"},
 ]
 
 classifiers = [

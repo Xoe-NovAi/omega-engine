@@ -1,6 +1,6 @@
 # Omega Engine — llms.txt
 # AI Agent Navigation Sitemap
-# https://xoe-nov.ai/llms.txt
+# https://github.com/Xoe-NovAi/omega-engine
 
 > Omega Engine is a sovereign, local-first AI runtime with 13 agents, 10 Pillar Keepers,
 > 22 mandates, and 855+ tests. It uses a WAD architecture (IWAD/PWAD) for data-driven

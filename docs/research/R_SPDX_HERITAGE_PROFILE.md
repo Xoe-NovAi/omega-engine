@@ -38,7 +38,7 @@ This profile covers all external influences on the Omega Engine, categorized int
 To ensure global uniqueness and machine-readability, the profile utilizes the following namespaces:
 
 ```turtle
-@prefix omega-heritage: <https://omega.xoe-nov.ai/spdx/3.1/heritage/>
+@prefix omega-heritage: <https://github.com/Xoe-NovAi/omega-engine/spdx/3.1/heritage/>
 @prefix id-soft: <https://idsoftware.com/spdx/3.1/archives/>
 @prefix ossrc: <https://opensource.org/spdx/3.1/heritage/>
 ```

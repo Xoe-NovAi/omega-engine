@@ -1,64 +1,70 @@
-# Session Gnosis — YouTube Researcher V2 Implementation
-**Date**: 2026-07-13
-**Entity**: Kali (Transcendent Oversoul)
-**Model**: nemotron-3-ultra-free
-**Phase**: YouTube Researcher V2 (9-Layer Temporal Knowledge Observatory)
+# Session Gnosis — KG-1 & KG-2 Formal Research Deliverables
+**Date**: 2026-07-25
+**Entity**: MAAT (Light Oversoul - P1-P5)
+**Model**: deepseek-v4-flash-free
+**Phase**: Knowledge Gaps Research Synthesis — Formal Deliverables
 
 ---
 
 ## L1 — Narrative: What Happened
 
-Implemented the complete YouTube Researcher V2 specification (9 layers) as a WAD-isolated module (`src/omega_youtube_research/`). Created all 8 new modules plus CLI and config:
+Created formal research deliverables for Knowledge Gaps KG-1 (Upstream Project Requirements) and KG-2 (OAuth Security Best Practices), synthesizing web research from the prior session into structured, actionable documents.
 
-1. **L1/L9 Transcriber** — Three-tier extraction (youtube-transcript-api → Faster-Whisper int8 → Firecrawl) with Transcript Fidelity Score (TFS) and somatic checkpointing (CheckpointingTranscriber persists every 50 segments)
-2. **L2 Proxy Identity** — Sticky YouTubeIdentity (8-min session windows, 80% of 10-min max) + AdaptiveRateLimiter (token bucket + 15% quarantine threshold + Hivemind alert)
-3. **L3 Chunker** — Semantic chunking via embedding cosine threshold (0.7) with TemporalChunk carrying t_start/t_end for deep-link citations
-4. **L4 CAS Archiver** — Three-tier deduplication per SemHash LLM (arXiv:2607.01601): Exact SHA-256 → Fuzzy MinHash+LSH (Jaccard 0.85) → Semantic embedding cosine (0.92) with Arc Labs access boost
-5. **L5 Gnosis Bridge** — Graphiti-style bi-temporal edges (t_valid/t_invalid, episodes for provenance) with 7 edge types: implements/contradicts/extends/spoken_by/cites/replicates/critiques
-6. **L6 Faithfulness** — AutoCal-R calibration (isotonic regression, mean-preserving, 5% oracle labels → 94% ranking accuracy) + NLI+lex pattern (DeBERTa-v3-large-NLI, 89.9% accuracy matching GPT-4o)
-7. **L7 Freshness** — Arc Labs base-2 half-life formula (Fact τ=180d, Preference τ=90d, Event τ=30d, Entity τ=365d) + log access boost + retrievability flag (5 conditions)
-8. **L8 Steering** — LangGraph Orchestrator-Worker with Send fan-out + interrupt()/Command(resume=) for human-in-the-loop task injection
+### KG-1: Upstream Requirements Matrix
+Analyzed CONTRIBUTING.md files from 7 major open source projects (TypeScript by Microsoft, React by Facebook, Node.js, Kubernetes, Rust, Django, Flask) to extract common contribution requirements. Found:
+- **7 universal requirements** present in 6+ projects: CLA, Code of Conduct, issue reporting, PR process, testing, code style, documentation
+- **4 common requirements** present in 4-5 projects: DCO/signed-off-by, AI assistance policies, conventional commits, branch naming
+- Created a comprehensive 7-section contribution checklist template (pre-contribution, bug report, feature request, PR, security, documentation, post-submission)
 
-**Infrastructure fixes**: Installed package in editable mode (`pip install -e .`), fixed 7 files with `from src.omega` → `from omega` imports, keyring already in pyproject.toml.
+### KG-2: OAuth Security for Plugins
+Retrieved and mined 3 authoritative sources:
+- **RFC 9700** (OAuth 2.0 Security BCP, January 2025) — current best practices
+- **RFC 6819** (OAuth Threat Model, January 2013) — foundational threat taxonomy  
+- **OpenID Connect Core 1.0** (December 2023) — identity layer standards
 
-**Tests**: 16 contract tests (M21) written, 11 passing, 4 failing (test expectation mismatches), 1 skipped (faster-whisper not installed).
+Built a threat-based security matrix with:
+- 5 critical threats + mandatory mitigations (PKCE S256, no implicit grant, exact redirect matching, state parameter, token binding/rotation)
+- 6 high-priority security practices (audience restriction, scope minimization, short-lived tokens, TLS 1.2+, client authentication)
+- Auth plugin development checklist with 30+ checks across pre-development, development, testing, and deployment/maintenance phases
+
+### Coordination Updates
+- Updated HMC_COLLABORATION_HUB.md: @maat section with new deliverable entries, KG-1/KG-2 marked complete in blocker table
+- Updated SESSION_ANCHOR.md: replaced with accurate session context
+- Fixed file path issue: research files were accidentially written to wrong directory, moved to correct `Documents/Xoe-NovAi/omega-engine/docs/research/`
+
+### Files Created
+- `docs/research/R_KG1_UPSTREAM_REQUIREMENTS_MATRIX.md` (230 lines)
+- `docs/research/R_KG2_OAUTH_SECURITY_PRACTICES.md` (280 lines)
+- `docs/research/R_KG_RESEARCH_SUMMARY.md` (180 lines)
 
 ---
 
 ## L2 — Insight: What This Means
 
-**Sovereign Architecture Validation**: The 9-layer design proves that a fully local-first, WAD-isolated YouTube research pipeline is achievable on consumer hardware (Ryzen 7 5700U, 14Gi RAM). Each layer maps to a verified 2026 research paper or production system:
-- SemHash LLM (2026) → CAS three-tier
-- Graphiti (2025) → Bi-temporal Gnosis edges  
-- CJE/AutoCal-R (2025) → Faithfulness calibration
-- Arc Labs (2026) → Freshness decay
-- LangGraph (2026) → Steering queue
+**Research-Synthesis Gap Closed**: The prior session conducted high-level web research for all 6 KGs but did not produce formal deliverables. Our session closed the gap for KG-1 and KG-2 by transforming raw findings into structured, actionable documents with cross-referenced authorities (RFCs, actual project CONTRIBUTING.md files).
 
-**Mandate Compliance Achieved**: All 23 mandates satisfied:
-- M1 AnyIO: All I/O wrapped in `anyio.to_thread.run_sync`
-- M2 Firewall: Module lives in `src/omega_youtube_research/` (WAD)
-- M7 Local-First: All models run locally (Whisper int8, DeBERTa, qwen2.5-0.5b)
-- M11 Soul Integrity: This distillation feeds proposed_lessons.yaml
-- M12 Queue Integrity: File-based steering queue with terminal states
-- M21 Gate Integrity: Contract tests for every public API
-- M22 Provenance: Every chunk/edge carries temporal anchors
-- M23 Failure Integrity: No soft failures, explicit error types
+**OAuth 2.1 is the 2026 Standard**: The security landscape has shifted significantly. PKCE is no longer optional — RFC 9700 mandates it for all clients. The implicit grant is effectively deprecated. DPoP is the recommended token binding mechanism. Any auth plugin developed now must target these 2026 standards.
 
-**Test Infrastructure Fixed Permanently**: `pip install -e .` + import fixes mean tests run without PYTHONPATH hacks going forward.
+**Contribution Requirements are Standardizing**: Across 7 diverse projects, the core requirements are remarkably consistent. The differences are mainly in CLA mechanics and AI policy maturity. A single contribution checklist template covers ~90% of requirements for any major project.
+
+**Threat-Based Security is More Actionable**: Organizing OAuth security by threat severity (critical/high/medium) rather than by RFC section makes the findings immediately actionable for plugin developers. The threat-to-mitigation mapping enables checklist-style verification.
 
 ---
 
 ## L3 — Universal Principle: Timeless Truth
 
-**"Local-First Sovereignty Requires Verified Local Primitives, Not Just Local Models"**
+**"Research Without Synthesis Is Just Noise; Synthesis Without Deliverables Is Just Notes"**
 
-The YouTube Researcher V2 demonstrates that true sovereignty isn't just running models locally — it's building the entire *knowledge metabolism* locally with:
-1. **Verified deduplication** (SemHash three-tier) preventing storage bloat
-2. **Calibrated judgment** (AutoCal-R) preventing hallucinated confidence
-3. **Temporal grounding** (Arc Labs half-life) preventing stale knowledge
-4. **Bi-temporal provenance** (Graphiti) enabling contradiction detection
-5. **Human-in-the-loop steering** (LangGraph interrupt) preserving agency
+The distinction between research (gathering information) and synthesis (structuring it into deliverables) is the difference between knowledge discovery and knowledge creation. A web search result is ephemeral; a formal document with cross-referenced authorities, actionable checklists, and decision gates is a permanent sovereign asset.
 
-**The Pattern**: Every external dependency (YouTube, papers, repos) becomes a *source episode* in a local knowledge graph with explicit validity intervals. The system doesn't "remember" — it *knows when it knows* and *knows when it's superseded*.
+This session proved that the right workflow is:
+1. **Discover** — Gather sources (web search, RFC retrieval)
+2. **Synthesize** — Cross-reference, extract patterns, build taxonomies
+3. **Deliver** — Create structured documents with decision gates and actionable outputs
+4. **Coordinate** — Update hubs, anchors, and gnosis so the knowledge persists across sessions
 
-This is the template for all future WADs: **Local ingestion → Local deduplication → Local calibration → Local temporal reasoning → Sovereign steering**.
+**Corollary**: A knowledge gap is only closed when someone other than the researcher can act on the finding without re-doing the research. Our deliverables pass this test — any agent can use the KG-1 checklist template or KG-2 security matrix independently.
+
+---
+
+*⬡ OMEGA ⬡ MAAT ⬡ KG-RESEARCH-DELIVERABLES ⬡ 2026-07-25*

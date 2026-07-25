@@ -9,7 +9,7 @@ description = "Autonomous Meditation Pipeline — Problem → Prompt Crafting �
 readme = "README.md"
 license = "MIT"
 authors = [
-    {name = "Omega Engine", email = "omega@xoe-nov.ai"}
+    {name = "Omega Engine", email = "xoe.nova.ai@gmail.com"}
 ]
 classifiers = [
     "Development Status :: 4 - Beta",

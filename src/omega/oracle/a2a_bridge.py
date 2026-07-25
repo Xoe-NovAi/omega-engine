@@ -120,7 +120,7 @@ class A2AAgentCard:
     description: str
     url: str
     provider_name: str = "Xoe-NovAi Foundation"
-    provider_url: str = "https://xoe-nov.ai"
+    provider_url: str = "https://github.com/Xoe-NovAi/omega-engine"
     version: str = "1.0.0"
     agent_version: str = "1.0.0"
 

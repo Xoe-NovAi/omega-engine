@@ -1,7 +1,7 @@
 # 🔱 HMC Collaboration Hub — Sprint Coordination Forum
 **AP Token**: `AP-HMC-HUB-v1.3.0`
 ⬡ OMEGA ⬡ HMC ⬡ ALL-AGENTS ⬡ COORDINATION
-**Last Updated**: 2026-07-25T07:55Z
+**Last Updated**: 2026-07-25T05:06Z
 
 ---
 
@@ -176,8 +176,8 @@ HMC_COLLABORATION_HUB.md
 | **C-0.5 hook registration** | @kali | Write hook config in `.opencode/opencode.json` **AND RESTART OPENCODE** | **TODAY** | 🔴 P0 |
 | **W-1 WARP proxy pool registration** | @john_carmack / @pillar P1 | `warp-reg@` daemon pattern test | **TODAY** | 🔴 P0 |
 | Google 8 GCP projects (free tier) | @researcher | Manual `gcp-seeder` / console | Phase 1 | 🟡 P1 |
-| **KG-1: Upstream Project Requirements** | @roc_racoon (mining) + @researcher (synthesis) | Research execution | **Week 1** | 🟠 P1 |
-| **KG-2: OAuth Security Best Practices** | @researcher | Research execution | **Week 1** | 🟠 P1 |
+| **KG-1: Upstream Project Requirements** | @maat | ✅ **COMPLETE** — `docs/research/R_KG1_UPSTREAM_REQUIREMENTS_MATRIX.md` | ✅ **DONE** | 🟢 P1 |
+| **KG-2: OAuth Security Best Practices** | @maat | ✅ **COMPLETE** — `docs/research/R_KG2_OAUTH_SECURITY_PRACTICES.md` | ✅ **DONE** | 🟢 P1 |
 | **KG-3: Effective PR Communication** | @grokster (expertise) + @roc_racoon (mining) | Research execution | **Week 1-2** | 🟡 P2 |
 | **KG-4: Fork Management Strategy** | @roc_racoon (mining) | Research execution | **Week 1-2** | 🟡 P2 |
 | **KG-5: Community Engagement** | @grokster (expertise) | Research execution | **Week 2** | 🟡 P2 |
@@ -555,6 +555,11 @@ Fixed `mcp.server.sse` import mock in `tests/test_hivemind.py` and renamed `src/
 - [2026-07-24T14:15Z] **AGY OAuth Fix PR #2 CREATED (Xoe-NovAi account)** — PR #2 opened at `0xYiliu/opencode-antigravity-auth` from fork `Xoe-NovAi:fix/agy-oauth-persistence`. This is the canonical PR from the organization account. Awaiting upstream review/merge.
 - [2026-07-24T14:30Z] **AGY OAuth Fix DOCUMENTATION UPDATED** — README.md updated with Xoe-NovAi Foundation branding, token persistence fix details, sovereign mandates compliance table, and updated links. Pushed to fork branch `fix/agy-oauth-persistence`.
 - [2026-07-24T07:20Z] **P0-2 Grok CLI Workflow SCAFFOLDED** — Created `src/omega/integrations/grok_cli.py` with `GrokCLIClient` (AnyIO `open_process` for `grok agent stdio`), JSON-RPC 2.0 framing, ACP initialize, `QuotaInfo` dataclass, `GrokAccountConfig` for 8 isolated `GROK_HOME` directories. Full ACP multiplexer deferred (D-435).
+- [2026-07-25T05:05Z] **KG-1 & KG-2 Research DELIVERABLES CREATED** — Formal research documents written:
+  - **KG-1: Upstream Project Requirements** → `docs/research/R_KG1_UPSTREAM_REQUIREMENTS_MATRIX.md` — Analyzed 7 major FOSS projects (TypeScript, React, Node.js, Kubernetes, Rust, Django, Flask), extracted 10 contribution requirement domains, created comprehensive checklist template (pre-submit, bug report, feature request, PR, security, docs, post-submit)
+  - **KG-2: OAuth Security Best Practices** → `docs/research/R_KG2_OAUTH_SECURITY_PRACTICES.md` — Synthesized from RFC 9700 (Jan 2025), RFC 6819, OpenID Connect Core 1.0. Created threat-based matrix (critical/high/medium) with 8 mandatory mitigations: PKCE S256, state parameter, no implicit grant, exact redirect matching, short-lived tokens, DPoP/mTLS, JWT validation, secure token storage
+  - **KG Research Summary** → `docs/research/R_KG_RESEARCH_SUMMARY.md` — Ties both findings into actionable recommendations, priority order for remaining KGs (KG-3→KG-4→KG-5→KG-6)
+
 - [2026-07-24T07:45Z] **P1-1 VaultCore Schema v2 DESIGN COMPLETE** — `docs/research/R_VAULT_SCHEMA_V2.md` updated with:
   - **BlindVault Resolver Integration**: `{{secret:NAME}}` pattern injection at last moment, output scrubbing, host/command allowlists
   - **Bury PID-Bound Fallback**: Session dies with process tree (PID + start time detection), real-time `access.log` JSONL
@@ -672,6 +677,17 @@ Fixed `mcp.server.sse` import mock in `tests/test_hivemind.py` and renamed `src/
   - `src/omega/vault/vault_core.py` — Unified 32-credential store with Argon2id+age encryption, lease protocol (TTL, heartbeat, M25), quota reconciliation, backward-compat KeyVault API
   - `src/omega/mcp/compliance.py` + `src/omega/mcp_runtime.py` — Sprint 1: Header validation (Mcp-Method, Mcp-Name, MCP-Protocol-Version), _meta envelope (SEP-2575), server/discover (SEP-2575), RFC 9728 endpoint, W3C Trace Context (SEP-414)
 - [2026-07-24T04:00Z] **Tests Passing** — mcp.compliance, mcp_runtime imports OK. VaultCore backward-compat methods added (store/retrieve/delete/list_keys/rotate/get_audit_log/verify_integrity). Test suite running (chaos tests excluded).
+- [2026-07-25T07:00Z] **SPRINT 1 CODE CORRECTIONS COMPLETE** — 5 critical fixes applied:
+  - **C-1**: MCP HeaderMismatch error code corrected to **-32020** (was -32600) in both `mcp_core/compliance.py` and `mcp_compliance.py` — verified from SEP-2243 + Python SDK PR #3033
+  - **C-2**: Python age encryption package corrected to **`python-age`** (was `age`) — added to `pyproject.toml`, updated heritage tag
+  - **C-3**: AgeEncryption class rewritten with correct API: `ScryptRecipient(password)` / `ScryptIdentity(password)` / `encrypt_bytes()` / `decrypt_bytes()` — eliminated broken `import age` / `X25519Recipient.from_private_key()` calls
+  - **C-4**: GET stream endpoint confirmed already removed from Streamable HTTP transport (only SSE legacy has it — correct per B8 deprecation)
+  - **C-5**: Protocol-level sessions confirmed already disabled via `stateless=True` in `StreamableHTTPSessionManager`
+- [2026-07-25T07:30Z] **SPRINT 1 DEEP RESEARCH COMPLETE** — 3 targets researched from primary sources:
+  - **MCP _meta envelope (SEP-2575)**: `protocolVersion`, `clientInfo` (SHOULD), `clientCapabilities` (required) on every request. `server/discover` MUST implement, clients MAY call. Returns `supportedVersions`, `capabilities`, `serverInfo`, `instructions`. Removed RPCs: initialize, initialized, logging/setLevel, roots/list, ping. `subscriptions/listen` replaces GET stream.
+  - **W3C Trace Context**: `traceparent` = `00-{trace_id_32hex}-{parent_id_16hex}-{trace_flags_2hex}` (exactly 55 chars). All-zeros trace_id or parent_id = invalid. Header name case-insensitive. Bit 0 = sampled, bit 1 = random-trace-id.
+  - **python-age ScryptRecipient**: `from age import ScryptRecipient, ScryptIdentity, encrypt_bytes, decrypt_bytes`. Cannot mix with other recipient types. Work factor default 18 (~1s). Max work factor 22 (~15s).
+- [2026-07-25T07:45Z] **Research Guide v3.0.0 DELIVERED** — `docs/research/R_RESEARCH_GAPS_20260724.md` enhanced: 10 domains (was 8), 62 extraction targets (was 46), 5-tier confidence, M13 gates, Sovereign Verification, L3 gnosis, sprint plan (36h total across 4 sprints). Verified provider APIs: Grok gRPC-web endpoint, OpenRouter /api/v1/key + /api/v1/credits, Exa search types + rate limits, Firecrawl /v1/team/credit-usage.
 
 #### 📋 4×P0 Research Reports — DELIVERED 2026-07-24
 | Report | Location | Key Decision |
