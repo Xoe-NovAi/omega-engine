@@ -26,6 +26,7 @@
 | **Researcher** | `RESEARCHER_QUEUE_DESIGN_20260721.md` | SQLite job store; claim TTL; P0/P1 auto-queue; verification gates; content TTL tiers T1/T2/T3; 7-stage workflow | **Partially absorbed**: YAML+flock now (D-2); SQLite/gates **DEFERRED** with note in Ark §3.2; full design preserved |
 | **Roc Racoon** | `ROC_LEGACY_MINING_REPORT_20260721.md` | Atomic soul write+fsync; Memory Guardian; pybreaker; tenacity retry; provider priority chain; Cerebras/Groq matrix; 500ms latency budget; cost tracking | **Patterns** → C-1′/C-2′/C-6′; Cerebras/Groq **rejected for now** (D-351) but matrix preserved; tenacity/latency/cost → PARKED P2 |
 | **Roc Racoon** | **NotebookLM/Omnidroid Mining (2026-07-23)** | NotebookLM 5-notebook ingestion strategy; Omnidroid 6-module cognitive architecture (Quantum Cognition, Holographic Memory, Neuro-Symbolic, Meta-Learning, Flow Regulation, Emergence); Lilith Tarot genesis (5 cards, full pantheon); Mnemosyne 13-sphere Kabbalistic memory; Grok 8-account exports indexed | **New patterns** → NotebookLM pipeline → D-1 Content Cache; Omnidroid patterns **verified evolved** (Jem Session 43); Lilith Tarot → philosophy lineage; Mnemosyne → soul.yaml precursor |
+| **Researcher** | **KG-3…6 + VaultCore + MCP Sprint 1 (2026-07-25)** | KG-3: PR communication patterns (6 elements, template, AI-assisted rules); KG-4: Fork management (sync decision tree, 18-month case study); KG-5: Community engagement (trust timeline, rejection handling, AI slop context); KG-6: Legal/licensing (3-tier classification, CLA vs DCO, 8 traps); VaultCore lease protocol from AGY OAuth fix; MCP Sprint 1 (Request ID, rate-limit, client, 12 tests) | **ACTIVE** → Track C-3/C-4 (VaultCore handoff); Track D-2/D-3/D-4/D-5 (MCP Sprint 1 complete); KG docs → Layer 2 preservation |
 | **Grokster** | `GROKSTER_ADVERSARIAL_REVIEW_20260721.md` | GAP-S-01…05; MCP 16h; Identity dep fix; novelty engine; SQLite/gap-service overengineering; sovereignty free-tier risk table | **Absorbed** into Ark decisions + §3; full review Layer 2 |
 | **Grokster** | `IDENTITY_FLUIDITY_ARCHITECTURE_20260721.md` + `SPEC_IDENTITY_FLUIDITY_v1.md` + `prototypes/` | Soul Kernel, Auto-Hydration MCP, Temporal Trace, Voice Calibration, Session Bridge; Phase 0–5 build order | **Phase E** in Ark §3.3; specs stay at entity workspace paths |
 | **Grokster** | `GROKSTER_RESEARCH_QUEUE_ANALYSIS_20260721.md` | Compress board; Grok JSONL as persistence; R19 Grok Build patterns; R20 MCP migration research; fleet as force multiplier | **Selective**: MCP deadline active; fleet/JSONL bridge **DEFERRED** (vault first); board compression informs D-2 |
@@ -132,6 +133,12 @@
 | Lilith Tarot 22-card pantheon mapping | `First 5 cards Grok Chat 05-25-2025.txt` | **Philosophy lineage** — add to `philosophy-dual-flame` as Era 0 origin |
 | Mnemosyne 13-sphere Kabbalistic memory | `data_archive/mnemosyne/` | **Migration script** — map spheres to soul.yaml sections |
 | Grok 8-account exports (274 convos, 6565 responses) | `grok-accounts-exports/` | **XNAI-RAG source** — add to search fleet |
+| **KG-3 PR Communication Patterns** | `R_KG3_PR_COMMUNICATION_GUIDE.md` | **Layer 2** — PR template + review etiquette for upstream contributions |
+| **KG-4 Fork Management Strategy** | `R_KG4_FORK_MANAGEMENT_GUIDE.md` | **Layer 2** — Sync decision tree + conflict resolution for fork workflows |
+| **KG-5 Community Engagement** | `R_KG5_COMMUNITY_ENGAGEMENT_GUIDE.md` | **Layer 2** — Maintainer trust + contributor retention playbook |
+| **KG-6 Legal & Licensing Compliance** | `R_KG6_LEGAL_LICENSING_GUIDE.md` | **Layer 2** — 3-tier license classification + CLA/DCO + 8 traps |
+| **VaultCore Lease Protocol** | `R_VAULTCORE_LEASE_PROTOCOL.md` | **Track C-3** — Atomic write + FileLock pattern for credential/session leases |
+| **MCP Sprint 1 Middleware + Client + Tests** | `src/omega/mcp_core/client.py` + `tests/mcp/` | **Track D-2/3/4** — 5-layer stack, SEP-2243 client, 12 unit tests |
 
 **Canonical Phase D shape**: Ark §3.2  
 **Full architecture prose**: `docs/strategy/LIVING_RESEARCH_OS_SPEC_20260721.md` (amended header)  
