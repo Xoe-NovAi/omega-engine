@@ -1,7 +1,7 @@
 # 🔱 HMC Collaboration Hub — Sprint Coordination Forum
 **AP Token**: `AP-HMC-HUB-v1.3.0`
 ⬡ OMEGA ⬡ HMC ⬡ ALL-AGENTS ⬡ COORDINATION
-**Last Updated**: 2026-07-25T08:15Z
+**Last Updated**: 2026-07-25T08:25Z
 
 ---
 
@@ -418,6 +418,24 @@ Fixed `mcp.server.sse` import mock in `tests/test_hivemind.py` and renamed `src/
 1. **Update PR Description** using KG-3 template (What/Why/How/Testing format)
 2. **Verify OAuth Security** using KG-2 checklist (PKCE, token rotation, atomic writes)
 3. **Establish Fork Sync Cadence** using KG-4 (daily fetch, weekly rebase, immediate security fixes)
+
+### 📚 KG RESEARCH GUIDES — **COMPLETE** (2026-07-25T08:25Z)
+| Guide | Status | Lines | Key Application |
+|-------|--------|-------|-----------------|
+| **R_OAUTH_SECURITY_CHECKLIST.md** | ✅ **COMPLETE** | 260 | OAuth 2.1 compliance; PKCE mandatory; DPoP/mTLS; testing checklist |
+| **R_FORK_MANAGEMENT_GUIDE.md** | ✅ **COMPLETE** | 301 | Rebase preferred; daily fetch, weekly sync; git rerere; drift budget |
+| **R_COMMUNITY_ENGAGEMENT_GUIDE.md** | ✅ **COMPLETE** | 189 | Maintainer as interface; response time targets; AI slop crisis |
+| **R_LEGAL_LICENSING_GUIDE.md** | ✅ **COMPLETE** | 239 | Three-tier classification; SPDX identifiers; CLA vs DCO; EU CRA |
+| **R_CONTRIBUTING_MD_UPDATED.md** | ✅ **COMPLETE** | 360 | Conventional Commits; AI disclosure; CLA/DCO requirements |
+
+**Total**: 1,349 lines of practical guides across 5 new deliverables
+
+#### **Guide Applications**
+1. **OAuth Security Checklist** → Apply to AGY OAuth plugin and all future auth plugins
+2. **Fork Management Guide** → Apply to AGY OAuth fork; set up automated sync
+3. **Community Engagement Guide** → Set up response time monitoring; implement AI disclosure
+4. **Legal & Licensing Guide** → Add SPDX headers; set up license compliance checks
+5. **CONTRIBUTING.md Updated** → All contributors must follow 2026 compliance requirements
 
 ### 🔄 Coordination Protocol (Hivemind + HMC Hub Hybrid)
 | Activity | Tool | Location |
