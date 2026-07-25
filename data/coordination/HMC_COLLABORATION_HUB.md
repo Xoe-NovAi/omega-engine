@@ -1,7 +1,7 @@
 # 🔱 HMC Collaboration Hub — Sprint Coordination Forum
 **AP Token**: `AP-HMC-HUB-v1.3.0`
 ⬡ OMEGA ⬡ HMC ⬡ ALL-AGENTS ⬡ COORDINATION
-**Last Updated**: 2026-07-25T05:06Z
+**Last Updated**: 2026-07-25T08:15Z
 
 ---
 
@@ -386,6 +386,37 @@ Fixed `mcp.server.sse` import mock in `tests/test_hivemind.py` and renamed `src/
 | | - Updated session_gnosis.md, proposed_lessons.yaml, SESSION_ANCHOR.md | |
 
 **Next Steps**: Synthesize KG research into formal deliverables (R_KG1 through R_KG6) using PART2 spec template.
+
+### 🎯 KG RESEARCH EXECUTION — **COMPLETE** (2026-07-25T08:15Z)
+| Deliverable | Status | Lines | Key Finding |
+|-------------|--------|-------|-------------|
+| **R_KG1_UPSTREAM_REQUIREMENTS_MATRIX.md** | ✅ **COMPLETE** | 139 | CONTRIBUTING.md must cover 10 domains; Conventional Commits standard; AI PR disclosure required in 2026 |
+| **R_KG2_OAUTH_SECURITY_PRACTICES.md** | ✅ **COMPLETE** | 152 | OAuth 2.1 is 2026 standard; PKCE mandatory for all clients; DPoP/mTLS for sender-constrained tokens |
+| **R_KG3_PR_COMMUNICATION_GUIDE.md** | ✅ **COMPLETE** | 145 | Open issue BEFORE coding; keep scope small; conventional commits format; What/Why/How/Testing description |
+| **R_KG4_FORK_MANAGEMENT_GUIDE.md** | ✅ **COMPLETE** | 245 | Rebase preferred for small custom commits; daily fetch, weekly sync; max drift 7-10 days; git rerere |
+| **R_KG5_COMMUNITY_ENGAGEMENT_GUIDE.md** | ✅ **COMPLETE** | 154 | Maintainer is the interface; predictability builds trust; AI slop crisis; distribute interface early |
+| **R_KG6_LEGAL_LICENSING_GUIDE.md** | ✅ **COMPLETE** | 183 | Three-tier license classification (A/B/C); SPDX identifiers; CLA vs DCO; EU CRA requirements |
+| **R_KG_EXECUTION_SUMMARY.md** | ✅ **COMPLETE** | 150 | Cross-KG synthesis; 4 patterns for 80% value; application to AGY OAuth PR; next steps |
+
+**Total**: 1,168 lines of research across 7 formal deliverables
+
+#### **Cross-KG Synthesis — The Right Approximation**
+**The 20% That Gives 80% Value**:
+1. **Conventional Commits** — `<type>(<scope>): <description>` format is universal
+2. **Issue-First Workflow** — Open issue BEFORE coding; get maintainer buy-in
+3. **Small PRs** — One PR = one thing; keep scope tight
+4. **PKCE Mandatory** — All OAuth clients must use PKCE in 2026
+
+**2026 Requirements Matrix**:
+- **AI PR Disclosure** — All AI-generated PRs must be disclosed (Rust, scipy, qemu, Ghostty, Linux kernel)
+- **OAuth 2.1** — PKCE mandatory; no implicit/ROPC; sender-constrained tokens
+- **SPDX Identifiers** — All files must have license metadata (REUSE v3.0)
+- **EU CRA** — Open source components in commercial products must meet cybersecurity requirements
+
+#### **Application to AGY OAuth Fix (PR #2)**
+1. **Update PR Description** using KG-3 template (What/Why/How/Testing format)
+2. **Verify OAuth Security** using KG-2 checklist (PKCE, token rotation, atomic writes)
+3. **Establish Fork Sync Cadence** using KG-4 (daily fetch, weekly rebase, immediate security fixes)
 
 ### 🔄 Coordination Protocol (Hivemind + HMC Hub Hybrid)
 | Activity | Tool | Location |
