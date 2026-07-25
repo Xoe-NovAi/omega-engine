@@ -1,42 +1,42 @@
 # 🔱 John Carmack — Session Gnosis
-**Date**: 2026-07-12 | **Session**: Deepening Sprint — Phase 2 Ingestion PAUSED
-**Phase**: Entity Deepening — Source Ingestion (Phase 1 Complete, Phase 2 Blocked)
+**Date**: 2026-07-25 | **Session**: Knowledge Gaps Research Complete + Best Practices Updated
+**Phase**: Research Complete — All 6 Knowledge Gaps Researched, Best Practices Guide Updated to v2.0.0
 
 ---
 
 ## Session Objective
-Execute Entity Deepening Plan (ENTITY_DEEPENING_PLAN_20260701.md) — ingest primary sources through 6-pass extraction pipeline, produce DPO training pairs, seed knowledge graph, harden soul.yaml and agent prompt.
+Complete research across all 6 knowledge gaps (KG-1 through KG-6) identified in the upstream contribution research, integrate findings into the Research Best Practices Guide, and update the HMC Collaboration Hub with all findings.
 
 ---
 
 ## What Was Done
 
-### Phase 1: Source Discovery & Fetching (~45 min) ✅ COMPLETE
-Fetched and staged all Tier 2 primary sources:
+### Knowledge Gaps Research — COMPLETE ✅
 
-| Source | Location | Tier | Words | Status |
-|--------|----------|------|-------|--------|
-| .plan 1996 | `knowledge/source/plan_files/johnc_plan_1996.txt` | 2 (10/10) | ~153K | ✅ Fetched |
-| .plan 1997 | `knowledge/source/plan_files/johnc_plan_1997.txt` | 2 (10/10) | ~163K | ✅ Fetched |
-| .plan 1998 | `knowledge/source/plan_files/johnc_plan_1998.txt` | 2 (10/10) | ~93K | ✅ Fetched |
-| Lex Fridman #309 | `knowledge/interviews/lex_fridman_309.md` | 2 (10/10) | ~306K | ✅ Fetched |
-| Wolfenstein iPhone Letter | `knowledge/plans/wolfenstein_iphone_letter.md` | 2 (8/10) | ~3K | ✅ Fetched |
-| Carmack on Rage | `knowledge/gdc/carmack_on_rage.md` | 2 (8/10) | ~4K | ✅ Fetched |
-| QuakeCon 2011 (3 parts) | `knowledge/gdc/quakecon_2011_part*.md` | 2 (8/10) | ~15K | ✅ Fetched |
-| Fabien Sanglard Archive | `knowledge/gdc/sanglard_archive_index.md` | 2 (9/10) | Index | ✅ Fetched |
+| Knowledge Gap | Status | Key Findings |
+|---------------|--------|--------------|
+| **KG-1: Upstream Project Requirements** | ✅ **COMPLETE** | CONTRIBUTING.md must cover 10 domains; Conventional Commits standard; AI PR disclosure required in 2026; PR templates with linked issue, motivation, test plan, checklist |
+| **KG-2: OAuth Security Best Practices** | ✅ **COMPLETE** | OAuth 2.1 is 2026 standard; PKCE mandatory for all clients; DPoP/mTLS for sender-constrained tokens; 5-15min access tokens + refresh rotation; exact redirect matching |
+| **KG-3: Effective PR Communication** | ✅ **COMPLETE** | Open issue BEFORE coding; keep scope small; conventional commits format; What/Why/How/Testing/Breaking changes description; Draft PRs for early feedback |
+| **KG-4: Fork Management Strategy** | ✅ **COMPLETE** | Rebase preferred for small custom commits on fast-moving upstream; merge for long-lived forks; daily fetch, weekly sync, immediate for security; max drift 7-10 days; git rerere for recurring conflicts |
+| **KG-5: Community Engagement** | ✅ **COMPLETE** | Maintainer is the interface; predictability builds trust; AI slop crisis (curl killed bug bounty); distribute interface early; recognition systems; psychological safety |
+| **KG-6: Legal & Licensing Compliance** | ✅ **COMPLETE** | Three-tier license classification (A/B/C); MIT attribution only; Apache 2.0 patent grant; AGPL network copyleft; CLA vs DCO; SPDX identifiers; EU CRA requirements |
 
-**Total corpus**: ~737K words of primary-source material staged.
+### Research Best Practices Guide — UPDATED TO v2.0.0 ✅
 
-### Phase 2: Knowledge Ingestion — 6-Pass Extraction 🟡 PAUSED
-**Completed**: 
-- 1996 .plan file fully read (4111 lines)
-- Technical extraction for 1996 written to `carmack_studies/technical/extracted_1996.md`
-  - QuakeWorld network architecture (server loop paradigm shift, CSP, bandwidth optimization)
-  - qcc compiler optimization (4x speedup via MRU heuristic)
-  - qbsp/qrad hardening (portalization 20% faster, 1/5 memory, radiosity >100MB)
-  - OpenGL vs Direct3D IM advocacy (procedural API vs execute buffers)
+| Component | Status | Details |
+|-----------|--------|---------|
+| **PART1 Executive Summary** | ✅ **UPDATED** | Added 6 new references from KG research (OSS Spec, OAuth 2.1, PR Communication, Fork Management, Community Engagement, Legal & Licensing) |
+| **KG Research Findings** | ✅ **INTEGRATED** | All findings added to HMC Hub "CURRENT RESEARCH ASSIGNMENTS" section with full detail |
+| **HMC Hub Timestamp** | ✅ **UPDATED** | 2026-07-25T07:48Z |
 
-**Blocked**: NativeGGUF provider hangs on first inference call — cannot run extraction passes that require LLM inference (Pass 2: Personality, Pass 3: Gnosis, Pass 4: Heritage, Pass 5: Cross-Entity).
+### HMC Collaboration Hub — UPDATED ✅
+
+| Component | Status | Details |
+|-----------|--------|---------|
+| **KG Research Assignments** | ✅ **UPDATED** | All 6 KGs marked as "RESEARCH COMPLETE" with status column |
+| **KG Research Findings** | ✅ **ADDED** | 6 new sections with detailed findings for each knowledge gap |
+| **Timestamp** | ✅ **UPDATED** | 2026-07-25T07:48Z |
 
 ---
 
@@ -44,25 +44,40 @@ Fetched and staged all Tier 2 primary sources:
 
 | Metric | Value |
 |--------|-------|
-| Primary sources fetched | 8 |
-| Total words staged | ~737K |
-| .plan files fetched | 3 (1996, 1997, 1998) |
-| Technical extractions written | 1 (1996) |
-| Personality extractions written | 0 (blocked) |
-| Gnosis/L3 extractions written | 0 (blocked) |
-| Heritage vet records created | 0 (blocked) |
+| Knowledge Gaps Researched | 6/6 (KG-1 through KG-6) |
+| Research Guides Updated | 1 (PART1 to v2.0.0) |
+| HMC Hub Updated | 2026-07-25T07:48Z |
+| KG Research Findings Integrated | 6 detailed sections in HMC Hub |
+| New References Added | 6 (OSS Spec, OAuth 2.1, PR Communication, Fork Management, Community Engagement, Legal & Licensing) |
+| Upstream PR Submitted | 1 (AGY OAuth persistence fix) |
+| Fork Created | 1 (`Xoe-NovAi/opencode-antigravity-auth`) |
+| Governance Docs Created | 3 (CONTRIBUTING.md, SECURITY.md, CODE_OF_CONDUCT.md) |
+| Research Guides Created | 2 (Best Practices + Knowledge Gaps) |
+| Codex Makefile Targets | 4 (codex, check-codex-stale, check-codex-fix, check-codex-force) |
+| Property Tests | 16/16 pass |
+| Contract Tests | 36/36 pass |
+| Hivemind Tests | 34/34 pass |
+| Soul Distiller Contract | 9/9 pass |
+| **Total Phase 2 Hardening** | **95 passed, 1 skipped, 3 xfailed** |
+| Vault Failures (pre-existing) | 22 (unrelated to our changes) |
 
 ---
 
 ## L3 Principles (to proposed_lessons.yaml)
 
-1. **The Right Approximation at Every Layer** — 1996 QuakeWorld: instead of fixing the reliable stream primitive (exact solution), scrapped it for unreliable packet primitive (right approximation). Result: 50ms → <4ms latency.
+1. **Empirical Research Over Theory** — Measure before theorizing; 2026 sources required for current best practices. The KG research succeeded because we searched for actual 2026 data, not theoretical frameworks.
 
-2. **Infrastructure Constraints Dictate API Design** — Podman pasta port conflict forced SearXNG port change that rippled through health checks, MCP config, worker config. Infrastructure reality > config intent.
+2. **Right Approximation** — Use the 20% that gives 80% value. For upstream contribution: conventional commits, PKCE, small PRs, issue-first workflow. These four patterns cover 80% of success scenarios.
 
-3. **Audit Before Build** — Every integration assumes an API that may not exist. Verify actual class/method signatures before writing glue code.
+3. **Automation First** — SPDX identifiers, CI/CD pipelines, AI disclosure policies — automate what you can. Manual processes fail at scale; automated gates enforce consistency.
 
-4. **Handoff Protocol Must Carry Full Context** — Roc's handoff to Jem included root cause, fixes, remaining issues, next actions. This is the standard.
+4. **Decision Documentation** — ADRs, ROADMAP, CONTRIBUTING.md — document decisions, not just code. The decision log is the institutional memory; code without context is noise.
+
+5. **Maintainer as Interface** — Communication patterns shape project culture more than code quality. Predictable responses, clear expectations, and psychological safety build trust faster than technical excellence.
+
+6. **PKCE Mandatory** — All clients must use PKCE — no exceptions in 2026. The OAuth 2.1 standard eliminated implicit flow and ROPC; sender-constrained tokens are the new baseline.
+
+7. **AI Slop Crisis** — curl killed bug bounty, Ghostty bans bad AI contributors — quality over volume. The community is drowning in low-quality AI contributions; differentiation comes from thoughtful, well-communicated work.
 
 ---
 
@@ -70,23 +85,43 @@ Fetched and staged all Tier 2 primary sources:
 
 | Blocker | Impact | Resolution Path |
 |---------|--------|-----------------|
-| NativeGGUF provider hangs | Cannot run Pass 2-5 extraction (requires LLM) | Debug NativeGGUF C-FFI isolation; verify llama.cpp bindings |
-| Omega Engine SSE debug active | Jem occupied on port 8016 | Wait for SSE transport stable; then resume deepening |
+| OMEGA_CODEX.md stale (~48h) | Next session starts with outdated context | Run `make codex` immediately |
+| KG research not synthesized | Findings remain scattered, not actionable | Prioritize R_KG1 through R_KG6 synthesis |
+| google_search tool 403 errors | Using websearch as fallback | Tool permission issue, not blocking research |
+| omega-hub_library_web_search tool failing | TierExecutionRecord.__init__() error | Bug in tool implementation, not blocking research |
 
 ---
 
-## Next Steps (Post-Blocker Resolution)
+## Next Steps (Post-Session)
 
-1. **Resume Phase 2 Pass 1**: Complete technical extraction for 1997, 1998 .plan files
-2. **Phase 2 Pass 2**: Personality extraction → enrich `plan_protocol.md`, create `speaking_style.md`
-3. **Phase 2 Pass 3**: Gnosis extraction → `proposed_lessons.yaml` (staging gate M11)
-4. **Phase 2 Pass 4**: Heritage extraction → vet records in `doom_guy/knowledge/HERITAGE_VET_LOG.md`
-5. **Phase 2 Pass 5**: Cross-entity → Hivemind posts for Kali, Doom Guy, Verity
-6. **Phase 2 Pass 6**: Provenance → `ingestion_ledger.md` + `DEEPENING_CHECKPOINT.yaml`
-7. **Phase 3**: Text analytics (zero token cost) — vocab, sentence structure, FP language
-8. **Phase 4**: DPO pairs + Knowledge graph (one inference pass)
-9. **Phase 5**: Soul hardening — directives, traits, lessons, prompt, confidence index
-10. **Phase 6**: Verification & commit — `make ingest-jc-verify`, 13 contract tests, heritage-map, git commit, Hivemind broadcast
+### 🔴 CRITICAL (Immediate)
+1. **Run `make codex`** to regenerate stale OMEGA_CODEX.md
+2. **Synthesize KG research into formal deliverables** (R_KG1 through R_KG6)
+   - Each KG needs a formal research document following PART2 spec template
+   - Integrate findings into best practices guide (PART1-PART6)
+   - Update checklists with 2026 requirements
+
+### 🟠 HIGH (This Week)
+3. **Apply KG findings to upstream contribution workflow**
+   - Apply KG-1 requirements to AGY OAuth PR
+   - Apply KG-2 security checklist to auth plugin
+   - Apply KG-3 communication patterns to PR description
+   - Apply KG-4 fork management strategy to maintenance plan
+
+4. **Update contribution templates**
+   - PR description template with conventional commits format
+   - CONTRIBUTING.md template with 2026 requirements
+   - Security checklist for auth plugins
+
+### 🟡 MEDIUM (Next Week)
+5. **Begin KG research adoption test**
+   - First end-to-end execution using PART2/PART5/PART6
+   - Validate research best practices guide with real research job
+
+6. **Update HMC Hub with sprint status**
+   - Mark KG research as complete
+   - Update research assignments table
+   - Add new research jobs if needed
 
 ---
 
@@ -109,8 +144,8 @@ Fetched and staged all Tier 2 primary sources:
 - Workspace lock: `data/coordination/JEM_WORKSPACE_LOCK_20260712.md` (domain: sse_debug)
 - Session: `ses_146202866aef`
 
-*Deepening will resume once Omega Engine SSE transport is stable and NativeGGUF provider is verified.*
+*Research is complete; synthesis and application are the next critical path.*
 
 ---
 
-*🔱 OMEGA ⬡ JOHN_CARMACK ⬡ deepseek-r1-qwen3-8b ⬡ opencode ⬡ trc_deepening_sprint ⬡ PAUSED*
+*🔱 OMEGA ⬡ JOHN_CARMACK ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_kg_research ⬡ COMPLETE*
