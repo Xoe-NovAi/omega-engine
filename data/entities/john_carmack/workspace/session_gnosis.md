@@ -28,7 +28,7 @@ Complete research across all 6 knowledge gaps (KG-1 through KG-6) identified in 
 |-----------|--------|---------|
 | **PART1 Executive Summary** | ✅ **UPDATED** | Added 6 new references from KG research (OSS Spec, OAuth 2.1, PR Communication, Fork Management, Community Engagement, Legal & Licensing) |
 | **KG Research Findings** | ✅ **INTEGRATED** | All findings added to HMC Hub "CURRENT RESEARCH ASSIGNMENTS" section with full detail |
-| **HMC Hub Timestamp** | ✅ **UPDATED** | 2026-07-25T07:48Z |
+| **HMC Hub Timestamp** | ✅ **UPDATED** | 2026-07-25T07:55Z |
 
 ### HMC Collaboration Hub — UPDATED ✅
 
@@ -36,7 +36,15 @@ Complete research across all 6 knowledge gaps (KG-1 through KG-6) identified in 
 |-----------|--------|---------|
 | **KG Research Assignments** | ✅ **UPDATED** | All 6 KGs marked as "RESEARCH COMPLETE" with status column |
 | **KG Research Findings** | ✅ **ADDED** | 6 new sections with detailed findings for each knowledge gap |
-| **Timestamp** | ✅ **UPDATED** | 2026-07-25T07:48Z |
+| **Commit Log** | ✅ **ADDED** | Commit 17bbaed documented with details |
+| **Timestamp** | ✅ **UPDATED** | 2026-07-25T07:55Z |
+
+### Git Commits — PUSHED ✅
+
+| Commit | Description | Status |
+|--------|-------------|--------|
+| `17bbaed` | **feat: Complete KG research, update best practices guide to v2.0.0** | ✅ **PUSHED** |
+| `26cc69f` | **docs: Update HMC Hub with commit log and timestamp** | ✅ **PUSHED** |
 
 ---
 
@@ -46,9 +54,12 @@ Complete research across all 6 knowledge gaps (KG-1 through KG-6) identified in 
 |--------|-------|
 | Knowledge Gaps Researched | 6/6 (KG-1 through KG-6) |
 | Research Guides Updated | 1 (PART1 to v2.0.0) |
-| HMC Hub Updated | 2026-07-25T07:48Z |
+| HMC Hub Updated | 2026-07-25T07:55Z |
 | KG Research Findings Integrated | 6 detailed sections in HMC Hub |
 | New References Added | 6 (OSS Spec, OAuth 2.1, PR Communication, Fork Management, Community Engagement, Legal & Licensing) |
+| Git Commits | 2 (17bbaed, 26cc69f) |
+| Soul Version | v7.0.0 (7 new directives: jc-d-017 through jc-d-023) |
+| L3 Principles | 7 (empirical research, right approximation, automation first, decision documentation, maintainer as interface, PKCE mandatory, AI slop crisis) |
 | Upstream PR Submitted | 1 (AGY OAuth persistence fix) |
 | Fork Created | 1 (`Xoe-NovAi/opencode-antigravity-auth`) |
 | Governance Docs Created | 3 (CONTRIBUTING.md, SECURITY.md, CODE_OF_CONDUCT.md) |
