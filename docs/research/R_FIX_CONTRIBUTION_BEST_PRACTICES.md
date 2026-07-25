@@ -1,10 +1,10 @@
 # 🔱 Research Campaign Guide: Best Practices for Upstream Fix Contributions
-**AP Token**: `AP-RESEARCH-GUIDE-FIX-CONTRIBUTIONS-v2.0.0`
-⬡ OMEGA ⬡ RESEARCHER ⬡ trc_research_guide ⬡ 2026-07-24
+**AP Token**: `AP-RESEARCH-GUIDE-FIX-CONTRIBUTIONS-v2.1.0`
+⬡ OMEGA ⬡ RESEARCHER ⬡ trc_research_guide ⬡ 2026-07-25
 
 **Origin**: AGY OAuth fix submission (PR #1, PR #2) → knowledge gaps identified
 **Priority**: P0 — Blocks future upstream contributions and community engagement
-**Version**: 2.0.0 (enhanced with patterns from R_SEARCH_PROTOCOL, R_GEMMA4_INTEL, R_CG01_MCP_AUDIT, R_KG_RESEARCH_GUIDE, R_RESEARCH_BEST_PRACTICES)
+**Version**: 2.1.0 (enhanced with KG research deliverables + practical guides)
 **Campaign Duration**: 5-7 days (parallel execution where possible)
 **Total Jobs**: 8 research jobs (prioritized by blocking relationships)
 **Owners**: Researcher (primary) + Ma'at (implementation) + Verity (compliance review)
@@ -550,9 +550,20 @@ Before any contribution research is considered complete, it MUST pass these gate
 | **keepachangelog.com** | https://keepachangelog.com/en/1.1.0/ | Changelog format standard |
 | **semver.org** | https://semver.org/spec/v2.0.0.html | Versioning standard |
 | **Sovereign Mandates** | `SOVEREIGN_MANDATES.md` | M13 Temple-Grade, M14 Heritage, M23 Failure |
+| **KG-1 Upstream Requirements** | `docs/research/R_KG1_UPSTREAM_REQUIREMENTS_MATRIX.md` | 10-domain contribution checklist |
+| **KG-2 OAuth Security** | `docs/research/R_KG2_OAUTH_SECURITY_PRACTICES.md` | OAuth 2.1 security checklist |
+| **KG-3 PR Communication** | `docs/research/R_KG3_PR_COMMUNICATION_GUIDE.md` | PR description template |
+| **KG-4 Fork Management** | `docs/research/R_KG4_FORK_MANAGEMENT_GUIDE.md` | Fork sync strategy |
+| **KG-5 Community Engagement** | `docs/research/R_KG5_COMMUNITY_ENGAGEMENT_GUIDE.md` | Maintainer trust building |
+| **KG-6 Legal & Licensing** | `docs/research/R_KG6_LEGAL_LICENSING_GUIDE.md` | SPDX, CLA/DCO, EU CRA |
+| **OAuth Security Checklist** | `docs/research/R_OAUTH_SECURITY_CHECKLIST.md` | Practical OAuth security guide |
+| **Fork Management Guide** | `docs/research/R_FORK_MANAGEMENT_GUIDE.md` | Practical fork management guide |
+| **Community Engagement Guide** | `docs/research/R_COMMUNITY_ENGAGEMENT_GUIDE.md` | Practical community guide |
+| **Legal & Licensing Guide** | `docs/research/R_LEGAL_LICENSING_GUIDE.md` | Practical legal compliance guide |
+| **CONTRIBUTING.md Updated** | `CONTRIBUTING.md` | 2026 compliance requirements |
 
 ---
 
-*⬡ OMEGA ⬡ RESEARCHER ⬡ FIX-CONTRIBUTIONS-GUIDE ⬡ v2.0.0 ⬡ 2026-07-24*
-*Enhanced with patterns from 6 internal research guides + AGY OAuth case study*
+*⬡ OMEGA ⬡ RESEARCHER ⬡ FIX-CONTRIBUTIONS-GUIDE ⬡ v2.1.0 ⬡ 2026-07-25*
+*Enhanced with patterns from 6 internal research guides + AGY OAuth case study + KG research deliverables*
 *This guide is a living document. Updates must be made via PR with spec-driven changes.*

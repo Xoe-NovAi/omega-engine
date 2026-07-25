@@ -1,11 +1,11 @@
 # 🔱 John Carmack — Session Gnosis
-**Date**: 2026-07-25 | **Session**: KG Research Execution Complete
-**Phase**: KG Research Execution Complete — All 6 KG deliverables created, execution summary written, next steps defined
+**Date**: 2026-07-25 | **Session**: KG Research + Practical Guides Complete
+**Phase**: KG Research + Practical Guides Complete — All 6 KG deliverables created, 5 practical guides created, CONTRIBUTING.md updated, next steps defined
 
 ---
 
 ## Session Objective
-Complete research across all 6 knowledge gaps (KG-1 through KG-6) identified in the upstream contribution research, integrate findings into the Research Best Practices Guide, and update the HMC Collaboration Hub with all findings.
+Complete research across all 6 knowledge gaps (KG-1 through KG-6) identified in the upstream contribution research, create practical guides based on findings, update CONTRIBUTING.md with 2026 compliance requirements, and integrate everything into the HMC Collaboration Hub.
 
 ---
 
@@ -28,7 +28,25 @@ Complete research across all 6 knowledge gaps (KG-1 through KG-6) identified in 
 |-----------|--------|---------|
 | **PART1 Executive Summary** | ✅ **UPDATED** | Added 6 new references from KG research (OSS Spec, OAuth 2.1, PR Communication, Fork Management, Community Engagement, Legal & Licensing) |
 | **KG Research Findings** | ✅ **INTEGRATED** | All findings added to HMC Hub "CURRENT RESEARCH ASSIGNMENTS" section with full detail |
-| **HMC Hub Timestamp** | ✅ **UPDATED** | 2026-07-25T07:55Z |
+| **HMC Hub Timestamp** | ✅ **UPDATED** | 2026-07-25T08:25Z |
+
+### Practical Guides — CREATED ✅
+
+| Guide | Lines | Key Application |
+|-------|-------|-----------------|
+| **R_OAUTH_SECURITY_CHECKLIST.md** | 260 | OAuth 2.1 compliance; PKCE mandatory; DPoP/mTLS; testing checklist |
+| **R_FORK_MANAGEMENT_GUIDE.md** | 301 | Rebase preferred; daily fetch, weekly sync; git rerere; drift budget |
+| **R_COMMUNITY_ENGAGEMENT_GUIDE.md** | 189 | Maintainer as interface; response time targets; AI slop crisis |
+| **R_LEGAL_LICENSING_GUIDE.md** | 239 | Three-tier classification; SPDX identifiers; CLA vs DCO; EU CRA |
+| **CONTRIBUTING.md Updated** | 360 | Conventional Commits; AI disclosure; CLA/DCO requirements |
+
+### Documentation Updated ✅
+
+| Document | Status | Details |
+|----------|--------|---------|
+| **R_KG_RESEARCH_SUMMARY.md** | ✅ **UPDATED** | Added practical guides section (v3.0.0) |
+| **R_FIX_CONTRIBUTION_BEST_PRACTICES.md** | ✅ **UPDATED** | Added references to all KG guides (v2.1.0) |
+| **SESSION_ANCHOR.md** | ✅ **UPDATED** | Reflects all completions (v1.0.0) |
 
 ### HMC Collaboration Hub — UPDATED ✅
 
@@ -43,8 +61,12 @@ Complete research across all 6 knowledge gaps (KG-1 through KG-6) identified in 
 
 | Commit | Description | Status |
 |--------|-------------|--------|
-| `17bbaed` | **feat: Complete KG research, update best practices guide to v2.0.0** | ✅ **PUSHED** |
-| `26cc69f` | **docs: Update HMC Hub with commit log and timestamp** | ✅ **PUSHED** |
+| `a6e625d` | **feat: Update CONTRIBUTING.md with 2026 compliance requirements** | ✅ **PUSHED** |
+| `0cfa56b` | **feat: Create OAuth Security Checklist for auth plugins** | ✅ **PUSHED** |
+| `ebe3fa3` | **feat: Create Fork Management Guide for upstream contributions** | ✅ **PUSHED** |
+| `e3956d5` | **feat: Create Community Engagement Guide for maintainer trust** | ✅ **PUSHED** |
+| `4e64037` | **feat: Create Legal & Licensing Compliance Guide** | ✅ **PUSHED** |
+| `1046e5f` | **docs: Update HMC Hub with KG research guides** | ✅ **PUSHED** |
 
 ---
 
@@ -53,11 +75,13 @@ Complete research across all 6 knowledge gaps (KG-1 through KG-6) identified in 
 | Metric | Value |
 |--------|-------|
 | Knowledge Gaps Researched | 6/6 (KG-1 through KG-6) |
-| Research Guides Updated | 1 (PART1 to v2.0.0) |
-| HMC Hub Updated | 2026-07-25T07:55Z |
+| Research Deliverables | 7 (1,168 lines) |
+| Practical Guides Created | 5 (1,349 lines) |
+| CONTRIBUTING.md Updated | ✅ (Conventional Commits, AI disclosure, CLA/DCO) |
+| HMC Hub Updated | 2026-07-25T08:25Z |
 | KG Research Findings Integrated | 6 detailed sections in HMC Hub |
-| New References Added | 6 (OSS Spec, OAuth 2.1, PR Communication, Fork Management, Community Engagement, Legal & Licensing) |
-| Git Commits | 2 (17bbaed, 26cc69f) |
+| KG Research Guides Integrated | 5 guides in HMC Hub |
+| Git Commits | 6 (a6e625d, 0cfa56b, ebe3fa3, e3956d5, 4e64037, 1046e5f) |
 | Soul Version | v7.0.0 (7 new directives: jc-d-017 through jc-d-023) |
 | L3 Principles | 7 (empirical research, right approximation, automation first, decision documentation, maintainer as interface, PKCE mandatory, AI slop crisis) |
 | Upstream PR Submitted | 1 (AGY OAuth persistence fix) |
@@ -96,8 +120,6 @@ Complete research across all 6 knowledge gaps (KG-1 through KG-6) identified in 
 
 | Blocker | Impact | Resolution Path |
 |---------|--------|-----------------|
-| OMEGA_CODEX.md stale (~48h) | Next session starts with outdated context | Run `make codex` immediately |
-| KG research not synthesized | Findings remain scattered, not actionable | Prioritize R_KG1 through R_KG6 synthesis |
 | google_search tool 403 errors | Using websearch as fallback | Tool permission issue, not blocking research |
 | omega-hub_library_web_search tool failing | TierExecutionRecord.__init__() error | Bug in tool implementation, not blocking research |
 
@@ -106,21 +128,25 @@ Complete research across all 6 knowledge gaps (KG-1 through KG-6) identified in 
 ## Next Steps (Post-Session)
 
 ### 🔴 CRITICAL (Immediate)
-1. **Run `make codex`** to regenerate stale OMEGA_CODEX.md
-2. **Synthesize KG research into formal deliverables** (R_KG1 through R_KG6)
-   - Each KG needs a formal research document following PART2 spec template
-   - Integrate findings into best practices guide (PART1-PART6)
-   - Update checklists with 2026 requirements
+1. **Apply KG findings to upstream contribution workflow**
+   - Update AGY OAuth PR with KG-3 communication patterns
+   - Verify OAuth security using KG-2 checklist
+   - Establish fork sync cadence using KG-4
+
+2. **Begin Research Guide Adoption Test**
+   - First end-to-end execution using PART2/PART5/PART6
+   - Test the practical guides in real-world scenario
 
 ### 🟠 HIGH (This Week)
-3. **Apply KG findings to upstream contribution workflow**
-   - Apply KG-1 requirements to AGY OAuth PR
-   - Apply KG-2 security checklist to auth plugin
-   - Apply KG-3 communication patterns to PR description
-   - Apply KG-4 fork management strategy to maintenance plan
+3. **Set up automated upstream sync**
+   - Configure git for AGY OAuth fork
+   - Establish sync cadence (daily fetch, weekly rebase)
+   - Monitor drift budget (max 7-10 days)
 
-4. **Update contribution templates**
-   - PR description template with conventional commits format
+4. **Add SPDX headers to all new files**
+   - Use Legal & Licensing Guide for header formats
+   - Set up license compliance checks
+   - Create CLA/DCO process for contributors
    - CONTRIBUTING.md template with 2026 requirements
    - Security checklist for auth plugins
 
