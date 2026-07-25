@@ -93,7 +93,7 @@ TTYVHangup=yes
 # /etc/systemd/system/omega-researcher@tty3.service
 [Unit]
 Description=Omega Researcher Agent (TTY3)
-Documentation=https://xoe-nov.ai/omega-engine
+Documentation=https://github.com/Xoe-NovAi/omega-engine
 After=systemd-vconsole-setup.service
 Wants=systemd-vconsole-setup.service
 Conflicts=omega-researcher@tty4.service omega-roc_racoon@tty3.service

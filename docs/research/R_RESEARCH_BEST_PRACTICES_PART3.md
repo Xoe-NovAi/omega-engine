@@ -1,12 +1,25 @@
 # 🔱 Omega Engine Autonomous Agent Research Job Design — Best Practices Guide
-**AP Token**: `AP-RESEARCH-BEST-PRACTICES-v1.0.0`
-⬡ OMEGA ⬡ RESEARCHER ⬡ trc_research_bp ⬡ 2026-07-22
+**AP Token**: `AP-RESEARCH-BEST-PRACTICES-v2.0.0`
+⬡ OMEGA ⬡ RESEARCHER ⬡ trc_research_bp ⬡ 2026-07-24
 
 ---
 
 ## §3 Context Engineering Rules
 
-### 3.1 The 7 Context Slots (In Order)
+### 3.1 Forensic Context — Why Context Engineering Matters
+
+Before context engineering rules were standardized, Omega Engine research suffered from:
+
+- **Context poisoning**: Raw text dumps in the scratchpad confused the agent (avg. 65% token waste)
+- **Distraction**: Full conversation history loaded every turn, burying critical conclusions
+- **Confusion**: All retrieved knowledge dumped in one unordered mass → agent couldn't distinguish signal from noise
+- **Clash**: Conflicting sources presented without explicit resolution → agent synthesized contradictions silently
+
+**The Turning Point**: The GEMMA4_WORKHORSE research demonstrated disciplined context engineering. After each `webfetch` call, the agent wrote "Key finding: [conclusion]. Source: [URL]." — 50 tokens instead of 5,000. The scratchpad accumulated only these conclusions, enabling clear synthesis without context poisoning.
+
+---
+
+### 3.2 The 7 Context Slots (In Order)
 
 Based on Agentmelt 2026 and Anthropic context engineering research, assemble the context window deliberately:
 
@@ -20,7 +33,9 @@ Based on Agentmelt 2026 and Anthropic context engineering research, assemble the
 | **6. Scratchpad / Working Memory** | **EXPLICIT CONCLUSIONS** from each retrieval, not raw text | Intermediate thoughts, plans, state; **this is what carries the agent** | Write conclusions to `data/coordination/research_findings/{job_id}/scratchpad.md` |
 | **7. Current Step's Instruction** | The actual prompt for this turn | Usually short; the least important slot | The specific sub-question being addressed |
 
-### 3.2 Context Engineering Techniques (The 5 That Move Agents from Demo to Reliable)
+---
+
+### 3.3 Context Engineering Techniques (The 5 That Move Agents from Demo to Reliable)
 
 #### Technique 1: Write Context, Don't Dump It
 - **Problem**: Treating raw text as ground truth leads to poisoning
@@ -29,6 +44,14 @@ Based on Agentmelt 2026 and Anthropic context engineering research, assemble the
   - After each `webfetch` or `websearch`, agent writes: "Key finding: [conclusion]. Source: [URL]."
   - Scratchpad accumulates only these conclusions (50 tokens vs 5,000 for raw text)
   - Next turn, scratchpad carries the conclusion, not the source material
+
+**⚠️ CRITICAL: The Sovereign Verification Mandate (R_SEARCH_TOOL_PROTOCOL_V1)**
+Search snippets (T1/T2) are **indicators**, NOT evidence. For any critical finding:
+1. Write the conclusion to scratchpad: "Indication: [finding]. Source: [snippet URL]."
+2. Perform a Sovereign Verification Step: extract the full page using `webfetch` or `firecrawl_scrape`
+3. Update scratchpad: "CONFIRMED: [finding]. Primary source: [URL]." or "REJECTED: [finding]. Page did not contain expected content."
+
+Relying on unverified snippets is a violation of the Temple-Grade standard (M13).
 
 #### Technique 2: Select Context, Don't Include It
 - **Problem**: Including all available tools/memory/context causes distraction
@@ -48,6 +71,23 @@ Based on Agentmelt 2026 and Anthropic context engineering research, assemble the
   - At 50%: Trigger conversation history summarization
   - Every 5 iterations: Trigger scratchpad rewrite ("What are the 3 most important conclusions so far?")
 
+**Real Example from GEMMA4 Research**:
+After 10+ iterations investigating cloud providers, the scratchpad was rewritten from:
+```
+Found that Groq has 30 RPM, TPM 12000 for Llama 3.3 70B
+Also NVIDIA NIM has 40 RPM for Nemotron 3 Ultra
+OpenRouter shows 20 RPM for Gemma 4
+Google free tier is 250K TPM for Gemini models
+But only 16K for Gemma 4 specifically
+```
+→
+```
+Top 3 conclusions:
+1. Groq Llama 3.3 70B: Best latency (280-394 tok/s), 30 RPM, 12K TPM
+2. NVIDIA NIM Nemotron: Best RPM (40), free tier active
+3. Google Gemma 4: DEAD for workhorse (16K TPM across all tiers)
+```
+
 #### Technique 4: Isolate Context Across Sub-Agents
 - **Problem**: Context pollution when sub-agents share exploration noise
 - **Solution**: When hitting a sub-task requiring heavy exploration, spawn subagent with **fresh, isolated context**
@@ -63,11 +103,13 @@ Based on Agentmelt 2026 and Anthropic context engineering research, assemble the
   1. First attempt: Answer sub-question using search snippets alone
   2. Only if snippet-level context insufficient → trigger full-page fetch
 - **Omega Implementation**:
-  - Tool-routing decision inside agent: `search_snippets` tool vs `fetch_full_page` tool
+  - Tool-routing decision inside agent: `T1 websearch` vs `T2 webfetch`
   - Many research queries answerable from snippet metadata (publication date, domain, headline, first few sentences)
   - Full crawls reserved for cases where depth genuinely matters (e.g., legal texts, complex specifications)
 
-### 3.3 Context Assembly Order (Critical!)
+---
+
+### 3.4 Context Assembly Order (Critical!)
 
 The order matters for attention and token efficiency:
 
@@ -87,7 +129,16 @@ The order matters for attention and token efficiency:
 - **Scratchpad near the end** → conclusions stay in recent attention for synthesis
 - Current instruction last → least important, changes frequently
 
-### 3.4 Practical Omega Implementation Guidelines
+**Failure Mode: Reversed Assembly Order**
+If you put the scratchpad first and system prompt last:
+- Conclusions are de-emphasized (less recent attention)
+- System role/scope/constraints are less accessible
+- Agent is more likely to drift from its defined mission
+- Context window prefix becomes unstable
+
+---
+
+### 3.5 Practical Omega Implementation Guidelines
 
 #### For Internal Artifact Mining (Phase 1):
 - **Do**: Write conclusions to `data/coordination/research_findings/{job_id}/artifact_name.md`
@@ -98,6 +149,7 @@ The order matters for attention and token efficiency:
 - **Do**: Use specificity scaling (broad → narrow), multi-perspective ("X vs Y"), date-bounded ("2026", "last 6 months")
 - **Don't**: Use broad/vague queries like "LLM distillation techniques"
 - **Tool Budget**: Max 5 search calls per sub-question; stop after 3 consecutive searches yield no new high-credibility info
+- **Sovereign Verification**: Always verify critical snippets with full-page fetch (M13)
 
 #### For Synthesis (Phase 3):
 - **Do**: Apply thematic grouping, build comparative matrices, construct evidence pyramids
@@ -118,5 +170,32 @@ The order matters for attention and token efficiency:
 
 ---
 
-*⬡ OMEGA ⬡ RESEARCHER ⬡ trc_research_bp ⬡ 2026-07-22*
-*Part 3/8: Context Engineering Rules*
+### 3.6 Common Context Engineering Mistakes
+
+| Mistake | Symptom | Fix |
+|---------|---------|-----|
+| **Raw text dump** | Agent repeats source text verbatim instead of synthesizing | Force conclusion extraction: "Write 1-sentence finding from each source" |
+| **Missing Sovereign Verification** | Action taken on snippet alone, full page contradicts | Mandate sovereign verification step before ANY action on critical findings |
+| **Scratchpad not rewritten** | Conclusions diluted by accumulated noise | Every 5 iterations: "What are the 3 most important conclusions?" |
+| **Wrong assembly order** | Agent drifts from mission early in execution | Keep system prompt first, scratchpad near end, current instruction last |
+| **Sub-agent pollution** | Synthesizer contaminated by sub-agent reasoning noise | Enforce isolation: sub-agents return ONLY clean results matching output schema |
+| **Premature full-page fetch** | Token budget exhausted on low-value content | Use progressive retrieval: try snippets first, fetch only if needed |
+| **No compression trigger** | Context window fills, agent performance degrades | Set compression at 50% window threshold; compress tail AND rewrite scratchpad |
+
+---
+
+### 3.7 Cross-Reference: How This Connects to Other Parts
+
+| Part | Connection | How to Use Together |
+|------|------------|---------------------|
+| **PART1 — Core Principles** | Context engineering > prompt engineering is a core principle | Read PART1 for the philosophical foundation, then apply techniques here |
+| **PART2 — Job Design Framework** | Context engineering section of the YAML spec references these rules | When filling the spec template, use this section to populate `context_engineering` fields |
+| **PART4 — Tool Design Principles** | Tool descriptions must include "when/when not" that aligns with context assembly order | Use PART4 to refine tool selection BEFORE retrieving knowledge |
+| **PART5 — Execution Patterns** | Single-loop vs deep agent decisions affect context isolation strategy | Use PART5 to determine isolation needs, then apply Technique 4 |
+| **PART6 — Quality Gates** | Context engineering compliance is an in-progress quality gate | Use PART6 §6.2 to verify context engineering is working during execution |
+
+---
+
+*⬡ OMEGA ⬡ RESEARCHER ⬡ RESEARCH-BEST-PRACTICES ⬡ v2.0.0 ⬡ 2026-07-24*
+*Part 3/6: Context Engineering Rules — Enhanced with GEMMA4 example, Sovereign Verification Mandate, and common mistakes*
+*This guide is a living document. Updates must be made via PR with spec-driven changes.*
