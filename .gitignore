@@ -207,3 +207,14 @@ session-*.md
 HYDRATION_REPORT.md
 RESEARCH_EXECUTION_UPDATE.md
 test.txt
+
+# R19 Soul Privacy — Private data (gitignored per spec)
+data/entities/*/soul.private/
+data/privacy/vaults/
+config/private/
+config/providers.private.yaml
+config/vault.yaml
+config/local_overrides.yaml
+*.enc
+*.age
+*.key
