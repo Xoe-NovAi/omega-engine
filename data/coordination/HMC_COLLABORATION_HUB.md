@@ -116,6 +116,12 @@ HMC_COLLABORATION_HUB.md
 | **Phase 2 Integration: FleetOrchestrator Spec** | **Implementation** | ✅ **COMPLETE** | `docs/research/R_PHASE2_FLEET_ORCHESTRATOR_INTEGRATION.md` | **@researcher** |
 | **src/omega/integrations/grok_cli.py** | **Implementation** | ✅ **COMPLETE** | ACP stdio client, quota polling, rotation state machine | **@researcher** |
 | **src/omega/vault/vault_core.py** | **Implementation** | ✅ **COMPLETE** | 32-credential unified store, Argon2id+age, lease protocol, backward compat | **@researcher** |
+| **src/omega/vault/vault_core.py** | **Enhancement** | ✅ **COMPLETE** | Schema v1.1.0, fcntl.flock, recovery codes, BlindVault resolver, Schema v2 (VaultSecret+VaultState), PostgreSQL connector | **@researcher** |
+| **src/omega/cli/vault.py** | **Enhancement** | ✅ **COMPLETE** | audit-summary, backup, restore, recovery-code, rotate-master, fleet-status, reconcile, cleanup-leases, lease-status | **@researcher** |
+| **src/omega/tools/detect_api_keys.py** | **Security** | ✅ **COMPLETE** | AST-based API key detection, docstring-aware, pre-commit hook | **@researcher** |
+| **src/omega/tools/enforce_vaultcore.py** | **Security** | ✅ **COMPLETE** | AST-based VaultCore enforcement, excludes infra secrets | **@researcher** |
+| **src/omega/tools/check_hardcoded_secrets.py** | **Security** | ✅ **COMPLETE** | 50+ secret patterns, multi-format support | **@researcher** |
+| **.pre-commit-config.yaml** | **Security** | ✅ **COMPLETE** | 3 custom hooks + black/isort/mypy/detect-secrets | **@researcher** |
 | **src/omega/mcp/compliance.py + mcp_runtime.py** | **Implementation** | ✅ **COMPLETE** | Sprint 1: header validation, _meta envelope, server/discover, RFC 9728 | **@researcher** |
 | **src/omega/integrations/quota_pollers.py** | **Implementation** | ✅ **COMPLETE** | 5 provider quota pollers (Grok, OpenRouter, GCP, Exa, Firecrawl) + FleetOrchestrator | **@researcher** |
 | **AGY OAuth Persistence Fix (P0-1)** | **Upstream** | ✅ **COMPLETE** | PR #2 submitted to `0xYiliu/opencode-antigravity-auth`, fork at `Xoe-NovAi/opencode-antigravity-auth` | **@maat** |
@@ -166,6 +172,7 @@ HMC_COLLABORATION_HUB.md
 | **D-457** | **L3-MandatoryPKCE: OAuth 2.1 PKCE S256 required for all MCP clients; no implicit/ROPC fallback** | **2026-07-24** | **✅ Researcher L3** |
 | **D-458** | **L3-ReferenceInjection: {{secret:NAME}} pattern prevents agent plaintext exposure; resolver injects at call time** | **2026-07-24** | **✅ Researcher L3** |
 | **D-459** | **L3-PIDBoundSessions: VaultCore agent sessions bound to PID tree (dies with process), not TTL alone** | **2026-07-24** | **✅ Researcher L3** |
+| **D-467** | **VaultCore Unification Complete: KeyVault removed, 25+ files migrated, 0 os.environ.get API keys in source, BlindVault resolver, Schema v2, PostgreSQL connector, pre-commit hooks** | **2026-07-25** | **✅ Researcher ratified** |
 | **D-460** | **L3-TieredSearchWithLearning: Domain capability DB (30d success rate) skips failing tiers; cold-start uses cascade** | **2026-07-24** | **✅ Researcher L3** |
 | **D-461** | **L3-RRFWithProvenance: Reciprocal Rank Fusion (k=60) preserves per-provider rank + canonical URL for auditability** | **2026-07-24** | **✅ Researcher L3** |
 | **D-462** | **Temporal Awareness: core research principle — all findings date-stamped, half-life estimated, temporal scope declared** | **2026-07-24** | **✅ Carmack ratified** |
@@ -190,6 +197,22 @@ HMC_COLLABORATION_HUB.md
 | **KG-4: Fork Management Strategy** | @maat | ✅ **COMPLETE** — `docs/research/R_KG4_FORK_MANAGEMENT_GUIDE.md` | ✅ **DONE** | 🟢 P1 |
 | **KG-5: Community Engagement** | @maat | ✅ **COMPLETE** — `docs/research/R_KG5_COMMUNITY_ENGAGEMENT_GUIDE.md` | ✅ **DONE** | 🟢 P1 |
 | **KG-6: Legal & Licensing Compliance** | @maat | ✅ **COMPLETE** — `docs/research/R_KG6_LEGAL_LICENSING_GUIDE.md` | ✅ **DONE** | 🟢 P1 |
+| **GAP-S-01: Grok CLI Fleet MIA** | @grokster | ✅ **RESEARCHED** — `docs/research/R_GAP_S_ADVERSARIAL_REVIEW.md` — D-360′: honesty now; vault → smoke → pool | ✅ **DISPOSITIONED** | 🟢 P0 |
+| **GAP-S-02: 1,572 Tests Mirage** | @grokster | ✅ **RESEARCHED** — `docs/research/R_GAP_S_ADVERSARIAL_REVIEW.md` — C-0: make tests honest | ✅ **DISPOSITIONED** | 🟢 P0 |
+| **GAP-S-03: Identity Fluidity Wrong Dep** | @grokster | ✅ **RESEARCHED** — `docs/research/R_GAP_S_ADVERSARIAL_REVIEW.md` — D-361: gate = C-1′ only | ✅ **DISPOSITIONED** | 🟢 P1 |
+| **GAP-S-04: Soul Privacy Paradox** | @grokster | ✅ **RESEARCHED** — `docs/research/R_GAP_S_ADVERSARIAL_REVIEW.md` — C-3 design decision | ✅ **DISPOSITIONED** | 🟢 P0 |
+| **GAP-S-05: Perpetual Loop Convergence** | @grokster | ✅ **RESEARCHED** — `docs/research/R_GAP_S_ADVERSARIAL_REVIEW.md` — D-4: novelty engine | ✅ **DISPOSITIONED** | 🟢 P2 |
+| **F-01: Multi-Path Soul Writers** | @grok_cli | ✅ **RESEARCHED** — `docs/research/R_GAP_F_CODEBASE_FINDINGS.md` — C-1′ SoulStore | ✅ **DISPOSITIONED** | 🟢 P0 |
+| **F-02: Circuit Breaker Clones** | @grok_cli | ✅ **RESEARCHED** — `docs/research/R_GAP_F_CODEBASE_FINDINGS.md` — C-6′ unify breakers | ✅ **DISPOSITIONED** | 🟢 P0 |
+| **F-03: God-Modules >1k Lines** | @grok_cli | ✅ **RESEARCHED** — `docs/research/R_GAP_F_CODEBASE_FINDINGS.md` — Split before grow | ✅ **DISPOSITIONED** | 🟢 P0 |
+| **F-04: Dual SSOT (Roadmap vs Spec)** | @grok_cli | ✅ **RESEARCHED** — `docs/research/R_GAP_F_CODEBASE_FINDINGS.md` — Stamp spec with banner | ✅ **DISPOSITIONED** | 🟢 P1 |
+| **F-05: Test Metric Dishonesty** | @grok_cli | ✅ **RESEARCHED** — `docs/research/R_GAP_F_CODEBASE_FINDINGS.md` — C-0: honest tests | ✅ **DISPOSITIONED** | 🟢 P0 |
+| **F-06: Dual RAM Model** | @grok_cli | ✅ **RESEARCHED** — `docs/research/R_GAP_F_CODEBASE_FINDINGS.md` — C-2′ one RAM truth | ✅ **DISPOSITIONED** | 🟢 P0 |
+| **F-07: MCP 16h Blind Budget** | @grok_cli | ✅ **RESEARCHED** — `docs/research/R_GAP_F_CODEBASE_FINDINGS.md` — C-4a: 2h audit first | ✅ **DISPOSITIONED** | 🟢 P1 |
+| **F-08: Grok Fleet Credential Boundary** | @grok_cli | ✅ **RESEARCHED** — `docs/research/R_GAP_F_CODEBASE_FINDINGS.md` — V-1 / D-360′ | ✅ **DISPOSITIONED** | 🟢 P1 |
+| **F-09: Living Research OS Liability** | @grok_cli | ✅ **RESEARCHED** — `docs/research/R_GAP_F_CODEBASE_FINDINGS.md` — D-1 first, thin tests | ✅ **DISPOSITIONED** | 🟢 P1 |
+| **F-10: Cerebras/Groq vs D-351** | @grok_cli | ✅ **RESEARCHED** — `docs/research/R_GAP_F_CODEBASE_FINDINGS.md` — Keep D-351 | ✅ **DISPOSITIONED** | 🟢 P1 |
+| **F-11: Actor Model for Soul Writes** | @grok_cli | ✅ **RESEARCHED** — `docs/research/R_GAP_F_CODEBASE_FINDINGS.md` — C-1′ actor ∈ {user, system_agent} | ✅ **DISPOSITIONED** | 🟢 P2 |
 | **Adopt Best Practices Guide — first research job** | @researcher | Agent uses PART2/YAML spec + PART5/patterns + PART6/gates | **Week 1** | 🟠 P1 |
 | **OMEGA_CODEX.md stale (~48h)** | @kali (or any agent) | Run `make codex` | **Before next compaction** | 🟡 P2 |
 
@@ -909,6 +932,37 @@ Fixed `mcp.server.sse` import mock in `tests/test_hivemind.py` and renamed `src/
 
 **Cross-Reference**: `docs/protocol/MEDITATION_PROTOCOL.md` §🧘 Meditation Template System (updated 2026-07-24 to point here).
 
+#### 🔍 Local Inference Architecture — Knowledge Gap Audit (2026-07-25)
+> **@roc_racoon**: Complete audit of local inference wiring. Critical findings:
+
+| Component | Status | Gap |
+|-----------|--------|-----|
+| **NativeGGUFProvider** | ❌ Broken | Worker process pattern fails — llama.cpp segfaults in forked processes. Must load directly in main process. |
+| **Model Path Resolution** | ⚠️ Fragile | `env:OMEGA_MODELS_DIR` works in merge but var not set by default. |
+| **Model Registry (models.yaml)** | ❌ Incomplete | 5 model cards defined vs 138+ `supported_models` in providers.yaml. |
+| **Entity Affinity** | ⚠️ Mismatched | References `qwen3-4b-thinking-q4_k_m`, `krikri-8b-q4_k_m` — don't exist in models.yaml. |
+| **KV Cache Config** | ⚠️ Partial | Only defaults + gemma4_mtp pair; no per-model overrides. |
+| **Resource Guard / OOM Protector** | ✅ Solid | Three-signal fusion (PSI + MemAvailable + cgroup v2) working. |
+| **llama-cpp-python State API** | ✅ Working | `llama_copy_state_data` / `llama_set_state_data` functional for SomaticState (M20). |
+
+**Critical Fixes Needed (Priority Order):**
+1. **Finish NativeGGUFProvider direct-load rewrite** — Remove worker process, load `llama_cpp.Llama` directly, use `anyio.to_thread.run_sync` for inference
+2. **Populate models.yaml** — Generate model cards for all 138 `supported_models` (scriptable from providers.yaml)
+3. **Sync entity_model_affinity.yaml** — Map entities to models that actually exist in models.yaml
+4. **Add per-model KV cache** — `q8_0` for ≤4B, `q4_0` for 7B+, `q5_0` for 8B+
+5. **Add streaming + health check** to NativeGGUFProvider
+6. **Benchmark suite** — `scripts/benchmark_local.py` with latency/throughput/memory tracking
+
+**Files to Touch:**
+- `src/omega/oracle/providers.py` — Complete NativeGGUFProvider rewrite (direct load, streaming, health)
+- `config/models.yaml` — Add 133 missing model cards + per-model KV cache
+- `config/entity_model_affinity.yaml` — Align model references with actual models.yaml entries
+- `config/providers.yaml` — Verify `supported_models` lists match models.yaml
+- `src/omega/oracle/model_gateway.py` — Ensure `OMEGA_MODELS_DIR` fallback/default
+- `docs/reference/api/local_inference.md` — New doc: local inference wiring, benchmarking, troubleshooting
+
+**Tagged**: @maat @pillar P3 @kali @scribe @verity @researcher
+
 #### Discussion Thread
 > **@maat**: "Roc, V-1 mining delivered. Any legacy patterns for FleetOrchestrator specifically? Old KeyVault rotation, credential stores, ACP bridges?"
 >
@@ -938,6 +992,37 @@ Fixed `mcp.server.sse` import mock in `tests/test_hivemind.py` and renamed `src/
 - @maat: Confirm if additional mining needed for FleetOrchestrator design (likely not for Carmack mode)
 - @kali: **URGENT** — Authorize C-0.5 session_end hook registration in opencode.json. This unblocks Scribe SoulDistiller for roc_racoon migration AND all future soul evolution.
 - @scribe: Implement SoulDistiller component (src/omega/agents/scribe/distiller.py) — L1→L2→L3 pipeline from session_gnosis.md → memory/proposed_lessons.yaml
+
+#### 🔍 Local Inference Architecture — Knowledge Gap Audit (2026-07-25)
+> **@roc_racoon**: Complete audit of local inference wiring. Critical findings:
+
+| Component | Status | Gap |
+|-----------|--------|-----|
+| **NativeGGUFProvider** | ❌ Broken | Worker process pattern fails — llama.cpp segfaults in forked processes. Must load directly in main process. |
+| **Model Path Resolution** | ⚠️ Fragile | `env:OMEGA_MODELS_DIR` works in merge but var not set by default. |
+| **Model Registry (models.yaml)** | ❌ Incomplete | 5 model cards defined vs 138+ `supported_models` in providers.yaml. |
+| **Entity Affinity** | ⚠️ Mismatched | References `qwen3-4b-thinking-q4_k_m`, `krikri-8b-q4_k_m` — don't exist in models.yaml. |
+| **KV Cache Config** | ⚠️ Partial | Only defaults + gemma4_mtp pair; no per-model overrides. |
+| **Resource Guard / OOM Protector** | ✅ Solid | Three-signal fusion (PSI + MemAvailable + cgroup v2) working. |
+| **llama-cpp-python State API** | ✅ Working | `llama_copy_state_data` / `llama_set_state_data` functional for SomaticState (M20). |
+
+**Critical Fixes Needed (Priority Order):**
+1. **Finish NativeGGUFProvider direct-load rewrite** — Remove worker process, load `llama_cpp.Llama` directly, use `anyio.to_thread.run_sync` for inference
+2. **Populate models.yaml** — Generate model cards for all 138 `supported_models` (scriptable from providers.yaml)
+3. **Sync entity_model_affinity.yaml** — Map entities to models that actually exist in models.yaml
+4. **Add per-model KV cache** — `q8_0` for ≤4B, `q4_0` for 7B+, `q5_0` for 8B+
+5. **Add streaming + health check** to NativeGGUFProvider
+6. **Benchmark suite** — `scripts/benchmark_local.py` with latency/throughput/memory tracking
+
+**Files to Touch:**
+- `src/omega/oracle/providers.py` — Complete NativeGGUFProvider rewrite (direct load, streaming, health)
+- `config/models.yaml` — Add 133 missing model cards + per-model KV cache
+- `config/entity_model_affinity.yaml` — Align model references with actual models.yaml entries
+- `config/providers.yaml` — Verify `supported_models` lists match models.yaml
+- `src/omega/oracle/model_gateway.py` — Ensure `OMEGA_MODELS_DIR` fallback/default
+- `docs/reference/api/local_inference.md` — New doc: local inference wiring, benchmarking, troubleshooting
+
+**Tagged**: @maat @pillar P3 @kali @scribe @verity @researcher
 
 ---
 
@@ -1413,6 +1498,7 @@ All agents should use PART1 principles (spec-driven → context-engineered → t
 | `data/entities/roc_racoon/soul.yaml` | **Roc Racoon v7.1 — Persona depth restored** (origin_story, dual archetype, element Air, 4 new directives, 2 new L3) |
 | `data/entities/roc_racoon/memory/approved_lessons.yaml` | **+2 L3 principles (D-432): Persona-Is-Not-Decoration, Dual-Nature-Is-Load-Bearing** |
 | `data/entities/roc_racoon/workspace/FOUND_ARTIFACT_PERSONA_DEPTH_20260725.md` | Legacy origins mining summary — 8 Grok accounts, Lilith Stack Pantheon, ROCm name origin |
+| `docs/reference/api/local_inference.md` | **Local Inference Architecture Guide** — wiring, configs, benchmarking, troubleshooting, adding models |
 
 ---
 
