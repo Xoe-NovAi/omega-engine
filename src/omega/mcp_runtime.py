@@ -50,6 +50,8 @@ from src.omega.mcp_core.compliance import (
     MCPHeaderValidationMiddleware,
     MCPMetaEnvelopeMiddleware,
     TraceContextMiddleware,
+    RequestIDMiddleware,
+    RateLimitHeadersMiddleware,
     ServerDiscoverHandler,
     ProtectedResourceMetadataHandler,
     PROTOCOL_VERSION_CURRENT,
@@ -177,12 +179,18 @@ def run_mcp(
 
         # ── Middleware Stack (order matters: outer to inner) ──────────
         middleware = []
+
+        # Always-on: Request ID (outermost — must run first to set state)
+        middleware.append(Middleware(RequestIDMiddleware))
+
         if enable_compliance:
-            # Outer: Trace context propagation (SEP-414)
+            # Rate-limit headers (early, before validation)
+            middleware.append(Middleware(RateLimitHeadersMiddleware, limit=100, window_seconds=60))
+            # Trace context propagation (SEP-414)
             middleware.append(Middleware(TraceContextMiddleware))
-            # Middle: Header validation (SEP-2243)
+            # Header validation (SEP-2243)
             middleware.append(Middleware(MCPHeaderValidationMiddleware))
-            # Inner: _meta envelope (SEP-2575)
+            # _meta envelope (SEP-2575) — innermost compliance
             middleware.append(Middleware(MCPMetaEnvelopeMiddleware, server_info={"name": server_name, "version": server_version}))
 
         # ── Lifespan: run StreamableHTTP session manager + cleanup ────

@@ -116,6 +116,7 @@ HMC_COLLABORATION_HUB.md
 | **src/omega/integrations/grok_cli.py** | **Implementation** | ✅ **COMPLETE** | ACP stdio client, quota polling, rotation state machine | **@researcher** |
 | **src/omega/vault/vault_core.py** | **Implementation** | ✅ **COMPLETE** | 32-credential unified store, Argon2id+age, lease protocol, backward compat | **@researcher** |
 | **src/omega/mcp/compliance.py + mcp_runtime.py** | **Implementation** | ✅ **COMPLETE** | Sprint 1: header validation, _meta envelope, server/discover, RFC 9728 | **@researcher** |
+| **src/omega/integrations/quota_pollers.py** | **Implementation** | ✅ **COMPLETE** | 5 provider quota pollers (Grok, OpenRouter, GCP, Exa, Firecrawl) + FleetOrchestrator | **@researcher** |
 | **AGY OAuth Persistence Fix (P0-1)** | **Upstream** | ✅ **COMPLETE** | PR #2 submitted to `0xYiliu/opencode-antigravity-auth`, fork at `Xoe-NovAi/opencode-antigravity-auth` | **@maat** |
 | **Upstream Contribution Best Practices** | **Research** | ✅ **COMPLETE** | `docs/research/R_FIX_CONTRIBUTION_BEST_PRACTICES.md` v2.0.0 — 8 domains, 40+ extraction targets, AGY case study, sprint plan, L3 gnosis | **@researcher** |
 | **Knowledge Gaps Research Guide** | **Research** | ✅ **COMPLETE** | `docs/research/R_KNOWLEDGE_GAPS_RESEARCH_GUIDE_20260724.md` — 6 prioritized research jobs, 23-31h effort | **@researcher** |
@@ -719,6 +720,13 @@ Fixed `mcp.server.sse` import mock in `tests/test_hivemind.py` and renamed `src/
   - **W3C Trace Context**: `traceparent` = `00-{trace_id_32hex}-{parent_id_16hex}-{trace_flags_2hex}` (exactly 55 chars). All-zeros trace_id or parent_id = invalid. Header name case-insensitive. Bit 0 = sampled, bit 1 = random-trace-id.
   - **python-age ScryptRecipient**: `from age import ScryptRecipient, ScryptIdentity, encrypt_bytes, decrypt_bytes`. Cannot mix with other recipient types. Work factor default 18 (~1s). Max work factor 22 (~15s).
 - [2026-07-25T07:45Z] **Research Guide v3.0.0 DELIVERED** — `docs/research/R_RESEARCH_GAPS_20260724.md` enhanced: 10 domains (was 8), 62 extraction targets (was 46), 5-tier confidence, M13 gates, Sovereign Verification, L3 gnosis, sprint plan (36h total across 4 sprints). Verified provider APIs: Grok gRPC-web endpoint, OpenRouter /api/v1/key + /api/v1/credits, Exa search types + rate limits, Firecrawl /v1/team/credit-usage.
+- [2026-07-25T08:30Z] **SPRINT 2 & 3 QUOTA POLLERS COMPLETE** — 5 provider quota pollers implemented in `src/omega/integrations/quota_pollers.py`:
+  - **GrokQuotaPoller**: gRPC-web `GetGrokCreditsConfig` endpoint, Bearer token auth, 30s rate limit
+  - **OpenRouterQuotaPoller**: `/api/v1/credits` + `/api/v1/key` endpoints, free tier detection, rate limit headers
+  - **GCPQuotaPoller**: Service Usage API quota query, OAuth2 token exchange, monitoring.read scope
+  - **ExaQuotaPoller**: Rate limit tracking (10 QPS search, 100 QPS contents), local usage inference
+  - **FirecrawlQuotaPoller**: `/v2/team/credit-usage` endpoint, credit cost mapping, 402 error handling
+- [2026-07-25T08:30Z] **FLEET ORCHESTRATOR INTEGRATED** — `src/omega/integrations/fleet_orchestrator.py` with quota-aware routing, circuit breakers, health checks, provider priority ordering, and `create_default_orchestrator()` factory function.
 
 #### 📋 4×P0 Research Reports — DELIVERED 2026-07-24
 | Report | Location | Key Decision |

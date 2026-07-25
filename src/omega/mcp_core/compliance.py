@@ -242,6 +242,78 @@ class MCPMetaEnvelopeMiddleware(BaseHTTPMiddleware):
 
 
 # =============================================================================
+# MIDDLEWARE 4: REQUEST ID GENERATION
+# =============================================================================
+
+import uuid
+
+class RequestIDMiddleware(BaseHTTPMiddleware):
+    """
+    Generate and propagate request IDs for tracing and rate-limiting.
+    
+    If the client provides an X-Request-Id header, it is preserved.
+    If not, a UUID is generated automatically.
+    The request ID is stored in request.state.request_id and echoed
+    in the response as X-Request-Id.
+    """
+
+    async def dispatch(self, request: Request, call_next):
+        request_id = request.headers.get("x-request-id") or str(uuid.uuid4())
+        request.state.request_id = request_id
+
+        response = await call_next(request)
+
+        response.headers["X-Request-Id"] = request_id
+        return response
+
+
+# =============================================================================
+# MIDDLEWARE 5: RATE-LIMIT HEADERS
+# =============================================================================
+
+class RateLimitHeadersMiddleware(BaseHTTPMiddleware):
+    """
+    Add rate-limit response headers (X-RateLimit-Limit, etc.).
+
+    Per default, enforces no actual rate-limiting — only adds headers.
+    Subclass and override _check_rate_limit() for enforcement.
+    """
+
+    def __init__(
+        self,
+        app: ASGIApp,
+        limit: int = 100,
+        window_seconds: int = 60,
+        enabled: bool = True,
+    ):
+        super().__init__(app)
+        self.limit = limit
+        self.window_seconds = window_seconds
+        self.enabled = enabled
+
+    async def dispatch(self, request: Request, call_next):
+        response = await call_next(request)
+
+        if self.enabled:
+            remaining = await self._get_remaining(request)
+            reset_at = await self._get_reset_at(request)
+            response.headers["X-RateLimit-Limit"] = str(self.limit)
+            response.headers["X-RateLimit-Remaining"] = str(remaining)
+            response.headers["X-RateLimit-Reset"] = str(reset_at)
+
+        return response
+
+    async def _get_remaining(self, request: Request) -> int:
+        """Override for actual rate-limit enforcement."""
+        return self.limit
+
+    async def _get_reset_at(self, request: Request) -> int:
+        """Return Unix timestamp when the window resets."""
+        import time
+        return int(time.time()) + self.window_seconds
+
+
+# =============================================================================
 # SERVER DISCOVER HANDLER (SEP-2575)
 # =============================================================================
 
@@ -285,7 +357,7 @@ class ServerDiscoverHandler:
         # Add _meta with cache metadata (SEP-2549)
         response["_meta"] = {
             "protocolVersion": PROTOCOL_VERSION_CURRENT,
-            "serverInfo": self.server_info,
+            "serverInfo": {"name": self.server_name, "version": self.server_version},
             "ttlMs": 3600000,  # 1 hour cache
             "cacheScope": "server",
         }
@@ -420,6 +492,8 @@ __all__ = [
     "TraceContextMiddleware",
     "MCPHeaderValidationMiddleware",
     "MCPMetaEnvelopeMiddleware",
+    "RequestIDMiddleware",
+    "RateLimitHeadersMiddleware",
     # Handlers
     "ServerDiscoverHandler",
     "ProtectedResourceMetadataHandler",
