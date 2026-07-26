@@ -42,26 +42,36 @@ def check_file(path: str) -> bool:
 
 
 def check_hook_registered() -> tuple[bool, str]:
-    cfg = ROOT / ".opencode" / "opencode.json"
+    """Check C-0.5: soul distillation hook is correctly wired.
+    
+    Architecture (2026-07-25 corrected):
+      OpenCode does NOT support a 'hooks' key in opencode.json.
+      The correct mechanism is the Plugin API with .opencode/plugins/*.js
+      listening for session.compacted events.
+      
+    Check: plugin file exists + Python hook script exists.
+    """
     hook_file = ROOT / ".opencode" / "hooks" / "session_end.py"
     if not hook_file.is_file():
         return False, "session_end.py missing"
-    if not cfg.is_file():
-        return False, "opencode.json missing"
-    try:
-        data = json.loads(cfg.read_text(encoding="utf-8"))
-    except json.JSONDecodeError as exc:
-        return False, f"opencode.json invalid JSON: {exc}"
-    # Accept several shapes used by OpenCode configs
-    hooks = data.get("hooks") or data.get("plugin_hooks") or {}
-    if isinstance(hooks, dict):
-        session_end = hooks.get("session_end") or hooks.get("session.end")
-        if session_end:
-            return True, f"hooks.session_end={session_end}"
-    raw = cfg.read_text(encoding="utf-8")
-    if "session_end" in raw and "hooks" in raw:
-        return True, "session_end string present in config"
-    return False, "hooks.session_end not registered in opencode.json"
+    
+    # Primary: OpenCode Plugin API (.opencode/plugins/soul_distiller.js)
+    plugin_file = ROOT / ".opencode" / "plugins" / "soul_distiller.js"
+    if plugin_file.is_file():
+        return True, f"plugin={plugin_file.name} + hook={hook_file.name}"
+    
+    # Legacy fallback: check opencode.json hooks key (deprecated, will break OpenCode)
+    cfg = ROOT / ".opencode" / "opencode.json"
+    if cfg.is_file():
+        try:
+            data = json.loads(cfg.read_text(encoding="utf-8"))
+            hooks = data.get("hooks") or {}
+            if isinstance(hooks, dict) and hooks.get("session_end"):
+                return True, f"legacy hooks.session_end={hooks['session_end']} (DEPRECATED — use plugin)"
+        except json.JSONDecodeError:
+            pass
+    
+    return False, "plugin soul_distiller.js missing (use .opencode/plugins/)"
 
 
 def check_mcp_pin() -> tuple[bool, str]:

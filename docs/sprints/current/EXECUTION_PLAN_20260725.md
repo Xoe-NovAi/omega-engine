@@ -23,7 +23,7 @@
 | MCP pin `>=1.27,<2` | CLOSED | **EXEC-PARTIAL** | pyproject pinned; venv 1.28.1; requirements 1.27.1 |
 | MCP Sprint 1 middleware | CLOSED | Hub: COMPLETE | Hub 8016 🅳 Firecrawl 8015 🅳 |
 | AGY OAuth persistence | CLOSED design | Hub: COMPLETE | Re-auth on restart still P0 risk |
-| C-0.5 SoulDistiller code | CLOSED | **EXEC-PARTIAL** | session_end.py exists; **not in opencode.json** (probe: 0 hooks) |
+| C-0.5 SoulDistiller code | CLOSED | ✅ **COMPLETE** | Plugin API: `.opencode/plugins/soul_distiller.js` + `session_end.py`; gate 10/11 |
 | W-1 WARP pool | CLOSED research | **EXEC-FAIL** | No listeners on 8081-8083 (probe: ss -lntp = ∅) |
 | C-3 restic scripts | CLOSED | **EXEC-PARTIAL** | Scripts exist; systemd timer not enabled |
 | Phase D gate script | — | FIXED fail-closed v1.1 | Was inverted |
@@ -36,7 +36,7 @@
 
 | # | Blocker | Owner | Effort | Done signal |
 |---|---------|-------|--------|-------------|
-| **B1** | C-0.5 hook **unregistered** | @kali | 2 min + restart | `hooks.session_end` in `.opencode/opencode.json` + session fire |
+| **B1** | C-0.5 hook **registered via Plugin API** | @kali | 2 min + restart | `.opencode/plugins/soul_distiller.js` exists + `session.compacted` fires |
 | **B2** | Dirty VaultCore / secret-scanner tree | @maat/P3 | 1–2 h | Commit slice **or** explicit freeze + lock |
 | **B3** | W-1 not live (SOCKS down) | Carmack/P1 + Architect | 15–45 min | `ss` shows 8081–8083 + 3 exit IPs |
 | **B4** | Honest Phase D gate run | @verity / @kali | 10–30 min | `verify_phase_d_gate.py` exit 0 or FAIL list |

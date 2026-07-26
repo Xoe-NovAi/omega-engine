@@ -20,7 +20,7 @@ Documented rollback procedures for all critical sprint infrastructure components
 | **WARP Pool** | `systemctl stop warp-* && pkexec bash scripts/fix_warp_ns_setup_and_restart.sh` | 5 min | 0 | Pool down, wrong IPs, bridge failure |
 | **AGY OAuth Fix** | `opencode plugin remove antigravity-auth && opencode plugin add opencode-antigravity-auth@previous` | 1 min | 0 | Plugin breaks auth, tokens not persisting |
 | **PolicyKit Rule** | `sudo rm /etc/polkit-1/rules.d/99-omega-warp.rules` | 30s | 0 | Rule causes auth issues, security concern |
-| **C-0.5 Hook** | Remove `hooks.session_end` from `.opencode/opencode.json` | 30s | 0 | Hook crashes, distillation fails |
+| **C-0.5 Hook** | Remove `.opencode/plugins/soul_distiller.js` (auto-discovered) | 10s | 0 | Plugin crashes, distillation fails |
 | **Four-File Model Dirs** | `rm -rf data/entities/*/memory/` (recreate via bootstrap) | 10s | 0 | Wrong structure, permission issues |
 | **Integrations Dir** | `rm -rf src/omega/integrations/` | 5s | 0 | Build failures, wrong location |
 | **Restic Backup** | `restic snapshots && restic restore latest --target /tmp/restore` | 10 min | 5% | Data loss, corruption, ransomware |
@@ -38,7 +38,7 @@ Documented rollback procedures for all critical sprint infrastructure components
 | WARP Pool | `curl -s https://api.ipify.org` ×3 (distinct IPs) |
 | AGY OAuth | `opencode plugin list | grep antigravity` |
 | PolicyKit | `ls /etc/polkit-1/rules.d/99-omega-warp.rules` |
-| C-0.5 Hook | `grep session_end .opencode/opencode.json` |
+| C-0.5 Hook | `ls .opencode/plugins/soul_distiller.js && ls .opencode/hooks/session_end.py` |
 | Four-File Model | `ls data/entities/kali/memory/approved_lessons.yaml` |
 | Integrations | `ls src/omega/integrations/__init__.py` |
 | Restic | `restic check --read-data-subset 5%` |
