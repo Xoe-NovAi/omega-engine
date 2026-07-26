@@ -206,6 +206,8 @@ The loop is closed. Every finding creates new gaps. Every gap triggers new resea
 
 ### Phase 1: Content Persistence (The Missing Seam)
 
+⚠️ **SUPERSESSION BANNER**: This phase is **ACTIVE** per Ark v5.1 §3.2 (D-1). Implement as specified. The schema additions and content cache logic are authoritative.
+
 **Goal**: Every web search from every agent permanently captures page content.
 
 **File to modify**: `src/omega/search/search_persistence.py`
@@ -294,6 +296,8 @@ def search_cache(cls, keyword: str) -> List[Dict]:
 
 ### Phase 1.5: NotebookLM Ingestion Pipeline (NEW — 2026-07-23 Mining)
 
+⚠️ **SUPERSESSION BANNER**: This phase is **NEW** and **ACTIVE** per Ark v5.1 §3.2 (NL-1 ticket). Not in original spec — added by R52c mining.
+
 **Goal**: Implement the 5-notebook segmented ingestion strategy from R52c spec to feed current Omega docs into NotebookLM for LLM-assisted research.
 
 **Source Spec**: `docs/research/archive/R52c_notebooklm_ingestion_strategy.md`
@@ -348,6 +352,12 @@ The script will output to `notebooklm_export/{NB-ID}/{filename}`, allowing for s
 ---
 
 ### Phase 2: Job Board Bridge
+
+⚠️ **SUPERSESSION BANNER**: This phase is **SUPERSEDED** per Ark v5.1 §3.2 (D-2) and D-357. 
+- **Do NOT implement SQLite Research Job Store** (§5, Phase 2 in original spec) — **DEFERRED** per D-357
+- **Do implement**: YAML job board + `fcntl.flock` bridge as specified below
+- **Do NOT implement**: SQLite schema, claim TTL, P0/P1 auto-queue, verification gates, content TTL tiers T1/T2/T3
+- **Do NOT implement**: 7-stage workflow — **DEFERRED** per D-358
 
 **Goal**: Background researcher reads open jobs from the job board and prioritizes them.
 
@@ -414,6 +424,8 @@ await self._load_board_jobs()  # NEW: Load board jobs into queue
 ---
 
 ### Phase 3: Auto-Indexing of Generated Research
+
+⚠️ **SUPERSESSION BANNER**: This phase is **ACTIVE** per Ark v5.1 §3.2 (D-3). Implement as specified. The INDEX.md registration and follow-up topic emission are authoritative.
 
 **Goal**: When the soul updater creates research docs, they're registered in the research index and propose follow-up topics.
 
@@ -488,7 +500,14 @@ await self._emit_followup_topics(task, gnosis)
 
 ### Phase 4: Gap Detector as a Service
 
-**Goal**: Extract gap-scanning logic into a standalone service that continuously proposes new research.
+⚠️ **SUPERSESSION BANNER**: This phase is **DEFERRED** per Ark v5.1 §3.2 (D-4) and D-358. 
+- **Do NOT implement** `GapDetector` as a standalone service with 6 scanner classes — **DEFERRED** per D-358
+- **Do implement**: Extend `_grow_frontier()` in `loop.py` only (~20 lines) with novelty engine (random + contradiction scanning)
+- **Do NOT implement**: SoulGapScanner, IndexGapScanner, EntityGapScanner, ContradictionScanner, FollowupScanner, BoardGapScanner as separate classes
+- **Do NOT implement**: GapDetector service class, deduplication, scoring, ResearchTask proposal pipeline
+- **Required addition**: Novelty engine (random topic sampling + cross-domain contradiction scanning) + INDEX noise policy
+
+**Original Goal (SUPERSEDED)**: Extract gap-scanning logic into a standalone service that continuously proposes new research.
 
 **New file**: `src/omega/workers/background_researcher/gap_detector.py`
 
