@@ -9,6 +9,13 @@
 #
 # Each tier has independent circuit breaker. No tier masks another's failure.
 # Every cycle produces a training triple (T1, T2, T3) → synthetic dataset.
+#
+# ⚠️ DEPRECATED — C-6' Unification (2026-07-25)
+# The JemCircuitBreaker and CircuitBreakerState below are CLONE implementations.
+# Use HealthMonitor.get_breaker() instead:
+#   breaker = get_health_monitor().get_breaker("jem_distiller")
+# The jem distiller breaker was NOT migrated during Phase C-6'. New code
+# MUST use HealthMonitor. Existing code should be migrated during P-5.
 
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md

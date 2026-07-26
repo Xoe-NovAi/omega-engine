@@ -135,6 +135,7 @@ class RequestSizeLimitMiddleware:
     """Limits incoming request size to prevent OOM/DOS attacks.
 
     Checks the ``content-length`` header against a configurable maximum.
+    For chunked encoding (no content-length), reads body to enforce limit.
 
     **Dependency footprint:**
       - ``starlette.responses.Response`` (third-party)
@@ -147,14 +148,46 @@ class RequestSizeLimitMiddleware:
     async def __call__(self, scope, receive, send):
         if scope["type"] == "http":
             content_length = 0
+            is_chunked = False
             for header, value in scope.get("headers", []):
                 if header == b"content-length":
                     content_length = int(value)
-                    break
+                elif header == b"transfer-encoding" and b"chunked" in value:
+                    is_chunked = True
+
+            # Reject if content-length exceeds limit
             if content_length > self.max_size:
                 response = Response("Request too large", status_code=413)
                 await response(scope, receive, send)
                 return
+
+            # For chunked encoding, we need to read body to enforce limit
+            # Wrap receive to accumulate body size
+            if is_chunked:
+                received_bytes = 0
+
+                async def limited_receive():
+                    nonlocal received_bytes
+                    message = await receive()
+                    if message["type"] == "http.request":
+                        body = message.get("body", b"")
+                        received_bytes += len(body)
+                        if received_bytes > self.max_size:
+                            # Send 413 response directly
+                            response = Response("Request too large", status_code=413)
+                            await response(scope, receive, send)
+                            # Signal to stop processing by raising
+                            raise RuntimeError("Request body exceeds size limit")
+                    return message
+
+                try:
+                    await self.app(scope, limited_receive, send)
+                except RuntimeError as e:
+                    if "Request body exceeds size limit" in str(e):
+                        return  # 413 already sent
+                    raise
+                return
+
         await self.app(scope, receive, send)
 
 

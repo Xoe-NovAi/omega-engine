@@ -7,6 +7,13 @@
 #
 # NOTE: Tavily and Jina removed per D-kal-164 sovereign dependency purge.
 #
+# ⚠️ DEPRECATED — C-6' Unification (2026-07-25)
+# This file contains a CircuitBreakerState dataclass and SearchCircuitBreaker
+# that are CLONE implementations. Use HealthMonitor.get_breaker() instead:
+#   breaker = get_health_monitor().get_breaker("search_fleet")
+# The search fleet breaker was NOT migrated during Phase C-6'. New code
+# MUST use HealthMonitor. Existing code should be migrated during P-5.
+#
 # LEGACY PORT: Circuit breaker pattern from Era 2 XNAi (xna-omega-legacy/src/omega/core/circuit_breakers/)
 #   - Redis-backed state persistence with in-memory fallback
 #   - Asymmetric thresholds: skip after N failures, critical after M failures

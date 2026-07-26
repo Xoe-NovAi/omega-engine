@@ -69,6 +69,10 @@ class TraceContextMiddleware(BaseHTTPMiddleware):
     """
     
     async def dispatch(self, request: Request, call_next):
+        # Skip SSE transport paths
+        if request.url.path.startswith("/messages") or request.url.path == "/sse":
+            return await call_next(request)
+        
         # Extract trace context from headers
         traceparent = request.headers.get("traceparent")
         tracestate = request.headers.get("tracestate")
@@ -186,7 +190,13 @@ class MCPHeaderValidationMiddleware(BaseHTTPMiddleware):
     def _is_mcp_endpoint(self, request: Request) -> bool:
         """Check if request is to an MCP endpoint."""
         path = request.url.path
-        return path.startswith("/mcp") or path == "/sse" or path.startswith("/messages")
+        # SSE GET connection doesn't require MCP headers - they're on POST to /messages
+        if path == "/sse" and request.method == "GET":
+            return False
+        # SSE message path - let the SSE transport handle it directly
+        if path.startswith("/messages"):
+            return False
+        return path.startswith("/mcp")
     
     def _error_response(self, status: int, code: int, message: str, request_id: Any) -> JSONResponse:
         return JSONResponse(
@@ -216,6 +226,10 @@ class MCPMetaEnvelopeMiddleware(BaseHTTPMiddleware):
         self.server_info = server_info or {"name": "omega-engine", "version": "1.0.0"}
     
     async def dispatch(self, request: Request, call_next):
+        # Skip SSE transport paths
+        if request.url.path.startswith("/messages") or request.url.path == "/sse":
+            return await call_next(request)
+
         # Extract _meta from request body (for POST)
         request_meta = {}
         if request.method == "POST":
@@ -258,6 +272,10 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
     """
 
     async def dispatch(self, request: Request, call_next):
+        # Skip SSE transport paths
+        if request.url.path.startswith("/messages") or request.url.path == "/sse":
+            return await call_next(request)
+
         request_id = request.headers.get("x-request-id") or str(uuid.uuid4())
         request.state.request_id = request_id
 
@@ -292,6 +310,10 @@ class RateLimitHeadersMiddleware(BaseHTTPMiddleware):
         self.enabled = enabled
 
     async def dispatch(self, request: Request, call_next):
+        # Skip SSE transport paths
+        if request.url.path.startswith("/messages") or request.url.path == "/sse":
+            return await call_next(request)
+
         response = await call_next(request)
 
         if self.enabled:
