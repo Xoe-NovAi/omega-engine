@@ -125,15 +125,15 @@ def check_restic() -> tuple[bool, str]:
     if not script_ok:
         return False, "restic backup script missing"
     code, out, _ = run(
-        "systemctl --user is-enabled restic-check.timer 2>/dev/null; "
-        "systemctl is-enabled restic-check.timer 2>/dev/null; true"
+        "systemctl --user is-enabled omega-restic-backup.timer 2>/dev/null; "
+        "systemctl is-enabled omega-restic-backup.timer 2>/dev/null; true"
     )
     enabled = "enabled" in out
     # Script present is required; timer is required for full C-3 gate
     if script_ok and enabled:
         return True, "restic script + timer enabled"
     if script_ok:
-        return False, "restic script exists but restic-check.timer not enabled"
+        return False, "restic script exists but omega-restic-backup.timer not enabled"
     return False, "restic not configured"
 
 
