@@ -21,24 +21,24 @@
 
 ## §2 Current State (2026-07-22)
 
-| Metric | Value | Status | LAST_VERIFIED |
-|--------|-------|--------|---------------|
-| **Strategy SSOT** | **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.2** + `STRATEGY_CORPUS_MAP.md` | ✅ Unified; fine-grained corpus preserved | 2026-07-22 |
-| **Current phase** | **Phase D Gate — Infrastructure Hardening complete pending P0 integrity checks** | 🟡 Active | 2026-07-25 |
-| Tests | **1,572 collected** · **50/50 core+contract+chaos+SoulStore pass** · 77/77 contract historically green | ✅ C-0 complete, C-10/C-2'/C-6'/C-1' verified | 2026-07-22 |
-| Mandates | **25 (M1-M25)** | ✅ All enforced (v3.7.0) | 2026-07-19 |
-| **Mandate Compliance** | **21/25 FULL (84%)** — 2 Partial, 2 Fail | ⚠️ M5, M11 remain (Soul distillation pipeline) | 2026-07-22 |
-| Fleet | **12 agents (cap 14 per M10)** | ✅ Clean | 2026-07-22 |
-| WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 |
-| **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, P1: 5/5, P2: 6/6, P3: 1/4 | ✅ P0-P2 Complete | 2026-07-18 |
-| Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 |
-| Shared modules | **4** (`omega-vetala`, `omega-sieve`, `omega-doc-reader`, `omega-meditation`) | ✅ 3 on PyPI, meditation compatible | 2026-07-20 |
-| **Foundation Stabilization Campaign** | **RATIFIED** — Gate Α passed, Phase Β complete, Gate Β passing | ✅ 0 active/pending handoffs | 2026-07-20 |
-| **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles | ✅ Gate Γ criterion met | 2026-07-20 |
-| **Antigravity OAuth** | **PARTIAL** — Plugin present; auth often **API-key only**; re-login may be required for Path B | 🟡 G-1b path | 2026-07-22 |
-| **Gemma 4 31B free workhorse** | **DEAD for fat OpenCode** — free-tier input TPM **16k** since **2026-07-15** (was workhorse May–Jul) | 🚨 **G-1 P0** — needs billing/OAuth | 2026-07-22 |
-| **WARP Proxy Pool** | **NOT LIVE** — No SOCKS listeners on 8081-8083 per `ss -lntp` probe at 2026-07-25 | 🚨 **W-1 P0** — ns-setup truncated; SystemCallFilter bugs fixed but not deployed | 2026-07-25 |
-| **Circuit Breakers** | **1 canonical** (`HealthMonitor.AsyncCircuitBreaker`) + 6 deprecated clones | ✅ C-6' Unified, sliding-window mode added | 2026-07-22 |
+| Metric | Value | Status | LAST_VERIFIED | PROBE_COMMAND |
+|--------|-------|--------|---------------|---------------|
+| **Strategy SSOT** | **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.2** + `STRATEGY_CORPUS_MAP.md` | ✅ Unified; fine-grained corpus preserved | 2026-07-22 | `cat docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md | head -5` |
+| **Current phase** | **Phase D Gate — Infrastructure Hardening complete pending P0 integrity checks** | 🟡 Active | 2026-07-25 | `cat docs/sprints/current/EXECUTION_PLAN_20260725.md | head -20` |
+| Tests | **1,572 collected** · **50/50 core+contract+chaos+SoulStore pass** · 77/77 contract historically green | ✅ C-0 complete, C-10/C-2'/C-6'/C-1' verified | 2026-07-22 | `source .venv/bin/activate && python -m pytest tests/property/ tests/contract/ tests/test_hivemind.py -q --tb=no 2>&1 | tail -3` |
+| Mandates | **25 (M1-M25)** | ✅ All enforced (v3.7.0) | 2026-07-19 | `cat SOVEREIGN_MANDATES.md | grep -c "^### [0-9]"` |
+| **Mandate Compliance** | **21/25 FULL (84%)** — 2 Partial, 2 Fail | ⚠️ M5, M11 remain (Soul distillation pipeline) | 2026-07-22 | `grep -r "M5\|M11" SOVEREIGN_MANDATES.md | head -5` |
+| Fleet | **12 agents (cap 14 per M10)** | ✅ Clean | 2026-07-22 | `ls .opencode/agents/ | wc -l` |
+| WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 | `ls config/wads/ | wc -l` |
+| **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, P1: 5/5, P2: 6/6, P3: 1/4 | ✅ P0-P2 Complete | 2026-07-18 | `cat data/coordination/THIRD_PARTY_REGISTRY.yaml | grep -c "status: cloned"` |
+| Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 | `grep -r "\[id-soft:" src/ | wc -l` |
+| Shared modules | **4** (`omega-vetala`, `omega-sieve`, `omega-doc-reader`, `omega-meditation`) | ✅ 3 on PyPI, meditation compatible | 2026-07-20 | `pip list | grep -E "omega-(sieve|doc-reader|meditation|vetala)"` |
+| **Foundation Stabilization Campaign** | **RATIFIED** — Gate Α passed, Phase Β complete, Gate Β passing | ✅ 0 active/pending handoffs | 2026-07-20 | `cat data/coordination/FOUNDATION_STABILIZATION_STATUS.md` |
+| **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles | ✅ Gate Γ criterion met | 2026-07-20 | `cat src/omega/memory/sqlite_policy.py | head -30` |
+| **Antigravity OAuth** | **PARTIAL** — Plugin present; auth often **API-key only**; re-login may be required for Path B | 🟡 G-1b path | 2026-07-22 | `opencode run -m google/antigravity-gemini-3-flash "Reply PONG" 2>&1 | head -3` |
+| **Gemma 4 31B free workhorse** | **DEAD for fat OpenCode** — free-tier input TPM **16k** since **2026-07-15** (was workhorse May–Jul) | 🚨 **G-1 P0** — needs billing/OAuth | 2026-07-22 | `opencode run -m google/gemma-4-31b-it "Reply PONG" 2>&1 | grep -i "16000\|free_tier"` |
+| **WARP Proxy Pool** | **NOT LIVE** — No SOCKS listeners on 8081-8083 per `ss -lntp` probe at 2026-07-25 | 🚨 **W-1 P0** — ns-setup truncated; SystemCallFilter bugs fixed but not deployed | 2026-07-25 | `ss -lntp | grep -E "808[1-3]"` |
+| **Circuit Breakers** | **1 canonical** (`HealthMonitor.AsyncCircuitBreaker`) + 5 deprecated clones + **2 unmigrated** (`JemCircuitBreaker`, `search_fleet.SearchCircuitBreaker`) | 🟡 C-6' Partial — P-5 ticket open for remaining clones | 2026-07-25 | `grep -r "class.*Breaker" src/omega/ | grep -v test | grep -v ".pyc"` |
 
 ### Active Deferred Items
 | Item | Status | Details |

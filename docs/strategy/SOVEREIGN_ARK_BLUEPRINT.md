@@ -8,20 +8,20 @@
 └── **W-1** WARP proxy pool bring-up (OCZ multi-IP unlock; D-304 Track 1)
       Blocker: truncated /usr/local/bin/warp-ns-setup — fix from warp-proxy-pool/scripts/
 
-URGENT + IMPORTANT (This week)
-├── C-0  Test honesty (real pass/fail/skip; fix Makefile lies)
-├── C-0.5 Soul Distillation Pipeline (Scribe agent) — NEW P0, unblocks M5/M11
-├── C-2′ One RAM truth (MUST complete before C-1′/C-10)
-├── C-1′ SoulStore (single writer + actor model) — DEPENDS ON C-2′
-├── C-3  Privacy model → restic
-├── C-4a MCP audit (2h) → then C-4b sized migration — START TODAY (7-day deadline)
-├── C-4a.5 MCP Migration Execution — Kali direct if P4 silent by EOD
-├── C-5  MaKaLi routing config
-├── C-6′ Unify breakers (delete clones)
-├── C-10 Local admission control (GAP-05) — DEPENDS ON C-2′
-├── C-10.5 Provider Fallback Chain — NEW P0, M7 compliance (Lilith/P6)
-├── C-9  GenerationPolicy extract (cheap structural win)
-└── C-11 Test infrastructure (fixtures, chaos, benchmarks, MCP matrix) — NEW P0
+PHASE C — COMPLETED ✅ (Keep below for historical trace; items no longer pending)
+├── C-0  Test honesty ✅ (95/95 Phase 2 hardening, false count ban)
+├── C-0.5 Soul Distillation Pipeline ✅ (Hook registered in opencode.json + script exists; needs OpenCode restart)
+├── C-2′ One RAM truth ✅ (OOMProtector 3-signal fusion)
+├── C-1′ SoulStore ✅ (Atomic writer, 4-layer guarantee)
+├── C-3  Restic 3-2-1 Backup 🟡 (Amended: local repo acceptable; timer not enabled — only remaining required Phase D gate failure)
+├── C-4a MCP audit ✅ (R_CG01 delivered, 16-hour/4-sprint plan)
+├── C-4b MCP Streamable HTTP ✅ (Dual transport live; client SEP-2575 compliant)
+├── C-5  MaKaLi routing config ✅ (oracle_summon_local)
+├── C-6′ Breaker unification ✅ (Canonical HealthMonitor factory; 5/7 clones deprecated; 2 clones unmigrated — P-5 ticket open)
+├── C-10 Local admission control ✅ (CCX-aware semaphore + OOMProtector)
+├── C-10.5 Provider Fallback Chain ✅ (4 modules, 69 tests)
+├── C-9  GenerationPolicy extract ❌ (Not started — optional Phase D criterion)
+└── C-11 Property tests ✅ (16/16 pass; 1 skip; OOM/breaker/soul store coverage)
 
 IMPORTANT (Next)
 ├── C-7 / C-8
@@ -122,7 +122,7 @@ COMPLETED (Phase C Hardening):
 ├── C-0 Test Honesty ✅ (99 quarantined, honest badge)
 ├── C-2′ OOMProtector 3-signal fusion ✅
 ├── C-1′ SoulStore atomic writer ✅
-├── C-6′ Breaker unification (7→1) ✅
+├── C-6′ Breaker unification ✅ (HealthMonitor factory + 5/7 deprecated; 2 unmigrated → P-5)
 ├── C-5 MaKaLi routing config ✅
 ├── C-10 Admission control ✅
 ├── C-4a MCP audit doc ✅

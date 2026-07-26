@@ -2,7 +2,7 @@
 **AP Token**: `AP-STRATEGY-CORPUS-MAP-v1.0.0`
 ⬡ OMEGA ⬡ GROK_CLI ⬡ opencode ⬡ trc_corpus_map ⬡ LAYER-2
 
-**Date**: 2026-07-22 (G-1/W-1 elevation)  
+**Date**: 2026-07-25 (KG-3..6 + VaultCore + MCP Sprint 1 — updated)  
 **Status**: LAYER 2 — companion to strategy SSOT  
 **Master**: [`SOVEREIGN_ARK_BLUEPRINT.md`](SOVEREIGN_ARK_BLUEPRINT.md) v5.1+  
 **P0 ops**: [`CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md`](CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md)  

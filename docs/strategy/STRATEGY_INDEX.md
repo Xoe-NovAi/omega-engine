@@ -65,7 +65,7 @@
 | `docs/ROADMAP.md` | Pointer stub → Ark |
 | `docs/strategy/RESEARCH_EXECUTION_UPDATE.md` | Jul 21 plan — absorbed into Game Plan archive |
 | `docs/strategy/HARDENING_PLAN_COMPLETE.md` | Carmack 5-phase plan — historical reference only |
-| `docs/sprints/guard-and-distill/index.md` | **SUPERSEDED** — use `docs/sprints/current/` |
+| `docs/sprints/guard-and-distill/index.md` | **SUPERSEDED** — archived to `docs/archive/sprints/2026-07-25/guard-and-distill/` |
 
 ## LAYER 4: ARCHIVE
 | Location | Contents |

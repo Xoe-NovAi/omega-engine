@@ -107,7 +107,7 @@ Use the role that matches the **ticket**, not your favorite persona.
 - [ ] **C-0** Honest tests (pass/fail/skip real; Makefile not lying)  
 - [ ] **C-1′** SoulStore only soul writer (flock + fsync + actors)  
 - Prefer also: C-2′, C-5/C-10 before heavy local inference work  
-- **Plus (sprint v1.1)**: C-0.5 hook **registered + fired**; Vault dirty-tree landed or frozen; fail-closed `scripts/verify_phase_d_gate.py`; no phantom W-1 claims without SOCKS probes  
+- **Plus (sprint v1.1)**: C-0.5 hook **registered** (needs OpenCode restart to fire); Vault dirty-tree landed or frozen; fail-closed `scripts/verify_phase_d_gate.py`; no phantom W-1 claims without SOCKS probes  
 
 ### Historical Phase C ordered queue (archive — superseded by EXECUTION_PLAN for sequencing)
 
