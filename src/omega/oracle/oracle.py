@@ -27,7 +27,6 @@ from .session_manager import SessionManager
 from .orchestrator import Orchestrator
 from .model_gateway import ModelGateway
 from .health_monitor import HealthMonitor
-from .soul_distiller import get_distiller
 from .wad_loader import WADLoader
 from .search import SovereignSearcher
 from .iterative_research import IterativeResearcher
@@ -181,7 +180,6 @@ class Oracle:
         
         self.headroom = get_headroom_middleware()
         self.observability = get_engine()  # Get singleton observability engine
-        self.distiller = get_distiller()
         self.session_manager = SessionManager()
         self.memory_store = get_memory_store()
         self.lifecycle = SessionLifecycleManager(self.memory_store)
@@ -1130,97 +1128,51 @@ class Oracle:
 
     # ── Soul evolution tracking ───────────────────────────────────────
     async def close_session(self, entity_name: str, session_id: str) -> bool:
-        """Trigger soul distillation for a session and close it.
+        """Close a session — track compaction + capture somatic state.
         
-        Implements Mandate 11 (Soul Integrity).
-        
-        [id-soft: vet-070] Save-game pattern — auto-save on session end
-        triggers L1→L2→L3 distillation, analogous to Quake's level-transition
-        autosave.
+        Soul distillation (L1→L2→L3) removed per Carmack Verdict 2026-07-30:
+        regex-based extraction was fortune-cookie generation. Agents write
+        their own lessons. That works.
         """
         try:
-            # 1. Retrieve the session transcript from MemoryStore
             exchanges = await self.memory_store.get_history(entity_name, session_id)
             if not exchanges:
-                logger.warning(f"No exchanges found for session {session_id}, skipping distillation")
-                return False
+                logger.info(f"No exchanges for session {session_id}, nothing to compact")
+                return True
             
-            # Build a readable transcript from exchanges
-            lines = []
-            for ex in exchanges:
-                user_msg = ex.get("user", "")
-                asst_msg = ex.get("assistant", "")
-                if user_msg:
-                    lines.append(f"[user]: {user_msg}")
-                if asst_msg:
-                    lines.append(f"[assistant]: {asst_msg}")
-            transcript = "\n".join(lines)
-            if not transcript:
-                logger.warning(f"No transcript found for session {session_id}, skipping distillation")
-                return False
-            
-            # 2. Distill and save to soul.yaml
-            success = await self.distiller.distill_and_save(
-                session_transcript=transcript,
-                entity_name=entity_name,
-                source_trace_id=session_id
-            )
-            
-            if success:
-                logger.info(f"Successfully distilled session {session_id} for {entity_name}")
-                # Record the distillation in the soul edit history
-                try:
-                    await self.soul_edit_history.append(SoulEditEntry(
-                        entity_name=entity_name,
-                        field_path="entity.lessons_learned",
-                        new_value=f"Session {session_id} distilled",
-                        source="soul_distiller",
-                        trace_id=session_id,
-                        summary=f"Session {session_id} distilled via close_session",
-                    ))
-                except (OmegaError, RuntimeError, OSError) as history_exc:
-                    logger.warning(
-                        "Failed to record soul edit history for %s session %s: %s",
-                        entity_name, session_id, history_exc,
-                    )
-                
-                # Check session size and flag if near compaction threshold
-                try:
-                    exchange_count = len(exchanges)
-                    report = self.compaction_harvester.assess_session(
-                        entity_name, session_id, exchange_count,
-                    )
-                    if report.needs_compaction or report.near_threshold:
-                        logger.info(
-                            "Session %s for %s: %d exchanges (%s%s)",
-                            session_id, entity_name, exchange_count,
-                            "NEEDS COMPACTION" if report.needs_compaction else "",
-                            "near threshold" if report.near_threshold and not report.needs_compaction else "",
-                        )
-                        # Estimate post-compaction size (keep ~half)
-                        after_count = max(exchange_count // 2, 15)
-                        await self.compaction_harvester.record_compaction(
-                            entity_name=entity_name,
-                            session_id=session_id,
-                            before_count=exchange_count,
-                            after_count=after_count,
-                            triggered_by="close_session",
-                        )
-                except (OmegaError, RuntimeError, OSError) as comp_exc:
-                    logger.warning(
-                        "Failed to record compaction stats for %s session %s: %s",
-                        entity_name, session_id, comp_exc,
-                    )
-            # 3. Capture somatic state (KV cache) if available
+            # 1. Check session size and flag if near compaction threshold
             try:
-                usm = get_usm()
+                exchange_count = len(exchanges)
+                report = self.compaction_harvester.assess_session(
+                    entity_name, session_id, exchange_count,
+                )
+                if report.needs_compaction or report.near_threshold:
+                    logger.info(
+                        "Session %s for %s: %d exchanges (%s%s)",
+                        session_id, entity_name, exchange_count,
+                        "NEEDS COMPACTION" if report.needs_compaction else "",
+                        "near threshold" if report.near_threshold and not report.needs_compaction else "",
+                    )
+                    after_count = max(exchange_count // 2, 15)
+                    await self.compaction_harvester.record_compaction(
+                        entity_name=entity_name,
+                        session_id=session_id,
+                        before_count=exchange_count,
+                        after_count=after_count,
+                        triggered_by="close_session",
+                    )
+            except (OmegaError, RuntimeError, OSError) as comp_exc:
+                logger.warning(f"Compaction tracking failed for {session_id}: {comp_exc}")
+            
+            # 2. Capture somatic state (KV cache) if available
+            try:
                 somatic_hash = await self._capture_somatic_state(entity_name, session_id)
                 if somatic_hash:
                     logger.info(f"Captured somatic state for {entity_name} session {session_id}: {somatic_hash[:16]}...")
             except (OmegaError, RuntimeError, OSError) as somatic_exc:
-                logger.warning(f"Somatic state capture failed for {entity_name} session {session_id}: {somatic_exc}")
+                logger.warning(f"Somatic capture failed for {entity_name} session {session_id}: {somatic_exc}")
             
-            return success
+            return True
         except (OmegaError, RuntimeError, OSError) as e:
             classification = get_failure_registry().classify_error(e)
             logger.error(f"Failed to close session {session_id} for {entity_name} [{classification['mode']}]: {e}")
@@ -1278,38 +1230,30 @@ class Oracle:
     async def _somatic_flush(self, entity_name: str, session_id: str) -> None:
         """Perform a somatic flush to clear KV cache and reset model state.
         
-        1. Distill session into a summary.
-        2. Close session (triggering soul distillation).
-        3. Re-hydrate the entity with the summary.
+        1. Note exchange count as summary.
+        2. Close session.
+        3. Re-hydrate the entity with a minimal context note.
         """
         logger.info(f"Triggering Somatic Flush for {entity_name} [session={session_id}]")
         
         try:
-            # 1. Distill current working memory into a summary
             exchanges = await self.memory_store.get_history(entity_name, session_id)
             if not exchanges:
                 return
             
-            lines = []
-            for ex in exchanges:
-                user_msg = ex.get("user", "")
-                asst_msg = ex.get("assistant", "")
-                if user_msg: lines.append(f"[user]: {user_msg}")
-                if asst_msg: lines.append(f"[assistant]: {asst_msg}")
-            transcript = "\n".join(lines)
+            exchange_count = len(exchanges)
+            summary = f"Somatic flush: {exchange_count} exchanges from session {session_id}"
             
-            summary = self.distiller.summarize_session(transcript, entity_name)
-            
-            # 2. Close session (clears KV cache in many providers and distills to soul.yaml)
+            # 2. Close session
             await self.close_session(entity_name, session_id)
             
-            # 3. Re-hydrate: Start new session and inject summary as a special memory entry
+            # 3. Re-hydrate: Start new session and inject context note
             new_session_id = await self.session_manager.get_session_id(entity_name)
             await self.memory_store.add_exchange(
                 entity_name=entity_name,
                 session_id=new_session_id,
                 user_message="[Somatic Flush]",
-                response=f"Somatic Flush Summary: {summary}",
+                response=summary,
                 metadata={"type": "somatic_flush", "prev_session": session_id}
             )
             logger.info(f"Somatic Flush complete for {entity_name}. New session: {new_session_id}")

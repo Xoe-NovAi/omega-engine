@@ -26,12 +26,7 @@ from omega.observability import get_engine
 obs = get_engine()
 print("Observability OK")
 
-print("6. Distiller")
-from omega.oracle.soul_distiller import get_distiller
-dist = get_distiller()
-print("Distiller OK")
-
-print("7. SessionManager")
+print("6. SessionManager")
 from omega.oracle.session_manager import SessionManager
 sm = SessionManager()
 print("SessionManager OK")

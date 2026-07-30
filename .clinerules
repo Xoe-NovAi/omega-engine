@@ -215,7 +215,7 @@
 # | **AxiomRegistry** | `src/omega/oracle/axiom_registry.py` | ✅ v1.1.0 | Five-Fold Foundation loader |
 # | **Firewall Checker** | `src/omega/audit/firewall_checker.py` | ✅ | M2 Engine-Stack Firewall scanner |
 # | **Observability** | `src/omega/observability/` | ✅ | Trace IDs, BLEG, sovereignty ratio |
-# | **Soul System** | `src/omega/oracle/soul_distiller.py` | ✅ | L1→L2→L3 gnosis distillation |
+# | **Soul System** | *(removed 2026-07-30 — Carmack scrap)* | ✅ | Agents self-write L1→L2→L3 |
 # | **Sovereign Search** | `src/omega/oracle/sovereign_search_service.py` | ✅ | 5-tier search fabric |
 # | **Hivemind** | `mcp_servers/omega_hub/` | ✅ v2.2.0 | 83 MCP tools, cross-agent coordination |
 # ## HANDOFF CONSTRUCTION (Cline ↔ OpenCode)

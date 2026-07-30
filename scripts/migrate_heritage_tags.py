@@ -89,8 +89,7 @@ MIGRATION_RULES: List[Tuple[str, str, str, str]] = [
     ("oracle/session_lifecycle.py", r"\[id-soft: quake-1996\]", "Cache Tier", "[id-soft: vet-067]"),
     ("oracle/session_lifecycle.py", r"\[id-soft: quake-1996\]", "Save-game", "[id-soft: vet-070]"),
     
-    # === oracle/soul_distiller.py ===
-    ("oracle/soul_distiller.py", r"\[id-soft: quake-1996\]", "Save-game", "[id-soft: vet-070]"),
+    # === oracle/soul_distiller.py (DELETED 2026-07-30 — Carmack scrap) ===
     
     # === oracle/spatial_resolver.py ===
     ("oracle/spatial_resolver.py", r"\[id-soft: doom-1993\]", "BSP Culling", "[id-soft: vet-046]"),

@@ -42,36 +42,16 @@ def check_file(path: str) -> bool:
 
 
 def check_hook_registered() -> tuple[bool, str]:
-    """Check C-0.5: soul distillation hook is correctly wired.
+    """Check C-0.5: session end hook is correctly wired.
     
-    Architecture (2026-07-25 corrected):
-      OpenCode does NOT support a 'hooks' key in opencode.json.
-      The correct mechanism is the Plugin API with .opencode/plugins/*.js
-      listening for session.compacted events.
-      
-    Check: plugin file exists + Python hook script exists.
+    Per Carmack Verdict 2026-07-30: soul distillation pipeline scrapped.
+    Hook now just writes timestamp + refreshes codex. Agents write own lessons.
     """
     hook_file = ROOT / ".opencode" / "hooks" / "session_end.py"
     if not hook_file.is_file():
         return False, "session_end.py missing"
     
-    # Primary: OpenCode Plugin API (.opencode/plugins/soul_distiller.js)
-    plugin_file = ROOT / ".opencode" / "plugins" / "soul_distiller.js"
-    if plugin_file.is_file():
-        return True, f"plugin={plugin_file.name} + hook={hook_file.name}"
-    
-    # Legacy fallback: check opencode.json hooks key (deprecated, will break OpenCode)
-    cfg = ROOT / ".opencode" / "opencode.json"
-    if cfg.is_file():
-        try:
-            data = json.loads(cfg.read_text(encoding="utf-8"))
-            hooks = data.get("hooks") or {}
-            if isinstance(hooks, dict) and hooks.get("session_end"):
-                return True, f"legacy hooks.session_end={hooks['session_end']} (DEPRECATED — use plugin)"
-        except json.JSONDecodeError:
-            pass
-    
-    return False, "plugin soul_distiller.js missing (use .opencode/plugins/)"
+    return True, f"hook={hook_file.name} (timestamp + codex refresh)"
 
 
 def check_mcp_pin() -> tuple[bool, str]:

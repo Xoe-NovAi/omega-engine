@@ -95,8 +95,7 @@ PRECISE_MAPPINGS: List[Tuple[str, int, str, str]] = [
     ("oracle/semantic_router.py", 8, r"\[id-soft: doom-1993\]", "[id-soft: vet-046]"),
     ("oracle/semantic_router.py", 110, r"\[id-soft: doom-1993\]", "[id-soft: vet-046]"),
     
-    # soul_distiller.py
-    ("oracle/soul_distiller.py", 9, r"\[id-soft: quake-1996\]", "[id-soft: vet-070]"),
+    # soul_distiller.py (FILE DELETED 2026-07-30 — Carmack scrap)
     
     # cli/oracle_cli.py
     ("cli/oracle_cli.py", 42, r"\[id-soft: quake-1996\]", "[id-soft: vet-071]"),
@@ -204,9 +203,7 @@ CONTEXT_MAPPINGS: Dict[str, Dict[str, str]] = {
     "oracle/semantic_router.py": {
         "BSP Culling": "[id-soft: vet-046]",
     },
-    "oracle/soul_distiller.py": {
-        "Save-game pattern": "[id-soft: vet-070]",
-    },
+    # oracle/soul_distiller.py (DELETED 2026-07-30 — Carmack scrap)
     "cli/oracle_cli.py": {
         "netchan header": "[id-soft: vet-071]",
     },
@@ -329,9 +326,7 @@ CONTEXT_MAPPINGS: Dict[str, Dict[str, str]] = {
     "oracle/cpu_optimizer.py": {
         "FISR Principle": "[id-soft: vet-002]",
     },
-    "oracle/soul_distiller.py": {
-        "WAD System": "[id-soft: vet-043]",
-    },
+    # oracle/soul_distiller.py (DELETED 2026-07-30 — Carmack scrap)
     "oracle/backends/remote_provider.py": {
         "cvar": "[id-soft: vet-016]",
         "Precomputed Lookup": "[id-soft: vet-023]",

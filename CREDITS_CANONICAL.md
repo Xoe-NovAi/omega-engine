@@ -182,7 +182,7 @@ These patterns are the user's OWN IP — evolved through ANAi → XNAi → omega
 | ResourceGuard (OOM protection) | omega-stack May 2026 | `resource_guard.py` |
 | MCP Hub (47 tools) | omega-stack May 2026 | `omega_hub/server.py` |
 | Hivemind Protocol | omega-engine Jun 2026 | `omega_hub/server.py` |
-| Soul Distiller (L1→L2→L3) | omega-engine Jun 2026 | `soul_distiller.py` |
+| Soul Distiller (L1→L2→L3) | omega-engine Jun 2026 — **REMOVED 2026-07-30** (Carmack scrap) | *(deleted: fortune-cookie generator)* |
 | MaKaLi Triad | omega-engine Jun 2026 | `makali.md` |
 | Sovereign Mandates | omega-engine Jun 2026 | `SOVEREIGN_MANDATES.md` |
 | Engine-Stack Firewall | omega-engine Jun 2026 | `SOVEREIGN_MANDATES.md` (M2) |
