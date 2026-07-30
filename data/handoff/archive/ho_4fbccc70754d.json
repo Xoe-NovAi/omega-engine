@@ -1,0 +1,23 @@
+{
+  "packet_id": "ho_4fbccc70754d",
+  "target_agent_id": "opencode/roc_racoon",
+  "target_channel": "opencode",
+  "target_entity": "roc_racoon",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "FS-\u03912: Collapse dual RRF \u2014 Kill hybrid_search_engine.py\n\nFoundation Stabilization Campaign Phase \u0391. You own memory fabric cleanup.\n\nTASK: Collapse the dual RRF modules.\n- src/omega/memory/hybrid_search.py (205 lines) \u2014 KEEP (tests import it)\n- src/omega/memory/hybrid_search_engine.py (243 lines) \u2014 DELETE or convert to one-line re-export\n\nSTEPS:\n1. grep -r hybrid_search_engine src/ tests/ \u2014 find all imports\n2. If imports exist: convert to `from .hybrid_search import *` re-export\n3. If no imports: delete the file\n4. Run: source .venv/bin/activate && python3 -m pytest tests/test_hybrid_search.py -v\n5. Verify: rg -n 'class HybridSearchEngine' src/omega/memory \u2192 exactly one definition\n\nKILL DATE: End of Phase \u0391 (today/tomorrow)\nREPORT: Hivemind with intent=status, packet_id ho_0d3ee1f47936 context",
+  "context": "Foundation Stabilization Campaign Phase \u0391. Feature freeze in effect. Only Foundation campaign tasks allowed.",
+  "priority": 1,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-07-20T04:45:18.409944+00:00",
+  "accepted_at": "2026-07-20T06:57:05.147155+00:00",
+  "accepted_by_agent_id": "opencode/roc_racoon",
+  "accepted_by_channel": "opencode",
+  "accepted_by_entity": "roc_racoon",
+  "completed_at": "2026-07-20T07:12:49.476401+00:00",
+  "result": "FS-\u03912 COMPLETE \u2014 hybrid_search_engine.py deleted. Single HybridSearchEngine class in hybrid_search.py. tests/test_hybrid_search.py passes. Gate \u0391.2 PASSED.",
+  "reaped_at": "2026-07-29T21:57:15.810447+00:00"
+}
