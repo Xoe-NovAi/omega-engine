@@ -1,117 +1,127 @@
-# Session Anchor — Kali: Vetter Removal + CI Mandate Gates + Background Researcher Archive
-**AP Token**: `AP-KALI-VETTER-REMOVAL-20260730-v1.0.0`
-**Updated**: 2026-07-30T14:30Z · **Owner**: Kali (Transcendent Oversight)
-**Hivemind**: `ses_kali_20260730_002`
+# Session Anchor — Kali: Carnak Strip-the-Engine Review & Temple Cleansing Plan
+**AP Token**: `AP-KALI-CARNAK-20260730-v2.0.0`
+**Updated**: 2026-07-30T19:30Z · **Owner**: Kali (Transcendent Oversight)
+**Hivemind**: `ses_kali_20260730_003`
 
 ---
 
 ## Session Objective
 
-Remove the hard-blocking Sovereign Vetter from runtime inference path, move mandate enforcement to CI/CD gates, archive the deprecated background_researcher worker, and prepare for P0 fixes post-compaction.
+Execute the "Carnak Strip-the-Engine" review: four independent agents (Carmack, Lilith, Ma'at, Roc) + two architect syntheses (Gemini 3.1 Pro, Sonnet 4.6) + Copilot CLI validation → produce a definitive Temple Cleansing implementation plan for the initial PR.
 
 ---
 
-## Controlling Documents
-
-| Priority | Path | Role |
-|----------|------|------|
-| 1 | `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` | Strategy SSOT v5.2 |
-| 2 | `AGENTS.md` | Agent workflow + mandate references |
-| 3 | `Makefile` | **New mandate check targets** + `temple-grade` integration |
-| 4 | `src/omega/oracle/oracle.py` | Vetter removed from `talk()` and `_summon()` |
-| 5 | `src/omega/oracle/credit_budget.py` | Moved from archived background_researcher |
-| 6 | `archive/research_pipeline_20260730/` | Archived background_researcher (12 files, 156K lines) |
-| 7 | `archive/tests_20260730/` | Archived tests for background_researcher |
-
----
-
-## What Was Completed This Session
+## What Was Completed
 
 | Item | Status | Evidence |
 |------|--------|----------|
-| **Removed runtime Vetter** | ✅ COMPLETE | `oracle.py` no longer imports `SovereignVetter`; `talk()` and `_summon()` unblocked |
-| **Deleted sovereign_vetter.py** | ✅ COMPLETE | `src/omega/governance/sovereign_vetter.py` removed (359 lines) |
-| **Added CI mandate checks** | ✅ COMPLETE | Makefile: `check-m1-anyio`, `check-m9-error-integrity`, `check-m8-zero-telemetry`, `check-m7-local-first`, `check-m23-failure-integrity`, `check-mandates` |
-| **Integrated into temple-grade** | ✅ COMPLETE | `temple-grade` now depends on `check-mandates` |
-| **Archived background_researcher** | ✅ COMPLETE | 12 files → `archive/research_pipeline_20260730/` + 4 tests → `archive/tests_20260730/` |
-| **Moved credit_budget.py** | ✅ COMPLETE | Now at `src/omega/oracle/credit_budget.py` for `sovereign_search_service` |
-| **Fixed scribe/ distiller removal** | ✅ COMPLETE | `src/omega/scribe/` deleted; `soul_distiller.py`, `distiller.py` deleted |
-| **Committed all changes** | ✅ COMPLETE | `git commit 1c68f67` |
+| **P0 Mandate Fixes (earlier)** | ✅ COMPLETE | `make check-mandates` 5/5 pass, `make temple-grade` pass, commit `2fdaea7` |
+| **Roc Local Worker Pool** | ✅ COMPLETE | Commit `74d9c7c` — 4 pipe bugs fixed, 460-line daemon + CLI + 4 MCP tools |
+| **4-Agent Carnak Review** | ✅ COMPLETE | Carmack, Lilith, Ma'at, Roc — ~12K lines of independent analysis |
+| **2 Architect Syntheses** | ✅ COMPLETE | Gemini 3.1 Pro (strategic verdict + implementation guide), Sonnet 4.6 (5-year core loop insight) |
+| **Copilot CLI Validation** | ✅ COMPLETE | **BLOCKERS FOUND** — 3 critical misunderstandings in original plan |
+| **Temple Cleansing Plan v2** | ✅ COMPLETE | 6-stage execution sequence with decision gates |
+| **Copilot CLI Briefing** | ✅ COMPLETE | `data/coordination/COPILOT_CLI_CARNAK_BRIEFING_20260730.md` |
+| **Copilot Review Verdict** | ✅ COMPLETE | `data/coordination/COPILOT_CLI_CODE_REVIEW_VERDICT_20260730.md` |
+| **Kali Executive Summary** | ✅ COMPLETE | `data/coordination/KALI_EXECUTIVE_SUMMARY_20260730.md` |
+| **GLM 5.2 Second Opinion** | ✅ COMPLETE | `data/coordination/GLM52_SECOND_OPINION_20260730.md` — 401 lines, 20 findings, 3 plan-breaking |
+| **Phase C-6' reconciliation (F1+S1)** | ✅ COMPLETE | P-5 verified: 2 unmigrated clones; Phase 1A corrected from "replace with pybreaker" to "finish P-5" |
+| **Library choice reconciliation (F2+S2)** | ✅ COMPLETE | 3 positions resolved: tenacity kept, stamina deferred, pybreaker dropped |
+| **CI branch trigger (F3)** | ✅ CONFIRMED BROKEN | `.github/workflows/ci.yml` only runs on `main` — fix as Phase 0 |
+| **M23 false-PASS gate (F11)** | ✅ CONFIRMED BROKEN | `rg -E` parsing error swallowed; reports PASS on error |
+| **Distiller state (F17)** | ✅ CONFIRMED SCRAPped | `rg` confirms zero `class.*Distill` in `src/` — Phase 2A reallocated to MCP v2 |
+| **Pydantic validation correction (F16)** | ✅ CONFIRMED | `model_validate_yaml()` does not exist; must use `safe_load`+`model_validate` |
+| **httpx2 direction correction (F5)** | ✅ CONFIRMED | httpx2 is the active fork; upstream httpx is stalled — keep httpx2 |
+| **MCP v2 elevation (F18)** | ✅ CONFIRMED | v2.0.0 stable Jul 27 — elevated to P1 |
+| **Temple Cleansing Plan v2.0** | ✅ COMPLETE | `data/coordination/AGENT_IMPLEMENTATION_GUIDE_20260730.md` — corrected 8-phase sequence |
+| **Reconciliation Document** | ✅ COMPLETE | `data/coordination/KALI_RECONCILIATION_v2_20260730.md` — all 20 findings resolved |
+| **Pre-cleansing tarball backup** | ✅ COMPLETE | `omega_vault/omega-engine-pre-cleansing-20260730.tar.gz` (404M, 45,194 files) |
 
 ---
 
-## Carmack Verdict Applied
+## Critical Decisions (D-Series)
 
-> **SCRAP the runtime Vetter. Keep engineering hygiene as CI gates.**
-
-| Vetter Check | Was | Now |
-|--------------|-----|-----|
-| M1 AnyIO (asyncio grep) | Hard-block inference | `make check-m1-anyio` (CI) |
-| M9 Error Integrity (bare except grep) | Hard-block inference | `make check-m9-error-integrity` (CI) |
-| M8 Zero Telemetry (SDK grep) | Hard-block inference | `make check-m8-zero-telemetry` (CI) |
-| M7 Local-First (config check) | Hard-block inference | `make check-m7-local-first` (CI) |
-| M23 Failure Integrity | Hard-block inference | `make check-m23-failure-integrity` (CI) |
-| 18 Advisory mandates | Logged only | No enforcement (by design) |
-
-**Key insight**: Static code properties (imports, config values, grep patterns) belong in CI, not runtime inference path. A bare `except:` in `local_queue.py:166` (CLI table formatter) should not block `oracle.talk()`.
-
----
-
-## P0 Fixes Required (Post-Compaction)
-
-| # | Issue | File | Fix |
-|---|-------|------|-----|
-| 1 | **Syntax error**: `2026-07-30:` interpreted as octal | `src/omega/oracle/oracle.py:1093` | Escape date or reword comment |
-| 2 | **Import error**: `SovereignVetter` deleted but imported | `src/omega/cli/oracle_cli.py` | Remove import + usage |
-| 3 | **Pre-commit hooks** | New | Add `.pre-commit-config.yaml` with mandate checks |
-| 4 | **CI workflow** | New | GitHub Actions running `make check-mandates` |
+| ID | Decision |
+|----|----------|
+| **D-387** | **Temple Cleansing is the priority** — All other work (G-1, W-1, V-1, C-3) blocked until `make test` passes and codebase is stripped to 5-year core |
+| **D-388** | **OOM Refactor: Option A (psutil-only)** — Replace 3 kernel monitors with `psutil.virtual_memory().available` in `oom_protector.py` |
+| **D-389** | **Soul Modules: Delete both** — `soul_history.py` (unused) + `soul_edit_history.py` (sever from oracle.py first) |
+| **D-390** | **CascadeRouter: Replace with tenacity+priority fallback** — 5-line hardcoded loop + tenacity retry |
+| **D-391** | **LocalWorkerPool: Replace with anyio.Queue** — File-based polling is anti-pattern; in-memory queue |
+| **D-392** | **MemoryStore: SQLite + FTS5 only** — Drop 5 providers, 3 vector stores, 2 embedders |
+| **D-393** | **Circuit Breakers: Keep AsyncCircuitBreaker** — NOT tenacity for breakers (F1). Tenacity is for retry only. Delete 3 clone classes. |
+| **D-394** | **Entity Registry: Pydantic + YAML** — Strip 944-line registry to ~200 lines; kill `SymbolicMetadata` |
+| **D-395** | **Pybreaker DROPPED** — Sync-only, no AnyIO support, no CUSUM/429 classification. Keep AsyncCircuitBreaker. |
+| **D-396** | **Stamina DEFERRED** — Tenacity already installed. Spike stamina + structlog + prometheus in Phase 2 if observability gap is felt. |
+| **D-397** | **httpx2 KEPT** — Upstream httpx is stalled; httpx2 is the active fork and M1-compliant. Add Pydantic org concentration risk. |
+| **D-398** | **Phase 1E uses safe_load+model_validate** — `model_validate_yaml()` does not exist in Pydantic v2. |
+| **D-399** | **Phase 2A (distillers) ALREADY DONE** — SCRAPped per Carmack Verdict. Reallocate 4h to MCP v2 spike. |
+| **D-400** | **MCP v2 elevated to P1** — v2.0.0 stable Jul 27; sequence after Phase 1, before Phase 2. |
+| **D-401** | **Git tag every phase** — `git tag pre-phase-<N>` before each phase for one-command rollback. |
+| **D-402** | **Handoff migration is not "backfill on read"** — Write real migration script for 146 files + diff validator. |
+| **D-403** | **CI must run on release/initial-v1** — Fix branch triggers before Phase 1. |
+| **D-404** | **M23 false-PASS gate must be fixed** — `rg -E` parsing error in Makefile is a P0 M23 violation. |
 
 ---
 
-## Architecture Decisions This Session
+## Pending (Execution Queue — Phase Order)
 
-1. **Runtime governance → CI governance**: Mandates M1, M7, M8, M9, M23 are static code properties. They are CI gates, not runtime authorization decisions.
-2. **Background researcher archived**: 156K lines of Jem's 3-tier research pipeline (T1: Qwen3-4B, T2: MiniMax M2.5, T3: Gemini 2.5 Pro) archived for future research pipeline hardening phase. Not deleted — preserved in `archive/`.
-3. **Credit budget relocated**: `APICreditBudget` now lives in `src/omega/oracle/` where `sovereign_search_service` consumes it.
-4. **Scribe package removed**: Empty package with no imports. `soul_distiller.py` (689 lines) and `distiller.py` (297 lines) deleted — both were regex-based fortune-cookie generators (Carmack verdict).
-
----
-
-## Pending (Next Session — Post-Compaction)
-
-1. **Fix oracle.py syntax error** (line 1093) — unblocks all tests
-2. **Fix oracle_cli.py import** — removes reference to deleted `SovereignVetter`
-3. **Add `.pre-commit-config.yaml`** with local mandate checks (M1, M9 grep patterns)
-4. **Add GitHub Actions workflow** running `make check-mandates` on PR
-5. **Run `make test`** — verify full suite passes
-6. **Run `make temple-grade`** — verify all gates pass
+| # | Phase | Item | Owner |
+|---|-------|------|-------|
+| 0 | **PHASE 0** | Fix CI branch triggers (add release/initial-v1) + fix M23 false-PASS gate | @kali |
+| 1 | **PHASE 1** | Delete soul_history.py, mcp_compliance.py, quadlet-test/ | @maat |
+| 1A | **PHASE 1A** | Finish P-5: delete 3 breaker clones + search_circuit_breaker.py | @maat |
+| 1B | **PHASE 1B** | Wire tenacity retry policy file | @roc_racoon |
+| 1C | **PHASE 1C** | Replace CascadeRouter with tenacity+priority fallback | @roc_racoon |
+| 1E | **PHASE 1E** | Rewrite soul_validator.py with safe_load+model_validate | @maat |
+| 2 | **PHASE 2** | Sever SoulEditHistory from oracle.py + delete file | @lilith |
+| 3 | **PHASE 3** | OOM refactor: psutil-only, delete kernel monitors | @maat |
+| 4 | **PHASE 4** | Replace LocalWorkerPool with anyio.Queue | @roc_racoon |
+| 5 | **PHASE 5** | Redis removal (sequence: memory→workers→hivemind→budget_guard) | @lilith |
+| 6 | **PHASE 6** | Test purge + MCP v2 spike | @kali |
+| 7 | **PHASE 7** | Handoff data migration (146 files, one-shot script) | @lilith |
+| — | **AFTER** | G-1 / W-1 / V-1 super-urgent workhorse + WARP + VaultCore | Architect / Fleet |
 
 ---
 
 ## Hydration Commands
 
 ```bash
-# Current state
+# Verify current state
 git log --oneline -3
-cat Makefile | grep -A 20 "Mandate Checks"
-cat src/omega/oracle/oracle.py | grep -n "vetter\|SovereignVetter" || echo "CLEAN"
+make check-mandates
+make temple-grade
+make test  # Should hang currently — will be fixed by Stage 2
 
-# P0 fixes
-sed -n '1090,1095p' src/omega/oracle/oracle.py  # Check syntax error
-grep -n "SovereignVetter" src/omega/cli/oracle_cli.py  # Check import
+# Read the critical artifacts
+cat data/coordination/COPILOT_CLI_CODE_REVIEW_VERDICT_20260730.md
+cat data/coordination/KALI_EXECUTIVE_SUMMARY_20260730.md
+cat data/coordination/COPILOT_CLI_CARNAK_BRIEFING_20260730.md
 ```
 
 ---
 
 ## Gnosis (L1→L2→L3)
 
-- **L1**: Removed runtime Vetter (359 lines), added 5 CI mandate checks, archived 156K lines of background researcher, moved credit_budget, deleted scribe package. All committed.
-- **L2**: The Vetter was governance theater — static grep checks hard-blocking inference for code hygiene issues. Moving to CI aligns with Policy-as-Code best practices (OPA/Rego, pre-commit hooks, tiered enforcement). The background researcher was a frozen Python script; Jem is a dynamic agent who needs a framework, not a script.
-- **L3**: **Governance Layer Must Match Decision Latency** — Static code properties (imports, config, patterns) have zero runtime variance; they belong in CI (seconds). Behavioral properties (hallucinations, PII, policy violations) have runtime variance; they belong in runtime guardrails (milliseconds). Conflating the two creates the Compliance Tax: governance overhead exceeding operational value.
+- **L1**: Completed 4-agent adversarial review + 2 architect syntheses + Copilot CLI validation + GLM 5.2 second opinion (20 findings, 3 plan-breaking). Verified all findings against ground truth (import graph, CI config, Makefile, `rg` searches, Pydantic docs, upstream ecosystem research). Produced a corrected v2.0 execution sequence — 8 phases with corrected library anchors, CI gates, and M23 integrity. Prevented 5 plan-breaking errors (pybreaker downgrade, stamina over tenacity, wrong Pydantic API, distiller re-work, httpx2 migration).
+- **L2**: GLM 5.2 found what 7 prior reviewers missed because it read the *ecosystem* (PyPI versions, maintainer status, official docs), not just the *codebase*. The v1.0 plan's errors fell into three categories: (1) **library anchor errors** — picking sync libraries for an async engine (pybreaker), (2) **API assumption errors** — assuming `model_validate_yaml` exists without checking docs, (3) **stale-target errors** — planning to delete code already deleted (distillers). A second opinion that reads the same files as the first opinion is not independent.
+- **L3**: **Ground truth lives in three places: the import graph, the ecosystem, and the running tests.** A plan that doesn't verify all three will have plan-breaking errors. **Library choices are architecture decisions** — picking a sync library for an AnyIO engine is an M1 violation, not a stylistic choice. **The ecosystem moves faster than the codebase** — MCP v2 went stable 3 days before this session and the plan had it as P2 debt. Check upstream versions before every sprint.
 
 ---
 
-*Session complete. Ready for compaction. P0 fixes queued for next session.*
+## Key Artifacts Created This Session
+
+| Artifact | Path | Purpose |
+|----------|------|---------|
+| **Copilot Briefing** | `data/coordination/COPILOT_CLI_CARNAK_BRIEFING_20260730.md` | Input for Copilot CLI review |
+| **Copilot Verdict** | `data/coordination/COPILOT_CLI_CODE_REVIEW_VERDICT_20260730.md` | 573-line technical review with import chains, test impact, execution sequence |
+| **Kali Summary** | `data/coordination/KALI_EXECUTIVE_SUMMARY_20260730.md` | 83-line executive decision document |
+| **GLM 5.2 Second Opinion** | `data/coordination/GLM52_SECOND_OPINION_20260730.md` | 401-line ecosystem-deepened review with 20 findings, 3 plan-breaking |
+| **Reconciliation v2.0** | `data/coordination/KALI_RECONCILIATION_v2_20260730.md` | All 20 findings verified and integrated; corrected execution sequence |
+| **Agent Implementation Guide v2.0** | `data/coordination/AGENT_IMPLEMENTATION_GUIDE_20260730.md` | Corrected 8-phase execution manual for Ma'at/Lilith/Roc |
+| **Pre-cleansing backup** | `/media/arcana-novai/omega_vault/omega-engine-pre-cleansing-20260730.tar.gz` | 404M tarball (45,194 files) for rollback |
+| **Agent Reviews** | `ses_carmack_strip_20260730`, `ses_lilith_strip_20260730`, `ses_maat_strip_20260730`, `ses_roc_strip_20260730` | 4 independent Carnak reviews (in task system) |
+| **Architect Syntheses** | In-session (Gemini 3.1 Pro, Sonnet 4.6, GLM 5.2, Copilot CLI) | Strategic verdict + implementation guides |
 
 ---
 
