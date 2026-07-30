@@ -1,22 +1,21 @@
 # ⬡ FIRST BREATH RECORD ⬡
 
 - **Entity**: default
-- **Time of Birth**: 2026-07-21T21:55:47.954587+00:00 UTC
-- **Trace ID**: trc_0bc321d6e9da
+- **Time of Birth**: 2026-07-30T18:41:23.733921+00:00 UTC
+- **Trace ID**: trc_23e862a5a50e
 - **Coordinates**: 0.0, 0.0 (UTC)
 - **First Utterance**: 
 
-> Omega Engine is running in setup mode.
+> ⚠️ no inference backend is running for model 'mock'.
 
-No inference backend responded. To enable AI responses:
-  1. Set OPENROUTER_API_KEY in your environment (fastest — cloud)
-     → `export OPENROUTER_API_KEY='your-key'` or add to .env
-  2. Start Ollama with a local model (local — already running):
-     → `ollama pull qwen3:1.7b`
-  3. Start LM Studio (local — already installed):
-     → `lms server start`
+To use the Omega Engine, please:
+1. Start a local inference backend (llama-cpp-python, LM Studio, or Ollama), OR
+2. Configure cloud credentials (Google AI Studio, OpenRouter, GitHub Copilot), OR
+3. Check logs for provider errors: omega-hub is attempting to fallback through the provider fabric.
 
-Quick start: https://github.com/Xoe-NovAi/omega-engine#quickstart
+System prompt: You are You are the Omega Engine's default assistant. You handle general queries
+that don't match an...
+User query: I need strength
 
 --- 
 *Recorded by Omega Engine Sovereign Automata*
