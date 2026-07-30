@@ -447,9 +447,13 @@ class ModelGateway:
                 continue
             if name == "native-gguf":
                 merged = self._merge_native_gguf_config(p_cfg, self.models)
-                instances.append(provider_map[name](name, merged))
+                provider = provider_map[name](name, merged)
             else:
-                instances.append(provider_map[name](name, p_cfg))
+                provider = provider_map[name](name, p_cfg)
+            # Set priority and is_cloud attributes from config for provider_selector
+            provider.priority = p_cfg.get("priority", 999)
+            provider.is_cloud = p_cfg.get("is_cloud", True)
+            instances.append(provider)
 
         def _get_priority(p):
             """Extract priority from provider config — handles both dict and dataclass (ProviderConfig)."""
@@ -1042,6 +1046,15 @@ class ModelGateway:
                 logger.error(f"Both ProviderSelector and CascadeRouter failed: {e2}")
                 raise ProviderUnavailableError(message=f"No providers available for model {model_name}")
 
+        # Normalize ordered_providers to list of provider names (strings)
+        # ProviderSelector returns provider objects, CascadeRouter returns strings
+        ordered_provider_names = []
+        for p in ordered_providers:
+            if isinstance(p, str):
+                ordered_provider_names.append(p)
+            else:
+                ordered_provider_names.append(p.name)
+        
         # [M8 Zero Telemetry] WARP Proxy Pool injection for opencode-zen
         # If proxy_pool is configured, inject socks5h:// proxy URL into the
         # opencode-zen provider's extra config before the provider loop.
@@ -1049,7 +1062,7 @@ class ModelGateway:
         # preventing local DNS leaks per the Sovereign Security Protocol.
         proxy_pool = getattr(self, 'proxy_pool', None)
         if proxy_pool is not None:
-            for provider_name in ordered_providers:
+            for provider_name in ordered_provider_names:
                 if provider_name == "opencode-zen":
                     # Find the provider instance
                     for p in self.providers:
@@ -1062,7 +1075,7 @@ class ModelGateway:
                                 logger.warning("WARP proxy injection failed for opencode-zen: %s", exc)
                             break
 
-        for provider_name in ordered_providers:
+        for provider_name in ordered_provider_names:
             # Find the provider instance
             provider = None
             for p in self.providers:
@@ -1143,8 +1156,8 @@ class ModelGateway:
                             if breaker:
                                 async def _call_with_none_as_failure():
                                     r = await provider.generate(
-                                        model_name, system_prompt, user_query,
-                                        temperature, max_tokens, trace_id=trace_id,
+                                        model=model_name, system_prompt=system_prompt, user_query=user_query,
+                                        temperature=temperature, max_tokens=max_tokens, trace_id=trace_id,
                                         session_id=session_id,
                                         logit_bias=logit_bias,
                                         repetition_penalty=repetition_penalty,
@@ -1156,8 +1169,8 @@ class ModelGateway:
                                 result = await breaker.call(_call_with_none_as_failure, trace_id=trace_id)
                             else:
                                 result = await provider.generate(
-                                    model_name, system_prompt, user_query,
-                                    temperature, max_tokens, trace_id=trace_id,
+                                    model=model_name, system_prompt=system_prompt, user_query=user_query,
+                                    temperature=temperature, max_tokens=max_tokens, trace_id=trace_id,
                                     session_id=session_id,
                                     logit_bias=logit_bias,
                                     repetition_penalty=repetition_penalty,
@@ -1165,8 +1178,8 @@ class ModelGateway:
                                 )
                         else:
                             result = await provider.generate(
-                                model_name, system_prompt, user_query,
-                                temperature, max_tokens, trace_id=trace_id,
+                                model=model_name, system_prompt=system_prompt, user_query=user_query,
+                                temperature=temperature, max_tokens=max_tokens, trace_id=trace_id,
                                 session_id=session_id,
                                 logit_bias=logit_bias,
                                 repetition_penalty=repetition_penalty,

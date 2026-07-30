@@ -231,6 +231,7 @@ inference:
     google-compat:
       priority: 4
       enabled: true
+      is_cloud: true
       description: Google AI Studio / Vertex AI compatible provider with Gemma 4 thinking
         support
       api_key: env:GOOGLE_API_KEY
@@ -248,6 +249,7 @@ inference:
     openrouter:
       priority: 5
       enabled: true
+      is_cloud: true
       description: OpenRouter free tier and paid models
       api_key: env:OPENROUTER_API_KEY
       base_url: https://openrouter.ai/api
@@ -285,6 +287,7 @@ inference:
     opencode-zen:
       priority: 6
       enabled: true
+      is_cloud: true
       description: OpenCode Zen - CLI-exclusive cloud models
       n_threads: 4
       streaming:
@@ -315,6 +318,7 @@ inference:
     cline:
       priority: 7
       enabled: true
+      is_cloud: true
       description: Cline - CLI agent with DeepSeek V4 Flash / MiMo V2.5
       n_threads: 4
       streaming:
@@ -327,6 +331,7 @@ inference:
     anthropic:
       priority: 8
       enabled: true
+      is_cloud: true
       description: Anthropic - Claude models (Sonnet, Haiku, Opus)
       api_key: env:ANTHROPIC_API_KEY
       base_url: https://api.anthropic.com/v1
@@ -342,6 +347,7 @@ inference:
     xai:
       priority: 9
       enabled: true
+      is_cloud: true
       description: xAI - Grok models
       api_key: env:XAI_API_KEY
       base_url: https://api.x.ai/v1
@@ -356,6 +362,7 @@ inference:
     mock:
       priority: 10
       enabled: false
+      is_cloud: false
       description: Test mock provider for unit tests
       n_threads: 4
       supported_models:

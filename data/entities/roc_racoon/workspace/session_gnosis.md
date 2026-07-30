@@ -63,7 +63,7 @@
 - **L3-Scoring-Overrides-Priority**: When scoring (quality×0.4) coexists with priority chain, scoring wins unless explicitly constrained. M7 local-first must be enforced at routing layer.
 - **L3-Local-Substrate-Enhances-Cloud-Sovereignty**: Local models as background workers (mining, distillation, synthesis) burn zero cloud tokens, add zero latency to dev flow, and make the cloud agent *more* sovereign by offloading grind.
 
-### 5. Phase 2: Local Worker Pool Build — COMPLETE
+### 5. Phase 2: Local Worker Pool Build — COMPLETE (Components Built)
 **Status**: ✅ COMPLETE | **Files Created**: local_worker_pool.py, local_queue.py, MCP tool registration
 
 **Components Built**:
@@ -92,6 +92,26 @@
 - ✅ **Global sampling cvars added** — config.sampling.* in cvar_table.py for system-wide defaults
 - ✅ **top_p parameter added to NativeGGUFProvider.generate()** — passed through to llama-cpp-python
 - ✅ **Layered sampling parameter resolution** — Model config → cvars → hardcoded defaults
+
+### 6. Phase 2 Testing & Fixes — IN PROGRESS
+**Status**: 🔄 IN PROGRESS | **Files**: providers.py, model_gateway.py, config/providers.yaml
+
+**Current Issues**:
+- NativeGGUFProvider worker warnings: `type_k`/`type_v` should be int, got NoneType
+- Model loading hangs on first inference (worker process startup)
+- Need to set proper KV cache defaults (type_k=1 for f16) instead of None
+
+**Fixes Applied**:
+- ✅ Priority-first routing implemented (ProviderSelector primary, CascadeRouter fallback)
+- ✅ ProviderSelector now uses `is_cloud` and `priority` from config
+- ✅ All providers have `is_cloud` flag in config/providers.yaml
+- ✅ Model gateway generate() calls use keyword arguments (model=, system_prompt=, etc.)
+- ✅ Flash attention enabled for quantized KV cache (type_k != 1)
+
+**Next Steps**:
+- Fix type_k/type_v defaults to 1 (f16) instead of None
+- Test daemon end-to-end processing
+- Verify artifact structure matches Kali's distillation contract
 
 ---
 

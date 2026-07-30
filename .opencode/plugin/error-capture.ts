@@ -1,120 +1,231 @@
 import type { Plugin } from "@opencode-ai/plugin";
 
-interface ToolErrorLog {
-  timestamp: string;
+interface SubagentSession {
   sessionId: string;
-  tool: string;
-  error: string;
-  input: Record<string, unknown>;
-  durationMs: number;
+  parentSessionId: string;
+  launchedBy: string;        // launching agent entity (e.g., "kali")
+  taskId: string;            // from task_registry
+  taskDescription: string;
+  createdAt: number;
 }
 
-interface SessionErrorLog {
-  timestamp: string;
+interface SubagentError {
   sessionId: string;
+  parentSessionId: string;
+  launchedBy: string;
+  taskId: string;
+  taskDescription: string;
   error: string;
-  providerId?: string;
-  modelId?: string;
+  errorType: "session.error" | "tool.error";
+  timestamp: string;
+  sessionSnapshot: {
+    lastThinking: string;
+    lastToolCall: string;
+    errorContext: string;
+    messageCount: number;
+    tokenUsage: { input: number; output: number };
+  };
 }
 
-interface RetryState {
-  lastError: string;
-  lastErrorTime: number;
-  retryCount: number;
-  originalSessionId: string;
+interface ErrorCaptureConfig {
+  logDir: string;
+  retentionDays: number;
+  enableHivemindNotify: boolean;
+  trackSubagentsOnly: boolean;
+  captureSnapshots: boolean;
 }
 
-const ERROR_LOG_DIR = "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/errors";
-const RETRY_STATE_FILE = `${ERROR_LOG_DIR}/retry-state.json`;
+const DEFAULT_CONFIG: ErrorCaptureConfig = {
+  logDir: "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/errors",
+  retentionDays: 30,
+  enableHivemindNotify: true,
+  trackSubagentsOnly: true,
+  captureSnapshots: true,
+};
 
-async function ensureErrorLogDir() {
+const subagentSessions = new Map<string, SubagentSession>();
+const config: ErrorCaptureConfig = { ...DEFAULT_CONFIG };
+
+async function ensureLogDir() {
   const { $ } = await import("bun");
-  await $`mkdir -p ${ERROR_LOG_DIR}`.quiet();
+  await $`mkdir -p ${config.logDir}`.quiet();
 }
 
-async function appendToolError(log: ToolErrorLog) {
-  await ensureErrorLogDir();
+async function appendErrorLog(error: SubagentError) {
+  await ensureLogDir();
   const date = new Date().toISOString().split("T")[0];
-  const filePath = `${ERROR_LOG_DIR}/tool-errors-${date}.jsonl`;
-  const line = JSON.stringify(log) + "\n";
+  const filePath = `${config.logDir}/subagent-errors-${date}.jsonl`;
+  const line = JSON.stringify(error) + "\n";
   await Bun.write(filePath, line, { append: true });
 }
 
-async function appendSessionError(log: SessionErrorLog) {
-  await ensureErrorLogDir();
-  const date = new Date().toISOString().split("T")[0];
-  const filePath = `${ERROR_LOG_DIR}/session-errors-${date}.jsonl`;
-  const line = JSON.stringify(log) + "\n";
-  await Bun.write(filePath, line, { append: true });
-}
+async function captureSessionSnapshot(client: any, sessionId: string) {
+  if (!config.captureSnapshots) {
+    return { lastThinking: "", lastToolCall: "", errorContext: "", messageCount: 0, tokenUsage: { input: 0, output: 0 } };
+  }
 
-async function logToConsole(level: "info" | "warn" | "error", message: string, extra?: Record<string, unknown>) {
-  const timestamp = new Date().toISOString();
-  const prefix = level.toUpperCase().padEnd(5);
-  console.log(`${timestamp} ${prefix} [error-capture] ${message}`, extra ? JSON.stringify(extra) : "");
-}
-
-async function loadRetryState(): Promise<RetryState | null> {
   try {
-    const file = Bun.file(RETRY_STATE_FILE);
-    if (await file.exists()) {
-      return await file.json();
-    }
-  } catch {}
-  return null;
-}
+    const session = await client.session.get({ path: { id: sessionId } });
+    if (!session) return { lastThinking: "", lastToolCall: "", errorContext: "", messageCount: 0, tokenUsage: { input: 0, output: 0 } };
 
-async function saveRetryState(state: RetryState | null) {
-  await ensureErrorLogDir();
-  if (state) {
-    await Bun.write(RETRY_STATE_FILE, JSON.stringify(state, null, 2));
-  } else {
-    try { await Bun.$`rm -f ${RETRY_STATE_FILE}`.quiet(); } catch {}
+    // Get recent messages for context
+    const messages = session.messages || [];
+    const recentMessages = messages.slice(-10);
+    
+    let lastThinking = "";
+    let lastToolCall = "";
+    let errorContext = "";
+    let inputTokens = 0;
+    let outputTokens = 0;
+
+    for (const msg of recentMessages) {
+      if (msg.role === "assistant") {
+        for (const part of msg.parts || []) {
+          if (part.type === "reasoning" && part.text) {
+            lastThinking = part.text.slice(-2000);
+          }
+          if (part.type === "tool" && part.state?.input) {
+            lastToolCall = JSON.stringify(part.state.input).slice(-2000);
+          }
+        }
+      }
+      inputTokens += msg.tokens?.input || 0;
+      outputTokens += msg.tokens?.output || 0;
+    }
+
+    // Build error context from recent messages
+    errorContext = recentMessages
+      .map(m => `${m.role}: ${m.parts?.map((p: any) => p.text || p.type).join(" ") || ""}`)
+      .join("\n")
+      .slice(-3000);
+
+    return {
+      lastThinking,
+      lastToolCall,
+      errorContext,
+      messageCount: messages.length,
+      tokenUsage: { input: inputTokens, output: outputTokens },
+    };
+  } catch (e) {
+    return { lastThinking: "", lastToolCall: "", errorContext: `Snapshot failed: ${e}`, messageCount: 0, tokenUsage: { input: 0, output: 0 } };
   }
 }
 
-async function checkAndInjectRetryContext(client: any, sessionId: string) {
-  const state = await loadRetryState();
-  if (!state) return;
+async function notifyHivemind(client: any, error: SubagentError) {
+  if (!config.enableHivemindNotify) return;
 
-  const timeSinceError = Date.now() - state.lastErrorTime;
-  // If error was recent (< 5 min) and we haven't retried too many times
-  if (timeSinceError < 300000 && state.retryCount < 5) {
-    // Inject context about the retry
-    await client.session.prompt({
-      path: { id: sessionId },
-      body: {
-        noReply: true,
-        parts: [{
-          type: "text",
-          text: `<retry-context>
-This session is a RETRY (attempt ${state.retryCount + 1}) after a previous failure.
-Previous session: ${state.originalSessionId}
-Previous error: ${state.lastError}
-Time since error: ${Math.round(timeSinceError / 1000)}s
-The retry plugin automatically restarted the stream. Continue your task normally.
-</retry-context>`
-        }]
-      }
-    }).catch(() => {}); // Ignore errors
+  try {
+    await client.hivemind?.post_context?.({
+      channel: "opencode",
+      entity: error.launchedBy,
+      model: "opencode/nemotron-3-ultra-free",
+      task_current: `Subagent error: ${error.taskDescription}`,
+      focus_chain: [error.taskId],
+      decisions: [
+        `Subagent session ${error.sessionId} (child of ${error.parentSessionId}) encountered error`,
+        `Error type: ${error.errorType}`,
+        `Error: ${error.error}`,
+      ],
+      continuation: `AWAITING DECISION: Resume with custom prompt? Query subagent? Abandon and spawn new? Subagent is PAUSED - full context preserved.`,
+      intent: "subagent_error",
+    });
+  } catch (e) {
+    console.error("[error-capture] Hivemind notify failed:", e);
+  }
+}
 
-    // Update retry state
-    state.retryCount++;
-    await saveRetryState(state);
-    await logToConsole("info", `Injected retry context`, { sessionId, retryCount: state.retryCount });
-  } else if (timeSinceError >= 300000) {
-    // Error is stale, clear state
-    await saveRetryState(null);
+async function loadTaskRegistry(taskId: string) {
+  try {
+    const task = await import("omega-hub_task_registry_get").then(m => m.omega-hub_task_registry_get({ task_id: taskId }));
+    return task;
+  } catch {
+    return null;
   }
 }
 
 export const ErrorCapturePlugin: Plugin = async ({ client, $, directory }) => {
-  await logToConsole("info", "ErrorCapturePlugin initialized", { directory });
+  console.log("[error-capture] Plugin initialized", { directory });
 
   return {
+    // Track subagent session creation
+    "session.created": async ({ sessionID, parentID, agent, model }) => {
+      if (!parentID) return; // Main session, not a subagent
+
+      // Try to get task info from Hivemind task registry
+      let taskId = "unknown";
+      let taskDescription = "unknown";
+      let launchedBy = "unknown";
+
+      try {
+        // Check if there's a recent task registry entry for this parent session
+        const tasks = await import("omega-hub_task_registry_query").then(m => 
+          m.omega-hub_task_registry_query({ 
+            channel: "opencode", 
+            status: "active",
+            limit: 10 
+          })
+        );
+        
+        // Find task that matches this parent session
+        for (const task of tasks.tasks || []) {
+          if (task.session_id === parentID || task.context?.includes(parentID)) {
+            taskId = task.task_id;
+            taskDescription = task.description;
+            launchedBy = task.entity || task.launched_by || "unknown";
+            break;
+          }
+        }
+      } catch {}
+
+      const subagentInfo: SubagentSession = {
+        sessionId: sessionID,
+        parentSessionId: parentID,
+        launchedBy,
+        taskId,
+        taskDescription,
+        createdAt: Date.now(),
+      };
+
+      subagentSessions.set(sessionID, subagentInfo);
+      console.log("[error-capture] Tracked subagent session", subagentInfo);
+    },
+
+    // Capture session-level errors (streaming failures, etc.)
+    "session.error": async ({ sessionID, error, providerID, modelID, properties }) => {
+      const sessionId = sessionID || properties?.sessionID;
+      const providerId = providerID || properties?.providerID;
+      const errorMsg = error || properties?.error;
+      
+      if (!sessionId || !errorMsg) return;
+
+      const subagentInfo = subagentSessions.get(sessionId);
+      if (config.trackSubagentsOnly && !subagentInfo) return; // Only track subagents
+
+      const snapshot = await captureSessionSnapshot(client, sessionId);
+
+      const errorRecord: SubagentError = {
+        sessionId,
+        parentSessionId: subagentInfo?.parentSessionId || "unknown",
+        launchedBy: subagentInfo?.launchedBy || "unknown",
+        taskId: subagentInfo?.taskId || "unknown",
+        taskDescription: subagentInfo?.taskDescription || "unknown",
+        error: typeof errorMsg === "string" ? errorMsg : JSON.stringify(errorMsg),
+        errorType: "session.error",
+        timestamp: new Date().toISOString(),
+        sessionSnapshot: snapshot,
+      };
+
+      await appendErrorLog(errorRecord);
+      console.error("[error-capture] Subagent session error", { sessionId, error: errorRecord.error });
+
+      // Notify launching agent + user via Hivemind
+      await notifyHivemind(client, errorRecord);
+    },
+
+    // Capture tool execution errors
     "tool.execute.after": async (input) => {
-      const sessionId = input.sessionID || "unknown";
       const result = input as unknown as {
+        sessionID?: string;
         tool: string;
         args: Record<string, unknown>;
         result?: unknown;
@@ -122,76 +233,39 @@ export const ErrorCapturePlugin: Plugin = async ({ client, $, directory }) => {
         durationMs?: number;
       };
 
-      if (result.error) {
-        const errorLog: ToolErrorLog = {
-          timestamp: new Date().toISOString(),
-          sessionId,
-          tool: result.tool,
-          error: result.error,
-          input: result.args,
-          durationMs: result.durationMs || 0,
-        };
+      if (!result.error) return;
 
-        await appendToolError(errorLog);
-        await logToConsole("error", `TOOL ERROR: ${result.tool}`, {
-          sessionId,
-          error: result.error,
-          input: result.args,
-        });
-      }
+      const sessionId = result.sessionID;
+      if (!sessionId) return;
+
+      const subagentInfo = subagentSessions.get(sessionId);
+      if (config.trackSubagentsOnly && !subagentInfo) return;
+
+      const snapshot = await captureSessionSnapshot(client, sessionId);
+
+      const errorRecord: SubagentError = {
+        sessionId,
+        parentSessionId: subagentInfo?.parentSessionId || "unknown",
+        launchedBy: subagentInfo?.launchedBy || "unknown",
+        taskId: subagentInfo?.taskId || "unknown",
+        taskDescription: subagentInfo?.taskDescription || "unknown",
+        error: `Tool ${result.tool} failed: ${result.error}`,
+        errorType: "tool.error",
+        timestamp: new Date().toISOString(),
+        sessionSnapshot: snapshot,
+      };
+
+      await appendErrorLog(errorRecord);
+      console.error("[error-capture] Subagent tool error", { sessionId, tool: result.tool, error: result.error });
+
+      await notifyHivemind(client, errorRecord);
     },
 
-    event: async ({ event }) => {
-      const sessionId = (event as any).sessionID || (event as any).session_id || (event as any).properties?.sessionID;
-
-      if (event.type === "session.error") {
-        const sessionError = event as unknown as {
-          type: "session.error";
-          sessionID?: string;
-          error?: string;
-          providerID?: string;
-          modelID?: string;
-          properties?: {
-            error?: string;
-            providerID?: string;
-            modelID?: string;
-          };
-        };
-
-        const errorMessage = sessionError.error || sessionError.properties?.error || "Unknown session error";
-        const providerId = sessionError.providerID || sessionError.properties?.providerID;
-        const modelId = sessionError.modelID || sessionError.properties?.modelID;
-
-        const errorLog: SessionErrorLog = {
-          timestamp: new Date().toISOString(),
-          sessionId: sessionId || "unknown",
-          error: errorMessage,
-          providerId,
-          modelId,
-        };
-
-        await appendSessionError(errorLog);
-        await logToConsole("error", `SESSION ERROR: ${errorMessage}`, {
-          sessionId,
-          providerId,
-          modelId,
-        });
-
-        // Save retry state for next session
-        const retryState: RetryState = {
-          lastError: errorMessage,
-          lastErrorTime: Date.now(),
-          retryCount: 0,
-          originalSessionId: sessionId || "unknown",
-        };
-        await saveRetryState(retryState);
-      }
-
-      if (event.type === "session.created") {
-        await logToConsole("info", "Session created", { sessionId });
-        // Check if this is a retry and inject context
-        await checkAndInjectRetryContext(client, sessionId || "");
-      }
+    // Cleanup on session end
+    "session.deleted": async ({ sessionID }) => {
+      subagentSessions.delete(sessionID);
     },
   };
 };
+
+export default ErrorCapturePlugin;

@@ -350,8 +350,8 @@ class NativeGGUFProvider(BaseProvider):
 
         # KV cache configuration — f16 default for maximum model compatibility
         # [M7 Local-First] q8_0 crashes some models (Qwen3); f16 is safe fallback
-        self._type_k = config.get("type_k", None)  # None = f16 (safe default)
-        self._type_v = config.get("type_v", None)  # None = f16 (safe default)
+        self._type_k = config.get("type_k", 1)  # 1 = GGML_TYPE_F16 (safe default)
+        self._type_v = config.get("type_v", 1)  # 1 = GGML_TYPE_F16 (safe default)
 
         # ── P0-1: Explicit KV cache type (q8_0 quantizes the KV cache) ──
         # [heritage: quake-1996] Zone Memory — quantize the KV cache to fit
