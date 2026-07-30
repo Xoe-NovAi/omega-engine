@@ -1,9 +1,9 @@
 # Omega Engine Test Suite Makefile
 # Implements C-0 Test Suite Honesty: Quarantine + JSON Badge + Makefile Fix
 
-# Configuration
-PYTHON := python3
-PYTEST := python3 -m pytest
+# Configuration — M24: Always use project venv Python
+PYTHON := .venv/bin/python
+PYTEST := .venv/bin/python -m pytest
 QUARANTINE_FILE := tests/quarantine.txt
 BADGE_FILE := tests/test-badge.json
 QUARANTINE_EXPIRY := 2026-08-01

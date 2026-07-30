@@ -168,25 +168,17 @@ export const ErrorCapturePlugin: Plugin = async ({ client, $, directory }) => {
       if (!parentID) return;
 
       let taskId = "unknown";
-      let taskDescription = "unknown";
+      let taskDescription = "subagent";
       let launchedBy = "unknown";
 
+      // Parent detection: use agent name from session metadata if available
+      // Task registry lookup deferred to Phase 2 (M24: no broken imports)
       try {
-        const tasks = await import("omega-hub_task_registry_query").then(m => 
-          m.omega-hub_task_registry_query({ 
-            channel: "opencode", 
-            status: "active",
-            limit: 10 
-          })
-        );
-        
-        for (const task of tasks.tasks || []) {
-          if (task.session_id === parentID || task.context?.includes(parentID)) {
-            taskId = task.task_id;
-            taskDescription = task.description;
-            launchedBy = task.entity || task.launched_by || "unknown";
-            break;
-          }
+        const sessions = await client.session.list();
+        const parentSession = sessions.find((s: any) => s.id === parentID);
+        if (parentSession) {
+          launchedBy = parentSession.agent || "unknown";
+          taskDescription = parentSession.title || "subagent task";
         }
       } catch {}
 
