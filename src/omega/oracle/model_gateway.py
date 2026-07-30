@@ -86,9 +86,6 @@ from omega.observability.token_ledger import TokenLedger
 from omega.observability.latency_tracker import tracker
 from omega.state.usm import USMManager
 
-from .quota_tracker import QuotaTracker, get_quota_tracker
-from .token_estimator import TokenEstimator, get_token_estimator
-from .cascade_router import CascadeRouter, get_cascade_router
 from .stream_handler import StreamHandler, get_stream_handler
 
 logger = logging.getLogger(__name__)
@@ -146,6 +143,7 @@ class ModelGateway:
         
         # Initialize Zen2Optimizer for hardware resonance
         from .cpu_optimizer import Zen2Optimizer
+        from .retry_policy import call_with_retry, TransientProviderError
         self._cpu_optimizer = Zen2Optimizer()
         
         self.resource_guard = ResourceGuard()
@@ -197,15 +195,6 @@ class ModelGateway:
         # Set via oracle.py: ModelGateway.proxy_pool = EphemeralWarpPool()
         self.proxy_pool: Optional[Any] = None
         
-        # C-10.5: Quota-Aware Provider Routing components
-        self.quota_tracker = get_quota_tracker()
-        self.token_estimator = get_token_estimator()
-        self.cascade_router = get_cascade_router(
-            self, 
-            health_monitor=self._health_monitor,
-            quota_tracker=self.quota_tracker,
-            token_estimator=self.token_estimator
-        )
         self.stream_handler = get_stream_handler()
 
     def list_providers(self) -> List[Dict[str, Any]]:
@@ -1014,7 +1003,6 @@ class ModelGateway:
         
         # ── Provider Selection Layer ──────────────────────────────────────────
         # [FIX 0.3] Priority-first routing (M7 Local-First): use ProviderSelector as primary
-        # CascadeRouter is only used as fallback for quota-aware routing when ProviderSelector fails
         try:
             ordered_providers = await self.provider_selector.get_ordered_providers(model_name, user_query)
             if ordered_providers:
@@ -1025,29 +1013,8 @@ class ModelGateway:
             else:
                 raise ProviderUnavailableError(message=f"No providers available for model {model_name}")
         except Exception as e:
-            logger.warning(f"ProviderSelector failed, falling back to CascadeRouter: {e}")
-            # Fallback to CascadeRouter for quota-aware routing
-            try:
-                routing_decision = await self.cascade_router.route_request(
-                    model_name=model_name,
-                    system_prompt=system_prompt,
-                    user_prompt=user_query,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    exclude_providers=None,
-                )
-                ordered_providers = [routing_decision.selected_provider] + routing_decision.fallback_chain
-                logger.info(
-                    f"CascadeRouter selected {routing_decision.selected_provider} "
-                    f"(score: {routing_decision.scores[0].total_score:.1f}) "
-                    f"with fallback chain: {' -> '.join(routing_decision.fallback_chain[:3])}"
-                )
-            except Exception as e2:
-                logger.error(f"Both ProviderSelector and CascadeRouter failed: {e2}")
-                raise ProviderUnavailableError(message=f"No providers available for model {model_name}")
-
-        # Normalize ordered_providers to list of provider names (strings)
-        # ProviderSelector returns provider objects, CascadeRouter returns strings
+            logger.warning(f"ProviderSelector failed, falling back to priority list: {e}")
+            ordered_providers = ["native-gguf", "lmster", "antigravity", "google"]
         ordered_provider_names = []
         for p in ordered_providers:
             if isinstance(p, str):
@@ -1168,23 +1135,23 @@ class ModelGateway:
                                     return r
                                 result = await breaker.call(_call_with_none_as_failure, trace_id=trace_id)
                             else:
-                                result = await provider.generate(
+                                result = await call_with_retry(provider.generate(
                                     model=model_name, system_prompt=system_prompt, user_query=user_query,
                                     temperature=temperature, max_tokens=max_tokens, trace_id=trace_id,
                                     session_id=session_id,
                                     logit_bias=logit_bias,
                                     repetition_penalty=repetition_penalty,
                                     top_p=top_p,
-                                )
+                                ))
                         else:
-                            result = await provider.generate(
+                            result = await call_with_retry(provider.generate(
                                 model=model_name, system_prompt=system_prompt, user_query=user_query,
                                 temperature=temperature, max_tokens=max_tokens, trace_id=trace_id,
                                 session_id=session_id,
                                 logit_bias=logit_bias,
                                 repetition_penalty=repetition_penalty,
                                 top_p=top_p,
-                            )
+                            ))
                         
                         if result:
                             # [M22 Response Provenance] Record latency immediately after provider returns
