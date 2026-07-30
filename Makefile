@@ -257,7 +257,7 @@ check-m7-local-first:
 # Check M23: Failure integrity - no soft-failure patterns
 check-m23-failure-integrity:
 	@echo "$(YELLOW)Checking M23 (Failure integrity)...$(NC)"
-	@! rg -n 'pass|continue' src/omega/ --type py --glob '!*test*' 2>/dev/null | rg -E '(except.*:|catch.*:)' | rg -v 'except Exception' | rg -v '# noqa' || (echo "$(RED)FAIL: Soft-failure patterns found$(NC)" && false)
+	@! rg -n 'pass|continue' src/omega/ --type py --glob '!*test*' 2>/dev/null | rg -e '(except[^a-zA-Z_].*:|catch[^a-zA-Z_].*:)' | rg -v 'except Exception' | rg -v '# noqa' || (echo "$(RED)FAIL: Soft-failure patterns found$(NC)" && false)
 	@echo "$(GREEN)M23 passed: No soft-failure patterns$(NC)"
 
 # Run all mandate checks (CI gate)
