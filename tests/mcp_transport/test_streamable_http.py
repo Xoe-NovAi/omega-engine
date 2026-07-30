@@ -27,7 +27,7 @@ class TestStreamableHTTPTransport:
             config = json.load(f)
         
         omega_hub = config.get("mcp", {}).get("omega-hub", {})
-        assert omega_hub.get("type") == "streamable-http",             "omega-hub MCP type should be 'streamable-http'"
+        assert omega_hub.get("type") == "remote",             "omega-hub MCP type should be 'remote' (OpenCode v1.18.x ignores 'streamable-http')"
         assert "/mcp" in omega_hub.get("url", ""),             "omega-hub URL should point to /mcp endpoint"
         assert omega_hub.get("enabled") is True,             "omega-hub should be enabled"
     

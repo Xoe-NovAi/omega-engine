@@ -188,8 +188,8 @@ def run_mcp(
             middleware.append(Middleware(RateLimitHeadersMiddleware, limit=100, window_seconds=60))
             # Trace context propagation (SEP-414)
             middleware.append(Middleware(TraceContextMiddleware))
-            # Header validation (SEP-2243)
-            middleware.append(Middleware(MCPHeaderValidationMiddleware))
+            # Header validation (SEP-2243) — non-strict for legacy MCP clients (OpenCode, Cline)
+            middleware.append(Middleware(MCPHeaderValidationMiddleware, strict=False))
             # _meta envelope (SEP-2575) — innermost compliance
             middleware.append(Middleware(MCPMetaEnvelopeMiddleware, server_info={"name": server_name, "version": server_version}))
 

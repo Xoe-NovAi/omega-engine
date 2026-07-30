@@ -136,6 +136,9 @@ class MCPHeaderValidationMiddleware(BaseHTTPMiddleware):
         missing = required - set(headers.keys())
         
         if missing:
+            if not self.strict:
+                # Non-strict mode: pass through for non-SEP-2243 clients (OpenCode, Cline, etc.)
+                return await call_next(request)
             return self._error_response(
                 400, ERROR_CODES["INVALID_REQUEST"],
                 f"Missing required headers: {', '.join(sorted(missing))}",
@@ -144,7 +147,10 @@ class MCPHeaderValidationMiddleware(BaseHTTPMiddleware):
         
         # Validate MCP-Protocol-Version
         proto_version = headers.get("mcp-protocol-version")
-        if proto_version not in SUPPORTED_PROTOCOL_VERSIONS:
+        if proto_version and proto_version not in SUPPORTED_PROTOCOL_VERSIONS:
+            if not self.strict:
+                # Non-strict mode: pass through for unsupported versions
+                return await call_next(request)
             return self._error_response(
                 400, ERROR_CODES["PROTOCOL_VERSION_MISMATCH"],
                 f"Unsupported protocol version: {proto_version}. Supported: {SUPPORTED_PROTOCOL_VERSIONS}",

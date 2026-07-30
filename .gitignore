@@ -218,3 +218,4 @@ config/local_overrides.yaml
 *.enc
 *.age
 *.key
+.aider*

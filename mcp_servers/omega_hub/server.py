@@ -115,7 +115,7 @@ logger = logging.getLogger("omega.hub")
 from mcp_servers.omega_hub.middleware import m9_safe, apply_security
 
 
-mcp = FastMCP("Omega Core Hub")
+mcp = FastMCP("Omega Core Hub", json_response=True)  # JSON-only responses for OpenCode/Cline compatibility
 
 # [P1a-2] State, service singletons, hivemind state, background tasks,
 # and helper functions are now in mcp_servers.omega_hub.state (extracted).
