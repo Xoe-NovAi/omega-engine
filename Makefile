@@ -221,9 +221,47 @@ doc-chunk-sprint:
 	@echo "$(GREEN)Chunking complete$(NC)"
 
 # Temple-grade includes Codex freshness and LLM doc validation
-temple-grade: check-codex-fix doc-llm-validate
+temple-grade: check-codex-fix doc-llm-validate check-mandates
 	@echo "$(YELLOW)Running temple-grade checks...$(NC)"
 	# Existing temple-grade checks would go here
-	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation)$(NC)"
+	@echo "$(GREEN)Temple-grade complete (Codex + LLM doc validation + Mandates)$(NC)"
 
-.PHONY: doc-llm-validate sprint-plan-llm sprint-plan-llms-txt doc-token-check doc-chunk-sprint
+# =============================================================================
+# Mandate Checks (CI-only, moved from runtime Vetter per Carmack Verdict)
+# =============================================================================
+
+# Check M1: AnyIO compliance - no asyncio imports in src/omega/
+check-m1-anyio:
+	@echo "$(YELLOW)Checking M1 (AnyIO compliance)...$(NC)"
+	@! rg -n 'import asyncio|from asyncio' src/omega/ --type py --glob '!*test*' --glob '!*governance*' --glob '!*tty_agent*' 2>/dev/null || (echo "$(RED)FAIL: asyncio imports found in src/omega/$(NC)" && false)
+	@echo "$(GREEN)M1 passed: No asyncio imports in core$(NC)"
+
+# Check M9: Error integrity - no bare except:
+check-m9-error-integrity:
+	@echo "$(YELLOW)Checking M9 (Error integrity)...$(NC)"
+	@! rg -n 'except\s*:' src/omega/ --type py --glob '!*test*' --glob '!*governance*' 2>/dev/null | rg -v 'except Exception' | rg -v '# noqa' || (echo "$(RED)FAIL: Bare except found in src/omega/$(NC)" && false)
+	@echo "$(GREEN)M9 passed: No bare except in core$(NC)"
+
+# Check M8: Zero telemetry - no telemetry SDK imports
+check-m8-zero-telemetry:
+	@echo "$(YELLOW)Checking M8 (Zero telemetry)...$(NC)"
+	@! rg -n 'import (segment|posthog|datadog|amplitude|mixpanel)|from (segment|posthog|datadog|amplitude|mixpanel)' src/omega/ --type py 2>/dev/null || (echo "$(RED)FAIL: Telemetry SDK imports found$(NC)" && false)
+	@echo "$(GREEN)M8 passed: No telemetry SDKs in core$(NC)"
+
+# Check M7: Local-first strategy
+check-m7-local-first:
+	@echo "$(YELLOW)Checking M7 (Local-first strategy)...$(NC)"
+	@grep -q 'strategy: local_first' config/providers.yaml || (echo "$(RED)FAIL: providers.yaml missing local_first strategy$(NC)" && false)
+	@echo "$(GREEN)M7 passed: Local-first strategy configured$(NC)"
+
+# Check M23: Failure integrity - no soft-failure patterns
+check-m23-failure-integrity:
+	@echo "$(YELLOW)Checking M23 (Failure integrity)...$(NC)"
+	@! rg -n 'pass|continue' src/omega/ --type py --glob '!*test*' 2>/dev/null | rg -E '(except.*:|catch.*:)' | rg -v 'except Exception' | rg -v '# noqa' || (echo "$(RED)FAIL: Soft-failure patterns found$(NC)" && false)
+	@echo "$(GREEN)M23 passed: No soft-failure patterns$(NC)"
+
+# Run all mandate checks (CI gate)
+check-mandates: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity
+	@echo "$(GREEN)All mandate checks passed$(NC)"
+
+.PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-mandates

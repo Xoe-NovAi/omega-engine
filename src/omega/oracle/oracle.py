@@ -1,14 +1,14 @@
 # AP: AP-PR-READINESS-v1.0.0
 # AP: AP-ORACLE-RESTORE-v2.3.0
-# 🔱 The Oracle — Routing, Summoning, and Entity Intelligence
+# 🔱 The Oracle - Routing, Summoning, and Entity Intelligence
 # ⬡ OMEGA ⬡ ORACLE ⬡ oracle.py (1100 lines)
 #
 # Single-source-of-truth for query routing, speculative decoding, entity summoning,
 # and soul evolution. Acts as the gateway between user intent and the 10-pillar council.
 #
-# [id-soft: vet-056] Oracle Summoning Pattern — Direct entity dispatch via _summon()
-# [id-soft: vet-009] Memory Zone — Long-term learning via soul.yaml
-# [id-soft: vet-056] Triage Routing — Intent classification and entity selection
+# [id-soft: vet-056] Oracle Summoning Pattern - Direct entity dispatch via _summon()
+# [id-soft: vet-009] Memory Zone - Long-term learning via soul.yaml
+# [id-soft: vet-056] Triage Routing - Intent classification and entity selection
 
 import logging
 import os
@@ -55,10 +55,9 @@ from ..memory_store import get_memory_store
 from ..astrology import record_first_breath
 from ..orchestration.triage_router import TriageRouter, TriageRequest, TaskRequest, EntityContext, Constraints, SessionContext, ModelSelection
 from ..state import get_usm, initialize_usm
-from ..governance.sovereign_vetter import SovereignVetter
 from omega.errors import OmegaError
 
-# WARP Proxy Pool — optional, for OpenCode Zen rate limit bypass
+# WARP Proxy Pool - optional, for OpenCode Zen rate limit bypass
 try:
     from ..proxy_pool import EphemeralWarpPool
     _WARP_AVAILABLE = True
@@ -71,8 +70,8 @@ logger = logging.getLogger(__name__)
 # Configuration
 IRIS_CONFIDENCE_THRESHOLD = 0.6
 
-# ROLE_CONSTANTS — engine-defined slots (NOT entity names).
-# WAD YAML (config/wads/<iwad>/entities/dispatch.yaml) maps ROLE → entity.
+# ROLE_CONSTANTS - engine-defined slots (NOT entity names).
+# WAD YAML (config/wads/<iwad>/entities/dispatch.yaml) maps ROLE -> entity.
 # These constants are engine architecture, not WAD content (M2-compliant).
 ROLE_CONSTANTS: Dict[str, str] = {
     "MESSENGER_BRIDGE": "MESSENGER_BRIDGE",      # Iris role
@@ -94,7 +93,7 @@ ROLE_CONSTANTS: Dict[str, str] = {
 }
 
 # WAD-backed dispatch config loader (M2 Firewall Phase C).
-# Delegates to dispatch_registry — single source of truth.
+# Delegates to dispatch_registry - single source of truth.
 # DISPATCH_CONFIG_FILENAME retained for compatibility.
 
 from omega.governance.dispatch_registry import get_dispatch_entities, get_entity_by_role as _registry_get_entity_by_role
@@ -118,7 +117,7 @@ class OracleResponse:
     
     Engine fields: text, entity, confidence, trace_id, slots, domains.
     WAD-specific display fields (sigil, glyph, pantheon, etc.) are in
-    the Entity.metadata dict — accessed via entity.metadata.get("sigil").
+    the Entity.metadata dict - accessed via entity.metadata.get("sigil").
     """
     text: str
     entity: str = "Oracle"
@@ -139,7 +138,7 @@ class OracleResponse:
 
 class Oracle:
     """
-    The Oracle — unified routing, summoning, and entity intelligence.
+    The Oracle - unified routing, summoning, and entity intelligence.
     DocRef: docs/reference/api/oracle.md
     
     Responsibilities:
@@ -147,7 +146,7 @@ class Oracle:
     2. Speculative decoding (Iris confidence assessment)
     3. Domain routing (escalation to Pillar Keepers)
     4. Entity summoning (direct dispatch to named entities)
-    5. Soul evolution tracking (L1→L2→L3 learning)
+    5. Soul evolution tracking (L1->L2->L3 learning)
     6. Cloud critique integration (TDP quarantine)
     """
     
@@ -166,7 +165,7 @@ class Oracle:
         # (hub creates ModelGateway at module level; Oracle was creating a second one)
         self.model_gateway = model_gateway or ModelGateway(health_monitor=self.health_monitor)
         
-        # [M8 Zero Telemetry] WARP Proxy Pool — inject for OpenCode Zen rate limit bypass
+        # [M8 Zero Telemetry] WARP Proxy Pool - inject for OpenCode Zen rate limit bypass
         # Only activates if WARP pool is deployed and running (systemd units).
         if _WARP_AVAILABLE and EphemeralWarpPool is not None:
             try:
@@ -185,13 +184,13 @@ class Oracle:
         self.lifecycle = SessionLifecycleManager(self.memory_store)
         self.searcher = SovereignSearcher(self.memory_store)
         self.verifier = SkepticalVerifier(self.model_gateway)
-        # [M11] Throttled soul distillation counter — triggers close_session
+        # [M11] Throttled soul distillation counter - triggers close_session
         # every N interactions to avoid per-interrupt soul.yaml I/O.
         self._interaction_counter: Dict[str, int] = {}
         # [Somatic Flush] Turn counter for somatic re-hydration
         self._turn_counter: Dict[str, int] = {}
         self.researcher = IterativeResearcher(self.model_gateway, self.searcher, verifier=self.verifier)
-        # [Workstream B] Selective Hydration — L3 gnosis retrieval for context injection
+        # [Workstream B] Selective Hydration - L3 gnosis retrieval for context injection
         self.selective_hydration = SelectiveHydration(
             embedding_manager=self.memory_store.embedding_manager,
             vector_adapter=self.memory_store.vector_store,
@@ -201,19 +200,17 @@ class Oracle:
         )
         self.pii_masker = PIIMasker()
         self.intent_matcher = IntentMatcher()
-        # ── P0-3: Sovereign Vetter (in-path mandate enforcement, M1-M23) ──
-        self._vetter = SovereignVetter()
         
-        # [D16-1] Audience Calibration Pipeline — output register transformation
+        # [D16-1] Audience Calibration Pipeline - output register transformation
         self.audience_calibrator = get_audience_calibrator()
         
-        # [M11] Soul Edit History — immutable audit trail for soul.yaml changes
+        # [M11] Soul Edit History - immutable audit trail for soul.yaml changes
         self.soul_edit_history = SoulEditHistory()
         
-        # [M12] Compaction Harvester — automated compaction monitoring and metrics
+        # [M12] Compaction Harvester - automated compaction monitoring and metrics
         self.compaction_harvester = CompactionHarvester()
         
-        # [D187] Semantic Router — embedding-based entity routing
+        # [D187] Semantic Router - embedding-based entity routing
         self.semantic_router = SemanticRouter(
             registry=self.registry,
             embedding_manager=self.memory_store.embedding_manager,
@@ -245,7 +242,7 @@ class Oracle:
             logger.error(f"USM initialization failed [{classification['mode']}]: {e}")
         
         # Run session lifecycle sweep (M12 Queue Integrity)
-        # Active (0-7d) → Archived (gzip) → External (90d) → Deleted (optional)
+        # Active (0-7d) -> Archived (gzip) -> External (90d) -> Deleted (optional)
         try:
             stats = await self.lifecycle.run_lifecycle()
             if stats.archived or stats.externalized:
@@ -257,7 +254,7 @@ class Oracle:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"Session lifecycle sweep failed during bootstrap [{classification['mode']}]: {e}")
         
-        # [D187] Bootstrap semantic router — pre-compute entity vectors
+        # [D187] Bootstrap semantic router - pre-compute entity vectors
         try:
             await self.semantic_router.bootstrap()
         except (OmegaError, RuntimeError, OSError) as e:
@@ -445,27 +442,6 @@ class Oracle:
 
         processed_query = TDPGate.isolate(query) if isinstance(query, TaintedData) else query
 
-        await self.bootstrap()
-
-        # ── P0-3: Sovereign Vetter pre-flight mandate check ──
-        # Enforce all 23 Sovereign Mandates before inference dispatch.
-        # A vetter *crash* is logged and does NOT block inference (so a
-        # governance-checker bug can't DoS the engine); a vetter *verdict* of
-        # failure raises BoundaryViolationError (M23: hard stop, no soft-failure).
-        try:
-            vet_result = await self._vetter.vet(
-                {"query": processed_query if isinstance(processed_query, str) else "", "channel": "opencode"}
-            )
-        except Exception as e:  # noqa: BLE001 — vetter crash must not DoS engine
-            logger.error("Sovereign Vetter crashed (proceeding): %s", e)
-        else:
-            if not vet_result.passed:
-                from omega.errors import BoundaryViolationError
-                raise BoundaryViolationError(
-                    f"Sovereign Vetter blocked inference: failed mandates "
-                    f"{vet_result.details.get('failed_mandates')}"
-                )
-
         async def _execute_turn():
             async with self.observability.trace() as trace:
                 # 0. Update system pressure for graceful degradation
@@ -473,7 +449,7 @@ class Oracle:
                 
                 trace.log("query.received", query=processed_query, transient=transient)
 
-                # [S3] Tiny-Critic RAG Router — classify query complexity as an
+                # [S3] Tiny-Critic RAG Router - classify query complexity as an
                 # ephemeral routing signal. Advisory only: never blocks the turn.
                 rag_complexity = "simple"
                 try:
@@ -481,7 +457,7 @@ class Oracle:
 
                     router = RAGRouter(mode="tfidf_svm")
                     rag_complexity = await router.classify(processed_query)
-                except Exception as e:  # noqa: BLE001 — router is advisory
+                except Exception as e:  # noqa: BLE001 - router is advisory
                     logger.warning("RAGRouter classification skipped (non-fatal): %s", e)
                 trace.log("rag.classify", complexity=rag_complexity, query=processed_query)
 
@@ -534,7 +510,7 @@ class Oracle:
                         logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
                     return resp
                 
-                # Step 2: Speculative decode — Iris tries first
+                # Step 2: Speculative decode - Iris tries first
                 # [D-kal-054] Restrict Iris to local chat channels only per user instruction.
                 # Bypassed for OpenCode, Gemini, Cline, and Antigravity.
                 channel = cvar_get("config.channel", "unknown")
@@ -587,7 +563,7 @@ class Oracle:
             calibrated = await cal.render(resp.text, prof, voice_anchor)
             resp.text = calibrated
             resp.audience = audience
-        except Exception as e:  # noqa: BLE001 — audience adaptation is advisory
+        except Exception as e:  # noqa: BLE001 - audience adaptation is advisory
             logger.warning("Audience calibration skipped (non-fatal): %s", e)
         return resp
 
@@ -697,7 +673,7 @@ class Oracle:
             classification = get_failure_registry().classify_error(e)
             logger.warning(f"Context injection failed (non-fatal) [{classification['mode']}]: {e}")
         
-        # Inject soul context — multi-path extractor (D-277)
+        # Inject soul context - multi-path extractor (D-277)
         from omega.soul_utils import load_entity_soul_context
         try:
             soul_context = load_entity_soul_context(entity_name, DATA_DIR)
@@ -706,7 +682,7 @@ class Oracle:
                 logger.debug("Soul injection for '%s' successful: %d chars", entity_name, len(soul_context))
             else:
                 logger.warning(
-                    "Soul injection for '%s' returned empty — check schema.", entity_name
+                    "Soul injection for '%s' returned empty - check schema.", entity_name
                 )
         except Exception as e:
             logger.warning("Soul injection failed (non-fatal) for '%s': %s", entity_name, e)
@@ -775,8 +751,8 @@ class Oracle:
 
 
         
-        # Throttled soul distillation — close_session every 5 interactions
-        # [M11: Soul Integrity] Ensures L1→L2→L3 distillation happens continuously
+        # Throttled soul distillation - close_session every 5 interactions
+        # [M11: Soul Integrity] Ensures L1->L2->L3 distillation happens continuously
         # on the hot path, not and not just from orchestrator.py CLI dispatch.
         # [M11-FIX-2026-07-01] Root cause: anyio.create_task() does NOT exist in
         # AnyIO (silent AttributeError swallowed by outer try/except). Replaced with
@@ -810,7 +786,7 @@ class Oracle:
     async def _respond_as_iris(self, query: str, trace: TraceSession, confidence: float, session_id: Optional[str] = None, transient: bool = False) -> OracleResponse:
         """Iris (speculative decoder) responds directly without invoking a pillar.
         
-        [id-soft: vet-069] Speculative Decode — lightweight, fast path for
+        [id-soft: vet-069] Speculative Decode - lightweight, fast path for
         simple queries that don't require domain expertise.
         
         [D-kal-053] Now attempts model invocation for Messenger Bridge via _summon.
@@ -853,22 +829,6 @@ class Oracle:
         transient: bool = False,
         model_override: Optional[str] = None,
     ) -> OracleResponse:
-        # ── P0-3: Sovereign Vetter pre-flight mandate check (direct summon path) ──
-        try:
-            vet_result = await self._vetter.vet({"query": query, "channel": "opencode", "entity": entity_name})
-        except Exception as e:  # noqa: BLE001 — vetter crash must not DoS engine
-            logger.error("Sovereign Vetter crashed in _summon (proceeding): %s", e)
-        else:
-            if not vet_result.passed:
-                from omega.errors import BoundaryViolationError
-                raise BoundaryViolationError(
-                    f"Sovereign Vetter blocked summon: failed mandates "
-                    f"{vet_result.details.get('failed_mandates')}"
-                )
-
-        """Internal implementation: directly summon a specific entity by name.
-        
-        This is called by both the public summon() method and the talk() pattern detector.
         It bypasses domain routing and directly communicates with the named entity.
         """
         async def _execute_summon():
@@ -901,7 +861,7 @@ class Oracle:
                     model_name = await self._select_model(entity.name, query, session_id, trace.trace_id)
             
             # Resolve entity affinity for inference presets (temperature, system_prompt, context window)
-            # [id-soft: vet-016] cvar pattern — YAML-backed affinity DB, hot-reloadable
+            # [id-soft: vet-016] cvar pattern - YAML-backed affinity DB, hot-reloadable
             first_domain = entity.domains[0] if entity.domains else None
             affinity_result = await self.model_gateway.resolve_entity_affinity(
                 entity_name=entity.name,
@@ -943,7 +903,7 @@ class Oracle:
                 # Detokenize response to restore original PII values
                 res.text = await self.pii_masker.process_response(res.text, token_map)
             else:
-                # Local provider — no PII masking needed
+                # Local provider - no PII masking needed
                 res = await self.model_gateway.generate(
                     model_name=model_name,
                     system_prompt=effective_system_prompt,
@@ -965,7 +925,7 @@ class Oracle:
                 entity_id=entity.name,
             )
             
-            # [D16-1] Audience Calibration — transform response to target register
+            # [D16-1] Audience Calibration - transform response to target register
             calibrated_text = res.text
             try:
                 calibration_result = await self.audience_calibrator.calibrate(
@@ -1000,9 +960,9 @@ class Oracle:
     async def _route_by_domain(self, text: str, trace: TraceSession, session_id: str, transient: bool = False) -> OracleResponse:
         """Route query to entity by domain keyword matching.
         
-        [D187] Routing chain: semantic → keyword → default.
+        [D187] Routing chain: semantic -> keyword -> default.
         """
-        # [D187] Semantic routing — embedding-based entity matching
+        # [D187] Semantic routing - embedding-based entity matching
         keyword_entity = self.registry.find_by_domain(text)
         entity, confidence, method = await self.semantic_router.route(
             query=text,
@@ -1076,7 +1036,7 @@ class Oracle:
         logger.info(f"Recording first breath for routed entity: {entity.name}")
         await record_first_breath(entity.name, res.text, trace.trace_id)
         
-        # [D16-1] Audience Calibration — transform response to target register
+        # [D16-1] Audience Calibration - transform response to target register
         calibrated_text = res.text
         try:
             calibration_result = await self.audience_calibrator.calibrate(
@@ -1128,9 +1088,9 @@ class Oracle:
 
     # ── Soul evolution tracking ───────────────────────────────────────
     async def close_session(self, entity_name: str, session_id: str) -> bool:
-        """Close a session — track compaction + capture somatic state.
+        """Close a session - track compaction + capture somatic state.
         
-        Soul distillation (L1→L2→L3) removed per Carmack Verdict 2026-07-30:
+        Soul distillation (L1->L2->L3) removed per Carmack Verdict (2026-07-30):
         regex-based extraction was fortune-cookie generation. Agents write
         their own lessons. That works.
         """
@@ -1208,10 +1168,10 @@ class Oracle:
         """Update the entity's soul.yaml after each interaction.
         Implements the L1->L2->L3 refractive abstraction model for gnosis preservation.
         
-        This is a lightweight real-time tracker — it logs a trace event.
-        Full soul distillation (L1→L2→L3) is handled by close_session() on session end.
+        This is a lightweight real-time tracker - it logs a trace event.
+        Full soul distillation (L1->L2->L3) is handled by close_session() on session end.
         
-        [id-soft: vet-070] Save-game pattern — incremental autosave mirrors Quake's
+        [id-soft: vet-070] Save-game pattern - incremental autosave mirrors Quake's
         periodic state writes, gathering state progressively for the final save on exit.
         """
         if os.environ.get("OMEGA_ENV") == "test":
@@ -1225,7 +1185,7 @@ class Oracle:
             )
         except (OmegaError, RuntimeError, OSError) as exc:
             logger.warning("Telemetry event failed for %s: %s", entity_name, exc)
-            # Non-fatal — telemetry failure must not block the response
+            # Non-fatal - telemetry failure must not block the response
 
     async def _somatic_flush(self, entity_name: str, session_id: str) -> None:
         """Perform a somatic flush to clear KV cache and reset model state.

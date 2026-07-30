@@ -44,7 +44,7 @@ from omega.oracle.search_providers import (
 from omega.oracle.search_router import SearchRouter, SearchIntent, TIER_LOCAL, TIER_SEARXNG, TIER_EXA, TIER_FIRECRAWL
 from omega.oracle.search_cache import SovereignCache
 from omega.oracle.skeptical_verifier import SkepticalVerifier
-from omega.workers.background_researcher.credit_budget import APICreditBudget
+from omega.oracle.credit_budget import APICreditBudget
 from omega.oracle.search_circuit_breaker import (
     get_circuit_breaker_registry, initialize_circuit_breakers, TIER_CONFIGS,
 )
