@@ -66,6 +66,13 @@ try:
 except ImportError:
     pass  # vault module not available
 
+# ── Local Queue sub-commands (Phase 2 Local Worker Pool) ─────────────────
+try:
+    from omega.cli.local_queue import app as local_queue_app
+    app.add_typer(local_queue_app, name="local-queue", help="Fire-and-forget local inference queue")
+except ImportError:
+    pass  # local_queue module not available
+
 # ── Vetter sub-commands (P0-3 Sovereign Vetter) ──────────────────────────
 try:
     from omega.governance.sovereign_vetter import SovereignVetter

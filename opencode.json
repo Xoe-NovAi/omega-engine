@@ -2,7 +2,8 @@
   "$schema": "https://opencode.ai/config.json",
   "plugin": [
     "opencode-antigravity-auth@latest",
-    "opencode-sessions-explorer"
+    "opencode-sessions-explorer",
+    "file:///home/arcana-novai/better-opencode-retries/src/index.js"
   ],
   "permission": {
     "external_directory": {
@@ -128,57 +129,153 @@
       "models": {
         "mimo-v2.5": {
           "variants": {
-            "low": { "reasoning": { "effort": "low" } },
-            "medium": { "reasoning": { "effort": "medium" } },
-            "high": { "reasoning": { "effort": "high" } }
+            "low": {
+              "reasoning": {
+                "effort": "low"
+              }
+            },
+            "medium": {
+              "reasoning": {
+                "effort": "medium"
+              }
+            },
+            "high": {
+              "reasoning": {
+                "effort": "high"
+              }
+            }
           }
         },
         "mimo-v2.5-free": {
           "variants": {
-            "low": { "reasoning": { "effort": "low" } },
-            "medium": { "reasoning": { "effort": "medium" } },
-            "high": { "reasoning": { "effort": "high" } }
+            "low": {
+              "reasoning": {
+                "effort": "low"
+              }
+            },
+            "medium": {
+              "reasoning": {
+                "effort": "medium"
+              }
+            },
+            "high": {
+              "reasoning": {
+                "effort": "high"
+              }
+            }
           }
         },
         "nemotron-3-ultra-free": {
           "variants": {
-            "low": { "reasoning": { "effort": "low" } },
-            "medium": { "reasoning": { "effort": "medium" } },
-            "high": { "reasoning": { "effort": "high" } }
+            "low": {
+              "reasoning": {
+                "effort": "low"
+              }
+            },
+            "medium": {
+              "reasoning": {
+                "effort": "medium"
+              }
+            },
+            "high": {
+              "reasoning": {
+                "effort": "high"
+              }
+            }
           }
         },
         "deepseek-v4-flash-free": {
           "variants": {
-            "low": { "reasoning": { "effort": "low" } },
-            "medium": { "reasoning": { "effort": "medium" } },
-            "high": { "reasoning": { "effort": "high" } },
-            "max": { "reasoning": { "effort": "max" } }
+            "low": {
+              "reasoning": {
+                "effort": "low"
+              }
+            },
+            "medium": {
+              "reasoning": {
+                "effort": "medium"
+              }
+            },
+            "high": {
+              "reasoning": {
+                "effort": "high"
+              }
+            },
+            "max": {
+              "reasoning": {
+                "effort": "max"
+              }
+            }
           }
         }
+      },
+      "options": {
+        "timeout": 600000,
+        "chunkTimeout": 60000
       }
     },
     "openrouter": {
       "models": {
         "nvidia/nemotron-3-ultra": {
           "variants": {
-            "low": { "reasoning": { "effort": "low" } },
-            "medium": { "reasoning": { "effort": "medium" } },
-            "high": { "reasoning": { "effort": "high" } }
+            "low": {
+              "reasoning": {
+                "effort": "low"
+              }
+            },
+            "medium": {
+              "reasoning": {
+                "effort": "medium"
+              }
+            },
+            "high": {
+              "reasoning": {
+                "effort": "high"
+              }
+            }
           }
         },
         "nvidia/nemotron-3-super": {
           "variants": {
-            "low": { "reasoning": { "effort": "low" } },
-            "medium": { "reasoning": { "effort": "medium" } },
-            "high": { "reasoning": { "effort": "high" } }
+            "low": {
+              "reasoning": {
+                "effort": "low"
+              }
+            },
+            "medium": {
+              "reasoning": {
+                "effort": "medium"
+              }
+            },
+            "high": {
+              "reasoning": {
+                "effort": "high"
+              }
+            }
           }
         },
         "deepseek/deepseek-v4-flash": {
           "variants": {
-            "low": { "reasoning": { "effort": "low" } },
-            "medium": { "reasoning": { "effort": "medium" } },
-            "high": { "reasoning": { "effort": "high" } },
-            "max": { "reasoning": { "effort": "max" } }
+            "low": {
+              "reasoning": {
+                "effort": "low"
+              }
+            },
+            "medium": {
+              "reasoning": {
+                "effort": "medium"
+              }
+            },
+            "high": {
+              "reasoning": {
+                "effort": "high"
+              }
+            },
+            "max": {
+              "reasoning": {
+                "effort": "max"
+              }
+            }
           }
         }
       }
@@ -187,7 +284,7 @@
   "agent": {
     "makali": {
       "mode": "primary",
-      "description": "MaKaLi Apex Mind — Mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives. NOT a builder. Ground troops: Kali, Lilith, Maat, Pillars, Carmack.",
+      "description": "MaKaLi Apex Mind \u2014 Mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives. NOT a builder. Ground troops: Kali, Lilith, Maat, Pillars, Carmack.",
       "instructions": [
         ".opencode/agents/plan.md"
       ]
@@ -275,5 +372,8 @@
         "GROK_CLI_PATH": "grok"
       }
     }
-  }
+  },
+  "model": "opencode/nemotron-3-ultra-free",
+  "small_model": "opencode/nemotron-3-ultra-free",
+  "default_agent": "kali"
 }

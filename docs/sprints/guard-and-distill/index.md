@@ -9,10 +9,13 @@ ap_token: "AP-SPRINT-GUARD-DISTILL-v1.0.0"
 date: "2026-07-25"
 duration_days: 5
 phase: "C → D Gate"
-status: "ACTIVE"
+status: "SUPERSEDED"
+superseded_on: "2026-07-30"
+successor: "data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md"
+successor_sprint: "UNOVERENGINEER-01"
 owner: "KALI"
 priority: "P0"
-tags: [sprint, phase-c, phase-d-gate, guard, distill]
+tags: [sprint, phase-c, phase-d-gate, guard, distill, superseded]
 depends_on: []
 blocks: []
 acceptance_gates:
@@ -27,6 +30,10 @@ cross_references:
   - "docs/research/R_DEEP_WEB_RESEARCH_OMEGA_GAPS_20260729.md"
   - "docs/sprints/guard-and-distill/08-research-index.md"
   - "docs/sprints/current/EXECUTION_PLAN_20260725.md"
+# ⚠️ SUPERSEDED FOR SPRINT CONTROL (2026-07-30)
+# Do not treat status as ACTIVE. Successor: data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md
+# + data/coordination/ACTIVE_SPRINT.json (UNOVERENGINEER-01). See data/coordination/SESSION_ANCHOR.md.
+
 llm_metadata:
   token_budget: 16000
   target_audience: "maat/P3, maat/P1, lilith/P6, kali/P9, scribe/new"
@@ -39,6 +46,10 @@ chunk_strategy: "section_per_topic"
 ---
 
 # 🔱 Sprint: Guard & Distill
+
+> ## ⚠️ SUPERSEDED FOR SPRINT CONTROL (2026-07-30)
+> **Successor**: `data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md` + `ACTIVE_SPRINT.json` (`UNOVERENGINEER-01`).  
+> **Session**: `data/coordination/SESSION_ANCHOR.md`. Body below is historical trail.
 
 **AP Token**: `AP-SPRINT-GUARD-DISTILL-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_sprint ⬡ ACTIVE

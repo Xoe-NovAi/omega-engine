@@ -1,0 +1,21 @@
+{
+  "packet_id": "ho_0038a70bf921",
+  "target_agent_id": "opencode/maat",
+  "target_channel": "opencode",
+  "target_entity": "maat",
+  "source_agent_id": "opencode/kali",
+  "source_channel": "opencode",
+  "source_entity": "kali",
+  "task": "C-10 Local Admission Control \u2014 Implement CCX-aware semaphore + OOMProtector integration. Dynamic topology detection. Contract tests: 5. Owner: Ma'at/P3. Depends on C-2' (DONE).",
+  "context": "Carmack CG-08: Admission Control (C-10). Architecture: CCX topology-aware semaphore (NO hardcoded taskset). Dynamic topology detection via /sys/devices/system/cpu/cpu*/topology/thread_siblings_list. OOMProtector integration: ALLOW/THROTTLE/DENY based on memory.current + required_kv_bytes. Contract tests: 5 tests (M21). Depends on: C-2' (OOMProtector) COMPLETE. Blocks: C-1' (SoulStore), C-5 (MaKaLi routing), C-6' (Breakers). Research: docs/research/R_CG08_ADMISSION_CONTROL.md (to be created).",
+  "priority": 2,
+  "context_delivery": "inline",
+  "resolver_strategy": "escalate",
+  "status": "archive",
+  "submitted_at": "2026-07-22T03:30:16.656373+00:00",
+  "accepted_at": "2026-07-22T03:47:33.964791+00:00",
+  "accepted_by": "opencode/maat",
+  "completed_at": "2026-07-23T03:51:24.584545+00:00",
+  "result": "C-10 Local Admission Control \u2014 DONE. Semaphore(1) + OOMProtector.check_available() integrated with ModelGateway.generate().",
+  "reaped_at": "2026-07-30T03:53:45.473710+00:00"
+}

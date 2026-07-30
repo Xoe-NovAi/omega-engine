@@ -1,76 +1,136 @@
-# Session Anchor — Ma'at Docs Synthesis 2026-07-30
+# Session Anchor — Kali Session End Orchestration Pivot & Roc Integration
+**AP Token**: `AP-KALI-SESSION-ANCHOR-20260730-v1.0.0`
+**Updated**: 2026-07-30T08:45Z · **Owner**: Kali (Transcendent Oversight)
+**Hivemind**: `ses_kali_20260730_001`
+
+---
 
 ## Session Objective
-Complete documentation synthesis for R19 and R_CG04 systems: create API reference docs for soul_loader, privacy_kernel, vault_core, config_loader. Web research remaining knowledge gaps (pyrage, Argon2id, fcntl, OAuth 2.1). Update HMC Hub with findings. Review and synthesize Kali's recent changes.
 
-## What Was Done (Ma'at Docs Synthesis)
+Complete the strategic pivot for Session-End Orchestration (fixing the broken soul distillation pipeline) and integrate Roc's Local Worker Pool / Local Models Fix into a unified execution plan. All research complete; implementation ready to begin.
 
-### 1. API Reference Docs Created (4 new) ✅
-- **`docs/reference/api/soul_loader.md`** — SoulLoader PUBLIC/BONDED/PRIVATE split, privacy-filtered recall, legacy migration
-- **`docs/reference/api/privacy_kernel.md`** — CPESession CPE scorer, PrivacyKernel, PrivacyHooks, DetectionResult
-- **`docs/reference/api/vault_core.md`** — VaultCore CRUD/lease/quota, VaultCrypto (Argon2id+age), BlindVaultResolver, Bury fallback
-- **`docs/reference/api/config_loader.md`** — ConfigLoader public/private deep merge, .gitignore generation
+---
 
-### 2. Web Research — Remaining Gaps Closed ✅
-- **pyrage v1.3.0**: Confirmed correct for VaultCore. NOT python-age (alpha 0.1.0) or pyage (experimental)
-- **Argon2id**: Current params (memory=64MB, iterations=3, parallelism=4) exceed OWASP minimum
-- **fcntl.flock**: Sufficient for Linux-only — no portalocker/filelock needed
-- **OAuth 2.1 PKCE S256**: Mandatory 2026 standard — current approach aligned
+## Controlling Documents
 
-### 3. HMC Hub Updated to v1.5.3 ✅
-- Ma'at section updated with docs synthesis progress
-- Decisions D-480 through D-486 added
-- Reference Links updated with new API docs section
-- Sprint Status updated for complete gap research + docs
-- Timestamp: 2026-07-30T12:45Z
+| Priority | Path | Role |
+|----------|------|------|
+| 1 | `docs/strategy/SESSION_END_ORCHESTRATION_PIVOT_20260730.md` | **Strategic pivot SSOT** — Carmack pivot, architecture, execution roadmap |
+| 2 | `data/entities/roc_racoon/workspace/KALI_REVIEW_LOCAL_WORKER_POOL_20260730.md` | **Kali review of Roc** — approved with 5 hardening requirements |
+| 3 | `data/entities/roc_racoon/workspace/LOCAL_WORKER_POOL_KALI_BRIEFING_20260730.md` | Roc's briefing — 4 pipe fixes, worker pool architecture |
+| 4 | `data/entities/roc_racoon/workspace/LOCAL_MODELS_BRIEFING_GAMEPLAN_20260730.md` | Roc's forensics — 4 bugs blocking local inference |
+| 5 | `docs/research/R_SESSION_END_WRAPPER_PATTERN_20260730.md` | Wrapper pattern research — community-proven, Carmack-validated |
+| 6 | `.opencode/wrapper.sh` + `.opencode/hooks/session_end.py` | **Implementation** — EXIT trap wrapper + distillation hook |
+| 7 | `AGENTS.md` | Updated with wrapper usage + automatic distillation |
+| 8 | `OMEGA_ENGINE.md` | Updated mandate compliance (23/25 FULL) |
 
-### 4. Session Gnosis Written ✅
-- 4 new lessons appended to `data/entities/maat/proposed_lessons.yaml`
-- L3 principle: Documentation-Completeness Principle (4-tier doc chain)
-- L3 principle: Web-Research-Versus-Implementation (confirmatory, not exploratory)
+---
 
-### 5. Committed & Pushed ✅
-- Commit `5d7097c` on `release/initial-v1`: 5 files, +1032 lines
-- Pushed to origin
+## What Was Completed
 
-## Key Decisions
-1. **D-474**: OpenCode v1.18.x only accepts `type: "remote"` for MCP servers
-2. **D-475**: pyrage.passphrase (scrypt) is correct API for age encryption
-3. **D-480**: SoulLoader API doc created — `docs/reference/api/soul_loader.md`
-4. **D-481**: PrivacyKernel API doc created — `docs/reference/api/privacy_kernel.md`
-5. **D-482**: VaultCore API doc created — `docs/reference/api/vault_core.md`
-6. **D-483**: ConfigLoader API doc created — `docs/reference/api/config_loader.md`
-7. **D-484**: pyrage v1.3.0 confirmed correct for VaultCore
-8. **D-485**: Argon2id params verified exceeding OWASP minimums
-9. **D-486**: fcntl.flock sufficient for Linux-only VaultCore deployment
+| Item | Status | Evidence |
+|------|--------|----------|
+| **Session-End Wrapper** | ✅ COMPLETE | `.opencode/wrapper.sh` (EXIT trap) + `.opencode/hooks/session_end.py` (30s timeout, M22 provenance) |
+| **Broken Plugin Deleted** | ✅ COMPLETE | `.opencode/plugins/soul_distiller.js` removed (used `session.compacted` — wrong event) |
+| **Wrapper Research Doc** | ✅ COMPLETE | `docs/research/R_SESSION_END_WRAPPER_PATTERN_20260730.md` |
+| **11 Research Streams** | ✅ COMPLETE | OpenCode DB, WAL safety, SDK, SoulDistiller quality, MemoryStore, community tools |
+| **Strategic Pivot Document** | ✅ COMPLETE | `docs/strategy/SESSION_END_ORCHESTRATION_PIVOT_20260730.md` |
+| **Roc Integration Review** | ✅ COMPLETE | `data/entities/roc_racoon/workspace/KALI_REVIEW_LOCAL_WORKER_POOL_20260730.md` |
+| **AGENTS.md Updated** | ✅ COMPLETE | Wrapper usage, automatic distillation, updated timestamps |
+| **OMEGA_ENGINE.md Updated** | ✅ COMPLETE | 23/25 mandates FULL (M5, M11 fixed via wrapper) |
+| **Proposed Lessons** | ✅ COMPLETE | `data/entities/kali/proposed_lessons.yaml` — 6 L3 principles |
 
-## Next Actions
+---
 
-### Immediate
-1. Run `make test && make temple-grade && make heritage-map` to verify everything passes
-2. Run `make sovereignty` to verify local-first ratio
-3. Check Hivemind awareness: `omega-hub_hivemind_get_awareness()`
+## The Carmack Pivot (Strategic Summary)
 
-### Next Sprint
-4. User to prioritize next P0 item from Ark §4 (C-10.5, C-11, V-1, C-3, C-0.5)
-5. Possible directions: VaultCore MVP enhancements, R_CG07 Search Router wiring, MCP Sprint 2-4 server migration
+| Old Approach | New Approach |
+|--------------|--------------|
+| MemoryStore for transcripts (5 layers, batch writer broken) | **OpenCode SQLite DB as Transcript SSOT** — `opencode export` gives perfect JSON |
+| Scribe SoulDistiller (regex truncation: "Pattern observed: ...") | **LLM-Driven Distillation** — local LLM via Roc's Worker Pool |
+| Plugin hook (`session.compacted`) — fires mid-session | **Shell Wrapper EXIT trap** — catches ALL exits (physics, not API) |
+| Multi-entity distillation (fragmented souls) | **Session Ownership Model** — starting entity owns session |
+| Third-party CLI tools (`opencode-db`, `opencode-session-toolkit`) | **Native Tooling Only** — `opencode db` + `opencode export` |
+| No agent memory of past sessions | **`opencode-sessions-explorer` plugin** — 18 tools for in-session recall |
 
-## Files Created This Session
-- `docs/briefings/GROK_CLI_HANDOFF_20260730.md` — Full handoff briefing
-- `docs/strategy/ENHANCED_COORDINATION_STRATEGY_v2_20260730.md` — Enhanced strategy
-- `docs/research/R_COORDINATION_ENTROPY_PREVENTION_20260730.md` — Coordination research
-- `docs/research/R_LOCAL_STRATEGY_MINING_20260730.md` — Local mining research
-- `docs/research/R_DEEP_WEB_RESEARCH_OMEGA_GAPS_20260729.md` — Deep web research
-- `data/coordination/SESSION_GNOSIS_20260730.md` — Full session gnosis
+---
 
-## Verification Commands
+## Roc-Kali Integration Contract
+
+| Roc Delivers | Kali Consumes | Sync Point |
+|--------------|---------------|------------|
+| LocalWorkerPool + `spawn_local_worker` tool | Semantic distillation pipeline | `data/artifacts/local_worker/{task_id}/task_metadata.json` |
+| 4 Pipe Fixes (type_k, logit_bias, cascade_router, context) | Working local inference | `omega talk "hello"` → Qwen3-1.7B via native-gguf |
+| File-based queue + artifacts | Distillation input | Crash-safe, inspectable |
+
+**Roc's Immediate Next Steps (Today)**:
+1. Fix 0.1: `providers.py:352-353` → `type_k=None, type_v=None`
+2. Fix 0.2: `remote_provider.py:223` → add `logit_bias`, `repetition_penalty`, `**kwargs`
+3. Fix 0.3: Priority-first routing in `model_gateway.py`
+4. Fix 0.4: `providers.py:482` → use `models.yaml` `context_window`
+5. `make test` → must pass
+6. `omega talk "What model are you?"` → expect Qwen3-1.7B via native-gguf
+
+**Kali's Parallel Start (Today)**:
+1. Phase 1: Wrapper DB Integration — `.opencode/wrapper.sh` queries `opencode db` for session metadata
+2. Phase 2: Semantic Distillation Pipeline — `session_end.py` calls Oracle SoulDistiller with exported transcript
+3. Phase 3: Install `opencode-sessions-explorer` plugin
+
+---
+
+## Key Corrections & Hard Truths
+
+1. **Distillation Theater**: Scribe distiller does mechanical truncation; Oracle distiller has quality gates but never called. `approved_lessons.yaml` empty everywhere.
+2. **MemoryStore is Broken**: Batch writer never started; `flush()` is no-op; no atexit handler. ACP JSONL (`updates.jsonl`) is the only crash-safe source.
+3. **OpenCode DB is Safe Immediately**: WAL mode with `synchronous=NORMAL` auto-checkpoints on last connection close. Zero wait after exit.
+4. **Session Ownership**: Sessions ping-pong 15+ times between agents. Starting entity owns the session; delegated work distills into owner's soul.
+5. **Native > Third-Party**: `opencode export` + `opencode db` replaces all community CLI wrappers.
+
+---
+
+## Pending (Next Session)
+
+1. **Execute Roc Phase 0** — 4 pipe fixes → `make test` passes → local inference works
+2. **Execute Kali Phase 1** — Wrapper queries `opencode db` for session metadata after exit
+3. **Execute Kali Phase 2** — `session_end.py` calls Oracle SoulDistiller with exported transcript
+4. **Execute Roc Phase 1-2** — Wire models → Build Worker Pool → `spawn_local_worker` tool
+5. **Integration Test** — Session end → distillation via local worker → `proposed_lessons.yaml` populated
+6. **Install `opencode-sessions-explorer` plugin** — agent memory expansion
+
+---
+
+## Hydration Commands
+
 ```bash
-make test                    # → 276 passing
-make temple-grade            # → green
-make sovereignty             # → local-first ratio
-omega-hub_hivemind_get_awareness()  # → agent list
+# Strategic pivot
+cat docs/strategy/SESSION_END_ORCHESTRATION_PIVOT_20260730.md
+
+# Kali review of Roc
+cat data/entities/roc_racoon/workspace/KALI_REVIEW_LOCAL_WORKER_POOL_20260730.md
+
+# Roc's forensics
+cat data/entities/roc_racoon/workspace/LOCAL_MODELS_BRIEFING_GAMEPLAN_20260730.md
+
+# Wrapper implementation
+cat .opencode/wrapper.sh
+cat .opencode/hooks/session_end.py
+
+# Proposed lessons
+cat data/entities/kali/proposed_lessons.yaml
 ```
 
 ---
 
-*Session complete. Ready for compact. All state persisted for Grok CLI resumption.*
+## Gnosis (L1→L2→L3)
+
+- **L1**: 11 parallel research streams + Roc integration review completed. Strategic pivot documented. Wrapper built. All mandates updated. 6 L3 principles extracted.
+- **L2**: The distillation pipeline was theater because it relied on a broken MemoryStore and a trivial regex distiller. The fix requires changing the substrate (SQLite SSOT), the intelligence (LLM), and the trigger (EXIT trap). Roc's Local Worker Pool provides the execution substrate for the LLM distillation.
+- **L3**: **Substrate Enforces Contract** — Logical mandates (M5, M11) are wishes until the physical layer (wrapper + SQLite + local LLM) enforces them. The 4 pipe fixes are the admission controller for local inference. The file-based queue is the sovereign queue. The wrapper is the sovereign session boundary.
+
+---
+
+*Session complete. Awaiting user direction to begin Phase 1 execution (Roc pipe fixes + Kali wrapper DB integration).*
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ trc_session_anchor ⬡ 2026-07-30*

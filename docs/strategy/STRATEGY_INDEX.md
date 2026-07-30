@@ -28,6 +28,8 @@
 | **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md`** | **START HERE** — Unified strategy & critical path (v5.2) |
 | **`docs/strategy/CRITICAL_PATH_OPENCODE_WORKHORSE_20260722.md`** | **🚨 P0** — Twin tickets **G-1** (workhorse) + **W-1** (WARP); D-377…D-381 |
 | `docs/strategy/STRATEGY_INDEX.md` | This file — hierarchy only |
+| **🚀 POST-PR ROSTER** | **`docs/strategy/POST_PR_ROSTER.md`** | **What to ship after the initial PR** — 7 items ranked, dependencies, effort, why scratched |
+| **🧠 DEF. STRATEGY** | [`docs/research/youtube_research_sessions/session_20260730/04_evidence/CARMACK_DEFINITIVE_STRATEGY_20260730.md`](../research/youtube_research_sessions/session_20260730/04_evidence/CARMACK_DEFINITIVE_STRATEGY_20260730.md) | Full dependency graph, risk matrix, validation gates for all 5 force multipliers |
 
 ## LAYER 2: ACTIVE SPECS + CORPUS (only if Layer 1 references them)
 | Document | Phase | Purpose |

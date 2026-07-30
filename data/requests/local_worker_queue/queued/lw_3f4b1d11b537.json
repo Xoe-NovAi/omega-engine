@@ -1,0 +1,15 @@
+{
+  "task_id": "lw_3f4b1d11b537",
+  "prompt": "What is 2+2?",
+  "model": "qwen3-1.7b",
+  "system_prompt": "",
+  "max_tokens": 1024,
+  "temperature": 0.7,
+  "top_p": 0.95,
+  "entity": "roc_racoon",
+  "trace_id": "lw_3f4b1d11b537",
+  "created_at": "2026-07-30T11:07:06.945940+00:00",
+  "status": "queued",
+  "retries": 0,
+  "max_retries": 3
+}

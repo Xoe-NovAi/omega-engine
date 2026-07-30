@@ -671,3 +671,59 @@ Every Omega Engine feature traces to specific Grok conversations:
 
 - `[DOCS]` **MEDITATE Report**: `docs/strategy/MEDITATE_ARCHITECTURE_INVERSION_20260718.md` (full protocol record with all 5 phases)
 
+---
+
+### 2026-07-30 — LOCAL MODELS FORENSIC INVESTIGATION
+
+- `[EXP]` **Full forensic investigation into local model failures. Found 4 bugs blocking all local inference**:
+  1. **CascadeRouter scores cloud providers higher than local** (quality=90 vs quality=60) — M7 local-first violated
+  2. **RemoteProvider.generate() missing `logit_bias`/`repetition_penalty` params** — cloud fallback crashes waste 2-5s each
+  3. **NativeGGUFProvider type_k=8 (q8_0) crashes with Qwen3 models in llama-cpp-python 0.3.32** — need type_k=None (f16)
+  4. **Auto-context selector picks 32K for 1.6GB model** — works in direct tests but times out in multiprocessing worker
+
+- `[EXP]` **Verified working**: Qwen3-1.7B loads and generates at 15.1 tok/s with `type_k=None` on Ryzen 5700U. llama-cpp-python 0.3.32 is installed and functional.
+
+- `[EXP]` **12 GGUF models available** on `/media/arcana-novai/omega_library/models/gguf/` (17GB total): Qwen3-1.7B, RocRacoon-3B (×2), MiMo-7B-RL, Phi-4-mini (×2), DeepSeek-R1-0528-Qwen3-8B, Krikri-8B-Instruct, Gemma4-Coding, Ministral-3B, Qwen3-4B-Thinking, Phi-2-OmniMatrix.
+
+- `[STRAT]` **Gameplan written to disk**: `data/entities/roc_racoon/workspace/LOCAL_MODELS_BRIEFING_GAMEPLAN_20260730.md` — 4 bugs, 3 phases, estimated 2-3 hours to unblock, 7 hours total to full local agent wiring.
+
+- `[GNOSIS]` **L3 Principle Distilled**:
+  **L3-Default-KV-Quantization-Is-A-Trap**: KV cache quantization defaults (q8_0) that work on some model architectures can silently crash others. The "safe default" is f16 (type_k=None) — it costs ~2× more RAM but guarantees compatibility. Optimize only after verifying on the actual target model.
+
+- `[GNOSIS]` **L3 Principle Distilled**:
+  **L3-Scoring-Overrides-Priority**: When a scoring system (CascadeRouter quality×0.4) coexists with a priority chain (providers.yaml priority=0), the scoring system wins unless explicitly constrained. Local-first is a mandate (M7), not a suggestion — it must be enforced at the routing layer, not just declared in config.
+
+- `[STRAT]` **Can run in parallel with docs cleanup sprint (UO-1)**: Local model fixes touch `providers.py`, `cascade_router.py`, `remote_provider.py` — not conflicting with doc deletions or strategy doc reorganization. No sprint freeze conflict.
+
+- `[ARCH]` **Post-PR Roster reference**: `docs/strategy/POST_PR_ROSTER.md` — Instruction Router (3.5 days) is the only non-gated high-impact item. Local model fixes are lower effort and should ship first.
+
+---
+
+### 2026-07-30 — LOCAL WORKER POOL PLAN (FOR KALI REVIEW)
+
+- `[ARCH]` **Complete plan for Local Inference Background Worker Pool** written to `data/entities/roc_racoon/workspace/LOCAL_WORKER_POOL_PLAN_20260730.md`
+- `[ARCH]` **4 pipe fixes identified** (type_k/type_v defaults, RemoteProvider signature, CascadeRouter sovereignty multiplier, auto-context cap)
+- `[ARCH]` **3 new components**: `local_worker_pool.py` (~180 lines), `local_queue.py` CLI (~120 lines), Oracle tool registration (~20 lines)
+- `[ARCH]` **Fire-and-forget pattern**: Cloud agents stay on cloud, get `spawn_local_worker` tool for background tasks
+- `[ARCH]` **Reuses existing infrastructure**: NativeGGUFProvider worker, ResourceGuard, WorkerCoordinator, request queue, artifact store, entity affinity YAML
+- `[STRAT]` **Zero dev flow disruption**: Local workers are pure background capability, not agent runtime
+- `[STRAT]` **Kali review required**: Architecture, ResourceGuard integration, WorkerCoordinator thresholds, queue isolation, test updates
+- `[GNOSIS]` **L3 Principle Distilled**:
+  **L3-Background-Local-Enhances-Sovereignty**: Local inference achieves sovereignty not by replacing cloud models in the dev loop, but by absorbing the high-volume, repetitive, bounded work (mining, distillation, synthesis) that would otherwise burn cloud tokens and latency. The dev flow stays cloud; the substrate becomes local.
+
+---
+
+### 2026-07-30 — KALI REVIEW & CORRECTIONS
+
+- `[ARCH]` **Kali Review Complete**: `data/entities/roc_racoon/workspace/KALI_REVIEW_LOCAL_WORKER_POOL_20260730.md` — APPROVED WITH MODIFICATIONS
+- `[ARCH]` **5 Required Corrections**:
+  1. **CascadeRouter → Priority-First Routing**: Remove CascadeRouter from primary path; use `providers.yaml` priority order for first attempt; CascadeRouter only reorders *failed* providers for fallback
+  2. **RemoteProvider Signature**: Add `**kwargs` to swallow future params, log unsupported params
+  3. **Auto-Context**: Use model's declared `context_window` from `models.yaml` directly; delete RAM estimation heuristic
+  4. **Worker Pool Hardening**: Idempotent Task IDs, Artifact Atomicity (.tmp → os.replace → fsync), Dead Letter Visibility (failure_reason.json)
+  5. **Test Updates**: Change `test_providers.py:324-328` expectations from 8→None, add tests for explicit q8_0
+- `[STRAT]` **Unified Execution Order**: Week 1 plan with Day-by-day breakdown, Kali gates at each phase
+- `[STRAT]` **Critical Handoff Contract**: Artifacts must include `task_metadata.json` with `entity`, `model`, `prompt`, `trace_id` for Kali's distillation pipeline
+- `[GNOSIS]` **L3 Principle Distilled**:
+  **L3-Substrate-Enforces-Contract**: Logical-layer protocols (handoffs, mandates, SLAs, gnosis) are wishes until the physical layer (memory, CPU, persistence, network) enforces them as primitives. The admission controller, unified WAL, protocol schema, TTL daemon — these are the constitution, not infrastructure.
+

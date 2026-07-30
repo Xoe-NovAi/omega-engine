@@ -1,0 +1,10 @@
+{
+  "task_id": "lw_0eafc4991805",
+  "entity": "roc_racoon",
+  "model": "qwen3-1.7b",
+  "prompt": "What is 2+2?",
+  "system_prompt": "",
+  "trace_id": "lw_0eafc4991805",
+  "started_at": "2026-07-30T10:25:56.184949+00:00",
+  "status": "processing"
+}

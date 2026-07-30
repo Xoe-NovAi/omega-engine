@@ -348,9 +348,10 @@ class NativeGGUFProvider(BaseProvider):
         self._n_ctx_max = config.get("n_ctx_max", 32768)
         self._ctx_overflow = config.get("ctx_overflow", "rolling_window")
 
-        # KV cache configuration
-        self._type_k = config.get("type_k", 8)  # 8 = q8_0
-        self._type_v = config.get("type_v", 8)  # 8 = q8_0, 1 = f16
+        # KV cache configuration — f16 default for maximum model compatibility
+        # [M7 Local-First] q8_0 crashes some models (Qwen3); f16 is safe fallback
+        self._type_k = config.get("type_k", None)  # None = f16 (safe default)
+        self._type_v = config.get("type_v", None)  # None = f16 (safe default)
 
         # ── P0-1: Explicit KV cache type (q8_0 quantizes the KV cache) ──
         # [heritage: quake-1996] Zone Memory — quantize the KV cache to fit
@@ -772,6 +773,7 @@ class NativeGGUFProvider(BaseProvider):
         session_id: Optional[str] = None,
         logit_bias: Optional[Dict[int, float]] = None,
         repetition_penalty: float = 1.0,
+        top_p: float = 0.95,
     ) -> Optional[str]:
         """Perform local inference with Zen 2 optimizations.
         
@@ -786,6 +788,7 @@ class NativeGGUFProvider(BaseProvider):
             session_id: Optional session ID.
             logit_bias: Optional mapping of token IDs to bias values.
             repetition_penalty: Penalty for repeating tokens.
+            top_p: Top-p sampling threshold (nucleus sampling).
         
         Returns:
             Generated text or None on failure.
@@ -814,7 +817,9 @@ class NativeGGUFProvider(BaseProvider):
             "user_query": user_query,
             "max_tokens": max_tokens,
             "temperature": temperature,
-            "stop": ["</s>", "User:", "\n\n"],
+            "top_p": top_p,
+            "repetition_penalty": repetition_penalty,
+            "stop": ["Assistant:", "User:", "\n\n"],
             "enable_thinking": False,
         }
         if logit_bias:

@@ -1,76 +1,133 @@
 {
-  "sprint_id": "FOUNDATION-STAB-01",
-  "campaign": "FOUNDATION_STABILIZATION_CAMPAIGN_20260720.md",
-  "phase": "Β",
-  "started": "2026-07-20T07:15:00Z",
-  "owner": "kali",
-  "status": "PHASE_Β_EXECUTING",
+  "sprint_id": "UNOVERENGINEER-01",
+  "campaign": "data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md",
+  "phase": "SSOT_AND_DOC_SANITY",
+  "started": "2026-07-30T00:00:00Z",
+  "updated": "2026-07-30T05:45:00Z",
+  "owner": "grok_cli",
+  "status": "ACTIVE",
+  "status_detail": "Strategy ratified; Cline ops health complete; mechanical Phase D PASS / operational NO-GO; doc consolidation handed to Cline",
+  "supersedes": [
+    "FOUNDATION-STAB-01 (Jul 20 Phase Β — historical)",
+    "docs/sprints/current/EXECUTION_PLAN_20260725.md (sprint control)",
+    "docs/sprints/guard-and-distill/index.md (sprint control)"
+  ],
+  "primary_handoffs": {
+    "ops_complete": "docs/briefings/CLINE_CLI_HANDOFF_TO_GROK_20260730.md",
+    "ops_results": "data/coordination/CLINE_OPS_HEALTH_RESULTS_20260730.md",
+    "phase_d_verdict": "data/coordination/PHASE_D_GATE_VERDICT_20260730.md",
+    "doc_sanity_cline": "data/coordination/CLINE_DOC_SANITY_HANDOFF_20260730.md"
+  },
   "freeze": {
     "active": true,
-    "until_gate": "Γ",
+    "until_gate": "DOC_SANITY_COMPLETE",
     "frozen": [
-      "new_provider_features",
-      "headless_pool_implementation",
-      "torment_hive_wad_parameterization",
-      "context_packer_expansion",
-      "new_hub_tools_monolithic",
-      "new_strategy_manuals_superseding"
+      "bulk_code_deletions_phase1_until_doc_ssot_stable",
+      "mcp_v2_full_migrate_until_pin_and_spike",
+      "new_strategy_manuals_superseding_unoverengineer_plan",
+      "make_sovereignty_implementation"
     ],
     "allowed": [
-      "foundation_campaign_tasks",
-      "d308_script_authoring",
+      "ssot_reconciliation",
+      "supersession_banners",
+      "doc_inventory_archive_consolidate",
+      "mcp_pin_tighten",
+      "phase_d_gate_rerun",
+      "architect_secrets_restic",
       "critical_production_bugs",
-      "handoff_triage_archive"
+      "warp_bridge_stabilize"
     ]
   },
   "gates": {
-    "Α": { "status": "PASSED", "completed": "2026-07-20T07:15:00Z" },
-    "Β": { "status": "EXECUTING", "depends_on": "Α" },
-    "Γ": { "status": "PENDING", "depends_on": "Β" },
-    "Δ": { "status": "PENDING", "depends_on": "Γ" }
-  },
-  "amendments": {
-    "document": "docs/strategy/PHASE_BETA_AMENDMENTS_20260720.md",
-    "grok_review": "ses_20260720_phase_beta_advisory",
-    "verdict": "APPROVE WITH AMENDMENTS",
-    "critical_fixes": [
-      "A1: Write-path default = 768 only (Gemma+Nomic); MiniLM/static demoted",
-      "A2: config_resolver has no .resolve() — use CONFIG_DIR / 'embedding_strategy.yaml'",
-      "A3: Provider key is 'id' not 'name'",
-      "A4: Contract tests must be real (not stubs) — M23",
-      "A5: Existing vec0 tables at wrong dim — document recreate vs migrate",
-      "A6: Third loader in ics.py — cwd-relative path bug",
-      "A7: Registry API shape — YAML has 'entities:' list, not top-level list",
-      "A8: Path CI allowlist not ban-all — ~46 Path(__file__) hits",
-      "A9: Migration map incomplete — must/should/may tiers",
-      "A10: D-282 PRAGMA stack is law — busy_timeout=30000, cache=32MB",
-      "A11: Profiles not one stack — memory/search/metrics",
-      "A12: sqlite3.connect flags API bug — use uri=True pattern",
-      "A13: Gate criterion fix — allow operational PRAGMAs (table_info, wal_checkpoint)"
-    ]
+    "ops_health_abc": {
+      "status": "COMPLETE",
+      "owner": "cline",
+      "completed": "2026-07-30T04:45:00Z",
+      "packet": "ho_c8bf25e6cf21"
+    },
+    "phase_d_mechanical": {
+      "status": "PASSED",
+      "completed": "2026-07-30T05:40:00Z",
+      "required": "11/11",
+      "artifact": "data/coordination/phase_d_gate_last.json"
+    },
+    "phase_d_operational": {
+      "status": "NO_GO",
+      "blockers": [
+        "C-3: no successful restic oneshot (OMEGA_VAULT_PASSPHRASE / .env.backup missing)",
+        "W-1: 1/3 SOCKS (8083 only); node units flaky",
+        "G-1: free Gemma TPM cliff; needs Architect or G-1e local GGUF"
+      ]
+    },
+    "doc_sanity": {
+      "status": "DISPATCHED_TO_CLINE",
+      "owner": "cline",
+      "packet": "data/coordination/CLINE_DOC_SANITY_HANDOFF_20260730.md"
+    },
+    "unoverengineer_phase1": {
+      "status": "PENDING",
+      "depends_on": ["doc_sanity", "ssot_stable"],
+      "note": "pybreaker/stamina/structlog/prometheus — after docs sane"
+    }
   },
   "workstreams": {
-    "FS-Β1": { "task": "Embedding SSOT + Kill 1024-Dim (A1-A5)", "owner": "Jem/P2/P10", "status": "DISPATCHED", "risk": "CRITICAL" },
-    "FS-Β2": { "task": "Dispatch Registry Extraction (A6-A7)", "owner": "Kali/P5", "status": "DISPATCHED", "risk": "HIGH" },
-    "FS-Β3": { "task": "Path Resolver CI Gate + Migrations (A8-A9)", "owner": "P1/P5", "status": "DISPATCHED", "risk": "HIGH" },
-    "FS-Β4": { "task": "Shared SQLite Policy Helper — Profiles (A10-A13)", "owner": "P2", "status": "DISPATCHED", "risk": "MEDIUM" },
-    "FS-Β5": { "task": "search_persistence AnyIO + DATA_DIR Fix (M16)", "owner": "P8/P2", "status": "DISPATCHED", "risk": "MEDIUM" },
-    "FS-Α0": { "task": "Composable Prompt Architecture", "owner": "P3 Engineering", "status": "HANDOFF SUBMITTED (ho_4c2ccc186a70)" },
-    "FS-Α0": { "task": "Heritage Vet: Pi PR #2903", "owner": "Verity+Doom Guy", "status": "ACTIVE" },
-    "FS-Α1.1": { "task": "Entity-Scoped Session Anchors", "owner": "Researcher", "status": "RESEARCH COMPLETE" },
-    "FS-Α2": { "task": "Collapse Dual RRF", "owner": "Roc Racoon", "status": "COMPLETE" },
-    "FS-Α3": { "task": "Restore Grok Consulting Seat + Soul", "owner": "Grok CLI", "status": "COMPLETE" },
-    "FS-Α4": { "task": "Strategy Index", "owner": "Verity", "status": "COMPLETE" },
-    "FS-Α5": { "task": "Fix SESSION_ANCHOR", "owner": "Kali", "status": "COMPLETE" },
-    "FS-Α6": { "task": "M2 Firewall 156 Violations", "owner": "Kali+P5", "status": "PLANNED → Phase Β" }
+    "UO-0": {
+      "task": "Ops Health A→B→C",
+      "owner": "cline",
+      "status": "COMPLETE",
+      "risk": "MEDIUM"
+    },
+    "UO-1": {
+      "task": "SSOT reconciliation (ACTIVE_SPRINT, OMEGA §2, SESSION_ANCHOR, banners)",
+      "owner": "grok_cli",
+      "status": "COMPLETE",
+      "risk": "HIGH"
+    },
+    "UO-2": {
+      "task": "Phase D dual-layer verdict",
+      "owner": "grok_cli",
+      "status": "COMPLETE",
+      "risk": "HIGH"
+    },
+    "UO-3": {
+      "task": "MCP pin containment + v2 migration schedule",
+      "owner": "grok_cli",
+      "status": "COMPLETE",
+      "risk": "CRITICAL",
+      "artifact": "data/coordination/MCP_V2_MIGRATION_SCHEDULE_20260730.md",
+      "pin": "mcp>=1.28.1,<2"
+    },
+    "UO-4": {
+      "task": "Documentation sanity — inventory, supersede, archive, consolidate (1M context)",
+      "owner": "cline",
+      "status": "READY",
+      "risk": "HIGH",
+      "why_cline": "Token-heavy multi-file reads; free tier + 1M context"
+    },
+    "UO-5": {
+      "task": "Architect: .env.backup + restic oneshot success",
+      "owner": "architect",
+      "status": "BLOCKED_ON_SECRETS",
+      "risk": "CRITICAL"
+    },
+    "UO-6": {
+      "task": "Un-overengineering Phase 1 library adoptions",
+      "owner": "cline+grok",
+      "status": "FROZEN_UNTIL_DOC_SANITY",
+      "risk": "MEDIUM"
+    }
   },
-  "deferred": [
-    "COORDINATED_STRIKE_ROADMAP_20260720.md (until Gate Γ)",
-    "Headless 24-account pool (until Gate Γ)",
-    "Torment/Hive WAD parameterization (until Gate Γ)",
-    "MaKaLi Council product (until Gate Γ)",
-    "Gemma 4 capability matrix (until Gate Γ)",
-    "Version Change Watchdog (Phase Δ)",
-    "OpenCode v2 recon (Phase Δ)"
+  "decisions_locked": [
+    "D-487..D-496 un-overengineering",
+    "D-500..D-506 ops health",
+    "D-507 Grok strategy / Cline token-heavy docs",
+    "D-508 mechanical gate != operational close",
+    "D-509 un-overengineering plan controls sprint (not Jul 25 EXECUTION_PLAN)"
+  ],
+  "ark_strategy_ssot": "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md",
+  "notes": [
+    "Foundation Stabilization FOUNDATION-STAB-01 is historical — do not resume as current sprint.",
+    "make sovereignty target intentionally absent — do not implement.",
+    "Breaker clone count corrected to 17 (was 6 in early plan text)."
   ]
 }

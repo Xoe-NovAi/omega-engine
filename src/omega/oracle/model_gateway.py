@@ -933,16 +933,56 @@ class ModelGateway:
 
     async def generate(
         self, model_name: str, system_prompt: str, user_query: str,
-        temperature: float = 0.7, max_tokens: int = 1024, trace_id: Optional[str] = None,
+        temperature: Optional[float] = None, max_tokens: int = 1024, trace_id: Optional[str] = None,
         session_id: Optional[str] = None, entity_name: Optional[str] = None,
         logit_bias: Optional[Dict[int, float]] = None,
-        repetition_penalty: float = 1.0,
+        repetition_penalty: Optional[float] = None,
+        top_p: Optional[float] = None,
     ) -> 'GenerateResult':
         """Iterate provider fabric with circuit breaker protection.
         
         [id-soft: vet-055] Fixed-Size Active Set — first try the 32 most recently
         successful providers before falling back to the full fabric.
+        
+        Sampling parameter resolution order (highest to lowest priority):
+        1. Explicit per-request parameter
+        2. Model config (models.yaml)
+        3. Entity affinity/config
+        4. Global cvars (config.sampling.*)
+        5. Hardcoded defaults
         """
+        # Resolve sampling parameters with layered defaults
+        # Model config as intermediate layer
+        spec = self.get_model_spec(model_name)
+        
+        # Temperature: per-request > model config > cvar > hardcoded
+        if temperature is None:
+            temperature = spec.get("temperature") if spec else None
+        if temperature is None:
+            temperature = cvar_get("config.sampling.temperature", 0.7)
+        
+        # Top-p: per-request > model config > cvar > hardcoded
+        if top_p is None:
+            top_p = spec.get("top_p") if spec else None
+        if top_p is None:
+            top_p = cvar_get("config.sampling.top_p", 0.95)
+        
+        # Repetition penalty: per-request > model config > cvar > hardcoded
+        if repetition_penalty is None:
+            repetition_penalty = spec.get("repetition_penalty") if spec else None
+        if repetition_penalty is None:
+            repetition_penalty = cvar_get("config.sampling.repetition_penalty", 1.0)
+        
+        # Top-k: per-request > model config > cvar > hardcoded
+        top_k = spec.get("top_k") if spec else None
+        if top_k is None:
+            top_k = cvar_get("config.sampling.top_k", 40)
+        
+        # Min-p: per-request > model config > cvar > hardcoded
+        min_p = spec.get("min_p") if spec else None
+        if min_p is None:
+            min_p = cvar_get("config.sampling.min_p", 0.0)
+        
         # ── Sovereign Sampling Layer ──────────────────────────────────────────
         # [Sovereign Sampling] Intervention for Gemma 4 31B to eliminate repetition loops.
         # Target: gemma-4-31b-it (or any model identified as Gemma 4 31B)
@@ -1098,6 +1138,7 @@ class ModelGateway:
                                         session_id=session_id,
                                         logit_bias=logit_bias,
                                         repetition_penalty=repetition_penalty,
+                                        top_p=top_p,
                                     )
                                     if not r:
                                         raise TimeoutError(f"Provider {provider.name} returned empty response")
@@ -1110,6 +1151,7 @@ class ModelGateway:
                                     session_id=session_id,
                                     logit_bias=logit_bias,
                                     repetition_penalty=repetition_penalty,
+                                    top_p=top_p,
                                 )
                         else:
                             result = await provider.generate(
@@ -1118,6 +1160,7 @@ class ModelGateway:
                                 session_id=session_id,
                                 logit_bias=logit_bias,
                                 repetition_penalty=repetition_penalty,
+                                top_p=top_p,
                             )
                         
                         if result:
@@ -1301,12 +1344,12 @@ class ModelGateway:
 
 
 
-    async def _call_provider_with_resilience(self, provider, model_name, system_prompt, user_query, temperature, max_tokens, trace_id=None):
+    async def _call_provider_with_resilience(self, provider, model_name, system_prompt, user_query, temperature, max_tokens, trace_id=None, repetition_penalty=1.0, top_p=0.95):
         """Wrapper to apply the OpenRouter retry policy."""
         @openrouter_retry_policy
         async def _do_call():
             try:
-                return await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id)
+                return await provider.generate(model_name, system_prompt, user_query, temperature, max_tokens, trace_id=trace_id, repetition_penalty=repetition_penalty, top_p=top_p)
             except (OmegaError, RuntimeError, OSError) as e:
                 # Map specific HTTP errors to Transient vs Fatal
                 err_msg = str(e).lower()

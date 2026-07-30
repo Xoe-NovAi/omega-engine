@@ -255,6 +255,7 @@ Full review: `data/coordination/GROK_CLI_CODEBASE_STRATEGY_REVIEW_20260721.md`
 | Roc | ROC_LEGACY_MINING | Port patterns · cloud matrix (held) |
 | Grokster | ADVERSARIAL_REVIEW · Identity Fluidity workspace · queue analysis | Strategy challenge · Phase E · fleet |
 | Carmack | CARMACK_RESEARCH_AUDIT | Compress research theater · D-1 first |
+| Carmack+Researcher | CARMACK_DEFINITIVE_STRATEGY_20260730 | YouTube Research Session — 24 proposals → top 5 force multipliers (Ornith-9B, Vulkan, Instruction Router, Hardening, llama-optimus). Deep-dive evidence base: 5,000+ lines across 6 documents. Phase 0 strategy: research complete, awaiting implementation go/no-go. Definitive doc in `docs/research/youtube_research_sessions/session_20260730/04_evidence/CARMACK_DEFINITIVE_STRATEGY_20260730.md`. |
 | Grok CLI | GROK_CLI_CODEBASE_STRATEGY_REVIEW | SoulStore · CB unify · structural gates |
 | Nemotron 3 Ultra | THIS REVIEW | Dependency order · test infra · MCP deadline · E-0 integration |
 
@@ -282,6 +283,7 @@ Full matrix: **`STRATEGY_CORPUS_MAP.md` §1**
 | `data/coordination/GROK_CLI_CODEBASE_STRATEGY_REVIEW_20260721.md` | Structural review |
 | `data/coordination/RESEARCHER_QUEUE_DESIGN_20260721.md` | Queue / SQLite / gates deep design |
 | `data/coordination/CARMACK_RESEARCH_AUDIT_20260721.md` | Research board compression |
+`docs/research/youtube_research_sessions/session_20260730/04_evidence/CARMACK_DEFINITIVE_STRATEGY_20260730.md` | **Top-5 force multipliers strategy (2026-07-30)** — Ornith-9B, Vulkan, Instruction Router, Hardening, llama-optimus deep dives |
 | `data/coordination/RESEARCH_JOB_BOARD.yaml` | 18 jobs (D-2 input) |
 | `docs/decisions/PIVOT_LOG.md` | Decision history |
 

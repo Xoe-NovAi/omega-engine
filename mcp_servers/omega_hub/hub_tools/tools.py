@@ -246,6 +246,266 @@ async def oracle_summon_local(entity_name: str, query: str, model: str) -> str:
     }, indent=2)
 
 
+@m9_safe("spawn_local_worker")
+@mcp.tool()
+async def spawn_local_worker(
+    task: str,
+    model: str = "qwen3-1.7b",
+    system_prompt: str = "",
+    max_tokens: int = 1024,
+    temperature: float = 0.7,
+    entity: str = "roc_racoon",
+) -> str:
+    """Fire-and-forget local inference using GGUF models. Returns task_id immediately.
+    
+    [Phase 2 Local Worker Pool] Offloads work to background local models.
+    Use for: mining, distillation, pattern extraction, synthesis, pre-commit checks.
+    
+    Args:
+        task: The prompt/task for local inference
+        model: GGUF model to use (default: qwen3-1.7b)
+        system_prompt: System prompt (default: "")
+        max_tokens: Max tokens to generate (default: 1024)
+        temperature: Sampling temperature (default: 0.7)
+        entity: Entity name for tracking (default: roc_racoon)
+        
+    Returns:
+        JSON string with task_id and status.
+    """
+    _require_service()
+    from omega.oracle.local_worker_pool import queue_local_task
+    task_id = await queue_local_task(
+        prompt=task,
+        model=model,
+        system_prompt=system_prompt,
+        max_tokens=max_tokens,
+        temperature=temperature,
+        entity=entity,
+    )
+    return json.dumps({
+        "task_id": task_id,
+        "status": "queued",
+        "model": model,
+        "entity": entity,
+        "message": f"Task queued. Check status with local_queue_status or local_queue_cat.",
+    }, indent=2)
+
+
+@m9_safe("local_queue_status")
+@mcp.tool()
+async def local_queue_status(task_id: str) -> str:
+    """Get status of a local worker task.
+    
+    Args:
+        task_id: The task ID returned by spawn_local_worker.
+        
+    Returns:
+        JSON string with task status.
+    """
+    _require_service()
+    from omega.oracle.local_worker_pool import get_local_task_status
+    status = await get_local_task_status(task_id)
+    if status is None:
+        return json.dumps({"error": f"Task '{task_id}' not found"})
+    return json.dumps(status, indent=2)
+
+
+@m9_safe("local_queue_cat")
+@mcp.tool()
+async def local_queue_cat(task_id: str) -> str:
+    """Get result of a completed local worker task.
+    
+    Args:
+        task_id: The task ID returned by spawn_local_worker.
+        
+    Returns:
+        JSON string with task result.
+    """
+    _require_service()
+    from omega.oracle.local_worker_pool import get_local_task_result
+    result = await get_local_task_result(task_id)
+    if result is None:
+        return json.dumps({"error": f"Result for '{task_id}' not found. Task may not be completed yet."})
+    return json.dumps({
+        "task_id": result.task_id,
+        "text": result.text,
+        "model": result.model,
+        "provider_name": result.provider_name,
+        "tokens_generated": result.tokens_generated,
+        "latency_ms": result.latency_ms,
+        "entity": result.entity,
+        "trace_id": result.trace_id,
+        "completed_at": result.completed_at,
+        "error": result.error,
+    }, indent=2)
+
+
+@m9_safe("local_queue_list")
+@mcp.tool()
+async def local_queue_list(
+    status: str = "all",
+    limit: int = 20,
+    entity: str = "",
+) -> str:
+    """List local worker tasks with optional filters.
+    
+    Args:
+        status: Filter by status (queued/completed/dead/all)
+        limit: Max tasks to show (default: 20)
+        entity: Filter by entity name
+        
+    Returns:
+        JSON string with list of tasks.
+    """
+    _require_service()
+    from omega.oracle.local_worker_pool import list_local_tasks, TaskStatus
+    status_enum = None
+    if status != "all":
+        try:
+            status_enum = TaskStatus(status.lower())
+        except ValueError:
+            return json.dumps({"error": f"Invalid status: {status}. Use: queued, completed, dead, all"})
+    
+    tasks = await list_local_tasks(status=status_enum, limit=limit, entity=entity if entity else None)
+    return json.dumps(tasks, indent=2)
+
+
+@m9_safe("spawn_local_worker")
+@mcp.tool()
+async def spawn_local_worker(
+    task: str,
+    model: str = "qwen3-1.7b",
+    system_prompt: str = "",
+    max_tokens: int = 1024,
+    temperature: float = 0.7,
+    top_p: float = 0.95,
+    entity: str = "roc_racoon",
+) -> str:
+    """Fire-and-forget local inference using GGUF models. Returns task_id immediately.
+    
+    Offloads work to background local worker pool. Use for:
+    - Legacy code mining (@roc_racoon)
+    - Soul distillation L1→L2 (@scribe, @verity)
+    - Pattern extraction (@roc_racoon, @researcher)
+    - Cross-video synthesis (@youtube_worker)
+    - Pre-commit mandate checks (@verity)
+    
+    Args:
+        task: The prompt/task for local inference
+        model: GGUF model to use (default: qwen3-1.7b)
+        system_prompt: Optional system prompt
+        max_tokens: Max tokens to generate (default: 1024)
+        temperature: Sampling temperature (default: 0.7)
+        top_p: Top-p sampling (default: 0.95)
+        entity: Entity name for tracking (default: roc_racoon)
+        
+    Returns:
+        JSON string with task_id and status. Check result with local_queue_status.
+    """
+    _require_service()
+    from omega.oracle.local_worker_pool import queue_local_task
+    
+    task_id = await queue_local_task(
+        prompt=task,
+        model=model,
+        system_prompt=system_prompt,
+        max_tokens=max_tokens,
+        temperature=temperature,
+        top_p=top_p,
+        entity=entity,
+    )
+    return json.dumps({
+        "status": "queued",
+        "task_id": task_id,
+        "model": model,
+        "entity": entity,
+        "check_status": f"local_queue_status {task_id}",
+        "get_result": f"local_queue_cat {task_id}",
+    }, indent=2)
+
+
+@m9_safe("local_queue_status")
+@mcp.tool()
+async def local_queue_status(task_id: str) -> str:
+    """Check status of a local worker task.
+    
+    Args:
+        task_id: Task ID returned by spawn_local_worker
+        
+    Returns:
+        JSON string with task status, model, entity, created_at, etc.
+    """
+    _require_service()
+    from omega.oracle.local_worker_pool import get_local_task_status
+    
+    status = await get_local_task_status(task_id)
+    if not status:
+        return json.dumps({"error": f"Task '{task_id}' not found"})
+    return json.dumps(status, indent=2)
+
+
+@m9_safe("local_queue_cat")
+@mcp.tool()
+async def local_queue_cat(task_id: str) -> str:
+    """Get result of a completed local worker task.
+    
+    Args:
+        task_id: Task ID returned by spawn_local_worker
+        
+    Returns:
+        JSON string with result text, provider, tokens, latency, metadata.
+    """
+    _require_service()
+    from omega.oracle.local_worker_pool import get_local_task_result
+    
+    result = await get_local_task_result(task_id)
+    if not result:
+        return json.dumps({"error": f"Result for '{task_id}' not found. Task may not be completed yet."})
+    return json.dumps({
+        "task_id": result.task_id,
+        "text": result.text,
+        "model": result.model,
+        "provider_name": result.provider_name,
+        "tokens_generated": result.tokens_generated,
+        "latency_ms": result.latency_ms,
+        "entity": result.entity,
+        "trace_id": result.trace_id,
+        "completed_at": result.completed_at,
+        "error": result.error,
+    }, indent=2)
+
+
+@m9_safe("local_queue_list")
+@mcp.tool()
+async def local_queue_list(
+    status: Optional[str] = None,
+    limit: int = 20,
+    entity: Optional[str] = None,
+) -> str:
+    """List local worker tasks with optional filters.
+    
+    Args:
+        status: Filter by status (queued/completed/dead)
+        limit: Max tasks to return (default: 20)
+        entity: Filter by entity name
+        
+    Returns:
+        JSON string with list of tasks.
+    """
+    _require_service()
+    from omega.oracle.local_worker_pool import list_local_tasks, TaskStatus
+    
+    status_enum = None
+    if status:
+        try:
+            status_enum = TaskStatus(status.lower())
+        except ValueError:
+            return json.dumps({"error": f"Invalid status: {status}. Use: queued, completed, dead"})
+    
+    tasks = await list_local_tasks(status=status_enum, limit=limit, entity=entity)
+    return json.dumps(tasks, indent=2)
+
+
 @m9_safe("oracle_list_entities")
 @mcp.tool()
 async def oracle_list_entities() -> str:

@@ -310,6 +310,33 @@ CVAR_TABLE: Dict[str, CvarDef] = {
         "NativeGGUFProvider",
     ),
 
+    # ── config.sampling.* — Global inference sampling defaults ─────
+    "config.sampling.temperature": CvarDef(
+        "config.sampling.temperature", 0.7, "float",
+        "Global default temperature for all providers (0.0=greedy, higher=more random)",
+        "ModelGateway",
+    ),
+    "config.sampling.top_p": CvarDef(
+        "config.sampling.top_p", 0.95, "float",
+        "Global default top-p (nucleus sampling) for all providers",
+        "ModelGateway",
+    ),
+    "config.sampling.top_k": CvarDef(
+        "config.sampling.top_k", 40, "int",
+        "Global default top-k sampling for all providers (0=disabled)",
+        "ModelGateway",
+    ),
+    "config.sampling.repetition_penalty": CvarDef(
+        "config.sampling.repetition_penalty", 1.0, "float",
+        "Global default repetition penalty for all providers (1.0=disabled)",
+        "ModelGateway",
+    ),
+    "config.sampling.min_p": CvarDef(
+        "config.sampling.min_p", 0.0, "float",
+        "Global default min-p sampling for all providers (0.0=disabled)",
+        "ModelGateway",
+    ),
+
     # ── config.providers.* — Provider-specific knobs ─────────────
     "config.providers.google.auth_header": CvarDef(
         "config.providers.google.auth_header", "x-goog-api-key", "str",

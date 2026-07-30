@@ -322,8 +322,14 @@ class TestNativeGGUFProvider:
         assert p._type_v == 0
 
     def test_init_default_kv_cache(self):
-        """__init__ defaults to q8_0 (enum 8) for KV cache."""
+        """__init__ defaults to f16 (None) for maximum model compatibility."""
         p = NativeGGUFProvider("native", {"model_path": "/tmp/test.gguf"})
+        assert p._type_k is None  # f16 default (safe for all models)
+        assert p._type_v is None
+
+    def test_init_explicit_q8_0_kv_cache(self):
+        """Explicit q8_0 should still work for models that support it."""
+        p = NativeGGUFProvider("native", {"model_path": "/tmp/test.gguf", "type_k": 8, "type_v": 8})
         assert p._type_k == 8
         assert p._type_v == 8
 

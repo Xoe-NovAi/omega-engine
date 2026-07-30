@@ -2,13 +2,20 @@
 **AP Token**: `AP-FLEET-EXECUTION-PLAN-v1.2.0`  
 ⬡ OMEGA ⬡ KALI ⬡ FLEET ⬡ PHASE-D-GATE ⬡ 2026-07-25
 
-**Status**: 🟡 **HARDENED v1.2** — Process audit complete, 7 web-research domains closed, sprint ready for execution  
+> ## ⚠️ SUPERSEDED FOR SPRINT CONTROL (2026-07-30)
+> **Status**: 📦 **SUPERSEDED** — historical trail only. Do **not** treat this file as the active sprint.
+> **Successor (near-term sprint)**: `data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md` + `data/coordination/ACTIVE_SPRINT.json` (`UNOVERENGINEER-01`)
+> **Ops truth**: `docs/briefings/CLINE_CLI_HANDOFF_TO_GROK_20260730.md` · **Gate verdict**: `data/coordination/PHASE_D_GATE_VERDICT_20260730.md`
+> **Session**: `data/coordination/SESSION_ANCHOR.md`
+> Body below preserved for archaeology; metrics may be stale vs live probes.
+
+**Status**: 📦 **SUPERSEDED** (was 🟡 HARDENED v1.2 on 2026-07-25)  
 **Owner**: @kali (Sprint Lead) · Final review: @cline 2026-07-25  
 **Gate**: Phase D entry — Integrity Gate (B1-B5) → Process Reform (P-1..P-7) → Phase D  
 **Agent card (read first)**: `docs/sprints/current/AGENT_SPRINT_CARD.md`  
 **Process reform plan**: `docs/strategy/PROCESS_IMPROVEMENT_PLAN_20260725.md`  
 **Gap research**: `docs/research/R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md`  
-**LAST_VERIFIED**: 2026-07-25T23:00Z (machine probes + git + hub cross-check + web research)
+**LAST_VERIFIED**: 2026-07-25T23:00Z (stale — see SESSION_ANCHOR 2026-07-30)
 
 ---
 

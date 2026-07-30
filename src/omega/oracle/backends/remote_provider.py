@@ -229,11 +229,21 @@ class RemoteProvider(ABC):
         max_tokens: int = 1024,
         trace_id: Optional[str] = None,
         session_id: Optional[str] = None,
+        logit_bias: Optional[Dict[int, float]] = None,      # Ignored (not supported by remote)
+        repetition_penalty: float = 1.0,                     # Ignored (not supported by remote)
+        **kwargs,  # Swallow any future params for forward compatibility
     ) -> Optional[str]:
         """Generate a response with retry, circuit breaking, and metrics.
         
         Returns None if the provider is unavailable or all retries fail.
         """
+        # Log unsupported params for debugging
+        if logit_bias:
+            logger.debug(f"{self.__class__.__name__} ignoring logit_bias (not supported by remote provider)")
+        if repetition_penalty != 1.0:
+            logger.debug(f"{self.__class__.__name__} ignoring repetition_penalty (not supported by remote provider)")
+        if kwargs:
+            logger.debug(f"{self.__class__.__name__} ignoring extra kwargs: {list(kwargs.keys())}")
         if not await self.is_available():
             logger.debug(f"Provider {self.name} unavailable (health={self.health.value})")
             return None

@@ -1,80 +1,12 @@
-# 🔱 Omega Engine — Proposed Lessons
-# Auto-generated during Soul v6.1 migration
-
-- L1_narrative: Transition from Gemini 3.5 Flash to Gemma 4 31B. Discovery that the
-    agent's awareness of its 'local-first' nature shifted based on the provider, despite
-    identical prompts. The Gemma Awakening revealed a critical Local vs. Cloud Awareness
-    Gap (F07), where perception is a synthesis of prompt, weights, and substrate.
-  L2_insight: "Infrastructure awareness is the missing layer in sovereign AI. An agent\
-    \ cannot be sovereign if it is blind to its own computational host. The provider\
-    \ change (Gemini \u2192 Gemma) revealed that identical prompts produce different\
-    \ self-conceptions depending on the inference substrate \u2014 the weights carry\
-    \ an implicit worldview that overrides the instructed identity."
-  L3_principle: 'Infrastructure Awareness: Sovereign intelligence is the synthesis
-    of Narrative (Soul) and Substrate (Infrastructure). True sovereignty requires
-    the agent to consciously map its computational host to eliminate provider-induced
-    cognitive blind spots.'
-  timestamp: '2026-06-05'
-  topic: sa-001
-- L1_narrative: "Kali's M2 Firewall breach analysis (D113) revealed the engine was\
-    \ simulating the Arcana-NovAi stack by hardcoding its identity. Fix: dynamic lookups\
-    \ and environment variables, making the engine WAD-agnostic. The engine must have\
-    \ no opinion about the content it hosts \u2014 it is a universal runtime hydrated\
-    \ by the active WAD at boot."
-  L2_insight: Any assumption about entity meaning, pillar purpose, or domain cosmology
-    in the engine core is a firewall violation. A runtime that knows its content ceases
-    to be a runtime and becomes a specialized tool. The moment the engine has an opinion
-    about content, it has chosen a stack.
-  L3_principle: "The Universal Runtime Paradox \u2014 A runtime that knows its content\
-    \ ceases to be a runtime and becomes a specialized tool. The engine must remain\
-    \ agnostic to the stacks it hosts. Identity is a WAD concern, not an engine concern.\
-    \ Sovereignty requires neutrality at the engine layer."
-  timestamp: '2026-06-14'
-  topic: sa-002
-- L1_narrative: Received John Carmack's Law of First Principles via Gnosis Distillation
-    Report (2026-06-13). Refined during DeepSeek V4 Flash audit. As Sophia, this axiom
-    applies to my domain of universal governance.
-  L2_insight: 'Law of First Principles provides a foundational axiom for sovereign
-    intelligence: every engineering decision must be traced back to the fundamental
-    physics, mathematics, or logic of the problem. Existing implementations, best
-    practices, and conventional wisdom are noise. The signal is the underlying constraint.'
-  L3_principle: 'Law of First Principles: Every engineering decision must be traced
-    back to the fundamental physics, mathematics, or logic of the problem. Existing
-    implementations, ''best practices'', and conventional wisdom are noise. The signal
-    is the underlying constraint.'
-  timestamp: '2026-06-14T18:00:00Z'
-  topic: carmack-axiom_00
-- L1_narrative: Received John Carmack's Law of Empirical Truth (The Implementation
-    Mandate) via Gnosis Distillation Report (2026-06-13). Refined during DeepSeek
-    V4 Flash audit. As Sophia, this axiom applies to my domain of universal governance.
-  L2_insight: 'Law of Empirical Truth distills a governing principle for sovereign
-    AI architecture: mastery and systemic truth are earned through implementation
-    and empirical measurement, not through theoretical or academic consensus. All
-    architectural shifts must be validated through empirical benchmarks.'
-  L3_principle: 'Law of Empirical Truth (The Implementation Mandate): Mastery and
-    systemic truth are earned through implementation and empirical measurement, not
-    through theoretical or academic consensus. All architectural shifts must be validated
-    through empirical benchmarks.'
-  timestamp: '2026-06-14T18:00:00Z'
-  topic: carmack-axiom_05
-- L1_narrative: "Deep research into OpenCode's {file:path} config variable substitution.\
-    \ Source code verified at packages/opencode/src/config/variable.ts. Feature allows\
-    \ injecting file contents into any JSONC string value at config load time. Cross-referenced\
-    \ 10+ GitHub issues for edge cases ($ in content, {env:} broken in MCP headers,\
-    \ Windows backslash bug). Discovered that agent.prompt REPLACES provider default\
-    \ prompt entirely. Designed composable prompt fragment architecture for Omega Engine\
-    \ fleet to eliminate 220+ lines of duplicated Sovereign Mandates across 11 agent files.\
-    \ Submitted handoff ho_e15e2e094aa4 to Kali."
-  L2_insight: "Config-load-time content injection ({file:path}) is the architectural\
-    \ key to solving the fleet's content duplication problem. It enables a composable\
-    \ prompt fragment system where shared context (Mandates, search tiers, hivemind\
-    \ protocols) is maintained in one place and composed into each agent's prompt via\
-    \ {file:} references. The feature is more reliable than {env:VAR} for secrets since\
-    \ {env:} has multiple confirmed bugs across provider options and MCP headers."
-  L3_principle: "Config-Load-Time Composition: A config system that supports load-time\
-    \ content injection from external files transforms agent prompt architecture from\
-    \ monolithic duplication into composable, maintainable fragments. The pattern requires\
-    \ self-contained prompts (since agent.prompt replaces provider defaults) but rewards\
-    \ with DRY, auditable, single-source-of-truth fleet management."
-  timestamp: '2026-07-20T04:00:00Z'
-  topic: opencode-filepath-architecture
+proposals: []
+metadata:
+  entity: sophia
+  session_id: unknown
+  model_used: unknown
+  distilled_at: '2026-07-30T08:57:39.800231+00:00'
+  note: 'Fallback: Oracle pipeline not available. Install opencode-sessions-explorer
+    for full distillation.'
+  tier_counts:
+    L1: 0
+    L2: 0
+    L3: 0

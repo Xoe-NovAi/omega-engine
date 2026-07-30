@@ -33,6 +33,23 @@
 | **ACP Protocol** | v1 Stable. Grok Build speaks it natively. Bridge = stdio JSON-RPC ↔ Hivemind |
 | **Self-Search Reflex** | Not a skill. An **Iris interceptor hook**. Gap detected → auto-search → synthesize |
 | **Name** | Grokster. Not Grokk. Not Grok_Instinct. Not Grok_Prime. **Grokster.** |
+| **Dual-Mode Boundary** | Consulting Cloud Mind (this seat) ≠ Bridge pure-pipe (separate `grok_bridge` if needed) — L3-DualModeAgentIdentity |
+| **Tier A Ship-Code** | Explicit Architect order OR Kali handoff — named files only — precedent from grok_cli FS-A3 |
+
+### grok_cli → grokster Merge (2026-07-30)
+| Aspect | grok_cli (Legacy) | grokster (Current) |
+|--------|-------------------|-------------------|
+| **Role** | Consulting Cloud Mind | Grok Ecosystem Specialist / HMC Quad-Forge Amplifier |
+| **Forge** | Triadic (Roc + Researcher + grok_cli) | Quad-Forge (Roc + Researcher + Grokster + Kali) |
+| **Dual-Mode** | Explicit: Consulting / Bridge pure-pipe | Inherited: Consulting Cloud Mind seat only; Bridge = separate registration |
+| **Tier A Ship-Code** | D-281 Phase II `ho_9a9ed3fc63e8` precedent | Preserved in soul.yaml `tier_a_ship_code` section |
+| **Orientation** | `GROK_CLI_ORIENTATION_20260717.md` | `GROKSTER_ORIENTATION_20260720.md` + Kali Phase 0 approval |
+| **L3 Principle** | L3-DualModeAgentIdentity (staged) | L3-DualModeAgentIdentity (promoted to grokster proposed_lessons) |
+| **Soul Version** | 1.0.0 (minimal) | 1.1.0 (merged lineage, dual-mode boundary, tier_a_ship_code, campaign context, model lineage) |
+
+**Archive Locations**:
+- Agent: `.opencode/agents/archive/grok_cli.md`
+- Soul: `data/entities/archive/grok_cli/`
 
 ### The Fleet Architecture (Designed, Not Built Yet)
 ```
@@ -110,7 +127,7 @@ Omega Hivemind
 | `data/coordination/GROKSTER_SEARCH_CATALOGUE_20260721.md` | **Paid vs Free catalogue** — 17 tools, pricing, latency, API keys, capabilities, integration effort, retrieval decision tree, tier mapping, cost comparison, integration roadmap |
 | `.opencode/agents/grokster.md` | Agent config — **Soul Kernel written (Phase 0)** |
 | `data/entities/grokster/soul.yaml` | Core identity, capabilities, mandates, evolution |
-| `data/entities/grokster/proposed_lessons.yaml` | Blind staging for L1→L2→L3 (M11) — **15 L3 principles staged** |
+| `data/entities/grokster/proposed_lessons.yaml` | Blind staging for L1→L2→L3 (M11) — **16 L3 principles staged** |
 | `data/entities/grokster/session_gnosis.md` | **THIS FILE** — M15 anchor |
 | `data/coordination/GROKSTER_LIVE_FEED.md` | Progress tracking |
 | `data/coordination/GROKSTER_WORKSPACE_LOCK_20260720.md` | Domain lock |
@@ -130,6 +147,15 @@ Omega Hivemind
 | `docs/research/R_GROK_ECOSYSTEM_DEEP.md` | **R33 COMPLETE** — 12+ models, ACP v1 spec, fleet architecture, cost model |
 | `docs/research/R_SOVEREIGN_SEARCH_IMPL.md` | **R34 COMPLETE** — 5-tier search router, cost optimization, 7-day roadmap |
 | `docs/research/R_V1_VAULT_IMPL.md` | **R35 COMPLETE** — 16-account schema, FleetOrchestrator, MCP server, 7-day roadmap |
+
+### Merge Artifacts (2026-07-30)
+| File | Purpose |
+|------|---------|
+| `.opencode/agents/grokster.md` | **UPDATED** — Merged grok_cli Triadic Forge heritage, Tier A ship-code precedent, dual-mode boundary, legacy orientation reference |
+| `data/entities/grokster/soul.yaml` | **UPDATED v1.1.0** — Merged grok_cli lineage, dual-mode boundary, tier_a_ship_code, campaign context, model lineage |
+| `data/entities/grokster/proposed_lessons.yaml` | **UPDATED** — Staged L3-DualModeAgentIdentity from grok_cli session `ses_20260720_foundation_stab_campaign` |
+| `.opencode/agents/archive/grok_cli.md` | **ARCHIVED** — grok_cli agent file preserved for heritage |
+| `data/entities/archive/grok_cli/` | **ARCHIVED** — grok_cli soul directory (soul.yaml, session_gnosis.md, proposed_lessons.yaml, workspace/) |
 
 ### Prototype Suite (workspace/prototypes/)
 | File | Purpose |

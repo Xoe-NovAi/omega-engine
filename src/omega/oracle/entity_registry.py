@@ -910,6 +910,34 @@ class EntityRegistry:
             "domains": entity.domains,
         })
 
+        # ── Local Worker Pool Tool (Phase 2) ─────────────────────────────
+        # Entities that can offload work to local GGUF models
+        local_worker_entities = {
+            "roc_racoon", "scribe", "verity", "youtube_worker", "researcher",
+            "kali", "maat", "lilith", "jem", "doom_guy", "john_carmack",
+        }
+        if entity.name.lower() in local_worker_entities:
+            tools.append({
+                "name": "spawn_local_worker",
+                "description": "Fire-and-forget local inference using GGUF models. Returns task_id immediately. "
+                              "Use for: mining, distillation, pattern extraction, synthesis, pre-commit checks. "
+                              "Args: task (str), model (str, default: qwen3-1.7b), system_prompt (str), "
+                              "max_tokens (int, default: 1024), temperature (float, default: 0.7).",
+                "entity": entity.name,
+                "domains": ["local_inference", "background_processing"],
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "task": {"type": "string", "description": "The prompt/task for local inference"},
+                        "model": {"type": "string", "description": "GGUF model to use", "default": "qwen3-1.7b"},
+                        "system_prompt": {"type": "string", "description": "System prompt", "default": ""},
+                        "max_tokens": {"type": "integer", "description": "Max tokens to generate", "default": 1024},
+                        "temperature": {"type": "number", "description": "Sampling temperature", "default": 0.7},
+                    },
+                    "required": ["task"],
+                },
+            })
+
         return tools
 
     def count(self) -> int:

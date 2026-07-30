@@ -10,6 +10,12 @@ models:
     ram_mb: 2048
     context_window: 8192
     role: "P1-P10 pillars, fast inference"
+    # Sampling parameters (model-level defaults, overrideable per-request)
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
   qwen3-1.7b-q6_k:
     context_budget: 15000
     provider: native-gguf
@@ -18,14 +24,29 @@ models:
     ram_mb: 2048
     context_window: 8192
     role: "Q6_K quant variant of Qwen3-1.7B"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
   qwen3-4b:
     context_budget: 20000
     provider: lmster
     role: "Ma'at/Lilith synthesis"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
   frontier:
     context_budget: 30000
     provider: google
     role: "Kali Grand Oversoul, complex synthesis"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
   mimo-7b-rl-q4_k_m:
     context_budget: 25000
     provider: native-gguf
@@ -34,6 +55,37 @@ models:
     ram_mb: 6144
     context_window: 32768
     role: "MiMo 7B RL - strong reasoning/coding, 32K context"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
+  rocracoon-3b-q4_k_m:
+    context_budget: 20000
+    provider: native-gguf
+    path: env:OMEGA_MODELS_DIR/RocRacoon-3b.Q4_K_M.gguf
+    size_gb: 2.4
+    ram_mb: 3072
+    context_window: 8192
+    role: "RocRacoon 3B - mining/distillation worker, fast local"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
+  rocracoon-3b-q5_k_m:
+    context_budget: 20000
+    provider: native-gguf
+    path: env:OMEGA_MODELS_DIR/RocRacoon-3b.Q5_K_M.gguf
+    size_gb: 2.8
+    ram_mb: 3584
+    context_window: 8192
+    role: "RocRacoon 3B Q5_K_M - higher quality worker"
+    temperature: 0.7
+    top_p: 0.95
+    top_k: 40
+    repetition_penalty: 1.0
+    min_p: 0.0
 
 # S4: Gemma 4 MTP Speculative Decoding
 # [id-soft: gemma-4-mtp-s4] MTP draft pair config for speculative decoding

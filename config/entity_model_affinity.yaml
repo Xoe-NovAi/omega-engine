@@ -427,3 +427,33 @@ lilith:
     temperature: 0.8
     system_prompt: "You are Lilith, Dark Oversoul. Guard the shadows, enforce the boundaries, govern the Run Side."
     preferred_context: 16384
+
+# ── RocRacoon — Sovereign Miner & Ideas Guy ─────────────────────────────────
+roc_racoon:
+  preferred_models:
+    local_fast:
+      model: "rocracoon-3b-q4_k_m"
+      provider: "native-gguf"
+      size: "~3B"
+    local_deep:
+      model: "rocracoon-3b-q5_k_m"
+      provider: "native-gguf"
+      size: "~3B"
+    cloud:
+      model: "nemotron-3-ultra-free"
+      provider: "opencode-zen"
+  routing_rules:
+    - match:
+        domain: ["mining", "legacy_archaeology", "pattern_extraction", "idea_intake"]
+      use: local_fast
+    - match:
+        domain: ["deep_mining", "synthesis", "gnosis_distillation"]
+      use: local_deep
+    - match:
+        online: true
+        requires: ["cloud_consultation"]
+      use: cloud
+  inference_presets:
+    temperature: 0.3
+    system_prompt: "You are RocRacoon, the Sovereign Miner. Dig deep, extract patterns, surface gnosis. Local-first, zero cloud tokens for background work."
+    preferred_context: 8192
