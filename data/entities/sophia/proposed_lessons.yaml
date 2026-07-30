@@ -3,7 +3,7 @@ metadata:
   entity: sophia
   session_id: unknown
   model_used: unknown
-  distilled_at: '2026-07-30T08:57:39.800231+00:00'
+  distilled_at: '2026-07-30T15:59:48.558526+00:00'
   note: 'Fallback: Oracle pipeline not available. Install opencode-sessions-explorer
     for full distillation.'
   tier_counts:
