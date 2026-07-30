@@ -5,33 +5,43 @@ import base64
 from pathlib import Path
 from datetime import datetime, timezone
 from src.omega.vault.vault_core import (
-    VaultCore, VaultCredential, ProviderName, CredentialType, 
-    CredentialTier, CredentialStatus, AgeEncryption
+    VaultCore, VaultCredential, 
+    VaultError, CredentialNotFoundError, LeaseError, QuotaExceededError
 )
-from src.omega.vault.crypto import encrypt, decrypt, generate_master_key
+from src.omega.vault.models import (
+    CredentialType, CredentialTier, CredentialStatus
+)
+from src.omega.vault.crypto import (
+    VaultCrypto, VaultCryptoManager, create_vault_crypto, create_vault_crypto_manager,
+)
+
 
 @pytest.mark.anyio
 async def test_vault_encryption_decryption():
     """Verify that secrets can be encrypted and decrypted correctly."""
-    master_key = generate_master_key()
+    crypto = create_vault_crypto("test-master-password-123")
     plaintext = "sovereign-secret-123"
     
-    ciphertext = encrypt(plaintext, master_key)
-    decrypted = decrypt(ciphertext, master_key)
+    ciphertext = crypto.encrypt(plaintext)
+    decrypted = crypto.decrypt(ciphertext)
     
     assert decrypted == plaintext
+    # Accept both age-armored formats
+    assert ciphertext.startswith("age-encryption.org/") or ciphertext.startswith("-----BEGIN AGE ENCRYPTED FILE-----")
+
 
 @pytest.mark.anyio
 async def test_vault_wrong_key_fails():
     """Verify that decryption with the wrong key fails."""
-    master_key_1 = generate_master_key()
-    master_key_2 = generate_master_key()
+    crypto_1 = create_vault_crypto("test-master-password-1")
+    crypto_2 = create_vault_crypto("test-master-password-2")
     plaintext = "sovereign-secret-123"
     
-    ciphertext = encrypt(plaintext, master_key_1)
+    ciphertext = crypto_1.encrypt(plaintext)
     
-    with pytest.raises(Exception): # Should raise VaultCryptoError or InvalidTag
-        decrypt(ciphertext, master_key_2)
+    with pytest.raises(Exception):  # Should raise VaultCryptoError or InvalidTag
+        crypto_2.decrypt(ciphertext)
+
 
 @pytest.mark.anyio
 async def test_vault_persistence():
@@ -47,21 +57,37 @@ async def test_vault_persistence():
             self.leases_db = self.vault_dir / "leases.json"
             self.audit_log = self.vault_dir / "audit.log"
             self.master_password = master_password
-            self.age = AgeEncryption(self.master_password)
+            self.crypto = create_vault_crypto(master_password)
             self._credentials = {}
             self._leases = {}
             self._loaded = False
-    
-    # Create a test credential
+        
+        def _load_sync(self):
+            """Load credentials from disk."""
+            if self.creds_db.exists():
+                import json
+                data = json.loads(self.creds_db.read_text())
+                self._credentials = {k: VaultCredential(**v) for k, v in data.items()}
+            self._loaded = True
+        
+        async def _save_credentials(self):
+            """Save credentials to disk."""
+            import json
+            data = {k: v.model_dump() for k, v in self._credentials.items()}
+            self.creds_db.write_text(json.dumps(data, indent=2, default=str))
+
+    # Create a test credential with valid age-encrypted blob
     master_password = "test-master-password-123"
+    crypto = create_vault_crypto(master_password)
     vault = TestVaultCore(vault_path, master_password)
     
-    # Manually create a credential
+    # Create a properly encrypted credential
+    encrypted_blob = crypto.encrypt("test-api-key-value")
     cred = VaultCredential(
-        provider=ProviderName.GOOGLE,
+        provider="google",
         key_id="api_key",
         cred_type=CredentialType.API_KEY,
-        encrypted_blob="test-key-123",  # In real use, this would be age-encrypted
+        encrypted_blob=encrypted_blob,
         tier=CredentialTier.FREE,
         daily_limit=0,
         used_today=0,
@@ -91,4 +117,4 @@ async def test_vault_persistence():
     
     loaded_cred = vault2._credentials.get("google:api_key")
     assert loaded_cred is not None
-    assert loaded_cred.encrypted_blob == "test-key-123"
+    assert loaded_cred.encrypted_blob == encrypted_blob

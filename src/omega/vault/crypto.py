@@ -5,7 +5,7 @@ AP: AP-VAULT-CRYPTO-v2.0.0
 
 Implements R_VAULT_SCHEMA_V2.md encryption architecture:
 - Argon2id(memory=64MB, iterations=3, parallelism=4, salt=16 bytes)
-- age.Encrypt(key) → age-armored ciphertext
+- age encryption via pyrage.passphrase (scrypt-based)
 """
 
 import os
@@ -16,21 +16,27 @@ logger = logging.getLogger(__name__)
 
 # Optional dependencies - gracefully handle missing
 try:
-    import age
+    import pyrage
+    import pyrage.passphrase as pp
     from argon2 import PasswordHasher
     _HAS_CRYPTO = True
 except ImportError:
     _HAS_CRYPTO = False
-    logger.warning("age or argon2 not installed — crypto operations will fail")
+    logger.warning("pyrage or argon2 not installed — crypto operations will fail")
+
+
+class VaultCryptoError(Exception):
+    """Base exception for vault crypto operations."""
+    pass
 
 
 class VaultCrypto:
     """
-    Vault encryption using Argon2id + age.
+    Vault encryption using Argon2id + age (pyrage.passphrase).
     
     Key Derivation:
     Master Password → Argon2id(memory=64MB, iterations=3, parallelism=4, salt=16 bytes) → 32-byte key
-    → age.X25519Recipient(key) → age-armored ciphertext
+    → age passphrase encryption (scrypt) → age-armored ciphertext
     """
     
     def __init__(self, master_key: str):
@@ -41,7 +47,7 @@ class VaultCrypto:
             master_key: Master password/key for encryption
         """
         if not _HAS_CRYPTO:
-            raise RuntimeError("Crypto dependencies not installed. Run: pip install age argon2-cffi")
+            raise VaultCryptoError("Crypto dependencies not installed. Run: pip install pyrage argon2-cffi")
         
         self._ph = PasswordHasher(
             time_cost=3,
@@ -58,11 +64,12 @@ class VaultCrypto:
         """
         Derive encryption key from master password + salt.
         
-        Uses Argon2id hash which includes salt. We extract the raw key
-        from the hash for use with age.
+        Uses Argon2id hash which includes salt. We extract raw key material
+        from the hash for use as age passphrase.
         """
         # Argon2id hash includes salt; we use the hash as key material
-        hash_str = self._ph.hash(self._master_key + salt.decode())
+        # Pass salt as bytes directly to hash() - it handles bytes
+        hash_str = self._ph.hash(self._master_key.encode() + salt)
         # Use first 32 bytes of hash as key
         return hash_str.encode()[:32]
     
@@ -71,30 +78,27 @@ class VaultCrypto:
         Encrypt plaintext JSON to age-armored ciphertext.
         
         Returns:
-            salt_hex:age_ciphertext (salt prepended for key derivation on decrypt)
+            age-armored ciphertext (includes salt in header via scrypt)
         """
-        salt = os.urandom(16)
-        key = self._derive_key(salt)
-        recipient = age.X25519Recipient(key)
-        ciphertext = age.encrypt(recipient, plaintext.encode())
-        # Prepend salt for key derivation on decrypt
-        return salt.hex() + ":" + ciphertext
+        # Use master key directly as passphrase - age handles scrypt salt internally
+        ciphertext = pp.encrypt(plaintext.encode(), self._master_key, armored=True)
+        
+        return ciphertext.decode()
     
     def decrypt(self, armored: str) -> str:
         """
         Decrypt age-armored ciphertext to plaintext JSON.
         
         Args:
-            armored: salt_hex:age_ciphertext format
+            armored: age-armored ciphertext format
             
         Returns:
             Decrypted plaintext
         """
-        salt_hex, ciphertext = armored.split(":", 1)
-        salt = bytes.fromhex(salt_hex)
-        key = self._derive_key(salt)
-        identity = age.X25519Identity(key)
-        return age.decrypt(identity, ciphertext).decode()
+        # Use master key directly as passphrase
+        plaintext_bytes = pp.decrypt(armored.encode(), self._master_key)
+        
+        return plaintext_bytes.decode()
     
     def rotate_key(self, old_armored: str, new_master_key: str) -> str:
         """
@@ -125,7 +129,7 @@ class VaultCryptoManager:
     """
     
     def __init__(self):
-        self._ciphers: Dict[str, VaultCrypto] = {}
+        self._ciphers: dict[str, VaultCrypto] = {}
         self._default_version: Optional[str] = None
     
     def add_key(self, version: str, master_key: str, default: bool = False) -> None:
@@ -169,7 +173,6 @@ class VaultCryptoManager:
         old_cipher = self._ciphers[old_version]
         new_cipher = VaultCrypto(new_master_key)
         
-        # Re-encrypt all data (in practice, this would be done by a migration script)
         self._ciphers[new_version] = new_cipher
         self._default_version = new_version
 
@@ -195,6 +198,7 @@ def create_vault_crypto_manager() -> VaultCryptoManager:
 __all__ = [
     "VaultCrypto",
     "VaultCryptoManager",
+    "VaultCryptoError",
     "create_vault_crypto",
     "create_vault_crypto_manager",
 ]

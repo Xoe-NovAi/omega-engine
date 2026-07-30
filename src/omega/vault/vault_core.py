@@ -143,6 +143,12 @@ class VaultCore:
             except Exception as e:
                 logger.error(f"Failed to load audit: {e}")
                 self.audit = []
+        
+        # Backward compatibility: _credentials was renamed to credentials (10+ callers)
+        self._credentials = self.credentials
+    
+    # Backward compatibility: _load_sync renamed to _load_data (13+ callers)
+    _load_sync = _load_data
     
     def _save_data(self) -> None:
         """Save vault data to files atomically."""
@@ -250,6 +256,11 @@ class VaultCore:
             raise CredentialNotFoundError(f"Credential not found: {provider}:{key_id}")
         
         return self.credentials[credential_key]
+    
+    # Backward compatibility: retrieve_credential renamed to get_credential
+    async def retrieve_credential(self, provider: str, key_id: str = "default") -> Optional[VaultCredential]:
+        """Backward-compatible alias for get_credential."""
+        return await self.get_credential(provider=provider, key_id=key_id)
     
     async def update_credential(
         self,

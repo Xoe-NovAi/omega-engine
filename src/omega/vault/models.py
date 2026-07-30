@@ -44,6 +44,36 @@ class VisibilityTier(str, Enum):
     PRIVATE = "private"
 
 
+class ProviderName(str, Enum):
+    """Known provider names for credential storage."""
+    GOOGLE = "google"
+    ANTIGRAVITY = "antigravity"
+    OPENROUTER = "openrouter"
+    EXA = "exa"
+    FIRECRAWL = "firecrawl"
+    GROK = "grok"
+    XAI = "xai"
+    ANTHROPIC = "anthropic"
+    OPENAI = "openai"
+    LMSTUDIO = "lmstudio"
+    OLLAMA = "ollama"
+    NATIVE_GGUF = "native-gguf"
+    SEARXNG = "searxng"
+    PARALLEL = "parallel"
+    HUGGINGFACE = "huggingface"
+    CEREBRAS = "cerebras"
+    SAMBANOVA = "sambanova"
+    TOGETHER = "together"
+    DEEPINFRA = "deepinfra"
+    REPLICATE = "replicate"
+    PERPLEXITY = "perplexity"
+    MISTRAL = "mistral"
+    COHERE = "cohere"
+    VOYAGE = "voyage"
+    JINA = "jina"
+    CUSTOM = "custom"
+
+
 class VaultCredential(BaseModel):
     """Unified credential record for FleetOrchestrator."""
 
@@ -83,8 +113,8 @@ class VaultCredential(BaseModel):
     @field_validator('encrypted_blob')
     @classmethod
     def validate_age_armor(cls, v: str) -> str:
-        """Ensure blob is age-armored (starts with 'age-encryption.org/v1')."""
-        if not v.startswith("age-encryption.org/v1"):
+        """Ensure blob is age-armored (starts with 'age-encryption.org/v1' or '-----BEGIN AGE ENCRYPTED FILE-----')."""
+        if not (v.startswith("age-encryption.org/v1") or v.startswith("-----BEGIN AGE ENCRYPTED FILE-----")):
             raise ValueError("encrypted_blob must be age-armored ciphertext")
         return v
 
