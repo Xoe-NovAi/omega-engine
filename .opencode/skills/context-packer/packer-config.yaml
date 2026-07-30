@@ -61,6 +61,114 @@ profiles:
       strategy:
         - "docs/strategy/**/*.md"
 
+  # ── Provider Fabric Review (for Web Claude deep review) ─────────────────────
+  provider-fabric-review:
+    description: "Deep review of local inference (NativeGGUFProvider) + provider fabric with cloud backends, routing, and streaming"
+    target_platform: "web-claude"
+    target_model: "claude-sonnet-5"
+    max_slots: 12
+    format: "xml"
+    bundle_ordering: "litm-u-shaped"
+    prompt_caching:
+      enabled: true
+      cache_prefix: ["manifest", "mandates", "engine_state"]
+    token_budget:
+      total: 150000
+      per_bundle: 15000
+      reserved_output: 50000
+    multishot_examples: true
+    xml_delimiters: "spotlighting"
+    include:
+      # ── Sovereign Mandates (espec. M7 Local-First, M22 Provenance, M25 Streaming) ─
+      - "SOVEREIGN_MANDATES.md"
+      - "OMEGA_ENGINE.md"
+      - "ORACLE_STACK.md"
+      # ── Core Gateway + Provider Fabric ──
+      - "src/omega/oracle/model_gateway.py"
+      - "src/omega/oracle/providers.py"
+      # ── Cloud Backends ──
+      - "src/omega/oracle/backends/__init__.py"
+      - "src/omega/oracle/backends/remote_provider.py"
+      - "src/omega/oracle/backends/openai_compat.py"
+      - "src/omega/oracle/backends/antigravity_provider.py"
+      - "src/omega/oracle/backends/google_compat.py"
+      - "src/omega/oracle/backends/mock.py"
+      # ── Infrastructure ──
+      - "src/omega/oracle/oom_protector.py"
+      - "src/omega/oracle/resource_guard.py"
+      - "src/omega/oracle/cpu_optimizer.py"
+      - "src/omega/oracle/admission_controller.py"
+      - "src/omega/oracle/stream_handler.py"
+      - "src/omega/oracle/health_monitor.py"
+      # ── Routing & Resilience ──
+      - "src/omega/oracle/provider_selector.py"
+      - "src/omega/oracle/cascade_router.py"
+      - "src/omega/oracle/retry_policy.py"
+      - "src/omega/oracle/rate_limiter.py"
+      - "src/omega/oracle/quota_tracker.py"
+      - "src/omega/oracle/token_estimator.py"
+      - "src/omega/oracle/local_worker_pool.py"
+      # ── Config ──
+      - "config/providers.yaml"
+      - "config/models.yaml"
+      - "config/model_registry/providers/native-gguf.yaml"
+      # ── Strategy ──
+      - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+      # ── Tests ──
+      - "tests/test_providers.py"
+      - "tests/test_model_gateway.py"
+      - "tests/test_e2e_inference_chain.py"
+      - "tests/test_antigravity_provider.py"
+    exclude:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+      - "**/*.log"
+      - "**/*.tmp"
+      - "context_packs/**"
+    themes:
+      mandates:
+        - "SOVEREIGN_MANDATES.md"
+      engine_state:
+        - "OMEGA_ENGINE.md"
+        - "ORACLE_STACK.md"
+      gateway:
+        - "src/omega/oracle/model_gateway.py"
+      native_inference:
+        - "src/omega/oracle/providers.py"
+      cloud_backends:
+        - "src/omega/oracle/backends/__init__.py"
+        - "src/omega/oracle/backends/remote_provider.py"
+        - "src/omega/oracle/backends/openai_compat.py"
+        - "src/omega/oracle/backends/antigravity_provider.py"
+        - "src/omega/oracle/backends/google_compat.py"
+        - "src/omega/oracle/backends/mock.py"
+      infrastructure:
+        - "src/omega/oracle/oom_protector.py"
+        - "src/omega/oracle/resource_guard.py"
+        - "src/omega/oracle/cpu_optimizer.py"
+        - "src/omega/oracle/admission_controller.py"
+        - "src/omega/oracle/stream_handler.py"
+        - "src/omega/oracle/health_monitor.py"
+      routing:
+        - "src/omega/oracle/provider_selector.py"
+        - "src/omega/oracle/cascade_router.py"
+        - "src/omega/oracle/retry_policy.py"
+        - "src/omega/oracle/rate_limiter.py"
+        - "src/omega/oracle/quota_tracker.py"
+        - "src/omega/oracle/token_estimator.py"
+        - "src/omega/oracle/local_worker_pool.py"
+      config:
+        - "config/providers.yaml"
+        - "config/models.yaml"
+        - "config/model_registry/providers/native-gguf.yaml"
+      roadmap:
+        - "docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md"
+      tests:
+        - "tests/test_providers.py"
+        - "tests/test_model_gateway.py"
+        - "tests/test_e2e_inference_chain.py"
+        - "tests/test_antigravity_provider.py"
+
   # ── Engineering P3 (unchanged, working) ───────────────────────────────────
   engineering-p3:
     description: "Full context for P3 Engineering Pillar"
