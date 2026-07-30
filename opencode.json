@@ -3,7 +3,8 @@
   "plugin": [
     "opencode-antigravity-auth@latest",
     "opencode-sessions-explorer",
-    "file:///home/arcana-novai/better-opencode-retries/src/index.js"
+    "file:///home/arcana-novai/better-opencode-retries/src/index.js",
+    "file:///home/arcana-novai/Documents/Xoe-NovAi/omega-engine/.opencode/plugin/error-capture.ts"
   ],
   "permission": {
     "external_directory": {

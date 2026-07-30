@@ -91,6 +91,7 @@
 - ✅ **Sampling parameters added to models.yaml** — temperature, top_p, top_k, repetition_penalty, min_p for all models
 - ✅ **Global sampling cvars added** — config.sampling.* in cvar_table.py for system-wide defaults
 - ✅ **top_p parameter added to NativeGGUFProvider.generate()** — passed through to llama-cpp-python
+- ✅ **Layered sampling parameter resolution** — Model config → cvars → hardcoded defaults
 
 ---
 
@@ -148,6 +149,7 @@
 - Phase 2 CLI commands verified: `queue`, `status`, `list`, `cat` all working
 - Daemon starts and polls queue (verified with debug logging)
 - top_p parameter added to NativeGGUFProvider.generate() and passed to llama-cpp-python
+- Layered sampling parameter resolution: per-request > model config > cvars > hardcoded
 
 ---
 

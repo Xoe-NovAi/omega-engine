@@ -64,57 +64,70 @@ inference:
   - provider: native-gguf
     priority: 0
     enabled: true
+    is_cloud: false
     description: Local GGUF inference via llama.cpp (highest priority - local-first)
   - provider: lmster
     priority: 1
     enabled: true
+    is_cloud: false
     description: LM Studio local server (OpenAI-compatible API)
   - provider: ollama
     priority: 2
     enabled: false
+    is_cloud: false
     description: Ollama local server (OpenAI-compatible API)
   - provider: antigravity
     priority: 3
     enabled: true
+    is_cloud: true
     description: Antigravity OAuth-based frontier models (Google DeepMind, Anthropic,
       OpenAI)
   - provider: google
     priority: 4
     enabled: true
+    is_cloud: true
     description: Google AI Studio / Vertex AI - Google's own models only
   - provider: google-compat
     priority: 4
     enabled: true
+    is_cloud: true
     description: Google AI Studio / Vertex AI compatible provider with Gemma 4 thinking
       support
   - provider: openrouter
     priority: 5
     enabled: true
+    is_cloud: true
     description: OpenRouter free tier and paid models
   - provider: opencode-zen
     priority: 6
     enabled: true
+    is_cloud: true
     description: OpenCode Zen - CLI-exclusive cloud models
   - provider: cline
     priority: 7
     enabled: true
+    is_cloud: true
     description: Cline - CLI agent with DeepSeek V4 Flash / MiMo V2.5
   - provider: anthropic
     priority: 8
     enabled: true
+    is_cloud: true
     description: Anthropic - Claude models (Sonnet, Haiku, Opus)
   - provider: xai
     priority: 9
     enabled: true
+    is_cloud: true
     description: xAI - Grok models
   - provider: mock
     priority: 10
     enabled: false
+    is_cloud: false
     description: Test mock provider for unit tests
   providers:
     native-gguf:
       priority: 0
       enabled: true
+      is_cloud: false
       description: Local GGUF inference via llama.cpp (highest priority - local-first)
       model_path: env:OMEGA_MODELS_DIR/Qwen3-1.7B-Q6_K.gguf
       n_threads: 4
@@ -138,6 +151,7 @@ inference:
     lmster:
       priority: 1
       enabled: true
+      is_cloud: false
       description: LM Studio local server (OpenAI-compatible API)
       api_key: lm-studio
       base_url: http://localhost:1234/v1
@@ -159,6 +173,7 @@ inference:
     ollama:
       priority: 2
       enabled: false
+      is_cloud: false
       description: Ollama local server (OpenAI-compatible API)
       api_key: ollama
       base_url: http://localhost:11434/v1
@@ -180,6 +195,7 @@ inference:
     antigravity:
       priority: 3
       enabled: true
+      is_cloud: true
       description: Antigravity OAuth-based frontier models (Google DeepMind, Anthropic,
         OpenAI)
       api_key: env:ANTIGRAVITY_API_KEY
@@ -199,6 +215,7 @@ inference:
     google:
       priority: 4
       enabled: true
+      is_cloud: true
       description: Google AI Studio / Vertex AI - Google's own models only
       api_key: env:GOOGLE_API_KEY
       n_threads: 4

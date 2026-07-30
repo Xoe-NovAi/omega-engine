@@ -544,6 +544,10 @@ class NativeGGUFProvider(BaseProvider):
                 "n_gpu_layers": n_gpu_layers,
                 "verbose": False,
             }
+            # Enable flash_attn when using quantized KV cache (type_k/type_v != f16)
+            # On CPU backend, flash_attn is required for quantized KV cache to work
+            if type_k != 1 or type_v != 1:
+                llama_kwargs["flash_attn"] = True
             if kwarg_filter_enabled and validate_llama_kwargs:
                 kwarg_warnings = validate_llama_kwargs(llama_kwargs, "NativeGGUFProvider.worker")
                 if kwarg_warnings:

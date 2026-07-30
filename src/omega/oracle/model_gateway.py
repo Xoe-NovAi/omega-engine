@@ -1009,27 +1009,37 @@ class ModelGateway:
         _latency_ms = 0.0  # [M22] Initialize before loop for fallback path
         
         # ── Provider Selection Layer ──────────────────────────────────────────
-        # [C-10.5] Use CascadeRouter for quota-aware routing with cost-weighted fallback
+        # [FIX 0.3] Priority-first routing (M7 Local-First): use ProviderSelector as primary
+        # CascadeRouter is only used as fallback for quota-aware routing when ProviderSelector fails
         try:
-            routing_decision = await self.cascade_router.route_request(
-                model_name=model_name,
-                system_prompt=system_prompt,
-                user_prompt=user_query,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                exclude_providers=None,
-            )
-            ordered_providers = [routing_decision.selected_provider] + routing_decision.fallback_chain
-            logger.info(
-                f"CascadeRouter selected {routing_decision.selected_provider} "
-                f"(score: {routing_decision.scores[0].total_score:.1f}) "
-                f"with fallback chain: {' -> '.join(routing_decision.fallback_chain[:3])}"
-            )
-        except Exception as e:
-            logger.warning(f"CascadeRouter failed, falling back to ProviderSelector: {e}")
-            # Fallback to existing ProviderSelector
             ordered_providers = await self.provider_selector.get_ordered_providers(model_name, user_query)
-            if not ordered_providers:
+            if ordered_providers:
+                logger.info(
+                    f"Priority-first routing selected {ordered_providers[0].name} "
+                    f"with fallback chain: {' -> '.join([p.name for p in ordered_providers[1:4]])}"
+                )
+            else:
+                raise ProviderUnavailableError(message=f"No providers available for model {model_name}")
+        except Exception as e:
+            logger.warning(f"ProviderSelector failed, falling back to CascadeRouter: {e}")
+            # Fallback to CascadeRouter for quota-aware routing
+            try:
+                routing_decision = await self.cascade_router.route_request(
+                    model_name=model_name,
+                    system_prompt=system_prompt,
+                    user_prompt=user_query,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    exclude_providers=None,
+                )
+                ordered_providers = [routing_decision.selected_provider] + routing_decision.fallback_chain
+                logger.info(
+                    f"CascadeRouter selected {routing_decision.selected_provider} "
+                    f"(score: {routing_decision.scores[0].total_score:.1f}) "
+                    f"with fallback chain: {' -> '.join(routing_decision.fallback_chain[:3])}"
+                )
+            except Exception as e2:
+                logger.error(f"Both ProviderSelector and CascadeRouter failed: {e2}")
                 raise ProviderUnavailableError(message=f"No providers available for model {model_name}")
 
         # [M8 Zero Telemetry] WARP Proxy Pool injection for opencode-zen
