@@ -19,47 +19,47 @@
 
 ---
 
-## §2 Current State (2026-07-22)
+## §2 Current State (2026-07-30)
 
 | Metric | Value | Status | LAST_VERIFIED | PROBE_COMMAND |
 |--------|-------|--------|---------------|---------------|
-| **Strategy SSOT** | **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.2** + `STRATEGY_CORPUS_MAP.md` | ✅ Unified; fine-grained corpus preserved | 2026-07-22 | `cat docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md | head -5` |
-| **Current phase** | **Phase D Gate — Infrastructure Hardening complete pending P0 integrity checks** | 🟡 Active | 2026-07-25 | `cat docs/sprints/current/EXECUTION_PLAN_20260725.md | head -20` |
-| Tests | **1,572 collected** · **50/50 core+contract+chaos+SoulStore pass** · 77/77 contract historically green | ✅ C-0 complete, C-10/C-2'/C-6'/C-1' verified | 2026-07-22 | `source .venv/bin/activate && python -m pytest tests/property/ tests/contract/ tests/test_hivemind.py -q --tb=no 2>&1 | tail -3` |
-| Mandates | **25 (M1-M25)** | ✅ All enforced (v3.7.0) | 2026-07-19 | `cat SOVEREIGN_MANDATES.md | grep -c "^### [0-9]"` |
-| **Mandate Compliance** | **21/25 FULL (84%)** — 2 Partial, 2 Fail | ⚠️ M5, M11 remain (Soul distillation pipeline) | 2026-07-22 | `grep -r "M5\|M11" SOVEREIGN_MANDATES.md | head -5` |
-| Fleet | **12 agents (cap 14 per M10)** | ✅ Clean | 2026-07-22 | `ls .opencode/agents/ | wc -l` |
-| WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 | `ls config/wads/ | wc -l` |
-| **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, P1: 5/5, P2: 6/6, P3: 1/4 | ✅ P0-P2 Complete | 2026-07-18 | `cat data/coordination/THIRD_PARTY_REGISTRY.yaml | grep -c "status: cloned"` |
-| Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 | `grep -r "\[id-soft:" src/ | wc -l` |
-| Shared modules | **4** (`omega-vetala`, `omega-sieve`, `omega-doc-reader`, `omega-meditation`) | ✅ 3 on PyPI, meditation compatible | 2026-07-20 | `pip list | grep -E "omega-(sieve|doc-reader|meditation|vetala)"` |
-| **Foundation Stabilization Campaign** | **RATIFIED** — Gate Α passed, Phase Β complete, Gate Β passing | ✅ 0 active/pending handoffs | 2026-07-20 | `cat data/coordination/FOUNDATION_STABILIZATION_STATUS.md` |
-| **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles | ✅ Gate Γ criterion met | 2026-07-20 | `cat src/omega/memory/sqlite_policy.py | head -30` |
-| **Antigravity OAuth** | **PARTIAL** — Plugin present; auth often **API-key only**; re-login may be required for Path B | 🟡 G-1b path | 2026-07-22 | `opencode run -m google/antigravity-gemini-3-flash "Reply PONG" 2>&1 | head -3` |
-| **Gemma 4 31B free workhorse** | **DEAD for fat OpenCode** — free-tier input TPM **16k** since **2026-07-15** (was workhorse May–Jul) | 🚨 **G-1 P0** — needs billing/OAuth | 2026-07-22 | `opencode run -m google/gemma-4-31b-it "Reply PONG" 2>&1 | grep -i "16000\|free_tier"` |
-| **WARP Proxy Pool** | **NOT LIVE** — No SOCKS listeners on 8081-8083 per `ss -lntp` probe at 2026-07-25 | 🚨 **W-1 P0** — ns-setup truncated; SystemCallFilter bugs fixed but not deployed | 2026-07-25 | `ss -lntp | grep -E "808[1-3]"` |
-| **Circuit Breakers** | **1 canonical** (`HealthMonitor.AsyncCircuitBreaker`) + 5 deprecated clones + **2 unmigrated** (`JemCircuitBreaker`, `search_fleet.SearchCircuitBreaker`) | 🟡 C-6' Partial — P-5 ticket open for remaining clones | 2026-07-25 | `grep -r "class.*Breaker" src/omega/ | grep -v test | grep -v ".pyc"` |
+| **Strategy SSOT (long-horizon)** | **`docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.2** + `STRATEGY_CORPUS_MAP.md` | ✅ Ark remains long-horizon law | 2026-07-30 | `head -5 docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` |
+| **Sprint control (near-term)** | **`UNOVERENGINEER-01`** — `data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md` (user-ratified) | ✅ ACTIVE; Jul 25 EXECUTION_PLAN / guard-and-distill **SUPERSEDED** for sprint control | 2026-07-30 | `cat data/coordination/ACTIVE_SPRINT.json \| head -20` |
+| **Phase D gate** | Mechanical **PASS 11/11** · Operational **NO-GO** (C-3/W-1/G-1) | 🟡 Dual-layer — see verdict | 2026-07-30 | `python scripts/verify_phase_d_gate.py` · `cat data/coordination/PHASE_D_GATE_VERDICT_20260730.md` |
+| Tests | Focused **27 passed** (vault+property+hivemind 2026-07-30) · Full suite **1706 collected** (make test timeout risk) | ✅ Focused green; full suite needs longer budget | 2026-07-30 | `pytest tests/test_vault_integrity.py tests/property/ tests/test_hivemind.py -q` |
+| Mandates | **25 (M1-M25)** | ✅ All enforced (v3.7.0) | 2026-07-19 | `grep -c "^### [0-9]" SOVEREIGN_MANDATES.md` |
+| **Mandate Compliance** | **23/25 FULL (92%)** — 0 Partial, 2 Fail | ✅ M5, M11 fixed via wrapper (EXIT trap + DB integration) | 2026-07-30 | `grep -r "M5\|M11" SOVEREIGN_MANDATES.md \| head -5` |
+| Fleet | **12 agents (cap 14 per M10)** | ✅ Clean | 2026-07-22 | `ls .opencode/agents/ \| wc -l` |
+| WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 | `ls config/wads/ \| wc -l` |
+| **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, P1: 5/5, P2: 6/6, P3: 1/4 | ✅ P0-P2 Complete | 2026-07-18 | `grep -c "status: cloned" data/coordination/THIRD_PARTY_REGISTRY.yaml` |
+| Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 | `grep -r "\[id-soft:" src/ \| wc -l` |
+| Shared modules | **4** (`omega-vetala`, `omega-sieve`, `omega-doc-reader`, `omega-meditation`) | ✅ 3 on PyPI, meditation compatible | 2026-07-20 | `pip list \| grep -E "omega-(sieve\|doc-reader\|meditation\|vetala)"` |
+| **Foundation Stabilization** | **HISTORICAL** — Gate Α/Β done; not current sprint | 📦 Superseded by UNOVERENGINEER-01 | 2026-07-30 | `cat data/coordination/ACTIVE_SPRINT.json` |
+| **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles | ✅ Gate Γ criterion met | 2026-07-20 | `head -30 src/omega/memory/sqlite_policy.py` |
+| **C-0.5 Soul distillation hook** | **Phase 1 COMPLETE** — wrapper queries `opencode db` for session metadata (entity/model/session_id) after exit, exports env vars, runs **Oracle SoulDistillationPipeline** (classifier → distiller → scorer → atomic store). Phase 2: local LLM semantic distillation via Roc's Worker Pool. | ✅ M5/M11/M22 compliant | 2026-07-30 | `.opencode/wrapper.sh` + `.opencode/hooks/session_end.py` |
+| **Antigravity OAuth** | **PARTIAL** — Plugin present; auth often **API-key only**; re-login may be required for Path B | 🟡 G-1b path | 2026-07-22 | `opencode run -m google/antigravity-gemini-3-flash "Reply PONG" 2>&1 \| head -3` |
+| **Gemma 4 31B free workhorse** | **DEAD for fat OpenCode** — free-tier input TPM **16k** since **2026-07-15** | 🚨 **G-1 P0** — billing/OAuth **or G-1e local GGUF** | 2026-07-30 | see critical-path + Cline ops results |
+| **WARP Proxy Pool (W-1)** | **PARTIAL 1/3** — SOCKS **8083** listening; 8081/8082 down; ns-prep@1/2/3 active; node units flaky; SystemCallFilter fix applied | 🟡 Bridges + canary still open | 2026-07-30 | `ss -lntp \| rg '808[123]'` |
+| **Circuit Breakers** | **~17** `class.*Breaker` hits in src/+mcp_servers (was underestimated as 6) · HealthMonitor remains intended canonical | 🟡 Un-overengineering Phase 1 → pybreaker | 2026-07-30 | `rg -n 'class.*Breaker' src/ mcp_servers/ --glob '*.py' \| wc -l` |
+| **C-3 Restic backup** | PATH drop-in **FIXED**; timer **enabled+active**; oneshot **FAILED** (`OMEGA_VAULT_PASSPHRASE` / `.env.backup` missing); restic **0.17.3** at `~/.local/bin` | 🟡 Architect secrets required | 2026-07-30 | `systemctl is-enabled omega-restic-backup.timer; journalctl -u omega-restic-backup.service -n 20` |
+| **MCP pin (CG-01)** | pyproject `mcp>=1.28.1,<2` · venv **1.28.1** · SDK **v2.0.0 stable 2026-07-28** = P0 migration debt (Hub still `mcp.server.fastmcp`) | 🟡 Pin holds; migrate scheduled | 2026-07-30 | `.venv/bin/pip show mcp \| rg Version` |
+| **Doc hygiene** | Coordination/sprint thrash; Cline **DOC_SANITY** handoff ready (1M context) | 🟡 In flight | 2026-07-30 | `cat data/coordination/CLINE_DOC_SANITY_HANDOFF_20260730.md \| head -30` |
 
 ### Active Deferred Items
-| Item | Status | Details |
-| **VaultCore (src/omega/vault/)** | **EXEC-PARTIAL** — Dirty tree uncommitted; large unification in progress; freeze zone in effect | 🟡 V-1 P0 — needs land or freeze | 2026-07-25 |
-| MCP pin version: pyproject `>=1.27,<2`; venv 1.28.1; requirements 1.27.1 | 🟡 3 files disagree — needs alignment | 2026-07-25 |
-| C-3 Backup (restic) | **EXEC-PARTIAL** — Scripts exist; systemd timer not enabled | 🟡 Needs timer enablement | 2026-07-25 |
-|------|--------|---------|
-| Firecrawl MCP | ⏳ Needs Streamable HTTP migration | SSE on :8015 |
-| Local inference ratio ≥80% | 🟡 Aspirational target | Gate configurable, default OFF |
-| Session Namespace Isolation (D-290) | 🟡 Design complete | 5 preconditions, 5 critical fixes pending |
-| MIAP Phase 0 (D-291) | 🟡 Planned | ~6 sessions: ReplayMode, Two-Log, IntentionValidator |
-| MACP Alignment (D-292) | 🟡 Planned | Aligns with IETF draft-li-dmsc-macp-05 |
-| Experience Repository (D-294) | 🟡 Planned | AgentRR L0→L1→L2 via Scribe |
-| Headless Subagent Pool (D-303) | 🟡 Planned | 24 accounts (8 Grok + 8 Copilot + 8 Cline) |
-| Antigravity Two-Track (D-304) | ✅ **W-1 FIXED**; V-1 complete | WARP pool operational; AGY multi-account after vault |
-| **G-1 Workhorse continuity** | 🚨 **P0 ACTIVE** — needs billing/OAuth | Forensic + critical path docs 2026-07-22 |
-| **W-1 WARP pool bring-up** | 🟡 **FIXES APPLIED BUT NOT DEPLOYED** — SOCKS not listening (8081-8083) — SystemCallFilter + port-template bugs committed |
-| Hive Evolution (D-305) | 🟡 Architecture designed | Hivemind → Hive, 5 layers, 7 sprints |
-| Arch Soul Integration (D-306) | 🟡 Design complete | Torment: Nameless One, companions, factions |
-| Torment WAD (D-307) | 🟡 Scaffold defined | Awaiting Researcher Phase 1-4 |
-| **D-308 Ubuntu 25.10** | 🚨 **P0 GATE** — Kernel 6.17, no free-threaded Python, AppArmor breaks rootless Podman | 13 actionable changes before Phase 2 |
+| Item | Status | Details | LAST_VERIFIED |
+|------|--------|---------|---------------|
+| **VaultCore (src/omega/vault/)** | **EXEC-PARTIAL** | Module present; backup cannot unlock without passphrase; gate V-1 may false-PASS via `pytest\|tail` | 2026-07-30 |
+| **MCP v2 migration** | **P0 DEBT** | Prefer external FastMCP (SearXNG precedent); Hub+Firecrawl still SDK v1 FastMCP | 2026-07-30 |
+| **C-3 Backup operational** | **BLOCKED** | Timer OK; need `.env.backup` + successful oneshot + ≥1 snapshot | 2026-07-30 |
+| Firecrawl MCP | ⏳ Streamable HTTP / FastMCP align with Hub migrate | SSE on :8015 | 2026-07-30 |
+| Local inference ratio ≥80% | 🟡 Aspirational | Gate configurable, default OFF | 2026-07-22 |
+| Session Namespace Isolation (D-290) | 🟡 Design complete | 5 preconditions pending | 2026-07-22 |
+| MIAP / Hive Evolution (D-291, D-305) | ⏸ **CANCELLED per D-495** (un-overengineering) — Hivemind shipped | Do not re-open without production bug | 2026-07-30 |
+| Headless Subagent Pool (D-303) | 🟡 Planned | Frozen until doc sanity / later gate | 2026-07-30 |
+| **G-1 Workhorse continuity** | 🚨 **P0 ACTIVE** | billing/OAuth **or G-1e** local Gemma 4 GGUF (32GB CPU viable) | 2026-07-30 |
+| **W-1 WARP pool** | 🟡 **PARTIAL** | 1/3 SOCKS; bridges for 1/2; canary timeout | 2026-07-30 |
+| Arch Soul / Torment WAD (D-306/307) | 🟡 Design/scaffold | Not current sprint | 2026-07-22 |
+| **D-308 Ubuntu 25.10** | 🚨 **P0 GATE** residual | Kernel/AppArmor/Podman notes remain | 2026-07-22 |
 
 ### Recent Milestones (Completed)
 D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne ✅ | MIAP merged ✅ | HMC Quad-Forge ✅ | D-298 Decision Workspace ✅ | D-300 Omega-Meditation ✅ | D-301 MaKaLi Council ✅ | D-302 CPR ✅ | **MaKaLi Apex Mind deployed (Sophia replaced)** ✅ | All Phase 5 ratified items ✅ | **C-10 Admission Control** ✅ | **C-2' RAM Truth** ✅ | **C-4a MCP Audit** ✅ | **C-5 MaKaLi Routing** ✅ | **C-6' Breaker Unification** ✅ | **C-1' SoulStore** ✅
@@ -159,4 +159,4 @@ The Omega Engine is runtime-agnostic. Any MCP client can connect to the Omega Hu
 
 ---
 
-*Last Updated: 2026-07-25 | Version: v1.8.1 | Strategy SSOT: SOVEREIGN_ARK_BLUEPRINT v5.2 + STRATEGY_CORPUS_MAP | Phase D Gate active (P0 B1-B5 remain) | Tests: 50/50 core+contract+chaos+SoulStore green | Mandate compliance: 84% | W-1 NOT LIVE (corrected 2026-07-25) | V-1 EXEC-PARTIAL (dirty tree) | C-3 EXEC-PARTIAL (timer not enabled) | MCP pin version inconsistent*
+*Last Updated: 2026-07-30 | Version: v1.8.2 | Ark SSOT: SOVEREIGN_ARK_BLUEPRINT v5.2 | Sprint: UNOVERENGINEER-01 | Phase D mechanical PASS / operational NO-GO | W-1 PARTIAL 1/3 (8083) | C-3 timer OK / oneshot vault-blocked | MCP 1.28.1 pin `<2` · v2 migrate P0 | Doc sanity → Cline | Mandate compliance: 84%*
