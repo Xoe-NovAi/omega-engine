@@ -3,8 +3,8 @@ import type { Plugin } from "@opencode-ai/plugin";
 interface SubagentSession {
   sessionId: string;
   parentSessionId: string;
-  launchedBy: string;        // launching agent entity (e.g., "kali")
-  taskId: string;            // from task_registry
+  launchedBy: string;
+  taskId: string;
   taskDescription: string;
   createdAt: number;
 }
@@ -27,24 +27,15 @@ interface SubagentError {
   };
 }
 
-interface ErrorCaptureConfig {
-  logDir: string;
-  retentionDays: number;
-  enableHivemindNotify: boolean;
-  trackSubagentsOnly: boolean;
-  captureSnapshots: boolean;
-}
+const subagentSessions = new Map<string, SubagentSession>();
 
-const DEFAULT_CONFIG: ErrorCaptureConfig = {
+const config = {
   logDir: "/home/arcana-novai/Documents/Xoe-NovAi/omega-engine/data/coordination/errors",
   retentionDays: 30,
   enableHivemindNotify: true,
   trackSubagentsOnly: true,
   captureSnapshots: true,
 };
-
-const subagentSessions = new Map<string, SubagentSession>();
-const config: ErrorCaptureConfig = { ...DEFAULT_CONFIG };
 
 async function ensureLogDir() {
   const { $ } = await import("bun");
@@ -68,13 +59,11 @@ async function captureSessionSnapshot(client: any, sessionId: string) {
     const session = await client.session.get({ path: { id: sessionId } });
     if (!session) return { lastThinking: "", lastToolCall: "", errorContext: "", messageCount: 0, tokenUsage: { input: 0, output: 0 } };
 
-    // Get recent messages for context
     const messages = session.messages || [];
     const recentMessages = messages.slice(-10);
     
     let lastThinking = "";
     let lastToolCall = "";
-    let errorContext = "";
     let inputTokens = 0;
     let outputTokens = 0;
 
@@ -93,8 +82,7 @@ async function captureSessionSnapshot(client: any, sessionId: string) {
       outputTokens += msg.tokens?.output || 0;
     }
 
-    // Build error context from recent messages
-    errorContext = recentMessages
+    const errorContext = recentMessages
       .map(m => `${m.role}: ${m.parts?.map((p: any) => p.text || p.type).join(" ") || ""}`)
       .join("\n")
       .slice(-3000);
@@ -111,53 +99,79 @@ async function captureSessionSnapshot(client: any, sessionId: string) {
   }
 }
 
-async function notifyHivemind(client: any, error: SubagentError) {
+async function notifyParentAgent(client: any, errorRecord: SubagentError) {
   if (!config.enableHivemindNotify) return;
 
   try {
     await client.hivemind?.post_context?.({
       channel: "opencode",
-      entity: error.launchedBy,
+      entity: errorRecord.launchedBy,
       model: "opencode/nemotron-3-ultra-free",
-      task_current: `Subagent error: ${error.taskDescription}`,
-      focus_chain: [error.taskId],
+      task_current: `SUBAGENT FAILED: ${errorRecord.taskDescription}`,
+      focus_chain: [errorRecord.taskId],
       decisions: [
-        `Subagent session ${error.sessionId} (child of ${error.parentSessionId}) encountered error`,
-        `Error type: ${error.errorType}`,
-        `Error: ${error.error}`,
+        `Subagent session ${errorRecord.sessionId} (child of ${errorRecord.parentSessionId}) FAILED`,
+        `Error type: ${errorRecord.errorType}`,
+        `Error: ${errorRecord.error}`,
       ],
-      continuation: `AWAITING DECISION: Resume with custom prompt? Query subagent? Abandon and spawn new? Subagent is PAUSED - full context preserved.`,
-      intent: "subagent_error",
+      continuation: `SUBAGENT STALLED - AWAITING DECISION. Subagent session preserved. Options: 1) Resume with custom prompt 2) Query subagent 3) Abandon and spawn new. Parent agent MUST decide.`,
+      intent: "subagent_failed",
     });
   } catch (e) {
     console.error("[error-capture] Hivemind notify failed:", e);
   }
 }
 
-async function loadTaskRegistry(taskId: string) {
+async function injectIntoParentSession(client: any, errorRecord: SubagentError) {
+  const parentSessionId = errorRecord.parentSessionId;
+  if (!parentSessionId || parentSessionId === "unknown") return;
+
   try {
-    const task = await import("omega-hub_task_registry_get").then(m => m.omega-hub_task_registry_get({ task_id: taskId }));
-    return task;
-  } catch {
-    return null;
+    const context = `<subagent-failure>
+SUBAGENT FAILED - PARENT AGENT NOTIFIED
+Subagent: ${errorRecord.sessionId}
+Parent: ${parentSessionId}
+Task: ${errorRecord.taskDescription} (${errorRecord.taskId})
+Error Type: ${errorRecord.errorType}
+Error: ${errorRecord.error}
+Timestamp: ${errorRecord.timestamp}
+
+SUBAGENT SESSION PRESERVED - CAN BE RESUMED
+Snapshot: ${errorRecord.sessionSnapshot.messageCount} messages, ${errorRecord.sessionSnapshot.tokenUsage.input} in / ${errorRecord.sessionSnapshot.tokenUsage.output} out tokens
+Last Thinking: ${errorRecord.sessionSnapshot.lastThinking.slice(0,200)}...
+Last Tool Call: ${errorRecord.sessionSnapshot.lastToolCall.slice(0,200)}...
+Error Context: ${errorRecord.sessionSnapshot.errorContext.slice(0,300)}...
+
+PARENT AGENT MUST DECIDE:
+1. Resume subagent with custom prompt
+2. Query subagent for more info
+3. Abandon and spawn new subagent
+</subagent-failure>`;
+
+    await client.session.prompt({
+      path: { id: parentSessionId },
+      body: {
+        parts: [{ type: "text", text: context, synthetic: true }],
+        noReply: true,
+      }
+    });
+  } catch (e) {
+    console.error("[error-capture] Parent injection failed:", e);
   }
 }
 
 export const ErrorCapturePlugin: Plugin = async ({ client, $, directory }) => {
-  console.log("[error-capture] Plugin initialized", { directory });
+  console.log("[error-capture] Plugin initialized - SUBAGENT FAILURE DETECTION ACTIVE", { directory });
 
   return {
-    // Track subagent session creation
     "session.created": async ({ sessionID, parentID, agent, model }) => {
-      if (!parentID) return; // Main session, not a subagent
+      if (!parentID) return;
 
-      // Try to get task info from Hivemind task registry
       let taskId = "unknown";
       let taskDescription = "unknown";
       let launchedBy = "unknown";
 
       try {
-        // Check if there's a recent task registry entry for this parent session
         const tasks = await import("omega-hub_task_registry_query").then(m => 
           m.omega-hub_task_registry_query({ 
             channel: "opencode", 
@@ -166,7 +180,6 @@ export const ErrorCapturePlugin: Plugin = async ({ client, $, directory }) => {
           })
         );
         
-        // Find task that matches this parent session
         for (const task of tasks.tasks || []) {
           if (task.session_id === parentID || task.context?.includes(parentID)) {
             taskId = task.task_id;
@@ -177,29 +190,25 @@ export const ErrorCapturePlugin: Plugin = async ({ client, $, directory }) => {
         }
       } catch {}
 
-      const subagentInfo: SubagentSession = {
+      subagentSessions.set(sessionID, {
         sessionId: sessionID,
         parentSessionId: parentID,
         launchedBy,
         taskId,
         taskDescription,
         createdAt: Date.now(),
-      };
-
-      subagentSessions.set(sessionID, subagentInfo);
-      console.log("[error-capture] Tracked subagent session", subagentInfo);
+      });
+      console.log("[error-capture] Tracking subagent", { sessionID, parentID, taskId });
     },
 
-    // Capture session-level errors (streaming failures, etc.)
     "session.error": async ({ sessionID, error, providerID, modelID, properties }) => {
       const sessionId = sessionID || properties?.sessionID;
-      const providerId = providerID || properties?.providerID;
       const errorMsg = error || properties?.error;
       
       if (!sessionId || !errorMsg) return;
 
       const subagentInfo = subagentSessions.get(sessionId);
-      if (config.trackSubagentsOnly && !subagentInfo) return; // Only track subagents
+      if (config.trackSubagentsOnly && !subagentInfo) return;
 
       const snapshot = await captureSessionSnapshot(client, sessionId);
 
@@ -216,13 +225,14 @@ export const ErrorCapturePlugin: Plugin = async ({ client, $, directory }) => {
       };
 
       await appendErrorLog(errorRecord);
-      console.error("[error-capture] Subagent session error", { sessionId, error: errorRecord.error });
+      console.error("[error-capture] SUBAGENT FAILED", { sessionId, error: errorRecord.error });
 
-      // Notify launching agent + user via Hivemind
-      await notifyHivemind(client, errorRecord);
+      await notifyParentAgent(client, errorRecord);
+      if (subagentInfo?.parentSessionId) {
+        await injectIntoParentSession(client, errorRecord);
+      }
     },
 
-    // Capture tool execution errors
     "tool.execute.after": async (input) => {
       const result = input as unknown as {
         sessionID?: string;
@@ -256,12 +266,14 @@ export const ErrorCapturePlugin: Plugin = async ({ client, $, directory }) => {
       };
 
       await appendErrorLog(errorRecord);
-      console.error("[error-capture] Subagent tool error", { sessionId, tool: result.tool, error: result.error });
+      console.error("[error-capture] SUBAGENT TOOL FAILED", { sessionId, tool: result.tool, error: result.error });
 
-      await notifyHivemind(client, errorRecord);
+      await notifyParentAgent(client, errorRecord);
+      if (subagentInfo?.parentSessionId) {
+        await injectIntoParentSession(client, errorRecord);
+      }
     },
 
-    // Cleanup on session end
     "session.deleted": async ({ sessionID }) => {
       subagentSessions.delete(sessionID);
     },

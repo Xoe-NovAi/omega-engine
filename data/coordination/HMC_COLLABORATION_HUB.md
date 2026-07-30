@@ -1,7 +1,7 @@
 # 🔱 HMC Collaboration Hub — Sprint Coordination Forum
 **AP Token**: `AP-HMC-HUB-v1.5.1`
 ⬡ OMEGA ⬡ HMC ⬡ ALL-AGENTS ⬡ COORDINATION
-**Last Updated**: 2026-07-30T12:45Z
+**Last Updated**: 2026-07-30T15:35Z
 
 ---
 
@@ -691,6 +691,15 @@ tests/golden/test_soul_schema_migrations.py — Migration golden file tests
 - [2026-07-30T01:15Z] **HMC Hub Optimization Review Complete** — Identified 320+ lines duplication, 400+ lines stale content, 500+ lines archivable. Target: v2.0 at ~950 lines (50% reduction).
 - [2026-07-30T01:30Z] **Subagent Reliability Issue** — Researcher launched 3× — all failed (streaming). Fixed: direct execution fallback. **Decision**: Subagents paused; user switching provider.
 - [2026-07-30T02:15Z] **HANDOFF TO GROK CLI** — All research complete. Enhanced Coordination Strategy v2.0 published. Handoff briefing written to `docs/briefings/GROK_CLI_HANDOFF_20260730.md`. Kali session complete. Grok CLI to take over execution.
+- [2026-07-30T15:35Z] **Partition Recovery Session — 16GB Freed** (ses_04c68eaeaffe, `/` 100%→85%):
+  - **Caches**: npm cache (2.0G), uv cache (1.4G), pip cache (194MB), Playwright (646MB), npm npx (1.2G) all cleared
+  - **ISO**: HBCD_PE_x64.iso (3.1G) deleted
+  - **Legacy repos to vault**: omega-stack-legacy (2.8G), xna-omega-legacy (560M), omega-vetala (405M), archive (1.0G) — all safely on `/media/arcana-novai/omega_vault/legacy-repos/`
+  - **ACL fix pattern**: Docker container data had files with restrictive ACLs (`r-xr-xr-x+`) owned by arcana-novai but non-writable. Pattern: `pkexec chmod -R u+w` → `pkexec find ! -user \$USER -delete` → `rm -rf`
+  - **Cross-filesystem mv caveat**: `mv` silently drops root-owned files. Must use `pkexec rsync -av` first, then remove source.
+  - **OpenCode**: Cleared sessions explorer export (2.3G). Main DB (15.8G) at `~/.local/share/opencode/opencode.db` — preserved (monolithic SQLite, not cache).
+  - **Sudo completed**: `apt clean` (658M), `journalctl --vacuum` (800M), old snap revisions (2-3G)
+  - **Result**: 103G→87G used, 193MB→16GB free. Vault at 54% (6.8G free). Full report: `data/coordination/SESSION_CLEANUP_20260730.md`
 - [2026-07-23T15:09Z] Pre-compaction complete. All 3 Architect decisions executed. Soul distillation done (5 L3 principles). Researcher Phase 0 + Grokster G1-15 complete. Ma'at ready for C-4b + Vault FleetOrchestrator. Researcher pending dispatch for Phases 1-3. Carmack W-1 pending. Scribe C-0.5 ready.
 - [2026-07-23T15:35Z] **Full Orchestration Brief posted** (ses_2f0475f2bbd4) — 5-phase sprint plan, 11 agent assignments, 57 research queries.
 
