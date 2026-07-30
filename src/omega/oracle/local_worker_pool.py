@@ -252,6 +252,8 @@ class LocalWorkerPool:
         self._task_group: Optional[anyio.abc.TaskGroup] = None
         # Track background tasks to prevent GC (Python 3.12+ fire-and-forget fix)
         self._background_tasks: Set[anyio.abc.Task] = set()
+        # Track in-progress task IDs to prevent re-picking the same task
+        self._processing_task_ids: Set[str] = set()
         
 # Register with WorkerCoordinator
         from omega.library.coordinator import COORDINATOR
@@ -312,8 +314,12 @@ class LocalWorkerPool:
                 # Get next queued task
                 task = await self._get_next_task()
                 if task:
-                    # Spawn task processor with GC protection
                     task_id = task.task_id
+                    # Skip if already being processed
+                    if task_id in self._processing_task_ids:
+                        await anyio.sleep(self.poll_interval)
+                        continue
+                    self._processing_task_ids.add(task_id)
                     # Use task group to spawn - completion tracked via filesystem
                     self._task_group.start_soon(self._process_task, task)
                 else:
@@ -434,7 +440,7 @@ class LocalWorkerPool:
             logger.error("Task %s failed: %s", task_id, e)
             await self._handle_task_failure(task, str(e))
         finally:
-            self._background_tasks.discard(task_id)
+            self._processing_task_ids.discard(task_id)
     
     async def _handle_task_failure(self, task: LocalTask, error: str) -> None:
         """Handle task failure with retry logic."""

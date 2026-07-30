@@ -432,7 +432,7 @@ lilith:
 roc_racoon:
   preferred_models:
     local_fast:
-      model: "rocracoon-3b-q4_k_m"
+      model: "rocracoon-3b-q5_k_m"
       provider: "native-gguf"
       size: "~3B"
     local_deep:

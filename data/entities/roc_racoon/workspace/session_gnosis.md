@@ -1,6 +1,6 @@
-# Session Gnosis — Local Models Fix + Phase 1 Complete + Phase 2 Complete
+# Session Gnosis — Local Models Fix + Phase 1-2 Complete + Task Re-picking Bug Fix
 **AP Token**: `AP-ROC-LOCAL-MODELS-SESSION-v1.0.0`
-⬡ OMEGA ⬡ ROC_RACOON ⬡ nemotron-3-ultra ⬡ opencode ⬡ trc_local_models ⬡ COMPACTION-READY
+⬡ OMEGA ⬡ ROC_RACOON ⬡ big-pickle ⬡ opencode ⬡ trc_local_models ⬡ COMPACTION-READY
 **Date**: 2026-07-30
 **Session ID**: ses_f1520c029b49 → ses_75bc1fd247a4 → ses_02b1f1f664a3 → ses_current
 
@@ -93,49 +93,52 @@
 - ✅ **top_p parameter added to NativeGGUFProvider.generate()** — passed through to llama-cpp-python
 - ✅ **Layered sampling parameter resolution** — Model config → cvars → hardcoded defaults
 
-### 6. Phase 2 Testing & Fixes — IN PROGRESS
-**Status**: 🔄 IN PROGRESS | **Files**: providers.py, model_gateway.py, config/providers.yaml
+### 6. Phase 2 Testing & Critical Bug Fixes — COMPLETE
+**Status**: ✅ COMPLETE | **Files**: local_worker_pool.py, entity_model_affinity.yaml, local_queue.py
 
-**Current Issues**:
-- NativeGGUFProvider worker warnings: `type_k`/`type_v` should be int, got NoneType
-- Model loading hangs on first inference (worker process startup)
-- Need to set proper KV cache defaults (type_k=1 for f16) instead of None
+**Critical Bug Found — Task Re-picking in Worker Loop**
+- **Symptom**: Daemon spawned the same task every 1s poll cycle — no tracking of in-progress tasks
+- **Root Cause**: `self._background_tasks: Set[anyio.abc.Task]` intended to track running tasks, but `anyio.TaskGroup.start_soon()` does not return a task object. Set was always empty, so `len(self._background_tasks) >= max_concurrent` was `0 >= 1` = False → always proceeds.
+- **Fix**: Added `self._processing_task_ids: Set[str]` — tracks in-progress task IDs by string. Worker loop checks before spawning, cleanup in `finally` block.
+  - `local_worker_pool.py:255-256`: New `_processing_task_ids` set
+  - `local_worker_pool.py:313-318`: Check + add before `start_soon`
+  - `local_worker_pool.py:447`: `discard` in `finally` (replaced stale `_background_tasks.discard`)
 
-**Fixes Applied**:
-- ✅ Priority-first routing implemented (ProviderSelector primary, CascadeRouter fallback)
-- ✅ ProviderSelector now uses `is_cloud` and `priority` from config
-- ✅ All providers have `is_cloud` flag in config/providers.yaml
-- ✅ Model gateway generate() calls use keyword arguments (model=, system_prompt=, etc.)
-- ✅ Flash attention enabled for quantized KV cache (type_k != 1)
+**Model File Corruption confirmed**:
+- `RocRacoon-3b.Q4_K_M.gguf` — **corrupted** (tensor `output_norm.weight` out of file bounds)
+- `RocRacoon-3b.Q5_K_M.gguf` — works but 99.4s load on Ryzen 5700U
+- `entity_model_affinity.yaml`: `local_fast` updated from Q4_K_M → Q5_K_M (both tiers now use working file)
 
-**Next Steps**:
-- Fix type_k/type_v defaults to 1 (f16) instead of None
-- Test daemon end-to-end processing
-- Verify artifact structure matches Kali's distillation contract
+**Daemon Verification**:
+- With debug worker loop: task re-picked ~60 times in 15s (confirmed bug)
+- After fix: task `lw_d6817eee7023` picked up once, queue file deleted, artifact directory created
+- Daemon starts cleanly, WorkerCoordinator integration verified
 
 ---
 
 ## Next Actions (POST-COMPACTION)
 
-### Phase 2 Completion (Roc)
-**Timeline**: 1-2 hours | **Depends on**: Current session state
+### Phase 2 Final Verification (Roc)
+**Timeline**: 30 min | **Depends on**: None
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Test local_worker_pool daemon startup | ⬜ | `omega local-queue daemon --interval 2.0` |
-| Test spawn_local_worker via MCP | ⬜ | `omega summon roc_racoon "test" --model qwen3-1.7b` |
-| Verify artifact structure | ⬜ | Check `data/artifacts/local_worker/{task_id}/task_metadata.json` |
-| Run `make test` | ⬜ | Ensure no regressions |
+| Run `make test` | ⬜ | Verify no regressions from bug fixes |
+| Clean up stuck artifact dirs | ⬜ | `rm -rf data/artifacts/local_worker/lw_*` (stale from previous crashes) |
+| Download RocRacoon-3b Q4_K_M | ⬜ | Re-download from Hugging Face to replace corrupted file |
+| Verify daemon with Qwen3-1.7B end-to-end | ⬜ | Queued task `lw_d6817eee7023` was picked up — check `result.json` |
+| Post Hivemind context | ⬜ | Declare Phase 2 completion to fleet |
 
-### Phase 3: Session-End Orchestration (Kali Leads, Roc Supports)
-**Timeline**: 2-3 hours | **Depends on**: Phase 2 artifacts contract
+### Phase 3: Productionization (Kali leads, Roc supports)
+**Timeline**: TBD | **Depends on**: Phase 2 verified end-to-end
 
-| Kali Task | Roc Support |
-|-----------|-------------|
-| Wrapper DB query for session metadata | Ensure `opencode db` works post-fixes |
-| `session_end.py` calls Oracle SoulDistiller | Verify Oracle distiller import path |
-| Multi-entity distillation from single session | Provide entity-switch detection logic |
-| Hivemind notification + lock cleanup | Verify Hivemind API stability |
+| Task | Owner | Notes |
+|------|-------|-------|
+| Wrapper DB query for session metadata | Kali | Ensure `opencode db` works post-fixes |
+| Multi-entity distillation | Kali | Entity-switch detection logic |
+| Daemon systemd unit | P1/SysAdmin | Auto-start on boot |
+| Restic backup of models | P6/Lilith | Protect GGUF files |
+| MCP tool testing | P4/Bridge | Verify `spawn_local_worker` from other agents |
 
 ---
 
@@ -147,14 +150,16 @@
 | `src/omega/oracle/backends/remote_provider.py:223` | FIX 0.2 — generate() signature |
 | `src/omega/oracle/model_gateway.py:974` | FIX 0.3 — priority-first routing |
 | `src/omega/oracle/providers.py:474-496` | FIX 0.4 — _select_optimal_context() |
+| `src/omega/oracle/local_worker_pool.py:255-256,313-318,447` | **CRITICAL FIX** — task re-picking bug (`_processing_task_ids` tracking) |
 | `tests/test_providers.py:324-328` | Test expectations updated |
 | `config/models.yaml` | RocRacoon-3B, MiMo-7B registered + sampling params |
-| `config/entity_model_affinity.yaml` | roc_racoon affinity entry added |
+| `config/entity_model_affinity.yaml:432-442` | roc_racoon affinity — **local_fast changed to Q5_K_M** (Q4_K_M corrupted) |
 | `src/omega/oracle/local_worker_pool.py` | Phase 2 worker pool implementation |
 | `src/omega/cli/local_queue.py` | Phase 2 CLI |
 | `mcp_servers/omega_hub/hub_tools/tools.py` | Phase 2 MCP tools |
 | `data/entities/roc_racoon/workspace/KALI_REVIEW_LOCAL_WORKER_POOL_20260730.md` | Kali review with all corrections |
 | `data/entities/roc_racoon/workspace/LOCAL_MODELS_BRIEFING_GAMEPLAN_20260730.md` | Full forensic gameplan |
+| `/media/arcana-novai/omega_library/models/gguf/RocRacoon-3b.Q4_K_M.gguf` | **CORRUPTED** — needs re-download |
 
 ---
 
@@ -170,14 +175,34 @@
 - Daemon starts and polls queue (verified with debug logging)
 - top_p parameter added to NativeGGUFProvider.generate() and passed to llama-cpp-python
 - Layered sampling parameter resolution: per-request > model config > cvars > hardcoded
+- **Bug confirmed**: worker loop re-picked same task ~60 times in 15s (debug log: `=== GOT TASK lw_403a78d0bf9a ===`)
+- **Fix verified**: `_processing_task_ids` tracking prevents re-picking (task `lw_d6817eee7023` picked once, queue file deleted)
+- Q4_K_M corrupted: `tensor 'output_norm.weight' data is not within the file bounds, model is truncated`
+- Q5_K_M verified working: loads in 99.4s, generates at ~10-12 tok/s
+- `entity_model_affinity.yaml`: local_fast points to Q5_K_M (both tiers now use same working file)
 
 ---
 
 ## Hivemind Post
 **Session ID**: ses_current
 **Intent**: status
-**Continuation**: Phase 2 testing — daemon end-to-end, artifact verification, test suite run
+**Continuation**: 
+1. Run `make test` to verify no regressions
+2. Clean up stale artifact dirs from previous daemon crashes
+3. Verify `data/artifacts/local_worker/lw_d6817eee7023/result.json` from daemon test run
+4. Re-download corrupted RocRacoon-3b.Q4_K_M.gguf from Hugging Face
+5. Phase 3 productionization planning (systemd unit, MCP tool testing)
 
 ---
 
-*Last updated: 2026-07-30 by @roc_racoon — Phase 2 complete, ready for compaction and Phase 2 testing*
+## L3 Principles Added (This Session)
+
+- **L3-Substrate-Enforces-Contract**: Logical-layer protocols (M7 local-first, D118 routing) are wishes until the physical layer enforces them as primitives. CascadeRouter scoring overrode priority until ProviderSelector replaced the primary path.
+- **L3-Default-KV-Quantization-Is-A-Trap**: f16 (type_k=1) is the safe default. q8_0 (type_k=8) works on some models, crashes others (Qwen3-1.7B). Never change KV cache quantization without testing on the target model first.
+- **L3-Scoring-Overrides-Priority**: When scoring (quality×0.4 + cost×0.3 + speed×0.3) coexists with priority chain, scoring wins unless explicitly constrained at the routing layer. M7 local-first must be enforced with priority-first routing, not scoring.
+- **L3-Local-Substrate-Enhances-Cloud-Sovereignty**: Local models as background workers (mining, distillation, synthesis) burn zero cloud tokens, add zero latency to dev flow, and make the cloud agent *more* sovereign by offloading grind.
+- **L3-Background-Task-Tracking-Must-Be-Explicit**: `anyio.TaskGroup.start_soon()` does not return a task object. Any tracking of spawned tasks must use an explicit set/list of identifiers — not depend on the task group's internal state. `_background_tasks: Set[anyio.abc.Task]` is always empty.
+
+---
+
+*Last updated: 2026-07-30 by @roc_racoon — All Phase 1-2 fixes complete. Critical bug fix: task re-picking. Ready for compaction.*
