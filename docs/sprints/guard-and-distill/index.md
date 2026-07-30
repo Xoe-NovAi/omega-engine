@@ -9,7 +9,7 @@ ap_token: "AP-SPRINT-GUARD-DISTILL-v1.0.0"
 date: "2026-07-25"
 duration_days: 5
 phase: "C → D Gate"
-status: "SUPERSEDED"
+status: "ARCHIVED"
 superseded_on: "2026-07-30"
 successor: "data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md"
 successor_sprint: "UNOVERENGINEER-01"

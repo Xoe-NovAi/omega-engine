@@ -163,7 +163,7 @@ def list_tasks(
             try:
                 dt = datetime.fromisoformat(task["created_at"].replace("Z", "+00:00"))
                 created_str = dt.strftime("%m-%d %H:%M")
-            except:
+            except (ValueError, AttributeError, KeyError):
                 created_str = task["created_at"][:16]
             
             table.add_row(

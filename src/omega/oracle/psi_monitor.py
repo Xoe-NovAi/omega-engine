@@ -8,7 +8,7 @@ in exponentially weighted moving average windows.
 Kernel 4.20+ (PSI merged), 5.15+ (triggers supported)
 Kernel source: kernel/sched/psi.c -- psi_avgs_work updates EWMA every 2s
 """
-import asyncio
+import anyio
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, Optional
@@ -52,7 +52,7 @@ class PSIMonitor:
         self.poll_interval = poll_interval
         self.resources = resources
         self._cache: dict[Resource, PSISnapshot] = {}
-        self._task: Optional[asyncio.Task] = None
+        self._task_group: Optional[anyio.abc.TaskGroup] = None
         self._running = False
 
     async def start(self) -> None:
@@ -60,24 +60,23 @@ class PSIMonitor:
         if self._running:
             return
         self._running = True
-        self._task = asyncio.create_task(self._poll_loop())
+        self._task_group = await anyio.create_task_group().__aenter__()
+        self._task_group.start_soon(self._poll_loop)
         # Initial read
         await self._poll_once()
 
     async def stop(self) -> None:
         """Stop background polling"""
         self._running = False
-        if self._task:
-            self._task.cancel()
-            try:
-                await self._task
-            except asyncio.CancelledError:
-                pass
+        if self._task_group:
+            tg = self._task_group
+            self._task_group = None
+            await tg.__aexit__(None, None, None)
 
     async def _poll_loop(self) -> None:
         """Background polling loop"""
         while self._running:
-            await asyncio.sleep(self.poll_interval)
+            await anyio.sleep(self.poll_interval)
             if self._running:
                 await self._poll_once()
 

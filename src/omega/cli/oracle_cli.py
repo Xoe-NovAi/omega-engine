@@ -73,14 +73,6 @@ try:
 except ImportError:
     pass  # local_queue module not available
 
-# ── Vetter sub-commands (P0-3 Sovereign Vetter) ──────────────────────────
-try:
-    from omega.governance.sovereign_vetter import SovereignVetter
-    VETTER_AVAILABLE = True
-except ImportError:
-    VETTER_AVAILABLE = False
-
-
 def _load_config() -> dict:
     """Load core omega config."""
     config_path = Path(__file__).resolve().parent.parent.parent.parent / "config" / "omega.yaml"
@@ -477,42 +469,6 @@ def model_status():
 
 
 # ── VET — Sovereign Mandate Compliance Check ───────────────────────────────
-@app.command()
-def vet(
-    path: str = typer.Argument(..., help="File or directory to vet for mandate compliance"),
-    force: bool = typer.Option(False, "--force", "-f", help="Bypass cache and re-run all checks"),
-):
-    """Run the Sovereign Vetter (P0-3) — checks all 23 Sovereign Mandates.
-    
-    CRITICAL mandates (M1, M7, M8, M9, M23) hard-block on failure.
-    ADVISORY mandates log failures but do not block.
-    
-    Example:
-        omega vet src/omega/oracle/
-        omega vet config/omega.yaml
-    """
-    async def _run():
-        from omega.governance.sovereign_vetter import SovereignVetter
-        vetter = SovereignVetter()
-        result = await vetter.vet({"path": path}, force=force)
-        
-        if result.passed:
-            console.print("[green]✅ SOVEREIGN VETTER PASSED — All critical mandates satisfied[/green]")
-        else:
-            console.print("[red]❌ SOVEREIGN VETTER FAILED — Critical mandate violations[/red]")
-            for m_id, detail in result.details.get("per_mandate", {}).items():
-                if not detail["passed"]:
-                    status = "CRITICAL" if m_id in vetter.CRITICAL_MANDATES else "ADVISORY"
-                    console.print(f"  [red]{m_id}[/red] ({status}): {detail['detail']}")
-        
-        if result.details.get("advisory_failed"):
-            console.print(f"\n[yellow]Advisory failures (logged only): {', '.join(result.details['advisory_failed'])}[/yellow]")
-        
-        if not result.passed:
-            raise typer.Exit(1)
-    
-    anyio.run(_run)
-
 # ── Display helper ─────────────────────────────────────────────────────
 def _display_response(result: OracleResponse):
     """Format and display an Oracle response."""

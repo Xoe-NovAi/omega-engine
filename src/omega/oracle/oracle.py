@@ -829,7 +829,7 @@ class Oracle:
         transient: bool = False,
         model_override: Optional[str] = None,
     ) -> OracleResponse:
-        It bypasses domain routing and directly communicates with the named entity.
+        """It bypasses domain routing and directly communicates with the named entity.
         """
         async def _execute_summon():
             entity = self.registry.get(entity_name)

@@ -17,7 +17,6 @@ Key Properties:
 - OS user isolation — separate UID for vault broker (optional but recommended)
 """
 
-import asyncio
 import json
 import logging
 import os

@@ -86,11 +86,43 @@ repos:
         types: [python, yaml, toml, json]
         pass_filenames: true
 
-      # Verify Temple-Grade compliance
+      # Fast mandate compliance checks (per Carmack Verdict — moved from runtime Vetter to CI)
+      - id: omega-check-m1-anyio
+        name: Check M1 AnyIO (no asyncio)
+        entry: make check-m1-anyio
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: omega-check-m9-error-integrity
+        name: Check M9 Error Integrity (no bare except)
+        entry: make check-m9-error-integrity
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: omega-check-m8-zero-telemetry
+        name: Check M8 Zero Telemetry
+        entry: make check-m8-zero-telemetry
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: omega-check-m7-local-first
+        name: Check M7 Local-First config
+        entry: make check-m7-local-first
+        language: system
+        pass_filenames: false
+        always_run: true
+      - id: omega-check-m23-failure-integrity
+        name: Check M23 Failure Integrity
+        entry: make check-m23-failure-integrity
+        language: system
+        pass_filenames: false
+        always_run: true
+
+      # Verify Temple-Grade compliance (comprehensive — slower, CI-focused)
       - id: omega-temple-grade
         name: Temple-Grade compliance check
         entry: make temple-grade
         language: system
         pass_filenames: false
-        stages: [commit, push]
+        stages: [push]
         always_run: true

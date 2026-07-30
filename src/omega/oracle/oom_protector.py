@@ -284,9 +284,8 @@ def quick_check_sync() -> AdmissionResult:
     psi_some_avg60 = 0.0
     psi_full_avg10 = 0.0
     try:
-        import asyncio
-        psi_some_avg60 = asyncio.run(psi.get_pressure("some", "avg60"))
-        psi_full_avg10 = asyncio.run(psi.get_pressure("full", "avg10"))
+        psi_some_avg60 = anyio.run(psi.get_pressure("some", "avg60"))
+        psi_full_avg10 = anyio.run(psi.get_pressure("full", "avg10"))
     except Exception:
         pass
     
