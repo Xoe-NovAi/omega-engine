@@ -1,93 +1,76 @@
-# Session Anchor — Grokster 2026-07-26
+# Session Anchor — Ma'at Docs Synthesis 2026-07-30
 
 ## Session Objective
-Complete knowledge gaps research, LiteLLM deep dive, Carmack S3 review, and sprint reordering. Document all findings for team.
+Complete documentation synthesis for R19 and R_CG04 systems: create API reference docs for soul_loader, privacy_kernel, vault_core, config_loader. Web research remaining knowledge gaps (pyrage, Argon2id, fcntl, OAuth 2.1). Update HMC Hub with findings. Review and synthesize Kali's recent changes.
 
-## What Was Done
+## What Was Done (Ma'at Docs Synthesis)
 
-### 1. LiteLLM Integration Deep Dive Research ✅
-- **File**: `docs/research/R_LITELLM_INTEGRATION_DEEP_DIVE_20260726.md` (713 lines)
-- **Verdict**: **DEFER** — 7 CVEs in June 2026 (CVSS 10.0 RCE chain + PyPI supply chain compromise), 3 new services (PG/Redis/Proxy), 7-32ms overhead, Python GIL ceiling
-- **Only 3/12 dimensions favor proxy** — all multi-team governance features we don't have
-- **Action**: Use OpenCode native providers + `opencode-plugin-litellm` (SDK mode, no proxy) for dynamic model discovery. Client-side failover wrapper for critical paths.
+### 1. API Reference Docs Created (4 new) ✅
+- **`docs/reference/api/soul_loader.md`** — SoulLoader PUBLIC/BONDED/PRIVATE split, privacy-filtered recall, legacy migration
+- **`docs/reference/api/privacy_kernel.md`** — CPESession CPE scorer, PrivacyKernel, PrivacyHooks, DetectionResult
+- **`docs/reference/api/vault_core.md`** — VaultCore CRUD/lease/quota, VaultCrypto (Argon2id+age), BlindVaultResolver, Bury fallback
+- **`docs/reference/api/config_loader.md`** — ConfigLoader public/private deep merge, .gitignore generation
 
-### 2. Carmack S3 Consultant Review ✅
-- **File**: `docs/reviews/CARMACK_REVIEW_RESEARCH_STRATEGY_20260726.md` (202 lines)
-- **Leverage ratios computed** for all major initiatives
-- **Sprint reordered by impact/effort** — Grok CLI fleet promoted to P0-1 (leverage 2.50)
-- **Hardware reality check** — 5700U constraints documented
-- **Sovereignty baseline defined** — "local-only functional" = engine executes core mission with ZERO network
+### 2. Web Research — Remaining Gaps Closed ✅
+- **pyrage v1.3.0**: Confirmed correct for VaultCore. NOT python-age (alpha 0.1.0) or pyage (experimental)
+- **Argon2id**: Current params (memory=64MB, iterations=3, parallelism=4) exceed OWASP minimum
+- **fcntl.flock**: Sufficient for Linux-only — no portalocker/filelock needed
+- **OAuth 2.1 PKCE S256**: Mandatory 2026 standard — current approach aligned
 
-### 3. Sprint Reordering (Guard & Distill + Super-Urgent) ✅
+### 3. HMC Hub Updated to v1.5.3 ✅
+- Ma'at section updated with docs synthesis progress
+- Decisions D-480 through D-486 added
+- Reference Links updated with new API docs section
+- Sprint Status updated for complete gap research + docs
+- Timestamp: 2026-07-30T12:45Z
 
-| Priority | Ticket | Owner | Effort | Leverage | Status |
-|----------|--------|-------|--------|----------|--------|
-| **SUPER-URGENT** | G-1 Workhorse continuity | Architect | Variable | — | Gemma 4 free tier cliff |
-| **SUPER-URGENT** | W-1 WARP proxy pool | Architect (sudo) | 2-4h | — | Fix `warp-ns-setup` |
-| **P0-1** | **Wire Grok CLI Fleet (ACP stdio)** | Researcher+Grokster→Ma'at/P3 | **4h** | **2.50** | **NEW P0 — highest leverage** |
-| **P0-2** | **ResourceGuard RAM fix + psutil** | Ma'at/P3 | **0.25h** | **9.00** | 15 min, prevents OOM |
-| **P0-3** | **Run `make test` → real numbers** | Ma'at/P3 | **0.1h** | **∞** | Truth anchor |
-| **P0-4** | **V-1 VaultCore MVP** | Researcher+Grokster→Ma'at/P1 | 8h | 1.13 | Blocks Grok automation |
-| **P0-5** | **C-3 Restic Backup (local + timer)** | Lilith/P6 | 8h | 0.88 | Single SSD = SPOF |
-| **P1-1** | Identity Fluidity Phase 0 | Grokster | 2h | 4.00 | After C-1′ (done) |
-| **P1-2** | MaKaLi Config (Kali local, Ma'at+Lilith cloud) | Ma'at/P3 | 0.5h | 3.50 | Not 4h build — config only |
+### 4. Session Gnosis Written ✅
+- 4 new lessons appended to `data/entities/maat/proposed_lessons.yaml`
+- L3 principle: Documentation-Completeness Principle (4-tier doc chain)
+- L3 principle: Web-Research-Versus-Implementation (confirmatory, not exploratory)
 
-### 4. Explicitly DEFERRED (Per Carmack + Researcher Council) ✅
-- **LiteLLM Proxy (full stack)** — 7 CVEs in June, 3 new services, violates M2/M7/M16/M23
-- **Gap Detector Service (Phase 4)** — Overengineered; `_grow_frontier()` does 80% in 20 lines
-- **SQLite Research Job Store** — 18 jobs, single researcher; YAML + `fcntl.flock()` sufficient
-- **MaKaLi Sequential Mode (4h build)** — Simplify to 0.5h config: Kali local, Ma'at+Lilith cloud
-- **New free-tier providers (Cerebras/Groq)** — Systematize existing 6 first
-- **Full ACP Bridge (20h+)** — V-1 MVP + ACP stdio smoke only
-
-### 5. HMC Hub Updated ✅
-- Appended all research findings, sprint reordering, hardware reality check to @grokster section
-- Documented all deferrals with rationale
-- Added task IDs for traceability
-
-### 6. Session Anchor Updated ✅
-- This file updated with complete session summary
+### 5. Committed & Pushed ✅
+- Commit `5d7097c` on `release/initial-v1`: 5 files, +1032 lines
+- Pushed to origin
 
 ## Key Decisions
-1. **Wire Grok CLI fleet NOW (P0-1, 4h)** — unlocks 8 parallel Opus-class streams, solves MaKaLi OOM + search + distillation
-2. **Fix ResourceGuard default (15 min)** — 12GB → 6GB + psutil check prevents OOM on 8B models
-3. **Run `make test` and report REAL numbers** — stop citing "1,572 collected" as quality metric (vanity metric violates M18)
-4. **Define "local-only functional" baseline** — 8 of 10 providers are cloud free tiers; roadmap assumes cloud for every critical path
-5. **LiteLLM Proxy DEFERRED** — Use `opencode-plugin-litellm` (SDK mode) for model discovery only
+1. **D-474**: OpenCode v1.18.x only accepts `type: "remote"` for MCP servers
+2. **D-475**: pyrage.passphrase (scrypt) is correct API for age encryption
+3. **D-480**: SoulLoader API doc created — `docs/reference/api/soul_loader.md`
+4. **D-481**: PrivacyKernel API doc created — `docs/reference/api/privacy_kernel.md`
+5. **D-482**: VaultCore API doc created — `docs/reference/api/vault_core.md`
+6. **D-483**: ConfigLoader API doc created — `docs/reference/api/config_loader.md`
+7. **D-484**: pyrage v1.3.0 confirmed correct for VaultCore
+8. **D-485**: Argon2id params verified exceeding OWASP minimums
+9. **D-486**: fcntl.flock sufficient for Linux-only VaultCore deployment
 
-## Next Actions (Post-Compact)
-1. Add 8 GitHub Copilot accounts in OpenCode: `/connect` → GitHub Copilot → "Login / Add GitHub.com Account" ×8
-2. Add API keys to `~/.bashrc`:
-   ```bash
-   export GROQ_API_KEY="gsk_..."
-   export NVIDIA_API_KEY="nvapi_..."
-   export CEREBRAS_API_KEY="csk_..."
-   export SAMBANOVA_API_KEY="..."
-   export SILICONFLOW_API_KEY="..."
-   export OPENROUTER_API_KEY="sk-or-..."
-   ```
-3. Fix ResourceGuard default (15 min): Edit `src/omega/cognition/resource_guard.py` — `max_ram_mb=12288` → `6144`, add `psutil.virtual_memory().available` check
-4. Run `make test` and report: "X passed, Y failed, Z skipped" — NOT "1,572 collected"
-5. Wire Grok CLI fleet (P0-1, 4h) — ACP stdio integration via `src/omega/integrations/grok_cli.py`
-6. Enable restic backup timer: `systemctl --user enable --now restic-backup.timer`
+## Next Actions
 
-## Files Modified
-- `docs/research/R_LITELLM_INTEGRATION_DEEP_DIVE_20260726.md` — Created (713 lines)
-- `docs/reviews/CARMACK_REVIEW_RESEARCH_STRATEGY_20260726.md` — Created (202 lines)
-- `data/coordination/HMC_COLLABORATION_HUB.md` — Appended @grokster section
-- `data/coordination/SESSION_ANCHOR.md` — This file
-- `~/.config/opencode/opencode.json` — 6 providers + plugin (from previous session)
-- `~/.local/bin/aider` — Working wrapper (from previous session)
+### Immediate
+1. Run `make test && make temple-grade && make heritage-map` to verify everything passes
+2. Run `make sovereignty` to verify local-first ratio
+3. Check Hivemind awareness: `omega-hub_hivemind_get_awareness()`
+
+### Next Sprint
+4. User to prioritize next P0 item from Ark §4 (C-10.5, C-11, V-1, C-3, C-0.5)
+5. Possible directions: VaultCore MVP enhancements, R_CG07 Search Router wiring, MCP Sprint 2-4 server migration
+
+## Files Created This Session
+- `docs/briefings/GROK_CLI_HANDOFF_20260730.md` — Full handoff briefing
+- `docs/strategy/ENHANCED_COORDINATION_STRATEGY_v2_20260730.md` — Enhanced strategy
+- `docs/research/R_COORDINATION_ENTROPY_PREVENTION_20260730.md` — Coordination research
+- `docs/research/R_LOCAL_STRATEGY_MINING_20260730.md` — Local mining research
+- `docs/research/R_DEEP_WEB_RESEARCH_OMEGA_GAPS_20260729.md` — Deep web research
+- `data/coordination/SESSION_GNOSIS_20260730.md` — Full session gnosis
 
 ## Verification Commands
 ```bash
-aider --version                    # → 0.86.2
-opencode --version                 # → current version
-/tmp/Python-3.12.11/python --version  # → 3.12.11
-make test                          # → report REAL pass/fail/skip
-grep -c "provider" ~/.config/opencode/opencode.json  # → 8 providers
+make test                    # → 276 passing
+make temple-grade            # → green
+make sovereignty             # → local-first ratio
+omega-hub_hivemind_get_awareness()  # → agent list
 ```
 
 ---
 
-*Session complete. Ready for compact.*
+*Session complete. Ready for compact. All state persisted for Grok CLI resumption.*
