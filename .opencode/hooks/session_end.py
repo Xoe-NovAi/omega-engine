@@ -34,11 +34,12 @@ CODEX_CAT_PATH = os.path.join(os.path.dirname(__file__), "..", "..", "scripts", 
 async def _regenerate_codex() -> None:
     """Regenerate OMEGA_CODEX.md via codex_cat.py (non-blocking)."""
     try:
-        result = await anyio.to_thread.run_sync(
-            subprocess.run,
-            [sys.executable, CODEX_CAT_PATH],
-            capture_output=True, text=True, timeout=30,
-        )
+        def _run_codex():
+            return subprocess.run(
+                [sys.executable, CODEX_CAT_PATH],
+                capture_output=True, text=True, timeout=30,
+            )
+        result = await anyio.to_thread.run_sync(_run_codex)
         if result.returncode == 0:
             # Extract line count from output for logging
             for line in result.stdout.strip().split("\n"):
