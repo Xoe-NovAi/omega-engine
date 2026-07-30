@@ -7,6 +7,9 @@
 # Ensures that entity souls are syntactically valid and structurally complete.
 #
 # [id-soft: vet-015] ZONEID Pattern — validated via soul_power and session counts.
+#
+# Phase 1E Temple Cleansing (D-398): yaml.safe_load + Pydantic model_validate.
+# Pydantic models defined at bottom of file.
 
 
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
@@ -14,16 +17,21 @@ import yaml
 import uuid
 import logging
 from pathlib import Path
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from omega.errors import SoulCorruptionError, OmegaPersistenceError, OmegaError
 
+from pydantic import BaseModel, Field, model_validator, ConfigDict
+from pydantic import ValidationError as PydanticValidationError
+
 logger = logging.getLogger(__name__)
+
 
 class SoulValidationError(Exception):
     """Raised when a soul file violates the R-10 schema."""
     def __init__(self, message: str, original_exception: Optional[Exception] = None):
         super().__init__(message)
         self.original_exception = original_exception
+
 
 REQUIRED_TOP_KEYS = {"entity"}
 # Core required fields in the entity block (backward compatible)
@@ -40,12 +48,12 @@ SOUL_VERSION = "6.1"
 
 class SoulValidator:
     """Sovereign validator for entity soul files.
-    
+
     v6.1 Lean Schema: soul.yaml contains only identity, directives, team.
-    Session logs → memory/sessions.yaml.
-    Lesson proposals → memory/proposed_lessons.yaml.
-    Approved lessons → memory/approved_lessons.yaml.
-    
+    Session logs -> memory/sessions.yaml.
+    Lesson proposals -> memory/proposed_lessons.yaml.
+    Approved lessons -> memory/approved_lessons.yaml.
+
     Provides methods to validate soul.yaml files and generate minimal safe fallbacks
     when corruption is detected.
     """
@@ -55,12 +63,12 @@ class SoulValidator:
 
     def validate(self, entity_name: str) -> Tuple[bool, Optional[Dict[str, Any]]]:
         """Validate the soul.yaml for a given entity.
-        
+
         Args:
             entity_name: The human-readable name of the entity.
-            
+
         Returns:
-            A tuple of (is_valid, loaded_data). If is_valid is False, 
+            A tuple of (is_valid, loaded_data). If is_valid is False,
             loaded_data may be None or a partially loaded dict.
         """
         safe_name = entity_name.lower().replace(" ", "_").replace("'", "")
@@ -74,7 +82,7 @@ class SoulValidator:
             # Use a safe load with encoding check
             with open(soul_file, "r", encoding="utf-8") as f:
                 data = yaml.safe_load(f)
-            
+
             self.validate_dict(data)
             return True, data
 
@@ -86,8 +94,11 @@ class SoulValidator:
             return False, None
 
     def validate_dict(self, data: Any) -> None:
-        """Verify a dictionary against the v6.1 soul schema.
-        
+        """Verify a dictionary against the v6.1 soul schema using Pydantic.
+
+        v6.0 souls receive a migration warning but are NOT rejected (backward
+        compatibility). v6.1 souls are fully validated via ``SoulYaml.model_validate``.
+
         Raises:
             SoulValidationError: If the dictionary violates the schema.
         """
@@ -112,57 +123,18 @@ class SoulValidator:
             # Skip strict v6.1 checks for legacy souls to prevent fleet lobotomy
             return
 
-        # --- Strict v6.1 Checks Below ---
+        # --- Strict v6.1 Pydantic Validation ---
+        try:
+            SoulYaml.model_validate(data)
+        except PydanticValidationError as e:
+            errors = []
+            for err in e.errors():
+                loc = " -> ".join(str(l) for l in err["loc"])
+                msg = err["msg"]
+                errors.append(f"{loc}: {msg}")
+            raise SoulValidationError("; ".join(errors)) from e
 
-        if "short" not in entity:
-            raise SoulValidationError("Missing required field in v6.1 soul: {'short'}")
-
-        # Forbidden-field checks — fields that existed in v6.0 but don't belong in v6.1
-        for forbidden in FORBIDDEN_ENTITY_BLOCKS:
-            if forbidden in entity:
-                raise SoulValidationError(
-                    f"'{forbidden}' is a v6.0 field and must NOT exist in v6.1 souls. "
-                    f"Remove it or migrate to memory/ subdirectory."
-                )
-
-        # Type and Value Constraints
-        if not isinstance(entity["name"], str) or not entity["name"]:
-            raise SoulValidationError("'name' must be a non-empty string")
-        
-        if not isinstance(entity["short"], str) or not (2 <= len(entity["short"]) <= 6):
-            raise SoulValidationError("'short' must be a string between 2 and 6 characters")
-
-        # v6.1: archetype is a description string, not constrained to fixed set
-        # Optional fields: hierarchy_level, sovereignty_level, element, domain
-        if "hierarchy_level" in entity:
-            if not isinstance(entity["hierarchy_level"], int) or entity["hierarchy_level"] < 0:
-                raise SoulValidationError("'hierarchy_level' must be a non-negative integer")
-        if "sovereignty_level" in entity:
-            if not isinstance(entity["sovereignty_level"], int) or not (1 <= entity["sovereignty_level"] <= 10):
-                raise SoulValidationError("'sovereignty_level' must be an integer between 1 and 10")
-
-        # v6.1: optional blocks with type validation
-        if "identity" in data:
-            identity = data["identity"]
-            if not isinstance(identity, dict):
-                raise SoulValidationError("'identity' block must be a dictionary")
-
-        if "directives" in data:
-            directives = data["directives"]
-            if not isinstance(directives, list):
-                raise SoulValidationError("'directives' must be a list")
-            for d in directives:
-                if not isinstance(d, dict) or "id" not in d or "rule" not in d:
-                    raise SoulValidationError(
-                        "Each directive must have 'id' and 'rule' fields"
-                    )
-
-        if "team" in data:
-            team = data["team"]
-            if not isinstance(team, dict):
-                raise SoulValidationError("'team' block must be a dictionary")
-
-        # Memory directory validation — check that memory/ subdirectory exists
+        # Memory directory validation -- check that memory/ subdirectory exists
         safe_name = entity["name"].lower().replace(" ", "_").replace("'", "")
         memory_dir = self.entities_data_dir / safe_name / "memory"
         if not memory_dir.exists():
@@ -173,17 +145,12 @@ class SoulValidator:
                 entity["name"],
             )
 
-        # v6.1: lessons_learned is OPTIONAL and not validated for content structure
-        if "lessons_learned" in entity:
-            if not isinstance(entity["lessons_learned"], list):
-                raise SoulValidationError("'lessons_learned' must be a list if present")
-
     def get_fallback_soul(self, entity_name: str) -> Dict[str, Any]:
         """Generate a minimal safe soul dictionary for fallback recovery.
-        
-        v6.1 lean schema — only entity block with identity.
-        
-        [id-soft: vet-008] Lazy Deletion — provides a safe baseline to prevent
+
+        v6.1 lean schema -- only entity block with identity.
+
+        [id-soft: vet-008] Lazy Deletion -- provides a safe baseline to prevent
         engine crash when soul is corrupted.
         """
         return {
@@ -215,3 +182,109 @@ class SoulValidator:
                 },
             },
         }
+
+
+# ===================================================================
+# Pydantic Models -- v6.1 Lean Schema (Phase 1E Temple Cleansing)
+# ===================================================================
+
+
+class Directive(BaseModel):
+    """A single directive entry from soul.yaml ``directives`` list.
+
+    Extra keys are silently ignored (backward compat with v6.0-era directive extras).
+    """
+
+    model_config = ConfigDict(extra="ignore")
+
+    id: str
+    title: str
+    rule: str
+    rationale: Optional[str] = None
+    mandate_binding: Optional[List[str]] = None
+    priority: Optional[str] = None
+    validation: Optional[str] = None
+
+
+class CorePrinciple(BaseModel):
+    """A single core principle entry from soul.yaml ``core_principles`` list.
+
+    Extra keys are silently ignored.
+    """
+
+    model_config = ConfigDict(extra="ignore")
+
+    id: str
+    principle: str
+    mandates: Optional[List[str]] = None
+    confidence: Optional[float] = None
+    tags: Optional[List[str]] = None
+    source_session: Optional[str] = None
+    evidence: Optional[List[Dict[str, str]]] = None
+    directive_provenance: Optional[str] = None
+
+
+class IdentityBlock(BaseModel):
+    """The ``identity`` block of a soul.yaml.
+
+    Extra keys are silently ignored.
+    """
+
+    model_config = ConfigDict(extra="ignore")
+
+    voice_summary: Optional[str] = None
+    values: Optional[List[str]] = None
+    strengths: Optional[List[str]] = None
+    growth_areas: Optional[List[str]] = None
+
+
+class EntityBlock(BaseModel):
+    """The ``entity`` block -- v6.1 lean schema.
+
+    [id-soft: vet-015] ZONEID Pattern -- validated via soul_power and session counts.
+
+    Extra keys ARE allowed (``extra="allow"``) so that unknown fields do not
+    cause rejection. Forbidden v6.0 fields are caught by
+    ``check_forbidden_fields``.
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    name: str = Field(min_length=1)
+    short: str = Field(min_length=2, max_length=6)
+    soul_version: str = Field(default="6.1")
+    archetype: Optional[str] = None
+    hierarchy_level: Optional[int] = Field(default=None, ge=0)
+    sovereignty_level: Optional[int] = Field(default=None, ge=1, le=10)
+    element: Optional[str] = None
+    domain: Optional[str] = None
+    lessons_learned: Optional[List[Any]] = None
+
+    @model_validator(mode="before")
+    @classmethod
+    def check_forbidden_fields(cls, data: Any) -> Any:
+        """Reject v6.0-only fields (soul_axioms, wisdom_text, trajectory)."""
+        if isinstance(data, dict):
+            for forbidden in FORBIDDEN_ENTITY_BLOCKS:
+                if forbidden in data:
+                    raise ValueError(
+                        f"'{forbidden}' is a v6.0 field and must NOT exist in v6.1 souls. "
+                        f"Remove it or migrate to memory/ subdirectory."
+                    )
+        return data
+
+
+class SoulYaml(BaseModel):
+    """Top-level structure of a ``soul.yaml`` file -- v6.1 lean schema.
+
+    Extra keys (e.g. ``nameless_one``, ``allies``, ``version``) are silently
+    ignored.
+    """
+
+    model_config = ConfigDict(extra="ignore")
+
+    entity: EntityBlock
+    identity: Optional[IdentityBlock] = None
+    directives: Optional[List[Directive]] = None
+    core_principles: Optional[List[CorePrinciple]] = None
+    team: Optional[Dict[str, Any]] = None
