@@ -37,26 +37,6 @@ from ..library.enrichment import EnrichmentEngine
 logger = logging.getLogger(__name__)
 
 # ⚠️ DEPRECATED — C-6' Unification (2026-07-22)
-# This IngestionCircuitBreaker is a clone. Use HealthMonitor.get_breaker() instead.
-#   from omega.oracle.health_monitor import get_health_monitor
-#   breaker = get_health_monitor().get_breaker("ingestion")
-class IngestionCircuitBreaker:
-    """Sovereign Circuit Breaker for the Ingestion Pipeline."""
-    def __init__(self, fail_max: int = 5, reset_timeout: int = 300):
-        self.breaker = pybreaker.CircuitBreaker(fail_max=fail_max, reset_timeout=reset_timeout)
-        self.consecutive_failures = 0
-
-    def can_proceed(self) -> bool:
-        return self.breaker.current_state != "open"
-
-    def record_success(self):
-        self.consecutive_failures = 0
-
-    def record_failure(self, error: Exception):
-        self.consecutive_failures += 1
-
-    def call(self, func, *args, **kwargs):
-        return self.breaker.call(func, *args, **kwargs)
 
 class ResilienceContext:
     """
@@ -68,7 +48,7 @@ class ResilienceContext:
     def __init__(
         self,
         config: IngestionConfig,
-        breaker: IngestionCircuitBreaker,
+        breaker: 'AsyncCircuitBreaker',
         sentry: SovereignSentry,
         budget: BudgetGuard,
         verifier: TriangulationVerifier,
@@ -135,7 +115,8 @@ class IngestionPipeline:
         self.config = config
         self.extractor = extractor
         self.persistence = IngestionPersistence(config.entity_name)
-        self.breaker = IngestionCircuitBreaker()
+        from src.omega.oracle.health_monitor import HealthMonitor
+        self.breaker = HealthMonitor().get_breaker('ingestion')
         self.sentry = SovereignSentry(config)
         self.budget = BudgetGuard(config)
         self.verifier = TriangulationVerifier(EnrichmentEngine())

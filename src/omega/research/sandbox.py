@@ -629,10 +629,11 @@ class ExperimentCircuitBreaker:
 
 
 # Global circuit breaker instance
-_circuit_breaker = ExperimentCircuitBreaker()
+from src.omega.oracle.health_monitor import HealthMonitor
+_circuit_breaker = HealthMonitor().get_breaker('sandbox')
 
 
-def get_circuit_breaker() -> ExperimentCircuitBreaker:
+def get_circuit_breaker():
     return _circuit_breaker
 
 
@@ -700,7 +701,7 @@ __all__ = [
     # Runtime
     "SandboxRuntime",
     # Circuit Breaker
-    "ExperimentCircuitBreaker",
+    
     "get_circuit_breaker",
     # Contract tests
     "assert_sandbox_result_type",

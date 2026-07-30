@@ -22,7 +22,8 @@ class CoordinatedRecovery:
     """Manages recovery across all 4 failure layers."""
     
     def __init__(self):
-        self.circuit_breaker = CircuitBreaker()
+        from src.omega.oracle.health_monitor import HealthMonitor
+        self.circuit_breaker = HealthMonitor().get_breaker('council')
         self.wal = WriteAheadLog()
     
     def should_retry(self, attempt: int, policy: Optional[RetryPolicy] = None) -> bool:
@@ -30,7 +31,7 @@ class CoordinatedRecovery:
         policy = policy or RetryPolicy()
         if attempt >= policy.max_retries:
             return False
-        if self.circuit_breaker.state != CircuitBreakerState.CLOSED:
+        if self.circuit_breaker.current_state != 'closed':
             return False
         return True
     
@@ -43,47 +44,6 @@ class CoordinatedRecovery:
         )
         jitter = delay * random.uniform(-policy.jitter_factor, policy.jitter_factor)
         return max(0.001, (delay + jitter) / 1000.0)  # Return seconds
-
-
-class CircuitBreaker:
-    """Quality-aware circuit breaker for council operations.
-    
-    ⚠️ C-6' NOTE: This breaker is domain-specific (schema quality).
-    For provider-level circuit breaking, use HealthMonitor.get_breaker().
-    
-    Opens when >30% error rate over 10 minutes, or
-    >15% schema validation failure over 60 seconds.
-    """
-    
-    def __init__(self):
-        self.state = CircuitBreakerState.CLOSED
-        self.error_window: list[tuple[datetime, bool]] = []
-        self.window_minutes = 10
-        self.error_threshold = 0.30
-        self.half_open_timeout_seconds = 30
-    
-    @property
-    def error_rate(self) -> float:
-        """Current error rate over the sliding window."""
-        self._prune_window()
-        if not self.error_window:
-            return 0.0
-        errors = sum(1 for _, is_error in self.error_window if is_error)
-        return errors / len(self.error_window)
-    
-    def record_attempt(self, success: bool):
-        """Record a success or failure in the sliding window."""
-        now = datetime.now(timezone.utc)
-        self.error_window.append((now, not success))
-        self._prune_window()
-        
-        if self.error_rate > self.error_threshold:
-            self.state = CircuitBreakerState.OPEN
-    
-    def _prune_window(self):
-        """Remove entries outside the sliding window."""
-        cutoff = datetime.now(timezone.utc) - timedelta(minutes=self.window_minutes)
-        self.error_window = [(ts, e) for ts, e in self.error_window if ts > cutoff]
 
 
 class WriteAheadLog:
