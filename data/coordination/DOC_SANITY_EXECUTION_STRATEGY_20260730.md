@@ -60,12 +60,31 @@ Use `sed` to inject a standardized supersession banner at the top of every stale
 4. **SEDA Ring-Bus:** Implement lock-free `SEDARingBus` (AnyIO) with back-pressure to decouple inference, training, memory, and TTS.
 5. **Inference Isolation:** Document plan for inference worker process isolation to contain C-level segfaults.
 6. **Dual-Branch Memory Rescoring:** Implement math: Declarative = `Similarity * (1 + 0.5*Importance)`. Episodic = `Similarity * e^(-lambda*dt) * S_consol`.
+7. **KV-Cache Prefix Caching:** Pin system prompts (`soul.yaml`), tool definitions, and governance rules via `llama.cpp` context prefix caching to accelerate multi-turn prefill.
+8. **GBNF/JSON Schema Constrained Sampling:** Enforce JSON output structures at the sampler level using GBNF grammars or Pydantic JSON schemas to eliminate tool-parsing failures.
+9. **iMatrix/IQ Quantization:** Replace `Q4_K_M` with `IQ4_XS` or `IQ3_S` quantizations to save 0.5-1GB model weight memory without perceptible quality loss.
+10. **Automatic Context Sliding Windows:** Configure `llama.cpp` sequence removal hooks to clear older context tokens while preserving initial system prompt tokens.
+11. **MemPalace Verbatim-First Pattern:** Adapt MemPalace's verbatim storage (raw message chunks with `wing`/`room` payload tags) directly into existing Qdrant/SQLite stack — no ChromaDB dependency.
+12. **OpenCode CLI Binding:** Bind OpenCode CLI directly to local engine via OpenAI-compatible REST API endpoint (`OPENCODE_API_BASE=http://127.0.0.1:8080/v1`).
+13. **Legacy Architecture Purge:** Execute script to purge "26 sphere toroidal" and "108 gates" concepts from Qdrant collections.
+14. **NotebookLM Multi-Persona Ingestion:** Implement relaxed prompting for 3-persona system generation with distinct speaker tags and semantic transitions for NotebookLM audio synthesis.
 
 ### Phase 4: Sovereignty Flywheel & Security
 1. **Sovereign Bridge:** Implement FastAPI + HMAC-SHA256 raw body verification + 30-min replay window for webhooks.
 2. **Continuous Learning:** Implement nightly GRPO loop (TRL/PEFT 4-bit) and Telemetry harvester (`executor_dpo.jsonl`).
 3. **Security Hardening:** Document Podman rootless AppArmor checks, Executor/Auditor pre-execution gate, and Property/Chaos testing extensions (Hypothesis).
 4. **Operational Continuity:** Document pg_dump, Qdrant snapshotting, N-1 GGUF model rollback, and mmap cold-start warmups.
+5. **Verification Probes (V-1 through V-10):** Execute and document all 10 verification probes from `OMEGA_AGENT_VERIFICATION_DISPATCH_v1-nova.ai.md`:
+   - V-1: Actual engine/mandate version
+   - V-2: Circuit breaker class count
+   - V-3: sqlite-vec vs Qdrant import modules
+   - V-4: Real iGPU memory ceiling
+   - V-5: ElevenLabs integration existence
+   - V-6: "Omegamind"/"Guidance Set" codebase presence
+   - V-7: GraphRAG indexing through admission gate
+   - V-8: `amd-pstate` active driver check
+   - V-9: IA2 envelope freshness vs signature
+   - V-10: AppArmor on Omega containers
 
 ---
 

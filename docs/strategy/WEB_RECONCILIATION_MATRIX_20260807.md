@@ -324,3 +324,33 @@ The web docs identify Omega's opportunity: **no one has published the integrated
 | 16GB zRAM (zstd + multi-comp) | 8GB zRAM | **GAP** | Expand to 16GB, enable idle/huge recompress + writeback. | `SYSTEMD_DEPLOYMENT_GUIDE.md` | `@node P1` |
 | Qdrant TurboQuant BITS4 | Unspecified | **GAP** | Default to BITS4 for recall, BITS2 for aggressive compression. | `omega/memory/qdrant_adapter.py` | `@lilith` |
 | MoE Expert Offload (`--n-cpu-moe`) | Unconfigured | **GAP** | Use mmap + zRAM + NVMe swap for 30B-70B+ models. | `omega/core/llm.py` | `@node P3` |
+
+### K. Inference Optimization (Web-Gemini Engine Hardening)
+| Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
+|---|---|---|---|---|---|
+| KV-Cache Prefix Caching | Not implemented | **GAP** | Pin system prompts, tool defs, governance rules via `llama.cpp` prefix caching. | `omega/core/llm.py` | `@node P3` |
+| GBNF/JSON Schema Constrained Sampling | Unwired | **GAP** | Enforce JSON at sampler level to eliminate tool-parsing failures. | `omega/core/llm.py` | `@node P3` |
+| iMatrix/IQ Quantization (IQ4_XS, IQ3_S) | Q4_K_M default | **GAP** | Replace Q4_K_M with IQ4_XS/IQ3_S to save 0.5-1GB. | `omega/core/llm.py` | `@node P3` |
+| Automatic Context Sliding Windows | Not implemented | **GAP** | Clear older context tokens, preserve system prompt via sequence removal hooks. | `omega/core/llm.py` | `@node P3` |
+| MemPalace Verbatim-First Pattern | ChromaDB dependency | **GAP** | Adapt verbatim storage (wing/room tags) into Qdrant/SQLite — no ChromaDB. | `omega/memory/router.py` | `@lilith` |
+
+### L. OpenCode Integration & Legacy Purge (Web-Gemini Refactoring)
+| Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
+|---|---|---|---|---|---|
+| OpenCode CLI Binding to Local Engine | Not configured | **GAP** | Bind OpenCode to local engine via OpenAI-compatible REST API (`OPENCODE_API_BASE=http://127.0.0.1:8080/v1`). | `docs/kb/OMEGA_OPENCODE_INTEGRATION.md` | `@node P4` |
+| Legacy Architecture Purge from Qdrant | Not executed | **GAP** | Run script to purge "26 sphere toroidal" and "108 gates" from Qdrant collections. | `scripts/purge_legacy_qdrant.py` | `@kali` |
+| NotebookLM Multi-Persona Ingestion | Not implemented | **GAP** | Relaxed prompting for 3-persona generation with speaker tags for NotebookLM. | `scripts/prepare_notebooklm.py` | `@researcher` |
+
+### M. Verification Probes (Agent Verification Dispatch)
+| Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
+|---|---|---|---|---|---|
+| V-1: Engine/Mandate Version | v1.8.4 / v3.7.0 | **GAP** | Execute `head -20 OMEGA_ENGINE.md`; `head -5 SOVEREIGN_MANDATES.md` | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
+| V-2: Circuit Breaker Class Count | 3 classes + 2 enums | **GAP** | Execute `grep -rn "class.*Breaker" --include="*.py" src/` | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
+| V-3: sqlite-vec vs Qdrant Imports | Both present | **GAP** | Execute grep for qdrant_client vs sqlite_vec in src/ | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
+| V-4: Real iGPU Memory Ceiling | 8GB carve-out | **GAP** | Execute `radeontop`, `dmesg | grep amdgpu` | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
+| V-5: ElevenLabs Integration | Unverified | **GAP** | Execute `grep -rln "elevenlabs\|ElevenLabs"` | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
+| V-6: "Omegamind"/"Guidance Set" in Codebase | Unverified | **GAP** | Execute `grep -rln "Omegamind\|Guidance Set"` | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
+| V-7: GraphRAG Through Admission Gate | Unverified | **GAP** | Cross-reference v3 §N | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
+| V-8: `amd-pstate` Active Driver | Unverified | **GAP** | Execute `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver` | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
+| V-9: IA2 Envelope Freshness Check | Unverified | **GAP** | Cross-reference v3 §I.1 | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
+| V-10: AppArmor on Omega Containers | Unverified | **GAP** | Cross-reference v3 §I.2 | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
