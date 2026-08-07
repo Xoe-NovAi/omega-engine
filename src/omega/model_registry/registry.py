@@ -18,6 +18,30 @@ from .providers import ProviderConfig
 from .research import ResearchProfile as ResearchProfileData
 
 
+def _enum_ci(enum_cls, value):
+    """Case-insensitive enum lookup (B2 fix).
+
+    Model cards use inconsistent platform/tier/status casing (e.g. ``"LOCAL"``
+    vs ``"local"``, ``"ACTIVE"`` vs ``"active"``).  Normalize to the enum's
+    canonical value before construction so a single card can't break the
+    whole registry index build.
+    """
+    if value is None:
+        return None
+    s = str(value).strip()
+    if not s:
+        return None
+    # Exact match first, then case-insensitive by member name, then by value.
+    try:
+        return enum_cls(s)
+    except ValueError:
+        pass
+    for member in enum_cls:
+        if member.name.lower() == s.lower() or str(member.value).lower() == s.lower():
+            return member
+    return None
+
+
 class ModelRegistry:
     """Unified model registry - files are source of truth, SQLite is derived index."""
 
@@ -68,10 +92,21 @@ class ModelRegistry:
                 with open(current_models) as f:
                     content = f.read()
 
-                # Extract YAML section
+                # Extract YAML section — only the fenced block between
+                # ```yaml and the closing ``` (B2 fix: slicing from "models:"
+                # to EOF pulled in trailing markdown + backticks → YAML error).
+                yaml_content = None
                 if "models:" in content:
-                    yaml_start = content.index("models:")
-                    yaml_content = content[yaml_start:]
+                    fence_start = content.find("```yaml")
+                    if fence_start != -1:
+                        fence_start = content.find("models:", fence_start)
+                        fence_end = content.find("```", fence_start)
+                        if fence_end != -1:
+                            yaml_content = content[fence_start:fence_end]
+                    if yaml_content is None:  # fallback: old behavior
+                        yaml_start = content.index("models:")
+                        yaml_content = content[yaml_start:]
+                if yaml_content:
                     data = yaml.safe_load(yaml_content)
                     if data and "models" in data:
                         for model_id, model_data in data["models"].items():
@@ -206,9 +241,9 @@ class ModelRegistry:
             display_name=data["display_name"],
             version=data["version"],
             provider=data["provider"],
-            platform=Platform(data["platform"]),
-            tier=Tier(data["tier"]),
-            status=Status(data["status"]),
+            platform=_enum_ci(Platform, data["platform"]) or Platform.CLOUD,
+            tier=_enum_ci(Tier, data["tier"]) or Tier.T1,
+            status=_enum_ci(Status, data["status"]) or Status.ACTIVE,
             context_window=data["context_window"],
             max_output_tokens=data.get("max_output_tokens", 0),
             capabilities=capabilities,
@@ -281,8 +316,19 @@ class ModelRegistry:
                     last_verified_free=data.get("last_verified_free", ""),
                 )
 
-            # Determine platform from provider
+            # Determine platform from provider.
+            # Legacy CURRENT_MODELS.md uses the OLD provider taxonomy
+            # (together, sambanova, openai, ...).  Normalize to a registered
+            # provider in the current fabric so test_provider_in_registry holds
+            # and queries can join cards to provider configs.
             provider = data.get("provider", "unknown")
+            provider = {
+                # Legacy router/aggregator names → current fabric provider
+                "together": "openrouter",
+                "sambanova": "openrouter",
+                "openai": "openrouter",
+                "zen": "opencode-zen",
+            }.get(provider, provider)
             if provider in ["native-gguf", "lmster", "ollama"]:
                 platform = Platform.LOCAL
             elif provider in ["opencode-zen", "cline"]:
@@ -378,9 +424,20 @@ class ModelRegistry:
         return self._research_profiles.get(profile_name)
 
     def build_index(self) -> None:
-        """Build SQLite index from loaded data."""
+        """Build SQLite index from loaded data.
+
+        The index is DERIVED (files are source of truth per registry.yaml).
+        Drop existing tables first to prevent schema drift — the old 83-column
+        models table (from a richer past schema) would otherwise persist via
+        CREATE TABLE IF NOT EXISTS while the INSERT supplies only the current
+        column set, raising OperationalError.
+        """
         conn = sqlite3.connect(self.index_path)
         cursor = conn.cursor()
+
+        cursor.execute("DROP TABLE IF EXISTS models")
+        cursor.execute("DROP TABLE IF EXISTS providers")
+        cursor.execute("DROP TABLE IF EXISTS research_profiles")
 
         # Create tables
         cursor.execute("""

@@ -702,6 +702,12 @@ tests/golden/test_soul_schema_migrations.py — Migration golden file tests
   - **Result**: 103G→87G used, 193MB→16GB free. Vault at 54% (6.8G free). Full report: `data/coordination/SESSION_CLEANUP_20260730.md`
 - [2026-07-23T15:09Z] Pre-compaction complete. All 3 Architect decisions executed. Soul distillation done (5 L3 principles). Researcher Phase 0 + Grokster G1-15 complete. Ma'at ready for C-4b + Vault FleetOrchestrator. Researcher pending dispatch for Phases 1-3. Carmack W-1 pending. Scribe C-0.5 ready.
 - [2026-07-23T15:35Z] **Full Orchestration Brief posted** (ses_2f0475f2bbd4) — 5-phase sprint plan, 11 agent assignments, 57 research queries.
+- [2026-08-07T14:28Z] **PRE-COMPACTION — B2 + B3 provider-fabric defects complete & verified** (ses_675d9bdb981b):
+  - **B3 KV-cache types**: New canonical `src/omega/oracle/kv_types.py` derived from llama-cpp-python 0.3.32 `GGML_TYPE_*` constants. `providers.py` had WRONG q4_0→4/q5_0→5/q6_0→6; both `providers.py` + `model_gateway.py` now import the single map.
+  - **B2 Model Registry**: Confirmed NOT dead — it's the source-of-truth (runtime `config/providers.yaml` generated from it). Fixed `build_index()` stale 83-col table (DROP before recreate), case-insensitive enums, legacy YAML fence extraction, ResearchProfile defaults, legacy provider normalization.
+  - **max_tokens policy (user directive)**: Stripped `parameters.max_tokens` from all 33 cloud/stealth cards; kept on 5 local cards (RAM/OOM guard); test enforces local-only.
+  - **Verification**: `test_model_registry.py` 27/27; affected suite 78 pass / 1 pre-existing fail (TestVaultCoreRateLimit). Docs matrix §6 B2/B3 FIXED.
+  - **PENDING**: commit batch staged; 38 registry model cards now trackable (gitignore negation added); push blocked (network down); remaining B4/A5/B7/B8/B6/B5/B9 next.
 
 #### Discussion Thread
 > **@maat**: "Kali, on Phase D gate — you mentioned '2/10 criteria met'. Can we add a 'Gate Criteria' subsection here to track the remaining 8? This would help Ma'at prioritize Vault design against gate requirements."

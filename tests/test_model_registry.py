@@ -232,7 +232,15 @@ class TestModelCardFiles:
             params = data.get('parameters', {})
             assert 'temperature' in params, f"{f}: missing parameters.temperature"
             assert 'top_p' in params, f"{f}: missing parameters.top_p"
-            assert 'max_tokens' in params, f"{f}: missing parameters.max_tokens"
+            # max_tokens is a LOCAL-MODEL resource constraint (RAM/OOM guard).
+            # Cloud/stealth cards must NOT set it — output caps live in the
+            # card-level max_output_tokens and per-request API parameters.
+            platform = str(data.get('platform', '')).lower()
+            if platform == 'local':
+                assert 'max_tokens' in params, f"{f}: local model missing parameters.max_tokens"
+            else:
+                assert 'max_tokens' not in params, \
+                    f"{f}: cloud/stealth model must NOT set parameters.max_tokens (use max_output_tokens)"
 
     def test_benchmark_sources_in_yaml(self, registry):
         """All .yaml.md files must have benchmark_sources."""

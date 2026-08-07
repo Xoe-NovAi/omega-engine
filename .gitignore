@@ -181,6 +181,9 @@ htmlcov/
 ingestion.log
 mcp_test.py
 models/
+# Registry source-of-truth model cards are small YAML configs — track them.
+!config/model_registry/models/
+!config/model_registry/models/**
 open-code-*.md
 opencode-antigravity-auth/
 opencode.json.bak

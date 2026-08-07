@@ -359,8 +359,10 @@ class NativeGGUFProvider(BaseProvider):
         # When present, kv_cache_type overrides type_k/type_v uniformly.
         kv_cache_type = config.get("kv_cache_type")
         if kv_cache_type:
-            _KV_TYPE_MAP = {"q8_0": 8, "q4_0": 4, "q5_0": 5, "q6_0": 6, "f16": 1, "f32": 0}
-            _mapped = _KV_TYPE_MAP.get(str(kv_cache_type).lower())
+            # [B3] Single canonical source — do not redefine the map here.
+            from .kv_types import KV_TYPE_MAP
+
+            _mapped = KV_TYPE_MAP.get(str(kv_cache_type).strip().lower())
             if _mapped is not None:
                 self._type_k = _mapped
                 self._type_v = _mapped

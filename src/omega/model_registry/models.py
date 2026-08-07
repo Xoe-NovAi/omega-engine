@@ -145,10 +145,10 @@ class LiveAPIState:
 
 @dataclass
 class ResearchProfile:
-    reasoning_depth: str
-    tool_fidelity: str
-    failure_signature: str
-    shadow_focus: str
+    reasoning_depth: str = "iterative"
+    tool_fidelity: str = "medium"
+    failure_signature: str = "shallow"
+    shadow_focus: str = "force_deepening"
     guardrails: list[str] = field(default_factory=list)
 
 

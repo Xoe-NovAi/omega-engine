@@ -382,8 +382,10 @@ class ModelGateway:
         if "threads" in merged and "n_threads" not in merged:
             merged["n_threads"] = merged.pop("threads")
 
-        # Map string KV cache types → llama.cpp enum ints
-        kv_map = {"f16": 1, "q8_0": 8, "q4_0": 2}
+        # Map string KV cache types → llama.cpp enum ints (single source, B3)
+        from .kv_types import KV_TYPE_MAP
+
+        kv_map = KV_TYPE_MAP
         for yaml_key, prov_key in [("kv_cache_key_type", "type_k"),
                                     ("kv_cache_value_type", "type_v")]:
             if yaml_key in merged:
