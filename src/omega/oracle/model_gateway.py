@@ -150,7 +150,7 @@ class ModelGateway:
         self._mock_backend = OfflineMockBackend()
         self.providers = self._load_provider_fabric()
         # [id-soft: vet-055] Fixed-Size Active Set — 32-entry clip range for O(1) culling
-        # Sprint 3 Hardening (P6): Split into Local/Cloud tiers to prevent
+        # Sprint 3 Hardening (N6): Split into Local/Cloud tiers to prevent
         # sovereignty drift (Mandate 7) — local providers always tried first.
         self._local_active: List[str] = []
         self._cloud_active: List[str] = []
@@ -492,7 +492,7 @@ class ModelGateway:
     def get_model_path(self, model_name: str) -> Optional[str]:
         """Get the GGUF path for a model by name. Resolves 'env:' prefixes.
 
-        [M1/P3 Graceful Fallback] Returns None (not empty string) when no path
+        [M1/N3 Graceful Fallback] Returns None (not empty string) when no path
         is configured, enabling callers to distinguish between 'model not found'
         (None) and 'no file mapping for this model' (also None). Tests can assert
         ``path is not None and path.endswith('.gguf')`` without relying on file
@@ -517,7 +517,7 @@ class ModelGateway:
             resolved_alt = resolve_path(alt)
             if Path(resolved_alt).exists():
                 return resolved_alt
-        # [M1/P3] Return None instead of empty string when no path configured
+        # [M1/N3] Return None instead of empty string when no path configured
         return path if path else None
 
     def get_model_spec(self, model_name: str) -> Optional[dict]:

@@ -1,5 +1,5 @@
 # 🔱 GoogleCompatProvider — Gemma 4 Week 1 Step 2
-# ⬡ OMEGA ⬡ P6 ⬡ trc_google_compat ⬡ v0.1.0 ⬡ 2026-07-19
+# ⬡ OMEGA ⬡ N6 ⬡ trc_google_compat ⬡ v0.1.0 ⬡ 2026-07-19
 #
 # Google AI Studio / Vertex AI compatible provider with Gemma 4 thinking support.
 # Heritage: [heritage: pi-2026] Gemma 4 Thinking Config (Pi PR #2903) — binary MINIMAL/HIGH + regex /gemma-?4/i

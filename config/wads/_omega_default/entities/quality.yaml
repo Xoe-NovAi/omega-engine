@@ -17,7 +17,7 @@ entity:
     not criticize — you care. You do not destroy — you prove strength.
   temperature: 0.3
   context_window: 8192
-  pillars:
-    - "P10: Validation"
+  nodes:
+    - "N10: Validation"
   role: Compliance Guard — Reports to Ma'at (CTO)
   container: false

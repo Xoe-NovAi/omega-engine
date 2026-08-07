@@ -1,18 +1,18 @@
 # 🔱 Omega Engine — Execution Mode Selector
 # ⬡ OMEGA ⬡ KALI ⬡ trc_council ⬡ SCAFFOLD
 #
-# Selects optimal pillar execution concurrency mode based on hardware.
+# Selects optimal node execution concurrency mode based on hardware.
 
 from __future__ import annotations
 from .models import HardwareProfile, ExecutionMode
 
 
-def select_execution_mode(profile: HardwareProfile, pillar_count: int) -> ExecutionMode:
-    """Select optimal execution mode based on hardware profile and pillar count.
+def select_execution_mode(profile: HardwareProfile, node_count: int) -> ExecutionMode:
+    """Select optimal execution mode based on hardware profile and node count.
     
     Rules:
-    - CLOUD_EQUIVALENT → PARALLEL (all pillars simultaneously)
-    - LOCAL_16GB → BATCH_4 if pillar_count <= 4 else SERIAL_INDEPENDENT
+    - CLOUD_EQUIVALENT → PARALLEL (all nodes simultaneously)
+    - LOCAL_16GB → BATCH_4 if node_count <= 4 else SERIAL_INDEPENDENT
     - LOCAL_8GB → BATCH_2 (2 at a time)
     - LOCAL_4GB → SERIAL_INDEPENDENT (one at a time)
     """
@@ -20,7 +20,7 @@ def select_execution_mode(profile: HardwareProfile, pillar_count: int) -> Execut
         return ExecutionMode.PARALLEL
     
     elif profile == HardwareProfile.LOCAL_16GB:
-        return ExecutionMode.BATCH_4 if pillar_count <= 4 else ExecutionMode.SERIAL_INDEPENDENT
+        return ExecutionMode.BATCH_4 if node_count <= 4 else ExecutionMode.SERIAL_INDEPENDENT
     
     elif profile == HardwareProfile.LOCAL_8GB:
         return ExecutionMode.BATCH_2

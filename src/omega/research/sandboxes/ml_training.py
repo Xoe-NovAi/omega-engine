@@ -1,6 +1,6 @@
 """
 ML Training Sandbox — First Ω-Research Sandbox Implementation
-⬡ OMEGA ⬡ MA'AT ⬡ P6 ⬡ ML_TRAINING
+⬡ OMEGA ⬡ MA'AT ⬡ N6 ⬡ ML_TRAINING
 AP Token: AP-MAAT-ML-SANDBOX-v1.0.0
 
 Trains a small model (BGE-small 33M or synthetic) on synthetic data,

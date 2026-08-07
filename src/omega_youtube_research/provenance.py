@@ -10,7 +10,7 @@
 
 """ProvenanceChain — hash-linked chain of extracted transcript chunks.
 
-This is the **Provenance Chain Fix** (P7 gap): each extracted chunk cryptographically
+This is the **Provenance Chain Fix** (N7 gap): each extracted chunk cryptographically
 references its *parent* chunk and its *source*, forming a tamper-evident chain. The
 ``chain_hash`` of a chunk is a SHA-256 over ``(parent_chain_hash || content_hash ||
 source_id)``. The first chunk has no parent, so its ``chain_hash`` binds directly to

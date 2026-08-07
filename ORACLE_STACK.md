@@ -7,4 +7,4 @@
 
 **Provider Fabric (Local-First)**: native-gguf → lmster → Ollama → Google → OpenRouter → OpenCode
 
-*(For full 10 Pillar Keepers, Observability, and Infrastructure details, see Canonical Source)*
+*(For full 10 Nodes, Observability, and Infrastructure details, see Canonical Source)*

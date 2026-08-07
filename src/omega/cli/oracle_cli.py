@@ -403,7 +403,7 @@ def add_entity():
         await registry.add(entity)
     anyio.run(_run)
     console.print(f"[green]✅ {name} added to pantheon![/green]")
-    console.print("[dim]Edit ~/omega/config/entities.yaml to add pillar mappings, sigils, etc.[/dim]")
+    console.print("[dim]Edit ~/omega/config/entities.yaml to add node mappings, sigils, etc.[/dim]")
 
 
 # ── REMOVE-ENTITY — Delete an entity ───────────────────────────────────

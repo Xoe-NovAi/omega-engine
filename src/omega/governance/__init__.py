@@ -1,5 +1,5 @@
 # 🔱 Omega Engine — Governance Package
-# ⬡ OMEGA ⬡ MA'AT ⬡ P5 ⬡ 2026-07-12
+# ⬡ OMEGA ⬡ MA'AT ⬡ N5 ⬡ 2026-07-12
 #
 # In-path governance modules: build-time and run-time enforcement of the
 # Sovereign Mandates (M1-M23). This package lives in the Core Engine

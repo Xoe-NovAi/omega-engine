@@ -47,15 +47,15 @@ class TestDispatchRegistry:
         assert kali.get("name") == "kali"
 
     def test_dispatch_registry_get_entity_by_role_pillar(self):
-        """get_entity_by_role finds an entity with P1 role (multiple exist, returns first)."""
+        """get_entity_by_role finds an entity with N1 role (multiple exist, returns first)."""
         invalidate_cache()
-        pillar = get_entity_by_role("P1")
+        pillar = get_entity_by_role("N1")
         assert pillar is not None
-        assert pillar.get("role") == "P1"
+        assert pillar.get("role") == "N1"
         # Multiple entities have P1 role; verify pillar is among them
         entities = get_dispatch_entities()
-        p1_names = {e["name"] for e in entities if e.get("role") == "P1"}
-        assert "pillar" in p1_names
+        p1_names = {e["name"] for e in entities if e.get("role") == "N1"}
+        assert "node" in p1_names
 
     def test_dispatch_registry_get_entity_by_role_not_found(self):
         """get_entity_by_role returns None for unknown role."""
@@ -86,7 +86,7 @@ class TestDispatchRegistry:
             assert "purpose" in ent
             assert "capabilities" in ent
             assert "domains" in ent
-            assert "pillar_slot" in ent
+            assert "node_slot" in ent
             assert "task_tool_type" in ent
             assert "owned_files" in ent
             assert "model" in ent
@@ -97,7 +97,7 @@ class TestDispatchRegistry:
         entities = get_dispatch_entities()
         names = {e["name"] for e in entities}
         # Core entities that must exist
-        required = {"kali", "maat", "lilith", "iris", "sophia", "pillar", "verity"}
+        required = {"kali", "maat", "lilith", "iris", "sophia", "node", "verity"}
         for req in required:
             assert req in names, f"Required entity '{req}' missing from dispatch.yaml"
 

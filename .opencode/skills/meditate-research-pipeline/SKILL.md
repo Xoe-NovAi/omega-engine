@@ -91,7 +91,7 @@ await omega_hub_hivemind_submit_handoff(
 - Architecture diagram (ASCII)
 - Non-negotiables (from Preserved Dissent)
 - MVP scope (from Emergent Sequencing)
-- Integration points (Omega Pillars)
+- Integration points (Omega Nodes)
 - Success metrics (measurable, not aspirational)
 
 ### Stage 3: RESEARCH (Sovereign Search)

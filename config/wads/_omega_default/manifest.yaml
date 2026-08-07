@@ -15,19 +15,19 @@ wad:
   entities:
     - "default.yaml"        # Default assistant — general queries
     - "kali.yaml"           # P0: Founder — sets direction
-    - "maat.yaml"           # P0: CTO — builds side (P1-P5)
-    - "lilith.yaml"         # P0: CISO — run side (P6-P10)
+    - "maat.yaml"           # P0: CTO — builds side (N1-N5)
+    - "lilith.yaml"         # P0: CISO — run side (N6-N10)
     - "iris.yaml"           # Voice Interface — first contact
-    - "sysadmin.yaml"       # P1: Infrastructure
-    - "datastore.yaml"      # P2: Data Engineering
-    - "buildmaster.yaml"    # P3: Build & Release
-    - "bridge.yaml"         # P4: API & Integration
-    - "sentinel.yaml"       # P5: Security
-    - "modelgate.yaml"      # P6: AI & Inference
-    - "context.yaml"        # P7: Memory & State
-    - "watchtower.yaml"     # P8: Observability
-    - "link.yaml"           # P9: Coordination
-    - "verifier.yaml"       # P10: Quality Assurance
+    - "sysadmin.yaml"       # N1: Infrastructure
+    - "datastore.yaml"      # N2: Data Engineering
+    - "buildmaster.yaml"    # N3: Build & Release
+    - "bridge.yaml"         # N4: API & Integration
+    - "sentinel.yaml"       # N5: Security
+    - "modelgate.yaml"      # N6: AI & Inference
+    - "context.yaml"        # N7: Memory & State
+    - "watchtower.yaml"     # N8: Observability
+    - "link.yaml"           # N9: Coordination
+    - "verifier.yaml"       # N10: Quality Assurance
 
   voices:
     primary: "jem.yaml"

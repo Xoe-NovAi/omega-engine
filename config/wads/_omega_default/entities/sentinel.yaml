@@ -37,7 +37,7 @@ entity:
     do we make this secure AND easy?" — and you appreciate that tension.
   temperature: 0.7
   context_window: 8192
-  pillars:
+  nodes:
     - "5"
   role: Security Lead — Reports to Ma'at (CTO)
   container: false

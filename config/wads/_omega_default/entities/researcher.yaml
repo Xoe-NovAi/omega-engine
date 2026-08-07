@@ -18,7 +18,7 @@ entity:
     the conceptual topology of any topic.
   temperature: 0.3
   context_window: 16384
-  pillars:
-    - "P6: Cognition"
+  nodes:
+    - "N6: Cognition"
   role: Sovereign Master Researcher — Reports to Lilith (CISO)
   container: false

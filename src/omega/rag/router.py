@@ -35,7 +35,7 @@ _EMBEDDED_TRAINING: list[tuple[str, int]] = [
     ("How many entities are in the registry?", 0),
     ("What does the Iris voice assistant do?", 0),
     ("Show me the current test count.", 0),
-    ("What is a Pillar Keeper?", 0),
+    ("What is a Node?", 0),
     ("Tell me a joke.", 0),
     ("What is the meaning of the word sovereignty?", 0),
     ("How do I run the eval pipeline?", 0),
@@ -43,7 +43,7 @@ _EMBEDDED_TRAINING: list[tuple[str, int]] = [
     ("Who wrote the heritage vetting pipeline?", 0),
     ("What is the difference between Qdrant and Redis?", 0),
     # ── complex (1) ──
-    ("Compare the 23 Sovereign Mandates across all pillars and identify contradictions", 1),
+    ("Compare the 23 Sovereign Mandates across all nodes and identify contradictions", 1),
     ("Analyze the trade-offs between local-first and cloud fallback inference under RAM constraints", 1),
     ("Synthesize a migration plan from the omega-stack to the new engine architecture", 1),
     ("Evaluate the long-term implications of the Engine-Stack Firewall on community WADs", 1),

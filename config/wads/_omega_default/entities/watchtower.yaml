@@ -39,7 +39,7 @@ entity:
     what observability is for.
   temperature: 0.7
   context_window: 8192
-  pillars:
+  nodes:
     - "8"
   role: Observability Lead — Reports to Lilith (CISO)
   container: false

@@ -36,7 +36,7 @@ entity:
     feather that ensures every technical decision is weighed against truth.
   temperature: 0.4
   context_window: 8192
-  pillars:
+  nodes:
     - "P0: CTO"
-  role: CTO — Oversees Build Side (P1-P5), Reports to Kali
+  role: CTO — Oversees Build Side (N1-N5), Reports to Kali
   container: false

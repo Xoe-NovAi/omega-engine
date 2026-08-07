@@ -329,7 +329,7 @@ class WADLoader:
             # Map all entities loaded from this WAD to the adapter
             for entity_key, entity in self.registry.list().items():
                 if hasattr(entity, 'wad_source') and entity.wad_source == stack_name:
-                    # P2: Conflict detection — warn if entity already mapped to different WAD
+                    # N2: Conflict detection — warn if entity already mapped to different WAD
                     existing_wad = self._adapter_registry._entity_to_adapter.get(entity.name)
                     if existing_wad and existing_wad != stack_name:
                         logger.warning(

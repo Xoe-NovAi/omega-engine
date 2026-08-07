@@ -1,6 +1,6 @@
 """
 Ω-Research BudgetGuard — Redis-Backed Distributed Quota Enforcement for AMFO Tiers
-⬡ OMEGA ⬡ MA'AT ⬡ P2/P5 ⬡ BUDGET-GUARD
+⬡ OMEGA ⬡ MA'AT ⬡ N2/N5 ⬡ BUDGET-GUARD
 AP Token: AP-MAAT-BUDGET-GUARD-v1.0.0
 
 Mandate Compliance:

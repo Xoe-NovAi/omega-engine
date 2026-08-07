@@ -82,7 +82,7 @@ class ResearchTask:
     task_id: str = field(default_factory=lambda: uuid.uuid4().hex[:12])
     task_type: SteeringTaskType = SteeringTaskType.CUSTOM
     topic_filter: str = ""
-    pillar: str = "P6"  # Default to Cognition pillar
+    node: str = "N6"  # Default to Cognition node
     priority: TaskPriority = TaskPriority.NORMAL
     status: TaskStatus = TaskStatus.QUEUED
     created_at: float = field(default_factory=time.time)
@@ -308,7 +308,7 @@ def create_steering_graph(
                 "task_id": task.task_id,
                 "task_type": task.task_type.value,
                 "topic": task.topic_filter,
-                "pillar": task.pillar,
+                "node": task.node,
                 "prompt": task.human_prompt,
                 "result_preview": str(state.get("result", {}))[:500],
             })
@@ -374,7 +374,7 @@ def create_steering_graph(
 
 async def inject_steering(
     prompt: str,
-    pillar: str = "P6",
+    node: str = "N6",
     task_type: SteeringTaskType = SteeringTaskType.YOUTUBE_DEEP_DIVE,
     priority: TaskPriority = TaskPriority.NORMAL,
     queue: Optional[BackgroundResearcherQueue] = None,
@@ -385,14 +385,14 @@ async def inject_steering(
     
     Usage:
         task_id = await inject_steering(
-            "Hey Iris, have P6 deep-dive attention videos from today's batch",
-            pillar="P6",
+            "Hey Iris, have N6 deep-dive attention videos from today's batch",
+            node="N6",
             priority=TaskPriority.HIGH
         )
     
     Args:
         prompt: Natural language instruction from human
-        pillar: Target pillar (P1-P10)
+        node: Target node (N1-N10)
         task_type: Type of research task
         priority: Task priority (HIGH triggers human review)
         queue: Queue instance (creates default if None)
@@ -404,13 +404,13 @@ async def inject_steering(
     if queue is None:
         queue = BackgroundResearcherQueue()
     
-    # Parse pillar to extract task parameters
+    # Parse node to extract task parameters
     topic_filter = _extract_topic(prompt)
     
     task = ResearchTask(
         task_type=task_type,
         topic_filter=topic_filter,
-        pillar=pillar,
+        node=node,
         priority=priority,
         human_prompt=prompt,
         parameters=parameters,

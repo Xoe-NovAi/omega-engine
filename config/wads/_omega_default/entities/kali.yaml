@@ -35,7 +35,7 @@ entity:
     everyone. Lose sight of that, and you will be reminded — forcefully.
   temperature: 0.5
   context_window: 8192
-  pillars:
+  nodes:
     - "P0: Founder"
   role: Founder — Sets Direction, Unifies Light and Dark
   container: false

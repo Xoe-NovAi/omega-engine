@@ -185,16 +185,16 @@ ROLE_CONSTANTS: Dict[str, str] = {
     "GRAND_OVERSIGHT": "grand_oversight",
     "LIGHT_OVERSOUL": "light_oversoul",
     "DARK_OVERSOUL": "dark_oversoul",
-    "P1": "infrastructure",
-    "P2": "persistence",
-    "P3": "engineering",
-    "P4": "integration",
-    "P5": "governance",
-    "P6": "cognition",
-    "P7": "context",
-    "P8": "observability",
-    "P9": "orchestration",
-    "P10": "validation",
+    "N1": "infrastructure",
+    "N2": "persistence",
+    "N3": "engineering",
+    "N4": "integration",
+    "N5": "governance",
+    "N6": "cognition",
+    "N7": "context",
+    "N8": "observability",
+    "N9": "orchestration",
+    "N10": "validation",
 }
 
 # WAD-backed dispatch config loader (M2 Firewall Phase B).
@@ -207,7 +207,7 @@ from omega.governance.dispatch_registry import get_dispatch_entities
 def _build_capability_registry(iwad: str | None = None) -> Dict[str, AgentDescriptor]:
     """Build the capability registry from WAD dispatch.yaml at runtime.
 
-    Engine core defines SLOTS (P1-P10, Grand Oversight) and INTERFACES.
+    Engine core defines SLOTS (N1-N10, Grand Oversight) and INTERFACES.
     WADs provide the ENTITIES that fill those slots. No entity names are
     hardcoded in engine code (M2 Firewall compliant).
 
@@ -228,7 +228,7 @@ def _build_capability_registry(iwad: str | None = None) -> Dict[str, AgentDescri
             "purpose": ent.get("purpose", ""),
             "capabilities": ent.get("capabilities", []),
             "domains": ent.get("domains", []),
-            "pillar_slot": ent.get("pillar_slot"),
+            "node_slot": ent.get("node_slot"),
             "task_tool_type": ent.get("task_tool_type", "general"),
             "owned_files": ent.get("owned_files", []),
             "role": ent.get("role"),

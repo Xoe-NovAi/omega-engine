@@ -22,9 +22,9 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 - **Reason**: Prevents architectural drift and ensures the engine remains a universal runtime.
 
 ### 3. The Iris Constant
-- **Mandate**: Iris is the messenger bridge, NOT a Pillar Keeper.
-- **Constraint**: Do not assign Iris a Pillar (P1-P10). She is the interface.
-- **Reason**: Preserves the cosmological purity of the 10 Pillar Keepers.
+- **Mandate**: Iris is the messenger bridge, NOT a Node.
+- **Constraint**: Do not assign Iris a Node (N1-N10). She is the interface.
+- **Reason**: Preserves the cosmological purity of the 10 Nodes.
 
 ### 4. The Sequentiality Mandate
 - **Mandate**: Complex architectural changes must follow the "Plan → Verify → Execute" loop.
@@ -69,8 +69,8 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
 
 ### 10. Fleet Integrity (NEW — 2026-06-01)
 - **Mandate**: The Agent Fleet must remain lean, purpose-driven, and slot-constrained.
-- **Constraint**: No new agents may be created without a verified gap in the Lattice or a vacancy in the Pillar slots. Capabilities must map to existing Pillars (P1-P10) or Lattice roles before proposing a new entity.
-- **Pattern**: Map new capabilities to existing `pillar --slot PX` agents or Lattice subagents (Jem, Quality, Scribe). A new agent file is a last resort, applied only after slot-based delegation has been proven impossible.
+- **Constraint**: No new agents may be created without a verified gap in the Lattice or a vacancy in the Node slots. Capabilities must map to existing Nodes (N1-N10) or Lattice roles before proposing a new entity.
+- **Pattern**: Map new capabilities to existing `node --slot PX` agents or Lattice subagents (Jem, Quality, Scribe). A new agent file is a last resort, applied only after slot-based delegation has been proven impossible.
 - **Reason**: Prevents "Agent Bloat" and cognitive fragmentation, ensuring clear delegation and ownership. The consolidation from 26 to 14 agents exposed how bloat accumulates through additive habits rather than slot-based discipline.
 - **Enforcement**: `.opencode/agents/*.md` file count must never exceed 14 without an architectural review documented in `PIVOT_LOG.md`.
 
@@ -192,7 +192,7 @@ These mandates are the "Constitutional Law" of the Omega Engine. They override a
   # OR absolute path
   .venv/bin/pip install <package>
   ```
-- **Reason**: The P3 Engineering subagent used `--break-system-packages` to install `keyring`, polluting the system Python. This breaks reproducibility, creates version conflicts, and violates M16 (Modularization & Portability). The venv IS the sovereign boundary for Python dependencies.
+- **Reason**: The N3 Engineering subagent used `--break-system-packages` to install `keyring`, polluting the system Python. This breaks reproducibility, creates version conflicts, and violates M16 (Modularization & Portability). The venv IS the sovereign boundary for Python dependencies.
 - **Enforcement**: 
   - Pre-commit hook: `grep -r "break-system-packages" scripts/ && exit 1`
   - CI gate: `make test` fails if `sys.prefix` != `.venv` path

@@ -60,18 +60,18 @@ async def test_summon_unknown_entity():
     assert result.entity is not None
 
 
-def test_all_pillar_keepers_have_required_fields():
-    """Structural invariants - every pillar keeper must have required fields.
+def test_all_node_keepers_have_required_fields():
+    """Structural invariants - every node keeper must have required fields.
     
     Does NOT hardcode entity names per the Engine-Stack Firewall mandate.
     """
     oracle = Oracle()
-    keepers = oracle.registry.list_pillar_keepers()
+    keepers = oracle.registry.list_node_keepers()
     assert len(keepers) >= 1  # At least one keeper exists
     for k in keepers:
-        assert k.name is not None, "Pillar keeper missing name"
-        assert k.slots, "Pillar keeper must have slot assignments"
-        assert k.domains is not None, "Pillar keeper must have domains"
+        assert k.name is not None, "Node keeper missing name"
+        assert k.slots, "Node keeper must have slot assignments"
+        assert k.domains is not None, "Node keeper must have domains"
 
 
 @pytest.mark.anyio
@@ -84,7 +84,7 @@ async def test_iris_speculative_decoder_simple():
 
 @pytest.mark.anyio
 async def test_iris_speculative_decoder_complex():
-    """Complex queries should escalate to a Pillar Keeper."""
+    """Complex queries should escalate to a Node Keeper."""
     result = await Oracle().talk("explain the meaning of justice")
     assert result.escalated is True
 

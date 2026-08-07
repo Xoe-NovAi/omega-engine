@@ -30,7 +30,7 @@ KV cache quantization (llama-server flags):
 
 Speculative decoding (Oracle already implements this):
   Draft: speculative-decoder (qwen3-1.7b-270m, always-on, ~300MB)
-  Target: Pillar Keeper (loaded on demand)
+  Target: Node (loaded on demand)
   Acceptance: heuristic-based confidence check
   
   Can be enhanced with dynamic speculation:
@@ -148,7 +148,7 @@ class KVCacheConfig:
 
 @dataclass
 class SpeculativeDecodeConfig:
-    """Configuration for the speculative decoder (Draft → Pillar Keeper).
+    """Configuration for the speculative decoder (Draft → Node).
 
     [S4 Gemma 4 MTP] Supports two draft strategies:
       - "ngram": lightweight n-gram drafter (default, no extra model load)

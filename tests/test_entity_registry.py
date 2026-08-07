@@ -13,7 +13,7 @@ SAMPLE_YAML = """
 entities:
   test_entity:
     name: TestEntity
-    pillars: ["P0: Test"]
+    nodes: ["N0: Test"]
     pantheon: Test
     element: "Earth 🜃"
     chakra: Root
@@ -45,8 +45,8 @@ def test_load_entities(temp_config):
     entity = registry.get("testentity")
     assert entity is not None
     assert entity.name == "TestEntity"
-    # pillars migrated to slots (preserving "P0: Test" → slot key)
-    assert entity.slots == ["P0"]
+    # nodes migrated to slots (preserving "N0: Test" → slot key)
+    assert entity.slots == ["N0"]
     # WAD-specific fields are now in metadata dict
     assert entity.metadata["pantheon"] == "Test"
     assert entity.metadata["element"] == "Earth 🜃"
@@ -60,9 +60,9 @@ def test_list_entities(temp_config):
     assert entities[0].name == "TestEntity"
 
 
-def test_list_pillar_keepers(temp_config):
+def test_list_node_keepers(temp_config):
     registry = EntityRegistry(config_path=temp_config)
-    keepers = registry.list_pillar_keepers()
+    keepers = registry.list_node_keepers()
     assert len(keepers) == 1
 
 
@@ -90,11 +90,11 @@ def test_entity_to_dict():
         domains=["test"],
         model="qwen3-1.7b-q6_k",
         personality="Test personality",
-        slots=["P0"],
+        slots=["N0"],
     )
     d = entity.to_dict()
     assert d["name"] == "Test"
-    assert d["slots"] == ["P0"]
+    assert d["slots"] == ["N0"]
     # Metadata with None/empty should not be included
     assert "metadata" not in d or d["metadata"] == {}
 

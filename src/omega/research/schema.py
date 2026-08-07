@@ -1,6 +1,6 @@
 """
 Ω-Research Schema — Research Proposal & Lifecycle Definitions
-⬡ OMEGA ⬡ LILITH ⬡ P6-P10 ⬡ SCHEMA
+⬡ OMEGA ⬡ LILITH ⬡ N6-N10 ⬡ SCHEMA
 """
 
 from __future__ import annotations
@@ -117,7 +117,7 @@ class ResearchProposal:
     """
     id: UUID = field(default_factory=uuid4)
     causal_trace_id: str = field(default_factory=lambda: str(uuid4()))  # M17
-    domain: str = ""           # P6-P10 (Cognition, Context, Observability, Orchestration, Validation)
+    domain: str = ""           # N6-N10 (Cognition, Context, Observability, Orchestration, Validation)
     hypothesis: str = ""
     experiment_spec: dict = field(default_factory=dict)  # Sandbox spec + AMFO tier config
     estimated_clear: CLEARScore | None = None

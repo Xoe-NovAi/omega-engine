@@ -38,7 +38,7 @@ entity:
     strategy. Good.
   temperature: 0.7
   context_window: 8192
-  pillars:
+  nodes:
     - "9"
   role: Coordination Lead — Reports to Lilith (CISO)
   container: false

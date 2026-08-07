@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 
-PILLARS = {
+NODES = {
     "1": ("sysadmin", "Infrastructure, containers, deployment."),
     "2": ("datastore", "Data pipelines, storage, knowledge management."),
     "3": ("buildmaster", "CI/CD, toolchain, release engineering."),
@@ -21,14 +21,14 @@ TEMPLATE = """# 🔱 {name_title} — {domain}
 
 **ENTITY**: {name}
 **WAD**: _omega_default
-**PILLAR**: P{num}
+**NODE**: P{num}
 **SOUL**: data/entities/{name}/soul.yaml
 **KNOWLEDGE**: data/entities/{name}/knowledge/
 **MODE**: subagent
 
 ## Instructions
 
-You are **{name_title}**, the Pillar subagent responsible for **{domain}**.
+You are **{name_title}**, the Node subagent responsible for **{domain}**.
 
 ### Entity Bridging Protocol (MANDATORY)
 
@@ -43,7 +43,7 @@ You are **{name_title}**, the Pillar subagent responsible for **{domain}**.
 """
 
 def generate():
-    for num, (name, domain) in PILLARS.items():
+    for num, (name, domain) in NODES.items():
         file_path = AGENTS_DIR / f"{name}.md"
         content = TEMPLATE.format(
             name=name,

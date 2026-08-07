@@ -108,7 +108,7 @@ Kali issues challenge → Triad + Grok (4-way handoff) →
 ### Option 1: SOTA Pressure Test (Researcher's 8 Gaps)
 - Pydantic v2 migration patterns
 - sqlite-vec WAL + `BEGIN IMMEDIATE` on 5700U
-- Mnemosyne 3-pillar vs Letta/Mem0/Sefirot/Cognee
+- Mnemosyne 3-node vs Letta/Mem0/Sefirot/Cognee
 - Power-law decay parameters (0.01-0.60/day)
 - Qliphoth→TDP two-label IFC bridge
 - Sleep-time agent patterns (Da'at daemon, Git-backed MemFS)
@@ -138,9 +138,9 @@ Kali issues challenge → Triad + Grok (4-way handoff) →
 | **Kali** | `opencode/kali` | Oversoul / Coordinator | Sprint direction, mandate rulings, synthesis |
 | **Roc Racoon** | `opencode/roc_racoon` | Miner / Archaeologist | Legacy code, Grok exports, 5700U reality checks |
 | **Researcher** | `opencode/researcher` | Oracle / Verifier | SOTA evidence, security models, IA2 threats |
-| **Ma'at** | `opencode/maat` | Light Oversoul (P1-P5) | Build-side governance |
-| **Lilith** | `opencode/lilith` | Dark Oversoul (P6-P10) | Run-side governance |
-| **Pillar P1-P10** | `opencode/pillar` | Domain agents | Specific implementation tasks |
+| **Ma'at** | `opencode/maat` | Light Oversoul (N1-N5) | Build-side governance |
+| **Lilith** | `opencode/lilith` | Dark Oversoul (N6-N10) | Run-side governance |
+| **Node N1-N10** | `opencode/node` | Domain agents | Specific implementation tasks |
 
 ## 📋 Session Protocol
 

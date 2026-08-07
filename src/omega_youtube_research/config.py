@@ -55,7 +55,7 @@ class PersistenceConfig(BaseModel):
 
 
 class EmbeddingConfig(BaseModel):
-    """Configuration for embedding backends (used by P1/P2, declared here for P0)."""
+    """Configuration for embedding backends (used by N1/N2, declared here for P0)."""
 
     qwen_model: str = "Qwen3-Embedding-0.6B"
     mrl_dimension: int = 768

@@ -80,8 +80,8 @@ class PersonaSpec:
     anti_domains: List[str] = field(default_factory=list)
     """Domains this voice must NOT speak about."""
 
-    pillar: Optional[str] = None
-    """Omega pillar slot (P1-P10), if applicable."""
+    node: Optional[str] = None
+    """Omega node slot (N1-N10), if applicable."""
 
     element: Optional[str] = None
     """Elemental/archetypal anchor (e.g., 'Fire 🜂')."""
@@ -97,7 +97,7 @@ class PersonaSpec:
             "domain": self.domain,
             "mandate_lens": self.mandate_lens,
             "anti_domains": self.anti_domains,
-            "pillar": self.pillar,
+            "node": self.node,
             "element": self.element,
             "known_for": self.known_for,
             "dissent_style": self.dissent_style.value,
@@ -110,7 +110,7 @@ class PersonaSpec:
             domain=data["domain"],
             mandate_lens=data["mandate_lens"],
             anti_domains=data.get("anti_domains", []),
-            pillar=data.get("pillar"),
+            node=data.get("node"),
             element=data.get("element"),
             known_for=data.get("known_for"),
             dissent_style=DissentStyle(data.get("dissent_style", "direct")),

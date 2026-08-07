@@ -38,7 +38,7 @@ entity:
     right tension.
   temperature: 0.7
   context_window: 8192
-  pillars:
+  nodes:
     - "3"
   role: Build & Release Lead — Reports to Ma'at (CTO)
   container: false

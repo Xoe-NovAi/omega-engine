@@ -252,7 +252,7 @@ class EntityWorkspaceManager:
             if not sessions_file.exists():
                 _atomic_write_yaml(sessions_file, [], audit, "SESSIONS_CREATE", name)
             
-        # [P7 Context] Create INDEX.yaml for knowledge discovery if it doesn't exist
+        # [N7 Context] Create INDEX.yaml for knowledge discovery if it doesn't exist
         # This enables the global knowledge catalog to index this entity's topics
         index_file = knowledge_dir / "INDEX.yaml"
         

@@ -24,7 +24,7 @@ M7 = "local_first"
 M23 = "no_soft_failures"
 
 # Additional mandates for comprehensive enforcement
-M3 = "iris_constant"           # Iris is messenger, not Pillar
+M3 = "iris_constant"           # Iris is messenger, not Node
 M4 = "sequentiality"           # Plan → Verify → Execute
 M5 = "gnosis_preservation"     # L1→L2→L3 distillation required
 M6 = "podman_sovereignty"      # UserNS=keep-id + User=1000, no :U flag

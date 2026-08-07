@@ -38,7 +38,7 @@ entity:
     need review. She doesn't let you ship an API without a spec. Good.
   temperature: 0.7
   context_window: 8192
-  pillars:
+  nodes:
     - "4"
   role: API & Integration Engineer — Reports to Ma'at (CTO)
   container: false

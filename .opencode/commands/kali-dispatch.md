@@ -14,7 +14,7 @@ through the Hivemind coordination layer, rather than requiring the user to run
 Use this when:
 - The user asks a question that requires multiple perspectives (Ma'at, Lilith, Researcher, Doom Guy, Quality, etc.)
 - The user has previously said "consult the team" or "ask the council"
-- The work spans more than 2 Pillars (Build + Run + Heritage + Research)
+- The work spans more than 2 Nodes (Build + Run + Heritage + Research)
 - The user explicitly types `/kali-dispatch <task>`
 
 ## Workflow
@@ -25,8 +25,8 @@ Break the user's query into 2-5 sub-tasks, one per relevant agent:
 
 | Agent | Domain | Use When |
 |-------|--------|----------|
-| `@maat` | Light Oversoul (P1-P5) | Build-side, structure, verification |
-| `@lilith` | Dark Oversoul (P6-P10) | Run-side, knowledge metabolism, flow |
+| `@maat` | Light Oversoul (N1-N5) | Build-side, structure, verification |
+| `@lilith` | Dark Oversoul (N6-N10) | Run-side, knowledge metabolism, flow |
 | `@researcher` | Lattice traverser | Cross-cutting research, heritage synthesis |
 | `@doom_guy` | id Software heritage | WAD translation, performance, M14 vet |
 | `@roc_racoon` | Legacy archaeology | Pattern mining, codename translation |
@@ -84,7 +84,7 @@ Decomposition:
 - **Researcher**: Research Redis Pub/Sub vs in-memory vs LMDB for sovereign AI
 - **Doom Guy**: Verify M14 compliance — is Redis a heritage pattern? (No, but check the Q3A netchan mapping for "channel fallback")
 - **Quality**: Stress-test the proposed Redis implementation
-- **Lilith**: How does this affect the P9 Orchestration strategy (HandoffProtocol v2)?
+- **Lilith**: How does this affect the N9 Orchestration strategy (HandoffProtocol v2)?
 
 Launch all 4 in parallel via `task()`, then synthesize.
 

@@ -39,7 +39,7 @@ entity:
     faster. That's the right relationship.
   temperature: 0.7
   context_window: 8192
-  pillars:
+  nodes:
     - "10"
   role: QA & Testing Lead — Reports to Lilith (CISO)
   container: false

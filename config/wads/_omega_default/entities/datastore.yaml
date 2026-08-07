@@ -38,7 +38,7 @@ entity:
     That's how it should be.
   temperature: 0.7
   context_window: 8192
-  pillars:
+  nodes:
     - "2"
   role: Data Engineering Lead — Reports to Ma'at (CTO)
   container: false

@@ -169,9 +169,9 @@ profiles:
         - "tests/test_e2e_inference_chain.py"
         - "tests/test_antigravity_provider.py"
 
-  # ── Engineering P3 (unchanged, working) ───────────────────────────────────
+  # ── Engineering N3 (unchanged, working) ───────────────────────────────────
   engineering-p3:
-    description: "Full context for P3 Engineering Pillar"
+    description: "Full context for N3 Engineering Node"
     max_slots: 12
     include:
       - "src/omega/oracle/orchestrator.py"

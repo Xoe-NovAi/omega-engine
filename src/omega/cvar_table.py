@@ -142,7 +142,7 @@ ZONEID_TABLE = {
     "trace": {"id": ZONEID_TRACE, "subsystem": "ObservabilityEngine", "description": "Trace/session lineage"},
     "probe": {"id": ZONEID_PROBE, "subsystem": "ResourceGuard", "description": "Critical section guard"},
     "handoff": {"id": ZONEID_HANDOFF, "subsystem": "SubagentDispatcher", "description": "HandoffPacket integrity marker"},
-    "presence": {"id": ZONEID_PRESENCE, "subsystem": "LinkP9Runtime", "description": "Agent presence record marker"},
+    "presence": {"id": ZONEID_PRESENCE, "subsystem": "LinkN9Runtime", "description": "Agent presence record marker"},
     "knowledge": {"id": ZONEID_KNOWLEDGE, "subsystem": "CrossPollination", "description": "Knowledge signal integrity marker"},
     "demand": {"id": ZONEID_DEMAND, "subsystem": "CrossPollination", "description": "Demand signal integrity marker"},
     "tombstone": {"id": ZONEID_TOMBSTONE, "subsystem": "EntityRegistry", "description": "Lazy deletion sentinel"},
@@ -184,7 +184,7 @@ CVAR_TABLE: Dict[str, CvarDef] = {
     ),
     "zoneid.presence": CvarDef(
         "zoneid.presence", ZONEID_PRESENCE, "zoneid",
-        "Agent presence record marker (Link P9 Runtime)", "LinkP9Runtime",
+        "Agent presence record marker (Link N9 Runtime)", "LinkN9Runtime",
     ),
     "zoneid.tombstone": CvarDef(
         "zoneid.tombstone", ZONEID_TOMBSTONE, "zoneid",
@@ -192,7 +192,7 @@ CVAR_TABLE: Dict[str, CvarDef] = {
     ),
     "zoneid.verification": CvarDef(
         "zoneid.verification", ZONEID_VERIFICATION, "zoneid",
-        "Verification audit trail integrity marker (P5 Sentinel)", "Sentinel",
+        "Verification audit trail integrity marker (N5 Sentinel)", "Sentinel",
     ),
     "zoneid.atomic": CvarDef(
         "zoneid.atomic", ZONEID_ATOMIC, "zoneid",
@@ -236,11 +236,11 @@ CVAR_TABLE: Dict[str, CvarDef] = {
     # ── config.hivemind.* — Hivemind/Hub knobs ─────────────────
     "config.hivemind.enabled": CvarDef(
         "config.hivemind.enabled", True, "bool",
-        "Enable cross-agent awareness via Omega Hub", "LinkP9Runtime",
+        "Enable cross-agent awareness via Omega Hub", "LinkN9Runtime",
     ),
     "config.hivemind.endpoint": CvarDef(
         "config.hivemind.endpoint", "http://127.0.0.1:8016", "str",
-        "Base URL for the Omega Hub MCP server", "LinkP9Runtime",
+        "Base URL for the Omega Hub MCP server", "LinkN9Runtime",
     ),
 
     # ── config.session_header.* — ICS/Session header knobs ─────────
@@ -250,27 +250,27 @@ CVAR_TABLE: Dict[str, CvarDef] = {
     ),
 
     # ── config.hivemind.retention.* — TTL Alignment (D-kal-045) ────
-    # P7 Dark Council Synthesis: workspace (was 7d) and observation log (30d)
+    # N7 Dark Council Synthesis: workspace (was 7d) and observation log (30d)
     # had a 23-day silent data loss zone. Aligned both to 30d with 25% grace.
     "config.hivemind.retention.workspace_days": CvarDef(
         "config.hivemind.retention.workspace_days", 30, "int",
-        "Workspace file retention (days) — aligned with observation log", "LinkP9Runtime",
+        "Workspace file retention (days) — aligned with observation log", "LinkN9Runtime",
     ),
     "config.hivemind.retention.observation_days": CvarDef(
         "config.hivemind.retention.observation_days", 30, "int",
-        "Observation log retention (days)", "LinkP9Runtime",
+        "Observation log retention (days)", "LinkN9Runtime",
     ),
     "config.hivemind.retention.grace_ratio": CvarDef(
         "config.hivemind.retention.grace_ratio", 0.25, "float",
-        "Grace period as ratio of base TTL (id Software Quake 1996 pattern)", "LinkP9Runtime",
+        "Grace period as ratio of base TTL (id Software Quake 1996 pattern)", "LinkN9Runtime",
     ),
     "config.hivemind.retention.warm_ttl_hours": CvarDef(
         "config.hivemind.retention.warm_ttl_hours", 24, "int",
-        "Warm awareness tier retention (hours)", "LinkP9Runtime",
+        "Warm awareness tier retention (hours)", "LinkN9Runtime",
     ),
     "config.hivemind.retention.hot_ttl_minutes": CvarDef(
         "config.hivemind.retention.hot_ttl_minutes", 5, "int",
-        "Hot presence tier retention (minutes) — in-memory", "LinkP9Runtime",
+        "Hot presence tier retention (minutes) — in-memory", "LinkN9Runtime",
     ),
 
     # ── config.gguf.* — Native GGUF Provider knobs ───────────────

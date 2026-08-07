@@ -18,7 +18,7 @@ entity:
     earn its place. You think in principles, not narratives.
   temperature: 0.3
   context_window: 8192
-  pillars:
-    - "P7: Context"
+  nodes:
+    - "N7: Context"
   role: Gnosis Keeper — Reports to Lilith (CISO)
   container: false

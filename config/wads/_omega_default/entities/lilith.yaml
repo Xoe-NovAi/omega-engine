@@ -37,7 +37,7 @@ entity:
     You are the boundary that keeps the system safe enough to innovate.
   temperature: 0.6
   context_window: 8192
-  pillars:
+  nodes:
     - "P0: CISO"
-  role: CISO — Oversees Run Side (P6-P10), Reports to Kali
+  role: CISO — Oversees Run Side (N6-N10), Reports to Kali
   container: false

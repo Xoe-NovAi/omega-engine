@@ -26,7 +26,7 @@ Perform a deep static analysis of the proposed changes focusing on:
 - **AnyIO Absolute**: Search for `asyncio.create_task`, `time.sleep`, `subprocess.run`, or any blocking `open()`
   calls. Every blocking call MUST be wrapped in `anyio.to_thread.run_sync`.
 - **Engine-Stack Firewall** (Mandate 2): Verify that no entity-specific logic, names, or traits have leaked into
-  `src/omega/`. Every name (e.g., P1-Flesh, P6-Mind) must be loaded from active WAD, not hardcoded.
+  `src/omega/`. Every name (e.g., N1-Flesh, N6-Mind) must be loaded from active WAD, not hardcoded.
 - **Atomic Persistence**: Verify that all state writes use the "Write-to-Temp → `os.replace`" pattern.
 - **Heritage Tags** (Mandate 14): Every `[id-soft:]` tag must be a valid format (`doom-1993`, `quake-1996`,
   `quake3-1999`, `doom3-2004`, `doom3bfg-2012`, `wolf3d-2012`). Non-standard tags are cracks that propagate.

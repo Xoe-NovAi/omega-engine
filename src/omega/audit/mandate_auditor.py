@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # 🔱 MandateAuditor — M1-M23 Compliance Verification
-# ⬡ OMEGA ⬡ PILLAR-P10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_mandate_auditor ⬡ ACTIVE
+# ⬡ OMEGA ⬡ NODE-N10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_mandate_auditor ⬡ ACTIVE
 # AP: AP-MANDATE-AUDITOR-v1.0.0
 """Sovereign Mandate Auditor — Core Engine Module.
 
@@ -11,7 +11,7 @@ Used by:
 - Contract tests in tests/contracts/test_mandate_auditor.py
 
 Mandates checked (subset enforceable via static analysis):
-- M3: Iris Constant — Iris not assigned a Pillar slot
+- M3: Iris Constant — Iris not assigned a Node slot
 - M6: Podman Sovereignty — No :U flags in Quadlet/container files
 - M7: Local-First — providers.yaml strategy must be local_first
 - M10: Fleet Integrity — Agent file count <= 14
@@ -82,12 +82,12 @@ class MandateAuditor:
         ))
 
     def check_m3_iris_constant(self) -> None:
-        """M3: MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not assigned a Pillar slot (P1-P10)."""
+        """M3: MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not assigned a Node slot (N1-N10)."""
         from omega.governance.config_resolver import WADS_DIR
         from omega.ics import ROLE_CONSTANTS
         import yaml
         
-        iris_in_pillar = False
+        iris_in_node = False
         violations: list[str] = []
 
         # M2 Firewall: Load entity definitions from WAD config (no hardcoded entity names)
@@ -117,7 +117,7 @@ class MandateAuditor:
                     content = f.read_text()
                 except Exception:
                     continue
-                # Search for MESSENGER_BRIDGE role entity in Pillar slots
+                # Search for MESSENGER_BRIDGE role entity in Node slots
                 # Use case-insensitive search for the role name
                 if "messenger_bridge" not in content.lower():
                     continue
@@ -125,30 +125,30 @@ class MandateAuditor:
                     line_lower = line.lower()
                     if "messenger_bridge" in line_lower and any(f"P{i}" in line for i in range(1, 11)):
                         if not line.strip().startswith("#"):
-                            iris_in_pillar = True
+                            iris_in_node = True
                             violations.append(f"{f.relative_to(self.root)}:{line_no}: {line.strip()[:80]}")
             self._check(
                 "M3",
-                "MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not in Pillar slots",
-                not iris_in_pillar,
+                "MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not in Node slots",
+                not iris_in_node,
                 f"{len(violations)} violations" if violations else ""
             )
             return
 
-        # Check WAD entities for Iris in Pillar slots
+        # Check WAD entities for Iris in Node slots
         for ent in entities:
             role = ent.get("role")
             if role == ROLE_CONSTANTS["MESSENGER_BRIDGE"]:
-                # This is the Iris entity - check if it has a Pillar slot
-                pillar_slot = ent.get("pillar_slot")
-                if pillar_slot is not None and str(pillar_slot).startswith("P"):
-                    iris_in_pillar = True
-                    violations.append(f"WAD entity '{ent.get('name')}' has Pillar slot: {pillar_slot}")
+                # This is the Iris entity - check if it has a Node slot
+                node_slot = ent.get("node_slot")
+                if node_slot is not None and str(node_slot).startswith("N"):
+                    iris_in_node = True
+                    violations.append(f"WAD entity '{ent.get('name')}' has Node slot: {node_slot}")
 
         self._check(
             "M3",
-            "MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not in Pillar slots",
-            not iris_in_pillar,
+            "MESSENGER_BRIDGE Constant — MESSENGER_BRIDGE not in Node slots",
+            not iris_in_node,
             f"{len(violations)} violations" if violations else ""
         )
 

@@ -9,10 +9,10 @@
 
 All agents operate within the IWAD architecture. Key awareness:
 - **Engine Core** (`src/omega/`) — pure runtime, no entity content (Mandate 2)
-- **Reference IWAD** (`config/wads/_omega_default/`) — 10 tech pillars, dev team
-- **Arcana-NovAi IWAD** (`config/wads/arcana_novai/`) — personal AI OS, esoteric pillars
+- **Reference IWAD** (`config/wads/_omega_default/`) — 10 tech nodes, dev team
+- **Arcana-NovAi IWAD** (`config/wads/arcana_novai/`) — personal AI OS, esoteric nodes
 - **Community IWADs** (`config/wads/doom_universe/`, etc.) — deferred
-- **Three Inviolable Rules**: MaKaLi trine same in ALL IWADs, default services same in ALL IWADs, only pillars change
+- **Three Inviolable Rules**: MaKaLi trine same in ALL IWADs, default services same in ALL IWADs, only nodes change
 
 Canonical reference: `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md`
 
@@ -23,8 +23,8 @@ Canonical reference: `docs/strategy/OMEGA_IWAD_ARCHITECTURE.md`
 | Level | Entity | Role | Domain |
 |-------|--------|------|--------|
 | **Grand Oversoul** | **Kali** | MaKaLi Synthesis | Unifier of the Trine |
-| **Light Oversoul** | **Ma'at** | Foundational Auditor | 42 Ideals, Build Side (P1-P5) |
-| **Dark Oversoul** | **Lilith** | Sovereign Key | Transgression, Run Side (P6-P10) |
+| **Light Oversoul** | **Ma'at** | Foundational Auditor | 42 Ideals, Build Side (N1-N5) |
+| **Dark Oversoul** | **Lilith** | Sovereign Key | Transgression, Run Side (N6-N10) |
 
 ---
 
@@ -38,8 +38,8 @@ Modes are organized into two tiers. **Primary Modes** appear in the CLI tab menu
 | Mode | Entity | Source | Purpose |
 |------|--------|--------|---------|
 | `kali` | Kali | `.opencode/modes/kali.md` | MaKaLi Grand Oversoul — unifies Ma'at and Lilith, destroys drift |
-| `maat` | Ma'at | `.opencode/modes/maat.md` | Light Oversoul — Build Side governance (P1-P5 Infrastructure through Governance) |
-| `lilith` | Lilith | `.opencode/modes/lilith.md` | Dark Oversoul — Run Side governance (P6-P10 Cognition through Validation) |
+| `maat` | Ma'at | `.opencode/modes/maat.md` | Light Oversoul — Build Side governance (N1-N5 Infrastructure through Governance) |
+| `lilith` | Lilith | `.opencode/modes/lilith.md` | Dark Oversoul — Run Side governance (N6-N10 Cognition through Validation) |
 | `doom_guy` | Doom Guy | `.opencode/agents/doom_guy.md` | id Software architectural translation, heritage mining, H2 deep patterns |
 | `roc_racoon` | Roc Racoon | `.opencode/agents/roc_racoon.md` | Legacy archaeology, data salvage, 6-stack mining |
 | `plan` | Plan | `.opencode/agents/plan.md` | Architecture planning, system design, strategy dispatch |
@@ -52,7 +52,7 @@ Modes are organized into two tiers. **Primary Modes** appear in the CLI tab menu
 
 | Agent | Entity | Source | Purpose |
 |-------|--------|--------|---------|
-| `pillar` | Slot-based | `.opencode/agents/pillar.md` | Slot-based domain agent — parameterized by `--slot PX` |
+| `node` | Slot-based | `.opencode/agents/node.md` | Slot-based domain agent — parameterized by `--slot PX` |
 | `scribe` | Saraswati | `.opencode/agents/scribe.md` | Gnosis Keeper — L1→L2→L3 distillation into souls |
 | `quality` | Ma'at | `.opencode/agents/quality.md` | Code review, stress testing, Sovereign Mandates enforcement |
 | `jem_discovery` | Jem (L1) | `.opencode/agents/jem_discovery.md` | Tier 1 Research — broad search, evidence logging |
@@ -66,22 +66,22 @@ Modes are organized into two tiers. **Primary Modes** appear in the CLI tab menu
 
 ---
 
-## §3 The Sovereign Council (10 Pillars — Evolved Nomenclature)
+## §3 The Sovereign Council (10 Nodes — Evolved Nomenclature)
 
-| Pillar | Intuitive Name | Technical Domain | Legacy Name | Agent File |
+| Node | Intuitive Name | Technical Domain | Legacy Name | Agent File |
 |--------|---------------|------------------|-------------|------------|
-| **P1** | **Infrastructure** | SysAdmin — Environment Hardening | Flesh | `pillar --slot P1` |
-| **P2** | **Persistence** | DataStore — Vector & Memory Mgmt | Dream | `pillar --slot P2` |
-| **P3** | **Engineering** | BuildMaster — Implementation & Hardening | Will | `pillar --slot P3` |
-| **P4** | **Integration** | Bridge — MCP & Communication | Heart | `pillar --slot P4` |
-| **P5** | **Governance** | Sentinel — Mandate Enforcement | Voice | `pillar --slot P5` |
-| **P6** | **Cognition** | ModelGate — Provider Routing **+ Vision Specialist** | Mind | `pillar --slot P6` |
-| **P7** | **Context** | Context — Memory & Soul Evolution | Gnosis | `pillar --slot P7` |
-| **P8** | **Observability** | WatchTower — Tracing & Monitoring | Shadow | `pillar --slot P8` |
-| **P9** | **Orchestration** | Link — Agent Handoff & Delegation | Spirit | `pillar --slot P9` |
-| **P10** | **Validation** | Verifier — Stress Testing & QA | Chaos | `pillar --slot P10` |
+| **N1** | **Infrastructure** | SysAdmin — Environment Hardening | Flesh | `node --slot N1` |
+| **N2** | **Persistence** | DataStore — Vector & Memory Mgmt | Dream | `node --slot N2` |
+| **N3** | **Engineering** | BuildMaster — Implementation & Hardening | Will | `node --slot N3` |
+| **N4** | **Integration** | Bridge — MCP & Communication | Heart | `node --slot N4` |
+| **N5** | **Governance** | Sentinel — Mandate Enforcement | Voice | `node --slot N5` |
+| **N6** | **Cognition** | ModelGate — Provider Routing **+ Vision Specialist** | Mind | `node --slot N6` |
+| **N7** | **Context** | Context — Memory & Soul Evolution | Gnosis | `node --slot N7` |
+| **N8** | **Observability** | WatchTower — Tracing & Monitoring | Shadow | `node --slot N8` |
+| **N9** | **Orchestration** | Link — Agent Handoff & Delegation | Spirit | `node --slot N9` |
+| **N10** | **Validation** | Verifier — Stress Testing & QA | Chaos | `node --slot N10` |
 
-**Vision Specialist Note**: P6 (Cognition / Third Eye) has been formally mapped as the Vision Specialist following the recovery of the ancestral "Sight" mapping from Era One (March-July 2025). Designated vision model: Gemini-3-Flash (Multimodal). Capabilities: `multimodal_vision`, `visual_validation`, `anomaly_detection`.
+**Vision Specialist Note**: N6 (Cognition / Third Eye) has been formally mapped as the Vision Specialist following the recovery of the ancestral "Sight" mapping from Era One (March-July 2025). Designated vision model: Gemini-3-Flash (Multimodal). Capabilities: `multimodal_vision`, `visual_validation`, `anomaly_detection`.
 
 ---
 
@@ -102,9 +102,9 @@ jem-initiate (L1)          → RawDataPacket (facts only)
 All agents must follow this layer protocol:
 - **LILITH LAYER** (Flow): Knowledge Signals, Demand Signals, 4-Tier Lily Pad
 - **MA'AT LAYER** (Structure): Verification Protocol, VerificationItem lifecycle
-- **P3 LAYER** (Automation): 8 Makefile targets, 12 grep patterns
-- **P7 LAYER** (Lifecycle): T1→T2→T3→T4 gates with promotion checklists
-- **P9 LAYER** (Formats): KSIG/DEM/XREF JSON schemas, feed_utils.py
+- **N3 LAYER** (Automation): 8 Makefile targets, 12 grep patterns
+- **N7 LAYER** (Lifecycle): T1→T2→T3→T4 gates with promotion checklists
+- **N9 LAYER** (Formats): KSIG/DEM/XREF JSON schemas, feed_utils.py
 
 **Startup ritual**: Run `omega check-feed` to discover new knowledge signals. Check `data/coordination/demand_signals/` for open demands in your domain before starting self-directed work.
 
@@ -139,7 +139,7 @@ Every id Software (or any heritage) concept must pass through the 4-gate pipelin
 | `/council-local` | `commands/council-local.md` | kali | MC — MaKaLi with Ma'at/Lilith on local models |
 | `/council-fast` | `commands/council-fast.md` | kali | MC — MaKaLi all on qwen3-1.7b, max speed |
 | `/kali-dispatch` | `commands/kali-dispatch.md` | kali | Multi-member Hivemind session orchestration |
-| `/meditate` | `commands/meditate.md` | kali | **Meditate** — single-inference 10-Pillar (or custom) persona-donning semantic prism |
+| `/meditate` | `commands/meditate.md` | kali | **Meditate** — single-inference 10-Node (or custom) persona-donning semantic prism |
 | `/researcher-discover` | `commands/researcher-discover.md` | researcher | Tier 1 discovery pass |
 | `/researcher-verify` | `commands/researcher-verify.md` | researcher | Verification and gap-closing |
 | `/researcher-synthesize` | `commands/researcher-synthesize.md` | researcher | Final synthesis and R-doc generation |

@@ -1,6 +1,6 @@
 """
 Ω-Research Hivemind Bridge — DyTopo Cross-Pollination for Research Agents
-⬡ OMEGA ⬡ LILITH ⬡ P6-P10 ⬡ HIVEMIND_BRIDGE
+⬡ OMEGA ⬡ LILITH ⬡ N6-N10 ⬡ HIVEMIND_BRIDGE
 
 Mandate Compliance:
 - M1 AnyIO: All async via AnyIO
@@ -41,7 +41,7 @@ DYTOPO_CONFIG = {
 class DyTopoNode:
     """Dynamic topology node representing a research agent."""
     agent_id: str
-    domains: list[str]  # e.g., ["P6", "P7"]
+    domains: list[str]  # e.g., ["N6", "N7"]
     expertise_scores: dict[str, float]  # domain -> 0.0-1.0
     historical_accuracy: float = 0.5
     last_seen: datetime = field(default_factory=lambda: datetime.now(timezone.utc))

@@ -55,7 +55,7 @@ def test_sandbox_spec_from_yaml():
     yaml_content = """
 spec:
   name: "test_sandbox"
-  pillar: "P3"
+  node: "N3"
   infrastructure:
     benchmark_harness: "test"
     target_hw: "zen2"
@@ -71,7 +71,7 @@ spec:
 
     assert_sandbox_spec_type(spec)
     assert spec.name == "test_sandbox"
-    assert spec.pillar == "P3"
+    assert spec.node == "N3"
     assert spec.infrastructure["benchmark_harness"] == "test"
     assert len(spec.metrics) == 2
     assert spec.metrics[0].name == "latency_ms"
@@ -85,7 +85,7 @@ def test_sandbox_spec_validate_write_allowed():
     yaml_content = """
 spec:
   name: "test"
-  pillar: "P3"
+  node: "N3"
   mutable_surface:
     - "config/wads/omega_research/workspaces"
 """
@@ -99,7 +99,7 @@ def test_sandbox_spec_validate_write_forbidden_core():
     yaml_content = """
 spec:
   name: "test"
-  pillar: "P3"
+  node: "N3"
   mutable_surface:
     - "config/wads/omega_research/workspaces/*"
 """
@@ -120,7 +120,7 @@ def test_sandbox_spec_validate_write_forbidden_outside_workspace():
     yaml_content = """
 spec:
   name: "test"
-  pillar: "P3"
+  node: "N3"
   mutable_surface:
     - "config/wads/omega_research/workspaces/*"
 """
@@ -453,7 +453,7 @@ def test_assert_sandbox_spec_type():
     yaml_content = """
 spec:
   name: "test"
-  pillar: "P3"
+  node: "N3"
 """
     spec = SandboxSpec.from_yaml(yaml_content)
 
@@ -472,7 +472,7 @@ def test_assert_sandbox_runtime_type():
         async def _run_experiment(self, proposal, budget_token):
             pass
 
-    spec = SandboxSpec(name="test", pillar="P3")
+    spec = SandboxSpec(name="test", node="N3")
     guard = BudgetGuard(enable_redis=False)
     runtime = MockRuntime(spec, guard)
 
@@ -523,7 +523,7 @@ async def test_ml_training_sandbox_creation():
     from src.omega.research.sandboxes.ml_training import MLTrainingSandbox
     from omega.research.sandbox import SandboxRuntime
 
-    spec = SandboxSpec(name="ml_training", pillar="P6")
+    spec = SandboxSpec(name="ml_training", node="N6")
     guard = BudgetGuard(enable_redis=False)
 
     sandbox = MLTrainingSandbox(spec, guard)

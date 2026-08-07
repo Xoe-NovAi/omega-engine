@@ -149,7 +149,7 @@ steering:
   enabled: true
   queue_path: "data/steering_queue"
   human_review_threshold: "high"  # Priority >= HIGH triggers human review
-  default_pillar: "P6"
+  default_node: "N6"
   max_retries: 3
 
 

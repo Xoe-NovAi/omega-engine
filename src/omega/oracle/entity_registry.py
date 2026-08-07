@@ -120,7 +120,7 @@ DEFAULT_IWAD = "_omega_default"
 
 @dataclass
 class Entity:
-    """A user-definable entity — a Pillar Keeper, custom persona, or free agent.
+    """A user-definable entity — a Node, custom persona, or free agent.
     
     Engine knows: name, slots, domains, model, personality, capabilities.
     Everything else: metadata dict (WAD-defined, engine-agnostic).
@@ -144,9 +144,9 @@ class Entity:
     wad_source: Optional[str] = None
     priority: int = 0  # [Project 3] Layer priority for Shadow-Stacking
     
-    # ── Slot System (replaces hardcoded PILLAR_SLOTS) ──
-    # Engine uses these for get("P1") resolution.
-    # The engine does NOT interpret what "P1" means — that's WAD content.
+    # ── Slot System (replaces hardcoded NODE_SLOTS) ──
+    # Engine uses these for get("N1") resolution.
+    # The engine does NOT interpret what "N1" means — that's WAD content.
     slots: List[str] = field(default_factory=list)
     
     # ── Generic Metadata (WAD-defined, engine-agnostic) ──
@@ -284,9 +284,9 @@ class EntityRegistry:
         "personality", "temperature", "context_window",
     })
     
-    # Slot system is fully dynamic — no hardcoded PILLAR_SLOTS.
+    # Slot system is fully dynamic — no hardcoded NODE_SLOTS.
     # The engine discovers occupied slots from loaded entities.
-    # WADs define slot labels ("P1: Flesh"); the engine sees only "P1".
+    # WADs define slot labels ("N1: Flesh"); the engine sees only "N1".
     # [id-soft: quake3-1999] vvar pattern — dynamic set, not hardcoded
     @property
     def occupied_slots(self) -> frozenset:
@@ -367,24 +367,24 @@ class EntityRegistry:
             wad_metadata = {k: v for k, v in raw.items() if k not in core_fields}
             
             # ── Backward-Compatible Slot Migration ──
-            # Old YAML format used "pillars: ['P1: Flesh']" or "pillars: ['1']".
-            # New format uses "slots: ['P1']". Migrate automatically.
+            # Old YAML format used "nodes: ['N1: Flesh']" or "nodes: ['1']".
+            # New format uses "slots: ['N1']". Migrate automatically.
             raw_slots = raw.get("slots", [])
-            if not raw_slots and "pillars" in raw:
-                raw_pillars = raw.get("pillars", [])
-                # Extract slot ID from "P1: Flesh" → "P1", or use bare value
-                for p in raw_pillars:
+            if not raw_slots and "nodes" in raw:
+                raw_nodes = raw.get("nodes", [])
+                # Extract slot ID from "N1: Flesh" → "N1", or use bare value
+                for p in raw_nodes:
                     p_str = str(p)
-                    # Handle "P1: Flesh" format — extract before colon
-                    if ":" in p_str and not p_str.startswith("pillar"):
+                    # Handle "N1: Flesh" format — extract before colon
+                    if ":" in p_str and not p_str.startswith("node"):
                         slot_id = p_str.split(":")[0].strip()
                     else:
                         slot_id = p_str
                     raw_slots.append(slot_id)
-                logger.info(f"Migrated pillars→slots for '{key}': {raw_pillars} → {raw_slots}")
-            # If "pillars" key exists in raw YAML, remove from wad_metadata
+                logger.info(f"Migrated nodes→slots for '{key}': {raw_nodes} → {raw_slots}")
+            # If "nodes" key exists in raw YAML, remove from wad_metadata
             # (it's been consumed for migration; don't duplicate in metadata dict)
-            wad_metadata.pop("pillars", None)
+            wad_metadata.pop("nodes", None)
             
             entity = Entity(
                 name=raw.get("name", key),
@@ -428,7 +428,7 @@ class EntityRegistry:
         """Get entity by name, role, or Slot ID (3-Tier Resolution).
         
         Tier 1: Direct entity match (e.g., "sekhmet")
-        Tier 2: Slot match (e.g., "p1" or "pillar 1") — dynamic, no hardcoded slots
+        Tier 2: Slot match (e.g., "p1" or "node 1") — dynamic, no hardcoded slots
         Tier 3: Role match (e.g., "sysadmin")
         
         [Project 3: Shadow-Stacking] Projects a single Entity by merging layers.
@@ -456,10 +456,10 @@ class EntityRegistry:
             # [Project 3: Shadow-Stacking] Project the layered entity
             return self._project_entity(active_layers)
             
-        # Tier 2: Slot Match (e.g., "p1" or "pillar 1")
-        # Fully dynamic — no hardcoded PILLAR_SLOTS. The engine discovers
+        # Tier 2: Slot Match (e.g., "p1" or "node 1")
+        # Fully dynamic — no hardcoded NODE_SLOTS. The engine discovers
         # occupied slots from loaded entities. WADs define slot semantics.
-        slot_key = name_lower.replace("pillar ", "p").replace("pillar", "p")
+        slot_key = name_lower.replace("node ", "p").replace("node", "p")
         for key, layers in self._entities.items():
             active_layers = [l for l in layers if l.magic != ZONEID_TOMBSTONE]
             if not active_layers:
@@ -558,10 +558,10 @@ class EntityRegistry:
         """
         return self.active_iter()
     
-    def list_pillar_keepers(self) -> List[Entity]:
+    def list_node_keepers(self) -> List[Entity]:
         """List entities with slot assignments (forward-compat alias).
         
-        The term "Pillar Keeper" is Arcana-NovAi WAD content. The engine
+        The term "Node" is Arcana-NovAi WAD content. The engine
         discovers slot-holding entities dynamically rather than enforcing
         a hardcoded 10-slot grid. This method queries any entity that has
         at least one slot assigned.
@@ -765,7 +765,7 @@ class EntityRegistry:
     def find_by_domain(self, text: str) -> Optional[Entity]:
         """Find the best entity match for a query text based on domain keywords.
         
-        Matches Pillar Keepers only (Nova handles routing separately).
+        Matches Nodes only (Nova handles routing separately).
         Scores each entity by how many domain keywords appear in the text.
         Uses word-boundary matching to avoid substring false positives.
         When scores tie, prefers the entity whose domain keyword appears
@@ -784,7 +784,7 @@ class EntityRegistry:
             if not active_layers:
                 continue
             projected = self._project_entity(active_layers)
-            # All entities are routable by domain — no pillar gate (D179)
+            # All entities are routable by domain — no node gate (D179)
                 
             score = 0
             first_pos = len(text_lower) + 1

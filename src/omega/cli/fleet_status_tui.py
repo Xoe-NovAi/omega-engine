@@ -153,8 +153,8 @@ def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
     kali_node = tree.root.add(get_display_name(kali_role), data=get_entity_key(kali_role), expand=True)
     
     maat_node = kali_node.add(get_display_name(maat_role), data=get_entity_key(maat_role), expand=True)
-    # P1-P5 under Light Oversoul (Build Side)
-    for p in ["P1", "P2", "P3", "P4", "P5"]:
+    # N1-N5 under Light Oversoul (Build Side)
+    for p in ["N1", "N2", "N3", "N4", "N5"]:
         p_role = ROLE_CONSTANTS[p]
         p_entity = role_to_entity.get(p_role)
         if p_entity:
@@ -163,8 +163,8 @@ def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
             maat_node.add(f"P{p[-1]}: {p_role}", data=p.lower())
     
     lilith_node = kali_node.add(get_display_name(lilith_role), data=get_entity_key(lilith_role), expand=True)
-    # P6-P10 under Dark Oversoul (Run Side)
-    for p in ["P6", "P7", "P8", "P9", "P10"]:
+    # N6-N10 under Dark Oversoul (Run Side)
+    for p in ["N6", "N7", "N8", "N9", "N10"]:
         p_role = ROLE_CONSTANTS[p]
         p_entity = role_to_entity.get(p_role)
         if p_entity:
@@ -175,7 +175,7 @@ def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
     # ── Sovereign Specialists ───────────────────────────────────────────
     specialists = tree.root.add("Sovereign Specialists", data="specialists", expand=True)
     
-    # Specialists are entities with P1 role that are not pillar slots
+    # Specialists are entities with N1 role that are not node slots
     # plus MAKALI_COUNCIL. Build dynamically from WAD config.
     specialist_entities = []
     for ent in entities:
@@ -183,9 +183,9 @@ def build_fleet_tree(iwad: str = DEFAULT_IWAD) -> Tree:
         name = ent.get("name")
         if not name:
             continue
-        # Include P1 entities that are specialists (not pillar slots)
+        # Include N1 entities that are specialists (not node slots)
         # and MAKALI_COUNCIL
-        if role == "P1" and ent.get("pillar_slot") is None:
+        if role == "N1" and ent.get("node_slot") is None:
             specialist_entities.append(ent)
         elif role == "MAKALI_COUNCIL":
             specialist_entities.append(ent)

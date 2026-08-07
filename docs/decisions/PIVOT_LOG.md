@@ -487,4 +487,24 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 * **Key Insight**: The first user-ratified soul content transforms approved_lessons.yaml from a structural placeholder into a living document. The 5 L3 principles define roc_racoon's epistemological foundation, architectural insight, mining mission, concrete discovery, and philosophical bedrock.
 * **Status**: ✅ **COMPLETE**
 
-*⬡ OMEGA ⬡ MAAT ⬡ D-376a/D-376b ⬡ 2026-07-22*
+### D-510: Node (N1-N10) Architecture Replaces Pillar (P1-P10)
+* **Date**: 2026-08-07
+* **Context**: The "P" prefix (Pillar/P1-P10) was a leaky abstraction. "P" collides with Priority levels (P0-P3), Percentiles (P50/P95), and the ANAi WAD's sovereign "Pillar Keepers" content. User rejected "Slot" (S1-S10) due to collision with "Section". Decision: "Node" (N1-N10) is the engine's sovereign slot terminology.
+* **Decision**: Eradicate the P-prefix abstraction across the engine core, default IWAD (`_omega_default`), agent system, and canonical docs. Adopt "Node" (N1-N10):
+  - `ROLE_CONSTANTS` P1-P10 → N1-N10 (`src/omega/ics.py`)
+  - `LinkP9Runtime` → `LinkN9Runtime`; `P5 Sentinel` → `N5 Sentinel`; `P7 Dark Council` → `N7 Dark Council` (`cvar_table.py`)
+  - `PillarReport` → `NodeReport`; `pillar_id`/`pillar_slot`/`pillar_count` → `node_id`/`node_slot`/`node_count`; `PHASE1_PILLARS` → `PHASE1_NODES` (council/models.py)
+  - `.opencode/agents/pillar.md` → `node.md`; `opencode.json` agent key `pillar` → `node`; dispatch `@pillar` → `@node`
+  - `scripts/generate_pillar_agents.py` → `generate_node_agents.py`
+  - YAML key `pillars:` → `nodes:` in entity/slot configs; `list_pillar_keepers` → `list_node_keepers`
+  - Canonical docs: AGENTS.md, SOVEREIGN_MANDATES.md, OMEGA_ENGINE.md, ORACLE_STACK.md, FLEET_TEAM_PLAYBOOK.md
+* **Protected (not migrated)**:
+  - ANAi WAD (`config/wads/arcana_novai/`) keeps "Pillar Keepers" as sovereign content terminology
+  - Priority levels (P0-P3 in `request_queue.py`, `oracle_cli.py`)
+  - Percentiles (P50/P95 in `latency_tracker.py`)
+  - Non-default WADs (`omega_research`, `doom_universe`, `ingestion`), `data/`, `docs/archive/`, `context_packs/`
+* **Scope**: 116 files changed. Engine defines Nodes; WADs fill/map Nodes. Engine-level "Pillar" references are now "Node".
+* **Verification**: `make doc-llm-validate` passes. Full test suite diff vs baseline: migration introduced ZERO persistent new failures (all remaining ~124 failures pre-existing: vault pydantic age-armored validation, `call_with_retry` NameError, missing `cascade_router` module, etc.). Updated tests: dispatch_registry, mandate_auditor, entity_registry, subagent_dispatcher, oracle, meditate_protocol, sandbox.
+* **Status**: ✅ **COMPLETE**
+
+*⬡ OMEGA ⬡ KALI ⬡ D-510 ⬡ 2026-08-07*

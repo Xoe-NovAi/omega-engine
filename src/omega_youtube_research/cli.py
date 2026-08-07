@@ -172,7 +172,7 @@ def chunk(
 @app.command()
 def steer(
     prompt: str = typer.Argument(..., help="Natural language steering prompt"),
-    pillar: str = typer.Option("P6", "--pillar", "-p", help="Target pillar (P1-P10)"),
+    node: str = typer.Option("N6", "--node", "-p", help="Target node (N1-N10)"),
     priority: str = typer.Option("normal", "--priority", help="Priority: low/normal/high/critical"),
     task_type: str = typer.Option("youtube_deep_dive", "--type", help="Task type"),
 ):
@@ -184,14 +184,14 @@ def steer(
         
         task_id = await inject_steering(
             prompt=prompt,
-            pillar=pillar,
+            node=node,
             priority=task_priority,
             task_type=task_type,
         )
         
         typer.echo(f"✅ Injected steering task: {task_id}")
         typer.echo(f"   Prompt: {prompt}")
-        typer.echo(f"   Pillar: {pillar}")
+        typer.echo(f"   Node: {node}")
         typer.echo(f"   Priority: {priority}")
         typer.echo(f"   Type: {task_type}")
     

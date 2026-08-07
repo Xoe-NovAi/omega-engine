@@ -1,6 +1,6 @@
 """
 Ω-Research Module — CLEAR-Pareto Sovereignty Scorecard + AMFO Evaluator + Hivemind Bridge
-⬡ OMEGA ⬡ LILITH ⬡ P6-P10 ⬡ RESEARCH
+⬡ OMEGA ⬡ LILITH ⬡ N6-N10 ⬡ RESEARCH
 
 Public API:
 - CLEARScore: 5-dimension sovereignty scorecard

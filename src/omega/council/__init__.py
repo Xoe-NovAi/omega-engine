@@ -2,12 +2,12 @@
 # ⬡ OMEGA ⬡ KALI ⬡ trc_council ⬡ SCAFFOLD
 #
 # MaKaLi Parallel Council — Unified MultiAgentCoordinator
-# Stages: Pillars (Phase 1) → Digestion (Phase 1.5) → Oversouls (Phase 2) → Kali Synthesis (Phase 3) → Research (Phase 4)
+# Stages: Nodes (Phase 1) → Digestion (Phase 1.5) → Oversouls (Phase 2) → Kali Synthesis (Phase 3) → Research (Phase 4)
 # Status: SCAFFOLD — Implementation in progress (T0 Sessions 1-5)
 
 from .coordinator import MultiAgentCoordinator
 from .models import (
-    PillarReport, DigestedReport, Conflict, CouncilConfig,
+    NodeReport, DigestedReport, Conflict, CouncilConfig,
     HardwareProfile, ExecutionMode, StageResult, CouncilResult
 )
 from .report_digestion import ReportDigester
@@ -20,7 +20,7 @@ from .failure_layer import (
 
 __all__ = [
     "MultiAgentCoordinator",
-    "PillarReport", "DigestedReport", "Conflict",
+    "NodeReport", "DigestedReport", "Conflict",
     "CouncilConfig", "HardwareProfile", "ExecutionMode",
     "StageResult", "CouncilResult",
     "ReportDigester",

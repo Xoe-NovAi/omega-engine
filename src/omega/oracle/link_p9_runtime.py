@@ -1,13 +1,13 @@
 # AP: AP-ORACLE-RESTORE-v2.3.0
-# 🔱 Omega Engine — Link P9 Runtime (Agent Handoff & Delegation)
-# ⬡ OMEGA ⬡ DOOM_GUY ⬡ deepseek-v4-flash ⬡ opencode ⬡ LINK-P9
-# AP: LINK-P9-v1.0.0
+# 🔱 Omega Engine — Link N9 Runtime (Agent Handoff & Delegation)
+# ⬡ OMEGA ⬡ DOOM_GUY ⬡ deepseek-v4-flash ⬡ opencode ⬡ LINK-N9
+# AP: LINK-N9-v1.0.0
 #
 # Agent presence tracking, HandoffPacket lifecycle management,
 # task queue for inter-agent delegation.
 #
 # [id-soft: vet-066] idEntity event system — agents emit typed events,
-#     other agents consume them. Link P9 is the engine's event bus for agents.
+#     other agents consume them. Link N9 is the engine's event bus for agents.
 # [id-soft: vet-015] ZONEID Pattern — magic constant for agent presence integrity
 # [id-soft: vet-011] Thinker chain — spawn → execute → reap lifecycle.
 #
@@ -99,10 +99,10 @@ class AgentPresence:
         return asdict(self)
 
 
-# ── Link P9 Runtime ──────────────────────────────────────────────────────
+# ── Link N9 Runtime ──────────────────────────────────────────────────────
 
 
-class LinkP9Runtime:
+class LinkN9Runtime:
     """The runtime for agent handoff and delegation.
 
     Manages:
@@ -365,7 +365,7 @@ class LinkP9Runtime:
             "saved_at": datetime.now().isoformat(),
         }
         state_path.write_text(json.dumps(state, indent=2, default=str))
-        logger.info("Link P9 state saved: %s", state_path)
+        logger.info("Link N9 state saved: %s", state_path)
         return state_path
 
     def load_state(self, state_dir: str = "data/coordination") -> bool:
@@ -392,10 +392,10 @@ class LinkP9Runtime:
             # Restore dispatch log
             self._dispatch_log = state.get("dispatch_log", [])
 
-            logger.info("Link P9 state loaded from %s", state_path)
+            logger.info("Link N9 state loaded from %s", state_path)
             return True
         except OmegaError:
             return False
         except (OmegaError, RuntimeError, OSError) as e:
-            logger.error("Failed to load Link P9 state: %s", e, exc_info=True)
+            logger.error("Failed to load Link N9 state: %s", e, exc_info=True)
             return False

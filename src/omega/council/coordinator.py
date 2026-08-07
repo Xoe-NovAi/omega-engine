@@ -2,10 +2,10 @@
 # ⬡ OMEGA ⬡ KALI ⬡ trc_council ⬡ SCAFFOLD
 #
 # T0 Session 1: Unified MultiAgentCoordinator for MaKaLi Parallel Council.
-# Orchestrates 5-stage pipeline: Pillars → Digestion → Oversouls → Kali → Research.
+# Orchestrates 5-stage pipeline: Nodes → Digestion → Oversouls → Kali → Research.
 #
 # TODO:
-# - Phase 1: Pillar dispatch via task() tool or Oracle Summon
+# - Phase 1: Node dispatch via task() tool or Oracle Summon
 # - Phase 1.5: ReportDigestion layer integration
 # - Phase 2: Oversoul (Ma'at/Lilith) dispatch with digested reports
 # - Phase 3: Kali final synthesis
@@ -33,14 +33,14 @@ class MultiAgentCoordinator:
     """Unified coordinator for MaKaLi Parallel Council (meditation + council modes).
     
     Orchestrates the 5-stage pipeline:
-    1. Phase 1: Pillar independent execution (parallel or batched)
+    1. Phase 1: Node independent execution (parallel or batched)
     2. Phase 1.5: Report digestion (stack-cat + Python optimization)
     3. Phase 2: Oversoul distillation (Ma'at/Lilith)
     4. Phase 3: Kali final synthesis
     5. Phase 4: Research gap execution
     
     Supports two modes:
-    - `run_council()`: Full parallel council (pillars → oversouls → Kali)
+    - `run_council()`: Full parallel council (nodes → oversouls → Kali)
     - `run_meditation()`: 10-voice sequential meditation with dedicated agent
     
     Resilience:
@@ -69,7 +69,7 @@ class MultiAgentCoordinator:
         profile = detect_hardware_profile()
         self.config.hardware_profile = profile
         self.config.phase1_execution_mode = select_execution_mode(
-            profile, pillar_count=9
+            profile, node_count=9
         )
     
     async def run_council(self, topic: str) -> CouncilResult:
@@ -80,9 +80,9 @@ class MultiAgentCoordinator:
         )
         
         try:
-            # Phase 1: Pillar independent execution
-            result.stages[CouncilStage.PHASE1_PILLARS] = await self._execute_phase1(topic)
-            if not result.stages[CouncilStage.PHASE1_PILLARS].success:
+            # Phase 1: Node independent execution
+            result.stages[CouncilStage.PHASE1_NODES] = await self._execute_phase1(topic)
+            if not result.stages[CouncilStage.PHASE1_NODES].success:
                 return self._fail(result, "Phase 1 failed")
             
             # Phase 1.5: Report digestion
@@ -125,10 +125,10 @@ class MultiAgentCoordinator:
         return await self.run_council(topic)
     
     async def _execute_phase1(self, topic: str) -> StageResult:
-        """Phase 1: Dispatch pillars independently.
+        """Phase 1: Dispatch nodes independently.
         
         TODO: 
-        - Determine pillar list from config
+        - Determine node list from config
         - Dispatch via task() tool or Oracle summon
         - Wait for all completions (parallel or batched)
         - Collect report files
@@ -136,7 +136,7 @@ class MultiAgentCoordinator:
         raise NotImplementedError("Phase 1 — T0 Session 1")
     
     async def _execute_phase1_5(self) -> StageResult:
-        """Phase 1.5: Run ReportDigester on pillar outputs.
+        """Phase 1.5: Run ReportDigester on node outputs.
         
         Uses ReportDigester (zero inference cost):
         - stack-cat concatenation

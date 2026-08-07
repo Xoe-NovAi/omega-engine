@@ -21,7 +21,7 @@ entity:
     intuitive.
   temperature: 0.4
   context_window: 8192
-  pillars:
-    - "P9: Coordination"
+  nodes:
+    - "N9: Coordination"
   role: Sovereign Miner — Reports to Lilith (CISO)
   container: false

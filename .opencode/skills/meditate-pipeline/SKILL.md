@@ -44,7 +44,7 @@ PROBLEM STATEMENT
          ▼
 ┌──────────────────┐
 │ 6. EXECUTE       │  Scaffold implementation, chaos tests, CI gates
-│    (P3/P9)       │  → Working code, not diagrams
+│    (N3/N9)       │  → Working code, not diagrams
 └──────────────────┘
 ```
 
@@ -98,7 +98,7 @@ await omega_hub_hivemind_submit_handoff(
 - Architecture diagram (ASCII)
 - Non-negotiables (from Preserved Dissent)
 - MVP scope (from Emergent Sequencing)
-- Integration points (Omega Pillars)
+- Integration points (Omega Nodes)
 - Success metrics (measurable, not aspirational)
 
 ### Stage 3: RESEARCH (Sovereign Search)
@@ -142,7 +142,7 @@ proposals:
 6. Run `make sovereignty` (M7 local/cloud ratio)
 **Output**: Updated project state, CI gates passing
 
-### Stage 6: EXECUTE (P3 Engineering + P9 Orchestration)
+### Stage 6: EXECUTE (N3 Engineering + N9 Orchestration)
 **Input**: Integrated plan with work items
 **Process**:
 1. Scaffold package structure (`src/omega/infra/vault/`)
@@ -195,7 +195,7 @@ data/meditation/
 | Fast Decision | MaKaLi Triad | STRATEGIC |
 
 ### For Different Contexts
-- **Omega Engine**: Full pipeline → integrates with Pillars, Hivemind, Soul
+- **Omega Engine**: Full pipeline → integrates with Nodes, Hivemind, Soul
 - **Standalone**: Stages 1-4 only → produces architecture + gnosis
 - **CI/CD**: Stage 6 only → executes pre-approved plan
 

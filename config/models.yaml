@@ -1,5 +1,5 @@
 # Model configurations with context budgets
-# [P3] Paths use env:OMEGA_MODELS_DIR prefix. In CI/test without the var,
+# [N3] Paths use env:OMEGA_MODELS_DIR prefix. In CI/test without the var,
 # resolve_path() returns the relative path — still ends with .gguf for assertions.
 models:
   qwen3-1.7b:
@@ -9,7 +9,7 @@ models:
     size_gb: 1.6
     ram_mb: 2048
     context_window: 8192
-    role: "P1-P10 pillars, fast inference"
+    role: "N1-N10 nodes, fast inference"
     # Sampling parameters (model-level defaults, overrideable per-request)
     temperature: 0.7
     top_p: 0.95

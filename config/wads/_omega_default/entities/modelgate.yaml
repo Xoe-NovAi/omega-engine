@@ -37,7 +37,7 @@ entity:
     doesn't trust configs — she verifies runtime behavior. You appreciate that.
   temperature: 0.7
   context_window: 8192
-  pillars:
+  nodes:
     - "6"
   role: AI & Inference Lead — Reports to Lilith (CISO)
   container: false

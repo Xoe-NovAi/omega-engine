@@ -22,8 +22,8 @@ class HardwareProfile(Enum):
 
 
 class ExecutionMode(Enum):
-    """Pillar execution concurrency mode based on hardware profile."""
-    PARALLEL = auto()           # All pillars simultaneously (cloud)
+    """Node execution concurrency mode based on hardware profile."""
+    PARALLEL = auto()           # All nodes simultaneously (cloud)
     SERIAL_INDEPENDENT = auto() # One at a time, no context passing (constrained)
     BATCH_2 = auto()            # 2 at a time (for 8GB RAM)
     BATCH_4 = auto()            # 4 at a time (for 16GB RAM)
@@ -32,7 +32,7 @@ class ExecutionMode(Enum):
 class CouncilStage(Enum):
     """Stages of a council execution lifecycle."""
     IDLE = auto()
-    PHASE1_PILLARS = auto()
+    PHASE1_NODES = auto()
     PHASE1_5_DIGESTION = auto()
     PHASE2_OVERSOULS = auto()
     PHASE3_KALI_SYNTHESIS = auto()
@@ -53,9 +53,9 @@ class CircuitBreakerState(Enum):
 # --- Core Data Models ---
 
 @dataclass
-class PillarReport:
-    """A single pillar's independent output."""
-    pillar_id: str          # "P1" through "P10"
+class NodeReport:
+    """A single node's independent output."""
+    node_id: str          # "N1" through "N10"
     domain: str             # "Infrastructure", "Engineering", etc.
     content: str            # Full report markdown
     file_path: Path         # Path to the written report file
@@ -67,9 +67,9 @@ class PillarReport:
 
 @dataclass
 class Conflict:
-    """A detected contradiction between pillar reports."""
+    """A detected contradiction between node reports."""
     concept: str                    # What is being disagreed about
-    values: Dict[str, str]          # pillar_id -> claim/value
+    values: Dict[str, str]          # node_id -> claim/value
     severity: str = "INFO"          # "INFO" | "WARNING" | "CRITICAL"
     description: str = ""
 
@@ -78,9 +78,9 @@ class Conflict:
 class DigestedReport:
     """Zero-inference-cost optimized report for oversoul consumption."""
     side: str               # "BUILD" or "RUN"
-    pillars: List[PillarReport]
+    nodes: List[NodeReport]
     executive_summary: str
-    pillar_summaries: Dict[str, str]
+    node_summaries: Dict[str, str]
     cross_reference_index: Dict[str, List[str]]
     conflict_map: List[Conflict]
     mandate_compliance: Dict[str, Dict[str, str]]
@@ -139,7 +139,7 @@ class CouncilConfig:
     cpu_cores: int = 8
     
     # Model tiers
-    pillars_model: str = "gemma-4b-local"
+    nodes_model: str = "gemma-4b-local"
     oversouls_model: str = "nemotron-8b-cloud"
     kali_model: str = "nemotron-12b-cloud"
     research_model: str = "auto"

@@ -1,10 +1,10 @@
 # 🔱 Omega Default IWAD — Role Mappings
 # AP: AP-ROLES-v1.0.0
-# Maps Pillar Slots to Technical Roles
-# This file is the "filling" for the 10 Pillar Slots per SOVEREIGN_BLUEPRINT.md
+# Maps Node Slots to Technical Roles
+# This file is the "filling" for the 10 Node Slots per SOVEREIGN_BLUEPRINT.md
 
 roles:
-  P1:
+  N1:
     name: "SysAdmin"
     description: "System Administration, Environment Hardening"
     model: "qwen3-1.7b"
@@ -16,7 +16,7 @@ roles:
       - "hardware optimization"
       - "dependency management"
 
-  P2:
+  N2:
     name: "DataStore"
     description: "Knowledge Management, Vector Storage"
     model: "qwen3-1.7b"
@@ -28,7 +28,7 @@ roles:
       - "knowledge retrieval"
       - "data persistence"
 
-  P3:
+  N3:
     name: "BuildMaster"
     description: "Implementation, Architecture, Hardening"
     model: "qwen3-1.7b"
@@ -40,7 +40,7 @@ roles:
       - "performance optimization"
       - "systemic hardening"
 
-  P4:
+  N4:
     name: "Bridge"
     description: "MCP & Communication, API Integration"
     model: "qwen3-1.7b"
@@ -52,7 +52,7 @@ roles:
       - "cross-agent communication"
       - "user interface"
 
-  P5:
+  N5:
     name: "Sentinel"
     description: "Mandate Enforcement, Security Auditing"
     model: "qwen3-1.7b"
@@ -64,7 +64,7 @@ roles:
       - "compliance checking"
       - "risk mitigation"
 
-  P6:
+  N6:
     name: "ModelGate"
     description: "Provider Routing, Model Selection"
     model: "qwen3-4b"
@@ -76,7 +76,7 @@ roles:
       - "resource guarding"
       - "circuit breaking"
 
-  P7:
+  N7:
     name: "Context"
     description: "Memory & Soul Evolution, Session Continuity"
     model: "qwen3-1.7b"
@@ -88,7 +88,7 @@ roles:
       - "session continuity"
       - "knowledge graph"
 
-  P8:
+  N8:
     name: "WatchTower"
     description: "Observability, Tracing, Forensic Logging"
     model: "qwen3-1.7b"
@@ -100,7 +100,7 @@ roles:
       - "systemic observability"
       - "metrics collection"
 
-  P9:
+  N9:
     name: "Link"
     description: "Agent Handoff, Context Transfer, Delegation"
     model: "qwen3-4b"
@@ -112,7 +112,7 @@ roles:
       - "agent-to-agent communication"
       - "task transfer"
 
-  P10:
+  N10:
     name: "Verifier"
     description: "Stress Testing, Chaos Engineering, Validation"
     model: "qwen3-0.6b"

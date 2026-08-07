@@ -269,7 +269,7 @@ class TestMandateAuditorWithTempFixture:
             assert "15 agents" in result.detail
 
     def test_m3_detects_iris_in_pillar(self):
-        """M3 check detects MESSENGER_BRIDGE assigned to a Pillar slot (dispatch.yaml format)."""
+        """M3 check detects MESSENGER_BRIDGE assigned to a Node slot (dispatch.yaml format)."""
         with tempfile.TemporaryDirectory() as tmpdir:
             entities_dir = Path(tmpdir) / "config" / "wads" / "test" / "entities"
             entities_dir.mkdir(parents=True)
@@ -279,7 +279,7 @@ class TestMandateAuditorWithTempFixture:
                 "entities:\n"
                 "  - name: iris\n"
                 "    role: MESSENGER_BRIDGE\n"
-                "    pillar_slot: P6\n"
+                "    node_slot: N6\n"
                 "    purpose: Test messenger in pillar\n"
             )
 
@@ -292,7 +292,7 @@ class TestMandateAuditorWithTempFixture:
             assert "violations" in result.detail
 
     def test_m3_passes_when_iris_not_in_pillar(self):
-        """M3 check passes when Iris is not assigned to a Pillar slot."""
+        """M3 check passes when Iris is not assigned to a Node slot."""
         with tempfile.TemporaryDirectory() as tmpdir:
             entities_dir = Path(tmpdir) / "config" / "wads" / "test" / "entities"
             entities_dir.mkdir(parents=True)
@@ -302,7 +302,7 @@ class TestMandateAuditorWithTempFixture:
                 "entities:\n"
                 "  - name: iris\n"
                 "    role: MESSENGER_BRIDGE\n"
-                "    pillar_slot: null\n"
+                "    node_slot: null\n"
                 "    purpose: Test messenger\n"
             )
 

@@ -73,7 +73,7 @@ class SovereignHierarchy:
             0: The Field (e.g., Sophia)
             1: Unification (e.g., Root Entity)
             2: Oversouls / Special Keepers
-            3: Pillar Keepers
+            3: Nodes
         """
         name = entity_name.lower()
         hierarchy_data = self._hierarchy.get("hierarchy", {})

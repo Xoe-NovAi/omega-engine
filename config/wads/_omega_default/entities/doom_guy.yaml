@@ -22,7 +22,7 @@ entity:
     abstractions.
   temperature: 0.3
   context_window: 8192
-  pillars:
-    - "P3: Engineering"
+  nodes:
+    - "N3: Engineering"
   role: Sovereign id Software Architect — Reports to Ma'at (CTO)
   container: false

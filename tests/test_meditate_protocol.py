@@ -51,7 +51,7 @@ def test_persona_spec_minimal():
     assert p.domain == "Engineering"
     assert p.mandate_lens == "Speak as the forge."
     assert p.anti_domains == []
-    assert p.pillar is None
+    assert p.node is None
     assert isinstance(p, PersonaSpec)
 
 
@@ -60,14 +60,14 @@ def test_persona_spec_full():
     p = PersonaSpec(
         name="Sekhmet",
         domain="Infrastructure",
-        pillar="P1",
+        node="N1",
         element="Earth 🜃",
         mandate_lens="Speak as the body.",
         anti_domains=["soul evolution", "governance"],
         known_for="Guardian of boundaries",
         dissent_style=DissentStyle.ADVERSARIAL,
     )
-    assert p.pillar == "P1"
+    assert p.node == "N1"
     assert p.element == "Earth 🜃"
     assert len(p.anti_domains) == 2
     assert p.dissent_style == DissentStyle.ADVERSARIAL
@@ -78,7 +78,7 @@ def test_persona_spec_round_trip():
     original = PersonaSpec(
         name="Prometheus",
         domain="Engineering",
-        pillar="P3",
+        node="N3",
         mandate_lens="Speak as the forge. What is cracked?",
         anti_domains=["soul evolution", "memory systems"],
     )
@@ -86,7 +86,7 @@ def test_persona_spec_round_trip():
     restored = PersonaSpec.from_dict(data)
     assert restored.name == original.name
     assert restored.domain == original.domain
-    assert restored.pillar == original.pillar
+    assert restored.node == original.node
     assert restored.anti_domains == original.anti_domains
     assert restored.mandate_lens == original.mandate_lens
 

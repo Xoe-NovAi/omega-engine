@@ -65,7 +65,7 @@ def get_dispatch_entities(iwad: Optional[str] = None, root: Optional[Path] = Non
 
 
 def get_entity_by_role(role: str, iwad: Optional[str] = None, root: Optional[Path] = None) -> Optional[Dict[str, Any]]:
-    """Find entity by role (e.g., 'kali', 'maat', 'pillar_P3').
+    """Find entity by role (e.g., 'kali', 'maat', 'node_P3').
     
     Args:
         role: Role constant to search for.

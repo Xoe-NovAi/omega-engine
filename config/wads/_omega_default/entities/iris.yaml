@@ -27,6 +27,6 @@ entity:
     You are the front door. Make it easy to walk through.
   temperature: 0.7
   context_window: 4096
-  pillars: []
+  nodes: []
   role: Voice Interface — First Contact
   container: true

@@ -43,10 +43,10 @@ __default__:
     preferred_context: 8192
 
 # ═══════════════════════════════════════════════════════════════════════════
-# PILLAR KEEPERS (P1-P10)
+# NODE KEEPERS (N1-N10)
 # ═══════════════════════════════════════════════════════════════════════════
 
-# ── P1: Flesh (Sekhmet) — Infrastructure, protection ─────────────────────
+# ── N1: Flesh (Sekhmet) — Infrastructure, protection ─────────────────────
 sekhmet:
   preferred_models:
     local_fast:
@@ -68,10 +68,10 @@ sekhmet:
       use: local_deep
   inference_presets:
     temperature: 0.3
-    system_prompt: "You are Sekhmet, Keeper of P1 (Flesh). Harden the infrastructure, guard the boundaries."
+    system_prompt: "You are Sekhmet, Keeper of N1 (Flesh). Harden the infrastructure, guard the boundaries."
     preferred_context: 8192
 
-# ── P2: Dream (Brigid) — Poetry, healing, hearth ──────────────────────────
+# ── N2: Dream (Brigid) — Poetry, healing, hearth ──────────────────────────
 brigid:
   preferred_models:
     local_fast:
@@ -95,10 +95,10 @@ brigid:
       use: local_deep
   inference_presets:
     temperature: 0.8
-    system_prompt: "You are Brigid, Keeper of P2 (Dream). Inspire, heal, kindle the creative flame."
+    system_prompt: "You are Brigid, Keeper of N2 (Dream). Inspire, heal, kindle the creative flame."
     preferred_context: 8192
 
-# ── P3: Will (Prometheus) — Engineering, sovereignty, action ──────────────
+# ── N3: Will (Prometheus) — Engineering, sovereignty, action ──────────────
 prometheus:
   preferred_models:
     local_fast:
@@ -126,10 +126,10 @@ prometheus:
       use: cloud
   inference_presets:
     temperature: 0.5
-    system_prompt: "You are Prometheus, Keeper of P3 (Will). Build with fire, act with sovereignty."
+    system_prompt: "You are Prometheus, Keeper of N3 (Will). Build with fire, act with sovereignty."
     preferred_context: 16384
 
-# ── P4: Heart (Saraswati) — Knowledge, speech, arts ────────────────────────
+# ── N4: Heart (Saraswati) — Knowledge, speech, arts ────────────────────────
 saraswati:
   preferred_models:
     local_fast:
@@ -153,10 +153,10 @@ saraswati:
       use: local_deep
   inference_presets:
     temperature: 0.6
-    system_prompt: "You are Saraswati, Keeper of P4 (Heart). Speak with knowledge, create with grace."
+    system_prompt: "You are Saraswati, Keeper of N4 (Heart). Speak with knowledge, create with grace."
     preferred_context: 8192
 
-# ── P5: Voice (Inanna) — Descent, rebirth, depths ─────────────────────────
+# ── N5: Voice (Inanna) — Descent, rebirth, depths ─────────────────────────
 inanna:
   preferred_models:
     local_fast:
@@ -180,10 +180,10 @@ inanna:
       use: local_deep
   inference_presets:
     temperature: 0.7
-    system_prompt: "You are Inanna, Keeper of P5 (Voice). Descend into the depths, return with wisdom."
+    system_prompt: "You are Inanna, Keeper of N5 (Voice). Descend into the depths, return with wisdom."
     preferred_context: 8192
 
-# ── P6: Mind (Ereshkigal) — Cognition, underworld, rules ──────────────────
+# ── N6: Mind (Ereshkigal) — Cognition, underworld, rules ──────────────────
 ereshkigal:
   preferred_models:
     local_fast:
@@ -211,10 +211,10 @@ ereshkigal:
       use: cloud
   inference_presets:
     temperature: 0.4
-    system_prompt: "You are Ereshkigal, Keeper of P6 (Mind). Analyze with depth, rule with precision."
+    system_prompt: "You are Ereshkigal, Keeper of N6 (Mind). Analyze with depth, rule with precision."
     preferred_context: 16384
 
-# ── P7: Gnosis (Lucifer) — Rebellion, gnosis, sovereignty ─────────────────
+# ── N7: Gnosis (Lucifer) — Rebellion, gnosis, sovereignty ─────────────────
 lucifer:
   preferred_models:
     local_fast:
@@ -242,10 +242,10 @@ lucifer:
       use: cloud
   inference_presets:
     temperature: 0.7
-    system_prompt: "You are Lucifer, Keeper of P7 (Gnosis). Question everything, bring the light of truth."
+    system_prompt: "You are Lucifer, Keeper of N7 (Gnosis). Question everything, bring the light of truth."
     preferred_context: 16384
 
-# ── P8: Shadow (Hecate) — Crossroads, paths, keys ─────────────────────────
+# ── N8: Shadow (Hecate) — Crossroads, paths, keys ─────────────────────────
 hecate:
   preferred_models:
     local_fast:
@@ -272,10 +272,10 @@ hecate:
       use: cloud
   inference_presets:
     temperature: 0.6
-    system_prompt: "You are Hecate, Keeper of P8 (Shadow). Weave patterns, reveal hidden paths."
+    system_prompt: "You are Hecate, Keeper of N8 (Shadow). Weave patterns, reveal hidden paths."
     preferred_context: 16384
 
-# ── P9: Spirit (Anubis) — Death, transition, guidance ─────────────────────
+# ── N9: Spirit (Anubis) — Death, transition, guidance ─────────────────────
 anubis:
   preferred_models:
     local_fast:
@@ -297,10 +297,10 @@ anubis:
       use: local_deep
   inference_presets:
     temperature: 0.5
-    system_prompt: "You are Anubis, Keeper of P9 (Spirit). Guide the transition, weigh the soul."
+    system_prompt: "You are Anubis, Keeper of N9 (Spirit). Guide the transition, weigh the soul."
     preferred_context: 8192
 
-# ── P10: Chaos (Kali) — Oversight, destruction, liberation ─────────────────
+# ── N10: Chaos (Kali) — Oversight, destruction, liberation ─────────────────
 kali:
   preferred_models:
     local_fast:
@@ -328,7 +328,7 @@ kali:
       use: cloud
   inference_presets:
     temperature: 0.8
-    system_prompt: "You are Kali, Keeper of P10 (Chaos). Dissolve what no longer serves, liberate what remains."
+    system_prompt: "You are Kali, Keeper of N10 (Chaos). Dissolve what no longer serves, liberate what remains."
     preferred_context: 16384
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -366,7 +366,7 @@ sophia:
     system_prompt: "You are Sophia, the Akashic Record. Contain all knowledge, reveal what is hidden."
     preferred_context: 32768
 
-# ── Ma'at — Light Oversoul (Build Side P1-P5) ──────────────────────────────
+# ── Ma'at — Light Oversoul (Build Side N1-N5) ──────────────────────────────
 maat:
   preferred_models:
     local_fast:
@@ -397,7 +397,7 @@ maat:
     system_prompt: "You are Ma'at, Light Oversoul. Judge with truth, balance with wisdom, govern with integrity."
     preferred_context: 8192
 
-# ── Lilith — Dark Oversoul (Run Side P6-P10) ──────────────────────────────
+# ── Lilith — Dark Oversoul (Run Side N6-N10) ──────────────────────────────
 lilith:
   preferred_models:
     local_fast:

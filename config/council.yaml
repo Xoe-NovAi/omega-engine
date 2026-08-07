@@ -17,7 +17,7 @@ council:
 
   # Model tier assignments (references providers.yaml)
   model_tiers:
-    pillars: "gemma-4b-local"        # T1: 4B local
+    nodes: "gemma-4b-local"        # T1: 4B local
     oversouls: "nemotron-8b-cloud"   # T2: 8B cloud (or local 8B)
     kali: "nemotron-12b-cloud"       # T3: 12B cloud (or local 12B)
     research: "auto"                 # T4: "auto" | "local_4b" | "cloud"
@@ -32,8 +32,8 @@ council:
   # Phase 2: Oversoul distillation
   oversoul_distillation:
     enabled: true
-    maat_persona: "maat"      # Light Oversoul — Build Side (P1-P5)
-    lilith_persona: "lilith"  # Dark Oversoul — Run Side (P6-P10)
+    maat_persona: "maat"      # Light Oversoul — Build Side (N1-N5)
+    lilith_persona: "lilith"  # Dark Oversoul — Run Side (N6-N10)
 
   # Phase 3: Kali synthesis
   kali_synthesis:

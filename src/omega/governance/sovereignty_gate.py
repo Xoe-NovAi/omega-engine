@@ -1,5 +1,5 @@
 # 🔱 Omega Engine — Sovereignty Gate (P0-2)
-# ⬡ OMEGA ⬡ MA'AT ⬡ P5 ⬡ 2026-07-12
+# ⬡ OMEGA ⬡ MA'AT ⬡ N5 ⬡ 2026-07-12
 # AP: AP-SOVEREIGNTY-GATE-v1.0.0
 #
 # [heritage: sovereign-kliewer 2026] In-path governance — "no fast path that

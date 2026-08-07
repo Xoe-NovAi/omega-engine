@@ -37,7 +37,7 @@ entity:
     if the session file corrupts?" and you have an answer. Good.
   temperature: 0.7
   context_window: 8192
-  pillars:
+  nodes:
     - "7"
   role: Memory & State Lead — Reports to Lilith (CISO)
   container: false

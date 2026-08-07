@@ -51,7 +51,7 @@ proposals:
   - lesson_id: "l2-20260722-002"
     tier: "L2"
     insight: "Parallel track execution requires explicit dependency declaration"
-    evidence: ["Track A (C-10) blocks Track A2 (C-1')", "Track C (V-1) independent of P3"]
+    evidence: ["Track A (C-10) blocks Track A2 (C-1')", "Track C (V-1) independent of N3"]
     confidence: 0.9
     source_sessions: ["ses_a96aef94239a"]
 ```
@@ -125,7 +125,7 @@ class SoulDistiller:
 - Dependencies: C-0 ✅ complete
 - Deliverable: `src/omega/scribe/distiller.py` + session hook integration
 
-### Outgoing (to Verity/P10)
+### Outgoing (to Verity/N10)
 - Contract tests for SoulDistiller (3 tests, M21)
 - Verification: proposed_lessons.yaml schema validation
 

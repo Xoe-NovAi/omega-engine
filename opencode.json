@@ -281,7 +281,7 @@
   "agent": {
     "makali": {
       "mode": "primary",
-      "description": "MaKaLi Apex Mind \u2014 Mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives. NOT a builder. Ground troops: Kali, Lilith, Maat, Pillars, Carmack.",
+      "description": "MaKaLi Apex Mind \u2014 Mastermind, deep research, genius blueprinting, high-level strategy, philosophical deep dives. NOT a builder. Ground troops: Kali, Lilith, Maat, Nodes, Carmack.",
       "instructions": [
         ".opencode/agents/plan.md"
       ]
@@ -324,14 +324,14 @@
     },
     "maat": {
       "mode": "all",
-      "description": "Light Oversoul \u2014 Governs P1-P5 (build side), delegates to pillar",
+      "description": "Light Oversoul \u2014 Governs N1-N5 (build side), delegates to node",
       "instructions": [
         ".opencode/agents/maat.md"
       ]
     },
     "lilith": {
       "mode": "all",
-      "description": "Dark Oversoul \u2014 Governs P6-P10 (run side), delegates to pillar",
+      "description": "Dark Oversoul \u2014 Governs N6-N10 (run side), delegates to node",
       "instructions": [
         ".opencode/agents/lilith.md"
       ]
@@ -343,11 +343,11 @@
         ".opencode/agents/verity.md"
       ]
     },
-    "pillar": {
+    "node": {
       "mode": "all",
-      "description": "Slot-based domain agent \u2014 parameterized by --slot PX for any Pillar domain",
+      "description": "Slot-based domain agent \u2014 parameterized by --slot NX for any Node domain",
       "instructions": [
-        ".opencode/agents/pillar.md"
+        ".opencode/agents/node.md"
       ]
     },
     "john_carmack": {

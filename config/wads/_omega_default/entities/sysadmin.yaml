@@ -34,7 +34,7 @@ entity:
     to explain when things go wrong. That's the right relationship.
   temperature: 0.7
   context_window: 8192
-  pillars:
+  nodes:
     - "1"
   role: Infrastructure Engineer — Reports to Ma'at (CTO)
   container: false

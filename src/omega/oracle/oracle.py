@@ -4,7 +4,7 @@
 # ⬡ OMEGA ⬡ ORACLE ⬡ oracle.py (1100 lines)
 #
 # Single-source-of-truth for query routing, speculative decoding, entity summoning,
-# and soul evolution. Acts as the gateway between user intent and the 10-pillar council.
+# and soul evolution. Acts as the gateway between user intent and the 10-node council.
 #
 # [id-soft: vet-056] Oracle Summoning Pattern - Direct entity dispatch via _summon()
 # [id-soft: vet-009] Memory Zone - Long-term learning via soul.yaml
@@ -80,16 +80,16 @@ ROLE_CONSTANTS: Dict[str, str] = {
     "LIGHT_OVERSOUL": "LIGHT_OVERSOUL",          # Ma'at role
     "DARK_OVERSOUL": "DARK_OVERSOUL",            # Lilith role
     "CONTAINING_FIELD": "CONTAINING_FIELD",      # Sophia role
-    "P1": "P1",
-    "P2": "P2",
-    "P3": "P3",
-    "P4": "P4",
-    "P5": "P5",
-    "P6": "P6",
-    "P7": "P7",
-    "P8": "P8",
-    "P9": "P9",
-    "P10": "P10",
+    "N1": "N1",
+    "N2": "N2",
+    "N3": "N3",
+    "N4": "N4",
+    "N5": "N5",
+    "N6": "N6",
+    "N7": "N7",
+    "N8": "N8",
+    "N9": "N9",
+    "N10": "N10",
 }
 
 # WAD-backed dispatch config loader (M2 Firewall Phase C).
@@ -144,7 +144,7 @@ class Oracle:
     Responsibilities:
     1. Intent detection (talk vs @summon vs @consult patterns)
     2. Speculative decoding (Iris confidence assessment)
-    3. Domain routing (escalation to Pillar Keepers)
+    3. Domain routing (escalation to Nodes)
     4. Entity summoning (direct dispatch to named entities)
     5. Soul evolution tracking (L1->L2->L3 learning)
     6. Cloud critique integration (TDP quarantine)
@@ -391,7 +391,7 @@ class Oracle:
                                               "justice", "morality", "ethics"]):
             return 0.0
         
-        # Low-confidence patterns (escalate to pillars)
+        # Low-confidence patterns (escalate to nodes)
         if any(kw in query_lower for kw in ["@", "/", "code", "api", "architecture",
                                              "design", "plan", "deploy", "deploy",
                                              "debug", "error", "bug", "implement"]):
@@ -529,7 +529,7 @@ class Oracle:
                         logger.error(f"Recording interaction failed (non-fatal) [{classification['mode']}]: {e}")
                     return resp
                 
-                # Step 3: Escalate to domain-matched Pillar Keeper
+                # Step 3: Escalate to domain-matched Node
                 trace.log("escalation", reason=f"iris_confidence={iris_confidence:.2f} <= threshold={IRIS_CONFIDENCE_THRESHOLD}")
                 resp = await self._route_by_domain(processed_query, trace, session_id, transient=transient)
                 resp.rag_complexity = rag_complexity
@@ -784,7 +784,7 @@ class Oracle:
             return f"[[ERROR: Original content for {ref_id} could not be retrieved]]"
 
     async def _respond_as_iris(self, query: str, trace: TraceSession, confidence: float, session_id: Optional[str] = None, transient: bool = False) -> OracleResponse:
-        """Iris (speculative decoder) responds directly without invoking a pillar.
+        """Iris (speculative decoder) responds directly without invoking a node.
         
         [id-soft: vet-069] Speculative Decode - lightweight, fast path for
         simple queries that don't require domain expertise.

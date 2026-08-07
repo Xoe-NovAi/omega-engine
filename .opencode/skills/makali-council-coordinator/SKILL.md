@@ -2,14 +2,14 @@
 # ⬡ OMEGA ⬡ KALI ⬡ trc_council ⬡ SCAFFOLD
 #
 # Unified MultiAgentCoordinator for MaKaLi Parallel Council.
-# Handles both meditation mode (10-voice sequential) and council mode (parallel pillars → oversouls → Kali).
+# Handles both meditation mode (10-voice sequential) and council mode (parallel nodes → oversouls → Kali).
 
 ## Purpose
-Orchestrate the 5-stage MaKaLi Parallel Council using `task()` tool, file-based handoffs, and Hivemind coordination. Zero-inference-cost Report Digestion Layer (Phase 1.5) optimizes pillar outputs for oversoul consumption.
+Orchestrate the 5-stage MaKaLi Parallel Council using `task()` tool, file-based handoffs, and Hivemind coordination. Zero-inference-cost Report Digestion Layer (Phase 1.5) optimizes node outputs for oversoul consumption.
 
 ## Architecture
 ```
-Phase 1: Pillars        → 9 independent reports
+Phase 1: Nodes        → 9 independent reports
 Phase 1.5: Digestion    → stack-cat + Python → 2 optimized digests (ZERO inference cost)
 Phase 2: Oversouls      → Ma'at reads BUILD_SIDE_DIGESTED, Lilith reads RUN_SIDE_DIGESTED
 Phase 3: Kali Synthesis → reads 2 oversoul reports → FINAL_SYNTHESIS.md + research gaps
@@ -31,7 +31,7 @@ omega council "topic" --profile cloud_unconstrained
 ## Inputs
 - `topic`: The question/problem for the council
 - `mode`: "council" (default, parallel) | "meditation" (sequential, 10-voice)
-- `profile`: Hardware profile preset (local_16gb, local_8gb, cloud_unconstrained, hybrid_local_pillars)
+- `profile`: Hardware profile preset (local_16gb, local_8gb, cloud_unconstrained, hybrid_local_nodes)
 - `config_path`: Path to custom council config (default: `config/council.yaml`)
 - `session_id`: Unique identifier for this council run
 
@@ -44,14 +44,14 @@ Before any dispatch:
 5. Check circuit breaker state
 6. Verify provider availability for assigned model tiers
 
-## Phase 1: Pillar Dispatch
-1. For each pillar in Ma'at's domain (P1, P3, P4, P5):
-   - Dispatch `task()` with pillar agent, topic, output path
-   - Pillars write independent reports — NO inter-pillar reads
-2. For each pillar in Lilith's domain (P6, P7, P8, P9, P10):
-   - Dispatch `task()` with pillar agent, topic, output path
+## Phase 1: Node Dispatch
+1. For each node in Ma'at's domain (N1, N3, N4, N5):
+   - Dispatch `task()` with node agent, topic, output path
+   - Nodes write independent reports — NO inter-node reads
+2. For each node in Lilith's domain (N6, N7, N8, N9, N10):
+   - Dispatch `task()` with node agent, topic, output path
 3. Execute according to mode:
-   - `parallel`: All 9 pillars simultaneously (cloud profile)
+   - `parallel`: All 9 nodes simultaneously (cloud profile)
    - `batch_4`: 4 at a time (16GB profile)
    - `batch_2`: 2 at a time (8GB profile)
    - `serial_independent`: One at a time (constrained)
@@ -59,12 +59,12 @@ Before any dispatch:
 5. WAL checkpoint: Phase 1 complete
 
 ## Phase 1.5: Report Digestion
-1. Run `ReportDigester` on pillar outputs:
+1. Run `ReportDigester` on node outputs:
    - stack-cat concatenation of all 4/5 reports per side
    - Executive summaries (auto-extracted via Python)
    - Cross-reference index (mandate tags, entities, shared keywords)
    - Conflict detection (numeric mismatches, mandate compliance differences)
-   - Mandate compliance matrix ([M1]-[M23] per pillar)
+   - Mandate compliance matrix ([M1]-[M23] per node)
    - Token budget allocation for oversoul context window
 2. Python only — ZERO inference cost (~50ms for typical reports)
 3. Write: `BUILD_SIDE_DIGESTED.md` + `RUN_SIDE_DIGESTED.md`
@@ -111,7 +111,7 @@ Before Phase 2, each oversoul reads 1 file (digested) instead of 4/5 raw reports
 ## Output
 ```
 data/council/{session_id}/
-├── phase1_pillars/
+├── phase1_nodes/
 │   ├── P1_report.md
 │   ├── P3_report.md
 │   ├── P4_report.md
@@ -143,7 +143,7 @@ data/council/{session_id}/
 
 ## Mandate Compliance
 - **M1 AnyIO**: All async operations use AnyIO, not asyncio
-- **M2 Firewall**: No pillar reads another pillar's report at write time
+- **M2 Firewall**: No node reads another node's report at write time
 - **M7 Local-First**: Tries local model tiers before cloud; cloud = safety net
 - **M13 Temple-Grade**: Each stage produces typed, verifiable outputs
 - **M18 Token Efficiency**: Digestion layer (Phase 1.5) reduces oversoul tokens by ~60%

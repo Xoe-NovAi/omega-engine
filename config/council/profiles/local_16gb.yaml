@@ -1,13 +1,13 @@
 # 🔱 MaKaLi Council — Local 16GB Profile
 # Ryzen 5700U, 16GB RAM, no GPU
-# Pillars: serial_independent (4B models one at a time, max 4-6GB each)
-# Oversouls: cloud (8B doesn't fit with 12B Kali + 4B pillars)
+# Nodes: serial_independent (4B models one at a time, max 4-6GB each)
+# Oversouls: cloud (8B doesn't fit with 12B Kali + 4B nodes)
 # Kali: cloud (12B won't fit locally)
 
 council:
   phase1_execution_mode: "serial_independent"
   model_tiers:
-    pillars: "gemma-4b-local"
+    nodes: "gemma-4b-local"
     oversouls: "nemotron-8b-cloud"
     kali: "nemotron-12b-cloud"
     research: "local_4b"

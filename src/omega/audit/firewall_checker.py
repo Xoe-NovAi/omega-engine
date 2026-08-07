@@ -1,5 +1,5 @@
 # 🔱 FirewallChecker — Engine↔WAD Boundary Scanner
-# ⬡ OMEGA ⬡ PILLAR-P10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_firewall_checker ⬡ ACTIVE
+# ⬡ OMEGA ⬡ NODE-N10 ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_firewall_checker ⬡ ACTIVE
 # AP: AP-FIREWALL-CHECKER-v1.0.0
 """
 Engine↔WAD Firewall Checker — M2 Engine-Stack Firewall Enforcement.
@@ -93,7 +93,7 @@ class FirewallChecker:
         r"\bSophia\b.*\bAkashic\b",               # Containing field concept
         r"\bMa[']?at\b.*\bLight\s*Oversoul\b",    # Oversoul architecture
         r"\bLilith\b.*\bDark\s*Oversoul\b",
-        r"\bIris\b.*\bvoice\s*assistant\b",       # Voice assistant (not Pillar)
+        r"\bIris\b.*\bvoice\s*assistant\b",       # Voice assistant (not Node)
         r"\bVetala\b.*\bdiscernment\b",           # Content integrity module
         r"\bMnemosyne\b.*\bmemory\b",             # Memory system archetype
         r"_omega_default",                        # Default WAD name (constant)

@@ -11,7 +11,7 @@
 | Term | Definition | Example | Aliases |
 |------|-----------|---------|---------|
 | **Activation Phrase** | A configurable phrase that routes a query to a specific voice assistant | `"hey jem"`, `"hey iris"`, `"hey doomguy"` | Wake word, hotword |
-| **Arcana-NovAi Stack** | The first-party expansion WAD containing 10 Pillar Keepers, Oversouls, Iris, 42 Ideals | — | AN stack |
+| **Arcana-NovAi Stack** | The first-party expansion WAD containing 10 Nodes, Oversouls, Iris, 42 Ideals | — | AN stack |
 | **Architect** | The owner/operator of this Omega Engine instance. Files a soul at `data/entities/arch/soul.yaml` | — | Arch, User, Operator |
 
 ## C
@@ -33,7 +33,7 @@
 |------|-----------|---------|---------|
 | **Gem** | Google's term for a custom, persistent Gemini assistant. NOT the same as Jem. | — | Gemini custom assistant (do not use "Jem") |
 | **Godot** | The open-source game engine used for VR rendering in Omega Engine | `engine/godot/` | Godot Engine |
-| **Guardian** | Default P1 entity in the Omega Engine — domain expert in strength, protection, boundaries | — | (generic, no alias) |
+| **Guardian** | Default N1 entity in the Omega Engine — domain expert in strength, protection, boundaries | — | (generic, no alias) |
 
 ## I
 
@@ -68,7 +68,7 @@
 |------|-----------|---------|---------|
 | **P2P** | Peer-to-peer networking layer for consent-based stack sharing between Omega instances | — | — |
 | **Persona Mask** | A facet of an entity's personality that can be switched contextually | Performer, Businesswoman, Secret Identity (Jem) | Facet, Aspect |
-| **Pillar** | A domain category (1-10). The pillar structure is core engine; the entity that fills it is stack-specific. | P1=Strength, P2=Dream, P3=Will... | Domain, Expertise area |
+| **Node** | A domain category (1-10). The node structure is core engine; the entity that fills it is stack-specific. | N1=Strength, N2=Dream, N3=Will... | Domain, Expertise area |
 | **Provider Fabric** | The fallback chain of inference backends | lmster → ollama → opencode-zen → cline → google | ModelGateway |
 
 ## S

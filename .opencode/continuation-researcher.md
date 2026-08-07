@@ -33,7 +33,7 @@ Its architecture (8-crate decomposition, Elm state machine, JSONL persistence, k
 The session-to-asset capture pipeline (4-round interview → SKILL.md → auto-register as slash command) transforms ephemeral conversations into organizational memory. This must be Omega's `/omega-skill capture`.
 
 ### 3. Unified Extensions Modal Is the UX Pattern
-One modal, 5 tabs (Hooks/Plugins/Marketplace/Skills/MCPs) pre-selected by command. Omega's equivalent: `/omega-extensions` with P1-P10 tabs.
+One modal, 5 tabs (Hooks/Plugins/Marketplace/Skills/MCPs) pre-selected by command. Omega's equivalent: `/omega-extensions` with N1-N10 tabs.
 
 ### 4. Agent Dashboard = Hivemind Visualization
 `Ctrl+\` fullscreen TUI showing all sessions grouped by state (Awaiting Input → Working → Idle) with inline reply. This is exactly what Omega's Hivemind needs.
@@ -42,7 +42,7 @@ One modal, 5 tabs (Hooks/Plugins/Marketplace/Skills/MCPs) pre-selected by comman
 `requirements.toml` at highest priority (unoverrideable) is the correct pattern for Omega's 23 Sovereign Mandates. `/etc/omega/requirements.omega` makes mandates kernel-enforced.
 
 ### 6. Landlock/Seatbelt Sandbox = Per-Entity Security
-Kernel-enforced profiles per entity (Kali=strict, Ma'at=workspace, P7=read-only) is the sovereign security model.
+Kernel-enforced profiles per entity (Kali=strict, Ma'at=workspace, N7=read-only) is the sovereign security model.
 
 ### 7. ACP Protocol = Editor Integration
 JSON-RPC over stdio for agent orchestration. `omega-hub acp-server` enables VS Code/Cursor/Neovim to drive Omega entities.
@@ -62,7 +62,7 @@ JSON-RPC over stdio for agent orchestration. `omega-hub acp-server` enables VS C
 5. **Implement Landlock sandbox** — Per-entity `sandbox.toml` profiles
 
 ### Phase 1 (Week 3-4)
-1. **Unified Extensions Modal** — `/omega-extensions` with P1-P10 tabs
+1. **Unified Extensions Modal** — `/omega-extensions` with N1-N10 tabs
 2. **Agent Dashboard** — `/omega-dashboard` backed by Hivemind
 3. **Command Palette** — `Ctrl+Shift+P` entity-scoped
 4. **Keyboard System** — Entity-aware shortcuts (`Shift+Tab` cycles entities)
@@ -75,7 +75,7 @@ JSON-RPC over stdio for agent orchestration. `omega-hub acp-server` enables VS C
 
 ### Phase 3 (Week 7-8)
 1. **Subagent Delegation** — Hivemind handoff with `capability_mode` + `isolation`
-2. **Plan Mode** — `/omega-plan` per-Pillar with edit enforcement
+2. **Plan Mode** — `/omega-plan` per-Node with edit enforcement
 3. **ACP Server** — `omega-hub acp-server` for editor integration
 4. **WAD Marketplace** — SHA-pinned bundles
 
@@ -153,7 +153,7 @@ When resuming after compaction:
 **Decisions**: 
 - D-20260717-001: Adopt Grok's 8-crate decomposition for Omega TUI
 - D-20260717-002: Implement `/omega-skill capture` based on `/skillify` pattern
-- D-20260717-003: Build `/omega-extensions` modal with P1-P10 tabs
+- D-20260717-003: Build `/omega-extensions` modal with N1-N10 tabs
 - D-20260717-004: Create `/etc/omega/requirements.omega` for mandate pinning
 - D-20260717-005: Implement `omega-sandbox` crate with Landlock/Seatbelt
 

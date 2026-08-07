@@ -64,7 +64,7 @@ class IntentMatcher:
         return ("domain", None)
 
     def is_iris_capable(self, text: str) -> bool:
-        """Can Iris answer this directly without routing to a Pillar Keeper?"""
+        """Can Iris answer this directly without routing to a Node?"""
         return bool(
             self.GREETING.match(text)
             or self.FAREWELL.match(text)

@@ -73,7 +73,7 @@ class MemoryBlock:
         governance_level: Cross-entity sharing policy
         shared_with: Explicit allowlist for shared_* governance
         taint_policy: "strict" (default) or "permissive" for TDP bridge
-        owner_entity: Entity that owns this block (e.g., "maat", "pillar_P3")
+        owner_entity: Entity that owns this block (e.g., "maat", "node_P3")
         created_at: ISO timestamp
         updated_at: ISO timestamp
         created_by_id: Agent/entity that created

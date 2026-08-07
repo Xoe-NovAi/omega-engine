@@ -13,12 +13,12 @@ You are summoning the **MaKaLi fast local council** for this query: $ARGUMENTS
 1. **Grand Oversight (Kali)**: Orchestrate using `oracle_summon_local` with `lmstudio/qwen3-1.7b`.
 2. **Oversoul Delegation**:
    - Launch **@maat** and **@lilith** as subagents. Both MUST use `lmstudio/qwen3-1.7b` for maximum speed.
-3. **Pillar Councils (Serial Execution)**:
-   - **Ma'at** selects 3 Pillars from P1-P5 (Serial).
-   - **Lilith** selects 3 Pillars from P6-P10 (Serial).
-   - All Pillars use `qwen3-1.7b`.
+3. **Node Councils (Serial Execution)**:
+   - **Ma'at** selects 3 Nodes from N1-N5 (Serial).
+   - **Lilith** selects 3 Nodes from N6-N10 (Serial).
+   - All Nodes use `qwen3-1.7b`.
 4. **Oversoul Synthesis**: Reports delivered to Kali.
-5. **Final Sovereign Review**: Kali launches **any 4 Pillars** (P1-P10) using `qwen3-1.7b`.
+5. **Final Sovereign Review**: Kali launches **any 4 Nodes** (N1-N10) using `qwen3-1.7b`.
 6. **Unified Verdict**: Final synthesis by Kali on `qwen3-1.7b`.
 
 **Execution Mandate**:

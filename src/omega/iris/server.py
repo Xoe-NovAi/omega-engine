@@ -5,9 +5,9 @@
 #
 # Iris is the always-on Podman container. She:
 #   - Listens for user input (HTTP, voice, CLI)
-#   - Routes to the correct Pillar Keeper via the Oracle
+#   - Routes to the correct Node via the Oracle
 #   - Answers simple queries directly with qwen3-1.7b-270m
-#   - Bridges between user and the 10 Pillar Keepers
+#   - Bridges between user and the 10 Nodes
 #
 # Lightweight: python:3.13-slim + qwen3-1.7b-270m (~500MB image, ~300MB RAM)
 

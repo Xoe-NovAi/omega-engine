@@ -2,7 +2,7 @@
 # ⬡ OMEGA ⬡ KALI ⬡ trc_council ⬡ SCAFFOLD
 #
 # Zero-inference-cost Python preprocessing for MaKaLi Parallel Council.
-# Phase 1.5: Transforms raw pillar reports into LLM-optimized digests.
+# Phase 1.5: Transforms raw node reports into LLM-optimized digests.
 #
 # Research doc: docs/research/R_REPORT_DIGESTION_LAYER_OPTIMIZATION_20260719.md
 #
@@ -10,7 +10,7 @@
 # - Executive summary extraction (3-tier fallback: explicit section → first-sentence → first-N-paragraphs)
 # - Cross-reference index (mandate tags + entity references + shared keywords)
 # - Conflict detection (numeric conflicts + mandate compliance conflicts)
-# - Mandate compliance matrix ([M1]-[M23] per pillar)
+# - Mandate compliance matrix ([M1]-[M23] per node)
 # - Token budget allocation (adaptive fusion: confidence + mandate criticality + novelty)
 # - M23 fallback: raw stack-cat concatenation on failure
 
@@ -25,9 +25,9 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
-class PillarReport:
-    """A single pillar's independent output."""
-    pillar_id: str
+class NodeReport:
+    """A single node's independent output."""
+    node_id: str
     domain: str
     content: str
     file_path: Path
@@ -43,9 +43,9 @@ class Conflict:
 @dataclass
 class DigestedReport:
     side: str
-    pillars: List[PillarReport]
+    nodes: List[NodeReport]
     executive_summary: str
-    pillar_summaries: Dict[str, str]
+    node_summaries: Dict[str, str]
     cross_reference_index: Dict[str, List[str]]
     conflict_map: List[Conflict]
     mandate_compliance: Dict[str, Dict[str, str]]
@@ -67,21 +67,21 @@ class ReportDigester:
     def __init__(self, session_id: str):
         self.session_id = session_id
     
-    def digest(self, build_pillars: List[PillarReport], run_pillars: List[PillarReport]) -> Tuple[DigestedReport, DigestedReport]:
+    def digest(self, build_nodes: List[NodeReport], run_nodes: List[NodeReport]) -> Tuple[DigestedReport, DigestedReport]:
         """Main entry point — returns (build_digested, run_digested)."""
-        build_digested = self._digest_side("BUILD", build_pillars)
-        run_digested = self._digest_side("RUN", run_pillars)
+        build_digested = self._digest_side("BUILD", build_nodes)
+        run_digested = self._digest_side("RUN", run_nodes)
         return build_digested, run_digested
     
-    def _digest_side(self, side: str, pillars: List[PillarReport]) -> DigestedReport:
+    def _digest_side(self, side: str, nodes: List[NodeReport]) -> DigestedReport:
         """Digest a single side (BUILD or RUN)."""
         # TODO: T0 Session 2 implementation
         # This is a pass-through stub for now
         return DigestedReport(
             side=side,
-            pillars=pillars,
+            nodes=nodes,
             executive_summary="",
-            pillar_summaries={},
+            node_summaries={},
             cross_reference_index={},
             conflict_map=[],
             mandate_compliance={},
@@ -119,34 +119,34 @@ class ReportDigester:
         result = '\n\n'.join(paragraphs[:3])
         return result[:max_chars]
     
-    def _build_cross_reference(self, pillars: List[PillarReport]) -> Dict[str, List[str]]:
-        """Build cross-reference index across pillars.
+    def _build_cross_reference(self, nodes: List[NodeReport]) -> Dict[str, List[str]]:
+        """Build cross-reference index across nodes.
         
         Sources:
         1. Mandate tags [M1]-[M23]
         2. Source file paths (src/omega/...)
-        3. Entity references (P1-P10)
+        3. Entity references (N1-N10)
         """
         cross_ref: Dict[str, List[str]] = {}
         
-        for pillar in pillars:
+        for node in nodes:
             # Strategy 1: Mandate tags
-            for tag in re.findall(r'\[M(\d+)\]', pillar.content):
-                cross_ref.setdefault(f'Mandate M{tag}', []).append(pillar.pillar_id)
+            for tag in re.findall(r'\[M(\d+)\]', node.content):
+                cross_ref.setdefault(f'Mandate M{tag}', []).append(node.node_id)
             
             # Strategy 2: Source file paths
-            for path in re.findall(r'(src/omega/[\w/]+\.\w+)', pillar.content):
-                cross_ref.setdefault(f'File: {path}', []).append(pillar.pillar_id)
+            for path in re.findall(r'(src/omega/[\w/]+\.\w+)', node.content):
+                cross_ref.setdefault(f'File: {path}', []).append(node.node_id)
             
-            # Strategy 3: Pillar cross-references
-            for ref in re.findall(r'P\d+', pillar.content):
-                if ref != pillar.pillar_id:  # Don't self-reference
-                    cross_ref.setdefault(f'Reference: {ref}', []).append(pillar.pillar_id)
+            # Strategy 3: Node cross-references
+            for ref in re.findall(r'P\d+', node.content):
+                if ref != node.node_id:  # Don't self-reference
+                    cross_ref.setdefault(f'Reference: {ref}', []).append(node.node_id)
         
         return cross_ref
     
-    def _detect_conflicts(self, pillars: List[PillarReport]) -> List[Conflict]:
-        """Detect conflicts across pillars.
+    def _detect_conflicts(self, nodes: List[NodeReport]) -> List[Conflict]:
+        """Detect conflicts across nodes.
         
         Types:
         1. Numeric conflicts: same entity, different values
@@ -156,10 +156,10 @@ class ReportDigester:
         
         # Numeric conflicts
         numeric_params: Dict[str, Dict[str, int]] = {}
-        for p in pillars:
+        for p in nodes:
             for match in re.finditer(r'(\w[\w_]+):\s*(\d+)', p.content):
                 key, val = match.groups()
-                numeric_params.setdefault(key, {})[p.pillar_id] = int(val)
+                numeric_params.setdefault(key, {})[p.node_id] = int(val)
         
         for key, values in numeric_params.items():
             if len(set(values.values())) > 1:
@@ -174,44 +174,44 @@ class ReportDigester:
         
         return conflicts
     
-    def _build_mandate_matrix(self, pillars: List[PillarReport]) -> Dict[str, Dict[str, str]]:
+    def _build_mandate_matrix(self, nodes: List[NodeReport]) -> Dict[str, Dict[str, str]]:
         """Build mandate compliance matrix.
         
-        Returns: {pillar_id: {mandate: "✅"|"❌"|"⚠️"|""}}
+        Returns: {node_id: {mandate: "✅"|"❌"|"⚠️"|""}}
         """
         matrix: Dict[str, Dict[str, str]] = {}
         mandates = [f"M{i}" for i in range(1, 24)]
         
-        for pillar in pillars:
-            pillar_matrix: Dict[str, str] = {}
+        for node in nodes:
+            node_matrix: Dict[str, str] = {}
             for mandate in mandates:
-                if re.search(rf'{re.escape(mandate)}\s*(✅|❌|⚠️)', pillar.content):
-                    match = re.search(rf'{re.escape(mandate)}\s*(✅|❌|⚠️)', pillar.content)
-                    pillar_matrix[mandate] = match.group(1) if match else ""
+                if re.search(rf'{re.escape(mandate)}\s*(✅|❌|⚠️)', node.content):
+                    match = re.search(rf'{re.escape(mandate)}\s*(✅|❌|⚠️)', node.content)
+                    node_matrix[mandate] = match.group(1) if match else ""
                 else:
-                    pillar_matrix[mandate] = ""  # Not mentioned
+                    node_matrix[mandate] = ""  # Not mentioned
             
-            matrix[pillar.pillar_id] = pillar_matrix
+            matrix[node.node_id] = node_matrix
         
         return matrix
     
-    def _allocate_budget(self, pillars: List[PillarReport], total_budget: int = 32000) -> Dict[str, int]:
-        """Allocate token budget across pillars using adaptive fusion.
+    def _allocate_budget(self, nodes: List[NodeReport], total_budget: int = 32000) -> Dict[str, int]:
+        """Allocate token budget across nodes using adaptive fusion.
         
         Formula: 
         score = 0.5 * confidence + 0.3 * mandate_criticality + 0.2 * novelty
         """
         scores: Dict[str, float] = {}
         
-        for p in pillars:
+        for p in nodes:
             words = p.content.split()
             unique_words = len(set(words))
             
             confidence = 0.5  # TODO: extract from confidence keywords
-            mandate_criticality = len(self._build_mandate_matrix([p]).get(p.pillar_id, {})) / 23
+            mandate_criticality = len(self._build_mandate_matrix([p]).get(p.node_id, {})) / 23
             novelty = unique_words / max(len(words), 1)  # Type-token ratio
             
-            scores[p.pillar_id] = 0.5 * confidence + 0.3 * mandate_criticality + 0.2 * novelty
+            scores[p.node_id] = 0.5 * confidence + 0.3 * mandate_criticality + 0.2 * novelty
         
         total_score = sum(scores.values()) or 1
         return {
@@ -220,9 +220,9 @@ class ReportDigester:
         }
 
 
-def raw_stack_cat_concat(pillars: List[PillarReport]) -> str:
+def raw_stack_cat_concat(nodes: List[NodeReport]) -> str:
     """M23 fallback: raw concatenation without any intelligence layer."""
     sections = []
-    for p in pillars:
-        sections.append(f"## PILLAR {p.pillar_id}: {p.domain}\n\n{p.content}")
+    for p in nodes:
+        sections.append(f"## NODE {p.node_id}: {p.domain}\n\n{p.content}")
     return "\n\n---\n\n".join(sections)

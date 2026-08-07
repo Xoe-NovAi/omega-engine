@@ -180,7 +180,7 @@ class TestCapabilityRegistry:
     def test_registry_contains_expected_agents(self):
         expected = [
             "kali", "doom_guy", "roc_racoon", "jem", "john_carmack",
-            "makali", "researcher", "maat", "lilith", "verity", "pillar"
+            "makali", "researcher", "maat", "lilith", "verity", "node"
         ]
         for agent in expected:
             assert agent in CAPABILITY_REGISTRY
@@ -191,7 +191,7 @@ class TestCapabilityRegistry:
             assert "purpose" in desc
             assert "capabilities" in desc
             assert "domains" in desc
-            assert "pillar_slot" in desc
+            assert "node_slot" in desc
             assert "task_tool_type" in desc
             assert "owned_files" in desc
             assert isinstance(desc["capabilities"], list)
@@ -204,8 +204,8 @@ class TestCapabilityRegistry:
     def test_maat_is_subagent(self):
         assert CAPABILITY_REGISTRY["maat"]["mode"] == "subagent"
 
-    def test_pillar_has_slot(self):
-        assert CAPABILITY_REGISTRY["pillar"]["pillar_slot"] == "PX"
+    def test_node_has_slot(self):
+        assert CAPABILITY_REGISTRY["node"]["node_slot"] == "NX"
 
 
 class TestGetAgentCapabilities:

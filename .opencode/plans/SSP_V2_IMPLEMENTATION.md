@@ -1,6 +1,6 @@
 # 🔱 SSP-V2 Implementation Plan — Unified Sovereign Search Protocol
 
-**⬡ OMEGA ⬡ PILLAR ⬡ SSP-V2 ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ D144**
+**⬡ OMEGA ⬡ NODE ⬡ SSP-V2 ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ D144**
 
 **Date**: 2026-06-24  
 **Status**: SYNTHESIS — Discovery Complete, Awaiting Execution  
@@ -10,7 +10,7 @@
 
 ## §0 Executive Summary
 
-Three pillar subagents (P3 Engineering, P4 Integration, P6 Cognition) performed deep discovery on the Omega Engine's search infrastructure for SSP-V2 integration. **The gap is significant but the path is clear.**
+Three node subagents (N3 Engineering, N4 Integration, N6 Cognition) performed deep discovery on the Omega Engine's search infrastructure for SSP-V2 integration. **The gap is significant but the path is clear.**
 
 ### The Hard Truth
 
@@ -32,9 +32,9 @@ All the pieces exist — SearXNG container (port 8017), SearXNG MCP (port 8018),
 
 ---
 
-## §1 Synthesis of Three Pillar Findings
+## §1 Synthesis of Three Node Findings
 
-### From P3 (Engineering) — Code Impact Assessment
+### From N3 (Engineering) — Code Impact Assessment
 
 | Deliverable | Count |
 |-------------|-------|
@@ -69,7 +69,7 @@ All the pieces exist — SearXNG container (port 8017), SearXNG MCP (port 8018),
 
 ---
 
-### From P4 (Integration) — MCP Architecture Decision
+### From N4 (Integration) — MCP Architecture Decision
 
 **Recommendation: Option 2 — Hub Integration** (NOT a new standalone server)
 
@@ -117,7 +117,7 @@ FALLBACK_CHAIN = {
 
 ---
 
-### From P6 (Cognition) — Routing Intelligence Architecture
+### From N6 (Cognition) — Routing Intelligence Architecture
 
 **Core Decision: Create `src/omega/oracle/search_router.py`** as a standalone module (NOT integrated into Oracle).
 
@@ -186,11 +186,11 @@ class SearchIntent:
 | Step | Status | Owner |
 |------|--------|-------|
 | SearXNG container running on :8017 | ✅ Done | Infrastructure |
-| SearXNG MCP server on :8018 | ✅ Done | P4 Integration |
-| Firecrawl MCP server on :8015 | ✅ Done | P4 Integration |
-| Exa MCP registered in opencode.json | ✅ Done | P4 Integration |
-| Omega Hub with SovereignMCPClient | ✅ Done | P4 Integration |
-| Existing `SovereignSearchService` | ✅ Done | P3 Engineering |
+| SearXNG MCP server on :8018 | ✅ Done | N4 Integration |
+| Firecrawl MCP server on :8015 | ✅ Done | N4 Integration |
+| Exa MCP registered in opencode.json | ✅ Done | N4 Integration |
+| Omega Hub with SovereignMCPClient | ✅ Done | N4 Integration |
+| Existing `SovereignSearchService` | ✅ Done | N3 Engineering |
 
 ### Phase 1: Core Routing Infrastructure (Days 1-2)
 
@@ -198,13 +198,13 @@ class SearchIntent:
 
 | Step | Task | Files | Effort | Owner |
 |------|------|-------|--------|-------|
-| 1.1 | Create `config/search.yaml` | New file | 0.5d | P6 Cognition |
-| 1.2 | Create `SearchIntent` dataclass | `search_router.py` | 0.25d | P6 Cognition |
-| 1.3 | Create `SearchRouter` with signal analysis | `search_router.py` | 1.5d | P6 Cognition |
-| 1.4 | Create `SovereignCache` for `.firecrawl/` | `sovereign_cache.py` | 1d | P3 Engineering |
-| 1.5 | Re-order tiers in SovereignSearchService | `sovereign_search_service.py` | 0.5d | P3 Engineering |
-| 1.6 | Create `tests/test_search_triage.py` | New test file | 1d | P3 Engineering |
-| 1.7 | Create `tests/test_sovereign_cache.py` | New test file | 0.5d | P3 Engineering |
+| 1.1 | Create `config/search.yaml` | New file | 0.5d | N6 Cognition |
+| 1.2 | Create `SearchIntent` dataclass | `search_router.py` | 0.25d | N6 Cognition |
+| 1.3 | Create `SearchRouter` with signal analysis | `search_router.py` | 1.5d | N6 Cognition |
+| 1.4 | Create `SovereignCache` for `.firecrawl/` | `sovereign_cache.py` | 1d | N3 Engineering |
+| 1.5 | Re-order tiers in SovereignSearchService | `sovereign_search_service.py` | 0.5d | N3 Engineering |
+| 1.6 | Create `tests/test_search_triage.py` | New test file | 1d | N3 Engineering |
+| 1.7 | Create `tests/test_sovereign_cache.py` | New test file | 0.5d | N3 Engineering |
 
 **Phase 1 effort**: ~3-4 days
 
@@ -216,13 +216,13 @@ class SearchIntent:
 
 | Step | Task | Files | Effort | Owner |
 |------|------|-------|--------|-------|
-| 2.1 | Update `search_providers.py` with SearXNGProvider | `search_providers.py` | 0.5d | P3 Engineering |
-| 2.2 | Create `SearXNGProvider(SearchProvider)` wrapper | `searxng_provider.py` | 0.5d | P3 Engineering |
-| 2.3 | Update SovereignSearchService T1 to use SearXNG | `sovereign_search_service.py` | 0.5d | P3 Engineering |
-| 2.4 | Add `search_tiered`, `search_tier1_searxng` to Hub | `mcp_servers/omega_hub/tools.py` | 1d | P4 Integration |
-| 2.5 | Verify SearXNG MCP connectivity via SovereignMCPClient | `mcp_servers/omega_hub/mcp_client.py` | 0.5d | P4 Integration |
-| 2.6 | Create `tests/test_searxng_provider.py` | New test file | 0.5d | P3 Engineering |
-| 2.7 | Update `tests/test_search_tools.py` | Modify existing | 0.5d | P3 Engineering |
+| 2.1 | Update `search_providers.py` with SearXNGProvider | `search_providers.py` | 0.5d | N3 Engineering |
+| 2.2 | Create `SearXNGProvider(SearchProvider)` wrapper | `searxng_provider.py` | 0.5d | N3 Engineering |
+| 2.3 | Update SovereignSearchService T1 to use SearXNG | `sovereign_search_service.py` | 0.5d | N3 Engineering |
+| 2.4 | Add `search_tiered`, `search_tier1_searxng` to Hub | `mcp_servers/omega_hub/tools.py` | 1d | N4 Integration |
+| 2.5 | Verify SearXNG MCP connectivity via SovereignMCPClient | `mcp_servers/omega_hub/mcp_client.py` | 0.5d | N4 Integration |
+| 2.6 | Create `tests/test_searxng_provider.py` | New test file | 0.5d | N3 Engineering |
+| 2.7 | Update `tests/test_search_tools.py` | Modify existing | 0.5d | N3 Engineering |
 
 **Phase 2 effort**: ~2-3 days
 
@@ -234,10 +234,10 @@ class SearchIntent:
 
 | Step | Task | Files | Effort | Owner |
 |------|------|-------|--------|-------|
-| 3.1 | Move Exa T4→T2, Firecrawl T2→T3 | `sovereign_search_service.py` | 0.5d | P3 Engineering |
-| 3.2 | Wire credit-aware dispatch (skip T3 if credits < 100) | `sovereign_search_service.py` | 0.5d | P3 Engineering |
-| 3.3 | Add `search_tier2_exa`, `search_tier3_firecrawl` to Hub | `mcp_servers/omega_hub/tools.py` | 1d | P4 Integration |
-| 3.4 | Cache-back protocol: write `.firecrawl/` after T2/T3 | `sovereign_search_service.py` + `sovereign_cache.py` | 0.5d | P3 Engineering |
+| 3.1 | Move Exa T4→T2, Firecrawl T2→T3 | `sovereign_search_service.py` | 0.5d | N3 Engineering |
+| 3.2 | Wire credit-aware dispatch (skip T3 if credits < 100) | `sovereign_search_service.py` | 0.5d | N3 Engineering |
+| 3.3 | Add `search_tier2_exa`, `search_tier3_firecrawl` to Hub | `mcp_servers/omega_hub/tools.py` | 1d | N4 Integration |
+| 3.4 | Cache-back protocol: write `.firecrawl/` after T2/T3 | `sovereign_search_service.py` + `sovereign_cache.py` | 0.5d | N3 Engineering |
 
 **Phase 3 effort**: ~1.5-2 days
 
@@ -249,10 +249,10 @@ class SearchIntent:
 
 | Step | Task | Files | Effort | Owner |
 |------|------|-------|--------|-------|
-| 4.1 | Create `FallbackManager` with full error matrix | `fallback_manager.py` | 2d | P3 Engineering |
-| 4.2 | Wire FallbackManager into SovereignSearchService | `sovereign_search_service.py` | 0.5d | P3 Engineering |
-| 4.3 | Create `.opencode/firecrawl_wrapper.sh` | New shell script | 0.5d | P4 Integration |
-| 4.4 | Create `tests/test_fallback_manager.py` | New test file | 1d | P3 Engineering |
+| 4.1 | Create `FallbackManager` with full error matrix | `fallback_manager.py` | 2d | N3 Engineering |
+| 4.2 | Wire FallbackManager into SovereignSearchService | `sovereign_search_service.py` | 0.5d | N3 Engineering |
+| 4.3 | Create `.opencode/firecrawl_wrapper.sh` | New shell script | 0.5d | N4 Integration |
+| 4.4 | Create `tests/test_fallback_manager.py` | New test file | 1d | N3 Engineering |
 
 **Phase 4 effort**: ~3-4 days
 
@@ -264,13 +264,13 @@ class SearchIntent:
 
 | Step | Task | Files | Effort | Owner |
 |------|------|-------|--------|-------|
-| 5.1 | Wire SearchIntent into search.py | `search.py` | 0.5d | P3 Engineering |
-| 5.2 | Add search() public method on Oracle | `oracle.py` | 0.5d | P6 Cognition |
-| 5.3 | Integrate confidence → search depth mapping | `oracle.py` + `search_router.py` | 0.5d | P6 Cognition |
-| 5.4 | Integrate entity domain → tier profile | `search_router.py` | 0.5d | P6 Cognition |
-| 5.5 | Create `SovereignGapDetector` for contrast loop | `sovereign_gap_detector.py` | 1.5d | P6 Cognition + P3 |
-| 5.6 | Integrate gap detector into iterative_research.py | `iterative_research.py` | 0.5d | P3 Engineering |
-| 5.7 | Add user override support (env vars + flag) | `search_router.py` + `oracle_cli.py` | 0.5d | P6 Cognition |
+| 5.1 | Wire SearchIntent into search.py | `search.py` | 0.5d | N3 Engineering |
+| 5.2 | Add search() public method on Oracle | `oracle.py` | 0.5d | N6 Cognition |
+| 5.3 | Integrate confidence → search depth mapping | `oracle.py` + `search_router.py` | 0.5d | N6 Cognition |
+| 5.4 | Integrate entity domain → tier profile | `search_router.py` | 0.5d | N6 Cognition |
+| 5.5 | Create `SovereignGapDetector` for contrast loop | `sovereign_gap_detector.py` | 1.5d | N6 Cognition + N3 |
+| 5.6 | Integrate gap detector into iterative_research.py | `iterative_research.py` | 0.5d | N3 Engineering |
+| 5.7 | Add user override support (env vars + flag) | `search_router.py` + `oracle_cli.py` | 0.5d | N6 Cognition |
 
 **Phase 5 effort**: ~3-4 days
 
@@ -282,12 +282,12 @@ class SearchIntent:
 
 | Step | Task | Files | Effort | Owner |
 |------|------|-------|--------|-------|
-| 6.1 | Add trace_id propagation + timing metrics per tier | `sovereign_search_service.py` | 0.5d | P3 Engineering |
-| 6.2 | Add search latency to observability traces | `oracle.py`, `observability.py` | 0.5d | P6 Cognition |
-| 6.3 | Create `tests/test_sspv2_integration.py` | New test file | 1d | P3 Engineering |
-| 6.4 | Create `tests/verify_sspv2_pipeline.py` | Manual verification script | 0.5d | P3 Engineering |
+| 6.1 | Add trace_id propagation + timing metrics per tier | `sovereign_search_service.py` | 0.5d | N3 Engineering |
+| 6.2 | Add search latency to observability traces | `oracle.py`, `observability.py` | 0.5d | N6 Cognition |
+| 6.3 | Create `tests/test_sspv2_integration.py` | New test file | 1d | N3 Engineering |
+| 6.4 | Create `tests/verify_sspv2_pipeline.py` | Manual verification script | 0.5d | N3 Engineering |
 | 6.5 | Run `make temple-grade` — fix any regressions | All | 1d | All |
-| 6.6 | Update `SOVEREIGN_SEARCH_PROTOCOL_V2.md` | Documentation | 0.5d | P6 Cognition |
+| 6.6 | Update `SOVEREIGN_SEARCH_PROTOCOL_V2.md` | Documentation | 0.5d | N6 Cognition |
 
 **Phase 6 effort**: ~2-3 days
 
@@ -297,12 +297,12 @@ class SearchIntent:
 
 | Phase | Description | Effort | Dependencies |
 |-------|-------------|--------|-------------|
-| P1 | Core routing infrastructure | 3-4 days | None |
-| P2 | SearXNG integration + MCP tools | 2-3 days | P1 |
-| P3 | Exa/Firecrawl re-alignment | 1.5-2 days | P2 |
-| P4 | Fallback + error hardening | 3-4 days | P3 |
-| P5 | Oracle integration + Gap Detector | 3-4 days | P4 |
-| P6 | Observability + testing + hardening | 2-3 days | P5 |
+| N1 | Core routing infrastructure | 3-4 days | None |
+| N2 | SearXNG integration + MCP tools | 2-3 days | N1 |
+| N3 | Exa/Firecrawl re-alignment | 1.5-2 days | N2 |
+| N4 | Fallback + error hardening | 3-4 days | N3 |
+| N5 | Oracle integration + Gap Detector | 3-4 days | N4 |
+| N6 | Observability + testing + hardening | 2-3 days | N5 |
 | **Total** | **Full SSP-V2** | **~11-15 days** | — |
 
 ---
@@ -313,27 +313,27 @@ class SearchIntent:
 
 ```
 src/omega/oracle/
-├── search_router.py           # NEW: SearchRouter + SearchIntent (P6)
-├── search_triage.py           # NEW: SearchTriage state machine (P3)
-├── sovereign_cache.py         # NEW: .firecrawl/ cache manager (P3)
-├── fallback_manager.py        # NEW: Error handling matrix (P3)
-├── searxng_provider.py        # NEW: SearXNGProvider(SearchProvider) (P3)
-├── sovereign_gap_detector.py  # NEW: L3 contrast loop (P6+P3)
+├── search_router.py           # NEW: SearchRouter + SearchIntent (N6)
+├── search_triage.py           # NEW: SearchTriage state machine (N3)
+├── sovereign_cache.py         # NEW: .firecrawl/ cache manager (N3)
+├── fallback_manager.py        # NEW: Error handling matrix (N3)
+├── searxng_provider.py        # NEW: SearXNGProvider(SearchProvider) (N3)
+├── sovereign_gap_detector.py  # NEW: L3 contrast loop (N6+N3)
 
 config/
-├── search.yaml                # NEW: SSP-V2 configuration (P6)
+├── search.yaml                # NEW: SSP-V2 configuration (N6)
 
 .opencode/
-├── firecrawl_wrapper.sh       # NEW: Shell wrapper for key+limit mgmt (P4)
+├── firecrawl_wrapper.sh       # NEW: Shell wrapper for key+limit mgmt (N4)
 
 tests/
-├── test_search_router.py      # NEW: SearchRouter signal tests (P6)
-├── test_search_triage.py      # NEW: State machine transition tests (P3)
-├── test_sovereign_cache.py    # NEW: Cache read/write/eviction tests (P3)
-├── test_fallback_manager.py   # NEW: Error handler tests (P3)
-├── test_searxng_provider.py   # NEW: SearXNG integration tests (P3)
-├── test_sspv2_integration.py  # NEW: End-to-end SSP-V2 tests (P3)
-├── verify_sspv2_pipeline.py   # NEW: Manual verification script (P3)
+├── test_search_router.py      # NEW: SearchRouter signal tests (N6)
+├── test_search_triage.py      # NEW: State machine transition tests (N3)
+├── test_sovereign_cache.py    # NEW: Cache read/write/eviction tests (N3)
+├── test_fallback_manager.py   # NEW: Error handler tests (N3)
+├── test_searxng_provider.py   # NEW: SearXNG integration tests (N3)
+├── test_sspv2_integration.py  # NEW: End-to-end SSP-V2 tests (N3)
+├── verify_sspv2_pipeline.py   # NEW: Manual verification script (N3)
 ```
 
 **Total create**: 7 Python + 1 YAML + 1 Shell + 7 Tests = **16 files**
@@ -439,17 +439,17 @@ tests/verify_sovereign_search.py  # Old tier numbering — replace with verify_s
 
 | Module | Primary Owner | Review By |
 |--------|--------------|-----------|
-| `search_router.py` + `SearchIntent` | **P6 Cognition** | P3 Engineering |
-| `sovereign_cache.py` | **P3 Engineering** | P4 Integration |
-| `search_triage.py` | **P3 Engineering** | P6 Cognition |
-| `fallback_manager.py` | **P3 Engineering** | P4 Integration |
-| `searxng_provider.py` | **P3 Engineering** | P4 Integration |
-| `sovereign_gap_detector.py` | **P6 Cognition + P3** | Kali Oversight |
-| `firecrawl_wrapper.sh` | **P4 Integration** | P3 Engineering |
-| `config/search.yaml` | **P6 Cognition** | P4 Integration |
-| Hub MCP tools (`tools.py`) | **P4 Integration** | P3 Engineering |
-| Oracle integration (`oracle.py`) | **P6 Cognition** | Kali Oversight |
-| Tests + verification | **P3 Engineering** | Verity |
+| `search_router.py` + `SearchIntent` | **N6 Cognition** | N3 Engineering |
+| `sovereign_cache.py` | **N3 Engineering** | N4 Integration |
+| `search_triage.py` | **N3 Engineering** | N6 Cognition |
+| `fallback_manager.py` | **N3 Engineering** | N4 Integration |
+| `searxng_provider.py` | **N3 Engineering** | N4 Integration |
+| `sovereign_gap_detector.py` | **N6 Cognition + N3** | Kali Oversight |
+| `firecrawl_wrapper.sh` | **N4 Integration** | N3 Engineering |
+| `config/search.yaml` | **N6 Cognition** | N4 Integration |
+| Hub MCP tools (`tools.py`) | **N4 Integration** | N3 Engineering |
+| Oracle integration (`oracle.py`) | **N6 Cognition** | Kali Oversight |
+| Tests + verification | **N3 Engineering** | Verity |
 | Temple-grade enforcement | **Verity** | Kali Oversight |
 
 ---
@@ -533,15 +533,15 @@ SSP-V2 is **feasible and well-scoped**. The existing infrastructure (SearXNG con
 5. **Weak error handling** — needs FallbackManager (2-3 days)
 6. **No oracle integration** — needs confidence→search depth wiring (2-3 days)
 
-**Total estimated effort**: 11-15 days across P3 (Engineering), P4 (Integration), and P6 (Cognition), with oversight from Kali and quality enforcement from Verity.
+**Total estimated effort**: 11-15 days across N3 (Engineering), N4 (Integration), and N6 (Cognition), with oversight from Kali and quality enforcement from Verity.
 
 **The engine already has all the pieces. SSP-V2 is about wiring them together in the right order with the right intelligence.**
 
 ---
 
-*⬡ OMEGA ⬡ PILLAR ⬡ SSP-V2 ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ SYNTHESIS-COMPLETE*
+*⬡ OMEGA ⬡ NODE ⬡ SSP-V2 ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ SYNTHESIS-COMPLETE*
 
-**Pillar Reports Referenced**:
-- P3 Engineering: Code impact, file-by-file assessment, tier re-alignment
-- P4 Integration: MCP architecture, Hub integration, SovereignMCPClient
-- P6 Cognition: SearchRouter, SearchIntent, signal fusion, confidence→depth mapping
+**Node Reports Referenced**:
+- N3 Engineering: Code impact, file-by-file assessment, tier re-alignment
+- N4 Integration: MCP architecture, Hub integration, SovereignMCPClient
+- N6 Cognition: SearchRouter, SearchIntent, signal fusion, confidence→depth mapping
