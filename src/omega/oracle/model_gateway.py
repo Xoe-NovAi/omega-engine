@@ -73,7 +73,7 @@ from .backends.openai_compat import OpenAICompatProvider
 from .backends.antigravity_provider import AntigravityProvider
 from .backends.remote_provider import ProviderConfig
 from .backends.google_compat import GoogleCompatProvider
-from .resource_guard import ResourceGuard
+from .resource_guard import ResourceGuard, get_resource_guard
 from .providers import GoogleAIProvider, LocallmsterProvider, OllamaProvider, MockProvider, NativeGGUFProvider
 from .health_monitor import CircuitOpenError
 
@@ -146,7 +146,7 @@ class ModelGateway:
         from .retry_policy import call_with_retry, TransientProviderError
         self._cpu_optimizer = Zen2Optimizer()
         
-        self.resource_guard = ResourceGuard()
+        self.resource_guard = get_resource_guard()
         self._mock_backend = OfflineMockBackend()
         self.providers = self._load_provider_fabric()
         # [id-soft: vet-055] Fixed-Size Active Set — 32-entry clip range for O(1) culling
@@ -1111,8 +1111,17 @@ class ModelGateway:
             weight = self.get_model_weight(model_name)
             spec = self.get_model_spec(model_name)
             
+            # [B1] Cloud guard + timeout: cloud providers must fail-fast on
+            # semaphore contention rather than queue indefinitely behind a slow
+            # local inference (inverts M7 Local-First). Pass a short acquisition
+            # timeout so a busy resource_guard lock routes to the next provider.
+            _is_cloud = self._is_cloud_provider(provider)
+            lock_timeout = None if not _is_cloud else min(timeout, 5.0)
+            
             try:
-                async with self.resource_guard.lock(weight=weight, model_spec=spec):
+                async with self.resource_guard.lock(
+                    weight=weight, model_spec=spec, timeout=lock_timeout
+                ):
                     with anyio.move_on_after(timeout) as cancel_scope:
                         # [M22 Response Provenance] Start latency measurement
                         _start_time = time.monotonic()

@@ -30,7 +30,7 @@ import anyio
 from .quota_pollers import (
     QuotaPoller,
     QuotaSnapshot,
-    QuotaStatus,
+    QuotaStatusLevel,
     create_quota_poller,
 )
 
@@ -138,7 +138,7 @@ class FleetOrchestrator:
         if not fleet or not fleet.quota_poller:
             return QuotaSnapshot(
                 provider=provider_name,
-                status=QuotaStatus.UNKNOWN,
+                status=QuotaStatusLevel.UNKNOWN,
                 remaining=0,
                 total=0,
                 used=0,
@@ -225,11 +225,11 @@ class FleetOrchestrator:
         quota = await self.get_quota(provider_name)
         
         # Check quota status
-        if quota.status == QuotaStatus.EXHAUSTED:
+        if quota.status == QuotaStatusLevel.EXHAUSTED:
             self._trip_circuit_breaker(provider_name, "Quota exhausted")
             return RouteDecision.SKIP, quota, "Quota exhausted"
         
-        if quota.status == QuotaStatus.CRITICAL:
+        if quota.status == QuotaStatusLevel.CRITICAL:
             return RouteDecision.FALLBACK, quota, "Quota critical"
         
         # Check rate limits
@@ -330,7 +330,7 @@ class FleetOrchestrator:
             try:
                 quota = await self.get_quota(name, force=True)
                 results[name] = {
-                    "status": "healthy" if quota.status != QuotaStatus.EXHAUSTED else "exhausted",
+                    "status": "healthy" if quota.status != QuotaStatusLevel.EXHAUSTED else "exhausted",
                     "quota_status": quota.status.value,
                     "remaining": quota.remaining,
                     "total": quota.total,

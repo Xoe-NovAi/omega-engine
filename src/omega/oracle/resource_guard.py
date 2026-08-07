@@ -341,3 +341,29 @@ class ResourceGuard:
                 else:
                     current_held[task_id] = new_weight
                 _held_weights.set(current_held)
+
+
+# ── Singleton Factory ──────────────────────────────────────────────────
+# [B1] Unify the concurrency gate. Two separate Semaphore(1) gates existed:
+#   - admission_controller.LocalInferenceAdmission (singleton, local-only)
+#   - ResourceGuard (per-instance, all providers)
+# Multiple ResourceGuard instances meant multiple local models could load
+# concurrently via direct callers (orchestrator, local_worker_pool,
+# model_updater, local_queue) that bypass the admission singleton.
+# This factory makes ResourceGuard a process-wide singleton so there is
+# exactly ONE Semaphore(1) gate for the engine.
+_resource_guard: Optional["ResourceGuard"] = None
+
+
+def get_resource_guard() -> "ResourceGuard":
+    """Get or create the process-wide singleton ResourceGuard.
+
+    [B1] Ensures exactly one concurrency gate engine-wide. Callers that
+    previously constructed their own ``ResourceGuard`` (e.g. orchestrator,
+    local_worker_pool, model_updater, local_queue) should use this factory
+    so all inference shares the same Semaphore(1).
+    """
+    global _resource_guard
+    if _resource_guard is None:
+        _resource_guard = ResourceGuard()
+    return _resource_guard

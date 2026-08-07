@@ -187,13 +187,13 @@ class TestQuotaTracking:
 
     def test_quota_usage(self):
         hm = HealthMonitor()
-        hm._quotas["google"] = QuotaStatus(daily_limit=1000)
+        hm._quotas["google"] = QuotaStatus(tokens_limit=1000, tokens_remaining=1000)
         hm.record_token_usage("google", 500)
         assert hm.get_quota_usage("google") == 0.5
 
     def test_quota_exhausted(self):
         hm = HealthMonitor()
-        hm._quotas["google"] = QuotaStatus(daily_limit=100)
+        hm._quotas["google"] = QuotaStatus(tokens_limit=100, tokens_remaining=100)
         hm.record_token_usage("google", 150)
         assert hm.get_quota_usage("google") == 1.0
 

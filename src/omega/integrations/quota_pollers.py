@@ -28,7 +28,7 @@ import anyio
 import httpx
 
 
-class QuotaStatus(Enum):
+class QuotaStatusLevel(Enum):
     """Quota status levels."""
     HEALTHY = "healthy"           # >50% remaining
     MODERATE = "moderate"         # 20-50% remaining
@@ -42,7 +42,7 @@ class QuotaStatus(Enum):
 class QuotaSnapshot:
     """Standardized quota information across all providers."""
     provider: str
-    status: QuotaStatus
+    status: QuotaStatusLevel
     remaining: float
     total: float
     used: float
@@ -101,23 +101,23 @@ class QuotaPoller(ABC):
         """Fetch quota from provider API. Implement in subclasses."""
         ...
 
-    def _calculate_status(self, remaining: float, total: float) -> QuotaStatus:
+    def _calculate_status(self, remaining: float, total: float) -> QuotaStatusLevel:
         """Calculate quota status based on remaining percentage."""
         if total <= 0:
-            return QuotaStatus.UNKNOWN
+            return QuotaStatusLevel.UNKNOWN
         
         percent = (remaining / total) * 100
         
         if percent <= 0:
-            return QuotaStatus.EXHAUSTED
+            return QuotaStatusLevel.EXHAUSTED
         elif percent < 5:
-            return QuotaStatus.CRITICAL
+            return QuotaStatusLevel.CRITICAL
         elif percent < 20:
-            return QuotaStatus.LOW
+            return QuotaStatusLevel.LOW
         elif percent < 50:
-            return QuotaStatus.MODERATE
+            return QuotaStatusLevel.MODERATE
         else:
-            return QuotaStatus.HEALTHY
+            return QuotaStatusLevel.HEALTHY
 
     async def poll(self, force: bool = False) -> QuotaSnapshot:
         """
@@ -153,7 +153,7 @@ class QuotaPoller(ABC):
         # All retries failed
         error_snapshot = QuotaSnapshot(
             provider=self.provider_name,
-            status=QuotaStatus.UNKNOWN,
+            status=QuotaStatusLevel.UNKNOWN,
             remaining=0,
             total=0,
             used=0,
@@ -226,7 +226,7 @@ class GrokQuotaPoller(QuotaPoller):
             # For production, use grpcio-tools or protobuf library
             return QuotaSnapshot(
                 provider="grok",
-                status=QuotaStatus.UNKNOWN,
+                status=QuotaStatusLevel.UNKNOWN,
                 remaining=0,
                 total=0,
                 used=0,
@@ -451,7 +451,7 @@ class GCPQuotaPoller(QuotaPoller):
         if not quota_info:
             return QuotaSnapshot(
                 provider="gcp",
-                status=QuotaStatus.UNKNOWN,
+                status=QuotaStatusLevel.UNKNOWN,
                 remaining=0,
                 total=0,
                 used=0,
@@ -619,7 +619,7 @@ class FirecrawlQuotaPoller(QuotaPoller):
         if not data.get("success"):
             return QuotaSnapshot(
                 provider="firecrawl",
-                status=QuotaStatus.UNKNOWN,
+                status=QuotaStatusLevel.UNKNOWN,
                 remaining=0,
                 total=0,
                 used=0,
@@ -702,7 +702,7 @@ def create_quota_poller(
 
 # Module exports
 __all__ = [
-    "QuotaStatus",
+    "QuotaStatusLevel",
     "QuotaSnapshot",
     "QuotaPoller",
     "GrokQuotaPoller",

@@ -96,13 +96,6 @@ class LatencySnapshot:
     max_ms: float = 0.0
 
 
-@dataclass
-class QuotaStatus:
-    daily_limit: int = 0           # 0 = unlimited
-    used_today: int = 0
-    reset_date: str = ""           # YYYY-MM-DD
-
-
 # ── Circuit Breaker (Canonical implementation — C-6') ──────────────────
 #
 # [C-6'] This is the SINGLE canonical circuit breaker implementation.
@@ -231,7 +224,10 @@ class AsyncCircuitBreaker:
             # We assume success if no exception. Quality is 1.0 for basic success.
             await self._on_success(latency=latency, quality=1.0, trace_id=trace_id)
             return result
-        except (OmegaError, RuntimeError, OSError) as e:
+        except Exception as e:
+            # [A6] Catch broadly, then let _is_circuit_breaking_error() filter.
+            # Previously only (OmegaError, RuntimeError, OSError) were caught, so
+            # e.g. httpx/network exceptions escaped without tripping the breaker.
             if self._is_circuit_breaking_error(e):
                 await self._on_failure(trace_id=trace_id)
             raise
@@ -631,9 +627,12 @@ class HealthMonitor:
     def get_quota_usage(self, provider: str) -> float:
         """Get quota usage as 0.0-1.0. Returns 0.0 if no limit set."""
         quota = self._quotas.get(provider)
-        if not quota or quota.daily_limit == 0:
+        if not quota or quota.tokens_limit == 0:
             return 0.0
-        return min(quota.used_today / quota.daily_limit, 1.0)
+        # tokens_remaining counts DOWN from tokens_limit, so usage =
+        # (limit - remaining) / limit.
+        used = quota.tokens_limit - quota.tokens_remaining
+        return min(max(used / quota.tokens_limit, 0.0), 1.0)
 
     def has_quota(self, provider_name: str) -> bool:
         """
@@ -661,14 +660,14 @@ class HealthMonitor:
         
         quota = self._quotas[provider_name]
         
-        # Update used amounts
-        quota.used_today += tokens_used
-        # Note: We don't track request count separately in HealthMonitor yet
-        # This would need to be added if we want to track request quotas
-        
-        # Update reset times if provided (would come from headers in practice)
-        # For now, we assume daily reset at midnight UTC
-        # In a full implementation, these would be parsed from response headers
+        # Decrement remaining tokens (assumes tokens_limit was set by a prior
+        # record that knows the provider's cap). If limit is unknown (0),
+        # we only track cumulative usage via tokens_remaining going negative —
+        # has_quota() treats limit==0 as "unlimited", so this is safe.
+        quota.tokens_remaining -= tokens_used
+        quota.requests_remaining -= requests_used
+        if quota.tokens_remaining <= 0 or quota.requests_remaining <= 0:
+            quota.exhausted = True
 
     def get_success_rate(self, model_name: str) -> float:
         """Get success rate as 0.0-1.0. Returns 1.0 if no data."""
@@ -738,14 +737,20 @@ class HealthMonitor:
         return self._breakers[name]
 
     def record_breaker_success(self, name: str, trace_id: Optional[str] = None):
-        """Record a success on a named breaker."""
+        """Record a success on a named breaker.
+
+        [A4] Implements the previously no-op stub. Fire-and-forget: dispatches
+        ``_on_success`` on the breaker's event loop with latency=0 and quality=1.0
+        (the caller has no timing info — use ``breaker.call()`` when latency
+        matters). Mirrors ``record_breaker_failure``.
+        """
         if name in self._breakers:
-            # Fire-and-forget: call async method via run_sync
-            import anyio
             breaker = self._breakers[name]
-            # _on_success requires latency — use 0 for fire-and-forget
-            # In practice, callers should use breaker.call() for full lifecycle
-            pass
+            import anyio
+            try:
+                anyio.from_thread.run(breaker._on_success, latency=0.0, quality=1.0, trace_id=trace_id)
+            except (OmegaError, RuntimeError, OSError) as e:
+                logger.warning(f"record_breaker_success failed for {name}: {e}")
 
     def record_breaker_failure(self, name: str, trace_id: Optional[str] = None):
         """Record a failure on a named breaker."""
@@ -809,10 +814,13 @@ class HealthMonitor:
         )
 
     def record_token_usage(self, provider: str, tokens: int):
-        """Track token usage against daily quota."""
+        """Track token usage against quota."""
         if provider not in self._quotas:
             self._quotas[provider] = QuotaStatus()
-        self._quotas[provider].used_today += tokens
+        quota = self._quotas[provider]
+        quota.tokens_remaining -= tokens
+        if quota.tokens_remaining <= 0:
+            quota.exhausted = True
 
     def set_model_provider(self, model_name: str, provider_name: str):
         """Map a model to its provider."""

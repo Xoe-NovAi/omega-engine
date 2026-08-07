@@ -523,7 +523,7 @@ class NativeGGUFProvider(BaseProvider):
         def _worker(req_queue, res_queue, model_path, n_threads, n_threads_batch,
                       n_ctx, n_batch, n_ubatch, type_k, type_v,
                       use_mmap, use_mlock, n_gpu_layers, kwarg_filter_enabled):
-            from llama_cpp import Llama
+            import llama_cpp
             try:
                 from omega.cvar_table import validate_llama_kwargs
             except ImportError:
@@ -559,7 +559,7 @@ class NativeGGUFProvider(BaseProvider):
             
             # Load the model — wrap in try/except to signal load failure
             try:
-                llm = Llama(**llama_kwargs)
+                llm = llama_cpp.Llama(**llama_kwargs)
             except (OmegaError, RuntimeError, OSError) as e:
                 # Send load failure back to parent, then exit
                 res_queue.put({"status": "load_error", "error": repr(e)})

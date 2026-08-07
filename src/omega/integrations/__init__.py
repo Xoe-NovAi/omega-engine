@@ -18,7 +18,7 @@ from .grok_cli import (
 )
 
 from .quota_pollers import (
-    QuotaStatus,
+    QuotaStatusLevel,
     QuotaSnapshot,
     QuotaPoller,
     GrokQuotaPoller,
@@ -53,7 +53,7 @@ __all__ = [
     "grok_prompt",
     
     # Quota Pollers
-    "QuotaStatus",
+    "QuotaStatusLevel",
     "QuotaSnapshot",
     "QuotaPoller",
     "GrokQuotaPoller",
