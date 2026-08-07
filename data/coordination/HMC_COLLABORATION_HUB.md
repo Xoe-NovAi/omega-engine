@@ -20,7 +20,7 @@ A **single, lightweight markdown document** serving as the central coordination 
 ## 📌 SHARED SECTIONS
 
 ### 🏁 Sprint Status (DOC SANITY UO-4 / PHASE D GATE PREP)
-**Current Focus**: Executing Doc Sanity Strategy v3.1 (UO-4 -> UO-6).
+**Current Focus**: UO-4 PART 1 (Archival & Pointer Sanity) **COMPLETE** ✅ — 67 files archived, SSOT Map created, temple-grade passing. Next: PART 2 (Web Strategy Reconciliation / Purge & Correct).
 **Phase D Gate Blockers**:
 - **C-3**: Restic 3-2-1 Backup (Blocked by V-1 Vault)
 - **W-1**: WARP proxy pool bring-up (Architect action required)
@@ -31,6 +31,7 @@ A **single, lightweight markdown document** serving as the central coordination 
 - **2026-08-07**: HMC Hub archived and reset to clear 2,100+ lines of historical bloat.
 - **2026-08-07**: Wrapper SQL query fixed to use `time_updated` for accurate session detection.
 - **2026-08-07**: WEB_RECONCILIATION_MATRIX updated with §17, K, L, M.
+- **2026-08-07**: UO-4 PART 1 complete — 67 files archived (sprints, coordination, web sessions), DOC_SSOT_MAP_20260807.md + DOC_SANITY_RESULTS_20260807.md created, Makefile stale refs fixed, doc-llm-validate + temple-grade passing.
 
 ### 🚧 Blockers & Requests
 - **@kali -> Architect**: Need sudo/billing action on W-1 and G-1 to unblock Phase D Gate.

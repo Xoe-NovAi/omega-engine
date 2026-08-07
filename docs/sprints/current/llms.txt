@@ -1,11 +1,6 @@
-# Sprint Plan Index: Phase D Gate (Hardened v1.1)
-- Sprint Goal: Honest Phase D entry — probe-backed P0s, no phantom capacity
-- Read first: docs/sprints/current/AGENT_SPRINT_CARD.md
-- Execution plan: docs/archive/sprints/EXECUTION_PLAN_20260725.md (v1.1)
-- Critical residual gaps: docs/research/R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md
-- Prior research closure (historical): docs/sprints/current/KNOWLEDGE_GAP_CLOSURE.md
-- P0 now: C-0.5 hook register, Vault dirty-tree land/freeze, W-1 SOCKS live, fail-closed gate
-- Do not re-research: MCP migration knowledge, Vault age+Argon2id, KG-1..6 FOSS surveys
-- Gate script: scripts/verify_phase_d_gate.py (fail-closed)
-- Strategy SSOT: docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md
-- Full concatenated plan (legacy guard-and-distill): docs/sprints/current/llms-full.txt
+# Sprint Plan Index: Doc Sanity & Un-overengineering
+- Sprint Goal: Sanitize docs (UO-4), then un-overengineer (UO-6)
+- Controlling Plan: data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md
+- Active Sprint: data/coordination/ACTIVE_SPRINT.json
+- Research: docs/archive/sprints/2026-07-25-guard-and-distill/08-research-index.md
+- Full Plan: docs/sprints/current/llms-full.txt
