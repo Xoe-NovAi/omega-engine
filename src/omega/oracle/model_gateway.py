@@ -86,7 +86,10 @@ from omega.observability.token_ledger import TokenLedger
 from omega.observability.latency_tracker import tracker
 from omega.state.usm import USMManager
 
-from .stream_handler import StreamHandler, get_stream_handler
+# [A5+call_with_retry scope fix] Module-level import: retry_policy helpers are
+# used inside generate() (lines ~1145/1154). Previously imported only in
+# __init__ local scope -> NameError on the retry path (latent bug).
+from .retry_policy import call_with_retry, TransientProviderError
 
 logger = logging.getLogger(__name__)
 
@@ -143,7 +146,6 @@ class ModelGateway:
         
         # Initialize Zen2Optimizer for hardware resonance
         from .cpu_optimizer import Zen2Optimizer
-        from .retry_policy import call_with_retry, TransientProviderError
         self._cpu_optimizer = Zen2Optimizer()
         
         self.resource_guard = get_resource_guard()
@@ -194,8 +196,6 @@ class ModelGateway:
         # Only used for opencode-zen provider to bypass rate limits.
         # Set via oracle.py: ModelGateway.proxy_pool = EphemeralWarpPool()
         self.proxy_pool: Optional[Any] = None
-        
-        self.stream_handler = get_stream_handler()
 
     def list_providers(self) -> List[Dict[str, Any]]:
         """Return a list of all registered providers and their current health."""

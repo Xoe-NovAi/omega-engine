@@ -448,10 +448,11 @@ async def test_sovereign_sampling_overrides(monkeypatch):
     )
     
     # Verify that the provider's generate was called with the overrides
+    # (provider.generate is invoked with all-keyword args in generate())
     args, kwargs = mock_provider.generate.call_args
-    
+
     # Check temperature override — code clamps to max(temperature, 0.85)
-    assert args[3] == 0.85
+    assert kwargs["temperature"] == 0.85
     # Check repetition penalty override — code clamps to max(penalty, 1.2)
     assert kwargs["repetition_penalty"] == 1.2
     # Check logit_bias is present as keyword argument
