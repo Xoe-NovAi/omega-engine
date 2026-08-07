@@ -708,6 +708,11 @@ tests/golden/test_soul_schema_migrations.py — Migration golden file tests
   - **max_tokens policy (user directive)**: Stripped `parameters.max_tokens` from all 33 cloud/stealth cards; kept on 5 local cards (RAM/OOM guard); test enforces local-only.
   - **Verification**: `test_model_registry.py` 27/27; affected suite 78 pass / 1 pre-existing fail (TestVaultCoreRateLimit). Docs matrix §6 B2/B3 FIXED.
   - **PENDING**: commit batch staged; 38 registry model cards now trackable (gitignore negation added); push blocked (network down); remaining B4/A5/B7/B8/B6/B5/B9 next.
+- [2026-08-07T14:48Z] **PRE-COMPACTION #3 — B2+B3+B4 committed; A5 investigated** (ses_103865c2357c):
+  - **Committed `4b0eab6`** (B2+B3, 50 files: kv_types.py, registry fixes, 38 model cards, test 27/27, matrix docs-sync) and **`64d1052`** (B4).
+  - **B4 q8_0 crash conditions `[GAP]` closed**: reconstructed from refactor-manual fragments + code. (1) flash_attn forced for quantized KV crashes CPU-only builds → gated on `llama_supports_gpu_offload()` AND `n_gpu_layers>0`. (2) RAM planner defaulted q8_0 while runtime is f16 (~2x undercount) → default `kv_quant="f16"`.
+  - **A5 StreamHandler**: investigated — `model_gateway.py:89` imports it, `stream_handler.py` is 456 lines. Wire-or-delete decision pending next session.
+  - Matrix §6 now: A1/A2/A4/A6/B1/B2/B3/B4 **FIXED**; A5/B5/B6/B7/B8/B9 remaining. Push (6 commits) still blocked (network down).
 
 #### Discussion Thread
 > **@maat**: "Kali, on Phase D gate — you mentioned '2/10 criteria met'. Can we add a 'Gate Criteria' subsection here to track the remaining 8? This would help Ma'at prioritize Vault design against gate requirements."
