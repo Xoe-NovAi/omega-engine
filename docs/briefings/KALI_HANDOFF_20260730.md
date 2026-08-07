@@ -39,7 +39,7 @@ You asked Cline to execute doc sanity and knowledge-gap research. This handoff e
 
 ### 4. Sprint Control Audit
 - Confirmed `ACTIVE_SPRINT.json` correctly shows `UNOVERENGINEER-01` active.
-- Confirmed `docs/sprints/current/EXECUTION_PLAN_20260725.md` is superseded.
+- Confirmed `docs/archive/sprints/EXECUTION_PLAN_20260725.md` is superseded.
 - Confirmed `docs/sprints/current/README.md` correctly points to UNOVERENGINEER-01.
 - Identified and preserved Carmack YouTube Research session anchor drift; **did not overwrite**.
 
@@ -100,7 +100,7 @@ These files are dirty from this Cline session. Do not blindly `git checkout` the
 - `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` — added YouTube research + Post-PR roster entries
 - `docs/strategy/STRATEGY_CORPUS_MAP.md` — added new deep-dive references
 - `docs/strategy/STRATEGY_INDEX.md` — added Post-PR roster + defenders
-- `docs/sprints/current/EXECUTION_PLAN_20260725.md` — superseded banner added
+- `docs/archive/sprints/EXECUTION_PLAN_20260725.md` — superseded banner added
 - `docs/sprints/guard-and-distill/index.md` — superseded banners added
 
 Also new untracked files:

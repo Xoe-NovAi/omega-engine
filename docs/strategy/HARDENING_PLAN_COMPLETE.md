@@ -1,5 +1,5 @@
 # 🔱 Omega Engine Hardening Plan — Complete Reference
-> **⚠️ HISTORICAL REFERENCE ONLY (2026-07-25)** — This plan describes Carmack's 5-phase hardening approach. The actual hardening was executed as C-tickets (C-0 through C-11). For current state, see `docs/sprints/current/EXECUTION_PLAN_20260725.md` and `OMEGA_ENGINE.md`. This document is retained for architectural audit trail.
+> **⚠️ HISTORICAL REFERENCE ONLY (2026-07-25)** — This plan describes Carmack's 5-phase hardening approach. The actual hardening was executed as C-tickets (C-0 through C-11). For current state, see `docs/archive/sprints/EXECUTION_PLAN_20260725.md` and `OMEGA_ENGINE.md`. This document is retained for architectural audit trail.
 
 **AP Token**: `AP-JOHN_CARMACK-HARDENING-v1.0.0`  
 **Date**: 2026-07-21  

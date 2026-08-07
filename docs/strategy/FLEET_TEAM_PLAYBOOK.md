@@ -97,7 +97,7 @@ Use the role that matches the **ticket**, not your favorite persona.
 > **LIVE mission board (2026-07-25+)** — do **not** use the historical queue below as “what’s next” without checking:
 >
 > 1. `docs/sprints/current/AGENT_SPRINT_CARD.md` (1-page probes + freezes)  
-> 2. `docs/sprints/current/EXECUTION_PLAN_20260725.md` v1.1 (§0 Reality Snapshot)  
+> 2. `docs/archive/sprints/EXECUTION_PLAN_20260725.md` v1.1 (§0 Reality Snapshot)  
 > 3. `docs/research/R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md` (SG-01..10 residual)  
 >
 > Many Phase C tickets are **research-closed / exec-partial**. Prefer probe-backed status over this section’s original checklist.
@@ -340,7 +340,7 @@ STATE      OMEGA_ENGINE.md
 LAW        SOVEREIGN_MANDATES.md
 OPS        AGENTS.md · HIVEMIND_PROTOCOL.md
 RECOVERY   data/coordination/SESSION_ANCHOR.md
-SPRINT     docs/sprints/current/EXECUTION_PLAN_20260725.md (NOT guard-and-distill)
+SPRINT     docs/archive/sprints/EXECUTION_PLAN_20260725.md (NOT guard-and-distill)
 CARD       docs/sprints/current/AGENT_SPRINT_CARD.md
 
 RULES      Every gap table needs RESEARCH + EXECUTION columns

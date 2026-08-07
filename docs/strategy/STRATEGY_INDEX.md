@@ -58,7 +58,7 @@
 | `data/coordination/RESEARCH_JOB_BOARD.yaml` | D | 18 jobs (D-2 input) |
 | `data/coordination/D308_CRITICAL_PATH_TRACKER.yaml` | C | Ubuntu 25.10 env gate |
 | **`docs/sprints/current/AGENT_SPRINT_CARD.md`** | **D Gate** | **ACTIVE SPRINT** — one-page agent card |
-| **`docs/sprints/current/EXECUTION_PLAN_20260725.md`** | **D Gate** | **ACTIVE EXECUTION PLAN v1.1** |
+SUPERSEDED: | **`docs/archive/sprints/EXECUTION_PLAN_20260725.md`** | **D Gate** | **ACTIVE EXECUTION PLAN v1.1** |
 
 ## LAYER 3: SUPERSEDED BUT KEPT IN TREE (trail only — do not treat as master)
 | Document | Note |
@@ -67,7 +67,7 @@
 | `docs/ROADMAP.md` | Pointer stub → Ark |
 | `docs/strategy/RESEARCH_EXECUTION_UPDATE.md` | Jul 21 plan — absorbed into Game Plan archive |
 | `docs/strategy/HARDENING_PLAN_COMPLETE.md` | Carmack 5-phase plan — historical reference only |
-| `docs/sprints/guard-and-distill/index.md` | **SUPERSEDED** — archived to `docs/archive/sprints/2026-07-25/guard-and-distill/` |
+SUPERSEDED: | `docs/archive/sprints/2026-07-25-guard-and-distill/index.md` | **SUPERSEDED** — archived to `docs/archive/sprints/2026-07-25/guard-and-distill/` |
 
 ## LAYER 4: ARCHIVE
 | Location | Contents |
@@ -98,7 +98,7 @@ If two docs disagree:
 
 1. **Law** → `SOVEREIGN_MANDATES.md`
 2. **Strategy / priority** → `SOVEREIGN_ARK_BLUEPRINT.md`
-3. **Sprint execution / process** → `docs/sprints/current/EXECUTION_PLAN_20260725.md` (probe-backed). AGENT_SPRINT_CARD has truth hierarchy.
+SUPERSEDED: 3. **Sprint execution / process** → `docs/archive/sprints/EXECUTION_PLAN_20260725.md` (probe-backed). AGENT_SPRINT_CARD has truth hierarchy.
 4. **Where did idea X go?** → `STRATEGY_CORPUS_MAP.md`
 5. **Live metrics** → `OMEGA_ENGINE.md` (but cross-check with machine probes)
 6. **Phase D implementation detail** → Living Research OS spec only where it does not contradict Ark

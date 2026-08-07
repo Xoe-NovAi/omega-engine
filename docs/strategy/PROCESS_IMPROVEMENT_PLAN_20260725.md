@@ -4,7 +4,7 @@
 
 **Status**: ACTIVE — Direct response to 2026-07-25 code+docs+process audit
 **Owner**: @kali (Sprint Lead) · Implementation: fleet
-**Companion plan**: `docs/sprints/current/EXECUTION_PLAN_20260725.md` v1.1
+**Companion plan**: `docs/archive/sprints/EXECUTION_PLAN_20260725.md` v1.1
 **Strategy SSOT**: `docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md` v5.2
 
 ---
@@ -191,7 +191,7 @@ pyproject.toml only. requirements.txt is generated.
 
 | Document | Role |
 |----------|------|
-| docs/sprints/current/EXECUTION_PLAN_20260725.md | Current sprint execution v1.1 |
+| docs/archive/sprints/EXECUTION_PLAN_20260725.md | Current sprint execution v1.1 |
 | docs/sprints/current/AGENT_SPRINT_CARD.md | Agent ops card |
 | docs/strategy/SOVEREIGN_ARK_BLUEPRINT.md v5.2 | Strategy SSOT |
 | OMEGA_ENGINE.md v1.8.1 | Engine state (corrected 2026-07-25) |

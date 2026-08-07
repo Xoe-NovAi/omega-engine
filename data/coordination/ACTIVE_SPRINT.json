@@ -9,7 +9,7 @@
   "status_detail": "Strategy ratified; Cline ops health complete; mechanical Phase D PASS / operational NO-GO; doc consolidation handed to Cline",
   "supersedes": [
     "FOUNDATION-STAB-01 (Jul 20 Phase Β — historical)",
-    "docs/sprints/current/EXECUTION_PLAN_20260725.md (sprint control)",
+    "docs/archive/sprints/EXECUTION_PLAN_20260725.md (sprint control)",
     "docs/sprints/guard-and-distill/index.md (sprint control)"
   ],
   "primary_handoffs": {

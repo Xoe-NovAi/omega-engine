@@ -4,7 +4,7 @@
 
 **Status**: COMPLETE — ground-truth audit + strategy/execution hardening  
 **Owner**: @grok_cli (Consulting Cloud Mind) · Review: @kali  
-**Companion plan**: `docs/sprints/current/EXECUTION_PLAN_20260725.md` v1.1  
+**Companion plan**: `docs/archive/sprints/EXECUTION_PLAN_20260725.md` v1.1  
 **Agent card**: `docs/sprints/current/AGENT_SPRINT_CARD.md`
 
 ---
@@ -220,7 +220,7 @@ Does **not** reorder Ark super-urgent G-1 ∥ W-1. It **adds an integrity layer*
 | Deliverable | Path |
 |-------------|------|
 | This research report | `docs/research/R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md` |
-| Hardened execution plan v1.1 | `docs/sprints/current/EXECUTION_PLAN_20260725.md` |
+| Hardened execution plan v1.1 | `docs/archive/sprints/EXECUTION_PLAN_20260725.md` |
 | One-page agent card | `docs/sprints/current/AGENT_SPRINT_CARD.md` |
 | Residual gaps addendum | `docs/sprints/current/KNOWLEDGE_GAP_CLOSURE.md` § residual |
 | Fail-closed gate script | `scripts/verify_phase_d_gate.py` |
