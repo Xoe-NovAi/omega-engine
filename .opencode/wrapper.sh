@@ -70,8 +70,8 @@ if command -v jq &>/dev/null; then
         SELECT id, agent, model, directory, time_created, time_updated,
                tokens_input, tokens_output, cost
         FROM session
-        WHERE time_created > ${BASELINE_MS}
-        ORDER BY time_created DESC
+        
+        ORDER BY time_updated DESC
         LIMIT 1;
     " 2>/dev/null || echo "")
 

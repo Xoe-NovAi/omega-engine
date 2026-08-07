@@ -220,3 +220,27 @@ Complete WEB_RECONCILIATION_MATRIX §6 provider-fabric remediation batch B2→B8
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
+
+---
+
+## 🏁 FINAL SESSION STATE (Pre-Compaction 2026-08-07 - Final)
+
+### Completed This Session
+1. **Complete Web Chatbot Review** — All 17 exports from `context_packs/provider-fabric-review/claude-response/` fully read and synthesized.
+2. **DOC_SANITY_EXECUTION_STRATEGY v3.1** — Master SOP for UO-4 now includes ALL captured pivots (WAD architecture, 16GB zRAM, Piper TTS, Headroom, MoE offload, Sovereign Bridge, Guidance Sets, KV-cache prefix caching, GBNF constrained sampling, iMatrix/IQ quantization, context sliding windows, MemPalace verbatim pattern, OpenCode CLI binding, legacy Qdrant purge, NotebookLM ingestion, 10 verification probes).
+3. **WEB_RECONCILIATION_MATRIX §17 + K, L, M** — 20+ new high-leverage pivots mapped across 4 new sections.
+4. **Wrapper System Fixed & Verified** — Alias installed in `.bashrc`, SQL query fixed to use `time_updated`, tested and confirmed working (correctly identifies entity, session ID, and model on exit).
+
+### Key Artifacts Updated
+| File | Status |
+|------|--------|
+| `data/coordination/DOC_SANITY_EXECUTION_STRATEGY_20260730.md` | ✅ v3.1 Complete |
+| `docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md` | ✅ §17, K, L, M Added |
+| `.opencode/wrapper.sh` | ✅ Fixed SQL query (time_updated) |
+| `~/.bashrc` | ✅ Alias installed: `opencode` → wrapper |
+
+### Next Session: Execute UO-4 → UO-6 → Phase D Gate Rerun
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
