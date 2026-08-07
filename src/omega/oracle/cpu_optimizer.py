@@ -72,10 +72,34 @@ ZEN2_COMPUTE_CORES = [0, 2, 4, 6, 8, 10, 12]
 ZEN2_IO_THREADS = [1, 3, 5, 7, 9, 11, 13, 15]
 ZEN2_RECOMMENDED_THREADS = 7
 
-# Expected RAM breakdown on 14Gi system
-RAM_TOTAL_MB = 14 * 1024  # ~14336
+
+# [B7] Dynamic RAM detection — reconcile with OOMProtector's kernel-truth
+# source (/proc/meminfo). Previously hardcoded 14Gi (RAM_TOTAL_MB = 14336)
+# which undercounted actual 16GB hardware and drifted from the kernel's
+# MemTotal. Reading /proc/meminfo at import time keeps planning aligned with
+# the real system; falls back to the old 14Gi constant when unreadable
+# (e.g., non-Linux or restricted sandbox).
+def _detect_ram_total_mb() -> int:
+    """Read total RAM (MiB) from /proc/meminfo MemTotal (kernel truth).
+
+    Returns the historical 14Gi fallback (14336) if the file is unavailable
+    or unparseable, so behavior is unchanged on unsupported platforms.
+    """
+    try:
+        with open("/proc/meminfo", "r") as f:
+            for line in f:
+                if line.startswith("MemTotal:"):
+                    # Format: "MemTotal:       16359712 kB"
+                    kb = int(line.split()[1])
+                    return kb // 1024
+    except (OSError, ValueError, IndexError):
+        pass
+    return 14 * 1024  # fallback: ~14336 (historical constant)
+
+
+RAM_TOTAL_MB = _detect_ram_total_mb()
 RAM_OS_OVERHEAD_MB = 2000
-RAM_AVAILABLE_AI_MB = RAM_TOTAL_MB - RAM_OS_OVERHEAD_MB  # ~12336
+RAM_AVAILABLE_AI_MB = RAM_TOTAL_MB - RAM_OS_OVERHEAD_MB
 RAM_DRAFT_RESIDENT_MB = 300
 
 # Model RAM with KV cache at various context lengths
