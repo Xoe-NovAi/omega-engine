@@ -294,3 +294,33 @@ The web docs identify Omega's opportunity: **no one has published the integrated
 |---|---|
 | `Web-Gemini-MaKaLi-Hierarchy-Clarification.md` | 1474 lines referencing 26-sphere toroidal architecture, 108-gate framework, Kether/Sophia, PostgreSQL, FAISS, Ubuntu 25.04, "apex/reports-to" hierarchy — all purged per Compendium Part 1 #3 |
 | `Web-Gemini-OMEGA-ENGINE-REFACTORING.md` | References Ubuntu 25.04 (EOL), PostgreSQL, FAISS, 12GB VRAM (actual: 8GB), "Fallback Tolerances" circuit breaker (conflicts with governance) |
+---
+
+## 17. Additional Web Pivot Opportunities (Added 2026-08-07)
+*Captured from deep review of 17 web chatbot exports.*
+
+### G. Security & Isolation
+| Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
+|---|---|---|---|---|---|
+| Inference Worker Isolation | Thread-based | **GAP** | Isolate llama.cpp C-level segfaults via multiprocessing. | `PROVIDER_FABRIC_REFACTOR_MANUAL_v3.md` | `@node P3` |
+| IA2 Replay Resistance | Signature only | **GAP** | Implement 30-min replay window + nonce tracking. | `omega/api/bridge.py` | `@node P4` |
+| Executor/Auditor Gate | Post-execution diff | **GAP** | Pre-execution gate for web-sourced instructions. | `AGENTS.md` | `@kali` |
+
+### H. Context & Voice Optimization
+| Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
+|---|---|---|---|---|---|
+| Headroom Context Compression | Unwired | **GAP** | Compress tool outputs/RAG chunks before prefill (60-95% reduction). | `omega/core/llm.py` | `@node P3` |
+| Lightweight TTS (Piper/Inflect) | ElevenLabs stub | **GAP** | Replace heavy neural TTS with <200MB local TTS to save VRAM. | `OMEGA_ENGINE.md` | `@node P3` |
+
+### I. WAD Architecture & Guidance Sets
+| Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
+|---|---|---|---|---|---|
+| Universal Guidance Set Schema | Hardcoded 42 Ideals | **GAP** | Engine provides mechanism (loading, review, logging). WAD provides content. | `GUIDANCE_SET_SCHEMA.md` | `@maat` |
+| Defeasibility Logging | Missing | **GAP** | Entities can consciously deviate from guidance with logged rationale. | `omega/telemetry/logger.py` | `@node P8` |
+
+### J. Advanced Memory Tuning
+| Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
+|---|---|---|---|---|---|
+| 16GB zRAM (zstd + multi-comp) | 8GB zRAM | **GAP** | Expand to 16GB, enable idle/huge recompress + writeback. | `SYSTEMD_DEPLOYMENT_GUIDE.md` | `@node P1` |
+| Qdrant TurboQuant BITS4 | Unspecified | **GAP** | Default to BITS4 for recall, BITS2 for aggressive compression. | `omega/memory/qdrant_adapter.py` | `@lilith` |
+| MoE Expert Offload (`--n-cpu-moe`) | Unconfigured | **GAP** | Use mmap + zRAM + NVMe swap for 30B-70B+ models. | `omega/core/llm.py` | `@node P3` |
