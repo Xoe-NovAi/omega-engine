@@ -1,0 +1,38 @@
+generated_at: "2026-08-07T19:15:55.008102"
+os_distro: "ubuntu"
+os_release: "25.10"
+kernel: "6.17.0-41-generic"
+cpu:
+  vendor: "amd"
+  model: "AMD Ryzen 7 5700U with Radeon Graphics"
+  architecture: "x86_64"
+  physical_cores: 8
+  logical_threads: 16
+  l3_cache_kb: 8192
+  compute_cores:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+  io_threads:
+    - 7
+  recommended_threads: 7
+  numa_single_die: True
+  microarch: "zen2"
+memory:
+  total_mb: 14793
+  available_mb: 10305
+  uma_carveout_mb: 8192
+  uma_vram_mb: 512
+  uma_gtt_mb: 7936
+  swap_zram_mb: 16384
+  nvme_swap_mb: 32768
+gpu:
+  present: True
+  vendor: "amd"
+  name: "integrated (Renoir)"
+  vram_mb: 512
+  vulkan_supported: True
