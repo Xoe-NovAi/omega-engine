@@ -1,3 +1,5 @@
+> **SUPERSEDED**: This document is preserved for historical context. For current sprint control, see `data/coordination/ACTIVE_SPRINT.json` and `data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md`.
+
 ---
 schema_version: "1.0"
 document_type: "sprint_plan"

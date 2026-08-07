@@ -1,7 +1,7 @@
 # Sprint Plan Index: Phase D Gate (Hardened v1.1)
 - Sprint Goal: Honest Phase D entry — probe-backed P0s, no phantom capacity
 - Read first: docs/sprints/current/AGENT_SPRINT_CARD.md
-- Execution plan: docs/sprints/current/EXECUTION_PLAN_20260725.md (v1.1)
+- Execution plan: docs/archive/sprints/EXECUTION_PLAN_20260725.md (v1.1)
 - Critical residual gaps: docs/research/R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md
 - Prior research closure (historical): docs/sprints/current/KNOWLEDGE_GAP_CLOSURE.md
 - P0 now: C-0.5 hook register, Vault dirty-tree land/freeze, W-1 SOCKS live, fail-closed gate

@@ -13,9 +13,8 @@
 
 | File | Status |
 |------|--------|
-| `EXECUTION_PLAN_20260725.md` | 📦 **SUPERSEDED** for sprint control (banner at top) |
-| `EXECUTION_PLAN_20260725.md.bak` | Backup — ignore |
+| `docs/archive/sprints/EXECUTION_PLAN_20260725.md` | 📦 **SUPERSEDED** for sprint control (banner at top) |
 | `AGENT_SPRINT_CARD.md` | Historical card — verify against SESSION_ANCHOR before use |
 | `KNOWLEDGE_GAP_*` / `llms*` | Supporting artifacts; may be stale |
 
-Do **not** start work from `EXECUTION_PLAN_20260725.md` as if it were active.
+Do **not** start work from the archived `EXECUTION_PLAN_20260725.md` as if it were active.

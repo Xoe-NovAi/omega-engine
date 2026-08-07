@@ -8,7 +8,7 @@
 ---
 
 > **⚠️ RESEARCH-VS-EXECUTION CORRECTION (2026-07-25):** This document correctly reports **research** closure for 5 critical domains. It does **not** assert execution closure.  
-> Always cross-reference `docs/sprints/current/EXECUTION_PLAN_20260725.md` §0 (probe-backed status) before acting on any claim.  
+> Always cross-reference `docs/archive/sprints/EXECUTION_PLAN_20260725.md` §0 (probe-backed status) before acting on any claim.  
 > See `R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md` §1 for residual execution gaps (SG-01..10).
 
 ## §1 Summary — What We Researched
@@ -206,7 +206,7 @@ Previous docs assumed "Zen 3-like performance." This is a correction — but it 
 > **Correction**: §§1–8 closed **research** questions. They did **not** prove execution closure.
 > Full audit: `docs/research/R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md`
 > Live ops card: `docs/sprints/current/AGENT_SPRINT_CARD.md`
-> Plan: `docs/sprints/current/EXECUTION_PLAN_20260725.md` v1.1
+> Plan: `docs/archive/sprints/EXECUTION_PLAN_20260725.md` v1.1
 
 | Gap | Name | Research | Execution | Owner |
 |-----|------|----------|-----------|-------|

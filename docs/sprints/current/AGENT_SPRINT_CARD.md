@@ -1,7 +1,7 @@
 # 🃏 Agent Sprint Card — Phase D Gate (READ FIRST)
 **AP Token**: `AP-AGENT-SPRINT-CARD-v1.1.0`  
 **LAST_VERIFIED**: 2026-07-25T21:35Z  
-**Full plan**: `docs/sprints/current/EXECUTION_PLAN_20260725.md`  
+**Full plan**: `data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md`  
 **Gap research**: `docs/research/R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md`
 
 > **Purpose**: One screen of truth so agents do not re-open closed research or thrash on stale tracks.
