@@ -10,7 +10,7 @@
 |---|------|-----------|--------|
 | **M1** | AnyIO Absolute | No `asyncio`. Wrap blocking I/O in `anyio.to_thread.run_sync()`. | ✅ |
 | **M2** | Engine-Stack Firewall | `src/omega/` (core) ≠ `config/wads/` (stacks). No stack logic in core. | ✅ |
-| **M3** | Iris Constant | Iris = messenger bridge, NOT a Pillar Keeper (P1-P10). | ✅ |
+| **M3** | Iris Constant | Iris = messenger bridge, NOT a Node (N1-N10). | ✅ |
 | **M4** | Sequentiality | Plan → Verify → Execute. No cowboy coding. | ✅ |
 | **M5** | Gnosis Preservation | L1→L2→L3 → `proposed_lessons.yaml`. No session closes without distillation. | ❌ 0/10 pillars |
 | **M6** | Podman Sovereignty | `UserNS=keep-id` + `User=1000` for Quadlets. No `:U` on shared volumes. | ✅ |

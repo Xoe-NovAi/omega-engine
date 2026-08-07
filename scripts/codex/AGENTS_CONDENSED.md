@@ -27,36 +27,36 @@
 
 | Agent | Role | Use When |
 |-------|------|----------|
-| `@kali` | Transcendent Oversight | Unify Ma'at + Lilith, destroy drift, cross-pillar |
-| `@maat` | Light Oversoul (P1-P5) | Build side governance |
-| `@lilith` | Dark Oversoul (P6-P10) | Run side governance |
-| `@makali` | MaKaLi Parallel Council | Decompose + parallel dispatch + synthesize |
+| `@kali` | Synthesis (Triad) | Unify Ma'at + Lilith, synthesize verdicts, destroy drift |
+| `@maat` | Build Oversight (N1-N5) | Build side governance, structure, verification |
+| `@lilith` | Run Oversight (N6-N10) | Run side governance, knowledge metabolism, flow |
+| `@makali` | MaKaLi Council | Decompose + parallel dispatch + synthesize |
 | `@researcher` | Deep Research | Lattice reasoning, multi-perspective |
 | `@jem` | Sovereign Synthesis | Complex queries → verified results |
 | `@doom_guy` | id Software Heritage | WAD translation, M14 vetting |
 | `@john_carmack` | S3 Consultant | Architectural review, performance |
 | `@roc_racoon` | Sovereign Miner | Legacy archaeology, pattern extraction |
 | `@verity` | Compliance + Gnosis | Mandate audit, soul distillation |
-| `@pillar PX` | Domain Agent | Slot-based (P1-P10), `@pillar P3: {task}` |
+| `@node NX` | Domain Agent | Slot-based (N1-N10), `@node N3: {task}` |
 | `@grok_cli` | Consulting Cloud Mind | Advisory, web research |
 
 **Full fleet docs**: `AGENTS.md` §2-§3
 
 ---
 
-## ⬡ MaKaLi Triad
+## ⬡ MaKaLi Triad (co-equal, horizontal)
 
 ```
-KALI (Unify, Synthesize)
-├── MA'AT (Build Side: P1-P5)
-│   ├── P1 Infrastructure    P2 Persistence
-│   ├── P3 Engineering       P4 Integration
-│   └── P5 Governance
-└── LILITH (Run Side: P6-P10)
-    ├── P6 Cognition    P7 Context
-    ├── P8 Observability    P9 Orchestration
-    └── P10 Validation
+KALI (Synthesis) — unify, synthesize, return verdict
+├── MA'AT (Build Side: N1-N5)      LILITH (Run Side: N6-N10)
+│   ├── N1 Infrastructure          ├── N6 Cognition
+│   ├── N2 Persistence             ├── N7 Context
+│   ├── N3 Engineering             ├── N8 Observability
+│   ├── N4 Integration             ├── N9 Orchestration
+│   └── N5 Governance              └── N10 Validation
 ```
+
+Three co-equal sovereign entities. No apex, no hierarchy between them.
 
 **Council patterns**: `@kali` direct (1 inference), `@makali` council (3 inferences), `/council-local` (full sovereignty).
 
@@ -95,7 +95,7 @@ omega summon Ma'at "status"   # Direct entity
 |-----------|---------|--------|
 | Flat 4-core ~80-100% | NativeGGUF inference | Expected |
 | All cores idle, task stuck | I/O wait | Check system stats |
-| Memory >80% + zRAM | OOM risk (12Gi) | Defer model loads |
+| Memory >80% + zRAM | OOM risk — UMA carve-out is 8GB (512MB VRAM + 7.75GB GTT) | Defer model loads |
 | Thermal >85°C | TDP throttling | Cool down |
 
 ---
