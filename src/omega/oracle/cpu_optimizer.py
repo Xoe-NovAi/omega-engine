@@ -65,11 +65,17 @@ logger = logging.getLogger(__name__)
 # ── Zen 2 Constants ──────────────────────────────────────────────────────
 ZEN2_L1_CACHE = 32  # KB per core
 ZEN2_L2_CACHE = 512  # KB per core
-ZEN2_L3_CACHE = 8192  # KB shared (2x 4MB CCX)
+ZEN2_L3_CACHE = 8192  # KB shared (single CCX on 5700U)
 ZEN2_CORES = 8
 ZEN2_THREADS = 16
-ZEN2_COMPUTE_CORES = [0, 2, 4, 6, 8, 10, 12]
-ZEN2_IO_THREADS = [1, 3, 5, 7, 9, 11, 13, 15]
+# [B6] Physical-core pinning list. Ryzen 7 5700U (Renoir) is a MONOLITHIC
+# single-CCX die: 8 physical cores (0-7), SMT siblings at 8-15. The old
+# constant ZEN2_COMPUTE_CORES=[0,2,4,6,8,10,12] mixed physical cores with
+# SMT siblings and had 7 entries vs 8 in ZEN2_IO_THREADS — an inconsistent
+# model of a chiplet topology this CPU doesn't have. Use the 7 physical
+# cores (leaving core 7 free for OS/Draft) for compute pinning.
+ZEN2_COMPUTE_CORES = [0, 1, 2, 3, 4, 5, 6]
+ZEN2_IO_THREADS = [7]
 ZEN2_RECOMMENDED_THREADS = 7
 
 

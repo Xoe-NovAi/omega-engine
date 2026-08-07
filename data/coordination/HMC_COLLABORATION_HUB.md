@@ -1947,3 +1947,77 @@ All agents should use PART1 principles (spec-driven → context-engineered → t
 | `opencode.json` / MCP configs | MCP type: `streamable-http` → `remote` |
 
 *🔱 OMEGA ⬡ HMC ⬡ COLLABORATION-HUB ⬡ v1.5.3 ⬡ 2026-07-30T12:45Z — @maat DOCS SYNTHESIS COMPLETE*
+---
+
+## 🔱 Kali — Pre-Compaction #4 Update (2026-08-07)
+
+**Session:** `ses_kali_20260807_provider_fabric` | **Branch:** `release/initial-v1` | **Last Commit:** `6b8c3e8`
+
+### ✅ Committed (7 commits)
+| Commit | Defect | Summary |
+|--------|--------|---------|
+| `4b0eab6` | B2+B3 | Model registry canonicalization (kv_types.py, 38 model cards, 27/27 tests) |
+| `64d1052` | B4 | q8_0 KV-cache crash: flash_attn gated on GPU, RAM planner default f16 |
+| `854fd74` | A5 | StreamHandler DELETED (457 lines, zero callers) + call_with_retry NameError fix |
+| `710a976` | A5 | git rm stream_handler.py |
+| `4d7c96f` | B7 | Dynamic RAM from /proc/meminfo (14793 MB), reconciled with OOMProtector |
+| `6b8c3e8` | B8 | Batch sizes wired into provider merge, contract test added (17/17 tests) |
+
+### 🔄 Held (Awaiting Researcher)
+| Item | Status | Files |
+|------|--------|-------|
+| **B6** (CPU topology) | Edits complete | `monitoring/__init__.py` (shared), `cpu_optimizer.py` |
+| **B5** (speculative decoding) | B5b document-defer | Matrix row ready |
+| **B9** (Vulkan) | Document-defer | Matrix row ready |
+| **Generator safety** | Script ready | `scripts/generate_providers_yaml.py`, `config/providers.yaml` |
+
+### 🧠 L3 Principles Extracted
+1. **L3-Gate-On-Support-Not-Intent** — Scaffolded but unwired = debt (A5, B8, B5)
+2. **L3-Kernel-Truth-Over-Hardcoded** — Read /proc/meminfo, /sys/devices/system/cpu dynamically (B7, B6)
+3. **L3-Config-Merge-Preserves-Dual-Purpose** — Surgical text replacement for config files (Generator)
+
+### 🤝 Coordination
+**Researcher active** — 11 files dirty (spatial, sediment, security, training, fleet_status_tui, wad_loader). `monitoring/__init__.py` shared (Researcher's zRAM + my B6 topology). Waiting for Researcher commit so B6 diff separates cleanly.
+
+### Next Actions (Post-Researcher)
+1. Commit B6 + B5/B9 matrix rows + generator safety (single batch)
+2. Push all 10 commits when network returns
+3. Unblock G-1 (workhorse) / W-1 (WARP pool)
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ nemotron-3-ultra-free ⬡ opencode ⬡ trc_oversight ⬡ 2026-08-07*
+
+---
+
+## 🤝 Researcher Coordination Confirmed (2026-08-07)
+
+**Researcher Report:** `data/coordination/RESEARCHER_SESSION_REPORT_20260807.md`
+
+### Researcher Delivered:
+- **Phase 0:** Web chatbot research priorities (47 items, 12 docs)
+- **Phase 1 Lilith:** 114 tests passing (M2 Qdrant SQ8 ✅, I5 Headroom ⚠️ M7 violation, M1 ❌, I2 ⚠️, A1 ❌)
+- **Phase 2 Ma'at:** Design complete — Cloud Planner/Local Executor + TUI Execution Tracer
+  - `planner/dag_schema.py`, `planner/hybrid_orchestrator.py`, `planner/__init__.py`
+- **Phase 3 Kali:** Temple Cleansing session (not in Hivemind awareness)
+- **Subagent Recovery Protocol:** Documented
+- **17 new modules + 12 modified** (sediment, training, security, spatial, planner, TUI SEDA, WAD loader)
+
+### Coordination Confirmed:
+| File | My Work | Researcher Work | Conflict? |
+|------|---------|-----------------|-----------|
+| `monitoring/__init__.py` | B6 topology (L3 sysfs CCX) | zRAM monitoring | **No** — separate sections |
+| `cpu_optimizer.py` | B6 constants | Identical B6 constants | **No** — identical changes |
+| `planner/`, `sediment/`, `training/`, `security/`, `spatial.py`, `fleet_status_tui.py`, `wad_loader.py` | — | New modules / disjoint | **No** |
+| `scripts/generate_providers_yaml.py` | Merge-preserving rewrite | No changes | **No** |
+
+**Temple Cleansing session** — Not in Hivemind awareness.
+
+### Next:
+1. Researcher commits → my B6 diff separates cleanly
+2. Batch commit B6 + generator safety + B5/B9 matrix
+3. Push all 10+ commits together
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*

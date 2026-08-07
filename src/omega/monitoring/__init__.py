@@ -180,18 +180,61 @@ class HardwareMonitor:
         except (OSError, RuntimeError) as e:
             logger.warning("Failed to read L3 topology: %s", e)
 
+        # [B6] Derive CCX groups from the ACTUAL L3 layout, not hardcoded
+        # 2-CCX split. Ryzen 7 5700U (Renoir) is a MONOLITHIC single-CCX die:
+        # all 8 physical cores share one 8MB L3 (shared_cpu_list "0-7"),
+        # with SMT siblings in "8-15". The previous hardcoded
+        # ccx0=[0,1,2,3]/ccx1=[4,5,6,7] falsely modeled a 2x4-core chiplet
+        # (like desktop Zen 2), which is factually wrong for this mobile chip.
+        # Compute physical groups (logical ids < physical core count) from
+        # the detected L3 groups when available.
+        l3_groups = sorted(l3_indices) if l3_indices else []
+        if l3_groups:
+            ccx_groups: List[List[int]] = []
+            for group in l3_groups:
+                try:
+                    if "-" in group:
+                        lo, hi = group.split("-")
+                        ccx_groups.append(list(range(int(lo), int(hi) + 1)))
+                    else:
+                        ccx_groups.append([int(group)])
+                except ValueError:
+                    continue
+            # Physical CCX cores = logical ids below physical core count
+            phys_ccx = [
+                [c for c in g if c < total_cores] for g in ccx_groups
+            ]
+            # Drop empty groups; if any remain, use them, else fall back
+            phys_ccx = [g for g in phys_ccx if g]
+            if phys_ccx:
+                ccx0_cores = phys_ccx[0]
+                ccx1_cores = phys_ccx[1] if len(phys_ccx) > 1 else []
+                l3_per_instance = 8 // len(phys_ccx)
+            else:
+                ccx0_cores = list(range(min(total_cores, 4)))
+                ccx1_cores = (
+                    list(range(4, total_cores)) if total_cores > 4 else []
+                )
+                l3_per_instance = 4
+        else:
+            # No L3 sysfs info: single-CCX assumption for monolithic dies
+            ccx0_cores = list(range(total_cores))
+            ccx1_cores = []
+            l3_groups = [f"0-{total_cores - 1}"]
+            l3_per_instance = 8
+
         return {
             "model": "AMD Ryzen 7 5700U (Zen 2)",
             "physical_cores": total_cores,
             "logical_threads": total_threads,
             "smt_enabled": total_threads > total_cores,
             "l3_cache_mb": 8,
-            "l3_instances": len(l3_indices) if l3_indices else 2,
-            "l3_per_instance_mb": 8 // max(len(l3_indices), 1) if l3_indices else 4,
+            "l3_instances": len(l3_groups),
+            "l3_per_instance_mb": l3_per_instance,
             "l3_is_victim_cache": True,
-            "l3_shared_groups": sorted(l3_indices) if l3_indices else ["0-3", "8-11"],
-            "ccx0_cores": [0, 1, 2, 3],
-            "ccx1_cores": [4, 5, 6, 7],
+            "l3_shared_groups": l3_groups,
+            "ccx0_cores": ccx0_cores,
+            "ccx1_cores": ccx1_cores,
         }
 
 
@@ -334,6 +377,10 @@ class HardwareMonitor:
             "risk_level": risk,
             "deficit_mb": round(max(0, oom_risk_mb)),   # positive = how much more we need
         }
+
+        # zRAM stats (OBS1 — Swap/zRAM Monitoring)
+        result["zram"] = self.get_zram_stats()
+
         return result
 
     def get_memory_pressure(self) -> float:
@@ -353,6 +400,203 @@ class HardwareMonitor:
     def get_oom_risk_level(self) -> str:
         """Quick OOM risk check: SAFE, LOW, MODERATE, HIGH, CRITICAL."""
         return self.get_memory_status()["oom_risk"]["risk_level"]
+
+    # ── zRAM Monitoring ─────────────────────────────────────────────────────
+
+    def get_zram_stats(self) -> Dict:
+        """Get zRAM compression statistics.
+
+        Reads from /sys/block/zram* to compute:
+        - Number of zRAM devices
+        - Total memory used (compressed)
+        - Total memory decompressed (original size)
+        - Compression ratio (original / compressed)
+        - I/O statistics (reads, writes, failures)
+
+        zRAM is a compressed RAM block device that provides
+        transparent compression for swap and memory pages.
+        On the 5700U with 12GB RAM, zRAM is critical for
+        extending effective memory under load.
+
+        Returns:
+            Dict with zram stats, or {"available": False} if no zRAM.
+        """
+        result = {"available": False, "devices": []}
+
+        try:
+            zram_path = Path("/sys/block")
+            if not zram_path.exists():
+                return result
+
+            zram_devices = sorted(zram_path.glob("zram*"))
+            if not zram_devices:
+                return result
+
+            total_compressed = 0
+            total_original = 0
+            total_reads = 0
+            total_writes = 0
+            total_failures = 0
+
+            for dev in zram_devices:
+                dev_name = dev.name
+                dev_stats = {"device": dev_name}
+
+                # Read mm_stat (compressed size, original size, etc.)
+                mm_stat_path = dev / "mm_stat"
+                if mm_stat_path.exists():
+                    try:
+                        mm_data = mm_stat_path.read_text().strip()
+                        parts = mm_data.split()
+                        # mm_stat format:
+                        # orig_data_size compr_data_size mem_used_total
+                        # mem_limit mem_used_max same_pages pages_compacted
+                        # huge_pages
+                        if len(parts) >= 3:
+                            orig_size = int(parts[0])
+                            compr_size = int(parts[1])
+                            mem_used = int(parts[2])
+
+                            dev_stats["original_bytes"] = orig_size
+                            dev_stats["compressed_bytes"] = compr_size
+                            dev_stats["mem_used_bytes"] = mem_used
+
+                            total_original += orig_size
+                            total_compressed += compr_size
+
+                            if compr_size > 0:
+                                dev_stats["compression_ratio"] = round(
+                                    orig_size / compr_size, 2
+                                )
+                            else:
+                                dev_stats["compression_ratio"] = 0.0
+                    except (ValueError, OSError) as e:
+                        dev_stats["error"] = str(e)
+
+                # Read io_stat (read/write operations)
+                io_stat_path = dev / "io_stat"
+
+                if io_stat_path.exists():
+                    try:
+                        io_data = io_stat_path.read_text().strip()
+                        for line in io_data.splitlines():
+                            if line.startswith("reads"):
+                                total_reads += int(line.split()[3])
+                                dev_stats["reads"] = int(line.split()[3])
+                            elif line.startswith("writes"):
+                                total_writes += int(line.split()[3])
+                                dev_stats["writes"] = int(line.split()[3])
+                            elif line.startswith("read_fail"):
+                                total_failures += int(line.split()[3])
+                                dev_stats["read_failures"] = int(line.split()[3])
+                            elif line.startswith("write_fail"):
+                                total_failures += int(line.split()[3])
+                                dev_stats["write_failures"] = int(line.split()[3])
+                    except (ValueError, OSError) as e:
+                        dev_stats["io_error"] = str(e)
+
+                # Read disksize (total disk size in bytes)
+                disksize_path = dev / "disksize"
+                if disksize_path.exists():
+                    try:
+                        dev_stats["disksize_bytes"] = int(disksize_path.read_text().strip())
+                    except (ValueError, OSError):
+                        pass
+
+                result["devices"].append(dev_stats)
+
+            result["available"] = True
+            result["total_original_mb"] = round(total_original / 1048576, 1)
+            result["total_compressed_mb"] = round(total_compressed / 1048576, 1)
+            result["total_reads"] = total_reads
+            result["total_writes"] = total_writes
+            result["total_failures"] = total_failures
+
+            if total_compressed > 0:
+                result["overall_compression_ratio"] = round(
+                    total_original / total_compressed, 2
+                )
+            else:
+                result["overall_compression_ratio"] = 0.0
+
+        except Exception as e:
+            logger.warning("Failed to read zRAM stats: %s", e)
+            result["error"] = str(e)
+
+        return result
+
+    def get_swap_zram_pressure(self) -> Dict:
+        """Get combined swap + zRAM memory pressure analysis.
+
+        Computes a unified pressure score that accounts for:
+        - Traditional swap usage (disk-backed, slow)
+        - zRAM usage (RAM-backed, compressed, fast)
+        - Effective memory savings from zRAM compression
+
+        On the 5700U with 12GB RAM, zRAM can provide 2-3x effective
+        memory capacity through compression, making it a critical
+        component of the OOM protection strategy.
+
+        Returns:
+            Dict with swap/zRAM pressure metrics.
+        """
+        mem_status = self.get_memory_status()
+        zram_stats = self.get_zram_stats()
+
+        swap_total_mb = mem_status.get("swap_total_mb", 0)
+        swap_used_mb = mem_status.get("swap_used_mb", 0)
+        swap_percent = mem_status.get("swap_percent", 0)
+
+        zram_available = zram_stats.get("available", False)
+        zram_compressed_mb = zram_stats.get("total_compressed_mb", 0)
+        zram_original_mb = zram_stats.get("total_original_mb", 0)
+        zram_ratio = zram_stats.get("overall_compression_ratio", 0.0)
+
+        # Effective swap: traditional swap + zRAM compressed capacity
+        # zRAM's effective capacity = original_mb (what it can hold uncompressed)
+        # but only uses compressed_mb of actual RAM
+        effective_swap_total = swap_total_mb + zram_original_mb
+        effective_swap_used = swap_used_mb + zram_compressed_mb
+
+        # Compression savings: how much RAM zRAM saved
+        compression_savings_mb = zram_original_mb - zram_compressed_mb
+
+        # Pressure score: 0.0 (no pressure) to 1.0 (critical)
+        # Weighted: swap usage (0.6) + zRAM fill ratio (0.4)
+        swap_pressure = min(1.0, swap_percent / 100.0) if swap_total_mb > 0 else 0.0
+
+        if zram_available and zram_original_mb > 0:
+            # zRAM fill ratio: how full is the compressed pool
+            # Use compressed_bytes / (disksize or a reasonable cap)
+            zram_fill = min(1.0, zram_compressed_mb / max(zram_original_mb, 1))
+        else:
+            zram_fill = 0.0
+
+        pressure = min(1.0, swap_pressure * 0.6 + zram_fill * 0.4)
+
+        return {
+            "swap_total_mb": swap_total_mb,
+            "swap_used_mb": swap_used_mb,
+            "swap_percent": swap_percent,
+            "zram_available": zram_available,
+            "zram_compressed_mb": zram_compressed_mb,
+            "zram_original_mb": zram_original_mb,
+            "zram_compression_ratio": zram_ratio,
+            "zram_compression_savings_mb": round(compression_savings_mb, 1),
+            "effective_swap_total_mb": round(effective_swap_total, 1),
+            "effective_swap_used_mb": round(effective_swap_used, 1),
+            "effective_swap_percent": round(
+                (effective_swap_used / max(effective_swap_total, 1)) * 100, 1
+            ) if effective_swap_total > 0 else 0,
+            "pressure_score": round(pressure, 3),
+            "pressure_level": (
+                "CRITICAL" if pressure > 0.8
+                else "HIGH" if pressure > 0.6
+                else "MODERATE" if pressure > 0.4
+                else "LOW" if pressure > 0.2
+                else "SAFE"
+            ),
+        }
 
     # ── Thermal ─────────────────────────────────────────────────────────────
 
@@ -455,6 +699,8 @@ class HardwareMonitor:
             "memory": mem,
             "memory_pressure": self.get_memory_pressure(),
             "oom_risk": mem["oom_risk"]["risk_level"],
+            "zram": mem.get("zram", {}),
+            "swap_zram_pressure": self.get_swap_zram_pressure(),
             "temperatures": temps,
             "threads": self.get_process_thread_count(),
             "disk_io": self.get_disk_io(),
@@ -472,6 +718,10 @@ class HardwareMonitor:
             ),
             "swap_delta_mb": round(
                 after.get("memory", {}).get("swap_used_mb", 0) - before.get("memory", {}).get("swap_used_mb", 0), 1
+            ),
+            "zram_compressed_delta_mb": round(
+                after.get("memory", {}).get("zram", {}).get("total_compressed_mb", 0)
+                - before.get("memory", {}).get("zram", {}).get("total_compressed_mb", 0), 1
             ),
             "temperature_delta": round(
                 max((t["temp"] for t in after.get("temperatures", {}).get("celsius", [])), default=0)
@@ -507,6 +757,11 @@ def main_cli():
         print(f"Memory: {mem['used_mb']}/{mem['total_mb']}MB used ({mem['percent']}%)")
         print(f"Available: {mem['available_mb']}MB")
         print(f"Swap: {mem['swap_used_mb']}/{mem['swap_total_mb']}MB ({mem['swap_percent']}%)")
+        zram = mem.get("zram", {})
+        if zram.get("available"):
+            print(f"zRAM: {zram.get('total_compressed_mb', 0):.0f}MB compressed / {zram.get('total_original_mb', 0):.0f}MB original (ratio: {zram.get('overall_compression_ratio', 0):.1f}x)")
+        else:
+            print("zRAM: not available")
         return
 
     if args.watch:
@@ -569,6 +824,16 @@ def _print_terminal(stats: Dict):
     print(f"   Swap: {mem.get('swap_used_mb', 0):.0f}/{mem.get('swap_total_mb', 0):.0f}MB ({mem.get('swap_percent', 0):.1f}%)")
     print(f"   OOM Risk: {stats.get('oom_risk', 'UNKNOWN')}")
     print(f"   Memory Pressure: {stats.get('memory_pressure', 0):.3f}")
+
+    # zRAM stats (OBS1)
+    zram = mem.get("zram", {})
+    if zram.get("available"):
+        print(f"   zRAM: {zram.get('total_compressed_mb', 0):.0f}MB compressed / {zram.get('total_original_mb', 0):.0f}MB original (ratio: {zram.get('overall_compression_ratio', 0):.1f}x)")
+
+    # Swap+zRAM pressure
+    szp = stats.get("swap_zram_pressure", {})
+    if szp:
+        print(f"   Swap+zRAM Pressure: {szp.get('pressure_level', 'UNKNOWN')} (score: {szp.get('pressure_score', 0):.3f})")
 
     print(f"\n🧵 Threads: Python processes total threads: {stats.get('threads', {}).get('total_python_threads', 0)}")
 

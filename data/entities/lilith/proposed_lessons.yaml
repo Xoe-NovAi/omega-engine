@@ -1,0 +1,213 @@
+# 🔱 LILITH — Proposed Lessons (Blind Staging)
+**Entity**: lilith
+**Session**: ses_research_phase1_lilith_20260807
+**Date**: 2026-08-07
+**Status**: ACTIVE — Phase 1 benchmarking complete
+
+---
+
+# Session: ses_research_phase1_lilith_20260807
+# Date: 2026-08-07
+# Phase: Phase 1 Benchmarking — 5 Implemented Research Priority Items
+
+  - id: "lilith-20260807-001"
+    tier: L1
+    category: "qdrant_sq8_benchmark"
+    narrative: |
+      Benchmarked Qdrant SQ8 (Scalar INT8 Quantization) on 5700U + Vega 8 hardware.
+      Created test collection with 500 vectors (768-dim, COSINE distance), 5 clusters
+      of 100 vectors each. Measured recall@10 with and without SQ8 quantization.
+      Results: recall@10 = 1.0 both with and without SQ8. Memory reduction: 50.0%
+      (FP16: 1536 bytes/vec → INT8: 768 bytes/vec). Both targets met (recall >= 0.95,
+      memory <= 50%). Existing collection 'omega_memory' has 57 points with SQ8 active.
+      Qdrant v1.17.1 running in Podman container.
+
+  - id: "lilith-20260807-002"
+    tier: L2
+    category: "qdrant_sq8_benchmark"
+    insight: |
+      SQ8 INT8 quantization on 768-dim COSINE vectors achieves perfect recall@10 (1.0)
+      at exactly 50% memory reduction. The quantization is already implemented at
+      vector_adapters.py:217-221 with ScalarType.INT8 and always_ram=True. No tuning
+      needed for current corpus size (57 points). The 50% memory reduction is a direct
+      consequence of INT8 being 1 byte vs FP16 being 2 bytes per dimension — a fixed
+      ratio, not an approximation. This means SQ8 is a free win for memory-constrained
+      deployments (12GB RAM ceiling on 5700U).
+
+  - id: "lilith-20260807-003"
+    tier: L3
+    category: "qdrant_sq8_benchmark"
+    principle: |
+      "Quantized vector search can maintain full recall at exactly 50% memory cost."
+      For 768-dim COSINE vectors, INT8 quantization (1 byte/dim) vs FP16 (2 bytes/dim)
+      yields a fixed 50% memory reduction with no recall degradation — because cosine
+      similarity is scale-invariant and INT8 preserves the relative ordering of dot
+      products. This generalizes: any memory-constrained vector store on CPU-only
+      hardware should default to INT8 quantization. The 50% ratio is not an approximation
+      but a structural property of the FP16→INT8 transition. Sovereign systems with
+      RAM ceilings (12GB on 5700U) must exploit this — there is no downside.
+
+  - id: "lilith-20260807-004"
+    tier: L1
+    category: "headroom_m7_violation"
+    narrative: |
+      Benchmarked HeadroomMiddleware token savings on 100 test prompts.
+      headroom-ai 0.29.0 is installed and integrated at oracle/middleware/headroom.py.
+      However, headroom.compress() defaults to model='claude-sonnet-4-5-20250929'
+      (cloud model). Local-only operation (SmartCrusher with EstimatingTokenCounter)
+      returns strategy='passthrough' (0% savings). The middleware does NOT configure
+      headroom for local-only operation. Token savings target (>=15%) cannot be
+      achieved locally. The middleware has a pass-through fallback when headroom-ai
+      is not installed, but headroom IS installed — it just cannot compress without
+      network access to the default cloud model.
+
+  - id: "lilith-20260807-005"
+    tier: L2
+    category: "headroom_m7_violation"
+    insight: |
+      The HeadroomMiddleware integrates headroom-ai but violates M7 (Local-First) by
+      defaulting to a cloud model. The middleware calls headroom.compress(messages)
+      without specifying a local model or optimize=False. When headroom-ai is installed
+      but the cloud model is unreachable (no network), the compress function fails
+      silently and returns original messages — the pass-through fallback only triggers
+      when headroom-ai is NOT installed, not when it can't reach the cloud. This is a
+      subtle but critical distinction: the middleware appears to work but produces zero
+      compression. The EstimatingTokenCounter (local-only) is available but SmartCrusher
+      still returns passthrough — the compression pipeline requires an LLM for lossy
+      summarization, which is not available locally.
+
+  - id: "lilith-20260807-006"
+    tier: L3
+    category: "headroom_m7_violation"
+    principle: |
+      "Local-first middleware must not default to cloud models — fail closed, not open."
+      When a middleware integration has a local-only fallback path, the default
+      configuration must use it. Defaulting to a cloud model creates a silent failure
+      mode: the system appears functional but produces zero benefit when the cloud is
+      unreachable. A sovereign middleware must either (a) configure local-only operation
+      by default, or (b) raise an error when the configured backend is unavailable.
+      Pass-through fallback should only apply when the library is absent, not when it
+      cannot reach its default cloud endpoint. This generalizes to all middleware
+      integrations: the default must be the most sovereign option available.
+
+  - id: "lilith-20260807-007"
+    tier: L1
+    category: "dual_branch_scoring_absent"
+    narrative: |
+      Validated the claimed dual-branch memory scoring equation (novelty×retention×
+      momentum×coherence×decay) against the codebase. src/omega/memory/scoring.py
+      does NOT exist. The equation is NOT implemented anywhere in the memory module.
+      The actual implementation in recall.py uses power-law decay:
+      decayed_score = base_quality * (1 + age_days)**(-decay_alpha).
+      Quality signals: message length, technical content, questions, recency bias.
+      Components found: retention (True), momentum (True via recency), decay (True).
+      Components missing: novelty (False), coherence (False). Consolidation agent
+      (SleepTimeAgent) exists at block_tools.py:440 but no HDBSCAN clustering.
+
+  - id: "lilith-20260807-008"
+    tier: L2
+    category: "dual_branch_scoring_absent"
+    insight: |
+      The research priority M1 claims a dual-branch scoring equation that does not
+      exist in the codebase. The actual memory scoring is single-branch: base_quality
+      (heuristic: length + technical content + questions + recency) × power-law decay.
+      The claimed components (novelty, coherence) are absent. This is not a bug —
+      it's an aspirational feature that was never implemented. The research priorities
+      document correctly classifies M1 as 🔴 ASPIRATIONAL. The gap between claimed
+      and actual implementation is a documentation accuracy issue: research priorities
+      must be cross-referenced against actual code, not assumed from design documents.
+
+  - id: "lilith-20260807-009"
+    tier: L3
+    category: "dual_branch_scoring_absent"
+    principle: |
+      "Aspirational equations must be validated against actual code, not design documents."
+      Research priorities that claim an equation or algorithm exists must be verified
+      by searching the codebase. The gap between "designed" and "implemented" is a
+      documentation accuracy failure. When a research priority claims a scoring equation
+      (novelty×retention×momentum×coherence×decay), the first validation step is to
+      grep the codebase for each component. If components are missing, the priority
+      is aspirational, not implemented. This generalizes: any research priority that
+      claims an implementation exists must be treated as suspect until verified by
+      code inspection — design documents are plans, not proof.
+
+  - id: "lilith-20260807-010"
+    tier: L1
+    category: "speculative_decoding_partial"
+    narrative: |
+      Benchmarked speculative decoding draft pairing. SpeculativeDecodeConfig exists
+      at cpu_optimizer.py:149-163 with draft_model='qwen3-1.7b', draft_type='ngram',
+      target_acceptance_rate=0.6, min_draft_tokens=1, max_draft_tokens=5. ModelGateway
+      exposes config at line 504. Acceptance tracking works: tested with 4 attempts
+      (3 accepted) → 73.29% acceptance rate, suggested spec length = 3. Capability
+      matrix has mtp_drafter field but all models have mtp_drafter=None. Estimated
+      savings: ~66.7% fewer target-model forward passes (theoretical). Full draft-verify
+      loop NOT wired in inference path — requires llama-server --spec-type integration.
+
+  - id: "lilith-20260807-011"
+    tier: L2
+    category: "speculative_decoding_partial"
+    insight: |
+      Speculative decoding configuration exists and acceptance tracking is functional,
+      but the full draft-verify loop is not integrated into the inference path. The
+      ngram draft type is zero-VRAM and M7-compliant (no extra model load). The
+      estimated 66.7% token savings are theoretical — they require the ngram drafter
+      to actually generate draft tokens and the target model to verify them. Without
+      the inference path integration, the config is inert. The acceptance tracking
+      (EMA with alpha=0.3) works correctly: 4 attempts → 73.29% rate, suggested length
+      = 3 (between min=1 and max=5, scaled by acceptance rate).
+
+  - id: "lilith-20260807-012"
+    tier: L3
+    category: "speculative_decoding_partial"
+    principle: |
+      "Configuration without integration is not implementation — it is documentation
+      with delusions of functionality." A SpeculativeDecodeConfig that exists but is
+      not wired into the inference path provides zero actual benefit. The acceptance
+      tracking works (proving the config is valid), but the draft-verify loop is
+      absent. This generalizes to all engine subsystems: a configuration object, a
+      tracking method, and an exposure property are necessary but insufficient —
+      the execution path must actually use them. Sovereign systems must verify not
+      just that a feature is configured, but that it is invoked in the critical path.
+
+  - id: "lilith-20260807-013"
+    tier: L1
+    category: "wad_dependency_resolution_absent"
+    narrative: |
+      Tested WAD pack dependency resolution and circular dependency handling.
+      WADLoader at oracle/wad_loader.py parses the 'dependencies' field in manifest V2
+      but does NOT process or resolve dependencies. No circular dependency detection
+      exists (no topological sort, no cycle detection). Test results: circular deps
+      (A→B→A) loaded without error — no detection. Linear chain (C→D→E) loaded without
+      resolving dependencies. Existing safeguards: path traversal guard (line 158-161),
+      file size guard (S1.5a, 1MB max), schema validation (V1+V2, extra=forbid), entity
+      collision detection (priority-based override). Default IWAD _omega_default has
+      dependencies: [] (correct for base IWAD).
+
+  - id: "lilith-20260807-014"
+    tier: L2
+    category: "wad_dependency_resolution_absent"
+    insight: |
+      The WAD manifest schema (V2) includes a 'dependencies' field with proper type
+      validation, but the WADLoader never reads or processes it. This means WAD packs
+      cannot declare dependencies on other WADs, and circular dependencies go undetected.
+      The loader has strong safeguards (path traversal, file size, schema validation,
+      entity collision) but lacks the dependency resolution layer. This is a critical
+      gap for the WAD pack marketplace vision — without dependency resolution, WAD
+      authors cannot build on each other's work safely. The fix requires a topological
+      sort with cycle detection, applied during load_all_wads() before individual WAD
+      loading.
+
+  - id: "lilith-20260807-015"
+    tier: L3
+    category: "wad_dependency_resolution_absent"
+    principle: |
+      "Schema fields without processors are documentation, not functionality."
+      A 'dependencies' field in the manifest schema that is never read by the loader
+      creates a false promise to WAD authors — they believe they can declare
+      dependencies, but the engine ignores them. This is worse than not having the
+      field at all, because it creates silent failures (WADs that appear to load
+      successfully but have unresolved dependencies). Sovereign systems must ensure
+      that every schema field has a corresponding processor — if a field is parsed
+      but not acted upon, it should be removed from the schema until the processor
+      is implemented. The schema is a contract; unfulfilled fields are broken promises.

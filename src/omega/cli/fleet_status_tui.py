@@ -17,10 +17,12 @@ Mandate 2: Engine-Stack Firewall — WAD-loadable entity display (M2 Phase E)
 # DocRef: docs/architecture/ORACLE_DEEP_DIVE.md
 
 import os
+import logging
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import List, Dict, Any, Optional
 
+import anyio
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.widgets import Header, Footer, Tree, Static, DataTable
@@ -31,7 +33,17 @@ from omega.observability.observability_reader import SovereignReader, TraceEvent
 
 # M2 Phase E: WAD-loadable entity display — use dispatch_registry (FS-Β2 / A6-A7)
 from omega.governance.dispatch_registry import load_dispatch_yaml, get_dispatch_entities, get_entity_by_role
-from omega.ics import ROLE_CONSTANTS
+from omega.ics import ROLE_CONSTANTS, DEFAULT_IWAD
+
+# SEDA: Sovereign Engine Data Access ring-bus for event-driven TUI updates
+from omega.research.sediment import (
+    SEDABus,
+    SEDAReader,
+    SEDATopic,
+    BackPressurePolicy,
+)
+
+logger = logging.getLogger(__name__)
 
 # ─── UI Styling ───────────────────────────────────────────────────────────────
 
@@ -234,6 +246,15 @@ class FleetStatusApp(App):
         # Build fleet tree from WAD config
         self.fleet_tree = None
 
+        # SEDA: Initialize the Sovereign Engine Data Access ring-bus
+        # The SEDA bus provides event-driven updates instead of polling.
+        # [id-soft: vet-045] SEDA Ring-Bus — replaces polling with pub/sub.
+        self.seda_bus = SEDABus(default_buffer_size=100)
+        self.seda_reader = SEDAReader(self.reader, self.seda_bus, poll_interval=2.0)
+        # Store latest data from SEDA events for UI rendering
+        self._seda_data: Dict[str, Any] = {}
+        self._seda_subscriptions: Dict[str, Any] = {}
+
     def compose(self) -> ComposeResult:
         yield Header()
         with Horizontal():
@@ -264,17 +285,175 @@ class FleetStatusApp(App):
         table.cursor_type = "row"
         table.zebra_stripes = True
         
-        # 3. Start the refresh loop (every 2 seconds)
-        self.set_interval(2.0, self.refresh_observability_data)
+        # 3. SEDA: Subscribe to observability topics via the Sovereign Engine Data Access bus.
+        #    Instead of polling every 2 seconds, we subscribe to SEDA events
+        #    that are published by the SEDAReader adapter (which polls the
+        #    SovereignReader in the background and publishes events).
+        await self._setup_seda_subscriptions()
         
-        # Initial fetch
+        # 4. Start the SEDA reader background task
+        await self.seda_reader.start()
+        
+        # 5. Initial fetch (fallback if SEDA events haven't arrived yet)
         await self.refresh_observability_data()
+
+    async def _setup_seda_subscriptions(self) -> None:
+        """Subscribe to SEDA topics for event-driven TUI updates.
+
+        Each subscription creates a dedicated receive stream that is
+        consumed in a background task group. Events update the
+        _seda_data cache, which is then used to refresh the UI.
+        """
+        # Subscribe to all observability topics
+        topics = [
+            SEDATopic.FLEET_HEALTH,
+            SEDATopic.TRACES,
+            SEDATopic.COGNITIVE_VELOCITY,
+            SEDATopic.TOKEN_BURN,
+            SEDATopic.SOVEREIGNTY_RATIO,
+            SEDATopic.SOMATIC_PRESSURE,
+            SEDATopic.SYSTEM_EVENT,
+        ]
+
+        for topic in topics:
+            send_stream, recv_stream = await self.seda_bus.subscribe(
+                topic=topic,
+                subscriber_id=f"tui_{topic.value}",
+                buffer_size=30,
+                policy=BackPressurePolicy.BUFFER,
+            )
+            self._seda_subscriptions[topic.value] = recv_stream
+
+        # Start a background task to consume SEDA events
+        # This runs alongside the Textual event loop
+        self._seda_task = self.run_worker(self._seda_event_loop, name="seda_consumer")
+
+    async def _seda_event_loop(self) -> None:
+        """Consume SEDA events and update the TUI.
+
+        This runs as a Textual worker, receiving events from all
+        subscribed SEDA topics and updating the UI accordingly.
+        """
+        # Collect all receive streams for multiplexed consumption
+        recv_streams = list(self._seda_subscriptions.values())
+
+        while True:
+            try:
+                # Use anyio to wait on multiple streams simultaneously
+                # We use a simple round-robin approach with receive_nowait
+                # to avoid blocking the Textual event loop
+                received_any = False
+                for topic_name, recv_stream in self._seda_subscriptions.items():
+                    try:
+                        event = recv_stream.receive_nowait()
+                        self._seda_data[topic_name] = event
+                        received_any = True
+                    except anyio.streams.memory.BufferEmpty:
+                        continue
+
+                if received_any:
+                    self._update_ui_from_seda()
+
+                # Sleep briefly to avoid busy-waiting
+                await anyio.sleep(0.1)
+
+            except anyio.get_cancelled_exc_class():
+                break
+            except Exception as e:
+                logger.error(f"SEDA event loop error: {e}")
+                await anyio.sleep(1.0)
+
+    def _update_ui_from_seda(self) -> None:
+        """Update UI widgets from cached SEDA event data."""
+        # Build synthetic data objects from SEDA events
+        health = self._extract_fleet_health()
+        traces = self._extract_traces()
+        velocity = self._extract_cognitive_velocity()
+        cost = self._extract_token_burn()
+        sovereignty = self._extract_sovereignty_ratio()
+        somatic = self._extract_somatic_pressure()
+
+        self._update_ui(health, traces, velocity, cost, sovereignty, somatic)
+
+    def _extract_fleet_health(self) -> Any:
+        """Extract FleetHealth from SEDA event data."""
+        from omega.observability.observability_reader import FleetHealth
+        event = self._seda_data.get("fleet_health")
+        if event and isinstance(event.payload, dict):
+            return FleetHealth(
+                breaker_states=event.payload.get("breaker_states", {}),
+                global_error_rate=event.payload.get("global_error_rate", 0.0),
+            )
+        return FleetHealth(breaker_states={}, global_error_rate=0.0)
+
+    def _extract_traces(self) -> List[Any]:
+        """Extract trace events from SEDA event data."""
+        from omega.observability.observability_reader import TraceEvent
+        event = self._seda_data.get("traces")
+        if event and isinstance(event.payload, list):
+            traces = []
+            for t in event.payload:
+                if isinstance(t, dict):
+                    traces.append(TraceEvent(
+                        timestamp=t.get("timestamp", ""),
+                        level=t.get("level", "INFO"),
+                        entity=t.get("entity", "system"),
+                        message=t.get("message", ""),
+                        trace_id=t.get("trace_id", "unknown"),
+                        raw=t,
+                    ))
+                elif isinstance(t, TraceEvent):
+                    traces.append(t)
+            return traces
+        return []
+
+    def _extract_cognitive_velocity(self) -> Any:
+        """Extract CognitiveVelocity from SEDA event data."""
+        from omega.observability.observability_reader import CognitiveVelocity
+        event = self._seda_data.get("cognitive_velocity")
+        if event and isinstance(event.payload, dict):
+            return CognitiveVelocity(
+                tokens_per_second=event.payload.get("tokens_per_second", 0.0),
+                acceleration=event.payload.get("acceleration", 0.0),
+            )
+        return CognitiveVelocity(tokens_per_second=0.0, acceleration=0.0)
+
+    def _extract_token_burn(self) -> Any:
+        """Extract TokenBurn from SEDA event data."""
+        from omega.observability.observability_reader import TokenBurn
+        event = self._seda_data.get("token_burn")
+        if event and isinstance(event.payload, dict):
+            return TokenBurn(
+                prompt_tokens=event.payload.get("prompt_tokens", 0),
+                completion_tokens=event.payload.get("completion_tokens", 0),
+                cost_usd=event.payload.get("cost_usd", 0.0),
+                provider_name=event.payload.get("provider_name", "unknown"),
+            )
+        return TokenBurn(0, 0, 0.0, "unknown")
+
+    def _extract_sovereignty_ratio(self) -> float:
+        """Extract sovereignty ratio from SEDA event data."""
+        event = self._seda_data.get("sovereignty_ratio")
+        if event and isinstance(event.payload, dict):
+            return event.payload.get("ratio", 1.0)
+        return 1.0
+
+    def _extract_somatic_pressure(self) -> Dict[str, Any]:
+        """Extract somatic pressure from SEDA event data."""
+        event = self._seda_data.get("somatic_pressure")
+        if event and isinstance(event.payload, dict):
+            return event.payload
+        return {"avg_latency_ms": 0.0, "max_latency_ms": 0.0, "request_count": 0}
 
 
     def on_tree_node_selected(self, event: Tree.NodeSelected) -> None:
         """Handle entity selection in the tree."""
         if event.node.data:
             self.selected_entity = event.node.data
+            # SEDA: Update the reader's entity filter so SEDAReader
+            # publishes events for the newly selected entity.
+            self.seda_reader.set_entity(self.selected_entity)
+            # Fallback: also trigger a direct refresh for immediate feedback
             self.refresh_observability_data()
 
     async def refresh_observability_data(self) -> None:
@@ -374,6 +553,14 @@ class FleetStatusApp(App):
         """Displays errors in the vitals panel if the reader fails."""
         vitals_widget = self.query_one("#global-vitals", Static)
         vitals_widget.update(f"[bold red]OBSERVATORY ERROR:[/bold red] {error_msg}")
+
+    async def on_unmount(self) -> None:
+        """Clean up SEDA resources on app exit."""
+        try:
+            await self.seda_reader.stop()
+            await self.seda_bus.close()
+        except Exception as e:
+            logger.warning(f"Error during SEDA cleanup: {e}")
 
 if __name__ == "__main__":
     app = FleetStatusApp()

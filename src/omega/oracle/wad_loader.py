@@ -102,23 +102,200 @@ class WADLoader:
             except PermissionError:
                 logger.warning(f"WADs directory read-only: {self.wads_dir}")
 
-    async def load_all_wads(self) -> Dict[str, bool]:
-        """Discover and load all WADs in the wads directory.
-        
-        Returns a map of stack_name -> success_status.
+    async def _discover_wads(self) -> List[Dict[str, Any]]:
+        """Discover all WAD directories and read their manifest metadata.
+
+        Scans the wads directory for subdirectories containing a manifest.yaml.
+        For each valid WAD, extracts metadata: name, type (iwad/pwad),
+        dependencies, priority, and version.
+
+        Returns:
+            List of WAD metadata dicts, sorted by discovery order.
+            Each dict has keys: name, type, dependencies, priority, version,
+            path, manifest_path.
         """
-        results = {}
-        
+        discovered: List[Dict[str, Any]] = []
+
         try:
             async for entry in anyio.Path(self.wads_dir).iterdir():
-                if await entry.is_dir():
-                    stack_name = entry.name
-                    logger.info(f"Loading WAD: {stack_name}")
-                    success, _ = await self.load_wad(stack_name)
-                    results[stack_name] = success
+                if not await entry.is_dir():
+                    continue
+
+                stack_name = entry.name
+                wad_path = self.wads_dir / stack_name
+                manifest_path = wad_path / "manifest.yaml"
+
+                if not await anyio.Path(manifest_path).exists():
+                    logger.debug(f"WAD {stack_name} has no manifest.yaml. Skipping discovery.")
+                    continue
+
+                # Read manifest for metadata
+                try:
+                    async with await anyio.open_file(str(manifest_path), "r") as f:
+                        manifest = yaml.safe_load(await f.read())
+
+                    if manifest is None:
+                        logger.warning(f"WAD {stack_name} manifest is empty. Skipping discovery.")
+                        continue
+
+                    # Support both flat and wad:-wrapped manifests
+                    if "wad" in manifest:
+                        manifest = manifest["wad"]
+
+                    wad_type = manifest.get("type", "pwad")
+                    dependencies = manifest.get("dependencies", [])
+                    if isinstance(dependencies, str):
+                        dependencies = [dependencies]
+                    elif not isinstance(dependencies, list):
+                        dependencies = []
+
+                    discovered.append({
+                        "name": stack_name,
+                        "type": wad_type,
+                        "dependencies": dependencies,
+                        "priority": manifest.get("priority", 0),
+                        "version": manifest.get("version", "unknown"),
+                        "path": wad_path,
+                        "manifest_path": manifest_path,
+                    })
+                except (OSError, yaml.YAMLError) as e:
+                    logger.warning(f"Failed to read manifest for WAD {stack_name}: {e}")
+                    continue
+
         except (OmegaError, RuntimeError, OSError) as e:
-            logger.error(f"Failed to iterate WADs directory: {e}")
-            
+            logger.error(f"Failed to iterate WADs directory for discovery: {e}")
+
+        return discovered
+
+    async def _resolve_load_order(self, discovered: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Resolve the load order for discovered WADs.
+
+        Ordering rules:
+        1. IWADs load before PWADs (IWAD = base, PWAD = patch/overlay).
+        2. Dependencies load before dependents (topological sort).
+        3. Circular dependencies are detected and reported.
+
+        Args:
+            discovered: List of WAD metadata dicts from _discover_wads().
+
+        Returns:
+            WAD metadata dicts in resolved load order.
+
+        Raises:
+            OmegaError: If a circular dependency is detected.
+        """
+        # Build name -> metadata lookup
+        name_to_wad: Dict[str, Dict[str, Any]] = {w["name"]: w for w in discovered}
+
+        # Assign base priority: IWAD = 100, PWAD = 0, plus manifest priority
+        def effective_priority(wad: Dict[str, Any]) -> int:
+            base = 100 if wad["type"] == "iwad" else 0
+            return base + wad.get("priority", 0)
+
+        # Topological sort with cycle detection
+        # We use a modified Kahn's algorithm that also respects type-based priority
+        # for tie-breaking among independent nodes.
+
+        # Build adjacency: dependency -> [dependents]
+        # and in-degree: wad_name -> count of unmet dependencies
+        in_degree: Dict[str, int] = {}
+        dependents: Dict[str, List[str]] = {w["name"]: [] for w in discovered}
+
+        for wad in discovered:
+            name = wad["name"]
+            in_degree[name] = 0
+            for dep in wad["dependencies"]:
+                if dep in name_to_wad:
+                    dependents[dep].append(name)
+                    in_degree[name] += 1
+                else:
+                    logger.warning(
+                        f"WAD {name} depends on unknown WAD '{dep}'. "
+                        f"Dependency will be ignored."
+                    )
+
+        # Kahn's algorithm with priority queue (sorted by effective priority)
+        # Use a list as a priority queue (sorted each iteration — small N)
+        ready = sorted(
+            [name for name, deg in in_degree.items() if deg == 0],
+            key=lambda n: effective_priority(name_to_wad[n]),
+            reverse=True,  # Higher priority first
+        )
+
+        resolved: List[Dict[str, Any]] = []
+        processed: Set[str] = set()
+
+        while ready:
+            # Pick highest-priority ready node
+            current_name = ready.pop(0)
+            current_wad = name_to_wad[current_name]
+            resolved.append(current_wad)
+            processed.add(current_name)
+
+            # Reduce in-degree of dependents
+            new_ready: List[str] = []
+            for dep_name in dependents[current_name]:
+                in_degree[dep_name] -= 1
+                if in_degree[dep_name] == 0:
+                    new_ready.append(dep_name)
+
+            # Merge new ready nodes into the ready list, maintaining priority order
+            ready.extend(new_ready)
+            ready.sort(
+                key=lambda n: effective_priority(name_to_wad[n]),
+                reverse=True,
+            )
+
+        # Detect circular dependencies
+        if len(resolved) < len(discovered):
+            unresolved = [w["name"] for w in discovered if w["name"] not in processed]
+            raise OmegaError(
+                f"Circular dependency detected among WADs: {unresolved}. "
+                f"Load order resolution failed."
+            )
+
+        return resolved
+
+    async def load_all_wads(self) -> Dict[str, bool]:
+        """Discover and load all WADs in the wads directory.
+
+        WADs are loaded in priority order:
+        1. IWADs (type: iwad) load first, with higher priority.
+        2. PWADs (type: pwad) load after their IWAD dependencies.
+        3. Dependencies are resolved via topological sort.
+        4. Circular dependencies raise OmegaError.
+
+        Returns a map of stack_name -> success_status.
+        """
+        results: Dict[str, bool] = {}
+
+        try:
+            discovered = await self._discover_wads()
+            if not discovered:
+                logger.info("No WADs discovered in wads directory.")
+                return results
+
+            ordered_wads = await self._resolve_load_order(discovered)
+
+            for wad_meta in ordered_wads:
+                stack_name = wad_meta["name"]
+                wad_type = wad_meta["type"]
+                # IWADs get priority 100, PWADs get priority 0 (base override)
+                # plus any manifest-specified priority
+                priority = 100 if wad_type == "iwad" else 0
+                priority += wad_meta.get("priority", 0)
+
+                logger.info(f"Loading WAD: {stack_name} (type={wad_type}, priority={priority})")
+                success, _ = await self.load_wad(stack_name, priority=priority)
+                results[stack_name] = success
+
+        except OmegaError as e:
+            logger.error(f"WAD auto-loading failed: {e}")
+            # Record failure for any WADs not yet loaded
+            for wad_meta in discovered:
+                if wad_meta["name"] not in results:
+                    results[wad_meta["name"]] = False
+
         return results
 
     async def load_single_wad(self, stack_name: str, priority: int = 10) -> bool:
