@@ -546,9 +546,22 @@ class NativeGGUFProvider(BaseProvider):
                 "n_gpu_layers": n_gpu_layers,
                 "verbose": False,
             }
-            # Enable flash_attn when using quantized KV cache (type_k/type_v != f16)
-            # On CPU backend, flash_attn is required for quantized KV cache to work
-            if type_k != 1 or type_v != 1:
+            # [B4] Enable flash_attn ONLY when the build can actually offload
+            # to a GPU. Forcing flash_attn=True for quantized KV cache on a
+            # CPU-only build (n_gpu_layers=0, no CUDA/Metal/Vulkan) crashes
+            # llama_context — the crash condition in WEB_RECONCILIATION_MATRIX
+            # §6 B4. Quantized KV cache (q8_0 etc.) works fine without flash
+            # attention on the CPU backend; flash attn is an accelerator
+            # optimization, NOT a prerequisite for quantized KV.
+            _flash_attn = False
+            if n_gpu_layers and n_gpu_layers > 0:
+                try:
+                    import llama_cpp as _lc
+                    if _lc.llama_supports_gpu_offload():
+                        _flash_attn = True
+                except Exception:
+                    _flash_attn = False
+            if _flash_attn:
                 llama_kwargs["flash_attn"] = True
             if kwarg_filter_enabled and validate_llama_kwargs:
                 kwarg_warnings = validate_llama_kwargs(llama_kwargs, "NativeGGUFProvider.worker")

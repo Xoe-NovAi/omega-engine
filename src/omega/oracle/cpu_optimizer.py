@@ -448,9 +448,15 @@ class Zen2Optimizer:
         model_size_b: float,
         quantization: str = "q4_k_m",
         context_window: int = 8192,
-        kv_quant: str = "q8_0",
+        kv_quant: str = "f16",
     ) -> Dict[str, float]:
         """Estimate RAM usage for a model with KV cache.
+
+        [B4] Default ``kv_quant`` is ``f16`` to match the ACTUAL runtime
+        default in ``NativeGGUFProvider`` (``type_k=type_v=1`` = f16).
+        RAM planning that assumes q8_0 while the runtime uses f16
+        undercounts the real KV footprint ~2x, causing admission math
+        to approve loads that OOM (WEB_RECONCILIATION_MATRIX §6 B4).
 
         Args:
             model_size_b: Model parameter count in billions
@@ -469,7 +475,8 @@ class Zen2Optimizer:
         factor = quant_factors.get(quantization, 500)
         model_mb = model_size_b * factor
 
-        # KV cache: ~2 bytes per token per parameter (for K+V at q8_0)
+        # KV cache: ~2 bytes per token per parameter (for K+V at q8_0).
+        # f16 = 2x q8_0, q4_0 = 0.5x q8_0 (bytes-per-param scales with type).
         kv_bytes_per_b_param = 2 * context_window * (model_size_b / 8)  # rough
         kv_scale = {"f16": 2.0, "q8_0": 1.0, "q4_0": 0.5}
         kv_mb = kv_bytes_per_b_param * kv_scale.get(kv_quant, 1.0) / (1024 * 1024)
