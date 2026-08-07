@@ -376,6 +376,16 @@ class ModelGateway:
             model_size_b = default_spec.get("size_gb", 1.7) # Default to 1.7B if unknown
             merged["threads"] = self._cpu_optimizer.get_recommended_threads(model_size_b)
 
+        # [B8] Optimize batch sizes based on model size if not explicitly set.
+        # Mirrors the threads pattern above — get_recommended_batch_sizes() was
+        # computed per-model but never wired into the provider config. Zen 2
+        # L2 cache is 512KB/core; batch fits in L2 for prompt processing speed.
+        if "n_batch" not in merged and "batch_size" not in merged:
+            model_size_b = default_spec.get("size_gb", 1.7) # Default to 1.7B if unknown
+            _batch_rec = self._cpu_optimizer.get_recommended_batch_sizes(model_size_b)
+            merged["n_batch"] = _batch_rec["batch_size"]
+            merged["n_ubatch"] = _batch_rec["ubatch_size"]
+
         # Map models.yaml names → NativeGGUFProvider config names
         if "context_window" in merged and "n_ctx" not in merged:
             merged["n_ctx"] = merged.pop("context_window")
