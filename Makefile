@@ -173,51 +173,50 @@ doc-llm-validate:
 		--answer-first-check \
 		--code-block-check \
 		--dependency-graph-check \
-		docs/sprints/guard-and-distill/
+		docs/sprints/current/
 	@echo "$(GREEN)LLM doc validation complete$(NC)"
 
 # Generate llms-full.txt for current sprint (concatenated for LLM consumption)
 sprint-plan-llm:
 	@echo "$(YELLOW)Generating llms-full.txt for current sprint...$(NC)"
 	@mkdir -p docs/sprints/current
-	@echo "# Sprint Plan: Guard & Distill (2026-07-22)" > docs/sprints/current/llms-full.txt
-	@cat docs/sprints/guard-and-distill/index.md >> docs/sprints/current/llms-full.txt
-	@for f in docs/sprints/guard-and-distill/02-p0-tickets/*.md; do \
+	@echo "# Sprint Plan: Doc Sanity & Un-overengineering (2026-07-30)" > docs/sprints/current/llms-full.txt
+	@cat docs/archive/sprints/EXECUTION_PLAN_20260725.md >> docs/sprints/current/llms-full.txt
+	@for f in docs/archive/sprints/2026-07-25-guard-and-distill/02-p0-tickets/*.md; do \
 		[ -f "$$f" ] || continue; \
 		echo "\n---\n# $$(basename $$f .md)" >> docs/sprints/current/llms-full.txt; \
 		cat $$f >> docs/sprints/current/llms-full.txt; \
 	done
-	@for f in docs/sprints/guard-and-distill/03-p1-tickets/*.md; do \
+	@for f in docs/archive/sprints/2026-07-25-guard-and-distill/03-p1-tickets/*.md; do \
 		[ -f "$$f" ] || continue; \
 		echo "\n---\n# $$(basename $$f .md)" >> docs/sprints/current/llms-full.txt; \
 		cat $$f >> docs/sprints/current/llms-full.txt; \
 	done
-	@cat docs/sprints/guard-and-distill/08-research-index.md >> docs/sprints/current/llms-full.txt
+	@cat docs/archive/sprints/2026-07-25-guard-and-distill/08-research-index.md >> docs/sprints/current/llms-full.txt
 	@echo "$(GREEN)Generated docs/sprints/current/llms-full.txt ($$(wc -c < docs/sprints/current/llms-full.txt) bytes)$(NC)"
 
 # Generate llms.txt (index only) for current sprint
 sprint-plan-llms-txt:
 	@echo "$(YELLOW)Generating llms.txt for current sprint...$(NC)"
 	@mkdir -p docs/sprints/current
-	@echo "# Sprint Plan Index: Guard & Distill" > docs/sprints/current/llms.txt
-	@echo "- Sprint Goal: Close 4 P0 gaps blocking Phase D" >> docs/sprints/current/llms.txt
-	@echo "- P0 Tickets: C-10.5, C-11, C-3, C-0.5" >> docs/sprints/current/llms.txt
-	@echo "- P1 Tickets: C-9, D-1, V-1, M21, C-4a.5" >> docs/sprints/current/llms.txt
-	@echo "- Dependencies: C-6', C-1', C-2' (all DONE)" >> docs/sprints/current/llms.txt
-	@echo "- Research: docs/sprints/guard-and-distill/08-research-index.md" >> docs/sprints/current/llms.txt
+	@echo "# Sprint Plan Index: Doc Sanity & Un-overengineering" > docs/sprints/current/llms.txt
+	@echo "- Sprint Goal: Sanitize docs (UO-4), then un-overengineer (UO-6)" >> docs/sprints/current/llms.txt
+	@echo "- Controlling Plan: data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md" >> docs/sprints/current/llms.txt
+	@echo "- Active Sprint: data/coordination/ACTIVE_SPRINT.json" >> docs/sprints/current/llms.txt
+	@echo "- Research: docs/archive/sprints/2026-07-25-guard-and-distill/08-research-index.md" >> docs/sprints/current/llms.txt
 	@echo "- Full Plan: docs/sprints/current/llms-full.txt" >> docs/sprints/current/llms.txt
 	@echo "$(GREEN)Generated docs/sprints/current/llms.txt$(NC)"
 
 # Check token count for sprint plan docs only
 doc-token-check:
 	@echo "$(YELLOW)Checking token budgets for sprint plan docs...$(NC)"
-	@python3 scripts/check_doc_tokens.py --budget $(DOC_TOKEN_BUDGETS) docs/sprints/guard-and-distill/
+	@python3 scripts/check_doc_tokens.py --budget $(DOC_TOKEN_BUDGETS) docs/sprints/current/
 	@echo "$(GREEN)Token check complete$(NC)"
 
 # Chunk sprint plan for RAG/vector storage
 doc-chunk-sprint:
 	@echo "$(YELLOW)Chunking sprint plan for RAG...$(NC)"
-	@python3 scripts/chunk_sprint_plan.py docs/sprints/guard-and-distill/index.md
+	@python3 scripts/chunk_sprint_plan.py docs/sprints/current/README.md
 	@echo "$(GREEN)Chunking complete$(NC)"
 
 # Temple-grade includes Codex freshness and LLM doc validation

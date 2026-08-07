@@ -1,6 +1,32 @@
+---
+schema_version: "1.0"
+document_type: reference
+document_id: current-sprint-readme
+title: Current Sprint Pointer
+status: ACTIVE
+version: "1.1.0"
+date: "2026-08-07"
+owner: kali
+tags: [sprint, pointer, coordination, index]
+priority: P0
+depends_on: []
+blocks: []
+acceptance_gates:
+  - "Active sprint file points to ACTIVE_SPRINT.json"
+  - "Superseded plans reference archive paths"
+cross_references:
+  - data/coordination/ACTIVE_SPRINT.json
+  - data/coordination/SESSION_ANCHOR.md
+llm_metadata:
+  token_budget: 500
+  chunk_strategy: flat
+  answer_first_sections: true
+  self_contained_code: false
+---
+
 # Current Sprint Pointer
 
-**Updated**: 2026-07-30
+**Updated**: 2026-08-07
 
 | Role | Path |
 |------|------|

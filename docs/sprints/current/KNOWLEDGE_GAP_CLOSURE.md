@@ -1,3 +1,28 @@
+---
+schema_version: "1.0"
+document_type: reference
+document_id: knowledge-gap-closure
+title: Fleet Knowledge Gap Closure Report
+status: ACTIVE
+version: "1.1.0"
+date: "2026-08-07"
+owner: kali
+tags: [knowledge-gaps, research, fleet, phase-d]
+priority: P1
+depends_on: []
+blocks: []
+acceptance_gates:
+  - "5/5 critical gaps documented with actionable findings"
+cross_references:
+  - docs/sprints/current/KNOWLEDGE_GAP_CLOSURE_FULL.md
+  - docs/archive/sprints/EXECUTION_PLAN_20260725.md
+llm_metadata:
+  token_budget: 3000
+  chunk_strategy: section_per_topic
+  answer_first_sections: true
+  self_contained_code: false
+---
+
 # 🔱 Fleet Knowledge Gap Closure Report
 **AP Token**: `AP-KNOWLEDGE-GAP-CLOSURE-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ RESEARCH ⬡ 2026-07-25

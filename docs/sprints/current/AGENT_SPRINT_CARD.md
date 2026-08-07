@@ -1,6 +1,32 @@
+---
+schema_version: "1.0"
+document_type: sprint_plan
+document_id: agent-sprint-card
+title: Agent Sprint Card
+status: ACTIVE
+version: "1.2.0"
+date: "2026-08-07"
+owner: kali
+tags: [sprint, phase-d, agents, coordination]
+priority: P0
+depends_on: []
+blocks: []
+acceptance_gates:
+  - "Full plan resolves to CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md"
+  - "Phase D gate blockers (C-3, W-1, G-1) tracked"
+cross_references:
+  - data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md
+  - docs/research/R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md
+llm_metadata:
+  token_budget: 2000
+  chunk_strategy: section_per_topic
+  answer_first_sections: true
+  self_contained_code: false
+---
+
 # 🃏 Agent Sprint Card — Phase D Gate (READ FIRST)
-**AP Token**: `AP-AGENT-SPRINT-CARD-v1.1.0`  
-**LAST_VERIFIED**: 2026-07-25T21:35Z  
+**AP Token**: `AP-AGENT-SPRINT-CARD-v1.2.0`  
+**LAST_VERIFIED**: 2026-08-07T21:00Z  
 **Full plan**: `data/coordination/CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md`  
 **Gap research**: `docs/research/R_CRITICAL_SPRINT_AGENT_SUPPORT_GAPS_20260725.md`
 
