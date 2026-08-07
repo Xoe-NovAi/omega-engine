@@ -244,3 +244,40 @@ Complete WEB_RECONCILIATION_MATRIX §6 provider-fabric remediation batch B2→B8
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
+
+---
+
+## 🏁 FINAL SESSION STATE (Pre-Compaction #2 — 2026-08-07)
+
+### Completed This Session
+1. **UO-4 PART 1: Doc Sanity Archival & Pointer Sanity — COMPLETE**
+   - 67 files archived (guard-and-distill sprint, EXECUTION_PLAN, 46 coordination files, 17 web exports)
+   - HMC Hub archived (2,136 lines) + lean 85-line template created
+   - DOC_SSOT_MAP_20260807.md + DOC_SANITY_RESULTS_20260807.md created
+   - Fixed ACTIVE_SPRINT.json (SSOT banner target) + all active docs to archive paths
+   - Makefile: fixed 4 stale guard-and-distill refs; added LLM frontmatter to 4 sprint docs
+   - `make doc-llm-validate` ✅ PASSES | `make temple-grade` ✅ PASSES (M1/M7/M8/M9/M23 green)
+2. **Git Push RESTORED** — `git push origin release/initial-v1` succeeded (033d5208). GitHub accessible again.
+   - Note: release/initial-v1 is **65 commits ahead of origin/main** — needs a decision on syncing.
+
+### Commits This Session (7 total)
+| Commit | Description |
+|--------|-------------|
+| c6a88b2 | fix(wrapper): use time_updated for session detection |
+| c97ad2d | chore(docs): archive bloated HMC Hub + reset template |
+| a4c2c015 | chore(docs): archive stale sprints + coordination files (UO-4) |
+| 1b700e56 | docs(strategy): supersession banners + pointer fixes (UO-4) |
+| de301692 | docs(strategy): add DOC_SANITY_RESULTS UO-4 report |
+| 7b16adf7 | fix(makefile): remove stale refs, add frontmatter |
+| 033d5208 | chore: commit UO-4 hub update + codex refresh + pending fabric changes |
+
+### Next Session: Execute UO-4 PART 2
+1. **Phase 1: Purge & Correct** — Mandate 3 rewrite (Node slots N1-N10), Engine/WAD separation, sqlite-vec decision, 8GB UMA correction, OS target 24.04/26.04, purge deprecated concepts (26-sphere/108-gate/PostgreSQL/FAISS)
+2. **Phase 2: New Infrastructure Docs** — hardware profile script, MEMORY_SUBSYSTEM_DESIGN, SYSTEMD_DEPLOYMENT_GUIDE, SOVEREIGN_WAD_PROTOCOL, GUIDANCE_SET_SCHEMA
+3. **Phase 3: Provider Fabric & Runtime** — Vulkan/MoE, speculative decoding, Piper TTS, SEDA ring-bus
+4. **Phase 4: Sovereignty Flywheel** — Sovereign Bridge, GRPO loop, V-1..V-10 probes
+5. Then UO-6 Un-Overengineering (freeze lifts after UO-4 complete)
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
