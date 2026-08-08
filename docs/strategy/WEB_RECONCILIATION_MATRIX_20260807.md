@@ -348,7 +348,7 @@ The web docs identify Omega's opportunity: **no one has published the integrated
 | V-2: Circuit Breaker Class Count | 3 classes + 2 enums | **GAP** | Execute `grep -rn "class.*Breaker" --include="*.py" src/` | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
 | V-3: sqlite-vec vs Qdrant Imports | Both present | **GAP** | Execute grep for qdrant_client vs sqlite_vec in src/ | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
 | V-4: Real iGPU Memory Ceiling | 8GB carve-out | **GAP** | Execute `radeontop`, `dmesg | grep amdgpu` | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
-| V-5: ElevenLabs Integration | Unverified | **GAP** | Execute `grep -rln "elevenlabs\|ElevenLabs"` | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
+| V-5: ElevenLabs Integration | Unverified | **VERIFIED 2026-08-07** | `grep -rli "elevenlabs" src/` → **0 hits** (clean). Docs-only reference. | `docs/strategy/PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
 | V-6: "Omegamind"/"Guidance Set" in Codebase | Unverified | **GAP** | Execute `grep -rln "Omegamind\|Guidance Set"` | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
 | V-7: GraphRAG Through Admission Gate | Unverified | **GAP** | Cross-reference v3 §N | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
 | V-8: `amd-pstate` Active Driver | Unverified | **GAP** | Execute `cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver` | `PHASE_0_VERIFICATION_REPORT_20260807.md` | `@kali` |
