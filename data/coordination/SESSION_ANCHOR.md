@@ -281,3 +281,27 @@ Complete WEB_RECONCILIATION_MATRIX §6 provider-fabric remediation batch B2→B8
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
+
+## 🏁 FINAL SESSION STATE (2026-08-07 — UO-4 PART 2 COMPLETE + MERGE TO MAIN)
+
+### Completed This Session
+1. **Git merge**: `release/initial-v1` → `main` (fast-forward, 69 commits). Both branches synced at `d58451c6` and pushed. **All work now on main.**
+2. **UO-4 PART 2 Phase 3: Provider Fabric & Runtime** — `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` (12 items: KV-cache prefix caching, GBNF constrained sampling, iMatrix/IQ quant, dual-branch memory rescoring math, n-gram spec decode, MemPalace verbatim-first, context sliding windows, NotebookLM multi-persona). Code-blocked items document-defer (Vulkan/MoE, Piper, OpenCode CLI, Qdrant purge).
+3. **UO-4 PART 2 Phase 4: Sovereignty Flywheel & Security** — `docs/strategy/PHASE_0_VERIFICATION_REPORT_20260807.md` (V-1..V-10 all executed) + `docs/architecture/SOVEREIGN_FLYWHEEL_SECURITY.md` (HMAC-SHA256 bridge, replay window, AppArmor, IA2 envelope, continuity).
+4. **Verification probes key findings**:
+   - V-5: ElevenLabs = 0 hits in src (clean)
+   - V-9: IA2 `_meta` envelope has NO freshness/signature (GAP)
+   - V-10: Containers UNCONFINED (AppArmor empty) (GAP)
+5. **Gates**: `make doc-llm-validate` ✅ | `make temple-grade` ✅ (M1/M7/M8/M9/M23 green)
+
+### Commits This Session
+| Commit | Description |
+|--------|-------------|
+| 0d38e449 | chore: wrapper artifacts (codex + proposed lessons) |
+| ad126616 | docs(runtime): UO-4 PART 2 Phase 3 provider fabric runtime |
+| d58451c6 | docs(security): UO-4 PART 2 Phase 4 flywheel + verification probes |
+
+### Next Session: UO-6 Un-Overengineering
+1. Freeze lifts after UO-4 complete
+2. Address V-9 (IA2 envelope freshness/signature) + V-10 (AppArmor) gaps
+3. Phase D Gate rerun (C-3/W-1/G-1 still need Architect action)
