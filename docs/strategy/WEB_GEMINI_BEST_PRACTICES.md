@@ -27,12 +27,19 @@
 
 ## 📋 EXECUTIVE SUMMARY
 
-Web Gemini (Google AI Studio) is the **primary platform** for broad research synthesis, benchmark comparison, and code execution verification. Best for: GPQA (94.1%), Deep Research (30+ parallel searches), code execution sandbox.
+Web Gemini (Google AI Studio) is the **primary platform** for broad research synthesis, benchmark comparison, and code execution verification. Best for: GPQA (92.7% for Flash), Deep Research (30+ parallel searches), code execution sandbox.
 
-**Models**: 
-- Gemini 3 Pro (1-2M context, $1.25/$2.50/MTok) — flagship
-- Gemini 3.1 Pro (10M context, preview pricing) — ultra-long context
-- Gemini 3 Flash (1M context, $0.075/$0.30/MTok) — cost-optimized
+**Available Models (Free Tier — as of August 2026)**: 
+| Model | Context | Free? | Best For |
+|-------|---------|-------|----------|
+| **Gemini 3.5 Flash** | 1M | ✅ | Flagship free model, coding, research |
+| **Gemini 3.6 Flash** | 1M | ✅ | Newer Flash variant |
+| **Gemini 3.1 Flash-Lite** | 1M | ✅ | Cost-optimized, high-volume |
+| **Gemini 3 Flash (Preview)** | 1M | ✅ | Previous-gen Flash |
+| ~~Gemini 3.1 Pro~~ | ~~10M~~ | ❌ | **Paid only** ($2/$12/MTok) |
+| ~~Gemini 3 Pro~~ | ~~1-2M~~ | ❌ | **Paid only** ($1.25/$2.50/MTok) |
+
+> **Key fact**: Pro-series models moved off the free tier on April 1, 2026. Only Flash and Flash-Lite variants remain free. Gemini 3.5 Flash (launched May 19, 2026) is the current flagship free model — ~25% cheaper than Gemini 3.1 Pro on coding tasks while delivering comparable quality. SWE-bench Verified: 78.8%. GPQA Diamond: 92.7%.
 
 ---
 
@@ -54,11 +61,13 @@ Web Gemini (Google AI Studio) is the **primary platform** for broad research syn
 - **Video Understanding**: Native video input (up to 2M tokens)
 
 ### 1.3 Model Capabilities
-| Model | Context | SWE-bench | GPQA | Best For |
-|-------|---------|-----------|------|----------|
-| Gemini 3 Flash | 1M | 58.2% | 89.5% | High-volume, cost-optimized |
-| Gemini 3 Pro | 1-2M | 63.8% | 94.1% | Flagship, balanced research |
-| Gemini 3.1 Pro | 10M | 65.2% | 95.3% | Ultra-long context analysis |
+| Model | Context | SWE-bench | GPQA | Free? | Best For |
+|-------|---------|-----------|------|-------|----------|
+| **Gemini 3.5 Flash** | 1M | 78.8% | 92.7% | ✅ | Flagship free, coding, research |
+| **Gemini 3.6 Flash** | 1M | — | — | ✅ | Newer Flash variant |
+| **Gemini 3.1 Flash-Lite** | 1M | — | — | ✅ | Cost-optimized, high-volume |
+| Gemini 3.1 Pro | 10M | 65.2% | 95.3% | ❌ | Ultra-long context (paid only) |
+| Gemini 3 Pro | 1-2M | 63.8% | 94.1% | ❌ | Flagship (paid only) |
 
 ---
 
@@ -186,12 +195,12 @@ Format findings for Google Docs/Sheets export:
 ## 6. COST OPTIMIZATION
 
 ### 6.1 Model Selection
-| Task Type | Model | Cost (input/output) | Context |
-|-----------|-------|---------------------|---------|
-| High-volume, simple | Gemini 3 Flash | $0.075/$0.30/MTok | 1M |
-| General research/analysis | Gemini 3 Pro | $1.25/$2.50/MTok | 1-2M |
-| Ultra-long context | Gemini 3.1 Pro | Preview pricing | 10M |
-| Cost-sensitive batch | Batch API | 50% off | — |
+| Task Type | Model | Cost (input/output) | Context | Free? |
+|-----------|-------|---------------------|---------|-------|
+| General research/analysis | **Gemini 3.5 Flash** | Free | 1M | ✅ |
+| High-volume, simple | Gemini 3.1 Flash-Lite | Free | 1M | ✅ |
+| Ultra-long context | ~~Gemini 3.1 Pro~~ | $2/$12/MTok | 10M | ❌ |
+| Cost-sensitive batch | Batch API | 50% off | — | ❌ |
 
 ### 6.2 Omega Engine Use Cases
 | Use Case | Recommended Model | Why |

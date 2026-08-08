@@ -49,19 +49,20 @@
 ### 1.3 Subscription Tiers & Model Access
 | Tier | Cost | Models | Key Features |
 |------|------|--------|--------------|
-| Free | $0 | Grok 3 (Mini under load) | Limited DeepSearch, no Think, tight caps |
-| X Premium+ | $40/mo (X sub) | Grok 3, Grok 4 | Think, DeepSearch within caps |
-| **SuperGrok** | **~$30/mo** | **Grok 3, Grok 4.5** | **Think, DeepSearch, full caps, Connectors, Skills** |
-| **SuperGrok Heavy** | **~$300/mo** | **All + Grok 4 Heavy** | **Think, DeepSearch, Heavy mode, includes Grok Build CLI** |
+| **Free** | **$0** | **Grok 3 / Grok 4 Mini** | **Text chat only, no image/video generation, limited caps** |
+| SuperGrok Lite | $10/mo | Grok 4 | Higher caps, image generation |
+| SuperGrok | ~$30/mo | Grok 4.5 | Think, DeepSearch, Connectors, Skills |
+| **SuperGrok Heavy** | **~$300/mo** | **All + Grok 4 Heavy + Grok Build CLI** | **Full access, Grok Build included** |
 
-> **Note**: SuperGrok is the standalone xAI subscription. X Premium+ is separate (billed via X). They overlap in chat caps but Heavy/DeepSearch budgets are SuperGrok-only.
+> **Free tier reality**: The free plan runs Grok 3 or Grok 4 Mini — lighter models good for quick questions and fact checks. No image/video generation (paid since March 2026). No DeepSearch or extended reasoning. xAI does not publish exact message limits — check Settings > Usage for your actual position. The 10 prompts/2-hour cap was retired in June 2026.
 
 ### 1.4 Model Capabilities
-| Model | Context | SWE-bench | GPQA | Best For |
-|-------|---------|-----------|------|----------|
-| Grok 4.5 | 1M | 70.8%* | 87.5% | General reasoning, agentic workflows |
-| Grok 4 Heavy | 2M | 72.5%* | 89.0% | Document analysis, complex orchestration |
-| Grok 4.1 Fast | 2M | 65.0%* | 82.0% | High-volume, cost-optimized |
+| Model | Context | SWE-bench | GPQA | Free? | Best For |
+|-------|---------|-----------|------|-------|----------|
+| Grok 3 / Grok 4 Mini | 1M | — | — | ✅ | Quick questions, fact checks |
+| Grok 4.5 | 1M | 70.8%* | 87.5% | ❌ | General reasoning, agentic |
+| Grok 4 Heavy | 2M | 72.5%* | 89.0% | ❌ | Document analysis, orchestration |
+| Grok 4.1 Fast | 2M | 65.0%* | 82.0% | ❌ | High-volume, cost-optimized |
 
 *SWE-bench for grok-code-fast-1 (Grok Build's model); Web Grok uses Grok 4.5/4 Heavy.
 
@@ -298,17 +299,19 @@ When referencing connector data in prompts:
 ## 8. COST OPTIMIZATION
 
 ### 8.1 Tier Selection
-| Use Case | Recommended Tier |
-|----------|------------------|
-| Casual chat, light research | Free / X Premium+ |
-| Regular productivity, DeepSearch | **SuperGrok (~$30/mo)** |
-| Heavy research, Grok 4 Heavy, Grok Build CLI | **SuperGrok Heavy (~$300/mo)** |
-| API integration | xAI API (usage-based) |
+| Use Case | Recommended Tier | Cost |
+|----------|------------------|------|
+| Casual chat, light research | **Free** | **$0** |
+| Regular productivity, DeepSearch | SuperGrok (~$30/mo) | $30/mo |
+| Heavy research, Grok 4 Heavy, Grok Build CLI | SuperGrok Heavy (~$300/mo) | $300/mo |
+| API integration | xAI API (usage-based) | Variable |
 
-### 8.2 SuperGrok vs X Premium+
-- **Chat caps overlap** — if you have X Premium+, don't buy SuperGrok unless you need Heavy/DeepSearch budgets
-- **SuperGrok Heavy** = only way to get Grok 4 Heavy + Grok Build CLI
-- **xAI API** = separate developer product (usage-based, OpenAI-compatible SDK)
+### 8.2 Free vs Paid
+- **Free**: Grok 3/4 Mini, text chat only, limited caps, no image/video
+- **SuperGrok Lite ($10)**: Grok 4, higher caps, image generation
+- **SuperGrok ($30)**: Grok 4.5, DeepSearch, Connectors, Skills
+- **SuperGrok Heavy ($300)**: Grok 4 Heavy, Grok Build CLI, full access
+- **xAI API**: Separate developer product (usage-based, OpenAI-compatible SDK)
 
 ---
 

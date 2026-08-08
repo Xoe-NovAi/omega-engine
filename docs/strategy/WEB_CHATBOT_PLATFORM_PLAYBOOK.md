@@ -24,18 +24,16 @@
 
 ### By Task Type
 
-| Task | Best Platform | Why |
-|------|---------------|-----|
-| Pre-refactor code review | **Web Claude** | 82.1% SWE-bench, instruction-following 94.2%, XML system prompt for precise mandate enforcement |
-| Architecture vetting | **Web Claude** | Long-doc QA (76% MRCR), structured reasoning, RAG mitigation patterns |
-| Multi-source research synthesis | **Web Gemini** | Deep Research (30+ parallel searches), 10M context for large doc sets |
-| Benchmark comparison | **Web Gemini** | 94.1% GPQA, code execution sandbox for verification scripts |
-| Real-time data / current events | **Web Grok** | Live X firehose, 2026 knowledge, real-time sentiment |
-| Source-grounded analysis | **NotebookLM** | Source citations, audio overview, multi-document synthesis |
-| **Local terminal coding agent** | **Grok CLI (Grok Build)** | Local file access, sandbox, 8 parallel sub-agents, ACP |
-| Cross-validation of critical decisions | **Claude + Gemini** | Independent verification of architecture decisions |
-| Real-time X sentiment on tech trends | **Web Grok** | Live X search, brand monitoring, social signals |
-| Research synthesis (multi-source) | **NotebookLM** | Source-grounded, citation-native, audio overview for team briefing |
+| Task | Best Platform | Free? | Why |
+|------|---------------|-------|-----|
+| Pre-refactor code review | **Web Claude** | ✅ Sonnet 5 | ~80-82% SWE-bench, instruction-following, XML system prompt |
+| Architecture vetting | **Web Claude** | ✅ Sonnet 5 | Long-doc QA, structured reasoning, RAG mitigation patterns |
+| Multi-source research synthesis | **Web Gemini** | ✅ Gemini 3.5 Flash | Deep Research, 1M context, code execution sandbox |
+| Benchmark comparison | **Web Gemini** | ✅ Gemini 3.5 Flash | 92.7% GPQA Diamond, code execution for verification |
+| Real-time data / current events | **Web Grok** | ✅ Grok 3/4 Mini | Live X firehose, real-time sentiment |
+| Source-grounded analysis | **NotebookLM** | ✅ Free | Source citations, audio overview, multi-document synthesis |
+| **Local terminal coding agent** | **Grok CLI (Grok Build)** | ❌ $300/mo | Local file access, sandbox, 8 parallel sub-agents, ACP |
+| Cross-validation of critical decisions | **Claude + Gemini** | ✅ Both free | Independent verification of architecture decisions |
 
 ### Omega Engine Workflow Decision Matrix
 
@@ -52,17 +50,17 @@
 
 ### By Model Capability
 
-| Model | SWE-bench | MRCR | GPQA | Context | Best Use |
-|-------|-----------|------|------|---------|----------|
-| Claude Opus 4.8 | 82.1% | 76% | 90.5% | 1M | Code review, deep analysis |
-| Claude Sonnet 4.6 | 78.3% | 72% | 88.2% | 1M | General tasks, cost-effective |
-| Gemini 3 Pro | 63.8% | 68% | 94.1% | 1-2M | Research, benchmarks |
-| Gemini 3.1 Pro | 65.2% | 70% | 95.3% | 10M | Ultra-long context analysis |
-| Grok 4.5 (Web) | 70.8%* | 65% | 87.5% | 1M | Agentic, real-time X search |
-| Grok 4 Heavy (Web) | 72.5%* | 68% | 89.0% | 2M | Document analysis, orchestration |
-| grok-code-fast-1 (CLI) | 70.8% | — | — | — | Local coding, parallel sub-agents |
-
-*SWE-bench for grok-code-fast-1 (Grok Build's model); Web Grok uses Grok 4.5/4 Heavy.
+| Model | SWE-bench | MRCR | GPQA | Context | Free? | Best Use |
+|-------|-----------|------|------|---------|-------|----------|
+| **Claude Sonnet 5** | ~80-82% | ~75% | ~90% | 1M | ✅ | Code review, deep analysis |
+| **Claude Haiku 4.5** | ~70% | ~65% | ~85% | 1M | ✅ | Quick answers, summaries |
+| ~~Claude Opus 4.8~~ | ~~82.1%~~ | ~~76%~~ | ~~90.5%~~ | ~~1M~~ | ❌ | ~~Deep reasoning (paid only)~~ |
+| **Gemini 3.5 Flash** | 78.8% | — | 92.7% | 1M | ✅ | Research, benchmarks, free |
+| **Gemini 3.1 Flash-Lite** | — | — | — | 1M | ✅ | Cost-optimized, high-volume |
+| ~~Gemini 3.1 Pro~~ | ~~65.2%~~ | ~~70%~~ | ~~95.3%~~ | ~~10M~~ | ❌ | ~~Ultra-long context (paid)~~ |
+| **Grok 3 / 4 Mini** | — | — | — | 1M | ✅ | Quick questions, fact checks |
+| ~~Grok 4.5~~ | ~~70.8%~~ | ~~65%~~ | ~~87.5%~~ | ~~1M~~ | ❌ | ~~Agentic, real-time X (paid)~~ |
+| **grok-code-fast-1 (CLI)** | 70.8% | — | — | — | ❌ | Local coding, sub-agents |
 
 ---
 

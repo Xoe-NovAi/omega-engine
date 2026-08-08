@@ -40,12 +40,15 @@ Web Claude (`claude.ai` Projects) is the **external deep-analysis layer** of the
 - **OpenCode CLI** (Antigravity SDK) → implementation, file edits, test execution, local operations
 - These are **not interchangeable**. Web Claude cannot touch local files. OpenCode CLI has full local access but limited free Claude usage. They are complementary layers.
 
-**Available Models (Free Tier)**:
-| Model | Thinking Mode | Best For |
-|-------|--------------|----------|
-| **Haiku 4.5** | Extended Thinking | Quick classification, simple extraction, fast synthesis |
-| **Sonnet 4.6** | Thinking | Deep code review, architecture analysis, complex reasoning |
-| ~~Opus 4.8~~ | ~~N/A~~ | **NOT available on free tier** |
+**Available Models (Free Tier — as of August 2026)**:
+| Model | Thinking Mode | Best For | Free? |
+|-------|--------------|----------|-------|
+| **Sonnet 5** | Extended Thinking | Coding, analysis, multi-step workflows | ✅ Default |
+| **Haiku 4.5** | Extended Thinking | Quick answers, summaries, simple extraction | ✅ |
+| ~~Opus 4.8~~ | ~~Extended Thinking~~ | ~~Deep research, complex reasoning~~ | ❌ Pro/Max only |
+| ~~Fable 5~~ | ~~Adaptive Thinking~~ | ~~Long-running agents, deep reasoning~~ | ❌ Pro/Max only (usage credits) |
+
+> **Key fact**: Sonnet 5 launched June 30, 2026 and became the default for Free and Pro plans on July 1, 2026. It's a substantial improvement over Sonnet 4.6 — performance close to Opus 4.8 at lower cost. Free usage: ~15-40 messages per rolling 5-hour window. Sonnet 5 is the daily driver for Web Claude work.
 
 **Note**: OpenCode CLI via Antigravity SDK provides access to Sonnet 4.6 and Opus 4.6. That is a separate platform and separate token budget. This document covers Web Claude only.
 
