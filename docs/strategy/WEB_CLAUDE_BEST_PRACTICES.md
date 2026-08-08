@@ -156,6 +156,18 @@ Headroom for chat:     ~157K tokens (78% of 200K)
 ```
 **Rule**: Keep pack total ≤80K tokens. This leaves 120K for the conversation — enough for one deep review cycle. If you need more than one review cycle, start a new conversation (same Project, same files).
 
+### Sonnet 5 Extended Thinking Budget (Critical)
+
+Sonnet 5 with Extended Thinking generates reasoning tokens *on top of* the response. A deep code review can consume 20-40K thinking tokens before the response begins. Use these model-specific budgets:
+
+| Mode | Pack Size | Thinking Reserve | Response Budget | Total Headroom |
+|------|-----------|-----------------|-----------------|----------------|
+| **Sonnet 5 (Extended Thinking)** | ≤60K | ~40K (thinking) | ~100K (response) | ~140K |
+| **Sonnet 5 (no Extended Thinking)** | ≤80K | ~0K | ~120K | ~120K |
+| **Haiku 4.5 (Extended Thinking)** | ≤100K | ~10K | ~90K | ~100K |
+
+**Rule**: For deep review tasks (code review, architecture vetting), target pack ≤60K to leave headroom for Extended Thinking. For quick tasks (summaries, extraction), Haiku 4.5 with ≤100K pack is more token-efficient.
+
 ### Quota Management
 - The free tier quota is a **rolling window**, not a daily reset
 - Large packs (>80K tokens) burn quota fast — a single deep session can exhaust an account
@@ -399,6 +411,30 @@ Claude's attention peaks at START and END of context (Liu et al. 2023). Upload o
 | **Middle** | Implementation bundles, mandates, research |
 | **2nd to last** | Specific files being reviewed |
 | **Last** | Handoff instructions / what to produce |
+
+### 7.4 Two-Project Split Pattern (When You Need >12 Files)
+
+When a review task genuinely needs more than 12 files of context, split across two Projects:
+
+**Project A (Stable Foundation)** — upload once, reuse across tasks:
+- `00_PROJECT_MANIFEST.md`
+- `SOVEREIGN_MANDATES.md` (condensed)
+- `PIVOT_LOG_decisions.md` (recent decisions only)
+- `OMEGA_ENGINE_state.md`
+- `ARCHITECTURE_OVERVIEW.md`
+
+**Project B (Task-Specific)** — fresh per task:
+- Source modules under review (up to 8 files)
+- Relevant test files
+- Task-specific research bundles
+
+**Session flow**:
+1. Open **Project A** → confirm context loaded ("List all files in your project knowledge")
+2. Paste Project B file list in the chat prompt: "I have also uploaded these task-specific files to a second Project"
+3. Claude cross-references Project A grounding with Project B analysis
+4. Download artifact from Project B conversation
+
+This effectively gives you ~20 files of logical context while staying under the 12-file RAG threshold in each Project.
 
 ---
 

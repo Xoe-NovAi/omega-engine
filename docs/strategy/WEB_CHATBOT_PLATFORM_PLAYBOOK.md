@@ -228,7 +228,10 @@ When an external platform produces an artifact:
 2. **Log** in `data/coordination/WEB_CLAUDE_ARTIFACT_REGISTRY.md` (or platform-specific registry)
 3. **Ingest** into the OpenCode CLI session that created the context pack
 4. **Validate** using the platform-specific quality checklist (§7)
-5. **Integrate** or **reject** with documented reasoning
+5. **Log ≥1 lesson** in the registry's Lessons Learned table — what to improve in the next pack
+6. **Integrate** or **reject** with documented reasoning
+
+> **Mandatory gate**: No artifact may be marked INTEGRATED without at least one lesson logged. This closes the feedback loop — without it, every pack is designed from first principles and the same mistakes repeat.
 
 ### 6.3 Cross-Platform Validation
 
@@ -250,6 +253,40 @@ For critical decisions (architecture, mandate compliance, security):
 | NotebookLM | Unlimited | No quota limits, source-based |
 
 > **Web Gemini rotation**: Apply the same sequential/parallel discipline as Web Claude. Google accounts in the pool each have independent free-tier quotas. Rotate top-to-bottom. Parallel streams should cover different research domains — never duplicate the same query across accounts.
+
+### 6.5 Daily Task Assignment Protocol
+
+When you have multiple tasks to run across the platform pool, use this protocol to assign them optimally:
+
+```
+1. CATEGORIZE each task:
+   ├── code-review      → Web Claude (accounts 1-N, sequential)
+   ├── arch-vet         → Web Claude (accounts 1-N, sequential)
+   ├── research-synth   → Web Gemini (account 1, long session)
+   ├── real-time        → Web Grok (free tier, quick)
+   ├── lit-review       → NotebookLM (no quota, source-based)
+   └── local-analysis   → Grok CLI / OpenCode CLI (local)
+
+2. ASSIGN to accounts:
+   ├── Sequential tasks (same platform): drain account 1 → 2 → ... → 8
+   ├── Parallel tasks (different platforms): assign to different accounts
+   └── Cross-validation tasks: assign same pack to 2 platforms, compare
+
+3. CROSS-VALIDATE critical decisions:
+   ├── Architecture changes → Claude + Gemini (independent answers)
+   ├── Real-time claims → Claude + Grok (X firehose)
+   └── Research findings → NotebookLM → Claude/Gemini (two-stage)
+
+4. ROTATE: update account tracker after each session
+```
+
+**Example**: 3 tasks today — code review, tech adoption research, X trend monitoring.
+- **acct-1 (Web Claude)**: code review (deep, Sonnet 5, ~40K tokens)
+- **acct-1 (Web Gemini)**: tech adoption research (long session, parallel search)
+- **acct-1 (Web Grok)**: X trend monitoring (quick, real-time)
+- All three accounts are the same Google account — sequential, not parallel.
+
+**Parallel example**: code review (Claude acct-1) + architecture vetting (Claude acct-2) + research synthesis (Gemini acct-1) running simultaneously — different platforms, different accounts.
 
 ---
 
