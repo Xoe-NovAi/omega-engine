@@ -44,7 +44,8 @@
 | **`docs/strategy/WEB_CHATBOT_PLATFORM_PLAYBOOK.md`** | — | **CANONICAL** — Index for platform-specific best practices |
 | **`docs/strategy/WEB_CLAUDE_BEST_PRACTICES.md`** | — | **CANONICAL** — Web Claude (Projects, Code, API) best practices |
 | **`docs/strategy/WEB_GEMINI_BEST_PRACTICES.md`** | — | **CANONICAL** — Web Gemini (AI Studio, Gems, API) best practices |
-| **`docs/strategy/WEB_GROK_BEST_PRACTICES.md`** | — | **CANONICAL** — Web Grok (SuperGrok, Build, API) best practices |
+| **`docs/strategy/WEB_GROK_BEST_PRACTICES.md`** | — | **CANONICAL** — Web Grok (grok.com, iOS, Android) best practices |
+| **`docs/strategy/GROK_CLI_BEST_PRACTICES.md`** | — | **CANONICAL** — Grok CLI (Grok Build) local terminal agent best practices |
 | **`docs/strategy/NOTEBOOKLM_BEST_PRACTICES.md`** | — | **CANONICAL** — NotebookLM (source-grounded research) best practices |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | — | Multi-agent coordination |
 | `docs/strategy/HIVEMIND_POST_TEMPLATE.md` | — | Hivemind post quality gate |
@@ -84,10 +85,10 @@ SUPERSEDED: | **`docs/archive/sprints/EXECUTION_PLAN_20260725.md`** | **D Gate**
 | **`docs/research/GEMINI_CLI_QUICK_REF.md`** | **Superseded by** `WEB_GEMINI_BEST_PRACTICES.md` |
 | **`docs/research/LEGACY_GEMINI_STRATEGY.md`** | **Superseded by** `WEB_GEMINI_BEST_PRACTICES.md` |
 | **`docs/research/R_GEMINI_CLI_TECHNICAL_REPORT.md`** | **Superseded by** `WEB_GEMINI_BEST_PRACTICES.md` |
-| **`docs/research/R_GROK_CLI_ARCHITECTURE.md`** | **Superseded by** `WEB_GROK_BEST_PRACTICES.md` |
-| **`docs/research/R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md`** | **Superseded by** `WEB_GROK_BEST_PRACTICES.md` |
-| **`docs/research/R_GROK_ECOSYSTEM_DEEP.md`** | **Superseded by** `WEB_GROK_BEST_PRACTICES.md` |
-| **`docs/research/GROK_CLI_KNOWLEDGE_GAPS.md`** | **Superseded by** `WEB_GROK_BEST_PRACTICES.md` |
+| **`docs/research/R_GROK_CLI_ARCHITECTURE.md`** | **Split** — CLI sections → `GROK_CLI_BEST_PRACTICES.md`; Web Grok sections → `WEB_GROK_BEST_PRACTICES.md` |
+| **`docs/research/R_GROK_CLI_COMPREHENSIVE_RESEARCH_REPORT.md`** | **Split** — CLI sections → `GROK_CLI_BEST_PRACTICES.md`; Web Grok sections → `WEB_GROK_BEST_PRACTICES.md` |
+| **`docs/research/R_GROK_ECOSYSTEM_DEEP.md`** | **Split** — CLI sections → `GROK_CLI_BEST_PRACTICES.md`; Web Grok sections → `WEB_GROK_BEST_PRACTICES.md` |
+| **`docs/research/GROK_CLI_KNOWLEDGE_GAPS.md`** | **Split** — CLI sections → `GROK_CLI_BEST_PRACTICES.md`; Web Grok sections → `WEB_GROK_BEST_PRACTICES.md` |
 SUPERSEDED: | `docs/archive/sprints/2026-07-25-guard-and-distill/index.md` | **SUPERSEDED** — archived to `docs/archive/sprints/2026-07-25/guard-and-distill/` |
 
 ## LAYER 4: ARCHIVE
