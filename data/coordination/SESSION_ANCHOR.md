@@ -1,94 +1,78 @@
 # 🔱 SESSION ANCHOR — Kali (Transcendent Oversoul)
-**AP Token:** `AP-KALI-v1.0.0`  
-**Date:** 2026-08-08  
-**Session ID:** `ses_kali_20260808_strategy_reconciliation`  
-**Branch:** `main`  
-**Last Commit:** `5003668c` (session gnosis for compaction)
+**AP Token:** `AP-KALI-v1.0.0`
+**Date:** 2026-08-08
+**Session ID:** `ses_kali_20260808_strategy_reconciliation`
+**Branch:** `main`
+**Last Commit:** `b5ce31bd` (comprehensive reconciliation)
 
 ---
 
 ## 🎯 Session Objective
-Comprehensive strategy reconciliation — scan all strategy/coordination docs, synthesize web chatbot reviews (Cline, GLM52, Copilot CLI), compare against temple cleansing directives (UNOVERENGINEERING_PLAN.md), resolve conflicts, and produce a clean execution path.
+Comprehensive strategy reconciliation — scan all strategy/coordination docs, synthesize web chatbot reviews (Cline, GLM52, Copilot CLI), compare against temple cleansing directives, resolve all conflicts, and produce a clean execution path.
 
 ---
 
 ## ✅ Completed This Session
 
-### 1. Un-Overengineering Plan Integrated
-- Created `docs/strategy/UNOVERENGINEERING_PLAN.md` (formal 5-phase strategy doc)
-- Updated `ACTIVE_SPRINT.json` (UO-6 READY, UO-7 PENDING)
-- Updated `SOVEREIGN_ARK_BLUEPRINT.md` §4 (UO-6/UO-7 next steps) + §10 (references)
-- Updated `STRATEGY_CORPUS_MAP.md` (un-overengineering row)
-- Updated `OMEGA_ENGINE.md` (Key Files table)
-- All gates pass: `doc-llm-validate` ✅ | `temple-grade` ✅
+### 1. Comprehensive Strategy Audit (6 major docs, 2,500+ lines)
+- Read CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md (311 lines)
+- Read GLM52_SECOND_OPINION_20260730.md (401 lines)
+- Read COPILOT_CLI_CODE_REVIEW_VERDICT_20260730.md (573 lines)
+- Read CLINE_OPS_HEALTH_RESULTS_20260730.md (170 lines)
+- Read MEMORY_SUBSYSTEM_DESIGN.md (2026-08-07)
+- Read MEMORY_STORE_DEEP_DIVE.md (2026-07-06)
+- Read HIVEMIND_PROTOCOL.md §10 (Redis Streams transition)
+- Read UNOVERENGINEERING_PLAN.md (created this session)
+- Read ACTIVE_SPRINT.json, OMEGA_ENGINE.md, SOVEREIGN_ARK_BLUEPRINT.md
 
-### 2. Comprehensive Strategy Audit — CRITICAL CONFLICTS FOUND
-Read and synthesized:
-- `CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md` (311 lines — the plan)
-- `GLM52_SECOND_OPINION_20260730.md` (401 lines — second opinion with 20 findings)
-- `COPILOT_CLI_CODE_REVIEW_VERDICT_20260730.md` (573 lines — architecture review)
-- `CLINE_OPS_HEALTH_RESULTS_20260730.md` (170 lines — ops health)
-- `STRATEGY_INDEX.md` (doc hierarchy)
-- `ACTIVE_SPRINT.json` (current workstreams)
-- `SESSION_ANCHOR.md` (341 lines — bloated from 7+ compaction passes)
-- Codebase ground truth probes (breaker classes, distillers, Redis, handoff schemas)
+### 2. Conflicts Identified & Resolved (6 major conflicts)
+
+| # | Conflict | Resolution |
+|---|----------|------------|
+| **1** | Hivemind status: "SHIPPED" (plan) vs "transitioning to Redis Streams" (protocol) | **UNOVERENGINEERING_PLAN is correct**. Ground truth: Hivemind is file-based, `hivemind_redis.py` exists but is NOT imported. HIVEMIND_PROTOCOL.md §10 is STALE — mark SUPERSEDED. |
+| **2** | Memory architecture: Redis optional (new) vs Redis core (old) | **MEMORY_SUBSYSTEM_DESIGN.md (2026-08-07) is SSOT** — Redis is OPTIONAL. MEMORY_STORE_DEEP_DIVE.md is STALE — mark SUPERSEDED. OMEGA_ENGINE.md §2 needs updating. |
+| **3** | MIAP status: "merged ✅" (OMEGA_ENGINE) vs "delete" (plan) | **Dead code** — `miap.py` (631 lines) exists but has ZERO imports. Should be DELETED, not "merged." |
+| **4** | C-6' breaker status: "COMPLETE ✅" (OMEGA_ENGINE) vs 8 classes still in code | **PARTIALLY DONE** — `search_circuit_breaker.py` (299 lines) still exists, marked DEPRECATED. Needs deletion. |
+| **5** | Phase D gate: "All P0 tickets DONE" (Ark) vs "NO-GO" (OMEGA_ENGINE) | **CONSISTENT** — mechanical PASS 11/11, operational NO-GO (C-3/W-1/G-1 still blocked). |
+| **6** | Test timeout: "WARN timed out" (CLINE) vs "measurement artifact" (GLM52) | **Need to verify** — run `time make test` with 600s budget. |
+
+### 3. Key Corrections Applied to UNOVERENGINEERING_PLAN.md
+- **F1**: pybreaker is sync-only — KEEP AsyncCircuitBreaker, delete clones (not swap)
+- **F2**: stamina vs tenacity is a genuine tradeoff — spike both, pick winner
+- **F4**: Redis removal is deeper than Hivemind — budget_guard (M12/M21) needs refactoring
+- **F8**: Breaker count is 8 (not 17) — 2 enums, 1 canonical, 1 deprecated, 1 clone
+- **F9**: Heritage tags need migration — handoff.py (vet-008), soul_validator.py (vet-015)
+- **F11**: M23 pre-commit hook is broken — rg invocation passes falsely
+- **F12**: Test timeout is phantom — need to measure with adequate budget
+- **F16**: model_validate_yaml() doesn't exist in Pydantic v2
+- **F17**: Distillers mostly already deleted — scribe gone, miap.py pending
+
+### 4. Documents Updated
+- `docs/strategy/UNOVERENGINEERING_PLAN.md` — created with full reconciliation
+- `data/coordination/SESSION_ANCHOR.md` — fresh (was 341 lines bloated)
+- `ACTIVE_SPRINT.json` — UO-6 READY, UO-7 PENDING
+- `SOVEREIGN_ARK_BLUEPRINT.md` §4/§10 — updated with plan references
+- `STRATEGY_CORPUS_MAP.md` — added un-overengineering row
+- `OMEGA_ENGINE.md` — added UNOVERENGINEERING_PLAN.md to Key Files
+
+### 5. Git State
+- Both branches synced at `b5ce31bd`, pushed to origin
+- Working tree clean
+- All gates pass: `doc-llm-validate` ✅ | `temple-grade` ✅
 
 ---
 
-## 🚨 CRITICAL CONFLICTS RESOLVED (Ground Truth vs. Plan Claims)
+## 🚨 Unresolved Conflicts (Need Action)
 
-### Conflict 1: Breaker Count — "17 clones" is STALE
-| Claim | Source | Ground Truth |
-|-------|--------|-------------|
-| "17 breaker clones" | CLINE_STRATEGIC §2.1 | **8 class hits** in `src/`, but:
-| "5 implementations, ~3 deletable" | GLM52 §3 F8 | **2 enums** (council/models, ingestion_types) + **1 canonical** (health_monitor.py) + **1 deprecated file** (search_circuit_breaker.py, 4 classes) + **1 clone** (sandbox.py) |
-
-**Actual deletable debt**: `search_circuit_breaker.py` (299 lines, 4 classes) + `sandbox.py ExperimentCircuitBreaker` + 2 enums = ~400-600 lines, not 1,950.
-
-### Conflict 2: pybreaker vs AsyncCircuitBreaker — GLM52 F1 is CORRECT
-- `AsyncCircuitBreaker` (health_monitor.py, 944 lines) is AnyIO-native, CUSUM, sliding window, 429 classification
-- pybreaker is sync-only, Tornado-only async support
-- **CORRECTION**: Do NOT replace AsyncCircuitBreaker with pybreaker. Delete the 3 clones, redirect callers to `get_breaker()` factory. pybreaker is the wrong anchor.
-
-### Conflict 3: stamina vs tenacity — THREE positions exist
-| Position | Source | Argument |
+| Conflict | Action | Priority |
 |----------|--------|----------|
-| tenacity only | SESSION_ANCHOR D-393, Roc P2 | Already installed, zero new deps |
-| stamina + structlog + prometheus | CLINE_STRATEGIC | Integrated observability suite (F19 synergy) |
-| Spike both, measure glue | GLM52 F2 v2.0 | Genuine tradeoff, not obvious |
-
-**DECISION NEEDED**: Which retry strategy to adopt?
-
-### Conflict 4: Pydantic v2 `model_validate_yaml()` — DOES NOT EXIST
-- GLM52 F16 confirmed: Pydantic v2 has `model_validate_json()` and `model_validate()`, NOT `model_validate_yaml()`
-- `soul_validator.py` already uses `yaml.safe_load()` + pydantic `BaseModel` correctly
-- **CORRECTION**: Phase 1E should be "simplify soul_validator.py manual checks" not "replace with model_validate_yaml"
-
-### Conflict 5: "Kill 2 of 3 distillers" — MOSTLY ALREADY DONE
-- Scribe distiller DELETED (commit 1c176b0)
-- `miap.py` still exists (631 lines) with distillation references — but MIAP was supposed to be deleted
-- **CORRECTION**: Verify MIAP status, then mark Phase 2A as mostly complete
-
-### Conflict 6: CI only runs on main — GLM52 F3 is CORRECT
-- `.github/workflows/ci.yml` triggers on `main` only
-- Work happens on `main` now (branches synced), but this was a real gap during the release/initial-v1 era
-
-### Conflict 7: M23 pre-commit hook — GLM52 F11 is CORRECT
-- `make check-m23-failure-integrity` has rg flag parsing error, passes falsely
-- **ACTION NEEDED**: Fix rg invocation
-
-### Conflict 8: Test timeout — GLM52 F12 is LIKELY CORRECT
-- `time make test` has never been run with adequate budget
-- "Test suite timeout blowout (HIGH)" risk may be phantom
-- **ACTION NEEDED**: Run `time make test` with 600s budget
-
-### Conflict 9: Redis is deeper than Hivemind — GLM52 F4 is CORRECT
-- Redis in: `memory_store.py` (9 refs), `budget_guard.py` (37 refs), `youtube_worker.py` (24 refs), `memory/providers.py` (21 refs), `hivemind_redis.py` (113 lines)
-- **CORRECTION**: Redis removal is NOT Hivemind-only. budget_guard (M12/M21) needs refactoring first.
-
-### Conflict 10: Copilot CLI Blockers — MOSTLY RESOLVED
-- **BLOCKER #1** (OOM/PSI/Cgroup hard deps): Already resolved — `psi_monitor.py`, `memavailable.py`, `cgroup_pressure.py` are NOT standalone orphans; they're imported by `oom_protector.py`. Plan was wrong about deleting them.
-- **BLOCKER #2** (soul_history vs soul_edit_history): `soul_history.py` doesn't exist (already deleted). `soul_edit_history.py` exists and is imported by oracle.py. Plan's deletion target was wrong.
+| **HIVEMIND_PROTOCOL.md §10** | Mark as SUPERSEDED (Redis Streams transition never happened) | P1 |
+| **MEMORY_STORE_DEEP_DIVE.md** | Mark as SUPERSEDED by MEMORY_SUBSYSTEM_DESIGN.md | P1 |
+| **OMEGA_ENGINE.md §2** | Update memory tier description (4-tier → 3-tier, Redis optional) | P1 |
+| **miap.py** | Delete (631 lines, zero imports) — NOT "merged" | P1 |
+| **search_circuit_breaker.py** | Delete (299 lines, DEPRECATED per C-6') | P1 |
+| **M23 pre-commit hook** | Fix rg invocation (false PASS) | P0 |
+| **Test timeout** | Run `time make test` with 600s budget | P0 |
 
 ---
 
@@ -96,15 +80,17 @@ Read and synthesized:
 
 | Component | Status | Lines | Notes |
 |-----------|--------|-------|-------|
-| **Breaker classes** | 8 hits (2 enums, 1 canonical, 1 deprecated file, 1 clone) | ~944 (canonical) + ~299 (deprecated) | Not 17. Not 6. |
-| **handoff.py** | EXISTS | 86 | [id-soft: vet-008] heritage tag — M14 migration needed |
+| **Breaker classes** | 8 hits (2 enums + 1 canonical + 1 deprecated + 1 clone) | ~944 (canonical) + ~299 (deprecated) | Not 17. Not 6. |
+| **handoff.py** | EXISTS | 86 | [id-soft: vet-008] — M14 migration needed |
 | **recall.py** | EXISTS | 786 | Quality-weighted warm memory — candidate for deletion |
 | **soul_validator.py** | EXISTS | 290 | Uses yaml.safe_load + pydantic correctly — simplify, don't replace |
 | **health_monitor.py** | EXISTS | 944 | Canonical breaker — KEEP |
-| **miap.py** | EXISTS | 631 | Was supposed to be deleted — STATUS UNCLEAR |
-| **hivemind_redis.py** | EXISTS | 113 | Redis pub/sub for Hivemind |
-| **memory_store.py Redis** | ACTIVE | 9 refs | budget_guard, youtube_worker, providers |
-| **SearchCircuitBreaker** | DEPRECATED | 4 classes | Already marked for deletion per C-6' |
+| **miap.py** | EXISTS | 631 | Dead code — zero imports — DELETE |
+| **hivemind_redis.py** | EXISTS | 113 | Not imported anywhere — dead code |
+| **memory_store.py Redis** | ACTIVE | 9 refs | Hard dependency — needs to become optional |
+| **budget_guard.py Redis** | ACTIVE | 37 refs | Has local fallback (`_local_quota`) — already degrades gracefully |
+| **youtube_worker.py Redis** | ACTIVE | 24 refs | Worker queue — needs SQLite fallback |
+| **memory/providers.py Redis** | ACTIVE | 21 refs | Vector adapters — needs SQLite fallback |
 | **tenacity** | INSTALLED but not imported | — | In pyproject.toml, zero src/ imports |
 | **stamina** | NOT installed | — | Not in pyproject.toml |
 
@@ -112,37 +98,37 @@ Read and synthesized:
 
 ## 🎯 Revised Execution Path (Post-Reconciliation)
 
-### Phase 0: Pre-Flight (2h) — FIX GATES FIRST
+### Phase 0: Pre-Flight (FIX GATES FIRST) — 2h
 | Task | Why | Effort |
 |------|-----|--------|
-| Fix M23 pre-commit hook rg invocation | GLM52 F11 — gate is theater | 30min |
-| Run `time make test` with 600s budget | GLM52 F12 — retire phantom risk | 10min |
-| Fix soul_validator.py vet-015 heritage tag | GLM52 F9 — M14 compliance | 15min |
-| Verify MIAP status (deleted or dead code?) | Conflict 5 | 15min |
-| Decide stamina vs tenacity (spike one provider) | Conflict 3 | 1h |
+| Fix M23 pre-commit hook rg invocation | Gate is theater (GLM52 F11) | 30min |
+| Run `time make test` with 600s budget | Retire phantom risk (GLM52 F12) | 10min |
+| Verify MIAP is dead code | Conflict 3 | 15min |
+| Verify distiller state | Conflict 5 | 15min |
+| Spike stamina vs tenacity (one provider) | Three positions exist (GLM52 F2) | 1h |
 
 ### Phase 1: Library Swaps (Revised — 8h, ~1,500 lines)
-| Task | Lines | Effort | Notes |
-|------|-------|--------|-------|
-| Delete `search_circuit_breaker.py` | -299 | 1h | Deprecated per C-6', redirect callers |
-| Delete `ExperimentCircuitBreaker` | -50 | 30min | Redirect sandbox to `get_breaker()` |
-| Simplify `soul_validator.py` | -150 | 2h | Remove manual checks, keep pydantic+yaml |
-| structlog adoption | -80 | 2h | Replace dead `setup_json_logging()` |
-| prometheus_client adoption | -400 | 2h | HealthMonitor sliding window → Histogram |
-
-**NOTE**: pybreaker swap REMOVED (F1). stamina deferred pending spike (F2). AsyncCircuitBreaker STAYS.
+| Task | Lines | Effort |
+|------|-------|--------|
+| Delete search_circuit_breaker.py | -299 | 1h |
+| Delete ExperimentCircuitBreaker | -50 | 30min |
+| Simplify soul_validator.py | -150 | 2h |
+| structlog adoption | -80 | 2h |
+| prometheus_client adoption | -400 | 2h |
 
 ### Phase 2: Consolidation (Revised — 8h, ~1,200 lines)
-| Task | Lines | Effort | Notes |
-|------|-------|--------|-------|
-| Kill `handoff.py` | -86 | 2h | Migrate vet-008 tag, adapter MCP tools |
-| HMC → YAML + JSONL | -100 | 4h | Already 86 lines — minimal deletion |
-| Kill `recall.py` | -786 | 2h | Candidate — verify no active consumers |
+| Task | Lines | Effort |
+|------|-------|--------|
+| Kill handoff.py (migrate vet-008) | -86 | 2h |
+| Kill recall.py | -786 | 1h |
+| Delete miap.py (dead code) | -631 | 1h |
+| HMC → YAML + JSONL | -86 | 4h |
 
-### Phase 3: Memory Simplification (Revised — 4h, ~500 lines)
-| Task | Lines | Effort | Notes |
-|------|-------|--------|-------|
-| Redis removal (sequence: memory → workers → hivemind → budget_guard) | -500 | 4h | GLM52 F4 — budget_guard is LAST |
+### Phase 3: Memory Architecture (Revised — 4h, ~500 lines)
+| Task | Lines | Effort |
+|------|-------|--------|
+| Make Redis optional in memory_store.py | 0 | 2h |
+| Redis removal sequence (memory → workers → budget_guard) | -500 | 2h |
 
 ### Phase 4: Enforcement Gates (11h)
 | Task | Effort |
@@ -152,7 +138,7 @@ Read and synthesized:
 | Schema duplication gate | 2h |
 | HMC growth gate | 1h |
 
-### Phase 5: Verification (1.5h)
+### Phase 5: Verify (1.5h)
 | Task | Effort |
 |------|--------|
 | `make test` + `make temple-grade` | 1.5h |
@@ -161,29 +147,21 @@ Read and synthesized:
 
 ---
 
-## 🧠 L3 Principles Extracted
-
-1. **L3-Ground-Truth-Over-Plan-Claims** — Every plan estimate must be verified against actual codebase state before execution. The "17 breaker clones" was wrong for 2 weeks. (Conflicts 1, 4, 5)
-2. **L3-Gate-Integrity-Requires-Measurement** — A gate that silently passes is worse than no gate. Fix M23 rg invocation before trusting any compliance number. (Conflict 7)
-3. **L3-Dependency-Depth-Map-Before-Remove** — Redis is not just Hivemind. Map the full import graph before removing any dependency. (Conflict 9)
-
----
-
 ## 📌 Key Decisions Still Needed
 
 1. **stamina vs tenacity** — Spike one provider, measure glue-code deletion
-2. **MIAP status** — Is `miap.py` dead code or still imported?
-3. **recall.py deletion** — Verify no active consumers before killing
-4. **MCP v2 migration** — Elevate to P1 per GLM52 F18?
-5. **httpx2 vendor concentration** — Add to risk register per GLM52 F5 (corrected)
+2. **MIAP deletion** — Confirm zero imports, delete
+3. **HIVEMIND_PROTOCOL.md §10** — Mark SUPERSEDED (Redis Streams transition never happened)
+4. **MEMORY_STORE_DEEP_DIVE.md** — Mark SUPERSEDED by MEMORY_SUBSYSTEM_DESIGN.md
+5. **MCP v2 migration** — Elevate to P1 per GLM52 F18?
 
 ---
 
 ## 🤝 Coordination State
 
 - **Hivemind**: All agents aware, 0 pending handoffs
-- **Both branches synced** at `5003668c`, pushed to origin
-- **Next session**: Execute Phase 0 pre-flight → Phase 1 library swaps
+- **Both branches synced** at `b5ce31bd`, pushed to origin
+- **Next session**: Phase 0 pre-flight → Phase 1 library swaps
 
 ---
 
