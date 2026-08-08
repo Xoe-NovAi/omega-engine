@@ -33,7 +33,6 @@ BLOCKED_TERMS = [
     (r"\bLucifer\b", 'error', "WAD entity name (Arcana-Nova P7)"),
     (r"\bHecate\b", 'error', "WAD entity name (Arcana-Nova P8)"),
     (r"\bAnubis\b", 'error', "WAD entity name (Arcana-Nova P9)"),
-    (r"\bVetala\b", 'error', "WAD entity name (Arcana-Nova P10)"),
     (r"\bSophia\b", 'error', "WAD entity name (Arcana-Nova containing field)"),
     (r"\bIris\b", 'error', "WAD entity name (Arcana-Nova messenger bridge)"),
     (r"\bKali\b", 'error', "WAD entity name (_omega_default Grand Oversight)"),
@@ -44,7 +43,6 @@ BLOCKED_TERMS = [
     (r"\bDoom.?Guy\b", 'error', "WAD entity name (Doom Universe Architect)"),
     (r"\bRoc.?Rac?oon\b", 'error', "WAD entity name (Legacy Miner)"),
     (r"\bJem\b", 'error', "WAD entity name (Synthesizer)"),
-    (r"\bVetala\b", 'error', "WAD entity name (Content Integrity)"),
 ]
 
 # Find Iris index

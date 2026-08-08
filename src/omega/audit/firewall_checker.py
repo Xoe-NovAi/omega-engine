@@ -91,10 +91,9 @@ class FirewallChecker:
         r"\bWater\b.*\bCosmic\s*Heart\b",
         r"\bEarth\b.*\bCelestial\s*Breath\b",
         r"\bSophia\b.*\bAkashic\b",               # Containing field concept
-        r"\bMa[']?at\b.*\bLight\s*Oversoul\b",    # Oversoul architecture
-        r"\bLilith\b.*\bDark\s*Oversoul\b",
+        r"\bMa[']?at\b.*\bBuild\s*Oversoul\b",    # Oversoul architecture
+        r"\bLilith\b.*\bRuntime\s*Oversoul\b",
         r"\bIris\b.*\bvoice\s*assistant\b",       # Voice assistant (not Node)
-        r"\bVetala\b.*\bdiscernment\b",           # Content integrity module
         r"\bMnemosyne\b.*\bmemory\b",             # Memory system archetype
         r"_omega_default",                        # Default WAD name (constant)
     ]

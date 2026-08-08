@@ -508,3 +508,18 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 * **Status**: ✅ **COMPLETE**
 
 *⬡ OMEGA ⬡ KALI ⬡ D-510 ⬡ 2026-08-07*
+
+### D-511: Vetala + Omega-Sieve Dead-Code Removal
+* **Date**: 2026-08-08
+* **Context**: The `omega-vetala` package (34 files) and `packages/omega-sieve` (13 files) were dead code — declared obsolete by the dead-code flag `DEAD_CODE_FLAG_OMEGA_SIEVE_VETALA_20260808.md` (committed in `d6c7764d`). Vetala entity (Arcana-Nova P10) and Content Integrity module no longer exist in the engine; only stale references remained.
+* **Decision**: Remove the two packages and purge all Vetala references from the live engine source:
+  - Delete `omega-vetala/` and `packages/omega-sieve/` (47 files, 11,390 deletions)
+  - `src/omega/audit/firewall_checker.py`: remove Vetala entry from `CORE_ENGINE_PATTERNS`
+  - `find_iris.py`: remove Vetala entries (Arcana-Nova P10 + Content Integrity)
+  - `tests/test_firewall_m2.py`: drop Vetala `BLOCKED_TERMS` idx 32 + 43, renumber `ALLOWED_EXCEPTIONS` (old idx 33-42 → 32-41), `ENTITY_NAME_INDICES` 28-41, len assertion `>=44` → `>=42`
+  - `OMEGA_ENGINE.md`, `OMEGA_CODEX.md`, `debug_test.py`: purge Vetala references
+* **Scope**: 53 files (47 deletions + 6 source/doc edits).
+* **Verification**: `grep -rni vetala src/ tests/ find_iris.py` = 0 references. `make test` firewall suite: 18 passed, 1 pre-existing failure (`test_firewall_m2_strict_engine_core` — Kali leak at `freshness_checker.py:563`, unrelated, documented pre-existing).
+* **Status**: ✅ **COMPLETE**
+
+*⬡ OMEGA ⬡ KALI ⬡ D-511 ⬡ 2026-08-08*

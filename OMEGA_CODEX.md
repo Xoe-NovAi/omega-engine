@@ -1,4 +1,4 @@
-# ⬡ OMEGA ⬡ CODEX ⬡ 2026-08-08T02:36:31.680565+00:00 ⬡
+# ⬡ OMEGA ⬡ CODEX ⬡ 2026-08-08T15:57:43.852137+00:00 ⬡
 
 > **Generated via Stack-Cat Protocol**. This is the single startup read target for all agents. It contains the concatenated active state of the engine, mandates, workflow, and refinement protocols.
 
@@ -12,7 +12,7 @@ After compaction or restart, execute in strict order:
 4. Read `.opencode/anchored-summary.md` — What was I doing?
 5. Present a rehydration report. Pause. Await user direction.
 
-> Codex generated: 2026-08-08T02:36:31.680565+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
+> Codex generated: 2026-08-08T15:57:43.852137+00:00 | Regenerate: `make codex` | Auto-fix: `make check-codex-fix`
 > If timestamp is >24h old, run `make check-codex-fix` (or `make codex`) before reading further.
 > The session_end hook auto-refreshes the Codex after every session — staleness should be rare.
 > To verify freshness: `make check-codex-stale` (exit 0 = fresh, exit 1 = stale)
@@ -22,7 +22,7 @@ After compaction or restart, execute in strict order:
 
 ### scripts/codex/ENGINE_CONDENSED.md
 **Type**: markdown
-**Size**: 4552 bytes
+**Size**: 4510 bytes
 **Lines**: 109
 
 # 🔱 Omega Engine — Single Source of Truth (Condensed)
@@ -37,7 +37,7 @@ After compaction or restart, execute in strict order:
 - **Cognitive Sovereignty**: Local inference floor; local verification ceiling.
 - **Local-first**: Cloud = teacher, never dependency.
 - **WAD Architecture**: Engine → IWADs → PWADs (id Software heritage).
-- **Standalone Packages**: `omega-sieve`, `omega-doc-reader`, `omega-meditation` on PyPI.
+- **Standalone Packages**: `omega-doc-reader`, `omega-meditation` on PyPI.
 
 ---
 
@@ -51,7 +51,7 @@ After compaction or restart, execute in strict order:
 | Fleet | **12 agents** (cap: 14 per M10) | ✅ |
 | WADs | **4** (arcana_novai, torment, youtube_research, youtube_worker) | ✅ |
 | Heritage | **121 [id-soft:] tags** — all vetted | ✅ |
-| Shared Modules | **4** (omega-vetala, omega-sieve, omega-doc-reader, omega-meditation) | ✅ 3 on PyPI |
+| Shared Modules | **2** (omega-doc-reader, omega-meditation) | ✅ 2 on PyPI |
 | **WARP Proxy Pool** | **3-node pool operational** (8081/8082/8083) | ✅ **W-1 FIXED** |
 | **Gemma 4 31B workhorse** | **DEAD** — 16k free input TPM since Jul 15 | 🚨 **G-1 PENDING** |
 | **Antigravity OAuth** | **PARTIAL** — API-key only | 🟡 G-1b path |

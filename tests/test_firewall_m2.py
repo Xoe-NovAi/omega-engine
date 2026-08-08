@@ -72,7 +72,6 @@ BLOCKED_TERMS: list[tuple[str, str, str]] = [
     (r"\bLucifer\b", "error", "WAD entity name (Arcana-Nova P7)"),
     (r"\bHecate\b", "error", "WAD entity name (Arcana-Nova P8)"),
     (r"\bAnubis\b", "error", "WAD entity name (Arcana-Nova P9)"),
-    (r"\bVetala\b", "error", "WAD entity name (Arcana-Nova P10)"),
     (r"\bSophia\b", "error", "WAD entity name (Arcana-Nova containing field)"),
     (r"\bIris\b", "error", "WAD entity name (Arcana-Nova messenger bridge)"),
     # _omega_default / MaKaLi triad entities:
@@ -85,8 +84,6 @@ BLOCKED_TERMS: list[tuple[str, str, str]] = [
     (r"\bDoom.?Guy\b", "error", "WAD entity name (Doom Universe Architect)"),
     (r"\bRoc.?Rac?oon\b", "error", "WAD entity name (Legacy Miner)"),
     (r"\bJem\b", "error", "WAD entity name (Synthesizer)"),
-    # Legacy / other:
-    (r"\bVetala\b", "error", "WAD entity name (Content Integrity)"),
 
     # ── Pre-existing violations being tracked (severity: warning) ─────
     # These will be upgraded to "error" as they are cleaned up.
@@ -136,25 +133,22 @@ ALLOWED_EXCEPTIONS: list[tuple[str, int | None, int]] = [
     ("src/omega/audit/firewall_checker.py", None, 29),  # _omega_default
     ("src/omega/audit/firewall_checker.py", None, 30),  # Sekhmet
     ("src/omega/audit/firewall_checker.py", None, 31),  # Brigid
-    ("src/omega/audit/firewall_checker.py", None, 32),  # Prometheus
-    ("src/omega/audit/firewall_checker.py", None, 33),  # Saraswati
-    ("src/omega/audit/firewall_checker.py", None, 34),  # Inanna
-    ("src/omega/audit/firewall_checker.py", None, 35),  # Ereshkigal
-    ("src/omega/audit/firewall_checker.py", None, 36),  # Lucifer
-    ("src/omega/audit/firewall_checker.py", None, 37),  # Hecate
-    ("src/omega/audit/firewall_checker.py", None, 38),  # Anubis
-    ("src/omega/audit/firewall_checker.py", None, 39),  # Vetala
-    ("src/omega/audit/firewall_checker.py", None, 40),  # Sophia
-    ("src/omega/audit/firewall_checker.py", None, 41),  # Iris
-    ("src/omega/audit/firewall_checker.py", None, 42),  # Kali
-    ("src/omega/audit/firewall_checker.py", None, 43),  # Ma'at
-    ("src/omega/audit/firewall_checker.py", None, 37),  # Lilith
-    ("src/omega/audit/firewall_checker.py", None, 38),  # Makali
-    ("src/omega/audit/firewall_checker.py", None, 39),  # John Carmack
-    ("src/omega/audit/firewall_checker.py", None, 40),  # Doom Guy
-    ("src/omega/audit/firewall_checker.py", None, 41),  # Roc Racoon
-    ("src/omega/audit/firewall_checker.py", None, 42),  # Jem
-    ("src/omega/audit/firewall_checker.py", None, 43),  # Vetala (duplicate)
+    ("src/omega/audit/firewall_checker.py", None, 32),  # Sophia
+    ("src/omega/audit/firewall_checker.py", None, 33),  # Iris
+    ("src/omega/audit/firewall_checker.py", None, 34),  # Kali
+    ("src/omega/audit/firewall_checker.py", None, 35),  # Ma'at
+    ("src/omega/audit/firewall_checker.py", None, 36),  # Lilith
+    ("src/omega/audit/firewall_checker.py", None, 37),  # Makali
+    ("src/omega/audit/firewall_checker.py", None, 38),  # John Carmack
+    ("src/omega/audit/firewall_checker.py", None, 39),  # Doom Guy
+    ("src/omega/audit/firewall_checker.py", None, 40),  # Roc Racoon
+    ("src/omega/audit/firewall_checker.py", None, 41),  # Jem
+    ("src/omega/audit/firewall_checker.py", None, 36),  # Lilith
+    ("src/omega/audit/firewall_checker.py", None, 37),  # Makali
+    ("src/omega/audit/firewall_checker.py", None, 38),  # John Carmack
+    ("src/omega/audit/firewall_checker.py", None, 39),  # Doom Guy
+    ("src/omega/audit/firewall_checker.py", None, 40),  # Roc Racoon
+    ("src/omega/audit/firewall_checker.py", None, 41),  # Jem
 
     # Memory firewall auditor references WAD terms as examples of what to block
     ("src/omega/audit/memory_firewall_auditor.py", None, 1),  # Qliphoth
@@ -186,8 +180,8 @@ ALLOWED_EXCEPTIONS: list[tuple[str, int | None, int]] = [
     ("src/omega/audit/memory_firewall_auditor.py", None, 27), # Ereshkigal
     ("src/omega/audit/memory_firewall_auditor.py", None, 28), # Lucifer
     ("src/omega/audit/memory_firewall_auditor.py", None, 29), # Hecate
-    ("src/omega/audit/memory_firewall_auditor.py", None, 30), # Anubis
-    ("src/omega/audit/memory_firewall_auditor.py", None, 31), # Vetala
+    ("src/omega/audit/memory_firewall_auditor.py", None, 30), # Hecate
+    ("src/omega/audit/memory_firewall_auditor.py", None, 31), # Anubis
     ("src/omega/audit/memory_firewall_auditor.py", None, 32), # Sophia
     ("src/omega/audit/memory_firewall_auditor.py", None, 33), # Iris
     ("src/omega/audit/memory_firewall_auditor.py", None, 34), # Kali
@@ -197,7 +191,6 @@ ALLOWED_EXCEPTIONS: list[tuple[str, int | None, int]] = [
     ("src/omega/audit/memory_firewall_auditor.py", None, 38), # John Carmack
     ("src/omega/audit/memory_firewall_auditor.py", None, 39), # Doom Guy
     ("src/omega/audit/memory_firewall_auditor.py", None, 40), # Roc Racoon
-    ("src/omega/audit/memory_firewall_auditor.py", None, 41), # Jem
 
     # ─────────────────────────────────────────────────────────────────
     # [DOC/COMMENT] - Legitimate documentation of architecture (not logic)
@@ -289,7 +282,7 @@ SCAN_EXCLUDE_FILES = [
 ]
 
 # Entity name term indices (for test file blanket exceptions)
-ENTITY_NAME_INDICES = list(range(30, 51))  # Indices 30-50 are entity names
+ENTITY_NAME_INDICES = list(range(28, 42))  # Indices 28-41 are entity names
 
 
 # ── The Test ─────────────────────────────────────────────────────────
@@ -412,7 +405,7 @@ def test_firewall_m2_lenient_test_fixtures():
 
 def test_firewall_m2_blocked_terms_list_is_maintained():
     """The BLOCKED_TERMS list itself should stay reasonable."""
-    assert len(BLOCKED_TERMS) >= 44, (
+    assert len(BLOCKED_TERMS) >= 42, (
         "BLOCKED_TERMS seems too small — was the list accidentally truncated?"
     )
 

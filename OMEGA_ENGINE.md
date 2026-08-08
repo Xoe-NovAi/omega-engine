@@ -15,7 +15,7 @@
 - **Local-first**: Cloud is a teacher and strategic partner, never a dependency.
 - **WAD Architecture**: Engine → IWADs → PWADs (inspired by id Software).
 - **Engine = Pure Runtime; WAD = Cosmology.** The Engine is a universal, opinion-free runtime. Each WAD supplies its own cosmology (entities, traits, governance, guidance) via Base IWAD + PWADs. **Users never fork core code** — they add layers. This is the deathless continuity substrate.
-- **Standalone Packages**: Core capabilities published as independent PyPI packages (`omega-sieve`, `omega-doc-reader`) for community use.
+- **Standalone Packages**: Core capabilities published as independent PyPI packages (`omega-doc-reader`, `omega-meditation`) for community use.
 - **Universal Reflection Substrate**: ONE foundational engine with infinite customizable layers (WADs), each custom to how a user understands their own sovereign journey. The ANAi Stack (Tarot/Nodes/Ma'at) and the Torment Stack (Hive/Nameless One/Sigil) are *two expressions of the same architecture* — proving the WAD customization power. Every user gets their own cosmology; the engine provides the deathless continuity substrate.
 
 ---
@@ -35,7 +35,7 @@
 | WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 | `ls config/wads/ \| wc -l` |
 | **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, N1: 5/5, N2: 6/6, N3: 1/4 | ✅ P0-N2 Complete | 2026-07-18 | `grep -c "status: cloned" data/coordination/THIRD_PARTY_REGISTRY.yaml` |
 | Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 | `grep -r "\[id-soft:" src/ \| wc -l` |
-| Shared modules | **4** (`omega-vetala`, `omega-sieve`, `omega-doc-reader`, `omega-meditation`) | ✅ 3 on PyPI, meditation compatible | 2026-07-20 | `pip list \| grep -E "omega-(sieve\|doc-reader\|meditation\|vetala)"` |
+| Shared modules | **2** (`omega-doc-reader`, `omega-meditation`) | ✅ 2 on PyPI | 2026-08-08 | `pip list \| grep -E "omega-(doc-reader\|meditation)"` |
 | **Foundation Stabilization** | **HISTORICAL** — Gate Α/Β done; not current sprint | 📦 Superseded by UNOVERENGINEER-01 | 2026-07-30 | `cat data/coordination/ACTIVE_SPRINT.json` |
 | **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles | ✅ Gate Γ criterion met | 2026-07-20 | `head -30 src/omega/memory/sqlite_policy.py` |
 | **C-0.5 Soul distillation hook** | **SCRAPPED per Carmack Verdict 2026-07-30** — Regex-based L1/L2/L3 extraction was fortune-cookie generation. Now: minimal timestamp write + codex refresh (~40 lines, no false promises). Agents write their own lessons. That works. | ✅ M5/M11 compliant | 2026-07-30 | `.opencode/wrapper.sh` + `.opencode/hooks/session_end.py` |
@@ -90,7 +90,6 @@ D-281 Substrate Repair ✅ | D-282 sqlite-vec Strike 10 ✅ | D-283 Mnemosyne �
 | **Soul Utils** | `src/omega/soul_utils.py` | ✅ Phase I COMPLETE | Multi-path soul context extractor for 31 entities |
 | **WAD Loader** | `src/omega/oracle/wad_loader.py` | ✅ Operational | V2 schema with heritage fields. Sovereign WAD Protocol (SWP) pending |
 | **Ingestion Pipeline** | `src/omega/ingestion/` | ✅ Operational | T1→T2→T3 tiered extraction, TriangulationVerifier, CAS |
-| **Sovereign Sieve (Standalone)** | `packages/omega-sieve/` | ✅ v0.1.0 | `pip install omega-sieve` — T1(Trafilatura)→T2(Surgical)→T3(Crawl4AI) |
 | **Document Reader (Standalone)** | `scripts/universal_doc_reader.py` | ✅ v1.0.0 | Reads .docx, .pdf, .odt, .rtf, .html, .md, .txt, .json, .yaml |
 | **Observability** | `src/omega/observability.py` | ✅ Operational | Trace IDs, event logging, fine-tuning dataset collection |
 | **Hivemind** | `mcp_servers/omega_hub/` | ✅ Operational | 6 MCP tools for cross-agent coordination, workspace locks, live feeds |
