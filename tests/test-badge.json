@@ -1,12 +1,12 @@
 {
   "passed": 0,
   "failed": 0,
-  "quarantined": 0,
+  "quarantined": 98,
   "xpassed": 0,
   "skipped": 0,
   "xfailed": 0,
-  "timestamp": "2026-07-30T12:40:12.210780",
+  "timestamp": "2026-08-08T15:51:48.530033",
   "version": "1.0.0",
   "quarantine_file": "tests/quarantine.txt",
-  "expiry_date": "2026-08-01"
+  "expiry_date": "2026-09-01"
 }
