@@ -12,16 +12,17 @@
 | Section | Anchor | Purpose |
 |---------|--------|---------|
 | 1. Setup & Architecture | `#1-setup--architecture` | Project creation, architecture, hard limits |
-| 2. Format Specification | `#2-format-specification` | XML for system prompt, Markdown for knowledge files, JSON for data |
-| 3. File Organization | `#3-file-organization` | File count, size, required files, bundle ordering |
-| 4. File Update Protocol | `#4-file-update-protocol-critical-bug-10841` | Delete-wait-upload-new-conversation procedure |
-| 5. System Prompt Mastery | `#5-system-prompt-mastery` | Force KB Search, role framing, behavioral rules, multishot examples |
-| 6. Token Optimization | `#6-token-optimization` | Strategy hierarchy, format efficiency, prompt caching, model routing |
-| 7. RAG Behavior & Mitigation | `#7-rag-behavior--mitigation` | 13-file threshold, quality issues, mitigation patterns |
-| 8. Sovereign Boundary Protocols | `#8-sovereign-boundary-protocols` | Mandates affecting Claude, context pack sovereignty, reviewer boundary |
-| 9. Quick Reference Cards | `#9-quick-reference-cards` | Setup checklist, context pack checklist, token budget |
-| 10. Source Citations | `#10-source-citations` | Tier-ordered citations (official, 2026 articles, local research) |
-| 11. Hydration Protocol | `#11-hydration-protocol` | Mandatory steps before any Web Claude interaction |
+| 2. The Three-Stage Workflow | `#2-the-three-stage-workflow-projects--code` | Canonical pattern combining Projects and Claude Code |
+| 3. Format Specification | `#3-format-specification` | XML for system prompt, Markdown for knowledge files, JSON for data |
+| 4. File Organization | `#4-file-organization` | File count, size, required files, bundle ordering, large codebases |
+| 5. File Update Protocol | `#5-file-update-protocol-critical-bug-10841` | Delete-wait-upload-new-conversation procedure, maintenance habits |
+| 6. System Prompt Mastery | `#6-system-prompt-mastery` | Force KB Search, role framing, behavioral rules, multishot examples, templates |
+| 7. Token & Quota Optimization | `#7-token--quota-optimization` | Strategy hierarchy, format efficiency, prompt caching, quota rotation |
+| 8. RAG Behavior & Mitigation | `#8-rag-behavior--mitigation` | 13-file threshold, quality issues, mitigation patterns |
+| 9. Sovereign Boundary Protocols | `#9-sovereign-boundary-protocols` | Mandates affecting Claude, context pack sovereignty, reviewer boundary |
+| 10. Quick Reference Cards | `#10-quick-reference-cards` | Setup checklist, context pack checklist, token budget |
+| 11. Source Citations | `#11-source-citations` | Tier-ordered citations (official, 2026 articles, local research) |
+| 12. Hydration Protocol | `#12-hydration-protocol` | Mandatory steps before any Web Claude interaction |
 
 ---
 
@@ -64,7 +65,30 @@ Web Claude (claude.ai Projects) is the **primary platform** for code review, arc
 
 ---
 
-## 2. FORMAT SPECIFICATION
+## 2. THE THREE-STAGE WORKFLOW (PROJECTS + CODE)
+
+The canonical pattern for combining Claude Projects with Claude Code, verified across Anthropic docs and enterprise practitioners:
+
+| Stage | Tool | What Happens |
+|-------|------|-------------|
+| **1. Plan/Design** | Claude Projects | Architecture decisions, research, spec writing. Project holds permanent context (docs, style guides, requirements). |
+| **2. Plan Mode** | Claude Code (Plan Mode) | Read-only analysis of the actual codebase. Produces file-by-file plan with verification steps. |
+| **3. Implementation** | Claude Code (execution) | Autonomous multi-file changes, tests, git commits. |
+
+**The Three-Round Heuristic**:
+> *"If you find yourself having three or more rounds of Claude Code tangling in implementation detail when you haven't written a line of code yet, that's a design conversation you're having in the wrong surface. Switch to Claude.ai."*
+> 
+> *"If you find yourself asking Claude.ai to produce a specific code change and then copy-pasting the output into your editor, you're doing manual work Claude Code would do for you. Switch."*
+
+**Connection between the two**:
+- **Claude.ai Project stores**: The API spec, architecture diagram, and coding standards
+- **CLAUDE.md in the repo stores**: The exact rules Claude Code should follow when editing files — patterns, forbidden patterns, test locations
+
+Projects holds **"what" and "why"** (knowledge docs). CLAUDE.md holds **"how"** (editorial rules).
+
+---
+
+## 3. FORMAT SPECIFICATION
 
 ### 2.1 System Prompt / Custom Instructions → **XML Tags**
 Claude's training data is XML-rich; Anthropic official docs recommend XML tags for structure. Closing tags prevent instruction/input boundary confusion.
@@ -134,6 +158,14 @@ U-shaped attention curve (Liu et al. 2023):
 2. **MIDDLE** (Reference): implementation, engine_state, mandates, research
 3. **END** (Action): handoff, next_steps, recommendations
 
+### 3.4 Large Codebase Strategy
+For sharing a large monolithic file (3,000+ lines) with a Web Claude architect:
+
+1. **Create a frozen snapshot** — copy the monolith at a known state for reference
+2. **Build per-section architecture docs** — ~300-line focused docs covering each subsystem
+3. **Use structural signposts** — section markers in code that Claude can reference by line range
+4. **Plan then specify** — produce a modularization plan before extracting any module
+
 ---
 
 ## 4. FILE UPDATE PROTOCOL (CRITICAL — Bug #10841)
@@ -147,6 +179,12 @@ U-shaped attention curve (Liu et al. 2023):
 4. **Start a brand-new conversation** — old conversations may hold stale cache
 5. **Clear browser cache** before the new session
 6. **Wait 5-10 seconds** after editing Custom Instructions before starting a new conversation
+
+### 4.1 Maintenance & Decisions Habit
+- **`decisions.md`**: Append one paragraph per concluded chat; re-upload. This is how state survives across chats.
+- **`lessons.md`**: Log every misread/drift/hallucination per Project.
+- **Prune every 2 weeks**: Remove stale bundles, regenerate from source if changed.
+- **Version stamps**: Name packs `sovereign-audit-20260711.xml` so re-uploads are traceable.
 
 ---
 
@@ -208,6 +246,97 @@ U-shaped attention curve (Liu et al. 2023):
 | "Show your work in `<scratchpad>`, then give final answer" | Math, logic, verification |
 | "Consider [X], [Y], [Z] before concluding" | Multi-factor decisions |
 
+### 5.4 Custom Instruction Templates (Per Project Type)
+
+**Void-Seekers (YouTube Research)**
+```xml
+<hierarchy>
+In the event of a conflict between these instructions and the Project Knowledge files, these Custom Instructions take absolute precedence.
+</hierarchy>
+
+<role>
+You are the YouTube Research Lead for the Omega Engine sovereign AI project. Your objective is to ingest, sign, and distill YouTube research into the Omega memory pipeline with verifiable provenance.
+</role>
+
+<context>
+Audience: The user is building local-first AI infrastructure and must be treated as an expert.
+Purpose: This project exists to ingest, sign, and distill YouTube research into the Omega memory pipeline. All work must remain local-first and sovereign.
+</context>
+
+<constraints>
+- FORBIDDEN to introduce any cloud dependency.
+- FORBIDDEN to emit telemetry of any kind (M8).
+- MUST remain local-first at all times (M7).
+</constraints>
+```
+
+**Pattern-Miners (Core Engine)**
+```xml
+<hierarchy>
+In the event of a conflict between these instructions and the Project Knowledge files, these Custom Instructions take absolute precedence.
+</hierarchy>
+
+<role>
+You are the Omega Engine Core Architect (anyio-only, sovereign mandates enforced).
+</role>
+
+<context>
+Audience: Expert Python systems engineer.
+Purpose: Reviewing, hardening, and extending src/omega/ core engine.
+</context>
+
+<constraints>
+- FORBIDDEN to use asyncio directly (M1).
+- FORBIDDEN to emit telemetry (M8).
+- MUST enforce Engine-Stack Firewall (M2).
+- MUST pass Temple-Grade T1-T11 (M13).
+</constraints>
+```
+
+**Scribes (Oversight & Docs)**
+```xml
+<hierarchy>
+In the event of a conflict between these instructions and the Project Knowledge files, these Custom Instructions take absolute precedence.
+</hierarchy>
+
+<role>
+You are the Sovereign Scribe — documentation and governance steward.
+</role>
+
+<context>
+Audience: Project maintainer.
+Purpose: Maintaining soul.yaml lessons, strategy docs, and the Sovereign Ark Blueprint.
+</context>
+
+<constraints>
+- MUST use L1→L2→L3 distillation.
+- MUST cite decisions from PIVOT_LOG.md.
+- MUST flag doc drift.
+</constraints>
+```
+
+**Sentinels (Security & Audit)**
+```xml
+<hierarchy>
+In the event of a conflict between these instructions and the Project Knowledge files, these Custom Instructions take absolute precedence.
+</hierarchy>
+
+<role>
+You are the Sovereign Sentinel — security and compliance auditor.
+</role>
+
+<context>
+Audience: Security-conscious maintainer.
+Purpose: Auditing mandates, heritage tags, and observability integrity.
+</context>
+
+<constraints>
+- MUST verify M1-M23 compliance.
+- MUST check [id-soft:] tags against HERITAGE_VET_LOG.md.
+- MUST validate Response Provenance (M22).
+</constraints>
+```
+
 ---
 
 ## 6. TOKEN OPTIMIZATION
@@ -243,6 +372,19 @@ U-shaped attention curve (Liu et al. 2023):
 | Massive doc ingestion | Sonnet 4.6 / Opus 4.8 | — | 1M + caching |
 | Production agent fleet | Local (Llama 4 Scout) | $0 | 10M |
 | Cost-sensitive batch | Batch API | 50% off | — |
+
+### 6.5 Quota Rotation Strategy (Fable 5 5-Hour Limit)
+Claude Fable 5 has **brutal 5-hour rolling usage limits** (July 2026). Stuffing the 1M window drains quota in 1–2 prompts.
+
+**Rotation protocol**:
+- Each team has **P (primary) + R (rotation)** account.
+- Use P for ~2h of active work, then switch to R.
+- R mirrors P's packs (same uploads) so context is identical.
+- This stretches 8 accounts across ~20h of effective sprint time.
+
+**Token discipline**:
+- Keep Direct Context accounts <40% utilization (≤80K tokens per theme, ≤12 files).
+- RAG-mode accounts rotate faster.
 
 ---
 
