@@ -533,3 +533,16 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 * **Status**: ✅ COMPLETE
 
 *⬡ OMEGA ⬡ KALI ⬡ D-512 ⬡ 2026-08-08*
+
+### D-513: PyPI Fiction Removal
+* **Date**: 2026-08-08
+* **Decision**: Remove false "3 on PyPI" claims from STATUS_REPORT.md and AGENTS.md.
+  Verified: 0 packages published on PyPI. `omega-meditation` is local editable only.
+  `omega` on PyPI (HTTP 200) is Caltech's `tulip-control/omega`, not ours.
+  Session dumps archived from repo root to `docs/archive/sessions/`.
+* **Verification**: `grep "3 on PyPI\|2 on PyPI" STATUS_REPORT.md OMEGA_ENGINE.md` = 0.
+  `grep "pip install omega-sieve\|pip install omega-doc-reader" AGENTS.md` = 0.
+  `docs/reference/api/omega_sieve.md` + `packages/omega-sieve/` removed.
+* **Status**: ✅ COMPLETE
+
+*⬡ OMEGA ⬡ KALI ⬡ D-513 ⬡ 2026-08-08*

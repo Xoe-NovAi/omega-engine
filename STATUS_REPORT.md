@@ -14,7 +14,8 @@
 - **WADs**: **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) ✅ S1.5a hardened
 - **Third-Party Registry**: **18/19 repos cloned** — P0-P2 Complete ✅
 - **Heritage**: **121 [id-soft:] tags**, **55+ general sources** ✅ All vetted
-- **Shared modules**: **4** (`omega-vetala`, `omega-sieve`, `omega-doc-reader`, `omega-meditation`) ✅ 3 on PyPI
+- **Shared modules**: **1** (`omega-meditation` — local editable only, not published) ✅
+- **PyPI**: 0 packages published. `omega-meditation` exists at `packages/omega-meditation/` as a local editable install only. `omega` on PyPI (HTTP 200) is Caltech's unrelated `tulip-control/omega` library.
 
 ### **🚨 Active Blockers (P0)**
 1. **G-1 Workhorse continuity** — Gemma 4 31B free workhorse dead (16k TPM since 2026-07-15)

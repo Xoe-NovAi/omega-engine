@@ -35,7 +35,7 @@
 | WADs | **4** (arcana_novai, torment, omega_youtube_research, omega_youtube_worker) | ✅ S1.5a hardened | 2026-07-13 | `ls config/wads/ \| wc -l` |
 | **Third-Party Registry** | **18/19 repos cloned** — P0: 4/4, N1: 5/5, N2: 6/6, N3: 1/4 | ✅ P0-N2 Complete | 2026-07-18 | `grep -c "status: cloned" data/coordination/THIRD_PARTY_REGISTRY.yaml` |
 | Heritage | **121 [id-soft:] tags**, **55+ general sources** | ✅ All vetted | 2026-07-13 | `grep -r "\[id-soft:" src/ \| wc -l` |
-| Shared modules | **2** (`omega-doc-reader`, `omega-meditation`) | ✅ 2 on PyPI | 2026-08-08 | `pip list \| grep -E "omega-(doc-reader\|meditation)"` |
+| Shared modules | **1** (`omega-meditation` — local editable only) | ✅ 0 on PyPI | 2026-08-08 | `pip list \| grep omega-meditation` |
 | **Foundation Stabilization** | **HISTORICAL** — Gate Α/Β done; not current sprint | 📦 Superseded by UNOVERENGINEER-01 | 2026-07-30 | `cat data/coordination/ACTIVE_SPRINT.json` |
 | **Memory ADR (ADR-001)** | **RATIFIED** — sqlite_policy.py SSOT, 4 PRAGMA profiles | ✅ Gate Γ criterion met | 2026-07-20 | `head -30 src/omega/memory/sqlite_policy.py` |
 | **C-0.5 Soul distillation hook** | **SCRAPPED per Carmack Verdict 2026-07-30** — Regex-based L1/L2/L3 extraction was fortune-cookie generation. Now: minimal timestamp write + codex refresh (~40 lines, no false promises). Agents write their own lessons. That works. | ✅ M5/M11 compliant | 2026-07-30 | `.opencode/wrapper.sh` + `.opencode/hooks/session_end.py` |
