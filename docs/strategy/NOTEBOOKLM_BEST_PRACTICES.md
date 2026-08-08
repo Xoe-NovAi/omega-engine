@@ -87,6 +87,14 @@ Every source should include:
 - **Clickable citations** link to exact source location
 - **No hallucination** of source content (verified by design)
 
+### 3.1.1 Omega Engine Research Synthesis Workflow
+1. **Gather sources**: Upload research docs, spec files, mandate documents
+2. **Run Gap Analysis**: "What gaps exist in the current research on [topic] across all sources?"
+3. **Run Synthesis**: "Synthesize a unified recommendation from all sources on [topic]"
+4. **Run Action Items**: "What are the concrete action items for [decision]?"
+5. **Generate Audio Overview**: For team briefing or async review
+6. **Export findings** → feed into Web Claude or Web Gemini for deeper analysis
+
 ### 3.2 Audio Overview
 - **Auto-generated podcast** (2 AI hosts discussing your sources)
 - **~5-10 minutes** typical length

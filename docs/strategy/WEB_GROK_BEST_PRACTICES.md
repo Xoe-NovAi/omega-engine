@@ -94,6 +94,17 @@ Web Grok's long-context handles structure; Markdown delimiters sufficient. No XM
 - **Parallel execution**: Up to 128 parallel tool calls — structure multi-source research as parallel tasks
 - **For anything on X first**: Meaningful gap vs other tools that query lagged search indexes
 
+### 3.1.1 Omega Engine X Search Patterns
+| Search Goal | x_search Query Pattern | Why |
+|-------------|----------------------|-----|
+| Latest AnyIO patterns | `anyio python 2026 best practices` | Current async patterns |
+| Grok CLI adoption | `grok build cli adoption 2026` | Real-time community sentiment |
+| Local LLM trends | `local LLM inference 2026` | Current hardware/software trends |
+| Circuit breaker libraries | `python circuit breaker library 2026` | Current best practices |
+| MCP server ecosystem | `model context protocol mcp 2026` | Latest MCP developments |
+
+**Always include date filter**: "Find posts from 2026 about [topic]" — avoids stale 2024/2025 info.
+
 ### 3.2 Connectors (Deep SaaS Integrations)
 OAuth-based, connect once, access on demand:
 

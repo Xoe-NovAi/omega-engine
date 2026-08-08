@@ -193,7 +193,16 @@ Format findings for Google Docs/Sheets export:
 | Ultra-long context | Gemini 3.1 Pro | Preview pricing | 10M |
 | Cost-sensitive batch | Batch API | 50% off | — |
 
-### 6.2 Pricing Notes (2026)
+### 6.2 Omega Engine Use Cases
+| Use Case | Recommended Model | Why |
+|----------|-------------------|-----|
+| Multi-source library research | Gemini 3 Pro | 94.1% GPQA, parallel search |
+| Technology adoption comparison | Gemini 3 Pro | Benchmark comparison, code execution |
+| Long-doc architecture review | Gemini 3.1 Pro | 10M context, no truncation |
+| Verification scripts | Gemini 3 Pro | Code execution sandbox |
+| Cross-validation of Claude findings | Gemini 3 Pro | Independent model perspective |
+
+### 6.3 Pricing Notes (2026)
 - **Gemini 3 Pro**: $1.25/$2.50/MTok (<200K), $2.50/$5.00/MTok (>200K)
 - **Context window** = prompt tokens + response tokens + system overhead
 - **Truncation** happens when limit reached — summarize earlier content

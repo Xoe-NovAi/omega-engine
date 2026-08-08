@@ -221,7 +221,43 @@ No telemetry in generated code.
 Local-first: prefer local models.
 ```
 
-### 5.2 System Prompt Override
+### 5.2 Omega Engine Mandate Rules
+Create `~/.grok/rules/omega-mandates.md` with:
+```markdown
+# Omega Engine Sovereign Mandates
+
+## M1 AnyIO
+- All async code MUST use AnyIO
+- NEVER use asyncio directly
+- Wrap blocking I/O in anyio.to_thread.run_sync
+
+## M2 Engine-Stack Firewall
+- Core (src/omega/) ≠ Stacks (config/wads/)
+- No stack-specific logic in core engine
+
+## M7 Local-First
+- Local inference is PRIMARY
+- Cloud is FALLBACK only
+- Prefer local model recommendations
+
+## M8 Zero Telemetry
+- No analytics, tracking, or phone-home
+- No external telemetry in generated code
+
+## M13 Temple-Grade
+- T1-T11 gates apply to all generated artifacts
+- Run `make temple-grade` after non-trivial changes
+
+## M14 Heritage Vetting
+- [id-soft:] tags need vet records in HERITAGE_VET_LOG.md
+- Qualification gate: cannot be justified without original hardware constraint
+
+## M23 Failure Integrity
+- No soft failures
+- Mandatory tool broken → [TOOL-CHAIN-COLLAPSE]
+```
+
+### 5.3 System Prompt Override
 ```bash
 grok --system-prompt-override "You are a [custom role]..."
 ```

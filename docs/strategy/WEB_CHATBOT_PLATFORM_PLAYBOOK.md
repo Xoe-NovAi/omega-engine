@@ -26,14 +26,29 @@
 
 | Task | Best Platform | Why |
 |------|---------------|-----|
-| Code review / architecture analysis | **Web Claude** | 82.1% SWE-bench, instruction-following 94.2% |
-| Technology adoption decisions | **Web Claude** | Long-doc QA (76% MRCR), structured reasoning |
-| Multi-source research synthesis | **Web Gemini** | Deep Research (30+ searches), parallel search |
-| Benchmark comparison | **Web Gemini** | 94.1% GPQA, code execution sandbox |
-| Real-time data / current events | **Web Grok** | Live X search, 2026 knowledge |
-| Source-grounded analysis | **NotebookLM** | Source citations, audio overview |
+| Pre-refactor code review | **Web Claude** | 82.1% SWE-bench, instruction-following 94.2%, XML system prompt for precise mandate enforcement |
+| Architecture vetting | **Web Claude** | Long-doc QA (76% MRCR), structured reasoning, RAG mitigation patterns |
+| Multi-source research synthesis | **Web Gemini** | Deep Research (30+ parallel searches), 10M context for large doc sets |
+| Benchmark comparison | **Web Gemini** | 94.1% GPQA, code execution sandbox for verification scripts |
+| Real-time data / current events | **Web Grok** | Live X firehose, 2026 knowledge, real-time sentiment |
+| Source-grounded analysis | **NotebookLM** | Source citations, audio overview, multi-document synthesis |
 | **Local terminal coding agent** | **Grok CLI (Grok Build)** | Local file access, sandbox, 8 parallel sub-agents, ACP |
-| Cross-validation of critical decisions | **Claude + Gemini** | Independent verification |
+| Cross-validation of critical decisions | **Claude + Gemini** | Independent verification of architecture decisions |
+| Real-time X sentiment on tech trends | **Web Grok** | Live X search, brand monitoring, social signals |
+| Research synthesis (multi-source) | **NotebookLM** | Source-grounded, citation-native, audio overview for team briefing |
+
+### Omega Engine Workflow Decision Matrix
+
+| Omega Engine Task | Primary Platform | Secondary Platform | Local Integration |
+|-------------------|-----------------|-------------------|-------------------|
+| Pre-refactor code review | Web Claude | — | OpenCode CLI ingests artifact |
+| Architecture decision vetting | Web Claude | Web Gemini (cross-check) | OpenCode CLI implements |
+| Technology adoption research | Web Gemini | Web Grok (real-time) | NotebookLM synthesizes |
+| Mandate compliance audit | Web Claude | — | OpenCode CLI enforces |
+| Real-time trend monitoring | Web Grok | — | Findings feed Web Claude/Gemini |
+| Research synthesis | NotebookLM | — | Summary feeds Web Claude/Gemini |
+| Local code implementation | Grok CLI | OpenCode CLI | Direct file edits |
+| Local code review | Grok CLI | OpenCode CLI | Sandbox-controlled |
 
 ### By Model Capability
 
@@ -164,15 +179,131 @@ Is this...
 
 ---
 
-## 6. HYDRATION PROTOCOL
+## 6. INTEGRATION FLOW (How Platforms Work Together)
+
+### 6.1 The Omega Engine Multi-Platform Loop
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    OPENCODE CLI (Local)                     │
+│                                                             │
+│  1. PLAN: Identify what needs external review               │
+│     (code review? arch vet? research synthesis?)            │
+│                                                             │
+│  2. PACK: Run Context Packer → context_packs/<profile>/     │
+│     (≤12 files, PII-masked, Ed25519 signed)                 │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+         ┌───────────────┼───────────────┐
+         ▼               ▼               ▼
+┌──────────────┐ ┌──────────────┐ ┌──────────────┐
+│ Web Claude   │ │ Web Gemini   │ │ Web Grok     │
+│ (deep review)│ │ (research)   │ │ (real-time)  │
+│              │ │              │ │              │
+│ Upload pack  │ │ Upload pack  │ │ Upload pack  │
+│ Run review   │ │ Run research │ │ Run search   │
+│ Download     │ │ Download     │ │ Download     │
+│ artifact     │ │ artifact     │ │ artifact     │
+└──────┬───────┘ └──────┬───────┘ └──────┬───────┘
+       │                │                │
+       └────────────────┼────────────────┘
+                        ▼
+┌─────────────────────────────────────────────────────────────┐
+│                    OPENCODE CLI (Local)                     │
+│                                                             │
+│  3. INGEST: Read all artifacts, cross-validate             │
+│     → Compare Claude/Gemini findings                       │
+│     → Flag contradictions                                    │
+│     → Make final decision (local context is arbiter)       │
+│                                                             │
+│  4. IMPLEMENT: Apply decisions via OpenCode CLI            │
+│     or Grok CLI (sandbox)                                    │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 6.2 Platform Handoff Protocol
+
+When an external platform produces an artifact:
+
+1. **Save** the artifact with proper naming: `<platform>-<task>-<date>-<account>.md`
+2. **Log** in `data/coordination/WEB_CLAUDE_ARTIFACT_REGISTRY.md` (or platform-specific registry)
+3. **Ingest** into the OpenCode CLI session that created the context pack
+4. **Validate** using the platform-specific quality checklist (§7)
+5. **Integrate** or **reject** with documented reasoning
+
+### 6.3 Cross-Platform Validation
+
+For critical decisions (architecture, mandate compliance, security):
+
+1. **Same context pack** → Web Claude + Web Gemini (parallel)
+2. **Compare findings** — look for agreement/disagreement
+3. **Disagreements** → flag for OpenCode CLI arbitration (local files are ground truth)
+4. **Real-time needs** → Web Grok for current X discussions on the topic
+5. **Multi-source synthesis** → NotebookLM for literature review
+
+### 6.4 Multi-Account Coordination
+
+| Platform | Accounts | Rotation Strategy |
+|----------|----------|-------------------|
+| Web Claude | 8 | Sequential drain, parallel streams for different tasks |
+| Web Gemini | 1-2 | Sequential, longer sessions |
+| Web Grok | 1-2 | Sequential, real-time focused |
+| NotebookLM | Unlimited | No quota limits, source-based |
+
+---
+
+## 7. PLATFORM-SPECIFIC VALIDATION CHECKLISTS
+
+### Web Claude Artifact Validation
+```
+☐ Findings reference actual bundled file content (not hallucinated)
+☐ Recommendations are mandate-compliant (M1, M2, M7, M8, M13)
+☐ No cloud dependencies introduced (M7)
+☐ No asyncio recommended (M1)
+☐ AnyIO patterns correctly suggested
+☐ Any [id-soft:] heritage tags have vet records in HERITAGE_VET_LOG.md
+☐ Recommended tests use anyio.pytest_plugin
+☐ Recommendations are consistent with PIVOT_LOG decisions
+```
+
+### Web Gemini Artifact Validation
+```
+☐ Claims cite specific source bundles with line references
+☐ Code execution snippets are runnable and produce expected output
+☐ Recommendations are implementable locally (M7)
+☐ No asyncio in generated code (M1)
+☐ Cross-check with Web Claude findings for contradictions
+```
+
+### Web Grok Artifact Validation
+```
+☐ X search results are from 2026 (not stale)
+☐ Real-time sentiment is contextualized (not just raw numbers)
+☐ Connector data is verified against actual repos
+☐ Recommendations are grounded in current X discussions
+```
+
+### NotebookLM Artifact Validation
+```
+☐ Every claim has a clickable source citation
+☐ Synthesis resolves contradictions across sources
+☐ Confidence levels are stated for each finding
+☐ Action items are prioritized by impact/effort/risk
+```
+
+---
+
+## 8. HYDRATION PROTOCOL
 
 **Before any external chatbot/CLI interaction, agents MUST:**
 1. Read this playbook (`docs/strategy/WEB_CHATBOT_PLATFORM_PLAYBOOK.md`)
-2. Select the appropriate platform using the Selection Matrix (§1)
+2. Select the appropriate platform using the Selection Matrix (§1) and Workflow Decision Matrix (§1.2)
 3. Read the platform-specific best practices doc (§3)
-4. Follow the format guidance for that platform
+4. Follow the format guidance for that platform (§2)
 5. Use the delivery checklist (§4) to prepare context packs
-6. Log the interaction in `data/coordination/HMC_COLLABORATION_HUB.md`
+6. Review the platform-specific validation checklist (§7)
+7. Log the interaction in `data/coordination/HMC_COLLABORATION_HUB.md`
+8. After receiving artifacts: follow the Integration Flow (§6) for ingestion and cross-validation
 
 **This playbook + platform-specific docs supersede all prior platform-specific docs for agent hydration.**
 
