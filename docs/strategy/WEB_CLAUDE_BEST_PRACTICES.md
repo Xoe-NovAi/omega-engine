@@ -12,7 +12,7 @@
 | Section | Anchor | Purpose |
 |---------|--------|---------|
 | 1. Setup & Architecture | `#1-setup--architecture` | Project creation, architecture, hard limits |
-| 2. The Three-Stage Workflow | `#2-the-three-stage-workflow-projects--code` | Canonical pattern combining Projects and Claude Code |
+| 2. Three-Stage Workflow | `#2-the-three-stage-workflow-web-claude-only` | Canonical pattern for Web Claude Projects analysis |
 | 3. Format Specification | `#3-format-specification` | XML for system prompt, Markdown for knowledge files, JSON for data |
 | 4. File Organization | `#4-file-organization` | File count, size, required files, bundle ordering, large codebases |
 | 5. File Update Protocol | `#5-file-update-protocol-critical-bug-10841` | Delete-wait-upload-new-conversation procedure, maintenance habits |
@@ -30,7 +30,9 @@
 
 Web Claude (claude.ai Projects) is the **primary platform** for code review, architecture analysis, and structured reasoning tasks. Best for: SWE-bench (82.1%), long-doc QA (76% MRCR), instruction-following (94.2%).
 
-**Model**: Opus 4.8 (1M context, $5/$25/MTok) for complex reasoning; Sonnet 4.6 (1M, $3/$15) for general tasks.
+**Model**: Haiku 4.5 (Extended Thinking) and Sonnet 4.6 (Thinking) on free Web Claude tier.
+
+**Note**: OpenCode CLI with Antigravity SDK provides access to Sonnet 4.6 and Opus 4.6 — that is a **separate platform** and not covered in this playbook.
 
 ---
 
@@ -44,17 +46,15 @@ Web Claude (claude.ai Projects) is the **primary platform** for code review, arc
 5. Test retrieval: "Based on `file.xml` in project knowledge, what is X?"
 
 ### 1.2 Architecture (2026)
-- **200K context window** primary workspace (consumer)
-- **1M context** with Claude Code + credits
+- **200K context window** on free Web Claude tier
 - **Auto-RAG expansion up to 10x** when approaching limit
 - **RAG activates at 13 files** (NOT token-based!) — GitHub Issue #25759
 - **Silent regression**: June 2024 loaded 63% capacity directly; Feb 2026 triggers at 2%
 
-### 1.3 Hard Limits
+### 1.3 Hard Limits (Free Tier)
 | Dimension | Value |
 |-----------|-------|
-| Context window (consumer) | 200K tokens |
-| Context window (Code + credits) | 1M tokens |
+| Context window | 200K tokens |
 | RAG auto-activation | At ~150K–200K tokens of Knowledge |
 | RAG expansion | Up to 10× capacity |
 | File size (Project) | 30MB per file |
@@ -63,28 +63,26 @@ Web Claude (claude.ai Projects) is the **primary platform** for code review, arc
 | Free tier | 5 Projects max, no RAG |
 | Pro | $20/mo, unlimited Projects + RAG |
 
+**Available Models (Free Tier)**:
+- **Haiku 4.5** — Extended Thinking mode
+- **Sonnet 4.6** — Thinking mode
+- **Opus 4.8** — NOT available on free tier |
+
 ---
 
-## 2. THE THREE-STAGE WORKFLOW (PROJECTS + CODE)
+## 2. THE THREE-STAGE WORKFLOW (WEB CLAUDE ONLY)
 
-The canonical pattern for combining Claude Projects with Claude Code, verified across Anthropic docs and enterprise practitioners:
+The canonical pattern for using Web Claude Projects for architecture and research:
 
-| Stage | Tool | What Happens |
-|-------|------|-------------|
-| **1. Plan/Design** | Claude Projects | Architecture decisions, research, spec writing. Project holds permanent context (docs, style guides, requirements). |
-| **2. Plan Mode** | Claude Code (Plan Mode) | Read-only analysis of the actual codebase. Produces file-by-file plan with verification steps. |
-| **3. Implementation** | Claude Code (execution) | Autonomous multi-file changes, tests, git commits. |
+| Stage | What Happens |
+|-------|-------------|
+| **1. Plan/Design** | Architecture decisions, research, spec writing. Project holds permanent context (docs, style guides, requirements). |
+| **2. Review/Analyze** | Deep analysis of code, docs, or research materials using Project Knowledge. |
+| **3. Synthesize/Deliver** | Produce structured outputs, decisions, and recommendations. |
 
-**The Three-Round Heuristic**:
-> *"If you find yourself having three or more rounds of Claude Code tangling in implementation detail when you haven't written a line of code yet, that's a design conversation you're having in the wrong surface. Switch to Claude.ai."*
-> 
-> *"If you find yourself asking Claude.ai to produce a specific code change and then copy-pasting the output into your editor, you're doing manual work Claude Code would do for you. Switch."*
+**Key Principle**: Web Claude is for **analysis, reasoning, and synthesis** — not autonomous code execution. For implementation, use OpenCode CLI (separate platform).
 
-**Connection between the two**:
-- **Claude.ai Project stores**: The API spec, architecture diagram, and coding standards
-- **CLAUDE.md in the repo stores**: The exact rules Claude Code should follow when editing files — patterns, forbidden patterns, test locations
-
-Projects holds **"what" and "why"** (knowledge docs). CLAUDE.md holds **"how"** (editorial rules).
+Projects holds **"what" and "why"** (knowledge docs). The Omega Engine's `CLAUDE.md` and `AGENTS.md` hold **"how"** (editorial rules for OpenCode CLI).
 
 ---
 
@@ -363,28 +361,23 @@ Purpose: Auditing mandates, heritage tags, and observability integrity.
 # 90% discount on cached input tokens
 ```
 
-### 6.4 Model Routing
-| Task Type | Model | Cost | Context |
-|-----------|-------|------|---------|
-| Simple classification/extraction | Haiku 4.5 | $0.25/$1.25 | 200K |
-| General coding/analysis | Sonnet 4.6 | $3/$15 | 1M |
-| Complex architecture/reasoning | Opus 4.8 | $5/$25 | 1M |
-| Massive doc ingestion | Sonnet 4.6 / Opus 4.8 | — | 1M + caching |
-| Production agent fleet | Local (Llama 4 Scout) | $0 | 10M |
-| Cost-sensitive batch | Batch API | 50% off | — |
+### 6.4 Model Selection (Free Tier)
+| Task Type | Model | Thinking Mode |
+|-----------|-------|---------------|
+| Simple classification/extraction | Haiku 4.5 | Extended Thinking |
+| General coding/analysis | Sonnet 4.6 | Thinking |
+| Complex architecture/reasoning | Sonnet 4.6 | Thinking (use more context) |
+| Massive doc ingestion | Sonnet 4.6 | Thinking |
 
-### 6.5 Quota Rotation Strategy (Fable 5 5-Hour Limit)
-Claude Fable 5 has **brutal 5-hour rolling usage limits** (July 2026). Stuffing the 1M window drains quota in 1–2 prompts.
+**Note**: Opus 4.8 is NOT available on free tier. For complex tasks, use Sonnet 4.6 with extended context.
 
-**Rotation protocol**:
-- Each team has **P (primary) + R (rotation)** account.
-- Use P for ~2h of active work, then switch to R.
-- R mirrors P's packs (same uploads) so context is identical.
-- This stretches 8 accounts across ~20h of effective sprint time.
+### 6.5 Quota Management (Free Tier)
+Web Claude free tier has **rolling usage limits** (July 2026). The 200K context window can be drained quickly with large context packs.
 
 **Token discipline**:
 - Keep Direct Context accounts <40% utilization (≤80K tokens per theme, ≤12 files).
 - RAG-mode accounts rotate faster.
+- Start new conversations for fresh context windows.
 
 ---
 
@@ -501,7 +494,6 @@ Headroom:        156K tokens (78% of 200K)
 - TokenOptimize.dev 2026: https://www.tokenoptimize.dev/guides/llm-token-optimization-strategies
 - Thomas Wiegold 2026: https://thomas-wiegold.com/blog/prompt-engineering-best-practices-2026
 - ImprovingAgents 2025: https://www.improvingagents.com/blog/best-nested-data-format
-- GitHub Issue #25759: https://github.com/anthropics/claude-code/issues/25759
 - AI Tools Guidebook 2026: https://aitoolsguidebook.com/en/articles/claude-projects-advanced-workflow
 - Practicaly.ai 2026: https://www.practicaly.ai/p/what-are-md-files-in-claude
 
@@ -518,7 +510,7 @@ Headroom:        156K tokens (78% of 200K)
 
 **Before any Web Claude interaction, agents MUST:**
 1. Read this document
-2. Select Opus 4.8 (complex) or Sonnet 4.6 (general)
+2. Select Haiku 4.5 (simple tasks) or Sonnet 4.6 (complex tasks)
 3. Prepare system prompt using XML ClaSSIC template
 4. Prepare knowledge files as `.md` (≤12)
 5. Follow file update protocol if files changed
