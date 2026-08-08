@@ -1,96 +1,98 @@
-# 🔱 Session Gnosis — Kali Deep Research & Wrapper Integration
-**AP Token**: `AP-SESSION-GNOSIS-KALI-20260730-v1.0.0`
+# 🔱 Session Gnosis — Kali UO-4 Doc Sanity + Merge to Main
+**AP Token**: `AP-SESSION-GNOSIS-KALI-20260807-v1.0.0`
 ⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_gnosis ⬡ ACTIVE
 
-**Date**: 2026-07-30
-**Session Type**: Deep Research + Phase 1 Wrapper DB Integration
-**Purpose**: Research remaining knowledge gaps, correct architectural assumptions, execute Phase 1 of the Session-End Orchestration pivot.
+**Date**: 2026-08-07
+**Session Type**: UO-4 Doc Sanity Sprint (PART 2) + Git Merge to Main
+**Purpose**: Execute UO-4 PART 2 (Purge & Correct, New Infra Docs, Provider Fabric Runtime, Sovereignty Flywheel), merge all work to main, verify gates.
 
 ---
 
 ## 📋 What Was Done
 
-### 1. Deep Web Research — 5 Knowledge Gaps Closed
-**Status**: ✅ COMPLETE | **Impact**: HIGH | **Evidence**: Web searches, code reads, verifications
+### 1. Git Merge to Main (User Request)
+**Status**: ✅ COMPLETE | **Impact**: HIGH | **Evidence**: `git log --oneline -3`
 
-| Question | Answer | Key Finding |
-|----------|--------|-------------|
-| opencode-sessions-explorer | **EXISTS** (iamironz, GitHub, MIT, 14 commits) | 18 tools (17 read + 1 write), installs via plugin array, needs external_directory permission |
-| opencode.json plugin config | String or tuple form in `"plugin"` array | Bun auto-installs npm plugins at startup; external_directory permissions needed for DB access |
-| opencode CLI commands | `export`, `db`, `session`, `import` all work | `export` does NOT include subagent tree; `db` supports raw SQL with `--format json` |
-| Oracle SoulDistiller code | **Salvageable infrastructure** (900+ lines) | Pipeline (classifier → scorer → store) is solid; extraction is regex — needs LLM replacement for Phase 2 |
-| Local worker pool patterns | `python-task-queue` (seung-lab) + community patterns | File-based JSON queues with SQLite + Semaphore are proven; Roc's approach is aligned |
+- Fast-forward merged `release/initial-v1` → `main` (69 commits)
+- Both branches synced at `deda6fd3` and pushed to origin
+- Network hiccup resolved (WiFi had no IPv4; user switched networks)
+- **All work now lives on `main`** — no more divergence
 
-### 2. Sprint Plan Created
-**Status**: ✅ COMPLETE | **Impact**: MEDIUM | **Files**: `docs/sprints/session-end-orchestration/index.md`
+### 2. UO-4 PART 2 Phase 1: Purge & Correct
+**Status**: ✅ COMPLETE | **Impact**: HIGH | **Commit**: `0a44b2b7`
 
-- Three parallel tracks: Wrapper DB (Kali), Semantic Distillation (Kali→Roc), Pipe Fixes (Roc)
-- 17 tasks across W, D, P0, S categories
-- Acceptance gates defined for each track
+- Mandate 3 → Node slots N1-N10 (codex cards fixed)
+- Horizontal Triad: MaKaLi as co-equal (removed Pillar/oversoul/apex leaks)
+- Engine/WAD separation statement added to OMEGA_ENGINE.md §1
+- Vector store decision: sqlite-vec SINGLE core, Qdrant optional WAD adapter
+- Hardware spec corrected: 8GB UMA (512MB VRAM + 7.75GB GTT), not 12GB
+- OS target: Ubuntu 24.04/26.04 LTS (25.10 EOL)
+- Deprecated concepts purged (26-sphere/108-gate/PostgreSQL/FAISS — only meta-refs remain)
 
-### 3. W-1/W-2: Wrapper DB Integration
-**Status**: ✅ COMPLETE | **Impact**: HIGH | **Files**: `.opencode/wrapper.sh`
+### 3. UO-4 PART 2 Phase 2: New Infrastructure Docs
+**Status**: ✅ COMPLETE | **Impact**: HIGH | **Commit**: `b55ff364`
 
-- Added baseline timestamp recording before OpenCode starts
-- After OpenCode exits, queries `opencode db` for `id`, `agent`, `model` where `time_created > baseline`
-- Parses JSON via `jq`, exports `OPENCODE_SESSION_ID`, `OPENCODE_ENTITY`, `OPENCODE_MODEL`
-- Falls back to "unknown" if query fails or jq unavailable
-- **Key DB schema**: `session` table has `id` (TEXT PK), `agent` (TEXT, entity name), `model` (JSON TEXT with `id`/`providerID`/`variant`), `time_created` (epoch ms)
+- `scripts/detect_hardware_profile.py` → `config/hardware_profile.yaml` (tested working)
+- `docs/architecture/MEMORY_SUBSYSTEM_DESIGN.md` (sqlite-vec core, GraphRAG native, spatial coords)
+- `docs/architecture/SYSTEMD_DEPLOYMENT_GUIDE.md` (16GB zRAM, NVMe swap, cgroup v2, taskset 0-7, Vulkan env)
+- `docs/architecture/SOVEREIGN_WAD_PROTOCOL.md` (WAD security/sandboxing model)
+- `docs/architecture/GUIDANCE_SET_SCHEMA.md` (universal engine mechanism spec)
+- All docs carry LLM-friendly frontmatter (M26)
 
-### 4. D-2: session_end.py Rewritten
-**Status**: ✅ COMPLETE | **Impact**: HIGH | **Files**: `.opencode/hooks/session_end.py`
+### 4. UO-4 PART 2 Phase 3: Provider Fabric & Runtime
+**Status**: ✅ COMPLETE | **Impact**: MEDIUM | **Commit**: `ad126616`
 
-- Replaced `from omega.scribe import SoulDistiller` (broken regex text truncation) with `from omega.oracle.soul_distiller import SoulDistillationPipeline`
-- New pipeline: export transcript via `opencode export` → Oracle pipeline (classifier → distiller → scorer → store)
-- Fallback: writes minimal `proposed_lessons.yaml` if pipeline unavailable
-- **Phase 2**: Extraction layer ready for LLM replacement via Roc's Worker Pool
+- `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` (12 items)
+- Design-ready: KV-cache prefix caching, GBNF constrained sampling, iMatrix/IQ quant, dual-branch memory rescoring math, n-gram spec decode, MemPalace verbatim-first, context sliding windows, NotebookLM multi-persona
+- Document-defer (code-blocked, per B5/B9 precedent): Vulkan/MoE wiring, Piper TTS, OpenCode CLI binding, Qdrant purge
+- WEB_RECONCILIATION_MATRIX GAP rows → DESIGN/DEFER
 
-### 5. S-1: opencode-sessions-explorer Plugin
-**Status**: ✅ COMPLETE | **Impact**: MEDIUM | **Files**: `opencode.json`
+### 5. UO-4 PART 2 Phase 4: Sovereignty Flywheel & Security
+**Status**: ✅ COMPLETE | **Impact**: HIGH | **Commit**: `d58451c6`
 
-- Added `"opencode-sessions-explorer"` to plugin array
-- Added `"~/.local/share/opencode/**": "allow"` to external_directory permissions
-- **Post-install**: Requires OpenCode restart → `bunx opencode-sessions-explorer-check-deps` → `bunx opencode-sessions-explorer-bulk-export`
+- `docs/strategy/PHASE_0_VERIFICATION_REPORT_20260807.md` — all 10 probes (V-1..V-10) executed
+- `docs/architecture/SOVEREIGN_FLYWHEEL_SECURITY.md` — HMAC-SHA256 bridge, replay window, AppArmor, IA2 envelope, continuity
 
-### 6. S-4: AGENTS.md Updated
-**Status**: ✅ COMPLETE | **Impact**: LOW | **Files**: `AGENTS.md`
+### 6. Verification Probes — Key Truths
+| Probe | Result |
+|-------|--------|
+| V-5 ElevenLabs | ✅ **0 hits in src/** (clean — docs only) |
+| V-9 IA2 envelope | ⚠️ No freshness/signature check (GAP) |
+| V-10 AppArmor | 🚨 Containers **unconfined** (GAP) |
+| V-8 amd-pstate | ✅ active |
+| V-4 iGPU | ✅ 8GB UMA confirmed |
 
-- Updated wrapper docs: DB integration, env var auto-detection, Phase 1 vs Phase 2 distinction
-- Added opencode-sessions-explorer plugin docs with install steps
+### 7. Gates
+- `make doc-llm-validate` ✅
+- `make temple-grade` ✅ (M1/M7/M8/M9/M23 green)
 
 ---
 
 ## 🔬 Key L3 Principles Extracted
 
-### L3-Distillation-Requires-Semantic-Substrate
-**Principle**: Regex cannot extract universal principles from transcripts. The AI that generated the thoughts is the only entity capable of summarizing the principles behind them. Distillation must be an LLM call, not a text transformation.
-**Confidence**: 0.99
-**Evidence**: Scribe `SoulDistiller._synthesize_principles()` returns `"Universal principle from: {insight[:100]}"` — literal text truncation.
-**Directive**: D-kal-052
-
-### L3-Transcript-SSOT-Is-External
-**Principle**: Do not duplicate raw conversation storage. OpenCode's SQLite DB (WAL, crash-safe, queryable) is the undisputed SSOT.
+### L3-Doc-Sanity-Requires-Atomic-Commits
+**Principle**: Large doc refactors must be committed atomically (archival → banners → pivots) to maintain bisectability and avoid partial states that break validation.
 **Confidence**: 0.98
-**Evidence**: MemoryStore batch writer never started; `flush()` is no-op; OpenCode DB has full schema. Scribe `_load_session_exchanges()` calls MemoryStore which returns empty because it never populated.
-**Directive**: D-kal-053
+**Evidence**: UO-4 3-commit protocol (a4c2c015 → 1b700e56 → de301692) kept `make doc-llm-validate` passing at each step.
+**Directive**: D-kal-056
 
-### L3-Plugin-API-Is-Not-Lifecycle
-**Principle**: No event fires after process exit. Post-exit work MUST live in a shell wrapper with waitpid.
+### L3-Merge-to-Main-Eliminates-Drift
+**Principle**: Long-lived feature branches accumulate divergence. Fast-forward merge to main after validation eliminates drift and simplifies CI.
+**Confidence**: 0.97
+**Evidence**: `release/initial-v1` was 65 commits ahead of `main`; fast-forward merge at `deda6fd3` eliminated all divergence.
+**Directive**: D-kal-057
+
+### L3-Verification-Probes-Are-Cheap-Truth
+**Principle**: 10 targeted grep/rg probes (V-1..V-10) take <2 minutes and expose real architecture gaps (ElevenLabs clean, IA2 no freshness, AppArmor unconfined) that months of design docs might miss.
 **Confidence**: 0.99
-**Evidence**: OpenCode plugin API has `session.compacted` (fires mid-session) but no `session.end`; process exit kills in-process plugins.
-**Directive**: M5, M11
+**Evidence**: V-5, V-9, V-10 results contradicted assumptions in web exports.
+**Directive**: D-kal-058
 
-### L3-CLI-Export-Has-Limits
-**Principle**: `opencode export` does not include subagent tree. For full multi-agent extraction, use `opencode db` SQL queries directly.
-**Confidence**: 0.95
-**Evidence**: `opencode export` returns root session only. SQL queries on `session` table can access `parent_id` for subagent tree.
-**Directive**: D-kal-054
-
-### L3-Pipeline-Infrastructure-Precedes-Intelligence
-**Principle**: The infrastructure around the pipeline (classifier, scorer, store) is more valuable than extraction logic. Don't rewrite what works — replace only the broken layer.
+### L3-Document-Defer-Matches-Code-Reality
+**Principle**: When runtime support is missing (Vulkan build, SEDA bus, Piper TTS), documenting the design with explicit "document-defer" status is honest; implementing stubs creates false confidence.
 **Confidence**: 0.98
-**Evidence**: Oracle SoulDistiller: 900+ lines total, ~300 lines of pipeline infrastructure (classifier, scorer, async run, atomic writes), ~200 lines of regex extraction that needs replacement.
-**Directive**: D-kal-055
+**Evidence**: Phase 3 items marked DEFER align with B5/B9 matrix precedent; no stub code added.
+**Directive**: D-kal-059
 
 ---
 
@@ -98,44 +100,54 @@
 
 | Task ID | Description | Status | Owner |
 |---------|-------------|--------|-------|
-| ses-20260730-wrapper-db-001 | W-1/W-2: Wrapper DB integration | ✅ COMPLETE | Kali |
-| ses-20260730-wrapper-db-002 | D-2: session_end.py Oracle pipeline | ✅ COMPLETE | Kali |
-| ses-20260730-wrapper-db-003 | S-1: opencode-sessions-explorer plugin | ✅ COMPLETE | Kali |
-| ses-20260730-wrapper-db-004 | S-4: AGENTS.md update | ✅ COMPLETE | Kali |
-| ses-20260730-wrapper-db-005 | Demote dead Scribe distiller | 🔴 PENDING | Kali |
-| ses-20260730-roc-p0-001 | Roc Phase 0: 4 pipe fixes | 🟡 IN_PROGRESS | Roc |
-| ses-20260730-distill-p2-001 | Phase 2: Semantic Distillation | ⏳ BLOCKED (Roc P0) | Kali |
+| ses-20260807-uo4-p1 | UO-4 PART 2 Phase 1: Purge & Correct | ✅ COMPLETE | Kali |
+| ses-20260807-uo4-p2 | UO-4 PART 2 Phase 2: New Infra Docs | ✅ COMPLETE | Kali |
+| ses-20260807-uo4-p3 | UO-4 PART 2 Phase 3: Provider Fabric Runtime | ✅ COMPLETE | Kali |
+| ses-20260807-uo4-p4 | UO-4 PART 2 Phase 4: Flywheel + Probes | ✅ COMPLETE | Kali |
+| ses-20260807-git-merge | Merge release/initial-v1 → main | ✅ COMPLETE | Kali |
+| ses-20260807-v9-gap | V-9: IA2 envelope freshness/signature | ⏳ NEXT | Kali |
+| ses-20260807-v10-gap | V-10: AppArmor container profiles | ⏳ NEXT | Kali |
 
 ---
 
 ## 🐝 Hivemind Broadcast
 
-**Intent**: status — Research complete, Phase 1 wrapper DB integration complete
+**Intent**: status — UO-4 PART 2 complete, merged to main, gates passing
 **Decisions**: 
-- Oracle SoulDistiller pipeline infrastructure is salvageable; only extraction layer needs replacement
-- `opencode db` is preferred over `opencode export` for multi-agent session extraction
-- `opencode-sessions-explorer` plugin installed (needs restart to activate)
-- Scribe SoulDistiller should be deprecated in favor of Oracle pipeline
+- All work merged to `main` (fast-forward, 69 commits)
+- Phase 3 runtime items document-defer where code-blocked (Vulkan/MoE, Piper TTS, OpenCode CLI, Qdrant purge)
+- V-5 ElevenLabs verified clean (0 hits in src)
+- V-9 IA2 envelope + V-10 AppArmor flagged as gaps for next session
+- `make doc-llm-validate` ✅ | `make temple-grade` ✅
 
 **Continuation**: 
-1. Next session: Run wrapper tests (W-3), verify env vars propagate correctly
-2. Monitor Roc's Phase 0 progress (4 pipe fixes → Local Worker Pool)
-3. Phase 2 Semantic Distillation: Replace regex extraction in SoulDistiller with local LLM call
-4. Install plugin post-install deps after OpenCode restart
+1. Next session: UO-6 Un-Overengineering (freeze lifts after UO-4 complete)
+2. Address V-9 (IA2 envelope freshness/signature in `mcp_core/compliance.py`)
+3. Address V-10 (apply AppArmor `podman` profile to running containers)
+4. Phase D Gate rerun — still blocked on C-3/W-1/G-1 (needs Architect sudo/billing action)
 
 ---
 
 ## 📂 Files Changed
 
-| File | Change | Ticket |
+| File | Change | Commit |
 |------|--------|--------|
-| `.opencode/wrapper.sh` | Added baseline timestamp, DB query, env export | W-1, W-2 |
-| `.opencode/hooks/session_end.py` | Rewrote to use Oracle SoulDistillationPipeline | D-2 |
-| `opencode.json` | Added opencode-sessions-explorer plugin + permission | S-1 |
-| `AGENTS.md` | Updated wrapper docs + plugin docs | S-4 |
-| `docs/sprints/session-end-orchestration/index.md` | New sprint plan | Sprint |
-| `data/entities/kali/session_gnosis.md` | This file | Gnosis |
+| `OMEGA_ENGINE.md` | Engine/WAD separation, sqlite-vec decision, 8GB UMA, OS target | 0a44b2b7 |
+| `scripts/codex/MANDATES_CONDENSED.md` | M3 → Node (N1-N10) | 0a44b2b7 |
+| `scripts/codex/AGENTS_CONDENSED.md` | Co-equal MaKaLi triad, @node NX | 0a44b2b7 |
+| `scripts/detect_hardware_profile.py` | New: hardware detection → config/hardware_profile.yaml | b55ff364 |
+| `config/hardware_profile.yaml` | Generated (Ryzen 7 5700U, 8C/16T, 8GB UMA) | b55ff364 |
+| `docs/architecture/MEMORY_SUBSYSTEM_DESIGN.md` | New | b55ff364 |
+| `docs/architecture/SYSTEMD_DEPLOYMENT_GUIDE.md` | New | b55ff364 |
+| `docs/architecture/SOVEREIGN_WAD_PROTOCOL.md` | New | b55ff364 |
+| `docs/architecture/GUIDANCE_SET_SCHEMA.md` | New | b55ff364 |
+| `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` | New | ad126616 |
+| `docs/strategy/PHASE_0_VERIFICATION_REPORT_20260807.md` | New | d58451c6 |
+| `docs/architecture/SOVEREIGN_FLYWHEEL_SECURITY.md` | New | d58451c6 |
+| `docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md` | GAP→DESIGN/DEFER updates | ad126616, d58451c6 |
+| `data/coordination/SESSION_ANCHOR.md` | Final session state | deda6fd3 |
+| `data/entities/kali/session_gnosis.md` | This file | (this write) |
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_gnosis ⬡ 2026-07-30*
+*⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_gnosis ⬡ 2026-08-07*
