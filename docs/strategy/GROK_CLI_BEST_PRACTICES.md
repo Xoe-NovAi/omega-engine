@@ -57,6 +57,24 @@ curl -fsSL https://x.ai/cli/install.sh | bash
 - **MCP server support** (planned/not yet documented as of May 2026)
 - **Hooks/skills** — local files in `~/.grok/`
 
+### 1.3.1 Role in the Omega Engine Pipeline
+
+Grok CLI is the **exploratory analysis layer** — it complements, not competes with, Web Claude:
+
+```
+Grok CLI (exploratory):   run tests, grep full repo, discover issues,
+                          find what to put in the context pack
+        ↓ (informs what to pack)
+Web Claude (formal review): mandate compliance, architecture vetting,
+        spec generation on the packaged context
+```
+
+**Delineation**:
+- **Grok CLI**: Full filesystem access, can execute code, 8 parallel sub-agents, discovers what to pack. Best for *finding* the issues.
+- **Web Claude**: Reviews only the packaged context. Best for *formalizing* findings into mandate-compliant specs.
+
+**Sequential flow (Pattern C)**: Run Grok CLI exploratory analysis → build context pack from findings → send to Web Claude for formal review → ingest artifact.
+
 ### 1.4 Subscription Requirement
 - **Limited-time free access to Grok 4.5** during launch window (verify at `x.ai/build`)
 - After launch promo ends: **SuperGrok Heavy required** (~$300/mo, $99/mo intro for 6 months)
@@ -382,6 +400,32 @@ grok -p "Run security audit" --single-turn --output-format json
 | Grok Build | $300/mo (Heavy) | Most expensive, only with 8-way parallelism |
 | Claude Code | $20-$200/mo | Mature, broader toolkit |
 | Codex CLI | Free install, API metered | OpenAI API costs |
+
+### 9.4 Promo Window Playbook (While Grok 4.5 Is Free)
+
+The Grok 4.5 launch promo is a **time-boxed opportunity**. Prioritize these while it lasts:
+
+```
+PRIORITY 1 — One-time setup that persists after promo:
+  ☐ Create ~/.grok/rules/omega-mandates.md (M1/M7/M8/M13/M14/M23)
+  ☐ Build local skills library in ~/.grok/skills/ (code-review, pack-finder)
+  ☐ Configure sandbox profiles (workspace for dev, strict for untrusted)
+  ☐ Test ACP integration (grok agent stdio) for IDE workflows
+
+PRIORITY 2 — High-value exploratory work (uses 8-way parallelism):
+  ☐ Run full-repo exploratory analysis on large modules
+  ☐ Parallel sub-agent review of src/omega/ (8 sub-agents)
+  ☐ Discover what to pack for Web Claude (Pattern C pipeline)
+
+PRIORITY 3 — Template reusable workflows:
+  ☐ Document any Grok CLI patterns that beat OpenCode CLI
+  ☐ Log lessons to PACK_EVOLUTION_LOG.md
+```
+
+**When the promo ends**:
+- Fall back to OpenCode CLI for local analysis
+- Remove Grok CLI from rotation until SuperGrok Heavy budget allows
+- **Do NOT build permanent automation on promo access** — the rules/skills files persist, but the model access does not
 
 ---
 

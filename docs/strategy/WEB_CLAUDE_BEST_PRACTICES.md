@@ -522,6 +522,31 @@ When reviewing a Web Claude artifact, the OpenCode CLI agent checks:
 ☐ Recommendations are consistent with PIVOT_LOG decisions
 ```
 
+### 9.5 Mandate Compliance Scan (Inbound Artifacts)
+
+Before integrating any received artifact, run a quick automated scan for obvious mandate violations. This is cheap, fast, and catches violations before they propagate:
+
+```bash
+# M1 violation? (asyncio in generated code)
+grep -iE "asyncio|async def .*await .*loop" artifact.md
+
+# M8 violation? (telemetry / analytics in recommended code)
+grep -iE "telemetry|analytics|phone-home|sentry|posthog" artifact.md
+
+# M7 violation? (cloud dependency recommended)
+grep -iE "aws|gcp|azure|cloudflare|openai\.com|anthropic\.com|googleapis" artifact.md
+
+# M9 violation? (bare except in recommended code)
+grep -nE "except\s*:" artifact.md
+
+# M16 violation? (hardcoded paths in recommended code)
+grep -nE "/home/|/var/|C:\\\\|/Users/" artifact.md
+```
+
+**Interpretation**: A hit does not automatically reject the artifact — it flags a section for manual review. The agent verifies whether the flagged content is a recommendation (needs rejection/rewrite) or merely context. Any recommendation that introduces a mandate violation is rejected with documented reasoning.
+
+**Note**: This scan complements, not replaces, the §9.4 checklist. The checklist is semantic (does the finding make sense); the scan is mechanical (does the content violate a mandate pattern).
+
 ---
 
 ## 10. MULTI-ACCOUNT STRATEGY

@@ -24,29 +24,31 @@
 
 ### By Task Type
 
-| Task | Best Platform | Free? | Why |
-|------|---------------|-------|-----|
-| Pre-refactor code review | **Web Claude** | ✅ Sonnet 5 | ~80-82% SWE-bench, instruction-following, XML system prompt |
-| Architecture vetting | **Web Claude** | ✅ Sonnet 5 | Long-doc QA, structured reasoning, RAG mitigation patterns |
-| Multi-source research synthesis | **Web Gemini** | ✅ Gemini 3.6 Flash | Deep Research, 1M context, code execution sandbox |
-| Benchmark comparison | **Web Gemini** | ✅ Gemini 3.5 Flash | 92.7% GPQA Diamond, code execution for verification |
-| Real-time data / current events | **Web Grok** | ✅ Grok 3/4 Mini | Live X firehose, real-time sentiment |
-| Source-grounded analysis | **NotebookLM** | ✅ Free | Source citations, audio overview, multi-document synthesis |
-| **Local terminal coding agent** | **Grok CLI (Grok Build)** | ⚠️ Promo | Grok 4.5 free during launch window; SuperGrok Heavy after |
-| Cross-validation of critical decisions | **Claude + Gemini** | ✅ Both free | Independent verification of architecture decisions |
+| Task | Best Platform | Pipeline | Free? | Why |
+|------|---------------|----------|-------|-----|
+| Pre-refactor code review | **Web Claude** | A (Direct) | ✅ Sonnet 5 | ~80-82% SWE-bench, instruction-following, XML system prompt |
+| Architecture vetting | **Web Claude** | A or C | ✅ Sonnet 5 | Long-doc QA, structured reasoning, RAG mitigation patterns |
+| Multi-source research synthesis | **NotebookLM → Web Claude** | B (NotebookLM) | ✅ Free | 20+ sources collapsed to 1 file; sidesteps 12-file RAG limit |
+| Benchmark comparison | **Web Gemini** | C (Gemini) | ✅ Gemini 3.5 Flash | 92.7% GPQA Diamond, code execution for verification |
+| Real-time data / current events | **Web Grok** | C (Grok) | ✅ Grok 3/4 Mini | Live X firehose, real-time sentiment |
+| Source-grounded analysis | **NotebookLM** | B (NotebookLM) | ✅ Free | Source citations, audio overview, multi-document synthesis |
+| Exploratory code analysis | **Grok CLI (Grok Build)** | C (Grok CLI) | ⚠️ Promo | Direct filesystem access, 8 parallel sub-agents, run tests |
+| **Local terminal coding agent** | **OpenCode CLI** | — | ✅ | Full local access, mandate enforcement, test execution |
+| Cross-validation of critical decisions | **Claude + Gemini** | A + C | ✅ Both free | Independent verification of architecture decisions |
 
 ### Omega Engine Workflow Decision Matrix
 
-| Omega Engine Task | Primary Platform | Secondary Platform | Local Integration |
-|-------------------|-----------------|-------------------|-------------------|
-| Pre-refactor code review | Web Claude | — | OpenCode CLI ingests artifact |
-| Architecture decision vetting | Web Claude | Web Gemini (cross-check) | OpenCode CLI implements |
-| Technology adoption research | Web Gemini | Web Grok (real-time) | NotebookLM synthesizes |
-| Mandate compliance audit | Web Claude | — | OpenCode CLI enforces |
-| Real-time trend monitoring | Web Grok | — | Findings feed Web Claude/Gemini |
-| Research synthesis | NotebookLM | — | Summary feeds Web Claude/Gemini |
-| Local code implementation | Grok CLI | OpenCode CLI | Direct file edits |
-| Local code review | Grok CLI | OpenCode CLI | Sandbox-controlled |
+| Omega Engine Task | Pipeline Pattern | Primary Platform | Secondary Platform | Local Integration |
+|-------------------|-----------------|-----------------|-------------------|-------------------|
+| Pre-refactor code review | A (Direct) | Web Claude | — | OpenCode CLI ingests artifact |
+| Architecture decision vetting | A or C | Web Claude | Web Gemini (cross-check) | OpenCode CLI implements |
+| Technology adoption research | B (NotebookLM) | NotebookLM → Web Claude | Web Grok (real-time) | OpenCode CLI ingests |
+| Mandate compliance audit | A (Direct) | Web Claude | — | OpenCode CLI enforces |
+| Real-time trend monitoring | C (Grok) | Web Grok | — | Findings feed Web Claude/Gemini |
+| Research synthesis | B (NotebookLM) | NotebookLM | — | Summary feeds Web Claude/Gemini |
+| Exploratory code analysis | C (Grok CLI) | Grok CLI | — | Discover what to pack |
+| Local code implementation | — | Grok CLI / OpenCode CLI | — | Direct file edits |
+| Local code review | — | Grok CLI / OpenCode CLI | — | Sandbox-controlled |
 
 ### By Model Capability
 
@@ -287,6 +289,53 @@ When you have multiple tasks to run across the platform pool, use this protocol 
 - All three accounts are the same Google account — sequential, not parallel.
 
 **Parallel example**: code review (Claude acct-1) + architecture vetting (Claude acct-2) + research synthesis (Gemini acct-1) running simultaneously — different platforms, different accounts.
+
+### 6.6 Multi-Stage Pipeline Patterns
+
+The order of platforms is not fixed. Choose the pipeline that matches the task's structure. Three canonical patterns:
+
+#### Pattern A: Direct (Default)
+```
+OpenCode CLI → Context Pack → Web Claude → Artifact → Ingest
+```
+**Use when**: Task is well-scoped, source material is already curated, mandate compliance is the primary concern.
+**Best for**: Code review, architecture vetting, spec generation, mandate audits.
+
+#### Pattern B: NotebookLM Pre-Synthesis
+```
+OpenCode CLI → Context Pack → NotebookLM (Gap Analysis + Synthesis)
+  → 1-page findings summary → Web Claude (deep analysis + spec)
+  → Artifact → Ingest
+```
+**Use when**: Task involves 10+ sources that need synthesis before Claude can analyze them.
+**Best for**: Technology adoption research, literature reviews, competitive analysis, multi-source decision making.
+**Why**: NotebookLM collapses 20-50 raw sources into 1 clean input file, sidestepping the 12-file RAG limit entirely.
+
+#### Pattern C: Grok CLI / Web Gemini Preliminary Analysis
+```
+OpenCode CLI → Context Pack → Grok CLI or Web Gemini (preliminary analysis)
+  → Refined findings report → Web Claude (formal review + spec)
+  → Artifact → Ingest
+```
+**Use when**: Task benefits from a different analytical perspective or real-time data before the formal review.
+**Best for**:
+- **Grok CLI**: Exploratory code analysis (run tests, grep full repo, discover what to pack)
+- **Web Grok**: Real-time X sentiment + current events on a topic
+- **Web Gemini**: Long-document synthesis, benchmark comparison, code execution verification
+
+**Grok CLI role**: Exploratory local analysis — run tests, grep across full repo, discover what to put in the pack. Grok CLI informs *what to pack*. Web Claude reviews *the pack*. Sequential, not competing.
+
+#### Choosing a Pipeline
+
+| Task Type | Recommended Pipeline | Why |
+|-----------|---------------------|-----|
+| Code review | A (Direct) | Claude is the right reviewer; no pre-synthesis needed |
+| Architecture vetting | A or C | A for internal consistency; C for external perspective |
+| Technology adoption | B (NotebookLM) | 20+ sources need synthesis first |
+| Real-time trend monitoring | C (Grok) | X firehose is the value-add |
+| Benchmark comparison | C (Gemini) | Code execution + GPQA 92.7% |
+| Mandate compliance audit | A (Direct) | Claude's instruction-following is the strength |
+| Research synthesis | B (NotebookLM) | Source grounding + Gap Analysis |
 
 ---
 
