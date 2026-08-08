@@ -64,16 +64,16 @@ Before executing the matrix, the engine's true state must be verified against th
 ### D. Concurrency & I/O
 | Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
 |---|---|---|---|---|---|
-| AnyIO SEDA Ring-Bus | Standard async/await | **GAP** | Implement lock-free `SEDARingBus` with back-pressure. | `omega/core/bus.py` | `@node P4` |
+| AnyIO SEDA Ring-Bus | Standard async/await | **DESIGN** | Implement lock-free `SEDARingBus` with back-pressure. | `docs/architecture/SOVEREIGN_BUS_SPEC.md` | `@node P4` |
 | Sovereign Bridge (FastAPI Webhook) | Scaffolded | **GAP** | Implement raw-body HMAC-SHA256 verification. | `omega/api/bridge.py` | `@node P4` |
-| Lightweight TTS (Piper/Inflect) | ElevenLabs stub | **GAP** | Deploy Piper locally (<200MB RAM) to save VRAM. | `OMEGA_ENGINE.md` | `@node P3` |
+| Lightweight TTS (Piper/Inflect) | ElevenLabs stub | **DEFER** | Deploy Piper locally (<200MB RAM) — blocked on SEDA bus. | `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` §8 | `@node P3` |
 
 ### E. Provider Fabric & Inference
 | Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
 |---|---|---|---|---|---|
-| Full Vega 8 Offload (`n_gpu_layers=-1`) | Partial offload | **GAP** | Enforce full offload + Vulkan + `n_batch=512`. | `omega/core/llm.py` | `@node P3` |
-| Speculative Decoding: n-gram vs MTP | Unwired (B5) | **DECISION** | Adopt n-gram (prompt-lookup) to save VRAM over MTP. | `PROVIDER_FABRIC_REFACTOR_MANUAL_v3.md` | `@node P3` |
-| MoE Expert Offload (`--n-cpu-moe`) | Not configured | **GAP** | Document mmap + zRAM + NVMe strategy for 30B+ models. | `PROVIDER_FABRIC_REFACTOR_MANUAL_v3.md` | `@node P3` |
+| Full Vega 8 Offload (`n_gpu_layers=-1`) | Partial offload | **DEFER** | Enforce full offload + Vulkan + `n_batch=512` — blocked on GGML Vulkan build (B9). | `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` | `@node P3` |
+| Speculative Decoding: n-gram vs MTP | Unwired (B5) | **DECISION** | Adopt n-gram (prompt-lookup) to save VRAM over MTP. | `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` §6 | `@node P3` |
+| MoE Expert Offload (`--n-cpu-moe`) | Not configured | **DEFER** | Document mmap + zRAM + NVMe strategy for 30B+ models. | `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` | `@node P3` |
 
 ### F. Sovereignty Flywheel (Training)
 | Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
@@ -315,31 +315,31 @@ The web docs identify Omega's opportunity: **no one has published the integrated
 ### I. WAD Architecture & Guidance Sets
 | Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
 |---|---|---|---|---|---|
-| Universal Guidance Set Schema | Hardcoded 42 Ideals | **GAP** | Engine provides mechanism (loading, review, logging). WAD provides content. | `GUIDANCE_SET_SCHEMA.md` | `@maat` |
+| Universal Guidance Set Schema | Hardcoded 42 Ideals | **DESIGN** | Engine provides mechanism (loading, review, logging). WAD provides content. | `docs/architecture/GUIDANCE_SET_SCHEMA.md` | `@maat` |
 | Defeasibility Logging | Missing | **GAP** | Entities can consciously deviate from guidance with logged rationale. | `omega/telemetry/logger.py` | `@node P8` |
 
 ### J. Advanced Memory Tuning
 | Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
 |---|---|---|---|---|---|
-| 16GB zRAM (zstd + multi-comp) | 8GB zRAM | **GAP** | Expand to 16GB, enable idle/huge recompress + writeback. | `SYSTEMD_DEPLOYMENT_GUIDE.md` | `@node P1` |
+| 16GB zRAM (zstd + multi-comp) | 8GB zRAM | **DESIGN** | Expand to 16GB, enable idle/huge recompress + writeback. | `docs/architecture/SYSTEMD_DEPLOYMENT_GUIDE.md` §2 | `@node P1` |
 | Qdrant TurboQuant BITS4 | Unspecified | **GAP** | Default to BITS4 for recall, BITS2 for aggressive compression. | `omega/memory/qdrant_adapter.py` | `@lilith` |
-| MoE Expert Offload (`--n-cpu-moe`) | Unconfigured | **GAP** | Use mmap + zRAM + NVMe swap for 30B-70B+ models. | `omega/core/llm.py` | `@node P3` |
+| MoE Expert Offload (`--n-cpu-moe`) | Unconfigured | **DEFER** | Use mmap + zRAM + NVMe swap for 30B-70B+ models. | `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` | `@node P3` |
 
 ### K. Inference Optimization (Web-Gemini Engine Hardening)
 | Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
 |---|---|---|---|---|---|
-| KV-Cache Prefix Caching | Not implemented | **GAP** | Pin system prompts, tool defs, governance rules via `llama.cpp` prefix caching. | `omega/core/llm.py` | `@node P3` |
-| GBNF/JSON Schema Constrained Sampling | Unwired | **GAP** | Enforce JSON at sampler level to eliminate tool-parsing failures. | `omega/core/llm.py` | `@node P3` |
-| iMatrix/IQ Quantization (IQ4_XS, IQ3_S) | Q4_K_M default | **GAP** | Replace Q4_K_M with IQ4_XS/IQ3_S to save 0.5-1GB. | `omega/core/llm.py` | `@node P3` |
-| Automatic Context Sliding Windows | Not implemented | **GAP** | Clear older context tokens, preserve system prompt via sequence removal hooks. | `omega/core/llm.py` | `@node P3` |
-| MemPalace Verbatim-First Pattern | ChromaDB dependency | **GAP** | Adapt verbatim storage (wing/room tags) into Qdrant/SQLite — no ChromaDB. | `omega/memory/router.py` | `@lilith` |
+| KV-Cache Prefix Caching | Not implemented | **DESIGN** | Pin system prompts, tool defs, governance rules via `llama.cpp` prefix caching. | `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` §1 | `@node P3` |
+| GBNF/JSON Schema Constrained Sampling | Unwired | **DESIGN** | Enforce JSON at sampler level to eliminate tool-parsing failures. | `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` §2 | `@node P3` |
+| iMatrix/IQ Quantization (IQ4_XS, IQ3_S) | Q4_K_M default | **DESIGN** | Replace Q4_K_M with IQ4_XS/IQ3_S to save 0.5-1GB. | `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` §3 | `@node P3` |
+| Automatic Context Sliding Windows | Not implemented | **DESIGN** | Clear older context tokens, preserve system prompt via sequence removal hooks. | `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` §9 | `@node P3` |
+| MemPalace Verbatim-First Pattern | ChromaDB dependency | **DESIGN** | Adapt verbatim storage (wing/room tags) into Qdrant/SQLite — no ChromaDB. | `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` §7 | `@lilith` |
 
 ### L. OpenCode Integration & Legacy Purge (Web-Gemini Refactoring)
 | Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
 |---|---|---|---|---|---|
-| OpenCode CLI Binding to Local Engine | Not configured | **GAP** | Bind OpenCode to local engine via OpenAI-compatible REST API (`OPENCODE_API_BASE=http://127.0.0.1:8080/v1`). | `docs/kb/OMEGA_OPENCODE_INTEGRATION.md` | `@node P4` |
-| Legacy Architecture Purge from Qdrant | Not executed | **GAP** | Run script to purge "26 sphere toroidal" and "108 gates" from Qdrant collections. | `scripts/purge_legacy_qdrant.py` | `@kali` |
-| NotebookLM Multi-Persona Ingestion | Not implemented | **GAP** | Relaxed prompting for 3-persona generation with speaker tags for NotebookLM. | `scripts/prepare_notebooklm.py` | `@researcher` |
+| OpenCode CLI Binding to Local Engine | Not configured | **DEFER** | Bind OpenCode to local engine via OpenAI-compatible REST API (`OPENCODE_API_BASE=http://127.0.0.1:8080/v1`). | `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` §10 | `@node P4` |
+| Legacy Architecture Purge from Qdrant | Not executed | **DEFER** | No core Qdrant collection holds these concepts — Qdrant is optional WAD adapter. | `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` §11 | `@kali` |
+| NotebookLM Multi-Persona Ingestion | Not implemented | **DESIGN** | Relaxed prompting for 3-persona generation with speaker tags for NotebookLM. | `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` §12 | `@researcher` |
 
 ### M. Verification Probes (Agent Verification Dispatch)
 | Web Source Claim | Local Canon State | Conflict/Gap? | Resolution | Target Document | Owner |
