@@ -305,3 +305,37 @@ Complete WEB_RECONCILIATION_MATRIX §6 provider-fabric remediation batch B2→B8
 1. Freeze lifts after UO-4 complete
 2. Address V-9 (IA2 envelope freshness/signature) + V-10 (AppArmor) gaps
 3. Phase D Gate rerun (C-3/W-1/G-1 still need Architect action)
+
+## 🏁 FINAL SESSION STATE (2026-08-07 — UO-4 COMPLETE + CORE DOCS FRESHENED)
+
+### Completed This Session (Final)
+1. **Core Strategy Docs Freshened** — all Pillar/oversoul/apex language purged:
+   - SUBAGENT_DISPATCH_PROTOCOL: Pillar→Node, Oversoul→Oversight
+   - FLEET_TEAM_PLAYBOOK: @pillar→@node, co-equal MaKaLi
+   - SOVEREIGN_ARK_BLUEPRINT: guard-and-distill marked SUPERSEDED
+   - STRATEGY_CORPUS_MAP: UO-4 Phase 3/4 docs row added
+   - CLINE_STRATEGIC: guard-and-distill path corrected to archive
+
+2. **Validation Gates**: doc-llm-validate ✅ | temple-grade ✅ (M1/M7/M8/M9/M23)
+
+3. **Git**: Both branches synced at `a3d5b763`, pushed to origin
+
+### Commits This Session (Final)
+| Commit | Description |
+|--------|-------------|
+| a3d5b763 | docs(strategy): freshen core strategy docs — Pillar→Node, co-equal MaKaLi, Corpus Map updated |
+| 6ea5eb44 | docs(gnosis): update kali session_gnosis for UO-4 PART 2 + merge to main |
+| deda6fd3 | docs(coordination): final session anchor (UO-4 PART 2 complete + merge to main) |
+| d58451c6 | docs(security): UO-4 PART 2 Phase 4 sovereignty flywheel + verification probes |
+| ad126616 | docs(runtime): UO-4 PART 2 Phase 3 provider fabric runtime design |
+| 0d38e449 | chore: commit wrapper artifacts (codex refresh + kali proposed lessons) |
+
+### Next Session: V-10/V-9 Gap Remediation → UO-6
+1. **V-10**: Apply AppArmor `podman` profile to running containers (currently unconfined)
+2. **V-9**: Add freshness/signature to IA2 `_meta` envelope in `mcp_core/compliance.py`
+3. **UO-6**: Un-Overengineering (freeze lifts after UO-4 complete)
+4. Phase D Gate rerun (still blocked on C-3/W-1/G-1 — Architect action)
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*

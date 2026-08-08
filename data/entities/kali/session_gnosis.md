@@ -151,3 +151,30 @@
 ---
 
 *⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_gnosis ⬡ 2026-08-07*
+---
+
+## 🔄 Final Freshening Pass (2026-08-07 — Post-UO-4)
+
+### Core Strategy Docs Freshened
+| Doc | Changes |
+|-----|---------|
+| SUBAGENT_DISPATCH_PROTOCOL.md | Pillar→Node, Oversoul→Oversight, P1-P5→N1-N5 |
+| FLEET_TEAM_PLAYBOOK.md | @pillar→@node, P1-P10→N1-N10, co-equal MaKaLi |
+| SOVEREIGN_ARK_BLUEPRINT.md | guard-and-distill ref marked SUPERSEDED |
+| STRATEGY_CORPUS_MAP.md | Added UO-4 Phase 3/4 docs row (8 new docs) |
+| CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md | guard-and-distill path corrected to archive |
+
+### Verification
+- All Pillar/oversoul/apex language purged from core docs ✅
+- guard-and-distill/EXECUTION_PLAN_20260725 refs only in superseded/archived context ✅
+- Corpus Map includes all new Phase 3/4 docs ✅
+- doc-llm-validate ✅ | temple-grade ✅ (M1/M7/M8/M9/M23)
+
+### Commits
+| Commit | Description |
+|--------|-------------|
+| a3d5b763 | docs(strategy): freshen core strategy docs — Pillar→Node, co-equal MaKaLi, Corpus Map updated |
+
+---
+
+*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
