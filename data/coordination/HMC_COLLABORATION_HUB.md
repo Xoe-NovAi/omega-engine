@@ -1,7 +1,7 @@
 # 🔱 HMC Collaboration Hub — Sprint Coordination Forum
 **AP Token**: `AP-HMC-HUB-v1.6.0`
 ⬡ OMEGA ⬡ HMC ⬡ ALL-AGENTS ⬡ COORDINATION
-**Last Updated**: 2026-08-07
+**Last Updated**: 2026-08-08 (M2 firewall: P1-P10 Pillar → N1-N10 Node nomenclature)
 
 ---
 
@@ -13,7 +13,7 @@ A **single, lightweight markdown document** serving as the central coordination 
 ## 🚨 P0-INTERRUPT TRIAGE (Active)
 | Timestamp | Source | Event | Owner | Status |
 |-----------|--------|-------|-------|--------|
-| (None)    | -      | -     | -     | 🟢 CLEAR |
+| 2026-08-08 | @grok_cli | Context Packer v2 broken (`sovereign-audit` poison pack). v3 refactor handoff ready. | @kali | 🔴 ACTIVE |
 
 ---
 
@@ -28,6 +28,7 @@ A **single, lightweight markdown document** serving as the central coordination 
 
 ### 📌 Decisions Log (Active)
 *See `docs/decisions/PIVOT_LOG.md` for the canonical record.*
+- **2026-08-08**: Grok CLI → Kali Context Packer v3 — curate offline, fail-closed pack, no silent theme drop. SSOT: `data/handoff/GROK_CLI_TO_KALI_CONTEXT_PACKER_V3_REFACTOR_20260808.md`.
 - **2026-08-07**: HMC Hub archived and reset to clear 2,100+ lines of historical bloat.
 - **2026-08-07**: Wrapper SQL query fixed to use `time_updated` for accurate session detection.
 - **2026-08-07**: WEB_RECONCILIATION_MATRIX updated with §17, K, L, M.
@@ -41,15 +42,20 @@ A **single, lightweight markdown document** serving as the central coordination 
 ## 🧑‍💼 AGENT SECTIONS
 
 ### @kali — Transcendent Oversight
-- Leading UO-4 Doc Sanity Sprint.
+- **P0 NOW**: Context Packer v3 refactor — read `data/handoff/GROK_CLI_TO_KALI_CONTEXT_PACKER_V3_REFACTOR_20260808.md` + accept `ho_packer_v3_kali_20260808`.
+- Task id: `packer-v3-refactor-20260808-01`. Do not upload `context_packs/sovereign-audit/` until v3 DoD met.
+- UO-4 Doc Sanity COMPLETE (prior). UO-6 un-overengineering after packer ship or in parallel only if no file clash.
 
-### @maat — Light Oversoul (P1-P5)
+### @maat — Light Oversoul (N1-N5)
+- Build-side governance: Infrastructure, Persistence, Engineering, Integration, Governance.
 - (Awaiting dispatch)
 
-### @lilith — Dark Oversoul (P6-P10)
+### @lilith — Dark Oversoul (N6-N10)
+- Run-side governance: Cognition, Context, Observability, Orchestration, Validation.
 - (Awaiting dispatch)
 
-### @researcher — Deep Research (P6)
+### @researcher — Deep Research (Lattice)
+- Lattice role (not a Node slot). Polymathic research, dialectic synthesis, knowledge curation.
 - (Awaiting dispatch)
 
 ### @grokster — Grok Ecosystem Specialist
@@ -70,7 +76,8 @@ A **single, lightweight markdown document** serving as the central coordination 
 ### @john_carmack — S3 Consultant
 - (Awaiting dispatch)
 
-### @pillar — Slot-based Pillars (P1-P10)
+### @node — Slot-based Nodes (N1-N10)
+- Core engine slots: N1 Infrastructure, N2 Persistence, N3 Engineering, N4 Integration, N5 Governance, N6 Cognition, N7 Context, N8 Observability, N9 Orchestration, N10 Validation.
 - (Awaiting dispatch)
 
 ### @scribe — Soul Distillation, Hub Master
@@ -84,3 +91,5 @@ A **single, lightweight markdown document** serving as the central coordination 
 - **Engine State**: `OMEGA_ENGINE.md`
 - **Doc Sanity**: `data/coordination/DOC_SANITY_EXECUTION_STRATEGY_20260730.md`
 - **Pivots**: `docs/decisions/PIVOT_LOG.md`
+- **Packer v3 (Kali)**: `data/handoff/GROK_CLI_TO_KALI_CONTEXT_PACKER_V3_REFACTOR_20260808.md`
+- **Packer diagnosis (Carmack)**: `docs/research/R_CONTEXT_PACKER_ARCH_REVIEW_20260808.md`
