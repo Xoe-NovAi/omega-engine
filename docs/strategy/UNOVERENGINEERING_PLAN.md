@@ -16,18 +16,27 @@ The original plan had 10 critical errors identified by GLM52 second opinion (F1-
 
 | # | Original Claim | Correction | Source |
 |---|----------------|------------|--------|
-| F1 | Replace breakers with pybreaker | **WRONG** — pybreaker is sync-only. Keep `AsyncCircuitBreaker`, delete clones, redirect to `get_breaker()` | GLM52 F1 (research-confirmed) |
-| F2 | Install stamina for retries | **TRADEOFF** — tenacity already installed; stamina gives free structlog+prometheus instrumentation. Spike both. | GLM52 F2 v2.0 |
+| F1 | Replace breakers with pybreaker | **WRONG** — pybreaker is sync-only. Researcher recommends **interlock-cb v2.1.3** (sync+async, sliding-window, slow-call detection). Keep `AsyncCircuitBreaker` as fallback if interlock-cb fails AnyIO trio verification. | GLM52 F1 + Researcher §1 |
+| F2 | Install stamina for retries | **TRADEOFF** — tenacity already installed; stamina gives free structlog+prometheus instrumentation. interlock-cb v2 has built-in retry pipeline (timeout, bulkhead, breaker, retry, fallback). Spike both. | GLM52 F2 v2.0 + Researcher §1 |
 | F3 | CI gates protect the work | **WRONG** — CI only runs on `main`. Was a gap on `release/initial-v1`. | GLM52 F3 |
-| F4 | Redis removal is Hivemind-only | **WRONG** — Redis in budget_guard (M12/M21), youtube_worker, memory providers. Map full graph first. | GLM52 F4 |
+| F4 | Redis removal is Hivemind-only | **WRONG** — Redis in budget_guard (M12/M21), youtube_worker, memory providers. Researcher recommends **SQLite + Honker** for single-node. | GLM52 F4 + Researcher §2 |
+| F5 | httpx2 is a fork risk | **CORRECTED** — httpx2 is the active fork (upstream httpx stalled). Already installed (v2.5.0). Adopt. | GLM52 F5 corrected + Researcher §4 |
 | F8 | "17 breaker clones" | **STALE** — actual: 8 class hits (2 enums, 1 canonical, 1 deprecated file, 1 clone) | Ground truth `rg` |
 | F9 | Heritage tags not mentioned | **MISSING** — handoff.py has vet-008, soul_validator.py has vet-015. M14 migration needed. | GLM52 F9 |
 | F11 | M23 compliance is 92% | **UNTRUSTABLE** — pre-commit hook rg invocation is broken, passes falsely | GLM52 F11 |
 | F12 | Test suite times out (HIGH risk) | **PHANTOM** — never measured with adequate budget | GLM52 F12 |
-| F16 | `model_validate_yaml()` exists | **WRONG** — doesn't exist in Pydantic v2 core. Use `yaml.safe_load()` + `model_validate()`. | GLM52 F16 |
+| F16 | `model_validate_yaml()` exists | **WRONG** — doesn't exist in Pydantic v2 core. Use `yaml.safe_load()` + `model_validate()`. | GLM52 F16 + Researcher §5 |
 | F17 | "Kill 2 of 3 distillers" | **MOSTLY DONE** — scribe distiller already deleted. miap.py still exists. | Ground truth grep |
+| F18 | MCP v2 is P2 | **ELEVATE to P1** — v2 stable July 27, 2026. Pin is deferral, not solution. | GLM52 F18 + Researcher §3 |
 
-**See**: `data/coordination/GLM52_SECOND_OPINION_20260730.md` for full evidence.
+**New findings from Researcher deep web research (2026-08-08):**
+- **interlock-cb v2.1.3** recommended over pybreaker (sync+async, sliding-window, slow-call detection)
+- **SQLite + Honker** recommended over Redis for single-node (wafris.org precedent, Honker 2957 stars)
+- **httpx2** is the active fork, anyio-based — adopt (already installed)
+- **structlog v26.1.0** + **prometheus_client** (local-only via textfile collector)
+- **sqlite-vec** for local-first vector search (exact match, faster for <10k docs)
+
+**See**: `data/coordination/GLM52_SECOND_OPINION_20260730.md` + `data/coordination/RESEARCH_TECH_ARCHITECTURE_DECISIONS_20260808.md` for full evidence.
 
 ---
 
@@ -50,56 +59,59 @@ The engine won't be less capable — it'll be **more maintainable**, **more reli
 
 ---
 
-## §1 Phase 0 — Pre-Flight (2h) — FIX GATES FIRST
+## §1 Phase 0 — Pre-Flight (3h) — FIX GATES FIRST
 
 | Task | Why | Effort |
 |------|-----|--------|
 | Fix M23 pre-commit hook rg invocation | Gate is theater (GLM52 F11) | 30min |
 | Run `time make test` with 600s budget | Retire phantom risk (GLM52 F12) | 10min |
 | Fix soul_validator.py vet-015 heritage tag | M14 compliance (GLM52 F9) | 15min |
-| Verify MIAP status (deleted or dead code?) | Conflict resolution | 15min |
-| Decide stamina vs tenacity (spike one provider) | Three positions exist (GLM52 F2) | 1h |
+| Verify MIAP status (dead code?) | Conflict resolution | 15min |
+| Spike stamina vs tenacity (one provider) | Three positions exist (GLM52 F2) | 1h |
+| Verify interlock-cb AnyIO trio compatibility | Researcher recommendation, M1 compliance | 1h |
 
 ---
 
-## §2 Phase 1 — Library Swaps (Revised — 8h, ~1,500 lines)
+## §2 Phase 1 — Library Swaps (Revised — 10h, ~1,700 lines)
 
-### §2.1 Delete Deprecated Breakers (NOT pybreaker swap)
+### §2.1 Delete Deprecated Breakers + Adopt interlock-cb
 **Status**: NOT STARTED
 **Current**: `search_circuit_breaker.py` (299 lines, 4 classes — DEPRECATED per C-6')
-**Action**: Delete `search_circuit_breaker.py`. Redirect callers to `get_breaker()` factory.
-**Keep**: `AsyncCircuitBreaker` (health_monitor.py, 944 lines) — AnyIO-native, CUSUM, sliding window, 429 classification
-**Do NOT**: Replace with pybreaker (sync-only, M1 violation — GLM52 F1)
-**Effort**: 1h | **Net Δ**: -299 lines
+**Researcher recommendation**: `interlock-cb v2.1.3` (sync+async, sliding-window, slow-call detection, httpx2 transport)
+**Action**:
+1. Delete `search_circuit_breaker.py` (299 lines)
+2. Delete `ExperimentCircuitBreaker` in sandbox.py (~50 lines)
+3. Install `interlock-cb` and verify AnyIO trio compatibility
+4. If interlock-cb fails trio verification: keep `AsyncCircuitBreaker` as canonical, redirect clones to `get_breaker()`
+**Keep**: `AsyncCircuitBreaker` (health_monitor.py, 944 lines) as fallback
+**Do NOT**: Use pybreaker (sync-only, M1 violation)
+**Effort**: 2h | **Net Δ**: -349 lines
 
-### §2.2 Delete ExperimentCircuitBreaker
-**Status**: NOT STARTED
-**Current**: `sandbox.py ExperimentCircuitBreaker` (~50 lines)
-**Action**: Redirect sandbox to `get_breaker()` factory
-**Effort**: 30min | **Net Δ**: -50 lines
-
-### §2.3 Simplify soul_validator.py
+### §2.2 Simplify soul_validator.py
 **Status**: NOT STARTED
 **Current**: `src/omega/oracle/soul_validator.py` (290 lines)
 **Action**: Remove manual REQUIRED_KEYS checks, keep `yaml.safe_load()` + pydantic `BaseModel`. Migrate vet-015 heritage tag.
 **Do NOT**: Claim `model_validate_yaml()` exists (GLM52 F16 — it doesn't)
 **Effort**: 2h | **Net Δ**: -150 lines
 
-### §2.4 structlog — Replace Custom JSON Logger
+### §2.3 structlog — Replace Custom JSON Logger
 **Status**: NOT STARTED
 **Current**: Dead `setup_json_logging()` (M9 blocker)
-**Action**: Replace with `structlog` (M8 compliant — local-only)
+**Action**: Install `structlog v26.1.0`, replace dead logger
 **Effort**: 2h | **Net Δ**: -80 lines
 
-### §2.5 prometheus_client — Replace HealthMonitor Sliding Window
+### §2.4 prometheus_client — Replace HealthMonitor Sliding Window
 **Status**: NOT STARTED
 **Current**: HealthMonitor sliding window (944 lines)
-**Action**: Use `prometheus_client` v0.24.1 for Counter/Gauge/Histogram at `:8016/metrics`
+**Action**: Install `prometheus_client`, use textfile collector pattern at `:8016/metrics` (local-only, M8 compliant)
 **Effort**: 2h | **Net Δ**: -400 lines
 
-### §2.6 stamina (DEFERRED — pending spike)
-**Status**: DEFERRED
-**Decision needed**: tenacity (already installed, 0 new deps) vs stamina (free structlog+prometheus instrumentation)
+### §2.5 Retry Strategy (Spike — 1h)
+**Status**: PENDING DECISION
+**Options**:
+- **Option A**: Use already-installed `tenacity` (0 new deps, hand-wire structlog+prometheus hooks)
+- **Option B**: Install `stamina` (free structlog+prometheus instrumentation, but +1 dep)
+- **Option C**: Use `interlock-cb` v2 retry pipeline (if adopted in §2.1, covers retry + breaker + timeout + bulkhead)
 **Action**: Spike one provider, measure glue-code deletion, pick winner
 **Effort**: 1h spike | **Net Δ**: TBD
 
@@ -141,7 +153,7 @@ The engine won't be less capable — it'll be **more maintainable**, **more reli
 
 ## §4 Phase 3 — Simplify Memory Architecture (Revised — 4h, ~500 lines)
 
-### §4.1 Kill Redundant Memory Tiers
+### §4.1 Kill Redundant Memory Tiers + Adopt SQLite + Honker
 | Kill | Why |
 |------|-----|
 | Recall tier (`recall.py`, 786 lines) | Duplicates FTS5 ranking with extra complexity |
@@ -149,16 +161,22 @@ The engine won't be less capable — it'll be **more maintainable**, **more reli
 | Archival tier (gzip) | Files ARE the archive. Extra compression wrapper = complexity. |
 | Knowledge graph adapter | No active use case consuming graph queries |
 
-**⚠️ Redis removal is deeper than Hivemind** (GLM52 F4):
+**⚠️ Redis removal is deeper than Hivemind** (GLM52 F4 + Researcher §2):
 - `memory_store.py` (9 refs) — RedisStorageProvider
 - `budget_guard.py` (37 refs) — M12/M21 quota enforcement
 - `youtube_worker.py` (24 refs) — worker queue
 - `memory/providers.py` (21 refs) — vector adapters
-- `hivemind_redis.py` (113 lines) — pub/sub
+- `hivemind_redis.py` (113 lines) — pub/sub (NOT imported anywhere — dead code)
+
+**Researcher recommendation**: SQLite + Honker for single-node (wafris.org precedent; Honker 2957 stars)
+- Honker (russellromney/honker): SQLite extension adding Postgres-style NOTIFY/LISTEN, task queues, event streams, cron scheduling — without client polling or a daemon
+- Cross-process wake latency: ~0.7ms p50 on M-series
+- Transactional outbox: business write + enqueue commit together
 
 **Sequence**: memory providers → workers → hivemind → budget_guard LAST (budget_guard needs SQLite fallback first)
+**Action**: Install Honker, migrate Redis use cases to Honker/SQLite, delete Redis dependencies
 
-**Effort**: 4h | **Δ**: -500 lines
+**Effort**: 6h | **Δ**: -1,400 lines (recall.py + hivemind_redis.py + Redis providers)
 
 ---
 
@@ -213,11 +231,13 @@ Gates on existing systems, not new infrastructure:
 | P0 | Fix soul_validator.py vet-015 heritage tag | 15min |
 | P0 | Verify MIAP status | 15min |
 | P0 | Spike stamina vs tenacity (one provider) | 1h |
+| P0 | Verify interlock-cb AnyIO trio compatibility | 1h |
 
 ### Day 1 — Phase 1 Start
 | Priority | Work | Effort |
 |----------|------|--------|
-| P0 | Delete search_circuit_breaker.py + sandbox breaker | 1.5h |
+| P0 | Install + verify interlock-cb | 1h |
+| P0 | Delete search_circuit_breaker.py + sandbox breaker | 1h |
 | P0 | Simplify soul_validator.py | 2h |
 | P0 | Install structlog + prometheus_client | 30min |
 
@@ -226,7 +246,7 @@ Gates on existing systems, not new infrastructure:
 |----------|------|--------|
 | P0 | structlog adoption | 2h |
 | P0 | prometheus_client adoption | 2h |
-| P0 | Retry strategy decision (stamina or tenacity) | 1h |
+| P0 | Retry strategy decision (stamina or tenacity or interlock-cb) | 1h |
 
 ### Day 3 — Phase 2
 | Priority | Work | Effort |
@@ -239,7 +259,7 @@ Gates on existing systems, not new infrastructure:
 ### Day 4 — Phase 3 + Phase 5
 | Priority | Work | Effort |
 |----------|------|--------|
-| P1 | Memory tier consolidation (Redis removal sequence) | 4h |
+| P1 | Install Honker + Redis removal sequence | 6h |
 | P2 | Enforcement gates (Phase 5) | 11h |
 
 ### Day 5 — Verify
@@ -253,14 +273,16 @@ Gates on existing systems, not new infrastructure:
 
 | Metric | Before | After (Target) |
 |--------|--------|----------------|
-| Breaker classes | 8 (2 enums + 1 canonical + 1 deprecated + 1 clone) | 1 canonical (`AsyncCircuitBreaker`) |
+| Breaker classes | 8 (2 enums + 1 canonical + 1 deprecated + 1 clone) | 1 canonical (`AsyncCircuitBreaker`) or `interlock-cb` |
 | Handoff schemas | 3 | 1 (HandoffPacket) |
 | Distillers | Mostly deleted (miap.py pending) | 0 |
 | HMC Hub size | 86 lines | YAML + JSONL, ≤100 lines/week |
-| Memory tiers | 5 | 3 |
+| Memory tiers | 5 | 3 (sqlite-vec + FTS5 + file archive) |
 | Recall tier | 786 lines | Deleted |
+| Redis dependencies | 5 files (memory_store, budget_guard, youtube_worker, providers, hivemind_redis) | 0 (replaced by Honker/SQLite) |
 | Custom lines deleted | — | **-2,500+** |
-| Community libraries adopted | — | **2-3** (structlog, prometheus_client, optionally stamina) |
+| Community libraries adopted | — | **3-4** (structlog, prometheus_client, interlock-cb, optionally stamina) |
+| httpx2 | Installed but not fully adopted | Fully adopted (replace all httpx imports) |
 | M23 gates | 2 false-PASS | Both fixed and trustworthy |
 | Test suite timing | Unknown (phantom HIGH risk) | Measured and documented |
 
@@ -272,6 +294,10 @@ Gates on existing systems, not new infrastructure:
 |------|--------|--------|
 | Plan Author | cline/omega-engine (DeepSeek) | ✅ Written |
 | Strategy Review | grok/grok_cli | ⏳ Awaiting handoff completion |
+| Second Opinion | GLM 5.2 | ✅ Delivered (F1-F20) |
+| Code Review | Copilot CLI | ✅ Delivered (2 blockers) |
+| Deep Research | researcher | ✅ Delivered (28 sources) |
+| Reconciliation | kali | ✅ 2026-08-08 |
 | User Ratification | Architect (User) | ✅ RATIFIED 2026-07-30 |
 
 ---
