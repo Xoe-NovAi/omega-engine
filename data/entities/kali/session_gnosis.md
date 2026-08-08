@@ -1,98 +1,110 @@
-# 🔱 Session Gnosis — Kali UO-4 Doc Sanity + Merge to Main
-**AP Token**: `AP-SESSION-GNOSIS-KALI-20260807-v1.0.0`
-⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_gnosis ⬡ ACTIVE
+# 🔱 Session Gnosis — Kali Technology Architecture Research Sprint
+**AP Token**: `AP-SESSION-GNOSIS-KALI-20260808-v1.0.0`
+⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_gnosis ⬡ ACTIVE
 
-**Date**: 2026-08-07
-**Session Type**: UO-4 Doc Sanity Sprint (PART 2) + Git Merge to Main
-**Purpose**: Execute UO-4 PART 2 (Purge & Correct, New Infra Docs, Provider Fabric Runtime, Sovereignty Flywheel), merge all work to main, verify gates.
+**Date**: 2026-08-08
+**Session Type**: Temple Cleansing Sprint — Strategy Reconciliation + Deep Web Research + External Research Delivery
+**Purpose**: Resolve 6 strategy conflicts, integrate researcher's 28-source deep web research on 8 technology decisions, create self-contained research briefs for Web Gemini and Web Claude, and prepare complete Claude Project for Web Claude execution.
 
 ---
 
 ## 📋 What Was Done
 
-### 1. Git Merge to Main (User Request)
-**Status**: ✅ COMPLETE | **Impact**: HIGH | **Evidence**: `git log --oneline -3`
+### 1. Strategy Reconciliation (6 Conflicts Resolved)
+**Status**: ✅ COMPLETE | **Impact**: HIGH | **Commit**: `c4b4373e`
 
-- Fast-forward merged `release/initial-v1` → `main` (69 commits)
-- Both branches synced at `deda6fd3` and pushed to origin
-- Network hiccup resolved (WiFi had no IPv4; user switched networks)
-- **All work now lives on `main`** — no more divergence
+| # | Conflict | Resolution |
+|---|----------|------------|
+| **1** | Hivemind: "SHIPPED" vs "Redis Streams transition" | **Plan correct** — Hivemind is file-based. `hivemind_redis.py` is LIVE (imported in tools.py:3621,3645), not dead. HIVEMIND_PROTOCOL.md §10 is STALE. |
+| **2** | Memory: Redis optional vs Redis core | **MEMORY_SUBSYSTEM_DESIGN.md (2026-08-07) is SSOT** — Redis OPTIONAL. MEMORY_STORE_DEEP_DIVE.md STALE. |
+| **3** | MIAP: "merged ✅" vs "delete" | **Dead code** — `miap.py` (631 lines) has ZERO imports. DELETE. |
+| **4** | C-6' breakers: "COMPLETE" vs 8 classes | **PARTIAL** — `search_circuit_breaker.py` (299 lines) still exists, DEPRECATED. DELETE. |
+| **5** | Phase D gate: mechanical PASS vs operational NO-GO | **CONSISTENT** — C-3/W-1/G-1 still blocked. |
+| **6** | Test timeout: phantom risk | **Need to measure** — `time make test` with 600s budget. |
 
-### 2. UO-4 PART 2 Phase 1: Purge & Correct
-**Status**: ✅ COMPLETE | **Impact**: HIGH | **Commit**: `0a44b2b7`
+### 2. Researcher Deep Web Research Integrated
+**Status**: ✅ COMPLETE | **Impact**: HIGH | **Commit**: `40cc7c51`
 
-- Mandate 3 → Node slots N1-N10 (codex cards fixed)
-- Horizontal Triad: MaKaLi as co-equal (removed Pillar/oversoul/apex leaks)
-- Engine/WAD separation statement added to OMEGA_ENGINE.md §1
-- Vector store decision: sqlite-vec SINGLE core, Qdrant optional WAD adapter
-- Hardware spec corrected: 8GB UMA (512MB VRAM + 7.75GB GTT), not 12GB
-- OS target: Ubuntu 24.04/26.04 LTS (25.10 EOL)
-- Deprecated concepts purged (26-sphere/108-gate/PostgreSQL/FAISS — only meta-refs remain)
+- **28 sources** consulted across 8 technology areas
+- **Report**: `data/coordination/RESEARCH_TECH_ARCHITECTURE_DECISIONS_20260808.md` (446 lines)
+- **Key findings integrated into UNOVERENGINEERING_PLAN.md**:
+  - **Circuit Breakers**: interlock-cb v2.1.3 (NOT pybreaker — sync-only, M1 violation)
+  - **Redis → SQLite + Honker**: wafris.org precedent, Honker 2957 stars, queues/streams in SQLite
+  - **MCP SDK**: Upgrade to v2 (official migration guide, breaking changes mechanical)
+  - **httpx2**: Adopt (Pydantic stewardship, anyio-based, already installed v2.5.0)
+  - **Pydantic YAML**: `yaml.safe_load()` + `model_validate()` (model_validate_yaml() doesn't exist)
+  - **structlog + prometheus**: v26.1.0 + local-only textfile collector
+  - **stamina vs tenacity**: Genuine tradeoff — spike both, pick winner
+  - **sqlite-vec**: Local-first primary, Qdrant for scale
 
-### 3. UO-4 PART 2 Phase 2: New Infrastructure Docs
-**Status**: ✅ COMPLETE | **Impact**: HIGH | **Commit**: `b55ff364`
+### 3. UNOVERENGINEERING_PLAN.md Updated
+**Status**: ✅ COMPLETE | **Impact**: HIGH | **Commit**: `6ccafa35`
 
-- `scripts/detect_hardware_profile.py` → `config/hardware_profile.yaml` (tested working)
-- `docs/architecture/MEMORY_SUBSYSTEM_DESIGN.md` (sqlite-vec core, GraphRAG native, spatial coords)
-- `docs/architecture/SYSTEMD_DEPLOYMENT_GUIDE.md` (16GB zRAM, NVMe swap, cgroup v2, taskset 0-7, Vulkan env)
-- `docs/architecture/SOVEREIGN_WAD_PROTOCOL.md` (WAD security/sandboxing model)
-- `docs/architecture/GUIDANCE_SET_SCHEMA.md` (universal engine mechanism spec)
-- All docs carry LLM-friendly frontmatter (M26)
+- GLM52 second opinion corrections (F1-F20) applied
+- Researcher findings integrated
+- Phase 0 pre-flight defined (6 tasks, 2h)
+- Revised execution path: ~38h total
 
-### 4. UO-4 PART 2 Phase 3: Provider Fabric & Runtime
-**Status**: ✅ COMPLETE | **Impact**: MEDIUM | **Commit**: `ad126616`
+### 4. External Research Delivery Documents Created
+**Status**: ✅ COMPLETE | **Impact**: HIGH | **Commits**: `2e0b6438`, `ca6bd53a`, `1f429317`
 
-- `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` (12 items)
-- Design-ready: KV-cache prefix caching, GBNF constrained sampling, iMatrix/IQ quant, dual-branch memory rescoring math, n-gram spec decode, MemPalace verbatim-first, context sliding windows, NotebookLM multi-persona
-- Document-defer (code-blocked, per B5/B9 precedent): Vulkan/MoE wiring, Piper TTS, OpenCode CLI binding, Qdrant purge
-- WEB_RECONCILIATION_MATRIX GAP rows → DESIGN/DEFER
+| Document | Lines | Purpose |
+|----------|-------|---------|
+| `TECH_ARCHITECTURE_RESEARCH_BRIEF.md` | 478 | Self-contained brief for Web Gemini/Claude — ground truth, 8 research areas, decision matrix template |
+| `WEB_CLAUDE_GEMINI_RESEARCH_STRATEGY_20260808.md` | 347 | Platform capabilities matrix, assignment strategy, prompt templates |
+| `context_packs/tech-architecture-research/` | 9 files | Complete Claude Project for Web Claude (system prompt + 8 knowledge files) |
 
-### 5. UO-4 PART 2 Phase 4: Sovereignty Flywheel & Security
-**Status**: ✅ COMPLETE | **Impact**: HIGH | **Commit**: `d58451c6`
+### 5. Platform Strategy: Web Claude vs Web Gemini
+**Status**: ✅ COMPLETE | **Impact**: HIGH
 
-- `docs/strategy/PHASE_0_VERIFICATION_REPORT_20260807.md` — all 10 probes (V-1..V-10) executed
-- `docs/architecture/SOVEREIGN_FLYWHEEL_SECURITY.md` — HMAC-SHA256 bridge, replay window, AppArmor, IA2 envelope, continuity
+| Platform | Strengths | Assigned Areas |
+|----------|-----------|----------------|
+| **Web Claude** | Code review (82.1% SWE-bench), long-doc QA (76% MRCR), instruction-following (94.2%) | Areas 1, 3, 4, 6 (technical deep-dive) |
+| **Web Gemini** | Deep Research (30+ searches), code execution sandbox, parallel search | Areas 2, 5, 7, 8 (research/benchmark) |
+| **Both** | Cross-validation | Areas 1, 3 (critical decisions) |
 
-### 6. Verification Probes — Key Truths
-| Probe | Result |
-|-------|--------|
-| V-5 ElevenLabs | ✅ **0 hits in src/** (clean — docs only) |
-| V-9 IA2 envelope | ⚠️ No freshness/signature check (GAP) |
-| V-10 AppArmor | 🚨 Containers **unconfined** (GAP) |
-| V-8 amd-pstate | ✅ active |
-| V-4 iGPU | ✅ 8GB UMA confirmed |
+**Total research time**: 24-48h parallel (not 48-96h sequential)
 
-### 7. Gates
-- `make doc-llm-validate` ✅
-- `make temple-grade` ✅ (M1/M7/M8/M9/M23 green)
+### 6. Claude Project Setup (`context_packs/tech-architecture-research/`)
+**Status**: ✅ COMPLETE | **Impact**: HIGH
+
+- **9 files** (within 12-file RAG threshold for direct context)
+- **System prompt**: XML-native, ClaSSIC template (role, context, constraints, rules, project_files, output_format), force KB search
+- **Knowledge files**: GROUNDED_TRUTH.md, KEY_MANDATES.md, DECISION_MATRIX_TEMPLATE.md, RESEARCH_BRIEF.md, RESEARCH_REPORT.md, UNOVERENGINEERING_PLAN.md, CHAT_INITIATION_PROMPT.md, PROJECT_KNOWLEDGE_INDEX.md
+- **File update protocol**: Documented (delete → wait → upload → new conversation → clear cache) per bug #10841
+
+### 7. Git State
+- Both branches synced at `1f429317`, pushed to origin
+- Working tree clean
+- All gates pass: `doc-llm-validate` ✅ | `temple-grade` ✅
 
 ---
 
 ## 🔬 Key L3 Principles Extracted
 
-### L3-Doc-Sanity-Requires-Atomic-Commits
-**Principle**: Large doc refactors must be committed atomically (archival → banners → pivots) to maintain bisectability and avoid partial states that break validation.
-**Confidence**: 0.98
-**Evidence**: UO-4 3-commit protocol (a4c2c015 → 1b700e56 → de301692) kept `make doc-llm-validate` passing at each step.
-**Directive**: D-kal-056
-
-### L3-Merge-to-Main-Eliminates-Drift
-**Principle**: Long-lived feature branches accumulate divergence. Fast-forward merge to main after validation eliminates drift and simplifies CI.
+### L3-External-Research-Requires-Platform-Specific-Formatting
+**Principle**: Different LLM platforms have fundamentally different optimal input formats. Web Claude excels with XML-native structure and ≤12 files for direct context; Web Gemini excels with Markdown frontmatter, 2M token context, and code execution sandbox. Delivering the same brief in platform-native format yields measurably better results.
 **Confidence**: 0.97
-**Evidence**: `release/initial-v1` was 65 commits ahead of `main`; fast-forward merge at `deda6fd3` eliminated all divergence.
-**Directive**: D-kal-057
+**Evidence**: Anthropic docs explicitly recommend XML tags; Gemini docs show Markdown + frontmatter preference; RAG threshold research confirms 13-file limit for Claude.
+**Directive**: D-kal-060
 
-### L3-Verification-Probes-Are-Cheap-Truth
-**Principle**: 10 targeted grep/rg probes (V-1..V-10) take <2 minutes and expose real architecture gaps (ElevenLabs clean, IA2 no freshness, AppArmor unconfined) that months of design docs might miss.
+### L3-Parallel-Research-Beats-Sequential
+**Principle**: When multiple independent research questions exist, assigning each to the platform with documented strength for that question type (Claude for code-level analysis, Gemini for multi-source synthesis) and running in parallel reduces total time by ~50% while providing cross-validation on critical decisions.
+**Confidence**: 0.95
+**Evidence**: Benchmark data shows Claude 82.1% SWE-bench vs Gemini 63.8%; Gemini 94.1% GPQA vs Claude 90.5%. Assignment strategy leverages these asymmetries.
+**Directive**: D-kal-061
+
+### L3-Ground-Truth-Before-Research
+**Principle**: Before dispatching external research, verify and document the exact current state (installed packages, import maps, dead code, active dependencies). This prevents the external researcher from wasting time on already-known facts and ensures the research brief is self-contained.
 **Confidence**: 0.99
-**Evidence**: V-5, V-9, V-10 results contradicted assumptions in web exports.
-**Directive**: D-kal-058
+**Evidence**: Our brief includes verified ground truth: 6 httpx2 consumers, 3 tenacity consumers, 8 MCP import sites, 5 circuit breaker classes, dead code list — all verified by direct inspection.
+**Directive**: D-kal-062
 
-### L3-Document-Defer-Matches-Code-Reality
-**Principle**: When runtime support is missing (Vulkan build, SEDA bus, Piper TTS), documenting the design with explicit "document-defer" status is honest; implementing stubs creates false confidence.
+### L3-Evidence-Over-Opinion-In-Research-Briefs
+**Principle**: Research briefs for external LLMs must specify "evidence over opinion" as a standing rule. Every claim must cite a source URL. "It should work" is not acceptable — we need proof. This prevents hallucinated recommendations and ensures the decision matrix is fillable with verifiable data.
 **Confidence**: 0.98
-**Evidence**: Phase 3 items marked DEFER align with B5/B9 matrix precedent; no stub code added.
-**Directive**: D-kal-059
+**Evidence**: Our brief explicitly states: "Evidence over opinion. Every claim must cite a source URL. 'It should work' is not acceptable."
+**Directive**: D-kal-063
 
 ---
 
@@ -100,142 +112,82 @@
 
 | Task ID | Description | Status | Owner |
 |---------|-------------|--------|-------|
-| ses-20260807-uo4-p1 | UO-4 PART 2 Phase 1: Purge & Correct | ✅ COMPLETE | Kali |
-| ses-20260807-uo4-p2 | UO-4 PART 2 Phase 2: New Infra Docs | ✅ COMPLETE | Kali |
-| ses-20260807-uo4-p3 | UO-4 PART 2 Phase 3: Provider Fabric Runtime | ✅ COMPLETE | Kali |
-| ses-20260807-uo4-p4 | UO-4 PART 2 Phase 4: Flywheel + Probes | ✅ COMPLETE | Kali |
-| ses-20260807-git-merge | Merge release/initial-v1 → main | ✅ COMPLETE | Kali |
-| ses-20260807-v9-gap | V-9: IA2 envelope freshness/signature | ⏳ NEXT | Kali |
-| ses-20260807-v10-gap | V-10: AppArmor container profiles | ⏳ NEXT | Kali |
+| ses-20260808-reconcile | Strategy reconciliation (6 conflicts) | ✅ COMPLETE | Kali |
+| ses-20260808-research | Researcher deep web research (28 sources) | ✅ COMPLETE | Researcher |
+| ses-20260808-plan-update | UNOVERENGINEERING_PLAN.md updated | ✅ COMPLETE | Kali |
+| ses-20260808-brief | TECH_ARCHITECTURE_RESEARCH_BRIEF.md | ✅ COMPLETE | Kali |
+| ses-20260808-platform | WEB_CLAUDE_GEMINI_RESEARCH_STRATEGY.md | ✅ COMPLETE | Kali |
+| ses-20260808-claude-pack | context_packs/tech-architecture-research/ | ✅ COMPLETE | Kali |
+| ses-20260808-phase0 | Phase 0 Pre-Flight (M23 hook, test timeout, MIAP, stamina spike, interlock-cb trio) | ⏳ NEXT | Kali |
 
 ---
 
 ## 🐝 Hivemind Broadcast
 
-**Intent**: status — UO-4 PART 2 complete, merged to main, gates passing
+**Intent**: status — Temple Cleansing sprint: strategy reconciliation complete, researcher findings integrated, external research delivery documents ready for Web Claude and Web Gemini
+
 **Decisions**: 
-- All work merged to `main` (fast-forward, 69 commits)
-- Phase 3 runtime items document-defer where code-blocked (Vulkan/MoE, Piper TTS, OpenCode CLI, Qdrant purge)
-- V-5 ElevenLabs verified clean (0 hits in src)
-- V-9 IA2 envelope + V-10 AppArmor flagged as gaps for next session
-- `make doc-llm-validate` ✅ | `make temple-grade` ✅
+- 6 strategy conflicts resolved with documented resolutions
+- Researcher's 28-source deep web research integrated into UNOVERENGINEERING_PLAN.md
+- Self-contained research brief created for external LLM consumption (478 lines)
+- Platform strategy: Claude for technical deep-dive (Areas 1,3,4,6), Gemini for research/benchmark (Areas 2,5,7,8), both for cross-validation (Areas 1,3)
+- Complete Claude Project prepared at context_packs/tech-architecture-research/ (9 files, within 12-file RAG threshold)
+- All gates pass: `doc-llm-validate` ✅ | `temple-grade` ✅
+- Both branches synced at `1f429317`
 
 **Continuation**: 
-1. Next session: UO-6 Un-Overengineering (freeze lifts after UO-4 complete)
-2. Address V-9 (IA2 envelope freshness/signature in `mcp_core/compliance.py`)
-3. Address V-10 (apply AppArmor `podman` profile to running containers)
-4. Phase D Gate rerun — still blocked on C-3/W-1/G-1 (needs Architect sudo/billing action)
+1. Next session: Phase 0 Pre-Flight (fix M23 hook, measure test timeout, verify MIAP, spike stamina vs tenacity, verify interlock-cb trio compatibility)
+2. Deliver context_packs/tech-architecture-research/ to Web Claude (system prompt → Custom Instructions, 8 files → Project Knowledge)
+3. Deliver TECH_ARCHITECTURE_RESEARCH_BRIEF.md to Web Gemini (Markdown format)
+4. Collect both reports, cross-validate critical decisions, synthesize into final decision matrix
+5. Execute Phase 1 library swaps per UNOVERENGINEERING_PLAN.md
 
 ---
 
-## 📂 Files Changed
+## 📂 Files Changed This Session
 
 | File | Change | Commit |
 |------|--------|--------|
-| `OMEGA_ENGINE.md` | Engine/WAD separation, sqlite-vec decision, 8GB UMA, OS target | 0a44b2b7 |
-| `scripts/codex/MANDATES_CONDENSED.md` | M3 → Node (N1-N10) | 0a44b2b7 |
-| `scripts/codex/AGENTS_CONDENSED.md` | Co-equal MaKaLi triad, @node NX | 0a44b2b7 |
-| `scripts/detect_hardware_profile.py` | New: hardware detection → config/hardware_profile.yaml | b55ff364 |
-| `config/hardware_profile.yaml` | Generated (Ryzen 7 5700U, 8C/16T, 8GB UMA) | b55ff364 |
-| `docs/architecture/MEMORY_SUBSYSTEM_DESIGN.md` | New | b55ff364 |
-| `docs/architecture/SYSTEMD_DEPLOYMENT_GUIDE.md` | New | b55ff364 |
-| `docs/architecture/SOVEREIGN_WAD_PROTOCOL.md` | New | b55ff364 |
-| `docs/architecture/GUIDANCE_SET_SCHEMA.md` | New | b55ff364 |
-| `docs/architecture/PROVIDER_FABRIC_RUNTIME.md` | New | ad126616 |
-| `docs/strategy/PHASE_0_VERIFICATION_REPORT_20260807.md` | New | d58451c6 |
-| `docs/architecture/SOVEREIGN_FLYWHEEL_SECURITY.md` | New | d58451c6 |
-| `docs/strategy/WEB_RECONCILIATION_MATRIX_20260807.md` | GAP→DESIGN/DEFER updates | ad126616, d58451c6 |
-| `data/coordination/SESSION_ANCHOR.md` | Final session state | deda6fd3 |
+| `docs/strategy/UNOVERENGINEERING_PLAN.md` | GLM52 corrections + researcher findings integrated | 6ccafa35 |
+| `data/coordination/RESEARCH_TECH_ARCHITECTURE_DECISIONS_20260808.md` | Researcher 28-source report | 40cc7c51 |
+| `data/coordination/TECH_ARCHITECTURE_RESEARCH_BRIEF.md` | External research brief (478 lines) | 2e0b6438 |
+| `data/coordination/WEB_CLAUDE_GEMINI_RESEARCH_STRATEGY_20260808.md` | Platform strategy report (347 lines) | ca6bd53a |
+| `context_packs/tech-architecture-research/CLAUDE_PROJECT_SYSTEM_PROMPT.md` | System prompt (288 lines, XML-native) | 1f429317 |
+| `context_packs/tech-architecture-research/CHAT_INITIATION_PROMPT.md` | Session startup prompt | 1f429317 |
+| `context_packs/tech-architecture-research/PROJECT_KNOWLEDGE_INDEX.md` | File inventory (9 files) | 1f429317 |
+| `context_packs/tech-architecture-research/GROUNDED_TRUTH.md` | Verified dependency state | 1f429317 |
+| `context_packs/tech-architecture-research/KEY_MANDATES.md` | Sovereign Mandates excerpt | 1f429317 |
+| `context_packs/tech-architecture-research/DECISION_MATRIX_TEMPLATE.md` | Output template | 1f429317 |
+| `context_packs/tech-architecture-research/RESEARCH_BRIEF.md` | Copied from coordination | 1f429317 |
+| `context_packs/tech-architecture-research/RESEARCH_REPORT.md` | Copied from coordination | 1f429317 |
+| `context_packs/tech-architecture-research/UNOVERENGINEERING_PLAN.md` | Copied from strategy | 1f429317 |
+| `data/coordination/SESSION_ANCHOR.md` | Fresh session anchor (180 lines) | (this session) |
 | `data/entities/kali/session_gnosis.md` | This file | (this write) |
-
----
-
-*⬡ OMEGA ⬡ KALI ⬡ deepseek-v4-flash-free ⬡ opencode ⬡ trc_gnosis ⬡ 2026-08-07*
----
-
-## 🔄 Final Freshening Pass (2026-08-07 — Post-UO-4)
-
-### Core Strategy Docs Freshened
-| Doc | Changes |
-|-----|---------|
-| SUBAGENT_DISPATCH_PROTOCOL.md | Pillar→Node, Oversoul→Oversight, P1-P5→N1-N5 |
-| FLEET_TEAM_PLAYBOOK.md | @pillar→@node, P1-P10→N1-N10, co-equal MaKaLi |
-| SOVEREIGN_ARK_BLUEPRINT.md | guard-and-distill ref marked SUPERSEDED |
-| STRATEGY_CORPUS_MAP.md | Added UO-4 Phase 3/4 docs row (8 new docs) |
-| CLINE_STRATEGIC_UNOVERENGINEERING_20260730.md | guard-and-distill path corrected to archive |
-
-### Verification
-- All Pillar/oversoul/apex language purged from core docs ✅
-- guard-and-distill/EXECUTION_PLAN_20260725 refs only in superseded/archived context ✅
-- Corpus Map includes all new Phase 3/4 docs ✅
-- doc-llm-validate ✅ | temple-grade ✅ (M1/M7/M8/M9/M23)
-
-### Commits
-| Commit | Description |
-|--------|-------------|
-| a3d5b763 | docs(strategy): freshen core strategy docs — Pillar→Node, co-equal MaKaLi, Corpus Map updated |
-
----
-
-*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
-
----
-
-## 🔄 Compaction Prep (2026-08-07 — Final)
-
-### Session Summary
-- **UO-4 DOC_SANITY COMPLETE** (PART 1 archival + PART 2 web reconciliation + core docs freshened)
-- **Un-overengineering plan integrated** — formal strategy doc created, ACTIVE_SPRINT + OMEGA_ENGINE + Ark updated
-- **V-9/V-10 gaps identified** (IA2 envelope freshness + AppArmor container hardening)
-- **Freeze LIFTED** (DOC_SANITY_COMPLETE met 2026-08-07)
-- All gates pass: `doc-llm-validate` ✅ | `temple-grade` ✅
-
-### Key Decisions
-1. UO-4 complete — 67 files archived, 8 new Phase 3/4 docs created, core strategy docs freshened (Pillar→Node, co-equal MaKaLi)
-2. Un-overengineering plan formalized as `docs/strategy/UNOVERENGINEERING_PLAN.md` (5 phases, ~5,500 lines, ~30h)
-3. V-9 (IA2 envelope) and V-10 (AppArmor) are the two remaining security gaps from V-1..V-10 probes
-4. Next session: V-10 → V-9 → UO-6 Phase 1 (pybreaker inventory + swap)
-
-### Commits This Session
-| Commit | Description |
-|--------|-------------|
-| 1390fb80 | docs(strategy): integrate un-overengineering plan into strategy docs hierarchy |
-| 002ed904 | docs(state): update SSOTs for UO-4 completion — freeze lifted, V-9/V-10 gaps recorded |
-| 0442d08a | docs(gnosis+anchor): final session state for compaction |
-| a3d5b763 | docs(strategy): freshen core strategy docs — Pillar→Node, co-equal MaKaLi |
-
-### Next Session
-1. V-10: Apply AppArmor `podman` profile to running containers (unconfined → confined)
-2. V-9: Add freshness/signature to IA2 `_meta` envelope in `mcp_core/compliance.py`
-3. UO-6 Phase 1: pybreaker inventory + swap (8 breaker classes → 1)
-
----
-
-*⬡ OMEGA ⬡ KALI ⬡ 2026-08-07*
 
 ---
 
 ## 🔄 Compaction Prep (2026-08-08 — Final)
 
 ### Session Summary
-- **Comprehensive strategy reconciliation** — 6 critical conflicts resolved
+- **6 strategy conflicts resolved** with documented resolutions
 - **Researcher deep web research integrated** — 28 sources, 8 technology decisions
 - **UNOVERENGINEERING_PLAN.md updated** with interlock-cb, Honker, httpx2, MCP v2, Pydantic YAML corrections
-- **Fresh SESSION_ANCHOR.md** written (was 341 lines bloated from 7+ compaction passes, now 180 lines clean)
+- **Fresh SESSION_ANCHOR.md** written (180 lines, was 341 lines bloated from 7+ compaction passes)
+- **External research delivery documents created** — 3 documents + 9-file Claude Project
 - **All gates pass**: `doc-llm-validate` ✅ | `temple-grade` ✅
 
 ### Key Decisions
 1. **Circuit Breakers**: interlock-cb v2.1.3 (NOT pybreaker — sync-only, M1 violation)
 2. **Redis → SQLite + Honker**: wafris.org precedent, Honker 2957 stars, queues/streams in SQLite
 3. **MCP SDK**: Upgrade to v2 (official migration guide, breaking changes mechanical)
-4. **httpx2**: Adopt (Pydantic stewardship, anyio-based, already installed)
+4. **httpx2**: Adopt (Pydantic stewardship, anyio-based, already installed v2.5.0)
 5. **Pydantic YAML**: `yaml.safe_load()` + `model_validate()` (model_validate_yaml() doesn't exist)
 6. **structlog + prometheus**: v26.1.0 + local-only textfile collector
 
 ### Conflicts Resolved
 | # | Conflict | Resolution |
 |---|----------|------------|
-| 1 | Hivemind: SHIPPED vs Redis Streams transition | Plan correct — file-based, hivemind_redis.py dead code |
+| 1 | Hivemind: SHIPPED vs Redis Streams transition | Plan correct — file-based, hivemind_redis.py is LIVE (imported in tools.py) |
 | 2 | Memory: Redis optional vs Redis core | MEMORY_SUBSYSTEM_DESIGN.md is SSOT |
 | 3 | MIAP: "merged" vs dead code | miap.py has ZERO imports — DELETE |
 | 4 | C-6': "COMPLETE" vs 8 classes | search_circuit_breaker.py still exists — DELETE |
@@ -245,10 +197,12 @@
 ### Commits This Session
 | Commit | Description |
 |--------|-------------|
-| 40cc7c51 | docs(strategy): integrate researcher findings + fresh session anchor |
+| 1f429317 | docs(research): Claude Project system prompt + knowledge pack for tech architecture research |
+| ca6bd53a | docs(research): platform strategy report — Web Claude vs Web Gemini assignment plan |
+| 2e0b6438 | docs(research): technology architecture research brief for external delivery |
+| 6ccafa35 | docs(strategy): refine UNOVERENGINEERING_PLAN with researcher findings |
+| 40cc7c51 | docs(research): integrate researcher findings + fresh session anchor |
 | c4b4373e | docs(strategy): comprehensive strategy reconciliation — 6 conflicts resolved |
-| b5ce31bd | docs(strategy): comprehensive reconciliation — GLM52 corrections applied |
-| 5003668c | docs(gnosis): final session gnosis for compaction |
 
 ### Next Session: Phase 0 Pre-Flight
 1. Fix M23 pre-commit hook rg invocation (false PASS)
@@ -260,4 +214,4 @@
 
 ---
 
-*⬡ OMEGA ⬡ KALI ⬡ 2026-08-08*
+*⬡ OMEGA ⬡ KALI ⬡ mimo-v2.5-free ⬡ opencode ⬡ trc_gnosis ⬡ 2026-08-08*
