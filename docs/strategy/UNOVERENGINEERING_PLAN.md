@@ -7,6 +7,7 @@
 **Owner**: `@kali` (dispatch) / `@maat` (Phase 1 execution)
 **Ratified**: 2026-07-30 by Architect
 **Reconciled**: 2026-08-08 by Kali (GLM52 second opinion + Copilot CLI review + ground truth probes)
+**Vault Reconciliation**: 2026-08-08 by Kali (John Carmack vault audit — ~1,500 lines custom vault code → 3 community tools)
 
 ---
 
@@ -53,8 +54,8 @@ The engine won't be less capable — it'll be **more maintainable**, **more reli
 | Soul distillers | Mostly deleted (scribe gone, miap.py pending) | 0 (all removed) |
 | HMC Hub size | 86 lines (already consolidated) | YAML + JSONL, ≤100 lines/week |
 | Memory tiers | 5 (Hot/Warm/Cold/Recall/Archival) | 3 (file-based, sqlite-vec+FTS5, raw archive) |
-| Custom lines deleted | — | **-2,500+** |
-| Community libraries adopted | — | **2-3** (structlog, prometheus_client, optionally stamina) |
+| Custom lines deleted | — | **-4,000+** |
+| Community libraries adopted | — | **5-6** (structlog, prometheus_client, interlock-cb, optionally stamina, Keyblind, Authy, Agent Vault) |
 | Pydantic simplification | Manual validator (290 lines) | Simplified with `yaml.safe_load()` + `model_validate()` |
 
 ---
@@ -114,6 +115,38 @@ The engine won't be less capable — it'll be **more maintainable**, **more reli
 - **Option C**: Use `interlock-cb` v2 retry pipeline (if adopted in §2.1, covers retry + breaker + timeout + bulkhead)
 **Action**: Spike one provider, measure glue-code deletion, pick winner
 **Effort**: 1h spike | **Net Δ**: TBD
+
+### §2.6 VaultCore — Replace with Keyblind + Authy + Agent Vault (Carmack Audit 2026-08-08)
+**Status**: NOT STARTED — **NEW FINDING** from John Carmack vault audit
+**Current**: ~2,000 lines custom vault code across:
+- `src/omega/vault/vault_core.py` (836 lines) — CRUD, lease, quota, BlindVault, Bury, CPE
+- `src/omega/vault/blindvault_resolver.py` (535 lines) — `{{secret:NAME}}` injection
+- `src/omega/vault/models.py` (398 lines) — Pydantic models, CPE scorer
+- `src/omega/vault/crypto.py` (204 lines) — **KEEP** (correct Argon2id + age)
+- `src/omega/tools/enforce_vaultcore.py` (177 lines) — AST enforcer
+- `src/omega/cli/vault.py` (418 lines) — CLI commands
+
+**Carmack Verdict**: Delete ~1,500 lines, adopt 3 community tools:
+| Tool | Replaces | 2026 Status |
+|------|----------|-------------|
+| **Keyblind** (aarifmms/keyblind) | BlindVault resolver + Bury PID sessions + MCP server + audit log + sandbox/unsandbox + secret sharing + biometric gate + TOTP + dead man's switch + 7 backends (local, 1Password, Bitwarden, AWS, GCP, Azure, env) + web dashboard + Chrome extension | Active, MCP-first, 16 tools, biometric (Touch ID), TOTP, secret sharing |
+| **Authy** (eric8810/authy) | Bury fallback + lease protocol + CLI injection + config resolver + policy-scoped sessions + HMAC-chained audit | Active, Rust, age (X25519) + HMAC-SHA256, `authy run`/`authy resolve`, glob policies, run-only tokens, MCP server, TUI admin |
+| **Agent Vault** (Infisical/agent-vault) | FleetOrchestrator + CAP Adapters + proxy layer + dynamic secrets + egress filtering + request logging | 2,040★, MIT, HTTP credential proxy + vault, MITM proxy, dynamic secrets, egress filtering, MCP server, Docker |
+
+**Presidio + Faker** replaces custom CPE extraction (180 lines in models.py) — CAMP paper (arXiv:2604.16521) explicitly uses Presidio + Faker.
+
+**Action**:
+1. **Keep** `src/omega/vault/crypto.py` (204 lines) — correct Argon2id + age
+2. **Delete** `blindvault_resolver.py` (535 lines) → Keyblind MCP tools
+3. **Delete** Bury integration in `vault_core.py` (~100 lines) → Authy `run`/`resolve`
+4. **Delete** FleetOrchestrator design (300 lines) → Agent Vault HTTPS_PROXY sidecar
+5. **Replace** CPE extraction in `models.py` (180 lines) → Presidio analyzers + Faker
+6. **Slim** `vault_core.py` (836 lines → ~200 lines) → thin adapter delegating to Keyblind/Authy/Agent Vault
+7. **Delete** `enforce_vaultcore.py` (177 lines) — no longer needed (tools enforce their own policies)
+8. **Slim** `cli/vault.py` (418 lines → ~100 lines) → thin wrapper over tool CLIs
+
+**Net Δ**: **-1,500 lines** | **New deps**: 3 (Keyblind, Authy, Agent Vault) — all MIT, local-first, MCP-native
+**Effort**: ~10 hours (vs. 72-hour original V-1 plan) | **Setup**: 30 min for 90% (`keyblind setup-mcp` + `authy serve --mcp` + `docker run infisical/agent-vault`)
 
 ---
 
@@ -241,14 +274,19 @@ Gates on existing systems, not new infrastructure:
 | P0 | Simplify soul_validator.py | 2h |
 | P0 | Install structlog + prometheus_client | 30min |
 
-### Day 2 — Phase 1 Finish
+### Day 2 — Phase 1 Finish + VaultCore Replacement
 | Priority | Work | Effort |
 |----------|------|--------|
 | P0 | structlog adoption | 2h |
 | P0 | prometheus_client adoption | 2h |
 | P0 | Retry strategy decision (stamina or tenacity or interlock-cb) | 1h |
+| **P0** | **Add Keyblind + Authy MCP servers** | **15 min** |
+| **P0** | **Deploy Agent Vault sidecar (Docker)** | **30 min** |
+| **P0** | **Replace BlindVault/Bury/Fleet with MCP tools** | **5 hrs** |
+| **P0** | **Swap CPE extraction → Presidio + Faker** | **2 hrs** |
+| **P0** | **Slim VaultCore to thin adapter** | **3 hrs** |
 
-### Day 3 — Phase 2
+### Day 3 — Phase 2 (Post-Vault)
 | Priority | Work | Effort |
 |----------|------|--------|
 | P1 | Kill HandoffState (migrate vet-008) | 2h |
@@ -280,8 +318,13 @@ Gates on existing systems, not new infrastructure:
 | Memory tiers | 5 | 3 (sqlite-vec + FTS5 + file archive) |
 | Recall tier | 786 lines | Deleted |
 | Redis dependencies | 5 files (memory_store, budget_guard, youtube_worker, providers, hivemind_redis) | 0 (replaced by Honker/SQLite) |
-| Custom lines deleted | — | **-2,500+** |
-| Community libraries adopted | — | **3-4** (structlog, prometheus_client, interlock-cb, optionally stamina) |
+| Custom lines deleted | — | **-4,000+** |
+| Community libraries adopted | — | **5-6** (structlog, prometheus_client, interlock-cb, optionally stamina, Keyblind, Authy, Agent Vault) |
+| VaultCore custom code | ~2,000 lines | **~500 lines** (crypto kept, rest → thin adapter) |
+| BlindVault resolver | 535 lines | **0** (→ Keyblind MCP) |
+| Bury fallback | ~100 lines | **0** (→ Authy) |
+| FleetOrchestrator | ~300 lines | **0** (→ Agent Vault) |
+| CPE extraction | 180 lines | **0** (→ Presidio + Faker) |
 | httpx2 | Installed but not fully adopted | Fully adopted (replace all httpx imports) |
 | M23 gates | 2 false-PASS | Both fixed and trustworthy |
 | Test suite timing | Unknown (phantom HIGH risk) | Measured and documented |
