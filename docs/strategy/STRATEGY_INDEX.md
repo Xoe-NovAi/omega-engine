@@ -41,6 +41,7 @@
 | `data/projects/warp-proxy-pool/CONTEXT.md` | P0/W-1 | WARP project one-turn hydration + live blockers |
 | `data/projects/antigravity-multi-account/CONTEXT.md` | G-1b | Antigravity OAuth multi-account |
 | `docs/strategy/LIVING_RESEARCH_OS_SPEC_20260721.md` | D | Phase D build detail |
+| **`docs/strategy/WEB_CHATBOT_PLATFORM_PLAYBOOK.md`** | — | **CANONICAL** — Single-source hydration for Web Claude, Gemini, Grok, NotebookLM |
 | `docs/strategy/HIVEMIND_PROTOCOL.md` | — | Multi-agent coordination |
 | `docs/strategy/HIVEMIND_POST_TEMPLATE.md` | — | Hivemind post quality gate |
 | `docs/strategy/SUBAGENT_DISPATCH_PROTOCOL.md` | — | Subagent delegation |
