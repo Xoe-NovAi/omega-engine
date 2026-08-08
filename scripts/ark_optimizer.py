@@ -43,7 +43,7 @@ RE_MANDATE_RANGE = re.compile(r"(\d+)\s*\(M1-M(\d+)\)")
 RE_DECISION_RANGE = re.compile(r"D1-D(\d+)")
 RE_DECISION_COUNT = re.compile(r"(\d+)\s+decisions")
 RE_IDSOFT = re.compile(r"\[id-soft:\s*([^\]\n]+)\]")
-RE_IDSOFT_EMPTY = re.compile(r"\[id-soft:\s*\]")
+RE_IDSOFT_EMPTY = re.compile(r"^[^#\n]*#[^#\n]*\[id-soft:\s*\]", re.MULTILINE)
 RE_MD_LINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 RE_ACTIVE_TASK = re.compile(r"^\|\s*\**([\w.\-]+)\**\s*\|(.+?)\|(.+?)\|$")
 
@@ -110,8 +110,6 @@ async def extract_metrics() -> dict:
     if m:
         omega_dec_max = int(m.group(1))
 
-    omega_has_vetala = "omega-vetala" in omega.lower()
-    ark_has_vetala = "omega-vetala" in ark.lower()
     ark_has_oms = "omega module standard" in ark.lower() or "oms v" in ark.lower()
     ark_has_resonance = "semantic resonance" in ark.lower()
     ark_has_wasm = "wasm" in ark.lower()
@@ -126,8 +124,6 @@ async def extract_metrics() -> dict:
         "actual_mand_max": actual_mand_max,
         "ark_dec_max": ark_dec_max,
         "omega_dec_max": omega_dec_max,
-        "omega_has_vetala": omega_has_vetala,
-        "ark_has_vetala": ark_has_vetala,
         "ark_has_oms": ark_has_oms,
         "ark_has_resonance": ark_has_resonance,
         "ark_has_wasm": ark_has_wasm,
@@ -280,22 +276,13 @@ async def find_undocumented_tags() -> list[str]:
 # Workbench cross-check
 # ─────────────────────────────────────────────────────────────────────────────
 async def check_workbench() -> dict:
-    out = {"available": False, "vetala_project": None, "vetala_items": None,
-           "omega_shared_modules": None}
+    out = {"available": False, "omega_shared_modules": None}
     if not await anyio.Path(WORKBENCH).exists():
         return out
     try:
         import sqlite3
         con = sqlite3.connect(str(WORKBENCH))
         cur = con.cursor()
-        cur.execute("SELECT name,status FROM projects WHERE name LIKE '%vetala%'")
-        row = cur.fetchone()
-        if row:
-            out["vetala_project"] = {"name": row[0], "status": row[1]}
-            cur.execute(
-                "SELECT COUNT(*) FROM work_items wi JOIN projects p ON wi.project_id=p.id "
-                "WHERE p.name LIKE '%vetala%'")
-            out["vetala_items"] = cur.fetchone()[0]
         con.close()
         out["available"] = True
     except Exception as e:  # pragma: no cover
@@ -353,8 +340,6 @@ def render_report(m: dict, tasks, orphans, broken, tags, wb, live, dry: bool) ->
     L.append("## §2 New-Plan Integration Gap")
     L.append("")
     gaps = []
-    if not m["ark_has_vetala"]:
-        gaps.append("`omega-vetala` shared module (D207) — absent from Ark Blueprint Current State")
     if not m["ark_has_oms"]:
         gaps.append("Omega Module Standard (OMS v1.0/v2.0) — absent")
     if not m["ark_has_resonance"]:
@@ -404,8 +389,6 @@ def render_report(m: dict, tasks, orphans, broken, tags, wb, live, dry: bool) ->
     L.append("## §7 Workbench Cross-Check")
     L.append("")
     if wb.get("available"):
-        L.append(f"- vetala project: `{wb.get('vetala_project')}`")
-        L.append(f"- vetala work items: {wb.get('vetala_items')}")
         L.append(f"- OMEGA_ENGINE shared-modules count: {wb.get('omega_shared_modules')}")
     else:
         L.append(f"- ⚠️ workbench DB unavailable: {wb.get('error', 'missing')}")

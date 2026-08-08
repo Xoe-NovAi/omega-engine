@@ -14,7 +14,7 @@ YELLOW := \033[1;33m
 RED := \033[0;31m
 NC := \033[0m
 
-.PHONY: help test test-honest test-quarantine-check quarantine save-quarantine load-quarantine clean-badge clean generate-badge codex check-codex-stale check-codex-fix check-codex-force
+.PHONY: help test test-honest test-quarantine-check quarantine save-quarantine load-quarantine clean-badge clean generate-badge codex check-codex-stale check-codex-fix check-codex-force ark-optimize ark-optimize-report
 
 help:
 	@echo "Omega Engine Makefile"
@@ -262,5 +262,15 @@ check-m23-failure-integrity:
 # Run all mandate checks (CI gate)
 check-mandates: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity
 	@echo "$(GREEN)All mandate checks passed$(NC)"
+
+## Run Ark Blueprint drift & M14 integrity check (read-only dry-run)
+ark-optimize:
+	@$(PYTHON) scripts/ark_optimizer.py --dry-run
+	@echo "✅ Dry-run complete. Run 'make ark-optimize-report' to write the report file."
+
+## Run Ark Blueprint check and write report to data/coordination/ARK_OPTIMIZATION_REPORT.md
+ark-optimize-report:
+	@$(PYTHON) scripts/ark_optimizer.py
+	@echo "✅ Report written to data/coordination/ARK_OPTIMIZATION_REPORT.md"
 
 .PHONY: check-m1-anyio check-m9-error-integrity check-m8-zero-telemetry check-m7-local-first check-m23-failure-integrity check-mandates

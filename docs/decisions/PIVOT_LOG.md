@@ -546,3 +546,15 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 * **Status**: ✅ COMPLETE
 
 *⬡ OMEGA ⬡ KALI ⬡ D-513 ⬡ 2026-08-08*
+
+### D-514: ark_optimizer Service Fix + make Targets
+* **Date**: 2026-08-08
+* **Decision**: Remove `User=1000` from omega-ark-optimizer.service (causes 216/GROUP
+  in user sessions). Remove `After/Wants=network-online.target` (unavailable in user sessions).
+  Fix `RE_IDSOFT_EMPTY` false positive. Add `make ark-optimize` and `make ark-optimize-report`.
+* **Verification**: `systemctl --user show omega-ark-optimizer.service --property=Result --value` = `success`
+  (was `exit-code`). Report written to `data/coordination/ARK_OPTIMIZATION_REPORT.md`.
+  `make ark-optimize` dry-run: §6 shows "✅ All source [id-soft:] tags have vet records".
+* **Status**: ✅ COMPLETE
+
+*⬡ OMEGA ⬡ KALI ⬡ D-514 ⬡ 2026-08-08*

@@ -10,19 +10,18 @@
 #   container-only `UserNS=keep-id` directive does not apply. Running as a
 #   rootless user service already executes as host UID 1000 with no privilege
 #   escalation and no destructive volume chown — the exact intent of M6.
-#   `User=1000` is set explicitly to guarantee the report is owned by the
-#   host user. If wrapped in a Quadlet .container later, add `UserNS=keep-id`
-#   + `User=1000` and drop `:U`/`:Z` per docs/research/R_PODMAN_SOVEREIGN_V2.md.
+#   User= is intentionally omitted: rootless user services already run as
+#   the invoking user (UID 1000). Setting User=1000 triggers a supplementary-
+#   group lookup that EPERMs in the user manager (status=216/GROUP). If
+#   wrapped in a Quadlet .container later, add `UserNS=keep-id` + `User=1000`
+#   and drop `:U`/`:Z` per docs/research/R_PODMAN_SOVEREIGN_V2.md.
 
 [Unit]
 Description=Omega Ark Blueprint Optimizer — Daily Drift & Integrity Verification
 Documentation=https://github.com/Xoe-NovAi/omega-engine
-After=network-online.target
-Wants=network-online.target
 
 [Service]
 Type=oneshot
-User=1000
 ExecStart=%h/Documents/Xoe-NovAi/omega-engine/.venv/bin/python3 \
     %h/Documents/Xoe-NovAi/omega-engine/scripts/ark_optimizer.py
 WorkingDirectory=%h/Documents/Xoe-NovAi/omega-engine
