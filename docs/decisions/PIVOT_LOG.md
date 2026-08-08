@@ -593,3 +593,21 @@ Deliver the **Autonomous Meditation Pipeline** as a complete, standalone, instal
 * **Status**: ✅ COMPLETE
 
 *⬡ OMEGA ⬡ KALI ⬡ D-516 ⬡ 2026-08-08*
+
+### D-516: Rotating Test-Run Log Implementation
+* **Date**: 2026-08-08
+* **Context**: The hygiene sprint's `make test-honest` target produced only single-snapshot artifacts
+  (`tests/quarantine.txt`, `tests/test-badge.json`) that were overwritten each run. No historical
+  record of test runs existed. The established `data/logs/` rotation pattern (`.log.N` + `.gz`)
+  was already in use for `mcp_watchdog.log`, `omega-hub.log`, `token_ledger.jsonl`.
+* **Decision**: Implement rotating test-run log at `data/logs/test-run.log` with 4-generation
+  retention (current, `.1`, `.2.gz`, `.3.gz`). Wire into `make test-honest` via new `log-test-run`
+  target that runs after `run-honest-tests` and before `generate-badge`. Created
+  `scripts/rotate_test_log.py` for rotation logic (reads from stdin to avoid arg-length limits).
+* **Verification**: 
+  - `make log-test-run` rotates correctly: current→.1, .1→.2.gz (compressed), .2.gz→.3.gz, .3.gz removed
+  - `make test-honest` chain: save-quarantine → run-honest-tests → log-test-run → generate-badge → check-quarantine-expiry
+  - Log captures full pytest output including summary line (passed/failed/skipped/xfailed)
+* **Status**: ✅ COMPLETE
+
+*⬡ OMEGA ⬡ KALI ⬡ D-516 ⬡ 2026-08-08*
